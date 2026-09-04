@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T16:14:50Z · open 332 · in progress 0 · done 153_
+_Source: universe_under2b.csv · updated 2026-09-04T16:39:39Z · open 322 · in progress 0 · done 163_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (332)
+## Open (322)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| BYRN | Byrna Technologies Inc. | $77.4M |
-| THRM | Gentherm Inc | $1.23B |
-| SVV | Savers Value Village, Inc. | $1.58B |
-| EVCM | EverCommerce Inc. | $1.40B |
-| FLNG | Flex LNG Ltd. | $1.69B |
-| KE | Kimball Electronics, Inc. | $585.8M |
-| PLPC | PREFORMED LINE PRODUCTS CO | $1.92B |
-| LXU | LSB INDUSTRIES, INC. | $808.5M |
-| TXO | TXO Partners, L.P. | $831.1M |
-| GENI | Genius Sports Ltd | $76.3M |
 | BJRI | BJs RESTAURANTS INC | $1.25B |
 | ERII | Energy Recovery, Inc. | $390.5M |
 | LINC | LINCOLN EDUCATIONAL SERVICES CORP | $808.3M |
@@ -346,7 +336,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (153)
+## Done (163)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | WEYS | WEYCO GROUP INC | $422.1M | cloudA | 2026-09-04T16:14:50Z |
 | NRC | NRC HEALTH | $470.0M | cloudA | 2026-09-04T16:14:50Z |
 | NPK | NATIONAL PRESTO INDUSTRIES INC | $1.03B | cloudA | 2026-09-04T16:14:50Z |
+| BYRN | Byrna Technologies Inc. | $77.4M | cloudB | 2026-09-04T16:39:39Z |
+| THRM | Gentherm Inc | $1.23B | cloudB | 2026-09-04T16:39:39Z |
+| SVV | Savers Value Village, Inc. | $1.58B | cloudB | 2026-09-04T16:39:39Z |
+| EVCM | EverCommerce Inc. | $1.40B | cloudB | 2026-09-04T16:39:39Z |
+| FLNG | Flex LNG Ltd. | $1.69B | cloudB | 2026-09-04T16:39:39Z |
+| KE | Kimball Electronics, Inc. | $585.8M | cloudB | 2026-09-04T16:39:39Z |
+| PLPC | PREFORMED LINE PRODUCTS CO | $1.92B | cloudB | 2026-09-04T16:39:39Z |
+| LXU | LSB INDUSTRIES, INC. | $808.5M | cloudB | 2026-09-04T16:39:39Z |
+| TXO | TXO Partners, L.P. | $831.1M | cloudB | 2026-09-04T16:39:39Z |
+| GENI | Genius Sports Ltd | $76.3M | cloudB | 2026-09-04T16:39:39Z |

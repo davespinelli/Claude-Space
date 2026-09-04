@@ -154,3 +154,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | WEYS | WEYCO GROUP INC | $422.1M | none | 0 | no filings in bundle |
 | 2026-09-04 | NRC | NRC HEALTH | $470.0M | post-restructuring | 5 | TRCV at an all-time $151.9M leads stale declining revenue, but the stock is up 54% in six months and the CFO resigned in August |
 | 2026-09-04 | NPK | NATIONAL PRESTO INDUSTRIES INC | $1.0B | none | 4 | Defense backlog lifted 1H EPS to $3.14 but trailing free cash flow is minus $36.2M, the revolver is drawn and Housewares profit was a tariff refund |
+| 2026-09-04 | BYRN | Byrna Technologies Inc. | $77.4M | insider-buying | 5 | Four insiders bought $268K with no sales, but Q2 revenue fell 43% to $16.4M and the 5.7x EV/EBIT is stale FY2025 data |
+| 2026-09-04 | THRM | Gentherm Inc | $1.2B | none | 4 | 15.6x EV/EBIT and up 31% in six months while 1H operating income halved to $22.0M on Modine deal costs |
+| 2026-09-04 | SVV | Savers Value Village, Inc. | $1.6B | none | 4 | US comps +6.6% and guidance raised, but 17.7x EV/EBIT with 5.0x net debt and $479M of insider selling in twelve months |
+| 2026-09-04 | EVCM | EverCommerce Inc. | $1.4B | cash-cow-narrative | 6 | 7.8% FCF yield and 2.5% of shares retired, but Q2 growth was 2.7%, guidance moved to the low end and net debt is 6.4x EBIT |
+| 2026-09-04 | FLNG | Flex LNG Ltd. | $1.7B | none | 3 | Pack has no business section, no MD&A and no results; units sit 1.3% off the high with net debt at 7.3x EBIT |
+| 2026-09-04 | KE | Kimball Electronics, Inc. | $585.8M | misunderstood-segment | 7 | Priced at 9.3x FY2026 adjusted operating income as a 4.6%-margin EMS shop while Medical plus Helvoet heads past a third of FY2027 sales |
+| 2026-09-04 | PLPC | PREFORMED LINE PRODUCTS CO | $1.9B | none | 4 | Record Q2 EPS of $4.49 already paid for: up 149% over 12-1 at 34.1x EV/EBIT and a 1.7% FCF yield |
+| 2026-09-04 | LXU | LSB INDUSTRIES, INC. | $808.5M | cyclical-trough | 5 | Operating income swung $63M on UAN pricing, but turnaround expense fell $31.6M of that and net debt is 7.3x EBIT |
+| 2026-09-04 | TXO | TXO Partners, L.P. | $831.1M | insider-buying | 6 | Two insiders bought $36.7M of units against an $831M cap and Q2 operating income swung to $57.7M, but units are 1.3% off the high |
+| 2026-09-04 | GENI | Genius Sports Ltd | $76.3M | none | 2 | Pack holds only meta and Form 4; screen row is broken with a 10.0M share count against $724.5M of equity |
