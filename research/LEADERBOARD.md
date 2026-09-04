@@ -193,3 +193,35 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 50 RULES v1 on the small panel, 2012+ - reference | 7.6% | 0.57 | -32.8% | 0.60 / 0.54 | 0.57 (0.60/0.54) | - | research/backtests/2026-09-04_insider-cluster-smallcap.py |
 | 2026-09-04 | 50 SPY buy & hold, 2012+ - reference | 15.2% | 0.94 | -33.7% | 1.12 / 0.85 | 0.57 (0.60/0.54) | - | research/backtests/2026-09-04_insider-cluster-smallcap.py |
 | 2026-09-04 | 50 EW all 439 small caps, 2012+ - CONTROL (no insider signal) | 14.3% | 0.74 | -46.0% | 0.99 / 0.63 | 0.57 (0.60/0.54) | - | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 49 N  n=5 (small panel) | 4.8% | 0.31 | -40.2% | 0.44 / 0.21 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=8 (small panel) | 5.2% | 0.35 | -37.5% | 0.45 / 0.27 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=10 (small panel) | 7.8% | 0.48 | -29.1% | 0.55 / 0.42 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=12 (small panel) | 9.4% | 0.57 | -27.3% | 0.63 / 0.53 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=15 (small panel) | 7.5% | 0.50 | -27.7% | 0.63 / 0.39 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=20 (small panel) | 6.7% | 0.47 | -27.4% | 0.61 / 0.35 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=25 (small panel) | 5.8% | 0.43 | -27.6% | 0.53 / 0.36 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=30 (small panel) | 5.4% | 0.41 | -24.7% | 0.49 / 0.36 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=40 (small panel) [diag] | 5.2% | 0.42 | -24.1% | 0.44 / 0.40 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=60 (small panel) [diag] | 4.5% | 0.39 | -25.7% | 0.43 / 0.36 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=90 (small panel) [diag] | 3.9% | 0.37 | -26.3% | 0.43 / 0.33 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 N  n=120 (small panel) [diag] | 3.5% | 0.35 | -26.9% | 0.42 / 0.31 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 NF n=5 (small panel) | 4.9% | 0.32 | -40.2% | 0.44 / 0.21 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 NF n=8 (small panel) | 5.3% | 0.35 | -37.5% | 0.45 / 0.28 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 NF n=10 (small panel) | 7.8% | 0.48 | -31.4% | 0.55 / 0.42 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 NF n=12 (small panel) | 9.3% | 0.57 | -31.1% | 0.63 / 0.52 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 NF n=15 (small panel) | 7.4% | 0.49 | -31.0% | 0.63 / 0.37 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 NF n=20 (small panel) | 6.5% | 0.46 | -32.4% | 0.61 / 0.33 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 NF n=25 (small panel) | 5.7% | 0.42 | -34.9% | 0.53 / 0.33 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 NF n=30 (small panel) | 5.2% | 0.40 | -32.8% | 0.49 / 0.33 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 F  f=0.15 (small panel) | 5.2% | 0.37 | -40.4% | 0.51 / 0.27 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 F  f=0.25 (small panel) | 6.0% | 0.44 | -40.8% | 0.44 / 0.44 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 F  f=0.35 (small panel) | 6.2% | 0.47 | -40.8% | 0.52 / 0.43 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 F  f=0.45 (small panel) | 5.7% | 0.45 | -40.7% | 0.51 / 0.41 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 F  f=0.55 (small panel) | 5.2% | 0.42 | -40.2% | 0.49 / 0.37 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 F  f=0.70 (small panel) | 4.6% | 0.39 | -38.6% | 0.48 / 0.33 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 F  f=0.85 (small panel) | 4.3% | 0.37 | -40.9% | 0.47 / 0.30 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 F  f=1.00 (small panel) | 3.5% | 0.33 | -40.2% | 0.43 / 0.25 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 SPY buy & hold, 2011+ sample - reference | 14.2% | 0.86 | -33.7% | 0.89 / 0.86 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 RULES v1 live (universe.json), 2011+ - baseline | 6.3% | 0.65 | -13.8% | 0.66 / 0.65 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 RULES v1 on the small panel, 2011+ - reference | 8.1% | 0.60 | -32.8% | 0.70 / 0.52 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 49 EW all 439 small caps @75% gross - CONTROL (no filter, no ranking) | 10.2% | 0.68 | -36.2% | 0.80 / 0.61 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_third-universe-portability_B.py |
