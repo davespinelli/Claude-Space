@@ -1,0 +1,355 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+HARNESS SANITY (must reproduce published rows before any new number is read)
+  idea 2  u56 CAND20 : 12.7%/1.093/-18.3% halves 1.088/1.103   (published 12.7%/1.093/-18.3%, 1.088/1.103)
+  sim vs engine.backtest max |dr| = 0.00e+00
+  idea 10 B136/EWall : 10.7%/1.027/-17.7% halves 1.146/0.917   (published 10.7%/1.027/-17.7%, 1.146/0.917)
+
+==================================================================================================================================================
+u56: 56 tickers, eval 2009-01-13 -> 2026-09-03
+  SPY  full  15.3%/0.890/ -33.7%  halves 0.957/0.837   IS 15.0%/0.899/-22.1%   OOS 15.5%/0.884/-33.7%
+  v1   full   6.5%/0.666/ -13.8%  halves 0.641/0.692   OOS 7.8%/0.751/-13.8%   (4a reference)
+  IS  4b bars: Sharpe > 0.899, MaxDD >= -13.2%, CAGR >= 10.5%
+==================================================================================================================================================
+
+[u56] grid N/ranked    8a: PASS   IS Sharpe spread 0.1234  binding Sh(0.1234); DD(0.0765); CAGR(0.0648)   (idea 2: n=20 is the standing 4b KEEP-candidate (rule-8 pick))
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+        n=5   16.5%   0.952  -21.6%  0.899  1.002   17.6   0.895  -18.3%   0.996  -21.6%  DD      H1,DD         DD        
+       n=10   12.9%   0.929  -17.5%  0.918  0.945   13.9   0.869  -14.1%   0.976  -17.5%  DD      H1            PASS      
+       n=15   13.2%   1.045  -19.2%  1.073  1.027   11.5   0.992  -12.4%   1.086  -19.2%  DD      PASS          PASS      
+       n=20   12.7%   1.093  -18.3%  1.088  1.103    9.6   0.993  -11.7%   1.170  -18.3%  DD      PASS          PASS        <-R0  <-R2
+       n=30   11.0%   1.099  -16.6%  1.026  1.168    7.0   0.917  -12.1%   1.240  -16.6%  DD      PASS          PASS      
+       n=40    9.7%   1.125  -14.0%  1.073  1.175    5.0   0.942  -10.6%   1.269  -14.0%  DD      CAGR          PASS      
+  R0 (rule 8) picks      n=20: OOS 14.4%/1.170/-18.3%   grid OOS-best 1.269 (n=40)   mean 1.123   SKILL +0.047   REGRET -0.099   rho +0.543
+  R2 (4b-aware) picks      n=20: OOS 14.4%/1.170/-18.3%
+  consequence of the choice: OOS Sharpe spread 0.293, OOS MaxDD spread 7.6%, R0's OOS MaxDD -18.3% (grid -21.6%..-14.0%)
+
+[u56] grid F/fraction    8a: PASS   IS Sharpe spread 0.1572  binding Sh(0.1572); DD(0.0547); CAGR(0.0752)   (idea 46: f=0.85 is the fraction arm's rule-8 pick / 4b candidate)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     f=0.15   16.8%   0.981  -27.8%  1.049  0.929   19.5   1.041  -16.7%   0.941  -27.8%  DD      DD            DD          <-R0
+     f=0.35   13.6%   1.007  -21.5%  0.961  1.052   15.1   0.884  -15.8%   1.102  -21.5%  DD      DD            DD        
+     f=0.45   13.6%   1.058  -19.7%  0.995  1.117   13.7   0.907  -14.9%   1.173  -19.7%  DD      PASS          PASS      
+     f=0.70   11.6%   1.036  -17.1%  1.000  1.071   11.1   0.903  -12.4%   1.139  -17.1%  DD      PASS          PASS      
+     f=0.85   11.3%   1.072  -16.7%  1.092  1.058    9.6   0.996  -11.2%   1.132  -16.7%  DD      PASS          PASS      
+     f=1.00   10.4%   1.051  -15.9%  1.069  1.038    8.2   0.969  -11.3%   1.116  -15.9%  DD      CAGR          PASS      
+  R0 (rule 8) picks    f=0.15: OOS 16.7%/0.941/-27.8%   grid OOS-best 1.173 (f=0.45)   mean 1.100   SKILL -0.160   REGRET -0.232   rho -0.314
+  R2 (4b-aware): INFEASIBLE - no arm meets the IS drawdown cap and CAGR floor
+  consequence of the choice: OOS Sharpe spread 0.232, OOS MaxDD spread 11.9%, R0's OOS MaxDD -27.8% (grid -27.8%..-15.9%)
+
+[u56] grid GROSS/top20    8a: FAIL(objective)   IS Sharpe spread 0.0002  binding DD(0.0759); CAGR(0.0703)   (idea 66: gross is not selectable; all picks fail OOS DD)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     g=0.50    8.4%   1.093  -12.4%  1.088  1.103    6.4   0.993   -7.8%   1.169  -12.4%  PASS    CAGR          CAGR      
+     g=0.60   10.1%   1.093  -14.8%  1.088  1.103    7.7   0.993   -9.4%   1.169  -14.8%  DD      CAGR          PASS      
+     g=0.70   11.8%   1.093  -17.1%  1.088  1.103    9.0   0.993  -10.9%   1.170  -17.1%  DD      PASS          PASS      
+     g=0.75   12.7%   1.093  -18.3%  1.088  1.103    9.6   0.993  -11.7%   1.170  -18.3%  DD      PASS          PASS      
+     g=0.80   13.5%   1.093  -19.5%  1.088  1.103   10.3   0.993  -12.4%   1.170  -19.5%  DD      PASS          PASS        <-R0  <-R2
+     g=0.90   15.2%   1.093  -21.7%  1.088  1.104   11.5   0.993  -13.9%   1.170  -21.7%  DD      DD            DD        
+     g=1.00   16.9%   1.093  -24.0%  1.088  1.104   12.8   0.993  -15.4%   1.170  -24.0%  DD      DD            DD        
+  R0 (rule 8) picks    g=0.80: OOS 15.4%/1.170/-19.5%   grid OOS-best 1.170 (g=1.00)   mean 1.170   SKILL +0.000   REGRET -0.000   rho +0.250
+  R2 (4b-aware) picks    g=0.80: OOS 15.4%/1.170/-19.5%
+  consequence of the choice: OOS Sharpe spread 0.001, OOS MaxDD spread 11.6%, R0's OOS MaxDD -19.5% (grid -24.0%..-12.4%)
+
+[u56] grid GROSS/EWall    8a: FAIL(objective)   IS Sharpe spread 0.0007  binding DD(0.0725); CAGR(0.0615)   (idea 66: same, on the unranked book)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     g=0.50    6.9%   1.050  -10.7%  1.068  1.037    5.5   0.969   -7.5%   1.114  -10.7%  PASS    CAGR          CAGR      
+     g=0.60    8.3%   1.050  -12.8%  1.068  1.037    6.6   0.969   -9.0%   1.114  -12.8%  PASS    CAGR          CAGR      
+     g=0.70    9.7%   1.050  -14.9%  1.068  1.037    7.7   0.970  -10.5%   1.114  -14.9%  DD      CAGR          CAGR      
+     g=0.75   10.4%   1.050  -15.9%  1.068  1.037    8.2   0.970  -11.2%   1.114  -15.9%  DD      CAGR          PASS      
+     g=0.80   11.1%   1.050  -16.9%  1.069  1.037    8.7   0.970  -11.9%   1.114  -16.9%  DD      PASS          PASS      
+     g=0.90   12.5%   1.050  -18.9%  1.069  1.037    9.8   0.970  -13.4%   1.114  -18.9%  DD      PASS          PASS      
+     g=1.00   13.9%   1.050  -20.9%  1.069  1.037   10.9   0.970  -14.8%   1.114  -20.9%  DD      DD            DD          <-R0
+  R0 (rule 8) picks    g=1.00: OOS 15.2%/1.114/-20.9%   grid OOS-best 1.114 (g=0.80)   mean 1.114   SKILL -0.000   REGRET -0.000   rho +0.536
+  R2 (4b-aware): INFEASIBLE - no arm meets the IS drawdown cap and CAGR floor
+  consequence of the choice: OOS Sharpe spread 0.000, OOS MaxDD spread 10.2%, R0's OOS MaxDD -20.9% (grid -20.9%..-10.7%)
+
+[u56] grid BAND/ew-all    8a: PASS   IS Sharpe spread 0.1242  binding CAGR(0.0172)   (idea 57/87: band book is the most robust object; picks band=0.08)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     b=0.00   10.4%   1.050  -15.9%  1.068  1.037    8.2   0.970  -11.2%   1.114  -15.9%  DD      CAGR          PASS      
+     b=0.02   11.0%   1.106  -15.1%  1.104  1.109    5.8   1.006  -10.1%   1.185  -15.1%  DD      PASS          PASS      
+     b=0.03   11.3%   1.136  -15.1%  1.113  1.160    4.9   1.012  -10.3%   1.234  -15.1%  DD      PASS          PASS      
+     b=0.05   11.5%   1.108  -15.8%  1.092  1.125    4.1   0.992  -10.0%   1.199  -15.8%  DD      PASS          PASS      
+     b=0.08   11.9%   1.131  -17.1%  1.180  1.093    3.3   1.094  -10.8%   1.160  -17.1%  DD      PASS          PASS        <-R0  <-R2
+  R0 (rule 8) picks    b=0.08: OOS 12.7%/1.160/-17.1%   grid OOS-best 1.234 (b=0.03)   mean 1.178   SKILL -0.018   REGRET -0.074   rho +0.300
+  R2 (4b-aware) picks    b=0.08: OOS 12.7%/1.160/-17.1%
+  consequence of the choice: OOS Sharpe spread 0.120, OOS MaxDD spread 2.1%, R0's OOS MaxDD -17.1% (grid -17.1%..-15.1%)
+
+[u56] grid K/lookback    8a: PASS   IS Sharpe spread 0.3440  binding Sh(0.3440); DD(0.0449); CAGR(0.0533)   (idea 55: rule 8 picks K=none on u56, K=200d on broad)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+       K=50    8.3%   0.824  -16.1%  0.808  0.841   15.1   0.727  -16.1%   0.901  -14.1%  DD      H1,CAGR       CAGR      
+      K=100   11.4%   1.050  -15.1%  1.028  1.073   11.2   0.935  -15.1%   1.138  -14.4%  DD      PASS          PASS      
+      K=200   12.7%   1.093  -18.3%  1.088  1.103    9.6   0.993  -11.7%   1.170  -18.3%  DD      PASS          PASS      
+     K=none   13.7%   1.123  -18.5%  1.154  1.101    9.5   1.071  -11.9%   1.164  -18.5%  DD      PASS          PASS        <-R0  <-R2
+  R0 (rule 8) picks    K=none: OOS 14.9%/1.164/-18.5%   grid OOS-best 1.170 (K=200)   mean 1.093   SKILL +0.071   REGRET -0.006   rho +0.800
+  R2 (4b-aware) picks    K=none: OOS 14.9%/1.164/-18.5%
+  consequence of the choice: OOS Sharpe spread 0.269, OOS MaxDD spread 4.4%, R0's OOS MaxDD -18.5% (grid -18.5%..-14.1%)
+
+[u56] grid COST/top20    8a: PASS   IS Sharpe spread 0.4509  binding Sh(0.4509); DD(0.0322); CAGR(0.0529)   (ideas 45/68: cost breakeven of the standing candidate)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+      c=0bp   13.8%   1.176  -18.2%  1.178  1.182    9.6   1.083  -11.3%   1.248  -18.2%  DD      PASS          PASS        <-R0  <-R2
+      c=5bp   13.2%   1.135  -18.3%  1.133  1.143    9.6   1.038  -11.5%   1.209  -18.3%  DD      PASS          PASS      
+     c=10bp   12.7%   1.093  -18.3%  1.088  1.103    9.6   0.993  -11.7%   1.170  -18.3%  DD      PASS          PASS      
+     c=15bp   12.1%   1.051  -18.4%  1.043  1.064    9.6   0.948  -11.9%   1.130  -18.4%  DD      PASS          PASS      
+     c=20bp   11.6%   1.010  -18.4%  0.999  1.025    9.6   0.903  -12.2%   1.091  -18.4%  DD      PASS          PASS      
+     c=25bp   11.1%   0.968  -18.4%  0.954  0.985    9.6   0.858  -12.5%   1.051  -18.4%  DD      H1            PASS      
+     c=50bp    8.4%   0.758  -18.7%  0.728  0.788    9.6   0.632  -14.5%   0.853  -18.7%  DD      H1,H2,OOS,CAGRSh,CAGR   
+  R0 (rule 8) picks     c=0bp: OOS 15.5%/1.248/-18.2%   grid OOS-best 1.248 (c=0bp)   mean 1.107   SKILL +0.141   REGRET +0.000   rho +1.000
+  R2 (4b-aware) picks     c=0bp: OOS 15.5%/1.248/-18.2%
+  consequence of the choice: OOS Sharpe spread 0.395, OOS MaxDD spread 0.4%, R0's OOS MaxDD -18.2% (grid -18.7%..-18.2%)
+
+[u56] grid COST/EWall    8a: PASS   IS Sharpe spread 0.4180  binding Sh(0.4180); DD(0.0330)   (ideas 45/68/83: EWall's higher breakeven)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+      c=0bp   11.3%   1.133  -15.8%  1.150  1.121    8.2   1.053  -10.5%   1.197  -15.8%  DD      PASS          PASS        <-R0
+      c=5bp   10.9%   1.092  -15.8%  1.109  1.079    8.2   1.011  -10.9%   1.156  -15.8%  DD      PASS          PASS      
+     c=10bp   10.4%   1.050  -15.9%  1.068  1.037    8.2   0.970  -11.2%   1.114  -15.9%  DD      CAGR          PASS      
+     c=15bp   10.0%   1.009  -15.9%  1.027  0.994    8.2   0.928  -11.5%   1.073  -15.9%  DD      CAGR          PASS      
+     c=20bp    9.5%   0.967  -16.0%  0.986  0.952    8.2   0.886  -11.9%   1.031  -16.0%  DD      CAGR          CAGR      
+     c=25bp    9.1%   0.925  -16.1%  0.945  0.910    8.2   0.844  -12.2%   0.989  -16.1%  DD      H1,CAGR       CAGR      
+     c=50bp    6.8%   0.716  -18.5%  0.740  0.697    8.2   0.635  -13.8%   0.781  -18.5%  DD      H1,H2,OOS,CAGRSh,CAGR   
+  R0 (rule 8) picks     c=0bp: OOS 12.3%/1.197/-15.8%   grid OOS-best 1.197 (c=0bp)   mean 1.049   SKILL +0.148   REGRET +0.000   rho +1.000
+  R2 (4b-aware): INFEASIBLE - no arm meets the IS drawdown cap and CAGR floor
+  consequence of the choice: OOS Sharpe spread 0.416, OOS MaxDD spread 2.7%, R0's OOS MaxDD -15.8% (grid -18.5%..-15.8%)
+
+[u56] grid CADENCE/top20    8a: PASS   IS Sharpe spread 0.2598  binding Sh(0.2598); DD(0.0341); CAGR(0.0360)   (idea 3/65: cadence-insensitivity proposed as a KEEP bar)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     freq=D   10.9%   0.977  -16.3%  0.935  1.017   23.0   0.838  -13.1%   1.083  -16.3%  DD      H1            PASS      
+     freq=W   12.7%   1.093  -18.3%  1.088  1.103    9.6   0.993  -11.7%   1.170  -18.3%  DD      PASS          PASS      
+     freq=M   14.7%   1.204  -19.5%  1.211  1.206    4.3   1.098  -11.9%   1.286  -19.5%  DD      PASS          PASS        <-R0  <-R2
+     freq=Q   13.5%   1.020  -27.1%  1.096  0.976    2.4   0.966  -15.1%   1.065  -27.1%  DD      DD            DD        
+  R0 (rule 8) picks    freq=M: OOS 16.7%/1.286/-19.5%   grid OOS-best 1.286 (freq=M)   mean 1.151   SKILL +0.135   REGRET +0.000   rho +0.800
+  R2 (4b-aware) picks    freq=M: OOS 16.7%/1.286/-19.5%
+  consequence of the choice: OOS Sharpe spread 0.221, OOS MaxDD spread 10.8%, R0's OOS MaxDD -19.5% (grid -27.1%..-16.3%)
+
+[u56] grid CADENCE/EWall    8a: PASS   IS Sharpe spread 0.2754  binding Sh(0.2754); CAGR(0.0352)   (idea 3/65: same, unranked book)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     freq=D    9.4%   0.969  -16.9%  0.970  0.970   18.8   0.859  -12.8%   1.056  -16.9%  DD      CAGR          CAGR      
+     freq=W   10.4%   1.050  -15.9%  1.068  1.037    8.2   0.970  -11.2%   1.114  -15.9%  DD      CAGR          PASS      
+     freq=M   11.9%   1.144  -17.0%  1.141  1.151    3.6   1.040  -10.0%   1.226  -17.0%  DD      PASS          PASS      
+     freq=Q   11.6%   1.081  -22.2%  1.221  0.969    1.9   1.134  -12.6%   1.044  -22.2%  DD      DD            DD          <-R0  <-R2
+  R0 (rule 8) picks    freq=Q: OOS 11.7%/1.044/-22.2%   grid OOS-best 1.226 (freq=M)   mean 1.110   SKILL -0.066   REGRET -0.182   rho -0.200
+  R2 (4b-aware) picks    freq=Q: OOS 11.7%/1.044/-22.2%
+  consequence of the choice: OOS Sharpe spread 0.182, OOS MaxDD spread 6.3%, R0's OOS MaxDD -22.2% (grid -22.2%..-15.9%)
+
+[u56] grid HYST/top20    8a: PASS   IS Sharpe spread 0.0398  binding none   (idea 86: k=2 cuts turnover 60%, cost-neutral)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     k=1.00   12.7%   1.093  -18.3%  1.088  1.103    9.6   0.993  -11.7%   1.170  -18.3%  DD      PASS          PASS      
+     k=1.25   12.9%   1.119  -17.5%  1.106  1.136    5.9   0.998  -11.8%   1.211  -17.5%  DD      PASS          PASS      
+     k=1.50   12.9%   1.124  -17.5%  1.128  1.127    4.8   1.015  -11.7%   1.208  -17.5%  DD      PASS          PASS      
+     k=2.00   12.7%   1.145  -17.2%  1.169  1.133    3.9   1.033  -11.2%   1.231  -17.2%  DD      PASS          PASS        <-R0  <-R2
+  R0 (rule 8) picks    k=2.00: OOS 14.6%/1.231/-17.2%   grid OOS-best 1.231 (k=2.00)   mean 1.205   SKILL +0.026   REGRET +0.000   rho +0.800
+  R2 (4b-aware) picks    k=2.00: OOS 14.6%/1.231/-17.2%
+  consequence of the choice: OOS Sharpe spread 0.061, OOS MaxDD spread 1.1%, R0's OOS MaxDD -17.2% (grid -18.3%..-17.2%)
+
+==================================================================================================================================================
+broad: 136 tickers, eval 2009-01-13 -> 2026-09-03
+  SPY  full  15.3%/0.890/ -33.7%  halves 0.957/0.837   IS 15.0%/0.899/-22.1%   OOS 15.5%/0.884/-33.7%
+  v1   full   6.4%/0.640/ -21.2%  halves 0.762/0.537   OOS 6.0%/0.581/-21.2%   (4a reference)
+  IS  4b bars: Sharpe > 0.899, MaxDD >= -13.2%, CAGR >= 10.5%
+==================================================================================================================================================
+
+[broad] grid N/ranked    8a: PASS   IS Sharpe spread 0.0797  binding DD(0.0927)   (idea 2: n=20 is the standing 4b KEEP-candidate (rule-8 pick))
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+        n=5   16.7%   0.881  -23.4%  1.016  0.777   21.3   0.981  -22.0%   0.816  -23.4%  DD      H2,OOS,DD     Sh,DD     
+       n=10   14.2%   0.893  -21.4%  1.110  0.714   17.5   1.048  -18.6%   0.784  -21.4%  DD      H2,OOS,DD     Sh,DD     
+       n=15   13.4%   0.924  -21.5%  1.095  0.778   15.2   1.009  -15.4%   0.862  -21.5%  DD      H2,OOS,DD     Sh,DD     
+       n=20   13.1%   0.958  -20.1%  1.125  0.814   13.8   1.044  -13.6%   0.894  -20.1%  PASS    H2            PASS      
+       n=30   12.2%   0.972  -20.3%  1.146  0.818   11.8   1.061  -12.7%   0.904  -20.3%  PASS    H2,DD         DD          <-R0  <-R2
+       n=40   11.9%   1.004  -19.1%  1.133  0.887   10.3   1.034  -12.7%   0.980  -19.1%  PASS    PASS          PASS      
+  R0 (rule 8) picks      n=30: OOS 11.6%/0.904/-20.3%   grid OOS-best 0.980 (n=40)   mean 0.873   SKILL +0.031   REGRET -0.076   rho +0.200
+  R2 (4b-aware) picks      n=30: OOS 11.6%/0.904/-20.3%
+  consequence of the choice: OOS Sharpe spread 0.196, OOS MaxDD spread 4.2%, R0's OOS MaxDD -20.3% (grid -23.4%..-19.1%)
+
+[broad] grid F/fraction    8a: PASS   IS Sharpe spread 0.1138  binding DD(0.0424)   (idea 46: f=0.85 is the fraction arm's rule-8 pick / 4b candidate)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     f=0.15   13.1%   0.854  -29.9%  1.113  0.633   18.5   1.041  -14.4%   0.715  -29.9%  DD      H2,OOS,DD     Sh,DD       <-R0
+     f=0.35   11.3%   0.885  -24.5%  1.029  0.754   14.6   0.931  -15.7%   0.848  -24.5%  DD      H2,OOS,DD     Sh,DD     
+     f=0.45   11.6%   0.941  -22.7%  1.032  0.857   13.2   0.927  -14.2%   0.953  -22.7%  DD      DD            DD        
+     f=0.70   11.3%   0.994  -20.6%  1.096  0.900   10.8   0.991  -12.3%   0.996  -20.6%  PASS    DD            DD        
+     f=0.85   11.2%   1.024  -18.6%  1.128  0.928    9.5   1.022  -11.6%   1.026  -18.6%  PASS    PASS          PASS      
+     f=1.00   10.7%   1.026  -17.7%  1.143  0.918    8.3   1.032  -11.5%   1.022  -17.7%  PASS    PASS          CAGR        <-R2
+  R0 (rule 8) picks    f=0.15: OOS 11.0%/0.715/-29.9%   grid OOS-best 1.026 (f=0.85)   mean 0.927   SKILL -0.211   REGRET -0.310   rho +0.029
+  R2 (4b-aware) picks    f=1.00: OOS 10.6%/1.022/-17.7%
+  consequence of the choice: OOS Sharpe spread 0.310, OOS MaxDD spread 12.2%, R0's OOS MaxDD -29.9% (grid -29.9%..-17.7%)
+
+[broad] grid GROSS/top20    8a: FAIL(objective)   IS Sharpe spread 0.0046  binding DD(0.0878); CAGR(0.0923)   (idea 66: gross is not selectable; all picks fail OOS DD)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     g=0.50    8.8%   0.956  -13.6%  1.122  0.812    9.2   1.041   -9.2%   0.892  -13.6%  PASS    H2,CAGR       CAGR      
+     g=0.60   10.5%   0.957  -16.2%  1.123  0.812   11.0   1.042  -11.0%   0.893  -16.2%  PASS    H2,CAGR       CAGR      
+     g=0.70   12.2%   0.958  -18.8%  1.124  0.813   12.9   1.043  -12.8%   0.894  -18.8%  PASS    H2            PASS        <-R2
+     g=0.75   13.1%   0.958  -20.1%  1.125  0.814   13.8   1.044  -13.6%   0.894  -20.1%  PASS    H2            PASS      
+     g=0.80   14.0%   0.958  -21.3%  1.125  0.814   14.7   1.044  -14.5%   0.894  -21.3%  DD      H2,DD         DD        
+     g=0.90   15.7%   0.959  -23.8%  1.126  0.815   16.5   1.045  -16.3%   0.895  -23.8%  DD      H2,DD         DD        
+     g=1.00   17.4%   0.960  -26.2%  1.127  0.815   18.4   1.046  -18.0%   0.896  -26.2%  DD      H2,DD         DD          <-R0
+  R0 (rule 8) picks    g=1.00: OOS 16.6%/0.896/-26.2%   grid OOS-best 0.896 (g=1.00)   mean 0.894   SKILL +0.002   REGRET +0.000   rho +1.000
+  R2 (4b-aware) picks    g=0.70: OOS 11.7%/0.894/-18.8%
+  consequence of the choice: OOS Sharpe spread 0.004, OOS MaxDD spread 12.6%, R0's OOS MaxDD -26.2% (grid -26.2%..-13.6%)
+
+[broad] grid GROSS/EWall    8a: FAIL(objective)   IS Sharpe spread 0.0025  binding DD(0.0738); CAGR(0.0726)   (idea 66: same, on the unranked book)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     g=0.50    7.2%   1.027  -12.0%  1.144  0.918    5.6   1.034   -7.7%   1.022  -12.0%  PASS    CAGR          CAGR      
+     g=0.60    8.6%   1.027  -14.3%  1.145  0.917    6.7   1.034   -9.2%   1.022  -14.3%  PASS    CAGR          CAGR      
+     g=0.70   10.0%   1.027  -16.6%  1.145  0.917    7.7   1.035  -10.7%   1.021  -16.6%  PASS    CAGR          CAGR      
+     g=0.75   10.7%   1.027  -17.7%  1.146  0.917    8.3   1.035  -11.4%   1.021  -17.7%  PASS    PASS          CAGR      
+     g=0.80   11.4%   1.027  -18.8%  1.146  0.917    8.8   1.035  -12.2%   1.021  -18.8%  PASS    PASS          PASS        <-R2
+     g=0.90   12.9%   1.027  -21.0%  1.146  0.916    9.9   1.036  -13.6%   1.020  -21.0%  PASS    DD            DD        
+     g=1.00   14.3%   1.027  -23.1%  1.147  0.916   10.9   1.036  -15.1%   1.020  -23.1%  DD      DD            DD          <-R0
+  R0 (rule 8) picks    g=1.00: OOS 14.1%/1.020/-23.1%   grid OOS-best 1.022 (g=0.50)   mean 1.021   SKILL -0.001   REGRET -0.002   rho -1.000
+  R2 (4b-aware) picks    g=0.80: OOS 11.3%/1.021/-18.8%
+  consequence of the choice: OOS Sharpe spread 0.002, OOS MaxDD spread 11.1%, R0's OOS MaxDD -23.1% (grid -23.1%..-12.0%)
+
+[broad] grid BAND/ew-all    8a: PASS   IS Sharpe spread 0.0837  binding none   (idea 57/87: band book is the most robust object; picks band=0.08)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     b=0.00   10.7%   1.027  -17.7%  1.146  0.917    8.3   1.035  -11.4%   1.021  -17.7%  PASS    PASS          CAGR      
+     b=0.02   11.1%   1.058  -17.1%  1.166  0.956    6.0   1.056  -10.6%   1.059  -17.1%  PASS    PASS          PASS      
+     b=0.03   11.1%   1.064  -16.8%  1.163  0.971    5.2   1.051  -10.5%   1.074  -16.8%  PASS    PASS          PASS      
+     b=0.05   11.1%   1.043  -17.5%  1.131  0.960    4.2   1.017  -11.1%   1.063  -17.5%  PASS    PASS          PASS      
+     b=0.08   11.7%   1.079  -18.8%  1.203  0.966    3.2   1.101  -11.5%   1.060  -18.8%  PASS    PASS          PASS        <-R0  <-R2
+  R0 (rule 8) picks    b=0.08: OOS 11.5%/1.060/-18.8%   grid OOS-best 1.074 (b=0.03)   mean 1.055   SKILL +0.005   REGRET -0.013   rho -0.100
+  R2 (4b-aware) picks    b=0.08: OOS 11.5%/1.060/-18.8%
+  consequence of the choice: OOS Sharpe spread 0.053, OOS MaxDD spread 2.0%, R0's OOS MaxDD -18.8% (grid -18.8%..-16.8%)
+
+[broad] grid K/lookback    8a: PASS   IS Sharpe spread 0.2520  binding Sh(0.2520); CAGR(0.0448)   (idea 55: rule 8 picks K=none on u56, K=200d on broad)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+       K=50    9.0%   0.743  -20.8%  0.878  0.621   18.8   0.792  -15.9%   0.705  -20.8%  PASS    H1,H2,OOS,DD,CAGRSh,DD,CAGR
+      K=100   11.9%   0.896  -19.9%  1.017  0.788   15.0   0.926  -14.6%   0.873  -19.9%  PASS    H2,OOS        Sh        
+      K=200   13.1%   0.958  -20.1%  1.125  0.814   13.8   1.044  -13.6%   0.894  -20.1%  PASS    H2            PASS        <-R0
+     K=none   12.8%   0.929  -20.7%  1.081  0.797   13.9   0.998  -13.6%   0.877  -20.7%  PASS    H2,OOS,DD     Sh,DD     
+  R0 (rule 8) picks     K=200: OOS 12.5%/0.894/-20.1%   grid OOS-best 0.894 (K=200)   mean 0.837   SKILL +0.057   REGRET +0.000   rho +1.000
+  R2 (4b-aware): INFEASIBLE - no arm meets the IS drawdown cap and CAGR floor
+  consequence of the choice: OOS Sharpe spread 0.189, OOS MaxDD spread 0.9%, R0's OOS MaxDD -20.1% (grid -20.8%..-19.9%)
+
+[broad] grid COST/top20    8a: PASS   IS Sharpe spread 0.5016  binding Sh(0.5016); CAGR(0.0740)   (ideas 45/68: cost breakeven of the standing candidate)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+      c=0bp   14.7%   1.057  -20.0%  1.226  0.911   13.8   1.144  -13.4%   0.993  -20.0%  PASS    PASS          PASS        <-R0
+      c=5bp   13.9%   1.008  -20.0%  1.175  0.862   13.8   1.094  -13.5%   0.943  -20.0%  PASS    PASS          PASS      
+     c=10bp   13.1%   0.958  -20.1%  1.125  0.814   13.8   1.044  -13.6%   0.894  -20.1%  PASS    H2            PASS      
+     c=15bp   12.3%   0.908  -20.1%  1.074  0.764   13.8   0.994  -13.8%   0.844  -20.1%  PASS    H2,OOS        Sh        
+     c=20bp   11.6%   0.859  -20.1%  1.023  0.715   13.8   0.944  -13.9%   0.795  -20.1%  PASS    H2,OOS        Sh        
+     c=25bp   10.8%   0.809  -20.2%  0.972  0.666   13.8   0.893  -14.0%   0.745  -20.2%  PASS    H2,OOS        Sh,CAGR   
+     c=50bp    7.0%   0.560  -21.9%  0.718  0.421   13.8   0.642  -14.9%   0.497  -21.9%  H1,H2,DDH1,H2,OOS,DD,CAGRSh,DD,CAGR
+  R0 (rule 8) picks     c=0bp: OOS 14.1%/0.993/-20.0%   grid OOS-best 0.993 (c=0bp)   mean 0.816   SKILL +0.177   REGRET +0.000   rho +1.000
+  R2 (4b-aware): INFEASIBLE - no arm meets the IS drawdown cap and CAGR floor
+  consequence of the choice: OOS Sharpe spread 0.495, OOS MaxDD spread 1.9%, R0's OOS MaxDD -20.0% (grid -21.9%..-20.0%)
+
+[broad] grid COST/EWall    8a: PASS   IS Sharpe spread 0.3817  binding Sh(0.3817); DD(0.0272); CAGR(0.0437)   (ideas 45/68/83: EWall's higher breakeven)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+      c=0bp   11.7%   1.107  -17.3%  1.220  1.000    8.3   1.111  -11.0%   1.103  -17.3%  PASS    PASS          PASS        <-R0  <-R2
+      c=5bp   11.2%   1.067  -17.5%  1.183  0.959    8.3   1.073  -11.2%   1.062  -17.5%  PASS    PASS          PASS      
+     c=10bp   10.7%   1.027  -17.7%  1.146  0.917    8.3   1.035  -11.4%   1.021  -17.7%  PASS    PASS          CAGR      
+     c=15bp   10.3%   0.988  -17.9%  1.108  0.875    8.3   0.997  -11.6%   0.980  -17.9%  PASS    CAGR          CAGR      
+     c=20bp    9.8%   0.948  -18.0%  1.071  0.833    8.3   0.959  -11.9%   0.939  -18.0%  PASS    H2,CAGR       CAGR      
+     c=25bp    9.4%   0.908  -18.2%  1.033  0.791    8.3   0.921  -12.1%   0.898  -18.2%  PASS    H2,CAGR       CAGR      
+     c=50bp    7.1%   0.709  -20.3%  0.845  0.582    8.3   0.729  -13.7%   0.692  -20.3%  PASS    H1,H2,OOS,DD,CAGRSh,DD,CAGR
+  R0 (rule 8) picks     c=0bp: OOS 11.6%/1.103/-17.3%   grid OOS-best 1.103 (c=0bp)   mean 0.956   SKILL +0.147   REGRET +0.000   rho +1.000
+  R2 (4b-aware) picks     c=0bp: OOS 11.6%/1.103/-17.3%
+  consequence of the choice: OOS Sharpe spread 0.411, OOS MaxDD spread 3.0%, R0's OOS MaxDD -17.3% (grid -20.3%..-17.3%)
+
+[broad] grid CADENCE/top20    8a: PASS   IS Sharpe spread 0.3768  binding Sh(0.3768); DD(0.0215)   (idea 3/65: cadence-insensitivity proposed as a KEEP bar)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     freq=D    9.9%   0.762  -19.7%  0.946  0.597   32.1   0.862  -14.6%   0.685  -19.7%  PASS    H1,H2,OOS,CAGRSh,CAGR   
+     freq=W   13.1%   0.958  -20.1%  1.125  0.814   13.8   1.044  -13.6%   0.894  -20.1%  PASS    H2            PASS      
+     freq=M   16.4%   1.101  -26.1%  1.328  0.923    6.3   1.239  -12.5%   1.009  -26.1%  DD      DD            DD          <-R0  <-R2
+     freq=Q   13.8%   0.919  -27.1%  1.273  0.653    3.5   1.174  -13.9%   0.754  -27.1%  DD      H2,OOS,DD     Sh,DD     
+  R0 (rule 8) picks    freq=M: OOS 15.7%/1.009/-26.1%   grid OOS-best 1.009 (freq=M)   mean 0.835   SKILL +0.174   REGRET +0.000   rho +0.800
+  R2 (4b-aware) picks    freq=M: OOS 15.7%/1.009/-26.1%
+  consequence of the choice: OOS Sharpe spread 0.324, OOS MaxDD spread 7.4%, R0's OOS MaxDD -26.1% (grid -27.1%..-19.7%)
+
+[broad] grid CADENCE/EWall    8a: PASS   IS Sharpe spread 0.1854  binding CAGR(0.0231)   (idea 3/65: same, unranked book)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     freq=D    9.8%   0.961  -18.9%  1.048  0.879   18.3   0.931  -12.1%   0.986  -18.9%  PASS    CAGR          CAGR      
+     freq=W   10.7%   1.027  -17.7%  1.146  0.917    8.3   1.035  -11.4%   1.021  -17.7%  PASS    PASS          CAGR      
+     freq=M   11.7%   1.071  -21.7%  1.162  0.992    3.8   1.052  -11.0%   1.085  -21.7%  DD      DD            DD        
+     freq=Q   11.5%   1.039  -24.4%  1.226  0.882    2.0   1.116  -11.4%   0.980  -24.4%  DD      DD            DD          <-R0  <-R2
+  R0 (rule 8) picks    freq=Q: OOS 11.1%/0.980/-24.4%   grid OOS-best 1.085 (freq=M)   mean 1.018   SKILL -0.038   REGRET -0.105   rho -0.200
+  R2 (4b-aware) picks    freq=Q: OOS 11.1%/0.980/-24.4%
+  consequence of the choice: OOS Sharpe spread 0.105, OOS MaxDD spread 6.7%, R0's OOS MaxDD -24.4% (grid -24.4%..-17.7%)
+
+[broad] grid HYST/top20    8a: PASS   IS Sharpe spread 0.1024  binding DD(0.0081)   (idea 86: k=2 cuts turnover 60%, cost-neutral)
+      param    CAGR  Sharpe   MaxDD     H1     H2   turn    ISsh    ISdd   OOSsh   OOSdd  4a      4b full       4b OOS    
+     k=1.00   13.1%   0.958  -20.1%  1.125  0.814   13.8   1.044  -13.6%   0.894  -20.1%  PASS    H2            PASS      
+     k=1.25   13.8%   0.996  -20.1%  1.186  0.830    9.0   1.103  -13.7%   0.915  -20.1%  PASS    H2            PASS      
+     k=1.50   13.8%   0.992  -19.9%  1.239  0.779    7.1   1.143  -13.5%   0.880  -19.9%  PASS    H2,OOS        Sh        
+     k=2.00   14.4%   1.025  -20.4%  1.257  0.831    5.7   1.146  -12.9%   0.939  -20.4%  PASS    H2,DD         DD          <-R0  <-R2
+  R0 (rule 8) picks    k=2.00: OOS 13.6%/0.939/-20.4%   grid OOS-best 0.939 (k=2.00)   mean 0.907   SKILL +0.032   REGRET +0.000   rho +0.400
+  R2 (4b-aware) picks    k=2.00: OOS 13.6%/0.939/-20.4%
+  consequence of the choice: OOS Sharpe spread 0.059, OOS MaxDD spread 0.5%, R0's OOS MaxDD -20.4% (grid -20.4%..-19.9%)
+
+==================================================================================================================================================
+RETROSPECTIVE: 8a pre-test applied to every published sweep family
+==================================================================================================================================================
+universegrid            arms8a                       ISsh spread              binding bars   R0 pick   OOSsh   best   SKILL  REGRET    rho
+u56    N/ranked           6PASS                          0.1234Sh(0.1234); DD(0.0765); CAGR(0.0648)      n=20   1.170  1.269  +0.047  -0.099 +0.543
+u56    F/fraction         6PASS                          0.1572Sh(0.1572); DD(0.0547); CAGR(0.0752)    f=0.15   0.941  1.173  -0.160  -0.232 -0.314
+u56    GROSS/top20        7FAIL(objective)               0.0002  DD(0.0759); CAGR(0.0703)    g=0.80   1.170  1.170  +0.000  -0.000 +0.250
+u56    GROSS/EWall        7FAIL(objective)               0.0007  DD(0.0725); CAGR(0.0615)    g=1.00   1.114  1.114  -0.000  -0.000 +0.536
+u56    BAND/ew-all        5PASS                          0.1242              CAGR(0.0172)    b=0.08   1.160  1.234  -0.018  -0.074 +0.300
+u56    K/lookback         4PASS                          0.3440Sh(0.3440); DD(0.0449); CAGR(0.0533)    K=none   1.164  1.170  +0.071  -0.006 +0.800
+u56    COST/top20         7PASS                          0.4509Sh(0.4509); DD(0.0322); CAGR(0.0529)     c=0bp   1.248  1.248  +0.141  +0.000 +1.000
+u56    COST/EWall         7PASS                          0.4180    Sh(0.4180); DD(0.0330)     c=0bp   1.197  1.197  +0.148  +0.000 +1.000
+u56    CADENCE/top20      4PASS                          0.2598Sh(0.2598); DD(0.0341); CAGR(0.0360)    freq=M   1.286  1.286  +0.135  +0.000 +0.800
+u56    CADENCE/EWall      4PASS                          0.2754  Sh(0.2754); CAGR(0.0352)    freq=Q   1.044  1.226  -0.066  -0.182 -0.200
+u56    HYST/top20         4PASS                          0.0398                      none    k=2.00   1.231  1.231  +0.026  +0.000 +0.800
+broad  N/ranked           6PASS                          0.0797                DD(0.0927)      n=30   0.904  0.980  +0.031  -0.076 +0.200
+broad  F/fraction         6PASS                          0.1138                DD(0.0424)    f=0.15   0.715  1.026  -0.211  -0.310 +0.029
+broad  GROSS/top20        7FAIL(objective)               0.0046  DD(0.0878); CAGR(0.0923)    g=1.00   0.896  0.896  +0.002  +0.000 +1.000
+broad  GROSS/EWall        7FAIL(objective)               0.0025  DD(0.0738); CAGR(0.0726)    g=1.00   1.020  1.022  -0.001  -0.002 -1.000
+broad  BAND/ew-all        5PASS                          0.0837                      none    b=0.08   1.060  1.074  +0.005  -0.013 -0.100
+broad  K/lookback         4PASS                          0.2520  Sh(0.2520); CAGR(0.0448)     K=200   0.894  0.894  +0.057  +0.000 +1.000
+broad  COST/top20         7PASS                          0.5016  Sh(0.5016); CAGR(0.0740)     c=0bp   0.993  0.993  +0.177  +0.000 +1.000
+broad  COST/EWall         7PASS                          0.3817Sh(0.3817); DD(0.0272); CAGR(0.0437)     c=0bp   1.103  1.103  +0.147  +0.000 +1.000
+broad  CADENCE/top20      4PASS                          0.3768    Sh(0.3768); DD(0.0215)    freq=M   1.009  1.009  +0.174  +0.000 +0.800
+broad  CADENCE/EWall      4PASS                          0.1854              CAGR(0.0231)    freq=Q   0.980  1.085  -0.038  -0.105 -0.200
+broad  HYST/top20         4PASS                          0.1024                DD(0.0081)    k=2.00   0.939  0.939  +0.032  +0.000 +0.400
+
+VALIDATION (pre-registered): does the 8a flag predict selection quality?
+  8a PASS   n=18  mean SKILL +0.039 (t +1.49)  mean REGRET -0.061  mean rho +0.492  SKILL>0 in 13/18  pick=OOS-best in 9/18
+  8a FAIL   n=4   mean SKILL +0.000 (t +0.37)  mean REGRET -0.001  mean rho +0.196  SKILL>0 in 2/4  pick=OOS-best in 1/4
+  separation: dSKILL +0.038, drho +0.296
+
+  threshold sensitivity of the 0.02 IS-Sharpe rule (reported, NOT tuned):
+       thr  nPASS  skill(PASS)  skill(FAIL)  rho(PASS)  rho(FAIL)
+     0.005     18        0.039        0.000      0.492      0.196
+     0.010     18        0.039        0.000      0.492      0.196
+     0.020     18        0.039        0.000      0.492      0.196
+     0.050     17        0.039        0.005      0.474      0.317
+     0.100     15        0.042        0.009      0.530      0.241
+     0.200      9        0.109       -0.022      0.800      0.188
+
+  DOES A SMALL OBJECTIVE SPREAD PREDICT A BAD SELECTION?  (the pre-test's whole claim)
+    Spearman(IS Sharpe spread, REGRET) over 22 cells = +0.256   (8a predicts NEGATIVE: less spread -> worse regret)
+    Spearman(IS Sharpe spread, SKILL)  = +0.602
+    worst 4 selections by REGRET: broad/F/fraction -0.310 [PASS], u56/F/fraction -0.232 [PASS], u56/CADENCE/EWall -0.182 [PASS], broad/CADENCE/EWall -0.105 [PASS]
+
+  RISK CONSEQUENCE of a noise-determined pick (what 8a is actually protecting):
+    universegrid           8a                   ISsh spread OOSsh spread OOSdd spread  R0 OOSdd
+    u56    N/ranked       PASS                      0.1234        0.293         7.6%    -18.3%
+    u56    F/fraction     PASS                      0.1572        0.232        11.9%    -27.8%
+    u56    GROSS/top20    FAIL(objective)           0.0002        0.001        11.6%    -19.5%
+    u56    GROSS/EWall    FAIL(objective)           0.0007        0.000        10.2%    -20.9%
+    u56    BAND/ew-all    PASS                      0.1242        0.120         2.1%    -17.1%
+    u56    K/lookback     PASS                      0.3440        0.269         4.4%    -18.5%
+    u56    COST/top20     PASS                      0.4509        0.395         0.4%    -18.2%
+    u56    COST/EWall     PASS                      0.4180        0.416         2.7%    -15.8%
+    u56    CADENCE/top20  PASS                      0.2598        0.221        10.8%    -19.5%
+    u56    CADENCE/EWall  PASS                      0.2754        0.182         6.3%    -22.2%
+    u56    HYST/top20     PASS                      0.0398        0.061         1.1%    -17.2%
+    broad  N/ranked       PASS                      0.0797        0.196         4.2%    -20.3%
+    broad  F/fraction     PASS                      0.1138        0.310        12.2%    -29.9%
+    broad  GROSS/top20    FAIL(objective)           0.0046        0.004        12.6%    -26.2%
+    broad  GROSS/EWall    FAIL(objective)           0.0025        0.002        11.1%    -23.1%
+    broad  BAND/ew-all    PASS                      0.0837        0.053         2.0%    -18.8%
+    broad  K/lookback     PASS                      0.2520        0.189         0.9%    -20.1%
+    broad  COST/top20     PASS                      0.5016        0.495         1.9%    -20.0%
+    broad  COST/EWall     PASS                      0.3817        0.411         3.0%    -17.3%
+    broad  CADENCE/top20  PASS                      0.3768        0.324         7.4%    -26.1%
+    broad  CADENCE/EWall  PASS                      0.1854        0.105         6.7%    -24.4%
+    broad  HYST/top20     PASS                      0.1024        0.059         0.5%    -20.4%
+    8a PASS: mean OOS Sharpe spread 0.241, mean OOS MaxDD spread 4.8%
+    8a FAIL: mean OOS Sharpe spread 0.002, mean OOS MaxDD spread 11.3%
+
+  which published conclusions rested on a non-selectable grid:
+    u56   GROSS/top20    FAIL(objective)         idea 66: gross is not selectable; all picks fail OOS DD
+    u56   GROSS/EWall    FAIL(objective)         idea 66: same, on the unranked book
+    broad GROSS/top20    FAIL(objective)         idea 66: gross is not selectable; all picks fail OOS DD
+    broad GROSS/EWall    FAIL(objective)         idea 66: same, on the unranked book
+
+LEADERBOARD rows written by hand from the tables above; full grid -> 2026-09-04_selectability-pre-test_cloud.grid.csv, cells -> 2026-09-04_selectability-pre-test_cloud.cells.csv
