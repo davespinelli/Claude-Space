@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T16:39:39Z · open 322 · in progress 0 · done 163_
+_Source: universe_under2b.csv · updated 2026-09-04T17:11:04Z · open 302 · in progress 10 · done 173_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (322)
+## Open (302)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| BJRI | BJs RESTAURANTS INC | $1.25B |
-| ERII | Energy Recovery, Inc. | $390.5M |
-| LINC | LINCOLN EDUCATIONAL SERVICES CORP | $808.3M |
-| VISN | Vistance Networks, Inc. | $1.47B |
-| NBR | NABORS INDUSTRIES LTD | $1.48B |
-| BORR | Borr Drilling Ltd | $1.42B |
-| III | Information Services Group Inc. | $248.4M |
-| LE | LANDS' END, INC. | $332.6M |
-| SIGA | SIGA TECHNOLOGIES INC | $232.1M |
-| VTOL | Bristow Group Inc. | $1.30B |
-| MYE | MYERS INDUSTRIES INC | $1.16B |
-| NVEC | NVE CORP /NEW/ | $476.8M |
-| RDCM | RADCOM LTD | $166.4M |
-| NSSC | NAPCO SECURITY TECHNOLOGIES, INC | $1.32B |
-| ROCK | GIBRALTAR INDUSTRIES, INC. | $1.36B |
-| CGNT | Cognyte Software Ltd. | $619.7M |
-| ICFI | ICF International, Inc. | $1.61B |
-| DSGR | Distribution Solutions Group, Inc. | $1.61B |
-| INSP | Inspire Medical Systems, Inc. | $1.80B |
-| ONT | Onterris, Inc. | $617.4M |
 | HROW | HARROW, INC. | $1.43B |
 | SLVM | Sylvamo Corp | $1.41B |
 | WMK | WEIS MARKETS INC | $1.77B |
@@ -331,12 +311,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| MYE | MYERS INDUSTRIES INC | $1.16B | cloudA | 2026-09-04T17:07:28Z |
+| NVEC | NVE CORP /NEW/ | $476.8M | cloudA | 2026-09-04T17:07:28Z |
+| RDCM | RADCOM LTD | $166.4M | cloudA | 2026-09-04T17:07:28Z |
+| NSSC | NAPCO SECURITY TECHNOLOGIES, INC | $1.32B | cloudA | 2026-09-04T17:07:28Z |
+| ROCK | GIBRALTAR INDUSTRIES, INC. | $1.36B | cloudA | 2026-09-04T17:07:28Z |
+| CGNT | Cognyte Software Ltd. | $619.7M | cloudA | 2026-09-04T17:07:28Z |
+| ICFI | ICF International, Inc. | $1.61B | cloudA | 2026-09-04T17:07:28Z |
+| DSGR | Distribution Solutions Group, Inc. | $1.61B | cloudA | 2026-09-04T17:07:28Z |
+| INSP | Inspire Medical Systems, Inc. | $1.80B | cloudA | 2026-09-04T17:07:28Z |
+| ONT | Onterris, Inc. | $617.4M | cloudA | 2026-09-04T17:07:28Z |
 
-## Done (163)
+## Done (173)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | LXU | LSB INDUSTRIES, INC. | $808.5M | cloudB | 2026-09-04T16:39:39Z |
 | TXO | TXO Partners, L.P. | $831.1M | cloudB | 2026-09-04T16:39:39Z |
 | GENI | Genius Sports Ltd | $76.3M | cloudB | 2026-09-04T16:39:39Z |
+| BJRI | BJs RESTAURANTS INC | $1.25B | cloudA | 2026-09-04T17:11:04Z |
+| ERII | Energy Recovery, Inc. | $390.5M | cloudA | 2026-09-04T17:11:04Z |
+| LINC | LINCOLN EDUCATIONAL SERVICES CORP | $808.3M | cloudA | 2026-09-04T17:11:04Z |
+| VISN | Vistance Networks, Inc. | $1.47B | cloudA | 2026-09-04T17:11:04Z |
+| NBR | NABORS INDUSTRIES LTD | $1.48B | cloudA | 2026-09-04T17:11:04Z |
+| BORR | Borr Drilling Ltd | $1.42B | cloudA | 2026-09-04T17:11:04Z |
+| III | Information Services Group Inc. | $248.4M | cloudA | 2026-09-04T17:11:04Z |
+| LE | LANDS' END, INC. | $332.6M | cloudA | 2026-09-04T17:11:04Z |
+| SIGA | SIGA TECHNOLOGIES INC | $232.1M | cloudA | 2026-09-04T17:11:04Z |
+| VTOL | Bristow Group Inc. | $1.30B | cloudA | 2026-09-04T17:11:04Z |

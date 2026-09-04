@@ -164,3 +164,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | LXU | LSB INDUSTRIES, INC. | $808.5M | cyclical-trough | 5 | Operating income swung $63M on UAN pricing, but turnaround expense fell $31.6M of that and net debt is 7.3x EBIT |
 | 2026-09-04 | TXO | TXO Partners, L.P. | $831.1M | insider-buying | 6 | Two insiders bought $36.7M of units against an $831M cap and Q2 operating income swung to $57.7M, but units are 1.3% off the high |
 | 2026-09-04 | GENI | Genius Sports Ltd | $76.3M | none | 2 | Pack holds only meta and Form 4; screen row is broken with a 10.0M share count against $724.5M of equity |
+| 2026-09-04 | BJRI | BJs RESTAURANTS INC | $1.3B | none | 4 | Restaurant-level margin up 220bps in two years to 15.5%, but 27.7x EV/EBIT after a 100% run and average check is falling |
+| 2026-09-04 | ERII | Energy Recovery, Inc. | $390.5M | cyclical-trough | 6 | $98.1M cash and no debt against a $390.5M cap with megaproject revenue down 82% on the Iran war, but the pack shows no backlog |
+| 2026-09-04 | LINC | LINCOLN EDUCATIONAL SERVICES CORP | $808.3M | fallen-growth | 6 | H1 EBITDA up 63% and guidance reiterated while the stock sits 54% off its high, but Q2 starts grew 1% against a 9% plan |
+| 2026-09-04 | VISN | Vistance Networks, Inc. | $1.5B | none | 0 | No filings in bundle |
+| 2026-09-04 | NBR | NABORS INDUSTRIES LTD | $1.5B | none | 0 | No filings in bundle |
+| 2026-09-04 | BORR | Borr Drilling Ltd | $1.4B | insider-buying | 4 | One insider bought $0.9M against a $1.4B cap, but net debt is 7.0x EBIT and the share count rose 25.4% in a year |
+| 2026-09-04 | III | Information Services Group Inc. | $248.4M | none | 0 | No filings in bundle |
+| 2026-09-04 | LE | LANDS' END, INC. | $332.6M | hidden-asset | 7 | The retained WHP JV stake is carried at $377.6M against a $332.6M market cap, with $89.2M of buyback still authorised |
+| 2026-09-04 | SIGA | SIGA TECHNOLOGIES INC | $232.1M | hidden-asset | 7 | Net cash of $117.6M is 51% of the cap and total liabilities are $10.4M, but Q2 closed the last order under the 19C contract |
+| 2026-09-04 | VTOL | Bristow Group Inc. | $1.3B | misunderstood-segment | 6 | Government Services lost $2.1M on transition costs and $3.6M of availability penalties inside a 10-year EUR 670M IRCG contract |

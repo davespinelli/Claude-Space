@@ -1,0 +1,5 @@
+# III — Information Services Group Inc. · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings were fetched for this ticker: section 1 reports "Filings fetched: none" and section 11 lists the business description, MD&A, risk factors, 8-K set, earnings release and Form 4 summary all as missing. There is no filing text in the pack, so the business cannot be described from source, no edge can be evidenced, and no risk can be quoted. Scored 0 under the routine's no-filings rule rather than triaged. Unverified from the screen row alone: a management consulting firm at a $248.4M market cap, 16.0x EV/EBIT, 10.1% FCF yield, 10.7% ROIC, revenue down 1.2% to $244.7M, $35.5M of net debt at 2.0x EBIT, a flat share count and $1.1M of average daily volume, with the screen's own rationale reading "balanced across factors, no single standout." Re-run fetch_filings.py III and re-triage before this row carries any weight.
+
+_Sources: triage pack only (sections 1, 2, 11). Not a triage read: no filings available._

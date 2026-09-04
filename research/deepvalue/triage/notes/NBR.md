@@ -1,0 +1,5 @@
+# NBR — NABORS INDUSTRIES LTD · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings were fetched for this ticker: section 1 reports "Filings fetched: none" and section 11 lists the business description, MD&A, risk factors, 8-K set, earnings release and Form 4 summary all as missing. With no filing text there is nothing to describe, no edge that can be named from evidence, and no risk that can be sourced. Scored 0 under the routine's no-filings rule rather than triaged. Unverified from the screen row alone: a land-drilling contractor, $1.5B market cap, 6.6x EV/EBIT, 17.3% ROIC, but $1.6B of net debt at 3.4x EBIT, negative free cash flow of $22.7M with capex of $715.9M exceeding operating cash flow of $693.3M, and a share count up 9.5% year over year. The reported 15,961,327 shares against a $92.97 price and a $1.5B market cap does not reconcile, which is a further reason to distrust the row. Re-run fetch_filings.py NBR before this name is scored.
+
+_Sources: triage pack only (sections 1, 2, 11). Not a triage read: no filings available._

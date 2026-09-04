@@ -1,0 +1,5 @@
+# VISN — Vistance Networks, Inc. · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings were fetched for this ticker: section 11 lists the business description, MD&A, risk factors, 8-K set, earnings release and Form 4 summary all as missing, and section 1 reports "Filings fetched: none." The pack is a screen row and nothing else, so there is no text from which to describe the business, name an edge, or test a risk. Scored 0 under the routine's no-filings rule rather than triaged. What the screen row alone shows, unverified: a $1.5B market cap, 17.2% FCF yield, 39.7% revenue growth and $113.6M of net cash, carrying an EARNINGS QUALITY flag that net income of $2.3B exceeds revenue of $1.9B and is more than 3x operating income of $47.6M, which the pack itself says must be reconciled against an earnings release before any earnings-based metric is used. That release is not in the bundle. Re-run fetch_filings.py VISN and re-triage before this row means anything.
+
+_Sources: triage pack only (sections 1, 2, 11). Not a triage read: no filings available._
