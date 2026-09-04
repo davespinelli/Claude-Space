@@ -1,0 +1,624 @@
+===============================================================================================================================================================================
+Idea 15  crypto-sleeve (lane C) | 2026-09-04_crypto-sleeve_C.py | 10 bps, weekly, next-day execution
+===============================================================================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+Index sanity (must be ~252 rows/yr; the calendar-day bug gave 365): 2013 252, 2018 251, 2024 252
+
+HARNESS CHECK vs idea 2's published KEEP row (12.7% / 1.093 / -18.3%, halves 1.088/1.103):
+  reproduced: 12.7% / 1.093 / -18.3%, halves 1.088/1.103
+  live RULES v1: 6.5% / 0.666 / -13.8%, halves 0.641/0.692
+  c=0 equivalence |v1(full panel) - v1(crypto-free panel)| max = 1.388e-17  (must be 0)
+
+===============================================================================================================================================================================
+UNIVERSE universe.json: 56 equity names + 2 crypto, 2008-01-02 -> 2026-09-03
+===============================================================================================================================================================================
+Eval sample: 2009-01-13 -> 2026-09-03 | IS <= 2016-12-31, OOS >= 2017-01-01
+SPY: CAGR 15.3%  Sharpe 0.890  MaxDD -33.7%  halves 0.957/0.837  OOS Sharpe 0.884
+4b bars: Sharpe > SPY halves & OOS, MaxDD <= 20.23%, CAGR >= 10.680%
+SPY over the crypto era (2018-09-01+): CAGR 14.8%  Sharpe 0.809  MaxDD -33.7%   -> CRY_* columns below are read against this
+
+CRYPTO DIAGNOSTICS (universe.json)
+  BTC-USD: cache 2014-09-17 -> 2026-09-03 (3009 bars); buy&hold over eval window CAGR 33.8% Sharpe 0.810 MaxDD -83.0%
+  ETH-USD: cache 2017-11-09 -> 2026-09-03 (2215 bars); buy&hold over eval window CAGR 12.1% Sharpe 0.492 MaxDD -93.5%
+  gate 'same': eligible BTC-USD 24.9% of days (1103)  ETH-USD 7.8% of days (344); both-on 6.9%, either-on 25.7%
+      gated-only BTC-USD: CAGR 21.0% Sharpe 0.855 MaxDD -52.4%
+      gated-only ETH-USD: CAGR 5.3% Sharpe 0.374 MaxDD -52.5%
+  gate 'trend': eligible BTC-USD 43.3% of days (1923)  ETH-USD 24.2% of days (1075); both-on 22.3%, either-on 45.2%
+      gated-only BTC-USD: CAGR 38.8% Sharpe 0.966 MaxDD -63.6%
+      gated-only ETH-USD: CAGR 11.5% Sharpe 0.470 MaxDD -65.5%
+  corr(BTC, ETH) daily since 2018-09-01: +0.811; corr(BTC, SPY): +0.309; corr(ETH, SPY): +0.326
+
+RULES v1 (live book, no crypto): CAGR 6.5%  Sharpe 0.666  MaxDD -13.8%  halves 0.641/0.692
+
+FULL GRID universe.json - 39 points, all reported (f4b lists which 4b tests fail)
+                            book     fund   gate   cap  CAGR   Vol  Sharpe  MaxDD    H1    H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  CRY_CAGR  CRY_Sharpe  CRY_MaxDD   turn  gross  cw_mean  cw_max    p4a    p4b             f4b
+point                                                                                                                                                                                                                       
+v1                            v1        -      - 0.000 0.065 0.102   0.666 -0.138 0.641 0.692     0.078       0.751     -0.138     0.056       0.560     -0.138 23.591  0.750    0.000   0.000  False  False  H1,H2,OOS,CAGR
+CAND20                    CAND20        -      - 0.000 0.127 0.115   1.093 -0.183 1.088 1.103     0.144       1.170     -0.183     0.129       1.044     -0.183  9.633  0.717    0.000   0.000  False   True               -
+EWall                      EWall        -      - 0.000 0.104 0.099   1.050 -0.159 1.068 1.037     0.114       1.114     -0.159     0.106       1.018     -0.159  8.211  0.750    0.000   0.000  False  False            CAGR
+v1/matched/same/c5            v1  matched   same 0.050 0.075 0.103   0.756 -0.137 0.751 0.766     0.091       0.850     -0.137     0.067       0.644     -0.137 23.495  0.750    0.016   0.117   True  False  H1,H2,OOS,CAGR
+v1/matched/same/c10           v1  matched   same 0.100 0.086 0.108   0.819 -0.150 0.849 0.803     0.104       0.905     -0.150     0.078       0.693     -0.150 23.428  0.750    0.033   0.230  False  False      H1,H2,CAGR
+v1/matched/same/c15           v1  matched   same 0.150 0.096 0.115   0.855 -0.192 0.931 0.811     0.116       0.924     -0.192     0.087       0.712     -0.192 23.358  0.750    0.049   0.339  False  False      H1,H2,CAGR
+v1/matched/trend/c5           v1  matched  trend 0.050 0.089 0.107   0.853 -0.156 0.859 0.859     0.115       0.994     -0.156     0.084       0.746     -0.156 22.798  0.750    0.034   0.141  False  False         H1,CAGR
+v1/matched/trend/c10          v1  matched  trend 0.100 0.113 0.122   0.936 -0.176 1.043 0.893     0.151       1.068     -0.176     0.111       0.805     -0.176 22.022  0.750    0.067   0.271  False   True               -
+v1/matched/trend/c15          v1  matched  trend 0.150 0.136 0.145   0.951 -0.229 1.182 0.870     0.186       1.061     -0.229     0.136       0.802     -0.229 21.232  0.750    0.101   0.389  False  False              DD
+v1/add/same/c5                v1      add   same 0.050 0.077 0.106   0.759 -0.143 0.752 0.770     0.095       0.855     -0.143     0.071       0.654     -0.143 23.905  0.766    0.016   0.117  False  False  H1,H2,OOS,CAGR
+v1/add/same/c10               v1      add   same 0.100 0.090 0.112   0.821 -0.160 0.850 0.811     0.111       0.913     -0.160     0.085       0.709     -0.160 24.222  0.782    0.033   0.231  False  False      H1,H2,CAGR
+v1/add/same/c15               v1      add   same 0.150 0.102 0.122   0.858 -0.199 0.932 0.825     0.127       0.937     -0.199     0.099       0.736     -0.199 24.540  0.798    0.049   0.339  False  False      H1,H2,CAGR
+v1/add/trend/c5               v1      add  trend 0.050 0.093 0.112   0.851 -0.170 0.855 0.864     0.123       0.993     -0.170     0.091       0.755     -0.170 23.863  0.783    0.034   0.141  False  False         H1,CAGR
+v1/add/trend/c10              v1      add  trend 0.100 0.121 0.132   0.933 -0.204 1.033 0.910     0.167       1.075     -0.204     0.125       0.825     -0.204 24.144  0.816    0.067   0.269  False  False              DD
+v1/add/trend/c15              v1      add  trend 0.150 0.148 0.157   0.956 -0.252 1.168 0.908     0.210       1.087     -0.252     0.157       0.840     -0.252 24.421  0.849    0.100   0.387  False  False              DD
+CAND20/matched/same/c5    CAND20  matched   same 0.050 0.135 0.116   1.151 -0.182 1.178 1.134     0.153       1.226     -0.182     0.136       1.079     -0.182  9.913  0.717    0.016   0.117  False   True               -
+CAND20/matched/same/c10   CAND20  matched   same 0.100 0.143 0.120   1.178 -0.191 1.254 1.127     0.162       1.237     -0.191     0.141       1.073     -0.191 10.253  0.717    0.033   0.230  False   True               -
+CAND20/matched/same/c15   CAND20  matched   same 0.150 0.151 0.126   1.179 -0.233 1.313 1.090     0.171       1.212     -0.233     0.146       1.037     -0.233 10.593  0.717    0.049   0.338  False  False              DD
+CAND20/matched/trend/c5   CAND20  matched  trend 0.050 0.148 0.120   1.214 -0.197 1.267 1.185     0.177       1.319     -0.197     0.152       1.129     -0.197  9.568  0.717    0.034   0.141  False   True               -
+CAND20/matched/trend/c10  CAND20  matched  trend 0.100 0.169 0.134   1.232 -0.236 1.408 1.142     0.208       1.314     -0.236     0.171       1.093     -0.236  9.539  0.717    0.067   0.270  False  False              DD
+CAND20/matched/trend/c15  CAND20  matched  trend 0.150 0.188 0.155   1.192 -0.296 1.509 1.056     0.237       1.246     -0.296     0.189       1.015     -0.296  9.502  0.717    0.100   0.388  False  False              DD
+CAND20/add/same/c5        CAND20      add   same 0.050 0.140 0.119   1.161 -0.188 1.185 1.151     0.162       1.240     -0.188     0.145       1.100     -0.188  9.948  0.733    0.016   0.117  False   True               -
+CAND20/add/same/c10       CAND20      add   same 0.100 0.153 0.126   1.197 -0.201 1.268 1.161     0.179       1.265     -0.201     0.160       1.115     -0.201 10.265  0.749    0.033   0.230  False   True               -
+CAND20/add/same/c15       CAND20      add   same 0.150 0.166 0.135   1.208 -0.247 1.334 1.145     0.197       1.259     -0.247     0.175       1.104     -0.247 10.584  0.766    0.049   0.338  False  False              DD
+CAND20/add/trend/c5       CAND20      add  trend 0.050 0.157 0.126   1.218 -0.215 1.272 1.200     0.192       1.327     -0.215     0.167       1.150     -0.215  9.909  0.750    0.034   0.140  False  False              DD
+CAND20/add/trend/c10      CAND20      add  trend 0.100 0.186 0.145   1.247 -0.249 1.418 1.187     0.238       1.346     -0.249     0.203       1.147     -0.249 10.194  0.783    0.067   0.268  False  False              DD
+CAND20/add/trend/c15      CAND20      add  trend 0.150 0.215 0.170   1.228 -0.311 1.524 1.140     0.284       1.315     -0.311     0.237       1.109     -0.311 10.477  0.817    0.100   0.385  False  False              DD
+EWall/matched/same/c5      EWall  matched   same 0.050 0.114 0.101   1.119 -0.164 1.172 1.077     0.125       1.182     -0.164     0.115       1.063     -0.164  8.476  0.750    0.016   0.117  False   True               -
+EWall/matched/same/c10     EWall  matched   same 0.100 0.123 0.106   1.148 -0.187 1.256 1.069     0.137       1.192     -0.187     0.124       1.056     -0.187  8.837  0.750    0.033   0.230  False   True               -
+EWall/matched/same/c15     EWall  matched   same 0.150 0.132 0.114   1.147 -0.226 1.321 1.030     0.147       1.162     -0.226     0.131       1.017     -0.226  9.226  0.750    0.049   0.339  False  False              DD
+EWall/matched/trend/c5     EWall  matched  trend 0.050 0.127 0.106   1.183 -0.188 1.271 1.125     0.148       1.276     -0.188     0.131       1.107     -0.188  8.235  0.750    0.034   0.142  False   True               -
+EWall/matched/trend/c10    EWall  matched  trend 0.100 0.149 0.123   1.193 -0.233 1.426 1.073     0.182       1.256     -0.233     0.153       1.057     -0.233  8.309  0.750    0.067   0.272  False  False              DD
+EWall/matched/trend/c15    EWall  matched  trend 0.150 0.170 0.146   1.146 -0.291 1.529 0.990     0.213       1.185     -0.291     0.174       0.977     -0.291  8.393  0.750    0.100   0.390  False  False              DD
+EWall/add/same/c5          EWall      add   same 0.050 0.117 0.103   1.129 -0.166 1.177 1.095     0.131       1.198     -0.166     0.122       1.084     -0.166  8.524  0.767    0.016   0.117  False   True               -
+EWall/add/same/c10         EWall      add   same 0.100 0.130 0.110   1.168 -0.196 1.267 1.104     0.148       1.222     -0.196     0.137       1.096     -0.196  8.834  0.783    0.033   0.230  False   True               -
+EWall/add/same/c15         EWall      add   same 0.150 0.143 0.120   1.176 -0.242 1.336 1.084     0.165       1.209     -0.242     0.151       1.077     -0.242  9.142  0.799    0.049   0.339  False  False              DD
+EWall/add/trend/c5         EWall      add  trend 0.050 0.134 0.110   1.196 -0.192 1.276 1.153     0.160       1.298     -0.192     0.143       1.140     -0.192  8.475  0.784    0.034   0.142  False   True               -
+EWall/add/trend/c10        EWall      add  trend 0.100 0.163 0.131   1.220 -0.241 1.434 1.134     0.206       1.308     -0.241     0.179       1.126     -0.241  8.734  0.817    0.067   0.271  False  False              DD
+EWall/add/trend/c15        EWall      add  trend 0.150 0.191 0.157   1.192 -0.306 1.542 1.083     0.251       1.268     -0.306     0.213       1.079     -0.306  8.985  0.850    0.100   0.389  False  False              DD
+  4b passes: 13 of 39  |  4a passes: 1 of 39
+
+HYPOTHESIS TEST (universe.json) - each sleeve arm vs its OWN crypto-free control, same days/gate/signal.  dRet = annualised paired mean; t_full over the whole eval window, t_cry over 2018-09-01+ only (the window where the sleeve can actually be on).
+                           dCAGR  dVol  dMaxDD  dSharpe  dRet_ann  t_full  dSharpe_cry  dRet_cry  t_cry
+book   fund    gate  cap                                                                               
+v1     matched same  0.05  0.011 0.001   0.002    0.090     0.010   2.288        0.085     0.011  1.200
+                     0.10  0.021 0.006  -0.012    0.153     0.020   2.287        0.133     0.021  1.199
+                     0.15  0.031 0.013  -0.053    0.189     0.030   2.288        0.152     0.032  1.200
+               trend 0.05  0.025 0.005  -0.017    0.187     0.023   2.753        0.186     0.027  1.623
+                     0.10  0.048 0.020  -0.038    0.269     0.047   2.755        0.245     0.055  1.627
+                     0.15  0.071 0.043  -0.091    0.284     0.070   2.759        0.243     0.082  1.632
+       add     same  0.05  0.013 0.004  -0.005    0.092     0.012   2.700        0.094     0.015  1.618
+                     0.10  0.025 0.010  -0.022    0.155     0.024   2.701        0.150     0.029  1.619
+                     0.15  0.037 0.020  -0.061    0.191     0.037   2.702        0.176     0.044  1.619
+               trend 0.05  0.028 0.010  -0.031    0.185     0.027   3.193        0.195     0.035  2.027
+                     0.10  0.056 0.030  -0.065    0.266     0.055   3.193        0.265     0.070  2.028
+                     0.15  0.083 0.055  -0.114    0.289     0.082   3.194        0.280     0.105  2.030
+CAND20 matched same  0.05  0.008 0.001   0.001    0.057     0.007   1.713        0.035     0.006  0.675
+                     0.10  0.016 0.004  -0.008    0.085     0.015   1.707        0.029     0.012  0.667
+                     0.15  0.024 0.010  -0.050    0.086     0.022   1.705       -0.007     0.017  0.665
+               trend 0.05  0.022 0.005  -0.014    0.121     0.020   2.334        0.085     0.021  1.231
+                     0.10  0.042 0.019  -0.053    0.139     0.039   2.334        0.049     0.041  1.232
+                     0.15  0.062 0.040  -0.113    0.099     0.059   2.335       -0.029     0.062  1.234
+       add     same  0.05  0.013 0.004  -0.005    0.068     0.012   2.712        0.056     0.015  1.636
+                     0.10  0.026 0.010  -0.018    0.104     0.024   2.713        0.071     0.030  1.637
+                     0.15  0.039 0.019  -0.064    0.115     0.037   2.714        0.060     0.044  1.637
+               trend 0.05  0.030 0.011  -0.032    0.125     0.028   3.212        0.106     0.035  2.052
+                     0.10  0.059 0.030  -0.066    0.154     0.055   3.212        0.103     0.071  2.053
+                     0.15  0.088 0.055  -0.127    0.134     0.083   3.213        0.065     0.106  2.055
+EWall  matched same  0.05  0.010 0.002  -0.005    0.068     0.009   2.048        0.045     0.009  0.993
+                     0.10  0.019 0.007  -0.029    0.098     0.018   2.038        0.038     0.017  0.983
+                     0.15  0.028 0.015  -0.067    0.097     0.026   2.034       -0.002     0.025  0.978
+               trend 0.05  0.023 0.007  -0.029    0.133     0.021   2.531        0.089     0.023  1.405
+                     0.10  0.045 0.024  -0.074    0.143     0.042   2.530        0.038     0.047  1.405
+                     0.15  0.066 0.047  -0.132    0.095     0.064   2.531       -0.042     0.070  1.407
+       add     same  0.05  0.013 0.004  -0.008    0.079     0.012   2.707        0.065     0.015  1.630
+                     0.10  0.026 0.011  -0.037    0.118     0.024   2.709        0.078     0.029  1.631
+                     0.15  0.039 0.021  -0.083    0.125     0.037   2.710        0.059     0.044  1.631
+               trend 0.05  0.030 0.011  -0.033    0.146     0.028   3.209        0.121     0.035  2.049
+                     0.10  0.059 0.032  -0.083    0.170     0.055   3.210        0.107     0.071  2.051
+                     0.15  0.087 0.058  -0.147    0.142     0.083   3.212        0.060     0.106  2.053
+  fund=matched : dSharpe > 0 in 18/18 arms (full), 14/18 (crypto era); t_full range [+1.71, +2.76], t_cry range [+0.66, +1.63]
+  fund=add     : dSharpe > 0 in 18/18 arms (full), 18/18 (crypto era); t_full range [+2.70, +3.21], t_cry range [+1.62, +2.06]
+  gate=same    : mean dSharpe +0.110 (full), +0.073 (crypto era); mean dMaxDD -2.90%
+  gate=trend   : mean dSharpe +0.171 (full), +0.120 (crypto era); mean dMaxDD -7.01%
+
+CALENDAR YEARS (universe.json, %) - controls, the queued c=10 arms on CAND20, and the assets
+         v1  CAND20  EWall  CAND20/matched/same/c10  CAND20/matched/trend/c10  CAND20/add/same/c10  CAND20/add/trend/c10     SPY      BTC     ETH
+Date                                                                                                                                             
+2009  9.113  16.899 16.744                   16.899                    16.899               16.899                16.899  31.133    0.000   0.000
+2010  4.348   7.744  9.303                    7.744                     7.744                7.744                 7.744  15.056    0.000   0.000
+2011  1.861   0.516 -1.003                    0.516                     0.516                0.516                 0.516   1.895    0.000   0.000
+2012  6.836   6.185  6.977                    6.185                     6.185                6.185                 6.185  15.990    0.000   0.000
+2013 11.143  29.030 22.677                   29.030                    29.030               29.030                29.030  32.308    0.000   0.000
+2014  6.618   8.146  7.957                    8.146                     8.146                8.146                 8.146  13.464  -29.987   0.000
+2015  3.109   9.899  6.997                   12.720                    14.840               13.120                15.194   1.234   34.471   0.000
+2016 -3.126   8.467  5.990                   16.665                    17.603               18.026                18.894  11.998  123.249   0.000
+2017 14.750  18.264 16.243                   26.867                    58.496               27.992                61.992  21.705 1424.721 134.849
+2018  7.993   5.924 -1.217                    5.924                    -0.429                5.924                 0.394  -4.569  -74.463 -82.302
+2019  6.730  17.713 14.977                   19.665                    17.323               19.456                19.191  31.224   92.203  -2.817
+2020  8.445  15.393 15.086                   26.940                    39.545               30.139                43.777  18.332  303.160 469.245
+2021 20.204  22.085 22.074                   18.315                    45.769               19.161                53.229  28.729   59.668 399.135
+2022  2.582  -9.024 -9.248                  -12.152                   -13.018              -12.338               -13.528 -18.175  -64.146 -67.435
+2023  1.288  23.989 18.874                   14.774                    18.950               20.043                25.754  26.176  153.571  91.847
+2024  9.661  22.196 16.923                   34.864                    30.947               40.284                36.020  24.886  121.925  44.849
+2025  7.731  13.229 10.317                   16.913                     9.328               18.877                12.249  17.719   -6.337 -10.967
+2026 -2.678  12.794  9.355                   11.188                    10.534               11.456                10.891  13.984  -11.666 -19.398
+
+WALK-FORWARD (universe.json, PROTOCOL rule 8): chosen on <= 2016-12-31, evaluated on 2017-01-01+
+  IS SPY Sharpe 0.899 MaxDD -22.1% -> S2 admits IS MaxDD shallower than -13.2%
+  OOS bars: Sharpe > 0.884, MaxDD <= 20.2%, CAGR >= 10.85%  (SPY OOS 15.5%/0.884/-33.7%)
+  In-sample table (the only numbers either rule may look at):
+                          IS_Sharpe  IS_MaxDD
+v1                            0.553    -0.131
+CAND20                        0.993    -0.117
+EWall                         0.970    -0.112
+v1/matched/same/c5            0.630    -0.120
+v1/matched/same/c10           0.701    -0.121
+v1/matched/same/c15           0.765    -0.134
+v1/matched/trend/c5           0.654    -0.100
+v1/matched/trend/c10          0.744    -0.099
+v1/matched/trend/c15          0.822    -0.099
+v1/add/same/c5                0.627    -0.123
+v1/add/same/c10               0.694    -0.123
+v1/add/same/c15               0.754    -0.136
+v1/add/trend/c5               0.645    -0.106
+v1/add/trend/c10              0.727    -0.105
+v1/add/trend/c15              0.796    -0.111
+CAND20/matched/same/c5        1.052    -0.117
+CAND20/matched/same/c10       1.104    -0.117
+CAND20/matched/same/c15       1.149    -0.117
+CAND20/matched/trend/c5       1.072    -0.117
+CAND20/matched/trend/c10      1.140    -0.117
+CAND20/matched/trend/c15      1.193    -0.117
+CAND20/add/same/c5            1.057    -0.117
+CAND20/add/same/c10           1.113    -0.117
+CAND20/add/same/c15           1.162    -0.117
+CAND20/add/trend/c5           1.073    -0.117
+CAND20/add/trend/c10          1.142    -0.117
+CAND20/add/trend/c15          1.197    -0.117
+EWall/matched/same/c5         1.037    -0.112
+EWall/matched/same/c10        1.095    -0.112
+EWall/matched/same/c15        1.144    -0.112
+EWall/matched/trend/c5        1.060    -0.112
+EWall/matched/trend/c10       1.136    -0.112
+EWall/matched/trend/c15       1.194    -0.112
+EWall/add/same/c5             1.040    -0.112
+EWall/add/same/c10            1.101    -0.112
+EWall/add/same/c15            1.153    -0.114
+EWall/add/trend/c5            1.059    -0.112
+EWall/add/trend/c10           1.133    -0.112
+EWall/add/trend/c15           1.192    -0.112
+  S1 plain-Sharpe: CAND20/add/trend/c15         -> OOS CAGR 28.4%  Sharpe 1.315  MaxDD -31.1%   clears all OOS 4b bars? False
+  S2 4b-aware   : CAND20/add/trend/c15         -> OOS CAGR 28.4%  Sharpe 1.315  MaxDD -31.1%   clears all OOS 4b bars? False
+  Spearman(IS Sharpe, OOS Sharpe) over the 39 points = +0.771
+    within v1      S1 picks v1/matched/trend/c15         -> OOS 18.6%/1.061/-22.9%
+    within CAND20  S1 picks CAND20/add/trend/c15         -> OOS 28.4%/1.315/-31.1%
+    within EWall   S1 picks EWall/matched/trend/c15      -> OOS 21.3%/1.185/-29.1%
+    NOTE: BTC is tradeable from 2015-07-02 and ETH from 2018-08-27, so the rule-8 in-sample window (<= 2016-12-31) contains ~1.5 yr of BTC and NO ETH.  Any sleeve parameter it 'selects' is selected on the control's numbers, not the sleeve's.
+
+WALK-FORWARD (universe.json, crypto era): chosen on <= 2021-12-31, evaluated on 2022-01-01+
+  IS SPY Sharpe 0.935 MaxDD -33.7% -> S2 admits IS MaxDD shallower than -20.2%
+  OOS bars: Sharpe > 0.764, MaxDD <= 14.7%, CAGR >= 8.76%  (SPY OOS 12.5%/0.764/-24.5%)
+  In-sample table (the only numbers either rule may look at):
+                          IS_Sharpe  IS_MaxDD
+v1                            0.752    -0.138
+CAND20                        1.090    -0.183
+EWall                         1.085    -0.159
+v1/matched/same/c5            0.853    -0.137
+v1/matched/same/c10           0.937    -0.137
+v1/matched/same/c15           1.001    -0.139
+v1/matched/trend/c5           1.011    -0.156
+v1/matched/trend/c10          1.137    -0.176
+v1/matched/trend/c15          1.170    -0.227
+v1/add/same/c5                0.854    -0.143
+v1/add/same/c10               0.936    -0.150
+v1/add/same/c15               0.998    -0.158
+v1/add/trend/c5               1.003    -0.170
+v1/add/trend/c10              1.122    -0.204
+v1/add/trend/c15              1.162    -0.252
+CAND20/matched/same/c5        1.174    -0.182
+CAND20/matched/same/c10       1.239    -0.180
+CAND20/matched/same/c15       1.286    -0.180
+CAND20/matched/trend/c5       1.290    -0.197
+CAND20/matched/trend/c10      1.366    -0.218
+CAND20/matched/trend/c15      1.362    -0.239
+CAND20/add/same/c5            1.177    -0.188
+CAND20/add/same/c10           1.245    -0.192
+CAND20/add/same/c15           1.293    -0.197
+CAND20/add/trend/c5           1.286    -0.215
+CAND20/add/trend/c10          1.362    -0.249
+CAND20/add/trend/c15          1.370    -0.286
+EWall/matched/same/c5         1.180    -0.159
+EWall/matched/same/c10        1.250    -0.159
+EWall/matched/same/c15        1.295    -0.162
+EWall/matched/trend/c5        1.303    -0.178
+EWall/matched/trend/c10       1.364    -0.202
+EWall/matched/trend/c15       1.343    -0.242
+EWall/add/same/c5             1.186    -0.163
+EWall/add/same/c10            1.260    -0.168
+EWall/add/same/c15            1.309    -0.175
+EWall/add/trend/c5            1.306    -0.192
+EWall/add/trend/c10           1.374    -0.230
+EWall/add/trend/c15           1.367    -0.266
+  S1 plain-Sharpe: EWall/add/trend/c10          -> OOS CAGR 10.5%  Sharpe 0.810  MaxDD -19.4%   clears all OOS 4b bars? False
+  S2 4b-aware   : EWall/add/same/c15           -> OOS CAGR 13.1%  Sharpe 0.924  MaxDD -21.9%   clears all OOS 4b bars? False
+  Spearman(IS Sharpe, OOS Sharpe) over the 39 points = +0.362
+    within v1      S1 picks v1/matched/trend/c15         -> OOS 3.7%/0.328/-16.9%
+    within CAND20  S1 picks CAND20/add/trend/c15         -> OOS 14.4%/0.851/-24.3%
+    within EWall   S1 picks EWall/add/trend/c10          -> OOS 10.5%/0.810/-19.4%
+
+===============================================================================================================================================================================
+UNIVERSE universe_broad.json: 136 equity names + 2 crypto, 2008-01-02 -> 2026-09-03
+===============================================================================================================================================================================
+Eval sample: 2009-01-13 -> 2026-09-03 | IS <= 2016-12-31, OOS >= 2017-01-01
+SPY: CAGR 15.3%  Sharpe 0.890  MaxDD -33.7%  halves 0.957/0.837  OOS Sharpe 0.884
+4b bars: Sharpe > SPY halves & OOS, MaxDD <= 20.23%, CAGR >= 10.680%
+SPY over the crypto era (2018-09-01+): CAGR 14.8%  Sharpe 0.809  MaxDD -33.7%   -> CRY_* columns below are read against this
+
+CRYPTO DIAGNOSTICS (universe_broad.json)
+  BTC-USD: cache 2014-09-17 -> 2026-09-03 (3009 bars); buy&hold over eval window CAGR 33.8% Sharpe 0.810 MaxDD -83.0%
+  ETH-USD: cache 2017-11-09 -> 2026-09-03 (2215 bars); buy&hold over eval window CAGR 12.1% Sharpe 0.492 MaxDD -93.5%
+  gate 'same': eligible BTC-USD 24.9% of days (1103)  ETH-USD 7.8% of days (344); both-on 6.9%, either-on 25.7%
+      gated-only BTC-USD: CAGR 21.0% Sharpe 0.855 MaxDD -52.4%
+      gated-only ETH-USD: CAGR 5.3% Sharpe 0.374 MaxDD -52.5%
+  gate 'trend': eligible BTC-USD 43.3% of days (1923)  ETH-USD 24.2% of days (1075); both-on 22.3%, either-on 45.2%
+      gated-only BTC-USD: CAGR 38.8% Sharpe 0.966 MaxDD -63.6%
+      gated-only ETH-USD: CAGR 11.5% Sharpe 0.470 MaxDD -65.5%
+  corr(BTC, ETH) daily since 2018-09-01: +0.811; corr(BTC, SPY): +0.309; corr(ETH, SPY): +0.326
+
+RULES v1 (live book, no crypto): CAGR 6.4%  Sharpe 0.640  MaxDD -21.2%  halves 0.762/0.537
+
+FULL GRID universe_broad.json - 39 points, all reported (f4b lists which 4b tests fail)
+                            book     fund   gate   cap  CAGR   Vol  Sharpe  MaxDD    H1    H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  CRY_CAGR  CRY_Sharpe  CRY_MaxDD   turn  gross  cw_mean  cw_max    p4a    p4b                f4b
+point                                                                                                                                                                                                                          
+v1                            v1        -      - 0.000 0.064 0.106   0.640 -0.212 0.762 0.537     0.060       0.581     -0.212     0.043       0.436     -0.212 29.436  0.750    0.000   0.000  False  False  H1,H2,OOS,DD,CAGR
+CAND20                    CAND20        -      - 0.000 0.131 0.139   0.958 -0.201 1.125 0.814     0.125       0.894     -0.201     0.108       0.770     -0.201 13.776  0.739    0.000   0.000   True  False                 H2
+EWall                      EWall        -      - 0.000 0.107 0.105   1.027 -0.177 1.146 0.917     0.106       1.021     -0.177     0.094       0.886     -0.177  8.268  0.750    0.000   0.000   True   True                  -
+v1/matched/same/c5            v1  matched   same 0.050 0.076 0.107   0.736 -0.229 0.869 0.626     0.074       0.694     -0.229     0.056       0.537     -0.229 29.175  0.750    0.016   0.117  False  False  H1,H2,OOS,DD,CAGR
+v1/matched/same/c10           v1  matched   same 0.100 0.087 0.111   0.807 -0.249 0.963 0.684     0.088       0.770     -0.249     0.067       0.606     -0.249 28.940  0.750    0.033   0.230  False  False     H2,OOS,DD,CAGR
+v1/matched/same/c15           v1  matched   same 0.150 0.098 0.117   0.852 -0.284 1.043 0.713     0.101       0.812     -0.284     0.079       0.645     -0.284 28.702  0.750    0.049   0.338  False  False     H2,OOS,DD,CAGR
+v1/matched/trend/c5           v1  matched  trend 0.050 0.090 0.110   0.835 -0.223 0.971 0.732     0.098       0.854     -0.223     0.072       0.647     -0.223 28.357  0.750    0.034   0.140  False  False     H2,OOS,DD,CAGR
+v1/matched/trend/c10          v1  matched  trend 0.100 0.114 0.125   0.931 -0.238 1.146 0.804     0.136       0.970     -0.238     0.100       0.737     -0.238 27.294  0.750    0.067   0.268  False  False              H2,DD
+v1/matched/trend/c15          v1  matched  trend 0.150 0.138 0.146   0.956 -0.300 1.279 0.809     0.172       0.994     -0.300     0.126       0.757     -0.300 26.219  0.750    0.101   0.386  False  False              H2,DD
+v1/add/same/c5                v1      add   same 0.050 0.077 0.109   0.735 -0.236 0.869 0.627     0.077       0.697     -0.236     0.058       0.541     -0.236 29.750  0.766    0.016   0.117  False  False  H1,H2,OOS,DD,CAGR
+v1/add/same/c10               v1      add   same 0.100 0.090 0.115   0.802 -0.261 0.963 0.684     0.093       0.773     -0.261     0.072       0.612     -0.261 30.066  0.782    0.033   0.229  False  False     H2,OOS,DD,CAGR
+v1/add/same/c15               v1      add   same 0.150 0.102 0.124   0.845 -0.293 1.041 0.716     0.109       0.817     -0.293     0.086       0.653     -0.293 30.382  0.799    0.049   0.338  False  False     H2,OOS,DD,CAGR
+v1/add/trend/c5               v1      add  trend 0.050 0.093 0.115   0.829 -0.226 0.966 0.735     0.104       0.851     -0.226     0.078       0.654     -0.226 29.708  0.783    0.034   0.139  False  False     H2,OOS,DD,CAGR
+v1/add/trend/c10              v1      add  trend 0.100 0.121 0.134   0.921 -0.249 1.135 0.814     0.148       0.968     -0.249     0.112       0.750     -0.249 29.984  0.816    0.067   0.266  False  False              H2,DD
+v1/add/trend/c15              v1      add  trend 0.150 0.148 0.158   0.951 -0.303 1.264 0.834     0.191       1.007     -0.303     0.144       0.784     -0.303 30.256  0.850    0.101   0.382  False  False              H2,DD
+CAND20/matched/same/c5    CAND20  matched   same 0.050 0.140 0.139   1.013 -0.199 1.197 0.853     0.135       0.954     -0.199     0.115       0.813     -0.199 13.942  0.739    0.016   0.117   True   True                  -
+CAND20/matched/same/c10   CAND20  matched   same 0.100 0.148 0.141   1.048 -0.242 1.260 0.869     0.144       0.986     -0.242     0.121       0.832     -0.242 14.171  0.739    0.033   0.230  False  False                 DD
+CAND20/matched/same/c15   CAND20  matched   same 0.150 0.156 0.146   1.065 -0.292 1.312 0.865     0.153       0.993     -0.292     0.127       0.830     -0.292 14.400  0.739    0.049   0.338  False  False                 DD
+CAND20/matched/trend/c5   CAND20  matched  trend 0.050 0.154 0.141   1.083 -0.217 1.272 0.928     0.159       1.067     -0.217     0.131       0.886     -0.217 13.517  0.739    0.034   0.139  False  False                 DD
+CAND20/matched/trend/c10  CAND20  matched  trend 0.100 0.175 0.152   1.137 -0.278 1.395 0.954     0.191       1.130     -0.278     0.153       0.917     -0.278 13.293  0.739    0.067   0.267  False  False                 DD
+CAND20/matched/trend/c15  CAND20  matched  trend 0.150 0.196 0.170   1.136 -0.335 1.491 0.927     0.221       1.122     -0.335     0.172       0.896     -0.335 13.061  0.739    0.100   0.385  False  False                 DD
+CAND20/add/same/c5        CAND20      add   same 0.050 0.144 0.142   1.022 -0.205 1.204 0.872     0.143       0.971     -0.205     0.123       0.835     -0.205 14.090  0.755    0.016   0.117   True  False                 DD
+CAND20/add/same/c10       CAND20      add   same 0.100 0.158 0.147   1.067 -0.253 1.273 0.906     0.160       1.019     -0.253     0.138       0.875     -0.253 14.405  0.772    0.033   0.230  False  False                 DD
+CAND20/add/same/c15       CAND20      add   same 0.150 0.170 0.155   1.092 -0.304 1.332 0.920     0.177       1.043     -0.304     0.152       0.894     -0.304 14.720  0.788    0.049   0.338  False  False                 DD
+CAND20/add/trend/c5       CAND20      add  trend 0.050 0.161 0.148   1.086 -0.232 1.276 0.943     0.172       1.076     -0.232     0.145       0.906     -0.232 14.048  0.772    0.034   0.139  False  False                 DD
+CAND20/add/trend/c10      CAND20      add  trend 0.100 0.191 0.165   1.143 -0.290 1.404 0.988     0.218       1.152     -0.290     0.180       0.957     -0.290 14.325  0.806    0.067   0.265  False  False                 DD
+CAND20/add/trend/c15      CAND20      add  trend 0.150 0.219 0.187   1.154 -0.351 1.503 0.989     0.263       1.169     -0.351     0.213       0.965     -0.351 14.602  0.839    0.100   0.380  False  False                 DD
+EWall/matched/same/c5      EWall  matched   same 0.050 0.117 0.106   1.097 -0.182 1.239 0.968     0.118       1.098     -0.182     0.104       0.944     -0.182  8.536  0.750    0.016   0.117   True   True                  -
+EWall/matched/same/c10     EWall  matched   same 0.100 0.127 0.111   1.132 -0.200 1.316 0.976     0.130       1.121     -0.200     0.113       0.955     -0.200  8.901  0.750    0.033   0.230   True   True                  -
+EWall/matched/same/c15     EWall  matched   same 0.150 0.136 0.118   1.138 -0.229 1.375 0.954     0.141       1.105     -0.229     0.121       0.934     -0.229  9.289  0.750    0.049   0.339  False  False                 DD
+EWall/matched/trend/c5     EWall  matched  trend 0.050 0.131 0.111   1.164 -0.201 1.330 1.029     0.141       1.201     -0.201     0.119       1.002     -0.201  8.288  0.750    0.034   0.142   True   True                  -
+EWall/matched/trend/c10    EWall  matched  trend 0.100 0.153 0.127   1.185 -0.247 1.472 1.006     0.175       1.205     -0.247     0.143       0.983     -0.247  8.352  0.750    0.067   0.271  False  False                 DD
+EWall/matched/trend/c15    EWall  matched  trend 0.150 0.174 0.150   1.148 -0.292 1.569 0.944     0.207       1.151     -0.292     0.164       0.926     -0.292  8.426  0.750    0.101   0.390  False  False                 DD
+EWall/add/same/c5          EWall      add   same 0.050 0.121 0.108   1.107 -0.183 1.247 0.985     0.124       1.113     -0.183     0.109       0.963     -0.183  8.581  0.767    0.016   0.117   True   True                  -
+EWall/add/same/c10         EWall      add   same 0.100 0.133 0.115   1.150 -0.203 1.331 1.008     0.141       1.148     -0.203     0.124       0.990     -0.203  8.892  0.783    0.033   0.230   True  False                 DD
+EWall/add/same/c15         EWall      add   same 0.150 0.146 0.124   1.164 -0.245 1.398 1.001     0.157       1.147     -0.245     0.138       0.987     -0.245  9.201  0.799    0.049   0.339  False  False                 DD
+EWall/add/trend/c5         EWall      add  trend 0.050 0.137 0.115   1.175 -0.211 1.338 1.054     0.153       1.221     -0.211     0.131       1.031     -0.211  8.532  0.784    0.034   0.142   True  False                 DD
+EWall/add/trend/c10        EWall      add  trend 0.100 0.166 0.135   1.209 -0.248 1.487 1.060     0.198       1.252     -0.248     0.166       1.044     -0.248  8.791  0.817    0.067   0.270  False  False                 DD
+EWall/add/trend/c15        EWall      add  trend 0.150 0.194 0.160   1.189 -0.304 1.591 1.027     0.243       1.226     -0.304     0.199       1.016     -0.304  9.043  0.850    0.100   0.388  False  False                 DD
+  4b passes: 6 of 39  |  4a passes: 10 of 39
+
+HYPOTHESIS TEST (universe_broad.json) - each sleeve arm vs its OWN crypto-free control, same days/gate/signal.  dRet = annualised paired mean; t_full over the whole eval window, t_cry over 2018-09-01+ only (the window where the sleeve can actually be on).
+                           dCAGR  dVol  dMaxDD  dSharpe  dRet_ann  t_full  dSharpe_cry  dRet_cry  t_cry
+book   fund    gate  cap                                                                               
+v1     matched same  0.05  0.011 0.001  -0.017    0.096     0.011   2.374        0.101     0.012  1.333
+                     0.10  0.022 0.004  -0.037    0.167     0.021   2.373        0.170     0.024  1.332
+                     0.15  0.033 0.011  -0.072    0.212     0.032   2.374        0.209     0.036  1.333
+               trend 0.05  0.025 0.004  -0.011    0.195     0.024   2.798        0.211     0.028  1.675
+                     0.10  0.050 0.018  -0.027    0.291     0.048   2.801        0.300     0.057  1.679
+                     0.15  0.073 0.040  -0.088    0.316     0.072   2.805        0.321     0.086  1.685
+       add     same  0.05  0.013 0.003  -0.024    0.095     0.012   2.707        0.105     0.015  1.625
+                     0.10  0.025 0.009  -0.049    0.162     0.024   2.708        0.175     0.029  1.625
+                     0.15  0.037 0.018  -0.081    0.205     0.037   2.709        0.217     0.044  1.625
+               trend 0.05  0.029 0.009  -0.015    0.189     0.028   3.195        0.218     0.035  2.028
+                     0.10  0.056 0.027  -0.037    0.281     0.055   3.195        0.314     0.070  2.029
+                     0.15  0.084 0.052  -0.091    0.311     0.082   3.196        0.348     0.105  2.031
+CAND20 matched same  0.05  0.009 0.000   0.002    0.055     0.008   1.726        0.043     0.006  0.734
+                     0.10  0.017 0.003  -0.042    0.090     0.015   1.720        0.062     0.013  0.728
+                     0.15  0.025 0.007  -0.092    0.107     0.023   1.720        0.060     0.019  0.726
+               trend 0.05  0.023 0.003  -0.017    0.125     0.020   2.375        0.117     0.022  1.299
+                     0.10  0.044 0.014  -0.077    0.179     0.040   2.375        0.147     0.044  1.301
+                     0.15  0.064 0.031  -0.135    0.178     0.060   2.378        0.126     0.066  1.304
+       add     same  0.05  0.013 0.003  -0.004    0.064     0.012   2.706        0.066     0.015  1.629
+                     0.10  0.026 0.009  -0.053    0.108     0.024   2.707        0.106     0.029  1.629
+                     0.15  0.039 0.016  -0.103    0.134     0.037   2.708        0.124     0.044  1.629
+               trend 0.05  0.030 0.009  -0.031    0.127     0.028   3.211        0.136     0.035  2.048
+                     0.10  0.060 0.026  -0.090    0.184     0.055   3.212        0.188     0.071  2.049
+                     0.15  0.088 0.048  -0.150    0.196     0.083   3.213        0.195     0.106  2.051
+EWall  matched same  0.05  0.010 0.002  -0.005    0.070     0.009   2.096        0.058     0.009  1.078
+                     0.10  0.020 0.006  -0.023    0.105     0.018   2.086        0.068     0.018  1.068
+                     0.15  0.029 0.014  -0.052    0.110     0.027   2.081        0.047     0.028  1.063
+               trend 0.05  0.023 0.006  -0.024    0.137     0.021   2.551        0.115     0.024  1.455
+                     0.10  0.046 0.022  -0.070    0.158     0.043   2.551        0.097     0.049  1.456
+                     0.15  0.067 0.045  -0.115    0.121     0.064   2.552        0.040     0.073  1.458
+       add     same  0.05  0.013 0.004  -0.006    0.080     0.012   2.706        0.076     0.015  1.627
+                     0.10  0.026 0.010  -0.026    0.123     0.024   2.707        0.104     0.029  1.627
+                     0.15  0.039 0.019  -0.068    0.137     0.037   2.708        0.101     0.044  1.628
+               trend 0.05  0.030 0.010  -0.034    0.148     0.028   3.209        0.145     0.035  2.048
+                     0.10  0.059 0.030  -0.071    0.182     0.055   3.210        0.158     0.071  2.050
+                     0.15  0.087 0.056  -0.127    0.162     0.083   3.211        0.130     0.106  2.052
+  fund=matched : dSharpe > 0 in 18/18 arms (full), 18/18 (crypto era); t_full range [+1.72, +2.81], t_cry range [+0.73, +1.68]
+  fund=add     : dSharpe > 0 in 18/18 arms (full), 18/18 (crypto era); t_full range [+2.71, +3.21], t_cry range [+1.62, +2.05]
+  gate=same    : mean dSharpe +0.118 (full), +0.105 (crypto era); mean dMaxDD -4.18%
+  gate=trend   : mean dSharpe +0.193 (full), +0.184 (crypto era); mean dMaxDD -6.71%
+
+CALENDAR YEARS (universe_broad.json, %) - controls, the queued c=10 arms on CAND20, and the assets
+         v1  CAND20  EWall  CAND20/matched/same/c10  CAND20/matched/trend/c10  CAND20/add/same/c10  CAND20/add/trend/c10     SPY      BTC     ETH
+Date                                                                                                                                             
+2009  5.221  17.988 17.091                   17.988                    17.988               17.988                17.988  31.142    0.000   0.000
+2010  1.514  14.643 10.541                   14.643                    14.643               14.643                14.643  15.054    0.000   0.000
+2011 10.112   4.539  2.208                    4.539                     4.539                4.539                 4.539   1.892    0.000   0.000
+2012 15.527  15.974  8.778                   15.974                    15.974               15.974                15.974  15.990    0.000   0.000
+2013 17.896  35.339 27.651                   35.339                    35.339               35.339                35.339  32.311    0.000   0.000
+2014  1.007   6.288 10.515                    6.288                     6.288                6.288                 6.288  13.467  -29.987   0.000
+2015  7.127   7.764  3.347                   10.717                    12.828               10.931                12.966   1.231   34.471   0.000
+2016 -1.176  10.265  8.471                   18.373                    19.383               19.985                20.863  12.003  123.249   0.000
+2017 14.878  21.666 19.786                   30.022                    62.462               31.645                66.708  21.704 1424.721 134.849
+2018  0.481   1.798 -1.082                    1.798                    -4.172                1.798                -3.457  -4.571  -74.463 -82.302
+2019  7.703  16.325 18.508                   18.426                    16.335               18.058                17.791  31.225   92.203  -2.817
+2020  4.111  12.242  7.502                   23.463                    35.935               26.602                39.955  18.331  303.160 469.245
+2021 16.169  15.532 20.918                   12.335                    39.586               12.795                44.922  28.730   59.668 399.135
+2022 -4.142 -10.925 -8.370                  -14.015                   -14.570              -14.200               -15.397 -18.176  -64.146 -67.435
+2023 -7.807  12.696 14.644                    5.131                     9.535                9.158                14.360  26.177  153.571  91.847
+2024 20.814  20.593 13.514                   33.354                    29.374               38.325                34.141  24.888  121.925  44.849
+2025  6.609  19.912 10.312                   23.309                    14.657               25.829                18.808  17.719   -6.337 -10.967
+2026  2.446  15.082 10.198                   13.724                    13.096               13.695                13.118  13.983  -11.666 -19.398
+
+WALK-FORWARD (universe_broad.json, PROTOCOL rule 8): chosen on <= 2016-12-31, evaluated on 2017-01-01+
+  IS SPY Sharpe 0.899 MaxDD -22.1% -> S2 admits IS MaxDD shallower than -13.2%
+  OOS bars: Sharpe > 0.884, MaxDD <= 20.2%, CAGR >= 10.85%  (SPY OOS 15.5%/0.884/-33.7%)
+  In-sample table (the only numbers either rule may look at):
+                          IS_Sharpe  IS_MaxDD
+v1                            0.721    -0.095
+CAND20                        1.044    -0.136
+EWall                         1.035    -0.114
+v1/matched/same/c5            0.797    -0.092
+v1/matched/same/c10           0.866    -0.095
+v1/matched/same/c15           0.928    -0.105
+v1/matched/trend/c5           0.815    -0.092
+v1/matched/trend/c10          0.899    -0.095
+v1/matched/trend/c15          0.970    -0.097
+v1/add/same/c5                0.791    -0.093
+v1/add/same/c10               0.855    -0.095
+v1/add/same/c15               0.912    -0.107
+v1/add/trend/c5               0.808    -0.093
+v1/add/trend/c10              0.885    -0.095
+v1/add/trend/c15              0.951    -0.098
+CAND20/matched/same/c5        1.093    -0.136
+CAND20/matched/same/c10       1.136    -0.136
+CAND20/matched/same/c15       1.175    -0.136
+CAND20/matched/trend/c5       1.109    -0.136
+CAND20/matched/trend/c10      1.167    -0.136
+CAND20/matched/trend/c15      1.215    -0.136
+CAND20/add/same/c5            1.096    -0.136
+CAND20/add/same/c10           1.143    -0.136
+CAND20/add/same/c15           1.185    -0.136
+CAND20/add/trend/c5           1.109    -0.136
+CAND20/add/trend/c10          1.167    -0.136
+CAND20/add/trend/c15          1.216    -0.136
+EWall/matched/same/c5         1.096    -0.114
+EWall/matched/same/c10        1.149    -0.114
+EWall/matched/same/c15        1.194    -0.114
+EWall/matched/trend/c5        1.117    -0.114
+EWall/matched/trend/c10       1.186    -0.114
+EWall/matched/trend/c15       1.240    -0.114
+EWall/add/same/c5             1.101    -0.114
+EWall/add/same/c10            1.158    -0.114
+EWall/add/same/c15            1.208    -0.114
+EWall/add/trend/c5            1.117    -0.114
+EWall/add/trend/c10           1.187    -0.114
+EWall/add/trend/c15           1.243    -0.114
+  S1 plain-Sharpe: EWall/add/trend/c15          -> OOS CAGR 24.3%  Sharpe 1.226  MaxDD -30.4%   clears all OOS 4b bars? False
+  S2 4b-aware   : EWall/add/trend/c15          -> OOS CAGR 24.3%  Sharpe 1.226  MaxDD -30.4%   clears all OOS 4b bars? False
+  Spearman(IS Sharpe, OOS Sharpe) over the 39 points = +0.855
+    within v1      S1 picks v1/matched/trend/c15         -> OOS 17.2%/0.994/-30.0%
+    within CAND20  S1 picks CAND20/add/trend/c15         -> OOS 26.3%/1.169/-35.1%
+    within EWall   S1 picks EWall/add/trend/c15          -> OOS 24.3%/1.226/-30.4%
+    NOTE: BTC is tradeable from 2015-07-02 and ETH from 2018-08-27, so the rule-8 in-sample window (<= 2016-12-31) contains ~1.5 yr of BTC and NO ETH.  Any sleeve parameter it 'selects' is selected on the control's numbers, not the sleeve's.
+
+WALK-FORWARD (universe_broad.json, crypto era): chosen on <= 2021-12-31, evaluated on 2022-01-01+
+  IS SPY Sharpe 0.935 MaxDD -33.7% -> S2 admits IS MaxDD shallower than -20.2%
+  OOS bars: Sharpe > 0.764, MaxDD <= 14.7%, CAGR >= 8.76%  (SPY OOS 12.5%/0.764/-24.5%)
+  In-sample table (the only numbers either rule may look at):
+                          IS_Sharpe  IS_MaxDD
+v1                            0.736    -0.109
+CAND20                        0.994    -0.201
+EWall                         1.078    -0.177
+v1/matched/same/c5            0.839    -0.110
+v1/matched/same/c10           0.926    -0.112
+v1/matched/same/c15           0.995    -0.114
+v1/matched/trend/c5           1.004    -0.132
+v1/matched/trend/c10          1.145    -0.185
+v1/matched/trend/c15          1.191    -0.245
+v1/add/same/c5                0.838    -0.116
+v1/add/same/c10               0.922    -0.123
+v1/add/same/c15               0.988    -0.130
+v1/add/trend/c5               0.986    -0.143
+v1/add/trend/c10              1.113    -0.205
+v1/add/trend/c15              1.159    -0.273
+CAND20/matched/same/c5        1.065    -0.199
+CAND20/matched/same/c10       1.124    -0.197
+CAND20/matched/same/c15       1.172    -0.197
+CAND20/matched/trend/c5       1.182    -0.213
+CAND20/matched/trend/c10      1.285    -0.233
+CAND20/matched/trend/c15      1.317    -0.276
+CAND20/add/same/c5            1.069    -0.205
+CAND20/add/same/c10           1.132    -0.209
+CAND20/add/same/c15           1.182    -0.214
+CAND20/add/trend/c5           1.177    -0.232
+CAND20/add/trend/c10          1.274    -0.267
+CAND20/add/trend/c15          1.311    -0.306
+EWall/matched/same/c5         1.167    -0.177
+EWall/matched/same/c10        1.234    -0.179
+EWall/matched/same/c15        1.280    -0.182
+EWall/matched/trend/c5        1.289    -0.195
+EWall/matched/trend/c10       1.361    -0.217
+EWall/matched/trend/c15       1.351    -0.264
+EWall/add/same/c5             1.174    -0.182
+EWall/add/same/c10            1.247    -0.189
+EWall/add/same/c15            1.298    -0.196
+EWall/add/trend/c5            1.292    -0.211
+EWall/add/trend/c10           1.369    -0.248
+EWall/add/trend/c15           1.372    -0.292
+  S1 plain-Sharpe: EWall/add/trend/c15          -> OOS CAGR 9.7%  Sharpe 0.670  MaxDD -24.1%   clears all OOS 4b bars? False
+  S2 4b-aware   : EWall/add/same/c15           -> OOS CAGR 11.9%  Sharpe 0.870  MaxDD -22.9%   clears all OOS 4b bars? False
+  Spearman(IS Sharpe, OOS Sharpe) over the 39 points = +0.252
+    within v1      S1 picks v1/matched/trend/c15         -> OOS 3.0%/0.281/-26.5%
+    within CAND20  S1 picks CAND20/matched/trend/c15     -> OOS 9.3%/0.616/-26.4%
+    within EWall   S1 picks EWall/add/trend/c15          -> OOS 9.7%/0.670/-24.1%
+
+===============================================================================================================================================================================
+CROSS-UNIVERSE 4b (a point passes only if it passes on BOTH lists)
+===============================================================================================================================================================================
+                                 u56_f4b          broad_f4b  u56_pass  broad_pass  cross
+point                                                                                   
+v1                        H1,H2,OOS,CAGR  H1,H2,OOS,DD,CAGR     False       False  False
+CAND20                                 -                 H2      True       False  False
+EWall                               CAGR                  -     False        True  False
+v1/matched/same/c5        H1,H2,OOS,CAGR  H1,H2,OOS,DD,CAGR     False       False  False
+v1/matched/same/c10           H1,H2,CAGR     H2,OOS,DD,CAGR     False       False  False
+v1/matched/same/c15           H1,H2,CAGR     H2,OOS,DD,CAGR     False       False  False
+v1/matched/trend/c5              H1,CAGR     H2,OOS,DD,CAGR     False       False  False
+v1/matched/trend/c10                   -              H2,DD      True       False  False
+v1/matched/trend/c15                  DD              H2,DD     False       False  False
+v1/add/same/c5            H1,H2,OOS,CAGR  H1,H2,OOS,DD,CAGR     False       False  False
+v1/add/same/c10               H1,H2,CAGR     H2,OOS,DD,CAGR     False       False  False
+v1/add/same/c15               H1,H2,CAGR     H2,OOS,DD,CAGR     False       False  False
+v1/add/trend/c5                  H1,CAGR     H2,OOS,DD,CAGR     False       False  False
+v1/add/trend/c10                      DD              H2,DD     False       False  False
+v1/add/trend/c15                      DD              H2,DD     False       False  False
+CAND20/matched/same/c5                 -                  -      True        True   True
+CAND20/matched/same/c10                -                 DD      True       False  False
+CAND20/matched/same/c15               DD                 DD     False       False  False
+CAND20/matched/trend/c5                -                 DD      True       False  False
+CAND20/matched/trend/c10              DD                 DD     False       False  False
+CAND20/matched/trend/c15              DD                 DD     False       False  False
+CAND20/add/same/c5                     -                 DD      True       False  False
+CAND20/add/same/c10                    -                 DD      True       False  False
+CAND20/add/same/c15                   DD                 DD     False       False  False
+CAND20/add/trend/c5                   DD                 DD     False       False  False
+CAND20/add/trend/c10                  DD                 DD     False       False  False
+CAND20/add/trend/c15                  DD                 DD     False       False  False
+EWall/matched/same/c5                  -                  -      True        True   True
+EWall/matched/same/c10                 -                  -      True        True   True
+EWall/matched/same/c15                DD                 DD     False       False  False
+EWall/matched/trend/c5                 -                  -      True        True   True
+EWall/matched/trend/c10               DD                 DD     False       False  False
+EWall/matched/trend/c15               DD                 DD     False       False  False
+EWall/add/same/c5                      -                  -      True        True   True
+EWall/add/same/c10                     -                 DD      True       False  False
+EWall/add/same/c15                    DD                 DD     False       False  False
+EWall/add/trend/c5                     -                 DD      True       False  False
+EWall/add/trend/c10                   DD                 DD     False       False  False
+EWall/add/trend/c15                   DD                 DD     False       False  False
+  cross-universe 4b passes: 5 of 39
+  passing points: ['CAND20/matched/same/c5', 'EWall/matched/same/c5', 'EWall/matched/same/c10', 'EWall/matched/trend/c5', 'EWall/add/same/c5']
+
+H1 INHERITANCE CHECK (universe.json): how much of H1 is actually a crypto test?
+  v1/matched/same/c10          H1 ends 2017-11-02; first divergence 2015-07-27; 13.1% of H1 days differ from the control
+  v1/matched/trend/c10         H1 ends 2017-11-02; first divergence 2015-07-27; 24.0% of H1 days differ from the control
+  CAND20/matched/same/c10      H1 ends 2017-11-02; first divergence 2015-07-27; 13.1% of H1 days differ from the control
+  CAND20/matched/trend/c10     H1 ends 2017-11-02; first divergence 2015-07-27; 24.0% of H1 days differ from the control
+  EWall/matched/same/c10       H1 ends 2017-11-02; first divergence 2015-07-27; 13.1% of H1 days differ from the control
+  EWall/matched/trend/c10      H1 ends 2017-11-02; first divergence 2015-07-27; 24.0% of H1 days differ from the control
+
+COST SENSITIVITY (universe.json, best full-sample-Sharpe sleeve arm; diagnostic only, 10 bps is an equity assumption and crypto costs more)
+  CAND20/add/trend/c10 @  10 bps: CAGR 18.6% Sharpe 1.247 MaxDD -24.9% | control 12.7%/1.093/-18.3% | dSharpe +0.154
+  CAND20/add/trend/c10 @  25 bps: CAGR 16.8% Sharpe 1.142 MaxDD -26.2% | control 11.1%/0.968/-18.4% | dSharpe +0.175
+  CAND20/add/trend/c10 @  50 bps: CAGR 13.9% Sharpe 0.967 MaxDD -28.6% | control 8.4%/0.758/-18.7% | dSharpe +0.209
+  CAND20/add/trend/c10 @ 100 bps: CAGR 8.2% Sharpe 0.615 MaxDD -33.3% | control 3.3%/0.339/-20.3% | dSharpe +0.276
+
+===============================================================================================================================================================================
+LEADERBOARD ROWS
+===============================================================================================================================================================================
+| 2026-09-04 | 15 u56/v1 | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/same/c5 | 7.5% | 0.76 | -13.7% | 0.75 / 0.77 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/same/c10 | 8.6% | 0.82 | -15.0% | 0.85 / 0.80 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/same/c15 | 9.6% | 0.86 | -19.2% | 0.93 / 0.81 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/trend/c5 | 8.9% | 0.85 | -15.6% | 0.86 / 0.86 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/trend/c10 | 11.3% | 0.94 | -17.6% | 1.04 / 0.89 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/trend/c15 | 13.6% | 0.95 | -22.9% | 1.18 / 0.87 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/same/c5 | 7.7% | 0.76 | -14.3% | 0.75 / 0.77 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/same/c10 | 9.0% | 0.82 | -16.0% | 0.85 / 0.81 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/same/c15 | 10.2% | 0.86 | -19.9% | 0.93 / 0.83 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/trend/c5 | 9.3% | 0.85 | -17.0% | 0.85 / 0.86 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/trend/c10 | 12.1% | 0.93 | -20.4% | 1.03 / 0.91 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/trend/c15 | 14.8% | 0.96 | -25.2% | 1.17 / 0.91 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/same/c5 | 13.5% | 1.15 | -18.2% | 1.18 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/same/c10 | 14.3% | 1.18 | -19.1% | 1.25 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/same/c15 | 15.1% | 1.18 | -23.3% | 1.31 / 1.09 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/trend/c5 | 14.8% | 1.21 | -19.7% | 1.27 / 1.19 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/trend/c10 | 16.9% | 1.23 | -23.6% | 1.41 / 1.14 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/trend/c15 | 18.8% | 1.19 | -29.6% | 1.51 / 1.06 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/same/c5 | 14.0% | 1.16 | -18.8% | 1.19 / 1.15 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/same/c10 | 15.3% | 1.20 | -20.1% | 1.27 / 1.16 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/same/c15 | 16.6% | 1.21 | -24.7% | 1.33 / 1.15 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/trend/c5 | 15.7% | 1.22 | -21.5% | 1.27 / 1.20 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/trend/c10 | 18.6% | 1.25 | -24.9% | 1.42 / 1.19 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/trend/c15 | 21.5% | 1.23 | -31.1% | 1.52 / 1.14 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/same/c5 | 11.4% | 1.12 | -16.4% | 1.17 / 1.08 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/same/c10 | 12.3% | 1.15 | -18.7% | 1.26 / 1.07 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/same/c15 | 13.2% | 1.15 | -22.6% | 1.32 / 1.03 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/trend/c5 | 12.7% | 1.18 | -18.8% | 1.27 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/trend/c10 | 14.9% | 1.19 | -23.3% | 1.43 / 1.07 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/trend/c15 | 17.0% | 1.15 | -29.1% | 1.53 / 0.99 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/same/c5 | 11.7% | 1.13 | -16.6% | 1.18 / 1.10 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/same/c10 | 13.0% | 1.17 | -19.6% | 1.27 / 1.10 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/same/c15 | 14.3% | 1.18 | -24.2% | 1.34 / 1.08 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/trend/c5 | 13.4% | 1.20 | -19.2% | 1.28 / 1.15 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/trend/c10 | 16.3% | 1.22 | -24.1% | 1.43 / 1.13 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/trend/c15 | 19.1% | 1.19 | -30.6% | 1.54 / 1.08 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1 | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/same/c5 | 7.6% | 0.74 | -22.9% | 0.87 / 0.63 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/same/c10 | 8.7% | 0.81 | -24.9% | 0.96 / 0.68 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/same/c15 | 9.8% | 0.85 | -28.4% | 1.04 / 0.71 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/trend/c5 | 9.0% | 0.84 | -22.3% | 0.97 / 0.73 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/trend/c10 | 11.4% | 0.93 | -23.8% | 1.15 / 0.80 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/trend/c15 | 13.8% | 0.96 | -30.0% | 1.28 / 0.81 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/same/c5 | 7.7% | 0.73 | -23.6% | 0.87 / 0.63 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/same/c10 | 9.0% | 0.80 | -26.1% | 0.96 / 0.68 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/same/c15 | 10.2% | 0.84 | -29.3% | 1.04 / 0.72 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/trend/c5 | 9.3% | 0.83 | -22.6% | 0.97 / 0.74 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/trend/c10 | 12.1% | 0.92 | -24.9% | 1.13 / 0.81 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/trend/c15 | 14.8% | 0.95 | -30.3% | 1.26 / 0.83 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/same/c5 | 14.0% | 1.01 | -19.9% | 1.20 / 0.85 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/same/c10 | 14.8% | 1.05 | -24.2% | 1.26 / 0.87 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/same/c15 | 15.6% | 1.07 | -29.2% | 1.31 / 0.86 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/trend/c5 | 15.4% | 1.08 | -21.7% | 1.27 / 0.93 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/trend/c10 | 17.5% | 1.14 | -27.8% | 1.39 / 0.95 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/trend/c15 | 19.6% | 1.14 | -33.5% | 1.49 / 0.93 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/same/c5 | 14.4% | 1.02 | -20.5% | 1.20 / 0.87 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/same/c10 | 15.8% | 1.07 | -25.3% | 1.27 / 0.91 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/same/c15 | 17.0% | 1.09 | -30.4% | 1.33 / 0.92 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/trend/c5 | 16.1% | 1.09 | -23.2% | 1.28 / 0.94 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/trend/c10 | 19.1% | 1.14 | -29.0% | 1.40 / 0.99 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/trend/c15 | 21.9% | 1.15 | -35.1% | 1.50 / 0.99 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/same/c5 | 11.7% | 1.10 | -18.2% | 1.24 / 0.97 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/same/c10 | 12.7% | 1.13 | -20.0% | 1.32 / 0.98 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/same/c15 | 13.6% | 1.14 | -22.9% | 1.38 / 0.95 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/trend/c5 | 13.1% | 1.16 | -20.1% | 1.33 / 1.03 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/trend/c10 | 15.3% | 1.19 | -24.7% | 1.47 / 1.01 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/trend/c15 | 17.4% | 1.15 | -29.2% | 1.57 / 0.94 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/same/c5 | 12.1% | 1.11 | -18.3% | 1.25 / 0.98 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/same/c10 | 13.3% | 1.15 | -20.3% | 1.33 / 1.01 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/same/c15 | 14.6% | 1.16 | -24.5% | 1.40 / 1.00 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/trend/c5 | 13.7% | 1.18 | -21.1% | 1.34 / 1.05 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/trend/c10 | 16.6% | 1.21 | -24.8% | 1.49 / 1.06 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/trend/c15 | 19.4% | 1.19 | -30.4% | 1.59 / 1.03 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+
+Grid written to 2026-09-04_crypto-sleeve_C.grid.csv

@@ -969,3 +969,81 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 83 broad/EWall/gross0.45 | 6.4% | 1.03 | -10.9% | 1.14 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
 | 2026-09-04 | 83 broad/EWall/gross0.55 | 7.9% | 1.03 | -13.2% | 1.14 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
 | 2026-09-04 | 83 broad/EWall/gross0.65 | 9.3% | 1.03 | -15.5% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 15 u56/v1 | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/same/c5 | 7.5% | 0.76 | -13.7% | 0.75 / 0.77 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/same/c10 | 8.6% | 0.82 | -15.0% | 0.85 / 0.80 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/same/c15 | 9.6% | 0.86 | -19.2% | 0.93 / 0.81 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/trend/c5 | 8.9% | 0.85 | -15.6% | 0.86 / 0.86 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/trend/c10 | 11.3% | 0.94 | -17.6% | 1.04 / 0.89 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/matched/trend/c15 | 13.6% | 0.95 | -22.9% | 1.18 / 0.87 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/same/c5 | 7.7% | 0.76 | -14.3% | 0.75 / 0.77 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/same/c10 | 9.0% | 0.82 | -16.0% | 0.85 / 0.81 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/same/c15 | 10.2% | 0.86 | -19.9% | 0.93 / 0.83 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/trend/c5 | 9.3% | 0.85 | -17.0% | 0.85 / 0.86 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/trend/c10 | 12.1% | 0.93 | -20.4% | 1.03 / 0.91 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/v1/add/trend/c15 | 14.8% | 0.96 | -25.2% | 1.17 / 0.91 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/same/c5 | 13.5% | 1.15 | -18.2% | 1.18 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/same/c10 | 14.3% | 1.18 | -19.1% | 1.25 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/same/c15 | 15.1% | 1.18 | -23.3% | 1.31 / 1.09 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/trend/c5 | 14.8% | 1.21 | -19.7% | 1.27 / 1.19 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/trend/c10 | 16.9% | 1.23 | -23.6% | 1.41 / 1.14 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/matched/trend/c15 | 18.8% | 1.19 | -29.6% | 1.51 / 1.06 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/same/c5 | 14.0% | 1.16 | -18.8% | 1.19 / 1.15 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/same/c10 | 15.3% | 1.20 | -20.1% | 1.27 / 1.16 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/same/c15 | 16.6% | 1.21 | -24.7% | 1.33 / 1.15 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/trend/c5 | 15.7% | 1.22 | -21.5% | 1.27 / 1.20 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/trend/c10 | 18.6% | 1.25 | -24.9% | 1.42 / 1.19 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/CAND20/add/trend/c15 | 21.5% | 1.23 | -31.1% | 1.52 / 1.14 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/same/c5 | 11.4% | 1.12 | -16.4% | 1.17 / 1.08 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/same/c10 | 12.3% | 1.15 | -18.7% | 1.26 / 1.07 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/same/c15 | 13.2% | 1.15 | -22.6% | 1.32 / 1.03 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/trend/c5 | 12.7% | 1.18 | -18.8% | 1.27 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/trend/c10 | 14.9% | 1.19 | -23.3% | 1.43 / 1.07 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/matched/trend/c15 | 17.0% | 1.15 | -29.1% | 1.53 / 0.99 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/same/c5 | 11.7% | 1.13 | -16.6% | 1.18 / 1.10 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/same/c10 | 13.0% | 1.17 | -19.6% | 1.27 / 1.10 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/same/c15 | 14.3% | 1.18 | -24.2% | 1.34 / 1.08 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/trend/c5 | 13.4% | 1.20 | -19.2% | 1.28 / 1.15 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/trend/c10 | 16.3% | 1.22 | -24.1% | 1.43 / 1.13 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 u56/EWall/add/trend/c15 | 19.1% | 1.19 | -30.6% | 1.54 / 1.08 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1 | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/same/c5 | 7.6% | 0.74 | -22.9% | 0.87 / 0.63 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/same/c10 | 8.7% | 0.81 | -24.9% | 0.96 / 0.68 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/same/c15 | 9.8% | 0.85 | -28.4% | 1.04 / 0.71 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/trend/c5 | 9.0% | 0.84 | -22.3% | 0.97 / 0.73 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/trend/c10 | 11.4% | 0.93 | -23.8% | 1.15 / 0.80 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/matched/trend/c15 | 13.8% | 0.96 | -30.0% | 1.28 / 0.81 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/same/c5 | 7.7% | 0.73 | -23.6% | 0.87 / 0.63 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/same/c10 | 9.0% | 0.80 | -26.1% | 0.96 / 0.68 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/same/c15 | 10.2% | 0.84 | -29.3% | 1.04 / 0.72 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/trend/c5 | 9.3% | 0.83 | -22.6% | 0.97 / 0.74 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/trend/c10 | 12.1% | 0.92 | -24.9% | 1.13 / 0.81 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/v1/add/trend/c15 | 14.8% | 0.95 | -30.3% | 1.26 / 0.83 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/same/c5 | 14.0% | 1.01 | -19.9% | 1.20 / 0.85 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/same/c10 | 14.8% | 1.05 | -24.2% | 1.26 / 0.87 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/same/c15 | 15.6% | 1.07 | -29.2% | 1.31 / 0.86 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/trend/c5 | 15.4% | 1.08 | -21.7% | 1.27 / 0.93 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/trend/c10 | 17.5% | 1.14 | -27.8% | 1.39 / 0.95 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/matched/trend/c15 | 19.6% | 1.14 | -33.5% | 1.49 / 0.93 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/same/c5 | 14.4% | 1.02 | -20.5% | 1.20 / 0.87 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/same/c10 | 15.8% | 1.07 | -25.3% | 1.27 / 0.91 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/same/c15 | 17.0% | 1.09 | -30.4% | 1.33 / 0.92 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/trend/c5 | 16.1% | 1.09 | -23.2% | 1.28 / 0.94 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/trend/c10 | 19.1% | 1.14 | -29.0% | 1.40 / 0.99 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/CAND20/add/trend/c15 | 21.9% | 1.15 | -35.1% | 1.50 / 0.99 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/same/c5 | 11.7% | 1.10 | -18.2% | 1.24 / 0.97 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/same/c10 | 12.7% | 1.13 | -20.0% | 1.32 / 0.98 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/same/c15 | 13.6% | 1.14 | -22.9% | 1.38 / 0.95 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/trend/c5 | 13.1% | 1.16 | -20.1% | 1.33 / 1.03 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/trend/c10 | 15.3% | 1.19 | -24.7% | 1.47 / 1.01 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/matched/trend/c15 | 17.4% | 1.15 | -29.2% | 1.57 / 0.94 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/same/c5 | 12.1% | 1.11 | -18.3% | 1.25 / 0.98 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/same/c10 | 13.3% | 1.15 | -20.3% | 1.33 / 1.01 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/same/c15 | 14.6% | 1.16 | -24.5% | 1.40 / 1.00 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/trend/c5 | 13.7% | 1.18 | -21.1% | 1.34 / 1.05 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/trend/c10 | 16.6% | 1.21 | -24.8% | 1.49 / 1.06 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 15 broad/EWall/add/trend/c15 | 19.4% | 1.19 | -30.4% | 1.59 / 1.03 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
