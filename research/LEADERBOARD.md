@@ -353,3 +353,39 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 4 universe_broad walk-forward 4b-aware: ew-all gate=band3 OOS | 11.2% | 1.07 | -16.8% | - / - | 0.64 (0.76/0.54) | no idea-4 arm picked | research/backtests/2026-09-04_abs-momentum-filter_C.py |
 | 2026-09-04 | 4 OOS reference: RULES v1 baseline (universe.json) | 7.8% | 0.75 | -13.8% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_abs-momentum-filter_C.py |
 | 2026-09-04 | 4 OOS reference: SPY buy & hold | 15.5% | 0.88 | -33.7% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 3 universe.json v1 freq=D | 3.6% | 0.40 | -15.7% | 0.42 / 0.38 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json v1 freq=W | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json v1 freq=M | 10.2% | 0.96 | -15.4% | 1.08 / 0.87 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json v1 freq=Q | 8.1% | 0.68 | -22.8% | 0.73 / 0.64 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json top20 freq=D | 10.9% | 0.98 | -16.3% | 0.94 / 1.02 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json top20 freq=W | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json top20 freq=M | 14.7% | 1.20 | -19.5% | 1.21 / 1.21 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json top20 freq=Q | 13.5% | 1.02 | -27.1% | 1.10 / 0.98 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json ew-all freq=D | 9.4% | 0.97 | -16.9% | 0.97 / 0.97 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json ew-all freq=W | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json ew-all freq=M | 11.9% | 1.14 | -17.0% | 1.14 / 1.15 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json ew-all freq=Q | 11.6% | 1.08 | -22.2% | 1.22 / 0.97 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json ew-band3 freq=D | 10.8% | 1.10 | -14.7% | 1.07 / 1.14 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json ew-band3 freq=W | 11.3% | 1.14 | -15.1% | 1.11 / 1.16 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json ew-band3 freq=M | 11.4% | 1.10 | -18.6% | 1.09 / 1.12 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json ew-band3 freq=Q | 11.2% | 1.06 | -21.8% | 1.15 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json v1 freq=D | 2.0% | 0.24 | -25.1% | 0.43 / 0.09 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json v1 freq=W | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json v1 freq=M | 8.5% | 0.78 | -22.1% | 1.12 / 0.50 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H2,OOS,DD,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json v1 freq=Q | 9.7% | 0.80 | -23.7% | 1.16 / 0.52 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H2,OOS,DD,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json top20 freq=D | 9.9% | 0.76 | -19.7% | 0.95 / 0.60 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json top20 freq=W | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json top20 freq=M | 16.4% | 1.10 | -26.1% | 1.33 / 0.92 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json top20 freq=Q | 13.8% | 0.92 | -27.1% | 1.27 / 0.65 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json ew-all freq=D | 9.8% | 0.96 | -18.9% | 1.05 / 0.88 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json ew-all freq=W | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json ew-all freq=M | 11.7% | 1.07 | -21.7% | 1.16 / 0.99 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json ew-all freq=Q | 11.5% | 1.04 | -24.4% | 1.23 / 0.88 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json ew-band3 freq=D | 11.0% | 1.06 | -17.2% | 1.14 / 0.99 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json ew-band3 freq=W | 11.1% | 1.06 | -16.8% | 1.16 / 0.97 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json ew-band3 freq=M | 11.6% | 1.06 | -22.4% | 1.15 / 0.98 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad.json ew-band3 freq=Q | 11.5% | 1.04 | -24.3% | 1.22 / 0.90 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe.json walk-forward (both rules): ew-all freq=Q OOS | 11.7% | 1.04 | -22.2% | - / - | 0.67 (0.64/0.69) | FAILS OOS 4b (DD,CAGR) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 universe_broad walk-forward (both rules): top20 freq=M OOS | 15.7% | 1.01 | -26.1% | - / - | 0.64 (0.76/0.54) | FAILS OOS 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 OOS reference: RULES v1 weekly (universe.json) | 7.8% | 0.75 | -13.8% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 3 OOS reference: SPY buy & hold | 15.5% | 0.88 | -33.7% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_rebalance-freq_cloud.py |
