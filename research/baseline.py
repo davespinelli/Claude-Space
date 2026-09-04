@@ -14,7 +14,39 @@ sys.path.insert(0, str(ROOT / "products" / "backtester"))
 from engine import load_prices, backtest, metrics, report  # noqa
 
 EXCLUDE = {"BTC-USD", "ETH-USD"}
-def load_universe(start="2008-01-01", exclude=EXCLUDE, broad=False):
+
+def _small_path(stem):
+    """data/<stem>.csv, or the .csv.gz variant if the panel was large enough to be gzipped."""
+    for p in (ROOT / "data" / f"{stem}.csv", ROOT / "data" / f"{stem}.csv.gz"):
+        if p.exists(): return p
+    raise FileNotFoundError(f"data/{stem}.csv[.gz] not found — run research/cache_small.py")
+
+def _read_small(stem):
+    return pd.read_csv(_small_path(stem), index_col=0, parse_dates=True).sort_index()
+
+def load_volume(start="2010-01-01", small=False):
+    """Daily share volume. small=True -> data/volume_small.csv (the sub-$2B panel)."""
+    if not small: raise ValueError("load_volume currently only serves the small panel (small=True)")
+    return _read_small("volume_small").loc[start:]
+
+def load_universe(start="2008-01-01", exclude=EXCLUDE, broad=False, small=False, with_spy=True):
+    """Daily adjusted closes.
+
+    small=True returns the 485-name sub-$2B panel from data/prices_small.csv (offline,
+    no network).  SURVIVORSHIP: current constituents of the screen only — see
+    data/SMALL_PANEL_README.md.  with_spy joins a single benchmark column "SPY"
+    from data/prices.csv (reindexed onto the small panel's trading days) because
+    compare() needs it; the panel is otherwise pure small caps.
+    """
+    if small:
+        px = _read_small("prices_small")
+        if start: px = px.loc[start:]
+        px = px.dropna(how="all").ffill()
+        if with_spy:
+            spy = pd.read_csv(ROOT / "data" / "prices.csv", index_col=0, parse_dates=True)["SPY"]
+            spy = spy.reindex(px.index, method="ffill").rename("SPY")   # benchmark, NOT a constituent
+            px = pd.concat([px.drop(columns=["SPY"], errors="ignore"), spy], axis=1)
+        return px
     if broad:
         T = json.loads((ROOT / "research" / "universe_broad.json").read_text())
         cache = ROOT / "data" / "prices_broad.csv"

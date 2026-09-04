@@ -17,3 +17,14 @@ if _dt.date.today().weekday() == 4 or not (ROOT / "data" / "prices_broad.csv").e
     B = json.loads((ROOT / "research" / "universe_broad.json").read_text())
     pb = yf.download(B, start="2008-01-01", auto_adjust=True, progress=False)["Close"].dropna(how="all").ffill()
     pb.round(2).to_csv(ROOT / "data" / "prices_broad.csv"); print(f"cached broad {pb.shape}")
+
+# Small-cap sub-$2B panel (485 names): refresh on Fridays or if the file is missing.
+# Guarded so the daily pipeline never fails on it (485 downloads, several minutes).
+try:
+    _small = (ROOT / "data" / "prices_small.csv").exists() or (ROOT / "data" / "prices_small.csv.gz").exists()
+    if _dt.date.today().weekday() == 4 or not _small:
+        from cache_small import build as _build_small
+        _ps, _vs, _ms = _build_small(verbose=True)
+        print(f"cached small {_ps.shape} (survivorship: current constituents only)")
+except Exception as _e:
+    print(f"small-cap cache skipped ({type(_e).__name__}: {_e})")

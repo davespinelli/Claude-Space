@@ -12,8 +12,8 @@ jobs:
     env:
       ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: { python-version: "3.12" }
       - run: pip install -q pandas numpy yfinance requests python-dotenv alpaca-py markdown
       - name: Scan, cache prices, mark paper NAV, apply rules
@@ -23,6 +23,10 @@ jobs:
           python paper/ledger.py mark
           python paper/apply_rules.py
           python research/build_site.py
+      - name: Options IV snapshot cache (idea 35)
+        continue-on-error: true
+        run: python research/options_cache.py
+
       - name: Alpaca PAPER bot (only if secrets are set)
         if: ${{ env.ALPACA_API_KEY != '' }}
         continue-on-error: true
