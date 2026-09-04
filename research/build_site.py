@@ -16,11 +16,22 @@ body = markdown.markdown(latest.read_text(), extensions=["tables"])
 dv = ROOT / "research" / "deepvalue"
 picks_md = (dv / "PICKS.md").read_text() if (dv / "PICKS.md").exists() else ""
 track_md = (dv / "TRACK.md").read_text() if (dv / "TRACK.md").exists() else ""
+ls_md = (dv / "LS_TRACK.md").read_text() if (dv / "LS_TRACK.md").exists() else ""
+def ls_section(md):
+    """Pull the marked summary block out of LS_TRACK.md; stay silent if it is missing or malformed."""
+    if "<!--LS_SUMMARY-->" not in md or "<!--/LS_SUMMARY-->" not in md: return ""
+    block = md.split("<!--LS_SUMMARY-->", 1)[1].split("<!--/LS_SUMMARY-->", 1)[0].strip()
+    if not block: return ""
+    return f"""<h2>Does the reading have information?</h2>
+<p><small>A market-neutral test of the verdicts themselves: long every IDEA, short every PASS, hedge the net with IWM. WATCH names are excluded and shown separately. <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/deepvalue/LS_TRACK.md">Full rules, positions and daily series</a>.</small></p>
+{markdown.markdown(block, extensions=["tables"])}"""
+ls_html = ls_section(ls_md)
 notes = sorted((dv / "notes").glob("*.md"), reverse=True) if (dv / "notes").exists() else []
 note_links = "".join(f'<li><a href="https://github.com/davespinelli/Claude-Space/blob/main/research/deepvalue/notes/{n.name}">{n.stem.replace("_", " · ")}</a></li>' for n in notes[:20])
 deepvalue_html = f"""<h2>Deep Value Desk — researched ideas, tracked forever</h2>
 <p><small>Small and mid-cap edge cases. Every note is built from the 10-K, 10-Q, proxy, 8-Ks, insider filings and the earnings call or press release, with citations, base/bear/bull valuation and pre-registered kill criteria. Every verdict, including rejections, is tracked from publication. <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/deepvalue/README.md">Methodology</a>.</small></p>
 {markdown.markdown(track_md.split("\n", 1)[1] if track_md else "_Track record starts with the first published verdict._", extensions=["tables"])}
+{ls_html}
 <h3>Latest research notes</h3><ul>{note_links or "<li><em>First notes publishing shortly.</em></li>"}</ul>"""
 gig = "https://www.fiverr.com/"  # TODO: live gig URL
 stripe_std = ""  # TODO: Stripe Payment Link $99 Standard
