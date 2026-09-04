@@ -33,6 +33,20 @@ deepvalue_html = f"""<h2>Deep Value Desk — researched ideas, tracked forever</
 {markdown.markdown(track_md.split("\n", 1)[1] if track_md else "_Track record starts with the first published verdict._", extensions=["tables"])}
 {ls_html}
 <h3>Latest research notes</h3><ul>{note_links or "<li><em>First notes publishing shortly.</em></li>"}</ul>"""
+# Idea B2 — odd-lot tender offers. Show only the live-share-tender table from
+# TENDERS.md (the first markdown table) plus a link to the full file.
+tenders_path = ROOT / "research" / "tenders" / "TENDERS.md"
+tenders_html = ""
+if tenders_path.exists():
+    tmd = tenders_path.read_text()
+    sub = tmd.split("## Live share tenders", 1)[-1].split("\n## ", 1)[0]
+    table = "\n".join(l for l in sub.splitlines() if l.startswith("|"))
+    stamp = next((l.strip() for l in tmd.splitlines() if l.startswith("_Generated")), "")
+    tenders_html = f"""<h2>Tender offers with odd-lot priority</h2>
+<p><small>Issuer self-tenders (SEC Schedule TO-I) that buy back stock at a premium. Most give <strong>odd-lot priority</strong>: a holder of fewer than 100 shares who tenders all of them is bought in full, ahead of the proration that hits everyone else. Profit shown is for a 99-share position. {markdown.markdown(stamp)}</small></p>
+{markdown.markdown(table, extensions=["tables"]) if table else "<p><em>No live offers in the current window.</em></p>"}
+<p><small>Risks, the odd-lot rule and the quoted filing language: <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/tenders/TENDERS.md">TENDERS.md</a> · full history: <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/tenders/history.csv">history.csv</a>. Information, not advice.</small></p>"""
+
 gig = "https://www.fiverr.com/"  # TODO: live gig URL
 stripe_std = ""  # TODO: Stripe Payment Link $99 Standard
 stripe_pro = ""  # TODO: Stripe Payment Link $249 Pro
@@ -49,6 +63,7 @@ html = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name
 {spark(list(nav.nav))}
 <p><small>Every trade and rule is public: <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/RULES.md">RULES.md</a> · <a href="https://github.com/davespinelli/Claude-Space/blob/main/paper/trades.csv">trades.csv</a> · <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/LEADERBOARD.md">research leaderboard</a>.</small></p>
 {deepvalue_html}
+{tenders_html}
 <h2>Daily quantitative scan</h2>
 {body}
 <p><small>Research and education only. Nothing here is investment advice or a recommendation to buy or sell any security. Past performance does not predict future results.</small></p>

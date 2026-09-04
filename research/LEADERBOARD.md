@@ -131,6 +131,7 @@ EQW versions) — a leverage lever, not a position-count edge. See
 | 2026-09-04 | 31 PEAD quintile h=40 (broad, 2012-26) | 16.8% | 0.92 | -36.0% | 1.13 / 0.78 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
 | 2026-09-04 | 31 PEAD quintile h=60 (broad, 2012-26) | 19.4% | 1.05 | -35.0% | 1.35 / 0.84 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
 | 2026-09-04 | 31 PEAD CONTROL bottom-tercile h=60 (sort reversed — beats the signal) | 20.7% | 1.16 | -32.1% | 1.30 / 1.09 | 0.67 (0.86/0.50) | diagnostic | research/backtests/2026-09-04_small-cap-pead.py |
+<<<<<<< Updated upstream
 
 ### Idea 46 — eligible-fraction-vs-n (lane B, 2026-09-04)
 
@@ -173,3 +174,14 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 46 F  f=0.70 | 11.6% | 1.04 | -17.1% | 1.00 / 1.07 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 F  f=0.85 | 11.3% | 1.07 | -16.7% | 1.09 / 1.06 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 F  f=1.00 | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | 2026-09-04_eligible-fraction-vs-n_B.py |
+=======
+| 2026-09-04 | 36 spinoff INVESTABLE daily-EW | 32.1% | 1.11 | -45.3% | 0.70 / 1.41 | IWM 0.51 (0.50/0.52) | PARK (5-name result; sign test p 0.12; DD 1.8x IWM) | 2026-09-04_spinoff-calendar.py |
+| 2026-09-04 | 36 spinoff INVESTABLE drift | 33.7% | 1.08 | -49.1% | 0.70 / 1.41 | IWM 0.51 (0.50/0.52) | PARK | 2026-09-04_spinoff-calendar.py |
+| 2026-09-04 | 36 spinoff INVESTABLE ex top-5 | 20.7% | 0.82 | -49.4% | n/a | IWM 0.51 (0.50/0.52) | PARK (robustness arm) | 2026-09-04_spinoff-calendar.py |
+| 2026-09-04 | 36 spinoff ALL daily-EW | 24.6% | 0.74 | -46.3% | 0.77 / 1.30 | IWM 0.51 (0.50/0.52) | KILL (raw 10-12B list; mean log return negative) | 2026-09-04_spinoff-calendar.py |
+| 2026-09-04 | 36 spinoff ALL drift | 47.4% | 1.05 | -46.3% | 0.77 / 1.30 | IWM 0.51 (0.50/0.52) | KILL (one OTC shell, LDSN +5850%) | 2026-09-04_spinoff-calendar.py |
+| 2026-09-04 | insider-cluster-buying hold=6m (broad universe, 2012+) | 21.1% | 0.97 | -39.8% | 0.96 / 1.01 | 0.66 (0.86/0.49) | KILL | research/backtests/2026-09-04_insider-cluster-buying.py |
+| 2026-09-04 | insider-cluster-buying hold=12m (broad universe, 2012+) | 26.6% | 1.27 | -39.7% | 1.31 / 1.28 | 0.66 (0.86/0.49) | PARK (4b: Sharpe yes, MaxDD no) | research/backtests/2026-09-04_insider-cluster-buying.py |
+| 2026-09-04 | RULES v1 baseline, 2012+ broad-universe sample - reference | 6.8% | 0.66 | -21.2% | 0.86 / 0.49 | 0.66 (0.86/0.49) | - | research/backtests/2026-09-04_insider-cluster-buying.py |
+| 2026-09-04 | SPY buy & hold, 2012+ sample - reference | 15.2% | 0.94 | -33.7% | 1.13 / 0.85 | 0.66 (0.86/0.49) | - | research/backtests/2026-09-04_insider-cluster-buying.py |
+>>>>>>> Stashed changes
