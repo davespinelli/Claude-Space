@@ -1147,3 +1147,17 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 88 broad/EWall/p70 | 12.0% | 1.09 | -20.1% | 1.25 / 0.97 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
 | 2026-09-04 | 88 broad/EWall/p90 | 12.6% | 1.14 | -20.1% | 1.27 / 1.03 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
 | 2026-09-04 | 88 broad/EWall/none | 13.1% | 1.16 | -20.1% | 1.33 / 1.03 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 19 RP L= 20 g=0.60 | 5.5% | 1.00 | -14.2% | 1.11 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L= 20 g=0.75 | 6.8% | 1.00 | -17.5% | 1.11 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L= 20 g=1.00 | 9.1% | 1.00 | -22.7% | 1.11 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L= 60 g=0.60 | 5.5% | 1.01 | -14.0% | 1.10 / 0.93 | 0.67 (0.64/0.69) | 4b-fail(CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L= 60 g=0.75 | 6.9% | 1.01 | -17.2% | 1.10 / 0.93 | 0.67 (0.64/0.69) | 4b-fail(CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L= 60 g=1.00 | 9.1% | 1.00 | -22.4% | 1.10 / 0.93 | 0.67 (0.64/0.69) | 4b-fail(DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L=120 g=0.60 | 5.4% | 0.98 | -14.1% | 1.06 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L=120 g=0.75 | 6.7% | 0.98 | -17.3% | 1.06 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L=120 g=1.00 | 8.9% | 0.98 | -22.5% | 1.06 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L=252 g=0.60 | 5.3% | 0.96 | -14.3% | 1.02 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L=252 g=0.75 | 6.6% | 0.95 | -17.7% | 1.02 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 RP L=252 g=1.00 | 8.8% | 0.95 | -23.0% | 1.02 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 EW thirds (control) | 9.3% | 0.98 | -23.1% | 1.05 / 0.94 | 0.67 (0.64/0.69) | 4b-fail(DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 19 60/40 SPY-TLT (control) | 10.3% | 1.00 | -27.7% | 1.40 / 0.73 | 0.67 (0.64/0.69) | 4b-fail(H2,OOS,DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
