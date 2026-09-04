@@ -13,14 +13,14 @@
 14. rsi2-sleeve — allocate 25% of book to a RSI2<10-in-uptrend mean-reversion sleeve on sector ETFs.
 15. crypto-sleeve — allow BTC-USD/ETH-USD at max 10% each under v1 rules.
 16. monthly-seasonality — v1 with exposure reduced in historically weak months (test, expect KILL).
-17. broad-momentum-top10 — v1 selection on universe_broad (top 10 of ~100 names, 10% each). Does breadth of universe restore momentum's edge? (Jegadeesh-Titman)
-18. macro-trend-ensemble — trend following on SPY/QQQ/IWM/EFA/EEM/TLT/GLD/DBC/UUP via 50/100/200d MA ensemble vote, equal risk. (Moskowitz-Ooi-Pedersen time-series momentum)
 19. spy-tlt-gld-riskparity — inverse-vol risk parity on SPY/TLT/GLD monthly, as a low-turnover benchmark the live book must beat.
-20. full-exposure-v1 — v1 with 20% per name (100% gross) + 200d SPY cash filter: does the 75% cap explain the CAGR gap to SPY?
 21. momentum-plus-quality-proxy — among top-10 momentum in broad universe, drop the 3 highest-vol names (vol as quality proxy). Max 2 params.
 22. drawdown-control — v1 with book-level rule: if book drawdown > 8%, halve exposure until new high. (Test, expect mixed)
 23. earnings-season-avoidance — v1 excluding single stocks during their earnings weeks (approximate with quarterly calendar). Expect PARK: needs earnings dates.
 ## In progress
+17. broad-momentum-top10 — v1 selection on universe_broad (top 10 of ~100 names, 10% each). Does breadth of universe restore momentum's edge? (Jegadeesh-Titman) (claimed 2026-09-03, local session)
+18. macro-trend-ensemble — trend following on SPY/QQQ/IWM/EFA/EEM/TLT/GLD/DBC/UUP via 50/100/200d MA ensemble vote, equal risk. (Moskowitz-Ooi-Pedersen time-series momentum) (claimed 2026-09-03, local session)
+20. full-exposure-v1 — v1 with 20% per name (100% gross) + 200d SPY cash filter: does the 75% cap explain the CAGR gap to SPY? (claimed 2026-09-03, local session)
 ## Done (see LEADERBOARD.md)
 5. dual-momentum-classes — KILL — all 4 variants below baseline Sharpe in H1 (best 0.39 vs 0.64), MaxDD -24% to -36% vs -13.8%; DBC 2022-23 collapse (2026-09-03)
 7. inverse-vol-weights — KILL — Sharpe 0.57 vs 0.67 both halves; double vol tilt (score already /sqrt(vol)) concentrates book to 2-3 names (2026-09-03)
