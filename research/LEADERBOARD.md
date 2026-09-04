@@ -1161,3 +1161,25 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 19 RP L=252 g=1.00 | 8.8% | 0.95 | -23.0% | 1.02 / 0.91 | 0.67 (0.64/0.69) | 4b-fail(DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
 | 2026-09-04 | 19 EW thirds (control) | 9.3% | 0.98 | -23.1% | 1.05 / 0.94 | 0.67 (0.64/0.69) | 4b-fail(DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
 | 2026-09-04 | 19 60/40 SPY-TLT (control) | 10.3% | 1.00 | -27.7% | 1.40 / 0.73 | 0.67 (0.64/0.69) | 4b-fail(H2,OOS,DD,CAGR) | 2026-09-04_spy-tlt-gld-riskparity_C.py |
+| 2026-09-04 | 16 u56/v1 none f=1.00 | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | control 4b-fail | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/top20 none f=1.00 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | control 4b-PASS | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/EWall none f=1.00 | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | control 4b-fail | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/v1 none f=1.00 | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | control 4b-fail | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/top20 none f=1.00 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | control 4b-fail | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/EWall none f=1.00 | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | control 4b-PASS | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/EWall sep f=0.50 | 10.2% | 1.06 | -15.9% | 1.06 / 1.06 | 0.67 (0.64/0.69) | KILL (best dSharpe +0.007) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/EWall worst6 f=0.50 | 7.0% | 0.91 | -15.9% | 1.13 / 0.74 | 0.67 (0.64/0.69) | KILL (rule-8 IS pick; OOS 0.82 vs ctrl) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/top20 sep f=0.75 | 12.5% | 1.10 | -18.3% | 1.09 / 1.11 | 0.67 (0.64/0.69) | KILL (best dSharpe +0.003) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/top20 worst6 f=0.50 | 8.3% | 0.92 | -18.3% | 1.14 / 0.76 | 0.67 (0.64/0.69) | KILL (rule-8 IS pick; OOS 0.84 vs ctrl) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/v1 sep f=0.00 | 6.5% | 0.69 | -13.8% | 0.57 / 0.80 | 0.67 (0.64/0.69) | KILL (best dSharpe +0.027) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/v1 worst6 f=0.00 | 2.9% | 0.43 | -14.8% | 0.85 / 0.12 | 0.67 (0.64/0.69) | KILL (rule-8 IS pick; OOS 0.18 vs ctrl) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/EWall sep f=0.50 | 10.6% | 1.04 | -17.7% | 1.13 / 0.95 | 0.64 (0.76/0.54) | KILL (best dSharpe +0.010) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/EWall worst6 f=0.25 | 6.8% | 0.89 | -17.7% | 1.36 / 0.53 | 0.64 (0.76/0.54) | KILL (rule-8 IS pick; OOS 0.60 vs ctrl) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/top20 sep f=0.75 | 12.9% | 0.96 | -20.1% | 1.11 / 0.83 | 0.64 (0.76/0.54) | KILL (best dSharpe +0.000) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/top20 worst6 f=0.25 | 6.7% | 0.70 | -20.1% | 1.31 / 0.26 | 0.64 (0.76/0.54) | KILL (rule-8 IS pick; OOS 0.37 vs ctrl) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/v1 sep f=0.00 | 6.9% | 0.70 | -17.9% | 0.70 / 0.71 | 0.64 (0.76/0.54) | KILL (best dSharpe +0.063) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/v1 worst6 f=0.00 | 3.7% | 0.51 | -21.8% | 1.17 / -0.01 | 0.64 (0.76/0.54) | KILL (rule-8 IS pick; OOS 0.08 vs ctrl) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/top20 sep f=0.00 | 12.1% | 1.08 | -18.3% | 1.06 / 1.11 | 0.67 (0.64/0.69) | 4b-pass both-univ but dSharpe<0 (hindsight mask) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 u56/top20 sep f=0.25 | 12.3% | 1.09 | -18.3% | 1.07 / 1.11 | 0.67 (0.64/0.69) | 4b-pass both-univ but dSharpe<0 (hindsight mask) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/top20 sep f=0.00 | 12.3% | 0.94 | -20.1% | 1.04 / 0.85 | 0.64 (0.76/0.54) | 4b-pass both-univ but dSharpe<0 (hindsight mask) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 16 broad/top20 sep f=0.25 | 12.5% | 0.95 | -20.1% | 1.07 / 0.84 | 0.64 (0.76/0.54) | 4b-pass both-univ but dSharpe<0 (hindsight mask) | 2026-09-04_monthly-seasonality_cloud.py |
