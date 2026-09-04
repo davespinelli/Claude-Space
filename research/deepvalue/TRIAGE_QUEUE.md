@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T20:39:42Z · open 202 · in progress 0 · done 283_
+_Source: universe_under2b.csv · updated 2026-09-04T21:11:30Z · open 182 · in progress 10 · done 293_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (202)
+## Open (182)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| AVO | Mission Produce, Inc. | $1.11B |
-| PERI | Perion Network Ltd. | $360.2M |
-| CXDO | Crexendo, Inc. | $196.9M |
-| RPD | Rapid7, Inc. | $773.1M |
-| VTS | Vitesse Energy, Inc. | $733.0M |
-| TUYA | Tuya Inc. | $1.16B |
-| KLC | KinderCare Learning Companies, Inc. | $318.8M |
-| ARRY | Array Technologies, Inc. | $699.2M |
-| ACVA | ACV Auctions Inc. | $1.14B |
-| AZTA | Azenta, Inc. | $1.37B |
-| WGO | WINNEBAGO INDUSTRIES INC | $849.5M |
-| OEC | Orion S.A. | $337.4M |
-| SWIM | Latham Group, Inc. | $812.9M |
-| RDWR | RADWARE LTD | $1.23B |
-| OESX | ORION ENERGY SYSTEMS, INC. | $94.8M |
-| UTL | UNITIL CORP | $979.5M |
-| RGR | STURM RUGER & CO INC | $594.7M |
-| COOK | Traeger, Inc. | $136.0M |
-| PCYO | PURE CYCLE CORP | $268.0M |
-| LFMD | LifeMD, Inc. | $147.0M |
 | NGS | NATURAL GAS SERVICES GROUP INC | $460.1M |
 | UFI | UNIFI INC | $130.7M |
 | ALTG | ALTA EQUIPMENT GROUP INC. | $187.2M |
@@ -211,12 +191,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| WGO | WINNEBAGO INDUSTRIES INC | $849.5M | cloudA | 2026-09-04T21:07:25Z |
+| OEC | Orion S.A. | $337.4M | cloudA | 2026-09-04T21:07:25Z |
+| SWIM | Latham Group, Inc. | $812.9M | cloudA | 2026-09-04T21:07:25Z |
+| RDWR | RADWARE LTD | $1.23B | cloudA | 2026-09-04T21:07:25Z |
+| OESX | ORION ENERGY SYSTEMS, INC. | $94.8M | cloudA | 2026-09-04T21:07:25Z |
+| UTL | UNITIL CORP | $979.5M | cloudA | 2026-09-04T21:07:25Z |
+| RGR | STURM RUGER & CO INC | $594.7M | cloudA | 2026-09-04T21:07:25Z |
+| COOK | Traeger, Inc. | $136.0M | cloudA | 2026-09-04T21:07:25Z |
+| PCYO | PURE CYCLE CORP | $268.0M | cloudA | 2026-09-04T21:07:25Z |
+| LFMD | LifeMD, Inc. | $147.0M | cloudA | 2026-09-04T21:07:25Z |
 
-## Done (283)
+## Done (293)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | OLN | OLIN Corp | $1.93B | cloudB | 2026-09-04T20:39:42Z |
 | BZH | BEAZER HOMES USA INC | $885.8M | cloudB | 2026-09-04T20:39:42Z |
 | MNKD | MANNKIND CORP | $1.27B | cloudB | 2026-09-04T20:39:42Z |
+| AVO | Mission Produce, Inc. | $1.11B | cloudA | 2026-09-04T21:11:30Z |
+| PERI | Perion Network Ltd. | $360.2M | cloudA | 2026-09-04T21:11:30Z |
+| CXDO | Crexendo, Inc. | $196.9M | cloudA | 2026-09-04T21:11:30Z |
+| RPD | Rapid7, Inc. | $773.1M | cloudA | 2026-09-04T21:11:30Z |
+| VTS | Vitesse Energy, Inc. | $733.0M | cloudA | 2026-09-04T21:11:30Z |
+| TUYA | Tuya Inc. | $1.16B | cloudA | 2026-09-04T21:11:30Z |
+| KLC | KinderCare Learning Companies, Inc. | $318.8M | cloudA | 2026-09-04T21:11:30Z |
+| ARRY | Array Technologies, Inc. | $699.2M | cloudA | 2026-09-04T21:11:30Z |
+| ACVA | ACV Auctions Inc. | $1.14B | cloudA | 2026-09-04T21:11:30Z |
+| AZTA | Azenta, Inc. | $1.37B | cloudA | 2026-09-04T21:11:30Z |

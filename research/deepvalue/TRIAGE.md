@@ -284,3 +284,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | OLN | OLIN Corp | $1.9B | cyclical-trough | 5 | Epoxy swung +$39.7M and Q2 adjusted EBITDA rose to $191.3M, but net debt is 5.0x and the Huntsman all-stock merger shares any recovery |
 | 2026-09-04 | BZH | BEAZER HOMES USA INC | $885.8M | none | 2 | Agreed to be acquired by Dream Finders at $33.50 cash and trading 0.9% below it, so this is a merger spread not a valuation gap |
 | 2026-09-04 | MNKD | MANNKIND CORP | $1.3B | none | 3 | Revenue +43% but SG&A +84% produced a $19.0M net loss, with negative $67.2M equity and $266.2M net debt at $1.5B EV |
+| 2026-09-04 | AVO | Mission Produce, Inc. | $1.1B | insider-buying | 6 | Three insiders bought a net $42.0M including 687k shares at $13.42 versus a $12.57 screen price, but EV/EBIT is 18.3x and Q2 EBITDA fell to $7.1M |
+| 2026-09-04 | PERI | Perion Network Ltd. | $360.2M | cash-cow-narrative | 4 | $38.1M FCF is a 10.6% yield with a 12.9% share shrink, but EBIT is negative $14.9M, revenue fell 11.7% and the pack has no MD&A or release |
+| 2026-09-04 | CXDO | Crexendo, Inc. | $196.9M | fallen-growth | 6 | Revenue +49% and adj EBITDA +46% in Q2 with the stock 43.5% off its high, but GAAP net income fell to $1.1M on ESI intangible amortisation |
+| 2026-09-04 | RPD | Rapid7, Inc. | $773.1M | post-restructuring | 7 | JANA agreement, new CEO and a 12% workforce cut with FY26 FCF guided near $130M on a $773M cap, but ARR is still shrinking and converts are untagged |
+| 2026-09-04 | VTS | Vitesse Energy, Inc. | $733.0M | insider-buying | 4 | Steinberg bought 59,118 shares at $17.00 but Q2 FCF of $16.3M trails the ~$18.4M dividend and the screen's 23.2% FCF yield omits capex |
+| 2026-09-04 | TUYA | Tuya Inc. | $1.2B | none | 0 | no filings in bundle |
+| 2026-09-04 | KLC | KinderCare Learning Companies, Inc. | $318.8M | post-restructuring | 6 | 49 centers closed and goodwill cut $272M while FY26 EBITDA is guided to $200-220M on a $319M cap, but leases plus debt total $2.5B and enrolment fell 4.0% |
+| 2026-09-04 | ARRY | Array Technologies, Inc. | $699.2M | fallen-growth | 7 | Record $2.5B orderbook and raised FY26 EBITDA guide of $210-230M against a $1.0B EV with the stock 62% off its high, offset by $506M of accreting preferred |
+| 2026-09-04 | ACVA | ACV Auctions Inc. | $1.1B | none | 4 | Revenue grew 10% but GMV and units were flat, FY26 GAAP loss is guided to $44-49M and ~$63M of SBC roughly equals the adjusted EBITDA guide |
+| 2026-09-04 | AZTA | Azenta, Inc. | $1.4B | post-restructuring | 5 | B Medical divested and $529M of cash against a $1.4B cap, but FY26 EBITDA is guided to just $59-62M, Q3 FCF was negative and the CEO resigned in August |
