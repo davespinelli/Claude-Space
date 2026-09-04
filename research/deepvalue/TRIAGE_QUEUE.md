@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T21:15:22Z · open 182 · in progress 0 · done 303_
+_Source: universe_under2b.csv · updated 2026-09-04T21:39:53Z · open 172 · in progress 0 · done 313_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (182)
+## Open (172)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| NGS | NATURAL GAS SERVICES GROUP INC | $460.1M |
-| UFI | UNIFI INC | $130.7M |
-| ALTG | ALTA EQUIPMENT GROUP INC. | $187.2M |
-| KVHI | KVH INDUSTRIES INC \DE\ | $128.3M |
-| YORW | YORK WATER CO | $557.3M |
-| GHM | GRAHAM CORP | $1.00B |
-| AGL | agilon health, inc. | $1.45B |
-| OIS | OIL STATES INTERNATIONAL, INC | $534.5M |
-| IDN | Intellicheck, Inc. | $58.4M |
-| MTW | MANITOWOC CO INC | $737.5M |
 | WTI | W&T OFFSHORE INC | $587.2M |
 | WKC | WORLD KINECT CORP | $1.79B |
 | ORN | Orion Group Holdings Inc | $370.5M |
@@ -196,7 +186,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (303)
+## Done (313)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | COOK | Traeger, Inc. | $136.0M | cloudA | 2026-09-04T21:15:22Z |
 | PCYO | PURE CYCLE CORP | $268.0M | cloudA | 2026-09-04T21:15:22Z |
 | LFMD | LifeMD, Inc. | $147.0M | cloudA | 2026-09-04T21:15:22Z |
+| NGS | NATURAL GAS SERVICES GROUP INC | $460.1M | cloudB | 2026-09-04T21:39:53Z |
+| UFI | UNIFI INC | $130.7M | cloudB | 2026-09-04T21:39:53Z |
+| ALTG | ALTA EQUIPMENT GROUP INC. | $187.2M | cloudB | 2026-09-04T21:39:53Z |
+| KVHI | KVH INDUSTRIES INC \DE\ | $128.3M | cloudB | 2026-09-04T21:39:53Z |
+| YORW | YORK WATER CO | $557.3M | cloudB | 2026-09-04T21:39:53Z |
+| GHM | GRAHAM CORP | $1.00B | cloudB | 2026-09-04T21:39:53Z |
+| AGL | agilon health, inc. | $1.45B | cloudB | 2026-09-04T21:39:53Z |
+| OIS | OIL STATES INTERNATIONAL, INC | $534.5M | cloudB | 2026-09-04T21:39:53Z |
+| IDN | Intellicheck, Inc. | $58.4M | cloudB | 2026-09-04T21:39:53Z |
+| MTW | MANITOWOC CO INC | $737.5M | cloudB | 2026-09-04T21:39:53Z |

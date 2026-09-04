@@ -304,3 +304,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | COOK | Traeger, Inc. | $136.0M | post-restructuring | 6 | Project Gravity lifted adj EBITDA to $17.3M on 17.4% lower revenue and FY26 FCF is guided above $30M, but net debt is $340.5M against a $136M cap |
 | 2026-09-04 | PCYO | PURE CYCLE CORP | $268.0M | none | 0 | no filings in bundle |
 | 2026-09-04 | LFMD | LifeMD, Inc. | $147.0M | none | 0 | no filings in bundle |
+| 2026-09-04 | NGS | NATURAL GAS SERVICES GROUP INC | $460.1M | none | 4 | Record utilization and 14% rental growth but 21.1x EV/EBIT, net debt 8.8x EBIT and FCF of negative $58.6M on growth capex |
+| 2026-09-04 | UFI | UNIFI INC | $130.7M | hidden-asset | 7 | Agreed sale of non-strategic real estate for $60.0M gross versus a $130.7M cap and $67.4M net debt, with FY26 gross margin up 420bp |
+| 2026-09-04 | ALTG | ALTA EQUIPMENT GROUP INC. | $187.2M | cyclical-trough | 6 | Bookings up 12.3% and FY26 EBITDA guided to $167.5M-$177.5M on a $652.6M EV, but net debt is 20.1x EBIT and equity is negative |
+| 2026-09-04 | KVHI | KVH INDUSTRIES INC | $128.3M | hidden-asset | 6 | Cash of $57.7M is 45% of the cap with zero interest expense, and Q2 revenue rose 27%, but adjusted EBITDA gained only $0.3M |
+| 2026-09-04 | YORW | YORK WATER CO | $557.3M | none | 3 | Regulated PA water at 26.9x EV/EBIT and 0.7% off its high, with shares up 12.5% on an April offering and ROE below its 5-year average |
+| 2026-09-04 | GHM | GRAHAM CORP | $1.0B | none | 3 | Record $557.2M backlog and 17% growth already priced at 65.1x EV/EBIT with roughly zero FCF and 12-1 momentum of 120.4% |
+| 2026-09-04 | AGL | agilon health, inc. | $1.5B | post-restructuring | 4 | EBITDA guide raised to $75M-$95M, but the -95.9% share change is a reverse split and Q3 is guided back to breakeven |
+| 2026-09-04 | OIS | OIL STATES INTERNATIONAL, INC | $534.5M | misunderstood-segment | 7 | FY25 EBIT loss is entirely a $112.7M Downhole impairment while Offshore earned $69.2M and backlog hit a decade high, with no net debt |
+| 2026-09-04 | IDN | Intellicheck, Inc. | $58.4M | fallen-growth | 5 | Down 68% on a customer at 29% of H1 revenue going multi-source, and 42.8x EV/EBIT does not yet pay for that risk |
+| 2026-09-04 | MTW | MANITOWOC CO INC | $737.5M | misunderstood-segment | 6 | EURAF lost $42.9M against $95.7M from Americas, but net debt is 6.8x EBIT and the stock is 2.0% off its high |
