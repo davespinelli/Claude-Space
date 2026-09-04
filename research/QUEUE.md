@@ -14,7 +14,7 @@
 15. crypto-sleeve — allow BTC-USD/ETH-USD at max 10% each under v1 rules.
 16. monthly-seasonality — v1 with exposure reduced in historically weak months (test, expect KILL).
 ## In progress
-5. dual-momentum-classes — Antonacci-style: SPY/EFA/EEM/TLT/GLD/DBC, hold top 1-2 by 12m return if > T-bill proxy (SHY), else SHY. (claimed 2026-09-03, local session)
-7. inverse-vol-weights — weight the top 5 by 1/vol20 instead of equal. (claimed 2026-09-03, local session)
-12. vol-target — scale v1 gross exposure to target 12% annualized portfolio vol (cap 100%). (claimed 2026-09-03, local session)
 ## Done (see LEADERBOARD.md)
+5. dual-momentum-classes — KILL — all 4 variants below baseline Sharpe in H1 (best 0.39 vs 0.64), MaxDD -24% to -36% vs -13.8%; DBC 2022-23 collapse (2026-09-03)
+7. inverse-vol-weights — KILL — Sharpe 0.57 vs 0.67 both halves; double vol tilt (score already /sqrt(vol)) concentrates book to 2-3 names (2026-09-03)
+12. vol-target — KILL — 10%/14% targets: Sharpe 0.59/0.60 vs 0.67, deeper DD; v1 realizes ~10% vol so cap binds, cuts after spikes (2026-09-03)
