@@ -1221,3 +1221,17 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 87 broad/CRYPTO/CAND20=0.15 | 15.6% | 1.07 | -29.2% | 1.31 / 0.86 | 0.64 (0.76/0.54) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
 | 2026-09-04 | 87 broad/CRYPTO/EWall=0.15 | 13.6% | 1.14 | -22.9% | 1.38 / 0.95 | 0.64 (0.76/0.54) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
 | 2026-09-04 | 87 broad/CRYPTO/EWall=0.15 | 13.6% | 1.14 | -22.9% | 1.38 / 0.95 | 0.64 (0.76/0.54) | rule-8 Rm(m=0pp) pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 86 u56 CAND20/hyst2 (idea 79) | 12.7% | 1.15 | -17.2% | 1.17 / 1.13 | 0.67 (0.64/0.69) | rule-8 pick; 4b KEEP-candidate (u56) | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 u56 CAND20/hyst2 gross-matched | 12.9% | 1.11 | -17.2% | 1.14 / 1.09 | 0.67 (0.64/0.69) | gm-invariant; 4b PASS | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 u56 CAND20/control (idea 2 KEEP) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | control; 4b PASS | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 u56 CAND20/control gross-matched | 12.8% | 1.06 | -18.3% | 1.07 / 1.07 | 0.67 (0.64/0.69) | idea 81 fix: -0.029 Sharpe; 4b PASS | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 u56 CAND20/budget-top0.1 | 15.3% | 1.11 | -22.9% | 1.14 / 1.10 | 0.67 (0.64/0.69) | rule-8 pick; 4b fail | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 u56 CAND20/budget-top0.1 gross-matched | 13.9% | 1.03 | -30.4% | 1.22 / 0.80 | 0.67 (0.64/0.69) | KILL: sign flip vs gmOFF | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 u56 EWall/budget-top0.2 | 11.0% | 1.04 | -19.2% | 1.05 / 1.05 | 0.67 (0.64/0.69) | 4b PASS (idea 83's positive) | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 u56 EWall/budget-top0.2 gross-matched | 0.9% | 0.18 | -27.8% | 0.20 / 0.17 | 0.67 (0.64/0.69) | KILL: 4b PASS -> fail once gross-matched | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 u56 CAND20/monthly gross-matched | 15.3% | 1.21 | -19.5% | 1.20 / 1.23 | 0.67 (0.64/0.69) | idea 3 survives; 4b PASS, MaxDD-bought | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 broad CAND20/hyst2 (idea 79) | 14.4% | 1.03 | -20.4% | 1.26 / 0.83 | 0.64 (0.76/0.54) | rule-8 pick; 4b fail (H2,DD) | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 broad CAND20/hyst2 gross-matched | 14.3% | 1.01 | -20.4% | 1.24 / 0.82 | 0.64 (0.76/0.54) | gm-invariant; 4b fail (H2,DD) | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 broad CAND20/budget-top0.1 | 19.2% | 1.10 | -31.8% | 1.28 / 0.97 | 0.64 (0.76/0.54) | rule-8 pick gmOFF; 4b fail | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 broad CAND20/budget-top0.1 gross-matched | 11.9% | 0.81 | -18.1% | 0.89 / 0.73 | 0.64 (0.76/0.54) | KILL: gm demotes pick to control | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 86 broad EWall/control gross-matched | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | gm-invariant; 4b PASS | 2026-09-04_gross-matched-turnover-constraints_B.py |
