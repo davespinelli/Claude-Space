@@ -334,3 +334,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | JACK | JACK IN THE BOX INC | $290.8M | post-restructuring | 7 | Del Taco sold and debt refinanced to 2031, with $225M-$230M guided EBITDA and 25.5% FCF yield on a 19.2M share stub |
 | 2026-09-04 | ALTO | Alto Ingredients, Inc. | $312.6M | cyclical-trough | 6 | Q2 adjusted EBITDA swung $23.9M to $23.7M in a fourth straight positive quarter, but momentum is 343.9% and a $50M ATM was just filed |
 | 2026-09-04 | CPRI | Capri Holdings Ltd | $1.5B | post-restructuring | 7 | Net debt cut from $1.5B to $224M post-Versace, 6.2x guided EPS, and $871M buyback left vs a $1.5B cap |
+| 2026-09-04 | WLFC | WILLIS LEASE FINANCE CORP | $1.2B | fallen-growth | 5 | Down 76.8% off the high while Q2 operating income rose 20.2%, but 22.2x net debt to EBIT and 33.4x EV/EBIT cap the case |
+| 2026-09-04 | EGY | VAALCO ENERGY INC /DE/ | $635.4M | cyclical-trough | 7 | Baobab restart lifted Q2 EBITDAX to $54.8M from $11.6M with Q3 volumes guided up 23%, on a $782M EV |
+| 2026-09-04 | CRSR | Corsair Gaming, Inc. | $1.4B | none | 3 | Gross margin up 400bps yet 2025 operating income was only $2.1M on a net loss, and the stock has doubled in six months |
+| 2026-09-04 | VSTS | Vestis Corp | $1.7B | post-restructuring | 7 | FY26 FCF guided to $165M against $5.9M actual in FY25, EV 8.6x guided EBITDA, and the CEO bought $1.0M on 2026-09-02 |
+| 2026-09-04 | GETY | Getty Images Holdings, Inc. | $98.5M | none | 2 | Guidance withdrawn, Guggenheim engaged on the balance sheet, Q2 FCF negative $122.6M and subscribers down 25.2% |
+| 2026-09-04 | NAT | NORDIC AMERICAN TANKERS Ltd | $1.5B | none | 2 | Pack has no business description, results or risk factors, and the screen shows 39.8x EV/EBIT at the 52-week high |
+| 2026-09-04 | CURI | CuriosityStream Inc. | $172.1M | misunderstood-segment | 6 | Content licensing took gross margin to 72.8% and EBITDA to $11.4M, but H1 operating cash flow was negative $3.0M |
+| 2026-09-04 | INNV | InnovAge Holding Corp. | $1.5B | none | 3 | About 16x guided EBITDA after a 194% run, with $51.9M of quarterly litigation costs exceeding adjusted EBITDA |
+| 2026-09-04 | CODI | Compass Diversified Holdings | $869.0M | insider-buying | 7 | Six insiders bought $2.5M with no sales while debt fell $298M, leverage went 5.3x to 4.8x and manager fees were cut |
+| 2026-09-04 | ETON | Eton Pharmaceuticals, Inc. | $1.7B | none | 3 | Revenue up 99% but the $1.7B EV is roughly 33x implied 2026 EBITDA after a 247% six-month move, with insiders selling $11.7M |

@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T22:13:41Z · open 152 · in progress 0 · done 333_
+_Source: universe_under2b.csv · updated 2026-09-04T22:39:58Z · open 142 · in progress 0 · done 343_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (152)
+## Open (142)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| WLFC | WILLIS LEASE FINANCE CORP | $1.17B |
-| EGY | VAALCO ENERGY INC /DE/ | $635.4M |
-| CRSR | Corsair Gaming, Inc. | $1.38B |
-| VSTS | Vestis Corp | $1.66B |
-| GETY | Getty Images Holdings, Inc. | $98.5M |
-| NAT | NORDIC AMERICAN TANKERS Ltd | $1.50B |
-| CURI | CuriosityStream Inc. | $172.1M |
-| INNV | InnovAge Holding Corp. | $1.46B |
-| CODI | Compass Diversified Holdings | $869.0M |
-| ETON | Eton Pharmaceuticals, Inc. | $1.71B |
 | IMCR | Immunocore Holdings plc | $1.93B |
 | ESOA | Energy Services of America CORP | $210.7M |
 | AMN | AMN HEALTHCARE SERVICES INC | $1.29B |
@@ -166,7 +156,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (333)
+## Done (343)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | JACK | JACK IN THE BOX INC | $290.8M | cloudA | 2026-09-04T22:13:41Z |
 | ALTO | Alto Ingredients, Inc. | $312.6M | cloudA | 2026-09-04T22:13:41Z |
 | CPRI | Capri Holdings Ltd | $1.50B | cloudA | 2026-09-04T22:13:41Z |
+| WLFC | WILLIS LEASE FINANCE CORP | $1.17B | cloudB | 2026-09-04T22:39:58Z |
+| EGY | VAALCO ENERGY INC /DE/ | $635.4M | cloudB | 2026-09-04T22:39:58Z |
+| CRSR | Corsair Gaming, Inc. | $1.38B | cloudB | 2026-09-04T22:39:58Z |
+| VSTS | Vestis Corp | $1.66B | cloudB | 2026-09-04T22:39:58Z |
+| GETY | Getty Images Holdings, Inc. | $98.5M | cloudB | 2026-09-04T22:39:58Z |
+| NAT | NORDIC AMERICAN TANKERS Ltd | $1.50B | cloudB | 2026-09-04T22:39:58Z |
+| CURI | CuriosityStream Inc. | $172.1M | cloudB | 2026-09-04T22:39:58Z |
+| INNV | InnovAge Holding Corp. | $1.46B | cloudB | 2026-09-04T22:39:58Z |
+| CODI | Compass Diversified Holdings | $869.0M | cloudB | 2026-09-04T22:39:58Z |
+| ETON | Eton Pharmaceuticals, Inc. | $1.71B | cloudB | 2026-09-04T22:39:58Z |

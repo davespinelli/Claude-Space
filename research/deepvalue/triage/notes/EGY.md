@@ -1,0 +1,5 @@
+# EGY — VAALCO ENERGY INC /DE/ · triage 2026-09-04 · Edge: cyclical-trough · Score 7/10
+
+Vaalco is a Houston-based independent producing crude oil from an African-focused portfolio: Gabon (Etame, 58.8% WI operated), Egypt, Cote d'Ivoire (Baobab, CI-40) and undeveloped Equatorial Guinea, having exited Canada in February 2026 for $25.5M. The edge type is cyclical-trough. Trailing 2025 numbers in the screen row (2026-09-04, $6.04) are depressed by a year-long Baobab FPSO dry dock and a $67.2M held-for-sale impairment: revenue fell 25% to $359.3M and EBIT was negative $20.6M. Baobab restarted in June 2026 and Q2 2026 adjusted EBITDAX was $54.8M, nearly five times Q1's $11.6M, with Q3 NRI volumes guided up about 23% sequentially; annualising Q2 puts EV of $782.0M near 3.6x. The biggest risk is that this is a spending year, not a harvest year: 2026 capital guidance is $290.0M to $360.0M against $30.4M of cash, the screen's 33.5% FCF yield is an artefact because capex was not tagged, and momentum is already 40.9% with the stock 7.5% off its high.
+
+_Sources: triage pack only (sections 1, 2, 3, 5, 6, 7, 8, 9, 11). Triage-depth read, not a deep dive._
