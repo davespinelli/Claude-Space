@@ -238,3 +238,21 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 39 SPY buy & hold - reference | 14.2% | 0.86 | -33.7% | 0.89 / 0.86 | 0.60 (0.70/0.52) | - | 2026-09-04_smallcap-eligible-equal-weight_C.py |
 | 2026-09-04 | 39 RULES v1 on the small panel - reference | 8.1% | 0.60 | -32.8% | 0.70 / 0.52 | 0.60 (0.70/0.52) | - | 2026-09-04_smallcap-eligible-equal-weight_C.py |
 | 2026-09-04 | 39 EW all 439 names @75% - CONTROL (no eligibility filter) | 8.1% | 0.64 | -30.7% | 0.82 / 0.61 | 0.60 (0.70/0.52) | - | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 38 mom12-1 filt=200d n=10 | 16.0% | 0.70 | -35.6% | 0.72 / 0.70 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 mom12-1 filt=200d n=20 | 13.4% | 0.69 | -33.0% | 0.75 / 0.68 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 mom12-1 filt=200d n=40 | 11.4% | 0.69 | -30.3% | 0.75 / 0.67 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 mom12-1 filt=200d n=60 | 7.6% | 0.53 | -30.2% | 0.55 / 0.54 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 mom12-1 filt=none n=10 | 14.9% | 0.65 | -38.9% | 0.64 / 0.67 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 mom12-1 filt=none n=20 | 13.5% | 0.68 | -34.9% | 0.73 / 0.66 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 mom12-1 filt=none n=40 | 14.6% | 0.80 | -33.9% | 0.80 / 0.82 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 mom12-1 filt=none n=60 | 10.7% | 0.65 | -36.5% | 0.67 / 0.65 | 0.65 (0.66/0.65) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 CONTROL EW all 439 @75% (no filter, no ranking) | 10.2% | 0.68 | -36.2% | 0.80 / 0.61 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 RULES v1 on the small panel - reference | 8.1% | 0.60 | -32.8% | 0.70 / 0.52 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 SPY buy & hold - reference | 14.2% | 0.86 | -33.7% | 0.89 / 0.86 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 RULES v1 live (universe.json) - baseline | 6.3% | 0.65 | -13.8% | 0.66 / 0.65 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 walk-forward plain-Sharpe pick none/n=40 - OOS 2017+ | 16.3% | 0.82 | -33.9% | - / - | 0.65 (0.66/0.65) | KILL 4b (OOS Sharpe 0.818 vs SPY 0.884) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 walk-forward 4b-aware pick - OOS 2017+ | - | - | - | - / - | 0.65 (0.66/0.65) | picks NOTHING (no IS point met the -11.2% DD cap) | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 n=40 gate=vol20 only [diag] | 7.4% | 0.52 | -32.8% | - / - | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 n=40 gate=both [diag] | 5.6% | 0.44 | -27.2% | - / - | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 D1 (best 12-1 decile, EW, 0 bps) [diag] | 21.5% | 0.87 | -42.2% | - / - | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 38 D10 (worst 12-1 decile, EW, 0 bps) [diag] | 29.2% | 0.94 | -60.3% | - / - | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
