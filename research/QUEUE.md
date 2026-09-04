@@ -1,6 +1,7 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
-0. small-cap-price-panel — DATA (local, live data): build data/prices_small.csv = daily adjusted closes since 2010 for every ticker in research/deepvalue/universe_under2b.csv (485 names; state survivorship bias: current constituents only) via yfinance in batches; add to research/cache_prices.py weekly; extend baseline.load_universe(small=True). Then RERUN small-cap-pead and momentum-no-vol-scaler on it. Prereq for every small-cap idea.
+38. small-cap-momentum-clean — on the NEW small-cap panel: `from baseline import load_universe; px = load_universe(small=True)` (483 sub-$2B names since 2010, SPY column included for compare). FIRST filter out tickers whose data/small_meta.csv max_1d_move >= 1.0 (42 corrupted/relisted names, e.g. AMPY). Then test 12-1 momentum top-20/top-40 equal-weight with the 200d filter, weekly, 10 bps, both halves and rule-8 OOS. Survivorship: current constituents only, state it.
+39. small-cap-eligible-equal-weight — same panel and filter: equal-weight ALL names above 200d with vol20<0.60 (the v2 logic) at 75%/100% gross. Does the KEEP-4b result from the ETF/mega-cap universe survive in small caps?
 3. rebalance-freq — weekly vs monthly vs quarterly for RULES v1.
 4. abs-momentum-filter — replace 200d-MA filter with 12-1 momentum > 0; also try both.
 6. defensive-sleeve — when breadth (% above 200d) < 40%, move the cash sleeve into TLT/GLD/SHY best-of-3 by 3m momentum.
@@ -49,3 +50,4 @@
 25. composite-vs-equal-weight — PARK/ACTIONABLE — traded score IC≈0 (t 0.4); /sqrt(vol20) cancels momentum (pre-scaler IC t 4.2). Equal-weight all eligible @75%: 10.4%/1.05, halves 1.07/1.03 (> SPY both), misses 4b CAGR floor by 0.23pp (2026-09-03)
 27. qqq-trend-only — KILL — filter costs 6.4pp CAGR vs QQQ B&H (20.8%/1.01); variants 12-15%/0.83-0.91/-27%; live book beaten 3x by a napkin rule (2026-09-03)
 31. small-cap-pead — KILL on the broad (large-cap) panel: sorted terciles 17-19%/0.96-1.07/-34%, but unsorted and reversed controls beat them; drift +0.47% at 20d then negative by 60d; OOS Sharpe 0.92 < SPY. Must be rerun on a true small-cap panel (idea 0). (2026-09-04)
+0. small-cap-price-panel — DONE: data/prices_small.csv.gz + volume_small.csv.gz, 483 names 2010-2026, loaders baseline.load_universe(small=True) / load_volume(small=True); 42 names flagged in small_meta.csv (max_1d_move>=1.0) must be excluded explicitly. (2026-09-04)
