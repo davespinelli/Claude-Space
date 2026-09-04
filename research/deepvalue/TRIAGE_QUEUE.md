@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T15:40:48Z · open 352 · in progress 0 · done 133_
+_Source: universe_under2b.csv · updated 2026-09-04T16:11:52Z · open 332 · in progress 10 · done 143_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (352)
+## Open (332)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| WNC | WABASH NATIONAL Corp | $580.9M |
-| APEI | AMERICAN PUBLIC EDUCATION INC | $830.5M |
-| PZZA | PAPA JOHNS INTERNATIONAL INC | $742.4M |
-| FLO | FLOWERS FOODS INC | $1.37B |
-| UVV | UNIVERSAL CORP /VA/ | $1.15B |
-| CNMD | CONMED Corp | $1.48B |
-| DMC | DEL MONTE CORP | $1.49B |
-| SPOK | Spok Holdings, Inc | $223.4M |
-| PSFE | Paysafe Ltd | $350.9M |
-| KFRC | KFORCE INC | $966.2M |
-| HLLY | Holley Inc. | $375.8M |
-| PROP | Prairie Operating Co. | $53.1M |
-| DLX | DELUXE CORP | $1.12B |
-| IRMD | IRADIMED CORP | $1.11B |
-| EVI | EVI INDUSTRIES, INC. | $167.7M |
-| EPAC | ENERPAC TOOL GROUP CORP | $1.89B |
-| ATEN | A10 Networks, Inc. | $1.79B |
-| WEYS | WEYCO GROUP INC | $422.1M |
-| NRC | NRC HEALTH | $470.0M |
-| NPK | NATIONAL PRESTO INDUSTRIES INC | $1.03B |
 | BYRN | Byrna Technologies Inc. | $77.4M |
 | THRM | Gentherm Inc | $1.23B |
 | SVV | Savers Value Village, Inc. | $1.58B |
@@ -361,12 +341,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| HLLY | Holley Inc. | $375.8M | cloudA | 2026-09-04T16:07:37Z |
+| PROP | Prairie Operating Co. | $53.1M | cloudA | 2026-09-04T16:07:37Z |
+| DLX | DELUXE CORP | $1.12B | cloudA | 2026-09-04T16:07:37Z |
+| IRMD | IRADIMED CORP | $1.11B | cloudA | 2026-09-04T16:07:37Z |
+| EVI | EVI INDUSTRIES, INC. | $167.7M | cloudA | 2026-09-04T16:07:37Z |
+| EPAC | ENERPAC TOOL GROUP CORP | $1.89B | cloudA | 2026-09-04T16:07:37Z |
+| ATEN | A10 Networks, Inc. | $1.79B | cloudA | 2026-09-04T16:07:37Z |
+| WEYS | WEYCO GROUP INC | $422.1M | cloudA | 2026-09-04T16:07:37Z |
+| NRC | NRC HEALTH | $470.0M | cloudA | 2026-09-04T16:07:37Z |
+| NPK | NATIONAL PRESTO INDUSTRIES INC | $1.03B | cloudA | 2026-09-04T16:07:37Z |
 
-## Done (133)
+## Done (143)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | USNA | USANA HEALTH SCIENCES INC | $266.6M | cloudB | 2026-09-04T15:40:48Z |
 | CLB | Core Laboratories Inc. /DE/ | $574.9M | cloudB | 2026-09-04T15:40:48Z |
 | XHR | Xenia Hotels & Resorts, Inc. | $1.67B | cloudB | 2026-09-04T15:40:48Z |
+| WNC | WABASH NATIONAL Corp | $580.9M | cloudA | 2026-09-04T16:11:52Z |
+| APEI | AMERICAN PUBLIC EDUCATION INC | $830.5M | cloudA | 2026-09-04T16:11:52Z |
+| PZZA | PAPA JOHNS INTERNATIONAL INC | $742.4M | cloudA | 2026-09-04T16:11:52Z |
+| FLO | FLOWERS FOODS INC | $1.37B | cloudA | 2026-09-04T16:11:52Z |
+| UVV | UNIVERSAL CORP /VA/ | $1.15B | cloudA | 2026-09-04T16:11:52Z |
+| CNMD | CONMED Corp | $1.48B | cloudA | 2026-09-04T16:11:52Z |
+| DMC | DEL MONTE CORP | $1.49B | cloudA | 2026-09-04T16:11:52Z |
+| SPOK | Spok Holdings, Inc | $223.4M | cloudA | 2026-09-04T16:11:52Z |
+| PSFE | Paysafe Ltd | $350.9M | cloudA | 2026-09-04T16:11:52Z |
+| KFRC | KFORCE INC | $966.2M | cloudA | 2026-09-04T16:11:52Z |
