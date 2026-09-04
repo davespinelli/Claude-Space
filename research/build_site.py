@@ -41,9 +41,9 @@ if tenders_path.exists():
     tmd = tenders_path.read_text()
     sub = tmd.split("## Live share tenders", 1)[-1].split("\n## ", 1)[0]
     table = "\n".join(l for l in sub.splitlines() if l.startswith("|"))
-    stamp = next((l.strip() for l in tmd.splitlines() if l.startswith("_Generated")), "")
+    stamp = next((l.strip().strip("_") for l in tmd.splitlines() if l.startswith("_Generated")), "")
     tenders_html = f"""<h2>Tender offers with odd-lot priority</h2>
-<p><small>Issuer self-tenders (SEC Schedule TO-I) that buy back stock at a premium. Most give <strong>odd-lot priority</strong>: a holder of fewer than 100 shares who tenders all of them is bought in full, ahead of the proration that hits everyone else. Profit shown is for a 99-share position. {markdown.markdown(stamp)}</small></p>
+<p><small>Issuer self-tenders (SEC Schedule TO-I) that buy back stock at a premium. Most give <strong>odd-lot priority</strong>: a holder of fewer than 100 shares who tenders all of them is bought in full, ahead of the proration that hits everyone else. Profit shown is for a 99-share position. {stamp}</small></p>
 {markdown.markdown(table, extensions=["tables"]) if table else "<p><em>No live offers in the current window.</em></p>"}
 <p><small>Risks, the odd-lot rule and the quoted filing language: <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/tenders/TENDERS.md">TENDERS.md</a> · full history: <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/tenders/history.csv">history.csv</a>. Information, not advice.</small></p>"""
 
