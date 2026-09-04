@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T23:10:55Z · open 122 · in progress 10 · done 353_
+_Source: universe_under2b.csv · updated 2026-09-04T23:14:11Z · open 122 · in progress 0 · done 363_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -131,22 +131,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| SILC | SILICOM LTD. | $228.6M | cloudA | 2026-09-04T23:07:32Z |
-| MUX | McEwen Inc. | $1.26B | cloudA | 2026-09-04T23:07:32Z |
-| MBC | MasterBrand, Inc. | $1.66B | cloudA | 2026-09-04T23:07:32Z |
-| MSEX | MIDDLESEX WATER CO | $1.10B | cloudA | 2026-09-04T23:07:32Z |
-| STOK | Stoke Therapeutics, Inc. | $1.94B | cloudA | 2026-09-04T23:07:32Z |
-| TDAY | USA TODAY Co., Inc. | $949.9M | cloudA | 2026-09-04T23:07:32Z |
-| QMCO | QUANTUM CORP /DE/ | $956.8M | cloudA | 2026-09-04T23:07:32Z |
-| MEI | METHODE ELECTRONICS INC | $543.4M | cloudA | 2026-09-04T23:07:32Z |
-| ALOT | AstroNova, Inc. | $224.6M | cloudA | 2026-09-04T23:07:32Z |
-| TITN | Titan Machinery Inc. | $532.0M | cloudA | 2026-09-04T23:07:32Z |
 
-## Done (353)
+## Done (363)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | CLW | Clearwater Paper Corp | $333.8M | cloudA | 2026-09-04T23:10:55Z |
 | SNDA | SONIDA SENIOR LIVING, INC. | $1.82B | cloudA | 2026-09-04T23:10:55Z |
 | SONO | Sonos Inc | $1.91B | cloudA | 2026-09-04T23:10:55Z |
+| SILC | SILICOM LTD. | $228.6M | cloudA | 2026-09-04T23:14:11Z |
+| MUX | McEwen Inc. | $1.26B | cloudA | 2026-09-04T23:14:11Z |
+| MBC | MasterBrand, Inc. | $1.66B | cloudA | 2026-09-04T23:14:11Z |
+| MSEX | MIDDLESEX WATER CO | $1.10B | cloudA | 2026-09-04T23:14:11Z |
+| STOK | Stoke Therapeutics, Inc. | $1.94B | cloudA | 2026-09-04T23:14:11Z |
+| TDAY | USA TODAY Co., Inc. | $949.9M | cloudA | 2026-09-04T23:14:11Z |
+| QMCO | QUANTUM CORP /DE/ | $956.8M | cloudA | 2026-09-04T23:14:11Z |
+| MEI | METHODE ELECTRONICS INC | $543.4M | cloudA | 2026-09-04T23:14:11Z |
+| ALOT | AstroNova, Inc. | $224.6M | cloudA | 2026-09-04T23:14:11Z |
+| TITN | Titan Machinery Inc. | $532.0M | cloudA | 2026-09-04T23:14:11Z |

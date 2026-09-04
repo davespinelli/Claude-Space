@@ -1,0 +1,5 @@
+# SILC — SILICOM LTD. · triage 2026-09-04 · Edge: none · Score 3/10
+
+Silicom is an Israeli maker of computer communications equipment, but the pack cannot describe the business further: the file labelled Item 7 MD&A is the 20-F Item 7, Major Shareholders and Related Party Transactions, so it carries ownership tables and the CEO compensation package rather than any management commentary on operations, and no Item 1 business description or earnings release was fetched. From the screen row alone, CY2025 revenue was $61.9M, up 6.6%, against an EBIT loss of $12.3M, a net loss of $11.5M and negative operating cash flow of $2.2M, with $35.2M of cash and a DEBT DATA MISSING flag meaning the net cash position is unverified. No edge is claimable: a loss-making equipment vendor whose stock is up 172% over twelve months and sits 21.4% below its high is not visibly mispriced, and insiders sold $2.3M with no open-market purchases. The biggest risk is simply that nothing here can be checked, and what can be seen is losses at the operating line. Two funds hold 9.7% and 5.3%.
+
+_Sources: triage pack only (sections 2, 3, 6, 8, 11). Triage-depth read, not a deep dive._

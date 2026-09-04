@@ -354,3 +354,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | CLW | Clearwater Paper Corp | $333.8M | cyclical-trough | 7 | Trades at 0.42x book with 300K tons of SBS capacity out, operating rates heading to 90%+ and July price increases of $40-60 per ton |
 | 2026-09-04 | SNDA | SONIDA SENIOR LIVING, INC. | $1.8B | none | 4 | Same-store NOI up 16.9% and occupancy 87.8%, but 16x EV/EBITDA with shares up 155%, a $250M ATM and negative H1 operating cash flow |
 | 2026-09-04 | SONO | Sonos Inc | $1.9B | post-restructuring | 6 | Opex cut of $54M turned a $16M operating loss into $100M of profit over nine months and Coliseum bought stock and took a board seat |
+| 2026-09-04 | SILC | SILICOM LTD. | $228.6M | none | 3 | Pack has no MD&A or business description, and the screen shows a $12.3M EBIT loss after the stock ran 172% in twelve months |
+| 2026-09-04 | MUX | McEwen Inc. | $1.3B | none | 0 | no filings in bundle |
+| 2026-09-04 | MBC | MasterBrand, Inc. | $1.7B | cyclical-trough | 6 | Legacy EBITDA halved on a mid-single-digit market decline with $100M of merger synergies targeted, but 3.9x leverage and near-zero H2 adjusted EPS |
+| 2026-09-04 | MSEX | MIDDLESEX WATER CO | $1.1B | none | 3 | Regulated water utility at 27.5x EV/EBIT and 3.1% off its high, with $126M of 2026 capex keeping FCF negative and shares up 4.6% |
+| 2026-09-04 | STOK | Stoke Therapeutics, Inc. | $1.9B | none | 3 | One unapproved Phase 3 asset with data in Q3 2027, H1 loss of $111.6M, and screen revenue that is a 2025 Biogen licence recognition |
+| 2026-09-04 | TDAY | USA TODAY Co., Inc. | $949.9M | cash-cow-narrative | 5 | FCF up 11% and first lien leverage down to 2.3x, but revenue still fell 6.1% same-store and debt of $970M exceeds the market cap |
+| 2026-09-04 | QMCO | QUANTUM CORP /DE/ | $956.8M | post-restructuring | 4 | Eliminated all debt and turned its first profitable quarter since 2023, but $902M EV on ~$32M run-rate EBITDA after a 376% six-month move |
+| 2026-09-04 | MEI | METHODE ELECTRONICS INC | $543.4M | misunderstood-segment | 4 | Data centre Industrial volumes drove sales up 10.4%, yet adjusted EBITDA fell to 5.2% of sales and free cash flow was an outflow of $10.9M |
+| 2026-09-04 | ALOT | AstroNova, Inc. | $224.6M | none | 2 | Merger agreement with Orion signed in June and change-of-control 8-Ks filed in August, with the stock sitting exactly at its 52-week high |
+| 2026-09-04 | TITN | Titan Machinery Inc. | $532.0M | cyclical-trough | 5 | Equipment margins inflecting at roughly book value, but FY27 is guided to a $28-40M adjusted net loss and the 25.8% FCF yield is an inventory artifact |
