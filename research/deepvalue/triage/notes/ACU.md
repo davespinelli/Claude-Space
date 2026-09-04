@@ -1,0 +1,5 @@
+# ACU — ACME UNITED CORP · triage 2026-09-04 · Edge: none · Score 4/10
+
+Acme United supplies first aid and medical kits (First Aid Only, PhysiciansCare, Spill Magic, Med-Nap, My Medic) and cutting tools (Westcott, Clauss, DMT) to mass-market retailers, e-commerce, industrial distributors and office channels in the US, Canada, Europe and Asia; first aid and medical is roughly 66% of sales. Q2 2026 sales rose 16% to $62.7M (8% excluding the January My Medic acquisition) with gross margin up to 42.6%, but H1 net income fell 6% to $6.0M and diluted EPS 7% to $1.46. The screen row (price $63.15, cap $242.1M) shows 17.6x EV/EBIT, a 3.1% FCF yield and a price 1.0% off its 52-week high, so there is no evidenced valuation gap and I claim no edge. Biggest risk is tariffs: the CEO says elevated tariff costs will keep pressuring margins in coming quarters, and 2025 US segment sales already fell on tariff-driven order cancellations. Bank debt less cash rose to $27.3M; insiders sold 25,722 shares with no open-market buys. No transcript in the pack.
+
+_Sources: triage pack only (sections 1-3, 5-9, 11). Triage-depth read, not a deep dive._

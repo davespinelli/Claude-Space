@@ -214,3 +214,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | CLFD | Clearfield, Inc. | $384.7M | hidden-asset | 4 | Cash and investments of about $155M are 40% of the cap, but backlog fell 32% and year-to-date operating income is negative |
 | 2026-09-04 | ORGO | Organogenesis Holdings Inc. | $211.0M | none | 1 | Revenue guided down 62-68%, $82.5M half-year EBITDA loss against $46.8M cash, an ATM signed and $148M of preferred ahead of common |
 | 2026-09-04 | GBX | GREENBRIER COMPANIES INC | $1.3B | misunderstood-segment | 6 | Leasing earned $29.2M of $31.9M operating income on 8% of revenue at 99% utilization, but railcar orders ran 2,200 against 3,600 delivered |
+| 2026-09-04 | IDR | Idaho Strategic Resources, Inc. | $497.1M | none | 4 | Revenue +64.6% is realized gold price not ounces, at 31.5x EV to EBIT with Q2 AISC up 16% and only insider selling |
+| 2026-09-04 | MCFT | MasterCraft Boat Holdings, Inc. | $379.8M | cyclical-trough | 6 | Units down 23.5% into the trough yet gross margin up 420bps and $84.6M confirmed net cash on a $379.8M cap, but no post-merger pro formas |
+| 2026-09-04 | ACU | ACME UNITED CORP | $242.1M | none | 4 | Q2 sales up 16% but H1 EPS down 7% on tariff costs management expects to persist, at 17.6x EV to EBIT and 1% off the 52-week high |
+| 2026-09-04 | XERS | Xeris Biopharma Holdings, Inc. | $1.6B | none | 3 | Recorlev doubled revenue but SG&A is 63% of sales, equity is negative and the count grew 12.9%, at 65.6x EV to EBIT |
+| 2026-09-04 | SFL | SFL Corp Ltd. | $1.8B | none | 3 | Revenue down 18.9% with a $26.4M net loss and $1.7B net debt at 12.4x EBIT, and the pack has no MD&A, no release and no capex |
+| 2026-09-04 | TWIN | TWIN DISC INC | $329.0M | none | 4 | FY26 EBITDA up 48% to $29.9M and net debt down to $13.8M, but that is 11x EBITDA after an 82% run with $14.0M of net income from a tax reversal |
+| 2026-09-04 | SCL | STEPAN CO | $1.4B | post-restructuring | 7 | H1 GAAP loss is entirely a $70.5M restructuring charge costing $7M cash while Q2 adjusted EBITDA rose 45% on 6% organic volume |
+| 2026-09-04 | ADV | Advantage Solutions Inc. | $409.3M | none | 0 | no filings in bundle |
+| 2026-09-04 | HLX | HORNBECK OFFSHORE SERVICES, INC. | $1.6B | none | 0 | no filings in bundle |
+| 2026-09-04 | TBPH | Theravance Biopharma, Inc. | $886.8M | none | 0 | no filings in bundle |

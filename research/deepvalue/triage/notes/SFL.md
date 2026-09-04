@@ -1,0 +1,5 @@
+# SFL — SFL Corp Ltd. · triage 2026-09-04 · Edge: none · Score 3/10
+
+SFL owns and charters out shipping assets (SIC 4412, deep sea foreign freight transportation); the pack carries no business description, because the fetcher missed Item 1 and the file labelled Item 7 is in fact the foreign-private-issuer "Major Shareholders and Related Party Transactions" item, so there is no management commentary and no earnings release here at all. What the pack does show: FY2025 revenue fell 18.9% to $733.0M, EBIT was $136.7M, and the company still lost $26.4M net, with $1.7B of net debt at 12.4x EBIT against $1.0B of equity and a $1.8B cap. ROIC is 4.0%. The 14.6% FCF yield on $267.1M of operating cash flow is not a claim I can test because capex is missing from the screen, and for a shipowner that omission is decisive. Hemen Holding owns 17.8% and DNB holds 11.8M shares under a share-lending arrangement. Biggest risk is leverage against falling revenue with no visibility into charter coverage or vessel capex. I claim no edge because the pack is too thin to support one.
+
+_Sources: triage pack only (sections 1-3, 6, 8, 11). Triage-depth read, not a deep dive._

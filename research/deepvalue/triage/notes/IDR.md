@@ -1,0 +1,5 @@
+# IDR — Idaho Strategic Resources, Inc. · triage 2026-09-04 · Edge: none · Score 4/10
+
+Idaho Strategic mines gold underground at the 100%-owned Golden Chest in north Idaho, processes it through its majority-owned New Jersey Mill (360 tonnes/day flotation), and sells concentrate; it also holds a large Idaho rare-earth and thorium land package (Mineral Hill, Lemhi Pass, Diamond Creek) that generates no revenue in the pack. FY2025 revenue rose 64.6% to $42.4M, but the MD&A attributes it mainly to realized gold of $3,583/oz versus $2,307, not volume: only 665 more ounces sold. The screen row (universe_under2b.csv, price $31.41, cap $497.1M) puts it at 31.5x EV/EBIT and a 2.5% FCF yield, so no valuation gap is evidenced and I claim no edge. Biggest risk is cost creep against a gold price the company does not control: Q2 2026 AISC rose 16.1% to $2,261.81/oz while feed grade fell 20.9%, and Form 4s show 176,793 shares sold, zero open-market buys. Shares grew 9.1%. No transcript in the pack.
+
+_Sources: triage pack only (sections 1-3, 5-9, 11). Triage-depth read, not a deep dive._

@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T18:13:55Z · open 272 · in progress 0 · done 213_
+_Source: universe_under2b.csv · updated 2026-09-04T18:38:45Z · open 262 · in progress 0 · done 223_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (272)
+## Open (262)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| IDR | Idaho Strategic Resources, Inc. | $497.1M |
-| MCFT | MasterCraft Boat Holdings, Inc. | $379.8M |
-| ACU | ACME UNITED CORP | $242.1M |
-| XERS | Xeris Biopharma Holdings, Inc. | $1.57B |
-| SFL | SFL Corp Ltd. | $1.82B |
-| TWIN | TWIN DISC INC | $329.0M |
-| SCL | STEPAN CO | $1.42B |
-| ADV | Advantage Solutions Inc. | $409.3M |
-| HLX | HORNBECK OFFSHORE SERVICES, INC. | $1.56B |
-| TBPH | Theravance Biopharma, Inc. | $886.8M |
 | HLMN | Hillman Solutions Corp. | $1.49B |
 | PD | PagerDuty, Inc. | $1.09B |
 | CERT | Certara, Inc. | $1.24B |
@@ -286,7 +276,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (213)
+## Done (223)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | CLFD | Clearfield, Inc. | $384.7M | cloudA | 2026-09-04T18:13:55Z |
 | ORGO | Organogenesis Holdings Inc. | $211.0M | cloudA | 2026-09-04T18:13:55Z |
 | GBX | GREENBRIER COMPANIES INC | $1.32B | cloudA | 2026-09-04T18:13:55Z |
+| IDR | Idaho Strategic Resources, Inc. | $497.1M | cloudB | 2026-09-04T18:38:45Z |
+| MCFT | MasterCraft Boat Holdings, Inc. | $379.8M | cloudB | 2026-09-04T18:38:45Z |
+| ACU | ACME UNITED CORP | $242.1M | cloudB | 2026-09-04T18:38:45Z |
+| XERS | Xeris Biopharma Holdings, Inc. | $1.57B | cloudB | 2026-09-04T18:38:45Z |
+| SFL | SFL Corp Ltd. | $1.82B | cloudB | 2026-09-04T18:38:45Z |
+| TWIN | TWIN DISC INC | $329.0M | cloudB | 2026-09-04T18:38:45Z |
+| SCL | STEPAN CO | $1.42B | cloudB | 2026-09-04T18:38:45Z |
+| ADV | Advantage Solutions Inc. | $409.3M | cloudB | 2026-09-04T18:38:45Z |
+| HLX | HORNBECK OFFSHORE SERVICES, INC. | $1.56B | cloudB | 2026-09-04T18:38:45Z |
+| TBPH | Theravance Biopharma, Inc. | $886.8M | cloudB | 2026-09-04T18:38:45Z |
