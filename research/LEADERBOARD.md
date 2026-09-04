@@ -736,3 +736,27 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 10 BSTK100/CAND-n20 (names 100, turn 12.6x, OOS 0.94) | 13.9% | 1.00 | -20.4% | 1.18 / 0.84 | 0.67 (0.64/0.69) | KILL 4b (DD) | research/backtests/2026-09-04_sector-only-universe_C.py |
 | 2026-09-04 | 10 WF S1 max-IS-Sharpe -> STK20/CAND-n10 OOS | 21.2% | 1.37 | -17.3% | - / - | 0.75 OOS | OOS 4b PASS (survivorship, see memo) | research/backtests/2026-09-04_sector-only-universe_C.py |
 | 2026-09-04 | 10 WF S2 4b-aware -> STK20/CAND-n20 OOS | 14.0% | 1.45 | -12.1% | - / - | 0.75 OOS | OOS 4b PASS (survivorship, see memo) | research/backtests/2026-09-04_sector-only-universe_C.py |
+| 2026-09-04 | 9 u.json/v1/none (turn 23.6x, OOS 0.75) | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/v1/S10/C21 (turn 23.5x, OOS 0.70) | 6.0% | 0.63 | -13.7% | 0.64 / 0.63 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/v1/S15/C0 (turn 23.6x, OOS 0.73) | 6.3% | 0.65 | -14.1% | 0.64 / 0.67 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/top20/none (turn 9.6x, OOS 1.17) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/top20/S10/C21 (turn 10.3x, OOS 1.05) | 9.5% | 1.00 | -12.2% | 1.00 / 0.99 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/top20/S15/C0 (turn 10.3x, OOS 1.13) | 12.1% | 1.07 | -16.2% | 1.09 / 1.06 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/top20/S20/C0 (turn 9.8x, OOS 1.16) | 12.4% | 1.09 | -17.0% | 1.09 / 1.09 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/ew-band3/none (turn 4.9x, OOS 1.23) | 11.3% | 1.14 | -15.1% | 1.11 / 1.16 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/ew-band3/S10/C21 (turn 5.6x, OOS 1.13) | 8.2% | 1.04 | -11.5% | 1.04 / 1.04 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/ew-band3/S15/C0 (turn 5.5x, OOS 1.20) | 10.7% | 1.12 | -15.3% | 1.12 / 1.11 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/ew-band3/S15/C21 (turn 5.0x, OOS 1.18) | 10.1% | 1.12 | -12.8% | 1.17 / 1.09 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 u.json/ew-band3/S20/C0 (turn 5.0x, OOS 1.21) | 11.0% | 1.13 | -14.8% | 1.12 / 1.14 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/v1/none (turn 29.4x, OOS 0.58) | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/v1/S10/C21 (turn 29.4x, OOS 0.60) | 6.5% | 0.65 | -20.6% | 0.77 / 0.55 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/v1/S15/C0 (turn 29.4x, OOS 0.56) | 6.3% | 0.63 | -21.7% | 0.76 / 0.52 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/top20/none (turn 13.8x, OOS 0.89) | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/top20/S10/C21 (turn 14.2x, OOS 0.78) | 9.1% | 0.82 | -14.7% | 0.94 / 0.71 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/top20/S15/C0 (turn 14.4x, OOS 0.85) | 12.2% | 0.92 | -20.1% | 1.10 / 0.76 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/top20/S20/C0 (turn 13.9x, OOS 0.88) | 12.8% | 0.95 | -19.0% | 1.12 / 0.80 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/ew-band3/none (turn 5.2x, OOS 1.07) | 11.1% | 1.06 | -16.8% | 1.16 / 0.97 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/ew-band3/S10/C21 (turn 5.9x, OOS 1.01) | 8.0% | 0.98 | -13.1% | 1.08 / 0.88 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/ew-band3/S15/C0 (turn 5.8x, OOS 1.04) | 10.5% | 1.04 | -17.0% | 1.15 / 0.93 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/ew-band3/S15/C21 (turn 5.3x, OOS 1.07) | 10.1% | 1.06 | -15.0% | 1.17 / 0.95 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 9 broad/ew-band3/S20/C0 (turn 5.3x, OOS 1.07) | 10.9% | 1.06 | -16.7% | 1.17 / 0.96 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
