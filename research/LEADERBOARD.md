@@ -131,7 +131,6 @@ EQW versions) — a leverage lever, not a position-count edge. See
 | 2026-09-04 | 31 PEAD quintile h=40 (broad, 2012-26) | 16.8% | 0.92 | -36.0% | 1.13 / 0.78 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
 | 2026-09-04 | 31 PEAD quintile h=60 (broad, 2012-26) | 19.4% | 1.05 | -35.0% | 1.35 / 0.84 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
 | 2026-09-04 | 31 PEAD CONTROL bottom-tercile h=60 (sort reversed — beats the signal) | 20.7% | 1.16 | -32.1% | 1.30 / 1.09 | 0.67 (0.86/0.50) | diagnostic | research/backtests/2026-09-04_small-cap-pead.py |
-<<<<<<< Updated upstream
 
 ### Idea 46 — eligible-fraction-vs-n (lane B, 2026-09-04)
 
@@ -174,7 +173,6 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 46 F  f=0.70 | 11.6% | 1.04 | -17.1% | 1.00 / 1.07 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 F  f=0.85 | 11.3% | 1.07 | -16.7% | 1.09 / 1.06 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 F  f=1.00 | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | 2026-09-04_eligible-fraction-vs-n_B.py |
-=======
 | 2026-09-04 | 36 spinoff INVESTABLE daily-EW | 32.1% | 1.11 | -45.3% | 0.70 / 1.41 | IWM 0.51 (0.50/0.52) | PARK (5-name result; sign test p 0.12; DD 1.8x IWM) | 2026-09-04_spinoff-calendar.py |
 | 2026-09-04 | 36 spinoff INVESTABLE drift | 33.7% | 1.08 | -49.1% | 0.70 / 1.41 | IWM 0.51 (0.50/0.52) | PARK | 2026-09-04_spinoff-calendar.py |
 | 2026-09-04 | 36 spinoff INVESTABLE ex top-5 | 20.7% | 0.82 | -49.4% | n/a | IWM 0.51 (0.50/0.52) | PARK (robustness arm) | 2026-09-04_spinoff-calendar.py |
@@ -184,4 +182,14 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | insider-cluster-buying hold=12m (broad universe, 2012+) | 26.6% | 1.27 | -39.7% | 1.31 / 1.28 | 0.66 (0.86/0.49) | PARK (4b: Sharpe yes, MaxDD no) | research/backtests/2026-09-04_insider-cluster-buying.py |
 | 2026-09-04 | RULES v1 baseline, 2012+ broad-universe sample - reference | 6.8% | 0.66 | -21.2% | 0.86 / 0.49 | 0.66 (0.86/0.49) | - | research/backtests/2026-09-04_insider-cluster-buying.py |
 | 2026-09-04 | SPY buy & hold, 2012+ sample - reference | 15.2% | 0.94 | -33.7% | 1.13 / 0.85 | 0.66 (0.86/0.49) | - | research/backtests/2026-09-04_insider-cluster-buying.py |
->>>>>>> Stashed changes
+| 2026-09-04 | 50 insider-cluster-smallcap ALL hold=6m EW100% | 18.8% | 0.83 | -49.4% | 1.08 / 0.69 | 0.57 (0.60/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 insider-cluster-smallcap ALL hold=6m cap5% | 18.0% | 0.80 | -49.4% | 1.03 / 0.69 | 0.57 (0.60/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 insider-cluster-smallcap ALL hold=12m EW100% | 16.0% | 0.75 | -49.1% | 0.96 / 0.63 | 0.57 (0.60/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 insider-cluster-smallcap ALL hold=12m cap5% | 15.2% | 0.72 | -49.1% | 0.91 / 0.63 | 0.57 (0.60/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 insider-cluster-smallcap OPP hold=6m EW100% (best arm) | 19.2% | 0.84 | -48.7% | 1.09 / 0.70 | 0.57 (0.60/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 insider-cluster-smallcap OPP hold=6m cap5% | 18.3% | 0.82 | -48.7% | 1.04 / 0.70 | 0.57 (0.60/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 insider-cluster-smallcap OPP hold=12m EW100% | 16.1% | 0.75 | -49.1% | 0.96 / 0.63 | 0.57 (0.60/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 insider-cluster-smallcap OPP hold=12m cap5% | 15.3% | 0.72 | -49.1% | 0.91 / 0.63 | 0.57 (0.60/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 RULES v1 on the small panel, 2012+ - reference | 7.6% | 0.57 | -32.8% | 0.60 / 0.54 | 0.57 (0.60/0.54) | - | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 SPY buy & hold, 2012+ - reference | 15.2% | 0.94 | -33.7% | 1.12 / 0.85 | 0.57 (0.60/0.54) | - | research/backtests/2026-09-04_insider-cluster-smallcap.py |
+| 2026-09-04 | 50 EW all 439 small caps, 2012+ - CONTROL (no insider signal) | 14.3% | 0.74 | -46.0% | 0.99 / 0.63 | 0.57 (0.60/0.54) | - | research/backtests/2026-09-04_insider-cluster-smallcap.py |
