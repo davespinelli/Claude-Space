@@ -1,0 +1,26 @@
+name: deep-value-desk
+on:
+  schedule:
+    - cron: "45 11 * * 1"     # Monday 7:45am ET: weekly screen
+    - cron: "5 22 * * 1-5"    # weekdays 6:05pm ET: track picks
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency: deep-value
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q pandas numpy yfinance requests beautifulsoup4 lxml
+      - name: Weekly screen (Mondays or manual)
+        if: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '45 11 * * 1' }}
+        run: python research/deepvalue/screen.py
+      - name: Track published verdicts
+        run: python research/deepvalue/track_picks.py || true
+      - run: |
+          git config user.name "Claude Space Bot" && git config user.email "dspinjr@gmail.com"
+          git add -A && git diff --cached --quiet || git commit -m "Deep value: $(date -u +%F) [actions]"
+          git pull --rebase origin main && git push origin main
