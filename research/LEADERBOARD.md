@@ -131,3 +131,45 @@ EQW versions) — a leverage lever, not a position-count edge. See
 | 2026-09-04 | 31 PEAD quintile h=40 (broad, 2012-26) | 16.8% | 0.92 | -36.0% | 1.13 / 0.78 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
 | 2026-09-04 | 31 PEAD quintile h=60 (broad, 2012-26) | 19.4% | 1.05 | -35.0% | 1.35 / 0.84 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
 | 2026-09-04 | 31 PEAD CONTROL bottom-tercile h=60 (sort reversed — beats the signal) | 20.7% | 1.16 | -32.1% | 1.30 / 1.09 | 0.67 (0.86/0.50) | diagnostic | research/backtests/2026-09-04_small-cap-pead.py |
+
+### Idea 46 — eligible-fraction-vs-n (lane B, 2026-09-04)
+
+Should the book pin the position COUNT (`top n`) or the FRACTION of eligible names (`top f x E_t`)?
+Arms: **N** = top n at 0.75/n (idea 2's KEEP construction, de-grosses to cash when E_t < n);
+**NF** = same count cap renormalised to 75% gross (a decomposition arm, isolates the cash sleeve);
+**F** = top ceil(f x E_t) at 0.75/ceil(f x E_t). Scorer fixed at the candidate's own (no
+`/sqrt(vol20)`); one tuned parameter per arm; all 24 points below. Sanity: `N n=20` reproduces idea
+2's KEEP row and `N n=5` reproduces idea 1's `OFF EQW n=5` row exactly.
+**KILL for the fraction rule as an improvement** — at matched average book size it beats the
+gross-matched count arm on Sharpe at 3 of 8 pairs (mean dSharpe -0.002), and its walk-forward pick
+loses OOS to fixed-n's (12.4%/1.132 vs 14.4%/1.170). **But f=0.85 is a 4b KEEP-candidate in its own
+right**: it is the only setting in the study that passes 4b on BOTH universe.json (11.3%/1.072/
+-16.7%) and universe_broad.json (11.2%/1.024/-18.6%), where idea 2's n=20 fails H2 by 0.02. Also
+found: idea 2's "leave the remainder in cash when fewer than n are eligible" clause is worth +0.02
+Sharpe at n=20 / +0.05 at n=30 and should be kept deliberately. 14 of 24 pass 4b, 0 of 24 pass 4a.
+See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
+
+| 2026-09-04 | 46 N  n=5 | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 N  n=8 | 13.8% | 0.93 | -17.9% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 N  n=10 | 12.9% | 0.93 | -17.5% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 N  n=12 | 12.7% | 0.96 | -17.8% | 0.98 / 0.95 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 N  n=15 | 13.2% | 1.04 | -19.2% | 1.07 / 1.03 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 N  n=20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 N  n=25 | 11.8% | 1.09 | -17.7% | 1.05 / 1.14 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 N  n=30 | 11.0% | 1.10 | -16.6% | 1.03 / 1.17 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=5 | 16.6% | 0.95 | -21.1% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=8 | 14.0% | 0.94 | -17.9% | 0.92 / 0.97 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=10 | 13.0% | 0.94 | -17.5% | 0.91 / 0.96 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=12 | 12.8% | 0.96 | -17.8% | 0.97 / 0.96 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=15 | 13.3% | 1.04 | -19.2% | 1.06 / 1.03 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=20 | 12.8% | 1.07 | -18.3% | 1.08 / 1.07 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=25 | 12.1% | 1.07 | -17.6% | 1.04 / 1.09 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=30 | 11.5% | 1.05 | -17.5% | 1.02 / 1.09 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 F  f=0.15 | 16.8% | 0.98 | -27.8% | 1.05 / 0.93 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 F  f=0.25 | 14.8% | 1.00 | -25.0% | 0.94 / 1.06 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 F  f=0.35 | 13.6% | 1.01 | -21.5% | 0.96 / 1.05 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 F  f=0.45 | 13.6% | 1.06 | -19.7% | 1.00 / 1.12 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 F  f=0.55 | 12.2% | 1.01 | -18.0% | 0.96 / 1.05 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 F  f=0.70 | 11.6% | 1.04 | -17.1% | 1.00 / 1.07 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 F  f=0.85 | 11.3% | 1.07 | -16.7% | 1.09 / 1.06 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 F  f=1.00 | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | 2026-09-04_eligible-fraction-vs-n_B.py |
