@@ -1183,3 +1183,41 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 16 u56/top20 sep f=0.25 | 12.3% | 1.09 | -18.3% | 1.07 / 1.11 | 0.67 (0.64/0.69) | 4b-pass both-univ but dSharpe<0 (hindsight mask) | 2026-09-04_monthly-seasonality_cloud.py |
 | 2026-09-04 | 16 broad/top20 sep f=0.00 | 12.3% | 0.94 | -20.1% | 1.04 / 0.85 | 0.64 (0.76/0.54) | 4b-pass both-univ but dSharpe<0 (hindsight mask) | 2026-09-04_monthly-seasonality_cloud.py |
 | 2026-09-04 | 16 broad/top20 sep f=0.25 | 12.5% | 0.95 | -20.1% | 1.07 / 0.84 | 0.64 (0.76/0.54) | 4b-pass both-univ but dSharpe<0 (hindsight mask) | 2026-09-04_monthly-seasonality_cloud.py |
+| 2026-09-04 | 87 u56/GROSS/EWall=0.8 | 11.1% | 1.05 | -16.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/BAND/ew-all=0.02 | 11.0% | 1.11 | -15.1% | 1.10 / 1.11 | 0.67 (0.64/0.69) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/BAND/ew-all=0.03 | 11.3% | 1.14 | -15.1% | 1.11 / 1.16 | 0.67 (0.64/0.69) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/BAND/ew-all=0.05 | 11.5% | 1.11 | -15.8% | 1.09 / 1.12 | 0.67 (0.64/0.69) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/BAND/ew-all=0.08 | 11.9% | 1.13 | -17.1% | 1.18 / 1.09 | 0.67 (0.64/0.69) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/CRYPTO/CAND20=0.05 | 13.5% | 1.15 | -18.2% | 1.18 / 1.13 | 0.67 (0.64/0.69) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/CRYPTO/EWall=0.05 | 11.4% | 1.12 | -16.4% | 1.17 / 1.08 | 0.67 (0.64/0.69) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/CRYPTO/EWall=0.1 | 12.3% | 1.15 | -18.7% | 1.26 / 1.07 | 0.67 (0.64/0.69) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/GROSS/EWall=0.8 | 11.4% | 1.03 | -18.8% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/BAND/ew-all=0.02 | 11.1% | 1.06 | -17.1% | 1.17 / 0.96 | 0.64 (0.76/0.54) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/BAND/ew-all=0.03 | 11.1% | 1.06 | -16.8% | 1.16 / 0.97 | 0.64 (0.76/0.54) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/BAND/ew-all=0.05 | 11.1% | 1.04 | -17.5% | 1.13 / 0.96 | 0.64 (0.76/0.54) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/BAND/ew-all=0.08 | 11.7% | 1.08 | -18.8% | 1.20 / 0.97 | 0.64 (0.76/0.54) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/CRYPTO/CAND20=0.05 | 14.0% | 1.01 | -19.9% | 1.20 / 0.85 | 0.64 (0.76/0.54) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/CRYPTO/EWall=0.05 | 11.7% | 1.10 | -18.2% | 1.24 / 0.97 | 0.64 (0.76/0.54) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/CRYPTO/EWall=0.1 | 12.7% | 1.13 | -20.0% | 1.32 / 0.98 | 0.64 (0.76/0.54) | 4b-pass both-universe | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/GROSS/top20=0.8 | 13.5% | 1.09 | -19.5% | 1.09 / 1.10 | 0.67 (0.64/0.69) | rule-8 R0 pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/GROSS/top20=0.8 | 13.5% | 1.09 | -19.5% | 1.09 / 1.10 | 0.67 (0.64/0.69) | rule-8 Rm(m=0pp) pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/GROSS/EWall=1 | 13.9% | 1.05 | -20.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/BAND/ew-all=0.08 | 11.9% | 1.13 | -17.1% | 1.18 / 1.09 | 0.67 (0.64/0.69) | rule-8 R0 pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/BAND/ew-all=0.08 | 11.9% | 1.13 | -17.1% | 1.18 / 1.09 | 0.67 (0.64/0.69) | rule-8 Rm(m=0pp) pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/N/ranked=20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | rule-8 R0 pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/N/ranked=20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | rule-8 Rm(m=0pp) pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/CRYPTO/CAND20=0.15 | 15.1% | 1.18 | -23.3% | 1.31 / 1.09 | 0.67 (0.64/0.69) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/CRYPTO/CAND20=0.15 | 15.1% | 1.18 | -23.3% | 1.31 / 1.09 | 0.67 (0.64/0.69) | rule-8 Rm(m=0pp) pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/CRYPTO/EWall=0.15 | 13.2% | 1.15 | -22.6% | 1.32 / 1.03 | 0.67 (0.64/0.69) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 u56/CRYPTO/EWall=0.15 | 13.2% | 1.15 | -22.6% | 1.32 / 1.03 | 0.67 (0.64/0.69) | rule-8 Rm(m=0pp) pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/GROSS/top20=1 | 17.4% | 0.96 | -26.2% | 1.13 / 0.82 | 0.64 (0.76/0.54) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/GROSS/top20=0.7 | 12.2% | 0.96 | -18.8% | 1.12 / 0.81 | 0.64 (0.76/0.54) | rule-8 Rm(m=0pp) pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/GROSS/EWall=1 | 14.3% | 1.03 | -23.1% | 1.15 / 0.92 | 0.64 (0.76/0.54) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/GROSS/EWall=0.8 | 11.4% | 1.03 | -18.8% | 1.15 / 0.92 | 0.64 (0.76/0.54) | rule-8 Rm(m=0pp) pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/BAND/ew-all=0.08 | 11.7% | 1.08 | -18.8% | 1.20 / 0.97 | 0.64 (0.76/0.54) | rule-8 R0 pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/BAND/ew-all=0.08 | 11.7% | 1.08 | -18.8% | 1.20 / 0.97 | 0.64 (0.76/0.54) | rule-8 Rm(m=0pp) pick; OOS-4b PASS | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/N/ranked=30 | 12.2% | 0.97 | -20.3% | 1.15 / 0.82 | 0.64 (0.76/0.54) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/N/ranked=30 | 12.2% | 0.97 | -20.3% | 1.15 / 0.82 | 0.64 (0.76/0.54) | rule-8 Rm(m=0pp) pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/CRYPTO/CAND20=0.15 | 15.6% | 1.07 | -29.2% | 1.31 / 0.86 | 0.64 (0.76/0.54) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/CRYPTO/EWall=0.15 | 13.6% | 1.14 | -22.9% | 1.38 / 0.95 | 0.64 (0.76/0.54) | rule-8 R0 pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
+| 2026-09-04 | 87 broad/CRYPTO/EWall=0.15 | 13.6% | 1.14 | -22.9% | 1.38 / 0.95 | 0.64 (0.76/0.54) | rule-8 Rm(m=0pp) pick; OOS-4b fail | 2026-09-04_interior-4b-selection_cloud.py |
