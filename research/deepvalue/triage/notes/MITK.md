@@ -1,0 +1,5 @@
+# MITK — MITEK SYSTEMS INC · triage 2026-09-04 · Edge: misunderstood-segment · Score 5/10
+
+Mitek sells digital identity verification and fraud prevention software to more than 7,000 banks, fintechs, telecoms and marketplaces, plus the mobile check deposit product that processes roughly 1.2 billion transactions a year. The consolidated growth rate hides two opposite businesses: FY2025 revenue rose only 4% to $179.7 million because software license and hardware fell 10% to $74.1 million while SaaS and maintenance rose 17% to $105.6 million, and in the June 2026 quarter SaaS grew 36% with adjusted EBITDA margin at 38.5% versus 28.6%. The retirement of the $155 million convertible notes leaves roughly $100.2 million of cash and investments. The problem for a value desk is price: the stock is 6.4% off its 52-week high after a 76.2% twelve-month move, GAAP EV/EBIT is 48.1x, the FCF yield is 6.4%, and insiders sold $3.5 million with no open-market purchases. The biggest risk is that the declining legacy license base, still 41% of revenue, keeps offsetting SaaS growth.
+
+_Sources: triage pack only (sections 2, 3, 6, 7, 8, 9, 11). Triage-depth read, not a deep dive._

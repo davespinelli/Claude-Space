@@ -184,3 +184,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | DSGR | Distribution Solutions Group, Inc. | $1.6B | none | 3 | Trades 0.8% under the $35.00 LKCM Headwater going-private price; a merger spread, not a mispricing |
 | 2026-09-04 | INSP | Inspire Medical Systems, Inc. | $1.8B | none | 4 | 57% off the high for a reason the MD&A names: the -52 modifier would cut the Inspire V professional fee 10-50% |
 | 2026-09-04 | ONT | Onterris, Inc. | $617.4M | cyclical-trough | 7 | Emergency response revenue fell $37.7M in the quarter while EBITDA margin rose, at 8x EV with a strategic review and a poison pill |
+| 2026-09-04 | HROW | HARROW, INC. | $1.4B | none | 0 | No filings in bundle |
+| 2026-09-04 | SLVM | Sylvamo Corp | $1.4B | cyclical-trough | 7 | Europe swung to a $112M segment loss and 2026 is a stated transition year, with capex normalizing into a claimed $300M FCF run rate |
+| 2026-09-04 | WMK | WEIS MARKETS INC | $1.8B | none | 0 | No filings in bundle |
+| 2026-09-04 | MITK | MITEK SYSTEMS INC | $850.6M | misunderstood-segment | 5 | SaaS grew 36% in Q3 behind a 10% legacy license decline, but the stock is up 76% and near its high at 48x EV/EBIT |
+| 2026-09-04 | TK | TEEKAY CORP LTD | $1.2B | hidden-asset | 6 | $940.7M of consolidated cash against a $1.2B market cap, but debt is untagged, the sub stake unquantified and the pack has no MD&A |
+| 2026-09-04 | HSTM | HEALTHSTREAM INC | $869.6M | none | 4 | Guided capex of $31-34M is 10x the $3.7M the screen used, so the 6.9% FCF yield is roughly half real at 40.7x EV/EBIT |
+| 2026-09-04 | NRP | NATURAL RESOURCE PARTNERS LP | $1.5B | cash-cow-narrative | 7 | Zero-capex royalty MLP at $163M LTM FCF on a $1.5B cap, 0.2x leverage, management says debt gone and distributions up before year-end |
+| 2026-09-04 | LXFR | LUXFER HOLDINGS PLC | $460.0M | none | 3 | A July 2026 Transaction Agreement, change-in-control deals and a 41% six-month move point to a pending deal whose terms the pack omits |
+| 2026-09-04 | HPK | HighPeak Energy, Inc. | $1.0B | none | 3 | The 48.8% FCF yield ignores $107.5M of quarterly capex; what is real is $922.6M net debt with term loan amortization restarting in September |
+| 2026-09-04 | FET | FORUM ENERGY TECHNOLOGIES, INC. | $920.7M | post-restructuring | 5 | Guidance of $115-125M adjusted EBITDA makes the screen's 34.2x EV/EBIT stale, but the stock already ran 196% to 8.5x EV |

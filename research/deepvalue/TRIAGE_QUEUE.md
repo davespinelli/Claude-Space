@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T17:14:14Z · open 302 · in progress 0 · done 183_
+_Source: universe_under2b.csv · updated 2026-09-04T17:39:38Z · open 292 · in progress 0 · done 193_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (302)
+## Open (292)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| HROW | HARROW, INC. | $1.43B |
-| SLVM | Sylvamo Corp | $1.41B |
-| WMK | WEIS MARKETS INC | $1.77B |
-| MITK | MITEK SYSTEMS INC | $850.6M |
-| TK | TEEKAY CORP LTD | $1.16B |
-| HSTM | HEALTHSTREAM INC | $869.6M |
-| NRP | NATURAL RESOURCE PARTNERS LP | $1.50B |
-| LXFR | LUXFER HOLDINGS PLC | $460.0M |
-| HPK | HighPeak Energy, Inc. | $1.05B |
-| FET | FORUM ENERGY TECHNOLOGIES, INC. | $920.7M |
 | HNRG | HALLADOR ENERGY CO | $759.5M |
 | CWCO | Consolidated Water Co. Ltd. | $464.1M |
 | NX | Quanex Building Products CORP | $861.6M |
@@ -316,7 +306,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (183)
+## Done (193)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DSGR | Distribution Solutions Group, Inc. | $1.61B | cloudA | 2026-09-04T17:14:14Z |
 | INSP | Inspire Medical Systems, Inc. | $1.80B | cloudA | 2026-09-04T17:14:14Z |
 | ONT | Onterris, Inc. | $617.4M | cloudA | 2026-09-04T17:14:14Z |
+| HROW | HARROW, INC. | $1.43B | cloudB | 2026-09-04T17:39:38Z |
+| SLVM | Sylvamo Corp | $1.41B | cloudB | 2026-09-04T17:39:38Z |
+| WMK | WEIS MARKETS INC | $1.77B | cloudB | 2026-09-04T17:39:38Z |
+| MITK | MITEK SYSTEMS INC | $850.6M | cloudB | 2026-09-04T17:39:38Z |
+| TK | TEEKAY CORP LTD | $1.16B | cloudB | 2026-09-04T17:39:38Z |
+| HSTM | HEALTHSTREAM INC | $869.6M | cloudB | 2026-09-04T17:39:38Z |
+| NRP | NATURAL RESOURCE PARTNERS LP | $1.50B | cloudB | 2026-09-04T17:39:38Z |
+| LXFR | LUXFER HOLDINGS PLC | $460.0M | cloudB | 2026-09-04T17:39:38Z |
+| HPK | HighPeak Energy, Inc. | $1.05B | cloudB | 2026-09-04T17:39:38Z |
+| FET | FORUM ENERGY TECHNOLOGIES, INC. | $920.7M | cloudB | 2026-09-04T17:39:38Z |
