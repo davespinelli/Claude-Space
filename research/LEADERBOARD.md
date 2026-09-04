@@ -430,3 +430,63 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 67 broad walk-forward SPY core (10/12 pts): ew-band3 b=0.00 OOS | 11.2% | 1.07 | -16.8% | - / - | 0.64 (0.76/0.54) | clears OOS 4b | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
 | 2026-09-04 | 67 broad walk-forward QQQ core (10/12 pts): top20 b=0.50 OOS | 14.4% | 0.99 | -22.0% | - / - | 0.64 (0.76/0.54) | FAILS OOS 4b (DD) — 0/24 points pick b=0.25 | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
 | 2026-09-04 | 67 OOS reference: SPY buy & hold | 15.5% | 0.88 | -33.7% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
+| 2026-09-04 | 8 universe.json 12-1 n=5 | 19.9% | 1.06 | -24.1% | 1.04 / 1.09 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 12-1 n=10 | 15.2% | 1.04 | -20.6% | 1.03 / 1.05 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 12-1 n=20 | 12.1% | 1.05 | -18.8% | 1.15 / 0.97 | 0.67 (0.64/0.69) | KILL 4a (DD) / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 12-1 n=30 | 10.9% | 1.10 | -15.8% | 1.10 / 1.09 | 0.67 (0.64/0.69) | KILL 4a (DD) / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 6-1 n=5 | 19.9% | 1.08 | -22.8% | 1.21 / 0.97 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 6-1 n=10 | 13.9% | 0.96 | -20.6% | 1.08 / 0.88 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 6-1 n=20 | 11.8% | 1.02 | -19.2% | 1.09 / 0.95 | 0.67 (0.64/0.69) | KILL 4a (DD) / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 6-1 n=30 | 10.5% | 1.06 | -16.9% | 1.07 / 1.06 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 3-1 n=5 | 14.5% | 0.85 | -21.0% | 0.80 / 0.90 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 3-1 n=10 | 12.2% | 0.89 | -18.9% | 0.85 / 0.93 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 3-1 n=20 | 10.4% | 0.93 | -18.3% | 0.91 / 0.96 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json 3-1 n=30 | 9.8% | 1.02 | -16.4% | 0.94 / 1.10 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json blend-v1 n=5 | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json blend-v1 n=10 | 12.9% | 0.93 | -17.5% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json blend-v1 n=20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KILL 4a (DD) / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json blend-v1 n=30 | 11.0% | 1.10 | -16.6% | 1.03 / 1.17 | 0.67 (0.64/0.69) | KILL 4a (DD) / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json blend-skip n=5 | 16.9% | 0.97 | -22.5% | 1.11 / 0.84 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json blend-skip n=10 | 12.2% | 0.88 | -20.0% | 0.96 / 0.82 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1,H2,OOS) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json blend-skip n=20 | 11.7% | 1.01 | -19.5% | 1.04 / 0.99 | 0.67 (0.64/0.69) | KILL 4a (DD) / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json blend-skip n=30 | 10.8% | 1.08 | -16.5% | 1.06 / 1.11 | 0.67 (0.64/0.69) | KILL 4a (DD) / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json CONTROL EW-all-eligible | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json CONTROL REVERSED blend-v1 bottom-5 | 2.7% | 0.35 | -21.6% | 0.41 / 0.29 | 0.67 (0.64/0.69) | KILL 4a (H1,H2,DD) / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json CONTROL REVERSED blend-v1 bottom-20 | 6.5% | 0.81 | -13.7% | 0.94 / 0.68 | 0.67 (0.64/0.69) | KILL 4a (H2) / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json CONTROL REVERSED 12-1 bottom-5 | 7.2% | 0.67 | -20.9% | 0.49 / 0.86 | 0.67 (0.64/0.69) | KILL 4a (H1,DD) / KILL 4b (H1,OOS,DD,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json CONTROL REVERSED 12-1 bottom-20 | 7.1% | 0.85 | -14.2% | 0.84 / 0.86 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json CONTROL 1m-reversal n=5 | 10.0% | 0.72 | -26.7% | 0.81 / 0.64 | 0.67 (0.64/0.69) | KILL 4a (H2,DD) / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json CONTROL 1m-reversal n=20 | 8.0% | 0.82 | -17.3% | 0.89 / 0.76 | 0.67 (0.64/0.69) | KILL 4a (DD) / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 12-1 n=5 | 20.6% | 1.01 | -26.4% | 1.29 / 0.79 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 12-1 n=10 | 18.8% | 1.08 | -21.4% | 1.28 / 0.93 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 12-1 n=20 | 13.9% | 0.97 | -21.0% | 1.12 / 0.85 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 12-1 n=30 | 13.0% | 1.00 | -20.2% | 1.16 / 0.87 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 6-1 n=5 | 19.9% | 1.01 | -23.8% | 1.24 / 0.80 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (H2,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 6-1 n=10 | 16.9% | 1.02 | -20.2% | 1.25 / 0.83 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 6-1 n=20 | 14.5% | 1.02 | -20.9% | 1.23 / 0.83 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 6-1 n=30 | 13.4% | 1.03 | -20.6% | 1.24 / 0.85 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 3-1 n=5 | 15.9% | 0.87 | -22.6% | 0.91 / 0.83 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 3-1 n=10 | 12.2% | 0.80 | -20.9% | 1.04 / 0.58 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 3-1 n=20 | 10.9% | 0.83 | -20.1% | 1.03 / 0.64 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json 3-1 n=30 | 10.4% | 0.86 | -21.1% | 1.10 / 0.63 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS,DD,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json blend-v1 n=5 | 16.7% | 0.88 | -23.4% | 1.02 / 0.78 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json blend-v1 n=10 | 14.2% | 0.89 | -21.4% | 1.11 / 0.71 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json blend-v1 n=20 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json blend-v1 n=30 | 12.2% | 0.97 | -20.3% | 1.15 / 0.82 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json blend-skip n=5 | 16.0% | 0.85 | -22.4% | 1.09 / 0.65 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json blend-skip n=10 | 13.5% | 0.85 | -23.1% | 1.24 / 0.52 | 0.64 (0.76/0.54) | KILL 4a (H2,DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json blend-skip n=20 | 13.1% | 0.94 | -22.1% | 1.22 / 0.70 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json blend-skip n=30 | 12.2% | 0.96 | -20.3% | 1.16 / 0.77 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json CONTROL EW-all-eligible | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json CONTROL REVERSED blend-v1 bottom-5 | 1.6% | 0.20 | -29.9% | 0.31 / 0.09 | 0.64 (0.76/0.54) | KILL 4a (H1,H2,DD) / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json CONTROL REVERSED blend-v1 bottom-20 | 5.7% | 0.65 | -19.0% | 0.90 / 0.44 | 0.64 (0.76/0.54) | KILL 4a (H2) / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json CONTROL REVERSED 12-1 bottom-5 | 8.5% | 0.66 | -26.6% | 0.57 / 0.75 | 0.64 (0.76/0.54) | KILL 4a (H1,DD) / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json CONTROL REVERSED 12-1 bottom-20 | 8.0% | 0.81 | -17.0% | 0.86 / 0.76 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json CONTROL 1m-reversal n=5 | 10.7% | 0.70 | -28.1% | 0.83 / 0.59 | 0.64 (0.76/0.54) | KILL 4a (DD) / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json CONTROL 1m-reversal n=20 | 10.2% | 0.84 | -19.6% | 0.98 / 0.72 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS,CAGR) | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 SPY buy & hold (universe.json sample) - reference | 15.3% | 0.89 | -33.7% | 0.96 / 0.84 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 RULES v1 live (universe.json) - baseline | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json walk-forward plain-Sharpe: 6-1 n=5 OOS | 18.5% | 0.97 | -22.8% | - / - | 0.67 (0.64/0.69) | beats SPY OOS; misses OOS 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe.json walk-forward 4b-aware: 6-1 n=20 OOS | 12.3% | 1.02 | -19.2% | - / - | 0.67 (0.64/0.69) | beats SPY OOS; clears OOS 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json walk-forward plain-Sharpe: 12-1 n=5 OOS | 17.8% | 0.85 | -26.4% | - / - | 0.64 (0.76/0.54) | loses to SPY OOS; misses OOS 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 8 universe_broad.json walk-forward 4b-aware: 6-1 n=30 OOS | 12.3% | 0.93 | -20.6% | - / - | 0.64 (0.76/0.54) | beats SPY OOS; misses OOS 4b | research/backtests/2026-09-04_lookback-blend_C.py |
