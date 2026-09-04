@@ -4,13 +4,14 @@
 Compute budget: $200 Max plan, only 3% of the week used on day 1 → run much hotter. Research sprint is hourly.
 
 ## Operating model (changed Sep 3)
-David does not want to be the hands. He logs into each service ONCE inside the desktop app's browser pane (Fiverr, Upwork, GitHub, X, Stripe). Claude then operates those sessions: posts, bids, publishes, opens PRs. Claude still never creates accounts, types passwords, or moves money. **Monday login list:** Fiverr · Upwork · GitHub · X · Stripe (15 minutes total).
+David does not want to be the hands. He logs into each service ONCE inside the desktop app's browser pane (Fiverr, Upwork, GitHub, X, Stripe). Claude then operates those sessions: posts, bids, publishes, opens PRs. Claude still never creates accounts, types passwords, or moves money. **Monday login list:** Freelancer.com · Upwork · Fiverr · GitHub · X · Stripe (20 minutes total).
 
-## Channel priority (push beats pull on a 3-week clock)
-1. **Upwork bids** — daily proposals to quant/backtest/bot/data jobs. Fastest real dollars.
-2. **Open-source bounties** (Algora, GitHub bounty issues) — code for cash, paid on merge.
-3. **Own Stripe storefront + Fiverr** — passive; keep live, don't wait on it.
-4. **Daily posts on X** of the scan + track record → traffic to storefront.
+## Channel priority (push beats pull on a 3-week clock) — revised after Sep 3 scouting
+Evidence (products/backtester/MARKET_SCAN_upwork.md, products/bounties/SCOUT_2026-09-03.md): the quant-only freelance niche holds ~12 open jobs at a time at $30–250 with 50–170 bids each; bounty boards are dead or hardware-gated. General Python/data/automation/AI work has ~100 matching jobs per scan. So:
+1. **General freelance bidding (Freelancer.com + Upwork)** — Python, scraping, data cleaning, dashboards, automation, AI agents, with quant as the differentiator. Pipeline: Actions scans Freelancer every 6h → cloud routine drafts up to 8 proposals → Claude submits from David's logged-in browser session (Monday onward). Target 15–25 bids/week.
+2. **Own Stripe storefront + Fiverr** — passive; keep live, don't wait on it.
+3. **Daily posts on X** of the scan + track record → traffic to storefront.
+4. Bounties: only opportunistic (comma.ai opendbc/openpilot if a fitting one appears).
 Fiverr alone is small potatoes. It stays as the floor; the plan has three tiers.
 
 ## Hard constraints

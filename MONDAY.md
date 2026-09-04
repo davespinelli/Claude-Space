@@ -1,5 +1,6 @@
 # Monday login session (≈15 minutes, David at the Mac)
 Claude opens each login page in the app's browser pane; David types credentials (Claude never sees or types them); Claude takes over from there.
+0. **Freelancer.com** — David: create/log in (free). Claude: complete profile from products/backtester/UPWORK.md, then submit the drafted proposals in products/freelance/proposals/ (bids are free on Freelancer for a limited monthly quota).
 1. **Upwork** — David: create the freelancer account if none, log in. Claude: fill profile from products/backtester/UPWORK.md, then submit bids from products/proposals/ (David buys Connects; ~$15 for 100).
 2. **Fiverr** — David: seller account, log in. Claude: publish the gig from products/backtester/GIG.md with the three sample images.
 3. **GitHub** — David: log in. Claude: open bounty PRs from products/bounties/ work branches.
