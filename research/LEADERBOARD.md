@@ -788,3 +788,31 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 73 SMALL484/CAND5 (sd 0.682, dS_EW -0.084) | 5.2% | 0.33 | -52.8% | 0.68 / 0.02 | 0.52 (0.53/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
 | 2026-09-04 | 73 SMALL484/CAND10 (sd 0.682, dS_EW +0.061) | 7.7% | 0.47 | -35.9% | 0.69 / 0.29 | 0.52 (0.53/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
 | 2026-09-04 | 73 SMALL484/CAND20 (sd 0.682, dS_EW +0.082) | 7.2% | 0.49 | -26.3% | 0.67 / 0.35 | 0.52 (0.53/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 13 u56/v1 | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/COMP-n5 | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4b (H1,DD) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/COMP-n10 | 12.9% | 0.93 | -17.5% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4b (H1) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/COMP-n20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/COMP-n30 | 11.0% | 1.10 | -16.6% | 1.03 / 1.17 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/PROX-n5 | 1.5% | 0.21 | -21.0% | 0.13 / 0.28 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/PROX-n10 | 5.6% | 0.67 | -15.4% | 0.66 / 0.68 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/PROX-n20 | 7.9% | 0.94 | -14.6% | 1.00 / 0.88 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/PROX-n30 | 8.9% | 1.05 | -14.5% | 1.03 / 1.07 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/BLEND-n5 | 7.3% | 0.61 | -24.0% | 0.43 / 0.77 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/BLEND-n10 | 8.1% | 0.76 | -17.1% | 0.73 / 0.79 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/BLEND-n20 | 9.8% | 1.00 | -16.8% | 0.98 / 1.03 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 u56/BLEND-n30 | 10.1% | 1.10 | -15.2% | 1.09 / 1.12 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/v1 | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/EWall | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | KEEP 4b | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/COMP-n5 | 16.7% | 0.88 | -23.4% | 1.02 / 0.78 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/COMP-n10 | 14.2% | 0.89 | -21.4% | 1.11 / 0.71 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/COMP-n20 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/COMP-n30 | 12.2% | 0.97 | -20.3% | 1.15 / 0.82 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,DD) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/PROX-n5 | 0.7% | 0.13 | -22.3% | -0.03 / 0.27 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/PROX-n10 | 3.4% | 0.40 | -22.1% | 0.45 / 0.36 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/PROX-n20 | 5.2% | 0.58 | -15.0% | 0.73 / 0.46 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/PROX-n30 | 7.2% | 0.80 | -15.4% | 0.94 / 0.67 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/BLEND-n5 | 7.5% | 0.58 | -27.2% | 0.65 / 0.52 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/BLEND-n10 | 6.9% | 0.60 | -20.1% | 0.66 / 0.56 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/BLEND-n20 | 7.4% | 0.69 | -18.0% | 0.79 / 0.61 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 13 broad/BLEND-n30 | 8.8% | 0.84 | -18.0% | 0.96 / 0.73 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
