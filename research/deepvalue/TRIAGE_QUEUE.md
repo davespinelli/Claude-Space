@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T14:13:20Z · open 392 · in progress 10 · done 83_
+_Source: universe_under2b.csv · updated 2026-09-04T14:16:56Z · open 392 · in progress 0 · done 93_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -401,22 +401,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| HCKT | HACKETT GROUP, INC. | $275.6M | cloudA | 2026-09-04T14:09:27Z |
-| PDEX | PRO DEX INC | $197.2M | cloudA | 2026-09-04T14:09:27Z |
-| EFOR | Everforth Inc | $1.31B | cloudA | 2026-09-04T14:09:27Z |
-| GLP | GLOBAL PARTNERS LP | $1.78B | cloudA | 2026-09-04T14:09:27Z |
-| UTMD | UTAH MEDICAL PRODUCTS INC | $225.1M | cloudA | 2026-09-04T14:09:27Z |
-| CLMB | Climb Global Solutions, Inc. | $525.9M | cloudA | 2026-09-04T14:09:27Z |
-| TRS | TRIMAS CORP | $1.39B | cloudA | 2026-09-04T14:09:27Z |
-| SWBI | SMITH & WESSON BRANDS, INC. | $548.8M | cloudA | 2026-09-04T14:09:27Z |
-| KOP | Koppers Holdings Inc. | $886.2M | cloudA | 2026-09-04T14:09:27Z |
-| CARS | Cars.com Inc. | $631.2M | cloudA | 2026-09-04T14:09:27Z |
 
-## Done (83)
+## Done (93)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | CTS | CTS CORP | $1.61B | cloudA | 2026-09-04T14:13:20Z |
 | CSV | CARRIAGE SERVICES INC | $537.8M | cloudA | 2026-09-04T14:13:20Z |
 | UTI | UNIVERSAL TECHNICAL INSTITUTE INC | $1.19B | cloudA | 2026-09-04T14:13:20Z |
+| HCKT | HACKETT GROUP, INC. | $275.6M | cloudA | 2026-09-04T14:16:56Z |
+| PDEX | PRO DEX INC | $197.2M | cloudA | 2026-09-04T14:16:56Z |
+| EFOR | Everforth Inc | $1.31B | cloudA | 2026-09-04T14:16:56Z |
+| GLP | GLOBAL PARTNERS LP | $1.78B | cloudA | 2026-09-04T14:16:56Z |
+| UTMD | UTAH MEDICAL PRODUCTS INC | $225.1M | cloudA | 2026-09-04T14:16:56Z |
+| CLMB | Climb Global Solutions, Inc. | $525.9M | cloudA | 2026-09-04T14:16:56Z |
+| TRS | TRIMAS CORP | $1.39B | cloudA | 2026-09-04T14:16:56Z |
+| SWBI | SMITH & WESSON BRANDS, INC. | $548.8M | cloudA | 2026-09-04T14:16:56Z |
+| KOP | Koppers Holdings Inc. | $886.2M | cloudA | 2026-09-04T14:16:56Z |
+| CARS | Cars.com Inc. | $631.2M | cloudA | 2026-09-04T14:16:56Z |

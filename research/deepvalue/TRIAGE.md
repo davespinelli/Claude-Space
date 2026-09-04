@@ -84,3 +84,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | CTS | CTS CORP | $1.6B | none | 4 | Mix shift out of transportation lifted gross margin to 38.4%, but 18.9x EV/EBIT after a 59.7% move, and the pack has no earnings release, 8-Ks or Form 4s |
 | 2026-09-04 | CSV | CARRIAGE SERVICES INC | $537.8M | none | 5 | Screen 5.5x EV/EBIT is wrong: management states 4.0x leverage, so real EV is near $1.1B; volumes fell 4.0% funeral and 14.0% cemetery, offset by price |
 | 2026-09-04 | UTI | UNIVERSAL TECHNICAL INSTITUTE INC | $1.2B | fallen-growth | 6 | Starts +10.9% and students +5.8% with baseline adj EBITDA above $135M on a $1.2B EV, but guidance was cut and adjusted FCF now guided to negative $20M to zero |
+| 2026-09-04 | HCKT | HACKETT GROUP, INC. | $275.6M | none | 4 | Q1 revenue before reimbursements fell to $67.8M from $76.2M with Q2 guided no better, on $6.1M cash against $79.0M drawn and negative operating cash flow |
+| 2026-09-04 | PDEX | PRO DEX INC | $197.2M | none | 4 | FY26 sales $77.5M and operating income $13.0M, but one customer is 78% of sales, $5.0M of $18.0M pretax was investment marks, and FCF was negative |
+| 2026-09-04 | EFOR | Everforth Inc | $1.3B | insider-buying | 7 | Eleven insiders bought $1.5M with zero sales, CEO $1.0M at $19.24, on a 22.1% FCF yield and 11.2x EV/EBIT with the stock 40.3% off its high |
+| 2026-09-04 | GLP | GLOBAL PARTNERS LP | $1.8B | none | 0 | no filings in bundle |
+| 2026-09-04 | UTMD | UTAH MEDICAL PRODUCTS INC | $225.1M | hidden-asset | 4 | Net cash of $87.5M is 39% of the market cap, but 1H sales fell 12.3% and management now guides a 10-13% full-year decline with the stock 4.4% off its high |
+| 2026-09-04 | CLMB | Climb Global Solutions, Inc. | $525.9M | none | 4 | Gross billings up 17% and gross profit up 15%, yet adjusted EBITDA was flat at $11.3M, effective margin fell 580bp and the dividend was suspended |
+| 2026-09-04 | TRS | TRIMAS CORP | $1.4B | hidden-asset | 7 | Net cash of $845.6M is 60% of the market cap after the $1.5B Aerospace sale, funding an 11.7% share count cut, with adjusted operating profit up 29.1% |
+| 2026-09-04 | SWBI | SMITH & WESSON BRANDS, INC. | $548.8M | none | 0 | no filings in bundle |
+| 2026-09-04 | KOP | Koppers Holdings Inc. | $886.2M | cash-cow-narrative | 6 | FY26 free cash flow guided to $110-130M against an $886M cap versus $68M in 2025, but CMC adjusted EBITDA fell 54.8% and guidance was trimmed |
+| 2026-09-04 | CARS | Cars.com Inc. | $631.2M | cash-cow-narrative | 6 | Retired over 10% of shares in six months at 29.4% adjusted EBITDA margin, but unique visitors fell 14% and traffic 12% year over year |
