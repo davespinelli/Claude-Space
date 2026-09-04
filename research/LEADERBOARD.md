@@ -1251,3 +1251,12 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 85 broad EWall entry-budget B=0.20 | 10.9% | 1.08 | -16.4% | 1.17 / 0.99 | 0.64 (0.76/0.54) | PARK: 4b PASS full+OOS (control fails OOS CAGR) | 2026-09-04_exit-schedule-vs-entry-schedule_cloud.py |
 | 2026-09-04 | 85 broad CAND20 entry-budget B=0.10 | 11.2% | 0.94 | -18.2% | 1.18 / 0.73 | 0.64 (0.76/0.54) | KILL on the ranked book: dSharpe -0.016, t -3.15 | 2026-09-04_exit-schedule-vs-entry-schedule_cloud.py |
 | 2026-09-04 | 85 u56 CAND20 total-budget B=0.05 (idea 83 control) | 14.3% | 1.13 | -22.8% | 1.18 / 1.10 | 0.67 (0.64/0.69) | reproduces idea 83: MaxDD worse in 19/20 arms | 2026-09-04_exit-schedule-vs-entry-schedule_cloud.py |
+| 2026-09-04 | 84 binding-bar census (8 cells, 480 pts) | n/a | n/a | n/a | n/a | n/a | KILL 2-branch rule: CAGR binds 6/8; Sharpe bars g-invariant (spread 0.006) | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 84 u56 C57/ew-band3 g=0.85 (KEEP-cand) | 12.8% | 1.14 | -17.1% | 1.11 / 1.16 | 0.67 (0.64/0.69) | 4b PASS full+OOS at 5/10/25 bps | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 84 broad C57/ew-band3 g=0.85 (KEEP-cand) | 12.6% | 1.06 | -18.9% | 1.16 / 0.97 | 0.64 (0.76/0.54) | 4b PASS full+OOS at 5/10/25 bps; 4a PASS | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 84 u56 C57/ew-band3 g=0.85 @ 25 bps | 11.9% | 1.06 | -17.2% | 1.04 / 1.09 | 0.67 (0.64/0.69) | answers idea 58: g=0.75 dies here on CAGR | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 84 broad C57/ew-band3 g=0.85 @ 25 bps | 11.6% | 0.99 | -19.1% | 1.09 / 0.89 | 0.64 (0.76/0.54) | 4b PASS both universes at 25 bps (6/80 arms) | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 84 u56 C72/EWall g=0.85 | 11.8% | 1.05 | -17.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | gross fixes idea 72's 0.26pp CAGR miss; dies at 25 bps | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 84 broad C2/CAND20 g=0.75 (control) | 13.1% | 0.96 | -20.1% | 1.13 / 0.81 | 0.64 (0.76/0.54) | H2-bound: 0/20 lever arms convert (best +0.003) | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 84 broad C72/EWall entry-budget B=0.20 | 10.9% | 1.08 | -16.4% | 1.17 / 0.99 | 0.64 (0.76/0.54) | budget is a Sharpe lever (+0.050), CAGR-neutral (+0.02pp) | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 84 walk-forward RBIND vs R0 vs control | n/a | n/a | n/a | n/a | n/a | mean OOS Sharpe 1.098 / 1.097 / 1.083: rule has no net content | 2026-09-04_which-4b-bar-binds_B.py |
