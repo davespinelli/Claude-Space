@@ -4,10 +4,11 @@ routines (no outbound network) can backtest offline."""
 import json
 from pathlib import Path
 import yfinance as yf
+import sys; sys.path.insert(0, str(Path(__file__).resolve().parent)); from scan import download_aligned
 ROOT = Path(__file__).resolve().parents[1]
 U = json.loads((ROOT / "research" / "universe.json").read_text())
 T = sorted({t for g in U.values() for t in g})
-px = yf.download(T, start="2008-01-01", auto_adjust=True, progress=False)["Close"].dropna(how="all").ffill()
+px = download_aligned(T, start="2008-01-01")
 (ROOT / "data").mkdir(exist_ok=True); px.round(4).to_csv(ROOT / "data" / "prices.csv")
 print(f"cached {px.shape[0]} rows x {px.shape[1]} tickers to data/prices.csv")
 

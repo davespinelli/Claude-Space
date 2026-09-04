@@ -7,6 +7,20 @@ import json, sys, datetime as dt
 from pathlib import Path
 import numpy as np, pandas as pd, yfinance as yf
 
+def download_aligned(tickers, **kw):
+    """yfinance download where crypto (7-day) tickers are aligned to the equity trading-day index.
+    Prevents calendar-day indexes that forward-fill equities across weekends (found 2026-09-04)."""
+    import yfinance as yf, pandas as pd
+    crypto = [t for t in tickers if t.endswith("-USD")]; eq = [t for t in tickers if t not in crypto]
+    px = yf.download(eq, auto_adjust=True, progress=False, **kw)["Close"]
+    if isinstance(px, pd.Series): px = px.to_frame(eq[0])
+    px = px.dropna(how="all")
+    if crypto:
+        cx = yf.download(crypto, auto_adjust=True, progress=False, **kw)["Close"]
+        if isinstance(cx, pd.Series): cx = cx.to_frame(crypto[0])
+        px = px.join(cx.reindex(px.index, method="ffill"))
+    return px.ffill()
+
 ROOT = Path(__file__).resolve().parents[1]
 UNIVERSE = json.loads((ROOT / "research" / "universe.json").read_text())
 TICKERS = sorted({t for grp in UNIVERSE.values() for t in grp})
@@ -17,8 +31,7 @@ def rsi(s, n=14):
     return 100 - 100 / (1 + up / dn.replace(0, np.nan))
 
 def main():
-    px = yf.download(TICKERS, period="15mo", auto_adjust=True, progress=False, threads=True)["Close"]
-    px = px.dropna(how="all").ffill()
+    px = download_aligned(TICKERS, period="15mo", threads=True)
     last = px.index[-1].date()
     rows = []
     for t in px.columns:
