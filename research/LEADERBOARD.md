@@ -158,7 +158,7 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 46 N  n=20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 N  n=25 | 11.8% | 1.09 | -17.7% | 1.05 / 1.14 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 N  n=30 | 11.0% | 1.10 | -16.6% | 1.03 / 1.17 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
-| 2026-09-04 | 46 NF n=5 | 16.6% | 0.95 | -21.1% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_eligible-fraction-vs-n_B.py |
+| 2026-09-04 | 46 NF n=5 | 16.6% | 0.95 | -21.2% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 NF n=8 | 14.0% | 0.94 | -17.9% | 0.92 / 0.97 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 NF n=10 | 13.0% | 0.94 | -17.5% | 0.91 / 0.96 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 NF n=12 | 12.8% | 0.96 | -17.8% | 0.97 / 0.96 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_eligible-fraction-vs-n_B.py |
@@ -180,7 +180,7 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 36 spinoff INVESTABLE ex top-5 | 20.7% | 0.82 | -49.4% | n/a | IWM 0.51 (0.50/0.52) | PARK (robustness arm) | 2026-09-04_spinoff-calendar.py |
 | 2026-09-04 | 36 spinoff ALL daily-EW | 24.6% | 0.74 | -46.3% | 0.77 / 1.30 | IWM 0.51 (0.50/0.52) | KILL (raw 10-12B list; mean log return negative) | 2026-09-04_spinoff-calendar.py |
 | 2026-09-04 | 36 spinoff ALL drift | 47.4% | 1.05 | -46.3% | 0.77 / 1.30 | IWM 0.51 (0.50/0.52) | KILL (one OTC shell, LDSN +5850%) | 2026-09-04_spinoff-calendar.py |
-| 2026-09-04 | insider-cluster-buying hold=6m (broad universe, 2012+) | 21.1% | 0.97 | -39.8% | 0.96 / 1.01 | 0.66 (0.86/0.49) | KILL | research/backtests/2026-09-04_insider-cluster-buying.py |
+| 2026-09-04 | insider-cluster-buying hold=6m (broad universe, 2012+) | 21.2% | 0.97 | -39.8% | 0.96 / 1.01 | 0.66 (0.86/0.49) | KILL | research/backtests/2026-09-04_insider-cluster-buying.py |
 | 2026-09-04 | insider-cluster-buying hold=12m (broad universe, 2012+) | 26.6% | 1.27 | -39.7% | 1.31 / 1.28 | 0.66 (0.86/0.49) | PARK (4b: Sharpe yes, MaxDD no) | research/backtests/2026-09-04_insider-cluster-buying.py |
 | 2026-09-04 | RULES v1 baseline, 2012+ broad-universe sample - reference | 6.8% | 0.66 | -21.2% | 0.86 / 0.49 | 0.66 (0.86/0.49) | - | research/backtests/2026-09-04_insider-cluster-buying.py |
 | 2026-09-04 | SPY buy & hold, 2012+ sample - reference | 15.2% | 0.94 | -33.7% | 1.13 / 0.85 | 0.66 (0.86/0.49) | - | research/backtests/2026-09-04_insider-cluster-buying.py |
