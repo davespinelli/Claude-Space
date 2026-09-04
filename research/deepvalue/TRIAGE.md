@@ -224,3 +224,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | ADV | Advantage Solutions Inc. | $409.3M | none | 0 | no filings in bundle |
 | 2026-09-04 | HLX | HORNBECK OFFSHORE SERVICES, INC. | $1.6B | none | 0 | no filings in bundle |
 | 2026-09-04 | TBPH | Theravance Biopharma, Inc. | $886.8M | none | 0 | no filings in bundle |
+| 2026-09-04 | HLMN | Hillman Solutions Corp. | $1.5B | none | 3 | Levered hardware distributor at 18.7x EV/EBIT and 4.8% ROIC buying growth while existing home sales sit at a 30-year low |
+| 2026-09-04 | PD | PagerDuty, Inc. | $1.1B | cash-cow-narrative | 6 | 10.3% FCF yield and share count down 16.3%, but FY27 revenue guided flat and FY26 net income was a $152.5M tax benefit |
+| 2026-09-04 | CERT | Certara, Inc. | $1.2B | post-restructuring | 5 | Divestiture plus 5% RIF for $13M run-rate savings, but continuing ops guide only 0-4% growth and services bookings fell 6% |
+| 2026-09-04 | BBCP | Concrete Pumping Holdings, Inc. | $456.1M | cyclical-trough | 7 | Q3 revenue +13% on data centres with residential still assumed dead, guidance raised again, 8x guided EBITDA, dividend initiated at 5.6% |
+| 2026-09-04 | ALNT | ALLIENT INC | $1.5B | none | 0 | no filings in bundle |
+| 2026-09-04 | EGHT | 8X8 INC /DE/ | $277.3M | cash-cow-narrative | 6 | 18.8% FCF yield deleveraging stub, but subscription revenue fell $29.1M and gross margin dropped from 67.9% to 64.6% |
+| 2026-09-04 | PAYS | Paysign, Inc. | $731.7M | none | 0 | no filings in bundle |
+| 2026-09-04 | ATNI | ATN International, Inc. | $478.6M | none | 0 | no filings in bundle |
+| 2026-09-04 | RJET | REPUBLIC AIRWAYS HOLDINGS INC. | $806.2M | post-restructuring | 8 | Every screen metric predates the Mesa merger; 2026 guide $2.1B revenue and $395-405M EBITDAR against $806M cap and $1,386M book equity |
+| 2026-09-04 | HSHP | Himalaya Shipping Ltd. | $836.4M | none | 0 | no filings in bundle |

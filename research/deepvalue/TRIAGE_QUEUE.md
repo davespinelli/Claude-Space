@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T18:38:45Z · open 262 · in progress 0 · done 223_
+_Source: universe_under2b.csv · updated 2026-09-04T19:09:09Z · open 242 · in progress 10 · done 233_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (262)
+## Open (242)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| HLMN | Hillman Solutions Corp. | $1.49B |
-| PD | PagerDuty, Inc. | $1.09B |
-| CERT | Certara, Inc. | $1.24B |
-| BBCP | Concrete Pumping Holdings, Inc. | $456.1M |
-| ALNT | ALLIENT INC | $1.53B |
-| EGHT | 8X8 INC /DE/ | $277.3M |
-| PAYS | Paysign, Inc. | $731.7M |
-| ATNI | ATN International, Inc. | $478.6M |
-| RJET | REPUBLIC AIRWAYS HOLDINGS INC. | $806.2M |
-| HSHP | Himalaya Shipping Ltd. | $836.4M |
-| CBRL | CRACKER BARREL OLD COUNTRY STORE, INC | $1.21B |
-| BXC | BlueLinx Holdings Inc. | $607.4M |
-| TSSI | TSS, Inc. | $228.6M |
-| PLTK | Playtika Holding Corp. | $854.4M |
-| WLDN | Willdan Group, Inc. | $1.33B |
-| BWMN | Bowman Consulting Group Ltd. | $738.7M |
-| MAMA | Mama's Creations, Inc. | $649.7M |
-| CDRE | Cadre Holdings, Inc. | $1.28B |
-| ANAB | ANAPTYSBIO, INC | $1.67B |
-| LEGH | Legacy Housing Corp | $663.3M |
 | EPC | EDGEWELL PERSONAL CARE Co | $1.31B |
 | SMTI | Sanara MedTech Inc. | $319.0M |
 | GRPN | Groupon, Inc. | $766.9M |
@@ -271,12 +251,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| CBRL | CRACKER BARREL OLD COUNTRY STORE, INC | $1.21B | cloudA | 2026-09-04T19:06:40Z |
+| BXC | BlueLinx Holdings Inc. | $607.4M | cloudA | 2026-09-04T19:06:40Z |
+| TSSI | TSS, Inc. | $228.6M | cloudA | 2026-09-04T19:06:40Z |
+| PLTK | Playtika Holding Corp. | $854.4M | cloudA | 2026-09-04T19:06:40Z |
+| WLDN | Willdan Group, Inc. | $1.33B | cloudA | 2026-09-04T19:06:40Z |
+| BWMN | Bowman Consulting Group Ltd. | $738.7M | cloudA | 2026-09-04T19:06:40Z |
+| MAMA | Mama's Creations, Inc. | $649.7M | cloudA | 2026-09-04T19:06:40Z |
+| CDRE | Cadre Holdings, Inc. | $1.28B | cloudA | 2026-09-04T19:06:40Z |
+| ANAB | ANAPTYSBIO, INC | $1.67B | cloudA | 2026-09-04T19:06:40Z |
+| LEGH | Legacy Housing Corp | $663.3M | cloudA | 2026-09-04T19:06:40Z |
 
-## Done (223)
+## Done (233)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | ADV | Advantage Solutions Inc. | $409.3M | cloudB | 2026-09-04T18:38:45Z |
 | HLX | HORNBECK OFFSHORE SERVICES, INC. | $1.56B | cloudB | 2026-09-04T18:38:45Z |
 | TBPH | Theravance Biopharma, Inc. | $886.8M | cloudB | 2026-09-04T18:38:45Z |
+| HLMN | Hillman Solutions Corp. | $1.49B | cloudA | 2026-09-04T19:09:09Z |
+| PD | PagerDuty, Inc. | $1.09B | cloudA | 2026-09-04T19:09:09Z |
+| CERT | Certara, Inc. | $1.24B | cloudA | 2026-09-04T19:09:09Z |
+| BBCP | Concrete Pumping Holdings, Inc. | $456.1M | cloudA | 2026-09-04T19:09:09Z |
+| ALNT | ALLIENT INC | $1.53B | cloudA | 2026-09-04T19:09:09Z |
+| EGHT | 8X8 INC /DE/ | $277.3M | cloudA | 2026-09-04T19:09:09Z |
+| PAYS | Paysign, Inc. | $731.7M | cloudA | 2026-09-04T19:09:09Z |
+| ATNI | ATN International, Inc. | $478.6M | cloudA | 2026-09-04T19:09:09Z |
+| RJET | REPUBLIC AIRWAYS HOLDINGS INC. | $806.2M | cloudA | 2026-09-04T19:09:09Z |
+| HSHP | Himalaya Shipping Ltd. | $836.4M | cloudA | 2026-09-04T19:09:09Z |
