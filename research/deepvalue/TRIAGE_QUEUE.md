@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T15:16:20Z · open 362 · in progress 0 · done 123_
+_Source: universe_under2b.csv · updated 2026-09-04T15:40:48Z · open 352 · in progress 0 · done 133_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (362)
+## Open (352)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| AMPY | Amplify Energy Corp. | $203.1M |
-| SPH | SUBURBAN PROPANE PARTNERS LP | $1.17B |
-| FC | FRANKLIN COVEY CO | $207.8M |
-| BNED | Barnes & Noble Education, Inc. | $422.6M |
-| SSTK | Shutterstock, Inc. | $213.2M |
-| LZ | LEGALZOOM.COM, INC. | $1.10B |
-| MLKN | MILLERKNOLL, INC. | $1.53B |
-| USNA | USANA HEALTH SCIENCES INC | $266.6M |
-| CLB | Core Laboratories Inc. /DE/ | $574.9M |
-| XHR | Xenia Hotels & Resorts, Inc. | $1.67B |
 | WNC | WABASH NATIONAL Corp | $580.9M |
 | APEI | AMERICAN PUBLIC EDUCATION INC | $830.5M |
 | PZZA | PAPA JOHNS INTERNATIONAL INC | $742.4M |
@@ -376,7 +366,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (123)
+## Done (133)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DSX | DIANA SHIPPING INC. | $343.9M | cloudA | 2026-09-04T15:16:20Z |
 | WWW | WOLVERINE WORLD WIDE INC /DE/ | $1.60B | cloudA | 2026-09-04T15:16:20Z |
 | NPKI | NPK International Inc. | $1.11B | cloudA | 2026-09-04T15:16:20Z |
+| AMPY | Amplify Energy Corp. | $203.1M | cloudB | 2026-09-04T15:40:48Z |
+| SPH | SUBURBAN PROPANE PARTNERS LP | $1.17B | cloudB | 2026-09-04T15:40:48Z |
+| FC | FRANKLIN COVEY CO | $207.8M | cloudB | 2026-09-04T15:40:48Z |
+| BNED | Barnes & Noble Education, Inc. | $422.6M | cloudB | 2026-09-04T15:40:48Z |
+| SSTK | Shutterstock, Inc. | $213.2M | cloudB | 2026-09-04T15:40:48Z |
+| LZ | LEGALZOOM.COM, INC. | $1.10B | cloudB | 2026-09-04T15:40:48Z |
+| MLKN | MILLERKNOLL, INC. | $1.53B | cloudB | 2026-09-04T15:40:48Z |
+| USNA | USANA HEALTH SCIENCES INC | $266.6M | cloudB | 2026-09-04T15:40:48Z |
+| CLB | Core Laboratories Inc. /DE/ | $574.9M | cloudB | 2026-09-04T15:40:48Z |
+| XHR | Xenia Hotels & Resorts, Inc. | $1.67B | cloudB | 2026-09-04T15:40:48Z |

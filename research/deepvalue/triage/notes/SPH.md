@@ -1,0 +1,5 @@
+# SPH — SUBURBAN PROPANE PARTNERS LP · triage 2026-09-04 · Edge: none · Score 4/10
+
+Suburban Propane is a master limited partnership distributing propane, renewable propane, fuel oil and renewable natural gas and marketing natural gas and electricity, serving roughly 1.0 million customers from about 750 locations across 42 states; two-thirds of retail propane volume sells in the October-March heating season. No edge is nameable from the pack. Fiscal 2025 was a strong year rather than a depressed one, with Adjusted EBITDA up 11.2% to $278.0M on retail gallons up 5.9%, so the trailing numbers are not stale, and the June quarter went the other way: Adjusted EBITDA of $18.0M against $27.0M, on an April that was 24% warmer than normal. The screen row of 2026-09-04 shows $17.52, an $1.2B market cap, 11.6x EV/EBIT and $1.2B of net debt at 5.9x EBIT; the release puts credit-agreement leverage at 4.35x versus 4.33x. Biggest risk: that leverage sits against weather-dependent margins while the ATM program dilutes units 1.9% a year to fund growth capex and debt paydown.
+
+_Sources: triage pack only (sections 1, 2, 3, 6, 7, 8, 9, 11). Triage-depth read, not a deep dive._
