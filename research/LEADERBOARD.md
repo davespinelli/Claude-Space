@@ -490,3 +490,73 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 8 universe.json walk-forward 4b-aware: 6-1 n=20 OOS | 12.3% | 1.02 | -19.2% | - / - | 0.67 (0.64/0.69) | beats SPY OOS; clears OOS 4b | research/backtests/2026-09-04_lookback-blend_C.py |
 | 2026-09-04 | 8 universe_broad.json walk-forward plain-Sharpe: 12-1 n=5 OOS | 17.8% | 0.85 | -26.4% | - / - | 0.64 (0.76/0.54) | loses to SPY OOS; misses OOS 4b | research/backtests/2026-09-04_lookback-blend_C.py |
 | 2026-09-04 | 8 universe_broad.json walk-forward 4b-aware: 6-1 n=30 OOS | 12.3% | 0.93 | -20.6% | - / - | 0.64 (0.76/0.54) | beats SPY OOS; misses OOS 4b | research/backtests/2026-09-04_lookback-blend_C.py |
+| 2026-09-04 | 6 universe.json v1 B=plain L=63 | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=30% L=63 | 6.6% | 0.66 | -15.2% | 0.61 / 0.72 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=30% L=126 | 6.5% | 0.65 | -15.2% | 0.59 / 0.70 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=40% L=63 | 6.5% | 0.65 | -13.7% | 0.55 / 0.73 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=40% L=126 | 6.5% | 0.65 | -13.7% | 0.55 / 0.73 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=50% L=63 | 6.6% | 0.65 | -14.1% | 0.53 / 0.76 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=50% L=126 | 6.6% | 0.65 | -13.7% | 0.56 / 0.74 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=60% L=63 | 6.7% | 0.66 | -15.4% | 0.55 / 0.75 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=60% L=126 | 6.8% | 0.66 | -15.4% | 0.59 / 0.73 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=always L=63 | 7.9% | 0.72 | -15.9% | 0.61 / 0.82 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=always L=126 | 7.8% | 0.71 | -15.9% | 0.61 / 0.79 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=40 L=63 sleeve=best3 [ctrl] | 6.5% | 0.65 | -13.7% | 0.55 / 0.73 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=40 L=63 sleeve=ew3 [ctrl] | 6.7% | 0.68 | -13.5% | 0.64 / 0.71 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=40 L=63 sleeve=shy [ctrl] | 6.4% | 0.66 | -13.8% | 0.63 / 0.69 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 B=40 L=63 cash-cap-25% [ctrl] | 6.4% | 0.64 | -13.7% | 0.55 / 0.72 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=plain L=63 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=30% L=63 | 12.9% | 1.05 | -19.7% | 0.98 / 1.11 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=30% L=126 | 12.4% | 1.01 | -19.7% | 0.94 / 1.07 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=40% L=63 | 12.7% | 1.03 | -18.3% | 0.94 / 1.12 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=40% L=126 | 12.4% | 1.00 | -18.3% | 0.91 / 1.09 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=50% L=63 | 12.8% | 1.04 | -18.3% | 0.93 / 1.14 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=50% L=126 | 12.6% | 1.02 | -18.3% | 0.92 / 1.10 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=60% L=63 | 13.0% | 1.05 | -19.9% | 0.94 / 1.14 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=60% L=126 | 12.7% | 1.03 | -19.9% | 0.95 / 1.10 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=always L=63 | 14.3% | 1.10 | -20.4% | 1.00 / 1.19 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=always L=126 | 13.8% | 1.05 | -20.4% | 0.97 / 1.13 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=40 L=63 sleeve=best3 [ctrl] | 12.7% | 1.03 | -18.3% | 0.94 / 1.12 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=40 L=63 sleeve=ew3 [ctrl] | 13.0% | 1.09 | -17.4% | 1.09 / 1.10 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=40 L=63 sleeve=shy [ctrl] | 12.6% | 1.08 | -18.2% | 1.08 / 1.09 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 B=40 L=63 cash-cap-25% [ctrl] | 12.6% | 1.07 | -16.8% | 1.02 / 1.13 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=plain L=63 | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=30% L=63 | 6.7% | 0.65 | -21.3% | 0.73 / 0.58 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=30% L=126 | 6.4% | 0.62 | -22.8% | 0.70 / 0.56 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=40% L=63 | 6.5% | 0.63 | -23.1% | 0.71 / 0.56 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=40% L=126 | 6.5% | 0.63 | -23.7% | 0.72 / 0.55 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=50% L=63 | 6.3% | 0.61 | -22.6% | 0.66 / 0.56 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=50% L=126 | 6.3% | 0.61 | -23.2% | 0.68 / 0.55 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=60% L=63 | 6.5% | 0.63 | -22.1% | 0.71 / 0.56 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=60% L=126 | 6.5% | 0.62 | -22.9% | 0.73 / 0.53 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=always L=63 | 7.9% | 0.72 | -21.6% | 0.75 / 0.69 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=always L=126 | 7.7% | 0.69 | -22.9% | 0.74 / 0.66 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=40 L=63 sleeve=best3 [ctrl] | 6.5% | 0.63 | -23.1% | 0.71 / 0.56 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=40 L=63 sleeve=ew3 [ctrl] | 6.7% | 0.66 | -22.8% | 0.77 / 0.56 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=40 L=63 sleeve=shy [ctrl] | 6.4% | 0.64 | -21.5% | 0.76 / 0.53 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 B=40 L=63 cash-cap-25% [ctrl] | 6.4% | 0.62 | -23.1% | 0.71 / 0.55 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=plain L=63 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=30% L=63 | 13.3% | 0.95 | -20.4% | 1.07 / 0.85 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=30% L=126 | 12.9% | 0.92 | -20.4% | 1.03 / 0.83 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2,DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=40% L=63 | 13.2% | 0.94 | -20.7% | 1.07 / 0.84 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=40% L=126 | 13.0% | 0.93 | -21.4% | 1.04 / 0.83 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H2,DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=50% L=63 | 12.9% | 0.93 | -20.6% | 1.03 / 0.84 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=50% L=126 | 12.8% | 0.92 | -20.6% | 1.01 / 0.84 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=60% L=63 | 13.2% | 0.94 | -20.6% | 1.07 / 0.84 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=60% L=126 | 13.0% | 0.93 | -20.6% | 1.06 / 0.82 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2,DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=always L=63 | 14.7% | 1.01 | -21.1% | 1.10 / 0.94 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=always L=126 | 14.3% | 0.98 | -21.1% | 1.07 / 0.91 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (DD) | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=40 L=63 sleeve=best3 [ctrl] | 13.2% | 0.94 | -20.7% | 1.07 / 0.84 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=40 L=63 sleeve=ew3 [ctrl] | 13.5% | 0.98 | -20.3% | 1.14 / 0.84 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=40 L=63 sleeve=shy [ctrl] | 13.1% | 0.96 | -20.0% | 1.12 / 0.81 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 B=40 L=63 cash-cap-25% [ctrl] | 13.1% | 0.96 | -20.7% | 1.11 / 0.83 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 SPY buy & hold (universe.json sample) - reference | 15.3% | 0.89 | -33.7% | 0.96 / 0.84 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 RULES v1 live (universe.json) - baseline | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 walk-forward plain-Sharpe: plain book OOS | 7.8% | 0.75 | -13.8% | - / - | 0.67 (0.64/0.69) | loses to SPY OOS | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json v1 walk-forward 4b-aware: picks NOTHING | - | - | - | - / - | 0.67 (0.64/0.69) | no IS point met the 4b bars | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 walk-forward plain-Sharpe: plain book OOS | 14.4% | 1.17 | -18.3% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe.json top20 walk-forward 4b-aware: plain book OOS | 14.4% | 1.17 | -18.3% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 walk-forward plain-Sharpe: plain book OOS | 6.0% | 0.58 | -21.2% | - / - | 0.67 (0.64/0.69) | loses to SPY OOS | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json v1 walk-forward 4b-aware: picks NOTHING | - | - | - | - / - | 0.67 (0.64/0.69) | no IS point met the 4b bars | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 walk-forward plain-Sharpe: plain book OOS | 12.5% | 0.89 | -20.1% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
+| 2026-09-04 | 6 universe_broad.json top20 walk-forward 4b-aware: picks NOTHING | - | - | - | - / - | 0.67 (0.64/0.69) | no IS point met the 4b bars | research/backtests/2026-09-04_defensive-sleeve_cloud.py |
