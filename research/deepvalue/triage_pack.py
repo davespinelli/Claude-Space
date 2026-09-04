@@ -243,6 +243,195 @@ def extract_mdna(text: str, budget: int = BUDGET_MDNA) -> tuple[str, str]:
     )
 
 
+NO_F4_ACTIVITY = "No Form 4 activity in 12 months (no observation; not a signal)."
+
+
+def normalize_form4(body: str) -> str:
+    """Repair a zero-activity Form 4 summary written by an older fetch_filings.py.
+
+    "buys 0 sh / $0 vs sells 0 sh / $0 -> net $0 (SELLING)" turned an absence of
+    filings into a bearish insider signal. Rewrite it in place so packs built
+    from already-fetched files are correct without a refetch.
+    """
+    m_rows = re.search(r"transaction rows:\s*([\d,]+)", body)
+    m_fil = re.search(r"Form 4 filings parsed:\s*([\d,]+)", body)
+    n_rows = int(m_rows.group(1).replace(",", "")) if m_rows else None
+    n_fil = int(m_fil.group(1).replace(",", "")) if m_fil else None
+    zero_market = re.search(
+        r"^Net open-market activity.*buys\s+0\s+sh\s*/\s*\$0\s+vs\s+sells\s+0\s+sh\s*/\s*\$0",
+        body, flags=re.M)
+    if n_rows == 0 or n_fil == 0:
+        repl = NO_F4_ACTIVITY
+    elif zero_market:
+        repl = ("No open-market insider purchases or sales (codes P/S) in the last 12m — "
+                "only non-market rows such as grants, option exercises, gifts or tax "
+                "withholding. No observation; not a signal.")
+    else:
+        return body
+    return re.sub(r"^Net open-market activity.*$", repl, body, count=1, flags=re.M)
+
+
+# ------------------------------------------------------- earnings release
+
+# Where the substance of a release actually starts. First match in document
+# order wins, so a cover page, an exhibit stub or a table of contents is dropped.
+RELEASE_ANCHORS = (
+    "financial highlights",
+    "highlights",
+    "results of operations",
+    "second quarter",
+    "third quarter",
+    "first quarter",
+    "fourth quarter",
+    "full year",
+    "reported",          # handled specially: a headline/lede, not a heading
+)
+# Safe-harbour boilerplate. Long, identical every quarter, and says nothing about
+# the business; it used to eat most of the 12k budget on 6-K exhibits.
+FLS_RE = re.compile(
+    r"forward[-\s]?looking statement|safe harbou?r|"
+    r"private securities litigation reform act|"
+    r"cautionary (?:note|statement|language)|"
+    r"undue reliance on (?:any |such )?forward",
+    re.I,
+)
+# EDGAR cover-page furniture, present on every 8-K/6-K main document.
+COVER_RE = re.compile(
+    r"^\s*(?:united states\b|securities and exchange commission|washington,?\s*d\.?\s*c\.?"
+    r"|form\s+(?:8-k|6-k|20-f)\b|current report pursuant|report of foreign private issuer"
+    r"|pursuant to (?:rule|section)\b|check the appropriate box|indicate by check mark"
+    r"|title of each class|trading symbol|name of each exchange|emerging growth company"
+    r"|\(exact name of registrant|\(translation of registrant|\(address of principal"
+    r"|\(state or other jurisdiction|\(i\.r\.s\.|commission file number"
+    r"|registrant.s telephone|if an emerging growth company|item\s+\d\.\d\d\b"
+    r"|signatures?\s*$|exhibit index|pursuant to the requirements of the securities)",
+    re.I,
+)
+MONEY_RE = re.compile(r"\$\s?\d|\d[\d,.]*\s*(?:million|billion)|\d[\d.]*\s?%", re.I)
+BULLET_RE = re.compile(r"^\s*(?:[\u2022\u00b7\u25aa\u25cf\u2027*\-\u2013\u2014]|\(?[ivx]+\)|\(\d+\))\s")
+FLS_SKIP_PARAS = 6
+
+
+BULLET_STRIP = re.compile(r"^[#*_>|\s\-\u2022\u00b7\u25aa\u25cf\u2027\u2013\u2014]+")
+
+
+def _release_anchor(para: str) -> bool:
+    """Does this paragraph open the substantive part of an earnings release?
+
+    Only the paragraph's own first line of text counts, so a mid-prose mention
+    never anchors the excerpt. A bullet glyph sitting alone on the first line
+    (how the HTML-to-text pass renders highlight bullets) is stepped over, since
+    "* Fourth quarter sales of ..." is exactly the heading we want to start at.
+    """
+    lines = [ln for ln in para.strip().split("\n") if ln.strip()]
+    low = ""
+    for ln in lines[:2]:
+        cand = BULLET_STRIP.sub("", ln).strip().strip("*_#|").strip()
+        cand = re.sub(r"\s+", " ", cand).lower()
+        if cand:
+            low = cand
+            break
+    if not low or len(low) > 400:
+        return False
+    for a in RELEASE_ANCHORS:
+        if a == "reported":
+            # press-release headline or lede: "X Reports Q2 2026 Results",
+            # "... today reported financial results for ..."
+            if re.search(r"\breport(?:s|ed|ing)\b.{0,80}\bresults\b", low):
+                return True
+            continue
+        if low.startswith(a):
+            return True
+        if a in low and len(low) <= len(a) + 30:
+            return True
+    return False
+
+
+def extract_release(text: str, budget: int = BUDGET_EX99) -> tuple[str, str]:
+    """(excerpt, how) for an 8-K EX-99 / 6-K exhibit earnings release.
+
+    Two passes. First drop EDGAR cover-page furniture and forward-looking-statement
+    blocks, then start the excerpt at the first real release heading. Without this
+    a 6-K exhibit spent its whole budget on the SEC cover page and four pages of
+    safe-harbour bullets and never reached a single number.
+    """
+    body = strip_toc(strip_fetch_header(text))
+    paras = [p.strip() for p in re.split(r"\n\s*\n", body)]
+    kept: list[str] = []
+    n_fls = n_cover = 0
+    skip = 0
+    for para in paras:
+        if not para:
+            continue
+        if skip > 0:
+            if FLS_RE.search(para):
+                skip = FLS_SKIP_PARAS          # a continuing safe-harbour block
+                n_fls += 1
+                continue
+            if BULLET_RE.match(para) and len(para) < 400:
+                n_fls += 1                     # the risk-factor bullet list inside it
+                continue
+            if not (_release_anchor(para) or MONEY_RE.search(para)):
+                skip -= 1
+                n_fls += 1
+                continue
+            skip = 0                           # real content resumed
+        if FLS_RE.search(para):
+            n_fls += 1
+            if len(para) < 4000:
+                skip = FLS_SKIP_PARAS
+            continue
+        if COVER_RE.search(para) and not MONEY_RE.search(para):
+            n_cover += 1
+            continue
+        kept.append(para)
+
+    start = 0
+    anchor_line = ""
+    for i, para in enumerate(kept):
+        if _release_anchor(para):
+            start = i
+            for ln in [x for x in para.strip().split("\n") if x.strip()][:2]:
+                cand = BULLET_STRIP.sub("", ln).strip().strip("*_#|").strip()
+                if cand:
+                    anchor_line = re.sub(r"\s+", " ", cand)
+                    break
+            break
+    chosen = kept[start:]
+    if len("\n\n".join(chosen)) < 400:        # anchor landed at the very end; keep it all
+        chosen, start, anchor_line = kept, 0, ""
+    # Keep the exhibit headings from the dropped prefix so provenance survives, plus
+    # the release headline itself when the anchor landed on a highlight bullet below
+    # it ("Strattec Transformation Delivers Margin Improvement...", which names no
+    # quarter and so matches no anchor).
+    head = [p for p in kept[:start] if p.startswith("## ")]
+    if start and chosen and BULLET_RE.match(chosen[0].strip()):
+        # anchored on a highlight bullet, so the headline sits just above it
+        for para in reversed(kept[:start]):
+            if para.startswith("## ") or "|" in para or "\n" in para.strip():
+                continue
+            line = para.strip()
+            if 30 <= len(line) <= 200 and len(line.split()) >= 5 and not line.endswith("."):
+                head.append(line)
+            break
+    out, _ = clip("\n\n".join(head + chosen), budget)
+
+    if anchor_line:
+        how = f"started at the first release heading, '{anchor_line[:70]}'"
+    else:
+        how = "no Highlights/Results/quarter heading found; started at the top of the exhibit"
+    dropped = []
+    if n_cover:
+        dropped.append(f"{n_cover} cover-page block(s)")
+    if n_fls:
+        dropped.append(f"{n_fls} forward-looking-statement block(s)")
+    if dropped:
+        how += "; skipped " + " and ".join(dropped)
+    if start:
+        how += f"; {start} block(s) of pre-heading matter dropped"
+    return out, how
+
+
 def newest(pattern: str, d: Path) -> Path | None:
     hits = sorted(glob.glob(str(d / pattern)))
     if not hits:
@@ -425,13 +614,14 @@ SCREEN_GROUPS = [
         [
             ("roic", pct), ("net_debt", money), ("net_debt_ebit", mult),
             ("cash", money), ("ltd", money), ("equity", money), ("ltd_tag", str),
+            ("ltd_missing", str),
         ],
     ),
     (
         "Growth and operations",
         [
             ("revenue", money), ("revenue_prior", money), ("rev_growth", pct),
-            ("rev_growth_note", str),
+            ("rev_growth_note", str), ("eq_flag", str),
             ("ebit", money), ("net_income", money), ("cfo", money), ("capex", money),
         ],
     ),
@@ -461,6 +651,48 @@ SCREEN_GROUPS = [
 ]
 
 
+def _truthy(v) -> bool:
+    """CSV columns arrive as strings; 'False'/'nan'/'' must not read as True."""
+    return str(v).strip().lower() in ("true", "1", "yes")
+
+
+def debt_callout(row: dict) -> str:
+    """The balance-sheet line the analyst must not skim past."""
+    note = str(row.get("debt_note") or "").strip()
+    missing = _truthy(row.get("ltd_missing"))
+    if not missing:
+        return (f"**Debt data:** OK — {note}\n" if note and note.lower() != "nan" else "")
+    if not note or note.lower() == "nan":
+        note = ("debt data missing (net cash unverified) — no long-term-debt concept was "
+                "tagged in any XBRL frame, so the screen filled long-term debt with 0: EV is "
+                "understated, ROIC overstated, and any negative net debt is an artefact of "
+                "that fill rather than a confirmed debt-free balance sheet")
+    return (
+        "> **DEBT DATA MISSING — DO NOT SCORE THIS AS NET CASH.**\n"
+        f"> {note}. The `net_debt`, `net_debt_ebit`, `ev` and `roic` figures below are all "
+        "affected.\n"
+        "> **Before scoring this name, read the balance sheet (total debt, current portion of "
+        "long-term debt, revolver/credit-facility balance) and the MD&A liquidity and capital "
+        "resources section in sections 8-9 of this pack, and use the figures you find there "
+        "instead of the screen's.**\n"
+    )
+
+
+def eq_callout(row: dict) -> str:
+    flag = str(row.get("eq_flag") or "").strip()
+    if not flag or flag.lower() in ("nan", "none"):
+        return ""
+    return (
+        "> **EARNINGS QUALITY FLAG — one-off items likely.**\n"
+        f"> {flag}.\n"
+        "> Reported net income is not supported by the operating engine that is supposed to "
+        "produce it (typical causes: gains on sale, legal settlements, deferred-tax "
+        "valuation-allowance releases, bargain-purchase gains). Reconcile net income to "
+        "operating income in the earnings release (section 7) before treating any earnings-based "
+        "metric here as repeatable.\n"
+    )
+
+
 def render_screen(row: dict, source: str) -> str:
     if not row:
         return f"_No screen row: {source}._\n"
@@ -473,6 +705,10 @@ def render_screen(row: dict, source: str) -> str:
     ]
     used.update({"name", "cik", "sic", "sic_desc", "exchange", "ticker"})
     out.append("\n".join(ident) + "\n")
+    # Flags first: they change how every number below should be read.
+    for callout in (debt_callout(row), eq_callout(row)):
+        if callout:
+            out.append(callout)
     for title, fields in SCREEN_GROUPS:
         lines = []
         for key, fmt in fields:
@@ -483,6 +719,7 @@ def render_screen(row: dict, source: str) -> str:
             lines.append(f"| {key} | {'n/a' if _isnan(v) else fmt(v)} |")
         if lines:
             out.append(f"**{title}**\n\n| metric | value |\n|---|---|\n" + "\n".join(lines) + "\n")
+    used.update({"debt_note", "eq_flag"})
     extra = [k for k in row if k not in used and k != "why"]
     if extra:
         rows = "\n".join(f"| {k} | {row[k]} |" for k in extra)
@@ -728,7 +965,7 @@ def build_pack(ticker: str) -> tuple[str, dict]:
     f4 = d / "form4_summary.md"
     if f4.exists():
         found.append("form4_summary.md")
-        body, _ = clip(strip_fetch_header(read(f4)), BUDGET_FORM4)
+        body, _ = clip(normalize_form4(strip_fetch_header(read(f4))), BUDGET_FORM4)
         parts.append("## 6. Insider activity (Form 4, trailing 12 months)\n\n" + body)
     else:
         missing.append("form4_summary.md")
@@ -756,11 +993,12 @@ def build_pack(ticker: str) -> tuple[str, dict]:
         er_date = m.group(1) if m else ""
     if ex99:
         found.append(er.name)
-        ex99_excerpt, _ = clip(ex99, BUDGET_EX99)
+        ex99_excerpt, how = extract_release(ex99)
         src_form = "6-K" if er.name.startswith("6-K") else "8-K"
         parts.append(
             f"## 7. Latest earnings press release ({src_form} exhibit from {er.name})\n\n"
             + ("_This issuer reports on Form 6-K rather than 8-K._\n\n" if src_form == "6-K" else "")
+            + f"_Extraction: {how}._\n\n"
             + ex99_excerpt
         )
     else:

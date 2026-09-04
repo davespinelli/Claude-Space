@@ -102,6 +102,17 @@ INST_TAGS = {
             "DebtLongtermAndShorttermCombinedAmount",
             "LongTermNotesPayable", "LongTermLineOfCredit",
             "ConvertibleLongTermNotesPayable", "SecuredLongTermDebt"],
+    # Second-pass fallbacks, applied only to filers the chain above missed
+    # entirely (see fill_ltd_fallbacks). Kept out of the primary chain so a
+    # company that tags a proper long-term-debt concept is never valued off a
+    # revolver balance instead.
+    # DELIBERATELY EXCLUDED: OperatingLeaseLiabilityNoncurrent. An operating
+    # lease liability is not borrowed money; the rent is already inside EBIT, so
+    # adding it to EV double-counts and would manufacture "debt" for every
+    # asset-light retailer that has none.
+    "ltd_noncurrent": ["LongTermDebtNoncurrent"],
+    "debt_current": ["DebtCurrent"],
+    "ltd_alt": ["LineOfCredit", "NotesPayable", "ConvertibleNotesPayable"],
     # last fallback is the cash-flow-statement total (includes restricted cash);
     # used only when the plain cash tag is absent, which beats assuming zero
     "cash": ["CashAndCashEquivalentsAtCarryingValue",
@@ -328,6 +339,64 @@ def instant_concept(name: str, periods: list[str]) -> tuple[pd.Series, pd.Series
     return val, per, src
 
 
+# Tag labels produced by the second pass, so the CSV and the counters can tell a
+# fallback-sourced debt figure from a primary one.
+# NOTE: plain "LongTermDebtNoncurrent" is NOT listed -- it heads the primary
+# chain, so a row carrying it was filled on the first pass, not the second.
+LTD_FALLBACK_TAGS = {
+    "DebtCurrent+LongTermDebtNoncurrent", "DebtCurrent",
+    "LineOfCredit", "NotesPayable", "ConvertibleNotesPayable",
+}
+
+
+def fill_ltd_fallbacks(ltd: pd.Series, ltd_per: pd.Series, ltd_tag: pd.Series):
+    """Fill long-term debt for filers the primary chain found nothing for.
+
+    Order (first hit wins per CIK):
+      1. DebtCurrent + LongTermDebtNoncurrent -- total borrowings, short + long,
+         summed across whichever of the two the filer actually tagged.
+      2. LineOfCredit, NotesPayable, ConvertibleNotesPayable -- single-instrument
+         balances, used when that is all a small filer tags.
+
+    Operating lease liabilities are never used: see the note on INST_TAGS.
+    Returns (ltd, ltd_period, ltd_tag, n_filled).
+    """
+    dc, dc_per, _ = instant_concept("debt_current", INSTANT_PERIODS)
+    nc, nc_per, _ = instant_concept("ltd_noncurrent", INSTANT_PERIODS)
+    alt, alt_per, alt_tag = instant_concept("ltd_alt", INSTANT_PERIODS)
+
+    have = set(ltd.dropna().index)
+    add_v: dict = {}
+    add_p: dict = {}
+    add_t: dict = {}
+
+    for cik in (set(dc.dropna().index) | set(nc.dropna().index)) - have:
+        a, b = dc.get(cik, np.nan), nc.get(cik, np.nan)
+        parts = [(v, n) for v, n in ((a, "DebtCurrent"), (b, "LongTermDebtNoncurrent"))
+                 if v is not None and np.isfinite(v)]
+        if not parts:
+            continue
+        add_v[cik] = float(sum(v for v, _ in parts))
+        add_t[cik] = "+".join(n for _, n in parts)
+        add_p[cik] = dc_per.get(cik) if np.isfinite(a) else nc_per.get(cik)
+
+    for cik in set(alt.dropna().index) - have - set(add_v):
+        v = alt.get(cik, np.nan)
+        if v is None or not np.isfinite(v):
+            continue
+        add_v[cik] = float(v)
+        add_t[cik] = str(alt_tag.get(cik) or "ltd_alt")
+        add_p[cik] = alt_per.get(cik)
+
+    if not add_v:
+        return ltd, ltd_per, ltd_tag, 0
+    idx = sorted(add_v)
+    ltd = pd.concat([ltd, pd.Series([add_v[c] for c in idx], index=idx, dtype="float64")])
+    ltd_per = pd.concat([ltd_per, pd.Series([add_p[c] for c in idx], index=idx, dtype="object")])
+    ltd_tag = pd.concat([ltd_tag, pd.Series([add_t[c] for c in idx], index=idx, dtype="object")])
+    return ltd, ltd_per, ltd_tag, len(add_v)
+
+
 def shares_concept(periods: list[str]) -> tuple[pd.Series, pd.Series]:
     val = pd.Series(dtype="float64")
     per = pd.Series(dtype="object")
@@ -538,6 +607,17 @@ def compute_metrics(f: pd.DataFrame) -> pd.DataFrame:
     f["ltd"] = f.ltd.fillna(0.0)
     f["cash"] = f.cash.fillna(0.0)
     f["net_debt"] = f.ltd - f.cash
+    # A missing debt tag is an absence of data, never evidence of a clean balance
+    # sheet. net_debt < 0 for these rows is an artefact of filling LTD with zero,
+    # so nothing downstream may call it "net cash".
+    f["debt_note"] = np.where(
+        f.ltd_missing,
+        "debt data missing (net cash unverified) — no long-term-debt concept was tagged "
+        "in any XBRL frame, so LTD was filled with 0: EV is understated, ROIC overstated, "
+        "and any negative net debt is an artefact of that fill rather than a confirmed "
+        "debt-free balance sheet",
+        "long-term debt from us-gaap:" + f.ltd_tag.astype(str),
+    )
     f["ev"] = f.mktcap + f.net_debt
     f["ev_ebit"] = np.where((f.ebit > 0) & (f.ev > 0), f.ev / f.ebit, np.nan)
     f["capex_missing"] = f.capex.isna()
@@ -586,6 +666,29 @@ def compute_metrics(f: pd.DataFrame) -> pd.DataFrame:
         "share count +" + (f.loc[dilutive, "share_chg"] * 100).round(1).astype(str)
         + "% yoy — growth may be acquisition/issuance-driven, not organic")
 
+    # ---- earnings quality --------------------------------------------------
+    # Reported net income that outruns the operating engine that is supposed to
+    # produce it usually means one-off items (gains on sale, legal settlements,
+    # deferred-tax valuation-allowance releases, bargain-purchase gains). Those
+    # inflate the FCF/ROIC/growth ranks below without recurring, so they are
+    # flagged rather than silently scored.
+    eq_reasons: list[pd.Series] = []
+    ni, rev, ebit = f.net_income, f.revenue, f.ebit
+    m = ni.notna() & rev.notna() & (ni > rev)
+    eq_reasons.append(m.map({True: "net income exceeds revenue", False: ""}))
+    m = ni.notna() & ebit.notna() & (ni > 0) & (ni > 3 * ebit)
+    eq_reasons.append(m.map({True: "net income more than 3x operating income", False: ""}))
+    m = (f.rev_growth.notna() & (f.rev_growth > 0.50)
+         & f.share_chg.notna() & (f.share_chg > SHARE_GROWTH_FLAG))
+    eq_reasons.append(m.map({True: "revenue growth above 50% alongside share count "
+                                   "growth above 15% (bought, not organic)", False: ""}))
+    joined = eq_reasons[0]
+    for nxt in eq_reasons[1:]:
+        both = (joined != "") & (nxt != "")
+        joined = np.where(both, joined + "; " + nxt, np.where(joined != "", joined, nxt))
+        joined = pd.Series(joined, index=f.index)
+    f["eq_flag"] = joined
+
     def rank_hi(s):  # higher is better
         return s.rank(pct=True)
 
@@ -633,10 +736,16 @@ def make_why(f: pd.DataFrame):
             bits.append(str(r.rev_growth_note))
         if np.isfinite(r.share_chg) and r.share_chg <= q1_sh and r.share_chg < 0:
             bits.append(f"buying back stock {pct(r.share_chg)}")
-        if np.isfinite(r.net_debt_ebit) and r.net_debt_ebit < 0:
+        if bool(getattr(r, "ltd_missing", False)):
+            # never claim net cash off a balance sheet whose debt was never tagged
+            bits.append("debt data missing (net cash unverified)")
+        elif np.isfinite(r.net_debt_ebit) and r.net_debt_ebit < 0:
             bits.append("net cash")
         if np.isfinite(r.mom_12_1) and r.mom_12_1 > 0:
             bits.append(f"12-1 momentum {pct(r.mom_12_1)}")
+        eq = str(getattr(r, "eq_flag", "") or "")
+        if eq and eq.lower() not in ("nan", "none"):
+            bits.append(f"EARNINGS QUALITY: {eq} — one-off items likely")
         if r.falling_knife:
             bits.append("WARNING 6m return below -40%")
         return "; ".join(bits) if bits else "balanced across factors, no single standout"
@@ -649,7 +758,8 @@ OUT_COLS = ["ticker", "name", "sic", "sic_desc", "exchange", "price", "mktcap", 
             "share_chg", "share_chg_src", "rev_growth_note",
             "mom_12_1", "r6m", "off_52w_high", "adv20", "revenue",
             "revenue_prior", "ebit", "net_income", "cfo", "capex", "equity", "ltd", "cash",
-            "shares", "shares_py", "capex_missing", "ltd_missing", "ltd_tag",
+            "shares", "shares_py", "capex_missing", "ltd_missing", "ltd_tag", "debt_note",
+            "eq_flag",
             "revenue_period", "ebit_period", "equity_period",
             "shares_period", "shares_py_period", "r_fcf_yield", "r_ev_ebit", "r_roic",
             "r_rev_growth", "r_buyback", "score", "why"]
@@ -680,6 +790,11 @@ def main(argv=None) -> None:
     equity, equity_per, _ = instant_concept("equity", INSTANT_PERIODS)
     assets, _, _ = instant_concept("assets", INSTANT_PERIODS)
     ltd, ltd_per, ltd_tag = instant_concept("ltd", INSTANT_PERIODS)
+    n_ltd_primary = int(ltd.notna().sum())
+    ltd, ltd_per, ltd_tag, n_ltd_fb = fill_ltd_fallbacks(ltd, ltd_per, ltd_tag)
+    log(f"long-term debt: {n_ltd_primary:,} CIKs from the primary tag chain, "
+        f"+{n_ltd_fb:,} from the DebtCurrent/LongTermDebtNoncurrent, LineOfCredit, "
+        f"NotesPayable and ConvertibleNotesPayable fallbacks")
     cash, _, _ = instant_concept("cash", INSTANT_PERIODS)
     sh, sh_per = shares_concept(INSTANT_PERIODS)
     sh_py, sh_py_per = shares_concept(INSTANT_PERIODS_PY)
@@ -771,6 +886,10 @@ def main(argv=None) -> None:
         log(f"universe after SIC exclusions: {len(u)} "
             f"(-{u_fin} financials/REITs, -{u_bio} clinical-stage biotech)")
         u = compute_metrics(u)
+        n_ltd_missing = int(u.ltd_missing.sum())
+        n_ltd_from_fb = int(u.ltd_tag.isin(LTD_FALLBACK_TAGS).sum())
+        log(f"universe long-term debt: {n_ltd_missing} of {len(u)} rows still ltd_missing "
+            f"after the fallbacks ({n_ltd_from_fb} rows were filled by a fallback tag)")
         u_why = make_why(u)
         u["why"] = [u_why(r) for _, r in u.iterrows()]
         u.insert(0, "rank", range(1, len(u) + 1))
@@ -852,10 +971,18 @@ def main(argv=None) -> None:
              f"{SHARE_GROWTH_FLAG:.0%} year over year: revenue growth alongside that much "
              f"issuance is usually bought, not organic, and the note is repeated in the "
              f"'why each name screens' line below.")
-    L.append("- `ltd_missing` / `ltd_tag` in the CSV show whether any long-term-debt concept was found "
-             "and which one. When nothing is tagged, long-term debt is treated as zero, so EV is "
-             "understated and ROIC overstated for those names. Short-term borrowings, floorplan "
-             "notes and lease liabilities are never included in EV.")
+    L.append("- `ltd_missing` / `ltd_tag` / `debt_note` in the CSV show whether any long-term-debt "
+             "concept was found and which one. The primary tag chain is backed by a second pass "
+             "(`DebtCurrent` + `LongTermDebtNoncurrent`, then `LineOfCredit`, `NotesPayable`, "
+             "`ConvertibleNotesPayable`) for filers the chain misses. `OperatingLeaseLiabilityNoncurrent` "
+             "is deliberately NOT treated as debt. When nothing is tagged even after the fallbacks, "
+             "long-term debt is filled with zero, so EV is understated and ROIC overstated for those "
+             "names and `debt_note` reads 'debt data missing (net cash unverified)' — those rows are "
+             "never described as net cash.")
+    L.append("- `eq_flag` marks earnings-quality problems: net income above revenue, net income above "
+             "3x operating income, or revenue growth above 50% alongside share-count growth above 15%. "
+             "Any of those usually means one-off items rather than a repeatable result, and the flag "
+             "is repeated in the 'why each name screens' line.")
     L.append("- Cash is `CashAndCashEquivalentsAtCarryingValue`, falling back to the cash-flow-statement "
              "total (which includes restricted cash) when the plain tag is absent. Short-term "
              "investments and marketable securities are never netted, so EV is conservative for "

@@ -1,6 +1,6 @@
 # Triage pack — ITRN · Ituran Location & Control Ltd.
 
-_Generated 2026-09-04 12:18 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:44 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -20,6 +20,10 @@ _Source: universe_under2b.csv (not a screen candidate)_
 
 - **Name:** Ituran Location & Control Ltd.
 - **CIK:** 1,337,117 · **SIC:** 5065 (Wholesale-Electronic Parts & Equipment, NEC) · **Exchange:** Nasdaq
+
+> **DEBT DATA MISSING — DO NOT SCORE THIS AS NET CASH.**
+> debt data missing (net cash unverified) — no long-term-debt concept was tagged in any XBRL frame, so LTD was filled with 0: EV is understated, ROIC overstated, and any negative net debt is an artefact of that fill rather than a confirmed debt-free balance sheet. The `net_debt`, `net_debt_ebit`, `ev` and `roic` figures below are all affected.
+> **Before scoring this name, read the balance sheet (total debt, current portion of long-term debt, revolver/credit-facility balance) and the MD&A liquidity and capital resources section in sections 8-9 of this pack, and use the figures you find there instead of the screen's.**
 
 **Valuation**
 
@@ -43,6 +47,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 | ltd | $0.00 |
 | equity | $217.6M |
 | ltd_tag | none |
+| ltd_missing | True |
 
 **Growth and operations**
 
@@ -52,6 +57,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 | revenue_prior | $336.3M |
 | rev_growth | 6.8% |
 | rev_growth_note | n/a |
+| eq_flag | n/a |
 | ebit | $77.0M |
 | net_income | $58.0M |
 | cfo | $88.6M |
@@ -104,7 +110,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 |---|---|
 | rank | 29 |
 
-**Screen rationale:** high ROIC 55.3%; net cash; 12-1 momentum 81.0%
+**Screen rationale:** high ROIC 55.3%; debt data missing (net cash unverified); 12-1 momentum 81.0%
 
 
 ## 3. Share count trend
@@ -137,7 +143,7 @@ _This is a foreign private issuer: it files 6-Ks, which carry no 8-K item codes,
 
 ## 6. Insider activity (Form 4, trailing 12 months)
 
-Net open-market activity (last 12m): buys 0 sh / $0 vs sells 0 sh / $0 -> net $0 (SELLING).
+No Form 4 activity in 12 months (no observation; not a signal).
 Distinct insiders buying (code P): 0. Largest buy: none.
 
 Form 4 filings parsed: 0; transaction rows: 0 (open-market buys 0, sales 0).
@@ -153,11 +159,9 @@ Detail: form4_last12m.csv
 
 _This issuer reports on Form 6-K rather than 8-K._
 
+_Extraction: started at the first release heading, 'ITURAN PRESENTS SECOND QUARTER 2026 RESULTS'; skipped 3 forward-looking-statement block(s); 3 block(s) of pre-heading matter dropped._
+
 ## EX-99.1 - EXHIBIT 99.1 (exhibit_99-1.htm)
-
-Ituran Location & Control Ltd. - 1337117 - 2026
-
-Exhibit 99.1
 
 ITURAN PRESENTS SECOND QUARTER 2026 RESULTS
 
@@ -237,12 +241,6 @@ https://us06web.zoom.us/webinar/register/WN_mE4jXN-IS0ufW5K5ZyeaUg
 
 For those unable to listen to the live call, a replay of the call will be available from the day after the call in the investor relations section of Ituran's website.
 
-Certain statements in this press release are "forward-looking statements" within the meaning of the Securities Act of 1933, as amended. These forward-looking statements include, but are not limited to, our plans, objectives, expectations and intentions and other statements contained in this report that are not historical facts as well as statements identified by words such as "expects", "anticipates", "intends", "plans", "believes", "seeks", "estimates" or words of similar meaning. These statements are based on our current beliefs or expectations and are inherently subject to significant uncertainties and changes in circumstances, many of which are beyond our control. Actual results may differ materially from these expectations due to, but not limited to, changes in global political, economic, business, competitive, market and regulatory factors. Forward-looking statements are not guarantees of future performance, and involve risks, uncertainties and assumptions that may cause our actual results to differ materially from the expectations that we describe in our forward-looking statements. We disclaim any obligation to update forward-looking statements, even if our assumptions and projections change, except where applicable law may otherwise require us to do so.
-
-About Ituran
-
-Ituran is a leader in the emerging mobility technology field, providing value-added location-based services, including a full suite of services for the connected car. Ituran offers Stolen Vehicle Recovery, fleet management as well as mobile asset location, management and control services for vehicles, cargo and personal security for the retail, insurance, financing industries and car manufacturers. Ituran is the largest OEM telematics provider in Latin America. Its products and applications are used by customers in over 20 countries. Ituran is also the founder of the Tel Aviv-based DRIVE startup incubator to promote the development of smart mobility technology.
-
 Ituran's subscriber base has been growing significantly since the Company's inception to over 2.7 million subscribers using its location-based services with a market-leading position in Israel and Latin America. Established in 1995, Ituran has approximately 2,800 employees worldwide, with offices in Israel, Brazil, Argentina, Mexico, Ecuador, Colombia, India, Canada and the United States.
 
 For more information, please visit Ituran's website, at: www.ituran.com
@@ -261,9 +259,6 @@ Condensed Consolidated Financial Statements
 
 as of June 30, 2026
 
-Table of Contents
-
-Page
 Condensed Consolidated Interim Financial Statements :
 Condensed Consolidated Balance Sheets | 2 - 3
 Condensed Consolidated Statements of Income | 4
@@ -297,8 +292,6 @@ Intangible assets, net | 9,563 | 8,839
 Goodwill | 40,119 | 39,831
 Total assets | 408,420 | 386,214
 
-2
-
 ITURAN LOCATION AND CONTROL LTD.
 
 CONDENSED CONSOLIDATED BALANCE SHEETS (cont.)
@@ -324,11 +317,42 @@ Non-controlling interests | 7,167 | 6,922
 Total equity | 225,539 | 224,486
 Total liabilities and equity | 408,420 | 386,214
 
-3
-
 ITURAN LOCATION AND CONTROL LTD.
 
 CONDENSED CONSOLIDATED STATEMENTS OF INCOME
+
+US dollars
+Six months period | Three months period
+ended June 30, | ended June 30,
+(in thousands, except per share data) | 2026 | 2025 | 2026 | 2025
+(unaudited) | (unaudited)
+Revenues:
+Telematics services | 155,224 | 125,936 | 79,824 | 63,756
+Telematics products | 52,230 | 47,312 | 24,964 | 23,037
+207,454 | 173,248 | 104,788 | 86,793
+Cost of revenues:
+Telematics services | 63,949 | 52,734 | 32,887 | 26,835
+Telematics products | 40,711 | 35,574 | 18,551 | 17,037
+104,660 | 88,308 | 51,438 | 43,872
+Gross profit | 102,794 | 84,940 | 53,350 | 42,921
+Research and development expenses | 10,555 | 9,920 | 5,538 | 5,058
+Selling and marketing expenses | 10,754 | 8,634 | 5,521 | 4,375
+General and administrative expenses | 35,848 | 29,369 | 18,533 | 15,131
+Other expenses (income), net | ( 180 | 27 | - | 21
+Operating income | 45,817 | 36,990 | 23,758 | 18,336
+Financing expenses, net | ( 740 | ( 782 | ( 1,327 | ( 1,328
+Income before income tax | 45,077 | 36,208 | 22,431 | 17,008
+Income tax expenses | ( 10,159 | ( 7,329 | ( 4,592 | ( 3,263
+Share in profit (losses) of affiliated companies, net | ( 59 | ( 18 | ( 14 | 16
+Net income for the period | 34,859 | 28,861 | 17,825 | 13,761
+Less: net income attributable to non-controlling interest | ( 758 | ( 816 | ( 498 | ( 308
+Net income attributable to the company | 34,101 | 28,045 | 17,327 | 13,453
+Basic and diluted earnings per share attributable to Company's stockholders | 1.72 | 1.41 | 0.88 | 0.67
+Basic and diluted weighted average number of shares outstanding (in thousands) | 19,802 | 19,894 | 19,773 | 19,894
+
+ITURAN LOCATION AND CONTROL LTD.
+
+CONDENSED CONSOLIDATED STATEMENTS OF CASH FLOWS
 
 _[...truncated at ~12,000 chars of this document]_
 

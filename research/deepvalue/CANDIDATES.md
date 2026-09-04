@@ -53,7 +53,7 @@ mktcap    = last close x dei:EntityCommonStockSharesOutstanding
 | 4 | ESEA | EUROSEAS LTD. | $543M | 3.8 | 26.0% | 24.4% | 7.0% | 0.1 | 0.1% | 28.8% | $3M | 0.841 |
 | 5 | LRN | Stride, Inc. | $3.57B | 9.0 | 12.1% | 22.0% | 17.9% | -0.9 | -4.7% | -48.3% | $61M | 0.841 |
 | 6 | YELP | YELP INC | $1.20B | 6.5 | 26.9% | 22.4% | 3.7% | 0.0 | -14.0% | -18.5% | $26M | 0.840 |
-| 7 | MDXG | MIMEDX GROUP, INC. | $646M | 8.2 | 11.5% | 52.6% | 20.0% | -1.9 | -1.5% | -41.4% | $4M | 0.835 |
+| 7 | MDXG | MIMEDX GROUP, INC. | $646M | 8.2 | 11.5% | 52.6% | 20.0% | -1.9 | -1.5% | -41.4% | $4M | 0.836 |
 | 8 | NUTX | Nutex Health Inc. | $1.35B | 4.3 | 18.1% | 98.9% | 82.4% | -0.6 | 15.1% | 91.7% | $32M | 0.832 |
 | 9 | ZD | ZIFF DAVIS, INC. | $1.93B | 5.7 | 14.9% | 10.7% | 3.5% | -4.8 | -16.4% | 41.6% | $33M | 0.830 |
 | 10 | SIG | SIGNET JEWELERS LTD | $3.23B | 6.7 | 16.3% | 24.0% | 1.6% | -1.5 | -4.4% | 9.8% | $54M | 0.829 |
@@ -81,27 +81,27 @@ mktcap    = last close x dei:EntityCommonStockSharesOutstanding
 | 32 | RIGL | RIGEL PHARMACEUTICALS INC | $906M | 7.1 | 8.4% | 24.2% | 64.1% | -0.1 | 4.1% | 2.2% | $13M | 0.777 |
 | 33 | PGNY | Progyny, Inc. | $2.04B | 22.2 | 9.4% | 22.4% | 10.4% | -1.8 | -10.8% | 33.3% | $30M | 0.777 |
 | 34 | NVGS | Navigator Holdings Ltd. | $1.48B | 7.6 | 7.9% | 12.9% | 3.6% | -1.4 | -6.0% | 29.6% | $8M | 0.775 |
-| 35 | NAGE | Niagen Bioscience, Inc. | $246M | 11.0 | 5.5% | 81.5% | 29.9% | -4.1 | -0.8% | -69.4% | $1M | 0.773 |
+| 35 | NAGE | Niagen Bioscience, Inc. | $246M | 11.0 | 5.5% | 81.5% | 29.9% | -4.1 | -0.8% | -69.4% | $1M | 0.774 |
 | 36 | EMBC | Embecta Corp. | $322M | 5.9 | 56.6% | 39.2% | -3.8% | 4.5 | -3.1% | -74.3% | $9M | 0.772 |
 | 37 | ABG | ASBURY AUTOMOTIVE GROUP INC | $3.87B | 8.0 | 20.0% | 9.8% | 4.7% | 3.5 | -8.7% | -13.5% | $44M | 0.772 |
-| 38 | SMPL | Simply Good Foods Co | $1.02B | 8.2 | 15.5% | 7.3% | 9.0% | 1.7 | -12.0% | -61.0% | $21M | 0.771 |
+| 38 | SMPL | Simply Good Foods Co | $1.02B | 8.2 | 15.5% | 7.3% | 9.0% | 1.7 | -12.0% | -61.0% | $21M | 0.772 |
 | 39 | GNTX | GENTEX CORP | $4.81B | 9.7 | 9.5% | 16.5% | 9.6% | -0.5 | -4.0% | -11.1% | $55M | 0.771 |
 | 40 | UPBD | UPBOUND GROUP, INC. | $1.09B | 4.4 | 21.9% | 28.1% | 8.7% | -0.5 | 0.7% | -12.3% | $15M | 0.768 |
 
 ## Why each name screens
 
 1. **BRBR** -- BELLRING BRANDS, INC. (Food and Kindred Products). top-quartile FCF yield 21.2%; cheap at 6.4x EV/EBIT; high ROIC 45.7%; revenue +16.1%; buying back stock -7.7%
-2. **TOYO** -- TOYO Co., Ltd (Semiconductors & Related Devices). top-quartile FCF yield 24.9%; cheap at 1.8x EV/EBIT; high ROIC 89.0%; revenue +141.5%; buying back stock -19.0%; net cash; WARNING 6m return below -40%
-3. **PRDO** -- PERDOCEO EDUCATION Corp (Services-Educational Services). top-quartile FCF yield 10.8%; cheap at 9.8x EV/EBIT; high ROIC 17.8%; revenue +24.2%; buying back stock -3.7%; net cash; 12-1 momentum 1.9%
+2. **TOYO** -- TOYO Co., Ltd (Semiconductors & Related Devices). top-quartile FCF yield 24.9%; cheap at 1.8x EV/EBIT; high ROIC 89.0%; revenue +141.5%; buying back stock -19.0%; debt data missing (net cash unverified); WARNING 6m return below -40%
+3. **PRDO** -- PERDOCEO EDUCATION Corp (Services-Educational Services). top-quartile FCF yield 10.8%; cheap at 9.8x EV/EBIT; high ROIC 17.8%; revenue +24.2%; buying back stock -3.7%; debt data missing (net cash unverified); 12-1 momentum 1.9%
 4. **ESEA** -- EUROSEAS LTD. (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 26.0%; cheap at 3.8x EV/EBIT; high ROIC 24.4%; 12-1 momentum 28.8%
 5. **LRN** -- Stride, Inc. (Services-Educational Services). top-quartile FCF yield 12.1%; cheap at 9.0x EV/EBIT; high ROIC 22.0%; revenue +17.9%; buying back stock -4.7%; net cash
 6. **YELP** -- YELP INC (Services-Personal Services). top-quartile FCF yield 26.9%; cheap at 6.5x EV/EBIT; high ROIC 22.4%; buying back stock -14.0%
 7. **MDXG** -- MIMEDX GROUP, INC. (Surgical & Medical Instruments & Apparatus). top-quartile FCF yield 11.5%; cheap at 8.2x EV/EBIT; high ROIC 52.6%; revenue +20.0%; net cash
-8. **NUTX** -- Nutex Health Inc. (Services-Business Services, NEC). top-quartile FCF yield 18.1%; cheap at 4.3x EV/EBIT; high ROIC 98.9%; revenue +82.4% BUT share count +15.1% yoy — growth may be acquisition/issuance-driven, not organic; net cash; 12-1 momentum 91.7%
+8. **NUTX** -- Nutex Health Inc. (Services-Business Services, NEC). top-quartile FCF yield 18.1%; cheap at 4.3x EV/EBIT; high ROIC 98.9%; revenue +82.4% BUT share count +15.1% yoy — growth may be acquisition/issuance-driven, not organic; net cash; 12-1 momentum 91.7%; EARNINGS QUALITY: revenue growth above 50% alongside share count growth above 15% (bought, not organic) — one-off items likely
 9. **ZD** -- ZIFF DAVIS, INC. (Telegraph & Other Message Communications). top-quartile FCF yield 14.9%; cheap at 5.7x EV/EBIT; buying back stock -16.4%; net cash; 12-1 momentum 41.6%
-10. **SIG** -- SIGNET JEWELERS LTD (Retail-Jewelry Stores). top-quartile FCF yield 16.3%; cheap at 6.7x EV/EBIT; high ROIC 24.0%; buying back stock -4.4%; net cash; 12-1 momentum 9.8%
+10. **SIG** -- SIGNET JEWELERS LTD (Retail-Jewelry Stores). top-quartile FCF yield 16.3%; cheap at 6.7x EV/EBIT; high ROIC 24.0%; buying back stock -4.4%; debt data missing (net cash unverified); 12-1 momentum 9.8%
 11. **GPOR** -- GULFPORT ENERGY CORP (Crude Petroleum & Natural Gas). top-quartile FCF yield 25.0%; cheap at 6.9x EV/EBIT; high ROIC 17.3%; revenue +48.5%
-12. **CRMD** -- CorMedix Inc. (Pharmaceutical Preparations). top-quartile FCF yield 26.2%; cheap at 2.7x EV/EBIT; high ROIC 58.1%; revenue +617.0%; net cash
+12. **CRMD** -- CorMedix Inc. (Pharmaceutical Preparations). top-quartile FCF yield 26.2%; cheap at 2.7x EV/EBIT; high ROIC 58.1%; revenue +617.0%; debt data missing (net cash unverified)
 13. **HRMY** -- Harmony Biosciences Holdings, Inc. (Pharmaceutical Preparations). top-quartile FCF yield 14.3%; cheap at 9.7x EV/EBIT; high ROIC 28.2%; revenue +21.5%; net cash; 12-1 momentum 1.9%
 14. **DAC** -- Danaos Corp (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 22.9%; cheap at 5.3x EV/EBIT; buying back stock -3.8%; net cash; 12-1 momentum 49.7%
 15. **DXC** -- DXC Technology Co (Services-Computer Processing & Data Preparation). top-quartile FCF yield 55.6%; cheap at 3.0x EV/EBIT; high ROIC 18.7%; buying back stock -10.7%
@@ -110,7 +110,7 @@ mktcap    = last close x dei:EntityCommonStockSharesOutstanding
 18. **TPC** -- TUTOR PERINI CORP (General Bldg Contractors - Nonresidential Bldgs). top-quartile FCF yield 12.4%; high ROIC 25.5%; revenue +28.1%; net cash; 12-1 momentum 43.6%
 19. **KTB** -- Kontoor Brands, Inc. (Men's & Boys' Furnishgs, Work Clothg, & Allied Garments). top-quartile FCF yield 10.8%; high ROIC 15.8%; revenue +20.9%; 12-1 momentum 8.2%
 20. **GPI** -- GROUP 1 AUTOMOTIVE INC (Retail-Auto Dealers & Gasoline Stations). top-quartile FCF yield 12.5%; cheap at 8.5x EV/EBIT; buying back stock -7.9%
-21. **CRTO** -- Criteo S.A. (Services-Advertising Agencies). top-quartile FCF yield 23.4%; cheap at 3.1x EV/EBIT; high ROIC 18.3%; buying back stock -6.4%; net cash
+21. **CRTO** -- Criteo S.A. (Services-Advertising Agencies). top-quartile FCF yield 23.4%; cheap at 3.1x EV/EBIT; high ROIC 18.3%; buying back stock -6.4%; debt data missing (net cash unverified)
 22. **BBWI** -- Bath & Body Works, Inc. (Retail-Retail Stores, NEC). top-quartile FCF yield 22.6%; cheap at 5.7x EV/EBIT; high ROIC 58.7%; buying back stock -4.7%
 23. **LAUR** -- LAUREATE EDUCATION, INC. (Services-Educational Services). cheap at 11.5x EV/EBIT; high ROIC 29.8%; buying back stock -6.5%; 12-1 momentum 36.1%
 24. **NGVT** -- Ingevity Corp (Chemicals & Allied Products). top-quartile FCF yield 11.4%; cheap at 8.0x EV/EBIT; high ROIC 32.9%; buying back stock -5.7%; 12-1 momentum 33.2%
@@ -119,17 +119,17 @@ mktcap    = last close x dei:EntityCommonStockSharesOutstanding
 27. **COLL** -- COLLEGIUM PHARMACEUTICAL, INC (Pharmaceutical Preparations). top-quartile FCF yield 42.5%; cheap at 4.9x EV/EBIT; high ROIC 33.7%; revenue +23.6%
 28. **UPWK** -- UPWORK, INC (Services-Computer Processing & Data Preparation). top-quartile FCF yield 21.1%; cheap at 8.0x EV/EBIT; high ROIC 20.6%; buying back stock -5.8%; net cash
 29. **GSL** -- Global Ship Lease, Inc. (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 31.7%; cheap at 4.4x EV/EBIT; high ROIC 16.6%; 12-1 momentum 46.3%
-30. **PAYO** -- Payoneer Global Inc. (Services-Business Services, NEC). high ROIC 32.1%; buying back stock -6.0%; net cash; 12-1 momentum 5.3%
+30. **PAYO** -- Payoneer Global Inc. (Services-Business Services, NEC). high ROIC 32.1%; buying back stock -6.0%; debt data missing (net cash unverified); 12-1 momentum 5.3%
 31. **KFY** -- KORN FERRY (Services-Employment Agencies). cheap at 9.8x EV/EBIT; high ROIC 23.2%; net cash; 12-1 momentum 16.9%
-32. **RIGL** -- RIGEL PHARMACEUTICALS INC (Pharmaceutical Preparations). cheap at 7.1x EV/EBIT; high ROIC 24.2%; revenue +64.1%; net cash; 12-1 momentum 2.2%
-33. **PGNY** -- Progyny, Inc. (Services-Misc Health & Allied Services, NEC). high ROIC 22.4%; buying back stock -10.8%; net cash; 12-1 momentum 33.3%
-34. **NVGS** -- Navigator Holdings Ltd. (Deep Sea Foreign Transportation of  Freight). cheap at 7.6x EV/EBIT; buying back stock -6.0%; net cash; 12-1 momentum 29.6%
-35. **NAGE** -- Niagen Bioscience, Inc. (Medicinal Chemicals & Botanical Products). cheap at 11.0x EV/EBIT; high ROIC 81.5%; revenue +29.9%; net cash
+32. **RIGL** -- RIGEL PHARMACEUTICALS INC (Pharmaceutical Preparations). cheap at 7.1x EV/EBIT; high ROIC 24.2%; revenue +64.1%; net cash; 12-1 momentum 2.2%; EARNINGS QUALITY: net income exceeds revenue — one-off items likely
+33. **PGNY** -- Progyny, Inc. (Services-Misc Health & Allied Services, NEC). high ROIC 22.4%; buying back stock -10.8%; debt data missing (net cash unverified); 12-1 momentum 33.3%
+34. **NVGS** -- Navigator Holdings Ltd. (Deep Sea Foreign Transportation of  Freight). cheap at 7.6x EV/EBIT; buying back stock -6.0%; debt data missing (net cash unverified); 12-1 momentum 29.6%
+35. **NAGE** -- Niagen Bioscience, Inc. (Medicinal Chemicals & Botanical Products). cheap at 11.0x EV/EBIT; high ROIC 81.5%; revenue +29.9%; debt data missing (net cash unverified)
 36. **EMBC** -- Embecta Corp. (Surgical & Medical Instruments & Apparatus). top-quartile FCF yield 56.6%; cheap at 5.9x EV/EBIT; high ROIC 39.2%; buying back stock -3.1%
 37. **ABG** -- ASBURY AUTOMOTIVE GROUP INC (Retail-Auto Dealers & Gasoline Stations). top-quartile FCF yield 20.0%; cheap at 8.0x EV/EBIT; buying back stock -8.7%
 38. **SMPL** -- Simply Good Foods Co (Food and Kindred Products). top-quartile FCF yield 15.5%; cheap at 8.2x EV/EBIT; buying back stock -12.0%
-39. **GNTX** -- GENTEX CORP (Motor Vehicle Parts & Accessories). cheap at 9.7x EV/EBIT; high ROIC 16.5%; buying back stock -4.0%; net cash
-40. **UPBD** -- UPBOUND GROUP, INC. (Services-Equipment Rental & Leasing, NEC). top-quartile FCF yield 21.9%; cheap at 4.4x EV/EBIT; high ROIC 28.1%; net cash
+39. **GNTX** -- GENTEX CORP (Motor Vehicle Parts & Accessories). cheap at 9.7x EV/EBIT; high ROIC 16.5%; buying back stock -4.0%; debt data missing (net cash unverified)
+40. **UPBD** -- UPBOUND GROUP, INC. (Services-Equipment Rental & Leasing, NEC). top-quartile FCF yield 21.9%; cheap at 4.4x EV/EBIT; high ROIC 28.1%; debt data missing (net cash unverified)
 
 ## Data notes
 
@@ -137,7 +137,8 @@ mktcap    = last close x dei:EntityCommonStockSharesOutstanding
 - Balance-sheet instants: first available of CY2026Q2I, CY2026Q1I, CY2025Q4I; prior-year share count from CY2025Q2I, CY2025Q1I, CY2024Q4I.
 - `share_chg` prefers the dei cover-page count on both sides. That tag is missing (or filed as zero) for a slice of filers, so it falls back first to `us-gaap:CommonStockSharesOutstanding` for both instants and then to `us-gaap:WeightedAverageNumberOfSharesOutstandingBasic` year over year. `share_chg_src` in the CSV names the tag that produced each number; both sides of a ratio always come from the same tag.
 - `rev_growth_note` flags companies whose share count grew more than 15% year over year: revenue growth alongside that much issuance is usually bought, not organic, and the note is repeated in the 'why each name screens' line below.
-- `ltd_missing` / `ltd_tag` in the CSV show whether any long-term-debt concept was found and which one. When nothing is tagged, long-term debt is treated as zero, so EV is understated and ROIC overstated for those names. Short-term borrowings, floorplan notes and lease liabilities are never included in EV.
+- `ltd_missing` / `ltd_tag` / `debt_note` in the CSV show whether any long-term-debt concept was found and which one. The primary tag chain is backed by a second pass (`DebtCurrent` + `LongTermDebtNoncurrent`, then `LineOfCredit`, `NotesPayable`, `ConvertibleNotesPayable`) for filers the chain misses. `OperatingLeaseLiabilityNoncurrent` is deliberately NOT treated as debt. When nothing is tagged even after the fallbacks, long-term debt is filled with zero, so EV is understated and ROIC overstated for those names and `debt_note` reads 'debt data missing (net cash unverified)' — those rows are never described as net cash.
+- `eq_flag` marks earnings-quality problems: net income above revenue, net income above 3x operating income, or revenue growth above 50% alongside share-count growth above 15%. Any of those usually means one-off items rather than a repeatable result, and the flag is repeated in the 'why each name screens' line.
 - Cash is `CashAndCashEquivalentsAtCarryingValue`, falling back to the cash-flow-statement total (which includes restricted cash) when the plain tag is absent. Short-term investments and marketable securities are never netted, so EV is conservative for companies that park cash in securities.
 - `capex_missing` in the CSV flags companies with no capex concept tagged; for those FCF equals operating cash flow and is therefore overstated.
 - Market cap uses the dei cover-page share count, which for dual-class companies sometimes covers only one class and then understates the true market cap.

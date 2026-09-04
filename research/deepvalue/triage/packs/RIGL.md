@@ -1,6 +1,6 @@
 # Triage pack — RIGL · RIGEL PHARMACEUTICALS INC
 
-_Generated 2026-09-04 12:18 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:44 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -17,6 +17,12 @@ _Source: candidates.csv_
 
 - **Name:** RIGEL PHARMACEUTICALS INC
 - **CIK:** 1,034,842 · **SIC:** 2834 (Pharmaceutical Preparations) · **Exchange:** Nasdaq
+
+**Debt data:** OK — long-term debt from us-gaap:LongTermDebt
+
+> **EARNINGS QUALITY FLAG — one-off items likely.**
+> net income exceeds revenue.
+> Reported net income is not supported by the operating engine that is supposed to produce it (typical causes: gains on sale, legal settlements, deferred-tax valuation-allowance releases, bargain-purchase gains). Reconcile net income to operating income in the earnings release (section 7) before treating any earnings-based metric here as repeatable.
 
 **Valuation**
 
@@ -40,6 +46,7 @@ _Source: candidates.csv_
 | ltd | $45.0M |
 | equity | $425.4M |
 | ltd_tag | LongTermDebt |
+| ltd_missing | False |
 
 **Growth and operations**
 
@@ -49,6 +56,7 @@ _Source: candidates.csv_
 | revenue_prior | $179.3M |
 | rev_growth | 64.1% |
 | rev_growth_note | n/a |
+| eq_flag | net income exceeds revenue |
 | ebit | $125.5M |
 | net_income | $367.0M |
 | cfo | $75.7M |
@@ -95,7 +103,7 @@ _Source: candidates.csv_
 | capex_missing | True |
 | ltd_missing | False |
 
-**Screen rationale:** cheap at 7.1x EV/EBIT; high ROIC 24.2%; revenue +64.1%; net cash; 12-1 momentum 2.2%
+**Screen rationale:** cheap at 7.1x EV/EBIT; high ROIC 24.2%; revenue +64.1%; net cash; 12-1 momentum 2.2%; EARNINGS QUALITY: net income exceeds revenue — one-off items likely
 
 
 ## 3. Share count trend
@@ -137,16 +145,9 @@ Detail: form4_last12m.csv
 
 ## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-04_2-02-results.md)
 
+_Extraction: started at the first release heading, 'Rigel Reports Second Quarter 2026 Financial Results'; skipped 9 forward-looking-statement block(s); 4 block(s) of pre-heading matter dropped._
+
 ## EX-99.1 - EX-99.1 (rigl-20260804xex991q22026r.htm)
-
-EX-99.1
-2
-rigl-20260804xex991q22026r.htm
-EX-99.1
-
-Document
-
-Exhibit 99.1
 
 Rigel Reports Second Quarter 2026 Financial Results
 
@@ -225,6 +226,8 @@ The above revenue guidance excludes VEPPANU.
 The company also continues to anticipate it will report positive net income for the full year 2026, while funding existing and new clinical development programs.
 
 Conference Call and Webcast with Slides Today at 4:30 p.m. Eastern Time
+
+Rigel will hold a live conference call and webcast today at 4:30 p.m. Eastern Time (1:30 p.m. Pacific Time).
 
 _[...truncated at ~12,000 chars of this document]_
 

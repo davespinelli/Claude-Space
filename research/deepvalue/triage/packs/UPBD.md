@@ -1,6 +1,6 @@
 # Triage pack — UPBD · UPBOUND GROUP, INC.
 
-_Generated 2026-09-04 12:18 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:44 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -17,6 +17,10 @@ _Source: candidates.csv_
 
 - **Name:** UPBOUND GROUP, INC.
 - **CIK:** 933,036 · **SIC:** 7359 (Services-Equipment Rental & Leasing, NEC) · **Exchange:** Nasdaq
+
+> **DEBT DATA MISSING — DO NOT SCORE THIS AS NET CASH.**
+> debt data missing (net cash unverified) — no long-term-debt concept was tagged in any XBRL frame, so LTD was filled with 0: EV is understated, ROIC overstated, and any negative net debt is an artefact of that fill rather than a confirmed debt-free balance sheet. The `net_debt`, `net_debt_ebit`, `ev` and `roic` figures below are all affected.
+> **Before scoring this name, read the balance sheet (total debt, current portion of long-term debt, revolver/credit-facility balance) and the MD&A liquidity and capital resources section in sections 8-9 of this pack, and use the figures you find there instead of the screen's.**
 
 **Valuation**
 
@@ -40,6 +44,7 @@ _Source: candidates.csv_
 | ltd | $0.00 |
 | equity | $733.4M |
 | ltd_tag | none |
+| ltd_missing | True |
 
 **Growth and operations**
 
@@ -49,6 +54,7 @@ _Source: candidates.csv_
 | revenue_prior | $4.3B |
 | rev_growth | 8.7% |
 | rev_growth_note | n/a |
+| eq_flag | n/a |
 | ebit | $223.3M |
 | net_income | $73.0M |
 | cfo | $305.6M |
@@ -95,7 +101,7 @@ _Source: candidates.csv_
 | capex_missing | False |
 | ltd_missing | True |
 
-**Screen rationale:** top-quartile FCF yield 21.9%; cheap at 4.4x EV/EBIT; high ROIC 28.1%; net cash
+**Screen rationale:** top-quartile FCF yield 21.9%; cheap at 4.4x EV/EBIT; high ROIC 28.1%; debt data missing (net cash unverified)
 
 
 ## 3. Share count trend
@@ -135,14 +141,9 @@ Detail: form4_last12m.csv
 
 ## 7. Latest earnings press release (8-K exhibit from 8-K_2026-07-30_2-02-results.md)
 
+_Extraction: started at the first release heading, 'Upbound Group, Inc. Reports Second Quarter 2026 Results'; skipped 11 forward-looking-statement block(s); 3 block(s) of pre-heading matter dropped._
+
 ## EX-99.1 - EX-99.1 (upbd-ex99_1.htm)
-
-EX-99.1
-2
-upbd-ex99_1.htm
-EX-99.1
-
-EX-99.1
 
 Upbound Group, Inc. Reports Second Quarter 2026 Results
 
@@ -194,32 +195,19 @@ Same Store Sales (SSS): Same store sales generally represents revenue earned in 
 (6)
 See "Non-GAAP Financial Measures" below for the definitions and other information regarding our non-GAAP financial measures included in this release.
 
-Forward-Looking Statements
-
-This release contains forward-looking statements within the meaning of the U.S. Private Securities Litigation Reform Act of 1995, including, among others, statements regarding our 2026 financial guidance, future same store sales expectations and other statements regarding our future outlook. Such forward-looking statements generally can be identified by the use of forward-looking terminology such as "may," "will," "expect," "intend," "could," "estimate," "predict," "continue," "maintain," "should," "anticipate," "believe," or "confident," or the negative thereof or variations thereon or similar terminology. Such forward-looking statements are based on particular assumptions that our management has made in light of its experience and its perception of expected future developments and other factors that it believes are appropriate under the circumstances, and are subject to various risks and uncertainties. Factors that could cause or contribute to material and adverse differences between actual and anticipated results include, but are not limited to, (1) the general strength of the economy and other economic conditions affecting consumer preferences, spending and payment behaviors, including the availability of credit to the Company's target consumers and to other consumers, impacts from continued inflation, central bank monetary policy initiatives to address inflation concerns and a possible recession or slowdown in economic growth, (2) risks described in our full second quarter 2026 earnings release and related materials, and (3) the other risks detailed from time to time in the reports
-
-filed by us with the Securities and Exchange Commission, including our Annual Report on Form 10-K for the year ended December 31, 2025, and our Quarterly Reports on Form 10-Q for the quarters ended March 31, 2026, and June 30, 2026, as well as subsequent Quarterly Reports on Form 10-Q or Current Reports on Form 8-K. You are cautioned not to place undue reliance on forward-looking statements, which speak only as of the date of this release. Except as required by law, we are not obligated to, and do not undertake to, publicly release any revisions to these forward-looking statements to reflect any events or circumstances after the date hereof or to reflect the occurrence of unanticipated events.
-
-Non-GAAP Financial Measures
-
-This release contains certain financial information determined by methods other than in accordance with U.S. Generally Accepted Accounting Principles (GAAP), including (1) Non-GAAP diluted earnings per share (net earnings or loss, as adjusted for special items (as defined below), net of taxes, divided by the number of shares of our common stock on a fully diluted basis), (2) Adjusted EBITDA (net earnings before interest, taxes, stock-based compensation, depreciation and amortization, as adjusted for special items) on a consolidated basis, and (3) Free Cash Flow (net cash provided by operating activities less capital expenditures and customer cash advances). "Special items" refers to certain gains and charges we view as extraordinary, unusual or non-recurring in nature or which we believe do not reflect our core business activities, and, for historical items, are reported as Other Gains and Charges in our Consolidated Statements of Operations. Because of the inherent uncertainty related to these special items, management does not believe it is able to provide a meaningful forecast of the comparable GAAP measures or reconciliation to forecasted non-GAAP measures without unreasonable effort.
-
-These non-GAAP measures are additional tools intended to assist our management in comparing our performance on a more consistent basis for purposes of business decision-making by removing the impact of certain items management believes do not directly reflect our core operations. These measures are intended to assist management in evaluating operating performance and liquidity, comparing performance and liquidity across periods, planning and forecasting future business operations, helping determine levels of operating and capital investments and identifying and assessing additional trends potentially impacting our Company that may not be shown solely by comparisons of GAAP measures. Consolidated Adjusted EBITDA is also used as part of our incentive compensation program for our executive officers and others.
-
-We believe these non-GAAP financial measures also provide supplemental information that is useful to investors, analysts and other external users of our consolidated financial statements in understanding our financial results and evaluating our performance and liquidity from period to period. However, non-GAAP financial measures have inherent limitations and are not substitutes for, or superior to, GAAP financial measures, and they should be read together with our consolidated financial statements prepared in accordance with GAAP. Further, because non-GAAP financial measures are not standardized, it may not be possible to compare such measures to the non-GAAP financial measures presented by other companies, even if they have the same or similar names.
-
-Upbound Investor Relations:
-
-investor.relations@upbound.com
-
 972-801-1103
 
 ## EX-99.2 - EX-99.2 (upbd-ex99_2.htm)
 
 EX-99.2
-3
 upbd-ex99_2.htm
 EX-99.2
+
+Upbound Group, Inc. Earnings Release July 30, 2026 Second Quarter 2026 Results & Key Metrics $1,163M $22M $127M $0.37 $1.07 $0.39 Total Revenue Adjusted EBITDA1 GAAP Diluted EPS Non-GAAP Quarterly Dividend Per Share Net Earnings Diluted EPS1 Brigit Delivers over 35% Topline Growth, Acima LCO Improves Below 9%, Rent-A-Center Achieves Third Consecutive Quarter of Positive Same-Store Sales Affirming full year EBITDA and EPS Guidance. Second Quarter Results Within All Guided Ranges Second Quarter Consolidated Results CEO Commentary • Consolidated revenue of $1,163.4 million increased $5.9 million, or 0.5%, year-over-year. "The second quarter reflected continued solid execution for Upbound. We • GAAP operating profit of $54.3 million and non-GAAP operating profit1 of $108.7 million, compared to $50.7 million of GAAP operating profit and $116.2 million of non-GAAP operating profit in the prior year period. Second quarter 2026 GAAP operating profit margin was 4.7%, compared to 4.4% in the prior year period. delivered results within all of our guided ranges, generated robust cash flow, and made meaningful progress strengthening our balance sheet all while advancing our long-term strategic priorities," said CEO Fahmi Karam. • Net earnings on a GAAP basis of $21.6 million, compared to $15.5 million in the prior year period, a $6.1 million increase. Net profit margin of 1.9% increased 60 basis points year-over-year. "Our three complementary brands give us multiple avenues for growth and allow us to deepen customer relationships across products. Despite a tough operating environment, we executed well across the business including Rent-A-Center launching Amazon package pickups and returns at 1,500 stores nationally, Brigit executing a partnership agreement with Experian, and Acima expanding Adjusted EBITDA margin to over 16 percent." • Adjusted EBITDA1 decreased 4.6% year-over-year to $127.0 million. • Adjusted EBITDA margin1 of 10.9% decreased 60 basis points compared to the prior year period. • GAAP diluted earnings per share was $0.37, compared to GAAP diluted earnings per share of $0.26 in the prior year period. • Non-GAAP diluted earnings per share1, which excludes the impact of special items described at the end of this release, was $1.07 for the second quarter of 2026, compared to $1.12 in the prior year period. "We're energized by the opportunities ahead. By reinforcing underwriting discipline, strategically investing in AI, shared data platforms, and a more connected, personalized customer experience, we're building a stronger, more efficient platform positioned to sustain profitability and create long-term value for our shareholders," concluded Mr. Karam. • Improvement in lease-to-own charge-off performance, with Acima LCO rate decreasing 50 basis points year-over-year while Rent-A- Center LCO rate increased 30 basis points year-over-year. • Quarterly dividend per share of $0.39, or $1.56 annualized. (1)Non-GAAP financial measure. Refer to definitions and reconciliations elsewhere in this release.
+
+Second Quarter Segment Highlights • Paying subscribers increased 399k, an increase of 30.2%, y/y and 10.3% compared to the first quarter. Total Revenue Paying Subscribers $71.1M +37.1% y/y 1.72M +30.2% y/y • Average monthly revenue per user (ARPU) increased 6.3% y/y, driven by increased shift towards Brigit's Premium subscription tier, deeper engagement with marketplace offers, and higher expedited transfer revenue. Net Advance Loss Rate ARPU • Net advance loss rate increased 100 bps y/y and increased 10 bps sequentially. 3.6% +100 bps y/y $14.30 +6.3% y/y • Net earnings of $7.5M with a net profit margin of 10.6%, and Adjusted EBITDA1 of $11.8M with an Adjusted EBITDA margin1 of 16.6%. • Revenue of $603.5M decreased approximately 2.5% y/y. Total Revenue Net Earnings • GMV decreased approximately 10.7% y/y in the second quarter. $603.5M $73.4M -2.5% y/y -10.4% y/y • Lease charge-off rate decreased 50 bps y/y and flat compared to the first quarter. LCO Rate Adjusted EBITDA1 8.8% -50 bps y/y $98.0M +5.1% y/y • Net earnings margin was 12.2%, a decrease of 100 bps from the prior year period, and Adjusted EBITDA margin1 was 16.2%, an increase of 117 bps y/y. • Company-owned same store sales increased 1.6% y/y, while consolidated segment revenue of $466.4M decreased approximately 0.2% y/y. Total Revenue Net Earnings $466.4M $54.7M -0.2% y/y -13.2% y/y • Lease charge-offs for company-owned Rent-A-Center stores were 5.0%, increasing 30 bps y/y. • Net earnings of $54.7M and Adjusted EBITDA1 of $63.2M decreased 13.2% and 7.6% y/y, respectively. LCO Rate 5.0% Adjusted EBITDA1 $63.2M -7.6% y/y +30 bps y/y Note: Definitions of certain key performance metrics are available on page five of this release. (1) Non-GAAP financial measure. Refer to definitions and reconciliations elsewhere in this release.
+
+Full Year and Q3 2026 Guidance CFO Commentary "Second-quarter results came in within our guided ranges across revenue, EBITDA, and EPS, even as top-line growth ran below plan on softer consumer demand," said CFO Hal Khouri. The Company reaffirms EBITDA & EPS FY 2026 guidance, while tightening revenue guidance, and providing guidance for Q3 2026 "At the segment level, Acima continued to benefit from prior underwriting actions, with lease charge-offs Table 1 Consolidated Guidance1,2 Full Year 2026 Third Quarter 2026 improving year-over-year to Revenues ($B) $4.70 - $4.85 $1.05 - $1.15 approximately 8.8 percent and EBITDA margins expanding. Brigit sustained strong double-digit growth in revenue and paying users, while Rent-A-Center achieved its third consecutive quarter of positive same-store sales." Adj. EBITDA Excluding SBC ($M)3 Non-GAAP Diluted Earnings Per Share3 $500 - $535 $105 - $115 $4.00 - $4.35 $0.85 - $0.95 "Cash generation remained strong in the quarter, with free cash flow well above both plan and the prior year, supporting continued progress on debt reduction and balance-sheet strength. Liquidity remained solid at approximately $487 million at quarter end, and net leverage continued to trend lower sequentially, towards our goal of 2.0x net leverage." 1. Consolidated includes Acima, Brigit, Rent-A-Center, Mexico, and Corporate Segments. 2. Due to the inherent uncertainty related to the special items identified in the tables below, management does not believe it is able to provide a meaningful forecast of the comparable GAAP measures or reconciliation to any forecasted GAAP measure without unreasonable effort. The actual amount of these items during 2026 may have a significant impact on our future GAAP results. 3. Non-GAAP financial measure. See descriptions below in this release. "Our capital allocation priorities are unchanged as we move through the second half of the year: invest in the business, strengthen the balance sheet, and return capital to shareholders while maintaining flexibility to support long-term value creation." concluded Mr. Khouri Conference Call and Webcast Information Upbound Group, Inc. will host a conference call to discuss second quarter 2026 results, guidance and other operational matters on the morning of Thursday, July 30, 2026, at 9:00 a.m. ET. For a live webcast of the call, visit https://investor.upbound.com. Certain financial and other statistical information that will be discussed during the conference call will also be provided on the same website.
 
 _[...truncated at ~12,000 chars of this document]_
 

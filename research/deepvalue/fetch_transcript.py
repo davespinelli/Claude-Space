@@ -445,14 +445,61 @@ def fetch_sec(ticker, want_quarter=None):
     return best_overall
 
 
+# ------------------------------------------------------------------ API keys
+
+# A key that was never filled in is worse than no key at all: it turns a clean
+# "SKIPPED, no key" into a 401/403 that reads like the source being down. An
+# empty value, a leftover placeholder, or anything too short to be a real key is
+# therefore treated as UNSET.
+KEY_PLACEHOLDERS = ("paste", "your_key", "your-key", "yourkey", "xxxxxxxx")
+KEY_MIN_LEN = 8
+
+
+def clean_key(raw):
+    """Return a usable API key, or None if the value is effectively unset."""
+    k = (raw or "").strip().strip("\"'")
+    if len(k) < KEY_MIN_LEN:
+        return None
+    low = k.lower()
+    if any(m in low for m in KEY_PLACEHOLDERS):
+        return None
+    return k
+
+
+def _key_looks_set_but_isnt(raw):
+    """True when the env var is non-empty but is a placeholder / too short."""
+    return bool((raw or "").strip()) and clean_key(raw) is None
+
+
 # --------------------------------------------------------------- earningscall
 
 EC_BASE = "https://v2.api.earningscall.biz"
 EC_EXCHANGES = ["NASDAQ", "NYSE", "AMEX", "OTC"]
 
+# The public "demo" key covers AAPL and MSFT only. Without this latch a batch run
+# pays four HTTP round trips per ticker to relearn that for every name in the
+# universe, so the demo path is attempted at most once per process.
+_ec_demo_spent = [False]
+_ec_key_warned = [False]
+
+
+def ec_key():
+    return clean_key(os.environ.get("EARNINGSCALL_API_KEY"))
+
 
 def fetch_earningscall(ticker, want_quarter=None):
-    key = os.environ.get("EARNINGSCALL_API_KEY", "demo")
+    key = ec_key()
+    if key is None:
+        raw = os.environ.get("EARNINGSCALL_API_KEY")
+        if _key_looks_set_but_isnt(raw) and not _ec_key_warned[0]:
+            _ec_key_warned[0] = True
+            log("  - earningscall: EARNINGSCALL_API_KEY is a placeholder or too short "
+                "-> treated as UNSET, falling back to the public demo key")
+        key = "demo"
+    if key == "demo" and _ec_demo_spent[0]:
+        log("  - earningscall: SKIPPED, demo key covers AAPL/MSFT only and was already "
+            "tried once this process (set EARNINGSCALL_API_KEY for full coverage)")
+        return None
     s = session("ClaudeSpace research")
     for exchange in EC_EXCHANGES:
         try:
@@ -498,8 +545,10 @@ def fetch_earningscall(ticker, want_quarter=None):
                              "Set EARNINGSCALL_API_KEY for full coverage."
                              if key == "demo" else ""))
     if key == "demo":
+        _ec_demo_spent[0] = True          # do not re-probe the demo key per ticker
         log(f"  - earningscall: {ticker.upper()} not in the free demo universe "
-            f"(demo key covers AAPL and MSFT only)")
+            f"(demo key covers AAPL and MSFT only); skipping this source for the "
+            f"rest of the run")
     else:
         log(f"  - earningscall: {ticker.upper()} not available on this API key")
     return None
@@ -520,8 +569,17 @@ def candidate_quarters(n=6):
     return out
 
 
+_av_key_warned = [False]
+
+
 def av_key():
-    return os.environ.get("ALPHAVANTAGE_API_KEY") or os.environ.get("ALPHA_VANTAGE_API_KEY")
+    raw = os.environ.get("ALPHAVANTAGE_API_KEY") or os.environ.get("ALPHA_VANTAGE_API_KEY")
+    k = clean_key(raw)
+    if k is None and _key_looks_set_but_isnt(raw) and not _av_key_warned[0]:
+        _av_key_warned[0] = True
+        log("  - alphavantage: ALPHAVANTAGE_API_KEY is a placeholder or too short "
+            "-> treated as UNSET")
+    return k
 
 
 # Alpha Vantage's free tier is 25 requests/day and roughly 5/minute; this script
@@ -663,8 +721,8 @@ def main(argv=None):
         print("Source chain (in order):")
         for name in DEFAULT_ORDER:
             if name == "earningscall":
-                k = os.environ.get("EARNINGSCALL_API_KEY")
-                status = "key set" if k else "NO key -> demo mode (AAPL/MSFT only)"
+                status = ("key set" if ec_key()
+                          else "NO usable key -> demo mode, tried once per run (AAPL/MSFT only)")
             elif name == "alphavantage":
                 status = (f"key set (throttled to {AV_RPS} req/s)" if av_key()
                           else "NO key -> skipped entirely (free key: 20 seconds)")

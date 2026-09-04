@@ -1,6 +1,6 @@
 # Triage pack — MPAA · MOTORCAR PARTS OF AMERICA INC
 
-_Generated 2026-09-04 12:18 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:44 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -17,6 +17,10 @@ _Source: universe_under2b.csv (not a screen candidate)_
 
 - **Name:** MOTORCAR PARTS OF AMERICA INC
 - **CIK:** 918,251 · **SIC:** 3714 (Motor Vehicle Parts & Accessories) · **Exchange:** Nasdaq
+
+> **DEBT DATA MISSING — DO NOT SCORE THIS AS NET CASH.**
+> debt data missing (net cash unverified) — no long-term-debt concept was tagged in any XBRL frame, so LTD was filled with 0: EV is understated, ROIC overstated, and any negative net debt is an artefact of that fill rather than a confirmed debt-free balance sheet. The `net_debt`, `net_debt_ebit`, `ev` and `roic` figures below are all affected.
+> **Before scoring this name, read the balance sheet (total debt, current portion of long-term debt, revolver/credit-facility balance) and the MD&A liquidity and capital resources section in sections 8-9 of this pack, and use the figures you find there instead of the screen's.**
 
 **Valuation**
 
@@ -40,6 +44,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 | ltd | $0.00 |
 | equity | $253.0M |
 | ltd_tag | none |
+| ltd_missing | True |
 
 **Growth and operations**
 
@@ -49,6 +54,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 | revenue_prior | $757.4M |
 | rev_growth | 4.3% |
 | rev_growth_note | n/a |
+| eq_flag | n/a |
 | ebit | $65.8M |
 | net_income | $12.0M |
 | cfo | $19.2M |
@@ -101,7 +107,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 |---|---|
 | rank | 31 |
 
-**Screen rationale:** cheap at 3.1x EV/EBIT; high ROIC 22.2%; buying back stock -2.6%; net cash
+**Screen rationale:** cheap at 3.1x EV/EBIT; high ROIC 22.2%; buying back stock -2.6%; debt data missing (net cash unverified)
 
 
 ## 3. Share count trend
@@ -141,24 +147,9 @@ Detail: form4_last12m.csv
 
 ## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-10_2-02-results.md)
 
+_Extraction: started at the first release heading, 'MOTORCAR PARTS OF AMERICA REPORTS FISCAL 2027 FIRST QUARTER RESULTS'; skipped 8 forward-looking-statement block(s); 8 block(s) of pre-heading matter dropped._
+
 ## EX-99.1 - EXHIBIT 99.1 (ef20079233_ex99-1.htm)
-
-EX-99.1
-2
-ef20079233_ex99-1.htm
-EXHIBIT 99.1
-
-Exhibit 99.1
-
-NEWS RELEASE
-
-CONTACT:
-
-Gary S. Maier
-
-Vice President, Corporate Communications & IR
-
-(310) 972-5124
 
 MOTORCAR PARTS OF AMERICA REPORTS FISCAL 2027 FIRST QUARTER RESULTS
 
@@ -271,27 +262,6 @@ domestic passenger vehicles, light trucks, and heavy-duty applications. Its prod
 New York, Mexico, Malaysia, China and India, and administrative offices located in California, Tennessee, Mexico, Singapore, Malaysia, and Canada. In addition, the company's electrical vehicle subsidiary designs and manufactures testing solutions
 for performance, endurance, and production of multiple components in the electric power train – providing simulation, emulation, and production applications for the electrification of both automotive and aerospace industries, including electric
 vehicle charging systems. Additional information is available at www.motorcarparts.com .
-
-Forward-Looking Statements
-
-This press release contains forward-looking statements within the meaning of the Private Securities Litigation Reform Act of 1995, including statements
-regarding future financial performance, sales growth, margin improvement, operating efficiencies, customer demand, new business opportunities, capacity utilization, working capital, liquidity, debt levels, cash flow, strategic initiatives, and market
-conditions. These statements are based on current expectations, estimates, forecasts, and assumptions and are not guarantees of future performance. Actual results may differ materially from those expressed or implied by these forward-looking
-statements due to risks and uncertainties, including changes in customer ordering patterns, customer concentration, competitive conditions, supply-chain constraints, inflation, tariffs, interest rates, credit availability, labor and production costs,
-inventory levels, operational execution, macroeconomic conditions, and the other risks described in the company's most recent Form 10-K, Forms 10-Q, and other filings with the Securities and Exchange Commission. The company undertakes no obligation
-to update or revise any forward-looking statements, except as required by law.
-
-# # #
-
-(Financial tables follow)
-
-(more)
-
-MOTORCAR PARTS OF AMERICA, INC. AND SUBSIDIARIES
-
-Consolidated Statements of Operations
-
-(Unaudited)
 
 Three Months Ended June 30,
 2026 | 2025
@@ -446,7 +416,83 @@ _[...truncated at ~6,000 chars of this document]_
 - **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
 - **Source:** https://www.sec.gov/Archives/edgar/data/918251/000114036126031937/ef20079233_ex99-1.htm
 
-_Body not repeated: this file is the same press release already excerpted in section 7._
+Exhibit 99.1
+
+NEWS RELEASE
+
+CONTACT:
+
+Gary S. Maier
+
+Vice President, Corporate Communications & IR
+
+(310) 972-5124
+
+MOTORCAR PARTS OF AMERICA REPORTS FISCAL 2027 FIRST QUARTER RESULTS
+
+Company Reaffirms Full-Year Guidance;
+
+Brake-Related Products Expected to Gain Momentum Throughout Fiscal Year
+
+LOS ANGELES, CA – August 10, 2026 –
+Motorcar Parts of America, Inc. (
+Nasdaq: MPAA
+) today reported financial results for its fiscal 2027 first quarter ended June 30, reflecting timing of orders, with the
+company still on target to meet its expectations for the full year.
+
+Positive Drivers:
+
+•
+
+Reaffirms fiscal 2027 net sales guidance between $780 million and $800 million and operating income between $86 million and $91 million, excluding certain non-cash and one-time expenses.
+
+•
+
+Expects to add more than $100 million of additional annualized net sales by the end of fiscal 2027, with annualized net sales to be more than $900 million by the end of fiscal 2027, as referenced in
+the fiscal year-end release.
+
+•
+
+Significant new business commitments.
+
+•
+
+Additional opportunities are expected from the Centric Parts brand relaunch.
+
+•
+
+Increasing utilization of brake-related capacity to support margin accretion.
+
+Three-Month Results
+
+Net sales
+for the first quarter
+of fiscal 2027 were $168.0 million, compared with $188.4 million in the prior-year period, consistent with the company’s expectations. The company is reaffirming its fiscal 2027 guidance. The year-over-year decline in net sales was primarily
+attributable to the anticipated timing of customer orders. In addition, certain new business opportunities were temporarily impacted as customers took advantage of inventory liquidations associated with the bankruptcy of a competitor. The company
+believes this dynamic has begun to reverse. Net sales during the quarter were also delayed by the planned strategic relocation of the company’s Canadian heavy-duty operations to its manufacturing facilities in Mexico.
+
+(more)
+
+Motorcar Parts of America, Inc.
+
+2
+-
+2
+-2
+
+Gross profit
+for the fiscal
+2027 first
+quarter was
+$27.2 million compared with $33.9 million a year earlier
+.
+Gross margin
+for the same period was 16.2 percent compared with 18.0 percent a year
+ago. Gross margin was impacted by non-cash expenses of 2.4 percent and one-time items of 1.6 percent as detailed in Exhibit 2.
+Excluding these non-cash expenses and certain
+one-time cash items, gross margin was 20.2 percent. In addition, the company noted that gross margin was negatively impacted by approximately 2 percent, or $3.5 million, due to foreign currency fluctuations.
+
+_[...truncated at ~3,000 chars of this document]_
 
 ## 11. Document availability
 

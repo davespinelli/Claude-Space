@@ -687,7 +687,13 @@ def _f(x):
         return 0.0
 
 
-def form4_summary(rows):
+# The absence of Form 4 activity is the absence of an observation. Labelling it
+# "SELLING" (which "net $0" used to do, because the direction was a bare
+# buy_val > sell_val test) invents a bearish insider signal out of nothing.
+NO_ACTIVITY = "No Form 4 activity in 12 months (no observation; not a signal)."
+
+
+def form4_summary(rows, n_filings=None):
     buys = [r for r in rows if r["code"] == "P" and r["table"] == "non-derivative"]
     sells = [r for r in rows if r["code"] == "S" and r["table"] == "non-derivative"]
     buy_val = sum(_f(r["shares"]) * _f(r["price"]) for r in buys)
@@ -702,9 +708,19 @@ def form4_summary(rows):
               f"on {largest['transaction_date']}")
     else:
         lg = "none"
-    l1 = (f"Net open-market activity (last 12m): buys {buy_sh:,.0f} sh / ${buy_val:,.0f} "
-          f"vs sells {sell_sh:,.0f} sh / ${sell_val:,.0f} "
-          f"-> net ${buy_val - sell_val:,.0f} ({'BUYING' if buy_val > sell_val else 'SELLING'}).")
+    if not rows or n_filings == 0:
+        l1 = NO_ACTIVITY
+    elif buy_val == 0 and sell_val == 0:
+        l1 = (f"No open-market insider purchases or sales (codes P/S) in the last 12m "
+              f"across {len(rows)} transaction row(s) — only non-market rows such as "
+              f"grants, option exercises, gifts or tax withholding. "
+              f"No observation; not a signal.")
+    else:
+        direction = ("BUYING" if buy_val > sell_val
+                     else "SELLING" if sell_val > buy_val else "BALANCED")
+        l1 = (f"Net open-market activity (last 12m): buys {buy_sh:,.0f} sh / ${buy_val:,.0f} "
+              f"vs sells {sell_sh:,.0f} sh / ${sell_val:,.0f} "
+              f"-> net ${buy_val - sell_val:,.0f} ({direction}).")
     l2 = f"Distinct insiders buying (code P): {n_buyers}. Largest buy: {lg}."
     return l1, l2, buys, sells
 
@@ -1031,7 +1047,7 @@ def process(ticker: str) -> dict:
             w.writerow(r)
     record(csv_path)
 
-    l1, l2, buys, sells = form4_summary(f4rows)
+    l1, l2, buys, sells = form4_summary(f4rows, len(fours))
     codes = {}
     for r in f4rows:
         codes[r["code"]] = codes.get(r["code"], 0) + 1

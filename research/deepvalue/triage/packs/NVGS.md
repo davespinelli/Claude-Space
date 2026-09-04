@@ -1,6 +1,6 @@
 # Triage pack — NVGS · Navigator Holdings Ltd.
 
-_Generated 2026-09-04 12:18 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:44 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -18,6 +18,10 @@ _Source: candidates.csv_
 
 - **Name:** Navigator Holdings Ltd.
 - **CIK:** 1,581,804 · **SIC:** 4412 (Deep Sea Foreign Transportation of  Freight) · **Exchange:** NYSE
+
+> **DEBT DATA MISSING — DO NOT SCORE THIS AS NET CASH.**
+> debt data missing (net cash unverified) — no long-term-debt concept was tagged in any XBRL frame, so LTD was filled with 0: EV is understated, ROIC overstated, and any negative net debt is an artefact of that fill rather than a confirmed debt-free balance sheet. The `net_debt`, `net_debt_ebit`, `ev` and `roic` figures below are all affected.
+> **Before scoring this name, read the balance sheet (total debt, current portion of long-term debt, revolver/credit-facility balance) and the MD&A liquidity and capital resources section in sections 8-9 of this pack, and use the figures you find there instead of the screen's.**
 
 **Valuation**
 
@@ -41,6 +45,7 @@ _Source: candidates.csv_
 | ltd | $0.00 |
 | equity | $1.2B |
 | ltd_tag | none |
+| ltd_missing | True |
 
 **Growth and operations**
 
@@ -50,6 +55,7 @@ _Source: candidates.csv_
 | revenue_prior | $566.7M |
 | rev_growth | 3.6% |
 | rev_growth_note | n/a |
+| eq_flag | n/a |
 | ebit | $165.4M |
 | net_income | $100.1M |
 | cfo | $201.7M |
@@ -82,7 +88,7 @@ _Source: candidates.csv_
 | r_roic | 0.74 |
 | r_rev_growth | 0.44 |
 | r_buyback | 0.89 |
-| score | 0.77 |
+| score | 0.78 |
 
 **Data provenance and flags**
 
@@ -96,7 +102,7 @@ _Source: candidates.csv_
 | capex_missing | False |
 | ltd_missing | True |
 
-**Screen rationale:** cheap at 7.6x EV/EBIT; buying back stock -6.0%; net cash; 12-1 momentum 29.6%
+**Screen rationale:** cheap at 7.6x EV/EBIT; buying back stock -6.0%; debt data missing (net cash unverified); 12-1 momentum 29.6%
 
 
 ## 3. Share count trend
@@ -149,154 +155,49 @@ Detail: form4_last12m.csv
 
 _This issuer reports on Form 6-K rather than 8-K._
 
+_Extraction: started at the first release heading, 'Second Quarter Financial Highlights'; skipped 14 cover-page block(s) and 37 forward-looking-statement block(s); 11 block(s) of pre-heading matter dropped._
+
 ## Main document (nvgs-20260630.htm)
-
-nvgs-20260630
-
-UNITED STATES
-
-SECURITIES AND EXCHANGE COMMISSION
-
-WASHINGTON, D.C. 20549
-
-Form 6-K
-
-REPORT OF FOREIGN PRIVATE ISSUER
-
-PURSUANT TO RULE 13a-16 OR 15d-16
-
-UNDER THE SECURITIES EXCHANGE ACT OF 1934
-
-For the Quarter Ended June 30, 2026
-
-Commission File Number 001-36202
-
-NAVIGATOR HOLDINGS LTD .
-
-(Translation of registrant's name into English)
-
-c/o NGT Services (UK) Ltd
-
-10 Bressenden Place,
-
-London, SW1E 5DH,
-
-United Kingdom
-
-(Address of principal executive office)
-
-Indicate by check mark whether the registrant files or will file annual reports under cover of Form 20-F or Form 40-F.
-
-Form 20-F ☒ Form 40-F ☐
-
-1
-
-NAVIGATOR HOLDINGS Ltd.
-
-REPORT ON FORM 6-K FOR THE THREE MONTHS ENDED JUNE 30, 2026
-
-INDEX
-
-PAGE
-PART I. Management's Discussion and Analysis of Financial Condition and Results of Operations for the three and six months ended June 30, 2026, and Unaudited Condensed Consolidated Financial Statements
-Important Information Regarding Forward-Looking Statements | 3
-Quantitative and Qualitative Disclosures About Market Risk | 25
-Unaudited Condensed Consolidated Financial Statements
-Unaudited Condensed Consolidated Statements of Operations for the three and six months ended June 30, 2026, and 2025 | F- 1
-Unaudited Condensed Consolidated Statements of Comprehensive Income for the three and six months ended June 30, 2026, and 2025 | F- 2
-Unaudited Condensed Consolidated Balance Sheets as of June 30, 2026, and December 31, 2025 | F- 3
-Unaudited Condensed Consolidated Statements of Stockholders' Equity for the three and six months ended June 30, 2026, and 2025 | F- 4
-Unaudited Condensed Consolidated Statements of Cash Flows for the six months ended June 30, 2026, and 2025 | F- 6
-Notes to Unaudited Condensed Consolidated Financial Statements | F- 7
-Our Fleet | F- 20
-Part II. Second Quarter 2026, Conference Call Details | 29
-Signatures | 30
-
-The Information under "Part I. Management's Discussion and Analysis of Financial Condition and Results of Operations for the three and six months ended June 30, 2026, and Unaudited Condensed Consolidated Financial Statements" of this report on Form 6-K is incorporated by reference into the following registration statements of the registrant: Form F-3 (File No. 333-272980) originally filed with the Securities and Exchange Commission on June 28, 2023; and Form S-8 (File No. 333-278593) originally filed with the Securities and Exchange Commission April 10, 2024.
-
-2
-
-PART I. Management's Discussion and Analysis of Financial Condition and Results of Operations for the Three and Six Months ended June 30, 2026, and Unaudited Condensed Consolidated Financial Statements
-
-IMPORTANT INFORMATION REGARDING FORWARD-LOOKING STATEMENTS
-
-This report on Form 6-K contains certain forward-looking statements concerning plans and expectations of management for future operations or economic performance, or assumptions related thereto, including without limitation, in relation to our financial forecast, and our investments, such as our newbuild vessels, joint ventures and co-investments, their respective terms and benefits, and their anticipated timing of completion, and commercialization, the potential Company Redomiciliation (as defined below), and the Unigas Transaction (as defined below). In addition, we and our representatives may from time to time make other oral or written statements that are also forward-looking statements. Such statements include, in particular, statements about our plans, strategies, business prospects, changes and trends in our business and the markets in which we operate, as described in this report on Form 6-K. In some cases, you can identify the forward-looking statements by the use of words such as "may," "could," "should," "would," "expect," "plan," "anticipate," "intend," "forecast," "believe," "estimate," "predict," "propose," "potential," "continue," "scheduled," or the negative of these terms or other comparable terminology. Forward-looking statements appear in a number of places in this report. Where, in any forward-looking statement, we express an expectation or belief as to future results or events, such expectation or belief is expressed in good faith and believed to have a reasonable basis, but there can be no assurance that the expectation or belief will result or be achieved or accomplished. The following are some, but not all of the factors that could cause actual results or events to differ materially from anticipated results or events:
-
-• future operating or financial results, including those from our joint ventures;
-
-• potential acquisitions, vessel sales, joint ventures, business strategy and expected capital spending;
-
-• operating expenses, availability of crew, number of offhire days, drydocking requirements and insurance costs;
-
-• fluctuations in currencies and interest rates;
-
-• general market conditions and shipping market trends, including charter rates and factors affecting vessel supply and demand;
-
-• our ability to continue to comply with all our debt covenants;
-
-• our financial condition and liquidity, including our ability to refinance our indebtedness as it matures or obtain additional financing in the future to fund capital expenditures, acquisitions, newbuild vessels, and purchases of vessels, and for other corporate activities;
-
-• future capital expenditures needed to preserve our asset base;
-
-• the availability of vessels to purchase, the time it may take to construct new vessels, or the useful lives of our vessels;
-
-• our continued ability to enter into short-term or long-term time charters or voyage charters with our customers;
-
-• our vessels engaging in ship-to-ship transfers of cargoes, which may ultimately be discharged in sanctioned areas or to sanctioned individuals without our knowledge;
-
-• the severity and duration of any world events and armed conflicts, including in Central or South America, the Russian-Ukraine war, conflicts in the Israel-Gaza region, and conflict in the Middle East involving Iran and the Strait of Hormuz, and associated repercussions to supply and demand for oil and gas and the economy generally, as well as possible effects of trade disruptions;
-
-• the severity and duration of any climate and weather-related events;
-
-• our ability to employ and retain suitably experienced commercial and technical staff;
-
-• changes in governmental rules and regulations, including tariffs, taxes, trade restrictions, port fees, or other actions taken by regulatory authorities;
-
-• the risk inherent in marine transportation, including any incident involving significant loss of product or environmental contamination attributable to any of our vessels;
-
-• our ability to manage obligations, liabilities, or responsibilities, arising from any regulatory environment emission trading or compliance schemes;
-
-• global epidemics or other health crises, including the impact on our business;
-
-• liability from future litigation;
-
-• our share repurchases and the payment of dividends to our shareholders, including under any return of capital policy;
-
-• our ability to maintain appropriate internal control over financial reporting and our disclosure controls and procedures;
-
-• failure of a key information technology system or process or exposure to fraud, security breaches or cyber-attacks;
-
-• the impact of cyber-crime and the changing financial fraud environment;
-
-• the financial performance of the Ethylene Export Terminal (as defined below) and our related Export Terminal Joint Venture (as defined below);
-
-3
-
-• our expectations about the receipt of new building vessels, by us and our joint ventures, and the timing of the receipt thereof;
-
-• the ability to complete the Unigas Transaction (as defined below) and realize the expected benefits and proceeds from the sale;
-
-• whether the Company Redomiciliation is ultimately completed and the impacts thereof; and
-
-• other factors discussed in our Annual Report on Form 20-F and the other reports and documents we file with the U.S. Securities and Exchange Commission.
-
-All forward-looking statements included in this report on Form 6-K are made only as of the date of this report. New factors that could cause actual results or events to differ materially from anticipated results or events emerge from time to time, and it is not possible for us to predict all of these factors. Further, we cannot assess the impact of each such factor on our business or the extent to which any factor, or combination of factors, may cause actual results or events to be materially different from those contained in any forward-looking statement. We expressly disclaim any obligation to update or revise any of these forward-looking statements, whether because of future events, new information, a change in our views or expectations, or otherwise, except as required by law. We make no prediction or statement about the performance of our common stock.
-
-4
-
-MANAGEMENT'S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS
-
-Unless the context otherwise requires, all references in this report to "Navigator Holdings," "Navigator Gas," "our," "we," "us," and the "Company" refer to Navigator Holdings Ltd., a Marshall Islands corporation. All references in this report to our wholly-owned subsidiary "Navigator Gas L.L.C." refer to Navigator Gas L.L.C., a Marshall Islands limited liability company. As used in this report, unless the context indicates or otherwise requires, references to "our fleet" or "our vessels" refer to the 54 vessels we owned and operated as of August 4, 2026.
-
-This section should be read in conjunction with the interim financial statements and notes thereto presented elsewhere in this report, as well as the audited historical consolidated financial statements and notes thereto of Navigator Holdings Ltd. included in our Annual Report on Form 20-F, filed with the United States Securities and Exchange Commission, or the SEC, on March 12, 2026, (the "2025 Annual Report"). Among other things, those financial statements include more detailed information regarding the basis of presentation for the following information. The financial statements have been prepared in accordance with generally accepted accounting principles in the United States, or U.S. GAAP, and are presented in U.S. Dollars unless otherwise indicated.
-
-5
 
 Second Quarter Financial Highlights
 
 • For the quarter ended June 30, 2026, pursuant to the Company's capital return policy (the "Capital Return Policy") the Board of Directors of the Company declared, on August 4, 2026, a cash dividend of $0.07 per share of the Company's common stock, payable on September 1, 2026, to all shareholders of record as of the close of business U.S. Eastern Time on August 19, 2026, (the "Dividend"). The aggregate amount of the Dividend is expected to be approximately $4.3 million, which the Company anticipates will be funded from cash on hand.
 
 • Also for the quarter ended June 30, 2026, pursuant to the Company's Capital Return Policy, the Company expects to repurchase approximately $14.2 million of its common stock between August 6, 2026, and September 30, 2026, subject to operating needs, market conditions, legal requirements, stock price and other circumstances (the "Share Repurchases"), such that the Dividend and the Share Repurchases together equal 35% of net income attributable to stockholders of the Company for the quarter ended June 30, 2026.
+
+• For the quarter ending September 30, 2026, the Board of Directors of the Company approved, on August 4, 2026, an increase in the Fixed Element of the Company's Capital Return Policy to $0.08 per share of the Company's common stock, while maintaining that the Fixed Element and the Variable Element together should equal 35% of net income attributable to stockholders of the Company. The declaration of any dividends, and the amount of any such dividends or share repurchases, including with respect to the quarter ending September 30, 2026, remain subject to approval by the Company's Board of Directors following the conclusion of each quarter.
+
+• For the quarter ended March 31, 2026, on June 10, 2026, the Company paid a dividend of $0.07 per share of the Company's common stock to all shareholders of record as of the close of business U.S. Eastern Time on May 20, 2026, totaling $4.3 million. The Company also repurchased 272,280 shares of common stock in the open market between March 16, 2026, and June 30, 2026, at an average price of $23.19 per share, totaling $6.3 million, such that the cash dividend and share repurchases together equaled 30% of net income attributable to stockholders of the Company in respect of the quarter ended March 31, 2026.
+
+• The Company reported total operating revenues of $167.9 million for the three months ended June 30, 2026, compared to $129.6 million for the three months ended June 30, 2025. Disruption to transits through the Strait of Hormuz continued throughout the second quarter of 2026, constraining the availability of hydrocarbon products from the Middle East. End users sought alternative sources of supply, with Asian consumers in particular turning to North America for substitute volumes of LPG, ethane and ethylene. As a consequence, the price arbitrage between North America and Asia widened, supporting elevated freight rates for transportation between the two regions, while vessel utilization remained robust. Higher oil prices also increased demand for ethylene produced from competitively priced U.S. ethane. At the same time, a number of European crackers entered planned turnarounds, temporarily removing European ethylene production that had to be replaced by imports. These factors also resulted in record volumes of ethylene being exported through the Ethylene Export Terminal at Morgan's Point in the second quarter of 2026.
+
+• Net income attributable to stockholders of the Company was $53.0 million for the three months ended June 30, 2026, compared to $21.5 million for the three months ended June 30, 2025.
+
+• Adjusted net income attributable to stockholders of the Company 1 was $53.1 million for the three months ended June 30, 2026, compared to $22.2 million for the three months ended June 30, 2025. During the three months ended March 31, 2026, the Company revised its definition of Adjusted net income attributable to stockholders of the Company to no longer exclude profit/loss on sale of vessels. The Company believes this change provides improved comparability and better reflects overall earnings generated during the period, which earnings include contributions to net income arising from the Company's ongoing process of fleet renewal. Prior‑period Adjusted net income attributable to stockholders of the Company presented has been recast to conform to the current‑period presentation.
+
+• EBITDA 2 was $101.6 million for the three months ended June 30, 2026, compared to $71.9 million for the three months ended June 30, 2025.
+
+• Adjusted EBITDA 2 was $86.4 million for the three months ended June 30, 2026, compared to $60.1 million for the three months ended June 30, 2025.
+
+1 Adjusted net income attributable to stockholders of Navigator Holdings Ltd. is not a measurement prepared in accordance with U.S. GAAP. Adjusted net income attributable to stockholders of Navigator Holdings Ltd. represents net income attributable to stockholders of Navigator Holdings Ltd. adjusted to exclude realized and unrealized gain/loss on non-designated derivative instruments and unrealized foreign currency exchange, write off of deferred financing costs, and other income. Management believes that EBITDA, Adjusted EBITDA, Adjusted Net Income Attributable to Stockholders of Navigator Holdings Ltd., Adjusted Basic Earnings per Share and Adjusted Diluted Earnings per Share are useful to investors in evaluating the operating performance of the Company but they do not represent and should not be considered alternatives to consolidated net income, earnings per share, cash generated from operations, or any other GAAP measure.
+
+2 EBITDA and Adjusted EBITDA are not measurements prepared in accordance with U.S. GAAP. EBITDA represents net income before net interest expense, income taxes, depreciation and amortization. We define Adjusted EBITDA as EBITDA before profit/loss on sale of vessel, realized and unrealized gain/loss on non-designated derivative instruments and unrealized foreign currency exchange, write off of deferred financing costs, and other income. Management believes that EBITDA, Adjusted EBITDA, Adjusted Net Income Attributable to Stockholders of Navigator Holdings Ltd., Adjusted Basic Earnings per Share and Adjusted Diluted Earnings per Share are useful to investors in evaluating the operating performance of the Company but they do not represent and should not be considered alternatives to consolidated net income, earnings per share, cash generated from operations, or any other GAAP measure.
+
+• Basic earnings per share attributable to stockholders of the Company was $0.86 for the three months ended June 30, 2026, compared to $0.31 per share for the three months ended June 30, 2025, with the increase primarily due to an increase in net income attributable to stockholders of Navigator Holdings Ltd., and by a lower number of shares of common stock in issue in the three months ended June 30, 2026, compared to the three months ended June 30, 2025.
+
+• Adjusted basic earnings per share attributable to stockholders 3 of the Company was $0.86 per share for the three months ended June 30, 2026, compared to $0.32 per share for the three months ended June 30, 2025, driven primarily by an increase in Adjusted net income attributable to stockholders of the Company 4 , and by a lower number of shares of common stock in issue in the three months ended June 30, 2026, compared to the three months ended June 30, 2025.
+
+• The Company increased its gross debt by $23.3 million to $920.4 million (net of deferred financing costs) during the three months ended June 30, 2026, as the Company made net repayments on loan facilities and revolving credit facilities of $71.1 million and the Company drew $28.5 million of the revolving credit portion of its $111.8 million December 2022 Term Loan and Revolving Credit Facility and $62.9 million of the revolving credit portion of its $147.6 million August 2024 Term Loan and Revolving Credit Facility, totaling $91.4 million. The Company reduced its gross debt by $3.1 million to $897.1 million (net of deferred financing costs) during the three months ended March 31, 2026, as the Company made net repayments on loan facilities and revolving credit facilities of $29.9 million, offset by the drawdown of $26.8 million from the March 2026 Senior Secured Term Loan (as defined below).
+
+• At June 30, 2026, the Company's cash, cash equivalents, and restricted cash including available but undrawn credit facilities of $nil, was $273.8 million, compared to $291.0 million as of March 31, 2026, and $316.0 million as of June 30, 2025.
+
+• On July 13, 2026, further to the non-binding letter of intent entered into on April 14, 2026, the Company entered into definitive agreements with Bernhard Schulte (Singapore) Holdings Pte. Ltd. ("Bernhard Schulte") and Sloman Neptun Schiffahrts-Aktiengesellschaft ("Sloman Neptun") for the sale of eight gas carriers (the "Unigas Vessels"), together with the Company's shareholding in Unigas International B.V. ("Unigas B.V."), the entity that commercially manages the Unigas Vessels through the Unigas Pool, for aggregate consideration of approximately $183.0 million (the "Unigas Transaction").
+
+The combined book value in respect of the Unigas Vessels and the Company's holding in Unigas B.V. in the Company's accounts at June 30, 2026, was approximately $114.0 million. At June 30, 2026, the outstanding balance under the Company's May 2025 Secured Term Loan and RCF in respect of the Unigas Vessels was $18.3 million and was prepaid on July 27, 2026, and as a result all the security granted by the Company over Happy Albatross was released.
+
+The Unigas Transaction, which is subject to customary closing conditions, as well as delivery of the Unigas Vessels pursuant to it, is expected to be completed by the fourth quarter of 2026 after which the Company's fleet, all other things being equal, will consist of 46 vessels, 18 of which will be ethylene and ethane-capable. The Company currently expects to recognize a profit on sale of the Unigas Vessels and the Company's holding in Unigas B.V. of between $66.0 million and $69.0 million, pursuant to the exact time at which each individual vessel is delivered based on operational practicalities.
+
+3 Adjusted Basic Earnings per Share and Adjusted Diluted Earnings per Share are not measurements prepared in accordance with U.S. GAAP. Adjusted Basic Earnings per Share represents basic earnings per share adjusted to exclude realized and unrealized gain/loss on non-designated derivative instruments and unrealized foreign currency exchange, write off of deferred financing costs, and other income. Adjusted Diluted Earnings per Share represents Adjusted Basic Earnings per Share adjusting the weighted average number of common shares used for calculating Adjusted Basic Earnings per Share for the effects of all potentially dilutive shares. Management believes that EBITDA, Adjusted Net Income Attributable to Stockholders of Navigator Holdings Ltd., Adjusted Basic Earnings per Share and Adjusted Diluted Earnings per Share are useful to investors in evaluating the operating performance of the Company but they do not represent and should not be considered alternatives to consolidated net income, earnings per share, cash generated from operations, or any other GAAP measure.
 
 _[...truncated at ~12,000 chars of this document]_
 

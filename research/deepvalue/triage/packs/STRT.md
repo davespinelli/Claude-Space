@@ -1,6 +1,6 @@
 # Triage pack — STRT · STRATTEC SECURITY CORP
 
-_Generated 2026-09-04 12:11 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:44 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -19,6 +19,8 @@ _Source: candidates.csv_
 
 - **Name:** STRATTEC SECURITY CORP
 - **CIK:** 933,034 · **SIC:** 3714 (Motor Vehicle Parts & Accessories) · **Exchange:** Nasdaq
+
+**Debt data:** OK — long-term debt from us-gaap:LongTermLineOfCredit
 
 **Valuation**
 
@@ -42,6 +44,7 @@ _Source: candidates.csv_
 | ltd | $0.00 |
 | equity | $238.6M |
 | ltd_tag | LongTermLineOfCredit |
+| ltd_missing | False |
 
 **Growth and operations**
 
@@ -51,6 +54,7 @@ _Source: candidates.csv_
 | revenue_prior | $565.1M |
 | rev_growth | 2.5% |
 | rev_growth_note | n/a |
+| eq_flag | n/a |
 | ebit | $26.5M |
 | net_income | $20.6M |
 | cfo | $46.3M |
@@ -108,7 +112,9 @@ _Source: candidates.csv_
 
 ## 4. Price range (1 year)
 
-_Not included: skipped (TRIAGE_NO_PRICE set)._
+- Last 74.42 (as of 2026-09-03) · 52w range 61.36 - 90.91 · -18.1% vs 52w high · 21.3% above 52w low
+
+_Source: yfinance, live._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -134,20 +140,9 @@ Detail: form4_last12m.csv
 
 ## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-25_2-02-results.md)
 
+_Extraction: started at the first release heading, 'Fourth quarter fiscal 2026 sales of $151.8 million was better than exp'; skipped 12 forward-looking-statement block(s); 7 block(s) of pre-heading matter dropped._
+
 ## EX-99.1 - EX-99.1 (strt-ex99_1.htm)
-
-EX-99.1
-2
-strt-ex99_1.htm
-EX-99.1
-
-EX-99.1
-
-NEWS
-
-RELEASE
-
-FOR IMMEDIATE RELEASE
 
 Strattec Transformation Delivers Margin Improvement and Strong Cash Generation in Fiscal 2026
 
@@ -234,32 +229,88 @@ Strattec is a global automotive access company that designs and delivers safe, s
 
 As access becomes increasingly intelligent, connected, and central to vehicle experience, Strattec's strategy is to expand its market share, further diversify its customers and geographic reach while becoming the most trusted access partner to drive long‑term growth across global automotive and mobility markets. For more information, visit www.strattec.com .
 
-Safe Harbor Statement
-
-Certain statements contained in this release contain "forward-looking statements" within the meaning of the Private Securities Litigation Reform Act of 1995. These statements may be identified by the use of forward-looking words or phrases such as "anticipate," "believe," "could," "expect," "intend," "may," "planned," "potential," "should," "will," and "would." Such forward-looking statements are inherently subject to many uncertainties in the Company's operations and business environment. These uncertainties include general economic conditions, in particular, relating to the automotive industry, consumer demand for the Company's and its customers' products, competitive and technological developments, customer purchasing actions, changes in warranty provisions and customer product recall policies, work stoppages at the Company or at the location of its key customers as a result of labor disputes, foreign currency fluctuations, uncertainties stemming from U.S. trade policies, tariffs and reactions to the same from foreign countries, matters adversely impacting the timing and availability of component parts and raw materials needed for the production of the Company's products and the products of its customers and fluctuations in costs of operation. Shareholders, potential investors and other readers are urged to consider these factors carefully in
-
-Strattec Transformation Delivers Margin Improvement and Strong Cash Generation in Fiscal 2026
-
-August 25, 2026
-
-Page 4 of 10
-
-evaluating the forward-looking statements and are cautioned not to place undue reliance on such forward-looking statements. Such uncertainties and other operational matters are discussed further in the Company's quarterly and annual filings with the Securities and Exchange Commission. The forward-looking statements made herein are only made as of the date of this press release and the Company undertakes no obligation to publicly update such forward-looking statements to reflect subsequent events or circumstances occurring after the date of this release.
-
-Use of Non-Gaap Financial Metrics and Additional Financial Information
-
-In addition to reporting financial results in accordance with generally accepted accounting principles, or GAAP, Strattec provides Adjusted Non-GAAP information as additional information for its operating results. References to Adjusted Non-GAAP information are to non-GAAP financial measures. These measures are not required by, in accordance with, or an alternative for, GAAP and may be different from similarly titled non-GAAP financial measures used by other companies. Strattec's management uses these measures to make strategic decisions, establish budget plans and forecasts, identify trends affecting Strattec's business, and evaluate performance. Management believes that providing these non-GAAP financial measures to investors, as a supplement to GAAP financial measures, will help investors evaluate Strattec's core operating and financial performance and business trends consistent with how management evaluates such performance and trends. Investors are encouraged to review the related GAAP financial measures and the reconciliation of these non-GAAP financial measures to their most directly comparable GAAP financial measures.
-
-###
-
-Investor Contact:
-Deborah K. Pawlowski, IRC Alliance Advisors IR Phone: 716-843-3908 Email: dpawlowski@allianceadvisors.com
-
-Strattec Transformation Delivers Margin Improvement and Strong Cash Generation in Fiscal 2026
-
-August 25, 2026
-
 Page 5 of 10
+
+STRATTEC SECURITY CORPORATION
+CONDENSED CONSOLIDATED STATEMENTS OF INCOME (UNAUDITED)
+(in thousands, except per share amounts)
+Three Months Ended | Twelve Months Ended
+June 28, 2026 | June 29, 2025 | June 28, 2026 | June 29, 2025
+Net sales | 151,827 | 152,013 | 579,392 | 565,066
+Cost of goods sold | 128,179 | 126,613 | 484,027 | 480,489
+Gross profit | 23,648 | 25,400 | 95,365 | 84,577
+Gross margin | 15.6 | % | 16.7 | % | 16.5 | % | 15.0 | %
+Selling, administrative and engineering expenses | 17,480 | 16,898 | 68,842 | 61,793
+Income from operations | 6,168 | 8,502 | 26,523 | 22,784
+Operating margin | 4.1 | % | 5.6 | % | 4.6 | % | 4.0 | %
+Interest income | 859 | 753 | 3,500 | 2,039
+Interest expense | (37 | (212 | (359 | (1,007
+Other income, net | 2,630 | 1,189 | 3,298 | 820
+Income before provision for income taxes and non-controlling interest | 9,620 | 10,232 | 32,962 | 24,636
+Income tax expense | 6,002 | 2,170 | 11,339 | 5,717
+Net income | 3,618 | 8,062 | 21,623 | 18,919
+Net income (loss) attributable to non-controlling interest | (264 | (205 | 1,025 | 234
+Net income attributable to Strattec | 3,882 | 8,267 | 20,598 | 18,685
+Earnings per share attributable to Strattec
+Basic | 0.96 | 2.05 | 5.07 | 4.64
+Diluted | 0.95 | 2.01 | 5.00 | 4.58
+Weighted average shares outstanding:
+Basic | 4,035 | 4,039 | 4,064 | 4,030
+Diluted | 4,091 | 4,105 | 4,122 | 4,076
+
+Strattec Transformation Delivers Margin Improvement and Strong Cash Generation in Fiscal 2026
+
+August 25, 2026
+
+Page 6 of 10
+
+STRATTEC SECURITY CORPORATION
+CONDENSED CONSOLIDATED BALANCE SHEETS (UNAUDITED)
+(in thousands, except share amounts)
+June 28, 2026 | June 29, 2025
+ASSETS
+Current Assets:
+Cash and cash equivalents | 108,243 | 84,579
+Receivables, net | 99,109 | 102,061
+Inventories, net | 64,310 | 64,701
+Pre-production costs | 6,489 | 8,657
+Value-added tax recoverable | 10,069 | 19,389
+Other current assets | 8,053 | 10,676
+Total current assets | 296,273 | 290,063
+Noncurrent Assets:
+Property, plant and equipment, net | 69,845 | 77,410
+Deferred income taxes | 16,080 | 19,531
+Other long-term assets | 5,281 | 4,450
+Total Assets | 387,479 | 391,454
+LIABILITIES AND SHAREHOLDERS' EQUITY
+Current Liabilities:
+Accounts payable | 54,973 | 65,824
+Accrued payroll and benefits | 20,773 | 22,956
+Value-added tax payable | 7,429 | 11,933
+Warranty reserve | 6,673 | 8,900
+Other current liabilities | 12,383 | 9,737
+Total current liabilities | 102,231 | 119,350
+Noncurrent Liabilities:
+Borrowings under credit facilities | — | 8,000
+Post-employment benefits | 13,350 | 13,325
+Other noncurrent liabilities | 6,401 | 4,348
+Total Liabilities | 121,982 | 145,023
+Shareholders' Equity:
+Common stock, authorized 18,000,000 shares, $.01 par value, 7,704,994 issued shares at June 28, 2026 and 7,635,883 issued shares at June 29, 2025 | 77 | 76
+Capital in excess of par value | 107,138 | 103,784
+Retained earnings | 289,895 | 269,297
+Accumulated other comprehensive loss | (14,143 | (16,113
+Less: treasury stock, at cost (3,727,322 shares at June 28, 2026 and 3,596,549 shares at June 29, 2025) | (144,321 | (135,452
+Total Strattec shareholders' equity | 238,646 | 221,592
+Non-controlling interest | 26,851 | 24,839
+Total Shareholders' Equity | 265,497 | 246,431
+Total Liabilities and Shareholders' Equity | 387,479 | 391,454
+
+Strattec Transformation Delivers Margin Improvement and Strong Cash Generation in Fiscal 2026
+
+August 25, 2026
+
+Page 7 of 10
 
 _[...truncated at ~12,000 chars of this document]_
 
