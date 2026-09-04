@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T19:09:09Z · open 242 · in progress 10 · done 233_
+_Source: universe_under2b.csv · updated 2026-09-04T19:11:32Z · open 242 · in progress 0 · done 243_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -251,22 +251,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| CBRL | CRACKER BARREL OLD COUNTRY STORE, INC | $1.21B | cloudA | 2026-09-04T19:06:40Z |
-| BXC | BlueLinx Holdings Inc. | $607.4M | cloudA | 2026-09-04T19:06:40Z |
-| TSSI | TSS, Inc. | $228.6M | cloudA | 2026-09-04T19:06:40Z |
-| PLTK | Playtika Holding Corp. | $854.4M | cloudA | 2026-09-04T19:06:40Z |
-| WLDN | Willdan Group, Inc. | $1.33B | cloudA | 2026-09-04T19:06:40Z |
-| BWMN | Bowman Consulting Group Ltd. | $738.7M | cloudA | 2026-09-04T19:06:40Z |
-| MAMA | Mama's Creations, Inc. | $649.7M | cloudA | 2026-09-04T19:06:40Z |
-| CDRE | Cadre Holdings, Inc. | $1.28B | cloudA | 2026-09-04T19:06:40Z |
-| ANAB | ANAPTYSBIO, INC | $1.67B | cloudA | 2026-09-04T19:06:40Z |
-| LEGH | Legacy Housing Corp | $663.3M | cloudA | 2026-09-04T19:06:40Z |
 
-## Done (233)
+## Done (243)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | ATNI | ATN International, Inc. | $478.6M | cloudA | 2026-09-04T19:09:09Z |
 | RJET | REPUBLIC AIRWAYS HOLDINGS INC. | $806.2M | cloudA | 2026-09-04T19:09:09Z |
 | HSHP | Himalaya Shipping Ltd. | $836.4M | cloudA | 2026-09-04T19:09:09Z |
+| CBRL | CRACKER BARREL OLD COUNTRY STORE, INC | $1.21B | cloudA | 2026-09-04T19:11:32Z |
+| BXC | BlueLinx Holdings Inc. | $607.4M | cloudA | 2026-09-04T19:11:32Z |
+| TSSI | TSS, Inc. | $228.6M | cloudA | 2026-09-04T19:11:32Z |
+| PLTK | Playtika Holding Corp. | $854.4M | cloudA | 2026-09-04T19:11:32Z |
+| WLDN | Willdan Group, Inc. | $1.33B | cloudA | 2026-09-04T19:11:32Z |
+| BWMN | Bowman Consulting Group Ltd. | $738.7M | cloudA | 2026-09-04T19:11:32Z |
+| MAMA | Mama's Creations, Inc. | $649.7M | cloudA | 2026-09-04T19:11:32Z |
+| CDRE | Cadre Holdings, Inc. | $1.28B | cloudA | 2026-09-04T19:11:32Z |
+| ANAB | ANAPTYSBIO, INC | $1.67B | cloudA | 2026-09-04T19:11:32Z |
+| LEGH | Legacy Housing Corp | $663.3M | cloudA | 2026-09-04T19:11:32Z |

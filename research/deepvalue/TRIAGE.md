@@ -234,3 +234,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | ATNI | ATN International, Inc. | $478.6M | none | 0 | no filings in bundle |
 | 2026-09-04 | RJET | REPUBLIC AIRWAYS HOLDINGS INC. | $806.2M | post-restructuring | 8 | Every screen metric predates the Mesa merger; 2026 guide $2.1B revenue and $395-405M EBITDAR against $806M cap and $1,386M book equity |
 | 2026-09-04 | HSHP | Himalaya Shipping Ltd. | $836.4M | none | 0 | no filings in bundle |
+| 2026-09-04 | CBRL | CRACKER BARREL OLD COUNTRY STORE, INC | $1.2B | none | 0 | no filings in bundle |
+| 2026-09-04 | BXC | BlueLinx Holdings Inc. | $607.4M | cyclical-trough | 6 | FY25 EBIT fell to $32.5M from $87.6M on pricing alone, Q2 margin up 190bp, and $655M liquidity exceeds the $607M market cap |
+| 2026-09-04 | TSSI | TSS, Inc. | $228.6M | misunderstood-segment | 6 | Revenue -20% masks systems integration +46% and gross profit +11% as agency procurement rolls off, but one OEM is the whole business |
+| 2026-09-04 | PLTK | Playtika Holding Corp. | $854.4M | cash-cow-narrative | 6 | $854M cap against $750-790M guided EBITDA, but MAUs fell 30.0M to 24.8M and H1 FCF was $15M versus $120M a year earlier |
+| 2026-09-04 | WLDN | Willdan Group, Inc. | $1.3B | none | 0 | no filings in bundle |
+| 2026-09-04 | BWMN | Bowman Consulting Group Ltd. | $738.7M | none | 2 | Signed an Agreement and Plan of Merger with Prive Parent on 10 Aug 2026, so the price is set by undisclosed deal terms, not fundamentals |
+| 2026-09-04 | MAMA | Mama's Creations, Inc. | $649.7M | none | 3 | Deli foods roll-up growing 39% but earning $7.1M EBIT for a $516.6M EV, 72.6x EV/EBIT, and no current-quarter data in the pack |
+| 2026-09-04 | CDRE | Cadre Holdings, Inc. | $1.3B | none | 0 | no filings in bundle |
+| 2026-09-04 | ANAB | ANAPTYSBIO, INC | $1.7B | spin-off | 5 | Clean post-spin royalty vehicle, but $263.7M royalty-sale liability the screen missed and royalties pledged to Sagard until mid-2027 |
+| 2026-09-04 | LEGH | Legacy Housing Corp | $663.3M | none | 0 | no filings in bundle |
