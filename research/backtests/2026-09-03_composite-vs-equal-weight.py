@@ -325,6 +325,28 @@ def main():
     print("Walk-forward: IS 2009-2016 (selection) | OOS 2017-2026 (untouched)")
     print(wfd.to_string(float_format=lambda x: f"{x:.3f}"))
 
+    # ---- PROTOCOL rule 4b (capital-worthy path, added to PROTOCOL.md on Sep 4 while this
+    #      script was being written): Sharpe > SPY in BOTH halves AND out-of-sample,
+    #      MaxDD <= 60% of SPY's, CAGR >= 70% of SPY's.
+    print("\n" + "=" * 92)
+    ms, os_ = metrics(spy), metrics(spy.loc[OOS_START:])
+    s1, s2 = half_sharpes(spy)
+    dd_lim, cagr_lim = 0.60 * abs(ms["MaxDD"]), 0.70 * ms["CAGR"]
+    print(f"Rule 4b thresholds from SPY: H1 Sharpe > {s1:.3f}, H2 Sharpe > {s2:.3f}, "
+          f"OOS Sharpe > {os_['Sharpe']:.3f}, MaxDD >= -{dd_lim:.2%}, CAGR >= {cagr_lim:.2%}")
+    tb = []
+    for n in [x for x, _ in VARIANTS]:
+        r = rets[n]
+        m = metrics(r)
+        h1, h2 = half_sharpes(r)
+        so = metrics(r.loc[OOS_START:])["Sharpe"]
+        c = dict(H1=h1 > s1, H2=h2 > s2, OOS=so > os_["Sharpe"],
+                 MaxDD=abs(m["MaxDD"]) <= dd_lim, CAGR=m["CAGR"] >= cagr_lim)
+        tb.append(dict(name=n, **{k: ("PASS" if v else "fail") for k, v in c.items()},
+                       verdict_4b="KEEP-4b" if all(c.values()) else
+                                  "fails: " + ",".join(k for k, v in c.items() if not v)))
+    print(pd.DataFrame(tb).set_index("name").to_string())
+
     pick = max(CANDIDATES, key=lambda n: metrics(rets[n].loc[:IS_END])["Sharpe"])
     print(f"\nBest variant on 2009-2016 Sharpe alone: {pick}")
     for n in (pick, "RULES v1 baseline", "SPY"):

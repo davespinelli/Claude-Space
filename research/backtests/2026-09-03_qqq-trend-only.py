@@ -31,6 +31,12 @@ Honesty control demanded by the task: QQQ's 2009-2026 run is historically except
 buy-and-hold is therefore reported everywhere the variants are, so the memo can separate
 "QQQ beat SPY" from "the trend filter helped".
 
+PROTOCOL rule 4 has two KEEP paths (4b was added to research/PROTOCOL.md on Sep 4, i.e. DURING
+this run -- see the memo). Both are evaluated explicitly below so the verdict does not depend on
+which revision of the protocol the reader has:
+  4a  Sharpe > live RULES v1 in BOTH halves and MaxDD no worse than RULES v1.
+  4b  Sharpe > SPY in BOTH halves AND out-of-sample, MaxDD <= 60% of SPY's, CAGR >= 70% of SPY's.
+
 Deterministic, standalone.
 """
 import sys
@@ -122,6 +128,21 @@ def round_trips(px, variant, freq, start):
     flips.iloc[0] = False
     per_year = flips.groupby(flips.index.year).sum()
     return flips, per_year
+
+
+def rule4_gates(r, base, spy):
+    """Evaluate both PROTOCOL rule-4 KEEP paths explicitly. Returns (dict_4a, dict_4b)."""
+    def halves(x):
+        h = len(x) // 2
+        return metrics(x.iloc[:h])["Sharpe"], metrics(x.iloc[h:])["Sharpe"]
+    m, mb, ms = metrics(r), metrics(base), metrics(spy)
+    h1, h2 = halves(r); b1, b2 = halves(base); s1, s2 = halves(spy)
+    oos, soos = metrics(r.loc[SPLIT:])["Sharpe"], metrics(spy.loc[SPLIT:])["Sharpe"]
+    a = {"H1>base": h1 > b1, "H2>base": h2 > b2, "MaxDD>=base": m["MaxDD"] >= mb["MaxDD"]}
+    b = {"H1>SPY": h1 > s1, "H2>SPY": h2 > s2, "OOS>SPY": oos > soos,
+         "MaxDD<=60%SPY": m["MaxDD"] >= 0.6 * ms["MaxDD"],
+         "CAGR>=70%SPY": m["CAGR"] >= 0.7 * ms["CAGR"]}
+    return a, b
 
 
 def cal_years(series_map):
@@ -256,6 +277,20 @@ def main():
     print(corr.to_string(float_format=lambda x: f"{x:.3f}"))
 
     print("\n" + "=" * 100)
+    print("### PROTOCOL rule 4 - both KEEP paths evaluated explicitly\n")
+    ms = metrics(spy)
+    print(f"  SPY reference: Sharpe {ms['Sharpe']:.3f}, MaxDD {ms['MaxDD']:.1%}, CAGR {ms['CAGR']:.2%}")
+    print(f"  4b thresholds: MaxDD floor {0.6 * ms['MaxDD']:.2%}, CAGR floor {0.7 * ms['CAGR']:.2%}\n")
+    for name in VARIANTS:
+        ga, gb = rule4_gates(series[name], base, spy)
+        fa = [k for k, v in ga.items() if not v]
+        fb = [k for k, v in gb.items() if not v]
+        print(f"  {name}")
+        print(f"     4a: {'PASS' if not fa else 'FAIL -> ' + ', '.join(fa)}")
+        print(f"     4b: {'PASS' if not fb else 'FAIL -> ' + ', '.join(fb)}")
+    print()
+
+    print("=" * 100)
     print("### LEADERBOARD rows\n")
     for line in leaderboard:
         print(line)
