@@ -1,6 +1,6 @@
 # Triage pack — CCSI · Consensus Cloud Solutions, Inc.
 
-_Generated 2026-09-04 11:37 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -48,6 +48,7 @@ _Source: candidates.csv_
 | revenue | $349.7M |
 | revenue_prior | $350.4M |
 | rev_growth | -0.2% |
+| rev_growth_note | n/a |
 | ebit | $150.2M |
 | net_income | $84.5M |
 | cfo | $136.1M |
@@ -58,6 +59,7 @@ _Source: candidates.csv_
 | metric | value |
 |---|---|
 | share_chg | -3.4% |
+| share_chg_src | dei:EntityCommonStockSharesOutstanding |
 | shares | 18,324,922 |
 | shares_py | 18,977,018 |
 
@@ -98,14 +100,13 @@ _Source: candidates.csv_
 
 ## 3. Share count trend
 
-- Shares outstanding (dei): **18,324,922** (CY2026Q2I) vs **18,977,018** prior year (CY2025Q2I)
+- Shares outstanding: **18,324,922** (CY2026Q2I) vs **18,977,018** prior year (CY2025Q2I)
 - Change: **-3.4%** — buyback / shrinking count
+- Source concept: `dei:EntityCommonStockSharesOutstanding`
 
 ## 4. Price range (1 year)
 
-- Last 35.13 (as of 2026-09-03) · 52w range 20.24 - 39.85 · -11.8% vs 52w high · 73.6% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -129,7 +130,7 @@ Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exerc
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-08-06_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-06_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 (pressreleaseq22026.htm)
 
@@ -376,7 +377,7 @@ Sales and Marketing
 
 _[...truncated at ~4,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business (10-K_2026-02-13_item1_business.md)
+## 9. 10-K Item 1 - Business (10-K_2026-02-13_item1_business.md)
 
 Item 1. Business
 
@@ -416,7 +417,9 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-08-06.md
+- **CALL PERIOD: 2026Q2** (call dated 2026-08-06)
+- **Recency:** same fiscal period as the latest earnings release in this pack.
+- **File:** transcript_2026Q2_2026-08-06.md
 - **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
 - **Source:** https://www.sec.gov/Archives/edgar/data/1866633/000186663326000015/pressreleaseq22026.htm
 
@@ -424,7 +427,15 @@ _Body not repeated: this file is the same press release already excerpted in sec
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-06_2-02-results.md, 10-K_2026-02-13_item7_mdna.md, 10-K_2026-02-13_item1_business.md, transcript_2026-08-06.md
+**Annual report form:** 10-K
+
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | 10-K_2026-02-13_item1_business.md |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-02-13_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-02-13_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-06_2-02-results.md, 10-K_2026-02-13_item7_mdna.md, 10-K_2026-02-13_item1_business.md, transcript_2026Q2_2026-08-06.md
 
 **Missing:** none
 

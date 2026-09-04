@@ -1,6 +1,6 @@
 # Triage pack — CRTO · Criteo S.A.
 
-_Generated 2026-09-04 11:37 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -48,6 +48,7 @@ _Source: candidates.csv_
 | revenue | $1.9B |
 | revenue_prior | $1.9B |
 | rev_growth | 0.6% |
+| rev_growth_note | n/a |
 | ebit | $202.8M |
 | net_income | $149.0M |
 | cfo | $311.2M |
@@ -58,6 +59,7 @@ _Source: candidates.csv_
 | metric | value |
 |---|---|
 | share_chg | -6.4% |
+| share_chg_src | dei:EntityCommonStockSharesOutstanding |
 | shares | 48,997,559 |
 | shares_py | 52,327,360 |
 
@@ -98,14 +100,13 @@ _Source: candidates.csv_
 
 ## 3. Share count trend
 
-- Shares outstanding (dei): **48,997,559** (CY2026Q2I) vs **52,327,360** prior year (CY2025Q2I)
+- Shares outstanding: **48,997,559** (CY2026Q2I) vs **52,327,360** prior year (CY2025Q2I)
 - Change: **-6.4%** — buyback / shrinking count
+- Source concept: `dei:EntityCommonStockSharesOutstanding`
 
 ## 4. Price range (1 year)
 
-- Last 18.17 (as of 2026-09-03) · 52w range 15.86 - 23.75 · -23.5% vs 52w high · 14.6% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -131,7 +132,7 @@ Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exerc
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-08-05_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-05_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 (exhibit991-8xkq22026.htm)
 
@@ -488,7 +489,7 @@ Revenue breakdown by region
 
 _[...truncated at ~4,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business (10-K_2026-02-26_item1_business.md)
+## 9. 10-K Item 1 - Business (10-K_2026-02-26_item1_business.md)
 
 Item 1. Business
 
@@ -616,7 +617,9 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-08-05.md
+- **CALL PERIOD: 2026Q2** (call dated 2026-08-05)
+- **Recency:** no earnings release to compare against.
+- **File:** transcript_2026Q2_2026-08-05.md
 - **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
 - **Source:** https://www.sec.gov/Archives/edgar/data/1576427/000162828026052913/exhibit991-8xkq22026.htm
 
@@ -624,7 +627,15 @@ _Body not repeated: this file is the same press release already excerpted in sec
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-05_2-02-results.md, 10-K_2026-02-26_item7_mdna.md, 10-K_2026-02-26_item1_business.md, transcript_2026-08-05.md
+**Annual report form:** 10-K
+
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | 10-K_2026-02-26_item1_business.md |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-02-26_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-02-26_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-05_2-02-results.md, 10-K_2026-02-26_item7_mdna.md, 10-K_2026-02-26_item1_business.md, transcript_2026Q2_2026-08-05.md
 
 **Missing:** none
 

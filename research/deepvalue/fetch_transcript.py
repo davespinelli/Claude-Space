@@ -40,8 +40,16 @@ import sys
 import time
 from pathlib import Path
 
+import warnings
+
 import requests
 from bs4 import BeautifulSoup
+
+try:
+    from bs4 import XMLParsedAsHTMLWarning
+    warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+except ImportError:
+    pass
 
 ROOT = Path(__file__).resolve().parent
 OUT_ROOT = ROOT / "filings"
@@ -65,7 +73,7 @@ CONTENT_LABEL = {
 
 class Result:
     def __init__(self, text, content_type, source, source_url, event_date,
-                 fiscal_label="", notes=""):
+                 fiscal_label="", notes="", period_code="", period_source=""):
         self.text = text
         self.content_type = content_type
         self.source = source
@@ -73,6 +81,85 @@ class Result:
         self.event_date = event_date          # "YYYY-MM-DD"
         self.fiscal_label = fiscal_label      # e.g. "FY2026 Q2"
         self.notes = notes
+        self.period_code = period_code        # e.g. "2026Q1" / "2025FY" -> filename
+        self.period_source = period_source    # how the period was determined
+
+    def resolve_period(self):
+        """Fill period_code/fiscal_label from the document text when the API did
+        not supply them. Returns (period_code, fiscal_label, period_source)."""
+        if self.period_code:
+            return self.period_code, self.fiscal_label, self.period_source or "API response"
+        code, label = parse_period(self.text)
+        if code:
+            self.period_code, self.period_source = code, "parsed from the document text"
+            if not self.fiscal_label:
+                self.fiscal_label = label
+        else:
+            self.period_source = "not stated in the document; file dated by the filing date"
+        return self.period_code, self.fiscal_label, self.period_source
+
+
+# ------------------------------------------------------- fiscal-period parsing
+
+ORD_Q = {"first": 1, "second": 2, "third": 3, "fourth": 4}
+MONTH_NUM = {m: i + 1 for i, m in enumerate(
+    ["january", "february", "march", "april", "may", "june", "july", "august",
+     "september", "october", "november", "december"])}
+SPAN_LABEL = {"three": "Q", "six": "H1 through Q", "nine": "9M through Q",
+              "twelve": "FY through Q"}
+
+
+def parse_period(text: str) -> tuple[str, str]:
+    """Best-effort fiscal period of the call/release -> ("2026Q1", "Q1 2026").
+
+    Returns ("", "") when the document does not state a period. Only the first
+    ~8k characters are considered: that is the headline / dateline region, where
+    the period is always named, and it avoids matching year-over-year comparison
+    tables deeper in the release.
+    """
+    head = re.sub(r"\s+", " ", (text or "")[:8000])
+    pats = [
+        # "fourth quarter and full year 2025", "first quarter of fiscal 2026"
+        (r"\b(first|second|third|fourth)\s+quarter\b[^.]{0,60}?\b(?:of\s+)?"
+         r"(?:the\s+)?(?:fiscal\s+)?(?:year\s+)?(?:ended\s+[A-Za-z]+\s+\d{1,2},?\s+)?"
+         r"(20\d{2})\b", "ord_year"),
+        # "fiscal 2026 first quarter"
+        (r"\b(?:fiscal\s+)?(?:year\s+)?(20\d{2})\s+(first|second|third|fourth)\s+quarter\b",
+         "year_ord"),
+        # "Q2 2026", "Q2 FY2026", "second-quarter 2026"
+        (r"\bQ([1-4])\s*(?:FY|fiscal)?\s*(20\d{2})\b", "q_year"),
+        (r"\b(?:FY|fiscal)?\s*(20\d{2})\s*[-\s]?Q([1-4])\b", "year_q"),
+    ]
+    for pat, kind in pats:
+        m = re.search(pat, head, re.I)
+        if not m:
+            continue
+        if kind == "ord_year":
+            q, y = ORD_Q[m.group(1).lower()], m.group(2)
+        elif kind == "year_ord":
+            q, y = ORD_Q[m.group(2).lower()], m.group(1)
+        elif kind == "q_year":
+            q, y = int(m.group(1)), m.group(2)
+        else:
+            q, y = int(m.group(2)), m.group(1)
+        return f"{y}Q{q}", f"Q{q} {y}"
+    # "three / six / nine months ended June 30, 2026"
+    m = re.search(r"\b(three|six|nine|twelve)\s+months\s+ended\s+"
+                  r"([A-Za-z]+)\s+\d{1,2},?\s+(20\d{2})", head, re.I)
+    if m:
+        mon = MONTH_NUM.get(m.group(2).lower())
+        if mon:
+            q, y = (mon - 1) // 3 + 1, m.group(3)
+            span = SPAN_LABEL[m.group(1).lower()]
+            return f"{y}Q{q}", f"{span}{q} {y} ({m.group(1).lower()} months ended)"
+    # "full year 2025", "fiscal year ended December 31, 2025"
+    m = re.search(r"\b(?:full[- ]year|fiscal\s+year|year)\s+(?:ended|ending)\s+"
+                  r"[A-Za-z]+\s+\d{1,2},?\s+(20\d{2})", head, re.I)
+    if not m:
+        m = re.search(r"\bfull[- ]year\s+(?:results\s+)?(?:for\s+)?(20\d{2})\b", head, re.I)
+    if m:
+        return f"{m.group(1)}FY", f"FY{m.group(1)}"
+    return "", ""
 
 
 def log(msg):
@@ -95,6 +182,35 @@ def sec_session():
     if _sec is None:
         _sec = session(SEC_UA)
     return _sec
+
+
+# EDGAR throttles hard; scanning several 6-K indexes in a row trips a 503
+# unless the requests are paced and transient failures are retried.
+SEC_RPS = 5.0
+_sec_last = [0.0]
+
+
+def sec_get(url, timeout=30, tries=3):
+    """Throttled EDGAR GET with retry on 429/503. Raises on final failure."""
+    last = None
+    for attempt in range(tries):
+        gap = 1.0 / SEC_RPS if SEC_RPS > 0 else 0.0
+        delta = time.monotonic() - _sec_last[0]
+        if delta < gap:
+            time.sleep(gap - delta)
+        _sec_last[0] = time.monotonic()
+        try:
+            r = sec_session().get(url, timeout=timeout)
+            if r.status_code in (429, 503):
+                last = requests.HTTPError(f"{r.status_code} from EDGAR", response=r)
+                time.sleep(1.0 + 2 * attempt)
+                continue
+            r.raise_for_status()
+            return r
+        except Exception as e:                      # noqa: BLE001
+            last = e
+            time.sleep(1.0 + 2 * attempt)
+    raise last
 
 
 def ticker_to_cik(ticker):
@@ -175,14 +291,56 @@ def classify_exhibit(desc, filename, text):
 
 RANK = {FULL_TRANSCRIPT: 0, PREPARED_REMARKS: 1, PRESS_RELEASE: 2, PRESENTATION: 3}
 
+# How many recent 6-Ks to look through for an earnings release. FPIs file 6-Ks
+# for everything (charters, AGMs, press releases), so the earnings one is rarely
+# the newest; a handful covers a quarter's worth of filings.
+SIX_K_SCAN = 8
 
-def sec_exhibit_rows(cik, accession):
-    """Return [(type, description, url)] for EX-99* docs in a filing."""
+EARNINGS_DOC_RE = re.compile(
+    r"(?:financial|operating|interim|quarterly|annual|half[- ]year|full[- ]year)\s+"
+    r"(?:and\s+operating\s+)?results"
+    r"|results\s+for\s+(?:the|its|fiscal)"
+    r"|(?:reports?|announces?)\s+(?:its\s+)?(?:\w+[- ]){0,4}results"
+    r"|earnings\s+(?:release|results|call|report)"
+    r"|unaudited\s+(?:interim\s+)?(?:condensed\s+)?(?:consolidated\s+)?financial", re.I)
+NOT_EARNINGS_DOC_RE = re.compile(
+    r"results\s+of\s+(?:its\s+|the\s+)?(?:\d{4}\s+)?(?:annual|extraordinary|special)"
+    r"(?:\s+general)?\s+meeting|voting\s+results"
+    r"|results\s+of\s+(?:its\s+|the\s+)?(?:tender|exchange)\s+offer", re.I)
+EARNINGS_CONFIRM_DOC_RE = re.compile(
+    r"\bnet\s+(?:income|loss|revenues?)\b|\badjusted\s+ebitda\b|\bearnings\s+per\s+share\b"
+    r"|\bper\s+(?:common\s+)?share\b|\bgross\s+(?:profit|margin)\b"
+    r"|\boperating\s+income\b|\btotal\s+revenues?\b", re.I)
+
+
+def is_earnings_document(desc, url, text):
+    """Does this 6-K exhibit read as an earnings release rather than a charter
+    announcement, AGM notice or shelf-registration housekeeping?"""
+    head = f"{desc} {url.rsplit('/', 1)[-1]} " + re.sub(r"\s+", " ", (text or "")[:4000])
+    if NOT_EARNINGS_DOC_RE.search(head):
+        return False
+    if not EARNINGS_DOC_RE.search(head):
+        return False
+    return bool(EARNINGS_CONFIRM_DOC_RE.search((text or "")[:20000]))
+
+
+# 8-Ks carry the release in EX-99. Foreign private issuers use EX-1/EX-2, and
+# often put the release straight into the 6-K document itself.
+EX_8K_TYPE = re.compile(r"^EX-99(?:\.\d+)?$", re.I)
+EX_6K_TYPE = re.compile(r"^(?:EX-(?:99|1|2)(?:\.\d+)?|6-K(?:/A)?)$", re.I)
+
+
+def sec_exhibit_rows(cik, accession, six_k=False):
+    """Return [(type, description, url)] for the readable docs in a filing.
+
+    8-K: EX-99* only. 6-K: EX-99/EX-1/EX-2 plus the 6-K body, because FPIs
+    routinely file the earnings release as the primary document.
+    """
+    want = EX_6K_TYPE if six_k else EX_8K_TYPE
     acc_nodash = accession.replace("-", "")
     url = (f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/"
            f"{acc_nodash}/{accession}-index.htm")
-    r = sec_session().get(url, timeout=30)
-    r.raise_for_status()
+    r = sec_get(url)
     soup = BeautifulSoup(r.text, "lxml")
     rows = []
     for tr in soup.find_all("tr"):
@@ -190,7 +348,7 @@ def sec_exhibit_rows(cik, accession):
         if len(tds) < 4:
             continue
         doc_type = tds[3].get_text(strip=True)
-        if not doc_type.startswith("EX-99"):
+        if not want.match(doc_type):
             continue
         a = tds[2].find("a")
         if not a or not a.get("href"):
@@ -198,6 +356,8 @@ def sec_exhibit_rows(cik, accession):
         href = a["href"]
         # iXBRL viewer links wrap the real document
         href = href.replace("/ix?doc=", "")
+        if not href.lower().split("?")[0].endswith((".htm", ".html", ".txt")):
+            continue
         rows.append((doc_type, tds[1].get_text(strip=True),
                      "https://www.sec.gov" + href))
     return url, rows
@@ -208,35 +368,46 @@ def fetch_sec(ticker, want_quarter=None):
     if not cik:
         log(f"  - SEC: no CIK found for {ticker} in SEC's ticker mapping")
         return None
-    s = sec_session()
-    r = s.get(f"https://data.sec.gov/submissions/CIK{cik}.json", timeout=30)
-    r.raise_for_status()
-    sub = r.json()
+    sub = sec_get(f"https://data.sec.gov/submissions/CIK{cik}.json").json()
     recent = sub["filings"]["recent"]
     company = sub.get("name", ticker)
 
-    candidates = []
+    eights, sixes = [], []
     for i, form in enumerate(recent["form"]):
-        if form != "8-K":
-            continue
-        if "2.02" not in (recent["items"][i] or ""):
-            continue
-        candidates.append((recent["filingDate"][i], recent["accessionNumber"][i]))
-    if not candidates:
-        log(f"  - SEC: no 8-K with Item 2.02 (Results of Operations) for {ticker}")
+        if form == "8-K" and "2.02" in (recent["items"][i] or ""):
+            eights.append((recent["filingDate"][i], recent["accessionNumber"][i]))
+        elif form.startswith("6-K"):
+            sixes.append((recent["filingDate"][i], recent["accessionNumber"][i]))
+
+    if eights:
+        # unchanged behaviour for domestic filers: newest 8-K with Item 2.02
+        candidates, form_label, scan = eights[:1], "8-K Item 2.02", 1
+    elif sixes:
+        # Foreign private issuers file 6-K instead of 8-K and 6-Ks carry no item
+        # codes, so scan the recent ones for the newest earnings exhibit.
+        candidates, form_label, scan = sixes[:SIX_K_SCAN], "6-K", SIX_K_SCAN
+        log(f"  - SEC: {ticker} files 6-K (foreign private issuer); scanning the "
+            f"{len(candidates)} most recent for an earnings release")
+    else:
+        log(f"  - SEC: no 8-K with Item 2.02 and no 6-K filings for {ticker}")
         return None
 
-    for filing_date, accession in candidates[:1]:
-        index_url, rows = sec_exhibit_rows(cik, accession)
+    best_overall = None
+    for filing_date, accession in candidates[:scan]:
+        try:
+            index_url, rows = sec_exhibit_rows(cik, accession, six_k=(form_label == "6-K"))
+        except Exception as e:                      # noqa: BLE001
+            log(f"  ! SEC: could not read the {filing_date} filing index: {e}")
+            continue
         if not rows:
-            log(f"  - SEC: 8-K {filing_date} has no EX-99 exhibits")
+            if form_label == "8-K Item 2.02":
+                log(f"  - SEC: 8-K {filing_date} has no EX-99 exhibits")
             continue
         best = None
         for doc_type, desc, url in rows:
             try:
-                body = s.get(url, timeout=30)
-                body.raise_for_status()
-            except Exception as e:
+                body = sec_get(url)
+            except Exception as e:                  # noqa: BLE001
                 log(f"  ! SEC: could not fetch {url}: {e}")
                 continue
             text = html_to_text(body.text)
@@ -246,19 +417,32 @@ def fetch_sec(ticker, want_quarter=None):
             cand = (RANK[ctype], -len(text), ctype, doc_type, desc, url, text)
             if best is None or cand[:2] < best[:2]:
                 best = cand
-            time.sleep(0.15)
         if best is None:
             continue
         _, _, ctype, doc_type, desc, url, text = best
-        notes = (f"Selected {doc_type} from the 8-K filed {filing_date}. "
-                 f"Filing index: {index_url}")
+        if form_label == "6-K" and not is_earnings_document(desc, url, text):
+            continue                      # charter announcement, AGM notice, ...
+        notes = (f"Selected {doc_type} from the {form_label.split()[0]} filed "
+                 f"{filing_date}. Filing index: {index_url}")
+        if form_label == "6-K":
+            notes += ("\n> NOTE: this is a foreign private issuer; it reports on Form 6-K "
+                      "rather than 8-K, and this exhibit is the most recent 6-K that reads "
+                      "as an earnings release.")
         if ctype in (PRESS_RELEASE, PRESENTATION):
             notes += ("\n> NOTE: this company did not file prepared remarks or a "
                       "call transcript as an exhibit. This is the closest "
                       "SEC-sourced substitute, not the call itself.")
-        return Result(text, ctype, f"SEC EDGAR 8-K Item 2.02, {doc_type} ({company})",
-                      url, filing_date, notes=notes)
-    return None
+        res = Result(text, ctype,
+                     f"SEC EDGAR {form_label}, {doc_type} ({company})",
+                     url, filing_date, notes=notes)
+        if ctype in (FULL_TRANSCRIPT, PREPARED_REMARKS):
+            return res                    # cannot do better
+        if best_overall is None:
+            best_overall = res
+    if best_overall is None and form_label == "6-K":
+        log(f"  - SEC: none of the {len(candidates)} most recent 6-Ks for {ticker} "
+            f"contained an earnings release")
+    return best_overall
 
 
 # --------------------------------------------------------------- earningscall
@@ -308,6 +492,8 @@ def fetch_earningscall(ticker, want_quarter=None):
                       f"{EC_BASE}/transcript?exchange={exchange}"
                       f"&symbol={ticker.upper()}&year={ev['year']}&quarter={ev['quarter']}",
                       date, f"FY{ev['year']} Q{ev['quarter']}",
+                      period_code=f"{ev['year']}Q{ev['quarter']}",
+                      period_source="EarningsCall event year/quarter",
                       notes=("Retrieved with the public 'demo' key (AAPL and MSFT only). "
                              "Set EARNINGSCALL_API_KEY for full coverage."
                              if key == "demo" else ""))
@@ -334,16 +520,38 @@ def candidate_quarters(n=6):
     return out
 
 
+def av_key():
+    return os.environ.get("ALPHAVANTAGE_API_KEY") or os.environ.get("ALPHA_VANTAGE_API_KEY")
+
+
+# Alpha Vantage's free tier is 25 requests/day and roughly 5/minute; this script
+# walks up to 6 quarters per ticker, so pace the calls rather than burst them.
+AV_RPS = 0.8
+_av_last = [0.0]
+
+
+def _av_throttle():
+    """Space Alpha Vantage requests at most AV_RPS per second (process-wide)."""
+    if AV_RPS <= 0:
+        return
+    gap = 1.0 / AV_RPS
+    delta = time.monotonic() - _av_last[0]
+    if delta < gap:
+        time.sleep(gap - delta)
+    _av_last[0] = time.monotonic()
+
+
 def fetch_alphavantage(ticker, want_quarter=None):
-    key = os.environ.get("ALPHAVANTAGE_API_KEY") or os.environ.get("ALPHA_VANTAGE_API_KEY")
+    key = av_key()
     if not key:
-        log("  - alphavantage: skipped (set ALPHAVANTAGE_API_KEY; free key at "
-            "https://www.alphavantage.co/support/#api-key)")
+        log("  - alphavantage: SKIPPED, no API key set (export ALPHAVANTAGE_API_KEY; "
+            "free key, no card, at https://www.alphavantage.co/support/#api-key)")
         return None
     s = session("ClaudeSpace research")
     quarters = [want_quarter] if want_quarter else candidate_quarters()
     for quarter in quarters:
         try:
+            _av_throttle()
             r = s.get("https://www.alphavantage.co/query",
                       params={"function": "EARNINGS_CALL_TRANSCRIPT",
                               "symbol": ticker.upper(), "quarter": quarter,
@@ -369,7 +577,9 @@ def fetch_alphavantage(ticker, want_quarter=None):
                       f"Alpha Vantage EARNINGS_CALL_TRANSCRIPT ({ticker.upper()})",
                       "https://www.alphavantage.co/documentation/#transcript",
                       "", quarter,
-                      notes="Speaker-tagged turns as returned by Alpha Vantage.")
+                      notes="Speaker-tagged turns as returned by Alpha Vantage.",
+                      period_code=quarter,
+                      period_source="Alpha Vantage `quarter` field for this call")
     log(f"  - alphavantage: no transcript for {ticker.upper()} in "
         f"{quarters[0]}..{quarters[-1]}")
     return None
@@ -386,20 +596,38 @@ DEFAULT_ORDER = ["earningscall", "alphavantage", "sec"]
 
 
 def write_output(ticker, res, force=False):
+    """Write transcript_<period>_<date>.md.
+
+    The file is named after the fiscal period the CALL ITSELF covers, not after
+    the day we happened to fetch it: an Alpha Vantage response for a stale
+    quarter used to land as transcript_<today>.md and read as current. The
+    period comes from the API response when it gives one, otherwise from the
+    document's own header text, and the date component falls back to the
+    8-K/6-K filing date (or, failing that, the retrieval date).
+    """
+    dated = bool(res.event_date)
     date = res.event_date or dt.date.today().isoformat()
+    period, label, how = res.resolve_period()
     outdir = OUT_ROOT / ticker.upper()
     outdir.mkdir(parents=True, exist_ok=True)
-    path = outdir / f"transcript_{date}.md"
+    stem = f"transcript_{period}_{date}" if period else f"transcript_{date}"
+    path = outdir / f"{stem}.md"
     if path.exists() and not force:
         log(f"  = {path} already exists (use --force to overwrite)")
         return path
+    title_period = label or period or "period not stated"
     header = [
-        f"# {ticker.upper()} earnings call material — {date}",
+        f"# {ticker.upper()} earnings call material — {title_period}",
         "",
+        f"- **call_period:** **{period or 'UNKNOWN'}**"
+        + (f" ({label})" if label and label != period else "")
+        + f" — {how}",
         f"- **content_type:** `{res.content_type}` — {CONTENT_LABEL[res.content_type]}",
         f"- **source:** {res.source}",
         f"- **source_url:** {res.source_url}",
-        f"- **event_date:** {date}",
+        f"- **event_date:** {date}"
+        + ("" if dated else "  (NOT a real event date: the source gave none, so this is the "
+                            "retrieval date — judge recency by call_period above)"),
     ]
     if res.fiscal_label:
         header.append(f"- **fiscal_period:** {res.fiscal_label}")
@@ -415,6 +643,7 @@ def write_output(ticker, res, force=False):
 
 
 def main(argv=None):
+    global AV_RPS
     p = argparse.ArgumentParser(
         description="Fetch an earnings call transcript or closest substitute.")
     p.add_argument("ticker", nargs="?", help="US ticker, e.g. CULP")
@@ -423,6 +652,9 @@ def main(argv=None):
                    choices=["auto"] + list(SOURCES),
                    help="Force a single source (default: try all in order)")
     p.add_argument("--force", action="store_true", help="Overwrite an existing file")
+    p.add_argument("--av-rps", type=float, default=AV_RPS, metavar="RPS",
+                   help=f"Alpha Vantage request rate, requests/second "
+                        f"(default {AV_RPS}; 0 disables throttling)")
     p.add_argument("--list-sources", action="store_true",
                    help="Show source chain and key status, then exit")
     args = p.parse_args(argv)
@@ -434,9 +666,8 @@ def main(argv=None):
                 k = os.environ.get("EARNINGSCALL_API_KEY")
                 status = "key set" if k else "NO key -> demo mode (AAPL/MSFT only)"
             elif name == "alphavantage":
-                k = os.environ.get("ALPHAVANTAGE_API_KEY") or \
-                    os.environ.get("ALPHA_VANTAGE_API_KEY")
-                status = "key set" if k else "NO key -> skipped (free key: 20 seconds)"
+                status = (f"key set (throttled to {AV_RPS} req/s)" if av_key()
+                          else "NO key -> skipped entirely (free key: 20 seconds)")
             else:
                 status = "no key needed (always available)"
             print(f"  {name:<14} {status}")
@@ -448,7 +679,18 @@ def main(argv=None):
         p.error("--quarter must look like 2026Q2")
 
     ticker = args.ticker.upper()
+    AV_RPS = max(0.0, args.av_rps)
     order = DEFAULT_ORDER if args.source == "auto" else [args.source]
+    if "alphavantage" in order and not av_key():
+        if args.source == "alphavantage":
+            sys.stderr.write(
+                "ERROR: --source alphavantage needs ALPHAVANTAGE_API_KEY. Get a free key "
+                "(no card) at https://www.alphavantage.co/support/#api-key.\n")
+            return 2
+        # Do not burn an attempt on a source that cannot possibly answer.
+        order = [n for n in order if n != "alphavantage"]
+        log("  - alphavantage: SKIPPED, no ALPHAVANTAGE_API_KEY set "
+            "(free key at https://www.alphavantage.co/support/#api-key)")
     log(f"Fetching earnings call material for {ticker} ...")
     for name in order:
         log(f"  > trying {name}")

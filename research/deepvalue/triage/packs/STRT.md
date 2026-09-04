@@ -1,6 +1,6 @@
 # Triage pack — STRT · STRATTEC SECURITY CORP
 
-_Generated 2026-09-04 11:30 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:11 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -50,6 +50,7 @@ _Source: candidates.csv_
 | revenue | $579.4M |
 | revenue_prior | $565.1M |
 | rev_growth | 2.5% |
+| rev_growth_note | n/a |
 | ebit | $26.5M |
 | net_income | $20.6M |
 | cfo | $46.3M |
@@ -60,6 +61,7 @@ _Source: candidates.csv_
 | metric | value |
 |---|---|
 | share_chg | -4.2% |
+| share_chg_src | dei:EntityCommonStockSharesOutstanding |
 | shares | 3,985,013 |
 | shares_py | 4,161,334 |
 
@@ -100,14 +102,13 @@ _Source: candidates.csv_
 
 ## 3. Share count trend
 
-- Shares outstanding (dei): **3,985,013** (CY2026Q2I) vs **4,161,334** prior year (CY2025Q2I)
+- Shares outstanding: **3,985,013** (CY2026Q2I) vs **4,161,334** prior year (CY2025Q2I)
 - Change: **-4.2%** — buyback / shrinking count
+- Source concept: `dei:EntityCommonStockSharesOutstanding`
 
 ## 4. Price range (1 year)
 
-- Last 74.42 (as of 2026-09-03) · 52w range 61.36 - 90.91 · -18.1% vs 52w high · 21.3% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -131,7 +132,7 @@ Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exerc
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-08-25_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-25_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 (strt-ex99_1.htm)
 
@@ -317,22 +318,43 @@ Analysis of Results of Operations
 
 _[...truncated at ~10,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business
+## 9. 10-K Item 1 - Business
 
-_Not available: the fetcher did not split out Item 1 for this filing. Describe the business from the MD&A overview above instead, and say so in the note._
+_Not available: the fetcher did not split out this section for this filing. Describe the business from the MD&A overview above instead, and say so in the note._
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-08-25.md
-- **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
-- **Source:** https://www.sec.gov/Archives/edgar/data/933034/000093303426000003/strt-ex99_1.htm
+- **CALL PERIOD: 2026Q3** (call dated 2026-09-04)
+- **Recency:** STALE: this call covers 2026Q3, but the latest earnings release in this pack (section 7, 8-K_2026-08-25_2-02-results.md) covers 2026Q4. Everything said below predates those results — do not read it as commentary on the current quarter.
+- **Other transcript files present (not shown):** transcript_2026Q4_2026-08-25.md [2026Q4, press_release]
+- **File:** transcript_2026Q3_2026-09-04.md
+- **Type:** REAL CALL TRANSCRIPT / PREPARED REMARKS — management's own words
+- **Source:** https://www.alphavantage.co/documentation/#transcript
 
-_Body not repeated: this file is the same press release already excerpted in section 7._
+**Operator** — *Operator*
+
+Greetings, and welcome to the Strattec Security Corporation third quarter fiscal 2026 financial results. At this time, all participants are in a listen-only mode. A brief question-and-answer session will follow the formal presentation. As a reminder, this conference is being recorded. It is now my pleasure to introduce your host, Deborah Pawlowski, investor relations for Strattec Security Corporation. Please go ahead.
+
+**Deborah Pawlowski** — *Investor Relations*
+
+Thank you, and good morning, everyone. We appreciate you joining us for Strattec Security Corporation’s third quarter fiscal 2026 financial results conference call. Joining me on the call today are Jennifer Slater, our President and Chief Executive Officer, and Matthew Pauli, our Senior Vice President and Chief Financial Officer. Jennifer and Matthew will review our financial results, the progress we are making on our transformation, and our outlook. You can find a copy of the news release and the slides that accompany our conversation today on the Investor Relations section of the company’s website. If you are reviewing those slides, please turn to Slide two for the Safe Harbor statement. As you are aware, we may make some forward-looking statements on this call during the formal discussion as well as during the Q&A. These statements apply to future events that are subject to risks and uncertainties as well as other factors that could cause actual results to differ materially from what is stated on today’s call. These risks and uncertainties and other factors are discussed in the earnings release as well as in other documents filed by the company with the Securities and Exchange Commission. You can find these documents on our website as well. I want to also point out that during today’s call we will discuss some non-GAAP measures. We believe these will be useful in evaluating our performance. You should not consider the presentation of this additional information in isolation or as a substitute for results prepared in accordance with GAAP. We have provided reconciliations of non-GAAP to comparable GAAP measures in the tables accompanying the earnings release and slides. So with that, I will turn the call over to Jennifer, who will begin with Slide three. Thank you, and good morning, everyone.
+
+**Jennifer Slater** — *President and Chief Executive Officer*
+
+_[...truncated at ~3,000 chars of this document]_
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-25_2-02-results.md, 10-K_2026-08-28_item7_mdna.md, transcript_2026-08-25.md
+**Annual report form:** 10-K
 
-**Missing:** 10-K Item 1 Business
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | **MISSING** |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-08-28_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-08-28_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-25_2-02-results.md, 10-K_2026-08-28_item7_mdna.md, transcript_2026Q3_2026-09-04.md
+
+**Missing:** 10-K Item 1 - Business (business description), current-period call material (STALE)
 
 _Anything not listed as present is absent from this pack. Score conservatively and say what you could not check rather than guessing._

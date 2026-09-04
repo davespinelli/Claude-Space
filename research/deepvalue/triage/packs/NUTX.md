@@ -1,6 +1,6 @@
 # Triage pack — NUTX · Nutex Health Inc.
 
-_Generated 2026-09-04 11:34 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -48,6 +48,7 @@ _Source: candidates.csv_
 | revenue | $875.3M |
 | revenue_prior | $479.9M |
 | rev_growth | 82.4% |
+| rev_growth_note | share count +15.1% yoy — growth may be acquisition/issuance-driven, not organic |
 | ebit | $275.6M |
 | net_income | $70.8M |
 | cfo | $248.1M |
@@ -58,6 +59,7 @@ _Source: candidates.csv_
 | metric | value |
 |---|---|
 | share_chg | 15.1% |
+| share_chg_src | dei:EntityCommonStockSharesOutstanding |
 | shares | 6,847,973 |
 | shares_py | 5,950,539 |
 
@@ -93,19 +95,19 @@ _Source: candidates.csv_
 | capex_missing | False |
 | ltd_missing | False |
 
-**Screen rationale:** top-quartile FCF yield 18.1%; cheap at 4.3x EV/EBIT; high ROIC 98.9%; revenue +82.4%; net cash; 12-1 momentum 91.7%
+**Screen rationale:** top-quartile FCF yield 18.1%; cheap at 4.3x EV/EBIT; high ROIC 98.9%; revenue +82.4% BUT share count +15.1% yoy — growth may be acquisition/issuance-driven, not organic; net cash; 12-1 momentum 91.7%
 
 
 ## 3. Share count trend
 
-- Shares outstanding (dei): **6,847,973** (CY2026Q2I) vs **5,950,539** prior year (CY2025Q1I)
+- Shares outstanding: **6,847,973** (CY2026Q2I) vs **5,950,539** prior year (CY2025Q1I)
 - Change: **15.1%** — dilution / growing count
+- Source concept: `dei:EntityCommonStockSharesOutstanding`
+- **Flag:** share count +15.1% yoy — growth may be acquisition/issuance-driven, not organic
 
 ## 4. Price range (1 year)
 
-- Last 197.68 (as of 2026-09-03) · 52w range 83.24 - 197.68 · 0.0% vs 52w high · 137.5% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -113,24 +115,22 @@ _Source: yfinance, live._
 
 ## 6. Insider activity (Form 4, trailing 12 months)
 
-Net open-market activity (last 12m): buys 1,241 sh / $148,237 vs sells 0 sh / $0 -> net $148,237 (BUYING).
-Distinct insiders buying (code P): 5. Largest buy: Bates Jon Christian bought 750 sh @ $136.71 ($102,532) on 2025-11-25.
+Net open-market activity (last 12m): buys 0 sh / $0 vs sells 0 sh / $0 -> net $0 (SELLING).
+Distinct insiders buying (code P): 0. Largest buy: none.
 
-Form 4 filings parsed: 28; transaction rows: 45 (open-market buys 5, sales 0).
+Form 4 filings parsed: 12; transaction rows: 13 (open-market buys 0, sales 0).
 
 | code | rows |
 |---|---|
-| A | 8 |
-| F | 6 |
+| A | 4 |
 | J | 3 |
-| M | 23 |
-| P | 5 |
+| M | 6 |
 
 Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exercise, F=tax withholding, G=gift.
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-08-06_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-06_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 (nutx-20260630xexx99.htm)
 
@@ -381,7 +381,7 @@ Year Ended December 31, 2025 Compared to Year Ended December 31, 2024
 
 _[...truncated at ~10,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business (10-K_2026-03-05_item1_business.md)
+## 9. 10-K Item 1 - Business (10-K_2026-03-05_item1_business.md)
 
 Item 1. Business
 
@@ -411,7 +411,9 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-08-06.md
+- **CALL PERIOD: 2026Q2** (call dated 2026-08-06)
+- **Recency:** same fiscal period as the latest earnings release in this pack.
+- **File:** transcript_2026Q2_2026-08-06.md
 - **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
 - **Source:** https://www.sec.gov/Archives/edgar/data/1479681/000162828026054274/nutx-20260630xexx99.htm
 
@@ -419,7 +421,15 @@ _Body not repeated: this file is the same press release already excerpted in sec
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-06_2-02-results.md, 10-K_2026-03-05_item7_mdna.md, 10-K_2026-03-05_item1_business.md, transcript_2026-08-06.md
+**Annual report form:** 10-K
+
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | 10-K_2026-03-05_item1_business.md |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-03-05_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-03-05_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-06_2-02-results.md, 10-K_2026-03-05_item7_mdna.md, 10-K_2026-03-05_item1_business.md, transcript_2026Q2_2026-08-06.md
 
 **Missing:** none
 

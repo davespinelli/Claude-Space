@@ -80,6 +80,8 @@ WATCH_FORMS = {
     "10-K": ("10-K", "10-K405", "10-KSB", "20-F", "40-F"),
     "10-Q": ("10-Q",),
     "8-K": ("8-K", "8-K/A"),
+    # foreign private issuers file 6-K instead of 8-K
+    "6-K": ("6-K", "6-K/A"),
     "DEF 14A": ("DEF 14A", "DEFM14A", "DEF 14C", "DEFA14A"),
     "4": ("4",),
 }

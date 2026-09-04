@@ -11,6 +11,18 @@ Writes, per ticker, under research/deepvalue/filings/<TICKER>/:
     10-Q_<date>_mdna.md
     DEF14A_<date>_summary.md
     8-K_<date>_<desc>.md           (last 6 months, main doc + EX-99 exhibits)
+
+Foreign private issuers file a 20-F instead of a 10-K and a 6-K instead of an
+8-K, and the 20-F item numbering is completely different. For those the annual
+report is split as:
+
+    20-F_<date>_item4_business.md          (Item 4  Information on the Company)
+    20-F_<date>_item5_operating_review.md  (Item 5  Operating & Financial Review = MD&A)
+    20-F_<date>_item3d_risks.md            (Item 3.D Risk Factors)
+    6-K_<date>_<desc>.md                   (last 6 months, main doc + EX-99 exhibits)
+
+meta.json records "form_type" (10-K or 20-F) and "is_fpi" so downstream tools
+can label the sections correctly.
     form4_last12m.csv / form4_summary.md
     meta.json
 
@@ -78,8 +90,12 @@ def fetch(url: str, cache_dir: Path, cache_name: str | None = None,
           binary: bool = False, tries: int = 3):
     """GET with on-disk cache under cache_dir. Returns bytes, or None on failure."""
     cache_dir.mkdir(parents=True, exist_ok=True)
-    name = cache_name or re.sub(r"[^A-Za-z0-9._-]", "_", url.split("/Archives/")[-1])
+    name = cache_name or url.split("/Archives/")[-1]
+    # never let a document name introduce a sub-directory or escape the cache dir
+    name = re.sub(r"[^A-Za-z0-9._-]", "_", name).lstrip(".") or "download"
     path = cache_dir / name[-180:]
+    # belt and braces: the cache dir (and any parent) must exist at write time
+    path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists() and path.stat().st_size > 0:
         return path.read_bytes()
     last_err = None
@@ -260,6 +276,69 @@ def extract_10k_items(text):
     return out
 
 
+# --------------------------------------------------------------------------
+# 20-F (foreign private issuer annual report) item detection
+#
+# The 20-F item numbering has nothing to do with the 10-K's:
+#   Item 3.D  Risk Factors                        (= 10-K Item 1A)
+#   Item 4    Information on the Company          (= 10-K Item 1  Business)
+#   Item 5    Operating and Financial Review      (= 10-K Item 7  MD&A)
+#   Item 7    Major Shareholders / Related Party  (NOT MD&A - what we used to grab)
+# Sub-item headings are commonly rendered "D. | Risk Factors" once tables have
+# been flattened, so the gap class has to allow a pipe.
+# --------------------------------------------------------------------------
+GAP20 = r"[\s\.\:\|\-\u2013\u2014\)]{0,40}"
+
+F20_PATS = {
+    "3":  rf"^[ \t]*ITEM{GAP20}3{GAP20}(?:KEY\s+INFORMATION)",
+    "3d": rf"^[ \t]*(?:ITEM{GAP20}3{GAP20})?D{GAP20}RISK\s*FACTORS",
+    "4":  rf"^[ \t]*ITEM{GAP20}4{GAP20}(?:INFORMATION\s+ON\s+THE\s+COMPANY)",
+    "4a": rf"^[ \t]*ITEM{GAP20}4A{GAP20}(?:UNRESOLVED)",
+    "5":  rf"^[ \t]*ITEM{GAP20}5{GAP20}(?:OPERATING\s+AND\s+FINANCIAL\s+REVIEW)",
+    "6":  rf"^[ \t]*ITEM{GAP20}6{GAP20}(?:DIRECTORS)",
+    "7":  rf"^[ \t]*ITEM{GAP20}7{GAP20}(?:MAJOR\s+SHAREHOLDERS)",
+}
+F20_PATS_LOOSE = {
+    "3d": rf"^[ \t]*(?:ITEM{GAP20}3{GAP20})?D{GAP20}RISK\s*FACTORS",
+    "4":  rf"^[ \t]*ITEM{GAP20}4\b",
+    "4a": rf"^[ \t]*ITEM{GAP20}4A\b",
+    "5":  rf"^[ \t]*ITEM{GAP20}5\b",
+    "6":  rf"^[ \t]*ITEM{GAP20}6\b",
+    "7":  rf"^[ \t]*ITEM{GAP20}7\b",
+}
+
+# 20-F key -> (file suffix, human title, 10-K equivalent)
+F20_SECTIONS = {
+    "item4":  ("item4_business", "Item 4 - Information on the Company (business)",
+               "10-K Item 1 Business"),
+    "item5":  ("item5_operating_review",
+               "Item 5 - Operating and Financial Review and Prospects (MD&A)",
+               "10-K Item 7 MD&A"),
+    "item3d": ("item3d_risks", "Item 3.D - Risk Factors", "10-K Item 1A Risk Factors"),
+}
+
+
+def extract_20f_items(text):
+    """-> dict with keys item4/item5/item3d (missing keys = not found)."""
+    out = {}
+    plans = [
+        ("item4",  "4",  ["4a", "5"]),
+        ("item5",  "5",  ["6", "7"]),
+        ("item3d", "3d", ["4", "4a"]),
+    ]
+    for key, start, ends in plans:
+        got = None
+        for pats, loose in ((F20_PATS, False), (F20_PATS_LOOSE, True)):
+            epats = [pats[e] for e in ends if e in pats]
+            got = pick_section(text, pats[start], epats,
+                               min_len=2000 if loose else 1200)
+            if got:
+                break
+        if got:
+            out[key] = text[got[0]:got[1]].strip()
+    return out
+
+
 def extract_10q_mdna(text):
     got = pick_section(text, Q_ITEM_PATS["q2"],
                        [Q_ITEM_PATS["q3"], Q_ITEM_PATS["q4"]], min_len=1000)
@@ -334,6 +413,7 @@ def write_md(path: Path, header: str, body: str, notes=()):
         parts.append("")
     parts.append(body)
     parts.append(trunc)
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(parts).rstrip() + "\n", encoding="utf-8")
     return path.stat().st_size
 
@@ -433,6 +513,95 @@ def slug_8k(items: str, desc: str) -> str:
         return f"{c.replace('.', '-')}-{ITEM_8K_SLUG.get(c, 'item')}"
     s = re.sub(r"[^a-z0-9]+", "-", (desc or "8k").lower()).strip("-")
     return s[:40] or "8k"
+
+
+# --------------------------------------------------------------------------
+# 6-K helpers (foreign private issuers: no item codes, so classify by content)
+# --------------------------------------------------------------------------
+EARNINGS_RE = re.compile(
+    r"(?:financial|operating|interim|quarterly|annual|half[- ]year|full[- ]year)\s+"
+    r"(?:and\s+operating\s+)?results"
+    r"|results\s+for\s+(?:the|its|fiscal)"
+    r"|reports?\s+(?:its\s+)?(?:\w+[- ]){0,4}results"
+    r"|announces?\s+(?:its\s+)?(?:\w+[- ]){0,4}results"
+    r"|earnings\s+(?:release|results|call|report)"
+    r"|unaudited\s+(?:interim\s+)?(?:condensed\s+)?(?:consolidated\s+)?financial"
+    r"|net\s+income\s+(?:of|per\s+share)"
+    r"|revenue[s]?\s+(?:of|increased|decreased|grew)",
+    re.I)
+# "REPORT OF FOREIGN PRIVATE ISSUER" is on every 6-K and says nothing
+BOILER_6K_RE = re.compile(
+    r"united\s+states|securities\s+and\s+exchange|washington|form\s+6-?k"
+    r"|foreign\s+private\s+issuer|pursuant\s+to\s+rule|commission\s+file"
+    r"|indicate\s+by\s+check|securities\s+exchange\s+act|month\s+of"
+    r"|^\s*exhibit\b|\.(?:htm|html|txt|xml)\b|^\s*\d+\s*$|registrant|^\s*6-?k\s*$"
+    r"|signatures?\s*$|duly\s+authorized", re.I)
+# "REPORT OF FOREIGN PRIVATE ISSUER" is on every 6-K and says nothing
+USELESS_DESC = re.compile(r"^\s*(?:report\s+of\s+foreign\s+private\s+issuer|6-?k|form\s+6-?k)"
+                          r"\s*(?:pursuant.*)?$", re.I)
+
+
+# A 6-K cover page is line-broken mid-sentence by the HTML, so a per-line
+# boilerplate filter alone is not enough: also require the line to look like an
+# actual announcement headline before using it as the file slug.
+HEADLINE_HINT_RE = re.compile(
+    r"press\s+release|announce|presentation|agreement|dividend|notice|update"
+    r"|acquisition|offering|appoint|resign|completion|entry\s+into|letter\s+to"
+    r"|shareholders?\s+meeting|transcript|webcast|conference\s+call", re.I)
+
+
+# 8-Ks put the press release in EX-99. Foreign private issuers frequently use
+# EX-1 (or EX-2) instead, and sometimes put the release in the 6-K body itself.
+EX_6K_RE = re.compile(r"^EX-(?:99|1|2)(?:\.\d+)?$", re.I)
+# "announces the results of its annual general meeting" is not an earnings release
+NOT_EARNINGS_RE = re.compile(
+    r"results\s+of\s+(?:its\s+|the\s+)?(?:\d{4}\s+)?(?:annual|extraordinary|special)"
+    r"(?:\s+general)?\s+meeting|voting\s+results|results\s+of\s+the\s+(?:vote|election)"
+    r"|results\s+of\s+(?:its\s+|the\s+)?(?:tender|exchange)\s+offer", re.I)
+# an earnings release always carries at least one of these
+EARNINGS_CONFIRM_RE = re.compile(
+    r"\bnet\s+(?:income|loss|revenues?)\b|\badjusted\s+ebitda\b|\bearnings\s+per\s+share\b"
+    r"|\bper\s+(?:common\s+)?share\b|\bgross\s+(?:profit|margin)\b|\boperating\s+income\b"
+    r"|\btotal\s+revenues?\b", re.I)
+
+
+def _slugify(txt: str, limit: int = 48) -> str:
+    out = re.sub(r"[^a-z0-9]+", "-", (txt or "").lower()).strip("-")
+    if len(out) > limit:
+        out = out[:limit].rsplit("-", 1)[0] or out[:limit]
+    return out.strip("-")
+
+
+def slug_6k(desc: str, chunks) -> tuple[str, bool]:
+    """-> (slug, is_earnings). `chunks` is the list of (title, text) already read."""
+    blob = "\n".join(t for _, t in chunks)[:8000]
+    titles = " ".join(t for t, _ in chunks)
+    is_earnings = bool(EARNINGS_RE.search(blob[:4000]) or EARNINGS_RE.search(titles))
+    if is_earnings and NOT_EARNINGS_RE.search(blob[:4000] + " " + titles):
+        is_earnings = False
+    if is_earnings and not EARNINGS_CONFIRM_RE.search(blob):
+        is_earnings = False
+    if is_earnings:
+        return "results", True
+    if desc and not USELESS_DESC.match(desc.strip()):
+        sl = _slugify(desc)
+        if sl:
+            return sl, False
+    # fall back to the press-release headline: the first substantial line that
+    # is not part of the EDGAR document header or the 6-K cover-page boilerplate
+    ordered = [c for c in chunks if c[0].startswith("EX-")] + \
+              [c for c in chunks if not c[0].startswith("EX-")]
+    for _, body in ordered:
+        for line in body.split("\n")[:80]:
+            line = line.strip()
+            if not (20 <= len(line) <= 200) or BOILER_6K_RE.search(line):
+                continue
+            if len(line.split()) < 4 or not HEADLINE_HINT_RE.search(line):
+                continue
+            sl = _slugify(line)
+            if sl:
+                return sl, False
+    return "6k", False
 
 
 # --------------------------------------------------------------------------
@@ -592,18 +761,47 @@ def process(ticker: str) -> dict:
             return None
         return doc_to_text(raw, r["primaryDocument"])
 
-    # ---------------- 10-K ----------------
+    # ---------------- annual report: 10-K, or 20-F for a foreign private issuer ----
     k = latest(["10-K", "10-K405", "10-KSB", "20-F", "40-F"])
+    form_type = None
+    is_fpi = False
     if not k:
         problems.append("no 10-K/20-F in recent filings")
     else:
+        form_type = "20-F" if k["form"].upper().startswith("20-F") else k["form"]
+        is_fpi = form_type == "20-F"
         d = k["filingDate"]
         meta["filings_used"]["10-K"] = {"filingDate": d, "reportDate": k["reportDate"],
                                         "accession": k["accessionNumber"],
                                         "form": k["form"], "primaryDocument": k["primaryDocument"]}
         text = load_primary(k)
         if not text:
-            problems.append(f"10-K {d}: primary document could not be downloaded")
+            problems.append(f"{k['form']} {d}: primary document could not be downloaded")
+        elif is_fpi:
+            # 20-F: completely different item numbering (see F20_SECTIONS)
+            items = extract_20f_items(text)
+            found = [k2 for k2 in F20_SECTIONS if k2 in items]
+            for k2, (suffix, title, equiv) in F20_SECTIONS.items():
+                if k2 not in items:
+                    continue
+                pth = out_dir / f"20-F_{d}_{suffix}.md"
+                write_md(pth, f"# {ticker} 20-F {d} - {title}\n\n"
+                              f"Source: {doc_url(cik, k['accessionNumber'], k['primaryDocument'])}",
+                         items[k2],
+                         notes=[f"Foreign private issuer annual report (Form 20-F). "
+                                f"This section is the 20-F equivalent of the {equiv}."])
+                record(pth)
+            missing = [F20_SECTIONS[k2][1] for k2 in F20_SECTIONS if k2 not in items]
+            if missing:
+                problems.append(f"20-F {d}: heading split missed {', '.join(missing)}")
+            if not found:
+                pth = out_dir / f"20-F_{d}_full.md"
+                write_md(pth, f"# {ticker} 20-F {d} - FULL DOCUMENT",
+                         text[:FULL_FALLBACK_CHARS],
+                         notes=[f"Item 3.D/4/5 heading detection failed; full text truncated to "
+                                f"{FULL_FALLBACK_CHARS:,} of {len(text):,} characters."])
+                record(pth)
+                meta["notes"].append("20-F item splitting failed; wrote full-text fallback.")
         else:
             items = extract_10k_items(text)
             want = {"item1": ("item1_business", "Item 1 - Business"),
@@ -628,11 +826,17 @@ def process(ticker: str) -> dict:
                                 f"{FULL_FALLBACK_CHARS:,} of {len(text):,} characters."])
                 record(p)
                 meta["notes"].append("10-K item splitting failed; wrote full-text fallback.")
+    meta["form_type"] = form_type or "unknown"
+    meta["is_fpi"] = is_fpi
 
     # ---------------- 10-Q ----------------
     q = latest(["10-Q"])
     if not q:
-        problems.append("no 10-Q in recent filings")
+        if is_fpi:
+            meta["notes"].append("no 10-Q: foreign private issuers report interim "
+                                 "results on Form 6-K instead")
+        else:
+            problems.append("no 10-Q in recent filings")
     else:
         d = q["filingDate"]
         meta["filings_used"]["10-Q"] = {"filingDate": d, "reportDate": q["reportDate"],
@@ -655,7 +859,11 @@ def process(ticker: str) -> dict:
     # ---------------- DEF 14A ----------------
     px = latest(["DEF 14A", "DEFM14A", "DEF 14C", "DEFA14A"])
     if not px:
-        problems.append("no proxy (DEF 14A) in recent filings")
+        if is_fpi:
+            meta["notes"].append("no DEF 14A: foreign private issuers are exempt from the "
+                                 "US proxy rules; compensation/ownership sit in 20-F Items 6-7")
+        else:
+            problems.append("no proxy (DEF 14A) in recent filings")
     else:
         d = px["filingDate"]
         meta["filings_used"]["DEF 14A"] = {"filingDate": d, "accession": px["accessionNumber"],
@@ -726,8 +934,65 @@ def process(ticker: str) -> dict:
         used_8k.append({"filingDate": d, "accession": acc, "items": r["items"],
                         "file": p.name, "exhibits": len(chunks) - 1})
     meta["filings_used"]["8-K"] = used_8k
-    if not eights:
+    if not eights and not is_fpi:
         meta["notes"].append("no 8-K filings in the last 6 months")
+
+    # ---------------- 6-K, last 6 months (foreign private issuers) ----------
+    # FPIs file 6-K instead of 8-K. Same treatment: main document + EX-99
+    # exhibits. 6-Ks carry no item codes, so the slug comes from the content.
+    sixes = [r for r in rows if r["form"] in ("6-K", "6-K/A")
+             and r["filingDate"] >= cutoff_6m.isoformat()]
+    n_sixes_all = len(sixes)
+    if MAX_8K is not None and len(sixes) > MAX_8K:
+        sixes = sixes[:MAX_8K]            # `rows` is newest-first
+        meta["notes"].append(
+            f"6-K capped at the {MAX_8K} most recent of {n_sixes_all} in the last 6 months")
+    used_6k = []
+    seen6 = set()
+    for r in sixes:
+        d = r["filingDate"]
+        acc = r["accessionNumber"]
+        chunks = []
+        text = load_primary(r)
+        if text:
+            chunks.append(("Main document (" + r["primaryDocument"] + ")", text))
+        docs = filing_documents(cik, acc, raw_dir)
+        for dd in docs:
+            typ = (dd["type"] or "").upper()
+            nm = dd["document"]
+            if not EX_6K_RE.match(typ):
+                continue
+            if not nm.lower().endswith((".htm", ".html", ".txt")):
+                continue
+            raw = fetch(f"{filing_dir_url(cik, acc)}/{nm}", raw_dir, f"{acc}_{nm}")
+            if raw is None:
+                continue
+            chunks.append((f"{typ} - {dd['description'] or nm} ({nm})", doc_to_text(raw, nm)))
+        if not chunks:
+            problems.append(f"6-K {d}: no readable documents")
+            continue
+        slug, is_earnings = slug_6k(r["primaryDocDescription"], chunks)
+        base = f"6-K_{d}_{slug}"
+        fn, i = base, 2
+        while fn in seen6:
+            fn = f"{base}-{i}"
+            i += 1
+        seen6.add(fn)
+        body = "\n\n".join(f"## {t}\n\n{b}" for t, b in chunks)
+        pth = out_dir / f"{fn}.md"
+        write_md(pth, f"# {ticker} {r['form']} {d}"
+                      f"{'  (earnings / results release)' if is_earnings else ''}\n\n"
+                      f"Source: {filing_dir_url(cik, acc)}/{acc}-index.html", body,
+                 notes=["Form 6-K: a foreign private issuer's equivalent of an 8-K. "
+                        "6-Ks carry no item codes, so the classification above comes from "
+                        "the document text."])
+        record(pth)
+        used_6k.append({"filingDate": d, "accession": acc, "file": pth.name,
+                        "earnings_release": is_earnings, "exhibits": len(chunks) - 1})
+    meta["filings_used"]["6-K"] = used_6k
+    meta["filings_used"]["sixk_available"] = n_sixes_all
+    if is_fpi and not sixes:
+        meta["notes"].append("no 6-K filings in the last 6 months")
 
     # ---------------- Form 4, last 12 months ----------------
     cutoff_12m = today - dt.timedelta(days=365)

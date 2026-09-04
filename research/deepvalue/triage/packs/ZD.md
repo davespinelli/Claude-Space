@@ -1,6 +1,6 @@
 # Triage pack — ZD · ZIFF DAVIS, INC.
 
-_Generated 2026-09-04 11:33 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -48,6 +48,7 @@ _Source: candidates.csv_
 | revenue | $1.5B |
 | revenue_prior | $1.4B |
 | rev_growth | 3.5% |
+| rev_growth_note | n/a |
 | ebit | $183.1M |
 | net_income | $47.4M |
 | cfo | $407.1M |
@@ -58,6 +59,7 @@ _Source: candidates.csv_
 | metric | value |
 |---|---|
 | share_chg | -16.4% |
+| share_chg_src | dei:EntityCommonStockSharesOutstanding |
 | shares | 34,287,208 |
 | shares_py | 41,002,903 |
 
@@ -98,14 +100,13 @@ _Source: candidates.csv_
 
 ## 3. Share count trend
 
-- Shares outstanding (dei): **34,287,208** (CY2026Q2I) vs **41,002,903** prior year (CY2025Q2I)
+- Shares outstanding: **34,287,208** (CY2026Q2I) vs **41,002,903** prior year (CY2025Q2I)
 - Change: **-16.4%** — buyback / shrinking count
+- Source concept: `dei:EntityCommonStockSharesOutstanding`
 
 ## 4. Price range (1 year)
 
-- Last 56.31 (as of 2026-09-03) · 52w range 26.51 - 56.69 · -0.7% vs 52w high · 112.4% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -113,24 +114,22 @@ _Source: yfinance, live._
 
 ## 6. Insider activity (Form 4, trailing 12 months)
 
-Net open-market activity (last 12m): buys 1,354 sh / $49,949 vs sells 44,469 sh / $2,132,511 -> net $-2,082,562 (SELLING).
-Distinct insiders buying (code P): 1. Largest buy: FAY SARAH ANN bought 1,354 sh @ $36.89 ($49,949) on 2025-09-15.
+Net open-market activity (last 12m): buys 0 sh / $0 vs sells 44,469 sh / $2,132,511 -> net $-2,132,511 (SELLING).
+Distinct insiders buying (code P): 0. Largest buy: none.
 
-Form 4 filings parsed: 34; transaction rows: 79 (open-market buys 1, sales 10).
+Form 4 filings parsed: 12; transaction rows: 19 (open-market buys 0, sales 10).
 
 | code | rows |
 |---|---|
-| A | 11 |
-| F | 15 |
-| M | 42 |
-| P | 1 |
+| A | 3 |
+| M | 6 |
 | S | 10 |
 
 Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exercise, F=tax withholding, G=gift.
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-08-07_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-07_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 (zd20260630pressrelease.htm)
 
@@ -371,7 +370,7 @@ The following table sets forth, for the years ended December 31, 2025 and 2024, 
 
 _[...truncated at ~4,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business (10-K_2026-02-24_item1_business.md)
+## 9. 10-K Item 1 - Business (10-K_2026-02-24_item1_business.md)
 
 Item 1. Business
 
@@ -399,7 +398,9 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-08-07.md
+- **CALL PERIOD: 2026Q2** (call dated 2026-08-07)
+- **Recency:** same fiscal period as the latest earnings release in this pack.
+- **File:** transcript_2026Q2_2026-08-07.md
 - **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
 - **Source:** https://www.sec.gov/Archives/edgar/data/1084048/000108404826000043/zd20260630pressrelease.htm
 
@@ -407,7 +408,15 @@ _Body not repeated: this file is the same press release already excerpted in sec
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-07_2-02-results.md, 10-K_2026-02-24_item7_mdna.md, 10-K_2026-02-24_item1_business.md, transcript_2026-08-07.md
+**Annual report form:** 10-K
+
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | 10-K_2026-02-24_item1_business.md |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-02-24_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-02-24_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-07_2-02-results.md, 10-K_2026-02-24_item7_mdna.md, 10-K_2026-02-24_item1_business.md, transcript_2026Q2_2026-08-07.md
 
 **Missing:** none
 

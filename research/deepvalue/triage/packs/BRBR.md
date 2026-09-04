@@ -1,6 +1,6 @@
 # Triage pack — BRBR · BELLRING BRANDS, INC.
 
-_Generated 2026-09-04 11:30 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -48,6 +48,7 @@ _Source: candidates.csv_
 | revenue | $2.3B |
 | revenue_prior | $2.0B |
 | rev_growth | 16.1% |
+| rev_growth_note | n/a |
 | ebit | $357.4M |
 | net_income | $216.2M |
 | cfo | $260.6M |
@@ -58,6 +59,7 @@ _Source: candidates.csv_
 | metric | value |
 |---|---|
 | share_chg | -7.7% |
+| share_chg_src | dei:EntityCommonStockSharesOutstanding |
 | shares | 116,278,194 |
 | shares_py | 125,979,165 |
 
@@ -98,14 +100,13 @@ _Source: candidates.csv_
 
 ## 3. Share count trend
 
-- Shares outstanding (dei): **116,278,194** (CY2026Q2I) vs **125,979,165** prior year (CY2025Q2I)
+- Shares outstanding: **116,278,194** (CY2026Q2I) vs **125,979,165** prior year (CY2025Q2I)
 - Change: **-7.7%** — buyback / shrinking count
+- Source concept: `dei:EntityCommonStockSharesOutstanding`
 
 ## 4. Price range (1 year)
 
-- Last 10.40 (as of 2026-09-03) · 52w range 7.90 - 42.68 · -75.6% vs 52w high · 31.6% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -114,25 +115,21 @@ _Source: yfinance, live._
 
 ## 6. Insider activity (Form 4, trailing 12 months)
 
-Net open-market activity (last 12m): buys 6,000 sh / $72,440 vs sells 8,248 sh / $298,583 -> net $-226,143 (SELLING).
+Net open-market activity (last 12m): buys 4,000 sh / $36,940 vs sells 0 sh / $0 -> net $36,940 (BUYING).
 Distinct insiders buying (code P): 1. Largest buy: Finkelstein David Isaiah bought 4,000 sh @ $9.23 ($36,940) on 2026-05-13.
 
-Form 4 filings parsed: 58; transaction rows: 67 (open-market buys 2, sales 3).
+Form 4 filings parsed: 12; transaction rows: 12 (open-market buys 1, sales 0).
 
 | code | rows |
 |---|---|
-| A | 50 |
-| F | 9 |
-| G | 2 |
-| J | 1 |
-| P | 2 |
-| S | 3 |
+| A | 11 |
+| P | 1 |
 
 Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exercise, F=tax withholding, G=gift.
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-08-04_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-04_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 Q3 2026 EARNINGS PRESS RELEASE (brbrexh991-q32026earningsr.htm)
 
@@ -320,7 +317,7 @@ Sources and Uses of Cash
 
 _[...truncated at ~10,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business (10-K_2025-11-18_item1_business.md)
+## 9. 10-K Item 1 - Business (10-K_2025-11-18_item1_business.md)
 
 ITEM 1. BUSINESS
 
@@ -356,15 +353,38 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-08-04.md
-- **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
-- **Source:** https://www.sec.gov/Archives/edgar/data/1772016/000162828026052137/brbrexh991-q32026earningsr.htm
+- **CALL PERIOD: 2026Q3** (call dated 2026-09-04)
+- **Recency:** same fiscal period as the latest earnings release in this pack.
+- **Other transcript files present (not shown):** transcript_2026Q3_2026-08-04.md [2026Q3, press_release]
+- **File:** transcript_2026Q3_2026-09-04.md
+- **Type:** REAL CALL TRANSCRIPT / PREPARED REMARKS — management's own words
+- **Source:** https://www.alphavantage.co/documentation/#transcript
 
-_Body not repeated: this file is the same press release already excerpted in section 7._
+**Operator** — *Operator*
+
+Thank you for standing by, and welcome to BellRing Brands' Third Quarter Fiscal Year 2026 Earnings Conference Call. I would now like to hand the call over to Jennifer Meyer, Investor Relations for BellRing Brands. Please go ahead.
+
+**Jennifer Meyer** — *Investor Relations*
+
+Good morning, and thank you for joining us today for BellRing Brands' Third Quarter Fiscal 2026 Earnings Call. With me today are Mike Axelrod, our President and CEO; and Paul Rode, our CFO. Mike and Paul will begin with prepared remarks, and afterwards, we'll have a brief question-and-answer session. The press release and supplemental slide presentation that support these remarks are posted on our website in both the Investor Relations and the SEC Filings sections at bellring.com. In addition, the release and slides are available on the SEC's website. Before we continue, I would like to remind you that this call will contain forward-looking statements, which are subject to risks and uncertainties that should be carefully considered by investors as actual results could differ materially from these statements. These forward-looking statements are current as of the date of this call, and management undertakes no obligation to update these statements. As a reminder, this call is being recorded, and an audio replay will be available on our website. And finally, this call will discuss certain non-GAAP measures. For a reconciliation of these non-GAAP measures to the nearest GAAP measure, see our press release issued this morning and posted on our website. With that, I will turn the call over to Mike.
+
+**Michael Axelrod** — *President and CEO*
+
+Thank you, Jennifer, and good morning, everyone. Thank you for joining our third quarter earnings call. I'm excited and honored to lead BellRing, and I'm grateful to the Board, the executive leadership team and colleagues across the company for the very warm welcome. As it's my seventh day at the company, I'll start the call with introductory remarks, and then pass it on to Paul to cover our third quarter performance and outlook for the remainder of fiscal 2026. I joined BellRing after 30 years in the consumer packaged goods industry across both entrepreneurial and large-scale businesses. Throughout my career, I've had the opportunity to grow businesses profitably by strengthening execution, improving operations and speed to market, and investing behind strong brands. What attracted me to BellRing was the combination of an attractive category with a long runway for growth, the market-leading Premier Protein brand, and a meaningful opportunity to improve execution. I built my career by putting the consumer first, building strong customer partnerships and creating value through disciplined execution, and I see many of these same opportunities here. Encouragingly, consumer demand for ready-to-drink protein shakes remains strong, and the category is among the fastest growing in CPG.
+
+_[...truncated at ~3,000 chars of this document]_
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-04_2-02-results.md, 10-K_2025-11-18_item7_mdna.md, 10-K_2025-11-18_item1_business.md, transcript_2026-08-04.md
+**Annual report form:** 10-K
+
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | 10-K_2025-11-18_item1_business.md |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2025-11-18_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2025-11-18_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-04_2-02-results.md, 10-K_2025-11-18_item7_mdna.md, 10-K_2025-11-18_item1_business.md, transcript_2026Q3_2026-09-04.md
 
 **Missing:** none
 

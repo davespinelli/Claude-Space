@@ -6,7 +6,14 @@ Usage:
 
 Writes research/deepvalue/triage/packs/TICKER.md, a 25k-40k character context
 assembled from the screen row, meta.json, form 4 summary, the latest earnings
-press release, the 10-K MD&A and business section, and the transcript file.
+press release, the annual-report MD&A and business section, and the transcript
+file.
+
+Foreign private issuers file a 20-F (Item 4 = Business, Item 5 = MD&A,
+Item 3.D = Risk Factors) and a 6-K instead of a 10-K and an 8-K. The pack reads
+meta.json's `form_type` and pulls the right sections, labelling them by the form
+they actually came from. A 20-F Item 7 is Major Shareholders, NOT MD&A, and is
+never treated as such.
 
 Every source is optional. A missing document is reported inline and in the
 "Document availability" section rather than raising, so a pack is always
@@ -257,16 +264,30 @@ def read(p: Path | None) -> str:
         return ""
 
 
-def extract_ex99(text: str) -> str:
-    """Concatenate the EX-99 sections of an 8-K markdown file."""
+# 8-Ks carry the release in EX-99; foreign private issuers use EX-1/EX-2 on a
+# 6-K, or put the release straight into the 6-K body with no exhibit at all.
+EXHIBIT_HEAD = re.compile(r"\s*EX-?(?:99|1|2)\b", re.I)
+
+
+def extract_ex99(text: str, filename: str = "") -> str:
+    """Concatenate the exhibit sections of an 8-K / 6-K markdown file.
+
+    For a 6-K with no separate exhibit the main document IS the release, so it
+    is used rather than reporting the filing as having no press release.
+    """
     parts = re.split(r"^## ", text, flags=re.M)
     keep = []
     for part in parts:
         head = part.split("\n", 1)[0]
-        if re.match(r"\s*EX-?99", head, re.I):
+        if EXHIBIT_HEAD.match(head):
             keep.append("## " + part.strip())
     if keep:
         return "\n\n".join(keep)
+    if filename.startswith("6-K"):
+        for part in parts:
+            head = part.split("\n", 1)[0]
+            if re.match(r"\s*main document", head, re.I) and len(part) > 800:
+                return "## " + part.strip()
     return ""
 
 
@@ -410,12 +431,13 @@ SCREEN_GROUPS = [
         "Growth and operations",
         [
             ("revenue", money), ("revenue_prior", money), ("rev_growth", pct),
+            ("rev_growth_note", str),
             ("ebit", money), ("net_income", money), ("cfo", money), ("capex", money),
         ],
     ),
     (
         "Capital allocation",
-        [("share_chg", pct), ("shares", ints), ("shares_py", ints)],
+        [("share_chg", pct), ("share_chg_src", str), ("shares", ints), ("shares_py", ints)],
     ),
     (
         "Price behaviour and liquidity",
@@ -471,22 +493,126 @@ def render_screen(row: dict, source: str) -> str:
 
 
 def share_trend(row: dict) -> str:
+    """Share-count trend, using screen.py's own share_chg (which may come from a
+    fallback tag) rather than recomputing it from two possibly-mixed columns."""
     sh, py = row.get("shares"), row.get("shares_py")
-    if sh in (None, "") or py in (None, "") or _isnan(sh) or _isnan(py) or not py:
-        return "_No prior-year dei share count in the screen file; share trend not computed._"
-    try:
-        sh, py = float(sh), float(py)
-    except (TypeError, ValueError):
-        return "_Share counts not numeric; share trend not computed._"
-    chg = sh / py - 1 if py else float("nan")
+    chg = row.get("share_chg")
+    src = str(row.get("share_chg_src") or "").strip()
+    have_chg = not (chg in (None, "") or _isnan(chg))
+    if not have_chg:
+        return ("_No usable share count for the prior year (dei cover-page count absent and "
+                "no fallback tag available); share trend not computed._")
+    chg = float(chg)
     direction = "buyback / shrinking count" if chg < -0.005 else (
         "dilution / growing count" if chg > 0.005 else "roughly flat"
     )
-    return (
-        f"- Shares outstanding (dei): **{ints(sh)}** ({row.get('shares_period', 'n/a')}) "
-        f"vs **{ints(py)}** prior year ({row.get('shares_py_period', 'n/a')})\n"
-        f"- Change: **{pct(chg)}** — {direction}"
-    )
+    lines = []
+    if not (sh in (None, "") or py in (None, "") or _isnan(sh) or _isnan(py)):
+        lines.append(
+            f"- Shares outstanding: **{ints(sh)}** ({row.get('shares_period', 'n/a')}) "
+            f"vs **{ints(py)}** prior year ({row.get('shares_py_period', 'n/a')})"
+        )
+    lines.append(f"- Change: **{pct(chg)}** — {direction}")
+    if src:
+        lines.append(f"- Source concept: `{src}`")
+    note = str(row.get("rev_growth_note") or "").strip()
+    if note and note.lower() not in ("nan", "none"):
+        lines.append(f"- **Flag:** {note}")
+    return "\n".join(lines)
+
+
+# --------------------------------------------------------------- FPI support
+
+# role -> (10-K glob + label, 20-F glob + label)
+ANNUAL_SECTIONS = {
+    "mdna": {
+        "10-K": ("10-K_*_item7_mdna.md", "10-K Item 7 MD&A"),
+        "20-F": ("20-F_*_item5_operating_review.md",
+                 "20-F Item 5 - Operating and Financial Review and Prospects (MD&A)"),
+    },
+    "business": {
+        "10-K": ("10-K_*_item1_business.md", "10-K Item 1 - Business"),
+        "20-F": ("20-F_*_item4_business.md", "20-F Item 4 - Information on the Company"),
+    },
+    "risks": {
+        "10-K": ("10-K_*_item1a_risks.md", "10-K Item 1A - Risk Factors"),
+        "20-F": ("20-F_*_item3d_risks.md", "20-F Item 3.D - Risk Factors"),
+    },
+}
+
+
+def annual_form(meta: dict, d: Path) -> str:
+    """Which annual report this issuer files: '20-F' (foreign private issuer) or '10-K'."""
+    ft = str(meta.get("form_type") or "").upper()
+    if ft.startswith("20-F"):
+        return "20-F"
+    if ft.startswith("10-K"):
+        return "10-K"
+    # meta.json predates the form_type field: fall back to what is on disk
+    if list(d.glob("20-F_*.md")) and not list(d.glob("10-K_*.md")):
+        return "20-F"
+    return "10-K"
+
+
+def section_doc(d: Path, form: str, role: str) -> tuple[Path | None, str]:
+    pat, label = ANNUAL_SECTIONS[role][form]
+    return newest(pat, d), label
+
+
+PERIOD_RE = re.compile(r"(\d{4})(Q[1-4]|FY)")
+
+
+def period_key(code: str) -> tuple[int, int]:
+    """Sortable key for a '2026Q2' / '2025FY' period code. ('' -> lowest)."""
+    m = PERIOD_RE.fullmatch(code or "")
+    if not m:
+        return (0, 0)
+    q = 5 if m.group(2) == "FY" else int(m.group(2)[1])
+    return (int(m.group(1)), q)
+
+
+CT_RANK = {"full_transcript": 0, "prepared_remarks": 1,
+           "press_release": 2, "investor_presentation": 3}
+
+
+def transcript_candidates(d: Path) -> list[dict]:
+    """Every transcript_*.md with its declared call period, date and content type."""
+    out = []
+    for fp in sorted(d.glob("transcript_*.md")):
+        raw = read(fp)
+        m = re.search(r"call_period:\*\*\s*\**([0-9]{4}(?:Q[1-4]|FY))\**", raw)
+        code = m.group(1) if m else ""
+        if not code:
+            m = re.search(r"transcript_([0-9]{4}(?:Q[1-4]|FY))_", fp.name)
+            code = m.group(1) if m else ""
+        m = re.search(r"content_type:\*\*\s*`?([a-z_]+)`?", raw)
+        ctype = m.group(1) if m else ""
+        m = re.search(r"event_date:\*\*\s*(\d{4}-\d{2}-\d{2})", raw)
+        date = m.group(1) if m else ""
+        if not date:
+            m = re.search(r"(\d{4}-\d{2}-\d{2})", fp.name)
+            date = m.group(1) if m else ""
+        out.append({"path": fp, "period": code, "date": date, "ctype": ctype, "raw": raw})
+    # A real transcript is management's own voice and is worth more than another
+    # copy of the press release already excerpted in section 7 - even one quarter
+    # behind, which section 10 then flags. Among equals, newest call period wins.
+    out.sort(key=lambda c: (-CT_RANK.get(c["ctype"], 9), period_key(c["period"]), c["date"]),
+             reverse=True)
+    return out
+
+
+def release_period(path: Path | None) -> str:
+    """Fiscal period of an 8-K/6-K earnings release, via fetch_transcript's parser."""
+    if not path:
+        return ""
+    try:
+        import fetch_transcript as _ft            # sibling module, same directory
+    except Exception:                             # noqa: BLE001
+        return ""
+    try:
+        return _ft.parse_period(strip_fetch_header(read(path)))[0]
+    except Exception:                             # noqa: BLE001
+        return ""
 
 
 def build_pack(ticker: str) -> tuple[str, dict]:
@@ -520,6 +646,7 @@ def build_pack(ticker: str) -> tuple[str, dict]:
     )
 
     # --- 1. identity -------------------------------------------------------
+    form = annual_form(meta, d)
     fye = meta.get("fiscal_year_end") or ""
     fye_fmt = f"{fye[:2]}-{fye[2:]}" if len(fye) == 4 else (fye or "n/a")
     exch = ", ".join(meta.get("exchanges") or []) or str(row.get("exchange") or "n/a")
@@ -531,7 +658,11 @@ def build_pack(ticker: str) -> tuple[str, dict]:
         f"{meta.get('sic_description') or row.get('sic_desc', 'n/a')}\n"
         f"- **Fiscal year end (MM-DD):** {fye_fmt}\n"
         f"- **Exchange:** {exch}\n"
-        f"- **Filings fetched:** {meta_p.parent if meta else 'none'}"
+        + (f"- **Annual report form:** {form} — FOREIGN PRIVATE ISSUER. It files a 20-F "
+           f"(Item 4 = business, Item 5 = MD&A, Item 3.D = risk factors) and 6-Ks instead "
+           f"of a 10-K, 10-Q, 8-K and proxy. There is no quarterly 10-Q and no DEF 14A.\n"
+           if form == "20-F" else "")
+        + f"- **Filings fetched:** {meta_p.parent if meta else 'none'}"
     )
     if meta.get("problems"):
         parts.append(
@@ -568,6 +699,7 @@ def build_pack(ticker: str) -> tuple[str, dict]:
         want = {i for i in WATCH_ITEMS if i in items.replace("-", ".")} or WATCH_ITEMS
         for h in item_headline(fp, want):
             headlines.append(f"- **{date}** — {h}")
+    six_ks = sorted(glob.glob(str(d / "6-K_*.md")), reverse=True)
     sec5 = "## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)\n\n"
     if headlines:
         sec5 += "\n".join(headlines)
@@ -576,6 +708,17 @@ def build_pack(ticker: str) -> tuple[str, dict]:
             "_No Item 1.01 (material agreement), 1.02 (termination) or 5.02 (officer/director "
             f"change) 8-K filed since {cutoff} among the {len(eight_ks)} 8-Ks fetched._"
         )
+    elif six_ks:
+        # FPIs file 6-Ks, which carry no item codes at all
+        titles = []
+        for fp in six_ks[:12]:
+            m = re.search(r"6-K_(\d{4}-\d{2}-\d{2})_(.+)\.md$", os.path.basename(fp))
+            if m:
+                titles.append(f"- **{m.group(1)}** — {m.group(2).replace('-', ' ')}")
+        sec5 = ("## 5. Material 6-K events, last 6 months\n\n"
+                "_This is a foreign private issuer: it files 6-Ks, which carry no 8-K item "
+                "codes, so these are the filings by headline rather than by item._\n\n"
+                + "\n".join(titles))
     else:
         sec5 += "_No 8-K filings fetched for this ticker._"
         missing.append("8-K filings")
@@ -596,36 +739,45 @@ def build_pack(ticker: str) -> tuple[str, dict]:
         )
 
     # --- 7. earnings press release ----------------------------------------
-    er = newest("8-K_*_2-02-results.md", d)
-    ex99 = extract_ex99(read(er)) if er else ""
+    er = newest("8-K_*_2-02-results.md", d) or newest("6-K_*_results.md", d)
+    ex99 = extract_ex99(read(er), er.name) if er else ""
     if not ex99:
-        for cand in sorted(glob.glob(str(d / "8-K_*.md")), reverse=True):
-            got = extract_ex99(read(Path(cand)))
+        cands = sorted(glob.glob(str(d / "8-K_*.md")), reverse=True) + \
+                sorted(glob.glob(str(d / "6-K_*.md")), reverse=True)
+        for cand in cands:
+            got = extract_ex99(read(Path(cand)), os.path.basename(cand))
             if got:
                 er, ex99 = Path(cand), got
                 break
     ex99_excerpt = ""
+    er_date = ""
+    if er:
+        m = re.search(r"(\d{4}-\d{2}-\d{2})", er.name)
+        er_date = m.group(1) if m else ""
     if ex99:
         found.append(er.name)
         ex99_excerpt, _ = clip(ex99, BUDGET_EX99)
+        src_form = "6-K" if er.name.startswith("6-K") else "8-K"
         parts.append(
-            f"## 7. Latest earnings press release (EX-99 from {er.name})\n\n" + ex99_excerpt
+            f"## 7. Latest earnings press release ({src_form} exhibit from {er.name})\n\n"
+            + ("_This issuer reports on Form 6-K rather than 8-K._\n\n" if src_form == "6-K" else "")
+            + ex99_excerpt
         )
     else:
-        missing.append("8-K earnings press release EX-99")
+        missing.append(("6-K" if form == "20-F" else "8-K") + " earnings press release exhibit")
         parts.append(
-            "## 7. Latest earnings press release (EX-99)\n\n"
-            "_Not available: no 8-K with an EX-99 exhibit was fetched. Current-quarter results are "
-            "unknown from this pack._"
+            f"## 7. Latest earnings press release\n\n"
+            f"_Not available: no {'6-K' if form == '20-F' else '8-K'} with a readable release "
+            "exhibit was fetched. Current-quarter results are unknown from this pack._"
         )
 
     # --- 8. MD&A -----------------------------------------------------------
-    m7 = newest("10-K_*_item7_mdna.md", d)
+    m7, mdna_label = section_doc(d, form, "mdna")
     if m7:
         found.append(m7.name)
         excerpt, how = extract_mdna(read(m7))
         parts.append(
-            f"## 8. 10-K Item 7 MD&A — Overview / Results of Operations ({m7.name})\n\n"
+            f"## 8. {mdna_label} — Overview / Results of Operations ({m7.name})\n\n"
             f"_Extraction: {how}._\n\n" + excerpt
         )
     else:
@@ -639,36 +791,36 @@ def build_pack(ticker: str) -> tuple[str, dict]:
             )
             missing.append("10-K Item 7 MD&A (substituted 10-Q MD&A)")
         else:
-            missing.append("10-K Item 7 MD&A")
+            missing.append(f"{mdna_label} (management commentary)")
             parts.append(
-                "## 8. 10-K Item 7 MD&A\n\n_Not available: neither a 10-K Item 7 nor a 10-Q MD&A "
-                "was fetched. No management commentary in this pack._"
+                f"## 8. {mdna_label}\n\n_Not available: no {mdna_label} "
+                + ("" if form == "20-F" else "and no 10-Q MD&A ")
+                + "was fetched. No management commentary in this pack._"
             )
 
-    # --- 9. Item 1 ---------------------------------------------------------
-    m1 = newest("10-K_*_item1_business.md", d)
+    # --- 9. business -------------------------------------------------------
+    m1, biz_label = section_doc(d, form, "business")
     if m1:
         found.append(m1.name)
         body, _ = clip(strip_toc(strip_fetch_header(read(m1))), BUDGET_ITEM1)
-        parts.append(f"## 9. 10-K Item 1 — Business ({m1.name})\n\n" + body)
+        parts.append(f"## 9. {biz_label} ({m1.name})\n\n" + body)
     else:
-        missing.append("10-K Item 1 Business")
+        missing.append(f"{biz_label} (business description)")
         parts.append(
-            "## 9. 10-K Item 1 — Business\n\n_Not available: the fetcher did not split out Item 1 "
+            f"## 9. {biz_label}\n\n_Not available: the fetcher did not split out this section "
             "for this filing. Describe the business from the MD&A overview above instead, and say "
             "so in the note._"
         )
 
     # --- 10. transcript ----------------------------------------------------
-    tr = newest("transcript_*.md", d)
+    cands = transcript_candidates(d)
+    tr = cands[0]["path"] if cands else None
     sec10 = "## 10. Earnings call material\n\n"
     if tr:
+        chosen = cands[0]
         found.append(tr.name)
-        raw = read(tr)
-        ctype = ""
-        m = re.search(r"content_type:\*\*\s*`?([a-z_]+)`?", raw)
-        if m:
-            ctype = m.group(1)
+        raw = chosen["raw"]
+        ctype = chosen["ctype"]
         src_url = ""
         m = re.search(r"source_url:\*\*\s*(\S+)", raw)
         if m:
@@ -688,6 +840,46 @@ def build_pack(ticker: str) -> tuple[str, dict]:
         head_b = re.sub(r"\W+", " ", ex99_excerpt[-4000:]).strip().lower()
         dup = bool(head_a) and (head_a[:200] in head_b or head_a[:200] in re.sub(
             r"\W+", " ", ex99_excerpt[:4000]).strip().lower())
+        tr_period = chosen["period"]
+        rel_period = release_period(er)
+        real_date = "NOT a real event date" not in raw[:1500]
+        sec10 += (
+            f"- **CALL PERIOD: {tr_period or 'UNKNOWN'}**"
+            + (f" (call dated {chosen['date']})" if chosen["date"] and real_date
+               else f" (no event date from the source; file dated {chosen['date']} when "
+                    f"retrieved — judge recency by the call period)" if chosen["date"] else "")
+            + "\n"
+        )
+        # Is this call older than the results already excerpted in section 7?
+        stale = ""
+        if er:
+            if tr_period and rel_period and period_key(tr_period) < period_key(rel_period):
+                stale = (f"STALE: this call covers {tr_period}, but the latest earnings "
+                         f"release in this pack (section 7, {er.name}) covers {rel_period}. "
+                         f"Everything said below predates those results — do not read it as "
+                         f"commentary on the current quarter.")
+            elif not tr_period and er_date and chosen["date"] and chosen["date"] < er_date:
+                stale = (f"STALE: this file is dated {chosen['date']}, before the latest "
+                         f"earnings release in this pack (section 7, {er.name}, {er_date}), "
+                         f"and states no fiscal period. Treat it as out of date.")
+            elif not tr_period:
+                stale = ("Call period could not be determined from the file; judge its "
+                         "recency from the source, not from the file name.")
+        if stale:
+            sec10 += f"- **Recency:** {stale}\n"
+            missing.append(f"current-period call material ({stale.split(':')[0]})")
+        elif tr_period:
+            sec10 += ("- **Recency:** same fiscal period as the latest earnings release in "
+                      "this pack.\n" if rel_period and period_key(tr_period) == period_key(rel_period)
+                      else "- **Recency:** no earnings release to compare against.\n"
+                      if not rel_period else
+                      "- **Recency:** newer than the earnings release in section 7.\n")
+        others = [c for c in cands[1:] if c["period"] or c["ctype"]]
+        if others:
+            sec10 += ("- **Other transcript files present (not shown):** "
+                      + ", ".join(f"{c['path'].name} [{c['period'] or 'no period'}, "
+                                  f"{c['ctype'] or 'unlabelled'}]" for c in others[:4])
+                      + "\n")
         sec10 += f"- **File:** {tr.name}\n- **Type:** {label}\n"
         if src_url:
             sec10 += f"- **Source:** {src_url}\n"
@@ -709,6 +901,18 @@ def build_pack(ticker: str) -> tuple[str, dict]:
 
     # --- 11. availability --------------------------------------------------
     avail = "## 11. Document availability\n\n"
+    # Say explicitly which document filled each role, so a 20-F Item 7 can never
+    # be mistaken for MD&A and a missing role is never reported as present.
+    roles = []
+    for role, human in (("business", "Business description"),
+                        ("mdna", "MD&A / management commentary"),
+                        ("risks", "Risk factors")):
+        doc, lbl = section_doc(d, form, role)
+        roles.append(f"| {human} | {lbl} | {doc.name if doc else '**MISSING**'} |")
+    avail += (f"**Annual report form:** {form}"
+              + (" (foreign private issuer)" if form == "20-F" else "")
+              + "\n\n| role | source item | file |\n|---|---|---|\n"
+              + "\n".join(roles) + "\n\n")
     avail += "**Present:** " + (", ".join(found) if found else "none") + "\n\n"
     avail += "**Missing:** " + (", ".join(missing) if missing else "none") + "\n\n"
     avail += (

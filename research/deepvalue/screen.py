@@ -64,6 +64,17 @@ PRIOR_OF = {"CY2025": "CY2024", "CY2024": "CY2023"}
 INSTANT_PERIODS = ["CY2026Q2I", "CY2026Q1I", "CY2025Q4I"]
 # Same instant one year earlier, for share-count change.
 INSTANT_PERIODS_PY = ["CY2025Q2I", "CY2025Q1I", "CY2024Q4I"]
+# Share-count tags, in fallback order. dei:EntityCommonStockSharesOutstanding is
+# the cover-page count and is the primary source, but it is missing or tagged as
+# zero for a meaningful minority of filers (e.g. DEC reported 0 for CY2024Q4I and
+# filed nothing at all for CY2025Q1I/Q2I), which silently blanked share_chg while
+# rev_growth showed +141% from an acquisition. Two fallbacks close that hole.
+SHARES_ALT_TAG = "CommonStockSharesOutstanding"                     # instant, us-gaap
+WANSO_TAG = "WeightedAverageNumberOfSharesOutstandingBasic"         # duration, us-gaap
+# Share-count growth above this is flagged next to revenue growth: revenue that
+# grew alongside a much larger share count is bought growth, not organic growth.
+SHARE_GROWTH_FLAG = 0.15
+
 # Quarters summed for a TTM fallback when no annual frame exists (non-Dec FY ends).
 TTM_QUARTERS = ["CY2025Q3", "CY2025Q4", "CY2026Q1", "CY2026Q2"]
 
@@ -240,6 +251,9 @@ def prefetch_all() -> None:
                 jobs.append(("us-gaap", tag, "USD", p))
     for p in INSTANT_PERIODS + INSTANT_PERIODS_PY:
         jobs.append(("dei", "EntityCommonStockSharesOutstanding", "shares", p))
+        jobs.append(("us-gaap", SHARES_ALT_TAG, "shares", p))
+    for p in ANNUAL_PERIODS + ["CY2023"]:
+        jobs.append(("us-gaap", WANSO_TAG, "shares", p))
     jobs = list(dict.fromkeys(jobs))
     log(f"fetching {len(jobs)} XBRL frames (cache: {FRAMES})")
     for i, (tax, tag, unit, per) in enumerate(jobs, 1):
@@ -327,6 +341,52 @@ def shares_concept(periods: list[str]) -> tuple[pd.Series, pd.Series]:
         val = pd.concat([val, new])
         per = pd.concat([per, pd.Series(p, index=new.index)])
     return val, per
+
+
+def alt_shares_concept(periods: list[str]) -> tuple[pd.Series, pd.Series]:
+    """us-gaap:CommonStockSharesOutstanding over the same instant windows.
+
+    Used only where the dei cover-page count is absent, and always compared
+    against itself (current vs prior instant) so the two sides of share_chg come
+    from the same tag - a dei count covers every class, this one sometimes only
+    one, so the two must never be mixed inside a single ratio.
+    """
+    val = pd.Series(dtype="float64")
+    per = pd.Series(dtype="object")
+    for p in periods:
+        s = frame("us-gaap", SHARES_ALT_TAG, "shares", p)
+        if s.empty:
+            continue
+        new = s[~s.index.isin(val.index)] if not val.empty else s
+        if new.empty:
+            continue
+        val = pd.concat([val, new])
+        per = pd.concat([per, pd.Series(p, index=new.index)])
+    return val, per
+
+
+def wanso_yoy() -> tuple[pd.Series, pd.Series]:
+    """Year-over-year change in weighted-average basic shares, and the label.
+
+    Last-resort fallback: an income-statement concept, so it exists whenever EPS
+    does, and both sides come from the same annual frame pair.
+    """
+    by = {p: frame("us-gaap", WANSO_TAG, "shares", p)
+          for p in ANNUAL_PERIODS + ["CY2023"]}
+    chg = pd.Series(dtype="float64")
+    lab = pd.Series(dtype="object")
+    for p in ANNUAL_PERIODS:
+        cur, pri = by.get(p), by.get(PRIOR_OF[p])
+        if cur is None or cur.empty or pri is None or pri.empty:
+            continue
+        common = cur.index.intersection(pri.index).difference(chg.index)
+        if len(common) == 0:
+            continue
+        ratio = cur.reindex(common) / pri.reindex(common) - 1.0
+        ratio = ratio[np.isfinite(ratio)]
+        chg = pd.concat([chg, ratio])
+        lab = pd.concat([lab, pd.Series(f"{p} vs {PRIOR_OF[p]}", index=ratio.index)])
+    return chg, lab
 
 
 # --------------------------------------------------------------------------- #
@@ -487,9 +547,44 @@ def compute_metrics(f: pd.DataFrame) -> pd.DataFrame:
     f["roic"] = np.where(invcap > 0, f.ebit * 0.79 / invcap, np.nan)
     f["rev_growth"] = np.where(f.revenue_prior > 0, f.revenue / f.revenue_prior - 1, np.nan)
     f["net_debt_ebit"] = np.where(f.ebit > 0, f.net_debt / f.ebit, np.nan)
+    for col in ("alt_shares", "alt_shares_py", "wanso_chg"):
+        if col not in f:
+            f[col] = np.nan
+    for col in ("alt_shares_period", "alt_shares_py_period", "wanso_label"):
+        if col not in f:
+            f[col] = np.nan
     f["share_chg"] = np.where(f.shares_py > 0, f.shares / f.shares_py - 1, np.nan)
-    # dei share counts are cover-page counts; ignore absurd jumps (reverse splits etc.)
+    f["share_chg_src"] = np.where(f.share_chg.notna(),
+                                  "dei:EntityCommonStockSharesOutstanding", "")
+
+    # Fallback 1: us-gaap:CommonStockSharesOutstanding, both sides from that tag.
+    need = f.share_chg.isna() & (f.alt_shares > 0) & (f.alt_shares_py > 0)
+    if need.any():
+        f.loc[need, "share_chg"] = f.loc[need, "alt_shares"] / f.loc[need, "alt_shares_py"] - 1
+        f.loc[need, "share_chg_src"] = "us-gaap:" + SHARES_ALT_TAG
+        # surface the counts that actually produced the number
+        f.loc[need, "shares_py"] = f.loc[need, "alt_shares_py"]
+        f.loc[need, "shares_py_period"] = (f.loc[need, "alt_shares_py_period"].astype(str)
+                                           + f" ({SHARES_ALT_TAG})")
+
+    # Fallback 2: weighted-average basic shares, year over year.
+    need = f.share_chg.isna() & f.wanso_chg.notna()
+    if need.any():
+        f.loc[need, "share_chg"] = f.loc[need, "wanso_chg"]
+        f.loc[need, "share_chg_src"] = ("us-gaap:" + WANSO_TAG + " "
+                                        + f.loc[need, "wanso_label"].astype(str))
+
+    # share counts here are cover-page / annual counts; ignore absurd jumps
+    # (reverse splits, unit changes) rather than ranking on them
     f.loc[f.share_chg.abs() > 3, "share_chg"] = np.nan
+    f.loc[f.share_chg.isna(), "share_chg_src"] = ""
+
+    # Revenue that grew alongside a much bigger share count is bought growth.
+    f["rev_growth_note"] = ""
+    dilutive = f.share_chg.notna() & (f.share_chg > SHARE_GROWTH_FLAG)
+    f.loc[dilutive, "rev_growth_note"] = (
+        "share count +" + (f.loc[dilutive, "share_chg"] * 100).round(1).astype(str)
+        + "% yoy — growth may be acquisition/issuance-driven, not organic")
 
     def rank_hi(s):  # higher is better
         return s.rank(pct=True)
@@ -531,7 +626,11 @@ def make_why(f: pd.DataFrame):
         if np.isfinite(r.roic) and r.roic >= q3["roic"]:
             bits.append(f"high ROIC {pct(r.roic)}")
         if np.isfinite(r.rev_growth) and r.rev_growth >= q3["rev_growth"]:
-            bits.append(f"revenue +{pct(r.rev_growth)}")
+            note = str(getattr(r, "rev_growth_note", "") or "")
+            bits.append(f"revenue +{pct(r.rev_growth)}"
+                        + (f" BUT {note}" if note else ""))
+        elif str(getattr(r, "rev_growth_note", "") or ""):
+            bits.append(str(r.rev_growth_note))
         if np.isfinite(r.share_chg) and r.share_chg <= q1_sh and r.share_chg < 0:
             bits.append(f"buying back stock {pct(r.share_chg)}")
         if np.isfinite(r.net_debt_ebit) and r.net_debt_ebit < 0:
@@ -547,7 +646,8 @@ def make_why(f: pd.DataFrame):
 
 OUT_COLS = ["ticker", "name", "sic", "sic_desc", "exchange", "price", "mktcap", "ev",
             "ev_ebit", "fcf", "fcf_yield", "roic", "rev_growth", "net_debt", "net_debt_ebit",
-            "share_chg", "mom_12_1", "r6m", "off_52w_high", "adv20", "revenue",
+            "share_chg", "share_chg_src", "rev_growth_note",
+            "mom_12_1", "r6m", "off_52w_high", "adv20", "revenue",
             "revenue_prior", "ebit", "net_income", "cfo", "capex", "equity", "ltd", "cash",
             "shares", "shares_py", "capex_missing", "ltd_missing", "ltd_tag",
             "revenue_period", "ebit_period", "equity_period",
@@ -583,13 +683,19 @@ def main(argv=None) -> None:
     cash, _, _ = instant_concept("cash", INSTANT_PERIODS)
     sh, sh_per = shares_concept(INSTANT_PERIODS)
     sh_py, sh_py_per = shares_concept(INSTANT_PERIODS_PY)
+    alt_sh, alt_sh_per = alt_shares_concept(INSTANT_PERIODS)
+    alt_sh_py, alt_sh_py_per = alt_shares_concept(INSTANT_PERIODS_PY)
+    wanso_chg, wanso_lab = wanso_yoy()
 
     f = pd.DataFrame(
         dict(revenue=rev, revenue_prior=rev_prior, revenue_period=rev_per,
              net_income=ni, ebit=ebit, ebit_period=ebit_per, cfo=cfo, capex=capex,
              equity=equity, equity_period=equity_per, assets=assets,
              ltd=ltd, ltd_period=ltd_per, ltd_tag=ltd_tag, cash=cash,
-             shares=sh, shares_period=sh_per, shares_py=sh_py, shares_py_period=sh_py_per)
+             shares=sh, shares_period=sh_per, shares_py=sh_py, shares_py_period=sh_py_per,
+             alt_shares=alt_sh, alt_shares_period=alt_sh_per,
+             alt_shares_py=alt_sh_py, alt_shares_py_period=alt_sh_py_per,
+             wanso_chg=wanso_chg, wanso_label=wanso_lab)
     )
     f.index.name = "cik"
     f = f.join(uni, how="inner")
@@ -737,6 +843,15 @@ def main(argv=None) -> None:
              f"{', '.join(TTM_QUARTERS)} for off-calendar fiscal years.")
     L.append(f"- Balance-sheet instants: first available of {', '.join(INSTANT_PERIODS)}; "
              f"prior-year share count from {', '.join(INSTANT_PERIODS_PY)}.")
+    L.append(f"- `share_chg` prefers the dei cover-page count on both sides. That tag is missing "
+             f"(or filed as zero) for a slice of filers, so it falls back first to "
+             f"`us-gaap:{SHARES_ALT_TAG}` for both instants and then to "
+             f"`us-gaap:{WANSO_TAG}` year over year. `share_chg_src` in the CSV names the tag "
+             f"that produced each number; both sides of a ratio always come from the same tag.")
+    L.append(f"- `rev_growth_note` flags companies whose share count grew more than "
+             f"{SHARE_GROWTH_FLAG:.0%} year over year: revenue growth alongside that much "
+             f"issuance is usually bought, not organic, and the note is repeated in the "
+             f"'why each name screens' line below.")
     L.append("- `ltd_missing` / `ltd_tag` in the CSV show whether any long-term-debt concept was found "
              "and which one. When nothing is tagged, long-term debt is treated as zero, so EV is "
              "understated and ROIC overstated for those names. Short-term borrowings, floorplan "
@@ -772,7 +887,8 @@ def main(argv=None) -> None:
         print(f"  cfo={money(r.cfo)}  capex={money(r.capex)}  fcf={money(r.fcf)}  fcf_yield={pct(r.fcf_yield)}")
         print(f"  equity={money(r.equity)} ({r.equity_period})  ltd={money(r.ltd)}  cash={money(r.cash)}  net_debt={money(r.net_debt)}")
         print(f"  EV={money(r.ev)}  EV/EBIT={num(r.ev_ebit)}  ROIC={pct(r.roic)}")
-        print(f"  shares_py={r.shares_py:,.0f} ({r.shares_py_period})  share_chg={pct(r.share_chg)}")
+        print(f"  shares_py={r.shares_py:,.0f} ({r.shares_py_period})  "
+              f"share_chg={pct(r.share_chg)} [{r.share_chg_src or 'unavailable'}]")
         print(f"  adv20={money(r.adv20)}  mom_12_1={pct(r.mom_12_1)}  r6m={pct(r.r6m)}  off52wh={pct(r.off_52w_high)}")
 
     print("\n=== FILTER STAGES ===")

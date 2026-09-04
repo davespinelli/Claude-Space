@@ -1,6 +1,6 @@
 # Triage pack — DEC · Diversified Energy Co
 
-_Generated 2026-09-04 11:38 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -13,7 +13,7 @@ _Generated 2026-09-04 11:38 UTC by research/deepvalue/triage_pack.py. Excerpts o
 
 ## 2. Screen row (all metrics)
 
-_Source: candidates.csv_
+_Source: universe_under2b.csv (not a screen candidate)_
 
 - **Name:** Diversified Energy Co
 - **CIK:** 1,922,446 · **SIC:** 1311 (Crude Petroleum & Natural Gas) · **Exchange:** NYSE
@@ -48,6 +48,7 @@ _Source: candidates.csv_
 | revenue | $1.8B |
 | revenue_prior | $757.3M |
 | rev_growth | 141.5% |
+| rev_growth_note | share count +40.9% yoy — growth may be acquisition/issuance-driven, not organic |
 | ebit | $535.0M |
 | net_income | $341.1M |
 | cfo | $464.6M |
@@ -57,9 +58,10 @@ _Source: candidates.csv_
 
 | metric | value |
 |---|---|
-| share_chg | n/a |
+| share_chg | 40.9% |
+| share_chg_src | us-gaap:CommonStockSharesOutstanding |
 | shares | 70,769,563 |
-| shares_py | n/a |
+| shares_py | 50,649,844 |
 
 **Price behaviour and liquidity**
 
@@ -74,12 +76,12 @@ _Source: candidates.csv_
 
 | metric | value |
 |---|---|
-| r_fcf_yield | 0.95 |
-| r_ev_ebit | 0.90 |
-| r_roic | 0.70 |
-| r_rev_growth | 0.99 |
-| r_buyback | 0.50 |
-| score | 0.81 |
+| r_fcf_yield | 0.93 |
+| r_ev_ebit | 0.86 |
+| r_roic | 0.74 |
+| r_rev_growth | 0.98 |
+| r_buyback | 0.05 |
+| score | 0.71 |
 
 **Data provenance and flags**
 
@@ -89,22 +91,29 @@ _Source: candidates.csv_
 | ebit_period | CY2025 |
 | equity_period | CY2026Q2I |
 | shares_period | CY2026Q2I |
-| shares_py_period | n/a |
+| shares_py_period | CY2024Q4I (CommonStockSharesOutstanding) |
 | capex_missing | False |
 | ltd_missing | False |
 
-**Screen rationale:** top-quartile FCF yield 25.2%; cheap at 7.3x EV/EBIT; revenue +141.5%
+**Other screen columns**
+
+| metric | value |
+|---|---|
+| rank | 55 |
+
+**Screen rationale:** top-quartile FCF yield 25.2%; cheap at 7.3x EV/EBIT; revenue +141.5% BUT share count +40.9% yoy — growth may be acquisition/issuance-driven, not organic
 
 
 ## 3. Share count trend
 
-_No prior-year dei share count in the screen file; share trend not computed._
+- Shares outstanding: **70,769,563** (CY2026Q2I) vs **50,649,844** prior year (CY2024Q4I (CommonStockSharesOutstanding))
+- Change: **40.9%** — dilution / growing count
+- Source concept: `us-gaap:CommonStockSharesOutstanding`
+- **Flag:** share count +40.9% yoy — growth may be acquisition/issuance-driven, not organic
 
 ## 4. Price range (1 year)
 
-- Last 15.72 (as of 2026-09-03) · 52w range 12.44 - 18.30 · -14.1% vs 52w high · 26.4% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -135,7 +144,7 @@ Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exerc
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-08-05_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-05_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 (a2q26earningspr.htm)
 
@@ -487,7 +496,7 @@ Total contractual obligations | $ 744,403 | $ 330,898 | $ 267,224 | $ 1,053,651 
 
 _[...truncated at ~10,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business (10-K_2026-02-26_item1_business.md)
+## 9. 10-K Item 1 - Business (10-K_2026-02-26_item1_business.md)
 
 Item 1. Business
 
@@ -613,7 +622,9 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-08-05.md
+- **CALL PERIOD: 2026Q2** (call dated 2026-08-05)
+- **Recency:** same fiscal period as the latest earnings release in this pack.
+- **File:** transcript_2026Q2_2026-08-05.md
 - **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
 - **Source:** https://www.sec.gov/Archives/edgar/data/1922446/000192244626000070/a2q26earningspr.htm
 
@@ -621,7 +632,15 @@ _Body not repeated: this file is the same press release already excerpted in sec
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-05_2-02-results.md, 10-K_2026-02-26_item7_mdna.md, 10-K_2026-02-26_item1_business.md, transcript_2026-08-05.md
+**Annual report form:** 10-K
+
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | 10-K_2026-02-26_item1_business.md |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-02-26_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-02-26_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-05_2-02-results.md, 10-K_2026-02-26_item7_mdna.md, 10-K_2026-02-26_item1_business.md, transcript_2026Q2_2026-08-05.md
 
 **Missing:** none
 

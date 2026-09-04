@@ -1,6 +1,6 @@
 # Triage pack — MDXG · MIMEDX GROUP, INC.
 
-_Generated 2026-09-04 11:33 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -48,6 +48,7 @@ _Source: candidates.csv_
 | revenue | $418.6M |
 | revenue_prior | $348.9M |
 | rev_growth | 20.0% |
+| rev_growth_note | n/a |
 | ebit | $63.9M |
 | net_income | $48.6M |
 | cfo | $74.0M |
@@ -58,6 +59,7 @@ _Source: candidates.csv_
 | metric | value |
 |---|---|
 | share_chg | -1.5% |
+| share_chg_src | dei:EntityCommonStockSharesOutstanding |
 | shares | 145,760,468 |
 | shares_py | 147,959,416 |
 
@@ -98,14 +100,13 @@ _Source: candidates.csv_
 
 ## 3. Share count trend
 
-- Shares outstanding (dei): **145,760,468** (CY2026Q2I) vs **147,959,416** prior year (CY2025Q2I)
+- Shares outstanding: **145,760,468** (CY2026Q2I) vs **147,959,416** prior year (CY2025Q2I)
 - Change: **-1.5%** — buyback / shrinking count
+- Source concept: `dei:EntityCommonStockSharesOutstanding`
 
 ## 4. Price range (1 year)
 
-- Last 4.43 (as of 2026-09-03) · 52w range 3.09 - 7.96 · -44.3% vs 52w high · 43.4% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -115,23 +116,22 @@ _Source: yfinance, live._
 
 ## 6. Insider activity (Form 4, trailing 12 months)
 
-Net open-market activity (last 12m): buys 0 sh / $0 vs sells 58,300 sh / $432,329 -> net $-432,329 (SELLING).
+Net open-market activity (last 12m): buys 0 sh / $0 vs sells 0 sh / $0 -> net $0 (SELLING).
 Distinct insiders buying (code P): 0. Largest buy: none.
 
-Form 4 filings parsed: 19; transaction rows: 27 (open-market buys 0, sales 1).
+Form 4 filings parsed: 12; transaction rows: 15 (open-market buys 0, sales 0).
 
 | code | rows |
 |---|---|
-| A | 15 |
-| F | 8 |
+| A | 5 |
+| F | 7 |
 | M | 3 |
-| S | 1 |
 
 Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exercise, F=tax withholding, G=gift.
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-07-29_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-07-29_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 (mdxg-q22026pressreleasevf4.htm)
 
@@ -298,7 +298,7 @@ Cost of goods sold includes product testing costs, quality assurance costs, pers
 
 _[...truncated at ~10,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business (10-K_2026-02-25_item1_business.md)
+## 9. 10-K Item 1 - Business (10-K_2026-02-25_item1_business.md)
 
 Item 1. Business
 
@@ -338,7 +338,9 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-07-29.md
+- **CALL PERIOD: 2026Q2** (call dated 2026-07-29)
+- **Recency:** same fiscal period as the latest earnings release in this pack.
+- **File:** transcript_2026Q2_2026-07-29.md
 - **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
 - **Source:** https://www.sec.gov/Archives/edgar/data/1376339/000137633926000074/mdxg-q22026pressreleasevf4.htm
 
@@ -346,7 +348,15 @@ _Body not repeated: this file is the same press release already excerpted in sec
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-07-29_2-02-results.md, 10-K_2026-02-25_item7_mdna.md, 10-K_2026-02-25_item1_business.md, transcript_2026-07-29.md
+**Annual report form:** 10-K
+
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | 10-K_2026-02-25_item1_business.md |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-02-25_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-02-25_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-07-29_2-02-results.md, 10-K_2026-02-25_item7_mdna.md, 10-K_2026-02-25_item1_business.md, transcript_2026Q2_2026-07-29.md
 
 **Missing:** none
 

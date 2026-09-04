@@ -1,6 +1,6 @@
 # Triage pack — DXC · DXC Technology Co
 
-_Generated 2026-09-04 11:36 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 12:11 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -48,6 +48,7 @@ _Source: candidates.csv_
 | revenue | $12.6B |
 | revenue_prior | $12.9B |
 | rev_growth | -1.8% |
+| rev_growth_note | n/a |
 | ebit | $970.0M |
 | net_income | $18.0M |
 | cfo | $1.2B |
@@ -58,6 +59,7 @@ _Source: candidates.csv_
 | metric | value |
 |---|---|
 | share_chg | -10.7% |
+| share_chg_src | dei:EntityCommonStockSharesOutstanding |
 | shares | 159,778,689 |
 | shares_py | 178,998,669 |
 
@@ -98,14 +100,13 @@ _Source: candidates.csv_
 
 ## 3. Share count trend
 
-- Shares outstanding (dei): **159,778,689** (CY2026Q2I) vs **178,998,669** prior year (CY2025Q2I)
+- Shares outstanding: **159,778,689** (CY2026Q2I) vs **178,998,669** prior year (CY2025Q2I)
 - Change: **-10.7%** — buyback / shrinking count
+- Source concept: `dei:EntityCommonStockSharesOutstanding`
 
 ## 4. Price range (1 year)
 
-- Last 11.67 (as of 2026-09-03) · 52w range 8.22 - 15.43 · -24.4% vs 52w high · 42.0% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -129,7 +130,7 @@ Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exerc
 
 Detail: form4_last12m.csv
 
-## 7. Latest earnings press release (EX-99 from 8-K_2026-07-30_2-02-results.md)
+## 7. Latest earnings press release (8-K exhibit from 8-K_2026-07-30_2-02-results.md)
 
 ## EX-99.1 - EX-99.1 (dxcfy27q1pressrelease.htm)
 
@@ -421,7 +422,7 @@ Depreciation and Amortization
 
 _[...truncated at ~10,000 chars of this document]_
 
-## 9. 10-K Item 1 — Business (10-K_2026-05-08_item1_business.md)
+## 9. 10-K Item 1 - Business (10-K_2026-05-08_item1_business.md)
 
 ITEM 1. BUSINESS
 
@@ -469,7 +470,10 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **File:** transcript_2026-09-04.md
+- **CALL PERIOD: 2026Q3** (call dated 2026-09-04)
+- **Recency:** STALE: this call covers 2026Q3, but the latest earnings release in this pack (section 7, 8-K_2026-07-30_2-02-results.md) covers 2027Q1. Everything said below predates those results — do not read it as commentary on the current quarter.
+- **Other transcript files present (not shown):** transcript_2027Q1_2026-07-30.md [2027Q1, press_release]
+- **File:** transcript_2026Q3_2026-09-04.md
 - **Type:** REAL CALL TRANSCRIPT / PREPARED REMARKS — management's own words
 - **Source:** https://www.alphavantage.co/documentation/#transcript
 
@@ -487,8 +491,16 @@ _[...truncated at ~3,000 chars of this document]_
 
 ## 11. Document availability
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-07-30_2-02-results.md, 10-K_2026-05-08_item7_mdna.md, 10-K_2026-05-08_item1_business.md, transcript_2026-09-04.md
+**Annual report form:** 10-K
 
-**Missing:** none
+| role | source item | file |
+|---|---|---|
+| Business description | 10-K Item 1 - Business | 10-K_2026-05-08_item1_business.md |
+| MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-05-08_item7_mdna.md |
+| Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-05-08_item1a_risks.md |
+
+**Present:** meta.json, form4_summary.md, 8-K_2026-07-30_2-02-results.md, 10-K_2026-05-08_item7_mdna.md, 10-K_2026-05-08_item1_business.md, transcript_2026Q3_2026-09-04.md
+
+**Missing:** current-period call material (STALE)
 
 _Anything not listed as present is absent from this pack. Score conservatively and say what you could not check rather than guessing._
