@@ -58,3 +58,30 @@ The 2026-09-04 rows above are on a corrected trading-day index and are comparabl
 2026-09-03 rows (which were run locally on live yfinance data). See
 `2026-09-04_no-vol-scaling.result.md` for the size of the distortion and its effect on live
 signals. Fix pending Sunday review.
+
+**2026-09-04 (lane B, idea 40 vol-scaler-replacement).** Base book = lane A's no-scaler
+book (top-n by the v1 composite without `/sqrt(vol20)`, eligible only, 75% gross, weekly).
+Treatment = a BOOK-LEVEL risk control in place of the per-name scaler. All 21 grid points
+reported. Corrected trading-day index (verified in-script).
+
+| 2026-09-04 | 40 NONE    n=3 | 21.9% | 1.04 | -25.8% | 1.01 / 1.06 | 0.67 (0.64/0.69) | KILL 4b (MaxDD -25.8% vs cap -20.2%) — lane A's OFF book, control | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=3 D=6% | 11.8% | 0.89 | -16.6% | 0.74 / 1.02 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=3 D=8% | 12.0% | 0.86 | -15.8% | 0.77 / 0.94 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=3 D=12% | 13.5% | 0.89 | -18.5% | 0.88 / 0.90 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=3 B=30% | 21.0% | 1.03 | -20.6% | 0.96 / 1.09 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — NEAREST MISS: fails MaxDD by 0.4pp (-20.6% vs cap -20.2%); passes H1/H2/OOS/CAGR; walk-forward pick | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=3 B=40% | 19.9% | 1.00 | -20.9% | 0.95 / 1.05 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1, MaxDD) | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=3 B=50% | 19.4% | 0.99 | -21.4% | 0.95 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1, MaxDD) | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 NONE    n=5 | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4b (MaxDD, H1) — control | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=5 D=6% | 9.0% | 0.81 | -14.3% | 0.73 / 0.87 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=5 D=8% | 8.0% | 0.70 | -15.5% | 0.68 / 0.72 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=5 D=12% | 8.7% | 0.70 | -15.7% | 0.67 / 0.74 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=5 B=30% | 16.0% | 0.95 | -17.8% | 0.86 / 1.03 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only (0.865 vs 0.957) | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=5 B=40% | 15.5% | 0.94 | -17.2% | 0.89 / 0.99 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only (0.893 vs 0.957) | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=5 B=50% | 15.0% | 0.93 | -17.9% | 0.90 / 0.97 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only (0.896 vs 0.957) | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 NONE    n=8 | 13.8% | 0.93 | -17.9% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4b (H1 0.918 vs SPY 0.957) — control, = lane A nearest miss | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=8 D=6% | 7.1% | 0.72 | -12.1% | 0.69 / 0.75 | 0.67 (0.64/0.69) | KEEP 4a (marginal) / KILL 4b (H1, H2, OOS, CAGR all fail) — do NOT adopt, see memo | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=8 D=8% | 7.4% | 0.70 | -13.8% | 0.71 / 0.69 | 0.67 (0.64/0.69) | KEEP 4a (marginal) / KILL 4b (H1, H2, OOS, CAGR all fail) — do NOT adopt, see memo | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 DD      n=8 D=12% | 8.2% | 0.71 | -15.4% | 0.69 / 0.73 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=8 B=30% | 13.4% | 0.93 | -19.1% | 0.88 / 0.98 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=8 B=40% | 13.0% | 0.93 | -16.8% | 0.92 / 0.94 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only (0.915 vs 0.957) | 2026-09-04_vol-scaler-replacement_B.py |
+| 2026-09-04 | 40 BREADTH n=8 B=50% | 12.4% | 0.90 | -18.1% | 0.90 / 0.91 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only | 2026-09-04_vol-scaler-replacement_B.py |
