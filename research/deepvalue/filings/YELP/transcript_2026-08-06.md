@@ -4,7 +4,7 @@
 - **source:** SEC EDGAR 8-K Item 2.02, EX-99.2 (YELP INC)
 - **source_url:** https://www.sec.gov/Archives/edgar/data/1345016/000134501626000059/yelpq22026ex992lettertos.htm
 - **event_date:** 2026-08-06
-- **retrieved_utc:** 2026-09-04T03:58:34+00:00
+- **retrieved_utc:** 2026-09-04T11:36:07+00:00
 - **retrieved_by:** research/deepvalue/fetch_transcript.py
 
 > Selected EX-99.2 from the 8-K filed 2026-08-06. Filing index: https://www.sec.gov/Archives/edgar/data/1345016/000134501626000059/0001345016-26-000059-index.htm

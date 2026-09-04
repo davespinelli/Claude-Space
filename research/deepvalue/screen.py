@@ -18,6 +18,7 @@ Research output only -- not investment advice.
 
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import os
@@ -52,6 +53,9 @@ MKTCAP_MIN, MKTCAP_MAX = 100e6, 5_000e6
 ADV_MIN = 1e6
 REV_MIN = 20e6
 TOP_N = 40
+# Wider band written by --universe-out: every operating company a cloud agent
+# might research. Deliberately overlaps but does not equal the candidate band.
+UNIVERSE_MIN, UNIVERSE_MAX = 50e6, 2_000e6
 
 # Latest completed fiscal year available in the frames API, newest first.
 ANNUAL_PERIODS = ["CY2025", "CY2024"]
@@ -446,7 +450,119 @@ def money(x):
     return f"${x/1e6:.0f}M"
 
 
-def main() -> None:
+def apply_sic_filters(f: pd.DataFrame, sic: pd.DataFrame) -> tuple[pd.DataFrame, int, int]:
+    """Join SIC codes and drop financials/real-estate and clinical-stage biotech."""
+    f = f.join(sic, how="left")
+    f["sic"] = f.sic.fillna(0).astype(int)
+    bad = pd.Series(False, index=f.index)
+    for lo, hi in SIC_EXCLUDE_RANGES:
+        bad |= f.sic.between(lo, hi)
+    n0 = len(f)
+    f = f[~bad]
+    n_fin = n0 - len(f)
+    n0 = len(f)
+    f = f[~(f.sic.isin(SIC_BIOTECH) & (f.revenue < BIOTECH_REV_MIN))]
+    return f, n_fin, n0 - len(f)
+
+
+def compute_metrics(f: pd.DataFrame) -> pd.DataFrame:
+    """Valuation/quality/growth metrics + the composite score, sorted best first.
+
+    Percentile ranks are cross-sectional, so the score depends on the population
+    passed in. The candidate list and the wider universe are therefore scored
+    separately and each row is ranked against its own peer set.
+    """
+    f = f.copy()
+    f["ltd_missing"] = f.ltd.isna()
+    f["ltd_tag"] = f.ltd_tag.fillna("none")
+    f["ltd"] = f.ltd.fillna(0.0)
+    f["cash"] = f.cash.fillna(0.0)
+    f["net_debt"] = f.ltd - f.cash
+    f["ev"] = f.mktcap + f.net_debt
+    f["ev_ebit"] = np.where((f.ebit > 0) & (f.ev > 0), f.ev / f.ebit, np.nan)
+    f["capex_missing"] = f.capex.isna()
+    f["fcf"] = f.cfo - f.capex.fillna(0.0)
+    f["fcf_yield"] = f.fcf / f.mktcap
+    invcap = f.equity + f.net_debt
+    f["roic"] = np.where(invcap > 0, f.ebit * 0.79 / invcap, np.nan)
+    f["rev_growth"] = np.where(f.revenue_prior > 0, f.revenue / f.revenue_prior - 1, np.nan)
+    f["net_debt_ebit"] = np.where(f.ebit > 0, f.net_debt / f.ebit, np.nan)
+    f["share_chg"] = np.where(f.shares_py > 0, f.shares / f.shares_py - 1, np.nan)
+    # dei share counts are cover-page counts; ignore absurd jumps (reverse splits etc.)
+    f.loc[f.share_chg.abs() > 3, "share_chg"] = np.nan
+
+    def rank_hi(s):  # higher is better
+        return s.rank(pct=True)
+
+    r_fcf = rank_hi(f.fcf_yield)
+    r_ev = 1.0 - f.ev_ebit.rank(pct=True)          # cheaper (lower EV/EBIT) = better
+    r_ev = r_ev.where(f.ev_ebit.notna(), 0.0)      # no positive EBIT / negative EV -> worst
+    r_roic = rank_hi(f.roic)
+    r_growth = rank_hi(f.rev_growth)
+    r_buyback = 1.0 - f.share_chg.rank(pct=True)   # shrinking share count = better
+    comps = pd.concat([r_fcf, r_ev, r_roic, r_growth, r_buyback], axis=1)
+    comps.columns = ["r_fcf_yield", "r_ev_ebit", "r_roic", "r_rev_growth", "r_buyback"]
+    # r_ev_ebit already encodes "no positive EBIT" as 0.0 (a real signal). The other
+    # four are NaN only when the underlying concept was not tagged, which is an
+    # absence of information, not bad news -> score them neutrally at 0.5 so every
+    # company is scored on the same five factors.
+    comps = comps.fillna(0.5)
+    base = comps.mean(axis=1)
+    penalty = np.where(f.r6m < -0.40, 0.10, 0.0)
+    bonus = np.where(f.mom_12_1 > 0, 0.05, 0.0)
+    f = f.join(comps)
+    f["score"] = (base - penalty + bonus).clip(0, 1.2)
+    f["falling_knife"] = f.r6m < -0.40
+    return f.sort_values("score", ascending=False)
+
+
+def make_why(f: pd.DataFrame):
+    """Return a row -> plain-English 'why it screens' function for this population."""
+    q3 = {c: f[c].quantile(0.75) for c in ["fcf_yield", "roic", "rev_growth"]}
+    q1_ev = f.ev_ebit.quantile(0.25)
+    q1_sh = f.share_chg.quantile(0.25)
+
+    def why(r) -> str:
+        bits = []
+        if np.isfinite(r.fcf_yield) and r.fcf_yield >= q3["fcf_yield"]:
+            bits.append(f"top-quartile FCF yield {pct(r.fcf_yield)}")
+        if np.isfinite(r.ev_ebit) and r.ev_ebit <= q1_ev:
+            bits.append(f"cheap at {r.ev_ebit:.1f}x EV/EBIT")
+        if np.isfinite(r.roic) and r.roic >= q3["roic"]:
+            bits.append(f"high ROIC {pct(r.roic)}")
+        if np.isfinite(r.rev_growth) and r.rev_growth >= q3["rev_growth"]:
+            bits.append(f"revenue +{pct(r.rev_growth)}")
+        if np.isfinite(r.share_chg) and r.share_chg <= q1_sh and r.share_chg < 0:
+            bits.append(f"buying back stock {pct(r.share_chg)}")
+        if np.isfinite(r.net_debt_ebit) and r.net_debt_ebit < 0:
+            bits.append("net cash")
+        if np.isfinite(r.mom_12_1) and r.mom_12_1 > 0:
+            bits.append(f"12-1 momentum {pct(r.mom_12_1)}")
+        if r.falling_knife:
+            bits.append("WARNING 6m return below -40%")
+        return "; ".join(bits) if bits else "balanced across factors, no single standout"
+
+    return why
+
+
+OUT_COLS = ["ticker", "name", "sic", "sic_desc", "exchange", "price", "mktcap", "ev",
+            "ev_ebit", "fcf", "fcf_yield", "roic", "rev_growth", "net_debt", "net_debt_ebit",
+            "share_chg", "mom_12_1", "r6m", "off_52w_high", "adv20", "revenue",
+            "revenue_prior", "ebit", "net_income", "cfo", "capex", "equity", "ltd", "cash",
+            "shares", "shares_py", "capex_missing", "ltd_missing", "ltd_tag",
+            "revenue_period", "ebit_period", "equity_period",
+            "shares_period", "shares_py_period", "r_fcf_yield", "r_ev_ebit", "r_roic",
+            "r_rev_growth", "r_buyback", "score", "why"]
+
+
+def main(argv=None) -> None:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
+    ap.add_argument("--universe-out", metavar="CSV",
+                    help=f"also write every company passing the base filters with market cap "
+                         f"${UNIVERSE_MIN/1e6:.0f}M-${UNIVERSE_MAX/1e9:.0f}B, scored and ranked")
+    args = ap.parse_args(argv)
+    universe_out = Path(args.universe_out).resolve() if args.universe_out else None
+
     t_start = time.time()
     stages: list[tuple[str, int]] = []
 
@@ -500,111 +616,62 @@ def main() -> None:
     stages.append(("priced by yfinance (>=130 trading days)", len(f)))
 
     f["mktcap"] = f.price * f.shares
-    f = f[(f.mktcap >= MKTCAP_MIN) & (f.mktcap <= MKTCAP_MAX)]
+    priced = f                                   # everything priced, before any cap band
+
+    f = priced[(priced.mktcap >= MKTCAP_MIN) & (priced.mktcap <= MKTCAP_MAX)]
     stages.append((f"market cap ${MKTCAP_MIN/1e6:.0f}M - ${MKTCAP_MAX/1e9:.0f}B", len(f)))
 
     f = f[f.adv20 > ADV_MIN]
     stages.append((f"20d avg dollar volume > ${ADV_MIN/1e6:.0f}M", len(f)))
 
-    sic = fetch_sic(sorted(f.index.unique().tolist()))
-    f = f.join(sic, how="left")
-    f["sic"] = f.sic.fillna(0).astype(int)
-    bad = pd.Series(False, index=f.index)
-    for lo, hi in SIC_EXCLUDE_RANGES:
-        bad |= f.sic.between(lo, hi)
-    n_before = len(f)
-    f = f[~bad]
-    stages.append((f"exclude SIC 6000-6799 (banks/insurers/REITs/holdcos): -{n_before-len(f)}", len(f)))
+    # Wider band for --universe-out. Same base filters, different cap window, so it
+    # is not a subset of the candidate set (it adds $50-100M, drops $2-5B).
+    uni = pd.DataFrame()
+    if universe_out is not None:
+        uni = priced[(priced.mktcap >= UNIVERSE_MIN) & (priced.mktcap <= UNIVERSE_MAX)
+                     & (priced.adv20 > ADV_MIN)].copy()
+        log(f"universe band ${UNIVERSE_MIN/1e6:.0f}M-${UNIVERSE_MAX/1e9:.0f}B "
+            f"before SIC exclusions: {len(uni)}")
+
+    # One submissions fetch covering both populations (cached, so no double cost).
+    sic = fetch_sic(sorted(set(f.index.unique()) | set(uni.index.unique())))
 
     n_before = len(f)
-    f = f[~(f.sic.isin(SIC_BIOTECH) & (f.revenue < BIOTECH_REV_MIN))]
-    stages.append((f"exclude drug/biotech SIC with revenue < ${BIOTECH_REV_MIN/1e6:.0f}M: -{n_before-len(f)}", len(f)))
+    f, n_fin, n_bio = apply_sic_filters(f, sic)
+    stages.append((f"exclude SIC 6000-6799 (banks/insurers/REITs/holdcos): -{n_fin}",
+                   n_before - n_fin))
+    stages.append((f"exclude drug/biotech SIC with revenue < ${BIOTECH_REV_MIN/1e6:.0f}M: -{n_bio}",
+                   len(f)))
 
-    # ---------------- metrics ----------------
+    # ---------------- metrics + composite score ----------------
     log("computing metrics")
-    f["ltd_missing"] = f.ltd.isna()
-    f["ltd_tag"] = f.ltd_tag.fillna("none")
-    f["ltd"] = f.ltd.fillna(0.0)
-    f["cash"] = f.cash.fillna(0.0)
-    f["net_debt"] = f.ltd - f.cash
-    f["ev"] = f.mktcap + f.net_debt
-    f["ev_ebit"] = np.where((f.ebit > 0) & (f.ev > 0), f.ev / f.ebit, np.nan)
-    f["capex_missing"] = f.capex.isna()
-    f["fcf"] = f.cfo - f.capex.fillna(0.0)
-    f["fcf_yield"] = f.fcf / f.mktcap
-    invcap = f.equity + f.net_debt
-    f["roic"] = np.where(invcap > 0, f.ebit * 0.79 / invcap, np.nan)
-    f["rev_growth"] = np.where(f.revenue_prior > 0, f.revenue / f.revenue_prior - 1, np.nan)
-    f["net_debt_ebit"] = np.where(f.ebit > 0, f.net_debt / f.ebit, np.nan)
-    f["share_chg"] = np.where(f.shares_py > 0, f.shares / f.shares_py - 1, np.nan)
-    # dei share counts are cover-page counts; ignore absurd jumps (reverse splits etc.)
-    f.loc[f.share_chg.abs() > 3, "share_chg"] = np.nan
-
-    # ---------------- composite score ----------------
-    def rank_hi(s):  # higher is better
-        return s.rank(pct=True)
-
-    r_fcf = rank_hi(f.fcf_yield)
-    r_ev = 1.0 - f.ev_ebit.rank(pct=True)          # cheaper (lower EV/EBIT) = better
-    r_ev = r_ev.where(f.ev_ebit.notna(), 0.0)      # no positive EBIT / negative EV -> worst
-    r_roic = rank_hi(f.roic)
-    r_growth = rank_hi(f.rev_growth)
-    r_buyback = 1.0 - f.share_chg.rank(pct=True)   # shrinking share count = better
-    comps = pd.concat([r_fcf, r_ev, r_roic, r_growth, r_buyback], axis=1)
-    comps.columns = ["r_fcf_yield", "r_ev_ebit", "r_roic", "r_rev_growth", "r_buyback"]
-    # r_ev_ebit already encodes "no positive EBIT" as 0.0 (a real signal). The other
-    # four are NaN only when the underlying concept was not tagged, which is an
-    # absence of information, not bad news -> score them neutrally at 0.5 so every
-    # company is scored on the same five factors.
-    comps = comps.fillna(0.5)
-    base = comps.mean(axis=1)
-    penalty = np.where(f.r6m < -0.40, 0.10, 0.0)
-    bonus = np.where(f.mom_12_1 > 0, 0.05, 0.0)
-    f = f.join(comps)
-    f["score"] = (base - penalty + bonus).clip(0, 1.2)
-    f["falling_knife"] = f.r6m < -0.40
-
-    f = f.sort_values("score", ascending=False)
+    f = compute_metrics(f)
     stages.append(("scored universe", len(f)))
 
     # ---------------- "why it screens" ----------------
-    q3 = {c: f[c].quantile(0.75) for c in ["fcf_yield", "roic", "rev_growth"]}
-    q1_ev = f.ev_ebit.quantile(0.25)
-    q1_sh = f.share_chg.quantile(0.25)
-
-    def why(r) -> str:
-        bits = []
-        if np.isfinite(r.fcf_yield) and r.fcf_yield >= q3["fcf_yield"]:
-            bits.append(f"top-quartile FCF yield {pct(r.fcf_yield)}")
-        if np.isfinite(r.ev_ebit) and r.ev_ebit <= q1_ev:
-            bits.append(f"cheap at {r.ev_ebit:.1f}x EV/EBIT")
-        if np.isfinite(r.roic) and r.roic >= q3["roic"]:
-            bits.append(f"high ROIC {pct(r.roic)}")
-        if np.isfinite(r.rev_growth) and r.rev_growth >= q3["rev_growth"]:
-            bits.append(f"revenue +{pct(r.rev_growth)}")
-        if np.isfinite(r.share_chg) and r.share_chg <= q1_sh and r.share_chg < 0:
-            bits.append(f"buying back stock {pct(r.share_chg)}")
-        if np.isfinite(r.net_debt_ebit) and r.net_debt_ebit < 0:
-            bits.append("net cash")
-        if np.isfinite(r.mom_12_1) and r.mom_12_1 > 0:
-            bits.append(f"12-1 momentum {pct(r.mom_12_1)}")
-        if r.falling_knife:
-            bits.append("WARNING 6m return below -40%")
-        return "; ".join(bits) if bits else "balanced across factors, no single standout"
-
+    why = make_why(f)
     top = f.head(TOP_N).copy()
     top["why"] = [why(r) for _, r in top.iterrows()]
 
-    cols = ["ticker", "name", "sic", "sic_desc", "exchange", "price", "mktcap", "ev",
-            "ev_ebit", "fcf", "fcf_yield", "roic", "rev_growth", "net_debt", "net_debt_ebit",
-            "share_chg", "mom_12_1", "r6m", "off_52w_high", "adv20", "revenue",
-            "revenue_prior", "ebit", "net_income", "cfo", "capex", "equity", "ltd", "cash",
-            "shares", "shares_py", "capex_missing", "ltd_missing", "ltd_tag", "revenue_period", "ebit_period", "equity_period",
-            "shares_period", "shares_py_period", "r_fcf_yield", "r_ev_ebit", "r_roic",
-            "r_rev_growth", "r_buyback", "score", "why"]
+    cols = OUT_COLS
     out = top[cols]
     out.to_csv(HERE / "candidates.csv", index=True)
     log(f"wrote {HERE/'candidates.csv'}")
+
+    # ---------------- full sub-$2B universe ----------------
+    n_universe = 0
+    if universe_out is not None:
+        u, u_fin, u_bio = apply_sic_filters(uni, sic)
+        log(f"universe after SIC exclusions: {len(u)} "
+            f"(-{u_fin} financials/REITs, -{u_bio} clinical-stage biotech)")
+        u = compute_metrics(u)
+        u_why = make_why(u)
+        u["why"] = [u_why(r) for _, r in u.iterrows()]
+        u.insert(0, "rank", range(1, len(u) + 1))
+        universe_out.parent.mkdir(parents=True, exist_ok=True)
+        u[["rank"] + cols].to_csv(universe_out, index=True)
+        n_universe = len(u)
+        log(f"wrote {universe_out}")
 
     # ---------------- markdown ----------------
     asof = dt.date.today().isoformat()
@@ -714,6 +781,11 @@ def main() -> None:
     print("\n=== TOP 10 ===")
     for i, (cik, r) in enumerate(f.head(10).iterrows(), 1):
         print(f"{i:>2}. {r.ticker:<6} {str(r['name'])[:36]:<38} score={r.score:.3f}")
+    if universe_out is not None:
+        print(f"\nUNIVERSE under ${UNIVERSE_MAX/1e9:.0f}B: {n_universe:,} companies "
+              f"(market cap ${UNIVERSE_MIN/1e6:.0f}M-${UNIVERSE_MAX/1e9:.0f}B, "
+              f"revenue > ${REV_MIN/1e6:.0f}M, ADV > ${ADV_MIN/1e6:.0f}M, non-financial) "
+              f"-> {universe_out}")
     print(f"\nruntime: {time.time()-t_start:.1f}s")
 
 

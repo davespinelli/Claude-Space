@@ -50,6 +50,13 @@ MAX_MD_CHARS = 380_000    # keep every .md comfortably under 400k
 FULL_FALLBACK_CHARS = 150_000
 PROXY_WINDOW = 40_000
 
+# Per-ticker request budget. None = unlimited (the single-ticker default, unchanged).
+# fetch_all.py sets these so a whole-universe sweep stays inside its time budget:
+# 8-Ks cost ~3 requests each (index + main doc + EX-99) and Form 4s 1-2 each, and
+# a handful of names file 100+ Form 4s a year.
+MAX_8K = None             # keep the N most recent 8-Ks in the 6-month window
+MAX_FORM4 = None          # parse the N most recent Form 4s in the 12-month window
+
 TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
 
 _session = requests.Session()
@@ -674,6 +681,11 @@ def process(ticker: str) -> dict:
     cutoff_6m = today - dt.timedelta(days=183)
     eights = [r for r in rows if r["form"] in ("8-K", "8-K/A")
               and r["filingDate"] >= cutoff_6m.isoformat()]
+    n_eights_all = len(eights)
+    if MAX_8K is not None and len(eights) > MAX_8K:
+        eights = eights[:MAX_8K]          # `rows` is newest-first
+        meta["notes"].append(
+            f"8-K capped at the {MAX_8K} most recent of {n_eights_all} in the last 6 months")
     used_8k = []
     seen_names = set()
     for r in eights:
@@ -721,6 +733,12 @@ def process(ticker: str) -> dict:
     cutoff_12m = today - dt.timedelta(days=365)
     fours = [r for r in rows if r["form"] == "4"
              and r["filingDate"] >= cutoff_12m.isoformat()]
+    n_fours_all = len(fours)
+    if MAX_FORM4 is not None and len(fours) > MAX_FORM4:
+        fours = fours[:MAX_FORM4]         # `rows` is newest-first
+        meta["notes"].append(
+            f"Form 4 capped at the {MAX_FORM4} most recent of {n_fours_all} in the last 12 months; "
+            f"the buy/sell totals below cover only those")
     f4rows = []
     for r in fours:
         acc = r["accessionNumber"]
@@ -764,6 +782,8 @@ def process(ticker: str) -> dict:
              f"Detail: form4_last12m.csv\n")
     record(p)
     meta["filings_used"]["form4_count"] = len(fours)
+    meta["filings_used"]["form4_available"] = n_fours_all
+    meta["filings_used"]["eightk_available"] = n_eights_all
     meta["filings_used"]["form4_rows"] = len(f4rows)
     if not fours:
         meta["notes"].append("no Form 4 filings in the last 12 months")
