@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T13:10:45Z · open 442 · in progress 0 · done 43_
+_Source: universe_under2b.csv · updated 2026-09-04T13:18:01Z · open 432 · in progress 0 · done 53_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (442)
+## Open (432)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| ZUMZ | Zumiez Inc | $298.6M |
-| VMD | VIEMED HEALTHCARE, INC. | $343.2M |
-| IMMR | IMMERSION CORP | $250.9M |
-| OSPN | OneSpan Inc. | $617.6M |
-| PRGS | PROGRESS SOFTWARE CORP /MA | $1.83B |
-| EBF | ENNIS, INC. | $538.9M |
-| ELMD | Electromed, Inc. | $228.6M |
-| PLOW | DOUGLAS DYNAMICS, INC | $953.1M |
-| EVTC | EVERTEC, Inc. | $1.83B |
-| NATH | NATHANS FAMOUS, INC. | $402.2M |
 | BDL | FLANIGANS ENTERPRISES INC | $85.2M |
 | DFIN | Donnelley Financial Solutions, Inc. | $1.21B |
 | TGLS | Tecnoglass Holdings Inc. | $1.74B |
@@ -456,7 +446,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (43)
+## Done (53)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | IBEX | IBEX Ltd | $527.7M | cloudA | 2026-09-04T13:10:45Z |
 | APOG | APOGEE ENTERPRISES, INC. | $797.0M | cloudA | 2026-09-04T13:10:45Z |
 | LNN | LINDSAY CORP | $1.25B | cloudA | 2026-09-04T13:10:45Z |
+| ZUMZ | Zumiez Inc | $298.6M | cloudA | 2026-09-04T13:18:01Z |
+| VMD | VIEMED HEALTHCARE, INC. | $343.2M | cloudA | 2026-09-04T13:18:01Z |
+| IMMR | IMMERSION CORP | $250.9M | cloudA | 2026-09-04T13:18:01Z |
+| OSPN | OneSpan Inc. | $617.6M | cloudA | 2026-09-04T13:18:01Z |
+| PRGS | PROGRESS SOFTWARE CORP /MA | $1.83B | cloudA | 2026-09-04T13:18:01Z |
+| EBF | ENNIS, INC. | $538.9M | cloudA | 2026-09-04T13:18:01Z |
+| ELMD | Electromed, Inc. | $228.6M | cloudA | 2026-09-04T13:18:01Z |
+| PLOW | DOUGLAS DYNAMICS, INC | $953.1M | cloudA | 2026-09-04T13:18:01Z |
+| EVTC | EVERTEC, Inc. | $1.83B | cloudA | 2026-09-04T13:18:01Z |
+| NATH | NATHANS FAMOUS, INC. | $402.2M | cloudA | 2026-09-04T13:18:01Z |

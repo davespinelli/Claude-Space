@@ -44,3 +44,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | LNN | LINDSAY CORP | $1.2B | cyclical-trough | 5 | North America irrigation down 11% with net cash and 6.4% share shrink, but 13.7x EV/EBIT gives no cushion and the CFO resigned in July |
 | 2026-09-04 | DAKT | DAKTRONICS INC /SD/ | $940.6M | none | 4 | Record FY26 sales and orders with $145M net cash, but 13.1x EV/EBIT and a 3.6% FCF yield after a receivables build price the improvement in |
 | 2026-09-04 | PMTS | CPI Card Group Inc. | $330.4M | none | 0 | no filings in bundle |
+| 2026-09-04 | ZUMZ | Zumiez Inc | $298.6M | hidden-asset | 7 | Cash and securities of $160.6M vs a $298.6M cap that the screen misses, 14.2% FCF yield, 5.1% share shrink, third year of margin gains |
+| 2026-09-04 | VMD | VIEMED HEALTHCARE, INC. | $343.2M | none | 4 | Revenue +23.9% in Q2 but operating income and adjusted EBITDA both fell, EBITDA guidance cut, and capex eats 77% of operating cash flow |
+| 2026-09-04 | IMMR | IMMERSION CORP | $250.9M | misunderstood-segment | 6 | Screen multiples are consolidation artefacts of Barnes and Noble Education while the licensing business itself saw fixed-fee revenue fall 95% |
+| 2026-09-04 | OSPN | OneSpan Inc. | $617.6M | misunderstood-segment | 5 | Segments earn $96M of operating income against $47.5M of unallocated corporate cost, but the stock sits 0.2% off its 52-week high |
+| 2026-09-04 | PRGS | PROGRESS SOFTWARE CORP /MA | $1.8B | cash-cow-narrative | 5 | 12.5% FCF yield and 4.9% share shrink, but net debt of $1.2B at 7.8x EBIT funds a roll-up whose organic license revenue fell 5% |
+| 2026-09-04 | EBF | ENNIS, INC. | $538.9M | cash-cow-narrative | 5 | Genuinely debt-free with $49.1M cash and stable 13.4% margins, but acquisitions are masking roughly $25M of annual organic volume decline |
+| 2026-09-04 | ELMD | Electromed, Inc. | $228.6M | fallen-growth | 7 | Stock 40% off its high while FY26 revenue rose 15.3% and operating income 43.7%, leaving about 15x EBIT on stale screen data plus net cash |
+| 2026-09-04 | PLOW | DOUGLAS DYNAMICS, INC | $953.1M | cyclical-trough | 6 | Seven straight below-average snow seasons now turning, guidance raised twice to 8.6x EV/EBITDA, but H1 operations used $25.2M of cash |
+| 2026-09-04 | EVTC | EVERTEC, Inc. | $1.8B | cash-cow-narrative | 6 | 7.7x raised adjusted EPS guidance with 11.2% FCF yield and 6.6% share shrink, but GAAP EPS fell to $0.09 and net debt is 5.2x EBIT |
+| 2026-09-04 | NATH | NATHANS FAMOUS, INC. | $402.2M | none | 3 | Trading 3.9% below Smithfield's $102.00 cash merger price, so this is CFIUS arbitrage rather than a value question |
