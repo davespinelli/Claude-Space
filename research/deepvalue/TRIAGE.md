@@ -64,3 +64,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | TEN | TSAKOS ENERGY NAVIGATION LTD | $1.3B | none | 0 | no filings in bundle |
 | 2026-09-04 | REPX | Riley Exploration Permian, Inc. | $932.5M | none | 4 | Screen FCF yield of 22.8% omits capex entirely; actual Q2 free cash flow was $6M and Q2 net income included a $69M non-cash derivative gain |
 | 2026-09-04 | AKBA | Akebia Therapeutics, Inc. | $272.4M | misunderstood-segment | 7 | Vafseo at $21.3M growing 34% sequentially is masked by Auryxia's generic collapse, with cash at roughly half the market cap |
+| 2026-09-04 | INFU | InfuSystem Holdings, Inc | $242.6M | misunderstood-segment | 5 | Patient Services up 15.2% and margins up on the GE contract restructuring, but 22.0x EV/EBIT with the stock 2.5% off its high |
+| 2026-09-04 | AUDC | AUDIOCODES LTD | $270.6M | none | 3 | Pack has no business description and no MD&A, leaving flat 1.4% revenue at 16.1x EV/EBIT and 15 insider sale rows as the only facts |
+| 2026-09-04 | KROS | Keros Therapeutics, Inc. | $220.3M | hidden-asset | 7 | Cash of $257.6M exceeds the $220.3M market cap for a negative EV, with shares down 51.2% and runway into H1 2028 against a $28.7M quarterly loss |
+| 2026-09-04 | PRKS | United Parks & Resorts Inc. | $1.8B | cash-cow-narrative | 5 | Retired 12.1% of shares in H1 on an 8.8% FCF yield, but attendance fell 3.6%, EBITDA fell 7.4% and net debt is 6.1x EBIT on negative equity |
+| 2026-09-04 | PANL | Pangaea Logistics Solutions Ltd. | $542.8M | cyclical-trough | 5 | Q2 TCE up 50% to $18,153/day and EBITDA up 125% against a screen multiple set at trough, but total debt is $352.4M not $235.6M and the stock is near its high |
+| 2026-09-04 | CRAI | CRA INTERNATIONAL, INC. | $1.1B | fallen-growth | 5 | Record H1 with guidance raised to $805-820M while the stock sits 21.9% off its high, but cash conversion is 1.7% FCF yield on rising forgivable loans |
+| 2026-09-04 | PRG | PROG Holdings, Inc. | $1.5B | misunderstood-segment | 6 | Four grew GMV 110.6% and Purchasing Power added $10.6M EBITDA while the 76%-of-revenue Progressive core shrank 3.4% at 8.4% write-offs |
+| 2026-09-04 | TBCH | Turtle Beach Corp | $224.2M | none | 3 | Screen 10.2x EV/EBIT is stale CY2025; Q2 was a $7.3M net loss with the gross margin gain from one-time tariff refunds and buybacks funded by a new term loan |
+| 2026-09-04 | ECVT | Ecovyst Inc. | $1.1B | post-restructuring | 7 | Zeolyst divestiture makes the 23.5x screen multiple meaningless; raised FY26 guidance of $195-207M EBITDA against a roughly $1.5B EV |
+| 2026-09-04 | XTNT | Xtant Medical Holdings, Inc. | $56.1M | none | 0 | no filings in bundle |

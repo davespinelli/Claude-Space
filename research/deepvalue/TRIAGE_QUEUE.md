@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T14:02:28Z · open 412 · in progress 10 · done 63_
+_Source: universe_under2b.csv · updated 2026-09-04T14:05:47Z · open 412 · in progress 0 · done 73_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -421,22 +421,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| INFU | InfuSystem Holdings, Inc | $242.6M | cloudA | 2026-09-04T13:59:44Z |
-| AUDC | AUDIOCODES LTD | $270.6M | cloudA | 2026-09-04T13:59:44Z |
-| KROS | Keros Therapeutics, Inc. | $220.3M | cloudA | 2026-09-04T13:59:44Z |
-| PRKS | United Parks & Resorts Inc. | $1.84B | cloudA | 2026-09-04T13:59:44Z |
-| PANL | Pangaea Logistics Solutions Ltd. | $542.8M | cloudA | 2026-09-04T13:59:44Z |
-| XTNT | Xtant Medical Holdings, Inc. | $56.1M | cloudA | 2026-09-04T13:59:44Z |
-| CRAI | CRA INTERNATIONAL, INC. | $1.08B | cloudA | 2026-09-04T13:59:44Z |
-| PRG | PROG Holdings, Inc. | $1.53B | cloudA | 2026-09-04T13:59:44Z |
-| TBCH | Turtle Beach Corp | $224.2M | cloudA | 2026-09-04T13:59:44Z |
-| ECVT | Ecovyst Inc. | $1.12B | cloudA | 2026-09-04T13:59:44Z |
 
-## Done (63)
+## Done (73)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | TEN | TSAKOS ENERGY NAVIGATION LTD | $1.30B | cloudA | 2026-09-04T14:02:28Z |
 | REPX | Riley Exploration Permian, Inc. | $932.5M | cloudA | 2026-09-04T14:02:28Z |
 | AKBA | Akebia Therapeutics, Inc. | $272.4M | cloudA | 2026-09-04T14:02:28Z |
+| INFU | InfuSystem Holdings, Inc | $242.6M | cloudA | 2026-09-04T14:05:47Z |
+| AUDC | AUDIOCODES LTD | $270.6M | cloudA | 2026-09-04T14:05:47Z |
+| KROS | Keros Therapeutics, Inc. | $220.3M | cloudA | 2026-09-04T14:05:47Z |
+| PRKS | United Parks & Resorts Inc. | $1.84B | cloudA | 2026-09-04T14:05:47Z |
+| PANL | Pangaea Logistics Solutions Ltd. | $542.8M | cloudA | 2026-09-04T14:05:47Z |
+| XTNT | Xtant Medical Holdings, Inc. | $56.1M | cloudA | 2026-09-04T14:05:47Z |
+| CRAI | CRA INTERNATIONAL, INC. | $1.08B | cloudA | 2026-09-04T14:05:47Z |
+| PRG | PROG Holdings, Inc. | $1.53B | cloudA | 2026-09-04T14:05:47Z |
+| TBCH | Turtle Beach Corp | $224.2M | cloudA | 2026-09-04T14:05:47Z |
+| ECVT | Ecovyst Inc. | $1.12B | cloudA | 2026-09-04T14:05:47Z |
