@@ -889,3 +889,39 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 73 SMALL439/CANDg-n5 (inv 75.0%, turn 30.1x, prem -0.014, OOS 0.42) | 4.9% | 0.32 | -40.2% | 0.44 / 0.21 | 0.56 (0.75/0.40) | KILL 4a/KILL 4b(H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_cloud.py |
 | 2026-09-04 | 73 SMALL439/CANDg-n10 (inv 75.0%, turn 24.3x, prem +0.142, OOS 0.55) | 7.7% | 0.47 | -31.4% | 0.54 / 0.42 | 0.56 (0.75/0.40) | KILL 4a/KILL 4b(H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_cloud.py |
 | 2026-09-04 | 73 SMALL439/CANDg-n20 (inv 75.0%, turn 20.5x, prem +0.115, OOS 0.46) | 6.4% | 0.45 | -33.5% | 0.61 / 0.31 | 0.56 (0.75/0.40) | KILL 4a/KILL 4b(H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_cloud.py |
+| 2026-09-04 | 80 u56/v1 | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/COMP-n5 | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4b (H1,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/COMP-n10 | 12.9% | 0.93 | -17.5% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4b (H1) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/COMP-n20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/COMP-n30 | 11.0% | 1.10 | -16.6% | 1.03 / 1.17 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROX-n5 | 13.9% | 0.83 | -29.7% | 0.72 / 0.92 | 0.67 (0.64/0.69) | KILL 4b (H1,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROX-n10 | 11.6% | 0.85 | -20.7% | 0.86 / 0.85 | 0.67 (0.64/0.69) | KILL 4b (H1,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROX-n20 | 10.6% | 0.96 | -18.3% | 0.98 / 0.94 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROX-n30 | 9.5% | 0.99 | -15.9% | 0.96 / 1.02 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROXn-n5 | 7.1% | 0.60 | -27.7% | 0.62 / 0.58 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROXn-n10 | 9.5% | 0.83 | -18.9% | 0.86 / 0.80 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROXn-n20 | 9.2% | 0.90 | -17.1% | 0.96 / 0.85 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROXn-n30 | 8.8% | 0.97 | -15.7% | 1.01 / 0.93 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/LOWVOL-n5 | 1.5% | 0.37 | -15.5% | 0.57 / 0.21 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/LOWVOL-n10 | 3.9% | 0.68 | -18.4% | 0.95 / 0.46 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/LOWVOL-n20 | 6.8% | 0.92 | -12.8% | 1.10 / 0.75 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/LOWVOL-n30 | 7.4% | 0.96 | -13.8% | 0.96 / 0.96 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/v1 | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/EWall | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/COMP-n5 | 16.7% | 0.88 | -23.4% | 1.02 / 0.78 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/COMP-n10 | 14.2% | 0.89 | -21.4% | 1.11 / 0.71 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/COMP-n20 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/COMP-n30 | 12.2% | 0.97 | -20.3% | 1.15 / 0.82 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROX-n5 | 16.2% | 0.87 | -28.5% | 0.99 / 0.76 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROX-n10 | 14.2% | 0.90 | -22.6% | 0.92 / 0.89 | 0.64 (0.76/0.54) | KILL 4b (H1,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROX-n20 | 13.4% | 0.98 | -19.7% | 1.04 / 0.93 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROX-n30 | 12.1% | 0.97 | -19.8% | 1.06 / 0.90 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROXn-n5 | 6.5% | 0.55 | -26.2% | 0.67 / 0.45 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROXn-n10 | 10.8% | 0.89 | -19.5% | 1.03 / 0.77 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROXn-n20 | 10.8% | 0.91 | -19.3% | 1.07 / 0.77 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROXn-n30 | 10.4% | 0.91 | -19.0% | 1.04 / 0.80 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/LOWVOL-n5 | 1.6% | 0.40 | -13.9% | 0.60 / 0.24 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/LOWVOL-n10 | 3.3% | 0.60 | -14.4% | 0.82 / 0.42 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/LOWVOL-n20 | 6.0% | 0.85 | -13.8% | 1.12 / 0.64 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/LOWVOL-n30 | 6.8% | 0.88 | -15.0% | 1.18 / 0.61 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |

@@ -1,0 +1,365 @@
+===============================================================================================================================================================================
+Idea 80  is-52w-proximity-a-short-signal (cloud) | 2026-09-04_prox-inverted-signal_cloud.py | 10 bps, weekly, next-day execution
+===============================================================================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+Index sanity (must be ~252 rows/yr; the calendar-day bug gave 365): 2013 252, 2018 251, 2024 252
+
+HARNESS CHECK vs idea 2's published KEEP row (12.7% / 1.093 / -18.3%, halves 1.088/1.103):
+  reproduced: 12.7% / 1.093 / -18.3%, halves 1.088/1.103
+
+===============================================================================================================================================================================
+UNIVERSE universe.json: 56 names, 2008-01-02 -> 2026-09-03
+===============================================================================================================================================================================
+Eval sample: 2009-01-13 -> 2026-09-03 | IS <= 2016-12-31, OOS >= 2017-01-01
+SPY: CAGR 15.3%  Sharpe 0.890  MaxDD -33.7%  halves 0.957/0.837  OOS Sharpe 0.884
+4b bars: Sharpe > SPY halves & OOS, MaxDD <= 20.23%, CAGR >= 10.680%
+RULES v1 (live book): CAGR 6.5%  Sharpe 0.666  MaxDD -13.8%  halves 0.641/0.692
+
+SIGNAL DIAGNOSTICS (universe.json)  [no verdict depends on these]
+  mean cross-sectional Spearman(PROX, vol20) over eligible names = -0.487 (sd 0.210, n=869 days)
+    negative => names near their 52w high are LOW vol, so IPROX (far from the high) is mechanically a HIGH-vol tilt
+  weekly rank IC vs next week's return (eligible names only):
+    COMP    IC +0.0427 (t +4.16, 905 wks) | H1 +0.0378 (t +2.76) | H2 +0.0475 (t +3.12)
+    IPROX   IC +0.0208 (t +2.13, 905 wks) | H1 +0.0193 (t +1.41) | H2 +0.0223 (t +1.61)
+    IPROXn  IC +0.0021 (t +0.25, 905 wks) | H1 +0.0048 (t +0.43) | H2 -0.0007 (t -0.06)
+    LOWVOL  IC -0.0426 (t -3.94, 905 wks) | H1 -0.0281 (t -1.80) | H2 -0.0571 (t -3.82)
+  Fama-MacBeth weekly cross-sectional slopes on NEXT week's return (percentile ranks, eligible names):
+    PROX_uni   mean slope -0.00298 (t -3.03, 887 wks)
+    vol20_uni  mean slope +0.00498 (t +4.63, 887 wks)
+    PROX_biv   mean slope -0.00065 (t -0.65, 887 wks)
+    vol20_biv  mean slope +0.00451 (t +3.90, 887 wks)
+    'uni' = alone, 'biv' = PROX and vol20 together.  If PROX_biv loses its significance while PROX_uni had it, the 52w signal is a vol proxy.
+
+FULL GRID universe.json - 18 points, ALL reported (f4b lists which 4b tests fail)
+             kind     key      n  CAGR   Vol  Sharpe  MaxDD    H1    H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  held_vol20   turn  flips    p4a    p4b                f4b
+point                                                                                                                                                              
+v1             v1       -    NaN 0.065 0.102   0.666 -0.138 0.641 0.692     0.078       0.751     -0.138       0.145 23.591  2.837  False  False     H1,H2,OOS,CAGR
+EWall       EWall       -    NaN 0.104 0.099   1.050 -0.159 1.068 1.037     0.114       1.114     -0.159       0.190  8.211  3.795  False  False               CAGR
+COMP-n5      CAND    COMP  5.000 0.165 0.178   0.952 -0.216 0.899 1.002     0.185       0.996     -0.216       0.296 17.626  2.086  False  False              H1,DD
+COMP-n10     CAND    COMP 10.000 0.129 0.141   0.929 -0.175 0.918 0.945     0.144       0.976     -0.175       0.260 13.860  3.221  False  False                 H1
+COMP-n20     CAND    COMP 20.000 0.127 0.115   1.093 -0.183 1.088 1.103     0.144       1.170     -0.183       0.228  9.633  4.384  False   True                  -
+COMP-n30     CAND    COMP 30.000 0.110 0.100   1.099 -0.166 1.026 1.168     0.130       1.240     -0.166       0.209  6.977  4.678  False   True                  -
+IPROX-n5     CAND   IPROX  5.000 0.139 0.177   0.827 -0.297 0.720 0.924     0.166       0.923     -0.297       0.304 32.364  3.839  False  False              H1,DD
+IPROX-n10    CAND   IPROX 10.000 0.116 0.140   0.855 -0.207 0.859 0.854     0.126       0.899     -0.207       0.267 26.597  6.250  False  False              H1,DD
+IPROX-n20    CAND   IPROX 20.000 0.106 0.112   0.958 -0.183 0.981 0.940     0.114       0.995     -0.183       0.229 20.000  9.316  False  False               CAGR
+IPROX-n30    CAND   IPROX 30.000 0.095 0.096   0.991 -0.159 0.960 1.020     0.108       1.099     -0.159       0.209 14.949 10.365  False  False               CAGR
+IPROXn-n5    CAND  IPROXn  5.000 0.071 0.128   0.598 -0.277 0.620 0.578     0.069       0.578     -0.277       0.204 39.413  4.709  False  False  H1,H2,OOS,DD,CAGR
+IPROXn-n10   CAND  IPROXn 10.000 0.095 0.119   0.825 -0.189 0.859 0.797     0.097       0.820     -0.189       0.218 30.525  7.217  False  False     H1,H2,OOS,CAGR
+IPROXn-n20   CAND  IPROXn 20.000 0.092 0.103   0.898 -0.171 0.958 0.847     0.094       0.903     -0.171       0.208 21.627 10.119  False  False               CAGR
+IPROXn-n30   CAND  IPROXn 30.000 0.088 0.091   0.966 -0.157 1.006 0.932     0.093       1.007     -0.157       0.195 15.566 10.825  False  False               CAGR
+LOWVOL-n5    CAND  LOWVOL  5.000 0.015 0.042   0.372 -0.155 0.572 0.213     0.010       0.251     -0.155       0.065 11.249  1.377  False  False     H1,H2,OOS,CAGR
+LOWVOL-n10   CAND  LOWVOL 10.000 0.039 0.058   0.681 -0.184 0.953 0.458     0.033       0.564     -0.184       0.098 13.304  3.166  False  False     H1,H2,OOS,CAGR
+LOWVOL-n20   CAND  LOWVOL 20.000 0.068 0.074   0.922 -0.128 1.105 0.754     0.062       0.853     -0.128       0.131 10.028  4.680   True  False        H2,OOS,CAGR
+LOWVOL-n30   CAND  LOWVOL 30.000 0.074 0.078   0.958 -0.138 0.960 0.956     0.081       1.046     -0.138       0.152  7.468  5.129   True  False               CAGR
+  4b passes: 2 of 18  |  4a passes: 2 of 18
+
+HYPOTHESIS TEST (universe.json) - IPROX / IPROXn / LOWVOL vs the incumbent COMP at matched n, same days, same gate, same gross
+           dCAGR   dVol  dMaxDD  dSharpe  dRet_ann      t  corr  overlap
+n  key                                                                  
+5  IPROX  -0.026 -0.001  -0.081   -0.124    -0.023 -0.635 0.641    0.147
+   IPROXn -0.095 -0.050  -0.061   -0.354    -0.092 -2.518 0.532    0.067
+   LOWVOL -0.151 -0.135   0.061   -0.579    -0.153 -3.803 0.314    0.038
+10 IPROX  -0.013 -0.001  -0.031   -0.075    -0.012 -0.528 0.788    0.243
+   IPROXn -0.033 -0.022  -0.014   -0.104    -0.033 -1.387 0.721    0.166
+   LOWVOL -0.090 -0.083  -0.009   -0.249    -0.091 -3.449 0.663    0.132
+20 IPROX  -0.021 -0.003   0.001   -0.135    -0.019 -1.680 0.915    0.463
+   IPROXn -0.035 -0.012   0.012   -0.195    -0.033 -2.726 0.897    0.406
+   LOWVOL -0.059 -0.041   0.055   -0.171    -0.058 -3.756 0.856    0.406
+30 IPROX  -0.016 -0.004   0.007   -0.109    -0.015 -2.465 0.968    0.661
+   IPROXn -0.023 -0.009   0.009   -0.133    -0.022 -3.267 0.962    0.639
+   LOWVOL -0.036 -0.022   0.028   -0.142    -0.035 -3.738 0.931    0.651
+  IPROX   vs COMP: dSharpe > 0 in 0/4, mean dRet -1.69%/yr, t range [-2.46, -0.53], mean overlap 38%
+  IPROXn  vs COMP: dSharpe > 0 in 0/4, mean dRet -4.50%/yr, t range [-3.27, -1.39], mean overlap 32%
+  LOWVOL  vs COMP: dSharpe > 0 in 0/4, mean dRet -8.44%/yr, t range [-3.80, -3.45], mean overlap 31%
+
+IS IT A VOL ARTEFACT? (universe.json) - IPROX vs IPROXn (same key, vol removed) and vs LOWVOL (pure vol tilt)
+    n=5   IPROX-IPROXn: +6.97%/yr (t +2.79), dVol +0.049 | IPROX-LOWVOL: +13.05%/yr (t +3.24) | held vol20 IPROX 0.304 / IPROXn 0.204 / LOWVOL 0.065 / COMP 0.296
+    n=10  IPROX-IPROXn: +2.13%/yr (t +1.84), dVol +0.021 | IPROX-LOWVOL: +8.00%/yr (t +3.07) | held vol20 IPROX 0.267 / IPROXn 0.218 / LOWVOL 0.098 / COMP 0.260
+    n=20  IPROX-IPROXn: +1.43%/yr (t +3.04), dVol +0.008 | IPROX-LOWVOL: +3.89%/yr (t +2.77) | held vol20 IPROX 0.229 / IPROXn 0.208 / LOWVOL 0.131 / COMP 0.228
+    n=30  IPROX-IPROXn: +0.69%/yr (t +2.43), dVol +0.005 | IPROX-LOWVOL: +2.04%/yr (t +2.50) | held vol20 IPROX 0.209 / IPROXn 0.195 / LOWVOL 0.152 / COMP 0.209
+
+RANKING-VALUE CONTROL (universe.json) - each key at each n vs EWall (no ranking):
+           dRet_ann      t  dSharpe
+key    n                           
+COMP   5      0.065  2.363   -0.099
+       10     0.027  1.617   -0.121
+       20     0.022  2.254    0.043
+       30     0.006  0.713    0.049
+IPROX  5      0.042  1.586   -0.223
+       10     0.015  0.984   -0.195
+       20     0.003  0.359   -0.092
+       30    -0.009 -1.187   -0.060
+IPROXn 5     -0.028 -1.485   -0.452
+       10    -0.006 -0.452   -0.225
+       20    -0.011 -1.344   -0.152
+       30    -0.016 -2.129   -0.084
+LOWVOL 5     -0.088 -4.281   -0.678
+       10    -0.064 -4.499   -0.370
+       20    -0.036 -3.756   -0.128
+       30    -0.029 -3.432   -0.092
+
+CALENDAR YEARS (universe.json, n=20 books, %)
+       COMP   IPROX  IPROXn  LOWVOL  EWall  v1_live     SPY
+Date                                                       
+2009 16.899  22.663  22.249  13.813 16.744    9.113  31.133
+2010  7.744   9.966  10.357   8.153  9.303    4.348  15.056
+2011  0.516  -3.422  -1.998   0.481 -1.003    1.861   1.895
+2012  6.185   6.590   4.836   8.858  6.977    6.836  15.990
+2013 29.030  24.944  22.178  15.025 22.677   11.143  32.308
+2014  8.146   5.367   4.854   8.629  7.957    6.618  13.464
+2015  9.899   8.081   6.632   3.199  6.997    3.109   1.234
+2016  8.467   6.134   3.964   1.804  5.990   -3.126  11.998
+2017 18.264  15.562  13.865  12.794 16.243   14.750  21.705
+2018  5.924  -1.700  -4.784  -5.534 -1.217    7.993  -4.569
+2019 17.713  16.872  13.067  10.177 14.977    6.730  31.224
+2020 15.393  12.419  10.519   7.988 15.086    8.445  18.332
+2021 22.085  25.411  20.314  13.770 22.074   20.204  28.729
+2022 -9.024 -10.710  -9.868  -7.680 -9.248    2.582 -18.175
+2023 23.989  21.728  20.066   8.745 18.874    1.288  26.176
+2024 22.196  21.346  16.403   8.917 16.923    9.661  24.886
+2025 13.229   7.717   9.621   7.093 10.317    7.731  17.719
+2026 12.794   6.087   5.541   6.256  9.355   -2.678  13.984
+
+WALK-FORWARD (universe.json, rule 8): chosen on 2009-2016, evaluated on 2017-2026
+  In-sample SPY: Sharpe 0.899, MaxDD -22.1% -> S2 admits IS MaxDD shallower than -13.2%
+  In-sample table (the only numbers either rule may look at):
+               key      n  IS_Sharpe  IS_MaxDD
+point                                         
+COMP-n5       COMP  5.000      0.895    -0.183
+COMP-n10      COMP 10.000      0.869    -0.141
+COMP-n20      COMP 20.000      0.993    -0.117
+COMP-n30      COMP 30.000      0.917    -0.121
+IPROX-n5     IPROX  5.000      0.701    -0.232
+IPROX-n10    IPROX 10.000      0.798    -0.157
+IPROX-n20    IPROX 20.000      0.911    -0.138
+IPROX-n30    IPROX 30.000      0.855    -0.134
+IPROXn-n5   IPROXn  5.000      0.622    -0.145
+IPROXn-n10  IPROXn 10.000      0.832    -0.136
+IPROXn-n20  IPROXn 20.000      0.893    -0.126
+IPROXn-n30  IPROXn 30.000      0.915    -0.122
+LOWVOL-n5   LOWVOL  5.000      0.546    -0.115
+LOWVOL-n10  LOWVOL 10.000      0.842    -0.090
+LOWVOL-n20  LOWVOL 20.000      1.005    -0.080
+LOWVOL-n30  LOWVOL 30.000      0.852    -0.107
+  OOS bars: Sharpe > 0.884, MaxDD <= 20.2%, CAGR >= 10.85%   (SPY OOS 15.5%/0.884/-33.7%; v1 OOS 7.8%/0.751/-13.8%)
+  S1 plain-Sharpe: LOWVOL-n20   -> OOS CAGR 6.2%  Sharpe 0.853  MaxDD -12.8%   clears all OOS 4b bars? False
+  S2 4b-aware   : LOWVOL-n20   -> OOS CAGR 6.2%  Sharpe 0.853  MaxDD -12.8%   clears all OOS 4b bars? False
+  Key choice audited within each n (S1 restricted to that n):
+      n=5   S1: COMP-n5      -> OOS CAGR 18.5%  Sharpe 0.996  MaxDD -21.6%   clears all OOS 4b bars? False
+      n=10  S1: COMP-n10     -> OOS CAGR 14.4%  Sharpe 0.976  MaxDD -17.5%   clears all OOS 4b bars? True
+      n=20  S1: LOWVOL-n20   -> OOS CAGR 6.2%  Sharpe 0.853  MaxDD -12.8%   clears all OOS 4b bars? False
+      n=30  S1: COMP-n30     -> OOS CAGR 13.0%  Sharpe 1.240  MaxDD -16.6%   clears all OOS 4b bars? True
+  Spearman(IS Sharpe, OOS Sharpe) over the 16 CAND points = +0.621
+
+===============================================================================================================================================================================
+UNIVERSE universe_broad.json: 136 names, 2008-01-02 -> 2026-09-03
+===============================================================================================================================================================================
+Eval sample: 2009-01-13 -> 2026-09-03 | IS <= 2016-12-31, OOS >= 2017-01-01
+SPY: CAGR 15.3%  Sharpe 0.890  MaxDD -33.7%  halves 0.957/0.837  OOS Sharpe 0.884
+4b bars: Sharpe > SPY halves & OOS, MaxDD <= 20.23%, CAGR >= 10.680%
+RULES v1 (live book): CAGR 6.4%  Sharpe 0.640  MaxDD -21.2%  halves 0.762/0.537
+
+SIGNAL DIAGNOSTICS (universe_broad.json)  [no verdict depends on these]
+  mean cross-sectional Spearman(PROX, vol20) over eligible names = -0.406 (sd 0.171, n=881 days)
+    negative => names near their 52w high are LOW vol, so IPROX (far from the high) is mechanically a HIGH-vol tilt
+  weekly rank IC vs next week's return (eligible names only):
+    COMP    IC +0.0242 (t +3.22, 914 wks) | H1 +0.0223 (t +2.21) | H2 +0.0260 (t +2.34)
+    IPROX   IC +0.0252 (t +3.34, 914 wks) | H1 +0.0233 (t +2.22) | H2 +0.0270 (t +2.49)
+    IPROXn  IC +0.0134 (t +2.21, 914 wks) | H1 +0.0123 (t +1.54) | H2 +0.0145 (t +1.58)
+    LOWVOL  IC -0.0329 (t -3.75, 914 wks) | H1 -0.0294 (t -2.28) | H2 -0.0365 (t -3.05)
+  Fama-MacBeth weekly cross-sectional slopes on NEXT week's return (percentile ranks, eligible names):
+    PROX_uni   mean slope -0.00282 (t -3.43, 910 wks)
+    vol20_uni  mean slope +0.00367 (t +3.88, 910 wks)
+    PROX_biv   mean slope -0.00161 (t -2.26, 910 wks)
+    vol20_biv  mean slope +0.00294 (t +3.19, 910 wks)
+    'uni' = alone, 'biv' = PROX and vol20 together.  If PROX_biv loses its significance while PROX_uni had it, the 52w signal is a vol proxy.
+
+FULL GRID universe_broad.json - 18 points, ALL reported (f4b lists which 4b tests fail)
+             kind     key      n  CAGR   Vol  Sharpe  MaxDD    H1    H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  held_vol20   turn  flips    p4a    p4b                f4b
+point                                                                                                                                                              
+v1             v1       -    NaN 0.064 0.106   0.640 -0.212 0.762 0.537     0.060       0.581     -0.212       0.149 29.436  1.489  False  False  H1,H2,OOS,DD,CAGR
+EWall       EWall       -    NaN 0.107 0.105   1.027 -0.177 1.146 0.917     0.106       1.021     -0.177       0.208  8.268  3.923   True   True                  -
+COMP-n5      CAND    COMP  5.000 0.167 0.197   0.881 -0.234 1.016 0.777     0.161       0.816     -0.234       0.321 21.338  1.076  False  False          H2,OOS,DD
+COMP-n10     CAND    COMP 10.000 0.142 0.163   0.893 -0.214 1.110 0.714     0.128       0.784     -0.214       0.292 17.530  1.721  False  False          H2,OOS,DD
+COMP-n20     CAND    COMP 20.000 0.131 0.139   0.958 -0.201 1.125 0.814     0.125       0.894     -0.201       0.268 13.776  2.647   True  False                 H2
+COMP-n30     CAND    COMP 30.000 0.122 0.127   0.972 -0.203 1.146 0.818     0.116       0.904     -0.203       0.254 11.801  3.359   True  False              H2,DD
+IPROX-n5     CAND   IPROX  5.000 0.162 0.195   0.869 -0.285 0.990 0.757     0.160       0.852     -0.285       0.334 37.562  1.871  False  False          H2,OOS,DD
+IPROX-n10    CAND   IPROX 10.000 0.142 0.162   0.902 -0.226 0.920 0.886     0.146       0.912     -0.216       0.305 34.186  3.355  False  False              H1,DD
+IPROX-n20    CAND   IPROX 20.000 0.134 0.138   0.982 -0.197 1.042 0.926     0.134       0.979     -0.197       0.277 29.143  5.664   True   True                  -
+IPROX-n30    CAND   IPROX 30.000 0.121 0.126   0.973 -0.198 1.058 0.896     0.121       0.969     -0.198       0.260 25.545  7.406   True   True                  -
+IPROXn-n5    CAND  IPROXn  5.000 0.065 0.128   0.553 -0.262 0.667 0.448     0.057       0.493     -0.262       0.197 44.028  2.201  False  False  H1,H2,OOS,DD,CAGR
+IPROXn-n10   CAND  IPROXn 10.000 0.108 0.123   0.892 -0.195 1.029 0.767     0.097       0.809     -0.195       0.213 39.172  3.862   True  False             H2,OOS
+IPROXn-n20   CAND  IPROXn 20.000 0.108 0.121   0.912 -0.193 1.074 0.766     0.096       0.815     -0.193       0.233 32.103  6.264   True  False             H2,OOS
+IPROXn-n30   CAND  IPROXn 30.000 0.104 0.116   0.910 -0.190 1.036 0.795     0.097       0.855     -0.190       0.233 27.250  7.927   True  False        H2,OOS,CAGR
+LOWVOL-n5    CAND  LOWVOL  5.000 0.016 0.042   0.401 -0.139 0.598 0.242     0.010       0.251     -0.139       0.062 12.777  0.676  False  False     H1,H2,OOS,CAGR
+LOWVOL-n10   CAND  LOWVOL 10.000 0.033 0.057   0.597 -0.144 0.823 0.417     0.027       0.478     -0.144       0.092 17.845  1.785  False  False     H1,H2,OOS,CAGR
+LOWVOL-n20   CAND  LOWVOL 20.000 0.060 0.071   0.854 -0.138 1.121 0.640     0.053       0.721     -0.138       0.119 16.762  3.290   True  False        H2,OOS,CAGR
+LOWVOL-n30   CAND  LOWVOL 30.000 0.068 0.079   0.876 -0.150 1.184 0.609     0.054       0.692     -0.150       0.135 14.852  4.332   True  False        H2,OOS,CAGR
+  4b passes: 3 of 18  |  4a passes: 10 of 18
+
+HYPOTHESIS TEST (universe_broad.json) - IPROX / IPROXn / LOWVOL vs the incumbent COMP at matched n, same days, same gate, same gross
+           dCAGR   dVol  dMaxDD  dSharpe  dRet_ann      t  corr  overlap
+n  key                                                                  
+5  IPROX  -0.004 -0.002  -0.052   -0.012    -0.004 -0.086 0.550    0.052
+   IPROXn -0.102 -0.068  -0.028   -0.329    -0.103 -2.409 0.461    0.019
+   LOWVOL -0.150 -0.155   0.095   -0.480    -0.156 -3.455 0.263    0.017
+10 IPROX   0.001 -0.001  -0.011    0.009     0.000  0.014 0.675    0.083
+   IPROXn -0.034 -0.040   0.019   -0.002    -0.036 -1.171 0.623    0.041
+   LOWVOL -0.109 -0.106   0.070   -0.296    -0.112 -3.359 0.557    0.043
+20 IPROX   0.003 -0.000   0.003    0.024     0.003  0.133 0.798    0.150
+   IPROXn -0.023 -0.018   0.008   -0.046    -0.023 -1.042 0.762    0.104
+   LOWVOL -0.071 -0.067   0.063   -0.104    -0.072 -3.085 0.746    0.114
+30 IPROX  -0.001 -0.001   0.005    0.001    -0.001 -0.066 0.859    0.231
+   IPROXn -0.018 -0.011   0.013   -0.062    -0.018 -1.080 0.841    0.185
+   LOWVOL -0.054 -0.048   0.053   -0.096    -0.055 -3.001 0.825    0.211
+  IPROX   vs COMP: dSharpe > 0 in 3/4, mean dRet -0.04%/yr, t range [-0.09, +0.13], mean overlap 13%
+  IPROXn  vs COMP: dSharpe > 0 in 0/4, mean dRet -4.48%/yr, t range [-2.41, -1.04], mean overlap 9%
+  LOWVOL  vs COMP: dSharpe > 0 in 0/4, mean dRet -9.87%/yr, t range [-3.46, -3.00], mean overlap 10%
+
+IS IT A VOL ARTEFACT? (universe_broad.json) - IPROX vs IPROXn (same key, vol removed) and vs LOWVOL (pure vol tilt)
+    n=5   IPROX-IPROXn: +9.87%/yr (t +2.96), dVol +0.067 | IPROX-LOWVOL: +15.27%/yr (t +3.37) | held vol20 IPROX 0.334 / IPROXn 0.197 / LOWVOL 0.062 / COMP 0.321
+    n=10  IPROX-IPROXn: +3.66%/yr (t +1.85), dVol +0.039 | IPROX-LOWVOL: +11.24%/yr (t +3.37) | held vol20 IPROX 0.305 / IPROXn 0.213 / LOWVOL 0.092 / COMP 0.292
+    n=20  IPROX-IPROXn: +2.54%/yr (t +2.77), dVol +0.017 | IPROX-LOWVOL: +7.46%/yr (t +3.25) | held vol20 IPROX 0.277 / IPROXn 0.233 / LOWVOL 0.119 / COMP 0.268
+    n=30  IPROX-IPROXn: +1.68%/yr (t +3.11), dVol +0.010 | IPROX-LOWVOL: +5.36%/yr (t +3.05) | held vol20 IPROX 0.260 / IPROXn 0.233 / LOWVOL 0.135 / COMP 0.254
+
+RANKING-VALUE CONTROL (universe_broad.json) - each key at each n vs EWall (no ranking):
+           dRet_ann      t  dSharpe
+key    n                           
+COMP   5      0.066  1.987   -0.146
+       10     0.038  1.673   -0.134
+       20     0.025  1.670   -0.069
+       30     0.016  1.387   -0.055
+IPROX  5      0.062  1.963   -0.158
+       10     0.039  1.794   -0.125
+       20     0.028  1.997   -0.046
+       30     0.015  1.412   -0.054
+IPROXn 5     -0.037 -1.881   -0.475
+       10     0.002  0.160   -0.135
+       20     0.003  0.243   -0.115
+       30    -0.002 -0.186   -0.117
+LOWVOL 5     -0.090 -3.980   -0.626
+       10    -0.073 -4.289   -0.430
+       20    -0.046 -3.705   -0.174
+       30    -0.039 -3.653   -0.151
+
+CALENDAR YEARS (universe_broad.json, n=20 books, %)
+        COMP   IPROX  IPROXn  LOWVOL  EWall  v1_live     SPY
+Date                                                        
+2009  17.988  31.437  27.787   8.977 17.091    5.221  31.142
+2010  14.643  12.756  15.894   7.490 10.541    1.514  15.054
+2011   4.539  -1.148  -2.021  10.496  2.208   10.112   1.892
+2012  15.974   5.730   6.115   8.389  8.778   15.527  15.990
+2013  35.339  37.784  31.959  11.106 27.651   17.896  32.311
+2014   6.288  11.622  13.140   4.960 10.515    1.007  13.467
+2015   7.764   4.591   4.159  -1.656  3.347    7.127   1.231
+2016  10.265   9.381   5.491   6.051  8.471   -1.176  12.003
+2017  21.666  19.095  13.965  11.318 19.786   14.878  21.704
+2018   1.798  -5.632  -5.332   0.366 -1.082    0.481  -4.571
+2019  16.325  23.030  13.392   8.742 18.508    7.703  31.225
+2020  12.242  17.041  14.923   5.346  7.502    4.111  18.331
+2021  15.532  24.902  21.243  14.184 20.918   16.169  28.730
+2022 -10.925 -12.726 -10.257  -1.317 -8.370   -4.142 -18.176
+2023  12.696  30.565  23.619  -0.394 14.644   -7.807  26.177
+2024  20.593  12.429   7.271   9.914 13.514   20.814  24.888
+2025  19.912  16.945   7.517   1.435 10.312    6.609  17.719
+2026  15.082  11.467  11.138   2.362 10.198    2.446  13.983
+
+WALK-FORWARD (universe_broad.json, rule 8): chosen on 2009-2016, evaluated on 2017-2026
+  In-sample SPY: Sharpe 0.899, MaxDD -22.1% -> S2 admits IS MaxDD shallower than -13.2%
+  In-sample table (the only numbers either rule may look at):
+               key      n  IS_Sharpe  IS_MaxDD
+point                                         
+COMP-n5       COMP  5.000      0.981    -0.220
+COMP-n10      COMP 10.000      1.048    -0.186
+COMP-n20      COMP 20.000      1.044    -0.136
+COMP-n30      COMP 30.000      1.061    -0.127
+IPROX-n5     IPROX  5.000      0.890    -0.239
+IPROX-n10    IPROX 10.000      0.890    -0.226
+IPROX-n20    IPROX 20.000      0.985    -0.183
+IPROX-n30    IPROX 30.000      0.978    -0.154
+IPROXn-n5   IPROXn  5.000      0.625    -0.220
+IPROXn-n10  IPROXn 10.000      0.994    -0.153
+IPROXn-n20  IPROXn 20.000      1.033    -0.166
+IPROXn-n30  IPROXn 30.000      0.978    -0.158
+LOWVOL-n5   LOWVOL  5.000      0.610    -0.073
+LOWVOL-n10  LOWVOL 10.000      0.767    -0.091
+LOWVOL-n20  LOWVOL 20.000      1.038    -0.074
+LOWVOL-n30  LOWVOL 30.000      1.114    -0.073
+  OOS bars: Sharpe > 0.884, MaxDD <= 20.2%, CAGR >= 10.85%   (SPY OOS 15.5%/0.884/-33.7%; v1 OOS 6.0%/0.581/-21.2%)
+  S1 plain-Sharpe: LOWVOL-n30   -> OOS CAGR 5.4%  Sharpe 0.692  MaxDD -15.0%   clears all OOS 4b bars? False
+  S2 4b-aware   : LOWVOL-n30   -> OOS CAGR 5.4%  Sharpe 0.692  MaxDD -15.0%   clears all OOS 4b bars? False
+  Key choice audited within each n (S1 restricted to that n):
+      n=5   S1: COMP-n5      -> OOS CAGR 16.1%  Sharpe 0.816  MaxDD -23.4%   clears all OOS 4b bars? False
+      n=10  S1: COMP-n10     -> OOS CAGR 12.8%  Sharpe 0.784  MaxDD -21.4%   clears all OOS 4b bars? False
+      n=20  S1: COMP-n20     -> OOS CAGR 12.5%  Sharpe 0.894  MaxDD -20.1%   clears all OOS 4b bars? True
+      n=30  S1: LOWVOL-n30   -> OOS CAGR 5.4%  Sharpe 0.692  MaxDD -15.0%   clears all OOS 4b bars? False
+  Spearman(IS Sharpe, OOS Sharpe) over the 16 CAND points = +0.185
+
+===============================================================================================================================================================================
+CROSS-UNIVERSE 4b (a point passes only if it passes on BOTH lists)
+===============================================================================================================================================================================
+            universe.json  broad   both
+point                                  
+v1                  False  False  False
+EWall               False   True  False
+COMP-n5             False  False  False
+COMP-n10            False  False  False
+COMP-n20             True  False  False
+COMP-n30             True  False  False
+IPROX-n5            False  False  False
+IPROX-n10           False  False  False
+IPROX-n20           False   True  False
+IPROX-n30           False   True  False
+IPROXn-n5           False  False  False
+IPROXn-n10          False  False  False
+IPROXn-n20          False  False  False
+IPROXn-n30          False  False  False
+LOWVOL-n5           False  False  False
+LOWVOL-n10          False  False  False
+LOWVOL-n20          False  False  False
+LOWVOL-n30          False  False  False
+  points passing on both lists: 0 of 18
+
+SIGN CONSISTENCY ACROSS LISTS (dSharpe vs COMP at matched n):
+  IPROX   beats COMP in 3/8 matched-n pairs across both lists
+  IPROXn  beats COMP in 0/8 matched-n pairs across both lists
+  LOWVOL  beats COMP in 0/8 matched-n pairs across both lists
+
+LEADERBOARD rows:
+| 2026-09-04 | 80 u56/v1 | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | see v1/SPY rows | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | see v1/SPY rows | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/COMP-n5 | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | see v1/SPY rows | KILL 4b (H1,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/COMP-n10 | 12.9% | 0.93 | -17.5% | 0.92 / 0.95 | see v1/SPY rows | KILL 4b (H1) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/COMP-n20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | see v1/SPY rows | KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/COMP-n30 | 11.0% | 1.10 | -16.6% | 1.03 / 1.17 | see v1/SPY rows | KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROX-n5 | 13.9% | 0.83 | -29.7% | 0.72 / 0.92 | see v1/SPY rows | KILL 4b (H1,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROX-n10 | 11.6% | 0.85 | -20.7% | 0.86 / 0.85 | see v1/SPY rows | KILL 4b (H1,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROX-n20 | 10.6% | 0.96 | -18.3% | 0.98 / 0.94 | see v1/SPY rows | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROX-n30 | 9.5% | 0.99 | -15.9% | 0.96 / 1.02 | see v1/SPY rows | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROXn-n5 | 7.1% | 0.60 | -27.7% | 0.62 / 0.58 | see v1/SPY rows | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROXn-n10 | 9.5% | 0.83 | -18.9% | 0.86 / 0.80 | see v1/SPY rows | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROXn-n20 | 9.2% | 0.90 | -17.1% | 0.96 / 0.85 | see v1/SPY rows | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/IPROXn-n30 | 8.8% | 0.97 | -15.7% | 1.01 / 0.93 | see v1/SPY rows | KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/LOWVOL-n5 | 1.5% | 0.37 | -15.5% | 0.57 / 0.21 | see v1/SPY rows | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/LOWVOL-n10 | 3.9% | 0.68 | -18.4% | 0.95 / 0.46 | see v1/SPY rows | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/LOWVOL-n20 | 6.8% | 0.92 | -12.8% | 1.10 / 0.75 | see v1/SPY rows | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 u56/LOWVOL-n30 | 7.4% | 0.96 | -13.8% | 0.96 / 0.96 | see v1/SPY rows | 4a-pass, KILL 4b (CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/v1 | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | see v1/SPY rows | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/EWall | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | see v1/SPY rows | 4a-pass, KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/COMP-n5 | 16.7% | 0.88 | -23.4% | 1.02 / 0.78 | see v1/SPY rows | KILL 4b (H2,OOS,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/COMP-n10 | 14.2% | 0.89 | -21.4% | 1.11 / 0.71 | see v1/SPY rows | KILL 4b (H2,OOS,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/COMP-n20 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | see v1/SPY rows | 4a-pass, KILL 4b (H2) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/COMP-n30 | 12.2% | 0.97 | -20.3% | 1.15 / 0.82 | see v1/SPY rows | 4a-pass, KILL 4b (H2,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROX-n5 | 16.2% | 0.87 | -28.5% | 0.99 / 0.76 | see v1/SPY rows | KILL 4b (H2,OOS,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROX-n10 | 14.2% | 0.90 | -22.6% | 0.92 / 0.89 | see v1/SPY rows | KILL 4b (H1,DD) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROX-n20 | 13.4% | 0.98 | -19.7% | 1.04 / 0.93 | see v1/SPY rows | 4a-pass, KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROX-n30 | 12.1% | 0.97 | -19.8% | 1.06 / 0.90 | see v1/SPY rows | 4a-pass, KEEP 4b | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROXn-n5 | 6.5% | 0.55 | -26.2% | 0.67 / 0.45 | see v1/SPY rows | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROXn-n10 | 10.8% | 0.89 | -19.5% | 1.03 / 0.77 | see v1/SPY rows | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROXn-n20 | 10.8% | 0.91 | -19.3% | 1.07 / 0.77 | see v1/SPY rows | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/IPROXn-n30 | 10.4% | 0.91 | -19.0% | 1.04 / 0.80 | see v1/SPY rows | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/LOWVOL-n5 | 1.6% | 0.40 | -13.9% | 0.60 / 0.24 | see v1/SPY rows | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/LOWVOL-n10 | 3.3% | 0.60 | -14.4% | 0.82 / 0.42 | see v1/SPY rows | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/LOWVOL-n20 | 6.0% | 0.85 | -13.8% | 1.12 / 0.64 | see v1/SPY rows | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 80 broad/LOWVOL-n30 | 6.8% | 0.88 | -15.0% | 1.18 / 0.61 | see v1/SPY rows | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
