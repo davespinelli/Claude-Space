@@ -264,3 +264,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | CCO | Clear Channel Outdoor Holdings, Inc. | $1.2B | none | 3 | Not a valuation: shareholders approved a $2.43 cash take-private in May and the screen price is $2.38 |
 | 2026-09-04 | CRON | Cronos Group Inc. | $1.2B | hidden-asset | 7 | $827M of cash and deposits against a $1.2B cap with Q2 revenue up 58%, but Israel reopened an anti-dumping case |
 | 2026-09-04 | GILT | GILAT SATELLITE NETWORKS LTD | $760.5M | none | 3 | 25.2x EV/EBIT with revenue growth flagged as issuance-driven on a 29.5% higher share count, and no MD&A in the pack |
+| 2026-09-04 | RDVT | Red Violet, Inc. | $1.2B | none | 3 | 89.5x EV/EBIT at the exact 52-week high after a 65% run, with a $109M equity raise following buybacks at $41.87 |
+| 2026-09-04 | UIS | UNISYS CORP | $188.9M | hidden-asset | 6 | Annuitizing away the U.S. pension while ~$200M of adjusted EBITDA sits behind a $188.9M cap, but equity is negative $367M |
+| 2026-09-04 | OMCL | OMNICELL, INC. | $1.6B | none | 4 | EBITDA guide raised on a $15M tariff refund while bookings guidance fell to $425-560M and the XT replacement cycle is done |
+| 2026-09-04 | LFS | LEIFRAS Co., Ltd. | $58.3M | none | 0 | no filings in bundle |
+| 2026-09-04 | FTK | FLOTEK INDUSTRIES INC | $859.9M | misunderstood-segment | 4 | Data Analytics now 51% of gross profit, but 18x guided EBITDA after a 214% run with 62% related-party revenue |
+| 2026-09-04 | LOVE | Lovesac Co | $233.5M | insider-buying | 7 | Three insiders bought 33,550 shares near $14.68 at 4.4x guided EBITDA with net cash, though the guide is all back-half |
+| 2026-09-04 | GDYN | GRID DYNAMICS HOLDINGS, INC. | $665.2M | hidden-asset | 5 | $298.4M cash is 45% of the cap, but operations lost money at GAAP and all reported profit is interest on that cash |
+| 2026-09-04 | AIOT | Powerfleet, Inc. | $407.9M | post-restructuring | 5 | SG&A down 940bps and operating margin swung to +4.4%, but interest expense at 6.2% of revenue keeps it loss-making |
+| 2026-09-04 | MLAB | MESA LABORATORIES INC | $719.2M | insider-buying | 4 | New CEO bought $800K at $112.80, but shares sit 1.6% off the high at 40.8x EV/EBIT on 1.0% revenue growth |
+| 2026-09-04 | MTRX | MATRIX SERVICE CO | $296.8M | post-restructuring | 7 | Debt-free with $223M cash leaving a $73.8M EV on $873.6M revenue and margins inflecting, but backlog fell 31% |

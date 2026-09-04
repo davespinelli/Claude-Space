@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T20:10:54Z · open 212 · in progress 10 · done 263_
+_Source: universe_under2b.csv · updated 2026-09-04T20:14:41Z · open 212 · in progress 0 · done 273_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -221,22 +221,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| RDVT | Red Violet, Inc. | $1.23B | cloudA | 2026-09-04T20:07:24Z |
-| UIS | UNISYS CORP | $188.9M | cloudA | 2026-09-04T20:07:24Z |
-| OMCL | OMNICELL, INC. | $1.59B | cloudA | 2026-09-04T20:07:24Z |
-| LFS | LEIFRAS Co., Ltd. | $58.3M | cloudA | 2026-09-04T20:07:24Z |
-| FTK | FLOTEK INDUSTRIES INC/CN/ | $859.9M | cloudA | 2026-09-04T20:07:24Z |
-| LOVE | Lovesac Co | $233.5M | cloudA | 2026-09-04T20:07:24Z |
-| GDYN | GRID DYNAMICS HOLDINGS, INC. | $665.2M | cloudA | 2026-09-04T20:07:24Z |
-| AIOT | Powerfleet, Inc. | $407.9M | cloudA | 2026-09-04T20:07:24Z |
-| MLAB | MESA LABORATORIES INC /CO/ | $719.2M | cloudA | 2026-09-04T20:07:24Z |
-| MTRX | MATRIX SERVICE CO | $296.8M | cloudA | 2026-09-04T20:07:24Z |
 
-## Done (263)
+## Done (273)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | CCO | Clear Channel Outdoor Holdings, Inc. | $1.21B | cloudA | 2026-09-04T20:10:54Z |
 | CRON | Cronos Group Inc. | $1.20B | cloudA | 2026-09-04T20:10:54Z |
 | GILT | GILAT SATELLITE NETWORKS LTD | $760.5M | cloudA | 2026-09-04T20:10:54Z |
+| RDVT | Red Violet, Inc. | $1.23B | cloudA | 2026-09-04T20:14:41Z |
+| UIS | UNISYS CORP | $188.9M | cloudA | 2026-09-04T20:14:41Z |
+| OMCL | OMNICELL, INC. | $1.59B | cloudA | 2026-09-04T20:14:41Z |
+| LFS | LEIFRAS Co., Ltd. | $58.3M | cloudA | 2026-09-04T20:14:41Z |
+| FTK | FLOTEK INDUSTRIES INC/CN/ | $859.9M | cloudA | 2026-09-04T20:14:41Z |
+| LOVE | Lovesac Co | $233.5M | cloudA | 2026-09-04T20:14:41Z |
+| GDYN | GRID DYNAMICS HOLDINGS, INC. | $665.2M | cloudA | 2026-09-04T20:14:41Z |
+| AIOT | Powerfleet, Inc. | $407.9M | cloudA | 2026-09-04T20:14:41Z |
+| MLAB | MESA LABORATORIES INC /CO/ | $719.2M | cloudA | 2026-09-04T20:14:41Z |
+| MTRX | MATRIX SERVICE CO | $296.8M | cloudA | 2026-09-04T20:14:41Z |
