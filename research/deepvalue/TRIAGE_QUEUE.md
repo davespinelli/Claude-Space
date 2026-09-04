@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T18:09:50Z · open 272 · in progress 10 · done 203_
+_Source: universe_under2b.csv · updated 2026-09-04T18:13:55Z · open 272 · in progress 0 · done 213_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -281,22 +281,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| MAGN | Magnera Corp | $443.9M | cloudA | 2026-09-04T18:06:20Z |
-| PCRX | Pacira BioSciences, Inc. | $1.06B | cloudA | 2026-09-04T18:06:20Z |
-| ACCO | ACCO BRANDS Corp | $400.6M | cloudA | 2026-09-04T18:06:20Z |
-| GCO | GENESCO INC | $382.5M | cloudA | 2026-09-04T18:06:20Z |
-| CMP | COMPASS MINERALS INTERNATIONAL INC | $1.06B | cloudA | 2026-09-04T18:06:20Z |
-| SND | Smart Sand, Inc. | $226.8M | cloudA | 2026-09-04T18:06:20Z |
-| MPTI | M-tron Industries, Inc. | $315.2M | cloudA | 2026-09-04T18:06:20Z |
-| CLFD | Clearfield, Inc. | $384.7M | cloudA | 2026-09-04T18:06:20Z |
-| ORGO | Organogenesis Holdings Inc. | $211.0M | cloudA | 2026-09-04T18:06:20Z |
-| GBX | GREENBRIER COMPANIES INC | $1.32B | cloudA | 2026-09-04T18:06:20Z |
 
-## Done (203)
+## Done (213)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DCTH | DELCATH SYSTEMS, INC. | $571.8M | cloudA | 2026-09-04T18:09:50Z |
 | LMAT | LEMAITRE VASCULAR INC | $1.84B | cloudA | 2026-09-04T18:09:50Z |
 | TNC | TENNANT CO | $1.20B | cloudA | 2026-09-04T18:09:50Z |
+| MAGN | Magnera Corp | $443.9M | cloudA | 2026-09-04T18:13:55Z |
+| PCRX | Pacira BioSciences, Inc. | $1.06B | cloudA | 2026-09-04T18:13:55Z |
+| ACCO | ACCO BRANDS Corp | $400.6M | cloudA | 2026-09-04T18:13:55Z |
+| GCO | GENESCO INC | $382.5M | cloudA | 2026-09-04T18:13:55Z |
+| CMP | COMPASS MINERALS INTERNATIONAL INC | $1.06B | cloudA | 2026-09-04T18:13:55Z |
+| SND | Smart Sand, Inc. | $226.8M | cloudA | 2026-09-04T18:13:55Z |
+| MPTI | M-tron Industries, Inc. | $315.2M | cloudA | 2026-09-04T18:13:55Z |
+| CLFD | Clearfield, Inc. | $384.7M | cloudA | 2026-09-04T18:13:55Z |
+| ORGO | Organogenesis Holdings Inc. | $211.0M | cloudA | 2026-09-04T18:13:55Z |
+| GBX | GREENBRIER COMPANIES INC | $1.32B | cloudA | 2026-09-04T18:13:55Z |

@@ -204,3 +204,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | DCTH | DELCATH SYSTEMS, INC. | $571.8M | none | 3 | Net cash of $95.9M is real and debt-free, but H1 operating income was $0.8M and the stock is up 81.5% in six months |
 | 2026-09-04 | LMAT | LEMAITRE VASCULAR INC | $1.8B | none | 3 | Net cash is $207M once the $169.1M convertible is netted, but the business still trades near 21x guided operating income |
 | 2026-09-04 | TNC | TENNANT CO | $1.2B | cyclical-trough | 6 | ERP botch and EMEA pricing cut EBITDA margin to 10.9% from 16.0% while orders rose 6.6% and share count fell 7.7% |
+| 2026-09-04 | MAGN | Magnera Corp | $443.9M | spin-off | 7 | Berry-Glatfelter spin merger leaves GAAP EBIT at $5M while LTM adjusted EBITDA is $372M and FY26 FCF is guided at $90-110M on a $444M cap |
+| 2026-09-04 | PCRX | Pacira BioSciences, Inc. | $1.1B | cash-cow-narrative | 6 | 12.9% FCF yield with share count down 11.3% and $73.6M in from the iovera sale, but EXPAREL net price is falling on GPO contracting |
+| 2026-09-04 | ACCO | ACCO BRANDS Corp | $400.6M | cash-cow-narrative | 6 | Guided $75-85M FCF and $0.87-0.91 adjusted EPS on a $4.34 stock, against 4.3x leverage and comparable sales down 2.3% |
+| 2026-09-04 | GCO | GENESCO INC | $382.5M | cash-cow-narrative | 7 | 11.1M shares at 0.69x book with net cash, 21.9% FCF yield and a $40-50M cost program larger than current operating income |
+| 2026-09-04 | CMP | COMPASS MINERALS INTERNATIONAL INC | $1.1B | post-restructuring | 5 | Leverage cut 4.3x to 2.8x with a constructive deicing bid season, but the 12.1% FCF yield was a working capital release |
+| 2026-09-04 | SND | Smart Sand, Inc. | $226.8M | cyclical-trough | 5 | Contribution margin per ton up to $14.54 from $11.08 with net cash and 0.95x book, but Q2 free cash flow was still negative |
+| 2026-09-04 | MPTI | M-tron Industries, Inc. | $315.2M | none | 4 | Backlog up 37% and net cash from the April rights offering, but roughly 16x ex-cash EV to EBITDA after a 98% twelve-month move |
+| 2026-09-04 | CLFD | Clearfield, Inc. | $384.7M | hidden-asset | 4 | Cash and investments of about $155M are 40% of the cap, but backlog fell 32% and year-to-date operating income is negative |
+| 2026-09-04 | ORGO | Organogenesis Holdings Inc. | $211.0M | none | 1 | Revenue guided down 62-68%, $82.5M half-year EBITDA loss against $46.8M cash, an ATM signed and $148M of preferred ahead of common |
+| 2026-09-04 | GBX | GREENBRIER COMPANIES INC | $1.3B | misunderstood-segment | 6 | Leasing earned $29.2M of $31.9M operating income on 8% of revenue at 99% utilization, but railcar orders ran 2,200 against 3,600 delivered |
