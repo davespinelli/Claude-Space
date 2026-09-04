@@ -25,6 +25,10 @@ Claude never executes real trades, moves money, creates accounts, or handles cre
 - **Upwork/contract quant development** ($500–3,000 per project: strategy coding, backtests, broker-API bots, data pipelines). Claude writes proposals (products/backtester/UPWORK.md) and does the work; David bids and invoices.
 - **Plain-English Backtester web app** ($29/mo): user types rules, gets a report in 60 seconds. Built on engine.py + Claude API. Week 2–3 build once Tier 1 has a first sale; needs David's Stripe + Anthropic API key + a free-tier host.
 
+## Tier 0 — Primary focus (David, Sep 4): Deep Value Desk — researched stock ideas with the reasoning
+David: "I will let you live if you set something up that gives me good stock picks and why… you must read 10-Ks and earnings calls." Methodology in research/deepvalue/README.md. Pipeline: SEC-XBRL screen of small/mid caps → edge-case overlay (spin-offs, insider clusters, no coverage, index deletions) → fetch 10-K/10-Q/proxy/8-K/Form 4/transcript → analyst deep dive per NOTE_TEMPLATE → PICKS.md ledger tracked forever vs IWM/SPY. Cadence: weekly screen, 1–3 deep dives per day, Sunday review of hits and misses. First notes due Sep 4–5.
+Advanced quant queue (ideas 31–37): small-cap PEAD, insider cluster buying, Amihud illiquidity, volume shocks, options IV cache, spin-off calendar, index-deletion reversal.
+
 ## Tier 3 — Ceiling: the $100k on a verified-edge strategy
 The biggest dollar lever by far, and the one that must not be faked. Current RULES v1 underperforms SPY risk-adjusted (Sharpe 0.67 vs 0.89, 2009–2026). Deploying capital on it would be worse than indexing. Therefore:
 - Research sprint runs 7×/day working research/QUEUE.md under research/PROTOCOL.md (now with walk-forward validation). Widened search: broader stock universe, trend on macro ETFs, cross-sectional momentum, defensive overlays, seasonality controls.
