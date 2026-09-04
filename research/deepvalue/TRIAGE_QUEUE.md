@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T16:11:52Z · open 332 · in progress 10 · done 143_
+_Source: universe_under2b.csv · updated 2026-09-04T16:14:50Z · open 332 · in progress 0 · done 153_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -341,22 +341,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| HLLY | Holley Inc. | $375.8M | cloudA | 2026-09-04T16:07:37Z |
-| PROP | Prairie Operating Co. | $53.1M | cloudA | 2026-09-04T16:07:37Z |
-| DLX | DELUXE CORP | $1.12B | cloudA | 2026-09-04T16:07:37Z |
-| IRMD | IRADIMED CORP | $1.11B | cloudA | 2026-09-04T16:07:37Z |
-| EVI | EVI INDUSTRIES, INC. | $167.7M | cloudA | 2026-09-04T16:07:37Z |
-| EPAC | ENERPAC TOOL GROUP CORP | $1.89B | cloudA | 2026-09-04T16:07:37Z |
-| ATEN | A10 Networks, Inc. | $1.79B | cloudA | 2026-09-04T16:07:37Z |
-| WEYS | WEYCO GROUP INC | $422.1M | cloudA | 2026-09-04T16:07:37Z |
-| NRC | NRC HEALTH | $470.0M | cloudA | 2026-09-04T16:07:37Z |
-| NPK | NATIONAL PRESTO INDUSTRIES INC | $1.03B | cloudA | 2026-09-04T16:07:37Z |
 
-## Done (143)
+## Done (153)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | SPOK | Spok Holdings, Inc | $223.4M | cloudA | 2026-09-04T16:11:52Z |
 | PSFE | Paysafe Ltd | $350.9M | cloudA | 2026-09-04T16:11:52Z |
 | KFRC | KFORCE INC | $966.2M | cloudA | 2026-09-04T16:11:52Z |
+| HLLY | Holley Inc. | $375.8M | cloudA | 2026-09-04T16:14:50Z |
+| PROP | Prairie Operating Co. | $53.1M | cloudA | 2026-09-04T16:14:50Z |
+| DLX | DELUXE CORP | $1.12B | cloudA | 2026-09-04T16:14:50Z |
+| IRMD | IRADIMED CORP | $1.11B | cloudA | 2026-09-04T16:14:50Z |
+| EVI | EVI INDUSTRIES, INC. | $167.7M | cloudA | 2026-09-04T16:14:50Z |
+| EPAC | ENERPAC TOOL GROUP CORP | $1.89B | cloudA | 2026-09-04T16:14:50Z |
+| ATEN | A10 Networks, Inc. | $1.79B | cloudA | 2026-09-04T16:14:50Z |
+| WEYS | WEYCO GROUP INC | $422.1M | cloudA | 2026-09-04T16:14:50Z |
+| NRC | NRC HEALTH | $470.0M | cloudA | 2026-09-04T16:14:50Z |
+| NPK | NATIONAL PRESTO INDUSTRIES INC | $1.03B | cloudA | 2026-09-04T16:14:50Z |

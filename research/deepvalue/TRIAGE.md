@@ -144,3 +144,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | SPOK | Spok Holdings, Inc | $223.4M | insider-buying | 6 | Two insiders bought $473K in the open market at a confirmed-debt-free company guiding $28-32M EBITDA on a $223M cap, but bookings fell 28% |
 | 2026-09-04 | PSFE | Paysafe Ltd | $350.9M | none | 4 | No business description, MD&A or results in the pack; $2.3B net debt on $71.9M EBIT is uncheckable against a $223.6M reported FCF |
 | 2026-09-04 | KFRC | KFORCE INC | $966.2M | none | 4 | Revenue and margins inflected but the stock is up 99% in twelve months at ~18x the Q3 guide while buybacks are funded on the revolver |
+| 2026-09-04 | HLLY | Holley Inc. | $375.8M | post-restructuring | 7 | Guided $127-137M EBITDA less $42-47M interest and $15-20M capex against a $375.8M cap, with $115M of voluntary debt paydown since 2023 |
+| 2026-09-04 | PROP | Prairie Operating Co. | $53.1M | none | 2 | Guided capex exceeds guided EBITDA behind $436M of net debt, with a $125.5M working-capital deficit and hedges realising $59.79 against $94.21 oil |
+| 2026-09-04 | DLX | DELUXE CORP | $1.1B | cash-cow-narrative | 7 | Guides $3.60-4.00 adjusted EPS and about $200M free cash flow against a $1.1B cap at $24.40, with Payments and Data now 52% of revenue |
+| 2026-09-04 | IRMD | IRADIMED CORP | $1.1B | none | 0 | no filings in bundle |
+| 2026-09-04 | EVI | EVI INDUSTRIES, INC. | $167.7M | fallen-growth | 5 | Revenue and gross margin at records with the stock down 62%, but nine-month operating income rose only 4% and net income fell |
+| 2026-09-04 | EPAC | ENERPAC TOOL GROUP CORP | $1.9B | none | 4 | About 20x the guided $1.84-1.89 adjusted EPS after an EBITDA guidance cut to $151-156M and 1-2% organic growth |
+| 2026-09-04 | ATEN | A10 Networks, Inc. | $1.8B | none | 4 | Growing 15% and guiding higher, but SBC of $9.3M nearly equals $9.0M of quarterly GAAP operating income at 36.9x trailing EV/EBIT |
+| 2026-09-04 | WEYS | WEYCO GROUP INC | $422.1M | none | 0 | no filings in bundle |
+| 2026-09-04 | NRC | NRC HEALTH | $470.0M | post-restructuring | 5 | TRCV at an all-time $151.9M leads stale declining revenue, but the stock is up 54% in six months and the CFO resigned in August |
+| 2026-09-04 | NPK | NATIONAL PRESTO INDUSTRIES INC | $1.0B | none | 4 | Defense backlog lifted 1H EPS to $3.14 but trailing free cash flow is minus $36.2M, the revolver is drawn and Housewares profit was a tariff refund |
