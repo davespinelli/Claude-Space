@@ -3,6 +3,11 @@
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
 | 2026-09-04 | 40690298 | Excel Programming & Marketing Support | $240 | 3 | drafted |
+| 2026-09-04 | 40690237 | Word to Excel Text Transfer | $250 | 10 | drafted |
+| 2026-09-04 | 40690431 | Mixed Data Entry Cleanup | $230 | 13 | drafted |
+| 2026-09-04 | 40690344 | Copy PDF Data into Excel | $215 | 13 | drafted |
+| 2026-09-04 | 40689889 | PDF Text Transcribed to Excel | $420 | 17 | drafted |
+| 2026-09-04 | 40689948 | Enhance and Automate Zoho Books | $125 | 19 | drafted |
 | 2026-09-04 | 40690530 | PDF-to-Sheet Data Entry | $210 | 4 | drafted |
 | 2026-09-04 | 40690372 | Excel Data Entry Assistance Needed | $220 | 6 | drafted |
 | 2026-09-04 | 40689875 | Mixed Data Entry Records | $300 | 12 | drafted |
@@ -34,3 +39,4 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Daily Sales Data Entry Support, Accurate Excel Data Entry x2, Excel Data Entry From Multiple Sources (duplicate template postings and/or 40+ bids)
 - Automatizacion Telegram (114 bids, Spanish-language delivery)
 - Modern Email Signature & Brochure, WordPress website with Chatbot (design/CMS work, 100+ bids)
+- Copy Digital Text to Excel (40690266), Plain Text to Excel Transfer (40690282) (near duplicates of 40687784 Copy Text Data to Excel, already drafted; lowest budgets in the batch)
