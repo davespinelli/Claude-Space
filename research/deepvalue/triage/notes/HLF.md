@@ -1,0 +1,5 @@
+# HLF — HERBALIFE LTD. · triage 2026-09-04 · Edge: cash-cow-narrative · Score 6/10
+
+Herbalife sells weight management, targeted nutrition and sports nutrition products in 95 markets through a direct-selling network of independent Members, with Formula 1 shake mix alone about 25% of net sales and gross margin near 78%. The screen row (universe_under2b.csv, 2026-09-04) shows a $1.3 billion cap at $12.17, FCF of $252.9 million for a 19.8% yield, 6.0x EV/EBIT and 32.8% ROIC. Q2 2026 net sales rose 5.4% to $1.33 billion, the fourth consecutive quarter of growth, and full-year adjusted EBITDA guidance is $670 to $690 million, with the constant-currency range raised. That is a cash generator the market prices as a melting ice cube. The biggest risk is the capital structure: $2.0 billion of long-term debt, $1.6 billion net debt at 3.4x EBIT and shareholders' equity of negative $474.5 million, so the equity is a levered stub. The pack does not give debt maturities. China sales fell 24.5% and insiders were net sellers of $2.5 million.
+
+_Sources: triage pack only (sections 2, 3, 6, 7, 8, 9, 11). Triage-depth read, not a deep dive._

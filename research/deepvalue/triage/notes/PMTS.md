@@ -1,0 +1,5 @@
+# PMTS — CPI Card Group Inc. · triage 2026-09-04 · Edge: none · Score 0/10
+
+Not triaged. `triage_pack.py PMTS --no-price` exited non-zero: no filings for this ticker are present in the bundle. The pack contains only the screen row and identity block (Nasdaq, SIC 2750 Commercial Printing) and is missing meta.json, all 8-K filings, the earnings press release exhibit, the Form 4 summary, 10-K Item 1 Business, 10-K Item 7 MD&A and any transcript. There is no business description, no management commentary and no current-period results to read, so no edge case can be assessed and no risk can be named from filing text. The screen row alone (universe_under2b.csv, 2026-09-04) shows $28.65, a $330.4 million cap, $571.1 million EV, 10.4x EV/EBIT, $41.3 million FCF for a 12.5% yield, 18.9% ROIC and $240.8 million of net debt at 4.4x EBIT, but a screen row is not a triage. Scored 0 for absence of evidence, not against the company. Requeue once fetch_filings.py PMTS has run and the ticker is in the bundle.
+
+_Sources: triage pack only (sections 1, 2, 11 — all filing sections absent). Triage-depth read, not a deep dive._

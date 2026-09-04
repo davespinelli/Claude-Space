@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T12:30:39Z · open 452 · in progress 0 · done 33_
+_Source: universe_under2b.csv · updated 2026-09-04T13:10:45Z · open 442 · in progress 0 · done 43_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (452)
+## Open (442)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| VATE | INNOVATE Corp. | $101.8M |
-| INMD | InMode Ltd. | $940.2M |
-| VRRM | VERRA MOBILITY Corp | $638.0M |
-| PMTS | CPI Card Group Inc. | $330.4M |
-| HLF | HERBALIFE LTD. | $1.28B |
-| YEXT | Yext, Inc. | $645.6M |
-| DAKT | DAKTRONICS INC /SD/ | $940.6M |
-| IBEX | IBEX Ltd | $527.7M |
-| APOG | APOGEE ENTERPRISES, INC. | $797.0M |
-| LNN | LINDSAY CORP | $1.25B |
 | ZUMZ | Zumiez Inc | $298.6M |
 | VMD | VIEMED HEALTHCARE, INC. | $343.2M |
 | IMMR | IMMERSION CORP | $250.9M |
@@ -55,13 +45,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | TCMD | TACTILE SYSTEMS TECHNOLOGY INC | $498.6M |
 | XPEL | XPEL, Inc. | $1.40B |
 | USPH | U S PHYSICAL THERAPY INC /NV | $1.17B |
-| GLP | GLOBAL PARTNERS LP | $1.78B |
 | CTS | CTS CORP | $1.61B |
 | CSV | CARRIAGE SERVICES INC | $537.8M |
 | UTI | UNIVERSAL TECHNICAL INSTITUTE INC | $1.19B |
 | HCKT | HACKETT GROUP, INC. | $275.6M |
 | PDEX | PRO DEX INC | $197.2M |
 | EFOR | Everforth Inc | $1.31B |
+| GLP | GLOBAL PARTNERS LP | $1.78B |
 | UTMD | UTAH MEDICAL PRODUCTS INC | $225.1M |
 | CLMB | Climb Global Solutions, Inc. | $525.9M |
 | TRS | TRIMAS CORP | $1.39B |
@@ -69,8 +59,8 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | KOP | Koppers Holdings Inc. | $886.2M |
 | CARS | Cars.com Inc. | $631.2M |
 | OPRX | OptimizeRx Corp | $149.7M |
-| PRTH | Priority Technology Holdings, Inc. | $446.8M |
 | INVA | Innoviva, Inc. | $1.54B |
+| PRTH | Priority Technology Holdings, Inc. | $446.8M |
 | CRI | CARTERS INC | $1.22B |
 | FLXS | FLEXSTEEL INDUSTRIES INC | $430.4M |
 | LMB | Limbach Holdings, Inc. | $590.9M |
@@ -107,8 +97,8 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | MLKN | MILLERKNOLL, INC. | $1.53B |
 | USNA | USANA HEALTH SCIENCES INC | $266.6M |
 | CLB | Core Laboratories Inc. /DE/ | $574.9M |
-| WNC | WABASH NATIONAL Corp | $580.9M |
 | XHR | Xenia Hotels & Resorts, Inc. | $1.67B |
+| WNC | WABASH NATIONAL Corp | $580.9M |
 | APEI | AMERICAN PUBLIC EDUCATION INC | $830.5M |
 | PZZA | PAPA JOHNS INTERNATIONAL INC | $742.4M |
 | FLO | FLOWERS FOODS INC | $1.37B |
@@ -119,17 +109,17 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | PSFE | Paysafe Ltd | $350.9M |
 | KFRC | KFORCE INC | $966.2M |
 | HLLY | Holley Inc. | $375.8M |
-| DLX | DELUXE CORP | $1.12B |
 | PROP | Prairie Operating Co. | $53.1M |
+| DLX | DELUXE CORP | $1.12B |
 | IRMD | IRADIMED CORP | $1.11B |
 | EVI | EVI INDUSTRIES, INC. | $167.7M |
 | EPAC | ENERPAC TOOL GROUP CORP | $1.89B |
 | ATEN | A10 Networks, Inc. | $1.79B |
 | WEYS | WEYCO GROUP INC | $422.1M |
 | NRC | NRC HEALTH | $470.0M |
+| NPK | NATIONAL PRESTO INDUSTRIES INC | $1.03B |
 | BYRN | Byrna Technologies Inc. | $77.4M |
 | THRM | Gentherm Inc | $1.23B |
-| NPK | NATIONAL PRESTO INDUSTRIES INC | $1.03B |
 | SVV | Savers Value Village, Inc. | $1.58B |
 | EVCM | EverCommerce Inc. | $1.40B |
 | FLNG | Flex LNG Ltd. | $1.69B |
@@ -138,8 +128,8 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | LXU | LSB INDUSTRIES, INC. | $808.5M |
 | TXO | TXO Partners, L.P. | $831.1M |
 | GENI | Genius Sports Ltd | $76.3M |
-| ERII | Energy Recovery, Inc. | $390.5M |
 | BJRI | BJs RESTAURANTS INC | $1.25B |
+| ERII | Energy Recovery, Inc. | $390.5M |
 | LINC | LINCOLN EDUCATIONAL SERVICES CORP | $808.3M |
 | VISN | Vistance Networks, Inc. | $1.47B |
 | NBR | NABORS INDUSTRIES LTD | $1.48B |
@@ -217,8 +207,8 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | MAMA | Mama's Creations, Inc. | $649.7M |
 | CDRE | Cadre Holdings, Inc. | $1.28B |
 | ANAB | ANAPTYSBIO, INC | $1.67B |
-| EPC | EDGEWELL PERSONAL CARE Co | $1.31B |
 | LEGH | Legacy Housing Corp | $663.3M |
+| EPC | EDGEWELL PERSONAL CARE Co | $1.31B |
 | SMTI | Sanara MedTech Inc. | $319.0M |
 | GRPN | Groupon, Inc. | $766.9M |
 | HE | HAWAIIAN ELECTRIC INDUSTRIES INC | $1.92B |
@@ -227,8 +217,8 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | TRNS | TRANSCAT INC | $802.1M |
 | NABL | N-able, Inc. | $753.7M |
 | TATT | TAT TECHNOLOGIES LTD | $506.5M |
-| BGS | B&G Foods, Inc. | $273.1M |
 | LYTS | LSI INDUSTRIES INC | $738.3M |
+| BGS | B&G Foods, Inc. | $273.1M |
 | CLVT | CLARIVATE PLC | $1.38B |
 | MG | Mistras Group, Inc. | $607.1M |
 | AHCO | AdaptHealth Corp. | $875.3M |
@@ -258,8 +248,8 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | OLN | OLIN Corp | $1.93B |
 | BZH | BEAZER HOMES USA INC | $885.8M |
 | MNKD | MANNKIND CORP | $1.27B |
-| PERI | Perion Network Ltd. | $360.2M |
 | AVO | Mission Produce, Inc. | $1.11B |
+| PERI | Perion Network Ltd. | $360.2M |
 | CXDO | Crexendo, Inc. | $196.9M |
 | RPD | Rapid7, Inc. | $773.1M |
 | VTS | Vitesse Energy, Inc. | $733.0M |
@@ -294,16 +284,15 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | EPM | EVOLUTION PETROLEUM CORP | $132.7M |
 | KODK | EASTMAN KODAK CO | $895.8M |
 | DHX | DHI GROUP, INC. | $198.9M |
-| AIN | ALBANY INTERNATIONAL CORP /DE/ | $1.78B |
 | MATW | MATTHEWS INTERNATIONAL CORP | $658.6M |
+| AIN | ALBANY INTERNATIONAL CORP /DE/ | $1.78B |
 | CVEO | Civeo Corp | $349.0M |
 | FWRG | First Watch Restaurant Group, Inc. | $722.0M |
 | MNRO | MONRO, INC. | $393.9M |
 | PACK | Ranpak Holdings Corp. | $375.6M |
-| CMCO | COLUMBUS MCKINNON CORP | $526.1M |
 | REAL | TheRealReal, Inc. | $1.22B |
+| CMCO | COLUMBUS MCKINNON CORP | $526.1M |
 | TLRY | Tilray Brands, Inc. | $617.0M |
-| TAYD | TAYLOR DEVICES, INC. | $194.9M |
 | PHR | Phreesia, Inc. | $686.1M |
 | OSS | ONE STOP SYSTEMS, INC. | $243.4M |
 | JACK | JACK IN THE BOX INC | $290.8M |
@@ -323,16 +312,17 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | ESOA | Energy Services of America CORP | $210.7M |
 | AMN | AMN HEALTHCARE SERVICES INC | $1.29B |
 | XNET | Xunlei Ltd | $1.54B |
+| TAYD | TAYLOR DEVICES, INC. | $194.9M |
 | TLS | TELOS CORP | $364.0M |
-| CLW | Clearwater Paper Corp | $333.8M |
 | JAKK | JAKKS PACIFIC INC | $275.3M |
+| CLW | Clearwater Paper Corp | $333.8M |
 | SNDA | SONIDA SENIOR LIVING, INC. | $1.82B |
 | SONO | Sonos Inc | $1.91B |
 | SILC | SILICOM LTD. | $228.6M |
 | MUX | McEwen Inc. | $1.26B |
 | MBC | MasterBrand, Inc. | $1.66B |
-| STOK | Stoke Therapeutics, Inc. | $1.94B |
 | MSEX | MIDDLESEX WATER CO | $1.10B |
+| STOK | Stoke Therapeutics, Inc. | $1.94B |
 | TDAY | USA TODAY Co., Inc. | $949.9M |
 | QMCO | QUANTUM CORP /DE/ | $956.8M |
 | MEI | METHODE ELECTRONICS INC | $543.4M |
@@ -372,12 +362,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | WYY | WIDEPOINT CORP | $113.9M |
 | KRO | KRONOS WORLDWIDE INC | $972.6M |
 | ASMB | ASSEMBLY BIOSCIENCES, INC. | $735.6M |
+| REI | RING ENERGY, INC. | $390.8M |
 | OPTX | SYNTEC OPTICS HOLDINGS, INC. | $312.6M |
 | NPCE | NeuroPace Inc | $506.3M |
 | HZO | MARINEMAX INC | $1.15B |
 | EVH | Evolent Health, Inc. | $481.6M |
 | ULCC | Frontier Group Holdings, Inc. | $1.32B |
-| REI | RING ENERGY, INC. | $390.8M |
 | KIDS | ORTHOPEDIATRICS CORP | $589.8M |
 | PAR | PAR TECHNOLOGY CORP | $781.8M |
 | SRTA | Strata Critical Medical, Inc. | $475.1M |
@@ -388,8 +378,8 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | ANGO | ANGIODYNAMICS INC | $639.4M |
 | HNST | Honest Company, Inc. | $627.6M |
 | BLZE | Backblaze, Inc. | $823.9M |
-| HUN | Huntsman CORP | $1.65B |
 | ICHR | ICHOR HOLDINGS, LTD. | $1.98B |
+| HUN | Huntsman CORP | $1.65B |
 | OXM | OXFORD INDUSTRIES INC | $546.9M |
 | NCMI | National CineMedia, Inc. | $234.2M |
 | TYGO | TIGO ENERGY, INC. | $81.4M |
@@ -466,7 +456,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (33)
+## Done (43)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | LZB | LA-Z-BOY INC | $1.27B | local2 | 2026-09-04T12:30:39Z |
 | MPAA | MOTORCAR PARTS OF AMERICA INC | $223.1M | local2 | 2026-09-04T12:30:39Z |
 | CYH | COMMUNITY HEALTH SYSTEMS INC | $410.3M | local2 | 2026-09-04T12:30:39Z |
+| VATE | INNOVATE Corp. | $101.8M | cloudA | 2026-09-04T13:10:45Z |
+| INMD | InMode Ltd. | $940.2M | cloudA | 2026-09-04T13:10:45Z |
+| VRRM | VERRA MOBILITY Corp | $638.0M | cloudA | 2026-09-04T13:10:45Z |
+| PMTS | CPI Card Group Inc. | $330.4M | cloudA | 2026-09-04T13:10:45Z |
+| HLF | HERBALIFE LTD. | $1.28B | cloudA | 2026-09-04T13:10:45Z |
+| YEXT | Yext, Inc. | $645.6M | cloudA | 2026-09-04T13:10:45Z |
+| DAKT | DAKTRONICS INC /SD/ | $940.6M | cloudA | 2026-09-04T13:10:45Z |
+| IBEX | IBEX Ltd | $527.7M | cloudA | 2026-09-04T13:10:45Z |
+| APOG | APOGEE ENTERPRISES, INC. | $797.0M | cloudA | 2026-09-04T13:10:45Z |
+| LNN | LINDSAY CORP | $1.25B | cloudA | 2026-09-04T13:10:45Z |

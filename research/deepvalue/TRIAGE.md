@@ -34,3 +34,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | LZB | LA-Z-BOY INC | $1.3B | cyclical-trough | 6 | Retail written same-store sales turned positive at 3% with a 500bp sequential gain on $267M net cash, but Q1 FCF was negative |
 | 2026-09-04 | MPAA | MOTORCAR PARTS OF AMERICA INC | $223.1M | none | 4 | Screen net-cash flag is wrong: $99.7M net bank debt plus PIK converts, and $12.0M quarterly interest swamps $3.5M operating income |
 | 2026-09-04 | CYH | COMMUNITY HEALTH SYSTEMS INC | $410.3M | none | 3 | Deleveraging with $600M of divestiture proceeds, but each sale removes EBITDA: H1 adjusted EBITDA fell 16% on 7x net leverage |
+| 2026-09-04 | VRRM | VERRA MOBILITY Corp | $638.0M | fallen-growth | 7 | Q2 revenue +12% and adjusted EBITDA $110.7M at 42% margins while the stock sits 83% off its high on 2.4x net leverage |
+| 2026-09-04 | HLF | HERBALIFE LTD. | $1.3B | cash-cow-narrative | 6 | Fourth straight quarter of sales growth and constant-currency EBITDA guidance raised at a 19.8% FCF yield, but 3.4x net debt on negative equity |
+| 2026-09-04 | YEXT | Yext, Inc. | $645.6M | post-restructuring | 6 | Opex cut $69M swung operating income to +$44.5M and a tender shrank shares 19%, but ARR is flat and zero-click AI search is the franchise risk |
+| 2026-09-04 | APOG | APOGEE ENTERPRISES, INC. | $797.0M | cyclical-trough | 6 | Glass EBITDA margin halved to 8.7% while $26M of Fortify 2 savings land, Services backlog grows to $734.5M and FY27 EPS guidance holds |
+| 2026-09-04 | VATE | INNOVATE Corp. | $101.8M | hidden-asset | 5 | DBMG has record $2.7B adjusted backlog and a signed IES transaction against a $102M cap, but $89M interest on $28.7M EBIT leaves equity a stub |
+| 2026-09-04 | INMD | InMode Ltd. | $940.2M | cash-cow-narrative | 5 | Cash is 32% of the cap with 9.0% FCF yield and 8.9% share shrink, but debt is untagged, revenue fell 6.2% and the pack has no MD&A or release |
+| 2026-09-04 | IBEX | IBEX Ltd | $527.7M | none | 5 | Revenue +16.8% with guidance raised a third time, but the stock is 6% off its high at 11.0x EV/EBIT so there is no dislocation to exploit |
+| 2026-09-04 | LNN | LINDSAY CORP | $1.2B | cyclical-trough | 5 | North America irrigation down 11% with net cash and 6.4% share shrink, but 13.7x EV/EBIT gives no cushion and the CFO resigned in July |
+| 2026-09-04 | DAKT | DAKTRONICS INC /SD/ | $940.6M | none | 4 | Record FY26 sales and orders with $145M net cash, but 13.1x EV/EBIT and a 3.6% FCF yield after a receivables build price the improvement in |
+| 2026-09-04 | PMTS | CPI Card Group Inc. | $330.4M | none | 0 | no filings in bundle |
