@@ -225,3 +225,16 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 49 RULES v1 live (universe.json), 2011+ - baseline | 6.3% | 0.65 | -13.8% | 0.66 / 0.65 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_third-universe-portability_B.py |
 | 2026-09-04 | 49 RULES v1 on the small panel, 2011+ - reference | 8.1% | 0.60 | -32.8% | 0.70 / 0.52 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_third-universe-portability_B.py |
 | 2026-09-04 | 49 EW all 439 small caps @75% gross - CONTROL (no filter, no ranking) | 10.2% | 0.68 | -36.2% | 0.80 / 0.61 | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_third-universe-portability_B.py |
+| 2026-09-04 | 39 F f=0.45 g=0.75 | 5.7% | 0.45 | -40.7% | 0.51 / 0.41 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 F f=0.45 g=1.00 | 7.2% | 0.45 | -51.4% | 0.51 / 0.40 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 F f=0.85 g=0.75 | 4.3% | 0.37 | -40.9% | 0.47 / 0.30 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 F f=0.85 g=1.00 | 5.3% | 0.37 | -51.2% | 0.47 / 0.30 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 F f=1.0 g=0.75 | 3.5% | 0.33 | -40.2% | 0.43 / 0.25 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 F f=1.0 g=1.00 | 4.4% | 0.33 | -50.4% | 0.44 / 0.25 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 N n=20 g=0.75 | 6.7% | 0.47 | -27.4% | 0.61 / 0.35 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 N n=20 g=1.00 | 8.3% | 0.47 | -36.4% | 0.61 / 0.35 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 N n=40 g=0.75 | 5.2% | 0.42 | -24.1% | 0.44 / 0.40 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 N n=40 g=1.00 | 6.4% | 0.42 | -31.9% | 0.44 / 0.40 | 0.60 (0.70/0.52) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 SPY buy & hold - reference | 14.2% | 0.86 | -33.7% | 0.89 / 0.86 | 0.60 (0.70/0.52) | - | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 RULES v1 on the small panel - reference | 8.1% | 0.60 | -32.8% | 0.70 / 0.52 | 0.60 (0.70/0.52) | - | 2026-09-04_smallcap-eligible-equal-weight_C.py |
+| 2026-09-04 | 39 EW all 439 names @75% - CONTROL (no eligibility filter) | 8.1% | 0.64 | -30.7% | 0.82 / 0.61 | 0.60 (0.70/0.52) | - | 2026-09-04_smallcap-eligible-equal-weight_C.py |
