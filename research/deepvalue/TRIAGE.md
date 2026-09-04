@@ -174,3 +174,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | LE | LANDS' END, INC. | $332.6M | hidden-asset | 7 | The retained WHP JV stake is carried at $377.6M against a $332.6M market cap, with $89.2M of buyback still authorised |
 | 2026-09-04 | SIGA | SIGA TECHNOLOGIES INC | $232.1M | hidden-asset | 7 | Net cash of $117.6M is 51% of the cap and total liabilities are $10.4M, but Q2 closed the last order under the 19C contract |
 | 2026-09-04 | VTOL | Bristow Group Inc. | $1.3B | misunderstood-segment | 6 | Government Services lost $2.1M on transition costs and $3.6M of availability penalties inside a 10-year EUR 670M IRCG contract |
+| 2026-09-04 | MYE | MYERS INDUSTRIES INC | $1.2B | post-restructuring | 6 | Q1 operating margin up 450bps to 15.1% and the $203.9M distribution arm is under contract to be sold, but the stock is up 121% |
+| 2026-09-04 | NVEC | NVE CORP /NEW/ | $476.8M | none | 4 | Marketable securities lift real net cash to about $41M and Q1 revenue rose 81%, but that is one quarter after a 110% run |
+| 2026-09-04 | RDCM | RADCOM LTD | $166.4M | ignored-microcap | 5 | $1.5M ADV and three 13D filings in one week in Feb 2026, but the pack has no MD&A, no release and no balance sheet to check |
+| 2026-09-04 | NSSC | NAPCO SECURITY TECHNOLOGIES, INC | $1.3B | none | 0 | No filings in bundle |
+| 2026-09-04 | ROCK | GIBRALTAR INDUSTRIES, INC. | $1.4B | post-restructuring | 7 | Trailing GAAP loss is discontinued Renewables; guided 2026 EBITDA of $310-326M puts EV at 8x and the CEO bought $739K at $37.44 |
+| 2026-09-04 | CGNT | Cognyte Software Ltd. | $619.7M | none | 4 | 14.1% revenue growth converts to a 3.3% operating margin and 37.9x EV/EBIT, with no MD&A in the pack to explain why |
+| 2026-09-04 | ICFI | ICF International, Inc. | $1.6B | none | 0 | No filings in bundle |
+| 2026-09-04 | DSGR | Distribution Solutions Group, Inc. | $1.6B | none | 3 | Trades 0.8% under the $35.00 LKCM Headwater going-private price; a merger spread, not a mispricing |
+| 2026-09-04 | INSP | Inspire Medical Systems, Inc. | $1.8B | none | 4 | 57% off the high for a reason the MD&A names: the -52 modifier would cut the Inspire V professional fee 10-50% |
+| 2026-09-04 | ONT | Onterris, Inc. | $617.4M | cyclical-trough | 7 | Emergency response revenue fell $37.7M in the quarter while EBITDA margin rose, at 8x EV with a strategic review and a poison pill |

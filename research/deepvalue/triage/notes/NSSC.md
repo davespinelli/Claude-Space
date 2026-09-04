@@ -1,0 +1,5 @@
+# NSSC — NAPCO SECURITY TECHNOLOGIES, INC · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings were fetched for this ticker: section 1 reports "Filings fetched: none" and section 11 lists the business description, MD&A, risk factors, 8-K set, earnings release and Form 4 summary all as missing. With no filing text there is nothing to describe from source, no edge that can be evidenced, and no risk that can be quoted. Scored 0 under the routine's no-filings rule rather than triaged. Unverified from the screen row alone: a $1.3 billion market cap, 25.9x EV/EBIT, a 3.9% FCF yield, revenue down 3.8% to $181.6 million, and a 57.0% ROIC that the pack's own DEBT DATA MISSING warning says is overstated because no long-term-debt concept was tagged, making the $126.9 million of apparent net cash an artefact rather than a confirmed debt-free balance sheet. The pack instructs that this be checked against the balance sheet and liquidity discussion, neither of which is in the bundle. Re-run fetch_filings.py NSSC before this name is scored.
+
+_Sources: triage pack only (sections 1, 2, 11). Not a triage read: no filings available._

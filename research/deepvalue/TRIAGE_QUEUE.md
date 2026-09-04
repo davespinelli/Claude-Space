@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T17:11:04Z · open 302 · in progress 10 · done 173_
+_Source: universe_under2b.csv · updated 2026-09-04T17:14:14Z · open 302 · in progress 0 · done 183_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -311,22 +311,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| MYE | MYERS INDUSTRIES INC | $1.16B | cloudA | 2026-09-04T17:07:28Z |
-| NVEC | NVE CORP /NEW/ | $476.8M | cloudA | 2026-09-04T17:07:28Z |
-| RDCM | RADCOM LTD | $166.4M | cloudA | 2026-09-04T17:07:28Z |
-| NSSC | NAPCO SECURITY TECHNOLOGIES, INC | $1.32B | cloudA | 2026-09-04T17:07:28Z |
-| ROCK | GIBRALTAR INDUSTRIES, INC. | $1.36B | cloudA | 2026-09-04T17:07:28Z |
-| CGNT | Cognyte Software Ltd. | $619.7M | cloudA | 2026-09-04T17:07:28Z |
-| ICFI | ICF International, Inc. | $1.61B | cloudA | 2026-09-04T17:07:28Z |
-| DSGR | Distribution Solutions Group, Inc. | $1.61B | cloudA | 2026-09-04T17:07:28Z |
-| INSP | Inspire Medical Systems, Inc. | $1.80B | cloudA | 2026-09-04T17:07:28Z |
-| ONT | Onterris, Inc. | $617.4M | cloudA | 2026-09-04T17:07:28Z |
 
-## Done (173)
+## Done (183)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | LE | LANDS' END, INC. | $332.6M | cloudA | 2026-09-04T17:11:04Z |
 | SIGA | SIGA TECHNOLOGIES INC | $232.1M | cloudA | 2026-09-04T17:11:04Z |
 | VTOL | Bristow Group Inc. | $1.30B | cloudA | 2026-09-04T17:11:04Z |
+| MYE | MYERS INDUSTRIES INC | $1.16B | cloudA | 2026-09-04T17:14:14Z |
+| NVEC | NVE CORP /NEW/ | $476.8M | cloudA | 2026-09-04T17:14:14Z |
+| RDCM | RADCOM LTD | $166.4M | cloudA | 2026-09-04T17:14:14Z |
+| NSSC | NAPCO SECURITY TECHNOLOGIES, INC | $1.32B | cloudA | 2026-09-04T17:14:14Z |
+| ROCK | GIBRALTAR INDUSTRIES, INC. | $1.36B | cloudA | 2026-09-04T17:14:14Z |
+| CGNT | Cognyte Software Ltd. | $619.7M | cloudA | 2026-09-04T17:14:14Z |
+| ICFI | ICF International, Inc. | $1.61B | cloudA | 2026-09-04T17:14:14Z |
+| DSGR | Distribution Solutions Group, Inc. | $1.61B | cloudA | 2026-09-04T17:14:14Z |
+| INSP | Inspire Medical Systems, Inc. | $1.80B | cloudA | 2026-09-04T17:14:14Z |
+| ONT | Onterris, Inc. | $617.4M | cloudA | 2026-09-04T17:14:14Z |

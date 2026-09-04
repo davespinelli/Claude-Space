@@ -1,0 +1,5 @@
+# ICFI — ICF International, Inc. · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings were fetched for this ticker: section 1 reports "Filings fetched: none" and section 11 lists the business description, MD&A, risk factors, 8-K set, earnings release and Form 4 summary all as missing. There is no filing text in the pack, so the business cannot be described from source, no edge can be evidenced, and no risk can be quoted. Scored 0 under the routine's no-filings rule rather than triaged. Unverified from the screen row alone: a management consulting firm at a $1.6 billion market cap, 13.9x EV/EBIT, a 7.4% FCF yield, revenue down 7.3% to $1.9 billion, $401.6 million of net debt at 2.8x EBIT against only $4.6 million of cash, and a share count down 2.7%, with the screen's rationale reading only "buying back stock." A 7.3% revenue decline is the kind of fact that decides the name, and there is no management commentary here to explain it. Re-run fetch_filings.py ICFI and re-triage before this row carries any weight.
+
+_Sources: triage pack only (sections 1, 2, 11). Not a triage read: no filings available._
