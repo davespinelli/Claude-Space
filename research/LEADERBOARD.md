@@ -256,3 +256,49 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 38 n=40 gate=both [diag] | 5.6% | 0.44 | -27.2% | - / - | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
 | 2026-09-04 | 38 D1 (best 12-1 decile, EW, 0 bps) [diag] | 21.5% | 0.87 | -42.2% | - / - | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
 | 2026-09-04 | 38 D10 (worst 12-1 decile, EW, 0 bps) [diag] | 29.2% | 0.94 | -60.3% | - / - | 0.65 (0.66/0.65) | - | research/backtests/2026-09-04_small-cap-momentum-clean_cloud.py |
+| 2026-09-04 | 55 universe.json K=200d n=5 | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=200d n=10 | 12.9% | 0.93 | -17.5% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=200d n=20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=200d n=30 | 11.0% | 1.10 | -16.6% | 1.03 / 1.17 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=100d n=5 | 15.7% | 0.93 | -22.6% | 0.88 / 0.97 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=100d n=10 | 12.4% | 0.93 | -18.0% | 1.00 / 0.87 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=100d n=20 | 11.4% | 1.05 | -15.1% | 1.03 / 1.07 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=100d n=30 | 9.5% | 1.01 | -12.9% | 0.96 / 1.07 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H1,CAGR) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=50d n=5 | 11.0% | 0.73 | -25.5% | 0.76 / 0.71 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=50d n=10 | 8.2% | 0.69 | -18.9% | 0.76 / 0.63 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=50d n=20 | 8.3% | 0.82 | -16.1% | 0.81 / 0.84 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,CAGR) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=50d n=30 | 7.1% | 0.82 | -14.4% | 0.77 / 0.87 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,CAGR) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=none n=5 | 17.0% | 0.97 | -21.4% | 0.90 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=none n=10 | 13.7% | 0.97 | -17.5% | 0.94 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=none n=20 | 13.7% | 1.12 | -18.5% | 1.15 / 1.10 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json K=none n=30 | 12.5% | 1.10 | -17.1% | 1.07 / 1.13 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json EW-all-eligible K=200d [diag] | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json EW-all-eligible K=100d [diag] | 9.9% | 1.01 | -20.0% | 1.10 / 0.92 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json EW-all-eligible K=50d [diag] | 7.4% | 0.79 | -22.3% | 0.87 / 0.71 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json EW-all-eligible K=none [diag] | 12.2% | 1.13 | -18.4% | 1.14 / 1.12 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=200d n=5 | 16.7% | 0.88 | -23.4% | 1.02 / 0.78 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=200d n=10 | 14.2% | 0.89 | -21.4% | 1.11 / 0.71 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=200d n=20 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=200d n=30 | 12.2% | 0.97 | -20.3% | 1.15 / 0.82 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=100d n=5 | 17.0% | 0.90 | -23.8% | 1.04 / 0.79 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=100d n=10 | 14.0% | 0.89 | -19.6% | 1.11 / 0.71 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2,OOS) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=100d n=20 | 11.9% | 0.90 | -19.9% | 1.02 / 0.79 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2,OOS) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=100d n=30 | 11.2% | 0.93 | -20.0% | 1.06 / 0.81 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=50d n=5 | 12.1% | 0.71 | -26.0% | 0.79 / 0.64 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=50d n=10 | 11.2% | 0.77 | -22.7% | 0.99 / 0.59 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=50d n=20 | 9.0% | 0.74 | -20.8% | 0.88 / 0.62 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=50d n=30 | 8.5% | 0.77 | -19.7% | 0.88 / 0.67 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=none n=5 | 16.9% | 0.89 | -23.8% | 1.03 / 0.78 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=none n=10 | 14.4% | 0.90 | -21.4% | 1.09 / 0.74 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=none n=20 | 12.8% | 0.93 | -20.7% | 1.08 / 0.80 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json K=none n=30 | 12.1% | 0.94 | -20.8% | 1.08 / 0.81 | 0.67 (0.64/0.69) | KEEP 4a / KILL 4b (H2,DD) | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json EW-all-eligible K=200d [diag] | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json EW-all-eligible K=100d [diag] | 10.2% | 0.99 | -18.2% | 1.12 / 0.86 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json EW-all-eligible K=50d [diag] | 8.4% | 0.85 | -22.9% | 0.98 / 0.72 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json EW-all-eligible K=none [diag] | 12.9% | 1.12 | -20.8% | 1.23 / 1.01 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 SPY buy & hold (universe.json sample) - reference | 15.3% | 0.89 | -33.7% | 0.96 / 0.84 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 RULES v1 live (universe.json) - baseline | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json walk-forward plain-Sharpe: K=none n=20 OOS | 14.9% | 1.16 | -18.5% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe.json walk-forward 4b-aware: K=none n=20 OOS | 14.9% | 1.16 | -18.5% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json walk-forward plain-Sharpe: K=200d n=30 OOS | 11.6% | 0.90 | -20.3% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
+| 2026-09-04 | 55 universe_broad.json walk-forward 4b-aware: K=200d n=30 OOS | 11.6% | 0.90 | -20.3% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_trend-gate-lookback-primary_cloud.py |
