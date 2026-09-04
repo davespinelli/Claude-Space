@@ -1,0 +1,5 @@
+# ESEA — EUROSEAS LTD. · triage 2026-09-04 · Edge: ignored-microcap · Score 4/10
+
+Euroseas is a Marshall Islands containership owner (SIC 4412, deep sea freight) whose vessels are operated not by employees but by Eurobulk, an affiliated ship manager owned by the Chairman/CEO and his family under a Master Management Agreement running to January 2028 at a per-vessel daily fee of EUR 875. The pack has no business description and no results release, so the fleet, charter book and rate environment are unknown to me. The ignored-microcap case rests on structure: 7,055,881 shares outstanding, 13 holders of record, directors and 5% owners holding 58.6%, and $3.0M of 20-day average dollar volume against a $542.9M market cap, with two insiders net buyers over the last year. The biggest risk is that the cheapness (3.8x EV/EBIT, 26.0% FCF yield on $149.5M of EBIT) is charter-cycle earnings the pack gives me no way to date, while the external manager takes fees regardless. The stock sits 3.1% below its 52-week high, so nothing here is unnoticed or distressed.
+
+_Sources: triage pack only (sections 1, 2, 3, 4, 6, 8, 11). Triage-depth read, not a deep dive._
