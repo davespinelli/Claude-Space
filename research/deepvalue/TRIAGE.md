@@ -54,3 +54,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | PLOW | DOUGLAS DYNAMICS, INC | $953.1M | cyclical-trough | 6 | Seven straight below-average snow seasons now turning, guidance raised twice to 8.6x EV/EBITDA, but H1 operations used $25.2M of cash |
 | 2026-09-04 | EVTC | EVERTEC, Inc. | $1.8B | cash-cow-narrative | 6 | 7.7x raised adjusted EPS guidance with 11.2% FCF yield and 6.6% share shrink, but GAAP EPS fell to $0.09 and net debt is 5.2x EBIT |
 | 2026-09-04 | NATH | NATHANS FAMOUS, INC. | $402.2M | none | 3 | Trading 3.9% below Smithfield's $102.00 cash merger price, so this is CFIUS arbitrage rather than a value question |
+| 2026-09-04 | BDL | FLANIGANS ENTERPRISES INC | $85.2M | ignored-microcap | 5 | 1.86M shares and $1.5M ADV at 9.8x EV/EBIT, but a 4.2% EBIT margin and guided cost inflation leave no cushion |
+| 2026-09-04 | DFIN | Donnelley Financial Solutions, Inc. | $1.2B | misunderstood-segment | 7 | Software is 44.3% of sales growing 8.7% inside a shrinking consolidated line, and GAAP earnings hide an $82.8M non-cash pension charge |
+| 2026-09-04 | TGLS | Tecnoglass Holdings Inc. | $1.7B | none | 0 | no filings in bundle |
+| 2026-09-04 | GIC | GLOBAL INDUSTRIAL Co | $1.5B | none | 4 | Quality net-cash MRO distributor but 14.4x EV/EBIT is full and Q2 GAAP EPS of $0.96 was $0.54 excluding one-time tariff refunds |
+| 2026-09-04 | PLAB | PHOTRONICS INC | $1.7B | hidden-asset | 6 | $511.5M cash on a $1.7B cap at 5.5x EV/EBIT, offset by $330M FY26 capex guidance and profit leaking to JV minorities |
+| 2026-09-04 | ELA | Envela Corp | $356.7M | none | 0 | no filings in bundle |
+| 2026-09-04 | LQDT | LIQUIDITY SERVICES INC | $1.3B | none | 4 | 29.9x EV/EBIT and the 31% revenue growth is a consignment-to-purchase mix shift that cut RSCG direct margin from 28.7% to 22.6% |
+| 2026-09-04 | TEN | TSAKOS ENERGY NAVIGATION LTD | $1.3B | none | 0 | no filings in bundle |
+| 2026-09-04 | REPX | Riley Exploration Permian, Inc. | $932.5M | none | 4 | Screen FCF yield of 22.8% omits capex entirely; actual Q2 free cash flow was $6M and Q2 net income included a $69M non-cash derivative gain |
+| 2026-09-04 | AKBA | Akebia Therapeutics, Inc. | $272.4M | misunderstood-segment | 7 | Vafseo at $21.3M growing 34% sequentially is masked by Auryxia's generic collapse, with cash at roughly half the market cap |

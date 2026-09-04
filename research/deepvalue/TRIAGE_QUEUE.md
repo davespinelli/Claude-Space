@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T13:18:01Z · open 432 · in progress 0 · done 53_
+_Source: universe_under2b.csv · updated 2026-09-04T14:02:28Z · open 412 · in progress 10 · done 63_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (432)
+## Open (412)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| BDL | FLANIGANS ENTERPRISES INC | $85.2M |
-| DFIN | Donnelley Financial Solutions, Inc. | $1.21B |
-| TGLS | Tecnoglass Holdings Inc. | $1.74B |
-| GIC | GLOBAL INDUSTRIAL Co | $1.49B |
-| PLAB | PHOTRONICS INC | $1.66B |
-| ELA | Envela Corp | $356.7M |
-| LQDT | LIQUIDITY SERVICES INC | $1.27B |
-| TEN | TSAKOS ENERGY NAVIGATION LTD | $1.30B |
-| REPX | Riley Exploration Permian, Inc. | $932.5M |
-| AKBA | Akebia Therapeutics, Inc. | $272.4M |
-| INFU | InfuSystem Holdings, Inc | $242.6M |
-| AUDC | AUDIOCODES LTD | $270.6M |
-| KROS | Keros Therapeutics, Inc. | $220.3M |
-| PRKS | United Parks & Resorts Inc. | $1.84B |
-| PANL | Pangaea Logistics Solutions Ltd. | $542.8M |
-| XTNT | Xtant Medical Holdings, Inc. | $56.1M |
-| CRAI | CRA INTERNATIONAL, INC. | $1.08B |
-| PRG | PROG Holdings, Inc. | $1.53B |
-| TBCH | Turtle Beach Corp | $224.2M |
-| ECVT | Ecovyst Inc. | $1.12B |
 | UAN | CVR PARTNERS, LP | $1.39B |
 | KRT | Karat Packaging Inc. | $938.0M |
 | NUS | NU SKIN ENTERPRISES, INC. | $228.8M |
@@ -441,12 +421,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| INFU | InfuSystem Holdings, Inc | $242.6M | cloudA | 2026-09-04T13:59:44Z |
+| AUDC | AUDIOCODES LTD | $270.6M | cloudA | 2026-09-04T13:59:44Z |
+| KROS | Keros Therapeutics, Inc. | $220.3M | cloudA | 2026-09-04T13:59:44Z |
+| PRKS | United Parks & Resorts Inc. | $1.84B | cloudA | 2026-09-04T13:59:44Z |
+| PANL | Pangaea Logistics Solutions Ltd. | $542.8M | cloudA | 2026-09-04T13:59:44Z |
+| XTNT | Xtant Medical Holdings, Inc. | $56.1M | cloudA | 2026-09-04T13:59:44Z |
+| CRAI | CRA INTERNATIONAL, INC. | $1.08B | cloudA | 2026-09-04T13:59:44Z |
+| PRG | PROG Holdings, Inc. | $1.53B | cloudA | 2026-09-04T13:59:44Z |
+| TBCH | Turtle Beach Corp | $224.2M | cloudA | 2026-09-04T13:59:44Z |
+| ECVT | Ecovyst Inc. | $1.12B | cloudA | 2026-09-04T13:59:44Z |
 
-## Done (53)
+## Done (63)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | PLOW | DOUGLAS DYNAMICS, INC | $953.1M | cloudA | 2026-09-04T13:18:01Z |
 | EVTC | EVERTEC, Inc. | $1.83B | cloudA | 2026-09-04T13:18:01Z |
 | NATH | NATHANS FAMOUS, INC. | $402.2M | cloudA | 2026-09-04T13:18:01Z |
+| BDL | FLANIGANS ENTERPRISES INC | $85.2M | cloudA | 2026-09-04T14:02:28Z |
+| DFIN | Donnelley Financial Solutions, Inc. | $1.21B | cloudA | 2026-09-04T14:02:28Z |
+| TGLS | Tecnoglass Holdings Inc. | $1.74B | cloudA | 2026-09-04T14:02:28Z |
+| GIC | GLOBAL INDUSTRIAL Co | $1.49B | cloudA | 2026-09-04T14:02:28Z |
+| PLAB | PHOTRONICS INC | $1.66B | cloudA | 2026-09-04T14:02:28Z |
+| ELA | Envela Corp | $356.7M | cloudA | 2026-09-04T14:02:28Z |
+| LQDT | LIQUIDITY SERVICES INC | $1.27B | cloudA | 2026-09-04T14:02:28Z |
+| TEN | TSAKOS ENERGY NAVIGATION LTD | $1.30B | cloudA | 2026-09-04T14:02:28Z |
+| REPX | Riley Exploration Permian, Inc. | $932.5M | cloudA | 2026-09-04T14:02:28Z |
+| AKBA | Akebia Therapeutics, Inc. | $272.4M | cloudA | 2026-09-04T14:02:28Z |
