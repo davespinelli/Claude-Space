@@ -194,3 +194,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | LXFR | LUXFER HOLDINGS PLC | $460.0M | none | 3 | A July 2026 Transaction Agreement, change-in-control deals and a 41% six-month move point to a pending deal whose terms the pack omits |
 | 2026-09-04 | HPK | HighPeak Energy, Inc. | $1.0B | none | 3 | The 48.8% FCF yield ignores $107.5M of quarterly capex; what is real is $922.6M net debt with term loan amortization restarting in September |
 | 2026-09-04 | FET | FORUM ENERGY TECHNOLOGIES, INC. | $920.7M | post-restructuring | 5 | Guidance of $115-125M adjusted EBITDA makes the screen's 34.2x EV/EBIT stale, but the stock already ran 196% to 8.5x EV |
+| 2026-09-04 | HNRG | HALLADOR ENERGY CO | $759.5M | none | 0 | no filings in bundle |
+| 2026-09-04 | CWCO | Consolidated Water Co. Ltd. | $464.1M | none | 0 | no filings in bundle |
+| 2026-09-04 | NX | Quanex Building Products CORP | $861.6M | cyclical-trough | 7 | Screen's -11.4% ROIC is a $302.3M non-cash goodwill impairment; LTM adjusted EBITDA is $215.2M against a $1.5B EV |
+| 2026-09-04 | THRY | Thryv Holdings, Inc. | $85.3M | cash-cow-narrative | 6 | $73-77M of guided 2026 segment EBITDA on an $85M cap, but SaaS fell 0.5% with 90% NRR while the cash cow runs off by 2028 |
+| 2026-09-04 | QNST | QUINSTREET, INC | $1.1B | none | 4 | The stale 164.6x EV/EBIT hides a 2.7% GAAP operating margin and $37.4M of SBC added back; stock near highs, insiders sold $17.4M |
+| 2026-09-04 | PNTG | Pennant Group, Inc. | $1.3B | none | 3 | Debt-funded home health roll-up at 15x guided EBITDA and 27x adjusted EPS, up 57% in twelve months with no insider buying |
+| 2026-09-04 | LWAY | Lifeway Foods, Inc. | $387.6M | cyclical-trough | 4 | Milk, resin and freight cut Q2 gross margin to 19.5% from 28.6%, but 24.9x EV/EBIT and negative FCF leave no margin of safety |
+| 2026-09-04 | DCTH | DELCATH SYSTEMS, INC. | $571.8M | none | 3 | Net cash of $95.9M is real and debt-free, but H1 operating income was $0.8M and the stock is up 81.5% in six months |
+| 2026-09-04 | LMAT | LEMAITRE VASCULAR INC | $1.8B | none | 3 | Net cash is $207M once the $169.1M convertible is netted, but the business still trades near 21x guided operating income |
+| 2026-09-04 | TNC | TENNANT CO | $1.2B | cyclical-trough | 6 | ERP botch and EMEA pricing cut EBITDA margin to 10.9% from 16.0% while orders rose 6.6% and share count fell 7.7% |

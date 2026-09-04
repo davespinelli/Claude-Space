@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T17:39:38Z · open 292 · in progress 0 · done 193_
+_Source: universe_under2b.csv · updated 2026-09-04T18:09:50Z · open 272 · in progress 10 · done 203_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (292)
+## Open (272)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| HNRG | HALLADOR ENERGY CO | $759.5M |
-| CWCO | Consolidated Water Co. Ltd. | $464.1M |
-| NX | Quanex Building Products CORP | $861.6M |
-| THRY | Thryv Holdings, Inc. | $85.3M |
-| QNST | QUINSTREET, INC | $1.08B |
-| PNTG | Pennant Group, Inc. | $1.35B |
-| LWAY | Lifeway Foods, Inc. | $387.6M |
-| DCTH | DELCATH SYSTEMS, INC. | $571.8M |
-| LMAT | LEMAITRE VASCULAR INC | $1.84B |
-| TNC | TENNANT CO | $1.20B |
-| MAGN | Magnera Corp | $443.9M |
-| PCRX | Pacira BioSciences, Inc. | $1.06B |
-| ACCO | ACCO BRANDS Corp | $400.6M |
-| GCO | GENESCO INC | $382.5M |
-| CMP | COMPASS MINERALS INTERNATIONAL INC | $1.06B |
-| SND | Smart Sand, Inc. | $226.8M |
-| MPTI | M-tron Industries, Inc. | $315.2M |
-| CLFD | Clearfield, Inc. | $384.7M |
-| ORGO | Organogenesis Holdings Inc. | $211.0M |
-| GBX | GREENBRIER COMPANIES INC | $1.32B |
 | IDR | Idaho Strategic Resources, Inc. | $497.1M |
 | MCFT | MasterCraft Boat Holdings, Inc. | $379.8M |
 | ACU | ACME UNITED CORP | $242.1M |
@@ -301,12 +281,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| MAGN | Magnera Corp | $443.9M | cloudA | 2026-09-04T18:06:20Z |
+| PCRX | Pacira BioSciences, Inc. | $1.06B | cloudA | 2026-09-04T18:06:20Z |
+| ACCO | ACCO BRANDS Corp | $400.6M | cloudA | 2026-09-04T18:06:20Z |
+| GCO | GENESCO INC | $382.5M | cloudA | 2026-09-04T18:06:20Z |
+| CMP | COMPASS MINERALS INTERNATIONAL INC | $1.06B | cloudA | 2026-09-04T18:06:20Z |
+| SND | Smart Sand, Inc. | $226.8M | cloudA | 2026-09-04T18:06:20Z |
+| MPTI | M-tron Industries, Inc. | $315.2M | cloudA | 2026-09-04T18:06:20Z |
+| CLFD | Clearfield, Inc. | $384.7M | cloudA | 2026-09-04T18:06:20Z |
+| ORGO | Organogenesis Holdings Inc. | $211.0M | cloudA | 2026-09-04T18:06:20Z |
+| GBX | GREENBRIER COMPANIES INC | $1.32B | cloudA | 2026-09-04T18:06:20Z |
 
-## Done (193)
+## Done (203)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | LXFR | LUXFER HOLDINGS PLC | $460.0M | cloudB | 2026-09-04T17:39:38Z |
 | HPK | HighPeak Energy, Inc. | $1.05B | cloudB | 2026-09-04T17:39:38Z |
 | FET | FORUM ENERGY TECHNOLOGIES, INC. | $920.7M | cloudB | 2026-09-04T17:39:38Z |
+| HNRG | HALLADOR ENERGY CO | $759.5M | cloudA | 2026-09-04T18:09:50Z |
+| CWCO | Consolidated Water Co. Ltd. | $464.1M | cloudA | 2026-09-04T18:09:50Z |
+| NX | Quanex Building Products CORP | $861.6M | cloudA | 2026-09-04T18:09:50Z |
+| THRY | Thryv Holdings, Inc. | $85.3M | cloudA | 2026-09-04T18:09:50Z |
+| QNST | QUINSTREET, INC | $1.08B | cloudA | 2026-09-04T18:09:50Z |
+| PNTG | Pennant Group, Inc. | $1.35B | cloudA | 2026-09-04T18:09:50Z |
+| LWAY | Lifeway Foods, Inc. | $387.6M | cloudA | 2026-09-04T18:09:50Z |
+| DCTH | DELCATH SYSTEMS, INC. | $571.8M | cloudA | 2026-09-04T18:09:50Z |
+| LMAT | LEMAITRE VASCULAR INC | $1.84B | cloudA | 2026-09-04T18:09:50Z |
+| TNC | TENNANT CO | $1.20B | cloudA | 2026-09-04T18:09:50Z |
