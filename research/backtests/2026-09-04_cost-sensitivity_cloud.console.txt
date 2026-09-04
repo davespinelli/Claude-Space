@@ -1,0 +1,334 @@
+==========================================================================================================================================================================
+Idea 11  cost-sensitivity (cloud) | 2026-09-04_cost-sensitivity_cloud.py | weekly, next-day execution, costs [0, 5, 10, 15, 25, 50, 100] bps
+==========================================================================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+Index sanity (must be ~252 rows/yr; the calendar-day bug gave 365): 2013 252, 2018 251, 2024 252
+
+HARNESS CHECK vs idea 2's published KEEP row (12.7% / 1.093 / -18.3%, halves 1.088/1.103):
+  reproduced: 12.7% / 1.093 / -18.3%, halves 1.088/1.103
+  RULES v1 live book @10bps: 6.5% / 0.666 / -13.8%, halves 0.641/0.692  (published idea-13 row: 6.5% / 0.67 / -13.8%, halves 0.64/0.69)
+
+==========================================================================================================================================================================
+UNIVERSE universe.json: 56 names, 2008-01-02 -> 2026-09-03
+==========================================================================================================================================================================
+Eval sample: 2009-01-13 -> 2026-09-03 | IS <= 2016-12-31, OOS >= 2017-01-01
+SPY: CAGR 15.3%  Sharpe 0.890  MaxDD -33.7%  halves 0.957/0.837  OOS Sharpe 0.884
+4b bars (cost-invariant): Sharpe > SPY halves & OOS, MaxDD <= 20.23%, CAGR >= 10.680%
+
+COST-MODEL VERIFICATION (analytic r(c) = r(0) - turnover*c/1e4 vs the engine)
+  max |analytic - engine| over 3x4 runs = 0.000e+00  (EXACT)
+
+TURNOVER (the whole cost story; annualised sum of |dw|)
+  v1       23.59x/yr   IS  22.02x   OOS  24.89x   cost drag @10bps = 2.36%/yr
+  CAND20    9.63x/yr   IS   9.70x   OOS   9.58x   cost drag @10bps = 0.96%/yr
+  EWall     8.21x/yr   IS   8.02x   OOS   8.37x   cost drag @10bps = 0.82%/yr
+
+FULL GRID universe.json - 21 points, ALL reported (4a vs v1 at the SAME cost; f4b lists which 4b tests fail)
+              CAGR   Vol  Sharpe  MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  exCAGR_SPY    p4a    p4b                f4b
+book   cost                                                                                                                        
+v1     0     0.090 0.102   0.897 -0.136  0.877  0.919     0.105       0.982     -0.136      -0.062  False  False            H1,CAGR
+       5     0.077 0.102   0.782 -0.137  0.759  0.806     0.091       0.867     -0.137      -0.075  False  False     H1,H2,OOS,CAGR
+       10    0.065 0.102   0.666 -0.138  0.641  0.692     0.078       0.751     -0.138      -0.088  False  False     H1,H2,OOS,CAGR
+       15    0.052 0.102   0.551 -0.140  0.522  0.578     0.064       0.635     -0.139      -0.100  False  False     H1,H2,OOS,CAGR
+       25    0.028 0.102   0.319 -0.156  0.285  0.350     0.038       0.403     -0.142      -0.125  False  False     H1,H2,OOS,CAGR
+       50   -0.031 0.103  -0.256 -0.468 -0.304 -0.216    -0.024      -0.174     -0.313      -0.184  False  False  H1,H2,OOS,DD,CAGR
+       100  -0.139 0.107  -1.350 -0.930 -1.418 -1.298    -0.139      -1.276     -0.771      -0.292  False  False  H1,H2,OOS,DD,CAGR
+CAND20 0     0.138 0.115   1.176 -0.182  1.178  1.182     0.155       1.248     -0.182      -0.015  False   True                  -
+       5     0.132 0.115   1.135 -0.183  1.133  1.143     0.149       1.209     -0.183      -0.020  False   True                  -
+       10    0.127 0.115   1.093 -0.183  1.088  1.103     0.144       1.170     -0.183      -0.026  False   True                  -
+       15    0.121 0.115   1.051 -0.184  1.043  1.064     0.138       1.130     -0.184      -0.031  False   True                  -
+       25    0.111 0.115   0.968 -0.184  0.954  0.985     0.128       1.051     -0.184      -0.042  False  False                 H1
+       50    0.084 0.115   0.758 -0.187  0.728  0.788     0.101       0.853     -0.187      -0.068   True  False     H1,H2,OOS,CAGR
+       100   0.033 0.116   0.339 -0.203  0.278  0.394     0.049       0.457     -0.194      -0.119   True  False  H1,H2,OOS,DD,CAGR
+EWall  0     0.113 0.099   1.133 -0.158  1.150  1.121     0.123       1.197     -0.158      -0.039  False   True                  -
+       5     0.109 0.099   1.092 -0.158  1.109  1.079     0.118       1.156     -0.158      -0.044  False   True                  -
+       10    0.104 0.099   1.050 -0.159  1.068  1.037     0.114       1.114     -0.159      -0.048  False  False               CAGR
+       15    0.100 0.099   1.009 -0.159  1.027  0.994     0.109       1.073     -0.159      -0.053  False  False               CAGR
+       25    0.091 0.099   0.925 -0.161  0.945  0.910     0.100       0.989     -0.161      -0.062  False  False            H1,CAGR
+       50    0.068 0.099   0.716 -0.185  0.740  0.697     0.077       0.781     -0.185      -0.084   True  False     H1,H2,OOS,CAGR
+       100   0.025 0.100   0.301 -0.250  0.331  0.274     0.033       0.365     -0.250      -0.127   True  False  H1,H2,OOS,DD,CAGR
+
+  Sharpe decay per 10 bps (OLS slope over 0-100 bps, and the 5->50 bp drop):
+    v1      dSharpe/10bps = -0.2250   Sharpe(5)=0.782 -> Sharpe(50)=-0.256 (-1.038)   CAGR(5)=7.74% -> CAGR(50)=-3.12%
+    CAND20  dSharpe/10bps = -0.0837   Sharpe(5)=1.135 -> Sharpe(50)=0.758 (-0.376)   CAGR(5)=13.22% -> CAGR(50)=8.41%
+    EWall   dSharpe/10bps = -0.0833   Sharpe(5)=1.092 -> Sharpe(50)=0.716 (-0.375)   CAGR(5)=10.87% -> CAGR(50)=6.85%
+
+BREAKEVEN COSTS universe.json (0.5 bp grid, 0-300 bps; 'dies at' = first cost at which the test fails)
+        Sharpe>SPY  CAGR>SPY  CAGR>0     4b  4a_samecost
+book                                                    
+v1           0.000       NaN  36.500    NaN          NaN
+CAND20      34.000       NaN 133.500 24.500          NaN
+EWall       29.000       NaN 130.000  7.000          NaN
+  (NaN = fails already at 0 bps, i.e. cost is not what kills it)
+  non-monotone tests (test re-passes above its first failure): none
+
+  WHICH 4b CLAUSE BINDS FIRST as cost rises (universe.json):
+    v1      H1@0bps -> CAGR@0bps -> H2@4bps -> OOS@5bps -> DD@37bps
+    CAND20  H1@25bps -> CAGR@29bps -> H2@44bps -> OOS@47bps -> DD@100bps
+    EWall   CAGR@8bps -> H1@24bps -> H2@34bps -> OOS@38bps -> DD@69bps
+
+WALK-FORWARD (universe.json, rule 8): chosen on 2009-2016, evaluated on 2017-2026
+  In-sample SPY: Sharpe 0.899, MaxDD -22.1% -> S2 admits IS MaxDD shallower than -13.2%
+  In-sample table (the only numbers either rule may look at):
+             IS_Sharpe  IS_MaxDD
+book   cost                     
+v1     0         0.785    -0.114
+       5         0.669    -0.122
+       10        0.553    -0.131
+       15        0.437    -0.140
+       25        0.206    -0.156
+       50       -0.369    -0.325
+       100      -1.455    -0.700
+CAND20 0         1.083    -0.113
+       5         1.038    -0.115
+       10        0.993    -0.117
+       15        0.948    -0.119
+       25        0.858    -0.125
+       50        0.632    -0.145
+       100       0.181    -0.203
+EWall  0         1.053    -0.105
+       5         1.011    -0.109
+       10        0.970    -0.112
+       15        0.928    -0.115
+       25        0.844    -0.122
+       50        0.635    -0.138
+       100       0.219    -0.185
+  OOS bars: Sharpe > 0.884, MaxDD <= 20.2%, CAGR >= 10.85%   (SPY OOS 15.5%/0.884/-33.7%)
+  S1 plain-Sharpe: CAND20@0bps -> OOS CAGR 15.5%  Sharpe 1.248  MaxDD -18.2%   clears all OOS 4b bars? True
+  S2 4b-aware   : CAND20@0bps -> OOS CAGR 15.5%  Sharpe 1.248  MaxDD -18.2%   clears all OOS 4b bars? True
+  Spearman(IS Sharpe, OOS Sharpe) over the 21 points = +0.990
+
+  IS-vs-OOS BREAKEVEN (universe.json) - is in-sample cost tolerance an unbiased estimate?
+    per book: cost at which Sharpe(book) <= Sharpe(SPY) within each window
+        IS_breakeven  OOS_breakeven   diff
+book                                      
+v1               NaN          4.000    NaN
+CAND20        20.000         46.000 26.000
+EWall         18.000         37.500 19.500
+
+CALENDAR YEARS (universe.json, %) - each book at 10 bps and at 50 bps
+      v1@10  CAND20@10  EWall@10   v1@50  CAND20@50  EWall@50     SPY
+Date                                                                 
+2009  9.113     16.899    16.744   0.953     13.107    13.074  31.133
+2010  4.348      7.744     9.303  -3.097      3.151     5.378  15.056
+2011  1.861      0.516    -1.003  -5.433     -3.562    -5.095   1.895
+2012  6.836      6.185     6.977  -2.194      2.036     4.359  15.990
+2013 11.143     29.030    22.677   1.728     25.110    20.331  32.308
+2014  6.618      8.146     7.957  -3.224      3.903     5.513  13.464
+2015  3.109      9.899     6.997  -7.999      5.935     2.874   1.234
+2016 -3.126      8.467     5.990 -11.334      3.846     1.982  11.998
+2017 14.750     18.264    16.243   3.791     14.771    14.583  21.705
+2018  7.993      5.924    -1.217  -3.059      2.317    -5.025  -4.569
+2019  6.730     17.713    14.977  -2.187     13.377    11.168  31.224
+2020  8.445     15.393    15.086  -1.251     10.342    10.677  18.332
+2021 20.204     22.085    22.074   8.560     17.220    20.303  28.729
+2022  2.582     -9.024    -9.248  -5.647    -12.009   -15.275 -18.175
+2023  1.288     23.989    18.874 -10.154     19.623    14.424  26.176
+2024  9.661     22.196    16.923  -1.441     17.126    14.747  24.886
+2025  7.731     13.229    10.317  -2.208      8.756     6.463  17.719
+2026 -2.678     12.794     9.355  -8.635      9.455     7.092  13.984
+
+==========================================================================================================================================================================
+UNIVERSE universe_broad.json: 136 names, 2008-01-02 -> 2026-09-03
+==========================================================================================================================================================================
+Eval sample: 2009-01-13 -> 2026-09-03 | IS <= 2016-12-31, OOS >= 2017-01-01
+SPY: CAGR 15.3%  Sharpe 0.890  MaxDD -33.7%  halves 0.957/0.837  OOS Sharpe 0.884
+4b bars (cost-invariant): Sharpe > SPY halves & OOS, MaxDD <= 20.23%, CAGR >= 10.680%
+
+COST-MODEL VERIFICATION (analytic r(c) = r(0) - turnover*c/1e4 vs the engine)
+  max |analytic - engine| over 3x4 runs = 0.000e+00  (EXACT)
+
+TURNOVER (the whole cost story; annualised sum of |dw|)
+  v1       29.44x/yr   IS  27.45x   OOS  31.08x   cost drag @10bps = 2.94%/yr
+  CAND20   13.78x/yr   IS  13.26x   OOS  14.20x   cost drag @10bps = 1.38%/yr
+  EWall     8.27x/yr   IS   7.98x   OOS   8.51x   cost drag @10bps = 0.83%/yr
+
+FULL GRID universe_broad.json - 21 points, ALL reported (4a vs v1 at the SAME cost; f4b lists which 4b tests fail)
+              CAGR   Vol  Sharpe  MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  exCAGR_SPY    p4a    p4b                f4b
+book   cost                                                                                                                        
+v1     0     0.096 0.106   0.917 -0.184  1.042  0.812     0.093       0.861     -0.184      -0.056  False  False        H2,OOS,CAGR
+       5     0.080 0.106   0.779 -0.194  0.902  0.674     0.077       0.721     -0.194      -0.072  False  False     H1,H2,OOS,CAGR
+       10    0.064 0.106   0.640 -0.212  0.762  0.537     0.060       0.581     -0.212      -0.088  False  False  H1,H2,OOS,DD,CAGR
+       15    0.049 0.107   0.501 -0.231  0.621  0.399     0.044       0.440     -0.231      -0.104  False  False  H1,H2,OOS,DD,CAGR
+       25    0.018 0.107   0.225 -0.267  0.341  0.124     0.012       0.160     -0.267      -0.134  False  False  H1,H2,OOS,DD,CAGR
+       50   -0.054 0.108  -0.458 -0.629 -0.353 -0.553    -0.064      -0.531     -0.516      -0.207  False  False  H1,H2,OOS,DD,CAGR
+       100  -0.184 0.114  -1.728 -0.973 -1.641 -1.810    -0.199      -1.812     -0.885      -0.337  False  False  H1,H2,OOS,DD,CAGR
+CAND20 0     0.147 0.139   1.057 -0.200  1.226  0.911     0.141       0.993     -0.200      -0.006  False   True                  -
+       5     0.139 0.139   1.008 -0.200  1.175  0.862     0.133       0.943     -0.200      -0.014  False   True                  -
+       10    0.131 0.139   0.958 -0.201  1.125  0.814     0.125       0.894     -0.201      -0.022   True  False                 H2
+       15    0.123 0.139   0.908 -0.201  1.074  0.764     0.117       0.844     -0.201      -0.029   True  False             H2,OOS
+       25    0.108 0.139   0.809 -0.202  0.972  0.666     0.102       0.745     -0.202      -0.045   True  False             H2,OOS
+       50    0.070 0.139   0.560 -0.219  0.718  0.421     0.063       0.497     -0.219      -0.082   True  False  H1,H2,OOS,DD,CAGR
+       100  -0.001 0.140   0.063 -0.406  0.211 -0.068    -0.010       0.004     -0.406      -0.154   True  False  H1,H2,OOS,DD,CAGR
+EWall  0     0.117 0.105   1.107 -0.173  1.220  1.000     0.116       1.103     -0.173      -0.036   True   True                  -
+       5     0.112 0.105   1.067 -0.175  1.183  0.959     0.111       1.062     -0.175      -0.041   True   True                  -
+       10    0.107 0.105   1.027 -0.177  1.146  0.917     0.106       1.021     -0.177      -0.045   True   True                  -
+       15    0.103 0.105   0.988 -0.179  1.108  0.875     0.101       0.980     -0.179      -0.050   True  False               CAGR
+       25    0.094 0.105   0.908 -0.182  1.033  0.791     0.092       0.898     -0.182      -0.059   True  False            H2,CAGR
+       50    0.071 0.105   0.709 -0.203  0.845  0.582     0.069       0.692     -0.203      -0.081   True  False  H1,H2,OOS,DD,CAGR
+       100   0.028 0.106   0.312 -0.249  0.469  0.165     0.024       0.282     -0.249      -0.125   True  False  H1,H2,OOS,DD,CAGR
+
+  Sharpe decay per 10 bps (OLS slope over 0-100 bps, and the 5->50 bp drop):
+    v1      dSharpe/10bps = -0.2649   Sharpe(5)=0.779 -> Sharpe(50)=-0.458 (-1.237)   CAGR(5)=8.02% -> CAGR(50)=-5.40%
+    CAND20  dSharpe/10bps = -0.0994   Sharpe(5)=1.008 -> Sharpe(50)=0.560 (-0.448)   CAGR(5)=13.89% -> CAGR(50)=7.04%
+    EWall   dSharpe/10bps = -0.0795   Sharpe(5)=1.067 -> Sharpe(50)=0.709 (-0.358)   CAGR(5)=11.19% -> CAGR(50)=7.13%
+
+BREAKEVEN COSTS universe_broad.json (0.5 bp grid, 0-300 bps; 'dies at' = first cost at which the test fails)
+        Sharpe>SPY  CAGR>SPY  CAGR>0     4b  4a_samecost
+book                                                    
+v1           0.500       NaN  31.000    NaN          NaN
+CAND20      16.500       NaN  99.000  7.500          NaN
+EWall       27.000       NaN 133.000 10.500      300.000
+  (NaN = fails already at 0 bps, i.e. cost is not what kills it)
+  non-monotone tests (test re-passes above its first failure): none
+
+  WHICH 4b CLAUSE BINDS FIRST as cost rises (universe_broad.json):
+    v1      H2@0bps -> OOS@0bps -> CAGR@0bps -> H1@4bps -> DD@8bps
+    CAND20  H2@8bps -> OOS@11bps -> CAGR@26bps -> H1@27bps -> DD@36bps
+    EWall   CAGR@11bps -> H2@20bps -> OOS@27bps -> H1@36bps -> DD@49bps
+
+WALK-FORWARD (universe_broad.json, rule 8): chosen on 2009-2016, evaluated on 2017-2026
+  In-sample SPY: Sharpe 0.899, MaxDD -22.1% -> S2 admits IS MaxDD shallower than -13.2%
+  In-sample table (the only numbers either rule may look at):
+             IS_Sharpe  IS_MaxDD
+book   cost                     
+v1     0         0.993    -0.090
+       5         0.857    -0.090
+       10        0.721    -0.095
+       15        0.584    -0.104
+       25        0.312    -0.132
+       50       -0.362    -0.303
+       100      -1.619    -0.763
+CAND20 0         1.144    -0.134
+       5         1.094    -0.135
+       10        1.044    -0.136
+       15        0.994    -0.138
+       25        0.893    -0.140
+       50        0.642    -0.149
+       100       0.141    -0.196
+EWall  0         1.111    -0.110
+       5         1.073    -0.112
+       10        1.035    -0.114
+       15        0.997    -0.116
+       25        0.921    -0.121
+       50        0.729    -0.137
+       100       0.348    -0.169
+  OOS bars: Sharpe > 0.884, MaxDD <= 20.2%, CAGR >= 10.85%   (SPY OOS 15.5%/0.884/-33.7%)
+  S1 plain-Sharpe: CAND20@0bps -> OOS CAGR 14.1%  Sharpe 0.993  MaxDD -20.0%   clears all OOS 4b bars? True
+  S2 4b-aware   : EWall@0bps -> OOS CAGR 11.6%  Sharpe 1.103  MaxDD -17.3%   clears all OOS 4b bars? True
+  Spearman(IS Sharpe, OOS Sharpe) over the 21 points = +0.962
+
+  IS-vs-OOS BREAKEVEN (universe_broad.json) - is in-sample cost tolerance an unbiased estimate?
+    per book: cost at which Sharpe(book) <= Sharpe(SPY) within each window
+        IS_breakeven  OOS_breakeven    diff
+book                                       
+v1             3.000            NaN     NaN
+CAND20        24.000         10.500 -13.500
+EWall         27.500         26.500  -1.000
+
+CALENDAR YEARS (universe_broad.json, %) - each book at 10 bps and at 50 bps
+      v1@10  CAND20@10  EWall@10   v1@50  CAND20@50  EWall@50     SPY
+Date                                                                 
+2009  5.221     17.988    17.091  -3.123     11.712    12.683  31.142
+2010  1.514     14.643    10.541  -8.722      8.423     6.521  15.054
+2011 10.112      4.539     2.208  -0.324     -1.109    -1.923   1.892
+2012 15.527     15.974     8.778   3.713     10.678     5.924  15.990
+2013 17.896     35.339    27.651   2.820     28.582    25.684  32.311
+2014  1.007      6.288    10.515  -9.969      0.284     7.957  13.467
+2015  7.127      7.764     3.347  -4.874      2.754    -0.537   1.231
+2016 -1.176     10.265     8.471 -11.356      4.586     4.865  12.003
+2017 14.878     21.666    19.786   1.926     15.862    18.157  21.704
+2018  0.481      1.798    -1.082 -10.766     -3.922    -4.962  -4.571
+2019  7.703     16.325    18.508  -5.026      9.729    15.083  31.225
+2020  4.111     12.242     7.502  -7.564      6.233     2.218  18.331
+2021 16.169     15.532    20.918   2.663      8.892    18.982  28.730
+2022 -4.142    -10.925    -8.370 -14.495    -15.831   -14.056 -18.176
+2023 -7.807     12.696    14.644 -19.078      6.281    10.310  26.177
+2024 20.814     20.593    13.514   4.205     13.563    11.489  24.888
+2025  6.609     19.912    10.312  -5.305     13.938     6.400  17.719
+2026  2.446     15.082    10.198  -5.767     10.303     7.773  13.983
+
+==========================================================================================================================================================================
+CROSS-UNIVERSE 4b (a (book, cost) point passes only if it passes on BOTH lists)
+==========================================================================================================================================================================
+             universe.json  broad   both
+book   cost                             
+v1     0             False  False  False
+       5             False  False  False
+       10            False  False  False
+       15            False  False  False
+       25            False  False  False
+       50            False  False  False
+       100           False  False  False
+CAND20 0              True   True   True
+       5              True   True   True
+       10             True  False  False
+       15             True  False  False
+       25            False  False  False
+       50            False  False  False
+       100           False  False  False
+EWall  0              True   True   True
+       5              True   True   True
+       10            False   True  False
+       15            False  False  False
+       25            False  False  False
+       50            False  False  False
+       100           False  False  False
+  points passing on both lists: 4 of 21
+    CAND20: cross-universe 4b survives to 5 bps (of the reported grid [0, 5, 10, 15, 25, 50, 100])
+    EWall: cross-universe 4b survives to 5 bps (of the reported grid [0, 5, 10, 15, 25, 50, 100])
+
+BREAKEVEN SUMMARY, both universes (bps):
+              Sharpe>SPY  CAGR>SPY  CAGR>0     4b  4a_samecost
+u     book                                                    
+u56   v1           0.000       NaN  36.500    NaN          NaN
+      CAND20      34.000       NaN 133.500 24.500          NaN
+      EWall       29.000       NaN 130.000  7.000          NaN
+broad v1           0.500       NaN  31.000    NaN          NaN
+      CAND20      16.500       NaN  99.000  7.500          NaN
+      EWall       27.000       NaN 133.000 10.500      300.000
+
+LEADERBOARD rows:
+| 2026-09-04 | 11 u56/v1@0bps | 9.0% | 0.90 | -13.6% | 0.88 / 0.92 | see v1 row | KILL 4b (H1,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@5bps | 7.7% | 0.78 | -13.7% | 0.76 / 0.81 | see v1 row | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@10bps | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | see v1 row | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@15bps | 5.2% | 0.55 | -14.0% | 0.52 / 0.58 | see v1 row | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@25bps | 2.8% | 0.32 | -15.6% | 0.28 / 0.35 | see v1 row | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@50bps | -3.1% | -0.26 | -46.8% | -0.30 / -0.22 | see v1 row | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@100bps | -13.9% | -1.35 | -93.0% | -1.42 / -1.30 | see v1 row | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@0bps | 13.8% | 1.18 | -18.2% | 1.18 / 1.18 | see v1 row | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@5bps | 13.2% | 1.13 | -18.3% | 1.13 / 1.14 | see v1 row | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@10bps | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | see v1 row | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@15bps | 12.1% | 1.05 | -18.4% | 1.04 / 1.06 | see v1 row | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@25bps | 11.1% | 0.97 | -18.4% | 0.95 / 0.99 | see v1 row | KILL 4b (H1) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@50bps | 8.4% | 0.76 | -18.7% | 0.73 / 0.79 | see v1 row | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@100bps | 3.3% | 0.34 | -20.3% | 0.28 / 0.39 | see v1 row | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@0bps | 11.3% | 1.13 | -15.8% | 1.15 / 1.12 | see v1 row | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@5bps | 10.9% | 1.09 | -15.8% | 1.11 / 1.08 | see v1 row | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@10bps | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | see v1 row | KILL 4b (CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@15bps | 10.0% | 1.01 | -15.9% | 1.03 / 0.99 | see v1 row | KILL 4b (CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@25bps | 9.1% | 0.93 | -16.1% | 0.95 / 0.91 | see v1 row | KILL 4b (H1,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@50bps | 6.8% | 0.72 | -18.5% | 0.74 / 0.70 | see v1 row | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@100bps | 2.5% | 0.30 | -25.0% | 0.33 / 0.27 | see v1 row | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@0bps | 9.6% | 0.92 | -18.4% | 1.04 / 0.81 | see v1 row | KILL 4b (H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@5bps | 8.0% | 0.78 | -19.4% | 0.90 / 0.67 | see v1 row | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@10bps | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | see v1 row | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@15bps | 4.9% | 0.50 | -23.1% | 0.62 / 0.40 | see v1 row | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@25bps | 1.8% | 0.22 | -26.7% | 0.34 / 0.12 | see v1 row | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@50bps | -5.4% | -0.46 | -62.9% | -0.35 / -0.55 | see v1 row | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@100bps | -18.4% | -1.73 | -97.3% | -1.64 / -1.81 | see v1 row | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@0bps | 14.7% | 1.06 | -20.0% | 1.23 / 0.91 | see v1 row | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@5bps | 13.9% | 1.01 | -20.0% | 1.18 / 0.86 | see v1 row | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@10bps | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | see v1 row | 4a-pass, KILL 4b (H2) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@15bps | 12.3% | 0.91 | -20.1% | 1.07 / 0.76 | see v1 row | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@25bps | 10.8% | 0.81 | -20.2% | 0.97 / 0.67 | see v1 row | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@50bps | 7.0% | 0.56 | -21.9% | 0.72 / 0.42 | see v1 row | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@100bps | -0.1% | 0.06 | -40.6% | 0.21 / -0.07 | see v1 row | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@0bps | 11.7% | 1.11 | -17.3% | 1.22 / 1.00 | see v1 row | 4a-pass, KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@5bps | 11.2% | 1.07 | -17.5% | 1.18 / 0.96 | see v1 row | 4a-pass, KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@10bps | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | see v1 row | 4a-pass, KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@15bps | 10.3% | 0.99 | -17.9% | 1.11 / 0.88 | see v1 row | 4a-pass, KILL 4b (CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@25bps | 9.4% | 0.91 | -18.2% | 1.03 / 0.79 | see v1 row | 4a-pass, KILL 4b (H2,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@50bps | 7.1% | 0.71 | -20.3% | 0.84 / 0.58 | see v1 row | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@100bps | 2.8% | 0.31 | -24.9% | 0.47 / 0.17 | see v1 row | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |

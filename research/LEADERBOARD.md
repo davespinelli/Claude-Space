@@ -816,3 +816,45 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 13 broad/BLEND-n10 | 6.9% | 0.60 | -20.1% | 0.66 / 0.56 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
 | 2026-09-04 | 13 broad/BLEND-n20 | 7.4% | 0.69 | -18.0% | 0.79 / 0.61 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
 | 2026-09-04 | 13 broad/BLEND-n30 | 8.8% | 0.84 | -18.0% | 0.96 / 0.73 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_52w-high-proximity_C.py |
+| 2026-09-04 | 11 u56/v1@0bps | 9.0% | 0.90 | -13.6% | 0.88 / 0.92 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@5bps | 7.7% | 0.78 | -13.7% | 0.76 / 0.81 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@10bps | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@15bps | 5.2% | 0.55 | -14.0% | 0.52 / 0.58 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@25bps | 2.8% | 0.32 | -15.6% | 0.28 / 0.35 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@50bps | -3.1% | -0.26 | -46.8% | -0.30 / -0.22 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/v1@100bps | -13.9% | -1.35 | -93.0% | -1.42 / -1.30 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@0bps | 13.8% | 1.18 | -18.2% | 1.18 / 1.18 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@5bps | 13.2% | 1.13 | -18.3% | 1.13 / 1.14 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@10bps | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@15bps | 12.1% | 1.05 | -18.4% | 1.04 / 1.06 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@25bps | 11.1% | 0.97 | -18.4% | 0.95 / 0.99 | 0.67 (0.64/0.69) | KILL 4b (H1) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@50bps | 8.4% | 0.76 | -18.7% | 0.73 / 0.79 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/CAND20@100bps | 3.3% | 0.34 | -20.3% | 0.28 / 0.39 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@0bps | 11.3% | 1.13 | -15.8% | 1.15 / 1.12 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@5bps | 10.9% | 1.09 | -15.8% | 1.11 / 1.08 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@10bps | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@15bps | 10.0% | 1.01 | -15.9% | 1.03 / 0.99 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@25bps | 9.1% | 0.93 | -16.1% | 0.95 / 0.91 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@50bps | 6.8% | 0.72 | -18.5% | 0.74 / 0.70 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 u56/EWall@100bps | 2.5% | 0.30 | -25.0% | 0.33 / 0.27 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@0bps | 9.6% | 0.92 | -18.4% | 1.04 / 0.81 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@5bps | 8.0% | 0.78 | -19.4% | 0.90 / 0.67 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@10bps | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@15bps | 4.9% | 0.50 | -23.1% | 0.62 / 0.40 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@25bps | 1.8% | 0.22 | -26.7% | 0.34 / 0.12 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@50bps | -5.4% | -0.46 | -62.9% | -0.35 / -0.55 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/v1@100bps | -18.4% | -1.73 | -97.3% | -1.64 / -1.81 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@0bps | 14.7% | 1.06 | -20.0% | 1.23 / 0.91 | 0.64 (0.76/0.54) | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@5bps | 13.9% | 1.01 | -20.0% | 1.18 / 0.86 | 0.64 (0.76/0.54) | KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@10bps | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@15bps | 12.3% | 0.91 | -20.1% | 1.07 / 0.76 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@25bps | 10.8% | 0.81 | -20.2% | 0.97 / 0.67 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@50bps | 7.0% | 0.56 | -21.9% | 0.72 / 0.42 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/CAND20@100bps | -0.1% | 0.06 | -40.6% | 0.21 / -0.07 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@0bps | 11.7% | 1.11 | -17.3% | 1.22 / 1.00 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@5bps | 11.2% | 1.07 | -17.5% | 1.18 / 0.96 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@10bps | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@15bps | 10.3% | 0.99 | -17.9% | 1.11 / 0.88 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@25bps | 9.4% | 0.91 | -18.2% | 1.03 / 0.79 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@50bps | 7.1% | 0.71 | -20.3% | 0.84 / 0.58 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
+| 2026-09-04 | 11 broad/EWall@100bps | 2.8% | 0.31 | -24.9% | 0.47 / 0.17 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_cost-sensitivity_cloud.py |
