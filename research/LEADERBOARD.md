@@ -85,3 +85,44 @@ reported. Corrected trading-day index (verified in-script).
 | 2026-09-04 | 40 BREADTH n=8 B=30% | 13.4% | 0.93 | -19.1% | 0.88 / 0.98 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only | 2026-09-04_vol-scaler-replacement_B.py |
 | 2026-09-04 | 40 BREADTH n=8 B=40% | 13.0% | 0.93 | -16.8% | 0.92 / 0.94 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only (0.915 vs 0.957) | 2026-09-04_vol-scaler-replacement_B.py |
 | 2026-09-04 | 40 BREADTH n=8 B=50% | 12.4% | 0.90 | -18.1% | 0.90 / 0.91 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only | 2026-09-04_vol-scaler-replacement_B.py |
+
+**2026-09-04 (lane A, idea 2 position-count).** All 30 grid points. Arms: FIXEDW = v1's own
+construction (w=15% each, gross=0.15n, n<=6 to avoid leverage); EQW = equal weight at a CONSTANT
+75% gross (w=0.75/n) — the arm in which n is purely a diversification choice. ON/OFF = v1
+composite with / without the `/sqrt(vol20)` term. Only n is tuned. Corrected trading-day index.
+`ON */n=5` reproduces the RULES v1 baseline exactly (0.75/5 = 0.15), and `OFF */n=5` reproduces
+idea 1's row. **5 of 30 pass 4b, 2 of 30 pass 4a.** The `OFF FIXEDW n=3/n=4` passes clear 4b's
+drawdown cap only because 45%/60% gross scales the n=3/n=4 drawdown under it (same Sharpe as the
+EQW versions) — a leverage lever, not a position-count edge. See
+`2026-09-04_position-count.result.md` and the KEEP memo `2026-09-04_position-count.md`.
+
+| 2026-09-04 | 2 ON  FIXEDW n=2  | 2.3% | 0.52 | -7.5% | 0.51 / 0.52 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  FIXEDW n=3  | 3.9% | 0.63 | -8.3% | 0.66 / 0.62 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  FIXEDW n=4  | 5.2% | 0.65 | -11.7% | 0.64 / 0.66 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  FIXEDW n=5  | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  FIXEDW n=6  | 8.3% | 0.72 | -17.4% | 0.81 / 0.66 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=2  | 5.4% | 0.52 | -18.0% | 0.52 / 0.52 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=3  | 6.4% | 0.63 | -13.6% | 0.66 / 0.61 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=4  | 6.4% | 0.65 | -14.6% | 0.64 / 0.65 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=5  | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=6  | 7.0% | 0.72 | -14.6% | 0.81 / 0.66 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=8  | 8.0% | 0.82 | -16.4% | 0.87 / 0.77 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=10 | 8.9% | 0.91 | -12.9% | 0.99 / 0.84 | 0.67 (0.64/0.69) | KEEP 4a | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=12 | 9.5% | 0.95 | -13.9% | 1.09 / 0.85 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=15 | 9.0% | 0.91 | -15.9% | 1.05 / 0.79 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H2,OOS,CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 ON  EQW    n=20 | 9.9% | 1.00 | -17.4% | 1.05 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF FIXEDW n=2  | 8.1% | 0.85 | -11.1% | 0.89 / 0.82 | 0.67 (0.64/0.69) | KEEP 4a | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF FIXEDW n=3  | 13.2% | 1.03 | -16.2% | 1.01 / 1.06 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF FIXEDW n=4  | 16.0% | 1.05 | -19.5% | 1.09 / 1.02 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF FIXEDW n=5  | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF FIXEDW n=6  | 18.3% | 0.94 | -23.0% | 0.89 / 0.99 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=2  | 19.5% | 0.86 | -26.5% | 0.89 / 0.83 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=3  | 21.9% | 1.04 | -25.8% | 1.01 / 1.06 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=4  | 20.0% | 1.05 | -23.8% | 1.09 / 1.03 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (DD) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=5  | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=6  | 15.3% | 0.94 | -19.4% | 0.89 / 0.99 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=8  | 13.8% | 0.93 | -17.9% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=10 | 12.9% | 0.93 | -17.5% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=12 | 12.7% | 0.96 | -17.8% | 0.98 / 0.95 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=15 | 13.2% | 1.04 | -19.2% | 1.07 / 1.03 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_position-count.py |
+| 2026-09-04 | 2 OFF EQW    n=20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_position-count.py |
