@@ -126,3 +126,8 @@ EQW versions) — a leverage lever, not a position-count edge. See
 | 2026-09-04 | 2 OFF EQW    n=12 | 12.7% | 0.96 | -17.8% | 0.98 / 0.95 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_position-count.py |
 | 2026-09-04 | 2 OFF EQW    n=15 | 13.2% | 1.04 | -19.2% | 1.07 / 1.03 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_position-count.py |
 | 2026-09-04 | 2 OFF EQW    n=20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | 2026-09-04_position-count.py |
+| 2026-09-04 | 31 PEAD tercile h=40 (broad, 2012-26) | 16.8% | 0.96 | -34.7% | 1.11 / 0.87 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
+| 2026-09-04 | 31 PEAD tercile h=60 (broad, 2012-26) | 18.9% | 1.07 | -33.5% | 1.29 / 0.93 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
+| 2026-09-04 | 31 PEAD quintile h=40 (broad, 2012-26) | 16.8% | 0.92 | -36.0% | 1.13 / 0.78 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
+| 2026-09-04 | 31 PEAD quintile h=60 (broad, 2012-26) | 19.4% | 1.05 | -35.0% | 1.35 / 0.84 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
+| 2026-09-04 | 31 PEAD CONTROL bottom-tercile h=60 (sort reversed — beats the signal) | 20.7% | 1.16 | -32.1% | 1.30 / 1.09 | 0.67 (0.86/0.50) | diagnostic | research/backtests/2026-09-04_small-cap-pead.py |

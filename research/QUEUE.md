@@ -1,5 +1,6 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
+0. small-cap-price-panel — DATA (local, live data): build data/prices_small.csv = daily adjusted closes since 2010 for every ticker in research/deepvalue/universe_under2b.csv (485 names; state survivorship bias: current constituents only) via yfinance in batches; add to research/cache_prices.py weekly; extend baseline.load_universe(small=True). Then RERUN small-cap-pead and momentum-no-vol-scaler on it. Prereq for every small-cap idea.
 3. rebalance-freq — weekly vs monthly vs quarterly for RULES v1.
 4. abs-momentum-filter — replace 200d-MA filter with 12-1 momentum > 0; also try both.
 6. defensive-sleeve — when breadth (% above 200d) < 40%, move the cash sleeve into TLT/GLD/SHY best-of-3 by 3m momentum.
@@ -31,7 +32,6 @@
 45. position-count-cost-and-liquidity — idea 2's KEEP holds 20 names at 3.75% each with 9.6x/yr turnover. Re-run it at 5/10/25/50 bps and with a 1-week execution lag instead of 1 day; the 4b drawdown margin is only 1.9pp so check what survives. Subsumes idea 11 for the candidate book. (2026-09-04, lane A)
 46. eligible-fraction-vs-n — idea 2 shows Sharpe rising in n while CAGR falls, U-shaped at matched vol. Is the right rule "top n" or "top X% of eligible names" (a count that adapts when only 8 of 56 are eligible, 2% of days)? Test fixed-n vs fixed-fraction at the same average book size. (2026-09-04, lane A)
 ## In progress
-31. small-cap-pead — post-earnings-announcement drift in small caps: use the 8-K earnings-release date (EDGAR) and the 2-day announcement return as the surprise proxy; long top decile, hold 60 trading days. (Chan-Jegadeesh-Lakonishok 1996; stronger in small caps) (claimed 2026-09-04, local data agents)
 32. insider-cluster-buying — Form 4 open-market purchases by >=2 distinct insiders within 30 days in small caps; hold 6-12 months. (Cohen-Malloy-Pomorski 2012 opportunistic trades) (claimed 2026-09-04, local data agents)
 35. options-iv-snapshot-cache — start a DAILY cache of yfinance option chains (IV, skew, put/call OI) for the live universe + candidates; no history exists for free, so build it now for later tests (IV-RV spread, skew as sentiment). (claimed 2026-09-04, local data agents)
 36. spinoff-calendar — Form 10 / 10-12B filings from EDGAR full-text search: build the last 5 years of spin-offs and test the classic 6-24 month post-spin outperformance. (Cusatis-Miles-Woolridge 1993) (claimed 2026-09-04, local data agents)
@@ -48,3 +48,4 @@
 24. core-plus-trend-sleeve — PARK — B (60% QQQ>200d + 40% sleeve) 10.8%/0.95/-18.9%, OOS 14.2%/1.15/-18.9%; fails 4b only on H1 Sharpe 0.84 vs SPY 0.96. Strongest growth candidate (2026-09-03)
 25. composite-vs-equal-weight — PARK/ACTIONABLE — traded score IC≈0 (t 0.4); /sqrt(vol20) cancels momentum (pre-scaler IC t 4.2). Equal-weight all eligible @75%: 10.4%/1.05, halves 1.07/1.03 (> SPY both), misses 4b CAGR floor by 0.23pp (2026-09-03)
 27. qqq-trend-only — KILL — filter costs 6.4pp CAGR vs QQQ B&H (20.8%/1.01); variants 12-15%/0.83-0.91/-27%; live book beaten 3x by a napkin rule (2026-09-03)
+31. small-cap-pead — KILL on the broad (large-cap) panel: sorted terciles 17-19%/0.96-1.07/-34%, but unsorted and reversed controls beat them; drift +0.47% at 20d then negative by 60d; OOS Sharpe 0.92 < SPY. Must be rerun on a true small-cap panel (idea 0). (2026-09-04)
