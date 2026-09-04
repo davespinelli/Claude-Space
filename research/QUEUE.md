@@ -17,11 +17,11 @@
 21. momentum-plus-quality-proxy — among top-10 momentum in broad universe, drop the 3 highest-vol names (vol as quality proxy). Max 2 params.
 22. drawdown-control — v1 with book-level rule: if book drawdown > 8%, halve exposure until new high. (Test, expect mixed)
 23. earnings-season-avoidance — v1 excluding single stocks during their earnings weeks (approximate with quarterly calendar). Expect PARK: needs earnings dates.
-24. core-plus-trend-sleeve — 60% SPY/QQQ core (SPY 200d filter to cash) + 40% macro-trend-ensemble variant B. Target: SPY-like CAGR with half the drawdown. (Follows Sep 3 diagnostic)
-25. composite-vs-equal-weight — v1 eligibility (above 200d, vol<0.6) but EQUAL weight all eligible names instead of top-5 by score. Does the score add anything?
 26. ensemble-plus-momentum — 50% macro-trend-ensemble B + 50% v1 top-5. Diversification of two weak-ish sleeves.
-27. qqq-trend-only — QQQ when above 200d (and 12-1 mom > 0), else SHY. Simplest possible growth+trend benchmark the book must beat.
 ## In progress
+24. core-plus-trend-sleeve — 60% SPY/QQQ core (SPY 200d filter to cash) + 40% macro-trend-ensemble variant B. Target: SPY-like CAGR with half the drawdown. (Follows Sep 3 diagnostic) (claimed 2026-09-03, local session)
+25. composite-vs-equal-weight — v1 eligibility (above 200d, vol<0.6) but EQUAL weight all eligible names instead of top-5 by score. Does the score add anything? (claimed 2026-09-03, local session)
+27. qqq-trend-only — QQQ when above 200d (and 12-1 mom > 0), else SHY. Simplest possible growth+trend benchmark the book must beat. (claimed 2026-09-03, local session)
 ## Done (see LEADERBOARD.md)
 5. dual-momentum-classes — KILL — all 4 variants below baseline Sharpe in H1 (best 0.39 vs 0.64), MaxDD -24% to -36% vs -13.8%; DBC 2022-23 collapse (2026-09-03)
 7. inverse-vol-weights — KILL — Sharpe 0.57 vs 0.67 both halves; double vol tilt (score already /sqrt(vol)) concentrates book to 2-3 names (2026-09-03)
