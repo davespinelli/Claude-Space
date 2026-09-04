@@ -344,3 +344,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | INNV | InnovAge Holding Corp. | $1.5B | none | 3 | About 16x guided EBITDA after a 194% run, with $51.9M of quarterly litigation costs exceeding adjusted EBITDA |
 | 2026-09-04 | CODI | Compass Diversified Holdings | $869.0M | insider-buying | 7 | Six insiders bought $2.5M with no sales while debt fell $298M, leverage went 5.3x to 4.8x and manager fees were cut |
 | 2026-09-04 | ETON | Eton Pharmaceuticals, Inc. | $1.7B | none | 3 | Revenue up 99% but the $1.7B EV is roughly 33x implied 2026 EBITDA after a 247% six-month move, with insiders selling $11.7M |
+| 2026-09-04 | IMCR | Immunocore Holdings plc | $1.9B | hidden-asset | 5 | Cash of $880M is 46% of the market cap but $120M of rebates are due in H2 and R&D of $275M exceeds two-thirds of revenue |
+| 2026-09-04 | ESOA | Energy Services of America CORP | $210.7M | none | 0 | no filings in bundle |
+| 2026-09-04 | AMN | AMN HEALTHCARE SERVICES INC | $1.3B | cyclical-trough | 6 | Travel nurse volume grew a second straight quarter and FCF yield is 18.1%, but Q3 guides adjusted EBITDA margin down to 6.5-7.0% |
+| 2026-09-04 | XNET | Xunlei Ltd | $1.5B | none | 0 | no filings in bundle |
+| 2026-09-04 | TAYD | TAYLOR DEVICES, INC. | $194.9M | none | 3 | Revenue down 10% with structural sales off 31%, yet it trades at 27.8x EV/EBIT on a 2.5% FCF yield with insiders only selling |
+| 2026-09-04 | TLS | TELOS CORP | $364.0M | post-restructuring | 7 | Opex down 25% took adjusted EBITDA margin from 1.1% to 14.4% and a sixth straight quarter above 12% FCF margin, buying back stock |
+| 2026-09-04 | JAKK | JAKKS PACIFIC INC | $275.3M | cyclical-trough | 4 | Toy sales fell 19% on a thin film slate with net cash at 22% of the cap, but operating margin halved to 2.5% and China sourcing is unresolved |
+| 2026-09-04 | CLW | Clearwater Paper Corp | $333.8M | cyclical-trough | 7 | Trades at 0.42x book with 300K tons of SBS capacity out, operating rates heading to 90%+ and July price increases of $40-60 per ton |
+| 2026-09-04 | SNDA | SONIDA SENIOR LIVING, INC. | $1.8B | none | 4 | Same-store NOI up 16.9% and occupancy 87.8%, but 16x EV/EBITDA with shares up 155%, a $250M ATM and negative H1 operating cash flow |
+| 2026-09-04 | SONO | Sonos Inc | $1.9B | post-restructuring | 6 | Opex cut of $54M turned a $16M operating loss into $100M of profit over nine months and Coliseum bought stock and took a board seat |

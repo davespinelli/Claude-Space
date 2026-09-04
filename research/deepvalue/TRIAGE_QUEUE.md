@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T22:39:58Z · open 142 · in progress 0 · done 343_
+_Source: universe_under2b.csv · updated 2026-09-04T23:10:55Z · open 122 · in progress 10 · done 353_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (142)
+## Open (122)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| IMCR | Immunocore Holdings plc | $1.93B |
-| ESOA | Energy Services of America CORP | $210.7M |
-| AMN | AMN HEALTHCARE SERVICES INC | $1.29B |
-| XNET | Xunlei Ltd | $1.54B |
-| TAYD | TAYLOR DEVICES, INC. | $194.9M |
-| TLS | TELOS CORP | $364.0M |
-| JAKK | JAKKS PACIFIC INC | $275.3M |
-| CLW | Clearwater Paper Corp | $333.8M |
-| SNDA | SONIDA SENIOR LIVING, INC. | $1.82B |
-| SONO | Sonos Inc | $1.91B |
-| SILC | SILICOM LTD. | $228.6M |
-| MUX | McEwen Inc. | $1.26B |
-| MBC | MasterBrand, Inc. | $1.66B |
-| MSEX | MIDDLESEX WATER CO | $1.10B |
-| STOK | Stoke Therapeutics, Inc. | $1.94B |
-| TDAY | USA TODAY Co., Inc. | $949.9M |
-| QMCO | QUANTUM CORP /DE/ | $956.8M |
-| MEI | METHODE ELECTRONICS INC | $543.4M |
-| ALOT | AstroNova, Inc. | $224.6M |
-| TITN | Titan Machinery Inc. | $532.0M |
 | AORT | ARTIVION, INC. | $1.25B |
 | SXC | SunCoke Energy, Inc. | $864.9M |
 | AEYE | AUDIOEYE INC | $91.4M |
@@ -151,12 +131,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| SILC | SILICOM LTD. | $228.6M | cloudA | 2026-09-04T23:07:32Z |
+| MUX | McEwen Inc. | $1.26B | cloudA | 2026-09-04T23:07:32Z |
+| MBC | MasterBrand, Inc. | $1.66B | cloudA | 2026-09-04T23:07:32Z |
+| MSEX | MIDDLESEX WATER CO | $1.10B | cloudA | 2026-09-04T23:07:32Z |
+| STOK | Stoke Therapeutics, Inc. | $1.94B | cloudA | 2026-09-04T23:07:32Z |
+| TDAY | USA TODAY Co., Inc. | $949.9M | cloudA | 2026-09-04T23:07:32Z |
+| QMCO | QUANTUM CORP /DE/ | $956.8M | cloudA | 2026-09-04T23:07:32Z |
+| MEI | METHODE ELECTRONICS INC | $543.4M | cloudA | 2026-09-04T23:07:32Z |
+| ALOT | AstroNova, Inc. | $224.6M | cloudA | 2026-09-04T23:07:32Z |
+| TITN | Titan Machinery Inc. | $532.0M | cloudA | 2026-09-04T23:07:32Z |
 
-## Done (343)
+## Done (353)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | INNV | InnovAge Holding Corp. | $1.46B | cloudB | 2026-09-04T22:39:58Z |
 | CODI | Compass Diversified Holdings | $869.0M | cloudB | 2026-09-04T22:39:58Z |
 | ETON | Eton Pharmaceuticals, Inc. | $1.71B | cloudB | 2026-09-04T22:39:58Z |
+| IMCR | Immunocore Holdings plc | $1.93B | cloudA | 2026-09-04T23:10:55Z |
+| ESOA | Energy Services of America CORP | $210.7M | cloudA | 2026-09-04T23:10:55Z |
+| AMN | AMN HEALTHCARE SERVICES INC | $1.29B | cloudA | 2026-09-04T23:10:55Z |
+| XNET | Xunlei Ltd | $1.54B | cloudA | 2026-09-04T23:10:55Z |
+| TAYD | TAYLOR DEVICES, INC. | $194.9M | cloudA | 2026-09-04T23:10:55Z |
+| TLS | TELOS CORP | $364.0M | cloudA | 2026-09-04T23:10:55Z |
+| JAKK | JAKKS PACIFIC INC | $275.3M | cloudA | 2026-09-04T23:10:55Z |
+| CLW | Clearwater Paper Corp | $333.8M | cloudA | 2026-09-04T23:10:55Z |
+| SNDA | SONIDA SENIOR LIVING, INC. | $1.82B | cloudA | 2026-09-04T23:10:55Z |
+| SONO | Sonos Inc | $1.91B | cloudA | 2026-09-04T23:10:55Z |
