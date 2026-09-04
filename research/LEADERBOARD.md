@@ -1260,3 +1260,13 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 84 broad C2/CAND20 g=0.75 (control) | 13.1% | 0.96 | -20.1% | 1.13 / 0.81 | 0.64 (0.76/0.54) | H2-bound: 0/20 lever arms convert (best +0.003) | 2026-09-04_which-4b-bar-binds_B.py |
 | 2026-09-04 | 84 broad C72/EWall entry-budget B=0.20 | 10.9% | 1.08 | -16.4% | 1.17 / 0.99 | 0.64 (0.76/0.54) | budget is a Sharpe lever (+0.050), CAGR-neutral (+0.02pp) | 2026-09-04_which-4b-bar-binds_B.py |
 | 2026-09-04 | 84 walk-forward RBIND vs R0 vs control | n/a | n/a | n/a | n/a | n/a | mean OOS Sharpe 1.098 / 1.097 / 1.083: rule has no net content | 2026-09-04_which-4b-bar-binds_B.py |
+| 2026-09-04 | 22 u56 V1 + DD-control 8%/halve/new-high (literal) | 3.7% | 0.49 | -12.1% | 0.41 / 0.55 | 0.67 (0.64/0.69) | KILL: dSharpe -0.182, 52% of days cut | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 u56 CAND20 + DD-control 8%/halve/new-high | 8.4% | 0.92 | -14.2% | 0.90 / 0.93 | 0.67 (0.64/0.69) | KILL: dSharpe -0.176, breaks idea 2's 4b pass on CAGR | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 u56 EWall + DD-control 8%/halve/new-high | 6.7% | 0.83 | -12.5% | 0.82 / 0.84 | 0.67 (0.64/0.69) | KILL: dSharpe -0.217, -3.8pp CAGR for +3.4pp DD | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 broad V1 + DD-control 8%/halve/new-high | 3.2% | 0.44 | -15.3% | 0.58 / 0.30 | 0.64 (0.76/0.54) | KILL: dSharpe -0.200, 65% of days cut | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 broad CAND20 + DD-control 8%/halve/new-high | 7.5% | 0.75 | -15.3% | 0.90 / 0.61 | 0.64 (0.76/0.54) | KILL: dSharpe -0.209, -5.6pp CAGR | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 broad EWall + DD-control 8%/halve/new-high | 7.2% | 0.88 | -14.3% | 1.03 / 0.72 | 0.64 (0.76/0.54) | KILL: dSharpe -0.146, kills idea 72's only 4b pass | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 u56 CAND20 D=4%/k=0.00 (absorbing state) | -0.1% | -0.05 | -5.8% | -0.07 / n/a | 0.67 (0.64/0.69) | KILL: exits 2011 and never returns, 97.3% of days in cash | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 u56 CAND20 D=12%/k=0.75 (best treated arm) | 12.0% | 1.06 | -18.3% | 1.09 / 1.05 | 0.67 (0.64/0.69) | 4b PASS but strictly worse than its own control (1.093) | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 exchange rate: DD rule vs static gross (288 arms) | n/a | n/a | n/a | n/a | n/a | KILL: 1.02 vs 0.57 pp CAGR per pp MaxDD; dominated 252/288 | 2026-09-04_drawdown-control_C.py |
+| 2026-09-04 | 22 walk-forward S1/S2 vs control (12 cells) | n/a | n/a | n/a | n/a | n/a | S1 picks the do-nothing corner 12/12 (OOS 0.900 vs 0.922); S2 picks nothing 10/12 | 2026-09-04_drawdown-control_C.py |
