@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T21:39:53Z · open 172 · in progress 0 · done 313_
+_Source: universe_under2b.csv · updated 2026-09-04T22:10:14Z · open 152 · in progress 10 · done 323_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (172)
+## Open (152)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| WTI | W&T OFFSHORE INC | $587.2M |
-| WKC | WORLD KINECT CORP | $1.79B |
-| ORN | Orion Group Holdings Inc | $370.5M |
-| EPM | EVOLUTION PETROLEUM CORP | $132.7M |
-| KODK | EASTMAN KODAK CO | $895.8M |
-| DHX | DHI GROUP, INC. | $198.9M |
-| MATW | MATTHEWS INTERNATIONAL CORP | $658.6M |
-| AIN | ALBANY INTERNATIONAL CORP /DE/ | $1.78B |
-| CVEO | Civeo Corp | $349.0M |
-| FWRG | First Watch Restaurant Group, Inc. | $722.0M |
-| MNRO | MONRO, INC. | $393.9M |
-| PACK | Ranpak Holdings Corp. | $375.6M |
-| REAL | TheRealReal, Inc. | $1.22B |
-| CMCO | COLUMBUS MCKINNON CORP | $526.1M |
-| TLRY | Tilray Brands, Inc. | $617.0M |
-| PHR | Phreesia, Inc. | $686.1M |
-| OSS | ONE STOP SYSTEMS, INC. | $243.4M |
-| JACK | JACK IN THE BOX INC | $290.8M |
-| ALTO | Alto Ingredients, Inc. | $312.6M |
-| CPRI | Capri Holdings Ltd | $1.50B |
 | WLFC | WILLIS LEASE FINANCE CORP | $1.17B |
 | EGY | VAALCO ENERGY INC /DE/ | $635.4M |
 | CRSR | Corsair Gaming, Inc. | $1.38B |
@@ -181,12 +161,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| MNRO | MONRO, INC. | $393.9M | cloudA | 2026-09-04T22:07:26Z |
+| PACK | Ranpak Holdings Corp. | $375.6M | cloudA | 2026-09-04T22:07:26Z |
+| REAL | TheRealReal, Inc. | $1.22B | cloudA | 2026-09-04T22:07:26Z |
+| CMCO | COLUMBUS MCKINNON CORP | $526.1M | cloudA | 2026-09-04T22:07:26Z |
+| TLRY | Tilray Brands, Inc. | $617.0M | cloudA | 2026-09-04T22:07:26Z |
+| PHR | Phreesia, Inc. | $686.1M | cloudA | 2026-09-04T22:07:26Z |
+| OSS | ONE STOP SYSTEMS, INC. | $243.4M | cloudA | 2026-09-04T22:07:26Z |
+| JACK | JACK IN THE BOX INC | $290.8M | cloudA | 2026-09-04T22:07:26Z |
+| ALTO | Alto Ingredients, Inc. | $312.6M | cloudA | 2026-09-04T22:07:26Z |
+| CPRI | Capri Holdings Ltd | $1.50B | cloudA | 2026-09-04T22:07:26Z |
 
-## Done (313)
+## Done (323)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | OIS | OIL STATES INTERNATIONAL, INC | $534.5M | cloudB | 2026-09-04T21:39:53Z |
 | IDN | Intellicheck, Inc. | $58.4M | cloudB | 2026-09-04T21:39:53Z |
 | MTW | MANITOWOC CO INC | $737.5M | cloudB | 2026-09-04T21:39:53Z |
+| WTI | W&T OFFSHORE INC | $587.2M | cloudA | 2026-09-04T22:10:14Z |
+| WKC | WORLD KINECT CORP | $1.79B | cloudA | 2026-09-04T22:10:14Z |
+| ORN | Orion Group Holdings Inc | $370.5M | cloudA | 2026-09-04T22:10:14Z |
+| EPM | EVOLUTION PETROLEUM CORP | $132.7M | cloudA | 2026-09-04T22:10:14Z |
+| KODK | EASTMAN KODAK CO | $895.8M | cloudA | 2026-09-04T22:10:14Z |
+| DHX | DHI GROUP, INC. | $198.9M | cloudA | 2026-09-04T22:10:14Z |
+| MATW | MATTHEWS INTERNATIONAL CORP | $658.6M | cloudA | 2026-09-04T22:10:14Z |
+| AIN | ALBANY INTERNATIONAL CORP /DE/ | $1.78B | cloudA | 2026-09-04T22:10:14Z |
+| CVEO | Civeo Corp | $349.0M | cloudA | 2026-09-04T22:10:14Z |
+| FWRG | First Watch Restaurant Group, Inc. | $722.0M | cloudA | 2026-09-04T22:10:14Z |

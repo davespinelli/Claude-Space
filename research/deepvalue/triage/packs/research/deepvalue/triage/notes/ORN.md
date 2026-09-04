@@ -1,0 +1,5 @@
+# ORN — Orion Group Holdings Inc · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings in the bundle. Section 1 reports "Filings fetched: none" and section 11 lists the business description, MD&A and risk factors as MISSING, along with the 8-K earnings release, the Form 4 summary and any transcript. The only description of the company available is the SIC code, 1600, Heavy Construction Other Than Building Construction, and the NYSE listing. The screen row shows price 9.15 as of the screen row, market cap $370.5M, EV $461.0M, FY25 revenue $852.3M against $796.4M prior for 7.0% growth, EBIT $14.6M, net income $2.5M, CFO $28.1M against capex $38.9M for negative free cash flow of $10.8M, cash of $2.5M, long-term debt $93.0M, net debt 6.2x EBIT, and EV/EBIT of 31.5x. The shares are 46.6% off the 52-week high with 12-1 momentum of 43.3% and six-month return of negative 22.6%. A contractor with $2.5M of cash and negative FCF cannot be triaged without the MD&A and backlog disclosure. Re-run once filings are fetched.
+
+_Sources: triage pack only (sections 1, 2, 3, 11). Triage-depth read, not a deep dive._

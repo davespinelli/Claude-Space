@@ -1,0 +1,5 @@
+# WTI — W&T OFFSHORE INC · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings in the bundle. Section 1 of the pack reports "Filings fetched: none" and section 11 lists every document as MISSING: no 10-K Item 1, no Item 7 MD&A, no risk factors, no 8-K earnings release, no Form 4 summary, no transcript. Nothing in the pack describes what the business does beyond the SIC code (1311, Crude Petroleum and Natural Gas) and the NYSE listing. Only the screen row is present: price 3.89 as of the screen row, market cap $587.2M, EV $779.9M, FY25 revenue $501.5M against $525.3M prior, EBIT negative $52.8M, net loss $150.1M, CFO $77.2M, cash $150.7M, long-term debt $343.4M, and negative shareholders equity of $196.2M. Momentum 12-1 is 85.6% and the shares sit 20.4% off the 52-week high. Negative book equity alongside a reported 13.2% FCF yield is exactly the kind of tension that needs the MD&A to resolve, and that document is absent. Not scorable at triage depth: re-run once filings are fetched.
+
+_Sources: triage pack only (sections 1, 2, 3, 11). Triage-depth read, not a deep dive._

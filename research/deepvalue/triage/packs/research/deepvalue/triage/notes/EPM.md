@@ -1,0 +1,5 @@
+# EPM — EVOLUTION PETROLEUM CORP · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings in the bundle. Section 1 reports "Filings fetched: none" and section 11 lists every source document as MISSING: Item 1 business description, Item 7 MD&A, Item 1A risk factors, the 8-K earnings release exhibit, the Form 4 summary and any transcript. The pack identifies the company only by SIC code 1311, Crude Petroleum and Natural Gas, on the NYSE. From the screen row: price 3.70 as of the screen row, market cap $132.7M, EV $186.6M, FY25 revenue $85.8M against $85.9M prior for flat growth, EBIT $4.2M, net income $1.5M, ROIC 2.9%, CFO $33.1M, cash $2.6M, long-term line of credit $56.5M, net debt 12.9x EBIT and EV/EBIT of 44.7x. The reported 24.9% FCF yield sits on a capex figure the pack flags as missing, so it is CFO, not free cash flow, and cannot be relied on. Share count grew 4.6% year over year. Not scorable without filings; re-run once the bundle carries them.
+
+_Sources: triage pack only (sections 1, 2, 3, 11). Triage-depth read, not a deep dive._

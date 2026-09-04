@@ -314,3 +314,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | OIS | OIL STATES INTERNATIONAL, INC | $534.5M | misunderstood-segment | 7 | FY25 EBIT loss is entirely a $112.7M Downhole impairment while Offshore earned $69.2M and backlog hit a decade high, with no net debt |
 | 2026-09-04 | IDN | Intellicheck, Inc. | $58.4M | fallen-growth | 5 | Down 68% on a customer at 29% of H1 revenue going multi-source, and 42.8x EV/EBIT does not yet pay for that risk |
 | 2026-09-04 | MTW | MANITOWOC CO INC | $737.5M | misunderstood-segment | 6 | EURAF lost $42.9M against $95.7M from Americas, but net debt is 6.8x EBIT and the stock is 2.0% off its high |
+| 2026-09-04 | WTI | W&T OFFSHORE INC | $587.2M | none | 0 | no filings in bundle |
+| 2026-09-04 | WKC | WORLD KINECT CORP | $1.8B | post-restructuring | 6 | FY25 EBIT of -$564.7M is exit and restructuring charges against $227.3M of FCF, but no earnings release in the pack |
+| 2026-09-04 | ORN | Orion Group Holdings Inc | $370.5M | none | 0 | no filings in bundle |
+| 2026-09-04 | EPM | EVOLUTION PETROLEUM CORP | $132.7M | none | 0 | no filings in bundle |
+| 2026-09-04 | KODK | EASTMAN KODAK CO | $895.8M | post-restructuring | 7 | Q2 Operational EBITDA of $36M vs $9M and $290M cash against $108M debt, but shares are up 20.9% yoy |
+| 2026-09-04 | DHX | DHI GROUP, INC. | $198.9M | misunderstood-segment | 6 | ClearanceJobs grew bookings 24% at a 39% margin while Dice fell 14%, but the stock is 1.3% off its high |
+| 2026-09-04 | MATW | MATTHEWS INTERNATIONAL CORP | $658.6M | misunderstood-segment | 7 | Memorialization has earned $162M-$170M EBITDA three years running vs $1.2B EV, and 3 insiders bought $298K |
+| 2026-09-04 | AIN | ALBANY INTERNATIONAL CORP /DE/ | $1.8B | misunderstood-segment | 6 | Machine Clothing earned $156.2M while AEC lost $145.1M on CH-53K re-estimates, but $2.2B EV leaves no gap |
+| 2026-09-04 | CVEO | Civeo Corp | $349.0M | cash-cow-narrative | 6 | Share count down 17.6% and EBITDA guide held at $85M-$90M on $537M EV, but FY25 EBIT was only $4.1M |
+| 2026-09-04 | FWRG | First Watch Restaurant Group, Inc. | $722.0M | fallen-growth | 6 | Revenue +15.2% and 60-62 new units at 7.2x guided EBITDA, but capex exceeds EBITDA and FCF is -$31.0M |
