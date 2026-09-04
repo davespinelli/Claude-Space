@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T14:16:56Z · open 392 · in progress 0 · done 93_
+_Source: universe_under2b.csv · updated 2026-09-04T14:40:29Z · open 382 · in progress 0 · done 103_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (392)
+## Open (382)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| OPRX | OptimizeRx Corp | $149.7M |
-| INVA | Innoviva, Inc. | $1.54B |
-| PRTH | Priority Technology Holdings, Inc. | $446.8M |
-| CRI | CARTERS INC | $1.22B |
-| FLXS | FLEXSTEEL INDUSTRIES INC | $430.4M |
-| LMB | Limbach Holdings, Inc. | $590.9M |
-| SCSC | SCANSOURCE, INC. | $1.18B |
-| GOGO | Gogo Inc. | $359.1M |
-| SMP | STANDARD MOTOR PRODUCTS, INC. | $877.8M |
-| AMPH | Amphastar Pharmaceuticals, Inc. | $1.01B |
 | NGVC | Natural Grocers by Vitamin Cottage, Inc. | $627.8M |
 | IRWD | IRONWOOD PHARMACEUTICALS INC | $708.9M |
 | INSE | Inspired Entertainment, Inc. | $147.3M |
@@ -406,7 +396,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (93)
+## Done (103)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | SWBI | SMITH & WESSON BRANDS, INC. | $548.8M | cloudA | 2026-09-04T14:16:56Z |
 | KOP | Koppers Holdings Inc. | $886.2M | cloudA | 2026-09-04T14:16:56Z |
 | CARS | Cars.com Inc. | $631.2M | cloudA | 2026-09-04T14:16:56Z |
+| OPRX | OptimizeRx Corp | $149.7M | cloudB | 2026-09-04T14:40:29Z |
+| INVA | Innoviva, Inc. | $1.54B | cloudB | 2026-09-04T14:40:29Z |
+| PRTH | Priority Technology Holdings, Inc. | $446.8M | cloudB | 2026-09-04T14:40:29Z |
+| CRI | CARTERS INC | $1.22B | cloudB | 2026-09-04T14:40:29Z |
+| FLXS | FLEXSTEEL INDUSTRIES INC | $430.4M | cloudB | 2026-09-04T14:40:29Z |
+| LMB | Limbach Holdings, Inc. | $590.9M | cloudB | 2026-09-04T14:40:29Z |
+| SCSC | SCANSOURCE, INC. | $1.18B | cloudB | 2026-09-04T14:40:29Z |
+| GOGO | Gogo Inc. | $359.1M | cloudB | 2026-09-04T14:40:29Z |
+| SMP | STANDARD MOTOR PRODUCTS, INC. | $877.8M | cloudB | 2026-09-04T14:40:29Z |
+| AMPH | Amphastar Pharmaceuticals, Inc. | $1.01B | cloudB | 2026-09-04T14:40:29Z |

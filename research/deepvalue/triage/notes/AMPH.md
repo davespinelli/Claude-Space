@@ -1,0 +1,5 @@
+# AMPH — Amphastar Pharmaceuticals, Inc. · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings were fetched for this ticker, so there is no triage read. Section 11 of the pack lists everything as missing: no meta.json, no 8-K filings, no earnings press release exhibit, no 10-K Item 1 business description, no 10-K Item 7 MD&A, no Form 4 summary and no transcript. The pack is 4,275 characters and contains only the screen row, which shows a $1.0B market cap at a price of $23.84, a $1.4B EV, 10.0x EV/EBIT, a 12.0% FCF yield on $121.2M, revenue of $719.9M down 1.7%, net debt of $385.9M at 2.7x EBIT, and a share count down 8.5% year over year (screen row dated 2026-09-04). Those numbers are suggestive but unverified against any filing, and nothing in the pack describes what the business does, how the segments earn, or what management said most recently. Per the desk rule this is scored 0 and requeued rather than guessed at. Re-run fetch_filings.py AMPH before triaging it again.
+
+_Sources: triage pack only (sections 1, 2, 3, 11). No filings in bundle; not a triage read._

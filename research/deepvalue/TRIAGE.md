@@ -94,3 +94,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | SWBI | SMITH & WESSON BRANDS, INC. | $548.8M | none | 0 | no filings in bundle |
 | 2026-09-04 | KOP | Koppers Holdings Inc. | $886.2M | cash-cow-narrative | 6 | FY26 free cash flow guided to $110-130M against an $886M cap versus $68M in 2025, but CMC adjusted EBITDA fell 54.8% and guidance was trimmed |
 | 2026-09-04 | CARS | Cars.com Inc. | $631.2M | cash-cow-narrative | 6 | Retired over 10% of shares in six months at 29.4% adjusted EBITDA margin, but unique visitors fell 14% and traffic 12% year over year |
+| 2026-09-04 | OPRX | OptimizeRx Corp | $149.7M | cash-cow-narrative | 5 | Guides $21-25M adjusted EBITDA on a $149.7M cap, but Q2 revenue fell 30% and net revenue retention dropped from 121% to 90% |
+| 2026-09-04 | INVA | Innoviva, Inc. | $1.5B | hidden-asset | 8 | $570.4M cash plus $669.5M of strategic stakes is 83% of the market cap on top of a $236.5M royalty stream and product sales up 46% |
+| 2026-09-04 | PRTH | Priority Technology Holdings, Inc. | $446.8M | cash-cow-narrative | 6 | 16.8% FCF yield and $230-245M adjusted EBITDA guided, but net debt is $924.4M at 6.5x EBIT and equity is negative $79.2M |
+| 2026-09-04 | CRI | CARTERS INC | $1.2B | cyclical-trough | 6 | Operating margin fell 400bp to 5.0% on roughly $60M of tariff cost while comps grew 5.1%, at 7.9x EV/EBIT with net cash |
+| 2026-09-04 | FLXS | FLEXSTEEL INDUSTRIES INC | $430.4M | none | 4 | Up 70% in twelve months and 2.2% off its high, with margin flattered by non-recurring tariff refunds and Section 232 duty rising to 30% in January |
+| 2026-09-04 | LMB | Limbach Holdings, Inc. | $590.9M | fallen-growth | 6 | Down 56.6% off the high on a raised revenue guide, but adjusted EBITDA guidance was cut to $78-84M from $90-94M and organic ODR revenue fell 3.4% |
+| 2026-09-04 | SCSC | SCANSOURCE, INC. | $1.2B | misunderstood-segment | 6 | Intelisys books $99.7M of gross profit on $101.1M of revenue inside a 3.1% operating margin distributor, but it grew only 3.1% and the stock is at its high |
+| 2026-09-04 | GOGO | Gogo Inc. | $359.1M | misunderstood-segment | 6 | Military and government service revenue up 40% inside a company whose ATG aircraft online fell 15%, with net debt of $750.9M against a $359.1M cap |
+| 2026-09-04 | SMP | STANDARD MOTOR PRODUCTS, INC. | $877.8M | misunderstood-segment | 7 | A $37.7M discontinued-operations loss cuts reported EPS from $3.52 to $1.84 while continuing EPS grew 23% and leverage fell to 2.5x |
+| 2026-09-04 | AMPH | Amphastar Pharmaceuticals, Inc. | $1.0B | none | 0 | no filings in bundle |
