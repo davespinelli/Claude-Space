@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T14:40:29Z · open 382 · in progress 0 · done 103_
+_Source: universe_under2b.csv · updated 2026-09-04T15:12:31Z · open 362 · in progress 10 · done 113_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (382)
+## Open (362)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| NGVC | Natural Grocers by Vitamin Cottage, Inc. | $627.8M |
-| IRWD | IRONWOOD PHARMACEUTICALS INC | $708.9M |
-| INSE | Inspired Entertainment, Inc. | $147.3M |
-| JBI | Janus International Group, Inc. | $683.5M |
-| GRNT | Granite Ridge Resources, Inc. | $670.1M |
-| BL | BLACKLINE, INC. | $1.93B |
-| WEN | Wendy's Co | $1.50B |
-| ESP | ESPEY MFG & ELECTRONICS CORP | $187.4M |
-| NATR | NATURES SUNSHINE PRODUCTS INC | $242.8M |
-| RICK | RCI HOSPITALITY HOLDINGS, INC. | $219.7M |
-| SHOE | SHOE STATION GROUP INC | $370.6M |
-| PBYI | PUMA BIOTECHNOLOGY, INC. | $485.7M |
-| VITL | Vital Farms, Inc. | $433.6M |
-| ETD | ETHAN ALLEN INTERIORS INC | $556.5M |
-| RLGT | RADIANT LOGISTICS, INC | $393.9M |
-| TRIP | TripAdvisor, Inc. | $1.09B |
-| NVAX | NOVAVAX INC | $1.71B |
-| DSX | DIANA SHIPPING INC. | $343.9M |
-| WWW | WOLVERINE WORLD WIDE INC /DE/ | $1.60B |
-| NPKI | NPK International Inc. | $1.11B |
 | AMPY | Amplify Energy Corp. | $203.1M |
 | SPH | SUBURBAN PROPANE PARTNERS LP | $1.17B |
 | FC | FRANKLIN COVEY CO | $207.8M |
@@ -391,12 +371,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| SHOE | SHOE STATION GROUP INC | $370.6M | cloudA | 2026-09-04T15:08:51Z |
+| PBYI | PUMA BIOTECHNOLOGY, INC. | $485.7M | cloudA | 2026-09-04T15:08:51Z |
+| VITL | Vital Farms, Inc. | $433.6M | cloudA | 2026-09-04T15:08:51Z |
+| ETD | ETHAN ALLEN INTERIORS INC | $556.5M | cloudA | 2026-09-04T15:08:51Z |
+| RLGT | RADIANT LOGISTICS, INC | $393.9M | cloudA | 2026-09-04T15:08:51Z |
+| TRIP | TripAdvisor, Inc. | $1.09B | cloudA | 2026-09-04T15:08:51Z |
+| NVAX | NOVAVAX INC | $1.71B | cloudA | 2026-09-04T15:08:51Z |
+| DSX | DIANA SHIPPING INC. | $343.9M | cloudA | 2026-09-04T15:08:51Z |
+| WWW | WOLVERINE WORLD WIDE INC /DE/ | $1.60B | cloudA | 2026-09-04T15:08:51Z |
+| NPKI | NPK International Inc. | $1.11B | cloudA | 2026-09-04T15:08:51Z |
 
-## Done (103)
+## Done (113)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | GOGO | Gogo Inc. | $359.1M | cloudB | 2026-09-04T14:40:29Z |
 | SMP | STANDARD MOTOR PRODUCTS, INC. | $877.8M | cloudB | 2026-09-04T14:40:29Z |
 | AMPH | Amphastar Pharmaceuticals, Inc. | $1.01B | cloudB | 2026-09-04T14:40:29Z |
+| NGVC | Natural Grocers by Vitamin Cottage, Inc. | $627.8M | cloudA | 2026-09-04T15:12:31Z |
+| IRWD | IRONWOOD PHARMACEUTICALS INC | $708.9M | cloudA | 2026-09-04T15:12:31Z |
+| INSE | Inspired Entertainment, Inc. | $147.3M | cloudA | 2026-09-04T15:12:31Z |
+| JBI | Janus International Group, Inc. | $683.5M | cloudA | 2026-09-04T15:12:31Z |
+| GRNT | Granite Ridge Resources, Inc. | $670.1M | cloudA | 2026-09-04T15:12:31Z |
+| BL | BLACKLINE, INC. | $1.93B | cloudA | 2026-09-04T15:12:31Z |
+| WEN | Wendy's Co | $1.50B | cloudA | 2026-09-04T15:12:31Z |
+| ESP | ESPEY MFG & ELECTRONICS CORP | $187.4M | cloudA | 2026-09-04T15:12:31Z |
+| NATR | NATURES SUNSHINE PRODUCTS INC | $242.8M | cloudA | 2026-09-04T15:12:31Z |
+| RICK | RCI HOSPITALITY HOLDINGS, INC. | $219.7M | cloudA | 2026-09-04T15:12:31Z |

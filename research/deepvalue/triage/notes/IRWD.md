@@ -1,0 +1,5 @@
+# IRWD — IRONWOOD PHARMACEUTICALS INC · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings were fetched for this ticker: section 1 of the pack records "Filings fetched: none" and section 11 lists meta.json, all 8-K filings, the Form 4 summary, the earnings press release exhibit, the 10-K Item 1 business description, the 10-K Item 7 MD&A and any transcript as missing. The pack contains only the screen row, which reports a $708.9M market cap, price $4.29, 17.9% FCF yield on $127.0M of cash flow, 10.3x EV/EBIT, 54.0% ROIC, revenue of $296.2M down 15.7% from $351.4M, negative book equity of $161.8M and $385.0M of long-term debt tagged as a line of credit against $79.1M of cash. Nothing in the pack describes what the business does, why revenue fell, or how the debt is structured, so no edge type can be supported and no risk can be named from the company's own text. This is scored 0 as a data gap, not as a judgement on the company. Re-run fetch_filings.py IRWD and re-triage before drawing any conclusion.
+
+_Sources: triage pack only (sections 1, 2, 11). Triage-depth read, not a deep dive._

@@ -104,3 +104,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | GOGO | Gogo Inc. | $359.1M | misunderstood-segment | 6 | Military and government service revenue up 40% inside a company whose ATG aircraft online fell 15%, with net debt of $750.9M against a $359.1M cap |
 | 2026-09-04 | SMP | STANDARD MOTOR PRODUCTS, INC. | $877.8M | misunderstood-segment | 7 | A $37.7M discontinued-operations loss cuts reported EPS from $3.52 to $1.84 while continuing EPS grew 23% and leverage fell to 2.5x |
 | 2026-09-04 | AMPH | Amphastar Pharmaceuticals, Inc. | $1.0B | none | 0 | no filings in bundle |
+| 2026-09-04 | NGVC | Natural Grocers by Vitamin Cottage, Inc. | $627.8M | fallen-growth | 5 | Unit growth accelerating to 6-7 stores from 2 and 32% off the high, but comps decelerated from 7.3% to 1.1% and the EPS guide was trimmed |
+| 2026-09-04 | IRWD | IRONWOOD PHARMACEUTICALS INC | $708.9M | none | 0 | no filings in bundle |
+| 2026-09-04 | INSE | Inspired Entertainment, Inc. | $147.3M | none | 0 | no filings in bundle |
+| 2026-09-04 | JBI | Janus International Group, Inc. | $683.5M | cyclical-trough | 7 | Self-storage volumes down on rates with the stock 52% off its high at 9.8x EV/EBIT and 16.7% FCF yield, but Q2 gross profit fell to $80.3M from $93.2M |
+| 2026-09-04 | GRNT | Granite Ridge Resources, Inc. | $670.1M | insider-buying | 4 | Three insiders bought open-market with no sales, but only $63k and the 44.2% FCF yield is a capex-missing artefact against $345-385M of 2026 capex |
+| 2026-09-04 | BL | BLACKLINE, INC. | $1.9B | cash-cow-narrative | 5 | $161.5M FCF and 6.1% of shares retired 43% off the high, but converts leave net cash unverified and customer count fell to 4,260 on 102% NRR |
+| 2026-09-04 | WEN | Wendy's Co | $1.5B | none | 3 | US same-restaurant sales -7.0%, 245 net US closures year to date, outlook withdrawn and dividend cut, with net debt at 6.9x EBIT |
+| 2026-09-04 | ESP | ESPEY MFG & ELECTRONICS CORP | $187.4M | none | 4 | Debt-free with $46.9M working capital and sales +13.5%, but 20.5x EV/EBIT after a 33% run with 84 insider sale rows and no buys |
+| 2026-09-04 | NATR | NATURES SUNSHINE PRODUCTS INC | $242.8M | hidden-asset | 7 | Zero debt and $82.5M cash is 34% of the cap, so EV is about 3.2x guided 2026 EBITDA, with $2.6M of insider buying into a 50% drawdown |
+| 2026-09-04 | RICK | RCI HOSPITALITY HOLDINGS, INC. | $219.7M | cash-cow-narrative | 6 | 88.6% club gross margin and 12.3% of shares retired at 15.9% FCF yield, but a $9.9M repurchase premium and 6.1x net debt to EBIT temper it |

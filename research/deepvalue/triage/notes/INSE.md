@@ -1,0 +1,5 @@
+# INSE — Inspired Entertainment, Inc. · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings were fetched for this ticker: section 1 of the pack records "Filings fetched: none" and section 11 lists meta.json, all 8-K filings, the Form 4 summary, the earnings press release exhibit, the 10-K Item 1 business description, the 10-K Item 7 MD&A and any transcript as missing. The pack contains only the screen row, which reports a $147.3M market cap, price $5.59, an $443.5M enterprise value on $296.2M of net debt, 14.5x EV/EBIT, 9.7x net debt to EBIT, negative book equity of $15.6M, revenue of $304.1M up 2.4%, EBIT of $30.5M against a net loss of $17.0M, capex of $35.7M on $52.0M of operating cash flow, and a 2.1% reduction in share count. The stock is 43.1% off its 52-week high with a $1.2M average daily value traded. Nothing in the pack describes the business, its segments, or its debt maturities, so no edge type can be supported and no risk can be named from the company's own text. Scored 0 as a data gap. Re-run fetch_filings.py INSE and re-triage.
+
+_Sources: triage pack only (sections 1, 2, 11). Triage-depth read, not a deep dive._
