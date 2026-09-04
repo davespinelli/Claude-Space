@@ -9,17 +9,24 @@ concurrency: daily-close
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: pip install -q pandas numpy yfinance requests python-dotenv
+      - run: pip install -q pandas numpy yfinance requests python-dotenv alpaca-py
       - name: Scan, cache prices, mark paper NAV, apply rules
         run: |
           python research/scan.py
           python research/cache_prices.py
           python paper/ledger.py mark
           python paper/apply_rules.py
+      - name: Alpaca PAPER bot (only if secrets are set)
+        if: ${{ env.ALPACA_API_KEY != '' }}
+        env:
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+        run: python products/bot/bot.py
       - name: Commit & push
         run: |
           git config user.name "Claude Space Bot" && git config user.email "dspinjr@gmail.com"
