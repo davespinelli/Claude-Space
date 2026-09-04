@@ -1,0 +1,265 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+HARNESS CHECKS
+  analytic-cost identity vs engine cost_bps=10: max abs daily diff 0.00e+00 (OK)
+  idea 2 row (top20, 200d gate, 75% gross, universe.json): 12.7%/1.093/-18.3%   [published 12.7%/1.093/-18.3%]
+  idea 57 KEEP-candidate (ew-all, band3): 11.3%/1.136/-15.1%   [published 11.3%/1.136/-15.1%]
+  idea 57 ungated control (ew-all, none): 12.2%/1.127/-18.4%
+
+====================================================================================================================================
+universe.json: 56 tickers, eval 2009-01-13 -> 2026-09-03 (index sanity: 2018 251 rows, 2024 252 rows)
+SPY 15.3%/0.890/-33.7% halves 0.957/0.837 OOS Sharpe 0.884
+4b bars: H1>0.957  H2>0.837  OOS>0.884  MaxDD>=-20.2%  CAGR>=10.7%
+====================================================================================================================================
+RULES v1 baseline @10bps: 6.5%/0.666/-13.8% halves 0.641/0.692 OOS Sharpe 0.751 (4a bars: H1>0.641, H2>0.692, MaxDD>=-13.8%)
+
+Gate mechanics — names passing the trend half, flip rate, and resulting book:
+  gate     mean pass  median   min  flips/tkr/yr  ew-all gross  days<20 elig  top20 turn  ew-all turn
+  none          56.0      56    56          0.00        75.0%         0.5%        9.5x         1.9x
+  200d          38.5      42     4          7.55        75.0%        11.0%        9.6x         8.2x
+  abs           39.4      43     4          5.75        75.0%        11.0%        9.3x         6.4x
+  both          33.0      37     2          8.06        75.0%        18.2%        9.3x         9.7x
+  band3         38.4      42     5          1.77        75.0%        11.0%        9.0x         4.9x
+
+book    gate      bps    CAGR  Sharpe   MaxDD    2020    2022    22DD   turn      H1/   H2    OOS   verdict
+------------------------------------------------------------------------------------------------------------------------------------
+top20   none        5   14.3%   1.162  -18.5%   14.4%   -8.5%  -14.1%   9.5x   1.196/1.138  1.201   KILL 4a / KEEP 4b
+top20   none       10   13.7%   1.123  -18.5%   13.8%   -8.9%  -14.3%   9.5x   1.154/1.101  1.164   KILL 4a / KEEP 4b <-
+top20   none       25   12.1%   1.005  -18.6%   11.8%  -10.3%  -14.9%   9.5x   1.028/0.989  1.051   KILL 4a / KEEP 4b
+top20   none       50    9.5%   0.807  -18.9%    8.7%  -12.6%  -15.8%   9.5x   0.818/0.801  0.862   KEEP 4a / KILL 4b (H1,H2,OOS,CAGR)
+top20   200d        5   13.2%   1.135  -18.3%   16.0%   -8.6%  -10.8%   9.6x   1.133/1.143  1.209   KILL 4a / KEEP 4b
+top20   200d       10   12.7%   1.093  -18.3%   15.4%   -9.0%  -11.0%   9.6x   1.088/1.103  1.170   KILL 4a / KEEP 4b <-
+top20   200d       25   11.1%   0.968  -18.4%   13.5%  -10.2%  -11.7%   9.6x   0.954/0.985  1.051   KILL 4a / KILL 4b (H1)
+top20   200d       50    8.4%   0.758  -18.7%   10.3%  -12.0%  -13.2%   9.6x   0.728/0.788  0.853   KEEP 4a / KILL 4b (H1,H2,OOS,CAGR)
+top20   abs         5   12.9%   1.098  -18.4%   14.7%   -6.4%  -10.7%   9.3x   1.089/1.115  1.183   KILL 4a / KEEP 4b
+top20   abs        10   12.4%   1.058  -18.4%   14.1%   -6.7%  -10.8%   9.3x   1.045/1.078  1.145   KILL 4a / KEEP 4b <-
+top20   abs        25   10.8%   0.939  -18.5%   12.3%   -7.7%  -11.2%   9.3x   0.916/0.966  1.033   KILL 4a / KILL 4b (H1)
+top20   abs        50    8.3%   0.740  -18.7%    9.4%   -9.2%  -11.8%   9.3x   0.700/0.780  0.845   KEEP 4a / KILL 4b (H1,H2,OOS,CAGR)
+top20   both        5   11.8%   1.068  -18.5%   14.3%   -6.7%   -8.5%   9.3x   1.053/1.091  1.165   KILL 4a / KEEP 4b
+top20   both       10   11.3%   1.026  -18.6%   13.7%   -7.0%   -8.6%   9.3x   1.007/1.051  1.125   KILL 4a / KEEP 4b <-
+top20   both       25    9.8%   0.899  -18.7%   11.9%   -7.9%   -8.9%   9.3x   0.869/0.932  1.006   KILL 4a / KILL 4b (H1,CAGR)
+top20   both       50    7.2%   0.687  -18.9%    8.9%   -9.3%  -10.0%   9.3x   0.640/0.733  0.805   KEEP 4a / KILL 4b (H1,H2,OOS,CAGR)
+top20   band3       5   13.6%   1.157  -18.0%   17.1%   -6.8%   -9.2%   9.0x   1.125/1.190  1.253   KILL 4a / KEEP 4b
+top20   band3      10   13.1%   1.118  -18.0%   16.4%   -7.1%   -9.3%   9.0x   1.083/1.154  1.216   KILL 4a / KEEP 4b <-
+top20   band3      25   11.5%   1.001  -18.1%   14.6%   -7.9%   -9.7%   9.0x   0.957/1.045  1.107   KILL 4a / KEEP 4b
+top20   band3      50    9.1%   0.807  -18.3%   11.6%   -9.2%  -10.7%   9.0x   0.745/0.863  0.923   KEEP 4a / KILL 4b (H1,CAGR)
+------------------------------------------------------------------------------------------------------------------------------------
+ew-all  none        5   12.3%   1.136  -18.3%   13.6%  -10.3%  -15.6%   1.9x   1.149/1.125  1.192   KILL 4a / KEEP 4b
+ew-all  none       10   12.2%   1.127  -18.4%   13.3%  -10.4%  -15.6%   1.9x   1.141/1.116  1.183   KILL 4a / KEEP 4b <-
+ew-all  none       25   11.9%   1.101  -18.5%   12.4%  -10.8%  -15.9%   1.9x   1.118/1.086  1.154   KILL 4a / KEEP 4b
+ew-all  none       50   11.4%   1.057  -18.8%   10.9%  -11.4%  -16.3%   1.9x   1.080/1.037  1.105   KEEP 4a / KEEP 4b
+ew-all  200d        5   10.9%   1.092  -15.8%   15.6%   -8.5%  -14.9%   8.2x   1.109/1.079  1.156   KILL 4a / KEEP 4b
+ew-all  200d       10   10.4%   1.050  -15.9%   15.1%   -9.2%  -15.2%   8.2x   1.068/1.037  1.114   KILL 4a / KILL 4b (CAGR) <-
+ew-all  200d       25    9.1%   0.925  -16.1%   13.4%  -11.6%  -16.1%   8.2x   0.945/0.910  0.989   KILL 4a / KILL 4b (H1,CAGR)
+ew-all  200d       50    6.8%   0.716  -18.5%   10.7%  -15.3%  -18.5%   8.2x   0.740/0.697  0.781   KEEP 4a / KILL 4b (H1,H2,OOS,CAGR)
+ew-all  abs         5   11.7%   1.102  -17.0%   15.8%   -8.5%  -12.9%   6.4x   1.146/1.069  1.143   KILL 4a / KEEP 4b
+ew-all  abs        10   11.4%   1.072  -17.1%   15.3%   -9.0%  -13.1%   6.4x   1.116/1.038  1.113   KILL 4a / KEEP 4b <-
+ew-all  abs        25   10.3%   0.980  -17.2%   13.8%  -10.2%  -14.0%   6.4x   1.025/0.944  1.021   KILL 4a / KILL 4b (CAGR)
+ew-all  abs        50    8.5%   0.826  -18.1%   11.4%  -12.3%  -15.4%   6.4x   0.874/0.789  0.867   KEEP 4a / KILL 4b (H1,H2,OOS,CAGR)
+ew-all  both        5   10.5%   1.046  -15.9%   14.0%   -6.4%  -13.8%   9.7x   1.063/1.035  1.119   KILL 4a / KILL 4b (CAGR)
+ew-all  both       10   10.0%   0.997  -15.9%   13.3%   -7.2%  -14.1%   9.7x   1.013/0.988  1.073   KILL 4a / KILL 4b (CAGR) <-
+ew-all  both       25    8.4%   0.852  -16.1%   11.5%   -9.2%  -14.8%   9.7x   0.862/0.846  0.935   KILL 4a / KILL 4b (H1,CAGR)
+ew-all  both       50    5.8%   0.609  -20.3%    8.5%  -12.6%  -16.7%   9.7x   0.610/0.610  0.703   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+ew-all  band3       5   11.5%   1.161  -15.1%   19.4%   -4.7%  -13.8%   4.9x   1.137/1.185  1.258   KILL 4a / KEEP 4b
+ew-all  band3      10   11.3%   1.136  -15.1%   18.9%   -5.2%  -14.0%   4.9x   1.113/1.160  1.234   KILL 4a / KEEP 4b <-
+ew-all  band3      25   10.5%   1.062  -15.2%   17.7%   -6.5%  -14.7%   4.9x   1.039/1.085  1.161   KEEP 4a / KILL 4b (CAGR)
+ew-all  band3      50    9.1%   0.937  -15.7%   15.6%   -8.7%  -15.7%   4.9x   0.915/0.960  1.039   KEEP 4a / KILL 4b (H1,CAGR)
+------------------------------------------------------------------------------------------------------------------------------------
+
+IDEA 4's TEST — each arm minus the 200d incumbent, same book, same days (paired daily differences at 10 bps):
+  book    gate       dCAGR  dSharpe  dMaxDD   dTurn  ann.diff      t
+  top20   none       +1.06   +0.030   -0.24   -0.1x     +1.00  +1.61
+  top20   abs        -0.30   -0.035   -0.11   -0.4x     -0.25  -0.30
+  top20   both       -1.36   -0.067   -0.25   -0.3x     -1.27  -1.99
+  top20   band3      +0.39   +0.025   +0.31   -0.6x     +0.35  +1.56
+
+  ew-all  none       +1.81   +0.077   -2.51   -6.4x     +1.71  +1.47
+  ew-all  abs        +0.94   +0.021   -1.18   -1.8x     +0.91  +0.92
+  ew-all  both       -0.41   -0.053   -0.04   +1.5x     -0.36  -0.57
+  ew-all  band3      +0.85   +0.086   +0.74   -3.4x     +0.76  +2.57
+
+SAME, against the UNGATED control (gate=none) — is any gate worth its cost at all?
+  book    gate       dCAGR  dSharpe  dMaxDD   dTurn  ann.diff      t   pp CAGR/pp DD
+  top20   200d       -1.06   -0.030   +0.24   +0.1x     -1.00  -1.61            4.45
+  top20   abs        -1.36   -0.065   +0.13   -0.3x     -1.26  -1.59           10.74
+  top20   both       -2.41   -0.096   -0.01   -0.2x     -2.27  -2.50             nan
+  top20   band3      -0.67   -0.005   +0.55   -0.5x     -0.65  -1.06            1.21
+
+  ew-all  200d       -1.81   -0.077   +2.51   +6.4x     -1.71  -1.47            0.72
+  ew-all  abs        -0.87   -0.055   +1.32   +4.6x     -0.80  -0.77            0.66
+  ew-all  both       -2.22   -0.130   +2.47   +7.9x     -2.07  -1.54            0.90
+  ew-all  band3      -0.96   +0.009   +3.25   +3.0x     -0.95  -0.82            0.29
+
+MARGINS on each 4b bar at 10 bps (positive = clears; the binding bar is the smallest positive or any negative):
+  book    gate       H1-bar   H2-bar  OOS-bar  DD-slack(pp)  CAGR-slack(pp)   binding
+  top20   none      +0.1973  +0.2643  +0.2792         +1.68           +3.05   H1 (+0.1973)
+  top20   200d      +0.1317  +0.2668  +0.2852         +1.92           +1.99   H1 (+0.1317)
+  top20   abs       +0.0888  +0.2411  +0.2608         +1.81           +1.69   H1 (+0.0888)
+  top20   both      +0.0502  +0.2145  +0.2409         +1.67           +0.64   H1 (+0.0502)
+  top20   band3     +0.1267  +0.3172  +0.3319         +2.24           +2.38   H1 (+0.1267)
+  ew-all  none      +0.1843  +0.2792  +0.2981         +1.85           +1.55   H1 (+0.1843)
+  ew-all  200d      +0.1119  +0.2003  +0.2296         +4.36           -0.26   CAGR (-0.2607)
+  ew-all  abs       +0.1595  +0.2010  +0.2281         +3.17           +0.68   H1 (+0.1595)
+  ew-all  both      +0.0563  +0.1512  +0.1889         +4.32           -0.67   CAGR (-0.6737)
+  ew-all  band3     +0.1561  +0.3236  +0.3494         +5.09           +0.59   H1 (+0.1561)
+
+WHIPSAW ORDERING — idea 57 predicts fewer flips -> better net Sharpe. Gates ranked by flip rate:
+  top20   band3(1.77 flips, Sh 1.118)  abs(5.75 flips, Sh 1.058)  200d(7.55 flips, Sh 1.093)  both(8.06 flips, Sh 1.026)
+  ew-all  band3(1.77 flips, Sh 1.136)  abs(5.75 flips, Sh 1.072)  200d(7.55 flips, Sh 1.050)  both(8.06 flips, Sh 0.997)
+
+Rule 8 walk-forward — gate (and book) chosen on IS 2009-2016 only, evaluated untouched on 2017-01-01-2026, at 10 bps.
+  IS SPY 15.0%/0.899/-22.1%   4b-aware IS bars: MaxDD>=-13.2%, CAGR>=10.5%
+  book    gate      IS CAGR   IS Sh   IS DD    OOS CAGR  OOS Sh  OOS DD
+  top20   none        12.3%   1.071  -11.9%       14.9%   1.164  -18.5%
+  top20   200d        10.6%   0.993  -11.7%       14.4%   1.170  -18.3%
+  top20   abs          9.9%   0.942  -12.5%       14.4%   1.145  -18.4%
+  top20   both         8.8%   0.893  -11.6%       13.4%   1.125  -18.6%
+  top20   band3       10.6%   0.988  -12.2%       15.1%   1.216  -18.0%
+  ew-all  none        11.4%   1.059  -12.2%       12.9%   1.183  -18.4%
+  ew-all  200d         9.3%   0.970  -11.2%       11.4%   1.114  -15.9%
+  ew-all  abs         10.3%   1.020  -12.4%       12.2%   1.113  -17.1%
+  ew-all  both         8.5%   0.899  -11.9%       11.2%   1.073  -15.9%
+  ew-all  band3        9.6%   1.012  -10.3%       12.6%   1.234  -15.1%
+  RULES v1 base        4.9%   0.553  -13.1%        7.8%   0.751  -13.8%
+  SPY                 15.0%   0.899  -22.1%       15.5%   0.884  -33.7%
+  RULE A (max IS Sharpe)      -> top20/none: OOS 14.9%/1.164/-18.5% vs SPY 15.5%/0.884/-33.7% [clears OOS 4b bars]
+  RULE B (4b-aware IS filter) -> top20/none: OOS 14.9%/1.164/-18.5% [clears OOS 4b bars]
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+====================================================================================================================================
+universe_broad.json: 136 tickers, eval 2009-01-13 -> 2026-09-03 (index sanity: 2018 251 rows, 2024 252 rows)
+SPY 15.3%/0.890/-33.7% halves 0.957/0.837 OOS Sharpe 0.884
+4b bars: H1>0.957  H2>0.837  OOS>0.884  MaxDD>=-20.2%  CAGR>=10.7%
+====================================================================================================================================
+RULES v1 baseline @10bps: 6.4%/0.640/-21.2% halves 0.762/0.537 OOS Sharpe 0.581 (4a bars: H1>0.762, H2>0.537, MaxDD>=-21.2%)
+
+Gate mechanics — names passing the trend half, flip rate, and resulting book:
+  gate     mean pass  median   min  flips/tkr/yr  ew-all gross  days<20 elig  top20 turn  ew-all turn
+  none         136.0     136   136          0.00        75.0%         0.5%       13.9x         1.8x
+  200d          93.2     101     6          7.73        75.0%         2.4%       13.8x         8.3x
+  abs           96.4     104     6          5.98        75.0%         4.0%       13.7x         6.4x
+  both          79.9      87     3          8.34        75.0%         4.9%       13.6x         9.6x
+  band3         93.2     101     6          2.03        75.0%         2.5%       13.7x         5.2x
+
+book    gate      bps    CAGR  Sharpe   MaxDD    2020    2022    22DD   turn      H1/   H2    OOS   verdict
+------------------------------------------------------------------------------------------------------------------------------------
+top20   none        5   13.6%   0.979  -20.6%    9.8%   -9.0%  -16.1%  13.9x   1.132/0.845  0.926   KILL 4a / KILL 4b (DD)
+top20   none       10   12.8%   0.929  -20.7%    9.0%   -9.6%  -16.5%  13.9x   1.081/0.797  0.877   KEEP 4a / KILL 4b (H2,OOS,DD) <-
+top20   none       25   10.5%   0.780  -21.0%    6.6%  -11.5%  -17.8%  13.9x   0.929/0.651  0.730   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+top20   none       50    6.7%   0.532  -21.4%    2.8%  -14.6%  -19.8%  13.9x   0.674/0.408  0.484   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+top20   200d        5   13.9%   1.008  -20.0%   13.0%  -10.3%  -16.6%  13.8x   1.175/0.862  0.943   KILL 4a / KEEP 4b
+top20   200d       10   13.1%   0.958  -20.1%   12.2%  -10.9%  -17.0%  13.8x   1.125/0.814  0.894   KEEP 4a / KILL 4b (H2) <-
+top20   200d       25   10.8%   0.809  -20.2%   10.0%  -12.8%  -18.4%  13.8x   0.972/0.666  0.745   KEEP 4a / KILL 4b (H2,OOS)
+top20   200d       50    7.0%   0.560  -21.9%    6.2%  -15.8%  -20.5%  13.8x   0.718/0.421  0.497   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+top20   abs         5   13.6%   0.994  -20.6%    9.4%   -8.4%  -15.2%  13.7x   1.160/0.859  0.939   KILL 4a / KILL 4b (DD)
+top20   abs        10   12.8%   0.944  -20.7%    8.6%   -9.0%  -15.6%  13.7x   1.109/0.810  0.890   KEEP 4a / KILL 4b (H2,DD) <-
+top20   abs        25   10.5%   0.795  -21.0%    6.2%  -10.9%  -16.9%  13.7x   0.956/0.662  0.741   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+top20   abs        50    6.8%   0.545  -21.4%    2.5%  -14.0%  -19.0%  13.7x   0.701/0.416  0.492   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+top20   both        5   13.7%   1.013  -20.0%   12.6%   -8.8%  -15.1%  13.6x   1.167/0.886  0.966   KILL 4a / KEEP 4b
+top20   both       10   12.9%   0.963  -20.1%   11.9%   -9.4%  -15.5%  13.6x   1.116/0.837  0.916   KEEP 4a / KEEP 4b <-
+top20   both       25   10.7%   0.812  -20.2%    9.6%  -11.3%  -16.9%  13.6x   0.963/0.688  0.766   KEEP 4a / KILL 4b (H2,OOS,CAGR)
+top20   both       50    7.0%   0.562  -21.3%    5.9%  -14.4%  -19.1%  13.6x   0.707/0.441  0.516   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+top20   band3       5   13.8%   1.001  -20.0%   14.7%  -10.4%  -16.6%  13.7x   1.152/0.871  0.952   KILL 4a / KEEP 4b
+top20   band3      10   13.0%   0.952  -20.1%   13.9%  -11.0%  -17.0%  13.7x   1.101/0.823  0.902   KEEP 4a / KILL 4b (H2) <-
+top20   band3      25   10.7%   0.803  -20.2%   11.6%  -12.8%  -18.2%  13.7x   0.950/0.676  0.755   KEEP 4a / KILL 4b (H1,H2,OOS)
+top20   band3      50    7.0%   0.555  -21.8%    7.8%  -15.7%  -20.3%  13.7x   0.696/0.433  0.508   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+------------------------------------------------------------------------------------------------------------------------------------
+ew-all  none        5   13.0%   1.129  -20.7%    9.3%   -6.3%  -14.5%   1.8x   1.240/1.024  1.113   KILL 4a / KILL 4b (DD)
+ew-all  none       10   12.9%   1.121  -20.8%    8.9%   -6.4%  -14.6%   1.8x   1.233/1.015  1.104   KEEP 4a / KILL 4b (DD) <-
+ew-all  none       25   12.6%   1.097  -20.9%    7.8%   -6.7%  -14.8%   1.8x   1.214/0.987  1.076   KEEP 4a / KILL 4b (DD)
+ew-all  none       50   12.1%   1.057  -21.2%    6.0%   -7.2%  -15.1%   1.8x   1.181/0.940  1.030   KEEP 4a / KILL 4b (DD)
+ew-all  200d        5   11.2%   1.067  -17.5%    8.2%   -7.6%  -15.9%   8.3x   1.183/0.959  1.062   KEEP 4a / KEEP 4b
+ew-all  200d       10   10.7%   1.027  -17.7%    7.5%   -8.4%  -16.4%   8.3x   1.146/0.917  1.021   KEEP 4a / KEEP 4b <-
+ew-all  200d       25    9.4%   0.908  -18.2%    5.5%  -10.5%  -17.8%   8.3x   1.033/0.791  0.898   KEEP 4a / KILL 4b (H2,CAGR)
+ew-all  200d       50    7.1%   0.709  -20.3%    2.2%  -14.1%  -20.2%   8.3x   0.845/0.582  0.692   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+ew-all  abs         5   12.1%   1.097  -20.0%   10.0%   -5.0%  -13.2%   6.4x   1.186/1.018  1.112   KILL 4a / KEEP 4b
+ew-all  abs        10   11.8%   1.068  -20.1%    9.4%   -5.5%  -13.5%   6.4x   1.158/0.988  1.083   KEEP 4a / KEEP 4b <-
+ew-all  abs        25   10.7%   0.980  -20.3%    7.6%   -6.8%  -14.4%   6.4x   1.073/0.899  0.995   KEEP 4a / KILL 4b (DD)
+ew-all  abs        50    9.0%   0.835  -20.6%    4.8%   -9.0%  -15.8%   6.4x   0.931/0.749  0.848   KEEP 4a / KILL 4b (H1,H2,OOS,DD,CAGR)
+ew-all  both        5   10.8%   1.034  -17.8%    7.8%   -4.6%  -13.5%   9.6x   1.093/0.982  1.087   KEEP 4a / KEEP 4b
+ew-all  both       10   10.3%   0.988  -17.9%    7.1%   -5.3%  -14.0%   9.6x   1.046/0.937  1.043   KEEP 4a / KILL 4b (CAGR) <-
+ew-all  both       25    8.7%   0.850  -18.7%    5.0%   -7.4%  -15.4%   9.6x   0.904/0.802  0.910   KEEP 4a / KILL 4b (H1,H2,CAGR)
+ew-all  both       50    6.1%   0.620  -20.0%    1.7%  -10.7%  -17.6%   9.6x   0.667/0.577  0.690   KEEP 4a / KILL 4b (H1,H2,OOS,CAGR)
+ew-all  band3       5   11.4%   1.089  -16.8%   13.1%   -8.0%  -15.6%   5.2x   1.187/0.997  1.099   KEEP 4a / KEEP 4b
+ew-all  band3      10   11.1%   1.064  -16.8%   12.6%   -8.4%  -15.9%   5.2x   1.163/0.971  1.074   KEEP 4a / KEEP 4b <-
+ew-all  band3      25   10.3%   0.989  -17.0%   11.1%   -9.9%  -16.8%   5.2x   1.092/0.892  0.997   KEEP 4a / KILL 4b (CAGR)
+ew-all  band3      50    8.8%   0.863  -18.5%    8.6%  -12.2%  -18.2%   5.2x   0.974/0.760  0.868   KEEP 4a / KILL 4b (H2,OOS,CAGR)
+------------------------------------------------------------------------------------------------------------------------------------
+
+IDEA 4's TEST — each arm minus the 200d incumbent, same book, same days (paired daily differences at 10 bps):
+  book    gate       dCAGR  dSharpe  dMaxDD   dTurn  ann.diff      t
+  top20   none       -0.28   -0.029   -0.64   +0.1x     -0.22  -0.50
+  top20   abs        -0.30   -0.014   -0.64   -0.1x     -0.28  -0.44
+  top20   both       -0.17   +0.005   +0.00   -0.2x     -0.18  -0.34
+  top20   band3      -0.09   -0.006   +0.00   -0.1x     -0.08  -0.57
+
+  ew-all  none       +2.19   +0.094   -3.09   -6.5x     +2.06  +2.13
+  ew-all  abs        +1.05   +0.040   -2.42   -1.9x     +1.01  +1.19
+  ew-all  both       -0.43   -0.039   -0.26   +1.3x     -0.38  -0.69
+  ew-all  band3      +0.39   +0.036   +0.89   -3.1x     +0.35  +1.45
+
+SAME, against the UNGATED control (gate=none) — is any gate worth its cost at all?
+  book    gate       dCAGR  dSharpe  dMaxDD   dTurn  ann.diff      t   pp CAGR/pp DD
+  top20   200d       +0.28   +0.029   +0.64   -0.1x     +0.22  +0.50           -0.43
+  top20   abs        -0.03   +0.015   -0.00   -0.2x     -0.06  -0.11             nan
+  top20   both       +0.11   +0.034   +0.64   -0.3x     +0.03  +0.05           -0.17
+  top20   band3      +0.18   +0.023   +0.64   -0.2x     +0.13  +0.30           -0.28
+
+  ew-all  200d       -2.19   -0.094   +3.09   +6.5x     -2.06  -2.13            0.71
+  ew-all  abs        -1.13   -0.054   +0.67   +4.6x     -1.06  -1.27            1.69
+  ew-all  both       -2.61   -0.133   +2.83   +7.8x     -2.45  -2.13            0.92
+  ew-all  band3      -1.80   -0.057   +3.98   +3.4x     -1.71  -1.76            0.45
+
+MARGINS on each 4b bar at 10 bps (positive = clears; the binding bar is the smallest positive or any negative):
+  book    gate       H1-bar   H2-bar  OOS-bar  DD-slack(pp)  CAGR-slack(pp)   binding
+  top20   none      +0.1245  -0.0397  -0.0072         -0.47           +2.15   DD (-0.4658)
+  top20   200d      +0.1679  -0.0231  +0.0096         +0.18           +2.43   H2 (-0.0231)
+  top20   abs       +0.1522  -0.0266  +0.0052         -0.47           +2.12   DD (-0.4658)
+  top20   both      +0.1590  +0.0002  +0.0315         +0.18           +2.26   H2 (+0.0002)
+  top20   band3     +0.1448  -0.0139  +0.0180         +0.18           +2.33   H2 (-0.0139)
+  ew-all  none      +0.2767  +0.1782  +0.2193         -0.55           +2.24   DD (-0.5496)
+  ew-all  200d      +0.1889  +0.0803  +0.1365         +2.54           +0.05   CAGR (+0.0520)
+  ew-all  abs       +0.2009  +0.1518  +0.1983         +0.12           +1.11   DD (+0.1217)
+  ew-all  both      +0.0891  +0.1004  +0.1582         +2.28           -0.38   CAGR (-0.3754)
+  ew-all  band3     +0.2064  +0.1345  +0.1894         +3.43           +0.44   H2 (+0.1345)
+
+WHIPSAW ORDERING — idea 57 predicts fewer flips -> better net Sharpe. Gates ranked by flip rate:
+  top20   band3(2.03 flips, Sh 0.952)  abs(5.98 flips, Sh 0.944)  200d(7.73 flips, Sh 0.958)  both(8.34 flips, Sh 0.963)
+  ew-all  band3(2.03 flips, Sh 1.064)  abs(5.98 flips, Sh 1.068)  200d(7.73 flips, Sh 1.027)  both(8.34 flips, Sh 0.988)
+
+Rule 8 walk-forward — gate (and book) chosen on IS 2009-2016 only, evaluated untouched on 2017-01-01-2026, at 10 bps.
+  IS SPY 15.0%/0.899/-22.1%   4b-aware IS bars: MaxDD>=-13.2%, CAGR>=10.5%
+  book    gate      IS CAGR   IS Sh   IS DD    OOS CAGR  OOS Sh  OOS DD
+  top20   none        13.3%   0.998  -13.6%       12.4%   0.877  -20.7%
+  top20   200d        13.8%   1.044  -13.6%       12.5%   0.894  -20.1%
+  top20   abs         13.1%   1.023  -13.6%       12.6%   0.890  -20.7%
+  top20   both        13.1%   1.030  -13.6%       12.8%   0.916  -20.1%
+  top20   band3       13.4%   1.019  -13.6%       12.7%   0.902  -20.1%
+  ew-all  none        13.4%   1.142  -13.9%       12.5%   1.104  -20.8%
+  ew-all  200d        10.9%   1.035  -11.4%       10.6%   1.021  -17.7%
+  ew-all  abs         11.4%   1.049  -12.3%       12.1%   1.083  -20.1%
+  ew-all  both         9.5%   0.921  -11.8%       11.0%   1.043  -17.9%
+  ew-all  band3       11.0%   1.051  -10.5%       11.2%   1.074  -16.8%
+  RULES v1 base        7.0%   0.721   -9.5%        6.0%   0.581  -21.2%
+  SPY                 15.0%   0.899  -22.1%       15.5%   0.884  -33.7%
+  RULE A (max IS Sharpe)      -> ew-all/none: OOS 12.5%/1.104/-20.8% vs SPY 15.5%/0.884/-33.7% [FAILS OOS 4b bars]
+  RULE B (4b-aware IS filter) -> ew-all/band3: OOS 11.2%/1.074/-16.8% [clears OOS 4b bars]
+
+====================================================================================================================================
+CROSS-UNIVERSE 4b SUMMARY at 10 bps (an arm is only a candidate if it passes on BOTH lists)
+====================================================================================================================================
+  book    gate                   universe.json           universe_broad.json   both?
+  top20   none        13.7%/1.123/ -18.5%      12.8%/0.929/ -20.7%   no
+  top20   200d        12.7%/1.093/ -18.3%      13.1%/0.958/ -20.1%   no
+  top20   abs         12.4%/1.058/ -18.4%      12.8%/0.944/ -20.7%   no  <- IDEA 4 arm
+  top20   both        11.3%/1.026/ -18.6%      12.9%/0.963/ -20.1%   YES  <- IDEA 4 arm
+  top20   band3       13.1%/1.118/ -18.0%      13.0%/0.952/ -20.1%   no
+  ew-all  none        12.2%/1.127/ -18.4%      12.9%/1.121/ -20.8%   no
+  ew-all  200d        10.4%/1.050/ -15.9%      10.7%/1.027/ -17.7%   no
+  ew-all  abs         11.4%/1.072/ -17.1%      11.8%/1.068/ -20.1%   YES  <- IDEA 4 arm
+  ew-all  both        10.0%/0.997/ -15.9%      10.3%/0.988/ -17.9%   no  <- IDEA 4 arm
+  ew-all  band3       11.3%/1.136/ -15.1%      11.1%/1.064/ -16.8%   YES
+
+  3 of 10 arms pass 4b on both universes at 10 bps.
+
+Script: research/backtests/2026-09-04_abs-momentum-filter_C.py

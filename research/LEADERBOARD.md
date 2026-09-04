@@ -328,3 +328,28 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 57 universe.json walk-forward 4b-aware: top20 gate=none OOS | 14.9% | 1.16 | -18.5% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_trend-gate-as-drawdown-insurance_B.py |
 | 2026-09-04 | 57 universe_broad.json walk-forward plain-Sharpe: ew-all gate=none OOS | 12.5% | 1.10 | -20.8% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_trend-gate-as-drawdown-insurance_B.py |
 | 2026-09-04 | 57 universe_broad.json walk-forward 4b-aware: ew-all gate=band3 OOS | 11.2% | 1.07 | -16.8% | - / - | 0.67 (0.64/0.69) | beats SPY OOS | research/backtests/2026-09-04_trend-gate-as-drawdown-insurance_B.py |
+| 2026-09-04 | 4 universe.json top20 gate=none | 13.7% | 1.12 | -18.5% | 1.15 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b / KILL 4a | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json top20 gate=200d (incumbent) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b / KILL 4a | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json top20 gate=abs12-1 | 12.4% | 1.06 | -18.4% | 1.05 / 1.08 | 0.67 (0.64/0.69) | KEEP 4b / KILL 4a | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json top20 gate=200d AND abs | 11.3% | 1.03 | -18.6% | 1.01 / 1.05 | 0.67 (0.64/0.69) | KEEP 4b / KILL 4a | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json top20 gate=band3 (idea 57 ref) | 13.1% | 1.12 | -18.0% | 1.08 / 1.15 | 0.67 (0.64/0.69) | KEEP 4b / KILL 4a | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json ew-all gate=none | 12.2% | 1.13 | -18.4% | 1.14 / 1.12 | 0.67 (0.64/0.69) | KEEP 4b / KILL 4a | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json ew-all gate=200d (incumbent) | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json ew-all gate=abs12-1 | 11.4% | 1.07 | -17.1% | 1.12 / 1.04 | 0.67 (0.64/0.69) | KEEP 4b / KILL 4a | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json ew-all gate=200d AND abs | 10.0% | 1.00 | -15.9% | 1.01 / 0.99 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json ew-all gate=band3 (idea 57 ref) | 11.3% | 1.14 | -15.1% | 1.11 / 1.16 | 0.67 (0.64/0.69) | KEEP 4b / KILL 4a | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad top20 gate=none | 12.8% | 0.93 | -20.7% | 1.08 / 0.80 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad top20 gate=200d (incumbent) | 13.1% | 0.96 | -20.1% | 1.13 / 0.81 | 0.64 (0.76/0.54) | KILL 4b (H2) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad top20 gate=abs12-1 | 12.8% | 0.94 | -20.7% | 1.11 / 0.81 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad top20 gate=200d AND abs | 12.9% | 0.96 | -20.1% | 1.12 / 0.84 | 0.64 (0.76/0.54) | KEEP 4b by +0.0002 (tie) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad top20 gate=band3 (idea 57 ref) | 13.0% | 0.95 | -20.1% | 1.10 / 0.82 | 0.64 (0.76/0.54) | KILL 4b (H2) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad ew-all gate=none | 12.9% | 1.12 | -20.8% | 1.23 / 1.02 | 0.64 (0.76/0.54) | KILL 4b (DD) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad ew-all gate=200d (incumbent) | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | KEEP 4b by +0.05pp CAGR | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad ew-all gate=abs12-1 | 11.8% | 1.07 | -20.1% | 1.16 / 0.99 | 0.64 (0.76/0.54) | KEEP 4b by +0.12pp DD | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad ew-all gate=200d AND abs | 10.3% | 0.99 | -17.9% | 1.05 / 0.94 | 0.64 (0.76/0.54) | KILL 4b (CAGR) | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad ew-all gate=band3 (idea 57 ref) | 11.1% | 1.06 | -16.8% | 1.16 / 0.97 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe.json walk-forward plain-Sharpe AND 4b-aware: top20 gate=none OOS | 14.9% | 1.16 | -18.5% | - / - | 0.67 (0.64/0.69) | no idea-4 arm picked | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad walk-forward plain-Sharpe: ew-all gate=none OOS | 12.5% | 1.10 | -20.8% | - / - | 0.64 (0.76/0.54) | no idea-4 arm picked; fails OOS DD | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 universe_broad walk-forward 4b-aware: ew-all gate=band3 OOS | 11.2% | 1.07 | -16.8% | - / - | 0.64 (0.76/0.54) | no idea-4 arm picked | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 OOS reference: RULES v1 baseline (universe.json) | 7.8% | 0.75 | -13.8% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_abs-momentum-filter_C.py |
+| 2026-09-04 | 4 OOS reference: SPY buy & hold | 15.5% | 0.88 | -33.7% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_abs-momentum-filter_C.py |
