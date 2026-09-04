@@ -324,3 +324,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | AIN | ALBANY INTERNATIONAL CORP /DE/ | $1.8B | misunderstood-segment | 6 | Machine Clothing earned $156.2M while AEC lost $145.1M on CH-53K re-estimates, but $2.2B EV leaves no gap |
 | 2026-09-04 | CVEO | Civeo Corp | $349.0M | cash-cow-narrative | 6 | Share count down 17.6% and EBITDA guide held at $85M-$90M on $537M EV, but FY25 EBIT was only $4.1M |
 | 2026-09-04 | FWRG | First Watch Restaurant Group, Inc. | $722.0M | fallen-growth | 6 | Revenue +15.2% and 60-62 new units at 7.2x guided EBITDA, but capex exceeds EBITDA and FCF is -$31.0M |
+| 2026-09-04 | MNRO | MONRO, INC. | $393.9M | post-restructuring | 4 | 145 stores closed and opex down 380bps, but adjusted operating income fell from 4.7% to 0.8% of sales and comps are -1.7% |
+| 2026-09-04 | PACK | Ranpak Holdings Corp. | $375.6M | misunderstood-segment | 5 | Automation revenue +133.8% toward $60M, but the installed PPS base shrank 2.3% and term debt is $395.8M |
+| 2026-09-04 | REAL | TheRealReal, Inc. | $1.2B | fallen-growth | 4 | GMV +22% and guidance raised to $66M-$69M EBITDA, but EV is 18x that with equity at -$377.7M and 5.6% dilution |
+| 2026-09-04 | CMCO | COLUMBUS MCKINNON CORP | $526.1M | post-restructuring | 6 | FY27 guide raised to $405M-$420M EBITDA on 21.0% margins, but leverage is 4.9x and preferred takes diluted shares to 52M |
+| 2026-09-04 | TLRY | Tilray Brands, Inc. | $617.0M | none | 3 | The -87.6% share change is a reverse split not a buyback, and adjusted EBITDA of $61.1M sits against CFO of -$69.1M |
+| 2026-09-04 | PHR | Phreesia, Inc. | $686.1M | fallen-growth | 7 | Down 64% off the high yet guiding $125M-$135M EBITDA on a $612.6M EV with net cash and $67.7M of trailing FCF |
+| 2026-09-04 | OSS | ONE STOP SYSTEMS, INC. | $243.4M | none | 3 | About 6x forward sales for barely positive EBITDA, with debt data missing, 13.8% dilution and only insider selling |
+| 2026-09-04 | JACK | JACK IN THE BOX INC | $290.8M | post-restructuring | 7 | Del Taco sold and debt refinanced to 2031, with $225M-$230M guided EBITDA and 25.5% FCF yield on a 19.2M share stub |
+| 2026-09-04 | ALTO | Alto Ingredients, Inc. | $312.6M | cyclical-trough | 6 | Q2 adjusted EBITDA swung $23.9M to $23.7M in a fourth straight positive quarter, but momentum is 343.9% and a $50M ATM was just filed |
+| 2026-09-04 | CPRI | Capri Holdings Ltd | $1.5B | post-restructuring | 7 | Net debt cut from $1.5B to $224M post-Versace, 6.2x guided EPS, and $871M buyback left vs a $1.5B cap |

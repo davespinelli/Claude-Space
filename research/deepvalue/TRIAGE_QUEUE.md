@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T22:10:14Z · open 152 · in progress 10 · done 323_
+_Source: universe_under2b.csv · updated 2026-09-04T22:13:41Z · open 152 · in progress 0 · done 333_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -161,22 +161,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| MNRO | MONRO, INC. | $393.9M | cloudA | 2026-09-04T22:07:26Z |
-| PACK | Ranpak Holdings Corp. | $375.6M | cloudA | 2026-09-04T22:07:26Z |
-| REAL | TheRealReal, Inc. | $1.22B | cloudA | 2026-09-04T22:07:26Z |
-| CMCO | COLUMBUS MCKINNON CORP | $526.1M | cloudA | 2026-09-04T22:07:26Z |
-| TLRY | Tilray Brands, Inc. | $617.0M | cloudA | 2026-09-04T22:07:26Z |
-| PHR | Phreesia, Inc. | $686.1M | cloudA | 2026-09-04T22:07:26Z |
-| OSS | ONE STOP SYSTEMS, INC. | $243.4M | cloudA | 2026-09-04T22:07:26Z |
-| JACK | JACK IN THE BOX INC | $290.8M | cloudA | 2026-09-04T22:07:26Z |
-| ALTO | Alto Ingredients, Inc. | $312.6M | cloudA | 2026-09-04T22:07:26Z |
-| CPRI | Capri Holdings Ltd | $1.50B | cloudA | 2026-09-04T22:07:26Z |
 
-## Done (323)
+## Done (333)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | AIN | ALBANY INTERNATIONAL CORP /DE/ | $1.78B | cloudA | 2026-09-04T22:10:14Z |
 | CVEO | Civeo Corp | $349.0M | cloudA | 2026-09-04T22:10:14Z |
 | FWRG | First Watch Restaurant Group, Inc. | $722.0M | cloudA | 2026-09-04T22:10:14Z |
+| MNRO | MONRO, INC. | $393.9M | cloudA | 2026-09-04T22:13:41Z |
+| PACK | Ranpak Holdings Corp. | $375.6M | cloudA | 2026-09-04T22:13:41Z |
+| REAL | TheRealReal, Inc. | $1.22B | cloudA | 2026-09-04T22:13:41Z |
+| CMCO | COLUMBUS MCKINNON CORP | $526.1M | cloudA | 2026-09-04T22:13:41Z |
+| TLRY | Tilray Brands, Inc. | $617.0M | cloudA | 2026-09-04T22:13:41Z |
+| PHR | Phreesia, Inc. | $686.1M | cloudA | 2026-09-04T22:13:41Z |
+| OSS | ONE STOP SYSTEMS, INC. | $243.4M | cloudA | 2026-09-04T22:13:41Z |
+| JACK | JACK IN THE BOX INC | $290.8M | cloudA | 2026-09-04T22:13:41Z |
+| ALTO | Alto Ingredients, Inc. | $312.6M | cloudA | 2026-09-04T22:13:41Z |
+| CPRI | Capri Holdings Ltd | $1.50B | cloudA | 2026-09-04T22:13:41Z |
