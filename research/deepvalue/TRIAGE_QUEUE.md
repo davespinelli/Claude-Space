@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T15:12:31Z · open 362 · in progress 10 · done 113_
+_Source: universe_under2b.csv · updated 2026-09-04T15:16:20Z · open 362 · in progress 0 · done 123_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -371,22 +371,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| SHOE | SHOE STATION GROUP INC | $370.6M | cloudA | 2026-09-04T15:08:51Z |
-| PBYI | PUMA BIOTECHNOLOGY, INC. | $485.7M | cloudA | 2026-09-04T15:08:51Z |
-| VITL | Vital Farms, Inc. | $433.6M | cloudA | 2026-09-04T15:08:51Z |
-| ETD | ETHAN ALLEN INTERIORS INC | $556.5M | cloudA | 2026-09-04T15:08:51Z |
-| RLGT | RADIANT LOGISTICS, INC | $393.9M | cloudA | 2026-09-04T15:08:51Z |
-| TRIP | TripAdvisor, Inc. | $1.09B | cloudA | 2026-09-04T15:08:51Z |
-| NVAX | NOVAVAX INC | $1.71B | cloudA | 2026-09-04T15:08:51Z |
-| DSX | DIANA SHIPPING INC. | $343.9M | cloudA | 2026-09-04T15:08:51Z |
-| WWW | WOLVERINE WORLD WIDE INC /DE/ | $1.60B | cloudA | 2026-09-04T15:08:51Z |
-| NPKI | NPK International Inc. | $1.11B | cloudA | 2026-09-04T15:08:51Z |
 
-## Done (113)
+## Done (123)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | ESP | ESPEY MFG & ELECTRONICS CORP | $187.4M | cloudA | 2026-09-04T15:12:31Z |
 | NATR | NATURES SUNSHINE PRODUCTS INC | $242.8M | cloudA | 2026-09-04T15:12:31Z |
 | RICK | RCI HOSPITALITY HOLDINGS, INC. | $219.7M | cloudA | 2026-09-04T15:12:31Z |
+| SHOE | SHOE STATION GROUP INC | $370.6M | cloudA | 2026-09-04T15:16:20Z |
+| PBYI | PUMA BIOTECHNOLOGY, INC. | $485.7M | cloudA | 2026-09-04T15:16:20Z |
+| VITL | Vital Farms, Inc. | $433.6M | cloudA | 2026-09-04T15:16:20Z |
+| ETD | ETHAN ALLEN INTERIORS INC | $556.5M | cloudA | 2026-09-04T15:16:20Z |
+| RLGT | RADIANT LOGISTICS, INC | $393.9M | cloudA | 2026-09-04T15:16:20Z |
+| TRIP | TripAdvisor, Inc. | $1.09B | cloudA | 2026-09-04T15:16:20Z |
+| NVAX | NOVAVAX INC | $1.71B | cloudA | 2026-09-04T15:16:20Z |
+| DSX | DIANA SHIPPING INC. | $343.9M | cloudA | 2026-09-04T15:16:20Z |
+| WWW | WOLVERINE WORLD WIDE INC /DE/ | $1.60B | cloudA | 2026-09-04T15:16:20Z |
+| NPKI | NPK International Inc. | $1.11B | cloudA | 2026-09-04T15:16:20Z |
