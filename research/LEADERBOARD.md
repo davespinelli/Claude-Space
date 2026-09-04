@@ -760,3 +760,31 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 9 broad/ew-band3/S15/C0 (turn 5.8x, OOS 1.04) | 10.5% | 1.04 | -17.0% | 1.15 / 0.93 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
 | 2026-09-04 | 9 broad/ew-band3/S15/C21 (turn 5.3x, OOS 1.07) | 10.1% | 1.06 | -15.0% | 1.17 / 0.95 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | research/backtests/2026-09-04_trailing-stop_cloud.py |
 | 2026-09-04 | 9 broad/ew-band3/S20/C0 (turn 5.3x, OOS 1.07) | 10.9% | 1.06 | -16.7% | 1.17 / 0.96 | 0.64 (0.76/0.54) | 4a-pass, KEEP 4b | research/backtests/2026-09-04_trailing-stop_cloud.py |
+| 2026-09-04 | 73 U56/EWall (sd 0.281, dS_EW +0.000) | 10.0% | 1.02 | -15.9% | 0.92 / 1.11 | 0.65 (0.66/0.65) | KEEP 4b | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 U56/CAND5 (sd 0.281, dS_EW -0.043) | 17.1% | 0.98 | -21.6% | 0.96 / 1.01 | 0.65 (0.66/0.65) | KILL 4b (DD) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 U56/CAND10 (sd 0.281, dS_EW -0.067) | 13.2% | 0.96 | -17.5% | 0.95 / 0.97 | 0.65 (0.66/0.65) | KEEP 4b | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 U56/CAND20 (sd 0.281, dS_EW +0.070) | 12.5% | 1.09 | -18.3% | 1.05 / 1.14 | 0.65 (0.66/0.65) | KEEP 4b | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 ETF36/EWall (sd 0.145, dS_EW +0.000) | 4.6% | 0.59 | -21.8% | 0.48 / 0.68 | 0.42 (0.46/0.39) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 ETF36/CAND5 (sd 0.145, dS_EW -0.073) | 5.8% | 0.51 | -23.4% | 0.37 / 0.63 | 0.42 (0.46/0.39) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 ETF36/CAND10 (sd 0.145, dS_EW +0.102) | 6.7% | 0.69 | -18.5% | 0.59 / 0.77 | 0.42 (0.46/0.39) | KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 ETF36/CAND20 (sd 0.145, dS_EW +0.228) | 6.6% | 0.81 | -15.2% | 0.64 / 0.96 | 0.42 (0.46/0.39) | 4a-pass, KILL 4b (H1,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 ETF24/EWall (sd 0.129, dS_EW +0.000) | 7.5% | 0.69 | -29.4% | 0.66 / 0.71 | 0.50 (0.48/0.52) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 ETF24/CAND5 (sd 0.129, dS_EW -0.109) | 6.6% | 0.58 | -23.4% | 0.49 / 0.65 | 0.50 (0.48/0.52) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 ETF24/CAND10 (sd 0.129, dS_EW -0.001) | 6.9% | 0.68 | -21.5% | 0.62 / 0.75 | 0.50 (0.48/0.52) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 ETF24/CAND20 (sd 0.129, dS_EW +0.073) | 6.3% | 0.76 | -15.2% | 0.65 / 0.86 | 0.50 (0.48/0.52) | 4a-pass, KILL 4b (H1,H2,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 STK20/EWall (sd 0.378, dS_EW +0.000) | 19.6% | 1.34 | -19.5% | 1.24 / 1.43 | 1.15 (1.17/1.14) | KEEP 4b | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 STK20/CAND5 (sd 0.378, dS_EW -0.270) | 18.7% | 1.07 | -18.4% | 1.00 / 1.13 | 1.15 (1.17/1.14) | KEEP 4b | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 STK20/CAND10 (sd 0.378, dS_EW -0.037) | 19.0% | 1.30 | -17.3% | 1.23 / 1.36 | 1.15 (1.17/1.14) | 4a-pass, KEEP 4b | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 STK20/CAND20 (sd 0.378, dS_EW -0.035) | 11.9% | 1.30 | -12.1% | 1.18 / 1.41 | 1.15 (1.17/1.14) | 4a-pass, KEEP 4b | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 B136/EWall (sd 0.257, dS_EW +0.000) | 10.2% | 1.01 | -17.7% | 1.07 / 0.95 | 0.66 (0.85/0.48) | 4a-pass, KEEP 4b | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 B136/CAND5 (sd 0.257, dS_EW -0.164) | 15.7% | 0.84 | -23.4% | 0.87 / 0.83 | 0.66 (0.85/0.48) | KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 B136/CAND10 (sd 0.257, dS_EW -0.138) | 13.6% | 0.87 | -21.4% | 1.04 / 0.74 | 0.66 (0.85/0.48) | KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 B136/CAND20 (sd 0.257, dS_EW -0.071) | 12.6% | 0.94 | -20.1% | 1.06 / 0.84 | 0.66 (0.85/0.48) | 4a-pass, KILL 4b (H2) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 BSTK100/EWall (sd 0.278, dS_EW +0.000) | 12.1% | 1.03 | -26.1% | 1.18 / 0.92 | 0.68 (0.96/0.45) | KILL 4b (DD) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 BSTK100/CAND5 (sd 0.278, dS_EW -0.203) | 15.3% | 0.83 | -22.1% | 0.84 / 0.83 | 0.68 (0.96/0.45) | KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 BSTK100/CAND10 (sd 0.278, dS_EW -0.157) | 13.7% | 0.88 | -22.4% | 1.08 / 0.72 | 0.68 (0.96/0.45) | KILL 4b (H2,OOS,DD) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 BSTK100/CAND20 (sd 0.278, dS_EW -0.057) | 13.2% | 0.98 | -20.4% | 1.13 / 0.85 | 0.68 (0.96/0.45) | 4a-pass, KILL 4b (H2,DD) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 SMALL484/EWall (sd 0.682, dS_EW +0.000) | 4.8% | 0.41 | -34.3% | 0.43 / 0.40 | 0.52 (0.53/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 SMALL484/CAND5 (sd 0.682, dS_EW -0.084) | 5.2% | 0.33 | -52.8% | 0.68 / 0.02 | 0.52 (0.53/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 SMALL484/CAND10 (sd 0.682, dS_EW +0.061) | 7.7% | 0.47 | -35.9% | 0.69 / 0.29 | 0.52 (0.53/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
+| 2026-09-04 | 73 SMALL484/CAND20 (sd 0.682, dS_EW +0.082) | 7.2% | 0.49 | -26.3% | 0.67 / 0.35 | 0.52 (0.53/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_asset-class-dispersion_B.py |
