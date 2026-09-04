@@ -1324,3 +1324,44 @@ See `2026-09-04_momentum-plus-quality-proxy_cloud.result.md`.
 | 2026-09-04 | 26 year attribution of the 25pct sleeve on top20 | n/a | n/a | n/a | n/a | n/a | KILLS the by-product as a rule: sleeve effect NEGATIVE in 17/18 years, only 2022 positive (+1.6/+2.2pp) | 2026-09-04_ensemble-plus-momentum_C.py |
 | 2026-09-04 | 26 cost ladder 5/10/15/20/25 bps on top20 f=0 vs f=0.25 | n/a | n/a | n/a | n/a | n/a | cross-universe 4b window 5-10 bps (f=0.25) vs 5 bps (f=0); both dead at 15 | 2026-09-04_ensemble-plus-momentum_C.py |
 | 2026-09-04 | 26 sleeve-to-book daily return correlation | n/a | n/a | n/a | n/a | n/a | 0.63-0.82 (u56) / 0.63-0.75 (broad): the sleeve is not an uncorrelated asset | 2026-09-04_ensemble-plus-momentum_C.py |
+### Idea 92 — sharpe-bound-books-need-a-book-change (cloud, 2026-09-04)
+
+Test cell inherited from ideas 46/84: `C2/CAND20` on `universe_broad.json` — the project's only
+**Sharpe-bound** 4b cell (H2 0.814 vs SPY 0.837, fails on H2 alone). Idea 84 showed no exposure
+or turnover lever moves it (best +0.0027 over 20 arms). This run tests the four BOOK changes the
+queue named. Four families, one dial each: SECTOR cap {1.00,0.40,0.25,0.15} (price-only annual
+sector labels from prior-756d correlation to the 11 SPDRs, look-ahead-free, 11% YoY churn);
+WCAP per-name cap {0.0375,0.05,0.075,0.10} on the equal-weight book AND on a 1/rank-weighted
+book; NORANK {CAND n=20/40/60, EWall, ew-band3}; GATE {both, none, 200d, vol20, band3, abs}.
+**96 grid points, all reported** in `2026-09-04_sharpe-bound-book-change_cloud.grid.csv`.
+Harness verified: `SECTOR cap=1.00` ≡ `CAND n=20` to 6dp; `WCAP-RANKW @0.75/20` collapses onto
+CAND20 weight-for-weight (max|diff| 2.4e-16 off tie days); the u56 test cell reproduces idea 2's
+KEEP row exactly. **Answer: only dropping the ranking is a dial** (ΔH2 +0.158, 4/4 arms convert
+the cell; +0.225 at 25 bps). NOT dials: per-name weight cap **exactly inert** on an equal-weight
+book (ΔH2 +0.000 at every level, bind rate 0) and ceilinged at the equal-weight book on a
+concentrated one; sector cap moves H2 **down** (−0.105 at 15%) with the run's worst walk-forward
+regret (−0.187); the eligibility gate tops out at +0.042, below idea 84's own 0.05 threshold —
+refuting the pre-registered prediction that the gate carries H2. Rule 8 picks `ew-band3`, which
+is also its family's best OOS arm (regret 0.000, the only family where those coincide).
+See `..._cloud.result.md` and memo `..._cloud.memo.md`.
+
+| 2026-09-04 | 92 BROAD CAND20 (the Sharpe-bound test cell, control) | 13.1% | 0.96 | -20.1% | 1.13 / 0.81 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2 by 0.023) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD SECTOR cap=0.40 | 13.0% | 0.97 | -19.2% | 1.11 / 0.84 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b (margin +0.002; dies at 25 bps, not the rule-8 pick) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD SECTOR cap=0.25 | 11.6% | 0.90 | -18.9% | 1.05 / 0.76 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD SECTOR cap=0.15 | 9.9% | 0.88 | -21.4% | 1.08 / 0.71 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H2,OOS,DD,CAGR) — rule-8 pick, regret -0.187 | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD WCAP-EW wmax=0.05/0.075/0.10 (all three) | 13.1% | 0.96 | -20.1% | 1.13 / 0.81 | 0.64 (0.76/0.54) | KILL — measured INERT, identical to control to machine precision | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD WCAP-RANKW uncapped (1/rank weights) | 15.5% | 0.89 | -25.3% | 1.01 / 0.78 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H2,OOS,DD) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD NORANK CAND n=40 | 11.9% | 1.00 | -19.1% | 1.13 / 0.89 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD NORANK CAND n=60 | 10.9% | 1.01 | -19.0% | 1.11 / 0.93 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD NORANK EWall (no ranking) | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD NORANK ew-band3 (no ranking) — **the dial, rule-8 pick, regret 0.000** | 11.1% | 1.06 | -16.8% | 1.16 / 0.97 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD GATE none | 14.7% | 0.98 | -26.0% | 1.14 / 0.86 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (DD) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD GATE 200d only | 14.7% | 0.99 | -24.0% | 1.19 / 0.84 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (DD) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD GATE vol20 only | 12.8% | 0.93 | -20.7% | 1.08 / 0.80 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS,DD) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD GATE band3 | 13.0% | 0.95 | -20.1% | 1.10 / 0.82 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 BROAD GATE abs (200d & mom>0) | 12.9% | 0.96 | -20.1% | 1.12 / 0.84 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b (H2 margin +0.000; dies at 25 bps) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 U56 CAND20 (control universe — reproduces idea 2's KEEP row) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 U56 NORANK ew-band3 | 11.3% | 1.14 | -15.1% | 1.11 / 1.16 | 0.67 (0.64/0.69) | KILL 4a / KEEP 4b — rule-8 pick, OOS 1.234 | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 U56 NORANK EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 U56 SECTOR cap=0.15 | 10.3% | 1.01 | -17.4% | 0.91 / 1.11 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,CAGR) | 2026-09-04_sharpe-bound-book-change_cloud.py |
+| 2026-09-04 | 92 U56 WCAP-EW (all levels) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KILL — measured INERT, identical to control | 2026-09-04_sharpe-bound-book-change_cloud.py |
