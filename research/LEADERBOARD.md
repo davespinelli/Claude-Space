@@ -1086,3 +1086,16 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 14 broad/ew-all+rsi2 f=0.50 thr=5 | 4.6% | 0.52 | -20.0% | 0.69 / 0.37 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
 | 2026-09-04 | 14 broad/ew-all+rsi2 f=0.50 thr=10 | 3.1% | 0.34 | -26.3% | 0.32 / 0.35 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
 | 2026-09-04 | 14 broad/ew-all+rsi2 f=0.50 thr=20 | 2.6% | 0.27 | -24.3% | 0.30 / 0.25 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 89 u56/v1 LOYO-audit | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | 4b-fail (audited; 0/18 LOYO passes) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 u56/top20 LOYO-audit | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4b-pass, LOYO-ROBUST 18/18 | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 u56/frac085 LOYO-audit | 11.3% | 1.07 | -16.7% | 1.09 / 1.06 | 0.67 (0.64/0.69) | 4b-pass, LOYO-ROBUST 18/18 | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 u56/ew-band3 LOYO-audit | 11.3% | 1.14 | -15.1% | 1.11 / 1.16 | 0.67 (0.64/0.69) | 4b-pass, LOYO-FRAGILE 17/18 (drop 2022) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 u56/EWall LOYO-audit | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | 4b-fail (audited; 1/18 LOYO passes) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 u56/SPY LOYO-audit | 15.3% | 0.89 | -33.7% | 0.96 / 0.84 | 0.67 (0.64/0.69) | 4b-fail (audited; 0/18 LOYO passes) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 u56/EWall+c10 LOYO-audit | 12.3% | 1.15 | -18.7% | 1.26 / 1.07 | 0.67 (0.64/0.69) | 4b-pass, LOYO-FRAGILE 17/18 (drop 2020) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 broad/v1 LOYO-audit | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | 4b-fail (audited; 0/18 LOYO passes) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 broad/top20 LOYO-audit | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4b-fail (audited; 4/18 LOYO passes) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 broad/frac085 LOYO-audit | 11.2% | 1.02 | -18.6% | 1.13 / 0.93 | 0.64 (0.76/0.54) | 4b-pass, LOYO-FRAGILE 17/18 (drop 2020) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 broad/ew-band3 LOYO-audit | 11.1% | 1.06 | -16.8% | 1.16 / 0.97 | 0.64 (0.76/0.54) | 4b-pass, LOYO-FRAGILE 17/18 (drop 2020) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 broad/EWall LOYO-audit | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4b-pass, LOYO-FRAGILE 10/18 (drop 2011,2013,2014,2015,2017,2018,2020,2022) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 89 broad/SPY LOYO-audit | 15.3% | 0.89 | -33.7% | 0.96 / 0.84 | 0.64 (0.76/0.54) | 4b-fail (audited; 0/18 LOYO passes) | 2026-09-04_one-year-leverage-audit_cloud.py |
