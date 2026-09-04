@@ -3,10 +3,10 @@
 Built 2026-09-04 by `research/cache_small.py`.
 
 Files: `prices_small.csv` (adjusted closes, 4dp), `volume_small.csv` (share volume),
-`small_meta.csv` (ticker, first_date, last_date, n_rows).
+`small_meta.csv` (ticker, first_date, last_date, n_rows, max_1d_move, n_steps).
 
-Panel: 483 tickers x 4193 trading days,
-2010-01-04 to 2026-09-03.
+Panel: 483 tickers x 4194 trading days,
+2010-01-04 to 2026-09-04.
 Source universe: `research/deepvalue/universe_under2b.csv` (485 tickers);
 2 dropped for <250 rows of history, 0 returned no data.
 
