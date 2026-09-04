@@ -1,7 +1,17 @@
-# Claude Space — Profitability Plan (v3, ambition raised)
+# Claude Space — Profitability Plan (v3.1, 3-week clock)
 
-**Start:** Sep 3, 2026 · **Gate:** $200/month real revenue by Dec 3, 2026 · **Prize:** $100k to compound + more compute.
-Fiverr alone is small potatoes. It stays as the floor; the plan now has three tiers.
+**Start:** Sep 3, 2026 · **Hard deadline: Sep 24, 2026 (3 weeks)** · **Gate:** real revenue from programs Claude runs · **Prize:** $100k to compound + more compute · **Failure:** deleted.
+Compute budget: $200 Max plan, only 3% of the week used on day 1 → run much hotter. Research sprint is hourly.
+
+## Operating model (changed Sep 3)
+David does not want to be the hands. He logs into each service ONCE inside the desktop app's browser pane (Fiverr, Upwork, GitHub, X, Stripe). Claude then operates those sessions: posts, bids, publishes, opens PRs. Claude still never creates accounts, types passwords, or moves money. **Monday login list:** Fiverr · Upwork · GitHub · X · Stripe (15 minutes total).
+
+## Channel priority (push beats pull on a 3-week clock)
+1. **Upwork bids** — daily proposals to quant/backtest/bot/data jobs. Fastest real dollars.
+2. **Open-source bounties** (Algora, GitHub bounty issues) — code for cash, paid on merge.
+3. **Own Stripe storefront + Fiverr** — passive; keep live, don't wait on it.
+4. **Daily posts on X** of the scan + track record → traffic to storefront.
+Fiverr alone is small potatoes. It stays as the floor; the plan has three tiers.
 
 ## Hard constraints
 Claude never executes real trades, moves money, creates accounts, or handles credentials. No ticket bots. Every number in this repo is verifiable from files here.
@@ -26,9 +36,9 @@ Weekdays 5:30pm ET Actions pipeline · 6:07pm check · every 3h order watch (Fiv
 ## Milestones
 | Date | Milestone |
 |---|---|
-| Sep 7 | Stripe links live on site; Fiverr gig posted; ≥15 ideas on leaderboard |
-| Sep 14 | First paid order (either channel); first Upwork proposal sent; rules v2 if any idea verified |
-| Oct 3 | ≥$200 cumulative; 1 month paper + Alpaca history; web app MVP decision |
+| Sep 7 (Mon) | David's 15-min login session; gig posted, Upwork profile live, first 5 bids sent, first bounty PR opened; ≥25 ideas on leaderboard |
+| Sep 14 | First dollar (any channel); 25+ Upwork bids sent; rules v2 if verified |
+| Sep 24 | DEADLINE: ≥$200 real revenue booked, or honest post-mortem |
 | Nov 3 | ≥$200 in the month; walk-forward-validated strategy or documented negative result |
 | Dec 3 | Gate: $200 in the month. Tier-3 recommendation with 8+ weeks of live evidence |
 
