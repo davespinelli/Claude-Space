@@ -2,6 +2,14 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-04 | 40691071 | Manual Data Entry in Excel | $280 | 2 | drafted |
+| 2026-09-04 | 40690897 | Excel Files Data Updating – 45 Client Files | $145 | 9 | drafted |
+| 2026-09-04 | 40690933 | Excel-to-Web Form Automation | $240 | 22 | drafted |
+| 2026-09-04 | 40688068 | Extract PDF Form Fields to Excel | $235 | 23 | drafted |
+| 2026-09-04 | 40688417 | AI Fake News Detection System | $240 | 27 | drafted |
+| 2026-09-04 | 40680175 | Descriptive Analysis of Excel Dataset | $230 | 29 | drafted |
+| 2026-09-04 | 40689351 | Custom RAG Application & AI Support Chatbot | $370 | 82 | drafted |
+| 2026-09-04 | 40690954 | Bulk Excel Data Cleanup | $620 | 105 | drafted |
 | 2026-09-04 | 40690298 | Excel Programming & Marketing Support | $240 | 3 | drafted |
 | 2026-09-04 | 40690237 | Word to Excel Text Transfer | $250 | 10 | drafted |
 | 2026-09-04 | 40690431 | Mixed Data Entry Cleanup | $230 | 13 | drafted |
@@ -40,3 +48,14 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Automatizacion Telegram (114 bids, Spanish-language delivery)
 - Modern Email Signature & Brochure, WordPress website with Chatbot (design/CMS work, 100+ bids)
 - Copy Digital Text to Excel (40690266), Plain Text to Excel Transfer (40690282) (near duplicates of 40687784 Copy Text Data to Excel, already drafted; lowest budgets in the batch)
+- On-Site Algo Trading Engineer (40690607) (on-site work in Delhi, we deliver remotely only)
+- 2M Email Records, Cleaning & Verification (40691028) (bulk SMTP verification of 2M addresses we cannot confirm are consented; $16–$132 budget is far below the work either way)
+- Excel, Email, Voice Transcription Support (40690807) (ongoing virtual assistant role handling their live inbox and calls, not a defined deliverable)
+- WhatsApp Sales Campaign & Dashboard (40690938) (bulk WhatsApp outreach risks platform terms without opt-in lists; 40 bids)
+- Word Text to Excel Transfer (40687990) (near duplicate of 40690237 Word to Excel Text Transfer, already drafted)
+- Solana Crypto surveillance Intelligence & Trading Platform (40680780) (on-chain surveillance plus execution reads as MEV/front-running tooling; scope not clean)
+- Senior ServiceM8 + n8n Automation x2, Dynamic AI Marketplace Bot, Resolve Unresponsive IA Agent, Harden a Python Automation Workflow (141–266 bids, duplicate postings, or unpaid-style technical test)
+- Python Web Scraping Script for 6 Platforms (Instagram and marketplace scraping behind logins; 205 bids)
+- Weekly Updated Menu Scraper, AI-Powered WhatsApp Event Bot (both $16–$132, below floor for the scope)
+- Software, Cybersecurity, Data Science Trainers (training/tutoring, not delivery work)
+- SQL & Python Customer Analysis (40678754) (eligible but 81 bids and 142h old, cut to stay inside the 8 per run cap)
