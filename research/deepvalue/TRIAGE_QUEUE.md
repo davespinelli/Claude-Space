@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T14:05:47Z · open 412 · in progress 0 · done 73_
+_Source: universe_under2b.csv · updated 2026-09-04T14:13:20Z · open 392 · in progress 10 · done 83_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (412)
+## Open (392)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| UAN | CVR PARTNERS, LP | $1.39B |
-| KRT | Karat Packaging Inc. | $938.0M |
-| NUS | NU SKIN ENTERPRISES, INC. | $228.8M |
-| EBS | Emergent BioSolutions Inc. | $319.4M |
-| TCMD | TACTILE SYSTEMS TECHNOLOGY INC | $498.6M |
-| XPEL | XPEL, Inc. | $1.40B |
-| USPH | U S PHYSICAL THERAPY INC /NV | $1.17B |
-| CTS | CTS CORP | $1.61B |
-| CSV | CARRIAGE SERVICES INC | $537.8M |
-| UTI | UNIVERSAL TECHNICAL INSTITUTE INC | $1.19B |
-| HCKT | HACKETT GROUP, INC. | $275.6M |
-| PDEX | PRO DEX INC | $197.2M |
-| EFOR | Everforth Inc | $1.31B |
-| GLP | GLOBAL PARTNERS LP | $1.78B |
-| UTMD | UTAH MEDICAL PRODUCTS INC | $225.1M |
-| CLMB | Climb Global Solutions, Inc. | $525.9M |
-| TRS | TRIMAS CORP | $1.39B |
-| SWBI | SMITH & WESSON BRANDS, INC. | $548.8M |
-| KOP | Koppers Holdings Inc. | $886.2M |
-| CARS | Cars.com Inc. | $631.2M |
 | OPRX | OptimizeRx Corp | $149.7M |
 | INVA | Innoviva, Inc. | $1.54B |
 | PRTH | Priority Technology Holdings, Inc. | $446.8M |
@@ -421,12 +401,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| HCKT | HACKETT GROUP, INC. | $275.6M | cloudA | 2026-09-04T14:09:27Z |
+| PDEX | PRO DEX INC | $197.2M | cloudA | 2026-09-04T14:09:27Z |
+| EFOR | Everforth Inc | $1.31B | cloudA | 2026-09-04T14:09:27Z |
+| GLP | GLOBAL PARTNERS LP | $1.78B | cloudA | 2026-09-04T14:09:27Z |
+| UTMD | UTAH MEDICAL PRODUCTS INC | $225.1M | cloudA | 2026-09-04T14:09:27Z |
+| CLMB | Climb Global Solutions, Inc. | $525.9M | cloudA | 2026-09-04T14:09:27Z |
+| TRS | TRIMAS CORP | $1.39B | cloudA | 2026-09-04T14:09:27Z |
+| SWBI | SMITH & WESSON BRANDS, INC. | $548.8M | cloudA | 2026-09-04T14:09:27Z |
+| KOP | Koppers Holdings Inc. | $886.2M | cloudA | 2026-09-04T14:09:27Z |
+| CARS | Cars.com Inc. | $631.2M | cloudA | 2026-09-04T14:09:27Z |
 
-## Done (73)
+## Done (83)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | PRG | PROG Holdings, Inc. | $1.53B | cloudA | 2026-09-04T14:05:47Z |
 | TBCH | Turtle Beach Corp | $224.2M | cloudA | 2026-09-04T14:05:47Z |
 | ECVT | Ecovyst Inc. | $1.12B | cloudA | 2026-09-04T14:05:47Z |
+| UAN | CVR PARTNERS, LP | $1.39B | cloudA | 2026-09-04T14:13:20Z |
+| KRT | Karat Packaging Inc. | $938.0M | cloudA | 2026-09-04T14:13:20Z |
+| NUS | NU SKIN ENTERPRISES, INC. | $228.8M | cloudA | 2026-09-04T14:13:20Z |
+| EBS | Emergent BioSolutions Inc. | $319.4M | cloudA | 2026-09-04T14:13:20Z |
+| TCMD | TACTILE SYSTEMS TECHNOLOGY INC | $498.6M | cloudA | 2026-09-04T14:13:20Z |
+| XPEL | XPEL, Inc. | $1.40B | cloudA | 2026-09-04T14:13:20Z |
+| USPH | U S PHYSICAL THERAPY INC /NV | $1.17B | cloudA | 2026-09-04T14:13:20Z |
+| CTS | CTS CORP | $1.61B | cloudA | 2026-09-04T14:13:20Z |
+| CSV | CARRIAGE SERVICES INC | $537.8M | cloudA | 2026-09-04T14:13:20Z |
+| UTI | UNIVERSAL TECHNICAL INSTITUTE INC | $1.19B | cloudA | 2026-09-04T14:13:20Z |

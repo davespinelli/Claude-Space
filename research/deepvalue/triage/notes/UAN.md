@@ -1,0 +1,5 @@
+# UAN — CVR PARTNERS, LP · triage 2026-09-04 · Edge: none · Score 4/10
+
+CVR Partners is a variable-distribution MLP that makes ammonia and UAN solution fertilizer at two plants, Coffeyville (pet coke gasification) and East Dubuque (natural gas), selling wholesale to US farmers serving corn and wheat acres. The pack shows earnings running hot, not depressed: Q2 2026 net income of $78M and EBITDA of $107M against $39M and $67M a year earlier, on realized gate prices up 33% for ammonia and 24% for UAN, with H1 EBITDA of $184.8M versus $120.1M. The screen's 14.2x EV/EBIT is CY2025 and understates current run-rate, but the units are already priced for it: 12-1 momentum of 55.2% and within 1.8% of the 52-week high. Management itself attributes pricing to constrained global nitrogen supply from ongoing geopolitical conflicts, which is the trap: this is a commodity at a cycle high, not a trough, and the distribution is explicitly variable. A six-week East Dubuque turnaround begins in August. No transcript in the pack, and no insider open-market buying.
+
+_Sources: triage pack only (sections 1, 2, 5, 6, 7, 8, 9, 11). Triage-depth read, not a deep dive._

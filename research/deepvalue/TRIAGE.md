@@ -74,3 +74,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | TBCH | Turtle Beach Corp | $224.2M | none | 3 | Screen 10.2x EV/EBIT is stale CY2025; Q2 was a $7.3M net loss with the gross margin gain from one-time tariff refunds and buybacks funded by a new term loan |
 | 2026-09-04 | ECVT | Ecovyst Inc. | $1.1B | post-restructuring | 7 | Zeolyst divestiture makes the 23.5x screen multiple meaningless; raised FY26 guidance of $195-207M EBITDA against a roughly $1.5B EV |
 | 2026-09-04 | XTNT | Xtant Medical Holdings, Inc. | $56.1M | none | 0 | no filings in bundle |
+| 2026-09-04 | UAN | CVR PARTNERS, LP | $1.4B | none | 4 | Q2 EBITDA $107M on ammonia and UAN gate prices up 33% and 24%, but units sit 1.8% off the high at a nitrogen cycle peak with variable distributions |
+| 2026-09-04 | KRT | Karat Packaging Inc. | $938.0M | none | 3 | Q2 gross margin 56.6% only via $25.8M IEEPA tariff refunds; ex-refund adj EBITDA fell to about $15.8M from $17.7M and Q3 EBITDA margin is guided 9-11% |
+| 2026-09-04 | NUS | NU SKIN ENTERPRISES, INC. | $228.8M | cash-cow-narrative | 6 | 3.5x EV/EBIT and 20.1% FCF yield with no net debt, but all seven geographies shrank in Q2 and a $186.6M tax charge landed alongside a $78.9M impairment |
+| 2026-09-04 | EBS | Emergent BioSolutions Inc. | $319.4M | post-restructuring | 7 | $319M equity on $761M EV against Q2 adjusted EBITDA of $96.5M and $40M of annualized cuts, though naloxone fell 22% and drew a $191.3M impairment |
+| 2026-09-04 | TCMD | TACTILE SYSTEMS TECHNOLOGY INC | $498.6M | none | 0 | no filings in bundle |
+| 2026-09-04 | XPEL | XPEL, Inc. | $1.4B | none | 4 | 22.4x EV/EBIT with Q3 guided sequentially lower, and Q2 investing outflows of $72.9M plus $43.5M of new debt turn an asset-light model capital-heavy |
+| 2026-09-04 | USPH | U S PHYSICAL THERAPY INC /NV | $1.2B | none | 4 | Revenue +8.5% but adjusted EBITDA flat at $27.0M as PT margin fell 170bp, and full-year guidance needs a $55-59M second half from hospital integrations |
+| 2026-09-04 | CTS | CTS CORP | $1.6B | none | 4 | Mix shift out of transportation lifted gross margin to 38.4%, but 18.9x EV/EBIT after a 59.7% move, and the pack has no earnings release, 8-Ks or Form 4s |
+| 2026-09-04 | CSV | CARRIAGE SERVICES INC | $537.8M | none | 5 | Screen 5.5x EV/EBIT is wrong: management states 4.0x leverage, so real EV is near $1.1B; volumes fell 4.0% funeral and 14.0% cemetery, offset by price |
+| 2026-09-04 | UTI | UNIVERSAL TECHNICAL INSTITUTE INC | $1.2B | fallen-growth | 6 | Starts +10.9% and students +5.8% with baseline adj EBITDA above $135M on a $1.2B EV, but guidance was cut and adjusted FCF now guided to negative $20M to zero |

@@ -1,6 +1,6 @@
 # Triage pack — KRT · Karat Packaging Inc.
 
-_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-04 14:09 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -9,7 +9,7 @@ _Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts o
 - **SIC:** 3089 — Plastics Products, NEC
 - **Fiscal year end (MM-DD):** 12-31
 - **Exchange:** Nasdaq
-- **Filings fetched:** /Users/davidspinelli/Documents/Claude Space/research/deepvalue/filings/KRT
+- **Filings fetched:** /home/user/Claude-Space/research/deepvalue/filings/KRT
 
 ## 2. Screen row (all metrics)
 
@@ -17,6 +17,10 @@ _Source: universe_under2b.csv (not a screen candidate)_
 
 - **Name:** Karat Packaging Inc.
 - **CIK:** 1,758,021 · **SIC:** 3089 (Plastics Products, NEC) · **Exchange:** Nasdaq
+
+> **DEBT DATA MISSING — DO NOT SCORE THIS AS NET CASH.**
+> debt data missing (net cash unverified) — no long-term-debt concept was tagged in any XBRL frame, so LTD was filled with 0: EV is understated, ROIC overstated, and any negative net debt is an artefact of that fill rather than a confirmed debt-free balance sheet. The `net_debt`, `net_debt_ebit`, `ev` and `roic` figures below are all affected.
+> **Before scoring this name, read the balance sheet (total debt, current portion of long-term debt, revolver/credit-facility balance) and the MD&A liquidity and capital resources section in sections 8-9 of this pack, and use the figures you find there instead of the screen's.**
 
 **Valuation**
 
@@ -40,6 +44,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 | ltd | $0.00 |
 | equity | $166.5M |
 | ltd_tag | none |
+| ltd_missing | True |
 
 **Growth and operations**
 
@@ -49,6 +54,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 | revenue_prior | $422.6M |
 | rev_growth | 10.7% |
 | rev_growth_note | n/a |
+| eq_flag | n/a |
 | ebit | $41.4M |
 | net_income | $31.5M |
 | cfo | $33.8M |
@@ -101,7 +107,7 @@ _Source: universe_under2b.csv (not a screen candidate)_
 |---|---|
 | rank | 75 |
 
-**Screen rationale:** high ROIC 25.5%; net cash; 12-1 momentum 79.0%
+**Screen rationale:** high ROIC 25.5%; debt data missing (net cash unverified); 12-1 momentum 79.0%
 
 
 ## 3. Share count trend
@@ -116,21 +122,20 @@ _Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
-_No Item 1.01 (material agreement), 1.02 (termination) or 5.02 (officer/director change) 8-K filed since 2026-03-02 among the 7 8-Ks fetched._
+_No Item 1.01 (material agreement), 1.02 (termination) or 5.02 (officer/director change) 8-K filed since 2026-03-02 among the 6 8-Ks fetched._
 
 ## 6. Insider activity (Form 4, trailing 12 months)
 
-Net open-market activity (last 12m): buys 1,361 sh / $30,092 vs sells 6,500 sh / $308,485 -> net $-278,393 (SELLING).
-Distinct insiders buying (code P): 1. Largest buy: Guo Jian bought 1,361 sh @ $22.11 ($30,092) on 2025-11-12.
+Net open-market activity (last 12m): buys 0 sh / $0 vs sells 6,500 sh / $308,485 -> net $-308,485 (SELLING).
+Distinct insiders buying (code P): 0. Largest buy: none.
 
-Form 4 filings parsed: 13; transaction rows: 23 (open-market buys 1, sales 2).
+Form 4 filings parsed: 12; transaction rows: 22 (open-market buys 0, sales 2).
 
 | code | rows |
 |---|---|
 | A | 3 |
 | F | 3 |
 | M | 14 |
-| P | 1 |
 | S | 2 |
 
 Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exercise, F=tax withholding, G=gift.
@@ -139,14 +144,9 @@ Detail: form4_last12m.csv
 
 ## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-06_2-02-results.md)
 
+_Extraction: started at the first release heading, 'Karat Packaging Reports Second Quarter 2026 Financial Results'; skipped 10 forward-looking-statement block(s); 3 block(s) of pre-heading matter dropped._
+
 ## EX-99.1 - EX-99.1 (krt-20260806xpressrelease.htm)
-
-EX-99.1
-2
-krt-20260806xpressrelease.htm
-EX-99.1
-
-Document
 
 Karat Packaging Reports Second Quarter 2026 Financial Results
 
@@ -188,8 +188,6 @@ Guidance
 
 "We delivered record quarterly net sales of $136.3 million, driven by solid customer demand and accelerated momentum in our online business growth," said Alan Yu, Chief Executive Officer. "Our financial performance included a benefit from the IEEPA tariff refunds, which further contributed to strong reported profitability.
 
-1
-
 "We continue to experience encouraging momentum across the business and our sales pipeline is expanding. During the quarter, we added four new chain accounts and our online business grew 23.6 percent over the prior-year quarter, further strengthening our growth prospects. At the same time, we continue to execute plans to enhance operational efficiency and manage costs to support sustainable profitability.
 
 "To support our long-term growth strategy, we are currently finalizing a lease for a 47,000-square-foot warehouse for a new distribution center in Orlando, Florida, which we expect to be operational by the third quarter of this year. The new facility is expected to enhance Karat's ability to better serve customers throughout the Southeast, improve fulfillment capabilities for our growing e-commerce business, reduce delivery times, and provide additional infrastructure to support future growth," Yu added.
@@ -207,8 +205,6 @@ Operating expenses for the 2026 second quarter increased to $39.6 million, from 
 Other income, net for the 2026 second quarter was $1.4 million, compared with other expenses, net, of $2.0 million in the prior-year quarter. The increase in other income, net was mainly driven from a loss on foreign currency transactions of $0.1 million, compared to a loss of $2.9 million during the same period last year. In addition, interest income increased $0.5 million due to $0.9 million interest income related to IEEPA tariff refunds recognized in the 2026 second quarter, partially offset by a decrease of $0.4 million in interest income from investment in certificates of deposit compared to the prior-year quarter.
 
 Net income for the 2026 second quarter increased 168.3 percent to $29.6 million, including contribution of $20.2 million from the IEEPA tariff refunds, from $11.1 million in the prior-year quarter. Net income margin was 21.8 percent in the 2026 second quarter, including contribution of 1,480 basis points from the IEEPA tariff refunds, compared with 8.9 percent in the prior-year quarter.
-
-2
 
 Net income attributable to Karat Packaging for the 2026 second quarter was $29.3 million, or $1.46 per diluted share, including contribution of 1.00 per share from the IEEPA tariff refunds, compared with $10.9 million in the prior-year quarter, or $0.54 per diluted share.
 
@@ -229,8 +225,6 @@ Operating expenses for the first half of 2026 were $72.6 million, compared with 
 Other income, net for the first half of 2026 was $2.3 million, compared with other expenses, net, of $0.9 million in the same period last year. The increase in other income, net was mainly driven by a gain on foreign currency transactions of $0.2 million, compared to a loss of $2.6 million during the same period last year. In addition, interest income increased $0.2 million due to $0.9 million interest income related to IEEPA tariff refunds recognized in the first half of 2026, partially offset by a decrease of $0.7 million in interest income from investment in certificates of deposit compared to the same period of 2025.
 
 Net income increased 105.9 percent to $36.8 million for the first half of 2026, including contribution of $20.2 million from the IEEPA tariff refunds, from $17.9 million in the same period last year. Net income margin was 14.5 percent in the first half of 2026, including a contribution of 800 basis points from the IEEPA tariff refunds, compared with 7.8 percent in the same period of 2025.
-
-3
 
 Net income attributable to Karat Packaging was $36.1 million, or $1.80 per diluted share, including contribution of 1.00 per share from the IEEPA tariff refunds, for the first half of 2026, compared with $17.3 million, or $0.86 per diluted share, in the same period of 2025.
 
