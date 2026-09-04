@@ -20,17 +20,23 @@ if not allrows:
     (DV / "TRACK.md").write_text("# Track record\n\nNo published verdicts yet.\n"); raise SystemExit("no rows")
 tickers = sorted({r["ticker"] for r in allrows} | {"IWM", "SPY"})
 start = min(r["date"] for r in allrows)
-px = yf.download(tickers, start=start, auto_adjust=True, progress=False)["Close"].ffill()
+px = yf.download(tickers, start=(pd.Timestamp(start) - pd.Timedelta(days=10)).strftime("%Y-%m-%d"), auto_adjust=True, progress=False)["Close"].ffill()
 out = []
 for r in allrows:
     t, d0 = r["ticker"], pd.Timestamp(r["date"])
     if t not in px.columns: continue
-    s = px[t].loc[d0:].dropna()
+    s = px[t].dropna()
     if s.empty: continue
-    p0 = float(re.sub(r"[^0-9.]", "", r["price"]) or s.iloc[0]); p1 = float(s.iloc[-1])
-    b = lambda tk: float(px[tk].loc[d0:].dropna().iloc[-1] / px[tk].loc[d0:].dropna().iloc[0] - 1)
+    since = s.loc[d0:]
+    p1 = float(since.iloc[-1]) if not since.empty else float(s.iloc[-1])   # before first post-pub close: mark at last close
+    p0 = float(re.sub(r"[^0-9.]", "", r["price"]) or p1)
+    def b(tk):
+        z = px[tk].dropna(); zs = z.loc[d0:]
+        return float(zs.iloc[-1] / zs.iloc[0] - 1) if len(zs) > 1 else 0.0
     out.append(dict(date=r["date"], ticker=t, verdict=r["verdict"], conv=r["conviction"], p0=p0, p1=p1, ret=p1/p0-1, iwm=b("IWM"), spy=b("SPY"), days=(s.index[-1]-d0).days))
 df = pd.DataFrame(out)
+if df.empty:
+    (DV / "TRACK.md").write_text("# Track record\n\nPublished verdicts exist but no price data yet.\n"); raise SystemExit("no prices")
 df["vs_iwm"] = df.ret - df.iwm
 md = [f"# Track record — updated {dt.date.today()}", "", "Every verdict since publication. Returns are price-only, no costs. IDEA = published pick; WATCH/PASS tracked so we learn from rejections.", ""]
 for v in ["IDEA", "WATCH", "PASS"]:
