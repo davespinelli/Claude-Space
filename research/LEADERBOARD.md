@@ -1365,3 +1365,33 @@ See `..._cloud.result.md` and memo `..._cloud.memo.md`.
 | 2026-09-04 | 92 U56 NORANK EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | 2026-09-04_sharpe-bound-book-change_cloud.py |
 | 2026-09-04 | 92 U56 SECTOR cap=0.15 | 10.3% | 1.01 | -17.4% | 0.91 / 1.11 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,CAGR) | 2026-09-04_sharpe-bound-book-change_cloud.py |
 | 2026-09-04 | 92 U56 WCAP-EW (all levels) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KILL — measured INERT, identical to control | 2026-09-04_sharpe-bound-book-change_cloud.py |
+
+### Idea 23 — earnings-season-avoidance (cloud, 2026-09-04) — KILL
+
+372 points (2 universes x 3 books x 2 exclusion conventions x [1 anchor + 15 season windows +
+15 placebo windows]), all reported; 2 tuned params (start, length); anchor reproduces
+`rules_v1_weights` exactly. Blacking single stocks out of the eligible set for a fixed
+post-quarter-end window loses Sharpe in **179 of 180 season cells** (mean -0.129, dCAGR -2.19%/yr)
+and the best window per cell still loses in 11 of 12. The premise fails first: in-season SPY-excess
+return is +0.81 bps/day (u56) / +0.05 (broad) with max |t| 2.39 / 1.42, below the placebo's own
+3.10 / 2.16. Rule 8 picks a blackout window in 10/12 cells on higher IS Sharpe (+0.100 mean) and
+loses -0.106..-0.420 OOS. Priced as drawdown insurance: 2.88 pp CAGR per pp MaxDD, vs idea 94's
+dearest priceable instrument at 0.91 and the gross lever at 0.57.
+
+| Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
+|---|---|---|---|---|---|---|---|---|
+| 2026-09-04 | 23 PREMISE u56: in-season excess return, 15 windows | n/a | n/a | n/a | n/a | n/a | REFUTED: +0.81 bps/day, max abs t 2.39, placebo max abs t 3.10 | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 PREMISE broad: in-season excess return, 15 windows | n/a | n/a | n/a | n/a | n/a | REFUTED: +0.05 bps/day, max abs t 1.42, placebo max abs t 2.16 | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 PREMISE u56: in-season vol (start 14-28d) | n/a | n/a | n/a | n/a | n/a | FINDING: 0.36-0.39 in-season vs 0.30 out — more risk, no more return | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 EFFECT: dSharpe of the blackout, 180 season cells | n/a | n/a | n/a | n/a | n/a | KILL: mean -0.129, positive in 1/180; dCAGR -2.19%/yr; dMaxDD +0.50pp | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 PLACEBO (+45d, same duty cycle), 180 cells | n/a | n/a | n/a | n/a | n/a | CONTROL: mean -0.061, positive in 34/180 — season costs 2x the placebo | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 u56 v1 anchor (no blackout, = live RULES v1) | 6.5% | 0.66 | -13.8% | 0.64 / 0.69 | 0.66 (0.64/0.69) | control: exact reproduction of the live book | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 u56 v1 + season(21,28) replace (worst arm in that cell) | 4.0% | 0.45 | -14.6% | 0.55 / 0.37 | 0.66 (0.64/0.69) | KILL 4a / KILL 4b (all bars) | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 u56 top20 anchor (idea 2's standing 4b KEEP) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.66 (0.64/0.69) | control: 4b PASS, reproduces idea 2's row | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 u56 top20 + season(35,14) replace (best arm in that cell) | 11.6% | 1.04 | -17.2% | 0.98 / 1.09 | 0.66 (0.64/0.69) | 4b PASS but INHERITED: -0.057 Sharpe vs its own anchor | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 u56 ewall anchor | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.66 (0.64/0.69) | control | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 broad top20 anchor | 13.1% | 0.96 | -20.1% | 1.13 / 0.81 | 0.64 (0.76/0.53) | control: KEEP 4a / KILL 4b (H2) | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 broad ewall anchor | 10.7% | 1.03 | -17.7% | 1.14 / 0.92 | 0.64 (0.76/0.53) | control: 4b PASS (idea 10's EWall) | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 best season window per cell vs its own anchor | n/a | n/a | n/a | n/a | n/a | KILL: loses in 11/12 cells (-0.075..-0.009); sole exception +0.004 on the weakest book | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 rule-8 walk-forward, 12 cells | n/a | n/a | n/a | n/a | n/a | picks a blackout in 10/12 on IS Sharpe +0.100; OOS -0.188 mean, regret <= 0 in 12/12 | 2026-09-04_earnings-season-avoidance_cloud.py |
+| 2026-09-04 | 23 4b census: 7 season rows pass, all on u56/top20 | n/a | n/a | n/a | n/a | n/a | INHERITED: every one has lower Sharpe than its own passing anchor; 0 conversions | 2026-09-04_earnings-season-avoidance_cloud.py |
