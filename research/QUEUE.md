@@ -21,6 +21,13 @@
 28. eligible-equal-weight-v2 — the v2 candidate: equal-weight ALL names above 200d with vol20<0.60, weekly. Report gross 75/85/100 (all three, no picking), halves, OOS, 2020/2022, turnover. Also with BTC/ETH excluded vs included at 5% cap. (Sep 3 IC finding)
 29. momentum-no-vol-scaler — top-5 and top-10 by 12-1 momentum among eligible (no /sqrt(vol) term), 75% and 100% gross; report all; survivorship caveat. (Sep 3 IC finding)
 30. qqq-core-plus-sleeve-h1 — why does 60% QQQ + 40% sleeve lose to SPY on Sharpe in 2009-2017? Decompose by year; test 50% QQQ + 10% SPY + 40% sleeve. (Sep 3 PARK)
+31. small-cap-pead — post-earnings-announcement drift in small caps: use the 8-K earnings-release date (EDGAR) and the 2-day announcement return as the surprise proxy; long top decile, hold 60 trading days. (Chan-Jegadeesh-Lakonishok 1996; stronger in small caps)
+32. insider-cluster-buying — Form 4 open-market purchases by >=2 distinct insiders within 30 days in small caps; hold 6-12 months. (Cohen-Malloy-Pomorski 2012 opportunistic trades)
+33. amihud-illiquidity-premium — within the small-cap universe, long the least liquid quintile (Amihud ratio) with a momentum filter; test if the premium survives 10-25 bps costs. (Amihud 2002)
+34. volume-shock-continuation — abnormal volume (20d vs 120d) with positive return: continuation vs reversal at 1w/1m/3m horizons in small caps. (Gervais-Kaniel-Mingelgrin 2001 high-volume return premium)
+35. options-iv-snapshot-cache — start a DAILY cache of yfinance option chains (IV, skew, put/call OI) for the live universe + candidates; no history exists for free, so build it now for later tests (IV-RV spread, skew as sentiment).
+36. spinoff-calendar — Form 10 / 10-12B filings from EDGAR full-text search: build the last 5 years of spin-offs and test the classic 6-24 month post-spin outperformance. (Cusatis-Miles-Woolridge 1993)
+37. index-deletion-reversal — Russell reconstitution deletions (June) and S&P 600 removals: post-deletion reversal in small caps.
 ## In progress
 ## Done (see LEADERBOARD.md)
 5. dual-momentum-classes — KILL — all 4 variants below baseline Sharpe in H1 (best 0.39 vs 0.64), MaxDD -24% to -36% vs -13.8%; DBC 2022-23 collapse (2026-09-03)
