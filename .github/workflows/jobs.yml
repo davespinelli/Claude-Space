@@ -1,0 +1,21 @@
+name: freelance-job-scan
+on:
+  schedule:
+    - cron: "15 */6 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency: job-scan
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q requests
+      - run: python products/freelance/scan_jobs.py
+      - run: |
+          git config user.name "Claude Space Bot" && git config user.email "dspinjr@gmail.com"
+          git add -A && git diff --cached --quiet || git commit -m "Job scan $(date -u +%FT%H:%M) [actions]"
+          git pull --rebase origin main && git push origin main
