@@ -1270,3 +1270,33 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 22 u56 CAND20 D=12%/k=0.75 (best treated arm) | 12.0% | 1.06 | -18.3% | 1.09 / 1.05 | 0.67 (0.64/0.69) | 4b PASS but strictly worse than its own control (1.093) | 2026-09-04_drawdown-control_C.py |
 | 2026-09-04 | 22 exchange rate: DD rule vs static gross (288 arms) | n/a | n/a | n/a | n/a | n/a | KILL: 1.02 vs 0.57 pp CAGR per pp MaxDD; dominated 252/288 | 2026-09-04_drawdown-control_C.py |
 | 2026-09-04 | 22 walk-forward S1/S2 vs control (12 cells) | n/a | n/a | n/a | n/a | n/a | S1 picks the do-nothing corner 12/12 (OOS 0.900 vs 0.922); S2 picks nothing 10/12 | 2026-09-04_drawdown-control_C.py |
+
+### Idea 21 — momentum-plus-quality-proxy (cloud, 2026-09-04)
+
+Top-K by 12-1 momentum among RULES v1's eligible set (200d MA + `vol20 < 0.60`), then drop
+`D = round(d·K)` names by `vol20`; equal weight, 0.75 gross, weekly, next-day execution.
+Two tuned parameters: `K ∈ {10,20,30}`, `d ∈ {0,0.1,0.2,0.3,0.5}`. Three arms — **HI** (drop
+highest-vol = the idea), **LO** (drop lowest-vol = sign check), **CTRL** (no screen, rank-cap
+at K−D = the matched-size control). Both gross conventions (MATCHED `g/count`, LITERAL `g/K`)
+and 10/25 bps. **312 grid points, all reported** in
+`2026-09-04_momentum-plus-quality-proxy_cloud.grid.csv`; representative rows below.
+**KILL** — HI beats CTRL on Sharpe in 1/24 cells (means −0.127 broad / −0.156 u56), beats the
+reversed screen LO in 2/24, is monotone-decreasing in `d` on both universes and both rankers,
+and **rule 8 selects `d = 0` (no screen) on BOTH universes**. Confirms ideas 1 and 80/81: the
+short-horizon vol premium inside this gate is positive-signed, so a low-vol tilt is backwards.
+By-product: the LITERAL `g/K` denominator de-grosses 0.750 → 0.522 at K=10/d=0.3 and inflates
+4a passes 18/39 → 30/39 on broad at unchanged Sharpe — idea 73's artefact, reproduced.
+See `2026-09-04_momentum-plus-quality-proxy_cloud.result.md`.
+
+| 2026-09-04 | 21 BROAD HI K=10 d=0.0 (anchor, no screen) | 18.7% | 1.08 | -21.4% | 1.28 / 0.92 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 BROAD HI K=10 d=0.3 (**the queue's literal proposal**) | 14.8% | 0.93 | -19.2% | 1.13 / 0.77 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 BROAD LO K=10 d=0.3 (sign check — beats the idea) | 21.1% | 1.07 | -25.5% | 1.39 / 0.82 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H2,DD) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 BROAD CTRL K=10 d=0.3 (matched-size control) | 18.6% | 0.99 | -23.2% | 1.26 / 0.79 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H2,OOS,DD) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 BROAD HI K=20 d=0.3 | 10.3% | 0.80 | -19.9% | 1.02 / 0.62 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 BROAD HI K=30 d=0.3 | 9.9% | 0.86 | -19.4% | 1.06 / 0.68 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 U56 HI K=10 d=0.0 (anchor) | 15.4% | 1.04 | -20.6% | 1.03 / 1.07 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 U56 HI K=10 d=0.3 (literal proposal) | 11.1% | 0.86 | -20.8% | 0.84 / 0.89 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 U56 CTRL K=10 d=0.3 (matched-size control) | 17.0% | 1.03 | -21.5% | 0.95 / 1.10 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 U56 HI K=20 d=0.3 | 8.3% | 0.84 | -17.6% | 0.97 / 0.74 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 rule-8 OOS pick BROAD (K=10, d=0 — the screen switched OFF) | 18.3% | 1.00 | -21.4% | OOS-only | v1 OOS 0.58, SPY OOS 0.88 | walk-forward selects no screen | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
+| 2026-09-04 | 21 rule-8 OOS pick U56 (K=20, d=0 — the screen switched OFF) | 12.9% | 1.02 | -18.8% | OOS-only | v1 OOS 0.75, SPY OOS 0.88 | walk-forward selects no screen | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
