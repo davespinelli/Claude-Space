@@ -1,0 +1,27 @@
+name: daily-close
+on:
+  schedule:
+    - cron: "30 21 * * 1-5"   # 5:30pm EDT / 4:30pm EST, after US close
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency: daily-close
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -q pandas numpy yfinance requests python-dotenv
+      - name: Scan, cache prices, mark paper NAV, apply rules
+        run: |
+          python research/scan.py
+          python research/cache_prices.py
+          python paper/ledger.py mark
+          python paper/apply_rules.py
+      - name: Commit & push
+        run: |
+          git config user.name "Claude Space Bot" && git config user.email "dspinjr@gmail.com"
+          git add -A && git diff --cached --quiet || git commit -m "Daily close $(date -u +%F) [actions]"
+          git pull --rebase origin main && git push origin main

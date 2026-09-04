@@ -12,9 +12,17 @@ from pathlib import Path
 import numpy as np, pandas as pd
 
 def load_prices(tickers, start="2010-01-01", end=None) -> pd.DataFrame:
-    import yfinance as yf
-    px = yf.download(list(tickers), start=start, end=end, auto_adjust=True, progress=False)["Close"]
-    if isinstance(px, pd.Series): px = px.to_frame(tickers[0])
+    cache = Path(__file__).resolve().parents[2] / "data" / "prices.csv"
+    try:
+        import yfinance as yf
+        px = yf.download(list(tickers), start=start, end=end, auto_adjust=True, progress=False)["Close"]
+        if isinstance(px, pd.Series): px = px.to_frame(tickers[0])
+        px = px.dropna(how="all")
+        if px.empty or px.shape[1] < len(tickers): raise RuntimeError("incomplete download")
+    except Exception as e:  # offline (e.g. cloud sandbox): fall back to committed cache
+        if not cache.exists(): raise
+        print(f"load_prices: network unavailable ({type(e).__name__}); using {cache.name}")
+        px = pd.read_csv(cache, index_col=0, parse_dates=True)[list(tickers)].loc[start:end]
     return px.dropna(how="all").ffill()
 
 def rebalance_mask(idx: pd.DatetimeIndex, freq: str) -> pd.Series:
