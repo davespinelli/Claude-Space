@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T23:14:11Z · open 122 · in progress 0 · done 363_
+_Source: universe_under2b.csv · updated 2026-09-04T23:39:53Z · open 112 · in progress 0 · done 373_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (122)
+## Open (112)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| AORT | ARTIVION, INC. | $1.25B |
-| SXC | SunCoke Energy, Inc. | $864.9M |
-| AEYE | AUDIOEYE INC | $91.4M |
-| RAIL | FreightCar America, Inc. | $229.9M |
-| RBBN | Ribbon Communications Inc. | $355.9M |
-| ANIK | Anika Therapeutics, Inc. | $281.0M |
-| MVST | Microvast Holdings, Inc. | $269.2M |
-| CVGI | Commercial Vehicle Group, Inc. | $126.0M |
-| VREX | Varex Imaging Corp | $779.7M |
-| RRGB | RED ROBIN GOURMET BURGERS INC | $155.6M |
 | OI | O-I Glass, Inc. /DE/ | $1.08B |
 | AOSL | ALPHA & OMEGA SEMICONDUCTOR Ltd | $739.8M |
 | SMWB | SIMILARWEB LTD. | $773.1M |
@@ -136,7 +126,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (363)
+## Done (373)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | MEI | METHODE ELECTRONICS INC | $543.4M | cloudA | 2026-09-04T23:14:11Z |
 | ALOT | AstroNova, Inc. | $224.6M | cloudA | 2026-09-04T23:14:11Z |
 | TITN | Titan Machinery Inc. | $532.0M | cloudA | 2026-09-04T23:14:11Z |
+| AORT | ARTIVION, INC. | $1.25B | cloudB | 2026-09-04T23:39:53Z |
+| SXC | SunCoke Energy, Inc. | $864.9M | cloudB | 2026-09-04T23:39:53Z |
+| AEYE | AUDIOEYE INC | $91.4M | cloudB | 2026-09-04T23:39:53Z |
+| RAIL | FreightCar America, Inc. | $229.9M | cloudB | 2026-09-04T23:39:53Z |
+| RBBN | Ribbon Communications Inc. | $355.9M | cloudB | 2026-09-04T23:39:53Z |
+| ANIK | Anika Therapeutics, Inc. | $281.0M | cloudB | 2026-09-04T23:39:53Z |
+| MVST | Microvast Holdings, Inc. | $269.2M | cloudB | 2026-09-04T23:39:53Z |
+| CVGI | Commercial Vehicle Group, Inc. | $126.0M | cloudB | 2026-09-04T23:39:53Z |
+| VREX | Varex Imaging Corp | $779.7M | cloudB | 2026-09-04T23:39:53Z |
+| RRGB | RED ROBIN GOURMET BURGERS INC | $155.6M | cloudB | 2026-09-04T23:39:53Z |

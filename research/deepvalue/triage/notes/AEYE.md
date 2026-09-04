@@ -1,0 +1,5 @@
+# AEYE — AUDIOEYE INC · triage 2026-09-04 · Edge: none · Score 0/10
+
+Not triaged. `triage_pack.py AEYE --no-price` produced a 4,118-character pack because no filings for this ticker are present in the bundle. Section 1 reports "Filings fetched: none" and section 11 lists meta.json, all 8-K filings, the earnings press release exhibit, the Form 4 summary, 10-K Item 1 Business, 10-K Item 7 MD&A and any transcript as missing, with nothing present. There is no business description, no management commentary and no current-period results, so no edge case can be assessed and no risk can be named from filing text. The screen row alone (universe_under2b.csv, 2026-09-04) shows $7.27, a $91.4 million cap, $98.2 million EV, $4.7 million FCF for a 5.1% yield, revenue of $40.3 million up 14.5%, EBIT of -$1.8 million, ROIC of -14.4%, net debt of $6.9 million and 12-1 momentum of -50.6%, but a screen row is not a triage. Scored 0 for absence of evidence, not against the company. Requeue once fetch_filings.py AEYE has run.
+
+_Sources: triage pack only (sections 1, 2, 3, 11 — all filing sections absent). Triage-depth read, not a deep dive._

@@ -364,3 +364,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | MEI | METHODE ELECTRONICS INC | $543.4M | misunderstood-segment | 4 | Data centre Industrial volumes drove sales up 10.4%, yet adjusted EBITDA fell to 5.2% of sales and free cash flow was an outflow of $10.9M |
 | 2026-09-04 | ALOT | AstroNova, Inc. | $224.6M | none | 2 | Merger agreement with Orion signed in June and change-of-control 8-Ks filed in August, with the stock sitting exactly at its 52-week high |
 | 2026-09-04 | TITN | Titan Machinery Inc. | $532.0M | cyclical-trough | 5 | Equipment margins inflecting at roughly book value, but FY27 is guided to a $28-40M adjusted net loss and the 25.8% FCF yield is an inventory artifact |
+| 2026-09-04 | AORT | ARTIVION, INC. | $1.2B | fallen-growth | 5 | Revenue up 14% with stent grafts up 29% and the stock 46% off its high, but 45.5x EV/EBIT, 0.1% FCF yield and 8.5x net debt to EBIT |
+| 2026-09-04 | SXC | SunCoke Energy, Inc. | $864.9M | post-restructuring | 7 | FY25 GAAP operating loss is a $90.3M Haverhill impairment; 2026 guide is $250-265M EBITDA and $240-260M operating cash flow on an $865M cap |
+| 2026-09-04 | AEYE | AUDIOEYE INC | $91.4M | none | 0 | no filings in bundle |
+| 2026-09-04 | RAIL | FreightCar America, Inc. | $229.9M | cyclical-trough | 7 | Backlog up 121% sequentially to $344M on 45% industry order share and the warrant liability cut to $14M, while the stock halved in six months |
+| 2026-09-04 | RBBN | Ribbon Communications Inc. | $355.9M | none | 0 | no filings in bundle |
+| 2026-09-04 | ANIK | Anika Therapeutics, Inc. | $281.0M | post-restructuring | 5 | Post-divestiture margins inflected to the best EBITDA since 2020 and guidance was raised, but the stock is up 113% and sits at its high |
+| 2026-09-04 | MVST | Microvast Holdings, Inc. | $269.2M | none | 2 | Going-concern evaluation, real debt near $289M versus the screen's $118.6M, and YTD revenue down 28.8% with EBITDA negative |
+| 2026-09-04 | CVGI | Commercial Vehicle Group, Inc. | $126.0M | cyclical-trough | 6 | All three segments grew 13.5% and guidance was raised on Class 8 builds up 9%, but EBITDA margin is 2.8% and an ATM is diluting 9.7% |
+| 2026-09-04 | VREX | Varex Imaging Corp | $779.7M | none | 2 | Merger agreement with Teledyne signed 2026-08-10, earnings call cancelled and guidance withdrawn, with the stock 0.3% off its high |
+| 2026-09-04 | RRGB | RED ROBIN GOURMET BURGERS INC | $155.6M | hidden-asset | 6 | Refranchising 116 restaurants for $96M gross against a $156M cap with traffic best since 2023, but equity is negative $105.6M |
