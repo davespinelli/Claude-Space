@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T19:11:32Z · open 242 · in progress 0 · done 243_
+_Source: universe_under2b.csv · updated 2026-09-04T19:39:23Z · open 232 · in progress 0 · done 253_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (242)
+## Open (232)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| EPC | EDGEWELL PERSONAL CARE Co | $1.31B |
-| SMTI | Sanara MedTech Inc. | $319.0M |
-| GRPN | Groupon, Inc. | $766.9M |
-| HE | HAWAIIAN ELECTRIC INDUSTRIES INC | $1.92B |
-| ADTN | ADTRAN Holdings, Inc. | $582.6M |
-| BLMN | Bloomin' Brands, Inc. | $833.1M |
-| TRNS | TRANSCAT INC | $802.1M |
-| NABL | N-able, Inc. | $753.7M |
-| TATT | TAT TECHNOLOGIES LTD | $506.5M |
-| LYTS | LSI INDUSTRIES INC | $738.3M |
 | BGS | B&G Foods, Inc. | $273.1M |
 | CLVT | CLARIVATE PLC | $1.38B |
 | MG | Mistras Group, Inc. | $607.1M |
@@ -256,7 +246,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (243)
+## Done (253)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | CDRE | Cadre Holdings, Inc. | $1.28B | cloudA | 2026-09-04T19:11:32Z |
 | ANAB | ANAPTYSBIO, INC | $1.67B | cloudA | 2026-09-04T19:11:32Z |
 | LEGH | Legacy Housing Corp | $663.3M | cloudA | 2026-09-04T19:11:32Z |
+| EPC | EDGEWELL PERSONAL CARE Co | $1.31B | cloudB | 2026-09-04T19:39:23Z |
+| SMTI | Sanara MedTech Inc. | $319.0M | cloudB | 2026-09-04T19:39:23Z |
+| GRPN | Groupon, Inc. | $766.9M | cloudB | 2026-09-04T19:39:23Z |
+| HE | HAWAIIAN ELECTRIC INDUSTRIES INC | $1.92B | cloudB | 2026-09-04T19:39:23Z |
+| ADTN | ADTRAN Holdings, Inc. | $582.6M | cloudB | 2026-09-04T19:39:23Z |
+| BLMN | Bloomin' Brands, Inc. | $833.1M | cloudB | 2026-09-04T19:39:23Z |
+| TRNS | TRANSCAT INC | $802.1M | cloudB | 2026-09-04T19:39:23Z |
+| NABL | N-able, Inc. | $753.7M | cloudB | 2026-09-04T19:39:23Z |
+| TATT | TAT TECHNOLOGIES LTD | $506.5M | cloudB | 2026-09-04T19:39:23Z |
+| LYTS | LSI INDUSTRIES INC | $738.3M | cloudB | 2026-09-04T19:39:23Z |

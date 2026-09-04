@@ -244,3 +244,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | CDRE | Cadre Holdings, Inc. | $1.3B | none | 0 | no filings in bundle |
 | 2026-09-04 | ANAB | ANAPTYSBIO, INC | $1.7B | spin-off | 5 | Clean post-spin royalty vehicle, but $263.7M royalty-sale liability the screen missed and royalties pledged to Sagard until mid-2027 |
 | 2026-09-04 | LEGH | Legacy Housing Corp | $663.3M | none | 0 | no filings in bundle |
+| 2026-09-04 | EPC | EDGEWELL PERSONAL CARE Co | $1.3B | post-restructuring | 5 | GAAP EBIT $96.6M vs adjusted $219.1M on restructuring and impairments, but 3.7x leverage on flat organic sales and 3.9% off the high |
+| 2026-09-04 | SMTI | Sanara MedTech Inc. | $319.0M | none | 0 | no filings in bundle |
+| 2026-09-04 | GRPN | Groupon, Inc. | $766.9M | cash-cow-narrative | 5 | Guides at least $60M FCF and $75-80M adjusted EBITDA on a $802M EV, but Q2 revenue and billings fell 1% and units 7% |
+| 2026-09-04 | HE | HAWAIIAN ELECTRIC INDUSTRIES INC | $1.9B | post-restructuring | 7 | Wildfire liability now fixed at $1.30B with WMP recovery approved and ratings upgraded, yet the stock is 35% off its high |
+| 2026-09-04 | ADTN | ADTRAN Holdings, Inc. | $582.6M | fallen-growth | 6 | 16.8% FCF yield and revenue +17.5% at 63% off the high, but $359M redeemable NCI and $194M converts sit outside the screen EV |
+| 2026-09-04 | BLMN | Bloomin' Brands, Inc. | $833.1M | post-restructuring | 6 | Outback turnaround inflecting with comps +2.3% and FY26 adjusted EPS guide raised to $0.90-1.00, against 17x net debt to EBIT |
+| 2026-09-04 | TRNS | TRANSCAT INC | $802.1M | none | 3 | 68.3x EV/EBIT and 2.6% ROIC for a roll-up whose service organic growth was 3.0% and whose Q1 operating income fell 30% |
+| 2026-09-04 | NABL | N-able, Inc. | $753.7M | fallen-growth | 7 | 53% off the high at roughly 6.4x guided adjusted EBITDA of $158-161M and 10% FCF yield, with ARR growth halving to 4-5% |
+| 2026-09-04 | TATT | TAT TECHNOLOGIES LTD | $506.5M | none | 4 | 24.7x EV/EBIT with share count +18.7% from repeat placements, and the pack has no business description or earnings release |
+| 2026-09-04 | LYTS | LSI INDUSTRIES INC | $738.3M | misunderstood-segment | 5 | Display Solutions doubled at a 12.4% EBITDA margin plus an unbooked 2,500-site award, but shares rose 22.4% to pay for it |
