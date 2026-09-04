@@ -925,3 +925,47 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 80 broad/LOWVOL-n10 | 3.3% | 0.60 | -14.4% | 0.82 / 0.42 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
 | 2026-09-04 | 80 broad/LOWVOL-n20 | 6.0% | 0.85 | -13.8% | 1.12 / 0.64 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
 | 2026-09-04 | 80 broad/LOWVOL-n30 | 6.8% | 0.88 | -15.0% | 1.18 / 0.61 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_prox-inverted-signal_cloud.py |
+| 2026-09-04 | 83 u56/CAND20/budget-pro0.1 | 13.8% | 1.12 | -21.1% | 1.13 / 1.12 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/budget-pro0.2 | 12.9% | 1.08 | -18.8% | 1.08 / 1.09 | 0.67 (0.64/0.69) | 4b-pass u56 only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/budget-pro0.4 | 12.6% | 1.08 | -18.3% | 1.09 / 1.08 | 0.67 (0.64/0.69) | 4b-pass u56 only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/budget-top0.1 | 15.3% | 1.11 | -22.9% | 1.14 / 1.10 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/budget-top0.2 | 13.7% | 1.08 | -21.1% | 1.09 / 1.09 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/budget-top0.4 | 12.6% | 1.08 | -17.5% | 1.08 / 1.08 | 0.67 (0.64/0.69) | 4b-pass u56 only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/control | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4b-pass u56 only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/gross0.35 | 5.9% | 1.09 | -8.8% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/gross0.45 | 7.6% | 1.09 | -11.2% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/gross0.55 | 9.3% | 1.09 | -13.6% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/CAND20/gross0.65 | 11.0% | 1.09 | -16.0% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4b-pass u56 only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/budget-pro0.1 | 11.2% | 1.08 | -18.7% | 1.11 / 1.06 | 0.67 (0.64/0.69) | 4b-pass u56 only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/budget-pro0.2 | 10.8% | 1.06 | -17.8% | 1.06 / 1.06 | 0.67 (0.64/0.69) | 4b-pass u56 only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/budget-pro0.4 | 10.5% | 1.05 | -16.7% | 1.04 / 1.05 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/budget-top0.1 | 12.0% | 1.08 | -21.2% | 1.21 / 1.00 | 0.67 (0.64/0.69) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/budget-top0.2 | 11.0% | 1.04 | -19.2% | 1.05 / 1.05 | 0.67 (0.64/0.69) | 4b-pass u56 only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/budget-top0.4 | 10.6% | 1.03 | -18.9% | 1.05 / 1.01 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/control | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/gross0.35 | 4.9% | 1.05 | -7.6% | 1.07 / 1.04 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/gross0.45 | 6.2% | 1.05 | -9.7% | 1.07 / 1.04 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/gross0.55 | 7.6% | 1.05 | -11.8% | 1.07 / 1.04 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 u56/EWall/gross0.65 | 9.0% | 1.05 | -13.8% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/budget-pro0.1 | 15.3% | 1.05 | -24.7% | 1.29 / 0.86 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/budget-pro0.2 | 13.7% | 0.98 | -22.6% | 1.21 / 0.79 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/budget-pro0.4 | 12.9% | 0.94 | -20.2% | 1.14 / 0.77 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/budget-top0.1 | 19.2% | 1.10 | -31.8% | 1.28 / 0.97 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/budget-top0.2 | 16.6% | 1.01 | -30.8% | 1.23 / 0.83 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/budget-top0.4 | 13.2% | 0.95 | -21.3% | 1.15 / 0.78 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/control | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/gross0.35 | 6.1% | 0.95 | -9.7% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/gross0.45 | 7.9% | 0.96 | -12.3% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/gross0.55 | 9.6% | 0.96 | -14.9% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/CAND20/gross0.65 | 11.4% | 0.96 | -17.5% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/budget-pro0.1 | 11.5% | 1.05 | -22.6% | 1.16 / 0.96 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/budget-pro0.2 | 11.1% | 1.03 | -21.8% | 1.14 / 0.93 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/budget-pro0.4 | 10.8% | 1.02 | -20.6% | 1.14 / 0.91 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/budget-top0.1 | 12.3% | 1.08 | -23.5% | 1.18 / 0.99 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/budget-top0.2 | 11.7% | 1.03 | -24.9% | 1.16 / 0.92 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/budget-top0.4 | 10.8% | 0.98 | -23.3% | 1.13 / 0.87 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/control | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4b-pass broad only, KILL cross-universe | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/gross0.35 | 5.0% | 1.03 | -8.5% | 1.14 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/gross0.45 | 6.4% | 1.03 | -10.9% | 1.14 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/gross0.55 | 7.9% | 1.03 | -13.2% | 1.14 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
+| 2026-09-04 | 83 broad/EWall/gross0.65 | 9.3% | 1.03 | -15.5% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (CAGR) | 2026-09-04_turnover-budget_B.py |
