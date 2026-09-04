@@ -6,3 +6,5 @@
 5. **One idea per script**, `research/backtests/YYYY-MM-DD_<slug>.py`, deterministic, runnable standalone. Append one row to `research/LEADERBOARD.md`.
 6. **Rules change only via Sunday review**, max one change per week, logged in CHANGELOG.md with version bump in RULES.md and `products/bot/bot.py`.
 7. Report honestly. A KILL is a useful result. Never tune until it works.
+8. **Walk-forward (required for KEEP-candidates):** re-run the idea with parameters chosen on 2009–2016 only, evaluate 2017–2026 untouched. Report OOS Sharpe/MaxDD vs baseline OOS. A candidate that only wins in-sample is PARK, not KEEP.
+9. **Broader universe available:** `research/universe_broad.json` (~100 liquid US large caps + ETFs) is cached to `data/prices_broad.csv` weekly (Fridays). Use `baseline.load_universe(broad=True)`. State survivorship bias (current constituents) in any memo using it.

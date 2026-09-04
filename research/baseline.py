@@ -14,7 +14,15 @@ sys.path.insert(0, str(ROOT / "products" / "backtester"))
 from engine import load_prices, backtest, metrics, report  # noqa
 
 EXCLUDE = {"BTC-USD", "ETH-USD"}
-def load_universe(start="2008-01-01", exclude=EXCLUDE):
+def load_universe(start="2008-01-01", exclude=EXCLUDE, broad=False):
+    if broad:
+        T = json.loads((ROOT / "research" / "universe_broad.json").read_text())
+        cache = ROOT / "data" / "prices_broad.csv"
+        try:
+            px = load_prices(T, start=start)
+        except Exception:
+            px = pd.read_csv(cache, index_col=0, parse_dates=True)
+        return px.dropna(how="all").ffill()
     U = json.loads((ROOT / "research" / "universe.json").read_text())
     T = sorted({t for g in U.values() for t in g} - set(exclude))
     return load_prices(T, start=start)
