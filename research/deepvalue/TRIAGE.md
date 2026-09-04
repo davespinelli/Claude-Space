@@ -254,3 +254,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | NABL | N-able, Inc. | $753.7M | fallen-growth | 7 | 53% off the high at roughly 6.4x guided adjusted EBITDA of $158-161M and 10% FCF yield, with ARR growth halving to 4-5% |
 | 2026-09-04 | TATT | TAT TECHNOLOGIES LTD | $506.5M | none | 4 | 24.7x EV/EBIT with share count +18.7% from repeat placements, and the pack has no business description or earnings release |
 | 2026-09-04 | LYTS | LSI INDUSTRIES INC | $738.3M | misunderstood-segment | 5 | Display Solutions doubled at a 12.4% EBITDA margin plus an unbooked 2,500-site award, but shares rose 22.4% to pay for it |
+| 2026-09-04 | BGS | B&G Foods, Inc. | $273.1M | none | 0 | no filings in bundle |
+| 2026-09-04 | CLVT | CLARIVATE PLC | $1.4B | cash-cow-narrative | 7 | FY26 FCF guided $365-435M against a $1.4B cap while debt fell $218M, but $4.25B of debt makes the equity a stub |
+| 2026-09-04 | MG | Mistras Group, Inc. | $607.1M | post-restructuring | 4 | Leverage at a 2018 low and guidance raised, but the stock is 2.3% off its high after a 67% run at 18.3x EV/EBIT |
+| 2026-09-04 | AHCO | AdaptHealth Corp. | $875.3M | post-restructuring | 5 | Diabetes sold for $235M and EV is 5.3x guided EBITDA, but guidance was cut and H1 free cash flow was negative $48.4M |
+| 2026-09-04 | ASTE | ASTEC INDUSTRIES INC | $976.3M | misunderstood-segment | 6 | Materials Solutions backlog up 150.6% on a 142.2% book-to-bill while the stock fell 34% on Infrastructure shipment timing |
+| 2026-09-04 | FVRR | Fiverr International Ltd. | $332.1M | fallen-growth | 6 | $206.8M EV against $103.9M of CY2025 FCF with revenue up 10.1%, but EBIT was negative and no release is in the pack |
+| 2026-09-04 | EYE | National Vision Holdings, Inc. | $1.3B | post-restructuring | 7 | Adjusted operating income guide raised to $119-139M and up 33.7% YTD while the shares fell 42% over six months |
+| 2026-09-04 | CCO | Clear Channel Outdoor Holdings, Inc. | $1.2B | none | 3 | Not a valuation: shareholders approved a $2.43 cash take-private in May and the screen price is $2.38 |
+| 2026-09-04 | CRON | Cronos Group Inc. | $1.2B | hidden-asset | 7 | $827M of cash and deposits against a $1.2B cap with Q2 revenue up 58%, but Israel reopened an anti-dumping case |
+| 2026-09-04 | GILT | GILAT SATELLITE NETWORKS LTD | $760.5M | none | 3 | 25.2x EV/EBIT with revenue growth flagged as issuance-driven on a 29.5% higher share count, and no MD&A in the pack |

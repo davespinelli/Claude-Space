@@ -1,0 +1,5 @@
+# BGS — B&G Foods, Inc. · triage 2026-09-04 · Edge: none · Score 0/10
+
+No filings in bundle. The pack for BGS contains only the screen row: the fetcher retrieved no 10-K, no 10-Q, no 8-K, no Form 4 summary and no transcript, so section 11 lists the business description, MD&A and risk factors as all missing and sections 5 through 10 are empty. Nothing in the pack describes what the company does, what it earned last quarter, or how management characterises the business, so no edge type can be claimed and no triage judgement can be made. The screen row alone shows a $273.1 million market capitalisation at $3.36, a $1.7 billion enterprise value, $1.4 billion of net debt at 14.6x EBIT, CY2025 revenue of $1.8 billion down 5.4%, EBIT of $97.1 million, a net loss of $43.3 million, and a 25.9% FCF yield on $70.7 million of free cash flow, with the shares 39.1% below the 52-week high. Those figures are unverifiable against any filing text in this pack. Scored 0 per the lane rule for tickers with no filings in the bundle; re-run fetch_filings.py BGS before triaging it.
+
+_Sources: triage pack only (section 2, section 11). No filings available. Not a triage judgement._

@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T19:39:23Z · open 232 · in progress 0 · done 253_
+_Source: universe_under2b.csv · updated 2026-09-04T20:10:54Z · open 212 · in progress 10 · done 263_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (232)
+## Open (212)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| BGS | B&G Foods, Inc. | $273.1M |
-| CLVT | CLARIVATE PLC | $1.38B |
-| MG | Mistras Group, Inc. | $607.1M |
-| AHCO | AdaptHealth Corp. | $875.3M |
-| ASTE | ASTEC INDUSTRIES INC | $976.3M |
-| FVRR | Fiverr International Ltd. | $332.1M |
-| EYE | National Vision Holdings, Inc. | $1.33B |
-| CCO | Clear Channel Outdoor Holdings, Inc. | $1.21B |
-| CRON | Cronos Group Inc. | $1.20B |
-| GILT | GILAT SATELLITE NETWORKS LTD | $760.5M |
-| RDVT | Red Violet, Inc. | $1.23B |
-| UIS | UNISYS CORP | $188.9M |
-| OMCL | OMNICELL, INC. | $1.59B |
-| LFS | LEIFRAS Co., Ltd. | $58.3M |
-| FTK | FLOTEK INDUSTRIES INC/CN/ | $859.9M |
-| LOVE | Lovesac Co | $233.5M |
-| GDYN | GRID DYNAMICS HOLDINGS, INC. | $665.2M |
-| AIOT | Powerfleet, Inc. | $407.9M |
-| MLAB | MESA LABORATORIES INC /CO/ | $719.2M |
-| MTRX | MATRIX SERVICE CO | $296.8M |
 | AEBI | Aebi Schmidt Holding AG | $975.5M |
 | WINA | WINMARK CORP | $1.14B |
 | HDSN | HUDSON TECHNOLOGIES INC /NY | $221.0M |
@@ -241,12 +221,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| RDVT | Red Violet, Inc. | $1.23B | cloudA | 2026-09-04T20:07:24Z |
+| UIS | UNISYS CORP | $188.9M | cloudA | 2026-09-04T20:07:24Z |
+| OMCL | OMNICELL, INC. | $1.59B | cloudA | 2026-09-04T20:07:24Z |
+| LFS | LEIFRAS Co., Ltd. | $58.3M | cloudA | 2026-09-04T20:07:24Z |
+| FTK | FLOTEK INDUSTRIES INC/CN/ | $859.9M | cloudA | 2026-09-04T20:07:24Z |
+| LOVE | Lovesac Co | $233.5M | cloudA | 2026-09-04T20:07:24Z |
+| GDYN | GRID DYNAMICS HOLDINGS, INC. | $665.2M | cloudA | 2026-09-04T20:07:24Z |
+| AIOT | Powerfleet, Inc. | $407.9M | cloudA | 2026-09-04T20:07:24Z |
+| MLAB | MESA LABORATORIES INC /CO/ | $719.2M | cloudA | 2026-09-04T20:07:24Z |
+| MTRX | MATRIX SERVICE CO | $296.8M | cloudA | 2026-09-04T20:07:24Z |
 
-## Done (253)
+## Done (263)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | NABL | N-able, Inc. | $753.7M | cloudB | 2026-09-04T19:39:23Z |
 | TATT | TAT TECHNOLOGIES LTD | $506.5M | cloudB | 2026-09-04T19:39:23Z |
 | LYTS | LSI INDUSTRIES INC | $738.3M | cloudB | 2026-09-04T19:39:23Z |
+| BGS | B&G Foods, Inc. | $273.1M | cloudA | 2026-09-04T20:10:54Z |
+| CLVT | CLARIVATE PLC | $1.38B | cloudA | 2026-09-04T20:10:54Z |
+| MG | Mistras Group, Inc. | $607.1M | cloudA | 2026-09-04T20:10:54Z |
+| AHCO | AdaptHealth Corp. | $875.3M | cloudA | 2026-09-04T20:10:54Z |
+| ASTE | ASTEC INDUSTRIES INC | $976.3M | cloudA | 2026-09-04T20:10:54Z |
+| FVRR | Fiverr International Ltd. | $332.1M | cloudA | 2026-09-04T20:10:54Z |
+| EYE | National Vision Holdings, Inc. | $1.33B | cloudA | 2026-09-04T20:10:54Z |
+| CCO | Clear Channel Outdoor Holdings, Inc. | $1.21B | cloudA | 2026-09-04T20:10:54Z |
+| CRON | Cronos Group Inc. | $1.20B | cloudA | 2026-09-04T20:10:54Z |
+| GILT | GILAT SATELLITE NETWORKS LTD | $760.5M | cloudA | 2026-09-04T20:10:54Z |
