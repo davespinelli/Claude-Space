@@ -389,3 +389,33 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 3 universe_broad walk-forward (both rules): top20 freq=M OOS | 15.7% | 1.01 | -26.1% | - / - | 0.64 (0.76/0.54) | FAILS OOS 4b (DD) | research/backtests/2026-09-04_rebalance-freq_cloud.py |
 | 2026-09-04 | 3 OOS reference: RULES v1 weekly (universe.json) | 7.8% | 0.75 | -13.8% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_rebalance-freq_cloud.py |
 | 2026-09-04 | 3 OOS reference: SPY buy & hold | 15.5% | 0.88 | -33.7% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_rebalance-freq_cloud.py |
+| 2026-09-04 | 63 universe_broad.json v1 + 0% QQQ core | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json v1 + 25% QQQ core | 8.8% | 0.86 | -18.3% | 0.99 / 0.75 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,CAGR) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json v1 + 50% QQQ core | 11.2% | 0.98 | -17.2% | 1.14 / 0.87 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json top20 + 0% QQQ core | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | KILL 4b (H2) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json top20 + 25% QQQ core | 13.8% | 1.02 | -19.9% | 1.18 / 0.88 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json top20 + 50% QQQ core | 14.5% | 1.04 | -22.0% | 1.21 / 0.91 | 0.64 (0.76/0.54) | KILL 4b (DD) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json ew-all + 0% QQQ core | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json ew-all + 25% QQQ core | 12.0% | 1.06 | -18.8% | 1.19 / 0.95 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json ew-all + 50% QQQ core | 13.3% | 1.06 | -21.2% | 1.21 / 0.94 | 0.64 (0.76/0.54) | KILL 4b (DD) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json ew-band3 + 0% QQQ core | 11.1% | 1.06 | -16.8% | 1.16 / 0.97 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json ew-band3 + 25% QQQ core | 12.3% | 1.09 | -18.5% | 1.20 / 0.99 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad.json ew-band3 + 50% QQQ core | 13.5% | 1.07 | -21.0% | 1.22 / 0.96 | 0.64 (0.76/0.54) | KILL 4b (DD) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json v1 + 0% QQQ core | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json v1 + 25% QQQ core | 8.8% | 0.87 | -15.3% | 0.91 / 0.85 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json v1 + 50% QQQ core | 11.2% | 0.98 | -17.0% | 1.08 / 0.91 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json top20 + 0% QQQ core | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json top20 + 25% QQQ core | 13.5% | 1.12 | -18.5% | 1.17 / 1.09 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json top20 + 50% QQQ core | 14.3% | 1.10 | -18.8% | 1.21 / 1.03 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json ew-all + 0% QQQ core | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json ew-all + 25% QQQ core | 11.8% | 1.08 | -17.3% | 1.15 / 1.03 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json ew-all + 50% QQQ core | 13.1% | 1.07 | -20.2% | 1.19 / 0.99 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json ew-band3 + 0% QQQ core | 11.3% | 1.14 | -15.1% | 1.11 / 1.16 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json ew-band3 + 25% QQQ core | 12.4% | 1.14 | -16.2% | 1.18 / 1.11 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json ew-band3 + 50% QQQ core | 13.6% | 1.11 | -19.3% | 1.21 / 1.04 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 CONTROL universe.json ew-band3 + 25% SPY core (no hindsight) | 11.4% | 1.11 | -16.5% | 1.11 / 1.11 | 0.67 (0.64/0.69) | KEEP 4b (also at 25 bps) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 CONTROL universe_broad ew-band3 + 25% SPY core (no hindsight) | 11.3% | 1.04 | -17.7% | 1.13 / 0.96 | 0.64 (0.76/0.54) | KEEP 4b (KILL at 25 bps, CAGR) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 CONTROL universe_broad top20 + 25% SPY core (no hindsight) | 12.8% | 0.99 | -20.1% | 1.13 / 0.86 | 0.64 (0.76/0.54) | KEEP 4b — H2 bar fixed by plain beta | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe.json walk-forward (both rules): top20 + 50% QQQ OOS | 15.4% | 1.11 | -18.8% | - / - | 0.67 (0.64/0.69) | clears OOS 4b bars | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 universe_broad walk-forward (both rules): top20 + 50% QQQ OOS | 14.4% | 0.99 | -22.0% | - / - | 0.64 (0.76/0.54) | FAILS OOS 4b (DD) | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
+| 2026-09-04 | 63 OOS reference: SPY buy & hold | 15.5% | 0.88 | -33.7% | - / - | 0.67 (0.64/0.69) | - | research/backtests/2026-09-04_broad-H2-binding-bar_cloud.py |
