@@ -1,0 +1,224 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+==========================================================================================================================================
+universe_broad.json: 136 tickers, eval 2009-01-13 -> 2026-09-03, weekly, t+1, 10 bps
+  SPY full 15.3%/0.890/-33.7%   4b bars: H1>0.957 H2>0.837 OOS>0.884 MaxDD>=-20.2% CAGR>=10.7%
+  RULES v1 baseline full 6.4%/0.640/-21.2% (H1 0.76 / H2 0.54)   <- the 4a bar
+  IS  = 2009-01-13 -> 2016-12-31     OOS = 2017-01-01 -> 2026-09-03
+  SPY IS  15.0%/0.899/-22.1%     SPY OOS 15.5%/0.884/-33.7%     <- the IS window has 65% of the OOS drawdown
+==========================================================================================================================================
+
+HARNESS CHECK vs idea 63's published rows:
+  top20     b=0.00 -    here 13.1%/0.958/-20.1%   published 13.1%/0.958/-20.1%
+  ew-all    b=0.00 -    here 10.7%/1.027/-17.7%   published 10.7%/1.027/-17.7%
+  ew-band3  b=0.00 -    here 11.1%/1.064/-16.8%   published 11.1%/1.064/-16.8%
+  top20     b=0.25 QQQ  here 13.8%/1.016/-19.9%   published 13.8%/1.016/-19.9%
+  ew-band3  b=0.25 QQQ  here 12.3%/1.086/-18.5%   published 12.3%/1.086/-18.5%
+
+IS / OOS MAP — every arm, IS 2009-2016 and OOS 2017-2026, 10 bps:
+  book          b core   IS CAGR   IS Sh   IS DD  IS Cal  OOS CAGR  OOS Sh  OOS DD   OOS 4b            full 4b             4a
+  v1         0.00 -         7.0%   0.721   -9.5%    0.74      6.0%   0.581  -21.2%   fail Sharpe,DD,CAGRfail H1,H2,OOS,DD,CAGRfail H1,H2
+  v1         0.25 QQQ       9.1%   0.929   -9.1%    1.00      8.6%   0.811  -18.3%   fail Sharpe,CAGR  fail H2,OOS,CAGR    PASS
+  v1         0.25 SPY       8.2%   0.858   -9.0%    0.91      7.5%   0.751  -17.7%   fail Sharpe,CAGR  fail H1,H2,OOS,CAGR PASS
+  v1         0.50 QQQ      11.2%   1.056   -9.8%    1.14     11.2%   0.936  -17.2%   PASS              PASS                PASS
+  v1         0.50 SPY       9.3%   0.928   -9.9%    0.93      9.0%   0.864  -17.6%   fail Sharpe,CAGR  fail H2,OOS,CAGR    PASS
+  top20      0.00 -        13.8%   1.044  -13.6%    1.01     12.5%   0.894  -20.1%   PASS              fail H2             PASS
+  top20      0.25 QQQ      14.2%   1.092  -13.1%    1.09     13.5%   0.961  -19.9%   PASS              PASS                PASS
+  top20      0.25 SPY      13.2%   1.046  -13.1%    1.01     12.4%   0.938  -20.1%   PASS              PASS                PASS
+  top20      0.50 QQQ      14.6%   1.117  -12.6%    1.16     14.4%   0.991  -22.0%   fail DD           fail DD             fail DD
+  top20      0.50 SPY      12.6%   1.022  -12.9%    0.98     12.2%   0.955  -21.2%   fail DD           fail DD             fail DD
+  ew-all     0.00 -        10.9%   1.035  -11.4%    0.95     10.6%   1.021  -17.7%   fail CAGR         PASS                PASS
+  ew-all     0.25 QQQ      12.0%   1.082  -11.0%    1.09     12.0%   1.045  -18.8%   PASS              PASS                PASS
+  ew-all     0.25 SPY      11.0%   1.018  -12.0%    0.91     10.9%   1.009  -18.9%   PASS              PASS                PASS
+  ew-all     0.50 QQQ      13.1%   1.104  -11.1%    1.18     13.4%   1.028  -21.2%   fail DD           fail DD             PASS
+  ew-all     0.50 SPY      11.1%   0.986  -12.7%    0.88     11.2%   0.977  -21.4%   fail DD           fail DD             fail DD
+  ew-band3   0.00 -        11.0%   1.051  -10.5%    1.05     11.2%   1.074  -16.8%   PASS              PASS                PASS
+  ew-band3   0.25 QQQ      12.1%   1.093  -10.7%    1.14     12.5%   1.082  -18.5%   PASS              PASS                PASS
+  ew-band3   0.25 SPY      11.1%   1.029  -11.1%    1.00     11.4%   1.049  -17.7%   PASS              PASS                PASS
+  ew-band3   0.50 QQQ      13.2%   1.109  -11.1%    1.19     13.7%   1.050  -21.0%   fail DD           fail DD             PASS
+  ew-band3   0.50 SPY      11.2%   0.992  -12.3%    0.91     11.5%   1.002  -19.7%   PASS              PASS                PASS
+
+  Is the IS window informative? Spearman rank corr across the 20 arms (IS statistic vs OOS statistic):
+    IS Sharpe    vs OOS Sharpe: +0.63  vs OOS CAGR: +0.84  vs OOS MaxDD: -0.19
+    IS CAGR      vs OOS Sharpe: +0.31  vs OOS CAGR: +0.97  vs OOS MaxDD: -0.51
+    IS MaxDD     vs OOS Sharpe: -0.14  vs OOS CAGR: -0.64  vs OOS MaxDD: +0.57
+    IS Calmar    vs OOS Sharpe: +0.50  vs OOS CAGR: +0.73  vs OOS MaxDD: -0.04
+
+SELECTION-RULE GRID — QQQ core (idea 63's candidate set). Chosen on IS only; OOS verdict is the test.
+  objective  IS DD cap      selected arm              OOS CAGR  OOS Sh  OOS DD   OOS 4b        picks b=0.25?
+  IS-Sharpe  none  [rule A] top20 b=0.50 QQQ             14.4%   0.991  -22.0%   FAIL DD       no
+  IS-Sharpe  none           top20 b=0.50 QQQ             14.4%   0.991  -22.0%   FAIL DD       no
+  IS-Sharpe  SPY-rel(60%)   top20 b=0.50 QQQ             14.4%   0.991  -22.0%   FAIL DD       no
+  IS-Sharpe  -20% abs       top20 b=0.50 QQQ             14.4%   0.991  -22.0%   FAIL DD       no
+  IS-Sharpe  -15% abs       top20 b=0.50 QQQ             14.4%   0.991  -22.0%   FAIL DD       no
+  IS-Sharpe  -12% abs       ew-band3 b=0.50 QQQ          13.7%   1.050  -21.0%   FAIL DD       no
+  IS-Sharpe  -10% abs       v1 b=0.50 QQQ                11.2%   0.936  -17.2%   PASS          no
+  IS-Calmar  none           ew-band3 b=0.50 QQQ          13.7%   1.050  -21.0%   FAIL DD       no
+  IS-Calmar  SPY-rel(60%)   ew-band3 b=0.50 QQQ          13.7%   1.050  -21.0%   FAIL DD       no
+  IS-Calmar  -20% abs       ew-band3 b=0.50 QQQ          13.7%   1.050  -21.0%   FAIL DD       no
+  IS-Calmar  -15% abs       ew-band3 b=0.50 QQQ          13.7%   1.050  -21.0%   FAIL DD       no
+  IS-Calmar  -12% abs       ew-band3 b=0.50 QQQ          13.7%   1.050  -21.0%   FAIL DD       no
+  IS-Calmar  -10% abs       v1 b=0.50 QQQ                11.2%   0.936  -17.2%   PASS          no
+
+SELECTION-RULE GRID — SPY core (control: plain beta). Chosen on IS only; OOS verdict is the test.
+  objective  IS DD cap      selected arm              OOS CAGR  OOS Sh  OOS DD   OOS 4b        picks b=0.25?
+  IS-Sharpe  none  [rule A] ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Sharpe  none           ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Sharpe  SPY-rel(60%)   ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Sharpe  -20% abs       ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Sharpe  -15% abs       ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Sharpe  -12% abs       ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Sharpe  -10% abs       -- nothing selected --  
+  IS-Calmar  none           ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Calmar  SPY-rel(60%)   ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Calmar  -20% abs       ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Calmar  -15% abs       ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Calmar  -12% abs       ew-band3 b=0.00 -            11.2%   1.074  -16.8%   PASS          no
+  IS-Calmar  -10% abs       -- nothing selected --  
+
+SPLIT STABILITY — 4b-aware IS rule (SPY-relative cap, IS Sharpe objective) at six IS end-years, QQQ core:
+  IS end   selected arm               IS Sh  OOS CAGR  OOS Sh  OOS DD   OOS 4b        b
+  2013     v1 b=0.50 QQQ              1.340      9.8%   0.858  -17.2%   PASS          0.50
+  2014     ew-all b=0.50 QQQ          1.263     12.1%   0.961  -21.2%   FAIL DD       0.50
+  2015     top20 b=0.50 QQQ           1.160     13.8%   0.972  -22.0%   FAIL DD       0.50
+  2016     top20 b=0.50 QQQ           1.117     14.4%   0.991  -22.0%   FAIL DD       0.50
+  2017     ew-band3 b=0.50 QQQ        1.225     12.8%   0.953  -21.0%   FAIL DD       0.50
+  2018     ew-band3 b=0.00 -          1.041     11.7%   1.093  -16.8%   FAIL CAGR     0.00
+
+CANDIDATE vs WALK-FORWARD PICK — both KEEP paths, full sample and OOS:
+  arm                         CAGR  Sharpe   MaxDD     H1     H2  OOS CAGR  OOS Sh  OOS DD   4b                  4a
+  top20 b=0.25 QQQ           13.8%   1.016  -19.9%  1.180  0.880     13.5%   0.961  -19.9%   KEEP                KEEP
+  top20 b=0.50 QQQ           14.5%   1.042  -22.0%  1.210  0.910     14.4%   0.991  -22.0%   KILL DD             KILL DD
+  ew-band3 b=0.25 QQQ        12.3%   1.086  -18.5%  1.203  0.986     12.5%   1.082  -18.5%   KEEP                KEEP
+  ew-band3 b=0.25 SPY        11.3%   1.040  -17.7%  1.127  0.960     11.4%   1.049  -17.7%   KEEP                KEEP
+  ew-band3 b=0.00 -          11.1%   1.064  -16.8%  1.163  0.971     11.2%   1.074  -16.8%   KEEP                KEEP
+  top20 b=0.00 -             13.1%   0.958  -20.1%  1.125  0.814     12.5%   0.894  -20.1%   KILL H2             KEEP
+  RULES v1 baseline           6.4%   0.640  -21.2%  0.762  0.537      6.0%   0.581  -21.2%
+  SPY buy & hold             15.3%   0.890  -33.7%  0.957  0.837     15.5%   0.884  -33.7%
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+==========================================================================================================================================
+universe.json: 56 tickers, eval 2009-01-13 -> 2026-09-03, weekly, t+1, 10 bps
+  SPY full 15.3%/0.890/-33.7%   4b bars: H1>0.957 H2>0.837 OOS>0.884 MaxDD>=-20.2% CAGR>=10.7%
+  RULES v1 baseline full 6.5%/0.666/-13.8% (H1 0.64 / H2 0.69)   <- the 4a bar
+  IS  = 2009-01-13 -> 2016-12-31     OOS = 2017-01-01 -> 2026-09-03
+  SPY IS  15.0%/0.899/-22.1%     SPY OOS 15.5%/0.884/-33.7%     <- the IS window has 65% of the OOS drawdown
+==========================================================================================================================================
+
+IS / OOS MAP — every arm, IS 2009-2016 and OOS 2017-2026, 10 bps:
+  book          b core   IS CAGR   IS Sh   IS DD  IS Cal  OOS CAGR  OOS Sh  OOS DD   OOS 4b            full 4b             4a
+  v1         0.00 -         4.9%   0.553  -13.1%    0.38      7.8%   0.751  -13.8%   fail Sharpe,CAGR  fail H1,H2,OOS,CAGR fail H1,H2
+  v1         0.25 QQQ       7.5%   0.813  -11.2%    0.67      9.9%   0.917  -15.3%   fail CAGR         fail H1,CAGR        fail DD
+  v1         0.25 SPY       6.6%   0.740  -11.2%    0.59      8.9%   0.877  -16.0%   fail Sharpe,CAGR  fail H1,H2,OOS,CAGR fail DD
+  v1         0.50 QQQ      10.1%   0.985  -10.7%    0.94     12.0%   0.984  -17.0%   PASS              PASS                fail DD
+  v1         0.50 SPY       8.2%   0.857  -11.2%    0.73      9.9%   0.936  -19.1%   fail CAGR         fail H1,CAGR        fail DD
+  top20      0.00 -        10.6%   0.993  -11.7%    0.91     14.4%   1.170  -18.3%   PASS              PASS                fail DD
+  top20      0.25 QQQ      11.8%   1.072  -11.5%    1.03     14.9%   1.159  -18.5%   PASS              PASS                fail DD
+  top20      0.25 SPY      10.9%   1.016  -11.6%    0.93     13.8%   1.153  -18.8%   PASS              PASS                fail DD
+  top20      0.50 QQQ      13.0%   1.109  -11.6%    1.12     15.4%   1.106  -18.8%   PASS              PASS                fail DD
+  top20      0.50 SPY      11.0%   1.001  -12.4%    0.89     13.2%   1.092  -20.6%   fail DD           fail DD             fail DD
+  ew-all     0.00 -         9.3%   0.970  -11.2%    0.83     11.4%   1.114  -15.9%   PASS              fail CAGR           fail DD
+  ew-all     0.25 QQQ      10.8%   1.052  -10.2%    1.06     12.6%   1.109  -17.3%   PASS              PASS                fail DD
+  ew-all     0.25 SPY       9.8%   0.989  -11.3%    0.87     11.5%   1.088  -17.0%   PASS              PASS                fail DD
+  ew-all     0.50 QQQ      12.3%   1.092  -10.4%    1.18     13.8%   1.065  -20.2%   PASS              PASS                fail DD
+  ew-all     0.50 SPY      10.3%   0.975  -12.2%    0.85     11.6%   1.032  -19.3%   PASS              PASS                fail DD
+  ew-band3   0.00 -         9.6%   1.012  -10.3%    0.93     12.6%   1.234  -15.1%   PASS              PASS                fail DD
+  ew-band3   0.25 QQQ      11.1%   1.080   -9.6%    1.15     13.6%   1.190  -16.2%   PASS              PASS                fail DD
+  ew-band3   0.25 SPY      10.1%   1.018  -10.3%    0.98     12.5%   1.175  -16.5%   PASS              PASS                fail DD
+  ew-band3   0.50 QQQ      12.5%   1.108  -10.3%    1.21     14.5%   1.112  -19.3%   PASS              PASS                fail DD
+  ew-band3   0.50 SPY      10.5%   0.992  -11.6%    0.91     12.3%   1.085  -18.5%   PASS              PASS                fail DD
+
+  Is the IS window informative? Spearman rank corr across the 20 arms (IS statistic vs OOS statistic):
+    IS Sharpe    vs OOS Sharpe: +0.65  vs OOS CAGR: +0.91  vs OOS MaxDD: -0.45
+    IS CAGR      vs OOS Sharpe: +0.46  vs OOS CAGR: +0.92  vs OOS MaxDD: -0.69
+    IS MaxDD     vs OOS Sharpe: +0.32  vs OOS CAGR: +0.08  vs OOS MaxDD: +0.20
+    IS Calmar    vs OOS Sharpe: +0.59  vs OOS CAGR: +0.84  vs OOS MaxDD: -0.38
+
+SELECTION-RULE GRID — QQQ core (idea 63's candidate set). Chosen on IS only; OOS verdict is the test.
+  objective  IS DD cap      selected arm              OOS CAGR  OOS Sh  OOS DD   OOS 4b        picks b=0.25?
+  IS-Sharpe  none  [rule A] top20 b=0.50 QQQ             15.4%   1.106  -18.8%   PASS          no
+  IS-Sharpe  none           top20 b=0.50 QQQ             15.4%   1.106  -18.8%   PASS          no
+  IS-Sharpe  SPY-rel(60%)   top20 b=0.50 QQQ             15.4%   1.106  -18.8%   PASS          no
+  IS-Sharpe  -20% abs       top20 b=0.50 QQQ             15.4%   1.106  -18.8%   PASS          no
+  IS-Sharpe  -15% abs       top20 b=0.50 QQQ             15.4%   1.106  -18.8%   PASS          no
+  IS-Sharpe  -12% abs       top20 b=0.50 QQQ             15.4%   1.106  -18.8%   PASS          no
+  IS-Sharpe  -10% abs       ew-band3 b=0.25 QQQ          13.6%   1.190  -16.2%   PASS          YES
+  IS-Calmar  none           ew-band3 b=0.50 QQQ          14.5%   1.112  -19.3%   PASS          no
+  IS-Calmar  SPY-rel(60%)   ew-band3 b=0.50 QQQ          14.5%   1.112  -19.3%   PASS          no
+  IS-Calmar  -20% abs       ew-band3 b=0.50 QQQ          14.5%   1.112  -19.3%   PASS          no
+  IS-Calmar  -15% abs       ew-band3 b=0.50 QQQ          14.5%   1.112  -19.3%   PASS          no
+  IS-Calmar  -12% abs       ew-band3 b=0.50 QQQ          14.5%   1.112  -19.3%   PASS          no
+  IS-Calmar  -10% abs       ew-band3 b=0.25 QQQ          13.6%   1.190  -16.2%   PASS          YES
+
+SELECTION-RULE GRID — SPY core (control: plain beta). Chosen on IS only; OOS verdict is the test.
+  objective  IS DD cap      selected arm              OOS CAGR  OOS Sh  OOS DD   OOS 4b        picks b=0.25?
+  IS-Sharpe  none  [rule A] ew-band3 b=0.25 SPY          12.5%   1.175  -16.5%   PASS          YES
+  IS-Sharpe  none           top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Sharpe  SPY-rel(60%)   top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Sharpe  -20% abs       top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Sharpe  -15% abs       top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Sharpe  -12% abs       top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Sharpe  -10% abs       -- nothing selected --  
+  IS-Calmar  none           top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Calmar  SPY-rel(60%)   top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Calmar  -20% abs       top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Calmar  -15% abs       top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Calmar  -12% abs       top20 b=0.25 SPY             13.8%   1.153  -18.8%   PASS          YES
+  IS-Calmar  -10% abs       -- nothing selected --  
+
+SPLIT STABILITY — 4b-aware IS rule (SPY-relative cap, IS Sharpe objective) at six IS end-years, QQQ core:
+  IS end   selected arm               IS Sh  OOS CAGR  OOS Sh  OOS DD   OOS 4b        b
+  2013     ew-band3 b=0.50 QQQ        1.267     12.9%   1.049  -19.3%   PASS          0.50
+  2014     ew-band3 b=0.50 QQQ        1.259     13.1%   1.040  -19.3%   PASS          0.50
+  2015     ew-band3 b=0.50 QQQ        1.169     13.6%   1.074  -19.3%   PASS          0.50
+  2016     top20 b=0.50 QQQ           1.109     15.4%   1.106  -18.8%   PASS          0.50
+  2017     ew-band3 b=0.50 QQQ        1.215     13.8%   1.031  -19.3%   PASS          0.50
+  2018     ew-band3 b=0.25 QQQ        1.056     14.7%   1.244  -16.2%   PASS          0.25
+
+CANDIDATE vs WALK-FORWARD PICK — both KEEP paths, full sample and OOS:
+  arm                         CAGR  Sharpe   MaxDD     H1     H2  OOS CAGR  OOS Sh  OOS DD   4b                  4a
+  top20 b=0.25 QQQ           13.5%   1.120  -18.5%  1.170  1.087     14.9%   1.159  -18.5%   KEEP                KILL DD
+  top20 b=0.50 QQQ           14.3%   1.104  -18.8%  1.208  1.032     15.4%   1.106  -18.8%   KEEP                KILL DD
+  ew-band3 b=0.25 QQQ        12.4%   1.142  -16.2%  1.183  1.113     13.6%   1.190  -16.2%   KEEP                KILL DD
+  ew-band3 b=0.25 SPY        11.4%   1.106  -16.5%  1.110  1.106     12.5%   1.175  -16.5%   KEEP                KILL DD
+  ew-band3 b=0.00 -          11.3%   1.136  -15.1%  1.113  1.160     12.6%   1.234  -15.1%   KEEP                KILL DD
+  top20 b=0.00 -             12.7%   1.093  -18.3%  1.088  1.103     14.4%   1.170  -18.3%   KEEP                KILL DD
+  RULES v1 baseline           6.5%   0.666  -13.8%  0.641  0.692      7.8%   0.751  -13.8%
+  SPY buy & hold             15.3%   0.890  -33.7%  0.957  0.837     15.5%   0.884  -33.7%
+
+==========================================================================================================================================
+CROSS-UNIVERSE 4b SUMMARY at 10 bps (both lists must pass)
+==========================================================================================================================================
+  book          b core                  universe.json           universe_broad.json   both?
+  v1         0.00 -           6.5%/0.666/ -13.8%       6.4%/0.640/ -21.2%   no
+  v1         0.25 QQQ         8.8%/0.871/ -15.3%       8.8%/0.861/ -18.3%   no
+  v1         0.25 SPY         7.8%/0.817/ -16.0%       7.8%/0.797/ -17.7%   no
+  v1         0.50 QQQ        11.2%/0.981/ -17.0%      11.2%/0.984/ -17.2%   YES
+  v1         0.50 SPY         9.1%/0.901/ -19.1%       9.1%/0.892/ -17.6%   no
+  top20      0.00 -          12.7%/1.093/ -18.3%      13.1%/0.958/ -20.1%   no
+  top20      0.25 QQQ        13.5%/1.120/ -18.5%      13.8%/1.016/ -19.9%   YES
+  top20      0.25 SPY        12.5%/1.093/ -18.8%      12.8%/0.985/ -20.1%   YES
+  top20      0.50 QQQ        14.3%/1.104/ -18.8%      14.5%/1.042/ -22.0%   no
+  top20      0.50 SPY        12.2%/1.052/ -20.6%      12.4%/0.984/ -21.2%   no
+  ew-all     0.00 -          10.4%/1.050/ -15.9%      10.7%/1.027/ -17.7%   no
+  ew-all     0.25 QQQ        11.8%/1.083/ -17.3%      12.0%/1.061/ -18.8%   YES
+  ew-all     0.25 SPY        10.8%/1.045/ -17.0%      11.0%/1.014/ -18.9%   YES
+  ew-all     0.50 QQQ        13.1%/1.074/ -20.2%      13.3%/1.059/ -21.2%   no
+  ew-all     0.50 SPY        11.0%/1.007/ -19.3%      11.2%/0.981/ -21.4%   no
+  ew-band3   0.00 -          11.3%/1.136/ -15.1%      11.1%/1.064/ -16.8%   YES
+  ew-band3   0.25 QQQ        12.4%/1.142/ -16.2%      12.3%/1.086/ -18.5%   YES
+  ew-band3   0.25 SPY        11.4%/1.106/ -16.5%      11.3%/1.040/ -17.7%   YES
+  ew-band3   0.50 QQQ        13.6%/1.108/ -19.3%      13.5%/1.074/ -21.0%   no
+  ew-band3   0.50 SPY        11.5%/1.044/ -18.5%      11.4%/0.998/ -19.7%   YES
+
+Script: research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py
+
+LEADERBOARD rows:
+| 2026-09-04 | 67 u.json top20 b=0.25 QQQ core | 13.5% | 1.12 | -18.5% | 1.17 / 1.09 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
+| 2026-09-04 | 67 u.json top20 b=0.50 QQQ core | 14.3% | 1.10 | -18.8% | 1.21 / 1.03 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
+| 2026-09-04 | 67 u.json ew-band3 b=0.25 QQQ core | 12.4% | 1.14 | -16.2% | 1.18 / 1.11 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
+| 2026-09-04 | 67 u.json ew-band3 b=0.25 SPY core | 11.4% | 1.11 | -16.5% | 1.11 / 1.11 | 0.67 (0.64/0.69) | KEEP 4b | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
+| 2026-09-04 | 67 broad top20 b=0.25 QQQ core | 13.8% | 1.02 | -19.9% | 1.18 / 0.88 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
+| 2026-09-04 | 67 broad top20 b=0.50 QQQ core | 14.5% | 1.04 | -22.0% | 1.21 / 0.91 | 0.64 (0.76/0.54) | KILL 4b (DD) | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
+| 2026-09-04 | 67 broad ew-band3 b=0.25 QQQ core | 12.3% | 1.09 | -18.5% | 1.20 / 0.99 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
+| 2026-09-04 | 67 broad ew-band3 b=0.25 SPY core | 11.3% | 1.04 | -17.7% | 1.13 / 0.96 | 0.64 (0.76/0.54) | KEEP 4b | research/backtests/2026-09-04_core-sleeve-walk-forward-repair_B.py |
