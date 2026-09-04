@@ -274,3 +274,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | AIOT | Powerfleet, Inc. | $407.9M | post-restructuring | 5 | SG&A down 940bps and operating margin swung to +4.4%, but interest expense at 6.2% of revenue keeps it loss-making |
 | 2026-09-04 | MLAB | MESA LABORATORIES INC | $719.2M | insider-buying | 4 | New CEO bought $800K at $112.80, but shares sit 1.6% off the high at 40.8x EV/EBIT on 1.0% revenue growth |
 | 2026-09-04 | MTRX | MATRIX SERVICE CO | $296.8M | post-restructuring | 7 | Debt-free with $223M cash leaving a $73.8M EV on $873.6M revenue and margins inflecting, but backlog fell 31% |
+| 2026-09-04 | AEBI | Aebi Schmidt Holding AG | $975.5M | post-restructuring | 5 | Combined LTM adjusted EBITDA of $165.5M vs $1.4B EV and backlog up 20%, but CY2025 CFO was $9.0M on $1.5B of sales |
+| 2026-09-04 | WINA | WINMARK CORP | $1.1B | none | 0 | no filings in bundle |
+| 2026-09-04 | HDSN | HUDSON TECHNOLOGIES INC /NY | $221.0M | none | 0 | no filings in bundle |
+| 2026-09-04 | WS | Worthington Steel, Inc. | $1.8B | post-restructuring | 5 | GAAP EBIT of -$1.4M hides $161.1M adjusted EBIT, but the June Kloeckner deal added debt the screen EV does not carry |
+| 2026-09-04 | HLIT | HARMONIC INC. | $1.3B | post-restructuring | 7 | Post-Video-divestiture screen shows 81x EV/EBIT while 2026 guides $74-86M GAAP operating profit on $1.1B EV with backlog up 71% |
+| 2026-09-04 | INOD | INNODATA INC | $1.9B | none | 0 | no filings in bundle |
+| 2026-09-04 | CTRN | Citi Trends Inc | $575.9M | none | 0 | no filings in bundle |
+| 2026-09-04 | OLN | OLIN Corp | $1.9B | cyclical-trough | 5 | Epoxy swung +$39.7M and Q2 adjusted EBITDA rose to $191.3M, but net debt is 5.0x and the Huntsman all-stock merger shares any recovery |
+| 2026-09-04 | BZH | BEAZER HOMES USA INC | $885.8M | none | 2 | Agreed to be acquired by Dream Finders at $33.50 cash and trading 0.9% below it, so this is a merger spread not a valuation gap |
+| 2026-09-04 | MNKD | MANNKIND CORP | $1.3B | none | 3 | Revenue +43% but SG&A +84% produced a $19.0M net loss, with negative $67.2M equity and $266.2M net debt at $1.5B EV |

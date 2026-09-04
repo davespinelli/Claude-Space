@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T20:14:41Z · open 212 · in progress 0 · done 273_
+_Source: universe_under2b.csv · updated 2026-09-04T20:39:42Z · open 202 · in progress 0 · done 283_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (212)
+## Open (202)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| AEBI | Aebi Schmidt Holding AG | $975.5M |
-| WINA | WINMARK CORP | $1.14B |
-| HDSN | HUDSON TECHNOLOGIES INC /NY | $221.0M |
-| WS | Worthington Steel, Inc. | $1.83B |
-| HLIT | HARMONIC INC. | $1.27B |
-| INOD | INNODATA INC | $1.89B |
-| CTRN | Citi Trends Inc | $575.9M |
-| OLN | OLIN Corp | $1.93B |
-| BZH | BEAZER HOMES USA INC | $885.8M |
-| MNKD | MANNKIND CORP | $1.27B |
 | AVO | Mission Produce, Inc. | $1.11B |
 | PERI | Perion Network Ltd. | $360.2M |
 | CXDO | Crexendo, Inc. | $196.9M |
@@ -226,7 +216,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (273)
+## Done (283)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | AIOT | Powerfleet, Inc. | $407.9M | cloudA | 2026-09-04T20:14:41Z |
 | MLAB | MESA LABORATORIES INC /CO/ | $719.2M | cloudA | 2026-09-04T20:14:41Z |
 | MTRX | MATRIX SERVICE CO | $296.8M | cloudA | 2026-09-04T20:14:41Z |
+| AEBI | Aebi Schmidt Holding AG | $975.5M | cloudB | 2026-09-04T20:39:42Z |
+| WINA | WINMARK CORP | $1.14B | cloudB | 2026-09-04T20:39:42Z |
+| HDSN | HUDSON TECHNOLOGIES INC /NY | $221.0M | cloudB | 2026-09-04T20:39:42Z |
+| WS | Worthington Steel, Inc. | $1.83B | cloudB | 2026-09-04T20:39:42Z |
+| HLIT | HARMONIC INC. | $1.27B | cloudB | 2026-09-04T20:39:42Z |
+| INOD | INNODATA INC | $1.89B | cloudB | 2026-09-04T20:39:42Z |
+| CTRN | Citi Trends Inc | $575.9M | cloudB | 2026-09-04T20:39:42Z |
+| OLN | OLIN Corp | $1.93B | cloudB | 2026-09-04T20:39:42Z |
+| BZH | BEAZER HOMES USA INC | $885.8M | cloudB | 2026-09-04T20:39:42Z |
+| MNKD | MANNKIND CORP | $1.27B | cloudB | 2026-09-04T20:39:42Z |
