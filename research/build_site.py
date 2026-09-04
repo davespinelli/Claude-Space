@@ -13,6 +13,15 @@ def spark(vals, w=600, h=120):
     pts = " ".join(f"{i*w/(len(vals)-1):.1f},{h-(v-lo)/rng*(h-10)-5:.1f}" for i, v in enumerate(vals))
     return f'<svg viewBox="0 0 {w} {h}" width="100%" height="{h}"><polyline fill="none" stroke="#2563eb" stroke-width="2" points="{pts}"/></svg>'
 body = markdown.markdown(latest.read_text(), extensions=["tables"])
+dv = ROOT / "research" / "deepvalue"
+picks_md = (dv / "PICKS.md").read_text() if (dv / "PICKS.md").exists() else ""
+track_md = (dv / "TRACK.md").read_text() if (dv / "TRACK.md").exists() else ""
+notes = sorted((dv / "notes").glob("*.md"), reverse=True) if (dv / "notes").exists() else []
+note_links = "".join(f'<li><a href="https://github.com/davespinelli/Claude-Space/blob/main/research/deepvalue/notes/{n.name}">{n.stem.replace("_", " · ")}</a></li>' for n in notes[:20])
+deepvalue_html = f"""<h2>Deep Value Desk — researched ideas, tracked forever</h2>
+<p><small>Small and mid-cap edge cases. Every note is built from the 10-K, 10-Q, proxy, 8-Ks, insider filings and the earnings call or press release, with citations, base/bear/bull valuation and pre-registered kill criteria. Every verdict, including rejections, is tracked from publication. <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/deepvalue/README.md">Methodology</a>.</small></p>
+{markdown.markdown(track_md.split("\n", 1)[1] if track_md else "_Track record starts with the first published verdict._", extensions=["tables"])}
+<h3>Latest research notes</h3><ul>{note_links or "<li><em>First notes publishing shortly.</em></li>"}</ul>"""
 gig = "https://www.fiverr.com/"  # TODO: live gig URL
 stripe_std = ""  # TODO: Stripe Payment Link $99 Standard
 stripe_pro = ""  # TODO: Stripe Payment Link $249 Pro
@@ -28,6 +37,8 @@ html = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name
 <div class="kpi"><div>NAV<br><strong>${nav.nav.iloc[-1]:,.0f}</strong></div><div>Return<br><strong>{nav_ret:+.2%}</strong></div><div>SPY same period<br><strong>{spy_ret:+.2%}</strong></div><div>Days<br><strong>{len(nav)}</strong></div></div>
 {spark(list(nav.nav))}
 <p><small>Every trade and rule is public: <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/RULES.md">RULES.md</a> · <a href="https://github.com/davespinelli/Claude-Space/blob/main/paper/trades.csv">trades.csv</a> · <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/LEADERBOARD.md">research leaderboard</a>.</small></p>
+{deepvalue_html}
+<h2>Daily quantitative scan</h2>
 {body}
 <p><small>Research and education only. Nothing here is investment advice or a recommendation to buy or sell any security. Past performance does not predict future results.</small></p>
 </body></html>"""
