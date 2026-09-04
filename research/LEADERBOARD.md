@@ -1099,3 +1099,51 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 89 broad/ew-band3 LOYO-audit | 11.1% | 1.06 | -16.8% | 1.16 / 0.97 | 0.64 (0.76/0.54) | 4b-pass, LOYO-FRAGILE 17/18 (drop 2020) | 2026-09-04_one-year-leverage-audit_cloud.py |
 | 2026-09-04 | 89 broad/EWall LOYO-audit | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4b-pass, LOYO-FRAGILE 10/18 (drop 2011,2013,2014,2015,2017,2018,2020,2022) | 2026-09-04_one-year-leverage-audit_cloud.py |
 | 2026-09-04 | 89 broad/SPY LOYO-audit | 15.3% | 0.89 | -33.7% | 0.96 / 0.84 | 0.64 (0.76/0.54) | 4b-fail (audited; 0/18 LOYO passes) | 2026-09-04_one-year-leverage-audit_cloud.py |
+| 2026-09-04 | 88 u56/v1 | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/CAND20 | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4b (CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/v1/abs0.45 | 7.4% | 0.75 | -13.7% | 0.72 / 0.78 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/v1/abs0.60 | 7.5% | 0.76 | -13.7% | 0.75 / 0.77 | 0.67 (0.64/0.69) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/v1/abs0.80 | 8.0% | 0.79 | -14.0% | 0.79 / 0.80 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/v1/p50 | 7.3% | 0.73 | -15.7% | 0.72 / 0.74 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/v1/p70 | 7.8% | 0.77 | -15.6% | 0.76 / 0.79 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/v1/p90 | 8.5% | 0.82 | -15.6% | 0.79 / 0.86 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/v1/none | 8.9% | 0.85 | -15.6% | 0.86 / 0.86 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/CAND20/abs0.45 | 13.4% | 1.15 | -18.2% | 1.15 / 1.16 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/CAND20/abs0.60 | 13.5% | 1.15 | -18.2% | 1.18 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/CAND20/abs0.80 | 13.9% | 1.17 | -18.1% | 1.21 / 1.15 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/CAND20/p50 | 13.2% | 1.11 | -20.0% | 1.15 / 1.09 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/CAND20/p70 | 13.7% | 1.15 | -19.7% | 1.18 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/CAND20/p90 | 14.4% | 1.19 | -19.7% | 1.21 / 1.19 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/CAND20/none | 14.8% | 1.21 | -19.7% | 1.27 / 1.19 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/EWall/abs0.45 | 11.2% | 1.12 | -15.9% | 1.14 / 1.10 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/EWall/abs0.60 | 11.4% | 1.12 | -16.4% | 1.17 / 1.08 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/EWall/abs0.80 | 11.8% | 1.14 | -18.6% | 1.21 / 1.08 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/EWall/p50 | 11.1% | 1.07 | -18.2% | 1.14 / 1.02 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/EWall/p70 | 11.6% | 1.11 | -18.8% | 1.18 / 1.07 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/EWall/p90 | 12.3% | 1.16 | -18.8% | 1.20 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 u56/EWall/none | 12.7% | 1.18 | -18.8% | 1.27 / 1.13 | 0.67 (0.64/0.69) | 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/v1 | 6.4% | 0.64 | -21.2% | 0.76 / 0.54 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/CAND20 | 13.1% | 0.96 | -20.1% | 1.12 / 0.81 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/EWall | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/v1/abs0.45 | 7.3% | 0.72 | -20.7% | 0.84 / 0.62 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/v1/abs0.60 | 7.6% | 0.74 | -22.9% | 0.87 / 0.63 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/v1/abs0.80 | 8.0% | 0.77 | -22.7% | 0.91 / 0.66 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/v1/p50 | 7.3% | 0.71 | -22.5% | 0.84 / 0.60 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/v1/p70 | 7.9% | 0.75 | -22.5% | 0.88 / 0.65 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/v1/p90 | 8.5% | 0.80 | -22.3% | 0.91 / 0.72 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/v1/none | 9.0% | 0.84 | -22.3% | 0.97 / 0.73 | 0.64 (0.76/0.54) | KILL 4b (H2,OOS,DD,CAGR) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/CAND20/abs0.45 | 13.9% | 1.01 | -19.9% | 1.17 / 0.87 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/CAND20/abs0.60 | 14.0% | 1.01 | -19.9% | 1.20 / 0.85 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/CAND20/abs0.80 | 14.4% | 1.04 | -21.5% | 1.23 / 0.88 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/CAND20/p50 | 13.7% | 0.99 | -21.6% | 1.18 / 0.83 | 0.64 (0.76/0.54) | KILL 4b (H2,DD) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/CAND20/p70 | 14.2% | 1.02 | -21.7% | 1.20 / 0.87 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/CAND20/p90 | 14.9% | 1.06 | -21.7% | 1.22 / 0.92 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/CAND20/none | 15.4% | 1.08 | -21.7% | 1.27 / 0.93 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/EWall/abs0.45 | 11.6% | 1.10 | -17.7% | 1.21 / 0.99 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/EWall/abs0.60 | 11.7% | 1.10 | -18.2% | 1.24 / 0.97 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/EWall/abs0.80 | 12.1% | 1.12 | -19.8% | 1.27 / 0.98 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/EWall/p50 | 11.4% | 1.06 | -19.7% | 1.21 / 0.92 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/EWall/p70 | 12.0% | 1.09 | -20.1% | 1.25 / 0.97 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/EWall/p90 | 12.6% | 1.14 | -20.1% | 1.27 / 1.03 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
+| 2026-09-04 | 88 broad/EWall/none | 13.1% | 1.16 | -20.1% | 1.33 / 1.03 | 0.64 (0.76/0.54) | 4a-pass, 4b-pass | 2026-09-04_vol-cap-as-a-satellite-clause_B.py |
