@@ -1235,3 +1235,8 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 86 broad CAND20/budget-top0.1 | 19.2% | 1.10 | -31.8% | 1.28 / 0.97 | 0.64 (0.76/0.54) | rule-8 pick gmOFF; 4b fail | 2026-09-04_gross-matched-turnover-constraints_B.py |
 | 2026-09-04 | 86 broad CAND20/budget-top0.1 gross-matched | 11.9% | 0.81 | -18.1% | 0.89 / 0.73 | 0.64 (0.76/0.54) | KILL: gm demotes pick to control | 2026-09-04_gross-matched-turnover-constraints_B.py |
 | 2026-09-04 | 86 broad EWall/control gross-matched | 10.7% | 1.03 | -17.7% | 1.15 / 0.92 | 0.64 (0.76/0.54) | gm-invariant; 4b PASS | 2026-09-04_gross-matched-turnover-constraints_B.py |
+| 2026-09-04 | 89 u56 N/ranked n=20 (S16 rule-8 pick) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | split-dependent pick; 4b PASS | 2026-09-04_is-window-has-no-crash_C.py |
+| 2026-09-04 | 89 u56 N/ranked n=40 (S13+S21 rule-8 pick) | 9.7% | 1.13 | -14.0% | 1.07 / 1.17 | 0.67 (0.64/0.69) | 4b fail (CAGR); 2022+ Sh 1.099 vs 1.100 | 2026-09-04_is-window-has-no-crash_C.py |
+| 2026-09-04 | 89 u56 BAND/ew-all b=0.08 (S16/S21 pick) | 11.9% | 1.13 | -17.1% | 1.18 / 1.09 | 0.67 (0.64/0.69) | 4b PASS; S13 picks b=0.02 (-0.034 2022+ Sh) | 2026-09-04_is-window-has-no-crash_C.py |
+| 2026-09-04 | 89 broad N/ranked n=30 (S16 pick) | 12.2% | 0.97 | -20.3% | 1.15 / 0.82 | 0.64 (0.76/0.54) | 4b fail (H2,DD); S13->20, S21->40 | 2026-09-04_is-window-has-no-crash_C.py |
+| 2026-09-04 | 89 rule-8 split test (S13/S16/S21) | n/a | n/a | n/a | n/a | n/a | KILL: 8/12 + 5/12 picks move, <=0.034 Sharpe; DD cap looser with crash IS | 2026-09-04_is-window-has-no-crash_C.py |
