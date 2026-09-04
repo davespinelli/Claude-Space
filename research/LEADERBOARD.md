@@ -1047,3 +1047,42 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 15 broad/EWall/add/trend/c5 | 13.7% | 1.18 | -21.1% | 1.34 / 1.05 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
 | 2026-09-04 | 15 broad/EWall/add/trend/c10 | 16.6% | 1.21 | -24.8% | 1.49 / 1.06 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
 | 2026-09-04 | 15 broad/EWall/add/trend/c15 | 19.4% | 1.19 | -30.4% | 1.59 / 1.03 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_crypto-sleeve_C.py |
+| 2026-09-04 | 14 sleeve-standalone thr=5 (100% sleeve, daily) | -1.6% | -0.06 | -51.0% | 0.04 / -0.15 | 0.67 (0.64/0.69) | KILL 4b (all bars) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 sleeve-standalone thr=10 (100% sleeve, daily) | -4.2% | -0.22 | -68.5% | -0.33 / -0.12 | 0.67 (0.64/0.69) | KILL 4b (all bars) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 sleeve-standalone thr=20 (100% sleeve, daily) | -5.3% | -0.24 | -73.1% | -0.32 / -0.17 | 0.67 (0.64/0.69) | KILL 4b (all bars) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/v1+rsi2 f=0.25 thr=5 | 4.6% | 0.53 | -12.9% | 0.54 / 0.52 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/v1+rsi2 f=0.25 thr=10 | 3.9% | 0.44 | -14.6% | 0.37 / 0.50 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/v1+rsi2 f=0.25 thr=20 | 3.6% | 0.39 | -15.1% | 0.33 / 0.45 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/v1+rsi2 f=0.50 thr=5 | 2.6% | 0.32 | -17.4% | 0.37 / 0.28 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/v1+rsi2 f=0.50 thr=10 | 1.2% | 0.17 | -29.5% | 0.08 / 0.25 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/v1+rsi2 f=0.50 thr=20 | 0.7% | 0.12 | -22.7% | 0.04 / 0.18 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/top20+rsi2 f=0.25 thr=5 | 9.1% | 0.90 | -15.6% | 0.92 / 0.88 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/top20+rsi2 f=0.25 thr=10 | 8.4% | 0.79 | -15.9% | 0.74 / 0.84 | 0.67 (0.64/0.69) | KILL 4b (H1,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/top20+rsi2 f=0.25 thr=20 | 8.1% | 0.73 | -17.6% | 0.69 / 0.77 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/top20+rsi2 f=0.50 thr=5 | 5.6% | 0.59 | -18.8% | 0.65 / 0.54 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/top20+rsi2 f=0.50 thr=10 | 4.1% | 0.41 | -24.3% | 0.33 / 0.48 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/top20+rsi2 f=0.50 thr=20 | 3.5% | 0.34 | -21.6% | 0.27 / 0.40 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/ew-all+rsi2 f=0.25 thr=5 | 7.4% | 0.83 | -16.8% | 0.88 / 0.78 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/ew-all+rsi2 f=0.25 thr=10 | 6.7% | 0.71 | -17.4% | 0.69 / 0.74 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/ew-all+rsi2 f=0.25 thr=20 | 6.4% | 0.65 | -19.5% | 0.63 / 0.66 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/ew-all+rsi2 f=0.50 thr=5 | 4.5% | 0.51 | -19.2% | 0.60 / 0.44 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/ew-all+rsi2 f=0.50 thr=10 | 3.0% | 0.33 | -26.8% | 0.27 / 0.39 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 u56/ew-all+rsi2 f=0.50 thr=20 | 2.5% | 0.26 | -23.7% | 0.22 / 0.30 | 0.67 (0.64/0.69) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/v1+rsi2 f=0.25 thr=5 | 4.6% | 0.52 | -22.1% | 0.66 / 0.39 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/v1+rsi2 f=0.25 thr=10 | 3.8% | 0.42 | -19.9% | 0.46 / 0.39 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/v1+rsi2 f=0.25 thr=20 | 3.6% | 0.38 | -24.5% | 0.44 / 0.33 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/v1+rsi2 f=0.50 thr=5 | 2.6% | 0.32 | -23.2% | 0.48 / 0.18 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/v1+rsi2 f=0.50 thr=10 | 1.2% | 0.16 | -29.7% | 0.12 / 0.19 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/v1+rsi2 f=0.50 thr=20 | 0.7% | 0.12 | -30.0% | 0.12 / 0.11 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/top20+rsi2 f=0.25 thr=5 | 9.5% | 0.82 | -19.2% | 1.00 / 0.66 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/top20+rsi2 f=0.25 thr=10 | 8.7% | 0.73 | -18.3% | 0.82 / 0.65 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/top20+rsi2 f=0.25 thr=20 | 8.4% | 0.68 | -21.2% | 0.79 / 0.58 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/top20+rsi2 f=0.50 thr=5 | 5.8% | 0.57 | -22.0% | 0.76 / 0.41 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/top20+rsi2 f=0.50 thr=10 | 4.3% | 0.41 | -26.2% | 0.42 / 0.40 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/top20+rsi2 f=0.50 thr=20 | 3.8% | 0.34 | -24.6% | 0.39 / 0.30 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/ew-all+rsi2 f=0.25 thr=5 | 7.7% | 0.82 | -18.2% | 0.97 / 0.68 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/ew-all+rsi2 f=0.25 thr=10 | 6.9% | 0.71 | -17.5% | 0.76 / 0.66 | 0.64 (0.76/0.54) | 4a-pass, KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/ew-all+rsi2 f=0.25 thr=20 | 6.7% | 0.65 | -20.3% | 0.72 / 0.58 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/ew-all+rsi2 f=0.50 thr=5 | 4.6% | 0.52 | -20.0% | 0.69 / 0.37 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/ew-all+rsi2 f=0.50 thr=10 | 3.1% | 0.34 | -26.3% | 0.32 / 0.35 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
+| 2026-09-04 | 14 broad/ew-all+rsi2 f=0.50 thr=20 | 2.6% | 0.27 | -24.3% | 0.30 / 0.25 | 0.64 (0.76/0.54) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-04_rsi2-sleeve_cloud.py |
