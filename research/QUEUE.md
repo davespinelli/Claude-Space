@@ -1,6 +1,5 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
-1. no-vol-scaling — same composite but without dividing by sqrt(vol20). Does vol scaling help or just favor low-vol ETFs?
 2. position-count — top 3 vs 5 vs 8 equal-weight (2 params max: n).
 3. rebalance-freq — weekly vs monthly vs quarterly for RULES v1.
 4. abs-momentum-filter — replace 200d-MA filter with 12-1 momentum > 0; also try both.
@@ -28,8 +27,12 @@
 35. options-iv-snapshot-cache — start a DAILY cache of yfinance option chains (IV, skew, put/call OI) for the live universe + candidates; no history exists for free, so build it now for later tests (IV-RV spread, skew as sentiment).
 36. spinoff-calendar — Form 10 / 10-12B filings from EDGAR full-text search: build the last 5 years of spin-offs and test the classic 6-24 month post-spin outperformance. (Cusatis-Miles-Woolridge 1993)
 37. index-deletion-reversal — Russell reconstitution deletions (June) and S&P 600 removals: post-deletion reversal in small caps.
+38. FIX-calendar-day-index — data/prices.csv (and prices_broad.csv) are indexed on calendar days from 2014-09-17 because BTC-USD is in the download; every equity is ffilled across weekends. Distorts all sandbox backtests AND research/scan.py's live 200d/vol20 signals (4.2 of 56 names mis-flagged per day). Fix cache_prices.py + load_universe() + scan.py to a trading-day index. INFRASTRUCTURE — do first, before trusting any further cloud-run result. (2026-09-04, lane A)
+39. rerun-sandbox-rows-corrected — after 38, re-run any leaderboard row produced in the sandbox on the corrected index and mark rows that change verdict. (2026-09-04, lane A)
+40. vol-scaler-replacement — the scaler is harmful but the no-scaler book breaches 4b's drawdown cap at every n. Test drawdown control ON TOP of the no-scaler book (idea 22's book-level rule, or a 200d-breadth gate) rather than per-name vol scaling. Max 2 params. (2026-09-04, lane A)
 ## In progress
 ## Done (see LEADERBOARD.md)
+1. no-vol-scaling — KILL as a v1 replacement (all 12 grid points fail 4a on MaxDD and 4b), but the scaler is confirmed harmful: removing it is worth +10.1%/yr (t 3.33) and beats v1 on Sharpe at every (n, gross); nearest miss OFF n=8/75% 13.8%/0.93/-17.9% fails 4b on H1 alone (0.92 vs SPY 0.96). Run also found a repo-wide calendar-day index bug in data/prices.csv (see result memo) (2026-09-04, lane A)
 5. dual-momentum-classes — KILL — all 4 variants below baseline Sharpe in H1 (best 0.39 vs 0.64), MaxDD -24% to -36% vs -13.8%; DBC 2022-23 collapse (2026-09-03)
 7. inverse-vol-weights — KILL — Sharpe 0.57 vs 0.67 both halves; double vol tilt (score already /sqrt(vol)) concentrates book to 2-3 names (2026-09-03)
 12. vol-target — KILL — 10%/14% targets: Sharpe 0.59/0.60 vs 0.67, deeper DD; v1 realizes ~10% vol so cap binds, cuts after spikes (2026-09-03)

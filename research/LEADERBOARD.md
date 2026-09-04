@@ -37,3 +37,24 @@
 | 2026-09-03 | D BOTTOM-5 by score 75% | 7.4% | 0.59 | -23.9% | 0.51 / 0.65 | 0.66 (0.65/0.68) | KILL | 2026-09-03_composite-vs-equal-weight.py |
 | 2026-09-03 | E top-5 by 12-1 momentum only 75% | 19.9% | 1.06 | -24.1% | 1.05 / 1.08 | 0.66 (0.65/0.68) | KILL 4a / PARK 4b | 2026-09-03_composite-vs-equal-weight.py |
 | 2026-09-03 | C2 top-5 by composite, no vol-scaling (diagnostic) | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.66 (0.65/0.68) | KILL | 2026-09-03_composite-vs-equal-weight.py |
+| 2026-09-04 | no-vol-scaling ON  n=3 gross=75% | 6.4% | 0.63 | -13.6% | 0.66 / 0.61 | 0.67 (0.64/0.69) | KILL | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling ON  n=3 gross=100% | 8.3% | 0.63 | -17.9% | 0.66 / 0.61 | 0.67 (0.64/0.69) | KILL | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling ON  n=5 gross=75% (= baseline) | 6.5% | 0.67 | -13.8% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL (is the baseline) | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling ON  n=5 gross=100% | 8.5% | 0.67 | -18.2% | 0.64 / 0.69 | 0.67 (0.64/0.69) | KILL | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling ON  n=8 gross=75% | 8.0% | 0.82 | -16.4% | 0.87 / 0.77 | 0.67 (0.64/0.69) | KILL | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling ON  n=8 gross=100% | 10.6% | 0.81 | -21.5% | 0.88 / 0.76 | 0.67 (0.64/0.69) | KILL | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling OFF n=3 gross=75% | 21.9% | 1.04 | -25.8% | 1.01 / 1.06 | 0.67 (0.64/0.69) | KILL (DD) | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling OFF n=3 gross=100% (walk-forward pick) | 29.0% | 1.04 | -33.1% | 1.02 / 1.07 | 0.67 (0.64/0.69) | KILL (DD) | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling OFF n=5 gross=75% | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL (DD) | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling OFF n=5 gross=100% | 21.9% | 0.95 | -28.0% | 0.90 / 1.01 | 0.67 (0.64/0.69) | KILL (DD) | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling OFF n=8 gross=75% (nearest miss) | 13.8% | 0.93 | -17.9% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b (fails H1 only, 0.92 vs SPY 0.96) | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | no-vol-scaling OFF n=8 gross=100% | 18.3% | 0.93 | -23.4% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL (DD) | 2026-09-04_no-vol-scaling.py |
+| 2026-09-04 | SPY reference on corrected trading-day index | 15.3% | 0.89 | -33.7% | 0.96 / 0.84 | 0.67 (0.64/0.69) | — | 2026-09-04_no-vol-scaling.py |
+
+**2026-09-04 (lane A) — read before comparing rows across dates.** `data/prices.csv` is on a
+CALENDAR-day index from 2014-09-17 (BTC-USD's first date), so any backtest run in the
+no-internet sandbox off the cache understates CAGR/Sharpe in the second half of the sample.
+The 2026-09-04 rows above are on a corrected trading-day index and are comparable with the
+2026-09-03 rows (which were run locally on live yfinance data). See
+`2026-09-04_no-vol-scaling.result.md` for the size of the distortion and its effect on live
+signals. Fix pending Sunday review.
