@@ -31,6 +31,10 @@ import argparse
 import datetime as dt
 import json
 import os
+try:
+    from dotenv import load_dotenv; load_dotenv(__import__('pathlib').Path(__file__).resolve().parents[2] / '.env')
+except Exception:
+    pass
 import re
 import sys
 import time
