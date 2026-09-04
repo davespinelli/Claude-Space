@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T21:11:30Z · open 182 · in progress 10 · done 293_
+_Source: universe_under2b.csv · updated 2026-09-04T21:15:22Z · open 182 · in progress 0 · done 303_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -191,22 +191,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| WGO | WINNEBAGO INDUSTRIES INC | $849.5M | cloudA | 2026-09-04T21:07:25Z |
-| OEC | Orion S.A. | $337.4M | cloudA | 2026-09-04T21:07:25Z |
-| SWIM | Latham Group, Inc. | $812.9M | cloudA | 2026-09-04T21:07:25Z |
-| RDWR | RADWARE LTD | $1.23B | cloudA | 2026-09-04T21:07:25Z |
-| OESX | ORION ENERGY SYSTEMS, INC. | $94.8M | cloudA | 2026-09-04T21:07:25Z |
-| UTL | UNITIL CORP | $979.5M | cloudA | 2026-09-04T21:07:25Z |
-| RGR | STURM RUGER & CO INC | $594.7M | cloudA | 2026-09-04T21:07:25Z |
-| COOK | Traeger, Inc. | $136.0M | cloudA | 2026-09-04T21:07:25Z |
-| PCYO | PURE CYCLE CORP | $268.0M | cloudA | 2026-09-04T21:07:25Z |
-| LFMD | LifeMD, Inc. | $147.0M | cloudA | 2026-09-04T21:07:25Z |
 
-## Done (293)
+## Done (303)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | ARRY | Array Technologies, Inc. | $699.2M | cloudA | 2026-09-04T21:11:30Z |
 | ACVA | ACV Auctions Inc. | $1.14B | cloudA | 2026-09-04T21:11:30Z |
 | AZTA | Azenta, Inc. | $1.37B | cloudA | 2026-09-04T21:11:30Z |
+| WGO | WINNEBAGO INDUSTRIES INC | $849.5M | cloudA | 2026-09-04T21:15:22Z |
+| OEC | Orion S.A. | $337.4M | cloudA | 2026-09-04T21:15:22Z |
+| SWIM | Latham Group, Inc. | $812.9M | cloudA | 2026-09-04T21:15:22Z |
+| RDWR | RADWARE LTD | $1.23B | cloudA | 2026-09-04T21:15:22Z |
+| OESX | ORION ENERGY SYSTEMS, INC. | $94.8M | cloudA | 2026-09-04T21:15:22Z |
+| UTL | UNITIL CORP | $979.5M | cloudA | 2026-09-04T21:15:22Z |
+| RGR | STURM RUGER & CO INC | $594.7M | cloudA | 2026-09-04T21:15:22Z |
+| COOK | Traeger, Inc. | $136.0M | cloudA | 2026-09-04T21:15:22Z |
+| PCYO | PURE CYCLE CORP | $268.0M | cloudA | 2026-09-04T21:15:22Z |
+| LFMD | LifeMD, Inc. | $147.0M | cloudA | 2026-09-04T21:15:22Z |

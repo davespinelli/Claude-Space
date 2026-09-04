@@ -294,3 +294,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | ARRY | Array Technologies, Inc. | $699.2M | fallen-growth | 7 | Record $2.5B orderbook and raised FY26 EBITDA guide of $210-230M against a $1.0B EV with the stock 62% off its high, offset by $506M of accreting preferred |
 | 2026-09-04 | ACVA | ACV Auctions Inc. | $1.1B | none | 4 | Revenue grew 10% but GMV and units were flat, FY26 GAAP loss is guided to $44-49M and ~$63M of SBC roughly equals the adjusted EBITDA guide |
 | 2026-09-04 | AZTA | Azenta, Inc. | $1.4B | post-restructuring | 5 | B Medical divested and $529M of cash against a $1.4B cap, but FY26 EBITDA is guided to just $59-62M, Q3 FCF was negative and the CEO resigned in August |
+| 2026-09-04 | WGO | WINNEBAGO INDUSTRIES INC | $849.5M | cyclical-trough | 6 | Motorhome swung to $9.6M operating income from a $3.2M loss and FCF yield is 10.5%, but FY26 adj EPS guidance was cut to $1.65-2.00 from $2.10-2.80 |
+| 2026-09-04 | OEC | Orion S.A. | $337.4M | cyclical-trough | 5 | Rubber EBITDA fell 61% with EU duties and 232 tariffs not yet helping, but net debt is $961M at 4.4x and FY26 FCF is guided at negative $10M to positive $20M |
+| 2026-09-04 | SWIM | Latham Group, Inc. | $812.9M | none | 5 | Guidance raised to $110-120M EBITDA but the stock is only 16% off its high at about 9x EV/EBITDA and six-month GAAP net income was just $4.2M |
+| 2026-09-04 | RDWR | RADWARE LTD | $1.2B | none | 3 | 98.7x EV/EBIT and a 3.4% FCF yield within 11% of the 52-week high, with insiders net sellers and no release or business section in the pack |
+| 2026-09-04 | OESX | ORION ENERGY SYSTEMS, INC. | $94.8M | post-restructuring | 6 | Seventh straight positive adj EBITDA quarter with margin up 450bps and a hyper-scale data center win, but the stock is already up 117% on $18.7M of equity |
+| 2026-09-04 | UTL | UNITIL CORP | $979.5M | none | 3 | Regulated utility 3.2% off its high at 16.3x EV/EBIT with negative $53.8M FCF and an 11.9% share count increase funding rate base |
+| 2026-09-04 | RGR | STURM RUGER & CO INC | $594.7M | post-restructuring | 7 | Sell-through rose 19% against NICS up 5% with $117.5M net cash and no debt, while trailing CY2025 EBIT of negative $12.3M hides the H1 recovery |
+| 2026-09-04 | COOK | Traeger, Inc. | $136.0M | post-restructuring | 6 | Project Gravity lifted adj EBITDA to $17.3M on 17.4% lower revenue and FY26 FCF is guided above $30M, but net debt is $340.5M against a $136M cap |
+| 2026-09-04 | PCYO | PURE CYCLE CORP | $268.0M | none | 0 | no filings in bundle |
+| 2026-09-04 | LFMD | LifeMD, Inc. | $147.0M | none | 0 | no filings in bundle |
