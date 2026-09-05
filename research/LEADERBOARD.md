@@ -1475,3 +1475,17 @@ arms (S4 = TLT,GLD,DBC,UUP; S3 = TLT,GLD,UUP), 2 tuned params (f, cost), 600 gri
 | 2026-09-05 | 101 cadence bar (idea 65), \|dSharpe\| across D/W/M <= 0.05 at f=0.50 | n/a | n/a | n/a | n/a | n/a | **FAILS 0/2** (spread 0.33 u56, 0.44 broad) — but the f=0 anchor fails identically (0.26/0.36); the sleeve's OWN contribution is +0.041..+0.155, positive 12/12, spread 0.068/0.075. The bar measures the equity book, not the overlay | 2026-09-05_fixed-gross-S4-blend_cloud.py |
 | 2026-09-05 | 101 4b under each cadence at f=0.50, g=1.00, 10bps | n/a | n/a | n/a | n/a | n/a | D **fails 4/4**, W passes 4/4, M passes 4/4 — cadence must be pre-registered as part of the rule; monthly dominates weekly on every metric | 2026-09-05_fixed-gross-S4-blend_cloud.py |
 | 2026-09-05 | 101 census, 600 points (2 arms x 5 f x 3 cadences x 2 conv x 2 universes x 5 costs) | n/a | n/a | n/a | n/a | n/a | see .grid.csv; every point reported, nothing hidden | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+
+**Idea 109 (filed as a second "104") — CAGR-floor-constrained-rule-8-selector (cloud, 2026-09-05).**
+4 pre-registered selectors x 6 overlay grids x 2 books x 2 universes x 2 cost rungs; 176 grid points, 44 cells.
+`research/backtests/2026-09-05_cagr-floor-constrained-selector_cloud.result.md`
+
+| Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
+|---|---|---|---|---|---|---|---|---|
+| 2026-09-05 | 109 S_floor (argmax IS Sharpe s.t. IS CAGR >= 70% SPY IS CAGR) vs rule 8 | n/a | n/a | n/a | n/a | n/a | **KILL** — same pick in 36/44 cells; in the 8 it differs it is WORSE on OOS Sharpe 8/8 (mean -0.057) | 2026-09-05_cagr-floor-constrained-selector_cloud.py |
+| 2026-09-05 | 109 mean OOS (2017-2026) Sharpe by selector, 44 cells | n/a | n/a | n/a | n/a | n/a | S_sharpe 1.048 > S_floor 1.038 > S_cagr 1.023 > S_null 0.993 — monotone in CAGR weight; the constraint is a partial step toward the worst-but-one rule | 2026-09-05_cagr-floor-constrained-selector_cloud.py |
+| 2026-09-05 | 109 mean OOS CAGR / MaxDD by selector | n/a | n/a | n/a | n/a | n/a | S_floor buys +0.95pp OOS CAGR in the differing cells at the price of 2.53pp MORE OOS drawdown — wrong side of 4b, which caps DD as well as flooring CAGR | 2026-09-05_cagr-floor-constrained-selector_cloud.py |
+| 2026-09-05 | 109 4b passes by selector | n/a | n/a | n/a | n/a | n/a | full-sample: S_sharpe 20, S_floor 21, S_cagr 15, S_null 19; OOS-only: 22 / 21 / 16 / 19. Net movement across the 8 differing cells: +1 full, -1 OOS = zero | 2026-09-05_cagr-floor-constrained-selector_cloud.py |
+| 2026-09-05 | 109 the motivating case (sleeve grid, u56/top20/10bps) | n/a | n/a | n/a | n/a | n/a | the constraint does NOT fire: f=0.50 IS CAGR 10.8% clears the 10.47% floor, S_floor picks f=0.50 exactly as rule 8 does — idea 100's mismatch was floating gross, not the objective | 2026-09-05_cagr-floor-constrained-selector_cloud.py |
+| 2026-09-05 | 109 constraint feasibility | n/a | n/a | n/a | n/a | n/a | INFEASIBLE in 12/44 cells (27%) — no grid point clears the floor, so the selector silently degenerates to argmax IS CAGR, the worst rule tested (breadth, stop, crypto, u56 band/top20) | 2026-09-05_cagr-floor-constrained-selector_cloud.py |
+| 2026-09-05 | 109 control — does selection itself pay? | n/a | n/a | n/a | n/a | n/a | yes: S_null (no overlay) is last on OOS Sharpe 0.993 and worst on regret -0.070 vs rule 8's -0.015. Rule 8 as written is doing real work | 2026-09-05_cagr-floor-constrained-selector_cloud.py |
