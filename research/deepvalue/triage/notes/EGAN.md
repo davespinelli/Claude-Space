@@ -1,0 +1,5 @@
+# EGAN — EGAIN Corp · triage 2026-09-05 · Edge: none · Score 0/10
+
+Not triaged: no filings for EGAN are present in the bundle. Section 11 of the pack shows every document missing (no 10-K Item 1, no Item 7 MD&A, no Item 1A risk factors, no 8-K earnings release, no Form 4 summary, no transcript), so there is no business description, no management commentary and no current-quarter results to read. Only the screen row exists: a $160.3M market cap at $5.84, $79.8M EV, revenue of $88.4M down 4.7%, EBIT of $4.4M, FCF of $4.7M for a 2.9% yield, $80.5M cash with the long-term-debt tag missing so net cash is unverified, flat share count, and the stock 62.2% off its high after a 39.0% six-month decline. The screen also raises an earnings-quality flag, net income of $32.3M against $4.4M of operating income, which cannot be reconciled without the earnings release. Scoring anything on the screen row alone would be inventing. Requeue after running fetch_filings.py EGAN.
+
+_Sources: triage pack only (sections 2, 3, 11). Not a triage read; the pack contains no filings._

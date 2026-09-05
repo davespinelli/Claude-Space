@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T05:06:59Z · open 0 · in progress 0 · done 485_
+_Source: universe_under2b.csv · updated 2026-09-05T08:38:05Z · open 0 · in progress 0 · done 489_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -14,7 +14,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (485)
+## Done (489)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +503,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | JELD | JELD-WEN Holding, Inc. | $197.0M | cloudA | 2026-09-05T03:13:08Z |
 | DDD | 3D SYSTEMS CORP | $551.6M | cloudB | 2026-09-05T03:37:05Z |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M | cloudB | 2026-09-05T03:37:05Z |
+| PGNY | Progyny, Inc. | $1.99B | cloudB | 2026-09-05T08:38:05Z |
+| EGAN | EGAIN Corp | $160.3M | cloudB | 2026-09-05T08:38:05Z |
+| CNXC | Concentrix Corp | $1.96B | cloudB | 2026-09-05T08:38:05Z |
+| AOUT | American Outdoor Brands, Inc. | $181.1M | cloudB | 2026-09-05T08:38:05Z |

@@ -486,3 +486,7 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-05 | JELD | JELD-WEN Holding, Inc. | $197.0M | cyclical-trough | 5 | First year-over-year adjusted EBITDA growth in ten quarters and guidance raised, but $1.2B net debt on a $197.0M cap with first-half FCF of negative $144.8M |
 | 2026-09-05 | DDD | 3D SYSTEMS CORP | $551.6M | post-restructuring | 3 | Cost cuts took H1 adjusted EBITDA positive at $1.3M, but 2025 FCF was negative $97.8M, share count is up 29.5% and the stock ran 74.1% |
 | 2026-09-05 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M | insider-buying | 3 | Lemonis bought $202.6K at $4.67 and three insiders bought, but adjusted EBITDA worsened to negative $12M and cash fell $75.8M in six months |
+| 2026-09-05 | CNXC | Concentrix Corp | $2.0B | cash-cow-narrative | 7 | FY25 operating loss is entirely a $1,527.7M impairment; guided $630-650M adjusted FCF on a $2.0B cap, but $3.7B net debt sits ahead of it |
+| 2026-09-05 | AOUT | American Outdoor Brands, Inc. | $181.1M | cyclical-trough | 5 | Destock and tariff pull-forward reversing with gross margin up 630bp and EBITDA guidance raised, but the stock is at its 52-week high on ~9x guided EBITDA |
+| 2026-09-05 | PGNY | Progyny, Inc. | $2.0B | none | 4 | The 9.6% FCF yield is mostly a $131.9M stock-comp add-back, at 21.5x EV/EBIT with 5.5-7.5% guided growth and insiders net sellers |
+| 2026-09-05 | EGAN | EGAIN Corp | $160.3M | none | 0 | no filings in bundle |
