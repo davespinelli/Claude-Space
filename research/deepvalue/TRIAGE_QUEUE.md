@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T03:09:38Z · open 2 · in progress 10 · done 473_
+_Source: universe_under2b.csv · updated 2026-09-05T03:13:08Z · open 2 · in progress 0 · done 483_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -11,22 +11,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| MX | MAGNACHIP SEMICONDUCTOR Corp | $111.0M | cloudA | 2026-09-05T03:06:19Z |
-| MED | MEDIFAST INC | $140.2M | cloudA | 2026-09-05T03:06:19Z |
-| NNBR | NN INC | $285.7M | cloudA | 2026-09-05T03:06:19Z |
-| FOSL | Fossil Group, Inc. | $303.4M | cloudA | 2026-09-05T03:06:19Z |
-| SPWR | SunPower Inc. | $50.9M | cloudA | 2026-09-05T03:06:19Z |
-| SSYS | STRATASYS LTD. | $669.1M | cloudA | 2026-09-05T03:06:19Z |
-| CHRN | ChronoScale Holdings Corp | $71.6M | cloudA | 2026-09-05T03:06:19Z |
-| RGP | RESOURCES CONNECTION, INC. | $146.0M | cloudA | 2026-09-05T03:06:19Z |
-| AIRS | Airsculpt Technologies, Inc. | $183.1M | cloudA | 2026-09-05T03:06:19Z |
-| JELD | JELD-WEN Holding, Inc. | $197.0M | cloudA | 2026-09-05T03:06:19Z |
 
-## Done (473)
+## Done (483)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | JFB | JFB Construction Holdings | $86.6M | cloudA | 2026-09-05T03:09:38Z |
 | ACDC | ProFrac Holding Corp. | $932.5M | cloudA | 2026-09-05T03:09:38Z |
 | ARDX | ARDELYX, INC. | $924.5M | cloudA | 2026-09-05T03:09:38Z |
+| MX | MAGNACHIP SEMICONDUCTOR Corp | $111.0M | cloudA | 2026-09-05T03:13:08Z |
+| MED | MEDIFAST INC | $140.2M | cloudA | 2026-09-05T03:13:08Z |
+| NNBR | NN INC | $285.7M | cloudA | 2026-09-05T03:13:08Z |
+| FOSL | Fossil Group, Inc. | $303.4M | cloudA | 2026-09-05T03:13:08Z |
+| SPWR | SunPower Inc. | $50.9M | cloudA | 2026-09-05T03:13:08Z |
+| SSYS | STRATASYS LTD. | $669.1M | cloudA | 2026-09-05T03:13:08Z |
+| CHRN | ChronoScale Holdings Corp | $71.6M | cloudA | 2026-09-05T03:13:08Z |
+| RGP | RESOURCES CONNECTION, INC. | $146.0M | cloudA | 2026-09-05T03:13:08Z |
+| AIRS | Airsculpt Technologies, Inc. | $183.1M | cloudA | 2026-09-05T03:13:08Z |
+| JELD | JELD-WEN Holding, Inc. | $197.0M | cloudA | 2026-09-05T03:13:08Z |
