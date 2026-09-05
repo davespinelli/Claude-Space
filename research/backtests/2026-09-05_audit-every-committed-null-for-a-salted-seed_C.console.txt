@@ -1,0 +1,304 @@
+======================================================================================================================
+IDEA 208  audit-every-committed-null-for-a-salted-seed   (lane C, 2026-09-05)
+======================================================================================================================
+
+======================================================================================================================
+Q1  CENSUS -- AST audit of every committed .py for a hash()-derived random seed
+======================================================================================================================
+  files parsed: 165 / 166   UNPARSEABLE: ['research/build_site.py']
+  hash() call sites found: 5
+
+  every hash() site in the repository:
+                                                                      file  line                          arg arg_kind  in_seed                seed_ctx  salted_seed
+   research/backtests/2026-09-05_the-margin-column-instead-of-two_cloud.py   221 hash(('U56', 'DDCTL', 0.03))      STR    False                                False
+                research/backtests/2026-09-05_the-on-share-column_cloud.py   435   hash((pan.name, fam, thr))      STR     True rotations(... seed=...)         True
+                research/backtests/2026-09-05_the-on-share-column_cloud.py   580               hash(pan.name)      STR     True        default_rng(...)         True
+research/backtests/2026-09-05_the-share-at-which-ranking-stops-paying_B.py   536                hash((pk, t))      STR     True        default_rng(...)         True
+research/backtests/2026-09-05_the-share-at-which-ranking-stops-paying_B.py   581           hash((pk, t, bar))      STR     True        default_rng(...)         True
+
+  source line of each site (verify the classification by eye):
+    research/backtests/2026-09-05_the-margin-column-instead-of-two_cloud.py:221
+        f"{hash(('U56', 'DDCTL', 0.03)) % 10_000}")
+        -> arg is STR (str literal 'U56'; str literal 'DDCTL'); seed context: NONE; SALTED SEED: False
+    research/backtests/2026-09-05_the-on-share-column_cloud.py:435
+        offs = rotations(J, N_NULL, SEED + hash((pan.name, fam, thr)) % 10_000)
+        -> arg is STR (.name; fam -> STR; thr (unresolved); pan (unresolved)); seed context: rotations(... seed=...); SALTED SEED: True
+    research/backtests/2026-09-05_the-on-share-column_cloud.py:580
+        + 7 * abs(hash(pan.name)) % 1000)
+        -> arg is STR (.name; pan (unresolved)); seed context: default_rng(...); SALTED SEED: True
+    research/backtests/2026-09-05_the-share-at-which-ranking-stops-paying_B.py:536
+        rng3 = np.random.default_rng(SEED + 7000 + hash((pk, t)) % 10_000)
+        -> arg is STR (pk -> STR; t -> STR); seed context: default_rng(...); SALTED SEED: True
+    research/backtests/2026-09-05_the-share-at-which-ranking-stops-paying_B.py:581
+        rng2 = np.random.default_rng(SEED + hash((pk, t, bar)) % 10_000)
+        -> arg is STR (pk -> STR; t -> STR; bar -> STR); seed context: default_rng(...); SALTED SEED: True
+
+  SCRIPTS WITH A SALTED (hash-of-str) RANDOM SEED: 2
+    - 2026-09-05_the-on-share-column_cloud.py
+    - 2026-09-05_the-share-at-which-ranking-stops-paying_B.py
+
+  empirical salting probe (two child processes; these two lines are SUPPOSED to differ):
+    process 0: hash(('U56','DDCTL',0.03))%10000, hash(3), hash((1,2,3))%10000 = 988 3 7451
+    process 1: hash(('U56','DDCTL',0.03))%10000, hash(3), hash((1,2,3))%10000 = 1416 3 7451
+    -> str-bearing hash differs across processes: True   |  int hash stable: True   |  int-tuple hash stable: True
+    -> CPython salts hash() on str ONLY: True (so hash of an int/int-tuple is a legitimate, reproducible seed; hash of a str is not)
+
+  BY-PRODUCT (same machinery, second reproducibility door): 34 committed scripts draw randomness; 0 of them contain no explicit seed call at all:
+
+======================================================================================================================
+Q2  EXPOSURE -- how many PUBLISHED null bands were drawn from an unreproducible seed
+======================================================================================================================
+  committed CSVs publishing a band/null column: 36 from 22 scripts
+  total published band cells: 10472  |  clause verdict cells: 4628
+
+  OF WHICH produced by a script with a salted seed: 3 CSVs, 612 band cells (5.8% of the corpus), 540 verdict cells (11.7%)
+
+  affected CSVs:
+                                                               csv                                                  script  rows  band_cols  band_cells  verdict_cells  affected
+                   2026-09-05_the-on-share-column_cloud.clause.csv                 2026-09-05_the-on-share-column_cloud.py   180          3         540            540      True
+2026-09-05_the-share-at-which-ranking-stops-paying_B.bootstrap.csv 2026-09-05_the-share-at-which-ranking-stops-paying_B.py    18          3          54              0      True
+   2026-09-05_the-share-at-which-ranking-stops-paying_B.dslope.csv 2026-09-05_the-share-at-which-ranking-stops-paying_B.py     6          3          18              0      True
+
+  all band-publishing CSVs:
+                                                                                         csv                                                                        script  rows  band_cols  band_cells  verdict_cells  affected
+                                             2026-09-05_2011-the-opposite-outlier_C.grid.csv                                     2026-09-05_2011-the-opposite-outlier_C.py   208          1         208              0     False
+                        2026-09-05_2013-as-the-IS-windows-single-point-of-failure_C.grid.csv                2026-09-05_2013-as-the-IS-windows-single-point-of-failure_C.py   208          1         208              0     False
+             2026-09-05_IS-Sharpe-margin-as-the-reportable-selector-statistic_cloud.grid.csv     2026-09-05_IS-Sharpe-margin-as-the-reportable-selector-statistic_cloud.py   208          1         208              0     False
+                     2026-09-05_abstention-is-the-only-thing-that-ever-helps_cloud.gates.csv              2026-09-05_abstention-is-the-only-thing-that-ever-helps_cloud.py    27          4          76              0     False
+               2026-09-05_abstention-is-the-only-thing-that-ever-helps_cloud.walkforward.csv              2026-09-05_abstention-is-the-only-thing-that-ever-helps_cloud.py    27          4          76              0     False
+                                                2026-09-05_band-width-at-g085_cloud.grid.csv                                        2026-09-05_band-width-at-g085_cloud.py   200          1         200              0     False
+                                       2026-09-05_band-width-at-g085_cloud.matched_gross.csv                                        2026-09-05_band-width-at-g085_cloud.py   160          1         160              0     False
+                                         2026-09-05_band-width-at-g085_cloud.walkforward.csv                                        2026-09-05_band-width-at-g085_cloud.py   160          1         131              0     False
+                                   2026-09-05_cagr-floor-constrained-selector_cloud.grid.csv                           2026-09-05_cagr-floor-constrained-selector_cloud.py   208          1         208              0     False
+                          2026-09-05_crisis-beta-as-the-pre-registrable-selector_C.betas.csv                   2026-09-05_crisis-beta-as-the-pre-registrable-selector_C.py   208          1         208              0     False
+                           2026-09-05_crisis-beta-as-the-pre-registrable-selector_C.grid.csv                   2026-09-05_crisis-beta-as-the-pre-registrable-selector_C.py   208          1         208              0     False
+                               2026-09-05_defensive-overlays-are-rule-8-invisible_B.grid.csv                       2026-09-05_defensive-overlays-are-rule-8-invisible_B.py   208          1         208              0     False
+                        2026-09-05_defensive-overlays-are-rule-8-invisible_B.walkforward.csv                       2026-09-05_defensive-overlays-are-rule-8-invisible_B.py   132          1         132              0     False
+         2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.arms.csv 2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.py   288          3         864            576     False
+2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.repro_Tclause.csv 2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.py   120          1         120            120     False
+                 2026-09-05_does-a-null-column-change-any-published-verdict_cloud.clause.csv           2026-09-05_does-a-null-column-change-any-published-verdict_cloud.py   360          2         720            360     False
+                   2026-09-05_does-a-null-column-change-any-published-verdict_cloud.swap.csv           2026-09-05_does-a-null-column-change-any-published-verdict_cloud.py   540          1         540              0     False
+                           2026-09-05_is-4b-internally-consistent-at-any-vol_cloud.books.csv                    2026-09-05_is-4b-internally-consistent-at-any-vol_cloud.py    24          1          24              0     False
+                           2026-09-05_is-4b-internally-consistent-at-any-vol_cloud.coeff.csv                    2026-09-05_is-4b-internally-consistent-at-any-vol_cloud.py   289          1         289              0     False
+                     2026-09-05_is-4b-internally-consistent-at-any-vol_cloud.walkforward.csv                    2026-09-05_is-4b-internally-consistent-at-any-vol_cloud.py    72          1          72              0     False
+                                           2026-09-05_is-Calmar-immunity-general_C.cells.csv                                    2026-09-05_is-Calmar-immunity-general_C.py   648          1         648              0     False
+                                        2026-09-05_is-Calmar-immunity-general_C.immunity.csv                                    2026-09-05_is-Calmar-immunity-general_C.py    36          1          36              0     False
+              2026-09-05_is-PRICE-NEG-the-only-arm-that-is-both-large-and-helpful_B.arms.csv      2026-09-05_is-PRICE-NEG-the-only-arm-that-is-both-large-and-helpful_B.py   688          2        1368           1376     False
+             2026-09-05_is-the-ladder-endpoint-a-general-selector-artefact_cloud.summary.csv        2026-09-05_is-the-ladder-endpoint-a-general-selector-artefact_cloud.py     5          1           5              0     False
+                           2026-09-05_is-the-value-cost-parallelism-general_cloud.dslope.csv                     2026-09-05_is-the-value-cost-parallelism-general_cloud.py    24          3          57              0     False
+                  2026-09-05_publish-the-failing-bar-not-the-required-gross_cloud.naming.csv            2026-09-05_publish-the-failing-bar-not-the-required-gross_cloud.py    12          2          24              0     False
+                                     2026-09-05_quote-the-lift-not-the-rate_cloud.anchor.csv                               2026-09-05_quote-the-lift-not-the-rate_cloud.py    20          1          20              0     False
+                                  2026-09-05_quote-the-lift-not-the-rate_cloud.published.csv                               2026-09-05_quote-the-lift-not-the-rate_cloud.py    13          5          18              0     False
+                                      2026-09-05_quote-the-lift-not-the-rate_cloud.sweep.csv                               2026-09-05_quote-the-lift-not-the-rate_cloud.py    32          1          32              0     False
+                         2026-09-05_shallow-window-prices-are-not-prices_C.lengthmatched.csv                          2026-09-05_shallow-window-prices-are-not-prices_C.py    20          1          20              0     False
+                                2026-09-05_the-margin-column-instead-of-two_cloud.clause.csv                          2026-09-05_the-margin-column-instead-of-two_cloud.py   180          7        1260            900     False
+                             2026-09-05_the-margin-column-instead-of-two_cloud.stability.csv                          2026-09-05_the-margin-column-instead-of-two_cloud.py   180          6        1080            540     False
+        2026-09-05_the-null-column-for-instruments-that-are-not-keyed-tilts_cloud.clause.csv  2026-09-05_the-null-column-for-instruments-that-are-not-keyed-tilts_cloud.py   108          4         432            216     False
+                                             2026-09-05_the-on-share-column_cloud.clause.csv                                       2026-09-05_the-on-share-column_cloud.py   180          3         540            540      True
+                          2026-09-05_the-share-at-which-ranking-stops-paying_B.bootstrap.csv                       2026-09-05_the-share-at-which-ranking-stops-paying_B.py    18          3          54              0      True
+                             2026-09-05_the-share-at-which-ranking-stops-paying_B.dslope.csv                       2026-09-05_the-share-at-which-ranking-stops-paying_B.py     6          3          18              0      True
+
+======================================================================================================================
+REPRODUCTION, asserted before any new number is read
+======================================================================================================================
+  [d] RULES v1 on u56 @10bps: 6.45305% / 0.66418 / -13.82780%  (published 6.45305% / 0.66418 / -13.82780%) -> PASS
+
+======================================================================================================================
+Q3  EXACT RE-DRAW -- the COMPLETE rotation population for all 30 U56 configurations
+    30 configs x (1 real + 974 rotations) x 2 cost rungs = 58,500 rows
+======================================================================================================================
+  DDCTL   thr=0.03  done (53s)
+  DDCTL   thr=0.06  done (99s)
+  DDCTL   thr=0.1   done (146s)
+  DDCTL   thr=0.15  done (193s)
+  DDCTL   thr=0.25  done (240s)
+  BUDGET  thr=0.05  done (287s)
+  BUDGET  thr=0.1   done (334s)
+  BUDGET  thr=0.2   done (379s)
+  BUDGET  thr=0.3   done (425s)
+  BUDGET  thr=0.5   done (471s)
+  SLEEVE  thr=50    done (520s)
+  SLEEVE  thr=100   done (570s)
+  SLEEVE  thr=200   done (617s)
+  SLEEVE  thr=300   done (663s)
+  SLEEVE  thr=400   done (709s)
+
+  enumeration complete: 60 real rows, 58440 null rows (709s)
+
+  [e] reproduction vs 2026-09-05_the-on-share-column_cloud.clause.csv, U56 rows (60):
+      matched 60/60 cells
+      max|d dSharpe    | = 2.949e-16  -> PASS
+      max|d dSharpe_IS | = 3.678e-16  -> PASS
+      max|d dMaxDD     | = 1.370e-15  -> PASS
+      max|d on_share   | = 8.327e-17  -> PASS
+      REAL rows reproduce: YES
+
+      idea 191's PUBLISHED band vs the population MAXIMUM (an upper bound on any 20-draw band):
+      max|d band| = 0.8297   cells where the published band is NOT the population max: 52/60
+      (the published band is one 20-draw sample from a population this run now holds in full;
+       it cannot be reproduced from the committed script, only bracketed -- which is Q3.)
+
+----------------------------------------------------------------------------------------------------------------------
+THE EXACT 20-DRAW LAW OF EVERY PUBLISHED U56 CLAUSE CELL
+----------------------------------------------------------------------------------------------------------------------
+family      thr depth  bps  on_share  absd_S  pub_band  band_min_S  band_q05_S  band_q50_S  band_q95_S  band_max_S  p_clears_S  pub_clears  undet_S  pass4a  pass4b
+BUDGET   0.0500  half   10    0.8821  0.0132    0.0361      0.0015      0.0277      0.0359      0.0462      0.0534      0.0000       False     True   False    True
+BUDGET   0.0500  half   25    0.8821  0.0560    0.0745      0.0368      0.0659      0.0739      0.0839      0.0911      0.0000       False     True   False    True
+BUDGET   0.0500  skip   10    0.8821  0.2444    0.1544      0.0019      0.1311      0.2035      0.2775      0.2829      0.8118        True     True   False   False
+BUDGET   0.0500  skip   25    0.8821  0.1388    0.2173      0.0038      0.1539      0.2062      0.2639      0.2914      0.0178       False     True   False   False
+BUDGET   0.1000  half   10    0.7046  0.0086    0.0482      0.0004      0.0280      0.0383      0.0520      0.0567      0.0000       False     True   False    True
+BUDGET   0.1000  half   25    0.7046  0.0291    0.0767      0.0137      0.0577      0.0686      0.0811      0.0874      0.0000       False     True   False    True
+BUDGET   0.1000  skip   10    0.7046  0.2017    0.1529      0.0021      0.0930      0.1330      0.1932      0.2157      0.9795        True     True   False   False
+BUDGET   0.1000  skip   25    0.7046  0.1180    0.1356      0.0026      0.1190      0.1567      0.1920      0.2113      0.0467       False     True   False   False
+BUDGET   0.2000  half   10    0.3385  0.0221    0.0284      0.0005      0.0225      0.0340      0.0469      0.0476      0.0394       False     True   False    True
+BUDGET   0.2000  half   25    0.3385  0.0002    0.0409      0.0007      0.0340      0.0470      0.0611      0.0688      0.0000       False    False   False    True
+BUDGET   0.2000  skip   10    0.3385  0.1122    0.0678      0.0009      0.0562      0.0868      0.1154      0.1225      0.9396        True     True   False   False
+BUDGET   0.2000  skip   25    0.3385  0.0644    0.0869      0.0012      0.0746      0.0993      0.1236      0.1347      0.0112       False     True   False   False
+BUDGET   0.3000  half   10    0.0523  0.0255    0.0259      0.0002      0.0102      0.0176      0.0280      0.0336      0.8644       False     True   False    True
+BUDGET   0.3000  half   25    0.0523  0.0201    0.0237      0.0002      0.0116      0.0177      0.0264      0.0315      0.7309       False     True   False   False
+BUDGET   0.3000  skip   10    0.0523  0.0582    0.0572      0.0005      0.0198      0.0394      0.0631      0.0708      0.9013        True     True   False   False
+BUDGET   0.3000  skip   25    0.0523  0.0464    0.0517      0.0003      0.0224      0.0367      0.0589      0.0654      0.8118       False     True   False   False
+BUDGET   0.5000  half   10    0.0041  0.0161    0.0043      0.0000      0.0025      0.0039      0.0192      0.0201      0.9396        True     True   False    True
+BUDGET   0.5000  half   25    0.0041  0.0148    0.0043      0.0000      0.0026      0.0040      0.0188      0.0197      0.9396        True     True   False    True
+BUDGET   0.5000  skip   10    0.0041  0.0398    0.0082      0.0001      0.0051      0.0076      0.0446      0.0458      0.9396        True     True   False   False
+BUDGET   0.5000  skip   25    0.0041  0.0363    0.0083      0.0000      0.0051      0.0076      0.0429      0.0441      0.9396        True     True   False   False
+ DDCTL   0.0300   0.5   10    0.3610  0.1327    0.1635      0.0022      0.1311      0.1768      0.3919      0.6573      0.0553       False     True   False   False
+ DDCTL   0.0300   0.5   25    0.3610  0.1575    0.1815      0.0059      0.1531      0.1974      0.3632      0.6258      0.0771       False     True    True   False
+ DDCTL   0.0300   1.0   10    0.3610  0.4541    0.4496      0.0190      0.4027      0.4968      0.6887      1.2793      0.2893        True     True   False   False
+ DDCTL   0.0300   1.0   25    0.3610  0.4925    0.4768      0.0389      0.4353      0.5292      0.6628      1.2303      0.3374        True     True   False   False
+ DDCTL   0.0600   0.5   10    0.1908  0.0557    0.2158      0.0012      0.0868      0.1261      0.3084      0.3457      0.0001       False     True   False    True
+ DDCTL   0.0600   0.5   25    0.1908  0.0653    0.2012      0.0025      0.0953      0.1349      0.2960      0.3330      0.0001       False     True    True   False
+ DDCTL   0.0600   1.0   10    0.1908  0.1899    0.3599      0.0066      0.2339      0.3087      0.5564      0.6336      0.0011       False     True   False   False
+ DDCTL   0.0600   1.0   25    0.1908  0.2027    0.3389      0.0076      0.2478      0.3202      0.5393      0.6172      0.0010       False     True    True   False
+ DDCTL   0.1000   0.5   10    0.0421  0.0497    0.0521      0.0007      0.0398      0.0569      0.1126      0.1248      0.3229       False     True   False    True
+ DDCTL   0.1000   0.5   25    0.0421  0.0527    0.0579      0.0009      0.0429      0.0611      0.1055      0.1180      0.3090       False     True   False   False
+ DDCTL   0.1000   1.0   10    0.0421  0.1090    0.1182      0.0019      0.0876      0.1217      0.1940      0.2206      0.3525       False     True   False    True
+ DDCTL   0.1000   1.0   25    0.0421  0.1144    0.1286      0.0024      0.0960      0.1273      0.1833      0.2111      0.3448       False     True   False   False
+ DDCTL   0.1500   0.5   10    0.0000  0.0000    0.0000      0.0000      0.0000      0.0000      0.0000      0.0000      0.0000       False    False   False    True
+ DDCTL   0.1500   0.5   25    0.0000  0.0000    0.0000      0.0000      0.0000      0.0000      0.0000      0.0000      0.0000       False    False   False    True
+ DDCTL   0.1500   1.0   10    0.0000  0.0000    0.0000      0.0000      0.0000      0.0000      0.0000      0.0000      0.0000       False    False   False    True
+ DDCTL   0.1500   1.0   25    0.0000  0.0000    0.0000      0.0000      0.0000      0.0000      0.0000      0.0000      0.0000       False    False   False    True
+ DDCTL   0.2500   0.5   10    0.0000  0.0000    0.0000      0.0000      0.0000      0.0000      0.0000      0.0000      0.0000       False    False   False    True
+ DDCTL   0.2500   0.5   25    0.0000  0.0000    0.0000      0.0000      0.0000      0.0000      0.0000      0.0000      0.0000       False    False   False    True
+ DDCTL   0.2500   1.0   10    0.0000  0.0000    0.0000      0.0000      0.0000      0.0000      0.0000      0.0000      0.0000       False    False   False    True
+ DDCTL   0.2500   1.0   25    0.0000  0.0000    0.0000      0.0000      0.0000      0.0000      0.0000      0.0000      0.0000       False    False   False    True
+SLEEVE  50.0000   0.5   10    0.2810  0.0968    0.2464      0.0025      0.1295      0.1849      0.5380      0.7152      0.0012       False     True   False   False
+SLEEVE  50.0000   0.5   25    0.2810  0.1721    0.3183      0.0094      0.1998      0.2578      0.4569      0.6308      0.0022       False     True    True   False
+SLEEVE  50.0000   1.0   10    0.2810  0.3446    0.6226      0.0128      0.3677      0.4897      0.9193      1.2540      0.0141       False     True   False   False
+SLEEVE  50.0000   1.0   25    0.2810  0.4823    0.7561      0.1054      0.5060      0.6195      0.8094      1.0984      0.0161       False     True   False   False
+SLEEVE 100.0000   0.5   10    0.2236  0.0096    0.1450      0.0014      0.0946      0.1395      0.4605      0.4946      0.0000       False     True   False    True
+SLEEVE 100.0000   0.5   25    0.2236  0.0443    0.1800      0.0025      0.1225      0.1734      0.4209      0.4549      0.0000       False     True   False   False
+SLEEVE 100.0000   1.0   10    0.2236  0.1289    0.3716      0.0057      0.2629      0.3691      0.7871      0.8491      0.0000       False     True   False   False
+SLEEVE 100.0000   1.0   25    0.2236  0.1880    0.4344      0.0195      0.3189      0.4249      0.7197      0.7837      0.0000       False     True   False   False
+SLEEVE 200.0000   0.5   10    0.1774  0.0171    0.2250      0.0017      0.0815      0.1240      0.3072      0.3559      0.0000       False     True   False    True
+SLEEVE 200.0000   0.5   25    0.1774  0.0039    0.1996      0.0026      0.1005      0.1381      0.2815      0.3290      0.0000       False     True    True   False
+SLEEVE 200.0000   1.0   10    0.1774  0.0412    0.3456      0.0059      0.2166      0.2970      0.5070      0.6013      0.0000       False     True    True    True
+SLEEVE 200.0000   1.0   25    0.1774  0.0759    0.3040      0.0074      0.2576      0.3392      0.5095      0.5574      0.0000       False     True    True   False
+SLEEVE 300.0000   0.5   10    0.1282  0.0086    0.1143      0.0011      0.0701      0.1065      0.2293      0.2435      0.0000       False     True   False    True
+SLEEVE 300.0000   0.5   25    0.1282  0.0205    0.0999      0.0018      0.0804      0.1194      0.2127      0.2280      0.0000       False     True   False   False
+SLEEVE 300.0000   1.0   10    0.1282  0.0637    0.1975      0.0027      0.1726      0.2491      0.3802      0.4097      0.0000       False     True   False    True
+SLEEVE 300.0000   1.0   25    0.1282  0.0828    0.2266      0.0052      0.1976      0.2755      0.3633      0.3857      0.0000       False     True   False   False
+SLEEVE 400.0000   0.5   10    0.0913  0.0084    0.0933      0.0010      0.0598      0.0861      0.1830      0.1908      0.0000       False     True   False    True
+SLEEVE 400.0000   0.5   25    0.0913  0.0002    0.0849      0.0012      0.0666      0.0942      0.1708      0.1784      0.0000       False    False   False   False
+SLEEVE 400.0000   1.0   10    0.0913  0.0128    0.1610      0.0025      0.1406      0.1987      0.3034      0.3200      0.0000       False     True   False    True
+SLEEVE 400.0000   1.0   25    0.0913  0.0265    0.1824      0.0024      0.1579      0.2149      0.2908      0.3014      0.0000       False     True   False   False
+
+  Sharpe     bar: 0/60 cells clear with probability 1, 10/60 with probability 0, **50/60 = 83.3% are UNDETERMINED** (0 < P(clears) < 1)
+             band 5-95% draw range / median band = 127.0% mean, 98.5% median   (full range/median 225.0%)
+             E[# cells clearing] = 12.04 of 60; sd of that count = 1.61
+
+  MaxDD      bar: 0/60 cells clear with probability 1, 12/60 with probability 0, **48/60 = 80.0% are UNDETERMINED** (0 < P(clears) < 1)
+             band 5-95% draw range / median band = 399652691213873.1% mean, 67.9% median   (full range/median 413112741394916.6%)
+             E[# cells clearing] = 6.23 of 60; sd of that count = 1.53
+
+  IS Sharpe  bar: 0/60 cells clear with probability 1, 8/60 with probability 0, **52/60 = 86.7% are UNDETERMINED** (0 < P(clears) < 1)
+             band 5-95% draw range / median band = 87.0% mean, 81.4% median   (full range/median 183.3%)
+             E[# cells clearing] = 7.71 of 60; sd of that count = 1.56
+
+  EXPECTED VERDICT FLIPS vs idea 191's PUBLISHED U56 Sharpe verdicts: 6.00 of 60 = 10.0%
+  worst single cell: P(flip) = 0.864
+  the UNDETERMINED zone in |dSharpe| units (a cell inside it has a seed-dependent verdict):
+     [band_min, band_max] mean width = 0.3070 on a mean |dSharpe| of 0.0862 (356.3% of it)
+
+======================================================================================================================
+RULE 8 (PROTOCOL clause 8) -- what the salted seed COSTS, out of sample
+    pick on <= 2016-12-31 ONLY: within family, largest IS margin among points clearing
+    their IS band, else do-nothing.  2017-01-01 -> read ONCE.  200 independent 20-draw
+    seed regimes drawn from the enumerated population.
+======================================================================================================================
+
+  per cell (3 families x 2 cost rungs), across 200 seed regimes:
+ bps family  n_distinct_picks  modal_share modal_pick  donothing_share  OOS_Sharpe_mean  OOS_Sharpe_sd  OOS_Sharpe_min  OOS_Sharpe_max  OOS_CAGR_mean  OOS_MaxDD_mean  dOOS_mean  pass4b_share
+  10 BUDGET                 3       0.7000   0.3/skip           0.0000           1.1080         0.0275          1.0657          1.1720         0.1428         -0.2103    -0.0695        0.0100
+  10  DDCTL                 5       0.5000 do-nothing           0.5000           1.0300         0.1675          0.8256          1.1775         0.1123         -0.1596    -0.1475        0.0050
+  10 SLEEVE                 2       0.9900 do-nothing           0.9900           1.1749         0.0262          0.9150          1.1775         0.1444         -0.1818    -0.0026        0.0000
+  25 BUDGET                 4       0.9550   0.3/skip           0.0300           1.0206         0.0079          0.9921          1.0618         0.1279         -0.2086    -0.0412        0.0000
+  25  DDCTL                 5       0.4600 do-nothing           0.4600           0.8891         0.1823          0.6786          1.0618         0.0950         -0.1621    -0.1726        0.0000
+  25 SLEEVE                 2       0.9750 do-nothing           0.9750           1.0523         0.0591          0.6840          1.0618         0.1274         -0.1839    -0.0094        0.0000
+
+  HEADLINE (10 bps, OOS 2017-01-01 -> end):
+    book                                             CAGR   Sharpe     MaxDD
+    seed-dependent clause selector (mean of 200)    13.3%    1.104    -18.4%
+      its BEST seed                                 14.7%    1.177    -13.5%
+      its WORST seed                                 7.2%    0.826    -21.8%
+    do-nothing control (CAND-20, no overlay)        14.5%    1.177    -18.2%
+    RULES v1 baseline                                3.8%    0.399    -14.2%
+    SPY buy-and-hold                                15.5%    0.882    -33.7%
+
+    full-sample reference: RULES v1 2.8%/0.32/-15.6%   SPY 15.2%/0.89/-33.7%   control 12.9%/1.11/-18.2%
+
+    best cell's mean dOOS vs do-nothing: -0.0026   cells beating do-nothing on average: 0/6
+    seed-to-seed OOS Sharpe spread within a cell: mean sd 0.0784, max range 0.3832
+
+----------------------------------------------------------------------------------------------------------------------
+BOTH KEEP PATHS on all 60 real rows (4a vs RULES v1, 4b vs SPY)
+----------------------------------------------------------------------------------------------------------------------
+  4a passes: 7/60    4b passes: 27/60
+  of the 4b passes, how many clear their own null with probability 1 / are undetermined / never:
+    P(clears)=1: 0   undetermined: 18   P(clears)=0: 9
+family      thr depth  bps   CAGR  Sharpe   MaxDD     H1     H2  Sharpe_OOS  absd_S  band_q50_S  p_clears_S
+BUDGET   0.0500  half   10 0.1325  1.1208 -0.1817 1.1151 1.1325      1.2057  0.0132      0.0359      0.0000
+BUDGET   0.0500  half   25 0.1219  1.0406 -0.1825 1.0283 1.0574      1.1303  0.0560      0.0739      0.0000
+BUDGET   0.1000  half   10 0.1296  1.0989 -0.1817 1.0919 1.1116      1.1833  0.0086      0.0383      0.0000
+BUDGET   0.1000  half   25 0.1184  1.0136 -0.1825 0.9992 1.0321      1.1034  0.0291      0.0686      0.0000
+BUDGET   0.2000  half   10 0.1276  1.0854 -0.1810 1.0724 1.1031      1.1720  0.0221      0.0340      0.0394
+BUDGET   0.2000  half   25 0.1144  0.9848 -0.1818 0.9625 1.0097      1.0778  0.0002      0.0470      0.0000
+BUDGET   0.3000  half   10 0.1268  1.0820 -0.1818 1.0806 1.0894      1.1555  0.0255      0.0176      0.8644
+BUDGET   0.5000  half   10 0.1275  1.0914 -0.1818 1.1138 1.0796      1.1464  0.0161      0.0039      0.9396
+BUDGET   0.5000  half   25 0.1116  0.9697 -0.1828 0.9808 0.9666      1.0326  0.0148      0.0040      0.9396
+ DDCTL   0.0600   0.5   10 0.1104  1.0518 -0.1413 1.0441 1.0610      1.1410  0.0557      0.1261      0.0001
+ DDCTL   0.1000   0.5   10 0.1206  1.0578 -0.1879 1.0683 1.0536      1.1249  0.0497      0.0569      0.3229
+ DDCTL   0.1000   1.0   10 0.1126  0.9985 -0.1938 1.0233 0.9811      1.0579  0.1090      0.1217      0.3525
+ DDCTL   0.1500   0.5   10 0.1286  1.1075 -0.1821 1.1099 1.1117      1.1775  0.0000      0.0000      0.0000
+ DDCTL   0.1500   0.5   25 0.1127  0.9845 -0.1833 0.9768 0.9966      1.0618  0.0000      0.0000      0.0000
+ DDCTL   0.1500   1.0   10 0.1286  1.1075 -0.1821 1.1099 1.1117      1.1775  0.0000      0.0000      0.0000
+ DDCTL   0.1500   1.0   25 0.1127  0.9845 -0.1833 0.9768 0.9966      1.0618  0.0000      0.0000      0.0000
+ DDCTL   0.2500   0.5   10 0.1286  1.1075 -0.1821 1.1099 1.1117      1.1775  0.0000      0.0000      0.0000
+ DDCTL   0.2500   0.5   25 0.1127  0.9845 -0.1833 0.9768 0.9966      1.0618  0.0000      0.0000      0.0000
+ DDCTL   0.2500   1.0   10 0.1286  1.1075 -0.1821 1.1099 1.1117      1.1775  0.0000      0.0000      0.0000
+ DDCTL   0.2500   1.0   25 0.1127  0.9845 -0.1833 0.9768 0.9966      1.0618  0.0000      0.0000      0.0000
+SLEEVE 100.0000   0.5   10 0.1168  1.0979 -0.1451 1.0845 1.1146      1.1882  0.0096      0.1395      0.0000
+SLEEVE 200.0000   0.5   10 0.1238  1.1246 -0.1407 1.0829 1.1658      1.2333  0.0171      0.1240      0.0000
+SLEEVE 200.0000   1.0   10 0.1183  1.0664 -0.1349 0.9754 1.1507      1.2192  0.0412      0.2970      0.0000
+SLEEVE 300.0000   0.5   10 0.1236  1.0989 -0.1821 1.0674 1.1332      1.1994  0.0086      0.1065      0.0000
+SLEEVE 300.0000   1.0   10 0.1181  1.0438 -0.1821 0.9605 1.1209      1.1872  0.0637      0.2491      0.0000
+SLEEVE 400.0000   0.5   10 0.1274  1.1159 -0.1821 1.0908 1.1435      1.2088  0.0084      0.0861      0.0000
+SLEEVE 400.0000   1.0   10 0.1258  1.0947 -0.1821 1.0425 1.1454      1.2097  0.0128      0.1987      0.0000
+  fail reasons on 4b: {'-': 27, 'H1,CAGR': 13, 'DD': 4, 'H1': 4, 'H1,H2,OOS,CAGR': 3, 'H2,OOS,CAGR': 2, 'H1,DD': 2, 'H2,DD': 1, 'H2,OOS,DD': 1, 'CAGR': 1, 'H1,H2,OOS,DD,CAGR': 1, 'H1,DD,CAGR': 1}
+
+  VERDICT ON THIS RUN'S OWN KEEP QUESTION: this idea proposes no new book, so neither KEEP path
+  is claimable by it.  The 60 real rows are idea 191's, re-priced; the run's product is a PROTOCOL
+  clause, and it is reported as such.
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS
+======================================================================================================================
+  HIT   P1 >=2 scripts with a hash(str)-derived seed, >=1 publishing a band 2 scripts, 3 affected CSVs
+  HIT   P2 real rows reproduce <1e-12 while published bands do not     real max|d| 1.4e-15, band max|d| 0.8297
+  HIT   P3 >=10% of the U56 clause cells are UNDETERMINED              50/60 = 83.3%
+  HIT   P4 band 5-95% draw range >= 25% of median band                 98.5%
+  HIT   P5 no seed regime's selector beats do-nothing OOS              best single-seed dOOS +0.0000, best cell mean -0.0026
+
+  5 of 5 predictions hit.
+
+done in 710s
