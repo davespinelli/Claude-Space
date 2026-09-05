@@ -2,6 +2,14 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-05 | 40692606 | FNP Sales Analysis Dashboard – Excel | $235 | 2 | drafted |
+| 2026-09-05 | 40689951 | Enter Financial Budget Data | $240 | 4 | drafted |
+| 2026-09-05 | 40692361 | Comprehensive Excel Data Management | $240 | 8 | drafted |
+| 2026-09-05 | 40692503 | Excel Text Data Entry | $300 | 12 | drafted |
+| 2026-09-05 | 40692371 | Online Registration Form Entry | $310 | 13 | drafted |
+| 2026-09-05 | 40690026 | Excel to SQL Server Import | $420 | 43 | drafted |
+| 2026-09-05 | 40692490 | Web Developer Needed for AI Chatbot Integration | $250 | 62 | drafted |
+| 2026-09-05 | 40692543 | Nasdaq Futures Automated Trading System | $850 | 114 | drafted |
 | 2026-09-05 | 40692162 | Excel Numeric Data PDF Conversion | $140 | 7 | drafted |
 | 2026-09-05 | 40692118 | Daily Excel Sales Entry Assistant | $230 | 14 | drafted |
 | 2026-09-05 | 40692106 | E-Commerce Excel & Power BI Dashboard | $125 | 14 | drafted |
@@ -92,5 +100,8 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Dynamic Cryptocurrency Trading Platform Development (40686448) (full exchange-style platform, no description available in the shortlist to price against)
 - Comprehensive IT & Forex Trading PDFs (40685724) (technical writing, not delivery work, $16–$132)
 - thumbnail ki emage (40679255) (image design work, outside scope)
+- Python Data Entry Automation -- 2 (40691285) (repost of an earlier listing, 120 bids at $30–$250)
+- Python Developer Needed for Small Process Automation Script (40692380) (164 bids; the posting URL is for an unrelated dissertation data project, so the brief and the listing do not match)
+- Next.js Dashboard with n8n Automation Integration (40692329) (176 bids at $30–$250, below floor for a full dashboard build)
 
 Note for this run: freelancer.com is blocked by the session network policy, so proposals were written from the descriptions the scanner captured in JOBS.md. Older undrafted rows have no description in the shortlist, which is why several were skipped rather than priced blind.
