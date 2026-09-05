@@ -1,0 +1,222 @@
+========================================================================================================
+IDEA 196  does-the-leak-free-selector-edge-survive-a-third-corpus   (cloud, 2026-09-05)
+========================================================================================================
+
+building idea 175's corpus from its own seeds ...
+  small panel: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable (SURVIVORSHIP: current constituents only, no delistings -- see data/SMALL_PANEL_README.md)
+  corpus: 115 books  SMALL=49  U56=33  ETF=33
+
+R0  RULES v1 on u56 @10bps: 6.45305% / 0.66418 / -13.82780%   (published 6.45305% / 0.66418 / -13.82780%)
+R1  fast_backtest == engine.backtest on U56's control book : max abs err 1.388e-17
+R2  cost identity  r_c == r_0 - turnover*c/1e4 : max abs err 1.388e-17
+R3  idea 175's published U56 @ W ladder point (12.86% / 1.1075 / -18.21%): 12.8581% / 1.1075 / -18.2071%
+R4  corpus size == idea 175's 115 books : 115
+
+              check     value    target       err
+    R0_rules_v1_u56 6.642e-01 6.642e-01 4.017e-07
+          R1_engine 1.388e-17 0.000e+00 1.388e-17
+            R2_cost 1.388e-17 0.000e+00 1.388e-17
+     R3_id175_U56_W 1.108e+00 1.107e+00 2.411e-05
+R4_corpus_115_books 1.150e+02 1.150e+02 0.000e+00
+
+reproduction PASSES -- proceeding to new numbers
+
+========================================================================================================
+GRID  115 books x (1 control + 3 leak-free keys x 2 dirs x 3 m) x 2 cost rungs
+========================================================================================================
+  ... 20/115 books (63s)
+  ... 40/115 books (101s)
+  ... 60/115 books (145s)
+  ... 80/115 books (181s)
+  ... 100/115 books (207s)
+
+grid: 4370 rows, 4140 real arms (227s) -> 2026-09-05_does-the-leak-free-selector-edge-survive-a-third-corpus_cloud.arms.csv
+
+  mean dSharpe (full sample) by key x direction, ALL grid points, pooled:
+dir         NEG     POS
+key                    
+MOM     -0.0255 +0.0052
+R3      -0.0083 -0.0109
+REBASED -0.0119 -0.0034
+
+  same, by family (this is the number idea 193 could not compute):
+dir                NEG     POS
+family key                    
+ETF    MOM     -0.0060 +0.0021
+       R3      -0.0004 -0.0004
+       REBASED -0.0048 +0.0054
+SMALL  MOM     -0.0212 +0.0082
+       R3      +0.0074 -0.0134
+       REBASED +0.0120 -0.0191
+U56    MOM     -0.0514 +0.0038
+       R3      -0.0393 -0.0178
+       REBASED -0.0544 +0.0111
+
+  mean dSharpe by tilt strength m and cost rung:
+cost    10.0    25.0
+m                   
+0.2  -0.0011 -0.0014
+0.5  -0.0062 -0.0086
+1.0  -0.0150 -0.0225
+
+  mean turnover (x/yr): control 5.55, tilted 5.74
+
+========================================================================================================
+RULE 8 WALK-FORWARD.  key/dir chosen on data <= 2016-12-31 only; 2017-2026 read ONCE.
+  690 cells = 115 books x 3 m x 2 cost rungs.  Pool = 6 arms (3 leak-free keys x 2 dirs).
+========================================================================================================
+
+walk-forward: 6900 rows over 690 cells -> 2026-09-05_does-the-leak-free-selector-edge-survive-a-third-corpus_cloud.walkforward.csv
+
+  ALL 690 CELLS, paired against S0 do-nothing:
+                  selector  mean_OOS_Sharpe    dOOS        t  wins  losses   n
+                ORACLE-OOS          +0.6522 +0.0210 +12.3976   367      35 690
+                 C-MOM/POS          +0.6361 +0.0049  +3.6447   227     173 690
+             S0 do-nothing          +0.6312 +0.0000      NaN     0       0 690
+S2LF IS-argmax (leak-free)          +0.6280 -0.0032  -1.7915   172     228 690
+             C-REBASED/POS          +0.6248 -0.0065  -3.9073   198     204 690
+                  C-R3/POS          +0.6175 -0.0137  -9.3871   146     256 690
+                  C-R3/NEG          +0.6175 -0.0137  -4.4616   183     219 690
+        RANDOM (same pool)          +0.6171 -0.0142  -6.1702   155     247 690
+             C-REBASED/NEG          +0.6141 -0.0171  -6.7193   131     271 690
+                 C-MOM/NEG          +0.5961 -0.0351 -12.8260    71     331 690
+
+  COST-COLLAPSED (345 cells) -- idea 193's own convention, the number to compare with
+  its +0.1370 / t +2.19 / 11W-1L:
+                  selector  mean_OOS_Sharpe    dOOS       t  wins  losses   n
+                ORACLE-OOS          +0.6522 +0.0210 +8.7785   183      18 345
+                 C-MOM/POS          +0.6361 +0.0049 +2.5787   113      87 345
+             S0 do-nothing          +0.6312 +0.0000     NaN     0       0 345
+S2LF IS-argmax (leak-free)          +0.6280 -0.0032 -1.2825    84     116 345
+             C-REBASED/POS          +0.6248 -0.0065 -2.7647    98     103 345
+                  C-R3/POS          +0.6175 -0.0137 -6.6880    72     129 345
+                  C-R3/NEG          +0.6175 -0.0137 -3.1787    90     111 345
+        RANDOM (same pool)          +0.6171 -0.0142 -5.1790    64     137 345
+             C-REBASED/NEG          +0.6141 -0.0171 -4.7639    64     137 345
+                 C-MOM/NEG          +0.5961 -0.0351 -9.1995    34     167 345
+
+  PER FAMILY (the decomposition idea 193's 2-panel corpus could not do):
+family                   selector  n_books      S0  mean_OOS    dOOS        t  wins  losses
+ SMALL S2LF IS-argmax (leak-free)       49 +0.1501   +0.1496 -0.0004  -0.1107    91     105
+ SMALL         RANDOM (same pool)       49 +0.1501   +0.1431 -0.0070  -2.0049    84     114
+ SMALL                 ORACLE-OOS       49 +0.1501   +0.1863 +0.0362 +10.0028   186      12
+ SMALL                  C-MOM/NEG       49 +0.1501   +0.1192 -0.0309  -7.0351    61     137
+ SMALL                  C-MOM/POS       49 +0.1501   +0.1636 +0.0136  +5.0283   116      80
+ SMALL                   C-R3/NEG       49 +0.1501   +0.1651 +0.0151  +4.7713   126      72
+ SMALL                   C-R3/POS       49 +0.1501   +0.1272 -0.0228  -7.8094    59     139
+ SMALL              C-REBASED/NEG       49 +0.1501   +0.1590 +0.0089  +2.7580   106      92
+ SMALL              C-REBASED/POS       49 +0.1501   +0.1269 -0.0231  -6.6254    60     138
+   U56 S2LF IS-argmax (leak-free)       33 +1.1783   +1.1730 -0.0053  -2.3480    49      53
+   U56         RANDOM (same pool)       33 +1.1783   +1.1428 -0.0355  -6.2102    29      73
+   U56                 ORACLE-OOS       33 +1.1783   +1.1897 +0.0114  +7.9633    85      17
+   U56                  C-MOM/NEG       33 +1.1783   +1.1169 -0.0614 -10.0876     1     101
+   U56                  C-MOM/POS       33 +1.1783   +1.1711 -0.0072  -3.6706    40      62
+   U56                   C-R3/NEG       33 +1.1783   +1.1134 -0.0649  -7.6777    22      80
+   U56                   C-R3/POS       33 +1.1783   +1.1646 -0.0137  -6.7897    21      81
+   U56              C-REBASED/NEG       33 +1.1783   +1.1126 -0.0657 -10.9940     0     102
+   U56              C-REBASED/POS       33 +1.1783   +1.1868 +0.0085  +6.0232    74      28
+   ETF S2LF IS-argmax (leak-free)       33 +0.7986   +0.7935 -0.0051  -4.3073    32      70
+   ETF         RANDOM (same pool)       33 +0.7986   +0.7950 -0.0035  -2.7520    42      60
+   ETF                 ORACLE-OOS       33 +0.7986   +0.8065 +0.0079  +8.7333    96       6
+   ETF                  C-MOM/NEG       33 +0.7986   +0.7836 -0.0149  -6.2172     9      93
+   ETF                  C-MOM/POS       33 +0.7986   +0.8026 +0.0041  +4.6884    71      31
+   ETF                   C-R3/NEG       33 +0.7986   +0.7932 -0.0054  -3.4191    35      67
+   ETF                   C-R3/POS       33 +0.7986   +0.7984 -0.0001  -0.1173    66      36
+   ETF              C-REBASED/NEG       33 +0.7986   +0.7915 -0.0070  -4.7140    25      77
+   ETF              C-REBASED/POS       33 +0.7986   +0.8019 +0.0034  +4.1114    64      38
+
+  S2LF vs RANDOM, paired directly (does the FIT beat a coin flip from the same pool?):
+    all 690 cells         d +0.0110  t +4.58  193W/147L
+    cost-collapsed 345    d +0.0110  t +3.78  111W/84L
+
+  what S2LF actually picks (share of the 690 cells):
+pick
+MOM/POS       58.6%
+MOM/NEG       10.4%
+R3/NEG         9.6%
+REBASED/POS    8.3%
+REBASED/NEG    7.7%
+R3/POS         5.5%
+
+  what the OOS oracle would have picked:
+pick
+MOM/POS       54.1%
+REBASED/POS   16.2%
+R3/NEG        11.9%
+REBASED/NEG    7.8%
+R3/POS         7.8%
+MOM/NEG        2.2%
+
+  S2LF agrees with the oracle in 52.9% of cells (1/6 = 16.7% by chance)
+  capture of the oracle: -15.1% (S2LF -0.0032 of the oracle's +0.0210)
+
+  BENCHMARKS over the same OOS window (2017-01-01 ->), for the three fixed books:
+    U56       RULES v1 full   6.45%/0.6642/ -13.83%   OOS   7.73%/0.7471/ -13.83% | SPY full  15.23%/0.8890/ -33.72%   OOS  15.45%/0.8820/ -33.72%
+    SMALL439  RULES v1 full   7.41%/0.5647/ -36.12%   OOS   6.35%/0.4923/ -36.12% | SPY full  14.13%/0.8615/ -33.72%   OOS  15.45%/0.8820/ -33.72%
+    ETF36     RULES v1 full   3.80%/0.4651/ -17.87%   OOS   3.78%/0.4425/ -17.87% | SPY full  15.23%/0.8890/ -33.72%   OOS  15.45%/0.8820/ -33.72%
+
+========================================================================================================
+BOTH KEEP PATHS, every row of the grid
+========================================================================================================
+
+  real arms: 4a 1665/4140, 4b 208/4140
+  controls : 4a 94/230, 4b 14/230
+
+  4b passes by family (real arms):
+        sum  count
+family            
+ETF       0   1188
+SMALL     0   1764
+U56     208   1188
+
+  4a passes by family (real arms):
+        sum  count
+family            
+ETF     760   1188
+SMALL   200   1764
+U56     705   1188
+
+  4b passes by key/dir (real arms):
+dir      NEG  POS
+key              
+MOM       14   60
+R3        35   26
+REBASED   12   61
+
+  4b passes on the three FIXED books (20 rows) -- the only ones that are not an unpriced sub-draw:
+book     key dir      m    cost  CAGR_F  Sharpe_F  MaxDD_F  Sharpe_H1  Sharpe_H2  Sharpe_OOS  CAGR_OOS  turnover_yr  pass4a
+ U56 CONTROL   - 0.0000 10.0000  0.1286    1.1075  -0.1821     1.1099     1.1117      1.1775    0.1449       9.4520   False
+ U56 CONTROL   - 0.0000 25.0000  0.1127    0.9845  -0.1833     0.9768     0.9966      1.0618    0.1289       9.4520   False
+ U56     MOM POS 0.2000 10.0000  0.1229    1.0630  -0.1881     1.0691     1.0652      1.1290    0.1393       9.2195   False
+ U56     MOM POS 0.5000 10.0000  0.1233    1.0646  -0.1865     1.1156     1.0296      1.0937    0.1349       8.8637   False
+ U56     MOM POS 0.5000 25.0000  0.1084    0.9493  -0.1880     0.9889     0.9230      0.9869    0.1201       8.8637   False
+ U56     MOM POS 1.0000 10.0000  0.1238    1.0686  -0.1879     1.1529     1.0058      1.0733    0.1321       8.8535   False
+ U56     MOM POS 1.0000 25.0000  0.1090    0.9535  -0.1895     1.0258     0.8998      0.9668    0.1174       8.8535   False
+ U56     MOM NEG 0.2000 10.0000  0.1231    1.0766  -0.1803     1.0389     1.1143      1.1750    0.1419      10.1063   False
+ U56     MOM NEG 0.5000 10.0000  0.1179    1.0691  -0.1737     1.0241     1.1125      1.1611    0.1334      12.2496   False
+ U56      R3 POS 0.2000 10.0000  0.1204    1.0505  -0.1841     1.0351     1.0693      1.1300    0.1372      10.1982   False
+ U56      R3 POS 0.5000 10.0000  0.1207    1.0663  -0.1781     1.0177     1.1132      1.1722    0.1399      10.8395   False
+ U56      R3 POS 1.0000 10.0000  0.1172    1.0483  -0.1788     0.9918     1.1020      1.1503    0.1353      11.6808   False
+ U56      R3 NEG 0.2000 10.0000  0.1220    1.0518  -0.1896     1.0766     1.0375      1.1037    0.1362       9.0608   False
+ U56      R3 NEG 0.5000 10.0000  0.1168    1.0178  -0.1930     1.1039     0.9505      1.0301    0.1248       9.5677   False
+ U56 REBASED POS 0.2000 10.0000  0.1314    1.1156  -0.1846     1.1158     1.1246      1.1925    0.1510       9.2345   False
+ U56 REBASED POS 0.2000 25.0000  0.1158    0.9969  -0.1858     0.9864     1.0137      1.0818    0.1353       9.2345   False
+ U56 REBASED POS 0.5000 10.0000  0.1305    1.1034  -0.1842     1.1213     1.1016      1.1812    0.1522       8.7243   False
+ U56 REBASED POS 0.5000 25.0000  0.1158    0.9919  -0.1853     0.9984     0.9981      1.0784    0.1373       8.7243   False
+ U56 REBASED POS 1.0000 10.0000  0.1330    1.1327  -0.1844     1.1890     1.1075      1.2007    0.1560       7.9061   False
+ U56 REBASED POS 1.0000 25.0000  0.1196    1.0306  -0.1855     1.0738     1.0139      1.1086    0.1425       7.9061   False
+
+  among 3932 failing real rows, bar violation counts (CAGR/DD/OOS-Sharpe): {'CAGR': 3893, 'DD': 1211, 'OOS': 2632}
+
+========================================================================================================
+PRE-REGISTERED PREDICTIONS
+========================================================================================================
+  MISS  P1 S2LF dOOS positive but < +0.1370            cost-collapsed -0.0032 (all-cell -0.0032) vs idea 193's +0.1370
+  MISS  P2 S2LF does not significantly beat RANDOM     S2LF-RANDOM +0.0110, t +3.78
+  HIT   P3 best CONSTANT beats S2LF                    best constant +0.0049 vs S2LF -0.0032
+  HIT   P4 SMALL carries the edge, U56 ~zero           SMALL -0.0004  U56 -0.0053  ETF -0.0051
+  HIT   P5 4b concentrated in U56, SMALL ~0            SMALL 0, U56 208, ETF 0
+
+  3 of 5 predictions hit.
+
+done in 239s
