@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T01:09:29Z · open 62 · in progress 10 · done 413_
+_Source: universe_under2b.csv · updated 2026-09-05T01:12:37Z · open 62 · in progress 0 · done 423_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -71,22 +71,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| ICHR | ICHOR HOLDINGS, LTD. | $1.98B | cloudA | 2026-09-05T01:06:33Z |
-| HUN | Huntsman CORP | $1.65B | cloudA | 2026-09-05T01:06:33Z |
-| OXM | OXFORD INDUSTRIES INC | $546.9M | cloudA | 2026-09-05T01:06:33Z |
-| NCMI | National CineMedia, Inc. | $234.2M | cloudA | 2026-09-05T01:06:33Z |
-| TYGO | TIGO ENERGY, INC. | $81.4M | cloudA | 2026-09-05T01:06:33Z |
-| INSG | INSEEGO CORP. | $66.2M | cloudA | 2026-09-05T01:06:33Z |
-| NSP | INSPERITY, INC. | $1.98B | cloudA | 2026-09-05T01:06:33Z |
-| GO | Grocery Outlet Holding Corp. | $1.22B | cloudA | 2026-09-05T01:06:33Z |
-| OMDA | Omada Health, Inc. | $1.36B | cloudA | 2026-09-05T01:06:33Z |
-| CSTL | CASTLE BIOSCIENCES INC | $997.4M | cloudA | 2026-09-05T01:06:33Z |
 
-## Done (413)
+## Done (423)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | ANGO | ANGIODYNAMICS INC | $639.4M | cloudA | 2026-09-05T01:09:29Z |
 | HNST | Honest Company, Inc. | $627.6M | cloudA | 2026-09-05T01:09:29Z |
 | BLZE | Backblaze, Inc. | $823.9M | cloudA | 2026-09-05T01:09:29Z |
+| ICHR | ICHOR HOLDINGS, LTD. | $1.98B | cloudA | 2026-09-05T01:12:37Z |
+| HUN | Huntsman CORP | $1.65B | cloudA | 2026-09-05T01:12:37Z |
+| OXM | OXFORD INDUSTRIES INC | $546.9M | cloudA | 2026-09-05T01:12:37Z |
+| NCMI | National CineMedia, Inc. | $234.2M | cloudA | 2026-09-05T01:12:37Z |
+| TYGO | TIGO ENERGY, INC. | $81.4M | cloudA | 2026-09-05T01:12:37Z |
+| INSG | INSEEGO CORP. | $66.2M | cloudA | 2026-09-05T01:12:37Z |
+| NSP | INSPERITY, INC. | $1.98B | cloudA | 2026-09-05T01:12:37Z |
+| GO | Grocery Outlet Holding Corp. | $1.22B | cloudA | 2026-09-05T01:12:37Z |
+| OMDA | Omada Health, Inc. | $1.36B | cloudA | 2026-09-05T01:12:37Z |
+| CSTL | CASTLE BIOSCIENCES INC | $997.4M | cloudA | 2026-09-05T01:12:37Z |
