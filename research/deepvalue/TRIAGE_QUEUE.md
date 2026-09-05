@@ -1,42 +1,32 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T02:39:07Z · open 22 · in progress 0 · done 463_
+_Source: universe_under2b.csv · updated 2026-09-05T03:09:38Z · open 2 · in progress 10 · done 473_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (22)
+## Open (2)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| WBTN | WEBTOON Entertainment Inc. | $1.36B |
-| SPCB | SuperCom Ltd | $54.1M |
-| OFIX | Orthofix Medical Inc. | $379.2M |
-| HCWC | HEALTHY CHOICE WELLNESS CORP. | $226.9M |
-| JBLU | JETBLUE AIRWAYS CORP | $1.74B |
-| STRZ | STARZ ENTERTAINMENT CORP /CN/ | $461.0M |
-| BW | Babcock & Wilcox Enterprises, Inc. | $1.06B |
-| JFB | JFB Construction Holdings | $86.6M |
-| ACDC | ProFrac Holding Corp. | $932.5M |
-| ARDX | ARDELYX, INC. | $924.5M |
-| MX | MAGNACHIP SEMICONDUCTOR Corp | $111.0M |
-| MED | MEDIFAST INC | $140.2M |
-| NNBR | NN INC | $285.7M |
-| FOSL | Fossil Group, Inc. | $303.4M |
-| SPWR | SunPower Inc. | $50.9M |
-| SSYS | STRATASYS LTD. | $669.1M |
-| CHRN | ChronoScale Holdings Corp | $71.6M |
-| RGP | RESOURCES CONNECTION, INC. | $146.0M |
-| AIRS | Airsculpt Technologies, Inc. | $183.1M |
-| JELD | JELD-WEN Holding, Inc. | $197.0M |
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| MX | MAGNACHIP SEMICONDUCTOR Corp | $111.0M | cloudA | 2026-09-05T03:06:19Z |
+| MED | MEDIFAST INC | $140.2M | cloudA | 2026-09-05T03:06:19Z |
+| NNBR | NN INC | $285.7M | cloudA | 2026-09-05T03:06:19Z |
+| FOSL | Fossil Group, Inc. | $303.4M | cloudA | 2026-09-05T03:06:19Z |
+| SPWR | SunPower Inc. | $50.9M | cloudA | 2026-09-05T03:06:19Z |
+| SSYS | STRATASYS LTD. | $669.1M | cloudA | 2026-09-05T03:06:19Z |
+| CHRN | ChronoScale Holdings Corp | $71.6M | cloudA | 2026-09-05T03:06:19Z |
+| RGP | RESOURCES CONNECTION, INC. | $146.0M | cloudA | 2026-09-05T03:06:19Z |
+| AIRS | Airsculpt Technologies, Inc. | $183.1M | cloudA | 2026-09-05T03:06:19Z |
+| JELD | JELD-WEN Holding, Inc. | $197.0M | cloudA | 2026-09-05T03:06:19Z |
 
-## Done (463)
+## Done (473)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | XGN | EXAGEN INC. | $182.7M | cloudB | 2026-09-05T02:39:07Z |
 | LTRX | LANTRONIX INC | $207.8M | cloudB | 2026-09-05T02:39:07Z |
 | OWLT | Owlet, Inc. | $147.0M | cloudB | 2026-09-05T02:39:07Z |
+| WBTN | WEBTOON Entertainment Inc. | $1.36B | cloudA | 2026-09-05T03:09:38Z |
+| SPCB | SuperCom Ltd | $54.1M | cloudA | 2026-09-05T03:09:38Z |
+| OFIX | Orthofix Medical Inc. | $379.2M | cloudA | 2026-09-05T03:09:38Z |
+| HCWC | HEALTHY CHOICE WELLNESS CORP. | $226.9M | cloudA | 2026-09-05T03:09:38Z |
+| JBLU | JETBLUE AIRWAYS CORP | $1.74B | cloudA | 2026-09-05T03:09:38Z |
+| STRZ | STARZ ENTERTAINMENT CORP /CN/ | $461.0M | cloudA | 2026-09-05T03:09:38Z |
+| BW | Babcock & Wilcox Enterprises, Inc. | $1.06B | cloudA | 2026-09-05T03:09:38Z |
+| JFB | JFB Construction Holdings | $86.6M | cloudA | 2026-09-05T03:09:38Z |
+| ACDC | ProFrac Holding Corp. | $932.5M | cloudA | 2026-09-05T03:09:38Z |
+| ARDX | ARDELYX, INC. | $924.5M | cloudA | 2026-09-05T03:09:38Z |

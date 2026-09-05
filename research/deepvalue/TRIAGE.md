@@ -464,3 +464,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-05 | XGN | EXAGEN INC. | $182.7M | post-restructuring | 6 | ASP up over 50% since 2022 and adjusted EBITDA loss down to $0.1M, but cash fell to $24.6M against $22.3M of Perceptive debt and 10.1% dilution |
 | 2026-09-05 | LTRX | LANTRONIX INC | $207.8M | none | 0 | no filings in bundle |
 | 2026-09-05 | OWLT | Owlet, Inc. | $147.0M | fallen-growth | 6 | Revenue +30% with positive operating income at 69.6% off the high, but first-half operating cash flow was negative $5.1M as receivables rose $10.2M and the credit line was drawn $10.2M |
+| 2026-09-05 | WBTN | WEBTOON Entertainment Inc. | $1.4B | hidden-asset | 5 | $594.9M cash and no debt against a $1.4B cap, but revenue fell 1.5% in Q1, $336.5M of 2025 impairments and $11.8M of quarterly operating cash outflow |
+| 2026-09-05 | SPCB | SuperCom Ltd | $54.1M | none | 2 | No Item 1 and no earnings release, net income 3x operating income, share count up 147.1% and operating cash flow negative $5.5M |
+| 2026-09-05 | OFIX | Orthofix Medical Inc. | $379.2M | post-restructuring | 6 | Post-SeaSpine and post-M6 cost base resetting, Q2 gross margin 71.0% and operating loss down to 3.9% of sales, but still lossmaking with $117.8M net debt |
+| 2026-09-05 | HCWC | HEALTHY CHOICE WELLNESS CORP. | $226.9M | none | 0 | no filings in bundle |
+| 2026-09-05 | JBLU | JETBLUE AIRWAYS CORP | $1.7B | cyclical-trough | 6 | Fuel up 76% to $4.23 a gallon with RASM up 10.9% recapturing half of it, but $6.8B net debt, negative $1.2B FCF and margin still guided negative |
+| 2026-09-05 | STRZ | STARZ ENTERTAINMENT CORP /CN/ | $461.0M | spin-off | 6 | Post-Lionsgate separation at 2.9x TTM adjusted OIBDA of $195.2M, but $304.7M of TTM restructuring and $129.2M of content impairment sit outside that number |
+| 2026-09-05 | BW | Babcock & Wilcox Enterprises, Inc. | $1.1B | post-restructuring | 7 | Divestitures done, backlog up 533% to $2.6B against a $901.4M EV with net cash and two insiders buying, though 2025 FCF was negative $85.7M |
+| 2026-09-05 | JFB | JFB Construction Holdings | $86.6M | none | 3 | Revenue up 32.3% but share count up 84.5%, operating cash flow negative $11.8M, and an announced XTEND merger valued at 17x its own market cap |
+| 2026-09-05 | ACDC | ProFrac Holding Corp. | $932.5M | cyclical-trough | 6 | Frac pricing inflecting with Q2 adjusted EBITDA up to $69M and four insiders buying $9.75M, but $1.08B net debt against only $72M of liquidity |
+| 2026-09-05 | ARDX | ARDELYX, INC. | $924.5M | fallen-growth | 5 | Q2 revenue up 31% and 53.6% off the high, but IBSRELA guidance was cut, XPHOZAH long-term guidance pulled and the CMS appeal lost |

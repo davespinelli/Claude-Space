@@ -1,0 +1,5 @@
+# HCWC — HEALTHY CHOICE WELLNESS CORP. · triage 2026-09-05 · Edge: none · Score 0/10
+
+No filings for this ticker are present in the bundle. Section 1 reports "Filings fetched: none" and section 11 lists every document as missing, including meta.json, the 10-K Item 1 business description, the Item 7 MD&A, the Item 1A risk factors, the 8-K earnings release exhibit and the Form 4 summary, so there is no management commentary and no business description of any kind. Only the screen row is available: a $226.9M market cap and $229.6M enterprise value against $78.2M of revenue, EBIT of negative $2.5M, net income of negative $3.9M, $3.5M of book equity, and a 135.2% increase in share count to 32,457,828 that the screen itself flags as possibly acquisition or issuance driven rather than organic. Reconciling that dilution against the 12.7% revenue growth needs the MD&A and the earnings release, neither of which exists here. Scored 0 with reason "no filings in bundle" per the lane instructions; re-queue after research/deepvalue/fetch_filings.py HCWC has run.
+
+_Sources: triage pack only (sections 1, 2, 3, 11). Triage-depth read, not a deep dive._
