@@ -1,0 +1,405 @@
+========================================================================================================================================================================================================
+IDEA 178 — is-the-IS-4b-screen-a-one-cell-accident   (2026-09-05_is-the-IS-4b-screen-a-one-cell-accident_C)
+Re-run idea 165's IS-window 4b screen on ideas 159 and 168's committed corpora and count how often it CHANGES the pick and how often the changed pick CLEARS the OOS window.  Exactly two tuned parameters: gross convention (2) x screen coefficients (2).
+IS <= 2016-12-31   OOS >= 2017-01-01   weekly, t+1, gross 0.75, costs [10.0, 25.0] bps, 4b bars phi=0.70 / delta=0.60 unless stated.
+========================================================================================================================================================================================================
+
+[REPRO d] SOURCE AUDIT — the `margins_at(r, b, phi, delta, which)` call convention across every committed backtest script.
+    61 call sites in 21 scripts.
+      PUBLISHED (phi=0.70, delta=0.60)           53
+      THREE-BAR VARIANT (different signature)     5
+      SWAPPED (phi=0.60, delta=0.70)              3
+    THE SWAPPED CALL SITES:
+      2026-09-05_required-gross-as-a-leaderboard-column_cloud.py:626   C.margins_at(... 0.6|0.7 ...)
+      2026-09-05_required-gross-as-a-leaderboard-column_cloud.py:641   C.margins_at(... 0.6|0.7 ...)
+      2026-09-05_the-sign-is-the-parameter-not-the-share_cloud.py:515   C.margins_at(... 0.6|0.7 ...)
+    -> a SWAPPED call runs phi=0.60 (a LOOSER CAGR floor, 60% of SPY instead of 70%) and delta=0.70 (a LOOSER drawdown cap, 70% of SPY's instead of 60%).
+
+RUNNING 11 CELLS (C165 1, C159 6, C168 4) on 4 workers.
+load_prices: network unavailable (ModuleNotFoundError); using prices.csvload_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+    [C159 small @   10bps]   98 books,  781 genuine backtests in this worker, 2906.2s
+    [C159 small @   25bps]   98 books,  943 genuine backtests in this worker, 3658.5s
+    [C159 broad @   10bps]   98 books,  134 genuine backtests in this worker,  242.0s
+    [C159 broad @   25bps]   98 books,  256 genuine backtests in this worker,  456.5s
+    [C168 broad @   10bps]   88 books,  312 genuine backtests in this worker,  320.8s
+    [C168 broad @   25bps]   88 books,  560 genuine backtests in this worker,  555.7s
+    [C159   u56 @   10bps]   98 books,  483 genuine backtests in this worker,  178.3s
+    [C159   u56 @   25bps]   98 books,  839 genuine backtests in this worker,  386.1s
+    [C165   u56 @   10bps]   63 books,  672 genuine backtests in this worker,  118.8s
+    [C168   u56 @   10bps]   88 books, 1067 genuine backtests in this worker,  249.9s
+    [C168   u56 @   25bps]   88 books, 1016 genuine backtests in this worker,  353.2s
+
+========================================================================================================================================================================================================
+REPRODUCTION GATES [a] and [b] — the two corpora reproduced ROW BY ROW against their own committed grid.csv (all rows, not a sample).
+========================================================================================================================================================================================================
+  [a] idea 159 grid.csv: 294 of 294 rows matched; CAGR 9.71e-17, Sharpe 2.22e-16, MaxDD 8.33e-17, H1 2.22e-16, H2 2.22e-16, OOS_Sharpe 2.22e-16, IS_Sharpe 2.22e-16
+  [b] idea 168 grid.csv: 352 of 352 rows matched; CAGR 9.71e-17, Sharpe 2.22e-16, MaxDD 8.33e-17, H1 2.22e-16, H2 2.22e-16, OOS_Sharpe 2.22e-16, IS_Sharpe 2.22e-16
+
+  [c] idea 165's u56 @ 10 bps walk-forward cell, arm by arm:
+      arm                        pick  share    n      g    OOS CAGR  OOS Sharpe  OOS MaxDD   4b-OOS fails
+      idea165 W_STATIC             R6   0.10    4  0.750    19.4570%      0.9693  -22.4474%   H1
+      idea165 W_VMIS               R6   0.10    4  0.729    18.9147%      0.9689  -21.8677%   H1
+      idea165 W_CFIS               R6   0.10    4  0.750    19.4570%      0.9693  -22.4474%   H1
+      idea165 W_4bIS               R6   0.15    6  0.750    19.6877%      1.0823  -18.9302%   (none)
+      idea178 W_STATIC             R6   0.10    4  0.750    19.4570%      0.9693  -22.4474%   PUB H1|DD | AS165 H1
+      idea178 W_4bIS[STATIC][AS165]     R6   0.15    6  0.750    19.6877%      1.0823  -18.9302%   PUB (none) | AS165 (none)
+      idea178 W_4bIS[STATIC][PUB]    MOM   0.53   20  0.750    13.1773%      1.0355  -18.8830%   PUB (none) | AS165 (none)
+      idea178 W_4bIS[CFIS][AS165]     R6   0.15    6  0.750    19.6877%      1.0823  -18.9302%   PUB (none) | AS165 (none)
+      idea178 W_4bIS[CFIS][PUB]    MOM   0.53   20  0.750    13.1773%      1.0355  -18.8830%   PUB (none) | AS165 (none)
+      idea178 ORACLE_OOS           R3   0.27   10  0.750    18.1777%      1.2040  -18.2335%   PUB (none) | AS165 (none)
+      -> pick identical: True;  max |diff| on the three OOS numbers 2.776e-17
+
+========================================================================================================================================================================================================
+THE ANSWER — every cell, every arm.  `changed` = the screen moved the pick away from the IS-Sharpe incumbent.  `clears` = the pick clears the OOS-window 4b bars.
+========================================================================================================================================================================================================
+
+---- corpus C165 ----
+
+  [u56 @ 10bps]  63 books, 33 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick     R6@m=0.10(n=  4) g=0.750 screen   0/ 63  OOS  19.46%/0.9693/-22.45%  4b-OOS PUB: H1|DD
+      W_4bIS[STATIC][AS165]  CHANGED  pick     R6@m=0.15(n=  6) g=0.750 screen   2/ 63  OOS  19.69%/1.0823/-18.93%  4b-OOS PUB: (none)
+      W_4bIS[STATIC][PUB]    CHANGED  pick    MOM@m=0.53(n= 20) g=0.750 screen   1/ 63  OOS  13.18%/1.0355/-18.88%  4b-OOS PUB: (none)
+      W_4bIS[CFIS][AS165]    CHANGED  pick     R6@m=0.15(n=  6) g=0.750 screen   2/ 63  OOS  19.69%/1.0823/-18.93%  4b-OOS PUB: (none)
+      W_4bIS[CFIS][PUB]      CHANGED  pick    MOM@m=0.53(n= 20) g=0.750 screen   1/ 63  OOS  13.18%/1.0355/-18.88%  4b-OOS PUB: (none)
+      ORACLE_OOS             CHANGED  pick     R3@m=0.27(n= 10) g=0.750 screen   0/ 63  OOS  18.18%/1.2040/-18.23%  4b-OOS PUB: (none)
+      RULES v1                                                            OOS   7.73%/0.7471/-13.83%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+---- corpus C159 ----
+
+  [small @ 10bps]  98 books, 0 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick    INV@m=0.15(n= 21) g=0.750 screen   0/ 98  OOS   3.68%/0.3337/-34.47%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[STATIC][AS165]           pick    INV@m=0.15(n= 21) g=0.750 screen   0/ 98  OOS   3.68%/0.3337/-34.47%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[STATIC][PUB]             pick    INV@m=0.15(n= 21) g=0.750 screen   0/ 98  OOS   3.68%/0.3337/-34.47%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[CFIS][AS165]             pick    INV@m=0.15(n= 21) g=0.750 screen   0/ 98  OOS   3.68%/0.3337/-34.47%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[CFIS][PUB]               pick    INV@m=0.15(n= 21) g=0.750 screen   0/ 98  OOS   3.68%/0.3337/-34.47%  4b-OOS PUB: H1|H2|DD|CAGR
+      ORACLE_OOS             CHANGED  pick     R6@m=0.07(n= 11) g=0.750 screen   0/ 98  OOS  13.82%/0.7392/-31.55%  4b-OOS PUB: H2|DD
+      RULES v1                                                            OOS   7.92%/0.5807/-32.84%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+  [small @ 25bps]  98 books, 0 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick    RND@m=0.05(n=  7) g=0.750 screen   0/ 98  OOS   1.94%/0.1965/-42.88%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[STATIC][AS165]           pick    RND@m=0.05(n=  7) g=0.750 screen   0/ 98  OOS   1.94%/0.1965/-42.88%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[STATIC][PUB]             pick    RND@m=0.05(n=  7) g=0.750 screen   0/ 98  OOS   1.94%/0.1965/-42.88%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[CFIS][AS165]             pick    RND@m=0.05(n=  7) g=0.750 screen   0/ 98  OOS   1.94%/0.1965/-42.88%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[CFIS][PUB]               pick    RND@m=0.05(n=  7) g=0.750 screen   0/ 98  OOS   1.94%/0.1965/-42.88%  4b-OOS PUB: H1|H2|DD|CAGR
+      ORACLE_OOS             CHANGED  pick     R6@m=0.07(n= 11) g=0.750 screen   0/ 98  OOS   9.58%/0.5518/-31.85%  4b-OOS PUB: H1|H2|DD|CAGR
+      RULES v1                                                            OOS   2.67%/0.2501/-43.04%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+  [broad @ 10bps]  98 books, 37 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick     R6@m=0.15(n= 14) g=0.750 screen   0/ 98  OOS  13.24%/0.8705/-21.05%  4b-OOS PUB: H1|DD
+      W_4bIS[STATIC][AS165]           pick     R6@m=0.15(n= 14) g=0.750 screen  35/ 98  OOS  13.24%/0.8705/-21.05%  4b-OOS PUB: H1|DD
+      W_4bIS[STATIC][PUB]    CHANGED  pick     R6@m=0.27(n= 25) g=0.750 screen  27/ 98  OOS  13.48%/0.9879/-19.76%  4b-OOS PUB: (none)
+      W_4bIS[CFIS][AS165]             pick     R6@m=0.15(n= 14) g=0.750 screen  35/ 98  OOS  13.24%/0.8705/-21.05%  4b-OOS PUB: H1|DD
+      W_4bIS[CFIS][PUB]      CHANGED  pick     R6@m=0.27(n= 25) g=0.750 screen  28/ 98  OOS  13.48%/0.9879/-19.76%  4b-OOS PUB: (none)
+      ORACLE_OOS             CHANGED  pick    POS@m=0.75(n= 69) g=0.750 screen   0/ 98  OOS  12.23%/1.0708/-18.67%  4b-OOS PUB: (none)
+      RULES v1                                                            OOS   5.94%/0.5763/-21.19%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+  [broad @ 25bps]  98 books, 0 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick     R6@m=0.15(n= 14) g=0.750 screen   0/ 98  OOS  10.52%/0.7152/-21.19%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[STATIC][AS165]           pick     R6@m=0.15(n= 14) g=0.750 screen   0/ 98  OOS  10.52%/0.7152/-21.19%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[STATIC][PUB]             pick     R6@m=0.15(n= 14) g=0.750 screen   0/ 98  OOS  10.52%/0.7152/-21.19%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[CFIS][AS165]             pick     R6@m=0.15(n= 14) g=0.750 screen   0/ 98  OOS  10.52%/0.7152/-21.19%  4b-OOS PUB: H1|H2|DD|CAGR
+      W_4bIS[CFIS][PUB]               pick     R6@m=0.15(n= 14) g=0.750 screen   0/ 98  OOS  10.52%/0.7152/-21.19%  4b-OOS PUB: H1|H2|DD|CAGR
+      ORACLE_OOS             CHANGED  pick    POS@m=0.75(n= 69) g=0.750 screen   0/ 98  OOS  10.66%/0.9463/-19.18%  4b-OOS PUB: CAGR
+      RULES v1                                                            OOS   1.11%/0.1554/-26.72%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+  [u56 @ 10bps]  98 books, 55 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick     R6@m=0.10(n=  4) g=0.750 screen   0/ 98  OOS  19.46%/0.9693/-22.45%  4b-OOS PUB: H1|DD
+      W_4bIS[STATIC][AS165]  CHANGED  pick     R6@m=0.15(n=  6) g=0.750 screen   3/ 98  OOS  19.69%/1.0823/-18.93%  4b-OOS PUB: (none)
+      W_4bIS[STATIC][PUB]    CHANGED  pick    MOM@m=0.53(n= 20) g=0.750 screen   1/ 98  OOS  13.18%/1.0355/-18.88%  4b-OOS PUB: (none)
+      W_4bIS[CFIS][AS165]    CHANGED  pick     R6@m=0.15(n=  6) g=0.750 screen   3/ 98  OOS  19.69%/1.0823/-18.93%  4b-OOS PUB: (none)
+      W_4bIS[CFIS][PUB]      CHANGED  pick    MOM@m=0.53(n= 20) g=0.750 screen   1/ 98  OOS  13.18%/1.0355/-18.88%  4b-OOS PUB: (none)
+      ORACLE_OOS             CHANGED  pick    POS@m=0.45(n= 17) g=0.750 screen   0/ 98  OOS  17.12%/1.2179/-18.65%  4b-OOS PUB: (none)
+      RULES v1                                                            OOS   7.73%/0.7471/-13.83%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+  [u56 @ 25bps]  98 books, 30 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick     R6@m=0.10(n=  4) g=0.750 screen   0/ 98  OOS  16.12%/0.8310/-23.08%  4b-OOS PUB: H1|DD
+      W_4bIS[STATIC][AS165]           pick     R6@m=0.10(n=  4) g=0.750 screen   0/ 98  OOS  16.12%/0.8310/-23.08%  4b-OOS PUB: H1|DD
+      W_4bIS[STATIC][PUB]             pick     R6@m=0.10(n=  4) g=0.750 screen   0/ 98  OOS  16.12%/0.8310/-23.08%  4b-OOS PUB: H1|DD
+      W_4bIS[CFIS][AS165]             pick     R6@m=0.10(n=  4) g=0.750 screen   0/ 98  OOS  16.12%/0.8310/-23.08%  4b-OOS PUB: H1|DD
+      W_4bIS[CFIS][PUB]               pick     R6@m=0.10(n=  4) g=0.750 screen   0/ 98  OOS  16.12%/0.8310/-23.08%  4b-OOS PUB: H1|DD
+      ORACLE_OOS             CHANGED  pick    POS@m=0.45(n= 17) g=0.750 screen   0/ 98  OOS  15.09%/1.0907/-18.76%  4b-OOS PUB: (none)
+      RULES v1                                                            OOS   3.78%/0.3992/-14.18%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+---- corpus C168 ----
+
+  [broad @ 10bps]  88 books, 19 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick   0.25@m=0.10(n=  9) g=0.750 screen   0/ 88  OOS  15.66%/0.8598/-23.15%  4b-OOS PUB: H1|DD
+      W_4bIS[STATIC][AS165]  CHANGED  pick    0.1@m=0.20(n= 18) g=0.750 screen  23/ 88  OOS  14.30%/0.9491/-21.93%  4b-OOS PUB: H1|DD
+      W_4bIS[STATIC][PUB]    CHANGED  pick   -0.5@m=0.27(n= 25) g=0.750 screen  12/ 88  OOS   8.41%/0.7986/-18.79%  4b-OOS PUB: H1|H2|CAGR
+      W_4bIS[CFIS][AS165]    CHANGED  pick    0.1@m=0.20(n= 18) g=0.750 screen  23/ 88  OOS  14.30%/0.9491/-21.93%  4b-OOS PUB: H1|DD
+      W_4bIS[CFIS][PUB]      CHANGED  pick   -0.5@m=0.27(n= 25) g=0.800 screen  14/ 88  OOS   8.95%/0.7985/-19.95%  4b-OOS PUB: H1|H2|CAGR
+      ORACLE_OOS             CHANGED  pick    1.0@m=0.05(n=  5) g=0.750 screen   0/ 88  OOS  25.23%/1.1020/-24.19%  4b-OOS PUB: DD
+      RULES v1                                                            OOS   5.94%/0.5763/-21.19%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+  [broad @ 25bps]  88 books, 0 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick   0.25@m=0.10(n=  9) g=0.750 screen   0/ 88  OOS  12.30%/0.7050/-23.21%  4b-OOS PUB: H1|H2|DD
+      W_4bIS[STATIC][AS165]           pick   0.25@m=0.10(n=  9) g=0.750 screen   0/ 88  OOS  12.30%/0.7050/-23.21%  4b-OOS PUB: H1|H2|DD
+      W_4bIS[STATIC][PUB]             pick   0.25@m=0.10(n=  9) g=0.750 screen   0/ 88  OOS  12.30%/0.7050/-23.21%  4b-OOS PUB: H1|H2|DD
+      W_4bIS[CFIS][AS165]             pick   0.25@m=0.10(n=  9) g=0.750 screen   0/ 88  OOS  12.30%/0.7050/-23.21%  4b-OOS PUB: H1|H2|DD
+      W_4bIS[CFIS][PUB]               pick   0.25@m=0.10(n=  9) g=0.750 screen   0/ 88  OOS  12.30%/0.7050/-23.21%  4b-OOS PUB: H1|H2|DD
+      ORACLE_OOS             CHANGED  pick    0.5@m=0.75(n= 69) g=0.750 screen   0/ 88  OOS  10.66%/0.9463/-19.18%  4b-OOS PUB: CAGR
+      RULES v1                                                            OOS   1.11%/0.1554/-26.72%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+  [u56 @ 10bps]  88 books, 33 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  20.02%/0.9818/-24.30%  4b-OOS PUB: DD
+      W_4bIS[STATIC][AS165]           pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  20.02%/0.9818/-24.30%  4b-OOS PUB: DD
+      W_4bIS[STATIC][PUB]             pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  20.02%/0.9818/-24.30%  4b-OOS PUB: DD
+      W_4bIS[CFIS][AS165]             pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  20.02%/0.9818/-24.30%  4b-OOS PUB: DD
+      W_4bIS[CFIS][PUB]               pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  20.02%/0.9818/-24.30%  4b-OOS PUB: DD
+      ORACLE_OOS             CHANGED  pick    1.0@m=0.35(n= 13) g=0.750 screen   0/ 88  OOS  19.40%/1.2345/-20.25%  4b-OOS PUB: DD
+      RULES v1                                                            OOS   7.73%/0.7471/-13.83%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+  [u56 @ 25bps]  88 books, 22 of them clear the OOS-window 4b at g=0.75 (the reachable set)
+      W_STATIC                 ---    pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  16.41%/0.8346/-25.08%  4b-OOS PUB: H2|DD
+      W_4bIS[STATIC][AS165]           pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  16.41%/0.8346/-25.08%  4b-OOS PUB: H2|DD
+      W_4bIS[STATIC][PUB]             pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  16.41%/0.8346/-25.08%  4b-OOS PUB: H2|DD
+      W_4bIS[CFIS][AS165]             pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  16.41%/0.8346/-25.08%  4b-OOS PUB: H2|DD
+      W_4bIS[CFIS][PUB]               pick    0.0@m=0.10(n=  4) g=0.750 screen   0/ 88  OOS  16.41%/0.8346/-25.08%  4b-OOS PUB: H2|DD
+      ORACLE_OOS             CHANGED  pick    1.0@m=0.35(n= 13) g=0.750 screen   0/ 88  OOS  16.95%/1.0991/-20.38%  4b-OOS PUB: DD
+      RULES v1                                                            OOS   3.78%/0.3992/-14.18%
+      SPY                                                                 OOS  15.45%/0.8820/-33.72%
+
+========================================================================================================================================================================================================
+HEADLINE COUNTS — over the 10 NEW cells (C159 + C168) and over all 11 cells run here.
+========================================================================================================================================================================================================
+  arm                       cells  changed  clears  changed&clears  mean OOS Sharpe  vs W_STATIC
+  -- NEW 10 cells --
+  W_STATIC                     10        0       0               0           0.7298      +0.0000
+  W_4bIS[STATIC][AS165]        10        2       1               1           0.7500      +0.0202
+  W_4bIS[STATIC][PUB]          10        3       2               2           0.7420      +0.0122
+  W_4bIS[CFIS][AS165]          10        2       1               1           0.7500      +0.0202
+  W_4bIS[CFIS][PUB]            10        3       2               2           0.7420      +0.0122
+  ORACLE_OOS                   10       10       3               3           0.9999      +0.2701
+  -- ALL 11 cells --
+  W_STATIC                     11        0       0               0           0.7515      +0.0000
+  W_4bIS[STATIC][AS165]        11        3       2               2           0.7802      +0.0287
+  W_4bIS[STATIC][PUB]          11        4       3               3           0.7687      +0.0172
+  W_4bIS[CFIS][AS165]          11        3       2               2           0.7802      +0.0287
+  W_4bIS[CFIS][PUB]            11        4       3               3           0.7687      +0.0171
+  ORACLE_OOS                   11       11       4               4           1.0184      +0.2669
+
+  (`clears` uses the PUBLISHED coefficients phi=0.70 / delta=0.60 on the four screen bars.  The AS165 reading is in .walkforward.csv and printed per cell above.)
+
+  PAIRED (by cell) OOS-Sharpe difference vs the do-nothing control W_STATIC:
+    W_4bIS[STATIC][AS165]    NEW 10: mean +0.0202  t +1.49  wins 2 / losses 0 / ties 8
+    W_4bIS[STATIC][AS165]    ALL 11: mean +0.0287  t +1.92  wins 3 / losses 0 / ties 8
+    W_4bIS[STATIC][PUB]      NEW 10: mean +0.0122  t +0.81  wins 2 / losses 1 / ties 7
+    W_4bIS[STATIC][PUB]      ALL 11: mean +0.0172  t +1.18  wins 3 / losses 1 / ties 7
+    W_4bIS[CFIS][AS165]      NEW 10: mean +0.0202  t +1.49  wins 2 / losses 0 / ties 8
+    W_4bIS[CFIS][AS165]      ALL 11: mean +0.0287  t +1.92  wins 3 / losses 0 / ties 8
+    W_4bIS[CFIS][PUB]        NEW 10: mean +0.0122  t +0.81  wins 2 / losses 1 / ties 7
+    W_4bIS[CFIS][PUB]        ALL 11: mean +0.0171  t +1.18  wins 3 / losses 1 / ties 7
+
+  SCREEN ADMISSION RATE (books clearing the IS-window screen / books in the cell):
+    [STATIC][AS165]  mean   6.2%   empty in 7 of 11 cells   range 0-35
+    [STATIC][PUB]  mean   4.0%   empty in 7 of 11 cells   range 0-27
+    [CFIS][AS165]  mean   6.2%   empty in 7 of 11 cells   range 0-35
+    [CFIS][PUB]  mean   4.3%   empty in 7 of 11 cells   range 0-28
+
+========================================================================================================================================================================================================
+BOTH KEEP PATHS over every corpus book at the published gross (full sample, phi=0.70 / delta=0.60).
+========================================================================================================================================================================================================
+                   pass4a  pass4b
+corpus panel cost                
+C159   broad 10.0      69      49
+             25.0      88       0
+       small 10.0       0       0
+             25.0      12       0
+       u56   10.0       1      41
+             25.0       2       0
+C165   u56   10.0       1      25
+C168   broad 10.0      49      20
+             25.0      76       0
+       u56   10.0       1      27
+             25.0       3       0
+
+  TOTAL: 4a 302 of 1003,  4b 162 of 1003
+
+  The 4b passers (all of them):
+corpus panel    cost   arm  share  n   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe
+  C159   u56 10.0000   POS 0.4500 17 0.1445  1.0975 -0.1865 1.0115 1.1771      1.2179
+  C168   u56 10.0000  0.75 0.2700 10 0.1725  1.0931 -0.2022 1.0198 1.1621      1.1765
+  C159   u56 10.0000    R6 0.2700 10 0.1589  1.0896 -0.1874 1.0267 1.1497      1.1762
+  C165   u56 10.0000    R6 0.2700 10 0.1589  1.0896 -0.1874 1.0267 1.1497      1.1762
+  C168   u56 10.0000   0.1 0.3500 13 0.1493  1.0851 -0.1919 1.0618 1.1117      1.1550
+  C165   u56 10.0000    R6 0.1500  6 0.1862  1.0844 -0.1893 1.0845 1.0908      1.0823
+  C159   u56 10.0000    R6 0.1500  6 0.1862  1.0844 -0.1893 1.0845 1.0908      1.0823
+  C168   u56 10.0000  0.75 0.3500 13 0.1572  1.0835 -0.2007 0.9845 1.1740      1.2010
+  C168   u56 10.0000  0.25 0.5300 20 0.1339  1.0819 -0.1904 1.0595 1.1076      1.1628
+  C168   u56 10.0000   0.1 0.7500 28 0.1216  1.0817 -0.1754 1.0479 1.1157      1.1792
+  C168   u56 10.0000  0.25 0.7500 28 0.1225  1.0800 -0.1750 1.0430 1.1167      1.1766
+  C168   u56 10.0000   1.0 0.5300 20 0.1370  1.0778 -0.1915 1.0327 1.1222      1.1686
+  C165   u56 10.0000   POS 0.7500 28 0.1229  1.0755 -0.1767 1.0388 1.1117      1.1761
+  C168   u56 10.0000   0.5 0.7500 28 0.1229  1.0755 -0.1767 1.0388 1.1117      1.1761
+  C159   u56 10.0000   POS 0.7500 28 0.1229  1.0755 -0.1767 1.0388 1.1117      1.1761
+  C159   u56 10.0000   POS 0.6500 24 0.1280  1.0738 -0.1842 1.0242 1.1217      1.1747
+  C168   u56 10.0000  0.25 0.3500 13 0.1500  1.0682 -0.1992 1.0549 1.0857      1.1197
+  C168   u56 10.0000   0.1 0.5300 20 0.1303  1.0679 -0.1880 1.0638 1.0784      1.1391
+  C159   u56 10.0000   POS 1.0000 37 0.1125  1.0678 -0.1699 1.0530 1.0847      1.1608
+  C165   u56 10.0000   POS 1.0000 37 0.1125  1.0678 -0.1699 1.0530 1.0847      1.1608
+  C165   u56 10.0000   MOM 0.7500 28 0.1183  1.0676 -0.1708 1.0924 1.0521      1.1305
+  C159   u56 10.0000   MOM 0.7500 28 0.1183  1.0676 -0.1708 1.0924 1.0521      1.1305
+  C168   u56 10.0000  0.75 0.7500 28 0.1223  1.0664 -0.1770 1.0208 1.1103      1.1733
+  C159   u56 10.0000   POS 0.9000 34 0.1154  1.0655 -0.1742 1.0394 1.0921      1.1656
+  C168   u56 10.0000   0.5 0.5300 20 0.1335  1.0650 -0.1900 1.0055 1.1217      1.1693
+  C159   u56 10.0000   POS 0.5300 20 0.1335  1.0650 -0.1900 1.0055 1.1217      1.1693
+  C165   u56 10.0000   POS 0.5300 20 0.1335  1.0650 -0.1900 1.0055 1.1217      1.1693
+  C159   u56 10.0000  NONE 0.9000 34 0.1132  1.0641 -0.1698 1.0532 1.0777      1.1537
+  C168   u56 10.0000   1.0 0.7500 28 0.1222  1.0639 -0.1770 1.0122 1.1131      1.1777
+  C168   u56 10.0000   0.0 0.5300 20 0.1279  1.0635 -0.1831 1.0682 1.0664      1.1307
+  C165   u56 10.0000  NONE 0.5300 20 0.1279  1.0635 -0.1831 1.0682 1.0664      1.1307
+  C159   u56 10.0000  NONE 0.5300 20 0.1279  1.0635 -0.1831 1.0682 1.0664      1.1307
+  C165   u56 10.0000  NONE 0.7500 28 0.1181  1.0627 -0.1754 1.0310 1.0950      1.1587
+  C168   u56 10.0000   0.0 0.7500 28 0.1181  1.0627 -0.1754 1.0310 1.0950      1.1587
+  C159   u56 10.0000  NONE 0.7500 28 0.1181  1.0627 -0.1754 1.0310 1.0950      1.1587
+  C168   u56 10.0000  0.75 0.5300 20 0.1339  1.0616 -0.1899 1.0114 1.1103      1.1573
+  C159   u56 10.0000  NONE 1.0000 37 0.1099  1.0558 -0.1707 1.0481 1.0664      1.1448
+  C165   u56 10.0000  NONE 1.0000 37 0.1099  1.0558 -0.1707 1.0481 1.0664      1.1448
+  C159 broad 10.0000    R6 0.2000 18 0.1509  1.0557 -0.2001 1.2509 0.8847      0.9796
+  C168   u56 10.0000 -0.25 0.7500 28 0.1142  1.0555 -0.1748 1.0674 1.0502      1.1196
+  C159   u56 10.0000  NONE 0.6500 24 0.1210  1.0522 -0.1827 1.0362 1.0719      1.1346
+  C168   u56 10.0000  -0.1 0.7500 28 0.1157  1.0515 -0.1752 1.0505 1.0573      1.1246
+  C159   u56 10.0000    R3 0.4500 17 0.1274  1.0503 -0.1769 0.9764 1.1193      1.1557
+  C168   u56 10.0000  0.25 0.2700 10 0.1589  1.0484 -0.2005 1.0441 1.0587      1.0922
+  C159   u56 10.0000    R6 0.6500 24 0.1200  1.0472 -0.1779 1.0610 1.0402      1.1104
+  C165   u56 10.0000    R6 0.2000  7 0.1693  1.0467 -0.1914 1.0598 1.0426      1.0670
+  C159   u56 10.0000    R6 0.2000  7 0.1693  1.0467 -0.1914 1.0598 1.0426      1.0670
+  C168   u56 10.0000  -0.1 0.5300 20 0.1226  1.0424 -0.1838 1.0548 1.0388      1.1030
+  C159   u56 10.0000   MOM 0.6500 24 0.1193  1.0423 -0.1807 1.0955 1.0043      1.0779
+  C168 broad 10.0000   1.0 0.7500 69 0.1195  1.0401 -0.1849 1.1147 0.9696      1.0699
+  C159   u56 10.0000   MOM 1.0000 37 0.1074  1.0396 -0.1673 1.0586 1.0269      1.1155
+  C165   u56 10.0000   MOM 1.0000 37 0.1074  1.0396 -0.1673 1.0586 1.0269      1.1155
+  C159   u56 10.0000   MOM 0.9000 34 0.1094  1.0378 -0.1686 1.0445 1.0365      1.1181
+  C159   u56 10.0000    R6 0.3500 13 0.1396  1.0371 -0.1893 1.0424 1.0399      1.0865
+  C165   u56 10.0000    R6 0.3500 13 0.1396  1.0371 -0.1893 1.0424 1.0399      1.0865
+  C159 broad 10.0000   POS 1.0000 91 0.1124  1.0370 -0.1834 1.1536 0.9278      1.0351
+  C165   u56 10.0000    R6 0.5300 20 0.1238  1.0364 -0.1859 1.0490 1.0314      1.0940
+  C159   u56 10.0000    R6 0.5300 20 0.1238  1.0364 -0.1859 1.0490 1.0314      1.0940
+  C168 broad 10.0000  0.75 0.7500 69 0.1187  1.0360 -0.1847 1.1145 0.9620      1.0611
+  C159 broad 10.0000   RND 0.9000 82 0.1090  1.0359 -0.1794 1.1565 0.9225      1.0263
+  C159   u56 10.0000    R3 0.5300 20 0.1207  1.0358 -0.1777 0.9822 1.0872      1.1322
+  C165   u56 10.0000    R3 0.5300 20 0.1207  1.0358 -0.1777 0.9822 1.0872      1.1322
+  C159   u56 10.0000    R6 0.4500 17 0.1293  1.0354 -0.1820 1.0220 1.0532      1.1105
+  C159   u56 10.0000    R3 0.9000 34 0.1076  1.0335 -0.1688 0.9891 1.0764      1.1333
+  C159 broad 10.0000   POS 0.9000 82 0.1141  1.0331 -0.1843 1.1418 0.9313      1.0347
+  C159 broad 10.0000   POS 0.7500 69 0.1177  1.0325 -0.1867 1.0970 0.9721      1.0708
+  C168 broad 10.0000   0.5 0.7500 69 0.1177  1.0325 -0.1867 1.0970 0.9721      1.0708
+  C159   u56 10.0000    R6 0.9000 34 0.1088  1.0320 -0.1748 1.0361 1.0321      1.1073
+  C159 broad 10.0000   RND 0.7500 69 0.1094  1.0316 -0.1799 1.1561 0.9144      1.0118
+  C165   u56 10.0000   RND 0.7500 28 0.1075  1.0315 -0.1652 1.0727 0.9973      1.1016
+  C159   u56 10.0000   RND 0.7500 28 0.1075  1.0315 -0.1652 1.0727 0.9973      1.1016
+  C159 broad 10.0000   RND 0.4500 41 0.1133  1.0307 -0.1869 1.1566 0.9126      1.0066
+  C159 broad 10.0000    R6 0.2700 25 0.1379  1.0301 -0.1976 1.1843 0.8933      0.9879
+  C159   u56 10.0000   MOM 0.5300 20 0.1232  1.0296 -0.1888 1.1097 0.9711      1.0355
+  C165   u56 10.0000   MOM 0.5300 20 0.1232  1.0296 -0.1888 1.1097 0.9711      1.0355
+  C159 broad 10.0000   RND 0.3500 32 0.1167  1.0291 -0.1851 1.1496 0.9167      1.0093
+  C159 broad 10.0000  NONE 1.0000 91 0.1104  1.0283 -0.1827 1.1462 0.9178      1.0269
+  C159 broad 10.0000   RND 0.5300 48 0.1111  1.0278 -0.1858 1.1365 0.9255      1.0142
+  C168 broad 10.0000  0.25 0.7500 69 0.1163  1.0276 -0.1865 1.1080 0.9528      1.0540
+  C159 broad 10.0000   RND 1.0000 91 0.1077  1.0273 -0.1784 1.1572 0.9054      1.0121
+  C159 broad 10.0000   RND 0.2000 18 0.1263  1.0271 -0.1813 1.0660 0.9941      1.0537
+  C168 broad 10.0000   0.1 0.7500 69 0.1152  1.0256 -0.1864 1.1171 0.9406      1.0388
+  C165   u56 10.0000    R6 0.7500 28 0.1128  1.0235 -0.1773 1.0232 1.0278      1.0969
+  C159   u56 10.0000    R6 0.7500 28 0.1128  1.0235 -0.1773 1.0232 1.0278      1.0969
+  C159 broad 10.0000  NONE 0.9000 82 0.1115  1.0235 -0.1841 1.1208 0.9326      1.0349
+  C159 broad 10.0000    R6 0.9000 82 0.1111  1.0226 -0.1857 1.1286 0.9236      1.0257
+  C168   u56 10.0000 -0.25 0.5300 20 0.1151  1.0220 -0.1740 1.0669 0.9900      1.0521
+  C159   u56 10.0000   RND 0.6500 24 0.1087  1.0215 -0.1704 1.0487 0.9996      1.0978
+  C159 broad 10.0000    R3 1.0000 91 0.1085  1.0213 -0.1816 1.1222 0.9270      1.0299
+  C159 broad 10.0000   MOM 0.7500 69 0.1134  1.0208 -0.1864 1.1509 0.9017      1.0141
+  C159   u56 10.0000  NONE 0.4500 17 0.1271  1.0196 -0.1918 1.0430 1.0069      1.0692
+  C159   u56 10.0000    R3 0.7500 28 0.1104  1.0190 -0.1743 0.9999 1.0402      1.1001
+  C165   u56 10.0000    R3 0.7500 28 0.1104  1.0190 -0.1743 0.9999 1.0402      1.1001
+  C159 broad 10.0000  NONE 0.7500 69 0.1136  1.0181 -0.1853 1.1053 0.9374      1.0332
+  C168 broad 10.0000   0.0 0.7500 69 0.1136  1.0181 -0.1853 1.1053 0.9374      1.0332
+  C159 broad 10.0000   RND 0.6500 59 0.1085  1.0179 -0.1836 1.1470 0.8969      0.9895
+  C159 broad 10.0000    R3 0.9000 82 0.1093  1.0161 -0.1814 1.1140 0.9249      1.0270
+  C168   u56 10.0000   0.1 0.2000  7 0.1663  1.0160 -0.2009 1.0242 1.0156      1.0191
+  C159   u56 10.0000   MOM 0.4500 17 0.1268  1.0159 -0.1895 1.0806 0.9716      1.0219
+  C159 broad 10.0000   POS 0.6500 59 0.1197  1.0153 -0.1906 1.1067 0.9310      1.0288
+  C168 broad 10.0000 -0.25 0.5300 48 0.1149  1.0143 -0.1844 1.0934 0.9431      1.0333
+  C159 broad 10.0000   MOM 0.9000 82 0.1096  1.0141 -0.1843 1.1538 0.8844      0.9947
+  C159 broad 10.0000    R6 0.7500 69 0.1128  1.0140 -0.1862 1.1143 0.9205      1.0195
+  C159 broad 10.0000   POS 0.2700 25 0.1454  1.0128 -0.2014 1.1227 0.9163      0.9995
+  C168 broad 10.0000   0.5 0.2700 25 0.1454  1.0128 -0.2014 1.1227 0.9163      0.9995
+  C159 broad 10.0000  NONE 0.5300 48 0.1197  1.0124 -0.1885 1.1087 0.9248      1.0186
+  C168 broad 10.0000   0.0 0.5300 48 0.1197  1.0124 -0.1885 1.1087 0.9248      1.0186
+  C165   u56 10.0000  NONE 0.3500 13 0.1340  1.0114 -0.1911 1.0200 1.0106      1.0519
+  C168   u56 10.0000   0.0 0.3500 13 0.1340  1.0114 -0.1911 1.0200 1.0106      1.0519
+  C159   u56 10.0000  NONE 0.3500 13 0.1340  1.0114 -0.1911 1.0200 1.0106      1.0519
+  C159 broad 10.0000   MOM 1.0000 91 0.1077  1.0113 -0.1836 1.1491 0.8827      0.9937
+  C159 broad 10.0000   INV 1.0000 91 0.1066  1.0103 -0.1814 1.1410 0.8879      0.9993
+  C168   u56 10.0000  -0.1 0.3500 13 0.1289  1.0100 -0.1703 1.0407 0.9928      1.0356
+  C159 broad 10.0000    R6 1.0000 91 0.1077  1.0088 -0.1843 1.1327 0.8926      0.9967
+  C159   u56 10.0000   RND 0.5300 20 0.1095  1.0066 -0.1744 1.0189 0.9975      1.0726
+  C165   u56 10.0000   RND 0.5300 20 0.1095  1.0066 -0.1744 1.0189 0.9975      1.0726
+  C168 broad 10.0000  -0.1 0.7500 69 0.1113  1.0057 -0.1862 1.0988 0.9195      1.0168
+  C168 broad 10.0000  -0.1 0.5300 48 0.1170  1.0054 -0.1895 1.1226 0.8988      0.9971
+  C159 broad 10.0000   MOM 0.6500 59 0.1145  1.0052 -0.1898 1.1238 0.8987      0.9987
+  C159 broad 10.0000   RND 0.2700 25 0.1180  1.0037 -0.1813 1.0877 0.9281      1.0041
+  C159 broad 10.0000    R6 0.4500 41 0.1220  1.0036 -0.1863 1.1008 0.9158      1.0027
+  C168 broad 10.0000  0.25 0.5300 48 0.1215  1.0035 -0.1897 1.1083 0.9076      0.9950
+  C159 broad 10.0000    R6 0.3500 32 0.1279  1.0031 -0.1895 1.1407 0.8796      0.9660
+  C159 broad 10.0000    R6 0.6500 59 0.1141  1.0011 -0.1869 1.1054 0.9049      0.9999
+  C159 broad 10.0000  NONE 0.6500 59 0.1142  0.9998 -0.1863 1.0993 0.9087      1.0031
+  C168 broad 10.0000   1.0 0.5300 48 0.1246  0.9998 -0.2016 1.0769 0.9292      1.0213
+  C159 broad 10.0000   POS 0.5300 48 0.1228  0.9997 -0.1968 1.0991 0.9087      0.9981
+  C168 broad 10.0000   0.5 0.5300 48 0.1228  0.9997 -0.1968 1.0991 0.9087      0.9981
+  C168 broad 10.0000  0.75 0.5300 48 0.1238  0.9988 -0.1957 1.0746 0.9297      1.0187
+  C159 broad 10.0000    R6 0.5300 48 0.1173  0.9949 -0.1906 1.1144 0.8856      0.9808
+  C159 broad 10.0000   POS 0.3500 32 0.1340  0.9926 -0.1980 1.0772 0.9173      0.9961
+  C168 broad 10.0000   0.5 0.3500 32 0.1340  0.9926 -0.1980 1.0772 0.9173      0.9961
+  C168 broad 10.0000 -0.25 0.7500 69 0.1083  0.9917 -0.1854 1.0960 0.8949      0.9983
+  C168   u56 10.0000  -0.1 0.1000  4 0.1769  0.9911 -0.1886 0.9903 0.9982      0.9899
+  C159 broad 10.0000   POS 0.4500 41 0.1261  0.9903 -0.1959 1.0764 0.9125      0.9965
+  C159   u56 10.0000   RND 0.4500 17 0.1103  0.9901 -0.1690 0.9956 0.9875      1.0595
+  C165   u56 10.0000   RND 0.2700 10 0.1202  0.9894 -0.1671 0.9759 1.0043      1.0484
+  C159   u56 10.0000   RND 0.2700 10 0.1202  0.9894 -0.1671 0.9759 1.0043      1.0484
+  C159 broad 10.0000   MOM 0.5300 48 0.1173  0.9890 -0.1924 1.1137 0.8795      0.9723
+  C168 broad 10.0000   0.1 0.5300 48 0.1176  0.9859 -0.1913 1.0765 0.9034      0.9958
+  C159 broad 10.0000    R3 0.4500 41 0.1160  0.9847 -0.1855 1.0591 0.9163      1.0075
+  C159 broad 10.0000    R3 0.7500 69 0.1078  0.9842 -0.1842 1.0727 0.9018      1.0040
+  C159 broad 10.0000  NONE 0.4500 41 0.1194  0.9840 -0.1920 1.0931 0.8853      0.9760
+  C168   u56 10.0000 -0.25 0.2000  7 0.1297  0.9796 -0.1556 0.9644 1.0009      1.0274
+  C168 broad 10.0000  0.25 0.3500 32 0.1288  0.9769 -0.1988 1.0859 0.8798      0.9729
+  C165   u56 10.0000   MOM 0.3500 13 0.1311  0.9726 -0.1949 1.0590 0.9105      0.9583
+  C159   u56 10.0000   MOM 0.3500 13 0.1311  0.9726 -0.1949 1.0590 0.9105      0.9583
+  C159 broad 10.0000   RND 0.0750  7 0.1375  0.9710 -0.1936 1.0832 0.8727      0.9259
+  C159 broad 10.0000   RND 0.1000  9 0.1309  0.9689 -0.1905 1.0738 0.8748      0.9205
+  C168 broad 10.0000   0.1 0.3500 32 0.1242  0.9658 -0.1973 1.1026 0.8430      0.9335
+  C159 broad 10.0000    R3 0.5300 48 0.1110  0.9655 -0.1850 1.0409 0.8962      0.9900
+  C159 broad 10.0000   RND 0.1500 14 0.1215  0.9641 -0.1876 1.0099 0.9251      0.9644
+  C159 broad 10.0000   MOM 0.4500 41 0.1169  0.9611 -0.1969 1.0765 0.8605      0.9532
+  C159 broad 10.0000    R3 0.6500 59 0.1071  0.9602 -0.1834 1.0240 0.9009      0.9963
+  C159 broad 10.0000    R3 0.3500 32 0.1174  0.9588 -0.1919 1.0366 0.8881      0.9716
+  C159   u56 10.0000   RND 0.1000  4 0.1456  0.9576 -0.1580 0.9620 0.9586      1.0137
+  C165   u56 10.0000   RND 0.1000  4 0.1456  0.9576 -0.1580 0.9620 0.9586      1.0137
+  C168   u56 10.0000 -0.25 0.3500 13 0.1131  0.9438 -0.1659 1.0041 0.9016      0.9498
+  C165   u56 10.0000   RND 0.2000  7 0.1215  0.9331 -0.1762 0.9925 0.8836      0.9364
+  C159   u56 10.0000   RND 0.2000  7 0.1215  0.9331 -0.1762 0.9925 0.8836      0.9364
+  C159   u56 10.0000   RND 0.1500  6 0.1256  0.9288 -0.1718 0.9889 0.8789      0.9226
+  C165   u56 10.0000   RND 0.1500  6 0.1256  0.9288 -0.1718 0.9889 0.8789      0.9226
+
+========================================================================================================================================================================================================
+PRE-REGISTERED PREDICTIONS, SCORED
+========================================================================================================================================================================================================
+  P1 screen changes the pick in a minority of the new cells       HIT    changed in 2 of 10 (idea 165's own arm)
+  P2 changed picks clear the OOS window at most 1 in 3            MISS   6 of 10 changed picks clear
+  P3 no arm beats the control by more than +0.02 OOS Sharpe       MISS   best paired mean +0.0202
+  P4 published coefficients admit no more, and win no more        MISS   screen admissions PUB 85 vs AS165 126; changed&clears 6 vs 4
+  P5 no new KEEP                                                  HIT    judged against the published record in the memo
+
+Done in 3661s.
