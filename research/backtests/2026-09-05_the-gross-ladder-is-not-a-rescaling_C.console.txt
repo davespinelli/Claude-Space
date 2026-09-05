@@ -1,0 +1,242 @@
+======================================================================================================================
+QUEUE idea 176 — the-gross-ladder-is-not-a-rescaling   (lane C, 2026-09-05)
+Audit: did the project ever price a gross ladder by scaling one backtest?  Then: what would it have cost?
+======================================================================================================================
+
+----------------------------------------------------------------------------------------------------------------------
+A1. STATIC AUDIT — AST scan of every committed research/backtests/*.py
+----------------------------------------------------------------------------------------------------------------------
+  124 committed scripts scanned; LEADERBOARD.md carries 3315 rows across 126 distinct Script cells.
+  COVERAGE: 2007 of 3315 rows (60.5%) name a Script cell that resolves to a file A1 scanned; the remaining 1308 name a cell that is not a committed .py in research/backtests (free text, a deleted file, or a helper) and are OUT OF A1'S REACH — A2/A3 audit their numbers instead.
+
+                     scripts  leaderboard_rows
+verdict                                       
+GENUINE                   55               789
+LADDER-UNCLASSIFIED        9               314
+MIXED                      1                 5
+NO-LADDER                 59               899
+
+  scripts flagged RESCALED or MIXED: 1  (committed leaderboard rows exposed: 5)
+    2026-09-05_required-gross-as-a-leaderboard-column_cloud.py  [MIXED]  rows=5
+        L234: GENUINE — ladder value passed into weights builder `weights(...)` :: return I159.weights(px, key, n, pk)
+        L259: GENUINE — ladder value passed into weights builder `weights(...)` :: W = weights(R["px"], key, R["nmap"][m], pk) * (g / GROSS)
+        L271: GENUINE — ladder value passed into simulating call `run_at(...)` :: r = run_at(pk, cost, key, m, g, ref)
+        L475: GENUINE — ladder value passed into simulating call `cf_gross_genuine(...)` :: gc_full, nm1 = cf_gross_genuine(pk, cost, key, m, 0.70 * b["full"]["scagr"], ref)
+        L476: GENUINE — ladder value passed into simulating call `cf_gross_genuine(...)` :: gc_is, nm2 = cf_gross_genuine(pk, cost, key, m, 0.70 * b["IS"]["scagr"], ref, win="IS")
+        L260: GENUINE — ladder value passed into simulating call `backtest(...)` :: _RUN[ck] = backtest(R["px"], W, cost_bps=cost, freq=FREQ)["returns"].loc[R["start"]:]
+        L409: GENUINE — ladder value passed into simulating call `run_at(...)` :: rr = run_at(pk, 10.0, key, m, g, ref)
+        L490: GENUINE — ladder value passed into simulating call `run_at(...)` :: rr = run_at(pk, cost, key, m, gg, ref)
+        L625: GENUINE — ladder value passed into simulating call `run_at(...)` :: rr = run_at(pk, cost, key, m, g, ref)          # genuine, cached
+        L639: GENUINE — ladder value passed into simulating call `run_at(...)` :: r = run_at(pk, cost, key, m, g, ref)           # genuine, cached
+        L671: GENUINE — `metrics(...)` reads a cached GENUINE run keyed by the ladder value :: s75 = metrics(RET[(pk, 10.0, key, m)])["Sharpe"]
+        L347: GENUINE — ladder value passed into weights builder `weights(...)` :: W = weights(px, key, n, pk)
+        L608: GENUINE — `metrics(...)` reads a cached GENUINE run keyed by the ladder value :: return metrics(H.window(RET[(pk, cost, key, m)], "IS"))["Sharpe"]
+        L435: RESCALED — ladder value inside a metric call `ann_vol(...)` — no re-run :: ach_lever.append(abs(ann_vol(r * (g / GROSS)) / R["spy_vol_full"] - 1.0))
+        L436: GENUINE — `ann_vol(...)` reads a simulating call made at the ladder value :: ach_true.append(abs(ann_vol(run_at(pk, 10.0, key, m, g, ref))
+        L348: GENUINE — ladder value passed into simulating call `backtest(...)` :: r = backtest(px, W, cost_bps=cost, freq=FREQ)["returns"].loc[start:]
+        L436: GENUINE — ladder value passed into simulating call `run_at(...)` :: ach_true.append(abs(ann_vol(run_at(pk, 10.0, key, m, g, ref))
+        L673: GENUINE — `metrics(...)` reads a simulating call made at the ladder value :: dsh.append(abs(metrics(run_at(pk, 10.0, key, m, g, ref))["Sharpe"] - s75))
+        L673: GENUINE — ladder value passed into simulating call `run_at(...)` :: dsh.append(abs(metrics(run_at(pk, 10.0, key, m, g, ref))["Sharpe"] - s75))
+    ADJUDICATION (read the printed evidence lines above, not the label): a MIXED verdict means the
+    analyser saw BOTH a genuine re-run and a rescaling in the same file.  Every flagged line must be
+    read in context before a committed row is called exposed; the count above is PRE-adjudication.
+  scripts with a ladder the analyser could not classify: 9 (rows=314) — these are covered by A2/A3, not by A1
+    2026-09-03_broad-momentum-top10.py, 2026-09-04_crypto-sleeve_C.py, 2026-09-04_vol-cap-as-a-satellite-clause_B.py, 2026-09-05_2013-as-the-IS-windows-single-point-of-failure_C.py, 2026-09-05_cross-universe-breakeven-as-a-KEEP-bar_cloud.py, 2026-09-05_de-gross-vs-reweight-across-gates_cloud.py, 2026-09-05_defensive-overlays-are-rule-8-invisible_B.py, 2026-09-05_is-the-ladder-endpoint-a-general-selector-artefact_cloud.py, 2026-09-05_threshold-plateaus-are-the-general-case_cloud.py
+
+----------------------------------------------------------------------------------------------------------------------
+A2/A3. AUDIT OF THE PUBLISHED NUMBERS — Sharpe invariance (A2) and CAGR monotonicity (A3)
+       A rescaled ladder has EXACTLY constant Sharpe (proved in the docstring).  Range < 1e-12 => RESCALED.
+----------------------------------------------------------------------------------------------------------------------
+                                                                  file ladder_col  points  groups  sharpe_range_max  sharpe_range_med  n_exactly_flat  cagr_nonmonotone  cagr_nonmono_frac      A2
+           2026-09-05_price-the-broad-POS-near-miss_cloud.transfer.csv          m       4       9          0.001288         0.0005026               0                 0                  0 GENUINE
+         2026-09-05_delete-the-scaler-on-small_cloud.norankcontrol.csv          g       4       4          0.004107          0.001991               0                 1               0.25 GENUINE
+                          2026-09-05_band-width-at-g085_cloud.grid.csv          g       5      40          0.004847          0.001193               0                 0                  0 GENUINE
+         2026-09-05_is-075-the-argmax-on-every-corpus_cloud.ladder.csv          g      10      83          0.005422         0.0005043               0                 1            0.01205 GENUINE
+                           2026-09-04_which-4b-bar-binds_B.gladder.csv          g      13      40          0.006102          0.000453               0                 0                  0 GENUINE
+                              2026-09-04_drawdown-control_C.ladder.csv          m      19       7          0.006248         0.0007989               0                 0                  0 GENUINE
+           2026-09-05_the-gross-ladder-is-not-a-rescaling_C.points.csv      gross      10      53          0.007185           0.00142               0                 0                  0 GENUINE
+             2026-09-05_the-gross-ladder-is-not-a-rescaling_C.keep.csv      gross      10      53          0.007185           0.00142               0                 0                  0 GENUINE
+                         2026-09-05_absorbing-state-audit_B.ladder.csv          m      19      12          0.008597          0.001976               0                 0                  0 GENUINE
+               2026-09-05_price-the-broad-POS-near-miss_cloud.grid.csv          m      25      38          0.008936          0.001679               0                 2            0.05263 GENUINE
+          2026-09-05_gross-dispersion-not-gross-level_cloud.ladder.csv          m      19      25           0.01024            0.0016               0                 0                  0 GENUINE
+                2026-09-05_gross-as-the-missing-third-bar_B.ladder.csv          m      19      25           0.01024            0.0016               0                 0                  0 GENUINE
+                        2026-09-05_cagr-floor-calibration_B.ladder.csv          m      19      25           0.01024            0.0016               0                 0                  0 GENUINE
+2026-09-05_weak-dominance-bands-as-the-calibration-output_C.ladder.csv          m      19      18           0.01024          0.002224               0                 0                  0 GENUINE
+            2026-09-05_sleeve-f-that-clears-the-floor_cloud.ladder.csv          m       5      52           0.01188          0.001869               0                 0                  0 GENUINE
+           2026-09-05_is-the-defensive-class-one-book_cloud.ladder.csv          m       5      48           0.01251          0.001748               0                 0                  0 GENUINE
+              2026-09-05_liquidity-screened-small-panel_cloud.grid.csv          g       3      64           0.01335          0.003247               0                 2            0.03125 GENUINE
+    2026-09-05_is-4b-internally-consistent-at-any-vol_cloud.ladder.csv          g      20      70           0.01408          0.001371               0                 2            0.02857 GENUINE
+          2026-09-05_does-the-ceiling-beat-a-chosen-gross_C.ladder.csv          g      10     300           0.01676          0.003218               0                 0                  0 GENUINE
+                  2026-09-05_delete-the-scaler-on-small_cloud.grid.csv          g       4      80           0.09422          0.009774               0                50              0.625 GENUINE
+               2026-09-05_the-sharpe-vs-4b-margin-sign-flip_C.keep.csv      gross      10     159            0.2235            0.1081               0                 0                  0 GENUINE
+             2026-09-05_the-sharpe-vs-4b-margin-sign-flip_C.points.csv      gross      10     165            0.2235           0.09882               0                 0                  0 GENUINE
+
+  ladder files audited: 22   ladder GROUPS audited: 1370
+  groups with EXACTLY constant Sharpe (the rescaling fingerprint): 0 of 1370
+  files verdict A2: GENUINE=22
+  A3: committed CAGR curves non-monotone in the ladder in 58 of 1370 groups (4.2%)
+
+  A4. ADJUDICATION — each A1-flagged script against its OWN committed ladder CSVs (A2 on its numbers)
+      RULE (mechanical, applied identically to every flag, no hand-waving): a RESCALED line is a
+      deliberate LEVER CONTROL if the same file has a GENUINE line within +/-2 source lines of it —
+      i.e. the rescaled series is built next to the genuine re-run it is being compared against, which
+      is what idea 165's check [c] and idea 158's lever control do.  Otherwise the flag STANDS.
+    2026-09-05_required-gross-as-a-leaderboard-column_cloud.py  (rows=5)
+        -> NOT EXPOSED — all 1 RESCALED line(s) [435] sit within 2 lines of a genuine re-run, i.e. they are the file's own LEVER CONTROL, not its priced ladder; A2: no committed ladder CSV
+    POST-ADJUDICATION committed LEADERBOARD rows exposed to a rescaled gross ladder: 0
+
+----------------------------------------------------------------------------------------------------------------------
+CORPUS + REPRODUCTION
+----------------------------------------------------------------------------------------------------------------------
+  53 books built in 18.8s (5 fixed panels + 3x16 B136 sub-panels, seed 171500)
+  [a] fast_backtest vs products/backtester/engine.backtest, incumbent point:
+      U56       freq=W  max|dret|=1.388e-17  max|dturn|=3.053e-16  -> PASS
+  [c] idea 165's committed exact-lever rows: n=12  max|dMaxDD| = 0.2755pp (QUEUE text says 0.2755)  max|dCAGR| = 0.0238pp  max|daily diff| = 4.902e-03
+      and its CAGR-monotonicity claim, re-counted from its own greq.csv: 92 of 378 books (QUEUE text says 92 of 213 — that 213 is the CAGR-FLOOR-FAILING subset, not the corpus)
+        cagr_fail=False: non-monotone   0 of 165   <- the non-monotonicity is confined to books that FAIL the CAGR floor
+        cagr_fail=True : non-monotone  92 of 213   <- the non-monotonicity is confined to books that FAIL the CAGR floor
+
+  running the GENUINE ladder: 53 books x 10 gross = 530 backtests, no rescaling ...
+  done in 40.7s
+  [b] idea 174 committed sleeve=0 GROSS rows: matched 530 of 530
+      CAGR    n=  530  max|diff| = 9.714e-17   MATCH
+      Sharpe  n=  530  max|diff| = 2.220e-16   MATCH
+      MaxDD   n=  530  max|diff| = 9.714e-17   MATCH
+      H1      n=  530  max|diff| = 2.220e-16   MATCH
+      H2      n=  530  max|diff| = 2.220e-16   MATCH
+
+----------------------------------------------------------------------------------------------------------------------
+B1. ERROR SIZE — GENUINE re-run vs RESCALED-from-anchor, at every ladder point, both anchors
+----------------------------------------------------------------------------------------------------------------------
+  1060 (book, anchor, gross) comparisons.  At m == anchor the two conventions coincide by
+  construction; that is asserted: max|dSharpe| at m==anchor = 0.000e+00
+
+  anchor m0 = 0.75   (n=530)
+    field        max|d|      p99|d|      mean|d|     at gross of max
+    dCAGR          0.0677      0.0403      0.0082   m=1.00 pp
+    dSharpe        0.0052      0.0034      0.0005   m=0.20 
+    dMaxDD         0.2236      0.2068      0.0623   m=1.00 pp
+    dH1            0.0062      0.0049      0.0012   m=0.20 
+    dH2            0.0049      0.0037      0.0008   m=0.20 
+    dOOS           0.0047      0.0037      0.0008   m=0.20 
+    error vs distance from the anchor (mean |d| by |m - m0|):
+               dCAGR   dSharpe    dMaxDD
+      dm                                
+      0.00  0.000000  0.000000  0.000000
+      0.05  0.000029  0.000114  0.000219
+      0.15  0.000085  0.000341  0.000655
+      0.25  0.000140  0.000568  0.001086
+      0.35  0.000113  0.000857  0.000834
+      0.45  0.000110  0.001124  0.000812
+      0.55  0.000090  0.001400  0.000670
+
+  anchor m0 = 1.00   (n=530)
+    field        max|d|      p99|d|      mean|d|     at gross of max
+    dCAGR          0.0661      0.0558      0.0131   m=0.50 pp
+    dSharpe        0.0072      0.0049      0.0009   m=0.20 
+    dMaxDD         0.2439      0.2268      0.1062   m=0.50 pp
+    dH1            0.0087      0.0071      0.0018   m=0.20 
+    dH2            0.0068      0.0057      0.0014   m=0.20 
+    dOOS           0.0067      0.0057      0.0014   m=0.20 
+    error vs distance from the anchor (mean |d| by |m - m0|):
+               dCAGR   dSharpe    dMaxDD
+      dm                                
+      0.00  0.000000  0.000000  0.000000
+      0.10  0.000063  0.000211  0.000531
+      0.20  0.000115  0.000426  0.000953
+      0.25  0.000136  0.000537  0.001122
+      0.30  0.000153  0.000651  0.001262
+      0.40  0.000179  0.000889  0.001455
+      0.50  0.000189  0.001135  0.001529
+      0.60  0.000185  0.001391  0.001472
+      0.70  0.000164  0.001654  0.001291
+      0.80  0.000126  0.001925  0.001004
+
+----------------------------------------------------------------------------------------------------------------------
+B2. THE NOISE FLOOR — the GENUINE ladder's own Sharpe range vs the convention's error
+    (if the error is the size of the range, a gross argmax is not a measurable quantity)
+----------------------------------------------------------------------------------------------------------------------
+  anchor 0.75: median genuine Sharpe RANGE over the 10-point ladder = 0.0014; median max|dSharpe| = 0.0012; error >= range in 0 of 53 books (0.0%); median ratio 0.758
+  anchor 1.00: median genuine Sharpe RANGE over the 10-point ladder = 0.0014; median max|dSharpe| = 0.0014; error >= range in 30 of 53 books (56.6%); median ratio 1.000
+  CAGR monotonicity of the GENUINE ladder (idea 165 reports 92 of 213 books non-monotone):
+    0 of 53 books (0.0%) have a NON-MONOTONE genuine CAGR curve in m over the LEGAL ladder 0.20-1.00 (PROTOCOL rule 2: no leverage)
+  DIAGNOSTIC, clearly labelled: idea 165 scanned gross up to 2.00.  Re-running the ladder ABOVE 1.00
+  (a rule-2-illegal region, run ONLY to reconcile the two counts — no candidate is proposed there):
+    0 of 53 books (0.0%) are non-monotone on 0.20-2.00 under idea 165's
+    own test (any diff < -1e-12).  Of the 31 books here that FAIL the CAGR floor at m=0.75 — idea 165's own subset — 0 are non-monotone.
+    Idea 165's 92-of-213 is therefore NOT reproduced on this corpus, and its own greq.csv says why:
+    its non-monotone books are all CAGR-floor failures on ITS arm construction (tilted/share books on
+    u56/broad/small), not idea 171/174's top-20 composite books.  Scope, not contradiction.
+
+----------------------------------------------------------------------------------------------------------------------
+C1. VERDICT EXPOSURE — does the convention move a point across a 4b bar?
+    Margins are signed, positive = passes.  CAGR/DD bars in pp; Sharpe bars in Sharpe units.
+----------------------------------------------------------------------------------------------------------------------
+
+  anchor 0.75   (n=530 points)
+    bar mC    sign disagreements    0/530  |  points within 0.005 of the bar:   38, of which flipped   0 (0.0%)
+    bar mD    sign disagreements    0/530  |  points within 0.005 of the bar:   22, of which flipped   0 (0.0%)
+    bar mH1   sign disagreements    0/530  |  points within 0.005 of the bar:   14, of which flipped   0 (0.0%)
+    bar mH2   sign disagreements    6/530  |  points within 0.005 of the bar:   30, of which flipped   6 (20.0%)
+    bar mO    sign disagreements    0/530  |  points within 0.005 of the bar:    0, of which flipped   0 (0.0%)
+    FULL 4b verdict disagreements: 0 of 530 (0.00%)   genuine passes 28, rescaled passes 28
+    any-bar sign disagreements 6; points near ANY bar 104
+
+  anchor 1.00   (n=530 points)
+    bar mC    sign disagreements    0/530  |  points within 0.005 of the bar:   38, of which flipped   0 (0.0%)
+    bar mD    sign disagreements    1/530  |  points within 0.005 of the bar:   22, of which flipped   1 (4.5%)
+    bar mH1   sign disagreements    0/530  |  points within 0.005 of the bar:   14, of which flipped   0 (0.0%)
+    bar mH2   sign disagreements   14/530  |  points within 0.005 of the bar:   30, of which flipped  14 (46.7%)
+    bar mO    sign disagreements    0/530  |  points within 0.005 of the bar:    0, of which flipped   0 (0.0%)
+    FULL 4b verdict disagreements: 1 of 530 (0.19%)   genuine passes 28, rescaled passes 27
+    any-bar sign disagreements 15; points near ANY bar 104
+    the flipped points (these are the rows a rescaled ladder would have mis-verdicted):
+            book  gross  g_pass4b  s_pass4b   g_mC   s_mC   g_mD   s_mD
+      B136k40d11 0.9000      True     False 0.0065 0.0065 0.0139 0.0132
+
+----------------------------------------------------------------------------------------------------------------------
+E. BOTH KEEP PATHS at every genuine point (PROTOCOL rule 4)
+----------------------------------------------------------------------------------------------------------------------
+  530 genuine points: 4a passes 426, 4b passes 28, both 25
+  4b passes by parent panel: B136=25, SMALL=0, U56=3
+  best 4b passes by full-sample Sharpe (all are idea 171/174's already-committed passes):
+          book  gross   CAGR  Sharpe   MaxDD     H1     H2  OOSsh
+    B136k20d00 1.0000 0.1298  1.1617 -0.1791 1.3316 1.0077 1.1709
+    B136k20d00 0.9000 0.1167  1.1617 -0.1622 1.3315 1.0076 1.1709
+           U56 0.8000 0.1372  1.1076 -0.1935 1.1099 1.1118 1.1776
+           U56 0.7500 0.1286  1.1075 -0.1821 1.1099 1.1117 1.1775
+           U56 0.7000 0.1200  1.1075 -0.1705 1.1098 1.1116 1.1774
+    B136k40d04 0.8000 0.1294  1.1059 -0.1921 1.2106 1.0144 1.1291
+    B136k40d04 0.7500 0.1212  1.1059 -0.1807 1.2104 1.0145 1.1292
+    B136k40d04 0.7000 0.1131  1.1059 -0.1693 1.2102 1.0146 1.1293
+
+----------------------------------------------------------------------------------------------------------------------
+D. RULE 8 WALK-FORWARD — gross chosen on <= 2016-12-31, read ONCE on 2017-01-01 ->
+   GENUINE ladder IS-Sharpe pick vs RESCALED ladder (DEGENERATE: its IS Sharpe is exactly
+   constant, so both tie-breaks are run) vs the do-nothing control m = 0.75
+----------------------------------------------------------------------------------------------------------------------
+  the rescaled ladder's IS-Sharpe column is flat to 6.661e-16 across all 53 books x 2 anchors — the IS-Sharpe selector has NO argmax on it
+
+                   mean_OOS_CAGR  mean_OOS_Sharpe  mean_OOS_MaxDD  beat_SPY  OOS4b  mean_pick
+arm                                                                                          
+CONTROL_m075              0.0996           0.9638         -0.1718        45     14     0.7500
+GENUINE_ISargmax          0.1300           0.9633         -0.2225        45      5     0.9868
+RESCALED_tie_high         0.1322           0.9632         -0.2254        45      4     1.0000
+RESCALED_tie_low          0.0267           0.9645         -0.0475        45      0     0.2000
+  paired vs the do-nothing control: GENUINE_ISargmax     dOOS Sharpe -0.0006 (t -4.24), wins 14-39, picks changed 53 of 53
+  paired vs the do-nothing control: RESCALED_tie_low     dOOS Sharpe +0.0006 (t +2.08), wins 34-19, picks changed 53 of 53
+  paired vs the do-nothing control: RESCALED_tie_high    dOOS Sharpe -0.0006 (t -4.67), wins 13-40, picks changed 53 of 53
+
+  reference OOS (2017-01-01 ->): SPY 15.45% / 0.8820 / -33.72%
+    RULES v1 on B136  : 5.94% / 0.5763 / -21.19%
+    RULES v1 on SMALL : 19.31% / 0.6046 / -35.01%
+    RULES v1 on U56   : 7.73% / 0.7471 / -13.83%
+
+======================================================================================================================
+SUMMARY
+======================================================================================================================
+  [a] PASS   [b] True   [c] idea 165 max|dMaxDD| re-read from disk = 0.2755
+  A1 static: 0 RESCALED, 1 MIXED, 55 GENUINE, 9 unclassified, 59 no ladder, of 124 scripts
+  A2 numbers: 0 of 1370 committed ladder groups carry the rescaling fingerprint
+  committed LEADERBOARD rows exposed: pre-adjudication 5, POST-ADJUDICATION 0
+  runtime 76.4s
