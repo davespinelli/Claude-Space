@@ -2,6 +2,13 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-05 | 40692162 | Excel Numeric Data PDF Conversion | $140 | 7 | drafted |
+| 2026-09-05 | 40692118 | Daily Excel Sales Entry Assistant | $230 | 14 | drafted |
+| 2026-09-05 | 40692106 | E-Commerce Excel & Power BI Dashboard | $125 | 14 | drafted |
+| 2026-09-05 | 40692319 | Extract Text & Keywords to Excel | $330 | 19 | drafted |
+| 2026-09-05 | 40691897 | Printed Text to Excel | $145 | 25 | drafted |
+| 2026-09-05 | 40687840 | WhatsApp Tech Support FAQ Bot | $240 | 38 | drafted |
+| 2026-09-05 | 40692246 | AI-Powered OCR Challan Processing & Billing | $390 | 59 | drafted |
 | 2026-09-05 | 40691768 | PDF to Excel Data Extraction | $310 | 8 | drafted |
 | 2026-09-05 | 40691566 | QA: Verify stock-charting dashboard vs TradingView | $210 | 33 | drafted |
 | 2026-09-05 | 40691750 | Automate Excel Form Submission | $125 | 11 | drafted |
@@ -80,3 +87,10 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Web Scraping Specialist Needed (40691488) (entire brief is "I'm looking for a scraping expert": no target, no scope, 98 bids, hourly posting)
 - AI-Powered Business Operating System Development (40691548) (full cloud business OS MVP posted at $30–$250 with 113 bids; budget and scope do not meet)
 - Self-Hosted Facial Recognition API (40691451) (biometric identification system at $27–$338 with 161 bids; privacy exposure we will not take on at that price)
+- Laravel Data Dashboard & Exports (40692291) (Laravel and Vue stack outside what we deliver, $85–$127 with 43 bids)
+- Integrare WhatsApp API + SmartBill (40692264) (Romanian-language delivery, 90 bids, needs a live SmartBill account we do not have)
+- Dynamic Cryptocurrency Trading Platform Development (40686448) (full exchange-style platform, no description available in the shortlist to price against)
+- Comprehensive IT & Forex Trading PDFs (40685724) (technical writing, not delivery work, $16–$132)
+- thumbnail ki emage (40679255) (image design work, outside scope)
+
+Note for this run: freelancer.com is blocked by the session network policy, so proposals were written from the descriptions the scanner captured in JOBS.md. Older undrafted rows have no description in the shortlist, which is why several were skipped rather than priced blind.
