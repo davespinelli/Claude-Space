@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-04T23:39:53Z · open 112 · in progress 0 · done 373_
+_Source: universe_under2b.csv · updated 2026-09-05T00:10:53Z · open 92 · in progress 10 · done 383_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (112)
+## Open (92)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| OI | O-I Glass, Inc. /DE/ | $1.08B |
-| AOSL | ALPHA & OMEGA SEMICONDUCTOR Ltd | $739.8M |
-| SMWB | SIMILARWEB LTD. | $773.1M |
-| MATV | Mativ Holdings, Inc. | $691.0M |
-| SHEN | SHENANDOAH TELECOMMUNICATIONS CO/VA/ | $694.8M |
-| KRNT | Kornit Digital Ltd. | $743.0M |
-| DCH | Dauch Corp | $1.58B |
-| ALLT | Allot Ltd. | $368.2M |
-| NTGR | NETGEAR, INC. | $573.2M |
-| XIFR | XPLR Infrastructure, LP | $1.13B |
-| CYRX | Cryoport, Inc. | $803.3M |
-| MGPI | MGP INGREDIENTS INC | $349.9M |
-| SIBN | SI-BONE, Inc. | $835.4M |
-| RXT | Rackspace Technology, Inc. | $838.5M |
-| ASLE | AerSale Corp | $269.2M |
-| GEVO | Gevo, Inc. | $405.5M |
-| WEST | Westrock Coffee Co | $749.8M |
-| TH | Target Hospitality Corp. | $1.85B |
-| RYAM | RAYONIER ADVANCED MATERIALS INC. | $579.0M |
-| PPHC | Public Policy Holding Company, Inc. | $339.6M |
 | CERS | CERUS CORP | $517.9M |
 | WYY | WIDEPOINT CORP | $113.9M |
 | KRO | KRONOS WORLDWIDE INC | $972.6M |
@@ -121,12 +101,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| CYRX | Cryoport, Inc. | $803.3M | cloudA | 2026-09-05T00:07:05Z |
+| MGPI | MGP INGREDIENTS INC | $349.9M | cloudA | 2026-09-05T00:07:05Z |
+| SIBN | SI-BONE, Inc. | $835.4M | cloudA | 2026-09-05T00:07:05Z |
+| RXT | Rackspace Technology, Inc. | $838.5M | cloudA | 2026-09-05T00:07:05Z |
+| ASLE | AerSale Corp | $269.2M | cloudA | 2026-09-05T00:07:05Z |
+| GEVO | Gevo, Inc. | $405.5M | cloudA | 2026-09-05T00:07:05Z |
+| WEST | Westrock Coffee Co | $749.8M | cloudA | 2026-09-05T00:07:05Z |
+| TH | Target Hospitality Corp. | $1.85B | cloudA | 2026-09-05T00:07:05Z |
+| RYAM | RAYONIER ADVANCED MATERIALS INC. | $579.0M | cloudA | 2026-09-05T00:07:05Z |
+| PPHC | Public Policy Holding Company, Inc. | $339.6M | cloudA | 2026-09-05T00:07:05Z |
 
-## Done (373)
+## Done (383)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | CVGI | Commercial Vehicle Group, Inc. | $126.0M | cloudB | 2026-09-04T23:39:53Z |
 | VREX | Varex Imaging Corp | $779.7M | cloudB | 2026-09-04T23:39:53Z |
 | RRGB | RED ROBIN GOURMET BURGERS INC | $155.6M | cloudB | 2026-09-04T23:39:53Z |
+| OI | O-I Glass, Inc. /DE/ | $1.08B | cloudA | 2026-09-05T00:10:53Z |
+| AOSL | ALPHA & OMEGA SEMICONDUCTOR Ltd | $739.8M | cloudA | 2026-09-05T00:10:53Z |
+| SMWB | SIMILARWEB LTD. | $773.1M | cloudA | 2026-09-05T00:10:53Z |
+| MATV | Mativ Holdings, Inc. | $691.0M | cloudA | 2026-09-05T00:10:53Z |
+| SHEN | SHENANDOAH TELECOMMUNICATIONS CO/VA/ | $694.8M | cloudA | 2026-09-05T00:10:53Z |
+| KRNT | Kornit Digital Ltd. | $743.0M | cloudA | 2026-09-05T00:10:53Z |
+| DCH | Dauch Corp | $1.58B | cloudA | 2026-09-05T00:10:53Z |
+| ALLT | Allot Ltd. | $368.2M | cloudA | 2026-09-05T00:10:53Z |
+| NTGR | NETGEAR, INC. | $573.2M | cloudA | 2026-09-05T00:10:53Z |
+| XIFR | XPLR Infrastructure, LP | $1.13B | cloudA | 2026-09-05T00:10:53Z |

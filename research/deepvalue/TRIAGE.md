@@ -374,3 +374,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | CVGI | Commercial Vehicle Group, Inc. | $126.0M | cyclical-trough | 6 | All three segments grew 13.5% and guidance was raised on Class 8 builds up 9%, but EBITDA margin is 2.8% and an ATM is diluting 9.7% |
 | 2026-09-04 | VREX | Varex Imaging Corp | $779.7M | none | 2 | Merger agreement with Teledyne signed 2026-08-10, earnings call cancelled and guidance withdrawn, with the stock 0.3% off its high |
 | 2026-09-04 | RRGB | RED ROBIN GOURMET BURGERS INC | $155.6M | hidden-asset | 6 | Refranchising 116 restaurants for $96M gross against a $156M cap with traffic best since 2023, but equity is negative $105.6M |
+| 2026-09-05 | OI | O-I Glass, Inc. /DE/ | $1.1B | none | 0 | no filings in bundle |
+| 2026-09-05 | AOSL | ALPHA & OMEGA SEMICONDUCTOR Ltd | $739.8M | hidden-asset | 5 | Cash $180.8M and book equity above the whole market cap plus an 18.9% JV stake, but FY26 operating loss widened to $43.2M |
+| 2026-09-05 | SMWB | SIMILARWEB LTD. | $773.1M | insider-buying | 4 | Four insiders bought at $3.89 in May but the stock is $8.89 after a 204% six-month run and the pack has no MD&A or results |
+| 2026-09-05 | MATV | Mativ Holdings, Inc. | $691.0M | post-restructuring | 7 | Screen EBIT is a $411.9M goodwill write-off; record Q2 adj EBITDA $75.0M and 13.6% FCF yield against $974.5M of debt |
+| 2026-09-05 | SHEN | SHENANDOAH TELECOMMUNICATIONS CO/VA/ | $694.8M | post-restructuring | 6 | Glo Fiber build ends in 2026 with capex guided down 21% and a 10% RIF, but net debt is over 5x guided EBITDA |
+| 2026-09-05 | KRNT | Kornit Digital Ltd. | $743.0M | none | 3 | Flat 2.1% growth, $34.6M operating loss, 0.5% FCF yield, and the pack has no business description or earnings release |
+| 2026-09-05 | DCH | Dauch Corp | $1.6B | post-restructuring | 7 | Post-Dowlais 2026 guide is $1.36-1.425B adj EBITDA on $5.8B EV, but net debt is $4.2B and adj FCF excludes $210-260M of cash costs |
+| 2026-09-05 | ALLT | Allot Ltd. | $368.2M | ignored-microcap | 4 | 15 record holders and $2.1M ADV with three funds at 39%, but EV/EBIT is 97x after 23% dilution and insiders only sold |
+| 2026-09-05 | NTGR | NETGEAR, INC. | $573.2M | misunderstood-segment | 7 | Enterprise at 54.1% gross margin and 26% contribution margin annualises near the entire $398.9M EV while Consumer masks it |
+| 2026-09-05 | XIFR | XPLR Infrastructure, LP | $1.1B | post-restructuring | 6 | Distribution suspended and $600-700M FCFBG guided on a $1.1B cap, but XPLR holds only 48.8% of OpCo under $7.4B of NCI |
