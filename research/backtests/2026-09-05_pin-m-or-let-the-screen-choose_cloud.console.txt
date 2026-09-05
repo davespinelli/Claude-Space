@@ -1,0 +1,181 @@
+========================================================================================================================================================================================================
+IDEA 146 — PIN m, OR LET THE SCREEN CHOOSE IT?  Pricing rule 8's FAMILY screen on idea 74's axis against the 200d gate and de-grossing, at matched book and cost.
+    corpus 3 panels x 3 books x 17 arms x 2 cost rungs x 25 gross points = 7650 runs.  IS <= 2016-12-31 chosen on, OOS >= 2017-01-01 read once.
+    m-rules ['point', 'pin', 'hi', 'lo'] x m ceilings [1.0, 1.3];  4b bars fixed at published phi=0.7, delta=0.6.
+========================================================================================================================================================================================================
+
+CHECK (a) H.run vs engine.backtest, ungated EWall u56: max|diff| = 0.000e+00 -> PASS
+
+CORPUS CACHE: reading the already-simulated family grid from 2026-09-05_pin-m-or-let-the-screen-choose_cloud.family.csv.gz (delete it to force a full re-simulation; the two paths are identical by construction — the cache is written by this same script).
+
+CORPUS: 7650 family rows; 306 books at the published m=1.00 -> PASS (expected 306; idea 144's full corpus is 306)
+CHECK (b) idea 94's published EWall+vol60-dg u56@10bps: 11.587% / 1.133 / -16.884%  (published 11.6% / 1.133 / -16.9%) -> PASS
+
+========================================================================================================================================================================================================
+Q1 — REPRODUCTION OF IDEA 144's RULE-8 WALK-FORWARD (nothing new is read until this passes)
+  committed picks file found (18 cells, cols ['S0', 'S1', 'S2', 'S3']); differing cells vs this run [S0: 0; S1: 0; S3: 0]: 0 of 54 -> PASS
+panel  book  cost                      S0             S1             S3
+  u56   V1u  10.0            control@1.00              -              -
+  u56   V1u  25.0          ebud-0.10@1.00              -              -
+  u56 TOP20  10.0            control@1.00   control@1.00 ebud-0.20@1.10
+  u56 TOP20  25.0            control@1.00              -              -
+  u56 EWall  10.0           abs12-rw@1.00  abs12-rw@1.00  abs12-rw@1.05
+  u56 EWall  25.0            control@1.00   control@1.00   control@1.05
+broad   V1u  10.0          ebud-0.20@1.00              -              -
+broad   V1u  25.0          ebud-0.10@1.00              -              -
+broad TOP20  10.0          ebud-0.10@1.00 ebud-0.10@1.00 ebud-0.10@1.25
+broad TOP20  25.0          ebud-0.10@1.00 ebud-0.10@1.00 ebud-0.10@1.20
+broad EWall  10.0           vol60-dg@1.00  vol60-dg@1.00  vol60-dg@1.10
+broad EWall  25.0           vol60-dg@1.00  vol60-dg@1.00  vol60-dg@1.05
+small   V1u  10.0          ebud-0.20@1.00              -              -
+small   V1u  25.0          ebud-0.20@1.00              -              -
+small TOP20  10.0          ebud-0.20@1.00              -              -
+small TOP20  25.0          ebud-0.20@1.00              -              -
+small EWall  10.0            control@1.00              -              -
+small EWall  25.0 ddctl-8/.5/recover@1.00              -              -
+
+========================================================================================================================================================================================================
+Q2 — SPLITTING THE FAMILY SCREEN.  Same admissibility, same arm statistic; only the m-rule differs.  'pin' = the published gross 1.00.
+
+  ALL 18 CELLS (a rule with fewer cells is abstaining, not losing):
+            cells  mean_m  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  beat_SPY  beat_v1 pass4a  pass4b
+mmax mrule                                                                                  
+1.0  hi         7   1.000     0.127       1.022     -0.211         5        7      3       3
+     lo         7   0.836     0.108       1.029     -0.181         6        7      4       3
+     pin        7   1.000     0.127       1.022     -0.211         5        7      3       3
+     point      7   1.000     0.127       1.022     -0.211         5        7      3       3
+1.3  hi         7   1.114     0.138       1.019     -0.228         5        7      3       1
+     lo         7   0.836     0.108       1.029     -0.181         6        7      4       3
+     pin        7   1.000     0.127       1.022     -0.211         5        7      3       3
+     point      7   1.000     0.127       1.022     -0.211         5        7      3       3
+
+  paired cells (every m-rule at every ceiling enters): 7 of 18 -> [('broad', 'EWall', 10.0), ('broad', 'EWall', 25.0), ('broad', 'TOP20', 10.0), ('broad', 'TOP20', 25.0), ('u56', 'EWall', 10.0), ('u56', 'EWall', 25.0), ('u56', 'TOP20', 10.0)]
+
+  PAIRED on the 7 cells:
+            cells  mean_m  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  beat_SPY  beat_v1 pass4a  pass4b
+mmax mrule                                                                                  
+1.0  hi         7   1.000     0.127       1.022     -0.211         5        7      3       3
+     lo         7   0.836     0.108       1.029     -0.181         6        7      4       3
+     pin        7   1.000     0.127       1.022     -0.211         5        7      3       3
+     point      7   1.000     0.127       1.022     -0.211         5        7      3       3
+1.3  hi         7   1.114     0.138       1.019     -0.228         5        7      3       1
+     lo         7   0.836     0.108       1.029     -0.181         6        7      4       3
+     pin        7   1.000     0.127       1.022     -0.211         5        7      3       3
+     point      7   1.000     0.127       1.022     -0.211         5        7      3       3
+  CHECK (d) idea 144 S1 == this run's point@m_max1.00: 0.127 / 1.022 / -0.211  vs published 0.127 / 1.022 / -0.211 -> PASS
+  CHECK (d) idea 144 S3 == this run's hi@m_max1.30: 0.138 / 1.019 / -0.228  vs published 0.138 / 1.019 / -0.228 -> PASS
+
+  per-cell picks (arm@m), by m ceiling:
+
+    m_max = 1.00
+mrule                         hi              lo             pin           point
+panel book  cost                                                                
+broad EWall 10.0   vol60-dg@1.00   vol60-dg@0.85   vol60-dg@1.00   vol60-dg@1.00
+            25.0   vol60-dg@1.00   vol60-dg@0.85   vol60-dg@1.00   vol60-dg@1.00
+      TOP20 10.0  ebud-0.10@1.00  ebud-0.10@0.75  ebud-0.10@1.00  ebud-0.10@1.00
+            25.0  ebud-0.10@1.00  ebud-0.10@0.85  ebud-0.10@1.00  ebud-0.10@1.00
+      V1u   10.0               -               -               -               -
+            25.0               -               -               -               -
+small EWall 10.0               -               -               -               -
+            25.0               -               -               -               -
+      TOP20 10.0               -               -               -               -
+            25.0               -               -               -               -
+      V1u   10.0               -               -               -               -
+            25.0               -               -               -               -
+u56   EWall 10.0   abs12-rw@1.00   abs12-rw@0.95   abs12-rw@1.00   abs12-rw@1.00
+            25.0    control@1.00    control@0.85    control@1.00    control@1.00
+      TOP20 10.0  ebud-0.20@1.00  ebud-0.20@0.75  ebud-0.20@1.00    control@1.00
+            25.0               -               -               -               -
+      V1u   10.0               -               -               -               -
+            25.0               -               -               -               -
+
+    m_max = 1.30
+mrule                         hi              lo             pin           point
+panel book  cost                                                                
+broad EWall 10.0   vol60-dg@1.10   vol60-dg@0.85   vol60-dg@1.00   vol60-dg@1.00
+            25.0   vol60-dg@1.05   vol60-dg@0.85   vol60-dg@1.00   vol60-dg@1.00
+      TOP20 10.0  ebud-0.10@1.25  ebud-0.10@0.75  ebud-0.10@1.00  ebud-0.10@1.00
+            25.0  ebud-0.10@1.20  ebud-0.10@0.85  ebud-0.10@1.00  ebud-0.10@1.00
+      V1u   10.0               -               -               -               -
+            25.0               -               -               -               -
+small EWall 10.0               -               -               -               -
+            25.0               -               -               -               -
+      TOP20 10.0               -               -               -               -
+            25.0               -               -               -               -
+      V1u   10.0               -               -               -               -
+            25.0               -               -               -               -
+u56   EWall 10.0   abs12-rw@1.05   abs12-rw@0.95   abs12-rw@1.00   abs12-rw@1.00
+            25.0    control@1.05    control@0.85    control@1.00    control@1.00
+      TOP20 10.0  ebud-0.20@1.10  ebud-0.20@0.75  ebud-0.20@1.00    control@1.00
+            25.0               -               -               -               -
+      V1u   10.0               -               -               -               -
+            25.0               -               -               -               -
+
+========================================================================================================================================================================================================
+Q3 — THE PRICE OF LETTING THE SCREEN CHOOSE m, ON IDEA 74's AXIS (pp of CAGR per pp of |MaxDD|), AT MATCHED BOOK AND COST.
+    screen_rate  = OOS CAGR gained per pp of |MaxDD| given up, going pin -> hi.
+    ladder_slope = the same rate available by simply turning the gross dial on the PINNED arm's own 25-point family (OOS window; IS-window slope also shown).
+    g200_price   = the 200d gate's price in the same cell: pp CAGR surrendered per pp of |MaxDD| bought, control@1.00 -> g200-dg@1.00, OOS window.
+    A screen whose rate does NOT beat the ladder slope is buying nothing a dial cannot buy, and it is spending drawdown budget without a mandate.
+
+panel  book   cost  mmax arm_point   arm_pin    arm_hi  same_arm  m_hi  dCAGR_pp  dMaxDD_pp  screen_rate  dSharpe  ladder_slope_OOS  ladder_slope_IS  g200_price  matchedPOINT_minus_hi_pp  fam_scale_free
+  u56 TOP20 10.000 1.000   control ebud-0.20 ebud-0.20      True 1.000     0.000      0.000          NaN    0.000             0.782            1.204       0.355                     0.067           False
+  u56 TOP20 10.000 1.300   control ebud-0.20 ebud-0.20      True 1.100     1.666      2.034        0.819   -0.000             0.782            1.204       0.355                     0.105           False
+  u56 EWall 10.000 1.000  abs12-rw  abs12-rw  abs12-rw      True 1.000     0.000      0.000          NaN    0.000             0.623            0.946       0.448                     0.000            True
+  u56 EWall 10.000 1.300  abs12-rw  abs12-rw  abs12-rw      True 1.050     0.601      0.920        0.653   -0.000             0.623            0.946       0.448                     0.000            True
+  u56 EWall 25.000 1.000   control   control   control      True 1.000     0.000      0.000          NaN    0.000             0.631            1.016       0.485                     0.000            True
+  u56 EWall 25.000 1.300   control   control   control      True 1.050     0.690      1.024        0.674   -0.000             0.631            1.016       0.485                     0.000            True
+broad TOP20 10.000 1.000 ebud-0.10 ebud-0.10 ebud-0.10      True 1.000     0.000      0.000          NaN    0.000             0.538            1.357       0.219                     0.000           False
+broad TOP20 10.000 1.300 ebud-0.10 ebud-0.10 ebud-0.10      True 1.250     1.635      2.814        0.581   -0.014             0.538            1.357       0.219                     0.000           False
+broad TOP20 25.000 1.000 ebud-0.10 ebud-0.10 ebud-0.10      True 1.000     0.000      0.000          NaN    0.000             0.466            1.183       0.206                     0.000           False
+broad TOP20 25.000 1.300 ebud-0.10 ebud-0.10 ebud-0.10      True 1.200     1.237      2.292        0.540   -0.004             0.466            1.183       0.206                     0.000           False
+broad EWall 10.000 1.000  vol60-dg  vol60-dg  vol60-dg      True 1.000     0.000      0.000          NaN    0.000             0.657            1.082       0.475                     0.000            True
+broad EWall 10.000 1.300  vol60-dg  vol60-dg  vol60-dg      True 1.100     1.210      1.766        0.685   -0.001             0.657            1.082       0.475                     0.000            True
+broad EWall 25.000 1.000  vol60-dg  vol60-dg  vol60-dg      True 1.000     0.000      0.000          NaN    0.000             0.644            1.059       0.509                     0.000            True
+broad EWall 25.000 1.300  vol60-dg  vol60-dg  vol60-dg      True 1.050     0.592      0.886        0.668   -0.000             0.644            1.059       0.509                     0.000            True
+
+  rows where the m-move actually shifts drawdown (> 0.1pp): 7
+    screen rate beats the OOS ladder slope in 7/7;  the IS ladder slope in 0/7;  the 200d gate's price in 7/7
+    median screen rate 0.668 pp/pp   vs  median OOS ladder slope 0.631   vs  median g200 price 0.448
+    mean OOS Sharpe change from the m-move: -0.0028  (cells improved: 0/7)
+    IDENTITY, stated not hidden: in 7/7 of these rows the screen keeps the arm and moves only m, so its exchange rate IS the ladder's own local slope by construction — the screen is the dial, wearing a screen's clothes.  The matched-DD control on that same arm is therefore trivially 0.000 and is reported only for completeness (mean +0.000 pp).
+    HINDSIGHT matched-DD control against the INCUMBENT (point) arm's own ladder: +0.015 pp of CAGR at the screen pick's OOS drawdown (positive = the incumbent arm's dial dominates the screen's pick); dominates in 1/7
+
+========================================================================================================================================================================================================
+Q4 — MECHANISM.  (i) Sharpe along a book's own gross family; (ii) the IS-admissible m against the OOS-admissible m.
+
+  (i) within-family Sharpe RANGE over the 25 gross points, by arm kind (the screen ranks arms on IS Sharpe, so a small range means IS Sharpe cannot order m):
+      books  med_full_range  max_full_range  med_IS_range  max_IS_range  CAGR_monotone
+kind                                                                                  
+bud      36          0.0160          0.1722        0.0308        0.1875             27
+ctl      18          0.0029          0.0124        0.0052        0.0126             18
+dd       36          0.1924          0.2924        0.2696        0.4737              0
+gate    180          0.0022          0.0130        0.0051        0.0140            176
+stop     36          0.0037          0.0110        0.0056        0.0125             34
+
+  (ii) the m the IS window admits vs the m the OOS window would have admitted, for the PINNED arm of every entering cell (idea 128: the IS window's crash is shallower, so an IS drawdown cap admits too much):
+panel  book   cost       arm  m_IS_max  m_OOS_max  n_IS  n_OOS  IS_minus_OOS
+  u56 TOP20 10.000 ebud-0.20     1.100      0.900     8      5         0.200
+  u56 EWall 10.000  abs12-rw     1.050      1.000     3      3         0.050
+  u56 EWall 25.000   control     1.050      0.850     5      2         0.200
+broad TOP20 10.000 ebud-0.10     1.250        NaN    11      0           NaN
+broad TOP20 25.000 ebud-0.10     1.200        NaN     8      0           NaN
+broad EWall 10.000  vol60-dg     1.100      1.050     6      3         0.050
+broad EWall 25.000  vol60-dg     1.050      1.050     5      3         0.000
+
+    IS-admissible m exceeds OOS-admissible m in 4/5 cells; mean gap +0.100, median +0.050
+
+========================================================================================================================================================================================================
+Q5 — BOTH KEEP PATHS ON EVERY SELECTOR'S PICK, AND THE VERDICT ON THE CONVENTION.
+            cells pass4a  pass4b  beat_SPY_OOS  OOS_Sharpe  OOS_CAGR  OOS_MaxDD
+mmax mrule                                                                     
+1.0  hi         7      3       3             5       1.022     0.127     -0.211
+     lo         7      4       3             6       1.029     0.108     -0.181
+     pin        7      3       3             5       1.022     0.127     -0.211
+     point      7      3       3             5       1.022     0.127     -0.211
+1.3  hi         7      3       1             5       1.019     0.138     -0.228
+     lo         7      4       3             6       1.029     0.108     -0.181
+     pin        7      3       3             5       1.022     0.127     -0.211
+     point      7      3       3             5       1.022     0.127     -0.211
+
+  (4a = beats RULES v1 on both Sharpe halves with no worse MaxDD, same panel/cost; 4b = all five bars on the full sample at the published phi/delta.)
