@@ -319,9 +319,10 @@ def main():
             if len(s):
                 say(f"      {pn:>6}: rate {s.rate.mean():.3f} over {len(s)} points | "
                     f"lever {s.lever.mean():.3f} | rate/lever {s.rate_over_lever.mean():.3f}")
-        mm = ok.groupby("panel").rate.mean()
-        say(f"    matched-depth spread: rate max/min = {mm.max()/mm.min():.2f}x "
-            f"(unmatched {r_ratio.max()/r_ratio.min():.2f}x)")
+        md_rate = ok.groupby("panel").rate.mean()
+        say(f"    matched-depth spread: rate max/min = {md_rate.max()/md_rate.min():.2f}x "
+            f"(unmatched {r_ratio.max()/r_ratio.min():.2f}x) | cheapest panel unmatched "
+            f"'{r_ratio.idxmin()}' -> matched '{md_rate.idxmin()}'")
 
     # ---------------------------------------------------------------- D: H2 name vol ----
     say("\n[D] H2 — small panel split by single-name vol (median full-sample vol20; an "
@@ -347,8 +348,8 @@ def main():
             rc = H.run(sub, W, bps=10.0)["r"].loc[start:]
             lad = []
             for m_ in LADDER:
-                mm = metrics(H.run(sub, W, m=float(m_), bps=10.0)["r"].loc[start:])
-                lad.append(dict(m=m_, CAGR=mm["CAGR"], MaxDD=mm["MaxDD"]))
+                mv = metrics(H.run(sub, W, m=float(m_), bps=10.0)["r"].loc[start:])
+                lad.append(dict(m=m_, CAGR=mv["CAGR"], MaxDD=mv["MaxDD"]))
             lev = H.ladder_slope(pd.DataFrame(lad))
             ra = H.run(sub, W, D=0.08, k=0.50, reset="recover", bps=10.0)["r"].loc[start:]
             p = H.price(rc, ra, lev)
@@ -410,17 +411,31 @@ def main():
     say(f"    P0 normalisation removes >= half the panel gap: rate spread {r_ratio.max()/r_ratio.min():.2f}x "
         f"-> rate/lever spread {n_ratio.max()/n_ratio.min():.2f}x -> "
         f"{'CONFIRMED' if (n_ratio.max()/n_ratio.min()) <= 0.5*(r_ratio.max()/r_ratio.min()) else 'REFUTED'}")
+    say(f"       [supplementary, NOT the pre-registered test] spread measured as excess over 1.0: "
+        f"{(r_ratio.max()/r_ratio.min())-1:.2f} -> {(n_ratio.max()/n_ratio.min())-1:.2f} "
+        f"({100*(1-((n_ratio.max()/n_ratio.min())-1)/((r_ratio.max()/r_ratio.min())-1)):.0f}% removed)")
     if len(ok):
-        say(f"    P1 matched-depth spread falls by >half: {mm.max()/mm.min():.2f}x vs "
+        say(f"    P1 matched-depth spread falls by >half: {md_rate.max()/md_rate.min():.2f}x vs "
             f"{r_ratio.max()/r_ratio.min():.2f}x -> "
-            f"{'CONFIRMED' if (mm.max()/mm.min()) <= 0.5*(r_ratio.max()/r_ratio.min()) else 'REFUTED'}")
+            f"{'CONFIRMED' if (md_rate.max()/md_rate.min()) <= 0.5*(r_ratio.max()/r_ratio.min()) else 'REFUTED'}"
+            f" | but the ORDERING inverts: cheapest panel unmatched '{r_ratio.idxmin()}', "
+            f"matched '{md_rate.idxmin()}' (small rate {r_ratio['small']:.3f} -> {md_rate['small']:.3f})")
     lo_, hi_ = V[V.half == "lowvol"].rate.mean(), V[V.half == "highvol"].rate.mean()
     say(f"    P2 low-vol half dearer: {lo_:.3f} vs high-vol {hi_:.3f} -> "
-        f"{'CONFIRMED' if lo_ > hi_ else 'REFUTED'}")
+        f"{'CONFIRMED' if lo_ > hi_ else 'REFUTED'}"
+        f" | lever-normalised r/lev {V[V.half=='lowvol'].rate_over_lever.mean():.3f} vs "
+        f"{V[V.half=='highvol'].rate_over_lever.mean():.3f} (reported, not the pre-registered test)")
     sp = H.spearman(sw.rate, sw.armed_frac)
     say(f"    P3 Spearman(rate, armed_frac) < 0: {sp:.3f} -> {'CONFIRMED' if sp < 0 else 'REFUTED'}")
     n4b = int(G[(G.panel == 'small')].pass4b.sum())
-    say(f"    P4 no small-panel 4b pass: {n4b} -> {'CONFIRMED' if n4b == 0 else 'REFUTED'}")
+    say(f"    P4 no small-panel 4b pass: {n4b} -> {'CONFIRMED' if n4b == 0 else 'REFUTED'}"
+        f" | 4b passes elsewhere: " + ", ".join(
+            f"{x.panel}/{x.book}/{x.cost:.0f}bp D={x.D:.2f} k={x.k:.2f}"
+            for _, x in G[G.pass4b].iterrows()) or " none")
+    say(f"    [decisive control] the static-gross ladder beats the DD arm at MATCHED drawdown in "
+        f"{int(G[G.reset=='recover'].ladder_beats_arm.sum())}/{len(G[G.reset=='recover'])} sweep arms "
+        f"(small {int(sw[sw.panel=='small'].ladder_beats_arm.sum())}/{len(sw[sw.panel=='small'])}): "
+        f"cheap is not the same as worth buying.")
 
     (OUT / f"{STEM}.console.txt").write_text("\n".join(_tee) + "\n")
 

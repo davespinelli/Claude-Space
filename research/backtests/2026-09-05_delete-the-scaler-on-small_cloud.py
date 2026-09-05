@@ -370,6 +370,36 @@ def main():
                 f"{row['pct_adv_1M']:>9.2f}% {row['pct_adv_10M']:>7.1f}% {row['pct_adv_100M']:>7.0f}%")
     pd.DataFrame(frows).to_csv(OUT / f"{STEM}.capacity.csv", index=False)
 
+    # ---- H: no-ranking control (added after test C: is the SCREENED UNIVERSE bad, or the RANKING?) ----
+    say("\n[H] control — equal-weight EVERY name passing the screen (no composite, no ranking, "
+        "no scaler, no gate), so the grid's result can be attributed:")
+    say(f"    {'floor':>7} {'g':>5} {'CAGR':>7} {'Shrp':>6} {'MaxDD':>7} {'H1':>6} {'H2':>6} "
+        f"{'OOSs':>6} {'turn':>6} {'names':>6} {'4a':>5} {'4b':>5}")
+    hrows = []
+    for floor in FLOORS:
+        elig = (dv20 >= floor) if floor > 0 else sel.notna()
+        elig = elig & sel.notna()
+        for g in GS:
+            w = elig.astype(float).div(elig.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0) * g
+            w = w.reindex(columns=px.columns).fillna(0.0)
+            r, t, _ = fast_bt(px, w)
+            d = stats(r, start)
+            d["turnover"] = t.loc[start:].sum() / (len(t.loc[start:]) / 252)
+            d["names"] = float(elig.loc[start:].sum(axis=1).mean())
+            d["floor_musd"], d["g"] = floor / 1e6, g
+            d["pass4a"], d["pass4b"] = verdicts(d, base, spy)
+            hrows.append(d)
+            say(f"    ${floor/1e6:>5.0f}M {g:>5.2f} {d['CAGR']:>7.2%} {d['Sharpe']:>6.3f} "
+                f"{d['MaxDD']:>7.1%} {d['H1']:>6.3f} {d['H2']:>6.3f} {d['OOS_Sharpe']:>6.3f} "
+                f"{d['turnover']:>5.1f}x {d['names']:>6.0f} {str(d['pass4a']):>5} {str(d['pass4b']):>5}")
+    pd.DataFrame(hrows).to_csv(OUT / f"{STEM}.norankcontrol.csv", index=False)
+    ctl5 = [x for x in hrows if x["floor_musd"] == HEADLINE_FLOOR / 1e6 and x["g"] == 0.75][0]
+    rk5 = hf[(hf.n == 5) & (hf.g == 0.75)].iloc[0]
+    say(f"    attribution at the ${HEADLINE_FLOOR/1e6:.0f}M floor, g=0.75: no-ranking control "
+        f"{ctl5['CAGR']:.2%}/{ctl5['Sharpe']:.3f}/{ctl5['MaxDD']:.1%} vs unscaled ranked n=5 "
+        f"{rk5.CAGR:.2%}/{rk5.Sharpe:.3f}/{rk5.MaxDD:.1%} -> the ranking is worth "
+        f"{100*(rk5.CAGR-ctl5['CAGR']):+.2f} pp of CAGR and {rk5.Sharpe-ctl5['Sharpe']:+.3f} of Sharpe")
+
     # ---- G: year table ----
     say("\n[G] calendar-year returns (headline floor, ungated, scaler OFF, matched gross):")
     yrows = {}
