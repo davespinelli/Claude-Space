@@ -2,6 +2,9 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-05 | 40691768 | PDF to Excel Data Extraction | $310 | 8 | drafted |
+| 2026-09-05 | 40691566 | QA: Verify stock-charting dashboard vs TradingView | $210 | 33 | drafted |
+| 2026-09-05 | 40691750 | Automate Excel Form Submission | $125 | 11 | drafted |
 | 2026-09-05 | 40691151 | Business Analytics API Dashboard -- 2 | $245 | 12 | drafted |
 | 2026-09-05 | 40691213 | Excel Data Validation & Entry | $640 | 14 | drafted |
 | 2026-09-05 | 40691397 | Numeric CSV Data Cleanup | $520 | 91 | drafted |
@@ -72,3 +75,8 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Long-Term Django Web Development (40691283) (ongoing hourly maintenance role, 143 bids)
 - tạo tool tự động (40681118) (Vietnamese-language delivery, browser automation tool with no English brief)
 - Daily Market Trend Tweets (40683550) (recurring content writing service, not a defined build)
+- Input Data Pelanggan ke Excel (40691788) (Indonesian-language posting whose whole brief is "Jasa Data Entry dan Inputan ke Excel", reads as a service advert with no scope to price)
+- App C++/Python para Automatizar (40691593) (Spanish-language delivery, 61 bids, desktop C++ app outside our stack)
+- Web Scraping Specialist Needed (40691488) (entire brief is "I'm looking for a scraping expert": no target, no scope, 98 bids, hourly posting)
+- AI-Powered Business Operating System Development (40691548) (full cloud business OS MVP posted at $30–$250 with 113 bids; budget and scope do not meet)
+- Self-Hosted Facial Recognition API (40691451) (biometric identification system at $27–$338 with 161 bids; privacy exposure we will not take on at that price)
