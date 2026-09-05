@@ -1,0 +1,15 @@
+# MEMO — 4b KEEP-candidate (by-product of idea 171): monthly cadence on the standing top-20 book
+
+1. **What.** The standing 2026-09-04 KEEP 4b candidate (top-20 equal-weight, 75% gross, no vol scaler, `universe.json`) rebalanced **monthly** instead of weekly. One dial, one step, no other change.
+2. **Why it is not a fit.** Both selectors (IS Sharpe argmax and IS 4b-margin argmax) pick `M` on U56 from the **2009–2016 window alone**, and `M` is also the OOS oracle. Across 53 books, monthly wins the paired test on OOS Sharpe (+0.0642, t = +4.54, 40 win / 11 loss, sign p = 0.0001) and banks 67.1% of the oracle's gain while the RANDOM control banks −33.0%. It is the only dial of five that survives the geometry and random controls.
+3. **Numbers, U56, 10 bps, t+1, full sample.** Monthly **14.8% CAGR / 1.208 Sharpe / −19.6% MaxDD**, halves **1.219 / 1.206**, OOS Sharpe **1.287**, turnover **4.28×/yr**.
+4. **Against the incumbent weekly**: 12.9% / 1.108 / −18.2%, halves 1.110/1.112, OOS 1.177, turnover 9.45×. Monthly is +1.9 pp CAGR, +0.100 Sharpe, +0.110 OOS Sharpe, **−55% turnover**, at −1.4 pp of drawdown.
+5. **Against SPY**: 15.2% / 0.889 / −33.7%, halves 0.957 / 0.834, OOS 0.882. **Against RULES v1**: 0.664 Sharpe / −13.8% MaxDD.
+6. **PROTOCOL 4b, bar by bar.** H1 1.219 > 0.957 ✅ · H2 1.206 > 0.834 ✅ · OOS 1.287 > 0.882 ✅ · |MaxDD| 19.6% ≤ 20.23% (60% of SPY) ✅ · CAGR 14.8% ≥ 10.66% (70% of SPY) ✅. **Passes 4b. Fails 4a on drawdown** (−19.6% vs RULES v1's −13.8%), as the incumbent weekly book also does.
+7. **BLOCKER 1 — the drawdown margin is 0.6 pp.** 19.6% against a 20.23% cap. Idea 3 found monthly buys 3–6 pp of extra drawdown; a slightly worse SPY drawdown, or one more year of data, closes this bar. This is a thin pass, not a comfortable one.
+8. **BLOCKER 2 — it fails cross-universe.** The identical move on `universe_broad.json` (B136) gives 16.3% / 1.100 / **−26.1%** and **fails 4b on DD** by 5.9 pp (weekly there fails on H2). Idea 44 already flagged the standing candidate's broad-universe weakness; monthly widens it.
+9. **Not proposed as a rules change here.** PROTOCOL rule 6 reserves that for Sunday review, and **idea 107 (open) owns the cadence question** and should decide it with a pre-registered cadence parameter rather than a by-product. Survivorship (idea 54) and idea 38's calendar-day index carry over.
+10. **Exact RULES wording, if Sunday review adopts it** — replace the rebalance clause only:
+    > **Rebalance monthly.** Recompute the composite score and the eligibility gate on the **last trading day of each calendar month**; trade at the next day's close. Between month-ends, hold and let positions drift — no intra-month rebalancing, no intra-month entries or exits. All other rules are unchanged: hold the top 20 eligible names by composite score, equal-weight at 3.75% each (75% gross, 25% cash), no volatility scaler, eligibility = price above its 200-day moving average and 20-day annualised volatility below 0.60.
+
+Evidence: `2026-09-05_do-gross-choice-rules-lose-to-constants-in-general_C.{py,console.txt,ladder.csv,choices.csv,paired.csv,geometry.csv,walkforward.csv,keep.csv}`.
