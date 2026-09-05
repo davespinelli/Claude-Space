@@ -1,0 +1,117 @@
+[audit] idea 94 `run()` reading, done before any backtest: the trailing-stop trigger is evaluated on EVERY row (its step 5 is not gated by the rebalance mask), so the exit is already intra-week; the weekly grid governs RE-ENTRY only. A hit at row i is executed at row i+1 before that row's return, so the effective exit price is px[i], the triggering close — one bar faster than PROTOCOL rule 2's next-day execution.
+
+[panel] u56: 56 columns, 2008-01-02 -> 2026-09-04, eval from 2009-01-13
+[SPY] u56: CAGR 15.23% Sharpe 0.889 MaxDD -33.7% halves 0.957/0.834 OOS 15.45%/0.882/-33.7% | 4b bars MaxDD >= -20.2%, CAGR >= 10.66%
+[v1 baseline] u56: 6.30%/0.663/-15.7% halves 0.682/0.650
+
+[panel] broad: 136 columns, 2008-01-02 -> 2026-09-04, eval from 2009-01-13
+[SPY] broad: CAGR 15.23% Sharpe 0.889 MaxDD -33.7% halves 0.957/0.834 OOS 15.45%/0.882/-33.7% | 4b bars MaxDD >= -20.2%, CAGR >= 10.66%
+[v1 baseline] broad: 6.21%/0.627/-23.5% halves 0.743/0.527
+
+[B] grid: 144 stop arms + 12 controls -> 2026-09-05_stop-as-negative-insurance_cloud.grid.csv
+
+[A] REPRODUCTION of idea 94's stop convention (check=daily, lag=same):
+    control vs idea 94's own `run()`  max|diff| over 12 cells = 0.000e+00
+    stop arms vs idea 94's `run(stop=...)` max|diff| over 24 arms = 0.000e+00; firing-count differences = 0
+    stop15: median dMaxDD -0.69 pp [idea 94 published -0.69], median dSharpe -0.036 [published -0.033], median turnover 12.5x [published 12.5x], dMaxDD < 0 in 12/12 cells [published 10/12 negative, 0/12 priceable]
+    stop25: median dMaxDD -1.32 pp [idea 94 published -1.25], median dSharpe -0.007 [published -0.006], median turnover 11.3x [published 11.3x], dMaxDD < 0 in 8/12 cells [published 10/12 negative, 0/12 priceable]
+
+[C] IS THE SIGN THE GRID? dMaxDD sign over the 12 matched cells, by implementation:
+      check    lag  depth  dMaxDD<0  med dMaxDD  med dCAGR  med dSharpe  priceable(abs)  priceable(rel)
+      daily   same   0.15     12/12       -0.69      -1.19       -0.036              0/12              0/12
+      daily   same   0.25      8/12       -1.32      -0.33       -0.007              0/12              0/12
+      daily   next   0.15      4/12        2.44      -0.49       -0.004              8/12              6/12
+      daily   next   0.25      0/12        1.42       0.00        0.012              8/12              2/12
+      daily  rebal   0.15      8/12       -0.25      -0.62       -0.038              0/12              0/12
+      daily  rebal   0.25      8/12       -0.13      -0.13       -0.008              0/12              0/12
+     weekly   same   0.15      4/12        0.31      -1.38       -0.047              8/12              0/12
+     weekly   same   0.25      0/12        0.40      -0.27       -0.006              7/12              0/12
+     weekly   next   0.15      4/12        2.54      -0.43       -0.004              8/12              8/12
+     weekly   next   0.25      0/12        1.65      -0.00        0.009              8/12              6/12
+     weekly  rebal   0.15      8/12       -0.17      -0.39       -0.024              0/12              0/12
+     weekly  rebal   0.25      8/12       -0.05      -0.09       -0.005              0/12              0/12
+
+[D] EXIT SPEED — the queue's axis, slowest to fastest (median over 12 cells, both depths pooled):
+      daily/same  : med dMaxDD   -0.95 pp | med dCAGR   -0.41 pp | med dSharpe -0.013 | dMaxDD<0 in 20/24 | stops/yr 15.0
+      daily/next  : med dMaxDD   +2.16 pp | med dCAGR   -0.05 pp | med dSharpe +0.000 | dMaxDD<0 in 4/24 | stops/yr 15.3
+     weekly/same  : med dMaxDD   +0.31 pp | med dCAGR   -0.41 pp | med dSharpe -0.009 | dMaxDD<0 in 4/24 | stops/yr 7.5
+     weekly/next  : med dMaxDD   +2.45 pp | med dCAGR   -0.05 pp | med dSharpe +0.000 | dMaxDD<0 in 4/24 | stops/yr 7.5
+      daily/rebal : med dMaxDD   -0.17 pp | med dCAGR   -0.28 pp | med dSharpe -0.017 | dMaxDD<0 in 16/24 | stops/yr 32.4
+     weekly/rebal : med dMaxDD   -0.11 pp | med dCAGR   -0.18 pp | med dSharpe -0.011 | dMaxDD<0 in 16/24 | stops/yr 18.3
+    COST OF PROTOCOL CONFORMANCE (as-coded same-day -> next-day, 24 arms): dMaxDD worsens in 4/24 (median +3.289 pp), dCAGR +0.402 pp, dSharpe +0.0278
+
+[E] MECHANISM — firings, the de-grossing they cause, and the lever this must beat (check=daily, lag=same, i.e. idea 94's own arm):
+    universe   book  cost  depth  stops/yr  gross arm  gross ctl  turn arm  turn ctl  lever pp/pp
+       broad  EWall    10   0.15     277.5      0.739      0.750      3.4x      0.9x        0.591
+       broad  EWall    10   0.25      95.0      0.747      0.750      1.7x      0.9x        0.591
+       broad  EWall    25   0.15     277.5      0.739      0.750      3.4x      0.9x        0.585
+       broad  EWall    25   0.25      95.0      0.747      0.750      1.7x      0.9x        0.585
+       broad  TOP20    10   0.15      26.1      0.741      0.748     14.5x     13.2x        0.595
+       broad  TOP20    10   0.25       4.7      0.747      0.748     13.4x     13.2x        0.595
+       broad  TOP20    25   0.15      26.1      0.741      0.748     14.5x     13.2x        0.496
+       broad  TOP20    25   0.25       4.7      0.747      0.748     13.4x     13.2x        0.496
+       broad    V1u    10   0.15       0.4      0.750      0.750     29.4x     29.4x        0.271
+       broad    V1u    10   0.25       0.0      0.750      0.750     29.4x     29.4x        0.271
+       broad    V1u    25   0.15       0.4      0.750      0.750     29.4x     29.4x        0.051
+       broad    V1u    25   0.25       0.0      0.750      0.750     29.4x     29.4x        0.051
+         u56  EWall    10   0.15     109.3      0.740      0.750      3.3x      0.8x        0.620
+         u56  EWall    10   0.25      38.8      0.747      0.750      1.7x      0.8x        0.620
+         u56  EWall    25   0.15     109.3      0.740      0.750      3.3x      0.8x        0.613
+         u56  EWall    25   0.25      38.8      0.747      0.750      1.7x      0.8x        0.613
+         u56  TOP20    10   0.15      24.8      0.740      0.747     10.5x      9.0x        0.735
+         u56  TOP20    10   0.25       5.3      0.746      0.747      9.3x      9.0x        0.735
+         u56  TOP20    25   0.15      24.8      0.740      0.747     10.5x      9.0x        0.654
+         u56  TOP20    25   0.25       5.3      0.746      0.747      9.3x      9.0x        0.654
+         u56    V1u    10   0.15       0.2      0.750      0.750     23.3x     23.2x        0.405
+         u56    V1u    10   0.25       0.0      0.750      0.750     23.2x     23.2x        0.405
+         u56    V1u    25   0.15       0.2      0.750      0.750     23.3x     23.2x        0.127
+         u56    V1u    25   0.25       0.0      0.750      0.750     23.2x     23.2x        0.127
+
+[F] PROTOCOL RULE 8 WALK-FORWARD — implementation + depth chosen on ..2016-12-31 by argmax IS Sharpe over {12 stop arms + no-stop control}, OOS 2017-01-01.. read once:
+      broad/EWall @10bp pick **daily/next/stop25** (IS 1.147 vs control 1.146) -> OOS  13.94%/1.142/-22.2% vs control OOS 13.93%/1.102/-25.4% | regret +0.040 | SPY OOS 15.45%/0.882 | 4a True 4b False
+      broad/EWall @25bp pick **control (no stop)** (IS 1.136 vs control 1.136) -> OOS  13.78%/1.091/-25.4% vs control OOS 13.78%/1.091/-25.4% | regret +0.000 | SPY OOS 15.45%/0.882 | 4a False 4b False
+      broad/TOP20 @10bp pick **control (no stop)** (IS 1.050 vs control 1.050) -> OOS  14.86%/0.930/-26.0% vs control OOS 14.86%/0.930/-26.0% | regret +0.000 | SPY OOS 15.45%/0.882 | 4a False 4b False
+      broad/TOP20 @25bp pick **control (no stop)** (IS 0.910 vs control 0.910) -> OOS  12.57%/0.807/-26.1% vs control OOS 12.57%/0.807/-26.1% | regret +0.000 | SPY OOS 15.45%/0.882 | 4a False 4b False
+      broad/V1u   @10bp pick **daily/same/stop15** (IS 0.701 vs control 0.700) -> OOS   5.77%/0.568/-23.9% vs control OOS 5.83%/0.573/-23.5% | regret -0.005 | SPY OOS 15.45%/0.882 | 4a False 4b False
+      broad/V1u   @25bp pick **daily/same/stop15** (IS 0.286 vs control 0.285) -> OOS   0.95%/0.141/-29.3% vs control OOS 1.00%/0.146/-28.9% | regret -0.005 | SPY OOS 15.45%/0.882 | 4a False 4b False
+        u56/EWall @10bp pick **control (no stop)** (IS 1.110 vs control 1.110) -> OOS  13.82%/1.136/-22.5% vs control OOS 13.82%/1.136/-22.5% | regret +0.000 | SPY OOS 15.45%/0.882 | 4a False 4b False
+        u56/EWall @25bp pick **control (no stop)** (IS 1.099 vs control 1.099) -> OOS  13.67%/1.125/-22.5% vs control OOS 13.67%/1.125/-22.5% | regret +0.000 | SPY OOS 15.45%/0.882 | 4a False 4b False
+        u56/TOP20 @10bp pick **control (no stop)** (IS 1.187 vs control 1.187) -> OOS  16.64%/1.168/-22.2% vs control OOS 16.64%/1.168/-22.2% | regret +0.000 | SPY OOS 15.45%/0.882 | 4a False 4b False
+        u56/TOP20 @25bp pick **control (no stop)** (IS 1.069 vs control 1.069) -> OOS  15.09%/1.072/-22.3% vs control OOS 15.09%/1.072/-22.3% | regret +0.000 | SPY OOS 15.45%/0.882 | 4a False 4b False
+        u56/V1u   @10bp pick **daily/same/stop15** (IS 0.596 vs control 0.596) -> OOS   7.14%/0.712/-16.2% vs control OOS 7.17%/0.714/-15.7% | regret -0.002 | SPY OOS 15.45%/0.882 | 4a False 4b False
+        u56/V1u   @25bp pick **daily/same/stop15** (IS 0.250 vs control 0.250) -> OOS   3.24%/0.357/-20.4% vs control OOS 3.27%/0.359/-19.9% | regret -0.002 | SPY OOS 15.45%/0.882 | 4a False 4b False
+    selector took a stop in 5/12 cells; mean OOS regret vs the no-stop control +0.002; OOS Sharpe beats SPY in 7/12
+
+[G] KEEP footprint: 4a 15/144 stop arms (0/12 controls); 4b 9/144 stop arms (0/12 controls)
+    4b: u56/TOP20@10 daily/next/stop15 15.03%/1.174/-20.0% halves 1.253/1.119 OOS 1.183
+    4b: u56/TOP20@10 weekly/next/stop15 15.07%/1.176/-19.9% halves 1.251/1.124 OOS 1.185
+    4b: u56/TOP20@25 weekly/next/stop15 13.36%/1.057/-20.1% halves 1.122/1.014 OOS 1.073
+    4b: u56/EWall@10 daily/next/stop15 12.68%/1.133/-18.6% halves 1.162/1.109 OOS 1.177
+    4b: u56/EWall@10 weekly/next/stop15 12.89%/1.149/-18.7% halves 1.184/1.120 OOS 1.186
+    4b: u56/EWall@10 weekly/next/stop25 13.27%/1.148/-20.0% halves 1.183/1.120 OOS 1.183
+    4b: u56/EWall@25 daily/next/stop15 12.12%/1.088/-18.9% halves 1.120/1.061 OOS 1.130
+    4b: u56/EWall@25 weekly/next/stop15 12.45%/1.114/-18.9% halves 1.151/1.083 OOS 1.150
+    4b: u56/EWall@25 weekly/next/stop25 13.02%/1.128/-20.0% halves 1.164/1.100 OOS 1.164
+
+[H] POST-TRIGGER REVERSAL — is the slower exit harvesting a bounce? Mean return of the triggering name on the day AFTER the trigger and over the next 5 days, against the same panel's unconditional daily mean:
+    universe   book  depth  firings   E[r|t+1]    uncond   t-stat  E[r|t+1..5]  uncond x5
+         u56    V1u   0.15        3     0.369%    0.061%     0.32       0.784%     0.306%
+         u56    V1u   0.25        0       nan%    0.061%      nan         nan%     0.306%
+         u56  TOP20   0.15      436     0.673%    0.061%     3.04       2.120%     0.306%
+         u56  TOP20   0.25       93     1.589%    0.061%     2.73       1.540%     0.306%
+         u56  EWall   0.15     1926     0.587%    0.061%     5.70       1.289%     0.306%
+         u56  EWall   0.25      684     0.566%    0.061%     2.70       1.215%     0.306%
+       broad    V1u   0.15        7    -0.735%    0.066%    -0.81      -0.119%     0.329%
+       broad    V1u   0.25        0       nan%    0.066%      nan         nan%     0.329%
+       broad  TOP20   0.15      460     0.902%    0.066%     3.96       2.645%     0.329%
+       broad  TOP20   0.25       82     2.211%    0.066%     3.24       1.795%     0.329%
+       broad  EWall   0.15     4889     0.685%    0.066%    10.37       1.487%     0.329%
+       broad  EWall   0.25     1673     0.746%    0.066%     5.25       1.593%     0.329%
+    post-trigger next-day mean exceeds the unconditional mean in 9/12 cells; median excess +0.615 pp/day
+
+[P] pre-registered predictions vs outcome
+    P1 (daily,same) reproduces idea 94 to <1e-12: max|diff| 0.000e+00 -> CONFIRMED
+    P2 dMaxDD < 0 in the majority of 12 cells for ALL SIX implementations at both depths: minimum negative count over the 12 (impl, depth) groups = 0/12 -> REFUTED
+    P3 dMaxDD monotone in exit speed: fastest daily/same -0.95 pp, slowest weekly/rebal -0.11 pp -> REFUTED (full ordering daily/same -0.95, daily/next +2.16, daily/rebal -0.17, weekly/same +0.31, weekly/next +2.45, weekly/rebal -0.11)
+    P4 0 of 144 stop arms pass 4b: 9; and next-day is worse than same-day on dMaxDD in 4/24 arms -> PARTIAL/REFUTED
+    P4 note (see CORRECTION in the docstring): its second clause was written on a mistaken reading of the engine's lag. `lag=same` IS the protocol-conformant arm, so the protocol-conformant answer is the same-day column, where the stop still destroys drawdown; every 4b pass above sits on the one-day-SLOWER `next` arm, which PROTOCOL rule 2 does not permit and test H explains.
