@@ -1,0 +1,349 @@
+======================================================================================================================
+IDEA 191  the-on-share-column   (cloud, 2026-09-05)
+======================================================================================================================
+
+building panels ...
+  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable (SURVIVORSHIP: current constituents only, no delistings)
+  panels: U56=55  BROAD136=132  SMALL439=439
+
+REPRODUCTION, asserted before any new number is read:
+  [a] U56       fast_backtest vs engine.backtest: max|dret|=1.388e-17 max|dturn|=3.053e-16 -> PASS
+  [b] U56       cost identity 10bps from the 0bps run: max|d|=1.388e-17 -> PASS
+  [c] U56       base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [a] BROAD136  fast_backtest vs engine.backtest: max|dret|=2.082e-17 max|dturn|=2.776e-16 -> PASS
+  [b] BROAD136  cost identity 10bps from the 0bps run: max|d|=2.082e-17 -> PASS
+  [c] BROAD136  base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [a] SMALL439  fast_backtest vs engine.backtest: max|dret|=2.776e-17 max|dturn|=4.441e-16 -> PASS
+  [b] SMALL439  cost identity 10bps from the 0bps run: max|d|=2.776e-17 -> PASS
+  [c] SMALL439  base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [d] RULES v1 on u56 @10bps: 6.45305% / 0.66418 / -13.82780%  (published 6.45305% / 0.66418 / -13.82780%) -> PASS
+
+reproduction PASSES -- proceeding
+
+======================================================================================================================
+GRID  3 panels x 3 families x 5 thresholds x 2 depths x (1 real + 20 rotations) x 2 cost
+      threshold grid WIDENED from idea 186's 3 points to span on-share within family
+======================================================================================================================
+  U56 done (78s)
+  BROAD136 done (163s)
+  SMALL439 done (364s)
+
+grid: 3780 rows (180 real) (364s) -> 2026-09-05_the-on-share-column_cloud.grid.csv
+  null validity: on-share preserved in 3600/3600 rotated rows
+  null validity: circular switch count preserved in 3600/3600 rows
+
+  turnover fidelity of the rotation null (mean |null - real| / real), by family:
+depth   0.5  1.0  half    skip
+family                        
+BUDGET  NaN  NaN  4.3% 1782.7%
+DDCTL  1.1% 2.3%   NaN     NaN
+SLEEVE 0.7% 1.3%   NaN     NaN
+
+======================================================================================================================
+Q1  does ON-SHARE predict clearing WITHIN a family, on a widened threshold grid?
+======================================================================================================================
+
+  on-share range reached by each family (this run vs idea 186's 3-point grid):
+        min   max  mean
+family                 
+BUDGET 0.4% 93.7% 54.1%
+DDCTL  0.0% 62.4% 17.0%
+SLEEVE 9.1% 28.1% 17.5%
+
+  clear rate and mean band by family:
+         n  clears  clearsDD   band   absd
+family                                    
+BUDGET  60       8         6 0.1115 0.0669
+DDCTL   60      19         6 0.1810 0.1564
+SLEEVE  60       0         3 0.2238 0.0741
+
+  the confound made visible -- clear rate by (family x on-share tercile):
+os_terc  low  mid  high
+family                 
+BUDGET  0.42 0.00  0.07
+DDCTL   0.22 0.33  0.50
+SLEEVE  0.00 0.00   NaN
+
+  Spearman(on_share, .) WITHIN each family, and pooled on family-demeaned values:
+                  family   n  rho_clears  rho_band  rho_absd  rho_margin
+                  BUDGET  60     -0.3404   +0.6426   +0.4221     -0.2354
+                   DDCTL  60     +0.4184   +0.8904   +0.9038     +0.0118
+                  SLEEVE  60         NaN   +0.5810   +0.6513     -0.2509
+POOLED (family-demeaned) 180     +0.0683   +0.6558   +0.5951     -0.1659
+
+======================================================================================================================
+Q2  MECHANISM / SIZE.  Action held FIXED (de-gross by k); ON indicator is pure noise at a
+    TARGETED on-share.  A zero-effect overlay's clear rate IS the clause's realised size.
+======================================================================================================================
+    noise episode length matched to the real overlays' median: 5.89 rebalances
+    noise arm on U56 done (375s)
+    noise arm on BROAD136 done (394s)
+    noise arm on SMALL439 done (461s)
+
+  band width and realised SIZE of the clause, by target on-share (n = 12 cells each; nominal one-sided size 1/21 = 4.8%):
+        realised_on_share   band  band_sd  size_Sharpe  size_MaxDD   n
+target                                                                
+0.05               0.0622 0.0909   0.0399       0.0000      0.0000  12
+0.15               0.1681 0.1833   0.0662       0.0000      0.0000  12
+0.30               0.2919 0.2657   0.0948       0.0000      0.0833  12
+0.50               0.5068 0.4318   0.1429       0.0000      0.0000  12
+0.70               0.6903 0.5842   0.1385       0.0000      0.0000  12
+0.85               0.8612 0.7149   0.1491       0.0000      0.2500  12
+0.95               0.8597 0.6799   0.1199       0.3333      0.0833  12
+
+  Spearman(target on-share, band width) = +0.6768   over 84 noise cells
+  Spearman(target on-share, realised size) = +0.3354
+  overall realised size of the clause on a ZERO-EFFECT overlay: 4.8% on Sharpe, 6.0% on drawdown (nominal 4.8%)
+
+======================================================================================================================
+Q3  CONFOUND.  Conditional on realised |dSharpe| tercile, does on-share still predict
+    clearing?  If not, the column is a proxy for effect size and is cosmetic.
+======================================================================================================================
+
+  clear rate by |dSharpe| tercile x on-share tercile (n in parentheses):
+os_terc    low  mid  high
+absd_terc                
+small     0.06 0.00  0.00
+mid       0.32 0.00  0.00
+large     0.67 0.17  0.35
+  counts:
+os_terc    low  mid  high
+absd_terc                
+small       35   17     8
+mid         19   24    17
+large        6   23    31
+
+  within each |dSharpe| tercile, Spearman(on_share, clears):
+    small  n= 60  rho=-0.1409   mean band 0.0748   mean |d| 0.0079
+    mid    n= 60  rho=-0.4446   mean band 0.1347   mean |d| 0.0496
+    large  n= 60  rho=-0.1274   mean band 0.3068   mean |d| 0.2399
+
+  and the same for the BAND (the quantity the mechanism claim is actually about):
+    small  n= 60  rho(on_share, band)=+0.6992
+    mid    n= 60  rho(on_share, band)=+0.2431
+    large  n= 60  rho(on_share, band)=+0.0140
+
+======================================================================================================================
+Q4  CENSUS.  How many committed LEADERBOARD rows rest on a state-dependent instrument,
+    and how many publish an on-share?  (TEXT MATCH: bounds exposure, does not re-price.)
+======================================================================================================================
+
+  3359 committed data rows in LEADERBOARD.md
+    sleeve                       142 rows (4.2%)
+    drawdown control / stop       83 rows (2.5%)
+    entry/turnover budget        126 rows (3.8%)
+    gate                         295 rows (8.8%)
+    breadth                       26 rows (0.8%)
+    ANY state-dependent          632 rows (18.8%)
+    of those, publishing an on-share: 1 (0.16%)
+  -> the column is missing from 631 of 632 exposed rows.
+
+  BACK-FILL for every configuration this run prices (the column, as proposed):
+               on_share  switches  clears   band   absd
+family thr                                             
+BUDGET 0.05      0.9184   44.6667  0.0833 0.1636 0.1359
+       0.10      0.8360  141.3333  0.0833 0.1518 0.0767
+       0.20      0.6154  263.3333  0.0833 0.1263 0.0586
+       0.30      0.2601  231.3333  0.0833 0.0717 0.0343
+       0.50      0.0764   88.0000  0.3333 0.0441 0.0290
+DDCTL  0.03      0.4569  114.6667  0.3333 0.3800 0.3507
+       0.06      0.2696   70.6667  0.3333 0.3518 0.2283
+       0.10      0.1042   42.6667  0.5833 0.1231 0.1531
+       0.15      0.0201   11.3333  0.3333 0.0503 0.0497
+       0.25      0.0000    0.0000  0.0000 0.0000 0.0000
+SLEEVE 50.00     0.2739  147.3333  0.0000 0.3723 0.2101
+       100.00    0.2146   72.6667  0.0000 0.2416 0.0761
+       200.00    0.1669   51.3333  0.0000 0.2125 0.0326
+       300.00    0.1249   34.0000  0.0000 0.1486 0.0373
+       400.00    0.0927   24.6667  0.0000 0.1440 0.0144
+
+======================================================================================================================
+Q5  RULE 8 WALK-FORWARD.  Overlay point chosen on data <= 2016-12-31 ONLY; 2017-2026 read
+    ONCE.  18 cells = 3 panels x 3 families x 2 cost rungs.  Pool = 10 (5 thr x 2 depth).
+======================================================================================================================
+
+  on-share median used as the gate: 19.7%
+                         selector  mean_OOS_Sharpe    dOOS       t  wins  losses  n  abstains
+                       ORACLE-OOS          +0.8197 +0.0431 +3.8604    12       0 18         0
+                    S0 do-nothing          +0.7766 +0.0000     NaN     0       0 18         0
+S4 IS-argmax | on-share <= median          +0.7618 -0.0148 -1.3755     5       9 18         0
+      S5 IS-clause + low on-share          +0.7542 -0.0224 -2.3530     0       6 18        12
+              S1 IS-Sharpe argmax          +0.7405 -0.0361 -1.6840     5       9 18         0
+    S2 IS-clause-gated (idea 186)          +0.6902 -0.0864 -3.1387     0      11 18         7
+
+  every walk-forward cell:
+   panel family  bps                          selector             pick  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    dOOS
+BROAD136 BUDGET   10                     S0 do-nothing                -    0.1240      0.8758    -0.2157  0.0000
+BROAD136 BUDGET   10               S1 IS-Sharpe argmax  0.2/skip os=64%    0.1042      0.6986    -0.2779 -0.1772
+BROAD136 BUDGET   10 S4 IS-argmax | on-share <= median   0.5/skip os=3%    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10     S2 IS-clause-gated (idea 186)   0.5/skip os=3%    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10       S5 IS-clause + low on-share   0.5/skip os=3%    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10                        ORACLE-OOS        0.05/skip    0.1543      0.9020    -0.2779  0.0263
+BROAD136 BUDGET   25                     S0 do-nothing                -    0.1006      0.7310    -0.2168  0.0000
+BROAD136 BUDGET   25               S1 IS-Sharpe argmax  0.2/skip os=64%    0.0947      0.6447    -0.2797 -0.0864
+BROAD136 BUDGET   25 S4 IS-argmax | on-share <= median   0.5/skip os=3%    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25     S2 IS-clause-gated (idea 186)  0.2/skip os=64%    0.0947      0.6447    -0.2797 -0.0864
+BROAD136 BUDGET   25       S5 IS-clause + low on-share   0.5/skip os=3%    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25                        ORACLE-OOS        0.05/skip    0.1536      0.8982    -0.2779  0.1672
+BROAD136  DDCTL   10                     S0 do-nothing                -    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10               S1 IS-Sharpe argmax   0.15/0.5 os=1%    0.1216      0.8663    -0.2157 -0.0094
+BROAD136  DDCTL   10 S4 IS-argmax | on-share <= median   0.15/0.5 os=1%    0.1216      0.8663    -0.2157 -0.0094
+BROAD136  DDCTL   10     S2 IS-clause-gated (idea 186)    0.1/1.0 os=6%    0.0948      0.7564    -0.2742 -0.1194
+BROAD136  DDCTL   10       S5 IS-clause + low on-share    0.1/1.0 os=6%    0.0948      0.7564    -0.2742 -0.1194
+BROAD136  DDCTL   10                        ORACLE-OOS         0.25/0.5    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   25                     S0 do-nothing                -    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25               S1 IS-Sharpe argmax   0.15/0.5 os=1%    0.0983      0.7208    -0.2168 -0.0103
+BROAD136  DDCTL   25 S4 IS-argmax | on-share <= median   0.15/0.5 os=1%    0.0983      0.7208    -0.2168 -0.0103
+BROAD136  DDCTL   25     S2 IS-clause-gated (idea 186)    0.1/0.5 os=6%    0.0866      0.6833    -0.2376 -0.0477
+BROAD136  DDCTL   25       S5 IS-clause + low on-share    0.1/0.5 os=6%    0.0866      0.6833    -0.2376 -0.0477
+BROAD136  DDCTL   25                        ORACLE-OOS         0.25/0.5    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   10                     S0 do-nothing                -    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10               S1 IS-Sharpe argmax 100.0/0.5 os=22%    0.1116      0.8885    -0.1957  0.0127
+BROAD136 SLEEVE   10 S4 IS-argmax | on-share <= median  400.0/0.5 os=9%    0.1283      0.9278    -0.2157  0.0520
+BROAD136 SLEEVE   10     S2 IS-clause-gated (idea 186)          ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10       S5 IS-clause + low on-share          ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10                        ORACLE-OOS        400.0/1.0    0.1318      0.9503    -0.2157  0.0746
+BROAD136 SLEEVE   25                     S0 do-nothing                -    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25               S1 IS-Sharpe argmax  400.0/0.5 os=9%    0.1049      0.7787    -0.2168  0.0477
+BROAD136 SLEEVE   25 S4 IS-argmax | on-share <= median  400.0/0.5 os=9%    0.1049      0.7787    -0.2168  0.0477
+BROAD136 SLEEVE   25     S2 IS-clause-gated (idea 186)          ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25       S5 IS-clause + low on-share          ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25                        ORACLE-OOS        400.0/1.0    0.1085      0.8018    -0.2168  0.0708
+SMALL439 BUDGET   10                     S0 do-nothing                -    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10               S1 IS-Sharpe argmax  0.3/skip os=53%    0.0234      0.2176    -0.4365 -0.2821
+SMALL439 BUDGET   10 S4 IS-argmax | on-share <= median  0.5/skip os=20%    0.0684      0.4551    -0.3298 -0.0447
+SMALL439 BUDGET   10     S2 IS-clause-gated (idea 186)          ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10       S5 IS-clause + low on-share          ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10                        ORACLE-OOS         0.5/half    0.0753      0.5005    -0.3067  0.0007
+SMALL439 BUDGET   25                     S0 do-nothing                -    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25               S1 IS-Sharpe argmax  0.3/skip os=53%    0.0084      0.1391    -0.4489 -0.1748
+SMALL439 BUDGET   25 S4 IS-argmax | on-share <= median  0.5/skip os=20%    0.0421      0.3181    -0.3560  0.0043
+SMALL439 BUDGET   25     S2 IS-clause-gated (idea 186)          ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25       S5 IS-clause + low on-share          ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25                        ORACLE-OOS         0.1/skip    0.0587      0.4324    -0.3105  0.1186
+SMALL439  DDCTL   10                     S0 do-nothing                -    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   10               S1 IS-Sharpe argmax   0.25/0.5 os=0%    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   10 S4 IS-argmax | on-share <= median   0.25/0.5 os=0%    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   10     S2 IS-clause-gated (idea 186)  0.06/0.5 os=40%    0.0403      0.3565    -0.3004 -0.1432
+SMALL439  DDCTL   10       S5 IS-clause + low on-share          ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   10                        ORACLE-OOS         0.25/0.5    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   25                     S0 do-nothing                -    0.0403      0.3138    -0.3456  0.0000
+SMALL439  DDCTL   25               S1 IS-Sharpe argmax   0.25/0.5 os=0%    0.0403      0.3138    -0.3456  0.0000
+SMALL439  DDCTL   25 S4 IS-argmax | on-share <= median   0.25/0.5 os=0%    0.0403      0.3138    -0.3456  0.0000
+SMALL439  DDCTL   25     S2 IS-clause-gated (idea 186)  0.06/0.5 os=40%    0.0129      0.1622    -0.3752 -0.1516
+SMALL439  DDCTL   25       S5 IS-clause + low on-share          ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439  DDCTL   25                        ORACLE-OOS         0.25/0.5    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   10                     S0 do-nothing                -    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10               S1 IS-Sharpe argmax 300.0/1.0 os=12%    0.0696      0.4926    -0.2619 -0.0072
+SMALL439 SLEEVE   10 S4 IS-argmax | on-share <= median 300.0/1.0 os=12%    0.0696      0.4926    -0.2619 -0.0072
+SMALL439 SLEEVE   10     S2 IS-clause-gated (idea 186)          ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10       S5 IS-clause + low on-share          ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10                        ORACLE-OOS        200.0/1.0    0.0810      0.5725    -0.2150  0.0727
+SMALL439 SLEEVE   25                     S0 do-nothing                -    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25               S1 IS-Sharpe argmax 300.0/1.0 os=12%    0.0363      0.2997    -0.3069 -0.0141
+SMALL439 SLEEVE   25 S4 IS-argmax | on-share <= median 300.0/1.0 os=12%    0.0363      0.2997    -0.3069 -0.0141
+SMALL439 SLEEVE   25     S2 IS-clause-gated (idea 186)  50.0/1.0 os=26%    0.0167      0.1855    -0.4187 -0.1284
+SMALL439 SLEEVE   25       S5 IS-clause + low on-share          ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25                        ORACLE-OOS        400.0/1.0    0.0485      0.3694    -0.2884  0.0555
+     U56 BUDGET   10                     S0 do-nothing                -    0.1449      1.1775    -0.1821  0.0000
+     U56 BUDGET   10               S1 IS-Sharpe argmax   0.5/skip os=0%    0.1395      1.1026    -0.2090 -0.0749
+     U56 BUDGET   10 S4 IS-argmax | on-share <= median   0.5/skip os=0%    0.1395      1.1026    -0.2090 -0.0749
+     U56 BUDGET   10     S2 IS-clause-gated (idea 186)   0.3/half os=5%    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10       S5 IS-clause + low on-share   0.3/half os=5%    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10                        ORACLE-OOS        0.05/half    0.1518      1.2057    -0.1817  0.0282
+     U56 BUDGET   25                     S0 do-nothing                -    0.1289      1.0618    -0.1833  0.0000
+     U56 BUDGET   25               S1 IS-Sharpe argmax 0.05/half os=88%    0.1412      1.1303    -0.1825  0.0685
+     U56 BUDGET   25 S4 IS-argmax | on-share <= median   0.5/skip os=0%    0.1238      0.9921    -0.2112 -0.0697
+     U56 BUDGET   25     S2 IS-clause-gated (idea 186)   0.3/half os=5%    0.1282      1.0445    -0.1828 -0.0173
+     U56 BUDGET   25       S5 IS-clause + low on-share   0.3/half os=5%    0.1282      1.0445    -0.1828 -0.0173
+     U56 BUDGET   25                        ORACLE-OOS        0.05/half    0.1412      1.1303    -0.1825  0.0685
+     U56  DDCTL   10                     S0 do-nothing                -    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10               S1 IS-Sharpe argmax   0.15/0.5 os=0%    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10 S4 IS-argmax | on-share <= median   0.15/0.5 os=0%    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10     S2 IS-clause-gated (idea 186)  0.03/1.0 os=36%    0.0718      0.8256    -0.1352 -0.3519
+     U56  DDCTL   10       S5 IS-clause + low on-share          ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10                        ORACLE-OOS         0.15/0.5    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   25                     S0 do-nothing                -    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25               S1 IS-Sharpe argmax   0.15/0.5 os=0%    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25 S4 IS-argmax | on-share <= median   0.15/0.5 os=0%    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25     S2 IS-clause-gated (idea 186)  0.03/1.0 os=36%    0.0580      0.6786    -0.1437 -0.3832
+     U56  DDCTL   25       S5 IS-clause + low on-share          ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25                        ORACLE-OOS         0.15/0.5    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   10                     S0 do-nothing                -    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10               S1 IS-Sharpe argmax  400.0/0.5 os=9%    0.1466      1.2088    -0.1821  0.0313
+     U56 SLEEVE   10 S4 IS-argmax | on-share <= median  400.0/0.5 os=9%    0.1466      1.2088    -0.1821  0.0313
+     U56 SLEEVE   10     S2 IS-clause-gated (idea 186)          ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10       S5 IS-clause + low on-share          ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10                        ORACLE-OOS        200.0/0.5    0.1438      1.2333    -0.1407  0.0558
+     U56 SLEEVE   25                     S0 do-nothing                -    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25               S1 IS-Sharpe argmax  400.0/0.5 os=9%    0.1304      1.0885    -0.1833  0.0268
+     U56 SLEEVE   25 S4 IS-argmax | on-share <= median  400.0/0.5 os=9%    0.1304      1.0885    -0.1833  0.0268
+     U56 SLEEVE   25     S2 IS-clause-gated (idea 186)          ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25       S5 IS-clause + low on-share          ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25                        ORACLE-OOS        200.0/0.5    0.1263      1.0989    -0.1423  0.0372
+
+  BENCHMARKS over the same OOS window (2017-01-01 ->):
+    U56       RULES v1 OOS   7.73%/0.7471/ -13.83%   SPY OOS  15.45%/0.8820/ -33.72%
+    BROAD136  RULES v1 OOS   5.94%/0.5762/ -21.19%   SPY OOS  15.45%/0.8820/ -33.72%
+    SMALL439  RULES v1 OOS   7.88%/0.6617/ -32.37%   SPY OOS  15.45%/0.8820/ -33.72%
+
+======================================================================================================================
+BOTH KEEP PATHS
+======================================================================================================================
+
+  real overlays : 4a 37/180, 4b 28/180
+  rotated nulls : 4a 901/3600 (25.0%), 4b 750/3600 (20.8%)   [idea 186 found the null passes MORE often]
+
+  4b passes by panel x family (real):
+family    BUDGET  DDCTL  SLEEVE
+panel                          
+BROAD136       0      0       1
+SMALL439       0      0       0
+U56            9     11       7
+
+  all 28 real 4b passes, with the proposed ON-SHARE column beside them:
+   panel family      thr depth  bps  on_share   CAGR  Sharpe   MaxDD  Sharpe_OOS  dSharpe   band  clears  pass4a
+BROAD136 SLEEVE 200.0000   0.5   10    0.1774 0.1213  0.9684 -0.1601      0.9284   0.0190 0.1502   False    True
+     U56 BUDGET   0.0500  half   10    0.8821 0.1325  1.1208 -0.1817      1.2057   0.0132 0.0361   False   False
+     U56 BUDGET   0.0500  half   25    0.8821 0.1219  1.0406 -0.1825      1.1303   0.0560 0.0745   False   False
+     U56 BUDGET   0.1000  half   10    0.7046 0.1296  1.0989 -0.1817      1.1833  -0.0086 0.0482   False   False
+     U56 BUDGET   0.1000  half   25    0.7046 0.1184  1.0136 -0.1825      1.1034   0.0291 0.0767   False   False
+     U56 BUDGET   0.2000  half   10    0.3385 0.1276  1.0854 -0.1810      1.1720  -0.0221 0.0284   False   False
+     U56 BUDGET   0.2000  half   25    0.3385 0.1144  0.9848 -0.1818      1.0778   0.0002 0.0409   False   False
+     U56 BUDGET   0.3000  half   10    0.0523 0.1268  1.0820 -0.1818      1.1555  -0.0255 0.0259   False   False
+     U56 BUDGET   0.5000  half   10    0.0041 0.1275  1.0914 -0.1818      1.1464  -0.0161 0.0043    True   False
+     U56 BUDGET   0.5000  half   25    0.0041 0.1116  0.9697 -0.1828      1.0326  -0.0148 0.0043    True   False
+     U56  DDCTL   0.0600   0.5   10    0.1908 0.1104  1.0518 -0.1413      1.1410  -0.0557 0.2158   False   False
+     U56  DDCTL   0.1000   0.5   10    0.0421 0.1206  1.0578 -0.1879      1.1249  -0.0497 0.0521   False   False
+     U56  DDCTL   0.1000   1.0   10    0.0421 0.1126  0.9985 -0.1938      1.0579  -0.1090 0.1182   False   False
+     U56  DDCTL   0.1500   0.5   10    0.0000 0.1286  1.1075 -0.1821      1.1775   0.0000 0.0000   False   False
+     U56  DDCTL   0.1500   0.5   25    0.0000 0.1127  0.9845 -0.1833      1.0618   0.0000 0.0000   False   False
+     U56  DDCTL   0.1500   1.0   10    0.0000 0.1286  1.1075 -0.1821      1.1775   0.0000 0.0000   False   False
+     U56  DDCTL   0.1500   1.0   25    0.0000 0.1127  0.9845 -0.1833      1.0618   0.0000 0.0000   False   False
+     U56  DDCTL   0.2500   0.5   10    0.0000 0.1286  1.1075 -0.1821      1.1775   0.0000 0.0000   False   False
+     U56  DDCTL   0.2500   0.5   25    0.0000 0.1127  0.9845 -0.1833      1.0618   0.0000 0.0000   False   False
+     U56  DDCTL   0.2500   1.0   10    0.0000 0.1286  1.1075 -0.1821      1.1775   0.0000 0.0000   False   False
+     U56  DDCTL   0.2500   1.0   25    0.0000 0.1127  0.9845 -0.1833      1.0618   0.0000 0.0000   False   False
+     U56 SLEEVE 100.0000   0.5   10    0.2236 0.1168  1.0979 -0.1451      1.1882  -0.0096 0.1450   False   False
+     U56 SLEEVE 200.0000   0.5   10    0.1774 0.1238  1.1246 -0.1407      1.2333   0.0171 0.2250   False   False
+     U56 SLEEVE 200.0000   1.0   10    0.1774 0.1183  1.0664 -0.1349      1.2192  -0.0412 0.3456   False    True
+     U56 SLEEVE 300.0000   0.5   10    0.1282 0.1236  1.0989 -0.1821      1.1994  -0.0086 0.1143   False   False
+     U56 SLEEVE 300.0000   1.0   10    0.1282 0.1181  1.0438 -0.1821      1.1872  -0.0637 0.1975   False   False
+     U56 SLEEVE 400.0000   0.5   10    0.0913 0.1274  1.1159 -0.1821      1.2088   0.0084 0.0933   False   False
+     U56 SLEEVE 400.0000   1.0   10    0.0913 0.1258  1.0947 -0.1821      1.2097  -0.0128 0.1610   False   False
+
+  of those 28, inside their own null band (clears == False): 26  -- idea 186 found 18 of 18
+  their on-share range: 0.0% - 88.2% (median 9.1%)
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS
+======================================================================================================================
+  MISS  P1 within-family rho(on-share, clears) < 0 for all three  BUDGET -0.340  DDCTL +0.418  SLEEVE +nan
+  MISS  P2 noise band width rises monotonically with on-share  0.05:0.0909  0.15:0.1833  0.30:0.2657  0.50:0.4318  0.70:0.5842  0.85:0.7149  0.95:0.6799
+  HIT   P3 realised size <= nominal 4.8% everywhere           overall 4.8%; by target 0.05:0% 0.15:0% 0.30:0% 0.50:0% 0.70:0% 0.85:0% 0.95:33%
+  HIT   P4 on-share predicts clearing within |dSharpe| tercile  -0.141  -0.445  -0.127
+  HIT   P5 on-share-gated selector does NOT beat do-nothing   S4 dOOS -0.0148
+
+  3 of 5 predictions hit.
+
+done in 470s

@@ -106,4 +106,4 @@ zero-information key clears 4b *more* often than a real one.
 Nothing in RULES, `scan.py`, `bot.py` or `baseline.py` (all untouched). The record should now
 read: **an IS-fitted selector has lost to doing nothing in nine of nine project runs**
 (110/132/151/166/171/174/175/186/196), and idea 193's apparent exception was carried entirely
-by keys that read the level of an auto-adjusted price series. Ideas 198–200 queued.
+by keys that read the level of an auto-adjusted price series. Ideas 204–206 queued.
