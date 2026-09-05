@@ -1,0 +1,209 @@
+=== idea 190  is-the-conditional-sleeve-anything-at-all  (lane B) ===
+seed (int literal, no hash()): 1902026;  DIV pool 12 names; ALL-pool draws 200; clause bar = 95% of the null population
+tuned params: f in [0.1, 0.2, 0.5] x set in ['S3', 'S4'];  carried axes: panel ['u56', 'broad'], base n [10, 20, 40], cost [10.0, 25.0]
+
+[panel] u56: 56 cols, 2008-01-02..2026-09-04, eval from 2009-01-13
+    SPY CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834 OOS 0.882 | 4b bars: MaxDD <= 20.23%, CAGR >= 10.66%
+    RULES v1 @10bps: CAGR 6.45% Sharpe 0.664 MaxDD -13.83%
+    RULES v1 @25bps: CAGR 2.75% Sharpe 0.317 MaxDD -15.63%
+
+[panel] broad: 136 cols, 2008-01-02..2026-09-04, eval from 2009-01-13
+    SPY CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834 OOS 0.882 | 4b bars: MaxDD <= 20.23%, CAGR >= 10.66%
+    RULES v1 @10bps: CAGR 6.39% Sharpe 0.635 MaxDD -21.19%
+    RULES v1 @25bps: CAGR 1.79% Sharpe 0.219 MaxDD -26.72%
+
+[REPRODUCTION] asserted before any new number is read
+  [a] u56    fast_backtest vs engine.backtest: max|dret| 1.388e-17 max|dturn| 3.053e-16 -> PASS
+  [b] u56    cost identity 0->10 bps vs a genuine 10 bps run: max|d| 1.388e-17 -> PASS
+  [c] u56    blend() vs idea 134 book_weights over 6 points: max|d| 0.000e+00 -> PASS
+  [a] broad  fast_backtest vs engine.backtest: max|dret| 1.388e-17 max|dturn| 3.331e-16 -> PASS
+  [b] broad  cost identity 0->10 bps vs a genuine 10 bps run: max|d| 1.388e-17 -> PASS
+  [c] broad  blend() vs idea 134 book_weights over 6 points: max|d| 0.000e+00 -> PASS
+    ... u56 n=10 done, 472 genuine backtests, 43s
+    ... u56 n=20 done, 2144 genuine backtests, 180s
+    ... u56 n=40 done, 2616 genuine backtests, 213s
+    ... broad n=10 done, 3088 genuine backtests, 269s
+    ... broad n=20 done, 4760 genuine backtests, 487s
+    ... broad n=40 done, 5232 genuine backtests, 534s
+
+[corpus] 5232 genuine backtests -> 120 real/control rows, 10344 null rows (535s)
+  [d] 24 of 24 committed control-arm rows matched; max|d| 4.996e-16 on OOS_CAGR -> PASS
+  [e] u56    null match over 10 draws x 3 exact invariants (name count, disjoint from the real set, realised gross identical on every rebalance date): PASS
+      gross on rebalance dates in [0.0000, 0.7500] (0.0 only on warm-up dates where no name is eligible, real and null alike)
+      MEASURED, not assumed - sleeve on-share real 0.9395 vs null [0.9036, 0.9456]; sleeve share of gross real 0.1633 vs null [0.1871, 0.2019]; turnover ratio null/real [0.937, 0.964]
+  [e] broad  null match over 10 draws x 3 exact invariants (name count, disjoint from the real set, realised gross identical on every rebalance date): PASS
+      gross on rebalance dates in [0.0000, 0.7500] (0.0 only on warm-up dates where no name is eligible, real and null alike)
+      MEASURED, not assumed - sleeve on-share real 0.9395 vs null [0.9036, 0.9456]; sleeve share of gross real 0.1631 vs null [0.1868, 0.2008]; turnover ratio null/real [0.944, 0.969]
+
+[1] THE SUBSTITUTION NULL.  For every real point, the real effect vs R20 is placed in the
+    null population of the SAME construction with substituted assets.  DIV is ENUMERATED
+    (exact percentile, no seed); ALL is 200 seeded draws (n=20 only).
+
+    pool DIV: 72 real points against populations of [np.int64(70), np.int64(84)] draws
+      clears on |dSharpe| (>= 95% of the null): 21/72 = 29.2%   [strict 'above every draw': 16/72]
+      clears on  dMaxDD  (>= 95% of the null): 21/72 = 29.2%   [strict: 19/72]
+      mean percentile of the real point: |dSharpe| 0.544, signed dSharpe 1.000, dMaxDD 0.718
+      mean real dSharpe +0.0493 vs null mean -0.0549 (null |dS| max 0.0945);  mean real dMaxDD +0.0610 vs null mean +0.0439
+      SIGNED reading (post-hoc, see [1b]): the real sleeve is the STRICT ARGMAX of its own population in 72/72 points full-sample, 8/72 on the IS window and 48/72 on the OOS window; mean signed percentile IS 0.921, OOS 0.993
+
+    pool ALL: 24 real points against populations of [np.int64(200)] draws
+      clears on |dSharpe| (>= 95% of the null): 2/24 = 8.3%   [strict 'above every draw': 0/24]
+      clears on  dMaxDD  (>= 95% of the null): 16/24 = 66.7%   [strict: 5/24]
+      mean percentile of the real point: |dSharpe| 0.551, signed dSharpe 0.897, dMaxDD 0.964
+      mean real dSharpe +0.0423 vs null mean -0.0208 (null |dS| max 0.1296);  mean real dMaxDD +0.0596 vs null mean +0.0060
+      SIGNED reading (post-hoc, see [1b]): the real sleeve is the STRICT ARGMAX of its own population in 0/24 points full-sample, 0/24 on the IS window and 0/24 on the OOS window; mean signed percentile IS 0.869, OOS 0.820
+
+    per-point table (n=20 rows, both pools):
+panel     bps set_      f pool  npop  dSharpe  dMaxDD  null_dS_mean  null_dS_absmax  pct_absSharpe  pct_MaxDD  clears_S  clears_D
+broad 10.0000   S3 0.1000  ALL   200   0.0214  0.0288        0.0057          0.0440         0.8700     0.9950     False      True
+broad 10.0000   S3 0.1000  DIV    84   0.0214  0.0288       -0.0102          0.0221         0.9881     0.8095      True     False
+broad 10.0000   S3 0.2000  ALL   200   0.0479  0.0569        0.0087          0.1146         0.8850     0.9850     False      True
+broad 10.0000   S3 0.2000  DIV    84   0.0479  0.0569       -0.0204          0.0465         1.0000     0.7976      True     False
+broad 10.0000   S3 0.5000  ALL   200   0.1319  0.1289       -0.0116          0.2259         0.9650     1.0000      True      True
+broad 10.0000   S3 0.5000  DIV    84   0.1319  0.1289       -0.0866          0.1720         0.9167     1.0000     False      True
+broad 10.0000   S4 0.1000  ALL   200   0.0184  0.0249        0.0046          0.0434         0.8850     0.9750     False      True
+broad 10.0000   S4 0.1000  DIV    70   0.0184  0.0249       -0.0110          0.0177         1.0000     0.5000      True     False
+broad 10.0000   S4 0.2000  ALL   200   0.0420  0.0499        0.0081          0.0769         0.9000     0.9650     False      True
+broad 10.0000   S4 0.2000  DIV    70   0.0420  0.0499       -0.0213          0.0374         1.0000     0.5000      True     False
+broad 10.0000   S4 0.5000  ALL   200   0.1195  0.1200       -0.0018          0.1990         0.9550     1.0000      True      True
+broad 10.0000   S4 0.5000  DIV    70   0.1195  0.1200       -0.0827          0.1494         0.9429     1.0000     False      True
+broad 25.0000   S3 0.1000  ALL   200   0.0134  0.0288        0.0064          0.0465         0.6450     0.9950     False      True
+broad 25.0000   S3 0.1000  DIV    84   0.0134  0.0288       -0.0164          0.0252         0.2143     0.7976     False     False
+broad 25.0000   S3 0.2000  ALL   200   0.0312  0.0569        0.0117          0.1252         0.6550     0.9850     False      True
+broad 25.0000   S3 0.2000  DIV    84   0.0312  0.0569       -0.0327          0.0517         0.3571     0.7976     False     False
+broad 25.0000   S3 0.5000  ALL   200   0.0755  0.1294        0.0011          0.2589         0.6550     1.0000     False      True
+broad 25.0000   S3 0.5000  DIV    84   0.0755  0.1294       -0.1212          0.1848         0.0476     1.0000     False      True
+broad 25.0000   S4 0.1000  ALL   200   0.0110  0.0249        0.0054          0.0485         0.6200     0.9750     False      True
+broad 25.0000   S4 0.1000  DIV    70   0.0110  0.0249       -0.0175          0.0226         0.0000     0.5000     False     False
+broad 25.0000   S4 0.2000  ALL   200   0.0267  0.0499        0.0108          0.0877         0.7000     0.9650     False      True
+broad 25.0000   S4 0.2000  DIV    70   0.0267  0.0499       -0.0342          0.0465         0.1429     0.5000     False     False
+broad 25.0000   S4 0.5000  ALL   200   0.0673  0.1204        0.0114          0.2163         0.6900     1.0000     False      True
+broad 25.0000   S4 0.5000  DIV    70   0.0673  0.1204       -0.1213          0.1731         0.0000     1.0000     False      True
+  u56 10.0000   S3 0.1000  ALL   200   0.0144  0.0203       -0.0163          0.0504         0.3850     0.9450     False     False
+  u56 10.0000   S3 0.1000  DIV    84   0.0144  0.0203       -0.0199          0.0359         0.1786     0.6667     False     False
+  u56 10.0000   S3 0.2000  ALL   200   0.0401  0.0412       -0.0282          0.0961         0.6750     0.9100     False     False
+  u56 10.0000   S3 0.2000  DIV    84   0.0401  0.0412       -0.0348          0.0691         0.7262     0.6310     False     False
+  u56 10.0000   S3 0.5000  ALL   200   0.1055  0.0997       -0.0966          0.2773         0.5000     0.9900     False      True
+  u56 10.0000   S3 0.5000  DIV    84   0.1055  0.0997       -0.1372          0.2668         0.2024     1.0000     False      True
+  u56 10.0000   S4 0.1000  ALL   200   0.0110  0.0171       -0.0149          0.0418         0.3000     0.8950     False     False
+  u56 10.0000   S4 0.1000  DIV    70   0.0110  0.0171       -0.0206          0.0332         0.0000     0.4286     False     False
+  u56 10.0000   S4 0.2000  ALL   200   0.0331  0.0363       -0.0262          0.0790         0.5400     0.9050     False     False
+  u56 10.0000   S4 0.2000  DIV    70   0.0331  0.0363       -0.0353          0.0639         0.3429     0.3857     False     False
+  u56 10.0000   S4 0.5000  ALL   200   0.0882  0.0914       -0.0957          0.2639         0.4100     0.9950     False      True
+  u56 10.0000   S4 0.5000  DIV    70   0.0882  0.0914       -0.1308          0.2263         0.0286     1.0000     False      True
+  u56 25.0000   S3 0.1000  ALL   200   0.0050  0.0203       -0.0177          0.0546         0.1000     0.9450     False     False
+  u56 25.0000   S3 0.1000  DIV    84   0.0050  0.0203       -0.0274          0.0400         0.0000     0.6667     False     False
+  u56 25.0000   S3 0.2000  ALL   200   0.0212  0.0412       -0.0300          0.0983         0.2700     0.9100     False     False
+  u56 25.0000   S3 0.2000  DIV    84   0.0212  0.0412       -0.0493          0.0761         0.0000     0.6310     False     False
+  u56 25.0000   S3 0.5000  ALL   200   0.0419  0.0997       -0.0950          0.2808         0.2150     0.9950     False      True
+  u56 25.0000   S3 0.5000  DIV    84   0.0419  0.0997       -0.1774          0.2777         0.0000     1.0000     False      True
+  u56 25.0000   S4 0.1000  ALL   200   0.0024  0.0171       -0.0161          0.0419         0.0600     0.8950     False     False
+  u56 25.0000   S4 0.1000  DIV    70   0.0024  0.0171       -0.0283          0.0375         0.0000     0.4143     False     False
+  u56 25.0000   S4 0.2000  ALL   200   0.0159  0.0363       -0.0274          0.0790         0.2250     0.9000     False     False
+  u56 25.0000   S4 0.2000  DIV    70   0.0159  0.0363       -0.0503          0.0711         0.0000     0.3857     False     False
+  u56 25.0000   S4 0.5000  ALL   200   0.0305  0.0914       -0.0963          0.2595         0.1300     1.0000     False      True
+  u56 25.0000   S4 0.5000  DIV    70   0.0305  0.0914       -0.1750          0.2422         0.0000     1.0000     False      True
+
+[1b] WHY THE TWO-SIDED CLAUSE AND THE SIGNED READING DISAGREE (post-hoc, declared).
+     Ideas 181/186 clear a clause when |dSharpe(real)| exceeds every null draw.  For an
+     instrument whose null draws are mostly HARMFUL that statistic is perverse: a
+     substitute that destroys 0.27 of Sharpe has a larger |dSharpe| than the real sleeve's
+     +0.10 and blocks it.  The numbers this run can put on that:
+       pool DIV: null mean dSharpe is negative in 100.0% of points; two-sided clear 29.2% vs signed argmax 100.0% (mean signed percentile 1.000)
+       pool ALL: null mean dSharpe is negative in 58.3% of points; two-sided clear 8.3% vs signed argmax 0.0% (mean signed percentile 0.897)
+     The signed reading is NOT evidence the sleeve was chosen well - it is exactly what
+     picking three assets with 2008-2026 in view produces.  The arm that tells them apart
+     is S5 in [4], which picks the triple on the IS window alone.
+
+[2] THE CASH CONTROL.  Sleeve vs a cash carve-out at the same f (no rescale), both vs R20.
+    mean dSharpe vs R20:  sleeve +0.0493  cash -0.0017   (sleeve better in 72/72)
+    mean dMaxDD  vs R20:  sleeve +0.0610  cash +0.0608   -> cash captures 98.4% of the sleeve's drawdown gain (median)
+    mean dCAGR   vs R20:  sleeve -2.5408%  cash -3.8411%
+    by f:
+     dS_sleeve  dS_cash  dD_sleeve  dD_cash  dd_share
+f                                                    
+0.1     0.0181  -0.0006     0.0240   0.0222    0.9368
+0.2     0.0386  -0.0012     0.0478   0.0448    0.9479
+0.5     0.0911  -0.0034     0.1112   0.1155    1.0455
+
+[3] BOTH KEEP PATHS on every real row, control and null draw.
+    real sleeve rows:  4a 41/72   4b 23/72
+    R20 controls:      4a 3/12   4b 0/12
+    CASH controls:     4a 19/36   4b 8/36
+    null draws:        4a 3376/10344 = 32.6%   4b 1268/10344 = 12.3%
+    real 4b failing-bar census (idea 177's column):
+      -:23, DD:17, CAGR:16, H2,OOS,DD:10, H2,OOS,CAGR:3, H2,DD:2, H2,CAGR:1
+
+    the 23 real rows that PASS 4b, with their own DIV percentile:
+panel  n     bps set_      f   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe  pct_absSharpe  pct_MaxDD  clears_S  clears_D
+  u56 10 10.0000   S3 0.2000 0.1474  1.1155 -0.1898 1.2125 1.0520      1.0796         0.9881     0.6786      True     False
+  u56 10 25.0000   S3 0.2000 0.1265  0.9753 -0.1910 1.0510 0.9270      0.9515         0.1071     0.6786     False     False
+  u56 10 10.0000   S3 0.5000 0.1096  1.1665 -0.1270 1.2582 1.0975      1.1138         0.4286     0.8452     False     False
+  u56 10 10.0000   S4 0.2000 0.1489  1.1126 -0.1958 1.1936 1.0610      1.0867         1.0000     0.4857      True     False
+  u56 10 25.0000   S4 0.2000 0.1279  0.9736 -0.1970 1.0341 0.9368      0.9595         0.0000     0.4857     False     False
+  u56 10 10.0000   S4 0.5000 0.1124  1.1617 -0.1356 1.2019 1.1349      1.1461         0.3286     0.5857     False     False
+  u56 20 10.0000   S3 0.1000 0.1444  1.1854 -0.2018 1.2918 1.1131      1.1740         0.1786     0.6667     False     False
+  u56 20 10.0000   S3 0.2000 0.1343  1.2111 -0.1809 1.3232 1.1330      1.1927         0.7262     0.6310     False     False
+  u56 20 25.0000   S3 0.2000 0.1192  1.0880 -0.1822 1.1816 1.0235      1.0816         0.0000     0.6310     False     False
+  u56 20 10.0000   S4 0.2000 0.1357  1.2041 -0.1858 1.2949 1.1417      1.1981         0.3429     0.3857     False     False
+  u56 20 25.0000   S4 0.2000 0.1205  1.0828 -0.1871 1.1562 1.0333      1.0880         0.0000     0.3857     False     False
+  u56 40 10.0000   S3 0.1000 0.1289  1.1885 -0.1913 1.2807 1.1167      1.1792         1.0000     0.7857      True     False
+  u56 40 25.0000   S3 0.1000 0.1211  1.1234 -0.1923 1.2133 1.0532      1.1144         0.9405     0.7619     False     False
+  u56 40 10.0000   S3 0.2000 0.1201  1.2257 -0.1699 1.3281 1.1459      1.2070         0.9881     0.6667      True     False
+  u56 40 25.0000   S3 0.2000 0.1119  1.1488 -0.1707 1.2457 1.0731      1.1325         0.7857     0.6548     False     False
+  u56 40 10.0000   S4 0.1000 0.1296  1.1822 -0.1948 1.2634 1.1191      1.1800         1.0000     0.4857      True     False
+  u56 40 25.0000   S4 0.1000 0.1217  1.1179 -0.1957 1.1972 1.0560      1.1157         0.9143     0.4857     False     False
+  u56 40 10.0000   S4 0.2000 0.1214  1.2126 -0.1747 1.2907 1.1516      1.2096         0.9857     0.4857      True     False
+  u56 40 25.0000   S4 0.2000 0.1132  1.1376 -0.1755 1.2114 1.0799      1.1362         0.5000     0.4857     False     False
+broad 10 10.0000   S3 0.5000 0.1148  1.0888 -0.1380 1.3816 0.8680      0.9289         0.9286     1.0000     False      True
+broad 10 10.0000   S4 0.5000 0.1168  1.0836 -0.1474 1.3174 0.9033      0.9550         0.9286     1.0000     False      True
+broad 40 10.0000   S3 0.2000 0.1233  1.1138 -0.1987 1.2365 1.0115      1.0930         1.0000     0.7857      True     False
+broad 40 25.0000   S3 0.2000 0.1074  0.9837 -0.2005 1.0906 0.8946      0.9724         0.8214     0.7619     False     False
+    of those 23 4b passes, 7 clear the enumerated DIV null on Sharpe and 2 on drawdown
+    null draws that pass 4b: 1268/10344 = 12.3% (real rate 31.9%) - a substituted sleeve reaches 4b LESS often
+
+[4] RULE 8 WALK-FORWARD.  Everything fitted on <= 2016-12-31; 2017-2026 read ONCE.
+    12 cells = 2 panels x 3 base-n x 2 cost rungs.  S0 do-nothing, S1 IS-argmax sleeve,
+    S2 clause-gated argmax (abstain -> hold R20), S3 random-sleeve mean, S4 cash at S1's f.
+panel  n     bps   pick   pick2  n_gated       pick5     S0     S1     S2     S3     S4     S5  v1_Sharpe  spy_Sharpe
+  u56 10 10.0000 S3-0.5 abstain        0 IEF+LQD+UNG 1.0442 1.1138 1.0442 0.9223 1.0410 0.8379     0.7471      0.8820
+  u56 10 25.0000 S3-0.5 abstain        0 IEF+LQD+SLV 0.9306 0.9568 0.9306 0.7760 0.9264 0.6971     0.3992      0.8820
+  u56 20 10.0000 S3-0.5 abstain        0 IEF+LQD+UNG 1.1677 1.2411 1.1677 0.9738 1.1664 0.8937     0.7471      0.8820
+  u56 20 25.0000 S3-0.5 abstain        0 IEF+LQD+UNG 1.0722 1.0932 1.0722 0.8385 1.0699 0.7453     0.3992      0.8820
+  u56 40 10.0000 S3-0.5  S3-0.2        3 IEF+LQD+UNG 1.1503 1.2887 1.2070 0.9366 1.1501 0.8668     0.7471      0.8820
+  u56 40 25.0000 S3-0.5 abstain        0 IEF+LQD+UNG 1.0935 1.1666 1.0935 0.8331 1.0922 0.7489     0.3992      0.8820
+broad 10 10.0000 S3-0.5  S3-0.2        3 IEF+LQD+SLV 0.8534 0.9289 0.8824 0.7474 0.8447 0.6735     0.5763      0.8820
+broad 10 25.0000 S3-0.5 abstain        0 IEF+LQD+SLV 0.7335 0.7696 0.7335 0.5970 0.7237 0.5116     0.1554      0.8820
+broad 20 10.0000 S3-0.5 abstain        0 IEF+LQD+SLV 0.9301 1.0238 0.9301 0.8046 0.9259 0.7306     0.5763      0.8820
+broad 20 25.0000 S3-0.5 abstain        0 IEF+LQD+SLV 0.8066 0.8542 0.8066 0.6480 0.8013 0.5603     0.1554      0.8820
+broad 40 10.0000 S3-0.5  S3-0.2        2 IEF+LQD+UNG 1.0443 1.1641 1.0930 0.8996 1.0437 0.8174     0.5763      0.8820
+broad 40 25.0000 S3-0.5 abstain        0 IEF+LQD+SLV 0.9393 1.0036 0.9393 0.7563 0.9375 0.6719     0.1554      0.8820
+
+    S1 - S0 mean paired OOS Sharpe +0.0699 (t +6.85), wins 12/12;  mean OOS CAGR 9.21% vs S0 14.75%;  mean OOS MaxDD -12.72% vs S0 -24.28%
+    S2 - S0 mean paired OOS Sharpe +0.0112 (t +1.83), wins 3/12;  mean OOS CAGR 14.26% vs S0 14.75%;  mean OOS MaxDD -22.98% vs S0 -24.28%
+    S3 - S0 mean paired OOS Sharpe -0.1694 (t -12.21), wins 0/12;  mean OOS CAGR 7.83% vs S0 14.75%;  mean OOS MaxDD -17.54% vs S0 -24.28%
+    S4 - S0 mean paired OOS Sharpe -0.0036 (t -4.03), wins 0/12;  mean OOS CAGR 7.41% vs S0 14.75%;  mean OOS MaxDD -12.73% vs S0 -24.28%
+    S5 - S0 mean paired OOS Sharpe -0.2509 (t -17.29), wins 0/12;  mean OOS CAGR 7.08% vs S0 14.75%;  mean OOS MaxDD -17.70% vs S0 -24.28%
+    S5 - S1 (the whole asset-identity question) -0.3208 (t -19.09), S5 wins 0/12;  S1 - S3 (named vs the average substitute) +0.2393
+
+    BOTH KEEP PATHS on the OOS window itself (the bars that decide capital):
+      S0: 4a 3/12   4b 0/12   (4b failing bars: DD:6, H1,DD:3, H1,OOS,DD:2, H1,H2,OOS,DD:1)
+      S1: 4a 11/12   4b 1/12   (4b failing bars: CAGR:5, H1,CAGR:4, H1,OOS,CAGR:2, -:1)
+      S2: 4a 5/12   4b 2/12   (4b failing bars: DD:4, H1,DD:4, -:2, H1,H2,OOS,DD:1, H1,OOS,DD:1)
+      S4: 4a 12/12   4b 0/12   (4b failing bars: CAGR:6, H1,CAGR:3, H1,H2,OOS,CAGR:2, H1,OOS,CAGR:1)
+      S3: mean 4b pass rate over the enumerated substitutes at each cell's pick 0.0%
+    S0 mean OOS Sharpe 0.9805 / CAGR 14.75% / MaxDD -24.28%
+    RULES v1 OOS  Sharpe 0.4695 / CAGR 4.64% / MaxDD -18.98%   (per panel: broad 0.366, u56 0.573)
+    SPY      OOS  Sharpe 0.8820 / CAGR 15.45% / MaxDD -33.72%
+
+[5] PRE-REGISTERED PREDICTIONS, scored as they fell
+    P1 reproduction [a]-[e] hold -> HIT
+    P2 DIV Sharpe clear rate < 40%: 29.2% -> HIT
+    P3 ALL pool separates better than DIV (n=20): |dSharpe| pct 0.551 vs 0.337, dMaxDD pct 0.964 vs 0.725 -> HIT
+    P4 cash captures >= 50% of the sleeve's dMaxDD: 98.4% -> HIT
+    P5 neither S1 nor S2 beats S0: +0.0699 / +0.0112 -> MISS
+    P6 4b passes exist and a majority sit inside their DIV null: 23 passes, 7/23 clear -> HIT
+    P7 (post-hoc) the IS-chosen substitute does not reproduce the named sleeve's OOS advantage: S5 0.7296 vs S1 1.0504 (-0.3208) -> HIT
+    -> 5 of 6 pre-registered predictions hit; P7 (post-hoc) HIT
+
+[done] 5232 genuine backtests in 538s
