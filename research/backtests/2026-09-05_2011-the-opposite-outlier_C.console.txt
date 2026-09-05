@@ -1,0 +1,480 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+[data] u56 58 cols, broad 136 cols
+[windows] 46 distinct IS year-sets (FULL 1 + LOYO 8 + L2O 28 + RECUT 15, de-duplicated); L2O keeps 2011 in 21/28
+[pre-registered] S1 reproduce idea 112 · S2 price the 16 swaps · S3 matched-length
+                 keep/drop agreement premium with a per-year null · S4 its OOS price ·
+                 S5 contiguous re-cuts
+[pre-registered] 2011 IS the selector iff premium(2011) is the largest of the 8 years
+                 AND >= 0.20
+[pre-registered] SIGN: mean dOOS Sharpe of the ex-2011 swaps < 0 => 2011 is a FEATURE
+                 of rule 8's selector; > 0 => a DEFECT
+[pre-registered] IS <= 2016-12-31; OOS 2017-01-01.. is never touched by any window
+
+[check] cost linearity max |derived - direct| at 10 bps = 0.00e+00
+================================================================================================================================
+### UNIVERSE u56: 58 tickers | eval 2009-01-13 -> 2026-09-04
+                  CAGR  Sharpe  MaxDD    H1    H2  IS_CAGR  IS_Sharpe  IS_MaxDD  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+RULES v1 (10bps) 0.063   0.649 -0.138 0.668 0.637    0.052      0.583    -0.130     0.072       0.699     -0.138
+RULES v1 (25bps) 0.026   0.301 -0.155 0.312 0.294    0.018      0.235    -0.155     0.032       0.351     -0.150
+SPY              0.152   0.889 -0.337 0.957 0.834    0.150      0.899    -0.221     0.155       0.882     -0.337
+================================================================================================================================
+### UNIVERSE broad: 136 tickers | eval 2009-01-13 -> 2026-09-04
+                  CAGR  Sharpe  MaxDD    H1    H2  IS_CAGR  IS_Sharpe  IS_MaxDD  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+RULES v1 (10bps) 0.064   0.635 -0.212 0.756 0.532    0.069      0.715    -0.095     0.059       0.576     -0.212
+RULES v1 (25bps) 0.018   0.219 -0.267 0.335 0.120    0.026      0.305    -0.132     0.011       0.155     -0.267
+SPY              0.152   0.889 -0.337 0.957 0.834    0.150      0.899    -0.221     0.155       0.882     -0.337
+  [skip] grid=crypto on broad: crypto tickers absent from this panel
+
+[grid] 208 points x 46 windows -> 2026-09-05_2011-the-opposite-outlier_C.grid.csv
+[cells] 44 cells (expected 44)
+[check] moment-Sharpe vs table max |diff| = 0.00e+00
+
+================================================================================================================================
+### (1) EVERY GRID POINT — full sample, full-IS Sharpe, IS-ex-2011 Sharpe, OOS (10 bps shown; 25 bps in .grid.csv)
+
+--- u56 | grid=sleeve | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.0    1.000   14.841 0.178   1.093 -0.242 1.132 1.070    1.012      1.142     0.202       1.156     -0.242  False  False
+0.25   1.000   13.757 0.153   1.143 -0.194 1.167 1.128    1.060      1.145     0.171       1.208     -0.194  False   True
+0.5    1.000   12.884 0.123   1.180 -0.143 1.161 1.200    1.077      1.089     0.136       1.261     -0.143  False   True
+0.75   1.000   11.975 0.087   1.099 -0.099 0.969 1.232    0.938      0.830     0.096       1.243     -0.093   True  False
+1.0    0.998   10.777 0.035   0.492 -0.254 0.212 0.832    0.271     -0.048     0.048       0.728     -0.094  False  False
+
+--- u56 | grid=sleeve | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.0    1.000   10.954 0.143   1.076 -0.209 1.101 1.058    0.988      1.150     0.157       1.145     -0.209  False  False
+0.25   1.000   10.377 0.126   1.142 -0.169 1.152 1.136    1.053      1.162     0.136       1.214     -0.169  False   True
+0.5    1.000   10.310 0.104   1.186 -0.126 1.147 1.224    1.077      1.099     0.112       1.278     -0.126   True  False
+0.75   1.000   10.509 0.077   1.074 -0.099 0.923 1.236    0.912      0.799     0.084       1.229     -0.087   True  False
+1.0    0.998   10.777 0.035   0.492 -0.254 0.212 0.832    0.271     -0.048     0.048       0.728     -0.094  False  False
+
+--- u56 | grid=band | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a    4b
+param                                                                                                                   
+0.0    0.750   11.150 0.133   1.093 -0.185 1.132 1.069    1.012      1.142     0.151       1.156     -0.185  False  True
+0.02   0.750   10.592 0.134   1.098 -0.185 1.115 1.092    0.994      1.110     0.154       1.178     -0.185  False  True
+0.03   0.750   10.247 0.137   1.121 -0.185 1.108 1.141    0.986      1.106     0.160       1.223     -0.185  False  True
+0.05   0.750    9.874 0.140   1.133 -0.187 1.138 1.137    1.020      1.113     0.162       1.218     -0.187  False  True
+0.08   0.750    9.402 0.140   1.133 -0.186 1.162 1.117    1.047      1.138     0.159       1.200     -0.186  False  True
+
+--- u56 | grid=band | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a    4b
+param                                                                                                                   
+0.0    0.750    8.279 0.107   1.076 -0.159 1.100 1.057    0.988      1.150     0.118       1.145     -0.159  False  True
+0.02   0.750    5.898 0.114   1.141 -0.154 1.143 1.142    1.031      1.178     0.126       1.228     -0.154  False  True
+0.03   0.750    4.936 0.117   1.171 -0.151 1.152 1.192    1.038      1.195     0.132       1.276     -0.151  False  True
+0.05   0.750    4.220 0.119   1.143 -0.165 1.133 1.156    1.020      1.137     0.134       1.240     -0.165  False  True
+0.08   0.750    3.367 0.124   1.169 -0.176 1.223 1.129    1.125      1.267     0.134       1.204     -0.176  False  True
+
+--- u56 | grid=breadth | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a    4b
+param                                                                                                                   
+0.0    0.750   11.150 0.133   1.093 -0.185 1.132 1.069    1.012      1.142     0.151       1.156     -0.185  False  True
+0.25   0.735   10.676 0.133   1.116 -0.185 1.144 1.101    1.022      1.157     0.152       1.188     -0.185  False  True
+0.5    0.721   10.567 0.133   1.130 -0.185 1.146 1.125    1.022      1.163     0.153       1.212     -0.185  False  True
+0.75   0.706   10.522 0.133   1.137 -0.185 1.141 1.142    1.015      1.161     0.154       1.229     -0.185  False  True
+1.0    0.692   10.489 0.132   1.136 -0.185 1.128 1.151    1.000      1.150     0.155       1.238     -0.185  False  True
+
+--- u56 | grid=breadth | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.0    0.750    8.279 0.107   1.076 -0.159 1.100 1.057    0.988      1.150     0.118       1.145     -0.159  False   True
+0.25   0.735    7.794 0.107   1.111 -0.159 1.120 1.106    1.004      1.174     0.119       1.195     -0.159  False   True
+0.5    0.721    7.628 0.107   1.134 -0.159 1.127 1.144    1.008      1.187     0.120       1.234     -0.159  False   True
+0.75   0.706    7.605 0.107   1.146 -0.159 1.122 1.170    1.001      1.187     0.121       1.260     -0.159  False   True
+1.0    0.692    7.598 0.106   1.146 -0.159 1.107 1.183    0.984      1.175     0.122       1.274     -0.159  False  False
+
+--- u56 | grid=stop | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a    4b
+param                                                                                                                   
+none   0.750   11.150 0.133   1.093 -0.185 1.132 1.069    1.012      1.142     0.151       1.156     -0.185  False  True
+0.25   0.750   11.167 0.135   1.112 -0.185 1.134 1.102    1.014      1.139     0.154       1.187     -0.185  False  True
+0.2    0.750   11.230 0.132   1.097 -0.185 1.113 1.091    0.998      1.128     0.150       1.172     -0.185  False  True
+0.15   0.750   11.632 0.124   1.061 -0.185 1.102 1.031    1.002      1.125     0.137       1.107     -0.185  False  True
+0.1    0.750   12.899 0.117   1.054 -0.173 1.080 1.035    0.981      1.119     0.129       1.110     -0.173  False  True
+
+--- u56 | grid=stop | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+none   0.750    8.279 0.107   1.076 -0.159 1.100 1.057    0.988      1.150     0.118       1.145     -0.159  False   True
+0.25   0.750    8.276 0.108   1.084 -0.159 1.097 1.075    0.984      1.145     0.119       1.162     -0.159  False   True
+0.2    0.750    8.390 0.104   1.055 -0.159 1.066 1.048    0.959      1.121     0.114       1.131     -0.159  False  False
+0.15   0.750    8.825 0.099   1.029 -0.172 1.066 0.998    0.963      1.114     0.106       1.083     -0.172  False  False
+0.1    0.750   10.354 0.091   1.002 -0.148 1.040 0.967    0.942      1.110     0.097       1.051     -0.148  False  False
+
+--- u56 | grid=crypto | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.0    0.750   11.150 0.133   1.093 -0.185 1.132 1.069    1.012      1.142     0.151       1.156     -0.185  False   True
+0.02   0.745   10.961 0.138   1.131 -0.189 1.182 1.101    1.031      1.163     0.160       1.208     -0.189  False   True
+0.05   0.738   10.679 0.146   1.178 -0.195 1.254 1.135    1.057      1.192     0.173       1.270     -0.195  False   True
+0.1    0.726   10.210 0.158   1.227 -0.207 1.355 1.161    1.091      1.227     0.195       1.332     -0.207  False  False
+
+--- u56 | grid=crypto | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a    4b
+param                                                                                                                   
+0.0    0.750    8.279 0.107   1.076 -0.159 1.100 1.057    0.988      1.150     0.118       1.145     -0.159  False  True
+0.02   0.745    8.146 0.113   1.123 -0.163 1.161 1.097    1.010      1.175     0.127       1.211     -0.163  False  True
+0.05   0.738    7.946 0.121   1.179 -0.176 1.245 1.135    1.040      1.208     0.141       1.283     -0.176  False  True
+0.1    0.726    7.613 0.134   1.228 -0.202 1.359 1.155    1.077      1.245     0.165       1.341     -0.202  False  True
+
+--- u56 | grid=gross | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.75   0.750   11.150 0.133   1.093 -0.185 1.132 1.069    1.012      1.142     0.151       1.156     -0.185  False   True
+0.5    0.500    7.464 0.089   1.093 -0.125 1.132 1.068    1.012      1.141     0.100       1.155     -0.125   True  False
+1.0    1.000   14.841 0.178   1.093 -0.242 1.132 1.070    1.012      1.142     0.202       1.156     -0.242  False  False
+1.25   1.250   18.568 0.222   1.093 -0.297 1.131 1.070    1.011      1.142     0.253       1.156     -0.297  False  False
+
+--- u56 | grid=gross | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.75   0.750    8.279 0.107   1.076 -0.159 1.100 1.057    0.988      1.150     0.118       1.145     -0.159  False   True
+0.5    0.500    5.565 0.071   1.076 -0.107 1.100 1.057    0.988      1.150     0.078       1.145     -0.107   True  False
+1.0    1.000   10.954 0.143   1.076 -0.209 1.101 1.058    0.988      1.150     0.157       1.145     -0.209  False  False
+1.25   1.250   13.594 0.179   1.076 -0.257 1.101 1.058    0.988      1.151     0.197       1.145     -0.257  False  False
+
+--- broad | grid=sleeve | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.0    1.000   19.062 0.172   0.945 -0.262 1.107 0.804    1.025      1.129     0.165       0.885     -0.262  False  False
+0.25   1.000   17.228 0.149   0.999 -0.211 1.153 0.861    1.079      1.145     0.142       0.937     -0.211   True  False
+0.5    1.000   15.443 0.121   1.057 -0.156 1.177 0.946    1.120      1.118     0.116       1.006     -0.156   True   True
+0.75   1.000   13.409 0.086   1.046 -0.101 1.039 1.053    1.023      0.902     0.085       1.068     -0.100   True  False
+1.0    0.998   10.758 0.036   0.494 -0.254 0.216 0.833    0.274     -0.042     0.049       0.729     -0.094  False  False
+
+--- broad | grid=sleeve | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.0    1.000   10.913 0.143   1.025 -0.231 1.144 0.914    1.034      1.172     0.141       1.018     -0.231  False  False
+0.25   1.000   10.417 0.126   1.108 -0.186 1.215 1.007    1.115      1.203     0.124       1.103     -0.186   True   True
+0.5    1.000   10.383 0.104   1.184 -0.140 1.241 1.129    1.167      1.167     0.104       1.200     -0.140   True  False
+0.75   1.000   10.567 0.077   1.106 -0.096 1.017 1.202    1.003      0.868     0.079       1.207     -0.096   True  False
+1.0    0.998   10.758 0.036   0.494 -0.254 0.216 0.833    0.274     -0.042     0.049       0.729     -0.094  False  False
+
+--- broad | grid=band | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    4a     4b
+param                                                                                                                   
+0.0    0.750   14.311 0.130   0.943 -0.201 1.105 0.803    1.023      1.127     0.125       0.884     -0.201  True  False
+0.02   0.750   14.256 0.130   0.943 -0.201 1.089 0.815    1.006      1.105     0.126       0.896     -0.201  True  False
+0.03   0.750   14.211 0.131   0.949 -0.201 1.087 0.829    1.003      1.098     0.129       0.909     -0.201  True  False
+0.05   0.750   14.119 0.128   0.932 -0.201 1.053 0.828    0.967      1.060     0.129       0.907     -0.201  True  False
+0.08   0.750   14.023 0.130   0.942 -0.201 1.080 0.822    0.996      1.097     0.128       0.902     -0.201  True  False
+
+--- broad | grid=band | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    4a    4b
+param                                                                                                                  
+0.0    0.750    8.266 0.107   1.025 -0.177 1.143 0.915    1.032      1.171     0.106       1.019     -0.177  True  True
+0.02   0.750    6.038 0.110   1.055 -0.171 1.164 0.953    1.054      1.181     0.110       1.056     -0.171  True  True
+0.03   0.750    5.184 0.111   1.062 -0.168 1.161 0.969    1.050      1.169     0.112       1.072     -0.168  True  True
+0.05   0.750    4.172 0.111   1.041 -0.175 1.129 0.959    1.015      1.112     0.113       1.062     -0.175  True  True
+0.08   0.750    3.212 0.117   1.078 -0.188 1.202 0.965    1.100      1.218     0.115       1.060     -0.188  True  True
+
+--- broad | grid=breadth | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    4a     4b
+param                                                                                                                   
+0.0    0.750   14.311 0.130   0.943 -0.201 1.105 0.803    1.023      1.127     0.125       0.884     -0.201  True  False
+0.25   0.738   14.264 0.127   0.938 -0.201 1.097 0.801    1.013      1.120     0.123       0.883     -0.201  True  False
+0.5    0.726   14.271 0.125   0.929 -0.201 1.084 0.796    0.997      1.108     0.121       0.879     -0.201  True  False
+0.75   0.713   14.283 0.122   0.915 -0.201 1.065 0.787    0.975      1.091     0.120       0.872     -0.201  True  False
+1.0    0.701   14.301 0.119   0.897 -0.201 1.040 0.776    0.947      1.067     0.118       0.861     -0.201  True  False
+
+--- broad | grid=breadth | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    4a     4b
+param                                                                                                                   
+0.0    0.750    8.266 0.107   1.025 -0.177 1.143 0.915    1.032      1.171     0.106       1.019     -0.177  True   True
+0.25   0.738    7.802 0.105   1.031 -0.175 1.144 0.926    1.030      1.177     0.105       1.032     -0.175  True  False
+0.5    0.726    7.683 0.103   1.028 -0.175 1.134 0.929    1.016      1.173     0.104       1.037     -0.175  True  False
+0.75   0.713    7.749 0.101   1.014 -0.175 1.113 0.923    0.991      1.159     0.103       1.034     -0.175  True  False
+1.0    0.701    7.835 0.098   0.994 -0.175 1.082 0.911    0.958      1.137     0.101       1.023     -0.175  True  False
+
+--- broad | grid=stop | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    4a     4b
+param                                                                                                                   
+none   0.750   14.311 0.130   0.943 -0.201 1.105 0.803    1.023      1.127     0.125       0.884     -0.201  True  False
+0.25   0.750   14.297 0.131   0.951 -0.201 1.101 0.820    1.018      1.127     0.127       0.900     -0.201  True  False
+0.2    0.750   14.361 0.131   0.950 -0.201 1.093 0.826    1.010      1.123     0.128       0.906     -0.201  True  False
+0.15   0.750   14.732 0.123   0.911 -0.197 1.055 0.784    0.974      1.079     0.119       0.863     -0.197  True  False
+0.1    0.750   16.213 0.113   0.887 -0.183 1.025 0.763    0.937      1.047     0.110       0.849     -0.183  True  False
+
+--- broad | grid=stop | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    4a     4b
+param                                                                                                                   
+none   0.750    8.266 0.107   1.025 -0.177 1.143 0.915    1.032      1.171     0.106       1.019     -0.177  True   True
+0.25   0.750    8.270 0.107   1.023 -0.177 1.138 0.916    1.026      1.167     0.106       1.020     -0.177  True   True
+0.2    0.750    8.359 0.105   1.010 -0.177 1.123 0.904    1.012      1.157     0.104       1.008     -0.177  True  False
+0.15   0.750    8.776 0.100   0.982 -0.180 1.099 0.873    0.988      1.130     0.099       0.977     -0.180  True  False
+0.1    0.750   10.464 0.097   0.994 -0.162 1.122 0.870    1.015      1.152     0.094       0.976     -0.162  True  False
+
+--- broad | grid=gross | book=top20
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.75   0.750   14.311 0.130   0.943 -0.201 1.105 0.803    1.023      1.127     0.125       0.884     -0.201   True  False
+0.5    0.500    9.571 0.087   0.941 -0.136 1.102 0.801    1.020      1.124     0.084       0.882     -0.136   True  False
+1.0    1.000   19.062 0.172   0.945 -0.262 1.107 0.804    1.025      1.129     0.165       0.885     -0.262  False  False
+1.25   1.250   23.854 0.214   0.947 -0.321 1.109 0.806    1.026      1.131     0.203       0.887     -0.321  False  False
+
+--- broad | grid=gross | book=ewall
+       Gross  Turn_yr  CAGR  Sharpe  MaxDD    H1    H2  IS_full  IS_ex2011  OOS_CAGR  OOS_Sharpe  OOS_MaxDD     4a     4b
+param                                                                                                                    
+0.75   0.750    8.266 0.107   1.025 -0.177 1.143 0.915    1.032      1.171     0.106       1.019     -0.177   True   True
+0.5    0.500    5.568 0.071   1.025 -0.120 1.142 0.916    1.031      1.170     0.071       1.020     -0.120   True  False
+1.0    1.000   10.913 0.143   1.025 -0.231 1.144 0.914    1.034      1.172     0.141       1.018     -0.231  False  False
+1.25   1.250   13.511 0.178   1.025 -0.283 1.146 0.913    1.035      1.173     0.176       1.017     -0.283  False  False
+
+================================================================================================================================
+### (2) S1 — REPRODUCTION OF IDEA 112 (LOYO picks, G leverage, per-year overlay d)
+
+--- LOYO pick changes (out of 44), this run vs idea 112's committed picks.csv
+      cells_changed  idea112  match  frac
+2009             11       11   True 0.250
+2010              6        6   True 0.136
+2011             16       16   True 0.364
+2012              5        5   True 0.114
+2013              8        8   True 0.182
+2014              8        8   True 0.182
+2015              9        9   True 0.205
+2016              9        9   True 0.205
+
+  2011 moves 16/44 (idea 112: 16); median year 8.5; max other year 11
+  cell-by-cell pick mismatches vs idea 112 (44 cells x 9 windows = 396): 0
+  LOYO table reproduces idea 112 exactly: True
+
+--- G LEVERAGE: pooled mean G by dropped year (full-IS control -0.058, idea 112 -0.058)
+      mean_G  idea112  shift_vs_full
+2011  -0.101   -0.101         -0.044
+2014  -0.067   -0.067         -0.009
+2016  -0.067   -0.067         -0.009
+2010  -0.063   -0.063         -0.005
+2015  -0.051   -0.051          0.007
+2009  -0.048   -0.048          0.009
+2012  -0.047   -0.047          0.010
+2013  -0.019   -0.019          0.039
+  reproduces idea 112's G leverage (max |diff| 0.0000): True
+  years whose deletion makes G MORE negative: [2010, 2011, 2014, 2016] — QUEUE idea 116 says 2011 is
+  the ONLY one; that clause is FALSE in idea 112's own data (4 years do),
+  though 2011's shift -0.0437 is 4.6x the next largest.
+
+--- PER-YEAR POOLED OVERLAY d (Sharpe of the overlay minus its grid's null, by year)
+universe  broad    u56    all    n
+year                              
+2010     -0.019  0.010 -0.003  164
+2011      0.191  0.235  0.215  164
+2012     -0.170 -0.125 -0.146  164
+2013     -0.417 -0.360 -0.386  164
+2014      0.050  0.053  0.051  164
+2015     -0.101 -0.092 -0.096  164
+2016     -0.009  0.072  0.034  164
+2017     -0.258 -0.092 -0.169  164
+2018     -0.030 -0.059 -0.046  164
+2019      0.105  0.123  0.114  164
+2020      0.094  0.020  0.054  164
+2021     -0.044 -0.002 -0.022  164
+2022      0.044  0.129  0.090  164
+2023     -0.164 -0.112 -0.136  164
+2024      0.102  0.046  0.072  164
+2025      0.024  0.035  0.030  164
+2026      0.007 -0.019 -0.007  164
+  best overlay year: 2011 (+0.215); 2011 = +0.215 (idea 112 +0.215); reproduces: True
+
+================================================================================================================================
+### (3) S2 — WHAT THE EX-2011 PICK CHANGES COST OUT OF SAMPLE (2017-2026, untouched)
+
+                                 pick_full pick_ex2011  OOS_S_full  OOS_S_ex  dOOS_Sharpe  dOOS_CAGR  dOOS_MaxDD  d4b  d4b_oos
+universe grid    book  cost_bps                                                                                               
+u56      sleeve  top20 10            0.500       0.250       1.261     1.208       -0.053      0.035      -0.051    0        0
+                       25            0.250       0.000       1.060     1.023       -0.036      0.027      -0.048   -1       -1
+                 ewall 10            0.500       0.250       1.278     1.214       -0.064      0.024      -0.042    1        0
+                       25            0.250       0.000       1.073     1.021       -0.052      0.019      -0.048   -1       -1
+         band    top20 10            0.080       0.000       1.200     1.156       -0.044     -0.008       0.001    0        0
+         breadth top20 10            0.250       0.500       1.188     1.212        0.024      0.001      -0.000    0        0
+                       25            0.250       0.500       1.058     1.083        0.025      0.001       0.000    0        0
+                 ewall 10            0.500       0.750       1.234     1.260        0.027      0.001       0.000    0        0
+         stop    top20 10            0.250        none       1.187     1.156       -0.032     -0.003      -0.000    0        0
+                       25            0.250        none       1.053     1.023       -0.030     -0.003       0.000    0        0
+         gross   top20 10            0.750       1.000       1.156     1.156        0.000      0.051      -0.057   -1       -1
+broad    sleeve  top20 10            0.500       0.250       1.006     0.937       -0.069      0.026      -0.055   -1       -1
+                       25            0.500       0.000       0.811     0.732       -0.079      0.039      -0.106    0        0
+                 ewall 10            0.500       0.250       1.200     1.103       -0.097      0.020      -0.046    1        1
+                       25            0.500       0.250       1.025     0.962       -0.062      0.019      -0.045    1        0
+         breadth ewall 10            0.000       0.250       1.019     1.032        0.013     -0.001       0.002   -1        0
+
+  idea 112's own swaps.csv for 2011: n=16, mean dOOS Sharpe -0.0331 (QUEUE quotes -0.033)
+  n=16 swaps; mean dOOS Sharpe -0.033; worse in 11/16; mean dOOS CAGR +0.0156; mean dOOS MaxDD -0.0310; net 4b -2; net 4b_oos -3
+  PRE-REGISTERED SIGN TEST: FEATURE (deleting 2011 hurts OOS)
+
+--- FOR CONTEXT: the same swap price for every dropped year
+          n  mean_dOOS_Sharpe  worse
+dropped                             
+2009     11            -0.008      5
+2010      6            -0.007      3
+2011     16            -0.033     11
+2012      5             0.011      2
+2013      8             0.003      4
+2014      8            -0.025      6
+2015      9             0.006      3
+2016      9            -0.033      6
+
+================================================================================================================================
+### (4) S3/S4 — MATCHED-LENGTH TEST: 28 leave-two-out windows x 44 cells,
+###        split by whether the window KEEPS each year.  Agreement with pick(FULL),
+###        OOS Sharpe of the pick, and OOS regret vs the cell's OOS-best point.
+
+  L2O windows: 28 (all 6 years long)
+  1232 pick observations (28 windows x 44 cells)
+
+--- AGREEMENT PREMIUM AND ITS OOS PRICE, BY YEAR (the 8 rows are each other's null)
+      n_keep  n_drop  A_keep  A_drop  premium  OOS_keep  OOS_drop   dOOS  regret_keep  regret_drop  dRegret  p4b_keep  p4b_drop
+year                                                                                                                           
+2009     924     308   0.725   0.682    0.043     1.043     1.042  0.001        0.020        0.021   -0.001     0.409     0.390
+2010     924     308   0.708   0.734   -0.026     1.042     1.045 -0.002        0.021        0.019    0.002     0.405     0.403
+2011     924     308   0.756   0.588    0.169     1.045     1.035  0.010        0.018        0.028   -0.010     0.400     0.416
+2012     924     308   0.693   0.779   -0.087     1.042     1.047 -0.005        0.022        0.016    0.005     0.404     0.406
+2013     924     308   0.703   0.747   -0.043     1.042     1.047 -0.005        0.022        0.016    0.005     0.412     0.380
+2014     924     308   0.696   0.769   -0.074     1.042     1.045 -0.002        0.021        0.019    0.002     0.398     0.422
+2015     924     308   0.718   0.705    0.013     1.042     1.044 -0.002        0.021        0.019    0.002     0.409     0.390
+2016     924     308   0.715   0.711    0.004     1.044     1.039  0.006        0.019        0.025   -0.006     0.396     0.429
+
+  premium(2011) = +0.169; largest of the 8: True (max is 2011 at +0.169); bar 0.20
+  PRE-REGISTERED S3 (2011 chooses rule 8's picks): NOT SUPPORTED
+  S4 OOS price of keeping 2011: mean OOS Sharpe +0.010, mean regret -0.010 (negative regret delta = keeping 2011 picks better)
+
+--- WINDOW-LEVEL DETAIL: all 28 L2O windows, pooled over the 44 cells
+             agree  OOS_Sharpe  regret   p4b  has2011
+window                                               
+ex2010+2011  0.477       1.032   0.031 0.341    False
+ex2011+2014  0.545       1.033   0.030 0.364    False
+ex2011+2015  0.545       1.038   0.026 0.432    False
+ex2009+2011  0.568       1.034   0.029 0.432    False
+ex2011+2016  0.568       1.028   0.036 0.432    False
+ex2011+2012  0.659       1.038   0.025 0.455    False
+ex2011+2013  0.750       1.042   0.021 0.455    False
+ex2009+2013  0.568       1.042   0.021 0.341     True
+2010-2015    0.614       1.039   0.024 0.432     True
+2009-2014    0.659       1.029   0.034 0.409     True
+ex2012+2013  0.682       1.046   0.017 0.364     True
+ex2010+2015  0.705       1.049   0.015 0.386     True
+ex2009+2015  0.727       1.041   0.023 0.341     True
+ex2010+2016  0.727       1.041   0.023 0.477     True
+ex2013+2015  0.727       1.050   0.013 0.364     True
+2011-2016    0.750       1.044   0.020 0.364     True
+ex2009+2014  0.750       1.045   0.018 0.432     True
+ex2010+2014  0.773       1.045   0.019 0.455     True
+ex2012+2015  0.773       1.053   0.011 0.386     True
+ex2009+2012  0.795       1.048   0.015 0.386     True
+ex2012+2016  0.795       1.044   0.020 0.409     True
+ex2014+2015  0.795       1.051   0.012 0.409     True
+ex2014+2016  0.795       1.042   0.022 0.477     True
+ex2013+2014  0.818       1.047   0.016 0.386     True
+ex2013+2016  0.818       1.049   0.015 0.364     True
+ex2010+2012  0.841       1.050   0.013 0.409     True
+ex2010+2013  0.864       1.052   0.012 0.386     True
+ex2012+2014  0.909       1.049   0.015 0.432     True
+
+--- SUPPLEMENTARY (POST-HOC, not pre-registered): how unlikely is that separation?
+  mean agreement RANK (1 = lowest agreement) of the seven windows that drop each year:
+2011    5.79
+2009   12.10
+2015   13.25
+2010   16.08
+2016   17.10
+2013   17.14
+2014   18.93
+2012   19.14
+  structurally-matched null (which of the 8 years is marked): 2011 is rank 1 of 8 -> exact one-sided p = 0.125
+  unstructured null (any 7 of the 28 windows, 200k draws, seed 0): observed mean rank 5.79, p = 0.00018
+  READ IT AS: 2011 is unambiguously the pick-moving year; the pre-registered bar it
+  misses is the SIZE of the premium, not its uniqueness.
+
+================================================================================================================================
+### (5) S5 — CONTIGUOUS RE-CUT WINDOWS (the queue's second clause)
+
+           nyears  has2011  agree  OOS_Sharpe  regret   p4b
+window                                                     
+2009-2012       4     True  0.750       1.044   0.020 0.341
+2010-2013       4     True  0.500       1.023   0.040 0.409
+2011-2014       4     True  0.545       1.022   0.041 0.364
+2012-2015       4    False  0.477       1.018   0.045 0.409
+2013-2016       4    False  0.614       1.034   0.029 0.386
+2009-2013       5     True  0.636       1.034   0.029 0.523
+2010-2014       5     True  0.545       1.020   0.043 0.386
+2011-2015       5     True  0.636       1.036   0.027 0.455
+2012-2016       5    False  0.614       1.027   0.036 0.341
+2009-2014       6     True  0.659       1.029   0.034 0.409
+2010-2015       6     True  0.614       1.039   0.024 0.432
+2011-2016       6     True  0.750       1.044   0.020 0.364
+2009-2015       7     True  0.795       1.041   0.022 0.455
+2010-2016       7     True  0.750       1.046   0.017 0.386
+2009-2016       8     True  1.000       1.048   0.015 0.455
+
+  contains 2011 (n=12, mean length 5.6): agreement 0.682, OOS Sharpe 1.036, regret 0.028
+  omits 2011    (n=3, mean length 4.3): agreement 0.568, OOS Sharpe 1.027, regret 0.037
+  (CONFOUNDED WITH LENGTH by construction — the controlled test is S3 above)
+
+--- the same, by window LENGTH (the confound, shown on its own)
+        n  agree  OOS_Sharpe  regret
+nyears                              
+4       5  0.577       1.028   0.035
+5       4  0.608       1.029   0.034
+6       3  0.674       1.037   0.026
+7       2  0.773       1.044   0.019
+8       1  1.000       1.048   0.015
+
+================================================================================================================================
+### (6) PROTOCOL RULE 8 WALK-FORWARD — every window's pick carried into the UNTOUCHED
+###     2017-2026 window, vs RULES v1 and SPY; both KEEP paths
+
+--- KEEP-PATH COUNTS ACROSS THE 44 CELLS, BY WINDOW FAMILY
+               n  pass_4a  pass_4b  pass_4b_oos  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD  per_cell_4b
+families                                                                                                    
+FULL,RECUT    44       17       20           22            1.048          0.133          -0.197       20.000
+L2O         1100      466      445          508            1.044          0.132          -0.196       17.800
+L2O,RECUT    132       55       53           65            1.037          0.132          -0.196       17.667
+LOYO         264      111      113          125            1.046          0.131          -0.195       18.833
+LOYO,RECUT    88       36       37           42            1.044          0.135          -0.199       18.500
+RECUT        396      159      159          186            1.029          0.133          -0.200       17.667
+
+--- FULL-IS (rule 8 as written) vs EX-2011 vs the L2O keep/drop split
+                            n  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  pass_4a  pass_4b  pass_4b_oos
+window_set                                                                                   
+FULL (rule 8 as written)   44       1.048     0.133     -0.197   17.000   20.000       22.000
+LOYO ex2011                44       1.036     0.139     -0.208   16.000   18.000       19.000
+L2O keeps 2011            924       1.045     0.129     -0.192   19.429   17.619       20.619
+L2O drops 2011            308       1.035     0.138     -0.207   16.143   18.286       20.000
+RECUT keeps 2011          528       1.036     0.131     -0.195   18.417   18.250       21.583
+RECUT omits 2011          132       1.027     0.142     -0.213   15.333   16.667       18.667
+
+  SPY u56  : full 15.2%/0.889/-33.7%  OOS 15.5%/0.882/-33.7%
+  SPY broad: full 15.2%/0.889/-33.7%  OOS 15.5%/0.882/-33.7%
+
+--- HEADLINE CELL: sleeve / u56 / top20 / 10 bps (the standing KEEP-4b candidate's cell)
+      n_windows  CAGR  Sharpe  MaxDD    H1    H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  keep_4a  keep_4b
+pick                                                                                               
+0.00          6 0.178   1.093 -0.242 1.132 1.070     0.202       1.156     -0.242        0        0
+0.25          8 0.153   1.143 -0.194 1.167 1.128     0.171       1.208     -0.194        0        1
+0.50         28 0.123   1.180 -0.143 1.161 1.200     0.136       1.261     -0.143        0        1
+0.75          4 0.087   1.099 -0.099 0.969 1.232     0.096       1.243     -0.093        1        0
+  windows picking each f, of 46; the standing candidate is f=0.50
+
+  its IS Sharpe by window family (the number rule 8 maximises):
+       IS_full  IS_ex2011  IS_2009-2012  IS_2011-2014  IS_2012-2015  IS_2013-2016
+param                                                                            
+0.0      1.012      1.142         0.685         1.040         1.265         1.380
+0.25     1.060      1.145         0.776         1.136         1.248         1.371
+0.5      1.077      1.089         0.869         1.214         1.156         1.312
+0.75     0.938      0.830         0.875         1.103         0.774         1.032
+1.0      0.271     -0.048         0.631         0.174        -0.680        -0.209
+
+================================================================================================================================
+### (7) VERDICT
+
+  S1 reproduction   : LOYO table True; G leverage True; per-year d True
+  S2 price of ex2011: n=16 swaps, mean dOOS Sharpe -0.033 -> FEATURE (deleting 2011 hurts OOS)
+  S3 selector test  : premium(2011) +0.169, largest=True, bar 0.20 -> NOT SUPPORTED
+  S4 OOS price      : keeping 2011 moves mean OOS Sharpe +0.010 and regret -0.010
+  S5 re-cuts        : agreement 0.682 (with 2011) vs 0.568 (without), length-confounded
+
+[outputs] 2026-09-05_2011-the-opposite-outlier_C.grid.csv .picks.csv .swaps.csv .l2o.csv .yearsplit.csv .recut.csv .peryear.csv .walkforward.csv
