@@ -1426,3 +1426,19 @@ every failure is the CAGR floor, which the natural blend misses only by de-gross
 | 2026-09-05 | 100 year attribution of the 25pct S4 sleeve | n/a | n/a | n/a | n/a | n/a | contribution positive in only 2/18 years (2011, 2022) — same shape as idea 26, but the Sharpe edge does NOT depend on it | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
 | 2026-09-05 | 100 cost ladder 5/10/15/20/25 bps, natural gross | n/a | n/a | n/a | n/a | n/a | cross-universe 4b window 5 bps only (CAGR floor); Sharpe decay -0.048/-0.055 per 10 bps | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
 | 2026-09-05 | 100 4b census (interior points only) | n/a | n/a | n/a | n/a | n/a | S4 2/36 vs S9 4/36; only S9/top20/f=0.25 passes all 4 universe x convention combos | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+
+### Idea 100b — sleeve-with-a-real-diversifier (INDEPENDENT SECOND RUN, lane B, 2026-09-05)
+
+Lane B ran the same idea the same day without seeing the cloud run. Same design (120 points,
+2 tuned params), same conclusion, and the shared numbers agree to the printed precision:
+correlation -0.011..+0.212 vs 0.626..0.820, dSharpe +0.265 vs +0.052 (36/36 both), exchange rate
+0.090 vs 0.031, S4 standalone 2.6%/0.616/-8.7%. Rows below are only what lane B measured that the
+cloud run did not; everything else is a duplicate and is not re-listed.
+`research/backtests/2026-09-05_sleeve-with-a-real-diversifier_B.result.md`
+
+| Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
+|---|---|---|---|---|---|---|---|---|
+| 2026-09-05 | 100b cost ladder 5/10/15/20/25 bps, GROSS-MATCHED blend | n/a | n/a | n/a | n/a | n/a | cross-universe 4b survives 10 bps and dies at 15, for BOTH sleeves — the matched convention buys +5 bps over natural but does not fix the cost window | 2026-09-05_sleeve-with-a-real-diversifier_B.py |
+| 2026-09-05 | 100b cross-universe 4b arms at 10 bps, all 120 points | n/a | n/a | n/a | n/a | n/a | exactly 3: top20/S4/matched/f=0.25, top20/S9/matched/f=0.25, top20/S9/natural/f=0.25 | 2026-09-05_sleeve-with-a-real-diversifier_B.py |
+| 2026-09-05 | 100b S4-vs-S9 paired, same universe/book/conv/f | n/a | n/a | n/a | n/a | n/a | S4 convexity higher in 36/36 (mean +0.212); S4 CAGR toll larger in 36/36 (mean -1.04pp); S4 exchange rate higher in 32/36 | 2026-09-05_sleeve-with-a-real-diversifier_B.py |
+| 2026-09-05 | 100b census, 120 points | n/a | n/a | n/a | n/a | n/a | 4a 78, 4b 14; interior 72 pts, 4a 61, 4b 6 (S9 4 / S4 2) — matches the cloud run | 2026-09-05_sleeve-with-a-real-diversifier_B.py |
