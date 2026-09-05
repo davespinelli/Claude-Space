@@ -1456,3 +1456,22 @@ cloud run did not; everything else is a duplicate and is not re-listed.
 | 2026-09-05 | 102 rule 8, (sleeve,f) chosen on 2009-2016, 2017-2026 untouched | n/a | n/a | n/a | n/a | n/a | picks noDBC/f=0.50 in 6/8 cells, TLTonly/f=0.25 in 2/8, S4 in 0/8, f=0 in 0/8; OOS beats SPY 8/8 and RULES v1 8/8, anchor 6/8; the 2 TLT picks are the run's 2 worst regrets (-0.223/-0.262) | 2026-09-05_which-asset-carries-S4_C.py |
 | 2026-09-05 | 102 cost ladder 5/10/15/20/25 bps at f=0.50, cross-universe 4b | n/a | n/a | n/a | n/a | n/a | g=1.00: S4 and noTLT and noDBC hold to 15 bps, noGLD dies at 15, noUUP and TLTonly never pass; nothing survives 25 | 2026-09-05_which-asset-carries-S4_C.py |
 | 2026-09-05 | 102 census, 240 points (6 sleeves x 5 f x 2 books x 2 universes x 2 conv) | n/a | n/a | n/a | n/a | n/a | 4a 114, 4b 39; interior 144 pts, 4a 102, 4b 27 (noTLT 8, S4/noDBC/noGLD 5 each, noUUP 4, TLTonly 0) | 2026-09-05_which-asset-carries-S4_C.py |
+
+**Idea 101 (+104 folded) — fixed-gross-S4-blend (cloud, 2026-09-05).** g fixed at 1.00 EX ANTE; two pre-registered
+arms (S4 = TLT,GLD,DBC,UUP; S3 = TLT,GLD,UUP), 2 tuned params (f, cost), 600 grid points, all reported.
+`research/backtests/2026-09-05_fixed-gross-S4-blend_cloud.result.md`
+
+| Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
+|---|---|---|---|---|---|---|---|---|
+| 2026-09-05 | 101 top20 + 50% S3 (TLT,GLD,UUP) g=1.00 fixed, u56, W, 10bps | 11.5% | 1.17 | -13.3% | 1.17 / 1.17 | 0.66 (0.64/0.69) | **KEEP 4a+4b** (OOS 1.215 @ 12.3%; SPY OOS 0.882) | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 top20 + 50% S3 (TLT,GLD,UUP) g=1.00 fixed, broad, W, 10bps | 12.0% | 1.07 | -14.6% | 1.25 / 0.92 | 0.64 (0.76/0.53) | **KEEP 4a+4b** (OOS 0.985 @ 11.1%) | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 top20 + 50% S4 (TLT,GLD,DBC,UUP) g=1.00 fixed, u56, W, 10bps | 11.8% | 1.15 | -14.2% | 1.10 / 1.20 | 0.66 (0.64/0.69) | 4b only — fails 4a on u56 (MaxDD -14.2% vs v1 -13.8%) | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 top20 + 50% S4 g=1.00 fixed, broad, W, 10bps | 12.2% | 1.06 | -15.6% | 1.17 / 0.96 | 0.64 (0.76/0.53) | 4a+4b | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 f-grid at g=1.00, W, 10bps (f=0/.25/.50/.75/1.00) | n/a | n/a | n/a | n/a | n/a | Sharpe peaks at f=0.50 in 4/4 cells — interior optimum, not a boundary pick (u56 S3: 1.064/1.127/**1.167**/1.056/0.392) | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 cost ladder 5/10/15/20/25 bps, cross-universe 4b at f=0.50 | n/a | n/a | n/a | n/a | n/a | BOTH arms hold to 15 bps, die at 20; binding bar is the CAGR floor (u56 -0.49pp at 20) — DD has 5.5-6.9pp headroom at every rung | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 4a cost ladder, cross-universe | n/a | n/a | n/a | n/a | n/a | S3 passes 4a on BOTH universes at all 5 rungs incl. 25 bps; S4 fails 4a on u56 at all 5 — drop-DBC (idea 104) is strictly the better arm | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 rule 8, f chosen on 2009-2016 IS Sharpe (g NOT selected) | n/a | n/a | n/a | n/a | n/a | picks f=0.50 in 44/60 cells, f=0 in 1, mean regret -0.019; at W/10bps picks f=0.50 in 4/4 at ZERO regret — fixing gross removes idea 100's selector/4b mismatch | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 rule 8 OOS (2017-2026) of the pick, 60 cells | n/a | n/a | n/a | n/a | n/a | beats its f=0 anchor 51/60, SPY 44/60, RULES v1 60/60; OOS CAGR >= 70% of SPY's in 39/60 | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 cadence bar (idea 65), \|dSharpe\| across D/W/M <= 0.05 at f=0.50 | n/a | n/a | n/a | n/a | n/a | **FAILS 0/2** (spread 0.33 u56, 0.44 broad) — but the f=0 anchor fails identically (0.26/0.36); the sleeve's OWN contribution is +0.041..+0.155, positive 12/12, spread 0.068/0.075. The bar measures the equity book, not the overlay | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 4b under each cadence at f=0.50, g=1.00, 10bps | n/a | n/a | n/a | n/a | n/a | D **fails 4/4**, W passes 4/4, M passes 4/4 — cadence must be pre-registered as part of the rule; monthly dominates weekly on every metric | 2026-09-05_fixed-gross-S4-blend_cloud.py |
+| 2026-09-05 | 101 census, 600 points (2 arms x 5 f x 3 cadences x 2 conv x 2 universes x 5 costs) | n/a | n/a | n/a | n/a | n/a | see .grid.csv; every point reported, nothing hidden | 2026-09-05_fixed-gross-S4-blend_cloud.py |
