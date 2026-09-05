@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T00:40:02Z · open 82 · in progress 0 · done 403_
+_Source: universe_under2b.csv · updated 2026-09-05T01:09:29Z · open 62 · in progress 10 · done 413_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (82)
+## Open (62)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| KIDS | ORTHOPEDIATRICS CORP | $589.8M |
-| PAR | PAR TECHNOLOGY CORP | $781.8M |
-| SRTA | Strata Critical Medical, Inc. | $475.1M |
-| CMRC | Commerce.com, Inc. | $208.0M |
-| AGEN | AGENUS INC | $371.0M |
-| TDOC | Teladoc Health, Inc. | $1.18B |
-| OPTU | Optimum Communications, Inc. | $283.5M |
-| ANGO | ANGIODYNAMICS INC | $639.4M |
-| HNST | Honest Company, Inc. | $627.6M |
-| BLZE | Backblaze, Inc. | $823.9M |
-| ICHR | ICHOR HOLDINGS, LTD. | $1.98B |
-| HUN | Huntsman CORP | $1.65B |
-| OXM | OXFORD INDUSTRIES INC | $546.9M |
-| NCMI | National CineMedia, Inc. | $234.2M |
-| TYGO | TIGO ENERGY, INC. | $81.4M |
-| INSG | INSEEGO CORP. | $66.2M |
-| NSP | INSPERITY, INC. | $1.98B |
-| GO | Grocery Outlet Holding Corp. | $1.22B |
-| OMDA | Omada Health, Inc. | $1.36B |
-| CSTL | CASTLE BIOSCIENCES INC | $997.4M |
 | INGN | Inogen Inc | $144.6M |
 | TWI | TITAN INTERNATIONAL INC | $493.1M |
 | STLN | Starling Oncology, Inc. | $608.4M |
@@ -91,12 +71,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| ICHR | ICHOR HOLDINGS, LTD. | $1.98B | cloudA | 2026-09-05T01:06:33Z |
+| HUN | Huntsman CORP | $1.65B | cloudA | 2026-09-05T01:06:33Z |
+| OXM | OXFORD INDUSTRIES INC | $546.9M | cloudA | 2026-09-05T01:06:33Z |
+| NCMI | National CineMedia, Inc. | $234.2M | cloudA | 2026-09-05T01:06:33Z |
+| TYGO | TIGO ENERGY, INC. | $81.4M | cloudA | 2026-09-05T01:06:33Z |
+| INSG | INSEEGO CORP. | $66.2M | cloudA | 2026-09-05T01:06:33Z |
+| NSP | INSPERITY, INC. | $1.98B | cloudA | 2026-09-05T01:06:33Z |
+| GO | Grocery Outlet Holding Corp. | $1.22B | cloudA | 2026-09-05T01:06:33Z |
+| OMDA | Omada Health, Inc. | $1.36B | cloudA | 2026-09-05T01:06:33Z |
+| CSTL | CASTLE BIOSCIENCES INC | $997.4M | cloudA | 2026-09-05T01:06:33Z |
 
-## Done (403)
+## Done (413)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | HZO | MARINEMAX INC | $1.15B | cloudB | 2026-09-05T00:40:02Z |
 | EVH | Evolent Health, Inc. | $481.6M | cloudB | 2026-09-05T00:40:02Z |
 | ULCC | Frontier Group Holdings, Inc. | $1.32B | cloudB | 2026-09-05T00:40:02Z |
+| KIDS | ORTHOPEDIATRICS CORP | $589.8M | cloudA | 2026-09-05T01:09:29Z |
+| PAR | PAR TECHNOLOGY CORP | $781.8M | cloudA | 2026-09-05T01:09:29Z |
+| SRTA | Strata Critical Medical, Inc. | $475.1M | cloudA | 2026-09-05T01:09:29Z |
+| CMRC | Commerce.com, Inc. | $208.0M | cloudA | 2026-09-05T01:09:29Z |
+| AGEN | AGENUS INC | $371.0M | cloudA | 2026-09-05T01:09:29Z |
+| TDOC | Teladoc Health, Inc. | $1.18B | cloudA | 2026-09-05T01:09:29Z |
+| OPTU | Optimum Communications, Inc. | $283.5M | cloudA | 2026-09-05T01:09:29Z |
+| ANGO | ANGIODYNAMICS INC | $639.4M | cloudA | 2026-09-05T01:09:29Z |
+| HNST | Honest Company, Inc. | $627.6M | cloudA | 2026-09-05T01:09:29Z |
+| BLZE | Backblaze, Inc. | $823.9M | cloudA | 2026-09-05T01:09:29Z |
