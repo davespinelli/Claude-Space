@@ -1,0 +1,289 @@
+IDEA 186 - the-null-column-for-instruments-that-are-not-keyed-tilts   (cloud, 2026-09-05)
+==========================================================================================================================
+Idea 181 defined PROTOCOL clause 11's matched null for a KEYED TILT only.  This run defines it
+for an OVERLAY - same action, same on-share, same episode structure, RANDOM TIMING (a circular
+rotation of the ON indicator over the rebalance dates) - and prices the three overlay families
+the queue names: drawdown control, entry/turnover budget, defensive sleeve.
+Base book: top-20 EW composite, no vol scaler, gross 0.75, weekly, t+1.  Cost rungs [10, 25] bps derived exactly from one 0 bps run.
+Two tuned params: overlay THRESHOLD (3) x overlay DEPTH (2) = 18 points per panel, all reported.
+Nulls: 20 rotations per point, seed 186400.
+
+SCOPE (stated, not buried): this prices the three CONSTRUCTIONS, not each published row.
+Keyword census of the committed LEADERBOARD (3330 data rows): 527 mention a sleeve, 54 a
+drawdown control or trailing stop, 11 an entry/turnover budget.
+
+  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+   U56       4699d x 56c  tradable= 55  2008-01-02..2026-09-04  rebalances=975  sleeve=['TLT', 'GLD', 'UUP']
+   BROAD136  4699d x 136c  tradable=132  2008-01-02..2026-09-04  rebalances=975  sleeve=['TLT', 'GLD', 'UUP']
+   SMALL439  4194d x 443c  tradable=439  2010-01-04..2026-09-04  rebalances=870  sleeve=['TLT', 'GLD', 'UUP']
+
+REPRODUCTION CONTROLS (asserted before any new number is read)
+  [a] fast_backtest vs engine.backtest (products/backtester/engine.py):
+      U56       max|dret|=1.388e-17  max|dturn|=3.053e-16  -> PASS
+  [b] cost identity: 10 bps derived from the 0 bps run vs a genuine 10 bps engine run:
+      max|d|=1.388e-17  -> PASS
+  [c] base CAND-20 weights vs idea 78/171 weights_cand:
+      U56       max|dw|=0.000e+00  -> PASS
+  [a] fast_backtest vs engine.backtest (products/backtester/engine.py):
+      BROAD136  max|dret|=2.082e-17  max|dturn|=2.776e-16  -> PASS
+  [b] cost identity: 10 bps derived from the 0 bps run vs a genuine 10 bps engine run:
+      max|d|=2.082e-17  -> PASS
+  [c] base CAND-20 weights vs idea 78/171 weights_cand:
+      BROAD136  max|dw|=0.000e+00  -> PASS
+  [a] fast_backtest vs engine.backtest (products/backtester/engine.py):
+      SMALL439  max|dret|=2.776e-17  max|dturn|=4.441e-16  -> PASS
+  [b] cost identity: 10 bps derived from the 0 bps run vs a genuine 10 bps engine run:
+      max|d|=2.776e-17  -> PASS
+  [c] base CAND-20 weights vs idea 78/171 weights_cand:
+      SMALL439  max|dw|=0.000e+00  -> PASS
+
+  U56       SPY  15.23%/0.889/-33.72%  OOS 15.45%/0.882
+            @10bps  BASE (untreated) 12.86%/1.1075/-18.21%  4b=-  |  RULES v1  6.45%/0.6642/-13.83%
+            @25bps  BASE (untreated) 11.27%/0.9845/-18.33%  4b=-  |  RULES v1  2.75%/0.3169/-15.63%
+  BROAD136  SPY  15.23%/0.889/-33.72%  OOS 15.45%/0.882
+            @10bps  BASE (untreated) 13.14%/0.9493/-21.57%  4b=H2,OOS,DD  |  RULES v1  6.32%/0.6295/-21.19%
+            @25bps  BASE (untreated) 10.84%/0.8033/-21.68%  4b=H2,OOS,DD  |  RULES v1  1.72%/0.2136/-26.72%
+  SMALL439  SPY  14.13%/0.862/-33.72%  OOS 15.45%/0.882
+            @10bps  BASE (untreated)  6.57%/0.4635/-26.84%  4b=H1,H2,OOS,DD,CAGR  |  RULES v1  7.65%/0.6319/-32.37%
+            @25bps  BASE (untreated)  3.38%/0.2824/-34.56%  4b=H1,H2,OOS,DD,CAGR  |  RULES v1  2.80%/0.2772/-41.30%
+
+RUNNING THE GRID (real + 20 matched nulls per point) ...
+   U56 done (31s)
+   BROAD136 done (61s)
+   SMALL439 done (126s)
+   2268 rows (108 real, 2160 null) -> 2026-09-05_the-null-column-for-instruments-that-are-not-keyed-tilts_cloud.grid.csv   (126s)
+
+  [d] MATCHED-NULL VALIDATION - a rotation must preserve on-share and switch count EXACTLY
+      on-share mismatches 0/2160   CIRCULAR switch-count mismatches 0/2160   -> PASS
+      (the LINEAR episode count can differ by one at the wrap seam; that is the single respect
+       in which rotation is not exact, and it is reported rather than hidden)
+      realised turnover: mean |null-real|/real = 9.15%, max 213.78% (rotation matches the overlay's SWITCHING exactly, its ACTION cost only approximately)
+      turnover gap, DDCTL  : mean  1.25%  max   4.27%
+      turnover gap, BUDGET : mean 25.39%  max 213.78%
+      turnover gap, SLEEVE : mean  0.82%  max   2.88%
+
+OVERLAY ON-SHARE (fraction of rebalance dates the overlay fires) - the free parameter the
+published dSharpe does not show.  A high on-share overlay is close to a de-grossing lever.
+  panel      family       D=0.06       D=0.1      D=0.15     tau=0.1     tau=0.2     tau=0.3      ma=100      ma=200      ma=300
+  U56                      19.1%        4.2%        0.0%       70.5%       33.8%        5.2%       22.4%       17.7%       12.8%
+  BROAD136                 21.3%        6.4%        1.4%       87.7%       64.1%       19.7%       22.4%       17.7%       12.8%
+  SMALL439                 40.5%       20.7%        4.6%       92.6%       86.7%       53.1%       19.7%       14.6%       11.8%
+
+==========================================================================================================================
+THE CLAUSE, applied: |dSharpe(real)| > max over the 20 matched null draws  (one-sided 1/21 = 4.8%)
+
+  overall: 17 of 108 real overlays clear on SHARPE (15.7%);  10 of 108 clear on DRAWDOWN (9.3%)
+
+  family   clears (Sharpe)  clears (MaxDD)  mean |dSharpe|  mean null max  mean null pctile  mean on-share
+  DDCTL        15/36 (42%)      6/36 (17%)          0.1437         0.1253             0.764          13.1%
+  BUDGET         2/36 (6%)      4/36 (11%)          0.0565         0.1192             0.510          57.0%
+  SLEEVE         0/36 (0%)       0/36 (0%)          0.0487         0.1757             0.289          16.9%
+
+  panel       bps          DDCTL         BUDGET         SLEEVE     (clears on Sharpe)
+  U56          10            0/6            2/6            0/6
+  U56          25            0/6            0/6            0/6
+  BROAD136     10            1/6            0/6            0/6
+  BROAD136     25            2/6            0/6            0/6
+  SMALL439     10            6/6            0/6            0/6
+  SMALL439     25            6/6            0/6            0/6
+
+  Every point, sorted by |dSharpe| (the full table is in .clause.csv):
+  panel      family    thr depth  bps  on-share   dSharpe  null max  pctile  clears   dMaxDD           4b
+  SMALL439   DDCTL    0.06   1.0   10     40.5%   -0.5162    0.3333   1.000    True  -14.53% H1,H2,OOS,DD,CAGR
+  SMALL439   DDCTL    0.06   1.0   25     40.5%   -0.5110    0.3234   1.000    True  -12.48% H1,H2,OOS,DD,CAGR
+  SMALL439   DDCTL     0.1   1.0   25     20.7%   -0.3967    0.2415   1.000    True  -20.84% H1,H2,OOS,DD,CAGR
+  SMALL439   DDCTL     0.1   1.0   10     20.7%   -0.3937    0.2407   1.000    True  -20.22% H1,H2,OOS,DD,CAGR
+  BROAD136   DDCTL    0.06   1.0   25     21.3%   -0.3041    0.2639   1.000    True   -0.73% H1,H2,OOS,DD,CAGR
+  BROAD136   DDCTL    0.06   1.0   10     21.3%   -0.2870    0.2584   1.000    True   +2.34% H1,H2,OOS,CAGR
+  SMALL439   DDCTL    0.06   0.5   25     40.5%   -0.2088    0.1294   1.000    True   -2.96% H1,H2,OOS,DD,CAGR
+  U56        DDCTL    0.06   1.0   25     19.1%   -0.2027    0.3559   0.700   False   +3.09% H1,H2,OOS,CAGR
+  U56        BUDGET    0.1  skip   10     70.5%   -0.2017    0.1424   1.000    True   -7.52%        H2,DD
+  SMALL439   DDCTL    0.06   0.5   10     40.5%   -0.1983    0.1307   1.000    True   -3.20% H1,H2,OOS,DD,CAGR
+  SMALL439   DDCTL    0.15   1.0   25      4.6%   -0.1928    0.0966   1.000    True   -3.20% H1,H2,OOS,DD,CAGR
+  U56        DDCTL    0.06   1.0   10     19.1%   -0.1899    0.3419   0.700   False   +3.42%      H1,CAGR
+  U56        SLEEVE  100.0   1.0   25     22.4%   -0.1880    0.4317   0.400   False   -2.74%   H1,DD,CAGR
+  SMALL439   DDCTL    0.15   1.0   10      4.6%   -0.1870    0.0981   1.000    True   -6.86% H1,H2,OOS,DD,CAGR
+  SMALL439   DDCTL     0.1   0.5   25     20.7%   -0.1817    0.1117   1.000    True   -7.28% H1,H2,OOS,DD,CAGR
+  BROAD136   SLEEVE  100.0   1.0   25     22.4%   -0.1816    0.3447   0.650   False   -5.49% H1,H2,OOS,DD,CAGR
+  SMALL439   BUDGET    0.2  skip   10     86.7%   -0.1781    0.2036   0.950   False  -12.79% H1,H2,OOS,DD,CAGR
+  SMALL439   DDCTL     0.1   0.5   10     20.7%   -0.1748    0.1078   1.000    True   -8.76% H1,H2,OOS,DD,CAGR
+  SMALL439   BUDGET    0.1  skip   25     92.6%   +0.1563    0.4259   0.500   False   +3.51% H1,H2,OOS,DD,CAGR
+  BROAD136   DDCTL     0.1   1.0   25      6.4%   -0.1381    0.1361   1.000    True   -8.17% H1,H2,OOS,DD,CAGR
+  BROAD136   BUDGET    0.1  skip   25     87.7%   +0.1338    0.3064   0.250   False   -5.47%    H2,OOS,DD
+  U56        SLEEVE  100.0   1.0   10     22.4%   -0.1289    0.3769   0.350   False   -0.35%      H1,CAGR
+  BROAD136   DDCTL     0.1   1.0   10      6.4%   -0.1256    0.1276   0.950   False   -5.85% H2,OOS,DD,CAGR
+  BROAD136   SLEEVE  100.0   1.0   10     22.4%   -0.1224    0.3035   0.550   False   -2.73% H2,OOS,DD,CAGR
+  U56        BUDGET    0.1  skip   25     70.5%   -0.1180    0.2113   0.900   False   -7.49%    H2,OOS,DD
+  SMALL439   BUDGET    0.3  skip   10     53.1%   -0.1172    0.1419   0.950   False  -16.81% H1,H2,OOS,DD,CAGR
+  U56        DDCTL     0.1   1.0   25      4.2%   -0.1144    0.1255   0.950   False   -1.24%      H1,CAGR
+  U56        BUDGET    0.2  skip   10     33.8%   -0.1122    0.0771   1.000    True   -3.57%           DD
+  U56        DDCTL     0.1   1.0   10      4.2%   -0.1090    0.1176   0.950   False   -1.17%            -
+  BROAD136   DDCTL    0.06   0.5   25     21.3%   -0.1074    0.1080   0.950   False   +3.39% H1,H2,OOS,CAGR
+  SMALL439   BUDGET    0.1  half   25     92.6%   +0.1027    0.1246   0.750   False   +1.57% H1,H2,OOS,DD,CAGR
+  SMALL439   SLEEVE  100.0   1.0   25     19.7%   -0.1014    0.1882   0.650   False   -0.18% H1,H2,OOS,DD,CAGR
+  SMALL439   BUDGET    0.2  half   25     86.7%   +0.0999    0.1304   0.800   False   +1.70% H1,H2,OOS,DD,CAGR
+  BROAD136   SLEEVE  300.0   1.0   25     12.8%   -0.0996    0.1957   0.550   False   -0.00% H1,H2,OOS,DD,CAGR
+  BROAD136   SLEEVE  200.0   1.0   25     17.7%   -0.0947    0.2710   0.300   False   +3.12% H1,H2,OOS,CAGR
+  BROAD136   DDCTL    0.06   0.5   10     21.3%   -0.0931    0.1019   0.950   False   +4.67%  H2,OOS,CAGR
+  SMALL439   DDCTL    0.15   0.5   25      4.6%   -0.0929    0.0496   1.000    True   -0.75% H1,H2,OOS,DD,CAGR
+  SMALL439   DDCTL    0.15   0.5   10      4.6%   -0.0886    0.0533   1.000    True   -1.23% H1,H2,OOS,DD,CAGR
+  U56        SLEEVE  300.0   1.0   25     12.8%   -0.0828    0.2094   0.350   False   -0.00%      H1,CAGR
+  BROAD136   SLEEVE  300.0   1.0   10     12.8%   -0.0815    0.1817   0.550   False   +0.00%    H2,OOS,DD
+  U56        SLEEVE  200.0   1.0   25     17.7%   -0.0759    0.3133   0.200   False   +4.05%      H1,CAGR
+  BROAD136   BUDGET    0.1  half   25     87.7%   +0.0754    0.1015   0.300   False   -0.76%    H2,OOS,DD
+  U56        DDCTL    0.06   0.5   25     19.1%   -0.0653    0.1493   0.650   False   +4.09%      H1,CAGR
+  U56        BUDGET    0.2  skip   25     33.8%   -0.0644    0.0743   0.850   False   -3.56%        H1,DD
+  U56        SLEEVE  300.0   1.0   10     12.8%   -0.0637    0.1819   0.400   False   -0.00%            -
+  U56        BUDGET    0.3  skip   10      5.2%   -0.0582    0.0631   0.950   False   -2.55%           DD
+  SMALL439   SLEEVE  100.0   1.0   10     19.7%   -0.0581    0.2167   0.450   False   -2.87% H1,H2,OOS,DD,CAGR
+  BROAD136   SLEEVE  200.0   1.0   10     17.7%   -0.0580    0.2389   0.150   False   +5.27%           H2
+  U56        DDCTL    0.06   0.5   10     19.1%   -0.0557    0.1422   0.650   False   +4.08%            -
+  SMALL439   BUDGET    0.3  half   25     53.1%   +0.0553    0.0921   0.500   False   -0.14% H1,H2,OOS,DD,CAGR
+  BROAD136   BUDGET    0.2  skip   25     64.1%   +0.0551    0.1773   0.150   False   -6.29%    H2,OOS,DD
+  BROAD136   DDCTL     0.1   0.5   25      6.4%   -0.0548    0.0609   0.950   False   -2.08% H1,H2,OOS,DD,CAGR
+  BROAD136   BUDGET    0.2  half   25     64.1%   +0.0536    0.0654   0.500   False   -0.77%    H2,OOS,DD
+  U56        DDCTL     0.1   0.5   25      4.2%   -0.0527    0.0565   0.950   False   -0.62%      H1,CAGR
+  U56        DDCTL     0.1   0.5   10      4.2%   -0.0497    0.0520   0.950   False   -0.58%            -
+  BROAD136   DDCTL     0.1   0.5   10      6.4%   -0.0465    0.0556   0.950   False   +0.24%    H2,OOS,DD
+  U56        BUDGET    0.3  skip   25      5.2%   -0.0464    0.0589   0.900   False   -2.60%        H1,DD
+  U56        SLEEVE  100.0   0.5   25     22.4%   -0.0443    0.1813   0.250   False   +1.95%      H1,CAGR
+  SMALL439   BUDGET    0.2  half   10     86.7%   +0.0425    0.0793   0.550   False   -3.95% H1,H2,OOS,DD,CAGR
+  SMALL439   BUDGET    0.1  half   10     92.6%   +0.0421    0.0677   0.600   False   -4.11% H1,H2,OOS,DD,CAGR
+  U56        SLEEVE  200.0   1.0   10     17.7%   -0.0412    0.2749   0.150   False   +4.71%            -
+  BROAD136   SLEEVE  100.0   0.5   25     22.4%   -0.0368    0.1442   0.250   False   -0.45% H1,H2,OOS,DD,CAGR
+  SMALL439   SLEEVE  100.0   0.5   25     19.7%   -0.0353    0.1005   0.500   False   +0.56% H1,H2,OOS,DD,CAGR
+  BROAD136   BUDGET    0.2  skip   10     64.1%   -0.0339    0.0965   0.300   False   -6.22%    H2,OOS,DD
+  SMALL439   SLEEVE  200.0   0.5   10     14.6%   +0.0318    0.0898   0.400   False   +3.85% H1,H2,OOS,DD,CAGR
+  U56        BUDGET    0.1  half   25     70.5%   +0.0291    0.0725   0.250   False   +0.08%            -
+  SMALL439   SLEEVE  200.0   1.0   10     14.6%   +0.0286    0.1766   0.400   False   +5.34% H1,H2,OOS,DD,CAGR
+  SMALL439   BUDGET    0.2  skip   25     86.7%   -0.0278    0.3436   0.050   False   -6.64% H1,H2,OOS,DD,CAGR
+  BROAD136   BUDGET    0.3  skip   10     19.7%   -0.0264    0.1020   0.650   False   -3.70%    H2,OOS,DD
+  BROAD136   BUDGET    0.1  half   10     87.7%   +0.0255    0.0557   0.100   False   -0.63%    H2,OOS,DD
+  U56        BUDGET    0.3  half   10      5.2%   -0.0255    0.0280   0.950   False   +0.02%            -
+  SMALL439   BUDGET    0.3  skip   25     53.1%   -0.0251    0.2106   0.050   False  -10.33% H1,H2,OOS,DD,CAGR
+  BROAD136   SLEEVE  300.0   0.5   25     12.8%   -0.0250    0.0812   0.450   False   +0.00% H1,H2,OOS,DD,CAGR
+  U56        BUDGET    0.2  half   10     33.8%   -0.0221    0.0309   0.950   False   +0.11%            -
+  SMALL439   SLEEVE  300.0   0.5   10     11.8%   +0.0210    0.0896   0.450   False   +0.42% H1,H2,OOS,DD,CAGR
+  U56        SLEEVE  300.0   0.5   25     12.8%   -0.0205    0.0821   0.250   False   -0.00%           H1
+  U56        BUDGET    0.3  half   25      5.2%   -0.0201    0.0264   0.900   False   +0.05%           H1
+  BROAD136   SLEEVE  200.0   0.5   10     17.7%   +0.0190    0.0966   0.300   False   +5.56%            -
+  SMALL439   BUDGET    0.1  skip   10     92.6%   -0.0182    0.2621   0.250   False   -4.21% H1,H2,OOS,DD,CAGR
+  SMALL439   SLEEVE  300.0   1.0   10     11.8%   +0.0175    0.1564   0.100   False   +0.64% H1,H2,OOS,DD,CAGR
+  U56        SLEEVE  200.0   0.5   10     17.7%   +0.0171    0.1108   0.100   False   +4.14%            -
+  SMALL439   BUDGET    0.3  half   10     53.1%   +0.0154    0.0648   0.100   False   -5.52% H1,H2,OOS,DD,CAGR
+  BROAD136   BUDGET    0.2  half   10     64.1%   +0.0131    0.0340   0.150   False   -0.63%    H2,OOS,DD
+  BROAD136   DDCTL    0.15   1.0   25      1.4%   -0.0129    0.0476   0.350   False   +0.00% H2,OOS,DD,CAGR
+  BROAD136   DDCTL    0.15   1.0   10      1.4%   -0.0123    0.0475   0.300   False   +0.00%    H2,OOS,DD
+  SMALL439   SLEEVE  200.0   0.5   25     14.6%   +0.0120    0.0902   0.350   False   +3.66% H1,H2,OOS,DD,CAGR
+  BROAD136   SLEEVE  300.0   0.5   10     12.8%   -0.0115    0.0713   0.250   False   +0.00%        H2,DD
+  SMALL439   SLEEVE  300.0   0.5   25     11.8%   +0.0103    0.0768   0.150   False   +2.31% H1,H2,OOS,DD,CAGR
+  U56        SLEEVE  100.0   0.5   10     22.4%   -0.0096    0.1505   0.000   False   +3.70%            -
+  BROAD136   BUDGET    0.1  skip   10     87.7%   +0.0091    0.1837   0.150   False   -5.40%    H2,OOS,DD
+  U56        BUDGET    0.1  half   10     70.5%   -0.0086    0.0436   0.400   False   +0.03%            -
+  U56        SLEEVE  300.0   0.5   10     12.8%   -0.0086    0.0686   0.150   False   +0.00%            -
+  BROAD136   BUDGET    0.3  half   10     19.7%   -0.0081    0.0394   0.400   False   -0.50%    H2,OOS,DD
+  BROAD136   BUDGET    0.3  half   25     19.7%   +0.0077    0.0291   0.200   False   -0.67%    H2,OOS,DD
+  BROAD136   SLEEVE  200.0   0.5   25     17.7%   -0.0066    0.1120   0.050   False   +4.01% H1,H2,OOS,CAGR
+  BROAD136   BUDGET    0.3  skip   25     19.7%   +0.0062    0.0792   0.050   False   -3.77%    H2,OOS,DD
+  SMALL439   SLEEVE  300.0   1.0   25     11.8%   +0.0057    0.1453   0.050   False   +3.86% H1,H2,OOS,DD,CAGR
+  BROAD136   DDCTL    0.15   0.5   25      1.4%   -0.0054    0.0223   0.300   False   +0.00%    H2,OOS,DD
+  SMALL439   SLEEVE  100.0   0.5   10     19.7%   -0.0054    0.1247   0.100   False   +0.68% H1,H2,OOS,DD,CAGR
+  BROAD136   DDCTL    0.15   0.5   10      1.4%   -0.0049    0.0220   0.300   False   +0.00%    H2,OOS,DD
+  U56        SLEEVE  200.0   0.5   25     17.7%   -0.0039    0.1324   0.050   False   +4.10%      H1,CAGR
+  SMALL439   SLEEVE  200.0   1.0   25     14.6%   +0.0028    0.1975   0.050   False   +5.46% H1,H2,OOS,DD,CAGR
+  BROAD136   SLEEVE  100.0   0.5   10     22.4%   +0.0017    0.1193   0.050   False   +2.00%           H2
+  U56        BUDGET    0.2  half   25     33.8%   +0.0002    0.0445   0.050   False   +0.16%            -
+  U56        DDCTL    0.15   0.5   10      0.0%   +0.0000    0.0000   0.000   False   +0.00%            -
+  U56        DDCTL    0.15   0.5   25      0.0%   +0.0000    0.0000   0.000   False   +0.00%            -
+  U56        DDCTL    0.15   1.0   10      0.0%   +0.0000    0.0000   0.000   False   +0.00%            -
+  U56        DDCTL    0.15   1.0   25      0.0%   +0.0000    0.0000   0.000   False   +0.00%            -
+
+==========================================================================================================================
+DOES THE OVERLAY NULL MOVE A PUBLISHED VERDICT?  (idea 181's Q2, asked of overlays)
+Every real overlay is compared with each of its 20 matched nulls in the SAME cell; a
+disagreement is a cell where the KEEP/KILL verdict depends on the overlay's timing.
+
+  4a verdict identical in 1801 of 2160 real-vs-null swaps = 83.4%
+  4b verdict identical in 1977 of 2160 real-vs-null swaps = 91.5%
+  4a pass rate  real 22.2% (24/108)   null 25.5% (551/2160)
+  4b pass rate  real 16.7% (18/108)   null 20.7% (447/2160)
+  4b pass rate by family (real vs null):
+    DDCTL   real  19.4%  null  21.9%
+    BUDGET  real  13.9%  null  26.4%
+    SLEEVE  real  16.7%  null  13.8%
+  most-violated 4b bar over failing REAL rows:
+    H2:74  DD:71  OOS:70  H1:62  CAGR:62
+
+==========================================================================================================================
+PROTOCOL RULE 8 WALK-FORWARD - overlay point chosen on <= 2016-12-31, 2017-2026 read once
+S0 = do nothing (untreated base)   S1 = IS-Sharpe argmax over the 6 points
+S2 = the same argmax restricted to points that CLEAR the null clause ON THE IS WINDOW
+
+  panel      family   bps |          S0 do-nothing |                 S1 IS-argmax |              S2 clause-gated
+  U56        DDCTL     10 |  14.49%/1.1775/-18.21% | 0.15/0.5 14.49%/1.1775/-18.21% |               none (abstain)
+  U56        DDCTL     25 |  12.89%/1.0618/-18.33% | 0.15/0.5 12.89%/1.0618/-18.33% |               none (abstain)
+  U56        BUDGET    10 |  14.49%/1.1775/-18.21% | 0.1/half 14.87%/1.1833/-18.17% | 0.3/half 14.36%/1.1555/-18.18%
+  U56        BUDGET    25 |  12.89%/1.0618/-18.33% | 0.1/half 13.74%/1.1034/-18.25% | 0.3/half 12.82%/1.0445/-18.28%
+  U56        SLEEVE    10 |  14.49%/1.1775/-18.21% | 200.0/0.5 14.38%/1.2333/-14.07% |               none (abstain)
+  U56        SLEEVE    25 |  12.89%/1.0618/-18.33% | 200.0/0.5 12.63%/1.0989/-14.23% |               none (abstain)
+  BROAD136   DDCTL     10 |  12.40%/0.8758/-21.57% | 0.15/0.5 12.16%/0.8663/-21.57% |               none (abstain)
+  BROAD136   DDCTL     25 |  10.06%/0.7310/-21.68% | 0.15/0.5  9.83%/0.7208/-21.68% | 0.06/0.5  7.43%/0.6349/-18.29%
+  BROAD136   BUDGET    10 |  12.40%/0.8758/-21.57% | 0.2/skip 10.42%/0.6986/-27.79% | 0.2/skip 10.42%/0.6986/-27.79%
+  BROAD136   BUDGET    25 |  10.06%/0.7310/-21.68% | 0.2/skip  9.47%/0.6447/-27.97% | 0.2/skip  9.47%/0.6447/-27.97%
+  BROAD136   SLEEVE    10 |  12.40%/0.8758/-21.57% | 100.0/0.5 11.16%/0.8885/-19.57% |               none (abstain)
+  BROAD136   SLEEVE    25 |  10.06%/0.7310/-21.68% | 200.0/0.5  9.62%/0.7627/-17.67% |               none (abstain)
+  SMALL439   DDCTL     10 |   7.46%/0.4997/-26.84% | 0.15/0.5  5.49%/0.4012/-28.07% | 0.15/0.5  5.49%/0.4012/-28.07%
+  SMALL439   DDCTL     25 |   4.03%/0.3138/-34.56% | 0.15/0.5  2.15%/0.2108/-35.31% | 0.06/0.5  1.29%/0.1622/-37.52%
+  SMALL439   BUDGET    10 |   7.46%/0.4997/-26.84% | 0.3/skip  2.34%/0.2176/-43.65% |               none (abstain)
+  SMALL439   BUDGET    25 |   4.03%/0.3138/-34.56% | 0.3/skip  0.84%/0.1391/-44.89% |               none (abstain)
+  SMALL439   SLEEVE    10 |   7.46%/0.4997/-26.84% | 300.0/1.0  6.96%/0.4926/-26.19% |               none (abstain)
+  SMALL439   SLEEVE    25 |   4.03%/0.3138/-34.56% | 300.0/1.0  3.63%/0.2997/-30.69% |               none (abstain)
+
+  paired over 18 cells (S2 falls back to S0 when it abstains, which it does in 11):
+    S1 - S0  mean -0.0432  t -2.00  wins 6/18
+    S2 - S0  mean -0.0361  t -2.62  wins 0/18
+    S1 and S2 pick the same point in 3/18 cells
+  mean OOS Sharpe: S0 0.7766  S1 0.7334  S2 0.7405
+
+==========================================================================================================================
+BOTH KEEP PATHS on every row (PROTOCOL rule 4a and 4b, exactly)
+  panel       bps   real 4a   real 4b   null 4a   null 4b
+  U56          10      1/18     13/18    48/360   270/360
+  U56          25      4/18      4/18    50/360   150/360
+  BROAD136     10      4/18      1/18    66/360    27/360
+  BROAD136     25     14/18      0/18   335/360     0/360
+  SMALL439     10      0/18      0/18     1/360     0/360
+  SMALL439     25      1/18      0/18    51/360     0/360
+
+  REAL overlay rows clearing 4b (idea 144: these are the base book with an instrument on it,
+  not new books):
+   U56        DDCTL    0.06/0.5   @10bps  11.04%/1.0518/-14.13%  halves 1.044/1.061  OOS 12.46%/1.1410  turnover 9.3x/yr  clause=inside the null band
+   U56        DDCTL     0.1/0.5   @10bps  12.06%/1.0578/-18.79%  halves 1.068/1.054  OOS 13.52%/1.1249  turnover 9.6x/yr  clause=inside the null band
+   U56        DDCTL     0.1/1.0   @10bps  11.26%/0.9985/-19.38%  halves 1.023/0.981  OOS 12.54%/1.0579  turnover 9.7x/yr  clause=inside the null band
+   U56        DDCTL    0.15/0.5   @10bps  12.86%/1.1075/-18.21%  halves 1.110/1.112  OOS 14.49%/1.1775  turnover 9.5x/yr  clause=inside the null band
+   U56        DDCTL    0.15/0.5   @25bps  11.27%/0.9845/-18.33%  halves 0.977/0.997  OOS 12.89%/1.0618  turnover 9.5x/yr  clause=inside the null band
+   U56        DDCTL    0.15/1.0   @10bps  12.86%/1.1075/-18.21%  halves 1.110/1.112  OOS 14.49%/1.1775  turnover 9.5x/yr  clause=inside the null band
+   U56        DDCTL    0.15/1.0   @25bps  11.27%/0.9845/-18.33%  halves 0.977/0.997  OOS 12.89%/1.0618  turnover 9.5x/yr  clause=inside the null band
+   U56        BUDGET    0.1/half  @10bps  12.96%/1.0989/-18.17%  halves 1.092/1.112  OOS 14.87%/1.1833  turnover 6.7x/yr  clause=inside the null band
+   U56        BUDGET    0.1/half  @25bps  11.84%/1.0136/-18.25%  halves 0.999/1.032  OOS 13.74%/1.1034  turnover 6.7x/yr  clause=inside the null band
+   U56        BUDGET    0.2/half  @10bps  12.76%/1.0854/-18.10%  halves 1.072/1.103  OOS 14.67%/1.1720  turnover 7.9x/yr  clause=inside the null band
+   U56        BUDGET    0.2/half  @25bps  11.44%/0.9848/-18.18%  halves 0.963/1.010  OOS 13.35%/1.0778  turnover 7.9x/yr  clause=inside the null band
+   U56        BUDGET    0.3/half  @10bps  12.68%/1.0820/-18.18%  halves 1.081/1.089  OOS 14.36%/1.1555  turnover 9.2x/yr  clause=inside the null band
+   U56        SLEEVE  100.0/0.5   @10bps  11.68%/1.0979/-14.51%  halves 1.085/1.115  OOS 13.40%/1.1882  turnover 11.1x/yr  clause=inside the null band
+   U56        SLEEVE  200.0/0.5   @10bps  12.38%/1.1246/-14.07%  halves 1.083/1.166  OOS 14.38%/1.2333  turnover 10.5x/yr  clause=inside the null band
+   U56        SLEEVE  200.0/1.0   @10bps  11.83%/1.0664/-13.49%  halves 0.975/1.151  OOS 14.20%/1.2192  turnover 11.6x/yr  clause=inside the null band
+   U56        SLEEVE  300.0/0.5   @10bps  12.36%/1.0989/-18.21%  halves 1.067/1.133  OOS 14.49%/1.1994  turnover 10.0x/yr  clause=inside the null band
+   U56        SLEEVE  300.0/1.0   @10bps  11.81%/1.0438/-18.21%  halves 0.961/1.121  OOS 14.44%/1.1872  turnover 10.7x/yr  clause=inside the null band
+   BROAD136   SLEEVE  200.0/0.5   @10bps  12.13%/0.9684/-16.01%  halves 1.116/0.841  OOS 12.04%/0.9284  turnover 14.5x/yr  clause=inside the null band
+
+==========================================================================================================================
+PRE-REGISTERED PREDICTIONS - scored
+  P1 reproduction [a][b][c][d]                                  -> HIT
+  P2 clear rate < 40%   actual 15.7%            -> HIT
+  P3 SLEEVE clears least  DDCTL:42% BUDGET:6% SLEEVE:0%  -> HIT
+  P4 DDCTL clears most                                          -> HIT
+  P5 4b real-vs-null verdict agreement > 80%   actual 91.5%  -> HIT
+  P6 S2 does not beat S0   S2-S0 -0.0361                 -> HIT
+  P7 null 4b pass rate within 2x of real   real 16.7% null 20.7% ratio 0.81 -> HIT
+
+done in 127s
