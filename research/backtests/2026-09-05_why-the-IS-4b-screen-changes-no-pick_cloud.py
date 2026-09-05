@@ -411,9 +411,10 @@ def main():
         f"{moved_where_picked} moves, declines in {18 - picked_cells} -> "
         f"{'HELD' if p1 else 'FAILED'}")
     p2 = non_sharpe_moved >= 1
+    p2txt = "HELD -> (A) it is a property of IS-Sharpe-argmax" if p2 else \
+        "FAILED -> (B) the screen is cosmetic on this arm family"
     say(f"   P2 explanation (A): a non-Sharpe selector's pick is moved by the screen in >= 1 "
-        f"cell: {non_sharpe_moved} -> {'HELD (A)' if p2 else 'FAILED -> (B) the screen is '
-                                       'cosmetic on this arm family'}")
+        f"cell: {non_sharpe_moved} -> {p2txt}")
     med1 = float(A.adm_S1.median())
     rate = float(ne1["K_Sharpe_in_S1"].mean()) if len(ne1) else np.nan
     p3 = (med1 < 9) and (rate >= 0.90)
