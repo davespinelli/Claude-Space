@@ -1395,3 +1395,34 @@ dearest priceable instrument at 0.91 and the gross lever at 0.57.
 | 2026-09-04 | 23 best season window per cell vs its own anchor | n/a | n/a | n/a | n/a | n/a | KILL: loses in 11/12 cells (-0.075..-0.009); sole exception +0.004 on the weakest book | 2026-09-04_earnings-season-avoidance_cloud.py |
 | 2026-09-04 | 23 rule-8 walk-forward, 12 cells | n/a | n/a | n/a | n/a | n/a | picks a blackout in 10/12 on IS Sharpe +0.100; OOS -0.188 mean, regret <= 0 in 12/12 | 2026-09-04_earnings-season-avoidance_cloud.py |
 | 2026-09-04 | 23 4b census: 7 season rows pass, all on u56/top20 | n/a | n/a | n/a | n/a | n/a | INHERITED: every one has lower Sharpe than its own passing anchor; 0 conversions | 2026-09-04_earnings-season-avoidance_cloud.py |
+
+### Idea 100 — sleeve-with-a-real-diversifier (cloud, 2026-09-05) — PARK (strong)
+
+120 points (5 sleeve fractions x 2 sleeves x 3 books x 2 universes x 2 gross conventions), all
+reported; 2 tuned params (f, sleeve); the S9 arm reproduces idea 26 exactly. Restricting idea 26's
+sleeve to its four NON-EQUITY assets (TLT/GLD/DBC/UUP) cuts sleeve-to-book correlation from
+0.626..0.820 to -0.011..+0.212 and multiplies the convexity by 5.1x (dSharpe vs the linear blend
++0.265 vs +0.052, positive in 36/36 for both) at 2.9x the exchange rate (0.090 vs 0.031 Sharpe per
+pp of CAGR surrendered). It repairs BOTH defects that made idea 26's by-product unadoptable: rule 8
+now picks f=0.50 in 8/8 S4 cells and beats its own anchor OOS in 8/8, and the Sharpe advantage
+survives deleting 2022 in 8/8 cells. But its literal 4b footprint is SMALLER (2/36 vs 4/36) because
+every failure is the CAGR floor, which the natural blend misses only by de-grossing to 0.65-0.70.
+
+| Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
+|---|---|---|---|---|---|---|---|---|
+| 2026-09-05 | 100 PREMISE: S4 sleeve-to-book correlation | n/a | n/a | n/a | n/a | n/a | CONFIRMED: -0.011..+0.212 (S9 0.626..0.820); S4-to-SPY -0.141 | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 CONVEXITY: dSharpe vs linear blend, 36 interior cells each | n/a | n/a | n/a | n/a | n/a | S4 +0.265 (36/36) vs S9 +0.052 (36/36); 0.090 vs 0.031 Sharpe per pp CAGR | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 u56 top20 + 25pct S4 (natural) | 10.2% | 1.14 | -14.2% | 1.11 / 1.18 | 0.66 (0.64/0.69) | KILL 4b on the CAGR floor ALONE (10.2% vs 10.66%); OOS 1.231 | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 u56 top20 + 25pct S4 (gross-matched) | 10.8% | 1.14 | -14.6% | 1.13 / 1.16 | 0.66 (0.64/0.69) | 4b PASS; OOS 1.217; 9.2x/yr turnover | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 broad top20 + 25pct S4 (gross-matched) | 11.3% | 1.01 | -16.0% | 1.17 / 0.87 | 0.64 (0.76/0.53) | KEEP 4a / KEEP 4b; repairs idea 2's broad H2 failure (0.811 -> 0.865) | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 u56 top20 + 50pct S4 (natural, the rule-8 pick) | 7.7% | 1.19 | -10.0% | 1.10 / 1.27 | 0.66 (0.64/0.69) | KEEP 4a / KILL 4b (CAGR floor); OOS 1.308 vs anchor 1.168 | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 broad top20 + 50pct S4 (natural, the rule-8 pick) | 8.0% | 1.08 | -10.9% | 1.18 / 1.00 | 0.64 (0.76/0.53) | KEEP 4a / KILL 4b (CAGR floor); OOS 1.053 vs anchor 0.892 | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 u56 top20 + 50pct S4 re-grossed to g=1.00 (DIAGNOSTIC, 3rd dial) | 11.8% | 1.15 | -14.2% | 1.10 / 1.20 | 0.66 (0.64/0.69) | 4b PASS — PARK: gross not pre-registered (idea 101) | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 broad top20 + 50pct S4 re-grossed to g=1.00 (DIAGNOSTIC, 3rd dial) | 12.2% | 1.06 | -15.6% | 1.17 / 0.96 | 0.64 (0.76/0.53) | 4b PASS on BOTH universes; Sharpe flat to 0.001 across g | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 S4 standalone (f=1.00) | 2.6% | 0.62 | -8.7% | 0.34 / 0.93 | 0.66 (0.64/0.69) | control: 4b FAIL on CAGR by 8pp; the sleeve is not a book | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 S9 standalone (f=1.00, idea 18 variant B replicated) | 5.0% | 0.87 | -10.1% | 0.76 / 0.98 | 0.66 (0.64/0.69) | control: reproduces idea 18 / idea 26 rows exactly | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 rule-8 walk-forward, 24 cells | n/a | n/a | n/a | n/a | n/a | S4 SELECTABLE: picks f=0.50 in 8/8, beats anchor OOS 8/8, regret 0.000..-0.104; S9 picks f=0 in 4/4 top20+ewall cells | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 ex-2022 test (idea 98's proposed bar) | n/a | n/a | n/a | n/a | n/a | S4 dSharpe vs anchor stays positive in 8/8 ex-2022 (shrink -0.015); S9 negative in 4/8 | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 year attribution of the 25pct S4 sleeve | n/a | n/a | n/a | n/a | n/a | contribution positive in only 2/18 years (2011, 2022) — same shape as idea 26, but the Sharpe edge does NOT depend on it | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 cost ladder 5/10/15/20/25 bps, natural gross | n/a | n/a | n/a | n/a | n/a | cross-universe 4b window 5 bps only (CAGR floor); Sharpe decay -0.048/-0.055 per 10 bps | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
+| 2026-09-05 | 100 4b census (interior points only) | n/a | n/a | n/a | n/a | n/a | S4 2/36 vs S9 4/36; only S9/top20/f=0.25 passes all 4 universe x convention combos | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
