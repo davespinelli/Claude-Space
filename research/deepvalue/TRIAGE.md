@@ -454,3 +454,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-05 | STIM | Neuronetics, Inc. | $207.3M | none | 0 | no filings in bundle |
 | 2026-09-05 | PUMP | ProPetro Holding Corp. | $1.4B | misunderstood-segment | 5 | PROPWR has 350MW contracted including a live hyperscaler site, but the stock is up 130% and insiders sold $277.7M with zero buys |
 | 2026-09-05 | BAER | Bridger Aerospace Group Holdings, Inc. | $64.1M | none | 3 | Guided $55-60M adj EBITDA sits under $233.1M of debt and $421.4M of Series A Preferred that accreted $14.1M in the first half |
+| 2026-09-05 | EOLS | Evolus, Inc. | $597.8M | none | 4 | Third straight quarter of positive adjusted EBITDA and raised guidance, but the stock sits 0.4% off its 52-week high with negative equity and $45.7M of cash burn |
+| 2026-09-05 | OPK | OPKO HEALTH, INC. | $1.2B | post-restructuring | 6 | Two Labcorp divestitures cut Q2 operating loss to $7.0M from $60.0M, but FY26 guidance still implies a $150M operating loss and Q2 IP revenue was $29.4M of Nicoya shares |
+| 2026-09-05 | FEIM | FREQUENCY ELECTRONICS INC | $591.1M | none | 3 | Record $111M backlog and a 34% CAGR target, but roughly 9x sales on a loss-making year while insiders sold $37.5M with zero buys |
+| 2026-09-05 | TROX | Tronox Holdings plc | $779.3M | cyclical-trough | 7 | Q3 EBITDA guided to $95-115M from $73M on rising TiO2 and zircon prices, with no bond covenants and no maturity until 2029, against 11.4x net leverage |
+| 2026-09-05 | UAMY | UNITED STATES ANTIMONY CORP | $769.3M | none | 0 | no filings in bundle |
+| 2026-09-05 | BALY | Bally's Corp | $516.8M | hidden-asset | 5 | Listed Intralot stake, The Star interest, Vegas land and a paid-for NY licence against a $516.8M cap, but $4.1B net debt, negative operating cash flow and a CFO who just resigned |
+| 2026-09-05 | BATL | BATTALION OIL CORP | $74.5M | none | 0 | no filings in bundle |
+| 2026-09-05 | XGN | EXAGEN INC. | $182.7M | post-restructuring | 6 | ASP up over 50% since 2022 and adjusted EBITDA loss down to $0.1M, but cash fell to $24.6M against $22.3M of Perceptive debt and 10.1% dilution |
+| 2026-09-05 | LTRX | LANTRONIX INC | $207.8M | none | 0 | no filings in bundle |
+| 2026-09-05 | OWLT | Owlet, Inc. | $147.0M | fallen-growth | 6 | Revenue +30% with positive operating income at 69.6% off the high, but first-half operating cash flow was negative $5.1M as receivables rose $10.2M and the credit line was drawn $10.2M |

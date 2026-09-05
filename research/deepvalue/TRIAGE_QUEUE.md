@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T02:11:52Z · open 32 · in progress 0 · done 453_
+_Source: universe_under2b.csv · updated 2026-09-05T02:39:07Z · open 22 · in progress 0 · done 463_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (32)
+## Open (22)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| EOLS | Evolus, Inc. | $597.8M |
-| OPK | OPKO HEALTH, INC. | $1.20B |
-| FEIM | FREQUENCY ELECTRONICS INC | $591.1M |
-| TROX | Tronox Holdings plc | $779.3M |
-| UAMY | UNITED STATES ANTIMONY CORP | $769.3M |
-| BALY | Bally's Corp | $516.8M |
-| BATL | BATTALION OIL CORP | $74.5M |
-| XGN | EXAGEN INC. | $182.7M |
-| LTRX | LANTRONIX INC | $207.8M |
-| OWLT | Owlet, Inc. | $147.0M |
 | WBTN | WEBTOON Entertainment Inc. | $1.36B |
 | SPCB | SuperCom Ltd | $54.1M |
 | OFIX | Orthofix Medical Inc. | $379.2M |
@@ -46,7 +36,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (453)
+## Done (463)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | STIM | Neuronetics, Inc. | $207.3M | cloudA | 2026-09-05T02:11:52Z |
 | PUMP | ProPetro Holding Corp. | $1.38B | cloudA | 2026-09-05T02:11:52Z |
 | BAER | Bridger Aerospace Group Holdings, Inc. | $64.1M | cloudA | 2026-09-05T02:11:52Z |
+| EOLS | Evolus, Inc. | $597.8M | cloudB | 2026-09-05T02:39:07Z |
+| OPK | OPKO HEALTH, INC. | $1.20B | cloudB | 2026-09-05T02:39:07Z |
+| FEIM | FREQUENCY ELECTRONICS INC | $591.1M | cloudB | 2026-09-05T02:39:07Z |
+| TROX | Tronox Holdings plc | $779.3M | cloudB | 2026-09-05T02:39:07Z |
+| UAMY | UNITED STATES ANTIMONY CORP | $769.3M | cloudB | 2026-09-05T02:39:07Z |
+| BALY | Bally's Corp | $516.8M | cloudB | 2026-09-05T02:39:07Z |
+| BATL | BATTALION OIL CORP | $74.5M | cloudB | 2026-09-05T02:39:07Z |
+| XGN | EXAGEN INC. | $182.7M | cloudB | 2026-09-05T02:39:07Z |
+| LTRX | LANTRONIX INC | $207.8M | cloudB | 2026-09-05T02:39:07Z |
+| OWLT | Owlet, Inc. | $147.0M | cloudB | 2026-09-05T02:39:07Z |
