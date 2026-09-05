@@ -41,6 +41,19 @@ THE EXACT-LEVER IDENTITY (idea 66) — TESTED FIRST, AND IT FAILS.  This is the 
     other than 0.75 is a GENUINE backtest at that gross, on the pre-registered ladder below.
     This costs ~2000 extra backtests and is the only defensible way to answer idea 165.
 
+    POST-RUN ADDENDUM (filled in from this script's own [c] output — read it before quoting the
+    single-name figure above, which is the WORST case, not the typical one).  On the corpus's
+    actual diversified books the lever is a GOOD approximation but still not an identity:
+    over 12 genuine re-runs at g in {0.40, 1.00}, max|daily error| 4.90e-03, max |dCAGR| 0.0238pp
+    and max |dMaxDD| 0.2755pp; over 36 genuine re-runs across the ladder, |dSharpe| mean 0.0018
+    and max 0.0097.  So the practical exposure is NOT to headline CAGR — it is to DRAWDOWN, and
+    4b's DD margins are routinely ~1pp, so a 0.28pp path error is a material fraction of the bar
+    a re-grossed book is judged against.  Concentrated books (the single-name control) are far
+    worse.  Two consequences, both reported: (i) a rescaled gross ladder is fine for ranking and
+    wrong for verdicts near a bar; (ii) CAGR is not even MONOTONE in gross under the true engine
+    — 92 of the 213 CAGR-floor failures have a non-monotone CAGR curve on the ladder — so "the
+    gross it would need" is a scan result, never a closed form.
+
     That failure is itself a finding with reach beyond this idea: every project result that
     priced a gross ladder by rescaling, or that leaned on "gross has zero Sharpe content", is
     exposed.  It is reported as such and a QUEUE follow-up is proposed, not fixed here (PROTOCOL

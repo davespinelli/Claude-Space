@@ -25,29 +25,49 @@ RUNNING THE CORPUS (one backtest per book at g = 0.75; every other gross is the 
 ========================================================================================================================================================================================================
   u56: 126 books done  (77s)
   broad: 126 books done  (191s)
-  small: 126 books done  (442s)
+  small: 126 books done  (448s)
 
 ========================================================================================================================================================================================================
 REPRODUCTION GATE (asserted before any new number is read)
 ========================================================================================================================================================================================================
-  [a] merged 2646 cells against idea 159's committed grid on ['panel', 'key']
-         CAGR  max|diff| 1.255e-01  MISMATCH
-       Sharpe  max|diff| 5.176e-01  MISMATCH
-        MaxDD  max|diff| 3.221e-01  MISMATCH
-           H1  max|diff| 5.972e-01  MISMATCH
-           H2  max|diff| 5.541e-01  MISMATCH
+  [a] merged 189 cells against idea 159's committed grid on ['panel', 'key', 'share']
+         CAGR  max|diff| 9.714e-17  MATCH
+       Sharpe  max|diff| 2.220e-16  MATCH
+        MaxDD  max|diff| 8.327e-17  MATCH
+           H1  max|diff| 2.220e-16  MATCH
+           H2  max|diff| 2.220e-16  MATCH
 
-  [c] exact-lever identity r_{cg} = c * r_g, against a genuine backtester re-run:
-      12 re-runs, max|diff| on the daily net return series = 4.902e-03  -> MISMATCH — every g_req below is VOID
+  [c] exact-lever identity r_{cg} = c * r_g (idea 66), against genuine re-runs:
+      engine.py drifts held weights between rebalances and renormalises against a
+      CONSTANT-VALUE cash sleeve (1 - gross), so a book started at a different gross
+      follows a different weight path.  The lever is an approximation, not an identity.
+        u56/NONE m=0.53 g=0.40: max|daily diff| 1.093e-03   genuine CAGR  6.8100% vs lever  6.8214%  (dCAGR 0.0113%, dMaxDD 0.0933%)
+        u56/NONE m=0.53 g=1.00: max|daily diff| 2.136e-03   genuine CAGR 17.0439% vs lever 17.0264%  (dCAGR 0.0175%, dMaxDD 0.1565%)
+        u56/INV  m=0.20 g=0.40: max|daily diff| 2.748e-04   genuine CAGR  4.1551% vs lever  4.1532%  (dCAGR 0.0020%, dMaxDD 0.0135%)
+        u56/INV  m=0.20 g=1.00: max|daily diff| 5.185e-04   genuine CAGR 10.0880% vs lever 10.0967%  (dCAGR 0.0087%, dMaxDD 0.0237%)
+      broad/NONE m=0.53 g=0.40: max|daily diff| 1.598e-03   genuine CAGR  6.3888% vs lever  6.4034%  (dCAGR 0.0146%, dMaxDD 0.0268%)
+      broad/NONE m=0.53 g=1.00: max|daily diff| 3.158e-03   genuine CAGR 15.9281% vs lever 15.9043%  (dCAGR 0.0238%, dMaxDD 0.0330%)
+      broad/INV  m=0.20 g=0.40: max|daily diff| 1.188e-03   genuine CAGR  4.4243% vs lever  4.4329%  (dCAGR 0.0086%, dMaxDD 0.0143%)
+      broad/INV  m=0.20 g=1.00: max|daily diff| 2.315e-03   genuine CAGR 10.8093% vs lever 10.7975%  (dCAGR 0.0118%, dMaxDD 0.0298%)
+      small/NONE m=0.53 g=0.40: max|daily diff| 2.411e-03   genuine CAGR  2.9715% vs lever  2.9826%  (dCAGR 0.0111%, dMaxDD 0.1886%)
+      small/NONE m=0.53 g=1.00: max|daily diff| 4.902e-03   genuine CAGR  6.4865% vs lever  6.4707%  (dCAGR 0.0158%, dMaxDD 0.2638%)
+      small/INV  m=0.20 g=0.40: max|daily diff| 2.411e-03   genuine CAGR  3.3022% vs lever  3.3066%  (dCAGR 0.0044%, dMaxDD 0.1964%)
+      small/INV  m=0.20 g=1.00: max|daily diff| 4.902e-03   genuine CAGR  7.4898% vs lever  7.4861%  (dCAGR 0.0037%, dMaxDD 0.2755%)
+      -> 12 re-runs, max|daily diff| = 4.902e-03, max |dCAGR| = 0.0238%:  MISMATCH.
+      PRE-REGISTERED CONSEQUENCE HONOURED: no g_req or bar below is computed by rescaling.  Every off-0.75 number in this file is a GENUINE backtest at that gross.
 
-  [b] idea 156's VM formula and the vol it achieves:
-      mean |achieved vol / SPY vol - 1| over all 378 books = 8.929e-17
-
-  [d] fast log-space CAGR vs engine.metrics()['CAGR']: max|diff| = 4.441e-16
+  [b] idea 156's VM formula and the vol a GENUINE re-run at that gross achieves:
+      under the (false) lever: 1.480e-16 — true by construction
+      under GENUINE re-runs  : 1.179e-03 — the formula's real accuracy.  idea 156's VM gross does NOT land the book on SPY's vol.
 
 ========================================================================================================================================================================================================
 g_req FOR EVERY BOOK, ALL 5 CONVENTIONS x 2 CEILINGS (pass or fail; .greq.csv)
 ========================================================================================================================================================================================================
+Every gross other than 0.75 below is a GENUINE backtest (reproduction [c] rejected the
+rescaling shortcut).  The ladder is 0.80, 0.85, 0.90, 0.95, 1.00, 1.10, 1.25, 1.50, 2.00.
+The ladder is run ONLY for the CAGR-floor failures — the population idea 165 asks about.
+
+  genuine backtests cached: 2355   books whose CAGR is NON-MONOTONE in gross on the ladder: 92
 
   books: 378   4b passes at the published g=0.75: 55   4a passes: 117
 
@@ -70,8 +90,8 @@ u56    10.0    12
   g_req distribution over the CAGR-floor failures (RAW, uncapped):
        VM_FULL  n= 213  unreachable=  0  median 0.941  p10 0.706  p90 1.279  frac > 1.00 = 38.0%
          VM_IS  n= 213  unreachable=  0  median 0.907  p10 0.681  p90 1.300  frac > 1.00 = 38.0%
-       CF_FULL  n=  99  unreachable=114  median 0.856  p10 0.770  p90 1.384  frac > 1.00 = 12.7%
-         CF_IS  n= 115  unreachable= 98  median 0.911  p10 0.755  p90 1.638  frac > 1.00 = 20.2%
+       CF_FULL  n=  97  unreachable=116  median 0.900  p10 0.800  p90 1.500  frac > 1.00 = 11.7%
+         CF_IS  n= 116  unreachable= 97  median 0.950  p10 0.800  p90 2.000  frac > 1.00 = 20.2%
 
 ========================================================================================================================================================================================================
 THE HEADLINE CENSUS — of the CAGR-floor 4b failures, how many are really no-leverage-ceiling KILLs?
@@ -105,99 +125,100 @@ VM_FULL small 25.000  63        0          0      63         0.000           0.0
   VM_IS small    ALL 126        0          0     126         0.000           0.000        1.000     0.825
   VM_IS small 10.000  63        0          0      63         0.000           0.000        1.000     0.826
   VM_IS small 25.000  63        0          0      63         0.000           0.000        1.000     0.825
-CF_FULL   ALL    ALL 213      141         10      62         0.662           0.047        0.291     0.856
-CF_FULL   ALL 10.000  83       65          7      11         0.783           0.084        0.133     1.012
-CF_FULL   ALL 25.000 130       76          3      51         0.585           0.023        0.392     0.834
-CF_FULL   u56    ALL  41       10          8      23         0.244           0.195        0.561     0.844
-CF_FULL   u56 10.000  12        4          6       2         0.333           0.500        0.167     0.830
-CF_FULL   u56 25.000  29        6          2      21         0.207           0.069        0.724     0.844
-CF_FULL broad    ALL  46       10          2      34         0.217           0.043        0.739     0.841
-CF_FULL broad 10.000   8        3          1       4         0.375           0.125        0.500     0.917
-CF_FULL broad 25.000  38        7          1      30         0.184           0.026        0.789     0.831
-CF_FULL small    ALL 126      121          0       5         0.960           0.000        0.040     1.259
-CF_FULL small 10.000  63       58          0       5         0.921           0.000        0.079     1.259
+CF_FULL   ALL    ALL 213      141          9      63         0.662           0.042        0.296     0.900
+CF_FULL   ALL 10.000  83       65          8      10         0.783           0.096        0.120     1.100
+CF_FULL   ALL 25.000 130       76          1      53         0.585           0.008        0.408     0.850
+CF_FULL   u56    ALL  41       10          8      23         0.244           0.195        0.561     0.850
+CF_FULL   u56 10.000  12        4          7       1         0.333           0.583        0.083     0.850
+CF_FULL   u56 25.000  29        6          1      22         0.207           0.034        0.759     0.850
+CF_FULL broad    ALL  46       10          1      35         0.217           0.022        0.761     0.850
+CF_FULL broad 10.000   8        3          1       4         0.375           0.125        0.500     0.925
+CF_FULL broad 25.000  38        7          0      31         0.184           0.000        0.816     0.850
+CF_FULL small    ALL 126      121          0       5         0.960           0.000        0.040     1.500
+CF_FULL small 10.000  63       58          0       5         0.921           0.000        0.079     1.500
 CF_FULL small 25.000  63       63          0       0         1.000           0.000        0.000       NaN
-  CF_IS   ALL    ALL 213      141          7      65         0.662           0.033        0.305     0.911
-  CF_IS   ALL 10.000  83       58          7      18         0.699           0.084        0.217     0.953
-  CF_IS   ALL 25.000 130       83          0      47         0.638           0.000        0.362     0.891
-  CF_IS   u56    ALL  41       21          7      13         0.512           0.171        0.317     0.979
-  CF_IS   u56 10.000  12        4          7       1         0.333           0.583        0.083     0.898
-  CF_IS   u56 25.000  29       17          0      12         0.586           0.000        0.414     1.002
-  CF_IS broad    ALL  46        6          0      40         0.130           0.000        0.870     0.810
-  CF_IS broad 10.000   8        2          0       6         0.250           0.000        0.750     0.808
-  CF_IS broad 25.000  38        4          0      34         0.105           0.000        0.895     0.810
-  CF_IS small    ALL 126      114          0      12         0.905           0.000        0.095     1.197
-  CF_IS small 10.000  63       52          0      11         0.825           0.000        0.175     1.138
-  CF_IS small 25.000  63       62          0       1         0.984           0.000        0.016     1.492
+  CF_IS   ALL    ALL 213      140          5      68         0.657           0.023        0.319     0.950
+  CF_IS   ALL 10.000  83       58          5      20         0.699           0.060        0.241     1.000
+  CF_IS   ALL 25.000 130       82          0      48         0.631           0.000        0.369     0.900
+  CF_IS   u56    ALL  41       20          4      17         0.488           0.098        0.415     1.000
+  CF_IS   u56 10.000  12        4          4       4         0.333           0.333        0.333     0.925
+  CF_IS   u56 25.000  29       16          0      13         0.552           0.000        0.448     1.000
+  CF_IS broad    ALL  46        6          1      39         0.130           0.022        0.848     0.850
+  CF_IS broad 10.000   8        2          1       5         0.250           0.125        0.625     0.825
+  CF_IS broad 25.000  38        4          0      34         0.105           0.000        0.895     0.850
+  CF_IS small    ALL 126      114          0      12         0.905           0.000        0.095     1.250
+  CF_IS small 10.000  63       52          0      11         0.825           0.000        0.175     1.250
+  CF_IS small 25.000  63       62          0       1         0.984           0.000        0.016     1.750
 
   ANSWER TO IDEA 165'S QUESTION (pooled over all panels and both cost rungs):
        VM_FULL: CEILING 38.0%  REACHABLE 0.0%  TRADED 62.0%   (n = 213 CAGR-floor failures)
          VM_IS: CEILING 38.0%  REACHABLE 0.0%  TRADED 62.0%   (n = 213 CAGR-floor failures)
-       CF_FULL: CEILING 66.2%  REACHABLE 4.7%  TRADED 29.1%   (n = 213 CAGR-floor failures)
-         CF_IS: CEILING 66.2%  REACHABLE 3.3%  TRADED 30.5%   (n = 213 CAGR-floor failures)
+       CF_FULL: CEILING 66.2%  REACHABLE 4.2%  TRADED 29.6%   (n = 213 CAGR-floor failures)
+         CF_IS: CEILING 65.7%  REACHABLE 2.3%  TRADED 31.9%   (n = 213 CAGR-floor failures)
 
   In the TRADED bucket, which bar takes over (CF_IS, CAP):
-      H2 54, DD 48, CAGR 43, OOS 41, H1 37
+      DD 57, H2 54, OOS 41, H1 38, CAGR 34
 
-  NET 4b PASS COUNT over all 378 books at each convention (CAP = PROTOCOL-legal):
-      STATIC (g=0.75, as published)        55
-      VM_FULL / CAP  [LOOK-AHEAD]           3
-      VM_FULL / RAW  [LOOK-AHEAD]           2  [LEVERED — never a KEEP]
-      VM_IS / CAP                           2
-      VM_IS / RAW                           1  [LEVERED — never a KEEP]
-      CF_FULL / CAP  [LOOK-AHEAD]          77
-      CF_FULL / RAW  [LOOK-AHEAD]          77  [LEVERED — never a KEEP]
-      CF_IS / CAP                          50
-      CF_IS / RAW                          50  [LEVERED — never a KEEP]
+  NET 4b PASS COUNT over all 378 books (books that already clear the CAGR floor are
+  left at their published g = 0.75 — re-grossing is only applied to the failures):
+      STATIC (g=0.75, as published)          55
+      VM_FULL / CAP  [LOOK-AHEAD]            56
+      VM_FULL / RAW  [LOOK-AHEAD]            55  [LEVERED — never a KEEP]
+      VM_IS / CAP                            56
+      VM_IS / RAW                            55  [LEVERED — never a KEEP]
+      CF_FULL / CAP  [LOOK-AHEAD]            64
+      CF_FULL / RAW  [LOOK-AHEAD]            64  [LEVERED — never a KEEP]
+      CF_IS / CAP                            60
+      CF_IS / RAW                            60  [LEVERED — never a KEEP]
 
 ========================================================================================================================================================================================================
 WALK-FORWARD (PROTOCOL rule 8) — g and pick chosen on 2009-2016 only, read ONCE on 2017-2026.  VM_IS / CF_IS are the only PROTOCOL-legal conventions here.
 ========================================================================================================================================================================================================
 
-  [u56 @ 10bps]  3 of 63 books clear the IS 4b screen
+  [u56 @ 10bps]  2 of 63 books clear the IS 4b screen
       W_STATIC  pick   R6@m=0.10(n=  4) g=0.750  OOS  19.46%/0.9693/-22.45%   4b-OOS fails: H1
-      W_VMIS    pick   R6@m=0.10(n=  4) g=0.729  OOS  18.92%/0.9693/-21.87%   4b-OOS fails: H1
-      W_CFIS    pick   R6@m=0.10(n=  4) g=0.392  OOS  10.32%/0.9693/-12.32%   4b-OOS fails: H1
-      W_4bIS    pick   R6@m=0.10(n=  4) g=0.392  OOS  10.32%/0.9693/-12.32%   4b-OOS fails: H1
+      W_VMIS    pick   R6@m=0.10(n=  4) g=0.729  OOS  18.91%/0.9689/-21.87%   4b-OOS fails: H1
+      W_CFIS    pick   R6@m=0.10(n=  4) g=0.750  OOS  19.46%/0.9693/-22.45%   4b-OOS fails: H1
+      W_4bIS    pick   R6@m=0.15(n=  6) g=0.750  OOS  19.69%/1.0823/-18.93%   4b-OOS fails: (none)
       RULES v1                                    OOS   7.73%/0.7471/-13.83%
       SPY                                         OOS  15.45%/0.8820/-33.72%
 
-  [u56 @ 25bps]  1 of 63 books clear the IS 4b screen
+  [u56 @ 25bps]  IS 4b screen EMPTY -> fell back to W_STATIC
       W_STATIC  pick   R6@m=0.10(n=  4) g=0.750  OOS  16.12%/0.8310/-23.08%   4b-OOS fails: H1
-      W_VMIS    pick   R6@m=0.10(n=  4) g=0.729  OOS  15.69%/0.8310/-22.49%   4b-OOS fails: H1
-      W_CFIS    pick   R6@m=0.10(n=  4) g=0.458  OOS  10.12%/0.8310/-14.70%   4b-OOS fails: H1
-      W_4bIS    pick   R6@m=0.10(n=  4) g=0.458  OOS  10.12%/0.8310/-14.70%   4b-OOS fails: H1
+      W_VMIS    pick   R6@m=0.10(n=  4) g=0.729  OOS  15.69%/0.8306/-22.49%   4b-OOS fails: H1
+      W_CFIS    pick   R6@m=0.10(n=  4) g=0.750  OOS  16.12%/0.8310/-23.08%   4b-OOS fails: H1
+      W_4bIS    pick   R6@m=0.10(n=  4) g=0.750  OOS  16.12%/0.8310/-23.08%   4b-OOS fails: H1
       RULES v1                                    OOS   3.78%/0.3992/-14.18%
       SPY                                         OOS  15.45%/0.8820/-33.72%
 
-  [broad @ 10bps]  36 of 63 books clear the IS 4b screen
+  [broad @ 10bps]  24 of 63 books clear the IS 4b screen
       W_STATIC  pick   R6@m=0.15(n= 14) g=0.750  OOS  13.24%/0.8705/-21.05%   4b-OOS fails: H1
-      W_VMIS    pick   R6@m=0.15(n= 14) g=0.897  OOS  15.70%/0.8705/-24.77%   4b-OOS fails: H1|DD
-      W_CFIS    pick   R6@m=0.15(n= 14) g=0.466  OOS   8.35%/0.8705/-13.49%   4b-OOS fails: H1|CAGR
-      W_4bIS    pick   R6@m=0.15(n= 14) g=0.466  OOS   8.35%/0.8705/-13.49%   4b-OOS fails: H1|CAGR
+      W_VMIS    pick   R6@m=0.15(n= 14) g=0.897  OOS  15.74%/0.8722/-24.82%   4b-OOS fails: H1|DD
+      W_CFIS    pick   R6@m=0.15(n= 14) g=0.750  OOS  13.24%/0.8705/-21.05%   4b-OOS fails: H1
+      W_4bIS    pick   R6@m=0.15(n= 14) g=0.750  OOS  13.24%/0.8705/-21.05%   4b-OOS fails: H1
       RULES v1                                    OOS   5.94%/0.5763/-21.19%
       SPY                                         OOS  15.45%/0.8820/-33.72%
 
-  [broad @ 25bps]  2 of 63 books clear the IS 4b screen
+  [broad @ 25bps]  IS 4b screen EMPTY -> fell back to W_STATIC
       W_STATIC  pick   R6@m=0.15(n= 14) g=0.750  OOS  10.52%/0.7152/-21.19%   4b-OOS fails: H1|H2
-      W_VMIS    pick   R6@m=0.15(n= 14) g=0.896  OOS  12.37%/0.7152/-24.93%   4b-OOS fails: H1|H2|DD
-      W_CFIS    pick   R6@m=0.15(n= 14) g=0.542  OOS   7.76%/0.7152/-15.67%   4b-OOS fails: H1|H2|CAGR
-      W_4bIS    pick   R6@m=0.15(n= 14) g=0.542  OOS   7.76%/0.7152/-15.67%   4b-OOS fails: H1|H2|CAGR
+      W_VMIS    pick   R6@m=0.15(n= 14) g=0.896  OOS  12.41%/0.7171/-24.98%   4b-OOS fails: H1|H2|DD
+      W_CFIS    pick   R6@m=0.15(n= 14) g=0.750  OOS  10.52%/0.7152/-21.19%   4b-OOS fails: H1|H2
+      W_4bIS    pick   R6@m=0.15(n= 14) g=0.750  OOS  10.52%/0.7152/-21.19%   4b-OOS fails: H1|H2
       RULES v1                                    OOS   1.11%/0.1554/-26.72%
       SPY                                         OOS  15.45%/0.8820/-33.72%
 
   [small @ 10bps]  IS 4b screen EMPTY -> fell back to W_STATIC
       W_STATIC  pick  INV@m=0.15(n= 21) g=0.750  OOS   3.68%/0.3337/-34.47%   4b-OOS fails: H1|H2|DD|CAGR
-      W_VMIS    pick  INV@m=0.15(n= 21) g=0.943  OOS   4.33%/0.3337/-41.57%   4b-OOS fails: H1|H2|DD|CAGR
-      W_CFIS    pick  INV@m=0.15(n= 21) g=0.676  OOS   3.40%/0.3337/-31.56%   4b-OOS fails: H1|H2|DD|CAGR
+      W_VMIS    pick  INV@m=0.15(n= 21) g=0.943  OOS   4.33%/0.3331/-41.77%   4b-OOS fails: H1|H2|DD|CAGR
+      W_CFIS    pick  INV@m=0.15(n= 21) g=0.800  OOS   3.86%/0.3336/-36.42%   4b-OOS fails: H1|H2|DD|CAGR
       W_4bIS    pick  INV@m=0.15(n= 21) g=0.750  OOS   3.68%/0.3337/-34.47%   4b-OOS fails: H1|H2|DD|CAGR
       RULES v1                                    OOS   7.92%/0.5807/-32.84%
       SPY                                         OOS  15.45%/0.8820/-33.72%
 
   [small @ 25bps]  IS 4b screen EMPTY -> fell back to W_STATIC
       W_STATIC  pick  RND@m=0.05(n=  7) g=0.750  OOS   1.94%/0.1965/-42.88%   4b-OOS fails: H1|H2|DD|CAGR
-      W_VMIS    pick  RND@m=0.05(n=  7) g=0.579  OOS   1.87%/0.1965/-33.94%   4b-OOS fails: H1|H2|DD|CAGR
-      W_CFIS    pick  RND@m=0.05(n=  7) g=0.695  OOS   1.94%/0.1965/-40.06%   4b-OOS fails: H1|H2|DD|CAGR
+      W_VMIS    pick  RND@m=0.05(n=  7) g=0.579  OOS   1.82%/0.1932/-34.10%   4b-OOS fails: H1|H2|DD|CAGR
+      W_CFIS    pick  RND@m=0.05(n=  7) g=0.800  OOS   1.94%/0.1975/-45.33%   4b-OOS fails: H1|H2|DD|CAGR
       W_4bIS    pick  RND@m=0.05(n=  7) g=0.750  OOS   1.94%/0.1965/-42.88%   4b-OOS fails: H1|H2|DD|CAGR
       RULES v1                                    OOS   2.67%/0.2501/-43.04%
       SPY                                         OOS  15.45%/0.8820/-33.72%
@@ -205,15 +226,17 @@ WALK-FORWARD (PROTOCOL rule 8) — g and pick chosen on 2009-2016 only, read ONC
   Mean OOS Sharpe by arm (pooled over the 6 panel x cost cells):
           OOS_Sharpe  OOS_CAGR  OOS_MaxDD
 arm                                      
-W_4bIS        0.6527    0.0703    -0.2225
-W_CFIS        0.6527    0.0698    -0.2130
+W_4bIS        0.6715    0.1086    -0.2693
+W_CFIS        0.6528    0.1086    -0.2825
 W_STATIC      0.6527    0.1083    -0.2752
-W_VMIS        0.6527    0.1148    -0.2826
-  P6 check — do the re-grossing arms pick a DIFFERENT book than W_STATIC? NO (Sharpe is scale-invariant, as predicted)
+W_VMIS        0.6525    0.1148    -0.2834
+
+  P6 (restated after [c]) — does gross carry ZERO Sharpe content, as idea 66 claims?
+      |Sharpe(g) - Sharpe(0.75)| over 36 genuine re-runs: mean 0.0018, max 0.0097.  Gross is NOT Sharpe-neutral under this engine.
 
 ========================================================================================================================================================================================================
 VERDICT — no new book, no KEEP.  This run prices a leaderboard COLUMN.
   Under idea 156's own VM_FULL formula, 38.0% of the 213 CAGR-floor failures need g > 1.00 and are genuine no-leverage KILLs; 0.0% would clear ALL FIVE 4b bars at a legal gross and are mislabelled; 62.0% merely swap the CAGR bar for another.
-  Under the floor's own inverse CF_IS (prospectively implementable), the numbers are 66.2% / 3.3% / 30.5%.
-done in 472s
+  Under the floor's own inverse CF_IS (prospectively implementable), the numbers are 65.7% / 2.3% / 31.9%.
+done in 4285s
 ========================================================================================================================================================================================================
