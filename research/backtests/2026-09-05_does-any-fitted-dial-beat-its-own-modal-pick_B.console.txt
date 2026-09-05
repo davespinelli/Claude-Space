@@ -1,0 +1,476 @@
+IDEA 189 - does-any-fitted-dial-beat-its-own-modal-pick   (lane B, 2026-09-05)
+==========================================================================================================================
+Does an IS-fitted dial beat a CONSTANT FIXED AT THAT SELECTOR'S OWN MODAL PICK, out of sample?
+Five dials, paired over 53 books, leave-one-out mode as the headline arm.
+Costs 10 bps, t+1 execution, IS <= 2016-12-31, OOS >= 2017-01-01.  Two tuned params: SELECTOR (2) x LADDER POINT (36).
+
+CORPUS: 53 books (5 fixed panels + 48 sub-panels, k in [20, 40, 80] x 16 draws, seed 171500+k) - idea 171's corpus, unchanged
+   U56       4699d x 56c  tradable= 55  2008-01-02..2026-09-04  sleeve=['TLT', 'GLD', 'UUP']
+   B136      4699d x 136c  tradable=135  2008-01-02..2026-09-04  sleeve=['TLT', 'GLD', 'UUP']
+   BSTK100   4699d x 104c  tradable=100  2008-01-02..2026-09-04  sleeve=['TLT', 'GLD', 'UUP']
+   ETF36     4699d x 36c  tradable= 36  2008-01-02..2026-09-04  sleeve=['TLT', 'GLD', 'UUP']
+   SMALL484  4194d x 487c  tradable=483  2010-01-04..2026-09-04  sleeve=['TLT', 'GLD', 'UUP']
+
+REPRODUCTION CONTROLS [a] and [b] (asserted before any new number is read)
+  [a] fast_backtest vs engine.backtest (products/backtester/engine.py), same book:
+      B136      freq=D  max|dret|=1.735e-18  max|dturn|=1.665e-16
+      B136      freq=W  max|dret|=2.776e-17  max|dturn|=3.331e-16
+      B136      freq=M  max|dret|=2.776e-17  max|dturn|=5.551e-16
+      B136      freq=Q  max|dret|=6.245e-17  max|dturn|=1.221e-15
+      -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on U56: max|dw|=0.000e+00  -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on B136: max|dw|=0.000e+00  -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on BSTK100: max|dw|=0.000e+00  -> PASS
+
+  benchmark U56    SPY  CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834  OOS Sharpe 0.882 | RULES v1 Sharpe 0.664
+  benchmark B136   SPY  CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834  OOS Sharpe 0.882 | RULES v1 Sharpe 0.635
+  benchmark SMALL  SPY  CAGR 14.13% Sharpe 0.862 MaxDD -33.72% halves 0.891/0.858  OOS Sharpe 0.882 | RULES v1 Sharpe 0.554
+
+RUNNING LADDERS ...
+   ... 10/53 books  (37s)
+   ... 20/53 books  (45s)
+   ... 30/53 books  (57s)
+   ... 40/53 books  (73s)
+   ... 50/53 books  (92s)
+   1908 ladder rows -> 2026-09-05_does-any-fitted-dial-beat-its-own-modal-pick_B.ladder.csv   (98s)
+
+REPRODUCTION CONTROL [c]
+  [c] ladder vs idea 171 committed 2026-09-05_do-gross-choice-rules-lose-to-constants-in-general_C.ladder.csv: rows 1908 vs 1908, keys align=True
+      max|delta| over 12 numeric columns = 3.553e-15 (worst: turnover);  fail4b string identical in 100.0%
+      -> PASS
+
+LADDER SHAPE - mean over the 53 books of each point's OOS Sharpe (flat ladder => nothing to choose)
+  GROSS    OOS Sharpe  0.2:0.964 0.3:0.964 0.4:0.964 0.5:0.964 0.6:0.964 0.7:0.964 0.75:0.964 0.8:0.964 0.9:0.963 1.0:0.963
+           spread 0.001;  incumbent 0.75 ranks 7/10;  best point 0.2
+  N        OOS Sharpe  3:0.696 5:0.791 8:0.844 10:0.889 15:0.933 20:0.964 25:0.988 30:0.998 40:1.012 50:1.027
+           spread 0.331;  incumbent 20 ranks 5/10;  best point 50
+  BAND     OOS Sharpe  0.0:0.964 0.02:0.970 0.03:0.963 0.05:0.955 0.08:0.973
+           spread 0.018;  incumbent 0.0 ranks 3/5;  best point 0.08
+  CADENCE  OOS Sharpe  D:0.915 W:0.964 M:1.054 Q:0.840
+           spread 0.215;  incumbent W ranks 2/4;  best point M
+  SLEEVE   OOS Sharpe  0.0:0.964 0.05:0.993 0.1:1.023 0.15:1.054 0.2:1.085 0.25:1.116 0.3:1.144
+           spread 0.180;  incumbent 0.0 ranks 7/7;  best point 0.3
+
+==========================================================================================================================
+THE MODE ARMS.  Every pick below is IS-only (<= 2016-12-31); the mode is a count over picks,
+not a new fit.  MODE-LOO for book b excludes b's own pick, so no book scores its own mode.
+
+  dial     sel      modal pick   share  incumbent   LOO mode differs from IC in   selector deviates from LOO mode in
+  GROSS    SHARPE          1.0   94.3%       0.75                    0/53                           3/53
+  GROSS    4B              1.0   37.7%       0.75                    0/53                          33/53
+  N        SHARPE           20   22.6%         20                    0/53                          41/53
+  N        4B               15   30.2%         20                    0/53                          37/53
+  BAND     SHARPE         0.08   81.1%        0.0                    0/53                          10/53
+  BAND     4B             0.08   69.8%        0.0                    0/53                          16/53
+  CADENCE  SHARPE            M   83.0%          W                    0/53                           9/53
+  CADENCE  4B                M   73.6%          W                    0/53                          14/53
+  SLEEVE   SHARPE          0.3  100.0%        0.0                    0/53                           0/53
+  SLEEVE   4B              0.0   49.1%        0.0                    0/53                          27/53
+
+  full pick distributions (SEL-SHARPE):
+    GROSS    0.2:0 0.3:0 0.4:0 0.5:0 0.6:1 0.7:0 0.75:0 0.8:1 0.9:1 1.0:50
+    N        3:1 5:5 8:5 10:7 15:9 20:12 25:4 30:6 40:1 50:3
+    BAND     0.0:3 0.02:3 0.03:3 0.05:1 0.08:43
+    CADENCE  D:1 W:2 M:44 Q:6
+    SLEEVE   0.0:0 0.05:0 0.1:0 0.15:0 0.2:0 0.25:0 0.3:53
+
+==========================================================================================================================
+HEADLINE - MODE MINUS SELECTOR, paired over 53 books.  Positive = 'write the mode down' beats 'fit the dial'.
+
+  --- OOS score = OOS_Sharpe ----------------------------------------------------------------------------------------
+  dial     contrast                        mean d  median d       t  win  loss  tie  sign p  verdict
+  GROSS    MODE-SHARPE-LOO - SEL-SHARPE   -0.0001   +0.0000   -1.06    1     2   50  1.0000  mode behind (n.s.)
+  GROSS    MODE-SHARPE-IC - SEL-SHARPE    -0.0001   +0.0000   -1.06    1     2   50  1.0000  mode behind (n.s.)
+  GROSS    MODE-4B-LOO - SEL-4B           -0.0001   +0.0000   -0.80   10    23   20  0.0351  MODE LOSES
+  N        MODE-SHARPE-LOO - SEL-SHARPE   +0.0215   +0.0000   +1.47   21    20   12  1.0000  mode ahead (n.s.)
+  N        MODE-SHARPE-IC - SEL-SHARPE    +0.0215   +0.0000   +1.47   21    20   12  1.0000  mode ahead (n.s.)
+  N        MODE-4B-LOO - SEL-4B           -0.0346   -0.0241   -2.65    8    29   16  0.0008  MODE LOSES
+  BAND     MODE-SHARPE-LOO - SEL-SHARPE   +0.0005   +0.0000   +0.16    8     2   43  0.1094  mode ahead (n.s.)
+  BAND     MODE-SHARPE-IC - SEL-SHARPE    +0.0005   +0.0000   +0.16    8     2   43  0.1094  mode ahead (n.s.)
+  BAND     MODE-4B-LOO - SEL-4B           +0.0031   +0.0000   +1.22   13     3   37  0.0213  MODE WINS
+  CADENCE  MODE-SHARPE-LOO - SEL-SHARPE   +0.0261   +0.0000   +2.89    9     0   44  0.0039  MODE WINS
+  CADENCE  MODE-SHARPE-IC - SEL-SHARPE    +0.0261   +0.0000   +2.89    9     0   44  0.0039  MODE WINS
+  CADENCE  MODE-4B-LOO - SEL-4B           +0.0444   +0.0000   +4.02   14     0   39  0.0001  MODE WINS
+  SLEEVE   MODE-SHARPE-LOO - SEL-SHARPE   +0.0000   +0.0000    +nan    0     0   53  1.0000  identical (selector never deviates)
+  SLEEVE   MODE-SHARPE-IC - SEL-SHARPE    +0.0000   +0.0000    +nan    0     0   53  1.0000  identical (selector never deviates)
+  SLEEVE   MODE-4B-LOO - SEL-4B           -0.0283   -0.0221   -5.90    0    27   26  0.0000  MODE LOSES
+
+  --- OOS score = OOS_margin ----------------------------------------------------------------------------------------
+  dial     contrast                        mean d  median d       t  win  loss  tie  sign p  verdict
+  GROSS    MODE-SHARPE-LOO - SEL-SHARPE   -0.0055   +0.0000   -1.07    1     2   50  1.0000  mode behind (n.s.)
+  GROSS    MODE-SHARPE-IC - SEL-SHARPE    -0.0055   +0.0000   -1.07    1     2   50  1.0000  mode behind (n.s.)
+  GROSS    MODE-4B-LOO - SEL-4B           -0.1115   -0.0299   -6.00    5    28   20  0.0001  MODE LOSES
+  N        MODE-SHARPE-LOO - SEL-SHARPE   +0.0112   +0.0000   +0.61   24    17   12  0.3489  mode ahead (n.s.)
+  N        MODE-SHARPE-IC - SEL-SHARPE    +0.0112   +0.0000   +0.61   24    17   12  0.3489  mode ahead (n.s.)
+  N        MODE-4B-LOO - SEL-4B           -0.0230   +0.0000   -1.88   14    23   16  0.1877  mode behind (n.s.)
+  BAND     MODE-SHARPE-LOO - SEL-SHARPE   +0.0029   +0.0000   +1.04    5     5   43  1.0000  mode ahead (n.s.)
+  BAND     MODE-SHARPE-IC - SEL-SHARPE    +0.0029   +0.0000   +1.04    5     5   43  1.0000  mode ahead (n.s.)
+  BAND     MODE-4B-LOO - SEL-4B           +0.0028   +0.0000   +0.91    6    10   37  0.4545  mode ahead (n.s.)
+  CADENCE  MODE-SHARPE-LOO - SEL-SHARPE   +0.0343   +0.0000   +2.48    9     0   44  0.0039  MODE WINS
+  CADENCE  MODE-SHARPE-IC - SEL-SHARPE    +0.0343   +0.0000   +2.48    9     0   44  0.0039  MODE WINS
+  CADENCE  MODE-4B-LOO - SEL-4B           +0.0026   +0.0000   +0.20    8     6   39  0.7905  mode ahead (n.s.)
+  SLEEVE   MODE-SHARPE-LOO - SEL-SHARPE   +0.0000   +0.0000    +nan    0     0   53  1.0000  identical (selector never deviates)
+  SLEEVE   MODE-SHARPE-IC - SEL-SHARPE    +0.0000   +0.0000    +nan    0     0   53  1.0000  identical (selector never deviates)
+  SLEEVE   MODE-4B-LOO - SEL-4B           -0.0237   +0.0000   -3.97    5    22   26  0.0015  MODE LOSES
+
+  THE COUNT (headline arm MODE-SHARPE-LOO vs SEL-SHARPE, OOS Sharpe, 5 dials):
+     mode ahead on 3/5   (significant 1/5)   tied 1/5   selector ahead on 1/5
+     dials where the mode wins significantly: CADENCE
+     dials where the selector is ahead:        GROSS
+
+==========================================================================================================================
+CONTEXT - every arm MINUS THE INCUMBENT CONSTANT (idea 171's table, with the mode arms added).
+A mode arm that beats the selector but loses to the incumbent changes nothing for RULES.
+
+  --- OOS score = OOS_Sharpe ----------------------------------------------------------------------------------------
+  dial     arm                 mean d       t  win  loss  tie  sign p  changes  verdict
+  GROSS    SEL-SHARPE         -0.0006   -4.24   14    39    0  0.0008   53/53  LOSES TO CONST
+  GROSS    MODE-SHARPE-IC     -0.0006   -4.67   13    40    0  0.0003   53/53  LOSES TO CONST
+  GROSS    MODE-SHARPE-LOO    -0.0006   -4.67   13    40    0  0.0003   53/53  LOSES TO CONST
+  GROSS    SEL-4B             -0.0005   -5.69   10    39    4  0.0000   49/53  LOSES TO CONST
+  GROSS    MODE-4B-LOO        -0.0006   -4.67   13    40    0  0.0003   53/53  LOSES TO CONST
+  GROSS    RANDOM             +0.0002   +0.95   27    21    5  0.4709   48/53  (control) ahead (n.s.)
+  GROSS    ORACLE             +0.0014   +8.25   52     0    1  0.0000   52/53  (upper bound)
+  N        SEL-SHARPE         -0.0215   -1.47   20    21   12  1.0000   41/53  behind (n.s.)
+  N        MODE-SHARPE-IC     +0.0000    +nan    0     0   53  1.0000    0/53  behind (n.s.)
+  N        MODE-SHARPE-LOO    +0.0000    +nan    0     0   53  1.0000    0/53  behind (n.s.)
+  N        SEL-4B             +0.0042   +0.34   23    17   13  0.4296   40/53  ahead (n.s.)
+  N        MODE-4B-LOO        -0.0304   -4.26   17    36    0  0.0127   53/53  LOSES TO CONST
+  N        RANDOM             -0.0593   -3.65   17    30    6  0.0789   47/53  (control) behind (n.s.)
+  N        ORACLE             +0.0900   +8.97   50     0    3  0.0000   50/53  (upper bound)
+  BAND     SEL-SHARPE         +0.0085   +1.08   27    23    3  0.6718   50/53  ahead (n.s.)
+  BAND     MODE-SHARPE-IC     +0.0090   +1.12   32    21    0  0.1690   53/53  ahead (n.s.)
+  BAND     MODE-SHARPE-LOO    +0.0090   +1.12   32    21    0  0.1690   53/53  ahead (n.s.)
+  BAND     SEL-4B             +0.0059   +0.75   26    25    2  1.0000   51/53  ahead (n.s.)
+  BAND     MODE-4B-LOO        +0.0090   +1.12   32    21    0  0.1690   53/53  ahead (n.s.)
+  BAND     RANDOM             +0.0022   +0.47   24    21    8  0.7660   45/53  (control) ahead (n.s.)
+  BAND     ORACLE             +0.0325   +5.38   44     0    9  0.0000   44/53  (upper bound)
+  CADENCE  SEL-SHARPE         +0.0642   +4.54   40    11    2  0.0001   51/53  BEATS CONST
+  CADENCE  MODE-SHARPE-IC     +0.0903  +10.08   48     5    0  0.0000   53/53  BEATS CONST
+  CADENCE  MODE-SHARPE-LOO    +0.0903  +10.08   48     5    0  0.0000   53/53  BEATS CONST
+  CADENCE  SEL-4B             +0.0459   +3.39   35    12    6  0.0011   47/53  BEATS CONST
+  CADENCE  MODE-4B-LOO        +0.0903  +10.08   48     5    0  0.0000   53/53  BEATS CONST
+  CADENCE  RANDOM             -0.0215   -1.64   19    24   10  0.5424   43/53  (control) behind (n.s.)
+  CADENCE  ORACLE             +0.0956  +13.03   50     0    3  0.0000   50/53  (upper bound)
+  SLEEVE   SEL-SHARPE         +0.1801  +37.73   53     0    0  0.0000   53/53  BEATS CONST
+  SLEEVE   MODE-SHARPE-IC     +0.1801  +37.73   53     0    0  0.0000   53/53  BEATS CONST
+  SLEEVE   MODE-SHARPE-LOO    +0.1801  +37.73   53     0    0  0.0000   53/53  BEATS CONST
+  SLEEVE   SEL-4B             +0.0283   +5.90   27     0   26  0.0000   27/53  BEATS CONST
+  SLEEVE   MODE-4B-LOO        +0.0000    +nan    0     0   53  1.0000    0/53  behind (n.s.)
+  SLEEVE   RANDOM             +0.0762   +8.24   41     0   12  0.0000   41/53  (control) BEATS CONST
+  SLEEVE   ORACLE             +0.1801  +37.73   53     0    0  0.0000   53/53  (upper bound)
+
+  --- OOS score = OOS_margin ----------------------------------------------------------------------------------------
+  dial     arm                 mean d       t  win  loss  tie  sign p  changes  verdict
+  GROSS    SEL-SHARPE         -0.0676   -2.38   20    33    0  0.0984   53/53  behind (n.s.)
+  GROSS    MODE-SHARPE-IC     -0.0731   -2.51   20    33    0  0.0984   53/53  behind (n.s.)
+  GROSS    MODE-SHARPE-LOO    -0.0731   -2.51   20    33    0  0.0984   53/53  behind (n.s.)
+  GROSS    SEL-4B             +0.0384   +2.12   28    21    4  0.3916   49/53  ahead (n.s.)
+  GROSS    MODE-4B-LOO        -0.0731   -2.51   20    33    0  0.0984   53/53  behind (n.s.)
+  GROSS    RANDOM             -0.1768   -5.66    9    39    5  0.0000   48/53  (control) LOSES TO CONST
+  GROSS    ORACLE             -0.4105  -12.27    4    48    1  0.0000   52/53  (upper bound)
+  N        SEL-SHARPE         -0.0112   -0.61   17    24   12  0.3489   41/53  behind (n.s.)
+  N        MODE-SHARPE-IC     +0.0000    +nan    0     0   53  1.0000    0/53  behind (n.s.)
+  N        MODE-SHARPE-LOO    +0.0000    +nan    0     0   53  1.0000    0/53  behind (n.s.)
+  N        SEL-4B             +0.0599   +3.46   28    12   13  0.0166   40/53  BEATS CONST
+  N        MODE-4B-LOO        +0.0368   +2.26   28    25    0  0.7838   53/53  ahead (n.s.)
+  N        RANDOM             -0.0932   -3.14   15    32    6  0.0186   47/53  (control) LOSES TO CONST
+  N        ORACLE             +0.0320   +1.03   27    23    3  0.6718   50/53  (upper bound)
+  BAND     SEL-SHARPE         +0.0273   +2.44   28    22    3  0.4799   50/53  ahead (n.s.)
+  BAND     MODE-SHARPE-IC     +0.0302   +2.67   29    24    0  0.5831   53/53  ahead (n.s.)
+  BAND     MODE-SHARPE-LOO    +0.0302   +2.67   29    24    0  0.5831   53/53  ahead (n.s.)
+  BAND     SEL-4B             +0.0274   +2.43   28    22    3  0.4799   51/53  ahead (n.s.)
+  BAND     MODE-4B-LOO        +0.0302   +2.67   29    24    0  0.5831   53/53  ahead (n.s.)
+  BAND     RANDOM             +0.0070   +1.24   26    19    8  0.3713   45/53  (control) ahead (n.s.)
+  BAND     ORACLE             +0.0414   +3.94   34    10    9  0.0004   44/53  (upper bound)
+  CADENCE  SEL-SHARPE         -0.0473   -2.02   25    26    2  1.0000   51/53  behind (n.s.)
+  CADENCE  MODE-SHARPE-IC     -0.0130   -0.62   31    22    0  0.2717   53/53  behind (n.s.)
+  CADENCE  MODE-SHARPE-LOO    -0.0130   -0.62   31    22    0  0.2717   53/53  behind (n.s.)
+  CADENCE  SEL-4B             -0.0156   -0.77   26    21    6  0.5601   47/53  behind (n.s.)
+  CADENCE  MODE-4B-LOO        -0.0130   -0.62   31    22    0  0.2717   53/53  behind (n.s.)
+  CADENCE  RANDOM             -0.0718   -3.84   12    31   10  0.0054   43/53  (control) LOSES TO CONST
+  CADENCE  ORACLE             -0.0116   -0.56   28    22    3  0.4799   50/53  (upper bound)
+  SLEEVE   SEL-SHARPE         -0.0304   -2.66   14    39    0  0.0008   53/53  LOSES TO CONST
+  SLEEVE   MODE-SHARPE-IC     -0.0304   -2.66   14    39    0  0.0008   53/53  LOSES TO CONST
+  SLEEVE   MODE-SHARPE-LOO    -0.0304   -2.66   14    39    0  0.0008   53/53  LOSES TO CONST
+  SLEEVE   SEL-4B             +0.0237   +3.97   22     5   26  0.0015   27/53  BEATS CONST
+  SLEEVE   MODE-4B-LOO        +0.0000    +nan    0     0   53  1.0000    0/53  behind (n.s.)
+  SLEEVE   RANDOM             +0.0156   +1.65   20    21   12  1.0000   41/53  (control) ahead (n.s.)
+  SLEEVE   ORACLE             -0.0304   -2.66   14    39    0  0.0008   53/53  (upper bound)
+
+==========================================================================================================================
+DECOMPOSITION - where the MODE-vs-SELECTOR gap comes from (OOS Sharpe, MODE-SHARPE-LOO).
+On books where the selector agrees with its own LOO mode the paired difference is 0 by
+construction, so the finding is entirely the size and sign of the DEVIATIONS.
+
+  Sign convention, stated once: d = MODE minus SELECTOR.  d > 0 means the selector's
+  off-mode pick LOST to the mode (the deviation hurt); d < 0 means it paid off.
+
+  dial      deviations  mean d (all)  mean d | deviating  dev paid off  dev hurt     min d     max d
+  GROSS           3/53       -0.0001             -0.0010             2         1   -0.0028   +0.0002
+  N              41/53       +0.0215             +0.0278            20        21   -0.2397   +0.3176
+  BAND           10/53       +0.0005             +0.0027             2         8   -0.1099   +0.0590
+  CADENCE         9/53       +0.0261             +0.1536             0         9   +0.0485   +0.2761
+  SLEEVE          0/53       +0.0000                +nan             0         0      +nan      +nan
+
+  the 10 deviations that COST THE SELECTOR most (largest d = mode beat the off-mode pick):
+       dial       book parent sel_point mode_point  sel_OOS_Sharpe  mode_OOS_Sharpe      d
+          N B136k40d06   B136        10         20          0.7436           1.0612 0.3176
+          N B136k40d13   B136         5         20          0.8627           1.1699 0.3072
+          N B136k20d12   B136         5         20          0.8538           1.1606 0.3068
+    CADENCE B136k40d13   B136         Q          M          0.9011           1.1772 0.2761
+    CADENCE B136k20d02   B136         Q          M          0.9122           1.1271 0.2149
+    CADENCE B136k40d15   B136         Q          M          0.8295           1.0300 0.2005
+    CADENCE B136k40d09   B136         Q          M          0.8141           1.0048 0.1906
+    CADENCE B136k20d08   B136         Q          M          0.7951           0.9757 0.1806
+          N B136k40d01   B136         8         20          0.8381           1.0139 0.1759
+          N B136k80d04   B136         3         20          0.7117           0.8752 0.1635
+
+  the 10 deviations that PAID OFF most for the selector (most negative d):
+    dial       book parent sel_point mode_point  sel_OOS_Sharpe  mode_OOS_Sharpe       d
+       N B136k80d05   B136        50         20          1.0861           0.8464 -0.2397
+       N B136k80d02   B136        50         20          1.2135           1.0256 -0.1878
+       N B136k80d00   B136        50         20          1.0761           0.9549 -0.1212
+       N B136k40d11   B136        30         20          1.0281           0.9104 -0.1177
+    BAND B136k20d07   B136    0.0200     0.0800          1.2120           1.1021 -0.1099
+       N B136k80d14   B136        25         20          0.9495           0.8602 -0.0894
+       N B136k80d15   B136        40         20          0.9997           0.9133 -0.0864
+    BAND B136k20d00   B136    0.0500     0.0800          1.1772           1.0997 -0.0774
+       N B136k20d05   B136        15         20          0.9978           0.9212 -0.0767
+       N B136k80d01   B136        25         20          1.0285           0.9675 -0.0610
+
+==========================================================================================================================
+PER-FAMILY (the pooled t OVERSTATES: sub-panels of B136 are correlated draws, idea 175's
+criticism of idea 171, applied here to this run).  MODE-SHARPE-LOO minus SEL-SHARPE, OOS Sharpe.
+
+  dial                        U56                   B136                  SMALL
+  GROSS       +0.0001 (n2, t+nan)  -0.0001 (n50, t-1.15)    +0.0000 (n1, t+nan)
+  N           +0.0000 (n2, t+nan)  +0.0232 (n50, t+1.50)    -0.0181 (n1, t+nan)
+  BAND        +0.0000 (n2, t+nan)  +0.0005 (n50, t+0.16)    +0.0000 (n1, t+nan)
+  CADENCE     +0.0000 (n2, t+nan)  +0.0276 (n50, t+2.90)    +0.0000 (n1, t+nan)
+  SLEEVE      +0.0000 (n2, t+nan)   +0.0000 (n50, t+nan)    +0.0000 (n1, t+nan)
+
+==========================================================================================================================
+PROTOCOL RULE 8 WALK-FORWARD.  Every arm above chose on IS only; OOS is read once, here.
+(i) mean OOS metrics across the 53 books, per dial and arm
+  dial     arm               OOS CAGR  OOS Shrp  OOS MaxDD  OOS margin  OOS-4b pass
+  GROSS    CONST                9.96%     0.964    -17.18%     -0.1615     11/53
+  GROSS    SEL-SHARPE          13.00%     0.963    -22.25%     -0.2290      5/53
+  GROSS    MODE-SHARPE-IC      13.22%     0.963    -22.54%     -0.2345      4/53
+  GROSS    MODE-SHARPE-LOO     13.22%     0.963    -22.54%     -0.2345      4/53
+  GROSS    SEL-4B              10.82%     0.963    -18.61%     -0.1231     10/53
+  GROSS    MODE-4B-LOO         13.22%     0.963    -22.54%     -0.2345      4/53
+  GROSS    RANDOM               8.24%     0.964    -14.19%     -0.3383      4/53
+  GROSS    ORACLE               6.62%     0.965    -11.12%     -0.5719      3/53
+  N        CONST                9.96%     0.964    -17.18%     -0.1615     11/53
+  N        SEL-SHARPE          10.84%     0.942    -18.36%     -0.1726      8/53
+  N        MODE-SHARPE-IC       9.96%     0.964    -17.18%     -0.1615     11/53
+  N        MODE-SHARPE-LOO      9.96%     0.964    -17.18%     -0.1615     11/53
+  N        SEL-4B              10.82%     0.968    -18.26%     -0.1016     13/53
+  N        MODE-4B-LOO         10.79%     0.933    -18.56%     -0.1246     11/53
+  N        RANDOM              10.11%     0.905    -18.17%     -0.2547      9/53
+  N        ORACLE               9.87%     1.054    -15.55%     -0.1295     15/53
+  BAND     CONST                9.96%     0.964    -17.18%     -0.1615     11/53
+  BAND     SEL-SHARPE          10.29%     0.972    -17.72%     -0.1342     10/53
+  BAND     MODE-SHARPE-IC      10.34%     0.973    -17.98%     -0.1313      9/53
+  BAND     MODE-SHARPE-LOO     10.34%     0.973    -17.98%     -0.1313      9/53
+  BAND     SEL-4B              10.26%     0.970    -17.86%     -0.1341      9/53
+  BAND     MODE-4B-LOO         10.34%     0.973    -17.98%     -0.1313      9/53
+  BAND     RANDOM              10.08%     0.966    -17.22%     -0.1545      7/53
+  BAND     ORACLE              10.43%     0.996    -17.27%     -0.1201     11/53
+  CADENCE  CONST                9.96%     0.964    -17.18%     -0.1615     11/53
+  CADENCE  SEL-SHARPE          11.55%     1.028    -20.00%     -0.2087      6/53
+  CADENCE  MODE-SHARPE-IC      11.70%     1.054    -18.96%     -0.1744      8/53
+  CADENCE  MODE-SHARPE-LOO     11.70%     1.054    -18.96%     -0.1744      8/53
+  CADENCE  SEL-4B              11.30%     1.010    -20.03%     -0.1771     10/53
+  CADENCE  MODE-4B-LOO         11.70%     1.054    -18.96%     -0.1744      8/53
+  CADENCE  RANDOM              10.21%     0.942    -19.32%     -0.2333      6/53
+  CADENCE  ORACLE              11.72%     1.059    -18.69%     -0.1731      8/53
+  SLEEVE   CONST                9.96%     0.964    -17.18%     -0.1615     11/53
+  SLEEVE   SEL-SHARPE           8.82%     1.144    -12.56%     -0.1919      7/53
+  SLEEVE   MODE-SHARPE-IC       8.82%     1.144    -12.56%     -0.1919      7/53
+  SLEEVE   MODE-SHARPE-LOO      8.82%     1.144    -12.56%     -0.1919      7/53
+  SLEEVE   SEL-4B               9.65%     0.992    -16.06%     -0.1378     18/53
+  SLEEVE   MODE-4B-LOO          9.96%     0.964    -17.18%     -0.1615     11/53
+  SLEEVE   RANDOM               9.51%     1.040    -15.07%     -0.1458     13/53
+  SLEEVE   ORACLE               8.82%     1.144    -12.56%     -0.1919      7/53
+
+  pooled over the five dials (the single number for 'fit' vs 'write the mode down' vs 'do nothing'):
+    CONST            OOS CAGR   9.96%  OOS Sharpe 0.9638  OOS MaxDD -17.18%
+    SEL-SHARPE       OOS CAGR  10.90%  OOS Sharpe 1.0100  OOS MaxDD -18.18%
+    MODE-SHARPE-IC   OOS CAGR  10.81%  OOS Sharpe 1.0196  OOS MaxDD -17.85%
+    MODE-SHARPE-LOO  OOS CAGR  10.81%  OOS Sharpe 1.0196  OOS MaxDD -17.85%
+    SEL-4B           OOS CAGR  10.57%  OOS Sharpe 0.9806  OOS MaxDD -18.16%
+    MODE-4B-LOO      OOS CAGR  11.20%  OOS Sharpe 0.9775  OOS MaxDD -19.05%
+    RANDOM           OOS CAGR   9.63%  OOS Sharpe 0.9634  OOS MaxDD -16.80%
+    ORACLE           OOS CAGR   9.49%  OOS Sharpe 1.0438  OOS MaxDD -15.04%
+    SPY/U56          OOS CAGR  15.45%  OOS Sharpe 0.8820  OOS MaxDD -33.72%
+    RULESv1/U56      OOS CAGR   7.73%  OOS Sharpe 0.7471  OOS MaxDD -13.83%
+    SPY/B136         OOS CAGR  15.45%  OOS Sharpe 0.8820  OOS MaxDD -33.72%
+    RULESv1/B136     OOS CAGR   5.94%  OOS Sharpe 0.5763  OOS MaxDD -21.19%
+    SPY/SMALL        OOS CAGR  15.45%  OOS Sharpe 0.8820  OOS MaxDD -33.72%
+    RULESv1/SMALL    OOS CAGR  19.31%  OOS Sharpe 0.6046  OOS MaxDD -35.01%
+
+(ii) the classic S1 pick: within each dial+arm, the single book with the best IS Sharpe, read once on OOS
+  dial     arm              book         point  OOS CAGR  OOS Shrp  OOS MaxDD  vs SPY / RULES v1 (same parent)
+  GROSS    CONST            B136k80d13    0.75     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS    SEL-SHARPE       B136k80d13     1.0    12.37%     0.807    -23.40%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS    MODE-SHARPE-IC   B136k80d13     1.0    12.37%     0.807    -23.40%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS    MODE-SHARPE-LOO  B136k80d13     1.0    12.37%     0.807    -23.40%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS    SEL-4B           B136k80d13     0.6     7.58%     0.808    -14.33%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS    MODE-4B-LOO      B136k80d13     1.0    12.37%     0.807    -23.40%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS    RANDOM           B136k80d13     0.3     3.84%     0.809     -7.27%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS    ORACLE           B136k80d13     0.2     2.57%     0.809     -4.87%   SPY 0.882 / v1 0.576   does not beat both
+  N        CONST            B136k80d13      20     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  N        SEL-SHARPE       B136k80d13      20     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  N        MODE-SHARPE-IC   B136k80d13      20     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  N        MODE-SHARPE-LOO  B136k80d13      20     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  N        SEL-4B           B136k20d00      15    13.09%     1.216    -15.35%   SPY 0.882 / v1 0.576   beats both
+  N        MODE-4B-LOO      B136k20d00      15    13.09%     1.216    -15.35%   SPY 0.882 / v1 0.576   beats both
+  N        RANDOM           B136k80d13      15     9.51%     0.769    -18.69%   SPY 0.882 / v1 0.576   does not beat both
+  N        ORACLE           B136k20d00      15    13.09%     1.216    -15.35%   SPY 0.882 / v1 0.576   beats both
+  BAND     CONST            B136k80d13     0.0     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  BAND     SEL-SHARPE       B136k20d04    0.08     6.58%     0.992    -12.93%   SPY 0.882 / v1 0.576   beats both
+  BAND     MODE-SHARPE-IC   B136k20d04    0.08     6.58%     0.992    -12.93%   SPY 0.882 / v1 0.576   beats both
+  BAND     MODE-SHARPE-LOO  B136k20d04    0.08     6.58%     0.992    -12.93%   SPY 0.882 / v1 0.576   beats both
+  BAND     SEL-4B           B136k20d04    0.08     6.58%     0.992    -12.93%   SPY 0.882 / v1 0.576   beats both
+  BAND     MODE-4B-LOO      B136k20d04    0.08     6.58%     0.992    -12.93%   SPY 0.882 / v1 0.576   beats both
+  BAND     RANDOM           B136k80d13    0.03     9.28%     0.794    -18.60%   SPY 0.882 / v1 0.576   does not beat both
+  BAND     ORACLE           B136k80d13    0.08     9.64%     0.817    -18.72%   SPY 0.882 / v1 0.576   does not beat both
+  CADENCE  CONST            B136k80d13       W     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  CADENCE  SEL-SHARPE       B136k80d13       M    12.56%     0.994    -21.57%   SPY 0.882 / v1 0.576   beats both
+  CADENCE  MODE-SHARPE-IC   B136k80d13       M    12.56%     0.994    -21.57%   SPY 0.882 / v1 0.576   beats both
+  CADENCE  MODE-SHARPE-LOO  B136k80d13       M    12.56%     0.994    -21.57%   SPY 0.882 / v1 0.576   beats both
+  CADENCE  SEL-4B           B136             M    15.67%     1.007    -26.10%   SPY 0.882 / v1 0.576   beats both
+  CADENCE  MODE-4B-LOO      B136k80d13       M    12.56%     0.994    -21.57%   SPY 0.882 / v1 0.576   beats both
+  CADENCE  RANDOM           BSTK100          M    16.49%     1.059    -26.17%   SPY 0.882 / v1 0.576   beats both
+  CADENCE  ORACLE           B136k80d13       M    12.56%     0.994    -21.57%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE   CONST            B136k80d13     0.0     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  SLEEVE   SEL-SHARPE       B136k80d13     0.3     8.47%     0.971    -13.58%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE   MODE-SHARPE-IC   B136k80d13     0.3     8.47%     0.971    -13.58%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE   MODE-SHARPE-LOO  B136k80d13     0.3     8.47%     0.971    -13.58%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE   SEL-4B           B136k80d13     0.2     8.80%     0.912    -14.14%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE   MODE-4B-LOO      B136k80d13     0.0     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  SLEEVE   RANDOM           B136k20d04     0.3     5.81%     1.173     -7.84%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE   ORACLE           B136k80d13     0.3     8.47%     0.971    -13.58%   SPY 0.882 / v1 0.576   beats both
+
+==========================================================================================================================
+BOTH KEEP PATHS (PROTOCOL rule 4), evaluated exactly on all 1908 ladder rows
+  4a (beat the book):  1507/1908 rows pass
+  4b (capital-worthy): 250/1908 rows pass (214 of them on sub-panels, which are a corpus device and NOT tradable books)
+  4b binding bars across all failing rows: {'CAGR': np.int64(1223), 'H2': np.int64(689), 'DD': np.int64(447), 'OOS': np.int64(405), 'H1': np.int64(312)}
+  4b-passing rows on the FIXED (tradable) panels:
+       book    dial point  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover
+        U56   GROSS 0.700 0.120   1.107 -0.171 1.110 1.112       1.177     0.135     -0.171     8.827
+        U56   GROSS 0.750 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452
+        U56   GROSS 0.800 0.137   1.108 -0.194 1.110 1.112       1.178     0.155     -0.194    10.078
+        U56       N    15 0.132   1.048 -0.192 1.072 1.034       1.093     0.146     -0.192    11.398
+        U56       N    20 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452
+        U56       N    25 0.117   1.094 -0.178 1.041 1.145       1.204     0.136     -0.178     8.050
+        U56       N    30 0.112   1.124 -0.165 1.065 1.180       1.254     0.131     -0.165     6.839
+        U56    BAND 0.000 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452
+        U56    BAND 0.020 0.131   1.119 -0.177 1.095 1.147       1.210     0.150     -0.177     9.030
+        U56    BAND 0.030 0.132   1.130 -0.179 1.102 1.160       1.222     0.152     -0.179     8.825
+        U56    BAND 0.050 0.131   1.116 -0.184 1.132 1.108       1.173     0.146     -0.184     8.402
+        U56    BAND 0.080 0.134   1.130 -0.184 1.164 1.107       1.172     0.147     -0.184     8.148
+        U56 CADENCE     W 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452
+        U56 CADENCE     M 0.148   1.208 -0.196 1.219 1.206       1.287     0.167     -0.196     4.277
+        U56  SLEEVE 0.000 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452
+        U56  SLEEVE 0.050 0.125   1.130 -0.173 1.135 1.132       1.198     0.141     -0.173     9.020
+        U56  SLEEVE 0.100 0.121   1.152 -0.164 1.161 1.153       1.220     0.137     -0.164     8.586
+        U56  SLEEVE 0.150 0.117   1.176 -0.154 1.187 1.175       1.242     0.132     -0.154     8.151
+        U56  SLEEVE 0.200 0.113   1.199 -0.145 1.213 1.197       1.264     0.128     -0.145     7.714
+        U56  SLEEVE 0.250 0.109   1.221 -0.136 1.238 1.219       1.286     0.124     -0.136     7.274
+       B136       N    40 0.119   1.004 -0.191 1.133 0.888       0.981     0.118     -0.191    10.312
+       B136       N    50 0.114   1.016 -0.190 1.115 0.926       1.027     0.117     -0.190     9.126
+       B136  SLEEVE 0.100 0.123   0.998 -0.181 1.172 0.851       0.932     0.119     -0.181    12.494
+       B136  SLEEVE 0.150 0.119   1.021 -0.171 1.199 0.873       0.954     0.116     -0.171    11.851
+       B136  SLEEVE 0.200 0.115   1.045 -0.160 1.226 0.897       0.978     0.113     -0.160    11.204
+       B136  SLEEVE 0.250 0.111   1.070 -0.156 1.255 0.922       1.002     0.110     -0.156    10.555
+       B136  SLEEVE 0.300 0.107   1.095 -0.151 1.283 0.948       1.028     0.106     -0.151     9.903
+    BSTK100       N    30 0.130   1.024 -0.194 1.175 0.886       0.982     0.126     -0.194    10.523
+    BSTK100       N    40 0.123   1.035 -0.191 1.164 0.917       1.018     0.122     -0.191     8.871
+    BSTK100       N    50 0.120   1.075 -0.187 1.188 0.971       1.078     0.121     -0.187     7.657
+    BSTK100  SLEEVE 0.050 0.133   1.016 -0.194 1.208 0.847       0.941     0.126     -0.194    12.015
+    BSTK100  SLEEVE 0.100 0.129   1.039 -0.186 1.235 0.868       0.963     0.122     -0.186    11.438
+    BSTK100  SLEEVE 0.150 0.125   1.064 -0.181 1.264 0.892       0.986     0.119     -0.181    10.857
+    BSTK100  SLEEVE 0.200 0.121   1.090 -0.175 1.295 0.917       1.011     0.116     -0.175    10.274
+    BSTK100  SLEEVE 0.250 0.116   1.117 -0.170 1.328 0.943       1.037     0.112     -0.170     9.687
+    BSTK100  SLEEVE 0.300 0.112   1.145 -0.164 1.361 0.971       1.065     0.109     -0.164     9.098
+  NOTE (idea 144): every one is a re-parameterisation of an EXISTING book, not a new
+  signal.  None is proposed.  This run is a methodology test.
+
+  do any of the ARMS land on a 4b pass?  (arm-level, fixed panels only)
+    CONST             5/25 arm-cells pass 4b
+    SEL-SHARPE        6/25 arm-cells pass 4b
+    MODE-SHARPE-IC    5/25 arm-cells pass 4b
+    MODE-SHARPE-LOO   5/25 arm-cells pass 4b
+    SEL-4B            8/25 arm-cells pass 4b
+    MODE-4B-LOO       4/25 arm-cells pass 4b
+    RANDOM            5/25 arm-cells pass 4b
+    ORACLE            6/25 arm-cells pass 4b
+
+==========================================================================================================================
+NAMED-BOOK VIEW (post-hoc).  U56 is the live book's panel.  What would 'write the mode down'
+actually write, dial by dial, and what did it earn there?
+
+  SPY(full) CAGR 15.23% Sharpe 0.889 halves 0.957/0.834 MaxDD -33.72% -> 4b bars: H1>0.957 H2>0.834 OOS>0.882 |DD|<=20.23% CAGR>=10.66%
+  RULES v1(full) Sharpe 0.664 MaxDD -13.83%
+    GROSS: incumbent 0.75 | SEL-SHARPE 0.8 | MODE-LOO 1.0 | oracle 1.0
+      point  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover fail4a fail4b
+      0.200 0.034   1.106 -0.050 1.109 1.110       1.176     0.038     -0.050     2.551      -   CAGR
+      0.300 0.051   1.107 -0.075 1.109 1.110       1.176     0.057     -0.075     3.815      -   CAGR
+      0.400 0.068   1.107 -0.099 1.109 1.111       1.177     0.077     -0.099     5.073      -   CAGR
+      0.500 0.086   1.107 -0.124 1.110 1.111       1.177     0.096     -0.124     6.327      -   CAGR
+      0.600 0.103   1.107 -0.147 1.110 1.111       1.177     0.116     -0.147     7.577     DD   CAGR
+      0.700 0.120   1.107 -0.171 1.110 1.112       1.177     0.135     -0.171     8.827     DD      -
+      0.750 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452     DD      -
+      0.800 0.137   1.108 -0.194 1.110 1.112       1.178     0.155     -0.194    10.078     DD      -
+      0.900 0.154   1.108 -0.216 1.110 1.112       1.178     0.174     -0.216    11.332     DD     DD
+      1.000 0.172   1.108 -0.239 1.110 1.112       1.178     0.194     -0.239    12.594     DD     DD
+    N: incumbent 20 | SEL-SHARPE 20 | MODE-LOO 20 | oracle 40
+      point  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover fail4a fail4b
+          3 0.219   1.036 -0.258 1.014 1.061       1.055     0.238     -0.258    20.750     DD     DD
+          5 0.165   0.950 -0.216 0.899 1.000       0.994     0.185     -0.216    17.622     DD  H1,DD
+          8 0.138   0.930 -0.179 0.918 0.946       0.974     0.153     -0.166    14.959     DD     H1
+         10 0.128   0.927 -0.175 0.918 0.940       0.971     0.143     -0.175    13.857     DD     H1
+         15 0.132   1.048 -0.192 1.072 1.034       1.093     0.146     -0.192    11.398     DD      -
+         20 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452     DD      -
+         25 0.117   1.094 -0.178 1.041 1.145       1.204     0.136     -0.178     8.050     DD      -
+         30 0.112   1.124 -0.165 1.065 1.180       1.254     0.131     -0.165     6.839     DD      -
+         40 0.096   1.130 -0.139 1.083 1.175       1.268     0.112     -0.139     4.911     DD   CAGR
+         50 0.078   1.130 -0.118 1.090 1.169       1.262     0.091     -0.118     3.519      -   CAGR
+    BAND: incumbent 0.0 | SEL-SHARPE 0.08 | MODE-LOO 0.08 | oracle 0.03
+      point  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover fail4a fail4b
+      0.000 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452     DD      -
+      0.020 0.131   1.119 -0.177 1.095 1.147       1.210     0.150     -0.177     9.030     DD      -
+      0.030 0.132   1.130 -0.179 1.102 1.160       1.222     0.152     -0.179     8.825     DD      -
+      0.050 0.131   1.116 -0.184 1.132 1.108       1.173     0.146     -0.184     8.402     DD      -
+      0.080 0.134   1.130 -0.184 1.164 1.107       1.172     0.147     -0.184     8.148     DD      -
+    CADENCE: incumbent W | SEL-SHARPE M | MODE-LOO M | oracle M
+      point  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover fail4a fail4b
+          D 0.111   0.990 -0.161 0.946 1.033       1.098     0.129     -0.161    22.337     DD     H1
+          W 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452     DD      -
+          M 0.148   1.208 -0.196 1.219 1.206       1.287     0.167     -0.196     4.277     DD      -
+          Q 0.136   1.027 -0.272 1.090 0.994       1.081     0.156     -0.272     2.410     DD     DD
+    SLEEVE: incumbent 0.0 | SEL-SHARPE 0.3 | MODE-LOO 0.3 | oracle 0.3
+      point  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover fail4a fail4b
+      0.000 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452     DD      -
+      0.050 0.125   1.130 -0.173 1.135 1.132       1.198     0.141     -0.173     9.020     DD      -
+      0.100 0.121   1.152 -0.164 1.161 1.153       1.220     0.137     -0.164     8.586     DD      -
+      0.150 0.117   1.176 -0.154 1.187 1.175       1.242     0.132     -0.154     8.151     DD      -
+      0.200 0.113   1.199 -0.145 1.213 1.197       1.264     0.128     -0.145     7.714     DD      -
+      0.250 0.109   1.221 -0.136 1.238 1.219       1.286     0.124     -0.136     7.274      -      -
+      0.300 0.105   1.242 -0.126 1.260 1.240       1.306     0.120     -0.126     6.833      -   CAGR
+
+==========================================================================================================================
+PREDICTIONS SCORECARD (all written before any number above was read)
+  P1 reproduction [a]+[b]+[c]                 : HIT
+  P2 mode beats selector on >= 4 of 5 dials    : MISS  (ahead on 3/5, tied 1/5, behind 1/5)
+  P3 |mean d| < 0.01 on GROSS and SLEEVE       : HIT  (GROSS -0.0001, SLEEVE +0.0000)
+  P4 agreeing books contribute exactly 0       : HIT   (deviation counts: {'GROSS': 3, 'N': 41, 'BAND': 10, 'CADENCE': 9, 'SLEEVE': 0})
+  P5 mode does NOT beat the incumbent on all 5 : HIT  (mode beats CONST on 3/5)
+  P6 |MODE-IC - MODE-LOO| < 0.01 Sharpe        : HIT  (max over dials 0.0000)
+  P7 no new 4b KEEP                            : see note  (250 of 1908 rows pass 4b; 36 on fixed panels, all re-parameterisations)
+
+done in 99s
