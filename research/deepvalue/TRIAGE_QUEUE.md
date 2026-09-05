@@ -1,22 +1,20 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T03:13:08Z · open 2 · in progress 0 · done 483_
+_Source: universe_under2b.csv · updated 2026-09-05T03:37:05Z · open 0 · in progress 0 · done 485_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (2)
+## Open (0)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| DDD | 3D SYSTEMS CORP | $551.6M |
-| NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
 ## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (483)
+## Done (485)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +501,5 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | RGP | RESOURCES CONNECTION, INC. | $146.0M | cloudA | 2026-09-05T03:13:08Z |
 | AIRS | Airsculpt Technologies, Inc. | $183.1M | cloudA | 2026-09-05T03:13:08Z |
 | JELD | JELD-WEN Holding, Inc. | $197.0M | cloudA | 2026-09-05T03:13:08Z |
+| DDD | 3D SYSTEMS CORP | $551.6M | cloudB | 2026-09-05T03:37:05Z |
+| NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M | cloudB | 2026-09-05T03:37:05Z |
