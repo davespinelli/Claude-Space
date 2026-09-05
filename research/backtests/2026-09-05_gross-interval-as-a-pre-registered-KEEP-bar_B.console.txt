@@ -1,0 +1,576 @@
+========================================================================================================================================================================================================
+IDEA 90 — gross-interval-as-a-pre-registered-KEEP-bar.  Is the WIDTH of a book's 4b-passing gross interval a robustness statistic, or only a description?
+corpus = 3 panels x 3 books x 17 arms x 2 costs = 306 BOOKS x 25 gross points m in [0.1, 1.3] = 7650 backtests
+IS <= 2016-12-31   OOS >= 2017-01-01   weekly, t+1, 75% target gross at m=1.00, costs [10.0, 25.0] bps.  Bars held at the published phi=0.7, delta=0.6.
+TUNED (2): w* in [np.float64(0.0), np.float64(0.05), np.float64(0.1), np.float64(0.15), np.float64(0.2), np.float64(0.25), np.float64(0.3), np.float64(0.35), np.float64(0.4), np.float64(0.45), np.float64(0.5), np.float64(0.55), np.float64(0.6)]   k in [1, 2, 3, 4].  Gross ceiling m_max in [1.0, 1.3] is an ARM.
+========================================================================================================================================================================================================
+
+--- PANEL u56: universe.json(56) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full  CAGR 15.23%  halves 0.957/0.834  MaxDD -33.72%  OOS Sharpe 0.882
+    SPY OOS   CAGR 15.45%  Sharpe 0.882  MaxDD -33.72%   |   RULES v1 OOS @10bps 7.73%/0.747/-13.83%
+    ... u56/V1u@10bps done (425 rows)
+    ... u56/V1u@25bps done (425 rows)
+    ... u56/TOP20@10bps done (425 rows)
+    ... u56/TOP20@25bps done (425 rows)
+    ... u56/EWall@10bps done (425 rows)
+    ... u56/EWall@25bps done (425 rows)
+
+--- PANEL broad: universe_broad.json(136) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full  CAGR 15.23%  halves 0.957/0.834  MaxDD -33.72%  OOS Sharpe 0.882
+    SPY OOS   CAGR 15.45%  Sharpe 0.882  MaxDD -33.72%   |   RULES v1 OOS @10bps 5.94%/0.576/-21.19%
+    ... broad/V1u@10bps done (425 rows)
+    ... broad/V1u@25bps done (425 rows)
+    ... broad/TOP20@10bps done (425 rows)
+    ... broad/TOP20@25bps done (425 rows)
+    ... broad/EWall@10bps done (425 rows)
+    ... broad/EWall@25bps done (425 rows)
+
+--- PANEL small: prices_small(439, SPY held out) | 2010-01-04 -> 2026-09-04 | eval from 2011-01-13
+    SPY full  CAGR 14.13%  halves 0.891/0.858  MaxDD -33.72%  OOS Sharpe 0.882
+    SPY OOS   CAGR 15.45%  Sharpe 0.882  MaxDD -33.72%   |   RULES v1 OOS @10bps 7.92%/0.581/-32.84%
+    ... small/V1u@10bps done (425 rows)
+    ... small/V1u@25bps done (425 rows)
+    ... small/TOP20@10bps done (425 rows)
+    ... small/TOP20@25bps done (425 rows)
+    ... small/EWall@10bps done (425 rows)
+    ... small/EWall@25bps done (425 rows)
+
+family frame: 7650 rows x 50 cols, 306 books, 25 gross points
+
+========================================================================================================================================================================================================
+HARNESS CHECK — rebuild vs idea 144's committed family.csv.gz (run before any new number)
+========================================================================================================================================================================================================
+rows: idea144 7650  this run 7650  index identical: True
+shared numeric columns compared: 26 over 7650 common rows  ->  max|diff| = 5.000e-07 (on IS_Sharpe)
+    idea 144's CSV is written rounded to 6 decimals, so 5e-7 is the file's own quantisation, not a harness difference; the bar is 1e-6.
+pass4a disagreements: 0 of 7650
+idea 144 census reproduced: FAMILY-4b passes at m<=1.30 = 72 (idea 144 published 72);  at m<=1.00 = 58 (published 58);  POINT-4b at m=1.00 = 29 (published 29)
+4a passes at m=1.00: 97;  anywhere in the family: 184
+
+========================================================================================================================================================================================================
+Q1 — IS THE PASSING SET AN INTERVAL?  (if not, 'width' is the wrong object)
+========================================================================================================================================================================================================
+full bars, m<=<1.00>:  58 of 306 books have a non-empty passing set; contiguous in 58 of 58 (100.0%); n_runs max 1
+full bars, m<=<1.30>:  72 of 306 books have a non-empty passing set; contiguous in 72 of 72 (100.0%); n_runs max 1
+  IS bars, m<=<1.00>:  62 of 306 books have a non-empty passing set; contiguous in 62 of 62 (100.0%); n_runs max 1
+  IS bars, m<=<1.30>:  67 of 306 books have a non-empty passing set; contiguous in 66 of 67 (98.5%); n_runs max 2
+ OOS bars, m<=<1.00>:  55 of 306 books have a non-empty passing set; contiguous in 55 of 55 (100.0%); n_runs max 1
+ OOS bars, m<=<1.30>:  71 of 306 books have a non-empty passing set; contiguous in 70 of 71 (98.6%); n_runs max 2
+
+non-contiguous books (full bars, m<=1.30) — the exceptions, listed in full:
+    (none)
+
+contiguity by arm kind (full bars, m<=1.30, non-empty books only):
+            books  contiguous  mean_runs
+pure  kind                              
+False bud       9           9      1.000
+      dd        8           8      1.000
+True  ctl       5           5      1.000
+      gate     46          46      1.000
+      stop      4           4      1.000
+
+========================================================================================================================================================================================================
+Q2 — CENSUS.  [m_lo, m_hi] and its width for every corpus book, per cell.
+========================================================================================================================================================================================================
+
+--- gross ceiling m_max = 1.00
+          books  nonempty  mean_width  max_width  mean_width_pass  median_width_pass
+cell                                                                                
+broad@10     51        13       0.027      0.200            0.108              0.100
+broad@25     51         3       0.007      0.150            0.117              0.150
+small@10     51         0       0.000      0.000              NaN                NaN
+small@25     51         0       0.000      0.000              NaN                NaN
+u56@10       51        24       0.079      0.300            0.169              0.150
+u56@25       51        18       0.040      0.200            0.114              0.100
+width distribution over non-empty books: 0=0.05, 25=0.05, 50=0.10, 75=0.20, 100=0.30
+
+top 15 books by interval width:
+                       book_id  kind  m_lo  m_hi  width  n_runs
+240    u56|TOP20|10.0|band3-dg  gate 0.750 1.000  0.300       1
+241    u56|TOP20|10.0|band3-rw  gate 0.750 1.000  0.300       1
+245   u56|TOP20|10.0|ebud-0.10   bud 0.700 0.950  0.300       1
+248     u56|TOP20|10.0|g200-rw  gate 0.750 1.000  0.300       1
+242     u56|TOP20|10.0|control   ctl 0.700 0.900  0.250       1
+246   u56|TOP20|10.0|ebud-0.20   bud 0.700 0.900  0.250       1
+247     u56|TOP20|10.0|g200-dg  gate 0.800 1.000  0.250       1
+254    u56|TOP20|10.0|vol60-rw  gate 0.800 1.000  0.250       1
+36   broad|TOP20|10.0|band3-dg  gate 0.750 0.900  0.200       1
+37   broad|TOP20|10.0|band3-rw  gate 0.750 0.900  0.200       1
+252   u56|TOP20|10.0|v1gate-rw  gate 0.850 1.000  0.200       1
+253    u56|TOP20|10.0|vol60-dg  gate 0.850 1.000  0.200       1
+257    u56|TOP20|25.0|band3-dg  gate 0.850 1.000  0.200       1
+258    u56|TOP20|25.0|band3-rw  gate 0.850 1.000  0.200       1
+262   u56|TOP20|25.0|ebud-0.10   bud 0.800 0.950  0.200       1
+
+--- gross ceiling m_max = 1.30
+          books  nonempty  mean_width  max_width  mean_width_pass  median_width_pass
+cell                                                                                
+broad@10     51        14       0.035      0.200            0.129              0.150
+broad@25     51         4       0.012      0.200            0.150              0.150
+small@10     51         0       0.000      0.000              NaN                NaN
+small@25     51         0       0.000      0.000              NaN                NaN
+u56@10       51        31       0.123      0.400            0.202              0.250
+u56@25       51        23       0.061      0.300            0.135              0.100
+width distribution over non-empty books: 0=0.05, 25=0.10, 50=0.15, 75=0.21, 100=0.40
+
+top 15 books by interval width:
+                               book_id  kind  m_lo  m_hi  width  n_runs
+253            u56|TOP20|10.0|vol60-dg  gate 0.850 1.200  0.400       1
+207            u56|EWall|10.0|band3-rw  gate 0.900 1.150  0.300       1
+219            u56|EWall|10.0|vol60-dg  gate 0.950 1.200  0.300       1
+236            u56|EWall|25.0|vol60-dg  gate 0.950 1.200  0.300       1
+240            u56|TOP20|10.0|band3-dg  gate 0.750 1.000  0.300       1
+241            u56|TOP20|10.0|band3-rw  gate 0.750 1.000  0.300       1
+244  u56|TOP20|10.0|ddctl-8/.5/recover    dd 0.950 1.200  0.300       1
+245           u56|TOP20|10.0|ebud-0.10   bud 0.700 0.950  0.300       1
+248             u56|TOP20|10.0|g200-rw  gate 0.750 1.000  0.300       1
+251           u56|TOP20|10.0|v1gate-dg  gate 0.950 1.200  0.300       1
+252           u56|TOP20|10.0|v1gate-rw  gate 0.850 1.100  0.300       1
+254            u56|TOP20|10.0|vol60-rw  gate 0.800 1.050  0.300       1
+218           u56|EWall|10.0|v1gate-rw  gate 1.050 1.250  0.250       1
+220            u56|EWall|10.0|vol60-rw  gate 0.900 1.100  0.250       1
+242             u56|TOP20|10.0|control   ctl 0.700 0.900  0.250       1
+
+by arm kind (full bars, m<=1.30):
+            books  nonempty  mean_width
+pure  kind                             
+False bud      36         9       0.031
+      dd       36         8       0.038
+True  ctl      18         5       0.028
+      gate    180        46       0.047
+      stop     36         4       0.010
+
+--- the queue's operational KEEP: non-empty on BOTH large-cap universes at BOTH costs
+
+m_max = 1.00   (cells = how many of the 4 large-cap cells are non-empty; i_width = width of the INTERSECTION)
+                          broad@10  broad@25  u56@10  u56@25  cells  min_width  i_lo  i_hi  i_width
+ba                                                                                                 
+EWall|vol60-rw                0.15      0.15    0.15    0.15      4       0.15  0.90  0.95     0.10
+EWall|vol60-dg                0.15      0.15    0.10    0.10      4       0.10  0.95  1.00     0.10
+EWall|band3-rw                0.10      0.05    0.15    0.10      4       0.05  1.00  1.00     0.05
+TOP20|abs12-rw                0.05      0.00    0.10    0.05      3       0.00   NaN   NaN     0.00
+TOP20|band3-dg                0.20      0.00    0.30    0.20      3       0.00   NaN   NaN     0.00
+TOP20|band3-rw                0.20      0.00    0.30    0.20      3       0.00   NaN   NaN     0.00
+TOP20|control                 0.05      0.00    0.25    0.10      3       0.00   NaN   NaN     0.00
+TOP20|ebud-0.20               0.05      0.00    0.25    0.10      3       0.00   NaN   NaN     0.00
+TOP20|g200-dg                 0.15      0.00    0.25    0.20      3       0.00   NaN   NaN     0.00
+TOP20|g200-rw                 0.10      0.00    0.30    0.20      3       0.00   NaN   NaN     0.00
+EWall|control                 0.00      0.00    0.05    0.05      2       0.00   NaN   NaN     0.00
+EWall|ebud-0.10               0.00      0.00    0.05    0.05      2       0.00   NaN   NaN     0.00
+EWall|ebud-0.20               0.00      0.00    0.05    0.05      2       0.00   NaN   NaN     0.00
+EWall|g200-rw                 0.10      0.00    0.10    0.00      2       0.00   NaN   NaN     0.00
+TOP20|abs12-dg                0.05      0.00    0.15    0.00      2       0.00   NaN   NaN     0.00
+TOP20|ebud-0.10               0.00      0.00    0.30    0.20      2       0.00   NaN   NaN     0.00
+TOP20|stop15                  0.00      0.00    0.15    0.05      2       0.00   NaN   NaN     0.00
+TOP20|stop25                  0.00      0.00    0.10    0.05      2       0.00   NaN   NaN     0.00
+TOP20|vol60-dg                0.00      0.00    0.20    0.05      2       0.00   NaN   NaN     0.00
+TOP20|vol60-rw                0.00      0.00    0.25    0.15      2       0.00   NaN   NaN     0.00
+EWall|abs12-rw                0.00      0.00    0.10    0.00      1       0.00   NaN   NaN     0.00
+EWall|v1gate-rw               0.05      0.00    0.00    0.00      1       0.00   NaN   NaN     0.00
+TOP20|ddctl-8/.5/recover      0.00      0.00    0.10    0.00      1       0.00   NaN   NaN     0.00
+TOP20|v1gate-dg               0.00      0.00    0.10    0.00      1       0.00   NaN   NaN     0.00
+TOP20|v1gate-rw               0.00      0.00    0.20    0.00      1       0.00   NaN   NaN     0.00
+EWall|abs12-dg                0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|band3-dg                0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|ddctl-8/.5/high         0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|ddctl-8/.5/recover      0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|g200-dg                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|stop15                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|stop25                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|v1gate-dg               0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+TOP20|ddctl-8/.5/high         0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|abs12-dg                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|abs12-rw                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|band3-dg                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|band3-rw                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|control                   0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|ddctl-8/.5/high           0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|ddctl-8/.5/recover        0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|ebud-0.10                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|ebud-0.20                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|g200-dg                   0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|g200-rw                   0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|stop15                    0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|stop25                    0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|v1gate-dg                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|v1gate-rw                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|vol60-dg                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|vol60-rw                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+books with all 4 cells non-empty: 3 of 51; with a non-empty INTERSECTION: 3
+
+m_max = 1.30   (cells = how many of the 4 large-cap cells are non-empty; i_width = width of the INTERSECTION)
+                          broad@10  broad@25  u56@10  u56@25  cells  min_width  i_lo  i_hi  i_width
+ba                                                                                                 
+EWall|vol60-dg                0.20      0.20    0.30    0.30      4       0.20  0.95  1.05     0.15
+EWall|vol60-rw                0.15      0.15    0.25    0.20      4       0.15  0.90  0.95     0.10
+EWall|band3-rw                0.15      0.10    0.30    0.20      4       0.10  1.00  1.05     0.10
+EWall|ddctl-8/.5/recover      0.15      0.15    0.20    0.20      4       0.15  1.15  1.15     0.05
+EWall|g200-rw                 0.10      0.00    0.15    0.05      3       0.00   NaN   NaN     0.00
+TOP20|abs12-rw                0.05      0.00    0.10    0.05      3       0.00   NaN   NaN     0.00
+TOP20|band3-dg                0.20      0.00    0.30    0.20      3       0.00   NaN   NaN     0.00
+TOP20|band3-rw                0.20      0.00    0.30    0.20      3       0.00   NaN   NaN     0.00
+TOP20|control                 0.05      0.00    0.25    0.10      3       0.00   NaN   NaN     0.00
+TOP20|ebud-0.20               0.05      0.00    0.25    0.10      3       0.00   NaN   NaN     0.00
+TOP20|g200-dg                 0.15      0.00    0.25    0.20      3       0.00   NaN   NaN     0.00
+TOP20|g200-rw                 0.10      0.00    0.30    0.20      3       0.00   NaN   NaN     0.00
+EWall|abs12-dg                0.00      0.00    0.10    0.05      2       0.00   NaN   NaN     0.00
+EWall|band3-dg                0.00      0.00    0.10    0.05      2       0.00   NaN   NaN     0.00
+EWall|control                 0.00      0.00    0.05    0.05      2       0.00   NaN   NaN     0.00
+EWall|ddctl-8/.5/high         0.00      0.00    0.15    0.10      2       0.00   NaN   NaN     0.00
+EWall|ebud-0.10               0.00      0.00    0.05    0.05      2       0.00   NaN   NaN     0.00
+EWall|ebud-0.20               0.00      0.00    0.05    0.05      2       0.00   NaN   NaN     0.00
+EWall|v1gate-rw               0.20      0.00    0.25    0.00      2       0.00   NaN   NaN     0.00
+TOP20|abs12-dg                0.05      0.00    0.15    0.00      2       0.00   NaN   NaN     0.00
+TOP20|ebud-0.10               0.00      0.00    0.30    0.20      2       0.00   NaN   NaN     0.00
+TOP20|stop15                  0.00      0.00    0.15    0.05      2       0.00   NaN   NaN     0.00
+TOP20|stop25                  0.00      0.00    0.10    0.05      2       0.00   NaN   NaN     0.00
+TOP20|vol60-dg                0.00      0.00    0.40    0.25      2       0.00   NaN   NaN     0.00
+TOP20|vol60-rw                0.00      0.00    0.30    0.20      2       0.00   NaN   NaN     0.00
+EWall|abs12-rw                0.00      0.00    0.10    0.00      1       0.00   NaN   NaN     0.00
+EWall|g200-dg                 0.00      0.00    0.05    0.00      1       0.00   NaN   NaN     0.00
+TOP20|ddctl-8/.5/high         0.00      0.00    0.10    0.00      1       0.00   NaN   NaN     0.00
+TOP20|ddctl-8/.5/recover      0.00      0.00    0.30    0.00      1       0.00   NaN   NaN     0.00
+TOP20|v1gate-dg               0.00      0.00    0.30    0.00      1       0.00   NaN   NaN     0.00
+TOP20|v1gate-rw               0.00      0.00    0.30    0.00      1       0.00   NaN   NaN     0.00
+EWall|stop15                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|stop25                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+EWall|v1gate-dg               0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|abs12-dg                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|abs12-rw                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|band3-dg                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|band3-rw                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|control                   0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|ddctl-8/.5/high           0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|ddctl-8/.5/recover        0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|ebud-0.10                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|ebud-0.20                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|g200-dg                   0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|g200-rw                   0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|stop15                    0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|stop25                    0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|v1gate-dg                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|v1gate-rw                 0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|vol60-dg                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+V1u|vol60-rw                  0.00      0.00    0.00    0.00      0       0.00   NaN   NaN     0.00
+books with all 4 cells non-empty: 4 of 51; with a non-empty INTERSECTION: 4
+
+========================================================================================================================================================================================================
+Q3 — IS THE WIDTH INFORMATIVE?  (a) cross-cell portability   (b) IS -> OOS
+========================================================================================================================================================================================================
+
+(a) pairwise Spearman of interval WIDTH across the four large-cap cells:
+          broad@10  broad@25  u56@10  u56@25
+broad@10     1.000     0.518   0.575   0.589
+broad@25     0.518     1.000   0.308   0.449
+u56@10       0.575     0.308   1.000   0.732
+u56@25       0.589     0.449   0.732   1.000
+
+(a) does width in one cell predict a non-empty interval in the other three?
+        cell   thr  n_sel  P_others_given  P_others_base  lift
+0   broad@10 0.050     14           0.286          0.078 0.207
+1   broad@10 0.150      8           0.500          0.078 0.422
+2   broad@10 0.300      0             NaN          0.078   NaN
+3   broad@10 0.500      0             NaN          0.078   NaN
+4   broad@10   NaN     14           0.286          0.078 0.207
+5   broad@25 0.050      4           1.000          0.235 0.765
+6   broad@25 0.150      3           1.000          0.235 0.765
+7   broad@25 0.300      0             NaN          0.235   NaN
+8   broad@25 0.500      0             NaN          0.235   NaN
+9   broad@25   NaN      4           1.000          0.235 0.765
+10    u56@10 0.050     31           0.129          0.078 0.051
+11    u56@10 0.150     21           0.190          0.078 0.112
+12    u56@10 0.300     11           0.182          0.078 0.103
+13    u56@10 0.500      0             NaN          0.078   NaN
+14    u56@10   NaN     31           0.129          0.078 0.051
+15    u56@25 0.050     23           0.174          0.078 0.095
+16    u56@25 0.150     11           0.364          0.078 0.285
+17    u56@25 0.300      1           1.000          0.078 0.922
+18    u56@25 0.500      0             NaN          0.078   NaN
+19    u56@25   NaN     23           0.174          0.078 0.095
+    (thr = NaN row is the plain pass/fail: non-empty at all.  The question idea 90 asks is whether the graded rows beat that one.)
+
+(a) Spearman(width in cell, number of OTHER cells non-empty), per cell:
+      broad@10: rho = +0.596   |   binary pass/fail rho = +0.594
+      broad@25: rho = +0.405   |   binary pass/fail rho = +0.405
+        u56@10: rho = +0.712   |   binary pass/fail rho = +0.741
+        u56@25: rho = +0.758   |   binary pass/fail rho = +0.733
+
+(b) IS width (2009-2016 bars) vs OOS outcome (2017-2026), all 306 books, m<=1.30:
+    IS non-empty: 67 of 306;  OOS non-empty: 71 of 306
+    Spearman(IS_width, OOS_width)       = +0.307
+    Spearman(IS_width, OOS_Sharpe@m=1)  = +0.540
+    Spearman(IS_pass , OOS_width)       = +0.296   <- the pass/fail it must beat
+    Spearman(IS_pass , OOS_Sharpe@m=1)  = +0.546
+    Spearman(IS_Sharpe@m=1, OOS_Sharpe@m=1) = +0.902   <- the incumbent selector's signal
+
+    within IS-passing books only (does the GRADE add anything to the pass?):
+      n = 67;  Spearman(IS_width, OOS_width) = +0.177;  Spearman(IS_width, OOS_Sharpe@m=1) = +0.055
+
+    P(OOS non-empty | IS width >= w), against the base rate and against IS_pass:
+       w    n  P_OOS_pass  mean_OOS_Sharpe  mean_OOS_CAGR
+0  0.000  306       0.232            0.715          0.086
+1  0.050   67       0.478            1.049          0.131
+2  0.100   64       0.484            1.049          0.132
+3  0.150   62       0.500            1.049          0.133
+4  0.200   43       0.512            1.041          0.135
+5  0.250   32       0.656            1.053          0.138
+6  0.300   18       0.444            1.010          0.143
+7  0.350   11       0.636            1.048          0.144
+8  0.400    6       0.667            1.049          0.148
+9  0.450    1       0.000            0.854          0.122
+10 0.500    1       0.000            0.854          0.122
+11 0.550    1       0.000            0.854          0.122
+12 0.600    0         NaN              NaN            NaN
+    base rate P(OOS non-empty) = 0.232;  P(OOS non-empty | IS_pass) = 0.478;  P(OOS non-empty | not IS_pass) = 0.163
+
+    by panel (the IS->OOS relation is not pooled-safe):
+              n  IS_pass  OOS_pass  rho_width  rho_pass  rho_width_sharpe
+cell                                                                     
+broad@10 51.000   28.000     7.000      0.268     0.260             0.511
+broad@25 51.000   11.000     4.000      0.405     0.386             0.547
+small@10 51.000    0.000     0.000        NaN       NaN               NaN
+small@25 51.000    0.000     0.000        NaN       NaN               NaN
+u56@10   51.000   19.000    32.000      0.308     0.300             0.380
+u56@25   51.000    9.000    28.000      0.086     0.070             0.483
+
+========================================================================================================================================================================================================
+Q4 — WIDTH AS A BAR.  Grid: w* x k, all points reported.  Admitted-set OOS quality is the test; a bar that admits fewer books but no better ones is not a bar.
+========================================================================================================================================================================================================
+    w_star  k  admitted  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD
+0    0.000  1        51            0.827          0.094          -0.199
+1    0.000  2        51            0.827          0.094          -0.199
+2    0.000  3        51            0.827          0.094          -0.199
+3    0.000  4        51            0.827          0.094          -0.199
+4    0.050  1        31            1.022          0.123          -0.200
+5    0.050  2        25            1.033          0.127          -0.207
+6    0.050  3        12            1.039          0.133          -0.208
+7    0.050  4         4            1.126          0.118          -0.180
+8    0.100  1        27            1.006          0.123          -0.199
+9    0.100  2        16            1.025          0.126          -0.199
+10   0.100  3         8            1.060          0.130          -0.197
+11   0.100  4         4            1.126          0.118          -0.180
+12   0.150  1        21            1.003          0.125          -0.201
+13   0.150  2        12            1.029          0.127          -0.194
+14   0.150  3         7            1.070          0.128          -0.194
+15   0.150  4         3            1.132          0.117          -0.180
+16   0.200  1        17            1.006          0.127          -0.198
+17   0.200  2        12            1.029          0.127          -0.194
+18   0.200  3         3            1.047          0.135          -0.199
+19   0.200  4         1            1.144          0.120          -0.178
+20   0.250  1        16            0.999          0.128          -0.200
+21   0.250  2         2            1.042          0.119          -0.177
+22   0.250  3         0              NaN            NaN             NaN
+23   0.250  4         0              NaN            NaN             NaN
+24   0.300  1        11            0.989          0.126          -0.194
+25   0.300  2         1            1.144          0.120          -0.178
+26   0.300  3         0              NaN            NaN             NaN
+27   0.300  4         0              NaN            NaN             NaN
+28   0.350  1         1            0.941          0.118          -0.176
+29   0.350  2         0              NaN            NaN             NaN
+30   0.350  3         0              NaN            NaN             NaN
+31   0.350  4         0              NaN            NaN             NaN
+32   0.400  1         1            0.941          0.118          -0.176
+33   0.400  2         0              NaN            NaN             NaN
+34   0.400  3         0              NaN            NaN             NaN
+35   0.400  4         0              NaN            NaN             NaN
+36   0.450  1         0              NaN            NaN             NaN
+37   0.450  2         0              NaN            NaN             NaN
+38   0.450  3         0              NaN            NaN             NaN
+39   0.450  4         0              NaN            NaN             NaN
+40   0.500  1         0              NaN            NaN             NaN
+41   0.500  2         0              NaN            NaN             NaN
+42   0.500  3         0              NaN            NaN             NaN
+43   0.500  4         0              NaN            NaN             NaN
+44   0.550  1         0              NaN            NaN             NaN
+45   0.550  2         0              NaN            NaN             NaN
+46   0.550  3         0              NaN            NaN             NaN
+47   0.550  4         0              NaN            NaN             NaN
+48   0.600  1         0              NaN            NaN             NaN
+49   0.600  2         0              NaN            NaN             NaN
+50   0.600  3         0              NaN            NaN             NaN
+51   0.600  4         0              NaN            NaN             NaN
+
+reference — the incumbent 'non-empty in all 4 cells' bar (w*=0.05, k=4): admits 4, mean OOS Sharpe 1.126, CAGR 11.84%, MaxDD -18.04%
+reference — POINT-4b in >= 1 of 4 cells: admits 15, mean OOS Sharpe 1.005, CAGR 12.37%, MaxDD -19.39%
+reference — POINT-4b in >= 2 of 4 cells: admits 10, mean OOS Sharpe 1.028, CAGR 12.93%, MaxDD -19.77%
+reference — POINT-4b in >= 3 of 4 cells: admits 2, mean OOS Sharpe 1.126, CAGR 12.14%, MaxDD -18.01%
+reference — POINT-4b in >= 4 of 4 cells: admits 2, mean OOS Sharpe 1.126, CAGR 12.14%, MaxDD -18.01%
+reference — the whole large-cap corpus (no bar): 51 books, mean OOS Sharpe 0.827, CAGR 9.40%, MaxDD -19.89%
+
+========================================================================================================================================================================================================
+Q5 — RULE 8 WALK-FORWARD.  Screens read 2009-2016 ONLY; picks read once on 2017-2026.
+    S0  no screen        : IS-Sharpe argmax at the published m = 1.00
+    S1  IS-POINT-4b      : screen at m=1.00, then IS-Sharpe argmax   (the incumbent)
+    S2  IS-FAMILY-4b     : any m clears the IS bars, then IS-Sharpe argmax at its m*
+    S3  IS-WIDTH (new)   : widest IS interval, traded at its MIDPOINT m
+    S4  IS-WIDTH @ m=1   : widest IS interval, traded at the published m (isolates the selection from the gross choice)
+========================================================================================================================================================================================================
+
+per-cell picks and their untouched OOS numbers:
+sel                S0    S1    S2    S3    S4
+cell                                         
+broad|EWall|10  1.122 1.122 1.122 1.076 1.076
+broad|EWall|25  1.102 1.102 1.102 1.102 1.102
+broad|TOP20|10  0.854 0.854 0.839 0.854 0.854
+broad|TOP20|25  0.751 0.751 0.747 0.751 0.751
+broad|V1u|10    0.399   NaN   NaN   NaN   NaN
+broad|V1u|25    0.000   NaN   NaN   NaN   NaN
+small|EWall|10  0.637   NaN   NaN   NaN   NaN
+small|EWall|25  0.683   NaN   NaN   NaN   NaN
+small|TOP20|10  0.792   NaN   NaN   NaN   NaN
+small|TOP20|25  0.681   NaN   NaN   NaN   NaN
+small|V1u|10    0.244   NaN   NaN   NaN   NaN
+small|V1u|25   -0.076   NaN   NaN   NaN   NaN
+u56|EWall|10    1.031 1.031 1.031 1.202 1.203
+u56|EWall|25    1.125 1.125 1.125 1.125 1.125
+u56|TOP20|10    1.168 1.168 1.168 1.168 1.168
+u56|TOP20|25    1.072   NaN   NaN   NaN   NaN
+u56|V1u|10      0.714   NaN   NaN   NaN   NaN
+u56|V1u|25      0.211   NaN   NaN   NaN   NaN
+
+full pick table:
+              cell  panel   book   cost sel                 arm     m  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+0       u56|V1u|10    u56    V1u 10.000  S0             control 1.000     0.072       0.714     -0.157
+1       u56|V1u|10    u56    V1u 10.000  S1                 NaN   NaN       NaN         NaN        NaN
+2       u56|V1u|10    u56    V1u 10.000  S2                 NaN   NaN       NaN         NaN        NaN
+3       u56|V1u|10    u56    V1u 10.000  S3                 NaN   NaN       NaN         NaN        NaN
+4       u56|V1u|10    u56    V1u 10.000  S4                 NaN   NaN       NaN         NaN        NaN
+5       u56|V1u|25    u56    V1u 25.000  S0           ebud-0.10 1.000     0.010       0.211     -0.111
+6       u56|V1u|25    u56    V1u 25.000  S1                 NaN   NaN       NaN         NaN        NaN
+7       u56|V1u|25    u56    V1u 25.000  S2                 NaN   NaN       NaN         NaN        NaN
+8       u56|V1u|25    u56    V1u 25.000  S3                 NaN   NaN       NaN         NaN        NaN
+9       u56|V1u|25    u56    V1u 25.000  S4                 NaN   NaN       NaN         NaN        NaN
+10    u56|TOP20|10    u56  TOP20 10.000  S0             control 1.000     0.166       1.168     -0.222
+11    u56|TOP20|10    u56  TOP20 10.000  S1             control 1.000     0.166       1.168     -0.222
+12    u56|TOP20|10    u56  TOP20 10.000  S2             control 1.100     0.183       1.168     -0.242
+13    u56|TOP20|10    u56  TOP20 10.000  S3             control 0.950     0.158       1.168     -0.212
+14    u56|TOP20|10    u56  TOP20 10.000  S4             control 1.000     0.166       1.168     -0.222
+15    u56|TOP20|25    u56  TOP20 25.000  S0             control 1.000     0.151       1.072     -0.223
+16    u56|TOP20|25    u56  TOP20 25.000  S1                 NaN   NaN       NaN         NaN        NaN
+17    u56|TOP20|25    u56  TOP20 25.000  S2                 NaN   NaN       NaN         NaN        NaN
+18    u56|TOP20|25    u56  TOP20 25.000  S3                 NaN   NaN       NaN         NaN        NaN
+19    u56|TOP20|25    u56  TOP20 25.000  S4                 NaN   NaN       NaN         NaN        NaN
+20    u56|EWall|10    u56  EWall 10.000  S0            abs12-rw 1.000     0.120       1.031     -0.199
+21    u56|EWall|10    u56  EWall 10.000  S1            abs12-rw 1.000     0.120       1.031     -0.199
+22    u56|EWall|10    u56  EWall 10.000  S2            abs12-rw 1.050     0.126       1.031     -0.208
+23    u56|EWall|10    u56  EWall 10.000  S3            band3-rw 1.150     0.155       1.202     -0.202
+24    u56|EWall|10    u56  EWall 10.000  S4            band3-rw 1.000     0.134       1.203     -0.177
+25    u56|EWall|25    u56  EWall 25.000  S0             control 1.000     0.137       1.125     -0.225
+26    u56|EWall|25    u56  EWall 25.000  S1             control 1.000     0.137       1.125     -0.225
+27    u56|EWall|25    u56  EWall 25.000  S2             control 1.050     0.144       1.125     -0.236
+28    u56|EWall|25    u56  EWall 25.000  S3             control 0.950     0.130       1.125     -0.215
+29    u56|EWall|25    u56  EWall 25.000  S4             control 1.000     0.137       1.125     -0.225
+30    broad|V1u|10  broad    V1u 10.000  S0           ebud-0.20 1.000     0.029       0.399     -0.179
+31    broad|V1u|10  broad    V1u 10.000  S1                 NaN   NaN       NaN         NaN        NaN
+32    broad|V1u|10  broad    V1u 10.000  S2                 NaN   NaN       NaN         NaN        NaN
+33    broad|V1u|10  broad    V1u 10.000  S3                 NaN   NaN       NaN         NaN        NaN
+34    broad|V1u|10  broad    V1u 10.000  S4                 NaN   NaN       NaN         NaN        NaN
+35    broad|V1u|25  broad    V1u 25.000  S0           ebud-0.10 1.000    -0.001       0.000     -0.113
+36    broad|V1u|25  broad    V1u 25.000  S1                 NaN   NaN       NaN         NaN        NaN
+37    broad|V1u|25  broad    V1u 25.000  S2                 NaN   NaN       NaN         NaN        NaN
+38    broad|V1u|25  broad    V1u 25.000  S3                 NaN   NaN       NaN         NaN        NaN
+39    broad|V1u|25  broad    V1u 25.000  S4                 NaN   NaN       NaN         NaN        NaN
+40  broad|TOP20|10  broad  TOP20 10.000  S0           ebud-0.10 1.000     0.122       0.854     -0.229
+41  broad|TOP20|10  broad  TOP20 10.000  S1           ebud-0.10 1.000     0.122       0.854     -0.229
+42  broad|TOP20|10  broad  TOP20 10.000  S2           ebud-0.10 1.250     0.139       0.839     -0.257
+43  broad|TOP20|10  broad  TOP20 10.000  S3           ebud-0.10 1.000     0.122       0.854     -0.229
+44  broad|TOP20|10  broad  TOP20 10.000  S4           ebud-0.10 1.000     0.122       0.854     -0.229
+45  broad|TOP20|25  broad  TOP20 25.000  S0           ebud-0.10 1.000     0.105       0.751     -0.230
+46  broad|TOP20|25  broad  TOP20 25.000  S1           ebud-0.10 1.000     0.105       0.751     -0.230
+47  broad|TOP20|25  broad  TOP20 25.000  S2           ebud-0.10 1.200     0.118       0.747     -0.253
+48  broad|TOP20|25  broad  TOP20 25.000  S3           ebud-0.10 1.000     0.105       0.751     -0.230
+49  broad|TOP20|25  broad  TOP20 25.000  S4           ebud-0.10 1.000     0.105       0.751     -0.230
+50  broad|EWall|10  broad  EWall 10.000  S0            vol60-dg 1.000     0.120       1.122     -0.187
+51  broad|EWall|10  broad  EWall 10.000  S1            vol60-dg 1.000     0.120       1.122     -0.187
+52  broad|EWall|10  broad  EWall 10.000  S2            vol60-dg 1.100     0.132       1.122     -0.205
+53  broad|EWall|10  broad  EWall 10.000  S3            band3-rw 1.100     0.132       1.076     -0.203
+54  broad|EWall|10  broad  EWall 10.000  S4            band3-rw 1.000     0.120       1.076     -0.185
+55  broad|EWall|25  broad  EWall 25.000  S0            vol60-dg 1.000     0.118       1.102     -0.187
+56  broad|EWall|25  broad  EWall 25.000  S1            vol60-dg 1.000     0.118       1.102     -0.187
+57  broad|EWall|25  broad  EWall 25.000  S2            vol60-dg 1.050     0.124       1.102     -0.196
+58  broad|EWall|25  broad  EWall 25.000  S3            vol60-dg 0.950     0.112       1.102     -0.178
+59  broad|EWall|25  broad  EWall 25.000  S4            vol60-dg 1.000     0.118       1.102     -0.187
+60    small|V1u|10  small    V1u 10.000  S0           ebud-0.20 1.000     0.019       0.244     -0.319
+61    small|V1u|10  small    V1u 10.000  S1                 NaN   NaN       NaN         NaN        NaN
+62    small|V1u|10  small    V1u 10.000  S2                 NaN   NaN       NaN         NaN        NaN
+63    small|V1u|10  small    V1u 10.000  S3                 NaN   NaN       NaN         NaN        NaN
+64    small|V1u|10  small    V1u 10.000  S4                 NaN   NaN       NaN         NaN        NaN
+65    small|V1u|25  small    V1u 25.000  S0           ebud-0.20 1.000    -0.012      -0.076     -0.379
+66    small|V1u|25  small    V1u 25.000  S1                 NaN   NaN       NaN         NaN        NaN
+67    small|V1u|25  small    V1u 25.000  S2                 NaN   NaN       NaN         NaN        NaN
+68    small|V1u|25  small    V1u 25.000  S3                 NaN   NaN       NaN         NaN        NaN
+69    small|V1u|25  small    V1u 25.000  S4                 NaN   NaN       NaN         NaN        NaN
+70  small|TOP20|10  small  TOP20 10.000  S0           ebud-0.20 1.000     0.164       0.792     -0.302
+71  small|TOP20|10  small  TOP20 10.000  S1                 NaN   NaN       NaN         NaN        NaN
+72  small|TOP20|10  small  TOP20 10.000  S2                 NaN   NaN       NaN         NaN        NaN
+73  small|TOP20|10  small  TOP20 10.000  S3                 NaN   NaN       NaN         NaN        NaN
+74  small|TOP20|10  small  TOP20 10.000  S4                 NaN   NaN       NaN         NaN        NaN
+75  small|TOP20|25  small  TOP20 25.000  S0           ebud-0.20 1.000     0.135       0.681     -0.303
+76  small|TOP20|25  small  TOP20 25.000  S1                 NaN   NaN       NaN         NaN        NaN
+77  small|TOP20|25  small  TOP20 25.000  S2                 NaN   NaN       NaN         NaN        NaN
+78  small|TOP20|25  small  TOP20 25.000  S3                 NaN   NaN       NaN         NaN        NaN
+79  small|TOP20|25  small  TOP20 25.000  S4                 NaN   NaN       NaN         NaN        NaN
+80  small|EWall|10  small  EWall 10.000  S0             control 1.000     0.101       0.637     -0.362
+81  small|EWall|10  small  EWall 10.000  S1                 NaN   NaN       NaN         NaN        NaN
+82  small|EWall|10  small  EWall 10.000  S2                 NaN   NaN       NaN         NaN        NaN
+83  small|EWall|10  small  EWall 10.000  S3                 NaN   NaN       NaN         NaN        NaN
+84  small|EWall|10  small  EWall 10.000  S4                 NaN   NaN       NaN         NaN        NaN
+85  small|EWall|25  small  EWall 25.000  S0  ddctl-8/.5/recover 1.000     0.076       0.683     -0.234
+86  small|EWall|25  small  EWall 25.000  S1                 NaN   NaN       NaN         NaN        NaN
+87  small|EWall|25  small  EWall 25.000  S2                 NaN   NaN       NaN         NaN        NaN
+88  small|EWall|25  small  EWall 25.000  S3                 NaN   NaN       NaN         NaN        NaN
+89  small|EWall|25  small  EWall 25.000  S4                 NaN   NaN       NaN         NaN        NaN
+
+cells entered, of 18: S0=18, S1=7, S2=7, S3=7, S4=7
+picks that MOVE vs the no-screen S0: {'S1': 0, 'S2': 0, 'S3': 2, 'S4': 2}
+
+PAIRED on the 7 cells every selector enters (mean of per-cell OOS statistics):
+     OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+sel                                 
+S0     0.1270      1.0219    -0.2114
+S1     0.1270      1.0219    -0.2114
+S2     0.1379      1.0192    -0.2281
+S3     0.1306      1.0397    -0.2098
+S4     0.1290      1.0397    -0.2080
+
+reference on the same paired cells:
+      SPY_CAGR  SPY_Sharpe  SPY_MaxDD  V1_CAGR  V1_Sharpe  V1_MaxDD
+mean    0.1545      0.8820    -0.3372   0.0477     0.4795   -0.1967
+
+unpaired (each selector over every cell it enters):
+     OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+sel                                 
+S0     0.0906      0.6950    -0.2312
+S1     0.1270      1.0219    -0.2114
+S2     0.1379      1.0192    -0.2281
+S3     0.1306      1.0397    -0.2098
+S4     0.1290      1.0397    -0.2080
+
+per-cell OOS Sharpe of each selector vs SPY and RULES v1 on that cell:
+sel                S0    S1    S2    S3    S4   SPY    V1
+cell                                                     
+broad|EWall|10  1.122 1.122 1.122 1.076 1.076 0.882 0.576
+broad|EWall|25  1.102 1.102 1.102 1.102 1.102 0.882 0.155
+broad|TOP20|10  0.854 0.854 0.839 0.854 0.854 0.882 0.576
+broad|TOP20|25  0.751 0.751 0.747 0.751 0.751 0.882 0.155
+broad|V1u|10    0.399   NaN   NaN   NaN   NaN 0.882 0.576
+broad|V1u|25    0.000   NaN   NaN   NaN   NaN 0.882 0.155
+small|EWall|10  0.637   NaN   NaN   NaN   NaN 0.882 0.581
+small|EWall|25  0.683   NaN   NaN   NaN   NaN 0.882 0.250
+small|TOP20|10  0.792   NaN   NaN   NaN   NaN 0.882 0.581
+small|TOP20|25  0.681   NaN   NaN   NaN   NaN 0.882 0.250
+small|V1u|10    0.244   NaN   NaN   NaN   NaN 0.882 0.581
+small|V1u|25   -0.076   NaN   NaN   NaN   NaN 0.882 0.250
+u56|EWall|10    1.031 1.031 1.031 1.202 1.203 0.882 0.747
+u56|EWall|25    1.125 1.125 1.125 1.125 1.125 0.882 0.399
+u56|TOP20|10    1.168 1.168 1.168 1.168 1.168 0.882 0.747
+u56|TOP20|25    1.072   NaN   NaN   NaN   NaN 0.882 0.399
+u56|V1u|10      0.714   NaN   NaN   NaN   NaN 0.882 0.747
+u56|V1u|25      0.211   NaN   NaN   NaN   NaN 0.882 0.399
+    S0: beats SPY OOS Sharpe in 6 of 18 cells; beats RULES v1 in 12 of 18
+    S1: beats SPY OOS Sharpe in 5 of 7 cells; beats RULES v1 in 7 of 7
+    S2: beats SPY OOS Sharpe in 5 of 7 cells; beats RULES v1 in 7 of 7
+    S3: beats SPY OOS Sharpe in 5 of 7 cells; beats RULES v1 in 7 of 7
+    S4: beats SPY OOS Sharpe in 5 of 7 cells; beats RULES v1 in 7 of 7
+
+wrote: family.csv.gz, intervals.csv, is_oos.csv, bargrid.csv, walkforward.csv, console.txt
