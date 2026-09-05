@@ -1,33 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T01:39:43Z · open 52 · in progress 0 · done 433_
+_Source: universe_under2b.csv · updated 2026-09-05T02:09:09Z · open 32 · in progress 10 · done 443_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (52)
+## Open (32)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| RDGT | Ridgetech Inc. | $119.8M |
-| LCUT | LIFETIME BRANDS, INC | $202.5M |
-| TNDM | TANDEM DIABETES CARE INC | $1.42B |
-| GWRS | Global Water Resources, Inc. | $256.9M |
-| COUR | Coursera, Inc. | $1.59B |
-| EAF | GRAFTECH INTERNATIONAL LTD | $164.4M |
-| CRNC | Cerence Inc. | $384.0M |
-| CTEV | Claritev Corp | $662.5M |
-| MEC | Mayville Engineering Company, Inc. | $495.5M |
-| PLAY | Dave & Buster's Entertainment, Inc. | $301.6M |
-| HTLD | HEARTLAND EXPRESS INC | $955.8M |
-| RYZ | Ryerson Holding Corp | $1.34B |
-| GPRE | Green Plains Inc. | $1.05B |
-| CURR | Currenc Group Inc. | $229.8M |
-| XPER | Xperi Inc. | $284.3M |
-| CTKB | Cytek Biosciences, Inc. | $610.9M |
-| ACH | ACCENDRA HEALTH INC/VA/ | $93.8M |
-| STIM | Neuronetics, Inc. | $207.3M |
-| PUMP | ProPetro Holding Corp. | $1.38B |
-| BAER | Bridger Aerospace Group Holdings, Inc. | $64.1M |
 | EOLS | Evolus, Inc. | $597.8M |
 | OPK | OPKO HEALTH, INC. | $1.20B |
 | FEIM | FREQUENCY ELECTRONICS INC | $591.1M |
@@ -61,12 +41,22 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (0)
+## In progress (10)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
+| HTLD | HEARTLAND EXPRESS INC | $955.8M | cloudA | 2026-09-05T02:05:53Z |
+| RYZ | Ryerson Holding Corp | $1.34B | cloudA | 2026-09-05T02:05:53Z |
+| GPRE | Green Plains Inc. | $1.05B | cloudA | 2026-09-05T02:05:53Z |
+| CURR | Currenc Group Inc. | $229.8M | cloudA | 2026-09-05T02:05:53Z |
+| XPER | Xperi Inc. | $284.3M | cloudA | 2026-09-05T02:05:53Z |
+| CTKB | Cytek Biosciences, Inc. | $610.9M | cloudA | 2026-09-05T02:05:53Z |
+| ACH | ACCENDRA HEALTH INC/VA/ | $93.8M | cloudA | 2026-09-05T02:05:53Z |
+| STIM | Neuronetics, Inc. | $207.3M | cloudA | 2026-09-05T02:05:53Z |
+| PUMP | ProPetro Holding Corp. | $1.38B | cloudA | 2026-09-05T02:05:53Z |
+| BAER | Bridger Aerospace Group Holdings, Inc. | $64.1M | cloudA | 2026-09-05T02:05:53Z |
 
-## Done (433)
+## Done (443)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | VYX | NCR Voyix Corp | $1.24B | cloudB | 2026-09-05T01:39:43Z |
 | SSTI | SOUNDTHINKING, INC. | $80.0M | cloudB | 2026-09-05T01:39:43Z |
 | LGIH | LGI Homes, Inc. | $1.27B | cloudB | 2026-09-05T01:39:43Z |
+| RDGT | Ridgetech Inc. | $119.8M | cloudA | 2026-09-05T02:09:09Z |
+| LCUT | LIFETIME BRANDS, INC | $202.5M | cloudA | 2026-09-05T02:09:09Z |
+| TNDM | TANDEM DIABETES CARE INC | $1.42B | cloudA | 2026-09-05T02:09:09Z |
+| GWRS | Global Water Resources, Inc. | $256.9M | cloudA | 2026-09-05T02:09:09Z |
+| COUR | Coursera, Inc. | $1.59B | cloudA | 2026-09-05T02:09:09Z |
+| EAF | GRAFTECH INTERNATIONAL LTD | $164.4M | cloudA | 2026-09-05T02:09:09Z |
+| CRNC | Cerence Inc. | $384.0M | cloudA | 2026-09-05T02:09:09Z |
+| CTEV | Claritev Corp | $662.5M | cloudA | 2026-09-05T02:09:09Z |
+| MEC | Mayville Engineering Company, Inc. | $495.5M | cloudA | 2026-09-05T02:09:09Z |
+| PLAY | Dave & Buster's Entertainment, Inc. | $301.6M | cloudA | 2026-09-05T02:09:09Z |

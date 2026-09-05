@@ -434,3 +434,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-05 | VYX | NCR Voyix Corp | $1.2B | post-restructuring | 6 | $2.1B EV against guided $432-447M adj EBITDA after three divestitures, but FY25 operating cash flow was -$210M and the pack's newest release is Q1 |
 | 2026-09-05 | SSTI | SOUNDTHINKING, INC. | $80.0M | ignored-microcap | 6 | 13.2M shares and $1.2M ADV against reaffirmed $109-111M revenue at 16-18% adj EBITDA margin, but Q1 margin was 0% and Chicago is unresolved |
 | 2026-09-05 | LGIH | LGI Homes, Inc. | $1.3B | cyclical-trough | 6 | Trades near 0.6x tangible book with margin guidance raised twice and debt down $128.6M in Q2, but H1 net income was only $29.1M on $2.13B of equity |
+| 2026-09-05 | RDGT | Ridgetech Inc. | $119.8M | none | 2 | Share count went 5.9M to 133.1M in a year while the stock fell 99.6%, and the chairman took 100-vote preferred shares for $100 total |
+| 2026-09-05 | LCUT | LIFETIME BRANDS, INC | $202.5M | none | 4 | FY26 earnings guidance tripled only on a one-time $40.1M tariff refund, underlying adj EBITDA guide unchanged and the stock is up 181% in six months |
+| 2026-09-05 | TNDM | TANDEM DIABETES CARE INC | $1.4B | none | 4 | Margins improving 800bps and adj EBITDA finally positive, but $2.0B EV against a guided $55-65M adj EBITDA is no valuation gap |
+| 2026-09-05 | GWRS | Global Water Resources, Inc. | $256.9M | none | 3 | The $5.8M insider buy coincides with an August 20 securities purchase agreement, and the utility trades at 53.6x EV/EBIT with -$47.2M FCF |
+| 2026-09-05 | COUR | Coursera, Inc. | $1.6B | post-restructuring | 7 | $717M EV against FY26 guidance of ~$170M adj EBITDA post-Udemy plus $85M run-rate synergies and $140M already repurchased at $5.45 |
+| 2026-09-05 | EAF | GRAFTECH INTERNATIONAL LTD | $164.4M | cyclical-trough | 5 | New commitments priced 15% above Q1 and volume guided up 5-10%, but $1,225M gross debt against $253M liquidity and -$102.6M H1 adjusted FCF |
+| 2026-09-05 | CRNC | Cerence Inc. | $384.0M | cash-cow-narrative | 7 | Q3 FCF of $19.6M up 20% with no Samsung licence in it, first-ever $30M buyback and backlog up to $1.17B, priced as an AI casualty |
+| 2026-09-05 | CTEV | Claritev Corp | $662.5M | insider-buying | 6 | Four distinct insiders bought including the CEO at $38.81, and bookings are tracking to +50%, but $4.6B net debt leaves only $5-15M guided FCF |
+| 2026-09-05 | MEC | Mayville Engineering Company, Inc. | $495.5M | none | 0 | no filings in bundle |
+| 2026-09-05 | PLAY | Dave & Buster's Entertainment, Inc. | $301.6M | none | 5 | Guided $100M+ FY26 FCF on a $301.6M cap, but comps fell 5.4%, the CEO who guided it retired weeks later and net debt is $1.5B before leases |
