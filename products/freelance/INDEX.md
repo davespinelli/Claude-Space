@@ -2,6 +2,12 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-05 | 40691151 | Business Analytics API Dashboard -- 2 | $245 | 12 | drafted |
+| 2026-09-05 | 40691213 | Excel Data Validation & Entry | $640 | 14 | drafted |
+| 2026-09-05 | 40691397 | Numeric CSV Data Cleanup | $520 | 91 | drafted |
+| 2026-09-05 | 40691197 | Automated Budget Excel Dashboard | $560 | 112 | drafted |
+| 2026-09-05 | 40691331 | AI-Powered Data Analysis Script Generator (SaaS) | $1,850 | 214 | drafted |
+| 2026-09-05 | 40678754 | SQL & Python Customer Analysis | $240 | 82 | drafted |
 | 2026-09-04 | 40691071 | Manual Data Entry in Excel | $280 | 2 | drafted |
 | 2026-09-04 | 40690897 | Excel Files Data Updating – 45 Client Files | $145 | 9 | drafted |
 | 2026-09-04 | 40690933 | Excel-to-Web Form Automation | $240 | 22 | drafted |
@@ -58,4 +64,11 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Python Web Scraping Script for 6 Platforms (Instagram and marketplace scraping behind logins; 205 bids)
 - Weekly Updated Menu Scraper, AI-Powered WhatsApp Event Bot (both $16–$132, below floor for the scope)
 - Software, Cybersecurity, Data Science Trainers (training/tutoring, not delivery work)
-- SQL & Python Customer Analysis (40678754) (eligible but 81 bids and 142h old, cut to stay inside the 8 per run cap)
+- SQL & Python Customer Analysis (40678754) (cut on 2026-09-04 for the 8 per run cap; drafted 2026-09-05)
+- Automated Binance Spot Trading Bot, Multi-Sniper Strategy (40691413) (sniper bot, same exchange terms risk as the earlier multi-sniper posting)
+- SaaS Website Showcasing WhatsApp API (40691232) (marketing website build at $16–$132, below floor and outside delivery scope)
+- AI-Based Procurement Automation for F&B, Oracle NetSuite (40691348) (NetSuite plus WhatsApp integration priced at $30–$250; scope and budget do not meet)
+- Earnway.art API & Ads Debug (40691406) (open ended debugging of an unseen codebase, 98 bids at $30–$250)
+- Long-Term Django Web Development (40691283) (ongoing hourly maintenance role, 143 bids)
+- tạo tool tự động (40681118) (Vietnamese-language delivery, browser automation tool with no English brief)
+- Daily Market Trend Tweets (40683550) (recurring content writing service, not a defined build)
