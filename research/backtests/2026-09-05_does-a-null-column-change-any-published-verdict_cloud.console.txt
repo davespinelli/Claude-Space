@@ -1,0 +1,125 @@
+small panel: dropped 44 tickers with max_1d_move >= 1.0; 439 names + SPY benchmark remain
+panel u56: 56 cols, sample 2009-01-13..2026-09-04, SPY 15.23%/0.889/-33.72% (H1 0.957 / H2 0.834 / OOS 0.882)
+panel broad: 136 cols, sample 2009-01-13..2026-09-04, SPY 15.23%/0.889/-33.72% (H1 0.957 / H2 0.834 / OOS 0.882)
+panel small: 440 cols, sample 2011-01-13..2026-09-04, SPY 14.13%/0.862/-33.72% (H1 0.891 / H2 0.858 / OOS 0.882)
+
+grid: 906 rows (575s) -> 2026-09-05_does-a-null-column-change-any-published-verdict_cloud.grid.csv
+
+=== the null keys really are null (realised monthly rank IC vs 21d forward return) ===
+  u56   real: VOL +0.0803 (t +4.22)  MOM +0.0439 (t +2.13)  R6 +0.0402 (t +2.25)  R3 +0.0241 (t +1.34)  PRICE -0.0391 (t -2.78)
+  u56   null: mean +0.0002, sd 0.0113, |t| max 2.95, |t|>2 in 2/20
+  broad real: VOL +0.0609 (t +3.84)  MOM +0.0214 (t +1.32)  R6 +0.0098 (t +0.67)  R3 -0.0025 (t -0.18)  PRICE -0.0375 (t -4.09)
+  broad null: mean +0.0006, sd 0.0062, |t| max 2.75, |t|>2 in 1/20
+  small real: VOL -0.0232 (t -2.38)  MOM +0.0048 (t +0.50)  R6 +0.0003 (t +0.03)  R3 -0.0082 (t -0.94)  PRICE -0.0380 (t -5.42)
+  small null: mean +0.0007, sd 0.0039, |t| max 1.93, |t|>2 in 0/20
+
+=== Q1  MAGNITUDE: does the real key's |dSharpe| clear its own null band? ===
+    clause = |dSharpe(real)| > max over 20 matched null draws (one-sided 1/21 = 4.8%)
+  full-sample arms: 180 real-key rows, clause cleared by 59 (32.8%)
+
+  by key (full sample, 18 panel x dir x m x cost cells each):
+  key     clears  mean |d|  mean null max  mean pctile
+  VOL     10/36     0.0947         0.1467        0.660
+  MOM      5/36     0.0950         0.1467        0.622
+  R6       9/36     0.1155         0.1467        0.650
+  R3       8/36     0.0795         0.1467        0.579
+  PRICE   27/36     0.2473         0.1467        0.944
+
+  by direction and panel (share of real-key rows clearing the clause, full sample):
+key        MOM  PRICE   R3   R6  VOL
+panel dir                           
+broad NEG 0.17   1.00 0.67 0.83 1.00
+      POS 0.00   1.00 0.00 0.00 0.00
+small NEG 0.33   1.00 0.33 0.33 0.00
+      POS 0.00   1.00 0.00 0.00 0.00
+u56   NEG 0.33   0.00 0.33 0.33 0.67
+      POS 0.00   0.50 0.00 0.00 0.00
+
+  VOL/NEG — the LIVE /sqrt(vol20) scaler's own key and direction:
+panel      m    cost       d  null_max  clears
+  u56 0.2000 10.0000 -0.0600    0.0648       0
+  u56 0.2000 25.0000 -0.0701    0.0705       0
+  u56 0.5000 10.0000 -0.1115    0.0913       1
+  u56 0.5000 25.0000 -0.1436    0.1092       1
+  u56 1.0000 10.0000 -0.1560    0.1094       1
+  u56 1.0000 25.0000 -0.2297    0.1478       1
+broad 0.2000 10.0000 -0.0732    0.0391       1
+broad 0.2000 25.0000 -0.0988    0.0392       1
+broad 0.5000 10.0000 -0.0883    0.0870       1
+broad 0.5000 25.0000 -0.1935    0.0968       1
+broad 1.0000 10.0000 -0.2057    0.1328       1
+broad 1.0000 25.0000 -0.3860    0.1733       1
+small 0.2000 10.0000  0.0494    0.1603       0
+small 0.2000 25.0000  0.0283    0.1708       0
+small 0.5000 10.0000  0.1038    0.2605       0
+small 0.5000 25.0000  0.0203    0.2849       0
+small 1.0000 10.0000  0.0211    0.3552       0
+small 1.0000 25.0000 -0.1106    0.3855       0
+
+=== Q2  VERDICT: does swapping the real key for a null key change KEEP/KILL? ===
+  pass counts over 180 real-key arms: 4a 62, 4b(full) 33, 4b(OOS window) 52
+  pass counts over 720 NULL-key arms: 4a 242 (33.6%), 4b(full) 143 (19.9%), 4b(OOS) 228 (31.7%)
+  pass rate over 180 REAL arms:  4a 34.4%, 4b 18.3%, 4b(OOS) 28.9%
+  untilted CONTROL (6 rows): 4a 3/6, 4b 1/6, 4b(OOS) 2/6
+
+  --- the direct swap: real key vs each of its 20 matched null draws, same cell ---
+  bar         real=null verdict  real pass, null pass  real pass, null FAIL  real FAIL, null pass
+  p4a                     0.843                 0.262                 0.083                 0.074   (n=3600)
+  p4b                     0.888                 0.135                 0.048                 0.064   (n=3600)
+  p4bo                    0.877                 0.241                 0.048                 0.076   (n=3600)
+
+  --- would the CLAUSE re-label any published verdict? ---
+    4a      : 62 real-key passes, of which 29 also clear the clause (46.8%) -> the clause would strip the magnitude claim from 33 of them, WITHOUT changing the pass itself
+    4b full : 33 real-key passes, of which 1 also clear the clause (3.0%) -> the clause would strip the magnitude claim from 32 of them, WITHOUT changing the pass itself
+    4b OOS  : 52 real-key passes, of which 3 also clear the clause (5.8%) -> the clause would strip the magnitude claim from 49 of them, WITHOUT changing the pass itself
+    (the clause governs what may be SAID about a tilt's size; a 4a/4b pass is decided by the bars, so the clause re-labels claims, it does not move verdicts)
+
+=== Q3  PROTOCOL rule 8: selectors read IS only, evaluated ONCE on 2017-2026 ===
+panel    cost        selector                      pick  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  p4a  p4b  p4bo  n_admissible
+  u56 10.0000   S0 do-nothing                   CONTROL    0.1436      1.1680    -0.1831    0    1     1             4
+  u56 10.0000    S1 IS-argmax             PRICE/NEG/0.5    0.1455      1.2160    -0.1815    0    1     1             4
+  u56 10.0000 S2 clause-gated             PRICE/POS/0.2    0.1368      1.1159    -0.1844    0    1     1             4
+  u56 25.0000   S0 do-nothing                   CONTROL    0.1273      1.0496    -0.1844    0    0     1             4
+  u56 25.0000    S1 IS-argmax             PRICE/NEG/0.5    0.1299      1.0989    -0.1831    0    1     1             4
+  u56 25.0000 S2 clause-gated             PRICE/POS/0.2    0.1205      0.9975    -0.1857    0    0     1             4
+broad 10.0000   S0 do-nothing                   CONTROL    0.1249      0.8919    -0.2005    1    0     0             5
+broad 10.0000    S1 IS-argmax             PRICE/NEG/1.0    0.1777      1.3493    -0.2136    0    0     0             5
+broad 10.0000 S2 clause-gated             PRICE/NEG/0.2    0.1425      1.0024    -0.2199    0    0     0             5
+broad 25.0000   S0 do-nothing                   CONTROL    0.1012      0.7434    -0.2016    1    0     0             6
+broad 25.0000    S1 IS-argmax             PRICE/NEG/1.0    0.1596      1.2269    -0.2152    1    0     0             6
+broad 25.0000 S2 clause-gated                R3/NEG/0.2    0.1136      0.7976    -0.2234    1    0     0             6
+small 10.0000   S0 do-nothing                   CONTROL    0.0723      0.4873    -0.2743    0    0     0             0
+small 10.0000    S1 IS-argmax             PRICE/NEG/1.0    0.2059      1.1904    -0.2735    1    0     0             0
+small 10.0000 S2 clause-gated CONTROL (nothing cleared)    0.0723      0.4873    -0.2743    0    0     0             0
+small 25.0000   S0 do-nothing                   CONTROL    0.0381      0.3016    -0.3514    1    0     0             2
+small 25.0000    S1 IS-argmax             PRICE/NEG/1.0    0.1701      1.0120    -0.2760    1    0     0             2
+small 25.0000 S2 clause-gated               VOL/POS/1.0    0.0137      0.1663    -0.4051    0    0     0             2
+
+  mean OOS over the 6 (panel, cost) cells:
+    S0 do-nothing    CAGR  10.12%  Sharpe 0.7736  MaxDD -23.25%  4b(OOS) 2/6
+    S1 IS-argmax     CAGR  16.48%  Sharpe 1.1823  MaxDD -22.38%  4b(OOS) 2/6
+    S2 clause-gated  CAGR   9.99%  Sharpe 0.7612  MaxDD -24.88%  4b(OOS) 2/6
+    RULES v1         CAGR   4.39%  Sharpe 0.4229  MaxDD -26.24%
+    SPY              CAGR  15.45%  Sharpe 0.8820  MaxDD -33.72%
+
+  paired (S1 - S0) mean +0.4086, wins 6/6;  (S2 - S0) mean -0.0124, wins 2/6;  S2 picks differ from S1 in 6/6
+
+=== LEADERBOARD CENSUS: entries resting on a tilt's realised magnitude ===
+  3315 LEADERBOARD rows; 76 rest on the realised magnitude of a keyed tilt (2.3%)
+  the entries the clause would touch (first 12 named):
+    - 16 u56/EWall sep f=0.50
+    - 16 u56/top20 sep f=0.75
+    - 16 u56/v1 sep f=0.00
+    - 16 broad/EWall sep f=0.50
+    - 16 broad/top20 sep f=0.75
+    - 16 broad/v1 sep f=0.00
+    - 85 broad CAND20 entry-budget B=0.10
+    - 22 u56 V1 + DD-control 8%/halve/new-high (literal)
+    - 22 u56 CAND20 + DD-control 8%/halve/new-high
+    - 22 u56 EWall + DD-control 8%/halve/new-high
+    - 22 broad V1 + DD-control 8%/halve/new-high
+    - 22 broad CAND20 + DD-control 8%/halve/new-high
+  ... and 64 more, all in .census.csv
+  NOTE: this classifies TEXT.  Of these, the ones whose construction is inside this run's grid (tilt of the RULES v1 composite by VOL/MOM/R6/R3/PRICE on u56/broad/small at 10 or 25 bps) are priced above; rows built on sleeves, gates, entry budgets or book-share ladders are NOT re-run here and are not claimed to be.
+
+done in 575s
