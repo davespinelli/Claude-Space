@@ -1,0 +1,365 @@
+========================================================================================================================================================================================================
+IDEA 145 — WEAK-DOMINANCE BANDS AS THE CALIBRATION OUTPUT   (lane C, 2026-09-05)
+corpus = 3 panels x 3 books x 17 arms x 2 costs = 306 arm-rows; ladder = 342 reference rows.  IS <= 2016-12-31, OOS >= 2017-01-01, weekly, t+1, 75% target gross, costs [10.0, 25.0] bps.
+published 4b: H1 > 1.00xSPY, H2 > 1.00xSPY, OOS > 1.00xSPY, |MaxDD| <= 0.60x|SPY|, CAGR >= 0.70xSPY
+========================================================================================================================================================================================================
+
+--- PANEL u56: universe.json(56) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full  CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+    SPY IS    CAGR 14.96%  MaxDD -22.06%  halves 0.838/1.060  window Sharpe 0.899
+    ... u56 done
+
+--- PANEL broad: universe_broad.json(136) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full  CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+    SPY IS    CAGR 14.96%  MaxDD -22.06%  halves 0.838/1.060  window Sharpe 0.899
+    ... broad done
+
+--- PANEL small: prices_small(439, SPY held out) | 2010-01-04 -> 2026-09-04 | eval from 2011-01-13
+    SPY full  CAGR 14.13%  Sharpe 0.862  MaxDD -33.72%  halves 0.891/0.858  OOS Sharpe 0.882
+    SPY IS    CAGR 12.02%  MaxDD -18.61%  halves 0.934/0.715  window Sharpe 0.832
+    ... small done
+
+========================================================================================================================================================================================================
+REPRODUCTION CHECKS (all must pass before any new number is read)
+  (a) H.run vs engine.backtest, ungated EWall u56: max|diff| = 0.00e+00 -> PASS
+  (b) idea 94 published EWall+vol60-dg u56@10bps 11.6%/1.133/-16.9%: got 11.587%/1.133/-16.884% -> PASS
+  (c) idea 129/131 census reproduced: {'rows': 306, 'pareto': 82, 'pass4b': 29, 'floor_only': 27, 'p_floor_only': 11, 'p_clear4': 23, 'lad_rows': 342, 'lad_floor_only': 97, 'lad_max_m': 0.8, 'lad_pass4b': 10}
+      target                          : {'rows': 306, 'pareto': 82, 'pass4b': 29, 'floor_only': 27, 'p_floor_only': 11, 'p_clear4': 23, 'lad_rows': 342, 'lad_floor_only': 97, 'lad_max_m': 0.8, 'lad_pass4b': 10}  -> PASS
+  (d) idea 129 IS-screen groups A/B/C = 45/9/252 (target 45/9/252) -> PASS
+  ALL CHECKS: PASS
+
+========================================================================================================================================================================================================
+Q1  THE PUBLISHED POINT — what each bar is doing at (1.00, 1.00, 1.00, 0.60, 0.70)
+========================================================================================================================================================================================================
+  arm corpus: 306 rows, 29 pass 4b, 97 pass 4a, 6 pass both
+  ladder    : 342 rows, 10 pass 4b  (the leakage control: these are pure de-grossing levers, not books)
+
+  sole-cause census (rows failing 4b on exactly ONE bar):
+ bar  coef  sole_victims  pareto_victims  also_pass4a  ladder_sole
+  H1   1.0             1               0            0            0
+  H2   1.0             2               1            2            0
+ OOS   1.0             0               0            0            0
+  DD   0.6            47               4            7           26
+CAGR   0.7            27              11           19           97
+
+  rows clearing the other four bars, per bar (denominator of the 'share' statistic):
+    H1   : 1 sole victims / 30 clearing the other four = 3.3%
+    H2   : 2 sole victims / 31 clearing the other four = 6.5%
+    OOS  : 0 sole victims / 29 clearing the other four = 0.0%
+    DD   : 47 sole victims / 76 clearing the other four = 61.8%
+    CAGR : 27 sole victims / 56 clearing the other four = 48.2%
+
+========================================================================================================================================================================================================
+Q2  DOMINANCE BANDS, ONE COEFFICIENT AT A TIME (other four PINNED at published)
+    criteria (idea 131's, generalised):  (1) lose none of the published admissions;
+    (2) save Pareto-best sole victims;   (3) admit no more ladder points than published.
+    WEAK = (1) and (3).   STRICT = WEAK and a strict gain on (2) or (3).
+========================================================================================================================================================================================================
+
+  --- bar H1  (published 1.00)   ALL 21 coarse grid points:
+ coef  n_admit  lost  gained  victims_saved  pareto_victims_saved  ladder_admit  identical  weak_dominates  strictly_dominates
+ 0.50       30     0       1              1                     0            10      False            True               False
+ 0.55       30     0       1              1                     0            10      False            True               False
+ 0.60       30     0       1              1                     0            10      False            True               False
+ 0.65       30     0       1              1                     0            10      False            True               False
+ 0.70       30     0       1              1                     0            10      False            True               False
+ 0.75       30     0       1              1                     0            10      False            True               False
+ 0.80       30     0       1              1                     0            10      False            True               False
+ 0.85       30     0       1              1                     0            10      False            True               False
+ 0.90       30     0       1              1                     0            10      False            True               False
+ 0.95       30     0       1              1                     0            10      False            True               False
+ 1.00       29     0       0              0                     0            10       True            True               False
+ 1.05       28     1       0              0                     0            10      False           False               False
+ 1.10       27     2       0              0                     0            10      False           False               False
+ 1.15       21     8       0              0                     0            10      False           False               False
+ 1.20       13    16       0              0                     0             9      False           False               False
+ 1.25        8    21       0              0                     0             5      False           False               False
+ 1.30        1    28       0              0                     0             5      False           False               False
+ 1.35        0    29       0              0                     0             0      False           False               False
+ 1.40        0    29       0              0                     0             0      False           False               False
+ 1.45        0    29       0              0                     0             0      False           False               False
+ 1.50        0    29       0              0                     0             0      False           False               False
+    INDIFFERENCE band (identical admitted set AND identical ladder leakage): [0.9974, 1.0453]  width 0.0479
+    WEAK-DOMINANCE band containing the published point: (-inf, 1.0453]  width unbounded
+    STRICT-DOMINANCE region: EMPTY — no value of H1 beats 1.00 on its own three criteria
+
+  --- bar H2  (published 1.00)   ALL 21 coarse grid points:
+ coef  n_admit  lost  gained  victims_saved  pareto_victims_saved  ladder_admit  identical  weak_dominates  strictly_dominates
+ 0.50       31     0       2              2                     1            10      False            True                True
+ 0.55       31     0       2              2                     1            10      False            True                True
+ 0.60       31     0       2              2                     1            10      False            True                True
+ 0.65       31     0       2              2                     1            10      False            True                True
+ 0.70       31     0       2              2                     1            10      False            True                True
+ 0.75       31     0       2              2                     1            10      False            True                True
+ 0.80       31     0       2              2                     1            10      False            True                True
+ 0.85       31     0       2              2                     1            10      False            True                True
+ 0.90       31     0       2              2                     1            10      False            True                True
+ 0.95       31     0       2              2                     1            10      False            True                True
+ 1.00       29     0       0              0                     0            10       True            True               False
+ 1.05       29     0       0              0                     0             9      False            True                True
+ 1.10       27     2       0              0                     0             9      False           False               False
+ 1.15       25     4       0              0                     0             9      False           False               False
+ 1.20       21     8       0              0                     0             9      False           False               False
+ 1.25       14    15       0              0                     0             7      False           False               False
+ 1.30       10    19       0              0                     0             5      False           False               False
+ 1.35        1    28       0              0                     0             0      False           False               False
+ 1.40        0    29       0              0                     0             0      False           False               False
+ 1.45        0    29       0              0                     0             0      False           False               False
+ 1.50        0    29       0              0                     0             0      False           False               False
+    INDIFFERENCE band (identical admitted set AND identical ladder leakage): [0.9829, 1.0213]  width 0.0383
+    WEAK-DOMINANCE band containing the published point: (-inf, 1.0905]  width unbounded
+    STRICT-DOMINANCE region: NON-EMPTY — the published point is DOMINATED (748 values LOOSER, 30 TIGHTER)
+      looser   range [-2.5941, 0.9727] — nearest value 0.9727: admits 30 (vs 29), loses 0, saves 1 sole victims of which 1 Pareto-best, ladder leakage 10 (vs 10)
+      tighter  range [1.0215, 1.0905] — nearest value 1.0215: admits 29 (vs 29), loses 0, saves 0 sole victims of which 0 Pareto-best, ladder leakage 9 (vs 10)
+      NOTE: dominated in BOTH directions — the three criteria do not order this bar, so 'dominated' here means UNDETERMINED, not 'move it to X'.
+
+  --- bar OOS  (published 1.00)   ALL 21 coarse grid points:
+ coef  n_admit  lost  gained  victims_saved  pareto_victims_saved  ladder_admit  identical  weak_dominates  strictly_dominates
+ 0.50       29     0       0              0                     0            10       True            True               False
+ 0.55       29     0       0              0                     0            10       True            True               False
+ 0.60       29     0       0              0                     0            10       True            True               False
+ 0.65       29     0       0              0                     0            10       True            True               False
+ 0.70       29     0       0              0                     0            10       True            True               False
+ 0.75       29     0       0              0                     0            10       True            True               False
+ 0.80       29     0       0              0                     0            10       True            True               False
+ 0.85       29     0       0              0                     0            10       True            True               False
+ 0.90       29     0       0              0                     0            10       True            True               False
+ 0.95       29     0       0              0                     0            10       True            True               False
+ 1.00       29     0       0              0                     0            10       True            True               False
+ 1.05       29     0       0              0                     0            10       True            True               False
+ 1.10       29     0       0              0                     0             9      False            True                True
+ 1.15       28     1       0              0                     0             9      False           False               False
+ 1.20       23     6       0              0                     0             9      False           False               False
+ 1.25       16    13       0              0                     0             7      False           False               False
+ 1.30       11    18       0              0                     0             5      False           False               False
+ 1.35        1    28       0              0                     0             0      False           False               False
+ 1.40        0    29       0              0                     0             0      False           False               False
+ 1.45        0    29       0              0                     0             0      False           False               False
+ 1.50        0    29       0              0                     0             0      False           False               False
+    INDIFFERENCE band (identical admitted set AND identical ladder leakage): (-inf, 1.0520]  width unbounded
+    WEAK-DOMINANCE band containing the published point: (-inf, 1.1447]  width unbounded
+    STRICT-DOMINANCE region: NON-EMPTY — the published point is DOMINATED (0 values LOOSER, 29 TIGHTER)
+      tighter  range [1.0522, 1.1447] — nearest value 1.0522: admits 29 (vs 29), loses 0, saves 0 sole victims of which 0 Pareto-best, ladder leakage 9 (vs 10)
+
+  --- bar DD  (published 0.60)   ALL 19 coarse grid points:
+ coef  n_admit  lost  gained  victims_saved  pareto_victims_saved  ladder_admit  identical  weak_dominates  strictly_dominates
+ 0.30        0    29       0              0                     0             0      False           False               False
+ 0.35        0    29       0              0                     0             0      False           False               False
+ 0.40        0    29       0              0                     0             0      False           False               False
+ 0.45        0    29       0              0                     0             0      False           False               False
+ 0.50        3    26       0              0                     0             1      False           False               False
+ 0.55       13    16       0              0                     0             4      False           False               False
+ 0.60       29     0       0              0                     0            10       True            True               False
+ 0.65       35     0       6              6                     3            22      False           False               False
+ 0.70       57     0      28             28                     4            29      False           False               False
+ 0.75       62     0      33             33                     4            33      False           False               False
+ 0.80       76     0      47             47                     4            36      False           False               False
+ 0.85       76     0      47             47                     4            36      False           False               False
+ 0.90       76     0      47             47                     4            36      False           False               False
+ 0.95       76     0      47             47                     4            36      False           False               False
+ 1.00       76     0      47             47                     4            36      False           False               False
+ 1.05       76     0      47             47                     4            36      False           False               False
+ 1.10       76     0      47             47                     4            36      False           False               False
+ 1.15       76     0      47             47                     4            36      False           False               False
+ 1.20       76     0      47             47                     4            36      False           False               False
+    INDIFFERENCE band (identical admitted set AND identical ladder leakage): [0.5979, 0.6012]  width 0.0033
+    WEAK-DOMINANCE band containing the published point: [0.5969, 0.6012]  width 0.0043
+    STRICT-DOMINANCE region: NON-EMPTY — the published point is DOMINATED (0 values LOOSER, 5 TIGHTER)
+      tighter  range [0.5969, 0.5978] — nearest value 0.5978: admits 29 (vs 29), loses 0, saves 0 sole victims of which 0 Pareto-best, ladder leakage 9 (vs 10)
+
+  --- bar CAGR  (published 0.70)   ALL 25 coarse grid points:
+ coef  n_admit  lost  gained  victims_saved  pareto_victims_saved  ladder_admit  identical  weak_dominates  strictly_dominates
+ 0.00       56     0      27             27                    11           107      False           False               False
+ 0.05       56     0      27             27                    11           107      False           False               False
+ 0.10       56     0      27             27                    11           101      False           False               False
+ 0.15       56     0      27             27                    11            94      False           False               False
+ 0.20       56     0      27             27                    11            87      False           False               False
+ 0.25       56     0      27             27                    11            80      False           False               False
+ 0.30       56     0      27             27                    11            72      False           False               False
+ 0.35       56     0      27             27                    11            64      False           False               False
+ 0.40       56     0      27             27                    11            57      False           False               False
+ 0.45       54     0      25             25                     9            50      False           False               False
+ 0.50       51     0      22             22                     7            43      False           False               False
+ 0.55       41     0      12             12                     2            34      False           False               False
+ 0.60       35     0       6              6                     1            27      False           False               False
+ 0.65       33     0       4              4                     1            18      False           False               False
+ 0.70       29     0       0              0                     0            10       True            True               False
+ 0.75       24     5       0              0                     0             5      False           False               False
+ 0.80       14    15       0              0                     0             3      False           False               False
+ 0.85        6    23       0              0                     0             2      False           False               False
+ 0.90        5    24       0              0                     0             1      False           False               False
+ 0.95        0    29       0              0                     0             0      False           False               False
+ 1.00        0    29       0              0                     0             0      False           False               False
+ 1.05        0    29       0              0                     0             0      False           False               False
+ 1.10        0    29       0              0                     0             0      False           False               False
+ 1.15        0    29       0              0                     0             0      False           False               False
+ 1.20        0    29       0              0                     0             0      False           False               False
+    INDIFFERENCE band (identical admitted set AND identical ladder leakage): [0.6965, 0.7020]  width 0.0054
+    WEAK-DOMINANCE band containing the published point: [0.6965, 0.7020]  width 0.0054
+    STRICT-DOMINANCE region: EMPTY — no value of CAGR beats 0.70 on its own three criteria
+
+  BAND SUMMARY (the object idea 145 proposes PROTOCOL publish instead of the point):
+ bar  published  ind_lo  ind_hi  ind_lo_open  ind_hi_open  ind_width  weak_lo  weak_hi  weak_lo_open  weak_hi_open  n_strict  n_strict_looser  n_strict_tighter  strict_lo  strict_hi  sole_victims  pareto_sole_victims  pub_interior
+  H1     1.0000  0.9974  1.0453        False        False     0.0479  -2.4268   1.0453          True         False         0                0                 0        NaN        NaN             1                    0          True
+  H2     1.0000  0.9829  1.0213        False        False     0.0383  -2.5941   1.0905          True         False       778              748                30    -2.5941     1.0905             2                    1          True
+ OOS     1.0000 -2.5430  1.0520         True        False        inf  -2.5430   1.1447          True         False        29                0                29     1.0522     1.1447             0                    0          True
+  DD     0.6000  0.5979  0.6012        False        False     0.0033   0.5969   0.6012         False         False         5                0                 5     0.5969     0.5978            47                    4          True
+CAGR     0.7000  0.6965  0.7020        False        False     0.0054   0.6965   0.7020         False         False         0                0                 0        NaN        NaN            27                   11          True
+
+========================================================================================================================================================================================================
+Q3  ARE THE BANDS SEPARABLE?  phi x delta map (the two-parameter grid, all points)
+========================================================================================================================================================================================================
+  n admitted (rows = delta, cols = phi):
+phi    0.0  0.1  0.2  0.3  0.4  0.5  0.6  0.7  0.8  0.9  1.0  1.1
+delta                                                            
+0.3      0    0    0    0    0    0    0    0    0    0    0    0
+0.4     12   12   12   12   12    7    0    0    0    0    0    0
+0.5     25   25   25   25   25   20    6    3    1    0    0    0
+0.6     56   56   56   56   56   51   35   29   14    5    0    0
+0.7     85   85   85   85   85   80   64   57   36   15    2    0
+0.8    104  104  104  104  104   99   83   76   55   27    3    0
+0.9    104  104  104  104  104   99   83   76   55   27    3    0
+1.0    104  104  104  104  104   99   83   76   55   27    3    0
+1.1    104  104  104  104  104   99   83   76   55   27    3    0
+
+  ladder points admitted (the leakage control):
+phi    0.0  0.1  0.2  0.3  0.4  0.5  0.6  0.7  0.8  0.9  1.0  1.1
+delta                                                            
+0.3     46   40   26   11    1    0    0    0    0    0    0    0
+0.4     66   60   46   31   16    3    0    0    0    0    0    0
+0.5     85   79   65   50   35   21    6    1    0    0    0    0
+0.6    107  101   87   72   57   43   27   10    3    1    0    0
+0.7    126  120  106   91   76   62   46   29   15    4    1    0
+0.8    133  127  113   98   83   69   53   36   22    8    1    0
+0.9    133  127  113   98   83   69   53   36   22    8    1    0
+1.0    133  127  113   98   83   69   53   36   22    8    1    0
+1.1    133  127  113   98   83   69   53   36   22    8    1    0
+
+  phi's indifference band re-derived at every delta (is the band delta-dependent?):
+ delta  phi_ind_lo  phi_ind_hi  phi_ind_open  phi_ind_width  phi_weak_lo  phi_weak_hi  n_strict
+0.3000      0.4028      3.0189          True            inf       0.4028       3.0189         0
+0.4000      0.5687      3.0189          True            inf       0.5568       3.0189         9
+0.5000      0.6845      0.7084         False         0.0239       0.6577       0.7460        36
+0.6000      0.6965      0.7020         False         0.0054       0.6965       0.7020         0
+0.7000      0.6965      0.7020         False         0.0054       0.6965       0.7020         0
+0.8000      0.6965      0.7020         False         0.0054       0.6965       0.7020         0
+0.9000      0.6965      0.7020         False         0.0054       0.6965       0.7020         0
+1.0000      0.6965      0.7020         False         0.0054       0.6965       0.7020         0
+1.1000      0.6965      0.7020         False         0.0054       0.6965       0.7020         0
+
+  delta's indifference band re-derived at every phi:
+   phi  delta_ind_lo  delta_ind_hi  delta_ind_open  delta_ind_width  delta_weak_lo  delta_weak_hi  n_strict
+0.0000        0.5979        0.6012           False           0.0033         0.5969         0.6012         5
+0.1000        0.5979        0.6012           False           0.0033         0.5969         0.6012         5
+0.2000        0.5979        0.6012           False           0.0033         0.5969         0.6012         5
+0.3000        0.5979        0.6012           False           0.0033         0.5969         0.6012         5
+0.4000        0.5979        0.6012           False           0.0033         0.5969         0.6012         5
+0.5000        0.5979        0.6012           False           0.0033         0.5969         0.6012         5
+0.6000        0.5979        0.6012           False           0.0033         0.5969         0.6012         5
+0.7000        0.5979        0.6012           False           0.0033         0.5969         0.6012         5
+0.8000        0.5979        0.6012           False           0.0033         0.5959         0.6012        11
+0.9000        0.5979        0.6076           False           0.0097         0.5906         0.6284        48
+1.0000       -2.4753        0.6587            True              inf        -2.4753         0.6587         0
+1.1000       -2.4753        3.2284            True              inf        -2.4753         3.2284         0
+
+========================================================================================================================================================================================================
+Q4  RULE 8 — bands re-derived on the IS WINDOW ALONE (2009-2016), read OOS once
+========================================================================================================================================================================================================
+  NOTE, stated before any number: 4b has FIVE bars but only FOUR are prospectively
+  checkable.  The OOS Sharpe bar cannot be screened on an IS window by construction,
+  so its band can only ever be derived retrospectively.  The IS screen below is the
+  four-bar version idea 131 used (H1, H2, DD, CAGR on the IS window).
+
+  IS-derived bands vs full-sample bands (the stability question):
+ bar  published  IS_ind_lo  IS_ind_hi  IS_ind_open  IS_ind_width  IS_weak_lo  IS_weak_hi  full_ind_lo  full_ind_hi  contains_pub  overlaps_full
+  H1     1.0000     0.9864     1.0136        False        0.0272     -2.3616      1.0136       0.9974       1.0453          True           True
+  H2     1.0000    -2.8052     1.0171         True           inf     -2.8052      1.0171       0.9829       1.0213          True           True
+  DD     0.6000     0.5979     0.6012        False        0.0033      0.5938      0.6012       0.5979       0.6012          True           True
+CAGR     0.7000     0.6960     0.7016        False        0.0056      0.6960      0.7016       0.6965       0.7020          True           True
+    (H2's IS band is unbounded on one side — its open edge IS bar deletion, which the NOBARS control already covers; the scanned endpoint is used.)
+
+  14 coefficient sets x 18 cells = 252 selector rows.
+
+  rule-8 selector results (means over cells that pick; OOS read once):
+     sel  cells_picking  mean_admitted  OOS_CAGR  OOS_Sharpe  OOS_MaxDD beat_spy beat_v1 beat_ctl oos_best  picks_moved_vs_PUB
+ CAGR@hi              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+ CAGR@lo              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+CAGR@mid              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+   DD@hi              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+   DD@lo              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+  DD@mid              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+   H1@hi              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+   H1@lo              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+  H1@mid              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+   H2@hi              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+   H2@lo              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+  H2@mid              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+  NOBARS             18         17.000     0.091       0.695     -0.231        6      12        3        0                  11
+     PUB              7          2.500     0.127       1.022     -0.211        5       7        2        0                   0
+
+  PAIRED on the 7 cells the published screen enters:
+     sel  n  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  beat_spy  beat_v1  moved
+     PUB  7     0.127       1.022     -0.211         5        7      0
+   H1@lo  7     0.127       1.022     -0.211         5        7      0
+  H1@mid  7     0.127       1.022     -0.211         5        7      0
+   H1@hi  7     0.127       1.022     -0.211         5        7      0
+   H2@lo  7     0.127       1.022     -0.211         5        7      0
+  H2@mid  7     0.127       1.022     -0.211         5        7      0
+   H2@hi  7     0.127       1.022     -0.211         5        7      0
+   DD@lo  7     0.127       1.022     -0.211         5        7      0
+  DD@mid  7     0.127       1.022     -0.211         5        7      0
+   DD@hi  7     0.127       1.022     -0.211         5        7      0
+ CAGR@lo  7     0.127       1.022     -0.211         5        7      0
+CAGR@mid  7     0.127       1.022     -0.211         5        7      0
+ CAGR@hi  7     0.127       1.022     -0.211         5        7      0
+  NOBARS  7     0.127       1.022     -0.211         5        7      0
+
+  reference OOS on those cells: SPY Sharpe 0.882 / CAGR 15.45% / MaxDD -33.72%;  RULES v1 Sharpe 0.480 / CAGR 4.77% / MaxDD -19.67%;  ungated control Sharpe 1.051
+
+  per-cell picks, published vs every band edge that moves one:
+sel                     PUB              NOBARS
+panel book  cost                               
+broad EWall 10.0   vol60-dg            vol60-dg
+            25.0   vol60-dg            vol60-dg
+      TOP20 10.0  ebud-0.10           ebud-0.10
+            25.0  ebud-0.10           ebud-0.10
+      V1u   10.0     (none)           ebud-0.20
+            25.0     (none)           ebud-0.10
+small EWall 10.0     (none)             control
+            25.0     (none)  ddctl-8/.5/recover
+      TOP20 10.0     (none)           ebud-0.20
+            25.0     (none)           ebud-0.20
+      V1u   10.0     (none)           ebud-0.20
+            25.0     (none)           ebud-0.20
+u56   EWall 10.0   abs12-rw            abs12-rw
+            25.0    control             control
+      TOP20 10.0    control             control
+            25.0     (none)             control
+      V1u   10.0     (none)             control
+            25.0     (none)           ebud-0.10
+
+========================================================================================================================================================================================================
+Q5  BOTH KEEP PATHS, all 306 rows, at the published point and at every band edge
+========================================================================================================================================================================================================
+              coefset  pass4b  pass4a  both  ladder
+    PUB(4b published)      29      97     6      10
+   H1=0.9974 (ind_lo)      29      97     6      10
+   H1=1.0453 (ind_hi)      29      97     6      10
+  H1=1.0453 (weak_hi)      29      97     6      10
+   H2=0.9829 (ind_lo)      29      97     6      10
+   H2=1.0213 (ind_hi)      29      97     6      10
+  H2=1.0905 (weak_hi)      29      97     6       9
+  OOS=1.0520 (ind_hi)      29      97     6      10
+ OOS=1.1447 (weak_hi)      29      97     6       9
+   DD=0.5979 (ind_lo)      29      97     6      10
+   DD=0.6012 (ind_hi)      29      97     6      10
+  DD=0.5969 (weak_lo)      29      97     6       9
+  DD=0.6012 (weak_hi)      29      97     6      10
+ CAGR=0.6965 (ind_lo)      29      97     6      10
+ CAGR=0.7020 (ind_hi)      29      97     6      10
+CAGR=0.6965 (weak_lo)      29      97     6      10
+CAGR=0.7020 (weak_hi)      29      97     6      10
+
+  No book is promoted by this run.  4a is unaffected by 4b's coefficients (97 of 306 rows) and is reported for completeness.
+
+wrote: .grid.csv .ladder.csv .bands.csv .bandsummary.csv .pairmap.csv .separability.csv .isbands.csv .walkforward.csv .console.txt
