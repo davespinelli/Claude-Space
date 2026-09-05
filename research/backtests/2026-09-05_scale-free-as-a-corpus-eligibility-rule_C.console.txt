@@ -1,0 +1,232 @@
+========================================================================================================================================================================================================
+IDEA 147 — scale-free-as-a-corpus-eligibility-rule.  Under test: does re-stating the two absolute-unit instruments
+            (ddctl's 8% trigger, ebud's 0.10 budget) in RELATIVE units restore closure under rescaling?
+corpus = 18 cells x 32 arms x 25 gross points = 14400 backtests. m in [0.1, 1.3].
+IS <= 2016-12-31   OOS >= 2017-01-01   weekly, t+1, 75% target gross at m=1.00, costs [10.0, 25.0] bps.  4b bars: CAGR >= 0.7 x SPY, MaxDD <= 0.6 x |SPY|.
+TUNED (2): c in [0.4, 0.7, 1.0, 1.3, 1.6] (vol multiple), L in [60, 120] (lookback).  ALL 10 reported. Matched point for the walk-forward pre-registered at c=1.0, L=60.
+PRE-REGISTERED SUCCESS BAR: max Sharpe range < 0.05 AND both monotonicity counts >= 65/72.  PURE yardstick: 228/234, 234/234, 0.0130.
+========================================================================================================================================================================================================
+
+--- PANEL u56: universe.json(56) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+    published bars: CAGR floor 10.66%/yr   DD cap -20.23%   |   IS SPY: CAGR 14.96% MaxDD -22.06% halves 0.838/1.060
+    live RULES v1 @10bps: CAGR 6.45%  Sharpe 0.664  MaxDD -13.83%
+    ... u56 grid loaded (4800 rows)
+
+--- PANEL broad: universe_broad.json(136) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+    published bars: CAGR floor 10.66%/yr   DD cap -20.23%   |   IS SPY: CAGR 14.96% MaxDD -22.06% halves 0.838/1.060
+    live RULES v1 @10bps: CAGR 6.39%  Sharpe 0.635  MaxDD -21.19%
+    ... broad grid loaded (4800 rows)
+
+--- PANEL small: prices_small(439, SPY held out) | 2010-01-04 -> 2026-09-04 | eval from 2011-01-13
+    SPY full CAGR 14.13%  Sharpe 0.862  MaxDD -33.72%  halves 0.891/0.858  OOS Sharpe 0.882
+    published bars: CAGR floor 9.89%/yr   DD cap -20.23%   |   IS SPY: CAGR 12.02% MaxDD -18.61% halves 0.934/0.715
+    live RULES v1 @10bps: CAGR 8.15%  Sharpe 0.603  MaxDD -32.84%
+    ... small grid loaded (4800 rows)
+
+full frame: 14400 rows = 576 books x 25 m-points
+
+========================================================================================================================================================================================================
+REPRODUCTION CHECKS (all four must pass before any new number is read)
+  (a) run2 vs idea-94 H.run, 6 instrument settings at m=0.55: max|diff| = 0.00e+00 -> PASS
+  (b) run2 control vs engine.backtest, ungated EWall u56: max|diff| = 0.00e+00 -> PASS
+  (c) idea 144 Q1 census on the ABS arms: n=72 (expect 72), CAGR monotone 27/72 (expect 27), |MaxDD| monotone 35/72 (expect 35), max Sharpe range 0.2924 (expect 0.2924) -> PASS
+      PURE yardstick on this run's 4 pure arms (n=72): CAGR monotone 70/72, |MaxDD| monotone 72/72, max Sharpe range 0.0126 (idea 144 full PURE class: 228/234, 234/234, 0.0130)
+  (d) REL-M == ABS at m=1.00 over 4 pairs x 4 metrics x 18 cells: max|diff| = 0.00e+00 -> PASS
+
+========================================================================================================================================================================================================
+Q1 — DOES RELATIVE PARAMETERISATION RESTORE CLOSURE?  (the whole question)
+    A rescale must leave Sharpe alone and move CAGR and |MaxDD| monotonically in m.
+
+  by parameterisation family (books = panel x book x cost x arm):
+          n  sharpe_rng_mean  sharpe_rng_p90  sharpe_rng_max  cagr_mono  dd_mono  cagr_mono_pct  dd_mono_pct
+family                                                                                                      
+PURE     72           0.0034          0.0073          0.0126         70       72         0.9722       1.0000
+ABS      72           0.1207          0.2457          0.2924         27       35         0.3750       0.4861
+REL-M    72           0.0197          0.0455          0.1325         63       71         0.8750       0.9861
+REL-V   360           0.0340          0.0732          0.1461        295      338         0.8194       0.9389
+
+  by instrument kind within each family:
+               n  sharpe_rng_max  cagr_mono  dd_mono
+family kind                                         
+ABS    bud    36          0.1722         27       30
+       dd     36          0.2924          0        5
+PURE   ctl    18          0.0124         18       18
+       gate   36          0.0126         35       36
+       stop   18          0.0094         17       18
+REL-M  bud    36          0.0100         35       36
+       dd     36          0.1325         28       35
+REL-V  dd    360          0.1461        295      338
+
+  MATCHED PAIRS — the same rule in two unit systems, 18 cells each:
+            abs_arm              rel_arm  n  abs_rng_max  rel_rng_max  abs_rng_med  rel_rng_med  abs_cagr_mono  rel_cagr_mono  abs_dd_mono  rel_dd_mono
+ddctl-abs-8/recover ddctl-relM-8/recover 18       0.2664       0.1325       0.2012       0.0364              0             14            2           17
+   ddctl-abs-8/high    ddctl-relM-8/high 18       0.2924       0.0703       0.1774       0.0258              0             14            3           18
+      ebud-abs-0.10       ebud-relM-0.10 18       0.1722       0.0089       0.0314       0.0029             12             18           14           18
+      ebud-abs-0.20       ebud-relM-0.20 18       0.1479       0.0100       0.0077       0.0026             15             17           16           18
+
+  REL-V full 2-parameter grid (c x L), ALL 10 points, both resets, 18 cells each:
+                  n  sharpe_rng_max  sharpe_rng_med  cagr_mono  dd_mono  mean_eps
+c   L   reset                                                                    
+0.4 60  high     18          0.0755          0.0305         13       18   11.8267
+        recover  18          0.1220          0.0426         13       18   16.0667
+    120 high     18          0.0831          0.0367         17       17   13.8644
+        recover  18          0.1041          0.0375         14       16   18.4689
+0.7 60  high     18          0.0904          0.0408         15       16    5.4022
+        recover  18          0.1083          0.0418         13       14    6.6778
+    120 high     18          0.0878          0.0595         10       16    5.9778
+        recover  18          0.0888          0.0336         14       17    7.2489
+1.0 60  high     18          0.0735          0.0215         14       18    2.8156
+        recover  18          0.0778          0.0371         12       16    3.1267
+    120 high     18          0.0814          0.0186         16       17    2.8911
+        recover  18          0.0933          0.0426         14       16    3.3022
+1.3 60  high     18          0.0912          0.0251         16       18    1.6778
+        recover  18          0.0934          0.0262         17       18    1.9622
+    120 high     18          0.0912          0.0089         17       16    1.5400
+        recover  18          0.1461          0.0187         16       17    1.7467
+1.6 60  high     18          0.0673          0.0066         16       18    1.1733
+        recover  18          0.0942          0.0100         15       17    1.4933
+    120 high     18          0.0728          0.0052         16       18    0.6822
+        recover  18          0.0680          0.0050         17       17    0.8422
+
+  8 largest Sharpe swings along a family, by parameterisation:
+   -- ABS
+panel  book    cost                 arm  sharpe_range  cagr_mono  dd_mono
+small EWall 10.0000    ddctl-abs-8/high        0.2924      False    False
+small EWall 25.0000    ddctl-abs-8/high        0.2856      False    False
+  u56   V1u 10.0000    ddctl-abs-8/high        0.2791      False     True
+broad TOP20 25.0000 ddctl-abs-8/recover        0.2664      False    False
+   -- REL-M
+panel  book    cost                  arm  sharpe_range  cagr_mono  dd_mono
+broad   V1u 25.0000 ddctl-relM-8/recover        0.1325      False     True
+  u56 EWall 25.0000 ddctl-relM-8/recover        0.0715       True     True
+broad   V1u 10.0000    ddctl-relM-8/high        0.0703       True     True
+small TOP20 10.0000    ddctl-relM-8/high        0.0667      False     True
+   -- REL-V
+panel  book    cost                           arm  sharpe_range  cagr_mono  dd_mono
+small EWall 25.0000 ddctl-relV-c1.30-L120/recover        0.1461       True     True
+small EWall 10.0000 ddctl-relV-c1.30-L120/recover        0.1453      False     True
+small EWall 10.0000  ddctl-relV-c0.40-L60/recover        0.1220      False     True
+small EWall 25.0000  ddctl-relV-c0.70-L60/recover        0.1083      False     True
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  PRE-REGISTERED SUCCESS BAR — (S1) max Sharpe range < 0.05 ; (S2) both monotonicity counts >= 90% of books
+    ABS (published, 72 books)                  max range 0.2924 (FAIL)   CAGR mono 27/72 (38%)  DD mono 35/72 (49%)  -> S2 FAIL
+    REL-M (analytic rescale, 72 books)         max range 0.1325 (FAIL)   CAGR mono 63/72 (88%)  DD mono 71/72 (99%)  -> S2 FAIL
+    REL-V @ c=1.0,L=60 (36 books)              max range 0.0778 (FAIL)   CAGR mono 26/36 (72%)  DD mono 34/36 (94%)  -> S2 FAIL
+    REL-V (all 10 grid points, 360 books)      max range 0.1461 (FAIL)   CAGR mono 295/360 (82%)  DD mono 338/360 (94%)  -> S2 FAIL
+    PURE yardstick (72 books, this run)        max range 0.0126   CAGR mono 70/72  DD mono 72/72
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+========================================================================================================================================================================================================
+Q2 — WHAT THE REPAIR DOES TO THE CORPUS: 4b and 4a verdicts, POINT vs FAMILY
+
+  admissions by parameterisation (POINT = m=1.00 only; FAMILY = some m of the family):
+family  books  POINT_4b  POINT_4a  FAMILY_4b_m1.00  FAMILY_4b_pct_m1.00  FAMILY_4a_m1.00  FAMILY_4b_m1.30  FAMILY_4b_pct_m1.30  FAMILY_4a_m1.30
+  PURE     72         4        25               13                0.181               45               16                0.222               45
+   ABS     72         1        26               10                0.139               48               17                0.236               48
+ REL-M     72         1        26               10                0.139               47               16                0.222               47
+ REL-V    360        10       125               41                0.114              234               66                0.183              235
+
+  matched pairs — does the repair change a 4b verdict for the SAME rule? (18 cells each)
+               rule  m_max  n  abs_pass  rel_pass  flips_to_pass  flips_to_fail
+ddctl-abs-8/recover    1.0 18         1         1              0              0
+ddctl-abs-8/recover    1.3 18         5         6              1              0
+   ddctl-abs-8/high    1.0 18         0         0              0              0
+   ddctl-abs-8/high    1.3 18         3         1              0              2
+      ebud-abs-0.10    1.0 18         4         4              0              0
+      ebud-abs-0.10    1.3 18         4         4              0              0
+      ebud-abs-0.20    1.0 18         5         5              0              0
+      ebud-abs-0.20    1.3 18         5         5              0              0
+
+  quality of what each parameterisation admits (FAMILY-4b at m<=1.30, best-m row per book by IS Sharpe, OOS 2017-2026):
+family  admitted  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  mean_m  also_4a
+  PURE        16    0.1302      1.1065    -0.1896  0.9719        4
+   ABS        17    0.1202      1.1179    -0.1853  0.9706        3
+ REL-M        16    0.1271      1.0957    -0.1932  0.9969        3
+ REL-V        66    0.1256      1.0904    -0.1923  1.0250       16
+
+========================================================================================================================================================================================================
+Q3 — RULE 8 WALK-FORWARD.  Parameters chosen on 2009-2016 ONLY; OOS 2017-2026 read once.
+    Three MATCHED selectors, each over 4 arms x 25 m: A=ABS, B=REL-M, C=REL-V(c=1.0, L=60) + REL-M ebud.
+    Rule: among family points clearing the IS 4b bars take argmax IS Sharpe; if none, fall back to the unscreened IS argmax.
+
+  per-cell picks (all 54 rows: 18 cells x 3 selectors):
+panel  book    cost selector  screened                          arm      m  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  regret
+  u56   V1u 10.0000    A_ABS     False                ebud-abs-0.10 0.8000     0.5998    0.0272      0.5695    -0.0909  0.1489
+  u56   V1u 10.0000   B_RELM     False               ebud-relM-0.10 1.3000     0.5840    0.0327      0.5177    -0.1194  0.1462
+  u56   V1u 10.0000   C_RELV     False               ebud-relM-0.10 1.3000     0.5840    0.0327      0.5177    -0.1194  0.1512
+  u56   V1u 25.0000    A_ABS     False                ebud-abs-0.10 0.8500     0.3017    0.0109      0.2418    -0.1092  0.1341
+  u56   V1u 25.0000   B_RELM     False               ebud-relM-0.10 1.3000     0.2971    0.0118      0.2102    -0.1418  0.1656
+  u56   V1u 25.0000   C_RELV     False               ebud-relM-0.10 1.3000     0.2971    0.0118      0.2102    -0.1418  0.1825
+  u56 TOP20 10.0000    A_ABS      True                ebud-abs-0.20 0.7500     1.1876    0.1243      1.1671    -0.1701  0.0329
+  u56 TOP20 10.0000   B_RELM      True               ebud-relM-0.20 1.1000     1.1868    0.1830      1.1669    -0.2427  0.0328
+  u56 TOP20 10.0000   C_RELV      True    ddctl-relV-c1.00-L60/high 1.1000     1.1870    0.1639      1.1018    -0.2422  0.0979
+  u56 TOP20 25.0000    A_ABS     False                ebud-abs-0.20 0.7500     1.0691    0.1130      1.0712    -0.1712  0.0414
+  u56 TOP20 25.0000   B_RELM     False               ebud-relM-0.20 1.2500     1.0688    0.1883      1.0718    -0.2737  0.0377
+  u56 TOP20 25.0000   C_RELV     False               ebud-relM-0.20 1.2500     1.0688    0.1883      1.0718    -0.2737  0.0377
+  u56 EWall 10.0000    A_ABS      True                ebud-abs-0.10 1.0500     1.1102    0.1452      1.1357    -0.2355  0.0798
+  u56 EWall 10.0000   B_RELM      True               ebud-relM-0.10 1.0500     1.1102    0.1452      1.1357    -0.2355  0.0463
+  u56 EWall 10.0000   C_RELV      True ddctl-relV-c1.00-L60/recover 1.3000     1.1589    0.1572      1.0561    -0.2853  0.0797
+  u56 EWall 25.0000    A_ABS      True                ebud-abs-0.10 1.0500     1.0996    0.1436      1.1250    -0.2357  0.0487
+  u56 EWall 25.0000   B_RELM      True               ebud-relM-0.10 1.0500     1.0996    0.1436      1.1250    -0.2357  0.0393
+  u56 EWall 25.0000   C_RELV      True ddctl-relV-c1.00-L60/recover 1.3000     1.1566    0.1545      1.0413    -0.2856  0.0837
+broad   V1u 10.0000    A_ABS     False                ebud-abs-0.20 0.7500     0.7275    0.0295      0.4484    -0.1719  0.1255
+broad   V1u 10.0000   B_RELM     False               ebud-relM-0.20 1.3000     0.7165    0.0361      0.3989    -0.2281  0.0007
+broad   V1u 10.0000   C_RELV     False               ebud-relM-0.20 1.3000     0.7165    0.0361      0.3989    -0.2281  0.0710
+broad   V1u 25.0000    A_ABS     False                ebud-abs-0.10 1.1500     0.3497   -0.0013     -0.0089    -0.1132  0.1550
+broad   V1u 25.0000   B_RELM     False               ebud-relM-0.10 1.3000     0.3449   -0.0015      0.0009    -0.1451  0.1378
+broad   V1u 25.0000   C_RELV     False               ebud-relM-0.10 1.3000     0.3449   -0.0015      0.0009    -0.1451  0.1561
+broad TOP20 10.0000    A_ABS      True                ebud-abs-0.10 1.2500     1.1880    0.1386      0.8393    -0.2570  0.0876
+broad TOP20 10.0000   B_RELM      True               ebud-relM-0.10 1.1500     1.1449    0.1401      0.8543    -0.2607  0.0652
+broad TOP20 10.0000   C_RELV      True               ebud-relM-0.10 1.1500     1.1449    0.1401      0.8543    -0.2607  0.0652
+broad TOP20 25.0000    A_ABS      True                ebud-abs-0.10 1.2000     1.0684    0.1178      0.7469    -0.2531  0.0560
+broad TOP20 25.0000   B_RELM      True               ebud-relM-0.10 1.1000     1.0228    0.1154      0.7517    -0.2516  0.0457
+broad TOP20 25.0000   C_RELV      True               ebud-relM-0.10 1.1000     1.0228    0.1154      0.7517    -0.2516  0.0582
+broad EWall 10.0000    A_ABS      True                ebud-abs-0.10 0.8500     1.1448    0.1183      1.1028    -0.2189  0.0766
+broad EWall 10.0000   B_RELM      True               ebud-relM-0.10 0.8500     1.1448    0.1183      1.1028    -0.2189  0.0373
+broad EWall 10.0000   C_RELV      True               ebud-relM-0.10 0.8500     1.1448    0.1183      1.1028    -0.2189  0.0020
+broad EWall 25.0000    A_ABS      True                ebud-abs-0.10 0.8500     1.1346    0.1170      1.0918    -0.2191  0.0771
+broad EWall 25.0000   B_RELM      True               ebud-relM-0.10 0.8500     1.1346    0.1170      1.0918    -0.2191  0.0326
+broad EWall 25.0000   C_RELV      True               ebud-relM-0.10 0.8500     1.1346    0.1170      1.0918    -0.2191  0.0005
+small   V1u 10.0000    A_ABS     False             ddctl-abs-8/high 0.6500     0.6522    0.0252      0.4431    -0.1588  0.1350
+small   V1u 10.0000   B_RELM     False               ebud-relM-0.20 1.3000     0.6495    0.0228      0.2423    -0.3967  0.3063
+small   V1u 10.0000   C_RELV     False               ebud-relM-0.20 1.3000     0.6495    0.0228      0.2423    -0.3967  0.3384
+small   V1u 25.0000    A_ABS     False                ebud-abs-0.20 1.0500     0.3399   -0.0127     -0.0823    -0.3852  0.3097
+small   V1u 25.0000   B_RELM     False               ebud-relM-0.20 1.3000     0.3420   -0.0175     -0.0777    -0.4648  0.3055
+small   V1u 25.0000   C_RELV     False               ebud-relM-0.20 1.3000     0.3420   -0.0175     -0.0777    -0.4648  0.3036
+small TOP20 10.0000    A_ABS     False             ddctl-abs-8/high 1.3000     0.7425    0.1404      0.8365    -0.2266  0.0420
+small TOP20 10.0000   B_RELM     False            ddctl-relM-8/high 1.3000     0.7418    0.1157      0.6860    -0.2468  0.1074
+small TOP20 10.0000   C_RELV     False               ebud-relM-0.20 1.3000     0.7196    0.2067      0.7934    -0.3794  0.0000
+small TOP20 25.0000    A_ABS     False             ddctl-abs-8/high 1.3000     0.6462    0.1015      0.6432    -0.2465  0.1320
+small TOP20 25.0000   B_RELM     False               ebud-relM-0.20 1.3000     0.5854    0.1686      0.6827    -0.3809  0.0437
+small TOP20 25.0000   C_RELV     False               ebud-relM-0.20 1.3000     0.5854    0.1686      0.6827    -0.3809  0.0000
+small EWall 10.0000    A_ABS     False             ddctl-abs-8/high 1.3000     0.9053    0.0936      0.7093    -0.2779  0.0282
+small EWall 10.0000   B_RELM     False               ebud-relM-0.10 1.1500     0.7737    0.1138      0.6360    -0.4074  0.1110
+small EWall 10.0000   C_RELV     False ddctl-relV-c1.00-L60/recover 0.2500     0.7771    0.0192      0.6205    -0.0740  0.0213
+small EWall 25.0000    A_ABS     False             ddctl-abs-8/high 1.3000     0.8709    0.0878      0.6787    -0.2805  0.0372
+small EWall 25.0000   B_RELM     False         ddctl-relM-8/recover 0.7000     0.8033    0.0538      0.6837    -0.1686  0.0464
+small EWall 25.0000   C_RELV     False               ebud-relM-0.10 1.2000     0.7572    0.1143      0.6198    -0.4250  0.0044
+
+  AGGREGATE (mean over 18 cells; 'paired' = cells where all three selectors were IS-screened):
+selector  cells  screened  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  regret  mean_m   sd_m  p_cells  p_OOS_CAGR  p_OOS_Sharpe  p_OOS_MaxDD  p_regret  beat_ctl  beat_spy  beat_v1
+   A_ABS     18         7    0.0844      0.7088    -0.2123  0.0971  1.0111 0.2311        7      0.1293        1.0298      -0.2271    0.0655         5         6       12
+  B_RELM     18         7    0.0937      0.6823    -0.2576  0.0949  1.1472 0.1875        7      0.1375        1.0326      -0.2377    0.0427         3         6       12
+  C_RELV     18         7    0.0971      0.6711    -0.2662  0.0919  1.1528 0.2692        7      0.1381        1.0000      -0.2519    0.0553         2         6       12
+
+  CONTROLS (mean over the same 18 cells): no-instrument `control` m=1.00 -> OOS CAGR 10.65%, Sharpe 0.762, MaxDD -27.39%
+                                       live RULES v1 -> OOS CAGR 4.86%, Sharpe 0.451, MaxDD -25.30%
+                                       SPY           -> OOS CAGR 15.45%, Sharpe 0.882, MaxDD -33.72%
+
+  m-CHOICE STABILITY — the risk the family convention introduces.  Spearman(IS Sharpe, OOS Sharpe) across the 25 m of the PICKED arm:
+selector  mean_rho  median_rho  mean_abs_m_error
+   A_ABS   -0.3566     -0.3454            0.5861
+  B_RELM   -0.1074     -0.4188            0.5556
+  C_RELV   -0.1180     -0.6373            0.6000
+
+========================================================================================================================================================================================================
+VERDICT
+  REL-M: S1 FAIL  S2 FAIL
+  REL-V: S1 FAIL  S2 FAIL
+  (no book is promoted by this run: it re-parameterises an existing corpus, and the object adjudicated is the CORPUS-ELIGIBILITY RULE, not a trading book.)
