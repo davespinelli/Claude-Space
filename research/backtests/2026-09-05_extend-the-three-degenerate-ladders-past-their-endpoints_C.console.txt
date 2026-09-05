@@ -1,0 +1,338 @@
+IDEA 218 - extend-the-three-degenerate-ladders-past-their-endpoints   (lane C, 2026-09-05)
+==========================================================================================================================
+Idea 189: the IS argmax is the LAST ladder point in 94.3%/81.1%/100.0% of books on
+GROSS/BAND/SLEEVE.  Is that the dial, or is it the wall?  Build the wall further out.
+Costs 10 bps, t+1 execution, IS <= 2016-12-31, OOS >= 2017-01-01.
+Two tuned params: SELECTOR (2, both reported) x LADDER POINT (34, all reported).
+LEVERAGE CAVEAT: gross > 1.00 is borrowing and the engine finances it at 0%.  Three
+financing rungs reported: ['0%', '2%', '5%'] per year on (gross - 1).
+
+  GROSS   idea 171 ladder [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1.0]  ->  EXTENDED with [1.1, 1.2, 1.3, 1.4, 1.5]   (incumbent 0.75, old endpoint 1.0, new endpoint 1.5)
+  BAND    idea 171 ladder [0.0, 0.02, 0.03, 0.05, 0.08]  ->  EXTENDED with [0.1, 0.12, 0.15]   (incumbent 0.0, old endpoint 0.08, new endpoint 0.15)
+  SLEEVE  idea 171 ladder [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3]  ->  EXTENDED with [0.35, 0.4, 0.45, 0.5]   (incumbent 0.0, old endpoint 0.3, new endpoint 0.5)
+
+CORPUS: 53 books, built by idea 189's own build_corpus() (5 fixed panels + 48 sub-panels, seed 171500+k)
+
+REPRODUCTION CONTROLS [a] and [b] (idea 189's own checks, called directly)
+  [a] fast_backtest vs engine.backtest (products/backtester/engine.py), same book:
+      B136      freq=D  max|dret|=1.735e-18  max|dturn|=1.665e-16
+      B136      freq=W  max|dret|=2.776e-17  max|dturn|=3.331e-16
+      B136      freq=M  max|dret|=2.776e-17  max|dturn|=5.551e-16
+      B136      freq=Q  max|dret|=6.245e-17  max|dturn|=1.221e-15
+      -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on U56: max|dw|=0.000e+00  -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on B136: max|dw|=0.000e+00  -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on BSTK100: max|dw|=0.000e+00  -> PASS
+
+  benchmark U56    SPY  CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834  OOS Sharpe 0.882 | RULES v1 Sharpe 0.664
+  benchmark B136   SPY  CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834  OOS Sharpe 0.882 | RULES v1 Sharpe 0.635
+  benchmark SMALL  SPY  CAGR 14.13% Sharpe 0.862 MaxDD -33.72% halves 0.891/0.858  OOS Sharpe 0.882 | RULES v1 Sharpe 0.554
+
+RUNNING EXTENDED LADDERS ...
+   ... 10/53 books  (80s)
+   ... 20/53 books  (110s)
+   ... 30/53 books  (146s)
+   ... 40/53 books  (187s)
+   ... 50/53 books  (236s)
+   1802 ladder rows (0% financing) -> 2026-09-05_extend-the-three-degenerate-ladders-past-their-endpoints_C.ladder.csv
+   2385 GROSS rows across 3 financing rungs -> 2026-09-05_extend-the-three-degenerate-ladders-past-their-endpoints_C.financing.csv   (251s)
+
+REPRODUCTION CONTROLS [c] and [c2]
+  [c] the 1166 ORIGINAL-point rows vs idea 189's committed 2026-09-05_does-any-fitted-dial-beat-its-own-modal-pick_B.ladder.csv:  rows 1166 vs 1166, keys align=True
+      max|delta| over 12 numeric columns = 3.553e-15 (worst: turnover);  fail4a identical in 100.0%, fail4b identical in 100.0%
+      -> PASS
+  [c2] truncated SEL-SHARPE pick distributions vs idea 189's published counts:
+       GROSS   endpoint   1.0: 50/53 books  (idea 189 published 50/53)  ok
+       BAND    endpoint  0.08: 43/53 books  (idea 189 published 43/53)  ok
+       SLEEVE  endpoint   0.3: 53/53 books  (idea 189 published 53/53)  ok
+       -> PASS
+
+==========================================================================================================================
+HEADLINE - DOES THE ARGMAX MOVE WHEN THE WALL MOVES?   (53 books, IS <= 2016 only)
+
+  dial    sel     old end  share@old  new end  share@new  moved past old  landed interior  ext modal   share  verdict
+  GROSS   SHARPE      1.0      94.3%      1.5      81.1%           92.5%            11.3%        1.5   81.1%  TRUNCATION ARTEFACT (runs to the new wall)
+  GROSS   4B          1.0      37.7%      1.5       5.7%           24.5%            18.9%        0.8   20.8%  endpoint held (old verdict stands)
+  BAND    SHARPE     0.08      81.1%     0.15      26.4%           69.8%            43.4%       0.12   30.2%  INTERIOR OPTIMUM FOUND
+  BAND    4B         0.08      69.8%     0.15      17.0%           60.4%            43.4%       0.12   30.2%  INTERIOR OPTIMUM FOUND
+  SLEEVE  SHARPE      0.3     100.0%      0.5      22.6%           88.7%            66.0%       0.45   39.6%  INTERIOR OPTIMUM FOUND
+  SLEEVE  4B          0.3       1.9%      0.5       1.9%            1.9%             0.0%        0.0   49.1%  endpoint held (old verdict stands)
+
+  full extended pick distributions:
+    GROSS   SEL-SHARPE 0.2:0 0.3:0 0.4:0 0.5:0 0.6:1 0.7:0 0.75:0 0.8:1 0.9:1 1.0:1 1.1:1* 1.2:2* 1.3:1* 1.4:2* 1.5:43*
+    GROSS   SEL-4B     0.2:0 0.3:0 0.4:0 0.5:0 0.6:6 0.7:9 0.75:4 0.8:11 0.9:3 1.0:7 1.1:3* 1.2:3* 1.3:2* 1.4:2* 1.5:3*
+    BAND    SEL-SHARPE 0.0:1 0.02:1 0.03:2 0.05:0 0.08:12 0.1:7* 0.12:16* 0.15:14*
+    BAND    SEL-4B     0.0:1 0.02:6 0.03:0 0.05:3 0.08:11 0.1:7* 0.12:16* 0.15:9*
+    SLEEVE  SEL-SHARPE 0.0:0 0.05:0 0.1:0 0.15:0 0.2:0 0.25:0 0.3:6 0.35:7* 0.4:7* 0.45:21* 0.5:12*
+    SLEEVE  SEL-4B     0.0:26 0.05:8 0.1:9 0.15:5 0.2:3 0.25:1 0.3:0 0.35:0* 0.4:0* 0.45:0* 0.5:1*
+   (* = a point that did not exist in idea 171's ladder)
+
+==========================================================================================================================
+LADDER SHAPE - mean over the 53 books.  If IS keeps rising past the old endpoint the dial is
+monotone and idea 171's ladder was an arbitrary stop; where IS turns over, the wall was real.
+  GROSS   IS_Sharpe  0.2:0.952 0.3:0.953 0.4:0.954 0.5:0.954 0.6:0.955 0.7:0.955 0.75:0.955 0.8:0.956 0.9:0.956 1.0:0.956 1.1*:0.957 1.2*:0.957 1.3*:0.957 1.4*:0.958 1.5*:0.958
+  GROSS   OOS_Sharpe 0.2:0.964 0.3:0.964 0.4:0.964 0.5:0.964 0.6:0.964 0.7:0.964 0.75:0.964 0.8:0.964 0.9:0.963 1.0:0.963 1.1*:0.963 1.2*:0.963 1.3*:0.962 1.4*:0.962 1.5*:0.961
+  GROSS   OOS_CAGR   0.2:2.7% 0.3:4.0% 0.4:5.3% 0.5:6.7% 0.6:8.0% 0.7:9.3% 0.75:10.0% 0.8:10.6% 0.9:11.9% 1.0:13.2% 1.1*:14.5% 1.2*:15.8% 1.3*:17.1% 1.4*:18.3% 1.5*:19.6%
+  GROSS   OOS_MaxDD  0.2:-4.7% 0.3:-7.1% 0.4:-9.4% 0.5:-11.6% 0.6:-13.9% 0.7:-16.1% 0.75:-17.2% 0.8:-18.3% 0.9:-20.4% 1.0:-22.5% 1.1*:-24.6% 1.2*:-26.7% 1.3*:-28.7% 1.4*:-30.7% 1.5*:-32.7%
+          IS argmax of the MEAN ladder = 1.5  (old endpoint 1.0, new endpoint 1.5);  OOS argmax = 0.2
+
+  BAND    IS_Sharpe  0.0:0.955 0.02:0.977 0.03:0.982 0.05:0.980 0.08:1.026 0.1*:1.024 0.12*:1.034 0.15*:1.025
+  BAND    OOS_Sharpe 0.0:0.964 0.02:0.970 0.03:0.963 0.05:0.955 0.08:0.973 0.1*:0.970 0.12*:0.984 0.15*:0.965
+  BAND    OOS_CAGR   0.0:10.0% 0.02:10.0% 0.03:10.0% 0.05:10.0% 0.08:10.3% 0.1*:10.3% 0.12*:10.6% 0.15*:10.5%
+  BAND    OOS_MaxDD  0.0:-17.2% 0.02:-16.9% 0.03:-16.9% 0.05:-17.4% 0.08:-18.0% 0.1*:-17.9% 0.12*:-18.0% 0.15*:-18.0%
+          IS argmax of the MEAN ladder = 0.12  (old endpoint 0.08, new endpoint 0.15);  OOS argmax = 0.12
+
+  SLEEVE  IS_Sharpe  0.0:0.955 0.05:0.985 0.1:1.015 0.15:1.047 0.2:1.078 0.25:1.107 0.3:1.132 0.35*:1.151 0.4*:1.161 0.45*:1.158 0.5*:1.142
+  SLEEVE  OOS_Sharpe 0.0:0.964 0.05:0.993 0.1:1.023 0.15:1.054 0.2:1.085 0.25:1.116 0.3:1.144 0.35*:1.169 0.4*:1.190 0.45*:1.205 0.5*:1.211
+  SLEEVE  OOS_CAGR   0.0:10.0% 0.05:9.8% 0.1:9.6% 0.15:9.4% 0.2:9.2% 0.25:9.0% 0.3:8.8% 0.35*:8.6% 0.4*:8.4% 0.45*:8.2% 0.5*:8.0%
+  SLEEVE  OOS_MaxDD  0.0:-17.2% 0.05:-16.3% 0.1:-15.5% 0.15:-14.7% 0.2:-13.9% 0.25:-13.2% 0.3:-12.6% 0.35*:-12.1% 0.4*:-11.7% 0.45*:-11.6% 0.5*:-11.5%
+          IS argmax of the MEAN ladder = 0.4  (old endpoint 0.3, new endpoint 0.5);  OOS argmax = 0.5
+
+==========================================================================================================================
+WHAT THE EXTENSION COSTS OR BUYS OUT OF SAMPLE, paired over 53 books.
+Positive = the arm on the left beats the arm on the right.
+
+  --- OOS score = OOS_Sharpe --------------------------------------------------------------------------------------
+  dial    contrast                              mean d    median       t  win  loss  tie  sign p  verdict
+  GROSS   SEL-EXT - SEL-TRUNC                  -0.0016   -0.0017   -6.13    8    41    4  0.0000  LEFT LOSES
+  GROSS   SEL-EXT-4B - SEL-TRUNC-4B            -0.0004   +0.0000   -3.01    0    13   40  0.0002  LEFT LOSES
+  GROSS   SEL-EXT - CONST                      -0.0021   -0.0025   -5.61   11    42    0  0.0000  LEFT LOSES
+  GROSS   MODE-EXT-LOO - SEL-EXT               -0.0005   +0.0000   -2.47    1     9   43  0.0215  LEFT LOSES
+  GROSS   MODE-EXT-LOO - CONST                 -0.0026   -0.0027   -6.39   10    43    0  0.0000  LEFT LOSES
+  GROSS   ORACLE-EXT - SEL-EXT                 +0.0038   +0.0031   +8.16   46     0    7  0.0000  LEFT WINS
+  BAND    SEL-EXT - SEL-TRUNC                  -0.0005   +0.0000   -0.08   20    17   16  0.7428  left behind (n.s.)
+  BAND    SEL-EXT-4B - SEL-TRUNC-4B            +0.0052   +0.0000   +0.86   19    13   21  0.3771  left ahead (n.s.)
+  BAND    SEL-EXT - CONST                      +0.0080   +0.0009   +0.96   28    24    1  0.6778  left ahead (n.s.)
+  BAND    MODE-EXT-LOO - SEL-EXT               +0.0120   +0.0020   +2.64   27    10   16  0.0076  LEFT WINS
+  BAND    MODE-EXT-LOO - CONST                 +0.0200   +0.0280   +2.71   37    16    0  0.0055  LEFT WINS
+  BAND    ORACLE-EXT - SEL-EXT                 +0.0407   +0.0300   +7.05   44     0    9  0.0000  LEFT WINS
+  SLEEVE  SEL-EXT - SEL-TRUNC                  +0.0603   +0.0720  +12.56   47     0    6  0.0000  LEFT WINS
+  SLEEVE  SEL-EXT-4B - SEL-TRUNC-4B            +0.0025   +0.0000   +1.00    1     0   52  1.0000  left ahead (n.s.)
+  SLEEVE  SEL-EXT - CONST                      +0.2404   +0.2433  +68.90   53     0    0  0.0000  LEFT WINS
+  SLEEVE  MODE-EXT-LOO - SEL-EXT               +0.0004   +0.0000   +0.18   17    15   21  0.8601  left ahead (n.s.)
+  SLEEVE  MODE-EXT-LOO - CONST                 +0.2409   +0.2387  +57.52   53     0    0  0.0000  LEFT WINS
+  SLEEVE  ORACLE-EXT - SEL-EXT                 +0.0125   +0.0101   +6.75   40     0   13  0.0000  LEFT WINS
+
+  --- OOS score = OOS_margin --------------------------------------------------------------------------------------
+  dial    contrast                              mean d    median       t  win  loss  tie  sign p  verdict
+  GROSS   SEL-EXT - SEL-TRUNC                  -0.3579   -0.5188   -9.72    7    42    4  0.0000  LEFT LOSES
+  GROSS   SEL-EXT-4B - SEL-TRUNC-4B            -0.0012   +0.0000   -0.11    8     5   40  0.5811  left behind (n.s.)
+  GROSS   SEL-EXT - CONST                      -0.4254   -0.6222   -7.18   13    40    0  0.0003  LEFT LOSES
+  GROSS   MODE-EXT-LOO - SEL-EXT               -0.0561   +0.0000   -2.39    1     9   43  0.0215  LEFT LOSES
+  GROSS   MODE-EXT-LOO - CONST                 -0.4816   -0.6675   -8.24   11    42    0  0.0000  LEFT LOSES
+  GROSS   ORACLE-EXT - SEL-EXT                 -0.0737   -0.0041   -1.20   19    27    7  0.3020  left behind (n.s.)
+  BAND    SEL-EXT - SEL-TRUNC                  -0.0070   +0.0000   -1.76   12    24   17  0.0652  left behind (n.s.)
+  BAND    SEL-EXT-4B - SEL-TRUNC-4B            +0.0016   +0.0000   +0.34   13    18   22  0.4731  left ahead (n.s.)
+  BAND    SEL-EXT - CONST                      +0.0203   -0.0000   +1.78   25    27    1  0.8899  left ahead (n.s.)
+  BAND    MODE-EXT-LOO - SEL-EXT               +0.0106   +0.0000   +2.22   23    14   16  0.1877  left ahead (n.s.)
+  BAND    MODE-EXT-LOO - CONST                 +0.0309   +0.0089   +2.87   28    25    0  0.7838  left ahead (n.s.)
+  BAND    ORACLE-EXT - SEL-EXT                 +0.0259   +0.0090   +4.82   34     9   10  0.0002  LEFT WINS
+  SLEEVE  SEL-EXT - SEL-TRUNC                  -0.0541   -0.0614   -7.26    1    46    6  0.0000  LEFT LOSES
+  SLEEVE  SEL-EXT-4B - SEL-TRUNC-4B            +0.0035   +0.0000   +1.00    1     0   52  1.0000  left ahead (n.s.)
+  SLEEVE  SEL-EXT - CONST                      -0.0845   -0.1038   -5.54    6    47    0  0.0000  LEFT LOSES
+  SLEEVE  MODE-EXT-LOO - SEL-EXT               -0.0001   +0.0000   -0.04   14    18   21  0.5966  left behind (n.s.)
+  SLEEVE  MODE-EXT-LOO - CONST                 -0.0847   -0.1100   -5.69    6    47    0  0.0000  LEFT LOSES
+  SLEEVE  ORACLE-EXT - SEL-EXT                 -0.0141   -0.0134   -6.12    3    37   13  0.0000  LEFT LOSES
+
+PER-FAMILY (sub-panels of B136 are correlated draws; the FAMILY count is the honest n).
+SEL-EXT minus SEL-TRUNC, OOS Sharpe.
+  dial                         U56                     B136                    SMALL
+  GROSS        -0.0007 (n2, t+nan)    -0.0017 (n50, t-6.39)      +0.0016 (n1, t+nan)
+  BAND         -0.0046 (n2, t+nan)    -0.0001 (n50, t-0.02)      -0.0114 (n1, t+nan)
+  SLEEVE       +0.0320 (n2, t+nan)   +0.0600 (n50, t+12.46)      +0.1315 (n1, t+nan)
+
+==========================================================================================================================
+THE LEVERAGE CONTROL.  GROSS only.  Does the extension survive paying for the borrowing?
+Financing charged daily on (gross - 1) at a flat annual rate; nominal gross, so this is a
+LOWER BOUND on the true charge (realised gross drifts above nominal between rebalances).
+
+   rate IS argmax dist over the 15-point ladder (SEL-SHARPE)          share>1.00  share@1.50  mean OOS Sharpe of the pick
+     0% 0.6:1 0.8:1 0.9:1 1.0:1 1.1:1 1.2:2 1.3:1 1.4:2 1.5:43             92.5%       81.1%                       0.9617
+     2% 0.6:1 0.8:1 0.9:1 1.0:50                                            0.0%        0.0%                       0.9633
+     5% 0.6:1 0.8:1 0.9:1 1.0:50                                            0.0%        0.0%                       0.9633
+
+  mean ladder by financing rung (OOS Sharpe):
+       0%  0.2:0.964 0.3:0.964 0.4:0.964 0.5:0.964 0.6:0.964 0.7:0.964 0.75:0.964 0.8:0.964 0.9:0.963 1.0:0.963 1.1:0.963 1.2:0.963 1.3:0.962 1.4:0.962 1.5:0.961
+       2%  0.2:0.964 0.3:0.964 0.4:0.964 0.5:0.964 0.6:0.964 0.7:0.964 0.75:0.964 0.8:0.964 0.9:0.963 1.0:0.963 1.1:0.949 1.2:0.937 1.3:0.927 1.4:0.918 1.5:0.911
+       5%  0.2:0.964 0.3:0.964 0.4:0.964 0.5:0.964 0.6:0.964 0.7:0.964 0.75:0.964 0.8:0.964 0.9:0.963 1.0:0.963 1.1:0.928 1.2:0.899 1.3:0.874 1.4:0.853 1.5:0.835
+  mean ladder by financing rung (OOS CAGR):
+       0%  0.2:2.7% 0.3:4.0% 0.4:5.3% 0.5:6.7% 0.6:8.0% 0.7:9.3% 0.75:10.0% 0.8:10.6% 0.9:11.9% 1.0:13.2% 1.1:14.5% 1.2:15.8% 1.3:17.1% 1.4:18.3% 1.5:19.6%
+       2%  0.2:2.7% 0.3:4.0% 0.4:5.3% 0.5:6.7% 0.6:8.0% 0.7:9.3% 0.75:10.0% 0.8:10.6% 0.9:11.9% 1.0:13.2% 1.1:14.3% 1.2:15.3% 1.3:16.4% 1.4:17.4% 1.5:18.4%
+       5%  0.2:2.7% 0.3:4.0% 0.4:5.3% 0.5:6.7% 0.6:8.0% 0.7:9.3% 0.75:10.0% 0.8:10.6% 0.9:11.9% 1.0:13.2% 1.1:13.9% 1.2:14.6% 1.3:15.3% 1.4:16.0% 1.5:16.6%
+  mean ladder by financing rung (OOS MaxDD):
+       0%  0.2:-4.7% 0.3:-7.1% 0.4:-9.4% 0.5:-11.6% 0.6:-13.9% 0.7:-16.1% 0.75:-17.2% 0.8:-18.3% 0.9:-20.4% 1.0:-22.5% 1.1:-24.6% 1.2:-26.7% 1.3:-28.7% 1.4:-30.7% 1.5:-32.7%
+       2%  0.2:-4.7% 0.3:-7.1% 0.4:-9.4% 0.5:-11.6% 0.6:-13.9% 0.7:-16.1% 0.75:-17.2% 0.8:-18.3% 0.9:-20.4% 1.0:-22.5% 1.1:-24.7% 1.2:-26.7% 1.3:-28.8% 1.4:-30.8% 1.5:-32.8%
+       5%  0.2:-4.7% 0.3:-7.1% 0.4:-9.4% 0.5:-11.6% 0.6:-13.9% 0.7:-16.1% 0.75:-17.2% 0.8:-18.3% 0.9:-20.4% 1.0:-22.5% 1.1:-24.7% 1.2:-26.9% 1.3:-29.0% 1.4:-31.0% 1.5:-33.1%
+
+==========================================================================================================================
+PROTOCOL RULE 8 WALK-FORWARD.  Every arm chose on IS only; OOS is read once, here.
+(i) mean OOS metrics across the 53 books, per dial and arm
+  dial    arm               OOS CAGR  OOS Shrp  OOS MaxDD  OOS margin  OOS-4b pass
+  GROSS   CONST                9.96%     0.964    -17.18%     -0.1615     11/53
+  GROSS   SEL-TRUNC           13.00%     0.963    -22.25%     -0.2290      5/53
+  GROSS   SEL-EXT             18.47%     0.962    -31.16%     -0.5869      2/53
+  GROSS   MODE-TRUNC-LOO      13.22%     0.963    -22.54%     -0.2345      4/53
+  GROSS   MODE-EXT-LOO        19.56%     0.961    -32.68%     -0.6431      1/53
+  GROSS   RANDOM-EXT          10.74%     0.964    -18.16%     -0.3932      3/53
+  GROSS   ORACLE-EXT           7.74%     0.965    -12.95%     -0.6606      3/53
+  BAND    CONST                9.96%     0.964    -17.18%     -0.1615     11/53
+  BAND    SEL-TRUNC           10.29%     0.972    -17.72%     -0.1342     10/53
+  BAND    SEL-EXT             10.43%     0.972    -17.86%     -0.1412     11/53
+  BAND    MODE-TRUNC-LOO      10.34%     0.973    -17.98%     -0.1313      9/53
+  BAND    MODE-EXT-LOO        10.60%     0.984    -18.00%     -0.1306     11/53
+  BAND    RANDOM-EXT          10.32%     0.974    -17.57%     -0.1380      8/53
+  BAND    ORACLE-EXT          10.75%     1.013    -17.35%     -0.1153     13/53
+  SLEEVE  CONST                9.96%     0.964    -17.18%     -0.1615     11/53
+  SLEEVE  SEL-TRUNC            8.82%     1.144    -12.56%     -0.1919      7/53
+  SLEEVE  SEL-EXT              8.19%     1.204    -11.50%     -0.2460      1/53
+  SLEEVE  MODE-TRUNC-LOO       8.82%     1.144    -12.56%     -0.1919      7/53
+  SLEEVE  MODE-EXT-LOO         8.20%     1.205    -11.57%     -0.2461      0/53
+  SLEEVE  RANDOM-EXT           8.95%     1.104    -13.51%     -0.1893      9/53
+  SLEEVE  ORACLE-EXT           8.04%     1.217    -11.42%     -0.2601      0/53
+
+  pooled over the three dials:
+    CONST            OOS CAGR   9.96%  OOS Sharpe 0.9638  OOS MaxDD -17.18%
+    SEL-TRUNC        OOS CAGR  10.70%  OOS Sharpe 1.0265  OOS MaxDD -17.51%
+    SEL-EXT          OOS CAGR  12.36%  OOS Sharpe 1.0460  OOS MaxDD -20.18%
+    MODE-TRUNC-LOO   OOS CAGR  10.79%  OOS Sharpe 1.0267  OOS MaxDD -17.69%
+    MODE-EXT-LOO     OOS CAGR  12.79%  OOS Sharpe 1.0499  OOS MaxDD -20.75%
+    RANDOM-EXT       OOS CAGR  10.00%  OOS Sharpe 1.0140  OOS MaxDD -16.41%
+    ORACLE-EXT       OOS CAGR   8.84%  OOS Sharpe 1.0649  OOS MaxDD -13.91%
+    SPY/U56          OOS CAGR  15.45%  OOS Sharpe 0.8820  OOS MaxDD -33.72%
+    RULESv1/U56      OOS CAGR   7.73%  OOS Sharpe 0.7471  OOS MaxDD -13.83%
+    SPY/B136         OOS CAGR  15.45%  OOS Sharpe 0.8820  OOS MaxDD -33.72%
+    RULESv1/B136     OOS CAGR   5.94%  OOS Sharpe 0.5763  OOS MaxDD -21.19%
+    SPY/SMALL        OOS CAGR  15.45%  OOS Sharpe 0.8820  OOS MaxDD -33.72%
+    RULESv1/SMALL    OOS CAGR  19.31%  OOS Sharpe 0.6046  OOS MaxDD -35.01%
+
+(ii) the classic S1 pick: within each dial+arm, the single book with the best IS Sharpe, read once OOS
+  dial    arm              book         point  OOS CAGR  OOS Shrp  OOS MaxDD  vs SPY / RULES v1
+  GROSS   CONST            B136k80d13    0.75     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS   SEL-TRUNC        B136k80d13     1.0    12.37%     0.807    -23.40%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS   SEL-EXT          B136k80d13     1.5    17.93%     0.804    -34.17%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS   MODE-TRUNC-LOO   B136k80d13     1.0    12.37%     0.807    -23.40%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS   MODE-EXT-LOO     B136k80d13     1.5    17.93%     0.804    -34.17%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS   RANDOM-EXT       B136k80d13     0.9    11.20%     0.807    -21.17%   SPY 0.882 / v1 0.576   does not beat both
+  GROSS   ORACLE-EXT       B136k80d13     0.2     2.57%     0.809     -4.87%   SPY 0.882 / v1 0.576   does not beat both
+  BAND    CONST            B136k80d13     0.0     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  BAND    SEL-TRUNC        B136k20d04    0.08     6.58%     0.992    -12.93%   SPY 0.882 / v1 0.576   beats both
+  BAND    SEL-EXT          B136k20d00    0.12    10.07%     1.066    -17.36%   SPY 0.882 / v1 0.576   beats both
+  BAND    MODE-TRUNC-LOO   B136k20d04    0.08     6.58%     0.992    -12.93%   SPY 0.882 / v1 0.576   beats both
+  BAND    MODE-EXT-LOO     B136k20d00    0.12    10.07%     1.066    -17.36%   SPY 0.882 / v1 0.576   beats both
+  BAND    RANDOM-EXT       B136k80d13    0.02     9.22%     0.791    -18.60%   SPY 0.882 / v1 0.576   does not beat both
+  BAND    ORACLE-EXT       B136k80d13    0.08     9.64%     0.817    -18.72%   SPY 0.882 / v1 0.576   does not beat both
+  SLEEVE  CONST            B136k80d13     0.0     9.41%     0.808    -17.78%   SPY 0.882 / v1 0.576   does not beat both
+  SLEEVE  SEL-TRUNC        B136k80d13     0.3     8.47%     0.971    -13.58%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE  SEL-EXT          B136k80d13    0.45     7.94%     1.056    -13.08%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE  MODE-TRUNC-LOO   B136k80d13     0.3     8.47%     0.971    -13.58%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE  MODE-EXT-LOO     B136k80d13    0.45     7.94%     1.056    -13.08%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE  RANDOM-EXT       B136k80d13    0.25     8.64%     0.941    -13.76%   SPY 0.882 / v1 0.576   beats both
+  SLEEVE  ORACLE-EXT       B136k80d13     0.5     7.76%     1.078    -12.91%   SPY 0.882 / v1 0.576   beats both
+
+==========================================================================================================================
+BOTH KEEP PATHS (PROTOCOL rule 4), evaluated on all 1802 ladder rows (0% financing)
+  4a (beat the book):  1406/1802 rows pass
+  4b (capital-worthy): 226/1802 rows pass (197 of them on sub-panels, a corpus device and NOT tradable books)
+  on the ADDED points only: 4a 393/636, 4b 64/636
+  4b binding bars across all failing rows: {'CAGR': np.int64(1110), 'H2': np.int64(495), 'DD': np.int64(443), 'OOS': np.int64(219), 'H1': np.int64(189)}
+  4b binding bars on the ADDED points:     {'CAGR': np.int64(302), 'DD': np.int64(268), 'H2': np.int64(158), 'OOS': np.int64(66), 'H1': np.int64(56)}
+  SMALL484 rows passing 4b: 0/34  (idea 136)
+  4b-passing rows on the FIXED (tradable) panels:
+       book   dial  point  is_added  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover
+        U56  GROSS  0.700     False 0.120   1.107 -0.171 1.110 1.112       1.177     0.135     -0.171     8.827
+        U56  GROSS  0.750     False 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452
+        U56  GROSS  0.800     False 0.137   1.108 -0.194 1.110 1.112       1.178     0.155     -0.194    10.078
+        U56   BAND  0.000     False 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452
+        U56   BAND  0.020     False 0.131   1.119 -0.177 1.095 1.147       1.210     0.150     -0.177     9.030
+        U56   BAND  0.030     False 0.132   1.130 -0.179 1.102 1.160       1.222     0.152     -0.179     8.825
+        U56   BAND  0.050     False 0.131   1.116 -0.184 1.132 1.108       1.173     0.146     -0.184     8.402
+        U56   BAND  0.080     False 0.134   1.130 -0.184 1.164 1.107       1.172     0.147     -0.184     8.148
+        U56   BAND  0.100      True 0.134   1.123 -0.184 1.133 1.119       1.182     0.149     -0.184     7.953
+        U56   BAND  0.120      True 0.138   1.149 -0.182 1.138 1.162       1.223     0.155     -0.182     7.723
+        U56   BAND  0.150      True 0.137   1.120 -0.186 1.139 1.109       1.177     0.151     -0.186     7.403
+        U56 SLEEVE  0.000     False 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452
+        U56 SLEEVE  0.050     False 0.125   1.130 -0.173 1.135 1.132       1.198     0.141     -0.173     9.020
+        U56 SLEEVE  0.100     False 0.121   1.152 -0.164 1.161 1.153       1.220     0.137     -0.164     8.586
+        U56 SLEEVE  0.150     False 0.117   1.176 -0.154 1.187 1.175       1.242     0.132     -0.154     8.151
+        U56 SLEEVE  0.200     False 0.113   1.199 -0.145 1.213 1.197       1.264     0.128     -0.145     7.714
+        U56 SLEEVE  0.250     False 0.109   1.221 -0.136 1.238 1.219       1.286     0.124     -0.136     7.274
+       B136 SLEEVE  0.100     False 0.123   0.998 -0.181 1.172 0.851       0.932     0.119     -0.181    12.494
+       B136 SLEEVE  0.150     False 0.119   1.021 -0.171 1.199 0.873       0.954     0.116     -0.171    11.851
+       B136 SLEEVE  0.200     False 0.115   1.045 -0.160 1.226 0.897       0.978     0.113     -0.160    11.204
+       B136 SLEEVE  0.250     False 0.111   1.070 -0.156 1.255 0.922       1.002     0.110     -0.156    10.555
+       B136 SLEEVE  0.300     False 0.107   1.095 -0.151 1.283 0.948       1.028     0.106     -0.151     9.903
+    BSTK100 SLEEVE  0.050     False 0.133   1.016 -0.194 1.208 0.847       0.941     0.126     -0.194    12.015
+    BSTK100 SLEEVE  0.100     False 0.129   1.039 -0.186 1.235 0.868       0.963     0.122     -0.186    11.438
+    BSTK100 SLEEVE  0.150     False 0.125   1.064 -0.181 1.264 0.892       0.986     0.119     -0.181    10.857
+    BSTK100 SLEEVE  0.200     False 0.121   1.090 -0.175 1.295 0.917       1.011     0.116     -0.175    10.274
+    BSTK100 SLEEVE  0.250     False 0.116   1.117 -0.170 1.328 0.943       1.037     0.112     -0.170     9.687
+    BSTK100 SLEEVE  0.300     False 0.112   1.145 -0.164 1.361 0.971       1.065     0.109     -0.164     9.098
+    BSTK100 SLEEVE  0.350      True 0.107   1.173 -0.159 1.394 1.000       1.093     0.106     -0.159     8.505
+  NOTE (idea 144): every one is a re-parameterisation of an EXISTING book, not a new
+  signal.  None is proposed.  This run is a methodology test.
+
+  arm-level 4b (fixed panels only):
+    CONST             3/15 arm-cells pass 4b
+    SEL-TRUNC         4/15 arm-cells pass 4b
+    SEL-EXT           2/15 arm-cells pass 4b
+    MODE-TRUNC-LOO    3/15 arm-cells pass 4b
+    MODE-EXT-LOO      1/15 arm-cells pass 4b
+    RANDOM-EXT        2/15 arm-cells pass 4b
+    ORACLE-EXT        1/15 arm-cells pass 4b
+
+==========================================================================================================================
+NAMED-BOOK VIEW.  U56 is the live book's panel.  Each extended ladder in full.
+  SPY(full) CAGR 15.23% Sharpe 0.889 halves 0.957/0.834 MaxDD -33.72% -> 4b bars: H1>0.957 H2>0.834 OOS>0.882 |DD|<=20.23% CAGR>=10.66%
+    GROSS: incumbent 0.75 | SEL-TRUNC 0.8 | SEL-EXT 0.8 | MODE-EXT-LOO 1.5 | oracle 1.1
+       point  is_added  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover fail4a fail4b
+       0.200     False 0.034   1.106 -0.050 1.109 1.110       1.176     0.038     -0.050     2.551      -   CAGR
+       0.300     False 0.051   1.107 -0.075 1.109 1.110       1.176     0.057     -0.075     3.815      -   CAGR
+       0.400     False 0.068   1.107 -0.099 1.109 1.111       1.177     0.077     -0.099     5.073      -   CAGR
+       0.500     False 0.086   1.107 -0.124 1.110 1.111       1.177     0.096     -0.124     6.327      -   CAGR
+       0.600     False 0.103   1.107 -0.147 1.110 1.111       1.177     0.116     -0.147     7.577     DD   CAGR
+       0.700     False 0.120   1.107 -0.171 1.110 1.112       1.177     0.135     -0.171     8.827     DD      -
+       0.750     False 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452     DD      -
+       0.800     False 0.137   1.108 -0.194 1.110 1.112       1.178     0.155     -0.194    10.078     DD      -
+       0.900     False 0.154   1.108 -0.216 1.110 1.112       1.178     0.174     -0.216    11.332     DD     DD
+       1.000     False 0.172   1.108 -0.239 1.110 1.112       1.178     0.194     -0.239    12.594     DD     DD
+       1.100      True 0.189   1.108 -0.260 1.110 1.112       1.178     0.214     -0.260    13.864     DD     DD
+       1.200      True 0.206   1.108 -0.282 1.110 1.112       1.178     0.233     -0.282    15.143     DD     DD
+       1.300      True 0.223   1.107 -0.303 1.109 1.112       1.178     0.253     -0.303    16.434     DD     DD
+       1.400      True 0.240   1.107 -0.324 1.109 1.112       1.178     0.273     -0.324    17.736     DD     DD
+       1.500      True 0.257   1.107 -0.345 1.109 1.112       1.178     0.292     -0.345    19.049     DD     DD
+    BAND: incumbent 0.0 | SEL-TRUNC 0.08 | SEL-EXT 0.08 | MODE-EXT-LOO 0.12 | oracle 0.12
+       point  is_added  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover fail4a fail4b
+       0.000     False 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452     DD      -
+       0.020     False 0.131   1.119 -0.177 1.095 1.147       1.210     0.150     -0.177     9.030     DD      -
+       0.030     False 0.132   1.130 -0.179 1.102 1.160       1.222     0.152     -0.179     8.825     DD      -
+       0.050     False 0.131   1.116 -0.184 1.132 1.108       1.173     0.146     -0.184     8.402     DD      -
+       0.080     False 0.134   1.130 -0.184 1.164 1.107       1.172     0.147     -0.184     8.148     DD      -
+       0.100      True 0.134   1.123 -0.184 1.133 1.119       1.182     0.149     -0.184     7.953     DD      -
+       0.120      True 0.138   1.149 -0.182 1.138 1.162       1.223     0.155     -0.182     7.723     DD      -
+       0.150      True 0.137   1.120 -0.186 1.139 1.109       1.177     0.151     -0.186     7.403     DD      -
+    SLEEVE: incumbent 0.0 | SEL-TRUNC 0.3 | SEL-EXT 0.4 | MODE-EXT-LOO 0.45 | oracle 0.5
+       point  is_added  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  turnover fail4a fail4b
+       0.000     False 0.129   1.108 -0.182 1.110 1.112       1.177     0.145     -0.182     9.452     DD      -
+       0.050     False 0.125   1.130 -0.173 1.135 1.132       1.198     0.141     -0.173     9.020     DD      -
+       0.100     False 0.121   1.152 -0.164 1.161 1.153       1.220     0.137     -0.164     8.586     DD      -
+       0.150     False 0.117   1.176 -0.154 1.187 1.175       1.242     0.132     -0.154     8.151     DD      -
+       0.200     False 0.113   1.199 -0.145 1.213 1.197       1.264     0.128     -0.145     7.714     DD      -
+       0.250     False 0.109   1.221 -0.136 1.238 1.219       1.286     0.124     -0.136     7.274      -      -
+       0.300     False 0.105   1.242 -0.126 1.260 1.240       1.306     0.120     -0.126     6.833      -   CAGR
+       0.350      True 0.101   1.259 -0.117 1.277 1.259       1.325     0.115     -0.117     6.390      -   CAGR
+       0.400      True 0.097   1.272 -0.107 1.286 1.275       1.340     0.111     -0.107     5.945      -   CAGR
+       0.450      True 0.093   1.277 -0.099 1.283 1.286       1.350     0.107     -0.099     5.498      -   CAGR
+       0.500      True 0.089   1.272 -0.100 1.266 1.291       1.353     0.102     -0.100     5.049      -   CAGR
+
+==========================================================================================================================
+PREDICTIONS SCORECARD (all written before any number above was read)
+  P1 reproduction [a]+[b]+[c]+[c2]              : HIT
+  P2 SLEEVE moves past 0.30 in >= 90% of books  : MISS  (88.7%)
+  P3a GROSS@0% moves past 1.00 in >= 90%        : HIT  (92.5%)
+  P3b GROSS@5% picks <= 1.00 in > 50%           : HIT  (100.0%)
+  P4 BAND new-endpoint share < 80%              : HIT  (26.4% at 0.15 vs 81.1% at 0.08)
+  P5 >= 2 of 3 dials run to the NEW wall        : MISS  (shares@new: GROSS 81.1%, BAND 26.4%, SLEEVE 22.6%)
+  P6 extension fails to pay OOS on >= 1 dial    : HIT  (mean d: GROSS -0.0016, BAND -0.0005, SLEEVE +0.0603)
+  P7 no new fixed-panel 4b KEEP beyond re-params: see note  (29 fixed-panel 4b rows, 4 of them on ADDED points)
+
+done in 253s
