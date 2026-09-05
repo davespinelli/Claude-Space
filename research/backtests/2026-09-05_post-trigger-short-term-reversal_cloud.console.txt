@@ -1,0 +1,439 @@
+Idea 125 — post-trigger-short-term-reversal   (research sprint, cloud lane, 2026-09-05)
+
+QUESTION (pre-registered, from QUEUE.md idea 125)
+    Idea 96 measured, as a BY-PRODUCT of killing a per-name trailing stop, that a name which
+    has just broken 15%/25% off its trailing high earns +0.57% to +2.21% the NEXT DAY against
+    an unconditional +0.06%/day (t +2.70..+10.37 on 4 of 6 book/panel cells, 9/12 overall,
+    persisting +1.2..+2.6% over 5 days, 82-4889 events per cell).  That number is why idea 96's
+    stop had the wrong sign.  This run asks whether it is a SIGNAL in its own right: buy the
+    triggered names, equal weight, hold 1/5/10 days.
+
+    The pre-registered prior AGAINST it (stated in the queue entry, not invented after the
+    fact): the events cluster in crashes, so the book is long a falling knife precisely when
+    the market is falling; a large mean daily return earned on a handful of violent days is
+    not the same object as a Sharpe.  A KILL here is the expected result and is a result.
+
+GRID — exactly TWO tuned parameters, every point reported
+    D  in {0.15, 0.25}      trailing-high drawdown that fires the trigger
+    H  in {1, 5, 10}        holding period in trading days
+    x 3 panels (u56, broad, small) x 4 cost rungs {0, 10, 25, 50} bps x 2 sizing conventions.
+    The sizing convention is NOT tuned: both are reported everywhere and rule 8 selects
+    within a convention, never across.  6 arms x 2 conv x 4 costs x 3 panels = 144 rows.
+
+CONSTRUCTION
+    trigger_t(i)  = ( px/rollmax(px,252) - 1 <= -D )  AND  ( the same was FALSE at t-1 )
+                    i.e. a FRESH crossing, so a name in a long grind does not re-fire daily.
+    held_t(i)     = a trigger fired for i in [t-H+1, t].
+    conv 'dgN10'  = w_i = 0.75 / max(n_t, 10)   -> de-grosses when few names fire (cash rest).
+                    The floor 10 is pre-registered, inherited from the project's n>=~10 book
+                    size convention, and never swept.
+    conv 'rw'     = w_i = 0.75 / n_t            -> always fully invested when anything fired.
+    Daily rebalance (freq='D'), weights decided at close t applied at t+1 (engine), long only,
+    no leverage, no shorting.  Evaluation starts at px.index[260].  IS <= 2016-12-31,
+    OOS >= 2017-01-01.  SPY is the benchmark and is excluded from the tradable set on every
+    panel (so is any name the small-panel screen rejects).
+
+CONTROLS (three, all on the identical index and cost rung)
+    EWall  — equal-weight every panel name at 75% gross, the project's incumbent simple book.
+    RULES v1 — the live paper book, weekly, via baseline.rules_v1_weights.
+    SPY    — buy and hold.
+    Plus the EVENT STUDY the whole idea rests on, re-measured here as a signal rather than as a
+    stop by-product: mean forward 1/5/10-day return after a trigger vs the unconditional mean,
+    with event counts, paired t-stats, an IS/OOS split, and a SPY-drawdown-state split that
+    tests the queue's own "they cluster in crashes" prior directly.
+
+KEEP PATHS (PROTOCOL rule 4, both evaluated)
+    4a: Sharpe > RULES v1 in BOTH halves and MaxDD no worse than RULES v1.
+    4b: Sharpe > SPY in BOTH halves AND OOS, MaxDD <= 60% of SPY's, CAGR >= 70% of SPY's.
+RULE 8 walk-forward: (D,H) chosen by IS Sharpe on 2009-2016 alone, evaluated untouched on
+    2017-2026 against EWall, RULES v1 and SPY.  Reported for every panel/cost/convention cell.
+
+CAVEATS carried, not buried
+    * Survivorship, and it bites THIS idea hardest.  All three panels are current-constituent
+      lists; the small panel is the 483-name sub-$2B screen (data/SMALL_PANEL_README.md) and
+      names that fell 25% off their high and then went to zero are ABSENT from it by
+      construction.  A "buy the crash" signal is exactly the strategy that bias flatters, so
+      any positive result here must be discounted and any KILL is, if anything, understated.
+    * The small panel additionally drops the 44 tickers with max_1d_move >= 1.0 in
+      data/small_meta.csv (bad splits), leaving 439 names, per the sprint's standing rule.
+    * Idea 38's calendar-day-index warning is checked, not assumed: this run asserts the loaded
+      index carries no weekend rows and no all-flat rows before reading any number (see
+      CHECK (a)).  On the current caches it is clean, which matters because a 1-day holding
+      period is the construction most exposed to ffilled non-trading rows.
+
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+========================================================================================================================================================================================================
+PANEL u56: 55 tradable names + SPY benchmark | 2008-01-02 -> 2026-09-04
+CHECK (a) index u56: 4699 rows, 251.7/yr, weekend rows 0, >70%-flat rows 0  -> TRADING-DAY CLEAN
+eval 2009-01-13 -> 2026-09-04 | IS <= 2016-12-31 | OOS >= 2017-01-01
+SPY   CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS 0.882
+4b bars: Sharpe > 0.957(H1)/0.834(H2)/0.882(OOS), MaxDD <= 20.23%, CAGR >= 10.66%
+
+EVENT STUDY u56 — forward return after a FRESH break of -D off the 252d high (no costs, diagnostic)
+panel     D  h         seg  n_events  mean_pct  uncond_pct  excess_pct     t   hit  per_day_pct
+  u56 0.150  1        full      2386     0.216       0.061       0.155 4.074 0.551        0.216
+  u56 0.150  1          IS       968     0.248       0.048       0.201 3.292 0.541        0.248
+  u56 0.150  1         OOS      1418     0.194       0.073       0.120 2.661 0.557        0.194
+  u56 0.150  1 SPYdd<=-10%       839     0.428       0.094       0.333 4.260 0.558        0.428
+  u56 0.150  1  SPYdd>-10%      1547     0.101       0.052       0.049 1.664 0.547        0.101
+  u56 0.150  5        full      2382     0.494       0.303       0.191 4.469 0.571        0.099
+  u56 0.150  5          IS       968     0.911       0.236       0.675 5.802 0.591        0.182
+  u56 0.150  5         OOS      1414     0.208       0.362      -0.154 1.374 0.557        0.042
+  u56 0.150  5 SPYdd<=-10%       839     0.569       0.453       0.116 2.734 0.602        0.114
+  u56 0.150  5  SPYdd>-10%      1543     0.453       0.260       0.193 3.547 0.554        0.091
+  u56 0.150 10        full      2376     0.758       0.603       0.156 5.007 0.588        0.076
+  u56 0.150 10          IS       968     1.086       0.470       0.616 5.140 0.607        0.109
+  u56 0.150 10         OOS      1408     0.534       0.720      -0.186 2.538 0.575        0.053
+  u56 0.150 10 SPYdd<=-10%       839     0.597       0.852      -0.255 2.102 0.591        0.060
+  u56 0.150 10  SPYdd>-10%      1537     0.847       0.531       0.316 4.821 0.586        0.085
+  u56 0.250  1        full      1199     0.524       0.061       0.463 5.124 0.578        0.524
+  u56 0.250  1          IS       506     0.365       0.048       0.318 2.820 0.575        0.365
+  u56 0.250  1         OOS       693     0.640       0.073       0.567 4.282 0.580        0.640
+  u56 0.250  1 SPYdd<=-10%       616     0.947       0.094       0.853 6.233 0.606        0.947
+  u56 0.250  1  SPYdd>-10%       583     0.077       0.052       0.025 0.577 0.549        0.077
+  u56 0.250  5        full      1197     0.977       0.303       0.674 5.257 0.581        0.195
+  u56 0.250  5          IS       506     1.373       0.236       1.137 5.664 0.589        0.275
+  u56 0.250  5         OOS       691     0.687       0.362       0.325 2.562 0.576        0.137
+  u56 0.250  5 SPYdd<=-10%       616     1.374       0.453       0.921 5.344 0.610        0.275
+  u56 0.250  5  SPYdd>-10%       581     0.556       0.260       0.297 2.075 0.551        0.111
+  u56 0.250 10        full      1196     2.124       0.603       1.521 8.124 0.623        0.212
+  u56 0.250 10          IS       506     1.514       0.470       1.044 4.165 0.601        0.151
+  u56 0.250 10         OOS       690     2.571       0.720       1.851 7.030 0.639        0.257
+  u56 0.250 10 SPYdd<=-10%       616     2.813       0.852       1.961 7.747 0.656        0.281
+  u56 0.250 10  SPYdd>-10%       580     1.392       0.531       0.861 3.716 0.588        0.139
+controls @10bps: RULES v1 CAGR 6.45% Sharpe 0.664 MaxDD -13.83% | EWall CAGR 13.30% Sharpe 1.128 MaxDD -22.46%
+
+GRID u56 — ALL 56 rows (2 D x 3 H x 2 conv x 4 costs + 8 control rows)
+  cost     D      H    conv   CAGR  Sharpe  MaxDD     H1     H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD    turn  gross  nheld  pass4a  pass4b            fail4b
+ 0.000   NaN    NaN   EWall  0.134   1.136 -0.224  1.202  1.083       1.148     0.140     -0.224   0.839    NaN    NaN   False   False                DD
+ 0.000   NaN    NaN RULESv1  0.090   0.895 -0.136  0.877  0.915       0.978     0.104     -0.136  23.585    NaN    NaN   False   False           H1,CAGR
+10.000   NaN    NaN   EWall  0.133   1.128 -0.225  1.195  1.076       1.140     0.139     -0.225   0.839    NaN    NaN   False   False                DD
+10.000   NaN    NaN RULESv1  0.065   0.664 -0.138  0.641  0.688       0.747     0.077     -0.138  23.585    NaN    NaN   False   False    H1,H2,OOS,CAGR
+25.000   NaN    NaN   EWall  0.132   1.118 -0.225  1.184  1.066       1.130     0.137     -0.225   0.839    NaN    NaN   False   False                DD
+25.000   NaN    NaN RULESv1  0.028   0.317 -0.156  0.285  0.346       0.399     0.038     -0.142  23.585    NaN    NaN   False   False    H1,H2,OOS,CAGR
+50.000   NaN    NaN   EWall  0.129   1.099 -0.225  1.165  1.048       1.111     0.135     -0.225   0.839    NaN    NaN    True   False                DD
+50.000   NaN    NaN RULESv1 -0.031  -0.258 -0.468 -0.304 -0.220      -0.178    -0.025     -0.313  23.585    NaN    NaN   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  1.000   dgN10  0.017   0.480 -0.071  0.461  0.514       0.446     0.018     -0.071  19.823  0.039  0.528   False   False    H1,H2,OOS,CAGR
+10.000 0.150  1.000   dgN10 -0.003  -0.080 -0.128 -0.174 -0.025      -0.088    -0.004     -0.101  19.823  0.039  0.528   False   False    H1,H2,OOS,CAGR
+25.000 0.150  1.000   dgN10 -0.033  -0.919 -0.453 -1.124 -0.834      -0.889    -0.037     -0.308  19.823  0.039  0.528   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  1.000   dgN10 -0.079  -2.281 -0.769 -2.634 -2.157      -2.197    -0.088     -0.590  19.823  0.039  0.528   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  1.000      rw  0.085   0.596 -0.248  0.457  0.715       0.565     0.084     -0.230 122.000  0.242  0.528   False   False H1,H2,OOS,DD,CAGR
+10.000 0.150  1.000      rw -0.040  -0.178 -0.710 -0.285 -0.091      -0.235    -0.052     -0.533 122.000  0.242  0.528   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  1.000      rw -0.200  -1.333 -0.984 -1.393 -1.295      -1.428    -0.226     -0.923 122.000  0.242  0.528   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  1.000      rw -0.411  -3.196 -1.000 -3.171 -3.244      -3.355    -0.447     -0.997 122.000  0.242  0.528   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  5.000   dgN10  0.046   0.581 -0.200  0.741  0.494       0.483     0.042     -0.200  14.879  0.172  2.374   False   False    H1,H2,OOS,CAGR
+10.000 0.150  5.000   dgN10  0.031   0.403 -0.204  0.545  0.321       0.311     0.025     -0.204  14.879  0.172  2.374   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  5.000   dgN10  0.008   0.135 -0.209  0.252  0.061       0.053     0.001     -0.209  14.879  0.172  2.374   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  5.000   dgN10 -0.029  -0.312 -0.448 -0.236 -0.373      -0.377    -0.039     -0.348  14.879  0.172  2.374   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  5.000      rw  0.162   0.839 -0.303  0.827  0.853       0.821     0.165     -0.303  71.100  0.599  2.374   False   False         H1,OOS,DD
+10.000 0.150  5.000      rw  0.082   0.489 -0.347  0.475  0.504       0.474     0.082     -0.347  71.100  0.599  2.374   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  5.000      rw -0.028  -0.035 -0.554 -0.051 -0.021      -0.047    -0.033     -0.476  71.100  0.599  2.374   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  5.000      rw -0.186  -0.899 -0.977 -0.912 -0.891      -0.908    -0.197     -0.894  71.100  0.599  2.374   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150 10.000   dgN10  0.072   0.700 -0.205  0.694  0.722       0.703     0.079     -0.205  12.489  0.284  4.123   False   False H1,H2,OOS,DD,CAGR
+10.000 0.150 10.000   dgN10  0.058   0.584 -0.206  0.575  0.605       0.587     0.064     -0.206  12.489  0.284  4.123   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150 10.000   dgN10  0.039   0.409 -0.208  0.395  0.429       0.412     0.043     -0.208  12.489  0.284  4.123   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150 10.000   dgN10  0.007   0.116 -0.269  0.095  0.134       0.120     0.007     -0.242  12.489  0.284  4.123    True   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150 10.000      rw  0.198   1.001 -0.237  0.900  1.093       1.085     0.232     -0.237  44.487  0.695  4.123   False   False             H1,DD
+10.000 0.150 10.000      rw  0.146   0.779 -0.266  0.676  0.873       0.867     0.176     -0.266  44.487  0.695  4.123   False   False         H1,OOS,DD
+25.000 0.150 10.000      rw  0.072   0.446 -0.319  0.339  0.541       0.537     0.096     -0.319  44.487  0.695  4.123   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150 10.000      rw -0.041  -0.110 -0.654 -0.220 -0.013      -0.012    -0.025     -0.471  44.487  0.695  4.123   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  1.000   dgN10  0.016   0.520 -0.034  0.487  0.574       0.533     0.019     -0.031   9.652  0.019  0.262   False   False    H1,H2,OOS,CAGR
+10.000 0.250  1.000   dgN10  0.006   0.206 -0.069  0.085  0.285       0.251     0.008     -0.051   9.652  0.019  0.262   False   False    H1,H2,OOS,CAGR
+25.000 0.250  1.000   dgN10 -0.009  -0.274 -0.163 -0.521 -0.157      -0.179    -0.007     -0.127   9.652  0.019  0.262   False   False    H1,H2,OOS,CAGR
+50.000 0.250  1.000   dgN10 -0.032  -1.078 -0.445 -1.508 -0.905      -0.909    -0.032     -0.272   9.652  0.019  0.262   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  1.000      rw  0.046   0.371 -0.331  0.571  0.208       0.165     0.014     -0.331  67.408  0.134  0.262   False   False H1,H2,OOS,DD,CAGR
+10.000 0.250  1.000      rw -0.022  -0.073 -0.584  0.119 -0.233      -0.268    -0.054     -0.474  67.408  0.134  0.262   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  1.000      rw -0.116  -0.740 -0.894 -0.562 -0.893      -0.915    -0.146     -0.785  67.408  0.134  0.262   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  1.000      rw -0.254  -1.830 -0.995 -1.681 -1.968      -1.968    -0.281     -0.959  67.408  0.134  0.262   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  5.000   dgN10  0.039   0.579 -0.136  0.834  0.490       0.456     0.035     -0.136   7.369  0.085  1.172   False   False    H1,H2,OOS,CAGR
+10.000 0.250  5.000   dgN10  0.031   0.475 -0.145  0.697  0.394       0.362     0.027     -0.145   7.369  0.085  1.172   False   False    H1,H2,OOS,CAGR
+25.000 0.250  5.000   dgN10  0.020   0.317 -0.159  0.492  0.250       0.221     0.015     -0.159   7.369  0.085  1.172   False   False    H1,H2,OOS,CAGR
+50.000 0.250  5.000   dgN10  0.001   0.053 -0.189  0.149  0.007      -0.017    -0.005     -0.181   7.369  0.085  1.172    True   False    H1,H2,OOS,CAGR
+ 0.000 0.250  5.000      rw  0.113   0.595 -0.420  0.512  0.668       0.587     0.118     -0.420  44.987  0.406  1.172   False   False      H1,H2,OOS,DD
+10.000 0.250  5.000      rw  0.064   0.392 -0.466  0.292  0.474       0.397     0.069     -0.458  44.987  0.406  1.172   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  5.000      rw -0.005   0.087 -0.684 -0.037  0.185       0.113    -0.001     -0.593  44.987  0.406  1.172   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  5.000      rw -0.111  -0.418 -0.925 -0.581 -0.295      -0.358    -0.109     -0.800  44.987  0.406  1.172   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250 10.000   dgN10  0.055   0.648 -0.176  0.898  0.530       0.526     0.050     -0.176   6.046  0.143  2.037   False   False    H1,H2,OOS,CAGR
+10.000 0.250 10.000   dgN10  0.049   0.581 -0.180  0.816  0.467       0.464     0.043     -0.180   6.046  0.143  2.037   False   False    H1,H2,OOS,CAGR
+25.000 0.250 10.000   dgN10  0.039   0.479 -0.190  0.694  0.372       0.371     0.033     -0.190   6.046  0.143  2.037   False   False    H1,H2,OOS,CAGR
+50.000 0.250 10.000   dgN10  0.024   0.308 -0.207  0.489  0.214       0.216     0.017     -0.207   6.046  0.143  2.037    True   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250 10.000      rw  0.187   0.842 -0.411  1.190  0.565       0.611     0.131     -0.411  31.338  0.542  2.037   False   False         H2,OOS,DD
+10.000 0.250 10.000      rw  0.150   0.709 -0.482  1.041  0.445       0.492     0.097     -0.482  31.338  0.542  2.037   False   False         H2,OOS,DD
+25.000 0.250 10.000      rw  0.097   0.510 -0.572  0.816  0.265       0.314     0.049     -0.572  31.338  0.542  2.037   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250 10.000      rw  0.014   0.179 -0.690  0.442 -0.033       0.018    -0.028     -0.690  31.338  0.542  2.037   False   False H1,H2,OOS,DD,CAGR
+
+RULE 8 WALK-FORWARD u56 — (D,H) chosen on IS Sharpe (<= 2016-12-31) only, evaluated untouched on 2017-01-01+
+panel   cost  conv        pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_rank  n_arms  beat_EWall  beat_v1  beat_SPY  ew_CAGR  ew_Sharpe  ew_MaxDD  v1_CAGR  v1_Sharpe  v1_MaxDD  spy_CAGR  spy_Sharpe  spy_MaxDD
+  u56  0.000 dgN10 D=0.25/H=10      0.910     0.050       0.526     -0.176         3       6       False    False     False    0.140      1.148    -0.224    0.104      0.978    -0.136     0.155       0.882     -0.337
+  u56  0.000    rw D=0.25/H=10      1.180     0.131       0.611     -0.411         3       6       False    False     False    0.140      1.148    -0.224    0.104      0.978    -0.136     0.155       0.882     -0.337
+  u56 10.000 dgN10 D=0.25/H=10      0.827     0.043       0.464     -0.180         2       6       False    False     False    0.139      1.140    -0.225    0.077      0.747    -0.138     0.155       0.882     -0.337
+  u56 10.000    rw D=0.25/H=10      1.027     0.097       0.492     -0.482         2       6       False    False     False    0.139      1.140    -0.225    0.077      0.747    -0.138     0.155       0.882     -0.337
+  u56 25.000 dgN10 D=0.25/H=10      0.703     0.033       0.371     -0.190         2       6       False    False     False    0.137      1.130    -0.225    0.038      0.399    -0.142     0.155       0.882     -0.337
+  u56 25.000    rw D=0.25/H=10      0.797     0.049       0.314     -0.572         2       6       False    False     False    0.137      1.130    -0.225    0.038      0.399    -0.142     0.155       0.882     -0.337
+  u56 50.000 dgN10 D=0.25/H=10      0.496     0.017       0.216     -0.207         1       6       False     True     False    0.135      1.111    -0.225   -0.025     -0.178    -0.313     0.155       0.882     -0.337
+  u56 50.000    rw D=0.25/H=10      0.414    -0.028       0.018     -0.690         1       6       False     True     False    0.135      1.111    -0.225   -0.025     -0.178    -0.313     0.155       0.882     -0.337
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+========================================================================================================================================================================================================
+PANEL broad: 135 tradable names + SPY benchmark | 2008-01-02 -> 2026-09-04
+CHECK (a) index broad: 4699 rows, 251.7/yr, weekend rows 0, >70%-flat rows 0  -> TRADING-DAY CLEAN
+eval 2009-01-13 -> 2026-09-04 | IS <= 2016-12-31 | OOS >= 2017-01-01
+SPY   CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS 0.882
+4b bars: Sharpe > 0.957(H1)/0.834(H2)/0.882(OOS), MaxDD <= 20.23%, CAGR >= 10.66%
+
+EVENT STUDY broad — forward return after a FRESH break of -D off the 252d high (no costs, diagnostic)
+panel     D  h         seg  n_events  mean_pct  uncond_pct  excess_pct      t   hit  per_day_pct
+broad 0.150  1        full      6552     0.225       0.066       0.159  7.296 0.545        0.225
+broad 0.150  1          IS      2542     0.273       0.057       0.217  5.948 0.545        0.273
+broad 0.150  1         OOS      4010     0.194       0.074       0.120  4.725 0.545        0.194
+broad 0.150  1 SPYdd<=-10%      2236     0.434       0.107       0.328  6.875 0.555        0.434
+broad 0.150  1  SPYdd>-10%      4316     0.116       0.054       0.062  3.493 0.540        0.116
+broad 0.150  5        full      6542     0.565       0.324       0.242  8.889 0.568        0.113
+broad 0.150  5          IS      2542     0.948       0.277       0.670  9.909 0.585        0.190
+broad 0.150  5         OOS      4000     0.323       0.364      -0.042  3.829 0.557        0.065
+broad 0.150  5 SPYdd<=-10%      2236     0.473       0.500      -0.027  3.750 0.576        0.095
+broad 0.150  5  SPYdd>-10%      4306     0.613       0.272       0.341  8.633 0.563        0.123
+broad 0.150 10        full      6531     0.856       0.641       0.215  9.643 0.582        0.086
+broad 0.150 10          IS      2542     1.162       0.547       0.615  9.054 0.598        0.116
+broad 0.150 10         OOS      3989     0.662       0.725      -0.063  5.508 0.572        0.066
+broad 0.150 10 SPYdd<=-10%      2236     0.538       0.933      -0.394  3.105 0.580        0.054
+broad 0.150 10  SPYdd>-10%      4295     1.022       0.557       0.465 10.180 0.583        0.102
+broad 0.250  1        full      3247     0.503       0.066       0.437  8.630 0.557        0.503
+broad 0.250  1          IS      1314     0.377       0.057       0.320  5.006 0.549        0.377
+broad 0.250  1         OOS      1933     0.589       0.074       0.515  7.057 0.562        0.589
+broad 0.250  1 SPYdd<=-10%      1719     0.940       0.107       0.833 10.344 0.596        0.940
+broad 0.250  1  SPYdd>-10%      1528     0.012       0.054      -0.042  0.176 0.512        0.012
+broad 0.250  5        full      3243     0.841       0.324       0.517  7.695 0.572        0.168
+broad 0.250  5          IS      1314     1.244       0.277       0.966  8.127 0.588        0.249
+broad 0.250  5         OOS      1929     0.567       0.364       0.202  3.752 0.560        0.113
+broad 0.250  5 SPYdd<=-10%      1719     1.199       0.500       0.699  7.525 0.601        0.240
+broad 0.250  5  SPYdd>-10%      1524     0.437       0.272       0.164  2.973 0.539        0.087
+broad 0.250 10        full      3240     1.808       0.641       1.167 12.094 0.608        0.181
+broad 0.250 10          IS      1314     1.156       0.547       0.609  5.219 0.581        0.116
+broad 0.250 10         OOS      1926     2.254       0.725       1.528 11.239 0.627        0.225
+broad 0.250 10 SPYdd<=-10%      1719     2.516       0.933       1.584 11.766 0.645        0.252
+broad 0.250 10  SPYdd>-10%      1521     1.009       0.557       0.452  4.905 0.567        0.101
+controls @10bps: RULES v1 CAGR 6.39% Sharpe 0.635 MaxDD -21.19% | EWall CAGR 14.18% Sharpe 1.124 MaxDD -25.36%
+
+GRID broad — ALL 56 rows (2 D x 3 H x 2 conv x 4 costs + 8 control rows)
+  cost     D      H    conv   CAGR  Sharpe  MaxDD     H1     H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD    turn  gross  nheld  pass4a  pass4b            fail4b
+ 0.000   NaN    NaN   EWall  0.143   1.131 -0.254  1.240  1.033       1.111     0.141     -0.254   0.871    NaN    NaN   False   False                DD
+ 0.000   NaN    NaN RULESv1  0.096   0.912 -0.184  1.036  0.807       0.857     0.093     -0.184  29.430    NaN    NaN   False   False       H2,OOS,CAGR
+10.000   NaN    NaN   EWall  0.142   1.124 -0.254  1.233  1.025       1.104     0.140     -0.254   0.871    NaN    NaN   False   False                DD
+10.000   NaN    NaN RULESv1  0.064   0.635 -0.212  0.756  0.532       0.576     0.059     -0.212  29.430    NaN    NaN   False   False H1,H2,OOS,DD,CAGR
+25.000   NaN    NaN   EWall  0.140   1.113 -0.254  1.223  1.015       1.093     0.138     -0.254   0.871    NaN    NaN    True   False                DD
+25.000   NaN    NaN RULESv1  0.018   0.219 -0.267  0.335  0.120       0.155     0.011     -0.267  29.430    NaN    NaN   False   False H1,H2,OOS,DD,CAGR
+50.000   NaN    NaN   EWall  0.138   1.096 -0.254  1.206  0.997       1.075     0.135     -0.254   0.871    NaN    NaN    True   False                DD
+50.000   NaN    NaN RULESv1 -0.054  -0.463 -0.630 -0.358 -0.557      -0.535    -0.065     -0.516  29.430    NaN    NaN   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  1.000   dgN10  0.041   0.691 -0.133  0.761  0.669       0.625     0.041     -0.133  52.315  0.104  1.451   False   False    H1,H2,OOS,CAGR
+10.000 0.150  1.000   dgN10 -0.012  -0.177 -0.311 -0.125 -0.217      -0.248    -0.019     -0.281  52.315  0.104  1.451   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  1.000   dgN10 -0.087  -1.482 -0.803 -1.458 -1.550      -1.562    -0.103     -0.657  52.315  0.104  1.451   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  1.000   dgN10 -0.199  -3.589 -0.980 -3.586 -3.715      -3.692    -0.227     -0.917  52.315  0.104  1.451   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  1.000      rw  0.135   0.798 -0.382  0.747  0.846       0.721     0.122     -0.382 214.914  0.426  1.451   False   False         H1,OOS,DD
+10.000 0.150  1.000      rw -0.084  -0.405 -0.838 -0.375 -0.433      -0.551    -0.111     -0.711 214.914  0.426  1.451   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  1.000      rw -0.337  -2.203 -0.999 -2.051 -2.346      -2.453    -0.373     -0.989 214.914  0.426  1.451   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  1.000      rw -0.613  -5.118 -1.000 -4.763 -5.458      -5.538    -0.650     -1.000 214.914  0.426  1.451   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  5.000   dgN10  0.109   0.916 -0.254  1.058  0.832       0.861     0.111     -0.254  38.769  0.400  6.598   False   False         H2,OOS,DD
+10.000 0.150  5.000   dgN10  0.067   0.596 -0.268  0.745  0.499       0.532     0.064     -0.268  38.769  0.400  6.598   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  5.000   dgN10  0.007   0.115 -0.360  0.277 -0.001       0.038    -0.004     -0.360  38.769  0.400  6.598   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  5.000   dgN10 -0.086  -0.683 -0.811 -0.499 -0.832      -0.783    -0.107     -0.709  38.769  0.400  6.598   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  5.000      rw  0.189   1.070 -0.321  1.047  1.092       1.195     0.213     -0.321  94.174  0.725  6.598   False   False                DD
+10.000 0.150  5.000      rw  0.082   0.535 -0.395  0.507  0.563       0.656     0.104     -0.395  94.174  0.725  6.598   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  5.000      rw -0.061  -0.266 -0.737 -0.300 -0.233      -0.155    -0.041     -0.589  94.174  0.725  6.598   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  5.000      rw -0.258  -1.591 -0.995 -1.627 -1.554      -1.499    -0.242     -0.939  94.174  0.725  6.598   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150 10.000   dgN10  0.162   1.163 -0.257  1.208  1.142       1.158     0.172     -0.257  29.434  0.571 11.498   False   False                DD
+10.000 0.150 10.000   dgN10  0.128   0.949 -0.260  1.006  0.915       0.935     0.134     -0.260  29.434  0.571 11.498   False   False                DD
+25.000 0.150 10.000   dgN10  0.080   0.627 -0.274  0.702  0.575       0.599     0.080     -0.274  29.434  0.571 11.498   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150 10.000   dgN10  0.003   0.090 -0.361  0.197  0.006       0.038    -0.005     -0.361  29.434  0.571 11.498    True   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150 10.000      rw  0.203   1.214 -0.282  1.243  1.188       1.246     0.211     -0.282  48.894  0.748 11.498   False   False                DD
+10.000 0.150 10.000      rw  0.145   0.915 -0.285  0.935  0.896       0.950     0.153     -0.285  48.894  0.748 11.498   False   False             H1,DD
+25.000 0.150 10.000      rw  0.064   0.465 -0.294  0.472  0.457       0.506     0.072     -0.294  48.894  0.748 11.498   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150 10.000      rw -0.058  -0.285 -0.692 -0.295 -0.275      -0.236    -0.051     -0.540  48.894  0.748 11.498   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  1.000   dgN10  0.027   0.532 -0.086  0.612  0.526       0.485     0.029     -0.086  25.341  0.050  0.710   False   False    H1,H2,OOS,CAGR
+10.000 0.250  1.000   dgN10  0.002   0.060 -0.165  0.032  0.079       0.052     0.001     -0.136  25.341  0.050  0.710   False   False    H1,H2,OOS,CAGR
+25.000 0.250  1.000   dgN10 -0.036  -0.654 -0.485 -0.846 -0.597      -0.604    -0.040     -0.322  25.341  0.050  0.710   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  1.000   dgN10 -0.095  -1.833 -0.831 -2.271 -1.720      -1.691    -0.104     -0.653  25.341  0.050  0.710   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  1.000      rw  0.037   0.289 -0.485  0.313  0.271       0.196     0.019     -0.345 128.545  0.255  0.710   False   False H1,H2,OOS,DD,CAGR
+10.000 0.250  1.000      rw -0.088  -0.424 -0.832 -0.366 -0.476      -0.533    -0.110     -0.677 128.545  0.255  0.710   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  1.000      rw -0.249  -1.488 -0.994 -1.381 -1.588      -1.619    -0.275     -0.955 128.545  0.255  0.710   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  1.000      rw -0.456  -3.206 -1.000 -3.021 -3.384      -3.369    -0.485     -0.998 128.545  0.255  0.710   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  5.000   dgN10  0.069   0.671 -0.245  0.770  0.633       0.596     0.068     -0.245  19.216  0.207  3.207   False   False H1,H2,OOS,DD,CAGR
+10.000 0.250  5.000   dgN10  0.049   0.494 -0.267  0.576  0.459       0.428     0.046     -0.267  19.216  0.207  3.207   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  5.000   dgN10  0.019   0.226 -0.298  0.283  0.198       0.174     0.014     -0.298  19.216  0.207  3.207   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  5.000   dgN10 -0.029  -0.220 -0.478 -0.205 -0.238      -0.251    -0.037     -0.398  19.216  0.207  3.207    True   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  5.000      rw  0.128   0.664 -0.410  0.600  0.723       0.640     0.125     -0.410  71.541  0.579  3.207   False   False      H1,H2,OOS,DD
+10.000 0.250  5.000      rw  0.050   0.333 -0.471  0.274  0.387       0.310     0.045     -0.471  71.541  0.579  3.207   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  5.000      rw -0.057  -0.161 -0.783 -0.214 -0.115      -0.183    -0.064     -0.639  71.541  0.579  3.207   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  5.000      rw -0.212  -0.978 -0.986 -1.019 -0.944      -0.998    -0.222     -0.919  71.541  0.579  3.207   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250 10.000   dgN10  0.095   0.762 -0.281  0.842  0.724       0.708     0.096     -0.281  15.283  0.322  5.587   False   False H1,H2,OOS,DD,CAGR
+10.000 0.250 10.000   dgN10  0.079   0.645 -0.286  0.718  0.610       0.597     0.079     -0.286  15.283  0.322  5.587   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250 10.000   dgN10  0.054   0.470 -0.301  0.532  0.438       0.429     0.053     -0.301  15.283  0.322  5.587   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250 10.000   dgN10  0.015   0.177 -0.337  0.221  0.152       0.150     0.011     -0.337  15.283  0.322  5.587    True   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250 10.000      rw  0.168   0.834 -0.335  0.997  0.681       0.715     0.141     -0.335  43.413  0.671  5.587   False   False         H2,OOS,DD
+10.000 0.250 10.000      rw  0.119   0.631 -0.340  0.796  0.475       0.513     0.092     -0.340  43.413  0.671  5.587   False   False      H1,H2,OOS,DD
+25.000 0.250 10.000      rw  0.048   0.326 -0.488  0.494  0.167       0.210     0.022     -0.456  43.413  0.671  5.587   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250 10.000      rw -0.060  -0.180 -0.799 -0.007 -0.343      -0.290    -0.084     -0.703  43.413  0.671  5.587   False   False H1,H2,OOS,DD,CAGR
+
+RULE 8 WALK-FORWARD broad — (D,H) chosen on IS Sharpe (<= 2016-12-31) only, evaluated untouched on 2017-01-01+
+panel   cost  conv        pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_rank  n_arms  beat_EWall  beat_v1  beat_SPY  ew_CAGR  ew_Sharpe  ew_MaxDD  v1_CAGR  v1_Sharpe  v1_MaxDD  spy_CAGR  spy_Sharpe  spy_MaxDD
+broad  0.000 dgN10 D=0.15/H=10      1.178     0.172       1.158     -0.257         1       6        True     True      True    0.141      1.111    -0.254    0.093      0.857    -0.184     0.155       0.882     -0.337
+broad  0.000    rw D=0.15/H=10      1.176     0.211       1.246     -0.282         1       6        True     True      True    0.141      1.111    -0.254    0.093      0.857    -0.184     0.155       0.882     -0.337
+broad 10.000 dgN10 D=0.15/H=10      0.975     0.134       0.935     -0.260         1       6       False     True      True    0.140      1.104    -0.254    0.059      0.576    -0.212     0.155       0.882     -0.337
+broad 10.000    rw D=0.15/H=10      0.871     0.153       0.950     -0.285         1       6       False     True      True    0.140      1.104    -0.254    0.059      0.576    -0.212     0.155       0.882     -0.337
+broad 25.000 dgN10 D=0.15/H=10      0.671     0.080       0.599     -0.274         1       6       False     True     False    0.138      1.093    -0.254    0.011      0.155    -0.267     0.155       0.882     -0.337
+broad 25.000    rw D=0.25/H=10      0.472     0.022       0.210     -0.456         2       6       False     True     False    0.138      1.093    -0.254    0.011      0.155    -0.267     0.155       0.882     -0.337
+broad 50.000 dgN10 D=0.25/H=10      0.224     0.011       0.150     -0.337         1       6       False     True     False    0.135      1.075    -0.254   -0.065     -0.535    -0.516     0.155       0.882     -0.337
+broad 50.000    rw D=0.25/H=10     -0.040    -0.084      -0.290     -0.703         2       6       False     True     False    0.135      1.075    -0.254   -0.065     -0.535    -0.516     0.155       0.882     -0.337
+
+========================================================================================================================================================================================================
+PANEL small: 439 tradable names + SPY benchmark | 2010-01-04 -> 2026-09-04
+CHECK (a) index small: 4194 rows, 251.7/yr, weekend rows 0, >70%-flat rows 0  -> TRADING-DAY CLEAN
+eval 2011-01-13 -> 2026-09-04 | IS <= 2016-12-31 | OOS >= 2017-01-01
+SPY   CAGR 14.13%  Sharpe 0.862  MaxDD -33.72%  halves 0.891/0.858  OOS 0.882
+4b bars: Sharpe > 0.891(H1)/0.858(H2)/0.882(OOS), MaxDD <= 20.23%, CAGR >= 9.89%
+
+EVENT STUDY small — forward return after a FRESH break of -D off the 252d high (no costs, diagnostic)
+panel     D  h         seg  n_events  mean_pct  uncond_pct  excess_pct     t   hit  per_day_pct
+small 0.150  1        full     21818     0.123       0.067       0.056 5.122 0.509        0.123
+small 0.150  1          IS      6672     0.154       0.076       0.079 3.963 0.517        0.154
+small 0.150  1         OOS     15146     0.108       0.062       0.046 3.631 0.506        0.108
+small 0.150  1 SPYdd<=-10%      2534     0.132       0.156      -0.024 1.530 0.513        0.132
+small 0.150  1  SPYdd>-10%     19284     0.121       0.053       0.068 4.934 0.509        0.121
+small 0.150  5        full     21792     0.375       0.317       0.058 7.237 0.518        0.075
+small 0.150  5          IS      6672     0.504       0.355       0.150 6.659 0.534        0.101
+small 0.150  5         OOS     15120     0.318       0.298       0.020 4.761 0.511        0.064
+small 0.150  5 SPYdd<=-10%      2534     0.197       0.808      -0.611 1.101 0.535        0.039
+small 0.150  5  SPYdd>-10%     19258     0.399       0.242       0.157 7.418 0.516        0.080
+small 0.150 10        full     21769     0.683       0.619       0.064 9.157 0.518        0.068
+small 0.150 10          IS      6672     0.714       0.680       0.033 6.823 0.530        0.071
+small 0.150 10         OOS     15097     0.670       0.588       0.082 6.894 0.512        0.067
+small 0.150 10 SPYdd<=-10%      2534     0.551       1.535      -0.984 2.218 0.537        0.055
+small 0.150 10  SPYdd>-10%     19235     0.700       0.478       0.222 9.001 0.515        0.070
+small 0.250  1        full     17817     0.182       0.067       0.115 6.011 0.505        0.182
+small 0.250  1          IS      4704     0.304       0.076       0.228 5.629 0.517        0.304
+small 0.250  1         OOS     13113     0.138       0.062       0.076 3.807 0.500        0.138
+small 0.250  1 SPYdd<=-10%      3014     0.193       0.156       0.037 2.285 0.512        0.193
+small 0.250  1  SPYdd>-10%     14803     0.180       0.053       0.127 5.594 0.503        0.180
+small 0.250  5        full     17796     0.360       0.317       0.043 5.754 0.516        0.072
+small 0.250  5          IS      4704     0.759       0.355       0.405 7.233 0.536        0.152
+small 0.250  5         OOS     13092     0.216       0.298      -0.082 2.839 0.508        0.043
+small 0.250  5 SPYdd<=-10%      3014     0.260       0.808      -0.548 1.445 0.540        0.052
+small 0.250  5  SPYdd>-10%     14782     0.380       0.242       0.138 5.785 0.511        0.076
+small 0.250 10        full     17773     0.645       0.619       0.027 7.458 0.520        0.065
+small 0.250 10          IS      4704     0.954       0.680       0.274 6.798 0.538        0.095
+small 0.250 10         OOS     13069     0.534       0.588      -0.054 5.026 0.513        0.053
+small 0.250 10 SPYdd<=-10%      3014     0.523       1.535      -1.013 2.112 0.546        0.052
+small 0.250 10  SPYdd>-10%     14759     0.670       0.478       0.192 7.357 0.514        0.067
+controls @10bps: RULES v1 CAGR 7.41% Sharpe 0.565 MaxDD -36.12% | EWall CAGR 10.18% Sharpe 0.678 MaxDD -36.17%
+
+GRID small — ALL 56 rows (2 D x 3 H x 2 conv x 4 costs + 8 control rows)
+  cost     D      H    conv   CAGR  Sharpe  MaxDD     H1     H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD    turn  gross  nheld  pass4a  pass4b            fail4b
+ 0.000   NaN    NaN   EWall  0.104   0.689 -0.360  0.809  0.624       0.647     0.103     -0.360   1.741    NaN    NaN   False   False      H1,H2,OOS,DD
+ 0.000   NaN    NaN RULESv1  0.109   0.788 -0.293  0.985  0.611       0.709     0.098     -0.293  32.383    NaN    NaN   False   False         H2,OOS,DD
+10.000   NaN    NaN   EWall  0.102   0.678 -0.362  0.797  0.614       0.637     0.101     -0.362   1.741    NaN    NaN   False   False      H1,H2,OOS,DD
+10.000   NaN    NaN RULESv1  0.074   0.565 -0.361  0.743  0.404       0.492     0.064     -0.361  32.383    NaN    NaN   False   False H1,H2,OOS,DD,CAGR
+25.000   NaN    NaN   EWall  0.099   0.662 -0.364  0.779  0.599       0.621     0.098     -0.364   1.741    NaN    NaN    True   False      H1,H2,OOS,DD
+25.000   NaN    NaN RULESv1  0.023   0.230 -0.454  0.381  0.094       0.167     0.014     -0.454  32.383    NaN    NaN   False   False H1,H2,OOS,DD,CAGR
+50.000   NaN    NaN   EWall  0.094   0.635 -0.369  0.750  0.573       0.594     0.093     -0.369   1.741    NaN    NaN    True   False H1,H2,OOS,DD,CAGR
+50.000   NaN    NaN RULESv1 -0.057  -0.322 -0.734 -0.216 -0.419      -0.369    -0.064     -0.611  32.383    NaN    NaN   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  1.000   dgN10  0.110   0.887 -0.237  0.860  0.929       0.883     0.120     -0.237 183.726  0.364  5.522   False   False             H1,DD
+10.000 0.150  1.000   dgN10 -0.076  -0.557 -0.716 -0.684 -0.484      -0.567    -0.085     -0.594 183.726  0.364  5.522   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  1.000   dgN10 -0.299  -2.709 -0.996 -2.984 -2.589      -2.727    -0.325     -0.978 183.726  0.364  5.522   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  1.000   dgN10 -0.558  -6.187 -1.000 -6.682 -6.008      -6.233    -0.594     -1.000 183.726  0.364  5.522   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  1.000      rw  0.319   1.188 -0.309  1.243  1.140       1.040     0.270     -0.301 356.922  0.708  5.522   False   False                DD
+10.000 0.150  1.000      rw -0.077  -0.176 -0.822 -0.168 -0.183      -0.342    -0.117     -0.712 356.922  0.708  5.522   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  1.000      rw -0.460  -2.220 -1.000 -2.284 -2.165      -2.412    -0.488     -0.998 356.922  0.708  5.522   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  1.000      rw -0.780  -5.614 -1.000 -5.800 -5.455      -5.847    -0.794     -1.000 356.922  0.708  5.522   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  5.000   dgN10  0.135   0.823 -0.378  0.901  0.773       0.741     0.126     -0.378  84.423  0.744 25.146   False   False         H2,OOS,DD
+10.000 0.150  5.000   dgN10  0.043   0.333 -0.464  0.339  0.333       0.277     0.034     -0.464  84.423  0.744 25.146   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  5.000   dgN10 -0.081  -0.401 -0.801 -0.503 -0.328      -0.421    -0.089     -0.678  84.423  0.744 25.146   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  5.000   dgN10 -0.256  -1.622 -0.991 -1.897 -1.429      -1.581    -0.263     -0.949  84.423  0.744 25.146   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150  5.000      rw  0.130   0.786 -0.384  0.847  0.750       0.718     0.123     -0.384  86.566  0.750 25.146   False   False      H1,H2,OOS,DD
+10.000 0.150  5.000      rw  0.036   0.292 -0.471  0.273  0.310       0.254     0.030     -0.471  86.566  0.750 25.146   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150  5.000      rw -0.090  -0.450 -0.825 -0.587 -0.350      -0.443    -0.094     -0.687  86.566  0.750 25.146   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150  5.000      rw -0.267  -1.682 -0.993 -2.009 -1.450      -1.602    -0.269     -0.953  86.566  0.750 25.146   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150 10.000   dgN10  0.123   0.787 -0.398  0.840  0.760       0.751     0.122     -0.398  41.720  0.750 43.689   False   False      H1,H2,OOS,DD
+10.000 0.150 10.000   dgN10  0.077   0.533 -0.435  0.543  0.534       0.511     0.076     -0.435  41.720  0.750 43.689   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150 10.000   dgN10  0.011   0.151 -0.489  0.098  0.194       0.151     0.011     -0.487  41.720  0.750 43.689   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150 10.000   dgN10 -0.089  -0.484 -0.824 -0.643 -0.370      -0.447    -0.089     -0.679  41.720  0.750 43.689   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.150 10.000      rw  0.123   0.787 -0.398  0.840  0.760       0.751     0.122     -0.398  41.720  0.750 43.689   False   False      H1,H2,OOS,DD
+10.000 0.150 10.000      rw  0.077   0.533 -0.435  0.543  0.534       0.511     0.076     -0.435  41.720  0.750 43.689   False   False H1,H2,OOS,DD,CAGR
+25.000 0.150 10.000      rw  0.011   0.151 -0.489  0.098  0.194       0.151     0.011     -0.487  41.720  0.750 43.689   False   False H1,H2,OOS,DD,CAGR
+50.000 0.150 10.000      rw -0.089  -0.484 -0.824 -0.643 -0.370      -0.447    -0.089     -0.679  41.720  0.750 43.689   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  1.000   dgN10  0.135   1.029 -0.262  1.224  0.944       0.877     0.126     -0.262 154.006  0.305  4.517    True   False            OOS,DD
+10.000 0.250  1.000   dgN10 -0.027  -0.140 -0.614  0.071 -0.280      -0.339    -0.059     -0.592 154.006  0.305  4.517   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  1.000   dgN10 -0.228  -1.890 -0.985 -1.662 -2.113      -2.160    -0.282     -0.960 154.006  0.305  4.517   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  1.000   dgN10 -0.475  -4.746 -1.000 -4.503 -5.116      -5.142    -0.543     -0.999 154.006  0.305  4.517   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  1.000      rw  0.295   0.999 -0.408  1.288  0.721       0.621     0.152     -0.408 344.039  0.683  4.517   False   False         H2,OOS,DD
+10.000 0.250  1.000      rw -0.082  -0.130 -0.880  0.181 -0.429      -0.565    -0.192     -0.879 344.039  0.683  4.517   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  1.000      rw -0.452  -1.822 -1.000 -1.480 -2.153      -2.344    -0.526     -0.999 344.039  0.683  4.517   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  1.000      rw -0.769  -4.632 -1.000 -4.237 -5.018      -5.300    -0.806     -1.000 344.039  0.683  4.517   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  5.000   dgN10  0.177   0.966 -0.461  1.239  0.747       0.810     0.149     -0.461  79.724  0.719 20.600   False   False         H2,OOS,DD
+10.000 0.250  5.000   dgN10  0.087   0.541 -0.528  0.798  0.332       0.380     0.056     -0.528  79.724  0.719 20.600   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  5.000   dgN10 -0.035  -0.097 -0.616  0.137 -0.292      -0.266    -0.068     -0.616  79.724  0.719 20.600   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  5.000   dgN10 -0.210  -1.159 -0.979 -0.962 -1.332      -1.343    -0.245     -0.940  79.724  0.719 20.600   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250  5.000      rw  0.173   0.915 -0.458  1.097  0.752       0.799     0.147     -0.458  87.525  0.750 20.600   False   False         H2,OOS,DD
+10.000 0.250  5.000      rw  0.075   0.467 -0.527  0.617  0.332       0.359     0.052     -0.527  87.525  0.750 20.600   False   False H1,H2,OOS,DD,CAGR
+25.000 0.250  5.000      rw -0.058  -0.205 -0.710 -0.102 -0.299      -0.301    -0.075     -0.640  87.525  0.750 20.600   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250  5.000      rw -0.243  -1.322 -0.989 -1.293 -1.351      -1.401    -0.255     -0.947  87.525  0.750 20.600   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250 10.000   dgN10  0.149   0.855 -0.425  1.076  0.685       0.794     0.141     -0.425  42.407  0.748 35.784   False   False         H2,OOS,DD
+10.000 0.250 10.000   dgN10  0.101   0.621 -0.461  0.812  0.474       0.570     0.094     -0.461  42.407  0.748 35.784   False   False      H1,H2,OOS,DD
+25.000 0.250 10.000   dgN10  0.033   0.271 -0.511  0.416  0.156       0.234     0.027     -0.511  42.407  0.748 35.784   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250 10.000   dgN10 -0.071  -0.313 -0.749 -0.243 -0.372      -0.327    -0.076     -0.619  42.407  0.748 35.784   False   False H1,H2,OOS,DD,CAGR
+ 0.000 0.250 10.000      rw  0.150   0.861 -0.425  1.089  0.685       0.794     0.141     -0.425  42.774  0.750 35.784   False   False         H2,OOS,DD
+10.000 0.250 10.000      rw  0.102   0.626 -0.461  0.822  0.474       0.570     0.094     -0.461  42.774  0.750 35.784   False   False      H1,H2,OOS,DD
+25.000 0.250 10.000      rw  0.034   0.273 -0.511  0.421  0.156       0.234     0.027     -0.511  42.774  0.750 35.784   False   False H1,H2,OOS,DD,CAGR
+50.000 0.250 10.000      rw -0.071  -0.314 -0.751 -0.246 -0.372      -0.327    -0.076     -0.619  42.774  0.750 35.784   False   False H1,H2,OOS,DD,CAGR
+
+RULE 8 WALK-FORWARD small — (D,H) chosen on IS Sharpe (<= 2016-12-31) only, evaluated untouched on 2017-01-01+
+panel   cost  conv        pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_rank  n_arms  beat_EWall  beat_v1  beat_SPY  ew_CAGR  ew_Sharpe  ew_MaxDD  v1_CAGR  v1_Sharpe  v1_MaxDD  spy_CAGR  spy_Sharpe  spy_MaxDD
+small  0.000 dgN10  D=0.25/H=1      1.448     0.126       0.877     -0.262         2       6        True     True     False    0.103      0.647    -0.360    0.098      0.709    -0.293     0.155       0.882     -0.337
+small  0.000    rw  D=0.25/H=1      1.584     0.152       0.621     -0.408         6       6       False    False     False    0.103      0.647    -0.360    0.098      0.709    -0.293     0.155       0.882     -0.337
+small 10.000 dgN10  D=0.25/H=5      0.831     0.056       0.380     -0.528         3       6       False    False     False    0.101      0.637    -0.362    0.064      0.492    -0.361     0.155       0.882     -0.337
+small 10.000    rw D=0.25/H=10      0.728     0.094       0.570     -0.461         1       6       False     True     False    0.101      0.637    -0.362    0.064      0.492    -0.361     0.155       0.882     -0.337
+small 25.000 dgN10 D=0.25/H=10      0.339     0.027       0.234     -0.511         1       6       False     True     False    0.098      0.621    -0.364    0.014      0.167    -0.454     0.155       0.882     -0.337
+small 25.000    rw D=0.25/H=10      0.346     0.027       0.234     -0.511         1       6       False     True     False    0.098      0.621    -0.364    0.014      0.167    -0.454     0.155       0.882     -0.337
+small 50.000 dgN10 D=0.25/H=10     -0.289    -0.076      -0.327     -0.619         1       6       False     True     False    0.093      0.594    -0.369   -0.064     -0.369    -0.611     0.155       0.882     -0.337
+small 50.000    rw D=0.25/H=10     -0.293    -0.076      -0.327     -0.619         1       6       False     True     False    0.093      0.594    -0.369   -0.064     -0.369    -0.611     0.155       0.882     -0.337
+
+========================================================================================================================================================================================================
+SUMMARY
+4b passes: 0 of 144 arm-rows.  4a passes: 7 of 144.
+controls: EWall 4b 0/12, RULESv1 4b 0/12
+
+BEST arm by Sharpe in every (panel, cost, conv) cell — is any of them competitive?
+panel   cost  conv     D      H   CAGR  Sharpe  MaxDD     H1     H2  OOS_Sharpe    turn  gross  pass4a  pass4b            fail4b
+broad  0.000 dgN10 0.150 10.000  0.162   1.163 -0.257  1.208  1.142       1.158  29.434  0.571   False   False                DD
+broad  0.000    rw 0.150 10.000  0.203   1.214 -0.282  1.243  1.188       1.246  48.894  0.748   False   False                DD
+broad 10.000 dgN10 0.150 10.000  0.128   0.949 -0.260  1.006  0.915       0.935  29.434  0.571   False   False                DD
+broad 10.000    rw 0.150 10.000  0.145   0.915 -0.285  0.935  0.896       0.950  48.894  0.748   False   False             H1,DD
+broad 25.000 dgN10 0.150 10.000  0.080   0.627 -0.274  0.702  0.575       0.599  29.434  0.571   False   False H1,H2,OOS,DD,CAGR
+broad 25.000    rw 0.150 10.000  0.064   0.465 -0.294  0.472  0.457       0.506  48.894  0.748   False   False H1,H2,OOS,DD,CAGR
+broad 50.000 dgN10 0.250 10.000  0.015   0.177 -0.337  0.221  0.152       0.150  15.283  0.322    True   False H1,H2,OOS,DD,CAGR
+broad 50.000    rw 0.250 10.000 -0.060  -0.180 -0.799 -0.007 -0.343      -0.290  43.413  0.671   False   False H1,H2,OOS,DD,CAGR
+small  0.000 dgN10 0.250  1.000  0.135   1.029 -0.262  1.224  0.944       0.877 154.006  0.305    True   False            OOS,DD
+small  0.000    rw 0.150  1.000  0.319   1.188 -0.309  1.243  1.140       1.040 356.922  0.708   False   False                DD
+small 10.000 dgN10 0.250 10.000  0.101   0.621 -0.461  0.812  0.474       0.570  42.407  0.748   False   False      H1,H2,OOS,DD
+small 10.000    rw 0.250 10.000  0.102   0.626 -0.461  0.822  0.474       0.570  42.774  0.750   False   False      H1,H2,OOS,DD
+small 25.000 dgN10 0.250 10.000  0.033   0.271 -0.511  0.416  0.156       0.234  42.407  0.748   False   False H1,H2,OOS,DD,CAGR
+small 25.000    rw 0.250 10.000  0.034   0.273 -0.511  0.421  0.156       0.234  42.774  0.750   False   False H1,H2,OOS,DD,CAGR
+small 50.000 dgN10 0.250 10.000 -0.071  -0.313 -0.749 -0.243 -0.372      -0.327  42.407  0.748   False   False H1,H2,OOS,DD,CAGR
+small 50.000    rw 0.250 10.000 -0.071  -0.314 -0.751 -0.246 -0.372      -0.327  42.774  0.750   False   False H1,H2,OOS,DD,CAGR
+  u56  0.000 dgN10 0.150 10.000  0.072   0.700 -0.205  0.694  0.722       0.703  12.489  0.284   False   False H1,H2,OOS,DD,CAGR
+  u56  0.000    rw 0.150 10.000  0.198   1.001 -0.237  0.900  1.093       1.085  44.487  0.695   False   False             H1,DD
+  u56 10.000 dgN10 0.150 10.000  0.058   0.584 -0.206  0.575  0.605       0.587  12.489  0.284   False   False H1,H2,OOS,DD,CAGR
+  u56 10.000    rw 0.150 10.000  0.146   0.779 -0.266  0.676  0.873       0.867  44.487  0.695   False   False         H1,OOS,DD
+  u56 25.000 dgN10 0.250 10.000  0.039   0.479 -0.190  0.694  0.372       0.371   6.046  0.143   False   False    H1,H2,OOS,CAGR
+  u56 25.000    rw 0.250 10.000  0.097   0.510 -0.572  0.816  0.265       0.314  31.338  0.542   False   False H1,H2,OOS,DD,CAGR
+  u56 50.000 dgN10 0.250 10.000  0.024   0.308 -0.207  0.489  0.214       0.216   6.046  0.143    True   False H1,H2,OOS,DD,CAGR
+  u56 50.000    rw 0.250 10.000  0.014   0.179 -0.690  0.442 -0.033       0.018  31.338  0.542   False   False H1,H2,OOS,DD,CAGR
+
+EVENT STUDY vs PORTFOLIO — the crash-clustering prior, per panel/D (h=1, full):
+  broad D=0.15: full +0.225% (t +7.30, n 6552)  |  in SPY dd<=-10%: +0.434% (n 2236)  |  outside: +0.116%  |  IS +0.273% vs OOS +0.194%
+  broad D=0.25: full +0.503% (t +8.63, n 3247)  |  in SPY dd<=-10%: +0.940% (n 1719)  |  outside: +0.012%  |  IS +0.377% vs OOS +0.589%
+  small D=0.15: full +0.123% (t +5.12, n 21818)  |  in SPY dd<=-10%: +0.132% (n 2534)  |  outside: +0.121%  |  IS +0.154% vs OOS +0.108%
+  small D=0.25: full +0.182% (t +6.01, n 17817)  |  in SPY dd<=-10%: +0.193% (n 3014)  |  outside: +0.180%  |  IS +0.304% vs OOS +0.138%
+  u56   D=0.15: full +0.216% (t +4.07, n 2386)  |  in SPY dd<=-10%: +0.428% (n 839)  |  outside: +0.101%  |  IS +0.248% vs OOS +0.194%
+  u56   D=0.25: full +0.524% (t +5.12, n 1199)  |  in SPY dd<=-10%: +0.947% (n 616)  |  outside: +0.077%  |  IS +0.365% vs OOS +0.640%
+========================================================================================================================================================================================================
