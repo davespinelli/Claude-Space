@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T02:09:09Z · open 32 · in progress 10 · done 443_
+_Source: universe_under2b.csv · updated 2026-09-05T02:11:52Z · open 32 · in progress 0 · done 453_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -41,22 +41,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| HTLD | HEARTLAND EXPRESS INC | $955.8M | cloudA | 2026-09-05T02:05:53Z |
-| RYZ | Ryerson Holding Corp | $1.34B | cloudA | 2026-09-05T02:05:53Z |
-| GPRE | Green Plains Inc. | $1.05B | cloudA | 2026-09-05T02:05:53Z |
-| CURR | Currenc Group Inc. | $229.8M | cloudA | 2026-09-05T02:05:53Z |
-| XPER | Xperi Inc. | $284.3M | cloudA | 2026-09-05T02:05:53Z |
-| CTKB | Cytek Biosciences, Inc. | $610.9M | cloudA | 2026-09-05T02:05:53Z |
-| ACH | ACCENDRA HEALTH INC/VA/ | $93.8M | cloudA | 2026-09-05T02:05:53Z |
-| STIM | Neuronetics, Inc. | $207.3M | cloudA | 2026-09-05T02:05:53Z |
-| PUMP | ProPetro Holding Corp. | $1.38B | cloudA | 2026-09-05T02:05:53Z |
-| BAER | Bridger Aerospace Group Holdings, Inc. | $64.1M | cloudA | 2026-09-05T02:05:53Z |
 
-## Done (443)
+## Done (453)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | CTEV | Claritev Corp | $662.5M | cloudA | 2026-09-05T02:09:09Z |
 | MEC | Mayville Engineering Company, Inc. | $495.5M | cloudA | 2026-09-05T02:09:09Z |
 | PLAY | Dave & Buster's Entertainment, Inc. | $301.6M | cloudA | 2026-09-05T02:09:09Z |
+| HTLD | HEARTLAND EXPRESS INC | $955.8M | cloudA | 2026-09-05T02:11:52Z |
+| RYZ | Ryerson Holding Corp | $1.34B | cloudA | 2026-09-05T02:11:52Z |
+| GPRE | Green Plains Inc. | $1.05B | cloudA | 2026-09-05T02:11:52Z |
+| CURR | Currenc Group Inc. | $229.8M | cloudA | 2026-09-05T02:11:52Z |
+| XPER | Xperi Inc. | $284.3M | cloudA | 2026-09-05T02:11:52Z |
+| CTKB | Cytek Biosciences, Inc. | $610.9M | cloudA | 2026-09-05T02:11:52Z |
+| ACH | ACCENDRA HEALTH INC/VA/ | $93.8M | cloudA | 2026-09-05T02:11:52Z |
+| STIM | Neuronetics, Inc. | $207.3M | cloudA | 2026-09-05T02:11:52Z |
+| PUMP | ProPetro Holding Corp. | $1.38B | cloudA | 2026-09-05T02:11:52Z |
+| BAER | Bridger Aerospace Group Holdings, Inc. | $64.1M | cloudA | 2026-09-05T02:11:52Z |

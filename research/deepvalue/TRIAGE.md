@@ -444,3 +444,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-05 | CTEV | Claritev Corp | $662.5M | insider-buying | 6 | Four distinct insiders bought including the CEO at $38.81, and bookings are tracking to +50%, but $4.6B net debt leaves only $5-15M guided FCF |
 | 2026-09-05 | MEC | Mayville Engineering Company, Inc. | $495.5M | none | 0 | no filings in bundle |
 | 2026-09-05 | PLAY | Dave & Buster's Entertainment, Inc. | $301.6M | none | 5 | Guided $100M+ FY26 FCF on a $301.6M cap, but comps fell 5.4%, the CEO who guided it retired weeks later and net debt is $1.5B before leases |
+| 2026-09-05 | HTLD | HEARTLAND EXPRESS INC | $955.8M | cyclical-trough | 5 | Operating ratio improved to 91.0% from 105.9%, but Q2 operating income of $16.5M included $25.1M of gains on selling trucks |
+| 2026-09-05 | RYZ | Ryerson Holding Corp | $1.3B | cyclical-trough | 5 | Trough year with a $30.8M operating loss while gaining share, and the Olympic Steel merger closed in February, but the pack has no post-merger figures |
+| 2026-09-05 | GPRE | Green Plains Inc. | $1.0B | post-restructuring | 6 | Q2 adj EBITDA of $93.3M after a cost reset, but $58.7M of it is 45Z credits and the base business earned only $34.6M |
+| 2026-09-05 | CURR | Currenc Group Inc. | $229.8M | none | 0 | no filings in bundle |
+| 2026-09-05 | XPER | Xperi Inc. | $284.3M | misunderstood-segment | 6 | Media Platform revenue up 44% and TiVo One users up 70% inside flat consolidated revenue, but guided operating cash flow of $15-25M barely covers $25M capex |
+| 2026-09-05 | CTKB | Cytek Biosciences, Inc. | $610.9M | hidden-asset | 5 | $262.0M of cash and securities is 43% of the market cap, but adjusted EBITDA turned negative and the revenue guide implies only 3% growth |
+| 2026-09-05 | ACH | ACCENDRA HEALTH INC/VA/ | $93.8M | none | 0 | no filings in bundle |
+| 2026-09-05 | STIM | Neuronetics, Inc. | $207.3M | none | 0 | no filings in bundle |
+| 2026-09-05 | PUMP | ProPetro Holding Corp. | $1.4B | misunderstood-segment | 5 | PROPWR has 350MW contracted including a live hyperscaler site, but the stock is up 130% and insiders sold $277.7M with zero buys |
+| 2026-09-05 | BAER | Bridger Aerospace Group Holdings, Inc. | $64.1M | none | 3 | Guided $55-60M adj EBITDA sits under $233.1M of debt and $421.4M of Series A Preferred that accreted $14.1M in the first half |
