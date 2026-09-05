@@ -1,0 +1,190 @@
+========================================================================================================================================================================================================
+IDEA 129 — is 4b's CAGR floor doing risk work?   corpus = 3 panels x 3 books x 17 arms x 2 costs = 306 arm-rows;  ladder = 3 x 3 x 19 x 2 reference rows
+IS <= 2016-12-31   OOS >= 2017-01-01   t+1 execution, weekly, 75% gross, costs [10.0, 25.0] bps.  Published bars: CAGR >= 0.7 x SPY, MaxDD <= 0.6 x |SPY|.
+========================================================================================================================================================================================================
+
+--- PANEL u56: universe.json(56) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full  CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+    bars: CAGR floor 10.66%/yr   DD cap -20.23%   |  IS-window SPY: CAGR 14.96% MaxDD -22.06%  (idea 128: the IS window is 65% as deep as the full sample)
+    ... u56 done
+
+--- PANEL broad: universe_broad.json(136) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full  CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+    bars: CAGR floor 10.66%/yr   DD cap -20.23%   |  IS-window SPY: CAGR 14.96% MaxDD -22.06%  (idea 128: the IS window is 65% as deep as the full sample)
+    ... broad done
+
+--- PANEL small: prices_small(439, SPY held out) | 2010-01-04 -> 2026-09-04 | eval from 2011-01-13
+    SPY full  CAGR 14.13%  Sharpe 0.862  MaxDD -33.72%  halves 0.891/0.858  OOS Sharpe 0.882
+    bars: CAGR floor 9.89%/yr   DD cap -20.23%   |  IS-window SPY: CAGR 12.02% MaxDD -18.61%  (idea 128: the IS window is 55% as deep as the full sample)
+    ... small done
+
+========================================================================================================================================================================================================
+REPRODUCTION CHECKS (all three must pass before any new number is read)
+  (a) run() vs engine.backtest on ungated EWall u56: max|diff| = 0.00e+00  -> PASS
+  (b) idea 94's published EWall+vol60-dg u56@10bps 11.6%/1.133/-16.9%: got 11.587%/1.133/-16.884% -> PASS
+  (c) re-parameterised bars at (phi=0.7, delta=0.6) vs H.margins on all 306 rows: 0 mismatches -> PASS
+
+========================================================================================================================================================================================================
+Q1  CENSUS — of the arms that are PARETO-BEST on (Sharpe, MaxDD) in their own cell,
+    how many are killed by 4b and by which bar?   (18 cells x 17 arms, full sample)
+========================================================================================================================================================================================================
+  Pareto-best arm-rows: 82 of 306 (26.8%);  {'broad': 24, 'small': 31, 'u56': 27}
+  of those 82:  pass 4b 12   fail on the CAGR floor ALONE 11   fail on >=1 other bar 59
+  -> the floor alone is the SOLE cause of KILL in 11 of 70 Pareto-best KILLs (16%) and in 13% of all Pareto-best rows
+
+  same census on the WHOLE corpus (not just the frontier):
+    pass 4b 29 of 306 (9.5%);  floor-only KILLs 27 (8.8%);  other KILLs 250
+
+  which bar kills, counted over all corpus KILLs (a row can fail several):
+    {'H1': 181, 'H2': 198, 'OOS': 193, 'DD': 179, 'CAGR': 185}   (n KILLs = 277)
+
+  Pareto-best rows killed by the floor alone — the arms 4b throws away:
+panel  book   cost                arm  CAGR  Sharpe  MaxDD  OOS_Sharpe  OOS_MaxDD  gross  m_CAGR  pass4a
+  u56 EWall 10.000            g200-dg 0.082   1.171 -0.120       1.263     -0.120  0.532  -0.025    True
+  u56 EWall 10.000           band3-dg 0.087   1.206 -0.121       1.285     -0.121  0.533  -0.020    True
+  u56 EWall 10.000          v1gate-dg 0.073   1.113 -0.109       1.252     -0.109  0.519  -0.033    True
+  u56 EWall 25.000            g200-dg 0.077   1.103 -0.121       1.196     -0.121  0.532  -0.030    True
+  u56 EWall 25.000           band3-dg 0.084   1.168 -0.121       1.248     -0.121  0.533  -0.023    True
+  u56 EWall 25.000          v1gate-dg 0.068   1.038 -0.110       1.176     -0.110  0.519  -0.039    True
+broad EWall 10.000           band3-dg 0.080   1.106 -0.122       1.119     -0.122  0.532  -0.026    True
+broad EWall 10.000          v1gate-dg 0.072   1.055 -0.121       1.085     -0.121  0.522  -0.034    True
+broad EWall 25.000           band3-dg 0.077   1.064 -0.123       1.074     -0.123  0.532  -0.030    True
+broad EWall 25.000          v1gate-dg 0.067   0.980 -0.122       1.004     -0.122  0.522  -0.040    True
+broad EWall 25.000 ddctl-8/.5/recover 0.104   1.066 -0.174       1.123     -0.174  0.661  -0.003    True
+
+  LADDER CONTROL (pure de-grossing; the floor SHOULD bite here):
+    ladder rows 342;  pass 4b 10 (2.9%);  floor-only KILLs 97 (28.4%)
+    gross multiplier at which the floor bites, by panel:
+       min   max  count
+panel                  
+broad  0.1  0.75     41
+u56    0.1  0.80     56
+
+========================================================================================================================================================================================================
+Q2a CALIBRATION GRID — all 21 (phi, delta) points, full-sample 4b applied to the 306-row corpus
+========================================================================================================================================================================================================
+  phi  delta  n_pass  pct_pass  floor_only  dd_only  adm_OOS_Sharpe  adm_OOS_MaxDD
+0.000  0.500      25     0.082           0       79           1.120         -0.141
+0.000  0.600      56     0.183           0       48           1.112         -0.166
+0.000  0.700      85     0.278           0       19           1.098         -0.185
+0.500  0.500      20     0.065           5       79           1.121         -0.146
+0.500  0.600      51     0.167           5       48           1.112         -0.170
+0.500  0.700      80     0.261           5       19           1.097         -0.189
+0.600  0.500       6     0.020          19       77           1.106         -0.163
+0.600  0.600      35     0.114          21       48           1.110         -0.183
+0.600  0.700      64     0.209          21       19           1.093         -0.200
+0.700  0.500       3     0.010          22       73           1.105         -0.166
+0.700  0.600      29     0.095          27       47           1.114         -0.185
+0.700  0.700      57     0.186          28       19           1.096         -0.203
+0.800  0.500       1     0.003          24       54           1.130         -0.168
+0.800  0.600      14     0.046          42       41           1.143         -0.190
+0.800  0.700      36     0.118          49       19           1.109         -0.210
+0.900  0.500       0     0.000          25       27             NaN            NaN
+0.900  0.600       5     0.016          51       22           1.175         -0.194
+0.900  0.700      15     0.049          70       12           1.105         -0.213
+1.000  0.500       0     0.000          25        3             NaN            NaN
+1.000  0.600       0     0.000          56        3             NaN            NaN
+1.000  0.700       2     0.007          83        1           1.167         -0.222
+
+  read: `n_pass` out of 306.  `adm_OOS_*` = mean OOS outcome of the arms the bars admit.
+
+========================================================================================================================================================================================================
+Q2b THE RISK-WORK TEST — screen on the IS window ALONE, then read OOS once.
+    A = IS-admitted at (phi=0.70, delta=0.60).   B = rejected by the IS CAGR floor ALONE.
+    C = rejected by some other IS bar.   If the floor does risk work, B must be OOS-worse.
+========================================================================================================================================================================================================
+         n  OOS_Sharpe  OOS_Sharpe_med  OOS_MaxDD  OOS_MaxDD_med  OOS_CAGR  gross
+group                                                                            
+A       45       1.056           1.112     -0.215         -0.225     0.134  0.736
+B        9       1.160           1.126     -0.134         -0.122     0.091  0.569
+C      252       0.638           0.634     -0.242         -0.228     0.078  0.671
+  B - A on OOS_Sharpe: +0.104   Welch t +3.22   (B = the floor's exclusive victims, n=9; A = admitted, n=45)
+  B - A on OOS_MaxDD: +0.081   Welch t +8.97   (B = the floor's exclusive victims, n=9; A = admitted, n=45)
+  B - A on OOS_CAGR: -0.044   Welch t -7.12   (B = the floor's exclusive victims, n=9; A = admitted, n=45)
+  B beats A's cell-mean OOS Sharpe in 1 of 1 pooled comparison; paired by cell:
+    cells with both A and B: 4;  B > A in 3   mean(B-A) +0.060
+    OOS MaxDD paired: B shallower than A in 4 of 4 cells;  mean(B-A) +0.068 (positive = the floor's victims drew down LESS)
+
+========================================================================================================================================================================================================
+RULE 8 WALK-FORWARD — S0 (no screen) / S1 (4b with the floor) / S2 (4b, floor deleted).
+    Screens read 2009-2016 only; 2017-2026 read once.  18 cells.
+========================================================================================================================================================================================================
+sel panel  book   cost               pick  n_admitted  OOS_CAGR  OOS_Sharpe  OOS_MaxDD beat_ctl beat_spy beat_v1 oos_best  oos_rank
+ S0   u56   V1u 10.000            control          17     0.072       0.714     -0.157    False    False   False    False     8.500
+ S1   u56   V1u 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2   u56   V1u 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0   u56   V1u 25.000          ebud-0.10          17     0.010       0.211     -0.111    False    False   False    False    17.000
+ S1   u56   V1u 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2   u56   V1u 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0   u56 TOP20 10.000            control          17     0.166       1.168     -0.222    False     True    True    False     7.000
+ S1   u56 TOP20 10.000            control           8     0.166       1.168     -0.222    False     True    True    False     7.000
+ S2   u56 TOP20 10.000            control           8     0.166       1.168     -0.222    False     True    True    False     7.000
+ S0   u56 TOP20 25.000            control          17     0.151       1.072     -0.223    False     True    True    False     4.000
+ S1   u56 TOP20 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2   u56 TOP20 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0   u56 EWall 10.000           abs12-rw          17     0.120       1.031     -0.199    False     True    True    False    17.000
+ S1   u56 EWall 10.000           abs12-rw          10     0.120       1.031     -0.199    False     True    True    False    17.000
+ S2   u56 EWall 10.000           abs12-rw          12     0.120       1.031     -0.199    False     True    True    False    17.000
+ S0   u56 EWall 25.000            control          17     0.137       1.125     -0.225    False     True    True    False     8.000
+ S1   u56 EWall 25.000            control           8     0.137       1.125     -0.225    False     True    True    False     8.000
+ S2   u56 EWall 25.000            control          10     0.137       1.125     -0.225    False     True    True    False     8.000
+ S0 broad   V1u 10.000          ebud-0.20          17     0.029       0.399     -0.179    False    False   False    False    14.000
+ S1 broad   V1u 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2 broad   V1u 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0 broad   V1u 25.000          ebud-0.10          17    -0.001       0.000     -0.113    False    False   False    False    16.000
+ S1 broad   V1u 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2 broad   V1u 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0 broad TOP20 10.000          ebud-0.10          17     0.122       0.854     -0.229    False    False    True    False    14.000
+ S1 broad TOP20 10.000          ebud-0.10          12     0.122       0.854     -0.229    False    False    True    False    14.000
+ S2 broad TOP20 10.000          ebud-0.10          12     0.122       0.854     -0.229    False    False    True    False    14.000
+ S0 broad TOP20 25.000          ebud-0.10          17     0.105       0.751     -0.230    False    False    True    False    10.000
+ S1 broad TOP20 25.000          ebud-0.10           1     0.105       0.751     -0.230    False    False    True    False    10.000
+ S2 broad TOP20 25.000          ebud-0.10           1     0.105       0.751     -0.230    False    False    True    False    10.000
+ S0 broad EWall 10.000           vol60-dg          17     0.120       1.122     -0.187     True     True    True    False     2.000
+ S1 broad EWall 10.000           vol60-dg           5     0.120       1.122     -0.187     True     True    True    False     2.000
+ S2 broad EWall 10.000           vol60-dg           9     0.120       1.122     -0.187     True     True    True    False     2.000
+ S0 broad EWall 25.000           vol60-dg          17     0.118       1.102     -0.187     True     True    True    False     2.000
+ S1 broad EWall 25.000           vol60-dg           1     0.118       1.102     -0.187     True     True    True    False     2.000
+ S2 broad EWall 25.000           vol60-dg           2     0.118       1.102     -0.187     True     True    True    False     2.000
+ S0 small   V1u 10.000          ebud-0.20          17     0.019       0.244     -0.319    False    False   False    False    16.000
+ S1 small   V1u 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2 small   V1u 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0 small   V1u 25.000          ebud-0.20          17    -0.012      -0.076     -0.379    False    False   False    False    17.000
+ S1 small   V1u 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2 small   V1u 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0 small TOP20 10.000          ebud-0.20          17     0.164       0.792     -0.302    False    False    True    False     6.000
+ S1 small TOP20 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2 small TOP20 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0 small TOP20 25.000          ebud-0.20          17     0.135       0.681     -0.303    False    False    True    False     6.000
+ S1 small TOP20 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2 small TOP20 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0 small EWall 10.000            control          17     0.101       0.637     -0.362    False    False    True    False     4.000
+ S1 small EWall 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2 small EWall 10.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S0 small EWall 25.000 ddctl-8/.5/recover          17     0.076       0.683     -0.234     True    False    True    False     2.000
+ S1 small EWall 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+ S2 small EWall 25.000             (none)           0       NaN         NaN        NaN      NaN      NaN     NaN      NaN       NaN
+
+  summary by selector (means over the 18 cells; a cell where the selector admits nothing is excluded from its means and counted in `empty`):
+     empty  mean_admitted  OOS_CAGR  OOS_Sharpe  OOS_MaxDD beat_ctl beat_spy beat_v1 oos_best  mean_oos_rank
+sel                                                                                                         
+S0       0         17.000     0.091       0.695     -0.231        3        6      12        0          9.472
+S1      11          2.500     0.127       1.022     -0.211        2        5       7        0          8.571
+S2      11          3.000     0.127       1.022     -0.211        2        5       7        0          8.571
+
+  reference OOS Sharpe: SPY 0.882 (panel-mean), ungated control 0.762, RULES v1 0.451; SPY OOS MaxDD -0.337
+  S1 vs S2 head-to-head on the 7 cells where both pick: S2 (no floor) OOS-better in 0, S1 better in 0, identical pick in 7;  mean OOS Sharpe S1 1.022 vs S2 1.022  (delta +0.000)
+  cells where the floor empties the admitted set entirely: S1 11 of 18 vs S2 11 of 18
+
+========================================================================================================================================================================================================
+KEEP PATH 4a (beat the live book) on the same corpus
+  4a passes 97 of 306 (31.7%);  of the 11 Pareto-best floor-only KILLs, 11 pass 4a
+  arms passing BOTH 4a and 4b: 6;  4a but not 4b: 91;  4b but not 4a: 23
+
+========================================================================================================================================================================================================
+E  LEADERBOARD.md CENSUS — INDICATIVE ONLY (mixed samples/universes/costs, no OOS column)
+  parseable numeric rows: 1289 of 1651 lines
+  vs u56 SPY (CAGR 15.23%, MaxDD -33.72%): rows meeting DD cap 743, meeting CAGR floor 791, both 455;  killed by the floor alone 288 (22.3% of all rows)
+     among the 6 Pareto-best published rows: floor-only KILLs 5
+  vs broad SPY (CAGR 15.23%, MaxDD -33.72%): rows meeting DD cap 743, meeting CAGR floor 791, both 455;  killed by the floor alone 288 (22.3% of all rows)
+     among the 6 Pareto-best published rows: floor-only KILLs 5
