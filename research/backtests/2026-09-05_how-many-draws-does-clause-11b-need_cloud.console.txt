@@ -1,0 +1,392 @@
+======================================================================================================================
+IDEA 207  how-many-draws-does-clause-11b-need   (cloud, 2026-09-05)
+======================================================================================================================
+
+building panels (idea 191's build_panels, imported) ...
+  panels: U56=55  BROAD136=132  SMALL439=439
+
+REPRODUCTION, asserted before any new number is read:
+  [d] RULES v1 on u56 @10bps: 6.45305% / 0.66418 / -13.82780%  (published 6.45305% / 0.66418 / -13.82780%) -> PASS
+  deterministic parts reproduce -- proceeding to the grid
+
+======================================================================================================================
+GRID  3 panels x 3 families x 5 thr x 2 depth = 90 configurations,
+      x (1 real + 400 circular rotations) x 2 cost rungs derived from one 0 bps run
+======================================================================================================================
+  U56 done (200s)
+  BROAD136 done (809s)
+  SMALL439 done (2637s)
+
+grid: 180 real rows, 72000 null evaluations (2637s)
+
+======================================================================================================================
+REPRODUCTION of idea 201's published bands (P1).  Idea 201 drew 60 offsets from THIS
+same crc32-seeded permutation, SORTED them, and split the sorted list into 3 blocks of
+20 -- so its band/band_b1/band_b2 are the MAX over the 1st, 2nd and 3rd smallest 20
+offsets of this run's first 60 pool draws.  That ordering is reconstructed exactly.
+======================================================================================================================
+  max |band  - idea 201 band   | over 180 rows: 9.714e-17
+  max |band_1- idea 201 band_b1| over 180 rows: 9.541e-17
+  max |band_2- idea 201 band_b2| over 180 rows: 9.714e-17
+  -> PASS (idea 201's bands reproduce; idea 191's, seeded with a salted hash(), do not and cannot)
+  idea 201's 3-block flip count reproduces: 32/180 = 17.8% (published 32/180 = 17.8%) -> PASS
+
+======================================================================================================================
+Q1  DOES THE BAND DRIFT WITH K?  Mean band, mean margin and clear rate over the 180
+    real rows, for every K and both statistics.  Each K uses pool positions 0:K, so
+    the K ladder is NESTED and the drift is not a re-draw artefact.
+======================================================================================================================
+
+stat   K  nominal_size  mean_band  median_band  mean_margin  clear_Sharpe  clear_MaxDD  n_clear_Sharpe
+ MAX  20        0.0476     0.1686       0.1291      -0.0694        0.1556       0.0611              28
+ MAX  50        0.0196     0.2100       0.1526      -0.1109        0.0944       0.0278              17
+ MAX 100        0.0099     0.2465       0.1929      -0.1473        0.0389       0.0222               7
+ MAX 200        0.0050     0.2797       0.2143      -0.1805        0.0222       0.0167               4
+ Q95  20        0.0500     0.1374       0.1125      -0.0383        0.2389       0.1833              43
+ Q95  50        0.0500     0.1420       0.1158      -0.0429        0.2111       0.1722              38
+ Q95 100        0.0500     0.1449       0.1116      -0.0458        0.2278       0.1722              41
+ Q95 200        0.0500     0.1466       0.1127      -0.0475        0.2333       0.1667              42
+
+  MAX band, K=20 -> K=200: 0.1686 -> 0.2797  (+65.9%)   clear rate 15.6% -> 2.2%
+  Q95 band, K=20 -> K=200: 0.1374 -> 0.1466  (+6.7%)   clear rate 23.9% -> 23.3%
+
+======================================================================================================================
+Q2  FLIP RATE vs K.  Disjoint blocks of size K from the 400-draw pool: 20 blocks at
+    K=20, 8 at K=50, 4 at K=100, 2 at K=200.  A configuration FLIPS when two disjoint
+    blocks disagree on `clears`.  Reported as the share of configurations that flip on
+    at least one block pair, and as the mean pairwise disagreement rate.
+======================================================================================================================
+
+stat   K  blocks  flip_share  n_flip  pairwise_disagree
+ MAX  20      20      0.3167      57             0.1083
+ MAX  50       8      0.2278      41             0.0937
+ MAX 100       4      0.1333      24             0.0759
+ MAX 200       2      0.0278       5             0.0278
+ Q95  20      20      0.2667      48             0.0769
+ Q95  50       8      0.1500      27             0.0581
+ Q95 100       4      0.0444       8             0.0250
+ Q95 200       2      0.0333       6             0.0333
+
+  MAX  pairwise disagreement K=20 10.8% -> K=200 2.8%
+  Q95  pairwise disagreement K=20 7.7% -> K=200 3.3%
+
+  band dispersion (mean over the 180 rows of the across-block sd and range):
+          band_mean  band_sd  rng_over_band  rng_pct
+stat K                                              
+MAX  20      0.1708   0.0502         0.1968   1.1525
+     50      0.2055   0.0569         0.1594   0.7756
+     100     0.2361   0.0606         0.1305   0.5529
+     200     0.2744   0.0492         0.0696   0.2536
+Q95  20      0.1383   0.0242         0.0948   0.6855
+     50      0.1444   0.0153         0.0450   0.3118
+     100     0.1467   0.0115         0.0258   0.1757
+     200     0.1476   0.0076         0.0107   0.0724
+
+======================================================================================================================
+Q3  THE UNDETERMINED ZONE.  |margin| below which the verdict is a property of WHICH
+    draws were taken.  margin_ref = |dSharpe| - mean band across the blocks at that K.
+======================================================================================================================
+
+stat   K  n_flip  zone_max  zone_p95  zone_median  corpus_inside_p95
+ MAX  20      57    0.2003    0.1248       0.0269             0.7278
+ MAX  50      41    0.0920    0.0787       0.0186             0.5278
+ MAX 100      24    0.1146    0.1068       0.0141             0.4944
+ MAX 200       5    0.0144    0.0141       0.0095             0.1611
+ Q95  20      48    0.1434    0.0921       0.0164             0.7278
+ Q95  50      27    0.0651    0.0327       0.0099             0.4111
+ Q95 100       8    0.0105    0.0097       0.0027             0.1611
+ Q95 200       6    0.0170    0.0163       0.0016             0.2500
+
+  MAX: the undetermined zone (95th pct of flipper |margin|) is 0.1248 at K=20 and 0.0141 at K=200; 16.1% of the corpus still lands inside it at K=200.
+
+======================================================================================================================
+Q4  RULE 8 (PROTOCOL clause 8).  The clause is read on the IS window ONLY
+    (<= 2016-12-31); the overlay point is chosen there; 2017-01-01 -> is read ONCE.
+    18 cells = 3 panels x 3 families x 2 cost rungs; pool = 10 points (5 thr x 2 depth).
+======================================================================================================================
+
+  rows with an undefined IS Sharpe, carried as non-clearing and excluded from IS statistics: 2/180 (SMALL439 BUDGET tau=0.05/skip, both rungs)
+
+                     selector  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD    dOOS       t  wins  losses  abstains  n
+                   ORACLE-OOS          +0.8197        +0.1104         -0.2316 +0.0431 +3.8604    12       0         0 18
+                S0 do-nothing          +0.7766        +0.1022         -0.2353 +0.0000     NaN     0       0         0 18
+    S2 clause-gated MAX K=200          +0.7621        +0.1007         -0.2413 -0.0145 -1.8934     0       4        14 18
+     S2 clause-gated MAX K=50          +0.7496        +0.0973         -0.2341 -0.0270 -2.4090     0       6        12 18
+     S2 clause-gated MAX K=20          +0.7471        +0.0973         -0.2432 -0.0295 -2.3539     0       6        12 18
+    S2 clause-gated Q95 K=100          +0.7471        +0.0973         -0.2432 -0.0295 -2.3539     0       6        12 18
+    S2 clause-gated Q95 K=200          +0.7418        +0.0939         -0.2368 -0.0348 -2.7743     0       8        10 18
+S1 IS-Sharpe argmax (control)          +0.7405        +0.0955         -0.2552 -0.0361 -1.6840     5       9         0 18
+    S2 clause-gated MAX K=100          +0.7383        +0.0975         -0.2398 -0.0383 -1.5014     0       5        13 18
+     S2 clause-gated Q95 K=20          +0.7125        +0.0912         -0.2546 -0.0641 -3.1379     1       9         8 18
+     S2 clause-gated Q95 K=50          +0.7114        +0.0906         -0.2361 -0.0652 -2.3528     0       8        10 18
+
+  BENCHMARKS over the same OOS window (2017-01-01 ->):
+   panel          series  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+     U56             SPY    0.1545      0.8820    -0.3372
+     U56 RULES v1 @10bps    0.0773      0.7471    -0.1383
+BROAD136             SPY    0.1545      0.8820    -0.3372
+BROAD136 RULES v1 @10bps    0.0594      0.5762    -0.2119
+SMALL439             SPY    0.1545      0.8820    -0.3372
+SMALL439 RULES v1 @10bps    0.0788      0.6617    -0.3237
+
+  every walk-forward cell:
+   panel family  bps                      selector      pick  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    dOOS
+BROAD136 BUDGET   10                 S0 do-nothing         -    0.1240      0.8758    -0.2157  0.0000
+BROAD136 BUDGET   10 S1 IS-Sharpe argmax (control)  0.2/skip    0.1042      0.6986    -0.2779 -0.1772
+BROAD136 BUDGET   10      S2 clause-gated MAX K=20  0.5/skip    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10      S2 clause-gated MAX K=50  0.5/skip    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10     S2 clause-gated MAX K=100  0.5/skip    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10     S2 clause-gated MAX K=200  0.5/skip    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10      S2 clause-gated Q95 K=20  0.5/skip    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10      S2 clause-gated Q95 K=50  0.5/skip    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10     S2 clause-gated Q95 K=100  0.5/skip    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10     S2 clause-gated Q95 K=200  0.5/skip    0.1109      0.7714    -0.2562 -0.1044
+BROAD136 BUDGET   10                    ORACLE-OOS 0.05/skip    0.1543      0.9020    -0.2779  0.0263
+BROAD136 BUDGET   25                 S0 do-nothing         -    0.1006      0.7310    -0.2168  0.0000
+BROAD136 BUDGET   25 S1 IS-Sharpe argmax (control)  0.2/skip    0.0947      0.6447    -0.2797 -0.0864
+BROAD136 BUDGET   25      S2 clause-gated MAX K=20  0.5/skip    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25      S2 clause-gated MAX K=50  0.5/skip    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25     S2 clause-gated MAX K=100  0.5/skip    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25     S2 clause-gated MAX K=200  0.5/skip    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25      S2 clause-gated Q95 K=20  0.5/skip    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25      S2 clause-gated Q95 K=50  0.5/skip    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25     S2 clause-gated Q95 K=100  0.5/skip    0.0887      0.6381    -0.2582 -0.0929
+BROAD136 BUDGET   25     S2 clause-gated Q95 K=200  0.3/half    0.0987      0.7115    -0.2235 -0.0195
+BROAD136 BUDGET   25                    ORACLE-OOS 0.05/skip    0.1536      0.8982    -0.2779  0.1672
+BROAD136  DDCTL   10                 S0 do-nothing         -    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10 S1 IS-Sharpe argmax (control)  0.15/0.5    0.1216      0.8663    -0.2157 -0.0094
+BROAD136  DDCTL   10      S2 clause-gated MAX K=20   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10      S2 clause-gated MAX K=50   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10     S2 clause-gated MAX K=100   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10     S2 clause-gated MAX K=200   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10      S2 clause-gated Q95 K=20   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10      S2 clause-gated Q95 K=50   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10     S2 clause-gated Q95 K=100   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10     S2 clause-gated Q95 K=200   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   10                    ORACLE-OOS  0.25/0.5    0.1240      0.8758    -0.2157  0.0000
+BROAD136  DDCTL   25                 S0 do-nothing         -    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25 S1 IS-Sharpe argmax (control)  0.15/0.5    0.0983      0.7208    -0.2168 -0.0103
+BROAD136  DDCTL   25      S2 clause-gated MAX K=20   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25      S2 clause-gated MAX K=50   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25     S2 clause-gated MAX K=100   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25     S2 clause-gated MAX K=200   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25      S2 clause-gated Q95 K=20   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25      S2 clause-gated Q95 K=50   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25     S2 clause-gated Q95 K=100   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25     S2 clause-gated Q95 K=200   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136  DDCTL   25                    ORACLE-OOS  0.25/0.5    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   10                 S0 do-nothing         -    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10 S1 IS-Sharpe argmax (control) 100.0/0.5    0.1116      0.8885    -0.1957  0.0127
+BROAD136 SLEEVE   10      S2 clause-gated MAX K=20   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10      S2 clause-gated MAX K=50   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10     S2 clause-gated MAX K=100   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10     S2 clause-gated MAX K=200   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10      S2 clause-gated Q95 K=20  50.0/1.0    0.0797      0.6942    -0.2219 -0.1816
+BROAD136 SLEEVE   10      S2 clause-gated Q95 K=50   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10     S2 clause-gated Q95 K=100   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10     S2 clause-gated Q95 K=200   ABSTAIN    0.1240      0.8758    -0.2157  0.0000
+BROAD136 SLEEVE   10                    ORACLE-OOS 400.0/1.0    0.1318      0.9503    -0.2157  0.0746
+BROAD136 SLEEVE   25                 S0 do-nothing         -    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25 S1 IS-Sharpe argmax (control) 400.0/0.5    0.1049      0.7787    -0.2168  0.0477
+BROAD136 SLEEVE   25      S2 clause-gated MAX K=20   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25      S2 clause-gated MAX K=50   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25     S2 clause-gated MAX K=100   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25     S2 clause-gated MAX K=200   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25      S2 clause-gated Q95 K=20  50.0/1.0    0.0478      0.4454    -0.2897 -0.2856
+BROAD136 SLEEVE   25      S2 clause-gated Q95 K=50   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25     S2 clause-gated Q95 K=100   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25     S2 clause-gated Q95 K=200   ABSTAIN    0.1006      0.7310    -0.2168  0.0000
+BROAD136 SLEEVE   25                    ORACLE-OOS 400.0/1.0    0.1085      0.8018    -0.2168  0.0708
+SMALL439 BUDGET   10                 S0 do-nothing         -    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10 S1 IS-Sharpe argmax (control)  0.3/skip    0.0234      0.2176    -0.4365 -0.2821
+SMALL439 BUDGET   10      S2 clause-gated MAX K=20   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10      S2 clause-gated MAX K=50   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10     S2 clause-gated MAX K=100   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10     S2 clause-gated MAX K=200   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10      S2 clause-gated Q95 K=20  0.5/skip    0.0684      0.4551    -0.3298 -0.0447
+SMALL439 BUDGET   10      S2 clause-gated Q95 K=50   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10     S2 clause-gated Q95 K=100   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10     S2 clause-gated Q95 K=200   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 BUDGET   10                    ORACLE-OOS  0.5/half    0.0753      0.5005    -0.3067  0.0007
+SMALL439 BUDGET   25                 S0 do-nothing         -    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25 S1 IS-Sharpe argmax (control)  0.3/skip    0.0084      0.1391    -0.4489 -0.1748
+SMALL439 BUDGET   25      S2 clause-gated MAX K=20   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25      S2 clause-gated MAX K=50   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25     S2 clause-gated MAX K=100   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25     S2 clause-gated MAX K=200   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25      S2 clause-gated Q95 K=20   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25      S2 clause-gated Q95 K=50   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25     S2 clause-gated Q95 K=100   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25     S2 clause-gated Q95 K=200   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 BUDGET   25                    ORACLE-OOS  0.1/skip    0.0587      0.4324    -0.3105  0.1186
+SMALL439  DDCTL   10                 S0 do-nothing         -    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   10 S1 IS-Sharpe argmax (control)  0.25/0.5    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   10      S2 clause-gated MAX K=20  0.06/0.5    0.0403      0.3565    -0.3004 -0.1432
+SMALL439  DDCTL   10      S2 clause-gated MAX K=50  0.03/0.5    0.0391      0.3843    -0.2199 -0.1154
+SMALL439  DDCTL   10     S2 clause-gated MAX K=100   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   10     S2 clause-gated MAX K=200   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   10      S2 clause-gated Q95 K=20  0.15/1.0    0.0350      0.2898    -0.3369 -0.2099
+SMALL439  DDCTL   10      S2 clause-gated Q95 K=50  0.15/0.5    0.0549      0.4012    -0.2807 -0.0986
+SMALL439  DDCTL   10     S2 clause-gated Q95 K=100  0.06/0.5    0.0403      0.3565    -0.3004 -0.1432
+SMALL439  DDCTL   10     S2 clause-gated Q95 K=200  0.06/0.5    0.0403      0.3565    -0.3004 -0.1432
+SMALL439  DDCTL   10                    ORACLE-OOS  0.25/0.5    0.0746      0.4997    -0.2684  0.0000
+SMALL439  DDCTL   25                 S0 do-nothing         -    0.0403      0.3138    -0.3456  0.0000
+SMALL439  DDCTL   25 S1 IS-Sharpe argmax (control)  0.25/0.5    0.0403      0.3138    -0.3456  0.0000
+SMALL439  DDCTL   25      S2 clause-gated MAX K=20  0.06/0.5    0.0129      0.1622    -0.3752 -0.1516
+SMALL439  DDCTL   25      S2 clause-gated MAX K=50  0.03/0.5    0.0144      0.1805    -0.2915 -0.1333
+SMALL439  DDCTL   25     S2 clause-gated MAX K=100  0.03/1.0   -0.0168     -0.1395    -0.3452 -0.4534
+SMALL439  DDCTL   25     S2 clause-gated MAX K=200   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439  DDCTL   25      S2 clause-gated Q95 K=20  0.15/0.5    0.0215      0.2108    -0.3531 -0.1030
+SMALL439  DDCTL   25      S2 clause-gated Q95 K=50  0.15/0.5    0.0215      0.2108    -0.3531 -0.1030
+SMALL439  DDCTL   25     S2 clause-gated Q95 K=100  0.06/0.5    0.0129      0.1622    -0.3752 -0.1516
+SMALL439  DDCTL   25     S2 clause-gated Q95 K=200  0.06/0.5    0.0129      0.1622    -0.3752 -0.1516
+SMALL439  DDCTL   25                    ORACLE-OOS  0.25/0.5    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   10                 S0 do-nothing         -    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10 S1 IS-Sharpe argmax (control) 300.0/1.0    0.0696      0.4926    -0.2619 -0.0072
+SMALL439 SLEEVE   10      S2 clause-gated MAX K=20   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10      S2 clause-gated MAX K=50   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10     S2 clause-gated MAX K=100   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10     S2 clause-gated MAX K=200   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10      S2 clause-gated Q95 K=20   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10      S2 clause-gated Q95 K=50   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10     S2 clause-gated Q95 K=100   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10     S2 clause-gated Q95 K=200   ABSTAIN    0.0746      0.4997    -0.2684  0.0000
+SMALL439 SLEEVE   10                    ORACLE-OOS 200.0/1.0    0.0810      0.5725    -0.2150  0.0727
+SMALL439 SLEEVE   25                 S0 do-nothing         -    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25 S1 IS-Sharpe argmax (control) 300.0/1.0    0.0363      0.2997    -0.3069 -0.0141
+SMALL439 SLEEVE   25      S2 clause-gated MAX K=20   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25      S2 clause-gated MAX K=50   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25     S2 clause-gated MAX K=100   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25     S2 clause-gated MAX K=200   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25      S2 clause-gated Q95 K=20 100.0/0.5    0.0399      0.3275    -0.3400  0.0137
+SMALL439 SLEEVE   25      S2 clause-gated Q95 K=50   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25     S2 clause-gated Q95 K=100   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25     S2 clause-gated Q95 K=200   ABSTAIN    0.0403      0.3138    -0.3456  0.0000
+SMALL439 SLEEVE   25                    ORACLE-OOS 400.0/1.0    0.0485      0.3694    -0.2884  0.0555
+     U56 BUDGET   10                 S0 do-nothing         -    0.1449      1.1775    -0.1821  0.0000
+     U56 BUDGET   10 S1 IS-Sharpe argmax (control)  0.5/skip    0.1395      1.1026    -0.2090 -0.0749
+     U56 BUDGET   10      S2 clause-gated MAX K=20  0.3/half    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10      S2 clause-gated MAX K=50  0.3/half    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10     S2 clause-gated MAX K=100  0.3/half    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10     S2 clause-gated MAX K=200  0.3/half    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10      S2 clause-gated Q95 K=20  0.5/skip    0.1395      1.1026    -0.2090 -0.0749
+     U56 BUDGET   10      S2 clause-gated Q95 K=50  0.3/half    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10     S2 clause-gated Q95 K=100  0.3/half    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10     S2 clause-gated Q95 K=200  0.3/half    0.1436      1.1555    -0.1818 -0.0219
+     U56 BUDGET   10                    ORACLE-OOS 0.05/half    0.1518      1.2057    -0.1817  0.0282
+     U56 BUDGET   25                 S0 do-nothing         -    0.1289      1.0618    -0.1833  0.0000
+     U56 BUDGET   25 S1 IS-Sharpe argmax (control) 0.05/half    0.1412      1.1303    -0.1825  0.0685
+     U56 BUDGET   25      S2 clause-gated MAX K=20  0.3/half    0.1282      1.0445    -0.1828 -0.0173
+     U56 BUDGET   25      S2 clause-gated MAX K=50  0.3/half    0.1282      1.0445    -0.1828 -0.0173
+     U56 BUDGET   25     S2 clause-gated MAX K=100  0.3/half    0.1282      1.0445    -0.1828 -0.0173
+     U56 BUDGET   25     S2 clause-gated MAX K=200  0.3/skip    0.1279      1.0197    -0.2093 -0.0420
+     U56 BUDGET   25      S2 clause-gated Q95 K=20  0.5/skip    0.1238      0.9921    -0.2112 -0.0697
+     U56 BUDGET   25      S2 clause-gated Q95 K=50  0.3/half    0.1282      1.0445    -0.1828 -0.0173
+     U56 BUDGET   25     S2 clause-gated Q95 K=100  0.3/half    0.1282      1.0445    -0.1828 -0.0173
+     U56 BUDGET   25     S2 clause-gated Q95 K=200  0.3/half    0.1282      1.0445    -0.1828 -0.0173
+     U56 BUDGET   25                    ORACLE-OOS 0.05/half    0.1412      1.1303    -0.1825  0.0685
+     U56  DDCTL   10                 S0 do-nothing         -    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10 S1 IS-Sharpe argmax (control)  0.15/0.5    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10      S2 clause-gated MAX K=20   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10      S2 clause-gated MAX K=50   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10     S2 clause-gated MAX K=100   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10     S2 clause-gated MAX K=200   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10      S2 clause-gated Q95 K=20   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10      S2 clause-gated Q95 K=50  0.03/1.0    0.0718      0.8256    -0.1352 -0.3519
+     U56  DDCTL   10     S2 clause-gated Q95 K=100   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   10     S2 clause-gated Q95 K=200  0.03/0.5    0.1087      1.1038    -0.1413 -0.0737
+     U56  DDCTL   10                    ORACLE-OOS  0.15/0.5    0.1449      1.1775    -0.1821  0.0000
+     U56  DDCTL   25                 S0 do-nothing         -    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25 S1 IS-Sharpe argmax (control)  0.15/0.5    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25      S2 clause-gated MAX K=20   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25      S2 clause-gated MAX K=50   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25     S2 clause-gated MAX K=100   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25     S2 clause-gated MAX K=200   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25      S2 clause-gated Q95 K=20   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25      S2 clause-gated Q95 K=50  0.03/1.0    0.0580      0.6786    -0.1437 -0.3832
+     U56  DDCTL   25     S2 clause-gated Q95 K=100   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56  DDCTL   25     S2 clause-gated Q95 K=200  0.03/0.5    0.0939      0.9665    -0.1425 -0.0953
+     U56  DDCTL   25                    ORACLE-OOS  0.15/0.5    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   10                 S0 do-nothing         -    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10 S1 IS-Sharpe argmax (control) 400.0/0.5    0.1466      1.2088    -0.1821  0.0313
+     U56 SLEEVE   10      S2 clause-gated MAX K=20   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10      S2 clause-gated MAX K=50   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10     S2 clause-gated MAX K=100   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10     S2 clause-gated MAX K=200   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10      S2 clause-gated Q95 K=20   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10      S2 clause-gated Q95 K=50   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10     S2 clause-gated Q95 K=100   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10     S2 clause-gated Q95 K=200   ABSTAIN    0.1449      1.1775    -0.1821  0.0000
+     U56 SLEEVE   10                    ORACLE-OOS 200.0/0.5    0.1438      1.2333    -0.1407  0.0558
+     U56 SLEEVE   25                 S0 do-nothing         -    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25 S1 IS-Sharpe argmax (control) 400.0/0.5    0.1304      1.0885    -0.1833  0.0268
+     U56 SLEEVE   25      S2 clause-gated MAX K=20   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25      S2 clause-gated MAX K=50   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25     S2 clause-gated MAX K=100   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25     S2 clause-gated MAX K=200   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25      S2 clause-gated Q95 K=20   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25      S2 clause-gated Q95 K=50   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25     S2 clause-gated Q95 K=100   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25     S2 clause-gated Q95 K=200   ABSTAIN    0.1289      1.0618    -0.1833  0.0000
+     U56 SLEEVE   25                    ORACLE-OOS 200.0/0.5    0.1263      1.0989    -0.1423  0.0372
+
+======================================================================================================================
+Q5  BOTH KEEP PATHS on the 180 real rows (4a vs the panel's own RULES v1, 4b vs SPY).
+======================================================================================================================
+
+  4a passes: 37/180     4b passes: 28/180
+
+  by panel and cost rung:
+               n  pass4a  pass4b
+panel    bps                    
+BROAD136 10   30       6       1
+         25   30      23       0
+SMALL439 10   30       0       0
+         25   30       1       0
+U56      10   30       1      19
+         25   30       6       8
+
+  of the 28 rows that pass 4b, INSIDE their own 200-draw MAX band: 28/28
+   panel family      thr depth  bps   CAGR  Sharpe   MaxDD     H1     H2  Sharpe_OOS  dSharpe
+BROAD136 SLEEVE 200.0000   0.5   10 0.1213  0.9684 -0.1601 1.1157 0.8415      0.9284   0.0190
+     U56 BUDGET   0.0500  half   10 0.1325  1.1208 -0.1817 1.1151 1.1325      1.2057   0.0132
+     U56 BUDGET   0.0500  half   25 0.1219  1.0406 -0.1825 1.0283 1.0574      1.1303   0.0560
+     U56 BUDGET   0.1000  half   10 0.1296  1.0989 -0.1817 1.0919 1.1116      1.1833  -0.0086
+     U56 BUDGET   0.1000  half   25 0.1184  1.0136 -0.1825 0.9992 1.0321      1.1034   0.0291
+     U56 BUDGET   0.2000  half   10 0.1276  1.0854 -0.1810 1.0724 1.1031      1.1720  -0.0221
+     U56 BUDGET   0.2000  half   25 0.1144  0.9848 -0.1818 0.9625 1.0097      1.0778   0.0002
+     U56 BUDGET   0.3000  half   10 0.1268  1.0820 -0.1818 1.0806 1.0894      1.1555  -0.0255
+     U56 BUDGET   0.5000  half   10 0.1275  1.0914 -0.1818 1.1138 1.0796      1.1464  -0.0161
+     U56 BUDGET   0.5000  half   25 0.1116  0.9697 -0.1828 0.9808 0.9666      1.0326  -0.0148
+     U56  DDCTL   0.0600   0.5   10 0.1104  1.0518 -0.1413 1.0441 1.0610      1.1410  -0.0557
+     U56  DDCTL   0.1000   0.5   10 0.1206  1.0578 -0.1879 1.0683 1.0536      1.1249  -0.0497
+     U56  DDCTL   0.1000   1.0   10 0.1126  0.9985 -0.1938 1.0233 0.9811      1.0579  -0.1090
+     U56  DDCTL   0.1500   0.5   10 0.1286  1.1075 -0.1821 1.1099 1.1117      1.1775   0.0000
+     U56  DDCTL   0.1500   0.5   25 0.1127  0.9845 -0.1833 0.9768 0.9966      1.0618   0.0000
+     U56  DDCTL   0.1500   1.0   10 0.1286  1.1075 -0.1821 1.1099 1.1117      1.1775   0.0000
+     U56  DDCTL   0.1500   1.0   25 0.1127  0.9845 -0.1833 0.9768 0.9966      1.0618   0.0000
+     U56  DDCTL   0.2500   0.5   10 0.1286  1.1075 -0.1821 1.1099 1.1117      1.1775   0.0000
+     U56  DDCTL   0.2500   0.5   25 0.1127  0.9845 -0.1833 0.9768 0.9966      1.0618   0.0000
+     U56  DDCTL   0.2500   1.0   10 0.1286  1.1075 -0.1821 1.1099 1.1117      1.1775   0.0000
+     U56  DDCTL   0.2500   1.0   25 0.1127  0.9845 -0.1833 0.9768 0.9966      1.0618   0.0000
+     U56 SLEEVE 100.0000   0.5   10 0.1168  1.0979 -0.1451 1.0845 1.1146      1.1882  -0.0096
+     U56 SLEEVE 200.0000   0.5   10 0.1238  1.1246 -0.1407 1.0829 1.1658      1.2333   0.0171
+     U56 SLEEVE 200.0000   1.0   10 0.1183  1.0664 -0.1349 0.9754 1.1507      1.2192  -0.0412
+     U56 SLEEVE 300.0000   0.5   10 0.1236  1.0989 -0.1821 1.0674 1.1332      1.1994  -0.0086
+     U56 SLEEVE 300.0000   1.0   10 0.1181  1.0438 -0.1821 0.9605 1.1209      1.1872  -0.0637
+     U56 SLEEVE 400.0000   0.5   10 0.1274  1.1159 -0.1821 1.0908 1.1435      1.2088   0.0084
+     U56 SLEEVE 400.0000   1.0   10 0.1258  1.0947 -0.1821 1.0425 1.1454      1.2097  -0.0128
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS
+======================================================================================================================
+  HIT   P1 idea 201's bands and flip count reproduce                   max |dband| 9.7e-17, flips 32/180
+  HIT   P2 MAX band drifts up monotonically, >20% over K               +65.9%, mono True, clear-rate mono True
+  HIT   P3 Q95 band does not drift (<20%)                              +6.7%
+  MISS  P4 MAX flip rate still >5% at K=200                            2.8%
+  MISS  P5 Q95 flip rate falls monotonically and is below MAX from K=50 mono False, below-MAX False
+  HIT   P6 no clause-gated selector beats do-nothing OOS               best dOOS -0.0145
+
+  4 of 6 predictions hit.
+
+done in 2643s
