@@ -1,0 +1,299 @@
+======================================================================================================================
+IDEA 217  does-the-modal-constant-result-survive-a-cost-ladder   (cloud, 2026-09-05)
+======================================================================================================================
+rungs = [5, 10, 15, 20, 25] bps | dials = ['GROSS', 'N', 'BAND', 'CADENCE', 'SLEEVE'] | IS <= 2016-12-31, OOS >= 2017-01-01
+
+building corpus A (idea 171's build_corpus, imported) ...
+  corpus A: 53 books   (SMALL484 inherited UNFILTERED -- see caveats)
+
+REPRODUCTION CONTROLS (asserted before any new number is read)
+  [a] fast_backtest vs engine.backtest (products/backtester/engine.py), same book:
+      B136      freq=D  max|dret|=1.735e-18  max|dturn|=1.665e-16
+      B136      freq=W  max|dret|=2.776e-17  max|dturn|=3.331e-16
+      B136      freq=M  max|dret|=2.776e-17  max|dturn|=5.551e-16
+      B136      freq=Q  max|dret|=6.245e-17  max|dturn|=1.221e-15
+      -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on U56: max|dw|=0.000e+00  -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on B136: max|dw|=0.000e+00  -> PASS
+  [b] CAND-20 weights vs idea 78 weights_cand on BSTK100: max|dw|=0.000e+00  -> PASS
+
+  [e] numpy metric kernels vs engine.metrics and idea 171's rel_margin/halves:
+      max |dCAGR/dSharpe/dMaxDD| = 0.000e+00 | halves 0.000e+00 | rel_margin 0.000e+00   -> PASS
+
+  [d] cost additivity: derived net(c) = gross - turnover*c/1e4  vs a DIRECT fast_backtest(cost=c) re-simulation
+      max |direct - derived| over 3 books x 5 configs x 5 rungs = 0.000e+00   -> PASS
+
+running corpus A ladders (1 simulation per point, 5 rungs derived) ...
+   ... A 25/53 books  (42s)
+   ... A 50/53 books  (68s)
+   9540 rung-rows = 1908 ladder points x 5 rungs  (72s)
+
+  [c] derived 10 bps rung vs idea 171's committed ladder.csv: 1908/1908 rows matched
+      max |dIS_Sharpe| = 2.220e-16
+      max |dOOS_Sharpe| = 2.220e-16
+      max |dOOS_margin| = 2.220e-16
+      max |dOOS_CAGR| = 9.714e-17
+      max |dOOS_MaxDD| = 9.714e-17
+      max |dSharpe| = 2.220e-16
+      max |dCAGR| = 9.714e-17
+      max |dMaxDD| = 9.714e-17
+      max |dH1| = 2.220e-16
+      max |dH2| = 2.220e-16
+      max |dIS_margin| = 4.441e-16
+      max |dturnover| = 3.553e-15
+      4a/4b verdict mismatches: 0
+      -> PASS
+
+building corpus B (idea 189's build_corpus_B, imported) ...
+  corpus B small panel: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable (SURVIVORSHIP: current constituents only, no delistings)
+  corpus B: 115 books
+
+running corpus B ladders ...
+   ... B 25/115 books  (105s)
+   ... B 50/115 books  (129s)
+   ... B 75/115 books  (142s)
+   ... B 100/115 books  (153s)
+   20700 rung-rows  (161s)
+
+deriving picks (162s) ...
+
+======================================================================================================================
+Q3  THE MODE AT EVERY RUNG  (modal SEL-SHARPE pick / its share).  A mode that MOVES with cost is not writable.
+======================================================================================================================
+
+corpus A  (53 books)
+  dial      inc                5bps            10bps            15bps            20bps            25bps   moves?
+  GROSS     0.75        1.0   94.3%      1.0   94.3%      1.0   94.3%      1.0   94.3%      1.0   94.3%   stable
+  N         20           20   20.8%       20   22.6%       20   20.8%       20   22.6%       50   24.5%   MOVES 20 -> 50
+  BAND      0.0        0.08   75.5%     0.08   81.1%     0.08   84.9%     0.08   86.8%     0.08   88.7%   stable
+  CADENCE   W             M   73.6%        M   83.0%        M   86.8%        M   86.8%        M   81.1%   stable
+  SLEEVE    0.0         0.3  100.0%      0.3  100.0%      0.3  100.0%      0.3  100.0%      0.3  100.0%   stable
+
+corpus B  (115 books)
+  dial      inc                5bps            10bps            15bps            20bps            25bps   moves?
+  GROSS     0.75        1.0   84.3%      1.0   84.3%      1.0   84.3%      1.0   84.3%      1.0   83.5%   stable
+  N         20           15   25.2%       15   23.5%       15   24.3%       15   20.0%       25   19.1%   MOVES 15 -> 25
+  BAND      0.0        0.08   67.0%     0.08   68.7%     0.08   70.4%     0.08   71.3%     0.08   73.0%   stable
+  CADENCE   W             M   88.7%        M   88.7%        M   87.8%        M   86.1%        M   87.0%   stable
+  SLEEVE    0.0         0.3   87.8%      0.3   87.8%      0.3   89.6%      0.3   89.6%      0.3   90.4%   stable
+
+======================================================================================================================
+Q4  MODE-minus-SEL AT EVERY RUNG   (positive = the constant beats the fit).  Paired over books; every grid point reported.
+======================================================================================================================
+
+MODE-LOO minus SEL-SHARPE   score = OOS_Sharpe   corpus A
+  dial                      5bps                10bps                15bps                20bps                25bps
+  GROSS          -0.0001 t -1.16      -0.0001 t -1.06      -0.0000 t -1.05      -0.0000 t -1.17      -0.0000 t -1.16
+  N              +0.0274 t +1.95      +0.0215 t +1.47      +0.0126 t +0.77      +0.0002 t +0.01      +0.0499 t +3.17
+  BAND           -0.0013 t -0.37      +0.0005 t +0.16      +0.0003 t +0.10      +0.0027 t +1.10      +0.0022 t +0.90
+  CADENCE        +0.0314 t +3.30      +0.0261 t +2.89      +0.0223 t +2.60      +0.0234 t +2.70      +0.0308 t +3.23
+  SLEEVE         +0.0000 t  +nan      +0.0000 t  +nan      +0.0000 t  +nan      +0.0000 t  +nan      +0.0000 t  +nan
+  dials won                  2/5                  3/5                  3/5                  3/5                  3/5
+
+MODE-LOO minus SEL-SHARPE   score = OOS_Sharpe   corpus B
+  dial                      5bps                10bps                15bps                20bps                25bps
+  GROSS          -0.0001 t -0.79      -0.0000 t -0.54      -0.0000 t -0.65      -0.0000 t -0.84      -0.0000 t -1.02
+  N              +0.0344 t +3.36      +0.0256 t +2.54      +0.0168 t +1.65      +0.0112 t +1.10      +0.0123 t +1.33
+  BAND           +0.0050 t +1.28      +0.0078 t +2.08      +0.0089 t +2.38      +0.0108 t +2.82      +0.0108 t +2.85
+  CADENCE        +0.0209 t +2.71      +0.0255 t +3.08      +0.0276 t +3.26      +0.0292 t +3.25      +0.0279 t +3.11
+  SLEEVE         +0.0030 t +2.84      +0.0030 t +2.88      +0.0031 t +2.82      +0.0028 t +2.68      +0.0022 t +2.49
+  dials won                  4/5                  4/5                  4/5                  4/5                  4/5
+
+MODE-LOO minus SEL-SHARPE   score = OOS_margin   corpus A
+  dial                      5bps                10bps                15bps                20bps                25bps
+  GROSS          +0.0067 t +0.57      -0.0055 t -1.07      -0.0084 t -1.20      -0.0052 t -1.05      -0.0052 t -1.06
+  N              +0.0081 t +0.42      +0.0112 t +0.61      +0.0304 t +1.67      +0.0454 t +2.35      -0.1592 t -5.26
+  BAND           +0.0028 t +0.97      +0.0029 t +1.04      +0.0035 t +1.22      +0.0046 t +1.61      +0.0038 t +1.37
+  CADENCE        +0.0315 t +2.04      +0.0343 t +2.48      +0.0297 t +2.21      +0.0295 t +2.24      +0.0444 t +2.81
+  SLEEVE         +0.0000 t  +nan      +0.0000 t  +nan      +0.0000 t  +nan      +0.0000 t  +nan      +0.0000 t  +nan
+  dials won                  4/5                  3/5                  3/5                  3/5                  2/5
+
+MODE-LOO minus SEL-SHARPE   score = OOS_margin   corpus B
+  dial                      5bps                10bps                15bps                20bps                25bps
+  GROSS          +0.0497 t +2.59      +0.0061 t +0.56      -0.0087 t -1.05      -0.0147 t -2.13      -0.0151 t -2.58
+  N              +0.0650 t +2.76      +0.0865 t +3.98      +0.0890 t +4.73      +0.1119 t +5.99      +0.0191 t +0.95
+  BAND           +0.0175 t +3.03      +0.0195 t +3.33      +0.0205 t +3.40      +0.0225 t +3.61      +0.0229 t +3.72
+  CADENCE        +0.0122 t +2.39      +0.0143 t +2.40      +0.0149 t +2.46      +0.0178 t +2.75      +0.0128 t +2.37
+  SLEEVE         +0.0026 t +2.30      +0.0025 t +2.27      +0.0025 t +2.24      +0.0024 t +2.19      +0.0020 t +1.93
+  dials won                  5/5                  5/5                  4/5                  4/5                  4/5
+
+ALL THREE MODE DEFINITIONS x BOTH SCORES x 5 RUNGS -- dials won (of 5), per corpus
+  arm           score       corpus      5bps    10bps    15bps    20bps    25bps
+  MODE-GLOBAL   OOS_Sharpe  A            2/5      3/5      3/5      3/5      3/5
+  MODE-GLOBAL   OOS_Sharpe  B            4/5      4/5      4/5      4/5      4/5
+  MODE-GLOBAL   OOS_margin  A            4/5      3/5      3/5      3/5      2/5
+  MODE-GLOBAL   OOS_margin  B            5/5      5/5      4/5      4/5      4/5
+  MODE-LOO      OOS_Sharpe  A            2/5      3/5      3/5      3/5      3/5
+  MODE-LOO      OOS_Sharpe  B            4/5      4/5      4/5      4/5      4/5
+  MODE-LOO      OOS_margin  A            4/5      3/5      3/5      3/5      2/5
+  MODE-LOO      OOS_margin  B            5/5      5/5      4/5      4/5      4/5
+  MODE-XCORPUS  OOS_Sharpe  A            2/5      2/5      2/5      2/5      2/5
+  MODE-XCORPUS  OOS_Sharpe  B            4/5      4/5      4/5      4/5      4/5
+  MODE-XCORPUS  OOS_margin  A            4/5      3/5      3/5      3/5      3/5
+  MODE-XCORPUS  OOS_margin  B            4/5      5/5      4/5      4/5      3/5
+
+THE TWO LIVE DIALS (N, CADENCE) -- MODE-LOO minus SEL-SHARPE, OOS Sharpe, with the exact sign test
+  corpus  dial       bps   agree  off n   off mean    overall        t      W/L   sign p
+  A       N            5   20.8%     42    +0.0345    +0.0274    +1.95  25/17     0.2800
+  A       N           10   22.6%     41    +0.0278    +0.0215    +1.47  21/20     1.0000
+  A       N           15   20.8%     42    +0.0159    +0.0126    +0.77  21/21     1.0000
+  A       N           20   22.6%     41    +0.0002    +0.0002    +0.01  17/24     0.3489
+  A       N           25   24.5%     40    +0.0661    +0.0499    +3.17  31/9      0.0007
+  A       CADENCE      5   73.6%     14    +0.1190    +0.0314    +3.30  13/1      0.0018
+  A       CADENCE     10   83.0%      9    +0.1536    +0.0261    +2.89   9/0      0.0039
+  A       CADENCE     15   86.8%      7    +0.1690    +0.0223    +2.60   7/0      0.0156
+  A       CADENCE     20   86.8%      7    +0.1771    +0.0234    +2.70   7/0      0.0156
+  A       CADENCE     25   81.1%     10    +0.1633    +0.0308    +3.23  10/0      0.0020
+  B       N            5   25.2%     86    +0.0460    +0.0344    +3.36  58/28     0.0016
+  B       N           10   23.5%     88    +0.0334    +0.0256    +2.54  55/33     0.0246
+  B       N           15   24.3%     87    +0.0223    +0.0168    +1.65  49/38     0.2836
+  B       N           20   20.0%     92    +0.0140    +0.0112    +1.10  48/44     0.7547
+  B       N           25   19.1%     93    +0.0152    +0.0123    +1.33  49/44     0.6785
+  B       CADENCE      5   88.7%     13    +0.1852    +0.0209    +2.71  11/2      0.0225
+  B       CADENCE     10   88.7%     13    +0.2259    +0.0255    +3.08  10/3      0.0923
+  B       CADENCE     15   87.8%     14    +0.2270    +0.0276    +3.26  12/2      0.0129
+  B       CADENCE     20   86.1%     16    +0.2100    +0.0292    +3.25  13/3      0.0213
+  B       CADENCE     25   87.0%     15    +0.2140    +0.0279    +3.11  12/3      0.0352
+
+======================================================================================================================
+Q5  RULE 8 WALK-FORWARD AT EVERY RUNG.  Every arm chooses on IS <= 2016-12-31 ONLY; 2017-2026 read once.
+    (ORACLE reads the OOS window and is NOT implementable -- it is the ceiling, not an arm.)
+======================================================================================================================
+
+references on the OOS window (2017-01-01 onward), per parent panel
+  corpus  panel    series            bps     CAGR   Sharpe    MaxDD
+  A       U56      SPY buy&hold        -   15.45%   0.8820  -33.72%
+  A       U56      RULES v1            5    9.08%   0.8627  -13.71%
+  A       U56      RULES v1           10    7.73%   0.7471  -13.83%
+  A       U56      RULES v1           15    6.40%   0.6312  -13.94%
+  A       U56      RULES v1           20    5.08%   0.5152  -14.06%
+  A       U56      RULES v1           25    3.78%   0.3992  -14.18%
+  A       B136     SPY buy&hold        -   15.45%   0.8820  -33.72%
+  A       B136     RULES v1            5    7.60%   0.7167  -19.40%
+  A       B136     RULES v1           10    5.94%   0.5763  -21.19%
+  A       B136     RULES v1           15    4.31%   0.4358  -23.05%
+  A       B136     RULES v1           20    2.70%   0.2955  -24.87%
+  A       B136     RULES v1           25    1.11%   0.1554  -26.72%
+  A       SMALL    SPY buy&hold        -   15.45%   0.8820  -33.72%
+  A       SMALL    RULES v1            5   21.05%   0.6437  -32.14%
+  A       SMALL    RULES v1           10   19.31%   0.6046  -35.01%
+  A       SMALL    RULES v1           15   17.60%   0.5655  -37.76%
+  A       SMALL    RULES v1           20   15.91%   0.5263  -40.39%
+  A       SMALL    RULES v1           25   14.24%   0.4872  -42.92%
+  B       U56      SPY buy&hold        -   15.45%   0.8820  -33.72%
+  B       U56      RULES v1            5    9.08%   0.8627  -13.71%
+  B       U56      RULES v1           10    7.73%   0.7471  -13.83%
+  B       U56      RULES v1           15    6.40%   0.6312  -13.94%
+  B       U56      RULES v1           20    5.08%   0.5152  -14.06%
+  B       U56      RULES v1           25    3.78%   0.3992  -14.18%
+  B       SMALL    SPY buy&hold        -   15.45%   0.8820  -33.72%
+  B       SMALL    RULES v1            5    9.49%   0.7788  -29.11%
+  B       SMALL    RULES v1           10    7.88%   0.6617  -32.37%
+  B       SMALL    RULES v1           15    6.29%   0.5445  -35.49%
+  B       SMALL    RULES v1           20    4.73%   0.4273  -38.46%
+  B       SMALL    RULES v1           25    3.18%   0.3101  -41.30%
+
+pooled OOS Sharpe by arm and rung -- corpus A (mean over 5 dials x 53 books)
+  arm                5bps     10bps     15bps     20bps     25bps    d(25-5)
+  CONST-INC        1.0001    0.9638    0.9275    0.8912    0.8548    -0.1453
+  SEL-SHARPE       1.0386    1.0100    0.9820    0.9533    0.9285    -0.1102
+  SEL-4B           1.0125    0.9806    0.9503    0.9197    0.8892    -0.1233
+  MODE-GLOBAL      1.0501    1.0196    0.9891    0.9585    0.9451    -0.1051
+  MODE-LOO         1.0501    1.0196    0.9891    0.9585    0.9451    -0.1051
+  MODE-XCORPUS     1.0448    1.0135    0.9823    0.9510    0.9342    -0.1106
+  RANDOM           1.0009    0.9634    0.9259    0.8883    0.8507    -0.1502
+  ORACLE           1.0752    1.0438    1.0130    0.9825    0.9522    -0.1230
+
+pooled OOS CAGR / MaxDD by arm -- corpus A
+  arm                        5bps             10bps             15bps             20bps             25bps
+  CONST-INC       10.41%/ -17.09%    9.96%/ -17.18%    9.52%/ -17.30%    9.07%/ -17.43%    8.63%/ -17.57%
+  SEL-SHARPE      11.31%/ -18.02%   10.90%/ -18.18%   10.42%/ -18.15%    9.97%/ -18.19%    9.50%/ -18.19%
+  SEL-4B          10.92%/ -17.97%   10.57%/ -18.16%   10.23%/ -18.32%    9.88%/ -18.53%    9.48%/ -18.70%
+  MODE-GLOBAL     11.20%/ -17.75%   10.81%/ -17.85%   10.41%/ -17.95%   10.02%/ -18.06%    9.07%/ -16.89%
+  MODE-LOO        11.20%/ -17.75%   10.81%/ -17.85%   10.41%/ -17.95%   10.02%/ -18.06%    9.07%/ -16.89%
+  MODE-XCORPUS    11.39%/ -18.02%   10.97%/ -18.12%   10.56%/ -18.23%   10.15%/ -18.35%    9.53%/ -17.87%
+  RANDOM          10.09%/ -16.67%    9.63%/ -16.80%    9.18%/ -16.94%    8.73%/ -17.10%    8.28%/ -17.30%
+  ORACLE           9.69%/ -14.69%    9.49%/ -15.04%    9.35%/ -15.47%    9.09%/ -15.75%    8.78%/ -15.93%
+
+pooled OOS Sharpe by arm and rung -- corpus B (mean over 5 dials x 115 books)
+  arm                5bps     10bps     15bps     20bps     25bps    d(25-5)
+  CONST-INC        0.7117    0.6793    0.6470    0.6146    0.5822    -0.1295
+  SEL-SHARPE       0.7515    0.7251    0.6995    0.6734    0.6484    -0.1031
+  SEL-4B           0.7300    0.7044    0.6791    0.6508    0.6259    -0.1042
+  MODE-GLOBAL      0.7642    0.7375    0.7108    0.6842    0.6590    -0.1051
+  MODE-LOO         0.7642    0.7375    0.7108    0.6842    0.6590    -0.1051
+  MODE-XCORPUS     0.7631    0.7370    0.7109    0.6848    0.6593    -0.1037
+  RANDOM           0.7180    0.6866    0.6552    0.6237    0.5923    -0.1257
+  ORACLE           0.8000    0.7716    0.7439    0.7164    0.6892    -0.1108
+
+pooled OOS CAGR / MaxDD by arm -- corpus B
+  arm                        5bps             10bps             15bps             20bps             25bps
+  CONST-INC        5.56%/ -16.69%    5.25%/ -17.03%    4.94%/ -17.40%    4.63%/ -17.80%    4.32%/ -18.21%
+  SEL-SHARPE       6.07%/ -17.78%    5.80%/ -18.14%    5.51%/ -18.34%    5.20%/ -18.61%    4.87%/ -18.84%
+  SEL-4B           6.26%/ -18.11%    5.95%/ -18.35%    5.66%/ -18.64%    5.34%/ -18.98%    5.06%/ -19.22%
+  MODE-GLOBAL      6.34%/ -17.55%    6.06%/ -17.83%    5.77%/ -18.13%    5.49%/ -18.45%    4.92%/ -17.59%
+  MODE-LOO         6.34%/ -17.55%    6.06%/ -17.83%    5.77%/ -18.13%    5.49%/ -18.45%    4.92%/ -17.59%
+  MODE-XCORPUS     6.11%/ -16.93%    5.84%/ -17.20%    5.58%/ -17.48%    5.31%/ -17.78%    4.58%/ -16.29%
+  RANDOM           5.50%/ -16.96%    5.19%/ -17.33%    4.88%/ -17.71%    4.57%/ -18.12%    4.26%/ -18.55%
+  ORACLE           5.77%/ -15.36%    5.54%/ -15.74%    5.36%/ -16.20%    5.14%/ -16.67%    4.90%/ -17.09%
+
+======================================================================================================================
+BOTH KEEP PATHS AT EVERY RUNG   (4a vs each panel's own RULES v1 re-costed at the same rung; 4b vs SPY)
+======================================================================================================================
+  corpus   bps   rows      4a      4b | fixed rows     4a     4b
+  A          5   1908    1215     396 |        180     51     55
+  A         10   1908    1507     250 |        180     74     36
+  A         15   1908    1637     146 |        180     83     29
+  A         20   1908    1698      84 |        180     91     19
+  A         25   1908    1745      47 |        180    101     14
+  B          5   4140     953     359 |        108     22     25
+  B         10   4140    1214     256 |        108     23     20
+  B         15   4140    1464     198 |        108     22     19
+  B         20   4140    1675     134 |        108     28     17
+  B         25   4140    1942      98 |        108     36     13
+
+4b passes on the FIXED panels only, by panel and rung  (sub-panel books are a corpus device, not tradable books)
+  panel      corpus       5bps     10bps     15bps     20bps     25bps
+  B136       A           19/36      7/36      3/36      0/36      0/36
+  BSTK100    A           11/36      9/36      7/36      2/36      1/36
+  ETF36      A            0/36      0/36      0/36      0/36      0/36
+  SMALL484   A            0/36      0/36      0/36      0/36      0/36
+  U56        A           25/36     20/36     19/36     17/36     13/36
+  ETF36      B            0/36      0/36      0/36      0/36      0/36
+  SMALL439   B            0/36      0/36      0/36      0/36      0/36
+  U56        B           25/36     20/36     19/36     17/36     13/36
+
+4b passes among the ARM-CHOSEN cells only (implementable arms; the number that would matter for capital)
+  arm           corpus       5bps     10bps     15bps     20bps     25bps
+  CONST-INC     A          70/265    50/265    30/265    20/265    10/265
+  CONST-INC     B          85/575    55/575    45/575    30/575    20/575
+  SEL-SHARPE    A          51/265    40/265    22/265    17/265    14/265
+  SEL-SHARPE    B          61/575    54/575    48/575    39/575    33/575
+  SEL-4B        A          92/265    62/265    39/265    25/265    20/265
+  SEL-4B        B          97/575    82/575    65/575    51/575    41/575
+  MODE-GLOBAL   A          56/265    40/265    24/265    19/265    14/265
+  MODE-GLOBAL   B          69/575    62/575    52/575    43/575    30/575
+  MODE-LOO      A          56/265    40/265    24/265    19/265    14/265
+  MODE-LOO      B          69/575    62/575    52/575    43/575    30/575
+  MODE-XCORPUS  A          56/265    40/265    23/265    19/265    15/265
+  MODE-XCORPUS  B          62/575    54/575    48/575    38/575    30/575
+  RANDOM        A          61/265    39/265    26/265    15/265     9/265
+  RANDOM        B          53/575    39/575    31/575    20/575    15/575
+  ORACLE        A          56/265    42/265    27/265    20/265    15/265
+  ORACLE        B          50/575    39/575    35/575    29/575    29/575
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS
+======================================================================================================================
+  idea 189 mode/share table reproduced on 10 cells: True
+  HIT   P1 10bps reproduces idea 171 ladder + idea 189 modes       ladder 3.6e-15/0 mismatches, modes True
+  HIT   P2 cost additivity holds at < 1e-15                        0.000e+00
+  MISS  P3 CADENCE mode moves with cost, slower at 25 than 5       moves=False slower=False
+  MISS  P4 degenerate dials: mode stable AND |gap| < 0.01          stable=True max|gap|=0.0108
+  HIT   P5 live dials: MODE-LOO positive in 20 of 20 cells         20/20
+  MISS  P6 CADENCE gap larger at 25 bps than at 5 bps (both corpora) A +0.0314->+0.0308, B +0.0209->+0.0279
+  MISS  P7 4b counts fall monotonically; 0 fixed-panel 4b at 25 bps monotone=True, fixed 4b @25bps=27
+
+  3 of 7 predictions hit.
+
+done in 173s
