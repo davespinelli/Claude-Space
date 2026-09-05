@@ -311,6 +311,9 @@ def main():
                                   wins=int(sum(1 for x in d if x > 0)),
                                   losses=int(sum(1 for x in d if x < 0)),
                                   p_null=p_null, null_lo=nlo, null_hi=nhi,
+                                  null_side=("above" if (np.isfinite(nhi) and gain > nhi)
+                                             else "below" if (np.isfinite(nlo) and gain < nlo)
+                                             else "inside" if np.isfinite(nlo) else ""),
                                   mean_OOS_Sharpe=float(np.mean([x["S"] for x in o])),
                                   mean_OOS_CAGR=float(np.mean([x["CAGR"] for x in o])),
                                   mean_OOS_MaxDD=float(np.mean([x["DD"] for x in o])),
@@ -339,7 +342,7 @@ def main():
                               gain=float(np.mean(d)), c_choice=np.nan, identity_err=np.nan,
                               t_vs_S0=tstat(d), wins=int(sum(1 for x in d if x > 0)),
                               losses=int(sum(1 for x in d if x < 0)),
-                              p_null=np.nan, null_lo=np.nan, null_hi=np.nan,
+                              p_null=np.nan, null_lo=np.nan, null_hi=np.nan, null_side="",
                               mean_OOS_Sharpe=float(np.mean([x["S"] for x in o])),
                               mean_OOS_CAGR=float(np.mean([x["CAGR"] for x in o])),
                               mean_OOS_MaxDD=float(np.mean([x["DD"] for x in o])),
@@ -359,9 +362,43 @@ def main():
     say(f"\n    P2 — decomposition identity gain = (1-a)*c: max |error| over the 25 gates "
         f"{g25.identity_err.max():.3e}  ->  {'HIT' if g25.identity_err.max() < 1e-12 else 'MISS'}")
     ok = g25.p_null.notna()
+    esc = g25.loc[ok & (g25.p_null < 0.05)]
     say(f"    P3 — gates whose abstention CHOICE escapes its matched-rate null (p < 0.05): "
-        f"{int((g25.loc[ok, 'p_null'] < 0.05).sum())} of {int(ok.sum())} testable  ->  "
-        f"{'HIT (no gate beats random abstention at the same rate)' if int((g25.loc[ok,'p_null'] < 0.05).sum()) == 0 else 'MISS — an abstention choice carries information'}")
+        f"{len(esc)} of {int(ok.sum())} testable  ->  "
+        f"{'HIT (no gate beats random abstention at the same rate)' if len(esc) == 0 else 'MISS — an abstention choice carries information'}")
+    for _, rw in esc.iterrows():
+        say(f"        {rw.selector:<10} tau {rw.tau:>5.2f}  a {rw.a:.3f}  gain {rw.gain:+.4f} "
+            f"{rw.null_side.upper()} the null [{rw.null_lo:+.4f},{rw.null_hi:+.4f}] p "
+            f"{rw.p_null:.3f}  (ungated c0 "
+            f"{float(g25[(g25.selector == rw.selector) & ~np.isfinite(g25.tau)].gain.iloc[0]):+.4f})")
+    say("        READ: 'above' = the gate abstains where its selector would have lost, i.e. the "
+        "choice is skilful; 'below' = it abstains where the selector would have won.")
+
+    # ---------------------------------------------------------- abstention as pure dilution
+    say("\n    IS ABSTENTION ANYTHING BUT DILUTION?  Per selector: gain regressed on a, and "
+        "|gain| regressed on a.  Pure dilution predicts sign(slope) = -sign(c0) and |gain| "
+        "falling in a whenever the selector is not already at zero.")
+    dil = []
+    for s in SELECTORS:
+        sub = g25[g25.selector == s].sort_values("a")
+        c0 = float(sub[~np.isfinite(sub.tau)].gain.iloc[0])
+        x2, y2 = sub["a"].values.astype(float), sub["gain"].values.astype(float)
+        b1s, b0s = np.polyfit(x2, y2, 1)
+        r2s = float(1 - ((y2 - (b0s + b1s * x2)) ** 2).sum() /
+                    max(1e-18, ((y2 - y2.mean()) ** 2).sum()))
+        a1, a0 = np.polyfit(x2, np.abs(y2), 1)
+        dil.append(dict(selector=s, c0=c0, slope_gain=b1s, r2_gain=r2s, slope_absgain=a1,
+                        sign_ok=bool(np.sign(b1s) == -np.sign(c0)),
+                        best_gain=float(y2.max()), best_a=float(x2[int(np.argmax(y2))])))
+        say(f"      {s:<10} c0 (ungated) {c0:+.4f}   gain ~ a: slope {b1s:+.4f} R^2 {r2s:.3f}   "
+            f"|gain| ~ a: slope {a1:+.4f}   dilution sign "
+            f"{'OK' if np.sign(b1s) == -np.sign(c0) else 'WRONG'}   best gain {y2.max():+.4f} "
+            f"at a={x2[int(np.argmax(y2))]:.3f}")
+    dilu = pd.DataFrame(dil)
+    say(f"      dilution sign correct in {int(dilu.sign_ok.sum())} of {len(dilu)} selectors; "
+        f"|gain| slope negative in {int((dilu.slope_absgain < 0).sum())} of {len(dilu)}; "
+        f"best gain over ALL 25 gates {g25.gain.max():+.4f} "
+        f"(t {float(g25.loc[g25.gain.idxmax(), 't_vs_S0']):+.2f}) — never significant.")
 
     # ---------------------------------------------------------- P4: gain ~ abstention rate
     x, y = g25["a"].values.astype(float), g25["gain"].values.astype(float)

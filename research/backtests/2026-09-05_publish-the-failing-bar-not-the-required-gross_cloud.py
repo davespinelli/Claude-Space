@@ -468,9 +468,19 @@ def main():
     naming.to_csv(OUT / f"{STEM}.naming.csv", index=False)
     fx = naming[naming.scope == "FIXABLE"]
     if len(fx):
-        p3 = bool((fx.lift_pp < 10).all() or (fx.p_perm > 0.05).any())
-        say(f"\n    P3 (reading B — bookkeeping): max lift {fx.lift_pp.max():+.1f}pp, min p "
-            f"{fx.p_perm.min():.4f}  ->  {'HIT' if p3 else 'MISS — reading (A) survives'}")
+        # P3 exactly as pre-registered: reading (B) wins iff the lift is < 10pp under EVERY
+        # naming rule AND the permutation p exceeds 0.05 under at least one.  Reported per dial
+        # as well as overall, because the two dials do not have to agree — and they do not.
+        for dial in DIALS:
+            fd = fx[fx.dial == dial]
+            hit = bool((fd.lift_pp < 10).all() and (fd.p_perm > 0.05).any())
+            say(f"    P3 @dial={dial:<7} max lift {fd.lift_pp.max():+.1f}pp over "
+                f"{len(fd)} naming rules, min p {fd.p_perm.min():.4f}  ->  reading "
+                f"{'(B) BOOKKEEPING' if hit else '(A) DIAGNOSTIC — the column carries decision content'}")
+        p3 = bool((fx.lift_pp < 10).all() and (fx.p_perm > 0.05).any())
+        say(f"    P3 OVERALL (reading B — bookkeeping): max lift {fx.lift_pp.max():+.1f}pp, "
+            f"min p {fx.p_perm.min():.4f}  ->  "
+            f"{'HIT' if p3 else 'MISS — reading (A) survives'}")
 
     # ---------------------------------------------------------- weaker target: does the bar move?
     say("\n    WEAKER TARGET — P(instrument clears bar B | the untreated book fails bar B)")
