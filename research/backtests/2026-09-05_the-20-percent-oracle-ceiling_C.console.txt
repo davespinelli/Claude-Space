@@ -11,10 +11,10 @@ PRE-REGISTERED: 2 tuned params (ladder point x 10, reachability tolerance tau x 
   4b bars on IS  : H1 > 0.838, H2 > 1.060, Sharpe(OOSbar) > 0.899, |MaxDD| <= 13.24%, CAGR >= 10.47%
   4b bars on OOS : H1 > 0.975, H2 > 0.782, Sharpe(OOSbar) > 0.882, |MaxDD| <= 20.23%, CAGR >= 10.82%
   ladder (tuned param 1): [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1.0]
-  tolerances (tuned param 2): [0.0, 0.02, 0.05, 0.1, 0.2]
-  k=20  done  (475s)
-  k=40  done  (1013s)
-  k=80  done  (1690s)
+  tolerances (tuned param 2): [-0.2, -0.1, -0.05, -0.02, 0.0, 0.02, 0.05, 0.1, 0.2]
+  k=20  done  (481s)
+  k=40  done  (1023s)
+  k=80  done  (1702s)
 
   3000 ladder rows written (300 books x 10 g), 3000 genuine backtests
 
@@ -66,13 +66,13 @@ MISALIGNED       5  0.021
   Idea 172's question, stated as a single number: the unreachable bar set is a SUBSET OF THE SHARPE BARS in 177 of 240 (73.8%); it involves a GROSS-SENSITIVE bar (DD or CAGR) in 58 of 240 (24.2%).
 
   per-BAR unreachability among the 240 (a book can have several unreachable bars):
- bar   kind  unreachable  share  median_best_slack  median_slack_range  reach_240
-  H1 SHARPE          157 0.6542            -0.0698              0.0076         83
-  H2 SHARPE          143 0.5958            -0.0543              0.0042         97
- OOS SHARPE          141 0.5875            -0.0364              0.0050         99
-  DD  GROSS            0 0.0000             0.7174              1.0363        240
-CAGR  GROSS           58 0.2417             0.2824              1.0170        182
-  (median_best_slack is the bar's BEST relative slack over the ladder — negative means the bar fails at every point; median_slack_range is how much the bar moves over the 6.75x span, i.e. how gross-sensitive it is.)
+ bar   kind  unreachable  share  median_best_slack  median_slack_range  reachable  med_deficit  p90_deficit
+  H1 SHARPE          157 0.6542            -0.0698              0.0076         83       0.1309       0.4113
+  H2 SHARPE          143 0.5958            -0.0543              0.0042         97       0.1482       0.4762
+ OOS SHARPE          141 0.5875            -0.0364              0.0050         99       0.1318       0.2959
+  DD  GROSS            0 0.0000             0.7174              1.0363        240          NaN          NaN
+CAGR  GROSS           58 0.2417             0.2824              1.0170        182       0.1448       0.3624
+  (median_best_slack is the bar's BEST relative slack over the ladder — negative means the bar fails at every point; median_slack_range is how much the bar moves over the 6.75x span, i.e. how gross-sensitive it is.  med_deficit/p90_deficit are how much RELAXATION the bar would need, among the books where it is unreachable — this is the 'how far outside' number, in the same units as the tau sweep below.)
 
   the exact unreachable SETS, most common first:
 U
@@ -124,21 +124,29 @@ g
 ========================================================================================================================================================================================================
 TOLERANCE SWEEP (tuned param 2) — how far outside is the unreachable bar?
 ========================================================================================================================================================================================================
-cls   REACHED  SHARPE-ONLY  GROSS-ONLY  MIXED  MISALIGNED
-tau                                                      
-0.00       60          177          16     42           5
-0.02       47          177          14     47          15
-0.05       32          190          11     54          13
-0.10        6          201          11     64          18
-0.20        0          195           4     94           7
-  (tau is a RELAXATION of every bar by tau relative units; tau=0.00 is the literal 4b. A bar that closes at small tau is a near-miss; one that needs large tau is not.)
+cls    REACHED  SHARPE-ONLY  GROSS-ONLY  MIXED  MISALIGNED
+tau                                                       
+-0.20      192           86           7     15           0
+-0.10      131          131          14     21           3
+-0.05       87          159          16     34           4
+-0.02       72          170          15     40           3
+ 0.00       60          177          16     42           5
+ 0.02       47          177          14     47          15
+ 0.05       32          190          11     54          13
+ 0.10        6          201          11     64          18
+ 0.20        0          195           4     94           7
+  (a bar counts as met iff its relative slack > tau.  tau < 0 RELAXES every bar — how far outside is the unreachable bar; tau > 0 TIGHTENS it — how robust is a book that does reach.  tau = 0.00 is the literal 4b.)
 
-  P6 — of the tau=0 SHARPE-ONLY books, how many become REACHED as tau grows:
-    tau 0.00: 0 of 177 SHARPE-ONLY books now reached (0.0%)
-    tau 0.02: 0 of 177 SHARPE-ONLY books now reached (0.0%)
-    tau 0.05: 0 of 177 SHARPE-ONLY books now reached (0.0%)
-    tau 0.10: 0 of 177 SHARPE-ONLY books now reached (0.0%)
-    tau 0.20: 0 of 177 SHARPE-ONLY books now reached (0.0%)
+  P6 — of the tau=0 SHARPE-ONLY books, how many become REACHED under relaxation:
+    tau -0.20: 106 of 177 SHARPE-ONLY books now reached (59.9%)
+    tau -0.10: 54 of 177 SHARPE-ONLY books now reached (30.5%)
+    tau -0.05: 18 of 177 SHARPE-ONLY books now reached (10.2%)
+    tau -0.02: 6 of 177 SHARPE-ONLY books now reached (3.4%)
+    tau +0.00: 0 of 177 SHARPE-ONLY books now reached (0.0%)
+    tau +0.02: 0 of 177 SHARPE-ONLY books now reached (0.0%)
+    tau +0.05: 0 of 177 SHARPE-ONLY books now reached (0.0%)
+    tau +0.10: 0 of 177 SHARPE-ONLY books now reached (0.0%)
+    tau +0.20: 0 of 177 SHARPE-ONLY books now reached (0.0%)
 
 ========================================================================================================================================================================================================
 RULE 8 WALK-FORWARD — everything chosen on <= 2016-12-31, read ONCE on 2017-01-01 ->
@@ -203,7 +211,7 @@ PRE-REGISTERED PREDICTIONS — scored
   HIT   P3  MISALIGNED < 15% of the non-reached (2.1%)
   MISS  P4  H2 the most frequently unreachable bar (actual: H1, 157/240)
   HIT   P5  gross-sensitive bars move >= 10x the Sharpe bars (median range 1.0339 vs 0.0042)
-  HIT   P6  tau=0.05 rescues < 25% of the SHARPE-ONLY books (0/177)
+  HIT   P6  relaxing every bar by 0.05 (tau=-0.05) rescues < 25% of the SHARPE-ONLY books (18/177)
   HIT   P7  S3 (price the gross) does not beat S0/S1 (0.9373 vs S0 0.8529 / S1 0.9394)
   HIT   P8  no new book proposed (every 4b pass is a re-grossing, idea 144)
 
@@ -214,6 +222,6 @@ CENSUS
 ========================================================================================================================================================================================================
   genuine backtests 3000 (+2 full-B136 controls +1 RULES v1)
   books 300;  reached 60;  not reached 240
-  walk-forward picks 24;  tolerance rows 1500
+  walk-forward picks 24;  tolerance rows 2700
   every g <= 1.00 (PROTOCOL rule 2): True
-  runtime 1724s
+  runtime 1736s
