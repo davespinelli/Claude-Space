@@ -1,0 +1,109 @@
+small panel: dropped 44 tickers with max_1d_move >= 1.0; 439 names + SPY benchmark remain
+panel u56: 56 cols, sample 2009-01-13..2026-09-04, IS rows 2007, OOS rows 2432, SPY F 15.23%/0.8890/-33.72%
+panel broad: 136 cols, sample 2009-01-13..2026-09-04, IS rows 2007, OOS rows 2432, SPY F 15.23%/0.8890/-33.72%
+panel small: 440 cols, sample 2011-01-13..2026-09-04, IS rows 1502, OOS rows 2432, SPY F 14.13%/0.8615/-33.72%
+
+=== REPRODUCTION / INTEGRITY ===
+  cost-derivation identity u56   : max |genuine(10bps) - derived| = 0.000e+00
+  cost-derivation identity broad : max |genuine(10bps) - derived| = 0.000e+00
+  cost-derivation identity small : max |genuine(10bps) - derived| = 0.000e+00
+  RULES v1 u56 @10bps: CAGR 6.45% Sharpe 0.6642 MaxDD -13.83%
+
+=== GRID: 27 book-cells x 9 gross = 243 genuine engine runs ===
+  u56    COMP n=10  done (9 runs, 33s)
+  u56    COMP n=20  done (18 runs, 42s)
+  u56    COMP n=40  done (27 runs, 51s)
+  u56    MOM  n=10  done (36 runs, 61s)
+  u56    MOM  n=20  done (45 runs, 70s)
+  u56    MOM  n=40  done (54 runs, 80s)
+  u56    R6   n=10  done (63 runs, 89s)
+  u56    R6   n=20  done (72 runs, 98s)
+  u56    R6   n=40  done (81 runs, 107s)
+  broad  COMP n=10  done (90 runs, 123s)
+  broad  COMP n=20  done (99 runs, 139s)
+  broad  COMP n=40  done (108 runs, 155s)
+  broad  MOM  n=10  done (117 runs, 171s)
+  broad  MOM  n=20  done (126 runs, 187s)
+  broad  MOM  n=40  done (135 runs, 203s)
+  broad  R6   n=10  done (144 runs, 219s)
+  broad  R6   n=20  done (153 runs, 235s)
+  broad  R6   n=40  done (162 runs, 252s)
+  small  COMP n=10  done (171 runs, 285s)
+  small  COMP n=20  done (180 runs, 317s)
+  small  COMP n=40  done (189 runs, 349s)
+  small  MOM  n=10  done (198 runs, 387s)
+  small  MOM  n=20  done (207 runs, 425s)
+  small  MOM  n=40  done (216 runs, 463s)
+  small  R6   n=10  done (225 runs, 498s)
+  small  R6   n=20  done (234 runs, 533s)
+  small  R6   n=40  done (243 runs, 567s)
+243 genuine engine runs -> 486 ladder points written to .grid.csv (567s)
+
+=== IS A RESCALED LADDER THE SAME LADDER?  (idea 176's exposure, measured) ===
+  432 rescaled-vs-genuine comparisons: max |dSharpe| 0.0072, max |dMaxDD| 0.83pp, max |dCAGR| 0.24pp
+  4b verdict MISLABELLED by rescaling in 0 of 432 points (0.0%)  [P6]
+
+=== M0  REPRODUCE IDEA 173: is the gross ladder flat in Sharpe? ===
+  g=0.20  meanOOS Sharpe 0.7369  full Sharpe 0.7401  CAGR 2.39%  MaxDD -6.49%  turnover 4.3x
+  g=0.35  meanOOS Sharpe 0.7374  full Sharpe 0.7408  CAGR 4.14%  MaxDD -11.17%  turnover 7.4x
+  g=0.50  meanOOS Sharpe 0.7379  full Sharpe 0.7414  CAGR 5.86%  MaxDD -15.69%  turnover 10.6x
+  g=0.65  meanOOS Sharpe 0.7381  full Sharpe 0.7419  CAGR 7.54%  MaxDD -20.05%  turnover 13.8x
+  g=0.75  meanOOS Sharpe 0.7383  full Sharpe 0.7422  CAGR 8.64%  MaxDD -22.86%  turnover 15.9x
+  g=0.90  meanOOS Sharpe 0.7383  full Sharpe 0.7424  CAGR 10.24%  MaxDD -26.95%  turnover 19.1x
+  g=1.05  meanOOS Sharpe 0.7382  full Sharpe 0.7425  CAGR 11.80%  MaxDD -30.88%  turnover 22.3x
+  g=1.20  meanOOS Sharpe 0.7380  full Sharpe 0.7425  CAGR 13.31%  MaxDD -34.65%  turnover 25.5x
+  g=1.35  meanOOS Sharpe 0.7377  full Sharpe 0.7423  CAGR 14.76%  MaxDD -38.27%  turnover 28.7x
+  RANGE across the ladder: OOS Sharpe 0.0014, full Sharpe 0.0024, CAGR 12.37pp, MaxDD 31.78pp
+  within-book (54 books): median Sharpe range 0.0027 (max 0.0118); median CAGR range 13.28pp; median MaxDD range 28.08pp
+  Spearman(gross, full Sharpe) within book: mean +0.311, positive in 37 of 54
+
+=== M1  THE STRONG FORM: does any verdict change if gross is fixed at 0.75? ===
+  4a              : passes at g=0.75 in 29 of 54 books; SOME ladder point passes in 40; **verdict FLIPS for 11 books** (20.4%)
+  4b full-sample  : passes at g=0.75 in  7 of 54 books; SOME ladder point passes in 15; **verdict FLIPS for 8 books** (14.8%)
+  4b OOS-window   : passes at g=0.75 in  7 of 54 books; SOME ladder point passes in 12; **verdict FLIPS for 5 books** (9.3%)
+  per-point: of 486 ladder points, the verdict differs from its own book's g=0.75 verdict in 129 (4a), 65 (4b), 60 (4b-OOS)
+  4b pass rate by gross rung  [P5]:
+    g=0.20   4a 74.1%  4b  0.0%  4b-OOS  0.0%   (n=54)
+    g=0.35   4a 74.1%  4b  0.0%  4b-OOS  0.0%   (n=54)
+    g=0.50   4a 74.1%  4b  1.9%  4b-OOS  0.0%   (n=54)
+    g=0.65   4a 61.1%  4b  9.3%  4b-OOS  7.4%   (n=54)
+    g=0.75   4a 53.7%  4b 13.0%  4b-OOS 13.0%   (n=54)
+    g=0.90   4a 27.8%  4b  5.6%  4b-OOS 11.1%   (n=54)
+    g=1.05   4a 13.0%  4b 11.1%  4b-OOS 11.1%   (n=54)
+    g=1.20   4a  3.7%  4b  0.0%  4b-OOS  0.0%   (n=54)
+    g=1.35   4a  0.0%  4b  0.0%  4b-OOS  0.0%   (n=54)
+
+=== M2  WHICH BAR MOVES ALONG THE LADDER?  (gross-invariance, per bar) ===
+  full-sample H1  : same pass/fail at all 9 gross points in 54 of 54 books (100.0%)
+  full-sample H2  : same pass/fail at all 9 gross points in 54 of 54 books (100.0%)
+  full-sample OOS : same pass/fail at all 9 gross points in 53 of 54 books (98.1%)
+  full-sample DD  : same pass/fail at all 9 gross points in  0 of 54 books ( 0.0%)
+  full-sample CAGR: same pass/fail at all 9 gross points in 15 of 54 books (27.8%)
+  OOS-window  H1  : same pass/fail at all 9 gross points in 54 of 54 books (100.0%)
+  OOS-window  H2  : same pass/fail at all 9 gross points in 54 of 54 books (100.0%)
+  OOS-window  OOS : same pass/fail at all 9 gross points in 53 of 54 books (98.1%)
+  OOS-window  DD  : same pass/fail at all 9 gross points in  0 of 54 books ( 0.0%)
+  OOS-window  CAGR: same pass/fail at all 9 gross points in 17 of 54 books (31.5%)
+  of 464 full-sample 4b failures: violated {'H1': 234, 'H2': 306, 'OOS': 299, 'DD': 255, 'CAGR': 323}; sole binding {'H1': 3, 'H2': 1, 'OOS': 0, 'DD': 62, 'CAGR': 78}
+
+=== M3  RULE 8 WALK-FORWARD: four ways to use the ladder, read ONCE on 2017-> ===
+  54 books.  arm: mean OOS CAGR / Sharpe / MaxDD, 4b-OOS passes, mean picked g
+    FIX075     8.91% / 0.7383 / -22.85%   4b-OOS  7/54   4b  7/54   4a 29/54   mean g 0.750
+    ISSHARPE  13.29% / 0.7380 / -34.91%   4b-OOS  5/54   4b  5/54   4a  1/54   mean g 1.198
+    IS4B       8.70% / 0.7381 / -22.56%   4b-OOS  6/54   4b  8/54   4a 29/54   mean g 0.739
+    ORACLE    10.02% / 0.7400 / -22.27%   4b-OOS  1/54   4b  1/54   4a 20/54   mean g 0.757
+    RULES v1   4.39% / 0.4229 / -26.24%
+    SPY       15.45% / 0.8820 / -33.72%
+  paired vs FIX075: ISSHARPE  dOOS Sharpe -0.0002 (t -0.58), better in 20/54, picked g != 0.75 in 51/54  [P1]
+  paired vs FIX075: IS4B      dOOS Sharpe -0.0001 (t -1.53), better in 0/54, picked g != 0.75 in 3/54  [P1]
+  paired vs FIX075: ORACLE    dOOS Sharpe +0.0017 (t +6.89), better in 49/54, picked g != 0.75 in 49/54  [P1]
+
+=== BOTH KEEP PATHS, all 486 points ===
+  4a 206/486;  4b full-sample 22/486;  4b OOS-window 23/486;  both 4a and 4b 7
+    broad : 4a  99/162  4b   7  4b-OOS   2
+    small : 4a  35/162  4b   0  4b-OOS   0
+    u56   : 4a  72/162  4b  15  4b-OOS  21
+  best point clearing 4b full AND OOS-window: u56 COMP n=40 g=0.9 @10bps -> 11.41% / 1.1244 / -16.43% (H1 1.0907 H2 1.1571, OOS 13.09%/1.2494/-16.43%, turnover 5.9x)
+  BUT it is 1 of 15 unpriced ladder selections -- reported, not proposed.
+
+total runtime 578s, 243 genuine engine runs
