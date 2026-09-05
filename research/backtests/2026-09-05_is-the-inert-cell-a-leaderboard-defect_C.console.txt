@@ -1,0 +1,227 @@
+======================================================================================================================
+IDEA 202  is-the-inert-cell-a-leaderboard-defect   (lane C, 2026-09-05)
+======================================================================================================================
+
+building panels ...
+  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable (SURVIVORSHIP: current constituents only, no delistings)
+  panels: U56=55  BROAD136=132  SMALL439=439
+
+REPRODUCTION, asserted before any new number is read:
+  [a] U56       fast_backtest vs engine.backtest: max|dret|=1.388e-17 max|dturn|=3.053e-16 -> PASS
+  [b] U56       cost identity 10bps from the 0bps run: max|d|=1.388e-17 -> PASS
+  [c] U56       base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [a] BROAD136  fast_backtest vs engine.backtest: max|dret|=2.082e-17 max|dturn|=2.776e-16 -> PASS
+  [b] BROAD136  cost identity 10bps from the 0bps run: max|d|=2.082e-17 -> PASS
+  [c] BROAD136  base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [a] SMALL439  fast_backtest vs engine.backtest: max|dret|=2.776e-17 max|dturn|=4.441e-16 -> PASS
+  [b] SMALL439  cost identity 10bps from the 0bps run: max|d|=2.776e-17 -> PASS
+  [c] SMALL439  base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [d] RULES v1 on U56 @10bps: CAGR=6.45305% Sharpe=0.66418 MaxDD=-13.82780% -> PASS
+
+======================================================================================================================
+CORPUS  3 panels x 3 families x 5 thresholds x 2 depths x 2 cost rungs = 180 real cells
+======================================================================================================================
+  built 180 real cells in 22s
+
+  [e] rebuilt cells vs idea 191's published grid.csv:
+      matched 180/180 rows   max|dSharpe|=2.220e-16  max|dMaxDD|=8.327e-17  max|d on_share|=1.110e-16 -> PASS
+      NOTE 191's on-share denominator includes the 54 warm-up rebalances that cannot move any reported number; measured on the EVALUATION window instead it differs by up to 5.955% (always upward). No configuration fires ONLY in warm-up, so the inert SET is identical under both definitions -- confirmed below.
+
+======================================================================================================================
+T2  THE INERTNESS IDENTITY -- is an on-share==0 row literally the control's row?
+======================================================================================================================
+  cells with on-share exactly 0.0% (queue 202's 'cannot have fired'): 16 of 180
+  max |r_cell - r_control| over ALL of them: 0.000e+00   max |dSharpe|: 0.000e+00
+  -> every published number on those rows IS the control's number, to machine zero.
+
+  behaviourally inert (returns bit-identical to control): 16
+  fires but changes NOTHING (the superset 191 missed): 0
+  never fires yet returns differ (should be 0): 0
+
+  where the never-fire cells live:
+family    panel  thr  depth  n
+ DDCTL BROAD136 0.25    0.5  2
+ DDCTL BROAD136 0.25    1.0  2
+ DDCTL SMALL439 0.25    0.5  2
+ DDCTL SMALL439 0.25    1.0  2
+ DDCTL      U56 0.15    0.5  2
+ DDCTL      U56 0.15    1.0  2
+ DDCTL      U56 0.25    0.5  2
+ DDCTL      U56 0.25    1.0  2
+
+======================================================================================================================
+T3  WINDOW INERTNESS -- rows whose OOS number (the 4b bar) is the control's
+======================================================================================================================
+  cells that FIRE in-sample but NEVER in 2017-01-01..: 0 of 180
+  cells with no overlay action anywhere in the OOS window (incl. never-fire): 16
+
+  of the 28 cells passing 4b, 8 have a CONTROL's OOS Sharpe (0 of them via window-only inertness).
+
+======================================================================================================================
+T3b THE SWEEP -- how much of the record's overlay pass-count is the control in disguise?
+======================================================================================================================
+   panel family  bps  n  inert  inert_oos  p4a  p4b  p4a_inert  p4b_inert  p4a_live  p4b_live
+BROAD136 BUDGET   10 10      0          0    0    0          0          0         0         0
+BROAD136 BUDGET   25 10      0          0    0    0          0          0         0         0
+BROAD136  DDCTL   10 10      2          2    2    0          0          0         2         0
+BROAD136  DDCTL   25 10      2          2    1    0          0          0         1         0
+BROAD136 SLEEVE   10 10      0          0    4    1          0          0         4         1
+BROAD136 SLEEVE   25 10      0          0    3    0          0          0         3         0
+SMALL439 BUDGET   10 10      0          0    0    0          0          0         0         0
+SMALL439 BUDGET   25 10      0          0    0    0          0          0         0         0
+SMALL439  DDCTL   10 10      2          2    0    0          0          0         0         0
+SMALL439  DDCTL   25 10      2          2    0    0          0          0         0         0
+SMALL439 SLEEVE   10 10      0          0    0    0          0          0         0         0
+SMALL439 SLEEVE   25 10      0          0    0    0          0          0         0         0
+     U56 BUDGET   10 10      0          0    0    5          0          0         0         5
+     U56 BUDGET   25 10      0          0    0    4          0          0         0         4
+     U56  DDCTL   10 10      4          4    0    7          0          4         0         3
+     U56  DDCTL   25 10      4          4    0    4          0          4         0         0
+     U56 SLEEVE   10 10      0          0    1    7          0          0         1         7
+     U56 SLEEVE   25 10      0          0    0    0          0          0         0         0
+
+  TOTALS: 4a passes 11, of which 0 inert -> 11 live (0.0% of the 4a headline is the untilted control)
+          4b passes 28, of which 8 inert -> 20 live (28.6% of the 4b headline is the untilted control)
+
+  WHY: an inert cell inherits the control's verdict, so the inert pass count is (inert cells) x 1{control passes}. Check per (panel,bps):
+   panel  bps  ctrl_pass4a  ctrl_pass4b  inert  pred_p4a_inert  obs_p4a_inert  pred_p4b_inert  obs_p4b_inert
+BROAD136   10        False        False      2               0              0               0              0
+BROAD136   25        False        False      2               0              0               0              0
+SMALL439   10        False        False      2               0              0               0              0
+SMALL439   25        False        False      2               0              0               0              0
+     U56   10        False         True      4               0              0               4              4
+     U56   25        False         True      4               0              0               4              4
+  prediction exact on all 6 (panel,bps) groups: True
+
+======================================================================================================================
+T4  IS THE FLAG REDUNDANT? -- can a reader see inertness in what the LEADERBOARD prints?
+======================================================================================================================
+  printed schema = CAGR .1%  Sharpe .2f  MaxDD .1%  H1 .2f  H2 .2f  (baseline.compare)
+  rows printing IDENTICALLY to the control: 16 of 180
+    of those, inert: 16   LIVE (false positives): 0
+    inert rows NOT printing identically (false negatives): 0
+  duplicate-detection as a substitute for the flag: precision 1.000  recall 1.000
+
+  NOTE the harder half: a LEADERBOARD row is published one-per-idea, so the control row is usually ABSENT from the table a reader is holding. Detection by duplication needs the control printed beside the overlay; the flag does not.
+  is a control row published alongside overlay rows in the parent's LEADERBOARD entry? False (idea 191 published aggregate stats, not per-cell rows)
+
+======================================================================================================================
+T4b THE RECORD SWEEP -- apply the same detector to every row LEADERBOARD.md actually has
+======================================================================================================================
+  FIRST, a defect found on the way: of 3380 table rows only 1863 are distinct lines; 3034 rows are VERBATIM repeats (1517 groups, max repeat 2). The file has been double-appended. Those repeats are collapsed before the inertness detector runs, or they would dominate it.
+  parsed 1861 published rows across 179 scripts
+  rows that publish NUMERIC CAGR/Sharpe/MaxDD at all: 1314 (70.6%); the remaining 547 carry 'n/a' or '-' and the detector cannot be applied to them at all -- a prior schema hole, reported not swept under.
+  rows sharing an IDENTICAL printed metric tuple with a sibling row of the same script: 57 (4.3%) in 8 scripts, 27 clusters
+  largest clusters (a book published under many labels):
+                                                 script                         tup  k
+              2026-09-04_interior-4b-selection_cloud.py 11.7%|1.08|-18.8%|1.20|0.97  3
+              2026-09-04_interior-4b-selection_cloud.py 11.9%|1.13|-17.1%|1.18|1.09  3
+research/backtests/2026-09-04_defensive-sleeve_cloud.py  6.5%|0.65|-13.7%|0.55|0.73  3
+              2026-09-04_interior-4b-selection_cloud.py 12.2%|0.97|-20.3%|1.15|0.82  2
+              2026-09-04_interior-4b-selection_cloud.py 12.7%|1.09|-18.3%|1.09|1.10  2
+              2026-09-04_interior-4b-selection_cloud.py 13.2%|1.15|-22.6%|1.32|1.03  2
+              2026-09-04_interior-4b-selection_cloud.py 13.5%|1.09|-19.5%|1.09|1.10  2
+              2026-09-04_interior-4b-selection_cloud.py 13.6%|1.14|-22.9%|1.38|0.95  2
+              2026-09-04_interior-4b-selection_cloud.py 15.1%|1.18|-23.3%|1.31|1.09  2
+            2026-09-04_one-year-leverage-audit_cloud.py 15.3%|0.89|-33.7%|0.96|0.84  2
+              2026-09-04_interior-4b-selection_cloud.py 11.4%|1.03|-18.8%|1.15|0.92  2
+                           2026-09-04_position-count.py 16.5%|0.95|-21.6%|0.90|1.00  2
+
+  verdicts carried by rows inside a duplicate cluster:
+verdict
+beats SPY OOS                         8
+KILL 4a / KILL 4b (H1,H2,OOS,CAGR)    5
+-                                     5
+rule-8 Rm(m=0pp) pick; OOS-4b PASS    5
+beats SPY OOS; misses OOS 4b          4
+rule-8 R0 pick; OOS-4b PASS           4
+rule-8 R0 pick; OOS-4b fail           4
+rule-8 Rm(m=0pp) pick; OOS-4b fail    4
+4b-pass both-universe                 3
+KILL 4a / KILL 4b (H1,DD)             2
+beats SPY OOS; clears OOS 4b          2
+loses to SPY OOS; misses OOS 4b       2
+  KEEP-bearing rows inside a duplicate cluster: 3
+      date                                                            idea Sharpe                         verdict                                                  script  k
+2026-09-04                          6 universe_broad.json top20 B=40% L=63   0.94          KEEP 4a / KILL 4b (DD) research/backtests/2026-09-04_defensive-sleeve_cloud.py  2
+2026-09-04           92 BROAD CAND20 (the Sharpe-bound test cell, control)   0.96 KEEP 4a / KILL 4b (H2 by 0.023)            2026-09-04_sharpe-bound-book-change_cloud.py  2
+2026-09-04 92 U56 CAND20 (control universe — reproduces idea 2's KEEP row)   1.09               KILL 4a / KEEP 4b            2026-09-04_sharpe-bound-book-change_cloud.py  2
+
+======================================================================================================================
+T5  RULE 8 WALK-FORWARD -- does the inert flag CHANGE A PICK, and does the pick help?
+    parameters chosen on ..2016-12-31 only; evaluated 2017-01-01.. untouched
+======================================================================================================================
+   panel  bps                                                                     arm             pick  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  base_OOS_Sharpe  spy_OOS_Sharpe
+     U56   10                                                 S0 do-nothing (control)          control      1.1775    0.1449    -0.1821           0.7471          0.8820
+     U56   10                                                 A1 IS-Sharpe, all cells  BUDGET/0.5/skip      1.1026    0.1395    -0.2090           0.7471          0.8820
+     U56   10                                             A2 IS-Sharpe, inert dropped  BUDGET/0.5/skip      1.1026    0.1395    -0.2090           0.7471          0.8820
+     U56   10 A3 IS-Sharpe, OOS-inert also dropped (unavailable IS; upper bound only)  BUDGET/0.5/skip      1.1026    0.1395    -0.2090           0.7471          0.8820
+     U56   25                                                 S0 do-nothing (control)          control      1.0618    0.1289    -0.1833           0.7471          0.8820
+     U56   25                                                 A1 IS-Sharpe, all cells BUDGET/0.05/half      1.1303    0.1412    -0.1825           0.7471          0.8820
+     U56   25                                             A2 IS-Sharpe, inert dropped BUDGET/0.05/half      1.1303    0.1412    -0.1825           0.7471          0.8820
+     U56   25 A3 IS-Sharpe, OOS-inert also dropped (unavailable IS; upper bound only) BUDGET/0.05/half      1.1303    0.1412    -0.1825           0.7471          0.8820
+BROAD136   10                                                 S0 do-nothing (control)          control      0.8758    0.1240    -0.2157           0.5762          0.8820
+BROAD136   10                                                 A1 IS-Sharpe, all cells  BUDGET/0.2/skip      0.6986    0.1042    -0.2779           0.5762          0.8820
+BROAD136   10                                             A2 IS-Sharpe, inert dropped  BUDGET/0.2/skip      0.6986    0.1042    -0.2779           0.5762          0.8820
+BROAD136   10 A3 IS-Sharpe, OOS-inert also dropped (unavailable IS; upper bound only)  BUDGET/0.2/skip      0.6986    0.1042    -0.2779           0.5762          0.8820
+BROAD136   25                                                 S0 do-nothing (control)          control      0.7310    0.1006    -0.2168           0.5762          0.8820
+BROAD136   25                                                 A1 IS-Sharpe, all cells  BUDGET/0.2/skip      0.6447    0.0947    -0.2797           0.5762          0.8820
+BROAD136   25                                             A2 IS-Sharpe, inert dropped  BUDGET/0.2/skip      0.6447    0.0947    -0.2797           0.5762          0.8820
+BROAD136   25 A3 IS-Sharpe, OOS-inert also dropped (unavailable IS; upper bound only)  BUDGET/0.2/skip      0.6447    0.0947    -0.2797           0.5762          0.8820
+SMALL439   10                                                 S0 do-nothing (control)          control      0.4997    0.0746    -0.2684           0.6617          0.8820
+SMALL439   10                                                 A1 IS-Sharpe, all cells  BUDGET/0.3/skip      0.2176    0.0234    -0.4365           0.6617          0.8820
+SMALL439   10                                             A2 IS-Sharpe, inert dropped  BUDGET/0.3/skip      0.2176    0.0234    -0.4365           0.6617          0.8820
+SMALL439   10 A3 IS-Sharpe, OOS-inert also dropped (unavailable IS; upper bound only)  BUDGET/0.3/skip      0.2176    0.0234    -0.4365           0.6617          0.8820
+SMALL439   25                                                 S0 do-nothing (control)          control      0.3138    0.0403    -0.3456           0.6617          0.8820
+SMALL439   25                                                 A1 IS-Sharpe, all cells  BUDGET/0.3/skip      0.1391    0.0084    -0.4489           0.6617          0.8820
+SMALL439   25                                             A2 IS-Sharpe, inert dropped  BUDGET/0.3/skip      0.1391    0.0084    -0.4489           0.6617          0.8820
+SMALL439   25 A3 IS-Sharpe, OOS-inert also dropped (unavailable IS; upper bound only)  BUDGET/0.3/skip      0.1391    0.0084    -0.4489           0.6617          0.8820
+
+  did the flag change the pick?
+    BROAD136  10bps  A1=BUDGET/0.2/skip        A2=BUDGET/0.2/skip        changed=False  dOOS_Sharpe=+0.0000
+    BROAD136  25bps  A1=BUDGET/0.2/skip        A2=BUDGET/0.2/skip        changed=False  dOOS_Sharpe=+0.0000
+    SMALL439  10bps  A1=BUDGET/0.3/skip        A2=BUDGET/0.3/skip        changed=False  dOOS_Sharpe=+0.0000
+    SMALL439  25bps  A1=BUDGET/0.3/skip        A2=BUDGET/0.3/skip        changed=False  dOOS_Sharpe=+0.0000
+    U56       10bps  A1=BUDGET/0.5/skip        A2=BUDGET/0.5/skip        changed=False  dOOS_Sharpe=+0.0000
+    U56       25bps  A1=BUDGET/0.05/half       A2=BUDGET/0.05/half       changed=False  dOOS_Sharpe=+0.0000
+  picks changed in 0 of 6 (panel,cost) cases.
+  mean OOS Sharpe   S0 0.7766   A1 0.6555   A2 0.6555
+  A2-S0 mean -0.1211   A1-S0 mean -0.1211
+
+  BOTH KEEP PATHS for each arm's picked book (full sample, engine costs):
+   panel  bps arm             pick  pass4a   fail4a  pass4b            fail4b
+     U56   10  S0          control   False       DD    True                 -
+     U56   10  A1  BUDGET/0.5/skip   False       DD   False                DD
+     U56   10  A2  BUDGET/0.5/skip   False       DD   False                DD
+     U56   25  S0          control   False       DD    True                 -
+     U56   25  A1 BUDGET/0.05/half   False       DD    True                 -
+     U56   25  A2 BUDGET/0.05/half   False       DD    True                 -
+BROAD136   10  S0          control   False       DD   False         H2,OOS,DD
+BROAD136   10  A1  BUDGET/0.2/skip   False       DD   False         H2,OOS,DD
+BROAD136   10  A2  BUDGET/0.2/skip   False       DD   False         H2,OOS,DD
+BROAD136   25  S0          control   False       DD   False         H2,OOS,DD
+BROAD136   25  A1  BUDGET/0.2/skip   False       DD   False         H2,OOS,DD
+BROAD136   25  A2  BUDGET/0.2/skip   False       DD   False         H2,OOS,DD
+SMALL439   10  S0          control   False    H1,H2   False H1,H2,OOS,DD,CAGR
+SMALL439   10  A1  BUDGET/0.3/skip   False    H2,DD   False H1,H2,OOS,DD,CAGR
+SMALL439   10  A2  BUDGET/0.3/skip   False    H2,DD   False H1,H2,OOS,DD,CAGR
+SMALL439   25  S0          control   False H1,H2,DD   False H1,H2,OOS,DD,CAGR
+SMALL439   25  A1  BUDGET/0.3/skip   False H1,H2,DD   False H1,H2,OOS,DD,CAGR
+SMALL439   25  A2  BUDGET/0.3/skip   False H1,H2,DD   False H1,H2,OOS,DD,CAGR
+  4a passes among picked books: 0/18   4b passes: 4/18
+
+======================================================================================================================
+LEADERBOARD rows (10 bps rung; the rule-8 arms' picked books, full sample)
+======================================================================================================================
+| 2026-09-05 | 202 inert-flag: 16/180 cells bit-identical to control (max|dr|=0.0e+00); 8/28 4b passes inert; printed-precision detector P=1.000 R=1.000; 0/6 rule-8 picks changed | n/a | n/a | n/a | n/a | n/a | KILL (flag redundant; defect real) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 U56 S0 do-nothing control | 12.9% | 1.11 | -18.2% | 1.11 / 1.11 | 0.66 (0.64/0.69) | KILL 4a (DD) / KEEP 4b | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 U56 A1 IS-pick all cells = BUDGET/0.5/skip | 12.6% | 1.07 | -20.9% | 1.12 / 1.04 | 0.66 (0.64/0.69) | KILL 4a (DD) / KILL 4b (DD) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 U56 A2 IS-pick, inert dropped = BUDGET/0.5/skip | 12.6% | 1.07 | -20.9% | 1.12 / 1.04 | 0.66 (0.64/0.69) | KILL 4a (DD) / KILL 4b (DD) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 BROAD136 S0 do-nothing control | 13.1% | 0.95 | -21.6% | 1.13 / 0.80 | 0.63 (0.74/0.53) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 BROAD136 A1 IS-pick all cells = BUDGET/0.2/skip | 13.5% | 0.92 | -27.8% | 1.32 / 0.59 | 0.63 (0.74/0.53) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 BROAD136 A2 IS-pick, inert dropped = BUDGET/0.2/skip | 13.5% | 0.92 | -27.8% | 1.32 / 0.59 | 0.63 (0.74/0.53) | KILL 4a (DD) / KILL 4b (H2,OOS,DD) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 SMALL439 S0 do-nothing control | 6.6% | 0.46 | -26.8% | 0.59 / 0.36 | 0.63 (0.66/0.60) | KILL 4a (H1,H2) / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 SMALL439 A1 IS-pick all cells = BUDGET/0.3/skip | 4.7% | 0.35 | -43.6% | 0.74 / 0.03 | 0.63 (0.66/0.60) | KILL 4a (H2,DD) / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+| 2026-09-05 | 202 SMALL439 A2 IS-pick, inert dropped = BUDGET/0.3/skip | 4.7% | 0.35 | -43.6% | 0.74 / 0.03 | 0.63 (0.66/0.60) | KILL 4a (H2,DD) / KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-05_is-the-inert-cell-a-leaderboard-defect_C.py |
+
+done in 22s
