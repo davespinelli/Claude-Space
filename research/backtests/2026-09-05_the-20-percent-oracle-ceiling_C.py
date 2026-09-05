@@ -37,10 +37,14 @@ TUNED PARAMETERS — exactly two, swept exhaustively, ALL grid points reported:
     1. the LADDER POINT g, 10 values {0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.75, 0.80, 0.90,
        1.00} — idea 166's ladder unchanged, and PROTOCOL rule 2 caps it at 1.00.  "Unreachable"
        means "fails at all ten".  Per-point numbers are in .ladder.csv and the per-g table.
-    2. the REACHABILITY TOLERANCE tau, 5 values {0.00, 0.02, 0.05, 0.10, 0.20} in the
-       scale-free relative-margin units of idea 166.  tau = 0.00 is the literal 4b bar; the
-       sweep answers "how far outside is the unreachable bar" rather than only "is it outside",
-       and every tau is reported (.tolerance.csv).
+    2. the REACHABILITY TOLERANCE tau, 9 values {-0.20, -0.10, -0.05, -0.02, 0.00, +0.02,
+       +0.05, +0.10, +0.20} in the scale-free relative-margin units of idea 166.  A bar counts
+       as met iff its relative slack is > tau, so tau = 0.00 is the literal 4b bar, tau < 0
+       RELAXES every bar (how far outside is the unreachable bar?) and tau > 0 TIGHTENS it (how
+       robust is a book that does reach?).  Every tau is reported (.tolerance.csv).
+       [Correction, logged: the first execution of this script swept tau >= 0 only and so read
+       P6 in the tightening direction, which is not what P6 says.  The sweep below is signed and
+       P6 is scored at tau = -0.05, its pre-registered meaning.  No other number changed.]
 
     Bars, relative slacks and the 4b constants (PHI=0.70, DELTA=0.60, EPS=0.05) are idea 166's
     verbatim, so the two runs are directly comparable.
@@ -92,8 +96,8 @@ PRE-REGISTERED PREDICTIONS (written before any number below was read)
     P5  The per-bar slack RANGE over the ladder is at least an order of magnitude larger for
         DD/CAGR than for H1/H2/OOS, confirming the gross-invariance of the Sharpe bars on this
         corpus and window.
-    P6  The tolerance sweep does not rescue the SHARPE-ONLY books: at tau = 0.05 fewer than a
-        quarter of them become reachable.
+    P6  The tolerance sweep does not rescue the SHARPE-ONLY books: RELAXING every bar by 0.05
+        relative units (tau = -0.05) makes fewer than a quarter of them reachable.
     P7  Rule 8: S3 (price the gross) does NOT beat S0/S1 on mean OOS Sharpe.  A ninth
         do-nothing win.
     P8  No new book and no KEEP.  Every 4b pass here is a re-grossing of a known book (idea 144).
@@ -151,7 +155,8 @@ IS_END, OOS_START = I78.IS_END, I78.OOS_START
 CAP = 1.00                       # PROTOCOL rule 2: no leverage
 
 LADDER = [0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.75, 0.80, 0.90, 1.00]   # tuned param 1
-TAUS = [0.00, 0.02, 0.05, 0.10, 0.20]                                   # tuned param 2
+TAUS = [-0.20, -0.10, -0.05, -0.02, 0.00, 0.02, 0.05, 0.10, 0.20]       # tuned param 2
+TAU_P6 = -0.05                   # the relaxation at which P6 is scored
 BARS = ["H1", "H2", "OOS", "DD", "CAGR"]
 SHARPE_BARS = {"H1", "H2", "OOS"}
 GROSS_BARS = {"DD", "CAGR"}
@@ -393,11 +398,17 @@ def main():
                          share=len(sub) / max(len(NR), 1),
                          median_best_slack=float(NR[f"best_{bar}"].median()),
                          median_slack_range=float(NR[f"range_{bar}"].median()),
-                         reach_240=int(NR[f"reach_{bar}"].sum())))
+                         reachable=int(NR[f"reach_{bar}"].sum()),
+                         med_deficit=(float(-sub[f"best_{bar}"].median()) if len(sub)
+                                      else np.nan),
+                         p90_deficit=(float(-sub[f"best_{bar}"].quantile(0.10)) if len(sub)
+                                      else np.nan)))
     say(pd.DataFrame(rows).to_string(index=False, float_format=lambda x: f"{x:.4f}"))
     say("  (median_best_slack is the bar's BEST relative slack over the ladder — negative means "
         "the bar fails at every point; median_slack_range is how much the bar moves over the "
-        "6.75x span, i.e. how gross-sensitive it is.)")
+        "6.75x span, i.e. how gross-sensitive it is.  med_deficit/p90_deficit are how much "
+        "RELAXATION the bar would need, among the books where it is unreachable — this is the "
+        "'how far outside' number, in the same units as the tau sweep below.)")
 
     say("\n  the exact unreachable SETS, most common first:")
     say(NR.U.value_counts().to_string())
@@ -438,15 +449,16 @@ def main():
     piv = T.pivot_table(index="tau", columns="cls", values="draw",
                         aggfunc="count").reindex(columns=cls_order).fillna(0).astype(int)
     say(piv.to_string())
-    say("  (tau is a RELAXATION of every bar by tau relative units; tau=0.00 is the literal 4b. "
-        "A bar that closes at small tau is a near-miss; one that needs large tau is not.)")
-    say("\n  P6 — of the tau=0 SHARPE-ONLY books, how many become REACHED as tau grows:")
+    say("  (a bar counts as met iff its relative slack > tau.  tau < 0 RELAXES every bar — how "
+        "far outside is the unreachable bar; tau > 0 TIGHTENS it — how robust is a book that "
+        "does reach.  tau = 0.00 is the literal 4b.)")
+    say("\n  P6 — of the tau=0 SHARPE-ONLY books, how many become REACHED under relaxation:")
     s0 = set(map(tuple, B[B.cls == "SHARPE-ONLY"][key].values))
     for tau in TAUS:
         sub = T[T.tau == tau]
         got = sub[sub.reached].apply(lambda r: (r.k, r.draw, r.n) in s0, axis=1).sum() \
             if len(sub[sub.reached]) else 0
-        say(f"    tau {tau:.2f}: {int(got)} of {len(s0)} SHARPE-ONLY books now reached "
+        say(f"    tau {tau:+.2f}: {int(got)} of {len(s0)} SHARPE-ONLY books now reached "
             f"({(int(got) / max(len(s0), 1)):.1%})")
 
     # =============================================================== rule 8 walk-forward
@@ -582,7 +594,7 @@ def main():
     top_bar = max(unre, key=unre.get)
     med_sharpe_rng = float(np.median([B[f"range_{b}"].median() for b in SHARPE_BARS]))
     med_gross_rng = float(np.median([B[f"range_{b}"].median() for b in GROSS_BARS]))
-    tau05 = T[(T.tau == 0.05) & T.reached]
+    tau05 = T[(T.tau == TAU_P6) & T.reached]
     got05 = int(tau05.apply(lambda r: (r.k, r.draw, r.n) in s0, axis=1).sum()) if len(tau05) else 0
     mean_s = WF.groupby("selector").OOS_Sharpe.mean()
     preds = [
@@ -595,7 +607,8 @@ def main():
         (f"P5  gross-sensitive bars move >= 10x the Sharpe bars (median range "
          f"{med_gross_rng:.4f} vs {med_sharpe_rng:.4f})",
          med_gross_rng >= 10 * max(med_sharpe_rng, 1e-12)),
-        (f"P6  tau=0.05 rescues < 25% of the SHARPE-ONLY books ({got05}/{len(s0)})",
+        (f"P6  relaxing every bar by 0.05 (tau={TAU_P6:+.2f}) rescues < 25% of the SHARPE-ONLY "
+         f"books ({got05}/{len(s0)})",
          got05 < 0.25 * max(len(s0), 1)),
         (f"P7  S3 (price the gross) does not beat S0/S1 "
          f"({mean_s.get('S3', np.nan):.4f} vs S0 {mean_s.get('S0', np.nan):.4f} / S1 "
