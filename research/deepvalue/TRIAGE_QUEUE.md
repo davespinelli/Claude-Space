@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T00:13:10Z · open 92 · in progress 0 · done 393_
+_Source: universe_under2b.csv · updated 2026-09-05T00:40:02Z · open 82 · in progress 0 · done 403_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (92)
+## Open (82)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| CERS | CERUS CORP | $517.9M |
-| WYY | WIDEPOINT CORP | $113.9M |
-| KRO | KRONOS WORLDWIDE INC | $972.6M |
-| ASMB | ASSEMBLY BIOSCIENCES, INC. | $735.6M |
-| REI | RING ENERGY, INC. | $390.8M |
-| OPTX | SYNTEC OPTICS HOLDINGS, INC. | $312.6M |
-| NPCE | NeuroPace Inc | $506.3M |
-| HZO | MARINEMAX INC | $1.15B |
-| EVH | Evolent Health, Inc. | $481.6M |
-| ULCC | Frontier Group Holdings, Inc. | $1.32B |
 | KIDS | ORTHOPEDIATRICS CORP | $589.8M |
 | PAR | PAR TECHNOLOGY CORP | $781.8M |
 | SRTA | Strata Critical Medical, Inc. | $475.1M |
@@ -106,7 +96,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (393)
+## Done (403)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | TH | Target Hospitality Corp. | $1.85B | cloudA | 2026-09-05T00:13:10Z |
 | RYAM | RAYONIER ADVANCED MATERIALS INC. | $579.0M | cloudA | 2026-09-05T00:13:10Z |
 | PPHC | Public Policy Holding Company, Inc. | $339.6M | cloudA | 2026-09-05T00:13:10Z |
+| CERS | CERUS CORP | $517.9M | cloudB | 2026-09-05T00:40:02Z |
+| WYY | WIDEPOINT CORP | $113.9M | cloudB | 2026-09-05T00:40:02Z |
+| KRO | KRONOS WORLDWIDE INC | $972.6M | cloudB | 2026-09-05T00:40:02Z |
+| ASMB | ASSEMBLY BIOSCIENCES, INC. | $735.6M | cloudB | 2026-09-05T00:40:02Z |
+| REI | RING ENERGY, INC. | $390.8M | cloudB | 2026-09-05T00:40:02Z |
+| OPTX | SYNTEC OPTICS HOLDINGS, INC. | $312.6M | cloudB | 2026-09-05T00:40:02Z |
+| NPCE | NeuroPace Inc | $506.3M | cloudB | 2026-09-05T00:40:02Z |
+| HZO | MARINEMAX INC | $1.15B | cloudB | 2026-09-05T00:40:02Z |
+| EVH | Evolent Health, Inc. | $481.6M | cloudB | 2026-09-05T00:40:02Z |
+| ULCC | Frontier Group Holdings, Inc. | $1.32B | cloudB | 2026-09-05T00:40:02Z |

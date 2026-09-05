@@ -394,3 +394,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-05 | TH | Target Hospitality Corp. | $1.8B | none | 0 | no filings in bundle |
 | 2026-09-05 | RYAM | RAYONIER ADVANCED MATERIALS INC. | $579.0M | cyclical-trough | 6 | Specialties pricing up 21% took adj EBITDA to $40M from $8M with a strategic review due in Q4, but net secured leverage is 4.2x |
 | 2026-09-05 | PPHC | Public Policy Holding Company, Inc. | $339.6M | ignored-microcap | 6 | Post-IPO Nasdaq name at $1.1M ADV and 6.8x guided EBITDA with 47% segment margins, but adjustments bridge a $78M gap to GAAP |
+| 2026-09-05 | CERS | CERUS CORP | $517.9M | none | 3 | Product revenue +10% and guidance raised, but 2.2x sales for $7M of H1 adjusted EBITDA, cash down to $56.3M and margin off 380bps |
+| 2026-09-05 | WYY | WIDEPOINT CORP | $113.9M | ignored-microcap | 5 | Sole awardee of DHS CWMS 3.0 with $5.5M FCF on a $114M cap, but insiders sold $7.3M with zero buys and debt is untagged |
+| 2026-09-05 | KRO | KRONOS WORLDWIDE INC | $972.6M | none | 0 | no filings in bundle |
+| 2026-09-05 | ASMB | ASSEMBLY BIOSCIENCES, INC. | $735.6M | none | 3 | $320M cash and no debt, but the 153% revenue jump is a one-time Gilead license fee and share count tripled in a year |
+| 2026-09-05 | REI | RING ENERGY, INC. | $390.8M | cyclical-trough | 6 | Realized oil $63.53 to $95.45 and EBITDA +42% q/q with two insiders buying, but only $4.6M YTD adjusted FCF and 70% hedged at $71.47 |
+| 2026-09-05 | OPTX | SYNTEC OPTICS HOLDINGS, INC. | $312.6M | none | 0 | no filings in bundle |
+| 2026-09-05 | NPCE | NeuroPace Inc | $506.3M | none | 3 | Growing RNS revenue 21% at 83% gross margin but trades at 5x guided sales and still guides to a full-year adjusted EBITDA loss |
+| 2026-09-05 | HZO | MARINEMAX INC | $1.2B | none | 3 | Signed a merger agreement with SHM Holdco on Aug 9 and sits 0.6% off its 52-week high, so what is left is deal terms the pack lacks |
+| 2026-09-05 | EVH | Evolent Health, Inc. | $481.6M | post-restructuring | 6 | PMPM repriced +75% and $120-135M EBITDA guided on a $482M cap, but MER hit 95.3% and net debt is 6.7x that guidance |
+| 2026-09-05 | ULCC | Frontier Group Holdings, Inc. | $1.3B | post-restructuring | 7 | RASM +28% to 11.52c with 24 aircraft returned early and Q4 guided to positive EPS, against a $1.3B cap on $3.7B of revenue |

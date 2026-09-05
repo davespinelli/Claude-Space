@@ -1,0 +1,5 @@
+# OPTX — SYNTEC OPTICS HOLDINGS, INC. · triage 2026-09-05 · Edge: none · Score 0/10
+
+Not triaged. The pack for OPTX is a stub of roughly 4,200 characters and section 1 records "Filings fetched: none". Section 11 lists meta.json, all 8-K filings, form4_summary.md, the 8-K earnings press release exhibit, the 10-K Item 7 MD&A and the 10-K Item 1 business description as missing, so there is no business description, no management commentary, no current-quarter results and no insider data to read. All that is present is the screen row, which shows a $312.6M market capitalisation, CY2025 revenue of $28.1M down 1.3%, EBIT of -$518k, net debt of $2.2M and 12-1 momentum of 384.8%, with no filing text behind any of it. The prompt's rule applies: absence of a fact is not evidence against it. Nothing here can support a claim about the business, an edge type or a valuation gap, so the score is 0 as a data gap rather than a judgement on the company. Run research/deepvalue/fetch_filings.py for this ticker and requeue it.
+
+_Sources: triage pack only (sections 1, 2, 11). Triage-depth read, not a deep dive._
