@@ -1,0 +1,193 @@
+========================================================================================================================================================================================================
+Idea 78 candidate-count-vs-dispersion (lane B) | 2026-09-05_candidate-count-vs-dispersion_B.py | 10 bps, weekly, next-day execution
+========================================================================================================================================================================================================
+Index sanity (must be ~252 rows/yr): 2013 252, 2018 251, 2024 252
+
+--- pre-check [a] harness on universe.json's own window (must match published rows) ---
+  U56/CAND20  12.7% / 1.092 / -18.3%  halves 1.088/1.102   [idea 2 KEEP: 12.7% / 1.093 / -18.3%, halves 1.088/1.103]
+  U56/v1      6.5% / 0.664 / -13.8%  halves 0.641/0.688   [live v1: 6.5% / 0.666 / -13.8%]
+
+--- pre-check [b] idea 73's cross-panel confound, recomputed from scratch ---
+           n_elig     sd  spread5  spread10  spread20
+U56       38.0037 0.2811   0.1060    0.0561    0.0390
+ETF36     24.7084 0.1455   0.0312    0.0278    0.0168
+ETF24     18.8148 0.1290   0.0094    0.0094    0.0018
+STK20     13.8660 0.3782   0.0319    0.0281    0.0009
+B136      92.9681 0.2571   0.0985    0.0622    0.0399
+BSTK100   68.8621 0.2780   0.0660    0.0389    0.0234
+SMALL484 149.0615 0.6816   0.0606    0.0641    0.0433
+  common window 2011-01-13 -> 2026-09-04
+
+  Spearman across the 7 panels (idea 73 published n_elig +0.571/+0.857/+0.964, sd +0.429/+0.679/+0.357):
+    sp_n_elig  sp_sd
+n                   
+5      0.5714 0.4286
+10     0.8571 0.6786
+20     0.9643 0.3571
+  Spearman(n_elig, sd) across panels = +0.321  <- the confound itself
+
+========================================================================================================================================================================================================
+TEST A - gross selection spread inside B136 at EXACTLY matched candidate count k
+========================================================================================================================================================================================================
+  rebalance weeks after warm-up: 921;  with n_elig >= 80: 697 (75.7%)  -> primary common week set
+  B136 eligible count on those weeks: mean 104.1, min 80, max 127
+
+  A1 COUNT EFFECT - mean over 100 draws, common week set (697 weeks), annualised spread
+       sd  spread5  spread10  spread20     t5    t10    t20
+k                                                          
+20 0.2512   0.0366    0.0211   -0.0000 1.2947 1.4182 0.0278
+40 0.2611   0.0584    0.0334    0.0223 1.6049 1.4611 1.8271
+80 0.2683   0.0910    0.0657    0.0359 2.0855 2.1409 1.8371
+  (dispersion `sd` is flat across k by construction - a random k-subset is an unbiased sample of the same
+   cross-section - so any movement of `spread` across k is a COUNT effect with dispersion matched.)
+
+  same, each k on its OWN week set (n_elig >= k; different samples - reported, not compared):
+    spread5_own  spread10_own  spread20_own  weeks
+k                                                 
+20       0.0281        0.0162       -0.0001    898
+40       0.0721        0.0349        0.0205    856
+80       0.0910        0.0657        0.0359    697
+
+  full-sample panel control (no subsample, all 921 weeks, n_elig free):
+    spread      t
+5   0.1008 2.4975
+10  0.0631 2.2614
+20  0.0390 2.1212
+
+  A2 DISPERSION EFFECT at exactly matched count - Spearman(draw sd, draw spread) over 100 draws:
+    rho_n5  rho_n10  rho_n20  sd_spread_across_draws
+k                                                   
+20  0.1303  -0.0455  -0.0940                  0.0054
+40 -0.0147  -0.1346  -0.1264                  0.0035
+80 -0.1169  -0.1012  -0.0061                  0.0015
+  (a positive rho here would be dispersion paying with the candidate count held exactly fixed.)
+
+  pooled OLS on all draws, spread(n) ~ z(log k) + z(sd)  (standardised betas, in bp/yr):
+    b_logk  t_logk   b_sd  t_sd  npts
+n                                    
+5   201.22    7.76  24.23  0.93   300
+10  209.80   13.36 -31.11 -1.98   300
+20  145.72   23.24   1.49  0.24   300
+
+  A3 SELECTIVITY - the same 9 cells arranged by q = n/k, the quantile depth the book selects.
+     A book of n names out of k candidates takes the top q of the cross-section; raising k at fixed n
+     therefore makes the book MORE selective as well as giving it more names to choose between.
+                 sd  spread      t  spread_sd_draws  se_weekly
+q      k  n                                                   
+0.0625 80 5  0.2683  0.0910 2.0855           0.0148     0.0436
+0.1250 40 5  0.2611  0.0584 1.6049           0.0247     0.0364
+       80 10 0.2683  0.0657 2.1409           0.0096     0.0307
+0.2500 20 5  0.2512  0.0366 1.2947           0.0238     0.0283
+       40 10 0.2611  0.0334 1.4611           0.0153     0.0229
+       80 20 0.2683  0.0359 1.8371           0.0055     0.0196
+0.5000 20 10 0.2512  0.0211 1.4182           0.0114     0.0149
+       40 20 0.2611  0.0223 1.8271           0.0063     0.0122
+1.0000 20 20 0.2512 -0.0000 0.0278           0.0005     0.0002
+
+     constant-q diagonals (count varies 4x, selectivity held fixed):
+       q=0.125  k=40,n=5: +0.0584   k=80,n=10: +0.0657    range +0.0073
+       q=0.250  k=20,n=5: +0.0366   k=40,n=10: +0.0334   k=80,n=20: +0.0359    range +0.0032
+       q=0.500  k=20,n=10: +0.0211   k=40,n=20: +0.0223    range +0.0012
+
+     Spearman(q, spread) over the 9 cells = -0.975;  Spearman(k, spread) over the same 9 = +0.685
+     Spearman(k, spread) along the q=0.25 diagonal = -0.500 (3 points)
+
+========================================================================================================================================================================================================
+TEST B - tradable sub-panels: 50 fixed random k-name sub-panels of B136 per k, CAND-20 and EWall, 10 bps
+========================================================================================================================================================================================================
+  SPY               15.23% / 0.889 / -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+  RULES v1 on B136  6.39% / 0.635 / -21.19%  halves 0.756/0.532  OOS Sharpe 0.576
+  4b bars: MaxDD <= 20.23%, CAGR >= 10.66%, H1 > 0.957, H2 > 0.834, OOS Sharpe > 0.882
+  k=20  done  (113s)
+  k=40  done  (227s)
+  k=80  done  (387s)
+
+  B1 by (k, n) - means over draws; premium = Sharpe(CAND-n) - Sharpe(EWall) on the SAME sub-panel:
+       n_elig     sd   CAGR  Sharpe   MaxDD  ew_Sharpe  premium  prem_sd  pass4a  pass4b  npts
+k  n                                                                                          
+20 5  13.2840 0.2409 0.1143  0.8422 -0.2201     0.9306  -0.0884   0.0826      17       1    50
+   20 13.2840 0.2409 0.0679  0.9788 -0.1176     0.9306   0.0482   0.0691      49       0    50
+40 5  26.9460 0.2451 0.1195  0.7972 -0.2414     0.9624  -0.1652   0.1031       8       0    50
+   20 26.9460 0.2451 0.1038  0.9753 -0.1831     0.9624   0.0129   0.0417      49      17    50
+80 5  53.9805 0.2533 0.1430  0.8370 -0.2432     1.0097  -0.1727   0.0847       7       1    50
+   20 53.9805 0.2533 0.1202  0.9670 -0.1962     1.0097  -0.0427   0.0382      48      23    50
+  (at k=20, n=20 the book holds every eligible name, so its premium is a weighting artefact, not a
+   selection payoff - that cell is reported and excluded from the premium-vs-k reading.)
+
+  B2 within-cell Spearman over 50 draws (candidate pool held at k by construction):
+       rho_sd_premium  rho_sd_Sharpe  rho_nelig_premium  rho_nelig_Sharpe
+k  n                                                                     
+20 5           0.0520         0.5274            -0.0431            0.0931
+   20         -0.2864         0.5008             0.0620            0.1836
+40 5          -0.1382         0.2724             0.0893            0.1440
+   20         -0.1027         0.5148            -0.2039           -0.0194
+80 5           0.1805         0.5177             0.1141            0.2343
+   20          0.0752         0.6342            -0.1818           -0.0095
+
+  pooled over 150 sub-panels at n=5: rho(k, premium) = -0.358, rho(sd, premium) = -0.086, rho(n_elig, premium) = -0.319
+
+  pooled over 150 sub-panels at n=20: rho(k, premium) = -0.601, rho(sd, premium) = -0.274, rho(n_elig, premium) = -0.603
+  4a passes 178 of 300;  4b passes 42 of 300
+
+  4b failing-bar census over all sub-panel books:
+f4b
+H2      179
+DD      146
+OOS     142
+CAGR    119
+H1       94
+-        42
+
+  B3 per-cell 4b base rates and OOS distribution - what a random pick from each cell is worth:
+       pass4b  pass4a  OOS_Sharpe  OOS_Sharpe_sd  OOS_Sharpe_max  OOS_CAGR  fail_H1  fail_H2  fail_OOS  fail_DD  fail_CAGR
+k  n                                                                                                                      
+20 5   0.0200  0.3400      0.8226         0.1285          1.1570    0.1144   0.5000   0.7600    0.6600   0.7600     0.3800
+   20  0.0000  0.9800      0.9915         0.1162          1.1927    0.0692   0.1800   0.3800    0.1600   0.0000     1.0000
+40 5   0.0000  0.1600      0.7375         0.1270          1.0876    0.1124   0.6200   0.9200    0.9000   0.9200     0.2800
+   20  0.3400  0.9800      0.9940         0.0936          1.2034    0.1069   0.1400   0.3000    0.1000   0.0600     0.6000
+80 5   0.0200  0.1400      0.7668         0.1259          1.0816    0.1349   0.3800   0.8400    0.8200   0.9600     0.0200
+   20  0.4600  0.9600      0.9389         0.0629          1.1282    0.1186   0.0600   0.3800    0.2000   0.2200     0.1000
+
+  controls on the FULL B136 panel (no subsample):
+         CAGR  Sharpe   MaxDD     H1     H2  Sharpe_OOS  CAGR_OOS  f4a_ok  f4b_ok
+CAND5  0.1662  0.8802 -0.2336 1.0160 0.7744      0.8138    0.1605  0.0000  0.0000
+CAND20 0.1309  0.9569 -0.2005 1.1246 0.8113      0.8919    0.1249  1.0000  0.0000
+EWall  0.1072  1.0261 -0.1769 1.1456 0.9144      1.0185    0.1058  1.0000  1.0000
+  full-panel premium n=5: -0.146 Sharpe (mean sub-panel premium at n=5: -0.142)
+  full-panel CAND5: 4a DD   4b H2,OOS,DD
+  full-panel premium n=20: -0.069 Sharpe (mean sub-panel premium at n=20: +0.006)
+  full-panel CAND20: 4a -   4b H2
+
+========================================================================================================================================================================================================
+TEST C - PROTOCOL rule 8 walk-forward: parameters chosen on <= 2016-12-31, 2017-01-01-> read once
+========================================================================================================================================================================================================
+  (secondary block for n=5)
+  (PRE-REGISTERED block for n=20)
+                                             k draw  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  cell_OOS_Sharpe  cell_4b_rate  full_Sharpe  full_MaxDD f4a        f4b
+selector                                                                                                                                                              
+n=5 S0 do-nothing (full B136)  [secondary]   -    -     0.9809    0.1605      0.8138    -0.2336              NaN           NaN       0.8802     -0.2336  DD  H2,OOS,DD
+n=5 S1 IS-Sharpe argmax  [secondary]        20   39     1.3592    0.1528      0.9077    -0.2101           0.8226        0.0200       1.0930     -0.2101   -         DD
+n=5 S2 DISPERSION (max IS sd)  [secondary]  20   39     1.3592    0.1528      0.9077    -0.2101           0.8226        0.0200       1.0930     -0.2101   -         DD
+n=5 S3 COUNT (max IS n_elig)  [secondary]   80   26     0.7879    0.1598      0.8944    -0.2237           0.7668        0.0200       0.8478     -0.2237  DD      H1,DD
+n=5 S4 random sub-panel  [secondary]        40   35     0.9640    0.0990      0.7049    -0.1972           0.7375        0.0000       0.8226     -0.1972   -     H2,OOS
+n=20 S0 do-nothing (full B136)               -    -     1.0438    0.1249      0.8919    -0.2005              NaN           NaN       0.9569     -0.2005   -         H2
+n=20 S1 IS-Sharpe argmax                    20   19     1.3229    0.0837      1.1045    -0.1054           0.9915        0.0000       1.2047     -0.1054   -       CAGR
+n=20 S2 DISPERSION (max IS sd)              20   39     1.1706    0.0903      1.1841    -0.0943           0.9915        0.0000       1.1744     -0.0943   -       CAGR
+n=20 S3 COUNT (max IS n_elig)               80   26     0.9750    0.1200      0.9526    -0.1964           0.9389        0.4600       0.9620     -0.1964   -          -
+n=20 S4 random sub-panel                    40   35     1.0248    0.1030      0.9837    -0.1761           0.9940        0.3400       1.0026     -0.1761   -       CAGR
+SPY                                          -    -     0.8987    0.1545      0.8820    -0.3372              NaN           NaN       0.8890     -0.3372   -          -
+RULES v1 (B136)                              -    -     0.7147    0.0594      0.5763    -0.2119              NaN           NaN       0.6350     -0.2119   -          -
+  cell_OOS_Sharpe / cell_4b_rate = what the pick's OWN (k, n) cell delivers on average and how often a
+  RANDOM member of it passes 4b - a selector that only matches its cell's base rate has found nothing.
+
+  n=5: Spearman(IS Sharpe, OOS Sharpe) over 150 sub-panels = +0.229
+        Spearman(IS sd, OOS Sharpe)      = +0.179   <- dispersion as a selector
+        Spearman(IS n_elig, OOS Sharpe)  = -0.148   <- count as a selector
+        OOS Sharpe of the sub-panels: mean 0.776, sd 0.131, min 0.460, max 1.157; full-panel control 0.814
+
+  n=20: Spearman(IS Sharpe, OOS Sharpe) over 150 sub-panels = +0.217
+        Spearman(IS sd, OOS Sharpe)      = +0.194   <- dispersion as a selector
+        Spearman(IS n_elig, OOS Sharpe)  = -0.262   <- count as a selector
+        OOS Sharpe of the sub-panels: mean 0.975, sd 0.096, min 0.737, max 1.203; full-panel control 0.892
+
+Done in 392s
