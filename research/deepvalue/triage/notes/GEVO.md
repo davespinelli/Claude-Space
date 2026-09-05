@@ -1,0 +1,5 @@
+# GEVO — Gevo, Inc. · triage 2026-09-05 · Edge: none · Score 0/10
+
+Not triaged. The pack for GEVO is a stub of roughly 4,200 characters and section 1 records "Filings fetched: none". Section 11 lists meta.json, all 8-K filings, form4_summary.md, the 8-K earnings press release exhibit, the 10-K Item 7 MD&A and the 10-K Item 1 business description as missing, so there is no business description, no management commentary, no current-quarter results and no insider data to read. Everything present is the screen row, which gives a market capitalisation of $405.5M but no filings behind it, and the prompt's own rule applies: absence of a fact is not evidence against it. Nothing in this pack can support a claim about the business, an edge type or a valuation gap, so the score is 0 as a data gap rather than a judgement on the company. This ticker needs research/deepvalue/fetch_filings.py run for it before it can be read at triage depth, and it should be requeued once the bundle contains its documents.
+
+_Sources: triage pack only (sections 1, 2, 11). Triage-depth read, not a deep dive._

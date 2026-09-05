@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T00:10:53Z · open 92 · in progress 10 · done 383_
+_Source: universe_under2b.csv · updated 2026-09-05T00:13:10Z · open 92 · in progress 0 · done 393_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
@@ -101,22 +101,12 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | DDD | 3D SYSTEMS CORP | $551.6M |
 | NXH | NEIGHBORHOOD INTELLIGENCE, INC. | $370.8M |
 
-## In progress (10)
+## In progress (0)
 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
-| CYRX | Cryoport, Inc. | $803.3M | cloudA | 2026-09-05T00:07:05Z |
-| MGPI | MGP INGREDIENTS INC | $349.9M | cloudA | 2026-09-05T00:07:05Z |
-| SIBN | SI-BONE, Inc. | $835.4M | cloudA | 2026-09-05T00:07:05Z |
-| RXT | Rackspace Technology, Inc. | $838.5M | cloudA | 2026-09-05T00:07:05Z |
-| ASLE | AerSale Corp | $269.2M | cloudA | 2026-09-05T00:07:05Z |
-| GEVO | Gevo, Inc. | $405.5M | cloudA | 2026-09-05T00:07:05Z |
-| WEST | Westrock Coffee Co | $749.8M | cloudA | 2026-09-05T00:07:05Z |
-| TH | Target Hospitality Corp. | $1.85B | cloudA | 2026-09-05T00:07:05Z |
-| RYAM | RAYONIER ADVANCED MATERIALS INC. | $579.0M | cloudA | 2026-09-05T00:07:05Z |
-| PPHC | Public Policy Holding Company, Inc. | $339.6M | cloudA | 2026-09-05T00:07:05Z |
 
-## Done (383)
+## Done (393)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | ALLT | Allot Ltd. | $368.2M | cloudA | 2026-09-05T00:10:53Z |
 | NTGR | NETGEAR, INC. | $573.2M | cloudA | 2026-09-05T00:10:53Z |
 | XIFR | XPLR Infrastructure, LP | $1.13B | cloudA | 2026-09-05T00:10:53Z |
+| CYRX | Cryoport, Inc. | $803.3M | cloudA | 2026-09-05T00:13:10Z |
+| MGPI | MGP INGREDIENTS INC | $349.9M | cloudA | 2026-09-05T00:13:10Z |
+| SIBN | SI-BONE, Inc. | $835.4M | cloudA | 2026-09-05T00:13:10Z |
+| RXT | Rackspace Technology, Inc. | $838.5M | cloudA | 2026-09-05T00:13:10Z |
+| ASLE | AerSale Corp | $269.2M | cloudA | 2026-09-05T00:13:10Z |
+| GEVO | Gevo, Inc. | $405.5M | cloudA | 2026-09-05T00:13:10Z |
+| WEST | Westrock Coffee Co | $749.8M | cloudA | 2026-09-05T00:13:10Z |
+| TH | Target Hospitality Corp. | $1.85B | cloudA | 2026-09-05T00:13:10Z |
+| RYAM | RAYONIER ADVANCED MATERIALS INC. | $579.0M | cloudA | 2026-09-05T00:13:10Z |
+| PPHC | Public Policy Holding Company, Inc. | $339.6M | cloudA | 2026-09-05T00:13:10Z |

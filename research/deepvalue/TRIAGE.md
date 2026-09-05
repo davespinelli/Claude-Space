@@ -384,3 +384,13 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-05 | ALLT | Allot Ltd. | $368.2M | ignored-microcap | 4 | 15 record holders and $2.1M ADV with three funds at 39%, but EV/EBIT is 97x after 23% dilution and insiders only sold |
 | 2026-09-05 | NTGR | NETGEAR, INC. | $573.2M | misunderstood-segment | 7 | Enterprise at 54.1% gross margin and 26% contribution margin annualises near the entire $398.9M EV while Consumer masks it |
 | 2026-09-05 | XIFR | XPLR Infrastructure, LP | $1.1B | post-restructuring | 6 | Distribution suspended and $600-700M FCFBG guided on a $1.1B cap, but XPLR holds only 48.8% of OpCo under $7.4B of NCI |
+| 2026-09-05 | CYRX | Cryoport, Inc. | $803.3M | none | 0 | no filings in bundle |
+| 2026-09-05 | MGPI | MGP INGREDIENTS INC | $349.9M | cyclical-trough | 7 | Whiskey glut cut brown goods 59% but 2026 guide is $90-98M adj EBITDA and $408M of aged inventory exceeds the market cap |
+| 2026-09-05 | SIBN | SI-BONE, Inc. | $835.4M | none | 3 | Growing 15% at 79% gross margin with guidance raised, but it trades above 3x sales and only just turned adjusted EBITDA positive |
+| 2026-09-05 | RXT | Rackspace Technology, Inc. | $838.5M | none | 2 | Net debt is 9x guided adj EBITDA with equity at negative $1.3B, guided interest eats all EBITDA, and an ATM was signed in July |
+| 2026-09-05 | ASLE | AerSale Corp | $269.2M | none | 0 | no filings in bundle |
+| 2026-09-05 | GEVO | Gevo, Inc. | $405.5M | none | 0 | no filings in bundle |
+| 2026-09-05 | WEST | Westrock Coffee Co | $749.8M | none | 0 | no filings in bundle |
+| 2026-09-05 | TH | Target Hospitality Corp. | $1.8B | none | 0 | no filings in bundle |
+| 2026-09-05 | RYAM | RAYONIER ADVANCED MATERIALS INC. | $579.0M | cyclical-trough | 6 | Specialties pricing up 21% took adj EBITDA to $40M from $8M with a strategic review due in Q4, but net secured leverage is 4.2x |
+| 2026-09-05 | PPHC | Public Policy Holding Company, Inc. | $339.6M | ignored-microcap | 6 | Post-IPO Nasdaq name at $1.1M ADV and 6.8x guided EBITDA with 47% segment margins, but adjustments bridge a $78M gap to GAAP |
