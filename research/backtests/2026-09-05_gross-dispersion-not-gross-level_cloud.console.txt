@@ -1,0 +1,290 @@
+==============================================================================================================================================================================================
+IDEA 143 — is gross DISPERSION the exposure-adequacy bar that gross LEVEL failed to be?
+corpus = 3 panels x 3 books x 17 arms x 2 costs = 306 arm-rows; ladder = 3 x 3 x 19 x 2 = 342 rows.  IS <= 2016-12-31, OOS >= 2017-01-01, weekly, t+1, 75% target gross, costs [10.0, 25.0] bps.
+Bars held: DD cap 0.6 x |SPY|, CAGR floor 0.7 x SPY, gross level 0.5.  ONE tuned parameter: kappa in [0.000, 0.400] step 0.005 (81 points).
+==============================================================================================================================================================================================
+
+--- PANEL u56: universe.json(56) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+    ... u56 done
+
+--- PANEL broad: universe_broad.json(136) | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+    SPY full CAGR 15.23%  Sharpe 0.889  MaxDD -33.72%  halves 0.957/0.834  OOS Sharpe 0.882
+    ... broad done
+
+--- PANEL small: prices_small(439, SPY held out) | 2010-01-04 -> 2026-09-04 | eval from 2011-01-13
+    SPY full CAGR 14.13%  Sharpe 0.862  MaxDD -33.72%  halves 0.891/0.858  OOS Sharpe 0.882
+    ... small done
+
+==============================================================================================================================================================================================
+REPRODUCTION GATE — idea 131's committed corpus must come back column-for-column
+  (a) 306 arm-rows, 28 numeric columns vs .grid.csv: max|diff| = 3.55e-15 -> PASS   (shapes (306, 40) vs (306, 38))
+  (b) 342 ladder rows, 8 numeric columns vs .ladder.csv: max|diff| = 2.22e-16 -> PASS   (shapes (342, 24) vs (342, 15))
+  (c) census {'rows': 306, 'pass4b': 29, 'floor_only': 27, 'lad_rows': 342, 'lad_floor_only': 97} vs target {'rows': 306, 'pass4b': 29, 'floor_only': 27, 'lad_rows': 342, 'lad_floor_only': 97} -> PASS
+  GATE: ALL PASS
+
+  victims (floor_only) n=27   Pareto-best among them n=11 (idea 131 targets 27 / 11 -> PASS)
+
+==============================================================================================================================================================================================
+Q0 — the two families on the DISPERSION axis (this is what idea 131 saw post hoc)
+  floor's victims (27)             cv  min 0.0028  median 0.2825  mean 0.2675  max 0.3351
+    of which Pareto-best (11)      cv  min 0.2417  median 0.2855  mean 0.2831  max 0.2999
+  static-gross ladder (342)        cv  min 0.0030  median 0.0111  mean 0.0120  max 0.0224
+  core-admissible ladder (107)     cv  min 0.0048  median 0.0121  mean 0.0137  max 0.0222
+  whole arm corpus (306)           cv  min 0.0028  median 0.0551  mean 0.1115  max 0.4057
+
+  LEVEL axis (idea 131's failure): victims mean-gross [0.519, 0.750]  vs core-admissible ladder [0.075, 0.672]  -> OVERLAP
+  DISPERSION axis:               victims cv [0.0028, 0.3351]  vs WHOLE ladder cv [0.0030, 0.0224]
+  victims at or below every ladder point's cv: 2 of 27 -> [('g200-rw', 'u56', 'EWall', 0.003), ('v1gate-rw', 'u56', 'EWall', 0.0028)]
+
+==============================================================================================================================================================================================
+Q1/Q2 — SEPARATION FRONTIER, every kappa grid point (bar = the four CORE bars + cv >= kappa)
+  reference: the published CAGR floor (phi=0.7) admits 29 corpus rows, 10 ladder rows, and saves 0 of its own 27 victims.
+  reference: idea 131's best gross LEVEL bar admitted 0 of 34 grid points with BOTH jobs done.
+ kappa  corpus_admits  floor_admits_lost  victims_admitted  pareto_victims_admitted  ladder_admitted  core_ladder_admitted  both_jobs  pass4a_among_admitted
+ 0.000             56                  0                27                       11              107                   107      False                     25
+ 0.005             44                 10                25                       11              105                   105      False                     21
+ 0.010             44                 10                25                       11               69                    69      False                     21
+ 0.015             44                 10                25                       11               47                    47      False                     21
+ 0.020             44                 10                25                       11               18                    18      False                     21
+ 0.025             44                 10                25                       11                0                     0      False                     21
+ 0.030             44                 10                25                       11                0                     0      False                     21
+ 0.035             44                 10                25                       11                0                     0      False                     21
+ 0.040             42                 12                25                       11                0                     0      False                     21
+ 0.045             42                 12                25                       11                0                     0      False                     21
+ 0.050             42                 12                25                       11                0                     0      False                     21
+ 0.055             42                 12                25                       11                0                     0      False                     21
+ 0.060             42                 12                25                       11                0                     0      False                     21
+ 0.065             42                 12                25                       11                0                     0      False                     21
+ 0.070             42                 12                25                       11                0                     0      False                     21
+ 0.075             42                 12                25                       11                0                     0      False                     21
+ 0.080             38                 16                25                       11                0                     0      False                     21
+ 0.085             38                 16                25                       11                0                     0      False                     21
+ 0.090             36                 18                25                       11                0                     0      False                     19
+ 0.095             36                 18                25                       11                0                     0      False                     19
+ 0.100             36                 18                25                       11                0                     0      False                     19
+ 0.105             36                 18                25                       11                0                     0      False                     19
+ 0.110             36                 18                25                       11                0                     0      False                     19
+ 0.115             36                 18                25                       11                0                     0      False                     19
+ 0.120             36                 18                25                       11                0                     0      False                     19
+ 0.125             34                 20                25                       11                0                     0      False                     19
+ 0.130             32                 22                25                       11                0                     0      False                     19
+ 0.135             30                 24                25                       11                0                     0      False                     19
+ 0.140             30                 24                25                       11                0                     0      False                     19
+ 0.145             27                 27                25                       11                0                     0      False                     19
+ 0.150             27                 27                25                       11                0                     0      False                     19
+ 0.155             27                 27                25                       11                0                     0      False                     19
+ 0.160             26                 28                25                       11                0                     0      False                     19
+ 0.165             26                 28                25                       11                0                     0      False                     19
+ 0.170             26                 28                25                       11                0                     0      False                     19
+ 0.175             26                 28                25                       11                0                     0      False                     19
+ 0.180             26                 28                25                       11                0                     0      False                     19
+ 0.185             26                 28                25                       11                0                     0      False                     19
+ 0.190             26                 28                25                       11                0                     0      False                     19
+ 0.195             26                 28                25                       11                0                     0      False                     19
+ 0.200             26                 28                25                       11                0                     0      False                     19
+ 0.205             26                 28                25                       11                0                     0      False                     19
+ 0.210             26                 28                25                       11                0                     0      False                     19
+ 0.215             26                 28                25                       11                0                     0      False                     19
+ 0.220             26                 28                25                       11                0                     0      False                     19
+ 0.225             26                 28                25                       11                0                     0      False                     19
+ 0.230             26                 28                25                       11                0                     0      False                     19
+ 0.235             26                 28                25                       11                0                     0      False                     19
+ 0.240             26                 28                25                       11                0                     0      False                     19
+ 0.245             25                 28                24                       10                0                     0      False                     18
+ 0.250             24                 28                23                       10                0                     0      False                     17
+ 0.255             24                 28                23                       10                0                     0      False                     17
+ 0.260             24                 28                23                       10                0                     0      False                     17
+ 0.265             24                 28                23                       10                0                     0      False                     17
+ 0.270             22                 28                21                       10                0                     0      False                     15
+ 0.275             22                 28                21                       10                0                     0      False                     15
+ 0.280             16                 28                15                        8                0                     0      False                     10
+ 0.285             12                 28                11                        6                0                     0      False                      8
+ 0.290             10                 28                 9                        4                0                     0      False                      6
+ 0.295              7                 29                 7                        2                0                     0      False                      4
+ 0.300              5                 29                 5                        0                0                     0      False                      2
+ 0.305              5                 29                 5                        0                0                     0      False                      2
+ 0.310              5                 29                 5                        0                0                     0      False                      2
+ 0.315              5                 29                 5                        0                0                     0      False                      2
+ 0.320              5                 29                 5                        0                0                     0      False                      2
+ 0.325              4                 29                 4                        0                0                     0      False                      1
+ 0.330              3                 29                 3                        0                0                     0      False                      0
+ 0.335              1                 29                 1                        0                0                     0      False                      0
+ 0.340              0                 29                 0                        0                0                     0      False                      0
+ 0.345              0                 29                 0                        0                0                     0      False                      0
+ 0.350              0                 29                 0                        0                0                     0      False                      0
+ 0.355              0                 29                 0                        0                0                     0      False                      0
+ 0.360              0                 29                 0                        0                0                     0      False                      0
+ 0.365              0                 29                 0                        0                0                     0      False                      0
+ 0.370              0                 29                 0                        0                0                     0      False                      0
+ 0.375              0                 29                 0                        0                0                     0      False                      0
+ 0.380              0                 29                 0                        0                0                     0      False                      0
+ 0.385              0                 29                 0                        0                0                     0      False                      0
+ 0.390              0                 29                 0                        0                0                     0      False                      0
+ 0.395              0                 29                 0                        0                0                     0      False                      0
+ 0.400              0                 29                 0                        0                0                     0      False                      0
+
+  kappa doing BOTH jobs (all 27 victims AND 0 ladder points): 0 of 81 grid points
+  first kappa emptying the ladder: 0.025; there victims_admitted = 25 of 27, Pareto 11 of 11, floor admissions lost 10
+  last kappa admitting all 27 victims: 0.000; there ladder_admitted = 107 of 342
+
+==============================================================================================================================================================================================
+Q3 — RULE 8 WALK-FORWARD.  Every screen reads the IS window (<=2016-12-31) ONLY; the pick (argmax IS Sharpe) is read once on 2017-2026.
+
+  kappa chosen ON THE IS WINDOW ONLY — separation frontier of the IS window:
+ kappa  IS_corpus_admits  IS_victims_admitted  IS_victims  IS_ladder_admitted
+ 0.000                54                    9           9                 108
+ 0.005                37                    8           9                 100
+ 0.010                37                    8           9                  58
+ 0.015                35                    8           9                  31
+ 0.020                30                    8           9                   0
+ 0.025                30                    8           9                   0
+ 0.030                29                    8           9                   0
+ 0.035                28                    8           9                   0
+ 0.040                25                    8           9                   0
+ 0.045                25                    8           9                   0
+ 0.050                22                    8           9                   0
+ 0.055                22                    8           9                   0
+ 0.060                21                    8           9                   0
+ 0.065                19                    8           9                   0
+ 0.070                19                    8           9                   0
+ 0.075                18                    8           9                   0
+ 0.080                17                    8           9                   0
+ 0.085                16                    8           9                   0
+ 0.090                16                    8           9                   0
+ 0.095                14                    8           9                   0
+ 0.100                14                    8           9                   0
+ 0.105                14                    8           9                   0
+ 0.110                14                    8           9                   0
+ 0.115                13                    8           9                   0
+ 0.120                12                    8           9                   0
+ 0.125                10                    8           9                   0
+ 0.130                10                    8           9                   0
+ 0.135                10                    8           9                   0
+ 0.140                10                    8           9                   0
+ 0.145                10                    8           9                   0
+ 0.150                10                    8           9                   0
+ 0.155                10                    8           9                   0
+ 0.160                10                    8           9                   0
+ 0.165                10                    8           9                   0
+ 0.170                10                    8           9                   0
+ 0.175                10                    8           9                   0
+ 0.180                10                    8           9                   0
+ 0.185                 9                    8           9                   0
+ 0.190                 9                    8           9                   0
+ 0.195                 9                    8           9                   0
+ 0.200                 9                    8           9                   0
+ 0.205                 8                    8           9                   0
+ 0.210                 8                    8           9                   0
+ 0.215                 8                    8           9                   0
+ 0.220                 8                    8           9                   0
+ 0.225                 8                    8           9                   0
+ 0.230                 8                    8           9                   0
+ 0.235                 8                    8           9                   0
+ 0.240                 8                    8           9                   0
+ 0.245                 7                    7           9                   0
+ 0.250                 7                    7           9                   0
+ 0.255                 7                    7           9                   0
+ 0.260                 7                    7           9                   0
+ 0.265                 7                    7           9                   0
+ 0.270                 7                    7           9                   0
+ 0.275                 7                    7           9                   0
+ 0.280                 7                    7           9                   0
+ 0.285                 4                    4           9                   0
+ 0.290                 4                    4           9                   0
+ 0.295                 1                    1           9                   0
+ 0.300                 1                    1           9                   0
+ 0.305                 0                    0           9                   0
+ 0.310                 0                    0           9                   0
+ 0.315                 0                    0           9                   0
+ 0.320                 0                    0           9                   0
+ 0.325                 0                    0           9                   0
+ 0.330                 0                    0           9                   0
+ 0.335                 0                    0           9                   0
+ 0.340                 0                    0           9                   0
+ 0.345                 0                    0           9                   0
+ 0.350                 0                    0           9                   0
+ 0.355                 0                    0           9                   0
+ 0.360                 0                    0           9                   0
+ 0.365                 0                    0           9                   0
+ 0.370                 0                    0           9                   0
+ 0.375                 0                    0           9                   0
+ 0.380                 0                    0           9                   0
+ 0.385                 0                    0           9                   0
+ 0.390                 0                    0           9                   0
+ 0.395                 0                    0           9                   0
+ 0.400                 0                    0           9                   0
+
+  IS-CHOSEN kappa* = 0.020  (smallest kappa emptying the ladder on the IS window; there IS victims admitted 8 of 9).  Nothing OOS was read to pick it.
+
+  per-selector OOS summary (cells where the selector picks at all):
+           selector  cells_picking  OOS_CAGR  OOS_Sharpe  OOS_MaxDD beat_SPY beat_v1 beat_ctl  picks_moved_vs_S0
+            S0 none             18     0.091       0.695     -0.231     6/18   12/18     3/18                  0
+      S1 CAGR floor              7     0.127       1.022     -0.211      5/7     7/7      2/7                  0
+ S2 no adequacy bar              7     0.127       1.022     -0.211      5/7     7/7      2/7                  0
+S3 gross level 0.50              7     0.127       1.022     -0.211      5/7     7/7      2/7                  0
+    S4 cv bar 0.020              7     0.117       1.076     -0.185      5/7     7/7      4/7                  3
+
+  PAIRED on the 7 cells the cv bar enters:
+           selector  cells  OOS_CAGR  OOS_Sharpe  OOS_MaxDD beat_SPY
+            S0 none      7     0.127       1.022     -0.211      5/7
+      S1 CAGR floor      7     0.127       1.022     -0.211      5/7
+ S2 no adequacy bar      7     0.127       1.022     -0.211      5/7
+S3 gross level 0.50      7     0.127       1.022     -0.211      5/7
+    S4 cv bar 0.020      7     0.117       1.076     -0.185      5/7
+
+  OOS references (mean over the 18 cells): SPY CAGR 15.45% / Sharpe 0.882 / MaxDD -33.72%;  RULES v1 CAGR 4.86% / Sharpe 0.451 / MaxDD -25.30%;  ungated control Sharpe 0.762
+
+  Rule-8 SENSITIVITY — picks moved vs S2 (core-only) at every kappa, all 18 cells:
+ kappa  cells_emptied  picks_moved_vs_S2
+ 0.000             11                  0
+ 0.010             11                  2
+ 0.020             11                  3
+ 0.030             11                  3
+ 0.040             11                  3
+ 0.050             11                  3
+ 0.060             11                  3
+ 0.070             11                  5
+ 0.080             11                  5
+ 0.090             11                  5
+ 0.100             11                  5
+ 0.110             11                  5
+ 0.120             11                  5
+ 0.130             12                  6
+ 0.140             12                  6
+ 0.150             12                  6
+ 0.160             12                  6
+ 0.170             12                  6
+ 0.180             12                  6
+ 0.190             13                  5
+ 0.200             13                  5
+ 0.210             14                  4
+ 0.220             14                  4
+ 0.230             14                  4
+ 0.240             14                  4
+ 0.250             14                  4
+ 0.260             14                  4
+ 0.270             14                  4
+ 0.280             14                  4
+ 0.290             16                  2
+ 0.300             17                  1
+ 0.310             18                  0
+ 0.320             18                  0
+ 0.330             18                  0
+ 0.340             18                  0
+ 0.350             18                  0
+ 0.360             18                  0
+ 0.370             18                  0
+ 0.380             18                  0
+ 0.390             18                  0
+ 0.400             18                  0
+
+==============================================================================================================================================================================================
+BOTH KEEP PATHS over all 306 rows (no new book is proposed — this re-scores an existing corpus)
+  4a (beat the live book): 97 of 306
+  4b as published (CAGR floor):     29 of 306, of which 6 also pass 4a
+  4b with the gross LEVEL bar 0.50: 56 of 306, of which 25 also pass 4a
+  4b with the cv bar kappa*=0.020:      44 of 306, of which 21 also pass 4a;  ladder admitted 18 of 342
+    admitted-set OOS quality 4b-FLOOR         n= 29  CAGR 13.24%  Sharpe 1.114  MaxDD -18.53%  4a 6
+    admitted-set OOS quality 4b-GROSS(0.50)   n= 56  CAGR 11.21%  Sharpe 1.112  MaxDD -16.55%  4a 25
+    admitted-set OOS quality 4b-CV(0.020)     n= 44  CAGR 11.00%  Sharpe 1.117  MaxDD -16.05%  4a 21
