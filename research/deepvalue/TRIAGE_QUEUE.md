@@ -1,23 +1,13 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T01:12:37Z · open 62 · in progress 0 · done 423_
+_Source: universe_under2b.csv · updated 2026-09-05T01:39:43Z · open 52 · in progress 0 · done 433_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
-## Open (62)
+## Open (52)
 
 | Ticker | Name | Mkt cap |
 |---|---|---|
-| INGN | Inogen Inc | $144.6M |
-| TWI | TITAN INTERNATIONAL INC | $493.1M |
-| STLN | Starling Oncology, Inc. | $608.4M |
-| WEAV | Weave Communications, Inc. | $586.4M |
-| AESI | Atlas Energy Solutions Inc. | $1.65B |
-| GNK | GENCO SHIPPING & TRADING LTD | $1.19B |
-| MRAM | EVERSPIN TECHNOLOGIES INC. | $385.9M |
-| VYX | NCR Voyix Corp | $1.24B |
-| SSTI | SOUNDTHINKING, INC. | $80.0M |
-| LGIH | LGI Homes, Inc. | $1.27B |
 | RDGT | Ridgetech Inc. | $119.8M |
 | LCUT | LIFETIME BRANDS, INC | $202.5M |
 | TNDM | TANDEM DIABETES CARE INC | $1.42B |
@@ -76,7 +66,7 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | Ticker | Name | Mkt cap | Lane | Claimed (UTC) |
 |---|---|---|---|---|
 
-## Done (423)
+## Done (433)
 
 | Ticker | Name | Mkt cap | Lane | Done (UTC) |
 |---|---|---|---|---|
@@ -503,3 +493,13 @@ Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane 
 | GO | Grocery Outlet Holding Corp. | $1.22B | cloudA | 2026-09-05T01:12:37Z |
 | OMDA | Omada Health, Inc. | $1.36B | cloudA | 2026-09-05T01:12:37Z |
 | CSTL | CASTLE BIOSCIENCES INC | $997.4M | cloudA | 2026-09-05T01:12:37Z |
+| INGN | Inogen Inc | $144.6M | cloudB | 2026-09-05T01:39:43Z |
+| TWI | TITAN INTERNATIONAL INC | $493.1M | cloudB | 2026-09-05T01:39:43Z |
+| STLN | Starling Oncology, Inc. | $608.4M | cloudB | 2026-09-05T01:39:43Z |
+| WEAV | Weave Communications, Inc. | $586.4M | cloudB | 2026-09-05T01:39:43Z |
+| AESI | Atlas Energy Solutions Inc. | $1.65B | cloudB | 2026-09-05T01:39:43Z |
+| GNK | GENCO SHIPPING & TRADING LTD | $1.19B | cloudB | 2026-09-05T01:39:43Z |
+| MRAM | EVERSPIN TECHNOLOGIES INC. | $385.9M | cloudB | 2026-09-05T01:39:43Z |
+| VYX | NCR Voyix Corp | $1.24B | cloudB | 2026-09-05T01:39:43Z |
+| SSTI | SOUNDTHINKING, INC. | $80.0M | cloudB | 2026-09-05T01:39:43Z |
+| LGIH | LGI Homes, Inc. | $1.27B | cloudB | 2026-09-05T01:39:43Z |

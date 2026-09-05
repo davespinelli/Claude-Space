@@ -1,0 +1,5 @@
+# AESI — Atlas Energy Solutions Inc. · triage 2026-09-05 · Edge: cyclical-trough · Score 4/10
+
+Atlas mines and delivers frac sand in the Permian, running proppant plants, the Dune Express conveyor and a last-mile trucking fleet, and is building an oilfield and behind-the-meter private power business expected to reach 180-200 MW deployed by year end. The edge type is cyclical-trough: Q2 adjusted EBITDA of $49.5 million was down from $71.2 million a year earlier on a 17% margin versus 25%, product revenue fell to $103.5 million, and management says the sand market is close to balance and positioned to tighten in 2027 as competitors' mines go under-invested. The biggest risk is that the balance sheet is funding a pivot at the trough: net debt is $914.2 million, Q2 operating cash flow was negative $553 thousand against $153.8 million of capex, $450 million of 0.50% convertible notes were issued in April, and no dividend was paid in Q2 versus $30.9 million a year earlier. The pack has no 10-K Item 1 or Item 7; the MD&A is a 10-Q substitute.
+
+_Sources: triage pack only (sections 2, 3, 5, 6, 7, 11). Triage-depth read, not a deep dive._

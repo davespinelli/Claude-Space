@@ -1,0 +1,5 @@
+# LGIH — LGI Homes, Inc. · triage 2026-09-05 · Edge: cyclical-trough · Score 6/10
+
+LGI Homes designs, builds and sells entry-level homes across 36 markets in 21 states, running a self-development platform and closing homes at an average sales price of $367,407 in Q2, with 151 active communities. The edge type is cyclical-trough: FY25 revenue fell 22.6%, but Q2 closings rose 8.8% to 1,440, homebuilding gross margin of 19.8% beat the midpoint, full-year gross margin guidance was raised for a second consecutive quarter to 19.0-21.0%, and debt fell $128.6 million in the quarter to a 42.6% debt-to-capital ratio. The market cap of $1.3B compares with $2.13 billion of book equity carrying only $12.0 million of goodwill, so the stock trades near 0.6 times tangible book. The biggest risk is that the book does not earn: H1 net income was $29.1 million on $2.13 billion of equity, H1 gross margin included an inventory impairment, FY25 operating cash flow was negative $140.0 million, and insiders sold $2.6 million with no open-market purchases.
+
+_Sources: triage pack only (sections 2, 3, 6, 7, 11). Triage-depth read, not a deep dive._

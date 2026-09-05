@@ -1,0 +1,5 @@
+# GNK — GENCO SHIPPING & TRADING LTD · triage 2026-09-05 · Edge: none · Score 0/10
+
+Not triaged. The bundle contains no filings for this ticker: section 11 of the pack lists nothing present and everything missing, including the 10-K Item 1 business description, the 10-K Item 7 MD&A, all 8-K filings, the earnings press release exhibit, the Form 4 summary and any transcript. The only content is the screen row from universe_under2b.csv, which shows a $1.2B market cap at $27.29, $245.9 million of net debt, FY25 revenue of $342.1 million down 19.1%, EBIT of $7.5 million, a net loss of $4.4 million, and the stock at its 52-week high after 55.5% twelve-month momentum. That row alone is not enough to describe the business, name an edge, or identify the biggest risk, and this desk's rule is to score strictly from the pack rather than from memory, so no edge type is claimed and the row is logged at 0 pending a filings fetch. Re-run fetch_filings.py GNK and re-triage.
+
+_Sources: triage pack only (sections 1, 2, 11 — no filings present). Not a triage read._
