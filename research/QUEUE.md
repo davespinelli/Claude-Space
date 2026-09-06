@@ -83,7 +83,6 @@
 48. breadth-adaptive-count-2022 — idea 46 found the adaptive count is a genuine bear defence (2022: f=0.35 -0.8%, f=0.45 -1.5% vs n=20's -9.0%, SPY -18.2%) that full-sample Sharpe hides. Test a rule that is fixed-n in broad markets and fraction-based only when E_t is in its bottom quintile. Max 2 params. (2026-09-04, lane B)
 51. trend-filter-by-market-cap — idea 49 showed the 200d/vol20 eligibility filter *destroys* 5.4pp/yr of CAGR at zero cost on sub-$2B names while it is the whole edge on universe.json. Isolate the filter alone (EW-all-eligible vs EW-all-names, no ranking, same gross) on all three universes and, if a cap column can be built, by cap decile within the small panel. Where does trend-following stop working, and does that boundary belong in RULES as a universe clause? (2026-09-04, lane B)
 52. small-cap-slower-trend — if whipsaw is the mechanism behind idea 49's 5.4pp filter cost, a slower filter should recover part of it: 200d MA with a 3%/5% re-entry band, or monthly instead of weekly rebalance, on the small panel. Max 2 params; the test is whether the filter merely stops losing or actually beats the no-filter control. Expect PARK. (2026-09-04, lane B)
-53. keep-candidate-universe-robustness — idea 2's n=20 passes 4b only on the 56-name list it was fitted on (fails broad by 0.02, fails the small panel outright). Test robustness to universe *composition* rather than parameters: re-run it on universe.json with 5/10 names dropped at random, 200 draws, and report the distribution of 4b passes. A KEEP that survives only one composition should be scoped or shelved. (2026-09-04, lane B)
 
 
 
@@ -99,6 +98,7 @@
 
 
 ## In progress
+53. keep-candidate-universe-robustness — idea 2's n=20 passes 4b only on the 56-name list it was fitted on (fails broad by 0.02, fails the small panel outright). Test robustness to universe *composition* rather than parameters: re-run it on universe.json with 5/10 names dropped at random, 200 draws, and report the distribution of 4b passes. A KEEP that survives only one composition should be scoped or shelved. (2026-09-04, lane B) [CLAIMED 2026-09-06, cloud]
 
 
 267. is-the-1.2x-to-1.4x-turnover-ratio-band-the-rung-sensitivity-boundary — idea 262's ladder puts the breakeven above the whole 0-25 bps range below ~1.2x and inside it above ~1.4x, but every point was a NULL against a comparand. Pre-register the band and test it on the record's non-null arm pairs (cadence dials, gross dials, n dials, the vol scaler), where idea 261 already found 23.9% majority-cost differences. If the band holds off-nulls it is a reportable screening rule; if it does not, the band is a null-arm artefact. Max 2 params. (2026-09-06)
