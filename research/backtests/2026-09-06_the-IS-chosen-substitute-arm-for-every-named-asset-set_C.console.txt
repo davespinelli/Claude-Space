@@ -1,0 +1,137 @@
+# 2026-09-06_the-IS-chosen-substitute-arm-for-every-named-asset-set_C
+# QUEUE idea 212 - the IS-chosen-substitute arm for EVERY named asset set
+# run 2026-09-06 02:35 UTC · costs [10.0, 25.0] bps · t+1 · freq W · gross 0.75 · NO SEED (populations enumerated)
+
+[CENSUS] human-chosen asset sets in the committed corpus (ticker literals in research/backtests/*.py, mapped to their LEADERBOARD rows)
+                 assets  k  n_scripts  lb_rows
+        TLT+GLD+DBC+UUP  4         15      222
+            TLT+GLD+UUP  3         15      145
+        BTC-USD+ETH-USD  2         11      454
+            GLD+DBC+UUP  3          1       28
+SPY+EFA+EEM+TLT+GLD+DBC  6          1        8
+            SPY+TLT+GLD  3          1       28
+            TLT+DBC+UUP  3          1       28
+            TLT+GLD+DBC  3          1       28
+            TLT+GLD+SHY  3          1      140
+  distinct human-chosen sets: 9 · LEADERBOARD rows they carry: 1081 (rows are counted once per set they touch)
+  SKIPPED BTC-USD+ETH-USD: crypto: baseline.EXCLUDE drops it from every cached panel; substitution population is EMPTY (no second crypto instrument)
+  RUN: 8 named sets x 2 panels x 3 base-n x 2 cost rungs = 96 cells
+  panel u56    4699 rows x 56 cols [2008-01-02 .. 2026-09-04] start 2009-01-13
+  panel broad  4699 rows x 136 cols [2008-01-02 .. 2026-09-04] start 2009-01-13
+
+[REPRODUCTION] asserted before any new number is read
+  [a] u56    run() vs engine.backtest on the evaluated sample [260:]: max|dret| 1.388e-17 max|dturn| 3.053e-16 -> PASS  (engine emits 2 NaN returns in the pre-warm-up head; excluded, not hidden)
+  [b] u56    cost identity 0bps->10bps vs engine 10bps: max|d| 0.000e+00 -> PASS
+  [c] u56    numpy sleeve == idea 134 sleeve_weights for all named sets: max|d| 0.0 -> PASS
+  [a] broad  run() vs engine.backtest on the evaluated sample [260:]: max|dret| 1.388e-17 max|dturn| 3.331e-16 -> PASS  (engine emits 2 NaN returns in the pre-warm-up head; excluded, not hidden)
+  [b] broad  cost identity 0bps->10bps vs engine 10bps: max|d| 0.000e+00 -> PASS
+  [c] broad  numpy sleeve == idea 134 sleeve_weights for all named sets: max|d| 0.0 -> PASS
+
+[POPULATIONS] enumerated whole, no draws, no seed
+  TLT+GLD+DBC+UUP              k=4  pool  8  population C(8,4) = 70
+  TLT+GLD+UUP                  k=3  pool  9  population C(9,3) = 84
+  GLD+DBC+UUP                  k=3  pool  9  population C(9,3) = 84
+  SPY+EFA+EEM+TLT+GLD+DBC      k=6  pool  9  population C(9,6) = 84
+  SPY+TLT+GLD                  k=3  pool 10  population C(10,3) = 120
+  TLT+DBC+UUP                  k=3  pool  9  population C(9,3) = 84
+  TLT+GLD+DBC                  k=3  pool  9  population C(9,3) = 84
+  TLT+GLD+SHY                  k=3  pool  9  population C(9,3) = 84
+
+[GRID] every book run once at 0 bps; cost rungs derived.  This is the whole enumeration.
+  (grid and walk-forward are fused: only the S0/CASH/REAL books and the S5 winners are held)
+  u56    n=10 grid rows so far 4220  (142s)
+  u56    n=20 grid rows so far 8440  (260s)
+  u56    n=40 grid rows so far 12660  (381s)
+  broad  n=10 grid rows so far 16880  (551s)
+  broad  n=20 grid rows so far 21100  (699s)
+  broad  n=40 grid rows so far 25320  (848s)
+  grid rows: 25320  (848s)  -> 2026-09-06_the-IS-chosen-substitute-arm-for-every-named-asset-set_C.grid.csv
+
+[KEEP PATHS] full sample, every grid row (PROTOCOL 4a and 4b), by arm kind
+       rows  pass4a  pass4b  pass4b_oos  rate4a  rate4b  rate4b_oos
+kind                                                               
+CASH     36      19       8           7  0.5278  0.2222      0.1944
+REAL    288     139      82          77  0.4826  0.2847      0.2674
+S0       12       3       0           0  0.2500  0.0000      0.0000
+SUB   24984   10582    4561        4330  0.4236  0.1826      0.1733
+
+[KEEP PATHS] 4b by named set, REAL rows only (the published construction)
+                         rows  pass4a  pass4b  pass4b_oos
+set                                                      
+GLD+DBC+UUP                36      17      11           9
+SPY+EFA+EEM+TLT+GLD+DBC    36      12       4           8
+SPY+TLT+GLD                36      15      12          11
+TLT+DBC+UUP                36      20      10           8
+TLT+GLD+DBC                36      17      11          12
+TLT+GLD+DBC+UUP            36      20      10           9
+TLT+GLD+SHY                36      17      11          10
+TLT+GLD+UUP                36      21      13          10
+
+[KEEP PATHS] which 4b bar binds (most common failing bar, by kind)
+  REAL  -=82, DD=78, CAGR=56, H2,OOS,DD=42, H2,OOS,CAGR=18, H1,CAGR=4
+  SUB   DD=5875, -=4561, H2,OOS,CAGR=4149, H2,OOS,DD=3395, CAGR=3121, H2,OOS,DD,CAGR=1177
+  S0    DD=9, H2,OOS,DD=3
+  CASH  CAGR=10, DD=8, -=8, H2,OOS,DD=5, H2,OOS,CAGR=3, H2,OOS,DD,CAGR=1
+
+[RULE 8 WALK-FORWARD] params fitted on <= 2016-12-31; 2017-2026 read ONCE.
+  S0 do-nothing (R_n) · S1 assets GIVEN (IS-argmax f) · S5 assets CHOSEN (IS-argmax f+set)
+  SM population mean at S1's f · SC cash carve-out at S1's f
+  cells: 96  (859s)
+
+[REPRODUCTION] [d] idea 190's committed walk-forward, rebuilt from this run's own grid
+  [d] S0 reproduced in 12/12 cells, max|d| 2.220e-16 -> PASS
+  [d] 190's S1 pick reproduced in 12/12 cells; OOS Sharpe max|d| 2.220e-16 -> PASS
+
+[ANSWER] per named set: does the published separation survive being CHOSEN not GIVEN?
+  d1 = OOS Sharpe(assets GIVEN) - do-nothing ; d5 = OOS Sharpe(assets CHOSEN) - do-nothing
+                    set  cells  lb_rows  d1_mean    d1_t d1_win  d5_mean     d5_t d5_win  d51_mean    d51_t d51_neg  survives
+        TLT+GLD+DBC+UUP     12      222  +0.0914 +7.6861  12/12  -0.2507 -16.5204   0/12   -0.3421 -20.7320   12/12     False
+            TLT+GLD+UUP     12      145  +0.0699 +6.8465  12/12  -0.2509 -17.2852   0/12   -0.3208 -19.0884   12/12     False
+            TLT+GLD+SHY     12      140  -0.0703 -4.9469   0/12  -0.2144 -10.7036   0/12   -0.1441  -4.7184   10/12     False
+            GLD+DBC+UUP     12       28  +0.0670 +4.4077  12/12  -0.2423 -16.3494   0/12   -0.3094 -17.8193   12/12     False
+            SPY+TLT+GLD     12       28  +0.0319 +2.7890   9/12  -0.2144 -10.7036   0/12   -0.2463 -11.0396   12/12     False
+            TLT+DBC+UUP     12       28  +0.0362 +4.7149  12/12  -0.2244  -8.6906   0/12   -0.2606 -11.0176   12/12     False
+            TLT+GLD+DBC     12       28  +0.0475 +4.8399  12/12  -0.2144 -10.7036   0/12   -0.2619 -13.4398   12/12     False
+SPY+EFA+EEM+TLT+GLD+DBC     12        8  +0.0042 +1.4544   9/12  -0.1242 -12.8409   0/12   -0.1283 -15.7896   12/12     False
+
+  named sets tested: 8  ·  LEADERBOARD rows they carry: 627
+  separations that REPRODUCE with the assets GIVEN (mean d1 > 0): 7/8
+  separations that SURVIVE being CHOSEN (mean d5 > 0 and majority of cells): 0/8
+  pooled over all 96 cells: d1 +0.0347 (t +5.69, 78/96) · d5 -0.2170 (t -29.72, 0/96) · d5-d1 -0.2517 (t -24.61, 94/96 negative)
+  the population MEAN substitute (SM) vs do-nothing: -0.0967 · cash carve-out (SC) vs do-nothing: -0.0025
+
+[WHAT THE IS CHOOSER PICKS] frequency of the substitute set it lands on
+  IEF+LQD+SLV x28 · IEF+LQD+UNG x23 · IEF+LQD+TLT x12 · IEF+LQD+SLV+TIP+UNG+UUP x12 · IEF+LQD+SLV+UNG x11 · IEF+LQD+UUP x6 · GLD+IEF+LQD x3 · IEF+LQD+TIP+UNG x1
+  leading ticker of the pick: IEF 93/96 · GLD 3/96
+    IEF appears in 96/96 picks
+    LQD appears in 96/96 picks
+    SHY appears in 0/96 picks
+    TIP appears in 13/96 picks
+    HYG appears in 0/96 picks
+
+[OOS LEVELS] mean over the 96 cells, vs the live book and SPY on the same window
+                    Sharpe   CAGR   MaxDD
+arm                                      
+S0 do-nothing       0.9805 0.1475 -0.2428
+S1 assets GIVEN     1.0152 0.1120 -0.1752
+S5 assets CHOSEN    0.7635 0.0719 -0.1706
+SM population mean  0.8838    NaN     NaN
+SC cash carve-out   0.9780 0.0958 -0.1619
+RULES v1            0.4695 0.0464 -0.1898
+SPY                 0.8820 0.1545 -0.3372
+
+[OOS-WINDOW 4b] passes by arm (of 96 cells)
+  S0_4b   pass   0/96 · commonest failing bar: DD=48, H1,DD=24, H1,OOS,DD=16, H1,H2,OOS,DD=8
+  S1_4b   pass  23/96 · commonest failing bar: -=23, CAGR=23, H1,DD=9, DD=8
+  S5_4b   pass   0/96 · commonest failing bar: H2,OOS,CAGR=29, H1,H2,OOS,CAGR=28, H1,H2,OOS,DD,CAGR=19, CAGR=11
+  SC_4b   pass  12/96 · commonest failing bar: CAGR=31, -=12, H1,CAGR=12, H1,H2,OOS,CAGR=8
+
+[SCOREBOARD vs the pre-registered predictions]
+  P1 checks [a]-[d]                                    -> see above
+  P2 <=10 distinct human-chosen sets, TLT/GLD/UUP family-> 9 censused, 8 runnable  HOLDS
+  P3 every named set separates with assets GIVEN        -> 7/8  FAILS
+  P4 0 survive being CHOSEN                             -> 0/8 survive  HOLDS
+  P5 d5-d1 < 0 in >=90% of cells                        -> 97.9%  HOLDS
+  P6 CAGR binds for S1                                  -> CAGR in 45.8% of S1 OOS-4b failures-lists  FAILS
+
+[DONE] 859s
