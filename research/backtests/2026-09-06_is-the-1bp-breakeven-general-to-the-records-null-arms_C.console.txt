@@ -1,0 +1,361 @@
+============================================================================================================================================================================================================================
+Idea 262 is-the-1bp-breakeven-general-to-the-records-null-arms (lane C) | 2026-09-06_is-the-1bp-breakeven-general-to-the-records-null-arms_C.py
+weekly cadence, next-day execution, gross matched 0.75, rungs [0, 1, 2, 5, 10, 25] bps, breakeven ladder 0..60.0 bps step 0.05
+============================================================================================================================================================================================================================
+
+====================================================================================================
+(A) CENSUS of every rng call site in research/backtests/*.py
+====================================================================================================
+
+HELD_KEY      a draw whose shape is (n_names,) broadcast over the whole index
+              (np.tile of an rng draw, or an rng draw used to build a constant column key)
+REDRAWN_KEY   a draw made per date / per rebalance (inside a loop over dates, or of shape
+              px.shape / (len(idx), ncols))
+PERM          rng.permutation / rng.shuffle used to relabel names or reorder a key
+SUBSET_PANEL  rng.choice used to pick a set of NAMES or CELLS (a panel/sub-sample null,
+              not a time-varying arm)
+NOISE         rng.normal / rng.standard_normal of shape px.shape (a noise-injection null)
+OTHER         everything else (bootstrap of returns, tie-breaks, grid shuffles, seeding)
+
+scripts scanned: 194   scripts with an rng call: 59   call sites: 163 (80 excluding seed declarations)
+
+Sites by class:
+cls
+SEED_DECL       83
+SUBSET_PANEL    33
+OTHER           23
+PERM            11
+HELD_KEY         7
+NOISE            3
+REDRAWN_KEY      3
+
+SCRIPTS by class (a script can appear in several):
+cls
+HELD_KEY         4
+NOISE            3
+OTHER           19
+PERM            11
+REDRAWN_KEY      2
+SEED_DECL       57
+SUBSET_PANEL    31
+
+TRADING-ARM nulls (a time-varying pick a cost rung can move): 13 sites in 8 scripts
+cls
+HELD_KEY       4
+NOISE          3
+REDRAWN_KEY    2
+
+the TRADING-ARM null scripts, by construction:
+  HELD_KEY     (4)
+      2026-09-05_the-share-at-which-ranking-stops-paying_cloud.py
+      2026-09-06_back-fill-the-zero-bps-rung-under-every-gross-matched-arm-difference_cloud.py
+      2026-09-06_is-RAND-beating-FWD-persistence-or-pick_C.py
+      2026-09-06_ranking-subtracts-value_B.py
+  REDRAWN_KEY  (2)
+      2026-09-05_is-the-book-size-floor-a-corpus-wide-clause_C.py
+      2026-09-06_is-RAND-beating-FWD-persistence-or-pick_C.py
+  NOISE        (3)
+      2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.py
+      2026-09-05_does-share-price-any-key-or-only-vol_B.py
+      2026-09-06_is-the-null-key-result-one-draw-or-a-distribution_cloud.py
+
+HAND AUDIT (all 11 PERM sites and all 33 SUBSET_PANEL sites were read, not sampled):
+  PERM          0 of 11 is a time-varying name pick.  Every one is a STATISTIC: a
+                permutation test (`rng.permutation(ry)` against a correlation, a failing-bar
+                matrix, an abstention count) or a half-split of a corpus, or a random draw of
+                MODE indices (`rng.permutation(np.arange(1, J))`).  A cost rung cannot move
+                any of them, so they are NOT what the queue is asking about and are excluded
+                from the pricing below.
+  SUBSET_PANEL  a random set of NAMES or CELLS, held for the sample - a panel-level null
+                (ideas 78/83's k-of-136 sub-panels).  Membership does not churn, so its
+                turnover is its comparand's; also excluded.
+  NOISE         3 scripts trade `walk = cumsum(rng.normal(0, sd, px.shape))` keyed by the
+                walk's own 126d momentum.  These DO trade, their churn is emergent rather
+                than scheduled, and the held/re-drawn dichotomy the queue names does not
+                describe them.  Priced below as `RWK`.
+
+Hand-audit sample (4 per class, full list in .census.csv / .audit.csv):
+                                                                                  script  line_no          cls                                                                                           src
+                                                       2026-09-03_inverse-vol-weights.py       92    SEED_DECL                                                                             np.random.seed(0)
+                                              2026-09-04_asset-class-dispersion_cloud.py      472    SEED_DECL                                                             rng = np.random.default_rng(SEED)
+                                              2026-09-04_asset-class-dispersion_cloud.py      475 SUBSET_PANEL                                      pick = list(rng.choice(names, DRAW_SIZE, replace=False))
+                                                          2026-09-04_spinoff-calendar.py       57    SEED_DECL                                                                             np.random.seed(0)
+                                               2026-09-05_2011-the-opposite-outlier_C.py      685    SEED_DECL                                                                rng = np.random.default_rng(0)
+                                               2026-09-05_2011-the-opposite-outlier_C.py      687 SUBSET_PANEL draws = np.array([arr[rng.choice(len(arr), 7, replace=False)].mean() for _ in range(200000)])
+               2026-09-05_IS-Sharpe-margin-as-the-reportable-selector-statistic_cloud.py      317         PERM                                                                      pr = rng.permutation(ry)
+                                            2026-09-05_V1u-small-negative-price_cloud.py      268 SUBSET_PANEL                                  keep = sorted(rng.choice(len(names), size=k, replace=False))
+                        2026-09-05_abstention-is-the-only-thing-that-ever-helps_cloud.py      298         PERM                                                     idx = rng.permutation(len(cells))[:k_abs]
+                        2026-09-05_abstention-is-the-only-thing-that-ever-helps_cloud.py      336        OTHER                               {cell: CAND[int(rr.integers(0, len(CAND)))] for cell in cells})
+                            2026-09-05_audit-every-committed-null-for-a-salted-seed_C.py      704         PERM                                                  sel = rng.permutation(np.arange(N))[:N_DRAW]
+                                           2026-09-05_candidate-count-vs-dispersion_B.py      469 SUBSET_PANEL                                      cols = list(rng.choice(names136, size=k, replace=False))
+                      2026-09-05_do-gross-choice-rules-lose-to-constants-in-general_C.py      520        OTHER                                        "RANDOM": ladder[int(rng_rand.integers(len(ladder)))],
+           2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.py      263        NOISE                                                    steps = rng.normal(0.0, sd, size=px.shape)
+           2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.py      332         PERM                                  return sorted(rng.permutation(np.arange(1, J))[:n].tolist())
+                            2026-09-05_does-any-fitted-dial-beat-its-own-modal-pick_B.py      581        OTHER                                        "RANDOM": ladder[int(rng_rand.integers(len(ladder)))],
+                        2026-09-05_does-any-fitted-dial-beat-its-own-modal-pick_cloud.py      272        OTHER                                                RANDOM=ladder[int(rng.integers(len(ladder)))],
+                                    2026-09-05_does-share-price-any-key-or-only-vol_B.py      193        NOISE                                                    steps = rng.normal(0.0, sd, size=px.shape)
+                             2026-09-05_is-the-book-size-floor-a-corpus-wide-clause_C.py      170  REDRAWN_KEY                  rnd = pd.DataFrame(rng.random(px.shape), index=px.index, columns=px.columns)
+                             2026-09-05_the-share-at-which-ranking-stops-paying_cloud.py      202     HELD_KEY                                   draw = pd.Series(rng.random(px.shape[1]), index=px.columns)
+2026-09-06_back-fill-the-zero-bps-rung-under-every-gross-matched-arm-difference_cloud.py      164     HELD_KEY                                                      rng = np.random.default_rng(1000 + seed)
+2026-09-06_back-fill-the-zero-bps-rung-under-every-gross-matched-arm-difference_cloud.py      165     HELD_KEY                     return pd.DataFrame(np.tile(rng.random(px.shape[1]), (len(px.index), 1)),
+                                 2026-09-06_is-RAND-beating-FWD-persistence-or-pick_C.py      203     HELD_KEY                                                      rng = np.random.default_rng(1000 + seed)
+                                 2026-09-06_is-RAND-beating-FWD-persistence-or-pick_C.py      222  REDRAWN_KEY                                                                k[0] = rng.random(px.shape[1])
+                                 2026-09-06_is-RAND-beating-FWD-persistence-or-pick_C.py      224  REDRAWN_KEY                                                                k[i] = rng.random(px.shape[1])
+                   2026-09-06_is-the-null-key-result-one-draw-or-a-distribution_cloud.py      152        NOISE                                                    steps = rng.normal(0.0, sd, size=px.shape)
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+Index sanity (must be ~252 rows/yr): 2013 252, 2018 251, 2024 252
+
+Panels:
+  U56       56 tradable (56 cols incl. benchmark)  2008-01-02 -> 2026-09-04   mean eligible 35.4 (p10 13 / p90 48)   rebalances 975
+  B136     136 tradable (136 cols incl. benchmark)  2008-01-02 -> 2026-09-04   mean eligible 86.5 (p10 31 / p90 116)   rebalances 975
+  BSTK100  100 tradable (101 cols incl. benchmark)  2008-01-02 -> 2026-09-04   mean eligible 63.5 (p10 24 / p90 86)   rebalances 975
+
+Running 203 books x 3 panels = 609 backtests at 0 bps (every rung derived exactly)...
+  resuming from 609 cached books (/tmp/claude-0/-home-user-Claude-Space/765bd9f1-76cc-5054-a7b2-ae891509647d/scratchpad/idea262.pkl)
+  U56 done (0 newly computed so far)
+  B136 done (0 newly computed so far)
+  BSTK100 done (0 newly computed so far)
+HARNESS IDENTITY U56/FWD20/seed None @10.0 bps: max|live-derived| = 0.000e+00
+HARNESS IDENTITY B136/RANDW20/seed 0 @25.0 bps: max|live-derived| = 0.000e+00
+HARNESS IDENTITY BSTK100/ROTW40/seed None @5.0 bps: max|live-derived| = 0.000e+00
+
+====================================================================================================
+REPRODUCTION GATE
+====================================================================================================
+  U56/FIXED20    12.7% / 1.092 / -18.3%  halves 1.088/1.102
+  U56/RULES v1   6.5% / 0.664 / -13.8%  halves 0.641/0.688
+  gate: PASS (idea 260 published 12.7%/1.093/-18.3% and 6.5%/0.666/-13.8%)
+
+sat_share (share of rebalances with fewer than n eligible names); cells with sat_share > 0.25 are excluded from headline counts:
+           20    30    40    60
+B136    0.078 0.091 0.121 0.178
+BSTK100 0.084 0.117 0.152 0.295
+U56     0.155 0.243 0.464 1.000
+unsaturated cells: 9 of 12 -> [('U56', 20), ('U56', 30), ('B136', 20), ('B136', 30), ('B136', 40), ('B136', 60), ('BSTK100', 20), ('BSTK100', 30), ('BSTK100', 40)]
+
+GRID: 3636 points written to 2026-09-06_is-the-1bp-breakeven-general-to-the-records-null-arms_C.grid.csv
+
+====================================================================================================
+1. TURNOVER OF EVERY NULL ARM AGAINST ITS COMPARANDS (x/yr, seed-mean)
+====================================================================================================
+arm           FWD  RANDA  RANDH  RANDM  RANDQ  RANDW  ROTW  RWK
+panel   n                                                      
+B136    20.0 14.3   10.1    9.3   20.8   12.9   60.2  61.8 17.5
+        30.0 12.5    9.9    9.1   18.8   12.2   52.2  53.4 15.6
+        40.0 11.3    9.6    8.9   17.1   11.6   45.0  46.5 14.1
+        60.0  9.8    9.2    8.8   14.0   10.5   31.5  31.9 11.9
+BSTK100 20.0 13.5   10.3    9.5   19.9   12.9   55.0  57.3 16.7
+        30.0 11.8   10.0    9.3   17.4   12.0   44.7  46.5 14.5
+        40.0 10.5    9.7    9.2   15.2   11.3   35.3  37.4 12.8
+        60.0  9.0    9.2    9.0   11.3    9.8   19.1  19.6 10.4
+U56     20.0 11.0    9.3    8.6   15.5   11.0   38.4  42.3 13.1
+        30.0  9.3    8.9    8.5   12.0    9.7   23.7  25.2 10.9
+        40.0  8.4    8.5    8.3    9.3    8.7   12.2  12.3  9.0
+        60.0  8.2    8.2    8.2    8.2    8.2    8.2   8.2  8.2
+
+turnover RATIO to FWD at the same n (>2x is idea 263's flag):
+arm           FWD  RANDA  RANDH  RANDM  RANDQ  RANDW  ROTW  RWK
+panel   n                                                      
+B136    20.0 1.00   0.71   0.65   1.45   0.90   4.21  4.32 1.22
+        30.0 1.00   0.79   0.73   1.51   0.98   4.19  4.28 1.25
+        40.0 1.00   0.85   0.79   1.51   1.03   3.99  4.12 1.25
+        60.0 1.00   0.94   0.90   1.43   1.07   3.23  3.27 1.22
+BSTK100 20.0 1.00   0.76   0.70   1.47   0.96   4.07  4.25 1.24
+        30.0 1.00   0.85   0.79   1.48   1.02   3.80  3.96 1.23
+        40.0 1.00   0.93   0.88   1.45   1.08   3.37  3.57 1.22
+        60.0 1.00   1.03   1.00   1.26   1.09   2.13  2.19 1.16
+U56     20.0 1.00   0.85   0.78   1.41   1.00   3.49  3.84 1.19
+        30.0 1.00   0.96   0.91   1.29   1.05   2.55  2.72 1.17
+        40.0 1.00   1.01   0.99   1.10   1.03   1.44  1.46 1.07
+        60.0 1.00   1.00   1.00   1.00   1.00   1.00  1.00 1.00
+
+====================================================================================================
+2. SHARPE DIFFERENCE AND THE EXACT COST RUNG AT WHICH IT FLIPS
+====================================================================================================
+
+--- vs FWD (unsaturated cells only, 3 panels) ---
+       redraws_yr   turn  turn_ratio     d0    d10  be_med  be_min  be_max  flips  nobs  be_below_10
+arm                                                                                                 
+RANDH       0.000  9.026       0.794  0.007  0.016  16.886   0.600  55.252     22    72            8
+RANDA       1.000  9.670       0.849  0.018  0.021  24.877   0.723  54.586      7    72            2
+RANDQ       4.000 11.564       1.009 -0.003 -0.017  21.722   1.040  59.054     33    72           11
+RANDM      12.000 16.745       1.447 -0.008 -0.068   6.454   0.596  19.488     37    72           32
+RWK           NaN 14.113       1.222  0.022 -0.016  11.360   0.645  45.695     48    72           20
+RANDW      52.000 42.890       3.656  0.019 -0.275   0.993   0.011   3.808     48    72           48
+ROTW       52.000 44.698       3.814  0.011 -0.300   0.752   0.165   3.594      6     9            6
+    RANDH  d0 +0.0069 (t +0.98, positive 37/72)   d@10bps +0.0159 (t +2.19, positive 45/72)
+    RANDA  d0 +0.0183 (t +2.60, positive 50/72)   d@10bps +0.0209 (t +2.86, positive 52/72)
+    RANDQ  d0 -0.0026 (t -0.46, positive 35/72)   d@10bps -0.0172 (t -2.99, positive 24/72)
+    RANDM  d0 -0.0076 (t -1.00, positive 37/72)   d@10bps -0.0684 (t -8.49, positive 5/72)
+    RWK    d0 +0.0217 (t +3.86, positive 48/72)   d@10bps -0.0156 (t -2.73, positive 28/72)
+    RANDW  d0 +0.0195 (t +3.18, positive 48/72)   d@10bps -0.2748 (t -26.88, positive 0/72)
+    ROTW   d0 +0.0113 (t +0.82, positive 6/9)   d@10bps -0.2996 (t -8.42, positive 0/9)
+
+--- vs EWall (unsaturated cells only, 3 panels) ---
+       redraws_yr   turn  turn_ratio     d0    d10  be_med  be_min  be_max  flips  nobs  be_below_10
+arm                                                                                                 
+RANDH       0.000  9.026       1.077 -0.021 -0.025  36.980   6.134  52.568     11    72            1
+RANDA       1.000  9.670       1.154 -0.010 -0.020  12.342   0.769  55.138     26    72            8
+RANDQ       4.000 11.564       1.380 -0.031 -0.058  13.704   0.567  26.869     17    72            8
+RANDM      12.000 16.745       1.998 -0.036 -0.109   2.562   0.444  10.038     20    72           19
+RWK           NaN 14.113       1.684 -0.007 -0.057   6.448   0.029  20.566     33    72           26
+RANDW      52.000 42.890       5.116 -0.009 -0.316   1.083   0.119   2.526     26    72           26
+ROTW       52.000 44.698       5.331 -0.017 -0.341   0.522   0.520   2.400      3     9            3
+    RANDH  d0 -0.0214 (t -3.40, positive 29/72)   d@10bps -0.0251 (t -3.99, positive 28/72)
+    RANDA  d0 -0.0100 (t -1.63, positive 35/72)   d@10bps -0.0201 (t -3.21, positive 27/72)
+    RANDQ  d0 -0.0309 (t -5.59, positive 17/72)   d@10bps -0.0582 (t -9.79, positive 9/72)
+    RANDM  d0 -0.0360 (t -5.16, positive 20/72)   d@10bps -0.1094 (t -13.30, positive 1/72)
+    RWK    d0 -0.0067 (t -1.24, positive 33/72)   d@10bps -0.0566 (t -9.00, positive 7/72)
+    RANDW  d0 -0.0089 (t -1.70, positive 26/72)   d@10bps -0.3158 (t -25.24, positive 0/72)
+    ROTW   d0 -0.0171 (t -1.31, positive 3/9)   d@10bps -0.3406 (t -8.05, positive 0/9)
+
+Per-cell breakeven of the two PUBLISHED endpoints vs FWD (seed-mean of per-seed breakevens):
+           breakeven_bps           d0           d10        turn_ratio      
+arm                RANDH RANDW  RANDH  RANDW  RANDH  RANDW      RANDH RANDW
+panel   n                                                                  
+B136    20        27.537 1.295  0.024  0.059  0.042 -0.395      0.650 4.206
+        30        16.230 1.404  0.024  0.045  0.037 -0.349      0.731 4.188
+        40        28.731 1.378  0.012  0.033  0.021 -0.301      0.789 3.991
+        60        52.195 1.580 -0.001  0.022  0.002 -0.193      0.902 3.234
+BSTK100 20        17.116 1.541  0.021  0.034  0.037 -0.305      0.703 4.073
+        30         5.628 1.866  0.043  0.026  0.054 -0.243      0.792 3.798
+        40        10.470 2.147  0.027  0.009  0.032 -0.194      0.878 3.372
+U56     20        55.252 0.092 -0.061 -0.039 -0.055 -0.328      0.784 3.490
+        30        31.581 0.950 -0.027 -0.013 -0.027 -0.166      0.915 2.552
+
+====================================================================================================
+3. THE LAW: is the breakeven reconstructible from published columns alone?
+   c* = dSharpe(0) * 1e4 / (T_x/vol_x - T_y/vol_y)
+====================================================================================================
+  n = 337 flipping (cell, arm, seed, comparand) points
+  R^2(measured, predicted) = 0.9989   median |error| = 0.028 bps   median measured = 6.414 bps
+  correlation = 0.9995
+    RANDH  n=  33  measured med 25.791  predicted med 25.578  med|err| 0.208
+    RANDA  n=  33  measured med 14.773  predicted med 14.768  med|err| 0.133
+    RANDQ  n=  50  measured med 14.759  predicted med 14.815  med|err| 0.182
+    RANDM  n=  57  measured med 4.990  predicted med 5.023  med|err| 0.032
+    RANDW  n=  74  measured med 1.014  predicted med 1.016  med|err| 0.001
+    RWK    n=  81  measured med 8.583  predicted med 8.601  med|err| 0.028
+    ROTW   n=   9  measured med 0.702  predicted med 0.704  med|err| 0.002
+
+====================================================================================================
+4. RULE 8 WALK-FORWARD  (IS 2009-01-01..2016-12-31 chooses, OOS 2017-01-01.. read once)
+====================================================================================================
+    ALL_ISARGMAX @10 bps picks U56: ('RANDH', 20, 7)
+    ALL_ISARGMAX @10 bps picks B136: ('RANDA', 40, 2)
+    ALL_ISARGMAX @10 bps picks BSTK100: ('RANDA', 40, 1)
+bps             0     1     2     5     10     25
+selector                                         
+ALL_ISARGMAX 1.225 1.189 1.144 1.116 1.069  0.929
+EWALL        1.154 1.146 1.138 1.114 1.073  0.952
+FWD20        1.084 1.074 1.065 1.036 0.987  0.842
+RANDH20      1.152 1.143 1.135 1.108 1.064  0.932
+RANDM20      1.138 1.120 1.102 1.047 0.957  0.684
+RANDW20      1.159 1.109 1.060 0.912 0.666 -0.068
+ROTW20       1.149 1.098 1.048 0.896 0.644 -0.107
+RULES v1     0.924 0.897 0.871 0.791 0.658  0.258
+RWK20        1.169 1.154 1.139 1.093 1.017  0.788
+SPY          0.882 0.882 0.882 0.882 0.882  0.882
+
+OOS CAGR:
+bps             0     1     2     5     10     25
+selector                                         
+ALL_ISARGMAX 0.130 0.126 0.120 0.117 0.112  0.096
+EWALL        0.123 0.123 0.122 0.119 0.114  0.100
+FWD20        0.149 0.147 0.146 0.141 0.134  0.112
+RANDH20      0.124 0.123 0.122 0.119 0.114  0.098
+RANDM20      0.122 0.120 0.118 0.111 0.101  0.070
+RANDW20      0.124 0.118 0.112 0.095 0.067 -0.013
+ROTW20       0.125 0.119 0.113 0.095 0.066 -0.017
+RULES v1     0.098 0.094 0.091 0.082 0.067  0.022
+RWK20        0.125 0.123 0.122 0.116 0.107  0.081
+SPY          0.155 0.155 0.155 0.155 0.155  0.155
+
+OOS MaxDD:
+bps              0      1      2      5      10     25
+selector                                              
+ALL_ISARGMAX -0.193 -0.193 -0.191 -0.192 -0.194 -0.199
+EWALL        -0.188 -0.189 -0.189 -0.190 -0.192 -0.196
+FWD20        -0.205 -0.206 -0.206 -0.207 -0.208 -0.212
+RANDH20      -0.192 -0.192 -0.192 -0.193 -0.195 -0.200
+RANDM20      -0.188 -0.188 -0.189 -0.190 -0.191 -0.196
+RANDW20      -0.191 -0.191 -0.192 -0.193 -0.195 -0.283
+ROTW20       -0.181 -0.182 -0.182 -0.183 -0.190 -0.313
+RULES v1     -0.142 -0.144 -0.146 -0.152 -0.162 -0.214
+RWK20        -0.188 -0.188 -0.189 -0.190 -0.192 -0.197
+SPY          -0.337 -0.337 -0.337 -0.337 -0.337 -0.337
+
+====================================================================================================
+5. KEEP PATHS over all grid points
+====================================================================================================
+4a passes by arm x rung:
+bps    0   1   2   5   10  25
+arm                          
+EWall   1   1   1   1   1   1
+FWD     4   4   4   4   4   4
+RANDA  32  32  32  32  32  29
+RANDH  32  32  32  32  32  30
+RANDM  32  32  32  32  31  14
+RANDQ  32  32  32  32  32  28
+RANDW  32  32  32  32  13   0
+ROTW    3   3   3   3   2   0
+RWK    32  32  32  32  32  24
+v1      3   3   3   3   0   0
+
+4b passes by arm x rung:
+bps    0   1   2   5   10  25
+arm                          
+EWall   2   2   2   2   1   0
+FWD     8   8   7   7   5   0
+RANDA  59  57  56  51  24   0
+RANDH  57  55  54  46  19   1
+RANDM  52  49  45  32   0   0
+RANDQ  59  57  56  43   7   0
+RANDW  63  54  40  11   0   0
+ROTW    7   5   5   1   0   0
+RWK    62  62  58  49   5   0
+v1      0   0   0   0   0   0
+
+totals: 4a 1121/3636   4b 1345/3636
+
+4b passes at PROTOCOL's 10 bps (61):
+panel   arm      n  seed  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  turn_yr
+ B136 RANDA 20.000 2.000 0.122   1.122 -0.167 1.255 1.002       1.127    9.692
+  U56 RANDH 20.000 7.000 0.108   1.117 -0.154 1.148 1.092       1.162    9.147
+  U56 RANDA 20.000 0.000 0.115   1.097 -0.170 1.137 1.067       1.133    9.288
+  U56   RWK 20.000 0.000 0.111   1.092 -0.166 1.090 1.097       1.175   13.152
+  U56 RANDA 20.000 5.000 0.113   1.092 -0.154 1.067 1.117       1.215    9.243
+  U56 RANDA 30.000 4.000 0.110   1.086 -0.152 1.097 1.080       1.159    9.005
+ B136 RANDA 60.000 2.000 0.114   1.086 -0.174 1.228 0.953       1.057    9.097
+  U56 RANDH 20.000 3.000 0.109   1.080 -0.164 1.089 1.075       1.172    8.174
+  U56 RANDH 30.000 3.000 0.110   1.080 -0.160 1.119 1.048       1.140    8.326
+  U56 RANDH 20.000 5.000 0.109   1.076 -0.160 1.000 1.146       1.211    8.901
+  U56 RANDQ 30.000 5.000 0.108   1.073 -0.161 1.147 1.010       1.090    9.708
+ B136 RANDH 40.000 5.000 0.115   1.073 -0.175 1.101 1.046       1.142    9.251
+  U56 RANDA 30.000 2.000 0.108   1.072 -0.159 1.073 1.074       1.148    8.811
+  U56 RANDQ 30.000 1.000 0.107   1.072 -0.162 1.074 1.073       1.162    9.738
+ B136 RANDH 20.000 2.000 0.124   1.070 -0.187 1.128 1.017       1.100    9.272
+  U56 RANDA 40.000 4.000 0.107   1.067 -0.155 1.083 1.056       1.129    8.583
+ B136 RANDH 20.000 5.000 0.116   1.065 -0.163 1.128 1.004       1.134    9.263
+ B136 RANDH 30.000 2.000 0.119   1.065 -0.191 1.144 0.990       1.079    9.053
+  U56   FWD 20.000   NaN 0.128   1.064 -0.183 1.068 1.066       1.131   10.996
+ B136 RANDH 40.000 2.000 0.115   1.062 -0.192 1.149 0.980       1.069    8.916
+
+binding bar census at 10 bps (fail4b):
+fail4b
+CAGR                 214
+DD                   128
+-                     61
+H1,H2,OOS,CAGR        49
+H1,H2,OOS,DD,CAGR     33
+H2,DD                 32
+H2,OOS,CAGR           25
+H1,CAGR               20
+H2,CAGR               20
+H2,OOS,DD             10
+H2,OOS,DD,CAGR         6
+H1,H2,CAGR             3
+
+DONE. artefacts: 2026-09-06_is-the-1bp-breakeven-general-to-the-records-null-arms_C.{census,audit,grid,breakeven,walkforward,keep}.csv
