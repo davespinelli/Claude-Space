@@ -2,6 +2,10 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-06 | 40694576 | Football Statistics Website from PostgreSQL | $2,200 | 86 | drafted |
+| 2026-09-06 | 40694223 | Automotive Excel Data Cleanup & Reporting | $245 | 11 | drafted |
+| 2026-09-06 | 40694549 | Automated Excel Analysis Workflow | $240 | 7 | drafted |
+| 2026-09-06 | 40694183 | Telegram Digital Marketplace Bot | $240 | 19 | drafted |
 | 2026-09-06 | 40693897 | Python Flask Scraping Integration Fix | $620 | 137 | drafted |
 | 2026-09-06 | 40693845 | PDF Text-to-Excel Conversion | $520 | 31 | drafted |
 | 2026-09-06 | 40693861 | AI Realtime Trading Risk Assessor | $460 | 62 | drafted |
@@ -126,9 +130,17 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Node.js Bulk Email Sender with Gmail API & SMTP Rotation (40693664) (SMTP rotation exists to spread bulk sending across accounts and stay under provider limits, which is deliverability evasion; we do not build it)
 - AI-Powered Business Operating System Development (40694076) (repost of 40691548 skipped 2026-09-05: full cloud business OS MVP at $30–$250, now 45 bids)
 - Entri Riwayat Pembelian Excel (40693794) (Indonesian-language posting and delivery, same reason as the earlier Indonesian data entry rows)
+- Expertise Required: Python-based Web Scraper Development (40694239) (the brief is a multi-tenant scraping and lead generation app, the same scope we skipped as 40693329; 127 bids at $27–$340)
+- Excel Files Data Updating & Modification – 45 Existing Client Files (40694571) and its "-- 2" twin (40694466) (both are reposts of 40690897, drafted 2026-09-04, so they fall under the near-duplicate rule. Worth noting for David: the client is clearly still hiring and 40694571 carries only 2 bids at a higher band of $159–$265, so the existing 40690897 draft can be repriced and submitted there directly)
+- AI-Driven Faceless YouTube Channel Development (40694388) (video production plus channel growth and monetisation, a content service rather than a build we deliver)
+- Bot Telegram para IQ Option (40694274) (Spanish-language delivery, 79 bids, and automated trading against a binary options platform whose terms do not permit bot access; no official API)
+- Hotel Review Visualization and Analysis Dashboard (chart-js listing) (the shortlist row carries no job id and an age of 15,046 hours, so the posting is stale and cannot be filed by id)
+- TradingView Strategy Conversion to Python (58 bids at $16–$132, below our floor for a strategy port)
 
 Note for this run: freelancer.com is blocked by the session network policy, so proposals were written from the descriptions the scanner captured in JOBS.md. Older undrafted rows have no description in the shortlist, which is why several were skipped rather than priced blind.
 
 Note for the 2026-09-06 10:55 UTC batch: freelancer.com is still blocked by the session network policy, so these seven were written from the descriptions the scanner captured. Ten NEW rows, three skipped for the reasons above. The scan script cannot refresh in this session; running it overwrites JOBS.md with an empty shortlist, so it was reverted.
+
+Note for the 2026-09-06 15:28 UTC batch: nine NEW rows, four drafted and five skipped for the reasons above. Freelancer.com remains blocked by the session network policy, so these were written from the descriptions the scanner captured. Two of the nine NEW rows are the same client reposting the 45-file Excel job already drafted as 40690897, so the batch is four rather than eight by supply, not by the per-run cap.
 
 Note for 2026-09-06: the 20:20 UTC scan carried only three NEW rows, one of which is a C#/.NET job we skipped. Expand Campus AI (40686904) was an older shortlist row never triaged either way; it has budget and bid data but no captured description, so the proposal is written to the job title and asks what the stack is rather than assuming. Earlier 09-03 backlog rows in seen.csv still carry no budget, bid or URL data, and the previous JOBS.md scans are not recoverable from git history, so they remain undrafted rather than priced blind.
