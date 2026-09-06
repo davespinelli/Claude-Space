@@ -1,6 +1,6 @@
 # Triage pack — BRBR · BELLRING BRANDS, INC.
 
-_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-06 11:36 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -9,7 +9,7 @@ _Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts o
 - **SIC:** 2000 — Food and Kindred Products
 - **Fiscal year end (MM-DD):** 09-30
 - **Exchange:** NYSE
-- **Filings fetched:** /Users/davidspinelli/Documents/Claude Space/research/deepvalue/filings/BRBR
+- **Filings fetched:** /home/user/Claude-Space/research/deepvalue/filings/BRBR
 
 ## 2. Screen row (all metrics)
 
@@ -18,11 +18,13 @@ _Source: candidates.csv_
 - **Name:** BELLRING BRANDS, INC.
 - **CIK:** 1,772,016 · **SIC:** 2000 (Food and Kindred Products) · **Exchange:** NYSE
 
+**Debt data:** OK — long-term debt from us-gaap:LongTermDebtNoncurrent
+
 **Valuation**
 
 | metric | value |
 |---|---|
-| price | 10.40 |
+| price | 10.39 |
 | mktcap | $1.2B |
 | ev | $2.3B |
 | ev_ebit | 6.4x |
@@ -40,6 +42,7 @@ _Source: candidates.csv_
 | ltd | $1.1B |
 | equity | -$467.2M |
 | ltd_tag | LongTermDebtNoncurrent |
+| ltd_missing | False |
 
 **Growth and operations**
 
@@ -49,6 +52,7 @@ _Source: candidates.csv_
 | revenue_prior | $2.0B |
 | rev_growth | 16.1% |
 | rev_growth_note | n/a |
+| eq_flag | n/a |
 | ebit | $357.4M |
 | net_income | $216.2M |
 | cfo | $260.6M |
@@ -67,10 +71,10 @@ _Source: candidates.csv_
 
 | metric | value |
 |---|---|
-| mom_12_1 | -69.9% |
-| r6m | -38.8% |
-| off_52w_high | -75.6% |
-| adv20 | $32.2M |
+| mom_12_1 | -71.6% |
+| r6m | -40.3% |
+| off_52w_high | -73.7% |
+| adv20 | $31.4M |
 
 **Screen ranks (0-1, higher is better)**
 
@@ -81,7 +85,7 @@ _Source: candidates.csv_
 | r_roic | 0.96 |
 | r_rev_growth | 0.78 |
 | r_buyback | 0.93 |
-| score | 0.90 |
+| score | 0.80 |
 
 **Data provenance and flags**
 
@@ -95,7 +99,7 @@ _Source: candidates.csv_
 | capex_missing | False |
 | ltd_missing | False |
 
-**Screen rationale:** top-quartile FCF yield 21.2%; cheap at 6.4x EV/EBIT; high ROIC 45.7%; revenue +16.1%; buying back stock -7.7%
+**Screen rationale:** top-quartile FCF yield 21.2%; cheap at 6.4x EV/EBIT; high ROIC 45.7%; revenue +16.1%; buying back stock -7.7%; WARNING 6m return below -40%
 
 
 ## 3. Share count trend
@@ -131,16 +135,9 @@ Detail: form4_last12m.csv
 
 ## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-04_2-02-results.md)
 
+_Extraction: started at the first release heading, 'BellRing Brands Reports Results for the Third Quarter of Fiscal Year 2'; skipped 45 forward-looking-statement block(s); 4 block(s) of pre-heading matter dropped._
+
 ## EX-99.1 - EX-99.1 Q3 2026 EARNINGS PRESS RELEASE (brbrexh991-q32026earningsr.htm)
-
-EX-99.1
-2
-brbrexh991-q32026earningsr.htm
-EX-99.1 Q3 2026 EARNINGS PRESS RELEASE
-
-Document
-
-Exhibit 99.1
 
 BellRing Brands Reports Results for the Third Quarter of Fiscal Year 2026; Updates Fiscal Year 2026 Outlook
 
@@ -174,8 +171,6 @@ Dymatize net sales increased 26.7%, driven by 6.0% increase in volume and 20.7% 
 
 Gross profit was $163.3 million, or 28.6% of net sales, a decrease of $30.3 million, compared to $193.6 million, or 35.4% of net sales, in the prior year period. Adjusted gross profit* was $157.9 million, or 27.7% of net sales, a decrease of $34.5 million,
 
-1
-
 compared to $192.4 million, or 35.1% of net sales in the prior year period. In the third quarter of 2026, gross profit and adjusted gross profit were impacted by significant input cost inflation (inclusive of tariffs) and higher freight. In addition, gross profit and adjusted gross profit were impacted by a $10.0 million charge for excess shake bottle inventory; this reflected a 180 unfavorable basis point impact to gross margin and adjusted gross margin.
 
 *Adjusted gross profit and adjusted gross profit margin are non-GAAP measures that exclude mark-to-market adjustments on commodity hedges. For additional information regarding non-GAAP measures, see the related explanations presented under "Use of Non-GAAP Measures" later in this release.
@@ -203,8 +198,6 @@ Gross profit was $485.8 million, or 28.5% of net sales, a decrease of $97.2 mill
 SG&A expenses were $263.2 million, or 15.4% of net sales, a decrease of $51.9 million, compared to $315.1 million, or 18.9% of net sales, in the prior year period. SG&A expenses included $5.9 million in reorganization charges in the nine months ended June 30, 2026 and a $69.0 million provision for legal matters in the nine months ended June 30, 2025, both of which were treated as adjustments for non-GAAP measures. Marketing and consumer advertising expenses were $71.8 million, an increase of $12.7 million compared to the prior year period, driven by increased Premier Protein spend.
 
 Operating profit was $209.9 million, a decrease of $45.3 million, compared to $255.2 million in the prior year period driven by lower gross profit.
-
-2
 
 Interest expense, net was $60.0 million and $49.3 million in the nine months ended June 30, 2026 and 2025, respectively, with the increase primarily driven by higher outstanding borrowings under BellRing's revolving credit facility. Income tax expense was $38.1 million in the nine months ended June 30, 2026 compared to $49.3 million in the nine months ended June 30, 2025. The effective income tax rate was 25.4% and 23.9% in the nine months ended June 30, 2026 and 2025, respectively.
 
@@ -353,26 +346,13 @@ _[...truncated at ~6,000 chars of this document]_
 
 ## 10. Earnings call material
 
-- **CALL PERIOD: 2026Q3** (call dated 2026-09-04)
-- **Recency:** same fiscal period as the latest earnings release in this pack.
-- **Other transcript files present (not shown):** transcript_2026Q3_2026-08-04.md [2026Q3, press_release]
-- **File:** transcript_2026Q3_2026-09-04.md
-- **Type:** REAL CALL TRANSCRIPT / PREPARED REMARKS — management's own words
-- **Source:** https://www.alphavantage.co/documentation/#transcript
+- **CALL PERIOD: 2026Q3** (call dated 2026-08-04)
+- **Recency:** no earnings release to compare against.
+- **File:** transcript_2026Q3_2026-08-04.md
+- **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
+- **Source:** https://www.sec.gov/Archives/edgar/data/1772016/000162828026052137/brbrexh991-q32026earningsr.htm
 
-**Operator** — *Operator*
-
-Thank you for standing by, and welcome to BellRing Brands' Third Quarter Fiscal Year 2026 Earnings Conference Call. I would now like to hand the call over to Jennifer Meyer, Investor Relations for BellRing Brands. Please go ahead.
-
-**Jennifer Meyer** — *Investor Relations*
-
-Good morning, and thank you for joining us today for BellRing Brands' Third Quarter Fiscal 2026 Earnings Call. With me today are Mike Axelrod, our President and CEO; and Paul Rode, our CFO. Mike and Paul will begin with prepared remarks, and afterwards, we'll have a brief question-and-answer session. The press release and supplemental slide presentation that support these remarks are posted on our website in both the Investor Relations and the SEC Filings sections at bellring.com. In addition, the release and slides are available on the SEC's website. Before we continue, I would like to remind you that this call will contain forward-looking statements, which are subject to risks and uncertainties that should be carefully considered by investors as actual results could differ materially from these statements. These forward-looking statements are current as of the date of this call, and management undertakes no obligation to update these statements. As a reminder, this call is being recorded, and an audio replay will be available on our website. And finally, this call will discuss certain non-GAAP measures. For a reconciliation of these non-GAAP measures to the nearest GAAP measure, see our press release issued this morning and posted on our website. With that, I will turn the call over to Mike.
-
-**Michael Axelrod** — *President and CEO*
-
-Thank you, Jennifer, and good morning, everyone. Thank you for joining our third quarter earnings call. I'm excited and honored to lead BellRing, and I'm grateful to the Board, the executive leadership team and colleagues across the company for the very warm welcome. As it's my seventh day at the company, I'll start the call with introductory remarks, and then pass it on to Paul to cover our third quarter performance and outlook for the remainder of fiscal 2026. I joined BellRing after 30 years in the consumer packaged goods industry across both entrepreneurial and large-scale businesses. Throughout my career, I've had the opportunity to grow businesses profitably by strengthening execution, improving operations and speed to market, and investing behind strong brands. What attracted me to BellRing was the combination of an attractive category with a long runway for growth, the market-leading Premier Protein brand, and a meaningful opportunity to improve execution. I built my career by putting the consumer first, building strong customer partnerships and creating value through disciplined execution, and I see many of these same opportunities here. Encouragingly, consumer demand for ready-to-drink protein shakes remains strong, and the category is among the fastest growing in CPG.
-
-_[...truncated at ~3,000 chars of this document]_
+_Body not repeated: this file is the same press release already excerpted in section 7._
 
 ## 11. Document availability
 
@@ -384,7 +364,7 @@ _[...truncated at ~3,000 chars of this document]_
 | MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2025-11-18_item7_mdna.md |
 | Risk factors | 10-K Item 1A - Risk Factors | 10-K_2025-11-18_item1a_risks.md |
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-04_2-02-results.md, 10-K_2025-11-18_item7_mdna.md, 10-K_2025-11-18_item1_business.md, transcript_2026Q3_2026-09-04.md
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-04_2-02-results.md, 10-K_2025-11-18_item7_mdna.md, 10-K_2025-11-18_item1_business.md, transcript_2026Q3_2026-08-04.md
 
 **Missing:** none
 

@@ -1,6 +1,6 @@
 # Triage pack — YELP · YELP INC
 
-_Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-06 11:36 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -9,7 +9,7 @@ _Generated 2026-09-04 12:10 UTC by research/deepvalue/triage_pack.py. Excerpts o
 - **SIC:** 7200 — Services-Personal Services
 - **Fiscal year end (MM-DD):** 12-31
 - **Exchange:** NYSE
-- **Filings fetched:** /Users/davidspinelli/Documents/Claude Space/research/deepvalue/filings/YELP
+- **Filings fetched:** /home/user/Claude-Space/research/deepvalue/filings/YELP
 
 ## 2. Screen row (all metrics)
 
@@ -18,16 +18,18 @@ _Source: candidates.csv_
 - **Name:** YELP INC
 - **CIK:** 1,345,016 · **SIC:** 7200 (Services-Personal Services) · **Exchange:** NYSE
 
+**Debt data:** OK — long-term debt from us-gaap:LongTermLineOfCredit
+
 **Valuation**
 
 | metric | value |
 |---|---|
-| price | 22.15 |
+| price | 21.66 |
 | mktcap | $1.2B |
 | ev | $1.2B |
-| ev_ebit | 6.5x |
+| ev_ebit | 6.4x |
 | fcf | $323.7M |
-| fcf_yield | 26.9% |
+| fcf_yield | 27.5% |
 
 **Quality and balance sheet**
 
@@ -40,6 +42,7 @@ _Source: candidates.csv_
 | ltd | $100.0M |
 | equity | $644.5M |
 | ltd_tag | LongTermLineOfCredit |
+| ltd_missing | False |
 
 **Growth and operations**
 
@@ -49,6 +52,7 @@ _Source: candidates.csv_
 | revenue_prior | $1.4B |
 | rev_growth | 3.7% |
 | rev_growth_note | n/a |
+| eq_flag | n/a |
 | ebit | $184.5M |
 | net_income | $145.6M |
 | cfo | $372.0M |
@@ -67,10 +71,10 @@ _Source: candidates.csv_
 
 | metric | value |
 |---|---|
-| mom_12_1 | -18.5% |
-| r6m | -8.7% |
-| off_52w_high | -34.5% |
-| adv20 | $25.6M |
+| mom_12_1 | -21.0% |
+| r6m | -11.7% |
+| off_52w_high | -36.0% |
+| adv20 | $24.7M |
 
 **Screen ranks (0-1, higher is better)**
 
@@ -95,7 +99,7 @@ _Source: candidates.csv_
 | capex_missing | False |
 | ltd_missing | False |
 
-**Screen rationale:** top-quartile FCF yield 26.9%; cheap at 6.5x EV/EBIT; high ROIC 22.4%; buying back stock -14.0%
+**Screen rationale:** top-quartile FCF yield 27.5%; cheap at 6.4x EV/EBIT; high ROIC 22.4%; buying back stock -14.0%
 
 
 ## 3. Share count trend
@@ -132,16 +136,9 @@ Detail: form4_last12m.csv
 
 ## 7. Latest earnings press release (8-K exhibit from 8-K_2026-08-06_2-02-results.md)
 
+_Extraction: started at the first release heading, 'Yelp Reports Second Quarter 2026 Results'; skipped 4 forward-looking-statement block(s); 4 block(s) of pre-heading matter dropped._
+
 ## EX-99.1 - EX-99.1 (yelpq2-26ex991pressrelease.htm)
-
-EX-99.1
-2
-yelpq2-26ex991pressrelease.htm
-EX-99.1
-
-Document
-
-EXHIBIT 99.1
 
 Yelp Reports Second Quarter 2026 Results
 
@@ -176,10 +173,6 @@ Yelp Inc. ( yelp.com ) is a community-driven platform that connects people with 
 action, whether it's requesting quotes from service pros, making reservations, ordering food, scheduling appointments, or connecting with the right businesses for their needs. Yelp was founded in San Francisco in 2004.
 
 Yelp intends to make future announcements of material financial and other information through its Investor Relations website. Yelp will also, from time to time, disclose this information through press releases, filings with the Securities and Exchange Commission, conference calls, or webcasts, as required by applicable law.
-
-Forward-Looking Statements
-
-This press release contains forward-looking statements relating to, among other things, Yelp's future performance, including its expected financial results for the full year 2026, its expectations regarding its AI transformation as well as its investments in and benefits from strategic initiatives, changes to its product offerings, the implications of trends in its key metrics and its ability to drive long-term profitable growth, that are based on its current expectations, forecasts and assumptions that involve risks and uncertainties.
 
 Yelp's actual results could differ materially from those predicted or implied and reported results should not be considered as an indication of future performance. Factors that could cause or contribute to such differences include, but are not limited to:
 
@@ -306,6 +299,48 @@ CONDENSED CONSOLIDATED STATEMENTS OF CASH FLOWS
 (In thousands)
 
 (Unaudited)
+
+Six Months Ended June 30,
+2026 | 2025
+Operating Activities
+Net income | 49,387 | 68,480
+Adjustments to reconcile net income to net cash provided by operating activities:
+Depreciation and amortization | 34,351 | 24,715
+Provision for credit losses | 18,005 | 22,562
+Stock-based compensation | 56,256 | 72,244
+Amortization of right-of-use assets | 3,002 | 6,715
+Deferred income taxes | 20,426 | (2,968)
+Amortization of deferred contract cost | 11,047 | 12,035
+Other adjustments, net | 2,474 | 1,471
+Changes in operating assets and liabilities, net of acquisition:
+Accounts receivable | (22,091) | (23,935)
+Prepaid expenses and other assets | (24,070) | (14,540)
+Operating lease liabilities | (4,355) | (15,396)
+Accounts payable, accrued liabilities and other liabilities | (10,794) | 4,646
+Net cash provided by operating activities | 133,638 | 156,029
+Investing Activities
+Purchases of marketable securities | (5,975) | (37,201)
+Sales and maturities of marketable securities | 109,293 | 34,769
+Purchases of other investments | (650) | (700)
+Maturities of other investments | 5,000 | —
+Acquisition, net of cash received | (263,600) | —
+Purchases of property, equipment and software | (27,409) | (23,555)
+Other investing activities | 75 | 67
+Net cash used in investing activities | (183,266) | (26,620)
+Financing Activities
+Proceeds from issuance of common stock for employee stock-based plans | 19,476 | 12,023
+Taxes paid related to the net share settlement of equity awards | (17,571) | (35,155)
+Repurchases of common stock | (174,000) | (128,450)
+Proceeds from revolving credit facility | 165,000 | —
+Repayments on revolving credit facility | (65,000) | —
+Other financing activities | (119) | —
+Net cash used in financing activities | (72,214) | (151,582)
+Effect of exchange rate changes on cash, cash equivalents and restricted cash | (149) | 2,651
+Change in cash, cash equivalents and restricted cash | (121,991) | (19,522)
+Cash, cash equivalents and restricted cash — Beginning of period | 216,289 | 217,682
+Cash, cash equivalents and restricted cash — End of period | 94,298 | 198,160
+
+Non-GAAP Financial Measures
 
 _[...truncated at ~12,000 chars of this document]_
 
@@ -434,7 +469,7 @@ _[...truncated at ~6,000 chars of this document]_
 ## 10. Earnings call material
 
 - **CALL PERIOD: 2026Q2** (call dated 2026-08-06)
-- **Recency:** same fiscal period as the latest earnings release in this pack.
+- **Recency:** no earnings release to compare against.
 - **File:** transcript_2026Q2_2026-08-06.md
 - **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
 - **Source:** https://www.sec.gov/Archives/edgar/data/1345016/000134501626000059/yelpq22026ex992lettertos.htm

@@ -490,3 +490,6 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-05 | AOUT | American Outdoor Brands, Inc. | $181.1M | cyclical-trough | 5 | Destock and tariff pull-forward reversing with gross margin up 630bp and EBITDA guidance raised, but the stock is at its 52-week high on ~9x guided EBITDA |
 | 2026-09-05 | PGNY | Progyny, Inc. | $2.0B | none | 4 | The 9.6% FCF yield is mostly a $131.9M stock-comp add-back, at 21.5x EV/EBIT with 5.5-7.5% guided growth and insiders net sellers |
 | 2026-09-05 | EGAN | EGAIN Corp | $160.3M | none | 0 | no filings in bundle |
+| 2026-09-06 | BRBR | BELLRING BRANDS, INC. | $1.2B | fallen-growth | 6 | Down 71.6% with volumes still growing and $21.3M of one-time inventory charges, but 8x guided EBITDA, 3.8x net debt and negative equity |
+| 2026-09-06 | STRT | STRATTEC SECURITY CORP | $302.2M | post-restructuring | 7 | EV $194.0M is 3.8x adjusted EBITDA with net cash 36% of the market cap, 3 insiders buying and margin up 150bp, against customers guiding production down 5-6% |
+| 2026-09-06 | YELP | YELP INC | $1.2B | cash-cow-narrative | 7 | 27.5% FCF yield and share count down 14% at under 4x guided EBITDA, but advertising revenue is shrinking 3% and insiders only sell |

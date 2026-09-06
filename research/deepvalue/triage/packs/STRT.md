@@ -1,6 +1,6 @@
 # Triage pack — STRT · STRATTEC SECURITY CORP
 
-_Generated 2026-09-04 12:44 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
+_Generated 2026-09-06 11:36 UTC by research/deepvalue/triage_pack.py. Excerpts only: every section is truncated. Do not infer anything the text does not say._
 
 ## 1. Company identity
 
@@ -9,7 +9,7 @@ _Generated 2026-09-04 12:44 UTC by research/deepvalue/triage_pack.py. Excerpts o
 - **SIC:** 3714 — Motor Vehicle Parts & Accessories
 - **Fiscal year end (MM-DD):** 06-28
 - **Exchange:** Nasdaq
-- **Filings fetched:** /Users/davidspinelli/Documents/Claude Space/research/deepvalue/filings/STRT
+- **Filings fetched:** /home/user/Claude-Space/research/deepvalue/filings/STRT
 
 **Fetcher warnings for this ticker:** 10-K 2026-08-28: heading split missed Item 1 - Business
 
@@ -26,12 +26,12 @@ _Source: candidates.csv_
 
 | metric | value |
 |---|---|
-| price | 74.42 |
-| mktcap | $296.6M |
-| ev | $188.3M |
-| ev_ebit | 7.1x |
+| price | 75.84 |
+| mktcap | $302.2M |
+| ev | $194.0M |
+| ev_ebit | 7.3x |
 | fcf | $39.0M |
-| fcf_yield | 13.1% |
+| fcf_yield | 12.9% |
 
 **Quality and balance sheet**
 
@@ -73,16 +73,16 @@ _Source: candidates.csv_
 
 | metric | value |
 |---|---|
-| mom_12_1 | 35.5% |
-| r6m | -9.7% |
-| off_52w_high | -18.1% |
-| adv20 | $8.0M |
+| mom_12_1 | 27.3% |
+| r6m | -5.7% |
+| off_52w_high | -16.6% |
+| adv20 | $8.1M |
 
 **Screen ranks (0-1, higher is better)**
 
 | metric | value |
 |---|---|
-| r_fcf_yield | 0.84 |
+| r_fcf_yield | 0.83 |
 | r_ev_ebit | 0.90 |
 | r_roic | 0.81 |
 | r_rev_growth | 0.40 |
@@ -101,7 +101,7 @@ _Source: candidates.csv_
 | capex_missing | False |
 | ltd_missing | False |
 
-**Screen rationale:** top-quartile FCF yield 13.1%; cheap at 7.1x EV/EBIT; high ROIC 16.1%; buying back stock -4.2%; net cash; 12-1 momentum 35.5%
+**Screen rationale:** top-quartile FCF yield 12.9%; cheap at 7.3x EV/EBIT; high ROIC 16.1%; buying back stock -4.2%; net cash; 12-1 momentum 27.3%
 
 
 ## 3. Share count trend
@@ -112,9 +112,7 @@ _Source: candidates.csv_
 
 ## 4. Price range (1 year)
 
-- Last 74.42 (as of 2026-09-03) · 52w range 61.36 - 90.91 · -18.1% vs 52w high · 21.3% above 52w low
-
-_Source: yfinance, live._
+_Not included: skipped (TRIAGE_NO_PRICE set)._
 
 ## 5. Material 8-K events, last 6 months (Items 1.01 / 1.02 / 5.02)
 
@@ -122,17 +120,16 @@ _Source: yfinance, live._
 
 ## 6. Insider activity (Form 4, trailing 12 months)
 
-Net open-market activity (last 12m): buys 4,598 sh / $286,430 vs sells 3,000 sh / $199,050 -> net $87,380 (BUYING).
+Net open-market activity (last 12m): buys 4,598 sh / $286,430 vs sells 0 sh / $0 -> net $286,430 (BUYING).
 Distinct insiders buying (code P): 3. Largest buy: Pauli Matthew bought 2,000 sh @ $62.53 ($125,060) on 2026-05-12.
 
-Form 4 filings parsed: 20; transaction rows: 25 (open-market buys 4, sales 1).
+Form 4 filings parsed: 12; transaction rows: 17 (open-market buys 4, sales 0).
 
 | code | rows |
 |---|---|
-| A | 13 |
-| F | 7 |
+| A | 8 |
+| F | 5 |
 | P | 4 |
-| S | 1 |
 
 Codes: P=open-market purchase, S=open-market sale, A=grant/award, M=option exercise, F=tax withholding, G=gift.
 
@@ -375,22 +372,69 @@ _Not available: the fetcher did not split out this section for this filing. Desc
 
 ## 10. Earnings call material
 
-- **CALL PERIOD: 2026Q3** (call dated 2026-09-04)
-- **Recency:** STALE: this call covers 2026Q3, but the latest earnings release in this pack (section 7, 8-K_2026-08-25_2-02-results.md) covers 2026Q4. Everything said below predates those results — do not read it as commentary on the current quarter.
-- **Other transcript files present (not shown):** transcript_2026Q4_2026-08-25.md [2026Q4, press_release]
-- **File:** transcript_2026Q3_2026-09-04.md
-- **Type:** REAL CALL TRANSCRIPT / PREPARED REMARKS — management's own words
-- **Source:** https://www.alphavantage.co/documentation/#transcript
+- **CALL PERIOD: 2026Q4** (call dated 2026-08-25)
+- **Recency:** no earnings release to compare against.
+- **File:** transcript_2026Q4_2026-08-25.md
+- **Type:** EARNINGS PRESS RELEASE ONLY, not the call — no Q&A, no unscripted management commentary. Do not attribute call quotes to this.
+- **Source:** https://www.sec.gov/Archives/edgar/data/933034/000093303426000003/strt-ex99_1.htm
 
-**Operator** — *Operator*
+EX-99.1
 
-Greetings, and welcome to the Strattec Security Corporation third quarter fiscal 2026 financial results. At this time, all participants are in a listen-only mode. A brief question-and-answer session will follow the formal presentation. As a reminder, this conference is being recorded. It is now my pleasure to introduce your host, Deborah Pawlowski, investor relations for Strattec Security Corporation. Please go ahead.
+2
 
-**Deborah Pawlowski** — *Investor Relations*
+strt-ex99_1.htm
 
-Thank you, and good morning, everyone. We appreciate you joining us for Strattec Security Corporation’s third quarter fiscal 2026 financial results conference call. Joining me on the call today are Jennifer Slater, our President and Chief Executive Officer, and Matthew Pauli, our Senior Vice President and Chief Financial Officer. Jennifer and Matthew will review our financial results, the progress we are making on our transformation, and our outlook. You can find a copy of the news release and the slides that accompany our conversation today on the Investor Relations section of the company’s website. If you are reviewing those slides, please turn to Slide two for the Safe Harbor statement. As you are aware, we may make some forward-looking statements on this call during the formal discussion as well as during the Q&A. These statements apply to future events that are subject to risks and uncertainties as well as other factors that could cause actual results to differ materially from what is stated on today’s call. These risks and uncertainties and other factors are discussed in the earnings release as well as in other documents filed by the company with the Securities and Exchange Commission. You can find these documents on our website as well. I want to also point out that during today’s call we will discuss some non-GAAP measures. We believe these will be useful in evaluating our performance. You should not consider the presentation of this additional information in isolation or as a substitute for results prepared in accordance with GAAP. We have provided reconciliations of non-GAAP to comparable GAAP measures in the tables accompanying the earnings release and slides. So with that, I will turn the call over to Jennifer, who will begin with Slide three. Thank you, and good morning, everyone.
+EX-99.1
 
-**Jennifer Slater** — *President and Chief Executive Officer*
+EX-99.1
+
+NEWS
+RELEASE
+
+FOR IMMEDIATE RELEASE
+Strattec Transformation Delivers Margin Improvement and Strong Cash Generation in Fiscal 2026
+•
+Fourth quarter fiscal 2026 sales of $151.8 million was better than expected and relatively unchanged from prior year; achieved sales of $579.4 million for fiscal year 2026
+•
+Reported fourth quarter gross margin of 15.6%; full year gross margin expanded to 16.5%, up from 15.0% in fiscal 2025
+•
+Generated fourth quarter net income attributable to Strattec of $3.9 million, or $0.95 per diluted share; adjusted diluted earnings per share were $2.06, unchanged from the prior-year period
+•
+Fourth quarter Adjusted EBITDA was $12.5 million, or 8.3% of net sales, compared with $13.0 million, or 8.5% of sales in the prior-year period; fiscal 2026 Adjusted EBITDA
+1
+was $50.5 million, a 15.3% increase over the prior year
+•
+$108.2 million in cash and no debt; returned $7.4 million to shareholders through share repurchases in the fourth quarter and authorized a new $40 million share buyback program
+
+MILWAUKEE, WI
+, August 25, 2026 —
+Strattec
+(Nasdaq: STRT), a global provider of highly engineered access solutions for the automotive and mobility industries, today reported financial results for its fourth quarter and fiscal year 2026, which ended June 28, 2026.
+Jennifer Slater, President and CEO of Strattec, said, “Fiscal 2026 was a year of progress and discipline as we continued to reshape Strattec into a more resilient, higher-performing business. While our fourth quarter and full-year results were impacted by foreign exchange pressure and the effect of tariffs, we nonetheless delivered year-over-year growth in sales and gross margin expansion through disciplined pricing, cost actions and operational improvements.”
+
+She added, “We recognize that the near-term environment remains uncertain and we have much work to do to secure future OEM vehicle platforms. We are managing costs and capital prudently, while our strong cash position gives us the flexibility to continue investing in our product technologies, production automation and customer relationships. These investments will better position us to benefit when industry conditions improve. The strength of our balance sheet also allows us to
+
+1
+Refer to use of “Non-GAAP Financial Metrics and Additional Financial Information” as well as accompanying reconciliations to GAAP
+
+3333 WEST GOOD HOPE ROAD
+MILWAUKEE, WI 53209
+
+414.247.3333
+WWW.STRATTEC.COM
+
+NASDAQ:
+STRT
+
+Strattec Transformation Delivers Margin Improvement and Strong Cash Generation in Fiscal 2026
+August 25, 2026
+Page
+2
+of 10
+
+consider opportunities that could enhance scale and diversify our customers, products and programs over time.”
+
+FY 2026 Fourth Quarter Financial Summary
 
 _[...truncated at ~3,000 chars of this document]_
 
@@ -404,8 +448,8 @@ _[...truncated at ~3,000 chars of this document]_
 | MD&A / management commentary | 10-K Item 7 MD&A | 10-K_2026-08-28_item7_mdna.md |
 | Risk factors | 10-K Item 1A - Risk Factors | 10-K_2026-08-28_item1a_risks.md |
 
-**Present:** meta.json, form4_summary.md, 8-K_2026-08-25_2-02-results.md, 10-K_2026-08-28_item7_mdna.md, transcript_2026Q3_2026-09-04.md
+**Present:** meta.json, form4_summary.md, 8-K_2026-08-25_2-02-results.md, 10-K_2026-08-28_item7_mdna.md, transcript_2026Q4_2026-08-25.md
 
-**Missing:** 10-K Item 1 - Business (business description), current-period call material (STALE)
+**Missing:** 10-K Item 1 - Business (business description)
 
 _Anything not listed as present is absent from this pack. Score conservatively and say what you could not check rather than guessing._
