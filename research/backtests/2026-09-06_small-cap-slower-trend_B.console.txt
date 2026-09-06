@@ -1,0 +1,375 @@
+================================================================================================================================================================
+Idea 52 small-cap-slower-trend (lane B) | 2026-09-06_small-cap-slower-trend_B.py
+================================================================================================================================================================
+Small-cap panel: 439 investable tickers (483 in file, 44 excluded for max_1d_move >= 1.0), 2010-01-04 -> 2026-09-04; evaluation starts 2011-01-13
+Index sanity (must be ~252 rows/yr): 2013 252, 2018 251, 2024 252
+Costs 10 bps, gross 0.75, next-day execution, 4b vs SPY (no small-cap benchmark offline).  Bands [0.0, 0.02, 0.03, 0.05, 0.08, 0.12], cadences ['W', 'M', 'Q'].
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+REFERENCE BOOKS
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+                                                     CAGR  Sharpe  MaxDD    H1    H2  isSharpe  isMaxDD  oCAGR  oSharpe  oMaxDD
+CONTROL EWall W                                     0.102   0.679 -0.362 0.799 0.615     0.776   -0.219  0.101    0.637  -0.362
+CONTROL EWall M                                     0.097   0.660 -0.347 0.775 0.596     0.743   -0.224  0.097    0.623  -0.347
+CONTROL EWall Q                                     0.101   0.682 -0.339 0.794 0.622     0.764   -0.220  0.102    0.647  -0.339
+RULES v2 on universe.json (LIVE BOOK, 4a comparand) 0.082   1.169 -0.121 1.056 1.272     0.960   -0.079  0.095    1.285  -0.121
+RULES v2 on the small panel (construction control)  0.038   0.571 -0.147 0.568 0.576     0.579   -0.114  0.038    0.566  -0.147
+SPY (4b comparand)                                  0.141   0.862 -0.337 0.891 0.858     0.832   -0.186  0.155    0.882  -0.337
+
+4b bars from SPY: H1>0.891, H2>0.858, OOS Sharpe>0.882, MaxDD>=-20.2%, CAGR>=9.89%
+Idea 49 reproduction check - EWall W control: CAGR 10.2% (idea 49: 10.2%), Sharpe 0.679 (0.677), MaxDD -36.2% (-36.2%); at 0 bps CAGR 10.4%
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+MECHANISM - gate state flips per name per year (daily, and as SAMPLED on the rebalance schedule)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+            mean_in_pct  flips_daily  flips_W  flips_M  flips_Q
+gate  band                                                     
+MA    0.00       49.556        8.910    4.168    2.103    1.259
+      0.02       49.544        4.108    3.356    2.035    1.242
+      0.03       49.462        3.272    2.908    1.968    1.225
+      0.05       49.577        2.343    2.237    1.787    1.200
+      0.08       50.200        1.674    1.646    1.475    1.125
+      0.12       51.315        1.203    1.197    1.143    0.970
+MAVOL 0.00       40.603        9.289    4.814    2.549    1.256
+      0.02       40.610        5.242    4.095    2.477    1.244
+      0.03       40.546        4.588    3.699    2.414    1.229
+      0.05       40.683        3.913    3.157    2.253    1.207
+      0.08       41.311        3.434    2.714    1.988    1.135
+      0.12       42.428        3.129    2.420    1.752    1.000
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+GRID - all 72 points (6 bands x 3 cadences x 2 gate forms x 2 constructions), 10 bps and 0 bps
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--- RESPREAD / gate MA ---   (dX_ctrl = idea vs the no-filter EWall control at the SAME cadence)
+          CAGR  Sharpe  MaxDD    H1    H2  oCAGR  oSharpe  oMaxDD  dCAGR_ctrl  dSharpe_ctrl  dMaxDD_ctrl  CAGR0  turn_yr    p4a                f4b
+cad band                                                                                                                                          
+W   0.00 0.065   0.503 -0.384 0.498 0.517  0.074    0.535  -0.384      -0.037        -0.176       -0.022  0.076   10.337  False  H1,H2,OOS,DD,CAGR
+    0.02 0.072   0.551 -0.372 0.564 0.553  0.079    0.570  -0.372      -0.030        -0.128       -0.010  0.081    8.615  False  H1,H2,OOS,DD,CAGR
+    0.03 0.073   0.555 -0.377 0.556 0.566  0.081    0.575  -0.377      -0.029        -0.124       -0.015  0.081    7.742  False  H1,H2,OOS,DD,CAGR
+    0.05 0.083   0.614 -0.379 0.653 0.600  0.090    0.624  -0.379      -0.019        -0.065       -0.017  0.090    6.324  False  H1,H2,OOS,DD,CAGR
+    0.08 0.084   0.622 -0.378 0.666 0.605  0.092    0.633  -0.378      -0.018        -0.057       -0.016  0.090    5.035  False  H1,H2,OOS,DD,CAGR
+    0.12 0.093   0.672 -0.376 0.728 0.647  0.098    0.664  -0.376      -0.009        -0.007       -0.015  0.097    4.025  False  H1,H2,OOS,DD,CAGR
+M   0.00 0.086   0.630 -0.395 0.677 0.610  0.092    0.633  -0.395      -0.011        -0.029       -0.047  0.091    4.574  False  H1,H2,OOS,DD,CAGR
+    0.02 0.089   0.647 -0.389 0.685 0.633  0.095    0.652  -0.389      -0.009        -0.012       -0.042  0.094    4.464  False  H1,H2,OOS,DD,CAGR
+    0.03 0.091   0.657 -0.384 0.686 0.650  0.098    0.664  -0.384      -0.007        -0.003       -0.037  0.095    4.385  False  H1,H2,OOS,DD,CAGR
+    0.05 0.097   0.692 -0.371 0.722 0.687  0.105    0.704  -0.371      -0.001         0.033       -0.024  0.101    4.081  False  H1,H2,OOS,DD,CAGR
+    0.08 0.097   0.693 -0.380 0.725 0.686  0.107    0.714  -0.380      -0.001         0.033       -0.033  0.100    3.488  False  H1,H2,OOS,DD,CAGR
+    0.12 0.100   0.713 -0.376 0.752 0.702  0.107    0.716  -0.376       0.002         0.053       -0.029  0.103    2.839  False       H1,H2,OOS,DD
+Q   0.00 0.090   0.654 -0.377 0.678 0.652  0.099    0.669  -0.377      -0.011        -0.028       -0.037  0.093    2.447  False  H1,H2,OOS,DD,CAGR
+    0.02 0.096   0.688 -0.370 0.689 0.703  0.108    0.717  -0.370      -0.006         0.006       -0.031  0.098    2.436  False  H1,H2,OOS,DD,CAGR
+    0.03 0.100   0.713 -0.366 0.701 0.738  0.113    0.747  -0.366      -0.001         0.031       -0.027  0.103    2.416  False       H1,H2,OOS,DD
+    0.05 0.103   0.730 -0.357 0.725 0.751  0.120    0.779  -0.357       0.002         0.048       -0.018  0.106    2.395  False       H1,H2,OOS,DD
+    0.08 0.105   0.735 -0.366 0.725 0.760  0.122    0.789  -0.366       0.003         0.053       -0.026  0.107    2.245  False       H1,H2,OOS,DD
+    0.12 0.104   0.730 -0.370 0.731 0.749  0.115    0.749  -0.370       0.002         0.048       -0.031  0.106    1.968  False       H1,H2,OOS,DD
+
+--- RESPREAD / gate MAVOL ---   (dX_ctrl = idea vs the no-filter EWall control at the SAME cadence)
+          CAGR  Sharpe  MaxDD    H1    H2  oCAGR  oSharpe  oMaxDD  dCAGR_ctrl  dSharpe_ctrl  dMaxDD_ctrl  CAGR0  turn_yr    p4a                f4b
+cad band                                                                                                                                          
+W   0.00 0.036   0.335 -0.402 0.439 0.256  0.031    0.289  -0.402      -0.066        -0.344       -0.040  0.050   13.359  False  H1,H2,OOS,DD,CAGR
+    0.02 0.043   0.383 -0.388 0.518 0.281  0.034    0.312  -0.388      -0.059        -0.296       -0.027  0.055   11.498  False  H1,H2,OOS,DD,CAGR
+    0.03 0.043   0.380 -0.407 0.502 0.291  0.035    0.311  -0.407      -0.059        -0.299       -0.046  0.054   10.619  False  H1,H2,OOS,DD,CAGR
+    0.05 0.048   0.408 -0.429 0.581 0.285  0.038    0.326  -0.429      -0.054        -0.272       -0.068  0.058    9.199  False  H1,H2,OOS,DD,CAGR
+    0.08 0.053   0.446 -0.410 0.609 0.329  0.044    0.369  -0.410      -0.049        -0.233       -0.048  0.062    7.966  False  H1,H2,OOS,DD,CAGR
+    0.12 0.061   0.496 -0.394 0.677 0.367  0.049    0.400  -0.394      -0.041        -0.183       -0.033  0.068    6.943  False  H1,H2,OOS,DD,CAGR
+M   0.00 0.056   0.464 -0.408 0.666 0.311  0.042    0.356  -0.408      -0.042        -0.195       -0.060  0.062    6.192  False  H1,H2,OOS,DD,CAGR
+    0.02 0.058   0.484 -0.405 0.664 0.347  0.046    0.388  -0.405      -0.039        -0.176       -0.058  0.065    6.082  False  H1,H2,OOS,DD,CAGR
+    0.03 0.059   0.488 -0.402 0.667 0.352  0.047    0.390  -0.402      -0.038        -0.172       -0.055  0.066    6.005  False  H1,H2,OOS,DD,CAGR
+    0.05 0.065   0.523 -0.385 0.707 0.387  0.052    0.425  -0.385      -0.033        -0.136       -0.038  0.071    5.570  False  H1,H2,OOS,DD,CAGR
+    0.08 0.070   0.563 -0.387 0.709 0.457  0.064    0.499  -0.387      -0.027        -0.097       -0.040  0.076    4.969  False  H1,H2,OOS,DD,CAGR
+    0.12 0.073   0.583 -0.384 0.733 0.477  0.065    0.508  -0.384      -0.024        -0.076       -0.037  0.078    4.354  False  H1,H2,OOS,DD,CAGR
+Q   0.00 0.051   0.429 -0.374 0.592 0.305  0.041    0.350  -0.374      -0.050        -0.253       -0.035  0.054    2.816  False  H1,H2,OOS,DD,CAGR
+    0.02 0.057   0.470 -0.369 0.601 0.370  0.050    0.410  -0.369      -0.045        -0.212       -0.030  0.060    2.815  False  H1,H2,OOS,DD,CAGR
+    0.03 0.059   0.486 -0.364 0.615 0.389  0.053    0.426  -0.364      -0.042        -0.196       -0.025  0.062    2.794  False  H1,H2,OOS,DD,CAGR
+    0.05 0.058   0.473 -0.354 0.605 0.373  0.051    0.416  -0.354      -0.044        -0.209       -0.014  0.060    2.681  False  H1,H2,OOS,DD,CAGR
+    0.08 0.065   0.523 -0.351 0.630 0.443  0.061    0.481  -0.351      -0.036        -0.159       -0.012  0.068    2.502  False  H1,H2,OOS,DD,CAGR
+    0.12 0.068   0.542 -0.361 0.671 0.446  0.061    0.483  -0.361      -0.034        -0.140       -0.022  0.070    2.205  False  H1,H2,OOS,DD,CAGR
+
+--- DEGROSS / gate MA ---   (dX_ctrl = idea vs the no-filter EWall control at the SAME cadence)
+          CAGR  Sharpe  MaxDD    H1    H2  oCAGR  oSharpe  oMaxDD  dCAGR_ctrl  dSharpe_ctrl  dMaxDD_ctrl  CAGR0  turn_yr    p4a                f4b
+cad band                                                                                                                                          
+W   0.00 0.036   0.539 -0.144 0.524 0.554  0.037    0.549  -0.144      -0.066        -0.140        0.218  0.039    3.712  False     H1,H2,OOS,CAGR
+    0.02 0.038   0.566 -0.146 0.572 0.563  0.038    0.561  -0.146      -0.064        -0.113        0.215  0.041    3.122  False     H1,H2,OOS,CAGR
+    0.03 0.038   0.571 -0.147 0.568 0.576  0.038    0.567  -0.147      -0.064        -0.108        0.215  0.041    2.801  False     H1,H2,OOS,CAGR
+    0.05 0.042   0.617 -0.146 0.636 0.602  0.042    0.612  -0.146      -0.060        -0.062        0.216  0.044    2.328  False     H1,H2,OOS,CAGR
+    0.08 0.043   0.628 -0.149 0.653 0.608  0.044    0.628  -0.149      -0.059        -0.051        0.213  0.045    1.926  False     H1,H2,OOS,CAGR
+    0.12 0.046   0.652 -0.160 0.686 0.622  0.045    0.636  -0.160      -0.056        -0.027        0.202  0.048    1.631  False     H1,H2,OOS,CAGR
+M   0.00 0.044   0.635 -0.167 0.710 0.571  0.041    0.587  -0.167      -0.053        -0.025        0.181  0.046    1.785  False     H1,H2,OOS,CAGR
+    0.02 0.046   0.661 -0.168 0.720 0.610  0.043    0.617  -0.168      -0.051         0.001        0.180  0.048    1.741  False     H1,H2,OOS,CAGR
+    0.03 0.046   0.663 -0.168 0.721 0.615  0.044    0.619  -0.168      -0.051         0.004        0.180  0.048    1.695  False     H1,H2,OOS,CAGR
+    0.05 0.049   0.690 -0.167 0.744 0.646  0.047    0.654  -0.167      -0.049         0.031        0.180  0.050    1.574  False     H1,H2,OOS,CAGR
+    0.08 0.049   0.679 -0.186 0.747 0.622  0.047    0.651  -0.186      -0.049         0.020        0.161  0.050    1.365  False     H1,H2,OOS,CAGR
+    0.12 0.049   0.670 -0.200 0.732 0.617  0.047    0.638  -0.200      -0.048         0.010        0.147  0.051    1.148  False     H1,H2,OOS,CAGR
+Q   0.00 0.039   0.538 -0.231 0.632 0.458  0.037    0.502  -0.231      -0.062        -0.144        0.109  0.040    1.011  False  H1,H2,OOS,DD,CAGR
+    0.02 0.041   0.570 -0.226 0.650 0.504  0.040    0.547  -0.226      -0.060        -0.112        0.114  0.042    1.003  False  H1,H2,OOS,DD,CAGR
+    0.03 0.042   0.580 -0.223 0.652 0.520  0.041    0.562  -0.223      -0.059        -0.102        0.117  0.043    0.992  False  H1,H2,OOS,DD,CAGR
+    0.05 0.044   0.606 -0.218 0.689 0.539  0.045    0.600  -0.218      -0.057        -0.076        0.121  0.045    0.977  False  H1,H2,OOS,DD,CAGR
+    0.08 0.045   0.608 -0.224 0.676 0.554  0.047    0.615  -0.224      -0.056        -0.074        0.116  0.046    0.933  False  H1,H2,OOS,DD,CAGR
+    0.12 0.044   0.585 -0.218 0.620 0.556  0.044    0.586  -0.218      -0.058        -0.097        0.122  0.045    0.828  False  H1,H2,OOS,DD,CAGR
+
+--- DEGROSS / gate MAVOL ---   (dX_ctrl = idea vs the no-filter EWall control at the SAME cadence)
+          CAGR  Sharpe  MaxDD    H1    H2  oCAGR  oSharpe  oMaxDD  dCAGR_ctrl  dSharpe_ctrl  dMaxDD_ctrl  CAGR0  turn_yr    p4a                f4b
+cad band                                                                                                                                          
+W   0.00 0.017   0.335 -0.120 0.442 0.216  0.010    0.233  -0.120      -0.085        -0.344        0.242  0.021    3.981  False     H1,H2,OOS,CAGR
+    0.02 0.018   0.367 -0.121 0.489 0.232  0.011    0.247  -0.121      -0.084        -0.312        0.241  0.022    3.455  False     H1,H2,OOS,CAGR
+    0.03 0.019   0.370 -0.121 0.479 0.248  0.012    0.253  -0.121      -0.083        -0.310        0.240  0.022    3.169  False     H1,H2,OOS,CAGR
+    0.05 0.021   0.414 -0.120 0.535 0.278  0.014    0.306  -0.120      -0.081        -0.266        0.241  0.024    2.780  False     H1,H2,OOS,CAGR
+    0.08 0.023   0.436 -0.123 0.553 0.304  0.016    0.341  -0.123      -0.079        -0.243        0.239  0.025    2.474  False     H1,H2,OOS,CAGR
+    0.12 0.026   0.472 -0.129 0.582 0.347  0.019    0.375  -0.129      -0.076        -0.208        0.233  0.028    2.282  False     H1,H2,OOS,CAGR
+M   0.00 0.026   0.484 -0.147 0.649 0.298  0.016    0.332  -0.147      -0.072        -0.176        0.200  0.028    2.031  False     H1,H2,OOS,CAGR
+    0.02 0.027   0.509 -0.149 0.657 0.342  0.018    0.369  -0.149      -0.070        -0.151        0.199  0.029    1.984  False     H1,H2,OOS,CAGR
+    0.03 0.028   0.514 -0.149 0.662 0.347  0.018    0.371  -0.149      -0.070        -0.146        0.198  0.030    1.938  False     H1,H2,OOS,CAGR
+    0.05 0.029   0.539 -0.147 0.674 0.388  0.020    0.410  -0.147      -0.068        -0.120        0.200  0.031    1.829  False     H1,H2,OOS,CAGR
+    0.08 0.031   0.554 -0.162 0.683 0.410  0.023    0.454  -0.162      -0.066        -0.106        0.185  0.033    1.648  False     H1,H2,OOS,CAGR
+    0.12 0.032   0.553 -0.173 0.666 0.427  0.025    0.463  -0.173      -0.065        -0.107        0.175  0.033    1.491  False     H1,H2,OOS,CAGR
+Q   0.00 0.021   0.354 -0.212 0.512 0.186  0.014    0.254  -0.212      -0.081        -0.328        0.128  0.022    0.987  False  H1,H2,OOS,DD,CAGR
+    0.02 0.022   0.381 -0.208 0.525 0.227  0.016    0.295  -0.208      -0.079        -0.301        0.131  0.023    0.981  False  H1,H2,OOS,DD,CAGR
+    0.03 0.023   0.392 -0.205 0.531 0.243  0.017    0.309  -0.205      -0.079        -0.291        0.135  0.024    0.971  False  H1,H2,OOS,DD,CAGR
+    0.05 0.023   0.402 -0.200 0.541 0.258  0.018    0.323  -0.200      -0.078        -0.280        0.139  0.024    0.957  False     H1,H2,OOS,CAGR
+    0.08 0.026   0.434 -0.202 0.550 0.314  0.021    0.375  -0.202      -0.075        -0.248        0.137  0.027    0.914  False  H1,H2,OOS,DD,CAGR
+    0.12 0.027   0.439 -0.199 0.541 0.328  0.022    0.391  -0.199      -0.075        -0.244        0.141  0.028    0.820  False     H1,H2,OOS,CAGR
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+TURNOVER-vs-TIMING DECOMPOSITION (idea 49's method): filter cost at 10 bps vs at 0 bps
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+                         total_cost_pp  timing_cost_pp  turnover_cost_pp
+con      gate  cad band                                                 
+RESPREAD MA    W   0.00          3.734           2.819             0.915
+                   0.02          2.990           2.254             0.736
+                   0.03          2.889           2.246             0.642
+                   0.05          1.909           1.413             0.495
+                   0.08          1.776           1.420             0.356
+                   0.12          0.943           0.694             0.249
+               M   0.00          1.135           0.734             0.401
+                   0.02          0.861           0.471             0.390
+                   0.03          0.684           0.302             0.382
+                   0.05          0.086          -0.265             0.351
+                   0.08          0.085          -0.201             0.286
+                   0.12         -0.213          -0.428             0.216
+               Q   0.00          1.135           0.928             0.208
+                   0.02          0.571           0.363             0.208
+                   0.03          0.126          -0.081             0.207
+                   0.05         -0.205          -0.411             0.205
+                   0.08         -0.329          -0.518             0.189
+                   0.12         -0.236          -0.395             0.158
+         MAVOL W   0.00          6.556           5.353             1.203
+                   0.02          5.889           4.874             1.015
+                   0.03          5.880           4.957             0.923
+                   0.05          5.395           4.618             0.778
+                   0.08          4.859           4.207             0.652
+                   0.12          4.132           3.584             0.548
+               M   0.00          4.173           3.615             0.558
+                   0.02          3.891           3.342             0.549
+                   0.03          3.819           3.279             0.541
+                   0.05          3.277           2.780             0.497
+                   0.08          2.694           2.258             0.436
+                   0.12          2.391           2.020             0.371
+               Q   0.00          5.050           4.813             0.237
+                   0.02          4.464           4.226             0.239
+                   0.03          4.195           3.958             0.237
+                   0.05          4.391           4.166             0.224
+                   0.08          3.644           3.437             0.207
+                   0.12          3.375           3.198             0.176
+DEGROSS  MA    W   0.00          6.646           6.453             0.193
+                   0.02          6.436           6.304             0.132
+                   0.03          6.395           6.296             0.099
+                   0.05          6.027           5.976             0.051
+                   0.08          5.880           5.871             0.009
+                   0.12          5.590           5.611            -0.021
+               M   0.00          5.338           5.249             0.089
+                   0.02          5.130           5.045             0.085
+                   0.03          5.104           5.024             0.080
+                   0.05          4.859           4.791             0.068
+                   0.08          4.860           4.814             0.046
+                   0.12          4.804           4.781             0.023
+               Q   0.00          6.236           6.190             0.046
+                   0.02          6.005           5.960             0.045
+                   0.03          5.927           5.883             0.044
+                   0.05          5.721           5.678             0.043
+                   0.08          5.628           5.590             0.038
+                   0.12          5.757           5.730             0.027
+         MAVOL W   0.00          8.542           8.329             0.214
+                   0.02          8.355           8.194             0.160
+                   0.03          8.338           8.207             0.131
+                   0.05          8.075           7.983             0.092
+                   0.08          7.907           7.846             0.061
+                   0.12          7.630           7.588             0.042
+               M   0.00          7.168           7.057             0.111
+                   0.02          7.014           6.907             0.107
+                   0.03          6.978           6.876             0.102
+                   0.05          6.801           6.710             0.091
+                   0.08          6.650           6.577             0.073
+                   0.12          6.546           6.490             0.057
+               Q   0.00          8.082           8.041             0.041
+                   0.02          7.930           7.889             0.041
+                   0.03          7.860           7.820             0.040
+                   0.05          7.797           7.759             0.039
+                   0.08          7.543           7.509             0.034
+                   0.12          7.466           7.441             0.025
+
+Idea 49's cell (RESPREAD/MAVOL/W/band=0.00, = its f=1.00 arm): total 6.56pp (idea 49: 6.6pp), timing 5.35pp (5.4pp), turnover 1.20pp (1.2pp)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+THE PRE-REGISTERED QUESTION: does any slower filter BEAT the no-filter control?
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Points beating the matched-cadence control on BOTH CAGR and Sharpe: 4 of 72
+                        CAGR  Sharpe  MaxDD    H1    H2  oCAGR  oSharpe  oMaxDD  dCAGR_ctrl  dSharpe_ctrl  dMaxDD_ctrl  CAGR0  turn_yr    p4a           f4b
+con      gate cad band                                                                                                                                     
+RESPREAD MA   M   0.12 0.100   0.713 -0.376 0.752 0.702  0.107    0.716  -0.376       0.002         0.053       -0.029  0.103    2.839  False  H1,H2,OOS,DD
+              Q   0.05 0.103   0.730 -0.357 0.725 0.751  0.120    0.779  -0.357       0.002         0.048       -0.018  0.106    2.395  False  H1,H2,OOS,DD
+                  0.08 0.105   0.735 -0.366 0.725 0.760  0.122    0.789  -0.366       0.003         0.053       -0.026  0.107    2.245  False  H1,H2,OOS,DD
+                  0.12 0.104   0.730 -0.370 0.731 0.749  0.115    0.749  -0.370       0.002         0.048       -0.031  0.106    1.968  False  H1,H2,OOS,DD
+Points beating it on Sharpe alone: 13 of 72; on CAGR alone: 4 of 72
+Best dSharpe_ctrl +0.053 at {'con': 'RESPREAD', 'gate': 'MA', 'cad': 'M', 'band': 0.12}
+Best dCAGR_ctrl  +0.33% at {'con': 'RESPREAD', 'gate': 'MA', 'cad': 'Q', 'band': 0.08}
+
+Does the band recover the cost?  timing cost (pp of CAGR vs the 0-bps control) by band, RESPREAD (pure selection, exposure held constant):
+band       0.00  0.02   0.03   0.05   0.08   0.12
+gate  cad                                        
+MA    M   0.734 0.471  0.302 -0.265 -0.201 -0.428
+      Q   0.928 0.363 -0.081 -0.411 -0.518 -0.395
+      W   2.819 2.254  2.246  1.413  1.420  0.694
+MAVOL M   3.615 3.342  3.279  2.780  2.258  2.020
+      Q   4.813 4.226  3.958  4.166  3.437  3.198
+      W   5.353 4.874  4.957  4.618  4.207  3.584
+
+Same, DEGROSS (selection + exposure):
+band       0.00  0.02  0.03  0.05  0.08  0.12
+gate  cad                                    
+MA    M   5.249 5.045 5.024 4.791 4.814 4.781
+      Q   6.190 5.960 5.883 5.678 5.590 5.730
+      W   6.453 6.304 6.296 5.976 5.871 5.611
+MAVOL M   7.057 6.907 6.876 6.710 6.577 6.490
+      Q   8.041 7.889 7.820 7.759 7.509 7.441
+      W   8.329 8.194 8.207 7.983 7.846 7.588
+
+Flips vs recovery, MA gate, weekly, RESPREAD (the whipsaw test - flips must fall AND cost must fall):
+      flips_daily  flips_W  mean_in_pct  timing_cost_pp
+band                                                   
+0.00        8.910    4.168       49.556           2.819
+0.02        4.108    3.356       49.544           2.254
+0.03        3.272    2.908       49.462           2.246
+0.05        2.343    2.237       49.577           1.413
+0.08        1.674    1.646       50.200           1.420
+0.12        1.203    1.197       51.315           0.694
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+VERDICT COUNTS
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+4a passes (vs RULES v2 on universe.json): 0 of 72
+4b passes (vs SPY): 0 of 72
+4b failure modes:
+f4b
+H1,H2,OOS,DD,CAGR    41
+H1,H2,OOS,CAGR       26
+H1,H2,OOS,DD          5
+  CONTROL EWall W: 4a False, 4b fails [H1,H2,OOS,DD]
+  CONTROL EWall M: 4a False, 4b fails [H1,H2,OOS,DD,CAGR]
+  CONTROL EWall Q: 4a False, 4b fails [H1,H2,OOS,DD]
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+WALK-FORWARD (rule 8): (band, cadence) chosen on 2010-2016 only, evaluated 2017-2026 untouched
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                         pick  isSharpe  oCAGR  oSharpe  oMaxDD  best_oSharpe best_pick  regret
+con      gate  sel                                                                                                             
+RESPREAD MA    S1 Sharpe                             b=0.12/M     0.718  0.107    0.716  -0.376         0.789  b=0.08/Q  -0.072
+               S2 4b-aware  none (no IS point met the DD cap)       NaN    NaN      NaN     NaN           NaN       NaN     NaN
+         MAVOL S1 Sharpe                             b=0.12/M     0.730  0.065    0.508  -0.384         0.508  b=0.12/M   0.000
+               S2 4b-aware  none (no IS point met the DD cap)       NaN    NaN      NaN     NaN           NaN       NaN     NaN
+DEGROSS  MA    S1 Sharpe                             b=0.05/M     0.752  0.047    0.654  -0.167         0.654  b=0.05/M   0.000
+               S2 4b-aware                           b=0.05/M     0.752  0.047    0.654  -0.167         0.654  b=0.05/M   0.000
+         MAVOL S1 Sharpe                             b=0.05/M     0.720  0.020    0.410  -0.147         0.463  b=0.12/M  -0.053
+               S2 4b-aware                           b=0.05/M     0.720  0.020    0.410  -0.147         0.463  b=0.12/M  -0.053
+
+OOS comparands  SPY: CAGR 15.45% Sharpe 0.882 MaxDD -33.7%  |  LIVE BOOK (v2/U56): CAGR 9.53% Sharpe 1.285 MaxDD -12.1%
+  NO-FILTER CONTROL W: OOS CAGR 10.10% Sharpe 0.637 MaxDD -36.2%
+  NO-FILTER CONTROL M: OOS CAGR 9.71% Sharpe 0.623 MaxDD -34.7%
+  NO-FILTER CONTROL Q: OOS CAGR 10.16% Sharpe 0.647 MaxDD -33.9%
+Walk-forward picks whose OOS Sharpe beats the weekly no-filter control (0.637): 3 of 6
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+COST SENSITIVITY (sub-$2B names; 10 bps is optimistic)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+                        CAGR@0  Sharpe@0  CAGR@10  Sharpe@10  CAGR@25  Sharpe@25  CAGR@50  Sharpe@50
+point                                                                                               
+CONTROL EWall/W          0.104     0.690    0.102      0.679    0.099      0.663    0.094      0.636
+RESPREAD/MAVOL/b=0.0/W   0.050     0.435    0.036      0.335    0.016      0.185   -0.018     -0.064
+RESPREAD/MA/b=0.08/Q     0.107     0.750    0.105      0.735    0.101      0.712    0.095      0.675
+DEGROSS/MA/b=0.05/M      0.050     0.712    0.049      0.690    0.046      0.658    0.042      0.604
+
+================================================================================================================================================================
+LEADERBOARD rows written to console block below; CSVs written beside the script.
+================================================================================================================================================================
+| 2026-09-06 | 52 RESPREAD MA b=0.00 W (small panel) | 6.5% | 0.50 | -38.4% | 0.50 / 0.52 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.02 W (small panel) | 7.2% | 0.55 | -37.2% | 0.56 / 0.55 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.03 W (small panel) | 7.3% | 0.56 | -37.7% | 0.56 / 0.57 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.05 W (small panel) | 8.3% | 0.61 | -37.9% | 0.65 / 0.60 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.08 W (small panel) | 8.4% | 0.62 | -37.8% | 0.67 / 0.60 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.12 W (small panel) | 9.3% | 0.67 | -37.6% | 0.73 / 0.65 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.00 M (small panel) | 8.6% | 0.63 | -39.5% | 0.68 / 0.61 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.02 M (small panel) | 8.9% | 0.65 | -38.9% | 0.69 / 0.63 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.03 M (small panel) | 9.1% | 0.66 | -38.4% | 0.69 / 0.65 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.05 M (small panel) | 9.7% | 0.69 | -37.1% | 0.72 / 0.69 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.08 M (small panel) | 9.7% | 0.69 | -38.0% | 0.72 / 0.69 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.12 M (small panel) | 10.0% | 0.71 | -37.6% | 0.75 / 0.70 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.00 Q (small panel) | 9.0% | 0.65 | -37.7% | 0.68 / 0.65 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.02 Q (small panel) | 9.6% | 0.69 | -37.0% | 0.69 / 0.70 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.03 Q (small panel) | 10.0% | 0.71 | -36.6% | 0.70 / 0.74 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.05 Q (small panel) | 10.3% | 0.73 | -35.7% | 0.73 / 0.75 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.08 Q (small panel) | 10.5% | 0.73 | -36.6% | 0.73 / 0.76 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MA b=0.12 Q (small panel) | 10.4% | 0.73 | -37.0% | 0.73 / 0.75 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.00 W (small panel) | 3.6% | 0.33 | -40.2% | 0.44 / 0.26 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.02 W (small panel) | 4.3% | 0.38 | -38.8% | 0.52 / 0.28 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.03 W (small panel) | 4.3% | 0.38 | -40.7% | 0.50 / 0.29 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.05 W (small panel) | 4.8% | 0.41 | -42.9% | 0.58 / 0.28 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.08 W (small panel) | 5.3% | 0.45 | -41.0% | 0.61 / 0.33 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.12 W (small panel) | 6.1% | 0.50 | -39.4% | 0.68 / 0.37 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.00 M (small panel) | 5.6% | 0.46 | -40.8% | 0.67 / 0.31 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.02 M (small panel) | 5.8% | 0.48 | -40.5% | 0.66 / 0.35 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.03 M (small panel) | 5.9% | 0.49 | -40.2% | 0.67 / 0.35 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.05 M (small panel) | 6.5% | 0.52 | -38.5% | 0.71 / 0.39 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.08 M (small panel) | 7.0% | 0.56 | -38.7% | 0.71 / 0.46 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.12 M (small panel) | 7.3% | 0.58 | -38.4% | 0.73 / 0.48 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.00 Q (small panel) | 5.1% | 0.43 | -37.4% | 0.59 / 0.30 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.02 Q (small panel) | 5.7% | 0.47 | -36.9% | 0.60 / 0.37 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.03 Q (small panel) | 5.9% | 0.49 | -36.4% | 0.61 / 0.39 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.05 Q (small panel) | 5.8% | 0.47 | -35.4% | 0.61 / 0.37 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.08 Q (small panel) | 6.5% | 0.52 | -35.1% | 0.63 / 0.44 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 RESPREAD MAVOL b=0.12 Q (small panel) | 6.8% | 0.54 | -36.1% | 0.67 / 0.45 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.00 W (small panel) | 3.6% | 0.54 | -14.4% | 0.52 / 0.55 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.02 W (small panel) | 3.8% | 0.57 | -14.6% | 0.57 / 0.56 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.03 W (small panel) | 3.8% | 0.57 | -14.7% | 0.57 / 0.58 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.05 W (small panel) | 4.2% | 0.62 | -14.6% | 0.64 / 0.60 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.08 W (small panel) | 4.3% | 0.63 | -14.9% | 0.65 / 0.61 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.12 W (small panel) | 4.6% | 0.65 | -16.0% | 0.69 / 0.62 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.00 M (small panel) | 4.4% | 0.63 | -16.7% | 0.71 / 0.57 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.02 M (small panel) | 4.6% | 0.66 | -16.8% | 0.72 / 0.61 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.03 M (small panel) | 4.6% | 0.66 | -16.8% | 0.72 / 0.61 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.05 M (small panel) | 4.9% | 0.69 | -16.7% | 0.74 / 0.65 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.08 M (small panel) | 4.9% | 0.68 | -18.6% | 0.75 / 0.62 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.12 M (small panel) | 4.9% | 0.67 | -20.0% | 0.73 / 0.62 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.00 Q (small panel) | 3.9% | 0.54 | -23.1% | 0.63 / 0.46 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.02 Q (small panel) | 4.1% | 0.57 | -22.6% | 0.65 / 0.50 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.03 Q (small panel) | 4.2% | 0.58 | -22.3% | 0.65 / 0.52 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.05 Q (small panel) | 4.4% | 0.61 | -21.8% | 0.69 / 0.54 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.08 Q (small panel) | 4.5% | 0.61 | -22.4% | 0.68 / 0.55 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MA b=0.12 Q (small panel) | 4.4% | 0.59 | -21.8% | 0.62 / 0.56 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.00 W (small panel) | 1.7% | 0.33 | -12.0% | 0.44 / 0.22 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.02 W (small panel) | 1.8% | 0.37 | -12.1% | 0.49 / 0.23 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.03 W (small panel) | 1.9% | 0.37 | -12.1% | 0.48 / 0.25 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.05 W (small panel) | 2.1% | 0.41 | -12.0% | 0.53 / 0.28 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.08 W (small panel) | 2.3% | 0.44 | -12.3% | 0.55 / 0.30 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.12 W (small panel) | 2.6% | 0.47 | -12.9% | 0.58 / 0.35 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.00 M (small panel) | 2.6% | 0.48 | -14.7% | 0.65 / 0.30 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.02 M (small panel) | 2.7% | 0.51 | -14.9% | 0.66 / 0.34 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.03 M (small panel) | 2.8% | 0.51 | -14.9% | 0.66 / 0.35 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.05 M (small panel) | 2.9% | 0.54 | -14.7% | 0.67 / 0.39 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.08 M (small panel) | 3.1% | 0.55 | -16.2% | 0.68 / 0.41 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.12 M (small panel) | 3.2% | 0.55 | -17.3% | 0.67 / 0.43 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.00 Q (small panel) | 2.1% | 0.35 | -21.2% | 0.51 / 0.19 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.02 Q (small panel) | 2.2% | 0.38 | -20.8% | 0.53 / 0.23 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.03 Q (small panel) | 2.3% | 0.39 | -20.5% | 0.53 / 0.24 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.05 Q (small panel) | 2.3% | 0.40 | -20.0% | 0.54 / 0.26 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.08 Q (small panel) | 2.6% | 0.43 | -20.2% | 0.55 / 0.31 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,DD,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
+| 2026-09-06 | 52 DEGROSS MAVOL b=0.12 Q (small panel) | 2.7% | 0.44 | -19.9% | 0.54 / 0.33 | 1.17 (1.06/1.27) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | research/backtests/2026-09-06_small-cap-slower-trend_B.py |
