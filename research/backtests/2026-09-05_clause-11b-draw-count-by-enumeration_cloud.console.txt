@@ -1,0 +1,296 @@
+======================================================================================================================
+IDEA 207  how-many-draws-does-clause-11b-need   (cloud, 2026-09-05)
+======================================================================================================================
+
+  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable (SURVIVORSHIP: current constituents only, no delistings)
+
+======================================================================================================================
+REPRODUCTION, asserted before any new number is read
+======================================================================================================================
+  [a] U56       fast_backtest vs engine.backtest: max|dret|=1.388e-17 max|dturn|=3.053e-16 -> PASS
+  [b] U56       cost identity 10bps from the 0bps run: max|d|=1.388e-17 -> PASS
+  [c] U56       base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [a] BROAD136  fast_backtest vs engine.backtest: max|dret|=2.082e-17 max|dturn|=2.776e-16 -> PASS
+  [b] BROAD136  cost identity 10bps from the 0bps run: max|d|=2.082e-17 -> PASS
+  [c] BROAD136  base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [a] SMALL439  fast_backtest vs engine.backtest: max|dret|=2.776e-17 max|dturn|=4.441e-16 -> PASS
+  [b] SMALL439  cost identity 10bps from the 0bps run: max|d|=2.776e-17 -> PASS
+  [c] SMALL439  base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+
+  PROTOCOL 3 baselines (RULES v1 and SPY), per panel, on each panel's own sample:
+   panel                name   CAGR  Sharpe   MaxDD     H1     H2  CAGR_OOS  Sharpe_OOS  MaxDD_OOS
+     U56     RULES v1 @10bps 0.0645  0.6642 -0.1383 0.6409 0.6878    0.0773      0.7471    -0.1383
+     U56                 SPY 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372
+     U56 control book @10bps 0.1286  1.1075 -0.1821 1.1099 1.1117    0.1449      1.1775    -0.1821
+     U56 control book @25bps 0.1127  0.9845 -0.1833 0.9768 0.9966    0.1289      1.0618    -0.1833
+BROAD136     RULES v1 @10bps 0.0632  0.6295 -0.2119 0.7444 0.5320    0.0594      0.5762    -0.2119
+BROAD136                 SPY 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372
+BROAD136 control book @10bps 0.1314  0.9493 -0.2157 1.1272 0.7955    0.1240      0.8758    -0.2157
+BROAD136 control book @25bps 0.1084  0.8033 -0.2168 0.9773 0.6524    0.1006      0.7310    -0.2168
+SMALL439     RULES v1 @10bps 0.0765  0.6319 -0.3237 0.6596 0.6032    0.0788      0.6617    -0.3237
+SMALL439                 SPY 0.1413  0.8615 -0.3372 0.8907 0.8577    0.1545      0.8820    -0.3372
+SMALL439 control book @10bps 0.0657  0.4635 -0.2684 0.5942 0.3566    0.0746      0.4997    -0.2684
+SMALL439 control book @25bps 0.0338  0.2824 -0.3456 0.4160 0.1719    0.0403      0.3138    -0.3456
+
+  [d] RULES v1 on U56 @10bps Sharpe 0.66418 vs idea 208's published 0.66418 -> PASS
+
+======================================================================================================================
+ENUMERATION -- the COMPLETE rotation population of all 90 configurations
+    90 configs x (1 real + J-1 rotations) = 84,600 genuine backtests, x 2 cost rungs = 169,200 rows
+======================================================================================================================
+   10/90 configs   (462s)
+   20/90 configs   (788s)
+   30/90 configs   (1138s)
+   40/90 configs   (1273s)
+   50/90 configs   (1404s)
+   60/90 configs   (1506s)
+   70/90 configs   (1564s)
+   80/90 configs   (1615s)
+   90/90 configs   (1672s)
+
+  enumeration complete: 180 real rows, 169,020 null rows (1672s)
+
+  [e] vs idea 191's published clause.csv: matched 180/180 rows
+      max|d dSharpe    | = 9.714e-17  -> PASS
+      max|d dSharpe_IS | = 9.714e-17  -> PASS
+      max|d dMaxDD     | = 9.986e-17  -> PASS
+      max|d on_share   | = 1.110e-16  -> PASS
+  [f] vs idea 208's exact.csv, 60 U56 cells x 3 statistics (180 comparisons): 4 (K, N) pairs outside their own 1e-9 tie count
+      (59 of 180 comparisons have >=1 exact tie between a rotation and the real effect; idea 208 broke those with a strict <, this run with a 1e-9 relative tolerance)
+
+      every disputed comparison, with the actual distance between the disputed rotations and the real effect:
+               cell stat  K_here  K_208  ties   N    absd_here     absd_208       d_absd  max_gap_over_disputed_rotations
+SLEEVE/300.0/0.5/25   DD     518    201   200 974 2.220446e-16 1.110223e-16 1.110223e-16                     2.220446e-16
+SLEEVE/300.0/1.0/10   DD     230    766   352 974 1.110223e-16 4.440892e-16 3.330669e-16                     2.220446e-16
+SLEEVE/300.0/1.0/25   DD     467    184   169 974 2.220446e-16 1.110223e-16 1.110223e-16                     1.110223e-16
+SLEEVE/400.0/0.5/10   DD       0    273   262 974 0.000000e+00 1.110223e-16 1.110223e-16                     1.110223e-16
+
+      largest |rotation - real| among ALL disputed rotations: 2.220e-16
+      -> the dispute is a tie-breaking convention at float precision, not a different population
+      verdict: PASS
+
+  REPRODUCTION: ALL PASS
+
+======================================================================================================================
+THE ENUMERATED POPULATION -- K (rotations below the real effect) and N, per cell
+======================================================================================================================
+  180 cells written to 2026-09-05_how-many-draws-does-clause-11b-need_cloud.exact.csv
+
+  K/N by panel and family (Sharpe statistic), mean of K/N and count at the extremes:
+                  n  mean_KoverN  frac_ge_0p95  frac_le_0p50  mean_absd
+panel    family                                                        
+BROAD136 BUDGET  20       0.4493        0.2000        0.6500     0.0428
+         DDCTL   20       0.6210        0.2500        0.4000     0.1268
+         SLEEVE  20       0.3937        0.0000        0.6000     0.0868
+SMALL439 BUDGET  20       0.5314        0.1000        0.4500     0.0946
+         DDCTL   20       0.7868        0.7500        0.2000     0.2385
+         SLEEVE  20       0.3263        0.0000        0.8000     0.0442
+U56      BUDGET  20       0.7791        0.5500        0.2000     0.0633
+         DDCTL   20       0.5063        0.0000        0.4000     0.1038
+         SLEEVE  20       0.3317        0.0000        0.8000     0.0914
+
+  exact ties between a rotation and the real effect (the clause's own resolution limit),
+  mean number of tied rotations out of N, by statistic:
+    dSharpe 84.24   dMaxDD 129.17   dSharpe_IS 95.78   |  cells with >=1 tie: S 16/180, DD 75/180, IS 22/180
+
+======================================================================================================================
+Q0  WHAT THE DRAW COUNT ACTUALLY DOES TO THE INCUMBENT CLAUSE (the sweep's precondition)
+======================================================================================================================
+  Under the null the real effect is exchangeable with the rotations, so the probability
+  that a rotation used as a pseudo-real clears a max-of-n band drawn from the others is
+  1/(n+1) EXACTLY.  Measured by enumeration: every rotation in turn is treated as the
+  real and priced against the remaining N-1.
+
+ n_draw  nominal_1_over_np1  measured_size  cells  pseudo_reals
+     20             0.04762        0.04762    180        169020
+     50             0.01961        0.01961    180        169020
+    100             0.00990        0.00990    180        169020
+    200             0.00498        0.00498    180        169020
+
+  -> the incumbent clause is NOT one clause evaluated more precisely at larger n; it is
+     a DIFFERENT clause at every n, four times stricter at n=100 than at n=20.  Every
+     number below is therefore reported for BOTH the incumbent max-of-n rule and the
+     level-alpha p-value rule (alpha = 0.05), which is the max-of-n rule at n=20.
+
+======================================================================================================================
+Q1  FLIP RATE -- expected disagreement between an n-draw verdict and the enumerated truth
+======================================================================================================================
+
+  statistic = Sharpe   (180 cells)
+rule  n_draw  E_clears  truth_clears  flip_vs_truth  two_seed_disagree  P_eq_0  P_eq_1
+MAXN      20    0.1768        0.2056         0.0742             0.1003  0.3000  0.0000
+MAXN      50    0.1105        0.2056         0.1009             0.0844  0.5611  0.0000
+MAXN     100    0.0667        0.2056         0.1392             0.0652  0.6444  0.0000
+MAXN     200    0.0317        0.2056         0.1739             0.0378  0.7111  0.0000
+PVAL      20    0.1768        0.2056         0.0742             0.1003  0.3000  0.0000
+PVAL      50    0.1790        0.2056         0.0516             0.0672  0.5333  0.0056
+PVAL     100    0.2095        0.2056         0.0312             0.0416  0.6111  0.0333
+PVAL     200    0.2120        0.2056         0.0238             0.0313  0.6444  0.0944
+
+  statistic = MaxDD   (180 cells)
+rule  n_draw  E_clears  truth_clears  flip_vs_truth  two_seed_disagree  P_eq_0  P_eq_1
+MAXN      20    0.1192        0.1389         0.0714             0.0920  0.2389  0.0056
+MAXN      50    0.0614        0.1389         0.0822             0.0481  0.4056  0.0056
+MAXN     100    0.0366        0.1389         0.1024             0.0274  0.6000  0.0056
+MAXN     200    0.0219        0.1389         0.1170             0.0170  0.7667  0.0056
+PVAL      20    0.1192        0.1389         0.0714             0.0920  0.2389  0.0056
+PVAL      50    0.1085        0.1389         0.0533             0.0633  0.3778  0.0111
+PVAL     100    0.1350        0.1389         0.0326             0.0493  0.4944  0.0333
+PVAL     200    0.1386        0.1389         0.0187             0.0302  0.6111  0.0444
+
+  statistic = IS-Sharpe   (180 cells)
+rule  n_draw  E_clears  truth_clears  flip_vs_truth  two_seed_disagree  P_eq_0  P_eq_1
+MAXN      20    0.1155        0.1222         0.0568             0.0802  0.1889  0.0000
+MAXN      50    0.0652        0.1222         0.0611             0.0491  0.4333  0.0000
+MAXN     100    0.0397        0.1222         0.0827             0.0374  0.6056  0.0000
+MAXN     200    0.0197        0.1222         0.1026             0.0206  0.7611  0.0000
+PVAL      20    0.1155        0.1222         0.0568             0.0802  0.1889  0.0000
+PVAL      50    0.1069        0.1222         0.0349             0.0442  0.3889  0.0056
+PVAL     100    0.1227        0.1222         0.0222             0.0296  0.4889  0.0167
+PVAL     200    0.1213        0.1222         0.0159             0.0204  0.6278  0.0500
+
+  the idea's literal question -- expected disagreement with idea 191's PUBLISHED
+  20-draw verdict (the verdicts actually committed to the LEADERBOARD):
+
+rule  n_draw  cells  flip_vs_published_Sharpe  flip_vs_published_MaxDD
+MAXN      20    180                    0.1054                   0.0856
+MAXN      50    180                    0.0971                   0.0599
+MAXN     100    180                    0.1056                   0.0574
+MAXN     200    180                    0.1233                   0.0632
+PVAL      20    180                    0.1054                   0.0856
+PVAL      50    180                    0.0940                   0.0723
+PVAL     100    180                    0.1007                   0.0823
+PVAL     200    180                    0.1021                   0.0823
+
+======================================================================================================================
+Q2  UNDETERMINED-ZONE WIDTH -- the band of true effect sizes the clause cannot resolve
+======================================================================================================================
+  For each cell the zone is the interval of |d_real| values with P(clears) in [eps,1-eps],
+  read off the cell's own enumerated population.  Width is in dSharpe units; the ratio
+  column divides it by the mean |dSharpe| actually being tested across the 180 cells.
+
+  mean |dSharpe| under test across the 180 cells = 0.0991
+
+rule  n_draw    eps  mean_zone_width  median_zone_width  zone_over_mean_effect  frac_cells_undetermined
+MAXN      20 0.0500           0.1619             0.1336                 1.6331                   0.3000
+MAXN      20 0.1000           0.1031             0.0991                 1.0401                   0.2500
+MAXN      20 0.2000           0.0595             0.0561                 0.6001                   0.1500
+MAXN      50 0.0500           0.2144             0.1405                 2.1626                   0.2444
+MAXN      50 0.1000           0.1642             0.1113                 1.6564                   0.1833
+MAXN      50 0.2000           0.0828             0.0766                 0.8348                   0.1500
+MAXN     100 0.0500           0.1939             0.1126                 1.9564                   0.1833
+MAXN     100 0.1000           0.1861             0.1072                 1.8776                   0.1667
+MAXN     100 0.2000           0.1099             0.0770                 1.1088                   0.1167
+MAXN     200 0.0500           0.1697             0.0890                 1.7123                   0.1222
+MAXN     200 0.1000           0.1574             0.0732                 1.5876                   0.0889
+MAXN     200 0.2000           0.1421             0.0627                 1.4335                   0.0500
+PVAL      20 0.0500           0.1619             0.1336                 1.6331                   0.3000
+PVAL      20 0.1000           0.1031             0.0991                 1.0401                   0.2500
+PVAL      20 0.2000           0.0595             0.0561                 0.6001                   0.1500
+PVAL      50 0.0500           0.0816             0.0788                 0.8234                   0.2111
+PVAL      50 0.1000           0.0587             0.0558                 0.5921                   0.1500
+PVAL      50 0.2000           0.0366             0.0341                 0.3697                   0.1167
+PVAL     100 0.0500           0.0414             0.0397                 0.4176                   0.1278
+PVAL     100 0.1000           0.0319             0.0281                 0.3216                   0.0833
+PVAL     100 0.2000           0.0209             0.0188                 0.2111                   0.0667
+PVAL     200 0.0500           0.0265             0.0233                 0.2678                   0.0722
+PVAL     200 0.1000           0.0204             0.0179                 0.2060                   0.0667
+PVAL     200 0.2000           0.0135             0.0124                 0.1365                   0.0667
+
+======================================================================================================================
+Q3  RULE 8 -- the clause as a SELECTION GATE at each draw count
+======================================================================================================================
+  Cell = (panel, family, cost rung) = 18.  Menu = the 10 (threshold, depth) configs.
+  Pick on IS <= 2016-12-31 by largest IS dSharpe among configs whose IS effect CLEARS
+  the clause; if none clears, ABSTAIN and hold the control book (idea 194's convention).
+  200 independent draw regimes per (cell, rule, n); ENUM = the exact population.
+
+  OOS window 2017-2026, mean across 18 cells (x seeds):
+rule  n_draw    n  abstain_rate  mean_Sharpe_OOS  mean_CAGR_OOS  mean_MaxDD_OOS  mean_dOOS   t_dOOS  win_rate
+ENUM       0   18        0.5556           0.7226         0.0916         -0.2396    -0.0540  -2.4974    0.0000
+MAXN      20 3600        0.5314           0.7222         0.0918         -0.2413    -0.0544 -36.5653    0.0136
+MAXN      50 3600        0.6636           0.7401         0.0960         -0.2412    -0.0365 -27.5925    0.0003
+MAXN     100 3600        0.7464           0.7489         0.0980         -0.2411    -0.0277 -21.0129    0.0000
+MAXN     200 3600        0.8508           0.7635         0.1005         -0.2385    -0.0131 -13.9795    0.0000
+NONE       0   18        0.0000           0.7206         0.0937         -0.2207    -0.0560  -1.6629    0.2778
+PVAL      20 3600        0.4111           0.6743         0.0848         -0.2224    -0.1023 -42.6599    0.0139
+PVAL      50 3600        0.4844           0.6861         0.0873         -0.2212    -0.0905 -38.6271    0.0022
+PVAL     100 3600        0.4547           0.6827         0.0862         -0.2208    -0.0939 -40.2177    0.0019
+PVAL     200 3600        0.4572           0.6820         0.0861         -0.2206    -0.0946 -40.3200    0.0000
+  S0       0   18        1.0000           0.7766         0.1022         -0.2353     0.0000      NaN    0.0000
+
+  per-seed spread of the mean OOS Sharpe (how much the DRAW alone moves the answer):
+rule  n_draw    min  median    max    std  range
+MAXN      20 0.6680  0.7232 0.7526 0.0166 0.0846
+MAXN      50 0.6951  0.7430 0.7628 0.0123 0.0677
+MAXN     100 0.7106  0.7500 0.7730 0.0136 0.0625
+MAXN     200 0.7232  0.7685 0.7754 0.0122 0.0522
+PVAL      20 0.6183  0.6746 0.7133 0.0188 0.0950
+PVAL      50 0.6446  0.6859 0.7116 0.0137 0.0669
+PVAL     100 0.6250  0.6811 0.7059 0.0131 0.0809
+PVAL     200 0.6451  0.6809 0.7018 0.0121 0.0567
+
+  reference OOS (2017-2026), per panel:
+   panel                name  CAGR_OOS  Sharpe_OOS  MaxDD_OOS
+     U56     RULES v1 @10bps    0.0773      0.7471    -0.1383
+     U56                 SPY    0.1545      0.8820    -0.3372
+     U56 control book @10bps    0.1449      1.1775    -0.1821
+     U56 control book @25bps    0.1289      1.0618    -0.1833
+BROAD136     RULES v1 @10bps    0.0594      0.5762    -0.2119
+BROAD136                 SPY    0.1545      0.8820    -0.3372
+BROAD136 control book @10bps    0.1240      0.8758    -0.2157
+BROAD136 control book @25bps    0.1006      0.7310    -0.2168
+SMALL439     RULES v1 @10bps    0.0788      0.6617    -0.3237
+SMALL439                 SPY    0.1545      0.8820    -0.3372
+SMALL439 control book @10bps    0.0746      0.4997    -0.2684
+SMALL439 control book @25bps    0.0403      0.3138    -0.3456
+
+======================================================================================================================
+PROTOCOL 4 -- KEEP paths on the 180 real overlay rows, crossed with the clause verdict
+======================================================================================================================
+  4a passes: 37/180    4b passes: 28/180
+
+rule  n_draw path  passes  clear_with_P1  never_clear  undetermined  E_clearing
+MAXN      20   4a      37              0           11             8       2.605
+MAXN      20   4b      28              0           16             3       3.458
+MAXN      50   4a      37              0           22             3       0.835
+MAXN      50   4b      28              0           21             3       2.525
+MAXN     100   4a      37              0           27             2       0.216
+MAXN     100   4b      28              0           22             3       1.919
+MAXN     200   4a      37              0           29             0       0.015
+MAXN     200   4b      28              0           23             3       1.202
+PVAL      20   4a      37              0           11             8       2.605
+PVAL      20   4b      28              0           16             3       3.458
+PVAL      50   4a      37              0           21             4       2.118
+PVAL      50   4b      28              0           21             2       3.438
+PVAL     100   4a      37              0           24             2       2.819
+PVAL     100   4b      28              2           22             2       3.769
+PVAL     200   4a      37              0           27             1       2.848
+PVAL     200   4b      28              3           22             2       3.755
+
+  4b passes by panel/family:
+panel     family
+BROAD136  SLEEVE     1
+U56       BUDGET     9
+          DDCTL     11
+          SLEEVE     7
+
+  4b failure reasons across all 180 rows:
+{'H1,H2,OOS,DD,CAGR': 70, '-': 28, 'H2,OOS,DD': 25, 'H1,CAGR': 13, 'H1,H2,OOS,CAGR': 12, 'DD': 6, 'H2,DD': 5, 'H2,OOS,DD,CAGR': 5, 'H2,OOS,CAGR': 5, 'H1': 4, 'H2': 2, 'H1,DD': 2, 'H1,H2,OOS,DD': 1, 'CAGR': 1, 'H1,DD,CAGR': 1}
+
+  This idea proposes NO book: it is a PROTOCOL measurement, so neither KEEP path is
+  claimable by it.  The 180 real rows are idea 191's, re-priced against a fully
+  enumerated null.
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS
+======================================================================================================================
+  HIT   P1 incumbent clause size == 1/(n+1) at every n (+-0.005)       n=20 0.04762 vs 0.04762; n=200 0.00498 vs 0.00498
+  HIT   P2 level-alpha flip rate falls in n but is >= 2% at n=200      n=20 0.0742 -> n=200 0.0238
+  MISS  P3 zone width shrinks >=3x from n=20 to 200, still >=50% of effect 0.1031 -> 0.0204 (20.6% of the effect)
+  HIT   P4 no clause-gated selector beats do-nothing OOS               best mean dOOS -0.0131
+  MISS  P5 >=80% of the 180 cells UNDETERMINED at n=20, eps=0.10       25.0%
+
+  3 of 5 predictions hit.
+
+done in 1676s
