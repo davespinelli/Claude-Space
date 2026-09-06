@@ -1,0 +1,210 @@
+========================================================================================================================================================================================================
+IDEA 83 - dispersion-as-a-survivorship-detector (lane B, 2026-09-06)
+Does draw-level dispersion still predict draw-level Sharpe once each name's full-sample return is regressed out?
+========================================================================================================================================================================================================
+
+[a] HARNESS - published rows recomputed before anything new is read
+    U56/CAND20   12.6597% / 1.09214 / -18.3083%  halves 1.08828/1.10155   (idea 2/73/77 published 12.7% / 1.092-1.093 / -18.3%, halves 1.088/1.102-1.103)
+    U56/RULES v1 6.4531% / 0.66418 / -13.8278%   (published 6.5% / 0.664-0.666 / -13.8%)
+
+    window 2009-01-13 -> 2026-09-04  (4439 days)
+    SPY              15.23% / 0.889 / -33.72%  halves 0.957/0.834  OOS 0.882
+    RULES v1 on B136 6.39% / 0.635 / -21.19%  halves 0.756/0.532  OOS 0.576
+    4b bars: MaxDD <= 20.23%, CAGR >= 10.66%, H1 > 0.957, H2 > 0.834, OOS Sharpe > 0.882
+
+    name-level ANNUALISED log return over 136 B136 columns (135 with >=1y of history; 12 list late: ABBV ANET AVGO META NOW PANW PLTR TSLA UBER XLC XLRE ZTS; 1 empty: MMC)
+      full  mean 0.1472 (15.85%/yr), sd 0.0876, min -0.316 (UNG), max 0.491 (PLTR)
+      IS    mean 0.1514 (16.35%/yr), sd 0.0963, 132 names with >=1y before 2016-12-31
+      corr(full, IS) over the 132 names with both = +0.8597 (Spearman +0.8590)
+      corr(annualised, common-window) over the 123 common-window names = +1.0000 — the common-window column drops 13 names including 13 of the panel's late listers
+
+[b] REPRODUCTION - idea 78's 150 sub-panels re-drawn from its seeds and re-run
+    k=20  done  (135s)
+    k=40  done  (286s)
+    k=80  done  (533s)
+
+    re-run vs committed idea-78 gridB.csv, 300 rows, max abs difference:
+      n_elig       7.105e-15
+      sd           8.327e-17
+      n_elig_IS    3.553e-15
+      sd_IS        8.327e-17
+      CAGR         9.714e-17
+      Sharpe       2.220e-16
+      MaxDD        9.714e-17
+      H1           2.220e-16
+      H2           2.220e-16
+      Sharpe_IS    2.220e-16
+      Sharpe_OOS   2.220e-16
+      CAGR_OOS     9.714e-17
+      MaxDD_OOS    9.714e-17
+      ew_Sharpe    2.220e-16
+      ew_CAGR      9.714e-17
+      ew_MaxDD     8.327e-17
+      premium      9.714e-17
+      f4a / f4b verdict strings identical in 300 / 300 of 300 rows
+    REPRODUCTION PASS - idea 78 rebuilt byte-for-byte; new numbers may be read
+
+========================================================================================================================================================================================================
+T1-T4 - dispersion, Sharpe and winner-content over the 150 sub-panels
+========================================================================================================================================================================================================
+  sd = mean weekly cross-sectional sd of 12-1 momentum over the draw's eligible set (idea 78's own column)
+  W  = mean FULL-SAMPLE annualised log return of the draw's own names.  No book, no gate, no ranking, no costs.
+
+  T2 - THE MECHANISM: is a wider draw a more winning draw?
+             N  rho_sd_W  r_sd_W  rho_sd_Wmax  rho_sd_Wcw  rho_sd_WIS  rho_nelig_W  rho_W_Sharpe
+n  scope                                                                                        
+5  pooled  150    0.4729  0.5670       0.5221      0.3606      0.3023       0.1201        0.3465
+   k=20     50    0.4951  0.5934       0.4236      0.3536      0.3272       0.1770        0.4638
+   k=40     50    0.4415  0.4945       0.4769      0.3307      0.2191       0.1624        0.2387
+   k=80     50    0.6608  0.6134       0.3900      0.5438      0.5663       0.1357        0.4447
+20 pooled  150    0.4729  0.5670       0.5221      0.3606      0.3023       0.1201        0.3242
+   k=20     50    0.4951  0.5934       0.4236      0.3536      0.3272       0.1770        0.4291
+   k=40     50    0.4415  0.4945       0.4769      0.3307      0.2191       0.1624        0.2249
+   k=80     50    0.6608  0.6134       0.3900      0.5438      0.5663       0.1357        0.4136
+
+  T1/T3/T4 - univariate vs partial.  kill = pR2(sd|W) / R2(sd); the pre-registered bar is kill < 1/3 AND |t_sd_given_W| < 2.
+                          N  R2_sd    t_sd   R2_W     t_W  pR2_sd_given_W  t_sd_given_W  t_W_given_sd  R2_both   kill  rho_sd_y  rho_W_y
+n  scope  y                                                                                                                             
+5  pooled CAND Sharpe   150 0.2217  6.4938 0.1392  4.8922          0.1152        4.3740        1.7893   0.2383 0.5193    0.4100   0.3465
+          EWall Sharpe  150 0.3437  8.8031 0.1834  5.7645          0.2129        6.3049        1.7587   0.3572 0.6194    0.6156   0.4185
+          premium       150 0.0026 -0.6192 0.0000 -0.0252          0.0036       -0.7322        0.3945   0.0036 1.4066   -0.0856   0.0502
+   k=20   CAND Sharpe    50 0.3679  5.2856 0.2673  4.1845          0.1893        3.3127        1.7359   0.4060 0.5145    0.5274   0.4638
+          EWall Sharpe   50 0.3351  4.9186 0.2204  3.6834          0.1786        3.1965        1.3402   0.3596 0.5329    0.5430   0.4749
+          premium        50 0.0014  0.2583 0.0050  0.4917          0.0000       -0.0405        0.4156   0.0050 0.0251    0.0520   0.0437
+   k=40   CAND Sharpe    50 0.0899  2.1773 0.0573  1.7088          0.0462        1.5088        0.7587   0.1009 0.5140    0.2724   0.2387
+          EWall Sharpe   50 0.2579  4.0843 0.0904  2.1840          0.1877        3.2958        0.4543   0.2611 0.7279    0.5062   0.3476
+          premium        50 0.0152 -0.8597 0.0000 -0.0490          0.0189       -0.9528        0.4286   0.0190 1.2497   -0.1382  -0.0024
+   k=80   CAND Sharpe    50 0.2634  4.1431 0.2378  3.8694          0.0964        2.2398        1.8071   0.3113 0.3661    0.5177   0.4447
+          EWall Sharpe   50 0.4261  5.9693 0.2100  3.5716          0.2803        4.2785        0.6654   0.4314 0.6579    0.6920   0.4935
+          premium        50 0.0489  1.5716 0.0983  2.2877          0.0015        0.2641        1.6270   0.0996 0.0303    0.1805   0.3002
+20 pooled CAND Sharpe   150 0.3062  8.0826 0.1554  5.2185          0.1899        5.8696        1.4314   0.3158 0.6200    0.4986   0.3242
+          EWall Sharpe  150 0.3437  8.8031 0.1834  5.7645          0.2129        6.3049        1.7587   0.3572 0.6194    0.6156   0.4185
+          premium       150 0.0620 -3.1288 0.0379 -2.4135          0.0295       -2.1134       -0.8128   0.0662 0.4753   -0.2738  -0.1912
+   k=20   CAND Sharpe    50 0.3576  5.1695 0.2644  4.1539          0.1800        3.2120        1.7477   0.3968 0.5033    0.5008   0.4291
+          EWall Sharpe   50 0.3351  4.9186 0.2204  3.6834          0.1786        3.1965        1.3402   0.3596 0.5329    0.5430   0.4749
+          premium        50 0.0776 -2.0096 0.0340 -1.3004          0.0457       -1.5002       -0.1700   0.0782 0.5889   -0.2864  -0.2681
+   k=40   CAND Sharpe    50 0.2935  4.4657 0.0544  1.6613          0.2546        4.0066       -0.3264   0.2951 0.8674    0.5148   0.2249
+          EWall Sharpe   50 0.2579  4.0843 0.0904  2.1840          0.1877        3.2958        0.4543   0.2611 0.7279    0.5062   0.3476
+          premium        50 0.0063 -0.5534 0.0443 -1.4915          0.0008        0.1974       -1.3809   0.0451 0.1307   -0.1027  -0.2055
+   k=80   CAND Sharpe    50 0.4064  5.7322 0.1593  3.0161          0.2940        4.4239        0.0913   0.4065 0.7235    0.6342   0.4136
+          EWall Sharpe   50 0.4261  5.9693 0.2100  3.5716          0.2803        4.2785        0.6654   0.4314 0.6579    0.6920   0.4935
+          premium        50 0.0167  0.9031 0.0001  0.0753          0.0241        1.0773       -0.6013   0.0242 1.4425    0.0752   0.0692
+
+  the two control variants, same rows (W_cw = common-window W, drops the late listers; t_sd|W,W_max adds the draw's single best name as a second control):
+                        pR2_sd_given_Wcw  t_sd_given_Wcw  t_sd_given_W_Wmax  R2_sd_W_Wmax
+n  scope  y                                                                              
+5  pooled CAND Sharpe             0.1370          4.8308             4.8812        0.2605
+          EWall Sharpe            0.2474          6.9524             6.3788        0.3651
+          premium                 0.0032         -0.6840            -0.3043        0.0109
+   k=20   CAND Sharpe             0.2635          4.1010             4.2548        0.4894
+          EWall Sharpe            0.2355          3.8055             3.7477        0.4076
+          premium                 0.0000         -0.0288             0.2164        0.0171
+   k=40   CAND Sharpe             0.0337          1.2794             1.9727        0.1402
+          EWall Sharpe            0.1861          3.2781             3.8262        0.3115
+          premium                 0.0287         -1.1790            -0.8257        0.0192
+   k=80   CAND Sharpe             0.0842          2.0784             2.1058        0.3128
+          EWall Sharpe            0.2713          4.1827             4.9879        0.5065
+          premium                 0.0000          0.0186            -0.0730        0.1499
+20 pooled CAND Sharpe             0.2147          6.3393             6.9184        0.3671
+          EWall Sharpe            0.2474          6.9524             6.3788        0.3651
+          premium                 0.0350         -2.3078            -1.3242        0.0867
+   k=20   CAND Sharpe             0.2525          3.9840             3.5719        0.4251
+          EWall Sharpe            0.2355          3.8055             3.7477        0.4076
+          premium                 0.0547         -1.6493            -1.8824        0.1135
+   k=40   CAND Sharpe             0.2252          3.6956             4.4911        0.3427
+          EWall Sharpe            0.1861          3.2781             3.8262        0.3115
+          premium                 0.0010         -0.2168            -0.0242        0.0507
+   k=80   CAND Sharpe             0.2823          4.2994             4.6931        0.4340
+          EWall Sharpe            0.2713          4.1827             4.9879        0.5065
+          premium                 0.0268          1.1380             0.8902        0.0371
+
+  headline (n=20, pooled over all 150 draws):
+    CAND Sharpe   R2(sd) 0.3062 (t +8.08)  ->  partial R2(sd | W) 0.1899 (t +5.87)   kill 0.620   [W alone R2 0.1554, t +5.22; sd | W,W_max t +6.92]
+    EWall Sharpe  R2(sd) 0.3437 (t +8.80)  ->  partial R2(sd | W) 0.2129 (t +6.30)   kill 0.619   [W alone R2 0.1834, t +5.76; sd | W,W_max t +6.38]
+    premium       R2(sd) 0.0620 (t -3.13)  ->  partial R2(sd | W) 0.0295 (t -2.11)   kill 0.475   [W alone R2 0.0379, t -2.41; sd | W,W_max t -1.32]
+
+  the same statistic with the CANDIDATE COUNT held exactly (within-k, N=50 each):
+    n=5   CAND Sharpe   R2(sd) 0.090-0.368  ->  pR2(sd|W) 0.046-0.189  |t_sd|W| max 3.31  (sd survives at |t|>2 in 2 of 3 k-cells)
+    n=5   EWall Sharpe  R2(sd) 0.258-0.426  ->  pR2(sd|W) 0.179-0.280  |t_sd|W| max 4.28  (sd survives at |t|>2 in 3 of 3 k-cells)
+    n=20  CAND Sharpe   R2(sd) 0.294-0.406  ->  pR2(sd|W) 0.180-0.294  |t_sd|W| max 4.42  (sd survives at |t|>2 in 3 of 3 k-cells)
+    n=20  EWall Sharpe  R2(sd) 0.258-0.426  ->  pR2(sd|W) 0.179-0.280  |t_sd|W| max 4.28  (sd survives at |t|>2 in 3 of 3 k-cells)
+
+  T5 - a residualised dispersion column, per draw (sd orthogonalised on W within its own k cell):
+    n=5: rho(sd_resid, Sharpe) +0.2153 vs rho(sd, Sharpe) +0.4100;  rho(sd_resid, premium) -0.0985 vs rho(sd, premium) -0.0856
+    n=20: rho(sd_resid, Sharpe) +0.3666 vs rho(sd, Sharpe) +0.4986;  rho(sd_resid, premium) -0.0522 vs rho(sd, premium) -0.2738
+
+========================================================================================================================================================================================================
+BOTH KEEP PATHS - all 450 books (150 CAND-5, 150 CAND-20, 150 EWall)
+========================================================================================================================================================================================================
+          N  pass4a  pass4b
+book                       
+CAND20  150     146      40
+CAND5   150      32       2
+EWall   150      98      45
+
+  overall: 4a 276 of 450;  4b 87 of 450
+
+  4b failing-bar census:
+f4b_
+H2      233
+DD      203
+CAGR    194
+OOS     176
+H1      121
+-        87
+
+  by (k, n) cell - mean Sharpe, mean W, and pass counts:
+          sd      W  n_elig   CAGR  Sharpe  Sharpe_sd   MaxDD  ew_Sharpe  premium  p4a  p4b   N
+k  n                                                                                           
+20 5  0.2409 0.1414 13.2840 0.1143  0.8422     0.1332 -0.2201     0.9306  -0.0884   17    1  50
+   20 0.2409 0.1414 13.2840 0.0679  0.9788     0.0978 -0.1176     0.9306   0.0482   49    0  50
+40 5  0.2451 0.1477 26.9460 0.1195  0.7972     0.1094 -0.2414     0.9624  -0.1652    8    0  50
+   20 0.2451 0.1477 26.9460 0.1038  0.9753     0.0779 -0.1831     0.9624   0.0129   49   17  50
+80 5  0.2533 0.1458 53.9805 0.1430  0.8370     0.1052 -0.2432     1.0097  -0.1727    7    1  50
+   20 0.2533 0.1458 53.9805 0.1202  0.9670     0.0631 -0.1962     1.0097  -0.0427   48   23  50
+
+  does the 4b verdict itself track W or sd?  (logit-free: means by verdict, n=20)
+    n=5
+         N      W     sd  Sharpe
+p4b                             
+False  148 0.1448 0.2462  0.8231
+True     2 0.1582 0.2612  0.9996
+      Welch t on W = +3.75;  on sd = +6.53
+    n=20
+         N      W     sd  Sharpe
+p4b                             
+False  110 0.1437 0.2419  0.9571
+True    40 0.1485 0.2588  1.0192
+      Welch t on W = +2.28;  on sd = +4.14
+
+========================================================================================================================================================================================================
+PROTOCOL rule 8 - selectors fitted on 2009-2016 ONLY, 2017-2026 read once
+========================================================================================================================================================================================================
+  SPY OOS 15.45% / 0.882 / -33.72%; RULES v1 B136 OOS 5.94% / 0.576; do-nothing OOS 12.49% / 0.892 / -20.05%
+                                    k  draw  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  full_Sharpe  full_MaxDD  cell_mean_OOS  cell_sd_OOS  cell_4b_rate          f4b
+selector                                                                                                                                                               
+S0 do-nothing (full B136 CAND-20)  -1    -1     1.0438    0.1249      0.8919    -0.2005       0.9569     -0.2005            NaN          NaN           NaN           H2
+S1 IS-Sharpe argmax                20    19     1.3229    0.0837      1.1045    -0.1054       1.2047     -0.1054         0.9915       0.1162        0.0000         CAGR
+S2 DISPERSION (max IS sd)          20    39     1.1706    0.0903      1.1841    -0.0943       1.1744     -0.0943         0.9915       0.1162        0.0000         CAGR
+S3 COUNT (max IS n_elig)           80    26     0.9750    0.1200      0.9526    -0.1964       0.9620     -0.1964         0.9389       0.0629        0.4600            -
+S5 RESID-DISP (max IS sd | W_IS)   20    16     1.1476    0.0599      0.9559    -0.1267       1.0369     -0.1267         0.9915       0.1162        0.0000      H2,CAGR
+S6 WINNERNESS (max IS name ret)    20    12     1.0140    0.0606      0.7752    -0.1203       0.8868     -0.1203         0.9915       0.1162        0.0000  H2,OOS,CAGR
+S4 random sub-panel                40    35     1.0248    0.1030      0.9837    -0.1761       1.0026     -0.1761         0.9940       0.0936        0.3400         CAGR
+
+  OOS Sharpe regret vs the do-nothing control (0.8919):
+    S1 IS-Sharpe argmax                  +0.2125   (its cell mean 0.992 +- 0.116; z within cell +0.97)
+    S2 DISPERSION (max IS sd)            +0.2922   (its cell mean 0.992 +- 0.116; z within cell +1.66)
+    S3 COUNT (max IS n_elig)             +0.0607   (its cell mean 0.939 +- 0.063; z within cell +0.22)
+    S5 RESID-DISP (max IS sd | W_IS)     +0.0639   (its cell mean 0.992 +- 0.116; z within cell -0.31)
+    S6 WINNERNESS (max IS name ret)      -0.1167   (its cell mean 0.992 +- 0.116; z within cell -1.86)
+    S4 random sub-panel                  +0.0918   (its cell mean 0.994 +- 0.094; z within cell -0.11)
+
+  selector-input skill over the 150 CAND-20 sub-panels (Spearman with OOS Sharpe):
+    IS Sharpe                    +0.2166   (with FULL Sharpe +0.7666)
+    IS sd (dispersion)           +0.1944   (with FULL Sharpe +0.4435)
+    IS n_elig (count)            -0.2617   (with FULL Sharpe -0.0190)
+    IS sd | W_IS (residualised)  +0.2315   (with FULL Sharpe +0.3680)
+    IS name return W_IS          +0.0737   (with FULL Sharpe +0.2762)
+    FULL-SAMPLE name return W    +0.2342   (with FULL Sharpe +0.3242)
+
+  elapsed 536s
