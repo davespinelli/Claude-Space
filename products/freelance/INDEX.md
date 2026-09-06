@@ -2,6 +2,9 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-06 | 40692810 | Real-Data Trading Bot Optimization & Validation | $290 | 73 | drafted |
+| 2026-09-06 | 40693155 | Website Customer-Support Chatbot | $270 | 164 | drafted |
+| 2026-09-06 | 40686904 | Expand Campus AI with New Modules | $210 | 51 | drafted |
 | 2026-09-05 | 40692606 | FNP Sales Analysis Dashboard – Excel | $235 | 2 | drafted |
 | 2026-09-05 | 40689951 | Enter Financial Budget Data | $240 | 4 | drafted |
 | 2026-09-05 | 40692361 | Comprehensive Excel Data Management | $240 | 8 | drafted |
@@ -104,4 +107,9 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Python Developer Needed for Small Process Automation Script (40692380) (164 bids; the posting URL is for an unrelated dissertation data project, so the brief and the listing do not match)
 - Next.js Dashboard with n8n Automation Integration (40692329) (176 bids at $30–$250, below floor for a full dashboard build)
 
+- Troubleshooting C#/.NET FXCM Trading App (40693017) (C#/.NET and the ForexConnect API, outside the Python stack we deliver in; 101 bids)
+- USA Entrepreneur Contact Database Build (40680451) (building a contact database of individuals, same personal-contact harvesting reason as the earlier email-scrape postings)
+
 Note for this run: freelancer.com is blocked by the session network policy, so proposals were written from the descriptions the scanner captured in JOBS.md. Older undrafted rows have no description in the shortlist, which is why several were skipped rather than priced blind.
+
+Note for 2026-09-06: the 20:20 UTC scan carried only three NEW rows, one of which is a C#/.NET job we skipped. Expand Campus AI (40686904) was an older shortlist row never triaged either way; it has budget and bid data but no captured description, so the proposal is written to the job title and asks what the stack is rather than assuming. Earlier 09-03 backlog rows in seen.csv still carry no budget, bid or URL data, and the previous JOBS.md scans are not recoverable from git history, so they remain undrafted rather than priced blind.
