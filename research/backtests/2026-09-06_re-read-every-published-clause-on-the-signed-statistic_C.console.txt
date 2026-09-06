@@ -1,0 +1,240 @@
+======================================================================================================================
+IDEA 211  re-read-every-published-clause-on-the-signed-statistic   (lane C, 2026-09-06)
+  ABS/MAX  = clause 11b as published:  |d| > max_K |d_null|      (two-sided, 'differs')
+  SIGNED   = idea 190's reading:        d  > band_K( d_null )    (one-sided, 'helps')
+  bands    = MAX (nominal size 1/(K+1)) and Q95 (nominal 5%, idea 207's proposal)
+======================================================================================================================
+
+======================================================================================================================
+[0] REPRODUCTION -- nothing below is read unless all three corpora reproduce
+======================================================================================================================
+
+  [T] idea 181: grid (906, 27), clause (360, 12)  (720 null draws, 180 real arms)
+  [T] reproduction: published clears == ABS/MAX recomputed on the committed draws in 360/360 rows;  max|band - committed null_max| = 0.000e+00
+      NOTE idea 181 committed null_mean over |d| (mean of the ABS draws); this run's null_mean is over the SIGNED draws, so they differ by construction (max|diff| 3.481e-01) -- that difference IS the subject of this run.
+
+  [S] idea 190: null (10344, 18) (per-draw), grid (120, 22), clause (96, 26)
+  [S] reproduction: ABS/MAX == published clears_S_strict in 96/96;  SIGNED/MAX == published argmax_full in 96/96;  max|dSharpe - committed| = 2.776e-16
+
+  [O] idea 201: clause (180, 39); regenerating its rotation pool with signs (3 panels x 3 families x 5 thr x 2 depth x (1 real + 60 rotations) x 2 cost)
+      reusing the committed signed-draw grid 2026-09-06_re-read-every-published-clause-on-the-signed-statistic_C.grid.csv.gz (10980 rows) -- the regeneration is deterministic and is asserted against idea 201 below either way
+  [O] reproduction vs 2026-09-05_the-margin-column-instead-of-two_cloud.clause.csv (180/180 rows matched):
+        max|d band      | = 3.192e-16  -> PASS
+        max|d band_IS   | = 3.331e-16  -> PASS
+        max|d band_OOS  | = 4.163e-16  -> PASS
+        max|d bandDD    | = 1.804e-16  -> PASS
+        max|d dSharpe   | = 2.446e-16  -> PASS
+        max|d dSharpe_IS| = 3.469e-16  -> PASS
+        max|d dMaxDD    | = 1.388e-16  -> PASS
+  [O] published verdicts == ABS/MAX regenerated: 538/538
+      dropped 2 of 540 verdicts with an undefined d (idea 207's documented cells): SMALL439/BUDGET/thr=0.05/skip/10bps/IS, SMALL439/BUDGET/thr=0.05/skip/25bps/IS
+
+  [selector null] 2026-09-05_does-a-random-screen-de-concentrate-just-as-well_B.null.csv: 6 rows already published on a SIGNED p5/p50/p95 band (`pct`, `inside_90`) -- cannot move; carried for completeness.
+               selector  real_dOOS  null_mean   pct  inside_90
+    SCREEN 4bIS [AS165]   0.028654   0.027187  54.5       True
+      SCREEN 4bIS [PUB]   0.017151   0.020509  34.0       True
+             SIZE n>=10   0.054277   0.026679  95.0      False
+             SIZE n>=15   0.076018   0.035794  99.0      False
+             SIZE n>=20   0.070831   0.040595  96.0      False
+             SIZE n>=25   0.129688   0.047114 100.0      False
+
+  all three corpora reproduce -- proceeding
+
+======================================================================================================================
+[Q1] THE CENSUS.  Every re-readable published clause verdict, under all four arms.
+======================================================================================================================
+
+  corpus coverage: 1090 published verdicts re-read
+                                 verdicts
+corpus ref     stat_kind window          
+O      idea201 MaxDD     F            180
+               Sharpe    F            180
+                         IS           178
+S      idea190 MaxDD     F             96
+               Sharpe    F             96
+T      idea181 Sharpe    F            180
+                         IS           180
+
+  per corpus x statistic-kind, ALL FOUR ARMS (published = ABS/MAX by construction):
+corpus stat_kind        arm   n  published_clears  arm_clears  gained_0to1  lost_1to0  lost_and_harmful  moved  moved_pct
+     O     MaxDD    ABS/MAX 180                28          28            0          0                 0      0        0.0
+     O     MaxDD    ABS/Q95 180                28          40           12          0                 0     12        6.7
+     O     MaxDD SIGNED/MAX 180                28          16            6         18                18     24       13.3
+     O     MaxDD SIGNED/Q95 180                28          22           12         18                18     30       16.7
+     O    Sharpe    ABS/MAX 358                68          68            0          0                 0      0        0.0
+     O    Sharpe    ABS/Q95 358                68          94           26          0                 0     26        7.3
+     O    Sharpe SIGNED/MAX 358                68          12            0         56                56     56       15.6
+     O    Sharpe SIGNED/Q95 358                68          21            9         56                56     65       18.2
+     S     MaxDD    ABS/MAX  96                24          24            0          0                 0      0        0.0
+     S     MaxDD    ABS/Q95  96                24          37           13          0                 0     13       13.5
+     S     MaxDD SIGNED/MAX  96                24          24            0          0                 0      0        0.0
+     S     MaxDD SIGNED/Q95  96                24          37           13          0                 0     13       13.5
+     S    Sharpe    ABS/MAX  96                16          16            0          0                 0      0        0.0
+     S    Sharpe    ABS/Q95  96                16          23            7          0                 0      7        7.3
+     S    Sharpe SIGNED/MAX  96                16          72           56          0                 0     56       58.3
+     S    Sharpe SIGNED/Q95  96                16          81           65          0                 0     65       67.7
+     T    Sharpe    ABS/MAX 360                80          80            0          0                 0      0        0.0
+     T    Sharpe    ABS/Q95 360                80         106           26          0                 0     26        7.2
+     T    Sharpe SIGNED/MAX 360                80          58           37         59                59     96       26.7
+     T    Sharpe SIGNED/Q95 360                80          78           57         59                59    116       32.2
+
+  POOLED over every re-readable verdict:
+    ABS   /MAX  clears 216/1090 (19.8%)   gained 0->1   0   lost 1->0   0  (of which d<0, i.e. HARMFUL:   0 = nan%)   moved   0 = 0.0% of the record
+    ABS   /Q95  clears 300/1090 (27.5%)   gained 0->1  84   lost 1->0   0  (of which d<0, i.e. HARMFUL:   0 = nan%)   moved  84 = 7.7% of the record
+    SIGNED/MAX  clears 182/1090 (16.7%)   gained 0->1  99   lost 1->0 133  (of which d<0, i.e. HARMFUL: 133 = 100%)   moved 232 = 21.3% of the record
+    SIGNED/Q95  clears 239/1090 (21.9%)   gained 0->1 156   lost 1->0 133  (of which d<0, i.e. HARMFUL: 133 = 100%)   moved 289 = 26.5% of the record
+
+  the 1 -> 0 losses, split by sign of the real effect (the direction that matters):
+    ABS   /MAX  n=  0   d<0   0   d>0   0   mean d +nan   mean null mean +nan
+    ABS   /Q95  n=  0   d<0   0   d>0   0   mean d +nan   mean null mean +nan
+    SIGNED/MAX  n=133   d<0 133   d>0   0   mean d -0.2259   mean null mean -0.0453
+    SIGNED/Q95  n=133   d<0 133   d>0   0   mean d -0.2259   mean null mean -0.0453
+
+  the 0 -> 1 gains (the record understated a positive effect):
+    ABS   /MAX  n=  0   mean d +nan   mean |null|max nan   band max attained by a NEGATIVE draw in nan%
+    ABS   /Q95  n= 84   mean d -0.0138   mean |null|max 0.1537   band max attained by a NEGATIVE draw in 63%
+    SIGNED/MAX  n= 99   mean d +0.0860   mean |null|max 0.1544   band max attained by a NEGATIVE draw in 100%
+    SIGNED/Q95  n=156   mean d +0.0797   mean |null|max 0.1515   band max attained by a NEGATIVE draw in 82%
+
+======================================================================================================================
+[Q2] THE MECHANISM.  Is the two-sided band built out of draws that HURT?
+======================================================================================================================
+corpus stat_kind   n  null_mean  null_mean_neg  absmax_is_neg  mean_d
+     O     MaxDD 180    -0.0054        +0.4389        +0.4833 -0.0076
+     O    Sharpe 358    -0.0288        +0.5978        +0.5698 -0.0803
+     S     MaxDD  96    +0.0344        +0.0000        +0.0000 +0.0607
+     S    Sharpe  96    -0.0464        +0.8958        +0.8646 +0.0475
+     T    Sharpe 360    -0.0548        +0.9306        +0.9167 -0.0494
+
+  POOLED: the band's largest-magnitude draw is NEGATIVE in 64.6% of 1090 verdicts; the null population mean is negative in 65.5%.
+
+======================================================================================================================
+[Q3] RULE 8 WALK-FORWARD.  Clause read on <= 2016-12-31 only; 2017-2026 read ONCE.
+     Does the statistic change move a DECISION?
+======================================================================================================================
+
+  building the corpus-T reference books (RULES v1 and SPY on idea 181's panels)
+      u56: SPY OOS 0.882, RULES v1 @10bps OOS 0.747 (9s)
+      broad: SPY OOS 0.882, RULES v1 @10bps OOS 0.576 (10s)
+      small: SPY OOS 0.882, RULES v1 @10bps OOS 0.492 (13s)
+
+  432 walk-forward rows over {'O': 18, 'T': 36} cells
+
+  corpus O: mean OOS across 18 cells (2017-01-01 .. end)
+                        CAGR_OOS  MaxDD_OOS  Sharpe_OOS  dOOS_vs_donothing       t   wins  differs
+sel                                                                                               
+REF RULES v1             +0.0494    -0.2493     +0.4750            -0.3017 -4.2023   3/18        0
+REF SPY                  +0.1545    -0.3372     +0.8820            +0.1054 +1.4424  12/18        0
+S0 do-nothing            +0.1022    -0.2353     +0.7766            +0.0000     NaN   0/18        0
+S1 IS-argmax (no gate)   +0.0955    -0.2552     +0.7405            -0.0361 -1.6840   5/18        0
+S2 gate ABS/MAX          +0.0963    -0.2384     +0.7458            -0.0308 -2.0498   2/18       17
+S2 gate ABS/Q95          +0.0947    -0.2497     +0.7302            -0.0464 -3.2961   2/18       15
+S2 gate SIGNED/MAX       +0.1026    -0.2386     +0.7732            -0.0034 -0.4881   2/18       17
+S2 gate SIGNED/Q95       +0.1007    -0.2466     +0.7567            -0.0199 -1.6426   2/18       15
+
+  corpus T: mean OOS across 36 cells (2017-01-01 .. end)
+                        CAGR_OOS  MaxDD_OOS  Sharpe_OOS  dOOS_vs_donothing       t   wins  differs
+sel                                                                                               
+REF RULES v1             +0.0439    -0.2624     +0.4229            -0.3507 -8.9065   6/36        0
+REF SPY                  +0.1545    -0.3372     +0.8820            +0.1084 +2.1153  18/36        0
+S0 do-nothing            +0.1012    -0.2325     +0.7736            +0.0000     NaN   0/36        0
+S1 IS-argmax (no gate)   +0.1219    -0.2246     +0.9060            +0.1324 +4.0284  28/36        0
+S2 gate ABS/MAX          +0.0869    -0.2421     +0.7013            -0.0723 -3.2605   2/36       34
+S2 gate ABS/Q95          +0.0957    -0.2490     +0.7612            -0.0125 -0.3181   7/36       28
+S2 gate SIGNED/MAX       +0.1142    -0.2317     +0.8647            +0.0911 +2.7072  15/36       16
+S2 gate SIGNED/Q95       +0.1165    -0.2314     +0.8770            +0.1034 +3.0623  19/36       11
+
+======================================================================================================================
+[Q4] BOTH KEEP PATHS on every real arm, and whether the statistic change moves one.
+======================================================================================================================
+
+  360 real arms: 4a passes 99, 4b passes 61
+          n  pass4a  pass4b
+corpus                     
+O       180      37      28
+T       180      62      33
+
+  of the 4b passes, how many carry an IS-window clause hit under each arm:
+    ABS   /MAX: 5/61
+    ABS   /Q95: 6/61
+    SIGNED/MAX: 10/61
+    SIGNED/Q95: 11/61
+
+  corpus    panel family           arm  cost fail4a fail4b clause_ABS_MAX clause_ABS_Q95 clause_SIGNED_MAX clause_SIGNED_Q95  pass4a  pass4b
+       O      U56  DDCTL  thr=0.06/0.5  10.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL   thr=0.1/0.5  10.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL   thr=0.1/1.0  10.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL  thr=0.15/0.5  10.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL  thr=0.15/0.5  25.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL  thr=0.15/1.0  10.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL  thr=0.15/1.0  25.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL  thr=0.25/0.5  10.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL  thr=0.25/0.5  25.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL  thr=0.25/1.0  10.0     DD      -          False          False             False             False   False    True
+       O      U56  DDCTL  thr=0.25/1.0  25.0     DD      -          False          False             False             False   False    True
+       O      U56 BUDGET thr=0.05/half  10.0     DD      -          False          False             False             False   False    True
+       O      U56 BUDGET thr=0.05/half  25.0     DD      -          False          False             False             False   False    True
+       O      U56 BUDGET  thr=0.1/half  10.0     DD      -          False           True             False             False   False    True
+       O      U56 BUDGET  thr=0.1/half  25.0     DD      -          False          False             False             False   False    True
+       O      U56 BUDGET  thr=0.2/half  10.0     DD      -           True           True             False             False   False    True
+       O      U56 BUDGET  thr=0.2/half  25.0     DD      -          False          False             False             False   False    True
+       O      U56 BUDGET  thr=0.3/half  10.0     DD      -           True           True             False             False   False    True
+       O      U56 BUDGET  thr=0.5/half  10.0     DD      -           True           True              True              True   False    True
+       O      U56 BUDGET  thr=0.5/half  25.0     DD      -           True           True              True              True   False    True
+       O      U56 SLEEVE thr=100.0/0.5  10.0     DD      -          False          False             False             False   False    True
+       O      U56 SLEEVE thr=200.0/0.5  10.0     DD      -          False          False             False             False   False    True
+       O      U56 SLEEVE thr=200.0/1.0  10.0      -      -          False          False             False             False    True    True
+       O      U56 SLEEVE thr=300.0/0.5  10.0     DD      -          False          False             False             False   False    True
+       O      U56 SLEEVE thr=300.0/1.0  10.0     DD      -          False          False             False             False   False    True
+       O      U56 SLEEVE thr=400.0/0.5  10.0     DD      -          False          False             False             False   False    True
+       O      U56 SLEEVE thr=400.0/1.0  10.0     DD      -          False          False             False             False   False    True
+       O BROAD136 SLEEVE thr=200.0/0.5  10.0      -      -          False          False             False             False    True    True
+       T      u56    VOL     POS/m=0.2  10.0     DD      -          False          False             False             False   False    True
+       T      u56    VOL     POS/m=0.5  10.0     DD      -          False          False             False             False   False    True
+       T      u56    VOL     POS/m=1.0  10.0     DD      -          False          False             False             False   False    True
+       T      u56    VOL     NEG/m=0.2  10.0     DD      -          False          False             False             False   False    True
+       T      u56    MOM     POS/m=0.2  10.0     DD      -          False          False             False             False   False    True
+       T      u56    MOM     POS/m=0.5  10.0     DD      -          False          False             False              True   False    True
+       T      u56    MOM     POS/m=1.0  10.0     DD      -          False          False              True              True   False    True
+       T      u56    MOM     POS/m=1.0  25.0     DD      -          False          False              True              True   False    True
+       T      u56    MOM     NEG/m=0.2  10.0     DD      -          False          False             False             False   False    True
+       T      u56    MOM     NEG/m=0.5  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R6     POS/m=0.2  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R6     POS/m=0.5  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R6     POS/m=1.0  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R6     NEG/m=0.2  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R6     NEG/m=0.5  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R3     POS/m=0.2  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R3     POS/m=0.5  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R3     POS/m=1.0  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R3     NEG/m=0.2  10.0     DD      -          False          False             False             False   False    True
+       T      u56     R3     NEG/m=0.5  10.0     DD      -          False          False             False             False   False    True
+       T      u56  PRICE     POS/m=0.2  10.0     DD      -           True           True             False             False   False    True
+       T      u56  PRICE     POS/m=0.5  10.0     DD      -          False          False             False             False   False    True
+       T      u56  PRICE     NEG/m=0.2  10.0     DD      -          False          False              True              True   False    True
+       T      u56  PRICE     NEG/m=0.2  25.0     DD      -          False          False              True              True   False    True
+       T      u56  PRICE     NEG/m=0.5  10.0     DD      -          False          False              True              True   False    True
+       T      u56  PRICE     NEG/m=0.5  25.0     DD      -          False          False              True              True   False    True
+       T      u56  PRICE     NEG/m=1.0  10.0     DD      -          False          False              True              True   False    True
+       T      u56  PRICE     NEG/m=1.0  25.0     DD      -          False          False              True              True   False    True
+       T    broad    MOM     NEG/m=0.5  10.0      -      -          False          False             False             False    True    True
+       T    broad     R6     POS/m=0.2  10.0      -      -          False          False             False             False    True    True
+       T    broad     R6     POS/m=1.0  10.0      -      -          False          False             False             False    True    True
+       T    broad     R3     POS/m=0.2  10.0      -      -          False          False             False             False    True    True
+       T    broad     R3     POS/m=1.0  10.0      -      -          False          False             False             False    True    True
+
+  4a/4b are computed from returns; the clause statistic is a reporting column and changes no KEEP by construction. The count above is the audit, not an inference.
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS
+======================================================================================================================
+  HIT   P1 all three reproductions pass                                        T/S/O all reproduce (checked in [0])
+  HIT   P2 SIGNED loses more verdicts than it gains                            lost 133, gained 99
+  HIT   P3 a majority of 1->0 losses are d<0 (harmful)                         133/133 = 100%
+  HIT   P4 band max attained by a NEGATIVE draw > 40%, null mean negative in a majority neg-argmax 64.6%, neg null mean 65.5%
+  MISS  P5 no clause gate beats do-nothing OOS, either statistic               best gate dOOS +0.1034
+  HIT   P6 the statistic change moves zero 4b passes                           61 4b passes; 4a/4b are return-based and clause-independent
+
+  5 of 6 predictions hit.
+
+done in 13s
