@@ -34,3 +34,12 @@
    tie-break, not as an edge.
 10. **Recommendation: adopt as report-only scoping wording or reject; do NOT promote a book.**
     RULES.md, scan.py, bot.py and baseline.py are untouched by this run.
+    **Amendment after the sibling lane (`..._B`, commit e787f48, same day, same idea):** lane B
+    ran the same sweep under four count conventions and found **the argmax's LOCATION is
+    construction-dependent** — U56 moves to 0.55 under a constant-count-at-equal-cash form, and
+    B136 to 1.00; under idea 78's raw `gross/n` the B136 q=1.00 premium rises across the ladder,
+    which is idea 157's cash channel. What survives all four constructions is only the DIRECTION:
+    the optimum sits in the top decile of q and nothing selective wins. **Clause 7's "q = 0.90"
+    must therefore be read as "the top decile", not as a constant to write down**, and the
+    review should prefer the direction wording to the number. Lane B's U56 value at 10 bps
+    (+0.0316) is identical to this run's, reached independently.
