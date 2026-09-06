@@ -75,17 +75,36 @@ def rules_v1_weights(px, n=5, w=0.15, max_vol=0.60, vol_scale=True):
     rank = elig.rank(axis=1, ascending=False)
     return (rank <= n).astype(float) * w
 
+def band_state(px, band=0.03):
+    """RULES v2 clause 2: 200d MA band with hysteresis. IN above ma*(1+band), OUT below
+    ma*(1-band), previous state in between, OUT before 200 closes exist."""
+    ma = px.rolling(200).mean()
+    raw = pd.DataFrame(np.nan, index=px.index, columns=px.columns)
+    raw = raw.mask(px > ma * (1 + band), 1.0).mask(px < ma * (1 - band), 0.0)
+    return raw.ffill().fillna(0.0) > 0.5
+
+def rules_v2_weights(px, band=0.03, gross=0.75):
+    """RULES v2 (live since 2026-09-06): hold every name inside the 200d +/-3% band at
+    gross/N of NAV, N = instruments priced that day; gated-out weight goes to CASH (de-gross,
+    never re-spread). No ranking, no vol filter. Weekly cadence (freq='W')."""
+    e = pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+    ew = gross * e.div(e.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0)
+    return ew.where(band_state(px, band), 0.0)
+
 def _row(name, r):
     m = metrics(r); h = len(r) // 2; m1, m2 = metrics(r.iloc[:h]), metrics(r.iloc[h:])
     return dict(name=name, CAGR=m["CAGR"], Sharpe=m["Sharpe"], MaxDD=m["MaxDD"], H1=m1["Sharpe"], H2=m2["Sharpe"])
 
 def compare(name, weights_fn, px, freq="W", cost_bps=10, baseline_freq="W", write_report=False):
-    """Run idea vs RULES v1 baseline vs SPY over the common sample; print table; return dict for the leaderboard."""
+    """Run idea vs the LIVE baseline (RULES v2 since 2026-09-06) vs RULES v1 vs SPY over the
+    common sample; print table; return dict for the leaderboard. The 4a verdict is judged
+    against RULES v2; the v1 row is kept for continuity with the pre-2026-09-06 record."""
     res = backtest(px, weights_fn(px), cost_bps=cost_bps, freq=freq)
-    base = backtest(px, rules_v1_weights(px), cost_bps=cost_bps, freq=baseline_freq)
+    base = backtest(px, rules_v2_weights(px), cost_bps=cost_bps, freq=baseline_freq)
+    old = backtest(px, rules_v1_weights(px), cost_bps=cost_bps, freq=baseline_freq)
     start = px.index[260]                                    # skip warm-up
     r, b, spy = res["returns"].loc[start:], base["returns"].loc[start:], px["SPY"].pct_change().fillna(0).loc[start:]
-    rows = [_row(name, r), _row("RULES v1 baseline", b), _row("SPY", spy)]
+    rows = [_row(name, r), _row("RULES v2 baseline (live)", b), _row("RULES v1 (previous)", old["returns"].loc[start:]), _row("SPY", spy)]
     df = pd.DataFrame(rows).set_index("name")
     print(df.to_string(float_format=lambda x: f"{x:.3f}"))
     keep = rows[0]["H1"] > rows[1]["H1"] and rows[0]["H2"] > rows[1]["H2"] and rows[0]["MaxDD"] >= rows[1]["MaxDD"]
@@ -99,4 +118,4 @@ def compare(name, weights_fn, px, freq="W", cost_bps=10, baseline_freq="W", writ
 
 if __name__ == "__main__":
     px = load_universe()
-    compare("RULES v1 (self-check)", rules_v1_weights, px)
+    compare("RULES v2 (self-check)", rules_v2_weights, px)

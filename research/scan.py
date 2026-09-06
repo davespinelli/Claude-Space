@@ -42,12 +42,17 @@ def main():
         mom_12_1 = s.iloc[-22] / s.iloc[-253] - 1          # classic 12-1 momentum
         vol20 = s.pct_change().iloc[-20:].std() * np.sqrt(252)
         hi52 = s.iloc[-252:].max()
+        ma200 = s.rolling(200).mean().iloc[-1]
         rows.append(dict(ticker=t, close=round(c,2), r1d=r(1), r1m=r(21), r3m=r(63), r6m=r(126),
             mom_12_1=mom_12_1, above_50=c > s.rolling(50).mean().iloc[-1],
-            above_200=c > s.rolling(200).mean().iloc[-1], rsi14=rsi(s).iloc[-1],
+            above_200=c > ma200, ma200=round(ma200, 4), d200=c / ma200 - 1, rsi14=rsi(s).iloc[-1],
             off_52w_high=c / hi52 - 1, vol20=vol20))
     df = pd.DataFrame(rows).set_index("ticker")
-    # Composite: risk-adjusted momentum (12-1 and 6m) scaled by vol, trend filter
+    # Composite: risk-adjusted momentum (12-1 and 6m) scaled by vol, trend filter.
+    # INFORMATIONAL ONLY since RULES v2 (2026-09-06): the live book neither ranks nor filters on
+    # it. v2 holds every name inside the 200d +/-3% band; d200 above is that distance, but the
+    # band is path-dependent, so the held set is computed by products/bot/bot.py from the
+    # full-history cache data/prices.csv, not from this 15-month window.
     df["score"] = (df.mom_12_1.rank(pct=True) + df.r6m.rank(pct=True) + df.r3m.rank(pct=True)) / 3
     df["score"] = df.score * (0.5 + 0.5 * df.above_200.astype(float)) / df.vol20.clip(lower=0.08) ** 0.5
     df = df.sort_values("score", ascending=False)
@@ -60,6 +65,8 @@ def main():
     spy = df.loc["SPY"] if "SPY" in df.index else None
     out = [f"# Market Scan — {last}", "", f"**Breadth:** {breadth}",
            f"**SPY:** 1d {pct(spy.r1d)}, 1m {pct(spy.r1m)}, 3m {pct(spy.r3m)}, RSI {spy.rsi14:.0f}, {pct(spy.off_52w_high)} off 52w high" if spy is not None else "",
+           "", "_Ranking below is informational. The live paper book (research/RULES.md v2) holds"
+           " every name inside its 200d ±3% band at 0.75/N of NAV and does not use this score._",
            "", "## Top 15 by risk-adjusted momentum", table(df.head(15)),
            "", "## Bottom 10 (weakest trend)", table(df.tail(10)),
            "", "## Oversold in uptrend (RSI<35 and above 200d) — mean-reversion candidates",
