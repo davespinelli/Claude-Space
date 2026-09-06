@@ -2,6 +2,10 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-06 | 40693579 | Excel Form Automation via SQL | $1,400 | 11 | drafted |
+| 2026-09-06 | 40693471 | Daily Order Status Entry | $230 | 4 | drafted |
+| 2026-09-06 | 40693466 | Claude AI Expert for Dev Team Upskilling | $600 | 53 | drafted |
+| 2026-09-06 | 40693390 | Small-Business Website AI Chatbot | $820 | 123 | drafted |
 | 2026-09-06 | 40692810 | Real-Data Trading Bot Optimization & Validation | $290 | 73 | drafted |
 | 2026-09-06 | 40693155 | Website Customer-Support Chatbot | $270 | 164 | drafted |
 | 2026-09-06 | 40686904 | Expand Campus AI with New Modules | $210 | 51 | drafted |
@@ -109,6 +113,9 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 
 - Troubleshooting C#/.NET FXCM Trading App (40693017) (C#/.NET and the ForexConnect API, outside the Python stack we deliver in; 101 bids)
 - USA Entrepreneur Contact Database Build (40680451) (building a contact database of individuals, same personal-contact harvesting reason as the earlier email-scrape postings)
+- Multi-tenant Web Scraping & Lead Gen App (40693329) (multi-tenant SaaS scope posted at $30–$250 with 115 bids, and the lead-gen half is contact harvesting we do not take)
+- Enter Financial Budget Data - 05/09/2026 23:01 EDT (40693487) (same template and brief as 40689951, already drafted 2026-09-05)
+- Printed Text to Excel (40693556) (same title and brief as 40691897, already drafted 2026-09-05)
 
 Note for this run: freelancer.com is blocked by the session network policy, so proposals were written from the descriptions the scanner captured in JOBS.md. Older undrafted rows have no description in the shortlist, which is why several were skipped rather than priced blind.
 
