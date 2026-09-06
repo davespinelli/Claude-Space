@@ -1,0 +1,192 @@
+======================================================================================================================
+IDEA 188  why-does-the-small-panel-want-M-and-the-large-caps-6W   (cloud, 2026-09-06)
+======================================================================================================================
+  small panel: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+  corpus: 115 books (49 SMALL / 33 U56 / 33 ETF)
+
+======================================================================================================================
+REPRODUCTION, asserted before any new number is read
+======================================================================================================================
+  [a] cad_mask vs engine.rebalance_mask at the four engine-supported points:
+      D   identical=True   rebalances/yr= 252.0
+      W   identical=True   rebalances/yr=  52.3
+      M   identical=True   rebalances/yr=  12.1
+      Q   identical=True   rebalances/yr=   4.0
+      2D  (new point)      rebalances/yr= 126.0
+      2W  (new point)      rebalances/yr=  26.1
+      6W  (new point)      rebalances/yr=   8.7
+      -> PASS
+  [a] cad_mask == engine.rebalance_mask: PASS
+  [b] fast_backtest vs engine.backtest (products/backtester/engine.py), same book:
+      SMALL439  cad=D   max|dret|=1.735e-18  max|dturn|=1.110e-16
+      SMALL439  cad=W   max|dret|=2.776e-17  max|dturn|=4.441e-16
+      SMALL439  cad=M   max|dret|=5.551e-17  max|dturn|=7.772e-16
+      SMALL439  cad=Q   max|dret|=8.327e-17  max|dturn|=1.110e-15
+      -> PASS
+  [b] fast_backtest == engine.backtest: PASS
+  [c] CAND-20 weights vs idea 78/171 weights_cand on SMALL439: max|dw|=0.000e+00  -> PASS
+  [c] CAND-20 weights == idea 78/171 weights_cand: PASS
+
+  [d] vs idea 175's published ladder.csv: matched 805/805 rows
+      max|d Sharpe     | = 2.220e-16  -> PASS
+      max|d CAGR       | = 9.888e-17  -> PASS
+      max|d MaxDD      | = 9.714e-17  -> PASS
+      max|d IS_Sharpe  | = 2.220e-16  -> PASS
+      max|d OOS_Sharpe | = 2.220e-16  -> PASS
+      max|d turnover   | = 7.105e-15  -> PASS
+
+  [e] idea 175's constants table (28 cells) re-derived: max|d mean_d| = 8.327e-17 -> PASS
+
+  the split this idea exists to explain (mean OOS Sharpe minus the W incumbent):
+point       6W       M       Q
+family                        
+ALL    +0.0999 +0.0761 -0.1412
+ETF    +0.1600 +0.0730 -0.2914
+SMALL  +0.0163 +0.0978 +0.0313
+U56    +0.1640 +0.0469 -0.2472
+
+  REPRODUCTION: ALL PASS
+
+======================================================================================================================
+(1) THE TWO CANDIDATE PANEL PROPERTIES, measured cadence-free
+======================================================================================================================
+
+  realised signal decay -- mean cross-sectional rank IC by family and horizon (stride 21):
+h          5       10      21      30      42      63      90      126
+family                                                                
+ETF    +0.0706 +0.0680 +0.0470 +0.0570 +0.0609 +0.0862 +0.1053 +0.1291
+SMALL  +0.0180 +0.0079 +0.0045 +0.0002 -0.0114 -0.0071 -0.0076 -0.0064
+U56    +0.0605 +0.0657 +0.0639 +0.0763 +0.0772 +0.0984 +0.1215 +0.1481
+
+  the same curve scaled as an h-day rule's information ratio, IC(h)/sqrt(h) (x100, stride 21):
+h         5      10     21     30     42     63     90     126
+family                                                        
+ETF    +3.158 +2.150 +1.026 +1.041 +0.940 +1.086 +1.110 +1.150
+SMALL  +0.806 +0.251 +0.098 +0.003 -0.175 -0.090 -0.081 -0.057
+U56    +2.708 +2.076 +1.394 +1.393 +1.192 +1.240 +1.281 +1.320
+  family argmax of IC(h)/sqrt(h): ETF -> h=5d, SMALL -> h=5d, U56 -> h=5d
+
+  holding-episode length (idea 76's measure on DAILY top-20 membership) and h*, by family:
+        episode_days  episode_days_median  hstar_IR_s21  hstar_IC_s21  hstar_HALF_s21  hstar_IR_s63  hstar_IC_s63  hstar_HALF_s63
+family                                                                                                                           
+ETF            38.75                 3.98          5.30        118.67          119.64         34.52        119.06          122.48
+SMALL          18.83                 3.88         12.90         29.04           45.22         21.49         31.90           48.37
+U56            31.28                 3.79          5.15        126.00          126.00         53.27        123.82          126.00
+
+  ...and the same, per fixed book (the three un-sampled panels):
+    book  n_names  episode_days  episode_days_median  hstar_IR_s21  hstar_IC_s21  hstar_HALF_s21  hstar_IR_s63  hstar_IC_s63  hstar_HALF_s63
+SMALL439      439          9.03                 3.00          5.00          5.00           21.00          5.00          5.00           10.00
+     U56       55         17.17                 3.00          5.00        126.00          126.00          5.00        126.00          126.00
+   ETF36       35         22.92                 3.00          5.00        126.00          126.00          5.00        126.00          126.00
+
+======================================================================================================================
+(2) DECOMPOSING IDEA 175's M-MINUS-6W GAP -- does either property absorb the family?
+======================================================================================================================
+
+  gap = OOS Sharpe(M) - OOS Sharpe(6W), 115 books; by family:
+        size    mean     std        t
+family                               
+ETF       33 -0.0870 +0.0305 -16.3558
+SMALL     49 +0.0815 +0.1510  +3.7783
+U56       33 -0.1171 +0.0481 -13.9867
+
+  OLS of the gap on candidate explanators (all 115 books):
+                         spec  k     R2                            coef
+          family dummies only  2 0.4453                 +0.1986 +0.0301
+       log h* (IR, stride 21)  1 0.0559                         +0.0584
+             log episode_days  1 0.1726                         -0.1412
+            log turnover at W  1 0.0153                         +0.0282
+         log h* + log episode  2 0.2036                 +0.0439 -0.1321
+log h* + log episode + family  4 0.4518 +0.0022 +0.0428 +0.2176 +0.0185
+
+  Spearman(gap, h* (IR)         ) = +0.3473   |  within-family: ETF -0.0800, SMALL +0.1151, U56 +0.2413
+  Spearman(gap, h* (half-life)  ) = -0.6335   |  within-family: ETF -0.2134, SMALL -0.2393, U56 +nan
+  Spearman(gap, episode_days    ) = -0.3862   |  within-family: ETF +0.0719, SMALL +0.1410, U56 -0.0080
+  Spearman(gap, turnover at W   ) = +0.0767   |  within-family: ETF -0.0909, SMALL -0.2564, U56 +0.0912
+
+======================================================================================================================
+(3) RULE 8 -- can the property CHOOSE the cadence better than writing a constant down?
+======================================================================================================================
+  Every property recomputed on IS <= 2016-12-31 only; 2017-2026 read once.
+
+  all 115 books:
+                             n  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD  d_vs_W   t_vs_W  d_vs_M   t_vs_M  win_vs_M
+arm                                                                                                                       
+ORACLE (OOS argmax)        115          +0.8427        +0.0714         -0.1824 +0.1629 +17.5641 +0.0868 +14.7712   +0.8783
+A2 constant 6W             115          +0.7797        +0.0649         -0.2026 +0.0999  +8.4880 +0.0238  +1.8557   +0.7304
+A1 constant M              115          +0.7559        +0.0602         -0.1732 +0.0761  +6.7075 +0.0000      NaN   +0.0000
+A5 EPISODE (IS)            115          +0.7384        +0.0612         -0.1922 +0.0586  +3.5507 -0.0175  -1.3190   +0.3826
+A3 SEL-SHARPE (IS argmax)  115          +0.7186        +0.0575         -0.1798 +0.0388  +3.2646 -0.0373  -3.8113   +0.0522
+A4 DECAY IR/s21            115          +0.6966        +0.0553         -0.1825 +0.0168  +2.3069 -0.0593  -5.4815   +0.2000
+A4 DECAY IR/s63            115          +0.6872        +0.0575         -0.1905 +0.0074  +0.5869 -0.0687  -4.7177   +0.3217
+A0 constant W              115          +0.6798        +0.0526         -0.1705 +0.0000      NaN -0.0761  -6.7075   +0.1826
+A4 DECAY IC/s21            115          +0.6325        +0.0540         -0.2059 -0.0473  -3.1967 -0.1234  -8.3403   +0.1826
+A4 DECAY HALF/s21          115          +0.6116        +0.0536         -0.2213 -0.0682  -4.0325 -0.1443  -8.6792   +0.1913
+A4 DECAY IC/s63            115          +0.6059        +0.0526         -0.2133 -0.0739  -5.0416 -0.1500  -9.0969   +0.2087
+A4 DECAY HALF/s63          115          +0.5688        +0.0512         -0.2287 -0.1109  -7.1578 -0.1870 -11.6190   +0.1478
+
+  by family (mean OOS Sharpe):
+family                       ETF  SMALL    U56
+arm                                           
+A0 constant W             0.8413 0.2052 1.2230
+A1 constant M             0.9143 0.3030 1.2699
+A2 constant 6W            1.0013 0.2215 1.3870
+A3 SEL-SHARPE (IS argmax) 0.9058 0.2525 1.2236
+A4 DECAY HALF/s21         0.7309 0.2270 1.0634
+A4 DECAY HALF/s63         0.6727 0.2116 0.9955
+A4 DECAY IC/s21           0.7590 0.2503 1.0734
+A4 DECAY IC/s63           0.7693 0.2063 1.0359
+A4 DECAY IR/s21           0.8503 0.2309 1.2344
+A4 DECAY IR/s63           0.8125 0.2140 1.2645
+A5 EPISODE (IS)           0.9139 0.2765 1.2485
+ORACLE (OOS argmax)       1.0013 0.3692 1.3873
+
+  what each arm actually picks (share of books):
+    A0 constant W              W 100%
+    A1 constant M              M 100%
+    A2 constant 6W             6W 100%
+    A3 SEL-SHARPE (IS argmax)  M 79%  2W 9%  Q 7%  6W 3%  2D 2%  W 1%
+    A4 DECAY HALF/s21          Q 53%  M 16%  6W 15%  2W 14%  W 3%
+    A4 DECAY HALF/s63          Q 58%  2W 30%  6W 8%  M 3%  W 2%
+    A4 DECAY IC/s21            Q 42%  W 29%  2W 18%  M 8%  6W 3%
+    A4 DECAY IC/s63            Q 44%  W 34%  6W 16%  M 3%  2W 3%
+    A4 DECAY IR/s21            W 56%  2W 28%  Q 10%  M 5%  6W 1%
+    A4 DECAY IR/s63            W 52%  6W 23%  Q 16%  M 5%  2W 3%
+    A5 EPISODE (IS)            6W 46%  M 42%  Q 11%  2W 1%
+    ORACLE (OOS argmax)        6W 61%  M 12%  Q 11%  W 8%  2W 6%  2D 2%
+
+  references, same OOS window: SPY Sharpe 0.8820; RULES v1 on U56 7.73%/0.7471/-13.83%; RULES v1 on SMALL 6.35%/0.4923/-36.12%
+
+======================================================================================================================
+PROTOCOL 4 -- KEEP paths across all 805 (book, cadence) points
+======================================================================================================================
+
+  4a passes by family x cadence:
+point    D  2D   W  2W   M  6W  Q
+family                           
+ETF     15  19  17  11  29  13  0
+SMALL    0   0   0   0   2   0  0
+U56     17  16  14  13  16  13  0
+
+  4b passes by family x cadence:
+point   D  2D   W  2W   M  6W  Q
+family                          
+ETF     0   0   0   0   0   0  0
+SMALL   0   0   0   0   0   0  0
+U56     5  12  10   4  18  10  0
+
+  totals: 4a 195/805, 4b 59/805
+  (the 4a/4b columns are idea 175's own, carried unchanged; this idea proposes no book and claims neither path)
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS
+======================================================================================================================
+  MISS  P1 SMALL's IR-optimal horizon is the shortest of the three families ETF 5.3d, SMALL 12.9d, U56 5.2d
+  HIT   P2 SMALL's holding episodes are shorter than U56's                 ETF 38.8d, SMALL 18.8d, U56 31.3d
+  MISS  P3 the two properties recover >=50% of the family dummies' R2      properties R2 0.2036 vs family R2 0.4453
+  HIT   P4 no property-chosen cadence beats the constant M                 best d vs M -0.0175 (A5 EPISODE (IS))
+  MISS  P5 IC decays over the horizon grid in every family                 ETF: +0.0470@21d -> +0.1291@126d, SMALL: +0.0045@21d -> -0.0064@126d, U56: +0.0639@21d -> +0.1481@126d
+
+  2 of 5 predictions hit.
+
+done in 90s
