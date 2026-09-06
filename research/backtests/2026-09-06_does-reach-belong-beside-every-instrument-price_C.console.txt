@@ -1,0 +1,237 @@
+=== idea 251 does-reach-belong-beside-every-instrument-price (lane C) ===
+research/backtests/2026-09-06_does-reach-belong-beside-every-instrument-price_C.py
+
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+panel u56: 56 cols, 2008-01-02 .. 2026-09-04
+panel broad: 136 cols, 2008-01-02 .. 2026-09-04
+
+--- harness [A] (idea 245's gates, u56) ---
+[A] run(no instrument) vs engine.backtest : max|dret| = 0.000e+00  max|dturn| = 0.000e+00
+[B] dg convention gap (reported, not asserted): lever(0.60) vs book-at-0.60xw — CAGR 0.0672 vs 0.0670, Sharpe 0.8915 vs 0.8899, MaxDD -0.2112 vs -0.2114; max|dret| = 1.344e-03
+    dg is priced with idea 66's LEVER convention throughout (exactly proportional by construction); the book-at-g-weights variant differs only through the engine's cash re-normalisation and is not used.
+[C] run(stop=S) vs idea 94 run_stop     : max|diff| over 4 depths = 0.000e+00
+
+
+--- building the arm grid (EXT ladder; PUB is a flagged subset) ---
+512 rows (504 arms + 8 controls)
+
+--- harness [B] vs idea 74's committed grid ---
+[B] bought_pp  matched on 288 shared points: max|diff| = 1.776e-15
+[B] paid_pp    matched on 288 shared points: max|diff| = 1.776e-15
+[B] MaxDD      matched on 288 shared points: max|diff| = 8.327e-17
+[B] CAGR       matched on 288 shared points: max|diff| = 9.714e-17
+
+--- REACH: max_bought (pp of MaxDD the whole ladder can buy), 10 bps ---
+family  ladder   u56/EWALL0  u56/CAND20  broad/EWALL0  broad/CAND20   best cell
+200d    PUB            4.20        1.21          7.02          4.07        7.02
+200d    EXT            4.20        1.21          7.02          5.95        7.02
+band    PUB            4.82        0.02          6.87          1.10        6.87
+band    EXT            4.82        0.15          6.87          1.10        6.87
+abs     PUB            3.41       -0.11          5.05          2.60        5.05
+abs     EXT            3.97        1.56          6.56          5.12        6.56
+dg      PUB           13.04       12.74         14.65         14.86       14.86
+dg      EXT           22.46       21.92         25.36         25.68       25.68
+ddctl   PUB            7.49        8.12          8.57          9.42        9.42
+ddctl   EXT            9.25        9.54         10.61         10.93       10.93
+stop    PUB            2.51        2.59          2.73          1.85        2.73
+stop    EXT            5.44        6.45          6.91          6.13        6.91
+
+max_bought column as it would be published (max over the 4 matched cells, 10 bps):
+  200d-type MA gate            PUB   7.02 pp   EXT   7.02 pp
+  MA re-entry band             PUB   6.87 pp   EXT   6.87 pp
+  absolute momentum            PUB   5.05 pp   EXT   6.56 pp
+  de-gross (reference)         PUB  14.86 pp   EXT  25.68 pp
+  book DD control (idea 40)    PUB   9.42 pp   EXT  10.93 pp
+  per-name trailing stop       PUB   2.73 pp   EXT   6.91 pp
+
+--- STRATUM 1: idea 74's committed menu.csv (prices quoted AT a budget) ---
+[B2] idea 74's committed per-cell max_bought reproduced here: max|diff| = 1.776e-15
+240 published menu entries (2 panels x 2 books x 2 costs x 6 families x 5 budgets)
+  quoted beyond the PUBLISHED ladder's reach : 136  (56.7%)
+  still beyond reach on the EXTENDED ladder  : 117  (48.8%)
+  closed by extending the ladder             :  19  -> a real instrument limit
+
+  by family (of 40 entries each): unreachable PUB / EXT
+    200d-type MA gate            28 / 28
+    MA re-entry band             30 / 30
+    absolute momentum            33 / 31
+    de-gross (reference)          0 /  0
+    book DD control (idea 40)    11 /  5
+    per-name trailing stop       34 / 23
+
+--- the menu re-read on the EXTENDED ladder (median rate over the 4 cells, 10 bps; 'unreach' = no level of the family buys T in that cell) ---
+family                     T=2pp                 T=4pp                 T=6pp                 T=8pp                T=10pp
+200d          0.44 -> 0.44 [3/4]    0.42 -> 0.42 [3/4]    0.46 -> 0.46 [1/4]unreach -> unreach [0/4]unreach -> unreach [0/4]
+band        -0.06 -> -0.03 [2/4]    0.23 -> 0.23 [2/4]    0.36 -> 0.36 [1/4]unreach -> unreach [0/4]unreach -> unreach [0/4]
+abs           0.41 -> 0.32 [3/4]    0.53 -> 0.65 [2/4] unreach -> 0.84 [1/4]unreach -> unreach [0/4]unreach -> unreach [0/4]
+dg            0.63 -> 0.63 [4/4]    0.62 -> 0.62 [4/4]    0.62 -> 0.62 [4/4]    0.61 -> 0.61 [4/4]    0.61 -> 0.61 [4/4]
+ddctl         0.29 -> 0.29 [4/4]    0.40 -> 0.40 [4/4]    0.53 -> 0.53 [4/4]    0.56 -> 0.52 [4/4] unreach -> 0.59 [2/4]
+stop          0.89 -> 0.93 [4/4] unreach -> 0.68 [4/4] unreach -> 0.96 [3/4]unreach -> unreach [0/4]unreach -> unreach [0/4]
+  (PUB rate -> EXT rate [cells where the EXTENDED ladder reaches T]; de-gross is the reference row every other instrument has to beat)
+
+  the pick a reader takes off the menu changes in 4/40 (panel, book, cost, budget) cells once reach is back-filled:
+    broad/EWALL0 @10bps T=10pp : dg @ 0.58              -> ddctl @ 0.43
+    broad/EWALL0 @25bps T=10pp : dg @ 0.58              -> ddctl @ 0.49
+    u56/EWALL0 @10bps T=8pp : dg @ 0.61              -> ddctl @ 0.45
+    u56/EWALL0 @25bps T=8pp : dg @ 0.61              -> ddctl @ 0.51
+
+--- STRATUM 2: census of published price claims in the record ---
+110 price-claim lines in 34 files -> 258 (claim, named-instrument) pairs
+  lines naming no instrument family (unclassified): 20
+
+  pairs per family (each carries a price the record published without a reach):
+    200d-type MA gate             45   reach(EXT)   7.02 pp
+    MA re-entry band              36   reach(EXT)   6.87 pp
+    absolute momentum              5   reach(EXT)   6.56 pp
+    de-gross (reference)          74   reach(EXT)  25.68 pp
+    book DD control (idea 40)     31   reach(EXT)  10.93 pp
+    per-name trailing stop        47   reach(EXT)   6.91 pp
+
+  classified (claim, family) pairs          : 238
+  of those, a depth/budget is recoverable   : 48  (20.2%)  <- the record's prices almost never state the depth they were quoted at
+  quoted BEYOND reach (published ladder)    : 3  (6.2% of recoverable)
+  quoted BEYOND reach (extended ladder)     : 0  (0.0% of recoverable)
+  [upper bound, LOOSE +/-3 line depth]      : 3 of 92 — reported as an upper bound only; the window leaks numbers between adjacent claims
+
+  EXPOSURE — share of PROTOCOL's own budget grid {2,4,6,8,10}pp on which each family's published prices are undefined:
+    200d-type MA gate            PUB  40%  EXT  40%    45 published prices carry no reach column
+    MA re-entry band             PUB  40%  EXT  40%    36 published prices carry no reach column
+    absolute momentum            PUB  60%  EXT  40%     5 published prices carry no reach column
+    de-gross (reference)         PUB   0%  EXT   0%    74 published prices carry no reach column
+    book DD control (idea 40)    PUB  20%  EXT   0%    31 published prices carry no reach column
+    per-name trailing stop       PUB  80%  EXT  40%    47 published prices carry no reach column
+    -> across the 238 classified pairs, a budget drawn uniformly from the grid lands outside the instrument's reach 22.4% of the time
+
+--- RULE 8 walk-forward: is max_bought an EX-ANTE column? ---
+  PUB: IS reach-argmax == OOS reach-argmax in 22/48 cells; median OOS reach regret 0.04 pp (mean 0.93, max 5.07)
+  EXT: IS reach-argmax == OOS reach-argmax in 18/48 cells; median OOS reach regret 0.33 pp (mean 1.10, max 6.66)
+  PUB: Spearman(IS reach, OOS reach) across the 6 families = 0.743 (per-cell 0.66, 0.83, 0.60, 0.89)
+  EXT: Spearman(IS reach, OOS reach) across the 6 families = 0.700 (per-cell 0.71, 0.54, 0.94, 0.60)
+  LEVEL shift — a max_bought measured on one window is not the other window's:
+    200d-type MA gate            IS   1.26 pp -> OOS   3.94 pp   (mean shift  +2.68 pp)
+    MA re-entry band             IS   1.79 pp -> OOS   3.19 pp   (mean shift  +1.39 pp)
+    absolute momentum            IS   2.04 pp -> OOS   3.51 pp   (mean shift  +1.47 pp)
+    de-gross (reference)         IS  13.16 pp -> OOS  23.90 pp   (mean shift +10.74 pp)
+    book DD control (idea 40)    IS   4.05 pp -> OOS   9.89 pp   (mean shift  +5.84 pp)
+    per-name trailing stop       IS   0.80 pp -> OOS   5.14 pp   (mean shift  +4.34 pp)
+    all families: OOS reach exceeds IS reach in 47/48 cells — reach measured on 2009-2016 UNDER-states what the instrument bought in 2017-2026
+
+--- KEEP paths (every arm in the grid, PROTOCOL rule 4) ---
+  arms passing 4a (no failing bar): 209/504
+  arms passing 4b (no failing bar): 57/504
+panel   book  cost family   level     CAGR   Sharpe     MaxDD  OOS_Sharpe
+  u56 EWALL0    10   200d 150.000 0.115969 1.099636 -0.189183    1.014772
+  u56 EWALL0    10   200d 200.000 0.116162 1.096649 -0.186230    1.116942
+  u56 EWALL0    10   200d 250.000 0.115569 1.088409 -0.182556    1.099183
+  u56 EWALL0    10   200d 300.000 0.110913 1.048599 -0.183899    1.079332
+  u56 EWALL0    10   200d 400.000 0.110886 1.047294 -0.186268    1.052209
+  u56 EWALL0    10   band   0.005 0.119322 1.123738 -0.184043    1.139629
+  u56 EWALL0    10   band   0.010 0.119967 1.130497 -0.181948    1.145873
+  u56 EWALL0    10   band   0.020 0.120931 1.143108 -0.177067    1.172180
+  u56 EWALL0    10   band   0.030 0.123239 1.168101 -0.176351    1.210553
+  u56 EWALL0    10   band   0.050 0.128216 1.162066 -0.184087    1.208962
+  u56 EWALL0    10   band   0.080 0.133008 1.184477 -0.196630    1.192216
+  u56 EWALL0    10   band   0.120 0.140932 1.232980 -0.193607    1.272278
+  u56 EWALL0    10    abs 126.000 0.119791 1.107670 -0.192077    1.078677
+  u56 EWALL0    10    abs 189.000 0.114296 1.059755 -0.192385    1.129021
+  u56 EWALL0    10    abs 252.000 0.118873 1.077347 -0.198309    1.036608
+  u56 EWALL0    10    abs 378.000 0.116503 1.069114 -0.190498    1.075063
+  u56 EWALL0    10    abs 504.000 0.121174 1.117472 -0.187861    1.158536
+  u56 EWALL0    10  ddctl   0.120 0.112931 1.102176 -0.188678    1.127396
+  u56 EWALL0    10  ddctl   0.160 0.122233 1.126451 -0.201485    1.121876
+  u56 EWALL0    10   stop   0.080 0.108702 1.033667 -0.199460    1.133109
+  u56 EWALL0    25   band   0.005 0.107682 1.023793 -0.186462    1.042861
+  u56 EWALL0    25   band   0.010 0.109315 1.038909 -0.184284    1.057131
+  u56 EWALL0    25   band   0.020 0.112087 1.066750 -0.179037    1.099197
+  u56 EWALL0    25   band   0.030 0.115978 1.105146 -0.178099    1.150617
+  u56 EWALL0    25   band   0.050 0.122295 1.113216 -0.185764    1.161811
+  u56 EWALL0    25   band   0.080 0.128584 1.148612 -0.198121    1.156432
+  u56 EWALL0    25   band   0.120 0.137624 1.206598 -0.194654    1.245058
+  u56 EWALL0    25    abs 378.000 0.109454 1.010782 -0.191410    1.017151
+  u56 EWALL0    25    abs 504.000 0.116408 1.077871 -0.188810    1.120596
+  u56 EWALL0    25  ddctl   0.120 0.110068 1.076600 -0.190234    1.094277
+  u56 EWALL0    25  ddctl   0.160 0.120242 1.109896 -0.202075    1.102862
+  u56 CAND20    10     dg   0.900 0.140469 1.181615 -0.198839    1.174584
+  u56 CAND20    10     dg   0.800 0.124703 1.181615 -0.178116    1.174584
+  u56 CAND20    10     dg   0.700 0.108964 1.181615 -0.157051    1.174584
+  u56 CAND20    10  ddctl   0.050 0.110682 1.063910 -0.138048    1.175606
+  u56 CAND20    10  ddctl   0.080 0.123334 1.079950 -0.163620    1.050535
+  u56 CAND20    10  ddctl   0.120 0.147007 1.164083 -0.177711    1.138157
+  u56 CAND20    10   stop   0.040 0.125329 1.112358 -0.164721    1.168668
+  u56 CAND20    10   stop   0.060 0.132227 1.127321 -0.180222    1.143191
+  u56 CAND20    10   stop   0.080 0.139083 1.148356 -0.193290    1.182762
+  u56 CAND20    25     dg   0.900 0.126847 1.078897 -0.200043    1.080710
+  u56 CAND20    25     dg   0.800 0.112753 1.078897 -0.179211    1.080710
+  u56 CAND20    25  ddctl   0.120 0.131138 1.052189 -0.179802    1.029387
+  u56 CAND20    25   stop   0.080 0.114539 0.966319 -0.197738    1.004490
+broad EWALL0    10   200d  75.000 0.106644 0.995204 -0.201062    0.975537
+broad EWALL0    10   200d 100.000 0.109527 1.006076 -0.183470    0.947319
+broad EWALL0    10   200d 150.000 0.114141 1.045425 -0.194045    0.997697
+broad EWALL0    10   200d 200.000 0.116597 1.058533 -0.201167    1.065951
+broad EWALL0    10   band   0.005 0.116688 1.059323 -0.199218    1.064665
+broad EWALL0    10   band   0.010 0.117295 1.066395 -0.191745    1.079207
+broad EWALL0    10   band   0.020 0.118617 1.077362 -0.189127    1.083104
+broad EWALL0    10   band   0.030 0.117584 1.071228 -0.184950    1.078412
+broad EWALL0    10   band   0.050 0.120267 1.073313 -0.194625    1.097053
+broad EWALL0    10  ddctl   0.080 0.109205 1.100355 -0.189136    1.177640
+broad EWALL0    25   band   0.020 0.109160 0.999190 -0.191560    1.005239
+broad EWALL0    25   band   0.030 0.109544 1.004569 -0.187117    1.011992
+broad EWALL0    25   band   0.050 0.114007 1.022500 -0.196701    1.045149
+
+  OOS (2017-2026) reference: RULES v1 7.73%/0.747/-13.8%   SPY 15.45%/0.882/-33.7%
+  OOS of each family's IS-reach-maximising arm on u56/EWALL0 @10bps:
+    200d-type MA gate            level   200.0  OOS 12.49%/1.117/-18.6%  (IS reach  1.68pp, OOS reach  3.83pp)
+    MA re-entry band             level    0.02  OOS 13.05%/1.172/-17.7%  (IS reach  2.79pp, OOS reach  4.75pp)
+    absolute momentum            level   126.0  OOS 12.31%/1.079/-19.2%  (IS reach  2.67pp, OOS reach  3.25pp)
+    de-gross (reference)         level     0.0  OOS  0.00%/nan/  0.0%  (IS reach 12.48pp, OOS reach 22.46pp)
+    book DD control (idea 40)    level    0.02  OOS 10.07%/1.312/-13.2%  (IS reach  3.98pp, OOS reach  9.25pp)
+    per-name trailing stop       level    0.04  OOS 11.25%/1.114/-17.3%  (IS reach  1.00pp, OOS reach  5.14pp)
+
+--- harness [C] census audit sample (every 11th classified pair; full table in .claims.csv) ---
+  CHANGELOG.md:1 -> stop   depth=4.0pp
+    | - 2026-09-06 (cloud, idea 74 drawdown-instrument-exchange-rate) — **ANSWERED: the ranked insurance menu the queue asked for is delivered, it
+  CHANGELOG.md:66 -> band   depth=n/a
+    | - 2026-09-04 — Research lane B, idea 83 `turnover-budget-instead-of-a-cost-assumption`: **KILL**. 176 points, all reported. A per-rebalance 
+  CHANGELOG.md:88 -> stop   depth=n/a
+    | - 2026-09-04 (cloud, idea 23 earnings-season-avoidance) — **KILL.** 372 points (2 universes x 3 books [live v1 / idea 2's `top20` KEEP / ide
+  CHANGELOG.md:109 -> stop   depth=n/a
+    | - 2026-09-05 — Research lane B (idea 95, vol-threshold-sweep-on-ewall): **KILL of `0.60` as a DERIVED threshold; the incumbent book survives
+  CHANGELOG.md:125 -> dg     depth=n/a
+    | - 2026-09-05 (lane B, idea 93 absorbing-state-audit-of-every-state-dependent-rule) — **ANSWERED: the absorbing pathology is CONFIRMED and ma
+  LEADERBOARD.md:1596 -> ddctl  depth=n/a
+    | | 2026-09-05 | 117 P3 protection scales with crisis depth (n=2400 arm-episodes) | n/a | n/a | n/a | n/a | n/a | ALL **+0.161 pp/pp t +15.07*
+  LEADERBOARD.md:3043 -> stop   depth=n/a
+    | loses -0.106..-0.420 OOS. Priced as drawdown insurance: 2.88 pp CAGR per pp MaxDD, vs idea 94's
+  LEADERBOARD.md:3277 -> dg     depth=n/a
+    | | 2026-09-05 | 96 rule-8 walk-forward over {12 stop arms + no-stop control}, 12 cells | n/a | n/a | n/a | n/a | v1 OOS 0.714 (u56) / 0.573 (
+  LEADERBOARD.md:3430 -> band   depth=n/a
+    | | 2026-09-05 | 146 the price of the m-move on idea 74's axis (pp OOS CAGR per pp of \|MaxDD\|), matched book and cost | +1.1pp CAGR | **-0.0
+  LEADERBOARD.md:4058 -> band   depth=n/a
+    | | 2026-09-06 | 74 rule 8 — walk-forwarding the MENU (family AND level on 2009–2016 rate only, 2017–2026 read once, 25 cells) | IS-cheapest f
+  QUEUE.md:3 -> band   depth=n/a
+    | 250. locate-the-band-width-ceiling — idea 74's PARK by-product (u56 EWall + 12% MA re-entry band, 14.1%/1.233/−19.4%, OOS 1.272, 1.9x turnov
+  QUEUE.md:105 -> dg     depth=2.0pp
+    | 74. drawdown-instrument-exchange-rate — **ANSWERED, menu delivered; KILL as a selector (2026-09-06 cloud).** One matched axis at T=2pp: band
+  QUEUE.md:227 -> stop   depth=n/a
+    | 100b. sleeve-with-a-real-diversifier (INDEPENDENT SECOND RUN, lane B — the cloud lane ran the same idea the same day; both reach PARK) — **m
+  QUEUE.md:229 -> dg     depth=n/a
+    | 23. earnings-season-avoidance — **KILL** (2026-09-04, cloud). 372 points (2 universes x 3 books x 2 exclusion conventions x [1 anchor + 15 s
+  QUEUE.md:234 -> stop   depth=n/a
+    | 22. drawdown-control — **KILL** (2026-09-04, lane C). 882 points (3 books x 2 universes x [control + 6 triggers x 4 cut depths x 2 reset rul
+  QUEUE.md:254 -> stop   depth=1.4pp
+    | 9. trailing-stop — **KILL as a source of Sharpe, plus the cheapest drawdown instrument the project has measured.** 66 arms (2 universes x 3 
+  backtests/2026-09-04_earnings-season-avoidance_cloud.result.md:40 -> stop   depth=n/a
+    | in 99/180 season cells, at a median **2.88 pp of CAGR per pp of MaxDD** (aggregate 4.34) —
+  backtests/2026-09-05_V1u-small-negative-price_cloud.result.md:6 -> 200d   depth=n/a
+    | `panel=small, book=V1u`, gate arms whose price (pp of CAGR surrendered per pp of MaxDD bought) is
+  backtests/2026-09-05_pin-m-or-let-the-screen-choose_cloud.result.md:23 -> ddctl  depth=n/a
+    | screen picks and moves only m. Its exchange rate is therefore the gross ladder's own local slope
+  backtests/2026-09-05_sleeve-with-a-real-diversifier_cloud.memo.md:21 -> band   depth=4.5pp
+    | 4.1pp / 4.5pp of MaxDD and +0.057 / +0.106 of Sharpe — an exchange rate of **0.20–0.22pp of
+  backtests/2026-09-05_vol-threshold-sweep-on-ewall_B.result.md:135 -> 200d   depth=n/a
+    | **0.257 to 1.513** pp/pp against those ladder slopes; at the incumbent 0.60 the price is
+  backtests/2026-09-06_drawdown-instrument-exchange-rate_cloud.result.md:68 -> band   depth=n/a
+    | **Conclusion: the exchange rate is a valid REPORTING column and an invalid SELECTOR.** RULES may
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-06_does-reach-belong-beside-every-instrument-price_C.grid.csv / .reach.csv / .menu_backfilled.csv / .claims.csv / .walkforward.csv
