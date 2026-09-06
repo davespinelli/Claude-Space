@@ -1,0 +1,221 @@
+===============================================================================================================================================================================
+IDEA 296 - re-quote-every-de-gross-claim-with-its-constant-leverage-replay (lane cloud, 2026-09-06)
+===============================================================================================================================================================================
+A de-grossing gate holds less on average, and holding less buys drawdown and costs CAGR by
+itself.  Every published de-gross claim therefore carries a free rider.  This run attaches
+the zero-parameter CONSTANT-LEVERAGE REPLAY - the comparand run at the de-grossed book's
+own realised mean gross - to every cell of the published de-gross construction space and
+counts how many gate claims survive.
+Costs 10 bps (plus a 0-bps rung), gross 0.75, next-day execution, no shorting, no leverage.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PART A - CENSUS OF THE RECORD ITSELF (declared regexes; a mapping, not a semantic reading)
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                total  de_gross  with_comparative_claim  touching_a_KEEP_path
+source                                                                       
+LEADERBOARD.md   2651       141                      66                    67
+CHANGELOG.md      150        44                      42                    44
+
+what those de-gross rows/entries mention (token counts, rows can match several):
+                      leaderboard  changelog
+token                                       
+SMALL|sub-\$2B                 37         31
+U56|universe.json              75         37
+B136|broad                     57         35
+\bMA\b|200d                    23         18
+MAVOL|vol20                    14          9
+TOP\s?20|n=20|top-20           16         20
+RESPREAD|respread              10          5
+RULES v2|live book             27         14
+
+The re-run corpus below covers the three panels, the three construction families and the
+two dials those rows name, plus the live book: 3 x 3 x 3 x 6 = 162 cells.  Rows that quote a construction outside it (sleeves, stops, ddctl, blends) are NOT
+re-run here and are reported as the un-mapped remainder, not silently counted as survivors.
+
+panels: SMALL439 439 names (44 dropped for max_1d_move >= 1.0), U56 55, B136 135
+  SMALL439: evaluated 2011-01-13 .. 2026-09-04 (15.61 yrs)
+  U56: evaluated 2009-01-13 .. 2026-09-04 (17.62 yrs)
+  B136: evaluated 2009-01-13 .. 2026-09-04 (17.62 yrs)
+
+  D0(i) vectorised backtester vs engine.backtest, 9 books: max |diff| 8.882e-16 (bar 1e-12) -> HOLDS
+
+REFERENCE BOOKS
+                                                   CAGR  Sharpe   MaxDD     H1     H2  isSharpe  oCAGR  oSharpe  oMaxDD
+CONTROL EWall SMALL439 W (full gross, no filter) 0.1020  0.6792 -0.3616 0.7985 0.6147    0.7757 0.1010   0.6372 -0.3616
+CONTROL EWall SMALL439 M (full gross, no filter) 0.0974  0.6596 -0.3475 0.7750 0.5958    0.7427 0.0971   0.6235 -0.3475
+CONTROL EWall SMALL439 Q (full gross, no filter) 0.1014  0.6821 -0.3394 0.7935 0.6217    0.7643 0.1016   0.6467 -0.3394
+CONTROL EWall U56 W (full gross, no filter)      0.1332  1.1296 -0.2246 1.1971 1.0763    1.1167 0.1386   1.1404 -0.2246
+CONTROL EWall U56 M (full gross, no filter)      0.1331  1.1378 -0.2221 1.1933 1.0941    1.1127 0.1394   1.1579 -0.2221
+CONTROL EWall U56 Q (full gross, no filter)      0.1353  1.1553 -0.2172 1.2144 1.1089    1.1362 0.1412   1.1708 -0.2172
+CONTROL EWall B136 W (full gross, no filter)     0.1417  1.1230 -0.2536 1.2318 1.0254    1.1462 0.1395   1.1038 -0.2536
+CONTROL EWall B136 M (full gross, no filter)     0.1404  1.1235 -0.2499 1.2257 1.0305    1.1391 0.1385   1.1103 -0.2499
+CONTROL EWall B136 Q (full gross, no filter)     0.1418  1.1378 -0.2445 1.2356 1.0494    1.1491 0.1407   1.1283 -0.2445
+RULES v2 (LIVE BOOK, 4a comparand)               0.0866  1.2056 -0.1205 1.2259 1.1908    1.1043 0.0953   1.2851 -0.1205
+SPY on SMALL439 window (4b comparand)            0.1413  0.8615 -0.3372 0.8907 0.8577    0.8316 0.1545   0.8820 -0.3372
+SPY on U56 window (4b comparand)                 0.1523  0.8890 -0.3372 0.9566 0.8340    0.8986 0.1545   0.8820 -0.3372
+SPY on B136 window (4b comparand)                0.1523  0.8890 -0.3372 0.9566 0.8340    0.8987 0.1545   0.8820 -0.3372
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+THE CENSUS - 162 cells x 4 books (DEGROSS, RESPREAD twin, REPLAY-EW, REPLAY-RS) + controls
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  SMALL439 done (78s)
+  U56 done (86s)
+  B136 done (102s)
+
+  D0(iii) identity r_dg,t == c_t*r_rs,t at 0 bps on 162 pairs: worst 3.469e-17 (bar 1e-12) -> HOLDS
+  D0(ii) replay mean-gross matching: worst |diff| EW 0.00333, RS 0.00324 (bar 0.005); cells over the bar: 0 of 162
+  census runs on the 162 cells that clear D0(ii).
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D1 - DO THE SHARPE CLAIMS SURVIVE THE REPLAY?
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                  n  beats_full_gross_control  beats_REPLAY_EW  beats_REPLAY_RS  mean_dSharpe_vs_ctrl  mean_dSharpe_vs_replay
+panel    family                                                                                                              
+B136     MA      18                    0.1111           0.1111           0.4444               -0.0693                 -0.0701
+         MAVOL   18                    0.0000           0.0000           0.5000               -0.0959                 -0.0967
+         TOP20   18                    0.0000           0.0000           0.8333               -0.1961                 -0.1962
+SMALL439 MA      18                    0.2778           0.2222           0.4444               -0.0592                 -0.0636
+         MAVOL   18                    0.0000           0.0000           0.3333               -0.2322                 -0.2371
+         TOP20   18                    0.0000           0.0000           0.3333               -0.2109                 -0.2111
+U56      MA      18                    0.6111           0.6111           0.3333               -0.0180                 -0.0181
+         MAVOL   18                    0.2778           0.2778           0.3889               -0.0578                 -0.0579
+         TOP20   18                    0.1111           0.1111           0.5556               -0.0788                 -0.0789
+
+POOLED: DG beats the full-gross control on Sharpe in 25/162 (0.154); beats REPLAY-EW in 24/162 (0.148); beats REPLAY-RS in 75/162 (0.463)
+mean dSharpe vs control -0.1131, vs REPLAY-EW -0.1144, vs REPLAY-RS -0.0248
+D1: survival rate 0.148 vs incumbent 0.154 -> the published de-gross Sharpe claims are EXPOSURE claims
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D2 - DOES THE DRAWDOWN CLAIM SURVIVE?  (DG MaxDD vs its exposure-matched REPLAY-EW)
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                      n  dg_shallower  mean_dg_MaxDD  mean_replay_MaxDD  mean_gap_pp
+panel    family                                                                     
+B136     MA     18.0000        0.5556        -0.1723            -0.1791       0.6774
+         MAVOL  18.0000        0.5556        -0.1694            -0.1762       0.6802
+         TOP20  18.0000        0.6667        -0.2220            -0.2468       2.4841
+SMALL439 MA     18.0000        0.5556        -0.1826            -0.1838       0.1240
+         MAVOL  18.0000        0.5556        -0.1604            -0.1557      -0.4746
+         TOP20  18.0000        0.5556        -0.3450            -0.3473       0.2260
+U56      MA     18.0000        0.6111        -0.1543            -0.1561       0.1829
+         MAVOL  18.0000        0.6667        -0.1475            -0.1526       0.5093
+         TOP20  18.0000        0.6667        -0.2100            -0.2128       0.2724
+D2: DG is shallower than its exposure-matched replay in 97/162 cells (0.599); mean MaxDD -19.59% vs -20.12% -> the drawdown claim does NOT survive
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D3 - THE CAGR PRICE, AND IDEA 290'S EXPOSURE SHARE ON THIS CORPUS
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                      n  mean_dCAGR_pp  pos_rate  median_share  mean_gap0_pp  mean_pred0_pp
+panel    family                                                                            
+B136     MA     18.0000        -1.5711    0.0000        0.7431       -5.7286        -4.2398
+         MAVOL  18.0000        -1.8516    0.0000        0.7204       -6.1718        -4.4112
+         TOP20  18.0000        -3.4143    0.0000        0.0687       -2.5124        -0.1553
+SMALL439 MA     18.0000        -1.0144    0.0000        0.8353       -5.6248        -4.7509
+         MAVOL  18.0000        -2.1066    0.0000        0.7292       -7.5123        -5.5755
+         TOP20  18.0000        -4.3677    0.0000        0.0149       -3.0848        -0.0599
+U56      MA     18.0000        -0.6370    0.0556        0.8937       -4.7460        -4.1875
+         MAVOL  18.0000        -1.1467    0.0000        0.8060       -5.4666        -4.4103
+         TOP20  18.0000        -0.9315    0.2222        0.3427       -0.9370        -0.5601
+D3: mean dCAGR(DG - REPLAY-EW) -1.893 pp/yr, positive in 5/162; corpus median exposure share of the DG-minus-control gap 0.7331 (idea 290: 0.914) -> does NOT replicate the 0.80-1.00 band
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D4 - THE KEEP PATHS: DG vs its zero-parameter replay
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                  n  dg_4a  replay_4a  dg_4b  replay_4b
+panel    family                                        
+B136     MA      18      0          0      0          0
+         MAVOL   18      0          0      0          0
+         TOP20   18      0          0      4          0
+SMALL439 MA      18      0          0      0          0
+         MAVOL   18      0          0      0          0
+         TOP20   18      0          0      0          0
+U56      MA      18      1          0      0          0
+         MAVOL   18      0          0      0          0
+         TOP20   18      0          0     11          0
+POOLED: 4a DG 1/162 vs REPLAY-EW 0/162; 4b DG 15/162 vs REPLAY-EW 0/162
+
+4b failure reasons, DG:
+                    n
+dg_f4b               
+CAGR               57
+H1,H2,OOS,DD,CAGR  28
+H1,H2,OOS,CAGR     26
+-                  15
+H2,OOS,DD           9
+H2,OOS,DD,CAGR      8
+DD,CAGR             5
+DD                  5
+H2,DD,CAGR          5
+H2,OOS,CAGR         3
+H2,DD               1
+4b failure reasons, REPLAY-EW:
+                    n
+reew_f4b             
+CAGR               72
+H1,H2,OOS,CAGR     36
+DD                 36
+H1,H2,OOS,DD       12
+H1,H2,OOS,DD,CAGR   6
+
+DG cells passing 4b:
+                       dg_CAGR  dg_Sharpe  dg_MaxDD  dg_H1  dg_H2  dg_oSharpe  reew_Sharpe  reew_MaxDD  reew_4b
+panel family cad band                                                                                          
+U56   TOP20  W   0.00   0.1070     1.0402   -0.1758 1.0794 1.0145      1.0902       1.1295     -0.2177    False
+             M   0.00   0.1145     1.0667   -0.1869 1.1404 1.0118      1.0802       1.1378     -0.2152    False
+             W   0.02   0.1084     1.0442   -0.1758 1.0456 1.0497      1.1227       1.1295     -0.2177    False
+             M   0.02   0.1138     1.0593   -0.1869 1.1182 1.0169      1.0848       1.1378     -0.2149    False
+             W   0.03   0.1079     1.0398   -0.1773 1.0351 1.0505      1.1233       1.1295     -0.2175    False
+             M   0.03   0.1148     1.0669   -0.1869 1.1163 1.0325      1.0994       1.1378     -0.2150    False
+             W   0.05   0.1143     1.0698   -0.1803 1.1055 1.0466      1.1171       1.1295     -0.2160    False
+             M   0.05   0.1209     1.0967   -0.1937 1.1676 1.0470      1.1104       1.1378     -0.2132    False
+             W   0.08   0.1221     1.1123   -0.1923 1.1286 1.1085      1.1720       1.1295     -0.2164    False
+             M   0.08   0.1265     1.1252   -0.1932 1.1669 1.1017      1.1593       1.1378     -0.2134    False
+                 0.12   0.1388     1.1963   -0.1943 1.1490 1.2451      1.3009       1.1378     -0.2157    False
+B136  TOP20  M   0.00   0.1130     1.0280   -0.1857 1.1552 0.9226      0.9891       1.1235     -0.2479    False
+                 0.02   0.1141     1.0357   -0.1857 1.1751 0.9202      0.9867       1.1235     -0.2478    False
+                 0.03   0.1151     1.0429   -0.1857 1.1807 0.9299      0.9954       1.1235     -0.2480    False
+                 0.05   0.1134     1.0121   -0.2010 1.1419 0.9073      0.9723       1.1235     -0.2478    False
+D4: the gate adds KEEP-path cells the replay does not
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D5 - THE LIVE BOOK (RULES v2) AGAINST ITS OWN CONSTANT-LEVERAGE REPLAYS
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                         CAGR Sharpe   MaxDD     H1     H2  oCAGR oSharpe  oMaxDD mean_gross turn_yr
+RULES v2 (live)                        0.0852 1.2128 -0.1169 1.2312 1.1997 0.0939  1.2938 -0.1169     0.5215  1.7552
+RESPREAD twin                          0.1232 1.1681 -0.1764 1.2166 1.1365 0.1350  1.2106 -0.1764     0.7502  4.3204
+REPLAY-RS (const leverage, same names) 0.0853 1.1680 -0.1248 1.2160 1.1367 0.0933  1.2108 -0.1248     0.5216  3.0414
+REPLAY-EW (const leverage, NO gate)    0.0922 1.1289 -0.1602 1.1955 1.0763 0.0960  1.1405 -0.1602     0.5216  0.6051
+SPY                                    0.1523 0.8890 -0.3372 0.9566 0.8340 0.1545  0.8820 -0.3372     1.0000  0.0000
+4b: RULES v2 (live): CAGR | RESPREAD twin: - | REPLAY-RS (const leverage, same names): CAGR | REPLAY-EW (const leverage, NO gate): CAGR | SPY: H1,H2,OOS,DD
+D5: the live book at mean gross 0.5215 vs a NO-GATE book held at the same constant leverage: dSharpe +0.0838, dCAGR -0.705 pp/yr, dMaxDD +4.34 pp (positive = live book shallower)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+D6 - RULE 8 WALK-FORWARD: (band, cadence) chosen on IS Sharpe inside each panel x family
+arm; 2017-2026 read once.  The replay is re-selected by ITS OWN IS Sharpe, so both sides
+get the same freedom.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                 dg_band dg_cad  dg_oCAGR  dg_oSharpe  dg_oMaxDD  replay_band replay_cad  replay_oCAGR  replay_oSharpe  replay_oMaxDD  ctrl_oSharpe  spy_oSharpe  live_oSharpe  dg_beats_replay  dg_beats_spy  dg_beats_live
+panel    family                                                                                                                                                                                                             
+SMALL439 MA       0.0500      M    0.0469      0.6543    -0.1670       0.1200          W        0.0558          0.6392        -0.2017        0.6235       0.8820        1.2851             True         False          False
+         MAVOL    0.0500      M    0.0205      0.4104    -0.1472       0.1200          W        0.0472          0.6395        -0.1716        0.6235       0.8820        1.2851            False         False          False
+         TOP20    0.0500      W    0.0411      0.3513    -0.3280       0.0200          W        0.1010          0.6372        -0.3616        0.6372       0.8820        1.2851            False         False          False
+U56      MA       0.0000      M    0.0953      1.2815    -0.1187       0.0200          Q        0.0985          1.1750        -0.1541        1.1579       0.8820        1.2851             True          True          False
+         MAVOL    0.1200      M    0.0897      1.1926    -0.1395       0.0200          Q        0.0966          1.1751        -0.1513        1.1579       0.8820        1.2851             True          True          False
+         TOP20    0.0800      Q    0.1265      0.9734    -0.2578       0.1200          Q        0.1356          1.1714        -0.2091        1.1708       0.8820        1.2851            False          True          False
+B136     MA       0.0800      W    0.0838      1.1138    -0.1477       0.1200          Q        0.0987          1.1343        -0.1740        1.1038       0.8820        1.2851            False          True          False
+         MAVOL    0.1200      M    0.0835      1.0230    -0.1947       0.1200          Q        0.0973          1.1345        -0.1716        1.1103       0.8820        1.2851            False          True          False
+         TOP20    0.1200      M    0.1174      0.9803    -0.2092       0.0300          Q        0.1390          1.1286        -0.2416        1.1103       0.8820        1.2851            False          True          False
+
+OOS: the IS-chosen de-gross arm beats its own IS-chosen replay in 3/9 arms, SPY in 6/9, the live book in 0/9
+mean OOS Sharpe: de-gross 0.8867 vs replay 0.9816 (delta -0.0949); mean OOS CAGR 7.83% vs 9.66%
+
+===============================================================================================================================================================================
+SUMMARY
+===============================================================================================================================================================================
+                                                               bar                              result               reading
+test                                                                                                                        
+D1 Sharpe claims survive the replay                    rate > 0.50  0.148 (incumbent vs control 0.154)       exposure claims
+D2 drawdown claim survives                         >= 2/3 of cells                               0.599      does NOT survive
+D3 exposure share replicates idea 290       median in [0.80, 1.00]                              0.7331              does not
+D4 replay passes 4b at least as often                 replay >= DG                   DG 15 vs replay 0       gate adds cells
+D6 IS-chosen DG beats IS-chosen replay OOS             >= 5/9 arms                                 3/9  does NOT survive OOS
+runtime 102s
