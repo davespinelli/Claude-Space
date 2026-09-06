@@ -1,0 +1,242 @@
+IDEA 220 - back-fill-the-phase-spread-over-every-cadence-claim  (cloud, 2026-09-06)
+======================================================================================================================
+Every cadence number in the record is a PHASE-0 number.  This run re-prices each published
+cadence verdict against its own phase spread and counts the survivors.
+Two tuned params: CADENCE POINT (swept, all reported) x PHASE (swept, all reported).
+Phase = (block shift, within-block day offset in [0, 1, 2, 3, 4]); (0,0) IS the published point.
+
+   phase grid D  :   1 phases
+   phase grid 2D :   2 phases
+   phase grid W  :   5 phases
+   phase grid 2W :  10 phases
+   phase grid M  :   5 phases
+   phase grid 6W :  30 phases
+   phase grid Q  :   5 phases
+
+  small panel: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+  corpus A: 115 units
+  corpus B: 53 units
+  corpus C: 18 units
+  corpus D: 8 units
+
+  panel references (SPY | RULES v1), full-sample and OOS
+   U56       SPY  CAGR 15.23% Sh 0.889 DD -33.72% H 0.957/0.834 OOS 15.45%/0.882/-33.72%
+             v1   CAGR  6.45% Sh 0.664 DD -13.83% H 0.641/0.688 OOS  7.73%/0.747/-13.83%
+   B136      SPY  CAGR 15.23% Sh 0.889 DD -33.72% H 0.957/0.834 OOS 15.45%/0.882/-33.72%
+             v1   CAGR  6.39% Sh 0.635 DD -21.19% H 0.756/0.532 OOS  5.94%/0.576/-21.19%
+   SMALL     SPY  CAGR 14.13% Sh 0.862 DD -33.72% H 0.891/0.858 OOS 15.45%/0.882/-33.72%
+             v1   CAGR  7.41% Sh 0.565 DD -36.12% H 0.743/0.404 OOS  6.35%/0.492/-36.12%
+   SMALL484  SPY  CAGR 14.13% Sh 0.862 DD -33.72% H 0.891/0.858 OOS 15.45%/0.882/-33.72%
+             v1   CAGR 14.55% Sh 0.554 DD -35.01% H 0.525/0.646 OOS 19.31%/0.605/-35.01%
+
+REPRODUCTION CONTROLS [a] and [b]
+  [a] cad_mask(0,0) == engine.rebalance_mask at D : True
+  [a] cad_mask(0,0) == engine.rebalance_mask at W : True
+  [a] cad_mask(0,0) == engine.rebalance_mask at M : True
+  [a] cad_mask(0,0) == engine.rebalance_mask at Q : True
+  [b] fast_backtest netted at 10 bps vs engine at D : max|d| = 1.73e-18
+  [b] fast_backtest netted at 10 bps vs engine at W : max|d| = 1.39e-17
+  [b] fast_backtest netted at 10 bps vs engine at M : max|d| = 3.47e-17
+  [b] fast_backtest netted at 10 bps vs engine at Q : max|d| = 1.39e-16
+
+SWEEPING CADENCE x PHASE OVER ALL FOUR CORPORA ...
+   ... 25/194 units  (71s)
+   ... 50/194 units  (115s)
+   ... 75/194 units  (144s)
+   ... 100/194 units  (169s)
+   ... 125/194 units  (195s)
+   ... 150/194 units  (204s)
+   ... 175/194 units  (224s)
+   7894 (unit, cadence, phase) rows -> 2026-09-06_back-fill-the-phase-spread-over-every-cadence-claim_cloud.rows.csv   (261s)
+
+REPRODUCTION CONTROL [c] - phase-(0,0) rows must equal the committed parent CSVs
+  [c] corpus A vs 2026-09-05_does-cadence-skill-survive-a-second-corpus_cloud.ladder.csv (OOS_Sharpe): matched 805/805 parent rows, max|d| = 2.220e-16 -> AUDITED
+  [c] corpus B vs 2026-09-05_do-gross-choice-rules-lose-to-constants-in-general_C.ladder.csv CADENCE dial (OOS_Sharpe): matched 212/212 parent rows, max|d| = 2.220e-16 -> AUDITED
+  [c] corpus C vs 2026-09-05_is-the-ladder-endpoint-a-general-selector-artefact_cloud.grid.csv CADENCE ladder (full-sample Sharpe): matched 72/72 parent rows, max|d| = 4.441e-16 -> AUDITED
+  [c] corpus D vs 2026-09-05_fixed-gross-S4-blend_cloud.cadence.csv (full-sample Sharpe): matched 24/24 parent rows, max|d| = 3.331e-16 -> AUDITED
+
+REPRODUCTION CONTROL [d] - the new phase machinery contains idea 187's as a special case
+  [d] cad=6W, off=0, shift sweep vs 2026-09-06_is-6W-a-grid-edge-or-a-real-optimum_B.phase.csv: matched 690/690 rows, max|d| = 2.220e-16 -> PASS
+
+======================================================================================================================
+PHASE SPREAD AT A FIXED CADENCE (mean over the cell's units; nothing picked)
+  'spread' = max-min of the cell-mean metric over the point's own phase grid.
+
+  corpus A  (metric OOS_Sharpe, AUDITED)
+  cell                         D            2D             W            2W             M            6W             Q
+  ETF                     0.0000        0.0151        0.0650        0.2091        0.1616        0.4274        0.0823 
+  SMALL                   0.0000        0.0168        0.0631        0.1380        0.1031        0.2618        0.0486 
+  U56                     0.0000        0.0245        0.0891        0.1094        0.1392        0.4107        0.0648 
+
+  corpus B  (metric OOS_Sharpe, AUDITED)
+  cell                         D             W             M             Q
+  B136                    0.0000        0.0924        0.1460        0.0573 
+  SMALL484                0.0000        0.1728        0.1054        0.1225 
+  U56                     0.0000        0.0616        0.1237        0.0568 
+
+  corpus C  (metric Sharpe, AUDITED)
+  cell                         D             W             M             Q
+  broad|COMP|10           0.0000        0.1487        0.1073        0.0610 
+  broad|COMP|25           0.0000        0.1523        0.1027        0.0605 
+  broad|MOM|10            0.0000        0.0816        0.0633        0.0832 
+  broad|MOM|25            0.0000        0.0814        0.0640        0.0826 
+  broad|R6|10             0.0000        0.0598        0.0989        0.0294 
+  broad|R6|25             0.0000        0.0602        0.1008        0.0286 
+  small|COMP|10           0.0000        0.1407        0.0985        0.0263 
+  small|COMP|25           0.0000        0.1438        0.0972        0.0260 
+  small|MOM|10            0.0000        0.0995        0.1641        0.0544 
+  small|MOM|25            0.0000        0.0982        0.1626        0.0548 
+  small|R6|10             0.0000        0.1088        0.1571        0.0586 
+  small|R6|25             0.0000        0.1051        0.1575        0.0584 
+  u56|COMP|10             0.0000        0.0973        0.0909        0.0413 
+  u56|COMP|25             0.0000        0.0985        0.0913        0.0416 
+  u56|MOM|10              0.0000        0.0692        0.1117        0.0822 
+  u56|MOM|25              0.0000        0.0672        0.1110        0.0822 
+  u56|R6|10               0.0000        0.1192        0.1514        0.0744 
+  u56|R6|25               0.0000        0.1245        0.1493        0.0729 
+
+  corpus D  (metric Sharpe, AUDITED)
+  cell                         D             W             M
+  broad|S3|0.00           0.0000        0.0427        0.1274 
+  broad|S3|0.50           0.0000        0.0567        0.1557 
+  broad|S4|0.00           0.0000        0.0427        0.1274 
+  broad|S4|0.50           0.0000        0.0446        0.1363 
+  u56|S3|0.00             0.0000        0.1123        0.1206 
+  u56|S3|0.50             0.0000        0.0811        0.1292 
+  u56|S4|0.00             0.0000        0.1123        0.1206 
+  u56|S4|0.50             0.0000        0.0739        0.1102 
+
+======================================================================================================================
+THE AUDIT - every published pairwise cadence verdict, priced against its own phase spread
+  SURVIVES  = sign(phase-averaged gap) == sign(phase-0 gap) AND sign_share >= 0.95
+  (sign_share = fraction of phase_A x phase_B combinations preserving the published sign)
+
+  240 published pairwise cadence verdicts recovered and re-priced
+
+  corpus   cells  claims  SURVIVE   share   weak  wk share  median |gap0|  median range  median ratio
+  A            4      84       39   46.4%     66     78.6%         0.0855        0.1702         0.486
+  B            4      24       18   75.0%     22     91.7%         0.1222        0.1475         1.018
+  C           18     108       78   72.2%    100     92.6%         0.1679        0.1403         1.179
+  D            8      24       20   83.3%     24    100.0%         0.1945        0.1274         2.151
+  ALL         32     240      155   64.6%    212     88.3%         0.1390        0.1465         0.967
+
+  the record's headline cadence claims, individually (corpus A, pooled and by family):
+  cell       pair            gap0    gap_pa  sign share  phase range   ratio  survives
+  ALL        M-6W         -0.0238   +0.0243       32.7%       0.3065   0.078  no
+  ALL        M-Q          +0.2173   +0.1495      100.0%       0.1822   1.193  YES
+  ALL        W-6W         -0.0999   +0.0153       32.7%       0.2250   0.444  no
+  ALL        W-M          -0.0761   -0.0090       52.0%       0.1644   0.463  no
+  ALL        W-Q          +0.1412   +0.1405      100.0%       0.1006   1.403  YES
+  ETF        M-6W         -0.0870   +0.0646       34.0%       0.5890   0.148  no
+  ETF        M-Q          +0.3644   +0.2999      100.0%       0.2439   1.494  YES
+  ETF        W-6W         -0.1600   +0.0586       39.3%       0.4924   0.325  no
+  ETF        W-M          -0.0730   -0.0060       56.0%       0.2266   0.322  no
+  ETF        W-Q          +0.2914   +0.2939      100.0%       0.1473   1.978  YES
+  SMALL      M-6W         +0.0815   +0.0104       56.0%       0.3649   0.223  no
+  SMALL      M-Q          +0.0666   +0.0229       76.0%       0.1517   0.439  no
+  SMALL      W-6W         -0.0163   -0.0428       63.3%       0.3250   0.050  no
+  SMALL      W-M          -0.0978   -0.0532       84.0%       0.1662   0.589  no
+  SMALL      W-Q          -0.0313   -0.0302       80.0%       0.1117   0.280  no
+  U56        M-6W         -0.1171   +0.0046       46.7%       0.5500   0.213  no
+  U56        M-Q          +0.2941   +0.1869      100.0%       0.2040   1.442  YES
+  U56        W-6W         -0.1640   +0.0584       33.3%       0.4998   0.328  no
+  U56        W-M          -0.0469   +0.0538       32.0%       0.2283   0.205  no
+  U56        W-Q          +0.2472   +0.2407      100.0%       0.1538   1.607  YES
+
+  worst-hit and best-held verdicts overall (by sign share):
+   weakest 8:
+     C u56|R6|10          W-Q      gap0  +0.0194  pa  -0.0264  sign  24.0%  range   0.1936
+     C broad|R6|10        W-Q      gap0  +0.0005  pa  -0.0179  sign  24.0%  range   0.0893
+     C small|MOM|25       M-Q      gap0  -0.0005  pa  +0.0595  sign  24.0%  range   0.2174
+     C u56|R6|25          M-Q      gap0  +0.0860  pa  -0.0407  sign  28.0%  range   0.2222
+     A U56                W-M      gap0  -0.0469  pa  +0.0538  sign  32.0%  range   0.2283
+     A ALL                W-6W     gap0  -0.0999  pa  +0.0153  sign  32.7%  range   0.2250
+     A ALL                M-6W     gap0  -0.0238  pa  +0.0243  sign  32.7%  range   0.3065
+     A U56                W-6W     gap0  -0.1640  pa  +0.0584  sign  33.3%  range   0.4998
+   strongest 5:
+     A ALL                D-2D     gap0  -0.0406  pa  -0.0427  sign 100.0%  range   0.0042
+     A ALL                D-W      gap0  -0.0583  pa  -0.0789  sign 100.0%  range   0.0415
+     A ALL                D-2W     gap0  -0.0672  pa  -0.0767  sign 100.0%  range   0.0522
+     A ALL                D-M      gap0  -0.1344  pa  -0.0879  sign 100.0%  range   0.1230
+     A ALL                D-Q      gap0  +0.0829  pa  +0.0616  sign 100.0%  range   0.0592
+
+  IDEA 101's CADENCE-INSENSITIVITY BAR (idea 65: |dSharpe| across D/W/M <= 0.05)
+  cell                phase-0 spread  published pass  spread incl. phase   pass
+  broad|S3|0.00               0.3630           False              0.3630  False
+  broad|S3|0.50               0.4377           False              0.4377  False
+  broad|S4|0.00               0.3630           False              0.3630  False
+  broad|S4|0.50               0.4048           False              0.4048  False
+  u56|S3|0.00                 0.2601           False              0.2601  False
+  u56|S3|0.50                 0.3285           False              0.3285  False
+  u56|S4|0.00                 0.2601           False              0.2601  False
+  u56|S4|0.50                 0.2902           False              0.2902  False
+
+  IDEA 188's FAMILY-SPLIT VERDICT - the argmax cadence per family, phase-0 vs phase-averaged
+  family    phase-0 argmax  phase-avg argmax   same
+  ETF                   6W                 M  False
+  SMALL                  M                 M   True
+  U56                   6W                 W  False
+
+======================================================================================================================
+PROTOCOL RULE 8 WALK-FORWARD - cadence and phase chosen on <= 2016-12-31, OOS read once
+  CONST-W0 = W at phase 0 (incumbent) | REC = cadence by IS Sharpe AT PHASE 0 (what the
+  record does) | SEL-CP = cadence AND phase by IS Sharpe | PHASE-AVG = cadence by IS
+  Sharpe of the equal-weight blend of all its phases, traded as that blend.
+
+  family   arm           n  mean OOS CAGR  mean OOS Sharpe  mean OOS MaxDD  vs CONST-W0       t
+  ALL      CONST-W0    115          5.26%            0.680         -17.05%      +0.0000    +nan
+  ALL      REC         115          5.75%            0.719         -17.98%      +0.0388   +3.26
+  ALL      SEL-CP      115          5.87%            0.693         -20.39%      +0.0134   +0.83
+  ALL      PHASE-AVG   115          5.59%            0.647         -21.45%      -0.0328   -2.11
+
+  ETF      CONST-W0     33          4.56%            0.841          -9.65%      +0.0000    +nan
+  ETF      REC          33          5.05%            0.906          -9.70%      +0.0646   +5.19
+  ETF      SEL-CP       33          5.06%            0.860         -12.60%      +0.0192   +0.65
+  ETF      PHASE-AVG    33          4.50%            0.741         -15.68%      -0.1002   -3.70
+
+  SMALL    CONST-W0     49          1.73%            0.205         -24.04%      +0.0000    +nan
+  SMALL    REC          49          2.13%            0.252         -25.48%      +0.0473   +2.27
+  SMALL    SEL-CP       49          2.22%            0.263         -26.72%      +0.0574   +2.18
+  SMALL    PHASE-AVG    49          2.25%            0.267         -26.10%      +0.0623   +2.77
+
+  U56      CONST-W0     33         11.19%            1.223         -14.05%      +0.0000    +nan
+  U56      REC          33         11.85%            1.224         -15.14%      +0.0006   +0.02
+  U56      SEL-CP       33         12.10%            1.165         -18.78%      -0.0579   -2.50
+  U56      PHASE-AVG    33         11.63%            1.116         -20.29%      -0.1067   -5.30
+
+  reference U56    OOS  SPY  15.45%/0.882/-33.72%   RULES v1   7.73%/0.747/-13.83%
+  reference SMALL  OOS  SPY  15.45%/0.882/-33.72%   RULES v1   6.35%/0.492/-36.12%
+
+======================================================================================================================
+BOTH KEEP PATHS on every corpus-A row (PROTOCOL rule 4a and 4b, exactly)
+  family     rows    4a    4b  4b at phase 0  4b off-phase
+  ALL        6670  1260   450             59           391
+  ETF        1914   735     0              0             0
+  SMALL      2842    26     0              0             0
+  U56        1914   499   450             59           391
+
+  4b passes on the three FIXED panels:
+   U56       @ 6W  phase(5,4) CAGR 14.88% Sharpe 1.2146 MaxDD -18.16% halves 1.116/1.306 OOS 17.88%/1.3652
+   U56       @ 6W  phase(5,2) CAGR 14.79% Sharpe 1.2012 MaxDD -15.58% halves 1.145/1.255 OOS 17.00%/1.3127
+   U56       @ M   phase(0,0) CAGR 14.76% Sharpe 1.2081 MaxDD -19.58% halves 1.219/1.206 OOS 16.71%/1.2866
+   U56       @ 6W  phase(5,3) CAGR 14.76% Sharpe 1.1806 MaxDD -19.60% halves 1.165/1.203 OOS 17.03%/1.2679
+   U56       @ W   phase(0,2) CAGR 13.36% Sharpe 1.1456 MaxDD -14.32% halves 1.072/1.214 OOS 15.57%/1.2630
+   U56       @ 2W  phase(1,2) CAGR 13.76% Sharpe 1.1617 MaxDD -14.04% halves 1.122/1.201 OOS 15.59%/1.2558
+   U56       @ W   phase(0,3) CAGR 13.52% Sharpe 1.1551 MaxDD -17.33% halves 1.161/1.157 OOS 15.44%/1.2405
+   U56       @ 2W  phase(1,4) CAGR 13.35% Sharpe 1.1355 MaxDD -17.08% halves 1.106/1.166 OOS 15.33%/1.2343
+   U56       @ 2W  phase(1,1) CAGR 13.35% Sharpe 1.1385 MaxDD -18.40% halves 1.100/1.177 OOS 15.16%/1.2279
+   U56       @ 2W  phase(0,3) CAGR 13.54% Sharpe 1.1418 MaxDD -19.17% halves 1.144/1.149 OOS 15.51%/1.2198
+   U56       @ 2W  phase(1,3) CAGR 13.46% Sharpe 1.1200 MaxDD -18.96% halves 1.119/1.128 OOS 15.34%/1.1994
+   U56       @ 2D  phase(1,0) CAGR 12.16% Sharpe 1.0708 MaxDD -14.14% halves 1.020/1.119 OOS 14.23%/1.1901
+   U56       @ 6W  phase(1,0) CAGR 13.84% Sharpe 1.1347 MaxDD -19.66% halves 1.184/1.101 OOS 15.46%/1.1897
+   U56       @ 2W  phase(0,2) CAGR 13.41% Sharpe 1.1131 MaxDD -19.26% halves 1.123/1.114 OOS 15.28%/1.1806
+   U56       @ W   phase(0,1) CAGR 12.91% Sharpe 1.1126 MaxDD -18.24% halves 1.094/1.134 OOS 14.41%/1.1805
+   U56       @ W   phase(0,0) CAGR 12.86% Sharpe 1.1075 MaxDD -18.21% halves 1.110/1.112 OOS 14.49%/1.1775
+   U56       @ 2W  phase(1,0) CAGR 12.94% Sharpe 1.1093 MaxDD -16.62% halves 1.133/1.094 OOS 14.51%/1.1760
+   U56       @ 2W  phase(0,1) CAGR 13.16% Sharpe 1.0933 MaxDD -19.61% halves 1.117/1.081 OOS 14.70%/1.1451
+   U56       @ W   phase(0,4) CAGR 12.05% Sharpe 1.0537 MaxDD -15.98% halves 1.041/1.069 OOS 13.80%/1.1441
+   U56       @ 2D  phase(0,0) CAGR 12.01% Sharpe 1.0557 MaxDD -17.50% halves 1.045/1.070 OOS 13.55%/1.1271
+   (21 such rows in total; the phase is NOT a tradable choice, so a 4b pass that
+    exists only off phase 0 is not a candidate - it is the measurement of the problem.)
+
+done in 268s
