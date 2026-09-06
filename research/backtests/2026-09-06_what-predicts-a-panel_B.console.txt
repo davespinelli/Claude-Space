@@ -1,0 +1,250 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+========================================================================================================================================================================================================
+Idea 77 what-predicts-a-panel (lane B) | 2026-09-06_what-predicts-a-panel_B.py | 10 bps, weekly, next-day execution
+========================================================================================================================================================================================================
+Index sanity (must be ~252 rows/yr): 2013 252, 2018 251, 2024 252
+
+Panels:
+  U56        56 tradable (56 cols incl. benchmark)  2008-01-02 -> 2026-09-04
+  ETF36      36 tradable (36 cols incl. benchmark)  2008-01-02 -> 2026-09-04
+  ETF24      24 tradable (24 cols incl. benchmark)  2008-01-02 -> 2026-09-04
+  STK20      20 tradable (21 cols incl. benchmark)  2008-01-02 -> 2026-09-04
+  B136      136 tradable (136 cols incl. benchmark)  2008-01-02 -> 2026-09-04
+  BSTK100   100 tradable (101 cols incl. benchmark)  2008-01-02 -> 2026-09-04
+  SMALL484  483 tradable (484 cols incl. benchmark)  2010-01-04 -> 2026-09-04
+
+--- harness sanity (universe.json window, must match published rows) ---
+  U56/CAND20  12.7% / 1.092 / -18.3%  halves 1.088/1.102   [idea 2 KEEP: 12.7% / 1.093 / -18.3%, halves 1.088/1.103]
+  U56/v1      6.5% / 0.664 / -13.8%  halves 0.641/0.688   [live v1: 6.5% / 0.666 / -13.8%]
+
+Common evaluation window (all panels, identical days): 2011-01-13 -> 2026-09-04 (3934 days)
+SPY on it: 14.1% / 0.862 / -33.7%  halves 0.891/0.858  IS 0.832  OOS 0.882
+4b bars (full): MaxDD <= 20.2%, CAGR >= 9.89%
+
+========================================================================================================================================================================================================
+0. REPRODUCTION GATE - idea 73's 21 CAND points, IS vs OOS, and its two published Spearmans
+========================================================================================================================================================================================================
+             IS_disp  IS_Sharpe  IS_MaxDD  OOS_Sharpe  OOS_CAGR  OOS_MaxDD
+panel    n                                                                
+U56      5     0.265      0.958    -0.183       0.994     0.185     -0.216
+         10    0.265      0.926    -0.141       0.971     0.143     -0.175
+         20    0.265      0.956    -0.116       1.168     0.144     -0.183
+ETF36    5     0.127      0.367    -0.234       0.586     0.073     -0.225
+         10    0.127      0.533    -0.139       0.769     0.081     -0.185
+         20    0.127      0.577    -0.116       0.942     0.081     -0.152
+ETF24    5     0.107      0.495    -0.169       0.622     0.076     -0.234
+         10    0.107      0.594    -0.155       0.735     0.079     -0.215
+         20    0.107      0.530    -0.137       0.889     0.077     -0.152
+STK20    5     0.357      1.025    -0.165       1.092     0.202     -0.184
+         10    0.357      1.185    -0.132       1.364     0.211     -0.173
+         20    0.357      1.039    -0.081       1.446     0.139     -0.121
+B136     5     0.241      0.912    -0.220       0.814     0.161     -0.234
+         10    0.241      1.047    -0.186       0.783     0.127     -0.214
+         20    0.241      1.025    -0.120       0.892     0.125     -0.201
+BSTK100  5     0.258      0.892    -0.219       0.800     0.155     -0.221
+         10    0.258      1.080    -0.149       0.773     0.124     -0.224
+         20    0.258      1.052    -0.125       0.938     0.132     -0.204
+SMALL484 5     0.482      0.284    -0.372       0.354     0.061     -0.528
+         10    0.482      0.460    -0.244       0.485     0.082     -0.359
+         20    0.482      0.471    -0.237       0.510     0.077     -0.263
+
+  Spearman(IS Sharpe, OOS Sharpe) over 21 points = +0.710   [idea 73 published +0.710]
+  Spearman(IS dispersion, OOS Sharpe) over 21 points = +0.134   [idea 73 published +0.134]
+  REPRODUCTION: EXACT
+
+========================================================================================================================================================================================================
+1. PANEL PROPERTIES, measured on the IS window (2009-2016 portion of the common window) ONLY
+========================================================================================================================================================================================================
+          n_names  level_S  level_C   corr  xs_mom  ts_mom   disp   n_elig  EWall_S  ISsh_n20  OOSsh_n20  OOSsh_meanN
+panel                                                                                                                
+STK20     19.0000   1.2844   0.2458 0.3325  0.0324 -0.0585 0.3566  13.4078   1.1632    1.0392     1.4458       1.3005
+BSTK100   96.0000   1.1787   0.1895 0.3831  0.0270 -0.0684 0.2585  69.7564   1.0759    1.0520     0.9383       0.8371
+B136     130.0000   1.0772   0.1558 0.3572  0.0395 -0.0691 0.2407  93.4263   0.9873    1.0251     0.8919       0.8296
+U56       53.0000   0.9691   0.1276 0.3088  0.0561 -0.0665 0.2655  36.9808   0.8619    0.9556     1.1680       1.0444
+SMALL484 291.0000   0.9593   0.2769 0.1732  0.0196 -0.0633 0.4821 138.6731   0.4188    0.4709     0.5104       0.4499
+ETF24     22.0000   0.7266   0.1089 0.6919  0.0506 -0.1145 0.1073  18.3251   0.6115    0.5304     0.8886       0.7483
+ETF36     34.0000   0.6051   0.0643 0.3073  0.0640 -0.0710 0.1269  23.8641   0.4334    0.5771     0.9419       0.7656
+
+  level_S/level_C = EW buy-and-hold of the panel's tradable names (no gate, no costs), IS window.
+  corr = mean pairwise daily-return correlation.  xs_mom = mean weekly cross-sectional Spearman
+  (12-1 momentum, forward 1w return).  ts_mom = mean per-name corr(12-1 momentum, own forward 4w return).
+
+========================================================================================================================================================================================================
+2. WHAT PREDICTS OOS SHARPE?  Each candidate against the same OOS column
+========================================================================================================================================================================================================
+                 rho_21  rho_7_n20  rho_7_meanN  perm_p_n20  perm_p_meanN
+predictor                                                                
+level_S           0.566      0.429        0.750       0.354         0.066
+level_C          -0.031     -0.143        0.107       0.783         0.840
+corr              0.173     -0.071        0.179       0.906         0.713
+xs_mom            0.252      0.393        0.107       0.396         0.840
+ts_mom            0.342      0.357        0.464       0.444         0.302
+disp              0.134      0.143        0.250       0.783         0.595
+n_elig           -0.523     -0.607       -0.429       0.167         0.354
+EWall_S           0.712      0.607        0.857       0.167         0.024
+ISsh_n20          0.617      0.607        0.821       0.167         0.034
+IS_Sharpe(21pt)   0.710        NaN          NaN         NaN           NaN
+
+  rho_21 is DESCRIPTIVE ONLY: panel properties are constant within a panel, so the 21 points
+  carry 7 independent draws.  perm_p is the EXACT two-sided permutation p over all 5,040
+  orderings of 7 panels and is the honest test.  With N=7 the smallest attainable p is 2/5040.
+
+========================================================================================================================================================================================================
+3. IS +0.710 THE PANEL OR THE n DIAL?  between/within decomposition
+========================================================================================================================================================================================================
+
+  Panel means over the 3 n values:
+          IS_Sharpe  OOS_Sharpe
+panel                          
+B136          0.995       0.830
+BSTK100       1.008       0.837
+ETF24         0.540       0.748
+ETF36         0.492       0.766
+SMALL484      0.405       0.450
+STK20         1.083       1.300
+U56           0.947       1.044
+  BETWEEN panels (N=7): Spearman(mean IS Sharpe, mean OOS Sharpe) = +0.857  (exact perm p = 0.0238)
+
+  WITHIN each panel, across n in {5,10,20} (3 points each):
+          rho_within  IS_best_n  OOS_best_n
+panel                                      
+U56            0.500          5          20
+ETF36          1.000         20          20
+ETF24          0.500         10          20
+STK20          0.500         10          20
+B136          -0.500         10          20
+BSTK100       -0.500         10          20
+SMALL484       1.000         20          20
+  pooled panel-demeaned Spearman(IS, OOS) over 21 points = +0.494   IS argmax n matches OOS argmax n in 2 of 7 panels
+
+========================================================================================================================================================================================================
+4. PARTIAL RANK CORRELATIONS (N=7 panels, n=20 column) - which candidate survives the others
+========================================================================================================================================================================================================
+            rho  |level_S  |corr  |xs_mom  |ts_mom  |disp  |n_elig  |EWall_S  |ISsh_n20
+level_S   0.429       NaN  0.470    0.823    0.278  0.417    0.512    -0.317     -0.155
+corr     -0.071    -0.224    NaN   -0.078    0.114  0.013   -0.354    -0.591     -0.462
+xs_mom    0.393     0.816  0.394      NaN    0.779  0.639    0.158     0.641      0.610
+ts_mom    0.357     0.118  0.367    0.771      NaN  0.837    0.534     0.215      0.267
+disp      0.143    -0.091  0.125    0.561   -0.815    NaN    0.449     0.098      0.126
+n_elig   -0.607    -0.655 -0.667   -0.521   -0.695 -0.697      NaN    -0.526     -0.638
+EWall_S   0.607     0.552  0.766    0.749    0.557  0.601    0.526       NaN      0.147
+ISsh_n20  0.607     0.495  0.708    0.729    0.573  0.605    0.638     0.147        NaN
+
+  Row = predictor's Spearman with OOS Sharpe; column '|X' = the same after controlling for X.
+  A predictor that survives control for the others is the mechanism; one that collapses is a proxy.
+
+========================================================================================================================================================================================================
+5. RULE 8 WALK-FORWARD - selectors fixed with direction before any OOS number was read
+========================================================================================================================================================================================================
+
+  Picks (from IS data only):
+    S_LVL   highest IS level Sharpe                          -> STK20     (IS level_S = +1.2844)
+    S_CORR  LOWEST IS mean pairwise correlation              -> SMALL484  (IS corr = +0.1732)
+    S_XSMOM highest IS cross-sectional momentum efficacy     -> ETF36     (IS xs_mom = +0.0640)
+    S_TSMOM highest IS per-name trend persistence            -> STK20     (IS ts_mom = -0.0585)
+    S_DISP  highest IS dispersion (idea 73's S3)             -> SMALL484  (IS disp = +0.4821)
+    S_ISS   highest IS Sharpe at n=20                        -> BSTK100   (IS ISsh_n20 = +1.0520)
+    S1      highest IS Sharpe over all 21 points (idea 73 S1) -> STK20/n=10 (IS 1.185)
+
+  Out of sample (2017-2026), read once:
+                    pick  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  vs_SPY  vs_v1 OOS_4b
+rule                                                                           
+S_LVL       STK20/CAND20     0.139       1.446     -0.121   0.564  0.699   PASS
+S_CORR   SMALL484/CAND20     0.077       0.510     -0.263  -0.372 -0.237   FAIL
+S_XSMOM     ETF36/CAND20     0.081       0.942     -0.152   0.060  0.195   FAIL
+S_TSMOM     STK20/CAND20     0.139       1.446     -0.121   0.564  0.699   PASS
+S_DISP   SMALL484/CAND20     0.077       0.510     -0.263  -0.372 -0.237   FAIL
+S_ISS     BSTK100/CAND20     0.132       0.938     -0.204   0.056  0.191   FAIL
+S1          STK20/CAND10     0.211       1.364     -0.173   0.482  0.616   PASS
+NOTHING       U56/CAND20     0.144       1.168     -0.183   0.286  0.421   PASS
+
+  RANDOM control (mean over the 7 panels at n=20): OOS Sharpe 0.969 (sd 0.286); OOS CAGR 11.1%; OOS MaxDD -18.2%
+  SPY OOS: 15.5% / 0.882 / -33.7%  (4b OOS bars: DD <= 20.2%, CAGR >= 10.82%)
+  RULES v1 baseline OOS (U56): 7.7% / 0.747 / -13.8%
+
+  Selection premium over a coin flip (OOS Sharpe minus the 7-panel mean at n=20):
+    S_LVL    +0.477
+    S_CORR   -0.459
+    S_XSMOM  -0.027
+    S_TSMOM  +0.477
+    S_DISP   -0.459
+    S_ISS    -0.031
+    S1       +0.394
+    NOTHING  +0.199
+
+  SIGN CHECKS (the opposite extreme of each pre-registered selector; labelled, not selected):
+                        pick  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  vs_SPY  vs_v1 OOS_4b
+rule                                                                               
+S_LVL^rev       ETF36/CAND20     0.081       0.942     -0.152   0.060  0.195   FAIL
+S_CORR^rev      ETF24/CAND20     0.077       0.889     -0.152   0.007  0.142   FAIL
+S_XSMOM^rev  SMALL484/CAND20     0.077       0.510     -0.263  -0.372 -0.237   FAIL
+S_TSMOM^rev     ETF24/CAND20     0.077       0.889     -0.152   0.007  0.142   FAIL
+S_DISP^rev      ETF24/CAND20     0.077       0.889     -0.152   0.007  0.142   FAIL
+S_ISS^rev    SMALL484/CAND20     0.077       0.510     -0.263  -0.372 -0.237   FAIL
+
+========================================================================================================================================================================================================
+6. ALL 35 POINTS on the common window - both KEEP paths (idea 73's grid, re-reported)
+========================================================================================================================================================================================================
+                 CAGR  Sharpe  MaxDD    H1    H2   OOS   turn  dS_vs_EW p4a                f4b
+panel    book                                                                                 
+U56      v1     0.063   0.647 -0.138 0.665 0.633 0.747 24.141    -0.374   n     H1,H2,OOS,CAGR
+         EWall  0.099   1.021 -0.159 0.932 1.103 1.112  8.163     0.000   n                  -
+         CAND5  0.170   0.978 -0.216 0.970 0.994 0.994 17.285    -0.043   n                 DD
+         CAND10 0.131   0.952 -0.175 0.963 0.952 0.971 13.611    -0.069   n                  -
+         CAND20 0.125   1.092 -0.183 1.059 1.127 1.168  9.618     0.070   n                  -
+ETF36    v1     0.034   0.421 -0.179 0.464 0.388 0.443 18.301    -0.163   n     H1,H2,OOS,CAGR
+         EWall  0.046   0.584 -0.218 0.498 0.660 0.666  8.535     0.000   n  H1,H2,OOS,DD,CAGR
+         CAND5  0.058   0.510 -0.234 0.386 0.613 0.586 14.452    -0.074   n  H1,H2,OOS,DD,CAGR
+         CAND10 0.067   0.687 -0.185 0.604 0.761 0.769 11.469     0.102   n     H1,H2,OOS,CAGR
+         CAND20 0.065   0.813 -0.152 0.652 0.955 0.942  6.670     0.228   Y            H1,CAGR
+ETF24    v1     0.051   0.498 -0.216 0.484 0.515 0.547 16.342    -0.186   n  H1,H2,OOS,DD,CAGR
+         EWall  0.075   0.684 -0.294 0.673 0.700 0.726  9.466     0.000   n  H1,H2,OOS,DD,CAGR
+         CAND5  0.066   0.576 -0.234 0.494 0.649 0.622 12.864    -0.108   n  H1,H2,OOS,DD,CAGR
+         CAND10 0.069   0.684 -0.215 0.622 0.741 0.735  9.244     0.000   Y  H1,H2,OOS,DD,CAGR
+         CAND20 0.063   0.757 -0.152 0.653 0.853 0.889  4.058     0.073   Y         H1,H2,CAGR
+STK20    v1     0.181   1.145 -0.193 1.176 1.128 1.132 15.290    -0.191   n                  -
+         EWall  0.195   1.335 -0.195 1.247 1.418 1.434  8.690     0.000   n                  -
+         CAND5  0.187   1.066 -0.184 1.004 1.126 1.092 14.337    -0.269   n                  -
+         CAND10 0.190   1.298 -0.173 1.238 1.357 1.364  8.543    -0.037   Y                  -
+         CAND20 0.118   1.300 -0.121 1.185 1.407 1.446  3.534    -0.035   Y                  -
+B136     v1     0.067   0.656 -0.212 0.859 0.468 0.576 30.103    -0.351   n  H1,H2,OOS,DD,CAGR
+         EWall  0.102   1.007 -0.177 1.082 0.943 1.019  8.113     0.000   Y                  -
+         CAND5  0.157   0.843 -0.234 0.878 0.825 0.814 21.450    -0.164   n       H1,H2,OOS,DD
+         CAND10 0.136   0.869 -0.214 1.046 0.735 0.783 17.541    -0.138   n          H2,OOS,DD
+         CAND20 0.126   0.936 -0.201 1.062 0.834 0.892 13.754    -0.071   Y                 H2
+BSTK100  v1     0.081   0.676 -0.211 0.968 0.435 0.503 28.139    -0.356   n     H2,OOS,DD,CAGR
+         EWall  0.120   1.032 -0.261 1.183 0.912 1.010  8.230     0.000   n                 DD
+         CAND5  0.153   0.829 -0.221 0.850 0.820 0.800 20.697    -0.203   n       H1,H2,OOS,DD
+         CAND10 0.137   0.876 -0.224 1.082 0.712 0.773 17.068    -0.156   n          H2,OOS,DD
+         CAND20 0.132   0.977 -0.204 1.130 0.847 0.938 12.647    -0.055   Y              H2,DD
+SMALL484 v1     0.136   0.523 -0.437 0.519 0.598 0.550 32.791     0.109   n       H1,H2,OOS,DD
+         EWall  0.048   0.414 -0.343 0.428 0.410 0.414 13.594     0.000   n  H1,H2,OOS,DD,CAGR
+         CAND5  0.053   0.329 -0.528 0.681 0.022 0.354 31.434    -0.085   n  H1,H2,OOS,DD,CAGR
+         CAND10 0.078   0.476 -0.359 0.683 0.304 0.485 25.063     0.061   n  H1,H2,OOS,DD,CAGR
+         CAND20 0.072   0.496 -0.263 0.663 0.360 0.510 20.920     0.081   n  H1,H2,OOS,DD,CAGR
+
+========================================================================================================================================================================================================
+7. LEADERBOARD ROWS (common window; baseline = that panel's own RULES v1 book)
+========================================================================================================================================================================================================
+| 2026-09-06 | 77 U56/CAND5 (IS lvl_S 0.97, corr 0.31, xs_mom +0.056) | 17.0% | 0.98 | -21.6% | 0.97 / 0.99 | 0.65 (0.66/0.63) | KILL 4b (DD) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 U56/CAND10 (IS lvl_S 0.97, corr 0.31, xs_mom +0.056) | 13.1% | 0.95 | -17.5% | 0.96 / 0.95 | 0.65 (0.66/0.63) | KEEP 4b | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 U56/CAND20 (IS lvl_S 0.97, corr 0.31, xs_mom +0.056) | 12.5% | 1.09 | -18.3% | 1.06 / 1.13 | 0.65 (0.66/0.63) | KEEP 4b | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 ETF36/CAND5 (IS lvl_S 0.61, corr 0.31, xs_mom +0.064) | 5.8% | 0.51 | -23.4% | 0.39 / 0.61 | 0.42 (0.46/0.39) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 ETF36/CAND10 (IS lvl_S 0.61, corr 0.31, xs_mom +0.064) | 6.7% | 0.69 | -18.5% | 0.60 / 0.76 | 0.42 (0.46/0.39) | KILL 4b (H1,H2,OOS,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 ETF36/CAND20 (IS lvl_S 0.61, corr 0.31, xs_mom +0.064) | 6.5% | 0.81 | -15.2% | 0.65 / 0.95 | 0.42 (0.46/0.39) | 4a-pass, KILL 4b (H1,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 ETF24/CAND5 (IS lvl_S 0.73, corr 0.69, xs_mom +0.051) | 6.6% | 0.58 | -23.4% | 0.49 / 0.65 | 0.50 (0.48/0.52) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 ETF24/CAND10 (IS lvl_S 0.73, corr 0.69, xs_mom +0.051) | 6.9% | 0.68 | -21.5% | 0.62 / 0.74 | 0.50 (0.48/0.52) | 4a-pass, KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 ETF24/CAND20 (IS lvl_S 0.73, corr 0.69, xs_mom +0.051) | 6.3% | 0.76 | -15.2% | 0.65 / 0.85 | 0.50 (0.48/0.52) | 4a-pass, KILL 4b (H1,H2,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 STK20/CAND5 (IS lvl_S 1.28, corr 0.33, xs_mom +0.032) | 18.7% | 1.07 | -18.4% | 1.00 / 1.13 | 1.14 (1.18/1.13) | KEEP 4b | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 STK20/CAND10 (IS lvl_S 1.28, corr 0.33, xs_mom +0.032) | 19.0% | 1.30 | -17.3% | 1.24 / 1.36 | 1.14 (1.18/1.13) | 4a-pass, KEEP 4b | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 STK20/CAND20 (IS lvl_S 1.28, corr 0.33, xs_mom +0.032) | 11.8% | 1.30 | -12.1% | 1.18 / 1.41 | 1.14 (1.18/1.13) | 4a-pass, KEEP 4b | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 B136/CAND5 (IS lvl_S 1.08, corr 0.36, xs_mom +0.040) | 15.7% | 0.84 | -23.4% | 0.88 / 0.82 | 0.66 (0.86/0.47) | KILL 4b (H1,H2,OOS,DD) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 B136/CAND10 (IS lvl_S 1.08, corr 0.36, xs_mom +0.040) | 13.6% | 0.87 | -21.4% | 1.05 / 0.73 | 0.66 (0.86/0.47) | KILL 4b (H2,OOS,DD) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 B136/CAND20 (IS lvl_S 1.08, corr 0.36, xs_mom +0.040) | 12.6% | 0.94 | -20.1% | 1.06 / 0.83 | 0.66 (0.86/0.47) | 4a-pass, KILL 4b (H2) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 BSTK100/CAND5 (IS lvl_S 1.18, corr 0.38, xs_mom +0.027) | 15.3% | 0.83 | -22.1% | 0.85 / 0.82 | 0.68 (0.97/0.43) | KILL 4b (H1,H2,OOS,DD) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 BSTK100/CAND10 (IS lvl_S 1.18, corr 0.38, xs_mom +0.027) | 13.7% | 0.88 | -22.4% | 1.08 / 0.71 | 0.68 (0.97/0.43) | KILL 4b (H2,OOS,DD) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 BSTK100/CAND20 (IS lvl_S 1.18, corr 0.38, xs_mom +0.027) | 13.2% | 0.98 | -20.4% | 1.13 / 0.85 | 0.68 (0.97/0.43) | 4a-pass, KILL 4b (H2,DD) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 SMALL484/CAND5 (IS lvl_S 0.96, corr 0.17, xs_mom +0.020) | 5.3% | 0.33 | -52.8% | 0.68 / 0.02 | 0.52 (0.52/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 SMALL484/CAND10 (IS lvl_S 0.96, corr 0.17, xs_mom +0.020) | 7.8% | 0.48 | -35.9% | 0.68 / 0.30 | 0.52 (0.52/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
+| 2026-09-06 | 77 SMALL484/CAND20 (IS lvl_S 0.96, corr 0.17, xs_mom +0.020) | 7.2% | 0.50 | -26.3% | 0.66 / 0.36 | 0.52 (0.52/0.60) | KILL 4b (H1,H2,OOS,DD,CAGR) | 2026-09-06_what-predicts-a-panel_B.py |
