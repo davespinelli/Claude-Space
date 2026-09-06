@@ -1,0 +1,234 @@
+IDEA 222 - a-phase-averaged-cadence-as-the-honest-estimator   (lane C, 2026-09-06)
+======================================================================================================================
+Idea 187 measured a 6W PHASE spread of 0.1518 ALL / 0.3957 U56 / 0.3862 ETF against a
+published 6W-minus-W CADENCE effect of 0.0999 / 0.1640 / 0.1600, i.e. the alignment draw is
+bigger than the effect.  This run collapses the draw: at cadence k it runs ALL k phases and
+reports the ladder under four estimators (PH0, MEANPH, BLEND-DR, BLEND-BH).
+13 points x 115 books x 59 phases-per-book = 59 runs/book, 10 bps, t+1, IS <= 2016-12-31, OOS >= 2017-01-01.
+Two tuned params: SELECTOR (2, both reported) x LADDER POINT (13, all reported).
+
+  small panel: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+CORPUS: 115 books (3 fixed panels + 112 sub-panels), seeds of ideas 175/187
+   SMALL439    4194d x 440c  tradable=439  2010-01-04..2026-09-04
+   U56         4699d x 56c  tradable= 55  2008-01-02..2026-09-04
+   ETF36       4699d x 36c  tradable= 35  2008-01-02..2026-09-04
+
+REPRODUCTION CONTROLS [a] and [b] (asserted before any new number is read)
+  [a] cad_mask vs engine.rebalance_mask at the four engine-supported points, and
+      rebalances/yr for all 13 (must be monotone decreasing in ladder order):
+      D   phases= 1  identical=True   rebalances/yr= 252.0
+      2D  phases= 2  (block point)     rebalances/yr= 126.0
+      W   phases= 1  identical=True   rebalances/yr=  52.3
+      2W  phases= 2  (block point)     rebalances/yr=  26.2
+      M   phases= 1  identical=True   rebalances/yr=  12.1
+      6W  phases= 6  (block point)     rebalances/yr=   8.7
+      7W  phases= 7  (block point)     rebalances/yr=   7.5
+      8W  phases= 8  (block point)     rebalances/yr=   6.5
+      2M  phases= 2  (block point)     rebalances/yr=   6.1
+      10W phases=10  (block point)     rebalances/yr=   5.3
+      Q   phases= 1  identical=True   rebalances/yr=   4.0
+      16W phases=16  (block point)     rebalances/yr=   3.3
+      2Q  phases= 2  (block point)     rebalances/yr=   2.0
+      monotone in ladder order=True   -> PASS
+  [b] fast_backtest vs engine.backtest (products/backtester/engine.py), same book:
+      U56       cad=D   max|dret|=1.735e-18  max|dturn|=1.110e-16
+      U56       cad=W   max|dret|=1.388e-17  max|dturn|=3.053e-16
+      U56       cad=M   max|dret|=3.469e-17  max|dturn|=5.551e-16
+      U56       cad=Q   max|dret|=1.388e-16  max|dturn|=1.110e-15
+      -> PASS
+
+  benchmark SMALL  SPY       CAGR 14.13% Sharpe 0.8615 MaxDD -33.72% halves 0.891/0.858  OOS 15.45%/0.8820/-33.72%
+             SMALL  RULES v1  CAGR  7.41% Sharpe 0.5647 MaxDD -36.12%   OOS  6.35%/0.4923/-36.12%
+  benchmark U56    SPY       CAGR 15.23% Sharpe 0.8890 MaxDD -33.72% halves 0.957/0.834  OOS 15.45%/0.8820/-33.72%
+             U56    RULES v1  CAGR  6.45% Sharpe 0.6642 MaxDD -13.83%   OOS  7.73%/0.7471/-13.83%
+
+RUNNING 59 phase-runs per book x 115 books = 6785 backtests ...
+   ... 25/115 books  (64s)
+   ... 50/115 books  (122s)
+   ... 75/115 books  (167s)
+   ... 100/115 books  (210s)
+   6785 phase rows -> .phaserows.csv;  5980 estimator rows -> .ladder.csv (237s)
+
+REPRODUCTION CONTROLS [c], [d], [e] - the decisive ones
+  [c] PH0 ladder vs idea 175's committed 2026-09-05_does-cadence-skill-survive-a-second-corpus_cloud.ladder.csv
+      rows: parent=805  this-run shared=805  matched=805
+      max|d| over 14 numeric columns = 7.105e-15 (worst: turnover);  verdict mismatches=0;  worst-bar mismatches=0
+      -> PASS
+  [d] phase sweep vs idea 187's committed 2026-09-06_is-6W-a-grid-edge-or-a-real-optimum_B.phase.csv (6W/2M/8W/Q)
+      rows: parent=2300  genuine-phase rows matched=1955 (expected 1955)   max|d| = 2.220e-16 (worst: OOS_Sharpe)
+      parent's 345 surplus Q rows (phases 1-3 of a k=1 point) vs its own Q phase 0: max|d| = 0.000e+00  -> degenerate as idea 187 stated
+      -> PASS
+  [e] DEGENERATE-PHASE IDENTITY: at k=1 points (D, W, M, Q) all estimators must agree with
+      PH0 (zero phase freedom -> zero averaging effect).  Negative control for the whole
+      construction.  MEANPH/BLEND-DR bitwise (0.0); BLEND-BH to float precision (<1e-12),
+      because it reconstructs returns from a cumulated equity curve.
+      MEANPH    max|d vs PH0| = 0.000e+00 (worst column: )   tol=0e+00  ok
+      BLEND-DR  max|d vs PH0| = 0.000e+00 (worst column: )   tol=0e+00  ok
+      BLEND-BH  max|d vs PH0| = 5.262e-14 (worst column: IS_margin)   tol=1e-12  ok
+      1840 rows over 4 k=1 points x 4 estimators -> PASS
+
+======================================================================================================================
+Q1  DOES THE PHASE-AVERAGED LADDER HAVE THE HUMPED SHAPE IDEA 175 CLAIMED?
+
+  mean OOS Sharpe over books, by ladder point.  ALL 13 points, all 4 estimators, nothing picked.
+  --- family ALL  (n=115 books)
+  est             D      2D       W      2W       M      6W      7W      8W      2M     10W       Q     16W      2Q  argmax   range  turns  TV/rng
+  PH0         0.621   0.662   0.680   0.689   0.756   0.780   0.606   0.651   0.826   0.693   0.539   0.630   0.646      2M  0.2872      4    3.30
+  MEANPH      0.621   0.664   0.680   0.708   0.756   0.677   0.674   0.674   0.719   0.670   0.539   0.653   0.596       M  0.2173      5    2.82
+  BLEND-DR    0.621   0.667   0.680   0.717   0.756   0.698   0.701   0.700   0.740   0.699   0.539   0.686   0.627       M  0.2173      7    2.96
+  BLEND-BH    0.621   0.667   0.680   0.717   0.756   0.700   0.702   0.697   0.742   0.698   0.539   0.684   0.630       M  0.2173      7    2.96
+
+  --- family SMALL  (n=49 books)
+  est             D      2D       W      2W       M      6W      7W      8W      2M     10W       Q     16W      2Q  argmax   range  turns  TV/rng
+  PH0         0.131   0.190   0.205   0.215   0.303   0.222   0.216   0.305   0.441   0.364   0.236   0.378   0.327      2M  0.3107      5    2.84
+  MEANPH      0.131   0.181   0.205   0.230   0.303   0.261   0.268   0.276   0.324   0.290   0.236   0.315   0.281      2M  0.1935      5    2.47
+  BLEND-DR    0.131   0.183   0.205   0.234   0.303   0.274   0.284   0.293   0.339   0.310   0.236   0.341   0.303     16W  0.2107      5    2.44
+  BLEND-BH    0.131   0.183   0.205   0.234   0.303   0.276   0.286   0.291   0.345   0.308   0.236   0.339   0.303      2M  0.2139      5    2.41
+
+  --- family U56  (n=33 books)
+  est             D      2D       W      2W       M      6W      7W      8W      2M     10W       Q     16W      2Q  argmax   range  turns  TV/rng
+  PH0         1.180   1.209   1.223   1.237   1.270   1.387   1.076   1.089   1.303   1.124   0.976   0.968   1.060      6W  0.4191      4    2.79
+  MEANPH      1.180   1.221   1.223   1.249   1.270   1.173   1.163   1.154   1.195   1.131   0.976   1.062   0.995       M  0.2941      5    2.10
+  BLEND-DR    1.180   1.226   1.223   1.264   1.270   1.204   1.199   1.190   1.220   1.170   0.976   1.104   1.038       M  0.2941      7    2.19
+  BLEND-BH    1.180   1.226   1.223   1.263   1.270   1.206   1.200   1.185   1.219   1.169   0.976   1.100   1.045       M  0.2941      7    2.17
+
+  --- family ETF  (n=33 books)
+  est             D      2D       W      2W       M      6W      7W      8W      2M     10W       Q     16W      2Q  argmax   range  turns  TV/rng
+  PH0         0.791   0.816   0.841   0.844   0.914   1.001   0.715   0.725   0.920   0.750   0.550   0.666   0.706      6W  0.4514      4    2.72
+  MEANPH      0.791   0.824   0.841   0.877   0.914   0.798   0.789   0.786   0.830   0.774   0.550   0.746   0.665       M  0.3644      5    2.34
+  BLEND-DR    0.791   0.828   0.841   0.889   0.914   0.822   0.821   0.815   0.855   0.807   0.550   0.781   0.697       M  0.3644      5    2.42
+  BLEND-BH    0.791   0.828   0.841   0.888   0.914   0.824   0.820   0.813   0.854   0.805   0.550   0.779   0.699       M  0.3644      5    2.41
+
+  IDEA 175's THREE SHAPE CLAIMS, re-tested under each estimator (pooled, ALL books):
+  est        rises D->6W?  6W minus W  Q below 6W?  Q rank/13  modal argmax   share  zone 6W-10W
+  PH0                True      0.0999         True          1            6W   50.4%        80.0%
+  MEANPH            False     -0.0029         True          1             M   52.2%         7.8%
+  BLEND-DR          False      0.0182         True          1             M   45.2%        10.4%
+  BLEND-BH          False      0.0203         True          1             M   46.1%        10.4%
+
+  (rises D->6W? is idea 175's monotone-rise claim; 6W-minus-W is its headline gap, published
+   at +0.0999 ALL / +0.1640 U56 / +0.1600 ETF; Q rank 1 = worst point on the ladder.)
+
+  THE BLEND CONFOUND, measured (pre-registered P6).  BLEND minus MEANPH mean OOS Sharpe by k:
+   point   k   BLEND-DR   BLEND-BH
+       D   1     0.0000    -0.0000
+      2D   2     0.0031     0.0028
+       W   1     0.0000    -0.0000
+      2W   2     0.0092     0.0090
+       M   1     0.0000     0.0000
+      6W   6     0.0211     0.0231
+      7W   7     0.0265     0.0273
+      8W   8     0.0258     0.0230
+      2M   2     0.0206     0.0226
+     10W  10     0.0292     0.0275
+       Q   1     0.0000    -0.0000
+     16W  16     0.0333     0.0306
+      2Q   2     0.0308     0.0334
+  Spearman(sleeve count k, BLEND-DR bonus over MEANPH) = +0.8883   (bonus at k=1 must be 0.0000 by construction)
+
+======================================================================================================================
+Q2  DOES THE M-vs-6W SPLIT OF IDEA 188 SURVIVE AVERAGING?
+
+  idea 188 published, phase 0, paired per book:  SMALL M-6W +0.1107 (t +7.78, M better)
+  U56 -0.1106 (t -13.33, 6W better)  ETF -0.0807 (t -15.28, 6W better).  Same pairing here.
+
+  est       family   M-minus-6W        t       W/L   sign p        M       6W
+  PH0       ALL         -0.0238    -1.86     31/84   0.0000    0.756    0.780
+  PH0       SMALL        0.0815     3.78     31/18   0.0854    0.303    0.222
+  PH0       U56         -0.1171   -13.99      0/33   0.0000    1.270    1.387
+  PH0       ETF         -0.0870   -16.36      0/33   0.0000    0.914    1.001
+
+  MEANPH    ALL          0.0790    10.69     96/19   0.0000    0.756    0.677
+  MEANPH    SMALL        0.0419     3.00     31/18   0.0854    0.303    0.261
+  MEANPH    U56          0.0967    13.03      33/0   0.0000    1.270    1.173
+  MEANPH    ETF          0.1163    13.81      32/1   0.0000    0.914    0.798
+
+  BLEND-DR  ALL          0.0579     7.95     92/23   0.0000    0.756    0.698
+  BLEND-DR  SMALL        0.0293     2.09     29/20   0.2529    0.303    0.274
+  BLEND-DR  U56          0.0658     8.79      32/1   0.0000    1.270    1.204
+  BLEND-DR  ETF          0.0925     9.99      31/2   0.0000    0.914    0.822
+
+  BLEND-BH  ALL          0.0558     7.70     87/28   0.0000    0.756    0.700
+  BLEND-BH  SMALL        0.0273     1.95     24/25   1.0000    0.303    0.276
+  BLEND-BH  U56          0.0635     8.59      32/1   0.0000    1.270    1.206
+  BLEND-BH  ETF          0.0906     9.84      31/2   0.0000    0.914    0.824
+
+======================================================================================================================
+RULE 8 WALK-FORWARD.  Every arm chooses on IS (<= 2016-12-31) only; OOS read once.
+
+  --- family ALL:  mean OOS Sharpe by arm (CAGR / MaxDD in parentheses)
+  est            CONST-W      CONST-M     CONST-6W     CONST-2M   SEL-SHARPE       SEL-4B       RANDOM       ORACLE
+  PH0             0.6798       0.7559       0.7797       0.8258       0.6674       0.6600       0.6881       0.9016
+  MEANPH          0.6798       0.7559       0.6769       0.7193       0.7313       0.7171       0.6767       0.7992
+  BLEND-DR        0.6798       0.7559       0.6980       0.7399       0.7341       0.7226       0.6917       0.8080
+  BLEND-BH        0.6798       0.7559       0.7000       0.7419       0.7348       0.7250       0.6914       0.8088
+
+  --- family SMALL:  mean OOS Sharpe by arm (CAGR / MaxDD in parentheses)
+  est            CONST-W      CONST-M     CONST-6W     CONST-2M   SEL-SHARPE       SEL-4B       RANDOM       ORACLE
+  PH0             0.2052       0.3030       0.2215       0.4414       0.3066       0.3021       0.2626       0.5024
+  MEANPH          0.2052       0.3030       0.2611       0.3242       0.2927       0.2852       0.2613       0.3960
+  BLEND-DR        0.2052       0.3030       0.2737       0.3393       0.2957       0.2998       0.2709       0.4109
+  BLEND-BH        0.2052       0.3030       0.2757       0.3447       0.2986       0.3041       0.2707       0.4128
+
+  --- family U56:  mean OOS Sharpe by arm (CAGR / MaxDD in parentheses)
+  est            CONST-W      CONST-M     CONST-6W     CONST-2M   SEL-SHARPE       SEL-4B       RANDOM       ORACLE
+  PH0             1.2230       1.2699       1.3870       1.3028       1.0853       1.0885       1.1941       1.3914
+  MEANPH          1.2230       1.2699       1.1732       1.1947       1.2114       1.1825       1.1682       1.2776
+  BLEND-DR        1.2230       1.2699       1.2041       1.2200       1.2099       1.1815       1.1877       1.2822
+  BLEND-BH        1.2230       1.2699       1.2064       1.2193       1.2085       1.1820       1.1876       1.2820
+
+  --- family ETF:  mean OOS Sharpe by arm (CAGR / MaxDD in parentheses)
+  est            CONST-W      CONST-M     CONST-6W     CONST-2M   SEL-SHARPE       SEL-4B       RANDOM       ORACLE
+  PH0             0.8413       0.9143       1.0013       0.9195       0.7851       0.7628       0.8141       1.0044
+  MEANPH          0.8413       0.9143       0.7980       0.8305       0.9024       0.8931       0.8019       0.9195
+  BLEND-DR        0.8413       0.9143       0.8218       0.8545       0.9091       0.8914       0.8203       0.9236
+  BLEND-BH        0.8413       0.9143       0.8237       0.8544       0.9090       0.8931       0.8199       0.9234
+
+  benchmarks over the same OOS window:
+    SMALL  SPY       15.45% / 0.8820 / -33.72%
+    SMALL  RULES v1   6.35% / 0.4923 / -36.12%
+    U56    SPY       15.45% / 0.8820 / -33.72%
+    U56    RULES v1   7.73% / 0.7471 / -13.83%
+
+  THE DECISION NUMBER - fitted selector minus the best CONSTANT, paired per book, pooled:
+  est        SEL-SHARPE - best const        t   SEL-4B - best const        t  best const  capture of ORACLE
+  PH0                        -0.1584   -11.76               -0.1658   -12.45          2M            -209.1%
+  MEANPH                     -0.0246    -2.93               -0.0388    -3.81           M             -56.8%
+  BLEND-DR                   -0.0218    -2.93               -0.0333    -3.30           M             -41.8%
+  BLEND-BH                   -0.0211    -2.88               -0.0308    -3.04           M             -39.8%
+
+======================================================================================================================
+BOTH KEEP PATHS on all 5980 estimator-rows (PROTOCOL rule 4).
+  est           4a     4b  4b SMALL  4b U56  4b ETF                       4b on fixed panels
+  PH0          272     90         0      90       0             U56@2D, U56@2M, U56@M, U56@W
+  MEANPH       232     73         0      73       0             U56@2D, U56@2W, U56@M, U56@W
+  BLEND-DR     254     90         0      90       0             U56@2D, U56@2W, U56@M, U56@W
+  BLEND-BH     254     90         0      90       0             U56@2D, U56@2W, U56@M, U56@W
+
+  4b passes on the three FIXED panels, in full (idea 144: a re-cadenced or re-phased book
+  is the SAME book, so these are not new candidates unless the averaging itself creates one):
+    book       point est          CAGR  Sharpe    MaxDD         H1/H2  OOS_Sh    turn
+    U56           2D BLEND-BH   12.08%   1.067  -15.64%     1.03/1.10   1.163   15.17
+    U56           2D BLEND-DR   12.09%   1.067  -15.63%     1.04/1.10   1.163   15.17
+    U56           2D MEANPH     12.08%   1.063  -15.82%     1.03/1.09   1.159   15.17
+    U56           2D PH0        12.01%   1.056  -17.50%     1.04/1.07   1.127   15.13
+    U56           2M PH0        15.35%   1.212  -20.11%     1.18/1.25   1.334    3.08
+    U56           2W BLEND-BH   13.09%   1.115  -17.41%     1.09/1.14   1.217    6.48
+    U56           2W BLEND-DR   13.10%   1.116  -17.42%     1.09/1.15   1.219    6.48
+    U56           2W MEANPH     13.09%   1.105  -19.00%     1.08/1.13   1.204    6.48
+    U56            M BLEND-BH   14.76%   1.208  -19.58%     1.22/1.21   1.287    4.28
+    U56            M BLEND-DR   14.76%   1.208  -19.58%     1.22/1.21   1.287    4.28
+    U56            M MEANPH     14.76%   1.208  -19.58%     1.22/1.21   1.287    4.28
+    U56            M PH0        14.76%   1.208  -19.58%     1.22/1.21   1.287    4.28
+    U56            W BLEND-BH   12.86%   1.108  -18.21%     1.11/1.11   1.177    9.45
+    U56            W BLEND-DR   12.86%   1.108  -18.21%     1.11/1.11   1.177    9.45
+    U56            W MEANPH     12.86%   1.108  -18.21%     1.11/1.11   1.177    9.45
+    U56            W PH0        12.86%   1.108  -18.21%     1.11/1.11   1.177    9.45
+
+  DOES AVERAGING ITSELF CREATE A 4b PASS?  rows that fail 4b at PH0 and pass under an
+  averaged estimator, and the reverse:
+    MEANPH    PH0-fail -> pass:   10    PH0-pass -> fail:   27    net  -17  of 1495 (book,point) cells
+    BLEND-DR  PH0-fail -> pass:   20    PH0-pass -> fail:   20    net   +0  of 1495 (book,point) cells
+    BLEND-BH  PH0-fail -> pass:   20    PH0-pass -> fail:   20    net   +0  of 1495 (book,point) cells
+
+DONE in 238s
