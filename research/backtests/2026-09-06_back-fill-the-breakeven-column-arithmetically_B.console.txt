@@ -1,0 +1,335 @@
+================================================================================================================================================================================================================================================
+Idea 269 back-fill-the-breakeven-column-arithmetically-not-by-re-running (lane B) | 2026-09-06_back-fill-the-breakeven-column-arithmetically_B.py
+================================================================================================================================================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+books to run: 147
+  ... 20/147
+  ... 40/147
+  ... 60/147
+  ... 80/147
+  ... 100/147
+  ... 120/147
+  ... 140/147
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+0. HARNESS IDENTITY  (derived rung vs a live backtest at that rung; must be 0)
+   U56      FWD    n=20   W @ 10.0 bps   max|live-derived| = 0.000e+00
+   B136     FWD    n=10   M @ 25.0 bps   max|live-derived| = 0.000e+00
+   BSTK100  EWall  n=None W @  5.0 bps   max|live-derived| = 0.000e+00
+   -> max over checks = 0.000e+00  OK
+
+   moment identity (closed-form Sharpe(c) vs the re-summed series; must be ~0):
+   U56      FWD    n=20   W   max|closed-form - series| = 2.220e-16
+   B136     EWall  n=None Q   max|closed-form - series| = 4.441e-16
+   BSTK100  FIXED  n=40   W   max|closed-form - series| = 4.441e-16
+   -> max over checks = 4.441e-16  OK
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. REPRODUCTION GATE (asserted before any result of this run is read)
+   U56/RULES v1     6.45% / 0.664 / -13.83%   halves 0.641/0.688
+   U56/FIXED20     12.66% / 1.092 / -18.31%   halves 1.088/1.102
+   published:     U56/RULES v1  6.5% / 0.666 / -13.8%   |   U56/FIXED20  12.7% / 1.093 / -18.3%
+   -> gate PASSED
+
+================================================================================================================================================================================================================================================
+2. THE CENSUS - how many published rows carry the four numbers
+
+   LEADERBOARD.md: 3753 data rows, 190 distinct script cells, 771 committed CSVs over 162 script stems
+   INCIDENTAL FINDING: 1515 of those 3753 rows are byte-identical duplicates of another row (2238 distinct).  Pre-existing in the file (a rebase artefact), not created here; every count below is reported on BOTH the raw and the DISTINCT row set.
+
+   Tier by PARENT SCRIPT's committed schema (does the parent commit the numbers at all):
+                               tier  rows  share
+                  A_turn+vol+sharpe   387  0.103
+B_turn+sharpe+cagr(vol recoverable)   749  0.200
+                        C_turn only   114  0.030
+             D_csv without turnover   847  0.226
+                 E_no committed csv  1656  0.441
+
+   Fingerprint JOIN (CAGR,Sharpe,MaxDD at the leaderboard's printed precision, inside the parent's own CSVs):
+     rows with all three numbers printed        : 2917
+     rows matching >=1 committed grid row       : 704
+     rows with an UNAMBIGUOUS turnover          : 684
+       of those, vol also committed outright    : 369
+       of those, vol must be RECOVERED          : 315
+     rows matching >1 grid row (ambiguous turn) : 20
+
+================================================================================================================================================================================================================================================
+3. THE VOL RECOVERY - can vol be reconstructed from (CAGR, Sharpe)?
+
+   test set: 10061 committed (CAGR, Sharpe, Vol) triples from 16 CSVs
+   median |rel err| 3.958e-04   p90 8.448e-04   p99 2.592e-02   max 9.800e-01
+   median |abs err| 4.615e-05 vol points   p99 6.455e-03
+   share within 1% relative: 0.9863   within 0.1%: 0.9259
+   PRE-REGISTERED (a): usable iff >=95% within 1% relative  ->  USABLE
+
+   the 138 failures, by sign of Sharpe and by file:
+                                                                                          file   neg  rows
+                                                        2026-09-04_drawdown-control_C.grid.csv False     8
+                                 2026-09-05_is-075-the-argmax-on-every-corpus_cloud.ladder.csv False    11
+                            2026-09-05_is-4b-internally-consistent-at-any-vol_cloud.ladder.csv False    41
+2026-09-06_back-fill-the-zero-bps-rung-under-every-gross-matched-arm-difference_cloud.grid.csv False     4
+               2026-09-06_does-the-12-1-plus-scaler-book-survive-a-second-panel_cloud.grid.csv False    34
+                               2026-09-06_holding-period-as-the-hidden-variable_cloud.grid.csv False    16
+                   2026-09-06_is-the-1bp-breakeven-general-to-the-records-null-arms_C.grid.csv False     6
+                                              2026-09-06_momentum-no-vol-scaler_cloud.grid.csv False    18
+
+================================================================================================================================================================================================================================================
+4. THE COMPARAND - identifying each row's published baseline book mechanically
+
+   RULES v1 and SPY computed live on every offline panel x start convention (10 bps):
+        book    conv   panel freq   CAGR  Sharpe   MaxDD     H1     H2    Vol  turn_yr
+    v1/U56/W warm260     U56    W 0.0645  0.6642 -0.1383 0.6409 0.6878 0.1020  23.5853
+    v1/U56/W    2009     U56    W 0.0646  0.6649 -0.1383 0.6384 0.6913 0.1019  23.5912
+    v1/U56/W    2010     U56    W 0.0628  0.6457 -0.1383 0.6477 0.6452 0.1026  23.7942
+    v1/U56/W    full     U56    W 0.0610  0.6469 -0.1383 0.5850 0.7032 0.0992  22.3211
+    v1/U56/M warm260     U56    M 0.1018  0.9600 -0.1540 1.0832 0.8679 0.1070  10.5164
+    v1/U56/M    2009     U56    M 0.1014  0.9566 -0.1540 1.0797 0.8646 0.1069  10.5424
+    v1/U56/M    2010     U56    M 0.0968  0.9078 -0.1540 0.9640 0.8605 0.1083  10.7624
+    v1/U56/M    full     U56    M 0.0956  0.9306 -0.1540 1.0050 0.8835 0.1040   9.9747
+     SPY/U56 warm260     U56    - 0.1523  0.8890 -0.3372 0.9566 0.8340 0.1772   0.0000
+     SPY/U56    2009     U56    - 0.1496  0.8746 -0.3372 0.9232 0.8354 0.1775   0.0000
+     SPY/U56    2010     U56    - 0.1431  0.8691 -0.3372 0.9056 0.8524 0.1707   0.0000
+     SPY/U56    full     U56    - 0.1138  0.6446 -0.5187 0.4592 0.8583 0.1975   0.0000
+   v1/B136/W warm260    B136    W 0.0639  0.6350 -0.2119 0.7562 0.5320 0.1064  29.4296
+   v1/B136/W    2009    B136    W 0.0637  0.6342 -0.2119 0.7703 0.5187 0.1064  29.4433
+   v1/B136/W    2010    B136    W 0.0644  0.6364 -0.2119 0.7608 0.5202 0.1072  29.9074
+   v1/B136/W    full    B136    W 0.0602  0.6170 -0.2119 0.6942 0.5563 0.1035  27.8580
+   v1/B136/M warm260    B136    M 0.0844  0.7754 -0.2212 1.1198 0.4920 0.1127  13.0929
+   v1/B136/M    2009    B136    M 0.0840  0.7724 -0.2212 1.1262 0.4810 0.1127  13.1148
+   v1/B136/M    2010    B136    M 0.0788  0.7239 -0.2212 0.9130 0.5570 0.1137  13.3991
+   v1/B136/M    full    B136    M 0.0793  0.7514 -0.2212 1.0215 0.5387 0.1096  12.4087
+    SPY/B136 warm260    B136    - 0.1523  0.8890 -0.3372 0.9566 0.8340 0.1772   0.0000
+    SPY/B136    2009    B136    - 0.1496  0.8746 -0.3372 0.9232 0.8354 0.1775   0.0000
+    SPY/B136    2010    B136    - 0.1431  0.8691 -0.3372 0.9057 0.8525 0.1707   0.0000
+    SPY/B136    full    B136    - 0.1138  0.6446 -0.5187 0.4591 0.8583 0.1975   0.0000
+v1/BSTK100/W warm260 BSTK100    W 0.0849  0.6930 -0.2113 0.8991 0.5096 0.1298  28.0980
+v1/BSTK100/W    2009 BSTK100    W 0.0820  0.6727 -0.2113 0.8668 0.4998 0.1298  28.1216
+v1/BSTK100/W    2010 BSTK100    W 0.0804  0.6730 -0.2113 0.8664 0.5061 0.1269  28.1950
+v1/BSTK100/W    full BSTK100    W 0.0774  0.6544 -0.2113 0.8067 0.5240 0.1262  26.6075
+v1/BSTK100/M warm260 BSTK100    M 0.1039  0.7848 -0.2429 1.1050 0.5121 0.1382  12.4211
+v1/BSTK100/M    2009 BSTK100    M 0.1021  0.7730 -0.2429 1.1012 0.4932 0.1382  12.4441
+v1/BSTK100/M    2010 BSTK100    M 0.1003  0.7748 -0.2429 1.0889 0.5162 0.1352  12.5483
+v1/BSTK100/M    full BSTK100    M 0.0964  0.7521 -0.2429 1.0001 0.5477 0.1345  11.7741
+ SPY/BSTK100 warm260 BSTK100    - 0.1523  0.8890 -0.3372 0.9566 0.8340 0.1772   0.0000
+ SPY/BSTK100    2009 BSTK100    - 0.1496  0.8746 -0.3372 0.9232 0.8354 0.1775   0.0000
+ SPY/BSTK100    2010 BSTK100    - 0.1431  0.8691 -0.3372 0.9057 0.8525 0.1707   0.0000
+ SPY/BSTK100    full BSTK100    - 0.1138  0.6446 -0.5187 0.4591 0.8583 0.1975   0.0000
+
+   baseline strings resolved to a live book: 9 of 566 distinct (2346 of 3753 rows).  Tolerance 0.011 = one printed unit on each of Sharpe/H1/H2.
+   most common baseline strings, what they resolved to, and the residual in Sharpe:
+      1490  0.67 (0.64/0.69)                           -> v1/U56/W       resid 0.0051  (2 conv-variants matched)
+       672  0.64 (0.76/0.54)                           -> v1/B136/W      resid 0.0050  (1 conv-variants matched)
+       371  n/a                                        -> (unresolved)   resid   -     (0 conv-variants matched)
+       108  0.65 (0.66/0.65)                           -> (unresolved)   resid   -     (0 conv-variants matched)
+        78  0.66 (0.64/0.69)                           -> v1/U56/W       resid 0.0042  (2 conv-variants matched)
+        44  0.66 (0.65/0.68)                           -> v1/U56/W       resid 0.0042  (1 conv-variants matched)
+        33  0.64 (0.76/0.53)                           -> v1/B136/W      resid 0.0036  (2 conv-variants matched)
+        26  0.60 (0.70/0.52)                           -> (unresolved)   resid   -     (0 conv-variants matched)
+        22  0.57 (0.60/0.54)                           -> (unresolved)   resid   -     (0 conv-variants matched)
+        19  —                                          -> (unresolved)   resid   -     (0 conv-variants matched)
+
+   start-convention spread in the numbers the law actually uses (T/yr and vol):
+              turn_lo  turn_hi  vol_lo  vol_hi
+book                                          
+v1/B136/M     12.4087  13.3991  0.1096  0.1137
+v1/B136/W     27.8580  29.9074  0.1035  0.1072
+v1/BSTK100/M  11.7741  12.5483  0.1345  0.1382
+v1/BSTK100/W  26.6075  28.1950  0.1262  0.1298
+v1/U56/M       9.9747  10.7624  0.1040  0.1083
+v1/U56/W      22.3211  23.7942  0.0992  0.1026
+
+================================================================================================================================================================================================================================================
+5. THE BACK-FILL - c* = 10 + dSharpe(10)*1e4/(T_x/vol_x - T_y/vol_y), no re-runs
+
+   rows back-filled: 624 raw / 315 distinct  (vol committed 368, recovered 256)
+   of the distinct rows, idea 263's >2x turnover-mismatched: 194
+   degenerate denominator (|T_x/vol_x - T_y/vol_y| < 1, arm turnover-matched to its baseline): 10 distinct
+
+   *** HEADLINE: published verdicts whose breakeven vs their own baseline lies in (0, 25] bps ***
+       distinct rows, non-degenerate : 13 of 305 (4.3%)
+       distinct rows, all            : 13 of 315 (4.1%)
+       raw rows (duplicates kept)    : 26 of 624 (4.2%)
+       of the 194 >2x-mismatched distinct rows: 6 (3.1%)
+
+   the in-band rows, one line each (distinct, non-degenerate), lowest c* first:
+         date                                               idea                                      verdict  Sharpe  sharpe_base   turn  turn_base  vol_used vol_source  cstar
+   2026-09-04  10 ETF24/CAND-n20 (names 24, turn 4.0x, OOS 0.89)                         KILL 4b (H1,H2,CAGR)   0.780        0.664  4.034     23.585     0.089  committed  3.768
+   2026-09-04                                  13 broad/PROX-n20                     KILL 4b (H1,H2,OOS,CAGR)   0.580        0.635 35.765     29.430     0.095  committed  4.593
+   2026-09-04       10 B136/v1 (names 136, turn 29.4x, OOS 0.58)                  KILL 4b (H1,H2,OOS,DD,CAGR)   0.640        0.664 29.436     23.585     0.106  committed  4.665
+   2026-09-04                       16 broad/top20 worst6 f=0.25      KILL (rule-8 IS pick; OOS 0.37 vs ctrl)   0.700        0.635 12.067     29.430     0.100  recovered  5.821
+   2026-09-04    10 BSTK100/v1 (names 100, turn 28.2x, OOS 0.51)                  KILL 4b (H1,H2,OOS,DD,CAGR)   0.670        0.664 28.173     23.585     0.130  committed  5.960
+   2026-09-04     10 ETF24/EWall (names 24, turn 9.6x, OOS 0.73)                  KILL 4b (H1,H2,OOS,DD,CAGR)   0.710        0.664  9.624     23.585     0.121  committed  6.977
+   2026-09-04 10 ETF36/CAND-n10 (names 36, turn 11.6x, OOS 0.77)                     KILL 4b (H1,H2,OOS,CAGR)   0.690        0.664 11.622     23.585     0.105  committed  7.852
+   2026-09-04  10 ETF24/CAND-n10 (names 24, turn 9.3x, OOS 0.73)                  KILL 4b (H1,H2,OOS,DD,CAGR)   0.680        0.664  9.313     23.585     0.109  committed  8.916
+   2026-09-04                                    13 u56/PROX-n10                     KILL 4b (H1,H2,OOS,CAGR)   0.670        0.664 31.149     23.585     0.088  committed 10.472
+   2026-09-04     10 ETF36/EWall (names 36, turn 8.5x, OOS 0.67)                  KILL 4b (H1,H2,OOS,DD,CAGR)   0.630        0.664  8.450     23.585     0.085  committed 12.594
+   2026-09-04  10 ETF24/CAND-n5 (names 24, turn 13.1x, OOS 0.62)                  KILL 4b (H1,H2,OOS,DD,CAGR)   0.570        0.664 13.074     23.585     0.127  committed 17.349
+   2026-09-04  10 ETF36/CAND-n5 (names 36, turn 15.0x, OOS 0.59)                  KILL 4b (H1,H2,OOS,DD,CAGR)   0.540        0.664 14.980     23.585     0.129  committed 20.787
+   2026-09-04    23 u56 v1 anchor (no blackout, = live RULES v1) control: exact reproduction of the live book   0.660        0.664 23.585     23.585     0.104  recovered 22.277
+
+   c* distribution over back-filled DISTINCT rows (bps):
+count     315.000
+mean       44.724
+std       896.470
+min     -4856.640
+5%        -97.995
+25%       -23.486
+50%       -16.011
+75%       -10.005
+95%        18.380
+max      8209.470
+
+   by parent script (distinct rows), most rows first:
+                                                      rows  in_band  degen  med_cstar  med_turn_ratio
+script                                                                                               
+2026-09-04_crypto-sleeve_C.py                           78        0      2    -23.324           0.449
+2026-09-04_vol-cap-as-a-satellite-clause_B.py           48        0      4    -21.022           0.440
+2026-09-04_interior-4b-selection_cloud.py               38        0      0    -14.136           0.365
+2026-09-04_sector-only-universe_C.py                    30        9      1     -7.906           0.569
+2026-09-04_52w-high-proximity_C.py                      28        2      2    -10.003           0.736
+2026-09-04_monthly-seasonality_cloud.py                 20        1      1    -10.181           0.417
+2026-09-04_sharpe-bound-book-change_cloud.py            16        0      0     -8.966           0.455
+2026-09-05_which-asset-carries-S4_C.py                   8        0      0    -26.087           0.528
+2026-09-04_momentum-plus-quality-proxy_cloud.py          7        0      0    -13.852           0.674
+2026-09-04_earnings-season-avoidance_cloud.py            7        1      0    -16.045           0.468
+2026-09-04_ensemble-plus-momentum_C.py                   6        0      0    -19.968           0.586
+2026-09-06_where-selectivity-and-cost-cross_B.py         6        0      0    -13.441           0.373
+2026-09-05_sleeve-with-a-real-diversifier_cloud.py       5        0      0    -24.816           0.355
+2026-09-04_selectability-pre-test_cloud.py               5        0      0    -16.562           0.435
+2026-09-04_is-window-has-no-crash_C.py                   4        0      0    -15.174           0.307
+2026-09-04_exit-schedule-vs-entry-schedule_cloud.py      4        0      0    -12.260           0.266
+2026-09-05_fixed-gross-S4-blend_cloud.py                 4        0      0    -27.992           0.524
+2026-09-05_post-trigger-short-term-reversal_cloud.py     1        0      0    -41.597           1.000
+
+   NOTE: c* < 0 means the row's sign versus its baseline NEVER flips at a positive cost
+         (the quoted verdict is cost-robust); c* > 25 means it flips only above the
+         project's own worst rung.  Only (0,25] is a live risk to the published verdict.
+
+   SENSITIVITY of the headline count (the baseline's own (T,vol) is vintage-dependent):
+                               conv  rows  in_band  med_cstar
+                            warm260   624       26    -16.011
+                               2009   624       26    -15.997
+                               2010   624       26    -17.076
+                               full   624       28    -17.460
+warm260, RECOVERED vol on every row   624       26    -15.940
+
+================================================================================================================================================================================================================================================
+6. VALIDATION - does the law survive on NON-NULL dials, with RECOVERED vol?
+   (idea 262 fitted it on held/re-drawn uniform nulls only)
+
+   FULL sample: 3675 pairs, 1258 flip below 60 bps (turnover ratio 0.07x-33.33x)
+      committed vol   R^2   0.9994   median |err|  0.0120 bps   n 1257
+      RECOVERED vol   R^2   0.9811   median |err|  0.0113 bps   n 1258
+
+================================================================================================================================================================================================================================================
+7. RULE 8 WALK-FORWARD  (IS 2009-01-01..2016-12-31 chooses; OOS 2017-01-01.. read once)
+
+   IS  2009-01-01..2016-12-31: 3675 pairs, 1191 flip below 60 bps (turnover ratio 0.06x-34.07x)
+      committed vol   R^2   0.9889   median |err|  0.0146 bps   n 1190
+      RECOVERED vol   R^2   0.9990   median |err|  0.0147 bps   n 1191
+
+   OOS 2017-01-01..: 3675 pairs, 1257 flip below 60 bps (turnover ratio 0.06x-34.11x)
+      committed vol   R^2   0.9998   median |err|  0.0172 bps   n 1257
+      RECOVERED vol   R^2   0.9994   median |err|  0.0172 bps   n 1257
+
+   PRE-REGISTERED (b): law generalises off the nulls iff R^2(recovered vol) > 0.90 IS *and* OOS
+      IS  R^2 = 0.9990      OOS R^2 = 0.9994   ->  HOLDS
+
+   Book selection, IS only: (panel, n) maximising IS Sharpe of FWD/W/g0.75 at 10 bps
+  panel  n  IS_Sharpe
+   B136 10     1.0559
+BSTK100 10     1.0496
+   B136 20     1.0226
+BSTK100 20     1.0131
+   B136 40     1.0102
+BSTK100 40     1.0065
+    U56 20     0.9759
+   B136  5     0.9551
+BSTK100  5     0.9447
+    U56 40     0.9415
+    U56  5     0.8800
+    U56 10     0.8540
+   -> IS-argmax: panel B136, n=10  (IS Sharpe 1.056).  OOS now read ONCE.
+
+                     book   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+   IS-argmax B136/FWD10/W 0.1425  0.8946 -0.2144 1.1181 0.7104    0.1277      0.7806    -0.2144
+          RULES v1 (B136) 0.0639  0.6350 -0.2119 0.7562 0.5320    0.0594      0.5763    -0.2119
+               SPY (B136) 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372
+
+================================================================================================================================================================================================================================================
+8. BOTH KEEP PATHS on every book x rung (PROTOCOL rule 4)
+
+   grid points written: 900  (150 books x 6 rungs)
+   4a passes: 169   4b passes: 148   either: 284
+   4b passes at PROTOCOL's own 10 bps: 14
+
+   the passing points (any rung):
+   panel   arm      n freq  gross  bps  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  turn_yr   v4a  v4b fail4b
+     U56   FWD 20.000    M  0.750    0 0.159   1.252 -0.194 1.241 1.269       1.344    4.816 False True      -
+     U56   FWD 20.000    M  0.750    1 0.158   1.248 -0.195 1.237 1.265       1.340    4.816 False True      -
+     U56   FWD 20.000    M  0.750    2 0.157   1.244 -0.195 1.233 1.261       1.337    4.816 False True      -
+     U56   FWD 20.000    M  0.750    5 0.156   1.232 -0.195 1.220 1.250       1.326    4.816 False True      -
+     U56   FWD 20.000    M  0.750   10 0.153   1.213 -0.195 1.200 1.232       1.307    4.816 False True      -
+     U56   FWD 20.000    D  0.750    0 0.142   1.185 -0.179 1.172 1.202       1.266   27.051 False True      -
+     U56   FWD 40.000    M  0.750    0 0.127   1.179 -0.178 1.157 1.202       1.278    3.718 False True      -
+     U56 EWall    NaN    M  0.750    0 0.123   1.178 -0.169 1.175 1.185       1.260    3.643 False True      -
+     U56 FWDVS 40.000    D  0.750    0 0.118   1.177 -0.155 1.166 1.189       1.265   19.549 False True      -
+     U56 FIXED 20.000    W    NaN    0 0.137   1.175 -0.182 1.178 1.180       1.247    9.631 False True      -
+     U56   FWD 40.000    M  0.750    1 0.126   1.175 -0.178 1.153 1.199       1.274    3.718 False True      -
+     U56 FWDVS 40.000    M  0.750    0 0.125   1.175 -0.179 1.176 1.179       1.254    3.670 False True      -
+     U56 EWall    NaN    M  0.750    1 0.122   1.175 -0.170 1.172 1.182       1.257    3.643 False True      -
+     U56   FWD 40.000    D  0.750    0 0.120   1.175 -0.158 1.152 1.198       1.279   19.747 False True      -
+     U56   FWD 40.000    M  0.750    2 0.126   1.172 -0.178 1.150 1.195       1.271    3.718 False True      -
+     U56 FWDVS 40.000    M  0.750    1 0.124   1.172 -0.179 1.172 1.175       1.251    3.670 False True      -
+     U56 EWall    NaN    M  0.750    2 0.122   1.171 -0.170 1.168 1.178       1.253    3.643 False True      -
+     U56 FWDVS 40.000    M  0.750    2 0.124   1.168 -0.179 1.169 1.172       1.247    3.670 False True      -
+     U56 FIXED 20.000    W    NaN    1 0.136   1.167 -0.182 1.169 1.172       1.239    9.631 False True      -
+     U56   FWD 20.000    D  0.750    1 0.139   1.162 -0.180 1.148 1.180       1.244   27.051 False True      -
+     U56   FWD 40.000    M  0.750    5 0.125   1.161 -0.178 1.140 1.184       1.260    3.718 False True      -
+     U56 EWall    NaN    M  0.750    5 0.120   1.161 -0.170 1.158 1.167       1.242    3.643 False True      -
+     U56 EWall    NaN    D  0.750    0 0.115   1.160 -0.153 1.158 1.165       1.247   18.791 False True      -
+     U56 FIXED 20.000    W    NaN    2 0.135   1.159 -0.182 1.160 1.164       1.231    9.631 False True      -
+     U56 FWDVS 40.000    M  0.750    5 0.122   1.158 -0.180 1.159 1.161       1.237    3.670 False True      -
+
+   4b failure reasons at 10 bps:
+               fails  books
+                  DD     31
+           H2,OOS,DD     26
+                CAGR     15
+                   -     14
+   H1,H2,OOS,DD,CAGR     14
+      H2,OOS,DD,CAGR      8
+      H1,H2,OOS,CAGR      7
+               H2,DD      6
+         H2,OOS,CAGR      6
+                  H1      5
+        H1,H2,OOS,DD      4
+               H1,DD      4
+             H1,CAGR      2
+                  H2      2
+              H2,OOS      2
+              OOS,DD      1
+       H1,H2,DD,CAGR      1
+            H1,H2,DD      1
+             H2,CAGR      1
+
+================================================================================================================================================================================================================================================
+9. LEADERBOARD ROWS
+
+| 2026-09-06 | 269 back-fill census: 315 of 2238 DISTINCT leaderboard rows carry the four numbers (turnover join 684, baseline resolved 2346; 1515 rows are duplicates) | — | — | — | — / — | — | ANSWERED | 2026-09-06_back-fill-the-breakeven-column-arithmetically_B.py |
+| 2026-09-06 | 269 vol recovery from (CAGR,Sharpe): 4.0e-04 median rel err on 10061 committed triples, 98.6% within 1% | — | — | — | — / — | — | ANSWERED | 2026-09-06_back-fill-the-breakeven-column-arithmetically_B.py |
+| 2026-09-06 | 269 law off the nulls (recovered vol): R^2 IS 0.999 / OOS 0.999 on 1257 flipping non-null pairs | — | — | — | — / — | — | ANSWERED | 2026-09-06_back-fill-the-breakeven-column-arithmetically_B.py |
+| 2026-09-06 | 269 HEADLINE: published verdicts with breakeven vs own baseline in (0,25] bps = 13 of 305 back-filled distinct non-degenerate rows (4.3%) | — | — | — | — / — | — | ANSWERED | 2026-09-06_back-fill-the-breakeven-column-arithmetically_B.py |
+| 2026-09-06 | 269 IS-argmax book B136/FWD10/W @10bps (reference, not a new idea) | 14.3% | 0.89 | -21.4% | 1.12 / 0.71 | 0.63 (0.76/0.53) | KILL | 2026-09-06_back-fill-the-breakeven-column-arithmetically_B.py |
+
+================================================================================================================================================================================================================================================
+VERDICT SUMMARY
+  vol recovery usable (pre-reg a) : True   (98.6% within 1% relative)
+  law holds off nulls (pre-reg b) : True   (IS R^2 0.9990, OOS R^2 0.9994)
+  leaderboard rows back-filled    : 315 of 2238 distinct (624 of 3753 raw)
+  verdicts with c* in (0,25] bps  : 13 distinct non-degenerate (13 incl. degenerate)
+  new KEEP-candidate books        : 14 at 10 bps
+================================================================================================================================================================================================================================================
+EXIT=0
