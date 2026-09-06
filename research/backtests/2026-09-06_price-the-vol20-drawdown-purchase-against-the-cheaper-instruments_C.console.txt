@@ -1,0 +1,485 @@
+Idea 288 - "price-the-vol20-drawdown-purchase-against-the-cheaper-instruments".
+
+The question
+------------
+Idea 56 killed `vol20 < 0.60` as a RETURN edge on research/universe.json and re-read it as a
+DRAWDOWN instrument: at n=20, de-gross convention, it costs 1.94pp of CAGR and 0.065 of
+Sharpe and buys 3.12pp of MaxDD.  That is a PRICE, and a price means nothing until it is put
+beside the other things on the same shelf.  This run puts idea 74's axis (pp of CAGR
+surrendered per pp of MaxDD bought) on the record's existing drawdown menu, all four
+instruments applied to the SAME base book, and asks where vol20 ranks at MATCHED MaxDD
+reduction - not at its own arbitrary threshold.
+
+The base book B0 (idea 56's `NONE` cell, held fixed everywhere)
+    scan.py's composite with NO vol scaler, NO eligibility gate, top 20 equal-weighted at
+    GROSS/n = 0.75/20 of NAV each, weekly rebalancing, 10 bps per unit turnover, weights
+    decided at close t applied at t+1.  Panels: universe.json (U56, where idea 56 measured
+    the price) and universe_broad.json (B136, reported never selected on).  SPY is a
+    benchmark column, never tradable (idea 56's convention verbatim).
+
+The menu - four instruments, each a one-dial modification of B0
+    VOL20(v)   eligibility `vol20 < v`, gated-out weight to CASH (de-gross).  Idea 56's own
+               instrument; v = 0.60 is its published point.
+    BAND(b)    eligibility = RULES v2 clause 2's 200d +/- b band with hysteresis, de-gross.
+               b = 0.00 is the hard 200d gate; b = 0.03 is the live book's band.
+    DEGROSS(m) every weight x m, remainder cash.  The null instrument: a pure exposure cut
+               that contains no information at all.  Ideas 135/244 keep finding that other
+               instruments ARE this one, so it is the comparand that matters.
+    SLEEVE(f)  (1-f) x B0 + f x the S4 = {TLT,GLD,DBC,UUP} sleeve (idea 18 variant B:
+               trend-vote x inverse-vol, re-grossed to 0.75), idea 129's census construction.
+               The four sleeve assets stay in B0's own selectable set (stated, not fixed).
+
+Tuned parameters (PROTOCOL rule 4: at most two)
+    1. instrument in {VOL20, BAND, DEGROSS, SLEEVE}     2. that instrument's dial level
+Every grid point of both is reported.  Panel and cost rung are NOT tuned: U56 is the panel
+idea 56 measured on, B136 is printed beside it, and 10 bps is PROTOCOL's rung.
+
+How the ranking is done
+    For each grid point x:  dDD = MaxDD(x) - MaxDD(B0)  (pp of drawdown BOUGHT),
+                            dCAGR = CAGR(B0) - CAGR(x)  (pp SURRENDERED),
+                            price = dCAGR / dDD,  sprice = (Sharpe(B0) - Sharpe(x)) / dDD.
+    Then each instrument's whole ladder is interpolated onto a common depth grid
+    T in {1,2,3,4,5,6,8} pp of MaxDD reduction, so the four are compared at MATCHED purchase
+    depth rather than at whatever their published dial happened to be.  Realised mean gross
+    is carried through every row: an instrument that only pays by being a smaller book is a
+    DEGROSS ladder point wearing a costume (ideas 135/244), and the matched-gross column is
+    what says so.
+
+Rule 8 walk-forward: choose (instrument, dial) on <= 2016 by cheapest IS price among points
+whose IS dDD >= 3.0pp, then read 2017-2026 once.  Reported against B0 (do-nothing), the
+pre-registered anchor VOL20(0.60), the best OOS point (regret), SPY and RULES v2.
+
+Both KEEP paths (4a vs live RULES v2, 4b vs SPY) are evaluated on every grid point.
+
+Outputs: .grid.csv, .matched.csv, .walkforward.csv, .console.txt, .result.md
+
+
+======================================================================================================================
+PANEL U56  (56 columns, SPY held out of the book)  sample 2008-01-02 -> 2026-09-04, measured from 2009-01-13, 10 bps, W, gross 0.75, n=20
+======================================================================================================================
+
+REFERENCE ROWS
+                         CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  gross  turnover
+name                                                                                                         
+B0 (top20 EW, no gate) 0.1540  1.1767 -0.2127 1.2763 1.1109    0.1650      1.1700    -0.2127 0.7470    9.0713
+RULES v2 (live)        0.0868  1.2127 -0.1190 1.2310 1.1996    0.0956      1.2937    -0.1190 0.5313    1.7876
+RULES v1               0.0647  0.6625 -0.1383 0.6249 0.6984    0.0786      0.7552    -0.1383 0.7497   23.7591
+SPY                    0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372 1.0000    0.0000
+
+FULL GRID - every point of every ladder (dDD>0 = drawdown BOUGHT, price = pp CAGR per pp DD)
+instrument  level   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  gross  turnover     dDD   dCAGR              price  dSharpe            sprice  keep4a  keep4b fail4b
+      BASE    NaN 0.1540  1.1767 -0.2127 1.2763 1.1109    0.1650      1.1700    -0.2127 0.7470    9.0713  0.0000  0.0000                NaN   0.0000               NaN   False   False     DD
+     VOL20 0.3000 0.1040  1.0750 -0.1554 1.1272 1.0283    0.1113      1.1245    -0.1554 0.7330   11.0311  5.7324  5.0023             0.8726  -0.1017            0.0177   False   False   CAGR
+     VOL20 0.3500 0.1159  1.1095 -0.1587 1.1275 1.0962    0.1287      1.1878    -0.1587 0.7381   10.4995  5.3975  3.8105             0.7060  -0.0672            0.0125   False    True      -
+     VOL20 0.4000 0.1255  1.1348 -0.1742 1.1458 1.1280    0.1392      1.2133    -0.1742 0.7419   10.1702  3.8466  2.8563             0.7426  -0.0419            0.0109   False    True      -
+     VOL20 0.4500 0.1304  1.1365 -0.1763 1.1096 1.1640    0.1482      1.2369    -0.1763 0.7436    9.7918  3.6368  2.3624             0.6496  -0.0402            0.0110   False    True      -
+     VOL20 0.5000 0.1323  1.1301 -0.1837 1.1336 1.1310    0.1473      1.2041    -0.1837 0.7442    9.7213  2.8996  2.1730             0.7494  -0.0466            0.0161   False    True      -
+     VOL20 0.5500 0.1334  1.1196 -0.1815 1.1669 1.0837    0.1437      1.1519    -0.1815 0.7446    9.6192  3.1220  2.0654             0.6616  -0.0571            0.0183   False    True      -
+     VOL20 0.6000 0.1347  1.1120 -0.1815 1.1529 1.0825    0.1456      1.1446    -0.1815 0.7453    9.6012  3.1220  1.9371             0.6205  -0.0647            0.0207   False    True      -
+     VOL20 0.7000 0.1410  1.1319 -0.1898 1.1876 1.0929    0.1530      1.1588    -0.1898 0.7461    9.4812  2.2874  1.3035             0.5699  -0.0448            0.0196   False    True      -
+     VOL20 0.8000 0.1425  1.1287 -0.1949 1.2257 1.0570    0.1503      1.1223    -0.1949 0.7465    9.3918  1.7791  1.1480             0.6453  -0.0480            0.0270   False    True      -
+     VOL20 1.0000 0.1505  1.1675 -0.2048 1.2681 1.0970    0.1602      1.1609    -0.2048 0.7471    9.2720  0.7937  0.3482             0.4387  -0.0092            0.0117   False   False     DD
+     VOL20 1.5000 0.1536  1.1736 -0.2127 1.2759 1.1057    0.1643      1.1651    -0.2127 0.7470    9.0701  0.0000  0.0469 4228158423930.0000  -0.0031 281411495833.1800   False   False     DD
+      BAND 0.0000 0.1440  1.1578 -0.1909 1.2223 1.1179    0.1585      1.1810    -0.1909 0.7224    9.0327  2.1819  1.0027             0.4596  -0.0189            0.0087   False    True      -
+      BAND 0.0100 0.1450  1.1620 -0.1909 1.2141 1.1316    0.1602      1.1911    -0.1909 0.7225    8.8819  2.1819  0.9058             0.4151  -0.0147            0.0068   False    True      -
+      BAND 0.0200 0.1448  1.1603 -0.1909 1.2121 1.1302    0.1605      1.1924    -0.1909 0.7225    8.7182  2.1819  0.9254             0.4241  -0.0164            0.0075   False    True      -
+      BAND 0.0300 0.1457  1.1667 -0.1924 1.2184 1.1370    0.1615      1.1988    -0.1924 0.7217    8.5209  2.0312  0.8359             0.4115  -0.0100            0.0049   False    True      -
+      BAND 0.0500 0.1471  1.1712 -0.1923 1.2437 1.1254    0.1608      1.1873    -0.1923 0.7165    8.0683  2.0406  0.6902             0.3382  -0.0055            0.0027   False    True      -
+      BAND 0.0800 0.1495  1.1844 -0.1949 1.2585 1.1371    0.1629      1.1980    -0.1949 0.7176    7.7861  1.7808  0.4558             0.2560   0.0077           -0.0043   False    True      -
+      BAND 0.1200 0.1533  1.1914 -0.2117 1.2274 1.1728    0.1701      1.2316    -0.2117 0.7263    7.4406  0.0977  0.0779             0.7970   0.0147           -0.1502   False   False     DD
+      BAND 0.2000 0.1594  1.1578 -0.2339 1.2504 1.1010    0.1732      1.1593    -0.2339 0.7300    6.4830 -2.1160 -0.5389             0.2547  -0.0189           -0.0089   False   False     DD
+      BAND 0.3000 0.1656  1.1478 -0.2498 1.2554 1.0798    0.1814      1.1588    -0.2498 0.7217    3.8580 -3.7115 -1.1533             0.3107  -0.0289           -0.0078   False   False     DD
+   DEGROSS 0.9500 0.1462  1.1766 -0.2029 1.2763 1.1108    0.1567      1.1698    -0.2029 0.7097    8.6222  0.9834  0.7805             0.7937  -0.0001            0.0001   False   False     DD
+   DEGROSS 0.9000 0.1384  1.1765 -0.1930 1.2762 1.1107    0.1483      1.1697    -0.1930 0.6724    8.1734  1.9750  1.5604             0.7901  -0.0002            0.0001   False    True      -
+   DEGROSS 0.8500 0.1306  1.1764 -0.1830 1.2762 1.1105    0.1400      1.1696    -0.1830 0.6351    7.7246  2.9749  2.3395             0.7864  -0.0003            0.0001   False    True      -
+   DEGROSS 0.8000 0.1229  1.1763 -0.1729 1.2761 1.1104    0.1316      1.1694    -0.1729 0.5978    7.2758  3.9830  3.1177             0.7828  -0.0004            0.0001   False    True      -
+   DEGROSS 0.7500 0.1151  1.1762 -0.1627 1.2760 1.1102    0.1233      1.1693    -0.1627 0.5605    6.8269  4.9995  3.8951             0.7791  -0.0005            0.0001   False    True      -
+   DEGROSS 0.7000 0.1073  1.1761 -0.1525 1.2759 1.1101    0.1150      1.1691    -0.1525 0.5232    6.3777  6.0243  4.6715             0.7754  -0.0006            0.0001   False    True      -
+   DEGROSS 0.6000 0.0918  1.1759 -0.1317 1.2757 1.1098    0.0984      1.1688    -0.1317 0.4485    5.4777  8.0992  6.2210             0.7681  -0.0008            0.0001   False   False   CAGR
+   DEGROSS 0.5000 0.0764  1.1756 -0.1106 1.2755 1.1094    0.0818      1.1684    -0.1106 0.3738    4.5753 10.2080  7.7659             0.7608  -0.0011            0.0001   False   False   CAGR
+   DEGROSS 0.4000 0.0610  1.1753 -0.0892 1.2753 1.1091    0.0653      1.1680    -0.0892 0.2991    3.6696 12.3510  9.3056             0.7534  -0.0014            0.0001   False   False   CAGR
+   DEGROSS 0.3000 0.0456  1.1750 -0.0674 1.2751 1.1087    0.0489      1.1676    -0.0674 0.2243    2.7597 14.5285 10.8396             0.7461  -0.0017            0.0001   False   False   CAGR
+    SLEEVE 0.0500 0.1478  1.1853 -0.2040 1.2807 1.1232    0.1588      1.1804    -0.2040 0.7470    8.9934  0.8710  0.6214             0.7134   0.0085           -0.0098   False   False     DD
+    SLEEVE 0.1000 0.1416  1.1938 -0.1952 1.2842 1.1362    0.1525      1.1913    -0.1952 0.7470    8.9297  1.7479  1.2460             0.7129   0.0171           -0.0098   False    True      -
+    SLEEVE 0.1500 0.1353  1.2024 -0.1864 1.2866 1.1500    0.1462      1.2027    -0.1864 0.7470    8.8674  2.6314  1.8722             0.7115   0.0257           -0.0098   False    True      -
+    SLEEVE 0.2000 0.1290  1.2109 -0.1775 1.2873 1.1647    0.1399      1.2147    -0.1775 0.7470    8.8056  3.5217  2.4998             0.7098   0.0342           -0.0097   False    True      -
+    SLEEVE 0.2500 0.1227  1.2188 -0.1685 1.2857 1.1802    0.1335      1.2271    -0.1685 0.7470    8.7471  4.4188  3.1291             0.7082   0.0421           -0.0095   False    True      -
+    SLEEVE 0.3000 0.1164  1.2259 -0.1596 1.2809 1.1964    0.1271      1.2398    -0.1596 0.7470    8.6922  5.3100  3.7602             0.7081   0.0492           -0.0093   False    True      -
+    SLEEVE 0.4000 0.1038  1.2350 -0.1426 1.2568 1.2305    0.1144      1.2651    -0.1426 0.7470    8.5878  7.0078  5.0263             0.7173   0.0583           -0.0083   False   False   CAGR
+    SLEEVE 0.5000 0.0911  1.2302 -0.1254 1.2020 1.2636    0.1015      1.2863    -0.1254 0.7470    8.4914  8.7292  6.2977             0.7214   0.0535           -0.0061   False   False   CAGR
+    SLEEVE 0.6000 0.0783  1.1972 -0.1080 1.0992 1.2877    0.0886      1.2938    -0.1080 0.7469    8.4015 10.4747  7.5735             0.7230   0.0205           -0.0020   False   False   CAGR
+
+MATCHED-DEPTH COMPARISON - each instrument interpolated onto a common MaxDD-reduction grid
+(blank = the ladder does not reach that depth; NEVER extrapolated)
+panel instrument  depth_pp  level   CAGR  Sharpe  gross  OOS_Sharpe  OOS_CAGR  dCAGR  price  sprice
+  U56      VOL20    1.0000 0.9581 0.1489  1.1593 0.7470      1.1528    0.1581 0.5156 0.5156  0.0174
+  U56      VOL20    2.0000 0.7565 0.1419  1.1301 0.7463      1.1382    0.1515 1.2156 0.6078  0.0233
+  U56      VOL20    3.0000 0.5226 0.1328  1.1253 0.7444      1.1805    0.1457 2.1245 0.7082  0.0171
+  U56      VOL20    3.1200 0.5495 0.1334  1.1197 0.7446      1.1523    0.1438 2.0664 0.6623  0.0183
+  U56      VOL20    4.0000 0.3951 0.1245  1.1323 0.7415      1.2108    0.1382 2.9507 0.7377  0.0111
+  U56      VOL20    5.0000 0.3628 0.1184  1.1160 0.7391      1.1943    0.1314 3.5659 0.7132  0.0121
+  U56      VOL20    6.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+  U56      VOL20    8.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+  U56       BAND    1.0000 0.0986 0.1512  1.1876 0.7216      1.2136    0.1663 0.2805 0.2805 -0.0109
+  U56       BAND    2.0000 0.0362 0.1461  1.1689 0.7212      1.1987    0.1617 0.7886 0.3943  0.0039
+  U56       BAND    3.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+  U56       BAND    3.1200    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+  U56       BAND    4.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+  U56       BAND    5.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+  U56       BAND    6.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+  U56       BAND    8.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+  U56    DEGROSS    1.0000 0.9492 0.1461  1.1766 0.7091      1.1698    0.1565 0.7936 0.7936  0.0001
+  U56    DEGROSS    2.0000 0.8988 0.1382  1.1765 0.6715      1.1697    0.1481 1.5798 0.7899  0.0001
+  U56    DEGROSS    3.0000 0.8488 0.1304  1.1764 0.6342      1.1696    0.1398 2.3589 0.7863  0.0001
+  U56    DEGROSS    3.1200 0.8428 0.1295  1.1764 0.6297      1.1695    0.1388 2.4515 0.7857  0.0001
+  U56    DEGROSS    4.0000 0.7992 0.1227  1.1763 0.5972      1.1694    0.1315 3.1307 0.7827  0.0001
+  U56    DEGROSS    5.0000 0.7500 0.1151  1.1762 0.5605      1.1693    0.1233 3.8955 0.7791  0.0001
+  U56    DEGROSS    6.0000 0.7012 0.1075  1.1761 0.5240      1.1691    0.1152 4.6530 0.7755  0.0001
+  U56    DEGROSS    8.0000 0.6048 0.0926  1.1759 0.4521      1.1688    0.0992 6.1469 0.7684  0.0001
+  U56     SLEEVE    1.0000 0.0574 0.1469  1.1865 0.7470      1.1820    0.1579 0.7133 0.7133 -0.0098
+  U56     SLEEVE    2.0000 0.1143 0.1398  1.1963 0.7470      1.1945    0.1507 1.4247 0.7123 -0.0098
+  U56     SLEEVE    3.0000 0.1707 0.1327  1.2059 0.7470      1.2077    0.1436 2.1320 0.7107 -0.0097
+  U56     SLEEVE    3.1200 0.1774 0.1319  1.2071 0.7470      1.2093    0.1427 2.2166 0.7105 -0.0097
+  U56     SLEEVE    4.0000 0.2267 0.1257  1.2151 0.7470      1.2213    0.1365 2.8354 0.7088 -0.0096
+  U56     SLEEVE    5.0000 0.2826 0.1186  1.2235 0.7470      1.2354    0.1294 3.5407 0.7081 -0.0094
+  U56     SLEEVE    6.0000 0.3406 0.1113  1.2296 0.7470      1.2501    0.1219 4.2747 0.7125 -0.0088
+  U56     SLEEVE    8.0000 0.4576 0.0964  1.2322 0.7470      1.2774    0.1070 5.7591 0.7199 -0.0069
+
+RANK AT MATCHED DEPTH (1 = cheapest; ordered by pp of CAGR surrendered per pp of MaxDD)
+instrument   BAND  DEGROSS  SLEEVE  VOL20
+depth_pp                                 
+1.00       0.2805   0.7936  0.7133 0.5156
+2.00       0.3943   0.7899  0.7123 0.6078
+3.00          NaN   0.7863  0.7107 0.7082
+3.12          NaN   0.7857  0.7105 0.6623
+4.00          NaN   0.7827  0.7088 0.7377
+5.00          NaN   0.7791  0.7081 0.7132
+6.00          NaN   0.7755  0.7125    NaN
+8.00          NaN   0.7684  0.7199    NaN
+
+  rank by price (CAGR cost):
+instrument  BAND  DEGROSS  SLEEVE  VOL20
+depth_pp                                
+1.00         1.0      4.0     3.0    2.0
+2.00         1.0      4.0     3.0    2.0
+3.00         NaN      3.0     2.0    1.0
+3.12         NaN      3.0     2.0    1.0
+4.00         NaN      3.0     1.0    2.0
+5.00         NaN      3.0     1.0    2.0
+6.00         NaN      2.0     1.0    NaN
+8.00         NaN      2.0     1.0    NaN
+
+  Sharpe cost per pp of MaxDD (negative = the instrument RAISES Sharpe while cutting DD):
+instrument    BAND  DEGROSS  SLEEVE  VOL20
+depth_pp                                  
+1.00       -0.0109   0.0001 -0.0098 0.0174
+2.00        0.0039   0.0001 -0.0098 0.0233
+3.00           NaN   0.0001 -0.0097 0.0171
+3.12           NaN   0.0001 -0.0097 0.0183
+4.00           NaN   0.0001 -0.0096 0.0111
+5.00           NaN   0.0001 -0.0094 0.0121
+6.00           NaN   0.0001 -0.0088    NaN
+8.00           NaN   0.0001 -0.0069    NaN
+
+  rank by Sharpe cost:
+instrument  BAND  DEGROSS  SLEEVE  VOL20
+depth_pp                                
+1.00         1.0      3.0     2.0    4.0
+2.00         3.0      2.0     1.0    4.0
+3.00         NaN      2.0     1.0    3.0
+3.12         NaN      2.0     1.0    3.0
+4.00         NaN      2.0     1.0    3.0
+5.00         NaN      2.0     1.0    3.0
+6.00         NaN      2.0     1.0    NaN
+8.00         NaN      2.0     1.0    NaN
+
+MATCHED-GROSS CONTROL (ideas 135/244) - is the instrument anything DEGROSS does not buy?
+  at each depth, DEGROSS's own realised gross vs the instrument's, and the CAGR gap.
+panel instrument  depth_pp  gross  dg_gross  dCAGR_vs_dg  dSharpe_vs_dg  dOOS_Sharpe_vs_dg
+  U56      VOL20    1.0000 0.7470    0.7091       0.2780        -0.0173            -0.0170
+  U56      VOL20    2.0000 0.7463    0.6715       0.3643        -0.0464            -0.0316
+  U56      VOL20    3.0000 0.7444    0.6342       0.2344        -0.0511             0.0110
+  U56      VOL20    3.1200 0.7446    0.6297       0.3851        -0.0567            -0.0172
+  U56      VOL20    4.0000 0.7415    0.5972       0.1800        -0.0440             0.0414
+  U56      VOL20    5.0000 0.7391    0.5605       0.3295        -0.0602             0.0251
+  U56       BAND    1.0000 0.7216    0.7091       0.5131         0.0110             0.0437
+  U56       BAND    2.0000 0.7212    0.6715       0.7913        -0.0076             0.0290
+  U56     SLEEVE    1.0000 0.7470    0.7091       0.0803         0.0099             0.0121
+  U56     SLEEVE    2.0000 0.7470    0.6715       0.1552         0.0198             0.0248
+  U56     SLEEVE    3.0000 0.7470    0.6342       0.2268         0.0295             0.0381
+  U56     SLEEVE    3.1200 0.7470    0.6297       0.2349         0.0306             0.0397
+  U56     SLEEVE    4.0000 0.7470    0.5972       0.2953         0.0388             0.0519
+  U56     SLEEVE    5.0000 0.7470    0.5605       0.3548         0.0472             0.0661
+  U56     SLEEVE    6.0000 0.7470    0.5240       0.3783         0.0535             0.0810
+  U56     SLEEVE    8.0000 0.7470    0.4521       0.3878         0.0563             0.1086
+
+RULE 8 WALK-FORWARD - (instrument, level) chosen on <= 2016-12-31 by cheapest IS price among points with IS dDD >= 3.0pp; 2017-2026 read once
+  eligible IS pool: 9 of 39 points  ({'DEGROSS': np.int64(5), 'SLEEVE': np.int64(4)})
+instrument  level  IS_dDD  IS_dCAGR  IS_price  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+    SLEEVE 0.3000  3.5985    3.7234    1.0347     1.2176    0.1271      1.2398    -0.1596
+    SLEEVE 0.4000  4.6966    4.9753    1.0593     1.2020    0.1144      1.2651    -0.1426
+    SLEEVE 0.5000  5.3039    6.2312    1.1748     1.1588    0.1015      1.2863    -0.1254
+   DEGROSS 0.3000  7.5903    9.9087    1.3054     1.1972    0.0489      1.1676    -0.0674
+   DEGROSS 0.4000  6.4943    8.5065    1.3098     1.1974    0.0653      1.1680    -0.0892
+   DEGROSS 0.5000  5.4021    7.0991    1.3141     1.1976    0.0818      1.1684    -0.1106
+   DEGROSS 0.6000  4.3136    5.6871    1.3184     1.1977    0.0984      1.1688    -0.1317
+   DEGROSS 0.7000  3.2291    4.2708    1.3226     1.1978    0.1150      1.1691    -0.1525
+    SLEEVE 0.6000  5.1942    7.4903    1.4420     1.0715    0.0886      1.2938    -0.1080
+               arm instrument  level  OOS_CAGR  OOS_Sharpe  OOS_MaxDD panel
+           IS pick     SLEEVE 0.3000    0.1271      1.2398    -0.1596   U56
+anchor VOL20(0.60)      VOL20 0.6000    0.1456      1.1446    -0.1815   U56
+     do-nothing B0       BASE    NaN    0.1650      1.1700    -0.2127   U56
+    best OOS point     SLEEVE 0.6000    0.0886      1.2938    -0.1080   U56
+   RULES v2 (live)          -    NaN    0.0956      1.2937    -0.1190   U56
+               SPY          -    NaN    0.1545      0.8820    -0.3372   U56
+  edge vs do-nothing  +0.0699 Sharpe, -3.79 pp CAGR, +5.31 pp MaxDD
+  edge vs anchor      +0.0952 Sharpe;  regret vs best OOS -0.0540
+  IS->OOS price drift: IS 1.0347 -> OOS 0.7139 pp/pp   (IS depth 3.60pp -> OOS 5.31pp)
+
+KEEP PATHS over all 40 grid points on U56:  4a 0/40   4b 24/40
+  first-failing 4b bar over the failures: {'DD': np.int64(8), 'CAGR': np.int64(8)}
+instrument  level   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe
+     VOL20 0.3500 0.1159  1.1095 -0.1587 1.1275 1.0962      1.1878
+     VOL20 0.4000 0.1255  1.1348 -0.1742 1.1458 1.1280      1.2133
+     VOL20 0.4500 0.1304  1.1365 -0.1763 1.1096 1.1640      1.2369
+     VOL20 0.5000 0.1323  1.1301 -0.1837 1.1336 1.1310      1.2041
+     VOL20 0.5500 0.1334  1.1196 -0.1815 1.1669 1.0837      1.1519
+     VOL20 0.6000 0.1347  1.1120 -0.1815 1.1529 1.0825      1.1446
+     VOL20 0.7000 0.1410  1.1319 -0.1898 1.1876 1.0929      1.1588
+     VOL20 0.8000 0.1425  1.1287 -0.1949 1.2257 1.0570      1.1223
+      BAND 0.0000 0.1440  1.1578 -0.1909 1.2223 1.1179      1.1810
+      BAND 0.0100 0.1450  1.1620 -0.1909 1.2141 1.1316      1.1911
+      BAND 0.0200 0.1448  1.1603 -0.1909 1.2121 1.1302      1.1924
+      BAND 0.0300 0.1457  1.1667 -0.1924 1.2184 1.1370      1.1988
+      BAND 0.0500 0.1471  1.1712 -0.1923 1.2437 1.1254      1.1873
+      BAND 0.0800 0.1495  1.1844 -0.1949 1.2585 1.1371      1.1980
+   DEGROSS 0.9000 0.1384  1.1765 -0.1930 1.2762 1.1107      1.1697
+   DEGROSS 0.8500 0.1306  1.1764 -0.1830 1.2762 1.1105      1.1696
+   DEGROSS 0.8000 0.1229  1.1763 -0.1729 1.2761 1.1104      1.1694
+   DEGROSS 0.7500 0.1151  1.1762 -0.1627 1.2760 1.1102      1.1693
+   DEGROSS 0.7000 0.1073  1.1761 -0.1525 1.2759 1.1101      1.1691
+    SLEEVE 0.1000 0.1416  1.1938 -0.1952 1.2842 1.1362      1.1913
+    SLEEVE 0.1500 0.1353  1.2024 -0.1864 1.2866 1.1500      1.2027
+    SLEEVE 0.2000 0.1290  1.2109 -0.1775 1.2873 1.1647      1.2147
+    SLEEVE 0.2500 0.1227  1.2188 -0.1685 1.2857 1.1802      1.2271
+    SLEEVE 0.3000 0.1164  1.2259 -0.1596 1.2809 1.1964      1.2398
+
+======================================================================================================================
+PANEL B136  (136 columns, SPY held out of the book)  sample 2008-01-02 -> 2026-09-04, measured from 2009-01-13, 10 bps, W, gross 0.75, n=20
+======================================================================================================================
+
+REFERENCE ROWS
+                         CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  gross  turnover
+name                                                                                                         
+B0 (top20 EW, no gate) 0.1491  0.9961 -0.2400 1.1768 0.8578    0.1478      0.9354    -0.2400 0.7480   13.1816
+RULES v2 (live)        0.0803  1.1078 -0.1218 1.2312 0.9861    0.0798      1.1206    -0.1218 0.5315    2.0182
+RULES v1               0.0614  0.6111 -0.2153 0.7679 0.4776    0.0562      0.5464    -0.2153 0.7498   29.6138
+SPY                    0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372 1.0000    0.0000
+
+FULL GRID - every point of every ladder (dDD>0 = drawdown BOUGHT, price = pp CAGR per pp DD)
+instrument  level   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  gross  turnover     dDD   dCAGR               price  dSharpe            sprice  keep4a  keep4b fail4b
+      BASE    NaN 0.1491  0.9961 -0.2400 1.1768 0.8578    0.1478      0.9354    -0.2400 0.7480   13.1816  0.0000  0.0000                 NaN   0.0000               NaN   False   False     DD
+     VOL20 0.3000 0.0884  0.8177 -0.1638 1.0535 0.5957    0.0766      0.7120    -0.1638 0.7404   17.4572  7.6241  6.0734              0.7966  -0.1785            0.0234   False   False     H2
+     VOL20 0.3500 0.1051  0.8939 -0.1637 1.1440 0.6605    0.0901      0.7704    -0.1637 0.7435   16.2895  7.6331  4.4077              0.5774  -0.1023            0.0134   False   False     H2
+     VOL20 0.4000 0.1070  0.8682 -0.1839 1.0863 0.6680    0.0945      0.7655    -0.1839 0.7448   15.2610  5.6109  4.2177              0.7517  -0.1280            0.0228   False   False     H2
+     VOL20 0.4500 0.1126  0.8751 -0.1985 1.0700 0.6986    0.1024      0.7895    -0.1985 0.7452   14.7725  4.1543  3.6571              0.8803  -0.1211            0.0291   False   False     H2
+     VOL20 0.5000 0.1196  0.9025 -0.2094 1.0795 0.7437    0.1125      0.8372    -0.2094 0.7459   14.3824  3.0619  2.9558              0.9654  -0.0937            0.0306   False   False     H2
+     VOL20 0.5500 0.1212  0.9014 -0.2027 1.0589 0.7626    0.1161      0.8465    -0.2027 0.7460   14.1316  3.7308  2.7925              0.7485  -0.0947            0.0254   False   False     H2
+     VOL20 0.6000 0.1285  0.9321 -0.2070 1.0967 0.7887    0.1225      0.8695    -0.2070 0.7462   13.8961  3.3078  2.0654              0.6244  -0.0641            0.0194   False   False     H2
+     VOL20 0.7000 0.1404  0.9875 -0.2005 1.1240 0.8726    0.1401      0.9523    -0.2005 0.7464   13.6591  3.9544  0.8686              0.2197  -0.0086            0.0022   False    True      -
+     VOL20 0.8000 0.1485  1.0211 -0.2080 1.1815 0.8891    0.1470      0.9721    -0.2080 0.7475   13.3922  3.2008  0.0677              0.0211   0.0249           -0.0078   False   False     DD
+     VOL20 1.0000 0.1489  1.0078 -0.2237 1.1780 0.8735    0.1476      0.9523    -0.2237 0.7479   13.2864  1.6331  0.0235              0.0144   0.0116           -0.0071   False   False     DD
+     VOL20 1.5000 0.1495  0.9985 -0.2400 1.1805 0.8593    0.1480      0.9368    -0.2400 0.7480   13.1728 -0.0000 -0.0398   895493960194.5000   0.0024  53724309470.9425   False   False     DD
+      BAND 0.0000 0.1474  0.9946 -0.2400 1.1948 0.8413    0.1440      0.9208    -0.2400 0.7428   13.0938 -0.0000  0.1716 -3863865219519.5000  -0.0016 -35944108796.1025   False   False     DD
+      BAND 0.0100 0.1482  1.0009 -0.2257 1.1901 0.8555    0.1459      0.9345    -0.2257 0.7432   13.0754  1.4315  0.0926              0.0647   0.0048           -0.0033   False   False     DD
+      BAND 0.0200 0.1482  1.0013 -0.2257 1.1954 0.8519    0.1453      0.9311    -0.2257 0.7431   13.0607  1.4315  0.0890              0.0622   0.0052           -0.0036   False   False     DD
+      BAND 0.0300 0.1480  1.0003 -0.2215 1.1996 0.8468    0.1444      0.9264    -0.2215 0.7434   13.0219  1.8514  0.1135              0.0613   0.0042           -0.0022   False   False     DD
+      BAND 0.0500 0.1479  0.9993 -0.2237 1.1833 0.8589    0.1466      0.9375    -0.2237 0.7426   12.9109  1.6368  0.1276              0.0780   0.0032           -0.0019   False   False     DD
+      BAND 0.0800 0.1485  1.0018 -0.2329 1.1954 0.8551    0.1464      0.9336    -0.2329 0.7415   12.8367  0.7100  0.0636              0.0895   0.0056           -0.0079   False   False     DD
+      BAND 0.1200 0.1543  1.0323 -0.2400 1.2497 0.8692    0.1498      0.9461    -0.2400 0.7409   12.6667  0.0000 -0.5215                 NaN   0.0361               NaN   False   False     DD
+      BAND 0.2000 0.1605  1.0582 -0.2391 1.2589 0.9124    0.1608      0.9920    -0.2391 0.7376   12.1609  0.0953 -1.1383            -11.9416   0.0620           -0.6508   False   False     DD
+      BAND 0.3000 0.1631  1.0480 -0.2552 1.2289 0.9168    0.1659      0.9980    -0.2552 0.7335   10.5994 -1.5172 -1.3979              0.9214   0.0519            0.0342   False   False     DD
+   DEGROSS 0.9500 0.1417  0.9957 -0.2291 1.1764 0.8574    0.1405      0.9350    -0.2291 0.7107   12.5275  1.0938  0.7423              0.6786  -0.0004            0.0004   False   False     DD
+   DEGROSS 0.9000 0.1343  0.9953 -0.2180 1.1759 0.8570    0.1332      0.9346    -0.2180 0.6733   11.8737  2.1983  1.4854              0.6757  -0.0008            0.0004   False   False     DD
+   DEGROSS 0.8500 0.1268  0.9949 -0.2069 1.1755 0.8565    0.1259      0.9342    -0.2069 0.6360   11.2199  3.3137  2.2294              0.6728  -0.0012            0.0004   False   False     DD
+   DEGROSS 0.8000 0.1194  0.9945 -0.1956 1.1750 0.8561    0.1186      0.9337    -0.1956 0.5986   10.5660  4.4401  2.9741              0.6698  -0.0017            0.0004   False    True      -
+   DEGROSS 0.7500 0.1119  0.9941 -0.1843 1.1745 0.8557    0.1113      0.9333    -0.1843 0.5612    9.9120  5.5775  3.7195              0.6669  -0.0021            0.0004   False    True      -
+   DEGROSS 0.7000 0.1045  0.9936 -0.1728 1.1740 0.8553    0.1039      0.9328    -0.1728 0.5238    9.2576  6.7259  4.4653              0.6639  -0.0025            0.0004   False   False   CAGR
+   DEGROSS 0.6000 0.0896  0.9927 -0.1495 1.1731 0.8544    0.0892      0.9320    -0.1495 0.4491    7.9474  9.0563  5.9583              0.6579  -0.0034            0.0004   False   False   CAGR
+   DEGROSS 0.5000 0.0746  0.9918 -0.1257 1.1721 0.8535    0.0744      0.9310    -0.1257 0.3743    6.6344 11.4317  7.4523              0.6519  -0.0043            0.0004   False   False   CAGR
+   DEGROSS 0.4000 0.0597  0.9909 -0.1015 1.1710 0.8526    0.0595      0.9301    -0.1015 0.2995    5.3178 13.8527  8.9465              0.6458  -0.0053            0.0004   False   False   CAGR
+   DEGROSS 0.3000 0.0447  0.9899 -0.0768 1.1700 0.8516    0.0447      0.9292    -0.0768 0.2246    3.9968 16.3199 10.4404              0.6397  -0.0062            0.0004   False   False   CAGR
+    SLEEVE 0.0500 0.1433  1.0045 -0.2296 1.1821 0.8693    0.1426      0.9453    -0.2296 0.7480   12.9223  1.0403  0.5849              0.5623   0.0083           -0.0080   False   False     DD
+    SLEEVE 0.1000 0.1374  1.0133 -0.2191 1.1871 0.8819    0.1373      0.9560    -0.2191 0.7479   12.6669  2.0899  1.1734              0.5615   0.0172           -0.0082   False   False     DD
+    SLEEVE 0.1500 0.1315  1.0226 -0.2085 1.1917 0.8955    0.1320      0.9675    -0.2085 0.7479   12.4120  3.1493  1.7649              0.5604   0.0265           -0.0084   False   False     DD
+    SLEEVE 0.2000 0.1255  1.0323 -0.1978 1.1957 0.9104    0.1267      0.9800    -0.1978 0.7478   12.1569  4.2186  2.3594              0.5593   0.0362           -0.0086   False    True      -
+    SLEEVE 0.2500 0.1196  1.0424 -0.1871 1.1986 0.9266    0.1213      0.9935    -0.1871 0.7477   11.9016  5.2978  2.9568              0.5581   0.0462           -0.0087   False    True      -
+    SLEEVE 0.3000 0.1136  1.0526 -0.1762 1.1999 0.9443    0.1159      1.0080    -0.1762 0.7477   11.6465  6.3871  3.5569              0.5569   0.0565           -0.0088   False    True      -
+    SLEEVE 0.4000 0.1015  1.0723 -0.1546 1.1940 0.9843    0.1050      1.0400    -0.1546 0.7476   11.1368  8.5426  4.7654              0.5578   0.0762           -0.0089   False   False   CAGR
+    SLEEVE 0.5000 0.0893  1.0867 -0.1356 1.1668 1.0303    0.0939      1.0749    -0.1356 0.7474   10.6280 10.4470  5.9841              0.5728   0.0906           -0.0087   False   False   CAGR
+    SLEEVE 0.6000 0.0770  1.0848 -0.1162 1.0993 1.0791    0.0827      1.1075    -0.1162 0.7473   10.1200 12.3814  7.2124              0.5825   0.0887           -0.0072   False   False   CAGR
+
+MATCHED-DEPTH COMPARISON - each instrument interpolated onto a common MaxDD-reduction grid
+(blank = the ladder does not reach that depth; NEVER extrapolated)
+panel instrument  depth_pp  level   CAGR  Sharpe  gross  OOS_Sharpe  OOS_CAGR  dCAGR  price  sprice
+ B136      VOL20    1.0000 1.1938 0.1490  1.0033 0.7480      0.9458    0.1477 0.0144 0.0144 -0.0071
+ B136      VOL20    2.0000 0.8716 0.1414  0.9807 0.7474      0.9228    0.1386 0.7765 0.3883  0.0077
+ B136      VOL20    3.0000 0.5217 0.1208  0.9070 0.7460      0.8422    0.1140 2.8288 0.9429  0.0297
+ B136      VOL20    3.1200 0.6255 0.1317  0.9521 0.7466      0.8936    0.1269 1.7476 0.5601  0.0141
+ B136      VOL20    4.0000 0.6429 0.1341  0.9619 0.7461      0.9151    0.1315 1.5050 0.3762  0.0086
+ B136      VOL20    5.0000 0.4210 0.1093  0.8711 0.7450      0.7755    0.0978 3.9826 0.7965  0.0250
+ B136      VOL20    6.0000 0.3807 0.1034  0.8584 0.7440      0.7551    0.0910 4.5764 0.7627  0.0230
+ B136      VOL20    8.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+ B136       BAND    1.0000 0.0519 0.1484  1.0014 0.7422      0.9339    0.1462 0.0753 0.0753 -0.0053
+ B136       BAND    2.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+ B136       BAND    3.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+ B136       BAND    3.1200    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+ B136       BAND    4.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+ B136       BAND    5.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+ B136       BAND    6.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+ B136       BAND    8.0000    NaN    NaN     NaN    NaN         NaN       NaN    NaN    NaN     NaN
+ B136    DEGROSS    1.0000    NaN 0.1423  0.9958 0.7139      0.9350    0.1411 0.6786 0.6786  0.0004
+ B136    DEGROSS    2.0000 0.9090 0.1356  0.9954 0.6800      0.9346    0.1345 1.3520 0.6760  0.0004
+ B136    DEGROSS    3.0000 0.8641 0.1289  0.9950 0.6465      0.9343    0.1280 2.0202 0.6734  0.0004
+ B136    DEGROSS    3.1200 0.8587 0.1281  0.9950 0.6424      0.9342    0.1272 2.1002 0.6731  0.0004
+ B136    DEGROSS    4.0000 0.8195 0.1223  0.9946 0.6132      0.9339    0.1215 2.6832 0.6708  0.0004
+ B136    DEGROSS    5.0000 0.7754 0.1157  0.9943 0.5802      0.9335    0.1150 3.3411 0.6682  0.0004
+ B136    DEGROSS    6.0000 0.7316 0.1092  0.9939 0.5475      0.9331    0.1085 3.9939 0.6657  0.0004
+ B136    DEGROSS    8.0000 0.6453 0.0963  0.9931 0.4830      0.9324    0.0958 5.2816 0.6602  0.0004
+ B136     SLEEVE    1.0000    NaN 0.1435  1.0042 0.7480      0.9449    0.1428 0.5623 0.5623 -0.0080
+ B136     SLEEVE    2.0000 0.0957 0.1379  1.0126 0.7479      0.9551    0.1378 1.1230 0.5615 -0.0082
+ B136     SLEEVE    3.0000 0.1430 0.1323  1.0213 0.7479      0.9659    0.1328 1.6816 0.5605 -0.0084
+ B136     SLEEVE    3.1200 0.1486 0.1316  1.0223 0.7479      0.9672    0.1322 1.7486 0.5604 -0.0084
+ B136     SLEEVE    4.0000 0.1898 0.1268  1.0303 0.7478      0.9775    0.1278 2.2379 0.5595 -0.0085
+ B136     SLEEVE    5.0000 0.2362 0.1212  1.0396 0.7478      0.9898    0.1228 2.7919 0.5584 -0.0087
+ B136     SLEEVE    6.0000 0.2822 0.1157  1.0490 0.7477      1.0028    0.1179 3.3436 0.5573 -0.0088
+ B136     SLEEVE    8.0000 0.3748 0.1045  1.0674 0.7476      1.0320    0.1078 4.4612 0.5576 -0.0089
+
+RANK AT MATCHED DEPTH (1 = cheapest; ordered by pp of CAGR surrendered per pp of MaxDD)
+instrument   BAND  DEGROSS  SLEEVE  VOL20
+depth_pp                                 
+1.00       0.0753   0.6786  0.5623 0.0144
+2.00          NaN   0.6760  0.5615 0.3883
+3.00          NaN   0.6734  0.5605 0.9429
+3.12          NaN   0.6731  0.5604 0.5601
+4.00          NaN   0.6708  0.5595 0.3762
+5.00          NaN   0.6682  0.5584 0.7965
+6.00          NaN   0.6657  0.5573 0.7627
+8.00          NaN   0.6602  0.5576    NaN
+
+  rank by price (CAGR cost):
+instrument  BAND  DEGROSS  SLEEVE  VOL20
+depth_pp                                
+1.00         2.0      4.0     3.0    1.0
+2.00         NaN      3.0     2.0    1.0
+3.00         NaN      2.0     1.0    3.0
+3.12         NaN      3.0     2.0    1.0
+4.00         NaN      3.0     2.0    1.0
+5.00         NaN      2.0     1.0    3.0
+6.00         NaN      2.0     1.0    3.0
+8.00         NaN      2.0     1.0    NaN
+
+  Sharpe cost per pp of MaxDD (negative = the instrument RAISES Sharpe while cutting DD):
+instrument    BAND  DEGROSS  SLEEVE   VOL20
+depth_pp                                   
+1.00       -0.0053   0.0004 -0.0080 -0.0071
+2.00           NaN   0.0004 -0.0082  0.0077
+3.00           NaN   0.0004 -0.0084  0.0297
+3.12           NaN   0.0004 -0.0084  0.0141
+4.00           NaN   0.0004 -0.0085  0.0086
+5.00           NaN   0.0004 -0.0087  0.0250
+6.00           NaN   0.0004 -0.0088  0.0230
+8.00           NaN   0.0004 -0.0089     NaN
+
+  rank by Sharpe cost:
+instrument  BAND  DEGROSS  SLEEVE  VOL20
+depth_pp                                
+1.00         3.0      4.0     1.0    2.0
+2.00         NaN      2.0     1.0    3.0
+3.00         NaN      2.0     1.0    3.0
+3.12         NaN      2.0     1.0    3.0
+4.00         NaN      2.0     1.0    3.0
+5.00         NaN      2.0     1.0    3.0
+6.00         NaN      2.0     1.0    3.0
+8.00         NaN      2.0     1.0    NaN
+
+MATCHED-GROSS CONTROL (ideas 135/244) - is the instrument anything DEGROSS does not buy?
+  at each depth, DEGROSS's own realised gross vs the instrument's, and the CAGR gap.
+panel instrument  depth_pp  gross  dg_gross  dCAGR_vs_dg  dSharpe_vs_dg  dOOS_Sharpe_vs_dg
+ B136      VOL20    1.0000 0.7480    0.7139       0.6643         0.0075             0.0107
+ B136      VOL20    2.0000 0.7474    0.6800       0.5755        -0.0147            -0.0119
+ B136      VOL20    3.0000 0.7460    0.6465      -0.8087        -0.0880            -0.0921
+ B136      VOL20    3.1200 0.7466    0.6424       0.3526        -0.0429            -0.0406
+ B136      VOL20    4.0000 0.7461    0.6132       1.1782        -0.0328            -0.0188
+ B136      VOL20    5.0000 0.7450    0.5802      -0.6415        -0.1232            -0.1580
+ B136      VOL20    6.0000 0.7440    0.5475      -0.5825        -0.1355            -0.1780
+ B136       BAND    1.0000 0.7422    0.7139       0.6034         0.0056            -0.0011
+ B136     SLEEVE    1.0000 0.7480    0.7139       0.1164         0.0084             0.0099
+ B136     SLEEVE    2.0000 0.7479    0.6800       0.2290         0.0172             0.0204
+ B136     SLEEVE    3.0000 0.7479    0.6465       0.3386         0.0263             0.0316
+ B136     SLEEVE    3.1200 0.7479    0.6424       0.3516         0.0274             0.0330
+ B136     SLEEVE    4.0000 0.7478    0.6132       0.4453         0.0357             0.0436
+ B136     SLEEVE    5.0000 0.7478    0.5802       0.5491         0.0453             0.0563
+ B136     SLEEVE    6.0000 0.7477    0.5475       0.6503         0.0551             0.0697
+ B136     SLEEVE    8.0000 0.7476    0.4830       0.8204         0.0742             0.0996
+
+RULE 8 WALK-FORWARD - (instrument, level) chosen on <= 2016-12-31 by cheapest IS price among points with IS dDD >= 3.0pp; 2017-2026 read once
+  eligible IS pool: 11 of 39 points  ({'DEGROSS': np.int64(6), 'SLEEVE': np.int64(5)})
+instrument  level  IS_dDD  IS_dCAGR  IS_price  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+    SLEEVE 0.4000  5.6320    5.3552    0.9508     1.1268    0.1050      1.0400    -0.1546
+    SLEEVE 0.3000  4.2067    4.0077    0.9527     1.1252    0.1159      1.0080    -0.1762
+    SLEEVE 0.2500  3.4984    3.3359    0.9536     1.1210    0.1213      0.9935    -0.1871
+   DEGROSS 0.3000  9.0804   10.5976    1.1671     1.0831    0.0447      0.9292    -0.0768
+   DEGROSS 0.4000  7.7607    9.0939    1.1718     1.0841    0.0595      0.9301    -0.1015
+   DEGROSS 0.5000  6.4483    7.5860    1.1764     1.0851    0.0744      0.9310    -0.1257
+   DEGROSS 0.6000  5.1433    6.0742    1.1810     1.0860    0.0892      0.9320    -0.1495
+   DEGROSS 0.7000  3.8459    4.5592    1.1855     1.0869    0.1039      0.9328    -0.1728
+   DEGROSS 0.7500  3.2001    3.8006    1.1876     1.0874    0.1113      0.9333    -0.1843
+    SLEEVE 0.5000  5.5902    6.7073    1.1998     1.1103    0.0939      1.0749    -0.1356
+    SLEEVE 0.6000  5.3651    8.0635    1.5029     1.0578    0.0827      1.1075    -0.1162
+               arm instrument  level  OOS_CAGR  OOS_Sharpe  OOS_MaxDD panel
+           IS pick     SLEEVE 0.4000    0.1050      1.0400    -0.1546  B136
+anchor VOL20(0.60)      VOL20 0.6000    0.1225      0.8695    -0.2070  B136
+     do-nothing B0       BASE    NaN    0.1478      0.9354    -0.2400  B136
+    best OOS point     SLEEVE 0.6000    0.0827      1.1075    -0.1162  B136
+   RULES v2 (live)          -    NaN    0.0798      1.1206    -0.1218  B136
+               SPY          -    NaN    0.1545      0.8820    -0.3372  B136
+  edge vs do-nothing  +0.1046 Sharpe, -4.28 pp CAGR, +8.54 pp MaxDD
+  edge vs anchor      +0.1705 Sharpe;  regret vs best OOS -0.0675
+  IS->OOS price drift: IS 0.9508 -> OOS 0.5007 pp/pp   (IS depth 5.63pp -> OOS 8.54pp)
+
+KEEP PATHS over all 40 grid points on B136:  4a 0/40   4b 6/40
+  first-failing 4b bar over the failures: {'DD': np.int64(19), 'CAGR': np.int64(8), 'H2': np.int64(7)}
+instrument  level   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe
+     VOL20 0.7000 0.1404  0.9875 -0.2005 1.1240 0.8726      0.9523
+   DEGROSS 0.8000 0.1194  0.9945 -0.1956 1.1750 0.8561      0.9337
+   DEGROSS 0.7500 0.1119  0.9941 -0.1843 1.1745 0.8557      0.9333
+    SLEEVE 0.2000 0.1255  1.0323 -0.1978 1.1957 0.9104      0.9800
+    SLEEVE 0.2500 0.1196  1.0424 -0.1871 1.1986 0.9266      0.9935
+    SLEEVE 0.3000 0.1136  1.0526 -0.1762 1.1999 0.9443      1.0080
+
+======================================================================================================================
+HEADLINE
+======================================================================================================================
+U56  VOL20(0.60) vs B0:  dCAGR +1.94pp  dSharpe -0.0647  dDD +3.12pp   price 0.6205 pp/pp   sprice 0.0207/pp   (idea 56 published 1.94pp / 0.065 / 3.12pp on U56)
+B136  VOL20(0.60) vs B0:  dCAGR +2.07pp  dSharpe -0.0641  dDD +3.31pp   price 0.6244 pp/pp   sprice 0.0194/pp   (idea 56 published 1.94pp / 0.065 / 3.12pp on U56)
+
+WHERE VOL20 RANKS (pp of CAGR per pp of MaxDD, lower = cheaper; rank of 4 at each depth)
+  U56 depth 1.00pp:  BAND 0.281  <  VOL20 0.516  <  SLEEVE 0.713  <  DEGROSS 0.794   [VOL20 rank 2 of 4]
+  U56 depth 2.00pp:  BAND 0.394  <  VOL20 0.608  <  SLEEVE 0.712  <  DEGROSS 0.790   [VOL20 rank 2 of 4]
+  U56 depth 3.00pp:  VOL20 0.708  <  SLEEVE 0.711  <  DEGROSS 0.786   [VOL20 rank 1 of 3]
+  U56 depth 3.12pp:  VOL20 0.662  <  SLEEVE 0.710  <  DEGROSS 0.786   [VOL20 rank 1 of 3]
+  U56 depth 4.00pp:  SLEEVE 0.709  <  VOL20 0.738  <  DEGROSS 0.783   [VOL20 rank 2 of 3]
+  U56 depth 5.00pp:  SLEEVE 0.708  <  VOL20 0.713  <  DEGROSS 0.779   [VOL20 rank 2 of 3]
+  U56 depth 6.00pp:  SLEEVE 0.712  <  DEGROSS 0.776   [VOL20 does not reach this depth]
+  U56 depth 8.00pp:  SLEEVE 0.720  <  DEGROSS 0.768   [VOL20 does not reach this depth]
+  B136 depth 1.00pp:  VOL20 0.014  <  BAND 0.075  <  SLEEVE 0.562  <  DEGROSS 0.679   [VOL20 rank 1 of 4]
+  B136 depth 2.00pp:  VOL20 0.388  <  SLEEVE 0.561  <  DEGROSS 0.676   [VOL20 rank 1 of 3]
+  B136 depth 3.00pp:  SLEEVE 0.561  <  DEGROSS 0.673  <  VOL20 0.943   [VOL20 rank 3 of 3]
+  B136 depth 3.12pp:  VOL20 0.560  <  SLEEVE 0.560  <  DEGROSS 0.673   [VOL20 rank 1 of 3]
+  B136 depth 4.00pp:  VOL20 0.376  <  SLEEVE 0.559  <  DEGROSS 0.671   [VOL20 rank 1 of 3]
+  B136 depth 5.00pp:  SLEEVE 0.558  <  DEGROSS 0.668  <  VOL20 0.797   [VOL20 rank 3 of 3]
+  B136 depth 6.00pp:  SLEEVE 0.557  <  DEGROSS 0.666  <  VOL20 0.763   [VOL20 rank 3 of 3]
+  B136 depth 8.00pp:  SLEEVE 0.558  <  DEGROSS 0.660   [VOL20 does not reach this depth]
+
+4b passes overall: 30/80;  4a passes overall: 0/80
