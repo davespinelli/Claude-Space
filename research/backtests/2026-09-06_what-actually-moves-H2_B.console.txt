@@ -1,0 +1,139 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+universe_broad.json: 136 tickers, 2008-01-02 -> 2026-09-03
+sector taxonomy: 15 classes, all 136 tickers covered
+
+============================================================================================
+REPRODUCTION GATE — idea 66's published broad `top20-200d` g=0.75 core=0 @10bps
+============================================================================================
+  CAGR     published    0.131   reproduced   0.1311   EXACT
+  Sharpe   published    0.958   reproduced   0.9581   EXACT
+  MaxDD    published   -0.201   reproduced  -0.2005   EXACT
+  H1       published    1.125   reproduced   1.1246   EXACT
+  H2       published    0.814   reproduced   0.8135   EXACT
+  SPY_H2   published    0.837   reproduced   0.8366   EXACT
+  eval window 2009-01-13 -> 2026-09-03   H2 window 2017-11-03 -> 2026-09-03 (2219 days)
+  REPRODUCTION: 6/6 EXACT
+
+  H2 book  11.46%  0.814 -20.05%  vol 14.67%   mean gross 0.7393
+  H2 SPY   15.05%  0.837 -33.72%  vol 18.90%
+  NOTE: H2 starts 2017-11-03; the rule-8 OOS window starts 2017-01-01. H2 IS the OOS window (overlap 100.0%), so anything fitted on H2 is hindsight.
+
+============================================================================================
+RESULT 1 — the 0.023 H2 Sharpe gap, split EXACTLY by name and by sector
+============================================================================================
+  vol ratio k = sigma_SPY/sigma_book = 18.9033%/14.6676% = 1.2888
+  identity check: sum_i A_i +0.911455  + COST -0.097947  + BENCH -0.836563  = -0.023055   vs dS = -0.023055   |err| 1.11e-16
+  So the whole question is a -0.023 Sharpe gap. Cost alone is -0.098 of it.
+
+  H2 Sharpe contribution by SECTOR (sums to sum_i A_i; 'active' = A_s - k*wbar_s*S_SPY):
+  sector         meanwt       A_s    active
+  Utilities      0.0117   -0.0123   -0.0250
+  ETF-Index      0.0047   -0.0047   -0.0097
+  Materials      0.0065   -0.0002   -0.0071
+  ETF-Bond       0.0038   +0.0001   -0.0040
+  RealEstate     0.0037   +0.0019   -0.0021
+  ConsStap       0.0358   +0.0070   -0.0315
+  Energy         0.0205   +0.0284   +0.0063
+  ETF-Cmdty      0.0232   +0.0308   +0.0058
+  Industrials    0.0646   +0.0543   -0.0153
+  HealthCare     0.1058   +0.0590   -0.0550
+  ConsDisc       0.0567   +0.0590   -0.0021
+  Financials     0.0842   +0.0623   -0.0284
+  CommSvcs       0.0351   +0.0673   +0.0295
+  ETF-Sector     0.0504   +0.0710   +0.0167
+  InfoTech       0.2328   +0.4874   +0.2364
+  vol-matched investment residual: k*gross - 1 = -0.0472  ->  -0.0395 Sharpe (this is ALL the cash drag is worth here)
+
+  10 most negative and 10 most positive NAME contributions A_i:
+    worst: LOW(Cons) -0.0112, WFC(Fina) -0.0094, UNP(Indu) -0.0094, ZTS(Heal) -0.0085, BLK(Fina) -0.0072, USO(ETF-) -0.0072, PFE(Heal) -0.0069, MO(Cons) -0.0068, NEE(Util) -0.0068, EEM(ETF-) -0.0067
+    best : NVDA(Info) +0.0660, MU(Info) +0.0454, SMH(ETF-) +0.0389, LRCX(Info) +0.0382, AVGO(Info) +0.0377, AMD(Info) +0.0343, NOW(Info) +0.0330, KLAC(Info) +0.0319, CAT(Indu) +0.0271, AMAT(Info) +0.0268
+
+============================================================================================
+RESULT 2 — leave-one-out: 136 real books, each with one name removed from the panel
+============================================================================================
+  parent H2 Sharpe 0.8135; SPY 0.8366; gap -0.0231
+  names whose REMOVAL alone lifts H2 Sharpe above SPY: 3 of 136
+  best 8 removals : WFC 0.8436, QCOM 0.8403, USO 0.8385, AXP 0.8343, JPM 0.8329, BLK 0.8321, XLE 0.8283, COP 0.8280
+  worst 8 removals: SMH 0.7953, GE 0.7946, GOOGL 0.7926, CAT 0.7904, MRK 0.7887, NVDA 0.7879, LLY 0.7844, MU 0.7804
+  spread of LOO H2 Sharpe: 0.7804 .. 0.8436 (sd 0.0105)
+  rank correlation LOO-gain vs attribution -A_i: Spearman +0.526
+
+  drop-k ladder, exclusion chosen ON H2 (pure hindsight — this is the CEILING, not a rule):
+    k names                               H2 Sharpe   vs SPY
+    0                                        0.8135  -0.0231
+    1 LOW                                    0.8163  -0.0203
+    2 LOW,WFC                                0.8452  +0.0086
+    3 LOW,WFC,UNP                            0.8594  +0.0229
+    5 LOW,WFC,UNP,ZTS,BLK                    0.8666  +0.0300
+   10 LOW,WFC,UNP,ZTS,BLK,USO,PFE,MO,NEE     0.9201  +0.0835
+
+  is the gap 'a handful of names'? share of |dS| recovered by dropping k names,
+  hindsight-best k vs the mean of 2000 random k-subsets (attribution-based, exact):
+    k    best-k  random-k  pctile
+    1   +0.0112   -0.0067   99.4%
+    2   +0.0207   -0.0134  100.0%
+    3   +0.0300   -0.0200  100.0%
+    5   +0.0457   -0.0343  100.0%
+   10   +0.0802   -0.0672  100.0%
+
+============================================================================================
+RESULT 3 — or is it a regime? time-concentration of the vol-matched active return
+============================================================================================
+  mean(a_t)*252/sigma_SPY = -0.0231 = dS (check 3.47e-17)
+     L  worst L-day sum  share of |dS|  dS ex-window  perm pctile
+    21          -0.2368       -617.0%       +0.1203         1.0%   [2020-03-24 -> 2020-04-22]
+    63          -0.2705       -704.8%       +0.1435         5.0%   [2020-03-24 -> 2020-06-22]
+   126          -0.2769       -721.5%       +0.1519        31.5%   [2020-03-24 -> 2020-09-21]
+  ('dS ex-window' = the Sharpe gap with the single worst L-day window deleted;
+   'perm pctile' = where that window sits in 200 permutations of the same daily returns.)
+
+  H2 by calendar year (2017 is a partial year, from 2017-11-03):
+  2017  2018  2019  2020  2021  2022  2023  2024  2025  2026
+  -2.8%  +6.4%  -14.9%  -6.1%  -13.2%  +7.3%  -13.5%  -4.3%  +2.2%  +1.1%
+  years the book beat SPY: 4 of 10
+
+============================================================================================
+RESULT 4 — does the book's MEGA10 weight explain the H2 gap?  (MEGA10 is a HINDSIGHT list)
+============================================================================================
+  MEGA10 = AAPL,MSFT,NVDA,AMZN,GOOGL,META,AVGO,TSLA,BRK-B,LLY
+  book mean MEGA10 weight in H2: 0.0996 of 0.7393 gross (13.5% of the book); range 0.000..0.267
+  a_t on MEGA10 weight (same-day): beta +0.0055  t +1.66  R2 0.0012
+  a_t on MEGA10 weight (lag-1   ): beta +0.0070  t +2.10  R2 0.0020
+  MEGA10's share of the book's H2 Sharpe: +0.2242 of +0.9115 (24.6%) — the mega-caps are the book's biggest POSITIVE, not its hole
+  counterfactual: the same book with all 10 mega-caps banned -> H2  9.59%  0.730 -20.73% (Sharpe +0.7298 vs parent 0.8135)
+
+============================================================================================
+RULE 8 — exclusion fitted on 2009-2016 ONLY, 2017-2026 evaluated untouched
+============================================================================================
+  IS  2009-01-13 -> 2016-12-30   OOS 2017-01-03 -> 2026-09-03
+  IS-worst names  : ACN, AMD, ICE, SPGI, VRTX, ABBV, CB, SCHW, GE, MRK
+  IS-worst sectors: ETF-Bond, ETF-Index, Energy
+
+  gran      k excluded                       |  OOS CAGR  OOS Sh   OOS DD | full CAGR     Sh      DD         H1/H2 | verdict
+  name      0 (none)                         |    12.52%   0.894  -20.05% |    13.11%  0.958 -20.05%  1.125/ 0.814 | KILL 4a(H1,H2,DD) / KILL 4b(H2)  [v1: KEEP 4a]
+  name      1 ACN                            |    12.41%   0.887  -20.05% |    13.12%  0.961 -20.05%  1.139/ 0.806 | KILL 4a(H1,H2,DD) / KILL 4b(H2)  [v1: KEEP 4a]
+  name      2 ACN,AMD                        |    12.64%   0.912  -19.79% |    13.27%  0.979 -19.79%  1.163/ 0.819 | KILL 4a(H1,H2,DD) / KILL 4b(H2)  [v1: KEEP 4a]
+  name      3 ACN,AMD,ICE                    |    12.61%   0.911  -19.79% |    13.32%  0.983 -19.79%  1.174/ 0.818 | KILL 4a(H1,H2,DD) / KILL 4b(H2)  [v1: KEEP 4a]
+  name      5 ACN,AMD,ICE,SPGI,VRTX          |    12.46%   0.902  -20.30% |    13.45%  0.994 -20.30%  1.202/ 0.815 | KILL 4a(H1,H2,DD) / KILL 4b(H2,DD)  [v1: KEEP 4a]
+  name     10 ACN,AMD,ICE,SPGI,VRTX,ABBV,CB, |    12.45%   0.902  -19.71% |    13.78%  1.017 -19.71%  1.250/ 0.816 | KILL 4a(H2,DD) / KILL 4b(H2)  [v1: KEEP 4a]
+  sector    0 (none)                         |    12.52%   0.894  -20.05% |    13.11%  0.958 -20.05%  1.125/ 0.814 | KILL 4a(H1,H2,DD) / KILL 4b(H2)  [v1: KEEP 4a]
+  sector    1 ETF-Bond                       |    12.39%   0.880  -21.32% |    13.26%  0.961 -21.32%  1.147/ 0.799 | KILL 4a(H1,H2,DD) / KILL 4b(H2,OOS,DD)  [v1: KILL 4a(DD)]
+  sector    2 ETF-Bond,ETF-Index             |    12.37%   0.880  -20.96% |    13.28%  0.964 -20.96%  1.152/ 0.800 | KILL 4a(H1,H2,DD) / KILL 4b(H2,OOS,DD)  [v1: KEEP 4a]
+  sector    3 ETF-Bond,ETF-Index,Energy      |    12.41%   0.883  -20.96% |    13.30%  0.964 -20.96%  1.156/ 0.797 | KILL 4a(H1,H2,DD) / KILL 4b(H2,OOS,DD)  [v1: KEEP 4a]
+  sector    5 ETF-Bond,ETF-Index,Energy,Real |    12.13%   0.862  -22.34% |    13.38%  0.965 -22.34%  1.186/ 0.772 | KILL 4a(H1,H2,DD) / KILL 4b(H2,OOS,DD)  [v1: KILL 4a(DD)]
+  sector   10 ETF-Bond,ETF-Index,Energy,Real |    14.51%   1.005  -22.16% |    14.66%  1.043 -22.16%  1.209/ 0.899 | KILL 4a(H1,H2,DD) / KILL 4b(DD)  [v1: KILL 4a(DD)]
+
+  RULES v2 (live book) OOS  8.01%  1.122 -12.24% | full  8.04%  1.107 -12.24% H1 1.229 / H2 0.988
+  RULES v1 (previous)  OOS  5.99%  0.581 -21.19% | full  6.41%  0.638 -21.19% H1 0.756 / H2 0.537
+  SPY                  OOS 15.50%  0.884 -33.72% | full 15.26%  0.890 -33.72% H1 0.957 / H2 0.837
+
+  grid points: 12;  4a passes 0 vs the LIVE book RULES v2 (9 against the retired v1);  4b passes 0
+  best OOS Sharpe on the grid: sector k=10 -> 1.005 vs parent k=0 0.894, SPY 0.884
+  IS-fitted drop-k OOS Sharpe spread over k: name 0.887..0.912, sector 0.862..1.005
+  PERSISTENCE: Spearman(IS per-name contribution, OOS per-name contribution) = +0.285 over 136 names
+  overlap of IS-worst-10 and OOS-worst-10: 0 of 10
+  overlap of IS-worst-3 sectors and OOS-worst-3 sectors: 1 of 3
+
+============================================================================================
+artifacts: 2026-09-06_what-actually-moves-H2_B.{sectors,names,loo,years,grid}.csv
+============================================================================================
