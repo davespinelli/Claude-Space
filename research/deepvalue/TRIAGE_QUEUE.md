@@ -1,6 +1,6 @@
 # Triage queue
 
-_Source: universe_under2b.csv · updated 2026-09-05T23:06:30Z · open 0 · in progress 0 · done 489_
+_Source: universe_under2b.csv · updated 2026-09-06T00:06:26Z · open 0 · in progress 0 · done 489_
 
 Managed by `research/deepvalue/triage_queue.py`. Claim work with `next N --lane X`, release it with `done TICKER`, recover abandoned claims with `reset-stale HOURS`. Edit by hand only if no lane is running.
 
