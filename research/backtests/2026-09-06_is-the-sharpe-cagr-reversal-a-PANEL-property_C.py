@@ -687,7 +687,88 @@ def main():
     P("")
     P(f"wrote {STEM}.{{grid,chars,reversal,panelshare,loso,threshold_grid,rivals,cells,"
       f"walkforward,keep,console}}")
+    q5()
+
+
+# ============================================================ Q5: what the R2 actually is
+def q5():
+    """Reads the CSVs main() has just written (so it is also runnable standalone against a
+    committed run) and decomposes the panel-level fit.  No new backtest, no new parameter."""
+    con = OUT / f"{STEM}.console.txt"
+    if not LOG and con.exists():                # standalone re-read: keep the committed log
+        LOG.extend(con.read_text().rstrip("\n").split("\n"))
+    ps = pd.read_csv(OUT / f"{STEM}.panelshare.csv", index_col=0)
+    cells = pd.read_csv(OUT / f"{STEM}.cells.csv")
+
+    def fit(y, X):
+        b = np.linalg.pinv(X.T @ X) @ (X.T @ y)
+        e = y - X @ b
+        return b, 1 - float(e @ e) / float(((y - y.mean()) ** 2).sum())
+
+    P("")
+    P("Q5 - WHAT THE PANEL-LEVEL R2 IS MADE OF (decomposition of Q2's 0.7112)")
+    y = ps.rev.to_numpy()
+    _, r_src = fit(y, np.column_stack([np.ones(len(ps)), (ps.source == "SMALL439").astype(float)]))
+    _, r_brd = fit(y, np.column_stack([np.ones(len(ps)), (ps.breadth < 0.5).astype(float)]))
+    sm, lg = ps[ps.source == "SMALL439"], ps[ps.source != "SMALL439"]
+    P(f"  a SINGLE indicator does most of it: source==SMALL439 R2 {r_src:.4f}; "
+      f"breadth<0.5 R2 {r_brd:.4f}  (the two indicators are IDENTICAL by construction)")
+    P(f"  breadth is perfectly BIMODAL: SMALL439-source {sm.breadth.min():.4f}..{sm.breadth.max():.4f}"
+      f"  vs everything else {lg.breadth.min():.4f}..{lg.breadth.max():.4f}  - no overlap, so the "
+      f"'continuous' regressor is a small-cap dummy on this pool.")
+    mu, sd = lg[CHARS].mean(), lg[CHARS].std(ddof=0)
+    _, r_lc = fit(lg.rev.to_numpy(), design(lg, CHARS, mu, sd))
+    _, r_lb = fit(lg.rev.to_numpy(), design(lg, ["breadth"], mu, sd))
+    P(f"  INSIDE the large-cap cluster (n={len(lg)} panels): 4-char R2 {r_lc:.4f}, "
+      f"breadth alone {r_lb:.4f} - breadth stops working the moment the small-cap panel leaves.")
+
+    lc_src = sorted(set(cells.source) - {"SMALL439"})
+    trc = cells[cells.source != "SMALL439"]
+    mu2, sd2 = trc[CHARS].mean(), trc[CHARS].std(ddof=0)
+    zs = float((cells[cells.source == "SMALL439"].breadth.mean() - mu2.breadth) / sd2.breadth)
+    P("")
+    P("  the pooled CHAR-LOSO headline is one source: per-source LOSO cell accuracy")
+    rows = []
+    for src in sorted(cells.source.unique()):
+        a, b_ = cells[cells.source != src], cells[cells.source == src]
+        m3, s3 = a[CHARS + ["r_real"]].mean(), a[CHARS + ["r_real"]].std(ddof=0)
+        bb, _ = fit(a.rev_is.astype(float).to_numpy(), design(a, CHARS + ["r_real"], m3, s3))
+        pr = (design(b_, CHARS + ["r_real"], m3, s3) @ bb) >= 0.50
+        rows.append(dict(held_out=src, cells=len(b_), pred_rate=float(pr.mean()),
+                         OOS_acc=float((pr == b_.rev_oos).mean()),
+                         base=float(max(b_.rev_oos.mean(), 1 - b_.rev_oos.mean()))))
+    t = pd.DataFrame(rows).set_index("held_out")
+    t["lift"] = t.OOS_acc - t.base
+    P(fmt(t, 4))
+    P(f"  SMALL439's 77/77 is EXTRAPOLATION, not a validated relation: its breadth sits "
+      f"{zs:.1f} sd outside the large-cap training range, the fit predicts 0 reversals there, "
+      f"and it happens to be right (its own base rate is 1.0000, so the lift is ZERO). "
+      f"Excluding it, mean lift over the 4 large-cap sources is "
+      f"{t.loc[lc_src, 'lift'].mean():+.4f} ("
+      + " / ".join(f"{v:+.4f}" for v in t.loc[lc_src, 'lift'].sort_values(ascending=False)) + ").")
+    o = []
+    for src in lc_src:
+        a, b_ = lg[lg.source != src], lg[lg.source == src]
+        m4, s4 = a[CHARS].mean(), a[CHARS].std(ddof=0)
+        bb, _ = fit(a.rev.to_numpy(), design(a, CHARS, m4, s4))
+        pred = design(b_, CHARS, m4, s4) @ bb
+        ssr = float(((b_.rev - pred) ** 2).sum())
+        ssb = float(((b_.rev - a.rev.mean()) ** 2).sum())
+        o.append(dict(held_out=src, panels=len(b_), actual=b_.rev.mean(), pred=float(pred.mean()),
+                      oos_R2=1 - ssr / ssb if ssb > 0 else np.nan))
+    od = pd.DataFrame(o).set_index("held_out")
+    P("")
+    P("  panel-level SHARE, leave-one-source-out INSIDE the large-cap cluster:")
+    P(fmt(od, 4))
+    P(f"  mean out-of-source R2 {od.oos_R2.mean():+.4f} - the pool mean beats the model in "
+      f"{int((od.oos_R2 <= 0).sum())} of {len(od)}.")
+    (OUT / f"{STEM}.console.txt").write_text("\n".join(LOG) + "\n")
+    t.to_csv(OUT / f"{STEM}.q5_loso_cells.csv")
+    od.to_csv(OUT / f"{STEM}.q5_loso_share.csv")
 
 
 if __name__ == "__main__":
-    main()
+    if "--q5" in sys.argv:                      # re-read a committed run, no backtests
+        q5()
+    else:
+        main()
