@@ -362,7 +362,7 @@ def main():
         if made >= MAX_PAIRS:
             trunc += 1
     bf = pd.DataFrame(brows)
-    bf.to_csv(OUT / f"{STEM}.backfill.csv", index=False)
+    bf.to_csv(OUT / f"{STEM}.backfill.csv.gz", index=False, compression="gzip")  # 87k rows
     P(f"\n  {len(bf)} pairs back-filled across {bf.file.nunique()} files "
       f"({trunc} files truncated at MAX_PAIRS = {MAX_PAIRS}; {skipped} files had no key column)")
     P(f"  pairs whose back-filled breakeven lands in (0, {QUOTED_MAX:.0f}] bps (OLS): "
