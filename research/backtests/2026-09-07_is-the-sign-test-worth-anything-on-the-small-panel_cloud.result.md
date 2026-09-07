@@ -130,6 +130,42 @@ denominator that is the OOS denominator at corr +0.9996. Applied to the unfilter
 it discriminates at +35.8 pp (p 1.0e-04, 12/12 grid points). No KEEP, no rule change proposed:
 the deliverable is a correction to a REPORT-ONLY clause.
 
+## Reconciliation with lane B, which ran idea 129 the same day
+
+Lane B (`…_B.py`, committed 4eaae8e) ran the same idea independently and its headline reads
+differently — "the queue's question answers YES", discrimination **+0.210** (0.870 vs 0.660,
+permutation p 0.0205). **The two runs do not disagree; they answer the question on two
+different populations, and each result reproduces on the other's terms.**
+
+* Lane B read it over **all 96 rows**. So did this run's [4b], and the two agree in sign,
+  significance and on the admissible arm to within a point: **0.880 vs their 0.870**. The
+  rejected arms differ (0.522 vs 0.660), as do the OOS base rates (68/96 here, 73/96 there),
+  because lane B used the **484-column** panel while this run used the **439-column** panel
+  with the 44 `max_1d_move >= 1.0` tickers dropped, per the small-panel convention.
+* This run's primary reading is the **63 published rows** — the ones ideas 22/74/94/97/117
+  actually quote, after idea 94's absolute floor. There the discrimination is **exactly zero**,
+  and [4c] gives the mechanism lane B's population never exposes.
+
+**Lane B's control result reproduces here, on this panel, independently** (`.controls.csv`):
+
+| rule (IS-only) | all 96 rows | published 63 |
+|---|---|---|
+| 3-axis screen | +35.8 pp (p 1.0e-04) | +0.0 pp (p 1.000) |
+| **naive `dMaxDD_IS > 0`** | **+43.2 pp (p 2.6e-05)** | +0.0 pp (p 1.000) |
+| D1(IS) alone | +38.5 pp | +0.0 pp |
+| D3(IS) alone | +35.8 pp | +0.0 pp |
+
+The naive IS sign — a number already sitting in every row — **beats the three-axis apparatus**
+(+43.2 vs +35.8), exactly as lane B found (+0.235 vs +0.210). The screen agrees with it in
+**88 of 96** rows, and within the naive-positive rows the apparatus adds **+0.5 pp at p 1.000**
+(lane B: +0.105 at p 0.44); within the naive-negative rows it admits nothing at all.
+
+**Merged recommendation, from both runs.** Quote the denominator's IS sign and **delete the
+perturbation apparatus** (lane B's conclusion, reproduced here), and **do not apply the clause
+downstream of idea 94's absolute floor**, where it is vacuous by construction (this run's
+[4c]). The repair proposed in the section above should be read as the second half of that
+sentence, not as a defence of the three-axis machinery.
+
 **SURVIVORSHIP:** `prices_small.csv.gz` is a current-constituent screen of sub-$2B names (see
 `data/SMALL_PANEL_README.md`), the most flattered panel in this record; every absolute level
 above is optimistic. This run reports sign stability and within-cell differences, which are far
