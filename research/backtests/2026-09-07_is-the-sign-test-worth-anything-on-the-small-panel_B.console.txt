@@ -1,0 +1,418 @@
+QUEUE idea 129 — is-the-sign-test-worth-anything-on-the-small-panel (lane B, 2026-09-07).
+
+Question (pre-registered, verbatim from QUEUE)
+----------------------------------------------
+"idea 122 showed the screen has ZERO out-of-sample discriminating power on u56/broad (OOS
+denominator positive in 138/138 rows, admissible and rejected alike).  Idea 119's small panel
+is where the sign actually moves, so run the identical IS-only screen there and ask the one
+question that matters: does an IS-admissible small-panel denominator stay positive OOS more
+often than a rejected one?  If not, the clause is cosmetic everywhere and PROTOCOL should say
+so."
+
+What is being tested.  Idea 122 proposed a PROTOCOL clause: no drawdown price
+    rate = (CAGR_ctl - CAGR_arm) / (|MaxDD_ctl| - |MaxDD_arm|)
+may be quoted unless its denominator dMaxDD survives three nuisance perturbations (D1 cost,
+D2 window, D3 panel draws).  On the two large-cap lists the clause was harmless-but-inert:
+two thirds of rows passed and the OOS denominator was positive in 138/138 rows, so the screen
+separated nothing.  Idea 122 itself flagged the small panel (idea 119: sign held 49/80) as the
+place where the denominator actually moves.  This run takes the SAME screen, the SAME books,
+the SAME arms and the SAME grid to the sub-$2B panel and asks the discrimination question
+directly, as a 2x2.
+
+THE SCREEN (identical to idea 122; nothing re-tuned)
+    D1 cost      dMaxDD > 0 at every cost rung in {0, 5, 10, 25} bps
+    D2 window    dMaxDD > 0 in BOTH the IS and the OOS window          (full-sample form only)
+    D3 panel     dMaxDD > 0 in >= tau of NDRAW=40 draws deleting a fraction q of the panel's
+                 names at random, signals recomputed on the sub-panel so the book is re-formed
+    IS-ONLY form (the one the queue asks for, and the only one a walk-forward may use):
+                 ADM_IS = D1 on IS-window returns AND D3 on IS-window draws.  D2 has no
+                 IS-only form and is excluded, exactly as in idea 122's S2.
+
+THE ONE QUESTION, pre-registered as a 2x2 before any number below was read
+        H_DISCRIM:  P(dMaxDD_OOS > 0 | ADM_IS)  >  P(dMaxDD_OOS > 0 | not ADM_IS)
+    Reported as counts, as a difference of proportions, and with a deterministic two-sided
+    permutation test (10,000 relabellings, seeded).  Also reported as a continuous version on
+    the bootstrap: mean OOS draw-level sign-agreement by IS admissibility, and the rank
+    correlation between IS and OOS sign-agreement.  PASS requires a positive gap that the
+    permutation test does not attribute to chance at p <= 0.05.
+
+CONFOUND CONTROLS for H_DISCRIM (a PASS is only interesting if the perturbation machinery
+earns its keep over something trivial; each control is scored on the same 2x2)
+    N1 naive sign      admit iff dMaxDD_IS > 0 at the published rung — one number, no
+                       perturbation, no bootstrap
+    N2 magnitude       admit the top-k rows by dMaxDD_IS with k = the screen's own admitted
+                       count, so the two screens are matched on selectivity
+    N3 ROC             rank-AUC of dMaxDD_IS (continuous) for predicting the OOS sign, with
+                       the screen plotted as a point (TPR, FPR).  A screen that lies on the
+                       magnitude ROC adds nothing to a number already in every row
+    N4 kind strata     the same 2x2 computed WITHIN each instrument kind (gate / dd / stop /
+                       bud), since kind alone may drive both admission and OOS sign
+    N5 incremental     the 2x2 restricted to rows with dMaxDD_IS > 0, i.e. what the two
+                       perturbation axes add once the naive sign is already known
+
+Tuned parameters (PROTOCOL rule 4).  TWO, both of the TEST and neither of any trading rule:
+    q    drop fraction in {0.05, 0.10, 0.20}
+    tau  sign-agreement threshold in {0.80, 0.90, 0.95, 1.00}
+ALL 12 grid points reported.  (q, tau) = (0.10, 0.90) is the pre-registered headline, adopted
+unchanged from ideas 119/122 so this run cannot pick its own bar.
+
+Panel / books / arms: idea 94's module is imported, not re-implemented.
+    panel   data/prices_small.csv, the 484-column sub-$2B screen panel (483 small caps + SPY
+            as the benchmark column, which idea 119's convention leaves in the draw pool)
+    books   V1u (v1's composite, ungated, top-5 @15%), TOP20 (idea 2's ranking, ungated),
+            EWall (equal-weight every name @75% gross)
+    arms    5 gates x {de-gross, reweight}, 2 trailing stops, 2 book DD controls, 2 entry-only
+            turnover budgets  (16 treated arms + control)
+    costs   published at 10 and 25 bps -> 3 books x 16 arms x 2 rungs = 96 audited rows
+
+Walk-forward (PROTOCOL rule 8), fixed before any OOS number was read
+    S1  idea 94's selector, unchanged: in each (book, cost) cell, among arms that bought
+        >= 1.0 pp of IS MaxDD, pick the LOWEST IS rate; evaluate untouched on 2017-2026.
+    S2  the same selector restricted to arms passing ADM_IS.  The OOS window is never
+        consulted by the screen.
+    Reported for both at all 12 grid points: OOS CAGR / Sharpe / MaxDD vs the cell's own
+    control, vs the live book (RULES v2), vs RULES v1 and vs SPY.
+
+Pre-registered predictions (written before any number was read)
+    P1  The small-panel OOS denominator is NOT degenerate: strictly between 60% and 95% of the
+        96 rows have dMaxDD_OOS > 0 (idea 122 got 100% on the large-cap lists).
+    P2  H_DISCRIM FAILS: the IS screen buys < 10 pp of OOS sign rate and p > 0.05.  The
+        screen's axes are nuisance dimensions of the SAME window, so they measure IS noise,
+        not OOS persistence.
+    P2b If P2 is refuted, the controls carry the finding: the screen does NOT beat the naive
+        dMaxDD_IS > 0 rule (N1) by more than 5 pp of OOS sign rate, and its point lies on the
+        magnitude ROC (N3).  Registered before the controls were computed.
+    P3  The screen is again near-inert in selection: it changes at most 2 of 6 walk-forward
+        picks at the headline setting.
+    P4  No new KEEP.  Neither selector passes 4b; the small panel has passed 4b 0 times in
+        the record (ideas 117/121/136 and six reproductions).
+
+Execution realism (PROTOCOL rule 2): inherited from idea 94 — weekly decision at close t
+applied at t+1, long-only, no leverage, costs charged inside the loop so both state machines
+see NET equity.  10 bps is the PROTOCOL point.
+
+SURVIVORSHIP: data/prices_small.csv is a CURRENT-CONSTITUENT screen (see
+data/SMALL_PANEL_README.md).  Every absolute level below is optimistic.  This run reports
+within-cell differences and the stability of a SIGN, both far less exposed than levels, but a
+delisting-aware panel could still move which rows pass.
+
+
+========================================================================================================================================================================================================
+PRE-REGISTERED: screen D1 costs [0.0, 5.0, 10.0, 25.0] bps | D2 windows IS/OOS | D3 40 draws x q in (0.05, 0.1, 0.2) (seed 20260905), tau in (0.8, 0.9, 0.95, 1.0); headline (q,tau) = (0.1, 0.9); permutation test 10000 draws
+========================================================================================================================================================================================================
+
+PANEL small(sub-$2B): 484 columns 2010-01-04 -> 2026-09-04 | eval from 2011-01-13 | IS <= 2016-12-31 | OOS >= 2017-01-01
+SPY  full 14.13%/0.862/-33.72%  halves 0.891/0.858  OOS 15.45%/0.882/-33.72%
+[check] cached targets vs idea 94 targets(): max|diff| = 0.000e+00 (EXACT)
+    book V1u: arm x cost grid done (16s)
+    book TOP20: arm x cost grid done (31s)
+    book EWall: arm x cost grid done (44s)
+
+D3 bootstrap: 3 x 40 draws x 3 books x 16 arms + control ...
+    [cache] reading 2026-09-07_is-the-sign-test-worth-anything-on-the-small-panel_B.bootstrap.csv (seeded draws, identical to recomputation)
+
+========================================================================================================================================================================================================
+A. THE PREMISE — does the small-panel denominator actually move?  (idea 122 got OOS-positive 138/138 on u56/broad)
+window  n  n_pos  frac_pos  median_dMaxDD
+  full 96     75    0.7812         1.6578
+    IS 96     63    0.6562         0.1678
+   OOS 96     73    0.7604         1.6578
+    published rows (idea 94 floor dMaxDD > 0.1 pp): 70 of 96
+    P1 (0.60 < frac_pos_OOS < 0.95): frac = 0.7604 -> CONFIRMED
+
+--- draw-level sign agreement (D3, q = headline), by book ---
+ book  frac_pos_full  frac_pos_IS  frac_pos_OOS
+EWall         1.0000       0.9250        1.0000
+TOP20         0.9125       0.5625        0.9000
+  V1u         0.6750       0.9500        0.6500
+
+========================================================================================================================================================================================================
+B. H_DISCRIM — does an IS-ADMISSIBLE denominator stay positive OOS more often than a rejected one?  IS-only screen (D1_IS & D3_IS), all 12 grid points.
+     q    tau  n_adm  n_rej  OOSpos_if_adm  OOSpos_if_rej    gap  perm_p  OOSagree_if_adm  OOSagree_if_rej  cont_gap  headline
+0.0500 0.8000     52     44         0.8462         0.6591 0.1871  0.0571           0.8798           0.6125    0.2673     False
+0.0500 0.9000     46     50         0.8696         0.6600 0.2096  0.0205           0.9076           0.6190    0.2886     False
+0.0500 0.9500     46     50         0.8696         0.6600 0.2096  0.0205           0.9076           0.6190    0.2886     False
+0.0500 1.0000     40     56         0.9000         0.6607 0.2393  0.0087           0.9250           0.6375    0.2875     False
+0.1000 0.8000     48     48         0.8750         0.6458 0.2292  0.0179           0.9000           0.6208    0.2792     False
+0.1000 0.9000     46     50         0.8696         0.6600 0.2096  0.0205           0.8978           0.6340    0.2638      True
+0.1000 0.9500     42     54         0.9048         0.6481 0.2566  0.0055           0.9131           0.6417    0.2714     False
+0.1000 1.0000     40     56         0.9000         0.6607 0.2393  0.0087           0.9100           0.6536    0.2564     False
+0.2000 0.8000     50     46         0.8400         0.6739 0.1661  0.0945           0.8570           0.6304    0.2266     False
+0.2000 0.9000     44     52         0.8636         0.6731 0.1906  0.0362           0.8659           0.6490    0.2169     False
+0.2000 0.9500     42     54         0.8571         0.6852 0.1720  0.0609           0.8619           0.6602    0.2017     False
+0.2000 1.0000     38     58         0.8947         0.6724 0.2223  0.0159           0.8816           0.6612    0.2204     False
+
+    HEADLINE (q=0.1, tau=0.9): P(OOS sign +ve | admissible) = 0.8696 (46 rows) vs 0.6600 (50 rows), gap +0.2096, perm p = 0.0205
+    H_DISCRIM: PASS
+    grid points with a positive, significant gap: 9 of 12
+    P2 (gap < 0.10 pp-fraction AND p > 0.05 at headline): REFUTED
+
+--- continuous form: spearman(frac_pos_IS, frac_pos_OOS) over 51 book-arms ---
+     q  spearman_IS_OOS  n
+0.0500           0.5401 48
+0.1000           0.5601 48
+0.2000           0.5315 48
+
+--- continuity check: idea 122's FULL three-axis screen on this panel — admissible 37/96 (38.5%); idea 122 got 90/138 (65.2%) on the large-cap lists ---
+    (the full screen contains D2, which reads the OOS window, so its 2x2 is circular and is reported for continuity only: 1.0000 vs 0.6102)
+
+========================================================================================================================================================================================================
+B2. CONFOUND CONTROLS — does the perturbation machinery beat something trivial?
+                      control  n_adm  n_rej  OOSpos_if_adm  OOSpos_if_rej    gap  perm_p  agree_with_screen
+SCREEN ADM_IS (D1_IS & D3_IS)     46     50         0.8696         0.6600 0.2096  0.0205             1.0000
+       N1 naive dMaxDD_IS > 0     63     33         0.8413         0.6061 0.2352  0.0165             0.8229
+       N2 top-46 by dMaxDD_IS     46     50         0.8913         0.6400 0.2513  0.0054             0.9583
+
+    N3 ROC: AUC(dMaxDD_IS -> OOS sign) = 0.7016; the screen sits at (FPR 0.2609, TPR 0.5479).  A screen ON the magnitude curve adds nothing.
+       AUC of the screen itself (binary) = 0.6435; AUC(D3_frac_IS) = 0.7305
+    P2b (screen beats N1 by <= 5 pp): screen +0.2096 vs N1 +0.2352, delta -0.0256 -> CONFIRMED
+
+    N4 within instrument-kind strata (kind may drive both admission and sign):
+kind  n  n_adm  n_rej  OOSpos_if_adm  OOSpos_if_rej     gap  perm_p
+ bud 12      6      6         1.0000         0.0000  1.0000  0.0020
+  dd 12     12      0         1.0000            NaN     NaN     NaN
+gate 60     28     32         0.7857         0.8438 -0.0580  0.7431
+stop 12      0     12            NaN         0.5000     NaN     NaN
+       AUC of instrument KIND alone (its mean OOS sign rate) = 0.7180
+
+    N5 incremental: the 2x2 restricted to rows whose naive IS sign is already positive
+       n = 63 (46 admitted / 17 rejected): 0.8696 vs 0.7647, gap +0.1049, perm p = 0.4445
+
+--- where the IS screen's rejections live (headline) ---
+ book  n  adm_IS  D1_IS  D3_IS  OOS_pos  med_dMaxDD_IS  med_dMaxDD_OOS
+EWall 32      18     18     18       28         0.6676          3.7481
+TOP20 32      10     20     10       26         0.0940          0.8248
+  V1u 32      18     18     18       19         1.1035          0.0514
+kind  n  adm_IS  OOS_pos  med_dMaxDD_IS  med_dMaxDD_OOS
+ bud 12       6        6         1.9653          1.2701
+  dd 12      12       12         6.5720         14.8607
+gate 60      28       49         0.1379          0.8701
+stop 12       0        6        -2.0359         -0.3761
+
+========================================================================================================================================================================================================
+C. THE SMALL-PANEL PRICE LIST UNDER THE SCREEN — 96 rows, 70 carry a publishable rate
+ book    cost                arm   dCAGR   dMaxDD    rate  published  dMaxDD_IS  dMaxDD_OOS  D1_pass_IS_only  D3_frac_IS  D3_frac_OOS  ADM_IS  OOS_sign_pos  ADMISSIBLE  p4a_v2   p4b               f4b
+  V1u 10.0000            g200-dg  0.0781   0.0011     NaN      False     1.3957      0.0011             True      1.0000       0.7250    True          True       False   False False      H1,H2,OOS,DD
+  V1u 10.0000            g200-rw -0.7370  -0.0036     NaN      False     3.1200     -0.0036             True      1.0000       0.4500    True         False       False   False False      H1,H2,OOS,DD
+  V1u 10.0000           band3-dg  1.0949  -0.3711     NaN      False     0.0693     -0.3711             True      0.9000       0.4750    True         False       False   False False      H1,H2,OOS,DD
+  V1u 10.0000           band3-rw  1.3794  -4.4256     NaN      False     0.8762     -4.4256            False      0.3750       0.0000   False         False       False   False False      H1,H2,OOS,DD
+  V1u 10.0000           abs12-dg -0.2822   0.7479 -0.3773       True    -0.0000      0.7479            False      0.7250       0.9250   False          True       False   False False      H1,H2,OOS,DD
+  V1u 10.0000           abs12-rw -0.1588   1.1233 -0.1414       True    -0.0000      1.1233            False      0.5250       0.8000   False          True       False   False False      H1,H2,OOS,DD
+  V1u 10.0000           vol60-dg  0.2369   0.0000     NaN      False     0.0000     -0.0000            False      0.0000       0.4750   False         False       False   False False      H1,H2,OOS,DD
+  V1u 10.0000           vol60-rw  0.4979   0.0000     NaN      False     0.0000     -0.0000            False      0.0000       0.4500   False         False       False   False False      H1,H2,OOS,DD
+  V1u 10.0000          v1gate-dg  0.0506   0.0011     NaN      False     1.3957      0.0011             True      1.0000       0.7250    True          True       False   False False      H1,H2,OOS,DD
+  V1u 10.0000          v1gate-rw -0.3341  -0.0036     NaN      False     3.1200     -0.0036             True      1.0000       0.4500    True         False       False   False False      H1,H2,OOS,DD
+  V1u 10.0000             stop15  0.8446   0.1557  5.4260       True    -0.3886      0.1557            False      0.1000       0.5750   False          True       False   False False      H1,H2,OOS,DD
+  V1u 10.0000             stop25  0.9167  -1.0253     NaN      False    -0.0000     -1.0253            False      0.4250       0.0750   False         False       False   False False      H1,H2,OOS,DD
+  V1u 10.0000 ddctl-8/.5/recover  3.8870  16.4915  0.2357       True     6.5316     16.4915             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+  V1u 10.0000    ddctl-8/.5/high  3.7778  16.4915  0.2291       True     9.3170     16.4915             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+  V1u 10.0000          ebud-0.10  5.4441  23.8331  0.2284       True     7.0019     23.8331             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+  V1u 10.0000          ebud-0.20  2.7865   9.8071  0.2841       True     4.3972      9.8071             True      1.0000       1.0000    True          True        True   False False      H1,H2,OOS,DD
+  V1u 25.0000            g200-dg -0.0023   0.1018 -0.0222       True     1.3308      0.1018             True      1.0000       0.7250    True          True       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000            g200-rw -0.6534  -0.0433     NaN      False     2.9319     -0.0433             True      1.0000       0.4500    True         False       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000           band3-dg  0.9055  -0.1035     NaN      False     0.1434     -0.1035             True      0.9000       0.4750    True         False       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000           band3-rw  1.5103  -4.6001     NaN      False    -0.7582     -4.6001            False      0.3750       0.0000   False         False       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000           abs12-dg -0.3674   0.8964 -0.4099       True     0.0000      0.8964            False      0.7250       0.9250   False          True        True   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000           abs12-rw -0.1166   0.5987 -0.1947       True     0.0000      0.5987            False      0.5250       0.8000   False          True       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000           vol60-dg  0.2223  -0.0000     NaN      False     0.0000      0.0000            False      0.0000       0.4750   False          True       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000           vol60-rw  0.4869  -0.0000     NaN      False     0.0000     -0.0000            False      0.0000       0.4500   False         False       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000          v1gate-dg -0.0319   0.1018 -0.3136       True     1.3308      0.1018             True      1.0000       0.7250    True          True       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000          v1gate-rw -0.2819  -0.0433     NaN      False     2.9319     -0.0433             True      1.0000       0.4500    True         False       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000             stop15  0.8134   0.1354  6.0056       True    -0.3534      0.1354            False      0.1000       0.5750   False          True       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000             stop25  0.8737  -0.8877     NaN      False     0.0000     -0.8877            False      0.4250       0.0750   False         False       False   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000 ddctl-8/.5/recover  2.0034  18.6509  0.1074       True    11.4385     18.6509             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000    ddctl-8/.5/high  1.9518  18.6509  0.1047       True    11.4385     18.6509             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000          ebud-0.10  1.8784  27.1619  0.0692       True    13.2971     27.1619             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+  V1u 25.0000          ebud-0.20  0.8554  11.0496  0.0774       True     7.4074     11.0496             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+TOP20 10.0000            g200-dg  0.2614   0.4090  0.6393       True     0.1018      0.4090             True      0.6750       0.9750   False          True       False   False False         H2,OOS,DD
+TOP20 10.0000            g200-rw  0.3376   0.4090  0.8254       True     0.0676      0.4090             True      0.3000       0.9000   False          True       False   False False         H2,OOS,DD
+TOP20 10.0000           band3-dg  0.1475   0.4090  0.3607       True     0.0803      0.4090             True      0.8750       0.9500   False          True       False   False False         H2,OOS,DD
+TOP20 10.0000           band3-rw  0.1565   0.4090  0.3826       True     0.1193      0.4090             True      0.4500       0.9000   False          True       False   False False         H2,OOS,DD
+TOP20 10.0000           abs12-dg  0.3959   0.3652  1.0839       True     0.0000      0.3652            False      0.0500       0.5250   False          True       False   False False         H2,OOS,DD
+TOP20 10.0000           abs12-rw  0.2282   0.6361  0.3588       True     0.0000      0.6361            False      0.0250       0.6500   False          True       False   False False         H2,OOS,DD
+TOP20 10.0000           vol60-dg 11.0193  14.3512  0.7678       True     3.5304     14.3512             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+TOP20 10.0000           vol60-rw  8.5806   3.0820  2.7841       True    -2.3695      3.0820            False      0.0500       0.7500   False          True       False   False False H1,H2,OOS,DD,CAGR
+TOP20 10.0000          v1gate-dg 11.0176  14.5753  0.7559       True     3.5304     14.5753             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+TOP20 10.0000          v1gate-rw  8.1211   6.4766  1.2539       True    -2.9103      6.4766            False      0.0500       0.9500   False          True       False   False False H1,H2,OOS,DD,CAGR
+TOP20 10.0000             stop15  4.2405 -10.9044     NaN      False    -3.4843    -10.9044            False      0.0000       0.0750   False         False       False   False False      H1,H2,OOS,DD
+TOP20 10.0000             stop25  2.2247  -4.4669     NaN      False    -2.1686     -4.4669            False      0.0250       0.4250   False         False       False   False False         H2,OOS,DD
+TOP20 10.0000 ddctl-8/.5/recover  4.7881   9.6139  0.4980       True     3.7147      9.6139             True      1.0000       1.0000    True          True        True   False False         H2,OOS,DD
+TOP20 10.0000    ddctl-8/.5/high  3.6245  12.2281  0.2964       True     6.6124     12.2281             True      1.0000       1.0000    True          True        True   False False             H2,DD
+TOP20 10.0000          ebud-0.10  5.1319   2.5402  2.0203       True     3.7204      2.5402             True      1.0000       0.8500    True          True       False   False False         H2,OOS,DD
+TOP20 10.0000          ebud-0.20  0.2995  -0.6741     NaN      False     0.2103     -0.6741             True      0.7000       0.5750   False         False       False   False False         H2,OOS,DD
+TOP20 25.0000            g200-dg  0.2531   0.9579  0.2642       True     0.1053      0.9579             True      0.6750       0.9750   False          True       False   False False         H2,OOS,DD
+TOP20 25.0000            g200-rw  0.3431   0.5828  0.5887       True     0.1184      0.5828             True      0.3000       0.9000   False          True       False   False False         H2,OOS,DD
+TOP20 25.0000           band3-dg  0.1394   0.8437  0.1652       True     0.0863      0.8437             True      0.8750       0.9500   False          True       False   False False         H2,OOS,DD
+TOP20 25.0000           band3-rw  0.1598   0.6324  0.2527       True     0.1324      0.6324             True      0.4500       0.9000   False          True       False   False False         H2,OOS,DD
+TOP20 25.0000           abs12-dg  0.3842   0.3231  1.1889       True    -0.5908      0.3231            False      0.0500       0.5250   False          True       False   False False         H2,OOS,DD
+TOP20 25.0000           abs12-rw  0.2378   0.8058  0.2952       True    -0.7469      0.8058            False      0.0250       0.6500   False          True       False   False False      H1,H2,OOS,DD
+TOP20 25.0000           vol60-dg 10.2972  15.4245  0.6676       True     4.9738     15.4245             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+TOP20 25.0000           vol60-rw  9.1125   4.7277  1.9275       True    -0.9779      4.7277            False      0.0500       0.7500   False          True       False   False False H1,H2,OOS,DD,CAGR
+TOP20 25.0000          v1gate-dg 10.2939  15.6415  0.6581       True     4.9738     15.6415             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+TOP20 25.0000          v1gate-rw  8.6509   5.2116  1.6599       True    -1.5491      5.2116            False      0.0500       0.9500   False          True       False   False False H1,H2,OOS,DD,CAGR
+TOP20 25.0000             stop15  5.0596 -12.0491     NaN      False    -4.9982    -12.0491            False      0.0000       0.0750   False         False       False   False False H1,H2,OOS,DD,CAGR
+TOP20 25.0000             stop25  2.4497  -4.8251     NaN      False    -1.9031     -4.8251            False      0.0250       0.4250   False         False       False   False False      H1,H2,OOS,DD
+TOP20 25.0000 ddctl-8/.5/recover  2.2429  15.8991  0.1411       True     6.9736     15.8991             True      1.0000       1.0000    True          True        True   False False         H2,OOS,DD
+TOP20 25.0000    ddctl-8/.5/high  2.9993  15.8991  0.1886       True     6.9736     15.8991             True      1.0000       1.0000    True          True        True   False False    H2,OOS,DD,CAGR
+TOP20 25.0000          ebud-0.10  4.0613   5.0545  0.8035       True     5.5535      5.0545             True      1.0000       0.8500    True          True       False   False False H1,H2,OOS,DD,CAGR
+TOP20 25.0000          ebud-0.20  0.2189  -0.3385     NaN      False     0.0097     -0.3385             True      0.7000       0.5750   False         False       False   False False         H2,OOS,DD
+EWall 10.0000            g200-dg  9.9734  24.3376  0.4098       True    10.4169     24.3376             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 10.0000            g200-rw  6.2726   3.7474  1.6739       True     0.1922      3.7474            False      0.5500       0.9750   False          True        True   False False H1,H2,OOS,DD,CAGR
+EWall 10.0000           band3-dg  9.7342  24.0538  0.4047       True    10.7431     24.0538             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 10.0000           band3-rw  5.3390   4.4453  1.2010       True     1.0060      4.4453             True      0.9500       0.9750    True          True        True   False False H1,H2,OOS,DD,CAGR
+EWall 10.0000           abs12-dg  9.5780  21.3798  0.4480       True     7.3820     24.5958             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 10.0000           abs12-rw  4.6812   2.7302  1.7146       True    -0.3223      2.7302            False      0.4000       1.0000   False          True       False   False False H1,H2,OOS,DD,CAGR
+EWall 10.0000           vol60-dg  9.6661  17.2364  0.5608       True     5.5424     17.2364             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 10.0000           vol60-rw  7.9337   3.4400  2.3063       True     0.5662      3.4400             True      0.9000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+EWall 10.0000          v1gate-dg 11.9932  26.3517  0.4551       True    13.4655     26.3517             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 10.0000          v1gate-rw  8.9480   1.9299  4.6365       True     0.4939      1.9299            False      0.6750       0.9000   False          True        True   False False H1,H2,OOS,DD,CAGR
+EWall 10.0000             stop15  4.2095   3.7487  1.1229       True    -2.8519      3.7487            False      0.0000       1.0000   False          True       False   False False H1,H2,OOS,DD,CAGR
+EWall 10.0000             stop25  2.3218   2.1871  1.0616       True    -1.8274      2.1871            False      0.0000       1.0000   False          True       False   False False      H1,H2,OOS,DD
+EWall 10.0000 ddctl-8/.5/recover  4.2375  11.9423  0.3548       True     5.3378     11.9423             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+EWall 10.0000    ddctl-8/.5/high  4.1074  13.8223  0.2972       True     5.9337     13.8223             True      1.0000       1.0000    True          True        True   False False    H2,OOS,DD,CAGR
+EWall 10.0000          ebud-0.10 -0.0181   0.0000     NaN      False     0.0000      0.0000            False      0.0000       0.0000   False         False       False   False False      H1,H2,OOS,DD
+EWall 10.0000          ebud-0.20  0.0000   0.0000     NaN      False     0.0000      0.0000            False      0.0000       0.0000   False         False       False   False False      H1,H2,OOS,DD
+EWall 25.0000            g200-dg 10.2278  23.6272  0.4329       True     9.8541     23.6272             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 25.0000            g200-rw  7.6014   2.5348  2.9989       True    -0.4183      2.5348            False      0.5500       0.9750   False          True       False   False False H1,H2,OOS,DD,CAGR
+EWall 25.0000           band3-dg  9.8529  23.5141  0.4190       True    10.3211     23.5141             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 25.0000           band3-rw  6.2788   3.4982  1.7949       True     0.7689      3.4982             True      0.9500       0.9750    True          True        True   False False H1,H2,OOS,DD,CAGR
+EWall 25.0000           abs12-dg  9.7356  21.2859  0.4574       True     7.4189     23.9011             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 25.0000           abs12-rw  5.6389   2.5460  2.2148       True    -0.4090      2.5460            False      0.4000       1.0000   False          True       False   False False H1,H2,OOS,DD,CAGR
+EWall 25.0000           vol60-dg  9.9701  16.6828  0.5976       True     5.5059     16.6828             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 25.0000           vol60-rw  8.6545   2.6652  3.2472       True     0.3381      2.6652             True      0.9000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+EWall 25.0000          v1gate-dg 12.2674  24.3863  0.5030       True    12.7836     24.3863             True      1.0000       1.0000    True          True        True   False False    H1,H2,OOS,CAGR
+EWall 25.0000          v1gate-rw 10.7425   0.4684 22.9335       True    -0.0663      0.4684            False      0.6750       0.9000   False          True       False   False False H1,H2,OOS,DD,CAGR
+EWall 25.0000             stop15  5.5041   2.1791  2.5258       True    -4.6868      2.1791            False      0.0000       1.0000   False          True       False   False False H1,H2,OOS,DD,CAGR
+EWall 25.0000             stop25  2.8866   1.3857  2.0830       True    -2.2478      1.3857            False      0.0000       1.0000   False          True       False   False False      H1,H2,OOS,DD
+EWall 25.0000 ddctl-8/.5/recover  4.0079  11.6765  0.3432       True     5.1565     11.6765             True      1.0000       1.0000    True          True        True   False False H1,H2,OOS,DD,CAGR
+EWall 25.0000    ddctl-8/.5/high  3.4638  13.6321  0.2541       True     6.0218     13.6321             True      1.0000       1.0000    True          True        True   False False         H1,OOS,DD
+EWall 25.0000          ebud-0.10 -0.0184   0.0000     NaN      False     0.0000      0.0000            False      0.0000       0.0000   False         False       False   False False      H1,H2,OOS,DD
+EWall 25.0000          ebud-0.20  0.0000   0.0000     NaN      False     0.0000      0.0000            False      0.0000       0.0000   False         False       False   False False      H1,H2,OOS,DD
+
+========================================================================================================================================================================================================
+D. RULE 8 WALK-FORWARD — parameters chosen on IS only, OOS read once
+ book    cost      q    tau selector  n_eligible               pick  IS_rate  OOS_rate  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  ctl_OOS_Sharpe  v2_OOS_Sharpe  spy_OOS_Sharpe   p4a   p4b
+EWall 10.0000 0.0500 0.8000       S1           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.0500 0.8000       S2           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.0500 0.9000       S2           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.0500 0.9500       S2           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.0500 1.0000       S2           7    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.1000 0.8000       S2           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.1000 0.9000       S2           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.1000 0.9500       S2           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.1000 1.0000       S2           7    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.2000 0.8000       S2           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.2000 0.9000       S2           8    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.2000 0.9500       S2           7    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 10.0000 0.2000 1.0000       S2           7    ddctl-8/.5/high   1.0374    0.2078    0.0926      0.8417    -0.2232          0.7370         0.6629          0.8820 False False
+EWall 25.0000 0.0500 0.8000       S1           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.0500 0.8000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.0500 0.9000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.0500 0.9500       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.0500 1.0000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.1000 0.8000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.1000 0.9000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.1000 0.9500       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.1000 1.0000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.2000 0.8000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.2000 0.9000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.2000 0.9500       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+EWall 25.0000 0.2000 1.0000       S2           7    ddctl-8/.5/high   1.0283    0.1329    0.0999      0.8741    -0.2255          0.7203         0.6018          0.8820 False False
+TOP20 10.0000 0.0500 0.8000       S1           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.0500 0.8000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.0500 0.9000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.0500 0.9500       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.0500 1.0000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.1000 0.8000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.1000 0.9000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.1000 0.9500       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.1000 1.0000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.2000 0.8000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.2000 0.9000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.2000 0.9500       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 10.0000 0.2000 1.0000       S2           5    ddctl-8/.5/high   0.4041    0.3453    0.1209      0.8870    -0.2060          0.7579         0.6629          0.8820 False False
+TOP20 25.0000 0.0500 0.8000       S1           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.0500 0.8000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.0500 0.9000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.0500 0.9500       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.0500 1.0000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.1000 0.8000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.1000 0.9000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.1000 0.9500       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.1000 1.0000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.2000 0.8000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.2000 0.9000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.2000 0.9500       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+TOP20 25.0000 0.2000 1.0000       S2           5 ddctl-8/.5/recover   0.2493    0.1610    0.1082      0.7887    -0.2381          0.6500         0.6018          0.8820 False False
+  V1u 10.0000 0.0500 0.8000       S1           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.0500 0.8000       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.0500 0.9000       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.0500 0.9500       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.0500 1.0000       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.1000 0.8000       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.1000 0.9000       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.1000 0.9500       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.1000 1.0000       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.2000 0.8000       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.2000 0.9000       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.2000 0.9500       S2           8            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 10.0000 0.2000 1.0000       S2           7            g200-rw  -0.3505       NaN    0.1783      0.5688    -0.4483          0.5586         0.6629          0.8820 False False
+  V1u 25.0000 0.0500 0.8000       S1           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.0500 0.8000       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.0500 0.9000       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.0500 0.9500       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.0500 1.0000       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.1000 0.8000       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.1000 0.9000       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.1000 0.9500       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.1000 1.0000       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.2000 0.8000       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.2000 0.9000       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.2000 0.9500       S2           8            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+  V1u 25.0000 0.2000 1.0000       S2           7            g200-rw  -0.3339       NaN    0.1244      0.4445    -0.5226          0.4345         0.6018          0.8820 False False
+
+--- selection effect of the screen (S2 vs S1), all 12 grid points ---
+     q    tau  picks_changed  n_cells  S2_mean_OOS_Sharpe  S2_empty_cells  S1_mean_OOS_Sharpe
+0.0500 0.8000              0        6              0.7341               0              0.7341
+0.0500 0.9000              0        6              0.7341               0              0.7341
+0.0500 0.9500              0        6              0.7341               0              0.7341
+0.0500 1.0000              0        6              0.7341               0              0.7341
+0.1000 0.8000              0        6              0.7341               0              0.7341
+0.1000 0.9000              0        6              0.7341               0              0.7341
+0.1000 0.9500              0        6              0.7341               0              0.7341
+0.1000 1.0000              0        6              0.7341               0              0.7341
+0.2000 0.8000              0        6              0.7341               0              0.7341
+0.2000 0.9000              0        6              0.7341               0              0.7341
+0.2000 0.9500              0        6              0.7341               0              0.7341
+0.2000 1.0000              0        6              0.7341               0              0.7341
+    P3 (<= 2 of 6 picks changed at headline): 0 -> CONFIRMED
+
+========================================================================================================================================================================================================
+E. BOTH KEEP PATHS (PROTOCOL rule 4) over all audited arm-points
+                 scope  n  p4a_vs_RULESv2  p4a_vs_RULESv1  p4b
+              all rows 96               0              37    0
+      publishable rows 70               0              31    0
+    IS-admissible rows 46               0              12    0
+full-screen admissible 37               0              12    0
+
+    first-failing 4b bar, count over all rows:
+f4b
+H1,H2,OOS,DD,CAGR    41
+H1,H2,OOS,DD         22
+H2,OOS,DD            17
+H1,H2,OOS,CAGR       12
+H2,OOS,DD,CAGR        2
+H2,DD                 1
+H1,OOS,DD             1
+
+    walk-forward picks: 4a 0/78, 4b 0/78
+    P4 (no new KEEP): CONFIRMED
+
+========================================================================================================================================================================================================
+VERDICT INPUTS
+  premise: OOS denominator positive in 73/96 rows (idea 122: 138/138 on u56/broad)
+  H_DISCRIM at headline: gap +0.2096, perm p 0.0205 -> PASS; positive+significant at 9/12 grid points
+  controls: screen gap +0.2096 vs naive-sign N1 +0.2352 vs top-46 magnitude +0.2513; AUC(dMaxDD_IS) 0.7016, AUC(kind) 0.7180; incremental gap +0.1049 (p 0.4445)
+  selection: 0/6 picks changed, S2 mean OOS Sharpe 0.7341 vs S1 0.7341
+  KEEP: 4a 0/96 vs RULES v2, 4b 0/96
+========================================================================================================================================================================================================
