@@ -1,0 +1,799 @@
+# 2026-09-07_the-small-panel-has-no-defensive-class_cloud
+# idea 136 — is the small panel's empty `4b-defensive` class THE PANEL or THE BARS?
+# every arm's four NON-FLOOR 4b bars decomposed, with margins, on 3 panels
+# + a WINDOW control (all panels re-read on the small panel's window)
+# + a BARS control (all five bars re-referenced to IWM instead of SPY)
+# books ['TOP5', 'TOP10', 'TOP20', 'TOP40', 'EWALL'] x overlays ['CTRL', 'G200', 'VT10', 'DD10'] x gross [0.53, 0.75, 1.0] x costs [0, 10, 25]
+
+========================================================================================================================================================
+[0] REPRODUCTION GATES
+    G1 fast_bt == engine.backtest (returns AND turnover, c in 0/25 bps): max |d| 0.000e+00
+    G2 overlay at OFF (m == 1) == parent on r / turnover / gross: max |d| 0.000e+00
+    G3 SMALL439: data/small_meta.csv lists 483 tickers, 44 with max_1d_move >= 1.0 dropped; traded names 439; dropped names still present: 0
+    G4 SMALL439: max weight on benchmark columns (SPY, IWM) = 0.000e+00
+    G4 U56     : max weight on benchmark columns (IWM) = 0.000e+00
+    G4 B136    : max weight on benchmark columns (IWM) = 0.000e+00
+    G5 bar arithmetic vs engine.metrics on RULES v2 @10bps (U56): max |d| 0.000e+00
+
+    COMMON WINDOW = the small panel's evaluation window, opening 2011-01-13
+
+========================================================================================================================================================
+PANEL SMALL439: 439 traded cols | 2010-01-04 -> 2026-09-04
+  [SMALL439 / own window 2011-01-13 .. 2026-09-04]  IS 1502d / OOS 2432d
+     ref SPY: CAGR 14.13% Sharpe 0.862 (H1 0.891 / H2 0.858 / OOS 0.882) MaxDD -33.72%  -> 4b bars: DD cap 20.23%, CAGR floor 9.89%
+     ref IWM: CAGR 10.21% Sharpe 0.552 (H1 0.620 / H2 0.511 / OOS 0.520) MaxDD -41.13%  -> 4b bars: DD cap 24.68%, CAGR floor 7.15%
+  [SMALL439 / common window 2011-01-13 .. 2026-09-04]  IS 1502d / OOS 2432d
+     ref SPY: CAGR 14.13% Sharpe 0.862 (H1 0.891 / H2 0.858 / OOS 0.882) MaxDD -33.72%  -> 4b bars: DD cap 20.23%, CAGR floor 9.89%
+     ref IWM: CAGR 10.21% Sharpe 0.552 (H1 0.620 / H2 0.511 / OOS 0.520) MaxDD -41.13%  -> 4b bars: DD cap 24.68%, CAGR floor 7.15%
+========================================================================================================================================================
+PANEL U56: 55 traded cols | 2008-01-02 -> 2026-09-04
+  [U56 / own window 2009-01-13 .. 2026-09-04]  IS 2007d / OOS 2432d
+     ref SPY: CAGR 15.23% Sharpe 0.889 (H1 0.957 / H2 0.834 / OOS 0.882) MaxDD -33.72%  -> 4b bars: DD cap 20.23%, CAGR floor 10.66%
+     ref IWM: CAGR 12.54% Sharpe 0.629 (H1 0.773 / H2 0.498 / OOS 0.520) MaxDD -41.13%  -> 4b bars: DD cap 24.68%, CAGR floor 8.78%
+  [U56 / common window 2011-01-13 .. 2026-09-04]  IS 1502d / OOS 2432d
+     ref SPY: CAGR 14.13% Sharpe 0.862 (H1 0.891 / H2 0.858 / OOS 0.882) MaxDD -33.72%  -> 4b bars: DD cap 20.23%, CAGR floor 9.89%
+     ref IWM: CAGR 10.21% Sharpe 0.552 (H1 0.620 / H2 0.511 / OOS 0.520) MaxDD -41.13%  -> 4b bars: DD cap 24.68%, CAGR floor 7.15%
+========================================================================================================================================================
+PANEL B136: 135 traded cols | 2008-01-02 -> 2026-09-04
+  [B136 / own window 2009-01-13 .. 2026-09-04]  IS 2007d / OOS 2432d
+     ref SPY: CAGR 15.23% Sharpe 0.889 (H1 0.957 / H2 0.834 / OOS 0.882) MaxDD -33.72%  -> 4b bars: DD cap 20.23%, CAGR floor 10.66%
+     ref IWM: CAGR 12.54% Sharpe 0.629 (H1 0.773 / H2 0.498 / OOS 0.520) MaxDD -41.13%  -> 4b bars: DD cap 24.68%, CAGR floor 8.78%
+  [B136 / common window 2011-01-13 .. 2026-09-04]  IS 1502d / OOS 2432d
+     ref SPY: CAGR 14.13% Sharpe 0.862 (H1 0.891 / H2 0.858 / OOS 0.882) MaxDD -33.72%  -> 4b bars: DD cap 20.23%, CAGR floor 9.89%
+     ref IWM: CAGR 10.21% Sharpe 0.552 (H1 0.620 / H2 0.511 / OOS 0.520) MaxDD -41.13%  -> 4b bars: DD cap 24.68%, CAGR floor 7.15%
+
+========================================================================================================================================================
+[1] THE DECOMPOSITION — which of the four NON-FLOOR bars fails, on every arm
+
+    --- COMMON window, reference SPY (the PROTOCOL bar set) ---
+                  n  fail_H1  fail_H2  fail_OOS  fail_DD  fail_CAGR  pass4b  defensive  pass4a
+      panel                                                                                   
+      B136      180       57      108        98       61         89      27         24       1
+      SMALL439  180      180      180       180      155        177       0          0       0
+      U56       180       68       27        32       37         86      50         38       0
+      margins (median [min, max]) of each bar, by panel:
+        SMALL439  H1 -0.515 [-1.023, -0.165]  H2 -0.705 [-1.438, -0.256]  OOS -0.603 [-1.386, -0.137]  DD -0.113 [-0.532, +0.066]  CAGR -0.074 [-0.165, +0.033]
+        U56       H1 +0.053 [-0.296, +0.287]  H2 +0.140 [-0.274, +0.424]  OOS +0.132 [-0.249, +0.453]  DD +0.047 [-0.117, +0.113]  CAGR +0.003 [-0.052, +0.155]
+        B136      H1 +0.106 [-0.376, +0.335]  H2 -0.042 [-0.613, +0.393]  OOS -0.015 [-0.543, +0.389]  DD +0.029 [-0.183, +0.098]  CAGR +0.000 [-0.052, +0.141]
+      arms with ZERO non-floor failures (the defensive candidate set), by panel:
+        SMALL439 0/180, U56 88/180, B136 51/180
+
+    --- OWN window, reference SPY (the PROTOCOL bar set) ---
+                  n  fail_H1  fail_H2  fail_OOS  fail_DD  fail_CAGR  pass4b  defensive  pass4a
+      panel                                                                                   
+      B136      180       61      114        98       62        106      19         31       0
+      SMALL439  180      180      180       180      155        177       0          0       0
+      U56       180       93       23        32       40        104      35         40       0
+      margins (median [min, max]) of each bar, by panel:
+        SMALL439  H1 -0.515 [-1.023, -0.165]  H2 -0.705 [-1.438, -0.256]  OOS -0.603 [-1.386, -0.137]  DD -0.113 [-0.532, +0.066]  CAGR -0.074 [-0.165, +0.033]
+        U56       H1 -0.001 [-0.459, +0.259]  H2 +0.151 [-0.252, +0.390]  OOS +0.132 [-0.249, +0.453]  DD +0.045 [-0.117, +0.113]  CAGR -0.005 [-0.060, +0.140]
+        B136      H1 +0.083 [-0.329, +0.276]  H2 -0.057 [-0.580, +0.315]  OOS -0.015 [-0.543, +0.389]  DD +0.029 [-0.183, +0.098]  CAGR -0.005 [-0.059, +0.147]
+      arms with ZERO non-floor failures (the defensive candidate set), by panel:
+        SMALL439 0/180, U56 75/180, B136 50/180
+
+========================================================================================================================================================
+[2] PANEL or BARS?  the same arms re-scored against IWM instead of SPY
+    reference SPY (common window):
+                  n  fail_H1  fail_H2  fail_OOS  fail_DD  fail_CAGR  pass4b  defensive
+      panel                                                                           
+      B136      180       57      108        98       61         89      27         24
+      SMALL439  180      180      180       180      155        177       0          0
+      U56       180       68       27        32       37         86      50         38
+    reference IWM (common window):
+                  n  fail_H1  fail_H2  fail_OOS  fail_DD  fail_CAGR  pass4b  defensive
+      panel                                                                           
+      B136      180        6       12        10       29         26     123         17
+      SMALL439  180      171      168       147      123        167       1          0
+      U56       180        1        0         0        8         27     144         27
+    SMALL439 defensive members: 0 vs SPY, 0 vs IWM, of 180 arms.
+    SMALL439 arms clearing all four non-floor bars: 0 vs SPY, 1 vs IWM.
+
+========================================================================================================================================================
+[3] SMALL439, common window, SPY reference — the failing-bar signature of every arm
+    failing-bar patterns (non-floor bars only):
+      nf_pattern
+      H1,H2,OOS,DD    155
+      H1,H2,OOS        25
+
+    how far each non-floor bar misses on SMALL439 (only the FAILING arms):
+      H1   fails 180/180  median -0.515  worst -1.023  closest -0.165
+      H2   fails 180/180  median -0.705  worst -1.438  closest -0.256
+      OOS  fails 180/180  median -0.603  worst -1.386  closest -0.137
+      DD   fails 155/180  median -0.134  worst -0.532  closest -0.006
+
+    the SMALL439 arms closest to defensive (ranked by their worst non-floor margin):
+       book  gross overlay  cost  mean_gross  CAGR  Sharpe  MaxDD  mSPY_H1  mSPY_H2  mSPY_OOS  mSPY_DD  mSPY_CAGR  worst_nf         fails_SPY
+      TOP10  1.000    CTRL     0       1.000 0.132   0.602 -0.399   -0.229   -0.302    -0.207   -0.197      0.033    -0.302      H1,H2,OOS,DD
+      TOP10  0.750    CTRL     0       0.750 0.104   0.600 -0.312   -0.232   -0.304    -0.210   -0.110      0.005    -0.304      H1,H2,OOS,DD
+      TOP10  0.530    CTRL     0       0.530 0.076   0.597 -0.229   -0.234   -0.307    -0.212   -0.027     -0.023    -0.307 H1,H2,OOS,DD,CAGR
+      TOP10  0.530    VT10     0       0.413 0.054   0.558 -0.152   -0.335   -0.298    -0.190    0.050     -0.045    -0.335    H1,H2,OOS,CAGR
+      TOP40  0.530    CTRL     0       0.530 0.053   0.532 -0.233   -0.337   -0.338    -0.309   -0.031     -0.046    -0.338 H1,H2,OOS,DD,CAGR
+      TOP40  0.750    CTRL     0       0.750 0.072   0.532 -0.318   -0.335   -0.339    -0.310   -0.116     -0.027    -0.339 H1,H2,OOS,DD,CAGR
+      TOP40  1.000    CTRL     0       1.000 0.091   0.532 -0.406   -0.333   -0.341    -0.312   -0.204     -0.008    -0.341 H1,H2,OOS,DD,CAGR
+      TOP10  0.750    VT10     0       0.428 0.056   0.553 -0.156   -0.373   -0.268    -0.152    0.046     -0.043    -0.373    H1,H2,OOS,CAGR
+      TOP10  1.000    VT10     0       0.429 0.057   0.557 -0.157   -0.379   -0.256    -0.137    0.046     -0.042    -0.379    H1,H2,OOS,CAGR
+      TOP40  0.530    VT10     0       0.485 0.045   0.518 -0.143   -0.385   -0.328    -0.295    0.059     -0.054    -0.385    H1,H2,OOS,CAGR
+      TOP10  0.750    DD10     0       0.603 0.070   0.497 -0.233   -0.353   -0.399    -0.269   -0.031     -0.029    -0.399 H1,H2,OOS,DD,CAGR
+      TOP10  1.000    DD10     0       0.751 0.078   0.466 -0.288   -0.402   -0.412    -0.280   -0.085     -0.021    -0.412 H1,H2,OOS,DD,CAGR
+
+========================================================================================================================================================
+[4] EVERY GRID POINT (common window, SPY reference; cost 0 is the diagnostic rung)
+       panel  book  gross overlay  cost  mean_gross   CAGR  Sharpe  MaxDD  OOS_Sharpe  mSPY_H1  mSPY_H2  mSPY_OOS  mSPY_DD  mSPY_CAGR  nf_fail_SPY  floor_only_SPY  pass4b_SPY  pass4a
+    SMALL439  TOP5  0.530    CTRL     0       0.530  0.064   0.441 -0.243       0.543   -0.324   -0.521    -0.339   -0.040     -0.035            4           False       False   False
+    SMALL439  TOP5  0.530    CTRL    10       0.530  0.041   0.319 -0.292       0.420   -0.446   -0.644    -0.462   -0.090     -0.058            4           False       False   False
+    SMALL439  TOP5  0.530    CTRL    25       0.530  0.009   0.136 -0.360       0.236   -0.630   -0.827    -0.646   -0.157     -0.090            4           False       False   False
+    SMALL439  TOP5  0.530    G200     0       0.277  0.016   0.188 -0.353       0.125   -0.343   -1.071    -0.757   -0.151     -0.083            4           False       False   False
+    SMALL439  TOP5  0.530    G200    10       0.277 -0.003   0.039 -0.385      -0.028   -0.493   -1.218    -0.910   -0.182     -0.101            4           False       False   False
+    SMALL439  TOP5  0.530    G200    25       0.277 -0.029  -0.183 -0.488      -0.257   -0.719   -1.438    -1.139   -0.286     -0.128            4           False       False   False
+    SMALL439  TOP5  0.530    VT10     0       0.341  0.041   0.419 -0.150       0.582   -0.419   -0.492    -0.300    0.052     -0.058            3           False       False   False
+    SMALL439  TOP5  0.530    VT10    10       0.341  0.024   0.268 -0.169       0.431   -0.571   -0.642    -0.451    0.033     -0.075            3           False       False   False
+    SMALL439  TOP5  0.530    VT10    25       0.341 -0.002   0.041 -0.209       0.205   -0.799   -0.867    -0.677   -0.006     -0.100            4           False       False   False
+    SMALL439  TOP5  0.530    DD10     0       0.433  0.032   0.288 -0.239       0.444   -0.481   -0.691    -0.438   -0.037     -0.067            4           False       False   False
+    SMALL439  TOP5  0.530    DD10    10       0.433  0.012   0.156 -0.274       0.315   -0.615   -0.821    -0.567   -0.072     -0.087            4           False       False   False
+    SMALL439  TOP5  0.530    DD10    25       0.433 -0.017  -0.043 -0.341       0.121   -0.817   -1.017    -0.761   -0.138     -0.116            4           False       False   False
+    SMALL439  TOP5  0.750    CTRL     0       0.750  0.082   0.442 -0.342       0.546   -0.326   -0.518    -0.336   -0.140     -0.017            4           False       False   False
+    SMALL439  TOP5  0.750    CTRL    10       0.750  0.050   0.321 -0.402       0.423   -0.448   -0.640    -0.459   -0.200     -0.049            4           False       False   False
+    SMALL439  TOP5  0.750    CTRL    25       0.750  0.003   0.138 -0.481       0.240   -0.632   -0.823    -0.642   -0.279     -0.095            4           False       False   False
+    SMALL439  TOP5  0.750    G200     0       0.392  0.017   0.187 -0.463       0.127   -0.350   -1.066    -0.755   -0.261     -0.081            4           False       False   False
+    SMALL439  TOP5  0.750    G200    10       0.392 -0.008   0.038 -0.506      -0.026   -0.500   -1.213    -0.908   -0.304     -0.107            4           False       False   False
+    SMALL439  TOP5  0.750    G200    25       0.392 -0.045  -0.185 -0.620      -0.255   -0.726   -1.433    -1.137   -0.418     -0.144            4           False       False   False
+    SMALL439  TOP5  0.750    VT10     0       0.344  0.044   0.442 -0.153       0.610   -0.403   -0.462    -0.272    0.050     -0.055            3           False       False   False
+    SMALL439  TOP5  0.750    VT10    10       0.344  0.026   0.288 -0.172       0.456   -0.558   -0.615    -0.426    0.030     -0.073            3           False       False   False
+    SMALL439  TOP5  0.750    VT10    25       0.344  0.000   0.056 -0.212       0.226   -0.791   -0.844    -0.656   -0.010     -0.099            4           False       False   False
+    SMALL439  TOP5  0.750    DD10     0       0.549  0.026   0.233 -0.330       0.380   -0.522   -0.759    -0.502   -0.128     -0.072            4           False       False   False
+    SMALL439  TOP5  0.750    DD10    10       0.549  0.000   0.096 -0.360       0.245   -0.658   -0.897    -0.637   -0.158     -0.099            4           False       False   False
+    SMALL439  TOP5  0.750    DD10    25       0.549 -0.038  -0.109 -0.488       0.041   -0.861   -1.104    -0.841   -0.286     -0.137            4           False       False   False
+    SMALL439  TOP5  1.000    CTRL     0       1.000  0.096   0.444 -0.450       0.549   -0.328   -0.513    -0.333   -0.248     -0.003            4           False       False   False
+    SMALL439  TOP5  1.000    CTRL    10       1.000  0.053   0.322 -0.516       0.427   -0.450   -0.635    -0.455   -0.313     -0.046            4           False       False   False
+    SMALL439  TOP5  1.000    CTRL    25       1.000 -0.009   0.139 -0.600       0.243   -0.634   -0.818    -0.639   -0.397     -0.107            4           False       False   False
+    SMALL439  TOP5  1.000    G200     0       0.522  0.016   0.185 -0.567       0.130   -0.357   -1.061    -0.752   -0.365     -0.082            4           False       False   False
+    SMALL439  TOP5  1.000    G200    10       0.522 -0.017   0.037 -0.621      -0.023   -0.507   -1.208    -0.905   -0.418     -0.116            4           False       False   False
+    SMALL439  TOP5  1.000    G200    25       0.522 -0.066  -0.186 -0.734      -0.252   -0.733   -1.428    -1.134   -0.532     -0.165            4           False       False   False
+    SMALL439  TOP5  1.000    VT10     0       0.345  0.045   0.450 -0.152       0.625   -0.406   -0.443    -0.257    0.050     -0.054            3           False       False   False
+    SMALL439  TOP5  1.000    VT10    10       0.345  0.027   0.295 -0.172       0.471   -0.561   -0.597    -0.411    0.031     -0.072            3           False       False   False
+    SMALL439  TOP5  1.000    VT10    25       0.345  0.001   0.063 -0.212       0.239   -0.794   -0.828    -0.643   -0.010     -0.098            4           False       False   False
+    SMALL439  TOP5  1.000    DD10     0       0.673  0.033   0.255 -0.362       0.441   -0.522   -0.718    -0.441   -0.159     -0.066            4           False       False   False
+    SMALL439  TOP5  1.000    DD10    10       0.673  0.001   0.119 -0.413       0.309   -0.659   -0.852    -0.573   -0.211     -0.098            4           False       False   False
+    SMALL439  TOP5  1.000    DD10    25       0.673 -0.045  -0.084 -0.551       0.110   -0.866   -1.052    -0.772   -0.349     -0.144            4           False       False   False
+    SMALL439 TOP10  0.530    CTRL     0       0.530  0.076   0.597 -0.229       0.670   -0.234   -0.307    -0.212   -0.027     -0.023            4           False       False   False
+    SMALL439 TOP10  0.530    CTRL    10       0.530  0.058   0.474 -0.231       0.547   -0.360   -0.428    -0.335   -0.028     -0.041            4           False       False   False
+    SMALL439 TOP10  0.530    CTRL    25       0.530  0.031   0.289 -0.246       0.362   -0.548   -0.611    -0.520   -0.044     -0.068            4           False       False   False
+    SMALL439 TOP10  0.530    G200     0       0.277  0.021   0.266 -0.237       0.205   -0.427   -0.802    -0.677   -0.035     -0.078            4           False       False   False
+    SMALL439 TOP10  0.530    G200    10       0.277  0.005   0.100 -0.274       0.033   -0.595   -0.965    -0.849   -0.071     -0.094            4           False       False   False
+    SMALL439 TOP10  0.530    G200    25       0.277 -0.018  -0.148 -0.446      -0.226   -0.847   -1.209    -1.108   -0.243     -0.117            4           False       False   False
+    SMALL439 TOP10  0.530    VT10     0       0.413  0.054   0.558 -0.152       0.692   -0.335   -0.298    -0.190    0.050     -0.045            3           False       False   False
+    SMALL439 TOP10  0.530    VT10    10       0.413  0.038   0.405 -0.170       0.539   -0.487   -0.451    -0.343    0.033     -0.061            3           False       False   False
+    SMALL439 TOP10  0.530    VT10    25       0.413  0.013   0.176 -0.216       0.308   -0.716   -0.681    -0.574   -0.013     -0.086            4           False       False   False
+    SMALL439 TOP10  0.530    DD10     0       0.470  0.049   0.442 -0.224       0.544   -0.377   -0.483    -0.338   -0.022     -0.050            4           False       False   False
+    SMALL439 TOP10  0.530    DD10    10       0.470  0.031   0.302 -0.262       0.406   -0.519   -0.622    -0.476   -0.060     -0.068            4           False       False   False
+    SMALL439 TOP10  0.530    DD10    25       0.470  0.004   0.091 -0.317       0.200   -0.731   -0.831    -0.682   -0.115     -0.095            4           False       False   False
+    SMALL439 TOP10  0.750    CTRL     0       0.750  0.104   0.600 -0.312       0.672   -0.232   -0.304    -0.210   -0.110      0.005            4           False       False   False
+    SMALL439 TOP10  0.750    CTRL    10       0.750  0.077   0.476 -0.314       0.549   -0.357   -0.426    -0.333   -0.112     -0.022            4           False       False   False
+    SMALL439 TOP10  0.750    CTRL    25       0.750  0.039   0.292 -0.336       0.365   -0.546   -0.609    -0.517   -0.134     -0.060            4           False       False   False
+    SMALL439 TOP10  0.750    G200     0       0.392  0.027   0.267 -0.320       0.207   -0.428   -0.799    -0.675   -0.118     -0.072            4           False       False   False
+    SMALL439 TOP10  0.750    G200    10       0.392  0.005   0.101 -0.380       0.035   -0.596   -0.962    -0.847   -0.178     -0.094            4           False       False   False
+    SMALL439 TOP10  0.750    G200    25       0.392 -0.028  -0.147 -0.577      -0.224   -0.848   -1.206    -1.106   -0.375     -0.127            4           False       False   False
+    SMALL439 TOP10  0.750    VT10     0       0.428  0.056   0.553 -0.156       0.730   -0.373   -0.268    -0.152    0.046     -0.043            3           False       False   False
+    SMALL439 TOP10  0.750    VT10    10       0.428  0.037   0.391 -0.173       0.570   -0.539   -0.426    -0.312    0.029     -0.062            3           False       False   False
+    SMALL439 TOP10  0.750    VT10    25       0.428  0.010   0.147 -0.218       0.329   -0.789   -0.665    -0.553   -0.016     -0.089            4           False       False   False
+    SMALL439 TOP10  0.750    DD10     0       0.603  0.070   0.497 -0.233       0.614   -0.353   -0.399    -0.269   -0.031     -0.029            4           False       False   False
+    SMALL439 TOP10  0.750    DD10    10       0.603  0.047   0.361 -0.249       0.481   -0.494   -0.531    -0.401   -0.047     -0.052            4           False       False   False
+    SMALL439 TOP10  0.750    DD10    25       0.603  0.012   0.156 -0.286       0.281   -0.705   -0.729    -0.601   -0.084     -0.087            4           False       False   False
+    SMALL439 TOP10  1.000    CTRL     0       1.000  0.132   0.602 -0.399       0.675   -0.229   -0.302    -0.207   -0.197      0.033            4           False       False   False
+    SMALL439 TOP10  1.000    CTRL    10       1.000  0.096   0.479 -0.401       0.552   -0.354   -0.423    -0.330   -0.199     -0.003            4           False       False   False
+    SMALL439 TOP10  1.000    CTRL    25       1.000  0.044   0.295 -0.432       0.368   -0.543   -0.606    -0.514   -0.229     -0.055            4           False       False   False
+    SMALL439 TOP10  1.000    G200     0       0.522  0.032   0.267 -0.406       0.210   -0.430   -0.796    -0.672   -0.203     -0.067            4           False       False   False
+    SMALL439 TOP10  1.000    G200    10       0.522  0.002   0.102 -0.492       0.037   -0.598   -0.959    -0.845   -0.289     -0.097            4           False       False   False
+    SMALL439 TOP10  1.000    G200    25       0.522 -0.041  -0.146 -0.695      -0.222   -0.850   -1.203    -1.104   -0.492     -0.140            4           False       False   False
+    SMALL439 TOP10  1.000    VT10     0       0.429  0.057   0.557 -0.157       0.745   -0.379   -0.256    -0.137    0.046     -0.042            3           False       False   False
+    SMALL439 TOP10  1.000    VT10    10       0.429  0.038   0.393 -0.173       0.583   -0.546   -0.416    -0.299    0.029     -0.061            3           False       False   False
+    SMALL439 TOP10  1.000    VT10    25       0.429  0.010   0.146 -0.221       0.339   -0.798   -0.657    -0.543   -0.019     -0.089            4           False       False   False
+    SMALL439 TOP10  1.000    DD10     0       0.751  0.078   0.466 -0.288       0.602   -0.402   -0.412    -0.280   -0.085     -0.021            4           False       False   False
+    SMALL439 TOP10  1.000    DD10    10       0.751  0.047   0.327 -0.314       0.466   -0.548   -0.546    -0.416   -0.112     -0.052            4           False       False   False
+    SMALL439 TOP10  1.000    DD10    25       0.751  0.003   0.117 -0.378       0.263   -0.768   -0.746    -0.619   -0.175     -0.096            4           False       False   False
+    SMALL439 TOP20  0.530    CTRL     0       0.530  0.063   0.566 -0.229       0.583   -0.168   -0.416    -0.299   -0.026     -0.036            4           False       False   False
+    SMALL439 TOP20  0.530    CTRL    10       0.530  0.047   0.446 -0.244       0.460   -0.287   -0.538    -0.422   -0.041     -0.051            4           False       False   False
+    SMALL439 TOP20  0.530    CTRL    25       0.530  0.025   0.265 -0.268       0.275   -0.465   -0.722    -0.607   -0.066     -0.074            4           False       False   False
+    SMALL439 TOP20  0.530    G200     0       0.277  0.022   0.312 -0.251       0.226   -0.339   -0.792    -0.656   -0.048     -0.077            4           False       False   False
+    SMALL439 TOP20  0.530    G200    10       0.277  0.008   0.137 -0.283       0.040   -0.515   -0.967    -0.842   -0.081     -0.091            4           False       False   False
+    SMALL439 TOP20  0.530    G200    25       0.277 -0.013  -0.126 -0.362      -0.238   -0.778   -1.229    -1.120   -0.159     -0.112            4           False       False   False
+    SMALL439 TOP20  0.530    VT10     0       0.458  0.050   0.542 -0.136       0.598   -0.222   -0.436    -0.284    0.066     -0.049            3           False       False   False
+    SMALL439 TOP20  0.530    VT10    10       0.458  0.035   0.395 -0.169       0.447   -0.361   -0.588    -0.435    0.033     -0.064            3           False       False   False
+    SMALL439 TOP20  0.530    VT10    25       0.458  0.013   0.176 -0.236       0.219   -0.571   -0.817    -0.663   -0.033     -0.086            4           False       False   False
+    SMALL439 TOP20  0.530    DD10     0       0.502  0.049   0.485 -0.212       0.499   -0.224   -0.534    -0.383   -0.010     -0.050            4           False       False   False
+    SMALL439 TOP20  0.530    DD10    10       0.502  0.034   0.351 -0.257       0.360   -0.350   -0.675    -0.522   -0.054     -0.065            4           False       False   False
+    SMALL439 TOP20  0.530    DD10    25       0.502  0.011   0.149 -0.319       0.150   -0.539   -0.887    -0.732   -0.117     -0.088            4           False       False   False
+    SMALL439 TOP20  0.750    CTRL     0       0.750  0.085   0.567 -0.313       0.584   -0.166   -0.415    -0.298   -0.111     -0.013            4           False       False   False
+    SMALL439 TOP20  0.750    CTRL    10       0.750  0.063   0.447 -0.334       0.461   -0.285   -0.537    -0.421   -0.132     -0.035            4           False       False   False
+    SMALL439 TOP20  0.750    CTRL    25       0.750  0.031   0.267 -0.365       0.276   -0.463   -0.721    -0.606   -0.162     -0.068            4           False       False   False
+    SMALL439 TOP20  0.750    G200     0       0.392  0.030   0.312 -0.337       0.227   -0.339   -0.792    -0.656   -0.135     -0.069            4           False       False   False
+    SMALL439 TOP20  0.750    G200    10       0.392  0.009   0.137 -0.379       0.041   -0.515   -0.966    -0.841   -0.177     -0.090            4           False       False   False
+    SMALL439 TOP20  0.750    G200    25       0.392 -0.021  -0.125 -0.475      -0.237   -0.778   -1.228    -1.119   -0.273     -0.120            4           False       False   False
+    SMALL439 TOP20  0.750    VT10     0       0.499  0.051   0.518 -0.152       0.622   -0.295   -0.417    -0.260    0.051     -0.048            3           False       False   False
+    SMALL439 TOP20  0.750    VT10    10       0.499  0.033   0.353 -0.180       0.455   -0.459   -0.583    -0.427    0.023     -0.066            3           False       False   False
+    SMALL439 TOP20  0.750    VT10    25       0.499  0.006   0.106 -0.254       0.203   -0.705   -0.832    -0.679   -0.051     -0.093            4           False       False   False
+    SMALL439 TOP20  0.750    DD10     0       0.639  0.045   0.377 -0.332       0.385   -0.305   -0.676    -0.497   -0.130     -0.053            4           False       False   False
+    SMALL439 TOP20  0.750    DD10    10       0.639  0.023   0.232 -0.360       0.234   -0.442   -0.830    -0.648   -0.157     -0.075            4           False       False   False
+    SMALL439 TOP20  0.750    DD10    25       0.639 -0.009   0.014 -0.437       0.008   -0.647   -1.060    -0.874   -0.235     -0.108            4           False       False   False
+    SMALL439 TOP20  1.000    CTRL     0       1.000  0.109   0.568 -0.404       0.585   -0.165   -0.414    -0.297   -0.202      0.010            4           False       False   False
+    SMALL439 TOP20  1.000    CTRL    10       1.000  0.079   0.448 -0.429       0.462   -0.283   -0.536    -0.420   -0.227     -0.020            4           False       False   False
+    SMALL439 TOP20  1.000    CTRL    25       1.000  0.036   0.268 -0.464       0.278   -0.461   -0.719    -0.604   -0.261     -0.063            4           False       False   False
+    SMALL439 TOP20  1.000    G200     0       0.522  0.037   0.313 -0.425       0.227   -0.339   -0.792    -0.655   -0.223     -0.062            4           False       False   False
+    SMALL439 TOP20  1.000    G200    10       0.522  0.009   0.138 -0.474       0.042   -0.514   -0.966    -0.840   -0.272     -0.090            4           False       False   False
+    SMALL439 TOP20  1.000    G200    25       0.522 -0.030  -0.124 -0.582      -0.237   -0.777   -1.228    -1.119   -0.380     -0.129            4           False       False   False
+    SMALL439 TOP20  1.000    VT10     0       0.504  0.052   0.518 -0.152       0.632   -0.300   -0.413    -0.250    0.050     -0.047            3           False       False   False
+    SMALL439 TOP20  1.000    VT10    10       0.504  0.033   0.348 -0.180       0.461   -0.471   -0.582    -0.421    0.022     -0.066            3           False       False   False
+    SMALL439 TOP20  1.000    VT10    25       0.504  0.004   0.093 -0.254       0.204   -0.728   -0.835    -0.678   -0.051     -0.095            4           False       False   False
+    SMALL439 TOP20  1.000    DD10     0       0.777  0.066   0.448 -0.330       0.470   -0.249   -0.606    -0.412   -0.127     -0.033            4           False       False   False
+    SMALL439 TOP20  1.000    DD10    10       0.777  0.039   0.305 -0.353       0.322   -0.385   -0.757    -0.560   -0.151     -0.060            4           False       False   False
+    SMALL439 TOP20  1.000    DD10    25       0.777 -0.000   0.089 -0.436       0.101   -0.591   -0.982    -0.781   -0.234     -0.099            4           False       False   False
+    SMALL439 TOP40  0.530    CTRL     0       0.530  0.053   0.532 -0.233       0.573   -0.337   -0.338    -0.309   -0.031     -0.046            4           False       False   False
+    SMALL439 TOP40  0.530    CTRL    10       0.530  0.040   0.417 -0.237       0.456   -0.453   -0.454    -0.426   -0.035     -0.059            4           False       False   False
+    SMALL439 TOP40  0.530    CTRL    25       0.530  0.021   0.244 -0.259       0.281   -0.628   -0.627    -0.601   -0.056     -0.078            4           False       False   False
+    SMALL439 TOP40  0.530    G200     0       0.277  0.015   0.238 -0.214       0.164   -0.564   -0.710    -0.718   -0.011     -0.084            4           False       False   False
+    SMALL439 TOP40  0.530    G200    10       0.277  0.001   0.056 -0.250      -0.031   -0.748   -0.891    -0.913   -0.047     -0.097            4           False       False   False
+    SMALL439 TOP40  0.530    G200    25       0.277 -0.018  -0.218 -0.348      -0.323   -1.023   -1.163    -1.205   -0.146     -0.117            4           False       False   False
+    SMALL439 TOP40  0.530    VT10     0       0.485  0.045   0.518 -0.143       0.587   -0.385   -0.328    -0.295    0.059     -0.054            3           False       False   False
+    SMALL439 TOP40  0.530    VT10    10       0.485  0.032   0.381 -0.157       0.446   -0.516   -0.470    -0.436    0.045     -0.067            3           False       False   False
+    SMALL439 TOP40  0.530    VT10    25       0.485  0.012   0.176 -0.214       0.235   -0.712   -0.683    -0.647   -0.012     -0.087            4           False       False   False
+    SMALL439 TOP40  0.530    DD10     0       0.509  0.040   0.439 -0.190       0.516   -0.457   -0.412    -0.366    0.013     -0.059            3           False       False   False
+    SMALL439 TOP40  0.530    DD10    10       0.509  0.026   0.306 -0.219       0.385   -0.591   -0.545    -0.498   -0.017     -0.073            4           False       False   False
+    SMALL439 TOP40  0.530    DD10    25       0.509  0.006   0.107 -0.279       0.187   -0.792   -0.744    -0.695   -0.077     -0.093            4           False       False   False
+    SMALL439 TOP40  0.750    CTRL     0       0.750  0.072   0.532 -0.318       0.572   -0.335   -0.339    -0.310   -0.116     -0.027            4           False       False   False
+    SMALL439 TOP40  0.750    CTRL    10       0.750  0.053   0.417 -0.325       0.455   -0.451   -0.455    -0.427   -0.123     -0.046            4           False       False   False
+    SMALL439 TOP40  0.750    CTRL    25       0.750  0.026   0.244 -0.352       0.281   -0.625   -0.628    -0.601   -0.150     -0.073            4           False       False   False
+    SMALL439 TOP40  0.750    G200     0       0.392  0.019   0.238 -0.291       0.164   -0.563   -0.711    -0.718   -0.088     -0.080            4           False       False   False
+    SMALL439 TOP40  0.750    G200    10       0.392  0.000   0.056 -0.336      -0.031   -0.747   -0.892    -0.913   -0.134     -0.098            4           False       False   False
+    SMALL439 TOP40  0.750    G200    25       0.392 -0.027  -0.218 -0.464      -0.323   -1.022   -1.163    -1.205   -0.261     -0.126            4           False       False   False
+    SMALL439 TOP40  0.750    VT10     0       0.556  0.047   0.484 -0.146       0.598   -0.446   -0.335    -0.284    0.057     -0.052            3           False       False   False
+    SMALL439 TOP40  0.750    VT10    10       0.556  0.029   0.324 -0.175       0.436   -0.604   -0.497    -0.446    0.028     -0.070            3           False       False   False
+    SMALL439 TOP40  0.750    VT10    25       0.556  0.003   0.085 -0.242       0.193   -0.841   -0.739    -0.689   -0.040     -0.096            4           False       False   False
+    SMALL439 TOP40  0.750    DD10     0       0.644  0.046   0.411 -0.286       0.416   -0.377   -0.536    -0.466   -0.084     -0.053            4           False       False   False
+    SMALL439 TOP40  0.750    DD10    10       0.644  0.027   0.273 -0.331       0.273   -0.506   -0.682    -0.609   -0.128     -0.071            4           False       False   False
+    SMALL439 TOP40  0.750    DD10    25       0.644  0.000   0.067 -0.393       0.058   -0.700   -0.901    -0.824   -0.191     -0.099            4           False       False   False
+    SMALL439 TOP40  1.000    CTRL     0       1.000  0.091   0.532 -0.406       0.570   -0.333   -0.341    -0.312   -0.204     -0.008            4           False       False   False
+    SMALL439 TOP40  1.000    CTRL    10       1.000  0.066   0.417 -0.418       0.454   -0.449   -0.456    -0.428   -0.216     -0.033            4           False       False   False
+    SMALL439 TOP40  1.000    CTRL    25       1.000  0.029   0.245 -0.449       0.280   -0.623   -0.629    -0.602   -0.246     -0.069            4           False       False   False
+    SMALL439 TOP40  1.000    G200     0       0.522  0.023   0.238 -0.370       0.163   -0.562   -0.712    -0.719   -0.168     -0.076            4           False       False   False
+    SMALL439 TOP40  1.000    G200    10       0.522 -0.002   0.056 -0.424      -0.031   -0.746   -0.892    -0.913   -0.221     -0.101            4           False       False   False
+    SMALL439 TOP40  1.000    G200    25       0.522 -0.038  -0.217 -0.576      -0.323   -1.021   -1.164    -1.205   -0.373     -0.137            4           False       False   False
+    SMALL439 TOP40  1.000    VT10     0       0.573  0.047   0.478 -0.146       0.602   -0.458   -0.334    -0.280    0.056     -0.052            3           False       False   False
+    SMALL439 TOP40  1.000    VT10    10       0.573  0.028   0.308 -0.175       0.432   -0.631   -0.501    -0.450    0.027     -0.071            3           False       False   False
+    SMALL439 TOP40  1.000    VT10    25       0.573 -0.000   0.053 -0.243       0.176   -0.891   -0.751    -0.706   -0.041     -0.099            4           False       False   False
+    SMALL439 TOP40  1.000    DD10     0       0.784  0.057   0.424 -0.333       0.478   -0.440   -0.459    -0.404   -0.131     -0.042            4           False       False   False
+    SMALL439 TOP40  1.000    DD10    10       0.784  0.034   0.288 -0.357       0.342   -0.576   -0.594    -0.540   -0.154     -0.065            4           False       False   False
+    SMALL439 TOP40  1.000    DD10    25       0.784  0.001   0.084 -0.390       0.138   -0.781   -0.797    -0.744   -0.188     -0.098            4           False       False   False
+    SMALL439 EWALL  0.530    CTRL     0       0.530  0.037   0.436 -0.287       0.396   -0.358   -0.492    -0.486   -0.085     -0.061            4           False       False   False
+    SMALL439 EWALL  0.530    CTRL    10       0.530  0.028   0.336 -0.298       0.291   -0.453   -0.599    -0.591   -0.096     -0.071            4           False       False   False
+    SMALL439 EWALL  0.530    CTRL    25       0.530  0.013   0.184 -0.315       0.134   -0.596   -0.758    -0.748   -0.112     -0.086            4           False       False   False
+    SMALL439 EWALL  0.530    G200     0       0.277  0.010   0.204 -0.227      -0.007   -0.511   -0.834    -0.889   -0.024     -0.089            4           False       False   False
+    SMALL439 EWALL  0.530    G200    10       0.277 -0.000   0.025 -0.269      -0.207   -0.683   -1.020    -1.089   -0.067     -0.099            4           False       False   False
+    SMALL439 EWALL  0.530    G200    25       0.277 -0.016  -0.242 -0.349      -0.504   -0.940   -1.299    -1.386   -0.147     -0.115            4           False       False   False
+    SMALL439 EWALL  0.530    VT10     0       0.506  0.034   0.435 -0.213       0.394   -0.366   -0.496    -0.488   -0.010     -0.065            4           False       False   False
+    SMALL439 EWALL  0.530    VT10    10       0.506  0.024   0.321 -0.225       0.272   -0.469   -0.621    -0.610   -0.023     -0.075            4           False       False   False
+    SMALL439 EWALL  0.530    VT10    25       0.506  0.009   0.148 -0.243       0.090   -0.623   -0.810    -0.792   -0.041     -0.090            4           False       False   False
+    SMALL439 EWALL  0.530    DD10     0       0.498  0.023   0.316 -0.223       0.291   -0.480   -0.624    -0.591   -0.021     -0.076            4           False       False   False
+    SMALL439 EWALL  0.530    DD10    10       0.498  0.013   0.191 -0.237       0.163   -0.594   -0.759    -0.719   -0.035     -0.086            4           False       False   False
+    SMALL439 EWALL  0.530    DD10    25       0.498 -0.003   0.004 -0.283      -0.030   -0.766   -0.959    -0.912   -0.081     -0.102            4           False       False   False
+    SMALL439 EWALL  0.750    CTRL     0       0.750  0.051   0.436 -0.386       0.395   -0.357   -0.493    -0.487   -0.184     -0.048            4           False       False   False
+    SMALL439 EWALL  0.750    CTRL    10       0.750  0.037   0.336 -0.400       0.291   -0.451   -0.599    -0.591   -0.198     -0.062            4           False       False   False
+    SMALL439 EWALL  0.750    CTRL    25       0.750  0.016   0.186 -0.420       0.135   -0.593   -0.757    -0.747   -0.217     -0.083            4           False       False   False
+    SMALL439 EWALL  0.750    G200     0       0.392  0.014   0.204 -0.307      -0.008   -0.510   -0.835    -0.890   -0.104     -0.085            4           False       False   False
+    SMALL439 EWALL  0.750    G200    10       0.392 -0.001   0.026 -0.361      -0.207   -0.682   -1.021    -1.089   -0.159     -0.100            4           False       False   False
+    SMALL439 EWALL  0.750    G200    25       0.392 -0.023  -0.241 -0.461      -0.504   -0.938   -1.299    -1.386   -0.259     -0.122            4           False       False   False
+    SMALL439 EWALL  0.750    VT10     0       0.617  0.034   0.382 -0.241       0.353   -0.424   -0.553    -0.529   -0.039     -0.065            4           False       False   False
+    SMALL439 EWALL  0.750    VT10    10       0.617  0.020   0.246 -0.258       0.211   -0.547   -0.701    -0.671   -0.056     -0.079            4           False       False   False
+    SMALL439 EWALL  0.750    VT10    25       0.617 -0.001   0.042 -0.290      -0.003   -0.731   -0.924    -0.885   -0.087     -0.100            4           False       False   False
+    SMALL439 EWALL  0.750    DD10     0       0.623  0.031   0.334 -0.282       0.274   -0.411   -0.653    -0.608   -0.079     -0.068            4           False       False   False
+    SMALL439 EWALL  0.750    DD10    10       0.623  0.017   0.209 -0.315       0.142   -0.519   -0.793    -0.740   -0.113     -0.082            4           False       False   False
+    SMALL439 EWALL  0.750    DD10    25       0.623 -0.003   0.023 -0.375      -0.057   -0.681   -1.001    -0.939   -0.172     -0.102            4           False       False   False
+    SMALL439 EWALL  1.000    CTRL     0       1.000  0.064   0.436 -0.486       0.394   -0.355   -0.495    -0.488   -0.284     -0.035            4           False       False   False
+    SMALL439 EWALL  1.000    CTRL    10       1.000  0.045   0.337 -0.501       0.291   -0.449   -0.599    -0.591   -0.299     -0.054            4           False       False   False
+    SMALL439 EWALL  1.000    CTRL    25       1.000  0.018   0.188 -0.523       0.137   -0.589   -0.756    -0.745   -0.321     -0.081            4           False       False   False
+    SMALL439 EWALL  1.000    G200     0       0.522  0.017   0.204 -0.389      -0.009   -0.510   -0.836    -0.891   -0.187     -0.082            4           False       False   False
+    SMALL439 EWALL  1.000    G200    10       0.522 -0.003   0.026 -0.453      -0.207   -0.680   -1.021    -1.089   -0.251     -0.102            4           False       False   False
+    SMALL439 EWALL  1.000    G200    25       0.522 -0.032  -0.240 -0.568      -0.503   -0.936   -1.298    -1.385   -0.366     -0.131            4           False       False   False
+    SMALL439 EWALL  1.000    VT10     0       0.659  0.033   0.351 -0.275       0.330   -0.461   -0.583    -0.552   -0.073     -0.066            4           False       False   False
+    SMALL439 EWALL  1.000    VT10    10       0.659  0.016   0.199 -0.296       0.174   -0.608   -0.741    -0.708   -0.093     -0.083            4           False       False   False
+    SMALL439 EWALL  1.000    VT10    25       0.659 -0.009  -0.030 -0.355      -0.059   -0.830   -0.977    -0.941   -0.153     -0.108            4           False       False   False
+    SMALL439 EWALL  1.000    DD10     0       0.760  0.048   0.420 -0.336       0.363   -0.363   -0.540    -0.519   -0.134     -0.051            4           False       False   False
+    SMALL439 EWALL  1.000    DD10    10       0.760  0.032   0.308 -0.350       0.245   -0.466   -0.661    -0.637   -0.148     -0.066            4           False       False   False
+    SMALL439 EWALL  1.000    DD10    25       0.760  0.010   0.141 -0.370       0.068   -0.620   -0.842    -0.814   -0.168     -0.089            4           False       False   False
+         U56  TOP5  0.530    CTRL     0       0.524  0.134   1.072 -0.148       1.082    0.182    0.224     0.200    0.055      0.036            0           False        True   False
+         U56  TOP5  0.530    CTRL    10       0.524  0.121   0.974 -0.153       0.989    0.077    0.131     0.107    0.050      0.022            0           False        True   False
+         U56  TOP5  0.530    CTRL    25       0.524  0.100   0.827 -0.165       0.848   -0.081   -0.008    -0.034    0.037      0.001            3           False       False   False
+         U56  TOP5  0.530    G200     0       0.449  0.120   1.051 -0.145       0.973    0.270    0.115     0.091    0.057      0.021            0           False        True   False
+         U56  TOP5  0.530    G200    10       0.449  0.105   0.933 -0.159       0.866    0.137    0.008    -0.016    0.043      0.006            1           False       False   False
+         U56  TOP5  0.530    G200    25       0.449  0.083   0.755 -0.180       0.704   -0.065   -0.153    -0.178    0.022     -0.016            3           False       False   False
+         U56  TOP5  0.530    VT10     0       0.441  0.104   1.036 -0.132       1.014    0.151    0.173     0.132    0.071      0.005            0           False        True   False
+         U56  TOP5  0.530    VT10    10       0.441  0.090   0.911 -0.140       0.891    0.024    0.050     0.009    0.062     -0.009            0            True       False   False
+         U56  TOP5  0.530    VT10    25       0.441  0.070   0.723 -0.155       0.705   -0.167   -0.135    -0.177    0.047     -0.029            3           False       False   False
+         U56  TOP5  0.530    DD10     0       0.508  0.126   1.030 -0.149       1.020    0.177    0.148     0.138    0.054      0.027            0           False        True   False
+         U56  TOP5  0.530    DD10    10       0.508  0.112   0.927 -0.158       0.920    0.071    0.047     0.038    0.044      0.013            0           False        True   False
+         U56  TOP5  0.530    DD10    25       0.508  0.091   0.772 -0.173       0.769   -0.088   -0.105    -0.113    0.029     -0.008            3           False       False   False
+         U56  TOP5  0.750    CTRL     0       0.741  0.190   1.074 -0.203       1.085    0.184    0.226     0.203   -0.001      0.092            1           False       False   False
+         U56  TOP5  0.750    CTRL    10       0.741  0.170   0.977 -0.211       0.992    0.079    0.134     0.110   -0.009      0.071            1           False       False   False
+         U56  TOP5  0.750    CTRL    25       0.741  0.140   0.830 -0.227       0.852   -0.078   -0.005    -0.030   -0.025      0.041            4           False       False   False
+         U56  TOP5  0.750    G200     0       0.634  0.169   1.054 -0.202       0.976    0.274    0.118     0.094    0.001      0.071            0           False        True   False
+         U56  TOP5  0.750    G200    10       0.634  0.147   0.936 -0.220       0.869    0.140    0.011    -0.013   -0.018      0.048            2           False       False   False
+         U56  TOP5  0.750    G200    25       0.634  0.115   0.758 -0.247       0.707   -0.061   -0.150    -0.175   -0.045      0.016            4           False       False   False
+         U56  TOP5  0.750    VT10     0       0.491  0.114   1.042 -0.141       0.991    0.193    0.142     0.109    0.061      0.015            0           False        True   False
+         U56  TOP5  0.750    VT10    10       0.491  0.097   0.899 -0.154       0.852    0.044    0.006    -0.030    0.048     -0.002            1           False       False   False
+         U56  TOP5  0.750    VT10    25       0.491  0.071   0.684 -0.173       0.644   -0.180   -0.200    -0.238    0.029     -0.028            3           False       False   False
+         U56  TOP5  0.750    DD10     0       0.684  0.155   0.952 -0.179       0.998    0.041    0.118     0.116    0.023      0.056            0           False        True   False
+         U56  TOP5  0.750    DD10    10       0.684  0.135   0.843 -0.181       0.894   -0.073    0.012     0.012    0.021      0.036            1           False       False   False
+         U56  TOP5  0.750    DD10    25       0.684  0.104   0.680 -0.187       0.737   -0.243   -0.146    -0.145    0.015      0.005            3           False       False   False
+         U56  TOP5  1.000    CTRL     0       0.988  0.254   1.077 -0.264       1.089    0.186    0.229     0.207   -0.061      0.155            1           False       False   False
+         U56  TOP5  1.000    CTRL    10       0.988  0.225   0.979 -0.274       0.996    0.081    0.137     0.114   -0.072      0.126            1           False       False   False
+         U56  TOP5  1.000    CTRL    25       0.988  0.184   0.833 -0.294       0.856   -0.076   -0.002    -0.026   -0.092      0.085            4           False       False   False
+         U56  TOP5  1.000    G200     0       0.845  0.226   1.057 -0.263       0.980    0.277    0.121     0.098   -0.061      0.127            1           False       False   False
+         U56  TOP5  1.000    G200    10       0.845  0.195   0.939 -0.286       0.872    0.143    0.014    -0.010   -0.083      0.096            2           False       False   False
+         U56  TOP5  1.000    G200    25       0.845  0.150   0.761 -0.319       0.710   -0.058   -0.148    -0.172   -0.117      0.052            4           False       False   False
+         U56  TOP5  1.000    VT10     0       0.506  0.117   1.049 -0.142       0.996    0.205    0.144     0.114    0.061      0.018            0           False        True   False
+         U56  TOP5  1.000    VT10    10       0.506  0.099   0.899 -0.155       0.852    0.046    0.002    -0.030    0.048     -0.000            1           False       False   False
+         U56  TOP5  1.000    VT10    25       0.506  0.071   0.673 -0.174       0.635   -0.192   -0.211    -0.247    0.028     -0.027            3           False       False   False
+         U56  TOP5  1.000    DD10     0       0.859  0.193   0.951 -0.207       0.989    0.022    0.132     0.107   -0.005      0.094            1           False       False   False
+         U56  TOP5  1.000    DD10    10       0.859  0.164   0.833 -0.213       0.878   -0.105    0.021    -0.004   -0.011      0.065            3           False       False   False
+         U56  TOP5  1.000    DD10    25       0.859  0.122   0.656 -0.228       0.712   -0.296   -0.145    -0.170   -0.026      0.023            4           False       False   False
+         U56 TOP10  0.530    CTRL     0       0.527  0.105   1.059 -0.125       1.078    0.178    0.204     0.196    0.077      0.006            0           False        True   False
+         U56 TOP10  0.530    CTRL    10       0.527  0.094   0.960 -0.126       0.983    0.074    0.108     0.101    0.077     -0.004            0            True       False   False
+         U56 TOP10  0.530    CTRL    25       0.527  0.078   0.811 -0.126       0.839   -0.083   -0.036    -0.043    0.076     -0.020            3           False       False   False
+         U56 TOP10  0.530    G200     0       0.450  0.092   1.033 -0.112       0.998    0.223    0.119     0.116    0.090     -0.007            0            True       False   False
+         U56 TOP10  0.530    G200    10       0.450  0.080   0.905 -0.124       0.883    0.078    0.003     0.001    0.078     -0.019            0            True       False   False
+         U56 TOP10  0.530    G200    25       0.450  0.061   0.711 -0.141       0.709   -0.140   -0.172    -0.173    0.061     -0.038            3           False       False   False
+         U56 TOP10  0.530    VT10     0       0.489  0.093   1.053 -0.105       1.084    0.150    0.209     0.202    0.098     -0.006            0            True       False   False
+         U56 TOP10  0.530    VT10    10       0.489  0.082   0.937 -0.108       0.967    0.035    0.091     0.085    0.094     -0.017            0            True       False   False
+         U56 TOP10  0.530    VT10    25       0.489  0.065   0.761 -0.118       0.791   -0.137   -0.087    -0.091    0.084     -0.033            3           False       False   False
+         U56 TOP10  0.530    DD10     0       0.526  0.103   1.044 -0.125       1.056    0.178    0.176     0.174    0.077      0.004            0           False        True   False
+         U56 TOP10  0.530    DD10    10       0.526  0.092   0.944 -0.126       0.958    0.074    0.078     0.076    0.077     -0.007            0            True       False   False
+         U56 TOP10  0.530    DD10    25       0.526  0.076   0.793 -0.126       0.811   -0.083   -0.070    -0.071    0.076     -0.023            3           False       False   False
+         U56 TOP10  0.750    CTRL     0       0.745  0.149   1.060 -0.175       1.080    0.179    0.205     0.198    0.028      0.050            0           False        True   False
+         U56 TOP10  0.750    CTRL    10       0.745  0.133   0.961 -0.175       0.985    0.076    0.109     0.103    0.027      0.034            0           False        True   False
+         U56 TOP10  0.750    CTRL    25       0.745  0.110   0.813 -0.176       0.841   -0.080   -0.035    -0.041    0.026      0.011            3           False       False   False
+         U56 TOP10  0.750    G200     0       0.637  0.130   1.035 -0.157       1.000    0.225    0.120     0.118    0.045      0.031            0           False        True   False
+         U56 TOP10  0.750    G200    10       0.637  0.112   0.906 -0.172       0.885    0.080    0.004     0.003    0.030      0.013            0           False        True   False
+         U56 TOP10  0.750    G200    25       0.637  0.085   0.713 -0.196       0.711   -0.138   -0.170    -0.171    0.007     -0.014            3           False       False   False
+         U56 TOP10  0.750    VT10     0       0.588  0.109   1.053 -0.117       1.080    0.124    0.232     0.198    0.085      0.010            0           False        True   False
+         U56 TOP10  0.750    VT10    10       0.588  0.093   0.912 -0.123       0.941   -0.018    0.092     0.059    0.080     -0.006            1           False       False   False
+         U56 TOP10  0.750    VT10    25       0.588  0.069   0.699 -0.142       0.730   -0.232   -0.120    -0.152    0.061     -0.030            3           False       False   False
+         U56 TOP10  0.750    DD10     0       0.718  0.127   0.950 -0.177       0.968    0.097    0.068     0.086    0.026      0.028            0           False        True   False
+         U56 TOP10  0.750    DD10    10       0.718  0.110   0.838 -0.179       0.860   -0.016   -0.044    -0.022    0.024      0.011            3           False       False   False
+         U56 TOP10  0.750    DD10    25       0.718  0.085   0.670 -0.211       0.697   -0.187   -0.212    -0.185   -0.009     -0.014            4           False       False   False
+         U56 TOP10  1.000    CTRL     0       0.993  0.199   1.061 -0.229       1.081    0.181    0.206     0.199   -0.027      0.100            1           False       False   False
+         U56 TOP10  1.000    CTRL    10       0.993  0.177   0.963 -0.230       0.986    0.078    0.110     0.104   -0.028      0.078            1           False       False   False
+         U56 TOP10  1.000    CTRL    25       0.993  0.145   0.815 -0.231       0.843   -0.078   -0.033    -0.039   -0.029      0.046            4           False       False   False
+         U56 TOP10  1.000    G200     0       0.849  0.173   1.036 -0.206       1.001    0.227    0.122     0.119   -0.004      0.074            1           False       False   False
+         U56 TOP10  1.000    G200    10       0.849  0.148   0.908 -0.225       0.886    0.083    0.006     0.004   -0.023      0.049            1           False       False   False
+         U56 TOP10  1.000    G200    25       0.849  0.112   0.715 -0.254       0.713   -0.135   -0.169    -0.169   -0.052      0.013            4           False       False   False
+         U56 TOP10  1.000    VT10     0       0.627  0.115   1.056 -0.119       1.060    0.145    0.219     0.178    0.084      0.016            0           False        True   False
+         U56 TOP10  1.000    VT10    10       0.627  0.096   0.898 -0.126       0.906   -0.018    0.066     0.024    0.077     -0.003            1           False       False   False
+         U56 TOP10  1.000    VT10    25       0.627  0.068   0.661 -0.144       0.675   -0.262   -0.163    -0.207    0.058     -0.031            3           False       False   False
+         U56 TOP10  1.000    DD10     0       0.897  0.157   0.939 -0.192       0.940    0.096    0.045     0.058    0.010      0.058            0           False        True   False
+         U56 TOP10  1.000    DD10    10       0.897  0.132   0.815 -0.200       0.817   -0.024   -0.083    -0.065    0.002      0.033            3           False       False   False
+         U56 TOP10  1.000    DD10    25       0.897  0.097   0.628 -0.239       0.633   -0.206   -0.274    -0.249   -0.036     -0.002            4           False       False   False
+         U56 TOP20  0.530    CTRL     0       0.528  0.099   1.172 -0.131       1.221    0.286    0.322     0.339    0.072     -0.000            0            True       False   False
+         U56 TOP20  0.530    CTRL    10       0.528  0.090   1.082 -0.131       1.134    0.193    0.232     0.252    0.071     -0.009            0            True       False   False
+         U56 TOP20  0.530    CTRL    25       0.528  0.078   0.946 -0.132       1.004    0.054    0.098     0.122    0.070     -0.021            0            True       False   False
+         U56 TOP20  0.530    G200     0       0.452  0.086   1.164 -0.106       1.215    0.267    0.320     0.333    0.096     -0.013            0            True       False   False
+         U56 TOP20  0.530    G200    10       0.452  0.077   1.041 -0.112       1.107    0.132    0.207     0.225    0.091     -0.022            0            True       False   False
+         U56 TOP20  0.530    G200    25       0.452  0.062   0.856 -0.121       0.943   -0.071    0.036     0.061    0.081     -0.037            1           False       False   False
+         U56 TOP20  0.530    VT10     0       0.512  0.094   1.193 -0.107       1.254    0.282    0.358     0.372    0.096     -0.005            0            True       False   False
+         U56 TOP20  0.530    VT10    10       0.512  0.086   1.092 -0.111       1.155    0.184    0.255     0.273    0.091     -0.013            0            True       False   False
+         U56 TOP20  0.530    VT10    25       0.512  0.073   0.941 -0.119       1.005    0.037    0.099     0.123    0.084     -0.026            0            True       False   False
+         U56 TOP20  0.530    DD10     0       0.527  0.096   1.153 -0.131       1.192    0.286    0.287     0.310    0.072     -0.003            0            True       False   False
+         U56 TOP20  0.530    DD10    10       0.527  0.088   1.062 -0.131       1.104    0.193    0.195     0.222    0.071     -0.011            0            True       False   False
+         U56 TOP20  0.530    DD10    25       0.527  0.076   0.924 -0.132       0.971    0.054    0.057     0.089    0.070     -0.023            0            True       False   False
+         U56 TOP20  0.750    CTRL     0       0.747  0.140   1.172 -0.182       1.221    0.286    0.322     0.339    0.020      0.041            0           False        True   False
+         U56 TOP20  0.750    CTRL    10       0.747  0.128   1.082 -0.183       1.135    0.194    0.233     0.253    0.019      0.029            0           False        True   False
+         U56 TOP20  0.750    CTRL    25       0.747  0.110   0.947 -0.184       1.005    0.055    0.099     0.123    0.018      0.011            0           False        True   False
+         U56 TOP20  0.750    G200     0       0.639  0.123   1.165 -0.147       1.216    0.267    0.321     0.334    0.055      0.024            0           False        True   False
+         U56 TOP20  0.750    G200    10       0.639  0.108   1.042 -0.155       1.108    0.133    0.208     0.226    0.047      0.010            0           False        True   False
+         U56 TOP20  0.750    G200    25       0.639  0.087   0.858 -0.168       0.944   -0.070    0.037     0.062    0.034     -0.011            1           False       False   False
+         U56 TOP20  0.750    VT10     0       0.651  0.118   1.202 -0.126       1.282    0.275    0.380     0.400    0.077      0.019            0           False        True   False
+         U56 TOP20  0.750    VT10    10       0.651  0.105   1.079 -0.132       1.160    0.156    0.252     0.278    0.071      0.006            0           False        True   False
+         U56 TOP20  0.750    VT10    25       0.651  0.085   0.894 -0.141       0.977   -0.022    0.061     0.095    0.061     -0.014            1           False       False   False
+         U56 TOP20  0.750    DD10     0       0.732  0.131   1.131 -0.163       1.162    0.278    0.247     0.280    0.040      0.032            0           False        True   False
+         U56 TOP20  0.750    DD10    10       0.732  0.118   1.033 -0.164       1.067    0.183    0.147     0.185    0.038      0.019            0           False        True   False
+         U56 TOP20  0.750    DD10    25       0.732  0.099   0.887 -0.182       0.923    0.041   -0.005     0.041    0.021      0.001            1           False       False   False
+         U56 TOP20  1.000    CTRL     0       0.996  0.187   1.173 -0.239       1.221    0.287    0.322     0.339   -0.036      0.088            1           False       False   False
+         U56 TOP20  1.000    CTRL    10       0.996  0.171   1.083 -0.240       1.136    0.195    0.233     0.254   -0.037      0.072            1           False       False   False
+         U56 TOP20  1.000    CTRL    25       0.996  0.146   0.948 -0.241       1.006    0.056    0.099     0.124   -0.039      0.047            1           False       False   False
+         U56 TOP20  1.000    G200     0       0.852  0.164   1.166 -0.193       1.217    0.268    0.322     0.335    0.009      0.065            0           False        True   False
+         U56 TOP20  1.000    G200    10       0.852  0.144   1.043 -0.203       1.108    0.134    0.209     0.226   -0.001      0.046            1           False       False   False
+         U56 TOP20  1.000    G200    25       0.852  0.116   0.859 -0.219       0.945   -0.069    0.038     0.063   -0.017      0.017            2           False       False   False
+         U56 TOP20  1.000    VT10     0       0.727  0.129   1.195 -0.135       1.269    0.278    0.364     0.386    0.067      0.030            0           False        True   False
+         U56 TOP20  1.000    VT10    10       0.727  0.111   1.050 -0.142       1.128    0.131    0.219     0.246    0.060      0.012            0           False        True   False
+         U56 TOP20  1.000    VT10    25       0.727  0.086   0.832 -0.152       0.916   -0.088    0.002     0.034    0.050     -0.013            1           False       False   False
+         U56 TOP20  1.000    DD10     0       0.932  0.164   1.116 -0.194       1.184    0.194    0.291     0.302    0.009      0.065            0           False        True   False
+         U56 TOP20  1.000    DD10    10       0.932  0.146   1.011 -0.195       1.082    0.090    0.184     0.200    0.007      0.047            0           False        True   False
+         U56 TOP20  1.000    DD10    25       0.932  0.120   0.852 -0.213       0.927   -0.067    0.022     0.045   -0.011      0.021            2           False       False   False
+         U56 TOP40  0.530    CTRL     0       0.530  0.079   1.125 -0.118       1.227    0.139    0.354     0.345    0.084     -0.019            0            True       False   False
+         U56 TOP40  0.530    CTRL    10       0.530  0.073   1.041 -0.119       1.145    0.057    0.269     0.263    0.083     -0.026            0            True       False   False
+         U56 TOP40  0.530    CTRL    25       0.530  0.064   0.915 -0.120       1.022   -0.066    0.140     0.140    0.082     -0.035            1           False       False   False
+         U56 TOP40  0.530    G200     0       0.453  0.068   1.141 -0.095       1.269    0.118    0.405     0.387    0.107     -0.031            0            True       False   False
+         U56 TOP40  0.530    G200    10       0.453  0.060   1.020 -0.101       1.161   -0.012    0.291     0.279    0.102     -0.038            1           False       False   False
+         U56 TOP40  0.530    G200    25       0.453  0.049   0.837 -0.109       0.998   -0.207    0.120     0.116    0.093     -0.050            1           False       False   False
+         U56 TOP40  0.530    VT10     0       0.521  0.078   1.141 -0.106       1.256    0.129    0.393     0.374    0.096     -0.021            0            True       False   False
+         U56 TOP40  0.530    VT10    10       0.521  0.071   1.051 -0.111       1.168    0.043    0.301     0.286    0.091     -0.028            0            True       False   False
+         U56 TOP40  0.530    VT10    25       0.521  0.062   0.918 -0.118       1.035   -0.086    0.162     0.153    0.084     -0.037            1           False       False   False
+         U56 TOP40  0.530    DD10     0       0.529  0.077   1.100 -0.118       1.189    0.139    0.308     0.307    0.084     -0.022            0            True       False   False
+         U56 TOP40  0.530    DD10    10       0.529  0.071   1.014 -0.121       1.103    0.057    0.218     0.221    0.081     -0.028            0            True       False   False
+         U56 TOP40  0.530    DD10    25       0.529  0.061   0.884 -0.126       0.974   -0.066    0.081     0.092    0.077     -0.038            1           False       False   False
+         U56 TOP40  0.750    CTRL     0       0.749  0.113   1.124 -0.165       1.226    0.139    0.354     0.344    0.037      0.014            0           False        True   False
+         U56 TOP40  0.750    CTRL    10       0.749  0.104   1.041 -0.166       1.145    0.058    0.268     0.263    0.036      0.005            0           False        True   False
+         U56 TOP40  0.750    CTRL    25       0.749  0.090   0.916 -0.168       1.022   -0.064    0.140     0.140    0.035     -0.009            1           False       False   False
+         U56 TOP40  0.750    G200     0       0.641  0.097   1.141 -0.133       1.268    0.119    0.405     0.386    0.069     -0.002            0            True       False   False
+         U56 TOP40  0.750    G200    10       0.641  0.085   1.020 -0.140       1.161   -0.010    0.292     0.279    0.062     -0.013            1           False       False   False
+         U56 TOP40  0.750    G200    25       0.641  0.069   0.838 -0.151       0.999   -0.205    0.121     0.117    0.051     -0.030            1           False       False   False
+         U56 TOP40  0.750    VT10     0       0.698  0.103   1.162 -0.125       1.301    0.143    0.423     0.419    0.078      0.004            0           False        True   False
+         U56 TOP40  0.750    VT10    10       0.698  0.093   1.059 -0.131       1.196    0.047    0.313     0.314    0.071     -0.006            0            True       False   False
+         U56 TOP40  0.750    VT10    25       0.698  0.078   0.903 -0.142       1.039   -0.097    0.147     0.157    0.060     -0.021            1           False       False   False
+         U56 TOP40  0.750    DD10     0       0.740  0.107   1.102 -0.149       1.197    0.134    0.316     0.315    0.053      0.008            0           False        True   False
+         U56 TOP40  0.750    DD10    10       0.740  0.098   1.012 -0.157       1.106    0.052    0.219     0.224    0.045     -0.001            0            True       False   False
+         U56 TOP40  0.750    DD10    25       0.740  0.084   0.877 -0.170       0.970   -0.071    0.074     0.088    0.032     -0.015            1           False       False   False
+         U56 TOP40  1.000    CTRL     0       0.999  0.151   1.124 -0.217       1.225    0.139    0.353     0.343   -0.015      0.052            1           False       False   False
+         U56 TOP40  1.000    CTRL    10       0.999  0.138   1.041 -0.218       1.144    0.058    0.268     0.262   -0.016      0.039            1           False       False   False
+         U56 TOP40  1.000    CTRL    25       0.999  0.120   0.917 -0.220       1.023   -0.063    0.141     0.141   -0.018      0.021            2           False       False   False
+         U56 TOP40  1.000    G200     0       0.855  0.129   1.141 -0.175       1.268    0.119    0.405     0.386    0.028      0.030            0           False        True   False
+         U56 TOP40  1.000    G200    10       0.855  0.114   1.021 -0.184       1.161   -0.009    0.292     0.279    0.018      0.015            1           False       False   False
+         U56 TOP40  1.000    G200    25       0.855  0.092   0.839 -0.197       0.999   -0.203    0.121     0.117    0.005     -0.007            1           False       False   False
+         U56 TOP40  1.000    VT10     0       0.822  0.119   1.170 -0.135       1.335    0.163    0.424     0.453    0.067      0.020            0           False        True   False
+         U56 TOP40  1.000    VT10    10       0.822  0.105   1.044 -0.142       1.211    0.043    0.292     0.329    0.061      0.006            0           False        True   False
+         U56 TOP40  1.000    VT10    25       0.822  0.084   0.855 -0.160       1.024   -0.136    0.093     0.142    0.042     -0.015            1           False       False   False
+         U56 TOP40  1.000    DD10     0       0.955  0.130   1.048 -0.200       1.181    0.046    0.294     0.299    0.002      0.031            0           False        True   False
+         U56 TOP40  1.000    DD10    10       0.955  0.116   0.949 -0.203       1.087   -0.051    0.194     0.205   -0.001      0.018            2           False       False   False
+         U56 TOP40  1.000    DD10    25       0.955  0.096   0.801 -0.218       0.946   -0.196    0.043     0.064   -0.015     -0.003            2           False       False   False
+         U56 EWALL  0.530    CTRL     0       0.530  0.077   1.114 -0.112       1.206    0.129    0.344     0.324    0.090     -0.022            0            True       False   False
+         U56 EWALL  0.530    CTRL    10       0.530  0.071   1.029 -0.113       1.123    0.047    0.256     0.241    0.089     -0.028            0            True       False   False
+         U56 EWALL  0.530    CTRL    25       0.530  0.061   0.902 -0.115       0.997   -0.077    0.124     0.115    0.087     -0.038            1           False       False   False
+         U56 EWALL  0.530    G200     0       0.454  0.065   1.135 -0.090       1.254    0.109    0.405     0.372    0.113     -0.034            0            True       False   False
+         U56 EWALL  0.530    G200    10       0.454  0.058   1.010 -0.095       1.143   -0.023    0.286     0.261    0.107     -0.041            1           False       False   False
+         U56 EWALL  0.530    G200    25       0.454  0.047   0.822 -0.109       0.974   -0.220    0.108     0.092    0.093     -0.052            1           False       False   False
+         U56 EWALL  0.530    VT10     0       0.522  0.075   1.132 -0.106       1.238    0.119    0.387     0.356    0.096     -0.024            0            True       False   False
+         U56 EWALL  0.530    VT10    10       0.522  0.069   1.042 -0.111       1.148    0.033    0.293     0.266    0.091     -0.030            0            True       False   False
+         U56 EWALL  0.530    VT10    25       0.522  0.059   0.906 -0.118       1.013   -0.097    0.152     0.131    0.084     -0.040            1           False       False   False
+         U56 EWALL  0.530    DD10     0       0.530  0.075   1.095 -0.112       1.177    0.129    0.308     0.295    0.090     -0.024            0            True       False   False
+         U56 EWALL  0.530    DD10    10       0.530  0.069   1.008 -0.115       1.090    0.047    0.216     0.208    0.087     -0.030            0            True       False   False
+         U56 EWALL  0.530    DD10    25       0.530  0.059   0.877 -0.122       0.959   -0.077    0.079     0.077    0.080     -0.040            1           False       False   False
+         U56 EWALL  0.750    CTRL     0       0.750  0.109   1.114 -0.157       1.206    0.129    0.343     0.324    0.045      0.010            0           False        True   False
+         U56 EWALL  0.750    CTRL    10       0.750  0.100   1.030 -0.158       1.123    0.047    0.256     0.241    0.044      0.001            0           False        True   False
+         U56 EWALL  0.750    CTRL    25       0.750  0.087   0.903 -0.160       0.998   -0.075    0.125     0.116    0.042     -0.012            1           False       False   False
+         U56 EWALL  0.750    G200     0       0.642  0.093   1.135 -0.125       1.254    0.109    0.405     0.372    0.077     -0.006            0            True       False   False
+         U56 EWALL  0.750    G200    10       0.642  0.082   1.011 -0.132       1.143   -0.021    0.287     0.261    0.070     -0.017            1           False       False   False
+         U56 EWALL  0.750    G200    25       0.642  0.066   0.824 -0.151       0.975   -0.218    0.109     0.093    0.051     -0.033            1           False       False   False
+         U56 EWALL  0.750    VT10     0       0.703  0.099   1.148 -0.125       1.272    0.135    0.404     0.390    0.078      0.001            0           False        True   False
+         U56 EWALL  0.750    VT10    10       0.703  0.090   1.044 -0.131       1.167    0.039    0.294     0.285    0.071     -0.009            0            True       False   False
+         U56 EWALL  0.750    VT10    25       0.703  0.075   0.890 -0.141       1.010   -0.105    0.129     0.128    0.062     -0.023            1           False       False   False
+         U56 EWALL  0.750    DD10     0       0.742  0.105   1.107 -0.148       1.201    0.124    0.336     0.319    0.055      0.006            0           False        True   False
+         U56 EWALL  0.750    DD10    10       0.742  0.096   1.018 -0.157       1.110    0.042    0.239     0.228    0.045     -0.003            0            True       False   False
+         U56 EWALL  0.750    DD10    25       0.742  0.082   0.883 -0.170       0.974   -0.082    0.094     0.092    0.032     -0.017            1           False       False   False
+         U56 EWALL  1.000    CTRL     0       1.000  0.145   1.114 -0.207       1.205    0.129    0.342     0.323   -0.005      0.047            1           False       False   False
+         U56 EWALL  1.000    CTRL    10       1.000  0.133   1.030 -0.208       1.123    0.048    0.256     0.241   -0.006      0.034            1           False       False   False
+         U56 EWALL  1.000    CTRL    25       1.000  0.115   0.905 -0.210       0.999   -0.073    0.127     0.117   -0.008      0.016            2           False       False   False
+         U56 EWALL  1.000    G200     0       0.856  0.124   1.136 -0.164       1.254    0.110    0.405     0.372    0.038      0.025            0           False        True   False
+         U56 EWALL  1.000    G200    10       0.856  0.109   1.012 -0.174       1.144   -0.020    0.288     0.262    0.029      0.010            1           False       False   False
+         U56 EWALL  1.000    G200    25       0.856  0.087   0.826 -0.197       0.977   -0.216    0.111     0.095    0.005     -0.012            1           False       False   False
+         U56 EWALL  1.000    VT10     0       0.835  0.116   1.163 -0.135       1.319    0.153    0.421     0.437    0.067      0.018            0           False        True   False
+         U56 EWALL  1.000    VT10    10       0.835  0.103   1.039 -0.142       1.197    0.035    0.290     0.315    0.061      0.004            0           False        True   False
+         U56 EWALL  1.000    VT10    25       0.835  0.083   0.853 -0.159       1.012   -0.142    0.094     0.130    0.043     -0.016            1           False       False   False
+         U56 EWALL  1.000    DD10     0       0.957  0.126   1.045 -0.182       1.175    0.032    0.303     0.293    0.021      0.028            0           False        True   False
+         U56 EWALL  1.000    DD10    10       0.957  0.113   0.944 -0.188       1.079   -0.066    0.200     0.197    0.014      0.014            1           False       False   False
+         U56 EWALL  1.000    DD10    25       0.957  0.093   0.793 -0.217       0.936   -0.213    0.045     0.054   -0.015     -0.006            2           False       False   False
+        B136  TOP5  0.530    CTRL     0       0.527  0.129   0.947 -0.166       0.911    0.103    0.064     0.029    0.036      0.030            0           False        True   False
+        B136  TOP5  0.530    CTRL    10       0.527  0.112   0.837 -0.170       0.806   -0.016   -0.041    -0.076    0.032      0.013            3           False       False   False
+        B136  TOP5  0.530    CTRL    25       0.527  0.087   0.671 -0.177       0.649   -0.194   -0.199    -0.233    0.026     -0.012            3           False       False   False
+        B136  TOP5  0.530    G200     0       0.462  0.120   0.959 -0.170       0.934    0.062    0.114     0.052    0.032      0.021            0           False        True   False
+        B136  TOP5  0.530    G200    10       0.462  0.103   0.835 -0.173       0.818   -0.071   -0.003    -0.064    0.029      0.004            3           False       False   False
+        B136  TOP5  0.530    G200    25       0.462  0.077   0.650 -0.178       0.643   -0.271   -0.178    -0.239    0.024     -0.022            3           False       False   False
+        B136  TOP5  0.530    VT10     0       0.420  0.093   0.911 -0.135       0.853    0.062    0.013    -0.029    0.068     -0.006            1           False       False   False
+        B136  TOP5  0.530    VT10    10       0.420  0.077   0.770 -0.139       0.716   -0.083   -0.124    -0.166    0.063     -0.021            3           False       False   False
+        B136  TOP5  0.530    VT10    25       0.420  0.054   0.558 -0.150       0.510   -0.300   -0.331    -0.372    0.052     -0.045            3           False       False   False
+        B136  TOP5  0.530    DD10     0       0.500  0.113   0.875 -0.164       0.811    0.085   -0.057    -0.071    0.038      0.014            2           False       False   False
+        B136  TOP5  0.530    DD10    10       0.500  0.096   0.758 -0.181       0.697   -0.034   -0.173    -0.185    0.021     -0.003            3           False       False   False
+        B136  TOP5  0.530    DD10    25       0.500  0.071   0.583 -0.206       0.525   -0.213   -0.348    -0.357   -0.004     -0.028            4           False       False   False
+        B136  TOP5  0.750    CTRL     0       0.745  0.182   0.951 -0.228       0.916    0.106    0.069     0.034   -0.026      0.083            1           False       False   False
+        B136  TOP5  0.750    CTRL    10       0.745  0.157   0.841 -0.234       0.812   -0.013   -0.035    -0.070   -0.031      0.058            4           False       False   False
+        B136  TOP5  0.750    CTRL    25       0.745  0.120   0.676 -0.242       0.655   -0.191   -0.192    -0.227   -0.040      0.021            4           False       False   False
+        B136  TOP5  0.750    G200     0       0.653  0.169   0.963 -0.234       0.940    0.065    0.120     0.058   -0.031      0.070            1           False       False   False
+        B136  TOP5  0.750    G200    10       0.653  0.144   0.840 -0.238       0.824   -0.068    0.004    -0.058   -0.035      0.045            3           False       False   False
+        B136  TOP5  0.750    G200    25       0.653  0.107   0.655 -0.244       0.650   -0.267   -0.172    -0.232   -0.042      0.008            4           False       False   False
+        B136  TOP5  0.750    VT10     0       0.453  0.094   0.866 -0.143       0.758    0.075   -0.090    -0.124    0.060     -0.005            2           False       False   False
+        B136  TOP5  0.750    VT10    10       0.453  0.075   0.710 -0.156       0.608   -0.088   -0.240    -0.274    0.046     -0.024            3           False       False   False
+        B136  TOP5  0.750    VT10    25       0.453  0.048   0.475 -0.177       0.382   -0.332   -0.464    -0.500    0.026     -0.051            3           False       False   False
+        B136  TOP5  0.750    DD10     0       0.665  0.143   0.838 -0.206       0.814   -0.012   -0.048    -0.068   -0.003      0.044            4           False       False   False
+        B136  TOP5  0.750    DD10    10       0.665  0.118   0.717 -0.219       0.700   -0.140   -0.163    -0.182   -0.017      0.019            4           False       False   False
+        B136  TOP5  0.750    DD10    25       0.665  0.083   0.536 -0.254       0.529   -0.334   -0.337    -0.353   -0.052     -0.016            4           False       False   False
+        B136  TOP5  1.000    CTRL     0       0.993  0.240   0.956 -0.294       0.923    0.108    0.076     0.041   -0.092      0.141            1           False       False   False
+        B136  TOP5  1.000    CTRL    10       0.993  0.205   0.846 -0.301       0.819   -0.010   -0.029    -0.063   -0.099      0.106            4           False       False   False
+        B136  TOP5  1.000    CTRL    25       0.993  0.155   0.681 -0.311       0.662   -0.188   -0.186    -0.220   -0.109      0.056            4           False       False   False
+        B136  TOP5  1.000    G200     0       0.870  0.225   0.969 -0.301       0.947    0.068    0.127     0.065   -0.098      0.126            1           False       False   False
+        B136  TOP5  1.000    G200    10       0.870  0.189   0.845 -0.306       0.831   -0.065    0.011    -0.051   -0.104      0.090            3           False       False   False
+        B136  TOP5  1.000    G200    25       0.870  0.138   0.660 -0.314       0.656   -0.264   -0.165    -0.226   -0.111      0.039            4           False       False   False
+        B136  TOP5  1.000    VT10     0       0.461  0.096   0.871 -0.148       0.760    0.089   -0.096    -0.122    0.054     -0.003            2           False       False   False
+        B136  TOP5  1.000    VT10    10       0.461  0.076   0.708 -0.163       0.605   -0.082   -0.251    -0.277    0.040     -0.023            3           False       False   False
+        B136  TOP5  1.000    VT10    25       0.461  0.047   0.464 -0.184       0.371   -0.338   -0.484    -0.511    0.018     -0.052            3           False       False   False
+        B136  TOP5  1.000    DD10     0       0.828  0.169   0.807 -0.262       0.749   -0.032   -0.089    -0.133   -0.059      0.070            4           False       False   False
+        B136  TOP5  1.000    DD10    10       0.828  0.135   0.677 -0.290       0.625   -0.170   -0.212    -0.257   -0.087      0.036            4           False       False   False
+        B136  TOP5  1.000    DD10    25       0.828  0.087   0.483 -0.330       0.437   -0.376   -0.398    -0.445   -0.128     -0.012            4           False       False   False
+        B136 TOP10  0.530    CTRL     0       0.528  0.110   0.969 -0.154       0.875    0.268   -0.033    -0.007    0.048      0.011            2           False       False   False
+        B136 TOP10  0.530    CTRL    10       0.528  0.096   0.860 -0.155       0.769    0.153   -0.138    -0.113    0.048     -0.003            2           False       False   False
+        B136 TOP10  0.530    CTRL    25       0.528  0.076   0.695 -0.155       0.610   -0.021   -0.297    -0.272    0.047     -0.023            3           False       False   False
+        B136 TOP10  0.530    G200     0       0.462  0.102   0.993 -0.162       0.890    0.268    0.006     0.008    0.040      0.003            0           False        True   False
+        B136 TOP10  0.530    G200    10       0.462  0.088   0.866 -0.165       0.768    0.133   -0.116    -0.114    0.037     -0.011            2           False       False   False
+        B136 TOP10  0.530    G200    25       0.462  0.066   0.674 -0.170       0.585   -0.069   -0.300    -0.297    0.033     -0.033            3           False       False   False
+        B136 TOP10  0.530    VT10     0       0.467  0.091   0.959 -0.123       0.853    0.256   -0.072    -0.029    0.079     -0.008            2           False       False   False
+        B136 TOP10  0.530    VT10    10       0.467  0.077   0.824 -0.133       0.718    0.122   -0.208    -0.164    0.069     -0.022            2           False       False   False
+        B136 TOP10  0.530    VT10    25       0.467  0.056   0.621 -0.149       0.515   -0.080   -0.413    -0.367    0.053     -0.043            3           False       False   False
+        B136 TOP10  0.530    DD10     0       0.519  0.102   0.922 -0.143       0.830    0.226   -0.089    -0.052    0.059      0.003            2           False       False   False
+        B136 TOP10  0.530    DD10    10       0.519  0.088   0.807 -0.153       0.719    0.106   -0.201    -0.163    0.049     -0.011            2           False       False   False
+        B136 TOP10  0.530    DD10    25       0.519  0.067   0.634 -0.167       0.553   -0.076   -0.369    -0.329    0.035     -0.032            3           False       False   False
+        B136 TOP10  0.750    CTRL     0       0.747  0.155   0.972 -0.214       0.879    0.270   -0.030    -0.003   -0.011      0.056            3           False       False   False
+        B136 TOP10  0.750    CTRL    10       0.747  0.135   0.863 -0.214       0.773    0.155   -0.135    -0.109   -0.012      0.036            3           False       False   False
+        B136 TOP10  0.750    CTRL    25       0.747  0.105   0.699 -0.216       0.615   -0.018   -0.293    -0.267   -0.013      0.006            4           False       False   False
+        B136 TOP10  0.750    G200     0       0.654  0.144   0.996 -0.223       0.893    0.270    0.010     0.011   -0.020      0.045            1           False       False   False
+        B136 TOP10  0.750    G200    10       0.654  0.123   0.869 -0.227       0.772    0.136   -0.112    -0.110   -0.024      0.024            3           False       False   False
+        B136 TOP10  0.750    G200    25       0.654  0.092   0.678 -0.233       0.589   -0.066   -0.296    -0.293   -0.030     -0.007            4           False       False   False
+        B136 TOP10  0.750    VT10     0       0.532  0.098   0.932 -0.138       0.775    0.281   -0.159    -0.107    0.065     -0.001            2           False       False   False
+        B136 TOP10  0.750    VT10    10       0.532  0.080   0.777 -0.157       0.622    0.124   -0.313    -0.260    0.045     -0.019            2           False       False   False
+        B136 TOP10  0.750    VT10    25       0.532  0.054   0.544 -0.186       0.391   -0.111   -0.543    -0.491    0.016     -0.045            3           False       False   False
+        B136 TOP10  0.750    DD10     0       0.701  0.132   0.895 -0.201       0.770    0.257   -0.167    -0.112    0.001      0.033            2           False       False   False
+        B136 TOP10  0.750    DD10    10       0.701  0.112   0.776 -0.217       0.654    0.137   -0.285    -0.228   -0.015      0.013            3           False       False   False
+        B136 TOP10  0.750    DD10    25       0.701  0.083   0.599 -0.298       0.479   -0.043   -0.463    -0.403   -0.096     -0.016            4           False       False   False
+        B136 TOP10  1.000    CTRL     0       0.996  0.206   0.975 -0.279       0.883    0.273   -0.026     0.001   -0.076      0.107            2           False       False   False
+        B136 TOP10  1.000    CTRL    10       0.996  0.178   0.866 -0.279       0.778    0.158   -0.131    -0.104   -0.077      0.079            3           False       False   False
+        B136 TOP10  1.000    CTRL    25       0.996  0.137   0.703 -0.281       0.620   -0.015   -0.289    -0.262   -0.079      0.038            4           False       False   False
+        B136 TOP10  1.000    G200     0       0.872  0.192   0.999 -0.287       0.897    0.272    0.013     0.015   -0.085      0.093            1           False       False   False
+        B136 TOP10  1.000    G200    10       0.872  0.163   0.872 -0.292       0.776    0.138   -0.109    -0.106   -0.090      0.064            3           False       False   False
+        B136 TOP10  1.000    G200    25       0.872  0.120   0.681 -0.300       0.593   -0.064   -0.293    -0.289   -0.097      0.021            4           False       False   False
+        B136 TOP10  1.000    VT10     0       0.554  0.101   0.925 -0.144       0.747    0.311   -0.207    -0.135    0.058      0.002            2           False       False   False
+        B136 TOP10  1.000    VT10    10       0.554  0.081   0.759 -0.165       0.584    0.139   -0.369    -0.298    0.037     -0.018            2           False       False   False
+        B136 TOP10  1.000    VT10    25       0.554  0.051   0.508 -0.200       0.339   -0.118   -0.613    -0.543    0.003     -0.048            3           False       False   False
+        B136 TOP10  1.000    DD10     0       0.884  0.161   0.871 -0.232       0.743    0.216   -0.184    -0.139   -0.030      0.062            3           False       False   False
+        B136 TOP10  1.000    DD10    10       0.884  0.133   0.744 -0.291       0.619    0.088   -0.311    -0.263   -0.089      0.034            3           False       False   False
+        B136 TOP10  1.000    DD10    25       0.884  0.092   0.554 -0.385       0.431   -0.104   -0.500    -0.451   -0.183     -0.007            4           False       False   False
+        B136 TOP20  0.530    CTRL     0       0.528  0.099   1.026 -0.144       0.975    0.273    0.058     0.093    0.059      0.000            0           False        True   False
+        B136 TOP20  0.530    CTRL    10       0.528  0.088   0.923 -0.144       0.874    0.168   -0.044    -0.008    0.058     -0.011            2           False       False   False
+        B136 TOP20  0.530    CTRL    25       0.528  0.072   0.769 -0.145       0.722    0.011   -0.197    -0.160    0.057     -0.027            2           False       False   False
+        B136 TOP20  0.530    G200     0       0.462  0.089   1.029 -0.143       1.015    0.185    0.134     0.133    0.060     -0.010            0            True       False   False
+        B136 TOP20  0.530    G200    10       0.462  0.077   0.903 -0.146       0.895    0.055    0.012     0.013    0.056     -0.022            0            True       False   False
+        B136 TOP20  0.530    G200    25       0.462  0.059   0.714 -0.151       0.715   -0.142   -0.170    -0.167    0.052     -0.039            3           False       False   False
+        B136 TOP20  0.530    VT10     0       0.497  0.091   1.039 -0.115       1.004    0.257    0.085     0.122    0.087     -0.008            0            True       False   False
+        B136 TOP20  0.530    VT10    10       0.497  0.079   0.919 -0.123       0.882    0.140   -0.039     0.000    0.079     -0.020            1           False       False   False
+        B136 TOP20  0.530    VT10    25       0.497  0.062   0.739 -0.135       0.699   -0.034   -0.225    -0.183    0.068     -0.036            3           False       False   False
+        B136 TOP20  0.530    DD10     0       0.523  0.097   1.020 -0.123       0.964    0.273    0.041     0.082    0.079     -0.002            0            True       False   False
+        B136 TOP20  0.530    DD10    10       0.523  0.086   0.915 -0.124       0.859    0.168   -0.065    -0.023    0.079     -0.013            2           False       False   False
+        B136 TOP20  0.530    DD10    25       0.523  0.070   0.758 -0.142       0.702    0.011   -0.224    -0.180    0.060     -0.029            2           False       False   False
+        B136 TOP20  0.750    CTRL     0       0.747  0.140   1.027 -0.200       0.977    0.275    0.059     0.094    0.002      0.041            0           False        True   False
+        B136 TOP20  0.750    CTRL    10       0.747  0.124   0.925 -0.201       0.876    0.171   -0.043    -0.006    0.002      0.025            2           False       False   False
+        B136 TOP20  0.750    CTRL    25       0.747  0.101   0.771 -0.202       0.724    0.014   -0.195    -0.158    0.001      0.002            2           False       False   False
+        B136 TOP20  0.750    G200     0       0.654  0.125   1.030 -0.197       1.017    0.187    0.135     0.135    0.005      0.026            0           False        True   False
+        B136 TOP20  0.750    G200    10       0.654  0.108   0.905 -0.201       0.897    0.056    0.014     0.015    0.001      0.009            0           False        True   False
+        B136 TOP20  0.750    G200    25       0.654  0.083   0.717 -0.208       0.718   -0.140   -0.168    -0.164   -0.005     -0.016            4           False       False   False
+        B136 TOP20  0.750    VT10     0       0.599  0.101   0.989 -0.129       0.944    0.214    0.021     0.062    0.073      0.002            0           False        True   False
+        B136 TOP20  0.750    VT10    10       0.599  0.085   0.844 -0.142       0.799    0.070   -0.126    -0.083    0.061     -0.014            2           False       False   False
+        B136 TOP20  0.750    VT10    25       0.599  0.061   0.626 -0.167       0.581   -0.146   -0.346    -0.301    0.035     -0.038            3           False       False   False
+        B136 TOP20  0.750    DD10     0       0.719  0.125   0.971 -0.186       0.917    0.230   -0.020     0.035    0.016      0.026            1           False       False   False
+        B136 TOP20  0.750    DD10    10       0.719  0.109   0.858 -0.188       0.804    0.121   -0.137    -0.078    0.014      0.010            2           False       False   False
+        B136 TOP20  0.750    DD10    25       0.719  0.085   0.689 -0.216       0.634   -0.042   -0.312    -0.248   -0.014     -0.014            4           False       False   False
+        B136 TOP20  1.000    CTRL     0       0.996  0.187   1.029 -0.261       0.978    0.278    0.060     0.096   -0.059      0.088            1           False       False   False
+        B136 TOP20  1.000    CTRL    10       0.996  0.165   0.927 -0.262       0.877    0.174   -0.042    -0.005   -0.060      0.066            3           False       False   False
+        B136 TOP20  1.000    CTRL    25       0.996  0.133   0.774 -0.263       0.726    0.017   -0.194    -0.156   -0.061      0.034            3           False       False   False
+        B136 TOP20  1.000    G200     0       0.872  0.167   1.032 -0.255       1.019    0.189    0.137     0.137   -0.053      0.068            1           False       False   False
+        B136 TOP20  1.000    G200    10       0.872  0.143   0.907 -0.261       0.899    0.058    0.016     0.017   -0.058      0.044            1           False       False   False
+        B136 TOP20  1.000    G200    25       0.872  0.109   0.719 -0.269       0.720   -0.138   -0.166    -0.162   -0.066      0.010            4           False       False   False
+        B136 TOP20  1.000    VT10     0       0.642  0.105   0.973 -0.138       0.893    0.231   -0.032     0.011    0.064      0.006            1           False       False   False
+        B136 TOP20  1.000    VT10    10       0.642  0.086   0.811 -0.154       0.731    0.068   -0.193    -0.151    0.048     -0.013            2           False       False   False
+        B136 TOP20  1.000    VT10    25       0.642  0.057   0.567 -0.188       0.489   -0.177   -0.436    -0.393    0.014     -0.042            3           False       False   False
+        B136 TOP20  1.000    DD10     0       0.916  0.150   0.926 -0.214       0.924    0.109   -0.001     0.042   -0.012      0.051            2           False       False   False
+        B136 TOP20  1.000    DD10    10       0.916  0.127   0.804 -0.226       0.808   -0.016   -0.120    -0.074   -0.024      0.028            4           False       False   False
+        B136 TOP20  1.000    DD10    25       0.916  0.093   0.621 -0.243       0.633   -0.203   -0.299    -0.249   -0.041     -0.006            4           False       False   False
+        B136 TOP40  0.530    CTRL     0       0.530  0.092   1.086 -0.136       1.061    0.332    0.112     0.179    0.066     -0.007            0            True       False   False
+        B136 TOP40  0.530    CTRL    10       0.530  0.083   0.994 -0.137       0.970    0.240    0.020     0.088    0.065     -0.015            0            True       False   False
+        B136 TOP40  0.530    CTRL    25       0.530  0.071   0.856 -0.141       0.834    0.101   -0.118    -0.048    0.062     -0.028            2           False       False   False
+        B136 TOP40  0.530    G200     0       0.464  0.084   1.127 -0.121       1.146    0.267    0.241     0.264    0.082     -0.015            0            True       False    True
+        B136 TOP40  0.530    G200    10       0.464  0.074   1.011 -0.124       1.034    0.149    0.128     0.152    0.078     -0.024            0            True       False   False
+        B136 TOP40  0.530    G200    25       0.464  0.061   0.837 -0.129       0.867   -0.029   -0.043    -0.015    0.073     -0.038            3           False       False   False
+        B136 TOP40  0.530    VT10     0       0.513  0.088   1.116 -0.120       1.120    0.314    0.177     0.238    0.083     -0.011            0            True       False   False
+        B136 TOP40  0.530    VT10    10       0.513  0.080   1.013 -0.127       1.017    0.213    0.073     0.135    0.076     -0.019            0            True       False   False
+        B136 TOP40  0.530    VT10    25       0.513  0.067   0.860 -0.137       0.863    0.063   -0.083    -0.019    0.065     -0.032            2           False       False   False
+        B136 TOP40  0.530    DD10     0       0.525  0.089   1.065 -0.136       1.027    0.332    0.068     0.145    0.066     -0.010            0            True       False   False
+        B136 TOP40  0.530    DD10    10       0.525  0.080   0.972 -0.138       0.935    0.240   -0.026     0.053    0.064     -0.019            1           False       False   False
+        B136 TOP40  0.530    DD10    25       0.525  0.068   0.832 -0.144       0.795    0.101   -0.168    -0.087    0.059     -0.031            2           False       False   False
+        B136 TOP40  0.750    CTRL     0       0.749  0.130   1.086 -0.190       1.061    0.334    0.111     0.178    0.012      0.031            0           False        True   False
+        B136 TOP40  0.750    CTRL    10       0.749  0.118   0.994 -0.191       0.970    0.242    0.019     0.088    0.011      0.019            0           False        True   False
+        B136 TOP40  0.750    CTRL    25       0.749  0.100   0.857 -0.195       0.834    0.104   -0.118    -0.048    0.007      0.001            2           False       False   False
+        B136 TOP40  0.750    G200     0       0.656  0.119   1.127 -0.167       1.146    0.267    0.242     0.264    0.035      0.020            0           False        True   False
+        B136 TOP40  0.750    G200    10       0.656  0.105   1.012 -0.172       1.035    0.150    0.129     0.153    0.030      0.006            0           False        True   False
+        B136 TOP40  0.750    G200    25       0.656  0.085   0.838 -0.179       0.868   -0.028   -0.042    -0.014    0.023     -0.013            3           False       False   False
+        B136 TOP40  0.750    VT10     0       0.653  0.108   1.104 -0.128       1.127    0.306    0.158     0.245    0.075      0.009            0           False        True   False
+        B136 TOP40  0.750    VT10    10       0.653  0.095   0.978 -0.139       1.002    0.184    0.029     0.120    0.064     -0.004            0            True       False   False
+        B136 TOP40  0.750    VT10    25       0.653  0.075   0.790 -0.155       0.813   -0.000   -0.164    -0.069    0.047     -0.024            3           False       False   False
+        B136 TOP40  0.750    DD10     0       0.729  0.123   1.073 -0.159       1.066    0.298    0.108     0.184    0.043      0.024            0           False        True   False
+        B136 TOP40  0.750    DD10    10       0.729  0.110   0.976 -0.160       0.970    0.201    0.010     0.088    0.042      0.011            0           False        True   False
+        B136 TOP40  0.750    DD10    25       0.729  0.092   0.830 -0.169       0.827    0.056   -0.136    -0.055    0.034     -0.007            2           False       False   False
+        B136 TOP40  1.000    CTRL     0       0.999  0.174   1.086 -0.250       1.060    0.335    0.110     0.178   -0.047      0.075            1           False       False   False
+        B136 TOP40  1.000    CTRL    10       0.999  0.157   0.995 -0.251       0.970    0.243    0.019     0.088   -0.048      0.058            1           False       False   False
+        B136 TOP40  1.000    CTRL    25       0.999  0.132   0.858 -0.254       0.834    0.106   -0.118    -0.048   -0.051      0.033            3           False       False   False
+        B136 TOP40  1.000    G200     0       0.874  0.159   1.128 -0.219       1.146    0.268    0.242     0.264   -0.016      0.060            1           False       False   False
+        B136 TOP40  1.000    G200    10       0.874  0.140   1.012 -0.225       1.036    0.150    0.129     0.154   -0.022      0.041            1           False       False   False
+        B136 TOP40  1.000    G200    25       0.874  0.113   0.839 -0.234       0.869   -0.027   -0.041    -0.013   -0.031      0.014            4           False       False   False
+        B136 TOP40  1.000    VT10     0       0.725  0.116   1.081 -0.140       1.094    0.297    0.118     0.212    0.062      0.017            0           False        True   False
+        B136 TOP40  1.000    VT10    10       0.725  0.098   0.932 -0.153       0.946    0.148   -0.031     0.064    0.049     -0.001            1           False       False   False
+        B136 TOP40  1.000    VT10    25       0.725  0.073   0.709 -0.173       0.725   -0.076   -0.253    -0.157    0.029     -0.026            3           False       False   False
+        B136 TOP40  1.000    DD10     0       0.939  0.148   1.021 -0.218       0.973    0.305   -0.003     0.091   -0.016      0.049            2           False       False   False
+        B136 TOP40  1.000    DD10    10       0.939  0.131   0.915 -0.233       0.866    0.204   -0.114    -0.016   -0.031      0.032            3           False       False   False
+        B136 TOP40  1.000    DD10    25       0.939  0.105   0.757 -0.268       0.706    0.053   -0.280    -0.176   -0.066      0.006            3           False       False   False
+        B136 EWALL  0.530    CTRL     0       0.530  0.079   1.091 -0.125       1.106    0.267    0.177     0.224    0.078     -0.020            0            True       False   False
+        B136 EWALL  0.530    CTRL    10       0.530  0.072   1.010 -0.127       1.023    0.193    0.089     0.141    0.075     -0.027            0            True       False   False
+        B136 EWALL  0.530    CTRL    25       0.530  0.063   0.889 -0.131       0.899    0.082   -0.042     0.017    0.071     -0.036            1           False       False   False
+        B136 EWALL  0.530    G200     0       0.464  0.071   1.177 -0.104       1.271    0.212    0.393     0.389    0.098     -0.028            0            True       False   False
+        B136 EWALL  0.530    G200    10       0.464  0.065   1.072 -0.108       1.166    0.113    0.281     0.284    0.095     -0.034            0            True       False   False
+        B136 EWALL  0.530    G200    25       0.464  0.055   0.914 -0.113       1.008   -0.036    0.114     0.126    0.089     -0.044            1           False       False   False
+        B136 EWALL  0.530    VT10     0       0.521  0.077   1.133 -0.112       1.175    0.261    0.259     0.293    0.091     -0.021            0            True       False   False
+        B136 EWALL  0.530    VT10    10       0.521  0.071   1.046 -0.119       1.085    0.182    0.165     0.203    0.083     -0.028            0            True       False   False
+        B136 EWALL  0.530    VT10    25       0.521  0.062   0.916 -0.131       0.950    0.064    0.023     0.068    0.072     -0.037            0            True       False   False
+        B136 EWALL  0.530    DD10     0       0.527  0.076   1.072 -0.132       1.075    0.267    0.137     0.193    0.071     -0.023            0            True       False   False
+        B136 EWALL  0.530    DD10    10       0.527  0.070   0.989 -0.135       0.989    0.193    0.046     0.107    0.068     -0.029            0            True       False   False
+        B136 EWALL  0.530    DD10    25       0.527  0.061   0.864 -0.139       0.859    0.082   -0.092    -0.023    0.063     -0.038            2           False       False   False
+        B136 EWALL  0.750    CTRL     0       0.750  0.111   1.090 -0.173       1.104    0.268    0.175     0.222    0.029      0.013            0           False        True   False
+        B136 EWALL  0.750    CTRL    10       0.750  0.102   1.010 -0.177       1.022    0.195    0.088     0.140    0.026      0.004            0           False        True   False
+        B136 EWALL  0.750    CTRL    25       0.750  0.089   0.890 -0.182       0.899    0.085   -0.042     0.017    0.020     -0.010            1           False       False   False
+        B136 EWALL  0.750    G200     0       0.657  0.101   1.177 -0.145       1.270    0.212    0.392     0.388    0.057      0.002            0           False        True   False
+        B136 EWALL  0.750    G200    10       0.657  0.092   1.073 -0.150       1.166    0.114    0.282     0.284    0.052     -0.007            0            True       False   False
+        B136 EWALL  0.750    G200    25       0.657  0.077   0.915 -0.158       1.009   -0.034    0.115     0.127    0.045     -0.022            1           False       False   False
+        B136 EWALL  0.750    VT10     0       0.695  0.100   1.135 -0.130       1.199    0.257    0.266     0.317    0.072      0.001            0           False        True   False
+        B136 EWALL  0.750    VT10    10       0.695  0.090   1.035 -0.141       1.096    0.166    0.157     0.214    0.061     -0.009            0            True       False   False
+        B136 EWALL  0.750    VT10    25       0.695  0.076   0.884 -0.157       0.941    0.029   -0.007     0.059    0.045     -0.023            1           False       False   False
+        B136 EWALL  0.750    DD10     0       0.737  0.103   1.066 -0.156       1.097    0.228    0.156     0.215    0.046      0.005            0           False        True   False
+        B136 EWALL  0.750    DD10    10       0.737  0.094   0.978 -0.168       1.006    0.151    0.059     0.124    0.035     -0.005            0            True       False   False
+        B136 EWALL  0.750    DD10    25       0.737  0.080   0.846 -0.187       0.869    0.035   -0.088    -0.013    0.016     -0.019            2           False       False   False
+        B136 EWALL  1.000    CTRL     0       1.000  0.149   1.089 -0.228       1.102    0.269    0.172     0.220   -0.026      0.050            1           False       False   False
+        B136 EWALL  1.000    CTRL    10       1.000  0.136   1.010 -0.231       1.021    0.196    0.087     0.139   -0.028      0.038            1           False       False   False
+        B136 EWALL  1.000    CTRL    25       1.000  0.118   0.891 -0.237       0.899    0.088   -0.042     0.017   -0.035      0.019            2           False       False   False
+        B136 EWALL  1.000    G200     0       0.875  0.135   1.177 -0.190       1.270    0.213    0.392     0.388    0.012      0.037            0           False        True   False
+        B136 EWALL  1.000    G200    10       0.875  0.122   1.074 -0.196       1.167    0.115    0.282     0.284    0.006      0.023            0           False        True   False
+        B136 EWALL  1.000    G200    25       0.875  0.103   0.917 -0.206       1.011   -0.032    0.117     0.129   -0.004      0.004            2           False       False   False
+        B136 EWALL  1.000    VT10     0       0.825  0.114   1.123 -0.140       1.221    0.250    0.248     0.339    0.062      0.015            0           False        True   False
+        B136 EWALL  1.000    VT10    10       0.825  0.101   1.002 -0.153       1.098    0.138    0.118     0.216    0.049      0.002            0           False        True   False
+        B136 EWALL  1.000    VT10    25       0.825  0.081   0.820 -0.172       0.914   -0.030   -0.078     0.032    0.030     -0.018            2           False       False   False
+        B136 EWALL  1.000    DD10     0       0.962  0.128   1.027 -0.199       1.080    0.167    0.139     0.198    0.004      0.029            0           False        True   False
+        B136 EWALL  1.000    DD10    10       0.962  0.115   0.934 -0.201       0.985    0.082    0.038     0.103    0.001      0.016            0           False        True   False
+        B136 EWALL  1.000    DD10    25       0.962  0.096   0.794 -0.225       0.843   -0.045   -0.115    -0.039   -0.023     -0.003            4           False       False   False
+
+========================================================================================================================================================
+[5] RULE 8 WALK-FORWARD — (n, g) chosen on 2011-2016 only, 2017-2026 read once
+    cells = panel x overlay x cost, common window, PROTOCOL cost rungs only
+    (the 0-bps diagnostic rung is excluded); four selectors fixed in advance.
+       panel overlay  cost selector        pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  full_Sharpe  full_MaxDD  spy_OOS_Sharpe  v2_Sharpe  ctrl_OOS_Sharpe pass4b pass4a defensive
+        B136    CTRL    10       S0 TOP10/g1.00      1.048     0.165       0.778     -0.279        0.866      -0.279           0.882      1.082            1.023  False  False     False
+        B136    CTRL    10       S1 TOP10/g0.75      1.047     0.126       0.773     -0.214        0.863      -0.214           0.882      1.082            1.023  False  False     False
+        B136    CTRL    10       S2 TOP10/g0.75      1.047     0.126       0.773     -0.214        0.863      -0.214           0.882      1.082            1.023  False  False     False
+        B136    CTRL    10       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    CTRL    25       S0 TOP40/g1.00      0.903     0.133       0.834     -0.254        0.858      -0.254           0.882      1.039            0.899  False  False     False
+        B136    CTRL    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    CTRL    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    CTRL    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    DD10    10       S0 TOP40/g0.53      1.040     0.080       0.935     -0.138        0.972      -0.138           0.882      1.082            1.006  False  False     False
+        B136    DD10    10       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    DD10    10       S2 TOP10/g0.53      0.984     0.081       0.719     -0.142        0.807      -0.153           0.882      1.082            1.006  False  False     False
+        B136    DD10    10       S3 TOP10/g0.53      0.984     0.081       0.719     -0.142        0.807      -0.153           0.882      1.082            1.006  False  False     False
+        B136    DD10    25       S0 TOP40/g0.53      0.899     0.067       0.795     -0.144        0.832      -0.144           0.882      1.039            0.869  False  False     False
+        B136    DD10    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    DD10    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    DD10    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    G200    10       S0 TOP10/g1.00      1.077     0.150       0.776     -0.292        0.872      -0.292           0.882      1.082            1.167  False  False     False
+        B136    G200    10       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    G200    10       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    G200    10       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    G200    25       S0 TOP10/g1.00      0.866     0.107       0.593     -0.300        0.681      -0.300           0.882      1.039            1.011  False  False     False
+        B136    G200    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    G200    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    G200    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    VT10    10       S0 TOP10/g1.00      1.046     0.060       0.584     -0.165        0.759      -0.165           0.882      1.082            1.098  False  False     False
+        B136    VT10    10       S1 TOP10/g1.00      1.046     0.060       0.584     -0.165        0.759      -0.165           0.882      1.082            1.098  False  False     False
+        B136    VT10    10       S2 TOP10/g1.00      1.046     0.060       0.584     -0.165        0.759      -0.165           0.882      1.082            1.098  False  False     False
+        B136    VT10    10       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    VT10    25       S0 EWALL/g0.53      0.860     0.064       0.950     -0.131        0.916      -0.131           0.882      1.039            0.950  False  False      True
+        B136    VT10    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    VT10    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+        B136    VT10    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    CTRL    10       S0 TOP20/g1.00      0.425     0.085       0.462     -0.429        0.448      -0.429           0.882      0.572            0.552  False  False     False
+    SMALL439    CTRL    10       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    CTRL    10       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    CTRL    10       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    CTRL    25       S0 EWALL/g1.00      0.285     0.008       0.137     -0.523        0.188      -0.523           0.882      0.512            0.368  False  False     False
+    SMALL439    CTRL    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    CTRL    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    CTRL    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    DD10    10       S0 EWALL/g1.00      0.414     0.024       0.245     -0.350        0.308      -0.350           0.882      0.572            0.481  False  False     False
+    SMALL439    DD10    10       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    DD10    10       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    DD10    10       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    DD10    25       S0 EWALL/g1.00      0.262     0.000       0.068     -0.370        0.141      -0.370           0.882      0.512            0.281  False  False     False
+    SMALL439    DD10    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    DD10    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    DD10    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    G200    10       S0 EWALL/g1.00      0.391    -0.028      -0.207     -0.453        0.026      -0.453           0.882      0.572            0.042  False  False     False
+    SMALL439    G200    10       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    G200    10       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    G200    10       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    G200    25       S0 EWALL/g1.00      0.172    -0.059      -0.503     -0.542       -0.240      -0.568           0.882      0.512           -0.222  False  False     False
+    SMALL439    G200    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    G200    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    G200    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    VT10    10       S0 EWALL/g0.53      0.405     0.020       0.272     -0.225        0.321      -0.225           0.882      0.572            0.583  False  False     False
+    SMALL439    VT10    10       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    VT10    10       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    VT10    10       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    VT10    25       S0 EWALL/g0.53      0.251     0.004       0.090     -0.243        0.148      -0.243           0.882      0.512            0.339  False  False     False
+    SMALL439    VT10    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    VT10    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+    SMALL439    VT10    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    CTRL    10       S0 TOP20/g1.00      0.993     0.193       1.136     -0.240        1.083      -0.240           0.882      1.169            1.145  False  False     False
+         U56    CTRL    10       S1 TOP20/g1.00      0.993     0.193       1.136     -0.240        1.083      -0.240           0.882      1.169            1.145  False  False     False
+         U56    CTRL    10       S2 TOP20/g1.00      0.993     0.193       1.136     -0.240        1.083      -0.240           0.882      1.169            1.145  False  False     False
+         U56    CTRL    10       S3 TOP20/g0.53      0.992     0.102       1.134     -0.131        1.082      -0.131           0.882      1.169            1.145  False  False      True
+         U56    CTRL    25       S0 TOP20/g1.00      0.844     0.168       1.006     -0.241        0.948      -0.241           0.882      1.131            1.023  False  False     False
+         U56    CTRL    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    CTRL    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    CTRL    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    DD10    10       S0 TOP20/g0.53      0.992     0.098       1.104     -0.131        1.062      -0.131           0.882      1.169            1.110  False  False      True
+         U56    DD10    10       S1 TOP20/g0.75      0.978     0.129       1.067     -0.164        1.033      -0.164           0.882      1.169            1.110   True  False     False
+         U56    DD10    10       S2 TOP20/g0.53      0.992     0.098       1.104     -0.131        1.062      -0.131           0.882      1.169            1.110  False  False      True
+         U56    DD10    10       S3 TOP20/g0.53      0.992     0.098       1.104     -0.131        1.062      -0.131           0.882      1.169            1.110  False  False      True
+         U56    DD10    25       S0 TOP20/g0.53      0.842     0.085       0.971     -0.132        0.924      -0.132           0.882      1.131            0.974  False  False      True
+         U56    DD10    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    DD10    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    DD10    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    G200    10       S0  TOP5/g1.00      1.089     0.190       0.872     -0.286        0.939      -0.286           0.882      1.169            1.161  False  False     False
+         U56    G200    10       S1  TOP5/g1.00      1.089     0.190       0.872     -0.286        0.939      -0.286           0.882      1.169            1.161  False  False     False
+         U56    G200    10       S2  TOP5/g1.00      1.089     0.190       0.872     -0.286        0.939      -0.286           0.882      1.169            1.161  False  False     False
+         U56    G200    10       S3 TOP20/g0.75      0.928     0.124       1.108     -0.155        1.042      -0.155           0.882      1.169            1.161   True  False     False
+         U56    G200    25       S0  TOP5/g1.00      0.876     0.147       0.710     -0.319        0.761      -0.319           0.882      1.131            0.999  False  False     False
+         U56    G200    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    G200    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    G200    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    VT10    10       S0 TOP20/g0.53      0.982     0.096       1.155     -0.111        1.092      -0.111           0.882      1.169            1.211  False  False      True
+         U56    VT10    10       S1  TOP5/g0.75      0.976     0.092       0.852     -0.154        0.899      -0.154           0.882      1.169            1.211  False  False     False
+         U56    VT10    10       S2 TOP20/g0.53      0.982     0.096       1.155     -0.111        1.092      -0.111           0.882      1.169            1.211  False  False      True
+         U56    VT10    10       S3 TOP20/g0.53      0.982     0.096       1.155     -0.111        1.092      -0.111           0.882      1.169            1.211  False  False      True
+         U56    VT10    25       S0 TOP20/g0.53      0.826     0.082       1.005     -0.119        0.941      -0.119           0.882      1.131            1.039  False  False      True
+         U56    VT10    25       S1       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    VT10    25       S2       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+         U56    VT10    25       S3       EMPTY        NaN       NaN         NaN        NaN          NaN         NaN             NaN        NaN              NaN    NaN    NaN       NaN
+
+    EMPTY selector cells: 54 of 96
+      panel     selector
+      B136      S1          6
+                S2          5
+                S3          7
+      SMALL439  S1          8
+                S2          8
+                S3          8
+      U56       S1          4
+                S2          4
+                S3          4
+    OOS of the IS-chosen arms, by panel x selector (mean):
+                         OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+      panel    selector                                 
+      B136     S0           0.103       0.781     -0.213
+               S1           0.093       0.679     -0.190
+               S2           0.089       0.692     -0.174
+               S3           0.081       0.719     -0.142
+      SMALL439 S0           0.007       0.070     -0.392
+      U56      S0           0.132       0.995     -0.197
+               S1           0.151       0.982     -0.211
+               S2           0.144       1.067     -0.192
+               S3           0.105       1.125     -0.132
+    IS-chosen arms beating SPY's OOS Sharpe: 17/42; clearing 4b: 1/42; clearing 4a: 0/42; defensive: 1/42
+
+========================================================================================================================================================
+[6] VERDICT
+    SMALL439  common window: defensive 0/180, 4b 0/180, 4a 0/180, zero non-floor failures 0/180  |  non-floor fail counts H1 180 H2 180 OOS 180 DD 155
+    U56       common window: defensive 38/180, 4b 50/180, 4a 0/180, zero non-floor failures 88/180  |  non-floor fail counts H1 68 H2 27 OOS 32 DD 37
+    B136      common window: defensive 24/180, 4b 27/180, 4a 1/180, zero non-floor failures 51/180  |  non-floor fail counts H1 57 H2 108 OOS 98 DD 61
+    -> the queue's stated test is NOT met: the DD cap binds on 155 small-panel arms
+       as well as the Sharpe bars on 180.  See [2] for whether re-referencing to IWM
+       moves the count, i.e. whether it is the panel or the bars.
+
+Wrote 2026-09-07_the-small-panel-has-no-defensive-class_cloud.grid.csv (1080), .refs.csv (12), .walkforward.csv (96)  [105.9s]
