@@ -2,6 +2,8 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-07 | 40694775 | n8n Workflow Automation for Legal Leads | $560 | 138 | drafted |
+| 2026-09-07 | 40694849 | Interactive Website, Data Analysis, AI/ML Model | $290 | 21 | drafted |
 | 2026-09-06 | 40694576 | Football Statistics Website from PostgreSQL | $2,200 | 86 | drafted |
 | 2026-09-06 | 40694223 | Automotive Excel Data Cleanup & Reporting | $245 | 11 | drafted |
 | 2026-09-06 | 40694549 | Automated Excel Analysis Workflow | $240 | 7 | drafted |
@@ -136,11 +138,18 @@ Proposals live in `products/freelance/proposals/<job id>.md`.
 - Bot Telegram para IQ Option (40694274) (Spanish-language delivery, 79 bids, and automated trading against a binary options platform whose terms do not permit bot access; no official API)
 - Hotel Review Visualization and Analysis Dashboard (chart-js listing) (the shortlist row carries no job id and an age of 15,046 hours, so the posting is stale and cannot be filed by id)
 - TradingView Strategy Conversion to Python (58 bids at $16–$132, below our floor for a strategy port)
+- Data Analyst Tutor Needed, Intensive 2-Month Program (40694832) (tutoring, not delivery work)
+- Ongoing Airbnb Virtual Staging Partner (40694920) (property image staging, a design service outside what we build)
+- Automate frontend button actions on LinkedIn (40694933) (driving LinkedIn's own UI to send messages breaches their user agreement ban on automated access; 106 bids)
+- Daily Excel Sales Data Entry (40694606) (same brief as 40692118, drafted 2026-09-05, so it falls under the near-duplicate rule. Worth noting for David: this one is live with 20 bids in the same $159–$265 band, so the existing 40692118 draft can be submitted there as it stands)
+- Activate UK Windows/Doors Installer Database (the shortlist row carries no job id and no captured description, and activating an installer database reads as outreach to a contact list whose consent we cannot verify)
 
 Note for this run: freelancer.com is blocked by the session network policy, so proposals were written from the descriptions the scanner captured in JOBS.md. Older undrafted rows have no description in the shortlist, which is why several were skipped rather than priced blind.
 
 Note for the 2026-09-06 10:55 UTC batch: freelancer.com is still blocked by the session network policy, so these seven were written from the descriptions the scanner captured. Ten NEW rows, three skipped for the reasons above. The scan script cannot refresh in this session; running it overwrites JOBS.md with an empty shortlist, so it was reverted.
 
 Note for the 2026-09-06 15:28 UTC batch: nine NEW rows, four drafted and five skipped for the reasons above. Freelancer.com remains blocked by the session network policy, so these were written from the descriptions the scanner captured. Two of the nine NEW rows are the same client reposting the 45-file Excel job already drafted as 40690897, so the batch is four rather than eight by supply, not by the per-run cap.
+
+Note for the 2026-09-07 00:45 UTC batch: the 2026-09-06 20:24 UTC scan is the latest available and carried six NEW rows, of which two were drafted and four skipped for the reasons above. Both freelancer.com and its public API are still blocked by the session network policy, so these were written from the truncated descriptions the scanner captured, and the scan cannot be refreshed from here. The batch is two by supply, not by the eight per run cap: every other shortlist row is already drafted or already skipped, and the one remaining untriaged row (Activate UK Windows/Doors Installer Database) has no id or description to file against.
 
 Note for 2026-09-06: the 20:20 UTC scan carried only three NEW rows, one of which is a C#/.NET job we skipped. Expand Campus AI (40686904) was an older shortlist row never triaged either way; it has budget and bid data but no captured description, so the proposal is written to the job title and asks what the stack is rather than assuming. Earlier 09-03 backlog rows in seen.csv still carry no budget, bid or URL data, and the previous JOBS.md scans are not recoverable from git history, so they remain undrafted rather than priced blind.
