@@ -1,0 +1,383 @@
+# 2026-09-07_is-c-star-widening-a-RISK-TIMING-property-record-wide_cloud
+# idea 394 — does 'the overlay widens the book's cost breakeven c*' partition by WHAT
+#            the overlay is timed on?  R = own realised risk | P = panel state |
+#            X = neither (calendar / turnover budget / fixed-seed random).
+# parent NF20 (top-20 eligible, equal weight, no vol scaler, weekly, t+1) | rungs [0.5, 0.75, 1.0]
+# 7 book-level families x 3 dials x 3 rungs x 2 panels = 126 cells, all reported
+# c* ladder [0, 50] bps | 4b vs SPY, 4a vs the LIVE RULES v2 | matched-gross control
+
+========================================================================================================================================================
+[0] REPRODUCTION GATES (all asserted before any new number is read)
+    G1  fast_bt == engine.backtest (returns AND turnover, c in 0/25 bps): max |d| 0.000e+00
+    G3  overlay at OFF (m == 1) == parent, on r, turnover AND gross: max |d| 0.000e+00
+    G4  matched control at a = 1 == parent: max |d| 0.000e+00
+    G5  SHARPE INVARIANCE of the gross dial (a in 0.25..1.00, c in 0/10/25): max |dSharpe| 2.220e-16  -> the control's c* moves only through CAGR/MaxDD
+    G9  RANDOM schedule reproducible: 0 disagreements on a re-draw; panel-independent on the 4699 shared days: 0 disagreements  (on-share 0.250 vs p=0.25)
+    G10 NAMEFLOOR's E_t vs panel breadth on U56: pearson +0.993, spearman +0.978  -> E_t IS the panel-state variable, so
+        NAMEFLOOR is filed under class P, not the queue's class X.  [2] reports both readings.
+
+========================================================================================================================================================
+PANEL U56: 56 cols | 2008-01-02 -> 2026-09-04 | eval 2009-01-13 .. 2026-09-04
+    SPY  15.23% / 0.889 (H1 0.957 / H2 0.834 / OOS 0.882) / -33.72%   | 4b bars: DD cap 20.23%, CAGR floor 10.66%
+    RULES v2 @10bps  8.66% / 1.206 / -12.05% (H1 1.226 / H2 1.191)  c*_4b 0.00
+  PARENT g0=0.50  gross 0.499  turn/yr 7.21  @10bps 8.54% / 1.070 / -12.42%  c*_4b   0.00  c*_4a   0.00
+  PARENT g0=0.75  gross 0.747  turn/yr 10.77  @10bps 12.83% / 1.070 / -18.31%  c*_4b  22.60  c*_4a   0.00
+  PARENT g0=1.00  gross 0.996  turn/yr 14.33  @10bps 17.11% / 1.070 / -23.98%  c*_4b   0.00  c*_4a   0.00
+========================================================================================================================================================
+PANEL B136: 136 cols | 2008-01-02 -> 2026-09-04 | eval 2009-01-13 .. 2026-09-04
+    SPY  15.23% / 0.889 (H1 0.957 / H2 0.834 / OOS 0.882) / -33.72%   | 4b bars: DD cap 20.23%, CAGR floor 10.66%
+    RULES v2 @10bps  8.03% / 1.106 / -12.24% (H1 1.229 / H2 0.984)  c*_4b 0.00
+  PARENT g0=0.50  gross 0.499  turn/yr 9.43  @10bps 8.67% / 0.941 / -13.64%  c*_4b   0.00  c*_4a   0.00
+  PARENT g0=0.75  gross 0.748  turn/yr 14.09  @10bps 12.96% / 0.943 / -20.05%  c*_4b   6.85  c*_4a   0.00
+  PARENT g0=1.00  gross 0.996  turn/yr 18.77  @10bps 17.19% / 0.945 / -26.20%  c*_4b   0.00  c*_4a   0.00
+
+========================================================================================================================================================
+[1] GATES G6 / G8 / G11 (post-build)
+    G6  c* recomputed on the first 12 cells: max |d| 0.000e+00
+    G8  matched-gross solve: max |mean gross(control) - mean gross(overlay)| over all 126 cells: 0.000e+00
+    G8  vacuous cells (overlay never fires, or a >= 1): 4 / 126  -> U56/DDCTL=0.2, U56/DDCTL=0.2, B136/DDCTL=0.2, B136/DDCTL=0.2
+        on_frac by family: BREADTH 0.107, CALCAD 0.510, DDCTL 0.110, NAMEFLOOR 0.069, RANDOM 0.293, TURNBUD 0.323, VOLCAP 0.287
+    G11 idea 335's 54 overlapping cells (BREADTH/DDCTL/VOLCAP) reproduce its committed .grid.csv: max |d| on c*(overlay), c*(control), mean gross = 3.553e-15
+
+========================================================================================================================================================
+[2] THE PARTITION — does 'widens c*' sort by what the overlay is timed on?
+    A cell WIDENS when c*(overlay) > c*(matched-gross control).  Only INFORMATIVE cells
+    count (at least one side has a non-zero c*); 0 <= 0 cells carry no information.
+
+    --- 4b / full : 53 informative of 126 cells
+                      n  widens  max_gap  med_gap
+      cls family                                 
+      P   BREADTH     6       0    -0.44    -1.65
+          NAMEFLOOR   7       4   +18.25    +0.69
+      R   DDCTL       8       2   +11.67    -2.43
+          VOLCAP     11       5   +17.67    -0.00
+      X   CALCAD      8       2    +1.41    -4.67
+          RANDOM      7       0    -1.58    -7.02
+          TURNBUD     6       0    -2.49    -7.84
+      by CLASS: P panel state: 4.0/13.0 (30.8%, max +18.25 bps) | R own realised risk: 7.0/19.0 (36.8%, max +17.67 bps) | X neither (exogenous): 2.0/21.0 (9.5%, max +1.41 bps)
+
+    --- 4b / is : 28 informative of 126 cells
+                     n  widens  max_gap  med_gap
+      cls family                                
+      P   BREADTH    3       0    -7.19   -14.75
+          NAMEFLOOR  3       2    +1.78    +0.88
+      R   DDCTL      3       1    +0.89   -13.59
+          VOLCAP     5       2   +14.60    -3.57
+      X   CALCAD     7       4   +22.75    +6.89
+          RANDOM     3       0    -1.02    -3.86
+          TURNBUD    4       0    -4.14   -14.49
+      by CLASS: P panel state: 2.0/6.0 (33.3%, max +1.78 bps) | R own realised risk: 3.0/8.0 (37.5%, max +14.60 bps) | X neither (exogenous): 4.0/14.0 (28.6%, max +22.75 bps)
+
+    --- 4b / oos : 53 informative of 126 cells
+                      n  widens  max_gap  med_gap
+      cls family                                 
+      P   BREADTH     6       6    +1.90    +1.27
+          NAMEFLOOR   7       4   +22.51    +1.35
+      R   DDCTL       8       2   +24.81    -0.10
+          VOLCAP     11       5   +26.30    +0.00
+      X   CALCAD      7       0    -0.19    -3.38
+          RANDOM      7       0    -0.19    -9.28
+          TURNBUD     7       1    +0.24    -0.41
+      by CLASS: P panel state: 10.0/13.0 (76.9%, max +22.51 bps) | R own realised risk: 7.0/19.0 (36.8%, max +26.30 bps) | X neither (exogenous): 1.0/21.0 (4.8%, max +0.24 bps)
+
+    --- 4a / full : 0 informative of 126 cells
+
+    --- 4a / is : 0 informative of 126 cells
+
+    --- 4a / oos : 0 informative of 126 cells
+
+    PARTITION TEST (4b / full, informative cells): risk-timed vs exogenous.
+      as filed  (NAMEFLOOR in P):  R widens 7/19   X widens 2/21   P widens 4/13   one-sided Fisher p(R >= observed) = 0.0448
+      queue's classification (NAMEFLOOR in X):  R widens 7/19   X widens 6/28   P widens 0/6   one-sided Fisher p(R >= observed) = 0.2036
+
+    MECHANISM.  G5 pins the control's Sharpe to the parent's at every cost, so the
+    control's c* moves only through CAGR/MaxDD while the overlay's also moves through
+    Sharpe.  dSharpe = overlay - control at 10 bps:
+                     mean_dSharpe  max_dSharpe  widens
+      cls family                                      
+      P   BREADTH         +0.0015      +0.0265       0
+          NAMEFLOOR       +0.0071      +0.0133       4
+      R   DDCTL           -0.0643      +0.0000       2
+          VOLCAP          -0.0057      +0.0354       5
+      X   CALCAD          -0.0502      +0.0000       2
+          RANDOM          -0.1174      -0.0556       0
+          TURNBUD         -0.1023      -0.0185       0
+      spearman(dSharpe_10, gap_4b_full) over all 53 informative cells: +0.623   (idea 335 reported +0.336 on its own 39)
+        within R own realised risk: +0.442  (n=19)
+        within P panel state: -0.033  (n=13)
+        within X neither (exogenous): +0.448  (n=21)
+
+========================================================================================================================================================
+[3] EVERY GRID POINT (4b, full sample): overlay c* vs its matched-gross control
+    panel    g0 cls    family  dial_val  on_frac  gross_overlay  alpha  turn_overlay  turn_ctrl  cstar_ov_4b_full  cstar_ct_4b_full  gap_4b_full  informative_4b_full  identity_4b_full  ov_Sharpe_10  ct_Sharpe_10
+      U56 0.500   R    VOLCAP     0.100    0.150          0.486  0.974         7.470      7.025             0.000             0.000        0.000                False              True         1.074         1.070
+      U56 0.500   R    VOLCAP     0.150    0.017          0.497  0.998         7.214      7.194             0.000             0.000        0.000                False              True         1.082         1.070
+      U56 0.500   R    VOLCAP     0.250    0.002          0.499  1.000         7.212      7.211             0.000             0.000        0.000                False              True         1.070         1.070
+      U56 0.500   R     DDCTL     0.050    0.134          0.465  0.933         7.773      6.729             0.000             0.000        0.000                False              True         0.992         1.070
+      U56 0.500   R     DDCTL     0.100    0.002          0.498  0.999         7.261      7.203             0.000             0.000        0.000                False              True         1.058         1.070
+      U56 0.500   R     DDCTL     0.200    0.000          0.499  1.000         7.211      7.211             0.000             0.000        0.000                False              True         1.070         1.070
+      U56 0.500   P   BREADTH     0.750    0.112          0.485  0.972         7.546      7.009             0.000             0.000        0.000                False              True         1.088         1.070
+      U56 0.500   P   BREADTH     0.500    0.112          0.471  0.944         7.881      6.806             0.000             0.000        0.000                False              True         1.096         1.070
+      U56 0.500   P   BREADTH     0.250    0.112          0.457  0.916         8.215      6.603             0.000             0.000        0.000                False              True         1.092         1.070
+      U56 0.500   P NAMEFLOOR    10.000    0.036          0.493  0.989         7.364      7.134             0.000             0.000        0.000                False              True         1.070         1.070
+      U56 0.500   P NAMEFLOOR    20.000    0.110          0.478  0.958         7.740      6.910             0.000             0.000        0.000                False              True         1.079         1.070
+      U56 0.500   P NAMEFLOOR    30.000    0.194          0.459  0.920         7.973      6.634             0.000             0.000        0.000                False              True         1.079         1.070
+      U56 0.500   X    CALCAD     0.750    0.510          0.435  0.873         6.562      6.292             0.000             0.000        0.000                False              True         1.070         1.070
+      U56 0.500   X    CALCAD     0.500    0.510          0.371  0.745         5.913      5.374             0.000             0.000        0.000                False              True         1.039         1.070
+      U56 0.500   X    CALCAD     0.250    0.510          0.308  0.618         5.264      4.455             0.000             0.000        0.000                False              True         0.956         1.070
+      U56 0.500   X   TURNBUD     0.500    0.559          0.359  0.720         6.967      5.193             0.000             0.000        0.000                False              True         0.932         1.070
+      U56 0.500   X   TURNBUD     0.750    0.267          0.432  0.866         7.877      6.248             0.000             0.000        0.000                False              True         0.949         1.070
+      U56 0.500   X   TURNBUD     0.900    0.160          0.459  0.920         7.716      6.633             0.000             0.000        0.000                False              True         0.982         1.070
+      U56 0.500   X    RANDOM     0.100    0.110          0.471  0.945         9.426      6.814             0.000             0.000        0.000                False              True         1.001         1.070
+      U56 0.500   X    RANDOM     0.250    0.254          0.435  0.873        11.408      6.295             0.000             0.000        0.000                False              True         0.962         1.070
+      U56 0.500   X    RANDOM     0.500    0.513          0.371  0.743        12.047      5.360             0.000             0.000        0.000                False              True         0.870         1.070
+      U56 0.750   R    VOLCAP     0.100    0.567          0.646  0.864        12.061      9.301             7.468            14.115       -6.647                 True              True         1.060         1.070
+      U56 0.750   R    VOLCAP     0.150    0.150          0.728  0.974        11.157     10.489            21.230            22.603       -1.373                 True              True         1.075         1.070
+      U56 0.750   R    VOLCAP     0.250    0.008          0.746  0.999        10.752     10.752            22.600            22.603       -0.003                 True              True         1.075         1.070
+      U56 0.750   R     DDCTL     0.050    0.250          0.654  0.875        12.274      9.423             4.098            15.449      -11.351                 True              True         0.956         1.070
+      U56 0.750   R     DDCTL     0.100    0.045          0.731  0.977        11.488     10.525            17.747            22.603       -4.856                 True              True         1.011         1.070
+      U56 0.750   R     DDCTL     0.200    0.000          0.747  1.000        10.767     10.767            22.603            22.603        0.000                 True              True         1.070         1.070
+      U56 0.750   P   BREADTH     0.750    0.112          0.726  0.972        11.272     10.465            21.830            22.603       -0.773                 True              True         1.088         1.070
+      U56 0.750   P   BREADTH     0.500    0.112          0.705  0.944        11.776     10.162            20.341            22.603       -2.262                 True              True         1.097         1.070
+      U56 0.750   P   BREADTH     0.250    0.112          0.684  0.916        12.281      9.859            18.167            19.924       -1.757                 True              True         1.093         1.070
+      U56 0.750   P NAMEFLOOR    10.000    0.036          0.740  0.989        10.998     10.652            22.513            22.603       -0.090                 True              True         1.071         1.070
+      U56 0.750   P NAMEFLOOR    20.000    0.110          0.716  0.958        11.565     10.316            20.242            22.603       -2.361                 True              True         1.080         1.070
+      U56 0.750   P NAMEFLOOR    30.000    0.194          0.688  0.920        11.917      9.905            18.226            20.379       -2.154                 True              True         1.079         1.070
+      U56 0.750   X    CALCAD     0.750    0.510          0.652  0.873         9.799      9.396            16.262            15.153        1.109                 True             False         1.070         1.070
+      U56 0.750   X    CALCAD     0.500    0.510          0.557  0.745         8.832      8.024             1.414             0.000        1.414                 True             False         1.039         1.070
+      U56 0.750   X    CALCAD     0.250    0.510          0.462  0.618         7.864      6.652             0.000             0.000        0.000                False              True         0.955         1.070
+      U56 0.750   X   TURNBUD     0.500    0.562          0.537  0.719        10.404      7.741             0.000             0.000        0.000                False              True         0.928         1.070
+      U56 0.750   X   TURNBUD     0.750    0.269          0.647  0.865        11.619      9.316             5.633            14.286       -8.653                 True              True         0.944         1.070
+      U56 0.750   X   TURNBUD     0.900    0.160          0.687  0.920        11.580      9.903            11.022            20.356       -9.334                 True              True         0.988         1.070
+      U56 0.750   X    RANDOM     0.100    0.110          0.706  0.945        14.088     10.174            15.060            22.603       -7.543                 True              True         1.002         1.070
+      U56 0.750   X    RANDOM     0.250    0.254          0.653  0.873        17.063      9.400             7.872            15.200       -7.327                 True              True         0.962         1.070
+      U56 0.750   X    RANDOM     0.500    0.513          0.556  0.743        18.023      8.003             0.000             0.000        0.000                False              True         0.871         1.070
+      U56 1.000   R    VOLCAP     0.100    0.827          0.718  0.721        15.441     10.328            12.354            22.626      -10.272                 True              True         1.043         1.070
+      U56 1.000   R    VOLCAP     0.150    0.429          0.905  0.909        15.724     13.021            17.672             0.000       17.672                 True             False         1.066         1.070
+      U56 1.000   R    VOLCAP     0.250    0.050          0.988  0.992        14.442     14.214             6.257             0.000        6.257                 True             False         1.084         1.070
+      U56 1.000   R     DDCTL     0.050    0.334          0.830  0.833        16.686     11.935             6.434             2.665        3.769                 True             False         0.953         1.070
+      U56 1.000   R     DDCTL     0.100    0.135          0.929  0.932        15.520     13.363            11.667             0.000       11.667                 True             False         0.993         1.070
+      U56 1.000   R     DDCTL     0.200    0.001          0.996  1.000        14.501     14.324             0.000             0.000        0.000                False              True         1.056         1.070
+      U56 1.000   P   BREADTH     0.750    0.112          0.968  0.972        15.006     13.927             0.000             0.000        0.000                False              True         1.089         1.070
+      U56 1.000   P   BREADTH     0.500    0.112          0.940  0.944        15.682     13.523             0.000             0.000        0.000                False              True         1.097         1.070
+      U56 1.000   P   BREADTH     0.250    0.112          0.912  0.915        16.357     13.120             0.000             0.000        0.000                False              True         1.093         1.070
+      U56 1.000   P NAMEFLOOR    10.000    0.036          0.986  0.989        14.640     14.177             0.000             0.000        0.000                False              True         1.071         1.070
+      U56 1.000   P NAMEFLOOR    20.000    0.110          0.954  0.958        15.398     13.730             0.000             0.000        0.000                False              True         1.080         1.070
+      U56 1.000   P NAMEFLOOR    30.000    0.194          0.916  0.920        15.871     13.182            18.250             0.000       18.250                 True             False         1.080         1.070
+      U56 1.000   X    CALCAD     0.750    0.510          0.869  0.873        13.043     12.505             0.000             0.000        0.000                False              True         1.070         1.070
+      U56 1.000   X    CALCAD     0.500    0.510          0.742  0.745        11.756     10.679             0.000            22.626      -22.626                 True              True         1.038         1.070
+      U56 1.000   X    CALCAD     0.250    0.510          0.615  0.618        10.469      8.853             0.000             9.195       -9.195                 True              True         0.954         1.070
+      U56 1.000   X   TURNBUD     0.500    0.558          0.718  0.721        13.931     10.330             0.000            22.626      -22.626                 True              True         0.937         1.070
+      U56 1.000   X   TURNBUD     0.750    0.269          0.862  0.865        15.604     12.399             0.000             0.000        0.000                False              True         0.942         1.070
+      U56 1.000   X   TURNBUD     0.900    0.160          0.916  0.920        15.354     13.182             0.000             0.000        0.000                False              True         0.989         1.070
+      U56 1.000   X    RANDOM     0.100    0.110          0.941  0.945        18.755     13.541             0.000             0.000        0.000                False              True         1.002         1.070
+      U56 1.000   X    RANDOM     0.250    0.254          0.870  0.873        22.719     12.511             0.000             0.000        0.000                False              True         0.962         1.070
+      U56 1.000   X    RANDOM     0.500    0.513          0.741  0.743        23.999     10.652             3.819            22.626      -18.807                 True              True         0.872         1.070
+     B136 0.500   R    VOLCAP     0.100    0.269          0.473  0.949         9.847      8.948             0.000             0.000        0.000                False              True         0.952         0.941
+     B136 0.500   R    VOLCAP     0.150    0.044          0.495  0.993         9.444      9.359             0.000             0.000        0.000                False              True         0.975         0.941
+     B136 0.500   R    VOLCAP     0.250    0.004          0.498  0.999         9.415      9.418             0.000             0.000        0.000                False              True         0.945         0.941
+     B136 0.500   R     DDCTL     0.050    0.162          0.458  0.919        10.610      8.666             0.000             0.000        0.000                False              True         0.792         0.941
+     B136 0.500   R     DDCTL     0.100    0.016          0.495  0.992         9.394      9.349             0.000             0.000        0.000                False              True         0.926         0.941
+     B136 0.500   R     DDCTL     0.200    0.000          0.499  1.000         9.425      9.425             0.000             0.000        0.000                False              True         0.941         0.941
+     B136 0.500   P   BREADTH     0.750    0.101          0.486  0.975         9.604      9.188             0.000             0.000        0.000                False              True         0.938         0.941
+     B136 0.500   P   BREADTH     0.500    0.101          0.473  0.950         9.783      8.952             0.000             0.000        0.000                False              True         0.925         0.941
+     B136 0.500   P   BREADTH     0.250    0.101          0.461  0.925         9.962      8.715             0.000             0.000        0.000                False              True         0.902         0.941
+     B136 0.500   P NAMEFLOOR    10.000    0.010          0.497  0.997         9.464      9.394             0.000             0.000        0.000                False              True         0.944         0.941
+     B136 0.500   P NAMEFLOOR    20.000    0.024          0.493  0.989         9.471      9.322             0.000             0.000        0.000                False              True         0.954         0.941
+     B136 0.500   P NAMEFLOOR    30.000    0.041          0.490  0.982         9.555      9.255             0.000             0.000        0.000                False              True         0.948         0.941
+     B136 0.500   X    CALCAD     0.750    0.510          0.435  0.873         8.472      8.224             0.000             0.000        0.000                False              True         0.938         0.941
+     B136 0.500   X    CALCAD     0.500    0.510          0.371  0.745         7.519      7.022             0.000             0.000        0.000                False              True         0.906         0.941
+     B136 0.500   X    CALCAD     0.250    0.510          0.308  0.618         6.565      5.820             0.000             0.000        0.000                False              True         0.829         0.941
+     B136 0.500   X   TURNBUD     0.500    0.561          0.359  0.719        10.094      6.781             0.000             0.000        0.000                False              True         0.792         0.941
+     B136 0.500   X   TURNBUD     0.750    0.267          0.432  0.867        10.269      8.167             0.000             0.000        0.000                False              True         0.846         0.941
+     B136 0.500   X   TURNBUD     0.900    0.117          0.469  0.942        10.088      8.875             0.000             0.000        0.000                False              True         0.918         0.941
+     B136 0.500   X    RANDOM     0.100    0.110          0.471  0.945        11.487      8.908             0.000             0.000        0.000                False              True         0.886         0.941
+     B136 0.500   X    RANDOM     0.250    0.254          0.435  0.873        13.277      8.230             0.000             0.000        0.000                False              True         0.833         0.941
+     B136 0.500   X    RANDOM     0.500    0.513          0.371  0.743        13.629      7.007             0.000             0.000        0.000                False              True         0.777         0.941
+     B136 0.750   R    VOLCAP     0.100    0.723          0.592  0.792        14.883     11.155             0.000             6.851       -6.851                 True              True         0.871         0.943
+     B136 0.750   R    VOLCAP     0.150    0.269          0.710  0.949        14.721     13.374             7.909             6.851        1.058                 True             False         0.954         0.943
+     B136 0.750   R    VOLCAP     0.250    0.022          0.745  0.996        14.084     14.032            11.254             6.851        4.403                 True             False         0.975         0.943
+     B136 0.750   R     DDCTL     0.050    0.282          0.642  0.859        15.334     12.106             0.584             6.851       -6.267                 True              True         0.834         0.943
+     B136 0.750   R     DDCTL     0.100    0.075          0.720  0.963        15.040     13.563             0.000             6.851       -6.851                 True              True         0.856         0.943
+     B136 0.750   R     DDCTL     0.200    0.000          0.748  1.000        14.089     14.089             6.851             6.851        0.000                 True              True         0.943         0.943
+     B136 0.750   P   BREADTH     0.750    0.101          0.729  0.975        14.359     13.735             6.414             6.851       -0.437                 True              True         0.940         0.943
+     B136 0.750   P   BREADTH     0.500    0.101          0.710  0.950        14.629     13.380             5.298             6.851       -1.553                 True              True         0.927         0.943
+     B136 0.750   P   BREADTH     0.250    0.101          0.691  0.924        14.898     13.025             3.496             6.851       -3.355                 True              True         0.905         0.943
+     B136 0.750   P NAMEFLOOR    10.000    0.010          0.745  0.997        14.147     14.041             7.540             6.851        0.689                 True             False         0.946         0.943
+     B136 0.750   P NAMEFLOOR    20.000    0.024          0.739  0.989        14.158     13.934             7.547             6.851        0.697                 True             False         0.956         0.943
+     B136 0.750   P NAMEFLOOR    30.000    0.041          0.734  0.982        14.286     13.834             7.906             6.851        1.055                 True             False         0.951         0.943
+     B136 0.750   X    CALCAD     0.750    0.510          0.652  0.873        12.665     12.293             4.526             6.851       -2.325                 True              True         0.939         0.943
+     B136 0.750   X    CALCAD     0.500    0.510          0.557  0.745        11.240     10.497             0.000             1.782       -1.782                 True              True         0.907         0.943
+     B136 0.750   X    CALCAD     0.250    0.510          0.462  0.618         9.816      8.700             0.000             0.000        0.000                False              True         0.829         0.943
+     B136 0.750   X   TURNBUD     0.500    0.560          0.538  0.720        15.236     10.147             0.000             0.000        0.000                False              True         0.799         0.943
+     B136 0.750   X   TURNBUD     0.750    0.270          0.647  0.865        15.430     12.187             0.000             6.851       -6.851                 True              True         0.838         0.943
+     B136 0.750   X   TURNBUD     0.900    0.117          0.704  0.942        15.085     13.265             4.362             6.851       -2.489                 True              True         0.920         0.943
+     B136 0.750   X    RANDOM     0.100    0.110          0.707  0.945        17.180     13.317             0.000             6.851       -6.851                 True              True         0.888         0.943
+     B136 0.750   X    RANDOM     0.250    0.254          0.653  0.873        19.868     12.303             0.000             6.851       -6.851                 True              True         0.834         0.943
+     B136 0.750   X    RANDOM     0.500    0.513          0.556  0.743        20.397     10.474             0.000             1.583       -1.583                 True              True         0.779         0.943
+     B136 1.000   R    VOLCAP     0.100    0.915          0.631  0.634        17.393     11.890             0.000             7.018       -7.018                 True              True         0.836         0.945
+     B136 1.000   R    VOLCAP     0.150    0.613          0.846  0.849        20.153     15.933             3.524             0.000        3.524                 True             False         0.899         0.945
+     B136 1.000   R    VOLCAP     0.250    0.107          0.978  0.982        19.050     18.425             0.000             0.000        0.000                False              True         0.980         0.945
+     B136 1.000   R     DDCTL     0.050    0.368          0.813  0.816        21.534     15.317             0.000             0.000        0.000                False              True         0.785         0.945
+     B136 1.000   R     DDCTL     0.100    0.164          0.914  0.918        20.566     17.223             0.000             0.000        0.000                False              True         0.808         0.945
+     B136 1.000   R     DDCTL     0.200    0.014          0.989  0.993        18.999     18.635             0.000             0.000        0.000                False              True         0.918         0.945
+     B136 1.000   P   BREADTH     0.750    0.101          0.971  0.975        19.127     18.294             0.000             0.000        0.000                False              True         0.942         0.945
+     B136 1.000   P   BREADTH     0.500    0.101          0.946  0.950        19.487     17.821             0.000             0.000        0.000                False              True         0.930         0.945
+     B136 1.000   P   BREADTH     0.250    0.101          0.921  0.924        19.847     17.347             0.000             0.000        0.000                False              True         0.907         0.945
+     B136 1.000   P NAMEFLOOR    10.000    0.010          0.993  0.997        18.844     18.702             0.000             0.000        0.000                False              True         0.948         0.945
+     B136 1.000   P NAMEFLOOR    20.000    0.024          0.985  0.989        18.859     18.560             0.000             0.000        0.000                False              True         0.958         0.945
+     B136 1.000   P NAMEFLOOR    30.000    0.041          0.978  0.982        19.031     18.426             0.000             0.000        0.000                False              True         0.953         0.945
+     B136 1.000   X    CALCAD     0.750    0.510          0.869  0.873        16.869     16.374             0.000             0.000        0.000                False              True         0.941         0.945
+     B136 1.000   X    CALCAD     0.500    0.510          0.742  0.745        14.972     13.981             0.000             7.018       -7.018                 True              True         0.908         0.945
+     B136 1.000   X    CALCAD     0.250    0.510          0.615  0.618        13.075     11.589             0.000             7.018       -7.018                 True              True         0.829         0.945
+     B136 1.000   X   TURNBUD     0.500    0.558          0.718  0.721        20.067     13.533             0.000             7.018       -7.018                 True              True         0.802         0.945
+     B136 1.000   X   TURNBUD     0.750    0.271          0.861  0.865        20.721     16.226             0.000             0.000        0.000                False              True         0.845         0.945
+     B136 1.000   X   TURNBUD     0.900    0.119          0.937  0.940        19.992     17.648             0.000             0.000        0.000                False              True         0.927         0.945
+     B136 1.000   X    RANDOM     0.100    0.110          0.942  0.945        22.885     17.737             0.000             0.000        0.000                False              True         0.889         0.945
+     B136 1.000   X    RANDOM     0.250    0.254          0.870  0.873        26.466     16.387             0.000             0.000        0.000                False              True         0.836         0.945
+     B136 1.000   X    RANDOM     0.500    0.513          0.741  0.743        27.170     13.951             0.000             7.018       -7.018                 True              True         0.781         0.945
+
+========================================================================================================================================================
+[4] THE SIX PARENTS (the anchors every overlay is measured against)
+    panel    g0  gross_mean  turnover_yr  p_CAGR  p_Sharpe  p_MaxDD  p_H1  p_H2  cstar4b  cstar4a  cstar4b_is  cstar4b_oos
+      U56 0.500       0.499        7.211   0.085     1.070   -0.124 1.076 1.071    0.000    0.000       0.000        0.000
+      U56 0.750       0.747       10.767   0.128     1.070   -0.183 1.076 1.072   22.603    0.000       0.000       38.380
+      U56 1.000       0.996       14.331   0.171     1.070   -0.240 1.076 1.073    0.000    0.000       0.000        0.000
+     B136 0.500       0.499        9.425   0.087     0.941   -0.136 1.102 0.801    0.000    0.000       0.000        0.000
+     B136 0.750       0.748       14.089   0.130     0.943   -0.201 1.105 0.802    6.851    0.000       0.000        0.191
+     B136 1.000       0.996       18.767   0.172     0.945   -0.262 1.107 0.804    0.000    0.000       0.000        0.000
+
+========================================================================================================================================================
+[5] KEEP-PATH CENSUS on every grid point, all three cost rungs
+    @ 0 bps:  4a   0/126   4b  38/126
+    @10 bps:  4a   0/126   4b  18/126
+    @25 bps:  4a   0/126   4b   0/126
+    failing-4b-bar distribution @10 bps: H2,CAGR,OOS=24, CAGR=23, -=18, DD=14, H2,DD,OOS=13, H2,OOS=7, H2,CAGR=5, H2=5, H2,DD=4, H1,CAGR=3, H1,H2,CAGR,OOS=3, H1=2, H2,DD,CAGR,OOS=2, H1,H2,OOS=2, H1,H2,DD,OOS=1
+    the 18 cells clearing 4b @10 bps:
+      panel    g0 cls    family  dial_val  ov_CAGR_10  ov_Sharpe_10  ov_MaxDD_10  cstar_ov_4b_full  cstar_ct_4b_full  identity_4b_full
+        U56 0.750   R    VOLCAP     0.150       0.122         1.075       -0.157            21.230            22.603              True
+        U56 0.750   R    VOLCAP     0.250       0.128         1.075       -0.174            22.600            22.603              True
+        U56 0.750   R     DDCTL     0.100       0.117         1.011       -0.164            17.747            22.603              True
+        U56 0.750   R     DDCTL     0.200       0.128         1.070       -0.183            22.603            22.603              True
+        U56 0.750   P   BREADTH     0.750       0.126         1.088       -0.176            21.830            22.603              True
+        U56 0.750   P   BREADTH     0.500       0.124         1.097       -0.168            20.341            22.603              True
+        U56 0.750   P   BREADTH     0.250       0.121         1.093       -0.161            18.167            19.924              True
+        U56 0.750   P NAMEFLOOR    10.000       0.126         1.071       -0.168            22.513            22.603              True
+        U56 0.750   P NAMEFLOOR    20.000       0.123         1.080       -0.159            20.242            22.603              True
+        U56 0.750   P NAMEFLOOR    30.000       0.119         1.079       -0.150            18.226            20.379              True
+        U56 0.750   X    CALCAD     0.750       0.113         1.070       -0.183            16.262            15.153             False
+        U56 0.750   X   TURNBUD     0.900       0.111         0.988       -0.183            11.022            20.356              True
+        U56 0.750   X    RANDOM     0.100       0.115         1.002       -0.183            15.060            22.603              True
+        U56 1.000   R    VOLCAP     0.100       0.111         1.043       -0.143            12.354            22.626              True
+        U56 1.000   R    VOLCAP     0.150       0.147         1.066       -0.186            17.672             0.000             False
+        U56 1.000   R     DDCTL     0.100       0.146         0.993       -0.195            11.667             0.000             False
+        U56 1.000   P NAMEFLOOR    30.000       0.158         1.080       -0.197            18.250             0.000             False
+       B136 0.750   R    VOLCAP     0.250       0.133         0.975       -0.181            11.254             6.851             False
+
+========================================================================================================================================================
+[6] RULE 8 WALK-FORWARD — dial chosen on 2008-2016 ONLY, 2017-2026 read once
+    panel    g0 cls    family   chooser  dial_val  cstar_is  cstar_oos  ctrl_cstar_oos  informative_oos  identity_oos  oos_CAGR  oos_Sharpe  oos_MaxDD  par_oos_CAGR  par_oos_Sharpe  par_oos_MaxDD  v2_oos_Sharpe  spy_oos_CAGR  spy_oos_Sharpe  spy_oos_MaxDD  keep4b_10  keep4a_10
+      U56 0.500   R    VOLCAP  IS c*_4b     0.150     0.000      0.000           0.000            False          True     0.097       1.152     -0.113         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   R    VOLCAP IS Sharpe     0.150     0.000      0.000           0.000            False          True     0.097       1.152     -0.113         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   R     DDCTL  IS c*_4b     0.100     0.000      0.000           0.000            False          True     0.094       1.116     -0.124         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   R     DDCTL IS Sharpe     0.100     0.000      0.000           0.000            False          True     0.094       1.116     -0.124         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   P   BREADTH  IS c*_4b     0.750     0.000      0.000           0.000            False          True     0.096       1.169     -0.119         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   P   BREADTH IS Sharpe     0.750     0.000      0.000           0.000            False          True     0.096       1.169     -0.119         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   P NAMEFLOOR  IS c*_4b    10.000     0.000      0.000           0.000            False          True     0.094       1.135     -0.114         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   P NAMEFLOOR IS Sharpe    10.000     0.000      0.000           0.000            False          True     0.094       1.135     -0.114         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   X    CALCAD  IS c*_4b     0.250     0.000      0.000           0.000            False          True     0.054       0.863     -0.124         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   X    CALCAD IS Sharpe     0.250     0.000      0.000           0.000            False          True     0.054       0.863     -0.124         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   X   TURNBUD  IS c*_4b     0.750     0.000      0.000           0.000            False          True     0.077       1.009     -0.122         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   X   TURNBUD IS Sharpe     0.750     0.000      0.000           0.000            False          True     0.077       1.009     -0.122         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   X    RANDOM  IS c*_4b     0.250     0.000      0.000           0.000            False          True     0.073       0.963     -0.128         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.500   X    RANDOM IS Sharpe     0.250     0.000      0.000           0.000            False          True     0.073       0.963     -0.128         0.096           1.136         -0.124          1.285         0.155           0.882         -0.337      False      False
+      U56 0.750   R    VOLCAP  IS c*_4b     0.250     0.000     38.380          38.380             True          True     0.145       1.145     -0.174         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   R    VOLCAP IS Sharpe     0.250     0.000     38.380          38.380             True          True     0.145       1.145     -0.174         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   R     DDCTL  IS c*_4b     0.200     0.000     38.380          38.380             True          True     0.145       1.137     -0.183         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   R     DDCTL IS Sharpe     0.200     0.000     38.380          38.380             True          True     0.145       1.137     -0.183         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   P   BREADTH  IS c*_4b     0.750     0.000     37.903          37.356             True         False     0.144       1.170     -0.176         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   P   BREADTH IS Sharpe     0.750     0.000     37.903          37.356             True         False     0.144       1.170     -0.176         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   P NAMEFLOOR  IS c*_4b    10.000     1.776     34.574          38.380             True          True     0.142       1.136     -0.168         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   P NAMEFLOOR IS Sharpe    10.000     1.776     34.574          38.380             True          True     0.142       1.136     -0.168         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   X    CALCAD  IS c*_4b     0.750     6.893     23.697          27.079             True          True     0.123       1.091     -0.183         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337       True      False
+      U56 0.750   X    CALCAD IS Sharpe     0.250     0.000      0.000           0.000            False          True     0.080       0.861     -0.183         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337      False      False
+      U56 0.750   X   TURNBUD  IS c*_4b     0.750     0.000     15.344          26.216             True          True     0.115       1.007     -0.180         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337      False      False
+      U56 0.750   X   TURNBUD IS Sharpe     0.750     0.000     15.344          26.216             True          True     0.115       1.007     -0.180         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337      False      False
+      U56 0.750   X    RANDOM  IS c*_4b     0.250     0.000      8.743          27.125             True          True     0.110       0.963     -0.189         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337      False      False
+      U56 0.750   X    RANDOM IS Sharpe     0.250     0.000      8.743          27.125             True          True     0.110       0.963     -0.189         0.145           1.137         -0.183          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   R    VOLCAP  IS c*_4b     0.100     5.863     17.945          36.551             True          True     0.122       1.122     -0.143         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337       True      False
+      U56 1.000   R    VOLCAP IS Sharpe     0.250     0.000      6.257           0.000             True         False     0.191       1.151     -0.203         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   R     DDCTL  IS c*_4b     0.200     0.000      0.000           0.000            False          True     0.188       1.113     -0.240         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   R     DDCTL IS Sharpe     0.200     0.000      0.000           0.000            False          True     0.188       1.113     -0.240         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   P   BREADTH  IS c*_4b     0.750     0.000      0.000           0.000            False          True     0.193       1.171     -0.230         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   P   BREADTH IS Sharpe     0.750     0.000      0.000           0.000            False          True     0.193       1.171     -0.230         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   P NAMEFLOOR  IS c*_4b    10.000     0.000      0.000           0.000            False          True     0.189       1.137     -0.220         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   P NAMEFLOOR IS Sharpe    10.000     0.000      0.000           0.000            False          True     0.189       1.137     -0.220         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   X    CALCAD  IS c*_4b     0.500    22.753      0.000          38.593             True          True     0.135       1.003     -0.240         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   X    CALCAD IS Sharpe     0.250    10.450      0.000          21.226             True          True     0.106       0.860     -0.240         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   X   TURNBUD  IS c*_4b     0.900     0.000      0.000           0.000            False          True     0.174       1.083     -0.240         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   X   TURNBUD IS Sharpe     0.900     0.000      0.000           0.000            False          True     0.174       1.083     -0.240         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   X    RANDOM  IS c*_4b     0.250     0.000      0.000           0.000            False          True     0.145       0.964     -0.247         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+      U56 1.000   X    RANDOM IS Sharpe     0.250     0.000      0.000           0.000            False          True     0.145       0.964     -0.247         0.194           1.137         -0.240          1.285         0.155           0.882         -0.337      False      False
+     B136 0.500   R    VOLCAP  IS c*_4b     0.150     0.000      0.000           0.000            False          True     0.086       0.927     -0.123         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   R    VOLCAP IS Sharpe     0.150     0.000      0.000           0.000            False          True     0.086       0.927     -0.123         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   R     DDCTL  IS c*_4b     0.100     0.000      0.000           0.000            False          True     0.079       0.853     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   R     DDCTL IS Sharpe     0.100     0.000      0.000           0.000            False          True     0.079       0.853     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   P   BREADTH  IS c*_4b     0.750     0.000      0.000           0.000            False          True     0.080       0.878     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   P   BREADTH IS Sharpe     0.750     0.000      0.000           0.000            False          True     0.080       0.878     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   P NAMEFLOOR  IS c*_4b    20.000     0.000      0.000           0.000            False          True     0.083       0.889     -0.125         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   P NAMEFLOOR IS Sharpe    20.000     0.000      0.000           0.000            False          True     0.083       0.889     -0.125         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   X    CALCAD  IS c*_4b     0.500     0.000      0.000           0.000            False          True     0.061       0.796     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   X    CALCAD IS Sharpe     0.500     0.000      0.000           0.000            False          True     0.061       0.796     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   X   TURNBUD  IS c*_4b     0.900     0.000      0.000           0.000            False          True     0.077       0.852     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   X   TURNBUD IS Sharpe     0.900     0.000      0.000           0.000            False          True     0.077       0.852     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   X    RANDOM  IS c*_4b     0.100     0.000      0.000           0.000            False          True     0.071       0.783     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.500   X    RANDOM IS Sharpe     0.100     0.000      0.000           0.000            False          True     0.071       0.783     -0.136         0.083           0.881         -0.136          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   R    VOLCAP  IS c*_4b     0.250    14.600      9.055           0.191             True         False     0.128       0.927     -0.181         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337       True      False
+     B136 0.750   R    VOLCAP IS Sharpe     0.250    14.600      9.055           0.191             True         False     0.128       0.927     -0.181         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337       True      False
+     B136 0.750   R     DDCTL  IS c*_4b     0.050     0.604      0.000           0.191             True          True     0.095       0.820     -0.138         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   R     DDCTL IS Sharpe     0.200     0.000      0.191           0.191             True          True     0.124       0.883     -0.201         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   P   BREADTH  IS c*_4b     0.750     0.000      1.466           0.191             True         False     0.120       0.880     -0.200         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   P   BREADTH IS Sharpe     0.750     0.000      1.466           0.191             True         False     0.120       0.880     -0.200         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   P NAMEFLOOR  IS c*_4b    20.000     0.000      3.487           0.191             True         False     0.123       0.891     -0.184         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   P NAMEFLOOR IS Sharpe    20.000     0.000      3.487           0.191             True         False     0.123       0.891     -0.184         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   X    CALCAD  IS c*_4b     0.750     6.447      0.000           0.191             True          True     0.108       0.854     -0.201         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   X    CALCAD IS Sharpe     0.500     0.000      0.000           0.000            False          True     0.091       0.796     -0.201         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   X   TURNBUD  IS c*_4b     0.750     0.510      0.000           0.191             True          True     0.093       0.771     -0.183         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   X   TURNBUD IS Sharpe     0.900     0.000      0.000           0.191             True          True     0.114       0.855     -0.201         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   X    RANDOM  IS c*_4b     0.100    10.886      0.000           0.191             True          True     0.105       0.785     -0.201         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 0.750   X    RANDOM IS Sharpe     0.100    10.886      0.000           0.191             True          True     0.105       0.785     -0.201         0.124           0.883         -0.201          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   R    VOLCAP  IS c*_4b     0.100     3.459      0.000           0.412             True          True     0.078       0.738     -0.154         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   R    VOLCAP IS Sharpe     0.250     0.000      0.000           0.000            False          True     0.166       0.933     -0.238         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   R     DDCTL  IS c*_4b     0.050     0.889      0.000           0.000            False          True     0.107       0.747     -0.173         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   R     DDCTL IS Sharpe     0.200     0.000      0.000           0.000            False          True     0.151       0.836     -0.272         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   P   BREADTH  IS c*_4b     0.750     0.000      0.000           0.000            False          True     0.158       0.882     -0.261         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   P   BREADTH IS Sharpe     0.750     0.000      0.000           0.000            False          True     0.158       0.882     -0.261         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   P NAMEFLOOR  IS c*_4b    20.000     0.000      0.000           0.000            False          True     0.163       0.893     -0.240         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   P NAMEFLOOR IS Sharpe    20.000     0.000      0.000           0.000            False          True     0.163       0.893     -0.240         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   X    CALCAD  IS c*_4b     0.500     0.000      0.000           0.412             True          True     0.120       0.797     -0.262         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   X    CALCAD IS Sharpe     0.500     0.000      0.000           0.412             True          True     0.120       0.797     -0.262         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   X   TURNBUD  IS c*_4b     0.900     0.000      0.000           0.000            False          True     0.152       0.864     -0.262         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   X   TURNBUD IS Sharpe     0.900     0.000      0.000           0.000            False          True     0.152       0.864     -0.262         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   X    RANDOM  IS c*_4b     0.100     0.000      0.000           0.000            False          True     0.138       0.787     -0.262         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+     B136 1.000   X    RANDOM IS Sharpe     0.100     0.000      0.000           0.000            False          True     0.138       0.787     -0.262         0.164           0.885         -0.262          1.119         0.155           0.882         -0.337      False      False
+
+    OOS identity for the IS-chosen dial: holds 24/33 informative (84 arms total).  Widening by class, OOS, IS-chosen only:
+            n  widens
+      cls            
+      P     8       6
+      R    11       3
+      X    14       0
+    OOS Sharpe of the IS-chosen arms vs SPY: 52/84 beat SPY; vs RULES v2: 0/84; vs their own parent: 22/84
+    IS-chosen arms clearing the FULL bar set @10 bps: 4b 12/84, 4a 0/84
+    best OOS Sharpe among IS-chosen arms: U56 g0=1.00 BREADTH=0.75 (IS c*_4b) -> OOS 19.27% / 1.171 / -23.00%  vs parent 19.37% / 1.137 / -23.98%, RULES v2 9.53% / 1.285, SPY 15.45% / 0.882 / -33.72%
+
+========================================================================================================================================================
+[7] VERDICT
+    4b / full, informative only:  R 7/19 widen   P 4/13   X 2/21
+    -> the partition FAILS: exogenous overlays widen c* too, so 'widens c*' is not a
+       property of what the overlay is timed on.  A cost budget cannot be screened by
+       timing class.
+    KEEP: 4a 0/126 @10 bps, 4b 18/126 @10 bps, 0/126 @25 bps.
+
+Wrote 2026-09-07_is-c-star-widening-a-RISK-TIMING-property-record-wide_cloud.grid.csv (126), .parents.csv (6), .walkforward.csv (84)  [15.8s]
