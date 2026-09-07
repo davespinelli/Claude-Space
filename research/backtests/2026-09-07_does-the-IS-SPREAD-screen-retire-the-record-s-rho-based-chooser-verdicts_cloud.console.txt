@@ -1,0 +1,216 @@
+======================================================================================================================
+IDEA 373 - does the IS-SPREAD screen retire the record's rho-based chooser verdicts?
+  S1 = IS_Sharpe(top1) - IS_Sharpe(top2).  0 tuned parameters; thresholds are a ladder.
+======================================================================================================================
+======================================================================================================================
+[A] CORPUS CENSUS - every committed grid carrying IS_Sharpe / OOS_Sharpe / OOS_MaxDD
+======================================================================================================================
+
+STRATIFIED: 6307 menus from 225 files, median menu size 12, total arms 168713
+  IS spread S1: median 0.0221, mean 0.0427, p10 0.0000, p90 0.1138
+
+  the queue's count, as a ladder (rows are S1 < threshold; last row = all menus):
+ threshold  menus  share  mean_regret  med_regret  argmax_flip  verdict_flip  med_dd_regret_pp  med_dd_ratio
+    0.0050   1746 0.2768       0.0746      0.0179       0.8889        0.3219            6.4613        1.5291
+    0.0100   2229 0.3534       0.0816      0.0224       0.8825        0.3109            6.0845        1.5196
+    0.0200   3007 0.4768       0.0843      0.0236       0.8793        0.3013            5.9029        1.5485
+    0.0500   4615 0.7317       0.0970      0.0345       0.8709        0.2784            6.2889        1.6129
+    0.1000   5546 0.8793       0.1046      0.0468       0.8603        0.2847            6.0290        1.5397
+       inf   6307 1.0000       0.1078      0.0524       0.8348        0.2840            5.8709        1.4944
+
+  Spearman(S1, OOS Sharpe regret) = +0.1552   (a working screen needs this NEGATIVE and large: small spread -> big regret)
+  Spearman(S1, dd_regret_pp)      = -0.0844
+  Spearman(S1, menu OOS spread)   = +0.2373   (is a tight IS menu just a tight menu?)
+
+  by S1 bucket:
+            menus  mean_regret  med_regret  argmax_flip  verdict_flip  med_dd_ratio  med_dd_regret_pp  med_menu_n
+bucket                                                                                                           
+<0.005       1746       0.0746      0.0179       0.8889        0.3219        1.5291            6.4613     12.0000
+0.005-0.01    483       0.1069      0.0413       0.8592        0.2712        1.4236            4.7104     12.0000
+0.01-0.02     778       0.0923      0.0292       0.8702        0.2738        1.5910            5.3012     13.0000
+0.02-0.05    1608       0.1206      0.0672       0.8551        0.2357        1.7365            7.2156     12.0000
+0.05-0.10     931       0.1427      0.1035       0.8077        0.3158        1.2956            3.9608      7.0000
+>0.10         761       0.1312      0.0844       0.6491        0.2786        1.1959            3.6293      7.0000
+
+  ARGMAX FLIP (the IS pick is not the menu's best arm by OOS MaxDD): 5265/6307 = 83.5%
+  VERDICT FLIP (pick beats its menu median on one OOS column and loses on the other): 1791/6307 = 28.4%
+  restricted to the queue's S1 < 0.01: argmax flip 88.2%, verdict flip 31.1%, median dd_ratio 1.520, median dd regret 6.08 pp   (idea 371's own cell: 4.8x)
+
+  ABSTENTION (idea 241): when S1 < t take the menu's MEDIAN-IS arm instead of its argmax
+ threshold  menus_abstained  argmax_mean_OOS  argmax_mean_regret  mean_dd_regret_pp
+    0.0050             1746           0.8702              0.0746             8.6970
+    0.0100             2229           0.8727              0.0816             8.2135
+    0.0200             3007           0.8874              0.0843             7.7901
+    0.0500             4615           0.8836              0.0970             7.6522
+    0.1000             5546           0.8609              0.1046             7.5645
+  (the corpus cannot score the abstention arm's OOS itself -- committed grids do not carry the median arm's identity per menu -- so arm [B] runs it on live paths.)
+
+FILE-LEVEL: 255 menus from 255 files, median menu size 168, total arms 173160
+  IS spread S1: median 0.0071, mean 0.0199, p10 0.0000, p90 0.0538
+
+  the queue's count, as a ladder (rows are S1 < threshold; last row = all menus):
+ threshold  menus  share  mean_regret  med_regret  argmax_flip  verdict_flip  med_dd_regret_pp  med_dd_ratio
+    0.0050    116 0.4549       0.2145      0.1784       0.9655        0.3707           11.6292        2.1484
+    0.0100    140 0.5490       0.2230      0.1897       0.9714        0.3714           10.9160        2.0695
+    0.0200    188 0.7373       0.2341      0.1998       0.9521        0.3457           10.7093        2.0528
+    0.0500    227 0.8902       0.2325      0.1978       0.9604        0.3260           10.2094        2.0195
+    0.1000    243 0.9529       0.2359      0.2019       0.9630        0.3210           10.1801        1.9931
+       inf    255 1.0000       0.2411      0.2082       0.9608        0.3176           10.2013        1.9894
+
+  Spearman(S1, OOS Sharpe regret) = +0.0931   (a working screen needs this NEGATIVE and large: small spread -> big regret)
+  Spearman(S1, dd_regret_pp)      = -0.1159
+  Spearman(S1, menu OOS spread)   = +0.1063   (is a tight IS menu just a tight menu?)
+
+  by S1 bucket:
+            menus  mean_regret  med_regret  argmax_flip  verdict_flip  med_dd_ratio  med_dd_regret_pp  med_menu_n
+bucket                                                                                                           
+<0.005        116       0.2145      0.1784       0.9655        0.3707        2.1484           11.6292    190.5000
+0.005-0.01     24       0.2639      0.2583       1.0000        0.3750        1.9242            8.6489    145.0000
+0.01-0.02      48       0.2666      0.3333       0.8958        0.2708        2.0146            9.7073    270.0000
+0.02-0.05      39       0.2249      0.1971       1.0000        0.2308        1.6085            7.6359    144.0000
+0.05-0.10      16       0.2834      0.2684       1.0000        0.2500        1.8403            8.7069    121.0000
+>0.10          12       0.3474      0.2200       0.9167        0.2500        1.6584           12.7668     27.5000
+
+  ARGMAX FLIP (the IS pick is not the menu's best arm by OOS MaxDD): 245/255 = 96.1%
+  VERDICT FLIP (pick beats its menu median on one OOS column and loses on the other): 81/255 = 31.8%
+  restricted to the queue's S1 < 0.01: argmax flip 97.1%, verdict flip 37.1%, median dd_ratio 2.070, median dd regret 10.92 pp   (idea 371's own cell: 4.8x)
+
+  ABSTENTION (idea 241): when S1 < t take the menu's MEDIAN-IS arm instead of its argmax
+ threshold  menus_abstained  argmax_mean_OOS  argmax_mean_regret  mean_dd_regret_pp
+    0.0050              116           1.0161              0.2145            12.0960
+    0.0100              140           1.0104              0.2230            11.5448
+    0.0200              188           1.0242              0.2341            11.2853
+    0.0500              227           1.0373              0.2325            10.9122
+    0.1000              243           1.0351              0.2359            10.8196
+  (the corpus cannot score the abstention arm's OOS itself -- committed grids do not carry the median arm's identity per menu -- so arm [B] runs it on live paths.)
+
+======================================================================================================================
+[B] LIVE REPLICATION - six dials x 3 panels x 3 rungs, IS <= 2016 chooses, 2017- read once
+======================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+    SMALL: dropped 44 tickers with max_1d_move >= 1.0 -> 439 names + SPY
+    [U56] 25 arms x 3 rungs; SPY 15.2%/0.889/-33.7%, OOS 0.882
+    [B136] 25 arms x 3 rungs; SPY 15.2%/0.889/-33.7%, OOS 0.882
+    [SMALL439] 25 arms x 3 rungs; SPY 14.1%/0.862/-33.7%, OOS 0.882
+
+  per-menu chooser statistics (menu = panel x dial x rung, 54 menus):
+   panel    dial  bps  n  pick     S1  OOS_pick  OOS_best  regret  OOS_MaxDD_pick  OOS_MaxDD_best  dd_ratio  argmax_flip  verdict_flip
+    B136    BAND    0  4 b0.12 0.0305    1.1053    1.1750  0.0697         -0.1480         -0.1221    1.2121         True         False
+    B136    BAND   10  4 b0.12 0.0446    1.0908    1.1256  0.0348         -0.1481         -0.1224    1.2100         True         False
+    B136    BAND   25  4 b0.12 0.0654    1.0692    1.0740  0.0048         -0.1483         -0.1228    1.2069         True         False
+    B136 BREADTH    0  4 B0.00 0.0209    0.9908    0.9908  0.0000         -0.1998         -0.1998    1.0000        False         False
+    B136 BREADTH   10  4 B0.00 0.0274    0.8919    0.8919  0.0000         -0.2005         -0.2005    1.0000        False          True
+    B136 BREADTH   25  4 B0.00 0.0373    0.7434    0.7434  0.0000         -0.2016         -0.2016    1.0000        False         False
+    B136 CADENCE    0  3     M 0.0852    1.0481    1.0481  0.0000         -0.2607         -0.1998    1.3044         True          True
+    B136 CADENCE   10  3     M 0.0647    1.0065    1.0065  0.0000         -0.2610         -0.2005    1.3018         True          True
+    B136 CADENCE   25  3     M 0.0339    0.9439    0.9439  0.0000         -0.2616         -0.2016    1.2980         True          True
+    B136   GROSS    0  5 g1.00 0.0012    0.9923    0.9923  0.0000         -0.2611         -0.1096    2.3831         True          True
+    B136   GROSS   10  5 g1.00 0.0013    0.8937    0.8937  0.0000         -0.2620         -0.1100    2.3819         True          True
+    B136   GROSS   25  5 g1.00 0.0013    0.7454    0.7454  0.0000         -0.2633         -0.1106    2.3801         True          True
+    B136       N    0  5   n10 0.0151    0.8876    1.0636  0.1759         -0.2137         -0.1903    1.1228         True         False
+    B136       N   10  5   n10 0.0042    0.7831    0.9790  0.1959         -0.2144         -0.1911    1.1220         True         False
+    B136       N   25  5   n40 0.0077    0.8520    0.8520  0.0000         -0.1923         -0.1923    1.0000        False         False
+    B136  VOLTGT    0  4 t0.08 0.0140    0.9317    0.9709  0.0392         -0.1071         -0.1071    1.0000        False          True
+    B136  VOLTGT   10  4 t0.15 0.0050    0.8628    0.8628  0.0000         -0.1753         -0.1218    1.4399         True          True
+    B136  VOLTGT   25  4 t0.15 0.0319    0.7004    0.7004  0.0000         -0.1892         -0.1439    1.3147         True          True
+SMALL439    BAND    0  4 b0.12 0.0442    0.6586    0.6586  0.0000         -0.1577         -0.1386    1.1380         True          True
+SMALL439    BAND   10  4 b0.12 0.0527    0.6355    0.6355  0.0000         -0.1598         -0.1435    1.1135         True          True
+SMALL439    BAND   25  4 b0.12 0.0653    0.6009    0.6009  0.0000         -0.1629         -0.1508    1.0801         True          True
+SMALL439 BREADTH    0  4 B0.40 0.0300    0.5273    0.6249  0.0976         -0.2345         -0.2345    1.0000        False          True
+SMALL439 BREADTH   10  4 B0.40 0.0304    0.4022    0.5010  0.0988         -0.2647         -0.2647    1.0000        False          True
+SMALL439 BREADTH   25  4 B0.40 0.0310    0.2142    0.3150  0.1008         -0.3079         -0.3079    1.0000        False          True
+SMALL439 CADENCE    0  3     M 0.0880    0.4510    0.6249  0.1739         -0.3507         -0.2444    1.4352         True         False
+SMALL439 CADENCE   10  3     M 0.1485    0.3954    0.5010  0.1056         -0.3591         -0.2743    1.3089         True         False
+SMALL439 CADENCE   25  3     M 0.1361    0.3118    0.3150  0.0033         -0.3713         -0.3515    1.0564         True         False
+SMALL439   GROSS    0  5 g1.00 0.0009    0.6257    0.6257  0.0000         -0.3159         -0.1361    2.3213         True          True
+SMALL439   GROSS   10  5 g1.00 0.0009    0.5018    0.5018  0.0000         -0.3639         -0.1456    2.4997         True          True
+SMALL439   GROSS   25  5 g1.00 0.0010    0.3159    0.3159  0.0000         -0.4526         -0.1954    2.3167         True          True
+SMALL439       N    0  5   n20 0.0567    0.6249    0.6744  0.0495         -0.2444         -0.2286    1.0688         True         False
+SMALL439       N   10  5   n20 0.0658    0.5010    0.5519  0.0509         -0.2743         -0.2408    1.1391         True         False
+SMALL439       N   25  5   n20 0.0795    0.3150    0.3680  0.0530         -0.3515         -0.3063    1.1475         True          True
+SMALL439  VOLTGT    0  4 t0.15 0.0648    0.5923    0.5982  0.0059         -0.2059         -0.1276    1.6144         True          True
+SMALL439  VOLTGT   10  4 t0.15 0.0703    0.4607    0.4607  0.0000         -0.2414         -0.1427    1.6909         True          True
+SMALL439  VOLTGT   25  4 t0.15 0.0785    0.2632    0.2632  0.0000         -0.3147         -0.1870    1.6827         True          True
+     U56    BAND    0  4 b0.12 0.0018    1.1896    1.3096  0.1200         -0.1214         -0.1197    1.0148         True         False
+     U56    BAND   10  4 b0.12 0.0160    1.1765    1.2851  0.1086         -0.1215         -0.1201    1.0116         True         False
+     U56    BAND   25  4 b0.12 0.0373    1.1569    1.2482  0.0913         -0.1216         -0.1208    1.0068         True         False
+     U56 BREADTH    0  4 B0.00 0.0162    1.2467    1.2861  0.0394         -0.1822         -0.1822    1.0000        False         False
+     U56 BREADTH   10  4 B0.00 0.0193    1.1680    1.2066  0.0386         -0.1831         -0.1831    1.0000        False         False
+     U56 BREADTH   25  4 B0.00 0.0242    1.0496    1.0869  0.0374         -0.1844         -0.1844    1.0000        False          True
+     U56 CADENCE    0  3     M 0.0534    1.3179    1.3179  0.0000         -0.1945         -0.1822    1.0673         True          True
+     U56 CADENCE   10  3     M 0.1048    1.2841    1.2841  0.0000         -0.1951         -0.1831    1.0655         True          True
+     U56 CADENCE   25  3     M 0.1036    1.2332    1.2332  0.0000         -0.1960         -0.1844    1.0627         True          True
+     U56   GROSS    0  5 g0.40 0.0001    1.2465    1.2469  0.0004         -0.0996         -0.0996    1.0000        False          True
+     U56   GROSS   10  5 g0.85 0.0000    1.1681    1.1683  0.0001         -0.2060         -0.1001    2.0586         True          True
+     U56   GROSS   25  5 g0.85 0.0001    1.0499    1.0500  0.0002         -0.2075         -0.1009    2.0571         True          True
+     U56       N    0  5    n3 0.0368    1.1486    1.3252  0.1766         -0.2517         -0.1391    1.8101         True         False
+     U56       N   10  5    n3 0.0229    1.0554    1.2662  0.2108         -0.2581         -0.1397    1.8472         True         False
+     U56       N   25  5    n3 0.0020    0.9150    1.1775  0.2625         -0.2676         -0.1407    1.9017         True         False
+     U56  VOLTGT    0  4 t0.08 0.0275    1.2409    1.2535  0.0126         -0.1026         -0.1026    1.0000        False          True
+     U56  VOLTGT   10  4 t0.08 0.0052    1.1379    1.1641  0.0262         -0.1087         -0.1087    1.0000        False          True
+     U56  VOLTGT   25  4 t0.15 0.0227    1.0360    1.0360  0.0000         -0.1532         -0.1178    1.3004         True          True
+
+  menus with S1 < 0.01: 15/54; argmax flip 74.1%; verdict flip 61.1%
+  Spearman(S1, regret) = -0.0133;  Spearman(S1, dd_regret_pp) = -0.0861
+  mean regret  S1<0.01 0.0404 (n=15)  vs  S1>=0.01 0.0456 (n=39)
+  mean dd_ratio S1<0.01 1.792          vs  S1>=0.01 1.195
+
+  ABSTENTION scored on live paths (take the median-IS arm when S1 < t):
+ threshold  abstained  mean_OOS  mean_OOS_MaxDD  d_vs_argmax_OOS  d_vs_argmax_DD_pp
+    0.0000          0    0.8474         -0.2222           0.0000             0.0000
+    0.0050         13    0.8577         -0.2083           0.0103             1.3829
+    0.0100         15    0.8540         -0.2091           0.0066             1.3037
+    0.0200         20    0.8589         -0.2092           0.0116             1.2908
+    0.0500         37    0.8529         -0.2077           0.0056             1.4482
+    0.1000         50    0.8397         -0.1996          -0.0076             2.2585
+
+  KEEP paths over the live grid:
+    4a 9/225    4b 33/225
+      n  p4b  p4a
+bps              
+0    75   22    3
+10   75   10    3
+25   75    1    3
+
+    4b passes by panel x dial:
+panel  dial   
+B136   BREADTH    2
+       CADENCE    1
+       GROSS      2
+       N          3
+       VOLTGT     3
+U56    BREADTH    7
+       CADENCE    5
+       GROSS      2
+       N          3
+       VOLTGT     5
+
+    top 4b passes by OOS Sharpe:
+panel    dial   arm  bps  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  OOS_CAGR  OOS_MaxDD   turn
+  U56 CADENCE     M    0 0.152   1.239 -0.194 1.249 1.238       1.318     0.172     -0.194  4.331
+  U56 BREADTH B0.30    0 0.138   1.191 -0.182 1.164 1.221       1.286     0.159     -0.182  9.750
+  U56 CADENCE     M   10 0.147   1.203 -0.195 1.211 1.204       1.284     0.167     -0.195  4.331
+  U56 BREADTH B0.40    0 0.129   1.140 -0.182 1.079 1.199       1.267     0.154     -0.182 10.173
+  U56  VOLTGT t0.12    0 0.124   1.175 -0.127 1.177 1.175       1.253     0.137     -0.127  9.696
+  U56 BREADTH B0.00    0 0.137   1.175 -0.182 1.178 1.180       1.247     0.155     -0.182  9.631
+
+    first failing 4b bar:
+fail4b
+H1      106
+CAGR     36
+PASS     33
+H2       33
+DD       17
+
+======================================================================================================================
+REPRODUCTION GATES
+======================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+GATE 1  idea 40/41 U56 TOP3 @10bps 21.9%/1.04/-25.8% vs published 21.9%/1.04/-25.8% -> PASS
+GATE 1  idea 40/41 U56 TOP5 @10bps 16.5%/0.95/-21.6% vs published 16.5%/0.95/-21.6% -> PASS
+GATE 2  live RULES v2 U56 @10bps 8.66%/1.2056/-12.05% vs published 8.66%/1.2056/-12.05% -> PASS
+GATE 3  idea 371's own object (the GROSS dial): S1 = 0.0001 / 0.0000 / 0.0001 at 0/10/25 bps   (idea 371 reported an IS spread of 0.001-0.005)
+        rho(IS rank, OOS rank) on that dial = +0.400  (idea 371: -1.00, 6/6); OOS MaxDD range -0.240..-0.100 = 2.4x  (idea 371: 4.8x)
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-07_does-the-IS-SPREAD-screen-retire-the-record-s-rho-based-chooser-verdicts_cloud.corpus_stratified.csv, .corpus_filelevel.csv, .live.csv, .rule8.csv
