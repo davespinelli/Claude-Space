@@ -1,0 +1,215 @@
+======================================================================================================================
+IDEA 374 - does the SECOND-worst drawdown episode bound every overlay?
+  headroom H = |D1| - |D2| (pp) from the base book's equity curve; 0 tuned parameters
+======================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+    SMALL: dropped 44 tickers with max_1d_move >= 1.0 -> 439 names + SPY
+    U56: 56 cols, 2008-01-02 .. 2026-09-04
+    B136: 136 cols, 2008-01-02 .. 2026-09-04
+    SMALL439: 440 cols, 2010-01-04 .. 2026-09-04
+
+======================================================================================================================
+REPRODUCTION GATES
+======================================================================================================================
+GATE 0  cost identity vs engine.backtest(cost_bps=k): max abs diff 0.00e+00
+GATE 1  U56 TOP3 @10bps: 21.9%/1.04/-25.8% vs idea 40/41 published 21.9%/1.04/-25.8% -> PASS
+GATE 1  U56 TOP5 @10bps: 16.5%/0.95/-21.6% vs idea 40/41 published 16.5%/0.95/-21.6% -> PASS
+GATE 1  U56 TOP20 @10bps: 12.7%/1.09/-18.3%
+GATE 1b LIVE RULES v2 U56 @10bps: 8.66%/1.2056/-12.05% vs published 8.66%/1.2056/-12.05% -> PASS
+GATE 2  idea 41 U56 n=3 mult=0.75 @10bps (return-space): MaxDD -0.205534 vs committed nan -> FAIL
+GATE 2  idea 41 U56 n=3 mult=0.50 @10bps (return-space): MaxDD -0.205534 vs committed -0.205534 -> PASS
+GATE 2  idea 41 U56 n=3 mult=0.00 @10bps (return-space): MaxDD -0.205534 vs committed -0.205534 -> PASS
+GATE 2b depth invariance in WEIGHT space, cut 0.25/0.50/1.00: -0.218236 / -0.218236 / -0.218236   spread 4.44e-16
+GATE 3  deepest episode == MaxDD on all 18 books: max abs diff 0.00e+00
+    [U56/EWALL] base @10bps D1 22.55 D2 17.01 H 5.54 pp
+    [U56/TOP3] base @10bps D1 26.76 D2 22.00 H 4.76 pp
+    [U56/TOP10] base @10bps D1 17.64 D2 16.06 H 1.57 pp
+    [U56/TOP20] base @10bps D1 18.44 D2 13.51 H 4.93 pp
+    [U56/MAEW] base @10bps D1 12.08 D2 9.10 H 2.98 pp
+    [U56/RULESV2] base @10bps D1 12.09 D2 8.18 H 3.91 pp
+    [B136/EWALL] base @10bps D1 25.39 D2 15.35 H 10.04 pp
+    [B136/TOP3] base @10bps D1 41.24 D2 34.20 H 7.04 pp
+    [B136/TOP10] base @10bps D1 21.55 D2 20.38 H 1.18 pp
+    [B136/TOP20] base @10bps D1 20.16 D2 19.25 H 0.91 pp
+    [B136/MAEW] base @10bps D1 12.69 D2 9.32 H 3.37 pp
+    [B136/RULESV2] base @10bps D1 12.28 D2 9.71 H 2.58 pp
+    [SMALL439/EWALL] base @10bps D1 36.43 D2 25.59 H 10.83 pp
+    [SMALL439/TOP3] base @10bps D1 68.88 D2 48.66 H 20.22 pp
+    [SMALL439/TOP10] base @10bps D1 33.60 D2 29.94 H 3.66 pp
+    [SMALL439/TOP20] base @10bps D1 35.15 D2 29.02 H 6.13 pp
+    [SMALL439/MAEW] base @10bps D1 15.00 D2 12.59 H 2.41 pp
+    [SMALL439/RULESV2] base @10bps D1 15.27 D2 12.28 H 2.98 pp
+
+======================================================================================================================
+1. THE BOUND:  is  max achievable dMaxDD <= H = |D1| - |D2|  ?   (all 1188 points)
+======================================================================================================================
+             n  viol  med_dDD  max_dDD  med_ratio  max_ratio  viol_share
+cls                                                                     
+CADENCE    108     6   -5.664   13.826     -1.239      4.717       0.056
+GLOBAL     486   247    4.062   40.516      1.016     18.147       0.508
+SELECTIVE  594    73    0.594   24.116      0.142      8.907       0.123
+
+  same, per cost rung:
+                 n  viol  med_ratio  viol_share
+cls       bps                                  
+CADENCE   0     36     2     -1.459       0.056
+          10    36     2     -1.415       0.056
+          25    36     2     -0.708       0.056
+GLOBAL    0    162    82      1.011       0.506
+          10   162    83      1.036       0.512
+          25   162    82      1.012       0.506
+SELECTIVE 0    198    31      0.432       0.157
+          10   198    25      0.134       0.126
+          25   198    17      0.004       0.086
+
+  class MAXIMUM per book (the queue's object: 'the maximum achievable dMaxDD of ANY overlay')
+            n  viol  med_ratio  min_ratio  max_ratio  viol_share
+cls                                                             
+CADENCE    54     3     -0.551     -6.616      4.717       0.056
+GLOBAL     54    54      2.161      1.288     18.147       1.000
+SELECTIVE  54    38      1.183      0.794      8.907       0.704
+
+======================================================================================================================
+2. DOES H PREDICT?  Spearman(H, class-max dDD) across the 18 books, per class x rung
+   rival predictor: the book's own |MaxDD| (D1), which needs no episode decomposition
+======================================================================================================================
+      cls  bps  n  rho_H  rho_D1  rho_D2  med_H  med_max
+  CADENCE    0 18  0.307  -0.018  -0.224  3.496   -2.443
+  CADENCE   10 18  0.434  -0.018  -0.205  3.296   -2.314
+  CADENCE   25 18  0.771   0.408   0.216  3.782   -1.497
+   GLOBAL    0 18  0.135   0.992   0.946  3.496    9.627
+   GLOBAL   10 18  0.077   0.992   0.940  3.296    9.346
+   GLOBAL   25 18  0.641   0.990   0.953  3.782    9.388
+SELECTIVE    0 18  0.451   0.771   0.647  3.496    4.935
+SELECTIVE   10 18  0.422   0.723   0.591  3.296    4.432
+SELECTIVE   25 18  0.932   0.707   0.552  3.782    4.488
+
+======================================================================================================================
+3. WHERE THE BOUND BITES:  headroom utilisation  dDD / H  by overlay family (10 bps)
+======================================================================================================================
+                     n  med_ratio  p90_ratio  med_dDD  med_dCAGR  med_dSharpe  viol
+cls       fam                                                                      
+CADENCE   CADENCE   36     -1.415      0.131   -5.815      0.388        0.010     2
+GLOBAL    GROSS     90      0.797      3.341    3.865     -1.436        0.000    40
+          VOLTGT    72      1.177      4.133    5.122     -1.900       -0.028    43
+SELECTIVE BREADTH  108      0.000      1.000    0.000     -0.773       -0.018     9
+          DDCTRL    72      0.021      1.229    0.056     -0.645       -0.012    10
+          HIVOL80   18      0.797      1.176    3.413     -2.002       -0.083     6
+
+======================================================================================================================
+4. RULE 8 -- H as an EX-ANTE quotable number: fit nothing, quote H_IS, score OOS
+======================================================================================================================
+            n  held_ex_ante  held_in_window  med_H_IS  med_H_OOS  med_maxdDD_OOS
+cls                                                                             
+CADENCE    54            45              51     1.615      3.954          -1.957
+GLOBAL     54             0               0     1.615      3.954           9.454
+SELECTIVE  54            13              16     1.615      3.954           4.962
+
+  Spearman vs OOS-window class-max dDD (18 books per cell):
+      cls  bps  n  rho_HIS  rho_D1IS  rho_realisedIS  rho_HOOS
+  CADENCE    0 18   -0.179     0.001          -0.065     0.548
+  CADENCE   10 18   -0.133     0.131          -0.212     0.876
+  CADENCE   25 18    0.110     0.298          -0.079     0.806
+   GLOBAL    0 18    0.424     0.942           0.934     0.088
+   GLOBAL   10 18    0.457     0.944           0.934     0.296
+   GLOBAL   25 18    0.509     0.938           0.936     0.587
+SELECTIVE    0 18    0.179     0.682           0.602     0.401
+SELECTIVE   10 18    0.154     0.628           0.529     0.674
+SELECTIVE   25 18    0.174     0.579           0.490     0.915
+
+======================================================================================================================
+5. KEEP PATHS at every one of the 1188 points
+======================================================================================================================
+  4a: 55/1242     4b: 122/1242
+       n  p4b  p4a
+bps               
+0    414   71   19
+10   414   37   18
+25   414   14   18
+
+  4b passes by panel x class:
+panel  cls      
+B136   BASE          1
+       GLOBAL       13
+       SELECTIVE    21
+U56    BASE          3
+       CADENCE       3
+       GLOBAL       30
+       SELECTIVE    51
+
+  top 4b passes by OOS Sharpe:
+panel  form             overlay  bps  CAGR  Sharpe  MaxDD    H1    H2   OOS  OOS_CAGR  OOS_MaxDD  dDD_pp   turn
+  U56 TOP20           CADENCE_M    0 0.152   1.239 -0.194 1.249 1.238 1.318     0.172     -0.194  -1.227  4.331
+  U56 TOP20 BREADTH_B0.30_c1.00    0 0.138   1.191 -0.182 1.164 1.221 1.286     0.159     -0.182   0.000  9.750
+  U56 TOP20           CADENCE_M   10 0.147   1.203 -0.195 1.211 1.204 1.284     0.167     -0.195  -1.198  4.331
+  U56 EWALL        VOLTGT_t0.10    0 0.111   1.231 -0.136 1.285 1.182 1.276     0.116     -0.136   8.898  1.633
+  U56 TOP20 BREADTH_B0.30_c0.50    0 0.138   1.186 -0.182 1.173 1.203 1.269     0.157     -0.182   0.000  9.685
+  U56 TOP20 BREADTH_B0.40_c1.00    0 0.129   1.140 -0.182 1.079 1.199 1.267     0.154     -0.182   0.000 10.173
+  U56 TOP20 BREADTH_B0.40_c0.50    0 0.133   1.166 -0.182 1.138 1.197 1.264     0.154     -0.182   0.000  9.883
+  U56 TOP20       HIVOL80_c0.50    0 0.114   1.168 -0.114 1.167 1.169 1.258     0.126     -0.113   6.817  9.799
+
+  first failing bar, 4b (all points):
+fail4b
+H1      589
+CAGR    317
+PASS    122
+H2      113
+DD      100
+OOS       1
+
+  SPY reference per panel (evaluation window):
+   panel  CAGR  Sharpe  MaxDD    H1    H2   OOS  OOS_CAGR  OOS_MaxDD
+     U56 0.152   0.889 -0.337 0.957 0.834 0.882     0.155     -0.337
+    B136 0.152   0.889 -0.337 0.957 0.834 0.882     0.155     -0.337
+SMALL439 0.141   0.862 -0.337 0.891 0.858 0.882     0.155     -0.337
+
+======================================================================================================================
+6. RULE 8 ON THE BOOKS (not on H): IS<=2016 Sharpe picks one of the 23 menu points
+======================================================================================================================
+  chooser takes an overlay over the base book in 54/54 cells; beats its own base book OOS in 41/54 (median dOOS +0.0366); beats live RULES v2 OOS in 17/54; mean regret 0.0631
+      n  beats_base  beats_v2  mean_regret  pick_4b
+bps                                                
+0    18          12         7       0.0734        3
+10   18          15         6       0.0567        3
+25   18          14         4       0.0592        3
+
+  most-picked overlays: {'CADENCE_M': 31, 'VOLTGT_t0.12': 8, 'CADENCE_Q': 7, 'BREADTH_B0.40_c1.00': 6, 'VOLTGT_t0.15': 2}
+
+======================================================================================================================
+7. THE ONE MULTI-PANEL 4b BY-PRODUCT: EWALL + VOLTGT, priced against its MATCHED-GROSS
+   ladder point (idea 351's numeraire).  A de-grossing overlay must beat it to exist.
+======================================================================================================================
+   panel     t  bps  ov_Sharpe  ov_CAGR  ov_MaxDD  ov_OOS  ov_4b  ov_gross  ov_turn  lad_g  lad_gross  lad_Sharpe  lad_CAGR  lad_MaxDD  lad_OOS  lad_4b  gross_resid  dSharpe   dOOS  dDD_pp
+     U56 0.100    0      1.231    0.111    -0.136   1.276   True     0.669    1.633  0.669      0.669       1.131     0.119     -0.203    1.143   False        0.000    0.100  0.133   6.641
+     U56 0.100   10      1.212    0.109    -0.138   1.257   True     0.669    1.633  0.669      0.669       1.124     0.118     -0.203    1.136   False        0.000    0.089  0.121   6.461
+     U56 0.100   25      1.185    0.106    -0.141   1.228  False     0.669    1.633  0.669      0.669       1.113     0.117     -0.203    1.125   False        0.000    0.072  0.103   6.192
+     U56 0.120    0      1.216    0.118    -0.156   1.227   True     0.700    1.387  0.700      0.700       1.131     0.125     -0.211    1.143   False        0.000    0.085  0.084   5.500
+     U56 0.120   10      1.202    0.117    -0.158   1.212   True     0.700    1.387  0.700      0.700       1.124     0.124     -0.211    1.136   False        0.000    0.078  0.076   5.320
+     U56 0.120   25      1.180    0.114    -0.161   1.188   True     0.700    1.387  0.700      0.700       1.113     0.122     -0.212    1.125   False        0.000    0.067  0.063   5.052
+     U56 0.150    0      1.195    0.125    -0.159   1.208   True     0.725    1.143  0.725      0.725       1.131     0.129     -0.218    1.143   False        0.000    0.063  0.065   5.880
+     U56 0.150   10      1.183    0.124    -0.161   1.196   True     0.725    1.143  0.725      0.725       1.124     0.128     -0.218    1.136   False        0.000    0.059  0.060   5.749
+     U56 0.150   25      1.167    0.122    -0.163   1.178   True     0.725    1.143  0.725      0.725       1.113     0.127     -0.219    1.125   False        0.000    0.053  0.053   5.553
+    B136 0.100    0      1.211    0.111    -0.137   1.225   True     0.659    1.752  0.659      0.659       1.129     0.125     -0.225    1.110   False        0.000    0.082  0.115   8.808
+    B136 0.100   10      1.191    0.109    -0.138   1.205   True     0.659    1.752  0.659      0.659       1.122     0.124     -0.226    1.103   False        0.000    0.069  0.102   8.772
+    B136 0.100   25      1.162    0.106    -0.139   1.175  False     0.659    1.752  0.659      0.659       1.111     0.123     -0.226    1.092   False        0.000    0.051  0.084   8.717
+    B136 0.120    0      1.220    0.121    -0.147   1.199   True     0.692    1.460  0.692      0.692       1.129     0.131     -0.236    1.110   False        0.000    0.091  0.089   8.866
+    B136 0.120   10      1.205    0.119    -0.148   1.183   True     0.692    1.460  0.692      0.692       1.122     0.131     -0.236    1.103   False        0.000    0.083  0.080   8.832
+    B136 0.120   25      1.183    0.117    -0.148   1.159   True     0.692    1.460  0.692      0.692       1.111     0.129     -0.236    1.092   False        0.000    0.071  0.067   8.783
+    B136 0.150    0      1.210    0.130    -0.162   1.184   True     0.719    1.219  0.719      0.719       1.129     0.137     -0.244    1.110   False        0.000    0.081  0.074   8.241
+    B136 0.150   10      1.198    0.129    -0.162   1.171   True     0.719    1.219  0.719      0.719       1.122     0.136     -0.244    1.102   False        0.000    0.076  0.069   8.211
+    B136 0.150   25      1.181    0.127    -0.163   1.153   True     0.719    1.219  0.719      0.719       1.111     0.134     -0.244    1.091   False        0.000    0.069  0.061   8.168
+SMALL439 0.100    0      0.554    0.054    -0.232   0.445  False     0.566    2.680  0.566      0.566       0.690     0.080     -0.281    0.649   False        0.000   -0.135 -0.204   4.860
+SMALL439 0.100   10      0.529    0.051    -0.235   0.419  False     0.566    2.680  0.566      0.566       0.679     0.079     -0.282    0.638   False        0.000   -0.150 -0.219   4.661
+SMALL439 0.100   25      0.490    0.047    -0.241   0.380  False     0.566    2.680  0.566      0.566       0.662     0.076     -0.284    0.621   False        0.000   -0.173 -0.242   4.365
+SMALL439 0.120    0      0.579    0.063    -0.259   0.459  False     0.629    2.564  0.629      0.629       0.689     0.088     -0.309    0.648   False        0.000   -0.110 -0.189   4.940
+SMALL439 0.120   10      0.557    0.061    -0.262   0.437  False     0.629    2.564  0.629      0.629       0.679     0.087     -0.310    0.637   False        0.000   -0.121 -0.201   4.806
+SMALL439 0.120   25      0.525    0.057    -0.266   0.403  False     0.629    2.564  0.629      0.629       0.662     0.084     -0.313    0.621   False        0.000   -0.138 -0.218   4.607
+SMALL439 0.150    0      0.612    0.075    -0.287   0.506  False     0.690    2.237  0.689      0.690       0.689     0.096     -0.334    0.648   False        0.000   -0.077 -0.142   4.750
+SMALL439 0.150   10      0.595    0.073    -0.289   0.488  False     0.690    2.237  0.689      0.690       0.678     0.094     -0.336    0.637   False        0.000   -0.083 -0.149   4.663
+SMALL439 0.150   25      0.570    0.069    -0.293   0.461  False     0.690    2.237  0.689      0.690       0.662     0.092     -0.339    0.621   False        0.000   -0.093 -0.160   4.533
+
+  vol target beats its matched-gross ladder point on Sharpe in 18/27, on OOS Sharpe in 18/27, on MaxDD in 27/27; gross-match residual max 6.57e-06
+  4b: overlay 16/27 vs matched ladder point 0/27
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-07_does-the-SECOND-worst-drawdown-episode-bound-every-overlay_cloud.grid.csv (1242 rows), .classmax.csv, .walkforward.csv
