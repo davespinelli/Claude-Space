@@ -3,9 +3,11 @@
 **SPLIT.** The queue's *premise* is **falsified** — 2009-2013 is not DBC's dead era, it is
 DBC's **best** era. The queue's *mechanism* is **confirmed** — the deletion gain is heavily
 era-concentrated, and the chooser's DBC decision flips in **24 of 24** cells when the era is
-withheld. But the queue's *conclusion* does not follow: the prune survives out of sample, so
-**idea 104's arm is not mis-specified**. One **4a KEEP-candidate** falls out — and it is not a
-post-hoc scan hit, rule 8 lands on it in 8/8 cells (memo: `_MEMO.md`).
+withheld. On the queue's *conclusion* this run was **corrected by an independent lane-B run of
+the same idea on the same day**: the prune survives out of sample only under the `natural`
+convention, and **loses 0/16 at g=1.00, which is the convention idea 104's arm is written in**
+— so **idea 104's arm IS mis-specified**, as the queue suspected. See §5. One 4a candidate is
+**PARKED with a memo recommending against adoption** (`_MEMO.md`).
 
 Script: `2026-09-07_is-DBC-a-drag-or-a-contango-artefact_cloud.py`
 (+ `.console.txt`, `.grid.csv` 720 rows, `.attribution.csv`, `.deletion_by_era.csv`,
@@ -94,10 +96,11 @@ OOS 2017-2026 read once.
 **The DBC decision flips in 24 of 24 cells** (all 8 books × 3 cost rungs). The prune is an
 era-selected decision, and the queue was right to suspect it.
 
-**But it is the era-selected decision that wins.** The `IS_full` chooser — the one handed the
-contango era — beats the no-sleeve control 8/8 and SPY 8/8 at 10 bps and is a wash against
-S4 (+0.0066, 4/8) at **lower turnover** (-0.0966x/yr). The `IS_post` chooser is far worse on
-every count.
+**The era-selected decision looks like the winner on the pooled figure — and that figure is
+misleading.** The `IS_full` chooser beats the no-sleeve control 8/8 and SPY 8/8 at 10 bps and
+appears a wash against S4 (+0.0066, 4/8) at lower turnover (-0.0966x/yr). But **the 4/8 is not
+noise, it is a clean convention split** (§5): 4/4 positive under `natural`, 4/4 negative under
+`g1.00`.
 
 **Honest confound, stated:** `IS_post` is a **3-year** IS window against `IS_full`'s 8. Some
 of its degradation is window length, not era content — it does not merely re-add DBC, it
@@ -105,10 +108,10 @@ switches arm entirely (to `noGLD`). This run therefore establishes that the DBC 
 era-dependent; it does **not** establish that the contango era is the *reason* the `IS_full`
 pick wins.
 
-**Conclusion on the queue's question: the prune is not a sample artefact.** Dropping DBC costs
-nothing out of sample (+0.0066 mean vs S4), reduces turnover (-0.0966x/yr), and is what rule 8 picks under
-PROTOCOL's own window in 8/8 cells. **Idea 104's arm needs no re-specification** — though the
-`noTLT` flag in §2 is a live question about the *other* three assets.
+**Conclusion on the queue's question — see §5, which corrects an earlier reading of this run.**
+The prune is what rule 8 picks under PROTOCOL's own window in 8/8 cells, and it does reduce
+turnover, but its out-of-sample value is entirely convention-dependent and is **negative in the
+convention idea 104 uses**. The `noTLT` flag in §2 is a further, separate problem with that arm.
 
 ## 4. KEEP paths (all 720 points reported, none selected on)
 
@@ -121,6 +124,34 @@ discriminate the prune.
 
 **The 4a passes do.** See `_MEMO.md`. Both are `noDBC` at f=0.50 natural on the **broad**
 panel, and both are what rule 8's `IS_full` chooser selects.
+
+## 5. CROSS-VALIDATION AND CORRECTION — independent lane-B run, same day
+
+Lane B (`2026-09-07_is-DBC-a-drag-or-a-contango-artefact_B.py`) ran this idea concurrently
+from a separately written script. The two runs agree on every shared number, several to four
+decimals:
+
+| quantity | this run | lane B |
+|---|---|---|
+| DBC's 2009-2013 contribution | +1.66 pp | +1.66 pp |
+| rule-8 pick, PROTOCOL window | `noDBC@f=0.50`, 8/8 | `noDBC@f=0.50`, 8/8 |
+| OOS gap noDBC−S4 at each arm's IS-best f | +0.0066, 4/8 | +0.0066, 4/8 |
+| 4a vs RULES v2 at 10 bps | 2, both noDBC, broad+natural | 2, both noDBC, broad+natural |
+| OOS gap by convention, all (panel × book × f) at 10 bps | **+0.0135 (12/16) natural, -0.1052 (0/16) g1.00** | **+0.0135 (12/16), -0.1052 (0/16)** |
+
+**Lane B split the OOS gap by gross convention and this run did not — and that split reverses
+the conclusion.** The pooled +0.0066 (4/8) is not a wash around zero; it is 4/4 positive under
+`natural` and 4/4 negative under `g1.00`. Idea 101/104's candidate is written **at g=1.00**, and
+in that convention the prune is behind on OOS Sharpe in **16 of 16** matched cells
+(mean -0.1052) and in **4 of 4** of the rule-8 picks. Idea 102's turnover claim survives
+(-0.0966x/yr here, -0.196x/yr on lane B's wider cell set), worth roughly 0.02 of Sharpe and
+swamped by the -0.105 OOS cost.
+
+**Withdrawn: the statement, in an earlier reading of this run, that "idea 104's arm needs no
+re-specification."** The verified position is lane B's: **at the convention it is written in,
+idea 104's arm is mis-specified.** What this run adds beyond lane B is the 24/24 era-flip of
+the chooser's decision (§3), DBC's 0.0903 realised weight inside the sleeve (§1), and the
+`noTLT` flag (§2).
 
 ## Caveats
 

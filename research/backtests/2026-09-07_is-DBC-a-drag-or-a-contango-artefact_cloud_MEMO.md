@@ -35,7 +35,9 @@ equal-weight leg.**
 
 Rule 8 selects it. With `(arm, f)` chosen on 2009-2016 IS Sharpe and 2017-2026 read once,
 the chooser lands on **`noDBC@f=0.50` in 8 of 8 cells** at 10 bps, beating the no-sleeve
-control 8/8 and SPY 8/8. These two 4a passes are that pick, on the broad panel.
+control 8/8 and SPY 8/8. These two 4a passes are that pick, on the broad panel. An
+independently written lane-B run of the same idea on the same day selects the identical arm
+and finds the identical two 4a cells.
 
 ## What must be said against it before any Sunday review adopts it
 
@@ -55,13 +57,24 @@ control 8/8 and SPY 8/8. These two 4a passes are that pick, on the broad panel.
    clause keeps. Open idea 105 separately asks whether the GLD leg is the whole sleeve.
    **The `f=0.50` fraction and the equal-weight leg are well supported; the three-asset
    membership is not settled.**
-5. **Survivorship**: the broad panel is current constituents, so the equity leg's level is
+5. **The `noDBC` prune this clause encodes is worthless outside the `natural` convention.**
+   The out-of-sample gap of `noDBC` over `S4` is **+0.0135 (12/16 cells) at natural gross but
+   -0.1052 (0/16) at g=1.00** — confirmed to four decimals by an independent lane-B run. This
+   candidate is written at natural gross, which is the side the prune wins on, but the record
+   should not read the prune as a general result: idea 101/104's candidate is written at
+   g=1.00, and **there the prune is behind in 16 of 16 cells.** The turnover saving
+   (-0.0966x/yr, worth roughly 0.02 of Sharpe) does not cover that.
+6. **It dies quickly on cost.** Lane B's ladder puts the 4a count at **6 / 2 / 1 / 0 / 0** at
+   5 / 10 / 15 / 20 / 25 bps: these passes are **gone by 20 bps**.
+7. **Survivorship**: the broad panel is current constituents, so the equity leg's level is
    biased up. The four sleeve ETFs are alive throughout.
 
 ## Recommendation
 
-**PARK as a 4a candidate; do not adopt at the next Sunday review.** The single-panel pass and
-the unsettled sleeve membership (points 2 and 4) are each enough to wait. The cheap next
+**PARK as a 4a candidate; do not adopt at the next Sunday review.** The single-panel pass
+(point 2), the unsettled membership (points 4 and 5) and the death by 20 bps (point 6) are
+each independently enough to wait; together they say this is a reporting result, not a rules
+change. The cheap next
 step is to re-run this exact clause with the membership swept — `noTLT` and `GLD`-only
 against `noDBC` — on both panels at 10 and 25 bps, which is open ideas 105 and the §2 flag
 combined into one grid.
