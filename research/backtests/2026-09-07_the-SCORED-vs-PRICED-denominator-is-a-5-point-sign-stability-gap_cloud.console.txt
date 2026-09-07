@@ -1,0 +1,179 @@
+=== 2026-09-07_the-SCORED-vs-PRICED-denominator-is-a-5-point-sign-stability-gap_cloud
+Book: equal weight over the denominator at gross 0.75, weekly, next-day, ungated.
+Tuned (2): M in [1, 63, 126, 200, 253, 'SCORED'] x WARM in [260, 504].  Reported: panel, cost [0, 10, 25] bps.
+PRICED = M 1 (idea 94 EWall + the LIVE rules_v2 convention); SCORED = defined composite (idea 124 _B2's ALL rung).
+
+
+[A] AUDIT of every committed backtest script that builds an all-names denominator
+    16 scripts build one.  By convention: {'PRICED': 9, 'SCORED': 5, 'BOTH': 2}
+    LEADERBOARD rows attributable to each convention: {'BOTH': 7, 'PRICED': 73, 'SCORED': 42}
+      PRICED rows  13  2026-09-04_drawdown-insurance-price-list_B.py
+               P L158: e = pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+      SCORED rows  13  2026-09-04_one-year-leverage-audit_cloud.py
+               S L120: return rank.le(k, axis=0).astype(float).mul(GROSS / k, axis=0)
+      SCORED rows   6  2026-09-04_selectability-pre-test_cloud.py
+               S L142: sel = rank.le(cnt, axis=0) & rank.notna()
+      SCORED rows   9  2026-09-04_which-4b-bar-binds_B.py
+               S L131: sel = rank.le(cnt, axis=0) & rank.notna()
+      SCORED rows   9  2026-09-05_cross-universe-breakeven-as-a-KEEP-bar_cloud.py
+               S L148: sel = rank.le(k, axis=0) & g
+      PRICED rows  11  2026-09-05_defensive-class-census_B.py
+               P L198: e = (pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+      BOTH   rows   7  2026-09-05_one-year-dependence-as-a-KEEP-bar_cloud.py
+               P L188: e = pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+               S L165: return rank.le(k, axis=0).astype(float).mul(GROSS / k, axis=0)
+      PRICED rows   9  2026-09-05_price-denominator-sign-test_C.py
+               P L157: e = pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+      PRICED rows   7  2026-09-05_threshold-plateaus-are-the-general-case_cloud.py
+               P L119: e = pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+      PRICED rows   5  2026-09-06_delisting-aware-small-panel_B.py
+               P L134: e = px.notna().astype(float)
+      PRICED rows   8  2026-09-06_is-RULES-v2-only-a-de-grossing-effect_C.py
+               P L57: e = pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+      PRICED rows   6  2026-09-07_book-size-floor-for-any-quoted-price_B.py
+               P L152: e = pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+      SCORED rows   5  2026-09-07_book-size-floor-for-any-quoted-price_B2.py
+               S L200: return rank.le(k, axis=0).astype(float).mul(H.GROSS / k, axis=0).fillna(0.0)
+      PRICED rows   7  2026-09-07_book-size-floor-for-any-quoted-price_cloud.py
+               P L144: e = (pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+      PRICED rows   7  2026-09-07_is-the-sign-test-worth-anything-on-the-small-panel_B.py
+               P L175: e = pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0)
+      BOTH   rows   0  2026-09-07_the-SCORED-vs-PRICED-denominator-is-a-5-point-sign-stability-gap_cloud.py
+               P L277: e94 = (pd.DataFrame(1.0, index=px.index, columns=px.columns).where(px.notna(), 0.0))
+               S L282: wB2 = rk.le(cnt, axis=0).astype(float).mul(GROSS / cnt, axis=0).fillna(0.0)
+
+[A2] the LIVE book's own convention (baseline.rules_v2_weights docstring):
+      "RULES v2 (live since 2026-09-06): hold every name inside the 200d +/-3% band at gross/N of NAV, N = instruments priced that day; gated-out weight goes to CASH (de-gross, never re-spread). No ranking, "
+      -> the live book counts INSTRUMENTS PRICED, i.e. PRICED (M = 1).
+
+[panels]
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+    SMALL: dropped 44 tickers with max_1d_move >= 1.0 -> 439 names + SPY
+
+============================================================================================================================================
+U56: 55 names + SPY, 2008-01-02 -> 2026-09-04
+    [0] WARM 260: eval from 2009-01-13, 4439 days | max|dw| 0.0150 | denominator counts disagree on 1530 of 4439 days (34.5%) | mean names PRICED 54.11 vs SCORED 53.76
+        GATE vs idea 124 _B2's published pair (max |dw| 0.0150, 1530 of 4439 days): |d(max dw)| 0.0000, days 1530 vs 1530, sample 4439 vs 4439
+    [0] WARM 504: eval from 2009-12-31, 4195 days | max|dw| 0.0147 | denominator counts disagree on 1383 of 4195 days (33.0%) | mean names PRICED 54.33 vs SCORED 53.99
+    [0] NESTING: PRICED arm == idea 94's EWall construction max|d| 0.000e+00; SCORED arm == _B2's ALL rung construction max|d| 0.000e+00
+    SPY CAGR 15.23% Sharpe 0.889 MaxDD -33.72% H1/H2 0.957/0.834 OOS 0.882 | RULES v2 (live) 8.66% / 1.206 / -12.05% OOS 1.285
+
+[B] GRID U56 WARM=260 (eval from 2009-01-13; every point)
+          M  names  turn/yr | c=0     CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=10    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=25    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a
+          1   54.1     0.83 |  13.36%  1.131 -22.51%  1.197/1.079   1.143 n  n |  13.27%  1.124 -22.53%  1.190/1.072   1.136 n  n |  13.13%  1.113 -22.55%  1.179/1.061   1.125 n  n |
+         63   54.0     0.83 |  13.36%  1.131 -22.51%  1.209/1.068   1.133 n  n |  13.26%  1.124 -22.53%  1.202/1.061   1.125 n  n |  13.12%  1.113 -22.55%  1.191/1.050   1.115 n  n |
+        126   53.9     0.82 |  13.30%  1.127 -22.51%  1.199/1.069   1.134 n  n |  13.21%  1.120 -22.53%  1.192/1.062   1.126 n  n |  13.07%  1.109 -22.55%  1.181/1.051   1.116 n  n |
+        200   53.8     0.82 |  13.30%  1.127 -22.51%  1.198/1.070   1.135 n  n |  13.21%  1.120 -22.53%  1.191/1.063   1.128 n  n |  13.07%  1.109 -22.55%  1.180/1.053   1.117 n  n |
+        253   53.8     0.82 |  13.29%  1.127 -22.51%  1.200/1.069   1.133 n  n |  13.20%  1.120 -22.53%  1.193/1.062   1.126 n  n |  13.06%  1.109 -22.55%  1.182/1.051   1.116 n  n |
+     SCORED   53.8     0.82 |  13.29%  1.127 -22.51%  1.200/1.069   1.133 n  n |  13.20%  1.120 -22.53%  1.193/1.062   1.126 n  n |  13.06%  1.109 -22.55%  1.182/1.051   1.116 n  n |
+
+[B] GRID U56 WARM=504 (eval from 2009-12-31; every point)
+          M  names  turn/yr | c=0     CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=10    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=25    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a
+          1   54.3     0.81 |  12.38%  1.090 -22.51%  1.103/1.094   1.143 n  n |  12.29%  1.082 -22.53%  1.096/1.087   1.136 n  n |  12.15%  1.072 -22.55%  1.084/1.076   1.125 n  n |
+         63   54.3     0.81 |  12.36%  1.088 -22.51%  1.114/1.083   1.133 n  n |  12.27%  1.081 -22.53%  1.107/1.075   1.125 n  n |  12.13%  1.070 -22.55%  1.095/1.065   1.115 n  n |
+        126   54.2     0.81 |  12.31%  1.084 -22.51%  1.104/1.084   1.134 n  n |  12.22%  1.077 -22.53%  1.097/1.077   1.126 n  n |  12.08%  1.066 -22.55%  1.086/1.066   1.116 n  n |
+        200   54.1     0.81 |  12.31%  1.085 -22.51%  1.103/1.085   1.135 n  n |  12.22%  1.077 -22.53%  1.095/1.078   1.128 n  n |  12.08%  1.067 -22.55%  1.084/1.067   1.117 n  n |
+        253   54.0     0.81 |  12.30%  1.085 -22.51%  1.105/1.083   1.133 n  n |  12.21%  1.077 -22.53%  1.098/1.076   1.126 n  n |  12.07%  1.067 -22.55%  1.087/1.066   1.116 n  n |
+     SCORED   54.0     0.81 |  12.30%  1.085 -22.51%  1.105/1.083   1.133 n  n |  12.21%  1.077 -22.53%  1.098/1.076   1.126 n  n |  12.07%  1.067 -22.55%  1.087/1.066   1.116 n  n |
+
+[C] SIGN STABILITY U56: 40 draws keeping 50 of 55 names (q=0.1), both books rebuilt on the sub-panel, 10 bps
+    dSharpe (SCORED - PRICED): mean -0.0042 sd 0.0025 frac_pos 0.1000  [min -0.0088 max +0.0036]
+    dCAGR   (SCORED - PRICED): mean -0.0723% frac_pos 0.1000
+    dMaxDD  (PRICED - SCORED, +ve = SCORED shallower): mean -0.0000% frac_pos 0.3250
+
+============================================================================================================================================
+B136: 135 names + SPY, 2008-01-02 -> 2026-09-04
+    [0] WARM 260: eval from 2009-01-13, 4439 days | max|dw| 0.0061 | denominator counts disagree on 2182 of 4439 days (49.2%) | mean names PRICED 131.37 vs SCORED 130.67
+    [0] WARM 504: eval from 2009-12-31, 4195 days | max|dw| 0.0060 | denominator counts disagree on 2035 of 4195 days (48.5%) | mean names PRICED 131.83 vs SCORED 131.14
+    SPY CAGR 15.23% Sharpe 0.889 MaxDD -33.72% H1/H2 0.957/0.834 OOS 0.882 | RULES v2 (live) 8.03% / 1.106 / -12.24% OOS 1.119
+
+[B] GRID B136 WARM=260 (eval from 2009-01-13; every point)
+          M  names  turn/yr | c=0     CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=10    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=25    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a
+          1  131.4     0.87 |  14.26%  1.129 -25.36%  1.238/1.031   1.109 n  n |  14.16%  1.122 -25.37%  1.231/1.024   1.102 n  n |  14.01%  1.112 -25.39%  1.221/1.013   1.091 n  n |
+         63  131.2     0.86 |  14.21%  1.126 -25.36%  1.236/1.027   1.106 n  n |  14.11%  1.119 -25.37%  1.229/1.020   1.099 n  n |  13.97%  1.108 -25.39%  1.219/1.009   1.088 n  n |
+        126  131.0     0.86 |  14.24%  1.128 -25.36%  1.237/1.030   1.108 n  n |  14.14%  1.121 -25.37%  1.230/1.023   1.101 n  n |  13.99%  1.110 -25.39%  1.220/1.012   1.090 n  n |
+        200  130.8     0.86 |  14.23%  1.127 -25.33%  1.237/1.029   1.107 n  n |  14.13%  1.120 -25.34%  1.230/1.022   1.100 n  n |  13.99%  1.110 -25.37%  1.220/1.011   1.089 n  n |
+        253  130.7     0.86 |  14.22%  1.126 -25.29%  1.235/1.028   1.107 n  n |  14.12%  1.119 -25.30%  1.229/1.021   1.100 n  n |  13.97%  1.109 -25.32%  1.218/1.011   1.089 n  n |
+     SCORED  130.7     0.86 |  14.22%  1.126 -25.29%  1.235/1.028   1.107 n  n |  14.12%  1.119 -25.30%  1.229/1.021   1.100 n  n |  13.97%  1.109 -25.32%  1.218/1.011   1.089 n  n |
+
+[B] GRID B136 WARM=504 (eval from 2009-12-31; every point)
+          M  names  turn/yr | c=0     CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=10    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=25    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a
+          1  131.8     0.85 |  13.17%  1.096 -25.36%  1.175/1.043   1.109 n  n |  13.07%  1.089 -25.37%  1.167/1.036   1.102 n  n |  12.93%  1.078 -25.39%  1.157/1.025   1.091 n  n |
+         63  131.7     0.84 |  13.11%  1.092 -25.36%  1.171/1.039   1.106 n  n |  13.02%  1.085 -25.37%  1.164/1.031   1.099 n  n |  12.88%  1.074 -25.39%  1.153/1.021   1.088 n  n |
+        126  131.5     0.84 |  13.15%  1.094 -25.36%  1.173/1.041   1.108 n  n |  13.05%  1.087 -25.37%  1.166/1.034   1.101 n  n |  12.91%  1.077 -25.39%  1.156/1.023   1.090 n  n |
+        200  131.3     0.84 |  13.14%  1.094 -25.33%  1.173/1.040   1.107 n  n |  13.04%  1.087 -25.34%  1.166/1.033   1.100 n  n |  12.90%  1.076 -25.37%  1.155/1.023   1.089 n  n |
+        253  131.1     0.84 |  13.13%  1.093 -25.29%  1.172/1.040   1.107 n  n |  13.03%  1.086 -25.30%  1.165/1.033   1.100 n  n |  12.89%  1.075 -25.32%  1.155/1.022   1.089 n  n |
+     SCORED  131.1     0.84 |  13.13%  1.093 -25.29%  1.172/1.040   1.107 n  n |  13.03%  1.086 -25.30%  1.165/1.033   1.100 n  n |  12.89%  1.075 -25.32%  1.155/1.022   1.089 n  n |
+
+[C] SIGN STABILITY B136: 40 draws keeping 122 of 135 names (q=0.1), both books rebuilt on the sub-panel, 10 bps
+    dSharpe (SCORED - PRICED): mean -0.0026 sd 0.0011 frac_pos 0.0750  [min -0.0046 max +0.0006]
+    dCAGR   (SCORED - PRICED): mean -0.0386% frac_pos 0.0250
+    dMaxDD  (PRICED - SCORED, +ve = SCORED shallower): mean +0.0726% frac_pos 0.9250
+
+============================================================================================================================================
+SMALL439: 439 names + SPY, 2010-01-04 -> 2026-09-04
+    [0] WARM 260: eval from 2011-01-13, 3934 days | max|dw| 0.0030 | denominator counts disagree on 3889 of 3934 days (98.9%) | mean names PRICED 348.91 vs SCORED 336.38
+    [0] WARM 504: eval from 2012-01-03, 3690 days | max|dw| 0.0029 | denominator counts disagree on 3645 of 3690 days (98.8%) | mean names PRICED 355.37 vs SCORED 342.47
+    SPY CAGR 14.13% Sharpe 0.862 MaxDD -33.72% H1/H2 0.891/0.858 OOS 0.882 | RULES v2 (live) 3.81% / 0.572 / -14.68% OOS 0.568
+
+[B] GRID SMALL439 WARM=260 (eval from 2011-01-13; every point)
+          M  names  turn/yr | c=0     CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=10    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=25    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a
+          1  348.8     1.74 |  10.38%  0.689 -35.93%  0.809/0.625   0.648 n  n |  10.18%  0.679 -36.11%  0.798/0.615   0.637 n  n |   9.90%  0.663 -36.36%  0.780/0.599   0.621 n  n |
+         63  345.7     1.73 |  10.19%  0.677 -36.69%  0.786/0.621   0.640 n  n |  10.00%  0.667 -36.86%  0.774/0.611   0.629 n  n |   9.72%  0.651 -37.12%  0.756/0.595   0.613 n  n |
+        126  342.6     1.73 |  10.32%  0.683 -36.71%  0.785/0.632   0.651 n  n |  10.13%  0.672 -36.89%  0.773/0.621   0.640 n  n |   9.84%  0.657 -37.15%  0.755/0.606   0.624 n  n |
+        200  338.9     1.73 |  10.40%  0.687 -36.94%  0.789/0.634   0.650 n  n |  10.21%  0.676 -37.11%  0.777/0.624   0.640 n  n |   9.92%  0.660 -37.36%  0.760/0.609   0.624 n  n |
+        253  336.2     1.72 |  10.40%  0.686 -37.03%  0.784/0.637   0.651 n  n |  10.21%  0.676 -37.21%  0.772/0.627   0.641 n  n |   9.92%  0.660 -37.46%  0.755/0.612   0.625 n  n |
+     SCORED  336.2     1.72 |  10.40%  0.686 -37.03%  0.784/0.637   0.651 n  n |  10.21%  0.676 -37.21%  0.772/0.627   0.641 n  n |   9.92%  0.660 -37.46%  0.755/0.612   0.625 n  n |
+
+[B] GRID SMALL439 WARM=504 (eval from 2012-01-03; every point)
+          M  names  turn/yr | c=0     CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=10    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a | c=25    CAGR   Shrp   MaxDD         H1/H2    OOS 4b 4a
+          1  355.3     1.74 |  11.26%  0.754 -35.93%  1.014/0.635   0.648 n  n |  11.07%  0.743 -36.11%  1.000/0.625   0.637 n  n |  10.78%  0.727 -36.36%  0.980/0.610   0.621 n  n |
+         63  352.1     1.74 |  11.11%  0.743 -36.69%  0.988/0.632   0.640 n  n |  10.92%  0.732 -36.86%  0.975/0.622   0.629 n  n |  10.63%  0.716 -37.12%  0.955/0.607   0.613 n  n |
+        126  348.9     1.74 |  11.25%  0.750 -36.71%  0.989/0.643   0.651 n  n |  11.06%  0.739 -36.89%  0.976/0.633   0.640 n  n |  10.77%  0.723 -37.15%  0.956/0.618   0.624 n  n |
+        200  345.1     1.73 |  11.33%  0.754 -36.94%  0.993/0.647   0.650 n  n |  11.14%  0.743 -37.11%  0.979/0.637   0.640 n  n |  10.85%  0.727 -37.36%  0.960/0.622   0.624 n  n |
+        253  342.3     1.73 |  11.33%  0.753 -37.03%  0.982/0.652   0.651 n  n |  11.14%  0.742 -37.21%  0.969/0.642   0.641 n  n |  10.85%  0.726 -37.46%  0.949/0.627   0.625 n  n |
+     SCORED  342.3     1.73 |  11.33%  0.753 -37.03%  0.982/0.652   0.651 n  n |  11.14%  0.742 -37.21%  0.969/0.642   0.641 n  n |  10.85%  0.726 -37.46%  0.949/0.627   0.625 n  n |
+
+[C] SIGN STABILITY SMALL439: 40 draws keeping 395 of 439 names (q=0.1), both books rebuilt on the sub-panel, 10 bps
+    dSharpe (SCORED - PRICED): mean -0.0037 sd 0.0024 frac_pos 0.0500  [min -0.0090 max +0.0005]
+    dCAGR   (SCORED - PRICED): mean +0.0149% frac_pos 0.6500
+    dMaxDD  (PRICED - SCORED, +ve = SCORED shallower): mean -1.0302% frac_pos 0.0000
+
+
+[C2] AUDIT READ of the two committed d3.csv files (the queue's 0.8133 / 0.7609),
+     restricted to q = 0.10 -- the two runs' draws are the same seeded draws.
+    [SCORED ALL rung (_B2)   ] 2026-09-07_book-size-floor-for-any-quoted-price_B2.d3.csv: rows 672, ALL-rung q=0.1 rows 32, mean frac_pos_full = 0.8133
+    [PRICED ALL rung (_cloud)] 2026-09-07_book-size-floor-for-any-quoted-price_cloud.d3.csv: rows 224, ALL-rung q=0.1 rows 32, mean frac_pos_full = 0.7609
+    GATE vs the queue's published pair (0.8133 SCORED / 0.7609 PRICED): |d| 0.0000 / 0.0000
+    PER-ARM on IDENTICAL draws: 32 arm-points, 4 differ, mean +0.0523, range [+0.000, +0.550], SCORED higher on 4, PRICED higher on 0
+    LEVERAGE: a max |dw| of 0.0150 (0.35 pp of a 4.3%% average weight) moves the published sign statistic by +0.0523 on average and up to 0.550 on a single arm.
+
+
+[B*] PRICED vs SCORED head-to-head at 10 bps, every panel x warm-up
+    panel      WARM |                        PRICED |                        SCORED |                SCORED-PRICED
+    U56         260 |  13.27%  1.124 -22.53% n |  13.20%  1.120 -22.53% n | dCAGR -0.07% dSharpe -0.0042 dMaxDD +0.00% dOOS -0.0095
+    U56         504 |  12.29%  1.082 -22.53% n |  12.21%  1.077 -22.53% n | dCAGR -0.08% dSharpe -0.0050 dMaxDD +0.00% dOOS -0.0095
+    B136        260 |  14.16%  1.122 -25.37% n |  14.12%  1.119 -25.30% n | dCAGR -0.04% dSharpe -0.0026 dMaxDD +0.07% dOOS -0.0025
+    B136        504 |  13.07%  1.089 -25.37% n |  13.03%  1.086 -25.30% n | dCAGR -0.04% dSharpe -0.0025 dMaxDD +0.07% dOOS -0.0025
+    SMALL439    260 |  10.18%  0.679 -36.11% n |  10.21%  0.676 -37.21% n | dCAGR +0.02% dSharpe -0.0032 dMaxDD -1.10% dOOS +0.0033
+    SMALL439    504 |  11.07%  0.743 -36.11% n |  11.14%  0.742 -37.21% n | dCAGR +0.07% dSharpe -0.0012 dMaxDD -1.10% dOOS +0.0033
+
+
+[D] RULE 8 WALK-FORWARD: (M, WARM) chosen on 2009-2016 IS Sharpe @10 bps alone,
+    2017-2026 read ONCE.
+    U56       picks M=     63 WARM=260 (IS 1.122) -> OOS 1.125 CAGR 13.67% MaxDD -22.53% | OOS-best M=1 WARM=260 (1.136), regret -0.010 | PRICED anchor 1.136 | SPY 0.882 | RULES v2 1.285
+    B136      picks M=      1 WARM=260 (IS 1.146) -> OOS 1.102 CAGR 13.93% MaxDD -25.37% | OOS-best M=1 WARM=260 (1.102), regret +0.000 | PRICED anchor 1.102 | SPY 0.882 | RULES v2 1.119
+    SMALL439  picks M=      1 WARM=504 (IS 1.086) -> OOS 0.637 CAGR 10.09% MaxDD -36.11% | OOS-best M=253 WARM=260 (0.641), regret -0.003 | PRICED anchor 0.637 | SPY 0.882 | RULES v2 0.568
+
+
+[E] KEEP-path census over the full grid
+     0 bps: 4b 0/36  by panel {}  |  4a 0/36
+    10 bps: 4b 0/36  by panel {}  |  4a 0/36
+    25 bps: 4b 0/36  by panel {}  |  4a 0/36
+
+=== PROPOSAL
+    max |dSharpe| across all panel x warm cells: 0.0050; max |dCAGR| 0.08%; 4b verdict flips: 0 of 6
+    disagreement days by panel (WARM 260): {'U56': 0.345, 'B136': 0.492, 'SMALL439': 0.989}
+    bootstrap frac_pos of dSharpe by panel: {'U56': 0.1, 'B136': 0.075, 'SMALL439': 0.05}
+    The LIVE book (rules_v2_weights) already counts INSTRUMENTS PRICED.
