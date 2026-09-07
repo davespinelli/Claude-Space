@@ -1,0 +1,269 @@
+==================================================================================================================================================================================================================
+QUEUE idea 379 — is-the-priceability-floor-the-real-selector  (lane B, 2026-09-07)
+Floor sweep phi = [0.0, 0.05, 0.1, 0.25, 0.5] pp of MaxDD; incumbent phi = 0.1 (idea 94).
+Grid held FIXED: 7 books x 16 arms x 2 published rungs x 2 panels = 448 rows.
+Only `published` moves with phi; `admissible` (D1&D2&D3) is floor-independent.
+D3 inherited from idea 124's committed d3.csv at q=0.1, tau=0.9; floor bar for n* = 90%.
+==================================================================================================================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+==================================================================================================================================================================================================================
+UNIVERSE universe.json(56): 56 names, 2008-01-02 -> 2026-09-04 | eval 2009-01-13 | IS <= 2016-12-31 | OOS >= 2017-01-01
+SPY CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834 OOS 0.882
+==================================================================================================================================================================================================================
+[gate] G1a TOP20 targets == idea 94 TOP20                   max|diff| = 0.000e+00  (PASS)
+[gate] G1b TOPall targets == idea 94 EWall (eval slice)     max|diff| = 0.000e+00  (PASS)
+[gate] G1c V1u targets == idea 94 V1u                       max|diff| = 0.000e+00  (PASS)
+[gate] G2 control run() == engine.backtest                  max|diff| = 0.000e+00  (PASS)
+[gate] LIVE RULES v2 @10bps on this panel: CAGR 8.66% Sharpe 1.2056 MaxDD -12.05% halves 1.2259/1.1908   (u56 reference: 8.66% / 1.2056 / -12.05%, 1.2259/1.1908)
+[build] universe.json(56): grid done in 64s
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+==================================================================================================================================================================================================================
+UNIVERSE universe_broad.json: 136 names, 2008-01-02 -> 2026-09-04 | eval 2009-01-13 | IS <= 2016-12-31 | OOS >= 2017-01-01
+SPY CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834 OOS 0.882
+==================================================================================================================================================================================================================
+[gate] G1a TOP20 targets == idea 94 TOP20                   max|diff| = 0.000e+00  (PASS)
+[gate] G1b TOPall targets == idea 94 EWall (eval slice)     max|diff| = 0.000e+00  (PASS)
+[gate] G1c V1u targets == idea 94 V1u                       max|diff| = 0.000e+00  (PASS)
+[gate] G2 control run() == engine.backtest                  max|diff| = 0.000e+00  (PASS)
+[gate] LIVE RULES v2 @10bps on this panel: CAGR 8.03% Sharpe 1.1058 MaxDD -12.24% halves 1.2291/0.9844
+[build] universe_broad.json: grid done in 93s
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+REPRODUCTION GATES
+[gate] G1 grid reproduces idea 124's committed grid.csv on 448 rows x 20 cols   max|diff| = 1.776e-15  (PASS)
+[gate] G2 published-row counts at phi=0.10 vs idea 124   max|diff| = 0.000e+00  (PASS)   u56 ladder = [18, 12, 22, 22, 24, 24]  (queue quotes [18,12,22,22,24,24])
+[gate] G3 adm_pub curve at phi=0.10 vs idea 124          max|diff| = 5.551e-17  (PASS)   adm_all max|diff| = 0.000e+00
+
+==================================================================================================================================================================================================================
+A. HOW MANY ROWS THE FLOOR ADMITS — published rows per (panel, book) at each phi
+   (32 rows per book = 16 arms x 2 published cost rungs; `admissible` is constant)
+
+  [universe.json(56)] published rows by floor:
+book  TOP3  TOP5  TOP10  TOP20  TOP40  TOPall  V1u
+phi                                               
+0.00    21    18     22     24     24      24   24
+0.05    18    12     22     22     24      24   24
+0.10    18    12     22     22     24      24   24
+0.25    17    12     22     22     24      24   24
+0.50    17    12     22     22     24      24   24
+
+  [universe_broad.json] published rows by floor:
+book  TOP3  TOP5  TOP10  TOP20  TOP40  TOPall  V1u
+phi                                               
+0.00    24    15     18     28     28      24   19
+0.05    19    14     18     28     28      24   19
+0.10    19    14     18     27     28      24   17
+0.25    19    14     17     22     24      24   16
+0.50    19    14     16     22     22      24   14
+
+  total published rows over both panels: phi=0.00: 313/448  phi=0.05: 296/448  phi=0.10: 293/448  phi=0.25: 281/448  phi=0.50: 276/448
+
+==================================================================================================================================================================================================================
+B. THE RANKINGS UNDER THE SWEEP  (bar: identical entry set AND identical ordering at all five floors)
+                            ranking  scope    phi  n_entries  dropped  added  identical  inversions  spearman    argmin          argmax
+               K0 adm_all (control)    u56 0.0000          7        0      0       True           0    1.0000     TOP40             V1u
+               K0 adm_all (control)    u56 0.0500          7        0      0       True           0    1.0000     TOP40             V1u
+               K0 adm_all (control)    u56 0.1000          7        0      0       True           0    1.0000     TOP40             V1u
+               K0 adm_all (control)    u56 0.2500          7        0      0       True           0    1.0000     TOP40             V1u
+               K0 adm_all (control)    u56 0.5000          7        0      0       True           0    1.0000     TOP40             V1u
+  K1 adm_pub (idea 124 floor curve)    u56 0.0000          7        0      0      False           3    0.7207     TOP40             V1u
+  K1 adm_pub (idea 124 floor curve)    u56 0.0500          7        0      0       True           0    1.0000     TOP40             V1u
+  K1 adm_pub (idea 124 floor curve)    u56 0.1000          7        0      0       True           0    1.0000     TOP40             V1u
+  K1 adm_pub (idea 124 floor curve)    u56 0.2500          7        0      0       True           0    1.0000     TOP40             V1u
+  K1 adm_pub (idea 124 floor curve)    u56 0.5000          7        0      0       True           0    1.0000     TOP40             V1u
+      K3 median rate by book @10bps    u56 0.0000          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @10bps    u56 0.0500          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @10bps    u56 0.1000          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @10bps    u56 0.2500          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @10bps    u56 0.5000          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @25bps    u56 0.0000          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @25bps    u56 0.0500          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @25bps    u56 0.1000          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @25bps    u56 0.2500          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @25bps    u56 0.5000          7        0      0       True           0    1.0000       V1u            TOP5
+               K0 adm_all (control)  broad 0.0000          7        0      0       True           0    1.0000    TOPall           TOP10
+               K0 adm_all (control)  broad 0.0500          7        0      0       True           0    1.0000    TOPall           TOP10
+               K0 adm_all (control)  broad 0.1000          7        0      0       True           0    1.0000    TOPall           TOP10
+               K0 adm_all (control)  broad 0.2500          7        0      0       True           0    1.0000    TOPall           TOP10
+               K0 adm_all (control)  broad 0.5000          7        0      0       True           0    1.0000    TOPall           TOP10
+  K1 adm_pub (idea 124 floor curve)  broad 0.0000          7        0      0      False           1    0.9643    TOPall           TOP20
+  K1 adm_pub (idea 124 floor curve)  broad 0.0500          7        0      0      False           1    0.9910    TOPall           TOP20
+  K1 adm_pub (idea 124 floor curve)  broad 0.1000          7        0      0       True           0    1.0000    TOPall           TOP20
+  K1 adm_pub (idea 124 floor curve)  broad 0.2500          7        0      0       True           0    1.0000    TOPall           TOP20
+  K1 adm_pub (idea 124 floor curve)  broad 0.5000          7        0      0      False           1    0.9643    TOPall           TOP20
+      K3 median rate by book @10bps  broad 0.0000          7        0      0      False           1    0.9643     TOP40            TOP3
+      K3 median rate by book @10bps  broad 0.0500          7        0      0       True           0    1.0000     TOP40            TOP5
+      K3 median rate by book @10bps  broad 0.1000          7        0      0       True           0    1.0000     TOP40            TOP5
+      K3 median rate by book @10bps  broad 0.2500          7        0      0       True           0    1.0000     TOP40            TOP5
+      K3 median rate by book @10bps  broad 0.5000          7        0      0       True           0    1.0000     TOP40            TOP5
+      K3 median rate by book @25bps  broad 0.0000          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @25bps  broad 0.0500          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @25bps  broad 0.1000          7        0      0       True           0    1.0000       V1u            TOP5
+      K3 median rate by book @25bps  broad 0.2500          7        0      0      False           1    0.9643       V1u            TOP5
+      K3 median rate by book @25bps  broad 0.5000          7        0      0      False           1    0.9643       V1u            TOP5
+K4 arm menu (idea94 3 books) @10bps pooled 0.0000         14        0      0      False           4    0.9648  band3-rw        abs12-dg
+K4 arm menu (idea94 3 books) @10bps pooled 0.0500         14        0      0      False           2    0.9868  band3-rw       ebud-0.20
+K4 arm menu (idea94 3 books) @10bps pooled 0.1000         14        0      0       True           0    1.0000  band3-rw       ebud-0.20
+K4 arm menu (idea94 3 books) @10bps pooled 0.2500         14        0      0      False           4    0.9780  band3-rw ddctl-8/.5/high
+K4 arm menu (idea94 3 books) @10bps pooled 0.5000         14        0      0      False           4    0.9780  band3-rw ddctl-8/.5/high
+K4 arm menu (idea94 3 books) @25bps pooled 0.0000         14        0      0      False           4    0.9560 ebud-0.10        abs12-rw
+K4 arm menu (idea94 3 books) @25bps pooled 0.0500         14        0      0      False           4    0.9560 ebud-0.10        abs12-rw
+K4 arm menu (idea94 3 books) @25bps pooled 0.1000         14        0      0       True           0    1.0000 ebud-0.10        abs12-dg
+K4 arm menu (idea94 3 books) @25bps pooled 0.2500         14        0      0      False           9    0.8637 ebud-0.10       v1gate-dg
+K4 arm menu (idea94 3 books) @25bps pooled 0.5000         14        0      0      False           6    0.9429 ebud-0.10        abs12-rw
+ K4 arm menu (7-book ladder) @10bps pooled 0.0000         16        0      0      False           2    0.9941  band3-rw          stop15
+ K4 arm menu (7-book ladder) @10bps pooled 0.0500         16        0      0       True           0    1.0000  band3-rw          stop15
+ K4 arm menu (7-book ladder) @10bps pooled 0.1000         16        0      0       True           0    1.0000  band3-rw          stop15
+ K4 arm menu (7-book ladder) @10bps pooled 0.2500         16        0      0      False           9    0.9265  band3-rw          stop15
+ K4 arm menu (7-book ladder) @10bps pooled 0.5000         16        0      0      False          10    0.9118  band3-rw          stop15
+ K4 arm menu (7-book ladder) @25bps pooled 0.0000         16        0      0      False           2    0.9912 ebud-0.20          stop15
+ K4 arm menu (7-book ladder) @25bps pooled 0.0500         16        0      0       True           0    1.0000 ebud-0.20          stop15
+ K4 arm menu (7-book ladder) @25bps pooled 0.1000         16        0      0       True           0    1.0000 ebud-0.20          stop15
+ K4 arm menu (7-book ladder) @25bps pooled 0.2500         16        0      0      False           1    0.9971 ebud-0.20          stop15
+ K4 arm menu (7-book ladder) @25bps pooled 0.5000         16        0      0      False           1    0.9971 ebud-0.20          stop15
+
+  INVARIANCE VERDICT per ranking (identical entry set AND ordering at all 5 floors):
+                            ranking  scope  INVARIANT  min_spearman  max_inversions  max_dropped  argmin_stable  argmax_stable
+               K0 adm_all (control)    u56       True        1.0000               0            0           True           True
+  K1 adm_pub (idea 124 floor curve)    u56      False        0.7207               3            0           True           True
+      K3 median rate by book @10bps    u56       True        1.0000               0            0           True           True
+      K3 median rate by book @25bps    u56       True        1.0000               0            0           True           True
+               K0 adm_all (control)  broad       True        1.0000               0            0           True           True
+  K1 adm_pub (idea 124 floor curve)  broad      False        0.9643               1            0           True           True
+      K3 median rate by book @10bps  broad      False        0.9643               1            0           True          False
+      K3 median rate by book @25bps  broad      False        0.9643               1            0           True           True
+K4 arm menu (idea94 3 books) @10bps pooled      False        0.9648               4            0           True          False
+K4 arm menu (idea94 3 books) @25bps pooled      False        0.8637               9            0           True          False
+ K4 arm menu (7-book ladder) @10bps pooled      False        0.9118              10            0           True           True
+ K4 arm menu (7-book ladder) @25bps pooled      False        0.9912               2            0           True           True
+
+  ANSWER to the queue's question: 4 of 12 book-level rankings are invariant to the floor; 12 of 12 keep the same argmin.
+
+  K2 — idea 124's floor number n* (smallest ladder rung with adm_pub >= 90%) at each floor:
+ phi  n*_pub[u56] n*_all[u56]  n*_pub[broad] n*_all[broad]
+0.00           40        None            136          None
+0.05           40        None            136          None
+0.10           40        None            136          None
+0.25           40        None             40          None
+0.50           40        None             40          None
+  K2 invariant: {'n*_pub[u56]': True, 'n*_all[u56]': True, 'n*_pub[broad]': False, 'n*_all[broad]': True}
+
+==================================================================================================================================================================================================================
+C. THE FLOOR CURVE adm_pub AT EVERY FLOOR (the number idea 124 published, re-read)
+
+  [universe.json(56)]
+book  TOP3  TOP5  TOP10  TOP20  TOP40  TOPall   V1u
+phi                                                
+0.00 0.476 0.667  0.864  0.750  1.000   0.958 0.333
+0.05 0.556 1.000  0.864  0.727  1.000   0.958 0.333
+0.10 0.556 1.000  0.864  0.727  1.000   0.958 0.333
+0.25 0.588 1.000  0.864  0.727  1.000   0.958 0.333
+0.50 0.588 1.000  0.864  0.727  1.000   0.958 0.333
+
+  [universe_broad.json]
+book  TOP3  TOP5  TOP10  TOP20  TOP40  TOPall   V1u
+phi                                                
+0.00 0.333 0.667  0.389  0.321  0.786   1.000 0.421
+0.05 0.421 0.714  0.389  0.321  0.786   1.000 0.421
+0.10 0.421 0.714  0.389  0.333  0.786   1.000 0.471
+0.25 0.421 0.714  0.412  0.364  0.917   1.000 0.500
+0.50 0.421 0.714  0.438  0.364  0.909   1.000 0.571
+
+==================================================================================================================================================================================================================
+D. RULE 8 / W1 — the floor curve chosen on 2009-2016 only, then read on 2017-2026
+   phi   uni  pub_IS  pub_OOS  n_star_IS  n_star_OOS  n_star_full  adm_pub_IS_mean  adm_pub_OOS_mean
+0.0000   u56     162      159        NaN          10           40           0.5667            0.7997
+0.0000 broad     139      152   136.0000         136          136           0.4979            0.8347
+0.0500   u56     155      146        NaN           5           40           0.5843            0.8719
+0.0500 broad     113      150   136.0000         136          136           0.6560            0.8509
+0.1000   u56     146      146        NaN           5           40           0.6288            0.8719
+0.1000 broad     112      147   136.0000         136          136           0.6574            0.8580
+0.2500   u56     138      145        NaN           5           40           0.6431            0.8785
+0.2500 broad     106      136   136.0000           5           40           0.6786            0.8901
+0.5000   u56     117      145        NaN           5           40           0.7555            0.8785
+0.5000 broad     100      131   136.0000           5           40           0.7369            0.9087
+
+==================================================================================================================================================================================================================
+E. RULE 8 / W2 — THE FLOOR AS A SELECTOR
+   S1 = idea 94's selector (IS reach >= 1.0pp, lowest IS rate) — floor sits below it
+   S2 = floor-only selector (published at phi on IS, lowest IS rate)
+   phi  cells  S1_picks  S2_picks  same_pick  S1_OOS_Sharpe  S2_OOS_Sharpe  S1_OOS_CAGR  S2_OOS_CAGR  S1_OOS_MaxDD  S2_OOS_MaxDD  ctl_OOS_Sharpe  ctl_OOS_CAGR  spearman_IS_OOS  n_elig_S2  dOOS_S2_minus_S1  dOOS_S2_minus_ctl
+0.0000     28        28        28         17         0.8686         0.8743       0.1347       0.1398       -0.2382       -0.2461          0.8957        0.1497           0.1486    10.7500            0.0057            -0.0214
+0.0500     28        28        28         21         0.8686         0.8724       0.1347       0.1389       -0.2382       -0.2448          0.8957        0.1497           0.1421     9.5714            0.0039            -0.0233
+0.1000     28        28        28         21         0.8686         0.8724       0.1347       0.1389       -0.2382       -0.2448          0.8957        0.1497           0.1470     9.2143            0.0039            -0.0233
+0.2500     28        28        28         22         0.8686         0.8732       0.1347       0.1390       -0.2382       -0.2441          0.8957        0.1497           0.1637     8.7143            0.0046            -0.0225
+0.5000     28        28        28         24         0.8686         0.8705       0.1347       0.1364       -0.2382       -0.2381          0.8957        0.1497           0.1850     7.7500            0.0019            -0.0253
+
+  How many of the 28 cells' S2 picks the floor moves, against the phi=0.10 incumbent:
+   phi  S2_picks_changed_vs_incumbent  of_cells
+0.0000                              5        28
+0.0500                              0        28
+0.1000                              0        28
+0.2500                              1        28
+0.5000                              3        28
+
+  OOS Sharpe head-to-heads (count of 28 cells):
+   phi  S1_beats_ctl  S2_beats_ctl  S2_beats_SPY  S2_beats_v2  cells
+0.0000            15            14            17            1     28
+0.0500            15            15            16            1     28
+0.1000            15            15            16            1     28
+0.2500            15            15            16            1     28
+0.5000            15            15            16            1     28
+
+==================================================================================================================================================================================================================
+F. KEEP PATHS (PROTOCOL rule 4) over all arm-points, and what the floor hides
+  4a vs LIVE RULES v2: 0/448 arm-points   4a vs RULES v1: 111/448   4b: 50/448
+
+  4b/4a passes the publication rule would NOT print, by floor:
+   phi  p4b_total  p4b_published  p4b_hidden  p4a_v2_published  p4a_v2_hidden
+0.0000         50             50           0                 0              0
+0.0500         50             50           0                 0              0
+0.1000         50             50           0                 0              0
+0.2500         50             50           0                 0              0
+0.5000         50             50           0                 0              0
+
+  best 4b-passing arm-points by OOS Sharpe (informational, none promoted):
+              uni   book    cost      arm   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe  dMaxDD     TO
+universe.json(56)  TOP40 10.0000 band3-rw 0.1136  1.2112 -0.1566 1.2503 1.1861      1.2761  5.9064 3.4533
+universe.json(56)  TOP40 10.0000  g200-dg 0.1066  1.1763 -0.1539 1.1821 1.1779      1.2666  6.1764 4.8177
+universe.json(56)  TOP40 10.0000 band3-dg 0.1107  1.1969 -0.1575 1.2329 1.1749      1.2609  5.8088 3.7727
+universe.json(56)  TOP40 10.0000  g200-rw 0.1069  1.1676 -0.1539 1.1772 1.1657      1.2582  6.1764 4.8792
+universe.json(56)  TOP40 25.0000 band3-rw 0.1078  1.1553 -0.1572 1.1956 1.1287      1.2186  5.9283 3.4533
+universe.json(56) TOPall 10.0000 band3-rw 0.1225  1.1609 -0.1771 1.2104 1.1286      1.2025  4.8111 4.3152
+
+==================================================================================================================================================================================================================
+H. WHICH ENTRIES THE FLOOR MOVES — max |rank(phi) - rank(0.10)| per entry
+  39 of 116 entry-slots move at all; the largest moves:
+                            ranking  scope              entry  rank_at_incumbent  max_rank_move  rank_lo  rank_hi
+K4 arm menu (idea94 3 books) @25bps pooled           abs12-dg                 13              7        6       13
+ K4 arm menu (7-book ladder) @10bps pooled          ebud-0.20                 12              5        7       13
+K4 arm menu (idea94 3 books) @25bps pooled           abs12-rw                  9              4        9       13
+ K4 arm menu (7-book ladder) @10bps pooled           abs12-dg                 14              4       10       14
+  K1 adm_pub (idea 124 floor curve)    u56               TOP5                  1              3        1        4
+ K4 arm menu (7-book ladder) @10bps pooled    ddctl-8/.5/high                 11              3       11       14
+K4 arm menu (idea94 3 books) @10bps pooled           abs12-dg                 10              3       10       13
+ K4 arm menu (7-book ladder) @10bps pooled          ebud-0.10                  9              2        9       11
+ K4 arm menu (7-book ladder) @10bps pooled ddctl-8/.5/recover                 10              2        9       12
+ K4 arm menu (7-book ladder) @25bps pooled           abs12-dg                 12              2       11       14
+K4 arm menu (idea94 3 books) @10bps pooled           abs12-rw                 11              2        9       11
+K4 arm menu (idea94 3 books) @25bps pooled          ebud-0.20                  3              2        1        3
+K4 arm menu (idea94 3 books) @10bps pooled ddctl-8/.5/recover                  9              2        9       11
+  K1 adm_pub (idea 124 floor curve)    u56             TOPall                  2              1        1        2
+  K1 adm_pub (idea 124 floor curve)    u56              TOP10                  3              1        2        3
+  K1 adm_pub (idea 124 floor curve)  broad               TOP3                  4              1        3        5
+  K1 adm_pub (idea 124 floor curve)  broad              TOP10                  5              1        4        5
+  K1 adm_pub (idea 124 floor curve)  broad                V1u                  3              1        3        4
+  K1 adm_pub (idea 124 floor curve)    u56              TOP20                  4              1        3        4
+      K3 median rate by book @25bps  broad              TOP10                  5              1        4        5
+
+==================================================================================================================================================================================================================
+G. PRE-REGISTERED PREDICTIONS
+  P1 K0 (control) invariant on both panels -> CONFIRMED (2/2)
+  P2 K1 NOT invariant on either panel -> CONFIRMED (0/2 invariant)
+  P3 K4 (arm menu) IS invariant -> REFUTED (0/4 invariant, min spearman 0.8637)
+  P4 n* not invariant on at least one panel -> CONFIRMED  ({'n*_pub[u56]': True, 'n*_all[u56]': True, 'n*_pub[broad]': False, 'n*_all[broad]': True})
+
+Wrote 2026-09-07_is-the-priceability-floor-the-real-selector_B.{grid,census,rankings,invariance,nstar,moves,walkforward_floor,walkforward,selector_summary,keeppaths}.csv   total 161s
+[gate] G1 1.776e-15   G2 0.000e+00   G3 5.551e-17 / 0.000e+00
