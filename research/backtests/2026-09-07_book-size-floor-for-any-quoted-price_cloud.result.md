@@ -149,6 +149,26 @@ static-gross lever at 0.57. Memo written, **PARK-recommended**: it is one row se
 from 224, the rule-8 selector does NOT pick it at any tau below 1.00 (S1 takes `ebud-0.10`, OOS
 1.151), and it fails 4b on broad (DD at 10 bps, H2+DD at 25).
 
+## [H] Reconciliation with lane B's independent same-day run
+
+Lane B ran this queue idea on the same day and reached the **same verdict** — KILL, non-monotone,
+no statable number — from its own script. The two published u56 curves differ at two rungs
+(mine 0.889 / 1.000 / 0.864 / 0.818 / 1.000 / 0.958 against B's 0.556 / 1.000 / 0.864 / 0.727 /
+1.000 / 0.958), and section [H] takes that difference apart:
+
+* the D1/D2 columns agree — both lanes gate against idea 94's committed price list at ~1e-15;
+* the D3 **sub-panels are different draws** (this run replays idea 122's rng; lane B drew its
+  own 40), differing by a mean of 0.002-0.083 and a max of 0.025-0.350 in frac_pos per arm-cell;
+* substituting lane B's draw fractions into my D1/D2 reproduces **its curve exactly, at one drop
+  fraction and at all three alike** — so the gap is **draw noise**, and the q convention (idea
+  122's fixed 0.10 here, all three q there) contributes nothing on u56.
+
+That is a result about idea 122's instrument rather than about this ladder: **at NDRAW = 40 the
+D3 statistic can move a rung's published share by a third between two honest runs** (TOP3
+0.889 -> 0.556 on an 18-row cell). Any future use of the sign test should either raise the draw
+count or publish the share with a band. Neither lane's verdict depends on it: the ladder is
+non-monotone and no rung reaches 1.00 under all three readings.
+
 ## Caveats
 
 (1) universe.json and universe_broad.json are current-constituent lists — **SURVIVORSHIP** — so

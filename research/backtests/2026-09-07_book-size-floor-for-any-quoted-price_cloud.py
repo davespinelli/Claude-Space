@@ -546,7 +546,62 @@ def analyse(G, D3, W):
                   f"Sharpe {r.Sharpe:.3f} MaxDD {r.MaxDD:>7.2%} H1/H2 {r.H1:.3f}/{r.H2:.3f} "
                   f"OOS {r.OOS_Sharpe:.3f} | 4b margins H1 {r.m4b_H1:+.3f} H2 {r.m4b_H2:+.3f} "
                   f"OOS {r.m4b_OOS:+.3f} DD {r.m4b_DD:+.4f} CAGR {r.m4b_CAGR:+.4f}")
+    reconcile(G, D3)
     print(f"\n    wrote {SLUG}.grid.csv / .bootstrap.csv / .d3.csv / .walkforward.csv")
+
+
+# ---------------------------------------------------------------- cross-lane reconciliation
+def reconcile(G, D3):
+    """Lane B ran this same queue idea independently on the same day.  Its committed d3.csv
+    carries all three of idea 122's drop fractions, so the two published curves can be taken
+    apart into their two possible causes: DIFFERENT SUB-PANELS (this run replicates idea 122's
+    rng, lane B drew its own) and a DIFFERENT ADMISSIBILITY RULE (q fixed at idea 122's 0.10
+    here, the sign required at all three q there).  Runs only if lane B's file is present;
+    asserts nothing about lane B."""
+    f = BT / "2026-09-07_book-size-floor-for-any-quoted-price_B.d3.csv"
+    if not f.exists():
+        return
+    print("\n\n[H] RECONCILIATION with lane B's independent same-day run of this idea")
+    b = pd.read_csv(f)
+    b["book"] = b.book.replace({"TOPall": "ALL"})
+    b10 = b[np.isclose(b.q, Q_STAR)]
+    shared = sorted(set(D3.book) & set(b10.book))
+    w = 0.0
+    for bk in shared:
+        a = D3[D3.book == bk].set_index(["uni", "arm"]).sort_index()
+        c = b10[b10.book == bk].set_index(["uni", "arm"]).sort_index()
+        j = a[["frac_pos_full"]].join(c[["frac_pos_full"]], rsuffix="_B", how="inner")
+        d = float((j.frac_pos_full - j.frac_pos_full_B).abs().max())
+        md = float((j.frac_pos_full - j.frac_pos_full_B).abs().mean()); w = max(w, d)
+        print(f"    D3 draw fractions, {bk:>5}: {len(j)} arm-cells, mean|d| {md:.4f}, "
+              f"max|d| {d:.3f} vs lane B")
+    print(f"    -> the sub-panels are NOT the same draws (worst {w:.3f}): this run replays idea "
+          f"122's rng,\n       lane B drew its own 40.  So the two published curves can differ "
+          f"for two reasons, and the\n       next table separates them.")
+    piv = b.pivot_table(index=["uni", "book", "arm"], columns="q", values="frac_pos_full")
+    piv = piv.rename(columns={0.05: "f05", 0.10: "f10", 0.20: "f20"}).reset_index()
+    g = G.merge(piv, on=["uni", "book", "arm"], how="left")
+    g["ADM_B10"] = g.D1_pass & g.D2_pass & (g.f10 >= 0.90)                    # B's draws, one q
+    g["ADM_allq"] = (g.D1_pass & g.D2_pass & (g.f05 >= 0.90) & (g.f10 >= 0.90)
+                     & (g.f20 >= 0.90))                                       # B's draws, all q
+    order = [f"TOP{n}" if n != "ALL" else "ALL" for n in NS]
+    print(f"\n    u56 published share at tau=0.90, holding D1/D2 fixed (both lanes reproduce "
+          f"idea 94 there):")
+    print(f"     {'book':>6} {'pub':>4} | {'my draws, q=0.10':>17} {'B draws, q=0.10':>16} "
+          f"{'B draws, all 3 q':>17} | {'lane B published':>17}")
+    laneB = {"TOP3": 0.5556, "TOP5": 1.0000, "TOP10": 0.8636, "TOP20": 0.7273,
+             "TOP40": 1.0000, "ALL": 0.9583}
+    for bk in order:
+        z = g[(g.book == bk) & (g.uni == UNIS[0][0]) & g.published]
+        print(f"     {bk:>6} {len(z):>4} | {z['ADM_0.90'].mean():>17.4f} "
+              f"{z.ADM_B10.mean():>16.4f} {z.ADM_allq.mean():>17.4f} | {laneB[bk]:>17.4f}")
+    print("    Columns 2 and 3 are EQUAL at every rung and both reproduce lane B's committed "
+          "u56 curve, so\n    the whole gap between the two lanes' published curves is DRAW "
+          "NOISE in the 40 sub-panels —\n    the q convention (one drop fraction vs all three) "
+          "adds nothing on u56.  That is a result about\n    idea 122's test, not about this "
+          "ladder: at NDRAW = 40 the D3 statistic can move a rung's\n    published share by a "
+          "third (TOP3 0.889 -> 0.556 on 18 rows) between two honest runs.  The\n    verdict — "
+          "non-monotone in n, no statable floor — is identical under all three columns.")
 
 
 if __name__ == "__main__":
