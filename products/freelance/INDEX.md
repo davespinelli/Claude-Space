@@ -58,7 +58,7 @@
 | 2026-09-05 | 40691213 | Excel Data Validation & Entry | $640 | 14 | drafted |
 | 2026-09-05 | 40691397 | Numeric CSV Data Cleanup | $520 | 91 | drafted |
 | 2026-09-05 | 40691197 | Automated Budget Excel Dashboard | $560 | 112 | drafted |
-| 2026-09-05 | 40691331 | AI-Powered Data Analysis Script Generator (SaaS) | $1,850 | 214 | drafted |
+| 2026-09-05 | 40691331 | AI-Powered Data Analysis Script Generator (SaaS) | $1,850 | 214 | submitted 2026-09-07 ($1,850, rank 100+/311) |
 | 2026-09-05 | 40678754 | SQL & Python Customer Analysis | $240 | 82 | drafted |
 | 2026-09-04 | 40691071 | Manual Data Entry in Excel | $280 | 2 | drafted |
 | 2026-09-04 | 40690897 | Excel Files Data Updating – 45 Client Files | $145 | 9 | drafted |
@@ -180,3 +180,8 @@ Note for the 2026-09-07 12:31 UTC batch: eleven NEW rows, eight drafted and thre
 Note for 2026-09-06: the 20:20 UTC scan carried only three NEW rows, one of which is a C#/.NET job we skipped. Expand Campus AI (40686904) was an older shortlist row never triaged either way; it has budget and bid data but no captured description, so the proposal is written to the job title and asks what the stack is rather than assuming. Earlier 09-03 backlog rows in seen.csv still carry no budget, bid or URL data, and the previous JOBS.md scans are not recoverable from git history, so they remain undrafted rather than priced blind.
 
 Note for the 2026-09-07 18:46 UTC batch: no NEW rows. The 12:31 UTC scan is still the latest shortlist (the 18:15 cron had not landed at the time of this run; the freelance-job-scan workflow's last four runs all succeeded, so this is GitHub's usual schedule delay, not a failure), and all eleven of its NEW rows were drafted or skipped in the previous batch. Auditing the whole shortlist against the index left exactly one row never triaged either way: LLM Evaluation post training (40682736), first seen 2026-09-03. It has an id in seen.csv but no captured description and a broken budget bound of $975 to $0, so it is priced just above the lower bound at $1,050 and the proposal is written to the job title, asking which model and post-training method before committing to scope. Sixty-three bids and four days old, so the odds are poor; it is drafted rather than left untriaged. Freelancer.com remains blocked by the session network policy (HTTP 403 on the proxy tunnel), re-tested this run.
+
+## Bidding session 2026-09-07 (Freelancer, Plus trial)
+Submitted 5 USD bids: 40694183 $240, 40691566 $210, 40693466 $600, 40694775 $560, 40691331 $1,850. Ranks 23/28, 50/66, 81/83, 100+/239, 100+/311 (new account, no reviews). Bid allowance shown: 15 of 100 left before this session's last two.
+Blocked: 40691071 KYC ($50+/hr); 40692162 $20 balance; 40693845 $20 balance; 40695548 $20 balance; 40691197 $20 balance; 40696328 $20 balance; 40691397 $20 balance; 40689889 $20 balance; 40693579 $20 balance; 40694981 KYC ($50+/hr); 40694576 Preferred Freelancer only.
+Lessons: proposals max 1,500 chars; each project requires ticking at least one of its skills before the bid box appears; ref-based clicks mis-target in the pane at 1440px, use coordinate clicks from a screenshot; clients' screening questions must be answered first and honestly.
