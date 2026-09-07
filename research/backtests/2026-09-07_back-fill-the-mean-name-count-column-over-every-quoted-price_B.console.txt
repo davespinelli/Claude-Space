@@ -1,0 +1,261 @@
+======================================================================================================================================================
+IDEA 378  back-fill the mean-name-count column over every quoted price   [2026-09-07 20:26:05Z]
+======================================================================================================================================================
+
+======================================================================================================================================================
+[A] CENSUS OF THE COMMITTED RECORD -- how much of the width column is recoverable
+======================================================================================================================================================
+holdings-like column lexicon : (^|_)(mean_)?names?(_held|_sel|_all|_gate)?$|^n_names$|^breadth\w*$|^m_names$|^npos$|^positions$
+nominal-dial column lexicon  : ^(n|nkeep|topn|n_top|rung)$
+row-text size patterns       : \bTOP\s?-?(\d+)\b | \bn\s?=\s?(\d+)\b | \b(\d+)-name\b | \btop-(\d+)\b | \bn(\d+)\b
+row-text panel tokens        : u56, universe.json, b136, universe_broad, small439, small484
+
+LEADERBOARD table lines 3208; skipped as header/malformed (<9 cells) 125; classified 2687  (PRICED 2122, RATE 565)
+
+  PRICED rows (2122) by recovery tier:
+      R1    208    9.8%   MEASURED (a holdings column exists)
+      R2    288   13.6%   NOMINAL-COL (only the dial `n`)
+      R3   1050   49.5%   ROW-TEXT (size or panel named in the row)
+      R0    576   27.1%   UNDEFINED (nothing recoverable)
+
+  RATE rows (565) by recovery tier:
+      R1     96   17.0%   MEASURED (a holdings column exists)
+      R2    182   32.2%   NOMINAL-COL (only the dial `n`)
+      R3     10    1.8%   ROW-TEXT (size or panel named in the row)
+      R0    277   49.0%   UNDEFINED (nothing recoverable)
+
+  ==> the queue's literal method (R1 only) reaches 208 of 2122 priced rows (9.8%); it FAILS on 90.2%.
+      scripts with NO committed CSV at all: 576 priced rows are unresolvable by any artefact route.
+
+======================================================================================================================================================
+[G] GATES + [B] WIDTH MAP + [D] KEEP PATHS -- re-measuring the record's own books
+======================================================================================================================================================
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+PANEL U56: 56 book names (56 columns), 2008-01-02 -> 2026-09-04 | eval from 2009-01-13 | IS <= 2016-12-31 | OOS >= 2017-01-01
+  SPY: CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834 OOS Sharpe 0.882
+  [G1] TOP20 / V1u / EWall vs idea 94 targets(): max|dw| = 0.000e+00 (EXACT)
+  [G2] H.run(all instruments off) vs engine.backtest @10bps: max|diff| = 0.000e+00 (EXACT)
+  [G3] reproduces idea 124 `_B2.grid.csv` on 224 rows: max|err| = 1.776e-15
+  panel done in 48s cumulative
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+PANEL B136: 136 book names (136 columns), 2008-01-02 -> 2026-09-04 | eval from 2009-01-13 | IS <= 2016-12-31 | OOS >= 2017-01-01
+  SPY: CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834 OOS Sharpe 0.882
+  [G1] TOP20 / V1u / EWall vs idea 94 targets(): max|dw| = 0.000e+00 (EXACT)
+  [G2] H.run(all instruments off) vs engine.backtest @10bps: max|diff| = 0.000e+00 (EXACT)
+  [G3] reproduces idea 124 `_B2.grid.csv` on 224 rows: max|err| = 1.776e-15
+  panel done in 115s cumulative
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+PANEL SMALL484: 483 book names (484 columns, SPY excluded from every book), 2010-01-04 -> 2026-09-04 | eval from 2011-01-13 | IS <= 2016-12-31 | OOS >= 2017-01-01
+  SPY: CAGR 14.13% Sharpe 0.862 MaxDD -33.72% halves 0.891/0.858 OOS Sharpe 0.882
+  [G1] TOP20 / V1u / EWall vs idea 94 targets(): max|dw| = 0.000e+00 (EXACT)
+  [G2] H.run(all instruments off) vs engine.backtest @10bps: max|diff| = 0.000e+00 (EXACT)
+  panel done in 282s cumulative
+
+  [G3] TOTAL: reproduced idea 124's committed grid on 448 (book x arm x cost) rows, max|err| = 1.776e-15 (EXACT)
+
+======================================================================================================================================================
+[B] WIDTH MAP -- what the record CALLS the book vs what the book HOLDS
+======================================================================================================================================================
+
+  control books (no gate), mean holdings per weekly rebalance day, against the name count the record writes:
+panel            nominal(U56)  B136  SMALL484  U56
+book                                              
+EWall                    56.0 131.4     382.0 54.1
+RULES v1                  5.0   5.0       5.0  5.0
+RULES v2 (LIVE)          56.0  93.2     185.7 38.4
+TOP10                    10.0  10.0      10.0  9.9
+TOP20                    20.0  19.9      20.0 19.9
+TOP3                      3.0   3.0       3.0  3.0
+TOP40                    40.0  39.9      40.0 39.9
+TOP5                      5.0   5.0       5.0  4.9
+TOPALL                   56.0 130.7     367.8 53.8
+V1u                       5.0   5.0       5.0  5.0
+
+  over all 264 (panel x book x gate x conv) cells:
+      nominal < 20: 132   measured < 20: 162   -> the nominal proxy MISCLASSIFIES 30 of 264 (11.4%) at the SIGN threshold
+      nominal < 40: 165   measured < 40: 214   -> the nominal proxy MISCLASSIFIES 49 of 264 (18.6%) at the ORDERING threshold
+
+  measured/nominal ratio by nominal level (the back-fill correction):
+         count  median   min   max
+nominal                           
+3.0         33   0.986 0.337 1.000
+5.0         66   0.991 0.392 1.000
+10.0        33   0.992 0.498 1.000
+20.0        33   0.984 0.598 1.000
+40.0        33   0.971 0.677 1.000
+56.0        22   0.686 0.668 0.966
+136.0       22   0.685 0.672 0.966
+483.0       22   0.386 0.305 0.791
+
+  THE LIVE BOOK: RULES v2 mean holdings U56 38.4, B136 93.2, SMALL484 185.7   (sign clause 20, ordering clause 40)
+
+======================================================================================================================================================
+[C] THE BACK-FILL -- every priced row given its best available width
+======================================================================================================================================================
+
+  priced rows 2122; width recovered for 1546 (72.9%); UNDEFINED 576 (27.1%) -- never imputed
+
+   threshold  below_corrected  below_raw  share_of_known  share_of_all_priced
+           5              110         47          0.0712               0.0518
+          10              223        142          0.1442               0.1051
+          20              759        371          0.4909               0.3577
+          40             1332        951          0.8616               0.6277
+          56             1401       1041          0.9062               0.6602
+
+  ==> THE QUEUE'S QUESTION, answered on the 1546 recoverable rows:
+      below 20 names (idea 124's SIGN clause):     759 of 1546 (49.1%) recoverable, 35.8% of all priced rows
+      below 40 names (idea 124's ORDERING clause): 1332 of 1546 (86.2%) recoverable, 62.8% of all priced rows
+
+  by recovery tier:
+      rows  median_width  below20  below40
+tier                                      
+R1     208          24.0       91      134
+R2     288          19.7      180      251
+R3    1050          29.5      488      947
+
+======================================================================================================================================================
+[D] KEEP PATHS 4a and 4b at every grid point
+======================================================================================================================================================
+  @   0 bps  cells  408   4a   0/408   4b  60/408
+  @  10 bps  cells  408   4a   1/408   4b  44/408
+  @  25 bps  cells  408   4a   1/408   4b  22/408
+
+  first-failing 4b bar @10 bps: H1 171, DD 99, H2 62, CAGR 28, OOS 4
+
+  4b passers @10 bps by panel x measured-width band:
+       sum              size             
+panel B136 SMALL484 U56 B136 SMALL484 U56
+band                                     
+20-40    5        0  14   17       26  33
+<20      0        0  12   85       76  85
+>=40     9        0   4   34       34  18
+
+  4a passers over all 1224 grid points, WITH their distance from the live book (a 4a pass that is the live RULES v2 under another denominator is not a new book):
+panel   book      arm    cost   names  v2_names   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe  corr_v2  dw_vs_v2
+  U56 TOPALL band3-dg 10.0000 38.3768   38.4430 0.0872  1.2088 -0.1205 1.2306 1.1924      1.2863   0.9998    0.0147
+  U56 TOPALL band3-dg 25.0000 38.3768   38.4430 0.0843  1.1712 -0.1209 1.1927 1.1550      1.2495   0.9998    0.0147
+
+  the 10 strongest 4b passers @10 bps (of 44), by Sharpe:
+panel   book      arm   names   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe  corr_v2
+  U56  TOP40 band3-rw 35.1781 0.1136  1.2112 -0.1566 1.2503 1.1861      1.2761   0.9966
+  U56  TOP40 band3-dg 34.1640 0.1107  1.1969 -0.1575 1.2329 1.1749      1.2609   0.9955
+  U56  TOP40  g200-dg 34.2128 0.1066  1.1763 -0.1539 1.1821 1.1779      1.2666   0.9904
+  U56  TOP40  g200-rw 35.0326 0.1069  1.1676 -0.1539 1.1772 1.1657      1.2582   0.9910
+  U56 TOPALL band3-rw 38.3768 0.1224  1.1616 -0.1771 1.2117 1.1289      1.2029   0.9391
+  U56  EWall band3-rw 38.4430 0.1225  1.1609 -0.1771 1.2104 1.1286      1.2025   0.9392
+  U56  TOP20 band3-dg 18.9501 0.1437  1.1570 -0.1976 1.2157 1.1231      1.1886   0.9531
+  U56  TOP20 band3-rw 19.2476 0.1442  1.1536 -0.1991 1.2139 1.1176      1.1829   0.9524
+  U56  TOP20  g200-rw 19.2638 0.1427  1.1469 -0.1939 1.2158 1.1042      1.1707   0.9517
+  U56  TOP20  g200-dg 19.0033 0.1414  1.1450 -0.1951 1.2114 1.1049      1.1719   0.9523
+
+======================================================================================================================================================
+[E1] RULE 8 WALK-FORWARD -- rung chosen on IS (<=2016) Sharpe @10bps, 2017-2026 read once
+======================================================================================================================================================
+   panel                arm   pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  anchor_OOS_Sharpe   best  best_OOS_Sharpe  regret  v2_OOS_Sharpe  spy_OOS_Sharpe
+     U56            control   TOP3     1.3589    0.2534      0.9662    -0.3450             1.1677  TOP20           1.1677 -0.2015         1.2851          0.8820
+     U56            g200-dg   TOP3     1.3763    0.2543      0.9690    -0.3450             1.1719  TOP40           1.2666 -0.2976         1.2851          0.8820
+     U56            g200-rw   TOP3     1.3702    0.2539      0.9676    -0.3450             1.1707  TOP40           1.2582 -0.2906         1.2851          0.8820
+     U56           band3-dg   TOP3     1.3544    0.2509      0.9594    -0.3463             1.1886 TOPALL           1.2863 -0.3269         1.2851          0.8820
+     U56           band3-rw   TOP3     1.3534    0.2490      0.9535    -0.3459             1.1829  TOP40           1.2761 -0.3226         1.2851          0.8820
+     U56           abs12-dg   TOP3     1.3636    0.2553      0.9725    -0.3450             1.1274 TOPALL           1.1304 -0.1579         1.2851          0.8820
+     U56           abs12-rw   TOP3     1.4066    0.2563      0.9750    -0.3450             1.1314  TOP20           1.1314 -0.1564         1.2851          0.8820
+     U56           vol60-dg TOPALL     1.0679    0.1224      1.1932    -0.1688             1.1301 TOPALL           1.1932  0.0000         1.2851          0.8820
+     U56           vol60-rw  TOP40     1.0759    0.1301      1.1777    -0.1662             1.1620 TOPALL           1.1849 -0.0071         1.2851          0.8820
+     U56          v1gate-dg   TOP3     1.0152    0.1839      0.9684    -0.2122             1.1330  TOP40           1.2595 -0.2911         1.2851          0.8820
+     U56          v1gate-rw   TOP3     1.0158    0.2381      1.0554    -0.2581             1.1680  TOP40           1.2662 -0.2108         1.2851          0.8820
+     U56             stop15   TOP3     1.2907    0.2364      0.9416    -0.3366             1.1164  TOP40           1.1187 -0.1771         1.2851          0.8820
+     U56             stop25   TOP3     1.3467    0.2522      0.9718    -0.3622             1.1563  TOP20           1.1563 -0.1845         1.2851          0.8820
+     U56 ddctl-8/.5/recover   TOP5     1.1162    0.1315      0.8415    -0.2139             1.0514 TOPALL           1.1648 -0.3233         1.2851          0.8820
+     U56    ddctl-8/.5/high   TOP3     1.1559    0.1455      0.8599    -0.2053             1.0343 TOPALL           1.0401 -0.1802         1.2851          0.8820
+     U56          ebud-0.10   TOP3     1.2895    0.1663      0.7875    -0.3343             1.1989  TOP20           1.1989 -0.4114         1.2851          0.8820
+     U56          ebud-0.20   TOP3     1.3514    0.2132      0.8803    -0.3428             1.1667  TOP20           1.1667 -0.2865         1.2851          0.8820
+    B136            control  TOP10     1.1927    0.1628      0.8534    -0.2601             0.9301 TOPALL           1.0997 -0.2462         1.1185          0.8820
+    B136            g200-dg  TOP10     1.2033    0.1587      0.8396    -0.2601             0.9217 TOPALL           1.1255 -0.2859         1.1185          0.8820
+    B136            g200-rw  TOP10     1.1857    0.1587      0.8388    -0.2601             0.9159 TOPALL           1.0650 -0.2262         1.1185          0.8820
+    B136           band3-dg  TOP10     1.2055    0.1616      0.8569    -0.2415             0.9228 TOPALL           1.1177 -0.2608         1.1185          0.8820
+    B136           band3-rw  TOP10     1.1900    0.1594      0.8428    -0.2556             0.9225 TOPALL           1.0761 -0.2334         1.1185          0.8820
+    B136           abs12-dg  TOP10     1.1848    0.1633      0.8559    -0.2601             0.9253 TOPALL           1.0650 -0.2090         1.1185          0.8820
+    B136           abs12-rw  TOP10     1.1445    0.1621      0.8504    -0.2601             0.9253 TOPALL           1.0557 -0.2053         1.1185          0.8820
+    B136           vol60-dg TOPALL     1.1542    0.1205      1.1248    -0.1874             0.8842 TOPALL           1.1248  0.0000         1.1185          0.8820
+    B136           vol60-rw TOPALL     1.1374    0.1252      1.1038    -0.2075             0.8752 TOPALL           1.1038  0.0000         1.1185          0.8820
+    B136          v1gate-dg  TOP10     1.0492    0.1146      0.7710    -0.1657             0.8676 TOPALL           1.0847 -0.3137         1.1185          0.8820
+    B136          v1gate-rw  TOP10     1.0480    0.1275      0.7831    -0.2144             0.8919 TOPALL           1.0191 -0.2360         1.1185          0.8820
+    B136             stop15  TOP10     1.1718    0.1401      0.7786    -0.2865             0.8490 TOPALL           1.0683 -0.2897         1.1185          0.8820
+    B136             stop25  TOP10     1.1777    0.1546      0.8262    -0.2831             0.9076 TOPALL           1.0931 -0.2670         1.1185          0.8820
+    B136 ddctl-8/.5/recover TOPALL     1.0949    0.1036      1.0970    -0.1728             0.8250 TOPALL           1.0970  0.0000         1.1185          0.8820
+    B136    ddctl-8/.5/high  TOP10     1.0083    0.1043      0.7630    -0.1690             0.8335 TOPALL           1.0236 -0.2606         1.1185          0.8820
+    B136          ebud-0.10   TOP5     1.1883    0.1686      0.8552    -0.2823             0.8535 TOPALL           1.0997 -0.2445         1.1185          0.8820
+    B136          ebud-0.20   TOP3     1.2076    0.1995      0.8285    -0.3700             0.9177 TOPALL           1.0997 -0.2712         1.1185          0.8820
+SMALL484            control  TOP20     0.8577    0.1631      0.7579    -0.3282             0.7579  TOP20           0.7579  0.0000         0.6617          0.8820
+SMALL484            g200-dg  TOP20     0.8541    0.1593      0.7481    -0.3241             0.7481  TOP20           0.7481  0.0000         0.6617          0.8820
+SMALL484            g200-rw  TOP20     0.8518    0.1582      0.7404    -0.3241             0.7404  TOP20           0.7404  0.0000         0.6617          0.8820
+SMALL484           band3-dg  TOP20     0.8577    0.1608      0.7525    -0.3241             0.7525  TOP20           0.7525  0.0000         0.6617          0.8820
+SMALL484           band3-rw  TOP20     0.8552    0.1608      0.7498    -0.3241             0.7498  TOP20           0.7498  0.0000         0.6617          0.8820
+SMALL484           abs12-dg  TOP20     0.8104    0.1621      0.7572    -0.3246             0.7572  TOP20           0.7572  0.0000         0.6617          0.8820
+SMALL484           abs12-rw  TOP20     0.8002    0.1653      0.7672    -0.3219             0.7672  TOP20           0.7672  0.0000         0.6617          0.8820
+SMALL484           vol60-dg TOPALL     0.6164    0.0309      0.3433    -0.1927             0.4175   TOP5           0.4183 -0.0750         0.6617          0.8820
+SMALL484           vol60-rw TOPALL     0.6402    0.0475      0.3783    -0.3476             0.4599  TOP10           0.4676 -0.0893         0.6617          0.8820
+SMALL484          v1gate-dg TOPALL     0.4709    0.0133      0.2912    -0.1030             0.4210  TOP20           0.4210 -0.1299         0.6617          0.8820
+SMALL484          v1gate-rw  TOP20     0.4801    0.0773      0.5101    -0.2637             0.5101  TOP20           0.5101  0.0000         0.6617          0.8820
+SMALL484             stop15  TOP20     0.5994    0.1277      0.6569    -0.4373             0.6569  TOP20           0.6569  0.0000         0.6617          0.8820
+SMALL484             stop25  TOP20     0.7401    0.1423      0.6972    -0.3729             0.6972  TOP20           0.6972  0.0000         0.6617          0.8820
+SMALL484 ddctl-8/.5/recover  TOP20     0.8162    0.1061      0.7588    -0.2321             0.7588  TOP10           0.8459 -0.0871         0.6617          0.8820
+SMALL484    ddctl-8/.5/high  TOP20     0.9647    0.1209      0.8870    -0.2060             0.8870  TOP20           0.8870  0.0000         0.6617          0.8820
+SMALL484          ebud-0.10 TOPALL     0.8372    0.1198      0.7241    -0.3639             0.6184   TOP5           0.8457 -0.1216         0.6617          0.8820
+SMALL484          ebud-0.20  TOP20     0.8705    0.1574      0.7469    -0.3350             0.7469  TOP20           0.7469  0.0000         0.6617          0.8820
+
+  IS chooser beats its TOP20 anchor OOS in 7/51; beats SPY OOS in 17/51; beats RULES v2 OOS in 13/51; mean regret -0.1545
+  IS pick distribution: TOP3 15, TOP20 13, TOP10 12, TOPALL 8, TOP5 2, TOP40 1
+  OOS-best distribution: TOPALL 23, TOP20 18, TOP40 6, TOP5 2, TOP10 2
+
+======================================================================================================================================================
+[E2] IDEA 124's ORDERING CLAUSE, re-tested on MEASURED width (not the nominal dial)
+======================================================================================================================================================
+   panel   book  nominal    names  band nom_band  n_priced_both  spearman_IS_OOS
+     U56   TOP3   3.0000   2.9533   <20      <20              8          -0.9048
+     U56   TOP5   5.0000   4.9381   <20      <20              6          -0.3714
+     U56  TOP10  10.0000   9.9305   <20      <20             10          -0.6121
+     U56  TOP20  20.0000  19.9110   <20    20-40              7          -0.5000
+     U56  TOP40  40.0000  39.9012 20-40     >=40             12           0.5105
+     U56 TOPALL  56.0000  53.7687  >=40     >=40             12           0.4336
+     U56    V1u   5.0000   4.9978   <20      <20              4           0.8000
+     U56  EWall  56.0000  54.1183  >=40     >=40             12           0.4196
+    B136   TOP3   3.0000   2.9609   <20      <20              5           0.7000
+    B136   TOP5   5.0000   4.9555   <20      <20              5          -0.9000
+    B136  TOP10  10.0000   9.9609   <20      <20              3           1.0000
+    B136  TOP20  20.0000  19.9283   <20    20-40              3          -1.0000
+    B136  TOP40  40.0000  39.9381 20-40     >=40             13           0.6538
+    B136 TOPALL 136.0000 130.6775  >=40     >=40             12           0.8671
+    B136    V1u   5.0000   5.0000   <20      <20              6           0.9276
+    B136  EWall 136.0000 131.3811  >=40     >=40             12           0.8392
+SMALL484   TOP3   3.0000   3.0000   <20      <20              6           0.4706
+SMALL484   TOP5   5.0000   5.0000   <20      <20              8          -0.5181
+SMALL484  TOP10  10.0000   9.9988   <20      <20              8           0.8795
+SMALL484  TOP20  20.0000  20.0000 20-40    20-40              7           0.5357
+SMALL484  TOP40  40.0000  39.9988 20-40     >=40              8           0.1905
+SMALL484 TOPALL 483.0000 367.8115  >=40     >=40             12           0.8182
+SMALL484    V1u   5.0000   5.0000   <20      <20              9           0.6555
+SMALL484  EWall 483.0000 381.9645  >=40     >=40             11           0.7909
+
+  mean spearman(IS rate list, OOS rate list) pooled by MEASURED width band:
+       count    mean  median
+band                        
+20-40      4 +0.4726 +0.5231
+<20       14 +0.0448 +0.0496
+>=40       6 +0.6948 +0.8045
+
+  the same pooled by the NOMINAL band (what the record would have said):
+          count    mean  median
+nom_band                       
+20-40         3 -0.3214 -0.5000
+<20          12 +0.1772 +0.5630
+>=40          9 +0.6137 +0.6538
+
+  rows whose band CHANGES when nominal is replaced by measured: 5 of 24
+
+======================================================================================================================================================
+done in 282s
+======================================================================================================================================================
