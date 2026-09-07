@@ -267,7 +267,7 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | RDVT | Red Violet, Inc. | $1.2B | none | 3 | 89.5x EV/EBIT at the exact 52-week high after a 65% run, with a $109M equity raise following buybacks at $41.87 |
 | 2026-09-04 | UIS | UNISYS CORP | $188.9M | hidden-asset | 6 | Annuitizing away the U.S. pension while ~$200M of adjusted EBITDA sits behind a $188.9M cap, but equity is negative $367M |
 | 2026-09-04 | OMCL | OMNICELL, INC. | $1.6B | none | 4 | EBITDA guide raised on a $15M tariff refund while bookings guidance fell to $425-560M and the XT replacement cycle is done |
-| 2026-09-04 | LFS | LEIFRAS Co., Ltd. | $58.3M | none | 0 | no filings in bundle |
+| 2026-09-07 | LFS | LEIFRAS Co., Ltd. | $57.0M | fallen-growth | 5 | Revenue +13.5% and 28% of the cap in net cash at 10.3x EV/EBIT, but Q1 operating income fell 7.7% on 28% SG&A growth and members fell 2.5% |
 | 2026-09-04 | FTK | FLOTEK INDUSTRIES INC | $859.9M | misunderstood-segment | 4 | Data Analytics now 51% of gross profit, but 18x guided EBITDA after a 214% run with 62% related-party revenue |
 | 2026-09-04 | LOVE | Lovesac Co | $233.5M | insider-buying | 7 | Three insiders bought 33,550 shares near $14.68 at 4.4x guided EBITDA with net cash, though the guide is all back-half |
 | 2026-09-04 | GDYN | GRID DYNAMICS HOLDINGS, INC. | $665.2M | hidden-asset | 5 | $298.4M cash is 45% of the cap, but operations lost money at GAAP and all reported profit is interest on that cash |
