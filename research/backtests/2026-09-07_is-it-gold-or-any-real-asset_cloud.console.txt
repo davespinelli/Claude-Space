@@ -1,0 +1,357 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+[gate] cost linearity max |derived - direct| at 10 bps = 0.000e+00
+[gate] IAU present in u56? False | in broad? False  -> the queue's IAU arm cannot be run; SLV and GDX carry the metals question.
+[gate] u56: missing sleeve assets none
+[gate] broad: missing sleeve assets none
+[grid] 16 arms x 5 f x 2 books x 2 conventions x 2 universes = 640 points
+   [A] S4         TLT GLD DBC UUP
+   [A] noDBC      TLT GLD UUP
+   [A] noGLD      TLT DBC UUP
+   [B] GLDonly    GLD
+   [B] GLD_UUP    GLD UUP
+   [B] UUPonly    UUP
+   [B] TLTonly    TLT
+   [B2] SLVonly    SLV
+   [B2] SLV_UUP    SLV UUP
+   [B2] GDXonly    GDX
+   [C] sub_SLV    TLT SLV UUP
+   [C] sub_GDX    TLT GDX UUP
+   [C] sub_DBC    TLT DBC UUP
+   [C] sub_USO    TLT USO UUP
+   [C] sub_XLE    TLT XLE UUP
+   [C] sub_TIP    TLT TIP UUP
+
+==========================================================================================================================
+### UNIVERSE u56: 56 tickers, 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+
+Reference rows (same days, same 10 bps):
+                           CAGR  Sharpe   MaxDD     H1     H2  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  FALL_CAGR  FALL_Sharpe  RISE_CAGR  RISE_Sharpe
+RULES v2 (live baseline) 0.0866  1.2056 -0.1205 1.2259 1.1908     1.1043    0.0953      1.2851    -0.1205     0.0889       1.2132     0.0803       1.1848
+RULES v1                 0.0645  0.6642 -0.1383 0.6409 0.6878     0.5534    0.0773      0.7471    -0.1383     0.0742       0.7523     0.0381       0.4179
+SPY                      0.1523  0.8890 -0.3372 0.9566 0.8340     0.8986    0.1545      0.8820    -0.3372     0.1626       0.9347     0.1240       0.7586
+4b bars: Sharpe > SPY H1 0.957 / H2 0.834 / OOS 0.882 · MaxDD >= -20.2% · CAGR >= 10.66%
+    grid done: 320 points
+
+==========================================================================================================================
+### UNIVERSE broad: 136 tickers, 2008-01-02 -> 2026-09-04 | eval from 2009-01-13
+
+Reference rows (same days, same 10 bps):
+                           CAGR  Sharpe   MaxDD     H1     H2  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  FALL_CAGR  FALL_Sharpe  RISE_CAGR  RISE_Sharpe
+RULES v2 (live baseline) 0.0803  1.1058 -0.1224 1.2291 0.9844     1.0912    0.0798      1.1185    -0.1224     0.0892       1.1636     0.0560       0.9261
+RULES v1                 0.0639  0.6350 -0.2119 0.7562 0.5320     0.7147    0.0594      0.5763    -0.2119     0.0753       0.7329     0.0326       0.3575
+SPY                      0.1523  0.8890 -0.3372 0.9566 0.8340     0.8987    0.1545      0.8820    -0.3372     0.1626       0.9348     0.1240       0.7586
+4b bars: Sharpe > SPY H1 0.957 / H2 0.834 / OOS 0.882 · MaxDD >= -20.2% · CAGR >= 10.66%
+    grid done: 320 points
+
+==========================================================================================================================
+### REPRODUCTION GATES (idea 100 / idea 102 published numbers, recomputed here)
+  idea 100 u56 top20+50% S4 @ g=1.00              11.8% / 1.149 / -14.2% / H 1.099/1.197 / OOS 12.9% 1.236 -14.2% / 12.5x / 4a False 4b True
+  idea 100 broad top20+50% S4 @ g=1.00            12.2% / 1.063 / -15.6% / H 1.173/0.961 / OOS 11.8% 1.020 -15.6% / 15.3x / 4a False 4b True
+  idea 102 u56 top20+50% (TLT,GLD,UUP) g=1.00     11.5% / 1.167 / -13.3% / H 1.169/1.167 / OOS 12.3% 1.215 -13.3% / 12.4x / 4a False 4b True
+  idea 102 broad same                             12.0% / 1.073 / -14.6% / H 1.245/0.917 / OOS 11.1% 0.985 -14.6% / 15.2x / 4a False 4b True
+
+==========================================================================================================================
+### (1) THE CANDIDATE ASSETS, BUY-AND-HOLD, AND THEIR CORRELATION TO THE BOOK
+  Before any sleeve machinery: what are these things on their own?
+
+                  CAGR  Sharpe   MaxDD  FALL_CAGR  RISE_CAGR  RISE_Sharpe  corr_book  corr_spy
+universe asset                                                                                
+u56      DBC    0.0354  0.2835 -0.6614     0.0035     0.1297       0.7299     0.3682    0.3982
+         GDX    0.0813  0.3958 -0.8057     0.0151     0.2894       0.8513     0.3013    0.2250
+         GLD    0.0961  0.6259 -0.4556     0.0596     0.2047       1.0680     0.1879    0.0639
+         SLV    0.1038  0.4724 -0.7628     0.0569     0.2457       0.7742     0.3092    0.2230
+         TIP    0.0315  0.5658 -0.1451     0.0435    -0.0011       0.0139     0.0140   -0.0527
+         TLT    0.0114  0.1509 -0.4835     0.0489    -0.0858      -0.4911    -0.1689   -0.2870
+         USO   -0.0305  0.1032 -0.9528    -0.1097     0.2290       0.7374     0.2789    0.3329
+         UUP    0.0164  0.2513 -0.2176     0.0036     0.0528       0.7371    -0.1697   -0.2215
+         XLE    0.0931  0.4616 -0.7126     0.0453     0.2379       0.9629     0.4645    0.6770
+broad    DBC    0.0354  0.2835 -0.6614     0.0035     0.1297       0.7297     0.3289    0.3982
+         GDX    0.0813  0.3959 -0.8056     0.0151     0.2894       0.8512     0.2388    0.2250
+         GLD    0.0961  0.6259 -0.4556     0.0596     0.2047       1.0680     0.1109    0.0638
+         SLV    0.1038  0.4724 -0.7628     0.0569     0.2457       0.7742     0.2378    0.2229
+         TIP    0.0315  0.5657 -0.1451     0.0435    -0.0011       0.0139    -0.0253   -0.0525
+         TLT    0.0115  0.1509 -0.4835     0.0489    -0.0858      -0.4912    -0.2053   -0.2871
+         USO   -0.0305  0.1032 -0.9528    -0.1097     0.2290       0.7374     0.2565    0.3330
+         UUP    0.0164  0.2509 -0.2179     0.0036     0.0528       0.7366    -0.1422   -0.2213
+         XLE    0.0931  0.4615 -0.7126     0.0453     0.2379       0.9628     0.4718    0.6769
+
+==========================================================================================================================
+### (2) THE SUBSTITUTION TEST at the pre-registered f=0.50
+  dSharpe = Sharpe(blend) - Sharpe(the same book alone, same convention), 8 cells
+  (2 universes x 2 books x 2 conventions).  Retention is against noDBC = idea 102's
+  best arm, the arm each 'sub_*' row substitutes gold out of.
+
+               dSharpe_mean  dSharpe_min  dSharpe_max  pos  n  retention_mean  dCAGR_mean  dMaxDD_mean  p4a  p4b
+group sleeve                                                                                                    
+A     noDBC          0.1630       0.1035       0.2265    8  8          1.0000     -0.0452       0.0921    2    2
+      S4             0.1225       0.0853       0.1637    8  8          0.7599     -0.0446       0.0873    0    2
+      noGLD          0.0488       0.0213       0.0867    8  8          0.2956     -0.0524       0.0864    0    2
+B     GLD_UUP        0.1604       0.1060       0.2125    8  8          0.9911     -0.0402       0.0818    0    3
+      GLDonly        0.0102      -0.0512       0.0820    4  8          0.0640     -0.0194       0.0339    0    0
+      UUPonly        0.0094      -0.0290       0.0359    6  8          0.0388     -0.0524       0.0779    0    2
+      TLTonly       -0.1177      -0.1721      -0.0246    0  8         -0.7906     -0.0556       0.0159    0    0
+B2    SLV_UUP        0.0199      -0.0244       0.0489    7  8          0.1000     -0.0450       0.0672    0    2
+      SLVonly       -0.3403      -0.4399      -0.1924    0  8         -2.1451     -0.0258      -0.0717    0    0
+      GDXonly       -0.3805      -0.5279      -0.1726    0  8         -2.3613     -0.0267      -0.0899    0    0
+C     sub_TIP        0.0920       0.0442       0.1543    8  8          0.5491     -0.0564       0.0889    1    0
+      sub_SLV        0.0619       0.0151       0.1046    8  8          0.3617     -0.0497       0.0811    1    1
+      sub_DBC        0.0488       0.0213       0.0867    8  8          0.2956     -0.0524       0.0864    0    2
+      sub_XLE        0.0181      -0.0078       0.0350    7  8          0.0999     -0.0519       0.0898    0    1
+      sub_GDX        0.0149      -0.0257       0.0478    6  8          0.0649     -0.0533       0.0754    0    1
+      sub_USO        0.0107      -0.0208       0.0483    5  8          0.0488     -0.0555       0.0883    0    1
+
+  THE DISCRIMINATING ROWS — group C, gold swapped out of (TLT,?,UUP):
+    gold arm  noDBC (TLT,GLD,UUP): dSharpe +0.1630, positive 8/8, 4b 2/8
+    sub_TIP    dSharpe +0.0920  retains  54.9%  positive 8/8  4b 0/8
+    sub_SLV    dSharpe +0.0619  retains  36.2%  positive 8/8  4b 1/8
+    sub_DBC    dSharpe +0.0488  retains  29.6%  positive 8/8  4b 2/8
+    sub_XLE    dSharpe +0.0181  retains  10.0%  positive 7/8  4b 1/8
+    sub_GDX    dSharpe +0.0149  retains   6.5%  positive 6/8  4b 1/8
+    sub_USO    dSharpe +0.0107  retains   4.9%  positive 5/8  4b 1/8
+
+  VERDICT ARITHMETIC (mean dSharpe at f=0.50, all 8 cells):
+    H_GOLD   gold arms  : GLDonly +0.0102, GLD_UUP +0.1604, noDBC +0.1630
+    H_METALS metal arms : SLVonly -0.3403, SLV_UUP +0.0199, GDXonly -0.3805, sub_SLV +0.0619, sub_GDX +0.0149
+    H_REAL   broad real : sub_DBC +0.0488, sub_USO +0.0107, sub_XLE +0.0181, sub_TIP +0.0920
+    H_DOLLAR null       : UUPonly +0.0094  (TLTonly -0.1177, idea 102's passenger)
+
+==========================================================================================================================
+### (3) MECHANISM — is it the asset's own Sharpe, or its correlation to the book?
+  Regress each single-asset arm's f=0.50 dSharpe on the asset's own standalone Sharpe
+  and on its correlation to the book.  If gold is special, neither should explain it.
+
+       dSharpe  asset_Sharpe  corr_book  asset_CAGR
+asset                                              
+GDX    -0.3805        0.3959     0.2700      0.0813
+GLD     0.0102        0.6259     0.1494      0.0961
+SLV    -0.3403        0.4724     0.2735      0.1038
+TLT    -0.1177        0.1509    -0.1871      0.0114
+UUP     0.0094        0.2511    -0.1560      0.0164
+  dSharpe ~ asset_Sharpe: slope -0.0712, intercept -0.1368, R2 0.0042, n=40
+  dSharpe ~ corr_book   : slope -0.5801, intercept -0.1232, R2 0.4263, n=40
+  residual dSharpe after removing the asset's own Sharpe, by asset (a positive residual = the asset does more than its Sharpe explains):
+        resid
+asset        
+GDX   -0.2155
+GLD    0.1915
+SLV   -0.1698
+TLT    0.0298
+UUP    0.1640
+
+==========================================================================================================================
+### (4) RULE 8 — (arm, f) chosen on 2009-2016 by IS Sharpe, 2017-2026 untouched
+                                      sleeve      f  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  ctrl_OOS_Sharpe  spy_OOS_Sharpe  v2_OOS_Sharpe  vs_ctrl  vs_spy  regret    p4b
+chooser      universe book  conv                                                                                                                                               
+joint(arm,f) broad    ewall g1.00      noDBC 0.5000     1.2769    0.0983      1.1843    -0.1314           1.0180          0.8820         1.1185   0.1663  0.3022 -0.0683  False
+arm@f=0.5    broad    ewall g1.00      noDBC 0.5000     1.2769    0.0983      1.1843    -0.1314           1.0180          0.8820         1.1185   0.1663  0.3022 -0.0683  False
+joint(arm,f) broad    ewall natural  sub_TIP 0.5000     1.2777    0.0588      1.1046    -0.1049           1.0191          0.8820         1.1185   0.0856  0.2226 -0.3058  False
+arm@f=0.5    broad    ewall natural  sub_TIP 0.5000     1.2777    0.0588      1.1046    -0.1049           1.0191          0.8820         1.1185   0.0856  0.2226 -0.3058  False
+joint(arm,f) broad    top20 g1.00      noDBC 0.5000     1.1844    0.1113      0.9854    -0.1462           0.8854          0.8820         1.1185   0.1000  0.1034 -0.0924   True
+arm@f=0.5    broad    top20 g1.00      noDBC 0.5000     1.1844    0.1113      0.9854    -0.1462           0.8854          0.8820         1.1185   0.1000  0.1034 -0.0924   True
+joint(arm,f) broad    top20 natural  sub_TIP 0.5000     1.2274    0.0687      0.9532    -0.1136           0.8919          0.8820         1.1185   0.0612  0.0711 -0.3319  False
+arm@f=0.5    broad    top20 natural  sub_TIP 0.5000     1.2274    0.0687      0.9532    -0.1136           0.8919          0.8820         1.1185   0.0612  0.0711 -0.3319  False
+joint(arm,f) u56      ewall g1.00      noDBC 0.5000     1.1559    0.1025      1.2326    -0.1181           1.1133          0.8820         1.2851   0.1193  0.3506 -0.0739  False
+arm@f=0.5    u56      ewall g1.00      noDBC 0.5000     1.1559    0.1025      1.2326    -0.1181           1.1133          0.8820         1.2851   0.1193  0.3506 -0.0739  False
+joint(arm,f) u56      ewall natural  sub_TIP 0.5000     1.1635    0.0624      1.1892    -0.0914           1.1133          0.8820         1.2851   0.0759  0.3071 -0.2480  False
+arm@f=0.5    u56      ewall natural  sub_TIP 0.5000     1.1635    0.0624      1.1892    -0.0914           1.1133          0.8820         1.2851   0.0759  0.3071 -0.2480  False
+joint(arm,f) u56      top20 g1.00    sub_TIP 0.5000     1.1087    0.1041      1.1090    -0.1339           1.1312          0.8820         1.2851  -0.0221  0.2270 -0.1498  False
+arm@f=0.5    u56      top20 g1.00    sub_TIP 0.5000     1.1087    0.1041      1.1090    -0.1339           1.1312          0.8820         1.2851  -0.0221  0.2270 -0.1498  False
+joint(arm,f) u56      top20 natural  sub_TIP 0.5000     1.1750    0.0771      1.2328    -0.1042           1.1680          0.8820         1.2851   0.0648  0.3508 -0.2178  False
+arm@f=0.5    u56      top20 natural  sub_TIP 0.5000     1.1750    0.0771      1.2328    -0.1042           1.1680          0.8820         1.2851   0.0648  0.3508 -0.2178  False
+
+  Which arm does IS selection reach for?
+                      cells
+chooser      sleeve        
+arm@f=0.5    noDBC        3
+             sub_TIP      5
+joint(arm,f) noDBC        3
+             sub_TIP      5
+
+  Chooser summary:
+              n  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD  beats_ctrl  beats_spy  mean_regret  p4a  p4b
+chooser                                                                                                      
+arm@f=0.5     8           1.1239         0.0854         -0.1180           7          8      -0.1860    1    1
+joint(arm,f)  8           1.1239         0.0854         -0.1180           7          8      -0.1860    1    1
+
+  OOS Sharpe of every arm at the pre-registered f=0.50 (NOT selected on — reported):
+               OOS_Sharpe  OOS_CAGR  OOS_MaxDD  full_Sharpe  beats_spy_OOS
+group sleeve                                                              
+B     GLD_UUP      1.2651    0.1009    -0.1258       1.1862              8
+A     noDBC        1.2035    0.0931    -0.1155       1.1889              8
+      S4           1.1969    0.0966    -0.1203       1.1483              8
+B     GLDonly      1.1691    0.1358    -0.1736       1.0360              8
+A     noGLD        1.0874    0.0865    -0.1212       1.0746              8
+C     sub_DBC      1.0874    0.0865    -0.1212       1.0746              8
+B     UUPonly      1.0751    0.0865    -0.1297       1.0352              8
+C     sub_USO      1.0662    0.0852    -0.1193       1.0366              8
+      sub_TIP      1.0651    0.0783    -0.1187       1.1178              7
+B2    SLV_UUP      1.0557    0.0901    -0.1404       1.0458              8
+C     sub_SLV      1.0404    0.0835    -0.1265       1.0877              7
+      sub_GDX      1.0244    0.0825    -0.1322       1.0407              7
+      sub_XLE      1.0096    0.0822    -0.1178       1.0439              7
+B     TLTonly      0.7723    0.0712    -0.1917       0.9081              1
+B2    GDXonly      0.7037    0.1255    -0.2975       0.6453              0
+      SLVonly      0.6888    0.1180    -0.2734       0.6856              0
+
+==========================================================================================================================
+### (5) KEEP PATHS over all 640 grid points (both reported, neither selected on)
+                    n  p4a  p4b
+universe conv                  
+broad    g1.00    160    0   21
+         natural  160    4   18
+u56      g1.00    160    0   33
+         natural  160    0   17
+
+  89 points clear 4b, by arm:
+               n_4b                fs     universes
+group sleeve                                       
+A     S4          7  [0.0, 0.25, 0.5]  [broad, u56]
+      noDBC       7  [0.0, 0.25, 0.5]  [broad, u56]
+      noGLD       7  [0.0, 0.25, 0.5]  [broad, u56]
+B     GLD_UUP     9  [0.0, 0.25, 0.5]  [broad, u56]
+      GLDonly     4       [0.0, 0.25]  [broad, u56]
+      TLTonly     2             [0.0]  [broad, u56]
+      UUPonly     7  [0.0, 0.25, 0.5]  [broad, u56]
+B2    GDXonly     2             [0.0]  [broad, u56]
+      SLV_UUP     6  [0.0, 0.25, 0.5]  [broad, u56]
+      SLVonly     2             [0.0]  [broad, u56]
+C     sub_DBC     7  [0.0, 0.25, 0.5]  [broad, u56]
+      sub_GDX     6  [0.0, 0.25, 0.5]  [broad, u56]
+      sub_SLV     6  [0.0, 0.25, 0.5]  [broad, u56]
+      sub_TIP     5       [0.0, 0.25]  [broad, u56]
+      sub_USO     6  [0.0, 0.25, 0.5]  [broad, u56]
+      sub_XLE     6  [0.0, 0.25, 0.5]  [broad, u56]
+
+  CROSS-UNIVERSE 4b (an arm/f/book/conv that passes on BOTH panels):
+    GLD_UUP f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1239  1.1399 -0.1708 1.1228 1.1567    0.1328      1.2199    -0.1708  10.1768
+broad    0.1277  1.1292 -0.1877 1.2146 1.0454    0.1259      1.1377    -0.1877  10.2868
+    GLD_UUP f=0.5 top20 g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1224  1.1698 -0.1465 1.1091 1.2294    0.1309      1.2588    -0.1465  12.3795
+broad    0.1267  1.0810 -0.1602 1.1747 0.9890    0.1205      1.0417    -0.1602  15.1002
+    GLDonly f=0.25 top20 natural:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1156  1.1539 -0.1458 1.0733 1.2296    0.1372      1.2844    -0.1458   8.2293
+broad    0.1193  1.0520 -0.1593 1.1438 0.9782    0.1238      1.0466    -0.1593  11.3705
+    S4 f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1221  1.1156 -0.1686 1.1193 1.1141    0.1316      1.1813    -0.1686  10.3072
+broad    0.1257  1.1083 -0.1856 1.2150 1.0074    0.1239      1.1028    -0.1856  10.4174
+    S4 f=0.5 top20 g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1175  1.1491 -0.1423 1.0992 1.1967    0.1290      1.2361    -0.1423  12.4982
+broad    0.1217  1.0631 -0.1562 1.1732 0.9609    0.1176      1.0204    -0.1562  15.3237
+    SLV_UUP f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1221  1.0901 -0.1803 1.0871 1.0934    0.1281      1.1445    -0.1803  10.4300
+broad    0.1257  1.0764 -0.1975 1.1757 0.9788    0.1206      1.0582    -0.1975  10.5286
+    SLV_UUP f=0.5 top20 g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1197  1.0394 -0.1643 1.0092 1.0688    0.1230      1.0767    -0.1643  13.0200
+broad    0.1245  0.9735 -0.1787 1.0912 0.8577    0.1117      0.8924    -0.1787  15.8134
+    UUPonly f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1187  1.1067 -0.1757 1.0984 1.1150    0.1261      1.1721    -0.1757  10.2327
+broad    0.1219  1.0772 -0.1933 1.1749 0.9812    0.1184      1.0691    -0.1933  10.3159
+    UUPonly f=0.5 top20 g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1112  1.0348 -0.1535 0.9871 1.0806    0.1200      1.1023    -0.1535  12.7687
+broad    0.1171  0.9481 -0.1687 1.0576 0.8409    0.1087      0.8908    -0.1687  15.6157
+    noDBC f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1213  1.1345 -0.1631 1.1680 1.1067    0.1286      1.1783    -0.1631  10.2034
+broad    0.1250  1.1284 -0.1797 1.2671 0.9999    0.1215      1.1004    -0.1797  10.3068
+    noDBC f=0.5 top20 g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1155  1.1673 -0.1329 1.1694 1.1669    0.1227      1.2150    -0.1329  12.4242
+broad    0.1195  1.0726 -0.1462 1.2445 0.9170    0.1113      0.9854    -0.1462  15.2259
+    noGLD f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1188  1.0963 -0.1715 1.1135 1.0828    0.1271      1.1484    -0.1715  10.4025
+broad    0.1221  1.0806 -0.1890 1.2037 0.9652    0.1188      1.0593    -0.1890  10.5018
+    noGLD f=0.5 top20 g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1096  1.0851 -0.1467 1.0613 1.1088    0.1193      1.1455    -0.1467  12.8213
+broad    0.1142  0.9983 -0.1616 1.1381 0.8707    0.1073      0.9282    -0.1616  15.6674
+    sub_DBC f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1188  1.0963 -0.1715 1.1135 1.0828    0.1271      1.1484    -0.1715  10.4025
+broad    0.1221  1.0806 -0.1890 1.2037 0.9652    0.1188      1.0593    -0.1890  10.5018
+    sub_DBC f=0.5 top20 g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1096  1.0851 -0.1467 1.0613 1.1088    0.1193      1.1455    -0.1467  12.8213
+broad    0.1142  0.9983 -0.1616 1.1381 0.8707    0.1073      0.9282    -0.1616  15.6674
+    sub_GDX f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1178  1.0850 -0.1732 1.1270 1.0499    0.1237      1.1152    -0.1732  10.3232
+broad    0.1214  1.0777 -0.1898 1.2243 0.9422    0.1163      1.0359    -0.1898  10.4231
+    sub_SLV f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1195  1.0985 -0.1698 1.1524 1.0526    0.1241      1.1169    -0.1698  10.3967
+broad    0.1230  1.0902 -0.1866 1.2498 0.9431    0.1164      1.0357    -0.1866  10.4947
+    sub_TIP f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1129  1.0833 -0.1626 1.1577 1.0212    0.1176      1.0976    -0.1626  10.2762
+broad    0.1157  1.0680 -0.1796 1.2422 0.9101    0.1099      1.0119    -0.1796  10.3845
+    sub_USO f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1166  1.0832 -0.1691 1.0992 1.0714    0.1256      1.1378    -0.1691  10.3400
+broad    0.1200  1.0706 -0.1864 1.1922 0.9575    0.1177      1.0534    -0.1864  10.4486
+    sub_XLE f=0.25 ewall g1.00:
+           CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  Turn_yr
+universe                                                                               
+u56      0.1183  1.0815 -0.1692 1.1231 1.0459    0.1238      1.1098    -0.1692  10.2934
+broad    0.1214  1.0629 -0.1867 1.2057 0.9292    0.1158      1.0218    -0.1867  10.4126
+
+  COST LADDER on every f=0.50 arm (cross-universe 4b pass count by bps, top20+g1.00):
+bps            0   5   10  15  20  25
+group sleeve                         
+A     S4        2   2   2   2   0   0
+      noDBC     2   2   2   2   0   0
+      noGLD     2   2   2   0   0   0
+B     GLD_UUP   2   2   2   2   2   0
+      GLDonly   0   0   0   0   0   0
+      TLTonly   0   0   0   0   0   0
+      UUPonly   2   2   2   0   0   0
+B2    GDXonly   0   0   0   0   0   0
+      SLV_UUP   2   2   2   0   0   0
+      SLVonly   0   0   0   0   0   0
+C     sub_DBC   2   2   2   0   0   0
+      sub_GDX   2   2   1   0   0   0
+      sub_SLV   2   2   1   0   0   0
+      sub_TIP   2   2   0   0   0   0
+      sub_USO   2   2   1   0   0   0
+      sub_XLE   2   2   1   0   0   0
+  (values are 4b passes out of 2 universes at that cost rung)
+
+==========================================================================================================================
+### ARTEFACTS
+   2026-09-07_is-it-gold-or-any-real-asset_cloud.grid.csv
+   2026-09-07_is-it-gold-or-any-real-asset_cloud.assets.csv
+   2026-09-07_is-it-gold-or-any-real-asset_cloud.substitution.csv
+   2026-09-07_is-it-gold-or-any-real-asset_cloud.mechanism.csv
+   2026-09-07_is-it-gold-or-any-real-asset_cloud.walkforward.csv
+   2026-09-07_is-it-gold-or-any-real-asset_cloud.keeppaths.csv
+   2026-09-07_is-it-gold-or-any-real-asset_cloud.costladder.csv
