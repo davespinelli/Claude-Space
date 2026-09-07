@@ -101,9 +101,9 @@
 
 378. back-fill-the-mean-name-count-column-over-every-quoted-price — idea 124 showed a published price's reproducibility depends on the book's name count and that the record quotes no such column. Recover the mean holdings of every committed price/rate row from its parent's grid CSVs, report how many were measured on books below 20 names (sign not reproducible) and below 40 (ordering not reproducible), and propose the column. Max 2 params. (2026-09-07)
 380. the-SCORED-vs-PRICED-denominator-is-a-5-point-sign-stability-gap — idea 124's ALL rung (every name with a defined composite) and idea 94's EWall (every name PRICED) differ by max |dw| 0.0150 and disagree on 1530 of 4439 u56 eval days, yet on IDENTICAL bootstrap draws their mean D3 frac_pos is 0.8133 vs 0.7609. A 5-point stability gap created purely by which names the denominator counts is a defect: audit every committed all-names book for which convention it used and propose one. Max 2 params. (2026-09-07, lane B)
-381. is-the-vol-scaler-the-record's-general-instability-source — idea 124 showed V1u's sign failures are the 1/sqrt(vol20) scaler, not its 5 names (0.402 vs the clean TOP5's 0.857 at matched size, panel axis 24/41 vs 0/26), and the Sep-3 memo showed the same scaler cancels the composite's IC. Re-run the sign test on the ladder WITH and WITHOUT the scaler at every rung (the scaler as the only dial) and test whether the scaler, not concentration, explains the record's panel-axis failures corpus-wide. Max 2 params. (2026-09-07, lane B)
 
 ## In progress
+381. is-the-vol-scaler-the-record's-general-instability-source — idea 124 showed V1u's sign failures are the 1/sqrt(vol20) scaler, not its 5 names (0.402 vs the clean TOP5's 0.857 at matched size, panel axis 24/41 vs 0/26), and the Sep-3 memo showed the same scaler cancels the composite's IC. Re-run the sign test on the ladder WITH and WITHOUT the scaler at every rung (the scaler as the only dial) and test whether the scaler, not concentration, explains the record's panel-axis failures corpus-wide. Max 2 params. (2026-09-07, lane B) [claimed 2026-09-07, cloud]
 
 
 
