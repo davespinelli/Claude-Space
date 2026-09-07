@@ -233,7 +233,7 @@ One row per ticker, written by an agent following `TRIAGE_PROMPT.md` from the pa
 | 2026-09-04 | PAYS | Paysign, Inc. | $731.7M | none | 0 | no filings in bundle |
 | 2026-09-04 | ATNI | ATN International, Inc. | $478.6M | none | 0 | no filings in bundle |
 | 2026-09-04 | RJET | REPUBLIC AIRWAYS HOLDINGS INC. | $806.2M | post-restructuring | 8 | Every screen metric predates the Mesa merger; 2026 guide $2.1B revenue and $395-405M EBITDAR against $806M cap and $1,386M book equity |
-| 2026-09-04 | HSHP | Himalaya Shipping Ltd. | $836.4M | none | 0 | no filings in bundle |
+| 2026-09-07 | HSHP | Himalaya Shipping Ltd. | $856.0M | cyclical-trough | 4 | H1 EBITDA already matches full-year CY2025 EBIT as Capesize rates doubled, but 4.2x debt/equity on hell-or-high-water leases and a 52w high
 | 2026-09-04 | CBRL | CRACKER BARREL OLD COUNTRY STORE, INC | $1.2B | none | 0 | no filings in bundle |
 | 2026-09-04 | BXC | BlueLinx Holdings Inc. | $607.4M | cyclical-trough | 6 | FY25 EBIT fell to $32.5M from $87.6M on pricing alone, Q2 margin up 190bp, and $655M liquidity exceeds the $607M market cap |
 | 2026-09-04 | TSSI | TSS, Inc. | $228.6M | misunderstood-segment | 6 | Revenue -20% masks systems integration +46% and gross profit +11% as agency procurement rolls off, but one OEM is the whole business |
