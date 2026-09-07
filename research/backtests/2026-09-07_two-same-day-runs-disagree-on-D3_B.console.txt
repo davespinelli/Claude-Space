@@ -1,0 +1,119 @@
+Idea 382 — two same-day runs disagree on D3 for PATH-DEPENDENT arms by exactly one draw.
+
+THE FILED PREMISE (research/QUEUE.md, idea 382)
+-----------------------------------------------
+    "idea 124's `_B` and `_B2` runs SHARE SEED, q order and NDRAW and agree to the last
+     digit on every GATE arm, but on ebud-0.10 / ebud-0.20 / stop15 their D3 frac_pos
+     differs by EXACTLY 0.025 (one draw of forty): `_B2` reproduces idea 122's COMMITTED
+     d3.csv at 0.000e+00, `_B` does not.  Find the difference (cost accrual inside the
+     state machine? sub-panel column order? pending-exit handling?) and make the record
+     carry one number for stateful instruments.  INFRASTRUCTURE."
+
+Three factual claims are load-bearing and all three are checked here BEFORE anything is
+recomputed, directly off the committed artefacts:
+
+    P1  the two runs share a seed.
+    P2  they agree to the last digit on every gate arm.
+    P3  the disagreement is exactly one draw of forty (0.025) on three stateful arms.
+
+PRE-REGISTRATION (written before the measurement section runs)
+-------------------------------------------------------------
+H0 (the queue's hypothesis)  the disagreement is a PATH-DEPENDENCE defect: something in
+    the stateful machine (cost accrual, pending exits, sub-panel column order) makes a
+    stateful arm's return depend on run identity.  Signature: stateless (gate) arms agree
+    exactly; stateful arms do not.
+
+H1 (the alternative tested here)  the disagreement is DRAW NOISE from two different draw
+    sets.  Signature: every arm disagrees, stateful and stateless alike, by an amount
+    whose distribution is reproduced by re-drawing the sub-panels.
+
+"Stateful arms disagree more" does NOT by itself separate the two: a state machine
+amplifies whatever the panel does, so pure re-drawing can produce exactly that signature
+with no defect at all.  The permutation test below therefore measures AMPLIFICATION
+(H_amp: draw noise is larger on stateful arms) and is reported as a descriptive fact, not
+as evidence for H0.
+
+The DECISIVE test is a per-cell CALIBRATION.  Draw M independent sub-panels from one
+master stream and cut them into disjoint blocks of N (statistically identical to
+independent seeds, since each draw is an independent uniform sample of columns).  For each
+(book, arm) cell this yields a null distribution of block-to-block |frac_pos| gaps that is
+SPECIFIC TO THAT CELL, so an arm's own amplification is already inside the null.  Locate
+the actually-observed `_B` vs `_B2` gap for that cell inside its own null and record the
+percentile.  Under H1 those percentiles are Uniform(0,1); under H0 the stateful cells sit
+systematically high.
+
+Decision rule, fixed in advance:
+  * H1 is sufficient (H0 unnecessary) if the mean cell percentile does not exceed 0.5 at
+    a one-sided p < 0.05 (10,000 permutations of the sign of the deviation), tested on
+    ALL cells and on the STATEFUL cells alone.
+  * H0 is retained only if the stateful cells' percentiles are significantly high.
+  * The deliverable "one number for stateful instruments" is then answered by asking what
+    NDRAW makes the statistic reproducible to a stated tolerance, and, if no feasible
+    NDRAW does, by proposing that the draw SET be fixed instead of the draw COUNT.
+
+TWO TUNED PARAMETERS (PROTOCOL rule 4): N (draws per replicate) and tau (the D3 bar).
+q is held at idea 119/122's pre-registered headline 0.10 and is not tuned.  ALL grid
+points are reported.
+
+CONSTRUCTION.  Nothing here is re-derived: the panel, book targets, arm specs, state
+machine and dpair() are imported from the committed `_B2` script (which itself imports
+idea 94's harness), so the sub-panel construction is byte-identical to the run that
+reproduces idea 122 at 0.000e+00.  Books are restricted to TOP20 (idea 94's published
+rung) and TOPALL (the deepest rung) to buy draws with the compute; both universes'
+committed d3 files are still used in full for the forensic section.
+
+PROTOCOL: 10 bps (rule 2), next-day execution (engine), rule-8 walk-forward, both KEEP
+paths 4a and 4b.  Deterministic, standalone, modifies nothing outside research/.
+
+======================================================================================================================
+[0] FORENSICS — the three filed claims, checked against the committed artefacts
+======================================================================================================================
+  _B  : SEED=20260907  NDRAW=40  DROP_FRACS=(0.05, 0.1, 0.2)
+  _B2 : SEED=20260905  NDRAW=40  DROP_FRACS=(0.05, 0.1, 0.2)
+  [P1] 'the two runs share seed'                       -> REFUTED  (seeds differ by 2; q order and NDRAW DO match)
+  [struct] bootstrap() bodies, normalised, are IDENTICAL -> True  (same loop nesting, same rng call, same order of rng consumption)
+
+  reproduction of idea 122's COMMITTED d3.csv (192 shared rows: TOP20/V1u x 16 arms x 3q x 2uni)
+    _B   n=192  max|diff| frac_pos_full=3.500e-01  frac_pos_IS=2.750e-01  frac_pos_OOS=3.500e-01  frac_priceable=3.250e-01   -> NOT EXACT
+    _B2  n=192  max|diff| frac_pos_full=0.000e+00  frac_pos_IS=0.000e+00  frac_pos_OOS=0.000e+00  frac_priceable=0.000e+00   -> EXACT
+  [G1] _B2 reproduces idea 122 at 0.000e+00  (PASS — this run inherits _B2 construction)
+
+  _B vs _B2 across ALL 672 shared rows (7 books x 16 arms x 3 q x 2 uni):
+    frac_pos_full    rows differing 255/672  max 0.5750  mean 0.0390  (max is 23 draws of 40)
+    frac_pos_IS      rows differing 430/672  max 1.0000  mean 0.0607  (max is 40 draws of 40)
+    frac_pos_OOS     rows differing 216/672  max 0.3500  mean 0.0211  (max is 14 draws of 40)
+    frac_priceable   rows differing 171/672  max 0.3250  mean 0.0168  (max is 13 draws of 40)
+
+  per-arm |frac_pos_full(_B) - frac_pos_full(_B2)|, 42 rows per arm (7 books x 3 q x 2 universes):
+               arm  n  rows_differ  max_ad  mean_ad  stateful
+         ebud-0.10 42           24  0.5750   0.0845      True
+         ebud-0.20 42           33  0.5000   0.1345      True
+          abs12-rw 42           29  0.3500   0.0690     False
+          band3-dg 42           17  0.2500   0.0399     False
+            stop25 42           10  0.2500   0.0190      True
+          vol60-rw 42           11  0.2500   0.0244     False
+           g200-dg 42           17  0.2500   0.0482     False
+           g200-rw 42           19  0.2250   0.0405     False
+            stop15 42           20  0.2250   0.0304      True
+          band3-rw 42           19  0.2250   0.0411     False
+         v1gate-dg 42           11  0.2000   0.0149     False
+          abs12-dg 42           23  0.2000   0.0440     False
+         v1gate-rw 42           10  0.1750   0.0161     False
+          vol60-dg 42           11  0.1250   0.0161     False
+ddctl-8/.5/recover 42            1  0.0500   0.0012      True
+   ddctl-8/.5/high 42            0  0.0000   0.0000      True
+
+  [P2] 'agree to the last digit on every GATE arm'     -> REFUTED  (stateless arms: 167/420 rows differ, max 0.3500)
+  [P3] 'differs by exactly 0.025 on ebud/stop15'       -> REFUTED  (those 3 arms: 77/126 rows differ, spread 0.0000..0.5750, 23 draws of 40)
+  [note] mean |diff| stateful 0.0449 vs stateless 0.0354 — the raw contrast the queue read
+
+  MATCHED SUBSET for calibration (u56, q=0.1, books ['TOP20', 'TOPALL'], 16 arms): n=32, max|diff| 0.4250, mean 0.0289, 8 rows differ
+======================================================================================================================
+[1] MASTER DRAW STREAM — the calibration instrument
+======================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+  panel 56 names, eval 2009-01-13 -> 2026-09-04, IS <= 2016-12-31, OOS >= 2017-01-01
+  SPY      15.23% / 0.889 / -33.72%  halves 0.957/0.834  OOS 0.882
+  RULES v2 8.66% / 1.206 / -12.05%  halves 1.226/1.191  OOS 1.285
+  drawing 480 sub-panels at q=0.1 (master seed 20260907382), pricing 2 books x 16 arms each
+    draws   40/480  (117s elapsed)
