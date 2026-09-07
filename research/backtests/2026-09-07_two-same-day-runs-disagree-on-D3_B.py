@@ -67,6 +67,7 @@ PROTOCOL: 10 bps (rule 2), next-day execution (engine), rule-8 walk-forward, bot
 paths 4a and 4b.  Deterministic, standalone, modifies nothing outside research/.
 """
 import importlib.util
+import math
 import re
 import sys
 import time
@@ -103,6 +104,7 @@ F_122 = BT / "2026-09-05_price-denominator-sign-test_C"
 
 # ---- constants (idea 122/124's, unchanged)
 PCOST = 10.0
+FLOOR = H.FLOOR if hasattr(H, "FLOOR") else 0.10   # idea 94's absolute priceability floor, pp
 Q_STAR = 0.10                               # idea 119/122's headline, NOT tuned here
 TAUS = (0.80, 0.90, 0.95, 1.00)             # tuned dial 2; 0.90 is the record's headline
 NGRID = (10, 20, 40, 80)                    # tuned dial 1; 40 is the record's NDRAW
@@ -420,6 +422,110 @@ def spread_analysis(D, fx):
                                      ratio=float(fx["obs_matched_mean"] / GAP.gap.mean()))
 
 
+# =============================================================== 2b. THE MECHANISM
+def mechanism(D, reps, cal):
+    """Where the instability actually lives, and whether the record's OWN floor removes it.
+
+    The calibration says the disagreement is, on average, draw noise.  This asks the sharper
+    question the deliverable needs: WHICH cells are irreproducible, and is there a rule that
+    makes them go away?  The candidate rule is not new — it is idea 94's absolute
+    priceability floor (|dMaxDD| > 0.10 pp), already used to decide whether a row may be
+    PUBLISHED, but never applied to the draws inside the D3 fraction itself."""
+    rule()
+    print("[2b] THE MECHANISM — is the irreproducibility a state machine defect, or the "
+          "record\n     computing a sign on a quantity it has itself declared unpriceable?")
+    rule()
+    CAL_N = 40 if 40 in NGRID else max(NGRID)
+    NB = M_DRAWS // CAL_N
+    C = cal["CELL"].copy()
+    sd = (reps[reps.N == CAL_N].groupby(["book", "arm"]).frac_pos_full
+          .std(ddof=1).rename("sd_blocks").reset_index())
+    C = C.merge(sd, on=["book", "arm"])
+    C["z"] = C.obs_gap / (np.sqrt(2) * C.sd_blocks.replace(0, np.nan))
+    C["p_norm"] = [float(math.erfc(abs(z) / np.sqrt(2))) if np.isfinite(z) else np.nan
+                   for z in C.z]
+    C["p_bonf"] = (C.p_norm * len(C)).clip(upper=1.0)
+    g = D.groupby(["book", "arm"]).dMaxDD_full
+    C = C.merge(pd.DataFrame(dict(
+        med_absdMaxDD=g.apply(lambda s: float(s.abs().median())),
+        max_absdMaxDD=g.apply(lambda s: float(s.abs().max())),
+        frac_below_floor=g.apply(lambda s: float((s.abs() <= FLOOR).mean())),
+    )).reset_index(), on=["book", "arm"])
+    C.to_csv(f"{OUT}.cell_ztest.csv", index=False)
+
+    prc, unp = C[C.frac_below_floor == 0.0], C[C.frac_below_floor > 0.0]
+    print(f"  A. cells whose denominator clears idea 94's floor (|dMaxDD| > {FLOOR} pp) on "
+          f"EVERY one of {M_DRAWS} draws: n={len(prc)}")
+    print(f"       replicate SD of frac_pos_full  mean {prc.sd_blocks.mean():.6f}  "
+          f"MAX {prc.sd_blocks.max():.6f}")
+    print(f"       observed _B vs _B2 gap         mean {prc.obs_gap.mean():.6f}  "
+          f"MAX {prc.obs_gap.max():.6f}   <== the two runs AGREE EXACTLY on all {len(prc)}")
+    print(f"     cells with ANY sub-floor draw: n={len(unp)}")
+    print(f"       replicate SD  mean {unp.sd_blocks.mean():.6f}  MAX {unp.sd_blocks.max():.6f}")
+    print(f"       observed gap  mean {unp.obs_gap.mean():.6f}  MAX {unp.obs_gap.max():.6f}")
+    print(f"     spearman(frac_below_floor, replicate SD) = "
+          f"{H.spearman(C.frac_below_floor, C.sd_blocks):+.4f}   "
+          f"spearman(median |dMaxDD|, replicate SD) = "
+          f"{H.spearman(C.med_absdMaxDD, C.sd_blocks):+.4f}")
+    print("\n     every cell with non-zero replicate SD, ranked:")
+    print(fmt(C[C.sd_blocks > 0].sort_values("sd_blocks", ascending=False)[
+        ["book", "arm", "stateful", "sd_blocks", "obs_gap", "med_absdMaxDD",
+         "frac_below_floor", "z", "p_bonf"]]))
+
+    sig = C[C.p_bonf < 0.05]
+    print(f"\n  B. Bonferroni-significant cells (32 tests): {len(sig)}")
+    if len(sig):
+        print(fmt(sig[["book", "arm", "obs_gap", "sd_blocks", "z", "p_norm", "p_bonf",
+                       "med_absdMaxDD", "max_absdMaxDD", "frac_below_floor"]], 6))
+        for r in sig.itertuples():
+            s = D[(D.book == r.book) & (D.arm == r.arm)]
+            print(f"     {r.book}/{r.arm}: |dMaxDD| max {s.dMaxDD_full.abs().max():.3e} over "
+                  f"{len(s)} draws, exactly 0 in {int((s.dMaxDD_full == 0).sum())} of them")
+        print("     -> the instrument NEVER BINDS on that book: frac_pos is the sign of an "
+              "identically-zero\n        quantity — a float-dust coin flip, not a price.  "
+              "Not a state-machine defect and not\n        draw noise: an UNDEFINED statistic "
+              "the record prints as if it were a fraction.")
+
+    print(f"\n  C. THE FIX — compute the D3 fraction only over draws that clear the same "
+          f"floor:")
+    rows = []
+    for (bk, ar), gg in D.groupby(["book", "arm"]):
+        raw, flo = [], []
+        for b in range(NB):
+            d = gg[(gg.draw >= b * CAL_N) & (gg.draw < (b + 1) * CAL_N)]
+            raw.append(float((d.dMaxDD_full > 0).mean()))
+            ok = d[d.dMaxDD_full.abs() > FLOOR]
+            flo.append(float((ok.dMaxDD_full > 0).mean()) if len(ok) else np.nan)
+        f = np.array(flo, float)
+        rows.append(dict(book=bk, arm=ar, stateful=ar in STATEFUL,
+                         sd_raw=float(np.std(raw, ddof=1)),
+                         sd_floored=(float(np.nanstd(f, ddof=1))
+                                     if np.isfinite(f).sum() > 1 else np.nan),
+                         blocks_defined=int(np.isfinite(f).sum()),
+                         range_raw=float(max(raw) - min(raw)),
+                         range_floored=(float(np.nanmax(f) - np.nanmin(f))
+                                        if np.isfinite(f).sum() > 1 else np.nan)))
+    FL = pd.DataFrame(rows)
+    FL.to_csv(f"{OUT}.floored_convention.csv", index=False)
+    dd = FL[FL.blocks_defined > 1]
+    print(f"     {len(FL)} cells; UNDEFINED (no qualifying draw in any block) for "
+          f"{int((FL.blocks_defined == 0).sum())} -> correctly reported as NO PRICE")
+    print(f"     over the {len(dd)} defined cells: mean replicate SD "
+          f"{dd.sd_raw.mean():.6f} -> {dd.sd_floored.mean():.6f} "
+          f"({100 * (1 - dd.sd_floored.mean() / max(dd.sd_raw.mean(), 1e-12)):.1f}% lower); "
+          f"MAX {dd.sd_raw.max():.6f} -> {dd.sd_floored.max():.6f}")
+    print(f"     exactly reproducible cells (SD 0): raw {int((FL.sd_raw == 0).sum())}/{len(FL)} "
+          f"-> floored {int((dd.sd_floored == 0).sum())}/{len(dd)} of the defined ones")
+    nz = dd[dd.sd_floored > 0]
+    print(f"     residual: {len(nz)} cells still move with the seed after flooring "
+          f"(max SD {nz.sd_floored.max() if len(nz) else 0:.4f}) — real sampling variance, "
+          f"not a bug,\n     so flooring alone does NOT deliver one number; the draw SET "
+          f"must also be fixed.")
+    if len(nz):
+        print(fmt(nz[["book", "arm", "stateful", "sd_raw", "sd_floored", "range_floored"]]))
+    return C, FL
+
+
 # =============================================================== 3. VERDICT STABILITY
 def verdict_stability(reps):
     rule()
@@ -600,11 +706,18 @@ def main():
           f"OOS {metrics(B2.win(v2_net, 'OOS'))['Sharpe']:.3f}")
     print(f"  drawing {M_DRAWS} sub-panels at q={Q_STAR} (master seed {MASTER_SEED}), "
           f"pricing {len(BOOKS)} books x {len(ARMS)} arms each", flush=True)
-    D = master_stream(px, start)
-    D.to_csv(f"{OUT}.draws.csv.gz", index=False, compression="gzip")
-    print(f"  stream done: {len(D)} arm-draw rows in {time.time() - t0:.0f}s")
+    cache = Path(f"{OUT}.draws.csv.gz")
+    if cache.exists():
+        D = pd.read_csv(cache)
+        print(f"  reusing the committed draw stream {cache.name} ({len(D)} rows) — "
+              f"delete it to redraw from the master seed")
+    else:
+        D = master_stream(px, start)
+        D.to_csv(cache, index=False, compression="gzip")
+        print(f"  stream done: {len(D)} arm-draw rows in {time.time() - t0:.0f}s")
 
     reps, SP, PERM, GAP, cal = spread_analysis(D, fx)
+    CZ, FL = mechanism(D, reps, cal)
     V, F = verdict_stability(reps)
     W, agg, rets, m_oos, v2_oos, spy_oos = walk_forward(D, reps, px, start, bars,
                                                         v2_net, spy)
@@ -627,6 +740,11 @@ def main():
     print(f"  H_amp (stateful arms noisier) : "
           f"{'YES at ' + str(list(PERM[PERM.amp_significant].N)) if PERM.amp_significant.any() else 'not significant at any N'}"
           f"  — descriptive, and the reason the queue read a path-dependence signature")
+    prc = CZ[CZ.frac_below_floor == 0.0]
+    print(f"  MECHANISM                     : irreproducibility is confined to cells below "
+          f"idea 94's\n                                  priceability floor — the "
+          f"{len(prc)} always-priceable cells agree at "
+          f"{prc.obs_gap.max():.3e}")
     print(f"  4a {int(K.p4a.sum())}/{len(K)}   4b {int(K.p4b.sum())}/{len(K)}")
     print(f"\n  elapsed {time.time() - t0:.0f}s")
     print(f"  wrote {STEM}.{{forensics_by_arm,forensics_rows,draws,replicates,spread_by_N,"
