@@ -1,0 +1,449 @@
+
+####################################################################################################
+### PANEL U56: 56 columns, 2008-01-02 -> 2026-09-04, eval from 2009-01-13
+    SPY  CAGR 15.23% Sharpe 0.889 MaxDD -33.72% H1/H2 0.957/0.834 | OOS CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    4b bars on this panel: H1>0.957  H2>0.834  OOS>0.882  |MaxDD|<=20.23%  CAGR>=10.66%
+
+====================================================================================================
+[A] MATCH to idea 24 variant B (60% QQQ>200d + 40% sleeve), U56 @10 bps weekly
+    tape check: 4699 rows, 0 weekend rows -> CORRECTED trading-day index (ideas 38/39).  Idea 24 ran on the PRE-FIX calendar-day tape, which is no longer in the repo, so what follows is a match to the published decimals ACROSS that correction, not a byte-level rerun.
+    today's tape (last bar 2026-09-04):  CAGR 10.9%  Sharpe 0.95  MaxDD -18.9%  halves 0.84 / 1.05
+    published row (2026-09-03): 10.8% | 0.95 | -18.9% | 0.84 / 1.04
+    same book on the 2026-09-02 tape: 10.8% | 0.95 | -18.9% | 0.84 / 1.04  -> MATCHES the published decimals
+    (the 0.1pp CAGR / 0.01 H2 difference vs today's tape is 2 extra bars, not a code change)
+
+[B] DECOMPOSITION of the blend into its two legs (each run as its own book)
+    additivity check: corr(core+sleeve, blend) = 0.999988, mean |diff| = 1.15e-05/day, CAGR 10.84% vs blend 10.86%
+
+    Full sample and compare()-halves (H1 = 2009-01-13 -> 2017-11-02, H2 = 2017-11-03 -> 2026-09-04)
+                       CAGR  Sharpe  MaxDD  H1_CAGR  H1_Vol  H1_Sharpe  H1_MaxDD  H2_CAGR  H2_Vol  H2_Sharpe  H2_MaxDD
+book                                                                                                                  
+blend B               0.109   0.954 -0.189    0.085   0.103      0.844    -0.181    0.133   0.126      1.053    -0.189
+core leg 60% QQQ>200d 0.088   0.925 -0.167    0.068   0.084      0.821    -0.167    0.109   0.107      1.018    -0.156
+sleeve leg 40%        0.020   0.868 -0.041    0.018   0.023      0.753    -0.035    0.023   0.023      0.983    -0.041
+SPY                   0.152   0.889 -0.337    0.155   0.165      0.957    -0.221    0.150   0.189      0.834    -0.337
+
+    Sharpe gap vs SPY, split into a RETURN term and a VOLATILITY term:
+      dSharpe = (mu_B - mu_S)/sig_B  +  mu_S * (1/sig_B - 1/sig_S)
+         mu_B  mu_SPY  sig_B  sig_SPY  dSharpe  return_term  vol_term
+period                                                               
+H1     0.0869  0.1574 0.1030   0.1645  -0.1128      -0.6837    0.5709
+H2     0.1325  0.1576 0.1258   0.1890   0.2190      -0.1995    0.4185
+full   0.1097  0.1575 0.1150   0.1772   0.0652      -0.4154    0.4805
+
+    Leg shares of the blend's mean return and of its VARIANCE (cov(leg, blend)/var(blend)):
+        mean_share_core  mean_share_sleeve  var_share_core  var_share_sleeve  corr_core_sleeve  sleeve_ann_ret  sleeve_ann_vol
+period                                                                                                                        
+H1               0.7952             0.2032          0.8076            0.1920            0.7533          0.0177          0.0235
+H2               0.8254             0.1732          0.8471            0.1517            0.7394          0.0229          0.0233
+full             0.8135             0.1851          0.8313            0.1679            0.7398          0.0203          0.0234
+
+    Calendar-year returns (the queue's 'decompose by year'):
+      blend B  core leg  sleeve leg     SPY  B - SPY
+Date                                                
+2009  +22.46%   +18.74%      +3.34% +31.13%   -8.67%
+2010   +6.71%    +4.67%      +2.25% +15.06%   -8.35%
+2011  -11.49%   -11.96%      +0.71%  +1.89%  -13.39%
+2012   +4.45%    +3.69%      +0.80% +15.99%  -11.54%
+2013  +22.96%   +19.05%      +3.39% +32.31%   -9.35%
+2014  +12.95%   +11.30%      +1.57% +13.46%   -0.51%
+2015   +1.90%    +3.14%      -1.05%  +1.23%   +0.67%
+2016   -0.94%    -1.49%      +0.63% +12.00%  -12.94%
+2017  +24.13%   +18.61%      +4.72% +21.71%   +2.42%
+2018   +3.64%    +4.77%      -0.85%  -4.57%   +8.21%
+2019  +14.82%   +11.34%      +3.17% +31.22%  -16.41%
+2020  +26.07%   +24.07%      +2.00% +18.33%   +7.74%
+2021  +19.41%   +16.00%      +3.13% +28.73%   -9.32%
+2022   -8.06%    -7.10%      -0.99% -18.18%  +10.12%
+2023  +20.20%   +18.00%      +1.99% +26.18%   -5.98%
+2024  +18.81%   +15.10%      +3.46% +24.89%   -6.08%
+2025  +12.35%    +8.11%      +4.06% +17.72%   -5.37%
+2026  +10.63%    +6.94%      +3.58% +13.54%   -2.91%
+
+    H1 era (<=2016): blend beats SPY in 1/8 years, mean gap -8.01%; sleeve leg mean +1.45%, core leg mean +5.89%
+    H2 era (>=2017): blend beats SPY in 4/10 years, mean gap -1.76%; sleeve leg mean +2.43%, core leg mean +11.58%
+
+    What the 200d gate costs the CORE leg (60% QQQ, gated vs always-on):
+        gated_CAGR  ungated_CAGR  d_CAGR  gated_Sharpe  ungated_Sharpe  d_Sharpe  gated_MaxDD  ungated_MaxDD
+period                                                                                                      
+H1          0.0678        0.1288 -0.0611        0.8215          1.1888   -0.3673      -0.1669        -0.1132
+H2          0.1091        0.1220 -0.0128        1.0180          0.8837    0.1343      -0.1558        -0.2224
+full        0.0883        0.1254 -0.0371        0.9249          1.0051   -0.0801      -0.1669        -0.2224
+    gate OFF (core in cash): 16.0% of days full sample, 15.2% in 2009-2016, 16.7% in 2017-2026
+    blend mean gross: 76.3% full, 75.3% 2009-2016, 77.1% 2017-2026; turnover 3.5x/yr
+
+====================================================================================================
+[C] GRID -- panel U56 @ 10 bps.  RULES v2 (live, 4a comparand): CAGR 8.66% Sharpe 1.206 MaxDD -12.05% H1/H2 1.226/1.191
+
+--- core GATE ON (each leg above its own 200d MA)
+    c     q      mix  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sh  turn           _4a          _4b                          note
+0.500 0.000  0/50/50 0.074   0.879 -0.130 0.808 0.948   1.046 3.829 fail:H1+H2+DD fail:H1+CAGR                              
+0.500 0.250 12/38/50 0.080   0.923 -0.138 0.835 1.006   1.108 3.782 fail:H1+H2+DD fail:H1+CAGR                              
+0.500 0.500 25/25/50 0.086   0.949 -0.145 0.850 1.041   1.144 3.752 fail:H1+H2+DD fail:H1+CAGR                              
+0.500 0.750 38/12/50 0.093   0.960 -0.156 0.853 1.057   1.160 3.723 fail:H1+H2+DD fail:H1+CAGR                              
+0.500 0.833  42/8/50 0.095   0.961 -0.161 0.852 1.060   1.163 3.713 fail:H1+H2+DD fail:H1+CAGR                              
+0.500 1.000  50/0/50 0.099   0.960 -0.172 0.847 1.061   1.163 3.697 fail:H1+H2+DD fail:H1+CAGR                              
+0.600 0.000  0/60/40 0.078   0.867 -0.147 0.804 0.928   1.024 3.671 fail:H1+H2+DD fail:H1+CAGR                              
+0.600 0.250 15/45/40 0.086   0.918 -0.155 0.835 0.995   1.094 3.620 fail:H1+H2+DD fail:H1+CAGR                              
+0.600 0.500 30/30/40 0.094   0.946 -0.164 0.851 1.033   1.134 3.587 fail:H1+H2+DD fail:H1+CAGR                              
+0.600 0.750 45/15/40 0.101   0.956 -0.173 0.853 1.050   1.151 3.548 fail:H1+H2+DD fail:H1+CAGR                              
+0.600 0.833 50/10/40 0.104   0.957 -0.175 0.851 1.052   1.153 3.533 fail:H1+H2+DD fail:H1+CAGR    <- queue proposal 50/10/40
+0.600 1.000  60/0/40 0.109   0.954 -0.189 0.844 1.053   1.153 3.505 fail:H1+H2+DD      fail:H1 <- idea 24 variant B (anchor)
+0.700 0.000  0/70/30 0.082   0.854 -0.163 0.798 0.908   1.001 3.511 fail:H1+H2+DD fail:H1+CAGR                              
+0.700 0.250 18/52/30 0.092   0.911 -0.172 0.833 0.983   1.080 3.461 fail:H1+H2+DD fail:H1+CAGR                              
+0.700 0.500 35/35/30 0.101   0.941 -0.182 0.850 1.024   1.124 3.424 fail:H1+H2+DD fail:H1+CAGR                              
+0.700 0.750 52/18/30 0.109   0.951 -0.192 0.851 1.042   1.142 3.371 fail:H1+H2+DD      fail:H1                              
+0.700 0.833 58/12/30 0.112   0.951 -0.196 0.848 1.044   1.144 3.350 fail:H1+H2+DD      fail:H1                              
+0.700 1.000  70/0/30 0.118   0.947 -0.205 0.839 1.045   1.143 3.308 fail:H1+H2+DD   fail:H1+DD                              
+0.800 0.000  0/80/20 0.087   0.842 -0.179 0.792 0.890   0.980 3.347 fail:H1+H2+DD fail:H1+CAGR                              
+0.800 0.250 20/60/20 0.097   0.903 -0.189 0.830 0.971   1.067 3.306 fail:H1+H2+DD fail:H1+CAGR                              
+0.800 0.500 40/40/20 0.108   0.936 -0.200 0.848 1.016   1.114 3.267 fail:H1+H2+DD      fail:H1                              
+0.800 0.750 60/20/20 0.118   0.946 -0.212 0.847 1.034   1.132 3.196 fail:H1+H2+DD   fail:H1+DD                              
+0.800 0.833 67/13/20 0.121   0.945 -0.215 0.844 1.037   1.134 3.166 fail:H1+H2+DD   fail:H1+DD                              
+0.800 1.000  80/0/20 0.128   0.941 -0.223 0.834 1.037   1.133 3.103 fail:H1+H2+DD   fail:H1+DD                              
+
+--- core GATE OFF (always held)
+    c     q      mix  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sh  turn           _4a          _4b note
+0.500 0.000  0/50/50 0.103   0.949 -0.216 0.976 0.927   0.994 2.377 fail:H1+H2+DD fail:DD+CAGR     
+0.500 0.250 12/38/50 0.110   0.984 -0.208 1.036 0.943   1.017 2.378 fail:H1+H2+DD      fail:DD     
+0.500 0.500 25/25/50 0.117   1.010 -0.200 1.088 0.953   1.030 2.392 fail:H1+H2+DD         PASS     
+0.500 0.750 38/12/50 0.124   1.029 -0.194 1.131 0.956   1.037 2.407 fail:H1+H2+DD         PASS     
+0.500 0.833  42/8/50 0.126   1.033 -0.194 1.143 0.956   1.038 2.411 fail:H1+H2+DD         PASS     
+0.500 1.000  50/0/50 0.130   1.041 -0.201 1.166 0.955   1.038 2.421 fail:H1+H2+DD         PASS     
+0.600 0.000  0/60/40 0.113   0.935 -0.241 0.975 0.903   0.965 1.918 fail:H1+H2+DD      fail:DD     
+0.600 0.250 15/45/40 0.121   0.974 -0.232 1.040 0.922   0.991 1.923 fail:H1+H2+DD      fail:DD     
+0.600 0.500 30/30/40 0.130   1.002 -0.222 1.096 0.933   1.007 1.942 fail:H1+H2+DD      fail:DD     
+0.600 0.750 45/15/40 0.138   1.022 -0.213 1.142 0.938   1.015 1.955 fail:H1+H2+DD      fail:DD     
+0.600 0.833 50/10/40 0.141   1.027 -0.214 1.155 0.938   1.016 1.957 fail:H1+H2+DD      fail:DD     
+0.600 1.000  60/0/40 0.146   1.035 -0.232 1.178 0.938   1.017 1.961 fail:H1+H2+DD      fail:DD     
+0.700 0.000  0/70/30 0.123   0.922 -0.266 0.972 0.882   0.940 1.451 fail:H1+H2+DD      fail:DD     
+0.700 0.250 18/52/30 0.133   0.964 -0.255 1.041 0.904   0.969 1.467 fail:H1+H2+DD      fail:DD     
+0.700 0.500 35/35/30 0.143   0.994 -0.245 1.100 0.917   0.987 1.491 fail:H1+H2+DD      fail:DD     
+0.700 0.750 52/18/30 0.152   1.015 -0.237 1.148 0.922   0.996 1.499 fail:H1+H2+DD      fail:DD     
+0.700 0.833 58/12/30 0.156   1.020 -0.244 1.162 0.923   0.998 1.497 fail:H1+H2+DD      fail:DD     
+0.700 1.000  70/0/30 0.162   1.028 -0.263 1.185 0.923   1.000 1.491 fail:H1+H2+DD      fail:DD     
+0.800 0.000  0/80/20 0.133   0.910 -0.290 0.967 0.864   0.918 0.977 fail:H1+H2+DD      fail:DD     
+0.800 0.250 20/60/20 0.144   0.954 -0.278 1.040 0.888   0.949 1.011 fail:H1+H2+DD      fail:DD     
+0.800 0.500 40/40/20 0.156   0.986 -0.266 1.101 0.902   0.969 1.044 fail:H1+H2+DD      fail:DD     
+0.800 0.750 60/20/20 0.167   1.008 -0.267 1.151 0.909   0.980 1.041 fail:H1+H2+DD      fail:DD     
+0.800 0.833 67/13/20 0.170   1.014 -0.275 1.165 0.910   0.983 1.032 fail:H1+H2+DD      fail:DD     
+0.800 1.000  80/0/20 0.178   1.022 -0.293 1.189 0.911   0.985 1.008 fail:H1+H2+DD      fail:DD     
+
+[E] RULE 8 walk-forward -- U56 @ 10 bps (IS 2009-2016 -> OOS 2017-2026), selection over (c,q) at GATE=ON (pre-registered)   [IS 4b screen empty -> falls back to IS Sharpe]
+    IS-Sharpe pick           c=0.60 q=0.500 (30/30/40)  IS Sharpe 0.702 -> OOS CAGR 11.80% Sharpe 1.134 MaxDD -14.92%
+    4b-aware IS pick         c=0.60 q=0.500 (30/30/40)  IS Sharpe 0.702 -> OOS CAGR 11.80% Sharpe 1.134 MaxDD -14.92%
+    anchor (idea 24 B)       c=0.60 q=1.000 (60/0/40)  IS Sharpe 0.681 -> OOS CAGR 14.29% Sharpe 1.153 MaxDD -18.86%
+    queue proposal 50/10/40  c=0.60 q=0.833 (50/10/40)  IS Sharpe 0.691 -> OOS CAGR 13.46% Sharpe 1.153 MaxDD -17.54%
+    OOS-best (hindsight)     c=0.50 q=1.000 (50/0/50)  IS Sharpe 0.684 -> OOS CAGR 12.95% Sharpe 1.163 MaxDD -17.23%
+    SPY OOS                  CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    RULES v2 OOS             CAGR 9.53% Sharpe 1.285 MaxDD -12.05%
+    chooser regret (IS-Sharpe pick - OOS best): -0.029 | 4b-aware regret -0.029 | pick vs anchor -0.019
+
+[E] RULE 8 walk-forward -- U56 @ 10 bps (IS 2009-2016 -> OOS 2017-2026), selection over (c,q) at GATE=OFF (diagnostic, 3rd dial)   [10/24 cells clear the IS 4b screen]
+    IS-Sharpe pick           c=0.80 q=1.000 (80/0/20)  IS Sharpe 1.089 -> OOS CAGR 18.44% Sharpe 0.985 MaxDD -29.27%
+    4b-aware IS pick         c=0.70 q=1.000 (70/0/30)  IS Sharpe 1.082 -> OOS CAGR 16.96% Sharpe 1.000 MaxDD -26.27%
+    anchor (idea 24 B)       c=0.60 q=1.000 (60/0/40)  IS Sharpe 1.070 -> OOS CAGR 15.47% Sharpe 1.017 MaxDD -23.21%
+    queue proposal 50/10/40  c=0.60 q=0.833 (50/10/40)  IS Sharpe 1.051 -> OOS CAGR 14.90% Sharpe 1.016 MaxDD -21.43%
+    OOS-best (hindsight)     c=0.50 q=1.000 (50/0/50)  IS Sharpe 1.053 -> OOS CAGR 13.97% Sharpe 1.038 MaxDD -20.08%
+    SPY OOS                  CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    RULES v2 OOS             CAGR 9.53% Sharpe 1.285 MaxDD -12.05%
+    chooser regret (IS-Sharpe pick - OOS best): -0.053 | 4b-aware regret -0.038 | pick vs anchor -0.032
+
+====================================================================================================
+[C] GRID -- panel U56 @ 25 bps.  RULES v2 (live, 4a comparand): CAGR 8.37% Sharpe 1.168 MaxDD -12.09% H1/H2 1.188/1.153
+
+--- core GATE ON (each leg above its own 200d MA)
+    c     q      mix  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sh  turn           _4a             _4b                          note
+0.500 0.000  0/50/50 0.067   0.811 -0.138 0.736 0.884   0.983 3.829 fail:H1+H2+DD    fail:H1+CAGR                              
+0.500 0.250 12/38/50 0.074   0.858 -0.146 0.764 0.948   1.050 3.782 fail:H1+H2+DD    fail:H1+CAGR                              
+0.500 0.500 25/25/50 0.080   0.888 -0.153 0.779 0.988   1.092 3.752 fail:H1+H2+DD    fail:H1+CAGR                              
+0.500 0.750 38/12/50 0.087   0.903 -0.161 0.783 1.011   1.114 3.723 fail:H1+H2+DD    fail:H1+CAGR                              
+0.500 0.833  42/8/50 0.089   0.905 -0.163 0.783 1.015   1.118 3.713 fail:H1+H2+DD    fail:H1+CAGR                              
+0.500 1.000  50/0/50 0.093   0.907 -0.173 0.779 1.020   1.123 3.697 fail:H1+H2+DD    fail:H1+CAGR                              
+0.600 0.000  0/60/40 0.072   0.807 -0.155 0.740 0.871   0.968 3.671 fail:H1+H2+DD    fail:H1+CAGR                              
+0.600 0.250 15/45/40 0.080   0.860 -0.164 0.771 0.943   1.044 3.620 fail:H1+H2+DD    fail:H1+CAGR                              
+0.600 0.500 30/30/40 0.088   0.892 -0.172 0.787 0.988   1.090 3.587 fail:H1+H2+DD    fail:H1+CAGR                              
+0.600 0.750 45/15/40 0.095   0.907 -0.181 0.790 1.011   1.113 3.548 fail:H1+H2+DD    fail:H1+CAGR                              
+0.600 0.833 50/10/40 0.098   0.908 -0.184 0.789 1.015   1.117 3.533 fail:H1+H2+DD    fail:H1+CAGR    <- queue proposal 50/10/40
+0.600 1.000  60/0/40 0.103   0.908 -0.191 0.783 1.019   1.120 3.505 fail:H1+H2+DD    fail:H1+CAGR <- idea 24 variant B (anchor)
+0.700 0.000  0/70/30 0.077   0.801 -0.171 0.741 0.857   0.952 3.511 fail:H1+H2+DD    fail:H1+CAGR                              
+0.700 0.250 18/52/30 0.086   0.860 -0.181 0.775 0.938   1.037 3.461 fail:H1+H2+DD    fail:H1+CAGR                              
+0.700 0.500 35/35/30 0.095   0.894 -0.191 0.792 0.986   1.086 3.424 fail:H1+H2+DD    fail:H1+CAGR                              
+0.700 0.750 52/18/30 0.104   0.908 -0.202 0.794 1.009   1.110 3.371 fail:H1+H2+DD    fail:H1+CAGR                              
+0.700 0.833 58/12/30 0.107   0.909 -0.205 0.792 1.013   1.113 3.350 fail:H1+H2+DD      fail:H1+DD                              
+0.700 1.000  70/0/30 0.113   0.908 -0.212 0.784 1.017   1.116 3.308 fail:H1+H2+DD      fail:H1+DD                              
+0.800 0.000  0/80/20 0.081   0.794 -0.187 0.741 0.844   0.936 3.347 fail:H1+H2+DD    fail:H1+CAGR                              
+0.800 0.250 20/60/20 0.092   0.858 -0.199 0.778 0.931   1.029 3.306 fail:H1+H2+DD    fail:H1+CAGR                              
+0.800 0.500 40/40/20 0.102   0.893 -0.210 0.795 0.982   1.081 3.267 fail:H1+H2+DD fail:H1+DD+CAGR                              
+0.800 0.750 60/20/20 0.112   0.907 -0.221 0.796 1.007   1.106 3.196 fail:H1+H2+DD      fail:H1+DD                              
+0.800 0.833 67/13/20 0.116   0.909 -0.225 0.793 1.011   1.109 3.166 fail:H1+H2+DD      fail:H1+DD                              
+0.800 1.000  80/0/20 0.122   0.907 -0.235 0.784 1.015   1.112 3.103 fail:H1+H2+DD      fail:H1+DD                              
+
+--- core GATE OFF (always held)
+    c     q      mix  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sh  turn           _4a             _4b note
+0.500 0.000  0/50/50 0.099   0.916 -0.216 0.940 0.897   0.964 2.377 fail:H1+H2+DD fail:H1+DD+CAGR     
+0.500 0.250 12/38/50 0.106   0.952 -0.208 1.000 0.915   0.987 2.378 fail:H1+H2+DD    fail:DD+CAGR     
+0.500 0.500 25/25/50 0.113   0.979 -0.200 1.052 0.925   1.002 2.392 fail:H1+H2+DD            PASS     
+0.500 0.750 38/12/50 0.120   0.998 -0.195 1.096 0.929   1.010 2.407 fail:H1+H2+DD            PASS     
+0.500 0.833  42/8/50 0.122   1.003 -0.194 1.109 0.930   1.011 2.411 fail:H1+H2+DD            PASS     
+0.500 1.000  50/0/50 0.126   1.012 -0.204 1.132 0.929   1.012 2.421 fail:H1+H2+DD         fail:DD     
+0.600 0.000  0/60/40 0.110   0.912 -0.242 0.949 0.881   0.944 1.918 fail:H1+H2+DD      fail:H1+DD     
+0.600 0.250 15/45/40 0.118   0.951 -0.232 1.014 0.902   0.970 1.923 fail:H1+H2+DD         fail:DD     
+0.600 0.500 30/30/40 0.126   0.980 -0.223 1.071 0.913   0.986 1.942 fail:H1+H2+DD         fail:DD     
+0.600 0.750 45/15/40 0.135   1.000 -0.214 1.117 0.919   0.995 1.955 fail:H1+H2+DD         fail:DD     
+0.600 0.833 50/10/40 0.137   1.006 -0.217 1.130 0.919   0.997 1.957 fail:H1+H2+DD         fail:DD     
+0.600 1.000  60/0/40 0.143   1.014 -0.234 1.154 0.919   0.999 1.961 fail:H1+H2+DD         fail:DD     
+0.700 0.000  0/70/30 0.120   0.906 -0.266 0.954 0.867   0.925 1.451 fail:H1+H2+DD      fail:H1+DD     
+0.700 0.250 18/52/30 0.130   0.948 -0.256 1.023 0.890   0.954 1.467 fail:H1+H2+DD         fail:DD     
+0.700 0.500 35/35/30 0.140   0.979 -0.245 1.082 0.903   0.973 1.491 fail:H1+H2+DD         fail:DD     
+0.700 0.750 52/18/30 0.150   1.000 -0.238 1.131 0.909   0.983 1.499 fail:H1+H2+DD         fail:DD     
+0.700 0.833 58/12/30 0.153   1.006 -0.245 1.145 0.910   0.985 1.497 fail:H1+H2+DD         fail:DD     
+0.700 1.000  70/0/30 0.159   1.014 -0.264 1.169 0.911   0.987 1.491 fail:H1+H2+DD         fail:DD     
+0.800 0.000  0/80/20 0.131   0.900 -0.291 0.956 0.855   0.909 0.977 fail:H1+H2+DD      fail:H1+DD     
+0.800 0.250 20/60/20 0.142   0.944 -0.279 1.029 0.879   0.940 1.011 fail:H1+H2+DD         fail:DD     
+0.800 0.500 40/40/20 0.154   0.976 -0.267 1.090 0.893   0.960 1.044 fail:H1+H2+DD         fail:DD     
+0.800 0.750 60/20/20 0.165   0.999 -0.268 1.140 0.901   0.972 1.041 fail:H1+H2+DD         fail:DD     
+0.800 0.833 67/13/20 0.169   1.004 -0.275 1.154 0.902   0.974 1.032 fail:H1+H2+DD         fail:DD     
+0.800 1.000  80/0/20 0.176   1.013 -0.294 1.179 0.903   0.978 1.008 fail:H1+H2+DD         fail:DD     
+
+[E] RULE 8 walk-forward -- U56 @ 25 bps (IS 2009-2016 -> OOS 2017-2026), selection over (c,q) at GATE=ON (pre-registered)   [IS 4b screen empty -> falls back to IS Sharpe]
+    IS-Sharpe pick           c=0.80 q=0.500 (40/40/20)  IS Sharpe 0.645 -> OOS CAGR 13.18% Sharpe 1.081 MaxDD -16.96%
+    4b-aware IS pick         c=0.80 q=0.500 (40/40/20)  IS Sharpe 0.645 -> OOS CAGR 13.18% Sharpe 1.081 MaxDD -16.96%
+    anchor (idea 24 B)       c=0.60 q=1.000 (60/0/40)  IS Sharpe 0.617 -> OOS CAGR 13.83% Sharpe 1.120 MaxDD -18.89%
+    queue proposal 50/10/40  c=0.60 q=0.833 (50/10/40)  IS Sharpe 0.626 -> OOS CAGR 12.98% Sharpe 1.117 MaxDD -17.59%
+    OOS-best (hindsight)     c=0.50 q=1.000 (50/0/50)  IS Sharpe 0.613 -> OOS CAGR 12.45% Sharpe 1.123 MaxDD -17.27%
+    SPY OOS                  CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    RULES v2 OOS             CAGR 9.24% Sharpe 1.248 MaxDD -12.09%
+    chooser regret (IS-Sharpe pick - OOS best): -0.041 | 4b-aware regret -0.041 | pick vs anchor -0.038
+
+[E] RULE 8 walk-forward -- U56 @ 25 bps (IS 2009-2016 -> OOS 2017-2026), selection over (c,q) at GATE=OFF (diagnostic, 3rd dial)   [9/24 cells clear the IS 4b screen]
+    IS-Sharpe pick           c=0.80 q=1.000 (80/0/20)  IS Sharpe 1.079 -> OOS CAGR 18.26% Sharpe 0.978 MaxDD -29.38%
+    4b-aware IS pick         c=0.70 q=1.000 (70/0/30)  IS Sharpe 1.065 -> OOS CAGR 16.71% Sharpe 0.987 MaxDD -26.45%
+    anchor (idea 24 B)       c=0.60 q=1.000 (60/0/40)  IS Sharpe 1.046 -> OOS CAGR 15.14% Sharpe 0.999 MaxDD -23.44%
+    queue proposal 50/10/40  c=0.60 q=0.833 (50/10/40)  IS Sharpe 1.026 -> OOS CAGR 14.57% Sharpe 0.997 MaxDD -21.67%
+    OOS-best (hindsight)     c=0.50 q=1.000 (50/0/50)  IS Sharpe 1.019 -> OOS CAGR 13.57% Sharpe 1.012 MaxDD -20.38%
+    SPY OOS                  CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    RULES v2 OOS             CAGR 9.24% Sharpe 1.248 MaxDD -12.09%
+    chooser regret (IS-Sharpe pick - OOS best): -0.035 | 4b-aware regret -0.025 | pick vs anchor -0.021
+
+####################################################################################################
+### PANEL B136: 136 columns, 2008-01-02 -> 2026-09-04, eval from 2009-01-13
+    SPY  CAGR 15.23% Sharpe 0.889 MaxDD -33.72% H1/H2 0.957/0.834 | OOS CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    4b bars on this panel: H1>0.957  H2>0.834  OOS>0.882  |MaxDD|<=20.23%  CAGR>=10.66%
+
+====================================================================================================
+[C] GRID -- panel B136 @ 10 bps.  RULES v2 (live, 4a comparand): CAGR 8.03% Sharpe 1.106 MaxDD -12.24% H1/H2 1.229/0.984
+
+--- core GATE ON (each leg above its own 200d MA)
+    c     q      mix  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sh  turn           _4a          _4b                          note
+0.500 0.000  0/50/50 0.074   0.879 -0.130 0.807 0.948   1.046 3.825 fail:H1+H2+DD fail:H1+CAGR                              
+0.500 0.250 12/38/50 0.080   0.923 -0.138 0.835 1.006   1.108 3.778    fail:H1+DD fail:H1+CAGR                              
+0.500 0.500 25/25/50 0.086   0.949 -0.145 0.849 1.041   1.144 3.748    fail:H1+DD fail:H1+CAGR                              
+0.500 0.750 38/12/50 0.093   0.960 -0.156 0.853 1.058   1.161 3.719    fail:H1+DD fail:H1+CAGR                              
+0.500 0.833  42/8/50 0.095   0.961 -0.161 0.852 1.060   1.163 3.709    fail:H1+DD fail:H1+CAGR                              
+0.500 1.000  50/0/50 0.099   0.960 -0.172 0.847 1.062   1.164 3.693    fail:H1+DD fail:H1+CAGR                              
+0.600 0.000  0/60/40 0.078   0.867 -0.147 0.803 0.928   1.024 3.668 fail:H1+H2+DD fail:H1+CAGR                              
+0.600 0.250 15/45/40 0.086   0.918 -0.155 0.835 0.995   1.095 3.617    fail:H1+DD fail:H1+CAGR                              
+0.600 0.500 30/30/40 0.094   0.946 -0.164 0.851 1.033   1.135 3.583    fail:H1+DD fail:H1+CAGR                              
+0.600 0.750 45/15/40 0.101   0.956 -0.172 0.853 1.050   1.152 3.544    fail:H1+DD fail:H1+CAGR                              
+0.600 0.833 50/10/40 0.104   0.957 -0.175 0.851 1.053   1.153 3.530    fail:H1+DD fail:H1+CAGR    <- queue proposal 50/10/40
+0.600 1.000  60/0/40 0.109   0.954 -0.189 0.844 1.053   1.153 3.502    fail:H1+DD      fail:H1 <- idea 24 variant B (anchor)
+0.700 0.000  0/70/30 0.082   0.854 -0.163 0.798 0.909   1.001 3.508 fail:H1+H2+DD fail:H1+CAGR                              
+0.700 0.250 18/52/30 0.092   0.911 -0.172 0.833 0.983   1.081 3.459 fail:H1+H2+DD fail:H1+CAGR                              
+0.700 0.500 35/35/30 0.101   0.941 -0.182 0.850 1.025   1.124 3.421    fail:H1+DD fail:H1+CAGR                              
+0.700 0.750 52/18/30 0.109   0.951 -0.192 0.850 1.042   1.142 3.369    fail:H1+DD      fail:H1                              
+0.700 0.833 58/12/30 0.112   0.951 -0.195 0.848 1.045   1.144 3.348    fail:H1+DD      fail:H1                              
+0.700 1.000  70/0/30 0.118   0.947 -0.205 0.839 1.045   1.143 3.306    fail:H1+DD   fail:H1+DD                              
+0.800 0.000  0/80/20 0.087   0.842 -0.178 0.791 0.890   0.980 3.346 fail:H1+H2+DD fail:H1+CAGR                              
+0.800 0.250 20/60/20 0.097   0.903 -0.189 0.830 0.971   1.067 3.304 fail:H1+H2+DD fail:H1+CAGR                              
+0.800 0.500 40/40/20 0.108   0.935 -0.200 0.848 1.016   1.114 3.266    fail:H1+DD      fail:H1                              
+0.800 0.750 60/20/20 0.118   0.946 -0.211 0.847 1.035   1.132 3.195    fail:H1+DD   fail:H1+DD                              
+0.800 0.833 67/13/20 0.121   0.945 -0.215 0.844 1.037   1.134 3.164    fail:H1+DD   fail:H1+DD                              
+0.800 1.000  80/0/20 0.128   0.941 -0.223 0.833 1.037   1.133 3.102    fail:H1+DD   fail:H1+DD                              
+
+--- core GATE OFF (always held)
+    c     q      mix  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sh  turn           _4a          _4b note
+0.500 0.000  0/50/50 0.103   0.948 -0.216 0.976 0.927   0.995 2.373 fail:H1+H2+DD fail:DD+CAGR     
+0.500 0.250 12/38/50 0.110   0.984 -0.208 1.036 0.944   1.017 2.374 fail:H1+H2+DD      fail:DD     
+0.500 0.500 25/25/50 0.117   1.010 -0.200 1.087 0.953   1.030 2.388 fail:H1+H2+DD         PASS     
+0.500 0.750 38/12/50 0.124   1.028 -0.194 1.131 0.956   1.037 2.403 fail:H1+H2+DD         PASS     
+0.500 0.833  42/8/50 0.126   1.033 -0.194 1.143 0.956   1.038 2.407 fail:H1+H2+DD         PASS     
+0.500 1.000  50/0/50 0.130   1.040 -0.201 1.165 0.955   1.038 2.417 fail:H1+H2+DD         PASS     
+0.600 0.000  0/60/40 0.113   0.935 -0.241 0.975 0.903   0.966 1.915 fail:H1+H2+DD      fail:DD     
+0.600 0.250 15/45/40 0.121   0.974 -0.232 1.040 0.923   0.991 1.920 fail:H1+H2+DD      fail:DD     
+0.600 0.500 30/30/40 0.130   1.002 -0.222 1.096 0.934   1.007 1.939 fail:H1+H2+DD      fail:DD     
+0.600 0.750 45/15/40 0.138   1.022 -0.213 1.142 0.938   1.015 1.952 fail:H1+H2+DD      fail:DD     
+0.600 0.833 50/10/40 0.141   1.027 -0.214 1.155 0.938   1.016 1.954 fail:H1+H2+DD      fail:DD     
+0.600 1.000  60/0/40 0.146   1.035 -0.232 1.178 0.938   1.018 1.958 fail:H1+H2+DD      fail:DD     
+0.700 0.000  0/70/30 0.123   0.922 -0.266 0.971 0.882   0.940 1.449 fail:H1+H2+DD      fail:DD     
+0.700 0.250 18/52/30 0.133   0.963 -0.255 1.041 0.904   0.969 1.464 fail:H1+H2+DD      fail:DD     
+0.700 0.500 35/35/30 0.143   0.994 -0.245 1.100 0.917   0.987 1.489 fail:H1+H2+DD      fail:DD     
+0.700 0.750 52/18/30 0.152   1.015 -0.237 1.148 0.923   0.996 1.496 fail:H1+H2+DD      fail:DD     
+0.700 0.833 58/12/30 0.156   1.020 -0.244 1.161 0.923   0.998 1.495 fail:H1+H2+DD      fail:DD     
+0.700 1.000  70/0/30 0.162   1.028 -0.263 1.185 0.923   1.000 1.489 fail:H1+H2+DD      fail:DD     
+0.800 0.000  0/80/20 0.133   0.910 -0.290 0.967 0.864   0.918 0.976 fail:H1+H2+DD      fail:DD     
+0.800 0.250 20/60/20 0.144   0.954 -0.278 1.040 0.888   0.949 1.009 fail:H1+H2+DD      fail:DD     
+0.800 0.500 40/40/20 0.156   0.986 -0.266 1.101 0.902   0.969 1.043 fail:H1+H2+DD      fail:DD     
+0.800 0.750 60/20/20 0.167   1.008 -0.267 1.151 0.909   0.981 1.039 fail:H1+H2+DD      fail:DD     
+0.800 0.833 67/13/20 0.170   1.014 -0.275 1.165 0.910   0.983 1.030 fail:H1+H2+DD      fail:DD     
+0.800 1.000  80/0/20 0.178   1.022 -0.293 1.189 0.911   0.985 1.007 fail:H1+H2+DD      fail:DD     
+
+[E] RULE 8 walk-forward -- B136 @ 10 bps (IS 2009-2016 -> OOS 2017-2026), selection over (c,q) at GATE=ON (pre-registered)   [IS 4b screen empty -> falls back to IS Sharpe]
+    IS-Sharpe pick           c=0.70 q=0.500 (35/35/30)  IS Sharpe 0.701 -> OOS CAGR 12.72% Sharpe 1.124 MaxDD -15.91%
+    4b-aware IS pick         c=0.70 q=0.500 (35/35/30)  IS Sharpe 0.701 -> OOS CAGR 12.72% Sharpe 1.124 MaxDD -15.91%
+    anchor (idea 24 B)       c=0.60 q=1.000 (60/0/40)  IS Sharpe 0.680 -> OOS CAGR 14.29% Sharpe 1.153 MaxDD -18.85%
+    queue proposal 50/10/40  c=0.60 q=0.833 (50/10/40)  IS Sharpe 0.691 -> OOS CAGR 13.46% Sharpe 1.153 MaxDD -17.54%
+    OOS-best (hindsight)     c=0.50 q=1.000 (50/0/50)  IS Sharpe 0.684 -> OOS CAGR 12.95% Sharpe 1.164 MaxDD -17.23%
+    SPY OOS                  CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    RULES v2 OOS             CAGR 7.98% Sharpe 1.119 MaxDD -12.24%
+    chooser regret (IS-Sharpe pick - OOS best): -0.039 | 4b-aware regret -0.039 | pick vs anchor -0.029
+
+[E] RULE 8 walk-forward -- B136 @ 10 bps (IS 2009-2016 -> OOS 2017-2026), selection over (c,q) at GATE=OFF (diagnostic, 3rd dial)   [10/24 cells clear the IS 4b screen]
+    IS-Sharpe pick           c=0.80 q=1.000 (80/0/20)  IS Sharpe 1.089 -> OOS CAGR 18.44% Sharpe 0.985 MaxDD -29.27%
+    4b-aware IS pick         c=0.70 q=1.000 (70/0/30)  IS Sharpe 1.081 -> OOS CAGR 16.96% Sharpe 1.000 MaxDD -26.27%
+    anchor (idea 24 B)       c=0.60 q=1.000 (60/0/40)  IS Sharpe 1.070 -> OOS CAGR 15.47% Sharpe 1.018 MaxDD -23.21%
+    queue proposal 50/10/40  c=0.60 q=0.833 (50/10/40)  IS Sharpe 1.050 -> OOS CAGR 14.90% Sharpe 1.016 MaxDD -21.43%
+    OOS-best (hindsight)     c=0.50 q=1.000 (50/0/50)  IS Sharpe 1.053 -> OOS CAGR 13.97% Sharpe 1.038 MaxDD -20.08%
+    SPY OOS                  CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    RULES v2 OOS             CAGR 7.98% Sharpe 1.119 MaxDD -12.24%
+    chooser regret (IS-Sharpe pick - OOS best): -0.053 | 4b-aware regret -0.038 | pick vs anchor -0.032
+
+====================================================================================================
+[C] GRID -- panel B136 @ 25 bps.  RULES v2 (live, 4a comparand): CAGR 7.70% Sharpe 1.064 MaxDD -12.28% H1/H2 1.191/0.939
+
+--- core GATE ON (each leg above its own 200d MA)
+    c     q      mix  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sh  turn           _4a             _4b                          note
+0.500 0.000  0/50/50 0.067   0.811 -0.138 0.736 0.884   0.983 3.825 fail:H1+H2+DD    fail:H1+CAGR                              
+0.500 0.250 12/38/50 0.074   0.858 -0.146 0.763 0.948   1.050 3.778    fail:H1+DD    fail:H1+CAGR                              
+0.500 0.500 25/25/50 0.080   0.888 -0.153 0.778 0.988   1.092 3.748    fail:H1+DD    fail:H1+CAGR                              
+0.500 0.750 38/12/50 0.087   0.903 -0.161 0.783 1.011   1.115 3.719    fail:H1+DD    fail:H1+CAGR                              
+0.500 0.833  42/8/50 0.089   0.905 -0.163 0.782 1.015   1.119 3.709    fail:H1+DD    fail:H1+CAGR                              
+0.500 1.000  50/0/50 0.093   0.907 -0.173 0.779 1.020   1.123 3.693    fail:H1+DD    fail:H1+CAGR                              
+0.600 0.000  0/60/40 0.072   0.807 -0.155 0.740 0.871   0.968 3.668 fail:H1+H2+DD    fail:H1+CAGR                              
+0.600 0.250 15/45/40 0.080   0.860 -0.164 0.771 0.944   1.044 3.617    fail:H1+DD    fail:H1+CAGR                              
+0.600 0.500 30/30/40 0.088   0.892 -0.172 0.787 0.988   1.090 3.583    fail:H1+DD    fail:H1+CAGR                              
+0.600 0.750 45/15/40 0.095   0.907 -0.181 0.790 1.011   1.113 3.544    fail:H1+DD    fail:H1+CAGR                              
+0.600 0.833 50/10/40 0.098   0.908 -0.184 0.788 1.015   1.117 3.530    fail:H1+DD    fail:H1+CAGR    <- queue proposal 50/10/40
+0.600 1.000  60/0/40 0.103   0.908 -0.190 0.783 1.020   1.120 3.502    fail:H1+DD    fail:H1+CAGR <- idea 24 variant B (anchor)
+0.700 0.000  0/70/30 0.077   0.801 -0.171 0.741 0.858   0.952 3.508 fail:H1+H2+DD    fail:H1+CAGR                              
+0.700 0.250 18/52/30 0.086   0.860 -0.181 0.775 0.938   1.037 3.459 fail:H1+H2+DD    fail:H1+CAGR                              
+0.700 0.500 35/35/30 0.095   0.894 -0.191 0.792 0.986   1.086 3.421    fail:H1+DD    fail:H1+CAGR                              
+0.700 0.750 52/18/30 0.104   0.908 -0.201 0.794 1.009   1.110 3.369    fail:H1+DD    fail:H1+CAGR                              
+0.700 0.833 58/12/30 0.107   0.909 -0.205 0.792 1.014   1.113 3.348    fail:H1+DD      fail:H1+DD                              
+0.700 1.000  70/0/30 0.113   0.908 -0.212 0.784 1.017   1.116 3.306    fail:H1+DD      fail:H1+DD                              
+0.800 0.000  0/80/20 0.081   0.794 -0.187 0.741 0.844   0.937 3.346 fail:H1+H2+DD    fail:H1+CAGR                              
+0.800 0.250 20/60/20 0.092   0.857 -0.198 0.778 0.931   1.029 3.304 fail:H1+H2+DD    fail:H1+CAGR                              
+0.800 0.500 40/40/20 0.102   0.893 -0.210 0.795 0.982   1.082 3.266    fail:H1+DD fail:H1+DD+CAGR                              
+0.800 0.750 60/20/20 0.112   0.907 -0.221 0.796 1.007   1.106 3.195    fail:H1+DD      fail:H1+DD                              
+0.800 0.833 67/13/20 0.116   0.909 -0.225 0.793 1.011   1.109 3.164    fail:H1+DD      fail:H1+DD                              
+0.800 1.000  80/0/20 0.122   0.907 -0.234 0.784 1.015   1.112 3.102    fail:H1+DD      fail:H1+DD                              
+
+--- core GATE OFF (always held)
+    c     q      mix  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sh  turn           _4a             _4b note
+0.500 0.000  0/50/50 0.099   0.916 -0.216 0.940 0.897   0.964 2.373 fail:H1+H2+DD fail:H1+DD+CAGR     
+0.500 0.250 12/38/50 0.106   0.952 -0.208 1.000 0.915   0.988 2.374 fail:H1+H2+DD    fail:DD+CAGR     
+0.500 0.500 25/25/50 0.113   0.979 -0.200 1.052 0.925   1.002 2.388 fail:H1+H2+DD            PASS     
+0.500 0.750 38/12/50 0.120   0.998 -0.194 1.096 0.929   1.010 2.403 fail:H1+H2+DD            PASS     
+0.500 0.833  42/8/50 0.122   1.004 -0.194 1.109 0.930   1.011 2.407 fail:H1+H2+DD            PASS     
+0.500 1.000  50/0/50 0.126   1.012 -0.204 1.132 0.929   1.012 2.417 fail:H1+H2+DD         fail:DD     
+0.600 0.000  0/60/40 0.110   0.912 -0.242 0.949 0.882   0.944 1.915 fail:H1+H2+DD      fail:H1+DD     
+0.600 0.250 15/45/40 0.118   0.951 -0.232 1.014 0.902   0.970 1.920 fail:H1+H2+DD         fail:DD     
+0.600 0.500 30/30/40 0.126   0.980 -0.223 1.070 0.914   0.987 1.939 fail:H1+H2+DD         fail:DD     
+0.600 0.750 45/15/40 0.135   1.000 -0.214 1.117 0.919   0.996 1.952 fail:H1+H2+DD         fail:DD     
+0.600 0.833 50/10/40 0.137   1.006 -0.217 1.130 0.919   0.997 1.954 fail:H1+H2+DD         fail:DD     
+0.600 1.000  60/0/40 0.143   1.014 -0.234 1.154 0.919   0.999 1.958 fail:H1+H2+DD         fail:DD     
+0.700 0.000  0/70/30 0.120   0.906 -0.266 0.954 0.868   0.925 1.449 fail:H1+H2+DD      fail:H1+DD     
+0.700 0.250 18/52/30 0.130   0.948 -0.256 1.023 0.890   0.954 1.464 fail:H1+H2+DD         fail:DD     
+0.700 0.500 35/35/30 0.140   0.979 -0.245 1.082 0.903   0.973 1.489 fail:H1+H2+DD         fail:DD     
+0.700 0.750 52/18/30 0.150   1.000 -0.238 1.131 0.909   0.983 1.496 fail:H1+H2+DD         fail:DD     
+0.700 0.833 58/12/30 0.153   1.006 -0.245 1.144 0.910   0.985 1.495 fail:H1+H2+DD         fail:DD     
+0.700 1.000  70/0/30 0.159   1.014 -0.264 1.169 0.911   0.987 1.489 fail:H1+H2+DD         fail:DD     
+0.800 0.000  0/80/20 0.131   0.900 -0.291 0.956 0.855   0.909 0.976 fail:H1+H2+DD      fail:H1+DD     
+0.800 0.250 20/60/20 0.142   0.944 -0.279 1.028 0.879   0.940 1.009 fail:H1+H2+DD         fail:DD     
+0.800 0.500 40/40/20 0.154   0.976 -0.267 1.090 0.894   0.960 1.043 fail:H1+H2+DD         fail:DD     
+0.800 0.750 60/20/20 0.165   0.999 -0.268 1.140 0.901   0.972 1.039 fail:H1+H2+DD         fail:DD     
+0.800 0.833 67/13/20 0.169   1.004 -0.275 1.154 0.902   0.975 1.030 fail:H1+H2+DD         fail:DD     
+0.800 1.000  80/0/20 0.176   1.013 -0.294 1.179 0.903   0.978 1.007 fail:H1+H2+DD         fail:DD     
+
+[E] RULE 8 walk-forward -- B136 @ 25 bps (IS 2009-2016 -> OOS 2017-2026), selection over (c,q) at GATE=ON (pre-registered)   [IS 4b screen empty -> falls back to IS Sharpe]
+    IS-Sharpe pick           c=0.80 q=0.500 (40/40/20)  IS Sharpe 0.645 -> OOS CAGR 13.18% Sharpe 1.082 MaxDD -16.96%
+    4b-aware IS pick         c=0.80 q=0.500 (40/40/20)  IS Sharpe 0.645 -> OOS CAGR 13.18% Sharpe 1.082 MaxDD -16.96%
+    anchor (idea 24 B)       c=0.60 q=1.000 (60/0/40)  IS Sharpe 0.617 -> OOS CAGR 13.83% Sharpe 1.120 MaxDD -18.88%
+    queue proposal 50/10/40  c=0.60 q=0.833 (50/10/40)  IS Sharpe 0.626 -> OOS CAGR 12.98% Sharpe 1.117 MaxDD -17.58%
+    OOS-best (hindsight)     c=0.50 q=1.000 (50/0/50)  IS Sharpe 0.613 -> OOS CAGR 12.45% Sharpe 1.123 MaxDD -17.27%
+    SPY OOS                  CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    RULES v2 OOS             CAGR 7.64% Sharpe 1.074 MaxDD -12.28%
+    chooser regret (IS-Sharpe pick - OOS best): -0.041 | 4b-aware regret -0.041 | pick vs anchor -0.039
+
+[E] RULE 8 walk-forward -- B136 @ 25 bps (IS 2009-2016 -> OOS 2017-2026), selection over (c,q) at GATE=OFF (diagnostic, 3rd dial)   [9/24 cells clear the IS 4b screen]
+    IS-Sharpe pick           c=0.80 q=1.000 (80/0/20)  IS Sharpe 1.079 -> OOS CAGR 18.26% Sharpe 0.978 MaxDD -29.38%
+    4b-aware IS pick         c=0.70 q=1.000 (70/0/30)  IS Sharpe 1.065 -> OOS CAGR 16.71% Sharpe 0.987 MaxDD -26.45%
+    anchor (idea 24 B)       c=0.60 q=1.000 (60/0/40)  IS Sharpe 1.046 -> OOS CAGR 15.15% Sharpe 0.999 MaxDD -23.44%
+    queue proposal 50/10/40  c=0.60 q=0.833 (50/10/40)  IS Sharpe 1.026 -> OOS CAGR 14.57% Sharpe 0.997 MaxDD -21.67%
+    OOS-best (hindsight)     c=0.50 q=1.000 (50/0/50)  IS Sharpe 1.019 -> OOS CAGR 13.57% Sharpe 1.012 MaxDD -20.38%
+    SPY OOS                  CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    RULES v2 OOS             CAGR 7.64% Sharpe 1.074 MaxDD -12.28%
+    chooser regret (IS-Sharpe pick - OOS best): -0.035 | 4b-aware regret -0.025 | pick vs anchor -0.021
+
+====================================================================================================
+[D] KEEP-path census over the whole grid (all 96 panel x cost x gate x c x q points)
+                pass4a       pass4b      
+                   sum count    sum count
+panel cost gate                          
+B136  10   0         0    24      4    24
+           1         0    24      0    24
+      25   0         0    24      3    24
+           1         0    24      0    24
+U56   10   0         0    24      4    24
+           1         0    24      0    24
+      25   0         0    24      3    24
+           1         0    24      0    24
+
+    4b failing-bar census (GATE=ON, 10 bps):
+panel  fail4b 
+B136   H1          4
+       H1+CAGR    16
+       H1+DD       4
+U56    H1          4
+       H1+CAGR    16
+       H1+DD       4
+
+    4b passes anywhere: 14/192;  4a passes anywhere: 0/192
+
+    Every 4b-passing point:
+panel  cost  gate     c     q  QQQ_pct  SPY_pct  sleeve_pct  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe
+  U56    10     0 0.500 0.500   25.000   25.000      50.000 0.117   1.010 -0.200 1.088 0.953       1.030
+  U56    10     0 0.500 0.750   37.500   12.500      50.000 0.124   1.029 -0.194 1.131 0.956       1.037
+  U56    10     0 0.500 0.833   41.700    8.300      50.000 0.126   1.033 -0.194 1.143 0.956       1.038
+  U56    10     0 0.500 1.000   50.000    0.000      50.000 0.130   1.041 -0.201 1.166 0.955       1.038
+  U56    25     0 0.500 0.500   25.000   25.000      50.000 0.113   0.979 -0.200 1.052 0.925       1.002
+  U56    25     0 0.500 0.750   37.500   12.500      50.000 0.120   0.998 -0.195 1.096 0.929       1.010
+  U56    25     0 0.500 0.833   41.700    8.300      50.000 0.122   1.003 -0.194 1.109 0.930       1.011
+ B136    10     0 0.500 0.500   25.000   25.000      50.000 0.117   1.010 -0.200 1.087 0.953       1.030
+ B136    10     0 0.500 0.750   37.500   12.500      50.000 0.124   1.028 -0.194 1.131 0.956       1.037
+ B136    10     0 0.500 0.833   41.700    8.300      50.000 0.126   1.033 -0.194 1.143 0.956       1.038
+ B136    10     0 0.500 1.000   50.000    0.000      50.000 0.130   1.040 -0.201 1.165 0.955       1.038
+ B136    25     0 0.500 0.500   25.000   25.000      50.000 0.113   0.979 -0.200 1.052 0.925       1.002
+ B136    25     0 0.500 0.750   37.500   12.500      50.000 0.120   0.998 -0.194 1.096 0.929       1.010
+ B136    25     0 0.500 0.833   41.700    8.300      50.000 0.122   1.004 -0.194 1.109 0.930       1.011
+
+====================================================================================================
+[F] The queue's question, answered on the anchor vs the proposal (GATE=ON):
+    U56 @10bps  anchor  H1 0.844 H2 1.053 Sharpe 0.954 CAGR 10.86% DD -18.86% | 4b margin H1 -0.113
+    U56 @10bps  50/10/40 H1 0.851 H2 1.052 Sharpe 0.957 CAGR 10.36% DD -17.54% | 4b margin H1 -0.106  (dH1 +0.007, dSharpe +0.003)
+    U56 @25bps  anchor  H1 0.783 H2 1.019 Sharpe 0.908 CAGR 10.28% DD -19.05% | 4b margin H1 -0.174
+    U56 @25bps  50/10/40 H1 0.789 H2 1.015 Sharpe 0.908 CAGR 9.78% DD -18.44% | 4b margin H1 -0.168  (dH1 +0.006, dSharpe -0.000)
+    B136 @10bps  anchor  H1 0.844 H2 1.053 Sharpe 0.954 CAGR 10.86% DD -18.85% | 4b margin H1 -0.113
+    B136 @10bps  50/10/40 H1 0.851 H2 1.053 Sharpe 0.957 CAGR 10.36% DD -17.54% | 4b margin H1 -0.106  (dH1 +0.007, dSharpe +0.003)
+    B136 @25bps  anchor  H1 0.783 H2 1.020 Sharpe 0.908 CAGR 10.28% DD -19.04% | 4b margin H1 -0.174
+    B136 @25bps  50/10/40 H1 0.788 H2 1.015 Sharpe 0.908 CAGR 9.78% DD -18.43% | 4b margin H1 -0.168  (dH1 +0.006, dSharpe -0.000)
+
+====================================================================================================
+[G] Two things the grid settles, stated as numbers
+    U56 @10bps: H1 Sharpe over all 24 (c,q) points -- GATE ON [0.792, 0.853], GATE OFF [0.967, 1.189];  4b H1 bar = SPY 0.957
+      -> gate ON: 0/24 clear the H1 bar;  gate OFF: 24/24 clear it
+    U56 @25bps: H1 Sharpe over all 24 (c,q) points -- GATE ON [0.736, 0.796], GATE OFF [0.940, 1.179];  4b H1 bar = SPY 0.957
+      -> gate ON: 0/24 clear the H1 bar;  gate OFF: 20/24 clear it
+    PANEL AXIS IS DEGENERATE for this book: it holds only QQQ, SPY and the 9 sleeve ETFs, all present in both panels.
+      max |U56 - B136| across all 96 cells: CAGR 8.60e-06, Sharpe 1.09e-04, MaxDD 1.72e-04, H1 4.84e-04, H2 2.71e-04 (price-file rounding only).
+      B136 is therefore NOT an independent confirmation here; only the 4a comparand differs.
