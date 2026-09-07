@@ -21,7 +21,7 @@
 | 2026-09-06 | 40694576 | Football Statistics Website from PostgreSQL | $2,200 | 86 | drafted |
 | 2026-09-06 | 40694223 | Automotive Excel Data Cleanup & Reporting | $245 | 11 | drafted |
 | 2026-09-06 | 40694549 | Automated Excel Analysis Workflow | $240 | 7 | drafted |
-| 2026-09-06 | 40694183 | Telegram Digital Marketplace Bot | $240 | 19 | drafted |
+| 2026-09-06 | 40694183 | Telegram Digital Marketplace Bot | $240 | 19 | submitted 2026-09-07 ($240, rank 23/28) |
 | 2026-09-06 | 40693897 | Python Flask Scraping Integration Fix | $620 | 137 | drafted |
 | 2026-09-06 | 40693845 | PDF Text-to-Excel Conversion | $520 | 31 | drafted |
 | 2026-09-06 | 40693861 | AI Realtime Trading Risk Assessor | $460 | 62 | drafted |
@@ -52,7 +52,7 @@
 | 2026-09-05 | 40687840 | WhatsApp Tech Support FAQ Bot | $240 | 38 | drafted |
 | 2026-09-05 | 40692246 | AI-Powered OCR Challan Processing & Billing | $390 | 59 | drafted |
 | 2026-09-05 | 40691768 | PDF to Excel Data Extraction | $310 | 8 | drafted |
-| 2026-09-05 | 40691566 | QA: Verify stock-charting dashboard vs TradingView | $210 | 33 | drafted |
+| 2026-09-05 | 40691566 | QA: Verify stock-charting dashboard vs TradingView | $210 | 33 | submitted 2026-09-07 ($210, rank 50/66) |
 | 2026-09-05 | 40691750 | Automate Excel Form Submission | $125 | 11 | drafted |
 | 2026-09-05 | 40691151 | Business Analytics API Dashboard -- 2 | $245 | 12 | drafted |
 | 2026-09-05 | 40691213 | Excel Data Validation & Entry | $640 | 14 | drafted |
