@@ -1,0 +1,293 @@
+========================================================================================================================================================================================================
+IDEA 135 — is a `4b-defensive` class member just its own book's ladder point?
+corpus: panels ['u56', 'broad', 'small'] x books ['V1u', 'TOP5', 'TOP10', 'TOP20', 'TOP40', 'EWall', 'SLV25', 'SLV50'] (sleeve books u56/broad only) x 17 arms x costs [10.0, 25.0] bps, NATIVE gross; each arm paired with its OWN book's ungated static-gross ladder point at matched mean gross (full-window and IS-window matches).
+IS <= 2016-12-31   OOS >= 2017-01-01   weekly, t+1.  Bars: CAGR >= 0.7 x SPY, MaxDD <= 0.6 x |SPY|.
+tuned: eps in [0.0, 0.05, 0.1, 0.15] (Sharpe margin over the ladder point), stat in ['sharpe', 'dom'].  All grid points reported.
+========================================================================================================================================================================================================
+========================================================================================================================================================================================================
+(0) REPRODUCTION — nothing new is read until these pass
+    (a) idea 94's EWall+vol60-dg u56@10bps: 11.587% / 1.133 / -16.884%   published 11.6% / 1.133 / -16.9%   PASS
+    (b) H.run vs engine.backtest (EWall, 10bps): max|diff| = 0.000e+00   PASS
+    (c) linearity check  max|r(m=0.5) - 0.5*r(m=1)| = 1.394e-03  Sharpe 1.1240 (m=1) vs 1.1229 (m=0.5) -> the ladder point is a DIFFERENT path, not a rescaling   PASS
+    (d) ladder solve: target gross 0.5323 achieved 0.5323 at m=0.7093  |gap| 7.80e-11   PASS
+
+--- PANEL u56: universe.json(56) | eval 2009-01-13 -> 2026-09-04 | books ['V1u', 'TOP5', 'TOP10', 'TOP20', 'TOP40', 'EWall', 'SLV25', 'SLV50']
+    SPY full CAGR 15.23% MaxDD -33.72% halves 0.957/0.834 OOS Sharpe 0.882
+    [u56 @10bps] 136 arm rows | class members 40 | 4b 28 | 4a(v2) 0 | 4a(v1) 27
+    [u56 @25bps] 136 arm rows | class members 38 | 4b 13 | 4a(v2) 0 | 4a(v1) 41
+
+--- PANEL broad: universe_broad.json(136) | eval 2009-01-13 -> 2026-09-04 | books ['V1u', 'TOP5', 'TOP10', 'TOP20', 'TOP40', 'EWall', 'SLV25', 'SLV50']
+    SPY full CAGR 15.23% MaxDD -33.72% halves 0.957/0.834 OOS Sharpe 0.882
+    [broad @10bps] 136 arm rows | class members 34 | 4b 12 | 4a(v2) 4 | 4a(v1) 66
+    [broad @25bps] 136 arm rows | class members 27 | 4b 6 | 4a(v2) 0 | 4a(v1) 99
+
+--- PANEL small: prices_small(439, SPY held out) | eval 2011-01-13 -> 2026-09-04 | books ['V1u', 'TOP5', 'TOP10', 'TOP20', 'TOP40', 'EWall']
+    SPY full CAGR 14.13% MaxDD -33.72% halves 0.891/0.858 OOS Sharpe 0.882
+    [small @10bps] 102 arm rows | class members 0 | 4b 0 | 4a(v2) 0 | 4a(v1) 24
+    [small @25bps] 102 arm rows | class members 0 | 4b 0 | 4a(v2) 0 | 4a(v1) 57
+
+========================================================================================================================================================================================================
+(0b) REPRODUCTION of idea 133's committed native-gross census
+    (e) idea 133 native-gross census re-run: 748 of 748 rows matched
+        max|d CAGR| = 9.714e-17
+        max|d Sharpe| = 2.220e-16
+        max|d MaxDD| = 9.714e-17
+        max|d OOS_Sharpe| = 2.220e-16
+        max|d gross| = 5.551e-17
+        floor_only mismatches 0/748   pass4b mismatches 0/748   PASS
+    ladder match quality: worst |achieved - target| gross, full-window 9.36e-10, IS-window 5.33e-10; rows worse than 5e-3: 0 / 748
+
+========================================================================================================================================================================================================
+(1) THE CONTROL — does a class member beat its own book's matched ladder point?
+    class members (`4b-defensive`, full window): 139 of 748 rows (18.6%)
+    their matched ladder point is ITSELF `4b-defensive` in 105 of 139 cases (75.5%)  <- H_ladder predicts MOST
+    mean d_Sharpe -0.0531  median -0.0449  mean d_MaxDD +2.56%  mean d_CAGR -1.28%  mean d_OOS_Sharpe -0.0149
+
+    SURVIVAL of the proposed recording rule (a `4b-defensive` row must beat its own matched ladder point):
+  stat   eps all_rows  all_pct class_rows  class_pct pareto_class  pareto_pct
+sharpe 0.000  116/748    0.155     25/139      0.180         9/16       0.562
+sharpe 0.050   12/748    0.016      3/139      0.022         2/16       0.125
+sharpe 0.100    1/748    0.001      0/139      0.000         0/16       0.000
+sharpe 0.150    0/748    0.000      0/139      0.000         0/16       0.000
+   dom 0.000   82/748    0.110     16/139      0.115         5/16       0.312
+   dom 0.050   12/748    0.016      3/139      0.022         2/16       0.125
+   dom 0.100    1/748    0.001      0/139      0.000         0/16       0.000
+   dom 0.150    0/748    0.000      0/139      0.000         0/16       0.000
+
+    by book (class members only, stat=sharpe eps=0.00):
+           n   beat   pct  mean_d_Sharpe  mean_gross  lad_is_class
+book                                                              
+EWall 26.000  3.000 0.115         -0.064       0.573         0.692
+SLV25 50.000 10.000 0.200         -0.056       0.690         0.680
+SLV50 52.000 10.000 0.192         -0.043       0.726         1.000
+TOP20  1.000  0.000 0.000         -0.173       0.555         0.000
+TOP40 10.000  2.000 0.200         -0.049       0.638         0.100
+
+    by panel x cost (class members only, stat=sharpe eps=0.00):
+                n  beat   pct  mean_d_Sharpe  lad_is_class
+panel cost                                                
+broad 10.0 34.000 5.000 0.147         -0.058         0.765
+      25.0 27.000 4.000 0.148         -0.075         0.741
+u56   10.0 40.000 9.000 0.225         -0.043         0.750
+      25.0 38.000 7.000 0.184         -0.044         0.763
+
+    by arm kind (class members only, stat=sharpe eps=0.00):
+          n   beat   pct  mean_d_Sharpe  mean_gross
+kind                                               
+bud  10.000  9.000 0.900          0.015       0.746
+ctl   5.000  0.000 0.000          0.000       0.749
+dd   23.000  1.000 0.043         -0.089       0.646
+gate 89.000 15.000 0.169         -0.057       0.664
+stop 12.000  0.000 0.000         -0.035       0.744
+
+    is the margin just the gross dial?  Spearman over class members:
+        rho(gross, d_Sharpe)  = +0.069
+        rho(gross, Sharpe)    = +0.245
+        rho(d_Sharpe, d_OOS_Sharpe) = +0.802   (does an IS win persist?)
+
+    the 20 class members with the LARGEST margin over their own ladder point:
+panel  book                arm   cost  gross  Sharpe  lad_Sharpe  d_Sharpe  MaxDD  lad_MaxDD  d_MaxDD  CAGR  d_CAGR  OOS_Sharpe  d_OOS_Sharpe  lad_floor_only
+  u56 EWall           band3-dg 10.000  0.533   1.206       1.123     0.082 -0.121     -0.164    0.043 0.087  -0.007       1.285         0.149            True
+  u56 SLV25           band3-dg 10.000  0.586   1.253       1.193     0.060 -0.096     -0.138    0.042 0.072  -0.011       1.369         0.149            True
+  u56 EWall           band3-dg 25.000  0.533   1.168       1.112     0.056 -0.121     -0.164    0.043 0.084  -0.009       1.248         0.123            True
+  u56 EWall            g200-dg 10.000  0.532   1.171       1.123     0.048 -0.120     -0.164    0.044 0.082  -0.012       1.263         0.127            True
+  u56 TOP40           band3-dg 25.000  0.641   1.135       1.095     0.040 -0.158     -0.187    0.029 0.104  -0.006       1.199         0.106           False
+  u56 SLV50          ebud-0.10 25.000  0.743   1.165       1.133     0.032 -0.130     -0.129   -0.001 0.075   0.003       1.230         0.007            True
+broad SLV50          ebud-0.10 25.000  0.743   1.197       1.166     0.031 -0.136     -0.135   -0.001 0.080   0.003       1.225         0.006            True
+  u56 SLV25            g200-dg 10.000  0.586   1.220       1.193     0.026 -0.097     -0.138    0.040 0.069  -0.015       1.349         0.129            True
+  u56 SLV50          ebud-0.10 10.000  0.743   1.263       1.239     0.024 -0.129     -0.128   -0.001 0.082   0.002       1.316         0.005            True
+broad SLV25           vol60-dg 10.000  0.729   1.223       1.200     0.023 -0.147     -0.190    0.043 0.100  -0.010       1.228         0.034           False
+broad SLV50          ebud-0.10 10.000  0.743   1.292       1.269     0.023 -0.136     -0.134   -0.001 0.087   0.002       1.311         0.005            True
+  u56 SLV25           band3-dg 25.000  0.586   1.165       1.148     0.017 -0.096     -0.138    0.041 0.067  -0.013       1.291         0.110            True
+  u56 SLV25           band3-rw 10.000  0.749   1.209       1.194     0.015 -0.143     -0.174    0.030 0.099  -0.008       1.273         0.054           False
+  u56 SLV25           vol60-dg 10.000  0.727   1.208       1.194     0.014 -0.133     -0.169    0.036 0.094  -0.009       1.281         0.062            True
+broad SLV25           vol60-dg 25.000  0.729   1.166       1.156     0.010 -0.147     -0.191    0.043 0.095  -0.011       1.175         0.019            True
+  u56 SLV50          ebud-0.20 25.000  0.747   1.143       1.133     0.009 -0.130     -0.130   -0.000 0.074   0.001       1.223        -0.000            True
+broad SLV50          ebud-0.20 25.000  0.747   1.175       1.166     0.009 -0.136     -0.136   -0.000 0.078   0.001       1.219        -0.000            True
+broad SLV50 ddctl-8/.5/recover 25.000  0.704   1.175       1.166     0.009 -0.112     -0.128    0.016 0.069  -0.004       1.228         0.009            True
+broad SLV50           vol60-dg 10.000  0.735   1.277       1.269     0.008 -0.106     -0.133    0.028 0.076  -0.008       1.338         0.031            True
+  u56 SLV50          ebud-0.20 10.000  0.747   1.246       1.239     0.007 -0.129     -0.129   -0.000 0.081   0.001       1.311        -0.000            True
+
+    the 10 class members with the WORST margin (these the rule deletes first):
+panel  book             arm   cost  gross  Sharpe  lad_Sharpe  d_Sharpe  MaxDD  lad_MaxDD  d_MaxDD  CAGR  d_CAGR  OOS_Sharpe  d_OOS_Sharpe  lad_floor_only
+  u56 TOP40 ddctl-8/.5/high 10.000  0.582   0.930       1.151    -0.221 -0.154     -0.171    0.016 0.085  -0.021       0.998        -0.152            True
+broad SLV25       v1gate-rw 25.000  0.749   0.943       1.156    -0.213 -0.142     -0.195    0.053 0.075  -0.034       0.963        -0.193           False
+  u56 SLV25 ddctl-8/.5/high 10.000  0.617   1.011       1.194    -0.183 -0.143     -0.144    0.001 0.071  -0.016       0.934        -0.286            True
+  u56 TOP20 ddctl-8/.5/high 10.000  0.555   0.997       1.171    -0.173 -0.166     -0.169    0.003 0.099  -0.016       1.034        -0.133           False
+broad SLV25         g200-rw 25.000  0.749   0.984       1.156    -0.172 -0.159     -0.195    0.036 0.082  -0.027       1.020        -0.136           False
+broad SLV50       v1gate-dg 10.000  0.634   1.101       1.269    -0.168 -0.071     -0.116    0.044 0.050  -0.022       1.258        -0.049            True
+broad EWall ddctl-8/.5/high 25.000  0.574   0.946       1.111    -0.165 -0.174     -0.199    0.025 0.084  -0.023       1.008        -0.084           False
+broad EWall ddctl-8/.5/high 10.000  0.581   0.969       1.122    -0.152 -0.173     -0.201    0.028 0.087  -0.023       1.036        -0.067           False
+broad SLV50        band3-rw 25.000  0.749   1.015       1.166    -0.151 -0.110     -0.136    0.026 0.063  -0.015       1.115        -0.104            True
+  u56 SLV25         g200-rw 25.000  0.749   1.001       1.149    -0.147 -0.152     -0.174    0.021 0.082  -0.021       1.057        -0.124            True
+
+========================================================================================================================================================================================================
+(2) THE LADDER POINTS THEMSELVES — is `4b-defensive` a property of de-grossing?
+    matched ladder points that are `4b-defensive`: 132 of 748 (17.6%)
+    matched ladder points that PASS 4b outright: 61 of 748 (8.2%)
+
+    arm class membership (rows) vs its matched ladder point's (cols):
+lad_floor_only  False  True 
+floor_only                  
+False             582     27
+True               34    105
+
+    arms in the class whose ladder point is NOT: 34   |   ladder points in the class whose arm is NOT: 27
+
+    ladder-point class rate by book (pure de-grossing, no overlay at all):
+            n  lad_class  arm_class  mean_lad_m
+book                                           
+EWall 102.000      0.176      0.255       0.880
+SLV25  68.000      0.574      0.735       0.930
+SLV50  68.000      1.000      0.765       0.955
+TOP10 102.000      0.010      0.000       0.919
+TOP20 102.000      0.020      0.010       0.929
+TOP40 102.000      0.039      0.098       0.924
+TOP5  102.000      0.000      0.000       0.900
+V1u   102.000      0.000      0.000       0.903
+
+========================================================================================================================================================================================================
+(3) RULE 8 WALK-FORWARD — parameters chosen on 2009-2016, 2017-2026 read once
+    cells pool ALL books within a (panel, cost) pair; S3L is the proposed screen.
+panel   cost sel   eps   stat  n_admitted                     pick  OOS_CAGR  OOS_Sharpe  OOS_MaxDD beat_spy beat_v2 beat_ctl  oos_rank
+  u56 10.000  S0   NaN      -         136            TOP5/band3-rw     0.229       1.034     -0.285     True   False    False    90.000
+  u56 10.000  S1   NaN      -          25            TOP20/control     0.166       1.168     -0.222     True   False     True    53.000
+  u56 10.000  S2   NaN      -          53          SLV50/ebud-0.10     0.089       1.316     -0.129     True    True     True    10.000
+  u56 10.000  S3   NaN      -          28          SLV50/ebud-0.10     0.089       1.316     -0.129     True    True     True    10.000
+  u56 10.000 S3L 0.000 sharpe           4          SLV50/ebud-0.10     0.089       1.316     -0.129     True    True     True    10.000
+  u56 10.000 S3L 0.050 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 10.000 S3L 0.100 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 10.000 S3L 0.150 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 10.000 S3L 0.000    dom           1           SLV25/abs12-rw     0.100       1.111     -0.155     True   False    False    78.000
+  u56 10.000 S3L 0.050    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 10.000 S3L 0.100    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 10.000 S3L 0.150    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 25.000  S0   NaN      -         136            TOP5/abs12-dg     0.207       0.954     -0.285     True   False    False    84.000
+  u56 25.000  S1   NaN      -          14          TOP40/ebud-0.10     0.134       1.094     -0.217     True   False    False    47.000
+  u56 25.000  S2   NaN      -          26          TOP40/ebud-0.10     0.134       1.094     -0.217     True   False    False    47.000
+  u56 25.000  S3   NaN      -          12          SLV25/ebud-0.10     0.110       1.181     -0.174     True   False     True    23.000
+  u56 25.000 S3L 0.000 sharpe           1          SLV25/ebud-0.10     0.110       1.181     -0.174     True   False     True    23.000
+  u56 25.000 S3L 0.050 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 25.000 S3L 0.100 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 25.000 S3L 0.150 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 25.000 S3L 0.000    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 25.000 S3L 0.050    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 25.000 S3L 0.100    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+  u56 25.000 S3L 0.150    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 10.000  S0   NaN      -         136          SLV50/ebud-0.10     0.089       1.311     -0.136     True    True     True     3.000
+broad 10.000  S1   NaN      -          35          SLV25/ebud-0.10     0.115       1.194     -0.195     True    True     True    24.000
+broad 10.000  S2   NaN      -          63          SLV50/ebud-0.10     0.089       1.311     -0.136     True    True     True     3.000
+broad 10.000  S3   NaN      -          28          SLV50/ebud-0.10     0.089       1.311     -0.136     True    True     True     3.000
+broad 10.000 S3L 0.000 sharpe           3          SLV50/ebud-0.10     0.089       1.311     -0.136     True    True     True     3.000
+broad 10.000 S3L 0.050 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 10.000 S3L 0.100 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 10.000 S3L 0.150 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 10.000 S3L 0.000    dom           1           SLV25/vol60-dg     0.100       1.228     -0.147     True    True     True    19.000
+broad 10.000 S3L 0.050    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 10.000 S3L 0.100    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 10.000 S3L 0.150    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 25.000  S0   NaN      -         136          SLV25/ebud-0.10     0.111       1.156     -0.195     True    True     True    11.000
+broad 25.000  S1   NaN      -           6          SLV25/ebud-0.10     0.111       1.156     -0.195     True    True     True    11.000
+broad 25.000  S2   NaN      -          19          SLV25/ebud-0.10     0.111       1.156     -0.195     True    True     True    11.000
+broad 25.000  S3   NaN      -          13          SLV50/ebud-0.10     0.083       1.225     -0.136     True    True     True     3.000
+broad 25.000 S3L 0.000 sharpe           1          SLV50/ebud-0.10     0.083       1.225     -0.136     True    True     True     3.000
+broad 25.000 S3L 0.050 sharpe           1          SLV50/ebud-0.10     0.083       1.225     -0.136     True    True     True     3.000
+broad 25.000 S3L 0.100 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 25.000 S3L 0.150 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 25.000 S3L 0.000    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 25.000 S3L 0.050    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 25.000 S3L 0.100    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+broad 25.000 S3L 0.150    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000  S0   NaN      -         102            EWall/control     0.101       0.637     -0.362    False    True    False    43.000
+small 10.000  S1   NaN      -           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000  S2   NaN      -           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000  S3   NaN      -           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000 S3L 0.000 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000 S3L 0.050 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000 S3L 0.100 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000 S3L 0.150 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000 S3L 0.000    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000 S3L 0.050    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000 S3L 0.100    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 10.000 S3L 0.150    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000  S0   NaN      -         102 EWall/ddctl-8/.5/recover     0.076       0.683     -0.234    False    True     True     8.000
+small 25.000  S1   NaN      -           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000  S2   NaN      -           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000  S3   NaN      -           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000 S3L 0.000 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000 S3L 0.050 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000 S3L 0.100 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000 S3L 0.150 sharpe           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000 S3L 0.000    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000 S3L 0.050    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000 S3L 0.100    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+small 25.000 S3L 0.150    dom           0                   (none)       NaN         NaN        NaN      NaN     NaN      NaN       NaN
+
+    selector summary (means over the 6 panel x cost cells):
+                 cells  picks  n_admitted  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  beat_spy  beat_v2  beat_ctl  mean_rank
+sel eps  stat                                                                                                     
+S0  NaN  -       6.000  6.000     124.667     0.135       0.962     -0.249     4.000    4.000     3.000     39.833
+S1  NaN  -       6.000  4.000      13.333     0.131       1.153     -0.207     4.000    2.000     3.000     33.750
+S2  NaN  -       6.000  4.000      26.833     0.106       1.219     -0.169     4.000    3.000     3.000     17.750
+S3  NaN  -       6.000  4.000      13.500     0.093       1.258     -0.144     4.000    3.000     4.000      9.750
+S3L 0.00 dom     6.000  2.000       0.333     0.100       1.169     -0.151     2.000    1.000     1.000     48.500
+         sharpe  6.000  4.000       1.500     0.093       1.258     -0.144     4.000    3.000     4.000      9.750
+    0.05 dom     6.000  0.000       0.000       NaN         NaN        NaN     0.000    0.000     0.000        NaN
+         sharpe  6.000  1.000       0.167     0.083       1.225     -0.136     1.000    1.000     1.000      3.000
+    0.10 dom     6.000  0.000       0.000       NaN         NaN        NaN     0.000    0.000     0.000        NaN
+         sharpe  6.000  0.000       0.000       NaN         NaN        NaN     0.000    0.000     0.000        NaN
+    0.15 dom     6.000  0.000       0.000       NaN         NaN        NaN     0.000    0.000     0.000        NaN
+         sharpe  6.000  0.000       0.000       NaN         NaN        NaN     0.000    0.000     0.000        NaN
+
+    references (means over cells): SPY OOS 15.45% / 0.882 / -33.72% | RULES v2 (live) OOS 6.94% / 0.966 / -13.11% | RULES v1 OOS Sharpe 0.451 | ungated EWall control OOS Sharpe 0.952
+
+    PAIRED: does the ladder screen change S3's pick, and does it help?
+  stat    eps  cells  picks_moved  empty_cells  mean_d_OOS_Sharpe   min_d   max_d
+sharpe 0.0000      6            0            2             0.0000  0.0000  0.0000
+sharpe 0.0500      6            3            5             0.0000  0.0000  0.0000
+sharpe 0.1000      6            4            6                NaN     NaN     NaN
+sharpe 0.1500      6            4            6                NaN     NaN     NaN
+   dom 0.0000      6            4            4            -0.1441 -0.2051 -0.0831
+   dom 0.0500      6            4            6                NaN     NaN     NaN
+   dom 0.1000      6            4            6                NaN     NaN     NaN
+   dom 0.1500      6            4            6                NaN     NaN     NaN
+
+========================================================================================================================================================================================================
+(4) BOTH KEEP PATHS on all rows
+    4a vs RULES v2 (live): 4 of 748
+    4a vs RULES v1 (continuity): 314 of 748
+    4b: 59 of 748
+panel  book 
+broad  EWall     6
+       SLV25     6
+       TOP40     6
+u56    EWall     8
+       SLV25     3
+       TOP10     1
+       TOP20    15
+       TOP40    11
+       TOP5      3
+
+    best 4b passes (and whether each beats its OWN matched ladder point):
+panel  book       arm   cost  gross  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  lad_Sharpe  d_Sharpe  d_MaxDD  lad_pass4b    TO
+  u56 TOP40  band3-rw 10.000  0.660 0.114   1.211 -0.157 1.250 1.186       1.276       1.151     0.060    0.035        True 3.453
+broad SLV25 ebud-0.10 10.000  0.749 0.114   1.202 -0.195 1.288 1.128       1.194       1.200     0.002   -0.000        True 2.646
+broad SLV25   control 10.000  0.749 0.114   1.200 -0.195 1.283 1.128       1.194       1.200     0.000    0.000        True 2.691
+broad SLV25 ebud-0.20 10.000  0.749 0.114   1.200 -0.195 1.283 1.128       1.194       1.200     0.000    0.000        True 2.691
+  u56 TOP40  band3-dg 10.000  0.641 0.111   1.197 -0.158 1.233 1.175       1.261       1.151     0.046    0.029        True 3.773
+  u56 SLV25 ebud-0.10 10.000  0.749 0.107   1.196 -0.174 1.236 1.170       1.220       1.194     0.003   -0.000        True 2.601
+  u56 SLV25   control 10.000  0.749 0.107   1.194 -0.174 1.230 1.170       1.220       1.194     0.000    0.000        True 2.646
+  u56 SLV25 ebud-0.20 10.000  0.749 0.107   1.194 -0.174 1.230 1.170       1.220       1.194     0.000    0.000        True 2.646
+  u56 TOP40   g200-dg 10.000  0.642 0.107   1.176 -0.154 1.182 1.178       1.267       1.151     0.025    0.033        True 4.818
+  u56 TOP40   g200-rw 10.000  0.657 0.107   1.168 -0.154 1.177 1.166       1.258       1.151     0.017    0.037        True 4.879
+  u56 EWall  band3-rw 10.000  0.750 0.122   1.161 -0.177 1.210 1.129       1.203       1.124     0.037    0.048       False 4.315
+broad SLV25 ebud-0.10 25.000  0.749 0.109   1.159 -0.195 1.238 1.092       1.156       1.156     0.003   -0.000        True 2.646
+
+    cross-cell survivors (4b in all four u56/broad x 10/25bps cells): EWall/band3-rw, EWall/vol60-dg
+
+    4a(v2) passes:
+panel  book 
+broad  SLV25    1
+       SLV50    3
+
+Wrote 2026-09-07_is-a-class-member-just-its-own-ladder-point_B.{grid,walkforward,survival,paired}.csv and .console.txt
