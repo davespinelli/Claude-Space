@@ -2,6 +2,11 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-07 | 40694981 | Website Chatbot Reply Automation | $1,150 | 58 | drafted |
+| 2026-09-07 | 40693615 | Excel Form Submission Automation | $680 | 23 | drafted |
+| 2026-09-07 | 40695354 | Investment Returns Data Entry | $245 | 4 | drafted |
+| 2026-09-07 | 40695444 | Extract PDF Tables to Excel | $240 | 8 | drafted |
+| 2026-09-07 | 40692150 | SQL Operational Report Generation | $235 | 25 | drafted |
 | 2026-09-07 | 40694775 | n8n Workflow Automation for Legal Leads | $560 | 138 | drafted |
 | 2026-09-07 | 40694849 | Interactive Website, Data Analysis, AI/ML Model | $290 | 21 | drafted |
 | 2026-09-06 | 40694576 | Football Statistics Website from PostgreSQL | $2,200 | 86 | drafted |
@@ -151,5 +156,10 @@ Note for the 2026-09-06 10:55 UTC batch: freelancer.com is still blocked by the 
 Note for the 2026-09-06 15:28 UTC batch: nine NEW rows, four drafted and five skipped for the reasons above. Freelancer.com remains blocked by the session network policy, so these were written from the descriptions the scanner captured. Two of the nine NEW rows are the same client reposting the 45-file Excel job already drafted as 40690897, so the batch is four rather than eight by supply, not by the per-run cap.
 
 Note for the 2026-09-07 00:45 UTC batch: the 2026-09-06 20:24 UTC scan is the latest available and carried six NEW rows, of which two were drafted and four skipped for the reasons above. Both freelancer.com and its public API are still blocked by the session network policy, so these were written from the truncated descriptions the scanner captured, and the scan cannot be refreshed from here. The batch is two by supply, not by the eight per run cap: every other shortlist row is already drafted or already skipped, and the one remaining untriaged row (Activate UK Windows/Doors Installer Database) has no id or description to file against.
+
+- Daily Excel Sales Data Entry (40695040) (third posting of the same evening sales workbook brief already drafted as 40692118 on 2026-09-05, after 40694606 was skipped for the same reason. Worth noting for David: this one sits in a wider $132–$397 band with 11 bids, so the existing 40692118 draft can be repriced upward and submitted there)
+- Input Kontak Pelanggan ke Excel (40693686) (Indonesian-language posting and delivery, same reason as the earlier Indonesian data entry rows, and the work is transcribing 100 to 500 personal customer contact records)
+
+Note for the 2026-09-07 04:42 UTC batch: seven NEW rows, five drafted and two skipped for the reasons above. The batch is five by supply, not by the eight per run cap: every other shortlist row is already drafted or already skipped. Freelancer.com and its public API remain blocked by the session network policy, so these were written from the truncated descriptions the scanner captured. Two of the five carry a broken upper budget bound in the shortlist ($530–$0 and $1,000–$0), so they were priced just above the lower bound rather than in the upper half of an unknown range.
 
 Note for 2026-09-06: the 20:20 UTC scan carried only three NEW rows, one of which is a C#/.NET job we skipped. Expand Campus AI (40686904) was an older shortlist row never triaged either way; it has budget and bid data but no captured description, so the proposal is written to the job title and asks what the stack is rather than assuming. Earlier 09-03 backlog rows in seen.csv still carry no budget, bid or URL data, and the previous JOBS.md scans are not recoverable from git history, so they remain undrafted rather than priced blind.
