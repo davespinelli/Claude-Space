@@ -16,7 +16,7 @@
 | 2026-09-07 | 40695354 | Investment Returns Data Entry | $245 | 4 | drafted |
 | 2026-09-07 | 40695444 | Extract PDF Tables to Excel | $240 | 8 | drafted |
 | 2026-09-07 | 40692150 | SQL Operational Report Generation | $235 | 25 | drafted |
-| 2026-09-07 | 40694775 | n8n Workflow Automation for Legal Leads | $560 | 138 | drafted |
+| 2026-09-07 | 40694775 | n8n Workflow Automation for Legal Leads | $560 | 138 | submitted 2026-09-07 ($560, rank 100+/239) |
 | 2026-09-07 | 40694849 | Interactive Website, Data Analysis, AI/ML Model | $290 | 21 | drafted |
 | 2026-09-06 | 40694576 | Football Statistics Website from PostgreSQL | $2,200 | 86 | drafted |
 | 2026-09-06 | 40694223 | Automotive Excel Data Cleanup & Reporting | $245 | 11 | drafted |
