@@ -97,6 +97,7 @@
 
 
 ## In progress
+135. is-a-class-member-just-its-own-ladder-point — idea 133 measured that forcing 0.53 mean gross moves TOP20 from 1 class member to 34 and TOP40 from 10 to 52, i.e. de-grossing manufactures membership, while V1u/TOP5 join at no gross level and the sleeve books at every one. A mean-gross column may not be enough to separate them. Test the explicit control: price every class member against its OWN book's static-gross ladder point at matched mean gross, and propose that a `4b-defensive` row must beat that point to be recorded at all. Bears on idea 131. Max 2 params. (2026-09-05; claimed 2026-09-07, lane B)
 
 
 
