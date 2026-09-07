@@ -31,7 +31,7 @@
 | 2026-09-06 | 40693911 | Excel Data Error Correction | $235 | 10 | drafted |
 | 2026-09-06 | 40693579 | Excel Form Automation via SQL | $1,400 | 11 | drafted |
 | 2026-09-06 | 40693471 | Daily Order Status Entry | $230 | 4 | drafted |
-| 2026-09-06 | 40693466 | Claude AI Expert for Dev Team Upskilling | $600 | 53 | drafted |
+| 2026-09-06 | 40693466 | Claude AI Expert for Dev Team Upskilling | $600 | 53 | submitted 2026-09-07 ($600, rank 81/83) |
 | 2026-09-06 | 40693390 | Small-Business Website AI Chatbot | $820 | 123 | drafted |
 | 2026-09-06 | 40692810 | Real-Data Trading Bot Optimization & Validation | $290 | 73 | drafted |
 | 2026-09-06 | 40693155 | Website Customer-Support Chatbot | $270 | 164 | drafted |
