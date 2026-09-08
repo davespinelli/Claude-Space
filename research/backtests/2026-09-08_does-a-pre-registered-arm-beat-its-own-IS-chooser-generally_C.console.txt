@@ -1,0 +1,268 @@
+# 2026-09-08_does-a-pre-registered-arm-beat-its-own-IS-chooser-generally_C
+# PROTOCOL: 10 bps rung (0/25 reported), t+1 execution, IS <= 2016-12-31, OOS >= 2017-01-01
+
+========================================================================================================================
+PART A — idea 232's own instance, every arm on the (mean, hit) plane
+========================================================================================================================
+  cells 84 (key x gross x panel x bps), balanced ladder 10 arms: GATE_OFF/n10, GATE_OFF/n20, GATE_OFF/n30, GATE_OFF/n40, GATE_OFF/n5, GATE_ON/n10, GATE_ON/n20, GATE_ON/n30, GATE_ON/n40, GATE_ON/n5
+  [G4] rebuild vs lane B's published walk-forward: |d A0| 0.000e+00, |d A1| 0.000e+00, |d S1| 0.000e+00, S1 pick identical 100.0% of 84 cells
+  [G3] premise: A1-A0 mean +0.0621 hit 88.1% | S1-A0 mean +0.0978 hit 66.7% [queue quotes +0.0621 / 88.1% and +0.0978 / 66.7%]
+
+  comparand = POOLMEAN
+    object                                  mean      hit       sd    skew  q(vs MATCHED)   q(vs WIDE)
+    ARM GATE_OFF/n10                     -0.0483    22.6%   0.1100   +0.95       DOMINATE     DOMINATE
+    ARM GATE_OFF/n20                     +0.0438    83.3%   0.0873   +0.07           LOSE      DIVERGE
+    ARM GATE_OFF/n30                     +0.0878    95.2%   0.0679   +1.02           LOSE         LOSE
+    ARM GATE_OFF/n40                     +0.1399   100.0%   0.0847   +0.71           LOSE         LOSE
+    ARM GATE_OFF/n5                      -0.0604    44.0%   0.1646   -0.60       DOMINATE     DOMINATE
+    ARM GATE_ON/n10                      -0.1260     0.0%   0.0593   +0.27       DOMINATE     DOMINATE
+    ARM GATE_ON/n20                      -0.0184    45.2%   0.0538   -0.63       DOMINATE     DOMINATE
+    ARM GATE_ON/n30                      +0.0437    64.3%   0.0925   -0.08        REVERSE     DOMINATE
+    ARM GATE_ON/n40                      +0.1007    83.3%   0.1235   -0.25           LOSE         LOSE
+    ARM GATE_ON/n5                       -0.1628    10.7%   0.1282   -0.33       DOMINATE     DOMINATE
+    CHOOSER-MATCHED (n20 ladder)         +0.0327    78.6%   0.0869   +0.43                            
+    CHOOSER-WIDE (gate x n)              +0.0795    66.7%   0.1312   +0.24                            
+
+  comparand = CONTROL
+    object                                  mean      hit       sd    skew  q(vs MATCHED)   q(vs WIDE)
+    ARM GATE_OFF/n10                     -0.0299    33.3%   0.1549   +0.66       DOMINATE     DOMINATE
+    ARM GATE_OFF/n20                     +0.0621    88.1%   0.0924   +1.84           LOSE      DIVERGE
+    ARM GATE_OFF/n30                     +0.1062   100.0%   0.0550   +0.57           LOSE         LOSE
+    ARM GATE_OFF/n40                     +0.1583   100.0%   0.0616   +0.18           LOSE         LOSE
+    ARM GATE_OFF/n5                      -0.0421    48.8%   0.2086   -0.30       DOMINATE     DOMINATE
+    ARM GATE_ON/n10                      -0.1076    16.7%   0.1076   +0.40       DOMINATE     DOMINATE
+    ARM GATE_ON/n20                      +0.0000     0.0%   0.0000    +nan       DOMINATE     DOMINATE
+    ARM GATE_ON/n30                      +0.0621    83.3%   0.0639   -0.02           LOSE      DIVERGE
+    ARM GATE_ON/n40                      +0.1191    83.3%   0.0939   -0.32           LOSE         LOSE
+    ARM GATE_ON/n5                       -0.1445    16.7%   0.1639   +0.05       DOMINATE     DOMINATE
+    CHOOSER-MATCHED (n20 ladder)         +0.0510    57.1%   0.0965   +1.90                            
+    CHOOSER-WIDE (gate x n)              +0.0978    66.7%   0.1461   -0.14                            
+
+  picks: MATCHED {'GATE_OFF/n20': np.int64(58), 'GATE_ON/n20': np.int64(26)}
+  picks: WIDE    {'GATE_OFF/n40': np.int64(29), 'GATE_OFF/n10': np.int64(14), 'GATE_OFF/n20': np.int64(14), 'GATE_OFF/n5': np.int64(14), 'GATE_ON/n30': np.int64(10), 'GATE_OFF/n30': np.int64(2), 'GATE_ON/n40': np.int64(1)}
+  the WIDE chooser reaches the n=5 corner in 16.7% of cells; the MATCHED chooser cannot reach it at all (its ladder is the 2 gate arms at n=20).
+
+  [A2] the queue's own mechanism, tested on its own instance: mean and hit rate are
+       BOTH linear in the pick mixture, so decompose each by the arm picked (comparand = CONTROL)
+    picked arm          freq  mean|pick  hit|pick  share of mean  share of hit
+    GATE_OFF/n10       16.7%    -0.0419      0.0%          -7.1%          0.0%
+    GATE_OFF/n20       16.7%    +0.2567    100.0%          43.7%         25.0%
+    GATE_OFF/n30        2.4%    +0.0861    100.0%           2.1%          3.6%
+    GATE_OFF/n40       34.5%    +0.2069    100.0%          73.0%         51.8%
+    GATE_OFF/n5        16.7%    -0.1137      0.0%         -19.4%          0.0%
+    GATE_ON/n30        11.9%    +0.0393    100.0%           4.8%         17.9%
+    GATE_ON/n40         1.2%    +0.2349    100.0%           2.9%          1.8%
+    TOTAL                               +0.0978     66.7%
+    THIN corner picks (n<=10, 33.3% of cells): mean -0.0778, hit 0.0% | the rest: mean +0.1856, hit 100.0%
+    drop the corner picks and re-price the same chooser: mean +0.1856 vs the pre-registered arm's +0.0621, hit 100.0% vs 88.1%
+
+========================================================================================================================
+PART B — census over 1876 committed CSVs under research/backtests
+========================================================================================================================
+  file tiers: instance 201, no_IS_or_OOS_Sharpe_column 1405, no_admissible_split 168, too_few_balanced_cells 102
+  instances (primary split): 201 files, 207 (instance x comparand) rows; 164 files admit >1 split (238 sensitivity rows carried in .census.csv)
+
+  [comparand POOLMEAN] 201 instances, median 90 cells / 3 arms
+    chooser mean margin: median +0.0824, share > 0 90.5%; chooser hit rate: median 94.1%
+    position rule     n   DIVERGE   REVERSE  DOMINATE    LOSE   IDENT     d mean    d hit
+    CONTROL        6    66.7%      0.0%      0.0%   33.3%    0.0%    +0.0092    -6.3%   [DIVERGE vs its mirror REVERSE: 4-0, sign p 0.125]
+    MEDIAN       201    10.9%      2.5%     69.7%   13.4%    3.5%    +0.1099   +17.2%   [DIVERGE vs its mirror REVERSE: 22-5, sign p 0.00151]
+    LADMIN       201     2.5%      2.0%     41.3%   32.3%   21.9%    +0.0122    +9.6%   [DIVERGE vs its mirror REVERSE: 5-4, sign p 1]
+    LADMAX       201     3.5%      3.0%     67.7%   22.9%    3.0%    +0.1802   +47.9%   [DIVERGE vs its mirror REVERSE: 7-6, sign p 1]
+    vs the ladder's BEST-HIT arm (the strongest possible form of the queue's claim): DIVERGE 13.9%, LOSE 53.7%, DOMINATE 9.0%
+    corner mechanism — DIVERGE rate (vs MEDIAN rule) by ladder-endpoint pick share:
+      corner_share low   (median 0.17, n=67): DIVERGE 4.5%, chooser mean +0.0878, hit 80.4%
+      corner_share mid   (median 0.76, n=67): DIVERGE 26.9%, chooser mean +0.0828, hit 75.2%
+      corner_share high  (median 1.00, n=67): DIVERGE 1.5%, chooser mean +0.1162, hit 89.5%
+      corr(corner_share, chooser margin skew) = -0.076; corr(conc, DIVERGE) = -0.190
+
+  [comparand CONTROL] 6 instances, median 57 cells / 3 arms
+    chooser mean margin: median +0.0007, share > 0 66.7%; chooser hit rate: median 44.4%
+    position rule     n   DIVERGE   REVERSE  DOMINATE    LOSE   IDENT     d mean    d hit
+    CONTROL        6     0.0%     33.3%     66.7%    0.0%    0.0%    +0.0092   +34.7%   [DIVERGE vs its mirror REVERSE: 0-2, sign p 0.5]
+    MEDIAN         6     0.0%     33.3%     16.7%   50.0%    0.0%    +0.0056    +4.4%   [DIVERGE vs its mirror REVERSE: 0-2, sign p 0.5]
+    LADMIN         6    16.7%      0.0%     66.7%   16.7%    0.0%    +0.0897   +10.3%   [DIVERGE vs its mirror REVERSE: 1-0, sign p 1]
+    LADMAX         6     0.0%      0.0%     83.3%   16.7%    0.0%    +0.0299    +4.0%   [DIVERGE vs its mirror REVERSE: 0-0, sign p nan]
+    vs the ladder's BEST-HIT arm (the strongest possible form of the queue's claim): DIVERGE 16.7%, LOSE 66.7%, DOMINATE 16.7%
+    corner mechanism — DIVERGE rate (vs MEDIAN rule) by ladder-endpoint pick share:
+
+========================================================================================================================
+PART C — the live corpus: 3 panels x 7 families x 3 rungs, ladders built here
+========================================================================================================================
+
+[panel] u56: 56 cols 2008-01-02..2026-09-04, eval from 2009-01-13
+  [G1] fast vs engine: returns 6.939e-18 turnover 1.735e-16 | [G2] rung identity 0.000e+00
+
+[panel] broad: 136 cols 2008-01-02..2026-09-04, eval from 2009-01-13
+  [G1] fast vs engine: returns 1.041e-17 turnover 1.804e-16 | [G2] rung identity 0.000e+00
+
+[panel] small: 439 cols 2010-01-04..2026-09-04, eval from 2011-01-13
+  [G1] fast vs engine: returns 6.939e-18 turnover 1.110e-16 | [G2] rung identity 0.000e+00
+
+------------------------------------------------------------------------------------------------------------------------
+[C1] live cells: 378 (panel x family x rung x h x comparand), 369 arm rows, 63 rule-8 cells
+
+  [comparand POOLMEAN] chooser vs the four pre-registered position rules (ALL h and ALL rungs pooled; per-h table below)
+    rule        n |          MATCHED chooser           |            WIDE chooser           
+                  |  DIVERGE   DOMIN    LOSE     REV |  DIVERGE   DOMIN    LOSE     REV
+    CONTROL   189 |     5.3%   37.6%   51.9%    3.7% |     4.8%   31.7%   58.2%    5.3%   [DIVERGE vs REVERSE sign p: matched 0.629, wide 1]
+    MEDIAN    189 |    10.6%   43.4%   36.0%    5.3% |    10.1%   28.0%   55.0%    6.9%   [DIVERGE vs REVERSE sign p: matched 0.0987, wide 0.377]
+    LADMIN    189 |     2.6%   60.8%   29.1%    5.8% |     3.7%   52.4%   33.3%   10.6%   [DIVERGE vs REVERSE sign p: matched 0.21, wide 0.0192]
+    LADMAX    189 |     3.2%   36.0%   52.9%    1.6% |    11.1%   31.7%   53.4%    3.7%   [DIVERGE vs REVERSE sign p: matched 0.508, wide 0.0125]
+    means: MATCHED +0.0472 hit 63.1% skew -0.15 | WIDE +0.0303 hit 57.9% skew -0.47
+    the WIDE chooser leaves the family's own ladder in 65.2% of folds; corner-pick share MATCHED 43.5% vs WIDE 10.8%
+
+  [comparand CONTROL] chooser vs the four pre-registered position rules (ALL h and ALL rungs pooled; per-h table below)
+    rule        n |          MATCHED chooser           |            WIDE chooser           
+                  |  DIVERGE   DOMIN    LOSE     REV |  DIVERGE   DOMIN    LOSE     REV
+    CONTROL   189 |     0.0%   42.9%   13.8%   41.8% |     0.0%   36.5%    2.1%   61.4%   [DIVERGE vs REVERSE sign p: matched 3.31e-24, wide 2.41e-35]
+    MEDIAN    189 |    17.5%   36.5%   35.4%    5.8% |    10.6%   27.5%   38.1%   23.8%   [DIVERGE vs REVERSE sign p: matched 0.00126, wide 0.00263]
+    LADMIN    189 |    19.6%   43.9%   32.8%    2.1% |     8.5%   47.6%   37.0%    6.9%   [DIVERGE vs REVERSE sign p: matched 1.03e-07, wide 0.711]
+    LADMAX    189 |    11.6%   27.5%   40.7%   13.8% |    11.1%   31.7%   36.0%   21.2%   [DIVERGE vs REVERSE sign p: matched 0.665, wide 0.0204]
+    means: MATCHED +0.0188 hit 42.2% skew -0.54 | WIDE +0.0019 hit 50.3% skew -0.60
+    the WIDE chooser leaves the family's own ladder in 65.2% of folds; corner-pick share MATCHED 43.5% vs WIDE 10.8%
+
+  every grid point — DIVERGE rate (vs MEDIAN rule) by h, rung and panel [comparand POOLMEAN]:
+    h=1y rung=0bps n= 21: MATCHED 9.5% | WIDE 4.8%
+    h=1y rung=10bps n= 21: MATCHED 4.8% | WIDE 9.5%
+    h=1y rung=25bps n= 21: MATCHED 23.8% | WIDE 4.8%
+    h=2y rung=0bps n= 21: MATCHED 9.5% | WIDE 9.5%
+    h=2y rung=10bps n= 21: MATCHED 4.8% | WIDE 14.3%
+    h=2y rung=25bps n= 21: MATCHED 19.0% | WIDE 14.3%
+    h=3y rung=0bps n= 21: MATCHED 9.5% | WIDE 4.8%
+    h=3y rung=10bps n= 21: MATCHED 9.5% | WIDE 14.3%
+    h=3y rung=25bps n= 21: MATCHED 4.8% | WIDE 14.3%
+    panel broad  n= 63: MATCHED 14.3% | WIDE 3.2%
+    panel small  n= 63: MATCHED 6.3% | WIDE 27.0%
+    panel u56    n= 63: MATCHED 11.1% | WIDE 0.0%
+    family CADENCE   n= 27: MATCHED 25.9% | WIDE 22.2%  (corner_m 0.02, corner_w 0.01)
+    family GATE      n= 27: MATCHED 0.0% | WIDE 14.8%  (corner_m 0.38, corner_w 0.06)
+    family GROSS     n= 27: MATCHED 22.2% | WIDE 22.2%  (corner_m 0.85, corner_w 0.12)
+    family LOOKBACK  n= 27: MATCHED 3.7% | WIDE 3.7%  (corner_m 0.31, corner_w 0.06)
+    family MALEN     n= 27: MATCHED 3.7% | WIDE 3.7%  (corner_m 0.28, corner_w 0.00)
+    family VOLCAP    n= 27: MATCHED 18.5% | WIDE 3.7%  (corner_m 0.89, corner_w 0.19)
+    family WIDTH     n= 27: MATCHED 0.0% | WIDE 0.0%  (corner_m 0.31, corner_w 0.31)
+
+  [C2] the MECHANISM: is divergence a corner-reach effect?
+    MATCHED  DIVERGE 10.6% | corr(DIVERGE, corner share) +0.006 | corr(DIVERGE, pick concentration) -0.034 | corr(DIVERGE, chooser margin skew) +0.052
+      corner tercile low   (median 0.00, n=63): DIVERGE 7.9%, mean +0.0452, hit 63.3%
+      corner tercile mid   (median 0.33, n=63): DIVERGE 12.7%, mean +0.0181, hit 57.4%
+      corner tercile high  (median 0.92, n=63): DIVERGE 11.1%, mean +0.0783, hit 68.5%
+    WIDE     DIVERGE 10.1% | corr(DIVERGE, corner share) -0.129 | corr(DIVERGE, pick concentration) +0.131 | corr(DIVERGE, chooser margin skew) +0.222
+      corner tercile low   (median 0.00, n=63): DIVERGE 0.0%, mean -0.0627, hit 53.1%
+      corner tercile mid   (median 0.00, n=63): DIVERGE 25.4%, mean +0.1839, hit 68.2%
+      corner tercile high  (median 0.23, n=63): DIVERGE 4.8%, mean -0.0303, hit 52.4%
+
+  [C3] PAIRED matched-vs-wide (the pool-width test, same cells, same fixed arms):
+    crosstab DIVERGE(matched) x DIVERGE(wide):
+MEDIAN_qw  False  True 
+MEDIAN_qm              
+False        152     17
+True          18      2
+    discordant pairs: wide-only 17, matched-only 18, McNemar sign p 1
+    hit rate: MATCHED 63.1% vs WIDE 57.9% (paired d -5.2%, t -5.02); mean margin: MATCHED +0.0472 vs WIDE +0.0303 (paired d -0.0169, t -1.63)
+
+========================================================================================================================
+PART D — PROTOCOL rule 8: parameters on 2009-2016, 2017-2026 read ONCE
+========================================================================================================================
+  object       n  mean margin     hit  OOS Sharpe  OOS CAGR  OOS MaxDD   > SPY    > v2
+  CHM         63      +0.0244   63.5%      0.9410    10.63%    -19.37%   63.5%   23.8%
+  CHW         63      -0.0445   36.5%      0.8721    17.67%    -28.53%   50.8%   34.9%
+  CONTROL     63      +0.0450   73.0%      0.9616     8.04%    -14.30%   65.1%   14.3%
+  MEDIAN      63      +0.0174   76.2%      0.9340     8.48%    -15.98%   66.7%   27.0%
+  LADMIN      63      -0.0633   41.3%      0.8533     8.71%    -17.71%   55.6%   39.7%
+  LADMAX      63      +0.0198   55.6%      0.9364     8.33%    -16.00%   63.5%   17.5%
+  reference OOS: SPY Sharpe 0.8820 CAGR 15.45% MaxDD -33.72% | RULES v2 Sharpe 0.9848 CAGR 7.08% MaxDD -13.02% | RULES v1 Sharpe 0.5938 | pool-mean 0.9166 | ORACLE 1.0140
+  per-panel, at the PROTOCOL rung (10 bps), OOS Sharpe / CAGR / MaxDD:
+    u56    CHM 1.191/13.2%/-17.6%  CHW 1.039/23.0%/-28.5%  MEDIAN 1.215/10.2%/-13.7%  SPY 0.882/15.5%/-33.7%  v2 1.285
+    broad  CHM 1.062/11.2%/-16.5%  CHW 0.881/16.2%/-23.6%  MEDIAN 1.073/9.8%/-15.3%  SPY 0.882/15.5%/-33.7%  v2 1.119
+    small  CHM 0.585/8.1%/-24.4%  CHW 0.684/13.9%/-32.7%  MEDIAN 0.536/5.8%/-18.8%  SPY 0.882/15.5%/-33.7%  v2 0.566
+
+========================================================================================================================
+PART E — both KEEP paths (PROTOCOL 4a and 4b)
+========================================================================================================================
+  arms: 4a 13 of 369; 4b 38 of 369; 4b OOS 41 of 369
+  [4a caveat] 45 arm rows ARE the live RULES v2 book re-expressed (EW band3 at gross 0.75 weekly is a member of 5 of the 7 ladders); 10 of them 'pass' 4a against themselves on a float tie (fast_backtest vs engine.backtest differ at ~1e-17), so the honest 4a count is 3 of 324:
+    panel family  cost  arm     CAGR   Sharpe     MaxDD       H1       H2  OOS_Sharpe
+      u56  WIDTH   0.0 n=80 0.059771 1.236835 -0.083479 1.265095 1.221573    1.311874
+      u56  WIDTH  10.0 n=80 0.058489 1.211532 -0.083660 1.239441 1.196388    1.287116
+      u56  WIDTH  25.0 n=80 0.056570 1.173538 -0.083932 1.200916 1.158571    1.249939
+    every one is a DE-GROSSED variant of the live book (n=80 on a 56-name panel is gross 0.525, not a new signal) — idea 311's gross-scalar flag, not a candidate.
+    4b passes by panel {'u56': np.int64(26), 'broad': np.int64(12)}, family {'LOOKBACK': np.int64(20), 'WIDTH': np.int64(7), 'GATE': np.int64(6), 'GROSS': np.int64(5)}, rung {0.0: np.int64(16), 10.0: np.int64(14), 25.0: np.int64(8)}
+    the 4b passers:
+panel   family  cost          arm     CAGR   Sharpe     MaxDD  OOS_Sharpe
+  u56    GROSS   0.0      g=1.000 0.118509 1.230330 -0.158790    1.308769
+  u56    WIDTH   0.0         n=20 0.153564 1.227136 -0.196863    1.252245
+  u56    WIDTH   0.0         n=40 0.114853 1.238141 -0.157060    1.302118
+  u56     GATE   0.0   gate=vol60 0.117423 1.147069 -0.168745    1.200337
+  u56 LOOKBACK   0.0        lb=21 0.114044 1.203757 -0.158893    1.253422
+  u56 LOOKBACK   0.0        lb=63 0.143632 1.259155 -0.191300    1.340399
+  u56 LOOKBACK   0.0       lb=126 0.148005 1.196124 -0.192867    1.220649
+  u56 LOOKBACK   0.0       lb=189 0.142718 1.163349 -0.183894    1.176906
+  u56 LOOKBACK   0.0       lb=252 0.147045 1.212778 -0.185973    1.210419
+  u56 LOOKBACK   0.0 lb=composite 0.153564 1.227136 -0.196863    1.252245
+  u56    GROSS  10.0      g=1.000 0.115881 1.205450 -0.159110    1.284375
+  u56    WIDTH  10.0         n=20 0.143667 1.156990 -0.197561    1.188572
+  u56    WIDTH  10.0         n=40 0.110658 1.196917 -0.157539    1.260903
+  u56     GATE  10.0   gate=vol60 0.115872 1.133318 -0.168839    1.185832
+  u56 LOOKBACK  10.0        lb=63 0.130999 1.159579 -0.192476    1.247854
+  u56 LOOKBACK  10.0       lb=126 0.137913 1.123533 -0.193575    1.154459
+  u56 LOOKBACK  10.0       lb=189 0.134261 1.101924 -0.184660    1.120157
+  u56 LOOKBACK  10.0       lb=252 0.139454 1.156993 -0.186859    1.158891
+  u56 LOOKBACK  10.0 lb=composite 0.143667 1.156990 -0.197561    1.188572
+  u56    GROSS  25.0      g=1.000 0.111950 1.168092 -0.159590    1.247746
+  u56    WIDTH  25.0         n=20 0.128976 1.051522 -0.199113    1.092859
+  u56     GATE  25.0   gate=vol60 0.113550 1.112681 -0.168981    1.164058
+  u56 LOOKBACK  25.0       lb=126 0.122938 1.014423 -0.194635    1.054996
+  u56 LOOKBACK  25.0       lb=189 0.121689 1.009629 -0.185808    1.034888
+  u56 LOOKBACK  25.0       lb=252 0.128158 1.073163 -0.188188    1.081471
+  u56 LOOKBACK  25.0 lb=composite 0.128976 1.051522 -0.199113    1.092859
+broad    GROSS   0.0      g=1.000 0.110201 1.133365 -0.161202    1.146866
+broad    WIDTH   0.0         n=80 0.116164 1.140845 -0.170449    1.172333
+broad     GATE   0.0   gate=vol60 0.125120 1.150783 -0.186876    1.136057
+broad LOOKBACK   0.0        lb=21 0.120284 1.109682 -0.146206    1.200608
+broad LOOKBACK   0.0        lb=63 0.150441 1.107771 -0.171949    1.145007
+broad LOOKBACK   0.0       lb=126 0.182928 1.207029 -0.201456    1.109658
+broad    GROSS  10.0      g=1.000 0.107246 1.105693 -0.161577    1.117412
+broad    WIDTH  10.0         n=80 0.110209 1.087737 -0.170908    1.119924
+broad     GATE  10.0   gate=vol60 0.123594 1.138120 -0.186962    1.122455
+broad LOOKBACK  10.0        lb=63 0.130841 0.980162 -0.172741    1.021461
+broad LOOKBACK  10.0       lb=126 0.167755 1.120221 -0.202196    1.026799
+broad     GATE  25.0   gate=vol60 0.121309 1.119116 -0.187093    1.102038
+  binding 4b bar over all arms: {'CAGR': np.int64(171), 'H2': np.int64(76), 'H1': np.int64(70), 'DD': np.int64(52)}
+  chooser/position books: 4a 14 of 378 (0 once the live book's own rows are removed); 4b 34 of 378; 4b OOS 33 of 378
+    panel   family  cost     obj                  pick  OOS_Sharpe  OOS_CAGR  OOS_MaxDD
+  u56    GROSS   0.0     CHM         GROSS:g=1.000    1.308769  0.130459  -0.158790
+  u56    GROSS   0.0  LADMAX         GROSS:g=1.000    1.308769  0.130459  -0.158790
+  u56    WIDTH   0.0  MEDIAN            WIDTH:n=40    1.302118  0.128267  -0.157060
+  u56 LOOKBACK   0.0     CHM       LOOKBACK:lb=252    1.210419  0.160595  -0.185973
+  u56 LOOKBACK   0.0 CONTROL LOOKBACK:lb=composite    1.252245  0.169809  -0.196863
+  u56 LOOKBACK   0.0  MEDIAN       LOOKBACK:lb=189    1.176906  0.156366  -0.183894
+  u56 LOOKBACK   0.0  LADMIN        LOOKBACK:lb=21    1.253422  0.127677  -0.158893
+  u56 LOOKBACK   0.0  LADMAX LOOKBACK:lb=composite    1.252245  0.169809  -0.196863
+  u56    GROSS  10.0     CHM         GROSS:g=1.000    1.284375  0.127780  -0.159110
+  u56    GROSS  10.0  LADMAX         GROSS:g=1.000    1.284375  0.127780  -0.159110
+  u56    WIDTH  10.0  MEDIAN            WIDTH:n=40    1.260903  0.123785  -0.157539
+  u56 LOOKBACK  10.0     CHM       LOOKBACK:lb=252    1.158891  0.152841  -0.186859
+  u56 LOOKBACK  10.0 CONTROL LOOKBACK:lb=composite    1.188572  0.159980  -0.197561
+  u56 LOOKBACK  10.0  MEDIAN       LOOKBACK:lb=189    1.120157  0.147817  -0.184660
+  u56 LOOKBACK  10.0  LADMAX LOOKBACK:lb=composite    1.188572  0.159980  -0.197561
+  u56    GROSS  25.0     CHM         GROSS:g=1.000    1.247746  0.123774  -0.159590
+  u56    GROSS  25.0  LADMAX         GROSS:g=1.000    1.247746  0.123774  -0.159590
+  u56 LOOKBACK  25.0     CHM       LOOKBACK:lb=252    1.081471  0.141304  -0.188188
+  u56 LOOKBACK  25.0 CONTROL LOOKBACK:lb=composite    1.092859  0.145388  -0.199113
+  u56 LOOKBACK  25.0  MEDIAN       LOOKBACK:lb=189    1.034888  0.135110  -0.185808
+  u56 LOOKBACK  25.0  LADMAX LOOKBACK:lb=composite    1.092859  0.145388  -0.199113
+broad    GROSS   0.0     CHM         GROSS:g=1.000    1.146866  0.109676  -0.161202
+broad    GROSS   0.0  LADMAX         GROSS:g=1.000    1.146866  0.109676  -0.161202
+broad     GATE   0.0     CHM       GATE:gate=vol60    1.136057  0.121726  -0.186876
+broad LOOKBACK   0.0     CHM       LOOKBACK:lb=126    1.109658  0.176616  -0.201456
+broad LOOKBACK   0.0     CHW       LOOKBACK:lb=126    1.109658  0.176616  -0.201456
+broad LOOKBACK   0.0  LADMIN        LOOKBACK:lb=21    1.200608  0.137692  -0.146206
+broad    GROSS  10.0     CHM         GROSS:g=1.000    1.117412  0.106586  -0.161577
+broad    GROSS  10.0  LADMAX         GROSS:g=1.000    1.117412  0.106586  -0.161577
+broad     GATE  10.0     CHM       GATE:gate=vol60    1.122455  0.120111  -0.186962
+broad LOOKBACK  10.0     CHM       LOOKBACK:lb=126    1.026799  0.161280  -0.202196
+broad LOOKBACK  10.0     CHW       LOOKBACK:lb=126    1.026799  0.161280  -0.202196
+broad     GATE  25.0     CHM       GATE:gate=vol60    1.102038  0.117694  -0.187093
+broad     GATE  25.0     CHW       GATE:gate=vol60    1.102038  0.117694  -0.187093
