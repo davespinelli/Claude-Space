@@ -1,0 +1,309 @@
+======================================================================================================================
+QUEUE idea 432 — why-does-the-IS-lift-slope-flip-between-GROSS-and-GATE   (lane C, 2026-09-08)
+======================================================================================================================
+PRE-REGISTERED: P1 signed slope-on-disp NOT reliably negative | P2 |slope| tracks 1/disp | P3 rho-on-disp
+  weaker than slope-on-disp | P4 idea 311 replicates in SIGN not at 0.006 | P5 the dispersion-gated
+  chooser does not beat always-abstaining OOS.
+2 tuned params: tau (abstention threshold, 11 points) x stat (sd | span).  Panels, rungs,
+  families, selectors, metrics are REPORTED axes.
+
+======================================================================================================================
+G0 — REPRODUCE idea 204's headline from ITS OWN committed walk-forward file
+======================================================================================================================
+  file: 2026-09-08_is-the-pool-sign-the-whole-selector-story_B.walkforward.csv  rows=324  cells=36  selectors=9
+  idea 204's own statement: 'per family, all rungs (excl. K_ANTI)' OLS(OOS_lift ~ IS_lift)
+    GROSS     n= 72  slope -0.5803  t -12.634  R2 0.6951
+    WIDTH     n= 72  slope -0.5637  t -3.039  R2 0.1166
+    CADENCE   n= 72  slope +0.5682  t +4.172  R2 0.1991
+    GATE      n= 72  slope +0.9836  t +10.746  R2 0.6226
+  QUOTED in QUEUE idea 432: GROSS -0.580, GATE +0.984.  REPRODUCED: GROSS -0.5803, GATE +0.9836   (|diff| 0.0003 / 0.0004)
+  G0 PASS — the flip the queue asks about is exactly this
+
+======================================================================================================================
+CORPUS — 3 panels x 7 families x 3 rungs = 63 pools, 41 arms/panel
+======================================================================================================================
+
+[panel] u56: 56 cols 2008-01-02..2026-09-04, eval from 2009-01-13
+  G1 fast_backtest vs engine.backtest: returns 6.939e-18  turnover 1.735e-16   | G5 rung identity 0.000e+00
+  SPY full 15.23%/0.889/-33.72% | OOS 15.45%/0.882/-33.72%
+  RULES v2 @10bps 8.66%/1.206/-12.05% | OOS 9.53%/1.285/-12.05%
+
+[panel] broad: 136 cols 2008-01-02..2026-09-04, eval from 2009-01-13
+  G1 fast_backtest vs engine.backtest: returns 1.041e-17  turnover 1.804e-16   | G5 rung identity 0.000e+00
+  SPY full 15.23%/0.889/-33.72% | OOS 15.45%/0.882/-33.72%
+  RULES v2 @10bps 8.03%/1.106/-12.24% | OOS 7.98%/1.119/-12.24%
+
+[panel] small: 439 cols 2010-01-04..2026-09-04, eval from 2011-01-13
+  G1 fast_backtest vs engine.backtest: returns 6.939e-18  turnover 1.110e-16   | G5 rung identity 0.000e+00
+  SPY full 14.13%/0.862/-33.72% | OOS 15.45%/0.882/-33.72%
+  RULES v2 @10bps 3.80%/0.571/-14.70% | OOS 3.84%/0.566/-14.70%
+
+  arm-rows: 369  (63 pools)
+
+======================================================================================================================
+Q4 — IDEA 311's PREMISE, MEASURED.  IS-Sharpe dispersion of each pool.
+======================================================================================================================
+
+  IS-Sharpe SPAN (max-min across the pool's arms), by family x panel, at 10 bps:
+panel     broad  small    u56
+family                       
+GROSS    0.0035 0.0038 0.0018
+WIDTH    0.1581 0.2311 0.1799
+CADENCE  0.0731 0.2157 0.0753
+GATE     0.1482 0.2957 0.1646
+MALEN    0.3045 0.3125 0.2927
+VOLCAP   0.1715 0.1205 0.2357
+LOOKBACK 0.5126 0.5071 0.2289
+
+  IS-Sharpe SD, by family x panel, at 10 bps:
+panel     broad  small    u56
+family                       
+GROSS    0.0013 0.0014 0.0006
+WIDTH    0.0537 0.0918 0.0685
+CADENCE  0.0339 0.0913 0.0359
+GATE     0.0621 0.1043 0.0599
+MALEN    0.1203 0.1181 0.1132
+VOLCAP   0.0621 0.0439 0.0836
+LOOKBACK 0.1773 0.2081 0.0781
+
+  by family, all panels and rungs (n=9 cells each):
+          span_mean  span_min  span_max  sd_mean  sd_min  sd_max
+family                                                          
+GROSS        0.0032    0.0009    0.0049   0.0011  0.0003  0.0018
+WIDTH        0.1928    0.1168    0.2449   0.0744  0.0526  0.1011
+CADENCE      0.1241    0.0606    0.2658   0.0554  0.0312  0.1129
+GATE         0.2121    0.1309    0.3804   0.0785  0.0481  0.1331
+MALEN        0.3238    0.1958    0.4676   0.1256  0.0725  0.1874
+VOLCAP       0.1914    0.0588    0.2889   0.0688  0.0193  0.1063
+LOOKBACK     0.4414    0.0922    0.7396   0.1648  0.0353  0.2666
+
+  IDEA 311's CLAIM 'Sharpe span <= 0.006 in g': GROSS span here is 0.0009..0.0049 (mean 0.0032) over 9 cells — <= 0.006 in 9 of 9 cells.
+  GROSS ranks 1 of 7 families by mean span (1 = narrowest). P4 CONFIRMED in sign
+
+======================================================================================================================
+Q1 — THE ASKED REGRESSION: per-family slope(OOS lift ~ IS lift) ON the family's own IS-Sharpe dispersion
+======================================================================================================================
+
+  (a) FAMILY level — idea 204's own unit, extended to 7 families (pick rows, all panels/rungs, excl. K_ANTI):
+           n   slope        t      r2      se     rho  span_mean  sd_mean
+family                                                                   
+GROSS     72 -0.5803 -12.6335 +0.6951 +0.0459 -0.8337    +0.0032  +0.0011
+WIDTH     72 -0.5637  -3.0391 +0.1166 +0.1855 -0.3414    +0.1928  +0.0744
+CADENCE   72 +0.5682  +4.1716 +0.1991 +0.1362 +0.4462    +0.1241  +0.0554
+GATE      72 +0.9836 +10.7458 +0.6226 +0.0915 +0.7890    +0.2121  +0.0785
+MALEN     72 +0.4391  +6.1244 +0.3489 +0.0717 +0.5907    +0.3238  +0.1256
+VOLCAP    72 +1.7650  +8.8127 +0.5260 +0.2003 +0.7252    +0.1914  +0.0688
+LOOKBACK  72 +0.2985  +6.1618 +0.3517 +0.0484 +0.5930    +0.4414  +0.1648
+
+    ASKED: slope ~ disp_sd    n=7  b +3.4156  t +0.490  R2 0.0458   [rho +0.2141]
+    ASKED: slope ~ disp_span  n=7  b +1.3754  t +0.533  R2 0.0537   [rho +0.2317]
+    n=7 is 7.  This is the queue's literal unit and it cannot carry a t; the cell-level form below is
+    the one with power, and both are reported.
+
+  (b) CELL level — one slope per (family, panel, rung); the queue's 'across panels and rungs'.
+      Two populations: PICKS (idea 204's own rows, 9 selectors, duplicates and all) and ARMS (every
+      arm in the pool — the population the selector draws from, and the better-identified one).
+
+    --- ALL 7 families  (n=63 cells) ---
+      PICK slope ~ disp_sd    n= 63  b   +3.9825  t  +1.236  R2 0.0244   rho +0.1563
+      PICK slope ~ disp_span  n= 63  b   +1.3132  t  +1.080  R2 0.0188   rho +0.1369
+      ARM  slope ~ disp_sd    n= 63  b   +1.8212  t  +0.682  R2 0.0076   rho +0.0870
+      ARM  slope ~ disp_span  n= 63  b   +0.5446  t  +0.541  R2 0.0048   rho +0.0691
+
+    --- CORE only (idea 204's exact 4 families x 3 panels x 3 rungs)  (n=36 cells) ---
+      PICK slope ~ disp_sd    n= 36  b  +11.0314  t  +1.631  R2 0.0726   rho +0.2694
+      PICK slope ~ disp_span  n= 36  b   +3.1075  t  +1.205  R2 0.0410   rho +0.2024
+      ARM  slope ~ disp_sd    n= 36  b   +6.6812  t  +1.104  R2 0.0346   rho +0.1860
+      ARM  slope ~ disp_span  n= 36  b   +1.5493  t  +0.675  R2 0.0132   rho +0.1150
+
+    --- EXT only (the 3 new families — out-of-corpus replication)  (n=27 cells) ---
+      PICK slope ~ disp_sd    n= 27  b   +0.1726  t  +0.036  R2 0.0001   rho +0.0072
+      PICK slope ~ disp_span  n= 27  b   +0.0957  t  +0.052  R2 0.0001   rho +0.0103
+      ARM  slope ~ disp_sd    n= 27  b   -4.2163  t  -1.283  R2 0.0618   rho -0.2486
+      ARM  slope ~ disp_span  n= 27  b   -1.6087  t  -1.266  R2 0.0602   rho -0.2455
+
+    --- excl. CADENCE (the 4-arm family)  (n=54 cells) ---
+      PICK slope ~ disp_sd    n= 54  b   +6.9360  t  +2.232  R2 0.0874   rho +0.2957
+      PICK slope ~ disp_span  n= 54  b   +2.6145  t  +2.215  R2 0.0862   rho +0.2936
+      ARM  slope ~ disp_sd    n= 54  b   +4.9023  t  +2.100  R2 0.0782   rho +0.2796
+      ARM  slope ~ disp_span  n= 54  b   +1.8854  t  +2.130  R2 0.0802   rho +0.2833
+
+    P1 asks whether the SIGNED slope is reliably NEGATIVE in dispersion (the queue's reading).
+    VERDICT P1: arm t +0.682, pick t +1.236 -> CONFIRMED (no reliable signed relation)
+
+======================================================================================================================
+Q2 — IDENTIFICATION.  slope = rho * sd(OOS lift) / sd(IS lift), and disp IS sd(IS lift).
+======================================================================================================================
+  G2 the decomposition closes at max|slope - rho*sd_ratio| = 1.776e-15 over 63 cells
+
+  (a) the SCALE-FREE leg — rho(OOS lift, IS lift) regressed on dispersion:
+    ALL   ARM  rho ~ disp_sd   n= 63  b  +5.5815  icept -0.2095  t  +4.518  R2 0.2507   mean rho +0.2439 (t +2.823)
+    ALL   PICK rho ~ disp_sd   n= 63  b  +6.6078  icept -0.3609  t  +4.571  R2 0.2551   mean rho +0.1760 (t +1.735)
+    CORE  ARM  rho ~ disp_sd   n= 36  b +12.0574  icept -0.6326  t  +4.490  R2 0.3722   mean rho -0.0010 (t -0.008)
+    CORE  PICK rho ~ disp_sd   n= 36  b +14.4288  icept -0.7751  t  +4.769  R2 0.4008   mean rho -0.0193 (t -0.133)
+    EXT   ARM  rho ~ disp_sd   n= 27  b  +0.9300  icept +0.4591  t  +0.761  R2 0.0226   mean rho +0.5705 (t +7.239)
+    EXT   PICK rho ~ disp_sd   n= 27  b  +3.0442  icept +0.0718  t  +1.658  R2 0.0990   mean rho +0.4363 (t +3.537)
+
+  (a2) WHAT SITS AT dispersion -> 0?  The queue's mechanism says NOISE (rho = 0); the alternative it does
+       not consider is ANTI-SIGNAL (rho < 0), i.e. a Sharpe-invariant dial whose IS-best arm is reliably
+       the OOS-worst.  The regression INTERCEPT and the low-dispersion tercile answer this directly.
+    intercept of ARM rho ~ disp_sd (ALL, n=63): -0.2095
+    by DISPERSION TERCILE (cells, all families):
+      low   n= 21  disp_sd 0.0003..0.0495  mean ARM rho -0.1245 (t -0.697)  cells rho>0 9/21 (sign p 0.6636)  mean ARM slope +0.6596
+      mid   n= 21  disp_sd 0.0526..0.0912  mean ARM rho +0.2227 (t +1.705)  cells rho>0 14/21 (sign p 0.1892)  mean ARM slope +0.1879
+      high  n= 21  disp_sd 0.0913..0.2666  mean ARM rho +0.6336 (t +8.110)  cells rho>0 20/21 (sign p 0.0000)  mean ARM slope +0.6173
+    -> the low-dispersion tercile is INDISTINGUISHABLE from noise: mean rho -0.1245, t -0.697, n=21.
+
+  (b) the MECHANICAL leg — |slope| and se(slope) on 1/disp (P2):
+    |ARM slope|  ~ 1/disp_sd  n= 63  b   +0.0003  t  +0.976  R2 0.0154   rho +0.1240
+    |PICK slope| ~ 1/disp_sd  n= 63  b   +0.0001  t  +0.431  R2 0.0030   rho +0.0551
+    se(ARM slope) ~ 1/disp_sd  n= 63  b   -0.0003  t  -1.585  R2 0.0396   rho -0.1989
+    VERDICT P2: REJECTED — the low-dispersion family's slope is a LARGER NUMBER, not a
+    differently-signed fact; dispersion enters the statistic through its own denominator.
+
+  (d) THE SCALE THE SLOPE IS MEASURED ON (idea 408's point, applied to a slope rather than a margin):
+      a slope is a RATIO; two families can have opposite slopes and still be describing motions three orders
+      of magnitude apart.  sd(OOS lift) is the size of the thing being ranked.
+          sd_IS_lift  sd_OOS_lift  mean_abs_OOS_lift   slope     rho
+family                                                              
+GROSS        +0.0016      +0.0011            +0.0010 -0.5803 -0.8337
+WIDTH        +0.0694      +0.1146            +0.1054 -0.5637 -0.3414
+CADENCE      +0.0590      +0.0751            +0.0653 +0.5682 +0.4462
+GATE         +0.0921      +0.1149            +0.0855 +0.9836 +0.7890
+MALEN        +0.0935      +0.0695            +0.0600 +0.4391 +0.5907
+VOLCAP       +0.0881      +0.2143            +0.1675 +1.7650 +0.7252
+LOOKBACK     +0.1651      +0.0831            +0.0583 +0.2985 +0.5930
+      ratio of the largest to the smallest family sd(OOS lift): 193.3x
+      pooled over ALL 504 pick rows ('the record fact'): slope +0.5053  t +10.786  R2 0.1881
+      pooled EXCLUDING GROSS (432 rows):            slope +0.5147  t +9.998  R2 0.1886   (change +0.0093)
+      READ: the family with the most extreme slope moves the pooled record number least, because OLS
+      weights by x-variance and GROSS's IS lift variance is ~0.  The flip is loud and weightless.
+
+  (c) so which reading does the data support?  the two candidate stories:
+      STORY A (the queue's): low dispersion => the dial is Sharpe-invariant => IS lift is noise => slope NEGATIVE.
+      STORY B (this run's): low dispersion => var(slope) explodes => slope LARGE in EITHER direction, sign
+      unstable across panels and rungs.
+      Discriminator: is the per-family slope SIGN stable across the 9 (panel, rung) cells of that family?
+          cells_slope>0  cells  sign_p  sd_mean
+family                                         
+GROSS                 0      9  0.0039   0.0011
+WIDTH                 4      9  1.0000   0.0744
+CADENCE               9      9  0.0039   0.0554
+GATE                  6      9  0.5078   0.0785
+MALEN                 9      9  0.0039   0.1256
+VOLCAP                8      9  0.0391   0.0688
+LOOKBACK              7      9  0.1797   0.1648
+      READ: a family whose slope sign is a FACT should be 9/9 or 0/9; one whose slope is noise sits near 5/9.
+
+======================================================================================================================
+Q3 — IS THE FLIP REAL?  cluster bootstrap over cells within each family (2000 draws, seed 4321)
+======================================================================================================================
+
+  family        point     boot mean    boot sd    2.5%      97.5%   P(slope>0)
+  GROSS         -0.5803    -0.5986    0.1237   -0.8954   -0.3963   0.000
+  WIDTH         -0.5637    -0.5534    0.3963   -1.2302   +0.2638   0.090
+  CADENCE       +0.5682    +0.6748    0.3606   +0.4031   +2.1183   1.000
+  GATE          +0.9836    +0.9142    0.2684   +0.0959   +1.2219   0.982
+  MALEN         +0.4391    +0.3997    0.1496   -0.0051   +0.5892   0.972
+  VOLCAP        +1.7650    +1.7777    0.3489   +1.2275   +2.5233   1.000
+  LOOKBACK      +0.2985    +0.2920    0.0675   +0.1361   +0.4015   1.000
+
+  GROSS minus GATE: point -1.5639, boot mean -1.5128, sd 0.2959, 95% CI [-1.9609, -0.6654], P(diff<0) 1.000
+  -> the GROSS/GATE gap is SEPARABLE from zero under a cluster bootstrap over its own cells.
+  heterogeneity: sd of the 7 family slopes = 0.8299 vs mean bootstrap se 0.2450  (ratio 3.39)
+  READ: ratio ~ 1 means the family-to-family spread is exactly what each family's own sampling error
+  produces — 'family fact' would need a ratio comfortably above 1.
+
+======================================================================================================================
+Q5 — PROTOCOL RULE 8.  tau chosen on the INNER IS split (fit <=2013-12-31, evaluated 2014-2016);
+     the outer OOS (2017-2026) is read ONCE.  All 11 tau x 2 stat grid points reported.
+======================================================================================================================
+  RULE R(tau, stat): in a pool whose IS dispersion > tau, take the K_Sharpe argmax pick; otherwise take
+  the pool's own do-nothing control (ABSTAIN).  tau=0 is always-pick; tau=inf is always-abstain.
+
+  (a) INNER-SPLIT selection of tau (this is the only place tau is chosen; OOS unseen):
+stat              tau  n_pick  mean_inner_lift       t
+  sd          +0.0000      63          +0.0565 +3.4308
+  sd          +0.0014      54          +0.0563 +3.4137
+  sd          +0.0352      52          +0.0563 +3.4170
+  sd          +0.0485      49          +0.0495 +3.0302
+  sd          +0.0616      40          +0.0347 +2.3008
+  sd          +0.0778      28          +0.0321 +2.2535
+  sd          +0.0835      25          +0.0320 +2.2551
+  sd          +0.0947      21          +0.0358 +2.8069
+  sd          +0.1161      12          +0.0174 +1.9211
+  sd          +0.1766       8          +0.0022 +0.6053
+  sd +1000000000.0000       0          +0.0000     NaN
+span          +0.0000      63          +0.0565 +3.4308
+span          +0.0040      54          +0.0563 +3.4137
+span          +0.0740      52          +0.0563 +3.4170
+span          +0.1267      49          +0.0495 +3.0302
+span          +0.1633      37          +0.0425 +2.7320
+span          +0.2005      24          +0.0307 +2.1790
+span          +0.2262      21          +0.0316 +2.2578
+span          +0.2438      18          +0.0335 +2.6802
+span          +0.3010      12          +0.0174 +1.9211
+span          +0.4550       8          +0.0022 +0.6053
+span +1000000000.0000       0          +0.0000     NaN
+
+  tau* = 0.0000 on stat 'sd' (inner mean lift +0.0565, picks in 63 of 63 pools).  READ ONCE below.
+
+  (b) OUTER OOS — every grid point reported; the tau* row is marked '*'.
+stat              tau  n_pick  mean_OOS_lift  t_lift  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD  mean_d_vs_ctl  t_d_vs_ctl  wins_vs_ctl  nonties  star  sign_p
+  sd          +0.0000      63        +0.0244 +2.1056          +0.9410        +0.1063         -0.1937        -0.0206     -1.4337           22       59  True +0.0674
+  sd          +0.0014      56        +0.0245 +2.1147          +0.9411        +0.1035         -0.1892        -0.0205     -1.4267           22       52 False +0.3317
+  sd          +0.0352      50        +0.0277 +2.4283          +0.9443        +0.1030         -0.1878        -0.0173     -1.2197           22       47 False +0.7709
+  sd          +0.0485      44        +0.0270 +2.4354          +0.9436        +0.1030         -0.1873        -0.0180     -1.2853           21       44 False +0.8804
+  sd          +0.0616      38        +0.0435 +4.2894          +0.9601        +0.0976         -0.1781        -0.0015     -0.1344           20       38 False +0.8714
+  sd          +0.0778      31        +0.0516 +5.5296          +0.9682        +0.0933         -0.1726        +0.0066     +0.6854           17       31 False +0.7201
+  sd          +0.0835      25        +0.0534 +5.8199          +0.9700        +0.0919         -0.1695        +0.0084     +0.8951           14       25 False +0.6900
+  sd          +0.0947      19        +0.0511 +5.5311          +0.9677        +0.0846         -0.1559        +0.0061     +0.7418            9       19 False +1.0000
+  sd          +0.1161      13        +0.0413 +5.7310          +0.9579        +0.0806         -0.1485        -0.0037     -0.7329            4       13 False +0.2668
+  sd          +0.1766       7        +0.0418 +5.9278          +0.9584        +0.0800         -0.1447        -0.0032     -0.8382            2        7 False +0.4531
+  sd +1000000000.0000       0        +0.0450 +5.6599          +0.9616        +0.0804         -0.1430        +0.0000         NaN            0        0 False     NaN
+span          +0.0000      63        +0.0244 +2.1056          +0.9410        +0.1063         -0.1937        -0.0206     -1.4337           22       59 False +0.0674
+span          +0.0040      56        +0.0245 +2.1147          +0.9411        +0.1035         -0.1892        -0.0205     -1.4267           22       52 False +0.3317
+span          +0.0740      50        +0.0277 +2.4283          +0.9443        +0.1030         -0.1878        -0.0173     -1.2197           22       47 False +0.7709
+span          +0.1267      44        +0.0324 +2.9592          +0.9490        +0.1021         -0.1854        -0.0126     -0.9698           21       43 False +1.0000
+span          +0.1633      38        +0.0411 +3.9890          +0.9577        +0.0977         -0.1788        -0.0039     -0.3461           19       38 False +1.0000
+span          +0.2005      31        +0.0473 +4.8562          +0.9640        +0.0942         -0.1733        +0.0023     +0.2286           16       31 False +1.0000
+span          +0.2262      25        +0.0485 +5.0987          +0.9651        +0.0908         -0.1669        +0.0035     +0.3751           12       25 False +1.0000
+span          +0.2438      19        +0.0511 +5.5311          +0.9677        +0.0846         -0.1559        +0.0061     +0.7418            9       19 False +1.0000
+span          +0.3010      13        +0.0413 +5.7310          +0.9579        +0.0806         -0.1485        -0.0037     -0.7329            4       13 False +0.2668
+span          +0.4550       7        +0.0418 +5.9278          +0.9584        +0.0800         -0.1447        -0.0032     -0.8382            2        7 False +0.4531
+span +1000000000.0000       0        +0.0450 +5.6599          +0.9616        +0.0804         -0.1430        +0.0000         NaN            0        0 False     NaN
+
+  RULE 8 READ-ONCE RESULT at tau*=0.0000 (sd):
+    R(tau*)          mean OOS Sharpe 0.9410  CAGR 10.63%  MaxDD -19.37%  d vs control -0.0206 (t -1.43, 22/59, sign p 0.0674)
+    always-pick      mean OOS Sharpe 0.9410  CAGR 10.63%  MaxDD -19.37%  d vs control -0.0206 (t -1.43)
+    always-abstain   mean OOS Sharpe 0.9616  CAGR 8.04%  MaxDD -14.30%  (this IS the do-nothing control, by construction)
+    VERDICT P5: CONFIRMED — the dispersion-gated chooser does not beat always-abstaining OOS.
+
+  benchmarks over the same OOS window (2017-2026), per panel, at 10 bps:
+    u56    SPY 15.45%/0.8820/-33.72%   RULES v2  9.53%/1.2851/-12.05%   RULES v1  7.73%/0.7471/-13.83%
+    broad  SPY 15.45%/0.8820/-33.72%   RULES v2  7.98%/1.1185/-12.24%   RULES v1  5.94%/0.5763/-21.19%
+    small  SPY 15.45%/0.8820/-33.72%   RULES v2  3.84%/0.5665/-14.70%   RULES v1  7.92%/0.5807/-32.84%
+
+======================================================================================================================
+Q6 — BOTH KEEP PATHS (PROTOCOL 4a vs RULES v2 live, 4b vs SPY), full sample and OOS
+======================================================================================================================
+
+  ARMS (369 rows):
+    all      n= 369  4a(v2)   3  4b full  38  4b OOS  41  BOTH   0
+    10 bps   n= 123  4a(v2)   1  4b full  14  4b OOS  14  BOTH   0
+    CORE     n= 207  4a(v2)   3  4b full  18  4b OOS  20  BOTH   0
+    EXT      n= 162  4a(v2)   0  4b full  20  4b OOS  21  BOTH   0
+
+  4b binding bar on the arms that fail (10 bps): {'CAGR': np.int64(51), 'H2': np.int64(25), 'H1': np.int64(23), 'DD': np.int64(10)}
+
+  R(tau*) SELECTED BOOKS (one per pool, 63 rows): 4a(v2) 0  4b full 13  4b OOS 12  BOTH 0
+  at the PROTOCOL 10 bps rung only (21 rows): 4a 0  4b full 5  4b OOS 4  BOTH 0
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS, SCORED
+======================================================================================================================
+  P1 signed slope-on-dispersion NOT reliably negative : CONFIRMED
+  P2 |slope| / se(slope) track 1/dispersion           : REJECTED
+  P3 rho-on-dispersion weaker than slope-on-dispersion: REJECTED  (|t| rho 4.518 vs slope 0.682, R2 0.2507 vs 0.0076)
+  P4 idea 311 replicates in SIGN, not at 0.006        : CONFIRMED in sign
+  P5 the dispersion-gated chooser loses to abstaining  : CONFIRMED
