@@ -1,0 +1,373 @@
+IDEA 197 - audit-every-published-key-for-the-adjustment-leak  (lane B, 2026-09-08)
+  book: top-20 of composite + dir*m*key, gross 0.75, freq W, vol cap 0.6, t+1
+  tuned params (2): m in [0.2, 0.5, 1.0], dir in ['POS', 'NEG'].  Reported axes: key, panel, rung, h, sigma, seed.
+    small panel: dropped 44 tickers with max_1d_move >= 1.0; 439 names + SPY remain
+    panel u56      56 cols  2008-01-02 .. 2026-09-04
+    panel broad   136 cols  2008-01-02 .. 2026-09-04
+    panel small   440 cols  2010-01-04 .. 2026-09-04
+
+================================================================================================
+R - REPRODUCTION
+================================================================================================
+  R0 RULES v1 u56 @10bps: 6.45851% / 0.66471 / -13.82781%   (published anchor 6.45305% / 0.66418 / -13.82780%)
+  R1 identity px[T]/px[t] == TR(t->T)  u56    max abs err 9.095e-12
+  R1 identity px[T]/px[t] == TR(t->T)  broad  max abs err 3.183e-12
+  R1 identity px[T]/px[t] == TR(t->T)  small  max abs err 4.263e-13
+  R2 fast_backtest == engine.backtest       max abs err 1.041e-17
+  R3 cost identity r_c == r_0 - turn*c/1e4  max abs err 1.041e-17
+
+================================================================================================
+E - THE OPERATOR OBSERVED IN THE PROJECT'S OWN CACHE (measurement, not a model)
+================================================================================================
+  bars compared 4699 x 56 names;  ratio new/old
+    names whose ENTIRE history was rescaled : 1 of 56   -> GOOGL x0.999358
+    max deviation from a per-name CONSTANT  : 2.13e-04   (CSV stores 4 dp; at a 0.47 price that IS 1e-4)
+    -> the theorem's operator is exactly what a cache refresh does.
+
+  the same book on the two snapshots (u56 @10 bps, identical code):
+                        book      kind  CAGR_old  CAGR_new  Sharpe_old  Sharpe_new  dSharpe  dCAGR_pp
+  RULES v1 (scale-invariant) invariant   0.06453   0.06459     0.66418     0.66471  0.00053   0.00545
+  RULES v2 (scale-invariant) invariant   0.08660   0.08660     1.20562     1.20563  0.00001   0.00005
+PRICE/NEG m=1.00 (LEVEL key)     level   0.13149   0.13149     1.17291     1.17291  0.00000   0.00001
+
+  channel (a) NEW INFORMATION, the extra bar's own return : 0.00053 of Sharpe
+  channel (b) RETROACTIVE RE-ADJUSTMENT, this refresh      : 0.00000 of Sharpe
+  READ THIS CORRECTLY.  One refresh is far too small to move anything: a single 0.064%
+  dividend on 1 of 56 names does not reorder a cross-section, so channel (b) measures
+  ZERO here and the level book is unmoved.  What E establishes is the MECHANISM, exactly:
+  a routine cache refresh multiplied a name's ENTIRE 4698-bar history by one
+  constant, which is the T1 operator, observed, not modelled.  A LEVEL key does not read
+  one refresh - it reads F(t), the PRODUCT of every such factor from t to the last bar.
+  CALIBRATION (stated assumption: quarterly cadence, the standard US schedule).
+  The observed event is x0.999358, i.e. a 0.0643% quarterly dividend = 0.26%/yr on a low-yield name.
+  Over the sample's 18.7 years that name's F(t) reaches ~1.049 (log 0.048); a 4%-yield name reaches ~2.08 (log 0.73).
+  The cross-name dispersion of log F a level key reads is therefore roughly 0 to 0.73,
+  which is what sigma in [0.1, 0.25] brackets - conservatively.  Section A prices it.
+
+  The published RULES v1 anchor (6.45305% / 0.66418 / -13.82780%) is reproduced EXACTLY
+  on the old snapshot and is NOT reproducible on the new one.  The record's most-quoted
+  number has an expiry date; channel (a) is its size, and that part is legitimate.
+
+================================================================================================
+T1 - THE ONE-LINE TEST (exact): does the key's cross-sectional rank move when the panel
+     is re-adjusted to a different terminal date?  RATIO keys cannot; LEVEL keys must.
+================================================================================================
+
+  per key, pooled over panels (sigma = 0.25 shown; sigma = 0.10 in .keys.csv):
+    key klass  max_abs_d  mean_abs_d  frac_moved   xs_rho  invariant
+ PXTERM LEVEL   0.294574    0.055050    0.829910 0.967164      False
+  PRICE LEVEL   0.406504    0.058774    0.815710 0.961182      False
+ FROZEN LEVEL   0.348624    0.059201    0.784701 0.957908      False
+  DVOLT LEVEL   0.313501    0.038785    0.735737 0.982700      False
+   DVOL LEVEL   0.275229    0.031540    0.727660 0.988500      False
+   COMP RATIO   0.003205    0.000000    0.000311 1.000000      False
+     R3 RATIO   0.009615    0.000000    0.000157 1.000000      False
+   DDTR RATIO   0.008130    0.000000    0.000114 1.000000      False
+     R6 RATIO   0.008130    0.000000    0.000106 1.000000      False
+    MOM RATIO   0.007692    0.000000    0.000060 1.000000      False
+REBASED RATIO   0.004149    0.000000    0.000052 1.000000      False
+ FWDRET   FWD   0.003704    0.000000    0.000021 1.000000       True
+    VOL RATIO   0.001136    0.000000    0.000001 1.000000       True
+  VOLSH RATIO   0.000000    0.000000    0.000000 1.000000       True
+
+------------------------------------------------------------------------------------------------
+  T1-LIVE - the same operator applied to the LIVE books' own weight matrices
+panel                  broad     small       u56
+object                                          
+RULES v1 weights   0.000e+00 0.000e+00 0.000e+00
+RULES v2 weights   0.000e+00 0.000e+00 0.000e+00
+v1 above-200d-MA   1.000e+00 1.000e+00 0.000e+00
+v1 composite score 3.865e-01 3.874e-01 1.998e-13
+v1 vol20           3.574e-14 3.272e-08 1.434e-14
+v2 band_state      0.000e+00 0.000e+00 0.000e+00
+  cells moved (fraction):
+panel                 broad    small      u56
+object                                       
+RULES v1 weights   0.00e+00 0.00e+00 0.00e+00
+RULES v2 weights   0.00e+00 0.00e+00 0.00e+00
+v1 above-200d-MA   3.13e-06 1.08e-06 0.00e+00
+v1 composite score 1.83e-04 7.78e-04 0.00e+00
+v1 vol20           0.00e+00 7.80e-05 0.00e+00
+v2 band_state      0.00e+00 0.00e+00 0.00e+00
+  -> the objects that hold capital (v1/v2 WEIGHT matrices) invariant on every panel: True   (max abs diff 0.0e+00)
+     The two intermediates that move do so on a single MA-crossing bar where `px > MA`
+     is a floating-point tie; it does not reach the weights.
+
+================================================================================================
+T2 - Spearman(key_t, forward return over h) - idea 193's statistic, back-filled, with h
+     as a ladder.  A LEAK grows without bound in h and peaks at h = T; a real signal does
+     not.  (h = T is the statistic idea 193 published.)
+================================================================================================
+h                  21      63     126     252       T
+klass key                                            
+FWD   FWDRET  +0.1617 +0.2324 +0.3086 +0.4060 +1.0000
+LEVEL DVOL    -0.0364 -0.0845 -0.1275 -0.1721 -0.5959
+      DVOLT   +0.0263 +0.0071 -0.0009 +0.0011 -0.0963
+      FROZEN  -0.0685 -0.0978 -0.1337 -0.1744 -0.3239
+      PRICE   -0.0425 -0.0716 -0.0970 -0.1357 -0.3327
+      PXTERM  +0.0758 +0.1121 +0.1535 +0.2037 +0.5082
+RATIO COMP    -0.0008 +0.0272 +0.0563 +0.0544 +0.0825
+      DDTR    -0.0222 -0.0258 -0.0204 -0.0291 -0.1202
+      MOM     -0.0015 +0.0279 +0.0431 +0.0523 +0.0812
+      R3      -0.0070 +0.0133 +0.0414 +0.0423 +0.0533
+      R6      +0.0069 +0.0283 +0.0586 +0.0464 +0.0720
+      REBASED +0.0452 +0.0491 +0.0691 +0.0918 +0.0412
+      VOL     +0.0394 +0.0580 +0.0786 +0.1037 +0.2786
+      VOLSH   -0.0108 -0.0408 -0.0642 -0.0803 -0.4166
+
+================================================================================================
+C - CENSUS of the committed corpus, gated on the CONSTRUCTION (not the column name),
+    with every string literal blanked first (see code_only)
+================================================================================================
+  scripts scanned                      : 361
+  scripts with >=1 LEVEL construction  : 7 (1.9%)
+  scripts with >=1 RATIO construction  : 184
+
+  LEVEL constructions by pattern:
+                    hits  files
+pattern                        
+ENTRY_BAR_LEVEL        2      2
+PRICE_TIMES_VOLUME     5      5
+TERMINAL_BAR_LEVEL     2      2
+XS_RANK_OF_LEVEL       4      4
+
+  every script carrying a LEVEL construction:
+    2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.py  (XS_RANK_OF_LEVEL; 1 lines)
+    2026-09-05_does-a-null-column-change-any-published-verdict_cloud.py  (XS_RANK_OF_LEVEL; 1 lines)
+    2026-09-05_is-PRICE-NEG-the-only-arm-that-is-both-large-and-helpful_B.py  (ENTRY_BAR_LEVEL, PRICE_TIMES_VOLUME, TERMINAL_BAR_LEVEL, XS_RANK_OF_LEVEL; 4 lines)
+    2026-09-06_band-gate-on-small-panel_B.py  (PRICE_TIMES_VOLUME; 1 lines)
+    2026-09-06_is-the-low-price-tilt-a-split-artefact-or-a-survivorship-one_cloud.py  (ENTRY_BAR_LEVEL, PRICE_TIMES_VOLUME, TERMINAL_BAR_LEVEL, XS_RANK_OF_LEVEL; 4 lines)
+    2026-09-06_trend-filter-by-market-cap_B.py  (PRICE_TIMES_VOLUME; 1 lines)
+    2026-09-06_trend-filter-by-market-cap_cloud.py  (PRICE_TIMES_VOLUME; 1 lines)
+
+  LEADERBOARD rows parsed                    : 3382
+  LEADERBOARD rows whose script carries a LEVEL construction: 35 (1.0%)
+2026-09-06_band-gate-on-small-panel_B.py                                            9
+2026-09-05_is-PRICE-NEG-the-only-arm-that-is-both-large-and-helpful_B.py            8
+2026-09-05_does-a-null-column-change-any-published-verdict_cloud.py                 5
+2026-09-06_trend-filter-by-market-cap_cloud.py                                      5
+2026-09-05_does-a-harmful-instrument-clear-more-often-than-a-helpful-one_B.py       4
+2026-09-06_is-the-low-price-tilt-a-split-artefact-or-a-survivorship-one_cloud.py    4
+
+================================================================================================
+B - THE CONSEQUENCE BOOK (idea 181's form verbatim; 2 tuned params, all points reported)
+================================================================================================
+
+================================================================================================
+RULE 8 - WALK-FORWARD.  (m, dir) chosen by IS Sharpe on <= 2016-12-31 within each
+     (panel, key, rung) cell; the 2017-2026 window is then read once.
+================================================================================================
+
+  --- cost rung 0 bps ---
+panel     key  klass  pick_m pick_dir  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  d_vs_ctrl  pass4a  pass4b
+broad    COMP  RATIO  0.2000      POS     1.1439    0.1409      0.9908    -0.1998     0.0000   False    True
+broad    DDTR  RATIO  0.5000      NEG     1.3003    0.1689      1.0820    -0.1974     0.0912   False    True
+broad  FROZEN  LEVEL  1.0000      NEG     1.3650    0.1838      1.2240    -0.2254     0.2333   False   False
+broad  FWDRET oracle  1.0000      POS     1.3607    0.2937      1.8123    -0.2015     0.8215   False    True
+broad     MOM  RATIO  1.0000      POS     1.1768    0.1464      0.9796    -0.2135    -0.0112   False   False
+broad   PRICE  LEVEL  1.0000      NEG     1.3790    0.1900      1.4307    -0.2126     0.4400   False   False
+broad  PXTERM oracle  0.5000      POS     1.1779    0.1515      1.0414    -0.2020     0.0506   False    True
+broad      R3  RATIO  0.2000      NEG     1.2128    0.1496      1.0113    -0.2216     0.0206   False   False
+broad      R6  RATIO  1.0000      POS     1.2285    0.1611      1.1146    -0.1978     0.1238   False    True
+broad REBASED  RATIO  0.5000      POS     1.2281    0.1432      0.9643    -0.2448    -0.0264   False   False
+broad     VOL  RATIO  0.5000      NEG     1.2283    0.0969      0.8931    -0.1752    -0.0976   False   False
+small    COMP  RATIO  0.2000      POS     0.5352    0.0958      0.6111    -0.2463     0.0000   False   False
+small    DDTR  RATIO  1.0000      POS     0.6502    0.0551      0.4235    -0.2423    -0.1876   False   False
+small    DVOL  LEVEL  1.0000      NEG     0.9217    0.2639      1.7023    -0.2373     1.0912   False   False
+small   DVOLT  LEVEL  1.0000      NEG     0.5421    0.1359      0.9455    -0.2363     0.3345   False   False
+small  FROZEN  LEVEL  1.0000      NEG     0.6248    0.1323      0.8696    -0.2421     0.2585   False   False
+small  FWDRET oracle  1.0000      POS     1.1212    0.4062      2.2670    -0.2675     1.6559   False   False
+small     MOM  RATIO  1.0000      POS     0.6236    0.1386      0.8203    -0.2522     0.2092   False   False
+small   PRICE  LEVEL  1.0000      NEG     0.9586    0.2304      1.3091    -0.2719     0.6980   False   False
+small  PXTERM oracle  0.5000      POS     0.6281    0.1442      0.9437    -0.2969     0.3326   False   False
+small      R3  RATIO  0.2000      NEG     0.6110    0.1388      0.8275    -0.2497     0.2164   False   False
+small      R6  RATIO  1.0000      POS     0.5909    0.1113      0.6910    -0.2585     0.0799   False   False
+small REBASED  RATIO  1.0000      NEG     0.6963    0.1730      0.9910    -0.3114     0.3799   False   False
+small     VOL  RATIO  0.5000      NEG     0.9390    0.0830      0.6362    -0.2551     0.0252   False   False
+small   VOLSH  RATIO  1.0000      NEG     0.8754    0.1710      1.2029    -0.2181     0.5918   False   False
+  u56    COMP  RATIO  0.2000      POS     1.0828    0.1547      1.2474    -0.1816     0.0006   False    True
+  u56    DDTR  RATIO  0.2000      NEG     1.0703    0.1645      1.2920    -0.1796     0.0452   False    True
+  u56  FROZEN  LEVEL  0.5000      NEG     1.1474    0.1608      1.2531    -0.1885     0.0064   False    True
+  u56  FWDRET oracle  0.5000      POS     1.1534    0.1889      1.4744    -0.1838     0.2276   False    True
+  u56     MOM  RATIO  1.0000      POS     1.1441    0.1416      1.1383    -0.1877    -0.1085   False    True
+  u56   PRICE  LEVEL  0.5000      NEG     1.1868    0.1561      1.2943    -0.1804     0.0476   False    True
+  u56  PXTERM oracle  0.2000      POS     1.0887    0.1591      1.2632    -0.1815     0.0165   False    True
+  u56      R3  RATIO  1.0000      NEG     1.1117    0.1071      0.9943    -0.1804    -0.2524   False    True
+  u56      R6  RATIO  0.5000      NEG     1.0860    0.1410      1.1723    -0.1753    -0.0745   False    True
+  u56 REBASED  RATIO  1.0000      POS     1.1269    0.1649      1.2562    -0.1837     0.0095   False    True
+  u56     VOL  RATIO  1.0000      NEG     1.1307    0.0844      1.0211    -0.1414    -0.2256   False   False
+
+  --- cost rung 10 bps ---
+panel     key  klass  pick_m pick_dir  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  d_vs_ctrl  pass4a  pass4b
+broad    COMP  RATIO  0.2000      POS     1.0438    0.1249      0.8919    -0.2005     0.0000   False   False
+broad    DDTR  RATIO  0.5000      NEG     1.1691    0.1469      0.9599    -0.1987     0.0680   False    True
+broad  FROZEN  LEVEL  1.0000      NEG     1.2872    0.1713      1.1520    -0.2345     0.2601   False   False
+broad  FWDRET oracle  1.0000      POS     1.2871    0.2802      1.7411    -0.2021     0.8492   False    True
+broad     MOM  RATIO  1.0000      POS     1.0883    0.1321      0.8965    -0.2141     0.0046   False   False
+broad   PRICE  LEVEL  1.0000      NEG     1.2957    0.1777      1.3493    -0.2136     0.4574   False   False
+broad  PXTERM oracle  0.5000      POS     1.0917    0.1371      0.9553    -0.2027     0.0634   False   False
+broad      R3  RATIO  0.2000      NEG     1.1256    0.1351      0.9259    -0.2223     0.0340   False   False
+broad      R6  RATIO  1.0000      POS     1.1317    0.1455      1.0203    -0.1984     0.1284   False    True
+broad REBASED  RATIO  0.5000      POS     1.1422    0.1292      0.8827    -0.2534    -0.0092   False   False
+broad     VOL  RATIO  0.5000      POS     1.1099    0.1537      0.9927    -0.2228     0.1008   False   False
+small    COMP  RATIO  1.0000      NEG     0.4392    0.0136      0.3562    -0.0579    -0.1311   False   False
+small    DDTR  RATIO  0.2000      POS     0.4651    0.0666      0.4665    -0.2607    -0.0209   False   False
+small    DVOL  LEVEL  1.0000      NEG     0.7635    0.2396      1.5667    -0.2387     1.0794   False   False
+small   DVOLT  LEVEL  0.2000      POS     0.4323    0.0528      0.3809    -0.3589    -0.1064   False   False
+small  FROZEN  LEVEL  1.0000      NEG     0.5069    0.1133      0.7618    -0.2436     0.2744   False   False
+small  FWDRET oracle  1.0000      POS     0.9914    0.3817      2.1543    -0.2693     1.6670   False   False
+small     MOM  RATIO  1.0000      POS     0.5181    0.1161      0.7075    -0.2536     0.2202   False   False
+small   PRICE  LEVEL  1.0000      NEG     0.8334    0.2059      1.1904    -0.2735     0.7031   False   False
+small  PXTERM oracle  0.5000      POS     0.5128    0.1242      0.8297    -0.3154     0.3423   False   False
+small      R3  RATIO  0.2000      NEG     0.5038    0.1158      0.7115    -0.2514     0.2241   False   False
+small      R6  RATIO  1.0000      POS     0.4742    0.0875      0.5671    -0.2675     0.0798   False   False
+small REBASED  RATIO  1.0000      NEG     0.5795    0.1493      0.8753    -0.3316     0.3880   False   False
+small     VOL  RATIO  0.5000      NEG     0.7607    0.0566      0.4608    -0.2849    -0.0265   False   False
+small   VOLSH  RATIO  1.0000      NEG     0.7167    0.1505      1.0762    -0.2195     0.5889   False   False
+  u56    COMP  RATIO  0.2000      POS     0.9929    0.1437      1.1687    -0.1824     0.0007   False    True
+  u56    DDTR  RATIO  0.2000      NEG     0.9822    0.1534      1.2147    -0.1807     0.0468   False    True
+  u56  FROZEN  LEVEL  0.5000      NEG     1.0678    0.1508      1.1844    -0.1893     0.0164   False    True
+  u56  FWDRET oracle  1.0000      POS     1.0784    0.1978      1.5646    -0.1844     0.3966   False    True
+  u56     MOM  RATIO  1.0000      POS     1.0585    0.1316      1.0671    -0.1887    -0.1009   False    True
+  u56   PRICE  LEVEL  0.5000      NEG     1.1075    0.1455      1.2165    -0.1815     0.0485   False    True
+  u56  PXTERM oracle  0.2000      POS     0.9978    0.1483      1.1871    -0.1823     0.0191   False    True
+  u56      R3  RATIO  0.5000      NEG     0.9999    0.1220      1.0075    -0.1931    -0.1605   False    True
+  u56      R6  RATIO  0.2000      POS     0.9845    0.1419      1.1558    -0.1821    -0.0122   False    True
+  u56 REBASED  RATIO  1.0000      POS     1.0473    0.1558      1.1945    -0.1844     0.0265   False    True
+  u56     VOL  RATIO  1.0000      NEG     1.0054    0.0721      0.8833    -0.1426    -0.2847   False   False
+
+  --- cost rung 25 bps ---
+panel     key  klass  pick_m pick_dir  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  d_vs_ctrl  pass4a  pass4b
+broad    COMP  RATIO  0.2000      POS     0.8934    0.1012      0.7434    -0.2016     0.0000   False   False
+broad    DDTR  RATIO  0.2000      NEG     0.9905    0.1155      0.7988    -0.2190     0.0554   False   False
+broad  FROZEN  LEVEL  1.0000      NEG     1.1701    0.1529      1.0437    -0.2481     0.3003   False   False
+broad  FWDRET oracle  1.0000      POS     1.1764    0.2601      1.6341    -0.2032     0.8907   False   False
+broad     MOM  RATIO  1.0000      POS     0.9553    0.1110      0.7717    -0.2150     0.0283   False   False
+broad   PRICE  LEVEL  1.0000      NEG     1.1703    0.1596      1.2269    -0.2152     0.4835   False   False
+broad  PXTERM oracle  0.5000      POS     0.9620    0.1159      0.8260    -0.2061     0.0826   False   False
+broad      R3  RATIO  0.2000      NEG     0.9946    0.1136      0.7976    -0.2234     0.0543   False   False
+broad      R6  RATIO  1.0000      POS     0.9861    0.1225      0.8785    -0.1992     0.1351   False   False
+broad REBASED  RATIO  0.5000      POS     1.0130    0.1086      0.7601    -0.2660     0.0167   False   False
+broad     VOL  RATIO  0.5000      POS     0.9575    0.1270      0.8423    -0.2372     0.0990   False   False
+small    COMP  RATIO  1.0000      NEG     0.3744    0.0115      0.3026    -0.0603     0.0010   False   False
+small    DDTR  RATIO  0.2000      POS     0.2721    0.0309      0.2648    -0.3476    -0.0368   False   False
+small    DVOL  LEVEL  1.0000      NEG     0.5265    0.2039      1.3626    -0.2409     1.0610   False   False
+small   DVOLT  LEVEL  0.2000      POS     0.2681    0.0202      0.2019    -0.4257    -0.0997   False   False
+small  FROZEN  LEVEL  0.5000      NEG     0.3309    0.0928      0.6318    -0.2560     0.3302   False   False
+small  FWDRET oracle  1.0000      POS     0.7966    0.3457      1.9843    -0.2721     1.6827   False   False
+small     MOM  RATIO  1.0000      POS     0.3598    0.0831      0.5382    -0.2557     0.2366   False   False
+small   PRICE  LEVEL  1.0000      NEG     0.6457    0.1701      1.0120    -0.2760     0.7104   False   False
+small  PXTERM oracle  0.5000      POS     0.3398    0.0947      0.6585    -0.3424     0.3569   False   False
+small      R3  RATIO  0.2000      NEG     0.3429    0.0822      0.5372    -0.2919     0.2356   False   False
+small      R6  RATIO  1.0000      POS     0.2990    0.0527      0.3811    -0.3011     0.0795   False   False
+small REBASED  RATIO  1.0000      NEG     0.4044    0.1146      0.7016    -0.3611     0.4000   False   False
+small     VOL  RATIO  0.5000      NEG     0.4931    0.0181      0.1979    -0.3277    -0.1037   False   False
+small   VOLSH  RATIO  1.0000      NEG     0.4789    0.1204      0.8857    -0.2217     0.5841   False   False
+  u56    COMP  RATIO  0.2000      POS     0.8577    0.1274      1.0504    -0.1837     0.0008   False   False
+  u56    DDTR  RATIO  0.2000      NEG     0.8497    0.1369      1.0986    -0.1822     0.0491   False   False
+  u56  FROZEN  LEVEL  1.0000      NEG     0.9484    0.1378      1.0931    -0.1937     0.0435   False    True
+  u56  FWDRET oracle  1.0000      POS     0.9676    0.1827      1.4586    -0.1861     0.4090   False    True
+  u56     MOM  RATIO  1.0000      POS     0.9298    0.1168      0.9601    -0.1903    -0.0895   False    True
+  u56   PRICE  LEVEL  0.5000      NEG     0.9881    0.1299      1.0994    -0.1831     0.0499   False    True
+  u56  PXTERM oracle  0.5000      POS     0.8689    0.1349      1.0957    -0.1831     0.0461   False    True
+  u56      R3  RATIO  0.5000      NEG     0.8580    0.1064      0.8921    -0.1946    -0.1574   False   False
+  u56      R6  RATIO  0.2000      POS     0.8502    0.1259      1.0396    -0.1833    -0.0100   False   False
+  u56 REBASED  RATIO  1.0000      POS     0.9277    0.1421      1.1016    -0.1855     0.0520   False    True
+  u56     VOL  RATIO  0.2000      NEG     0.8288    0.1094      0.9491    -0.1813    -0.1005   False   False
+
+================================================================================================
+A - ADMISSIBLE-RESCALING SPREAD of full-sample Sharpe @10 bps (m = 1.00, sigma = 0.25,
+    B = 6 draws).  Exactly 0 for a ratio key, by T1.
+================================================================================================
+panel     key klass dir      m  sigma  B  published_Sharpe  mean_Sharpe  sd_Sharpe  min_Sharpe  max_Sharpe  range_Sharpe
+small  PXTERM LEVEL POS 1.0000 0.2500  6            0.7503       0.7623     0.1002      0.6314      0.9176        0.2862
+small   PRICE LEVEL NEG 1.0000 0.2500  6            1.0672       1.0312     0.0792      0.9394      1.1348        0.1955
+small  FROZEN LEVEL POS 1.0000 0.2500  6            0.1517       0.1111     0.0743     -0.0150      0.1746        0.1896
+small  FROZEN LEVEL NEG 1.0000 0.2500  6            0.6710       0.6732     0.0448      0.5985      0.7375        0.1390
+small   PRICE LEVEL POS 1.0000 0.2500  6           -0.0217      -0.0333     0.0476     -0.1181      0.0186        0.1367
+small   DVOLT LEVEL NEG 1.0000 0.2500  6            0.6678       0.6523     0.0415      0.6006      0.7174        0.1167
+small    DVOL LEVEL POS 1.0000 0.2500  6           -0.2954      -0.2529     0.0453     -0.2897     -0.1888        0.1008
+small  PXTERM LEVEL NEG 1.0000 0.2500  6            0.0688       0.0768     0.0375      0.0525      0.1520        0.0995
+  u56   PRICE LEVEL NEG 1.0000 0.2500  6            1.1729       1.1780     0.0345      1.1491      1.2419        0.0927
+broad  FROZEN LEVEL POS 1.0000 0.2500  6            0.7743       0.7745     0.0316      0.7234      0.8160        0.0926
+  u56  PXTERM LEVEL NEG 1.0000 0.2500  6            0.9333       0.9393     0.0361      0.9054      0.9905        0.0851
+broad  PXTERM LEVEL POS 1.0000 0.2500  6            1.0283       1.0418     0.0299      0.9947      1.0779        0.0832
+small    DVOL LEVEL NEG 1.0000 0.2500  6            1.3019       1.2681     0.0291      1.2163      1.2924        0.0761
+small   DVOLT LEVEL POS 1.0000 0.2500  6            0.2062       0.2372     0.0264      0.1880      0.2631        0.0751
+broad   PRICE LEVEL POS 1.0000 0.2500  6            0.6447       0.6803     0.0261      0.6303      0.7029        0.0727
+broad  PXTERM LEVEL NEG 1.0000 0.2500  6            0.8909       0.8975     0.0309      0.8580      0.9290        0.0710
+broad   PRICE LEVEL NEG 1.0000 0.2500  6            1.3248       1.3322     0.0250      1.3047      1.3730        0.0683
+  u56  FROZEN LEVEL NEG 1.0000 0.2500  6            1.1325       1.1353     0.0201      1.1089      1.1697        0.0608
+  u56  FROZEN LEVEL POS 1.0000 0.2500  6            0.8663       0.9028     0.0197      0.8768      0.9338        0.0570
+  u56   PRICE LEVEL POS 1.0000 0.2500  6            0.9432       0.9349     0.0219      0.8982      0.9524        0.0542
+  u56  PXTERM LEVEL POS 1.0000 0.2500  6            1.1190       1.1527     0.0171      1.1302      1.1741        0.0439
+broad  FROZEN LEVEL NEG 1.0000 0.2500  6            1.2083       1.2087     0.0169      1.1874      1.2294        0.0420
+  u56     MOM RATIO POS 1.0000 0.2500  6            1.0609       1.0609     0.0000      1.0609      1.0609        0.0000
+  u56     MOM RATIO NEG 1.0000 0.2500  6            0.9399       0.9399     0.0000      0.9399      0.9399        0.0000
+  u56    DDTR RATIO POS 1.0000 0.2500  6            0.9978       0.9978     0.0000      0.9978      0.9978        0.0000
+  u56    DDTR RATIO NEG 1.0000 0.2500  6            1.0216       1.0216     0.0000      1.0216      1.0216        0.0000
+  u56 REBASED RATIO POS 1.0000 0.2500  6            1.1288       1.1288     0.0000      1.1288      1.1288        0.0000
+  u56 REBASED RATIO NEG 1.0000 0.2500  6            0.8430       0.8430     0.0000      0.8430      0.8430        0.0000
+broad     MOM RATIO POS 1.0000 0.2500  6            0.9755       0.9755     0.0000      0.9755      0.9755        0.0000
+broad     MOM RATIO NEG 1.0000 0.2500  6            0.9437       0.9437     0.0000      0.9437      0.9437        0.0000
+broad REBASED RATIO POS 1.0000 0.2500  6            0.9739       0.9739     0.0000      0.9739      0.9739        0.0000
+broad REBASED RATIO NEG 1.0000 0.2500  6            0.9527       0.9527     0.0000      0.9527      0.9527        0.0000
+broad    DDTR RATIO POS 1.0000 0.2500  6            0.6858       0.6858     0.0000      0.6858      0.6858        0.0000
+broad    DDTR RATIO NEG 1.0000 0.2500  6            1.0215       1.0215     0.0000      1.0215      1.0215        0.0000
+small     MOM RATIO NEG 1.0000 0.2500  6            0.1146       0.1146     0.0000      0.1146      0.1146        0.0000
+small     MOM RATIO POS 1.0000 0.2500  6            0.6394       0.6394     0.0000      0.6394      0.6394        0.0000
+small    DDTR RATIO POS 1.0000 0.2500  6            0.3085       0.3085     0.0000      0.3085      0.3085        0.0000
+small    DDTR RATIO NEG 1.0000 0.2500  6            0.3116       0.3116     0.0000      0.3116      0.3116        0.0000
+small REBASED RATIO POS 1.0000 0.2500  6            0.2388       0.2388     0.0000      0.2388      0.2388        0.0000
+small REBASED RATIO NEG 1.0000 0.2500  6            0.7719       0.7719     0.0000      0.7719      0.7719        0.0000
+small   VOLSH RATIO POS 1.0000 0.2500  6            0.1404       0.1404     0.0000      0.1404      0.1404        0.0000
+small   VOLSH RATIO NEG 1.0000 0.2500  6            0.9536       0.9536     0.0000      0.9536      0.9536        0.0000
+
+================================================================================================
+KEEP PATHS - both, every arm, every rung
+================================================================================================
+     0 bps: 4a   0 / 219   4b  81 / 219   BOTH   0
+    10 bps: 4a   0 / 219   4b  56 / 219   BOTH   0
+    25 bps: 4a   0 / 219   4b  16 / 219   BOTH   0
+
+  passes by key class (10 bps):
+           n  p4a  p4b
+klass                 
+LEVEL     48    0    9
+RATIO    132    0   37
+control    3    0    1
+oracle    36    0    9
+
+  P7: arms passing a KEEP path on a LEVEL/oracle key @10 bps: 18 - every one DISQUALIFIED by T1 (not implementable at any cost).
+panel    key dir      m  CAGR_F  Sharpe_F  MaxDD_F  Sharpe_OOS  pass4a  pass4b
+  u56  PRICE POS 0.2000  0.1166    1.0224  -0.1844      1.1167   False    True
+  u56  PRICE POS 0.5000  0.1139    1.0298  -0.1766      1.0971   False    True
+  u56  PRICE NEG 0.2000  0.1335    1.1432  -0.1839      1.2331   False    True
+  u56  PRICE NEG 0.5000  0.1360    1.1683  -0.1815      1.2165   False    True
+  u56  PRICE NEG 1.0000  0.1315    1.1729  -0.1765      1.2540   False    True
+  u56 FROZEN POS 0.2000  0.1152    1.0322  -0.1795      1.1447   False    True
+  u56 FROZEN NEG 0.2000  0.1304    1.0996  -0.1879      1.1565   False    True
+  u56 FROZEN NEG 0.5000  0.1368    1.1332  -0.1893      1.1844   False    True
+  u56 FROZEN NEG 1.0000  0.1370    1.1325  -0.1923      1.1900   False    True
+  u56 PXTERM POS 0.2000  0.1299    1.1053  -0.1823      1.1871   False    True
+  u56 PXTERM POS 0.5000  0.1299    1.1078  -0.1819      1.1989   False    True
+  u56 PXTERM POS 1.0000  0.1298    1.1190  -0.1795      1.2285   False    True
+  u56 PXTERM NEG 0.2000  0.1181    1.0427  -0.1821      1.1181   False    True
+  u56 PXTERM NEG 0.5000  0.1096    1.0149  -0.1738      1.0789   False    True
+  u56 FWDRET POS 0.2000  0.1375    1.1553  -0.1892      1.2557   False    True
+  u56 FWDRET POS 0.5000  0.1525    1.2577  -0.1848      1.4011   False    True
+  u56 FWDRET POS 1.0000  0.1635    1.3506  -0.1844      1.5646   False    True
+broad FWDRET POS 1.0000  0.2367    1.5414  -0.2021      1.7411   False    True
+
+================================================================================================
+PRE-REGISTERED PREDICTIONS
+================================================================================================
+  HIT   P1 R1 identity < 1e-9   
+  MISS  P2 ratio invariant (frac cells moved <1e-4), level not (>0.50)   ratio max frac 7.57e-04, level min frac 0.7277
+  HIT   P3 LIVE book exactly invariant   
+  HIT   P4 FROZEN is NOT invariant   
+  HIT   P5 level |rho| peaks at h=T   level |rho| h=21 0.0566 -> h=T 0.3806; ratio h=T 0.1605
+  HIT   P6 rescale spread 0 for ratio, >0.10 for a level arm   level max range 0.2862
+  INFO  P7 level/oracle arms passing a KEEP path @10 bps: 18 (all disqualified by T1)
+
+done in 253s;  LEADERBOARD rows parsed 3382, rows on a LEVEL-construction script 35
