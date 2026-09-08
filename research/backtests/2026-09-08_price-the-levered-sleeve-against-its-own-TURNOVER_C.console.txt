@@ -1,0 +1,300 @@
+IDEA 405 — THE LEVERED SLEEVE PRICED AGAINST ITS OWN TURNOVER (lane C, 2026-09-08).
+8 cells x 4 arms x 4 cost rungs x 7 financing rungs = 896 arm-rows from 32 simulated paths (both fee taps are exactly linear).
+cost sweep [0.0, 10.0, 25.0, 50.0] bps; financing sweep [0.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0] bps/yr on borrowed notional.
+Verdict quoted at the PROTOCOL rung c=10 bps, phi=300 bps. Cash earns 0 at gross<1 (record convention; taxes INC/CTL, not LEV).
+Arms: INC f=0.25 g=0.75, LEV f=0.60 g=1.25, CTL f=0.00 g=0.75, CTLg f=0.00 g=1.25
+
+[panel] u56: 56 cols 2008-01-02..2026-09-04, eval from 2009-01-13
+    SPY full 15.23%/0.889/-33.72% halves 0.957/0.834; OOS 15.45%/0.882/-33.72%
+    4b bars (full): H1>0.957 H2>0.834 OOS>0.882 MaxDD>=-20.23% CAGR>=10.66%
+    RULES v2 (live) @10bps 8.66%/1.206/-12.05% halves 1.226/1.191
+    RULES v2 (live) @25bps 8.37%/1.168/-12.09% halves 1.188/1.153
+    [gate a] run_lev vs H.run max|d| 0.000e+00; vs engine.backtest max|d| 0.000e+00
+
+[panel] broad: 136 cols 2008-01-02..2026-09-04, eval from 2009-01-13
+    SPY full 15.23%/0.889/-33.72% halves 0.957/0.834; OOS 15.45%/0.882/-33.72%
+    4b bars (full): H1>0.957 H2>0.834 OOS>0.882 MaxDD>=-20.23% CAGR>=10.66%
+    RULES v2 (live) @10bps 8.03%/1.106/-12.24% halves 1.229/0.984
+    RULES v2 (live) @25bps 7.70%/1.064/-12.28% halves 1.191/0.939
+    [gate a] run_lev vs H.run max|d| 0.000e+00; vs engine.backtest max|d| 0.000e+00
+
+[grid] 896 arm-rows written to 2026-09-08_price-the-levered-sleeve-against-its-own-TURNOVER_C.grid.csv
+
+[gate c] REPRODUCTION of idea 402's committed .grid.csv on its shared rows (arms INC/LEV/CTL at their (f,g), cost 10/25, fin 0/300)
+    matched 128 rows x 8 columns; max|d| 1.026e-05 (u56 cache drift caveat, idea 401: ~1e-5 is the floor after a daily close)
+
+====================================================================================================
+Q1  PREMISE CHECK — is the turnover multiple really 3.4x (2.3x -> 7.9x/yr)?
+====================================================================================================
+arm                   CTL   CTLg    INC    LEV  LEV/INC  gLEV/gINC
+panel book  sleeve                                                
+broad EWall S3      0.866  1.461  2.333  7.965    3.414      1.667
+            S4      0.866  1.461  2.317  8.062    3.479      1.667
+      TOP20 S3     13.369 22.298 12.134 17.450    1.438      1.667
+            S4     13.369 22.298 12.181 17.600    1.445      1.667
+u56   EWall S3      0.828  1.400  2.293  7.903    3.447      1.667
+            S4      0.828  1.400  2.274  7.998    3.517      1.667
+      TOP20 S3      9.299 15.544  8.887 14.265    1.605      1.667
+            S4      9.299 15.544  8.905 14.345    1.611      1.667
+
+    Turnover multiple LEV/INC: median 2.513, range 1.438-3.517, against the queue's stated 3.4x and the pure gross ratio 1.667.
+    By base book: EWall median 3.463 (idea 402 tabulated 2.29->7.90 = 3.45x on EWall rows), TOP20 median 1.525.  P1 CONFIRMED.
+    Mean borrowed notional at LEV: 0.2497 of NAV; at INC 0.0000 (INC never borrows, by construction).
+
+====================================================================================================
+Q2  THE JOINT REGION — over the 4 x 7 = 28 (cost, financing) rungs, where does LEV beat INC on Sharpe?
+====================================================================================================
+
+  dSharpe(LEV - INC) surface, cell mean over the 8 cells (rows = cost bps, cols = financing bps):
+fin    0.0     100.0   200.0   300.0   400.0   500.0   600.0
+cost                                                        
+0.0  +0.1469 +0.1242 +0.1014 +0.0787 +0.0559 +0.0332 +0.0105
+10.0 +0.1008 +0.0781 +0.0554 +0.0326 +0.0099 -0.0128 -0.0356
+25.0 +0.0314 +0.0087 -0.0140 -0.0368 -0.0595 -0.0822 -0.1049
+50.0 -0.0847 -0.1073 -0.1300 -0.1527 -0.1753 -0.1980 -0.2206
+
+  Cells (of 8) in which LEV beats INC on Sharpe:
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+cost                                                 
+0.0       8      8      8      8      7      6      6
+10.0      8      8      8      6      6      3      1
+25.0      6      5      1      1      0      0      0
+50.0      0      0      0      0      0      0      0
+
+  Cells (of 8) in which LEV beats INC AND passes 4b:
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+cost                                                 
+0.0       8      8      8      8      7      6      6
+10.0      8      8      8      6      6      3      1
+25.0      5      4      1      1      0      0      0
+50.0      0      0      0      0      0      0      0
+
+  Cells (of 8) in which the INCUMBENT itself passes 4b (the comparand's own region):
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+cost                                                 
+0.0       8      8      8      8      8      8      8
+10.0      8      8      8      8      8      8      8
+25.0      6      6      6      6      6      6      6
+50.0      2      2      2      2      2      2      2
+
+  Per-cell count of winning rungs (of 28) and the region's shape:
+panel  book sleeve  n_win  cost_max  fin_max  prefix_in_fin  win_at_proto
+broad EWall     S3     18      25.0    600.0           True          True
+broad EWall     S4     15      25.0    600.0           True          True
+broad TOP20     S3     14      25.0    600.0           True          True
+broad TOP20     S4     14      25.0    600.0           True          True
+  u56 EWall     S3     15      25.0    600.0           True          True
+  u56 EWall     S4     13      25.0    600.0           True          True
+  u56 TOP20     S3      8      10.0    400.0           True         False
+  u56 TOP20     S4      7      10.0    300.0           True         False
+
+    LEV wins in 104 of 224 (cell, rung) points; the win set is a prefix in financing within every cost row in 8 of 8 cells.
+    AT THE RECORD'S OWN RUNG (c=10, phi=300): LEV beats INC in 6 of 8 cells (mean dSharpe +0.0326), passes 4b in 8 of 8; P4 predicted a majority — CONFIRMED.
+
+====================================================================================================
+Q3  THE BREAK-EVEN FRONTIER phi*(c) — borrow rate at which the Sharpe edge dies
+====================================================================================================
+panel  book sleeve  cost  dS_at_0  dS_at_600  phi_star      kind  phi_4b   kind_4b
+broad EWall     S3   0.0      0.2        0.1       NaN above-all     NaN above-all
+broad EWall     S3  10.0      0.2        0.0       NaN above-all     NaN above-all
+broad EWall     S3  25.0      0.1       -0.1     319.1  interior     NaN above-all
+broad EWall     S3  50.0     -0.1       -0.2       NaN below-all     NaN below-all
+broad EWall     S4   0.0      0.2        0.0       NaN above-all     NaN above-all
+broad EWall     S4  10.0      0.1       -0.0     537.2  interior     NaN above-all
+broad EWall     S4  25.0      0.0       -0.1     198.5  interior     NaN above-all
+broad EWall     S4  50.0     -0.1       -0.2       NaN below-all    50.0  interior
+broad TOP20     S3   0.0      0.1        0.0       NaN above-all     NaN above-all
+broad TOP20     S3  10.0      0.1       -0.0     469.8  interior     NaN above-all
+broad TOP20     S3  25.0      0.0       -0.1     196.8  interior     NaN below-all
+broad TOP20     S3  50.0     -0.1       -0.2       NaN below-all     NaN below-all
+broad TOP20     S4   0.0      0.1        0.0       NaN above-all     NaN above-all
+broad TOP20     S4  10.0      0.1       -0.0     462.2  interior     NaN above-all
+broad TOP20     S4  25.0      0.0       -0.1     197.0  interior   150.0  interior
+broad TOP20     S4  50.0     -0.0       -0.2       NaN below-all     NaN below-all
+  u56 EWall     S3   0.0      0.2        0.0       NaN above-all     NaN above-all
+  u56 EWall     S3  10.0      0.1       -0.0     513.0  interior     NaN above-all
+  u56 EWall     S3  25.0      0.0       -0.1     180.7  interior   450.0  interior
+  u56 EWall     S3  50.0     -0.1       -0.3       NaN below-all     NaN below-all
+  u56 EWall     S4   0.0      0.2        0.0       NaN above-all     NaN above-all
+  u56 EWall     S4  10.0      0.1       -0.0     403.5  interior     NaN above-all
+  u56 EWall     S4  25.0      0.0       -0.1      71.0  interior   550.0  interior
+  u56 EWall     S4  50.0     -0.1       -0.3       NaN below-all     NaN below-all
+  u56 TOP20     S3   0.0      0.1       -0.0     415.8  interior     NaN above-all
+  u56 TOP20     S3  10.0      0.1       -0.1     235.9  interior     NaN above-all
+  u56 TOP20     S3  25.0     -0.0       -0.1       NaN below-all     NaN above-all
+  u56 TOP20     S3  50.0     -0.1       -0.2       NaN below-all     NaN below-all
+  u56 TOP20     S4   0.0      0.1       -0.0     380.0  interior     NaN above-all
+  u56 TOP20     S4  10.0      0.0       -0.1     207.1  interior     NaN above-all
+  u56 TOP20     S4  25.0     -0.0       -0.1       NaN below-all   450.0  interior
+  u56 TOP20     S4  50.0     -0.1       -0.2       NaN below-all     NaN below-all
+
+    c=  0.0 bps: phi* interior in 2/8 cells (median 398 bps if any), above-all 6 (LEV wins out to 600 bps), below-all 0 (LEV never wins).
+
+    c= 10.0 bps: phi* interior in 7/8 cells (median 462 bps if any), above-all 1 (LEV wins out to 600 bps), below-all 0 (LEV never wins).
+
+    c= 25.0 bps: phi* interior in 6/8 cells (median 197 bps if any), above-all 0 (LEV wins out to 600 bps), below-all 2 (LEV never wins).
+
+    c= 50.0 bps: phi* interior in 0/8 cells (median nan bps if any), above-all 0 (LEV wins out to 600 bps), below-all 8 (LEV never wins).
+
+  phi*(c) per cell (bps of borrow the edge can absorb; NaN = never crosses inside 0-600):
+cost                0.0   10.0  25.0
+panel book  sleeve                  
+broad EWall S3       NaN   NaN   319
+            S4       NaN   537   199
+      TOP20 S3       NaN   470   197
+            S4       NaN   462   197
+u56   EWall S3       NaN   513   181
+            S4       NaN   404    71
+      TOP20 S3       416   236   NaN
+            S4       380   207   NaN
+
+  Median phi* by cost rung (UNPAIRED — different cells are interior at each rung, so this median is NOT comparable across rungs): 0bps -> 398 (n=2), 10bps -> 462 (n=7), 25bps -> 197 (n=6)
+
+  PAIRED exchange rate d phi*/d c, per cell, over cost steps where the cell's phi* is interior at BOTH ends (the unpaired median above is a composition artefact):
+          cell   step  slope
+  u56/TOP20/S3  0->10  -18.0
+  u56/TOP20/S4  0->10  -17.3
+broad/EWall/S4 10->25  -22.6
+broad/TOP20/S3 10->25  -18.2
+broad/TOP20/S4 10->25  -17.7
+  u56/EWall/S3 10->25  -22.2
+  u56/EWall/S4 10->25  -22.2
+  MEDIAN PAIRED d phi*/d c = -18.2 bps of borrow per bp of trading cost over 7 paired cell-steps (range -22.6..-17.3).  P3 predicted 'a few tens, negative': CONFIRMED.
+
+  Idea 402 published a median break-even of 277 bps at c=10.  Here: median 462 bps over 7 interior cells of 8.
+
+====================================================================================================
+Q4  DECOMPOSITION — the LEV-minus-INC Sharpe gap, split into zero-fee gap, trading increment and financing increment (idea 137's method)
+====================================================================================================
+  Additivity residual (total - zerofee - trading - financing): max|resid| 6.581e-04, mean 8.319e-05.  The two taps are NOT exactly additive in SHARPE (they are in returns); the residual size says how far from additive.
+
+  Cell-mean split at each rung (zero-fee gap is constant by construction):
+fin    0.0     100.0   200.0   300.0   400.0   500.0   600.0
+cost                                                        
+0.0  +0.0000 +0.0000 +0.0000 +0.0000 +0.0000 +0.0000 +0.0000
+10.0 -0.0461 -0.0461 -0.0461 -0.0461 -0.0461 -0.0461 -0.0461
+25.0 -0.1155 -0.1155 -0.1155 -0.1155 -0.1155 -0.1155 -0.1155
+50.0 -0.2316 -0.2316 -0.2316 -0.2316 -0.2316 -0.2316 -0.2316   <- trading increment (invariant in phi)
+fin    0.0     100.0   200.0   300.0   400.0   500.0   600.0
+cost                                                        
+0.0  +0.0000 -0.0227 -0.0455 -0.0682 -0.0910 -0.1137 -0.1364
+10.0 +0.0000 -0.0227 -0.0455 -0.0682 -0.0910 -0.1137 -0.1364
+25.0 +0.0000 -0.0227 -0.0455 -0.0682 -0.0910 -0.1137 -0.1364
+50.0 +0.0000 -0.0227 -0.0455 -0.0682 -0.0910 -0.1137 -0.1364   <- financing increment (invariant in c)
+
+  Zero-fee dSharpe (LEV - INC), cell mean +0.1469, range +0.0795..+0.2280, positive in 8 of 8 cells.
+  At c=10/phi=300: cell-mean total +0.0326 = zero-fee +0.1469 + trading -0.0461 + financing -0.0682 (+resid +0.0000).
+  WHICH TAP DOMINATES at the record's rung: trading 40.3% vs financing 59.7% of the total fee drag on the gap.
+  Cell-mean fee drag on the gap at every rung (trading + financing, in Sharpe):
+fin    0.0     100.0   200.0   300.0   400.0   500.0   600.0
+cost                                                        
+0.0  +0.0000 -0.0227 -0.0455 -0.0682 -0.0910 -0.1137 -0.1364
+10.0 -0.0461 -0.0688 -0.0915 -0.1143 -0.1370 -0.1598 -0.1825
+25.0 -0.1155 -0.1382 -0.1610 -0.1837 -0.2065 -0.2292 -0.2519
+50.0 -0.2316 -0.2543 -0.2771 -0.2998 -0.3225 -0.3453 -0.3680
+
+====================================================================================================
+Q5  RULE 8 WALK-FORWARD — the ARM chosen on 2009-2016 only at each rung, 2017-2026 read once
+====================================================================================================
+  Selectors (both see IS only): S0 = argmax IS Sharpe over {INC, LEV, CTL, CTLg}; S1 = IS-4b-admissible then argmax IS Sharpe (abstains if none admissible).
+
+  S0 pick counts by rung (rows = cost, cols = financing), 8 cells each:
+  --- S0 picks INC ---
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+cost                                                 
+0.0       0      0      1      1      1      4      4
+10.0      1      1      1      4      4      5      7
+25.0      4      5      5      7      8      8      8
+50.0      6      6      6      6      6      6      6
+  --- S0 picks LEV ---
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+cost                                                 
+0.0       8      8      7      7      7      4      4
+10.0      7      7      7      4      4      3      1
+25.0      4      3      3      1      0      0      0
+  --- S0 picks CTL ---
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+cost                                                 
+50.0      1      2      2      2      2      2      2
+  --- S0 picks CTLg ---
+fin   0.0
+cost     
+50.0    1
+
+  S1 (IS-4b screened) pick counts:
+S1
+ABSTAIN    35
+CTL        23
+INC        89
+LEV        77
+
+  IS says LEV beats INC vs OOS says so (the rule-8 question), count of 8 per rung:
+  IS:
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+cost                                                 
+0.0       8      8      7      7      7      4      4
+10.0      7      7      7      4      4      3      1
+25.0      4      3      3      1      0      0      0
+50.0      0      0      0      0      0      0      0
+  OOS:
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+cost                                                 
+0.0       8      8      8      8      7      7      5
+10.0      8      8      7      7      5      4      1
+25.0      7      7      4      2      0      0      0
+50.0      0      0      0      0      0      0      0
+
+  IS/OOS agreement on the LEV>INC call: 81.2% of 224 (cell, rung) points.  IS wins 89, OOS wins 111 — P5 predicted the OOS region is SMALLER: REJECTED.
+
+  OOS performance at the PROTOCOL rung (c=10, phi=300), cell means over 8 cells:
+    S0        OOS CAGR 12.92% Sharpe 1.1741 MaxDD -17.88%  clears 3 OOS 4b bars 8/8
+    S1        OOS CAGR 12.84% Sharpe 1.1728 MaxDD -17.99%  clears 8/8
+    INC (std) OOS CAGR 12.41% Sharpe 1.1498 MaxDD -18.15%  clears 8/8
+    LEV       OOS CAGR 13.56% Sharpe 1.1866 MaxDD -18.02%  clears 8/8
+    SPY       OOS CAGR 15.45% Sharpe 0.8820 MaxDD -33.72%
+    RULES v2 (live) u56 @10bps OOS CAGR 9.53% Sharpe 1.2851 MaxDD -12.05%
+    RULES v2 (live) broad @10bps OOS CAGR 7.98% Sharpe 1.1185 MaxDD -12.24%
+
+  OOS dSharpe(LEV - INC) surface, cell mean (rows = cost, cols = financing):
+fin    0.0     100.0   200.0   300.0   400.0   500.0   600.0
+cost                                                        
+0.0  +0.1431 +0.1209 +0.0986 +0.0763 +0.0540 +0.0317 +0.0094
+10.0 +0.1036 +0.0813 +0.0590 +0.0368 +0.0145 -0.0078 -0.0301
+25.0 +0.0440 +0.0217 -0.0005 -0.0228 -0.0451 -0.0673 -0.0896
+50.0 -0.0556 -0.0778 -0.1001 -0.1223 -0.1445 -0.1667 -0.1890
+
+====================================================================================================
+KEEP PATHS over all rows (4a judged against the LIVE RULES v2 book, cost-matched, per PROTOCOL 3; 4b per PROTOCOL 4b)
+====================================================================================================
+  Totals over 896 rows: 4b 320, 4a(v2, cost-matched) 0, BOTH 0, 4a(v1 @fixed 10bps) 196 (the comparand gap open idea 398 owns).
+
+  4b pass count by arm and cost rung (of 8 cells x 7 fin rungs = 56 each):
+cost  0.0   10.0  25.0  50.0
+arm                         
+CTL      0     0     0     0
+CTLg     0     0     0     0
+INC     56    56    42    14
+LEV     56    56    39     1
+
+  4b pass count by arm and financing rung (of 8 cells x 4 cost rungs = 32 each):
+fin   0.0    100.0  200.0  300.0  400.0  500.0  600.0
+arm                                                  
+CTL       0      0      0      0      0      0      0
+CTLg      0      0      0      0      0      0      0
+INC      24     24     24     24     24     24     24
+LEV      24     23     22     22     22     20     19
+
+====================================================================================================
+VERDICT against the PRE-REGISTERED decision rule
+====================================================================================================
+  (i)   LEV wins AND passes 4b in all 8 cells at c=10 for every phi>=300: NO (actual at phi=300: 6/8; at phi=600: 1/8)
+  (ii)  rule-8 S1 picks LEV at that rung in 3/8 cells and clears all three OOS 4b bars in 8/8 (bar was >=7/8)
+  (iii) FEE-STORY test (pre-defined: the win region needs c<=10 AND phi<=300): moving cost one rung up (c=25, phi=300) LEV wins 1/8; moving borrow to the top rung (c=10, phi=600) LEV wins 1/8.  FEE STORY.
+
+  VERDICT: KILL (fee story)
+
+====================================================================================================
+CAVEAT, QUANTIFIED — what open idea 406's cash-credit convention would do to this frontier
+====================================================================================================
+  INC holds mean cash 1 - 0.750 = 0.250 of NAV; LEV borrows mean 0.250.  Crediting cash at k bps/yr therefore adds k*0.250/1e4 to INC's return and 0 to LEV's, i.e. it moves the frontier AGAINST LEV by roughly (0.250/borrowed) bps of borrow per bp of credit.
+  With borrowed = 0.250, the exchange rate is ~1.00 bps of phi* per bp of cash credit: a 150-bps credit (idea 406's first rung) would cut phi* by ~150 bps.  Every phi* below is therefore an UPPER bound under the record's cash-at-zero convention.
