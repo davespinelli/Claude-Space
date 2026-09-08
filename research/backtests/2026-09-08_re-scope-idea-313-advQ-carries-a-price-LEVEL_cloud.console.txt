@@ -1,0 +1,158 @@
+================================================================================================================
+IDEA 424 — does the capQ/advQ decile SIGN gap survive replacing advQ with a price-free key?
+  pinned: g=0.75, cadence W, cost 10 bps (0 bps alongside), NDEC=10, key window 60d, MA 200d
+  2 parameters: key in {capQ, advQ, VOLSH, DVOLT} x membership in {STATIC, DYNAMIC}
+================================================================================================================
+
+PANEL  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+       2010-01-04 .. 2026-09-04  (4194 rows)
+       SURVIVORSHIP: current constituents of the sub-$2B screen only; every LEVEL on this panel is biased UP, thin deciles most.  Claims below are key-vs-key DIFFERENCES.
+
+REFERENCES over 2011-01-13..2026-09-04
+  SPY              CAGR  14.13%  Sharpe  0.862  MaxDD -33.72%   | OOS CAGR  15.45% Sharpe  0.882 MaxDD -33.72%
+  RULES v2 (live)  CAGR   3.81%  Sharpe  0.572  MaxDD -14.68%   | OOS CAGR   3.85% Sharpe  0.568 MaxDD -14.68%
+  EWall whole panel CAGR  10.18%  Sharpe  0.678  MaxDD -36.17%   | OOS CAGR  10.09% Sharpe  0.637 MaxDD -36.17%
+
+KEYS   capQ covers 434/439 tradable names (median $748M, $57M-$1985M)
+       advQ   panel-median 60d value $3.217M  (439 names)
+       VOLSH  panel-median 60d value 0.178M  (439 names)
+       DVOLT  panel-median 60d value $3.353M  (439 names)
+
+G2  T1 RE-ADJUSTMENT INVARIANCE (px -> px @ diag(c), c ~ lognormal(0, sigma), 3 seeds)
+    'moved' = fraction of finite key cells whose cross-sectional rank changes.
+    capQ   moved 0.0000 mean  [0.0000, 0.0000] over 6 draws
+    advQ   moved 0.9531 mean  [0.9359, 0.9687] over 6 draws
+    VOLSH  moved 0.0000 mean  [0.0000, 0.0000] over 6 draws
+    DVOLT  moved 0.9594 mean  [0.9435, 0.9718] over 6 draws
+    -> advQ/DVOLT carry a price LEVEL (cells move); VOLSH and capQ do not.
+
+    pairwise agreement of the STATIC per-name key ranks (Spearman, n = names):
+            capQ   advQ  VOLSH  DVOLT
+    capQ  +1.000 +0.429 +0.318 +0.709
+    advQ  +0.429 +1.000 +0.843 +0.844
+    VOLSH +0.318 +0.843 +1.000 +0.711
+    DVOLT +0.709 +0.844 +0.711 +1.000
+
+================================================================================================================
+Q1  DECILE LADDERS — 4 keys x 2 memberships x 10 deciles x 3 arms (ALL grid points below)
+================================================================================================================
+  capQ-S done (93s)
+  advQ-S done (144s)
+  advQ-D done (384s)
+  VOLSH-S done (435s)
+  VOLSH-D done (679s)
+  DVOLT-S done (730s)
+  DVOLT-D done (970s)
+
+G1  REPRODUCTION of idea 51 lane B `.deciles.csv` (capQ-STATIC and advQ-DYNAMIC rows)
+    advQ-D (30 rows, 0 with a different decile size):
+      CAGR               max |diff| 9.93e-17
+      Sharpe             max |diff| 8.33e-17
+      MaxDD              max |diff| 8.33e-17
+      dSharpe_vs_EWall   max |diff| 9.02e-17
+    capQ-S (30 rows, 15 with a different decile size):
+      CAGR               max |diff| 3.30e-03
+      Sharpe             max |diff| 2.57e-02
+      MaxDD              max |diff| 9.87e-03
+      dSharpe_vs_EWall   max |diff| 1.72e-02
+    -> advQ-DYNAMIC (the leg the queue's question is about) REPRODUCES EXACTLY arm-for-arm on all 30 rows.
+    -> capQ-STATIC does NOT reproduce bit-exact, and the cause is a DATA VINTAGE, not this
+       script: `research/deepvalue/universe_under2b.csv` was re-committed on 2026-09-07,
+       AFTER idea 51 ran.  It now covers 434 of the 439 tradable names against the
+       435 idea 51's console reports, and since the decile edges are `qcut` on the covered
+       set, one name moves and the 43/44 sizes alternate differently.  The published capQ
+       vintage is not recoverable from the repo.  Bound on the damage: max |dSharpe| drift
+       0.0257, and idea 51's HEADLINE slopes still reproduce (see Q2: capQ MA-DG rho -0.335 vs published
+       -0.336/-0.335; advQ-D MA-RS rho +0.335 vs published +0.335).  Reported, not asserted away.
+
+================================================================================================================
+Q2  THE SIGN GAP — rho(decile, dSharpe vs EWall), FULL / IS 2010-2016 / OOS 2017-2026
+    n = 10 deciles, so SE(rho) ~ 0.354; t = rho*sqrt(8)/sqrt(1-rho^2).
+================================================================================================================
+  key    memb     arm     rho_full      t   rho_IS      t  rho_OOS      t  rhoCAGR  +d/10
+  capQ   STATIC   MA-RS     -0.326  -0.98   +0.365  +1.11   -0.583  -2.03   -0.399    0/10
+  capQ   STATIC   MA-DG     -0.335  -1.01   +0.349  +1.05   -0.709  -2.85   -0.340    1/10
+  advQ   STATIC   MA-RS     +0.099  +0.28   +0.550  +1.86   -0.265  -0.78   -0.064    1/10
+  advQ   STATIC   MA-DG     +0.133  +0.38   +0.531  +1.77   -0.309  -0.92   +0.647    1/10
+  advQ   DYNAMIC  MA-RS     +0.335  +1.01   +0.462  +1.48   +0.120  +0.34   +0.185    0/10
+  advQ   DYNAMIC  MA-DG     +0.113  +0.32   +0.396  +1.22   -0.463  -1.48   +0.908    1/10
+  VOLSH  STATIC   MA-RS     +0.630  +2.30   +0.649  +2.41   +0.153  +0.44   +0.426    0/10
+  VOLSH  STATIC   MA-DG     +0.381  +1.16   +0.609  +2.17   -0.193  -0.56   +0.905    0/10
+  VOLSH  DYNAMIC  MA-RS     +0.467  +1.49   +0.522  +1.73   +0.272  +0.80   +0.329    0/10
+  VOLSH  DYNAMIC  MA-DG     +0.262  +0.77   +0.408  +1.26   -0.159  -0.46   +0.787    0/10
+  DVOLT  STATIC   MA-RS     +0.058  +0.16   +0.715  +2.89   -0.423  -1.32   -0.128    1/10
+  DVOLT  STATIC   MA-DG     -0.113  -0.32   +0.652  +2.43   -0.513  -1.69   +0.267    1/10
+  DVOLT  DYNAMIC  MA-RS     +0.184  +0.53   +0.628  +2.28   -0.484  -1.57   -0.063    0/10
+  DVOLT  DYNAMIC  MA-DG     -0.264  -0.78   +0.419  +1.31   -0.682  -2.64   +0.251    2/10
+
+================================================================================================================
+Q3  PAIRED CALENDAR-YEAR BLOCK BOOTSTRAP (1000 draws, seed 424) — is the sign gap real?
+    One year-resample per draw, applied to EVERY book, so rho and the gap are PAIRED.
+================================================================================================================
+  capQ-S bootstrapped (971s)
+  advQ-S bootstrapped (973s)
+  advQ-D bootstrapped (975s)
+  VOLSH-S bootstrapped (976s)
+  VOLSH-D bootstrapped (978s)
+  DVOLT-S bootstrapped (980s)
+  DVOLT-D bootstrapped (982s)
+
+  key    memb     arm      rho_pt boot mean      5%     95%  P(rho>0)
+  capQ   STATIC   MA-RS    -0.326    -0.206  -0.610  +0.245     0.227
+  capQ   STATIC   MA-DG    -0.335    -0.241  -0.738  +0.304     0.245
+  advQ   STATIC   MA-RS    +0.099    +0.079  -0.240  +0.375     0.667
+  advQ   STATIC   MA-DG    +0.133    +0.094  -0.335  +0.451     0.674
+  advQ   DYNAMIC  MA-RS    +0.335    +0.274  -0.136  +0.541     0.892
+  advQ   DYNAMIC  MA-DG    +0.113    +0.087  -0.424  +0.532     0.626
+  VOLSH  STATIC   MA-RS    +0.630    +0.408  -0.126  +0.741     0.907
+  VOLSH  STATIC   MA-DG    +0.381    +0.233  -0.324  +0.677     0.787
+  VOLSH  DYNAMIC  MA-RS    +0.467    +0.401  +0.110  +0.612     0.979
+  VOLSH  DYNAMIC  MA-DG    +0.262    +0.196  -0.254  +0.540     0.801
+  DVOLT  STATIC   MA-RS    +0.058    +0.056  -0.403  +0.518     0.562
+  DVOLT  STATIC   MA-DG    -0.113    -0.099  -0.584  +0.393     0.368
+  DVOLT  DYNAMIC  MA-RS    +0.184    +0.119  -0.305  +0.469     0.700
+  DVOLT  DYNAMIC  MA-DG    -0.264    -0.215  -0.669  +0.226     0.237
+
+  THE GAP (rho_key - rho_capQ), paired per draw:
+  arm    contrast                 gap_pt boot mean      5%     95%  P(gap>0)  P(signs differ)
+  MA-RS  advQ-S vs capQ-S         +0.425    +0.285  -0.023  +0.591     0.935            0.456
+  MA-RS  advQ-D vs capQ-S         +0.662    +0.480  +0.090  +0.788     0.977            0.667
+  MA-RS  VOLSH-S vs capQ-S        +0.957    +0.614  +0.167  +1.007     0.993            0.684
+  MA-RS  VOLSH-D vs capQ-S        +0.793    +0.607  +0.209  +0.952     0.994            0.754
+  MA-RS  DVOLT-S vs capQ-S        +0.385    +0.262  +0.022  +0.553     0.963            0.343
+  MA-RS  DVOLT-D vs capQ-S        +0.510    +0.325  +0.052  +0.630     0.975            0.479
+  MA-DG  advQ-S vs capQ-S         +0.468    +0.335  -0.118  +0.765     0.891            0.477
+  MA-DG  advQ-D vs capQ-S         +0.448    +0.327  -0.104  +0.728     0.900            0.419
+  MA-DG  VOLSH-S vs capQ-S        +0.716    +0.474  -0.011  +0.917     0.947            0.560
+  MA-DG  VOLSH-D vs capQ-S        +0.597    +0.437  +0.001  +0.876     0.950            0.568
+  MA-DG  DVOLT-S vs capQ-S        +0.222    +0.142  -0.179  +0.415     0.794            0.193
+  MA-DG  DVOLT-D vs capQ-S        +0.071    +0.025  -0.282  +0.306     0.581            0.140
+
+================================================================================================================
+Q4  RULE 8 W2 — decile chosen by best IS (2010-2016) EWall Sharpe, OOS 2017-2026 read once
+================================================================================================================
+  key    memb     pick   IS Sh |  OOS CAGR  OOS Sh   OOS DD | vs SPY Sh  vs v2 Sh vs ctrl Sh   4a   4b
+  capQ   STATIC      2   1.020 |     7.80%   0.496  -41.95% |    -0.386    -0.072     -0.140 False False
+  advQ   STATIC      1   0.981 |    22.54%   1.346  -28.31% |    +0.464    +0.778     +0.709 False False
+  advQ   DYNAMIC     1   1.695 |    37.42%   2.213  -24.54% |    +1.331    +1.645     +1.576 False False
+  VOLSH  STATIC      1   1.155 |    17.35%   1.125  -27.62% |    +0.243    +0.557     +0.489 False False
+  VOLSH  DYNAMIC     1   1.474 |    18.45%   1.328  -26.13% |    +0.446    +0.760     +0.691 False False
+  DVOLT  STATIC      1   1.037 |    16.52%   0.980  -35.93% |    +0.098    +0.412     +0.343 False False
+  DVOLT  DYNAMIC     1   1.194 |    17.47%   1.142  -26.08% |    +0.260    +0.574     +0.506 False False
+
+  OOS references: SPY Sharpe 0.882 CAGR 15.45% MaxDD -33.72% | RULES v2 0.568 / 3.85% / -14.68% | EWall-panel control 0.637 / 10.09% / -36.17%
+  picks beating SPY OOS Sharpe: 6/7; beating the do-nothing control: 6/7; beating RULES v2: 6/7
+  READ THIS BEFORE THE ROW ABOVE: the IS chooser lands on decile 1 in 6 of 7 cells — the THINNEST, least-liquid decile,
+  which is precisely where current-constituent survivorship is largest (idea 51's cloud
+  replication rejected the same corner: 'control returns 19.71% CAGR, least-liquid
+  survivorship decile').  These OOS Sharpes are a bias measurement, NOT an edge, and 4b
+  passes 0 of 210 books, which is the honest reading of the same fact.
+
+================================================================================================================
+Q5  KEEP PATHS over ALL grid points
+================================================================================================================
+  4a passes: 2/210 books;  4b passes: 0/210
+  keep4a rows: advQ-S d3 MA-DG, advQ-D d2 MA-DG
+  NOTE any 4b pass on this panel is on CURRENT constituents only (survivorship); it is a decomposition read, not a capital claim.
+
+DONE in 982s
