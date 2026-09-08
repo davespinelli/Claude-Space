@@ -2,6 +2,8 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-08 | 40697477 | Futures Strategy Development and Testing | $650 | 31 | drafted |
+| 2026-09-08 | 40697440 | Manual Data Entry From Online Forms | $245 | 8 | drafted |
 | 2026-09-08 | 40696751 | Senior Backend Engineer, Agentic AI & Data Platform | $850 | 191 | drafted |
 | 2026-09-08 | 40697014 | Clio Intake Automation Specialist | $580 | 122 | drafted |
 | 2026-09-08 | 40696764 | Email Data Entry & Organization | $420 | 38 | drafted |
@@ -200,5 +202,9 @@ Lessons: proposals max 1,500 chars; each project requires ticking at least one o
 - Telegram Quotex Alert Bot (40696825) (automated real-time connection to a binary options platform with no official API, same reason as the IQ Option bot skipped 2026-09-06; $16 to $132 with 29 bids)
 - Setup Scrapy or any open source web data scrapping Remotely (40696496) (AnyDesk session onto the client's own Windows PC to install and configure software, remote support rather than delivery work, 103 bids at $30 to $250)
 - Dynamic AI Marketplace Bot Development (the shortlist row carries no job id and no captured description, so it cannot be filed or priced; 174 bids)
+
+- Accurate Mixed Data Entry (40697262) (the brief, a collection of records holding both text and numerical values, is the same template already drafted as 40689875 Mixed Data Entry Records on 2026-09-04 and again as 40695901 and 40690431, so it falls under the near-duplicate rule, and it carries 70 bids. Worth noting for David: this repost sits in a fixed $250 to $750 band rather than the usual $159 to $265, so the existing 40689875 draft can be repriced upward to roughly $420 and submitted there if he is willing to bid into 70 competitors)
+
+Note for the 2026-09-08 04:35 UTC batch: three NEW rows, two drafted and one skipped for the reason above, so the batch is two by supply rather than the eight per run cap. Auditing all sixty shortlist rows against the index left nothing else untriaged. Freelancer.com and its public API remain blocked by the session network policy, so both were written from the truncated descriptions the scanner captured, and each asks the scope question the truncation left open. 40697477 is the best shot on this shortlist: 31 bids, a fixed $250 to $750 band, and it is the only row that lands squarely on the backtesting engine we already have public proof of. 40697440 has the better odds at 8 bids but a smaller band; its proposal deliberately tells the client to check for a form export first, which may end the job before it starts, and that is the honest call.
 
 Note for the 2026-09-08 batch: the 2026-09-07 21:31 UTC scan carried thirteen NEW rows, of which seven were drafted and six skipped for the reasons above. One older row (Dynamic AI Marketplace Bot Development) was never triaged either way and is skipped above for lack of an id. Freelancer.com and its public API remain blocked by the session network policy (HTTP 403 on the proxy tunnel), re-tested this run, so all seven were written from the truncated descriptions the scanner captured, and each proposal asks the scope question the truncation left open. Five of the seven carry hourly-estimate bands rather than fixed budgets; they are priced in the upper half of the stated band since the scope in each case is a single well-defined deliverable. 40693802 is the best shot: 14 bids, a plain Python automation script squarely in our stack, and the lowest bid count of any row with a workable budget.
