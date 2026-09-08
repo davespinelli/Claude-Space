@@ -1,0 +1,280 @@
+======================================================================================================================
+IDEA 229 — the-tenth-selection-loses-instance-as-a-distribution   (cloud, 2026-09-08)
+======================================================================================================================
+(queue, verbatim intent)
+    Idea 155 is the 10th time an IS chooser lost to doing nothing OOS.  Pool EVERY such instance
+    in the record with its (selector, panel, dial, margin) and test whether the mean loss is a
+    constant, whether it scales with the dial's IS-OOS argmax distance, and whether ANY selector
+    class has ever won.  The output is the number PROTOCOL should quote when it says selection
+    loses.
+
+WHAT THIS RUN DOES
+    A. CENSUS of every committed `*.walkforward.csv` (304 files).  Two admitted shapes, both
+       declared before any number was read:
+         SHAPE-W (wide)  the file carries a per-row `OOS_Sharpe` for a selected arm AND a
+                         declared do-nothing control column `<ctl>_OOS_Sharpe`.
+         SHAPE-L (long)  the file carries an arm-like column whose LEVEL SET contains at least
+                         one declared CONTROL level and at least one declared SELECTOR level;
+                         rows are paired within the group formed by every non-metric column.
+       Every file is reported as admitted or rejected WITH ITS REASON.  Nothing is dropped
+       silently, and the coverage fraction is published.
+    B. Q1 — is the mean loss a CONSTANT?  Pooled margin (selector OOS Sharpe minus control OOS
+       Sharpe), cell-weighted and instance-weighted, with a bootstrap CI under three blocks, and
+       a between-instance heterogeneity decomposition.  This is the number PROTOCOL would quote.
+    C. Q2 — does it SCALE with the dial's IS-OOS argmax distance?  Measured on the live corpus
+       (part E), where the ladder, its IS argmax and its OOS argmax are all reconstructable;
+       reported on the record side wherever a file carries per-arm IS and OOS Sharpe.
+    D. Q3 — has ANY selector class ever won?  Per-class pooled margin + bootstrap CI, classes
+       assigned by a declared name map (IS-SHARPE / IS-CAGR / GATED / ABSTAIN / SHRUNK-FIT /
+       RANDOM / OTHER), with ORACLE arms held out as a non-selector reference.
+    E. RULE 8 on live prices, out of corpus: a fresh pre-registered 6-dial ladder on 3 panels x
+       2 costs.  Each dial has a DECLARED do-nothing arm (the incumbent value) and an IS-Sharpe
+       argmax chooser fitted on <= 2016-12-31 only; 2017-2026 is read once.  Both KEEP paths
+       (4a vs live RULES v2 and vs RULES v1; 4b vs SPY), full sample + halves + OOS.
+
+TUNED PARAMETERS (exactly two; every grid point reported)
+    P1  admission vocabulary in {STRICT, BROAD}.  STRICT counts only arms/columns the record
+        names as a do-nothing control (control, S0, none, ctl, ctrl, base, anchor, do-nothing).
+        BROAD additionally counts the live books (v1, v2) as the "doing nothing" comparand.
+    P2  bootstrap block in {cell, instance, file}.
+    The live corpus's ladders, their declared defaults, the IS/OOS split, costs, cadence, gross,
+    panels and t+1 execution are the record's committed conventions, not chosen here.
+
+PRE-REGISTERED PREDICTIONS (written before the new numbers were read)
+    R1  The record contains far MORE than 10 such instances; "the 10th" is an undercount driven
+        by which runs happened to phrase the result in prose.
+    R2  The pooled mean margin is NEGATIVE but SMALL, and its confidence interval contains
+        losses an order of magnitude smaller than any single published instance.
+    R3  The loss is NOT a constant: between-instance dispersion dominates the pooled mean, so
+        PROTOCOL cannot quote a single number without an interval.
+    R4  No selector class wins.  If one appears to, it will be a class with few instances.
+    R5  The margin scales with the IS-OOS argmax distance: choosers only lose when the dial's
+        IS and OOS argmaxes disagree, which is most of the time.
+
+CONFOUNDS / CAVEATS declared up front
+    * The census is over the record's COMMITTED ARTEFACTS, not over its prose.  A run that lost
+      to doing nothing but never wrote a machine-readable walk-forward file cannot be counted;
+      the coverage fraction is published so the undercount is visible.
+    * Instances are NOT independent: many share panels, price data, dials and even books.  That
+      is exactly why the instance and file blocks are carried as P2 rather than assuming i.i.d.
+      cells.
+    * Margins from different files use different arm ladders and different cell definitions, so
+      the cell-weighted pool over-weights files with many cells.  Both weightings are reported.
+    * SMALL439 is a CURRENT-CONSTITUENTS panel (data/SMALL_PANEL_README.md); tickers with
+      max_1d_move >= 1.0 in data/small_meta.csv are dropped first (439 names).  SURVIVORSHIP
+      BIAS — reported as a shape check, never as a tradable return.
+    * The live corpus's per-dial "do nothing" arm is the INCUMBENT value, declared in DIALS
+      below before the corpus was run.  A different default would give a different margin; that
+      is a property of the question, and the whole ladder is published either way.
+    * 10 bps is the protocol rung; 25 bps is carried as a robustness axis.  t+1 execution and
+      the 260-bar warm-up skip are the engine's, unchanged.
+
+======================================================================================================================
+PART A — THE CENSUS (every committed *.walkforward.csv, admitted or rejected with reason)
+======================================================================================================================
+
+  vocabulary STRICT:  305 committed *.walkforward.csv files scanned
+      admitted instances 104  over 69 files (22.6% coverage), 5302 paired cells
+      by shape: W 66 instances / 5053 cells, L 38 instances / 249 cells
+      REJECTED 236 files, by reason (nothing dropped silently):
+           159  no control column and no control level in an arm column
+            75  no OOS_Sharpe column
+             2  control column but no evidence the rows are IS-selected
+
+  vocabulary BROAD:  305 committed *.walkforward.csv files scanned
+      admitted instances 237  over 119 files (39.0% coverage), 19308 paired cells
+      by shape: W 195 instances / 16819 cells, L 42 instances / 2489 cells
+      REJECTED 186 files, by reason (nothing dropped silently):
+           103  no control column and no control level in an arm column
+            75  no OOS_Sharpe column
+             6  control column but no evidence the rows are IS-selected
+             2  control column present but no finite paired rows
+
+======================================================================================================================
+PART B — Q1: IS THE MEAN LOSS A CONSTANT?  (TUNED PARAMETER 1 = the vocabulary)
+======================================================================================================================
+
+  vocabulary STRICT
+      cells 5302, instances 104, files 69
+      CELL-weighted mean margin     -0.00202  (sd 0.10842, median +0.00000, win rate 34.5%)
+      INSTANCE-weighted mean margin -0.00052  (sd 0.08687, median +0.00000, instances that WIN 47.1%)
+      REGRET (chooser OOS Sharpe below its own pool's OOS best) is published on 1120 of 5302 cells / 32 instances:
+          cell-weighted mean regret +0.05473, instance-weighted +0.02999, median +0.00000, share with regret > 0 42.9%
+      heterogeneity: between-instance var 0.00755 vs mean within-instance var 0.00860  ->  between / (between+within) = 46.8%
+
+  vocabulary BROAD
+      cells 19308, instances 237, files 119
+      CELL-weighted mean margin     +0.15330  (sd 0.31367, median +0.02992, win rate 57.0%)
+      INSTANCE-weighted mean margin +0.10217  (sd 0.24949, median +0.02367, instances that WIN 59.9%)
+      REGRET (chooser OOS Sharpe below its own pool's OOS best) is published on 2484 of 19308 cells / 69 instances:
+          cell-weighted mean regret +0.02559, instance-weighted +0.01647, median +0.00000, share with regret > 0 40.2%
+      heterogeneity: between-instance var 0.06225 vs mean within-instance var 0.03116  ->  between / (between+within) = 66.6%
+
+  TUNED PARAMETER 2 — bootstrap block, on the mean margin:
+      STRICT block cell      mean -0.00205  95% CI [-0.00495, +0.00084]  P(mean<0) 91.6%
+      STRICT block instance  mean -0.00147  95% CI [-0.01342, +0.01361]  P(mean<0) 63.3%
+      STRICT block file      mean -0.00161  95% CI [-0.01417, +0.01521]  P(mean<0) 63.4%
+      BROAD  block cell      mean +0.15330  95% CI [+0.14891, +0.15793]  P(mean<0) 0.0%
+      BROAD  block instance  mean +0.15134  95% CI [+0.06066, +0.25940]  P(mean<0) 0.0%
+      BROAD  block file      mean +0.15405  95% CI [+0.08404, +0.26286]  P(mean<0) 0.0%
+
+  The 10 largest single instances (STRICT), i.e. what the record's prose quotes:
+       1. -0.4937 over    4 cells  2026-09-07_does-a-BAND-recover-what-the-raw-200d-gate-burns-in-H1_cloud.walkforward.csv::W::anch
+       2. -0.2612 over   14 cells  2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.walkforward.csv::L::rule::ISARGM
+       3. -0.2518 over   14 cells  2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.walkforward.csv::L::rule::RANDOM
+       4. -0.1877 over   12 cells  2026-09-04_earnings-season-avoidance_cloud.walkforward.csv::W::anchor_OOS_Sharpe
+       5. -0.1826 over   18 cells  2026-09-07_the-small-panel-has-no-defensive-class_cloud.walkforward.csv::W::ctrl_OOS_Sharpe
+       6. -0.0850 over   12 cells  2026-09-06_is-the-soft-200d-tilt-inside-the-score-doing-the-gate-s-job_cloud.walkforward.csv::W:
+       7. -0.0797 over    4 cells  2026-09-06_vol20-gate-in-isolation_cloud.walkforward.csv::W::anchor_OOS_Sharpe
+       8. -0.0745 over   54 cells  2026-09-05_scale-free-as-a-corpus-eligibility-rule_C.walkforward.csv::W::ctl_OOS_Sharpe
+       9. -0.0686 over   51 cells  2026-09-07_back-fill-the-mean-name-count-column-over-every-quoted-price_B.walkforward.csv::W::an
+      10. -0.0659 over  156 cells  2026-09-05_price-denominator-sign-test_C.walkforward.csv::W::ctl_OOS_Sharpe
+
+======================================================================================================================
+PART D — Q3: HAS ANY SELECTOR CLASS EVER WON?  (declared name map, per-class bootstrap)
+======================================================================================================================
+
+  vocabulary STRICT:
+      class         cells  inst  files  cell mean  inst mean  win rate                   95% CI  verdict
+      IS-SHARPE      4044    76     64   -0.00279   -0.00461     32.3%       [-0.0142, +0.0162]  not separable
+      GATED          1038    41     22   +0.00298   +0.00974     44.7%       [-0.0262, +0.0405]  not separable
+      IS-CAGR         206     3      3   +0.00495   +0.00307     29.1%       [+0.0010, +0.0063]  CI NOT USABLE (<5 instances)
+      RANDOM           14     1      1   -0.25177   -0.25177     14.3%       [-0.2518, -0.2518]  CI NOT USABLE (<5 instances)
+
+  vocabulary BROAD:
+      class         cells  inst  files  cell mean  inst mean  win rate                   95% CI  verdict
+      IS-SHARPE     14065   194    110   +0.16823   +0.11045     57.9%       [+0.0420, +0.3013]  WINS
+      GATED          2376    74     31   +0.16113   +0.13669     63.3%       [+0.0744, +0.2577]  WINS
+      SHRUNK-FIT     1120     2      1   +0.08229   +0.08229     58.9%       [+0.0672, +0.0973]  CI NOT USABLE (<5 instances)
+      OTHER          1120     2      1   +0.05278   +0.05278     36.2%       [+0.0000, +0.1056]  CI NOT USABLE (<5 instances)
+      IS-CAGR         600     9      4   +0.09750   +0.08644     48.0%       [-0.0717, +0.3052]  not separable
+      RANDOM           27     4      4   +0.03828   +0.19201     55.6%       [-0.1883, +0.3826]  CI NOT USABLE (<5 instances)
+
+======================================================================================================================
+PART E — RULE 8 ON LIVE PRICES, OUT OF CORPUS: 6 pre-registered dials, choice on
+         IS (<= 2016-12-31) only, 2017-2026 read once.  36 cells = 3 panels x 2 costs
+         x 6 dials; the do-nothing arm of each dial is its declared INCUMBENT value.
+======================================================================================================================
+
+  [panel] u56 = universe.json(56): 56 cols, eval 2009-01-13 -> 2026-09-04, mean weekly eligible 37.5
+      SPY 15.23%/0.889/-33.72% | OOS 15.45%/0.882/-33.72%
+      RULES v2 @10bps 8.66%/1.206/-12.05%   RULES v1 @10bps 6.46%/0.665/-13.83%
+      RULES v2 @25bps 8.37%/1.168/-12.09%   RULES v1 @25bps 2.76%/0.317/-15.63%
+      78 books done (7s cum.)
+
+  [panel] broad = universe_broad.json(136): 136 cols, eval 2009-01-13 -> 2026-09-04, mean weekly eligible 91.5
+      SPY 15.23%/0.889/-33.72% | OOS 15.45%/0.882/-33.72%
+      RULES v2 @10bps 8.03%/1.106/-12.24%   RULES v1 @10bps 6.39%/0.635/-21.19%
+      RULES v2 @25bps 7.70%/1.064/-12.28%   RULES v1 @25bps 1.79%/0.219/-26.72%
+      78 books done (20s cum.)
+
+  [panel] small = prices_small(439, SPY held out): 439 cols, eval 2011-01-13 -> 2026-09-04, mean weekly eligible 141.2
+      SPY 14.13%/0.862/-33.72% | OOS 15.45%/0.882/-33.72%
+      RULES v2 @10bps 3.80%/0.571/-14.70%   RULES v1 @10bps 8.15%/0.603/-32.84%
+      RULES v2 @25bps 3.37%/0.511/-15.27%   RULES v1 @25bps 2.86%/0.265/-43.04%
+      78 books done (54s cum.)
+
+  (i) PER-CELL: the IS-Sharpe chooser against the dial's declared do-nothing arm.
+  panel    cost dial       IS pick       S0   OOS S1   OOS S0   margin  OOS best   regret  |IS-OOS| steps
+  u56        10 band          0.08     0.03    1.173    1.285  -0.1125     1.288   0.1154               3
+  u56        10 gross         1.00     0.75    1.284    1.285  -0.0007     1.286   0.0013               4
+  u56        10 cadence          M        W    1.233    1.285  -0.0523     1.285   0.0523               1
+  u56        10 share         0.75     0.20    1.069    0.801  +0.2683     1.069   0.0000               0
+  u56        10 volcap        0.90     0.60    0.797    0.801  -0.0044     0.816   0.0195               1
+  u56        10 kexp          0.25    -0.50    1.037    0.801  +0.2360     1.128   0.0908               3
+  u56        25 band          0.12     0.03    1.157    1.248  -0.0913     1.248   0.0913               3
+  u56        25 gross         1.00     0.75    1.248    1.248  -0.0005     1.248   0.0007               4
+  u56        25 cadence          M        W    1.209    1.248  -0.0398     1.248   0.0398               1
+  u56        25 share         0.75     0.20    0.926    0.504  +0.4222     0.926   0.0000               0
+  u56        25 volcap        0.90     0.60    0.500    0.504  -0.0037     0.523   0.0230               1
+  u56        25 kexp          0.25    -0.50    0.907    0.504  +0.4029     0.984   0.0768               3
+  broad      10 band          0.08     0.03    1.109    1.119  -0.0090     1.139   0.0293               3
+  broad      10 gross         1.00     0.75    1.117    1.119  -0.0011     1.119   0.0020               4
+  broad      10 cadence          W        W    1.119    1.119  +0.0000     1.119   0.0000               0
+  broad      10 share         0.27     0.20    0.799    0.700  +0.0984     0.983   0.1840               3
+  broad      10 volcap         off     0.60    0.738    0.700  +0.0376     0.739   0.0007               4
+  broad      10 kexp          0.75    -0.50    1.017    0.700  +0.3170     1.017   0.0000               0
+  broad      25 band          0.08     0.03    1.083    1.074  +0.0091     1.086   0.0028               3
+  broad      25 gross         1.00     0.75    1.073    1.074  -0.0008     1.075   0.0014               4
+  broad      25 cadence          M        W    1.068    1.074  -0.0065     1.074   0.0065               1
+  broad      25 share         0.75     0.20    0.847    0.431  +0.4162     0.847   0.0000               0
+  broad      25 volcap         off     0.60    0.482    0.431  +0.0513     0.482   0.0000               0
+  broad      25 kexp          0.75    -0.50    0.858    0.431  +0.4264     0.858   0.0000               0
+  small      10 band          0.20     0.03    0.625    0.566  +0.0590     0.635   0.0100               1
+  small      10 gross         1.00     0.75    0.566    0.566  -0.0008     0.567   0.0016               4
+  small      10 cadence          M        W    0.619    0.566  +0.0529     0.619   0.0000               0
+  small      10 share         0.15     0.20    0.334    0.406  -0.0725     0.504   0.1705               2
+  small      10 volcap        0.90     0.60    0.402    0.406  -0.0038     0.434   0.0315               2
+  small      10 kexp         -0.75    -0.50    0.467    0.406  +0.0608     0.523   0.0561               3
+  small      25 band          0.20     0.03    0.598    0.506  +0.0923     0.601   0.0030               1
+  small      25 gross         1.00     0.75    0.505    0.506  -0.0006     0.506   0.0011               4
+  small      25 cadence          M        W    0.584    0.506  +0.0785     0.584   0.0000               0
+  small      25 share         0.15     0.20    0.056    0.153  -0.0968     0.275   0.2189               2
+  small      25 volcap        0.90     0.60    0.150    0.153  -0.0025     0.170   0.0196               1
+  small      25 kexp         -0.75    -0.50    0.193    0.153  +0.0405     0.337   0.1435               3
+
+      chooser BEATS do-nothing in 17 of 36 cells; mean margin +0.07138 (sd 0.15312, median -0.00025)
+      bootstrap over cells: 95% CI [+0.02465, +0.12031], P(mean < 0) = 0.1%
+      by dial:
+          band      beats do-nothing 3/6, mean -0.00877, mean |IS-OOS argmax| 2.33 steps
+          cadence   beats do-nothing 2/6, mean +0.00547, mean |IS-OOS argmax| 0.50 steps
+          gross     beats do-nothing 0/6, mean -0.00076, mean |IS-OOS argmax| 4.00 steps
+          kexp      beats do-nothing 6/6, mean +0.24727, mean |IS-OOS argmax| 2.00 steps
+          share     beats do-nothing 4/6, mean +0.17263, mean |IS-OOS argmax| 1.17 steps
+          volcap    beats do-nothing 2/6, mean +0.01244, mean |IS-OOS argmax| 1.50 steps
+      by panel:
+          broad     beats do-nothing 7/12, mean +0.11155
+          small     beats do-nothing 6/12, mean +0.01725
+          u56       beats do-nothing 4/12, mean +0.08534
+
+  (ii) THE DECOMPOSITION THAT SETTLES THE SIGN.  By construction, for every cell
+       margin = (OOS_best - OOS_S0) - regret  =  ROOM - REGRET.
+       ROOM is a property of the DIAL and its declared default — how much a perfect
+       chooser could have won.  REGRET is the selector's own shortfall and is >= 0 by
+       construction.  Only REGRET is attributable to selection.
+
+  dial      cells  beats S0      ROOM    REGRET    MARGIN  |IS-OOS|
+  band          6     3/6    +0.03321   0.04197  -0.00877      2.33
+  cadence       6     2/6    +0.02190   0.01643  +0.00547      0.50
+  gross         6     0/6    +0.00058   0.00135  -0.00076      4.00
+  kexp          6     6/6    +0.30848   0.06121  +0.24727      2.00
+  share         6     4/6    +0.26820   0.09556  +0.17263      1.17
+  volcap        6     2/6    +0.02816   0.01572  +0.01244      1.50
+  ALL          36    17/36   +0.11009   0.03871  +0.07138      1.92
+
+      MEAN REGRET = 0.03871, 95% CI [0.02078, 0.05805] — strictly positive, and this is the only term selection controls.
+      Mean ROOM = +0.11009: the two dials whose declared incumbent the
+      record has ALREADY shown to be wrong (kexp default -0.50, share default 0.20) supply
+      +0.28834 of room; the other four supply +0.02096.
+      On those other four dials the chooser beats do-nothing in 7 of 24 cells, mean margin +0.00209 (regret 0.01887).
+
+  (iii) Q2 — DOES THE LOSS SCALE WITH THE DIAL'S IS-OOS ARGMAX DISTANCE?
+      IS and OOS argmax AGREE in 9 of 36 cells; there the margin is +0.22587 (all >= 0: True)
+      they DISAGREE in 27; there the margin is +0.01989, and the chooser still beats do-nothing in 9 of 27
+      Spearman(|IS-OOS| steps, margin) = -0.336;  OLS slope -0.03954 per grid step (intercept +0.14716)
+      Spearman(|IS-OOS| steps, regret) = +0.416;  OLS slope +0.00929 per grid step (intercept +0.02090)
+      normalised distance (steps / ladder length): Spearman vs margin -0.501
+
+  (iv) THE TWO BOOKS, POOLED (equal weight over the 36 cells), and the KEEP paths.
+      4b bars off the pooled SPY: H1>0.965 H2>0.834 OOS>0.882 |MaxDD|<=20.23% CAGR>=10.05%
+  book                               |     CAGR  Sharpe    MaxDD     H1     H2 |  OOS CAGR  Sharpe    MaxDD |  4a v2  4a v1    4b  failing
+  S1  IS-Sharpe chooser              |    8.05%   0.911  -17.12%  1.035  0.811 |     8.13%   0.879  -17.12% |  False   True False  H2|OOS|CAGR
+  S0  do nothing (declared defaults) |    6.09%   0.788  -15.28%  0.914  0.687 |     6.12%   0.756  -15.28% |  False  False False  H1|H2|OOS|CAGR
+  ORACLE (OOS argmax, not a rule)    |    7.41%   0.898  -15.72%  0.976  0.837 |     7.84%   0.904  -15.72% |  False   True False  CAGR
+  SPY                                |   14.36%   0.883  -33.72%  0.965  0.834 |    15.45%   0.882  -33.72% |  False  False False  H1|H2|OOS|DD
+  RULES v2 (live) @10bps             |    6.69%   1.032  -10.90%  1.086  0.987 |     7.13%   1.063  -10.90% |  False   True False  CAGR
+  RULES v1 @10bps                    |    6.93%   0.756  -18.24%  0.840  0.691 |     7.48%   0.768  -18.24% |  False  False False  H1|H2|OOS|CAGR
+
+      SELECTION'S PRICE, pooled OOS: +0.1231 Sharpe, +2.006 pp CAGR, +1.833 pp drawdown.
+
+======================================================================================================================
+VERDICT
+======================================================================================================================
+  R1 the record holds 104 admitted instances over 69 files (STRICT), not 10 — the prose count is an undercount.
+  R2/R3 pooled mean margin (STRICT, instance block) -0.00147, 95% CI [-0.01342, +0.01361], P(<0) 63.3%
+     between-instance sd 0.08687 vs the pooled mean itself 0.00147 -> the loss is NOT a constant
+  R4 selector classes that WIN (CI above 0): NONE;  that LOSE: NONE
+  R5 live corpus: chooser beats do-nothing in 17 of 36 cells, mean +0.07138; Spearman(|IS-OOS| steps, margin) -0.336
+  KEEP paths on the pooled live books: 4a-v2 0/6, 4b 0/6
+
+  runtime 66s
