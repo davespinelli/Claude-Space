@@ -1,16 +1,16 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-09-07 · EDGAR form indexes, last 45 days · 217 tender filings → 142 distinct offers, of which 8 are common-stock self-tenders · 5 carry odd-lot priority (2 in common stock)._
+_Generated 2026-09-08 · EDGAR form indexes, last 45 days · 205 tender filings → 140 distinct offers, of which 8 are common-stock self-tenders · 5 carry odd-lot priority (2 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| GDEV | GDEV Inc. | Fixed price | $11.03 | $11.40 | -3.2% | $-37 | 2026-09-28 | 21 | no | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1848739/000110465926103543/0001104659-26-103543-index.htm) |
-| — | Highlands REIT, Inc. | Fixed price | $0.2000 | n/a | n/a | n/a | 2026-09-29 | 22 | yes | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1661458/000110465926104051/0001104659-26-104051-index.htm) |
-| ABUS | Arbutus Biopharma Corp | Dutch auction | $5.00–$5.75 | $5.15 | -2.9%/+11.7% | $-15/$59 | 2026-09-29 | 22 | yes | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1447028/000110465926100002/0001104659-26-100002-index.htm) |
-| — | VINEBROOK HOMES TRUST, INC. | Fixed price | $33.00 | n/a | n/a | n/a | 2026-10-05 | 28 | no | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1755755/000143774926029656/0001437749-26-029656-index.htm) |
-| NFJ | Virtus Dividend, Interest & Premium St | Fixed price | $15.67 | $15.68 | -0.1% | $-1 | 2026-10-05 | 28 | no | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1260563/000119312526377910/0001193125-26-377910-index.htm) |
+| GDEV | GDEV Inc. | Fixed price | $11.03 | $11.46 | -3.8% | $-43 | 2026-09-28 | 20 | no | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1848739/000110465926103543/0001104659-26-103543-index.htm) |
+| — | Highlands REIT, Inc. | Fixed price | $0.2000 | n/a | n/a | n/a | 2026-09-29 | 21 | yes | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1661458/000110465926104051/0001104659-26-104051-index.htm) |
+| ABUS | Arbutus Biopharma Corp | Dutch auction | $5.00–$5.75 | $5.18 | -3.5%/+11.0% | $-18/$56 | 2026-09-29 | 21 | yes | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1447028/000110465926100002/0001104659-26-100002-index.htm) |
+| — | VINEBROOK HOMES TRUST, INC. | Fixed price | $33.00 | n/a | n/a | n/a | 2026-10-05 | 27 | no | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1755755/000143774926029656/0001437749-26-029656-index.htm) |
+| NFJ | Virtus Dividend, Interest & Premium St | Fixed price | $15.67 | $15.63 | +0.3% | $4 | 2026-10-05 | 27 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1260563/000119312526377910/0001193125-26-377910-index.htm) |
 
 ### Odd-lot language, quoted
 
@@ -53,7 +53,6 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | PRIF-PD | Priority Income Fund, Inc. | listed fund tender | $3.15 | 2026-07-31 | no | price parse suspect — verify against the filing; expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1554625/000155462526000016/0001554625-26-000016-index.htm) |
 | — | Onex Direct Lending BDC Fund | fund/BDC repurchase (NAV) | not found | 2026-08-07 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1860424/000119312526344536/0001193125-26-344536-index.htm) |
 | ZCAR | Zoomcar Holdings, Inc. | warrant exchange | not found | 2026-08-14 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1854275/000121390026095698/0001213900-26-095698-index.htm) |
-| — | Bow River Capital Evergreen Fund | fund/BDC repurchase (NAV) | not found | 2026-08-17 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1810256/000121390026081488/0001213900-26-081488-index.htm) |
 | — | Fortress Private Lending Fund | fund/BDC repurchase (NAV) | $24.21 | 2026-08-19 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2012139/000119312526368859/0001193125-26-368859-index.htm) |
 | — | Hartford Schroders Private Opportuniti | fund/BDC repurchase (NAV) | not found | 2026-08-21 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1903070/000110465926086867/0001104659-26-086867-index.htm) |
 | — | Innovation Access Fund | fund/BDC repurchase (NAV) | not found | 2026-08-26 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1905379/000120677426000362/0001206774-26-000362-index.htm) |
@@ -90,7 +89,6 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | HPS Corporate Capital Solutions Fund | fund/BDC repurchase (NAV) | not found | 2026-09-04 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1989817/000162828026055161/0001628280-26-055161-index.htm) |
 | — | HPS Corporate Lending Fund | fund/BDC repurchase (NAV) | not found | 2026-09-04 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1838126/000162828026055335/0001628280-26-055335-index.htm) |
 | RXST | RxSight, Inc. | option exchange | $20.00 | 2026-09-04 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1111485/000119312526341304/0001193125-26-341304-index.htm) |
-| — | StepStone Private Venture & Growth Fun | fund/BDC repurchase (NAV) | not found | 2026-09-04 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1918642/000119312526315456/0001193125-26-315456-index.htm) |
 | — | FS MVP Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-08 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1856156/000139834426013312/0001398344-26-013312-index.htm) |
 | LNC | LINCOLN NATIONAL CORP | debt / preferred tender | not found | 2026-09-08 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/59558/000119312526341416/0001193125-26-341416-index.htm) |
 | — | ADAMS STREET PRIVATE EQUITY NAVIGATOR  | fund/BDC repurchase (NAV) | not found | 2026-09-11 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1862281/000119312526350605/0001193125-26-350605-index.htm) |
@@ -157,10 +155,10 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | BIP Ventures Evergreen BDC | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1950572/000158064226005472/0001580642-26-005472-index.htm) |
 | — | Boliden AB | pre-commencement (SC TO-C) | not found | not found | no | — | [SC TO-C](https://www.sec.gov/Archives/edgar/data/1446457/000114036126034601/0001140361-26-034601-index.htm) |
 | — | Evanston Multi-Alpha Fund | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1589390/000158064226004784/0001580642-26-004784-index.htm) |
-| — | KKR Real Estate Select Trust Inc. | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1803958/000119312526315675/0001193125-26-315675-index.htm) |
 | SQFT | Presidio Property Trust, Inc. | debt / preferred tender | not found | not found | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1080657/000149315226036654/0001493152-26-036654-index.htm) |
 | — | SEI Structured Credit Fund, LP | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1407736/000139834426014339/0001398344-26-014339-index.htm) |
 | — | StepStone Private Markets | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1789470/000119312526343837/0001193125-26-343837-index.htm) |
+| — | StepStone Private Venture & Growth Fun | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1918642/000119312526325375/0001193125-26-325375-index.htm) |
 
 ## How odd-lot tenders work, and the risks
 
