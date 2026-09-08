@@ -1,4 +1,4 @@
-# Research-verdict long/short — updated 2026-09-07
+# Research-verdict long/short — updated 2026-09-08
 
 **Portfolio rules.** Every IDEA enters the LONG book at the first close on or after its publication date; every PASS enters the SHORT book the same way. Within each book names are weighted 1/N, where N is the number of open positions in that book recomputed daily, capped at 20% per name; when N is below 5 the cap binds and the book is deliberately left partly in cash rather than levered up, so a two-name book runs 40% gross. A position stays open for 12 months or until a later note changes the verdict on that ticker (detected as a newer COVERAGE.md row for the same ticker), whichever comes first. The net exposure of the traded book (long weight minus short weight) is offset with IWM so the combined book is dollar-neutral; the raw long-minus-short spread is also reported unhedged. WATCH names are excluded from the traded book and carried as a separate long-only basket, for information only. Returns are price-only on adjusted closes with no costs deducted; an estimate at 10 bps per unit of turnover is printed separately. Cash earns 0%.
 
