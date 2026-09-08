@@ -1,0 +1,193 @@
+========================================================================================================================
+IDEA 203 — A TURNOVER-MATCHED NULL FOR SUPPRESSING OVERLAYS
+  p1 f in [1.0, 0.75, 0.5, 0.25];  p2 null in ['ROT', 'MC', 'RUN', 'STRAT'].  All grid points reported.
+  arms (not tuned): tau in [0.05, 0.1, 0.2, 0.3, 0.5] x mode in ['skip', 'half'] x 3 panels x 2 rungs
+  PRE-REGISTERED OBSTRUCTION: BUDGET's ON set is the top-K rebalance dates by required
+  turnover, so the ONLY exactly turnover-matched matched-count draw is the overlay itself.
+  Fidelity and entropy are one dial; this run builds it and reads both ends.
+========================================================================================================================
+
+PANELS
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+  U56         55 tradables,  4699 days,  975 rebalance dates, required-turnover tt mean 0.1615 max 0.7125
+  BROAD136   135 tradables,  4699 days,  975 rebalance dates, required-turnover tt mean 0.2401 max 0.7875
+  SMALL439   439 tradables,  4194 days,  870 rebalance dates, required-turnover tt mean 0.3492 max 0.9000
+
+========================================================================================================================
+GATES
+========================================================================================================================
+  G1  fast_backtest == engine.backtest on U56 base book, 0 bps: max abs diff 1.388e-17 -> PASS
+  G2  cost identity r(c) = r(0) - turnover*c/1e4: max abs diff 0.000e+00 -> PASS
+  G3  null STRUCTURE over 100 draws: on-count preserved 100/100 -> PASS
+      circular switch count preserved: ROT 25/25, MC 6/25, RUN 25/25, STRAT 5/25   (exact for ROT and RUN by construction; MC/STRAT are not clustering-matched and are
+      not claimed to be — that is the price of matching the count on the turnover axis)
+
+========================================================================================================================
+Q1  THE FIDELITY-ENTROPY FRONTIER — every null, every arm, every panel (fidelity uses idea
+    186's own definition: |TO_null - TO_real| / TO_real on realised annualised turnover)
+========================================================================================================================
+    TWO DENOMINATORS ARE REPORTED.  Idea 186 divides by the OVERLAID book's own turnover —
+    but a suppressing overlay drives that denominator toward ZERO as its on-share rises, so
+    the published statistic is ill-conditioned exactly where idea 191 found it exploding.
+    `fid_base` divides by the BASE book's turnover instead: overlay-independent and bounded.
+  420 grid rows written (3 panels x 5 tau x 2 modes x 7 null variants x 2 rungs)
+
+  POOLED BY NULL, mode = skip  (the suppressing overlay idea 203 is about):
+  null         fid/real       max  fid/base       max  overlap  switch=  clears     n
+  ROT           1901.4%  34159.8%      6.8%     13.6%    54.5%   100.0%    0.0%    30
+  MC            4722.6%  75618.7%     10.3%     18.1%    54.2%     8.0%    0.0%    30
+  RUN           2008.7%  34930.6%      6.8%     12.6%    54.1%   100.0%    0.0%    30
+  STRAT(1.00)      0.0%      0.0%      0.0%      0.0%   100.0%   100.0%    0.0%    30
+  STRAT(0.75)   4663.8%  74375.1%      7.5%     17.8%    80.9%    13.0%    0.0%    30
+  STRAT(0.50)   4682.8%  73323.1%      9.0%     17.5%    68.9%    11.3%    0.0%    30
+  STRAT(0.25)   4685.3%  75880.3%      9.8%     18.1%    58.9%     8.7%    0.0%    30
+
+  POOLED BY NULL, mode = half:
+  null         fid/real       max  fid/base       max  overlap  switch=  clears     n
+  ROT              4.4%     10.6%      3.3%      7.4%    54.3%   100.0%    0.0%    30
+  MC               4.8%     11.1%      3.6%      7.8%    54.3%     6.7%    0.0%    30
+  RUN              4.4%      9.7%      3.3%      7.2%    54.2%   100.0%    0.0%    30
+  STRAT(1.00)      0.0%      0.0%      0.0%      0.0%   100.0%   100.0%    0.0%    30
+  STRAT(0.75)      3.0%      8.2%      2.1%      5.8%    80.1%    11.0%    0.0%    30
+  STRAT(0.50)      4.0%     10.7%      2.9%      7.5%    68.7%    10.7%    0.0%    30
+  STRAT(0.25)      4.5%     10.1%      3.3%      7.2%    59.2%     9.7%    0.0%    30
+
+  ('overlap' = share of the real overlay's own ON dates the null also fires on.  A null at
+   overlap 100% IS the overlay: fidelity 0%, entropy 0%, and it tests nothing.  'fid/real' is
+   idea 186's published denominator, 'fid/base' the overlay-independent one.)
+
+  THE FRONTIER, read as one dial (skip mode, STRAT only): f -> overlap -> fidelity
+       f    M/K  overlap  fid/base  null sd(dSharpe)
+    1.00   1.00   100.0%      0.0%            0.0000
+    0.75   1.33    80.9%      7.5%            0.0519
+    0.50   2.00    68.9%      9.0%            0.0583
+    0.25   4.00    58.9%      9.8%            0.0597
+  (monotone by construction: buying turnover fidelity spends the null's entropy one-for-one,
+   and at f = 1.00 the 'null' is the overlay, sd 0.  There is no interior point that has both.)
+
+========================================================================================================================
+Q2  REPRODUCING THE NUMBER IDEA 203 IS BUILT ON
+========================================================================================================================
+  ROT on idea 186's OWN tau grid {0.10,0.20,0.30}, both modes, 3 panels: fid mean 25.3%  max 271.6%   (idea 186 published 25.4% / 213.8%)
+  ROT on the WIDENED grid [0.05, 0.1, 0.2, 0.3, 0.5]: fid mean 952.9%  max 34159.8%   (idea 191 published 1782.7% mean)
+  ROT/skip fidelity vs on-share: Pearson r +0.3019 over 30 rows -> the degradation idea 191 reported is CONFIRMED as a function of on-share
+  per-tau detail (ROT, skip, pooled over panels and rungs):
+       tau  on-share  fid mean   fid max
+      0.05     91.8%   9368.3%  34159.8%
+      0.10     83.8%     97.6%    271.6%
+      0.20     61.6%     27.4%     54.3%
+      0.30     26.3%     10.5%     22.2%
+      0.50      7.7%      3.0%      9.8%
+
+========================================================================================================================
+Q3  RULE 8 — the null is chosen on 2010-2016 by TURNOVER FIDELITY ALONE, 2017-2026 read ONCE
+========================================================================================================================
+  60 walk-forward cells.  The chosen null, by IS turnover fidelity alone:
+    ('MC', nan)                     2 cells
+    ('ROT', nan)                   12 cells
+    ('RUN', nan)                   16 cells
+    ('STRAT', 0.25)                 4 cells
+    ('STRAT', 0.5)                  6 cells
+    ('STRAT', 0.75)                20 cells
+
+  OOS CLAUSE CLEAR RATE (does the real BUDGET overlay beat its own null's q95 OOS?)
+  panel      mode       chosen  IS fid chosen  IS fid ROT  clears chosen  clears ROT
+  BROAD136   half        STRAT           1.4%        2.8%           0.0%        0.0%
+  BROAD136   skip        STRAT           3.3%        5.3%           0.0%        0.0%
+  SMALL439   half          ROT           1.1%        2.2%           0.0%        0.0%
+  SMALL439   skip          RUN           3.6%        7.0%           0.0%        0.0%
+  U56        half        STRAT           1.9%        3.4%           0.0%        0.0%
+  U56        skip        STRAT           3.9%        6.4%           0.0%        0.0%
+
+  POOLED: clears under the CHOSEN null 0.0% (0/60) vs under the incumbent ROT 0.0% (0/60); verdicts disagree on 0.0% of cells
+
+========================================================================================================================
+Q4  BOTH KEEP PATHS on every REAL BUDGET book (full sample and OOS)
+========================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+  benchmarks (u56 sample, 10 bps): SPY 15.23% / 0.8890 / -33.72%  H 0.957/0.834   OOS 15.45% / 0.8820 / -33.72%
+                                  RULES v2 8.66% / 1.2056 / -12.05%  H 1.226/1.191   RULES v1 0.6647
+
+  panel        tau mode    c    CAGR  Sharpe   MaxDD     H1     H2 OOS_CAGR  OOS_Shp  OOS_DD  4a  4b
+  U56         0.05 skip   10  10.56%  0.8632 -20.12%  1.007  0.773   11.61%   0.8600 -20.12%   .   .
+  U56         0.05 skip   25  10.32%  0.8457 -20.12%  0.984  0.759   11.37%   0.8441 -20.12%   .   .
+  U56         0.05 half   10  13.25%  1.1207 -18.17%  1.115  1.132   15.18%   1.2057 -18.17%   .   Y
+  U56         0.05 half   25  12.19%  1.0404 -18.25%  1.028  1.057   14.12%   1.1303 -18.25%   .   Y
+  U56         0.10 skip   10  11.31%  0.9007 -25.72%  1.023  0.823   12.46%   0.9051 -25.72%   .   .
+  U56         0.10 skip   25  10.75%  0.8615 -25.82%  0.977  0.789   11.91%   0.8701 -25.82%   .   .
+  U56         0.10 half   10  12.96%  1.0989 -18.17%  1.092  1.112   14.87%   1.1833 -18.17%   .   Y
+  U56         0.10 half   25  11.84%  1.0137 -18.25%  0.999  1.032   13.74%   1.1034 -18.25%   .   Y
+  U56         0.20 skip   10  12.26%  0.9952 -21.77%  1.013  0.992   14.25%   1.0657 -21.77%   .   .
+  U56         0.20 skip   25  11.21%  0.9200 -21.89%  0.927  0.925   13.21%   0.9975 -21.89%   .   .
+  U56         0.20 half   10  12.76%  1.0853 -18.10%  1.072  1.103   14.67%   1.1720 -18.10%   .   Y
+  U56         0.20 half   25  11.44%  0.9846 -18.18%  0.962  1.010   13.35%   1.0778 -18.18%   .   Y
+  U56         0.30 skip   10  12.52%  1.0493 -20.76%  1.046  1.059   14.29%   1.1246 -20.76%   .   .
+  U56         0.30 skip   25  11.04%  0.9380 -20.93%  0.925  0.955   12.79%   1.0197 -20.93%   .   .
+  U56         0.30 half   10  12.68%  1.0820 -18.18%  1.080  1.089   14.36%   1.1555 -18.18%   .   Y
+  U56         0.30 half   25  11.15%  0.9643 -18.28%  0.953  0.979   12.82%   1.0445 -18.28%   .   .
+  U56         0.50 skip   10  12.62%  1.0677 -20.90%  1.118  1.035   13.95%   1.1026 -20.90%   .   .
+  U56         0.50 skip   25  11.05%  0.9480 -21.12%  0.985  0.925   12.38%   0.9921 -21.12%   .   .
+  U56         0.50 half   10  12.74%  1.0913 -18.18%  1.114  1.080   14.23%   1.1464 -18.18%   .   Y
+  U56         0.50 half   25  11.16%  0.9695 -18.28%  0.980  0.967   12.65%   1.0326 -18.28%   .   Y
+  BROAD136    0.05 skip   10  16.50%  1.0053 -27.79%  1.229  0.905   19.14%   1.0125 -27.79%   .   .
+  BROAD136    0.05 skip   25  16.41%  1.0008 -27.79%  1.225  0.900   19.04%   1.0080 -27.79%   .   .
+  BROAD136    0.05 half   10  14.00%  1.0041 -20.72%  1.222  0.819   13.03%   0.9099 -20.72%   .   .
+  BROAD136    0.05 half   25  12.48%  0.9081 -20.86%  1.123  0.725   11.48%   0.8153 -20.86%   .   .
+  BROAD136    0.10 skip   10  14.91%  0.9761 -26.70%  1.192  0.836   15.12%   0.9048 -26.70%   .   .
+  BROAD136    0.10 skip   25  14.55%  0.9558 -26.70%  1.168  0.818   14.77%   0.8869 -26.70%   .   .
+  BROAD136    0.10 half   10  13.95%  1.0004 -20.72%  1.212  0.821   13.06%   0.9108 -20.72%   .   .
+  BROAD136    0.10 half   25  12.41%  0.9029 -20.86%  1.111  0.726   11.48%   0.8147 -20.86%   .   .
+  BROAD136    0.20 skip   10  13.85%  0.9444 -27.70%  1.321  0.646   11.28%   0.7507 -27.70%   .   .
+  BROAD136    0.20 skip   25  12.88%  0.8873 -27.89%  1.257  0.594   10.34%   0.6973 -27.89%   .   .
+  BROAD136    0.20 half   10  13.65%  0.9811 -21.06%  1.203  0.792   12.60%   0.8839 -21.06%   .   .
+  BROAD136    0.20 half   25  11.95%  0.8736 -21.31%  1.091  0.688   10.88%   0.7784 -21.31%   .   .
+  BROAD136    0.30 skip   10  12.98%  0.9256 -24.04%  1.171  0.720   11.53%   0.8034 -24.04%   .   .
+  BROAD136    0.30 skip   25  11.14%  0.8109 -24.23%  1.049  0.611    9.68%   0.6921 -24.23%   .   .
+  BROAD136    0.30 half   10  13.05%  0.9467 -20.62%  1.153  0.770   12.02%   0.8529 -20.62%   .   .
+  BROAD136    0.30 half   25  10.98%  0.8142 -20.90%  1.015  0.641    9.91%   0.7224 -20.90%   .   .
+  BROAD136    0.50 skip   10  12.59%  0.9090 -24.33%  1.160  0.698   11.09%   0.7829 -24.33%   .   .
+  BROAD136    0.50 skip   25  10.37%  0.7682 -24.59%  1.013  0.562    8.84%   0.6450 -24.59%   .   .
+  BROAD136    0.50 half   10  12.84%  0.9360 -20.83%  1.144  0.757   11.78%   0.8406 -20.83%   .   .
+  BROAD136    0.50 half   25  10.58%  0.7904 -21.14%  0.994  0.615    9.47%   0.6965 -21.14%   .   .
+  SMALL439    0.05 skip   10  -0.04% -0.0004 -13.22%    nan -0.001   -0.07%  -0.0005 -13.22%   .   .
+  SMALL439    0.05 skip   25  -0.04% -0.0006 -13.22%    nan -0.001   -0.07%  -0.0008 -13.22%   .   .
+  SMALL439    0.05 half   10   7.26%  0.5053 -30.83%  0.696  0.349    6.99%   0.4777 -30.83%   .   .
+  SMALL439    0.05 half   25   5.14%  0.3852 -32.87%  0.576  0.228    4.76%   0.3555 -32.87%   .   .
+  SMALL439    0.10 skip   10   5.92%  0.4453 -31.05%  0.520  0.386    5.94%   0.4367 -31.05%   .   .
+  SMALL439    0.10 skip   25   5.81%  0.4387 -31.05%  0.511  0.381    5.87%   0.4324 -31.05%   .   .
+  SMALL439    0.10 half   10   7.21%  0.5023 -31.01%  0.690  0.348    6.99%   0.4773 -31.01%   .   .
+  SMALL439    0.10 half   25   5.08%  0.3817 -33.05%  0.569  0.227    4.75%   0.3548 -33.05%   .   .
+  SMALL439    0.20 skip   10   3.41%  0.2845 -39.63%  0.548  0.056    1.26%   0.1596 -39.63%   .   .
+  SMALL439    0.20 skip   25   2.88%  0.2536 -41.20%  0.507  0.034    0.84%   0.1351 -41.20%   .   .
+  SMALL439    0.20 half   10   7.19%  0.5007 -30.85%  0.690  0.345    6.96%   0.4757 -30.85%   .   .
+  SMALL439    0.20 half   25   5.01%  0.3771 -32.91%  0.565  0.222    4.67%   0.3507 -32.91%   .   .
+  SMALL439    0.30 skip   10   4.46%  0.3343 -43.65%  0.736  0.014    1.78%   0.1881 -43.65%   .   .
+  SMALL439    0.30 skip   25   2.82%  0.2455 -44.89%  0.625 -0.058    0.28%   0.1094 -44.89%   .   .
+  SMALL439    0.30 half   10   6.82%  0.4765 -32.42%  0.667  0.319    6.77%   0.4621 -32.42%   .   .
+  SMALL439    0.30 half   25   4.31%  0.3355 -34.76%  0.520  0.182    4.19%   0.3224 -34.76%   .   .
+  SMALL439    0.50 skip   10   7.04%  0.4796 -33.05%  0.713  0.293    6.72%   0.4490 -33.05%   .   .
+  SMALL439    0.50 skip   25   4.43%  0.3369 -35.66%  0.554  0.162    4.10%   0.3122 -35.66%   .   .
+  SMALL439    0.50 half   10   6.92%  0.4810 -30.74%  0.646  0.346    7.36%   0.4915 -30.74%   .   .
+  SMALL439    0.50 half   25   4.02%  0.3179 -33.65%  0.477  0.187    4.33%   0.3288 -33.65%   .   .
+
+  KEEP PATHS: 4a 0/60   4b 9/60
+  (4a/4b are judged on the u56 benchmark bars for every panel, as the record does; the
+   BROAD/SMALL rows are therefore comparable to each other but their bars are u56's.)
+
+========================================================================================================================
+Q5  RULE 8 AT THE ARM LEVEL — for the 4b passers above.  (tau, mode) chosen on 2010-2016 by
+    IS Sharpe, per panel and rung; 2017-2026 read ONCE.  No null is involved here.
+========================================================================================================================
+  panel        c        IS pick  IS_Shp OOS_CAGR  OOS_Shp  OOS_DD  4a  4b   vs SPY OOS / v2 OOS
+  U56         10  tau=0.50 skip  1.0255   13.95%   1.1026 -20.90%   .   .   +0.2206 / -0.1825
+  U56         25  tau=0.05 half  0.9216   14.12%   1.1303 -18.25%   .   Y   +0.2483 / -0.1548
+  BROAD136    10  tau=0.20 skip  1.2268   11.28%   0.7507 -27.70%   .   .   -0.1313 / -0.5344
+  BROAD136    25  tau=0.20 skip  1.1641   10.34%   0.6973 -27.89%   .   .   -0.1847 / -0.5877
+  SMALL439    10  tau=0.30 skip  0.6104    1.78%   0.1881 -43.65%   .   .   -0.6939 / -1.0970   [1 degenerate arm(s) excluded]
+  SMALL439    25  tau=0.30 skip  0.5019    0.28%   0.1094 -44.89%   .   .   -0.7726 / -1.1757   [1 degenerate arm(s) excluded]
+  (this is the arm dial, not the idea's dial; it is reported because 4b passers appeared and
+   PROTOCOL rule 8 requires a KEEP-candidate to survive an out-of-sample read of its own choice.)
+
+elapsed 558.8s
