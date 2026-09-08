@@ -1,0 +1,247 @@
+======================================================================================================================
+IDEA 241 — THE 0.013 MARGIN RULE (cloud, 2026-09-08)
+======================================================================================================================
+
+PRE-REGISTERED: R1 no interior optimum; R2 any win sits at tau=INF and is 'do not
+select', not a margin rule; R3 the margin mode is near zero so the curve is close to a
+straight line between the endpoints; R4 idea 77's 0.013 is an ORDINARY margin.
+
+REPRODUCTION GATES (binding, before any new number is read)
+  G1  idea 114's margin distribution from its own 44 committed cells: mean 0.0190 median 0.0060 max 0.1195 (published 0.019 / 0.006 / 0.120) -> MATCH
+  G2  idea 114's null (margin -> OOS regret), Spearman: +0.104 (published +0.119, wrong sign, p 0.705) -> MATCH
+  G3  fast_backtest vs engine.backtest, RULES v2 / u56: max |diff| 0.000e+00
+
+======================================================================================================================
+PART A — THE CORPUS.  Every committed CSV re-readable as an argmax over a design dial.
+Admission is mechanical; every file is admitted or rejected WITH ITS REASON.
+======================================================================================================================
+  CSV files scanned ................ 1909
+    rejected: no OOS_Sharpe column                                  1238
+    rejected: no IS_Sharpe column                                    254
+    rejected: no numeric design dial with 3-25 levels                175
+    rejected: no cell with a clean >=3-rung ladder                   149
+    rejected: empty                                                    1
+  ADMITTED files ................... 92
+  SELECTION INSTANCES .............. 8748
+  instances per admitted file: median 26, max 1210 (2026-09-06_back-fill-the-phase-spread-over-every-cadence-claim_cloud.rows.csv)
+  -> a few files dominate the pool, so EVERY pooled number below is reported BOTH
+     instance-pooled AND file-clustered, and every bootstrap is blocked on FILE.
+
+  ladder length: 3-21 arms, median 4
+  dials used (top 12): off 2277, f 1502, q 1158, gross 945, g 617, share 427, m 406, point 310, k 262, B 176, lam 138, band 129
+
+======================================================================================================================
+PART B — THE MARGIN, and where idea 77's 0.013 sits in it.
+======================================================================================================================
+  margin over 8748 instances: mean 0.0339, median 0.0167, sd 0.0510, max 0.7508
+    deciles/quartiles: p10 0.0005  p25 0.0028  p50 0.0167  p75 0.0447  p90 0.0837  p99 0.2502
+  idea 77's 0.013: it is the 45.8% percentile of the record's margins -> R4 CONFIRMED (an ordinary margin)
+  file-clustered mean margin 0.0398
+  Spearman(margin, regret) = +0.1510 pooled, -0.1221 mean within-file
+  Spearman(margin, d_mean) = +0.2146 pooled, +0.1907 mean within-file
+  Spearman(margin, d_median) = +0.1156 pooled, +0.1697 mean within-file
+  the pick is already the OOS-best arm in 37.4% of instances (file-clustered 39.7%); mean regret 0.0413
+  RAW ARGMAX minus LADDER-MEAN, pooled +0.0237, file-clustered +0.0387, 95% CI (file-blocked) [+0.0207, +0.0585], P(<=0) 0.000
+
+======================================================================================================================
+PART C — THE RULE.  P1 = tau (every rung reported, including 0 = raw argmax and
+INF = always abstain); P2 = fallback.  d_vs_argmax > 0 means the abstention rule beats
+the raw argmax OOS.
+======================================================================================================================
+
+  fallback = LADDER-MEAN
+       tau  abstain  mean OOS  clustered  d vs argmax  d clustered    win   loss
+     0.000     0.0%    0.8385     0.9138      +0.0000      +0.0000   0.0%   0.0%  <- raw argmax
+     0.001    16.2%    0.8385     0.9137      -0.0000      -0.0001   8.5%   7.4%
+     0.005    31.1%    0.8373     0.9123      -0.0012      -0.0015  14.7%  16.1%
+     0.013    45.8%    0.8359     0.9110      -0.0026      -0.0028  20.6%  24.8%  <- idea 77
+     0.020    53.6%    0.8344     0.9092      -0.0041      -0.0045  23.3%  29.9%
+     0.030    63.4%    0.8327     0.9074      -0.0058      -0.0064  26.9%  36.1%
+     0.050    78.1%    0.8301     0.9039      -0.0084      -0.0099  32.9%  44.8%
+     0.100    92.7%    0.8249     0.8969      -0.0136      -0.0169  38.5%  53.9%
+     0.250    99.0%    0.8189     0.8881      -0.0196      -0.0257  40.3%  58.3%
+       inf   100.0%    0.8148     0.8751      -0.0237      -0.0387  40.3%  59.3%  <- always abstain
+    best tau > 0 on the file-clustered criterion: 0.001 at -0.0001; rungs that actually BEAT the raw argmax: 0 of 9 (NONE)
+    -> R1 CONFIRMED: no tau > 0 beats the raw argmax; the curve is monotone DOWN in tau and tau=INF is the worst point, so R2 is refuted too — on this corpus SELECTION WINS and abstention is a pure cost.
+
+  fallback = LADDER-MEDIAN
+       tau  abstain  mean OOS  clustered  d vs argmax  d clustered    win   loss
+     0.000     0.0%    0.8385     0.9138      +0.0000      +0.0000   0.0%   0.0%  <- raw argmax
+     0.001    16.2%    0.8387     0.9138      +0.0002      +0.0000   8.2%   6.4%
+     0.005    31.1%    0.8384     0.9128      -0.0001      -0.0010  14.2%  13.4%
+     0.013    45.8%    0.8391     0.9140      +0.0006      +0.0002  19.7%  18.9%  <- idea 77
+     0.020    53.6%    0.8389     0.9128      +0.0004      -0.0009  22.3%  22.0%
+     0.030    63.4%    0.8388     0.9126      +0.0003      -0.0012  26.0%  25.7%
+     0.050    78.1%    0.8389     0.9113      +0.0004      -0.0025  31.7%  30.7%
+     0.100    92.7%    0.8361     0.9072      -0.0024      -0.0066  36.7%  37.4%
+     0.250    99.0%    0.8311     0.8994      -0.0074      -0.0144  38.6%  41.2%
+       inf   100.0%    0.8261     0.8829      -0.0124      -0.0308  38.6%  42.2%  <- always abstain
+    best tau > 0 on the file-clustered criterion: 0.013 at +0.0002; rungs that actually BEAT the raw argmax: 2 of 9 (0.001, 0.013)
+    -> an INTERIOR rung beats the raw argmax by +0.0002 file-clustered.  Whether that survives is PART D's question, not this table's.
+
+  R3 check — is the tau curve close to a straight line between its endpoints?
+    LADDER-MEAN: max |actual - linear-in-abstention-rate| = 0.0204 over 9 finite rungs
+    LADDER-MEDIAN: max |actual - linear-in-abstention-rate| = 0.0220 over 9 finite rungs
+
+======================================================================================================================
+PART D — RULE 8 ON THE CORPUS.  tau chosen on a random half of FILES, read once on the
+held-out half, 20 seeds.  A rule that only wins where its tau was fitted is not a rule.
+======================================================================================================================
+  fallback       seed    tau*   IS gain  OOS gain  OOS gain of tau=INF
+  LADDER-MEAN       0   0.001   +0.0001   -0.0003              -0.0410
+  LADDER-MEAN       1   0.001   +0.0000   -0.0002              -0.0449
+  LADDER-MEAN       2   0.001   -0.0000   -0.0001              -0.0473
+  LADDER-MEAN       3   0.001   -0.0004   +0.0002              -0.0269
+  LADDER-MEAN       4   0.001   -0.0002   +0.0000              -0.0479
+  LADDER-MEDIAN     0   0.001   +0.0001   -0.0001              -0.0297
+  LADDER-MEDIAN     1   0.013   +0.0016   -0.0011              -0.0419
+  LADDER-MEDIAN     2   0.030   +0.0031   -0.0054              -0.0431
+  LADDER-MEDIAN     3   0.001   -0.0003   +0.0003              -0.0111
+  LADDER-MEDIAN     4   0.030   +0.0002   -0.0026              -0.0495
+
+  LADDER-MEAN: tau* = INF in 0/20 seeds (finite tau* values [0.001]);
+    held-out gain of the CHOSEN tau -0.0001 (positive in 7/20 seeds); held-out gain of tau=INF -0.0405 (0/20)
+
+  LADDER-MEDIAN: tau* = INF in 0/20 seeds (finite tau* values [0.001, 0.013, 0.03]);
+    held-out gain of the CHOSEN tau -0.0009 (positive in 4/20 seeds); held-out gain of tau=INF -0.0339 (0/20)
+
+======================================================================================================================
+PART E — RULE 8 ON LIVE PRICES, OUT OF CORPUS.  Idea 229's pre-registered frame,
+imported unchanged: 6 dials x 3 panels x 2 cost rungs = 36 cells, each dial carrying
+its DECLARED incumbent arm.  Choice on IS (<= 2016-12-31) only; 2017-2026 read once.
+======================================================================================================================
+
+  [panel] u56 = universe.json(56): 56 cols, eval 2009-01-13 -> 2026-09-04, mean weekly eligible 37.5
+      SPY 15.23%/0.889/-33.72% | OOS 15.45%/0.882/-33.72%
+      RULES v2 @10bps 8.66%/1.206/-12.05%   RULES v1 @10bps 6.46%/0.665/-13.83%
+      RULES v2 @25bps 8.37%/1.168/-12.09%   RULES v1 @25bps 2.76%/0.317/-15.63%
+      78 books done (4s cum.)
+
+  [panel] broad = universe_broad.json(136): 136 cols, eval 2009-01-13 -> 2026-09-04, mean weekly eligible 91.5
+      SPY 15.23%/0.889/-33.72% | OOS 15.45%/0.882/-33.72%
+      RULES v2 @10bps 8.03%/1.106/-12.24%   RULES v1 @10bps 6.39%/0.635/-21.19%
+      RULES v2 @25bps 7.70%/1.064/-12.28%   RULES v1 @25bps 1.79%/0.219/-26.72%
+      78 books done (13s cum.)
+
+  [panel] small = prices_small(439, SPY held out): 439 cols, eval 2011-01-13 -> 2026-09-04, mean weekly eligible 141.2
+      SPY 14.13%/0.862/-33.72% | OOS 15.45%/0.882/-33.72%
+      RULES v2 @10bps 3.80%/0.571/-14.70%   RULES v1 @10bps 8.15%/0.603/-32.84%
+      RULES v2 @25bps 3.37%/0.511/-15.27%   RULES v1 @25bps 2.86%/0.265/-43.04%
+      78 books done (36s cum.)
+
+  36 live cells (pre-registered 36 = 3 panels x 2 costs x 6 dials).
+  panel    cost dial          pick   incumb   margin  OOS pick  OOS incumb    delta
+  u56        10 band          0.08     0.03   0.0020    1.1726      1.2851  -0.1125
+  u56        10 gross         1.00     0.75   0.0002    1.2844      1.2851  -0.0007
+  u56        10 cadence          M        W   0.0012    1.2328      1.2851  -0.0523
+  u56        10 share         0.75     0.20   0.0048    1.0695      0.8012  +0.2683
+  u56        10 volcap        0.90     0.60   0.0000    0.7968      0.8012  -0.0044
+  u56        10 kexp          0.25    -0.50   0.0032    1.0372      0.8012  +0.2360
+  u56        25 band          0.12     0.03   0.0036    1.1569      1.2483  -0.0913
+  u56        25 gross         1.00     0.75   0.0002    1.2477      1.2483  -0.0005
+  u56        25 cadence          M        W   0.0146    1.2085      1.2483  -0.0398
+  u56        25 share         0.75     0.20   0.0369    0.9261      0.5040  +0.4222
+  u56        25 volcap        0.90     0.60   0.0000    0.5003      0.5040  -0.0037
+  u56        25 kexp          0.25    -0.50   0.0074    0.9068      0.5040  +0.4029
+  broad      10 band          0.08     0.03   0.0054    1.1095      1.1185  -0.0090
+  broad      10 gross         1.00     0.75   0.0004    1.1174      1.1185  -0.0011
+  broad      10 cadence          W        W   0.0034    1.1185      1.1185  +0.0000
+  broad      10 share         0.27     0.20   0.0060    0.7986      0.7002  +0.0984
+  broad      10 volcap         off     0.60   0.0012    0.7378      0.7002  +0.0376
+  broad      10 kexp          0.75    -0.50   0.0272    1.0172      0.7002  +0.3170
+  broad      25 band          0.08     0.03   0.0008    1.0831      1.0740  +0.0091
+  broad      25 gross         1.00     0.75   0.0005    1.0732      1.0740  -0.0008
+  broad      25 cadence          M        W   0.0098    1.0675      1.0740  -0.0065
+  broad      25 share         0.75     0.20   0.0030    0.8473      0.4311  +0.4162
+  broad      25 volcap         off     0.60   0.0010    0.4824      0.4311  +0.0513
+  broad      25 kexp          0.75    -0.50   0.0302    0.8575      0.4311  +0.4264
+  small      10 band          0.20     0.03   0.0092    0.6255      0.5665  +0.0590
+  small      10 gross         1.00     0.75   0.0005    0.5657      0.5665  -0.0008
+  small      10 cadence          M        W   0.1250    0.6194      0.5665  +0.0529
+  small      10 share         0.15     0.20   0.1138    0.3337      0.4062  -0.0725
+  small      10 volcap        0.90     0.60   0.0035    0.4024      0.4062  -0.0038
+  small      10 kexp         -0.75    -0.50   0.0301    0.4670      0.4062  +0.0608
+  small      25 band          0.20     0.03   0.0148    0.5979      0.5056  +0.0923
+  small      25 gross         1.00     0.75   0.0005    0.5050      0.5056  -0.0006
+  small      25 cadence          M        W   0.1097    0.5841      0.5056  +0.0785
+  small      25 share         0.15     0.20   0.0851    0.0560      0.1528  -0.0968
+  small      25 volcap        0.90     0.60   0.0035    0.1503      0.1528  -0.0025
+  small      25 kexp         -0.75    -0.50   0.0439    0.1933      0.1528  +0.0405
+
+  raw chooser minus DECLARED INCUMBENT, 36 cells: mean +0.0714, positive in 17/36; chooser picks the incumbent itself in 1/36
+  live margin distribution: median 0.0036, 69.4% at or below idea 77's 0.013
+
+  THE RULE ON THE LIVE FRAME (fallback = the dial's DECLARED INCUMBENT; ladder-mean
+  reported beside it).  tau* imported from PART D is applied UNTOUCHED.
+       tau  abstain  mean OOS (incumbent fb)  d vs argmax  mean OOS (ladder-mean fb)         d
+     0.000     0.0%                   0.8042      +0.0000                     0.8042   +0.0000
+     0.001    27.8%                   0.8028      -0.0013                     0.8014   -0.0028
+     0.005    55.6%                   0.7835      -0.0206                     0.7778   -0.0264
+     0.013    69.4%                   0.7684      -0.0358                     0.7690   -0.0351  <- idea 77
+     0.020    75.0%                   0.7669      -0.0372                     0.7657   -0.0385
+     0.030    77.8%                   0.7581      -0.0460                     0.7607   -0.0434
+     0.050    88.9%                   0.7317      -0.0724                     0.7447   -0.0595
+     0.100    91.7%                   0.7344      -0.0697                     0.7478   -0.0564
+     0.250   100.0%                   0.7328      -0.0714                     0.7478   -0.0564
+       inf   100.0%                   0.7328      -0.0714                     0.7478   -0.0564
+
+======================================================================================================================
+POOLED BOOKS AND BOTH KEEP PATHS.  Equal-weight over the cells of each panel/cost:
+CHOOSER (raw argmax), ABSTAIN@tau (the rule), INCUMBENT (always the declared arm),
+and ORACLE (best OOS arm per cell, not investable).  4a vs live RULES v2 and v1 on the
+cell's own panel; 4b vs SPY on that panel.
+======================================================================================================================
+  tau applied to the pooled books: idea 77's own 0.013 (pre-registered) and, where part D chose a finite tau*, 0.001.
+  panel    cost arm                   CAGR  Sharpe    MaxDD     H1     H2  OOS CAGR  OOS Sh  4a v2   4b
+  u56        10 CHOOSER             10.85%   1.111  -15.13%  1.145  1.087    11.75%   1.151      .    Y
+  u56        10 ABSTAIN@0.013        8.21%   1.003  -11.37%  1.033  0.979     8.97%   1.054      .    .
+  u56        10 INCUMBENT            8.21%   1.003  -11.37%  1.033  0.979     8.97%   1.054      .    .
+  u56        10 LADDER-MEAN          9.22%   1.059  -13.28%  1.095  1.032    10.00%   1.099      .    .
+  u56        10 ORACLE              10.11%   1.120  -13.53%  1.116  1.129    11.22%   1.186      .    .
+  u56        25 CHOOSER              9.51%   0.985  -14.86%  1.016  0.962    10.31%   1.025      .    .
+  u56        25 ABSTAIN@0.013        7.25%   0.889  -12.54%  0.918  0.866     7.98%   0.942      .    .
+  u56        25 INCUMBENT            6.45%   0.802  -11.51%  0.828  0.782     7.12%   0.852      .    .
+  u56        25 LADDER-MEAN          7.55%   0.881  -13.41%  0.910  0.860     8.26%   0.923      .    .
+  u56        25 ORACLE               8.71%   0.976  -13.68%  0.971  0.984     9.74%   1.041      .    .
+  broad      10 CHOOSER             10.44%   1.062  -16.68%  1.222  0.914    10.08%   1.022      .    .
+  broad      10 ABSTAIN@0.013        9.62%   1.034  -15.35%  1.193  0.885     9.24%   0.991      .    .
+  broad      10 INCUMBENT            8.15%   0.957  -14.57%  1.134  0.792     7.66%   0.899      .    .
+  broad      10 LADDER-MEAN          8.95%   1.005  -15.30%  1.163  0.857     8.60%   0.963      .    .
+  broad      10 ORACLE               9.46%   1.067  -14.02%  1.196  0.944     9.33%   1.054      .    .
+  broad      25 CHOOSER              9.28%   0.943  -16.84%  1.081  0.815     9.06%   0.920      .    .
+  broad      25 ABSTAIN@0.013        7.97%   0.870  -15.46%  1.030  0.721     7.55%   0.824      .    .
+  broad      25 INCUMBENT            6.48%   0.774  -14.68%  0.950  0.611     5.94%   0.712      .    .
+  broad      25 LADDER-MEAN          7.35%   0.838  -15.41%  0.997  0.691     6.95%   0.792      .    .
+  broad      25 ORACLE               8.23%   0.922  -15.05%  1.057  0.795     8.06%   0.900      .    .
+  small      10 CHOOSER              5.54%   0.593  -26.04%  0.765  0.452     4.73%   0.502      .    .
+  small      10 ABSTAIN@0.013        5.16%   0.580  -25.38%  0.748  0.443     4.40%   0.490      .    .
+  small      10 INCUMBENT            4.92%   0.548  -25.54%  0.687  0.436     4.39%   0.482      .    .
+  small      10 LADDER-MEAN          4.92%   0.541  -25.10%  0.642  0.458     4.70%   0.507      .    .
+  small      10 ORACLE               5.20%   0.575  -23.96%  0.673  0.494     5.14%   0.555      .    .
+  small      25 CHOOSER              3.55%   0.401  -28.17%  0.561  0.268     2.68%   0.309      .    .
+  small      25 ABSTAIN@0.013        3.36%   0.393  -27.88%  0.556  0.258     2.52%   0.301      .    .
+  small      25 INCUMBENT            2.96%   0.352  -27.68%  0.479  0.247     2.37%   0.285      .    .
+  small      25 LADDER-MEAN          3.00%   0.352  -27.18%  0.447  0.273     2.70%   0.315      .    .
+  small      25 ORACLE               3.57%   0.408  -26.74%  0.514  0.322     3.35%   0.376      .    .
+
+  arm                 mean OOS Sharpe  4a(v2)  4a(v1)    4b
+  CHOOSER                      0.8214   0/6     4/6     1/6  
+  ABSTAIN@0.013                0.7668   0/6     5/6     0/6  
+  INCUMBENT                    0.7138   0/6     5/6     0/6  
+  LADDER-MEAN                  0.7666   0/6     5/6     0/6  
+  ORACLE                       0.8520   0/6     5/6     0/6  
+  binding 4b bars over all 30 books: CAGR 29, H2 17, H1 14, OOS 14, DD 10
+
+  pooled-book OOS Sharpe: CHOOSER 0.8214, ABSTAIN@0.013 0.7668 (-0.0546), INCUMBENT 0.7138 (-0.1077) over 6 (panel, cost) books.
+
+======================================================================================================================
+HEADLINE
+======================================================================================================================
+  1. CORPUS: 8748 selection instances over 92 committed files — every published argmax the record can still be re-read as one.
+  2. R4: idea 77's 0.013 is the 46% percentile of the record's own margins — an ordinary margin, not a thin one.
+  3. RULE (LADDER-MEAN): best tau > 0 is 0.001 at -0.0001 file-clustered; raw argmax = 0 by construction; tau=INF -0.0387.
+  3. RULE (LADDER-MEDIAN): best tau > 0 is 0.013 at +0.0002 file-clustered; raw argmax = 0 by construction; tau=INF -0.0308.
+  4. RULE 8 on the corpus (LADDER-MEAN): held-out gain of the chosen tau -0.0001, positive in 7/20 seeds.
+  4. RULE 8 on the corpus (LADDER-MEDIAN): held-out gain of the chosen tau -0.0009, positive in 4/20 seeds.
+  5. LIVE 36 cells: chooser minus declared incumbent +0.0714 (17/36 positive); ABSTAIN@0.013 vs CHOOSER on the pooled books -0.0546, INCUMBENT -0.1077.
+  6. KEEP paths: 4a(v2) 0/30, 4a(v1) 24/30, 4b 1/30.
