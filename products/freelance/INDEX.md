@@ -2,6 +2,13 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-08 | 40698409 | Excel Data Cleanup Project -- 2 | $520 | 32 | drafted |
+| 2026-09-08 | 40698370 | Indian Household Liquid Manufacturer Database | $320 | 7 | drafted |
+| 2026-09-08 | 40698089 | Weekly Investment Returns Entry | $330 | 18 | drafted |
+| 2026-09-08 | 40697932 | Financial Transaction Data Entry | $265 | 33 | drafted |
+| 2026-09-08 | 40697852 | Daily Income-Expense Data Entry | $245 | 12 | drafted |
+| 2026-09-08 | 40698180 | Word Doc Product Data Entry | $125 | 18 | drafted |
+| 2026-09-08 | 40698025 | Excel Data Reconciliation on SharePoint | $120 | 24 | drafted |
 | 2026-09-08 | 40697477 | Futures Strategy Development and Testing | $650 | 31 | drafted |
 | 2026-09-08 | 40697440 | Manual Data Entry From Online Forms | $245 | 8 | drafted |
 | 2026-09-08 | 40696751 | Senior Backend Engineer, Agentic AI & Data Platform | $850 | 191 | drafted |
@@ -208,3 +215,15 @@ Lessons: proposals max 1,500 chars; each project requires ticking at least one o
 Note for the 2026-09-08 04:35 UTC batch: three NEW rows, two drafted and one skipped for the reason above, so the batch is two by supply rather than the eight per run cap. Auditing all sixty shortlist rows against the index left nothing else untriaged. Freelancer.com and its public API remain blocked by the session network policy, so both were written from the truncated descriptions the scanner captured, and each asks the scope question the truncation left open. 40697477 is the best shot on this shortlist: 31 bids, a fixed $250 to $750 band, and it is the only row that lands squarely on the backtesting engine we already have public proof of. 40697440 has the better odds at 8 bids but a smaller band; its proposal deliberately tells the client to check for a form export first, which may end the job before it starts, and that is the honest call.
 
 Note for the 2026-09-08 batch: the 2026-09-07 21:31 UTC scan carried thirteen NEW rows, of which seven were drafted and six skipped for the reasons above. One older row (Dynamic AI Marketplace Bot Development) was never triaged either way and is skipped above for lack of an id. Freelancer.com and its public API remain blocked by the session network policy (HTTP 403 on the proxy tunnel), re-tested this run, so all seven were written from the truncated descriptions the scanner captured, and each proposal asks the scope question the truncation left open. Five of the seven carry hourly-estimate bands rather than fixed budgets; they are priced in the upper half of the stated band since the scope in each case is a single well-defined deliverable. 40693802 is the best shot: 14 bids, a plain Python automation script squarely in our stack, and the lowest bid count of any row with a workable budget.
+
+- Python Zerodha NIFTY Options Bot (40698407) (a production-grade automated NIFTY options selling system posted at $16 to $132; the budget is an order of magnitude below the scope, and bidding the band top would misrepresent what we could deliver. Worth noting for David: it is the one row on this shortlist that lands on our trading stack, so if the client raises the band it is worth revisiting)
+- African B2B Contact Database Compilation (40698484) (scraping named founders, co-founders and managing directors for B2B marketing, the same personal-contact harvesting we have declined on the earlier email-scrape and executive-database postings)
+- Excel Form Submission Automation (40698039) (same brief as 40693615, drafted 2026-09-07, an existing Excel form collecting text and numeric inputs to be wired to a database, so it falls under the near-duplicate rule; 106 bids)
+- Excel Mixed Data Entry & Validation (40698247) (the mixed text-and-numeric entry sheet template already drafted as 40695548, 40695901 and 40689875, so it falls under the near-duplicate rule; $16 to $132 with 19 bids)
+- Word Doc Product Data Entry (40697794) (identical brief to 40698180, which is drafted in this batch with fewer bids and a newer posting, so this is the same job posted twice)
+- AI Image & Video Webapp (40698133) (a Grok-style browser platform generating both stills and video, a scope far beyond the $250 to $750 band, 68 bids)
+- Sterling Trader Pro API Integration (40697843) (C#-based desktop front end and the Sterling Trader Pro API, outside the Python stack we deliver in, same reason as the FXCM job; 82 bids)
+- AI SaaS Technology Lead (40698367) (an ongoing technology lead role on the client's own product rather than a defined deliverable, 109 bids)
+- Retail In Stock Notification / P2P Keyword Alerts (40697938) (188 bids, and retail stock endpoints sit behind bot protection, so a monitor that works today needs continuous evasion work we do not take on)
+
+Note for the 2026-09-08 12:00 UTC batch: the 11:18 UTC scan carried sixteen NEW rows, of which seven were drafted and nine skipped for the reasons above. Freelancer.com and its public API remain blocked by the session network policy, so all seven were written from the truncated descriptions the scanner captured, and each asks the scope question the truncation left open. 40698370 has the best odds at 7 bids in a $132 to $396 band; it is scoped to company-level manufacturer records only, with no named individuals or personal contact details, which is the line we have held on the contact-database postings. 40698409 is the best value at $250 to $750 with 32 bids and a brief that is plainly rule-based cleanup. Three of the seven are accounting-adjacent entry jobs from different clients and are drafted separately rather than treated as duplicates; the two that repeat briefs we have already drafted (40698039, 40698247) are skipped above.
