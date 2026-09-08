@@ -78,7 +78,6 @@
 235. is-selection-beats-do-nothing-just-a-rung-artefact — idea 230's rule-8 premium is monotone in the cost rung for BOTH the IS chooser (-0.0161 at 0 bps -> +0.1055 at 30) and a RANDOM dial (-0.0275 -> +0.0076), and is a coin flip at PROTOCOL's own 10 bps. Re-read every published 'selection beats do-nothing' claim against the rung it was quoted at and the do-nothing book's own turnover break-even. Max 2 params. (2026-09-06)
 231. the-gap-vs-tilt-rule-as-a-leaderboard-column — idea 228's re-rank predictor (0-bps top-2 Sharpe gap vs the ladder's 30-bp tilt) catches 3/3 actual re-ranks and over-predicts 3 cells. Back-fill both numbers over every swept dial in the record whose parent committed a grid CSV, and report the tilt/gap ratio at which the prediction stops over-firing; if it separates cleanly, the pair belongs beside every published argmax. Max 2 params. (2026-09-06)
 232. does-the-vol-gate-corner-survive-being-pre-registered — idea 228's rule-8 premium is entirely the vol-cap dial choosing max_vol=off (+0.1049 mean, +0.213..+0.376 on SMALL484), i.e. the chooser rediscovering ideas 38/49. Test the corner directly as a pre-registered arm rather than a selected one: no vol gate vs max_vol=0.60 on all three panels at all 7 rungs, with the 200d gate held fixed, and report both KEEP paths. If the corner is real it should not need a selector. Max 2 params. (2026-09-06)
-227. is-the-top-decile-trim-a-drop-the-worst-rule — idea 155's only surviving edge is q=0.90-0.95, i.e. deleting the bottom 5-10% of the eligible set, worth +0.0316/+0.0171 Sharpe. Test whether that is the composite ranking at all: replace the composite with each of its three legs and with a pure vol20 screen at the same trim depth, and report whether the trim survives when the ranking key is destroyed (shuffled within week). Max 2 params. (2026-09-06)
 195. market-cap-as-the-third-substitution — idea 193 parked the market-cap leg: no shares-outstanding series is cached in data/ and the sandbox has no internet, so the one size proxy that is neither a price level nor a volume product went untested. Cache shares outstanding (local or Actions) and re-run idea 193's substitution. PARK until then: needs local/Actions data. (2026-09-05) **[PARK re-affirmed 2026-09-08, lane B: data/ carries prices/volume/earnings/form4/spinoffs/small_meta only — small_meta.csv has no shares-outstanding or market-cap column. Needs local/Actions data; not claimable in the sandbox.]**
 
 
@@ -98,6 +97,7 @@
 
 
 ## In progress
+227. is-the-top-decile-trim-a-drop-the-worst-rule — idea 155's only surviving edge is q=0.90-0.95, i.e. deleting the bottom 5-10% of the eligible set, worth +0.0316/+0.0171 Sharpe. Test whether that is the composite ranking at all: replace the composite with each of its three legs and with a pure vol20 screen at the same trim depth, and report whether the trim survives when the ranking key is destroyed (shuffled within week). Max 2 params. (2026-09-06) — **CLAIMED 2026-09-08 (cloud)**
 
 
 
