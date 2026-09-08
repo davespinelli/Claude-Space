@@ -1,0 +1,362 @@
+IDEA 203 - a-turnover-matched-null-for-suppressing-overlays   (lane B, 2026-09-08)
+==============================================================================================================================
+Idea 186's rotation null preserves an overlay's on-share and episode structure exactly and its
+realised turnover only for actions that SCALE or REALLOCATE the book.  For BUDGET-skip - the
+action that SUPPRESSES a rebalance - it does not, and idea 191 measured the gap growing without
+bound in on-share.  This run builds idea 203's replacement (resample the SKIP DECISIONS at
+matched count), embeds it in the one-parameter family that runs from count-matched to
+turnover-matched, and re-prices idea 186's BUDGET family against all six nulls.
+
+Two tuned params: tau [0.05, 0.1, 0.2, 0.3, 0.5] x B [1, 2, 4, 8, 16].  Corpus axes: 3 panels x ['skip', 'half'] x [10, 25] bps.
+Null kinds: ['ROT', 'RS1', 'RS2', 'RS4', 'RS8', 'RS16'].  20 draws each.  ROT seed 186400 (idea 186's), RS seed 203000.
+
+  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+   U56       4699d x 56c  tradable= 55  2008-01-02..2026-09-04  rebalances=975
+   BROAD136  4699d x 136c  tradable=132  2008-01-02..2026-09-04  rebalances=975
+   SMALL439  4194d x 443c  tradable=439  2010-01-04..2026-09-04  rebalances=870
+
+REPRODUCTION GATES [a]-[d] (asserted before any new number is read)
+  --- U56 ---
+  [a] fast_backtest/_core vs engine.backtest: max|dret|=1.388e-17 max|dturn|=2.776e-16  (4 engine rows are NaN at the sample's first bar - engine.backtest does not fill the shift; they are skipped, as idea 186's own check did)  -> PASS
+  [b] cost identity (10 bps derived from the 0 bps run): max|d|=1.388e-17  -> PASS
+  [c] base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00  -> PASS
+  [d] mstats vs engine.metrics (CAGR/Sharpe/MaxDD): max|d|=0.000e+00  -> PASS
+  --- BROAD136 ---
+  [a] fast_backtest/_core vs engine.backtest: max|dret|=2.082e-17 max|dturn|=2.776e-16  (4 engine rows are NaN at the sample's first bar - engine.backtest does not fill the shift; they are skipped, as idea 186's own check did)  -> PASS
+  [b] cost identity (10 bps derived from the 0 bps run): max|d|=2.082e-17  -> PASS
+  [c] base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00  -> PASS
+  [d] mstats vs engine.metrics (CAGR/Sharpe/MaxDD): max|d|=0.000e+00  -> PASS
+  --- SMALL439 ---
+  [a] fast_backtest/_core vs engine.backtest: max|dret|=2.776e-17 max|dturn|=4.441e-16  (4 engine rows are NaN at the sample's first bar - engine.backtest does not fill the shift; they are skipped, as idea 186's own check did)  -> PASS
+  [b] cost identity (10 bps derived from the 0 bps run): max|d|=2.776e-17  -> PASS
+  [c] base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00  -> PASS
+  [d] mstats vs engine.metrics (CAGR/Sharpe/MaxDD): max|d|=0.000e+00  -> PASS
+
+  U56       SPY 15.23%/0.889/-33.72%  OOS 15.45%/0.882/-33.72%   | BASE@10 12.86%/1.1075/-18.21%   RULES v2@10 h1/h2 1.226/1.191 dd -12.05%
+  BROAD136  SPY 15.23%/0.889/-33.72%  OOS 15.45%/0.882/-33.72%   | BASE@10 13.14%/0.9493/-21.57%   RULES v2@10 h1/h2 1.229/0.984 dd -12.24%
+  SMALL439  SPY 14.13%/0.862/-33.72%  OOS 15.45%/0.882/-33.72%   | BASE@10  6.57%/0.4635/-26.84%   RULES v2@10 h1/h2 0.572/0.581 dd -14.48%
+
+RUNNING THE GRID (30 real points x (1 real + 6 nulls x 20 draws)) ...
+   U56 done (29s)
+   BROAD136 done (62s)
+   SMALL439 done (181s)
+   7260 rows (60 real) -> 2026-09-08_a-turnover-matched-null-for-suppressing-overlays_B.grid.csv  (181s)
+
+  [f] NULL VALIDITY - count matching and per-stratum count matching
+      skip-COUNT mismatches (all kinds): 0/7200  -> PASS
+      per-STRATUM count mismatches (RS-B): 0/9300  -> PASS
+
+  [e] ROT ARM vs IDEA 186's COMMITTED GRID (tau in {0.10,0.20,0.30}, same unsalted seed)
+      matched 756 of idea 186's 756 committed BUDGET rows on (panel, tau, action, rung, draw)
+      672 rows have an IDENTICAL ON set: max|dSharpe|=2.942e-04  max|dMaxDD|=1.424e-07  max|dturnover|=4.257e-03  -> PASS
+      The residual is a DATA REVISION, not a code difference: data/prices.csv was
+      re-committed by the daily Actions job on 2026-09-07, after idea 186 ran, and the
+      panel's adjusted closes moved.  Idea 424 carries the same caveat for its own source.
+      84 rows (tau=[np.float64(0.1)]) have an ON set that MOVED by
+      1 of 975 rebalance dates - the revision flipped one date's composite
+      across the threshold.  Drift BOUNDED and reported, not hidden: max|dSharpe|=0.0719  max|dMaxDD|=0.0632
+      gate [e] -> PASS (bounded)
+
+==============================================================================================================================
+Q1  DOES A COUNT-MATCHED RESAMPLE REPAIR THE TURNOVER GAP?  (prediction P2: no)
+==============================================================================================================================
+  realised turnover gap  mean |null - real| / real,  by ACTION x NULL KIND (pooled over
+  panels, tau and cost rungs; the 'half' column is the WITHIN-FAMILY CONTROL - a non-
+  suppressing action on the SAME indicator, where idea 186 already found rotation faithful)
+mode  half    skip
+kind              
+ROT    4.4  2036.8
+RS1    4.8  4759.3
+RS2    2.2  4277.4
+RS4    1.0  3475.8
+RS8    0.4  2425.9
+RS16   0.1     1.6   (%)
+
+  and the same table for the EX-ANTE skipped-turnover budget sum(tt over the ON dates),
+  the quantity RS-B is built to match:
+mode   half   skip
+kind              
+ROT   29.52  29.52
+RS1   29.17  29.38
+RS2   16.55  16.37
+RS4   10.07  10.14
+RS8    6.47   6.53
+RS16   3.85   4.07   (%)
+
+  ROT  BUDGET-skip gap: mean  2036.8%  median    24.8%  max  29878.6%  (n=30)
+  RS1  BUDGET-skip gap: mean  4759.3%  median    29.9%  max  70034.2%  (n=30)
+  RS1/ROT ratio of mean gap = 2.337  -> P2 (MISS: count-matched resampling does repair the gap)
+
+  idea 191 published 1782.7% for BUDGET-skip on this same tau ladder.  Idea 208 established
+  that idea 191 SALTED its offsets with Python's per-process hash(), so that number is not a
+  fixed quantity and cannot be bit-reproduced.  Re-measured here at a fixed seed:
+      ROT BUDGET-skip mean gap 2036.8%  (sd across the 30 cells 7568.6%, se 1381.8%)
+      on idea 186's NARROW 3-point ladder: mean 45.2%  max 213.8%   (idea 186 published 25.4% / 213.8% pooled over both actions)
+
+  the gap by ON-SHARE decile (idea 191's 'degrades without bound in on-share'), BUDGET-skip:
+kind            ROT      RS1      RS2      RS4      RS8  RS16
+os_bin                                                       
+(0.0, 0.1]      1.8      1.8      1.1      0.7      0.3   0.2
+(0.1, 0.3]      8.3      8.5      3.7      1.0      0.2   0.3
+(0.3, 0.5]     16.5     18.0      4.5      0.6      0.5   0.2
+(0.5, 0.7]     22.6     26.7      5.5      1.2      0.7   0.7
+(0.7, 0.9]     41.2     69.3     44.9     20.8      3.0   3.5
+(0.9, 1.0]  10101.0  23673.0  21318.4  17348.8  12124.4   2.6   (%)
+
+==============================================================================================================================
+Q2  THE FIDELITY / RANDOMISATION FRONTIER  (prediction P3: both fall monotonically in B)
+==============================================================================================================================
+  For BUDGET-skip, per null kind, pooled over panels / tau / rungs:
+    gap        realised turnover gap (want 0)
+    ex_gap     ex-ante skipped-turnover gap (what RS-B matches by construction)
+    overlap    share of the null's skip dates that are ALSO real skip dates (want low:
+               overlap -> 1 means the 'null' IS the instrument)
+    band       mean over cells of max|dSharpe| across the 20 draws (the clause's yardstick)
+    free       mean number of strata in which the draw has any freedom at all
+         gap  ex_gap  overlap   band  free_strata       B
+kind                                                     
+ROT  20.3677  0.2952   0.5408 0.1664          NaN     NaN
+RS1  47.5934  0.2938   0.5407 0.1481       1.0000  1.0000
+RS2  42.7740  0.1637   0.6488 0.1581       1.0000  2.0000
+RS4  34.7577  0.1014   0.7458 0.1453       1.0000  4.0000
+RS8  24.2589  0.0653   0.8048 0.1380       1.0000  8.0000
+RS16  0.0164  0.0407   0.8748 0.1322       0.9333 16.0000
+  monotone in B:  gap falls True   band falls False   overlap rises True   -> P3 MISS
+
+==============================================================================================================================
+Q3/Q4  RE-PRICING IDEA 186's BUDGET FAMILY AGAINST EVERY NULL
+==============================================================================================================================
+  clause readings, both computed (idea 211 killed the two-sided reading in favour of the
+  signed one; the two-sided is kept for comparability with idea 186's published verdicts):
+    two-sided  clears iff |dSharpe_real| > max over draws |dSharpe_null|
+    signed     clears iff dSharpe_real is beyond every draw IN ITS OWN DIRECTION
+
+  CLEAR RATE (share of the 30 real points x 2 rungs = 60 cells that clear), by action:
+    clears_two:
+      mode  half  skip
+      kind            
+      ROT    0.0  16.7
+      RS1   13.3  36.7
+      RS2   16.7  23.3
+      RS4   10.0  16.7
+      RS8   13.3   6.7
+      RS16   6.7  10.0   (%)
+    clears_signed:
+      mode  half  skip
+      kind            
+      ROT    3.3  36.7
+      RS1   13.3  53.3
+      RS2   16.7  33.3
+      RS4   10.0  16.7
+      RS8   13.3   6.7
+      RS16   6.7  13.3   (%)
+
+  VERDICT MOVEMENT vs the incumbent ROT null (the number idea 203 asks for):
+    RS1  :  12 of 60 signed verdicts move vs ROT   (+10 newly clear, -2 stop clearing)
+    RS2  :  13 of 60 signed verdicts move vs ROT   (+8 newly clear, -5 stop clearing)
+    RS4  :  16 of 60 signed verdicts move vs ROT   (+6 newly clear, -10 stop clearing)
+    RS8  :  14 of 60 signed verdicts move vs ROT   (+4 newly clear, -10 stop clearing)
+    RS16 :  18 of 60 signed verdicts move vs ROT   (+6 newly clear, -12 stop clearing)
+
+  THE WALL (P4): for BUDGET-skip, the clause's power against the fidelity it buys.
+  A null that matches the ex-ante turnover budget of the skipped set to within eps has an
+  overlap with the real skip set of 'overlap' and clears 'clear' of the real points.
+      ex_gap  overlap  clear_signed  clear_two  ex_ante_gap
+kind                                                       
+ROT  20.3677   0.5408        0.3667     0.1667       0.2952
+RS1  47.5934   0.5407        0.5333     0.3667       0.2938
+RS2  42.7740   0.6488        0.3333     0.2333       0.1637
+RS4  34.7577   0.7458        0.1667     0.1667       0.1014
+RS8  24.2589   0.8048        0.0667     0.0667       0.0653
+RS16  0.0164   0.8748        0.1333     0.1000       0.0407
+  rotation's gap on the NON-suppressing 'half' action = 4.43% - the fidelity target.
+  null kinds reaching that target on BUDGET-skip: ['RS16']
+  their signed clear rate on the real points: ['13.3%']   -> P4 MISS
+
+==============================================================================================================================
+Q5  SIZE CONTROL - a KNOWN-NULL overlay (random ON, same on-share, zero timing information)
+==============================================================================================================================
+  Run on U56 only.  A clause with nominal one-sided size 1/21 = 4.76% should clear these at
+  most that often.  If RS-B keeps its size here while losing power on the REAL overlay, the
+  power loss is specific to indicators that are functions of the stratifying variable.
+   noise tau=0.05 done (188s)
+   noise tau=0.1 done (193s)
+   noise tau=0.2 done (198s)
+   noise tau=0.3 done (202s)
+   noise tau=0.5 done (207s)
+
+  realised clear rate on the zero-information overlay (nominal 4.76%), by action:
+    clears_two:
+      mode  half  skip
+      kind            
+      ROT    0.0   0.0
+      RS1    0.0  10.0
+      RS2    0.0   0.0
+      RS4    0.0   0.0
+      RS8    0.0   0.0
+      RS16   0.0   0.0   (%)
+    clears_signed:
+      mode  half  skip
+      kind            
+      ROT    0.0   0.0
+      RS1    0.0  20.0
+      RS2    0.0   0.0
+      RS4   10.0  20.0
+      RS8    0.0  20.0
+      RS16   0.0   0.0   (%)
+  pooled: ROT 0.0%  RS1 10.0%  RS2 0.0%  RS4 15.0%  RS8 10.0%  RS16 0.0%
+  -> P5 MISS (all kinds at or near nominal; max 15.0%)
+
+==============================================================================================================================
+Q6  RULE 8 WALK-FORWARD - parameters chosen on <= 2016-12-31, 2017-2026 read once
+==============================================================================================================================
+  12 cells = 3 panels x 2 actions x 2 cost rungs.  The ladder is the 5-point tau ladder.
+   panel mode  bps           arm            pick  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    dOOS  spy_OOS_Sharpe
+     U56 skip   10 S0 do-nothing               -    0.1449      1.1775    -0.1821  0.0000          0.8820
+     U56 skip   10  S1 IS-argmax   tau=0.5 os=0%    0.1395      1.1026    -0.2090 -0.0749          0.8820
+     U56 skip   10        S2 ROT         tau=0.3    0.1429      1.1246    -0.2076 -0.0529          0.8820
+     U56 skip   10        S2 RS1         tau=0.3    0.1429      1.1246    -0.2076 -0.0529          0.8820
+     U56 skip   10        S2 RS2         tau=0.5    0.1395      1.1026    -0.2090 -0.0749          0.8820
+     U56 skip   10        S2 RS4         tau=0.3    0.1429      1.1246    -0.2076 -0.0529          0.8820
+     U56 skip   10        S2 RS8        tau=0.05    0.1161      0.8600    -0.2012 -0.3175          0.8820
+     U56 skip   10       S2 RS16         tau=0.5    0.1395      1.1026    -0.2090 -0.0749          0.8820
+     U56 skip   10    ORACLE-OOS         tau=0.3    0.1429      1.1246    -0.2076 -0.0529          0.8820
+     U56 skip   25 S0 do-nothing               -    0.1289      1.0618    -0.1833  0.0000          0.8820
+     U56 skip   25  S1 IS-argmax   tau=0.5 os=0%    0.1238      0.9921    -0.2112 -0.0697          0.8820
+     U56 skip   25        S2 ROT        tau=0.05    0.1137      0.8441    -0.2012 -0.2177          0.8820
+     U56 skip   25        S2 RS1         tau=0.3    0.1279      1.0197    -0.2093 -0.0420          0.8820
+     U56 skip   25        S2 RS2         tau=0.5    0.1238      0.9921    -0.2112 -0.0697          0.8820
+     U56 skip   25        S2 RS4         tau=0.3    0.1279      1.0197    -0.2093 -0.0420          0.8820
+     U56 skip   25        S2 RS8        tau=0.05    0.1137      0.8441    -0.2012 -0.2177          0.8820
+     U56 skip   25       S2 RS16         tau=0.5    0.1238      0.9921    -0.2112 -0.0697          0.8820
+     U56 skip   25    ORACLE-OOS         tau=0.3    0.1279      1.0197    -0.2093 -0.0420          0.8820
+     U56 half   10 S0 do-nothing               -    0.1449      1.1775    -0.1821  0.0000          0.8820
+     U56 half   10  S1 IS-argmax   tau=0.5 os=0%    0.1423      1.1464    -0.1818 -0.0311          0.8820
+     U56 half   10        S2 ROT         tau=0.3    0.1436      1.1555    -0.1818 -0.0219          0.8820
+     U56 half   10        S2 RS1         tau=0.5    0.1423      1.1464    -0.1818 -0.0311          0.8820
+     U56 half   10        S2 RS2         tau=0.3    0.1436      1.1555    -0.1818 -0.0219          0.8820
+     U56 half   10        S2 RS4         tau=0.3    0.1436      1.1555    -0.1818 -0.0219          0.8820
+     U56 half   10        S2 RS8         ABSTAIN    0.1449      1.1775    -0.1821  0.0000          0.8820
+     U56 half   10       S2 RS16         tau=0.5    0.1423      1.1464    -0.1818 -0.0311          0.8820
+     U56 half   10    ORACLE-OOS        tau=0.05    0.1518      1.2057    -0.1817  0.0282          0.8820
+     U56 half   25 S0 do-nothing               -    0.1289      1.0618    -0.1833  0.0000          0.8820
+     U56 half   25  S1 IS-argmax tau=0.05 os=88%    0.1412      1.1303    -0.1825  0.0685          0.8820
+     U56 half   25        S2 ROT         tau=0.2    0.1335      1.0778    -0.1818  0.0160          0.8820
+     U56 half   25        S2 RS1         tau=0.5    0.1265      1.0326    -0.1828 -0.0291          0.8820
+     U56 half   25        S2 RS2         tau=0.3    0.1282      1.0445    -0.1828 -0.0173          0.8820
+     U56 half   25        S2 RS4         tau=0.3    0.1282      1.0445    -0.1828 -0.0173          0.8820
+     U56 half   25        S2 RS8         ABSTAIN    0.1289      1.0618    -0.1833  0.0000          0.8820
+     U56 half   25       S2 RS16         tau=0.1    0.1374      1.1034    -0.1825  0.0417          0.8820
+     U56 half   25    ORACLE-OOS        tau=0.05    0.1412      1.1303    -0.1825  0.0685          0.8820
+BROAD136 skip   10 S0 do-nothing               -    0.1240      0.8758    -0.2157  0.0000          0.8820
+BROAD136 skip   10  S1 IS-argmax  tau=0.2 os=64%    0.1042      0.6986    -0.2779 -0.1772          0.8820
+BROAD136 skip   10        S2 ROT         tau=0.2    0.1042      0.6986    -0.2779 -0.1772          0.8820
+BROAD136 skip   10        S2 RS1         tau=0.5    0.1109      0.7714    -0.2562 -0.1044          0.8820
+BROAD136 skip   10        S2 RS2        tau=0.05    0.1543      0.9020    -0.2779  0.0263          0.8820
+BROAD136 skip   10        S2 RS4         tau=0.2    0.1042      0.6986    -0.2779 -0.1772          0.8820
+BROAD136 skip   10        S2 RS8         tau=0.2    0.1042      0.6986    -0.2779 -0.1772          0.8820
+BROAD136 skip   10       S2 RS16         tau=0.2    0.1042      0.6986    -0.2779 -0.1772          0.8820
+BROAD136 skip   10    ORACLE-OOS        tau=0.05    0.1543      0.9020    -0.2779  0.0263          0.8820
+BROAD136 skip   25 S0 do-nothing               -    0.1006      0.7310    -0.2168  0.0000          0.8820
+BROAD136 skip   25  S1 IS-argmax  tau=0.2 os=64%    0.0947      0.6447    -0.2797 -0.0864          0.8820
+BROAD136 skip   25        S2 ROT         tau=0.2    0.0947      0.6447    -0.2797 -0.0864          0.8820
+BROAD136 skip   25        S2 RS1         tau=0.5    0.0887      0.6381    -0.2582 -0.0929          0.8820
+BROAD136 skip   25        S2 RS2         tau=0.5    0.0887      0.6381    -0.2582 -0.0929          0.8820
+BROAD136 skip   25        S2 RS4         tau=0.2    0.0947      0.6447    -0.2797 -0.0864          0.8820
+BROAD136 skip   25        S2 RS8         tau=0.2    0.0947      0.6447    -0.2797 -0.0864          0.8820
+BROAD136 skip   25       S2 RS16         tau=0.2    0.0947      0.6447    -0.2797 -0.0864          0.8820
+BROAD136 skip   25    ORACLE-OOS        tau=0.05    0.1536      0.8982    -0.2779  0.1672          0.8820
+BROAD136 half   10 S0 do-nothing               -    0.1240      0.8758    -0.2157  0.0000          0.8820
+BROAD136 half   10  S1 IS-argmax tau=0.05 os=94%    0.1288      0.8913    -0.2182  0.0156          0.8820
+BROAD136 half   10        S2 ROT         tau=0.5    0.1168      0.8240    -0.2228 -0.0518          0.8820
+BROAD136 half   10        S2 RS1         tau=0.5    0.1168      0.8240    -0.2228 -0.0518          0.8820
+BROAD136 half   10        S2 RS2         tau=0.5    0.1168      0.8240    -0.2228 -0.0518          0.8820
+BROAD136 half   10        S2 RS4         ABSTAIN    0.1240      0.8758    -0.2157  0.0000          0.8820
+BROAD136 half   10        S2 RS8         tau=0.5    0.1168      0.8240    -0.2228 -0.0518          0.8820
+BROAD136 half   10       S2 RS16         tau=0.3    0.1197      0.8396    -0.2207 -0.0362          0.8820
+BROAD136 half   10    ORACLE-OOS        tau=0.05    0.1288      0.8913    -0.2182  0.0156          0.8820
+BROAD136 half   25 S0 do-nothing               -    0.1006      0.7310    -0.2168  0.0000          0.8820
+BROAD136 half   25  S1 IS-argmax tau=0.05 os=94%    0.1134      0.7984    -0.2196  0.0674          0.8820
+BROAD136 half   25        S2 ROT         tau=0.5    0.0940      0.6840    -0.2256 -0.0471          0.8820
+BROAD136 half   25        S2 RS1        tau=0.05    0.1134      0.7984    -0.2196  0.0674          0.8820
+BROAD136 half   25        S2 RS2         tau=0.5    0.0940      0.6840    -0.2256 -0.0471          0.8820
+BROAD136 half   25        S2 RS4         ABSTAIN    0.1006      0.7310    -0.2168  0.0000          0.8820
+BROAD136 half   25        S2 RS8         tau=0.5    0.0940      0.6840    -0.2256 -0.0471          0.8820
+BROAD136 half   25       S2 RS16         tau=0.3    0.0987      0.7115    -0.2235 -0.0195          0.8820
+BROAD136 half   25    ORACLE-OOS        tau=0.05    0.1134      0.7984    -0.2196  0.0674          0.8820
+SMALL439 skip   10 S0 do-nothing               -    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 skip   10  S1 IS-argmax  tau=0.3 os=53%    0.0234      0.2176    -0.4365 -0.2821          0.8820
+SMALL439 skip   10        S2 ROT         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 skip   10        S2 RS1         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 skip   10        S2 RS2         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 skip   10        S2 RS4         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 skip   10        S2 RS8         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 skip   10       S2 RS16         tau=0.5    0.0684      0.4551    -0.3298 -0.0447          0.8820
+SMALL439 skip   10    ORACLE-OOS         tau=0.5    0.0684      0.4551    -0.3298 -0.0447          0.8820
+SMALL439 skip   25 S0 do-nothing               -    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 skip   25  S1 IS-argmax  tau=0.3 os=53%    0.0084      0.1391    -0.4489 -0.1748          0.8820
+SMALL439 skip   25        S2 ROT         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 skip   25        S2 RS1         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 skip   25        S2 RS2         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 skip   25        S2 RS4         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 skip   25        S2 RS8         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 skip   25       S2 RS16         tau=0.5    0.0421      0.3181    -0.3560  0.0043          0.8820
+SMALL439 skip   25    ORACLE-OOS         tau=0.1    0.0587      0.4324    -0.3105  0.1186          0.8820
+SMALL439 half   10 S0 do-nothing               -    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 half   10  S1 IS-argmax tau=0.05 os=94%    0.0716      0.4866    -0.3077 -0.0131          0.8820
+SMALL439 half   10        S2 ROT         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 half   10        S2 RS1         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 half   10        S2 RS2         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 half   10        S2 RS4         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 half   10        S2 RS8         ABSTAIN    0.0746      0.4997    -0.2684  0.0000          0.8820
+SMALL439 half   10       S2 RS16         tau=0.5    0.0753      0.5005    -0.3067  0.0007          0.8820
+SMALL439 half   10    ORACLE-OOS         tau=0.5    0.0753      0.5005    -0.3067  0.0007          0.8820
+SMALL439 half   25 S0 do-nothing               -    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 half   25  S1 IS-argmax tau=0.05 os=94%    0.0492      0.3644    -0.3281  0.0506          0.8820
+SMALL439 half   25        S2 ROT         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 half   25        S2 RS1         tau=0.2    0.0484      0.3598    -0.3285  0.0459          0.8820
+SMALL439 half   25        S2 RS2         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 half   25        S2 RS4         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 half   25        S2 RS8         ABSTAIN    0.0403      0.3138    -0.3456  0.0000          0.8820
+SMALL439 half   25       S2 RS16         tau=0.5    0.0449      0.3377    -0.3359  0.0238          0.8820
+SMALL439 half   25    ORACLE-OOS        tau=0.05    0.0492      0.3644    -0.3281  0.0506          0.8820
+
+  ARM SUMMARY over the 12 cells (dOOS = OOS Sharpe minus the do-nothing control):
+          arm  n  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    dOOS       t  wins  beats_SPY
+   ORACLE-OOS 12    0.1138      0.8102    -0.2542  0.0336  1.7532     9          7
+S0 do-nothing 12    0.1022      0.7766    -0.2353  0.0000     NaN     0          4
+       S2 RS1 12    0.1006      0.7524    -0.2458 -0.0242 -1.6585     2          4
+       S2 RS2 12    0.1016      0.7475    -0.2498 -0.0291 -2.7039     1          5
+       S2 RS4 12    0.0997      0.7435    -0.2500 -0.0331 -2.1621     0          4
+      S2 RS16 12    0.0992      0.7375    -0.2596 -0.0391 -2.3051     4          4
+       S2 ROT 12    0.0978      0.7234    -0.2505 -0.0532 -2.4838     1          3
+ S1 IS-argmax 12    0.0950      0.7177    -0.2751 -0.0589 -1.8706     4          5
+       S2 RS8 12    0.0953      0.7018    -0.2501 -0.0748 -2.4326     0          2
+  -> P6 HIT: 6 of 6 clause-gated arms fail to beat do-nothing (best -0.0242); S1 IS-argmax -0.0589
+
+==============================================================================================================================
+Q7  BOTH KEEP PATHS on every real and every null row (PROTOCOL rule 4)
+==============================================================================================================================
+         n  pass4a_v2  pass4a_v1  pass4b  both
+kind                                          
+real    60          0          8       9     0
+ROT   1200          0        204     314     0
+RS1   1200          0        224     323     0
+RS2   1200          0        204     295     0
+RS4   1200          0        168     266     0
+RS8   1200          0        150     260     0
+RS16  1200          0        144     235     0
+
+  by panel, REAL rows only:
+           n  pass4a  pass4b  both
+panel                             
+BROAD136  20       0       0     0
+SMALL439  20       0       0     0
+U56       20       0       9     0
+  -> P7 HIT: SMALL439 real rows passing BOTH paths = 0/20
+
+  best real row on each path (reported so a KEEP could not hide):
+    4a vs RULES v2  :   0 rows pass
+    4b vs SPY       :   9 rows pass;  best U56/tau=0.05/half/10bps  CAGR 13.25% Sharpe 1.121 MaxDD -18.17% H1/H2 1.115/1.132 OOS 1.206
+
+TOTAL RUNTIME 208s
