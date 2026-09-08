@@ -2,6 +2,13 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-08 | 40696751 | Senior Backend Engineer, Agentic AI & Data Platform | $850 | 191 | drafted |
+| 2026-09-08 | 40697014 | Clio Intake Automation Specialist | $580 | 122 | drafted |
+| 2026-09-08 | 40696764 | Email Data Entry & Organization | $420 | 38 | drafted |
+| 2026-09-08 | 40696455 | Daily Online Form Data Entry | $240 | 17 | drafted |
+| 2026-09-08 | 40693802 | Python Automation Script Development | $230 | 14 | drafted |
+| 2026-09-08 | 40695872 | Data Entry & Excel Work, PDF/Images to Excel/Word | $230 | 37 | drafted |
+| 2026-09-08 | 40697136 | Excel Data to Statistical Summary | $220 | 60 | drafted |
 | 2026-09-07 | 40696327 | AI Voice-Command Project Management System | $3,450 | 0 | drafted |
 | 2026-09-07 | 40682736 | LLM Evaluation post training | $1,050 | 63 | drafted |
 | 2026-09-07 | 40695548 | Mixed Data Excel Entry & Validation | $520 | 77 | drafted |
@@ -185,3 +192,13 @@ Note for the 2026-09-07 18:46 UTC batch: no NEW rows. The 12:31 UTC scan is stil
 Submitted 5 USD bids: 40694183 $240, 40691566 $210, 40693466 $600, 40694775 $560, 40691331 $1,850. Ranks 23/28, 50/66, 81/83, 100+/239, 100+/311 (new account, no reviews). Bid allowance shown: 15 of 100 left before this session's last two.
 Blocked: 40691071 KYC ($50+/hr); 40692162 $20 balance; 40693845 $20 balance; 40695548 $20 balance; 40691197 $20 balance; 40696328 $20 balance; 40691397 $20 balance; 40689889 $20 balance; 40693579 $20 balance; 40694981 KYC ($50+/hr); 40694576 Preferred Freelancer only.
 Lessons: proposals max 1,500 chars; each project requires ticking at least one of its skills before the bid box appears; ref-based clicks mis-target in the pane at 1440px, use coordinate clicks from a screenshot; clients' screening questions must be answered first and honestly.
+
+- B2B Data Extraction & Verification, 50k SA Contacts (40696696) (building and verifying a 50,000-row database of named executives and their email addresses, the same personal-contact harvesting we have declined on the earlier email-scrape postings)
+- Event Marketing Manager (40697197) (a 15-day email marketing push, a marketing service rather than a build we deliver, despite being the only row on the shortlist with a single bid)
+- Gestion Donnees Clients Excel (40697121) (French-language posting and delivery, same reason as the earlier Spanish, Romanian and Indonesian rows. Worth noting for David: 13 bids at one hour old in a $139 to $279 band is the best odds on this shortlist, so if he is comfortable corresponding in French the existing Excel client-tracker drafts adapt directly)
+- Manta.com Business Data Extraction (40696374) (bulk extraction of a third-party business directory whose terms do not permit it, and the output is a contact list; $16 to $132 with 21 bids)
+- Telegram Quotex Alert Bot (40696825) (automated real-time connection to a binary options platform with no official API, same reason as the IQ Option bot skipped 2026-09-06; $16 to $132 with 29 bids)
+- Setup Scrapy or any open source web data scrapping Remotely (40696496) (AnyDesk session onto the client's own Windows PC to install and configure software, remote support rather than delivery work, 103 bids at $30 to $250)
+- Dynamic AI Marketplace Bot Development (the shortlist row carries no job id and no captured description, so it cannot be filed or priced; 174 bids)
+
+Note for the 2026-09-08 batch: the 2026-09-07 21:31 UTC scan carried thirteen NEW rows, of which seven were drafted and six skipped for the reasons above. One older row (Dynamic AI Marketplace Bot Development) was never triaged either way and is skipped above for lack of an id. Freelancer.com and its public API remain blocked by the session network policy (HTTP 403 on the proxy tunnel), re-tested this run, so all seven were written from the truncated descriptions the scanner captured, and each proposal asks the scope question the truncation left open. Five of the seven carry hourly-estimate bands rather than fixed budgets; they are priced in the upper half of the stated band since the scope in each case is a single well-defined deliverable. 40693802 is the best shot: 14 bids, a plain Python automation script squarely in our stack, and the lowest bid count of any row with a workable budget.
