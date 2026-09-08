@@ -1,0 +1,341 @@
+QUEUE idea 205 — the-pool-mean-as-a-leaderboard-column  (lane B, 2026-09-08).
+
+QUESTION (pre-registered, verbatim from QUEUE.md idea 205)
+    "following 204, propose the pool's mean dSharpe (and its sign) as a required column beside
+     any published selector claim, back-fill it wherever the parent script's grid CSV survives,
+     and report how many of the record's selector claims are made over a negative-expectancy
+     pool.  Cheap; max 2 params."
+
+WHAT IS ACTUALLY BEING TESTED
+    Idea 196 found S2LF beating RANDOM out of its own pool by +0.0110 while still losing to
+    do-nothing by -0.0032, because the POOL's mean dSharpe was negative.  Idea 204 proposes the
+    general form; idea 205 proposes the bookkeeping: publish the pool's mean dSharpe beside every
+    selector claim so a reader can see whether a "selector beats X" sentence was written over a
+    pool that could not have helped.
+
+    Two of the record's scripts already carry the column
+      (2026-09-08_does-any-selector-beat-doing-nothing_B, ..._pre-register-K_CAGR-..._cloud),
+    and BOTH compute it the same way:
+            pool_mean_dSharpe = mean(OOS_Sharpe of the pool) - OOS_Sharpe(control)
+    i.e. OUT OF SAMPLE.  That is the first thing this run checks, because it decides what kind
+    of column the record is being asked to adopt:
+
+      Q1  BACK-FILL (the literal ask).  Over every surviving committed CSV that can be resolved
+          into (cell, pool, do-nothing arm), what share of the record's selector claims stand
+          over a pool whose own mean is negative?
+      Q2  IS THE COLUMN CAUSAL?  The published form reads the OOS window, so it is not knowable
+          when the selector fires.  Build its causal twin -- the same mean computed on the IS
+          window only -- and measure how well the twin's SIGN and LEVEL track the published one.
+          A column that only exists after the fact is a post-mortem, not a leaderboard column.
+      Q3  IS IT DECISION-RELEVANT?  Regress the incumbent selector's realised d(OOS Sharpe) on
+          both forms of the column, paired over every cell.
+      Q4  PRICE IT.  Turn the causal twin into a GATE (take the selector's pick only when the
+          pool's IS mean clears tau, else hold the cell's own ungated book) and run it through
+          both KEEP paths and PROTOCOL rule 8, including a NESTED walk-forward in which tau
+          itself is chosen on 2013-2016 and read once on 2017-2026.
+
+    This is a statement about the record's bookkeeping, not a book.  It cannot promote a
+    candidate; both KEEP paths are scored anyway on every arm-row and every gated selection.
+
+CORPUS
+    (a) LIVE, re-derived here with the imported harness: 3 panels (u56 / broad / small) x 9 (or
+        6) books at matched gross 0.75 x 3 cost rungs (0, 10, 25 bps) x idea 94's 17 arms
+        = 72 cells, 1,224 arm-rows.  This is idea 151's corpus, re-derived so the IS-window pool
+        mean -- which no committed file carries -- can be computed at all.
+    (b) BACK-FILL, read-only, over every research/backtests/*.csv that satisfies the
+        pre-registered poolability rule below.  Nothing is re-run; files that cannot be resolved
+        are reported as unresolvable rather than dropped silently.
+
+POOLABILITY RULE (pre-registered, applied without exception to every CSV in the directory)
+    A file contributes cells iff it has an `arm` column, an OOS metric column
+    (OOS_Sharpe, else Sharpe), and at least one row whose arm is a do-nothing name
+    {control, ctl, none, off, noop, base, do-nothing, do_nothing, hold, identity}.  The cell key
+    is the file's own columns intersected with a fixed list of cell-shaped names; a cell counts
+    iff it holds EXACTLY ONE do-nothing row and >= 2 distinct rival arms.
+
+TUNED PARAMETERS -- exactly two, every value reported
+    1. tau, the gate threshold on the causal (IS-window) pool mean:
+         {-inf, -0.02, -0.01, 0.00, +0.01, +0.02, +inf}    (7 values;
+          -inf == gate off, always take the pick; +inf == gate always on, always do nothing)
+    2. K, the selector the gate sits in front of: {K_Sharpe (the incumbent), K_CAGR}
+    7 x 2 = 14 grid points, each scored on 72 cells x 2 pools.  Panels, books, cost rungs, the
+    pool definition (P_ALL / P_S1) and the scoring metric are REPORTED axes, never selected on.
+
+WALK-FORWARD (PROTOCOL rule 8), two levels
+    Level 1 (the corpus's own):  every selector reads IS (<= 2016-12-31) only; every pick is
+        read once on 2017-01-01..2026 against the cell's do-nothing control, RULES v2 (live),
+        RULES v1 and SPY, cost-matched at each rung.
+    Level 2 (NESTED, for tau):  arms are selected on A = <= 2012-12-31, the pool mean is computed
+        on A, tau* is chosen on B = 2013-01-01..2016-12-31, and the (K, tau*) rule is read ONCE
+        on C = 2017-01-01..2026, untouched by either choice.  Reported against the same four
+        comparands.
+
+PRE-REGISTERED PREDICTIONS (written before any number from the main grid was read)
+    P1  A majority of the record's back-fillable selector claims stand over a pool whose mean is
+        negative (idea 196's finding is the general case, not its own accident).
+    P2  The causal (IS) twin agrees in SIGN with the published (OOS) column in fewer than 75% of
+        cells -- i.e. the column as published cannot be used prospectively.
+    P3  The published (OOS) column explains a large share of the incumbent selector's realised
+        d(OOS Sharpe) (it is partly the same numbers), and the causal twin explains far less.
+    P4  No tau on the grid produces a positive mean d(OOS Sharpe) against do-nothing that
+        survives the nested walk-forward.
+
+CAVEATS carried, not buried
+    * Survivorship (idea 54): all three panels are current constituents; every CAGR here is
+      flattered and no level in this file is an achievable return.  Both sides of every pair are
+      drawn from the same flattered panel, so the paired signs are unaffected.
+    * Idea 401's restatement: data/prices.csv was rewritten after ideas 133/142 were committed
+      while broad/small were not, so the reproduction gate against the committed 1,224-row grid
+      is quoted per panel and per column rather than asserted.
+    * 72 cells are not 72 independent observations -- books and arms overlap heavily inside a
+      panel.  Per-panel and per-rung breakdowns are given so the clustering is visible.
+    * The back-fill reads committed CSVs at face value.  It cannot know whether a given file's
+      `arm` column was ever the subject of a published selector sentence; it reports the
+      poolable population, and the per-file table is written out so the mapping is auditable.
+    * Idea 126: every row is quoted at t+1 execution only, 10 bps at PROTOCOL's own rung.
+
+================ A.  LIVE CORPUS ================
+
+[panel] u56: 56 cols, 2008-01-02..2026-09-04, eval from 2009-01-13, 9 books ['EWall', 'V1u', 'R5', 'R10', 'R20', 'R40', 'S3-25', 'S3-50', 'S4-50']
+    SPY full CAGR 15.23% Sharpe 0.889 MaxDD -33.72% | OOS Sharpe 0.882 CAGR 15.45% MaxDD -33.72%
+    RULES v2 @   0bps CAGR 8.85% Sharpe 1.231 MaxDD -12.03% OOS 1.310/9.73%/-12.03% | v1 Sharpe 0.895 OOS 0.978/10.44%/-13.59%
+    RULES v2 @  10bps CAGR 8.66% Sharpe 1.206 MaxDD -12.05% OOS 1.285/9.53%/-12.05% | v1 Sharpe 0.665 OOS 0.747/7.73%/-13.83%
+    RULES v2 @  25bps CAGR 8.37% Sharpe 1.168 MaxDD -12.09% OOS 1.248/9.24%/-12.09% | v1 Sharpe 0.317 OOS 0.399/3.78%/-14.18%
+[a] engine-equivalence, 9 ungated books: max|diff| = 0.000e+00 (EXACT)
+
+[panel] broad: 136 cols, 2008-01-02..2026-09-04, eval from 2009-01-13, 9 books ['EWall', 'V1u', 'R5', 'R10', 'R20', 'R40', 'S3-25', 'S3-50', 'S4-50']
+    SPY full CAGR 15.23% Sharpe 0.889 MaxDD -33.72% | OOS Sharpe 0.882 CAGR 15.45% MaxDD -33.72%
+    RULES v2 @   0bps CAGR 8.25% Sharpe 1.134 MaxDD -12.21% OOS 1.148/8.21%/-12.21% | v1 Sharpe 0.912 OOS 0.857/9.28%/-18.35%
+    RULES v2 @  10bps CAGR 8.03% Sharpe 1.106 MaxDD -12.24% OOS 1.119/7.98%/-12.24% | v1 Sharpe 0.635 OOS 0.576/5.94%/-21.19%
+    RULES v2 @  25bps CAGR 7.70% Sharpe 1.064 MaxDD -12.28% OOS 1.074/7.64%/-12.28% | v1 Sharpe 0.219 OOS 0.155/1.11%/-26.72%
+[a] engine-equivalence, 9 ungated books: max|diff| = 0.000e+00 (EXACT)
+
+[panel] small: 439 cols, 2010-01-04..2026-09-04, eval from 2011-01-13, 6 books ['EWall', 'V1u', 'R5', 'R10', 'R20', 'R40']
+    SPY full CAGR 14.13% Sharpe 0.862 MaxDD -33.72% | OOS Sharpe 0.882 CAGR 15.45% MaxDD -33.72%
+    RULES v2 @   0bps CAGR 4.09% Sharpe 0.611 MaxDD -14.33% OOS 0.607/4.14%/-14.33% | v1 Sharpe 0.828 OOS 0.801/11.57%/-29.30%
+    RULES v2 @  10bps CAGR 3.80% Sharpe 0.571 MaxDD -14.70% OOS 0.566/3.84%/-14.70% | v1 Sharpe 0.603 OOS 0.581/7.92%/-32.84%
+    RULES v2 @  25bps CAGR 3.37% Sharpe 0.511 MaxDD -15.27% OOS 0.506/3.39%/-15.27% | v1 Sharpe 0.265 OOS 0.250/2.67%/-43.04%
+[a] engine-equivalence, 6 ungated books: max|diff| = 0.000e+00 (EXACT)
+
+[grid] 1224 arm-rows, 72 cells.
+
+[b] reproduction of idea 151's committed grid: 1224 of 1224 rows matched (it published 1224).
+       rows     CAGR   Sharpe    MaxDD       H1       H2  IS_Sharpe  IS_CAGR  IS_MaxDD  IS_Calmar  OOS_CAGR  OOS_Sharpe  OOS_MaxDD    gross       TO
+panel                                                                                                                                               
+broad   459 9.71e-17 2.22e-16 9.71e-17 2.22e-16 2.22e-16   2.22e-16 9.71e-17  9.71e-17   2.22e-16  9.71e-17    2.22e-16   9.71e-17 5.55e-17 3.55e-15
+small   306 9.71e-17 9.71e-17 8.33e-17 1.11e-16 9.71e-17   9.71e-17 9.71e-17  8.33e-17   9.71e-17  9.71e-17    8.33e-17   8.33e-17 5.55e-17 3.55e-15
+u56     459 9.71e-17 2.22e-16 9.71e-17 2.22e-16 2.22e-16   2.22e-16 9.89e-17  9.71e-17   2.22e-16  9.71e-17    2.22e-16   9.71e-17 5.55e-17 3.55e-15
+    EXACT (max|diff| < 1e-12) on: ['broad', 'small', 'u56'].  Gate (a) shows the simulator is exact; any remainder is idea 401's data restatement, a DATA difference.
+
+================ Q1  BACK-FILL over the committed record ================
+    1603 CSVs under research/backtests/; 21 are poolable under the pre-registered rule, contributing 520 cells; 1571 unresolvable (top reasons: {'no arm column': 1264, 'no do-nothing arm': 142, 'no OOS_Sharpe/Sharpe column': 115, 'no cell with 1 do-nothing arm and >=2 rivals': 50}).
+    NEGATIVE-EXPECTANCY POOLS: 414 of 520 cells (79.6%); mean pool_mean_d -0.0373, median -0.0275.
+    Files whose pools are negative in EVERY cell: 2 of 21; in NO cell: 7.
+    CONCENTRATION, reported not buried: the largest single file (2026-09-05_cagr-floor-calibration_B.calibration.csv) contributes 378 of 520 cells (72.7%).  Excluding it: 78 of 142 negative (54.9%).
+    FILE-weighted (each poolable file one vote, its own neg_share): median 50.0%, mean 43.5% over 21 files.
+
+    Top 20 poolable files by cell count:
+                                                                                     file     metric                      keys  cells  neg  pos  zero  neg_share
+                                      2026-09-05_cagr-floor-calibration_B.calibration.csv OOS_Sharpe panel|book|cost|phi|delta    378  336   42     0      0.889
+                          2026-09-08_selector-comparison-needs-more-cells_B.keeppaths.csv OOS_Sharpe           panel|book|cost     32   23    9     0      0.719
+                                         2026-09-05_cagr-floor-calibration_B.riskwork.csv OOS_Sharpe           panel|book|cost     18   16    2     0      0.889
+                                 2026-09-08_why-does-the-DD-ranking-die-on-U56_C.grid.csv OOS_Sharpe           kind|rung|scope     18    4   14     0      0.222
+                                               2026-09-06_stop-only-in-crashes_B.grid.csv OOS_Sharpe           panel|book|cost     12   12    0     0      1.000
+                          2026-09-08_why-does-the-DD-ranking-die-on-U56_C.walkforward.csv OOS_Sharpe           kind|rung|scope      9    0    9     0      0.000
+                      2026-09-08_is-IS-argmax-CONFIDENCE-an-inverse-signal_cloud.grid.csv OOS_Sharpe                panel|cost      6    3    3     0      0.500
+    2026-09-08_re-state-every-IS-DRAWDOWN-BAR-as-a-RANK-or-scale-it-by-1.5_cloud.grid.csv OOS_Sharpe                panel|cost      6    3    3     0      0.500
+                    2026-09-08_does-the-IS-WINDOW-DD-CAP-transfer-at-all_cloud.census.csv OOS_Sharpe                panel|rung      6    4    2     0      0.667
+                      2026-09-08_does-the-IS-WINDOW-DD-CAP-transfer-at-all_cloud.grid.csv OOS_Sharpe                panel|rung      6    3    3     0      0.500
+                                       2026-09-05_v1u-small-negative-price_B.costaxis.csv     Sharpe                      cost      5    0    5     0      0.000
+                                                2026-09-06_abs-gate-bear-shape_B.grid.csv     Sharpe                panel|book      4    3    1     0      0.750
+                             2026-09-05_quote-the-lift-not-the-rate_cloud.walkforward.csv OOS_Sharpe           panel|book|cost      3    3    0     0      1.000
+                                  2026-09-05_gross-interval-as-a-keep-bar_B.selectors.csv OOS_Sharpe         panel|book|cost|m      3    2    1     0      0.667
+2026-09-07_back-fill-the-mean-name-count-column-over-every-quoted-price_B.walkforward.csv OOS_Sharpe                     panel      3    1    2     0      0.333
+                              2026-09-07_two-same-day-runs-disagree-on-D3_B.keeppaths.csv OOS_Sharpe                      book      2    1    1     0      0.500
+                          2026-09-05_why-the-IS-4b-screen-changes-no-pick_cloud.picks.csv OOS_Sharpe           panel|book|cost      2    0    2     0      0.000
+                    2026-09-05_why-the-IS-4b-screen-changes-no-pick_cloud.walkforward.csv OOS_Sharpe           panel|book|cost      2    0    2     0      0.000
+                              2026-09-08_selector-comparison-needs-more-cells_B.picks.csv OOS_Sharpe           panel|book|cost      2    0    2     0      0.000
+                        2026-09-08_selector-comparison-needs-more-cells_B.walkforward.csv OOS_Sharpe           panel|book|cost      2    0    2     0      0.000
+
+    LIVE corpus (this run's 144 cell x pool rows), for comparison:
+      pool_mean_dSharpe_OOS    negative in  87 of 144 (60.4%); mean -0.0241 median -0.0206
+      pool_mean_dSharpe_IS     negative in  91 of 144 (63.2%); mean -0.0406 median -0.0294
+
+================ Q2  IS THE PUBLISHED COLUMN CAUSAL? ================
+    The record's two committed instances compute the column on the OOS window, so it is
+    not knowable when the selector fires.  Its causal twin is the same statistic read on
+    the IS window only.  If the two disagree, the column can only ever be a post-mortem.
+    sign agreement IS vs OOS: 124 of 144 (86.1%)   pearson r +0.6482   spearman +0.6253
+    regression OOS ~ IS: {'n': 144, 'slope': 0.4194946581108472, 'icept': -0.00705484910760464, 'r2': 0.42016525560447304, 't': 10.143833753073082}
+      broad  n  54  sign agreement  87.0%  r +0.5042  meanIS -0.0194  meanOOS -0.0235
+      small  n  36  sign agreement  91.7%  r +0.9174  meanIS -0.0519  meanOOS -0.0398
+      u56    n  54  sign agreement  81.5%  r +0.4898  meanIS -0.0543  meanOOS -0.0143
+
+    [c] the committed column reproduces: max|diff| vs idea 151's published pool_mean_dSharpe over 144 rows = 9.714e-17 (EXACT)
+
+================ Q3  IS THE COLUMN DECISION-RELEVANT? ================
+    Paired over every cell: the incumbent selector's realised d(OOS Sharpe) against
+    do-nothing, regressed on each form of the column.
+ pool selector                column  n   slope     r2       t  sign_agree  mean_d  t_mean_d
+P_ALL K_Sharpe pool_mean_dSharpe_OOS 72 -0.2959 0.0277 -1.4134      0.5278 -0.0241   -3.3423
+P_ALL K_Sharpe  pool_mean_dSharpe_IS 72 -0.6134 0.2129 -4.3511      0.5000 -0.0241   -3.3423
+P_ALL   K_CAGR pool_mean_dSharpe_OOS 72  0.1800 0.0538  1.9943      0.2222  0.0100    3.1749
+P_ALL   K_CAGR  pool_mean_dSharpe_IS 72  0.2598 0.2002  4.1854      0.2222  0.0100    3.1749
+ P_S1 K_Sharpe pool_mean_dSharpe_OOS 72  0.6394 0.1623  3.6826      0.8056 -0.0045   -1.4747
+ P_S1 K_Sharpe  pool_mean_dSharpe_IS 72 -0.1895 0.0469 -1.8554      0.7222 -0.0045   -1.4747
+ P_S1   K_CAGR pool_mean_dSharpe_OOS 72  0.3278 0.1369  3.3325      0.7222  0.0040    2.3488
+ P_S1   K_CAGR  pool_mean_dSharpe_IS 72 -0.2048 0.1759 -3.8649      0.6528  0.0040    2.3488
+
+================ Q4  PRICE THE COLUMN AS A GATE (all 14 grid points x 2 pools) ======
+ pool selector     tau  cells  take_rate  mean_dOOS_Sharpe    t_dS  mean_dOOS_CAGR    t_dC  mean_dOOS_MaxDD   t_dD  n_moved  wins  losses  win_rate  sign_p  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD  beat_spy_share  beat_v2_share  beat_v1_share  pass4a_v2  pass4a_v1  pass4b  pass4b_oos  both_paths
+P_ALL K_Sharpe    -inf     72     1.0000           -0.0241 -3.3423         -0.0115 -5.4168           0.0219 5.0034       55    18      37    0.3273  0.0145           0.9004         0.1253         -0.2256          0.5694         0.2778         0.8472          1         27      12          13           0
+P_ALL K_Sharpe -0.0200     72     0.0694           -0.0109 -1.7046         -0.0014 -1.4952           0.0042 1.5514        5     1       4    0.2000  0.3750           0.9137         0.1353         -0.2433          0.6111         0.2778         0.8611          0         24       9           9           0
+P_ALL K_Sharpe -0.0100     72     0.0556           -0.0085 -1.4218         -0.0010 -1.1733           0.0034 1.3140        4     1       3    0.2500  0.6250           0.9161         0.1357         -0.2441          0.6111         0.2778         0.8611          0         24       9           9           0
+P_ALL K_Sharpe  0.0000     72     0.0417           -0.0065 -1.1440         -0.0009 -1.0138           0.0010 1.0530        3     1       2    0.3333  1.0000           0.9181         0.1359         -0.2465          0.6111         0.2778         0.8611          0         24       9           9           0
+P_ALL K_Sharpe  0.0100     72     0.0417           -0.0065 -1.1440         -0.0009 -1.0138           0.0010 1.0530        3     1       2    0.3333  1.0000           0.9181         0.1359         -0.2465          0.6111         0.2778         0.8611          0         24       9           9           0
+P_ALL K_Sharpe  0.0200     72     0.0139           -0.0038 -1.0000         -0.0004 -1.0000           0.0009 1.0000        1     0       1    0.0000  1.0000           0.9208         0.1363         -0.2466          0.6111         0.2778         0.8472          0         24       9           9           0
+P_ALL K_Sharpe     inf     72     0.0000            0.0000     NaN          0.0000     NaN           0.0000    NaN        0     0       0       NaN     NaN           0.9246         0.1368         -0.2475          0.6111         0.2778         0.8472          0         24       9           9           0
+P_ALL   K_CAGR    -inf     72     1.0000            0.0100  3.1749          0.0021  2.5990           0.0058 5.6583       46    33      13    0.7174  0.0045           0.9346         0.1388         -0.2417          0.6111         0.3333         0.9028          4         25      13          14           4
+P_ALL   K_CAGR -0.0200     72     0.0694            0.0047  1.9778          0.0008  1.9321           0.0008 1.4575        5     5       0    1.0000  0.0625           0.9293         0.1376         -0.2467          0.6111         0.2917         0.9167          0         24       9           9           0
+P_ALL   K_CAGR -0.0100     72     0.0556            0.0045  1.8808          0.0008  1.8413           0.0004 1.0571        4     4       0    1.0000  0.1250           0.9291         0.1375         -0.2470          0.6111         0.2917         0.9028          0         24       9           9           0
+P_ALL   K_CAGR  0.0000     72     0.0417            0.0042  1.7552          0.0007  1.7555           0.0001 0.4750        3     3       0    1.0000  0.2500           0.9287         0.1375         -0.2473          0.6111         0.2917         0.8889          0         24       9           9           0
+P_ALL   K_CAGR  0.0100     72     0.0417            0.0042  1.7552          0.0007  1.7555           0.0001 0.4750        3     3       0    1.0000  0.2500           0.9287         0.1375         -0.2473          0.6111         0.2917         0.8889          0         24       9           9           0
+P_ALL   K_CAGR  0.0200     72     0.0139            0.0015  1.0000          0.0002  1.0000           0.0001 1.0000        1     1       0    1.0000  1.0000           0.9260         0.1370         -0.2473          0.6111         0.2778         0.8611          0         24       9           9           0
+P_ALL   K_CAGR     inf     72     0.0000            0.0000     NaN          0.0000     NaN           0.0000    NaN        0     0       0       NaN     NaN           0.9246         0.1368         -0.2475          0.6111         0.2778         0.8472          0         24       9           9           0
+ P_S1 K_Sharpe    -inf     72     1.0000           -0.0045 -1.4747         -0.0026 -2.7874           0.0080 4.2298       25    13      12    0.5200  1.0000           0.9201         0.1341         -0.2395          0.6111         0.2917         0.8472          3         26      15          16           2
+ P_S1 K_Sharpe -0.0200     72     0.7778           -0.0055 -1.9373         -0.0023 -2.7273           0.0055 3.7661       15     6       9    0.4000  0.6072           0.9191         0.1345         -0.2419          0.6111         0.2778         0.8472          0         25      13          13           0
+ P_S1 K_Sharpe -0.0100     72     0.7361           -0.0026 -1.1525         -0.0016 -2.0999           0.0047 3.2914       12     6       6    0.5000  1.0000           0.9220         0.1352         -0.2428          0.6111         0.2778         0.8472          0         24      12          12           0
+ P_S1 K_Sharpe  0.0000     72     0.6944           -0.0026 -1.1571         -0.0014 -1.8877           0.0041 2.9966       10     5       5    0.5000  1.0000           0.9220         0.1353         -0.2434          0.6111         0.2778         0.8472          0         24      12          12           0
+ P_S1 K_Sharpe  0.0100     72     0.0833           -0.0026 -1.3391         -0.0011 -1.6403           0.0022 2.4242        6     2       4    0.3333  0.6875           0.9220         0.1357         -0.2453          0.6111         0.2778         0.8472          0         24       9           9           0
+ P_S1 K_Sharpe  0.0200     72     0.0556           -0.0003 -0.2677         -0.0003 -0.8022           0.0013 1.9121        4     2       2    0.5000  1.0000           0.9243         0.1365         -0.2462          0.6250         0.2778         0.8472          0         24       9           9           0
+ P_S1 K_Sharpe     inf     72     0.0000            0.0000     NaN          0.0000     NaN           0.0000    NaN        0     0       0       NaN     NaN           0.9246         0.1368         -0.2475          0.6111         0.2778         0.8472          0         24       9           9           0
+ P_S1   K_CAGR    -inf     72     1.0000            0.0040  2.3488          0.0002  0.3185           0.0066 3.7153       24    20       4    0.8333  0.0015           0.9285         0.1370         -0.2409          0.6250         0.3194         0.8472          4         26      15          16           4
+ P_S1   K_CAGR -0.0200     72     0.7778            0.0007  0.5563         -0.0003 -0.6155           0.0039 3.0439       13     9       4    0.6923  0.2668           0.9253         0.1364         -0.2436          0.6250         0.2778         0.8472          0         25      11          11           0
+ P_S1   K_CAGR -0.0100     72     0.7361            0.0003  0.2202         -0.0005 -0.9407           0.0032 2.6572       11     7       4    0.6364  0.5488           0.9248         0.1363         -0.2442          0.6250         0.2778         0.8472          0         24      11          11           0
+ P_S1   K_CAGR  0.0000     72     0.6944            0.0006  0.5097         -0.0003 -0.7197           0.0031 2.5376        9     6       3    0.6667  0.5078           0.9252         0.1364         -0.2444          0.6250         0.2778         0.8472          0         24      11          11           0
+ P_S1   K_CAGR  0.0100     72     0.0833           -0.0000 -0.0348         -0.0002 -0.6499           0.0019 2.4196        6     3       3    0.5000  1.0000           0.9245         0.1365         -0.2455          0.6250         0.2778         0.8472          0         24       9           9           0
+ P_S1   K_CAGR  0.0200     72     0.0556            0.0003  0.3175         -0.0001 -0.2228           0.0014 1.9391        4     3       1    0.7500  0.6250           0.9249         0.1367         -0.2461          0.6250         0.2778         0.8472          0         24       9           9           0
+ P_S1   K_CAGR     inf     72     0.0000            0.0000     NaN          0.0000     NaN           0.0000    NaN        0     0       0       NaN     NaN           0.9246         0.1368         -0.2475          0.6111         0.2778         0.8472          0         24       9           9           0
+
+    Read: tau=-inf is the ungated incumbent selector, tau=+inf is do-nothing (d == 0 by construction).
+    A gate that helps must show mean_dOOS_Sharpe > 0 with take_rate strictly inside (0,1).
+
+    Best three interior grid points by mean d(OOS Sharpe):
+ pool selector     tau  cells  take_rate  mean_dOOS_Sharpe   t_dS  mean_dOOS_CAGR   t_dC  mean_dOOS_MaxDD   t_dD  n_moved  wins  losses  win_rate  sign_p  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD  beat_spy_share  beat_v2_share  beat_v1_share  pass4a_v2  pass4a_v1  pass4b  pass4b_oos  both_paths
+P_ALL   K_CAGR -0.0200     72     0.0694            0.0047 1.9778          0.0008 1.9321           0.0008 1.4575        5     5       0    1.0000  0.0625           0.9293         0.1376         -0.2467          0.6111         0.2917         0.9167          0         24       9           9           0
+P_ALL   K_CAGR -0.0100     72     0.0556            0.0045 1.8808          0.0008 1.8413           0.0004 1.0571        4     4       0    1.0000  0.1250           0.9291         0.1375         -0.2470          0.6111         0.2917         0.9028          0         24       9           9           0
+P_ALL   K_CAGR  0.0100     72     0.0417            0.0042 1.7552          0.0007 1.7555           0.0001 0.4750        3     3       0    1.0000  0.2500           0.9287         0.1375         -0.2473          0.6111         0.2917         0.8889          0         24       9           9           0
+
+================ RULE 8, LEVEL 2 — NESTED WALK-FORWARD FOR tau ================
+ pool selector     tau                                    window  take_rate  mean_d  chosen       t  n_moved    wins  sign_p  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  ctl_OOS_Sharpe  ctl_OOS_CAGR  ctl_OOS_MaxDD  v1_OOS_Sharpe  v2_OOS_Sharpe  spy_OOS_Sharpe  spy_OOS_CAGR  spy_OOS_MaxDD
+P_ALL K_Sharpe    -inf                              B(2013-2016)     1.0000 -0.0309   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL K_Sharpe -0.0200                              B(2013-2016)     0.1111 -0.0112   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL K_Sharpe -0.0100                              B(2013-2016)     0.0833 -0.0123   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL K_Sharpe  0.0000                              B(2013-2016)     0.0556 -0.0040   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL K_Sharpe  0.0100                              B(2013-2016)     0.0417  0.0009    True     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL K_Sharpe  0.0200                              B(2013-2016)     0.0417  0.0009   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL K_Sharpe     inf                              B(2013-2016)     0.0000  0.0000   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL K_Sharpe  0.0100                    C(2017-2026) READ ONCE     0.0417 -0.0119    True -1.7561   3.0000  0.0000  0.2500      0.9127    0.1347    -0.2463          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+P_ALL K_Sharpe  0.0100 C(2017-2026) READ ONCE, INTERIOR-tau ONLY     0.0417 -0.0119    True -1.7561   3.0000  0.0000  0.2500      0.9127    0.1347    -0.2463          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+P_ALL K_Sharpe    -inf            C(2017-2026) endpoint: UNGATED     1.0000 -0.0504    True -5.2839  58.0000 15.0000  0.0003      0.8742    0.1217    -0.2297          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+P_ALL K_Sharpe     inf         C(2017-2026) endpoint: DO-NOTHING     0.0000  0.0000    True     NaN   0.0000  0.0000     NaN      0.9246    0.1368    -0.2475          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+P_ALL   K_CAGR    -inf                              B(2013-2016)     1.0000 -0.0038   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL   K_CAGR -0.0200                              B(2013-2016)     0.1111 -0.0025   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL   K_CAGR -0.0100                              B(2013-2016)     0.0833 -0.0026   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL   K_CAGR  0.0000                              B(2013-2016)     0.0556 -0.0004   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL   K_CAGR  0.0100                              B(2013-2016)     0.0417 -0.0005   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL   K_CAGR  0.0200                              B(2013-2016)     0.0417 -0.0005   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL   K_CAGR     inf                              B(2013-2016)     0.0000  0.0000    True     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+P_ALL   K_CAGR     inf                    C(2017-2026) READ ONCE     0.0000  0.0000    True     NaN   0.0000  0.0000     NaN      0.9246    0.1368    -0.2475          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+P_ALL   K_CAGR  0.0000 C(2017-2026) READ ONCE, INTERIOR-tau ONLY     0.0556  0.0045    True  1.7463   4.0000  3.0000  0.6250      0.9290    0.1375    -0.2463          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+P_ALL   K_CAGR    -inf            C(2017-2026) endpoint: UNGATED     1.0000 -0.0029    True -0.6244  44.0000 23.0000  0.8804      0.9217    0.1349    -0.2385          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+P_ALL   K_CAGR     inf         C(2017-2026) endpoint: DO-NOTHING     0.0000  0.0000    True     NaN   0.0000  0.0000     NaN      0.9246    0.1368    -0.2475          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+ P_S1 K_Sharpe    -inf                              B(2013-2016)     1.0000  0.0049    True     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1 K_Sharpe -0.0200                              B(2013-2016)     0.7500  0.0020   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1 K_Sharpe -0.0100                              B(2013-2016)     0.7083  0.0032   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1 K_Sharpe  0.0000                              B(2013-2016)     0.6667  0.0035   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1 K_Sharpe  0.0100                              B(2013-2016)     0.0694  0.0030   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1 K_Sharpe  0.0200                              B(2013-2016)     0.0694  0.0030   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1 K_Sharpe     inf                              B(2013-2016)     0.0000  0.0000   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1 K_Sharpe    -inf                    C(2017-2026) READ ONCE     1.0000 -0.0052    True -1.9087  29.0000 14.0000  1.0000      0.9194    0.1336    -0.2409          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+ P_S1 K_Sharpe  0.0000 C(2017-2026) READ ONCE, INTERIOR-tau ONLY     0.6667 -0.0031    True -1.5456   8.0000  3.0000  0.7266      0.9215    0.1352    -0.2443          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+ P_S1 K_Sharpe    -inf            C(2017-2026) endpoint: UNGATED     1.0000 -0.0052    True -1.9087  29.0000 14.0000  1.0000      0.9194    0.1336    -0.2409          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+ P_S1 K_Sharpe     inf         C(2017-2026) endpoint: DO-NOTHING     0.0000  0.0000    True     NaN   0.0000  0.0000     NaN      0.9246    0.1368    -0.2475          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+ P_S1   K_CAGR    -inf                              B(2013-2016)     1.0000  0.0078    True     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1   K_CAGR -0.0200                              B(2013-2016)     0.7500  0.0024   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1   K_CAGR -0.0100                              B(2013-2016)     0.7083  0.0024   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1   K_CAGR  0.0000                              B(2013-2016)     0.6667  0.0026   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1   K_CAGR  0.0100                              B(2013-2016)     0.0694  0.0021   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1   K_CAGR  0.0200                              B(2013-2016)     0.0694  0.0021   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1   K_CAGR     inf                              B(2013-2016)     0.0000  0.0000   False     NaN      NaN     NaN     NaN         NaN       NaN        NaN             NaN           NaN            NaN            NaN            NaN             NaN           NaN            NaN
+ P_S1   K_CAGR    -inf                    C(2017-2026) READ ONCE     1.0000  0.0029    True  1.7536  23.0000 18.0000  0.0106      0.9275    0.1364    -0.2401          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+ P_S1   K_CAGR  0.0000 C(2017-2026) READ ONCE, INTERIOR-tau ONLY     0.6667  0.0005    True  0.4641   8.0000  5.0000  0.7266      0.9250    0.1364    -0.2440          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+ P_S1   K_CAGR    -inf            C(2017-2026) endpoint: UNGATED     1.0000  0.0029    True  1.7536  23.0000 18.0000  0.0106      0.9275    0.1364    -0.2401          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+ P_S1   K_CAGR     inf         C(2017-2026) endpoint: DO-NOTHING     0.0000  0.0000    True     NaN   0.0000  0.0000     NaN      0.9246    0.1368    -0.2475          0.9246        0.1368        -0.2475         0.6001         1.0379          0.8820        0.1545        -0.3372
+
+================ KEEP PATHS (PROTOCOL 4a and 4b) ================
+    Arm-rows: 4a-vs-v2 28/1224, 4a-vs-v1 465/1224, 4b(full) 198/1224, 4b(OOS) 222/1224, BOTH(4a_v2 & 4b) 8/1224.
+    Gated selections, per grid point, are in the Q4 table's pass4a_*/pass4b_* columns.
+ pool selector     tau  take_rate  pass4a_v2  pass4a_v1  pass4b  pass4b_oos  both_paths  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD  beat_spy_share  beat_v2_share
+P_ALL K_Sharpe    -inf     1.0000          1         27      12          13           0           0.9004         0.1253         -0.2256          0.5694         0.2778
+P_ALL K_Sharpe -0.0200     0.0694          0         24       9           9           0           0.9137         0.1353         -0.2433          0.6111         0.2778
+P_ALL K_Sharpe -0.0100     0.0556          0         24       9           9           0           0.9161         0.1357         -0.2441          0.6111         0.2778
+P_ALL K_Sharpe  0.0000     0.0417          0         24       9           9           0           0.9181         0.1359         -0.2465          0.6111         0.2778
+P_ALL K_Sharpe  0.0100     0.0417          0         24       9           9           0           0.9181         0.1359         -0.2465          0.6111         0.2778
+P_ALL K_Sharpe  0.0200     0.0139          0         24       9           9           0           0.9208         0.1363         -0.2466          0.6111         0.2778
+P_ALL K_Sharpe     inf     0.0000          0         24       9           9           0           0.9246         0.1368         -0.2475          0.6111         0.2778
+P_ALL   K_CAGR    -inf     1.0000          4         25      13          14           4           0.9346         0.1388         -0.2417          0.6111         0.3333
+P_ALL   K_CAGR -0.0200     0.0694          0         24       9           9           0           0.9293         0.1376         -0.2467          0.6111         0.2917
+P_ALL   K_CAGR -0.0100     0.0556          0         24       9           9           0           0.9291         0.1375         -0.2470          0.6111         0.2917
+P_ALL   K_CAGR  0.0000     0.0417          0         24       9           9           0           0.9287         0.1375         -0.2473          0.6111         0.2917
+P_ALL   K_CAGR  0.0100     0.0417          0         24       9           9           0           0.9287         0.1375         -0.2473          0.6111         0.2917
+P_ALL   K_CAGR  0.0200     0.0139          0         24       9           9           0           0.9260         0.1370         -0.2473          0.6111         0.2778
+P_ALL   K_CAGR     inf     0.0000          0         24       9           9           0           0.9246         0.1368         -0.2475          0.6111         0.2778
+ P_S1 K_Sharpe    -inf     1.0000          3         26      15          16           2           0.9201         0.1341         -0.2395          0.6111         0.2917
+ P_S1 K_Sharpe -0.0200     0.7778          0         25      13          13           0           0.9191         0.1345         -0.2419          0.6111         0.2778
+ P_S1 K_Sharpe -0.0100     0.7361          0         24      12          12           0           0.9220         0.1352         -0.2428          0.6111         0.2778
+ P_S1 K_Sharpe  0.0000     0.6944          0         24      12          12           0           0.9220         0.1353         -0.2434          0.6111         0.2778
+ P_S1 K_Sharpe  0.0100     0.0833          0         24       9           9           0           0.9220         0.1357         -0.2453          0.6111         0.2778
+ P_S1 K_Sharpe  0.0200     0.0556          0         24       9           9           0           0.9243         0.1365         -0.2462          0.6250         0.2778
+ P_S1 K_Sharpe     inf     0.0000          0         24       9           9           0           0.9246         0.1368         -0.2475          0.6111         0.2778
+ P_S1   K_CAGR    -inf     1.0000          4         26      15          16           4           0.9285         0.1370         -0.2409          0.6250         0.3194
+ P_S1   K_CAGR -0.0200     0.7778          0         25      11          11           0           0.9253         0.1364         -0.2436          0.6250         0.2778
+ P_S1   K_CAGR -0.0100     0.7361          0         24      11          11           0           0.9248         0.1363         -0.2442          0.6250         0.2778
+ P_S1   K_CAGR  0.0000     0.6944          0         24      11          11           0           0.9252         0.1364         -0.2444          0.6250         0.2778
+ P_S1   K_CAGR  0.0100     0.0833          0         24       9           9           0           0.9245         0.1365         -0.2455          0.6250         0.2778
+ P_S1   K_CAGR  0.0200     0.0556          0         24       9           9           0           0.9249         0.1367         -0.2461          0.6250         0.2778
+ P_S1   K_CAGR     inf     0.0000          0         24       9           9           0           0.9246         0.1368         -0.2475          0.6111         0.2778
+
+    Do-nothing baseline for the same 72 cells: 4a_v2 0, 4b 9, 4b_oos 9, both 0.
+    NO grid point that beats do-nothing on the KEEP counts while also beating it on d(OOS Sharpe) is a KEEP; the verdict below states which, if any, does.
+
+================ PRE-REGISTERED PREDICTIONS ================
+    P1 majority of back-fillable claims over a negative pool: 79.6% -> CONFIRMED
+    P2 IS/OOS sign agreement < 75%: 86.1% -> REJECTED
+    P3 published column explains much, causal twin little: mean r2 0.0952 vs 0.1589 -> REJECTED
+    P4 no tau survives the nested walk-forward: OOS mean_d [-0.0119, 0.0, -0.0052, 0.0029] -> REJECTED as literally coded
+       the literal test is contaminated by the DEGENERATE endpoints: the honest window chose tau*=-inf (gate off) or +inf (do nothing) in 3 of 4 arms, so any positive number there belongs to the UNGATED selector, not to the gate.
+       priced on the gate itself (best INTERIOR tau, chosen on B, read once on C): mean_d [-0.0119, 0.0045, -0.0031, 0.0005]; positive in 2 of 4 arms.
+
+================ DOMINATION TEST — is an interior gate ever the best thing to do? ====
+    For each (pool, selector) arm the gate has two degenerate endpoints: tau=-inf (the
+    ungated selector) and tau=+inf (do nothing).  A gate is only worth a column if its
+    best INTERIOR threshold beats BOTH of them.  In sample (the full IS->OOS reading)
+    and out of sample (the nested B->C reading), on mean d(OOS Sharpe):
+ pool selector  IS_ungated  IS_donothing  IS_best_interior  IS_best_tau  IS_gate_dominates  OOS_ungated  OOS_donothing  OOS_interior  OOS_gate_dominates
+P_ALL K_Sharpe     -0.0241        0.0000           -0.0038       0.0200              False      -0.0504         0.0000       -0.0119               False
+P_ALL   K_CAGR      0.0100        0.0000            0.0047      -0.0200              False      -0.0029         0.0000        0.0045                True
+ P_S1 K_Sharpe     -0.0045        0.0000           -0.0003       0.0200              False      -0.0052         0.0000       -0.0031               False
+ P_S1   K_CAGR      0.0040        0.0000            0.0007      -0.0200              False       0.0029         0.0000        0.0005               False
+    The interior gate dominates both endpoints in 0 of 4 arms in sample and 1 of 4 out of sample.
+    NOTE on the one OOS domination (P_ALL/K_CAGR): the honest B window chose tau*=inf, NOT an interior threshold -- the interior tau read here exists only because this leg FORCES an interior choice.  The gate never wins a decision the walk-forward was actually allowed to make.
+
+================ VERDICT ================
+    Q1  BACK-FILL: the column can be reconstructed for 21 of 1592 committed CSVs (520 cells).  79.6% of those cells stand over a negative-expectancy pool (file-weighted median 50.0%).
+    Q2  The published (OOS-window) form has a usable causal twin: IS vs OOS sign agreement 86.1%, r +0.648, OOS ~ IS r2 0.420.  The column is FORECASTABLE.
+    Q3  It is NOT decision-relevant: the slope of the incumbent selector's realised d(OOS Sharpe) on the column changes SIGN across the four (pool, selector) arms (OOS form [-0.296, 0.18, 0.639, 0.328], IS form [-0.613, 0.26, -0.189, -0.205]) and sign agreement ranges 22.2%-80.6%.
+    Q4  As a GATE it is a KILL: 9 of 20 interior grid points beat do-nothing on mean d(OOS Sharpe), but the interior gate dominates BOTH of its own degenerate endpoints in 0 of 4 arms in sample and 1 of 4 out of sample -- every apparent win is the gate walking toward one endpoint, never past it.  4a-vs-v2 passes fall from 4 (ungated) to 0 at every interior tau; both-paths from 4 to 0.
+    KEEP PATHS: 4a 0 of 20 interior grid points; 4b 6 grid points improving on do-nothing's 9; BOTH PATHS 0.  NO KEEP, on either path, at any grid point.
+    RECOMMENDATION: publish the column in its CAUSAL (IS-window) form as a REPORT-ONLY context column beside a selector claim -- it is cheap, forecastable and it does show that ~80% of the record's back-fillable selector claims stand over a pool that could not have helped.  Do NOT make it a gate, a screen or a KEEP bar: priced as one it loses at every threshold and on the nested walk-forward.
+
+[written] 2026-09-08_the-pool-mean-as-a-leaderboard-column_B.{grid,cells,picks,backfill,backfill_files,backfill_unresolved,paired,keeppaths,walkforward,console}
