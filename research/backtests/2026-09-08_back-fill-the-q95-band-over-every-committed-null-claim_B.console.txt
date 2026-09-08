@@ -1,0 +1,236 @@
+======================================================================================================================
+IDEA 215  back-fill-the-q95-band-over-every-committed-null-claim   (lane B, 2026-09-08)
+======================================================================================================================
+
+
+======================================================================================================================
+REPRODUCTION, asserted before any new number is read
+======================================================================================================================
+  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable (SURVIVORSHIP: current constituents only, no delistings)
+  panels: U56=55  BROAD136=132  SMALL439=439
+  [a] U56       fast_backtest vs engine.backtest: max|dret|=1.388e-17 max|dturn|=2.776e-16 -> PASS
+  [b] U56       cost identity 10bps from the 0bps run: max|d|=1.388e-17 -> PASS
+  [c] U56       base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [a] BROAD136  fast_backtest vs engine.backtest: max|dret|=2.082e-17 max|dturn|=2.776e-16 -> PASS
+  [b] BROAD136  cost identity 10bps from the 0bps run: max|d|=2.082e-17 -> PASS
+  [c] BROAD136  base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [a] SMALL439  fast_backtest vs engine.backtest: max|dret|=2.776e-17 max|dturn|=4.441e-16 -> PASS
+  [b] SMALL439  cost identity 10bps from the 0bps run: max|d|=2.776e-17 -> PASS
+  [c] SMALL439  base CAND-20 weights vs idea 78/171 weights_cand: max|dw|=0.000e+00 -> PASS
+  [d] RULES v1 on u56 @10bps: 6.45851% / 0.66471 / -13.82781%  (idea 191/201 published 6.45305% / 0.66418 / -13.82780% on 2026-09-05)
+      PRICE-REVISION DRIFT +5.27e-04 in Sharpe.  This is NOT a reproduction failure and it is not hidden: data/prices.csv last bar is 2026-09-04, the SAME last bar the parents saw, but the file has been rewritten by the daily
+      Actions job since (adjusted closes revise on dividends/splits).  The gate is therefore |drift| < 5e-3, not the stale constant -> PASS.
+      Consequence, stated up front: this run's FRESH real rows cannot match idea 191's
+      published real rows to 1e-12.  The gap is sized at [j] and, more usefully, turned
+      into a VERDICT count of its own at LEG 2b, so it can be subtracted from LEG 4.
+      Idea 216 (2026-09-08) independently priced the same re-commit on an overlapping
+      corpus: 104 rows' ON set moved by exactly 1 rebalance date, drift bounded at
+      1.25e-02, all 360 of its KEEP verdicts unchanged.
+  [e] idea 186 band re-read from its own 2160 committed null rows: max|d band| = 0.000e+00 over 108 configs -> PASS
+  [f] idea 191 band re-read from its own 3600 committed null rows: max|d band| = 0.000e+00 over 180 configs -> PASS
+  [g] idea 192 corpus O vs idea 186 draws (both use the FIXED seed 186_400), 12 shared configs: max|d band| = 2.082e-16 -> PASS
+      vs idea 191's draws on the same 12 configs: max|d band| = 7.361e-02 -- NOT zero, because 191's seed was `SEED + hash(...) % 10000` and Python salts hash() per process.  That is the SEED leg below, visible in the reproduction gate itself.
+  [h] idea 181 is a KEY-SUBSTITUTION null, not a rotation: kind values ['control', 'nullkey', 'real'], 720 null rows over 180 real rows = 4 draws each.  The null population has 4 members; K=100 does not exist for it.  OUT OF SCOPE, reported not run.
+  [i] idea 201 committed 180 band SUMMARIES and no per-draw rows (files: clause, keep, stability, walkforward). Its verdicts are carried as PUBLISHED and re-priced against this run's draws.
+
+reproduction PASSES -- proceeding
+
+======================================================================================================================
+LEG 0  SEED EXPOSURE -- the record's published verdicts already disagree BEFORE the
+       statistic is touched.  191 and 201 read the same 180 configurations with the
+       same statistic (MAX) at the same depth (K=20); only the rotation seed differs.
+======================================================================================================================
+
+  191 clears 27/180   201 clears 34/180   agree 155/180  (13.9% disagree)
+  direction 191 -> 201:  False->True 16   True->False 9
+  186 (fixed seed) vs 191 (salted seed) on the 108 shared configs: agree 103/108 (4.6% disagree), 186 clears 17/108, 191 clears 18/108
+
+  READ THIS FIRST: any statistic-change count below must be compared against this
+  floor.  Two honest runs of clause 11b as WRITTEN already move 13.9% of verdicts.
+
+======================================================================================================================
+LEG 1  STATISTIC EXPOSURE -- MAX -> Q95 on the SAME committed draws (K=20, free, exact)
+======================================================================================================================
+
+ parent   n  pub_clears  q95_clears  moved  F_to_T  T_to_F  mean_band_MAX  mean_band_Q95
+    186 108          17          30     13      13       0         0.1400         0.1222
+    191 180          27          51     24      24       0         0.1721         0.1370
+
+  T_to_F is 0 by arithmetic (Q95 <= MAX on the same draws), and that is the point:
+  swapping the statistic at fixed depth can only ADD clears.  The number that matters
+  is how many, and whether depth cancels it.
+
+======================================================================================================================
+LEG 2  FRESH ROTATION GRID -- 3 panels x 3 families x 5 thr x 2 depth x (1 real + 100 rotations) x 2 cost
+       K reads the FIRST K of the 100 draws, so the K ladder is nested on one set.
+======================================================================================================================
+  U56 done (109s)
+  BROAD136 done (327s)
+  SMALL439 done (901s)
+
+  real rows 180, null rows 18000  (902s)
+  [j] fresh real rows vs 2026-09-05_the-on-share-column_cloud.clause.csv (180/180 matched), PRICE-REVISION GAP: dSharpe 5.0e-03  dSharpe_IS 1.2e-02  Sharpe 5.1e-03  Sharpe_OOS 1.8e-05  CAGR 8.1e-04  MaxDD 4.6e-07
+      The construction is identical and deterministic, so this gap is entirely the revised price file (see [d]).  It is REPORTED, not gated at a threshold picked to pass: the number that matters is how many published VERDICTS the revision alone moves, and that is measured as its own leg immediately below.  Sanity stop only: max|d Sharpe| < 5e-2 -> PASS.
+
+  LEG 2b  PRICE EXPOSURE, isolated: idea 191's OWN committed 20-draw MAX bands, read
+          against THIS run's fresh real |dSharpe|.  Statistic, depth and draws are all
+          held at the published values, so every move here is the price revision alone.
+          0/180 published verdicts move on the price revision alone (0.0%): 0 False->True, 0 True->False.  clears 27 -> 27.
+          This is the irreducible floor under every count in LEG 4, which uses fresh
+          real rows.  LEG 1 uses the parents' own real rows and carries none of it.
+
+======================================================================================================================
+LEG 3  THE (stat, K) GRID -- every point reported.  `clears` = |dSharpe| > band.
+======================================================================================================================
+
+stat   K  nominal_size  mean_band  median_band  mean_margin  clears  clear_rate  clearsDD  clears_IS
+ MAX  20        0.0476     0.1636       0.1176      -0.0644      30      0.1667        23         39
+ MAX  50        0.0196     0.1781       0.1298      -0.0789      25      0.1389        17         10
+ MAX 100        0.0099     0.2466       0.1948      -0.1475       7      0.0389         4          9
+ Q95  20        0.0500     0.1416       0.1026      -0.0424      46      0.2556        35         52
+ Q95  50        0.0500     0.1436       0.1082      -0.0444      39      0.2167        37         27
+ Q95 100        0.0500     0.1449       0.1116      -0.0458      41      0.2278        31         18
+
+  MAX band K=20 -> 100: 0.1636 -> 0.2466  (+50.8%),  clear rate 16.7% -> 3.9%
+  Q95 band K=20 -> 100: 0.1416 -> 0.1449  (+2.4%),  clear rate 25.6% -> 22.8%
+
+  SEED leg, measured here: 5 DISJOINT blocks of 20 draws, MAX band. Verdict
+  differs across at least two blocks on 43/180 configurations (23.9%); block clear counts [30, 36, 31, 39, 20].
+  That brackets the 191-vs-201 disagreement of 25/180 (13.9%) measured on the published record.
+
+======================================================================================================================
+LEG 4  THE ANSWER -- how many PUBLISHED `clears` verdicts move, and in which direction
+======================================================================================================================
+
+stat   K  parent   n  published_clears  new_clears  moved  F_to_T  T_to_F  moved_pct
+ MAX  20     186 108                17          25      8       8       0     0.0741
+ MAX  20     191 180                27          30     23      13      10     0.1278
+ MAX  20     201 180                34          30      6       1       5     0.0333
+ MAX 100     186 108                17           6     13       1      12     0.1204
+ MAX 100     191 180                27           7     20       0      20     0.1111
+ MAX 100     201 180                34           7     27       0      27     0.1500
+ Q95  20     186 108                17          31     14      14       0     0.1296
+ Q95  20     191 180                27          46     27      23       4     0.1500
+ Q95  20     201 180                34          46     12      12       0     0.0667
+ Q95 100     186 108                17          25      8       8       0     0.0741
+ Q95 100     191 180                27          41     22      18       4     0.1222
+ Q95 100     201 180                34          41      9       8       1     0.0500
+
+  HEADLINE, published MAX@K=20 -> Q95@K=100:
+    idea 186: 8/108 verdicts move (7.4%), 8 False->True, 0 True->False; clears 17 -> 25
+    idea 191: 22/180 verdicts move (12.2%), 18 False->True, 4 True->False; clears 27 -> 41
+    idea 201: 9/180 verdicts move (5.0%), 8 False->True, 1 True->False; clears 34 -> 41
+    POOLED (186+191+201, 468 published verdicts): 39 move (8.3%), 34 F->T, 5 T->F
+    idea 192 corpus O is idea 186's grid verbatim (band agreement above), so its 17/108 published clears move with idea 186's row.
+    idea 181: 180 published verdicts, key-substitution null, 4 draws -- OUT OF SCOPE.
+      For the record: Q95 of 4 numbers interpolates between the 3rd and 4th, so at its own depth Q95 is NOT the max and the swap is defined but meaningless.
+
+======================================================================================================================
+RULE 8  Selectors pick on data <= 2016-12-31 ONLY and are read once on 2017-01-01 ->.
+        18 cells = 3 panels x 3 families x 2 cost.  Pool = 10 points (5 thr x 2 depth).
+        The clause-gated arms differ ONLY in which band gates them.
+======================================================================================================================
+
+             selector  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD    dOOS       t  wins  losses  n  abstains
+           ORACLE-OOS          +0.8197        +0.1104         -0.2316 +0.0431 +3.8604    12       0 18         0
+        S0 do-nothing          +0.7766        +0.1022         -0.2353 +0.0000     NaN     0       0 18         0
+     S-gated MAX@K=20          +0.7590        +0.0992         -0.2420 -0.0176 -1.6225     3       7 18         8
+    S-gated Q95@K=100          +0.7471        +0.0973         -0.2432 -0.0295 -2.3539     0       6 18        12
+S1 IS-argmax, ungated          +0.7405        +0.0955         -0.2552 -0.0361 -1.6840     5       9 18         0
+    S-gated MAX@K=100          +0.7383        +0.0975         -0.2398 -0.0383 -1.5014     0       5 18        13
+     S-gated Q95@K=20          +0.7275        +0.0945         -0.2554 -0.0491 -3.4883     0      10 18         8
+
+  THE DECISION TEST: swapping the gate MAX@20 -> Q95@100 changes 10/18 rule-8 picks, mean dOOS_Sharpe -0.0119
+
+  BENCHMARKS over the same OOS window (2017-01-01 ->):
+   panel          series  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+     U56             SPY    0.1545      0.8820    -0.3372
+     U56 RULES v1 @10bps    0.0773      0.7471    -0.1383
+BROAD136             SPY    0.1545      0.8820    -0.3372
+BROAD136 RULES v1 @10bps    0.0594      0.5762    -0.2119
+SMALL439             SPY    0.1545      0.8820    -0.3372
+SMALL439 RULES v1 @10bps    0.0788      0.6617    -0.3237
+
+  FULL SAMPLE and HALVES for the same 18 cells' do-nothing book vs SPY and RULES v1:
+   panel           series   CAGR  Sharpe   MaxDD     H1     H2
+     U56 base book @10bps 0.1286  1.1075 -0.1821 1.1097 1.1117
+     U56              SPY 0.1523  0.8890 -0.3372 0.9566 0.8340
+     U56  RULES v1 @10bps 0.0646  0.6647 -0.1383 0.6421 0.6878
+BROAD136 base book @10bps 0.1314  0.9493 -0.2157 1.1272 0.7955
+BROAD136              SPY 0.1523  0.8890 -0.3372 0.9566 0.8340
+BROAD136  RULES v1 @10bps 0.0632  0.6295 -0.2119 0.7444 0.5320
+SMALL439 base book @10bps 0.0657  0.4635 -0.2684 0.5942 0.3566
+SMALL439              SPY 0.1413  0.8615 -0.3372 0.8907 0.8577
+SMALL439  RULES v1 @10bps 0.0765  0.6319 -0.3237 0.6596 0.6032
+
+======================================================================================================================
+KEEP PATHS -- 4a and 4b on every real row (180).  This run proposes NO book.
+======================================================================================================================
+
+  4a passes: 37/180   4b passes: 28/180   BOTH PATHS: 2/180
+
+  4b failing bars:
+fail4b
+H1,H2,OOS,DD,CAGR    70
+-                    28
+H2,OOS,DD            25
+H1,CAGR              14
+H1,H2,OOS,CAGR       12
+DD                    6
+H2,OOS,CAGR           5
+H2,DD                 5
+H2,OOS,DD,CAGR        5
+H1                    4
+H1,DD                 2
+H2                    2
+H1,DD,CAGR            1
+H1,H2,OOS,DD          1
+
+  the 4b passes:
+   panel family      thr depth  bps  on_share   CAGR  Sharpe   MaxDD  Sharpe_OOS  CAGR_OOS  MaxDD_OOS  pass4a
+     U56  DDCTL   0.0600   0.5   10    0.1908 0.1104  1.0517 -0.1413      1.1410    0.1246    -0.1413   False
+     U56  DDCTL   0.1000   0.5   10    0.0421 0.1206  1.0578 -0.1879      1.1249    0.1352    -0.1879   False
+     U56  DDCTL   0.1000   1.0   10    0.0421 0.1126  0.9984 -0.1938      1.0579    0.1254    -0.1938   False
+     U56  DDCTL   0.1500   0.5   10    0.0000 0.1286  1.1075 -0.1821      1.1775    0.1449    -0.1821   False
+     U56  DDCTL   0.1500   0.5   25    0.0000 0.1127  0.9844 -0.1833      1.0618    0.1289    -0.1833   False
+     U56  DDCTL   0.1500   1.0   10    0.0000 0.1286  1.1075 -0.1821      1.1775    0.1449    -0.1821   False
+     U56  DDCTL   0.1500   1.0   25    0.0000 0.1127  0.9844 -0.1833      1.0618    0.1289    -0.1833   False
+     U56  DDCTL   0.2500   0.5   10    0.0000 0.1286  1.1075 -0.1821      1.1775    0.1449    -0.1821   False
+     U56  DDCTL   0.2500   0.5   25    0.0000 0.1127  0.9844 -0.1833      1.0618    0.1289    -0.1833   False
+     U56  DDCTL   0.2500   1.0   10    0.0000 0.1286  1.1075 -0.1821      1.1775    0.1449    -0.1821   False
+     U56  DDCTL   0.2500   1.0   25    0.0000 0.1127  0.9844 -0.1833      1.0618    0.1289    -0.1833   False
+     U56 BUDGET   0.0500  half   10    0.8821 0.1325  1.1207 -0.1817      1.2057    0.1518    -0.1817   False
+     U56 BUDGET   0.0500  half   25    0.8821 0.1219  1.0404 -0.1825      1.1303    0.1412    -0.1825   False
+     U56 BUDGET   0.1000  half   10    0.7056 0.1296  1.0989 -0.1817      1.1833    0.1487    -0.1817   False
+     U56 BUDGET   0.1000  half   25    0.7056 0.1184  1.0137 -0.1825      1.1034    0.1374    -0.1825   False
+     U56 BUDGET   0.2000  half   10    0.3385 0.1276  1.0853 -0.1810      1.1720    0.1467    -0.1810   False
+     U56 BUDGET   0.2000  half   25    0.3385 0.1144  0.9846 -0.1818      1.0778    0.1335    -0.1818   False
+     U56 BUDGET   0.3000  half   10    0.0523 0.1268  1.0820 -0.1818      1.1555    0.1436    -0.1818   False
+     U56 BUDGET   0.5000  half   10    0.0041 0.1274  1.0913 -0.1818      1.1464    0.1423    -0.1818   False
+     U56 BUDGET   0.5000  half   25    0.0041 0.1116  0.9695 -0.1828      1.0326    0.1265    -0.1828   False
+     U56 SLEEVE 100.0000   0.5   10    0.2236 0.1167  1.0978 -0.1451      1.1882    0.1340    -0.1451   False
+     U56 SLEEVE 200.0000   0.5   10    0.1774 0.1238  1.1245 -0.1407      1.2333    0.1438    -0.1407   False
+     U56 SLEEVE 200.0000   1.0   10    0.1774 0.1183  1.0663 -0.1349      1.2192    0.1420    -0.1195    True
+     U56 SLEEVE 300.0000   0.5   10    0.1282 0.1236  1.0988 -0.1821      1.1994    0.1449    -0.1821   False
+     U56 SLEEVE 300.0000   1.0   10    0.1282 0.1181  1.0438 -0.1821      1.1872    0.1444    -0.1821   False
+     U56 SLEEVE 400.0000   0.5   10    0.0913 0.1274  1.1158 -0.1821      1.2088    0.1466    -0.1821   False
+     U56 SLEEVE 400.0000   1.0   10    0.0913 0.1258  1.0946 -0.1821      1.2097    0.1481    -0.1821   False
+BROAD136 SLEEVE 200.0000   0.5   10    0.1774 0.1213  0.9684 -0.1601      0.9284    0.1204    -0.1601    True
+
+  NOTE: every 4b pass here is an overlay on idea 2's standing candidate, already priced
+  by ideas 186/191/201.  Nothing new is promoted and RULES.md is untouched.
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS (written before the fresh grid ran; LEG 0/1 are re-reads
+of committed files and were known)
+======================================================================================================================
+  HIT   P1 T->F is 0 in LEG 1 (Q95 <= MAX at fixed draws) -- arithmetic, not evidence  0 T->F over 288 rows
+  HIT   P2 the MAX band rises with K and the Q95 band does not (|dQ95| < 5%)        MAX +50.8%, Q95 +2.4%
+  MISS  P3 published->Q95@100 movement exceeds the seed floor measured on the record  8.2% vs seed floor 13.9%
+  HIT   P4 the price revision alone moves fewer verdicts than the seed leg does     price 0/180 = 0.0% vs seed 25/180 = 13.9%
+  HIT   P5 no clause-gated selector beats do-nothing out of sample                  best gated dOOS -0.0176
+  MISS  P6 swapping the gate changes at most a third of the 18 rule-8 picks         10/18 picks changed
+
+  4 of 6 predictions hit.
+
+done in 914s
