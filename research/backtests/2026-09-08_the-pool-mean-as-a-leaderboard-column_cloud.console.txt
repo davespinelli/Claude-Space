@@ -1,0 +1,126 @@
+================================================================================================================
+IDEA 205 — the POOL MEAN as a required LEADERBOARD column beside every selector claim
+  parameters: p1 comparand in {CONTROL, SPY};  p2 pool_def in {ALL, LIVE}. All 4 reported.
+  structural: MIN_POOL = 3 pool rows per claim (pre-set, not swept)
+  NOTE idea 204 (the regression form) is still OPEN and UNRUN; its pooled regression is
+       reported below as a BY-PRODUCT of the same table, not as a verdict on 204.
+================================================================================================================
+
+CORPUS  321 script stems in research/backtests/
+     93  no OOS_Sharpe column
+     91  OK
+     63  no sel/pool pair
+     57  no comparand column
+     17  no usable claim rows
+  -> 91 stems yield 29630 (claim x comparand x pool_def) rows; 3236 claim rows dropped for pool < 3
+  distinct parent dates 5 (2026-09-04 .. 2026-09-08)
+
+================================================================================================================
+Q1  HOW MANY SELECTOR CLAIMS ARE MADE OVER A NEGATIVE-EXPECTANCY POOL?  (all 4 grid points)
+================================================================================================================
+  comparand  pool  n_claims n_stems   pool<0   share   sel<0  both<0 mean pool  mean sel mean lift  t(lift)
+  CONTROL    ALL       6656      83     2467   37.1%    1331    1158   +0.2346   +0.2794   +0.0449   +30.35
+  CONTROL    LIVE      6653      83     2467   37.1%    1329    1156   +0.2360   +0.2796   +0.0436   +29.31
+  SPY        ALL       8328      90     2517   30.2%    2186    1927   +0.0497   +0.0863   +0.0366   +28.35
+  SPY        LIVE      7993      90     2516   31.5%    2169    1926   +0.0465   +0.0830   +0.0365   +27.26
+
+  SIGN AGREEMENT — does the pool's sign predict the claim's sign?
+  comparand  pool    agree    rate  P(sel<0|pool<0)  P(sel<0|pool>=0) lift explains
+  CONTROL    ALL      5092   76.5%            46.9%              4.1%         79.1%
+  CONTROL    LIVE     5087   76.5%            46.9%              4.1%         79.2%
+  SPY        ALL      7479   89.8%            76.6%              4.5%         72.1%
+  SPY        LIVE     7160   89.6%            76.6%              4.4%         72.4%
+  ('lift explains' = |pool| / (|pool| + |lift|): how much of a claim's magnitude is the
+   instrument's own expectancy rather than picking skill.)
+
+================================================================================================================
+Q2  BY-PRODUCT (idea 204's form, reported not adjudicated): sel_dOOS ~ a + b * pool_mean
+================================================================================================================
+  comparand  pool          a        b    t(b)      R2    t(a)  (a = mean lift at a zero-expectancy pool)
+  CONTROL    ALL     +0.0565  +0.9503 +201.48   0.859  +30.77
+  CONTROL    LIVE    +0.0577  +0.9406 +200.66   0.858  +31.33
+  SPY        ALL     +0.0387  +0.9575 +180.20   0.796  +29.48
+  SPY        LIVE    +0.0388  +0.9496 +177.26   0.797  +28.67
+  Books inside one stem are overlapping draws from one pool, so these pooled t-stats
+  OVERSTATE significance; per-stem numbers are in .claims.csv.  This settles nothing on 204.
+
+================================================================================================================
+Q3  RULE 8 / W1 — corpus walk-forward of the proposed screen (split by parent script DATE)
+    IS = earlier half of dates (rule fitted), OOS = later half read ONCE.
+================================================================================================================
+  5 distinct parent dates; IS = dates < 2026-09-06, OOS = dates >= 2026-09-06
+  comparand  pool    nIS  nOOS | IS agree OOS agree | IS P(sel<0|pool<0)  OOS same |    IS b   OOS b
+  CONTROL    ALL    4595  2061 |    85.6%     56.1% |              49.3%     45.2% |  +0.990  +0.791
+  CONTROL    LIVE   4595  2058 |    85.6%     56.1% |              49.2%     45.2% |  +0.977  +0.788
+  SPY        ALL    5151  3177 |    88.7%     91.6% |              73.6%     82.2% |  +0.994  +0.891
+  SPY        LIVE   5151  2842 |    88.7%     91.2% |              73.6%     82.2% |  +0.979  +0.898
+
+================================================================================================================
+Q4  RULE 8 / W2 — a LIVE pool built fresh this run (u56, top-n EW no vol scaler, weekly,
+    10 bps, t+1), so the column is demonstrated on real books.  ALL 25 grid points.
+================================================================================================================
+  references (from 2009-01-13):
+    SPY              CAGR  15.23% Sharpe  0.889 MaxDD -33.72% | OOS CAGR  15.45% Sharpe  0.882 MaxDD -33.72%
+    RULES v2 (live)  CAGR   8.66% Sharpe  1.206 MaxDD -12.05% | OOS CAGR   9.53% Sharpe  1.285 MaxDD -12.05%
+    RULES v1         CAGR   6.46% Sharpe  0.665 MaxDD -13.83% | OOS CAGR   7.73% Sharpe  0.747 MaxDD -13.83%
+
+    n      g    CAGR  Sharpe   MaxDD     H1     H2  IS Sh  OOSCAGR  OOS Sh  OOS DD    4a    4b
+   10  0.500  10.85%   1.047 -15.99%  1.125  1.001  1.083   11.68%   1.033 -15.99% False  True
+   10  0.625  13.57%   1.048 -19.69%  1.126  1.002  1.084   14.60%   1.034 -19.69% False  True
+   10  0.750  16.27%   1.048 -23.28%  1.126  1.003  1.084   17.50%   1.035 -23.28% False False
+   10  0.875  18.97%   1.049 -26.75%  1.127  1.004  1.084   20.39%   1.036 -26.75% False False
+   10  1.000  21.65%   1.050 -30.11%  1.127  1.005  1.085   23.25%   1.037 -30.11% False False
+   15  0.500  10.71%   1.150 -13.76%  1.214  1.115  1.138   11.85%   1.168 -13.76% False  True
+   15  0.625  13.42%   1.150 -16.99%  1.214  1.116  1.138   14.86%   1.169 -16.99% False  True
+   15  0.750  16.13%   1.151 -20.14%  1.214  1.116  1.138   17.88%   1.169 -20.14% False  True
+   15  0.875  18.85%   1.151 -23.21%  1.215  1.117  1.138   20.90%   1.169 -23.21% False False
+   15  1.000  21.57%   1.151 -26.20%  1.215  1.117  1.138   23.93%   1.170 -26.20% False False
+   20  0.500   9.55%   1.108 -14.62%  1.195  1.055  1.104   10.48%   1.119 -14.62% False False
+   20  0.625  11.95%   1.108 -18.04%  1.195  1.055  1.104   13.12%   1.120 -18.04% False  True
+   20  0.750  14.36%   1.108 -21.37%  1.195  1.055  1.105   15.76%   1.120 -21.37% False False
+   20  0.875  16.76%   1.108 -24.60%  1.195  1.055  1.105   18.41%   1.120 -24.60% False False
+   20  1.000  19.16%   1.108 -27.75%  1.195  1.055  1.104   21.05%   1.120 -27.75% False False
+   25  0.500   9.07%   1.113 -14.10%  1.147  1.099  1.053   10.24%   1.162 -14.10% False False
+   25  0.625  11.35%   1.113 -17.41%  1.147  1.100  1.053   12.83%   1.162 -17.41% False  True
+   25  0.750  13.64%   1.113 -20.62%  1.147  1.100  1.053   15.43%   1.162 -20.62% False False
+   25  0.875  15.92%   1.114 -23.75%  1.147  1.100  1.053   18.04%   1.162 -23.75% False False
+   25  1.000  18.21%   1.114 -26.80%  1.148  1.100  1.053   20.65%   1.162 -26.80% False False
+   30  0.500   8.68%   1.111 -13.88%  1.142  1.097  1.046    9.75%   1.162 -13.88% False False
+   30  0.625  10.87%   1.111 -17.14%  1.142  1.097  1.046   12.22%   1.163 -17.14% False  True
+   30  0.750  13.06%   1.111 -20.31%  1.142  1.097  1.046   14.69%   1.163 -20.31% False False
+   30  0.875  15.24%   1.111 -23.40%  1.143  1.097  1.046   17.17%   1.163 -23.40% False False
+   30  1.000  17.43%   1.111 -26.42%  1.143  1.097  1.046   19.65%   1.163 -26.42% False False
+
+  KEEP paths over the live pool: 4a 0/25, 4b 8/25
+
+  vs do-nothing (n=20,g=0.75):
+    IS-Sharpe pick        n=15 g=0.875  OOS CAGR  20.90%  Sharpe  1.169  MaxDD -23.21%
+    comparand                         OOS CAGR  15.76%  Sharpe  1.120  MaxDD -21.37%
+    sel_dOOS        +0.0495
+    POOL_MEAN_dOOS  +0.0098   (n_pool = 25)   <-- THE PROPOSED COLUMN
+    lift            +0.0397   (skill inside a POSITIVE-expectancy pool)
+
+  vs SPY:
+    IS-Sharpe pick        n=15 g=0.875  OOS CAGR  20.90%  Sharpe  1.169  MaxDD -23.21%
+    comparand                         OOS CAGR  15.45%  Sharpe  0.882  MaxDD -33.72%
+    sel_dOOS        +0.2874
+    POOL_MEAN_dOOS  +0.2477   (n_pool = 25)   <-- THE PROPOSED COLUMN
+    lift            +0.0397   (skill inside a POSITIVE-expectancy pool)
+
+  vs RULES v2:
+    IS-Sharpe pick        n=15 g=0.875  OOS CAGR  20.90%  Sharpe  1.169  MaxDD -23.21%
+    comparand                         OOS CAGR   9.53%  Sharpe  1.285  MaxDD -12.05%
+    sel_dOOS        -0.1156
+    POOL_MEAN_dOOS  -0.1553   (n_pool = 25)   <-- THE PROPOSED COLUMN
+    lift            +0.0397   (skill inside a NEGATIVE-expectancy pool)
+
+================================================================================================================
+PROPOSED PROTOCOL CLAUSE (wording; NOT applied — RULES.md/PROTOCOL.md untouched by this run)
+================================================================================================================
+  PROTOCOL 10.  Any published claim that an IS selector's OOS result beats a comparand C
+  MUST report, in the same row: n(pool), pool_mean_dOOS = mean over the pool of
+  (OOS_Sharpe(arm) - OOS_Sharpe(C)), and lift = dOOS(pick) - pool_mean_dOOS.  A claim with
+  pool_mean_dOOS < 0 is reported as an INSTRUMENT result; only `lift` may be described as
+  selection.  LEADERBOARD gains one column: `pool_mean_dOOS (n_pool)`.
+
+DONE in 48s
