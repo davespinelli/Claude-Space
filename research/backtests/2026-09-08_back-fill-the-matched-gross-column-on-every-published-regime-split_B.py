@@ -178,8 +178,12 @@ def is_regime_col(c, cols):
 def census():
     """Scan every committed research/backtests/*.csv for regime-split claims and ask whether the
     committed file itself carries enough gross columns to adjudicate idea 249's confound."""
-    # this script's OWN outputs are excluded so the census is deterministic on re-run
-    files = sorted(p for p in OUT.glob("*.csv") if not p.name.startswith(STEM))
+    # Both lanes' idea-471 outputs are excluded: this script's own, and the concurrent cloud
+    # lane's, which landed on main mid-run.  They are censuses OF the record, not claims IN it,
+    # and including them would let a census count itself.  Excluding them by name also makes
+    # the census deterministic on re-run.
+    TWIN = STEM[:-2]                                   # the shared idea-471 stem, both lanes
+    files = sorted(p for p in OUT.glob("*.csv") if not p.name.startswith(TWIN))
     rows = []
     tot_rows = 0
     for p in files:
@@ -235,7 +239,9 @@ def census_gaps(C):
             continue
         gcols = [c for c in r.gross_cols.split("|") if c]
         if r.decidable == "DECIDABLE-paired-columns":
-            num = [c for c in gcols if pd.api.types.is_numeric_dtype(df[c])]
+            num = [c for c in gcols if pd.api.types.is_numeric_dtype(df[c])
+                   and not pd.api.types.is_bool_dtype(df[c])]   # a bool 'publishes_gross' is
+                   # a flag, not a gross LEVEL, and cannot be differenced
             if len(num) < 2:
                 continue
             G = df[num]
