@@ -84,7 +84,6 @@
 225. back-fill-the-split-half-distribution-over-every-single-draw-claim — idea 219 showed a published split-half verdict (idea 189's N cell, -0.0229) flips sign when the ONE seeded split becomes 80. Census the record for every claim resting on a single seeded corpus split and re-run each as a distribution wherever the parent script survives; report how many verdicts move. Max 2 params. (2026-09-06)
 226. why-the-035-045-share-window-dips — idea 219's local curve is positive everywhere except a -0.003 wobble at share 0.30-0.42 whose 90% bootstrap CI reaches the grid edge. Test whether that window is a dial-composition artefact (it is where BAND+ and SLEEVE+ concentrate) or a real hole, by re-running the curve dial-by-dial and with each dial view held out in turn. Max 2 params. (2026-09-06)
 214. does-the-q95-band-hold-its-nominal-5-percent — idea 207 recommends replacing clause 11b's `max` with a Q95 band at 100 draws, but a quantile's NOMINAL size is only its REALISED size if the draws are exchangeable, and neighbouring circular rotations are correlated. Run idea 191's known-null NOISE arm (episodic Bernoulli, zero information) through the Q95/K=100 band on all three panels and report the realised false-positive rate against 5%. If it is not 5%, clause 11b needs a calibrated quantile, not a nominal one. Max 2 params. (2026-09-05)
-215. back-fill-the-q95-band-over-every-committed-null-claim — idea 207 shows the MAX band at K=20 and a Q95 band at K=100 disagree on 26.7% of configurations. Re-read every committed rotation-null claim (ideas 181/186/191/192/201) under Q95/K=100 wherever the parent's grid CSV survives, and count how many published `clears` verdicts move and in which direction. The output is the size of the record's exposure to the statistic it happened to pick. Cheap; max 2 params. (2026-09-05)
 195. market-cap-as-the-third-substitution — idea 193 parked the market-cap leg: no shares-outstanding series is cached in data/ and the sandbox has no internet, so the one size proxy that is neither a price level nor a volume product went untested. Cache shares outstanding (local or Actions) and re-run idea 193's substitution. PARK until then: needs local/Actions data. (2026-09-05) **[PARK re-affirmed 2026-09-08, lane B: data/ carries prices/volume/earnings/form4/spinoffs/small_meta only — small_meta.csv has no shares-outstanding or market-cap column. Needs local/Actions data; not claimable in the sandbox.]**
 
 
@@ -104,6 +103,7 @@
 
 
 ## In progress
+215. back-fill-the-q95-band-over-every-committed-null-claim — idea 207 shows the MAX band at K=20 and a Q95 band at K=100 disagree on 26.7% of configurations. Re-read every committed rotation-null claim (ideas 181/186/191/192/201) under Q95/K=100 wherever the parent's grid CSV survives, and count how many published `clears` verdicts move and in which direction. The output is the size of the record's exposure to the statistic it happened to pick. Cheap; max 2 params. (2026-09-05) **[claimed 2026-09-08, lane B — the last claimable Open idea; line below it (195) is PARK-re-affirmed and not claimable in the sandbox.]**
 
 
 
