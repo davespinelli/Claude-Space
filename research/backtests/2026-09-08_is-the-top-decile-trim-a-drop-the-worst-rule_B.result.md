@@ -182,6 +182,31 @@ The direction result is worth keeping as a positive: a composite ranking is a **
 **selector** — reliable about which names to refuse, uninformative about which to prefer. That is
 consistent with idea 82's "drop the ranking" and with the live RULES v2 having no ranking at all.
 
+## External reproduction: a cloud lane raced this idea and agrees to 4 decimals
+
+`2026-09-08_..._cloud.grid.csv` (pushed as commit `1b22894` while this run was executing) is an
+**independently written** script for the same queue item — 8 keys x 6 q x 3 rungs on the same three
+panels. Its q grid overlaps this one at q = 0.80/0.85/0.90/0.95/1.00. Every overlapping
+COMP cell at 10 bps is identical to 4 dp:
+
+| panel | q | this run | cloud lane |
+|---|---|---|---|
+| U56 | 0.80 | 1.0569 | 1.0569 |
+| U56 | 0.85 | 1.0754 | 1.0754 |
+| U56 | **0.90** | **1.0808** | **1.0808** |
+| U56 | 0.95 | 1.0523 | 1.0523 |
+| U56 | 1.00 (control) | 1.0492 | 1.0492 |
+| B136 | 0.80 | 1.0099 | 1.0099 |
+| B136 | 0.85 | 1.0174 | 1.0174 |
+| B136 | 0.90 | 1.0325 | 1.0325 |
+| B136 | **0.95** | **1.0424** | **1.0424** |
+| B136 | 1.00 (control) | 1.0253 | 1.0253 |
+
+The two runs are therefore measuring the same object, and the KILL rests on the null (60 persistent
+random keys) rather than on either script's construction. The cloud lane's own verdict, when it
+lands, is an independent read of the same ladder and should be reconciled against this one at Sunday
+review rather than merged into it.
+
 ## Limits
 
 * Survivorship: `universe_broad.json` and the small panel are **current constituents**,
