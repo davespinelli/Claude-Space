@@ -135,6 +135,27 @@ so the paired t treats correlated cells as independent and is **inflated** — g
 the live corpus (t values in the hundreds are arithmetic, not evidence). The signs and
 magnitudes of D are the honest readings; the t is a direction indicator only.
 
+## Concordance with the concurrent cloud run (independent replication)
+
+The cloud lane claimed and finished the same idea in parallel and reached the **same verdict
+by a different construction**; neither run saw the other's numbers before committing.
+
+| reading | cloud lane | lane B (this run) | agree? |
+|---|---|---|---|
+| verdict | KILL | KILL | yes |
+| corpus | 8,748 published argmaxes, 92 files | 4,925 Sharpe cells / 5,057 cells, 89 files (92 admitted) | same files, different admission unit |
+| ladder-mean / menu-mean fallback | 0 of 9 τ>0 rungs positive, monotone **down** | negative at all 9 non-zero rungs × 3 norms | yes |
+| ladder-median / IS-median fallback | best rung +0.0002, rule 8 → **−0.0009** | negative at all 27 non-zero grid points | yes |
+| where 0.013 sits | **46th percentile** of the record's margins | **40.6% quantile** of the record's gaps | yes (different admission rule) |
+| KEEP | 4a 0/30, 4b 1/30 (a by-product) | 4a 0/18, 4b 2/18 (the ARGMAX comparand) | yes |
+
+**Complementary and new here:** the cloud run does not carry a **control-arm** incumbent, which
+is the one fallback that scores positive in sample (+0.0113) — this run shows that branch is
+the control's ROOM (+0.0258, t +22.2) and not the margin; the **non-monotone tercile shape**
+that rules out any minimum threshold rather than just the rungs tested; and a **fresh live
+corpus on real prices** where the abstention book loses 0 of 6 and the margin sorts the
+opposite way.
+
 Script: `research/backtests/2026-09-08_the-013-margin-rule_B.py`
 Artefacts: `.console.txt` (687 lines), `.census.csv`, `.ledger.csv`, `.taugrid.csv`,
 `.taugrid_live.csv`, `.sensitivity.csv`, `.decomposition.csv`, `.sorting.csv`,
