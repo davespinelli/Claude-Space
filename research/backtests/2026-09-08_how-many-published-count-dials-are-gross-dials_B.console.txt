@@ -1,0 +1,407 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+==============================================================================================================================================================================================
+Idea 244 how-many-published-count-dials-are-gross-dials (lane B) | 2026-09-08_how-many-published-count-dials-are-gross-dials_B.py | 10 bps headline (+25 bps rung), weekly, next-day execution
+==============================================================================================================================================================================================
+Index sanity (must be ~252 rows/yr): 2013 252, 2018 251, 2024 252
+small panel hygiene: dropped 44 tickers with max_1d_move >= 1.0; 439 tradable remain
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+HARNESS: reproduce the live book and idea 240's construction before anything is claimed
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+cost-free-path reconstruction of RULES v1 vs engine.backtest(cost_bps=10): max|diff| 0.000e+00  (must be ~0)
+idea 240 replication  U56 FIXEDTOT n= 5: held gross 0.741  target gross 0.741  published (idea 240 .grid.csv) 0.741  diff(target-published) +0.0001
+idea 240 replication  U56 FIXEDTOT n=10: held gross 0.737  target gross 0.737  published (idea 240 .grid.csv) 0.739  diff(target-published) -0.0018
+idea 240 replication  U56 FIXEDTOT n=20: held gross 0.717  target gross 0.717  published (idea 240 .grid.csv) 0.721  diff(target-published) -0.0046
+idea 240 replication  U56 FIXEDTOT n=30: held gross 0.688  target gross 0.688  published (idea 240 .grid.csv) 0.695  diff(target-published) -0.0070
+idea 240 replication  U56 FIXEDTOT n=40: held gross 0.648  target gross 0.648  published (idea 240 .grid.csv) 0.656  diff(target-published) -0.0079
+idea 240 replication  U56 FIXEDTOT n=60: held gross 0.467  target gross 0.467  published (idea 240 .grid.csv) 0.474  diff(target-published) -0.0064
+  [idea 240 evaluates all seven panels on ONE common window starting 2011-01-13; this run uses each panel's own index[260]. That window difference, not the construction, is the residual.]
+
+IDENTITY CHECK  FIXEDTOT(n) == NORM(n) * phi_t,  phi_t = n_held_t / n   (max |weight diff|)
+  n= 5: 2.776e-17   mean phi 0.989   sd phi 0.048   corr(phi, SPY 20d fwd ret) +0.014
+  n=10: 1.388e-17   mean phi 0.983   sd phi 0.067   corr(phi, SPY 20d fwd ret) -0.168
+  n=20: 6.939e-18   mean phi 0.954   sd phi 0.139   corr(phi, SPY 20d fwd ret) -0.149
+  n=30: 3.469e-18   mean phi 0.918   sd phi 0.193   corr(phi, SPY 20d fwd ret) -0.133
+  n=40: 3.469e-18   mean phi 0.865   sd phi 0.229   corr(phi, SPY 20d fwd ret) -0.124
+  n=60: 1.735e-18   mean phi 0.624   sd phi 0.187   corr(phi, SPY 20d fwd ret) -0.126
+  => the FIXED convention is NOT a static gross ladder: it is the width book times a
+     BREADTH-TIMED exposure overlay whose MEAN the MATCHED control removes and whose
+     TIMING it does not. Level and timing are separated at every (panel, n) below.
+
+==============================================================================================================================================================================================
+Q1  CENSUS - every count/position sweep in the committed record, labelled by weighting convention
+==============================================================================================================================================================================================
+/home/user/Claude-Space/research/backtests/2026-09-08_how-many-published-count-dials-are-gross-dials_B.py:394: DtypeWarning: Columns (0: point) have mixed types. Specify dtype option on import or set low_memory=False.
+  df = pd.read_csv(f)
+CSV files scanned: 1969   qualifying count-sweep cells: 694   distinct files contributing: 69
+rejections logged: 328 (reasons in .census_rejects.csv)
+reason
+no Sharpe column beside it              113
+<3 distinct int values (2)               79
+<3 distinct int values (1)               59
+parent script never ranks on a count     14
+no parent script                         12
+range 1..148 outside [2,500]              7
+<3 distinct int values (0)                3
+range 0..60 outside [2,500]               2
+empty                                     1
+range 0..28 outside [2,500]               1
+range 0..115 outside [2,500]              1
+range 0..28316 outside [2,500]            1
+
+convention label counts (UNKNOWN/MIXED are counted, never assigned):
+conv
+MIXED       260
+FIXEDTOT    222
+NORM        135
+UNKNOWN      77
+
+convention x panel-mappability:
+panel     mapped  unmapped
+conv                      
+FIXEDTOT     150        72
+MIXED        209        51
+NORM         121        14
+UNKNOWN       66        11
+
+==============================================================================================================================================================================================
+Q2  THE GRID - 7 panels x n in {5,10,20,30,40,60} x 3 live arms (FIXEDTOT, NORM, MATCHED), every point reported
+==============================================================================================================================================================================================
+  panel U56      done (18 live points)
+  panel ETF36    done (18 live points)
+  panel ETF24    done (18 live points)
+  panel STK20    done (18 live points)
+  panel B136     done (18 live points)
+  panel BSTK100  done (18 live points)
+  panel SMALL    done (18 live points)
+
+live points at 10 bps: 126  (+ 28 reference rows)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+THE CHANNEL: realised gross across the count grid, by panel and convention (mean held gross)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+n                  5.0  10.0  20.0  30.0  40.0  60.0  SPAN   REL
+panel   arm                                                     
+B136    FIXEDTOT 0.745 0.745 0.739 0.735 0.728 0.709 0.036 0.049
+        MATCHED  0.745 0.745 0.739 0.735 0.728 0.709 0.036 0.049
+        NORM     0.750 0.750 0.750 0.750 0.750 0.750 0.000 0.000
+BSTK100 FIXEDTOT 0.737 0.735 0.733 0.726 0.715 0.685 0.052 0.073
+        MATCHED  0.737 0.736 0.733 0.726 0.715 0.685 0.052 0.073
+        NORM     0.748 0.748 0.748 0.748 0.748 0.748 0.000 0.000
+ETF24   FIXEDTOT 0.694 0.669 0.608 0.427 0.320 0.214 0.480 0.983
+        MATCHED  0.694 0.669 0.608 0.427 0.320 0.214 0.480 0.982
+        NORM     0.736 0.736 0.736 0.736 0.736 0.736 0.000 0.000
+ETF36   FIXEDTOT 0.738 0.719 0.676 0.596 0.455 0.304 0.435 0.748
+        MATCHED  0.738 0.719 0.676 0.596 0.455 0.304 0.435 0.748
+        NORM     0.750 0.750 0.750 0.750 0.750 0.750 0.000 0.000
+SMALL   FIXEDTOT 0.747 0.747 0.745 0.744 0.741 0.731 0.017 0.023
+        MATCHED  0.747 0.747 0.745 0.744 0.741 0.731 0.017 0.023
+        NORM     0.750 0.750 0.750 0.750 0.750 0.750 0.000 0.000
+STK20   FIXEDTOT 0.719 0.691 0.492 0.328 0.246 0.164 0.555 1.261
+        MATCHED  0.719 0.691 0.492 0.328 0.246 0.164 0.555 1.260
+        NORM     0.747 0.747 0.747 0.747 0.747 0.747 0.000 0.000
+U56     FIXEDTOT 0.741 0.737 0.717 0.688 0.648 0.467 0.274 0.411
+        MATCHED  0.741 0.737 0.717 0.688 0.648 0.468 0.273 0.410
+        NORM     0.750 0.750 0.750 0.750 0.750 0.750 0.000 0.000
+
+gross span by convention over the 7 panels:
+n         SPAN                REL             
+           min median   max   min median   max
+arm                                           
+FIXEDTOT 0.017  0.274 0.555 0.023  0.411 1.261
+MATCHED  0.017  0.273 0.555 0.023  0.410 1.260
+NORM     0.000  0.000 0.000 0.000  0.000 0.000
+
+==============================================================================================================================================================================================
+Q1 ANSWER - how many published count findings are GROSS-LADDER points
+(pre-registered: realised-gross span across the cell's OWN quoted grid >= 0.05 NAV; relative companion span/mean >= 0.10)
+==============================================================================================================================================================================================
+ladder
+UNKNOWN     337
+FLAT        176
+LADDER       95
+UNMAPPED     86
+
+by convention:
+ladder    FLAT  LADDER  UNKNOWN  UNMAPPED
+conv                                     
+FIXEDTOT    55      95        0        72
+MIXED        0       0      260         0
+NORM       121       0        0        14
+UNKNOWN      0       0       77         0
+
+DECIDABLE cells (mapped panel AND known convention): 271 of 694 (39.0% coverage)
+  GROSS-LADDER points (span >= 0.05): 95 of 271 = 35.1%
+  relative criterion (span/mean >= 0.1): 85 of 271 = 31.4%
+  span distribution over decidable cells: min 0.000 p25 0.000 median 0.017 p75 0.078 max 0.555
+  distinct FILES carrying at least one ladder cell: 14 of 23
+  cells whose grid top implies gross > 1.00 of NAV (leverage, PROTOCOL rule 2): 0 of 271; max implied gross 0.75
+
+  ladder rate by convention and panel (decidable cells only):
+ladder            FLAT  LADDER
+conv     panel                
+FIXEDTOT B136       23      19
+         BSTK100     3       7
+         ETF24       0       7
+         ETF36       0       7
+         SMALL      20      16
+         STK20       0       7
+         U56         9      32
+NORM     B136       29       0
+         BSTK100    10       0
+         ETF24      10       0
+         ETF36      10       0
+         SMALL      23       0
+         STK20      10       0
+         U56        29       0
+
+  the 12 largest gross spans in the record:
+                                                                               file  panel      conv  n_min  n_max  g_lo  g_hi  gross_span  n_argmax
+328                          2026-09-06_is-n20-a-constant-or-a-grid-edge_C.grid.csv  STK20  FIXEDTOT      5     60 0.719 0.164       0.555        20
+329                          2026-09-06_is-n20-a-constant-or-a-grid-edge_C.grid.csv  STK20  FIXEDTOT      5     60 0.719 0.164       0.555        10
+330                          2026-09-06_is-n20-a-constant-or-a-grid-edge_C.grid.csv  STK20  FIXEDTOT      5     60 0.719 0.164       0.555        20
+443  2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.duplicates.csv  STK20  FIXEDTOT      5     60 0.719 0.164       0.555        20
+477        2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.grid.csv  STK20  FIXEDTOT      5     60 0.719 0.164       0.555        20
+478        2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.grid.csv  STK20  FIXEDTOT      5     60 0.719 0.164       0.555        10
+479        2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.grid.csv  STK20  FIXEDTOT      5     60 0.719 0.164       0.555        20
+310                          2026-09-06_is-n20-a-constant-or-a-grid-edge_C.grid.csv  ETF24  FIXEDTOT      5     60 0.694 0.214       0.480        20
+311                          2026-09-06_is-n20-a-constant-or-a-grid-edge_C.grid.csv  ETF24  FIXEDTOT      5     60 0.694 0.214       0.480        10
+312                          2026-09-06_is-n20-a-constant-or-a-grid-edge_C.grid.csv  ETF24  FIXEDTOT      5     60 0.694 0.214       0.480        20
+437  2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.duplicates.csv  ETF24  FIXEDTOT      5     60 0.694 0.214       0.480        20
+459        2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.grid.csv  ETF24  FIXEDTOT      5     60 0.694 0.214       0.480        20
+
+COVERAGE LIMIT (published, not hidden): 337 cells label-UNKNOWN/MIXED, 86 cells on an unmappable panel.
+
+DEDUPLICATED (one row per file x count-column x panel x convention SWEEP, not per Sharpe column): 232 sweeps, 102 decidable, 37 gross ladders (36.3% of decidable)
+
+BOUNDS on the record-wide ladder rate, carrying the undecidable cells explicitly:
+  275 label-UNKNOWN/MIXED cells sit on a MAPPABLE panel; under a FIXEDTOT reading 143 of them would be ladders, under NORM 0.
+  LOWER bound (undecidables all FLAT/NORM): 95/546 = 17.4%
+  POINT estimate on decidable cells only:   95/271 = 35.1%
+  UPPER bound (undecidables all FIXEDTOT):  238/546 = 43.6%
+
+==============================================================================================================================================================================================
+Q2 ANSWER - the width curve re-quoted at MATCHED realised gross (10 bps, full sample)
+==============================================================================================================================================================================================
+n                 5.0   10.0  20.0  30.0  40.0  60.0
+panel   arm                                         
+B136    FIXEDTOT 0.880 0.893 0.957 0.972 1.003 1.014
+        MATCHED  0.876 0.894 0.943 0.952 0.989 1.000
+        NORM     0.876 0.895 0.943 0.953 0.989 1.000
+BSTK100 FIXEDTOT 0.870 0.906 1.002 1.019 1.045 1.117
+        MATCHED  0.849 0.879 0.946 0.965 0.990 1.022
+        NORM     0.849 0.879 0.946 0.965 0.990 1.022
+ETF24   FIXEDTOT 0.575 0.679 0.778 0.771 0.771 0.771
+        MATCHED  0.585 0.673 0.714 0.712 0.713 0.713
+        NORM     0.585 0.673 0.714 0.711 0.711 0.711
+ETF36   FIXEDTOT 0.534 0.687 0.817 0.789 0.798 0.798
+        MATCHED  0.529 0.613 0.672 0.621 0.631 0.632
+        NORM     0.529 0.613 0.672 0.621 0.631 0.631
+SMALL   FIXEDTOT 0.317 0.478 0.463 0.413 0.417 0.400
+        MATCHED  0.321 0.477 0.450 0.401 0.410 0.419
+        NORM     0.321 0.477 0.450 0.401 0.410 0.419
+STK20   FIXEDTOT 1.056 1.304 1.337 1.336 1.336 1.335
+        MATCHED  1.044 1.243 1.247 1.248 1.249 1.249
+        NORM     1.044 1.243 1.244 1.244 1.244 1.244
+U56     FIXEDTOT 0.950 0.927 1.092 1.098 1.124 1.123
+        MATCHED  0.921 0.930 1.063 1.053 1.051 1.049
+        NORM     0.921 0.930 1.064 1.053 1.051 1.049
+
+WIDTH PREMIUM (Sharpe at the panel's widest n minus Sharpe at n=5), by convention:
+         FIXEDTOT   NORM  MATCHED
+U56        0.1730 0.1279   0.1278
+ETF36      0.2643 0.1025   0.1028
+ETF24      0.1959 0.1262   0.1282
+STK20      0.2796 0.2001   0.2050
+B136       0.1338 0.1238   0.1239
+BSTK100    0.2467 0.1729   0.1734
+SMALL      0.0829 0.0985   0.0985
+MEAN       0.1966 0.1360   0.1371
+
+ARGMAX n by panel and convention (full-sample Sharpe):
+         FIXEDTOT  NORM  MATCHED
+U56            40    20       20
+ETF36          20    20       20
+ETF24          20    20       20
+STK20          20    20       60
+B136           60    60       60
+BSTK100        60    60       60
+SMALL          10    10       10
+argmax cells that MOVE when the gross channel is closed (MATCHED vs FIXEDTOT): 2 of 7
+argmax cells that move under plain NORM vs FIXEDTOT: 1 of 7
+
+KEEP paths over the 126 live points, by convention (10 bps):
+          pass_4a  pass_4b  n_points
+arm                                 
+FIXEDTOT        0       10        42
+MATCHED         0        3        42
+NORM            0        5        42
+TOTAL 10 bps: 4a 0/126, 4b 18/126
+TOTAL 25 bps: 4a 0/126, 4b 2/126
+
+4b passes at 10 bps:
+       panel      n       arm  realised_gross  CAGR  Sharpe  MaxDD    H1    H2  OOS_Sharpe  turnover_yr
+6        U56 20.000  FIXEDTOT           0.717 0.127   1.092 -0.183 1.088 1.102       1.168        9.631
+7        U56 20.000      NORM           0.750 0.128   1.064 -0.183 1.068 1.066       1.131       10.996
+8        U56 20.000   MATCHED           0.717 0.122   1.063 -0.175 1.068 1.066       1.131       10.510
+9        U56 30.000  FIXEDTOT           0.688 0.110   1.098 -0.166 1.026 1.167       1.238        6.975
+10       U56 30.000      NORM           0.750 0.115   1.053 -0.175 1.021 1.086       1.153        9.285
+13       U56 40.000      NORM           0.750 0.107   1.051 -0.167 1.050 1.055       1.136        8.428
+132    STK20  5.000  FIXEDTOT           0.719 0.186   1.056 -0.184 0.995 1.113       1.092       14.242
+135    STK20 10.000  FIXEDTOT           0.691 0.190   1.304 -0.173 1.295 1.318       1.364        8.451
+138    STK20 20.000  FIXEDTOT           0.492 0.120   1.337 -0.121 1.341 1.341       1.446        3.495
+188     B136 40.000  FIXEDTOT           0.728 0.119   1.003 -0.191 1.133 0.886       0.979       10.318
+189     B136 40.000      NORM           0.750 0.120   0.989 -0.191 1.108 0.880       0.971       11.281
+190     B136 40.000   MATCHED           0.728 0.117   0.989 -0.186 1.108 0.880       0.972       10.953
+191     B136 60.000  FIXEDTOT           0.709 0.109   1.014 -0.190 1.111 0.926       1.026        8.087
+192     B136 60.000      NORM           0.750 0.114   1.000 -0.187 1.097 0.911       1.005        9.752
+193     B136 60.000   MATCHED           0.709 0.108   1.000 -0.177 1.097 0.911       1.005        9.227
+229  BSTK100 30.000  FIXEDTOT           0.726 0.129   1.019 -0.194 1.171 0.881       0.976       10.526
+232  BSTK100 40.000  FIXEDTOT           0.715 0.124   1.045 -0.190 1.168 0.932       1.033        8.799
+235  BSTK100 60.000  FIXEDTOT           0.685 0.116   1.117 -0.171 1.229 1.011       1.129        6.283
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+LEVEL vs TIMING - the same n, the same mean gross, only the overlay's TIMING differs
+(FIXEDTOT minus MATCHED at every (panel, n); MATCHED already holds mean realised gross equal)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              d_Sharpe  d_OOS_Sharpe  d_MaxDD  d_CAGR  gross_gap
+panel   n                                                       
+B136    5.0     0.0044       -0.0103   0.0048  0.0010    -0.0000
+        10.0   -0.0015        0.0026  -0.0015  0.0001    -0.0000
+        20.0    0.0138        0.0084  -0.0028  0.0029    -0.0000
+        30.0    0.0195        0.0081  -0.0040  0.0033    -0.0000
+        40.0    0.0148        0.0075  -0.0053  0.0024    -0.0000
+        60.0    0.0142        0.0211  -0.0130  0.0011    -0.0000
+BSTK100 5.0     0.0212        0.0211   0.0618  0.0023    -0.0000
+        10.0    0.0271        0.0239   0.0627  0.0010    -0.0000
+        20.0    0.0565        0.0472   0.0641  0.0025    -0.0000
+        30.0    0.0539        0.0475   0.0668 -0.0000    -0.0000
+        40.0    0.0551        0.0571   0.0621 -0.0022    -0.0000
+        60.0    0.0945        0.1068   0.0724 -0.0031    -0.0001
+ETF24   5.0    -0.0096        0.0090   0.0638 -0.0034    -0.0000
+        10.0    0.0065        0.0705   0.0651 -0.0036    -0.0000
+        20.0    0.0637        0.1593   0.0961 -0.0016    -0.0001
+        30.0    0.0589        0.1520   0.0683 -0.0020    -0.0001
+        40.0    0.0585        0.1512   0.0530 -0.0016    -0.0001
+        60.0    0.0581        0.1504   0.0365 -0.0011    -0.0001
+ETF36   5.0     0.0054        0.0131  -0.0005  0.0010    -0.0000
+        10.0    0.0740        0.0899   0.0319  0.0085    -0.0000
+        20.0    0.1449        0.1986   0.0497  0.0135    -0.0000
+        30.0    0.1679        0.2534   0.0580  0.0111    -0.0000
+        40.0    0.1668        0.2532   0.0475  0.0080    -0.0001
+        60.0    0.1669        0.2535   0.0329  0.0053    -0.0001
+SMALL   5.0    -0.0033       -0.0050  -0.0013 -0.0008    -0.0000
+        10.0    0.0005        0.0012   0.0213  0.0001    -0.0000
+        20.0    0.0130        0.0216   0.0585  0.0019    -0.0000
+        30.0    0.0116        0.0205   0.0786  0.0014    -0.0000
+        40.0    0.0066        0.0157   0.0821  0.0004    -0.0000
+        60.0   -0.0189       -0.0171   0.0819 -0.0037    -0.0000
+STK20   5.0     0.0118       -0.0828   0.1133 -0.0048    -0.0001
+        10.0    0.0607       -0.0465   0.1144 -0.0037    -0.0001
+        20.0    0.0901        0.0112   0.0885 -0.0066    -0.0003
+        30.0    0.0882        0.0114   0.0609 -0.0046    -0.0003
+        40.0    0.0873        0.0114   0.0464 -0.0035    -0.0003
+        60.0    0.0864        0.0115   0.0314 -0.0024    -0.0002
+U56     5.0     0.0291        0.0391  -0.0032  0.0053    -0.0000
+        10.0   -0.0037       -0.0176  -0.0029 -0.0002    -0.0000
+        20.0    0.0286        0.0374  -0.0078  0.0044    -0.0000
+        30.0    0.0453        0.0852  -0.0048  0.0046    -0.0001
+        40.0    0.0731        0.1303   0.0050  0.0043    -0.0001
+        60.0    0.0744        0.1418   0.0004  0.0017    -0.0002
+
+over the 42 matched (panel, n) cells: mean d_Sharpe +0.0480 (positive on 37/42), mean d_OOS_Sharpe +0.0587 (positive on 36/42), mean gross gap -0.0001 (must be ~0 by construction)
+mean d_MaxDD +0.0413 (positive = FIXED draws down LESS), mean d_CAGR +0.09%
+
+binding 4b bar over all failing live points (10 bps):
+fail_4b
+H1,H2,OOS,DD,CAGR    38
+DD                   14
+CAGR                 12
+H2,OOS,DD            12
+H1,H2,OOS,CAGR        8
+H1,DD                 5
+H1,CAGR               4
+H1,H2,CAGR            4
+H2                    4
+H2,DD                 4
+
+==============================================================================================================================================================================================
+Q3 ANSWER - RULE 8 walk-forward: n chosen on IS 2009-2016 only, OOS 2017-2026 read once
+==============================================================================================================================================================================================
+
+--- 10 bps ---
+arm      EWALL  ISARGMAX-FIXEDTOT  ISARGMAX-MATCHED  ISARGMAX-NORM  NOTHING(RULESv2)  RULESv1   SPY
+panel                                                                                              
+B136     1.019              0.903             0.781          0.781             1.119    0.576 0.882
+BSTK100  1.010              1.129             0.749          0.749             1.138    0.544 0.882
+ETF24    0.726              0.889             0.729          0.728             0.868    0.547 0.882
+ETF36    0.666              0.942             0.666          0.666             0.927    0.437 0.882
+SMALL    0.291              0.487             0.466          0.466             0.568    0.492 0.882
+STK20    1.434              1.364             1.433          1.410             1.443    1.109 0.882
+U56      1.112              1.168             1.131          1.131             1.285    0.747 0.882
+
+pooled equal-weight over the 7 panels:
+                   OOS_CAGR  OOS_Sharpe  OOS_MaxDD  realised_gross  n_pick_median
+arm                                                                              
+NOTHING(RULESv2)      0.085       1.050     -0.132           0.514            NaN
+ISARGMAX-FIXEDTOT     0.117       0.983     -0.187           0.696         20.000
+EWALL                 0.105       0.894     -0.243           0.747            NaN
+SPY                   0.155       0.882     -0.337           1.000            NaN
+ISARGMAX-MATCHED      0.086       0.851     -0.204           0.593         20.000
+ISARGMAX-NORM         0.121       0.847     -0.248           0.748         20.000
+RULESv1               0.078       0.636     -0.216           0.740            NaN
+
+--- 25 bps ---
+arm      EWALL  ISARGMAX-FIXEDTOT  ISARGMAX-MATCHED  ISARGMAX-NORM  NOTHING(RULESv2)  RULESv1   SPY
+panel                                                                                              
+B136     0.895              0.766             0.619          0.620             1.074    0.155 0.882
+BSTK100  0.901              1.035             0.914          0.913             1.093    0.213 0.882
+ETF24    0.613              0.816             0.611          0.610             0.838    0.335 0.882
+ETF36    0.517              0.836             0.516          0.517             0.888    0.136 0.882
+SMALL    0.135              0.302             0.281          0.281             0.507    0.167 0.882
+STK20    1.344              1.278             1.342          1.347             1.414    0.964 0.882
+U56      0.987              1.179             0.987          0.989             1.248    0.399 0.882
+
+pooled equal-weight over the 7 panels:
+                   OOS_CAGR  OOS_Sharpe  OOS_MaxDD  realised_gross  n_pick_median
+arm                                                                              
+NOTHING(RULESv2)      0.081       1.009     -0.134           0.514            NaN
+ISARGMAX-FIXEDTOT     0.089       0.887     -0.178           0.632         30.000
+SPY                   0.155       0.882     -0.337           1.000            NaN
+EWALL                 0.089       0.770     -0.255           0.747            NaN
+ISARGMAX-NORM         0.094       0.754     -0.252           0.748         20.000
+ISARGMAX-MATCHED      0.060       0.753     -0.197           0.547         40.000
+RULESv1               0.040       0.339     -0.249           0.740            NaN
+ISARGMAX-FIXEDTOT    beats do-nothing OOS on 2/7 panels; beats the un-ranked EWall on 5/7
+ISARGMAX-NORM        beats do-nothing OOS on 0/7 panels; beats the un-ranked EWall on 3/7
+ISARGMAX-MATCHED     beats do-nothing OOS on 0/7 panels; beats the un-ranked EWall on 4/7
+
+IS picks (n) by arm, 10 bps:
+arm      ISARGMAX-FIXEDTOT  ISARGMAX-MATCHED  ISARGMAX-NORM
+panel                                                      
+B136                  30.0              10.0           10.0
+BSTK100               60.0              10.0           10.0
+ETF24                 20.0              20.0           20.0
+ETF36                 20.0              40.0           40.0
+SMALL                 20.0              20.0           20.0
+STK20                 10.0              60.0           10.0
+U56                   20.0              20.0           20.0
+IS pick identical under FIXEDTOT and MATCHED on 3/7 panels
+
+FIXEDTOT minus MATCHED, OOS Sharpe (the gross channel's own OOS contribution):
+     panel  n_fixed  n_matched  OOS_Sharpe_fixed  OOS_Sharpe_matched  excess
+0      U56   20.000     20.000             1.168               1.131   0.037
+1    ETF36   20.000     40.000             0.942               0.666   0.275
+2    ETF24   20.000     20.000             0.889               0.729   0.159
+3    STK20   10.000     60.000             1.364               1.433  -0.069
+4     B136   30.000     10.000             0.903               0.781   0.123
+5  BSTK100   60.000     10.000             1.129               0.749   0.380
+6    SMALL   20.000     20.000             0.487               0.466   0.022
+mean excess +0.1324, sign positive on 6/7 panels
+
+Spearman(gross span, published n argmax) over decidable census cells: -0.080 (N=271)
+
+==============================================================================================================================================================================================
+Artifacts: .census.csv .census_rejects.csv .grid.csv .gross.csv .argmax.csv .premium.csv .walkforward.csv
+==============================================================================================================================================================================================
