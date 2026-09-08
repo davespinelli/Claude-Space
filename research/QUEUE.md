@@ -1,6 +1,5 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
-468. is-phi-a-standalone-de-grossing-instrument — idea 244 found idea 73's count convention is exactly the equal-weight book times a breadth-timed overlay phi_t=n_held/n, and that at matched MEAN gross the overlay's TIMING alone is worth +0.0480 full-sample and +0.0587 OOS Sharpe on 37 and 36 of 42 (panel,n) cells, paying in drawdown (+4.1 pp MaxDD) for ~0 CAGR. It has never been priced on its own — only smuggled inside count sweeps. Run phi as a standalone overlay on the un-ranked EWall book against idea 74's instrument menu (which put de-gross at 0.63 pp per pp) and report whether it is cheaper than the menu's cheapest gate. Max 2 params. (2026-09-08)
 469. label-the-337-undecidable-count-cells-from-the-AST — idea 244 could label only 39.0% of its 694 count-sweep cells (222 FIXEDTOT, 135 NORM) because 260 parent scripts match BOTH a FIXED and a NORM pattern with no convention column to separate them, leaving the record-wide ladder rate bounded at 17.4-43.6% rather than pointed. Replace the regex labeller with an AST walk that resolves which weighting expression actually feeds the CSV each row came from, and re-quote the bound. Max 2 params. (2026-09-08)
 470. does-the-matched-gross-control-belong-on-every-published-DIAL-not-just-count — idea 244 showed a matched-mean-gross control is necessary but not sufficient for count dials, and that 7 of 10 4b passes on a FIXED count grid do not survive it. Idea 244's channel is n_held/n, but any dial that changes how many names clear a gate (band width, vol cap, cadence) moves the same overlay. Census the record's non-count dials for a realised-gross span and report how many carry the same confound. Max 2 params. (2026-09-08)
 460. back-fill-the-EWall-column-on-the-319-files-that-lack-it — idea 239 found 319 of 634 committed multi-panel files publish no un-ranked control. Take the subset whose headline is a PANEL ORDERING (U56 > B136 > SMALL439 and friends) and re-quote each ordering as an EXCESS over that panel's EW_ALL; report how many orderings survive the restatement. Max 2 params. (2026-09-08)
@@ -87,6 +86,7 @@
 
 
 ## In progress
+468. is-phi-a-standalone-de-grossing-instrument — idea 244 found idea 73's count convention is exactly the equal-weight book times a breadth-timed overlay phi_t=n_held/n, and that at matched MEAN gross the overlay's TIMING alone is worth +0.0480 full-sample and +0.0587 OOS Sharpe on 37 and 36 of 42 (panel,n) cells, paying in drawdown (+4.1 pp MaxDD) for ~0 CAGR. It has never been priced on its own — only smuggled inside count sweeps. Run phi as a standalone overlay on the un-ranked EWall book against idea 74's instrument menu (which put de-gross at 0.63 pp per pp) and report whether it is cheaper than the menu's cheapest gate. Max 2 params. (2026-09-08) **[CLAIMED 2026-09-08, cloud]**
 
 
 
