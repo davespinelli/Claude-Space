@@ -425,7 +425,7 @@ def keep_paths(G, REF):
         for cost in (10.0, 25.0):
             v2 = net(*REF[pk]["v2"], cost)
             vm, vh1, vh2 = metrics(v2), *halves(v2)
-            sub = G[(G.panel == pk) & (G.cost == cost) & (G.seed == -1)]
+            sub = G[(G.panel == pk) & (G.cost == cost)]
             for r in sub.itertuples():
                 f4a = (r.H1 > vh1 and r.H2 > vh2 and abs(r.MaxDD) <= abs(vm["MaxDD"]))
                 fails = []
@@ -439,13 +439,15 @@ def keep_paths(G, REF):
                     fails.append("MaxDD")
                 if r.CAGR < sm["CAGR"] * 0.7:
                     fails.append("CAGR")
-                rows.append(dict(panel=pk, cost=cost, key=r.key, q=r.q, CAGR=r.CAGR,
+                rows.append(dict(panel=pk, cost=cost, key=r.key, seed=r.seed, q=r.q,
+                                 CAGR=r.CAGR,
                                  Sharpe=r.Sharpe, MaxDD=r.MaxDD, H1=r.H1, H2=r.H2,
                                  OOS_CAGR=r.OOS_CAGR, OOS_Sharpe=r.OOS_Sharpe,
                                  OOS_MaxDD=r.OOS_MaxDD, keep4a=f4a, keep4b=not fails,
                                  failing="|".join(fails) or "none"))
-    KP = pd.DataFrame(rows)
-    KP.to_csv(OUT / f"{STEM}.keep.csv", index=False)
+    KPall = pd.DataFrame(rows)
+    KPall.to_csv(OUT / f"{STEM}.keep.csv", index=False)
+    KP = KPall[KPall.seed == -1]
     P(f"\n  {len(KP)} deterministic cells (3 panels x 6 keys x 6 q x 2 rungs).")
     P(f"      4a (vs live RULES v2): {int(KP.keep4a.sum())} of {len(KP)}")
     P(f"      4b (vs SPY):           {int(KP.keep4b.sum())} of {len(KP)}")
@@ -467,7 +469,27 @@ def keep_paths(G, REF):
             P(f"          {r.panel:9s} {r.key:9s} q={r.q:.2f}  {r.CAGR:7.2%}/{r.Sharpe:6.3f}/"
               f"{r.MaxDD:7.2%}  halves {r.H1:.3f}/{r.H2:.3f}  OOS {r.OOS_CAGR:7.2%}/"
               f"{r.OOS_Sharpe:6.3f}/{r.OOS_MaxDD:7.2%}")
-    return KP
+
+    P(f"\n  THE 4b BASE RATE OF A MEANINGLESS KEY.  The same trim, same panel, same rung, with")
+    P(f"  a RANDOM key: how often does 4b pass anyway?  (8 seeds per cell.)")
+    P(f"      {'panel':9s} {'cost':>5s} {'null':7s} " +
+      " ".join(f"{q:>7.2f}" for q in Q_GRID) + "     COMP")
+    for pk in KPall.panel.unique():
+        for cost in (10.0, 25.0):
+            for nk in NULL_KEYS:
+                cells = []
+                for q in Q_GRID:
+                    s = KPall[(KPall.panel == pk) & (KPall.cost == cost)
+                              & (KPall.key == nk) & (KPall.q == q)]
+                    cells.append(f"{int(s.keep4b.sum())}/{len(s)}")
+                comp = KPall[(KPall.panel == pk) & (KPall.cost == cost)
+                             & (KPall.key == "COMP")].set_index("q").reindex(Q_GRID)
+                P(f"      {pk:9s} {cost:5.0f} {nk:7s} " +
+                  " ".join(f"{c:>7s}" for c in cells) + "     " +
+                  "".join("P" if b else "." for b in comp.keep4b.values))
+    P(f"\n      (`P` = COMP passes 4b at that q, `.` = fails.  A null column of 4/8 means the")
+    P(f"      4b bar admits a random key at that trim depth half the time.)")
+    return KPall
 
 
 def main():
