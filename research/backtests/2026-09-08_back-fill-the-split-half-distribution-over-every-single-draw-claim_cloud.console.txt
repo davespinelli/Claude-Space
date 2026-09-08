@@ -1,0 +1,253 @@
+======================================================================================================================
+IDEA 225  back-fill-the-split-half-distribution-over-every-single-draw-claim  (cloud, 2026-09-08)
+======================================================================================================================
+
+----------------------------------------------------------------------------------------------------------------------
+Q1  CENSUS — every seeded partition in every committed backtest script
+----------------------------------------------------------------------------------------------------------------------
+  CLASSIFIER (stated, not asserted).  A call is a PARTITION if it is rng.permutation,
+  rng.shuffle, or rng.choice(..., replace=False).  A for-loop is a REPETITION loop iff none
+  of its targets is referenced in its body (`for _ in range(S)` is; `for tag, names in [...]`
+  is not).  A partition is REPEATED if it sits inside a repetition loop, or inside a function
+  that is itself called inside one.  Everything else is SINGLE-DRAW at its own call site.
+  Every single-draw hit is printed below with its family, so both error directions are visible.
+
+  scripts parsed: 389 of 389  (0 parse failures)
+  seeded partition calls found: 109 in 74 scripts
+  REPEATED at their call site: 29;  SINGLE-DRAW: 80 in 60 scripts
+
+  single-draw hits by adjudicated family:
+      16  OTHER (printed individually below)
+      14  SUB-PANEL DRAW (corpus construction)
+      11  SUB-PANEL DRAW (column subset)
+       9  DROPOUT resample (ticker-dropout robustness)
+       9  SUB-PANEL DRAW (corpus construction, one draw per (k, seed) definition)
+       5  ROTATION/OFFSET null (circular rotations of a signal, idea 191 family)
+       4  DROPOUT resample
+       4  NULL INSTRUMENT construction
+       3  CORPUS SPLIT-HALF
+       1  SUB-PANEL DRAW (null screen)
+       1  ROTATION/OFFSET null
+       1  SUB-PANEL DRAW (enumerated draw set)
+       1  LABEL PERMUTATION (exchangeability null)
+       1  ROTATION/OFFSET null (block draw)
+
+  the family under test — CORPUS SPLIT-HALF (a seeded permutation of a BOOK list sliced
+  into two complementary halves), every hit printed:
+    2026-09-05_does-any-fitted-dial-beat-its-own-modal-pick_cloud.py:511  fn=main
+        perm = rng.permutation(len(names))
+    2026-09-08_a-flip-rate-estimator-that-is-not-confounded-by-block-count_B.py:556  fn=main
+        perm = rng.permutation(n)[:nb * K].reshape(nb, K)
+    2026-09-08_a-flip-rate-estimator-that-is-not-confounded-by-block-count_cloud.py:303  fn=blocks_207
+        draw = rng.permutation(N)[:pool]
+
+  OTHER (unadjudicated by the family table), every hit printed:
+    2026-09-05_abstention-is-the-only-thing-that-ever-helps_cloud.py:298  fn=main  idx = rng.permutation(len(cells))[:k_abs]
+    2026-09-05_audit-every-committed-null-for-a-salted-seed_C.py:704  fn=main  sel = rng.permutation(np.arange(N))[:N_DRAW]
+    2026-09-05_clause-11b-draw-count-by-enumeration_cloud.py:610  fn=main  dr = a[rng.choice(N, size=kap, replace=False)]
+    2026-09-05_publish-the-failing-bar-not-the-required-gross_cloud.py:455  fn=main  xs = rng.permutation(x)
+    2026-09-05_quote-the-lift-not-the-rate_cloud.py:462  fn=main  perm[b][idx] = rng.permutation(v)
+    2026-09-06_is-breadth-a-small-cap-dummy-everywhere-in-the-record_cloud.py:231  fn=main  sc = list(rng.choice(src["s_stk"], size=ns_, replace=False)) if ns_ else []
+    2026-09-06_is-breadth-a-small-cap-dummy-everywhere-in-the-record_cloud.py:232  fn=main  lc = list(rng.choice(src["b_stk"], size=nl_, replace=False)) if nl_ else []
+    2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_cloud.py:282  fn=main  s1 = sorted(rng.choice(etf_pool, size=K_MIX, replace=False).tolist())
+    2026-09-07_selection-vs-no-selection-as-the-real-question_B.py:512  fn=main  idx = rng.choice(len(rest), size=k - 1, replace=False)
+    2026-09-08_a-flip-rate-estimator-that-is-not-confounded-by-block-count_B.py:747  fn=main  col.append(bool(abs(d) > band_of(a[rng.permutation(len(a))[:K]], stat)))
+    2026-09-08_a-turnover-matched-null-for-suppressing-overlays_B.py:788  fn=main  s_noise[rngn.choice(J, size=K, replace=False)] = True
+    2026-09-08_back-fill-the-split-half-distribution-over-every-single-draw-claim_cloud.py:375  fn=nan  perm = rng.permutation(len(PACK[tag]["names"]))          # SAME stream order as 
+    2026-09-08_does-the-q95-band-hold-its-nominal-5-percent_cloud.py:193  fn=main  offs = np.random.default_rng(sd + 1).permutation(np.arange(1, J))[:D_POOL]
+    2026-09-08_is-the-EMPTY-POOL-RATE-the-only-dial-the-4b-screen-has_B.py:355  fn=rate_null  idx = rng.choice(n, size=k, replace=False)
+    2026-09-08_why-does-the-DD-ranking-die-on-U56_C.py:235  fn=draw  a = list(rng.choice(etf, n_e, replace=False)) if n_e else []
+    2026-09-08_why-does-the-DD-ranking-die-on-U56_C.py:236  fn=draw  b = list(rng.choice(stk, n_s, replace=False)) if n_s else []
+
+  ADJUDICATION.  Of the 3 corpus split-half hits, the ones that partition a BOOK
+  LIST and publish a verdict off it are idea 189's Q5 (`2026-09-05_does-any-fitted-dial-beat-its-own-modal-pick_cloud.py`).
+  The others partition BLOCKS OF A RETURN SERIES inside a flip-rate estimator, which is a
+  time-series block draw, not a corpus split, and publishes no split-half verdict.  So the
+  record contains ONE published family resting on a single seeded corpus split: idea 189's
+  Q5, 10 verdicts (2 corpora x 5 dials, seed 189500).  That family is back-filled in
+  full below — not sampled.
+  P2 HIT  (1 published family; <= 3 predicted)
+
+----------------------------------------------------------------------------------------------------------------------
+Q2  REPRODUCTION — idea 189's Q5, rebuilt from its committed ladder.csv alone
+----------------------------------------------------------------------------------------------------------------------
+  substrate: 2026-09-05_does-any-fitted-dial-beat-its-own-modal-pick_cloud.ladder.csv, 6048 rows.  Nothing re-simulated.
+  corpus A: 53 books, dials ['BAND', 'CADENCE', 'GROSS', 'N', 'SLEEVE']
+  corpus B: 115 books, dials ['BAND', 'CADENCE', 'GROSS', 'N', 'SLEEVE']
+
+  corpus  dial       mode(h1)  mode(h2)  agree    mean d  published     delta
+  A       GROSS           1.0       1.0   True   -0.0001    -0.0001  +0.00004
+  A       N                10        20  False   -0.0229    -0.0229  +0.00002
+  A       BAND           0.08      0.08   True   +0.0005    +0.0005  +0.00000
+  A       CADENCE           M         M   True   +0.0261    +0.0261  -0.00002
+  A       SLEEVE          0.3       0.3   True   +0.0000    +0.0000  +0.00000
+  B       GROSS           1.0       1.0   True   -0.0000    -0.0000  -0.00002
+  B       N                15        15   True   +0.0256    +0.0256  -0.00001
+  B       BAND           0.08      0.08   True   +0.0078    +0.0078  -0.00000
+  B       CADENCE           M         M   True   +0.0255    +0.0255  +0.00003
+  B       SLEEVE          0.3       0.3   True   +0.0030    +0.0030  +0.00003
+
+  max |delta| vs the published 4-dp values: 4.29e-05;  mode/agreement mismatches: 0
+  P1 HIT  (all 10 published verdicts reproduce)
+  REPRODUCTION PASS
+
+----------------------------------------------------------------------------------------------------------------------
+Q3  THE BACK-FILL — all 10 verdicts re-run as a distribution over S seeded splits
+----------------------------------------------------------------------------------------------------------------------
+  built S = 40 splits per cell  (23s)
+  built S = 200 splits per cell  (24s)
+  built S = 1000 splits per cell  (29s)
+
+  headline S = 200, seed 189500 (the parent's own seed, stream re-drawn)
+  The PUBLISHED column below is the full-precision reproduced value, not the 4-dp console
+  literal Q2 gated against: comparing signs on a printed '-0.0000' would manufacture flips
+  out of rounding.  A cell is DEGENERATE when every draw gives the same answer to 1e-6 (the
+  mode equals the per-book fit for every book); a sign flip inside a degenerate cell is a
+  flip between two zeros and is never counted as a moved verdict.
+  corpus dial       published    S-mean     S-sd  pctile  P(sign!=) agree pub agree rate  SIGN moves AGREE moves  degen
+  A      GROSS        -0.0001   -0.0001   0.0000    0.00      0.000      True       1.00       False       False  False
+  A      N            -0.0229   +0.0064   0.0187    0.06      0.250     False       0.32        True       False  False
+  A      BAND         +0.0005   +0.0005   0.0000    0.00      0.000      True       1.00       False       False  False
+  A      CADENCE      +0.0261   +0.0261   0.0000    0.00      0.000      True       1.00       False       False  False
+  A      SLEEVE       +0.0000   +0.0000   0.0000    0.00      0.000      True       1.00       False       False   True
+  B      GROSS        -0.0000   -0.0000   0.0000    0.00      0.000      True       1.00       False       False  False
+  B      N            +0.0256   +0.0201   0.0202    0.25      0.065      True       0.90       False       False  False
+  B      BAND         +0.0078   +0.0078   0.0000    0.03      0.000      True       1.00       False       False  False
+  B      CADENCE      +0.0255   +0.0255   0.0000    0.29      0.000      True       1.00       False       False  False
+  B      SLEEVE       +0.0030   +0.0030   0.0000    0.00      0.000      True       1.00       False       False  False
+
+  at S = 200: SIGN moves in 1 of 10 cells; SIGN+margin(0.005) in 1; MODE-AGREEMENT in 0
+  P3 MISS  (>= 2 of 10 change sign at S=200)
+  P4 MISS  (agreement less stable than sign)
+
+  the cell the queue names — A/N, published -0.0229:
+    S=200 mean +0.0064 (sd 0.0187); the published draw sits at the 6% percentile of its own distribution and its SIGN DIFFERS FROM the many-draw mean — idea 219's finding, reproduced here from a different substrate.
+
+  how much a single draw can move each cell (S = 200): mean sd across the 10 cells 0.0039, max 0.0202 (B/N); mean |published - S-mean| 0.0035
+
+----------------------------------------------------------------------------------------------------------------------
+Q4  THE GENERAL NUMBER — what PROTOCOL should quote for ANY single-draw split claim
+----------------------------------------------------------------------------------------------------------------------
+  Idea 219 committed 560 cells x 80 seeded half-splits.  Re-derived exactly from its ladder,
+  they give the sampling distribution of a SINGLE draw against its own many-draw mean at a
+  sample size 56x larger than the 10 cells above.
+
+  560 cells x 80 draws = 44800 single draws
+  P(one seeded draw disagrees in SIGN with its own many-draw mean): mean over cells 0.205, median 0.194, and 18.8% of cells are above 0.40 (a near coin flip)
+  mean |single draw - many-draw mean| = 0.0130, i.e. 1.15x the mean |effect| itself (0.0113)
+
+  the rate as a function of how far the effect is from zero (|mean| / sd of the draws):
+   |mean|/sd   cells   P(sign disagree)   mean |d|
+       <0.25     168              0.178     0.0020
+    0.25-0.5      61              0.335     0.0125
+       0.5-1     161              0.291     0.0126
+         1-2     115              0.148     0.0135
+          >2      55              0.009     0.0296
+
+  THE NUMBER: a single seeded split disagrees in sign with the settled answer 20.5% of the time on this corpus, and above 40% of the time in 105 of 560 cells.
+  P5 HIT  (general rate above 20% predicted)
+
+----------------------------------------------------------------------------------------------------------------------
+Q5  THE TWO TUNED PARAMETERS — S x verdict rule, all 9 grid points, none selected on
+----------------------------------------------------------------------------------------------------------------------
+
+       S  SIGN moves   SIGN+0.005 moves   MODE-AGREE moves   mean sd  mean |pub - mean|   (of 10 cells)
+      40           1                  1                  0    0.0045             0.0038
+     200           1                  1                  0    0.0039             0.0035  *
+    1000           1                  1                  0    0.0038             0.0036
+  the count is stable across S (the distribution is already settled by S = 40), so the
+  reported number is not an artefact of how many splits were run.
+
+----------------------------------------------------------------------------------------------------------------------
+Q6  CONSEQUENCE — does reading the mode off S splits instead of 1 change a BOOK?
+    (PROTOCOL 2/3/4/8: picks on IS <= 2016-12-31, OOS 2017-2026 read once, 10 bps)
+----------------------------------------------------------------------------------------------------------------------
+  corpus  dial       SINGLE (published)    S-MODE   FULL-MODE  S-MODE == SINGLE
+  A       GROSS                     1.0       1.0         1.0              True
+  A       N                          10        20          20             False
+  A       BAND                     0.08      0.08        0.08              True
+  A       CADENCE                     M         M           M              True
+  A       SLEEVE                    0.3       0.3         0.3              True
+  B       GROSS                     1.0       1.0         1.0              True
+  B       N                          15        15          15              True
+  B       BAND                     0.08      0.08        0.08              True
+  B       CADENCE                     M         M           M              True
+  B       SLEEVE                    0.3       0.3         0.3              True
+  the S-draw mode differs from the published single-draw mode in 1 of 10 cells
+
+  reference (U56 window, 10 bps): SPY 15.23%/0.889/-33.7%  OOS 15.45%/0.882/-33.7% | RULES v2 8.66%/1.206/-12.1%  OOS 9.53%/1.285/-12.1%
+
+  reference (SMALL window, 10 bps): SPY 14.13%/0.862/-33.7%  OOS 15.45%/0.882/-33.7% | RULES v2 3.80%/0.571/-14.7%  OOS 3.84%/0.566/-14.7%
+
+  corpus  arm             rows    CAGR  Sharpe   MaxDD  OOS CAGR  OOS Shrp  OOS MaxDD  4a KEEP  4b KEEP
+  A       FULL-MODE        265  10.60%   1.020  -17.8%    10.81%     1.020     -17.8%      194       40
+  A       S-MODE           265  10.60%   1.020  -17.8%    10.81%     1.020     -17.8%      194       40
+  A       SEL-SHARPE       265  10.80%   1.019  -18.2%    10.90%     1.010     -18.2%      179       40
+  A       SINGLE-MODE      265  10.96%   1.008  -18.4%    11.15%     1.005     -18.4%      178       38
+  B       FULL-MODE        575   5.64%   0.708  -17.9%     6.06%     0.738     -17.8%      164       62
+  B       S-MODE           575   5.64%   0.708  -17.9%     6.06%     0.738     -17.8%      164       62
+  B       SEL-SHARPE       575   5.54%   0.706  -18.2%     5.80%     0.725     -18.1%      179       54
+  B       SINGLE-MODE      575   5.64%   0.708  -17.9%     6.06%     0.738     -17.8%      164       62
+
+  PAIRED vs the do-nothing control SEL-SHARPE, OOS Sharpe:
+  corpus  arm             mean delta       t        wins  rows differing
+  A       SINGLE-MODE        -0.0053   -1.31      33/265              68
+  A       S-MODE             +0.0096    2.72      39/265              63
+  A       FULL-MODE          +0.0096    2.72      39/265              63
+  A       S - SINGLE         +0.0149    4.80      43/265              53
+  B       SINGLE-MODE        +0.0124    4.49     106/575             169
+  B       S-MODE             +0.0124    4.49     106/575             169
+  B       FULL-MODE          +0.0124    4.49     106/575             169
+  B       S - SINGLE         +0.0000    0.00       0/575               0
+  P6 MISS  (S-MODE does not beat SEL-SHARPE out of sample; 2 of 2 corpora positive)
+
+  IS THAT A SAMPLING RESULT OR A DIAL-EXPOSURE ONE? (idea 226/438's standing check — an
+  arm that changes the pick on some dials and not others can inherit a dial's own premium)
+  corpus  arm          dial       mean delta       t  rows differing
+  A       SINGLE-MODE  BAND          +0.0005    0.16              10
+  A       SINGLE-MODE  CADENCE       +0.0261    2.89               9
+  A       SINGLE-MODE  GROSS         -0.0001   -1.06               3
+  A       SINGLE-MODE  N             -0.0530   -3.31              46
+  A       SINGLE-MODE  LODO     CADENCE:-0.0131  BAND:-0.0067  SLEEVE:-0.0066  GROSS:-0.0066  N:+0.0066
+  A       SINGLE-MODE           all-dials -0.0053; dials whose removal kills or flips it: N
+  A       S-MODE       BAND          +0.0005    0.16              10
+  A       S-MODE       CADENCE       +0.0261    2.89               9
+  A       S-MODE       GROSS         -0.0001   -1.06               3
+  A       S-MODE       N             +0.0215    1.47              41
+  A       S-MODE       LODO     CADENCE:+0.0055  N:+0.0066  BAND:+0.0119  SLEEVE:+0.0120  GROSS:+0.0120
+  A       S-MODE                all-dials +0.0096; dials whose removal kills or flips it: none
+  B       SINGLE-MODE  BAND          +0.0078    2.08              36
+  B       SINGLE-MODE  CADENCE       +0.0255    3.08              13
+  B       SINGLE-MODE  GROSS         -0.0000   -0.54              18
+  B       SINGLE-MODE  N             +0.0256    2.54              88
+  B       SINGLE-MODE  SLEEVE        +0.0030    2.88              14
+  B       SINGLE-MODE  LODO     N:+0.0091  CADENCE:+0.0091  BAND:+0.0135  SLEEVE:+0.0147  GROSS:+0.0155
+  B       SINGLE-MODE           all-dials +0.0124; dials whose removal kills or flips it: none
+  B       S-MODE       BAND          +0.0078    2.08              36
+  B       S-MODE       CADENCE       +0.0255    3.08              13
+  B       S-MODE       GROSS         -0.0000   -0.54              18
+  B       S-MODE       N             +0.0256    2.54              88
+  B       S-MODE       SLEEVE        +0.0030    2.88              14
+  B       S-MODE       LODO     N:+0.0091  CADENCE:+0.0091  BAND:+0.0135  SLEEVE:+0.0147  GROSS:+0.0155
+  B       S-MODE                all-dials +0.0124; dials whose removal kills or flips it: none
+
+  BOTH KEEP PATHS, by parent panel (point-level verdicts inherited from the ladder):
+  parent  arm               4a    4b   rows
+  B136    FULL-MODE        192    37    250
+  B136    S-MODE           192    37    250
+  B136    SEL-SHARPE       177    36    250
+  B136    SINGLE-MODE      176    36    250
+  SMALL   FULL-MODE          2     0    250
+  SMALL   S-MODE             2     0    250
+  SMALL   SEL-SHARPE         2     0    250
+  SMALL   SINGLE-MODE        2     0    250
+  U56     FULL-MODE        164    65    340
+  U56     S-MODE           164    65    340
+  U56     SEL-SHARPE       179    58    340
+  U56     SINGLE-MODE      164    64    340
+  (counted as ZERO new evidence for idea 136 — these are the parent's own committed rows,
+   reproduced not recomputed, and per idea 144 nothing here is proposed as a book.)
+
+======================================================================================================================
+done in 33s
+======================================================================================================================
