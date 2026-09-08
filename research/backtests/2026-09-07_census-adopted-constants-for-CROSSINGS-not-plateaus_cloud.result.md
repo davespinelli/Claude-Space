@@ -134,12 +134,12 @@ and a census re-run against a refreshed cache would have to state it.
 
 ## Follow-ups proposed
 
-404. `is-the-BAND-the-only-clean-constant-in-RULES` — the band dial is the census's only cell that is
+407. `is-the-BAND-the-only-clean-constant-in-RULES` — the band dial is the census's only cell that is
      plateau, non-crossing, non-thin and non-flipping in 12/12. Test whether that survives finer band
      grids and other panels, since RULES v2's single adopted constant rests on it.
-405. `publish-step_delta-beside-every-adopted-constant` — PROTOCOL currently quotes a margin with no
+408. `publish-step_delta-beside-every-adopted-constant` — PROTOCOL currently quotes a margin with no
      scale. Propose the binding bar, its margin and its one-step motion as three required columns,
      and back-fill them over the record's committed KEEP rows.
-406. `why-do-4b-windows-have-width-0-on-four-of-six-dials` — the adopted value sits inside a 4b
+409. `why-do-4b-windows-have-width-0-on-four-of-six-dials` — the adopted value sits inside a 4b
      interval only on `f` and `vol`. Test whether the other four dials have empty windows because the
      book fails 4b everywhere along them (an exposure fact) or because the window is off-grid.
