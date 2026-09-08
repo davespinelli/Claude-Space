@@ -1,0 +1,224 @@
+Reading the record's published ceilings ...
+  idea 90 intervals.csv: 306 books, 72 with a published ceiling, 45 distinct (panel, book, arm) cells across panels ['broad', 'u56']
+[broad] universe_broad.json(136)    136 cols  eval 2009-01-13 -> 2026-09-04 | G1 H.run vs engine.backtest max|diff| = 0.000e+00
+[u56  ] universe.json(56)            56 cols  eval 2009-01-13 -> 2026-09-04 | G1 H.run vs engine.backtest max|diff| = 0.000e+00
+  [checkpoint found: 2026-09-08_re-quote-every-gross-ceiling-with-its-grid-band_B.fine.csv.gz, 10890 rows reused]
+
+====================================================================================================================
+GATES — nothing below is read until all four pass
+====================================================================================================================
+  G1 broad universe_broad.json(136)   H.run vs engine.backtest max|diff| = 0.000e+00  PASS
+  G1 u56   universe.json(56)          H.run vs engine.backtest max|diff| = 0.000e+00  PASS
+  G2 cost-rung identity r(25) == r(10) - TO*15/1e4 on `gate` arms: max|diff| = 3.469e-18  PASS
+  G3a rebuilt 0.05 rows vs idea 90 family.csv.gz: 2250 shared rows x 15 columns, max|diff| = 6.788e-04  PASS
+      by panel: broad 6.661e-16  u56 6.788e-04
+      H1 (first-half Sharpe) max|diff| = 2.811e-04
+      DIAGNOSIS, carried into every reading below: `broad` reproduces the committed file EXACTLY; `u56` carries a residual that is ZERO in H1 and non-zero in H2 / OOS / full sample.  That is the signature of ONE late-sample daily return changing — an adjusted-close revision to data/prices.csv after idea 90 ran (data/prices_broad.csv is a separate weekly cache and was not refreshed).  This sandbox's clone is SHALLOW, so the pre-revision file cannot be checked out and the residual cannot be removed.  It is 1e-5-scale against a measurand quantised at ~0.007-0.03 of realised gross, i.e. 3 orders of magnitude below anything read here — but the DECISIVE gate is G3b, which checks the published READINGS rather than the floats behind them.
+  G3b rebuilt READINGS vs idea 90 intervals.csv (the decisive gate — these are the published numbers this run re-quotes):
+      90 shared books | nonempty verdict agrees 90/90 | max|diff| on the grid positions (m_lo, m_hi) = 0.000e+00 | on the quoted gross (g_lo, g_hi) = 3.601e-05
+      every published shoulder lands on the SAME grid point  PASS
+  G4 broad|EWall|10.0|band3-rw        fine ceiling 0.817668 vs idea 154 committed 0.817668  |d| = 0.00e+00  PASS
+  G4 broad|EWall|25.0|band3-rw        fine ceiling 0.810173 vs idea 154 committed 0.810173  |d| = 0.00e+00  PASS
+  G4 u56|EWall|10.0|band3-rw          fine ceiling 0.862655 vs idea 154 committed 0.862655  |d| = 7.96e-10  PASS
+  G4 u56|EWall|25.0|band3-rw          fine ceiling 0.855162 vs idea 154 committed 0.855162  |d| = 8.32e-10  PASS
+  G4 broad|EWall|10.0|vol60-dg        fine ceiling 0.781129 vs idea 154 committed 0.781129  |d| = 0.00e+00  PASS
+  G4 u56|EWall|10.0|vol60-dg          fine ceiling 0.870830 vs idea 154 committed 0.870830  |d| = 3.34e-10  PASS
+  G4 verdict: PASS
+
+====================================================================================================================
+Q1 — CENSUS OF THE RECORD'S PUBLISHED GROSS CEILINGS (idea 90/144's 306-book family)
+====================================================================================================================
+  books in the family                        : 306
+  books with a published gross CEILING       : 72   (non-empty 4b interval at the published phi=0.7, delta=0.6)
+  read off idea 90's m-grid of step 0.05     : 72 of 72  (100%)
+  right-CENSORED at PROTOCOL 2's m=1.30 cap  : 9   -> no band: the ceiling is the no-leverage rule, not a measurement
+  ceilings SET BY A 4b BAR (bandable)        : 63
+  contiguous admissible set (idea 90 Q1)     : 72 of 72
+
+  which bar sets the ceiling (all 72):
+    hi_bar
+    DD       62
+    grid      9
+    H2+DD     1
+
+  by panel / book / rung:
+    panel  book   cost
+    broad  EWall  10.0     6
+                  25.0     4
+           TOP20  10.0     8
+    u56    EWall  10.0    14
+                  25.0    11
+           TOP20  10.0    17
+                  25.0    12
+
+====================================================================================================================
+Q2 — IS THE DISPLACEMENT ONE-SIDED?  ceiling at step 0.05 vs 0.02 vs 0.01, all 72 books
+====================================================================================================================
+  step 0.05 :  25 m-points (all present), non-empty 72 of 90 cells
+  step 0.02 :  61 m-points (all present), non-empty 73 of 90 cells
+  step 0.01 : 121 m-points (all present), non-empty 74 of 90 cells
+
+  PRE-REGISTERED PREDICTION: d_hi >= 0 on every MONO book (the coarse grid is a SUBSET of the fine one,
+  so a coarse-admissible point stays admissible and m_hi can only rise; on MONO arms gross rises with m).
+    0.05 -> 0.02  : n=71  d>=0 in 66/71  mean 0.0096  mean|d| 0.0106  max 0.0300  min -0.0112  moved (|d|>1e-9) 48
+    0.05 -> 0.01  : n=72  d>=0 in 71/72  mean 0.0122  mean|d| 0.0124  max 0.0300  min -0.0060  moved (|d|>1e-9) 51
+
+  SPLIT BY WHETHER m IS A PURE EXPOSURE RESCALE (idea 90's PURE_KINDS = ctl/gate/stop).
+  The one-sided argument needs realised gross MONOTONE in m; on `dd` and `bud` arms m also moves
+  the instrument itself (idea 144 Q1), so it is not guaranteed there and the two groups are never pooled.
+    MONO (ctl/gate/stop): n= 55  d>=0 in 55/55  mean 0.0127  max 0.0300  min 0.0000
+    NON-MONO (dd/bud)   : n= 17  d>=0 in 16/17  mean 0.0107  max 0.0297  min -0.0060
+
+  VERDICT Q2: the displacement is ONE-SIDED (upward) wherever m is a pure exposure rescale — on those arms a published ceiling is a LOWER BOUND, not a point estimate.
+  1 book(s) DO move DOWN, every one of them off the MONO set — realised gross is non-monotone in m there,
+  so the finer grid finds a HIGHER admissible m at a LOWER realised gross:
+                           book_id kind  m_hi_0.05  m_hi_0.01  g_hi_0.05  g_hi_0.01   d_001
+    u56|TOP20|10.0|ddctl-8/.5/high   dd     1.2000     1.2300     0.6557     0.6497 -0.0060
+
+  A THIRD FLIP CLASS THE QUEUE DOES NOT NAME — books published with NO admissible gross at all
+  that acquire one at 0.01 resolution (a 4b verdict flip at the BOOK level, not the ceiling level):
+    2 of the 18 empty cells IN THIS CORPUS gain an interval at 0.01: ['u56|TOP20|25.0|abs12-dg', 'u56|EWall|25.0|abs12-rw']
+      u56|TOP20|25.0|abs12-dg            m [0.88, 0.89]  g [0.6074, 0.6143]  n_ok 2 of 121 points
+      u56|EWall|25.0|abs12-rw            m [0.98, 0.98]  g [0.7353, 0.7353]  n_ok 1 of 121 points
+    COVERAGE LIMIT, stated: only the 45 cells behind a published ceiling were refined, so this
+    count is a LOWER BOUND on the class — the other 234 empty books of the 306-book family were not re-run.
+
+  idea 154's headline, re-measured on 3.4x its cells (72 vs 21), 0.05 -> 0.01:
+    mean |move| = 0.0124 (idea 154: 0.0113)   max = 0.0300 (idea 154: 0.0300)   median = 0.0127
+
+====================================================================================================================
+Q3 — IS +/-0.03 THE RIGHT WIDTH?  the exact per-book bound vs the queue's constant
+====================================================================================================================
+  The displacement is bounded above, per book, with NO extra backtest:
+      d_hi  <  DELTA_STEP(book) = gross(m_hi + 0.05) - gross(m_hi)
+    all bandable   : n= 63  mean 0.0353  median 0.0370  min -0.0096  max 0.0375  |  > 0.03 in 61  |  bound holds 62/63
+    MONO only      : n= 50  mean 0.0367  median 0.0370  min 0.0340  max 0.0375  |  > 0.03 in 50  |  bound holds 50/50
+    NON-MONO (dd/bud): n= 13  mean 0.0301  median 0.0370  min -0.0096  max 0.0375  |  > 0.03 in 11  |  bound holds 12/13
+
+    So on 61 of 63 bandable ceilings ONE COARSE STEP is WIDER than the queue's +/-0.03:
+    the constant is not a bound, it is a guess that happens to cover this corpus.  The bound is DELTA_STEP,
+    it is free, and it is one-sided.
+    (the 1 negative DELTA_STEP are the same non-monotone `dd` arms as in Q2 — there a step
+     of m LOWERS realised gross, so 'a band around the ceiling' is not even the right object.)
+
+====================================================================================================================
+THE 15 GRID POINTS — step x band.  COVERAGE = fine ceiling inside [g_hi, g_hi+b]; WASTE = b - d_hi
+====================================================================================================================
+step   band  n  coverage_one_sided  mean_waste  mean_waste_two_sided
+0.05 0.0100 63              0.4127     -0.0040               -0.0042
+0.05 0.0200 63              0.6032      0.0060                0.0058
+0.05 0.0300 63              1.0000      0.0160                0.0158
+0.05 0.0400 63              1.0000      0.0260                0.0258
+0.05 0.0500 63              1.0000      0.0360                0.0358
+0.02 0.0100 62              1.0000      0.0068                0.0068
+0.02 0.0200 62              1.0000      0.0168                0.0168
+0.02 0.0300 62              1.0000      0.0268                0.0268
+0.02 0.0400 62              1.0000      0.0368                0.0368
+0.02 0.0500 62              1.0000      0.0468                0.0468
+0.01 0.0100 63              1.0000      0.0100                0.0100
+0.01 0.0200 63              1.0000      0.0200                0.0200
+0.01 0.0300 63              1.0000      0.0300                0.0300
+0.01 0.0400 63              1.0000      0.0400                0.0400
+0.01 0.0500 63              1.0000      0.0500                0.0500
+
+====================================================================================================================
+FLIPS — published verdicts that change inside the band, targets g in {0.75, 0.85}
+====================================================================================================================
+step  band  target  n  published_admits  fine_admits  real_flips  flagged_by_band  band_catches_real  band_false_alarm
+0.05  0.01    0.75 72                20           23           3                3                  2                 1
+0.05  0.01    0.85 72                 7            8           1                0                  0                 0
+0.05  0.02    0.75 72                20           23           3                4                  2                 2
+0.05  0.02    0.85 72                 7            8           1                0                  0                 0
+0.05  0.03    0.75 72                20           23           3                8                  3                 5
+0.05  0.03    0.85 72                 7            8           1                2                  1                 1
+0.05  0.04    0.75 72                20           23           3               16                  3                13
+0.05  0.04    0.85 72                 7            8           1                3                  1                 2
+0.05  0.05    0.75 72                20           23           3               16                  3                13
+0.05  0.05    0.85 72                 7            8           1                4                  1                 3
+0.02  0.01    0.75 71                22           23           1                2                  1                 1
+0.02  0.01    0.85 71                 8            8           0                0                  0                 0
+0.02  0.02    0.75 71                22           23           1                4                  1                 3
+0.02  0.02    0.85 71                 8            8           0                1                  0                 1
+0.02  0.03    0.75 71                22           23           1               11                  1                10
+0.02  0.03    0.85 71                 8            8           0                2                  0                 2
+0.02  0.04    0.75 71                22           23           1               15                  1                14
+0.02  0.04    0.85 71                 8            8           0                6                  0                 6
+0.02  0.05    0.75 71                22           23           1               15                  1                14
+0.02  0.05    0.85 71                 8            8           0                9                  0                 9
+0.01  0.01    0.75 72                23           23           0                2                  0                 2
+0.01  0.01    0.85 72                 8            8           0                0                  0                 0
+0.01  0.02    0.75 72                23           23           0                5                  0                 5
+0.01  0.02    0.85 72                 8            8           0                1                  0                 1
+0.01  0.03    0.75 72                23           23           0               10                  0                10
+0.01  0.03    0.85 72                 8            8           0                2                  0                 2
+0.01  0.04    0.75 72                23           23           0               14                  0                14
+0.01  0.04    0.85 72                 8            8           0                8                  0                 8
+0.01  0.05    0.75 72                23           23           0               15                  0                15
+0.01  0.05    0.85 72                 8            8           0               10                  0                10
+
+  the books whose published verdict actually FLIPS at 0.01 resolution:
+    target g = 0.75: 3 flips INADMISSIBLE -> ADMISSIBLE
+                                  book_id   g_lo  g_hi_0.05  g_hi_0.01  g_step_hi hi_bar
+                   u56|TOP20|10.0|g200-rw 0.5421     0.7226     0.7514     0.0361     DD
+      broad|EWall|10.0|ddctl-8/.5/recover 0.6929     0.7447     0.7584     0.0339     DD
+      broad|EWall|25.0|ddctl-8/.5/recover 0.6903     0.7409     0.7533     0.0352     DD
+    target g = 0.85: 1 flips INADMISSIBLE -> ADMISSIBLE
+                      book_id   g_lo  g_hi_0.05  g_hi_0.01  g_step_hi hi_bar
+      u56|EWall|25.0|band3-rw 0.7128     0.8252     0.8552     0.0375     DD
+
+====================================================================================================================
+BOTH KEEP PATHS at every grid point — each book run AT ITS OWN CEILING
+====================================================================================================================
+step  books  pass4a_vs_v2_live  pass4a_vs_v1  pass4b
+0.05     72                  0            19      72
+0.02     71                  0            19      71
+0.01     72                  0            19      72
+
+  4b at a book's own ceiling is TRUE BY CONSTRUCTION (the ceiling is the largest admissible point), so the informative column is 4a — and the band question does not create a KEEP candidate on either path.
+
+====================================================================================================================
+RULE 8 WALK-FORWARD — ceiling re-derived on 2009-2016 ONLY, 2017-2026 read ONCE
+====================================================================================================================
+  IS step 0.05 : non-empty 43 of 90
+  IS step 0.02 : non-empty 43 of 90
+  IS step 0.01 : non-empty 43 of 90
+
+  cells with an IS ceiling on BOTH grids: 40 of 72
+
+  MEAN OOS (2017-2026), book run at ITS OWN IS CEILING, by grid step:
+                     arm  n  gross   CAGR  Sharpe   MaxDD
+   IS ceiling, step 0.05 40 0.7933 0.1459  1.0912 -0.2223
+   IS ceiling, step 0.02 40 0.7989 0.1468  1.0905 -0.2237
+   IS ceiling, step 0.01 40 0.8030 0.1476  1.0905 -0.2248
+RULES v2 (live baseline) 72    NaN 0.0903  1.2292 -0.1212
+     RULES v1 (previous) 72    NaN 0.0575  0.5699 -0.1609
+                     SPY 72    NaN 0.1545  0.8820 -0.3372
+
+  PAIRED, on the cells that have both (the queue's actual capital question — a finer grid licenses MORE exposure; does it survive OOS?):
+    d realised gross : mean 0.0097  moved in 29/40 cells  max 0.0300
+    d OOS CAGR       : mean 0.0017  better in 28/40
+    d OOS Sharpe     : mean -0.0007  better in 14/40
+    d OOS |MaxDD|    : mean 0.0025  DEEPER in 29/40
+    beats SPY OOS Sharpe: step 0.05 40/40   step 0.01 40/40
+    beats RULES v2 OOS Sharpe: step 0.05 4/40   step 0.01 4/40
+
+  by panel and rung (OOS Sharpe at the IS ceiling):
+             n    g05    g01    S05    S01    C05    C01     D05     D01    SPY     V2
+panel cost                                                                            
+broad 10.0  14 0.7746 0.7846 0.9958 0.9958 0.1394 0.1411 -0.2293 -0.2320 0.8820 1.1185
+      25.0   3 0.7369 0.7610 1.1149 1.1058 0.1214 0.1244 -0.1973 -0.2038 0.8820 1.0740
+u56   10.0  17 0.8115 0.8202 1.1487 1.1487 0.1568 0.1586 -0.2226 -0.2248 0.8820 1.2851
+      25.0   6 0.8134 0.8183 1.1388 1.1388 0.1421 0.1430 -0.2177 -0.2188 0.8820 1.2483
+
+====================================================================================================================
+VERDICT
+====================================================================================================================
+  ceilings re-quoted            : 72   (63 bandable, 9 right-censored by PROTOCOL 2)
+  displacement 0.05 -> 0.01     : mean |d| 0.0124, max 0.0300, min -0.0060
+  published verdicts that FLIP  : g=0.75 3, g=0.85 1 (of 72)
+  the queue's +/-0.03 band      : recall 1.000 (it covers every real move on this corpus) at coverage 1.000,
+                                  but PRECISION 0.400 — it flags 10 books across the two targets and only 4 actually flip,
+                                  and it is NOT a bound: one coarse step exceeds 0.03 on 61 of 63 ceilings.
+  KEEP paths                    : see the table above; no new candidate is created by a band, and 4b at a ceiling is true by construction.
+
+wrote 2026-09-08_re-quote-every-gross-ceiling-with-its-grid-band_B.{census,band,flips,grid,keep,walkforward}.csv + .console.txt
