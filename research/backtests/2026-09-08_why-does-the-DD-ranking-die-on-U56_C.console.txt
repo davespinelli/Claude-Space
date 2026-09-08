@@ -1,0 +1,221 @@
+====================================================================================================
+IDEA 422 — why does the DD ranking die on U56?   (lane C, 2026-09-08)
+====================================================================================================
+
+
+## PART 0 — where the +0.051 comes from (idea 420's committed CSVs, re-read)
+
+  idea 420's per-PANEL-LABEL MaxDD transfer, as committed:
+            label    n  cells  slope    R2  t_slope   hit
+              u56 6580    824  0.864 0.431    3.150 0.531
+            broad 6563    807  1.084 0.550    7.231 0.526
+            small 4123    436  1.044 0.525   15.815 0.765
+              n/a  768    113 -0.178 0.019   -2.217 0.460
+          bstk100  510     30  0.935 0.324    7.803 0.583
+         SMALL439  249      9  0.354 0.047    1.069 0.650
+             B136  242      9  0.399 0.049    1.684 0.491
+              U56  242      9  0.051 0.007    0.452 0.316
+         broad136   62      2  1.691 0.917      NaN 0.857
+         SMALL484    0      0    NaN   NaN      NaN   NaN
+universe.json(56)    0      0    NaN   NaN      NaN   NaN
+
+  the same census RE-PARTITIONED by canonical panel (label spellings merged):
+   canon                                           labels  rows    n  cells  slope    R2      t     p
+ u56(56)                        U56,u56,universe.json(56)  9687 6822    833  0.760 0.371  3.135 0.002
+broad136 B136,BROAD136,broad,broad136,universe_broad(136)  9638 6867    818  1.039 0.484  7.222 0.000
+   small                                            small  4337 4123    436  1.044 0.525 15.815 0.000
+   other                                                   2929  768    113 -0.178 0.019    NaN   NaN
+small484                                         SMALL484  1395    0      0    NaN   NaN    NaN   NaN
+small439                                SMALL439,small439   859  311     11  0.440 0.073    NaN   NaN
+ bstk100                                  BSTK100,bstk100   515  510     30  0.935 0.324    NaN   NaN
+   etf36                                            ETF36     5    0      0    NaN   NaN    NaN   NaN
+pool: 35 ETFs + 100 stocks (SPY held out as benchmark), 4699 days 2008-01-02..2026-09-04
+U56 = 36/56 ETFs (share 0.643, 55 investable ex-SPY -> 35/55 = 0.636); broad136 = 36/136 (0.265)
+IS <= 2016-12-31, OOS >= 2017-01-01; rungs (0.0, 10.0, 25.0) bps; 31 arms/cell; seeds 6
+  ran REF_u56_SPYin: 56 names
+  ran REF_u56_SPYout: 55 names
+  ran REF_broad136_SPYin: 136 names
+  ran REF_broad136_SPYout: 135 names
+
+### GRID FEASIBILITY (all 16 points reported)
+   e   k  n_etf  n_stk  feasible  seed_variation  seeds
+0.00  20      0     20      True            True      6
+0.00  35      0     35      True            True      6
+0.00  56      0     56      True            True      6
+0.00 100      0    100      True           False      1
+0.35  20      7     13      True            True      6
+0.35  35     12     23      True            True      6
+0.35  56     20     36      True            True      6
+0.35 100     35     65      True            True      6
+0.65  20     13      7      True            True      6
+0.65  35     23     12      True            True      6
+0.65  56     36     20     False           False      0
+0.65 100     65     35     False           False      0
+1.00  20     20      0      True            True      6
+1.00  35     35      0      True           False      1
+1.00  56     56      0     False           False      0
+1.00 100    100      0     False           False      0
+  ran e=0.00 k=20: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.00 k=35: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.00 k=56: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.00 k=100: 1 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.35 k=20: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.35 k=35: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.35 k=56: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.35 k=100: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.65 k=20: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=0.65 k=35: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=1.00 k=20: 6 sub-panel(s) x 31 arms x 3 rungs
+  ran e=1.00 k=35: 1 sub-panel(s) x 31 arms x 3 rungs
+
+grid: 6138 arm-rows over 198 cells, 66 panels
+
+### PART 1 — REPRODUCTION on the two panels the queue names (episode = full)
+                        scope  n  cells  slope   t    R2  mean_slope  t_slope  mean_rho  frac_pos   hit  level_shift  frac_worse  level_ratio
+REF broad136 (SPY investable) 93      3  1.693 NaN 0.919       1.693  478.553     0.955     1.000 0.857       -0.061       1.000        1.719
+        REF broad136 (ex-SPY) 93      3  1.692 NaN 0.919       1.693  497.011     0.951     1.000 0.857       -0.061       1.000        1.720
+     REF u56 (SPY investable) 93      3  1.713 NaN 0.900       1.713  103.824     0.938     1.000 0.857       -0.054       1.000        1.627
+             REF u56 (ex-SPY) 93      3  1.719 NaN 0.906       1.719  103.175     0.949     1.000 0.857       -0.054       1.000        1.633
+
+### PART 2 — the 2-parameter grid (episode = full), ALL feasible points
+              scope    n  cells  slope      t    R2  mean_slope  t_slope  mean_rho  frac_pos   hit  level_shift  frac_worse  level_ratio
+       e=0.00 k=100   93      3  1.651    NaN 0.902       1.651  719.870     0.944     1.000 0.857       -0.068       1.000        1.758
+        e=0.00 k=20  558     18  1.644 16.622 0.826       1.676   31.902     0.915     1.000 0.817       -0.076       1.000        1.798
+        e=0.00 k=35  558     18  1.565 37.606 0.891       1.579   57.434     0.939     1.000 0.865       -0.058       1.000        1.587
+        e=0.00 k=56  558     18  1.670 37.931 0.895       1.684   60.667     0.949     1.000 0.881       -0.067       1.000        1.740
+       e=0.35 k=100  558     18  1.704 64.557 0.915       1.709  101.310     0.954     1.000 0.952       -0.058       1.000        1.678
+        e=0.35 k=20  558     18  1.506 22.382 0.831       1.527   41.565     0.911     1.000 0.802       -0.036       0.882        1.325
+        e=0.35 k=35  558     18  1.576 40.844 0.876       1.582   69.853     0.920     1.000 0.881       -0.051       1.000        1.535
+        e=0.35 k=56  558     18  1.689 41.884 0.899       1.694   70.607     0.948     1.000 0.873       -0.057       1.000        1.671
+        e=0.65 k=20  558     18  1.539 18.728 0.828       1.559   29.961     0.887     1.000 0.746       -0.047       1.000        1.551
+        e=0.65 k=35  558     18  1.547 18.841 0.799       1.561   35.870     0.878     1.000 0.802       -0.046       0.986        1.496
+        e=1.00 k=20  558     18  1.384 14.219 0.752       1.432   29.772     0.871     1.000 0.675       -0.028       0.858        1.304
+        e=1.00 k=35   93      3  1.566    NaN 0.817       1.566   65.237     0.890     1.000 0.762       -0.031       1.000        1.350
+ALL GRID SUB-PANELS 5766    186  1.584 66.576 0.852       1.600  126.003     0.917     1.000 0.829       -0.052       0.973        1.563
+
+### PART 2b — slope surface: rows = ETF share e, cols = name count k
+
+  slope:
+k       20     35     56     100
+e                               
+0.00 +1.644 +1.565 +1.670 +1.651
+0.35 +1.506 +1.576 +1.689 +1.704
+0.65 +1.539 +1.547    NaN    NaN
+1.00 +1.384 +1.566    NaN    NaN
+
+  mean_rho:
+k       20     35     56     100
+e                               
+0.00 +0.915 +0.939 +0.949 +0.944
+0.35 +0.911 +0.920 +0.948 +0.954
+0.65 +0.887 +0.878    NaN    NaN
+1.00 +0.871 +0.890    NaN    NaN
+
+  hit:
+k       20     35     56     100
+e                               
+0.00 +0.817 +0.865 +0.881 +0.857
+0.35 +0.802 +0.881 +0.873 +0.952
+0.65 +0.746 +0.802    NaN    NaN
+1.00 +0.675 +0.762    NaN    NaN
+
+### PART 3 — which dial prices the slope?
+                                          model   n      R2   const     b_e     b_k     t_e     t_k
+                                         e only  12 +0.4093 +1.6484 -0.1579     NaN     NaN     NaN
+                                         k only  12 +0.4672 +1.4913     NaN +0.0022     NaN     NaN
+                                          e + k  12 +0.6389 +1.5577 -0.1102 +0.0016     NaN     NaN
+per-cell slope ~ e + k (clustered on sub-panel) 186 +0.1697 +1.5815 -0.1420 +0.0018 -1.9373 +2.6859
+
+### PART 4 — EPISODE STRUCTURE (does excising 2020 / 2022 revive the ranking?)
+episode                         full  ex2020  ex2022  exboth
+scope                                                       
+ALL GRID SUB-PANELS           +1.584  +0.949  +1.585  +0.822
+REF broad136 (SPY investable) +1.693  +0.939  +1.693  +0.841
+REF broad136 (ex-SPY)         +1.692  +0.939  +1.692  +0.840
+REF u56 (SPY investable)      +1.713  +1.182  +1.713  +0.963
+REF u56 (ex-SPY)              +1.719  +1.189  +1.719  +0.967
+e=0.00 k=100                  +1.651  +0.944  +1.651  +0.848
+e=0.00 k=20                   +1.644  +0.949  +1.647  +0.830
+e=0.00 k=35                   +1.565  +0.966  +1.565  +0.850
+e=0.00 k=56                   +1.670  +0.983  +1.670  +0.831
+e=0.35 k=100                  +1.704  +0.952  +1.704  +0.835
+e=0.35 k=20                   +1.506  +0.897  +1.506  +0.838
+e=0.35 k=35                   +1.576  +1.033  +1.576  +0.869
+e=0.35 k=56                   +1.689  +0.938  +1.689  +0.856
+e=0.65 k=20                   +1.539  +0.972  +1.540  +0.806
+e=0.65 k=35                   +1.547  +0.907  +1.547  +0.755
+e=1.00 k=20                   +1.384  +0.890  +1.388  +0.719
+e=1.00 k=35                   +1.566  +0.897  +1.566  +0.798
+
+  same table, top-quartile hit rate (base 0.25):
+episode                        full  ex2020  ex2022  exboth
+scope                                                      
+ALL GRID SUB-PANELS           0.829   0.664   0.829   0.717
+REF broad136 (SPY investable) 0.857   0.714   0.857   0.714
+REF broad136 (ex-SPY)         0.857   0.714   0.857   0.714
+REF u56 (SPY investable)      0.857   0.857   0.857   0.857
+REF u56 (ex-SPY)              0.857   0.905   0.857   0.857
+e=0.00 k=100                  0.857   0.714   0.857   0.571
+e=0.00 k=20                   0.817   0.667   0.817   0.738
+e=0.00 k=35                   0.865   0.651   0.865   0.635
+e=0.00 k=56                   0.881   0.643   0.881   0.643
+e=0.35 k=100                  0.952   0.603   0.952   0.738
+e=0.35 k=20                   0.802   0.675   0.802   0.706
+e=0.35 k=35                   0.881   0.619   0.881   0.738
+e=0.35 k=56                   0.873   0.698   0.873   0.778
+e=0.65 k=20                   0.746   0.754   0.746   0.770
+e=0.65 k=35                   0.802   0.643   0.802   0.762
+e=1.00 k=20                   0.675   0.683   0.675   0.683
+e=1.00 k=35                   0.762   0.667   0.762   0.762
+
+### PART 5 — RULE 8 WALK-FORWARD (IS-only picks read on 2017-01-01..)
+                        scope         selector            arm  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  V2_OOS_Sharpe  V2_OOS_MaxDD  SPY_OOS_CAGR  SPY_OOS_Sharpe  SPY_OOS_MaxDD  d_vs_ORACLE_MaxDD  pass4a_oos  pass4b_oos
+     REF u56 (SPY investable)  IS_MaxDD_argmax b0.015-g0.50-M    0.0635      1.2607    -0.0863         1.2855       -0.1205        0.1545          0.8820        -0.3372            -0.0066       False       False
+     REF u56 (SPY investable) IS_Sharpe_argmax     b0-g1.00-M    0.1271      1.2743    -0.1549         1.2855       -0.1205        0.1545          0.8820        -0.3372            -0.0752       False        True
+     REF u56 (SPY investable)          control        control    0.1847      1.1353    -0.2918         1.2855       -0.1205        0.1545          0.8820        -0.3372            -0.2121       False       False
+     REF u56 (SPY investable) ORACLE_OOS_MaxDD b0.015-g0.50-W    0.0617      1.2783    -0.0797         1.2855       -0.1205        0.1545          0.8820        -0.3372             0.0000       False       False
+             REF u56 (ex-SPY)  IS_MaxDD_argmax b0.015-g0.50-M    0.0636      1.2639    -0.0867         1.2942       -0.1190        0.1545          0.8820        -0.3372            -0.0067       False       False
+             REF u56 (ex-SPY) IS_Sharpe_argmax     b0-g1.00-M    0.1278      1.2832    -0.1554         1.2942       -0.1190        0.1545          0.8820        -0.3372            -0.0755       False        True
+             REF u56 (ex-SPY)          control        control    0.1853      1.1399    -0.2910         1.2942       -0.1190        0.1545          0.8820        -0.3372            -0.2110       False       False
+             REF u56 (ex-SPY) ORACLE_OOS_MaxDD b0.015-g0.50-W    0.0618      1.2815    -0.0800         1.2942       -0.1190        0.1545          0.8820        -0.3372             0.0000       False       False
+REF broad136 (SPY investable)  IS_MaxDD_argmax b0.015-g0.50-W    0.0530      1.1332    -0.0832         1.1185       -0.1224        0.1545          0.8820        -0.3372            -0.0007       False       False
+REF broad136 (SPY investable) IS_Sharpe_argmax        control    0.1859      1.1006    -0.3272         1.1185       -0.1224        0.1545          0.8820        -0.3372            -0.2448       False       False
+REF broad136 (SPY investable)          control        control    0.1859      1.1006    -0.3272         1.1185       -0.1224        0.1545          0.8820        -0.3372            -0.2448       False       False
+REF broad136 (SPY investable) ORACLE_OOS_MaxDD  b0.03-g0.50-W    0.0531      1.1195    -0.0824         1.1185       -0.1224        0.1545          0.8820        -0.3372             0.0000       False       False
+        REF broad136 (ex-SPY)  IS_MaxDD_argmax b0.015-g0.50-W    0.0530      1.1333    -0.0833         1.1206       -0.1218        0.1545          0.8820        -0.3372            -0.0013       False       False
+        REF broad136 (ex-SPY) IS_Sharpe_argmax        control    0.1862      1.1022    -0.3271         1.1206       -0.1218        0.1545          0.8820        -0.3372            -0.2451       False       False
+        REF broad136 (ex-SPY)          control        control    0.1862      1.1022    -0.3271         1.1206       -0.1218        0.1545          0.8820        -0.3372            -0.2451       False       False
+        REF broad136 (ex-SPY) ORACLE_OOS_MaxDD  b0.03-g0.50-W    0.0531      1.1216    -0.0820         1.1206       -0.1218        0.1545          0.8820        -0.3372             0.0000       False       False
+
+  grid sub-panels, mean over sub-panels by selector and rung (d_vs_ORACLE_MaxDD: 0 = the IS pick found the OOS-shallowest arm)
+   rung         selector  n  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  d_ORACLE    p4a    p4b
+ 0.0000  IS_MaxDD_argmax 62    0.0523      1.0647    -0.0847   -0.0067 0.6935 0.0000
+ 0.0000 IS_Sharpe_argmax 62    0.1530      1.0769    -0.2602   -0.1822 0.0000 0.1613
+ 0.0000 ORACLE_OOS_MaxDD 62    0.0529      1.0883    -0.0780    0.0000 0.8226 0.0000
+ 0.0000          control 62    0.1765      1.0486    -0.3221   -0.2441 0.0000 0.0000
+10.0000  IS_MaxDD_argmax 62    0.0511      1.0407    -0.0847   -0.0063 0.2581 0.0000
+10.0000 IS_Sharpe_argmax 62    0.1524      1.0633    -0.2634   -0.1850 0.0000 0.1290
+10.0000 ORACLE_OOS_MaxDD 62    0.0515      1.0601    -0.0784    0.0000 0.3226 0.0000
+10.0000          control 62    0.1751      1.0418    -0.3223   -0.2438 0.0000 0.0000
+25.0000  IS_MaxDD_argmax 62    0.0493      1.0045    -0.0857   -0.0065 0.0645 0.0000
+25.0000 IS_Sharpe_argmax 62    0.1603      1.0396    -0.2913   -0.2121 0.0000 0.0323
+25.0000 ORACLE_OOS_MaxDD 62    0.0496      1.0208    -0.0792    0.0000 0.1290 0.0000
+25.0000          control 62    0.1731      1.0314    -0.3225   -0.2433 0.0000 0.0000
+
+  the SAME table split by ETF share e (rung 10 bps, IS_MaxDD selector) — does the IS-DD pick get worse as the panel gets more ETF?
+          n  OOS_MaxDD  d_ORACLE  OOS_Sharpe    p4b
+e    k                                             
+0.00 20   6    -0.1013   -0.0086      1.0148 0.0000
+     35   6    -0.0884   -0.0023      1.1720 0.0000
+     56   6    -0.0899   -0.0041      1.0971 0.0000
+     100  1    -0.0894   -0.0026      1.1606 0.0000
+0.35 20   6    -0.0895   -0.0121      0.9756 0.0000
+     35   6    -0.0855   -0.0081      1.0758 0.0000
+     56   6    -0.0788   -0.0017      1.1119 0.0000
+     100  6    -0.0832   -0.0031      1.1054 0.0000
+0.65 20   6    -0.0838   -0.0128      0.9416 0.0000
+     35   6    -0.0820   -0.0091      0.9923 0.0000
+1.00 20   6    -0.0662   -0.0016      0.9187 0.0000
+     35   1    -0.0701   -0.0062      0.9323 0.0000
+
+  KEEP paths over all 792 walk-forward rows: 4a 168, 4b 33, 4a_oos 146, 4b_oos 26
