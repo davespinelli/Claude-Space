@@ -83,6 +83,7 @@
 
 
 ## In progress
+471. back-fill-the-matched-gross-column-on-every-published-d_on-d_off-regime-split — idea 249 showed idea 246's headline "+12.6 and +5.8 pp/yr ON crash days" for `gross50`/`ddctl8` is pure gross arithmetic: against a control at the arm's OWN realised mean gross the surplus inverts to -0.94/-0.97 pp/yr and Sharpe goes to a coin flip. Any regime-split delta measured against a full-gross control carries the same confound. Census the record's committed `.regime.csv` / `.mech.csv` files for d_on/d_off splits whose arm and control differ in mean realised gross, re-quote each as an excess over a gross-matched static, and report how many published regime claims survive the restatement. Max 2 params. (2026-09-08) **[IN PROGRESS 2026-09-08, lane B]**
 
 
 
