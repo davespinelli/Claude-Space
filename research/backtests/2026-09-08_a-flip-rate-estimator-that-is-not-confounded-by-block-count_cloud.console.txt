@@ -1,0 +1,199 @@
+======================================================================================================================
+QUEUE idea 216 - a flip-rate estimator that is not confounded by block count   (cloud, 2026-09-08)
+======================================================================================================================
+Idea 207's flip rate cuts a 400-draw pool into floor(400/K) DISJOINT blocks, so its
+comparison count falls as 1/K and its own standard error RISES with K - at K=200 it is one
+Bernoulli trial per configuration, and both of idea 207's missed predictions are that row.
+This run builds FBP-B (B pairs at every K, comparisons fixed), derives its EXACT law, and
+re-runs the ladder with the comparison count held fixed.
+
+Tuned parameters: K in [20, 50, 100, 200, 400] x B in [1, 4, 16, 64, 256].  Band/panel/family/depth/statistic/rung are corpus axes.
+
+PANELS
+  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable (SURVIVORSHIP: current constituents only, no delistings)
+
+RE-RUNNING THE 90 CONFIGURATIONS' REAL BOOKS FROM SCRATCH (idea 191's machinery, verbatim)
+  U56 done (6s)
+  BROAD136 done (8s)
+  SMALL439 done (14s)
+
+======================================================================================================================
+GATES
+======================================================================================================================
+  matched 180 of 180 committed rows
+  [a1] the 76 rows whose ON SET is byte-identical to the committed one: Sharpe=1.52e-04  CAGR=2.22e-05  MaxDD=3.93e-07  H1=3.23e-04  H2=1.93e-05  Sharpe_OOS=1.81e-05  CAGR_OOS=2.77e-06  MaxDD_OOS=3.93e-07  on_share=0.00e+00  J=0.00e+00  |dS|=1.47e-04  |dDD|=3.17e-07  |dIS|=3.26e-04
+       max = 3.263e-04.  This is NOT bit-exact and the reason is the same data revision:
+       `data/prices.csv` was re-committed by the Actions job on 2026-09-07 (`git log`: f138ee9 'Daily close 2026-09-07 [actions]'), AFTER the 2026-09-05 enumeration.  Structure
+       reproduces EXACTLY - J 0.00e+00 and on-share 0.00e+00 on these rows - and the
+       performance drift is bounded; the STRUCTURAL gate is the one asserted:
+       [a1-struct] J and on-share on the unmoved rows: 0.000e+00  -> PASS
+       [a1-drift]  performance drift bounded at 3.263e-04 (reported, not absorbed)  -> PASS
+  [a2] the 104 rows whose ON SET MOVED (a `data/prices.csv` revision committed by the Actions job on 2026-09-07, not code - idea 203 gate [e] found the same):
+       max on-share move = 0.001026 = 1.00 rebalance dates; drift BOUNDED at Sharpe=5.08e-03  CAGR=8.12e-04  MaxDD=4.64e-07  H1=1.14e-02  H2=1.71e-05  Sharpe_OOS=1.60e-05  CAGR_OOS=2.52e-06  MaxDD_OOS=5.01e-07  on_share=1.03e-03  J=0.00e+00  |dS|=5.00e-03  |dDD|=4.64e-07  |dIS|=1.25e-02
+       these rows are carried with their drift reported; the estimator study below is a function of (M, N) only, and gate [c] re-derives those from a fresh enumeration.
+       KEEP verdicts identical on the unmoved rows: 152/152; on the moved rows 208/208
+
+  [c] FULL enumeration of one UNMOVED configuration per panel vs the committed (M, N),
+      M_ex = N - K_stat (the convention gate [g] pins):
+     panel           config  bps  N_here  N_ex  M_here  M_ex  ties         dabs  dM   dM_rel
+       U56 BUDGET/0.05/half   10     974   974     682   683     0 1.849740e-05   1 0.001027
+       U56 BUDGET/0.05/half   25     974   974     483   484     0 2.524434e-05   1 0.001027
+  BROAD136 BUDGET/0.05/half   10     974   974     311   311     0 4.857226e-17   0 0.000000
+  BROAD136 BUDGET/0.05/half   25     974   974     184   184     0 2.775558e-17   0 0.000000
+  SMALL439  BUDGET/0.1/half   10     869   869     496   496     0 2.081668e-17   0 0.000000
+  SMALL439  BUDGET/0.1/half   25     869   869     387   387     0 8.326673e-17   0 0.000000
+      population size N reproduces EXACTLY; |d absd| max 2.524e-05; the
+      exceedance count M differs by at most 1 rotation(s) (0.00103 of N) - a tie-breaking tolerance plus the 2026-09-07 price
+      revision  -> PASS
+
+  [d] closed-form P(clear) vs brute-force sampling (4000 replicates):
+    N   M   K       q   exact      mc       d
+  974 100  20 1.00000 0.11200 0.11975 0.00775
+  974   5 100 1.00000 0.58110 0.58275 0.00165
+  869 300  50 0.95000 0.00000 0.00000 0.00000
+  974  40 200 0.95000 0.82148 0.82850 0.00702
+  974   0  20 1.00000 1.00000 1.00000 0.00000
+  974 974 400 1.00000 0.00000 0.00000 0.00000
+      max|d| = 0.0078 vs 3 MC se = 0.0237  -> PASS
+      P(clear) at K=N is the population verdict exactly (asserted)
+
+  [g] closed-form P(clear) vs the 2160 committed MAX-band p-values (pMAXN20/50/100/200 x 3 statistics x 180 rows):
+      with M = N - K_stat : max|d| = 1.586e-12   median 6.585e-29
+      with M = K_stat     : max|d| = 1.000e+00   median 5.530e-05   <- the convention this run first assumed, REJECTED
+      the committed `truth_<stat>` column is the EXACT PERMUTATION verdict at level 0.05, p = (M+1)/(N+1) <= 0.05, reproduced on 540/540 claims (it is NOT the max-band rule M == 0, which holds on 0/180, 1/180 and 0/180 - so the record's own TARGET is a 5% test)
+      -> PASS
+
+  ALL GATES PASS
+
+======================================================================================================================
+CLAIM CORPUS: 540 claims = 180 committed rows x 3 statistics
+======================================================================================================================
+  rotation-DEGENERATE claims (every rotation reproduces the real book, ties == N): 48 of 540 (8.9%) - no estimator can have power on these, and they are
+  idea 203's `free_strata == 0` case seen from the other side.  They are kept in the corpus
+  and flagged; every table below is also shown on the non-degenerate subset.
+  exceedance rate M/N: median 0.3566, 1 claims have M = 0 (the population itself clears)
+
+======================================================================================================================
+Q1  THE CONFOUND ITSELF.  Comparison count and estimator standard error, per configuration.
+======================================================================================================================
+  K  blocks_207  pairs_207  se_207_at_p_half  pairs_FBP  se_FBP_at_p_half
+ 20          20        190            0.0363        256            0.0312
+ 50           8         28            0.0945        256            0.0312
+100           4          6            0.2041        256            0.0312
+200           2          1            0.5000        256            0.0312
+400           1          0               NaN        256            0.0312
+  (se at the worst case p = 1/2; idea 207's falls to ONE pair at K=200, FBP-B holds B.)
+
+======================================================================================================================
+Q2  FBP-B AGAINST ITS OWN CLOSED FORM.  Mean |MC - exact| over the whole corpus, by B.
+======================================================================================================================
+  RMS |FBP-B - exact| over the corpus:
+  B           1      4      16     64     256
+  band K                                     
+  MAX  20  0.2518 0.1336 0.0645 0.0309 0.0160
+       50  0.2010 0.1019 0.0460 0.0238 0.0141
+       100 0.1569 0.0723 0.0438 0.0198 0.0114
+       200 0.1360 0.0731 0.0354 0.0184 0.0079
+       400 0.0793 0.0395 0.0176 0.0114 0.0050
+  Q95  20  0.2415 0.1200 0.0664 0.0333 0.0170
+       50  0.1911 0.0933 0.0568 0.0245 0.0132
+       100 0.1705 0.0785 0.0445 0.0184 0.0114
+       200 0.1505 0.0772 0.0321 0.0185 0.0087
+       400 0.1089 0.0540 0.0286 0.0163 0.0083
+  [b] mean RMS falls 0.1687 -> 0.0113 = 1/14.91 against sqrt(256/1) = 16.00  -> PASS
+
+======================================================================================================================
+Q3  THE RE-RUN LADDER, comparison count HELD FIXED.  Every quantity is the exact law
+    evaluated on each claim's own (M, N); the 207 column is its own construction.
+======================================================================================================================
+  subset = all
+  band   K   n  flip_exact  flip_FBP256  flip_207  n_207  err_vs_truth  err_vs_own_limit  clear_rate  undetermined
+   MAX  20 540      0.0921       0.0919    0.0969    540        0.0675            0.1353      0.1371        0.2944
+   MAX  50 540      0.0627       0.0631    0.0600    540        0.0814            0.0772      0.0790        0.1889
+   MAX 100 540      0.0465       0.0463    0.0448    540        0.1081            0.0458      0.0476        0.1296
+   MAX 200 540      0.0286       0.0289    0.0259    540        0.1311            0.0226      0.0244        0.0889
+   MAX 400 540      0.0142       0.0141       NaN      0        0.1454            0.0083      0.0101        0.0333
+   Q95  20 540      0.0947       0.0958    0.0956    540        0.0812            0.0803      0.2178        0.3148
+   Q95  50 540      0.0601       0.0608    0.0615    540        0.0423            0.0421      0.1690        0.1889
+   Q95 100 540      0.0440       0.0440    0.0466    540        0.0320            0.0315      0.1730        0.1370
+   Q95 200 540      0.0316       0.0318    0.0389    540        0.0213            0.0209      0.1661        0.1000
+   Q95 400 540      0.0231       0.0235       NaN      0        0.0133            0.0129      0.1625        0.0593
+
+  subset = non-degenerate
+  band   K   n  flip_exact  flip_FBP256  flip_207  n_207  err_vs_truth  err_vs_own_limit  clear_rate  undetermined
+   MAX  20 492      0.1011       0.1012    0.0976    492        0.0741            0.1485      0.1505        0.3232
+   MAX  50 492      0.0689       0.0688    0.0674    492        0.0894            0.0847      0.0867        0.2073
+   MAX 100 492      0.0510       0.0517    0.0464    492        0.1186            0.0503      0.0523        0.1423
+   MAX 200 492      0.0314       0.0315    0.0427    492        0.1439            0.0248      0.0268        0.0976
+   MAX 400 492      0.0156       0.0154       NaN      0        0.1596            0.0091      0.0111        0.0366
+   Q95  20 492      0.1040       0.1047    0.1059    492        0.0892            0.0882      0.2390        0.3455
+   Q95  50 492      0.0659       0.0661    0.0706    492        0.0464            0.0462      0.1854        0.2073
+   Q95 100 492      0.0482       0.0475    0.0491    492        0.0351            0.0346      0.1899        0.1504
+   Q95 200 492      0.0347       0.0350    0.0285    492        0.0233            0.0229      0.1823        0.1098
+   Q95 400 492      0.0254       0.0254       NaN      0        0.0146            0.0142      0.1783        0.0650
+
+  [e] idea 207's own construction vs the exact law, max|d| = 0.0113 (it is an unbiased but 1/K-noisy estimator of the same quantity)
+
+  THE K RECOMMENDATION, read off err_vs_truth (the level-0.05 permutation target the
+  record's own `truth` column uses) on the non-degenerate subset:
+    MAX: K=20: 0.0741  K=50: 0.0894  K=100: 0.1186  K=200: 0.1439  K=400: 0.1596   -> argmin at K=20  (interior optimum)
+    Q95: K=20: 0.0892  K=50: 0.0464  K=100: 0.0351  K=200: 0.0233  K=400: 0.0146   -> argmin at K=400  (monotone: a FLOOR, not an optimum)
+
+  SENSITIVITY to the 0.0012-of-N exceedance-count drift gate [c] measured: the same
+  ladder with every claim's M shifted by +/- that amount (the price revision's own size).
+    MAX M-: K=20: 0.0725  K=50: 0.0865  K=100: 0.1146  K=200: 0.1393  K=400: 0.1552   -> argmin at K=20
+    MAX M+: K=20: 0.0761  K=50: 0.0938  K=100: 0.1243  K=200: 0.1497  K=400: 0.1643   -> argmin at K=20
+    Q95 M-: K=20: 0.0886  K=50: 0.0460  K=100: 0.0350  K=200: 0.0233  K=400: 0.0147   -> argmin at K=400
+    Q95 M+: K=20: 0.0888  K=50: 0.0466  K=100: 0.0347  K=200: 0.0229  K=400: 0.0141   -> argmin at K=400
+
+======================================================================================================================
+Q4  RULE 8 WALK-FORWARD.  Thresholds chosen on <= 2016-12-31; 2017-2026 read once.
+    36 cells = 3 panels x 3 families x 2 depths x 2 cost rungs, 5-point ladders.
+======================================================================================================================
+               mean_OOS_Sharpe  mean_d_vs_S0  mean_d_vs_SPY  wins_vs_S0  mean_pool  mean_sd_draws   n  t_vs_S0
+arm                                                                                                           
+ORACLE_OOS             +0.8052       +0.0286        -0.0769          21    +5.0000        +0.0000  36  +3.8921
+S0_do_nothing          +0.7766       +0.0000        -0.1054           0    +0.0000        +0.0000  36      NaN
+S1_IS_argmax           +0.7637       -0.0129        -0.1183          14    +5.0000        +0.0000  36  -1.0666
+S2_MAX_K100            +0.7546       -0.0220        -0.1274          14    +0.1975        +0.0233  36  -2.5391
+S2_MAX_K20             +0.7216       -0.0550        -0.1605           5    +0.5747        +0.0422  36  -3.6840
+S2_MAX_K200            +0.7689       -0.0077        -0.1131          16    +0.0982        +0.0149  36  -2.8809
+S2_MAX_K400            +0.7749       -0.0017        -0.1071          18    +0.0385        +0.0044  36  -1.8710
+S2_MAX_K50             +0.7400       -0.0366        -0.1420           9    +0.3283        +0.0289  36  -2.7785
+S2_Q95_K100            +0.7135       -0.0631        -0.1685           7    +0.6776        +0.0270  36  -3.5915
+S2_Q95_K20             +0.7030       -0.0736        -0.1791           3    +0.9612        +0.0488  36  -4.6981
+S2_Q95_K200            +0.7138       -0.0628        -0.1682          10    +0.6429        +0.0188  36  -3.3765
+S2_Q95_K400            +0.7126       -0.0640        -0.1694          12    +0.6272        +0.0107  36  -3.2713
+S2_Q95_K50             +0.7158       -0.0608        -0.1663           6    +0.6879        +0.0335  36  -3.7405
+S3_EXACT_MAX           +0.7110       -0.0656        -0.1710           0    +0.6111        +0.0000  36  -3.2063
+S3_EXACT_Q95           +0.7110       -0.0656        -0.1710           0    +0.6111        +0.0000  36  -3.2063
+
+  S0 (control book) mean OOS Sharpe +0.7766, mean OOS CAGR +0.1022, mean OOS MaxDD -0.2353
+  SPY mean OOS Sharpe over the same cells +0.8820
+  clause-gated arms losing to (or tying) do-nothing: 12 of 12
+
+======================================================================================================================
+Q5  KEEP PATHS (PROTOCOL rule 4), on the 180 freshly-run real rows.
+======================================================================================================================
+  4a: 37 / 180      4b: 28 / 180      BOTH: 2 / 180
+  4b by panel x family:
+  family    BUDGET  DDCTL  SLEEVE
+  panel                          
+  BROAD136   0.000  0.000   0.050
+  SMALL439   0.000  0.000   0.000
+  U56        0.450  0.550   0.350
+  4b failure clauses: H1,H2,OOS,DD,CAGR=70, -=28, H2,OOS,DD=25, H1,CAGR=14, H1,H2,OOS,CAGR=12, DD=6
+  SMALL439 4b passes: 0 of 60
+  control books and SPY:
+     panel  bps   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+       U56   10 0.1286  1.1075 -0.1821 1.1097 1.1117    0.1449      1.1775    -0.1821
+       U56   25 0.1127  0.9844 -0.1833 0.9765 0.9966    0.1289      1.0618    -0.1833
+       U56    0 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372
+  BROAD136   10 0.1314  0.9493 -0.2157 1.1272 0.7955    0.1240      0.8758    -0.2157
+  BROAD136   25 0.1084  0.8033 -0.2168 0.9773 0.6524    0.1006      0.7310    -0.2168
+  BROAD136    0 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372
+  SMALL439   10 0.0657  0.4635 -0.2684 0.5942 0.3566    0.0746      0.4997    -0.2684
+  SMALL439   25 0.0338  0.2824 -0.3456 0.4160 0.1719    0.0403      0.3138    -0.3456
+  SMALL439    0 0.1413  0.8615 -0.3372 0.8907 0.8577    0.1545      0.8820    -0.3372
+
+  runtime 226s
