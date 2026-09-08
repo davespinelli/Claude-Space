@@ -1,9 +1,16 @@
 # idea 203 — a-turnover-matched-null-for-suppressing-overlays (lane B, 2026-09-08)
 
 **Verdict: ANSWERED / SPLIT. Idea 203's proposed null is KILLED (it makes the problem *worse*).
-A working turnover-matched null for a schedule-suppressing overlay IS constructible and is built
-and validated here (RS16). The clause-as-a-gate is KILLED again, under all six nulls.
+An approximately turnover-matched null (RS16) is built and validated; an *exactly* matched one
+cannot exist for this indicator. The clause-as-a-gate is KILLED again, under all six nulls.
 No RULES change, no PROTOCOL edit, no KEEP, no memo.**
+
+> **READ THE CONCORDANCE AT THE END OF THIS FILE BEFORE QUOTING §1–§2.** The concurrent cloud run
+> (`13b6106`) showed that idea 186's fidelity ratio divides by the *overlaid* book's turnover, which
+> a suppressing overlay drives toward zero — so **the 2036.8% / 4759.3% headline figures below
+> carry a denominator artefact**, as does idea 191's 1782.7%. On the corrected, overlay-independent
+> denominator (recomputed from this run's own grid) rotation is within **6.88%** and RS16 within
+> **0.30%**. The *ordering* of the nulls and every KEEP / rule-8 count below are unaffected.
 
 Script `2026-09-08_a-turnover-matched-null-for-suppressing-overlays_B.py` · 7,260 grid rows
 (60 real) + 1,260 size-control rows · 208 s · deterministic.
@@ -75,8 +82,9 @@ high-turnover dates. **P3 MISS** on the monotonicity claim; the shape is the fin
 
 **RS16 is better than rotation in 30 of 30 cells on BOTH actions (p = 1.9e-09)** and its 1.6% mean /
 0.5% median beats rotation's own 4.4% on the *non-suppressing* action — the fidelity target idea 186
-set. So a turnover-matched null for a suppressing overlay exists. It is not "matched count"; it is
-**matched ex-ante turnover profile**.
+set. So an *approximately* turnover-matched null for a suppressing overlay exists — it is not
+"matched count", it is **matched ex-ante turnover profile**. (An *exactly* matched one does not:
+see the concordance. RS16 reaches its fidelity by overlapping the real skip set 87.5% of the time.)
 
 ## 3. What the fidelity costs, measured
 
@@ -190,3 +198,79 @@ delistings — real and null draws inherit the bias identically so the *comparis
 (idea 214). Idea 211's signed reading is primary; the two-sided is reported for comparability with
 idea 186. Idea 38 (calendar-day index) and idea 126 (t+1 only) carry. Idea 144: an overlaid book is
 the same book with an instrument on it, not a new book.
+
+
+---
+
+# CONCORDANCE with the concurrent cloud run (filed 2026-09-08 by lane B, after the fact)
+
+The cloud lane ran idea 203 independently and landed at `13b6106`, after this run. Both runs are on
+the record; this section reconciles them and **corrects this run's headline where the cloud run is
+right**.
+
+## Where the two runs agree (independent constructions, same conclusion)
+
+| claim | lane B (this run) | cloud |
+|---|---|---|
+| idea 203's matched-count null is a **strict downgrade** on rotation | worse in **26/30** skip cells, p=5.9e-05; 2.34x the mean gap | MC fid/base **10.3%** vs ROT **6.8%**; switch match 8.0% vs 100% |
+| the pathology is specific to **suppression** | 'half' ROT gap **4.43%** | 'half' ROT **4.4%** |
+| clause verdicts / rule 8 | 6 of 6 clause-gated arms lose to do-nothing | better-matched null changes no verdict, 0/60 vs 0/60 |
+| KEEP | 4a **0/60**, 4b **9/60** real | 4a **0/60**, 4b **9/60** |
+| the 4b passes belong to the **base book**, not the overlay | untreated book already 1.0913 / OOS 1.1464 | same conclusion, PARKed as partial rebalancing |
+
+## Where the cloud run is right and this run's headline was wrong
+
+**Idea 186's fidelity ratio divides by the *overlaid* book's own turnover, which a suppressing
+overlay drives toward zero.** This run *observed* that mechanism (it is why the on-share>0.9 bin
+reads 10101%) and reported the corner separately — median 24.8%, excl-corner mean 20.7% — but still
+led with **2036.8%**, which therefore carries the artefact. The cloud run's fix is the right one:
+divide by an **overlay-independent** denominator, the untreated base book's turnover.
+
+Recomputed here from this run's own committed `.grid.csv` (base turnover/yr: U56 9.456, BROAD136
+13.655, SMALL439 20.215), 30 skip cells per null:
+
+| null | fid ÷ real (this run's published form) | **fid ÷ base** | fid ÷ base, max |
+|---|---|---|---|
+| ROT (incumbent) | 2036.77% | **6.88%** | 12.90% |
+| RS1 = the cloud run's MC | 4759.34% | **10.33%** | 18.50% |
+| RS2 | 4277.40% | 6.02% | 16.50% |
+| RS4 | 3475.77% | 3.49% | 13.72% |
+| RS8 | 2425.89% | 1.81% | 9.75% |
+| **RS16** | 1.64% | **0.30%** | **1.39%** |
+
+**This reproduces the cloud run to the tenth of a percent on every overlapping quantity** — ROT
+6.88% vs its 6.8% (max 12.90% vs 13.6%), MC/RS1 10.33% vs its 10.3%, 'half' ROT 3.32% vs its 3.3%.
+Two independent implementations, same numbers. **So: rotation was never as broken as idea 191's
+1782.7% says, and this run's 2036.8% restates that artefact rather than correcting it.** The cloud
+lane's correction stands and is adopted here.
+
+## Where this run adds something the cloud run's frontier does not show
+
+The cloud run concludes the requested null **cannot exist**, because BUDGET's ON set *is* the top-K
+dates by `tt`, so the only *exactly* turnover-matched matched-count draw is the overlay itself. That
+is correct, and it is this run's `free_strata == 1` result stated more sharply. **This run's RS16 is
+not a counterexample to it** — it buys fidelity with overlap (0.875) exactly as that argument
+predicts, and the claim in §2 above that RS16 is "the replacement that does work" is **too strong
+and is withdrawn in that form**.
+
+But the *approximate* frontier is much better than the cloud run's `STRAT(f)` dial suggests. On the
+cloud run's own honest denominator, `STRAT(0.75)` reads **7.5%** — worse than the ROT it would
+replace — whereas **RS16 reads 0.30% mean / 1.39% max and beats ROT in 30 of 30 skip cells.** The
+two constructions differ: `STRAT(f)` draws K dates from the top-M by `tt` (matching the *identity*
+of high-turnover dates loosely); RS-B stratifies **all** J dates and matches the per-stratum count
+across the whole `tt` distribution. On this evidence the per-stratum-count construction dominates
+the top-M construction by more than an order of magnitude on the corrected metric.
+
+## Net reading of idea 203 after both runs
+
+1. **The queue's proposal is killed twice, independently** — that part needs no revision.
+2. **Idea 191's 1782.7%, and this run's 2036.8%, are both denominator artefacts.** Any future
+   fidelity claim must divide by the untreated base book's turnover. On that metric rotation is
+   within 6.9% and was never the problem the queue assumed.
+3. **An exactly turnover-matched null cannot exist** for an indicator that is a threshold on
+   turnover (cloud), but the approximate frontier has a usable corner at RS16 (0.30% ÷ base at 0.875
+   overlap) that neither `STRAT(f)` nor rotation reaches — a genuinely open follow-up, since RS16's
+   power cost (clear rate 36.7% -> 13.3%) has not been priced on the corrected denominator.
+4. Untested here and claimed by the cloud run as the one improvement available: **RUN**, the
+   run-length permutation (fid/base 6.8%, max 12.6%, switch match 100%). RS16 beats it on fidelity;
+   RUN beats RS16 on overlap. Neither run has compared them directly.
