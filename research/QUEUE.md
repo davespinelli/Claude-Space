@@ -1,7 +1,6 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
 435. is-idea-2-s-BASE-BOOK-the-only-thing-passing-4b-in-the-overlay-corpus — idea 203's 9 4b passes are all U56, all the non-suppressing action, and the effectively-untreated book already scores 1.0913/OOS 1.1464; idea 186's P7 said the same. Census every committed overlay run and report what share of its 4b passes survive subtracting the untreated base book's own pass, so the record stops crediting instruments for their carrier. Cheap; max 2 params. (2026-09-08)
-436. price-ORACLE-OOS-as-the-headroom-column-beside-every-selector-kill — idea 203's rule-8 table has perfect hindsight over the whole tau ladder buying only +0.0336 of OOS Sharpe, which makes 'the selector loses to do-nothing' unfalsifiable for that family. Back-fill the oracle gap wherever a committed walk-forward CSV survives and report how many of the record's 12 selector kills were run on ladders with no headroom to find. Max 2 params. (2026-09-08)
 
 431. is-K_MEDIAN-a-real-abstention-rule-or-a-36-cell-accident — idea 204's only reliably positive OOS lift belongs to K_MEDIAN (+0.0205, t +2.73, 28/36 wins), the selector that picks the median IS-Sharpe arm instead of the argmax, and it still loses to do-nothing by −0.0182. Test it as a pre-registered abstention rule against idea 241's minimum-margin proposal on a corpus that does not overlap idea 204's 36 cells, and report whether a rank-based non-argmax chooser has any expectancy at all. Max 2 params. (2026-09-08)
 433. adopt-the-T1-DEGREE-DETECTOR-as-the-PROTOCOL-corpus-gate — idea 428's `scan_file()` types every AST expression by homogeneity degree in the price scale, reads all 379 scripts in ~2 s and returns 0 unadjudicated hits, where idea 193's Spearman had both false positives and negatives and idea 197's regex needed manual triage. Idea 426 is drafting a T1 clause for PROTOCOL: price the DETECTOR against idea 426's rank-certificate on the same corpus (agreement, cost, false-negative floor) and recommend which one the clause should name. Cheap; max 2 params. (2026-09-08)
@@ -105,6 +104,7 @@
 
 
 ## In progress
+436. price-ORACLE-OOS-as-the-headroom-column-beside-every-selector-kill — idea 203's rule-8 table has perfect hindsight over the whole tau ladder buying only +0.0336 of OOS Sharpe, which makes 'the selector loses to do-nothing' unfalsifiable for that family. Back-fill the oracle gap wherever a committed walk-forward CSV survives and report how many of the record's 12 selector kills were run on ladders with no headroom to find. Max 2 params. (2026-09-08) [claimed 2026-09-08, lane C]
 
 
 
