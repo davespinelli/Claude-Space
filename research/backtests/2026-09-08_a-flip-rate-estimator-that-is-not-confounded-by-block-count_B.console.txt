@@ -1,0 +1,245 @@
+======================================================================================================================
+IDEA 216  a-flip-rate-estimator-that-is-not-confounded-by-block-count   (lane B, 2026-09-08)
+======================================================================================================================
+
+building panels (idea 191's build_panels, imported) ...
+  panels: U56=55  BROAD136=132  SMALL439=439
+
+REPRODUCTION, asserted before any new number is read:
+  [d] RULES v1 on u56 @10bps: 6.45851% / 0.66471 / -13.82781%  (published anchor 6.45305% / 0.66418 / -13.82780%)
+      deviation vs the 2026-09-05 price vintage: dCAGR +0.00546 pp, dSharpe +0.00053, dMaxDD -0.0000143 pp.
+      data/prices.csv has been re-cached since idea 201/207 ran, so CAGR/Sharpe carry a
+      VINTAGE drift that is reported, not asserted away; MaxDD is the shape statistic and
+      is the construction gate (idea 216 follows the convention set by today's lane-B and
+      cloud runs).  EVERY estimator below is computed on ONE pool from ONE vintage, so the
+      comparisons this run makes are vintage-free; only the cross-reference to idea 201's
+      PUBLISHED bands carries the drift, and it is quantified rather than gated.
+      -> PASS (MaxDD gate)
+
+  [e] bt_np vs p191.fast_backtest over a 24-point sample (3 panels x 4 overlays x 2 offsets):
+      max|dret|=0.000e+00  max|dturn|=0.000e+00 -> PASS
+  deterministic parts reproduce -- proceeding to the enumeration
+
+======================================================================================================================
+Q0  ENUMERATE THE ROTATION POPULATION.  Every one of the J-1 circular rotations of each
+    overlay's ON indicator, for 3 panels x 3 families x 5 thr x 2 depth = 90
+    configurations, at 2 cost rungs derived exactly from one 0 bps run.
+======================================================================================================================
+  reusing the enumerated pool from 2026-09-08_a-flip-rate-estimator-that-is-not-confounded-by-block-count_B.pool.npz (540 arrays); the real books are still re-run from scratch
+  U56 done (17s)
+  BROAD136 done (22s)
+  SMALL439 done (32s)
+
+grid: 180 real rows, 84510 null backtests reused from cache (32s)
+
+======================================================================================================================
+REPRODUCTION of idea 201's published bands (P1).  Idea 201's 60 offsets are located
+INSIDE this run's enumerated population by value, then blocked its way (sorted, 3x20).
+Idea 201 ran on the 2026-09-05 price vintage and data/prices.csv has been re-cached
+since, so the target here is CONSTRUCTION identity within the vintage drift measured
+above, not bit equality: the deviation is reported and the per-panel split is the test.
+======================================================================================================================
+  rows checked: 180/180
+  max |band  - idea 201 band   |: 1.607e-03
+  max |band_1- idea 201 band_b1|: 1.494e-02
+  max |band_2- idea 201 band_b2|: 4.616e-03
+  median |deviation| over the 3 x rows checked: 3.216e-08   (vintage drift of the u56 anchor: 5.3e-04 of Sharpe)
+
+  by panel (BROAD136 and SMALL439 read data/prices_broad.csv and
+  data/prices_small.csv.gz, which have NOT been re-cached since idea 201; U56 reads
+  data/prices.csv, which has -- so the drift should be a U56-only phenomenon):
+           n    median       max  over_1e4
+panel                                     
+BROAD136  60 7.980e-17 2.278e-06         0
+SMALL439  60 8.327e-17 1.622e-06         0
+U56       60 1.461e-05 1.494e-02        10
+  -> PASS  (gate: median < 1e-6 and max < 5e-2, the vintage envelope)
+
+======================================================================================================================
+THE POPULATION BAND.  With every rotation enumerated there is an exact band and an
+exact verdict per configuration; the K ladder is scored against it below.
+======================================================================================================================
+
+          n_pop  band_pop_MAX  band_pop_Q95  clear_MAX  clear_Q95
+panel                                                            
+BROAD136    974        0.3554        0.1433     0.0000     0.1500
+SMALL439    869        0.4109        0.1662     0.0000     0.2833
+U56         974        0.3129        0.1368     0.0000     0.1833
+
+  corpus population clear rate: MAX 0.0%   Q95 20.6%   (n=180)
+
+======================================================================================================================
+Q1/Q2  THE THREE ESTIMATORS AND THEIR OWN SAMPLING ERROR.
+       D = idea 207's disjoint blocks (comparisons per config vary with K)
+       P = paired, B=200 disjoint block pairs at EVERY K
+       E = error vs the population verdict, B=200 single K-draws
+       each recomputed under R=8 independent replicate seeds
+======================================================================================================================
+
+stat   K  D_blocks  D_pairs_per_cfg  D_disagree  D_rep_sd  P_pairs_per_cfg  P_disagree  P_rep_sd  E_err  E_rep_sd  E_implied_disagree  cfg_with_error
+ MAX  20        48             1128      0.1022    0.0015              200      0.1011    0.0010 0.1768    0.0017              0.1001          0.4056
+ MAX  50        19              171      0.0855    0.0017              200      0.0880    0.0007 0.1103    0.0010              0.0845          0.3111
+ MAX 100         9               36      0.0668    0.0033              200      0.0709    0.0013 0.0668    0.0005              0.0651          0.2556
+ MAX 200         4                6      0.0407    0.0061              200      0.0428    0.0006 0.0319    0.0006              0.0379          0.1889
+ MAX 400         2                1      0.0222    0.0073              200      0.0182    0.0004 0.0103    0.0005              0.0143          0.1278
+ Q95  20        48             1128      0.0765    0.0017              200      0.0749    0.0013 0.0676    0.0010              0.0735          0.4056
+ Q95  50        19              171      0.0565    0.0025              200      0.0535    0.0007 0.0430    0.0010              0.0519          0.2944
+ Q95 100         9               36      0.0437    0.0021              200      0.0424    0.0009 0.0341    0.0010              0.0403          0.2278
+ Q95 200         4                6      0.0359    0.0027              200      0.0365    0.0007 0.0267    0.0005              0.0319          0.1500
+ Q95 400         2                1      0.0403    0.0114              200      0.0348    0.0004 0.0202    0.0003              0.0256          0.0833
+
+  ESTIMATOR SAMPLING ERROR ACROSS THE LADDER (the queue's actual question):
+    MAX:  D rep sd 0.0015 -> 0.0073  (max/min 4.8x, pairs/cfg 1128 -> 1)
+          P rep sd 0.0004 -> 0.0013  (max/min 3.3x, pairs/cfg fixed at 200)
+    Q95:  D rep sd 0.0017 -> 0.0114  (max/min 6.7x, pairs/cfg 1128 -> 1)
+          P rep sd 0.0004 -> 0.0013  (max/min 3.2x, pairs/cfg fixed at 200)
+
+  MONOTONICITY of the disagreement rate in K:
+    MAX D disjoint (idea 207) : K=20:0.1022  K=50:0.0855  K=100:0.0668  K=200:0.0407  K=400:0.0222   -> MONOTONE DECREASING
+    MAX P fixed-B             : K=20:0.1011  K=50:0.0880  K=100:0.0709  K=200:0.0428  K=400:0.0182   -> MONOTONE DECREASING
+    MAX E vs population       : K=20:0.1768  K=50:0.1103  K=100:0.0668  K=200:0.0319  K=400:0.0103   -> MONOTONE DECREASING
+    Q95 D disjoint (idea 207) : K=20:0.0765  K=50:0.0565  K=100:0.0437  K=200:0.0359  K=400:0.0403   -> NOT MONOTONE
+    Q95 P fixed-B             : K=20:0.0749  K=50:0.0535  K=100:0.0424  K=200:0.0365  K=400:0.0348   -> MONOTONE DECREASING
+    Q95 E vs population       : K=20:0.0676  K=50:0.0430  K=100:0.0341  K=200:0.0267  K=400:0.0202   -> MONOTONE DECREASING
+
+======================================================================================================================
+Q2b  THE SAMPLING-FREE LIMIT.  A K-draw's verdict depends on the draw only through
+     X = how many of the K sampled |dSharpe| reach the real |dSharpe|.  With an
+     ORDER-STATISTIC band at level q the overlay clears iff X <= c(K) = K - ceil(q*K),
+     and X ~ Hypergeom(N, M, K) where M is the POPULATION exceedance count.  So the
+     ladder has a closed form with NO sampling error at all:
+       P(clear at K)  = P(X <= c)
+       P(error at K)  = P(clear) or 1-P(clear), whichever the population verdict denies
+       P(flip, 2 disjoint K-blocks) = 2 P(A clears) P(B does not clear | A clears)
+     (q=1 -> c=0 is the MAX band and is EXACT; q=0.95 uses the order-statistic band,
+     which differs from the run's linear-interpolation band only by that convention --
+     the gap is reported below, not hidden.)
+======================================================================================================================
+
+stat   K  c_K  CF_clear  CF_err  CF_flip  MC_err  MC_flip  err_gap  flip_gap
+ MAX  20    0    0.1769  0.1769   0.1020  0.1768   0.1011   0.0001    0.0009
+ MAX  50    0    0.1105  0.1105   0.0876  0.1103   0.0880   0.0001   -0.0003
+ MAX 100    0    0.0667  0.0667   0.0700  0.0668   0.0709  -0.0001   -0.0009
+ MAX 200    0    0.0317  0.0317   0.0428  0.0319   0.0428  -0.0002   -0.0001
+ MAX 400    0    0.0103  0.0103   0.0182  0.0103   0.0182  -0.0000    0.0000
+ Q95  20    1    0.2556  0.0703   0.0742  0.0676   0.0749   0.0027   -0.0007
+ Q95  50    2    0.2197  0.0434   0.0580  0.0430   0.0535   0.0004    0.0045
+ Q95 100    5    0.2267  0.0352   0.0428  0.0341   0.0424   0.0010    0.0004
+ Q95 200   10    0.2217  0.0272   0.0370  0.0267   0.0365   0.0004    0.0005
+ Q95 400   20    0.2180  0.0202   0.0353  0.0202   0.0348   0.0001    0.0005
+
+  MAX (the band where the closed form is EXACT): max |Monte Carlo - closed form| = 0.0009 over the ladder; the B=200 Monte-Carlo se is ~0.0026.
+  Q95 (order-statistic band vs the run's linear-interpolation band): max gap 0.0045 -- a convention difference, reported.
+
+  This is the estimator idea 216 asks for taken to its limit: B -> infinity, variance
+  zero, and it needs exactly ONE number per configuration (M, the population exceedance
+  count) rather than a re-draw at every K.
+
+======================================================================================================================
+Q3  THE UNDETERMINED ZONE, against the POPULATION margin |dSharpe| - band_pop, at
+    fixed B.  A configuration is UNDETERMINED at K when a K-draw disagrees with the
+    population verdict at a rate above 5% -- the clause's own nominal size.
+======================================================================================================================
+
+stat   K  n_undetermined  share_undetermined  zone_max  zone_p95  zone_median  corpus_inside_p95  mean_p  max_p
+ MAX  20              57              0.3167    1.1777    0.8285       0.1183             0.9667  0.1770 0.9819
+ MAX  50              44              0.2444    1.1777    0.8297       0.0925             0.9667  0.1100 0.9481
+ MAX 100              33              0.1833    1.1777    0.9723       0.0557             0.9833  0.0671 0.8994
+ MAX 200              22              0.1222    0.4805    0.4694       0.0502             0.8000  0.0315 0.7981
+ MAX 400               7              0.0389    0.0127    0.0125       0.0078             0.1389  0.0104 0.5969
+ Q95  20              41              0.2278    0.1055    0.0941       0.0162             0.7167  0.0673 0.7094
+ Q95  50              27              0.1500    0.0921    0.0684       0.0119             0.5833  0.0437 0.6031
+ Q95 100              17              0.0944    0.0180    0.0175       0.0068             0.2556  0.0344 0.6162
+ Q95 200              13              0.0722    0.0146    0.0130       0.0046             0.2111  0.0268 0.5800
+ Q95 400              12              0.0667    0.0146    0.0131       0.0041             0.2111  0.0203 0.5544
+
+======================================================================================================================
+Q4  THE K RECOMMENDATION, restated on the fixed-B estimator.
+======================================================================================================================
+    MAX K=  20:  fixed-B disagreement 0.1011 (+/- 0.0010)   error vs population 0.1768 (+/- 0.0017)   undetermined 31.7%   zone_p95 0.8285
+    MAX K=  50:  fixed-B disagreement 0.0880 (+/- 0.0007)   error vs population 0.1103 (+/- 0.0010)   undetermined 24.4%   zone_p95 0.8297
+    MAX K= 100:  fixed-B disagreement 0.0709 (+/- 0.0013)   error vs population 0.0668 (+/- 0.0005)   undetermined 18.3%   zone_p95 0.9723
+    MAX K= 200:  fixed-B disagreement 0.0428 (+/- 0.0006)   error vs population 0.0319 (+/- 0.0006)   undetermined 12.2%   zone_p95 0.4694
+    MAX K= 400:  fixed-B disagreement 0.0182 (+/- 0.0004)   error vs population 0.0103 (+/- 0.0005)   undetermined 3.9%   zone_p95 0.0125
+    Q95 K=  20:  fixed-B disagreement 0.0749 (+/- 0.0013)   error vs population 0.0676 (+/- 0.0010)   undetermined 22.8%   zone_p95 0.0941
+    Q95 K=  50:  fixed-B disagreement 0.0535 (+/- 0.0007)   error vs population 0.0430 (+/- 0.0010)   undetermined 15.0%   zone_p95 0.0684
+    Q95 K= 100:  fixed-B disagreement 0.0424 (+/- 0.0009)   error vs population 0.0341 (+/- 0.0010)   undetermined 9.4%   zone_p95 0.0175
+    Q95 K= 200:  fixed-B disagreement 0.0365 (+/- 0.0007)   error vs population 0.0267 (+/- 0.0005)   undetermined 7.2%   zone_p95 0.0130
+    Q95 K= 400:  fixed-B disagreement 0.0348 (+/- 0.0004)   error vs population 0.0202 (+/- 0.0003)   undetermined 6.7%   zone_p95 0.0131
+
+======================================================================================================================
+Q5  RULE 8 (PROTOCOL clause 8).  Clause read on the IS window ONLY (<= 2016-12-31);
+    the overlay point is chosen there; 2017-01-01 -> is read ONCE.
+    18 cells = 3 panels x 3 families x 2 cost rungs; pool = 10 points (5 thr x 2 depth).
+======================================================================================================================
+
+  rows with an undefined IS Sharpe, carried as non-clearing and excluded from IS statistics: 2/180
+
+                     selector  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD    dOOS       t  wins  losses  abstains  n
+                   ORACLE-OOS          +0.8197        +0.1104         -0.2316 +0.0431 +3.8604    12       0         0 18
+                S0 do-nothing          +0.7766        +0.1022         -0.2353 +0.0000     NaN     0       0         0 18
+    S2 clause-gated MAX K=200          +0.7737        +0.1021         -0.2367 -0.0029 -1.0000     0       1        17 18
+    S2 clause-gated MAX K=400          +0.7731        +0.1021         -0.2367 -0.0036 -1.3830     0       2        16 18
+    S2 clause-gated MAX K=100          +0.7555        +0.0988         -0.2416 -0.0211 -2.0373     0       5        13 18
+    S2 clause-gated Q95 K=200          +0.7471        +0.0958         -0.2390 -0.0295 -2.4280     0       7        11 18
+S1 IS-Sharpe argmax (control)          +0.7405        +0.0955         -0.2552 -0.0361 -1.6840     5       9         0 18
+     S2 clause-gated MAX K=20          +0.7347        +0.0935         -0.2334 -0.0419 -1.9863     1       7        10 18
+     S2 clause-gated Q95 K=20          +0.7330        +0.0928         -0.2374 -0.0436 -3.1929     2       9         7 18
+     S2 clause-gated MAX K=50          +0.7321        +0.0956         -0.2476 -0.0445 -1.8688     0       6        12 18
+    S2 clause-gated Q95 K=400          +0.7279        +0.0936         -0.2418 -0.0487 -2.2470     0       7        11 18
+    S2 clause-gated Q95 K=100          +0.7139        +0.0912         -0.2399 -0.0627 -2.4269     0       8        10 18
+     S2 clause-gated Q95 K=50          +0.7024        +0.0874         -0.2456 -0.0742 -3.2406     0      10         8 18
+
+  best clause-gated selector vs do-nothing: -0.0029 of OOS Sharpe (LOSES)   ORACLE-OOS headroom +0.0431
+
+  BENCHMARKS over the same OOS window (2017-01-01 ->):
+    U56       SPY OOS Sharpe 0.8820 CAGR 15.45% MaxDD -33.72% | RULES v1 @10bps OOS Sharpe 0.7471 CAGR 7.73% MaxDD -13.83%
+    BROAD136  SPY OOS Sharpe 0.8820 CAGR 15.45% MaxDD -33.72% | RULES v1 @10bps OOS Sharpe 0.5762 CAGR 5.94% MaxDD -21.19%
+    SMALL439  SPY OOS Sharpe 0.8820 CAGR 15.45% MaxDD -33.72% | RULES v1 @10bps OOS Sharpe 0.6617 CAGR 7.88% MaxDD -32.37%
+
+======================================================================================================================
+Q6  BOTH KEEP PATHS on the 180 real rows (4a vs the panel's own RULES v1 at the row's
+    own cost rung, 4b vs SPY; idea 191's evaluators, unchanged).
+======================================================================================================================
+
+  4a passes: 37/180     4b passes: 28/180     BOTH: 2/180
+
+  4b passes by panel/family:
+panel     family
+BROAD136  SLEEVE     1
+U56       BUDGET     9
+          DDCTL     11
+          SLEEVE     7
+
+  reasons 4a fails (top):
+fail4a
+DD          78
+-           37
+H1,H2       25
+H2          24
+H1,H2,DD     9
+H2,DD        4
+  reasons 4b fails (top):
+fail4b
+H1,H2,OOS,DD,CAGR    70
+-                    28
+H2,OOS,DD            25
+H1,CAGR              14
+H1,H2,OOS,CAGR       12
+DD                    6
+
+======================================================================================================================
+PRE-REGISTERED PREDICTIONS, scored
+======================================================================================================================
+  P1 reproduction (bt_np == parent at 0.0e+00 AND idea 201 bands within the vintage drift): CONFIRMED
+  P2 D rep sd rises >3x [CONFIRMED], P rep sd flat <2x [REJECTED]: D 4.8x MAX / 6.7x Q95 ; P 3.3x MAX / 3.2x Q95
+     the RATIO test is the wrong scale and P2's second clause is rejected on it: what
+     matters is the LEVEL at the noisy end -- at K=400 the fixed-B estimator's sd is
+     0.0004 against the disjoint estimator's 0.0114, a factor 28.
+  P3 Q95 fixed-B disagreement monotone decreasing: CONFIRMED  (0.0749 -> 0.0535 -> 0.0424 -> 0.0365 -> 0.0348)
+  P4 MAX p_K still >5% at K=400: 0.0103 -> REJECTED
+  P5 Q95 p_K monotone down and below MAX at K>=50: REJECTED  (0.0676 -> 0.0430 -> 0.0341 -> 0.0267 -> 0.0202)
+  P5b MAX Monte Carlo matches the exact closed form within 0.01: 0.0009 -> CONFIRMED
+  P6 no clause-gated selector beats do-nothing OOS: best -0.0029 -> CONFIRMED
+
+total runtime 186s
