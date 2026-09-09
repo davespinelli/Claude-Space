@@ -1,0 +1,170 @@
+================================================================================================================
+IDEA 313 — why do capQ and advQ disagree in SIGN?   (lane B, 2026-09-09)
+  pinned: g=0.75, cadence W, cost 10 bps, NDEC=10, key window 60d, MA 200d, arms ('EWall', 'MA-RS', 'MA-DG')
+  2 parameters: key in {CAP, ADV} x stamp in {LATE, EARLY, DYN}; all 6 cells reported
+================================================================================================================
+
+PANEL SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable;  2010-01-04 .. 2026-09-04 (4194 rows)
+      SURVIVORSHIP: current constituents of the sub-$2B screen only; LEVELS biased UP, thin deciles most.  Claims below are scheme-vs-scheme DIFFERENCES.
+
+REFERENCES over 2011-01-13..2026-09-04
+  SPY                  CAGR  14.13% Sharpe  0.862 MaxDD -33.72% | OOS CAGR  15.45% Sharpe  0.882 MaxDD -33.72%
+  RULES v2 (live)      CAGR   3.81% Sharpe  0.572 MaxDD -14.68% | OOS CAGR   3.85% Sharpe  0.568 MaxDD -14.68%
+  EWall whole panel    CAGR  10.18% Sharpe  0.678 MaxDD -36.17% | OOS CAGR  10.09% Sharpe  0.637 MaxDD -36.17%
+
+KEYS  CAP covers 430/439 tradable names (2026 mktcap median $736M, $55M-$1939M)
+G2    shares_eff = mktcap/px(last) vs the file's own `shares` column, n=430: median ratio 0.9883, IQR [0.9715, 1.0041]
+      (ratio != 1 is the dividend/split adjustment of the panel's prices; CAP's RANKING at the LATE stamp is mktcap's by construction, so the gate below is exact.)
+G1a   max |rank(CAP at LATE stamp) - rank(mktcap_2026)| = 0.00e+00  (0 => CAP/LATE IS idea 51's capQ)
+
+================================================================================================================
+Q1  DECILE LADDERS — 2 keys x 3 stamps x 10 deciles x 3 arms = 180 books (MAIN panel)
+================================================================================================================
+    MAIN  CAP/LATE  done
+    MAIN  CAP/EARLY done
+    MAIN  CAP/DYN   done
+    MAIN  ADV/LATE  done
+    MAIN  ADV/EARLY done
+    MAIN  ADV/DYN   done
+  main panel done (356s)
+
+G1b   ADV/DYN vs idea 424 advQ-DYNAMIC on 30 rows: max|dSharpe| 8.327e-17, max|dCAGR| 9.931e-17
+G1a2  CAP/LATE vs idea 424 capQ-STATIC on 30 rows: max|dSharpe| 2.329e-01, max|dCAGR| 3.279e-02
+
+================================================================================================================
+Q2  THE SIGN GAP, FULL / IS / OOS   rho(decile, dSharpe vs EWall), n=10, SE ~ 0.354
+================================================================================================================
+    WHICH rho?  Idea 51 and idea 424 both compute np.corrcoef(decile, dSharpe) — a
+    PEARSON correlation on 10 points — while their prose calls it Spearman.  BOTH are
+    reported below; `rho_P` is the record's statistic and is what the gates reproduce.
+
+G1c   idea 51 published capQ MA-DG -0.336/-0.335 and advQ-D MA-RS +0.335.
+      this run, PEARSON:  CAP/LATE MA-DG -0.1988   ADV/DYN MA-RS +0.3351
+      this run, SPEARMAN: CAP/LATE MA-DG -0.2364   ADV/DYN MA-RS +0.0303
+
+key  stamp  arm    |   rho_P      t   rho_S |    IS_P      t |   OOS_P      t
+CAP  LATE   MA-RS  |  -0.125  -0.36  -0.152 |  +0.372  +1.13 |  -0.515  -1.70
+CAP  LATE   MA-DG  |  -0.199  -0.57  -0.236 |  +0.382  +1.17 |  -0.586  -2.05
+CAP  EARLY  MA-RS  |  +0.480  +1.55  +0.406 |  +0.526  +1.75 |  +0.288  +0.85
+CAP  EARLY  MA-DG  |  +0.656  +2.46  +0.576 |  +0.652  +2.43 |  +0.420  +1.31
+CAP  DYN    MA-RS  |  +0.677  +2.60  +0.733 |  +0.636  +2.33 |  +0.167  +0.48
+CAP  DYN    MA-DG  |  +0.376  +1.15  +0.309 |  +0.660  +2.49 |  -0.181  -0.52
+ADV  LATE   MA-RS  |  +0.159  +0.46  +0.152 |  +0.538  +1.81 |  -0.117  -0.33
+ADV  LATE   MA-DG  |  -0.074  -0.21  -0.127 |  +0.448  +1.42 |  -0.356  -1.08
+ADV  EARLY  MA-RS  |  +0.266  +0.78  +0.236 |  +0.637  +2.34 |  -0.085  -0.24
+ADV  EARLY  MA-DG  |  +0.436  +1.37  +0.455 |  +0.731  +3.03 |  -0.182  -0.52
+ADV  DYN    MA-RS  |  +0.335  +1.01  +0.030 |  +0.462  +1.48 |  +0.120  +0.34
+ADV  DYN    MA-DG  |  +0.113  +0.32  +0.079 |  +0.396  +1.22 |  -0.463  -1.48
+
+  PEARSON minus SPEARMAN per scheme (full sample) — a large gap means the published
+  slope is carried by the SIZE of one decile's dSharpe, not by the ladder's ordering:
+    CAP  LATE   MA-RS   P -0.125  S -0.152  P-S +0.027
+    CAP  LATE   MA-DG   P -0.199  S -0.236  P-S +0.038
+    CAP  EARLY  MA-RS   P +0.480  S +0.406  P-S +0.074
+    CAP  EARLY  MA-DG   P +0.656  S +0.576  P-S +0.080
+    CAP  DYN    MA-RS   P +0.677  S +0.733  P-S -0.056
+    CAP  DYN    MA-DG   P +0.376  S +0.309  P-S +0.067
+    ADV  LATE   MA-RS   P +0.159  S +0.152  P-S +0.008
+    ADV  LATE   MA-DG   P -0.074  S -0.127  P-S +0.053
+    ADV  EARLY  MA-RS   P +0.266  S +0.236  P-S +0.030
+    ADV  EARLY  MA-DG   P +0.436  S +0.455  P-S -0.018
+    ADV  DYN    MA-RS   P +0.335  S +0.030  P-S +0.305
+    ADV  DYN    MA-DG   P +0.113  S +0.079  P-S +0.034
+    mean |P - S| over the 12 schemes: 0.066; sign disagreement in 0/12
+
+  DECOMPOSITION of idea 51's gap  rho_P(ADV,DYN) - rho_P(CAP,LATE), per arm:
+    MA-RS  gap +0.460 = pathA stamp +0.802 + key -0.342  = pathB key +0.284 + stamp +0.176
+    MA-DG  gap +0.311 = pathA stamp +0.574 + key -0.263  = pathB key +0.125 + stamp +0.186
+    (pathA + pathB differ by the interaction; both are printed so neither is privileged.)
+
+================================================================================================================
+Q3  SURVIVORSHIP — (i) drop decile 1,  (ii) FULLHIST sub-panel (no late entrants)
+================================================================================================================
+  FULLHIST: 239/439 names priced on 2010-01-04 (no late entrants)
+  FULLHIST whole-panel EWall control: CAGR 10.60% Sharpe 0.715 MaxDD -34.52%  (MAIN control 10.18% / 0.678 / -36.17%)
+    FULLHIST  CAP/LATE  done
+    FULLHIST  CAP/EARLY done
+    FULLHIST  CAP/DYN   done
+    FULLHIST  ADV/LATE  done
+    FULLHIST  ADV/EARLY done
+    FULLHIST  ADV/DYN   done
+
+  rho_P(decile, dSharpe) FULL sample, three readings (Spearman in brackets):
+key  stamp  arm    |             MAIN            d2-10         FULLHIST
+CAP  LATE   MA-RS  |  -0.125[-0.152]  -0.409[-0.533]  -0.284[-0.285]
+CAP  LATE   MA-DG  |  -0.199[-0.236]  -0.416[-0.383]  -0.292[-0.370]
+CAP  EARLY  MA-RS  |  +0.480[+0.406]  +0.348[+0.317]  +0.347[+0.297]
+CAP  EARLY  MA-DG  |  +0.656[+0.576]  +0.621[+0.567]  +0.476[+0.394]
+CAP  DYN    MA-RS  |  +0.677[+0.733]  +0.544[+0.633]  +0.637[+0.527]
+CAP  DYN    MA-DG  |  +0.376[+0.309]  +0.001[+0.050]  +0.267[-0.018]
+ADV  LATE   MA-RS  |  +0.159[+0.152]  -0.102[-0.167]  +0.154[+0.152]
+ADV  LATE   MA-DG  |  -0.074[-0.127]  -0.112[-0.133]  -0.212[-0.152]
+ADV  EARLY  MA-RS  |  +0.266[+0.236]  +0.188[+0.117]  +0.407[+0.321]
+ADV  EARLY  MA-DG  |  +0.436[+0.455]  +0.365[+0.383]  +0.319[+0.345]
+ADV  DYN    MA-RS  |  +0.335[+0.030]  -0.321[-0.333]  +0.453[+0.236]
+ADV  DYN    MA-DG  |  +0.113[+0.079]  -0.343[-0.267]  +0.114[-0.042]
+    gap(MA-RS) MAIN +0.460  d2-10 +0.088  FULLHIST +0.737
+    gap(MA-DG) MAIN +0.311  d2-10 +0.073  FULLHIST +0.405
+
+================================================================================================================
+Q4  PAIRED CALENDAR-YEAR BLOCK BOOTSTRAP (1000 draws, seed 313) — MAIN panel
+================================================================================================================
+    bootstrap CAP done (600s)
+    bootstrap ADV done (605s)
+
+  per-scheme rho: point, bootstrap mean, 5%, 95%, P(rho>0)   (treatment arms only)
+    CAP  LATE   MA-RS  -0.125 | -0.101 [-0.467, +0.270]  P 0.345
+    CAP  LATE   MA-DG  -0.199 | -0.156 [-0.575, +0.272]  P 0.301
+    CAP  EARLY  MA-RS  +0.480 | +0.430 [+0.033, +0.793]  P 0.964
+    CAP  EARLY  MA-DG  +0.656 | +0.553 [+0.085, +0.875]  P 0.981
+    CAP  DYN    MA-RS  +0.677 | +0.528 [+0.093, +0.801]  P 0.972
+    CAP  DYN    MA-DG  +0.376 | +0.291 [-0.244, +0.690]  P 0.829
+    ADV  LATE   MA-RS  +0.159 | +0.141 [-0.233, +0.538]  P 0.708
+    ADV  LATE   MA-DG  -0.074 | -0.044 [-0.462, +0.410]  P 0.423
+    ADV  EARLY  MA-RS  +0.266 | +0.232 [-0.076, +0.510]  P 0.898
+    ADV  EARLY  MA-DG  +0.436 | +0.305 [-0.242, +0.695]  P 0.838
+    ADV  DYN    MA-RS  +0.335 | +0.280 [-0.095, +0.531]  P 0.916
+    ADV  DYN    MA-DG  +0.113 | +0.091 [-0.384, +0.507]  P 0.643
+
+  the GAP to (CAP,LATE), paired per draw:
+    MA-RS  CAP/EARLY - CAP/LATE  gap +0.531 [+0.056, +1.003]  P(gap>0) 0.971  P(signs differ) 0.627
+    MA-RS  CAP/DYN   - CAP/LATE  gap +0.629 [+0.227, +1.051]  P(gap>0) 0.988  P(signs differ) 0.627
+    MA-RS  ADV/LATE  - CAP/LATE  gap +0.242 [-0.019, +0.539]  P(gap>0) 0.922  P(signs differ) 0.377
+    MA-RS  ADV/EARLY - CAP/LATE  gap +0.333 [+0.018, +0.683]  P(gap>0) 0.959  P(signs differ) 0.567
+    MA-RS  ADV/DYN   - CAP/LATE  gap +0.381 [-0.016, +0.728]  P(gap>0) 0.942  P(signs differ) 0.579
+    MA-DG  CAP/EARLY - CAP/LATE  gap +0.708 [+0.278, +1.118]  P(gap>0) 0.993  P(signs differ) 0.682
+    MA-DG  CAP/DYN   - CAP/LATE  gap +0.447 [-0.004, +0.930]  P(gap>0) 0.947  P(signs differ) 0.542
+    MA-DG  ADV/LATE  - CAP/LATE  gap +0.112 [-0.145, +0.401]  P(gap>0) 0.741  P(signs differ) 0.188
+    MA-DG  ADV/EARLY - CAP/LATE  gap +0.461 [+0.004, +0.942]  P(gap>0) 0.953  P(signs differ) 0.551
+    MA-DG  ADV/DYN   - CAP/LATE  gap +0.247 [-0.181, +0.695]  P(gap>0) 0.820  P(signs differ) 0.400
+
+================================================================================================================
+Q5  RULE 8 W2 — decile chosen by best IS (2010-2016) EWall Sharpe; OOS read once
+================================================================================================================
+  OOS references: SPY 0.882/15.45%/-33.72%;  RULES v2 0.568/3.85%/-14.68%;  EWall ctrl 0.637/10.09%/-36.17%
+  MAIN     CAP/LATE  pick d2  IS Sh 1.029 | OOS CAGR   6.78% Sh  0.440 DD -44.32% | vsSPY -0.442 vsV2 -0.128 vsCTRL -0.196
+  MAIN     CAP/EARLY pick d1  IS Sh 1.748 | OOS CAGR  17.25% Sh  1.150 DD -25.57% | vsSPY +0.268 vsV2 +0.582 vsCTRL +0.513
+  MAIN     CAP/DYN   pick d1  IS Sh 2.366 | OOS CAGR  50.58% Sh  2.348 DD -32.40% | vsSPY +1.466 vsV2 +1.779 vsCTRL +1.711
+  MAIN     ADV/LATE  pick d1  IS Sh 0.871 | OOS CAGR   8.35% Sh  0.550 DD -35.23% | vsSPY -0.332 vsV2 -0.018 vsCTRL -0.087
+  MAIN     ADV/EARLY pick d1  IS Sh 1.438 | OOS CAGR  19.87% Sh  1.143 DD -31.21% | vsSPY +0.261 vsV2 +0.575 vsCTRL +0.506
+  MAIN     ADV/DYN   pick d1  IS Sh 1.695 | OOS CAGR  37.42% Sh  2.213 DD -24.54% | vsSPY +1.331 vsV2 +1.645 vsCTRL +1.576
+  FULLHIST CAP/LATE  pick d2  IS Sh 1.079 | OOS CAGR   5.95% Sh  0.423 DD -37.24% | vsSPY -0.459 vsV2 -0.145 vsCTRL -0.214
+  FULLHIST CAP/EARLY pick d1  IS Sh 1.912 | OOS CAGR  17.28% Sh  1.176 DD -26.05% | vsSPY +0.294 vsV2 +0.608 vsCTRL +0.540
+  FULLHIST CAP/DYN   pick d1  IS Sh 2.164 | OOS CAGR  43.18% Sh  2.148 DD -27.64% | vsSPY +1.266 vsV2 +1.580 vsCTRL +1.512
+  FULLHIST ADV/LATE  pick d10 IS Sh 1.006 | OOS CAGR  12.63% Sh  0.737 DD -32.55% | vsSPY -0.145 vsV2 +0.168 vsCTRL +0.100
+  FULLHIST ADV/EARLY pick d1  IS Sh 1.435 | OOS CAGR  22.24% Sh  1.272 DD -27.79% | vsSPY +0.390 vsV2 +0.704 vsCTRL +0.635
+  FULLHIST ADV/DYN   pick d1  IS Sh 1.626 | OOS CAGR  36.55% Sh  2.077 DD -26.43% | vsSPY +1.195 vsV2 +1.509 vsCTRL +1.441
+  NOTE: a pick landing on decile 1 is the thinnest, least-liquid tenth of a CURRENT-CONSTITUENT small-cap screen — a survivorship measurement, not an edge.
+
+  W1 SIGN-HOLD across the rule-8 boundary: 6/24 (panel,key,stamp,arm) slopes keep their sign IS -> OOS;  rho_IS > 0 in 24/24, rho_OOS < 0 in 18/24
+
+================================================================================================================
+Q6  KEEP PATHS over all books
+================================================================================================================
+  MAIN     4a 3/180   4b 1/180   BOTH 0/180
+  FULLHIST 4a 3/180   4b 1/180   BOTH 0/180
+  TOTAL    4a 6/360   4b 2/360   BOTH 0/360
+  4a passers: MAIN/CAP/EARLY/d1/MA-DG, MAIN/CAP/DYN/d2/MA-DG, MAIN/ADV/DYN/d2/MA-DG, FULLHIST/CAP/EARLY/d1/MA-DG, FULLHIST/CAP/DYN/d2/MA-DG, FULLHIST/ADV/DYN/d2/MA-DG
+  4b passers: MAIN/CAP/DYN/d1/MA-DG, FULLHIST/CAP/DYN/d1/MA-DG
+
+done in 605s
