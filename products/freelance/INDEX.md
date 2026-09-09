@@ -2,6 +2,13 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-09 | 40699241 | FinTech AI SaaS: FastAPI + SQLModel + React/Vue | $1,950 | 183 | drafted |
+| 2026-09-09 | 40699427 | AI-Powered Full-Stack Web Platform | $820 | 125 | drafted |
+| 2026-09-09 | 40699256 | SharePoint Setup with Dashboards | $760 | 151 | drafted |
+| 2026-09-09 | 40699322 | Text Data Entry in Excel | $720 | 32 | drafted |
+| 2026-09-09 | 40699344 | Medical Workflow Automatisation & Data Management | $620 | 190 | drafted |
+| 2026-09-09 | 40699185 | Automate Diamond Market Data Reports | $340 | 27 | drafted |
+| 2026-09-09 | 40699362 | PDF Manual Data Entry | $135 | 6 | drafted |
 | 2026-09-08 | 40698960 | Independent technical audit of a live React, Node.js and PostgreSQL platform | $650 | 174 | drafted |
 | 2026-09-08 | 40698652 | AI Email Data Entry Automation | $440 | 113 | drafted |
 | 2026-09-08 | 40698655 | Excel Lookup Pivot Report | $320 | 25 | drafted |
@@ -241,3 +248,8 @@ Note for the 2026-09-08 12:00 UTC batch: the 11:18 UTC scan carried sixteen NEW 
 - Uber-Style Ride Booking App (40698559) (rider and driver apps, dispatch, payments and live tracking across multiple cities. A genuine multi-month team build rather than a deliverable we can quote honestly at solo scope; 92 bids)
 
 Note for the 2026-09-08 16:38 UTC batch: the 16:38 UTC scan carried twelve NEW rows, of which eight were drafted and four skipped for the reasons above (the two Winomkar rows being one duplicate brief). That fills the eight per run cap exactly, with no eligible row left over. Freelancer.com and its public API remain blocked by the session network policy (HTTP 403 on the proxy tunnel), re-tested this run, so all eight were written from the truncated descriptions the scanner captured and each asks the scope question the truncation left open. 40699050 has by far the best odds at 5 bids and one hour old, but the brief is generic entry work, so it is priced mid-band at $240 rather than the upper half. 40698655 is the best value for effort: 25 bids, a fixed $132 to $396 band, and a plainly specified Excel report rebuild. 40698960 is the largest at $650 but carries 174 bids, and it is priced on the assumption of staging access with per-role test accounts, which the proposal asks for before work starts. 40698632 at 213 bids is drafted for completeness rather than odds.
+
+- Seeking Detail-Oriented Virtual Assistant (40699426) (an ongoing virtual assistant post covering data entry, online research and general admin rather than a defined deliverable, the same reason the AI SaaS Technology Lead row was skipped; $500 to $1,000 hourly estimate with 28 bids)
+- Precise Investment Data Entry (40699174) (Excel sheets of investment-return figures copied line by line into a target sheet, the same brief already drafted as 40698089 Weekly Investment Returns Entry on 2026-09-08 and 40695354 Investment Returns Data Entry on 2026-09-07, so it falls under the near-duplicate rule. Worth noting for David: this posting sits in a wider $300 to $500 band with 37 bids, so the existing 40698089 draft can be repriced upward to roughly $420 and submitted there)
+
+Note for the 2026-09-09 batch: the 2026-09-08 21:09 UTC scan carried nine NEW rows, of which seven were drafted and two skipped for the reasons above, so the batch is seven by supply rather than the eight per run cap. Auditing all sixty shortlist rows against the index left nothing else untriaged. Freelancer.com and its public API remain blocked by the session network policy (the site returns no response at all through the proxy this run, not the usual 403), so all seven were written from the truncated descriptions the scanner captured and each asks the scope question the truncation left open. 40699362 has by far the best odds at 6 bids and two hours old, but it sits in an $84 to $158 band, so it is the smallest ticket here. 40699241 is the largest at $1,500 to $3,000, and it is priced at $1,950 rather than in the upper half because the brief cuts off before naming the screens; the proposal structures it as a scoped first release instead. 40699185 is drafted with an explicit access question: the brief says automated access to a diamond industry site, and if that data sits behind an account rather than being publicly viewable the job is one we would decline, so the proposal asks before quoting work. 40699344 at 190 bids and 40699427 at 125 bids are drafted on fit rather than odds; both land on stacks we already have public proof of.
