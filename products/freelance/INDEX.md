@@ -2,6 +2,13 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-09 | 40701305 | Automated Trading Bot Development for TopstepX -- 3 | $620 | 75 | drafted |
+| 2026-09-09 | 40701096 | AI Agent for CRM Automation | $380 | 193 | drafted |
+| 2026-09-09 | 40700785 | Automate Outlook Enquiry Processing | $290 | 138 | drafted |
+| 2026-09-09 | 40700974 | Scrape Store Data Spreadsheet | $260 | 163 | drafted |
+| 2026-09-09 | 40701301 | Website Data to Excel | $240 | 5 | drafted |
+| 2026-09-09 | 40701077 | Excel Data Cleaning & Entry | $235 | 7 | drafted |
+| 2026-09-09 | 40701245 | AI Bias Correction for WRF Forecasts -- 2 | $230 | 65 | drafted |
 | 2026-09-09 | 40700556 | Interactive Brokers API Integration | $245 | 24 | drafted |
 | 2026-09-09 | 40700194 | Website & App AI Chatbot -- 2 | $340 | 64 | drafted |
 | 2026-09-09 | 40700706 | Excel Data Collection Automation | $320 | 6 | drafted |
@@ -288,5 +295,10 @@ Note for the 2026-09-09 12:00 UTC batch: the 04:41 UTC scan carried eleven NEW r
 - Python 21-Game Easy AI (40700506) (a well-commented Python script playing the 21 Number Game against an easy computer opponent. That is indistinguishable from an introductory programming assignment, and the heavy commenting requirement is the tell, so we do not bid it; $131 to $394 with 49 bids)
 - ATEX Tanker Trailer Monitoring System IoT System Build (40700472) (ATEX-rated hardware, sensors and embedded firmware on fuel tankers, an industrial controls stack outside the Python and data work we deliver; 58 bids)
 - E-Commerce Website with CRM & WhatsApp (40700711) (storefront, CRM and WhatsApp integration end to end in a $16 to $131 band; the budget is an order of magnitude below the scope and bidding the band top would misrepresent it; 68 bids)
+
+- Duplicate Web-Scraping Chrome Extension (40700788) (an exact replica of a reference Chrome extension the client has to hand. Copying a third-party extension we cannot confirm they own is an IP problem before it is a technical one, and the brief never names the scraping target either; 82 bids)
+- Remote Image ML Generalist (40700566) (an ongoing adaptable generalist across the client's several computer-vision initiatives rather than a defined deliverable, the same reason the AI SaaS Technology Lead and virtual assistant rows were skipped, and it is posted in the data-annotation category, which reads as labelling volume rather than a build)
+
+Note for the 2026-09-09 23:00 UTC batch: the 16:38 UTC scan carried nine NEW rows, of which seven were drafted and two skipped for the reasons above, so the batch is seven by supply rather than the eight per run cap. Auditing all sixty shortlist rows against the index left nothing else untriaged. Freelancer.com and its public API remain blocked by the session network policy, so all seven were written from the truncated descriptions the scanner captured and each asks the scope question the truncation left open. 40701305 is the best shot: a fixed $250 to $750 band, the client already has the strategy written so the scope is genuinely the execution and risk layer, and it is the only row here that lands on the broker-API bot work we have public proof of. 40701301 has the best odds at 5 bids and zero hours old, and 40701077 at 7 bids is close behind, but both sit in the smaller $158 to $263 band. 40701245 is priced at $230 against a $30 to $250 band that is well below what honest bias-correction evaluation costs; it is drafted because the work is squarely in our stack, and the proposal is explicit that skill gets reported by lead time rather than as one headline number. 40701096 at 193 bids and 40700974 at 163 bids are drafted on fit and band rather than odds. 40700974 states in the proposal that we collect business-level store details only and no personal contact data, which is the line we have held throughout.
 
 Note for the 2026-09-09 20:00 UTC batch: the 11:22 UTC scan carried fifteen NEW rows, of which seven were drafted and eight skipped for the reasons above, so the batch is seven by supply rather than the eight per run cap. Auditing the rest of the shortlist against the index left nothing else untriaged. All seven were written from the truncated descriptions the scanner captured, and each asks the scope question the truncation left open. 40700657 has by far the best odds, one bid at one hour old, but it sits in the smallest band here and its proposal asks outright whether the target application has an import route, which would end the job honestly if it does. 40700556 is the best shot overall: 24 bids, and the only row on this shortlist that lands squarely on the broker-API bot work we already have public proof of, with the client stating the trading logic is already written so the scope is genuinely just the bridge. 40700194 at 64 bids and 40700408 at 44 bids are drafted on fit rather than odds.
