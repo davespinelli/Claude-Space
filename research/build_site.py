@@ -115,10 +115,27 @@ td:nth-child(2),td:nth-child(6){{text-align:left}}</style></head><body>
 
 notes_index_html = f'<p><strong><a href="notes/index.html">Browse all {len(parsed)} research notes &#8594;</a></strong> — one page per company, with the full note, the valuation and the kill criteria.</p>'
 
+# Screen v2 (quality-growth): show the top of the ranked industrial table + links.
+quality_path = dv / "QUALITY.md"
+quality_html = ""
+if quality_path.exists():
+    qmd = quality_path.read_text()
+    qsub = qmd.split("## Ranked industrial qualifiers", 1)[-1].split("\n## ", 1)[0]
+    qlines = [l for l in qsub.splitlines() if l.startswith("|")]
+    # keep header + separator + first 15 rows, drop the long "Why" column for the page
+    trimmed = []
+    for l in qlines[:17]:
+        cells = l.split("|")
+        trimmed.append("|".join(cells[:-2]) + "|")
+    quality_html = f"""<h3>Quality-growth screen: what the desk reads next</h3>
+<p><small>Companies $50M–$2B that are growing (revenue or normalised operating profit), priced at or below 20x EV / normalised after-tax operating profit (GAAP operating income plus impairments, taxed at 25%), and carrying under 4x net debt / EBITDA. Financials are screened separately on P/E, tangible book and ROTE. Ranked list, GAAP-artefact watchlist and every exclusion reason: <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/deepvalue/QUALITY.md">QUALITY.md</a> · <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/deepvalue/FINANCIALS.md">FINANCIALS.md</a>. Screen output, not a recommendation.</small></p>
+{markdown.markdown("\n".join(trimmed), extensions=["tables"]) if len(trimmed) > 2 else ""}"""
+
 deepvalue_html = f"""<h2>Deep Value Desk — researched ideas, tracked forever</h2>
 <p><small>Small and mid-cap edge cases. Every note is built from the 10-K, 10-Q, proxy, 8-Ks, insider filings and the earnings call or press release, with citations, base/bear/bull valuation and pre-registered kill criteria. Every verdict, including rejections, is tracked from publication. <a href="https://github.com/davespinelli/Claude-Space/blob/main/research/deepvalue/README.md">Methodology</a>.</small></p>
 {markdown.markdown(track_md.split("\n", 1)[1] if track_md else "_Track record starts with the first published verdict._", extensions=["tables"])}
 {ls_html}
+{quality_html}
 <h3>Latest research notes</h3>
 {notes_index_html}
 <ul>{note_links or "<li><em>First notes publishing shortly.</em></li>"}</ul>"""

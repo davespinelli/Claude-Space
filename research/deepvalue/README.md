@@ -21,3 +21,15 @@ Edge cases have alpha. Look where big money can't or won't: small and mid caps (
 - Valuation shows the assumptions; a note without a bear case is incomplete.
 - Track everything published, including the losers, forever.
 - Survivorship, small-cap liquidity, and the fact that backtested screens overstate live results are stated in each weekly summary.
+
+## Screen v2: quality-growth (adopted Sep 8, 2026 after discussion with David)
+The first 82 deep dives showed two things: the cheapest names on the value screen were cheap for a reason the filings revealed in ten minutes, and the genuinely mispriced ones were hidden behind GAAP artefacts (impairments, discontinued operations) that the screen misread. `screen_v2.py` therefore replaces the value composite as the reading queue:
+
+- **Growth is a gate.** Revenue OR normalised operating profit must be up in the last fiscal year and not down in the latest quarter year over year. Growth bought with share issuance (>15% share growth) does not count.
+- **Profit is normalised.** GAAP operating income + reported impairments, taxed at 25%. Primary valuation metric: EV / normalised after-tax operating profit (EV/NOPAT), ceiling 20x.
+- **Debt is a gate.** Net debt / normalised EBITDA above 4x is excluded, 3–4x penalised; net cash passes. Untagged debt: total liabilities minus cash is the upper bound and can only exclude, never earn a "net cash" label. Profit growth only counts if revenue is not falling more than 10%.
+- **Financials are in.** Banks, brokers, insurers, holdcos: P/E, P/TBV, ROTE, tangible BVPS growth (gates: growing, P/E ≤ 12 or P/TBV ≤ 1.2, equity ≥ 5% of assets; profit above 40% of equity or P/E under 4 is flagged as a likely one-off). REITs and real-estate operators: P/FFO ≤ 15, FFO growing, total liabilities ≤ 80% of assets (this excludes most mortgage REITs by design). Industrial metrics are never applied to them.
+- **Score among qualifiers** = 0.45 cheapness (EV/NOPAT) + 0.25 growth + 0.15 FCF yield + 0.15 normalised ROIC, −0.10 leverage band, +0.05 GAAP-artefact flag, −0.05 untagged debt.
+- Outputs: `QUALITY.md` (ranked industrials + GAAP-artefact watchlist + exclusion reasons), `FINANCIALS.md`, `universe_v2.csv` (every row with an `exclude_reason`). `universe_under2b.csv` is rewritten in v2 rank order with the legacy columns so the fetchers keep working.
+- Deep-dive lanes (cloud hourly, local 3x/day) read QUALITY.md / FINANCIALS.md in rank order; every note now opens with a six-line **Desk stats** block: revenue trend, normalised after-tax profit with each adjustment named, EV / normalised after-tax profit, leverage (or P/E, P/TBV, ROTE for financials), growth sustainability, and what the screen got wrong.
+- The value triage (`TRIAGE.md`, 489 rows) is retained as history and as the fallback queue; the triage routines are off.
