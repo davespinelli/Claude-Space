@@ -1,0 +1,161 @@
+==============================================================================================================
+IDEA 320 - is the UNCONDITIONAL WIDTH DIAL a B136 fact or a panel ordering?
+           (cloud, 2026-09-09)
+==============================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+  SMALL: 483 names in panel, dropped 44 with max_1d_move >= 1.0 (README) -> 439 tradable
+panel U56        4700 days x   56 tradable  2008-01-02 .. 2026-09-08
+panel B136       4699 days x  136 tradable  2008-01-02 .. 2026-09-04
+panel SMALL439   4194 days x  439 tradable  2010-01-04 .. 2026-09-04
+
+--- building the grid: 7 widths x 4 gross x 3 panels (weekly, t+1) ---
+  reusing cached book grid (84 books) from /tmp/i320_books.pkl
+  168 grid points written to 2026-09-09_is-the-UNCONDITIONAL-width-dial-a-B136-fact-or-a-panel-ordering_cloud.grid.csv
+
+--- G2  does the width dial REPRODUCE idea 318's committed unconditional arms? ---
+  idea 318 ran all three panels to 2026-09-04; this run's panel ends:
+    U56       2026-09-08  (1 bar(s) added since idea 318 was committed)
+    B136      2026-09-04  (0 bar(s) added since idea 318 was committed)
+    SMALL439  2026-09-04  (0 bar(s) added since idea 318 was committed)
+  => G2 is EXACT on the panels whose window is unchanged, and a VINTAGE check on any
+     panel that has grown: data/prices.csv is restated/extended between runs, so a
+     bit-for-bit bar on a longer window would be testing the data feed, not the code.
+  U56       NF20          -> n0=20  [VINTAGE-TRUNCATED]  dSharpe 2.91e-07  dOOS 5.53e-07  dNames 0.00e+00   (untruncated dSharpe 4.02e-04)
+  U56       EWALL         -> n0=E   [VINTAGE-TRUNCATED]  dSharpe 7.53e-06  dOOS 1.20e-05  dNames 0.00e+00   (untruncated dSharpe 1.54e-03)
+  U56       DIL-ALW m1.5  -> n0=30  [VINTAGE-TRUNCATED]  dSharpe 8.82e-06  dOOS 1.44e-05  dNames 0.00e+00   (untruncated dSharpe 1.41e-03)
+  U56       DIL-ALW m2.0  -> n0=40  [VINTAGE-TRUNCATED]  dSharpe 7.56e-06  dOOS 1.16e-05  dNames 0.00e+00   (untruncated dSharpe 1.49e-03)
+  U56       DIL-ALW m3.0  -> n0=60  [VINTAGE-TRUNCATED]  dSharpe 7.53e-06  dOOS 1.20e-05  dNames 0.00e+00   (untruncated dSharpe 1.54e-03)
+  U56       DIL-ALW m5.0  -> n0=100 [VINTAGE-TRUNCATED]  dSharpe 7.53e-06  dOOS 1.20e-05  dNames 0.00e+00   (untruncated dSharpe 1.54e-03)
+  B136      NF20          -> n0=20  [EXACT            ]  dSharpe 1.11e-16  dOOS 0.00e+00  dNames 0.00e+00
+  B136      EWALL         -> n0=E   [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 0.00e+00
+  B136      DIL-ALW m1.5  -> n0=30  [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 3.55e-15
+  B136      DIL-ALW m2.0  -> n0=40  [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 0.00e+00
+  B136      DIL-ALW m3.0  -> n0=60  [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 0.00e+00
+  B136      DIL-ALW m5.0  -> n0=100 [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 0.00e+00
+  SMALL439  NF20          -> n0=20  [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 0.00e+00
+  SMALL439  EWALL         -> n0=E   [EXACT            ]  dSharpe 0.00e+00  dOOS 5.55e-17  dNames 0.00e+00
+  SMALL439  DIL-ALW m1.5  -> n0=30  [EXACT            ]  dSharpe 5.55e-17  dOOS 0.00e+00  dNames 0.00e+00
+  SMALL439  DIL-ALW m2.0  -> n0=40  [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 0.00e+00
+  SMALL439  DIL-ALW m3.0  -> n0=60  [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 7.11e-15
+  SMALL439  DIL-ALW m5.0  -> n0=100 [EXACT            ]  dSharpe 0.00e+00  dOOS 0.00e+00  dNames 0.00e+00
+  G2a EXACT   12 arms on unchanged panels: worst dSharpe 1.11e-16, worst dNames 7.11e-15  PASS (bar 1e-9)
+  G2b VINTAGE 6 arms on grown panels, truncated to 2026-09-04: worst dSharpe 1.44e-05, worst dNames 0.00e+00  PASS (bar 1e-04 / 0.20 names)
+      truncation removes 99.06% of the U56 discrepancy (1.54e-03 -> 1.44e-05), which is the evidence that the cause is the data vintage and not this code.
+      the RESIDUAL is a genuine price RESTATEMENT (idea 257 measured up to 3e-4 on
+      shared cells), so a 1e-9 bar is unreachable at ANY window; the bar above is
+      justified below against the size of the effects actually under test.
+      the SIZE of the vintage effect (untruncated, U56's 1 added bar(s)): worst dSharpe 1.54e-03 - reported, not hidden.
+  H_318 HOLDS: the DIL-ALW family IS the width dial - every committed unconditional arm is reproduced by an n0.
+
+==============================================================================================================
+PART 1  THE CONFOUND FIRST - does the dial SATURATE?  realised mean holdings by n0
+==============================================================================================================
+  panel         n0=10    n0=20    n0=30    n0=40    n0=60   n0=100     n0=E   reach = k(E)/k(20)
+  U56            9.82    19.11    27.51    34.53    37.38    37.38    37.38     1.96x
+  B136           9.93    19.70    29.37    38.82    56.73    86.05    91.29     4.63x
+  SMALL439       9.95    19.87    29.74    39.50    58.44    93.11   140.25     7.06x
+
+  saturation: |k(n0) - k(E)| / k(E), the dial is dead where this is ~0:
+    U56       n0=10:0.737  n0=20:0.489  n0=30:0.264  n0=40:0.076  n0=60:0.000  n0=100:0.000  n0=E:0.000
+    B136      n0=10:0.891  n0=20:0.784  n0=30:0.678  n0=40:0.575  n0=60:0.379  n0=100:0.057  n0=E:0.000
+    SMALL439  n0=10:0.929  n0=20:0.858  n0=30:0.788  n0=40:0.718  n0=60:0.583  n0=100:0.336  n0=E:0.000
+
+  H_SAT (FAILS): on U56 the worst realised-width gap to EWALL at n0 >= 40 is 0.0760 vs a 1% bar
+  => U56's published 'flatness' at m=3 and m=5 is the dial being DEAD, not the panel
+     being indifferent: idea 318's DIL-ALW m3.0 and m5.0 rows ARE its EWALL row.
+
+==============================================================================================================
+PART 2  THE ORDERING - is the width effect U56 > B136 > SMALL439, the reverse, or neither?
+==============================================================================================================
+
+  width effect dSharpe = Sharpe(EWALL) - Sharpe(n0=20), by panel x gross x rung:
+cost          10                              25                        
+gross       0.25    0.50    0.75    1.00    0.25    0.50    0.75    1.00
+panel                                                                   
+B136     +0.0861 +0.0839 +0.0819 +0.0801 +0.1176 +0.1159 +0.1146 +0.1138
+SMALL439 -0.1146 -0.1156 -0.1164 -0.1170 -0.0858 -0.0859 -0.0857 -0.0851
+U56      -0.0206 -0.0211 -0.0214 -0.0216 -0.0108 -0.0110 -0.0109 -0.0103
+
+  and the same on OOS Sharpe:
+cost          10                              25                        
+gross       0.25    0.50    0.75    1.00    0.25    0.50    0.75    1.00
+panel                                                                   
+B136     +0.1421 +0.1390 +0.1360 +0.1332 +0.1693 +0.1667 +0.1645 +0.1627
+SMALL439 -0.1752 -0.1769 -0.1785 -0.1798 -0.1475 -0.1484 -0.1488 -0.1488
+U56      -0.0238 -0.0247 -0.0254 -0.0259 -0.0190 -0.0196 -0.0198 -0.0195
+
+  rank correlation of Sharpe with REALISED width, over the 7 widths:
+cost         10                          25                     
+gross      0.25   0.50   0.75   1.00   0.25   0.50   0.75   1.00
+panel                                                           
+B136     +0.964 +0.964 +0.964 +0.964 +0.964 +0.964 +0.964 +0.964
+SMALL439 -0.857 -0.857 -0.857 -0.857 -0.857 -0.857 -0.857 -0.750
+U56      +0.038 +0.038 +0.038 +0.038 -0.154 -0.154 -0.192 -0.154
+
+  G2b AUDIT: smallest |width effect| reported anywhere in this run is 1.03e-02; the G2b residual is 1.44e-05,
+  i.e. the reproduction noise is 716x smaller than the smallest effect it could contaminate.
+
+  mean width effect by panel: B136 +0.0992  U56 -0.0160  SMALL439 -0.1008
+  ORDERING (best width effect first): B136 > U56 > SMALL439
+  H_ORDER   FAILS  (U56 > B136 > SMALL439)
+  H_REVERSE FAILS  (SMALL439 > B136 > U56)
+  => BOTH pre-registered orderings are FALSIFIED.  The width dial does not sort
+     the panels the way ideas 51/312/316 sort them, nor the opposite way.
+
+  sign consistency of the width effect within each panel (share of the 8 cells > 0):
+    B136       100%  (8/8 cells)
+    SMALL439   0%  (0/8 cells)
+    U56        0%  (0/8 cells)
+
+==============================================================================================================
+PART 3  MECHANISM - is the width effect REACH, not panel identity?
+==============================================================================================================
+  dSharpe = -0.0364 * log(reach) +0.0447   R^2 = 0.055  (n = 24 panel x gross x rung cells)
+  reach by panel: U56 1.96x  B136 4.63x  SMALL439 7.06x
+  H_REACH (FAILS): R^2 0.055 vs a 0.50 bar
+
+  residual by panel (what reach does NOT explain):
+    B136       +0.1104
+    SMALL439   -0.0742
+    U56        -0.0362
+
+==============================================================================================================
+PART 4  RULE 8 - (n0, g) chosen on IS <= 2016-12-31, OOS 2017- read ONCE
+==============================================================================================================
+
+  U56: RULES v2 full  8.64%/1.204/-12.05% H1 1.231 H2 1.183 OOS  9.51%/1.282  | SPY full 15.19%/0.887/-33.72% H1 0.959 H2 0.829 OOS 15.38%/0.879
+    10bps  pick n0=20  g=0.75 (of  1 IS-eligible, realised k 19.1, gross 0.747)  full 12.82%/1.070/-18.31% H1 1.082 H2 1.066  OOS 14.48%/1.136/-18.31%  4a False  4b True (-)
+    25bps  no (n0, g) clears the IS 4b legs
+
+  B136: RULES v2 full  8.03%/1.106/-12.24% H1 1.229 H2 0.984 OOS  7.98%/1.119  | SPY full 15.23%/0.889/-33.72% H1 0.957 H2 0.834 OOS 15.45%/0.882
+    10bps  pick n0=10  g=0.50 (of  6 IS-eligible, realised k 9.9, gross 0.498)  full  9.48%/0.886/-14.62% H1 1.110 H2 0.701  OOS  8.54%/0.771/-14.62%  4a False  4b False (H2,OOS,CAGR)
+    25bps  no (n0, g) clears the IS 4b legs
+
+  SMALL439: RULES v2 full  3.80%/0.571/-14.70% H1 0.568 H2 0.576 OOS  3.84%/0.566  | SPY full 14.13%/0.862/-33.72% H1 0.891 H2 0.858 OOS 15.45%/0.882
+    10bps  no (n0, g) clears the IS 4b legs
+    25bps  no (n0, g) clears the IS 4b legs
+
+  4b pass count over the full grid, by panel (of 28 width x gross points per rung):
+    U56        10bps  4b  3/28   4a  0/28   4b passers at n0 = ['20', '30', '40']
+    U56        25bps  4b  0/28   4a  0/28   4b passers at n0 = []
+    B136       10bps  4b  4/28   4a  0/28   4b passers at n0 = ['100', '40', '60', 'E']
+    B136       25bps  4b  0/28   4a  0/28   4b passers at n0 = []
+    SMALL439   10bps  4b  0/28   4a  0/28   4b passers at n0 = []
+    SMALL439   25bps  4b  0/28   4a  0/28   4b passers at n0 = []
+
+==============================================================================================================
+PRE-REGISTERED HYPOTHESES
+==============================================================================================================
+  G2a EXACT   PASS   (worst dSharpe 1.11e-16)
+  G2b VINTAGE PASS   (worst dSharpe 1.44e-05 after truncation, 1.54e-03 before)
+  H_318       HOLDS
+  H_SAT       FAILS   (U56 worst gap to EWALL at n0>=40 is 0.0760, driven by n0=40 alone)
+              NOTE, stated precisely because the bar and the mechanism part company:
+              the bar as written (n0>=40) FAILS on the n0=40 rung (7.6%), but at
+              n0=60 and n0=100 the gap is EXACTLY 0.000 - so the thing H_SAT was
+              testing IS confirmed: idea 318's DIL-ALW m3.0 and m5.0 rows ARE its
+              EWALL row, and its U56 'flatness' at those rungs is a dead dial.
+  H_ORDER     FAILS   (found B136 > U56 > SMALL439)
+  H_REVERSE   FAILS
+  H_REACH     FAILS   (R^2 0.055)
