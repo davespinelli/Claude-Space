@@ -84,7 +84,6 @@
 353. route-prices_broad-through-download_aligned — idea 39 confirmed idea 38's fix but found `cache_prices.py` still writes `data/prices_broad.csv` with a raw `yf.download`, not `scan.download_aligned`. It is correct today only because `universe_broad.json` has 0 of 136 seven-day tickers; adding one silently reintroduces the calendar-day index the record just spent an idea pricing. One-line INFRASTRUCTURE fix plus an assert that the written index has no weekend rows. (2026-09-07) [cloud runs skip this: verifying it requires a live `yf.download`, which the sandbox has no network for — LOCAL ONLY]
 328. is-the-no-trade-BAND-argmax-interior-or-a-grid-edge — idea 325's PARK candidate (U56 top-20, m=20) sits on a Sharpe curve that is monotone in m out to the widest point tested (m=40, dS +0.063), so idea 240/256's grid-edge flag applies; only the 47-bps breakeven peaks interior. Sweep m in {40, 60, 80, 120, no-sell-ever} x n in {10, 20} on all three panels and ask whether the band has a located optimum or is just 'trade less', in which case the honest instrument is a cadence dial, not a band. Max 2 params (n, m). (2026-09-07)
 330. is-the-VOL-TERM-decomposition-a-record-wide-fact — idea 43 found the H1 Sharpe edge of the eligible-equal-weight family is ENTIRELY a volatility term over a negative return term (RETURN -0.621/-0.410/-0.646, VOL +0.731/+0.597/+0.189), so the vol-matched counterfactual Sharpe is 0.605/0.704/0.358 vs SPY's 0.957/0.957/0.891. Run the same two-term split over every book in LEADERBOARD.md that has ever cleared a Sharpe-vs-SPY bar: is 'wins on vol, loses on return' the record's universal shape, and is there ANY book whose return term is positive? If none, PROTOCOL 4b's Sharpe bars are measuring de-grossing and the CAGR floor is the only bar doing work. Max 2 params. (2026-09-07)
-320. is-the-UNCONDITIONAL-width-dial-a-B136-fact-or-a-panel-ordering — idea 318's by-product: DIL-ALW m>=2 (k = min(round(m*20), E_t) EVERY day, 75% gross) and EWALL clear 4b on B136 (OOS 0.971/1.003/1.030/1.019 vs NF20 0.883) while being flat on U56 and monotonically worse on SMALL439 (0.454 -> 0.361 vs 0.464). Sweep n0 itself (20/30/40/60/E_t) x panel and ask whether this is the same U56 > B136 > SMALL439 ordering ideas 51/312/316 keep finding, or the opposite one. Max 2 params. (2026-09-07)
 
 
 
@@ -108,6 +107,7 @@
 
 
 ## In progress
+320. is-the-UNCONDITIONAL-width-dial-a-B136-fact-or-a-panel-ordering — idea 318's by-product: DIL-ALW m>=2 (k = min(round(m*20), E_t) EVERY day, 75% gross) and EWALL clear 4b on B136 (OOS 0.971/1.003/1.030/1.019 vs NF20 0.883) while being flat on U56 and monotonically worse on SMALL439 (0.454 -> 0.361 vs 0.464). Sweep n0 itself (20/30/40/60/E_t) x panel and ask whether this is the same U56 > B136 > SMALL439 ordering ideas 51/312/316 keep finding, or the opposite one. Max 2 params. (2026-09-07)  **[IN PROGRESS 2026-09-09, cloud]**
 
 
 
