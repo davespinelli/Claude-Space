@@ -1,0 +1,182 @@
+# 2026-09-09_put-DEGREES-OF-FREEDOM-beside-every-within-cell-t_cloud
+
+## 0. CENSUS — what the record publishes beside a t
+committed CSVs under research/ carrying a t-statistic column: 113
+  ... produced by a script that demeans BOTH sides by a cell (a WITHIN t): 11
+  ... of those, publishing N: 9/11;  p (cells): 4/11;  G (clusters): 2/11
+  ... publishing N AND p (the pair needed to restate the dof): 3/11
+  ... referring the t to a NORMAL distribution: 5/11; using a cluster-robust SE: 9/11
+(classification is a file-level regex on the producing script, so WITHIN is a lower bound and 'publishes p' an upper bound — a file can publish cells for one t and not another.)
+
+## 1. BACK-FILL — (N, p, dof) beside every published within-cell t
+published t rows harvested from WITHIN scripts: 1510 from 11 CSVs
+by estimator (read off the producing source; UNMAPPED = the CSV header does not say which estimator the column is, and neither does the script's own column name):
+             rows  restatable  N_published  p_published  G_published
+estimator                                                           
+CELL_AGG      202         202          202          202          136
+POOLED          2           0            2            0            0
+UNMAPPED     1172           0         1166            0            0
+WITHIN_MEAN    18           0            0           18            0
+WITHIN_OLS    116         116          116          116           47
+  NOT restatable: 1192 rows — missing N 24, missing p 1174, estimator unidentifiable 1172
+
+  restatable rows: 318  (WITHIN_OLS 116, CELL_AGG 202)
+  dof lost to the cell means: median p/N 0.0323, q90 0.1667, max 0.2500
+  inflation sqrt((N-2)/(N-p-1)): median 1.0000, q90 1.0626, max 1.1530
+
+  published claims over the record's own |t|>2 bar: 302 of 318 restatable rows
+    still over the bar after the dof correction:      302 (100.0% survive)  -> 0 FLIP
+    still significant at 5% under t(N-p-1):           301
+    cluster rows (G published): 135; significant at 5% under CR1 + t(G-1): 135 (100.0%)
+
+  restated at 5% under the reference the estimator actually requires (the record refers every one of these to a NORMAL):
+            over_bar  sig_as_published  sig_restated  med_dof_naive  med_dof_correct
+estimator                                                                           
+CELL_AGG         195               195           194            inf             17.0
+WITHIN_OLS       107               107           107          556.0            539.0
+
+  every restatable within-t claim over the bar, by source (t_published -> t_correct):
+                                                                    csv   t_col  rows  med_t_pub  med_t_corr    med_N   med_p  survive
+2026-09-08_does-the-IS-WINDOW-DD-CAP-transfer-at-all_cloud.transfer.csv   t_rho    59     17.592      17.592  768.000  60.000       59
+2026-09-08_does-the-IS-WINDOW-DD-CAP-transfer-at-all_cloud.transfer.csv t_slope    60     11.806      11.184  768.000  78.500       60
+         2026-09-08_why-does-the-DD-ranking-die-on-U56_C.provenance.csv       t     3      7.222       6.909 9638.000 818.000        3
+           2026-09-08_why-does-the-DD-ranking-die-on-U56_C.transfer.csv       t    44     25.298      24.908  558.000  18.000       44
+           2026-09-08_why-does-the-DD-ranking-die-on-U56_C.transfer.csv   t_rho    68    112.920     112.920  558.000  18.000       68
+           2026-09-08_why-does-the-DD-ranking-die-on-U56_C.transfer.csv t_slope    68     67.569      67.569  558.000  18.000       68
+
+  WHY nothing moves: the published within-OLS claims are far from the bar.  |t| median 16.44, q10 6.47, min 2.22
+  the dof charge that WOULD kill each claim: p/N median 0.983, q10 0.902, min 0.187 — against an actual p/N of 0.076 (max 0.250)
+  worst-case bound (p at its ceiling N/4, so the largest charge the >=4-rows-per-cell rule allows): still over the bar on 106/107
+  NOTE: 44 of those rows carry an AMBIGUOUS p — 2026-09-08_why-does-the-DD-ranking-die-on-U56_C.transfer.csv builds its row by dict-updating within_cell_fit() with per_cell_slopes(), which overwrites `cells`, so the published p belongs to the other estimator and is a lower bound. Their restatement is the worst-case column, and they survive it too.
+
+  NO restatable published within-cell claim flips at |t|>2 on the dof charge alone.
+
+## 2. MONTE CARLO at the record's own (N, p) rungs — x and y INDEPENDENT
+share of independent draws clearing the bar (a correct procedure sits at 0.050):
+ draws    N   p  G  p_over_N  naive  correct    loo  cluster_pub  cluster_CR1  correct_tcrit
+   200  558  18  6    0.0323 0.0650   0.0500 0.0600       0.1350       0.0450         0.0650
+   200  192  32  0    0.1667 0.0800   0.0500 0.0750          NaN          NaN         0.0500
+   200  224  56  0    0.2500 0.0550   0.0350 0.0600          NaN          NaN         0.0400
+   200  224  56  8    0.2500 0.0550   0.0350 0.0600       0.1000       0.0200         0.0400
+   200  548 120 10    0.2190 0.0900   0.0600 0.0900       0.0900       0.0250         0.0600
+   200  360 120  6    0.3333 0.0950   0.0300 0.0900       0.1350       0.0200         0.0350
+   200  360   6  3    0.0167 0.0300   0.0250 0.0300       0.2850       0.0450         0.0350
+   200 6822 833 34    0.1221 0.0250   0.0200 0.0250       0.0450       0.0100         0.0250
+   200 4123 436 24    0.1057 0.1000   0.0750 0.1000       0.1100       0.0800         0.0900
+  1000  558  18  6    0.0323 0.0430   0.0400 0.0450       0.1250       0.0430         0.0460
+  1000  192  32  0    0.1667 0.0650   0.0430 0.0650          NaN          NaN         0.0450
+  1000  224  56  0    0.2500 0.0950   0.0530 0.0980          NaN          NaN         0.0580
+  1000  224  56  8    0.2500 0.0950   0.0530 0.0980       0.1030       0.0290         0.0580
+  1000  548 120 10    0.2190 0.0660   0.0360 0.0660       0.0830       0.0180         0.0400
+  1000  360 120  6    0.3333 0.0920   0.0410 0.0930       0.1300       0.0250         0.0440
+  1000  360   6  3    0.0167 0.0470   0.0440 0.0520       0.2510       0.0510         0.0480
+  1000 6822 833 34    0.1221 0.0530   0.0460 0.0540       0.0660       0.0370         0.0500
+  1000 4123 436 24    0.1057 0.0740   0.0590 0.0720       0.0840       0.0570         0.0660
+
+over all 18 rungs: naive-dof |t|>2 rate median 0.0655, corrected-dof |t|>2 rate median 0.0435, corrected dof at its OWN critical value median 0.0470, leave-one-out median 0.0655
+
+## 3. FRESH BOOKS — the same question where (N, p) are known exactly
+small panel: dropped 44 tickers with max_1d_move >= 1.0 per data/small_meta.csv; 439 names remain. SURVIVORSHIP: current constituents only.
+
+### U56: 55 names, 2008-01-02..2026-09-08, scored from 2009-01-13
+  SPY      15.19% / 0.8871 / -33.72%   halves 0.9587 / 0.8287
+  RULES v2 8.64% / 1.2037 / -12.05%   halves 1.2309 / 1.1828
+  RULES v1 6.42% / 0.6611 / -13.83%
+  ranked arms (all 12 grid points; n x gross are the only tuned parameters):
+        arm   CAGR  Sharpe   MaxDD     H1     H2  pass4a  pass4b
+ top5_g0.75 0.2361  1.1395 -0.2845 1.3027 1.0460   False   False
+ top5_g1.00 0.3153  1.1421 -0.3653 1.3045 1.0492   False   False
+top10_g0.75 0.1655  1.0639 -0.2320 1.1428 1.0179   False   False
+top10_g1.00 0.2204  1.0653 -0.3002 1.1440 1.0196   False   False
+top15_g0.75 0.1626  1.1592 -0.2014 1.2121 1.1336   False    True
+top15_g1.00 0.2174  1.1596 -0.2620 1.2122 1.1342   False   False
+top20_g0.75 0.1456  1.1231 -0.2138 1.2140 1.0665   False   False
+top20_g1.00 0.1944  1.1232 -0.2777 1.2142 1.0667   False   False
+top30_g0.75 0.1304  1.1141 -0.2029 1.1553 1.0921   False   False
+top30_g1.00 0.1742  1.1141 -0.2639 1.1556 1.0920   False   False
+top40_g0.75 0.1189  1.0918 -0.1943 1.1680 1.0395   False    True
+top40_g1.00 0.1587  1.0916 -0.2531 1.1681 1.0391   False   False
+  rule 8: IS-Sharpe argmax on the first half picks top5_g1.00 (IS 1.3045); OOS 32.13% / 1.0492 / -36.53% vs RULES v2 8.95%/1.1828/-12.05% vs SPY 14.88%/0.8287/-33.72%
+  draw books: 120  4a 0/120  4b 1/120   ranked arms 4a 0/12  4b 2/12
+
+### B136: 135 names, 2008-01-02..2026-09-04, scored from 2009-01-13
+  SPY      15.23% / 0.8890 / -33.72%   halves 0.9566 / 0.8340
+  RULES v2 8.03% / 1.1058 / -12.24%   halves 1.2291 / 0.9844
+  RULES v1 6.39% / 0.6350 / -21.19%
+  ranked arms (all 12 grid points; n x gross are the only tuned parameters):
+        arm   CAGR  Sharpe   MaxDD     H1     H2  pass4a  pass4b
+ top5_g0.75 0.2142  0.9750 -0.2932 1.1384 0.8792   False   False
+ top5_g1.00 0.2827  0.9803 -0.3759 1.1408 0.8866   False   False
+top10_g0.75 0.1735  0.9728 -0.2601 1.2693 0.7682   False   False
+top10_g1.00 0.2300  0.9767 -0.3352 1.2716 0.7737   False   False
+top15_g0.75 0.1577  0.9837 -0.2589 1.2066 0.8192   False   False
+top15_g1.00 0.2094  0.9866 -0.3334 1.2090 0.8228   False   False
+top20_g0.75 0.1493  0.9983 -0.2400 1.1735 0.8650   False   False
+top20_g1.00 0.1985  1.0006 -0.3102 1.1761 0.8674   False   False
+top30_g0.75 0.1381  1.0121 -0.2251 1.1587 0.8946   False   False
+top30_g1.00 0.1837  1.0134 -0.2916 1.1604 0.8958   False   False
+top40_g0.75 0.1360  1.0480 -0.2201 1.1420 0.9712   False   False
+top40_g1.00 0.1813  1.0489 -0.2856 1.1438 0.9714   False   False
+  rule 8: IS-Sharpe argmax on the first half picks top10_g1.00 (IS 1.2716); OOS 19.05% / 0.7737 / -33.52% vs RULES v2 7.14%/0.9844/-12.24% vs SPY 14.99%/0.8340/-33.72%
+  draw books: 120  4a 0/120  4b 1/120   ranked arms 4a 0/12  4b 0/12
+
+### SMALL439: 439 names, 2010-01-04..2026-09-04, scored from 2011-01-13
+  SPY      14.13% / 0.8615 / -33.72%   halves 0.8907 / 0.8577
+  RULES v2 3.81% / 0.5725 / -14.68%   halves 0.5699 / 0.5770
+  RULES v1 7.41% / 0.5647 / -36.12%
+  ranked arms (all 12 grid points; n x gross are the only tuned parameters):
+        arm   CAGR  Sharpe   MaxDD     H1     H2  pass4a  pass4b
+ top5_g0.75 0.1818  0.6762 -0.3983 0.8125 0.6046   False   False
+ top5_g1.00 0.2238  0.6828 -0.5448 0.8126 0.6158   False   False
+top10_g0.75 0.1544  0.7002 -0.3524 0.8855 0.5966   False   False
+top10_g1.00 0.1948  0.7017 -0.4483 0.8850 0.5994   False   False
+top15_g0.75 0.1599  0.7791 -0.3112 0.9978 0.6572   False   False
+top15_g1.00 0.2059  0.7806 -0.3985 0.9980 0.6594   False   False
+top20_g0.75 0.1418  0.7480 -0.3079 0.8603 0.6948   False   False
+top20_g1.00 0.1826  0.7493 -0.3937 0.8610 0.6965   False   False
+top30_g0.75 0.1132  0.6642 -0.3094 0.8934 0.5263   False   False
+top30_g1.00 0.1451  0.6656 -0.3997 0.8948 0.5277   False   False
+top40_g0.75 0.0936  0.5919 -0.3106 0.7410 0.5047   False   False
+top40_g1.00 0.1191  0.5930 -0.3973 0.7425 0.5057   False   False
+  rule 8: IS-Sharpe argmax on the first half picks top15_g1.00 (IS 0.9980); OOS 18.38% / 0.6594 / -39.85% vs RULES v2 4.08%/0.5770/-11.74% vs SPY 15.92%/0.8577/-33.72%
+  draw books: 120  4a 0/120  4b 0/120   ranked arms 4a 0/12  4b 0/12
+
+### the within-cell transfer t of OOS Sharpe on IS Sharpe, this run's 360 draw books
+cells are (panel, k) refined by q quantile bins of the book's OWN in-sample vol, so p
+rises with q on the SAME rows; q is a treatment axis, not a tuned parameter.
+ q   N   p  dof_naive  dof_correct  slope     R2  t_naive  t_correct  inflation  p_normal  p_correct  G  t_cluster_pub  t_cluster_CR1  p_cluster_CR1
+ 1 360   6        358          353 0.1361 0.0389   3.8084     3.7817     1.0071    0.0001     0.0002  3         0.8751         0.7085         0.5521
+ 2 360  12        358          347 0.1560 0.0499   4.3370     4.2699     1.0157    0.0000     0.0000  3         1.0388         0.8339         0.4921
+ 5 360  30        358          329 0.1687 0.0603   4.7910     4.5929     1.0431    0.0000     0.0000  3         1.0869         0.8496         0.4850
+10 360  60        358          299 0.1680 0.0599   4.7767     4.3654     1.0942    0.0000     0.0000  3         1.1292         0.8414         0.4887
+20 360 120        358          239 0.1635 0.0566   4.6342     3.7865     1.2239    0.0000     0.0002  3         1.3649         0.9093         0.4592
+
+grid points where the dof charge alone crosses the record's |t|>2 bar: 0/5
+grid points where the 5% verdict flips between the published NORMAL reference and t(N-p-1): 0/5
+grid points where the cluster verdict flips between the record's SE+normal and CR1+t(G-1): 0/5
+
+## Rule 8 walk-forward (chosen on the first half, second half read once)
+   panel         selector         arm  IS_Sharpe  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  OOS_Sharpe_base  OOS_CAGR_base  OOS_MaxDD_base  OOS_Sharpe_SPY  OOS_CAGR_SPY  OOS_MaxDD_SPY  OOS_Sharpe_mean_arm
+     U56 IS_Sharpe_argmax  top5_g1.00     1.3045      1.0492    0.3213    -0.3653           1.1828         0.0895         -0.1205          0.8287        0.1488        -0.3372               1.0664
+    B136 IS_Sharpe_argmax top10_g1.00     1.2716      0.7737    0.1905    -0.3352           0.9844         0.0714         -0.1224          0.8340        0.1499        -0.3372               0.8679
+SMALL439 IS_Sharpe_argmax top15_g1.00     0.9980      0.6594    0.1838    -0.3985           0.5770         0.0408         -0.1174          0.8577        0.1592        -0.3372               0.5991
+
+## Both KEEP paths over every arm this run built
+                pass4a      pass4b     
+                   sum size    sum size
+panel    kind                          
+B136     DRAW        0  120      1  120
+         RANKED      0   12      0   12
+SMALL439 DRAW        0  120      0  120
+         RANKED      0   12      0   12
+U56      DRAW        0  120      1  120
+         RANKED      0   12      2   12
+TOTAL 4a 0/396   4b 4/396
+4b passers:
+panel   kind         arm   CAGR  Sharpe   MaxDD     H1     H2
+  U56 RANKED top15_g0.75 0.1626  1.1592 -0.2014 1.2121 1.1336
+  U56 RANKED top40_g0.75 0.1189  1.0918 -0.1943 1.1680 1.0395
+  U56   DRAW    draw5_22 0.1782  1.3093 -0.1868 1.1524 1.4495
+ B136   DRAW     draw5_8 0.1366  1.0319 -0.2006 0.9700 1.0903
+
+runtime 610s
