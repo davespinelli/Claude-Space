@@ -16,7 +16,8 @@ What changed versus screen.py
   * Debt is a gate: net debt / normalised EBITDA above 4x is excluded, 3-4x is
     penalised. Net-cash companies pass automatically.
   * Financials are no longer thrown away. Banks, brokers, insurers and holdcos
-    get their own lane (P/E, P/TBV, ROTE, tangible book per share growth);
+    get their own lane (P/E, P/TBV, ROTE, tangible book per share growth, every one
+    of them on the common slice: see common_metrics());
     REITs and real-estate operators get P/FFO, FFO growth, dividend yield and a
     debt/assets gate. Industrial metrics are never applied to them.
   * Every row keeps an explicit `exclude_reason`, so "not on the list" is always
@@ -67,6 +68,15 @@ S.DUR_TAGS.update({
     "da": ["DepreciationDepletionAndAmortization", "DepreciationAndAmortization",
            "DepreciationAmortizationAndAccretionNet"],
     "dividends": ["PaymentsOfDividendsCommonStock", "PaymentsOfDividends"],
+    # Common- and preferred-only cash dividends, so `dividends` (which falls back to
+    # the combined PaymentsOfDividends tag) can be split. See common_metrics().
+    "div_common": ["PaymentsOfDividendsCommonStock"],
+    "div_pref_paid": ["PaymentsOfDividendsPreferredStockAndPreferenceStock"],
+    # Income-statement preferred charge, and the direct "available to common" tag.
+    "pref_div": ["PreferredStockDividendsAndOtherAdjustments",
+                 "PreferredStockDividendsIncomeStatementImpact",
+                 "DividendsPreferredStock"],
+    "ni_avail_common": ["NetIncomeLossAvailableToCommonStockholdersBasic"],
     "interest_net": ["InterestIncomeExpenseNet"],
     "nonint_income": ["NoninterestIncome"],
     "premiums": ["PremiumsEarnedNet"],
@@ -74,6 +84,10 @@ S.DUR_TAGS.update({
 S.INST_TAGS.update({
     "goodwill": ["Goodwill"],
     "intangibles": ["IntangibleAssetsNetExcludingGoodwill", "FiniteLivedIntangibleAssetsNet"],
+    # Carrying value of preferred stock. Some filers tag par only and carry the rest
+    # in APIC; PREF_LIQ_MIN in common_metrics() catches that case.
+    "preferred": ["PreferredStockValue", "PreferredStockIncludingAdditionalPaidInCapital"],
+    "preferred_liq": ["PreferredStockLiquidationPreferenceValue"],
 })
 
 # Most recent quarter vs the same quarter a year earlier, newest pair first.
@@ -102,6 +116,11 @@ def quarter_yoy(tags: list[str]) -> tuple[pd.Series, pd.Series, pd.Series]:
 
 def nz(s: pd.Series) -> pd.Series:
     return s.fillna(0.0)
+
+
+def col(f: pd.DataFrame, name: str) -> pd.Series:
+    """A column, or an all-NaN column of the right index when the concept was never tagged."""
+    return f[name] if name in f.columns else pd.Series(np.nan, index=f.index, dtype="float64")
 
 
 def rank_hi(s: pd.Series) -> pd.Series:
@@ -200,28 +219,78 @@ def industrial_metrics(f: pd.DataFrame) -> pd.DataFrame:
     return f
 
 
-def financial_metrics(f: pd.DataFrame) -> pd.DataFrame:
+# A preferred balance below this share of total equity is treated as par-only
+# tagging, and the liquidation preference is used instead when it is available.
+PREF_LIQ_MIN = 0.005
+
+
+def common_metrics(f: pd.DataFrame) -> pd.DataFrame:
+    """
+    Split preferred stock out of equity, income and dividends.
+
+    Market cap is a claim on the common only, so every metric that divides by it
+    (P/E, P/TBV, dividend yield) or compares against it (ROTE, book per share)
+    must use the common-only figure. Before this existed the screen divided market
+    cap by *total* equity and *total* net income, which understated P/TBV and P/E
+    for any bank, insurer or REIT with preferred outstanding, and counted preferred
+    dividends as common yield. NEWT was the worked example: 0.89x tangible book and
+    a 7.9% yield reported, 1.02x and 6.2% once $48.2M of Series B came out.
+
+    Known limitation: preferred UNITS of an operating partnership (common in REITs,
+    e.g. CSR's Series D and E) sit in noncontrolling interest or mezzanine rather
+    than in StockholdersEquity, so PreferredStockValue does not see them and this
+    function cannot deduct them. Those rows still need the filing read.
+    """
     f = f.copy()
-    f["tbv"] = f.equity - nz(f.goodwill) - nz(f.intangibles)
+    pref = nz(col(f, "preferred"))
+    liq = nz(col(f, "preferred_liq"))
+    par_only = (pref < PREF_LIQ_MIN * f.equity.abs()) & (liq > pref)
+    f["preferred"] = np.where(par_only, liq, pref)
+    f["preferred_py"] = nz(col(f, "preferred_py"))
+
+    f["common_equity"] = f.equity - f.preferred
+    f["common_equity_py"] = f.equity_py - f.preferred_py
     f["ni_cont"] = f.net_income - nz(f.disc_ops)
-    f["p_tbv"] = np.where(f.tbv > 0, f.mktcap / f.tbv, np.nan)
-    f["pe"] = np.where(f.ni_cont > 0, f.mktcap / f.ni_cont, np.nan)
-    f["rote"] = np.where(f.tbv > 0, f.ni_cont / f.tbv, np.nan)
-    bvps = f.equity / f.shares
-    bvps_py = np.where((f.equity_py > 0) & (f.shares_py > 0), f.equity_py / f.shares_py, np.nan)
+    # Prefer the filer's own "available to common" tag; else back out the preferred charge.
+    avail = col(f, "ni_avail_common")
+    f["ni_common"] = np.where(avail.notna(),
+                              avail - nz(f.disc_ops),
+                              f.ni_cont - nz(col(f, "pref_div")))
+    # `dividends` falls back to the combined PaymentsOfDividends tag, which includes
+    # preferred. Use the common-only tag when the filer provides it.
+    dc = col(f, "div_common")
+    f["div_common"] = np.where(dc.notna(), dc,
+                               nz(f.dividends) - nz(col(f, "div_pref_paid")))
+    return f
+
+
+def financial_metrics(f: pd.DataFrame) -> pd.DataFrame:
+    f = common_metrics(f)
+    # Total tangible equity is kept for reference; every ratio uses the common slice.
+    f["tbv"] = f.equity - nz(f.goodwill) - nz(f.intangibles)
+    f["tbv_common"] = f.tbv - f.preferred
+    f["p_tbv"] = np.where(f.tbv_common > 0, f.mktcap / f.tbv_common, np.nan)
+    f["pe"] = np.where(f.ni_common > 0, f.mktcap / f.ni_common, np.nan)
+    f["rote"] = np.where(f.tbv_common > 0, f.ni_common / f.tbv_common, np.nan)
+    bvps = f.common_equity / f.shares
+    bvps_py = np.where((f.common_equity_py > 0) & (f.shares_py > 0),
+                       f.common_equity_py / f.shares_py, np.nan)
     f["bvps_growth"] = np.where(bvps_py > 0, bvps / bvps_py - 1, np.nan)
     f["ni_growth"] = np.where(f.ni_prior > 0, f.ni_cont / f.ni_prior - 1, np.nan)
-    f["div_yield"] = nz(f.dividends) / f.mktcap
+    f["div_yield"] = f.div_common / f.mktcap
+    # The 5% gate is a solvency test, and preferred absorbs losses ahead of
+    # depositors, so it stays on total equity. The common figure is reported beside it.
     f["equity_assets"] = np.where(f.assets > 0, f.equity / f.assets, np.nan)
+    f["common_equity_assets"] = np.where(f.assets > 0, f.common_equity / f.assets, np.nan)
     f["growing"] = (f.bvps_growth > 0) | (f.ni_growth > 0)
     cheap = ((f.pe > 0) & (f.pe <= PE_MAX)) | ((f.p_tbv > 0) & (f.p_tbv <= PTBV_MAX))
-    # A year's profit above 40% of equity, or a P/E under 4, is almost always a
-    # one-off (tax-asset release, gain on sale, reserve release). Flag, don't score.
-    f["fin_eq_flag"] = ((f.ni_cont > 0.4 * f.equity) | ((f.pe > 0) & (f.pe < 4))).map(
-        {True: "net income > 40% of equity or P/E < 4: likely one-off", False: ""})
+    # A year's profit above 40% of common equity, or a P/E under 4, is almost always
+    # a one-off (tax-asset release, gain on sale, reserve release). Flag, don't score.
+    f["fin_eq_flag"] = ((f.ni_common > 0.4 * f.common_equity) | ((f.pe > 0) & (f.pe < 4))).map(
+        {True: "net income > 40% of common equity or P/E < 4: likely one-off", False: ""})
 
     reason = pd.Series("", index=f.index, dtype="object")
-    reason[~f.growing] = "tangible book per share and continuing net income both not growing"
+    reason[~f.growing] = "tangible common book per share and continuing net income both not growing"
     m = reason.eq("") & ~cheap
     reason[m] = f"P/E above {PE_MAX:.0f}x and P/TBV above {PTBV_MAX:.1f}x"
     m = reason.eq("") & (f.equity_assets < 0.05)
@@ -240,13 +309,14 @@ def financial_metrics(f: pd.DataFrame) -> pd.DataFrame:
 
 
 def reit_metrics(f: pd.DataFrame) -> pd.DataFrame:
-    f = f.copy()
-    f["ni_cont"] = f.net_income - nz(f.disc_ops)
-    f["ffo"] = f.ni_cont + nz(f.da) + nz(f.impair_total)
-    f["ffo_prior"] = f.ni_prior + nz(f.da_prior) + nz(f.impair_total_prior)
+    f = common_metrics(f)
+    # FFO to common: preferred dividends rank ahead of the shares market cap prices.
+    f["ffo"] = f.ni_common + nz(f.da) + nz(f.impair_total)
+    f["ffo_prior"] = f.ni_prior - nz(col(f, "pref_div_prior")) + nz(f.da_prior) + nz(f.impair_total_prior)
     f["p_ffo"] = np.where(f.ffo > 0, f.mktcap / f.ffo, np.nan)
     f["ffo_growth"] = np.where(f.ffo_prior > 0, f.ffo / f.ffo_prior - 1, np.nan)
-    f["div_yield"] = nz(f.dividends) / f.mktcap
+    f["div_yield"] = f.div_common / f.mktcap
+    # Total liabilities over assets: preferred is equity, not debt, so it stays out.
     f["debt_assets"] = np.where(f.assets > 0, (f.assets - f.equity) / f.assets, np.nan)
     f["growing"] = f.ffo_growth > 0
 
@@ -311,11 +381,11 @@ def why_financial(r) -> str:
     if np.isfinite(r.pe):
         bits.append(f"{r.pe:.1f}x P/E")
     if np.isfinite(r.p_tbv):
-        bits.append(f"{r.p_tbv:.2f}x tangible book")
+        bits.append(f"{r.p_tbv:.2f}x tangible common book")
     if np.isfinite(r.rote):
-        bits.append(f"ROTE {pct(r.rote)}")
+        bits.append(f"ROTCE {pct(r.rote)}")
     if np.isfinite(r.bvps_growth):
-        bits.append(f"tangible BVPS {pct(r.bvps_growth)}")
+        bits.append(f"tangible common BVPS {pct(r.bvps_growth)}")
     if np.isfinite(r.ni_growth):
         bits.append(f"net income {pct(r.ni_growth)}")
     if r.div_yield > 0:
@@ -350,8 +420,10 @@ V2_COLS = ["lane", "rank_v2", "score_v2", "qualifies", "exclude_reason", "growin
            "impairment", "ebit_norm", "ebit_prior", "ebit_growth", "nopat", "ev_nopat",
            "ebitda_norm", "leverage", "roic_norm", "fcf_conv", "rev_q_yoy", "rev_q_label",
            "ebit_q_yoy", "artifact_flag", "artifact_note", "restructuring", "disc_ops", "da",
-           "dividends", "goodwill", "intangibles", "tbv", "p_tbv", "pe", "rote",
-           "bvps_growth", "ni_growth", "div_yield", "equity_assets", "ffo", "p_ffo",
+           "dividends", "div_common", "goodwill", "intangibles", "preferred", "tbv",
+           "tbv_common", "ni_common", "p_tbv", "pe", "rote",
+           "bvps_growth", "ni_growth", "div_yield", "equity_assets", "common_equity_assets",
+           "ffo", "p_ffo",
            "ffo_growth", "debt_assets", "leverage_upper", "fin_eq_flag", "why_v2"]
 
 
@@ -375,12 +447,16 @@ def main(argv=None) -> None:
     capex, _, _ = A("capex")
     extra = {}
     for name in ["impair_total", "impair_gw", "impair_intang", "impair_lla", "restructuring",
-                 "disc_ops", "da", "dividends", "interest_net", "nonint_income", "premiums"]:
+                 "disc_ops", "da", "dividends", "div_common", "div_pref_paid", "pref_div",
+                 "ni_avail_common", "interest_net", "nonint_income", "premiums"]:
         v, _, vp = A(name)
         extra[name] = v
         extra[name + "_prior"] = vp
     equity, equity_per, _ = S.instant_concept("equity", S.INSTANT_PERIODS)
     equity_py, _, _ = S.instant_concept("equity", S.INSTANT_PERIODS_PY)
+    pref, _, _ = S.instant_concept("preferred", S.INSTANT_PERIODS)
+    pref_liq, _, _ = S.instant_concept("preferred_liq", S.INSTANT_PERIODS)
+    pref_py, _, _ = S.instant_concept("preferred", S.INSTANT_PERIODS_PY)
     assets, _, _ = S.instant_concept("assets", S.INSTANT_PERIODS)
     goodwill, _, _ = S.instant_concept("goodwill", S.INSTANT_PERIODS)
     intang, _, _ = S.instant_concept("intangibles", S.INSTANT_PERIODS)
@@ -400,6 +476,7 @@ def main(argv=None) -> None:
         revenue=rev, revenue_prior=rev_prior, revenue_period=rev_per,
         net_income=ni, ni_prior=ni_prior, ebit=ebit, ebit_period=ebit_per, ebit_prior=ebit_prior,
         cfo=cfo, capex=capex, equity=equity, equity_period=equity_per, equity_py=equity_py,
+        preferred=pref, preferred_liq=pref_liq, preferred_py=pref_py,
         assets=assets, goodwill=goodwill, intangibles=intang,
         ltd=ltd, ltd_period=ltd_per, ltd_tag=ltd_tag, cash=cash,
         shares=sh, shares_period=sh_per, shares_py=sh_py, shares_py_period=sh_py_per,
@@ -563,7 +640,9 @@ def write_markdown(f: pd.DataFrame, stages, t0) -> None:
     qr = re_[re_.qualifies].sort_values("rank_v2")
     M = [f"# Financials & REIT Screen (v2) -- {asof}", "",
          "Banks, brokers, insurers and holding companies (SIC 6000-6799 except real estate) are scored on "
-         f"P/E, price to tangible book, return on tangible equity and tangible book-per-share growth. Gates: growing "
+         f"P/E, price to tangible book, return on tangible equity and tangible book-per-share growth, all on the "
+         "common slice: preferred stock is deducted from equity and preferred dividends from earnings, because "
+         "market cap only buys the common. Gates: growing "
          f"(tangible BVPS or continuing net income up), cheap (P/E <= {PE_MAX:.0f}x or P/TBV <= {PTBV_MAX:.1f}x), equity "
          "at least 5% of assets. REITs and real-estate operators (SIC 6798, 6500-6599) are scored on P/FFO "
          f"(FFO = net income + D&A + impairments), FFO growth and dividend yield; gates: FFO growing, P/FFO <= {PFFO_MAX:.0f}x, "
