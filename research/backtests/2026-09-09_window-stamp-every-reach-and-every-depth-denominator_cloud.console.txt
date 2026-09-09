@@ -1,0 +1,103 @@
+=== idea 257 window-stamp-every-reach-and-every-depth-denominator (cloud) ===
+research/backtests/2026-09-09_window-stamp-every-reach-and-every-depth-denominator_cloud.py
+
+panels truncated to idea 251's last bar 2026-09-04: u56 2008-01-02..2026-09-04 (4699 rows), broad 2008-01-02..2026-09-04 (4699 rows)
+=== GATES ===
+G1 idea 245's own harness (run(no instrument) vs engine.backtest; stop vs idea 94) — it prints and asserts its own gates:
+
+--- building idea 251's arm grid (EXT ladder), keeping DAILY returns ---
+arms: 512 rows (8 controls); episode rows: 14616
+
+G2 vs idea 251's COMMITTED grid.csv:
+   bought_pp    max|diff| = 8.809e-03   q99 = 5.000e-05   rows within 1e-6: 304/512   (tolerance 1e-01)
+   paid_pp      max|diff| = 1.294e-02   q99 = 1.147e-02   rows within 1e-6: 288/512   (tolerance 1e-01)
+   IS_bought    max|diff| = 7.441e-02   q99 = 1.127e-04   rows within 1e-6: 306/512   (tolerance 1e-01)
+   OOS_bought   max|diff| = 8.809e-03   q99 = 4.721e-05   rows within 1e-6: 304/512   (tolerance 1e-01)
+   CAGR         max|diff| = 1.469e-04   q99 = 1.296e-04   rows within 1e-6: 386/512   (tolerance 1e-03)
+   MaxDD        max|diff| = 8.804e-05   q99 = 4.959e-07   rows within 1e-6: 509/512   (tolerance 1e-03)
+   NOTE: this is a tolerance gate, not a bit-for-bit one, and the reason is in the data, not the code. data/prices.csv has been RESTATED since idea 251 was committed: on the 4,699 x 58 cells the two files share, adjusted closes differ by up to 3e-4 (DIA, COST, LLY, META, UNH), and the panel has gained one bar (dropped here by the 2026-09-04 truncation). 60% of arms agree to 1e-6 and the 99th percentile disagreement is ~1e-4 pp; the two largest (0.074 and 0.068 pp of IS reach) are the 200d gate at a 20-day MA, the shortest lookback on the extended ladder. All of it is ~2-3 orders of magnitude below the IS/OOS reach gaps under test (0.8 -> 5.1 pp, 4.1 -> 9.9 pp), and idea 251's 47/48 headline recounts unchanged below.
+
+G3 vs idea 251's COMMITTED reach.csv (EXT ladder):
+   max_bought       max|diff| = 1.311e-05   cells within 1e-6: 26/48
+   IS_max_bought    max|diff| = 3.664e-05   cells within 1e-6: 26/48
+   OOS_max_bought   max|diff| = 1.311e-05   cells within 1e-6: 26/48
+   idea 251's headline recounted here: OOS reach > IS reach in **47 of 48 cells** (published: 47 of 48), sign-test p = 3.482e-13
+   whole-window median |log10(IS reach / OOS reach)| = 0.366 over 43/48 cells with both reaches > 0
+
+G4 episodes (idea 62/117's classifier, rebuilt from idea 117's own function):
+   theta=0.08 u56   : 13 episodes  IS 5 / OOS 8   DEEP 3 / SHALLOW 10   depths 22.1, 15.7, 18.6, 9.7, 13.0, 10.1, 19.3, 33.7, 9.4, 24.5, 8.4, 18.8, 8.9
+   theta=0.08 broad : 13 episodes  IS 5 / OOS 8   DEEP 3 / SHALLOW 10   depths 22.1, 15.7, 18.6, 9.7, 13.0, 10.1, 19.3, 33.7, 9.4, 24.5, 8.4, 18.8, 8.9
+   theta=0.10 u56   : 9 episodes  IS 4 / OOS 5   DEEP 3 / SHALLOW 6   depths 22.1, 15.7, 18.6, 13.0, 10.1, 19.3, 33.7, 24.5, 18.8
+   theta=0.10 broad : 9 episodes  IS 4 / OOS 5   DEEP 3 / SHALLOW 6   depths 22.1, 15.7, 18.6, 13.0, 10.1, 19.3, 33.7, 24.5, 18.8
+   theta=0.15 u56   : 7 episodes  IS 3 / OOS 4   DEEP 3 / SHALLOW 4   depths 22.1, 15.7, 18.6, 19.3, 33.7, 24.5, 18.8
+   theta=0.15 broad : 7 episodes  IS 3 / OOS 4   DEEP 3 / SHALLOW 4   depths 22.1, 15.7, 18.6, 19.3, 33.7, 24.5, 18.8
+
+  episode table at theta=0.10 (the point):
+panel eid       peak     trough      recov  depth  dur_pt speed depth_bin window
+  u56  E1 2009-01-28 2009-03-09 2009-04-17  22.06      27  FAST      DEEP     IS
+  u56  E2 2010-04-23 2010-07-02 2010-11-04  15.70      49  FAST   SHALLOW     IS
+  u56  E3 2011-04-29 2011-10-03 2012-02-03  18.61     108  SLOW   SHALLOW     IS
+  u56  E4 2015-07-20 2016-02-11 2016-04-18  13.02     143  SLOW   SHALLOW     IS
+  u56  E5 2018-01-26 2018-02-08 2018-08-06  10.10       9  FAST   SHALLOW    OOS
+  u56  E6 2018-09-20 2018-12-24 2019-04-12  19.35      65  SLOW   SHALLOW    OOS
+  u56  E7 2020-02-19 2020-03-23 2020-08-10  33.72      23  FAST      DEEP    OOS
+  u56  E8 2022-01-03 2022-10-12 2023-12-13  24.50     195  SLOW      DEEP    OOS
+  u56  E9 2025-02-19 2025-04-08 2025-06-26  18.76      34  FAST   SHALLOW    OOS
+broad  E1 2009-01-28 2009-03-09 2009-04-17  22.06      27  FAST      DEEP     IS
+broad  E2 2010-04-23 2010-07-02 2010-11-04  15.70      49  FAST   SHALLOW     IS
+broad  E3 2011-04-29 2011-10-03 2012-02-03  18.61     108  SLOW   SHALLOW     IS
+broad  E4 2015-07-20 2016-02-11 2016-04-18  13.02     143  SLOW   SHALLOW     IS
+broad  E5 2018-01-26 2018-02-08 2018-08-06  10.10       9  FAST   SHALLOW    OOS
+broad  E6 2018-09-20 2018-12-24 2019-04-12  19.35      65  SLOW   SHALLOW    OOS
+broad  E7 2020-02-19 2020-03-23 2020-08-10  33.72      23  FAST      DEEP    OOS
+broad  E8 2022-01-03 2022-10-12 2023-12-13  24.50     195  SLOW      DEEP    OOS
+broad  E9 2025-02-19 2025-04-08 2025-06-26  18.76      34  FAST   SHALLOW    OOS
+
+=== THE TEST: does the episode denominator remove the IS/OOS gap? ===
+ theta  stat depth_bin   convention  n_cells  n_OOS_gt_IS  share  signtest_p  med_abs_log10  n_pairs  B1_pass  B2_pass
+0.0800 reach       ALL      EPISODE       48           19 0.3958      0.1934         0.1808       38     True     True
+0.0800 reach   SHALLOW      EPISODE       48           17 0.3542      0.0595         0.0943       36     True     True
+0.0800 reach      DEEP      EPISODE       48           18 0.3750      0.1114         0.3659       44     True    False
+0.0800 price       ALL      EPISODE       48           24 0.5000      1.0000         0.1250       15     True     True
+0.0800 price   SHALLOW      EPISODE       47           28 0.5957      0.2430         0.2420       17     True    False
+0.0800 price      DEEP      EPISODE       48            8 0.1667      0.0000         0.1884       23    False     True
+0.1000 reach       ALL      EPISODE       48           21 0.4375      0.4709         0.1173       44     True     True
+0.1000 reach   SHALLOW      EPISODE       48           27 0.5625      0.4709         0.1008       42     True     True
+0.1000 reach      DEEP      EPISODE       48           18 0.3750      0.1114         0.3659       44     True    False
+0.1000 price       ALL      EPISODE       48           21 0.4375      0.4709         0.2257       22     True     True
+0.1000 price   SHALLOW      EPISODE       47           27 0.5745      0.3817         0.1996       25     True     True
+0.1000 price      DEEP      EPISODE       48           11 0.2292      0.0002         0.2037       25    False     True
+0.1500 reach       ALL      EPISODE       48           25 0.5208      0.8854         0.1947       47     True     True
+0.1500 reach   SHALLOW      EPISODE       48           24 0.5000      1.0000         0.2060       46     True     True
+0.1500 reach      DEEP      EPISODE       48           18 0.3750      0.1114         0.3659       44     True    False
+0.1500 price       ALL      EPISODE       48           19 0.3958      0.1934         0.2347       24     True    False
+0.1500 price   SHALLOW      EPISODE       47           25 0.5319      0.7709         0.0956       26     True     True
+0.1500 price      DEEP      EPISODE       48           11 0.2292      0.0002         0.1587       27    False     True
+   NaN reach       ALL WHOLE_WINDOW       48           47 0.9792      0.0000         0.3661       43    False    False
+   NaN price       ALL WHOLE_WINDOW       41            6 0.1463      0.0000         0.2465       29    False    False
+
+HEADLINE (theta = 0.10, the pre-registered point, both bars):
+  reach ALL     : OOS>IS 47/48 (p 3.5e-13) -> 21/48 (p 0.471)   med|log10 IS/OOS| 0.366 -> 0.117 (bar 0.227)   B1 PASS  B2 PASS
+  reach SHALLOW : OOS>IS 47/48 (p 3.5e-13) -> 27/48 (p 0.471)   med|log10 IS/OOS| 0.366 -> 0.101 (bar 0.227)   B1 PASS  B2 PASS
+  reach DEEP    : OOS>IS 47/48 (p 3.5e-13) -> 18/48 (p 0.111)   med|log10 IS/OOS| 0.366 -> 0.366 (bar 0.227)   B1 PASS  B2 FAIL
+  price ALL     : OOS>IS 6/41 (p 4.9e-06) -> 21/48 (p 0.471)   med|log10 IS/OOS| 0.247 -> 0.226 (bar 0.227)   B1 PASS  B2 PASS
+  price SHALLOW : OOS>IS 6/41 (p 4.9e-06) -> 27/47 (p 0.382)   med|log10 IS/OOS| 0.247 -> 0.200 (bar 0.227)   B1 PASS  B2 PASS
+  price DEEP    : OOS>IS 6/41 (p 4.9e-06) -> 11/48 (p 0.000)   med|log10 IS/OOS| 0.247 -> 0.204 (bar 0.227)   B1 FAIL  B2 PASS
+
+Per-family, theta=0.10, ALL episodes (reach), IS vs OOS by cell:
+  200d-type MA gate            EPISODE reach IS +0.0702 OOS +0.0697  (OOS>IS 3/8)   |  WHOLE-WINDOW pp IS  1.26 OOS  3.94 (OOS>IS 8/8)
+  MA re-entry band             EPISODE reach IS +0.0624 OOS +0.0122  (OOS>IS 0/8)   |  WHOLE-WINDOW pp IS  1.79 OOS  3.19 (OOS>IS 8/8)
+  absolute momentum            EPISODE reach IS +0.2802 OOS +0.0743  (OOS>IS 0/8)   |  WHOLE-WINDOW pp IS  2.04 OOS  3.51 (OOS>IS 7/8)
+  de-gross (reference)         EPISODE reach IS +0.6795 OOS +0.7116  (OOS>IS 5/8)   |  WHOLE-WINDOW pp IS 13.16 OOS 23.90 (OOS>IS 8/8)
+  book DD control (idea 40)    EPISODE reach IS +0.2446 OOS +0.2753  (OOS>IS 6/8)   |  WHOLE-WINDOW pp IS  4.05 OOS  9.89 (OOS>IS 8/8)
+  per-name trailing stop       EPISODE reach IS +0.0822 OOS +0.1530  (OOS>IS 7/8)   |  WHOLE-WINDOW pp IS  0.80 OOS  5.14 (OOS>IS 8/8)
+
+=== RULE 8: two selectors on IS only, 2017-2026 read once ===
+           OOS_bought_at_pick  OOS_bought_best  forfeit_pp  OOS_Sharpe  OOS_CAGR
+selector                                                                        
+S_EPISODE              7.2714           8.2612      0.9897      0.9764    0.0967
+S_WINDOW               7.1626           8.2612      1.0986      0.9996    0.0988
+  S_WINDOW  : mean OOS reach forfeited 1.099 pp, median 0.335 pp; picks the OOS-optimal level in 20/48 cells; 4a 8/48  4b 9/48
+  S_EPISODE : mean OOS reach forfeited 0.990 pp, median 0.217 pp; picks the OOS-optimal level in 23/48 cells; 4a 8/48  4b 6/48
+  head-to-head: S_EPISODE forfeits LESS OOS reach than S_WINDOW in 14/48 cells, MORE in 14, ties 20
+  4a passes across the whole arm grid: 18/504   4b passes: 57/504
