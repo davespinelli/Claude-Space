@@ -1,0 +1,296 @@
+=====================================================================================================================================================================
+Idea 320 is-the-UNCONDITIONAL-width-dial-a-B136-fact-or-a-panel-ordering (lane B) | 2026-09-09_is-the-UNCONDITIONAL-width-dial-a-B136-fact-or-a-panel-ordering_B.py
+=====================================================================================================================================================================
+Fixed, not searched: gross=75% EVERY day, vol-scaler OFF, max_vol=0.6, weekly, 10 bps, t+1, IS <= 2016-12-31, OOS 2017-01-01..
+Tuned (1 dial, 2 units, ALL points reported): ABS n0 in [20, 30, 40, 60, 'E'] and REL c in [0.25, 0.5, 0.75, 1.0]. Panel is a reporting axis, not a tuned parameter.
+SURVIVORSHIP: B136 and SMALL are CURRENT constituents; only within-panel dial differences are read as evidence.
+
+  SMALL: 483 names in panel, dropped 44 with max_1d_move >= 1.0 (README) -> 439 tradable
+=====================================================================================================================================================================
+PANEL U56: 56 tradable of 56 columns | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13 | index sanity 2018=251, 2024=252
+  E_t (eligible names/day): mean 37.5, median 41, min 3, max 55, p90 48 | panel width 56 | days with E_t == 0: 0 (0.000%)
+  gate G1 on U56: max|fast - engine| = 1.041e-17
+=====================================================================================================================================================================
+PANEL B136: 136 tradable of 136 columns | 2008-01-02 -> 2026-09-04 | eval from 2009-01-13 | index sanity 2018=251, 2024=252
+  E_t (eligible names/day): mean 91.5, median 99, min 3, max 128, p90 116 | panel width 136 | days with E_t == 0: 0 (0.000%)
+  gate G1 on B136: max|fast - engine| = 1.388e-17
+=====================================================================================================================================================================
+PANEL SMALL439: 439 tradable of 440 columns | 2010-01-04 -> 2026-09-04 | eval from 2011-01-13 | index sanity 2018=251, 2024=252
+  E_t (eligible names/day): mean 141.2, median 147, min 0, max 281, p90 195 | panel width 439 | days with E_t == 0: 1 (0.025%)
+  gate G1 on SMALL439: max|fast - engine| = 1.388e-17
+
+=====================================================================================================================================================================
+GATES
+=====================================================================================================================================================================
+G1  max|fast_backtest - engine.backtest| over 3 panels = 1.388e-17   PASS
+G2  LIVE RULES v2 on U56 @ vintage 2026-09-04 = 8.66% / 1.2056 / -12.05% (1.2259 / 1.1909)   record: 8.66% / 1.2056 / -12.05% (1.2259 / 1.1909)   PASS
+    (vintage note: the un-truncated U56 cache now runs to 2026-09-08 and gives 8.64% / 1.2037 -- a -0.0019 Sharpe drift from one extra bar, not a code difference; all three panels are cut to 2026-09-04, the last bar B136/SMALL carry.)
+G3a TARGET gross, bar = mean within 1 pp of 0.75 at every one of 27 points: max|mean - 0.75| = 0.650 pp   PASS
+    NOT an identity, and censused rather than assumed: worst share of days below 0.75 = 58.33%, worst single-day shortfall = 0.3750.  TWO causes, both inherited from idea 318's construction and kept so G4 is exact:
+      (i) UNRANKABLE ELIGIBLES -- a name above its 200d MA with vol20 under the cap but with no composite score yet (the 12m momentum leg needs 252 bars) is counted in E_t and cannot be ranked, so the book holds gross*(ranked/k).  Binds at the WIDE end only.
+      (ii) RANK TIES -- the composite is the mean of three pct-ranks and is therefore discrete, so names tie; rank.le(k) then selects fewer than k.  U56 carries tied ranks on 68.7% of days and loses ~1 name on 8.3% of them.  Binds at the NARROW end, sub-1 pp.
+    Fill shortfall by grid point (share of days below 0.75 / mean target gross):
+           tgt_days_off                 tgt_gross_mean                
+panel              B136 SMALL439    U56           B136 SMALL439    U56
+dial                                                                  
+ABS n0=20        0.0685   0.0023 0.0966         0.7478   0.7499 0.7471
+ABS n0=30        0.0811   0.0038 0.0827         0.7483   0.7498 0.7482
+ABS n0=40        0.0705   0.0112 0.0559         0.7489   0.7497 0.7489
+ABS n0=60        0.0811   0.0226 0.0617         0.7492   0.7494 0.7488
+ABS n0=E_t       0.0840   0.5833 0.0617         0.7493   0.7441 0.7488
+REL c=0.25       0.0712   0.0003 0.0901         0.7477   0.7500 0.7435
+REL c=0.50       0.0843   0.0015 0.1045         0.7488   0.7500 0.7462
+REL c=0.75       0.0791   0.0015 0.0969         0.7493   0.7500 0.7478
+REL c=1.00       0.0840   0.5833 0.0617         0.7493   0.7441 0.7488
+    Worst point SMALL439 ABS n0=E_t: 58.33% of days off, mean target gross 0.744093 (0.59 pp short). It concentrates at the WIDE end of the WIDEST panel -- exactly where the SMALL result lives -- so the FILL control below is required before that result can be read.
+G3b REALISED (engine-drifted) gross across the dial -- not an identity; reported because idea 321/587 showed 4b is mostly a gross meter:
+                 min    max  spread_pp
+panel    unit                         
+B136     ABS  0.7475 0.7495     0.1957
+         REL  0.7479 0.7497     0.1849
+SMALL439 ABS  0.7441 0.7499     0.5829
+         REL  0.7441 0.7501     0.5980
+U56      ABS  0.7475 0.7490     0.1520
+         REL  0.7438 0.7489     0.5128
+    max realised-gross spread within any (panel, unit) = 0.598 pp, vs the 12.78 pp gross motion idea 321 needed to move the 4b DD margin -> the width reading here is NOT an exposure reading.
+G4  B136 ABS n0=20    OOS Sharpe 0.8832   idea 318 published 0.883   d=+0.0002
+G4  B136 ABS n0=40    OOS Sharpe 0.9714   idea 318 published 0.971   d=+0.0004
+G4  B136 ABS n0=60    OOS Sharpe 1.0033   idea 318 published 1.003   d=+0.0003
+G4  B136 ABS n0=E_t   OOS Sharpe 1.0192   idea 318 published 1.019   d=+0.0002
+G4  max provenance deviation vs idea 318 = 0.0004   PASS
+G5  U56 n0=20 = 12.8% / 1.07 / -18.3% / 1.08 / 1.07   record (LEADERBOARD lines 288 and 2925): 12.8% / 1.07 / -18.3% / 1.08 / 1.07   PASS
+    -> this run's 4b passers are RE-DERIVATIONS of books already in the record and already not adopted, NOT new candidates.  No memo is claimed for them.
+
+=====================================================================================================================================================================
+THE FULL GRID -- every point reported (gross 0.75 everywhere, so d is WIDTH alone)
+=====================================================================================================================================================================
+
+--- U56
+panel  unit            dial  k_mean  cover    sat   names  gross    turn  ann_ret  ann_vol   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD   p4a   p4b fail4b
+  U56   ABS       ABS n0=20 19.1672 0.5671 0.1210 19.1075 0.7475 10.7826   0.1279   0.1195 0.1283  1.0702 -0.1831 1.0762 1.0721    0.1449      1.1369    -0.1831 False  True      -
+  U56   ABS       ABS n0=30 27.6071 0.7753 0.2048 27.5121 0.7486  9.1666   0.1147   0.1091 0.1149  1.0522 -0.1747 1.0171 1.0873    0.1325      1.1550    -0.1747 False  True      -
+  U56   ABS       ABS n0=40 34.6670 0.9396 0.4783 34.5330 0.7490  8.3625   0.1069   0.1019 0.1070  1.0494 -0.1666 1.0498 1.0528    0.1201      1.1342    -0.1666 False  True      -
+  U56   ABS       ABS n0=60 37.4999 1.0000 1.0000 37.3758 0.7489  8.1936   0.1038   0.0988 0.1039  1.0499 -0.1587 1.0688 1.0362    0.1134      1.1135    -0.1587 False False   CAGR
+  U56   ABS      ABS n0=E_t 37.4999 1.0000 1.0000 37.3758 0.7489  8.1936   0.1038   0.0988 0.1039  1.0499 -0.1587 1.0688 1.0362    0.1134      1.1135    -0.1587 False False   CAGR
+  U56   REL      REL c=0.25  9.3852 0.2505 0.0000  9.2836 0.7438 17.6622   0.1545   0.1538 0.1533  1.0045 -0.2693 0.9993 1.0163    0.1700      1.0453    -0.2693 False False     DD
+  U56   REL      REL c=0.50 18.7544 0.5000 0.0000 18.6369 0.7471 13.2821   0.1292   0.1263 0.1288  1.0228 -0.2245 0.9804 1.0643    0.1493      1.1238    -0.2245 False False     DD
+  U56   REL      REL c=0.75 28.1147 0.7495 0.0000 28.0045 0.7483 10.9173   0.1137   0.1110 0.1135  1.0241 -0.1718 1.0023 1.0473    0.1289      1.1138    -0.1718 False  True      -
+  U56   REL      REL c=1.00 37.4999 1.0000 1.0000 37.3758 0.7489  8.1936   0.1038   0.0988 0.1039  1.0499 -0.1587 1.0688 1.0362    0.1134      1.1135    -0.1587 False False   CAGR
+  U56 BENCH RULES v2 (live)     NaN    NaN    NaN     NaN    NaN     NaN   0.0856   0.0710 0.0866  1.2056 -0.1205 1.2259 1.1909    0.0953      1.2851    -0.1205 False False      -
+  U56 BENCH        RULES v1     NaN    NaN    NaN     NaN    NaN     NaN   0.0678   0.1020 0.0646  0.6647 -0.1383 0.6421 0.6878    0.0773      0.7471    -0.1383 False False      -
+  U56 BENCH             SPY     NaN    NaN    NaN     NaN    NaN     NaN   0.1575   0.1772 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372 False False      -
+
+--- B136
+panel  unit            dial  k_mean  cover    sat   names  gross    turn  ann_ret  ann_vol   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD   p4a   p4b    fail4b
+ B136   ABS       ABS n0=20 19.7826 0.2585 0.0241 19.7004 0.7475 14.1093   0.1317   0.1396 0.1296  0.9433 -0.2005 1.1046 0.8025    0.1241      0.8832    -0.2005 False False        H2
+ B136   ABS       ABS n0=30 29.4618 0.3723 0.0430 29.3731 0.7479 12.3423   0.1233   0.1288 0.1218  0.9574 -0.2030 1.1182 0.8146    0.1162      0.8994    -0.2030 False False     H2,DD
+ B136   ABS       ABS n0=40 38.8898 0.4779 0.0750 38.8229 0.7491 11.2168   0.1213   0.1224 0.1205  0.9907 -0.1911 1.1120 0.8807    0.1195      0.9714    -0.1911 False  True         -
+ B136   ABS       ABS n0=60 56.8015 0.6667 0.1352 56.7270 0.7494  9.7105   0.1142   0.1143 0.1136  0.9989 -0.1868 1.0971 0.9089    0.1150      1.0033    -0.1868 False  True         -
+ B136   ABS      ABS n0=E_t 91.4596 1.0000 1.0000 91.2949 0.7495  8.2577   0.1071   0.1044 0.1069  1.0252 -0.1769 1.1433 0.9150    0.1059      1.0192    -0.1769 False  True         -
+ B136   REL      REL c=0.25 22.8662 0.2501 0.0000 22.7801 0.7479 16.3237   0.1242   0.1434 0.1206  0.8663 -0.2907 1.0591 0.6948    0.1094      0.7817    -0.2907 False False H2,OOS,DD
+ B136   REL      REL c=0.50 45.7308 0.5000 0.0000 45.6418 0.7491 12.7362   0.1179   0.1232 0.1166  0.9571 -0.2307 1.0434 0.8772    0.1187      0.9704    -0.2307 False False        DD
+ B136   REL      REL c=0.75 68.5934 0.7499 0.0000 68.4925 0.7497 10.4372   0.1130   0.1128 0.1125  1.0012 -0.2084 1.0966 0.9132    0.1141      1.0122    -0.2084 False False        DD
+ B136   REL      REL c=1.00 91.4596 1.0000 1.0000 91.2949 0.7495  8.2577   0.1071   0.1044 0.1069  1.0252 -0.1769 1.1433 0.9150    0.1059      1.0192    -0.1769 False  True         -
+ B136 BENCH RULES v2 (live)     NaN    NaN    NaN     NaN    NaN     NaN   0.0799   0.0722 0.0803  1.1058 -0.1224 1.2291 0.9844    0.0798      1.1185    -0.1224 False False         -
+ B136 BENCH        RULES v1     NaN    NaN    NaN     NaN    NaN     NaN   0.0676   0.1064 0.0639  0.6350 -0.2119 0.7562 0.5320    0.0594      0.5763    -0.2119 False False         -
+ B136 BENCH             SPY     NaN    NaN    NaN     NaN    NaN     NaN   0.1575   0.1772 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372 False False         -
+
+--- SMALL439
+   panel  unit            dial   k_mean  cover    sat    names  gross    turn  ann_ret  ann_vol   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD   p4a   p4b            fail4b
+SMALL439   ABS       ABS n0=20  19.8760 0.1763 0.0094  19.8688 0.7499 20.4318   0.0765   0.1704 0.0638  0.4488 -0.3348 0.6056 0.3241    0.0692      0.4640    -0.3348 False False H1,H2,OOS,DD,CAGR
+SMALL439   ABS       ABS n0=30  29.7496 0.2586 0.0183  29.7392 0.7499 18.7965   0.0637   0.1592 0.0523  0.4003 -0.3282 0.4752 0.3435    0.0606      0.4361    -0.3282 False False H1,H2,OOS,DD,CAGR
+SMALL439   ABS       ABS n0=40  39.5155 0.3373 0.0336  39.5028 0.7498 17.5416   0.0622   0.1522 0.0519  0.4088 -0.3255 0.4324 0.3937    0.0614      0.4536    -0.3255 False False H1,H2,OOS,DD,CAGR
+SMALL439   ABS       ABS n0=60  58.4420 0.4805 0.0735  58.4410 0.7495 15.8315   0.0602   0.1445 0.0509  0.4165 -0.3473 0.4524 0.3919    0.0564      0.4389    -0.3473 False False H1,H2,OOS,DD,CAGR
+SMALL439   ABS      ABS n0=E_t 141.2260 1.0000 1.0000 140.2476 0.7441 13.2560   0.0443   0.1333 0.0360  0.3324 -0.4021 0.4327 0.2575    0.0305      0.2855    -0.4021 False False H1,H2,OOS,DD,CAGR
+SMALL439   REL      REL c=0.25  35.3139 0.2526 0.0031  35.3310 0.7501 20.6557   0.0704   0.1644 0.0584  0.4281 -0.4075 0.4000 0.4562    0.0683      0.4671    -0.4075 False False H1,H2,OOS,DD,CAGR
+SMALL439   REL      REL c=0.50  70.6271 0.5015 0.0031  70.6350 0.7501 17.2416   0.0647   0.1470 0.0553  0.4404 -0.4106 0.5059 0.3952    0.0577      0.4412    -0.4106 False False H1,H2,OOS,DD,CAGR
+SMALL439   REL      REL c=0.75 105.9169 0.7511 0.0048 105.9548 0.7501 15.1409   0.0522   0.1390 0.0434  0.3756 -0.3922 0.4552 0.3169    0.0378      0.3285    -0.3922 False False H1,H2,OOS,DD,CAGR
+SMALL439   REL      REL c=1.00 141.2260 1.0000 1.0000 140.2476 0.7441 13.2560   0.0443   0.1333 0.0360  0.3324 -0.4021 0.4327 0.2575    0.0305      0.2855    -0.4021 False False H1,H2,OOS,DD,CAGR
+SMALL439 BENCH RULES v2 (live)      NaN    NaN    NaN      NaN    NaN     NaN   0.0399   0.0696 0.0381  0.5725 -0.1468 0.5699 0.5770    0.0385      0.5680    -0.1468 False False                 -
+SMALL439 BENCH        RULES v1      NaN    NaN    NaN      NaN    NaN     NaN   0.0821   0.1455 0.0741  0.5647 -0.3612 0.7434 0.4044    0.0635      0.4923    -0.3612 False False                 -
+SMALL439 BENCH             SPY      NaN    NaN    NaN      NaN    NaN     NaN   0.1467   0.1703 0.1413  0.8615 -0.3372 0.8907 0.8577    0.1545      0.8820    -0.3372 False False                 -
+
+=====================================================================================================================================================================
+H3  IS THE ABSOLUTE DIAL EVEN LIVE ON EVERY PANEL?  saturation share = mean(1[E_t <= k]) -- at sat=1.00 the book IS EWALL and the dial is inert
+=====================================================================================================================================================================
+panel       B136  SMALL439   U56
+dial                            
+ABS n0=20  0.024     0.009 0.121
+ABS n0=30  0.043     0.018 0.205
+ABS n0=40  0.075     0.034 0.478
+ABS n0=60  0.135     0.073 1.000
+ABS n0=E_t 1.000     1.000 1.000
+
+Adjacent-step weight motion on the ABS grid (identical=True means the two dial points are the SAME BOOK to machine precision):
+   panel                    step  max_abs_dW  sum_abs_dW  identical
+     U56  ABS n0=20 -> ABS n0=30   3.571e-02   1.882e+03      False
+     U56  ABS n0=30 -> ABS n0=40   2.419e-02   1.195e+03      False
+     U56  ABS n0=40 -> ABS n0=60   1.829e-02   4.007e+02      False
+     U56 ABS n0=60 -> ABS n0=E_t   0.000e+00   0.000e+00       True
+    B136  ABS n0=20 -> ABS n0=30   3.571e-02   2.147e+03      False
+    B136  ABS n0=30 -> ABS n0=40   2.419e-02   1.571e+03      False
+    B136  ABS n0=40 -> ABS n0=60   1.829e-02   1.995e+03      False
+    B136 ABS n0=60 -> ABS n0=E_t   1.230e-02   2.217e+03      False
+SMALL439  ABS n0=20 -> ABS n0=30   3.571e-02   1.943e+03      False
+SMALL439  ABS n0=30 -> ABS n0=40   2.419e-02   1.441e+03      False
+SMALL439  ABS n0=40 -> ABS n0=60   1.829e-02   1.866e+03      False
+SMALL439 ABS n0=60 -> ABS n0=E_t   1.230e-02   3.044e+03      False
+
+=====================================================================================================================================================================
+H1/H2  THE WIDTH SLOPE PER PANEL, and whether the SLOPE ordering equals the LEVEL ordering
+=====================================================================================================================================================================
+
+  unit=ABS
+
+  unit=REL
+unit    panel     metric  slope_per_unit_cover   first    last    span  monotone_up  monotone_dn
+ ABS      U56     Sharpe               -0.0440  1.0702  1.0499 -0.0203        False        False
+ ABS      U56 OOS_Sharpe               -0.0606  1.1369  1.1135 -0.0233        False        False
+ ABS      U56       CAGR               -0.0556  0.1283  0.1039 -0.0244        False        False
+ ABS      U56   OOS_CAGR               -0.0730  0.1449  0.1134 -0.0315        False        False
+ ABS      U56      MaxDD                0.0554 -0.1831 -0.1587  0.0243        False        False
+ ABS     B136     Sharpe                0.1078  0.9433  1.0252  0.0819         True        False
+ ABS     B136 OOS_Sharpe                0.1899  0.8832  1.0192  0.1360         True        False
+ ABS     B136       CAGR               -0.0289  0.1296  0.1069 -0.0227        False         True
+ ABS     B136   OOS_CAGR               -0.0217  0.1241  0.1059 -0.0182        False        False
+ ABS     B136      MaxDD                0.0349 -0.2005 -0.1769  0.0236        False        False
+ ABS SMALL439     Sharpe               -0.1194  0.4488  0.3324 -0.1164        False        False
+ ABS SMALL439 OOS_Sharpe               -0.2158  0.4640  0.2855 -0.1785        False        False
+ ABS SMALL439       CAGR               -0.0283  0.0638  0.0360 -0.0278        False         True
+ ABS SMALL439   OOS_CAGR               -0.0447  0.0692  0.0305 -0.0387        False        False
+ ABS SMALL439      MaxDD               -0.0927 -0.3348 -0.4021 -0.0673        False        False
+ REL      U56     Sharpe                0.0551  1.0045  1.0499  0.0454         True        False
+ REL      U56 OOS_Sharpe                0.0780  1.0453  1.1135  0.0683        False        False
+ REL      U56       CAGR               -0.0655  0.1533  0.1039 -0.0494        False         True
+ REL      U56   OOS_CAGR               -0.0762  0.1700  0.1134 -0.0566        False         True
+ REL      U56      MaxDD                0.1538 -0.2693 -0.1587  0.1106         True        False
+ REL     B136     Sharpe                0.2084  0.8663  1.0252  0.1589         True        False
+ REL     B136 OOS_Sharpe                0.3017  0.7817  1.0192  0.2375         True        False
+ REL     B136       CAGR               -0.0181  0.1206  0.1069 -0.0137        False         True
+ REL     B136   OOS_CAGR               -0.0060  0.1094  0.1059 -0.0035        False        False
+ REL     B136      MaxDD                0.1454 -0.2907 -0.1769  0.1138         True        False
+ REL SMALL439     Sharpe               -0.1412  0.4281  0.3324 -0.0957        False        False
+ REL SMALL439 OOS_Sharpe               -0.2638  0.4671  0.2855 -0.1815        False         True
+ REL SMALL439       CAGR               -0.0317  0.0584  0.0360 -0.0224        False         True
+ REL SMALL439   OOS_CAGR               -0.0535  0.0683  0.0305 -0.0378        False         True
+ REL SMALL439      MaxDD                0.0139 -0.4075 -0.4021  0.0054        False        False
+
+  LEVEL ordering (mean OOS Sharpe across the ABS dial): U56 (1.131) > B136 (0.955) > SMALL439 (0.416)
+  SLOPE ordering (d OOS Sharpe / d coverage, ABS grid):  B136 (+0.190) > U56 (-0.061) > SMALL439 (-0.216)
+  same ordering as LEVEL?  False
+  EXACT REVERSE of LEVEL?  False
+  -> the queue's dichotomy ('same ordering or the opposite one') is a FALSE DICHOTOMY if both are False: True
+
+  H3 quantified: the B136-minus-U56 OOS-Sharpe slope gap is +0.2505 on the ABS dial (2 of whose 5 U56 points are the SAME BOOK) and +0.2237 on the fully live REL dial. De-saturating the dial closes 10.7% of the gap -> saturation is a REAL defect of the queue's grid but explains almost NONE of the panel difference.
+
+=====================================================================================================================================================================
+FILL CONTROL  the same REL dial with k = max(1, round(c * R_t)), R_t = the RANKED count, so the book is ALWAYS exactly 0.75 gross.  Does each panel's width slope survive?
+=====================================================================================================================================================================
+   panel       dial   k_mean  tgt_days_off  tgt_gross_mean  gross   CAGR  Sharpe   MaxDD  OOS_CAGR  OOS_Sharpe  OOS_MaxDD   p4a   p4b            fail4b
+     U56 REL c=0.25   9.3701        0.0901          0.7435 0.7438 0.1537  1.0065 -0.2693    0.1708      1.0487    -0.2693 False False                DD
+     U56 REL c=0.50  18.7234        0.1045          0.7462 0.7471 0.1289  1.0226 -0.2245    0.1490      1.1213    -0.2245 False False                DD
+     U56 REL c=0.75  28.0680        0.0969          0.7478 0.7483 0.1134  1.0233 -0.1718    0.1285      1.1112    -0.1718 False  True                 -
+     U56 REL c=1.00  37.4382        0.0000          0.7500 0.7502 0.1040  1.0492 -0.1587    0.1134      1.1133    -0.1587 False False              CAGR
+    B136 REL c=0.25  22.8452        0.0712          0.7477 0.7479 0.1209  0.8679 -0.2907    0.1096      0.7830    -0.2907 False False         H2,OOS,DD
+    B136 REL c=0.50  45.6909        0.0843          0.7488 0.7491 0.1168  0.9585 -0.2307    0.1187      0.9707    -0.2307 False False                DD
+    B136 REL c=0.75  68.5265        0.0791          0.7493 0.7497 0.1127  1.0028 -0.2084    0.1140      1.0118    -0.2084 False False                DD
+    B136 REL c=1.00  91.3717        0.0000          0.7500 0.7502 0.1070  1.0253 -0.1769    0.1059      1.0191    -0.1769 False  True                 -
+SMALL439 REL c=0.25  35.0496        0.0003          0.7500 0.7501 0.0605  0.4400 -0.4018    0.0699      0.4760    -0.4018 False False H1,H2,OOS,DD,CAGR
+SMALL439 REL c=0.50  70.0976        0.0018          0.7500 0.7501 0.0556  0.4420 -0.4106    0.0586      0.4462    -0.4106 False False H1,H2,OOS,DD,CAGR
+SMALL439 REL c=0.75 105.1512        0.0015          0.7500 0.7501 0.0437  0.3776 -0.3927    0.0386      0.3334    -0.3927 False False H1,H2,OOS,DD,CAGR
+SMALL439 REL c=1.00 140.1960        0.0000          0.7500 0.7500 0.0365  0.3344 -0.4022    0.0311      0.2884    -0.4022 False False H1,H2,OOS,DD,CAGR
+
+  Cause (i), UNRANKABLE ELIGIBLES, is gone by construction: at c=1.00 every panel now holds exactly 0.7500 gross with 0.00% of days off, against SMALL439's 0.7441 / 58.33% on the E_t dial.
+  Cause (ii), RANK TIES, survives and is unchanged: worst days-off share still 10.45% at c<1, max|mean - 0.75| = 0.650 pp -- still inside the 1 pp bar.
+
+  OOS-Sharpe width slope, E_t dial vs FILL dial (both per unit of coverage):
+    U56       E_t dial +0.0780   FILL dial +0.0736   sign preserved: True   |change| 0.0044
+    B136      E_t dial +0.3017   FILL dial +0.3000   sign preserved: True   |change| 0.0017
+    SMALL439  E_t dial -0.2638   FILL dial -0.2733   sign preserved: True   |change| 0.0094
+
+=====================================================================================================================================================================
+MECHANISM  idea 330's two-term split applied to the WIDTH dial: Sharpe = ann_ret / ann_vol, so ln(S_wide/S_narrow) = ln(ret ratio) - ln(vol ratio).  Which term does widening move?
+=====================================================================================================================================================================
+unit    panel     narrow       wide  ret_narrow  ret_wide  vol_narrow  vol_wide  ln_ret_term  ln_vol_term  ln_dSharpe carried_by
+ ABS      U56  ABS n0=20 ABS n0=E_t      0.1279    0.1038      0.1195    0.0988      -0.2092       0.1901     -0.0192     RETURN
+ ABS     B136  ABS n0=20 ABS n0=E_t      0.1317    0.1071      0.1396    0.1044      -0.2067       0.2900      0.0833        VOL
+ ABS SMALL439  ABS n0=20 ABS n0=E_t      0.0765    0.0443      0.1704    0.1333      -0.5457       0.2455     -0.3002     RETURN
+ REL      U56 REL c=0.25 REL c=1.00      0.1545    0.1038      0.1538    0.0988      -0.3983       0.4425      0.0442        VOL
+ REL     B136 REL c=0.25 REL c=1.00      0.1242    0.1071      0.1434    0.1044      -0.1488       0.3172      0.1684        VOL
+ REL SMALL439 REL c=0.25 REL c=1.00      0.0704    0.0443      0.1644    0.1333      -0.4631       0.2101     -0.2530     RETURN
+
+  carried by VOL in 3 of 6 (panel, unit) cells; the RETURN term is negative in 6 of 6 -- idea 330's 'wins on vol, loses on return' shape, now shown for the WIDTH dial specifically.
+
+=====================================================================================================================================================================
+H4  DO THE THREE PANELS COLLAPSE ONTO ONE CURVE IN COVERAGE UNITS?  (each panel's OOS Sharpe re-based to its own c=0.25 point)
+=====================================================================================================================================================================
+  raw OOS Sharpe:
+panel        B136  SMALL439    U56
+dial                              
+REL c=0.25 0.7817    0.4671 1.0453
+REL c=0.50 0.9704    0.4412 1.1238
+REL c=0.75 1.0122    0.3285 1.1138
+REL c=1.00 1.0192    0.2855 1.1135
+  re-based (minus each panel's own c=0.25):
+panel        B136  SMALL439    U56
+dial                              
+REL c=0.25 0.0000    0.0000 0.0000
+REL c=0.50 0.1887   -0.0258 0.0785
+REL c=0.75 0.2305   -0.1386 0.0686
+REL c=1.00 0.2375   -0.1815 0.0683
+
+  mean cross-panel SD of the re-based curve: ABS units 0.0643 vs REL units 0.1258  -> collapse DOES NOT IMPROVE in coverage units (-95.7%)
+
+=====================================================================================================================================================================
+RULE 8 WALK-FORWARD -- dial chosen on IS (<= 2016) ONLY, OOS read once
+=====================================================================================================================================================================
+   panel unit        chooser       pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  base_OOS_CAGR  base_OOS_Sharpe  base_OOS_MaxDD  spy_OOS_CAGR  spy_OOS_Sharpe  spy_OOS_MaxDD   p4a   p4b                 fail4b
+     U56  ABS      IS_Sharpe  ABS n0=20     0.9833    0.1449      1.1369    -0.1831         0.0953           1.2851         -0.1205        0.1545          0.8820        -0.3372 False  True                      -
+     U56  ABS IS_Sharpe|IS4b       NONE        NaN       NaN         NaN        NaN            NaN           1.2851             NaN           NaN          0.8820            NaN False False no IS-admissible point
+     U56  REL      IS_Sharpe REL c=1.00     0.9693    0.1134      1.1135    -0.1587         0.0953           1.2851         -0.1205        0.1545          0.8820        -0.3372 False False                   CAGR
+     U56  REL IS_Sharpe|IS4b       NONE        NaN       NaN         NaN        NaN            NaN           1.2851             NaN           NaN          0.8820            NaN False False no IS-admissible point
+    B136  ABS      IS_Sharpe  ABS n0=30     1.0324    0.1162      0.8994    -0.2030         0.0798           1.1185         -0.1224        0.1545          0.8820        -0.3372 False False                  H2,DD
+    B136  ABS IS_Sharpe|IS4b  ABS n0=30     1.0324    0.1162      0.8994    -0.2030         0.0798           1.1185         -0.1224        0.1545          0.8820        -0.3372 False False                  H2,DD
+    B136  REL      IS_Sharpe REL c=1.00     1.0322    0.1059      1.0192    -0.1769         0.0798           1.1185         -0.1224        0.1545          0.8820        -0.3372 False  True                      -
+    B136  REL IS_Sharpe|IS4b REL c=1.00     1.0322    0.1059      1.0192    -0.1769         0.0798           1.1185         -0.1224        0.1545          0.8820        -0.3372 False  True                      -
+SMALL439  ABS      IS_Sharpe  ABS n0=20     0.4231    0.0692      0.4640    -0.3348         0.0385           0.5680         -0.1468        0.1545          0.8820        -0.3372 False False      H1,H2,OOS,DD,CAGR
+SMALL439  ABS IS_Sharpe|IS4b       NONE        NaN       NaN         NaN        NaN            NaN           0.5680             NaN           NaN          0.8820            NaN False False no IS-admissible point
+SMALL439  REL      IS_Sharpe REL c=0.75     0.4640    0.0378      0.3285    -0.3922         0.0385           0.5680         -0.1468        0.1545          0.8820        -0.3372 False False      H1,H2,OOS,DD,CAGR
+SMALL439  REL IS_Sharpe|IS4b       NONE        NaN       NaN         NaN        NaN            NaN           0.5680             NaN           NaN          0.8820            NaN False False no IS-admissible point
+
+=====================================================================================================================================================================
+KEEP PATHS at every grid point
+=====================================================================================================================================================================
+  4a passers: 0 / 27
+  4b passers: 8 / 27
+  BOTH:       0 / 27
+  binding 4b leg counts: {'DD': 15, 'CAGR': 12, 'H2': 12, 'OOS': 10, 'H1': 9}
+
+  4b passers in full:
+panel unit       dial  k_mean  cover    sat   names  gross    turn  ann_ret  ann_vol   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD   p4a  p4b fail4b
+  U56  ABS  ABS n0=20 19.1672 0.5671 0.1210 19.1075 0.7475 10.7826   0.1279   0.1195 0.1283  1.0702 -0.1831 1.0762 1.0721    0.1449      1.1369    -0.1831 False True      -
+  U56  ABS  ABS n0=30 27.6071 0.7753 0.2048 27.5121 0.7486  9.1666   0.1147   0.1091 0.1149  1.0522 -0.1747 1.0171 1.0873    0.1325      1.1550    -0.1747 False True      -
+  U56  ABS  ABS n0=40 34.6670 0.9396 0.4783 34.5330 0.7490  8.3625   0.1069   0.1019 0.1070  1.0494 -0.1666 1.0498 1.0528    0.1201      1.1342    -0.1666 False True      -
+  U56  REL REL c=0.75 28.1147 0.7495 0.0000 28.0045 0.7483 10.9173   0.1137   0.1110 0.1135  1.0241 -0.1718 1.0023 1.0473    0.1289      1.1138    -0.1718 False True      -
+ B136  ABS  ABS n0=40 38.8898 0.4779 0.0750 38.8229 0.7491 11.2168   0.1213   0.1224 0.1205  0.9907 -0.1911 1.1120 0.8807    0.1195      0.9714    -0.1911 False True      -
+ B136  ABS  ABS n0=60 56.8015 0.6667 0.1352 56.7270 0.7494  9.7105   0.1142   0.1143 0.1136  0.9989 -0.1868 1.0971 0.9089    0.1150      1.0033    -0.1868 False True      -
+ B136  ABS ABS n0=E_t 91.4596 1.0000 1.0000 91.2949 0.7495  8.2577   0.1071   0.1044 0.1069  1.0252 -0.1769 1.1433 0.9150    0.1059      1.0192    -0.1769 False True      -
+ B136  REL REL c=1.00 91.4596 1.0000 1.0000 91.2949 0.7495  8.2577   0.1071   0.1044 0.1069  1.0252 -0.1769 1.1433 0.9150    0.1059      1.0192    -0.1769 False True      -
+  rule-8 picks that pass 4b: 3 / 12;  4a: 0 / 12
+
+=====================================================================================================================================================================
+VERDICT
+=====================================================================================================================================================================
+Q  'is this the same U56 > B136 > SMALL ordering ideas 51/312/316 keep finding, or the opposite one?'
+A  NEITHER -- the queue asked a FALSE DICHOTOMY.  The LEVEL ordering is the record's familiar one (U56 1.131 > B136 0.955 > SMALL439 0.416 mean OOS Sharpe).  The SLOPE ordering is B136 (+0.190) > U56 (-0.061) > SMALL439 (-0.216): not the same (B136 and U56 swap), not the reverse (SMALL is LAST in both).  Level and slope are different orderings sharing a last place, so 'width helps B136' is not a re-reading of the panel-quality ordering and does not invert it.
+
+H1 premise CONFIRMED in direction on 2 of 3 panels and shown to be UNIT-DEPENDENT on the third: B136 + (monotone up, ABS and REL), SMALL439 - (both units), U56 so nearly flat that its SIGN FLIPS with the unit the dial is read in (ABS -0.061, REL +0.070).
+H3 saturation CONFIRMED as a defect, REJECTED as the explanation: on U56 sat = 1.000 already at n0=60 and the n0=60 and n0=E_t books are BIT-IDENTICAL (max|dW| = 0.000e+00), so 1 of the queue's 4 ABS dial steps on U56 is a literal no-op -- but de-saturating the dial (REL units) closes only 10.7% of the B136-minus-U56 slope gap.
+H4 collapse KILLED: re-based on each panel's own narrow end, the cross-panel SD of the width curve is 0.0643 in ABS units and 0.1258 in REL units.  Reading the dial in coverage units makes the panels disagree ~2x MORE.  The width response is genuinely panel-specific; it is not an absolute-vs-relative units artefact, so idea 336/400's 'absolute cut on a panel-dependent distribution' critique does NOT apply to this dial.
+FILL control PASSES: with k taken from the RANKED count so gross is exactly 0.75, all three slope signs are preserved and |change| <= 0.0094.  The 58.3%-of-days fill shortfall at SMALL's widest point is not the mechanism.
+
+MECHANISM  widening is a VOLATILITY instrument with a RETURN TAX, and the panels differ in the tax, not the benefit.  Across the 6 (panel, unit) cells the vol term is POSITIVE in 6 of 6 and tightly bunched (+0.190 .. +0.443, spread 0.252); the return term is NEGATIVE in 6 of 6 and 1.5x more dispersed (-0.546 .. -0.149, spread 0.398).  B136's Sharpe gain is the vol term outrunning a small tax (+0.290 vs -0.207); SMALL's collapse is a large tax outrunning the same benefit (-0.546 vs +0.246).  This is idea 330's 'wins on vol, loses on return' shape, now located on the WIDTH dial specifically.
+
+KEEP  4a 0/27, 4b 8/27, BOTH 0/27; rule-8 3/12 pass 4b, 0/12 pass 4a.  NO promotion and NO memo: G5 shows the 4b passers are re-derivations of already-published, already-unadopted rows, and every one of them is dominated by the live RULES v2 on the two bars PROTOCOL 4a cares about -- U56 n0=20 OOS Sharpe 1.1369 vs v2's 1.2851 (-0.148) and MaxDD -18.31% vs -12.05% (-6.3 pp).  No RULES change.  RULES.md, scan.py, bot.py and baseline.py untouched.
+
+done in 23.5s
