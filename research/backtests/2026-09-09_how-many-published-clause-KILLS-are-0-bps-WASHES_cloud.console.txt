@@ -1,0 +1,532 @@
+QUEUE idea 505 — how-many-published-clause-KILLS-are-0-bps-WASHES-like-idea-275 (cloud, 2026-09-09).
+
+Question (pre-registered, verbatim from QUEUE)
+----------------------------------------------
+"idea 275 found the daily hard exit is -0.0015 of Sharpe gross and -0.0564 net at 10 bps: the
+whole verdict is turnover, and the 'more firing = worse' ordering has corr -0.14 at 0 bps vs
+-0.75 at 10.  Census the record's killed CLAUSES (stop/gate/dd/bud families, idea 396's 59 stop
+arms included) for the same shape - dSharpe at 0 bps within +/-0.005 of zero but decisively
+negative at 10 - and report how many KILLs are cost verdicts rather than signal verdicts.
+Max 2 params (family, rung)."
+
+Design
+------
+The record's clause corpus is idea 94's price-list harness (2026-09-04_drawdown-insurance-price-
+list_B.py), which ideas 135 / 396 / 402 inherit: one base book, one clause bolted on, priced
+against ITS OWN no-clause control on the same panel, the same days and the same cost.  This run
+re-runs that corpus at THREE cost rungs (0 / 10 / 25 bps) and classifies every arm whose 10-bps
+verdict is a loss into
+
+    COST VERDICT   |dSharpe @ 0 bps| <= 0.005  and  dSharpe @ 10 bps <= -0.010
+                   (the idea-275 shape: the clause is a gross-neutral wash that only the
+                    turnover bill kills)
+    COST VERDICT+  dSharpe @ 0 bps > +0.005 and dSharpe @ 10 bps < 0
+                   (stronger: the clause HELPS gross and is still killed by its own bill)
+    SIGNAL VERDICT dSharpe @ 0 bps < -0.005
+                   (the clause loses before a cent of cost is charged - a real signal KILL)
+
+Every classification bar was written before any number was read; they are idea 275's own numbers
+(+/-0.005 gross, "decisively negative" net) taken literally.
+
+Corpus (all reported, nothing selected)
+    families / arms   gate  g200, band3, abs12, vol60, v1gate x {dg de-gross, rw reweight} = 10
+                      stop  per-name trailing stop at 0.10 / 0.15 / 0.20 / 0.25 / 0.30      =  5
+                      dd    book DD control D in 0.05/0.08/0.12, halve, reset recover|high  =  6
+                      bud   entry-only turnover budget B in 0.05/0.10/0.20/0.40             =  4
+    base books        V1u (v1 composite, top-5 @15%, ungated), TOP20 (composite top-20 @0.75/20),
+                      EWall (equal-weight every name @75% gross)
+    panels            U56 (universe.json), B136 (universe_broad.json) - the record's own clause
+                      panels - plus SMALL439 as an OUT-OF-CORPUS replication (not part of the
+                      published census; reported separately).
+    rungs             0 / 10 / 25 bps.  25 rows are printed for completeness; the classification
+                      uses 0 vs 10 only, exactly as the idea asks.
+
+Two tuned parameters (PROTOCOL rule 4): FAMILY and RUNG.  Every setting inside a family is
+reported, never selected.
+
+Rule 8 walk-forward: within each panel x book, the arm with the highest IS (2009-2016) Sharpe at
+10 bps is chosen and evaluated untouched on 2017-2026 against its own control, the live RULES v2
+book and SPY; its IS classification is re-computed OOS to test whether "cost verdict" is a stable
+label or an in-sample artefact.  KEEP paths 4a and 4b are evaluated for every arm on U56.
+
+SURVIVORSHIP: universe.json / universe_broad.json are current-constituent lists and the small
+panel is a current screen (data/SMALL_PANEL_README.md); tickers with max_1d_move >= 1.0 in
+data/small_meta.csv are dropped first (44 of 483).  Every absolute level below is optimistic.
+This run compares an arm with its own control on the same panel and the same days, so the
+treatment deltas - which are the entire result - are far less exposed than the levels.
+
+Deterministic, standalone, no network.  Does not modify RULES.md, scan.py, bot.py or baseline.py.
+
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+{'U56': (4700, 56), 'B136': (4699, 136), 'SMALL439': (4194, 440)}
+
+============================================================================================================
+GATE 1 - run(no instrument) vs engine.backtest, max abs return difference
+  U56       V1u   : 0.000e+00
+  U56       TOP20 : 0.000e+00
+  U56       EWall : 0.000e+00
+  B136      V1u   : 0.000e+00
+  B136      TOP20 : 0.000e+00
+  B136      EWall : 0.000e+00
+  SMALL439  V1u   : 0.000e+00
+  SMALL439  TOP20 : 0.000e+00
+  SMALL439  EWall : 0.000e+00
+
+============================================================================================================
+FULL GRID - every arm vs ITS OWN no-clause control, same panel/book/days
+
+  U56 / V1u   control @10bps: CAGR  6.26%  Sharpe  0.6597  MaxDD -15.67%  H1/H2 0.684/0.642  turn 23.28x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         -0.0133  -0.0107  -0.0067   -0.15%  +1.62%    -0.39  SIGNAL
+    gate   g200-rw         +0.0152  +0.0172  +0.0202   +0.34%  +1.84%    +0.39  not-a-KILL
+    gate   band3-dg        -0.0102  -0.0063  -0.0006   -0.09%  +1.12%    -0.45  SIGNAL
+    gate   band3-rw        +0.0069  +0.0138  +0.0242   +0.26%  +2.05%    -0.28  not-a-KILL
+    gate   abs12-dg        -0.0124  -0.0060  +0.0035   -0.14%  +2.05%    -0.93  SIGNAL
+    gate   abs12-rw        -0.0092  -0.0017  +0.0097   +0.12%  +1.07%    -0.23  SIGNAL
+    gate   vol60-dg        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    gate   vol60-rw        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    gate   v1gate-dg       -0.0133  -0.0107  -0.0067   -0.15%  +1.62%    -0.39  SIGNAL
+    gate   v1gate-rw       -0.0004  +0.0014  +0.0043   +0.16%  +1.84%    +0.35  not-a-KILL
+    stop   stop10          -0.0202  -0.0241  -0.0300   -0.28%  -1.11%    +0.28  SIGNAL
+    stop   stop15          -0.0010  -0.0012  -0.0014   -0.01%  -0.52%    +0.02  MARGINAL
+    stop   stop20          +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    stop   stop25          +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    stop   stop30          +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    dd     dd5-recover     -0.2441  -0.3574  -0.2063   -4.33%  +1.99%    -7.65  SIGNAL
+    dd     dd5-high        -0.2463  -0.2497  -0.1531   -3.77%  +5.31%    -9.32  SIGNAL
+    dd     dd8-recover     -0.1239  -0.1215  -0.1287   -2.00%  +3.04%    -4.91  SIGNAL
+    dd     dd8-high        -0.1256  -0.1457  -0.0439   -2.56%  +3.69%    -6.91  SIGNAL
+    dd     dd12-recover    -0.1399  -0.1384  -0.0719   -1.94%  -0.36%    -3.01  SIGNAL
+    dd     dd12-high       -0.0758  -0.1184  -0.0390   -2.05%  +1.77%    -4.83  SIGNAL
+    bud    ebud0.05        -0.2085  -0.1622  -0.0915   -4.90% +11.46%   -18.04  SIGNAL
+    bud    ebud0.10        -0.1473  -0.1131  -0.0607   -3.52%  +6.36%   -12.95  SIGNAL
+    bud    ebud0.20        -0.0869  -0.0730  -0.0515   -1.61%  +1.78%    -4.96  SIGNAL
+    bud    ebud0.40        -0.0229  -0.0218  -0.0202   -0.33%  +0.22%    -0.53  SIGNAL
+
+  U56 / TOP20   control @10bps: CAGR 15.48%  Sharpe  1.1703  MaxDD -22.21%  H1/H2 1.274/1.101  turn  9.05x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         -0.0220  -0.0261  -0.0322   -1.35%  +2.70%    -0.07  SIGNAL
+    gate   g200-rw         -0.0189  -0.0241  -0.0320   -1.22%  +2.82%    +0.13  SIGNAL
+    gate   band3-dg        -0.0131  -0.0140  -0.0154   -1.12%  +2.45%    -0.42  SIGNAL
+    gate   band3-rw        -0.0174  -0.0174  -0.0175   -1.07%  +2.30%    -0.47  SIGNAL
+    gate   abs12-dg        -0.0666  -0.0668  -0.0671   -1.90%  +0.03%    -0.53  SIGNAL
+    gate   abs12-rw        -0.0562  -0.0561  -0.0560   -1.39%  -0.51%    -0.34  SIGNAL
+    gate   vol60-dg        -0.0681  -0.0793  -0.0961   -2.73%  +5.45%    +0.32  SIGNAL
+    gate   vol60-rw        -0.0395  -0.0488  -0.0628   -1.77%  +3.66%    +0.48  SIGNAL
+    gate   v1gate-dg       -0.0913  -0.1053  -0.1265   -3.67%  +5.70%    +0.20  SIGNAL
+    gate   v1gate-rw       -0.0645  -0.0785  -0.0997   -2.83%  +3.90%    +0.58  SIGNAL
+    stop   stop10          -0.0047  -0.0390  -0.0907   -1.47%  +0.67%    +3.69  COST
+    stop   stop15          -0.0223  -0.0362  -0.0570   -1.05%  -0.86%    +1.43  SIGNAL
+    stop   stop20          -0.0149  -0.0213  -0.0310   -0.66%  -1.63%    +0.62  SIGNAL
+    stop   stop25          -0.0049  -0.0074  -0.0111   -0.22%  -1.58%    +0.26  MARGINAL
+    stop   stop30          -0.0052  -0.0067  -0.0091   -0.21%  -0.36%    +0.14  SIGNAL
+    dd     dd5-recover     -0.2564  -0.2159  -0.2011   -6.35%  +5.65%    -1.80  SIGNAL
+    dd     dd5-high        -0.1532  -0.1789  -0.1850   -6.64%  +5.65%    -2.60  SIGNAL
+    dd     dd8-recover     -0.1155  -0.1288  -0.1401   -4.13%  +5.65%    -1.30  SIGNAL
+    dd     dd8-high        -0.1615  -0.1739  -0.1386   -5.61%  +5.65%    -2.12  SIGNAL
+    dd     dd12-recover    -0.1018  -0.1206  -0.1968   -2.63%  +2.45%    -0.52  SIGNAL
+    dd     dd12-high       -0.0822  -0.0941  -0.1676   -2.90%  +7.53%    -0.81  SIGNAL
+    bud    ebud0.05        -0.0715  -0.0493  -0.0159   -3.06%  +4.35%    -3.86  SIGNAL
+    bud    ebud0.10        +0.0018  +0.0057  +0.0117   -0.37%  +1.72%    -0.76  not-a-KILL
+    bud    ebud0.20        -0.0006  -0.0007  -0.0009   -0.03%  -0.05%    +0.00  MARGINAL
+    bud    ebud0.40        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+
+  U56 / EWall   control @10bps: CAGR 13.25%  Sharpe  1.1228  MaxDD -22.53%  H1/H2 1.194/1.067  turn  0.83x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         +0.0845  +0.0464  -0.0108   -5.06% +10.51%    +2.31  not-a-KILL
+    gate   g200-rw         +0.0319  -0.0337  -0.1324   -1.72%  +3.88%    +6.79  COST+
+    gate   band3-dg        +0.0988  +0.0809  +0.0540   -4.61% +10.47%    +0.95  not-a-KILL
+    gate   band3-rw        +0.0711  +0.0364  -0.0158   -1.02%  +4.81%    +3.49  not-a-KILL
+    gate   abs12-dg        -0.0113  -0.0338  -0.0677   -4.58%  +7.70%    +1.52  SIGNAL
+    gate   abs12-rw        -0.0118  -0.0533  -0.1155   -1.45%  +2.64%    +4.49  SIGNAL
+    gate   vol60-dg        +0.0160  +0.0094  -0.0006   -1.68%  +5.64%    +0.56  not-a-KILL
+    gate   vol60-rw        +0.0119  +0.0015  -0.0140   -1.06%  +4.14%    +1.03  not-a-KILL
+    gate   v1gate-dg       +0.0322  -0.0110  -0.0759   -5.94% +11.64%    +2.47  COST+
+    gate   v1gate-rw       +0.0007  -0.0753  -0.1897   -2.86%  +6.65%    +7.38  COST
+    stop   stop10          -0.0073  -0.0545  -0.1255   -1.75%  +0.79%    +4.98  SIGNAL
+    stop   stop15          -0.0072  -0.0300  -0.0641   -1.11%  -0.04%    +2.44  SIGNAL
+    stop   stop20          +0.0008  -0.0115  -0.0299   -0.68%  -0.73%    +1.32  COST
+    stop   stop25          +0.0020  -0.0056  -0.0169   -0.40%  -1.28%    +0.82  MARGINAL
+    stop   stop30          +0.0023  -0.0023  -0.0092   -0.31%  -0.85%    +0.51  MARGINAL
+    dd     dd5-recover     +0.0069  -0.0013  -0.0096   -4.09%  +6.93%    +0.37  COST+
+    dd     dd5-high        +0.0629  +0.0571  +0.0642   -3.93%  +6.93%    +0.10  not-a-KILL
+    dd     dd8-recover     -0.0901  -0.0588  -0.1203   -3.82%  +6.93%    +0.20  SIGNAL
+    dd     dd8-high        -0.1210  -0.1324  -0.1441   -5.03%  +6.93%    +0.06  SIGNAL
+    dd     dd12-recover    -0.0725  -0.0763  -0.0700   -2.66%  +4.15%    +0.06  SIGNAL
+    dd     dd12-high       -0.0916  -0.0959  -0.1022   -3.28%  +4.15%    -0.02  SIGNAL
+    bud    ebud0.05        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    bud    ebud0.10        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    bud    ebud0.20        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    bud    ebud0.40        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+
+  B136 / V1u   control @10bps: CAGR  6.21%  Sharpe  0.6266  MaxDD -23.46%  H1/H2 0.743/0.527  turn 29.43x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         -0.0190  -0.0175  -0.0152   -0.21%  -0.30%    -0.23  SIGNAL
+    gate   g200-rw         +0.0126  +0.0163  +0.0219   +0.27%  +2.27%    +0.02  not-a-KILL
+    gate   band3-dg        -0.0166  -0.0155  -0.0139   -0.18%  -0.03%    -0.14  SIGNAL
+    gate   band3-rw        -0.0185  -0.0166  -0.0138   -0.14%  +0.91%    +0.05  SIGNAL
+    gate   abs12-dg        -0.0110  -0.0079  -0.0034   -0.12%  +0.09%    -0.45  SIGNAL
+    gate   abs12-rw        +0.0043  +0.0035  +0.0024   +0.12%  +0.07%    +0.48  not-a-KILL
+    gate   vol60-dg        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    gate   vol60-rw        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    gate   v1gate-dg       -0.0190  -0.0175  -0.0152   -0.21%  -0.30%    -0.23  SIGNAL
+    gate   v1gate-rw       +0.0047  +0.0084  +0.0139   +0.17%  +2.27%    +0.00  not-a-KILL
+    stop   stop10          +0.0081  +0.0064  +0.0039   +0.05%  +0.73%    +0.08  not-a-KILL
+    stop   stop15          -0.0022  -0.0023  -0.0024   -0.03%  -0.47%    -0.00  MARGINAL
+    stop   stop20          +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    stop   stop25          +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    stop   stop30          +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    dd     dd5-recover     -0.2019  -0.1697  -0.1136   -3.05%  +8.30%   -10.29  SIGNAL
+    dd     dd5-high        -0.1511  -0.0583  -0.0010   -2.32%  +8.30%   -10.79  SIGNAL
+    dd     dd8-recover     -0.1342  -0.1975  -0.0902   -2.96%  +7.22%    -8.48  SIGNAL
+    dd     dd8-high        -0.1364  -0.1146  -0.0595   -2.67%  +7.22%   -10.26  SIGNAL
+    dd     dd12-recover    -0.0117  -0.0519  -0.0426   -1.13%  +5.17%    -4.92  SIGNAL
+    dd     dd12-high       -0.0264  -0.0486  -0.0303   -1.29%  +5.17%    -5.71  SIGNAL
+    bud    ebud0.05        -0.1984  -0.1518  -0.0815   -5.17% +18.88%   -24.20  SIGNAL
+    bud    ebud0.10        -0.1428  -0.1070  -0.0528   -4.09% +14.32%   -19.12  SIGNAL
+    bud    ebud0.20        -0.1103  -0.0914  -0.0626   -2.38%  +5.52%    -9.67  SIGNAL
+    bud    ebud0.40        -0.0077  -0.0056  -0.0025   -0.25%  -0.52%    -1.18  SIGNAL
+
+  B136 / TOP20   control @10bps: CAGR 14.69%  Sharpe  0.9761  MaxDD -25.97%  H1/H2 1.140/0.854  turn 13.18x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         +0.0146  +0.0131  +0.0109   -0.19%  +2.66%    -0.15  not-a-KILL
+    gate   g200-rw         +0.0161  +0.0146  +0.0124   -0.02%  +1.97%    -0.04  not-a-KILL
+    gate   band3-dg        +0.0106  +0.0096  +0.0080   -0.25%  +4.30%    -0.22  not-a-KILL
+    gate   band3-rw        +0.0176  +0.0166  +0.0151   -0.01%  +3.82%    -0.13  not-a-KILL
+    gate   abs12-dg        -0.0012  -0.0001  +0.0015   -0.39%  +0.23%    -0.50  MARGINAL
+    gate   abs12-rw        +0.0007  +0.0012  +0.0020   -0.27%  +0.10%    -0.34  not-a-KILL
+    gate   vol60-dg        -0.0470  -0.0602  -0.0802   -2.65%  +7.60%    +0.19  SIGNAL
+    gate   vol60-rw        -0.0356  -0.0481  -0.0668   -1.88%  +5.27%    +0.73  SIGNAL
+    gate   v1gate-dg       -0.0377  -0.0512  -0.0716   -2.68%  +7.60%    +0.03  SIGNAL
+    gate   v1gate-rw       -0.0064  -0.0191  -0.0384   -1.60%  +5.92%    +0.59  SIGNAL
+    stop   stop10          -0.0164  -0.0471  -0.0932   -1.70%  +0.97%    +3.54  SIGNAL
+    stop   stop15          -0.0486  -0.0601  -0.0774   -1.48%  -2.85%    +1.28  SIGNAL
+    stop   stop20          -0.0212  -0.0261  -0.0335   -0.75%  -1.28%    +0.46  SIGNAL
+    stop   stop25          -0.0130  -0.0151  -0.0183   -0.39%  -2.26%    +0.20  SIGNAL
+    stop   stop30          -0.0128  -0.0144  -0.0167   -0.39%  -1.13%    +0.12  SIGNAL
+    dd     dd5-recover     -0.1379  -0.1516  -0.1775   -5.99%  +7.29%    -3.48  SIGNAL
+    dd     dd5-high        -0.1489  -0.1691  -0.1917   -6.81%  +7.29%    -4.55  SIGNAL
+    dd     dd8-recover     -0.1523  -0.1469  -0.1756   -4.91%  +7.29%    -3.01  SIGNAL
+    dd     dd8-high        -0.1512  -0.1779  -0.2099   -5.99% +11.86%    -3.92  SIGNAL
+    dd     dd12-recover    -0.1322  -0.1152  -0.1855   -2.97%  +4.96%    -1.35  SIGNAL
+    dd     dd12-high       -0.1209  -0.1332  -0.1646   -3.77%  +9.92%    -1.67  SIGNAL
+    bud    ebud0.05        -0.0321  +0.0022  +0.0538   -4.90% +10.22%    -7.91  not-a-KILL
+    bud    ebud0.10        -0.0223  -0.0088  +0.0114   -1.58%  +3.08%    -3.15  SIGNAL
+    bud    ebud0.20        -0.0037  -0.0031  -0.0020   -0.12%  +0.13%    -0.17  MARGINAL
+    bud    ebud0.40        -0.0000  -0.0000  -0.0000   -0.00%  -0.00%    +0.00  MARGINAL
+
+  B136 / EWall   control @10bps: CAGR 14.16%  Sharpe  1.1220  MaxDD -25.37%  H1/H2 1.231/1.024  turn  0.87x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         +0.0117  -0.0282  -0.0883   -6.38% +12.75%    +2.46  COST+
+    gate   g200-rw         -0.0006  -0.0653  -0.1626   -2.52%  +5.25%    +6.98  COST
+    gate   band3-dg        +0.0047  -0.0162  -0.0475   -6.13% +13.13%    +1.15  COST
+    gate   band3-rw        -0.0156  -0.0529  -0.1091   -2.42%  +6.84%    +3.94  SIGNAL
+    gate   abs12-dg        -0.0578  -0.0813  -0.1168   -5.64%  +9.07%    +1.63  SIGNAL
+    gate   abs12-rw        -0.0326  -0.0732  -0.1343   -2.13%  +2.74%    +4.57  SIGNAL
+    gate   vol60-dg        +0.0219  +0.0162  +0.0076   -1.80%  +6.67%    +0.49  not-a-KILL
+    gate   vol60-rw        +0.0066  -0.0023  -0.0158   -1.26%  +4.59%    +0.93  COST+
+    gate   v1gate-dg       -0.0235  -0.0667  -0.1317   -6.94% +13.30%    +2.56  SIGNAL
+    gate   v1gate-rw       -0.0235  -0.0958  -0.2046   -3.44%  +7.68%    +7.40  SIGNAL
+    stop   stop10          -0.0048  -0.0523  -0.1236   -1.92%  +0.94%    +5.31  COST
+    stop   stop15          -0.0141  -0.0362  -0.0694   -1.34%  -0.85%    +2.53  SIGNAL
+    stop   stop20          +0.0005  -0.0112  -0.0288   -0.78%  -0.62%    +1.34  COST
+    stop   stop25          -0.0006  -0.0076  -0.0181   -0.53%  -1.21%    +0.81  MARGINAL
+    stop   stop30          +0.0070  +0.0026  -0.0040   -0.34%  -0.29%    +0.51  not-a-KILL
+    dd     dd5-recover     -0.0457  -0.0601  -0.0730   -4.91%  +8.04%    +0.45  SIGNAL
+    dd     dd5-high        +0.0032  -0.0018  +0.0221   -4.68%  +8.04%    +0.14  MARGINAL
+    dd     dd8-recover     -0.0452  -0.0542  -0.0451   -3.83%  +8.04%    +0.23  SIGNAL
+    dd     dd8-high        -0.1488  -0.1527  -0.1660   -5.48%  +8.04%    +0.11  SIGNAL
+    dd     dd12-recover    -0.0122  -0.0157  -0.0179   -2.11%  +5.19%    +0.03  SIGNAL
+    dd     dd12-high       -0.0539  -0.0636  -0.0699   -3.26%  +5.19%    -0.02  SIGNAL
+    bud    ebud0.05        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    bud    ebud0.10        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    bud    ebud0.20        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    bud    ebud0.40        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+
+  SMALL439 / V1u   control @10bps: CAGR  6.53%  Sharpe  0.5135  MaxDD -37.25%  H1/H2 0.695/0.350  turn 32.36x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         +0.0184  +0.0195  +0.0211   +0.24%  +0.54%    -0.50  not-a-KILL
+    gate   g200-rw         +0.0779  +0.0833  +0.0910   +1.46%  +1.13%    +0.10  not-a-KILL
+    gate   band3-dg        -0.0215  -0.0177  -0.0119   -0.30%  +0.52%    -0.73  SIGNAL
+    gate   band3-rw        -0.0059  +0.0035  +0.0174   +0.37%  -0.43%    +0.42  not-a-KILL
+    gate   abs12-dg        +0.0061  +0.0065  +0.0073   +0.02%  -0.77%    -0.53  not-a-KILL
+    gate   abs12-rw        +0.0772  +0.0786  +0.0807   +1.23%  +1.39%    -0.12  not-a-KILL
+    gate   vol60-dg        -0.0023  -0.0032  -0.0045   -0.08%  -0.00%    -0.06  MARGINAL
+    gate   vol60-rw        -0.0323  -0.0316  -0.0305   -0.47%  +0.00%    -0.00  SIGNAL
+    gate   v1gate-dg       +0.0284  +0.0287  +0.0292   +0.35%  +0.54%    -0.54  not-a-KILL
+    gate   v1gate-rw       +0.0477  +0.0511  +0.0563   +0.89%  +1.13%    +0.02  not-a-KILL
+    stop   stop10          +0.0023  -0.0053  -0.0166   -0.22%  +1.05%    +0.28  MARGINAL
+    stop   stop15          -0.0069  -0.0104  -0.0157   -0.23%  +0.84%    +0.05  SIGNAL
+    stop   stop20          -0.0279  -0.0281  -0.0286   -0.44%  -1.00%    -0.00  SIGNAL
+    stop   stop25          -0.0234  -0.0237  -0.0241   -0.37%  -1.12%    -0.00  SIGNAL
+    stop   stop30          -0.0156  -0.0158  -0.0161   -0.25%  +0.00%    -0.00  SIGNAL
+    dd     dd5-recover     -0.0337  -0.0301  -0.0379   -2.31% +14.93%   -12.69  SIGNAL
+    dd     dd5-high        -0.0583  -0.1246  -0.0668   -3.43% +14.93%   -13.66  SIGNAL
+    dd     dd8-recover     +0.0413  +0.0129  -0.0680   -1.61% +13.79%   -11.47  not-a-KILL
+    dd     dd8-high        +0.0078  +0.0215  -0.0032   -1.65% +13.79%   -12.27  not-a-KILL
+    dd     dd12-recover    -0.0136  +0.0063  -0.0226   -1.43% +12.05%    -9.88  not-a-KILL
+    dd     dd12-high       +0.0045  -0.0003  -0.0595   -1.73% +12.05%   -10.89  MARGINAL
+    bud    ebud0.05        -0.1547  -0.1139  -0.0525   -5.43% +27.53%   -27.13  SIGNAL
+    bud    ebud0.10        -0.1442  -0.1135  -0.0673   -4.51% +18.39%   -21.90  SIGNAL
+    bud    ebud0.20        -0.1265  -0.1124  -0.0909   -3.05%  +3.53%   -11.79  SIGNAL
+    bud    ebud0.40        -0.0315  -0.0295  -0.0263   -0.67%  +0.86%    -1.69  SIGNAL
+
+  SMALL439 / TOP20   control @10bps: CAGR 14.63%  Sharpe  0.7661  MaxDD -30.85%  H1/H2 0.871/0.719  turn 16.25x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         -0.0113  -0.0123  -0.0138   -0.44%  +2.73%    +0.02  SIGNAL
+    gate   g200-rw         -0.0181  -0.0187  -0.0196   -0.47%  +0.06%    +0.08  SIGNAL
+    gate   band3-dg        -0.0074  -0.0081  -0.0092   -0.31%  +2.21%    -0.00  SIGNAL
+    gate   band3-rw        -0.0132  -0.0135  -0.0140   -0.33%  -0.63%    +0.04  SIGNAL
+    gate   abs12-dg        -0.0103  -0.0106  -0.0111   -0.33%  -0.00%    -0.03  SIGNAL
+    gate   abs12-rw        -0.0095  -0.0096  -0.0097   -0.26%  -0.00%    -0.02  SIGNAL
+    gate   vol60-dg        -0.3196  -0.3595  -0.4193  -10.45% +13.41%    -2.28  SIGNAL
+    gate   vol60-rw        -0.2859  -0.3261  -0.3864   -8.40%  -1.34%    +4.04  SIGNAL
+    gate   v1gate-dg       -0.3204  -0.3604  -0.4202  -10.47% +13.41%    -2.30  SIGNAL
+    gate   v1gate-rw       -0.2615  -0.3032  -0.3657   -8.07%  +3.42%    +3.95  SIGNAL
+    stop   stop10          -0.1170  -0.1790  -0.2722   -4.99%  +0.62%   +10.05  SIGNAL
+    stop   stop15          -0.0438  -0.0742  -0.1199   -2.44%  +3.99%    +4.89  SIGNAL
+    stop   stop20          -0.0177  -0.0342  -0.0590   -1.33%  +2.20%    +2.57  SIGNAL
+    stop   stop25          -0.0266  -0.0357  -0.0495   -1.18%  +1.78%    +1.40  SIGNAL
+    stop   stop30          +0.0064  +0.0013  -0.0065   -0.23%  +2.82%    +0.73  not-a-KILL
+    dd     dd5-recover     -0.0504  -0.0704  -0.0084   -6.09% +10.32%    -5.57  SIGNAL
+    dd     dd5-high        -0.0190  +0.0617  -0.0104   -4.53% +13.19%    -6.28  not-a-KILL
+    dd     dd8-recover     -0.0609  -0.0803  -0.0759   -5.78% +10.74%    -5.41  SIGNAL
+    dd     dd8-high        -0.0668  -0.1036  -0.0216   -6.51% +11.55%    -6.35  SIGNAL
+    dd     dd12-recover    -0.1268  -0.0741  -0.0581   -5.04%  +7.50%    -4.89  SIGNAL
+    dd     dd12-high       -0.0268  -0.0645  -0.0113   -5.34% +10.27%    -5.79  SIGNAL
+    bud    ebud0.05        -0.2679  -0.2387  -0.1947   -9.47% +11.61%   -10.99  SIGNAL
+    bud    ebud0.10        -0.1559  -0.1402  -0.1166   -5.22%  +4.01%    -5.80  SIGNAL
+    bud    ebud0.20        -0.0051  -0.0043  -0.0029   -0.31%  +0.68%    -0.44  SIGNAL
+    bud    ebud0.40        -0.0007  -0.0008  -0.0009   -0.02%  -0.00%    +0.01  MARGINAL
+
+  SMALL439 / EWall   control @10bps: CAGR 10.18%  Sharpe  0.6787  MaxDD -36.11%  H1/H2 0.798/0.615  turn  1.74x
+    family arm            dS@0bps  dS@10    dS@25    dCAGR@10  dDD@10   dTurn@10  class
+    gate   g200-dg         -0.0950  -0.1378  -0.2022   -6.62% +21.85%    +1.97  SIGNAL
+    gate   g200-rw         -0.1145  -0.1747  -0.2651   -3.70%  -2.07%    +8.59  SIGNAL
+    gate   band3-dg        -0.0768  -0.1063  -0.1505   -6.37% +21.42%    +1.06  SIGNAL
+    gate   band3-rw        -0.0799  -0.1221  -0.1854   -2.86%  -1.44%    +5.99  SIGNAL
+    gate   abs12-dg        -0.0813  -0.1120  -0.1581   -6.20% +21.52%    +1.31  SIGNAL
+    gate   abs12-rw        -0.0166  -0.0579  -0.1198   -1.67%  +1.11%    +6.03  SIGNAL
+    gate   vol60-dg        -0.2168  -0.2428  -0.2819   -6.05% +14.71%    +2.14  SIGNAL
+    gate   vol60-rw        -0.2005  -0.2335  -0.2830   -4.72%  +1.14%    +4.46  SIGNAL
+    gate   v1gate-dg       -0.2768  -0.3406  -0.4363   -8.51% +24.19%    +2.24  SIGNAL
+    gate   v1gate-rw       -0.2521  -0.3413  -0.4750   -6.50%  -3.80%   +11.59  SIGNAL
+    stop   stop10          -0.0986  -0.1923  -0.3327   -4.06%  +4.65%   +13.20  SIGNAL
+    stop   stop15          -0.0725  -0.1238  -0.2008   -2.77%  +2.99%    +7.49  SIGNAL
+    stop   stop20          -0.0593  -0.0909  -0.1384   -2.08%  +2.38%    +4.70  SIGNAL
+    stop   stop25          -0.0418  -0.0627  -0.0941   -1.49%  +1.91%    +3.14  SIGNAL
+    stop   stop30          -0.0283  -0.0430  -0.0651   -1.09%  +1.61%    +2.22  SIGNAL
+    dd     dd5-recover     +0.0032  -0.0067  -0.0066   -3.59% +14.22%    +0.07  MARGINAL
+    dd     dd5-high        +0.0344  +0.0565  +0.0425   -3.25% +14.22%    -0.28  not-a-KILL
+    dd     dd8-recover     +0.0449  +0.0330  +0.0582   -2.78% +12.94%    -0.17  not-a-KILL
+    dd     dd8-high        +0.0373  +0.0271  +0.0219   -3.15% +12.94%    -0.35  not-a-KILL
+    dd     dd12-recover    -0.0213  -0.0215  -0.0312   -2.98% +11.27%    -0.13  SIGNAL
+    dd     dd12-high       -0.0220  -0.0254  -0.0313   -3.59% +11.27%    -0.34  SIGNAL
+    bud    ebud0.05        -0.0002  -0.0002  -0.0002   -0.02%  +0.24%    -0.00  MARGINAL
+    bud    ebud0.10        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    bud    ebud0.20        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+    bud    ebud0.40        +0.0000  +0.0000  +0.0000   +0.00%  +0.00%    +0.00  not-a-KILL
+
+============================================================================================================
+CENSUS - of the clause arms that LOSE at 10 bps, how many are COST verdicts?
+
+  PUBLISHED CORPUS (U56 + B136, the record's clause panels)   n = 150 arms
+class   COST  COST+  MARGINAL  SIGNAL  not-a-KILL
+family                                           
+bud        0      0         3      10          11
+dd         0      1         1      33           1
+gate       3      4         1      31          21
+stop       4      0         6      12           8
+    arms losing at 10 bps: 109/150   of those COST verdicts: 12 (11.0%)  [COST 7, COST+ 5, SIGNAL 86, MARGINAL 11]
+
+  OUT-OF-CORPUS REPLICATION (SMALL439)   n = 75 arms
+class   MARGINAL  SIGNAL  not-a-KILL
+family                              
+bud            2       7           3
+dd             2       9           7
+gate           1      22           7
+stop           1      13           1
+    arms losing at 10 bps: 57/75   of those COST verdicts: 0 (0.0%)  [COST 0, COST+ 0, SIGNAL 51, MARGINAL 6]
+
+  ALL THREE PANELS   n = 225 arms
+class   COST  COST+  MARGINAL  SIGNAL  not-a-KILL
+family                                           
+bud        0      0         5      17          14
+dd         0      1         3      42           8
+gate       3      4         2      53          28
+stop       4      0         7      25           9
+    arms losing at 10 bps: 166/225   of those COST verdicts: 12 (7.2%)  [COST 7, COST+ 5, SIGNAL 137, MARGINAL 17]
+
+  per-family COST share of 10-bps losers (published corpus):
+    gate  losers  39/ 60   COST   7 (17.9%)   mean d0 -0.0068  mean d10 -0.0198
+    stop  losers  22/ 30   COST   4 (18.2%)   mean d0 -0.0067  mean d10 -0.0168
+    dd    losers  35/ 36   COST   1 ( 2.9%)   mean d0 -0.1094  mean d10 -0.1176
+    bud   losers  13/ 24   COST   0 ( 0.0%)   mean d0 -0.0439  mean d10 -0.0325
+
+============================================================================================================
+IDEA 275's ORDERING STATISTIC - corr(dSharpe, dTurnover) by rung
+  (275 measured -0.14 at 0 bps vs -0.75 at 10 bps on the daily-exit family)
+  published corpus   0 bps +0.662   10 bps +0.472   n=150
+  all panels         0 bps +0.307   10 bps +0.115   n=225
+    gate  0 bps +0.171   10 bps -0.395   n=60
+    stop  0 bps -0.179   10 bps -0.813   n=30
+    dd    0 bps +0.514   10 bps +0.468   n=36
+    bud   0 bps +0.954   10 bps +0.926   n=24
+
+============================================================================================================
+RULE 8 WALK-FORWARD - arm (family x setting) chosen on IS 2009-2016 Sharpe @10bps,
+evaluated untouched on 2017-2026; the IS class label is re-computed OOS.
+
+  U56 / V1u: IS argmax = vol60-dg (gate)  IS Sharpe 0.5974
+    OOS arm vol60-dg                 CAGR  7.10%  Sharpe  0.7072  MaxDD -15.67%
+    OOS no-clause control            CAGR  7.10%  Sharpe  0.7072  MaxDD -15.67%
+    OOS RULES v2 baseline (live)     CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                          CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+    clause worth  IS d0 +0.0000 d10 +0.0000 [not-a-KILL]   OOS d0 +0.0000 d10 +0.0000 [not-a-KILL]
+
+  U56 / TOP20: IS argmax = dd12-recover (dd)  IS Sharpe 1.1869
+    OOS arm dd12-recover             CAGR 11.81%  Sharpe  0.9461  MaxDD -19.76%
+    OOS no-clause control            CAGR 16.62%  Sharpe  1.1664  MaxDD -22.21%
+    OOS RULES v2 baseline (live)     CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                          CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+    clause worth  IS d0 +0.0000 d10 +0.0000 [not-a-KILL]   OOS d0 -0.1879 d10 -0.2204 [SIGNAL]
+
+  U56 / EWall: IS argmax = abs12-rw (gate)  IS Sharpe 1.1322
+    OOS arm abs12-rw                 CAGR 12.02%  Sharpe  1.0295  MaxDD -19.89%
+    OOS no-clause control            CAGR 13.79%  Sharpe  1.1336  MaxDD -22.53%
+    OOS RULES v2 baseline (live)     CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                          CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+    clause worth  IS d0 +0.0661 d10 +0.0222 [not-a-KILL]   OOS d0 -0.0642 d10 -0.1041 [SIGNAL]
+
+  B136 / V1u: IS argmax = ebud0.20 (bud)  IS Sharpe 0.7162
+    OOS arm ebud0.20                 CAGR  2.86%  Sharpe  0.3991  MaxDD -17.94%
+    OOS no-clause control            CAGR  5.83%  Sharpe  0.5727  MaxDD -23.46%
+    OOS RULES v2 baseline (live)     CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                          CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    clause worth  IS d0 +0.0047 d10 +0.0164 [not-a-KILL]   OOS d0 -0.1982 d10 -0.1736 [SIGNAL]
+
+  B136 / TOP20: IS argmax = ebud0.05 (bud)  IS Sharpe 1.2311
+    OOS arm ebud0.05                 CAGR  8.81%  Sharpe  0.8216  MaxDD -15.75%
+    OOS no-clause control            CAGR 14.86%  Sharpe  0.9301  MaxDD -25.97%
+    OOS RULES v2 baseline (live)     CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                          CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    clause worth  IS d0 +0.1467 d10 +0.1809 [not-a-KILL]   OOS d0 -0.1426 d10 -0.1086 [SIGNAL]
+
+  B136 / EWall: IS argmax = vol60-dg (gate)  IS Sharpe 1.1565
+    OOS arm vol60-dg                 CAGR 12.01%  Sharpe  1.1225  MaxDD -18.70%
+    OOS no-clause control            CAGR 13.93%  Sharpe  1.1022  MaxDD -25.37%
+    OOS RULES v2 baseline (live)     CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                          CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    clause worth  IS d0 +0.0156 d10 +0.0107 [not-a-KILL]   OOS d0 +0.0266 d10 +0.0203 [not-a-KILL]
+
+  SMALL439 / V1u: IS argmax = dd12-high (dd)  IS Sharpe 0.7226
+    OOS arm dd12-high                CAGR  2.92%  Sharpe  0.3579  MaxDD -25.20%
+    OOS no-clause control            CAGR  5.59%  Sharpe  0.4481  MaxDD -37.25%
+    OOS RULES v2 baseline (live)     CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                          CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    clause worth  IS d0 +0.0764 d10 +0.0999 [not-a-KILL]   OOS d0 -0.0564 d10 -0.0902 [SIGNAL]
+
+  SMALL439 / TOP20: IS argmax = ebud0.20 (bud)  IS Sharpe 0.7205
+    OOS arm ebud0.20                 CAGR 16.36%  Sharpe  0.7915  MaxDD -30.17%
+    OOS no-clause control            CAGR 17.03%  Sharpe  0.8065  MaxDD -30.85%
+    OOS RULES v2 baseline (live)     CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                          CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    clause worth  IS d0 +0.0183 d10 +0.0184 [not-a-KILL]   OOS d0 -0.0163 d10 -0.0150 [SIGNAL]
+
+  SMALL439 / EWall: IS argmax = dd5-high (dd)  IS Sharpe 0.9461
+    OOS arm dd5-high                 CAGR  6.15%  Sharpe  0.6287  MaxDD -21.88%
+    OOS no-clause control            CAGR 10.09%  Sharpe  0.6374  MaxDD -36.11%
+    OOS RULES v2 baseline (live)     CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                          CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    clause worth  IS d0 +0.1751 d10 +0.1720 [not-a-KILL]   OOS d0 -0.0436 d10 -0.0087 [SIGNAL]
+
+  IS class == OOS class in 2/9 cells (22%) - is 'cost verdict' a stable label?
+
+============================================================================================================
+KEEP PATHS 4a / 4b on U56 @10bps (4a vs live RULES v2; 4b vs SPY incl. rule-8 OOS)
+  live v2 CAGR  8.64%  Sharpe  1.2037  MaxDD -12.05%  H1/H2 1.231/1.183   OOS Sharpe 1.2817
+  SPY     CAGR 15.19%  Sharpe  0.8871  MaxDD -33.72%  H1/H2 0.959/0.829   OOS Sharpe 0.8786
+  4b bars: SPY H1 0.9587 / H2 0.8287 / OOS 0.8786; MaxDD floor -20.23%; CAGR floor 10.63%
+  V1u    control        CAGR  6.26%  Sharpe  0.6597  MaxDD -15.67%  H1/H2 0.684/0.642  OOS Sh  0.7072  [     ]
+  V1u    g200-dg        CAGR  6.12%  Sharpe  0.6490  MaxDD -14.05%  H1/H2 0.666/0.638  OOS Sh  0.7035  [     ]
+  V1u    g200-rw        CAGR  6.60%  Sharpe  0.6768  MaxDD -13.83%  H1/H2 0.643/0.710  OOS Sh  0.7678  [     ]
+  V1u    band3-dg       CAGR  6.18%  Sharpe  0.6533  MaxDD -14.55%  H1/H2 0.663/0.648  OOS Sh  0.7129  [     ]
+  V1u    band3-rw       CAGR  6.52%  Sharpe  0.6735  MaxDD -13.62%  H1/H2 0.635/0.710  OOS Sh  0.7686  [     ]
+  V1u    abs12-dg       CAGR  6.12%  Sharpe  0.6537  MaxDD -13.62%  H1/H2 0.633/0.675  OOS Sh  0.7385  [     ]
+  V1u    abs12-rw       CAGR  6.38%  Sharpe  0.6580  MaxDD -14.60%  H1/H2 0.633/0.683  OOS Sh  0.7431  [     ]
+  V1u    vol60-dg       CAGR  6.26%  Sharpe  0.6597  MaxDD -15.67%  H1/H2 0.684/0.642  OOS Sh  0.7072  [     ]
+  V1u    vol60-rw       CAGR  6.26%  Sharpe  0.6597  MaxDD -15.67%  H1/H2 0.684/0.642  OOS Sh  0.7072  [     ]
+  V1u    v1gate-dg      CAGR  6.12%  Sharpe  0.6490  MaxDD -14.05%  H1/H2 0.666/0.638  OOS Sh  0.7035  [     ]
+  V1u    v1gate-rw      CAGR  6.42%  Sharpe  0.6611  MaxDD -13.83%  H1/H2 0.643/0.680  OOS Sh  0.7408  [     ]
+  V1u    stop10         CAGR  5.98%  Sharpe  0.6356  MaxDD -16.78%  H1/H2 0.675/0.604  OOS Sh  0.6722  [     ]
+  V1u    stop15         CAGR  6.25%  Sharpe  0.6585  MaxDD -16.20%  H1/H2 0.684/0.640  OOS Sh  0.7051  [     ]
+  V1u    stop20         CAGR  6.26%  Sharpe  0.6597  MaxDD -15.67%  H1/H2 0.684/0.642  OOS Sh  0.7072  [     ]
+  V1u    stop25         CAGR  6.26%  Sharpe  0.6597  MaxDD -15.67%  H1/H2 0.684/0.642  OOS Sh  0.7072  [     ]
+  V1u    stop30         CAGR  6.26%  Sharpe  0.6597  MaxDD -15.67%  H1/H2 0.684/0.642  OOS Sh  0.7072  [     ]
+  V1u    dd5-recover    CAGR  1.93%  Sharpe  0.3023  MaxDD -13.68%  H1/H2 0.370/0.232  OOS Sh  0.2704  [     ]
+  V1u    dd5-high       CAGR  2.50%  Sharpe  0.4099  MaxDD -10.36%  H1/H2 0.361/0.457  OOS Sh  0.5176  [     ]
+  V1u    dd8-recover    CAGR  4.26%  Sharpe  0.5382  MaxDD -12.64%  H1/H2 0.538/0.539  OOS Sh  0.5776  [     ]
+  V1u    dd8-high       CAGR  3.70%  Sharpe  0.5140  MaxDD -11.98%  H1/H2 0.447/0.582  OOS Sh  0.6264  [     ]
+  V1u    dd12-recover   CAGR  4.32%  Sharpe  0.5212  MaxDD -16.04%  H1/H2 0.610/0.432  OOS Sh  0.4788  [     ]
+  V1u    dd12-high      CAGR  4.21%  Sharpe  0.5412  MaxDD -13.90%  H1/H2 0.608/0.467  OOS Sh  0.5171  [     ]
+  V1u    ebud0.05       CAGR  1.37%  Sharpe  0.4975  MaxDD  -4.21%  H1/H2 0.602/0.389  OOS Sh  0.4533  [     ]
+  V1u    ebud0.10       CAGR  2.74%  Sharpe  0.5466  MaxDD  -9.31%  H1/H2 0.646/0.447  OOS Sh  0.5132  [     ]
+  V1u    ebud0.20       CAGR  4.65%  Sharpe  0.5866  MaxDD -13.89%  H1/H2 0.627/0.551  OOS Sh  0.6224  [     ]
+  V1u    ebud0.40       CAGR  5.93%  Sharpe  0.6378  MaxDD -15.45%  H1/H2 0.660/0.621  OOS Sh  0.6897  [     ]
+  TOP20  control        CAGR 15.48%  Sharpe  1.1703  MaxDD -22.21%  H1/H2 1.274/1.101  OOS Sh  1.1664  [     ]
+  TOP20  g200-dg        CAGR 14.13%  Sharpe  1.1442  MaxDD -19.51%  H1/H2 1.217/1.099  OOS Sh  1.1706  [   4b]
+  TOP20  g200-rw        CAGR 14.26%  Sharpe  1.1462  MaxDD -19.39%  H1/H2 1.221/1.098  OOS Sh  1.1694  [   4b]
+  TOP20  band3-dg       CAGR 14.35%  Sharpe  1.1562  MaxDD -19.76%  H1/H2 1.221/1.117  OOS Sh  1.1873  [   4b]
+  TOP20  band3-rw       CAGR 14.41%  Sharpe  1.1529  MaxDD -19.91%  H1/H2 1.220/1.112  OOS Sh  1.1816  [   4b]
+  TOP20  abs12-dg       CAGR 13.58%  Sharpe  1.1035  MaxDD -22.18%  H1/H2 1.195/1.052  OOS Sh  1.1261  [     ]
+  TOP20  abs12-rw       CAGR 14.09%  Sharpe  1.1142  MaxDD -22.72%  H1/H2 1.213/1.058  OOS Sh  1.1299  [     ]
+  TOP20  vol60-dg       CAGR 12.75%  Sharpe  1.0910  MaxDD -16.76%  H1/H2 1.134/1.057  OOS Sh  1.1300  [   4b]
+  TOP20  vol60-rw       CAGR 13.71%  Sharpe  1.1214  MaxDD -18.55%  H1/H2 1.160/1.094  OOS Sh  1.1613  [   4b]
+  TOP20  v1gate-dg      CAGR 11.81%  Sharpe  1.0650  MaxDD -16.51%  H1/H2 1.081/1.056  OOS Sh  1.1329  [   4b]
+  TOP20  v1gate-rw      CAGR 12.65%  Sharpe  1.0917  MaxDD -18.31%  H1/H2 1.094/1.096  OOS Sh  1.1672  [   4b]
+  TOP20  stop10         CAGR 14.01%  Sharpe  1.1313  MaxDD -21.54%  H1/H2 1.214/1.071  OOS Sh  1.1429  [     ]
+  TOP20  stop15         CAGR 14.43%  Sharpe  1.1341  MaxDD -23.07%  H1/H2 1.260/1.041  OOS Sh  1.1151  [     ]
+  TOP20  stop20         CAGR 14.82%  Sharpe  1.1489  MaxDD -23.85%  H1/H2 1.256/1.073  OOS Sh  1.1432  [     ]
+  TOP20  stop25         CAGR 15.26%  Sharpe  1.1629  MaxDD -23.79%  H1/H2 1.272/1.087  OOS Sh  1.1550  [     ]
+  TOP20  stop30         CAGR 15.26%  Sharpe  1.1635  MaxDD -22.57%  H1/H2 1.267/1.092  OOS Sh  1.1591  [     ]
+  TOP20  dd5-recover    CAGR  9.13%  Sharpe  0.9544  MaxDD -16.56%  H1/H2 1.020/0.902  OOS Sh  1.0152  [     ]
+  TOP20  dd5-high       CAGR  8.83%  Sharpe  0.9914  MaxDD -16.56%  H1/H2 1.119/0.883  OOS Sh  1.0076  [     ]
+  TOP20  dd8-recover    CAGR 11.35%  Sharpe  1.0415  MaxDD -16.56%  H1/H2 1.145/0.952  OOS Sh  1.0500  [   4b]
+  TOP20  dd8-high       CAGR  9.87%  Sharpe  0.9963  MaxDD -16.56%  H1/H2 1.080/0.922  OOS Sh  1.0327  [     ]
+  TOP20  dd12-recover   CAGR 12.84%  Sharpe  1.0497  MaxDD -19.76%  H1/H2 1.274/0.854  OOS Sh  0.9461  [   4b]
+  TOP20  dd12-high      CAGR 12.58%  Sharpe  1.0762  MaxDD -14.68%  H1/H2 1.274/0.884  OOS Sh  0.9837  [   4b]
+  TOP20  ebud0.05       CAGR 12.41%  Sharpe  1.1210  MaxDD -17.86%  H1/H2 1.209/1.070  OOS Sh  1.1422  [   4b]
+  TOP20  ebud0.10       CAGR 15.11%  Sharpe  1.1760  MaxDD -20.49%  H1/H2 1.249/1.131  OOS Sh  1.1976  [     ]
+  TOP20  ebud0.20       CAGR 15.45%  Sharpe  1.1696  MaxDD -22.26%  H1/H2 1.274/1.100  OOS Sh  1.1655  [     ]
+  TOP20  ebud0.40       CAGR 15.48%  Sharpe  1.1703  MaxDD -22.21%  H1/H2 1.274/1.101  OOS Sh  1.1664  [     ]
+  EWall  control        CAGR 13.25%  Sharpe  1.1228  MaxDD -22.53%  H1/H2 1.194/1.067  OOS Sh  1.1336  [     ]
+  EWall  g200-dg        CAGR  8.19%  Sharpe  1.1692  MaxDD -12.01%  H1/H2 1.186/1.157  OOS Sh  1.2594  [     ]
+  EWall  g200-rw        CAGR 11.53%  Sharpe  1.0891  MaxDD -18.65%  H1/H2 1.171/1.030  OOS Sh  1.1086  [   4b]
+  EWall  band3-dg       CAGR  8.64%  Sharpe  1.2037  MaxDD -12.05%  H1/H2 1.231/1.183  OOS Sh  1.2817  [     ]
+  EWall  band3-rw       CAGR 12.23%  Sharpe  1.1592  MaxDD -17.71%  H1/H2 1.214/1.122  OOS Sh  1.1995  [   4b]
+  EWall  abs12-dg       CAGR  8.67%  Sharpe  1.0890  MaxDD -14.82%  H1/H2 1.168/1.027  OOS Sh  1.1281  [     ]
+  EWall  abs12-rw       CAGR 11.80%  Sharpe  1.0696  MaxDD -19.89%  H1/H2 1.233/0.948  OOS Sh  1.0295  [   4b]
+  EWall  vol60-dg       CAGR 11.57%  Sharpe  1.1322  MaxDD -16.88%  H1/H2 1.160/1.107  OOS Sh  1.1838  [   4b]
+  EWall  vol60-rw       CAGR 12.19%  Sharpe  1.1243  MaxDD -18.38%  H1/H2 1.145/1.107  OOS Sh  1.1775  [   4b]
+  EWall  v1gate-dg      CAGR  7.32%  Sharpe  1.1118  MaxDD -10.89%  H1/H2 1.076/1.146  OOS Sh  1.2488  [     ]
+  EWall  v1gate-rw      CAGR 10.39%  Sharpe  1.0475  MaxDD -15.87%  H1/H2 1.073/1.028  OOS Sh  1.1091  [     ]
+  EWall  stop10         CAGR 11.51%  Sharpe  1.0683  MaxDD -21.74%  H1/H2 1.092/1.048  OOS Sh  1.1268  [     ]
+  EWall  stop15         CAGR 12.14%  Sharpe  1.0928  MaxDD -22.57%  H1/H2 1.153/1.041  OOS Sh  1.1155  [     ]
+  EWall  stop20         CAGR 12.57%  Sharpe  1.1113  MaxDD -23.25%  H1/H2 1.170/1.062  OOS Sh  1.1350  [     ]
+  EWall  stop25         CAGR 12.86%  Sharpe  1.1172  MaxDD -23.81%  H1/H2 1.188/1.059  OOS Sh  1.1296  [     ]
+  EWall  stop30         CAGR 12.94%  Sharpe  1.1205  MaxDD -23.37%  H1/H2 1.186/1.066  OOS Sh  1.1359  [     ]
+  EWall  dd5-recover    CAGR  9.17%  Sharpe  1.1216  MaxDD -15.59%  H1/H2 1.157/1.093  OOS Sh  1.2044  [     ]
+  EWall  dd5-high       CAGR  9.32%  Sharpe  1.1799  MaxDD -15.59%  H1/H2 1.170/1.193  OOS Sh  1.3033  [     ]
+  EWall  dd8-recover    CAGR  9.44%  Sharpe  1.0640  MaxDD -15.59%  H1/H2 1.058/1.075  OOS Sh  1.1736  [     ]
+  EWall  dd8-high       CAGR  8.22%  Sharpe  0.9904  MaxDD -15.59%  H1/H2 1.066/0.930  OOS Sh  1.0455  [     ]
+  EWall  dd12-recover   CAGR 10.59%  Sharpe  1.0465  MaxDD -18.37%  H1/H2 1.093/1.012  OOS Sh  1.0980  [     ]
+  EWall  dd12-high      CAGR  9.97%  Sharpe  1.0270  MaxDD -18.37%  H1/H2 1.147/0.927  OOS Sh  1.0231  [     ]
+  EWall  ebud0.05       CAGR 13.25%  Sharpe  1.1228  MaxDD -22.53%  H1/H2 1.194/1.067  OOS Sh  1.1336  [     ]
+  EWall  ebud0.10       CAGR 13.25%  Sharpe  1.1228  MaxDD -22.53%  H1/H2 1.194/1.067  OOS Sh  1.1336  [     ]
+  EWall  ebud0.20       CAGR 13.25%  Sharpe  1.1228  MaxDD -22.53%  H1/H2 1.194/1.067  OOS Sh  1.1336  [     ]
+  EWall  ebud0.40       CAGR 13.25%  Sharpe  1.1228  MaxDD -22.53%  H1/H2 1.194/1.067  OOS Sh  1.1336  [     ]
+
+  4a/4b passes on U56: 17  [('TOP20', 'g200-dg', np.False_, np.True_), ('TOP20', 'g200-rw', np.False_, np.True_), ('TOP20', 'band3-dg', np.False_, np.True_), ('TOP20', 'band3-rw', np.False_, np.True_), ('TOP20', 'vol60-dg', np.False_, np.True_), ('TOP20', 'vol60-rw', np.False_, np.True_), ('TOP20', 'v1gate-dg', np.False_, np.True_), ('TOP20', 'v1gate-rw', np.False_, np.True_), ('TOP20', 'dd8-recover', np.False_, np.True_), ('TOP20', 'dd12-recover', np.False_, np.True_), ('TOP20', 'dd12-high', np.False_, np.True_), ('TOP20', 'ebud0.05', np.False_, np.True_), ('EWall', 'g200-rw', np.False_, np.True_), ('EWall', 'band3-rw', np.False_, np.True_), ('EWall', 'abs12-rw', np.False_, np.True_), ('EWall', 'vol60-dg', np.False_, np.True_), ('EWall', 'vol60-rw', np.False_, np.True_)]
+
+files written: 2026-09-09_how-many-published-clause-KILLS-are-0-bps-WASHES_cloud.grid.csv 2026-09-09_how-many-published-clause-KILLS-are-0-bps-WASHES_cloud.census.csv 2026-09-09_how-many-published-clause-KILLS-are-0-bps-WASHES_cloud.walkforward.csv
