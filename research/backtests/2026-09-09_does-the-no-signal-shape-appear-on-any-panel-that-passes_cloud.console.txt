@@ -1,0 +1,516 @@
+QUEUE idea 283 — does-the-no-signal-shape-appear-on-any-panel-that-passes (cloud, 2026-09-09).
+
+Question (pre-registered, verbatim from QUEUE)
+----------------------------------------------
+"idea 60's saturation test is two numbers off any band ladder (the 0.00->0.03 increment vs the
+0.03->widest increment) and it separates 'the gate loses on noise crossings' from 'the gate loses
+on every crossing'.  Back-fill it over idea 61's 408 cells and idea 57's 40, and report whether
+the arms that clear 4b are exactly the ones whose recovery curve SATURATES.  If the diagnostic
+separates them it is a screening column; if not it is a KILL.  Max 2 params."
+
+The diagnostic (idea 60's own wording, made arithmetic)
+------------------------------------------------------
+For a band ladder b = 0.00 (the bare 200d gate) .. widest, on one cell:
+
+    inc1 = CAGR(b=0.03) - CAGR(b=0.00)          # what the first 3% of band buys back
+    inc2 = CAGR(b=widest) - CAGR(b=0.03)        # what everything past 3% buys back
+    R    = inc2 / inc1
+
+  R small  -> SATURATES.  Nearly all the damage the gate does is bought back by the first 3%:
+              the gate was losing on NOISE CROSSINGS near the MA and a band fixes it.
+  R large  -> NO-SIGNAL SHAPE.  The curve is still rising at the widest band; widening is just
+              turning the gate off, so the gate loses on EVERY crossing, not just noisy ones.
+              Idea 60 measured R = 4.0-4.6 on SMALL439 and called that the no-signal shape.
+
+PRE-REGISTERED BARS (written before any number was read).  Primary: SATURATES iff R <= 1.0
+(everything past 3% buys back no more than the first 3% did).  The bar is a tuned parameter, so
+the whole ladder R* in {0.25, 0.5, 1.0, 2.0, 4.0} is reported and nothing is selected.  Cells
+with inc1 <= 0 (the first 3% of band buys back NOTHING) are a separate class, `NO-RECOVERY`,
+because a ratio through a non-positive denominator is not a diagnostic; they are counted, never
+silently dropped.
+
+Two tuned parameters (PROTOCOL rule 4): the BAND b (a ladder, every point reported) and the
+saturation bar R* (a ladder, every point reported).  Panel, book, convention and cost rung are
+reported dimensions, not tuned: every cell is printed.
+
+Part A — LITERAL BACK-FILL of idea 61's published grid
+    `2026-09-06_gate-instrument-speed-curve_cloud.keep.csv` carries all 408 published cells with
+    pass4a / pass4b, and its BAND family is a 7-point ladder (0.00 .. 0.20) over 24 cells
+    (3 panels x 2 books x 2 conventions x 2 rungs).  R is computed from those published CAGRs -
+    no re-run, no new numbers - and tested against the published 4b flags.  Idea 57's 40 cells
+    carry only b in {0.00, 0.03} (no widest band), so inc2 does not exist there; Part B extends
+    that ladder rather than pretending idea 57 answers it.
+
+Part B — INDEPENDENT REPLICATION on a superset
+    Fresh band ladders on the record's clause harness (idea 94's price list, as re-used by idea
+    505): 3 panels x 3 base books (V1u, TOP20, EWall - idea 57's two books plus the live v1 book)
+    x 2 conventions (dg de-gross / rw reweight) x 3 rungs (0/10/25 bps) x 8 band points = 432 arm
+    rows against 27 ungated controls, so the recovery SHARE (fraction of the gate's own damage
+    that the band buys back) is available too, which Part A cannot give.
+
+Rule 8: (i) the band b is chosen per cell on IS 2009-2016 Sharpe and read once on 2017-2026
+against the ungated control, the live RULES v2 book and SPY; (ii) the diagnostic itself is walked
+forward - R is recomputed from IS-ONLY CAGRs and tested as a screening column for an OOS 4b-style
+pass, which is the only test that decides the idea's own question honestly.
+
+SURVIVORSHIP: universe.json / universe_broad.json are current-constituent lists and SMALL439 is a
+current screen (data/SMALL_PANEL_README.md); tickers with max_1d_move >= 1.0 in data/small_meta.csv
+are dropped first (44 of 483).  Absolute levels are optimistic; R is a ratio of two same-cell,
+same-days CAGR increments and is far less exposed.
+
+Deterministic, standalone, no network.  Does not modify RULES.md, scan.py, bot.py or baseline.py.
+
+
+==============================================================================================================
+PART A — LITERAL BACK-FILL of idea 61's 408 published cells (no re-run; published CAGRs)
+  idea 61 grid rows 408, BAND family rows 168, cells 24, dials [np.float64(0.0), np.float64(0.02), np.float64(0.03), np.float64(0.05), np.float64(0.08), np.float64(0.12), np.float64(0.2)]
+
+  the 24 published BAND cells, every one printed (inc1 = CAGR(0.03)-CAGR(0.00), inc2 = CAGR(0.2)-CAGR(0.03))
+    panel     cost book    conv   CAGR0   CAGR3   CAGRw    inc1     inc2      R      class        4b/arms
+    B136        10 ew-all  dg     7.78%   8.03%   8.40%  +0.25%   +0.37%    1.46  NO-SIGNAL     0/7
+    B136        25 ew-all  dg     7.24%   7.70%   8.27%  +0.46%   +0.56%    1.22  NO-SIGNAL     0/7
+    B136        10 ew-all  rw    11.64%  11.73%  13.65%  +0.10%   +1.92%   19.83  NO-SIGNAL     4/7
+    B136        25 ew-all  rw    10.33%  10.93%  13.38%  +0.60%   +2.45%    4.08  NO-SIGNAL     3/7
+    B136        10 top20   dg    14.66%  14.72%  16.08%  +0.06%   +1.36%   22.41  NO-SIGNAL     0/7
+    B136        25 top20   dg    12.42%  12.50%  13.98%  +0.07%   +1.49%   20.96  NO-SIGNAL     0/7
+    B136        10 top20   rw    14.80%  14.74%  15.63%  -0.06%   +0.90%     n/a  NO-RECOVERY   0/7
+    B136        25 top20   rw    12.49%  12.45%  13.49%  -0.04%   +1.04%     n/a  NO-RECOVERY   0/7
+    SMALL439    10 ew-all  dg     3.56%   3.80%   4.74%  +0.25%   +0.94%    3.83  NO-SIGNAL     0/7
+    SMALL439    25 ew-all  dg     2.98%   3.37%   4.53%  +0.39%   +1.16%    3.01  NO-SIGNAL     0/7
+    SMALL439    10 ew-all  rw     6.48%   7.31%  10.07%  +0.83%   +2.76%    3.31  NO-SIGNAL     0/7
+    SMALL439    25 ew-all  rw     4.84%   6.07%   9.58%  +1.23%   +3.51%    2.85  NO-SIGNAL     0/7
+    SMALL439    10 top20   dg    14.16%  14.24%  14.41%  +0.08%   +0.16%    1.94  NO-SIGNAL     0/7
+    SMALL439    25 top20   dg    11.40%  11.48%  11.66%  +0.09%   +0.18%    2.05  NO-SIGNAL     0/7
+    SMALL439    10 top20   rw    14.15%  14.23%  14.39%  +0.09%   +0.16%    1.75  NO-SIGNAL     0/7
+    SMALL439    25 top20   rw    11.38%  11.47%  11.65%  +0.09%   +0.18%    1.92  NO-SIGNAL     0/7
+    U56         10 ew-all  dg     8.20%   8.66%   8.58%  +0.46%   -0.08%   -0.18  SATURATES     0/7
+    U56         25 ew-all  dg     7.69%   8.37%   8.46%  +0.68%   +0.09%    0.14  SATURATES     0/7
+    U56         10 ew-all  rw    11.55%  12.25%  14.96%  +0.70%   +2.71%    3.87  NO-SIGNAL     6/7
+    U56         25 ew-all  rw    10.28%  11.52%  14.70%  +1.24%   +3.17%    2.55  NO-SIGNAL     5/7
+    U56         10 top20   dg    14.27%  14.45%  16.02%  +0.18%   +1.57%    8.68  NO-SIGNAL     5/7
+    U56         25 top20   dg    12.71%  12.97%  14.87%  +0.27%   +1.90%    7.12  NO-SIGNAL     5/7
+    U56         10 top20   rw    14.36%  14.53%  16.32%  +0.17%   +1.80%   10.55  NO-SIGNAL     0/7
+    U56         25 top20   rw    12.60%  12.91%  15.10%  +0.31%   +2.20%    7.16  NO-SIGNAL     0/7
+
+  DOES THE DIAGNOSTIC SEPARATE THE 4b PASSERS?  (cell level: does the cell contain any 4b-passing band arm?)
+
+  R* = 0.25
+    SATURATES      x any 4b arm       n=24
+      flag&pass    0   flag&fail    2
+      not&pass     6   not&fail    16
+      precision 0.000  recall 0.000  accuracy 0.667  phi -0.174  base rate 0.250
+
+  R* = 0.5
+    SATURATES      x any 4b arm       n=24
+      flag&pass    0   flag&fail    2
+      not&pass     6   not&fail    16
+      precision 0.000  recall 0.000  accuracy 0.667  phi -0.174  base rate 0.250
+
+  R* = 1.0
+    SATURATES      x any 4b arm       n=24
+      flag&pass    0   flag&fail    2
+      not&pass     6   not&fail    16
+      precision 0.000  recall 0.000  accuracy 0.667  phi -0.174  base rate 0.250
+
+  R* = 2.0
+    SATURATES      x any 4b arm       n=24
+      flag&pass    0   flag&fail    7
+      not&pass     6   not&fail    11
+      precision 0.000  recall 0.000  accuracy 0.458  phi -0.370  base rate 0.250
+
+  R* = 4.0
+    SATURATES      x any 4b arm       n=24
+      flag&pass    2   flag&fail   12
+      not&pass     4   not&fail     6
+      precision 0.143  recall 0.333  accuracy 0.333  phi -0.293  base rate 0.250
+
+  continuous AUC of R as a screening column for 'cell has a 4b arm': 0.260  (0.5 = no separation; sign set so LOW R = 'should pass')
+  NO-RECOVERY cells (inc1 <= 0, the ratio is undefined): 2 of 24; 0 of them contain a 4b passer
+
+  ARM LEVEL — every one of idea 61's 168 published BAND arms, screened by ITS CELL's R
+
+  R* = 0.25
+    cell SATURATES x arm passes 4b    n=168
+      flag&pass    0   flag&fail   14
+      not&pass    28   not&fail   126
+      precision 0.000  recall 0.000  accuracy 0.750  phi -0.135  base rate 0.167
+
+  R* = 0.5
+    cell SATURATES x arm passes 4b    n=168
+      flag&pass    0   flag&fail   14
+      not&pass    28   not&fail   126
+      precision 0.000  recall 0.000  accuracy 0.750  phi -0.135  base rate 0.167
+
+  R* = 1.0
+    cell SATURATES x arm passes 4b    n=168
+      flag&pass    0   flag&fail   14
+      not&pass    28   not&fail   126
+      precision 0.000  recall 0.000  accuracy 0.750  phi -0.135  base rate 0.167
+
+  R* = 2.0
+    cell SATURATES x arm passes 4b    n=168
+      flag&pass    0   flag&fail   49
+      not&pass    28   not&fail    91
+      precision 0.000  recall 0.000  accuracy 0.542  phi -0.287  base rate 0.167
+
+  R* = 4.0
+    cell SATURATES x arm passes 4b    n=168
+      flag&pass   11   flag&fail   87
+      not&pass    17   not&fail    53
+      precision 0.112  recall 0.393  accuracy 0.381  phi -0.173  base rate 0.167
+
+  continuous AUC of cell R for arm-level 4b: 0.298
+  published 4b pass rate among BAND arms: 0.167 (28/168); 4a 2/168
+
+==============================================================================================================
+PART B — INDEPENDENT REPLICATION: fresh band ladders, 3 panels x 3 books x 2 convs x 3 rungs
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+{'U56': (4700, 56), 'B136': (4699, 136), 'SMALL439': (4194, 440)}
+
+GATE 1 — run() vs engine.backtest, max abs return difference
+  U56       V1u   : 0.000e+00
+  U56       TOP20 : 0.000e+00
+  U56       EWall : 0.000e+00
+  B136      V1u   : 0.000e+00
+  B136      TOP20 : 0.000e+00
+  B136      EWall : 0.000e+00
+  SMALL439  V1u   : 0.000e+00
+  SMALL439  TOP20 : 0.000e+00
+  SMALL439  EWall : 0.000e+00
+
+==============================================================================================================
+PART B — all 54 cells, every one printed.  gap = ungated CAGR - CAGR(b=0.00) (the gate's
+own damage); rec3 / recw = share of that gap bought back by b=0.03 / b=0.20.
+  panel     book   conv cost  ungated  CAGR0   CAGR3   CAGR20    gap     inc1     inc2       R    rec3   recw   class        4b/8
+  B136      EWall  dg      0  14.26%   8.14%   8.25%   8.48%  +6.12%  +0.11%   +0.24%    2.16   1.8%   5.7%  NO-SIGNAL     0/8
+  B136      EWall  dg     10  14.16%   7.78%   8.03%   8.40%  +6.38%  +0.25%   +0.37%    1.46   3.9%   9.7%  NO-SIGNAL     0/8
+  B136      EWall  dg     25  14.01%   7.24%   7.70%   8.27%  +6.77%  +0.46%   +0.56%    1.21   6.8%  15.1%  NO-SIGNAL     0/8
+  B136      EWall  rw      0  14.26%  12.52%  12.27%  13.83%  +1.74%  -0.24%   +1.56%     n/a -14.0%  75.6%  NO-RECOVERY   5/8
+  B136      EWall  rw     10  14.16%  11.64%  11.73%  13.65%  +2.52%  +0.10%   +1.92%   19.73   3.9%  79.9%  NO-SIGNAL     5/8
+  B136      EWall  rw     25  14.01%  10.33%  10.93%  13.38%  +3.68%  +0.60%   +2.45%    4.08  16.3%  82.9%  NO-SIGNAL     3/8
+  B136      TOP20  dg      0  16.21%  16.00%  15.93%  15.78%  +0.21%  -0.07%   -0.15%     n/a -35.3% -106.3%  NO-RECOVERY   0/8
+  B136      TOP20  dg     10  14.69%  14.50%  14.43%  14.41%  +0.19%  -0.06%   -0.02%     n/a -34.4% -44.8%  NO-RECOVERY   0/8
+  B136      TOP20  dg     25  12.44%  12.28%  12.23%  12.40%  +0.16%  -0.05%   +0.17%     n/a -32.8%  72.6%  NO-RECOVERY   0/8
+  B136      TOP20  rw      0  16.21%  16.18%  16.18%  17.25%  +0.03%  -0.00%   +1.07%     n/a  -3.7% 3822.9%  NO-RECOVERY   0/8
+  B136      TOP20  rw     10  14.69%  14.66%  14.67%  15.84%  +0.02%  +0.01%   +1.17%  124.79  39.8% 5011.8%  NO-SIGNAL     0/8
+  B136      TOP20  rw     25  12.44%  12.42%  12.45%  13.77%  +0.02%  +0.02%   +1.32%   53.57 143.8% 7845.3%  NO-SIGNAL     0/8
+  B136      V1u    dg      0   9.38%   9.14%   9.18%   7.24%  +0.24%  +0.04%   -1.94%  -48.30  16.8% -793.3%  SATURATES     0/8
+  B136      V1u    dg     10   6.21%   6.00%   6.03%   4.64%  +0.21%  +0.03%   -1.39%  -46.91  14.2% -653.4%  SATURATES     0/8
+  B136      V1u    dg     25   1.62%   1.46%   1.47%   0.85%  +0.17%  +0.01%   -0.62%  -41.46   9.1% -367.3%  SATURATES     0/8
+  B136      V1u    rw      0   9.38%   9.66%   9.25%   9.25%  -0.28%  -0.41%   +0.01%     n/a    n/a    n/a  NO-RECOVERY   0/8
+  B136      V1u    rw     10   6.21%   6.48%   6.07%   6.14%  -0.27%  -0.41%   +0.07%     n/a    n/a    n/a  NO-RECOVERY   0/8
+  B136      V1u    rw     25   1.62%   1.88%   1.48%   1.64%  -0.25%  -0.39%   +0.16%     n/a    n/a    n/a  NO-RECOVERY   0/8
+  SMALL439  EWall  dg      0  10.38%   3.95%   4.10%   4.87%  +6.43%  +0.16%   +0.77%    4.85   2.5%  14.4%  NO-SIGNAL     0/8
+  SMALL439  EWall  dg     10  10.18%   3.56%   3.81%   4.73%  +6.62%  +0.25%   +0.91%    3.63   3.8%  17.6%  NO-SIGNAL     0/8
+  SMALL439  EWall  dg     25   9.90%   2.99%   3.38%   4.52%  +6.91%  +0.39%   +1.14%    2.90   5.7%  22.1%  NO-SIGNAL     0/8
+  SMALL439  EWall  rw      0  10.38%   7.57%   8.16%  10.40%  +2.80%  +0.58%   +2.24%    3.86  20.8% 100.7%  NO-SIGNAL     0/8
+  SMALL439  EWall  rw     10  10.18%   6.47%   7.32%  10.07%  +3.71%  +0.85%   +2.75%    3.21  23.0%  96.9%  NO-SIGNAL     0/8
+  SMALL439  EWall  rw     25   9.90%   4.83%   6.09%   9.58%  +5.06%  +1.25%   +3.49%    2.79  24.8%  93.7%  NO-SIGNAL     0/8
+  SMALL439  TOP20  dg      0  16.50%  16.06%  16.18%  15.81%  +0.44%  +0.12%   -0.37%   -3.03  27.8% -56.5%  SATURATES     0/8
+  SMALL439  TOP20  dg     10  14.63%  14.19%  14.31%  13.97%  +0.44%  +0.12%   -0.35%   -2.82  28.2% -51.2%  SATURATES     0/8
+  SMALL439  TOP20  dg     25  11.87%  11.44%  11.56%  11.25%  +0.43%  +0.12%   -0.31%   -2.50  28.8% -43.3%  SATURATES     0/8
+  SMALL439  TOP20  rw      0  16.50%  16.03%  16.17%  16.41%  +0.47%  +0.14%   +0.24%    1.76  29.1%  80.5%  NO-SIGNAL     0/8
+  SMALL439  TOP20  rw     10  14.63%  14.16%  14.30%  14.56%  +0.47%  +0.14%   +0.26%    1.88  29.4%  84.6%  NO-SIGNAL     0/8
+  SMALL439  TOP20  rw     25  11.87%  11.40%  11.54%  11.82%  +0.47%  +0.14%   +0.29%    2.03  29.8%  90.4%  NO-SIGNAL     0/8
+  SMALL439  V1u    dg      0  10.03%   9.73%   9.64%   9.96%  +0.30%  -0.09%   +0.32%     n/a -29.4%  77.0%  NO-RECOVERY   0/8
+  SMALL439  V1u    dg     10   6.53%   6.29%   6.23%   6.83%  +0.24%  -0.06%   +0.61%     n/a -24.6% 228.0%  NO-RECOVERY   0/8
+  SMALL439  V1u    dg     25   1.48%   1.32%   1.30%   2.31%  +0.16%  -0.02%   +1.00%     n/a -11.6% 632.7%  NO-RECOVERY   0/8
+  SMALL439  V1u    rw      0  10.03%  11.26%  10.46%  12.33%  -1.23%  -0.80%   +1.87%     n/a    n/a    n/a  NO-RECOVERY   0/8
+  SMALL439  V1u    rw     10   6.53%   7.70%   6.90%   8.58%  -1.18%  -0.81%   +1.68%     n/a    n/a    n/a  NO-RECOVERY   0/8
+  SMALL439  V1u    rw     25   1.48%   2.58%   1.76%   3.18%  -1.10%  -0.82%   +1.42%     n/a    n/a    n/a  NO-RECOVERY   0/8
+  U56       EWall  dg      0  13.35%   8.53%   8.84%   8.65%  +4.82%  +0.31%   -0.19%   -0.61   6.4%   2.5%  SATURATES     0/8
+  U56       EWall  dg     10  13.25%   8.19%   8.64%   8.57%  +5.06%  +0.46%   -0.07%   -0.16   9.0%   7.6%  SATURATES     0/8
+  U56       EWall  dg     25  13.11%   7.68%   8.36%   8.45%  +5.43%  +0.68%   +0.10%    0.15  12.5%  14.3%  SATURATES     0/8
+  U56       EWall  rw      0  13.35%  12.38%  12.71%  15.12%  +0.96%  +0.33%   +2.40%    7.21  34.5% 283.4%  NO-SIGNAL     7/8
+  U56       EWall  rw     10  13.25%  11.53%  12.23%  14.94%  +1.72%  +0.70%   +2.71%    3.87  40.6% 198.0%  NO-SIGNAL     7/8
+  U56       EWall  rw     25  13.11%  10.26%  11.50%  14.68%  +2.85%  +1.24%   +3.18%    2.55  43.6% 155.0%  NO-SIGNAL     6/8
+  U56       TOP20  dg      0  16.53%  15.15%  15.35%  13.94%  +1.37%  +0.19%   -1.41%   -7.36  13.9% -88.5%  SATURATES     7/8
+  U56       TOP20  dg     10  15.48%  14.13%  14.35%  13.19%  +1.35%  +0.23%   -1.17%   -5.09  16.9% -69.2%  SATURATES     7/8
+  U56       TOP20  dg     25  13.92%  12.60%  12.88%  12.07%  +1.32%  +0.28%   -0.81%   -2.85  21.5% -39.8%  SATURATES     6/8
+  U56       TOP20  rw      0  16.53%  15.31%  15.40%  16.88%  +1.22%  +0.09%   +1.48%   16.55   7.4% 129.0%  NO-SIGNAL     6/8
+  U56       TOP20  rw     10  15.48%  14.26%  14.41%  16.11%  +1.22%  +0.16%   +1.70%   10.81  12.8% 151.6%  NO-SIGNAL     6/8
+  U56       TOP20  rw     25  13.92%  12.69%  12.95%  14.96%  +1.23%  +0.26%   +2.01%    7.86  20.8% 184.5%  NO-SIGNAL     5/8
+  U56       V1u    dg      0   8.77%   8.57%   8.63%   7.84%  +0.19%  +0.05%   -0.79%  -14.37  28.8% -384.6%  SATURATES     0/8
+  U56       V1u    dg     10   6.26%   6.12%   6.18%   6.03%  +0.15%  +0.06%   -0.15%   -2.51  41.4% -62.4%  SATURATES     0/8
+  U56       V1u    dg     25   2.62%   2.54%   2.60%   3.36%  +0.08%  +0.07%   +0.76%   11.20  83.8% 1022.5%  NO-SIGNAL     0/8
+  U56       V1u    rw      0   8.77%   9.15%   9.00%  13.71%  -0.39%  -0.16%   +4.71%     n/a    n/a    n/a  NO-RECOVERY   1/8
+  U56       V1u    rw     10   6.26%   6.60%   6.52%  11.30%  -0.34%  -0.08%   +4.78%     n/a    n/a    n/a  NO-RECOVERY   0/8
+  U56       V1u    rw     25   2.62%   2.88%   2.91%   7.79%  -0.27%  +0.02%   +4.88%  213.84    n/a    n/a  NO-SIGNAL     0/8
+
+==============================================================================================================
+THE IDEA'S QUESTION — are the 4b passers EXACTLY the saturating cells?
+
+  CELL LEVEL, R* = 0.25
+    SATURATES      x any 4b arm       n=54
+      flag&pass    3   flag&fail   11
+      not&pass    10   not&fail    30
+      precision 0.214  recall 0.231  accuracy 0.611  phi -0.037  base rate 0.241
+
+  CELL LEVEL, R* = 0.5
+    SATURATES      x any 4b arm       n=54
+      flag&pass    3   flag&fail   11
+      not&pass    10   not&fail    30
+      precision 0.214  recall 0.231  accuracy 0.611  phi -0.037  base rate 0.241
+
+  CELL LEVEL, R* = 1.0
+    SATURATES      x any 4b arm       n=54
+      flag&pass    3   flag&fail   11
+      not&pass    10   not&fail    30
+      precision 0.214  recall 0.231  accuracy 0.611  phi -0.037  base rate 0.241
+
+  CELL LEVEL, R* = 2.0
+    SATURATES      x any 4b arm       n=54
+      flag&pass    3   flag&fail   15
+      not&pass    10   not&fail    26
+      precision 0.167  recall 0.231  accuracy 0.537  phi -0.123  base rate 0.241
+
+  CELL LEVEL, R* = 4.0
+    SATURATES      x any 4b arm       n=54
+      flag&pass    5   flag&fail   22
+      not&pass     8   not&fail    19
+      precision 0.185  recall 0.385  accuracy 0.444  phi -0.130  base rate 0.241
+
+  continuous AUC of R for 'cell has a 4b arm': 0.357
+
+  ARM LEVEL (432 arms), R* = 0.25
+    cell SATURATES x arm passes 4b    n=432
+      flag&pass   20   flag&fail   92
+      not&pass    51   not&fail   269
+      precision 0.179  recall 0.282  accuracy 0.669  phi +0.023  base rate 0.164
+
+  ARM LEVEL (432 arms), R* = 0.5
+    cell SATURATES x arm passes 4b    n=432
+      flag&pass   20   flag&fail   92
+      not&pass    51   not&fail   269
+      precision 0.179  recall 0.282  accuracy 0.669  phi +0.023  base rate 0.164
+
+  ARM LEVEL (432 arms), R* = 1.0
+    cell SATURATES x arm passes 4b    n=432
+      flag&pass   20   flag&fail   92
+      not&pass    51   not&fail   269
+      precision 0.179  recall 0.282  accuracy 0.669  phi +0.023  base rate 0.164
+
+  ARM LEVEL (432 arms), R* = 2.0
+    cell SATURATES x arm passes 4b    n=432
+      flag&pass   20   flag&fail  124
+      not&pass    51   not&fail   237
+      precision 0.139  recall 0.282  accuracy 0.595  phi -0.049  base rate 0.164
+
+  ARM LEVEL (432 arms), R* = 4.0
+    cell SATURATES x arm passes 4b    n=432
+      flag&pass   33   flag&fail  183
+      not&pass    38   not&fail   178
+      precision 0.153  recall 0.465  accuracy 0.488  phi -0.031  base rate 0.164
+
+  continuous AUC of cell R for arm-level 4b: 0.401
+  4b pass rate 0.164 (71/432); 4a 13/432
+
+  class x panel (cells):
+klass     NO-RECOVERY  NO-SIGNAL  SATURATES
+panel                                      
+B136                8          7          3
+SMALL439            6          9          3
+U56                 2          8          8
+
+  class x 4b (cells):
+n4b          False  True 
+klass                    
+NO-RECOVERY     14      2
+NO-SIGNAL       16      8
+SATURATES       11      3
+
+==============================================================================================================
+RULE 8 (i) — band b chosen per cell on IS 2009-2016 Sharpe, 2017-2026 read once, 10 bps
+
+  B136 / EWall / dg: IS argmax b = 0.08  IS Sharpe 1.1412
+    OOS arm b=0.08            CAGR  8.36%  Sharpe  1.1095  MaxDD -14.81%
+    OOS bare 200d gate (b=0.00)  CAGR  7.87%  Sharpe  1.1256  MaxDD -12.62%
+    OOS RULES v2 baseline (live) CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  B136 / EWall / rw: IS argmax b = 0.12  IS Sharpe 1.1951
+    OOS arm b=0.12            CAGR 13.75%  Sharpe  1.1621  MaxDD -21.74%
+    OOS bare 200d gate (b=0.00)  CAGR 11.95%  Sharpe  1.0645  MaxDD -20.12%
+    OOS RULES v2 baseline (live) CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  B136 / TOP20 / dg: IS argmax b = 0.12  IS Sharpe 1.1039
+    OOS arm b=0.12            CAGR 14.47%  Sharpe  0.9231  MaxDD -24.73%
+    OOS bare 200d gate (b=0.00)  CAGR 14.28%  Sharpe  0.9217  MaxDD -23.31%
+    OOS RULES v2 baseline (live) CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  B136 / TOP20 / rw: IS argmax b = 0.20  IS Sharpe 1.1595
+    OOS arm b=0.20            CAGR 15.71%  Sharpe  0.9678  MaxDD -26.33%
+    OOS bare 200d gate (b=0.00)  CAGR 14.30%  Sharpe  0.9159  MaxDD -24.00%
+    OOS RULES v2 baseline (live) CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  B136 / V1u / dg: IS argmax b = 0.05  IS Sharpe 0.6943
+    OOS arm b=0.05            CAGR  5.65%  Sharpe  0.5584  MaxDD -23.55%
+    OOS bare 200d gate (b=0.00)  CAGR  5.54%  Sharpe  0.5488  MaxDD -23.76%
+    OOS RULES v2 baseline (live) CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  B136 / V1u / rw: IS argmax b = 0.00  IS Sharpe 0.7147
+    OOS arm b=0.00            CAGR  6.11%  Sharpe  0.5902  MaxDD -21.19%
+    OOS bare 200d gate (b=0.00)  CAGR  6.11%  Sharpe  0.5902  MaxDD -21.19%
+    OOS RULES v2 baseline (live) CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  SMALL439 / EWall / dg: IS argmax b = 0.20  IS Sharpe 0.6884
+    OOS arm b=0.20            CAGR  4.66%  Sharpe  0.6255  MaxDD -17.14%
+    OOS bare 200d gate (b=0.00)  CAGR  3.71%  Sharpe  0.5510  MaxDD -14.33%
+    OOS RULES v2 baseline (live) CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  SMALL439 / EWall / rw: IS argmax b = 0.20  IS Sharpe 0.7074
+    OOS arm b=0.20            CAGR 10.95%  Sharpe  0.7340  MaxDD -34.73%
+    OOS bare 200d gate (b=0.00)  CAGR  7.37%  Sharpe  0.5354  MaxDD -38.28%
+    OOS RULES v2 baseline (live) CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  SMALL439 / TOP20 / dg: IS argmax b = 0.08  IS Sharpe 0.7000
+    OOS arm b=0.08            CAGR 16.35%  Sharpe  0.7848  MaxDD -30.84%
+    OOS bare 200d gate (b=0.00)  CAGR 16.43%  Sharpe  0.7922  MaxDD -28.12%
+    OOS RULES v2 baseline (live) CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  SMALL439 / TOP20 / rw: IS argmax b = 0.08  IS Sharpe 0.7079
+    OOS arm b=0.08            CAGR 16.46%  Sharpe  0.7852  MaxDD -31.38%
+    OOS bare 200d gate (b=0.00)  CAGR 16.42%  Sharpe  0.7848  MaxDD -30.79%
+    OOS RULES v2 baseline (live) CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  SMALL439 / V1u / dg: IS argmax b = 0.02  IS Sharpe 0.6394
+    OOS arm b=0.02            CAGR  5.09%  Sharpe  0.4169  MaxDD -37.23%
+    OOS bare 200d gate (b=0.00)  CAGR  5.30%  Sharpe  0.4306  MaxDD -36.72%
+    OOS RULES v2 baseline (live) CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  SMALL439 / V1u / rw: IS argmax b = 0.00  IS Sharpe 0.6854
+    OOS arm b=0.00            CAGR  6.82%  Sharpe  0.5149  MaxDD -36.12%
+    OOS bare 200d gate (b=0.00)  CAGR  6.82%  Sharpe  0.5149  MaxDD -36.12%
+    OOS RULES v2 baseline (live) CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                      CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+
+  U56 / EWall / dg: IS argmax b = 0.08  IS Sharpe 1.1222
+    OOS arm b=0.08            CAGR  9.03%  Sharpe  1.1699  MaxDD -14.47%
+    OOS bare 200d gate (b=0.00)  CAGR  9.08%  Sharpe  1.2594  MaxDD -12.01%
+    OOS RULES v2 baseline (live) CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                      CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+
+  U56 / EWall / rw: IS argmax b = 0.12  IS Sharpe 1.1762
+    OOS arm b=0.12            CAGR 15.12%  Sharpe  1.2637  MaxDD -19.42%
+    OOS bare 200d gate (b=0.00)  CAGR 12.39%  Sharpe  1.1086  MaxDD -18.65%
+    OOS RULES v2 baseline (live) CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                      CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+
+  U56 / TOP20 / dg: IS argmax b = 0.08  IS Sharpe 1.1768
+    OOS arm b=0.08            CAGR 15.83%  Sharpe  1.1753  MaxDD -20.13%
+    OOS bare 200d gate (b=0.00)  CAGR 15.66%  Sharpe  1.1706  MaxDD -19.51%
+    OOS RULES v2 baseline (live) CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                      CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+
+  U56 / TOP20 / rw: IS argmax b = 0.20  IS Sharpe 1.1925
+    OOS arm b=0.20            CAGR 17.36%  Sharpe  1.1552  MaxDD -23.08%
+    OOS bare 200d gate (b=0.00)  CAGR 15.72%  Sharpe  1.1694  MaxDD -19.39%
+    OOS RULES v2 baseline (live) CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                      CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+
+  U56 / V1u / dg: IS argmax b = 0.05  IS Sharpe 0.6027
+    OOS arm b=0.05            CAGR  7.03%  Sharpe  0.7053  MaxDD -14.25%
+    OOS bare 200d gate (b=0.00)  CAGR  7.01%  Sharpe  0.7035  MaxDD -14.05%
+    OOS RULES v2 baseline (live) CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                      CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+
+  U56 / V1u / rw: IS argmax b = 0.20  IS Sharpe 0.9250
+    OOS arm b=0.20            CAGR 11.90%  Sharpe  0.9248  MaxDD -19.25%
+    OOS bare 200d gate (b=0.00)  CAGR  8.00%  Sharpe  0.7678  MaxDD -13.83%
+    OOS RULES v2 baseline (live) CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                      CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+
+  IS-chosen band beats SPY OOS Sharpe in 9/18 cells; beats the live RULES v2 book in 5/18; b* = 0.00 in 2, 0.20 in 5
+
+==============================================================================================================
+RULE 8 (ii) — THE DIAGNOSTIC ITSELF WALKED FORWARD.  R recomputed from IS-ONLY (2009-2016)
+CAGRs; the target is an OOS-only 4b-style pass (OOS Sharpe > SPY OOS, OOS MaxDD <= 60% of
+SPY's, OOS CAGR >= 70% of SPY's) on 2017-2026, which the IS numbers cannot see.
+
+  IS-only R vs full-sample R over the 28 cells where both are defined: Spearman 0.923
+
+  ARM LEVEL, IS-only R* = 0.25  ->  OOS 4b-style pass
+    IS SATURATES   x OOS 4b pass      n=432
+      flag&pass   20   flag&fail   76
+      not&pass    57   not&fail   279
+      precision 0.208  recall 0.260  accuracy 0.692  phi +0.042  base rate 0.178
+
+  ARM LEVEL, IS-only R* = 0.5  ->  OOS 4b-style pass
+    IS SATURATES   x OOS 4b pass      n=432
+      flag&pass   20   flag&fail   76
+      not&pass    57   not&fail   279
+      precision 0.208  recall 0.260  accuracy 0.692  phi +0.042  base rate 0.178
+
+  ARM LEVEL, IS-only R* = 1.0  ->  OOS 4b-style pass
+    IS SATURATES   x OOS 4b pass      n=432
+      flag&pass   20   flag&fail   76
+      not&pass    57   not&fail   279
+      precision 0.208  recall 0.260  accuracy 0.692  phi +0.042  base rate 0.178
+
+  ARM LEVEL, IS-only R* = 2.0  ->  OOS 4b-style pass
+    IS SATURATES   x OOS 4b pass      n=432
+      flag&pass   20   flag&fail  124
+      not&pass    57   not&fail   231
+      precision 0.139  recall 0.260  accuracy 0.581  phi -0.073  base rate 0.178
+
+  ARM LEVEL, IS-only R* = 4.0  ->  OOS 4b-style pass
+    IS SATURATES   x OOS 4b pass      n=432
+      flag&pass   31   flag&fail  177
+      not&pass    46   not&fail   178
+      precision 0.149  recall 0.403  accuracy 0.484  phi -0.074  base rate 0.178
+
+  continuous AUC of IS-only R for the OOS pass: 0.322
+  OOS pass base rate 0.178 (77/432)
+
+==============================================================================================================
+KEEP PATHS — 4a / 4b counts per panel at 10 bps (144 arms per rung), bars printed
+
+  U56: live v2 CAGR  8.64% Sharpe 1.2037 MaxDD -12.05% (OOS Sharpe 1.2817);  SPY CAGR 15.19% Sharpe 0.8871 MaxDD -33.72%
+    4b bars: H1 0.9587 / H2 0.8287 / OOS 0.8786; MaxDD floor -20.23%; CAGR floor 10.63%
+    @10bps  4a 0/48   4b 20/48
+      4b: TOP20  dg  b=0.00  CAGR 14.13%  Sharpe 1.1442  MaxDD -19.51%  H1/H2 1.217/1.099  OOS 1.1706  cellR -5.09
+      4b: TOP20  dg  b=0.01  CAGR 14.16%  Sharpe 1.1427  MaxDD -19.57%  H1/H2 1.200/1.109  OOS 1.1785  cellR -5.09
+      4b: TOP20  dg  b=0.02  CAGR 14.23%  Sharpe 1.1477  MaxDD -19.57%  H1/H2 1.208/1.112  OOS 1.1824  cellR -5.09
+      4b: TOP20  dg  b=0.03  CAGR 14.35%  Sharpe 1.1562  MaxDD -19.76%  H1/H2 1.221/1.117  OOS 1.1873  cellR -5.09
+      4b: TOP20  dg  b=0.05  CAGR 14.28%  Sharpe 1.1496  MaxDD -19.76%  H1/H2 1.242/1.090  OOS 1.1616  cellR -5.09
+      4b: TOP20  dg  b=0.08  CAGR 14.57%  Sharpe 1.1708  MaxDD -20.13%  H1/H2 1.271/1.105  OOS 1.1753  cellR -5.09
+      4b: TOP20  dg  b=0.20  CAGR 13.19%  Sharpe 1.1131  MaxDD -19.24%  H1/H2 1.179/1.081  OOS 1.1459  cellR -5.09
+      4b: TOP20  rw  b=0.00  CAGR 14.26%  Sharpe 1.1462  MaxDD -19.39%  H1/H2 1.221/1.098  OOS 1.1694  cellR 10.81
+      4b: TOP20  rw  b=0.01  CAGR 14.33%  Sharpe 1.1483  MaxDD -19.51%  H1/H2 1.207/1.113  OOS 1.1806  cellR 10.81
+      4b: TOP20  rw  b=0.02  CAGR 14.34%  Sharpe 1.1480  MaxDD -19.51%  H1/H2 1.205/1.114  OOS 1.1839  cellR 10.81
+      4b: TOP20  rw  b=0.03  CAGR 14.41%  Sharpe 1.1529  MaxDD -19.91%  H1/H2 1.220/1.112  OOS 1.1816  cellR 10.81
+      4b: TOP20  rw  b=0.05  CAGR 14.68%  Sharpe 1.1658  MaxDD -19.90%  H1/H2 1.257/1.106  OOS 1.1757  cellR 10.81
+      4b: TOP20  rw  b=0.08  CAGR 14.98%  Sharpe 1.1824  MaxDD -20.13%  H1/H2 1.265/1.129  OOS 1.1965  cellR 10.81
+      4b: EWall  rw  b=0.00  CAGR 11.53%  Sharpe 1.0891  MaxDD -18.65%  H1/H2 1.171/1.030  OOS 1.1086  cellR 3.87
+      4b: EWall  rw  b=0.01  CAGR 11.92%  Sharpe 1.1235  MaxDD -18.22%  H1/H2 1.209/1.060  OOS 1.1384  cellR 3.87
+      4b: EWall  rw  b=0.02  CAGR 12.01%  Sharpe 1.1356  MaxDD -17.75%  H1/H2 1.206/1.084  OOS 1.1625  cellR 3.87
+      4b: EWall  rw  b=0.03  CAGR 12.23%  Sharpe 1.1592  MaxDD -17.71%  H1/H2 1.214/1.122  OOS 1.1995  cellR 3.87
+      4b: EWall  rw  b=0.05  CAGR 12.72%  Sharpe 1.1535  MaxDD -18.47%  H1/H2 1.201/1.123  OOS 1.1984  cellR 3.87
+      4b: EWall  rw  b=0.08  CAGR 13.21%  Sharpe 1.1767  MaxDD -19.70%  H1/H2 1.268/1.115  OOS 1.1827  cellR 3.87
+      4b: EWall  rw  b=0.12  CAGR 14.00%  Sharpe 1.2250  MaxDD -19.42%  H1/H2 1.265/1.199  OOS 1.2637  cellR 3.87
+
+  B136: live v2 CAGR  8.03% Sharpe 1.1058 MaxDD -12.24% (OOS Sharpe 1.1185);  SPY CAGR 15.23% Sharpe 0.8890 MaxDD -33.72%
+    4b bars: H1 0.9566 / H2 0.8340 / OOS 0.8820; MaxDD floor -20.23%; CAGR floor 10.66%
+    @10bps  4a 0/48   4b 5/48
+      4b: EWall  rw  b=0.00  CAGR 11.64%  Sharpe 1.0566  MaxDD -20.12%  H1/H2 1.158/0.969  OOS 1.0645  cellR 19.73
+      4b: EWall  rw  b=0.01  CAGR 11.71%  Sharpe 1.0646  MaxDD -19.18%  H1/H2 1.159/0.982  OOS 1.0778  cellR 19.73
+      4b: EWall  rw  b=0.02  CAGR 11.84%  Sharpe 1.0756  MaxDD -18.93%  H1/H2 1.178/0.986  OOS 1.0812  cellR 19.73
+      4b: EWall  rw  b=0.03  CAGR 11.73%  Sharpe 1.0690  MaxDD -18.53%  H1/H2 1.172/0.979  OOS 1.0760  cellR 19.73
+      4b: EWall  rw  b=0.05  CAGR 12.00%  Sharpe 1.0711  MaxDD -19.49%  H1/H2 1.155/0.999  OOS 1.0946  cellR 19.73
+
+  SMALL439: live v2 CAGR  3.81% Sharpe 0.5725 MaxDD -14.68% (OOS Sharpe 0.5680);  SPY CAGR 14.13% Sharpe 0.8615 MaxDD -33.72%
+    4b bars: H1 0.8907 / H2 0.8577 / OOS 0.8820; MaxDD floor -20.23%; CAGR floor 9.89%
+    @10bps  4a 1/48   4b 0/48
+
+files written: 2026-09-09_does-the-no-signal-shape-appear-on-any-panel-that-passes_cloud.partA.csv 2026-09-09_does-the-no-signal-shape-appear-on-any-panel-that-passes_cloud.grid.csv 2026-09-09_does-the-no-signal-shape-appear-on-any-panel-that-passes_cloud.curves.csv 2026-09-09_does-the-no-signal-shape-appear-on-any-panel-that-passes_cloud.walkforward.csv 2026-09-09_does-the-no-signal-shape-appear-on-any-panel-that-passes_cloud.walkdiag.csv
