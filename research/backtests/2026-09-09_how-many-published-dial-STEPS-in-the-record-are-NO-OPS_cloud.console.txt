@@ -1,0 +1,232 @@
+# Idea 588 — how many published dial STEPS in the record are NO-OPS?   (2026-09-09_how-many-published-dial-STEPS-in-the-record-are-NO-OPS_cloud)
+Costs 10 bps, W cadence, gross 0.75, t+1 execution (PROTOCOL 2/3).
+Tuned: dial n0 in [5, 10, 20, 30, 40, 60, 80, 100, 'E'] x gate in ['NONE', 'MA', 'MA+VOL']; ALL 27 points per panel reported. Panel is a reporting axis.
+
+====================================================================================================
+PART A — RECORD-WIDE CENSUS OF PUBLISHED ADJACENT COUNT-DIAL STEPS
+====================================================================================================
+Scanned 2635 committed CSVs; 128 (file, dial-column) pairs carry an integer count dial AND a performance column.
+  reporting groups 18,473   adjacent published steps 29,838
+  BIT-IDENTICAL on every shared performance column: 409 (1.371%)
+  NEAR-identical (all |d| < 1e-9, not exact):        0 (0.000%)
+
+By dial column (CAVEAT: `k`/`K` is sometimes a draw size or a fold count, not a book dial; those rows are reported, not claimed):
+          steps  noop  near   rate
+dial_col                          
+K            78    59     0 0.7564
+N            42    42     0 1.0000
+k          2695     4     0 0.0015
+n         27023   304     0 0.0112
+
+DEFENSIBLE SUBSET — dial columns that are unambiguously a BOOK WIDTH (n, n0, width): 304/27,023 = 1.125% of published adjacent steps re-publish the previous point's numbers unchanged.
+
+15 (file, dial) pairs contain at least one identical step. Top 12:
+    192/   440  [n]  2026-09-06_audit-gross-normalisation-across-the-book_cloud.grid.csv
+     59/    59  [K]  2026-09-09_which-published-residualisations-are-IN-SAMPLE-fits_cloud.walkf
+     42/    42  [N]  2026-09-07_two-same-day-runs-disagree-on-D3_B.walkforward.csv
+     28/   126  [n]  2026-09-09_does-one-dispersion-number-really-out-predict-136-name-dummies_
+     24/   108  [n]  2026-09-09_census-every-published-N-EQUALS-50-model-comparison-in-the-reco
+     12/   124  [n]  2026-09-08_how-many-published-count-dials-are-gross-dials_B.grid.csv
+     12/    82  [n]  2026-09-08_label-the-337-undecidable-count-cells-from-the-AST_cloud.grid.c
+      9/    81  [n]  2026-09-08_does-the-width-convergence-hold-past-n40_C.grid.csv
+      6/    56  [n]  2026-09-06_quote-every-n-argmax-with-its-saturation-share_cloud.duplicates
+      6/    46  [n]  2026-09-06_is-n20-a-constant-or-a-grid-edge_C.grid.csv
+      5/     6  [n]  2026-09-09_is-the-4b-footprint-a-monotone-function-of-cap-mix_B.walkforwar
+      4/    47  [n]  2026-09-07_position-count-broad-confirm_B.grid.csv
+
+====================================================================================================
+PART B — RE-DERIVATION OF THE BOOKS TO MACHINE PRECISION
+====================================================================================================
+  SMALL: 483 names in panel, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+G1  replica vs engine.backtest: max|dret| 1.388e-17  max|dturn| 0.000e+00   PASS
+G2  idea 320 grid.csv reproduction (MA+VOL gate, 5 ABS points, 6 columns): worst |d| U56 2.22e-16  B136 1.11e-16  SMALL439 9.71e-17   PASS
+G3  idea 320 saturation.csv max|dW| reproduction: worst |d| over 12 steps 7.286e-17   PASS
+G4  idea 320 'the panel saturates at 37.5 eligible names': U56 k_mean at n0=E_t = 37.4999   PASS
+
+THE CEILING (max_t E_t): every published dial point at or above it is a no-op by construction.
+   panel   gate  n_names  E_mean   E_med   E_p95   E_max  ceiling_frac
+     U56   NONE       56  53.845  54.000  56.000  56.000         1.000
+     U56     MA       56  38.454  42.000  50.000  55.000         0.982
+     U56 MA+VOL       56  37.500  41.000  50.000  55.000         0.982
+    B136   NONE      136 130.834 132.000 135.000 135.000         0.993
+    B136     MA      136  93.206 101.000 120.000 128.000         0.941
+    B136 MA+VOL      136  91.460  99.000 119.000 128.000         0.941
+SMALL439   NONE      439 338.052 322.000 435.000 439.000         1.000
+SMALL439     MA      439 172.371 176.000 266.350 345.000         0.786
+SMALL439 MA+VOL      439 141.226 147.000 211.350 281.000         0.640
+
+THE CLOSED FORM. A step is an exact no-op iff its LOWER dial point >= the panel-gate ceiling.
+  predicted vs realised over all 108 re-derived steps (72 on this script's grid + 36 on idea 320's): 108/108 agree (100.0%); IDENTITY HOLDS
+  max|dr| over every step flagged identical: 0.000e+00 (zero weight difference => zero return difference, as it must be)
+
+RE-DERIVED NO-OP RATE, by panel x gate
+
+  over this script's 9-point grid (8 steps per panel-gate):
+                   steps  noop  mean_days_same  rate
+  panel    gate                                     
+  B136     MA          8     0           0.122 0.000
+           MA+VOL      8     0           0.132 0.000
+           NONE        8     0           0.000 0.000
+  SMALL439 MA          8     0           0.028 0.000
+           MA+VOL      8     0           0.060 0.000
+           NONE        8     0           0.000 0.000
+  U56      MA          8     3           0.472 0.375
+           MA+VOL      8     3           0.481 0.375
+           NONE        8     3           0.375 0.375
+  TOTAL 9/72 = 12.5% of steps move nothing.
+
+  over idea 320's OWN published 5-point grid (4 steps per panel-gate):
+                   steps  noop  mean_days_same  rate
+  panel    gate                                     
+  B136     MA          4     0           0.063 0.000
+           MA+VOL      4     0           0.069 0.000
+           NONE        4     0           0.000 0.000
+  SMALL439 MA          4     0           0.010 0.000
+           MA+VOL      4     0           0.034 0.000
+           NONE        4     0           0.000 0.000
+  U56      MA          4     1           0.435 0.250
+           MA+VOL      4     1           0.451 0.250
+           NONE        4     1           0.250 0.250
+  TOTAL 3/36 = 8.3% of steps move nothing.
+
+PARTIAL no-ops: the share of DAYS on which an adjacent step changes no weight at all
+step             ABS n0=10 -> ABS n0=20  ABS n0=100 -> ABS n0=E_t  ABS n0=20 -> ABS n0=30  ABS n0=30 -> ABS n0=40  ABS n0=40 -> ABS n0=60  ABS n0=5 -> ABS n0=10  ABS n0=60 -> ABS n0=80  ABS n0=80 -> ABS n0=100
+panel    gate                                                                                                                                                                                                    
+B136     MA                       0.005                     0.500                   0.019                   0.037                   0.065                  0.000                   0.129                    0.222
+         MA+VOL                   0.011                     0.528                   0.024                   0.043                   0.075                  0.003                   0.135                    0.241
+         NONE                     0.000                     0.000                   0.000                   0.000                   0.000                  0.000                   0.000                    0.000
+SMALL439 MA                       0.000                     0.118                   0.001                   0.003                   0.006                  0.000                   0.029                    0.065
+         MA+VOL                   0.007                     0.200                   0.009                   0.018                   0.034                  0.006                   0.073                    0.129
+         NONE                     0.000                     0.000                   0.000                   0.000                   0.000                  0.000                   0.000                    0.000
+U56      MA                       0.030                     1.000                   0.107                   0.194                   0.439                  0.002                   1.000                    1.000
+         MA+VOL                   0.039                     1.000                   0.121                   0.205                   0.478                  0.007                   1.000                    1.000
+         NONE                     0.000                     1.000                   0.000                   0.000                   0.000                  0.000                   1.000                    1.000
+
+THE FULL GRID (81 books + 9 benchmark rows, ALL points reported)
+   panel   gate            dial   CAGR  Sharpe   MaxDD     H1     H2  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD   k_mean    sat   p4a   p4b            fail4b
+     U56  BENCH RULES v2 (live) 0.0866  1.2056 -0.1205 1.2259 1.1909     1.1043    0.0953      1.2851    -0.1205      NaN    NaN False False                 -
+     U56  BENCH        RULES v1 0.0646  0.6647 -0.1383 0.6421 0.6878     0.5547    0.0773      0.7471    -0.1383      NaN    NaN False False                 -
+     U56  BENCH             SPY 0.1523  0.8890 -0.3372 0.9566 0.8340     0.8986    0.1545      0.8820    -0.3372      NaN    NaN False False                 -
+     U56   NONE        ABS n0=5 0.2298  1.1315 -0.2845 1.2865 1.0398     1.2907    0.2322      1.0479    -0.2845   5.0000 0.0000 False False                DD
+     U56   NONE       ABS n0=10 0.1631  1.0574 -0.2328 1.1447 1.0050     1.1031    0.1742      1.0374    -0.2328  10.0000 0.0000 False False                DD
+     U56   NONE       ABS n0=20 0.1526  1.1652 -0.2156 1.2649 1.1002     1.1816    0.1644      1.1624    -0.2156  20.0000 0.0000 False False                DD
+     U56   NONE       ABS n0=30 0.1423  1.1679 -0.2151 1.2090 1.1423     1.1234    0.1555      1.2041    -0.2151  30.0000 0.0000 False False                DD
+     U56   NONE       ABS n0=40 0.1350  1.1427 -0.2156 1.2168 1.0858     1.1249    0.1427      1.1579    -0.2156  40.0000 0.0000 False False                DD
+     U56   NONE       ABS n0=60 0.1319  1.1209 -0.2253 1.1957 1.0617     1.1153    0.1367      1.1262    -0.2253  53.8450 1.0000 False False                DD
+     U56   NONE       ABS n0=80 0.1319  1.1209 -0.2253 1.1957 1.0617     1.1153    0.1367      1.1262    -0.2253  53.8450 1.0000 False False                DD
+     U56   NONE      ABS n0=100 0.1319  1.1209 -0.2253 1.1957 1.0617     1.1153    0.1367      1.1262    -0.2253  53.8450 1.0000 False False                DD
+     U56   NONE      ABS n0=E_t 0.1319  1.1209 -0.2253 1.1957 1.0617     1.1153    0.1367      1.1262    -0.2253  53.8450 1.0000 False False                DD
+     U56     MA        ABS n0=5 0.2298  1.1315 -0.2845 1.2865 1.0398     1.2907    0.2322      1.0479    -0.2845   4.9995 0.0023 False False                DD
+     U56     MA       ABS n0=10 0.1623  1.0519 -0.2328 1.1417 0.9976     1.0999    0.1730      1.0305    -0.2328   9.9414 0.0300 False False                DD
+     U56     MA       ABS n0=20 0.1449  1.1217 -0.2096 1.2048 1.0713     1.1145    0.1594      1.1356    -0.2096  19.3282 0.1075 False False                DD
+     U56     MA       ABS n0=30 0.1302  1.1104 -0.2031 1.1438 1.0946     1.0465    0.1464      1.1612    -0.2031  27.8756 0.1940 False False                DD
+     U56     MA       ABS n0=40 0.1191  1.0899 -0.1953 1.1476 1.0529     1.0398    0.1318      1.1303    -0.1953  35.1541 0.4393 False  True                 -
+     U56     MA       ABS n0=60 0.1153  1.0913 -0.1865 1.1667 1.0380     1.0661    0.1244      1.1132    -0.1865  38.4539 1.0000 False  True                 -
+     U56     MA       ABS n0=80 0.1153  1.0913 -0.1865 1.1667 1.0380     1.0661    0.1244      1.1132    -0.1865  38.4539 1.0000 False  True                 -
+     U56     MA      ABS n0=100 0.1153  1.0913 -0.1865 1.1667 1.0380     1.0661    0.1244      1.1132    -0.1865  38.4539 1.0000 False  True                 -
+     U56     MA      ABS n0=E_t 0.1153  1.0913 -0.1865 1.1667 1.0380     1.0661    0.1244      1.1132    -0.1865  38.4539 1.0000 False  True                 -
+     U56 MA+VOL        ABS n0=5 0.1654  0.9510 -0.2111 0.8991 1.0009     0.8950    0.1848      0.9950    -0.2111   4.9980 0.0072 False False             H1,DD
+     U56 MA+VOL       ABS n0=10 0.1300  0.9323 -0.1754 0.9129 0.9548     0.8646    0.1466      0.9846    -0.1754   9.8943 0.0392 False False                H1
+     U56 MA+VOL       ABS n0=20 0.1283  1.0702 -0.1831 1.0762 1.0721     0.9833    0.1449      1.1369    -0.1831  19.1672 0.1210 False  True                 -
+     U56 MA+VOL       ABS n0=30 0.1149  1.0522 -0.1747 1.0171 1.0873     0.9183    0.1325      1.1550    -0.1747  27.6071 0.2048 False  True                 -
+     U56 MA+VOL       ABS n0=40 0.1070  1.0494 -0.1666 1.0498 1.0528     0.9407    0.1201      1.1342    -0.1666  34.6670 0.4783 False  True                 -
+     U56 MA+VOL       ABS n0=60 0.1039  1.0499 -0.1587 1.0688 1.0362     0.9693    0.1134      1.1135    -0.1587  37.4999 1.0000 False False              CAGR
+     U56 MA+VOL       ABS n0=80 0.1039  1.0499 -0.1587 1.0688 1.0362     0.9693    0.1134      1.1135    -0.1587  37.4999 1.0000 False False              CAGR
+     U56 MA+VOL      ABS n0=100 0.1039  1.0499 -0.1587 1.0688 1.0362     0.9693    0.1134      1.1135    -0.1587  37.4999 1.0000 False False              CAGR
+     U56 MA+VOL      ABS n0=E_t 0.1039  1.0499 -0.1587 1.0688 1.0362     0.9693    0.1134      1.1135    -0.1587  37.4999 1.0000 False False              CAGR
+    B136  BENCH RULES v2 (live) 0.0803  1.1058 -0.1224 1.2291 0.9844     1.0912    0.0798      1.1185    -0.1224      NaN    NaN False False                 -
+    B136  BENCH        RULES v1 0.0639  0.6350 -0.2119 0.7562 0.5320     0.7147    0.0594      0.5763    -0.2119      NaN    NaN False False                 -
+    B136  BENCH             SPY 0.1523  0.8890 -0.3372 0.9566 0.8340     0.8987    0.1545      0.8820    -0.3372      NaN    NaN False False                 -
+    B136   NONE        ABS n0=5 0.2119  0.9739 -0.2932 1.1479 0.8703     1.0936    0.2182      0.9163    -0.2932   5.0000 0.0000 False False                DD
+    B136   NONE       ABS n0=10 0.1726  0.9706 -0.2601 1.2618 0.7695     1.1929    0.1587      0.8388    -0.2601  10.0000 0.0000 False False         H2,OOS,DD
+    B136   NONE       ABS n0=20 0.1479  0.9894 -0.2400 1.1678 0.8531     1.0803    0.1468      0.9306    -0.2400  20.0000 0.0000 False False                DD
+    B136   NONE       ABS n0=30 0.1374  1.0004 -0.2355 1.1471 0.8828     1.0539    0.1382      0.9639    -0.2355  30.0000 0.0000 False False                DD
+    B136   NONE       ABS n0=40 0.1379  1.0452 -0.2420 1.1471 0.9619     1.0490    0.1430      1.0440    -0.2420  40.0000 0.0000 False False                DD
+    B136   NONE       ABS n0=60 0.1342  1.0687 -0.2374 1.1648 0.9881     1.0686    0.1382      1.0696    -0.2374  60.0000 0.0000 False False                DD
+    B136   NONE       ABS n0=80 0.1346  1.0889 -0.2379 1.1762 1.0138     1.0776    0.1386      1.0980    -0.2379  80.0000 0.0000 False False                DD
+    B136   NONE      ABS n0=100 0.1341  1.0915 -0.2436 1.2236 0.9752     1.1239    0.1323      1.0655    -0.2436 100.0000 0.0000 False False                DD
+    B136   NONE      ABS n0=E_t 0.1411  1.1217 -0.2518 1.2311 1.0235     1.1454    0.1389      1.1021    -0.2518 130.8335 1.0000 False False                DD
+    B136     MA        ABS n0=5 0.2119  0.9739 -0.2932 1.1479 0.8703     1.0936    0.2182      0.9163    -0.2932   5.0000 0.0000 False False                DD
+    B136     MA       ABS n0=10 0.1722  0.9687 -0.2601 1.2572 0.7695     1.1879    0.1587      0.8388    -0.2601   9.9894 0.0050 False False         H2,OOS,DD
+    B136     MA       ABS n0=20 0.1481  0.9937 -0.2400 1.1737 0.8564     1.0862    0.1470      0.9340    -0.2400  19.8729 0.0187 False False                DD
+    B136     MA       ABS n0=30 0.1377  1.0112 -0.2245 1.1603 0.8912     1.0672    0.1383      0.9728    -0.2245  29.6139 0.0374 False False                DD
+    B136     MA       ABS n0=40 0.1358  1.0482 -0.2201 1.1424 0.9712     1.0416    0.1421      1.0548    -0.2201  39.1250 0.0653 False False                DD
+    B136     MA       ABS n0=60 0.1250  1.0382 -0.2112 1.1254 0.9654     1.0208    0.1308      1.0525    -0.2112  57.2352 0.1286 False False                DD
+    B136     MA       ABS n0=80 0.1219  1.0570 -0.2090 1.1296 0.9951     1.0179    0.1287      1.0881    -0.2090  73.9103 0.2223 False False                DD
+    B136     MA      ABS n0=100 0.1182  1.0578 -0.2058 1.1605 0.9692     1.0418    0.1222      1.0707    -0.2058  87.3341 0.4997 False False                DD
+    B136     MA      ABS n0=E_t 0.1162  1.0560 -0.2012 1.1559 0.9702     1.0447    0.1196      1.0651    -0.2012  93.2059 1.0000 False  True                 -
+    B136 MA+VOL        ABS n0=5 0.1660  0.8792 -0.2336 1.0160 0.7725     0.9809    0.1601      0.8121    -0.2336   4.9991 0.0032 False False         H2,OOS,DD
+    B136 MA+VOL       ABS n0=10 0.1411  0.8895 -0.2144 1.1121 0.7052     1.0502    0.1261      0.7755    -0.2144   9.9660 0.0110 False False         H2,OOS,DD
+    B136 MA+VOL       ABS n0=20 0.1296  0.9433 -0.2005 1.1046 0.8025     1.0231    0.1241      0.8832    -0.2005  19.7826 0.0241 False False                H2
+    B136 MA+VOL       ABS n0=30 0.1218  0.9574 -0.2030 1.1182 0.8146     1.0324    0.1162      0.8994    -0.2030  29.4618 0.0430 False False             H2,DD
+    B136 MA+VOL       ABS n0=40 0.1205  0.9907 -0.1911 1.1120 0.8807     1.0148    0.1195      0.9714    -0.1911  38.8898 0.0750 False  True                 -
+    B136 MA+VOL       ABS n0=60 0.1136  0.9989 -0.1868 1.0971 0.9089     0.9932    0.1150      1.0033    -0.1868  56.8015 0.1352 False  True                 -
+    B136 MA+VOL       ABS n0=80 0.1119  1.0240 -0.1844 1.1132 0.9408     1.0009    0.1141      1.0428    -0.1844  73.2748 0.2408 False  True                 -
+    B136 MA+VOL      ABS n0=100 0.1088  1.0278 -0.1813 1.1432 0.9200     1.0249    0.1088      1.0300    -0.1813  86.2176 0.5276 False  True                 -
+    B136 MA+VOL      ABS n0=E_t 0.1069  1.0252 -0.1769 1.1433 0.9150     1.0322    0.1059      1.0192    -0.1769  91.4596 1.0000 False  True                 -
+SMALL439  BENCH RULES v2 (live) 0.0381  0.5725 -0.1468 0.5699 0.5770     0.5802    0.0385      0.5680    -0.1468      NaN    NaN False False                 -
+SMALL439  BENCH        RULES v1 0.0741  0.5647 -0.3612 0.7434 0.4044     0.6854    0.0635      0.4923    -0.3612      NaN    NaN False False                 -
+SMALL439  BENCH             SPY 0.1413  0.8615 -0.3372 0.8907 0.8577     0.8316    0.1545      0.8820    -0.3372      NaN    NaN False False                 -
+SMALL439   NONE        ABS n0=5 0.1818  0.6762 -0.3983 0.8125 0.6046     0.5269    0.2315      0.7538    -0.3983   5.0000 0.0000 False False      H1,H2,OOS,DD
+SMALL439   NONE       ABS n0=10 0.1544  0.7002 -0.3524 0.8855 0.5966     0.7089    0.1707      0.7083    -0.3524  10.0000 0.0000 False False      H1,H2,OOS,DD
+SMALL439   NONE       ABS n0=20 0.1427  0.7523 -0.3079 0.8614 0.7013     0.6892    0.1661      0.7920    -0.3079  20.0000 0.0000 False False      H1,H2,OOS,DD
+SMALL439   NONE       ABS n0=30 0.1155  0.6751 -0.3039 0.8915 0.5464     0.7440    0.1200      0.6524    -0.3039  30.0000 0.0000 False False         H2,OOS,DD
+SMALL439   NONE       ABS n0=40 0.0960  0.6031 -0.3136 0.7273 0.5341     0.6062    0.1049      0.6091    -0.3136  40.0000 0.0000 False False H1,H2,OOS,DD,CAGR
+SMALL439   NONE       ABS n0=60 0.0843  0.5700 -0.3141 0.6138 0.5539     0.4976    0.0985      0.6106    -0.3141  60.0000 0.0000 False False H1,H2,OOS,DD,CAGR
+SMALL439   NONE       ABS n0=80 0.0794  0.5566 -0.3426 0.5836 0.5509     0.4941    0.0916      0.5922    -0.3426  80.0000 0.0000 False False H1,H2,OOS,DD,CAGR
+SMALL439   NONE      ABS n0=100 0.0776  0.5529 -0.3664 0.5644 0.5580     0.4890    0.0895      0.5890    -0.3664 100.0000 0.0000 False False H1,H2,OOS,DD,CAGR
+SMALL439   NONE      ABS n0=E_t 0.1010  0.6738 -0.3709 0.7691 0.6257     0.7554    0.1013      0.6390    -0.3709 338.0521 1.0000 False False      H1,H2,OOS,DD
+SMALL439     MA        ABS n0=5 0.1818  0.6762 -0.3983 0.8125 0.6046     0.5269    0.2315      0.7538    -0.3983   5.0000 0.0000 False False      H1,H2,OOS,DD
+SMALL439     MA       ABS n0=10 0.1544  0.7002 -0.3524 0.8855 0.5966     0.7089    0.1707      0.7083    -0.3524  10.0000 0.0000 False False      H1,H2,OOS,DD
+SMALL439     MA       ABS n0=20 0.1416  0.7473 -0.3079 0.8614 0.6930     0.6892    0.1642      0.7848    -0.3079  19.9962 0.0013 False False      H1,H2,OOS,DD
+SMALL439     MA       ABS n0=30 0.1129  0.6630 -0.3009 0.8915 0.5255     0.7440    0.1158      0.6345    -0.3009  29.9794 0.0033 False False         H2,OOS,DD
+SMALL439     MA       ABS n0=40 0.0927  0.5874 -0.3111 0.7273 0.5065     0.6062    0.0996      0.5857    -0.3111  39.9400 0.0061 False False H1,H2,OOS,DD,CAGR
+SMALL439     MA       ABS n0=60 0.0775  0.5339 -0.3219 0.6157 0.4897     0.4997    0.0873      0.5558    -0.3219  59.6502 0.0295 False False H1,H2,OOS,DD,CAGR
+SMALL439     MA       ABS n0=80 0.0718  0.5165 -0.3540 0.5719 0.4891     0.4784    0.0810      0.5397    -0.3540  78.7224 0.0648 False False H1,H2,OOS,DD,CAGR
+SMALL439     MA      ABS n0=100 0.0698  0.5113 -0.3747 0.5281 0.5116     0.4418    0.0814      0.5498    -0.3747  97.0041 0.1177 False False H1,H2,OOS,DD,CAGR
+SMALL439     MA      ABS n0=E_t 0.0636  0.4976 -0.3861 0.5015 0.5048     0.4547    0.0713      0.5225    -0.3861 172.3706 1.0000 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL        ABS n0=5 0.0498  0.3205 -0.4020 0.4427 0.2181     0.1263    0.0795      0.4232    -0.4020   4.9820 0.0056 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL       ABS n0=10 0.0773  0.4765 -0.3140 0.5335 0.4317     0.3439    0.0966      0.5494    -0.3140   9.9514 0.0069 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL       ABS n0=20 0.0638  0.4488 -0.3348 0.6056 0.3241     0.4231    0.0692      0.4640    -0.3348  19.8760 0.0094 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL       ABS n0=30 0.0523  0.4003 -0.3282 0.4752 0.3435     0.3361    0.0606      0.4361    -0.3282  29.7496 0.0183 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL       ABS n0=40 0.0519  0.4088 -0.3255 0.4324 0.3937     0.3280    0.0614      0.4536    -0.3255  39.5155 0.0336 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL       ABS n0=60 0.0509  0.4165 -0.3473 0.4524 0.3919     0.3773    0.0564      0.4389    -0.3473  58.4420 0.0735 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL       ABS n0=80 0.0497  0.4156 -0.3683 0.4608 0.3842     0.3843    0.0544      0.4338    -0.3683  76.4975 0.1291 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL      ABS n0=100 0.0433  0.3753 -0.3894 0.4400 0.3285     0.4042    0.0427      0.3609    -0.3894  93.2707 0.2001 False False H1,H2,OOS,DD,CAGR
+SMALL439 MA+VOL      ABS n0=E_t 0.0360  0.3324 -0.4021 0.4327 0.2575     0.4205    0.0305      0.2855    -0.4021 141.2260 1.0000 False False H1,H2,OOS,DD,CAGR
+
+KEEP PATHS at all 81 grid points (PROTOCOL 4a and 4b, both evaluated)
+  4a passes: 0/81   4b passes: 14/81   BOTH: 0/81
+  binding 4b legs across the failures: DD 61, H2 33, OOS 31, H1 27, CAGR 22
+  4b passers:
+  panel   gate       dial   CAGR  Sharpe   MaxDD     H1     H2  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  k_mean    sat   p4a  p4b fail4b
+    U56     MA  ABS n0=40 0.1191  1.0899 -0.1953 1.1476 1.0529     1.0398    0.1318      1.1303    -0.1953 35.1541 0.4393 False True      -
+    U56     MA  ABS n0=60 0.1153  1.0913 -0.1865 1.1667 1.0380     1.0661    0.1244      1.1132    -0.1865 38.4539 1.0000 False True      -
+    U56     MA  ABS n0=80 0.1153  1.0913 -0.1865 1.1667 1.0380     1.0661    0.1244      1.1132    -0.1865 38.4539 1.0000 False True      -
+    U56     MA ABS n0=100 0.1153  1.0913 -0.1865 1.1667 1.0380     1.0661    0.1244      1.1132    -0.1865 38.4539 1.0000 False True      -
+    U56     MA ABS n0=E_t 0.1153  1.0913 -0.1865 1.1667 1.0380     1.0661    0.1244      1.1132    -0.1865 38.4539 1.0000 False True      -
+    U56 MA+VOL  ABS n0=20 0.1283  1.0702 -0.1831 1.0762 1.0721     0.9833    0.1449      1.1369    -0.1831 19.1672 0.1210 False True      -
+    U56 MA+VOL  ABS n0=30 0.1149  1.0522 -0.1747 1.0171 1.0873     0.9183    0.1325      1.1550    -0.1747 27.6071 0.2048 False True      -
+    U56 MA+VOL  ABS n0=40 0.1070  1.0494 -0.1666 1.0498 1.0528     0.9407    0.1201      1.1342    -0.1666 34.6670 0.4783 False True      -
+   B136     MA ABS n0=E_t 0.1162  1.0560 -0.2012 1.1559 0.9702     1.0447    0.1196      1.0651    -0.2012 93.2059 1.0000 False True      -
+   B136 MA+VOL  ABS n0=40 0.1205  0.9907 -0.1911 1.1120 0.8807     1.0148    0.1195      0.9714    -0.1911 38.8898 0.0750 False True      -
+   B136 MA+VOL  ABS n0=60 0.1136  0.9989 -0.1868 1.0971 0.9089     0.9932    0.1150      1.0033    -0.1868 56.8015 0.1352 False True      -
+   B136 MA+VOL  ABS n0=80 0.1119  1.0240 -0.1844 1.1132 0.9408     1.0009    0.1141      1.0428    -0.1844 73.2748 0.2408 False True      -
+   B136 MA+VOL ABS n0=100 0.1088  1.0278 -0.1813 1.1432 0.9200     1.0249    0.1088      1.0300    -0.1813 86.2176 0.5276 False True      -
+   B136 MA+VOL ABS n0=E_t 0.1069  1.0252 -0.1769 1.1433 0.9150     1.0322    0.1059      1.0192    -0.1769 91.4596 1.0000 False True      -
+  of which sit on a NO-OP step (i.e. are a re-publication of the neighbouring point, not an independent pass): 4 — U56/MA/ABS n0=60, U56/MA/ABS n0=80, U56/MA/ABS n0=100, U56/MA/ABS n0=E_t
+
+RULE 8 (PROTOCOL 8): n0 chosen on IS <= 2016-12-31 by IS Sharpe, 2017- read once.
+   panel   gate       pick  tie_set tie_members  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  v2_OOS_Sharpe  v2_OOS_CAGR  v2_OOS_MaxDD  spy_OOS_Sharpe  spy_OOS_CAGR  spy_OOS_MaxDD   oos_best   p4a   p4b            fail4b
+     U56   NONE   ABS n0=5        1    ABS n0=5     1.2907    0.2322      1.0479    -0.2845         1.2851       0.0953       -0.1205          0.8820        0.1545        -0.3372  ABS n0=30 False False                DD
+     U56     MA   ABS n0=5        1    ABS n0=5     1.2907    0.2322      1.0479    -0.2845         1.2851       0.0953       -0.1205          0.8820        0.1545        -0.3372  ABS n0=30 False False                DD
+     U56 MA+VOL  ABS n0=20        1   ABS n0=20     0.9833    0.1449      1.1369    -0.1831         1.2851       0.0953       -0.1205          0.8820        0.1545        -0.3372  ABS n0=30 False  True                 -
+    B136   NONE  ABS n0=10        1   ABS n0=10     1.1929    0.1587      0.8388    -0.2601         1.1185       0.0798       -0.1224          0.8820        0.1545        -0.3372 ABS n0=E_t False False         H2,OOS,DD
+    B136     MA  ABS n0=10        1   ABS n0=10     1.1879    0.1587      0.8388    -0.2601         1.1185       0.0798       -0.1224          0.8820        0.1545        -0.3372  ABS n0=80 False False         H2,OOS,DD
+    B136 MA+VOL  ABS n0=10        1   ABS n0=10     1.0502    0.1261      0.7755    -0.2144         1.1185       0.0798       -0.1224          0.8820        0.1545        -0.3372  ABS n0=80 False False         H2,OOS,DD
+SMALL439   NONE ABS n0=E_t        1  ABS n0=E_t     0.7554    0.1013      0.6390    -0.3709         0.5680       0.0385       -0.1468          0.8820        0.1545        -0.3372  ABS n0=20 False False      H1,H2,OOS,DD
+SMALL439     MA  ABS n0=30        1   ABS n0=30     0.7440    0.1158      0.6345    -0.3009         0.5680       0.0385       -0.1468          0.8820        0.1545        -0.3372  ABS n0=20 False False         H2,OOS,DD
+SMALL439 MA+VOL  ABS n0=20        1   ABS n0=20     0.4231    0.0692      0.4640    -0.3348         0.5680       0.0385       -0.1468          0.8820        0.1545        -0.3372  ABS n0=10 False False H1,H2,OOS,DD,CAGR
+
+  picks whose IS-argmax is NOT unique (decided by sort order, not by data): 0/9
+
