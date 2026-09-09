@@ -1,0 +1,44 @@
+==============================================================================================================================
+IDEA 313 - why do capQ and advQ disagree in SIGN?  The causal price-x-fixed-shares rebuild.
+==============================================================================================================================
+  pinned (NOT tuned): g=0.75, cadence W, cost 10 bps (0 bps alongside), NDEC=10, key window 60d, MA 200d,
+                      arms {EWall, MA-RS, MA-DG}, decile edges = qcut on the covered set.
+  2 parameters: key in {capQ26, capC, capC0, advQ} x membership in {STATIC, DYNAMIC} (6 legal cells - capQ26 and capC0 are
+                constants in time, so their DYNAMIC cells do not exist).  ALL grid points reported.
+  PRE-REGISTERED  H_MEMB : |MEMBERSHIP| is the largest of the three channels on MA-RS.
+                  H_LOOK : |LOOKAHEAD| is the largest.
+                  H_THIN : dropping the single most influential decile cuts |G| by >= 50%.
+
+PANEL  SMALL: 483 names, dropped 44 with max_1d_move >= 1.0 -> 439 tradable
+       2010-01-04 .. 2026-09-04  (4194 rows)
+       SURVIVORSHIP: current constituents of the sub-$2B screen only; every LEVEL on this panel is biased UP, the thin
+       deciles most.  That bias IS channel (iii), so it is measured below (jackknife), not only disclaimed.
+
+REFERENCES over 2011-01-13..2026-09-04
+  SPY                CAGR  14.13%  Sharpe  0.862  MaxDD -33.72%  halves  0.891/ 0.858 | OOS CAGR  15.45% Sharpe  0.882
+  RULES v2 (live)    CAGR   3.81%  Sharpe  0.572  MaxDD -14.68%  halves  0.570/ 0.577 | OOS CAGR   3.85% Sharpe  0.568
+  EWall whole panel  CAGR  10.18%  Sharpe  0.678  MaxDD -36.17%  halves  0.797/ 0.614 | OOS CAGR  10.09% Sharpe  0.637
+  4b bars from SPY: H1>0.891 H2>0.858 OOS>0.882 MaxDD>=-20.2% CAGR>=9.89%
+
+==============================================================================================================================
+G2  THE CAP IDENTITY - is capQ literally price x shares?  (if not, the causal rebuild is a different object)
+==============================================================================================================================
+  mktcap vs price*shares over 716 rows: max relative |diff| = 4.441e-16 (bar 1e-02)  PASS
+  coverage: 430/439 tradable names carry a share count (median 40.9M shares)
+  capC at the panel's last bar vs capQ26 over 430 names: max relative |diff| = 1.809e-01 (bar 1e-02)  FAIL
+  -> the record's capQ look-ahead is exactly the 2026 PRICE; the share count is common to all four keys.
+  capQ26 median $736M   capC(median over time) $700M   capC0(first bar) $542M
+
+  pairwise agreement of the STATIC per-name key RANKS (Spearman):
+            capQ26   capC  capC0   advQ
+    capQ26  +1.000 +0.549 +0.291 +0.422
+    capC    +0.549 +1.000 +0.703 +0.851
+    capC0   +0.291 +0.703 +1.000 +0.549
+    advQ    +0.422 +0.851 +0.549 +1.000
+    (idea 51 quoted corr(capQ, advQ) = +0.545.)
+
+==============================================================================================================================
+Q1  DECILE LADDERS - 6 key x membership cells x 10 deciles x 3 arms = 180 books, all reported in 2026-09-09_why-do-capQ-and-advQ-disagree-in-SIGN_cloud.deciles.csv
+==============================================================================================================================
+  capQ26-S done (44s)
+  capC0-S done (82s)
