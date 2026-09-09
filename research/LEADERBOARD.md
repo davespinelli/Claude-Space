@@ -168,7 +168,6 @@
 | 2026-09-04 | no-vol-scaling OFF n=8 gross=75% (nearest miss) | 13.8% | 0.93 | -17.9% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b (fails H1 only, 0.92 vs SPY 0.96) | 2026-09-04_no-vol-scaling.py |
 | 2026-09-04 | no-vol-scaling OFF n=8 gross=100% | 18.3% | 0.93 | -23.4% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL (DD) | 2026-09-04_no-vol-scaling.py |
 | 2026-09-04 | SPY reference on corrected trading-day index | 15.3% | 0.89 | -33.7% | 0.96 / 0.84 | 0.67 (0.64/0.69) | — | 2026-09-04_no-vol-scaling.py |
-
 **2026-09-04 (lane A) — read before comparing rows across dates.** `data/prices.csv` is on a
 CALENDAR-day index from 2014-09-17 (BTC-USD's first date), so any backtest run in the
 no-internet sandbox off the cache understates CAGR/Sharpe in the second half of the sample.
@@ -176,12 +175,10 @@ The 2026-09-04 rows above are on a corrected trading-day index and are comparabl
 2026-09-03 rows (which were run locally on live yfinance data). See
 `2026-09-04_no-vol-scaling.result.md` for the size of the distortion and its effect on live
 signals. Fix pending Sunday review.
-
 **2026-09-04 (lane B, idea 40 vol-scaler-replacement).** Base book = lane A's no-scaler
 book (top-n by the v1 composite without `/sqrt(vol20)`, eligible only, 75% gross, weekly).
 Treatment = a BOOK-LEVEL risk control in place of the per-name scaler. All 21 grid points
 reported. Corrected trading-day index (verified in-script).
-
 | 2026-09-04 | 40 NONE    n=3 | 21.9% | 1.04 | -25.8% | 1.01 / 1.06 | 0.67 (0.64/0.69) | KILL 4b (MaxDD -25.8% vs cap -20.2%) — lane A's OFF book, control | 2026-09-04_vol-scaler-replacement_B.py |
 | 2026-09-04 | 40 DD      n=3 D=6% | 11.8% | 0.89 | -16.6% | 0.74 / 1.02 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
 | 2026-09-04 | 40 DD      n=3 D=8% | 12.0% | 0.86 | -15.8% | 0.77 / 0.94 | 0.67 (0.64/0.69) | KILL 4a/4b | 2026-09-04_vol-scaler-replacement_B.py |
@@ -203,7 +200,6 @@ reported. Corrected trading-day index (verified in-script).
 | 2026-09-04 | 40 BREADTH n=8 B=30% | 13.4% | 0.93 | -19.1% | 0.88 / 0.98 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only | 2026-09-04_vol-scaler-replacement_B.py |
 | 2026-09-04 | 40 BREADTH n=8 B=40% | 13.0% | 0.93 | -16.8% | 0.92 / 0.94 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only (0.915 vs 0.957) | 2026-09-04_vol-scaler-replacement_B.py |
 | 2026-09-04 | 40 BREADTH n=8 B=50% | 12.4% | 0.90 | -18.1% | 0.90 / 0.91 | 0.67 (0.64/0.69) | KILL 4a / PARK 4b — fails H1 only | 2026-09-04_vol-scaler-replacement_B.py |
-
 **2026-09-04 (lane A, idea 2 position-count).** All 30 grid points. Arms: FIXEDW = v1's own
 construction (w=15% each, gross=0.15n, n<=6 to avoid leverage); EQW = equal weight at a CONSTANT
 75% gross (w=0.75/n) — the arm in which n is purely a diversification choice. ON/OFF = v1
@@ -213,7 +209,6 @@ idea 1's row. **5 of 30 pass 4b, 2 of 30 pass 4a.** The `OFF FIXEDW n=3/n=4` pas
 drawdown cap only because 45%/60% gross scales the n=3/n=4 drawdown under it (same Sharpe as the
 EQW versions) — a leverage lever, not a position-count edge. See
 `2026-09-04_position-count.result.md` and the KEEP memo `2026-09-04_position-count.md`.
-
 | 2026-09-04 | 2 ON  FIXEDW n=2  | 2.3% | 0.52 | -7.5% | 0.51 / 0.52 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
 | 2026-09-04 | 2 ON  FIXEDW n=3  | 3.9% | 0.63 | -8.3% | 0.66 / 0.62 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
 | 2026-09-04 | 2 ON  FIXEDW n=4  | 5.2% | 0.65 | -11.7% | 0.64 / 0.66 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,H2,OOS,CAGR) | 2026-09-04_position-count.py |
@@ -249,9 +244,7 @@ EQW versions) — a leverage lever, not a position-count edge. See
 | 2026-09-04 | 31 PEAD quintile h=40 (broad, 2012-26) | 16.8% | 0.92 | -36.0% | 1.13 / 0.78 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
 | 2026-09-04 | 31 PEAD quintile h=60 (broad, 2012-26) | 19.4% | 1.05 | -35.0% | 1.35 / 0.84 | 0.67 (0.86/0.50) | KILL 4a / KILL 4b | research/backtests/2026-09-04_small-cap-pead.py |
 | 2026-09-04 | 31 PEAD CONTROL bottom-tercile h=60 (sort reversed — beats the signal) | 20.7% | 1.16 | -32.1% | 1.30 / 1.09 | 0.67 (0.86/0.50) | diagnostic | research/backtests/2026-09-04_small-cap-pead.py |
-
 ### Idea 46 — eligible-fraction-vs-n (lane B, 2026-09-04)
-
 Should the book pin the position COUNT (`top n`) or the FRACTION of eligible names (`top f x E_t`)?
 Arms: **N** = top n at 0.75/n (idea 2's KEEP construction, de-grosses to cash when E_t < n);
 **NF** = same count cap renormalised to 75% gross (a decomposition arm, isolates the cash sleeve);
@@ -266,7 +259,6 @@ right**: it is the only setting in the study that passes 4b on BOTH universe.jso
 found: idea 2's "leave the remainder in cash when fewer than n are eligible" clause is worth +0.02
 Sharpe at n=20 / +0.05 at n=30 and should be kept deliberately. 14 of 24 pass 4b, 0 of 24 pass 4a.
 See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
-
 | 2026-09-04 | 46 N  n=5 | 16.5% | 0.95 | -21.6% | 0.90 / 1.00 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,DD) | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 N  n=8 | 13.8% | 0.93 | -17.9% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_eligible-fraction-vs-n_B.py |
 | 2026-09-04 | 46 N  n=10 | 12.9% | 0.93 | -17.5% | 0.92 / 0.95 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1) | 2026-09-04_eligible-fraction-vs-n_B.py |
@@ -1388,9 +1380,7 @@ See `2026-09-04_eligible-fraction-vs-n_B.result.md` and memo `..._B.memo.md`.
 | 2026-09-04 | 22 u56 CAND20 D=12%/k=0.75 (best treated arm) | 12.0% | 1.06 | -18.3% | 1.09 / 1.05 | 0.67 (0.64/0.69) | 4b PASS but strictly worse than its own control (1.093) | 2026-09-04_drawdown-control_C.py |
 | 2026-09-04 | 22 exchange rate: DD rule vs static gross (288 arms) | n/a | n/a | n/a | n/a | n/a | KILL: 1.02 vs 0.57 pp CAGR per pp MaxDD; dominated 252/288 | 2026-09-04_drawdown-control_C.py |
 | 2026-09-04 | 22 walk-forward S1/S2 vs control (12 cells) | n/a | n/a | n/a | n/a | n/a | S1 picks the do-nothing corner 12/12 (OOS 0.900 vs 0.922); S2 picks nothing 10/12 | 2026-09-04_drawdown-control_C.py |
-
 ### Idea 21 — momentum-plus-quality-proxy (cloud, 2026-09-04)
-
 Top-K by 12-1 momentum among RULES v1's eligible set (200d MA + `vol20 < 0.60`), then drop
 `D = round(d·K)` names by `vol20`; equal weight, 0.75 gross, weekly, next-day execution.
 Two tuned parameters: `K ∈ {10,20,30}`, `d ∈ {0,0.1,0.2,0.3,0.5}`. Three arms — **HI** (drop
@@ -1405,7 +1395,6 @@ short-horizon vol premium inside this gate is positive-signed, so a low-vol tilt
 By-product: the LITERAL `g/K` denominator de-grosses 0.750 → 0.522 at K=10/d=0.3 and inflates
 4a passes 18/39 → 30/39 on broad at unchanged Sharpe — idea 73's artefact, reproduced.
 See `2026-09-04_momentum-plus-quality-proxy_cloud.result.md`.
-
 | 2026-09-04 | 21 BROAD HI K=10 d=0.0 (anchor, no screen) | 18.7% | 1.08 | -21.4% | 1.28 / 0.92 | 0.64 (0.76/0.54) | KILL 4b (DD) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
 | 2026-09-04 | 21 BROAD HI K=10 d=0.3 (**the queue's literal proposal**) | 14.8% | 0.93 | -19.2% | 1.13 / 0.77 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
 | 2026-09-04 | 21 BROAD LO K=10 d=0.3 (sign check — beats the idea) | 21.1% | 1.07 | -25.5% | 1.39 / 0.82 | 0.64 (0.76/0.54) | KILL 4a / KILL 4b (H2,DD) | 2026-09-04_momentum-plus-quality-proxy_cloud.py |
@@ -1443,7 +1432,6 @@ See `2026-09-04_momentum-plus-quality-proxy_cloud.result.md`.
 | 2026-09-04 | 26 cost ladder 5/10/15/20/25 bps on top20 f=0 vs f=0.25 | n/a | n/a | n/a | n/a | n/a | cross-universe 4b window 5-10 bps (f=0.25) vs 5 bps (f=0); both dead at 15 | 2026-09-04_ensemble-plus-momentum_C.py |
 | 2026-09-04 | 26 sleeve-to-book daily return correlation | n/a | n/a | n/a | n/a | n/a | 0.63-0.82 (u56) / 0.63-0.75 (broad): the sleeve is not an uncorrelated asset | 2026-09-04_ensemble-plus-momentum_C.py |
 ### Idea 92 — sharpe-bound-books-need-a-book-change (cloud, 2026-09-04)
-
 Test cell inherited from ideas 46/84: `C2/CAND20` on `universe_broad.json` — the project's only
 **Sharpe-bound** 4b cell (H2 0.814 vs SPY 0.837, fails on H2 alone). Idea 84 showed no exposure
 or turnover lever moves it (best +0.0027 over 20 arms). This run tests the four BOOK changes the
@@ -1462,7 +1450,6 @@ regret (−0.187); the eligibility gate tops out at +0.042, below idea 84's own 
 refuting the pre-registered prediction that the gate carries H2. Rule 8 picks `ew-band3`, which
 is also its family's best OOS arm (regret 0.000, the only family where those coincide).
 See `..._cloud.result.md` and memo `..._cloud.memo.md`.
-
 | 2026-09-04 | 92 BROAD CAND20 (the Sharpe-bound test cell, control) | 13.1% | 0.96 | -20.1% | 1.13 / 0.81 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2 by 0.023) | 2026-09-04_sharpe-bound-book-change_cloud.py |
 | 2026-09-04 | 92 BROAD SECTOR cap=0.40 | 13.0% | 0.97 | -19.2% | 1.11 / 0.84 | 0.64 (0.76/0.54) | KEEP 4a / KEEP 4b (margin +0.002; dies at 25 bps, not the rule-8 pick) | 2026-09-04_sharpe-bound-book-change_cloud.py |
 | 2026-09-04 | 92 BROAD SECTOR cap=0.25 | 11.6% | 0.90 | -18.9% | 1.05 / 0.76 | 0.64 (0.76/0.54) | KEEP 4a / KILL 4b (H2,OOS) | 2026-09-04_sharpe-bound-book-change_cloud.py |
@@ -1483,9 +1470,7 @@ See `..._cloud.result.md` and memo `..._cloud.memo.md`.
 | 2026-09-04 | 92 U56 NORANK EWall | 10.4% | 1.05 | -15.9% | 1.07 / 1.04 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (CAGR) | 2026-09-04_sharpe-bound-book-change_cloud.py |
 | 2026-09-04 | 92 U56 SECTOR cap=0.15 | 10.3% | 1.01 | -17.4% | 0.91 / 1.11 | 0.67 (0.64/0.69) | KILL 4a / KILL 4b (H1,CAGR) | 2026-09-04_sharpe-bound-book-change_cloud.py |
 | 2026-09-04 | 92 U56 WCAP-EW (all levels) | 12.7% | 1.09 | -18.3% | 1.09 / 1.10 | 0.67 (0.64/0.69) | KILL — measured INERT, identical to control | 2026-09-04_sharpe-bound-book-change_cloud.py |
-
 ### Idea 23 — earnings-season-avoidance (cloud, 2026-09-04) — KILL
-
 372 points (2 universes x 3 books x 2 exclusion conventions x [1 anchor + 15 season windows +
 15 placebo windows]), all reported; 2 tuned params (start, length); anchor reproduces
 `rules_v1_weights` exactly. Blacking single stocks out of the eligible set for a fixed
@@ -1495,7 +1480,6 @@ return is +0.81 bps/day (u56) / +0.05 (broad) with max |t| 2.39 / 1.42, below th
 3.10 / 2.16. Rule 8 picks a blackout window in 10/12 cells on higher IS Sharpe (+0.100 mean) and
 loses -0.106..-0.420 OOS. Priced as drawdown insurance: 2.88 pp CAGR per pp MaxDD, vs idea 94's
 dearest priceable instrument at 0.91 and the gross lever at 0.57.
-
 | Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
 |---|---|---|---|---|---|---|---|---|
 | 2026-09-04 | 23 PREMISE u56: in-season excess return, 15 windows | n/a | n/a | n/a | n/a | n/a | REFUTED: +0.81 bps/day, max abs t 2.39, placebo max abs t 3.10 | 2026-09-04_earnings-season-avoidance_cloud.py |
@@ -1513,9 +1497,7 @@ dearest priceable instrument at 0.91 and the gross lever at 0.57.
 | 2026-09-04 | 23 best season window per cell vs its own anchor | n/a | n/a | n/a | n/a | n/a | KILL: loses in 11/12 cells (-0.075..-0.009); sole exception +0.004 on the weakest book | 2026-09-04_earnings-season-avoidance_cloud.py |
 | 2026-09-04 | 23 rule-8 walk-forward, 12 cells | n/a | n/a | n/a | n/a | n/a | picks a blackout in 10/12 on IS Sharpe +0.100; OOS -0.188 mean, regret <= 0 in 12/12 | 2026-09-04_earnings-season-avoidance_cloud.py |
 | 2026-09-04 | 23 4b census: 7 season rows pass, all on u56/top20 | n/a | n/a | n/a | n/a | n/a | INHERITED: every one has lower Sharpe than its own passing anchor; 0 conversions | 2026-09-04_earnings-season-avoidance_cloud.py |
-
 ### Idea 100 — sleeve-with-a-real-diversifier (cloud, 2026-09-05) — PARK (strong)
-
 120 points (5 sleeve fractions x 2 sleeves x 3 books x 2 universes x 2 gross conventions), all
 reported; 2 tuned params (f, sleeve); the S9 arm reproduces idea 26 exactly. Restricting idea 26's
 sleeve to its four NON-EQUITY assets (TLT/GLD/DBC/UUP) cuts sleeve-to-book correlation from
@@ -1525,7 +1507,6 @@ pp of CAGR surrendered). It repairs BOTH defects that made idea 26's by-product 
 now picks f=0.50 in 8/8 S4 cells and beats its own anchor OOS in 8/8, and the Sharpe advantage
 survives deleting 2022 in 8/8 cells. But its literal 4b footprint is SMALLER (2/36 vs 4/36) because
 every failure is the CAGR floor, which the natural blend misses only by de-grossing to 0.65-0.70.
-
 | Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
 |---|---|---|---|---|---|---|---|---|
 | 2026-09-05 | 100 PREMISE: S4 sleeve-to-book correlation | n/a | n/a | n/a | n/a | n/a | CONFIRMED: -0.011..+0.212 (S9 0.626..0.820); S4-to-SPY -0.141 | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
@@ -1544,16 +1525,13 @@ every failure is the CAGR floor, which the natural blend misses only by de-gross
 | 2026-09-05 | 100 year attribution of the 25pct S4 sleeve | n/a | n/a | n/a | n/a | n/a | contribution positive in only 2/18 years (2011, 2022) — same shape as idea 26, but the Sharpe edge does NOT depend on it | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
 | 2026-09-05 | 100 cost ladder 5/10/15/20/25 bps, natural gross | n/a | n/a | n/a | n/a | n/a | cross-universe 4b window 5 bps only (CAGR floor); Sharpe decay -0.048/-0.055 per 10 bps | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
 | 2026-09-05 | 100 4b census (interior points only) | n/a | n/a | n/a | n/a | n/a | S4 2/36 vs S9 4/36; only S9/top20/f=0.25 passes all 4 universe x convention combos | 2026-09-05_sleeve-with-a-real-diversifier_cloud.py |
-
 ### Idea 100b — sleeve-with-a-real-diversifier (INDEPENDENT SECOND RUN, lane B, 2026-09-05)
-
 Lane B ran the same idea the same day without seeing the cloud run. Same design (120 points,
 2 tuned params), same conclusion, and the shared numbers agree to the printed precision:
 correlation -0.011..+0.212 vs 0.626..0.820, dSharpe +0.265 vs +0.052 (36/36 both), exchange rate
 0.090 vs 0.031, S4 standalone 2.6%/0.616/-8.7%. Rows below are only what lane B measured that the
 cloud run did not; everything else is a duplicate and is not re-listed.
 `research/backtests/2026-09-05_sleeve-with-a-real-diversifier_B.result.md`
-
 | Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
 |---|---|---|---|---|---|---|---|---|
 | 2026-09-05 | 100b cost ladder 5/10/15/20/25 bps, GROSS-MATCHED blend | n/a | n/a | n/a | n/a | n/a | cross-universe 4b survives 10 bps and dies at 15, for BOTH sleeves — the matched convention buys +5 bps over natural but does not fix the cost window | 2026-09-05_sleeve-with-a-real-diversifier_B.py |
@@ -1574,11 +1552,9 @@ cloud run did not; everything else is a duplicate and is not re-listed.
 | 2026-09-05 | 102 rule 8, (sleeve,f) chosen on 2009-2016, 2017-2026 untouched | n/a | n/a | n/a | n/a | n/a | picks noDBC/f=0.50 in 6/8 cells, TLTonly/f=0.25 in 2/8, S4 in 0/8, f=0 in 0/8; OOS beats SPY 8/8 and RULES v1 8/8, anchor 6/8; the 2 TLT picks are the run's 2 worst regrets (-0.223/-0.262) | 2026-09-05_which-asset-carries-S4_C.py |
 | 2026-09-05 | 102 cost ladder 5/10/15/20/25 bps at f=0.50, cross-universe 4b | n/a | n/a | n/a | n/a | n/a | g=1.00: S4 and noTLT and noDBC hold to 15 bps, noGLD dies at 15, noUUP and TLTonly never pass; nothing survives 25 | 2026-09-05_which-asset-carries-S4_C.py |
 | 2026-09-05 | 102 census, 240 points (6 sleeves x 5 f x 2 books x 2 universes x 2 conv) | n/a | n/a | n/a | n/a | n/a | 4a 114, 4b 39; interior 144 pts, 4a 102, 4b 27 (noTLT 8, S4/noDBC/noGLD 5 each, noUUP 4, TLTonly 0) | 2026-09-05_which-asset-carries-S4_C.py |
-
 **Idea 101 (+104 folded) — fixed-gross-S4-blend (cloud, 2026-09-05).** g fixed at 1.00 EX ANTE; two pre-registered
 arms (S4 = TLT,GLD,DBC,UUP; S3 = TLT,GLD,UUP), 2 tuned params (f, cost), 600 grid points, all reported.
 `research/backtests/2026-09-05_fixed-gross-S4-blend_cloud.result.md`
-
 | Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
 |---|---|---|---|---|---|---|---|---|
 | 2026-09-05 | 101 top20 + 50% S3 (TLT,GLD,UUP) g=1.00 fixed, u56, W, 10bps | 11.5% | 1.17 | -13.3% | 1.17 / 1.17 | 0.66 (0.64/0.69) | **KEEP 4a+4b** (OOS 1.215 @ 12.3%; SPY OOS 0.882) | 2026-09-05_fixed-gross-S4-blend_cloud.py |
@@ -1593,11 +1569,9 @@ arms (S4 = TLT,GLD,DBC,UUP; S3 = TLT,GLD,UUP), 2 tuned params (f, cost), 600 gri
 | 2026-09-05 | 101 cadence bar (idea 65), \|dSharpe\| across D/W/M <= 0.05 at f=0.50 | n/a | n/a | n/a | n/a | n/a | **FAILS 0/2** (spread 0.33 u56, 0.44 broad) — but the f=0 anchor fails identically (0.26/0.36); the sleeve's OWN contribution is +0.041..+0.155, positive 12/12, spread 0.068/0.075. The bar measures the equity book, not the overlay | 2026-09-05_fixed-gross-S4-blend_cloud.py |
 | 2026-09-05 | 101 4b under each cadence at f=0.50, g=1.00, 10bps | n/a | n/a | n/a | n/a | n/a | D **fails 4/4**, W passes 4/4, M passes 4/4 — cadence must be pre-registered as part of the rule; monthly dominates weekly on every metric | 2026-09-05_fixed-gross-S4-blend_cloud.py |
 | 2026-09-05 | 101 census, 600 points (2 arms x 5 f x 3 cadences x 2 conv x 2 universes x 5 costs) | n/a | n/a | n/a | n/a | n/a | see .grid.csv; every point reported, nothing hidden | 2026-09-05_fixed-gross-S4-blend_cloud.py |
-
 **Idea 109 (filed as a second "104") — CAGR-floor-constrained-rule-8-selector (cloud, 2026-09-05).**
 4 pre-registered selectors x 6 overlay grids x 2 books x 2 universes x 2 cost rungs; 176 grid points, 44 cells.
 `research/backtests/2026-09-05_cagr-floor-constrained-selector_cloud.result.md`
-
 | Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
 |---|---|---|---|---|---|---|---|---|
 | 2026-09-05 | 109 S_floor (argmax IS Sharpe s.t. IS CAGR >= 70% SPY IS CAGR) vs rule 8 | n/a | n/a | n/a | n/a | n/a | **KILL** — same pick in 36/44 cells; in the 8 it differs it is WORSE on OOS Sharpe 8/8 (mean -0.057) | 2026-09-05_cagr-floor-constrained-selector_cloud.py |
@@ -1613,11 +1587,9 @@ arms (S4 = TLT,GLD,DBC,UUP; S3 = TLT,GLD,UUP), 2 tuned params (f, cost), 600 gri
 | 2026-09-05 | 99 rule-8 walk-forward, sleeve pick u56/top20/10bps | 12.3% | 1.18 | -14.3% | 1.16 / 1.20 | 0.65 (0.67/0.64) | KEEP-4b (already standing, idea 101) — chosen on 2009-2016 alone, OOS 13.6%/1.261/-14.3% vs SPY 15.5%/0.882/-33.7% | 2026-09-05_defensive-overlays-are-rule-8-invisible_B.py |
 | 2026-09-05 | 99 cost of the alleged blindness | n/a | n/a | n/a | n/a | n/a | rule 8 mean OOS Sharpe 1.048 / 20 of 44 4b vs no-overlay 0.993 / 19 vs OOS-best ceiling 1.063 / **15**. Rule 8 beats not-selecting in 30/44 cells; the ceiling is +0.015 away and costs 5 4b passes | 2026-09-05_defensive-overlays-are-rule-8-invisible_B.py |
 | 2026-09-05 | 99 defensive-overlays-are-rule-8-invisible | n/a | n/a | n/a | n/a | n/a | **KILL** — premise false, gap is window crisis-density shared by the offensive overlay, worth +0.015 OOS Sharpe. No RULES change | 2026-09-05_defensive-overlays-are-rule-8-invisible_B.py |
-
 **Idea 112 — 2013-as-the-IS-window's-single-point-of-failure (lane C, 2026-09-05).**
 Idea 99's harness re-run with the IS window itself put through leave-one-year-out: 6 overlay grids x 2 books x 2 universes x 2 cost rungs = 44 cells / 208 grid points / 164 non-null, x 8 dropped IS years + control.
 `research/backtests/2026-09-05_2013-as-the-IS-windows-single-point-of-failure_C.result.md`
-
 | Date | Idea / variant | CAGR | Sharpe | MaxDD | H1 / H2 | Baseline Sharpe | Verdict | Script |
 |---|---|---|---|---|---|---|---|---|
 | 2026-09-05 | 112 S4 premise — is 2013 the worst overlay year? | n/a | n/a | n/a | n/a | n/a | **TRUE** — pooled mean d -0.386 (u56 -0.360, broad -0.417), rank 1 of 17, 2.3x the next-worst (2017 -0.169). IS-window ranking: 2013 -0.386, 2012 -0.146, 2015 -0.096, 2010 -0.003, 2016 +0.034, 2014 +0.051, 2011 +0.215 | 2026-09-05_2013-as-the-IS-windows-single-point-of-failure_C.py |
@@ -2660,10 +2632,8 @@ Idea 99's harness re-run with the IS window itself put through leave-one-year-ou
 | 2026-09-06 | 70 rule 8 cap dial: IS_ARGMAX picks do-nothing in 3/4 panels, beats CAP_NONE OOS by +0.0031 Sharpe / +0.06pp CAGR (1/4 panels better) | — | — | — | — / — | OOS SPY 0.882; RULESv1 0.576/0.544/0.747/0.492 | KILL | 2026-09-06_what-actually-moves-H2_cloud.py |
 | 2026-09-06 | 70 reproduction of idea 66's broad book top20-200d g0.75 @10bps (all-136 tradable; idea 66 published 0.814 H2 / 0.837 SPY) | 13.0% | 0.94 | -20.1% | 1.10 / 0.80 | SPY 0.96/0.83; H2 residual vs published -0.0115 | PASS | 2026-09-06_what-actually-moves-H2_cloud.py |
 | 2026-09-06 | 70 KEEP paths over the 20-point cap grid @10bps: 4a 0/20, 4b 2/20 (both U56 caps 0.50/1.00 = the standing candidate unchanged); B136/BSTK100/SMALL pass nothing | 12.8% | 1.06 | -18.3% | 1.07 / 1.07 | SPY 0.90; OOS 1.131 vs 0.882 | 4b pass (incumbent) | 2026-09-06_what-actually-moves-H2_cloud.py |
-
 ### Sunday review 2026-09-06 — rules decision (verification rows, no new ideas)
 Both parent scripts were re-run in full and were **bit-identical to their committed outputs** — every `.csv`/`.md` artefact byte-for-byte unchanged, console files differing on 8 and 2 lines respectively, all timing or run-date stamps. Every row below was additionally re-derived from scratch in the review (independent weights code, `engine.backtest`, panel u56 = research/universe.json, 2009-01-13..2026-09-04, next-day execution) and matches the published figures it verifies. 4b bars on this panel: H1>0.9566, H2>0.8340, OOS>0.8820, |MaxDD|<=20.23%, CAGR>=10.66%. 4a bars: beat RULES v1 in both halves at |MaxDD|<=13.83%.
-
 | Date | Idea | CAGR | Sharpe | MaxDD | Sharpe H1 / H2 | Baseline Sharpe (H1/H2) | Verdict | Script |
 |---|---|---|---|---|---|---|---|---|
 | 2026-09-06 | **94 `EWall + band3-dg` @10bps (u56) — VERIFIED and ADOPTED as RULES v2** | 8.66% | 1.2056 | -12.05% | 1.2259 / 1.1908 | v1 0.664 (0.641/0.688); SPY 0.889 (0.957/0.834) | **ADOPTED (4a).** Re-derived exactly (published 8.7%/1.21/-12.1%, 1.23/1.19). OOS 9.53%/1.2851/-12.05% vs v1 OOS 0.7471. Beats v1 on CAGR, Sharpe AND MaxDD, both halves and OOS. Turnover 1.77x/yr. Fails 4b on the CAGR floor only (8.66% vs 10.66%); clears the other four 4b bars | 2026-09-04_drawdown-insurance-price-list_B.py |
@@ -2672,9 +2642,7 @@ Both parent scripts were re-run in full and were **bit-identical to their commit
 | 2026-09-06 | 171 by-product (COMP top-20 EW g=0.75 MONTHLY, u56) — **DISQUALIFIED on drawdown-phase** | 14.8% | 1.208 | -19.6% | 1.219 / 1.206 | v1 0.664; SPY 0.889 | **the highest min-half Sharpe on the board (1.206), and its 4b drawdown pass is an anchor artefact: sliding the identical month-end schedule 0-7 trading bars, 4b passes 3 of 8 anchors** (MaxDD -18.41%..-21.33%, cap 20.23%; k=1..5 all breach). Script re-run cleanly (cadence M row reproduces). NOT adopted | 2026-09-05_do-gross-choice-rules-lose-to-constants-in-general_C.py |
 | 2026-09-06 | 182 phase control, same construction as the 171 row above | 13.61% | 1.1557 | -18.81% | 1.2279 / 1.1017 | SPY 0.889 | **7 of 8 anchors pass 4b** (MaxDD -17.88%..-20.39%; only k=1 breaches) — reproduces idea 182B's measurement independently and is the contrast that disqualifies 171 | review, this session |
 | 2026-09-06 | 115 `exDBC` sleeve (min-half 1.17, 4a+4b) — not considered this week | 12.1% | 1.200 | -13.4% | 1.24 / 1.17 | SPY 0.889; v1 0.649 | **blocked by its own memo**: "must not be adopted before queue idea 106 reports", and idea 106 is still in QUEUE `## Open` | 2026-09-05_sleeve-G-is-2013_cloud.py |
-
 ### Idea 70 — what-actually-moves-H2 (lane B, independent second run; agrees with the cloud entry above and adds the exact Sharpe split + the 21-day localisation). 4a judged against the LIVE book, RULES v2.
-
 | Date | Idea | CAGR | Sharpe | MaxDD | Sharpe H1 / H2 | Baseline Sharpe (H1/H2) | Verdict | Script |
 |---|---|---|---|---|---|---|---|---|
 | 2026-09-06 | 290 is-the-de-gross-cost-a-cash-drag-identity — P1 exactness: DEGROSS = RESPREAD at time-varying leverage c_t | n/a | n/a | n/a | n/a | algebraic bar max abs err < 1e-12 | **HOLDS at 2.082e-17 across all 36 cells.** c_t = realised-gross ratio = share of live names gated in, 0.419-0.525. There is no separate de-gross strategy on SMALL439 — it is the respread book delevered | 2026-09-06_is-the-de-gross-cost-a-cash-drag-identity_B.py |
@@ -3834,9 +3802,7 @@ Both parent scripts were re-run in full and were **bit-identical to their commit
 | 2026-09-08 | 452 THE POOL-WIDTH TEST (paired, same cells, same fixed arms; the run's own P2 and P3) | discordant pairs **17 wide-only vs 18 matched-only, McNemar p 1.0** — widening a chooser's pool does NOT create divergence | it makes the chooser worse on BOTH axes: hit **63.1% -> 57.9%** (paired d -5.2 pp, **t -5.02**), mean +0.0472 -> +0.0303 (t -1.63) | corr(DIVERGE, ladder-endpoint pick share) **+0.006** matched / **-0.129** wide; terciles non-monotone 4.5% / 26.9% / 1.5% | WIDE leaves its own family in 65.2% of folds yet its corner-pick share is LOWER (10.8% vs 43.5%) | **P2 and P3 FALSIFIED** | 2026-09-08_does-a-pre-registered-arm-beat-its-own-IS-chooser-generally_C.cells.csv |
 | 2026-09-08 | 452 RULE 8 walk-forward (params on 2009-2016, 2017-2026 read ONCE, 63 cells) | OOS CAGR: matched chooser **10.63%**, wide chooser 17.67%, control arm 8.04%, median arm 8.48%; SPY 15.45% | OOS Sharpe: matched **0.9410**, wide **0.8721**, **control 0.9616**, median 0.9340; SPY 0.8820, RULES v2 0.9848, oracle 1.0140 | OOS MaxDD: matched -19.37%, wide -28.53%, control **-14.30%**, median -15.98%; SPY -33.72% | mean margin / hit vs pool mean: matched +0.0244 / 63.5%, wide **-0.0445 / 36.5%**, control **+0.0450 / 73.0%**, median +0.0174 / **76.2%** | on the only non-overlapping window the DO-NOTHING control beats both choosers on both axes — domination, not divergence | 2026-09-08_does-a-pre-registered-arm-beat-its-own-IS-chooser-generally_C.walkforward.csv |
 | 2026-09-08 | 452 BOTH KEEP PATHS over all 369 arm rows + 378 chooser/position books | n/a | n/a | n/a | **4a 3 of 324** honest rows (45 rows ARE the live RULES v2 book re-expressed; 10 'passed' against themselves on a ~1e-17 float tie and are excluded and named). The 3 are `u56 WIDTH n=80` = gross 0.525, a de-grossed live book — idea 311's gross-scalar flag. Chooser books: **0 of 378** once the live book's rows go | **4b 38 of 369** (u56 26 / broad 12 / small 0 — idea 136's 18th reproduction), all known full-gross u56/broad books, none produced by a chooser; binding bar CAGR 171 / H2 76 / H1 70 / DD 52 | **no KEEP, no PARK, no RULES change** | 2026-09-08_does-a-pre-registered-arm-beat-its-own-IS-chooser-generally_C.keeppaths.csv |
-
 **2026-09-08 (lane C, idea 442 does-the-4b-gross-1.00-family-survive-a-CASH-CREDIT-and-a-BORROW-charge).** Grid: 3 panels (U56, B136, SMALL439 = the 484-col sub-$2B panel) x **P1 gross {0.50, 0.75, 1.00, 1.25, 1.50}** x **P2 rate {0, 150, 300} bps symmetric** (credit on cash, charge on borrow: `dr_t = rate/252 x (1 - G_t)`, `G_t` = realised gross) x cadence {W, M} x band {0, .02, .03, .05, .08, .12, .20} = **210 books x 3 rates x 2 Sharpe readings = 1 260 published points**, 10 bps, weekly/monthly, t+1. Two readings, both declared before any number was read: **RAW** = the record's rf=0 convention (SPY's realised gross is identically 1.0, so the same formula credits it exactly 0) and **EXCESS** = the same rate is rf for everyone (book excess collapses to `r_t - rate x G_t/252`). GATES, all PASS: `fast_backtest` vs `engine.backtest` on RULES v2/U56 **0.000e+00**; the rate-0 grid reproduces idea 439's committed 126-book `.keeppaths.csv` on CAGR/Sharpe/MaxDD/H1/H2/OOS at **2.220e-16** (126/126 rows); rate 0 is an exact no-op **0.000e+00**; SPY realised gross deviation from 1.0 **0.000e+00**. Live U56 band-3 g=0.75 realised gross mean **0.5328** (p05 0.1884); nominal 1.25 is above 1.0 on **43.2%** of days and 1.50 on **73.8%**, so the borrow leg is genuinely exercised. SURVIVORSHIP: B136 and SMALL439 are current constituents only — levels overstated, read the within-panel gross x rate contrasts.
-
 | 2026-09-08 | 442 THE PREMISE — does crediting cash dissolve the gross-1.00 family's 4b margin? (4b passes out of 42 books per gross rung) | RAW rate 0/150/300: g0.50 **0/0/0**, g0.75 **0/0/1**, **g1.00 19/20/20**, g1.25 9/9/9, g1.50 0/0/0 | EXCESS rate 0/150/300: **g1.00 19/19/19**, g1.25 9/9/9, everything else **0** | set identity: **nothing is LOST** going 0 -> 300 bps under either reading; the 2 gains are `B136 W b0.00` and one 0.75 book (`U56 M b0.12`, 10.68% / 1.330 / OOS 1.339) | by panel at every rate U56 18-19/70, B136 10-11/70, **SMALL439 0/70** (idea 136's 19th reproduction) | SPY 15.23% / 0.8891 / -33.72% (H 0.9568/0.8342, OOS 0.8820); RULES v2 U56 8.66% / 1.2058 / -12.05%, OOS 1.2853 | **KILL — the carve-out hypothesis is FALSIFIED. Idea 439's 19 passes are not an artefact of pricing cash at zero: not one is lost at 300 bps under either reading** | 2026-09-08_does-the-4b-gross-100-family-survive-a-CASH-CREDIT-and-a-BORROW-charge_C.py |
 | 2026-09-08 | 442 WHY — a cash credit is a SHARPE instrument and 4b's binding bar on the low-gross family is the CAGR FLOOR | gross-0.75 family fails 4b **42/42** at rate 0 with **CAGR failing 42**, H1/H2/OOS 14 each, DD 1 | at RAW 300 bps the credit clears every Sharpe bar it had been failing (**H2 14 -> 0, OOS 14 -> 0**) and still fails **CAGR 41 of 42** | arithmetic: 300 bps on the 0.75 book's ~47% mean cash is **+1.40 pp/yr** vs **+0.87 pp** for the 1.00 book — a **0.53 pp** differential against a **2.00 pp** CAGR shortfall (8.66% vs the 0.70 x SPY floor of 10.66%) | observed U56 live cell CAGR 8.66% -> 9.42% -> 10.19% | n/a | **The bar the convention moves is not the bar that binds** | 2026-09-08_does-the-4b-gross-100-family-survive-a-CASH-CREDIT-and-a-BORROW-charge_C.py |
 | 2026-09-08 | 442 WHAT 4b ACTUALLY IS ON THE GROSS DIAL — a WINDOW, not a Sharpe test (Sharpe span across the 5 gross rungs within a cell: median **0.0015**, max 0.0093 at rate 0) | live U56 cell (W, b0.03) admissible gross **[0.921, 1.287]** at rate 0 | RAW: -> [0.867, 1.287] at 150, **[0.799, 1.287]** at 300 | EXCESS: -> [0.909, 1.286], **[0.896, 1.284]** | the live book sits at **0.75**, OUTSIDE the window under all six conventions; the credit moves the floor 0.12 of gross (RAW) or 0.025 (EXCESS) and needs 0.17 | panel medians U56 [0.913, 1.222] -> [0.780, 1.224]; B136 [0.944, 1.040] -> [0.821, 1.041]; **SMALL439's floor (1.49) is ABOVE its ceiling (0.97) at every rate** — the exact shape of 0 of 70 | **4b on this dial is a CAGR floor and a MaxDD ceiling on SCALE. PROTOCOL should quote the admissible g-band, not a ladder point (idea 311)** | 2026-09-08_does-the-4b-gross-100-family-survive-a-CASH-CREDIT-and-a-BORROW-charge_C.py |
@@ -4259,3 +4225,6 @@ Both parent scripts were re-run in full and were **bit-identical to their commit
 | 2026-09-09 | 547 THE ANSWER — n* = the panels-per-stratum at which a block's sign replicates 90% of the time against an INDEPENDENT block, n*=(c_inf*1.6187/\|rho\|)^2 | n/a | n/a | n/a | n/a | the record's n = 60 | **THERE IS NO SINGLE n, AND n=60 IS BELOW THE BAR FOR EVERY POINT INCLUDING THE MARGINAL.** Primary stratum (q0.500,k40): PARTIAL median n* **1,160** (range 110-44,820; <=240 in 5/12, <=60 in **0/12**) vs MARGINAL median **112** (65-693; <=240 in 9/12, <=60 in **0/12**). q0.250: PARTIAL **938** (255-255,873, <=240 in **0/12**), MARGINAL **97** (47-3,527). Per characteristic (PARTIAL, primary): **corr 110/128/187 and evol 167/225/1,217 ARE estimable; disp 1,873/10,566/44,820 and breadth 1,104/1,846/2,453 are not** — because their estimand is gone, not because they are noisy. Corrects idea 546's premise too: **0 of 24 marginal points clear 90% at n=60**; '21-26 of 27' is pooled sign consistency, a different statistic. | ANSWERED | 2026-09-09_what-n-would-make-the-partial-estimable_C.py |
 | 2026-09-09 | 547 POST-HOC (declared) — the disjoint-block device itself: two blocks of n from a fixed pool of N have corr = -n/(N-n), reaching -1 at n = N/2 | n/a | analytic complement-pair prediction tracks the observed rate to **median \|err\| 0.022 / mean 0.036 over 192 points** | n/a | n/a | idea 310's split-half (seeds 0-29 vs 30-59) | **THE RECORD'S SPLIT-HALF DEVICE IS BIASED TOWARD DISAGREEMENT. Idea 310's seeds 0-29 vs 30-59 is n=30 of N=60, i.e. r = -1 EXACTLY.** Same-sign rate by effect size a=\|mu\|/se — independent 0.500/0.573/0.733 at a=0/0.5/1.0 vs complement **0.000/0.383/0.683**. So a complement split understates replication at every a below ~2 and prints BELOW a coin flip where the truth is 0.50 — precisely the small-effect regime idea 310 used it to diagnose ('evol 18-20/27, disp 13-19/27, near a coin'). Observed rates in this run fall to **0.110** (disp/CAND10/PARTIAL at n=240) for the same reason. Proposed: draw the two blocks from a pool of at least 4n, or quote the correction. | METHOD / corrects the record | 2026-09-09_what-n-would-make-the-partial-estimable_C.py |
 | 2026-09-09 | 547 RULE 8 + BOTH KEEP PATHS — direction fitted on block A, applied ONCE to the disjoint block B (4,800 picks); 4a/4b on all 2,880 panel-books, no selection | picks' OOS CAGR **9.54% / 9.41%** (q0.500 MARG/PART) and **12.27% / 11.82%** (q0.250) vs SPY **15.45%** | picks' OOS Sharpe **0.7129 / 0.7111** (q0.500) and **0.9014 / 0.8800** (q0.250) vs anchor 0.6998 / 0.8438, RULES v2 OOS **0.8527 / 1.0025**, SPY OOS 0.8820 | picks' OOS MaxDD -27.64 / -27.41 / -26.41 / -26.21% vs SPY -33.72% | n/a | SPY OOS Sharpe 0.8820 | **KILL FOR CAPITAL. 0 of 2,880 panel-books clear 4a, 170 clear 4b, BOTH 0**; of 4,800 picks 0 clear 4a and 541 clear 4b, every one on a panel whose un-ranked book also passes (idea 309's footprint). Picks lose to SPY on CAGR at both strata and to live RULES v2 on Sharpe at both. More draws buy a better direction only where the panel already carries it: at q0.250 the edge rises with n (+0.0185 -> +0.1090 marginal, -0.0015 -> +0.0884 partial), at q0.500 it does not (+0.0195 -> +0.0019). | KILL | 2026-09-09_what-n-would-make-the-partial-estimable_C.py |
+| 2026-09-09 | 550 (a) REPLICATION — QUANTILE-M mean resid0 (pp/yr) at cadence Q, 3 panels x 9 thetas, gross 0.75, 10 bps, D/W/M/Q/A design run verbatim off SMALL439 | n/a (a residual) | n/a | n/a | n/a | idea 307 (SMALL439 only): Q +0.0114, 9/9 thetas positive, c_sd 0.0097 | **DOES NOT REPLICATE — the flip is a SMALL439 PANEL FACT.** U56 Q **-0.0422 (0/9 thetas positive)**, B136 Q **-0.0442 (0/9)**, SMALL439 Q +0.0114 (9/9). Both other panels are negative at EVERY theta at Q. And the 9/9 is a FULL-window count only: SMALL439's own IS half reads **-0.0237 (1/9 positive)** against OOS +0.0316 (9/9), so the entire positive sign lives in the 2017+ window. Magnitude 1.1 bp/yr against a gap0 of -4.28 pp (0.27% of the quantity it decomposes) and 60x smaller than MA-THRESH at the same cadence/panel (-0.6871). Gates G1 0.0e+00, G2 6.7e-16, G3 idea 307 reproduced 2.2e-16 (270/270), G4 idea 551 reproduced 2.2e-16 (810/810), G7 reb-count |d|<=1; G5 (0.01396) and G6 (live 8.64%/1.2037) FAIL and reproduce idea 551's failures to the digit — pre-existing cache-vintage conditions, not this script. | KILLS the premise | 2026-09-09_does-the-Q-CADENCE-SIGN-FLIP-replicate-off-SMALL439_cloud.py |
+| 2026-09-09 | 550 (b) CALENDAR PROBE — same decomposition at a FIXED 63-bar cadence, phases {0,13,26,39,52}, vs the calendar quarter (540 extra books; phase is a reported contrast, not a tuned dial) | n/a | n/a | n/a | n/a | calendar-Q: U56 -0.0422 / B136 -0.0442 / SMALL439 +0.0114 | **CALENDAR ARTEFACT of the 63-rebalance window. 0 of 15 off-calendar (panel x phase) cells is positive**, SMALL439 included: 63bar+0 -0.0019, +13 -0.0370, +26 -0.0175, +39 -0.0690, +52 -0.0015. The ~63-bar HOLDING PERIOD never produces the flip on its own; only the quarter-end PHASE does. G7 confirms phase is not confounded with rebalance count (worst \|d n_reb\| = 1). In the OOS half alone SMALL439 does turn positive at 3/5 phases, so the OOS-window phenomenon is not purely calendar — but the published FULL-window number is. | KILLS the premise | 2026-09-09_does-the-Q-CADENCE-SIGN-FLIP-replicate-off-SMALL439_cloud.py |
+| 2026-09-09 | 550 RULE 8 + both KEEP paths over all 1,080 books (540 calendar-cadence + 540 phase-probe) | WF-book best OOS CAGR 41.53% (U56 QUANTILE-M/RESPREAD 63bar+13 th+0.30) | sign-claim chosen on IS holds into OOS in **0 of 6** (family x panel) cells; WF-book OOS Sharpe U56 1.3372 / B136 1.0600 / SMALL439 1.1042 vs RULES v2 OOS 1.2817 | WF-book OOS MaxDD -33.70% / -1.70% / -30.78% | 4a passers H1/H2 1.30/1.19 to 1.56/1.26 | SPY OOS 15.4% / 0.879 / -33.72%; RULES v2 OOS 9.51% / 1.2817 / -12.05% | **4a 5/1080, 4b 31/1080, BOTH 0/1080.** 4a passers are all U56 QUANTILE-M/DEGROSS and all fail 4b on CAGR; 4b passers are 26 U56 + 5 B136 + **0 SMALL439** and all fail 4a. 4b failing legs DD 755 / CAGR 537 / H2 425 / OOS 423 / H1 396 — the drawdown cap is still the binding leg (ideas 500/527). Every walk-forward book pick fails 4b (DD, CAGR, DD). No KEEP candidate, no memo, no RULES change. SURVIVORSHIP: SMALL439 and B136 are current constituents (44 tickers with max_1d_move >= 1.0 dropped first); resid0 is a same-names difference so the bias largely cancels there, but every CAGR/Sharpe/MaxDD/KEEP column is optimistic. | KILL | 2026-09-09_does-the-Q-CADENCE-SIGN-FLIP-replicate-off-SMALL439_cloud.py |
