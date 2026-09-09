@@ -1,0 +1,837 @@
+========================================================================================================================================================================================================
+IDEA 486 - census-every-published-N-EQUALS-50-model-comparison-in-the-record (lane C, 2026-09-09)
+Census every published model-vs-model comparison decided at N <= Nfloor rows whose two sides differ by
+more than G fitted parameters, then re-read each at the largest N its own panel can supply.
+Census axes (the two tuned parameters): Nfloor in [50, 75, 100, 150], G in [2, 5, 10, 20] - all 16 points reported.
+Re-read ladder D in [50, 100, 200, 500, 750, 1000] per k cell x panels ['B136', 'SMALL484'] (reporting axis, every point published).
+========================================================================================================================================================================================================
+
+[a] HARNESS - published rows recomputed from engine.backtest before anything new is read
+    U56/CAND20   12.6530% / 1.09172 / -18.3083%  halves 1.09418/1.09573   (the 2026-09-04 KEEP 4b candidate; published 12.7% / 1.092-1.093 / -18.3%)
+    U56/RULES v1 6.4194% / 0.66110 / -13.8278%   (published 6.5% / 0.664-0.666 / -13.8%)
+
+    B136: 136 tradable names, window 2009-01-13 -> 2026-09-04 (4439 days)
+      SPY      15.23% / 0.889 / -33.72%  halves 0.957/0.834  OOS 0.882
+      RULES v1        6.39% / 0.635 / -21.19%  halves 0.756/0.532  OOS 0.576
+      RULES v2 (live) 8.03% / 1.106 / -12.24%  halves 1.229/0.984  OOS 1.119
+      4b bars: MaxDD <= 20.23%, CAGR >= 10.66%, H1 > 0.957, H2 > 0.834, OOS Sharpe > 0.882
+
+    SMALL484: 483 tradable names, window 2011-01-13 -> 2026-09-04 (3934 days)
+      SPY      14.13% / 0.862 / -33.72%  halves 0.891/0.858  OOS 0.882
+      RULES v1        13.55% / 0.523 / -44.83%  halves 0.539/0.591  OOS 0.554
+      RULES v2 (live) 4.07% / 0.615 / -12.09%  halves 0.542/0.680  OOS 0.663
+      4b bars: MaxDD <= 20.23%, CAGR >= 9.89%, H1 > 0.891, H2 > 0.858, OOS Sharpe > 0.882
+
+    PANEL INTEGRITY: B136 carries 136 columns (load_universe(broad=True) reaches data/prices_broad.csv only via its exception path), SMALL484 carries 484.
+
+[b] FAST BACKTEST GATE - the vectorised backtester vs engine.backtest on 6 drawn books
+    max abs difference over 6 books: 2.776e-17   FAST BACKTEST PASS
+
+========================================================================================================================================================================================================
+STAGE 1 - THE CENSUS
+========================================================================================================================================================================================================
+
+[e] MECHANICAL SCAN of every committed .py under research/ (idea 483's regexes, verbatim)
+    files with a fit call                       72   (idea 483 published 70)
+    ... with NO fold/holdout machinery          66   (idea 483 published 66)
+    ... with a wide (dummy/design-matrix) hint  7   (idea 483 published 5)
+    ... wide AND unfolded                       3   (idea 483 published 3)
+    GATE [e] PASS - this run's scanner reproduces idea 483's census (counts may exceed it: files committed since).
+
+  THE COMPARISON TABLE - every published model-vs-model spec set the scan resolves.
+  p = fitted parameters including the intercept.  N = rows the comparison was decided on.
+  For the wide-ridge class p is the PANEL WIDTH, resolved from the panel itself, not typed.
+
+  10 published spec sets -> 52 comparisons, ALL reported:
+                                                                                     N                 spec_lo  p_lo                        spec_hi  p_hi  gap                        source
+file                                                 target                                                                                                                                 
+09-08_why-does-the-DD-ranking-die-on-U56_C           DD-ranking slope               12                  e only     2                          e + k     3    1                    MECHANICAL
+                                                     DD-ranking slope               12                  k only     2                          e + k     3    1                    MECHANICAL
+                                                     DD-ranking slope               12                  e only     2                         k only     2    0                    MECHANICAL
+09-08_does-modal-share-predict-VARIANCE-not-sign_B   log resid variance            560                   const     1                       distinct     2    1                    MECHANICAL
+                                                     log resid variance            560                   const     1                           logn     2    1                    MECHANICAL
+                                                     log resid variance            560                   const     1                          share     2    1                    MECHANICAL
+                                                     log resid variance            560                   const     1                     share+logn     3    2                    MECHANICAL
+                                                     log resid variance            560                   const     1            share+logn+distinct     4    3                    MECHANICAL
+                                                     log resid variance            560                distinct     2                           logn     2    0                    MECHANICAL
+                                                     log resid variance            560                distinct     2                          share     2    0                    MECHANICAL
+                                                     log resid variance            560                distinct     2                     share+logn     3    1                    MECHANICAL
+                                                     log resid variance            560                distinct     2            share+logn+distinct     4    2                    MECHANICAL
+                                                     log resid variance            560                    logn     2                          share     2    0                    MECHANICAL
+                                                     log resid variance            560                    logn     2                     share+logn     3    1                    MECHANICAL
+                                                     log resid variance            560                    logn     2            share+logn+distinct     4    2                    MECHANICAL
+                                                     log resid variance            560                   share     2                     share+logn     3    1                    MECHANICAL
+                                                     log resid variance            560                   share     2            share+logn+distinct     4    2                    MECHANICAL
+                                                     log resid variance            560              share+logn     3            share+logn+distinct     4    1                    MECHANICAL
+09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end- k-crossing shape              352        hinge@0 (pinned)     3                      hinge@tau     4    1  MECHANICAL p / ADJUDICATED N
+                                                     k-crossing shape              352                  linear     2               hinge@0 (pinned)     3    1  MECHANICAL p / ADJUDICATED N
+                                                     k-crossing shape              352        hinge@0 (pinned)     3                       step@tau     3    0  MECHANICAL p / ADJUDICATED N
+                                                     k-crossing shape              352                  linear     2                      hinge@tau     4    2  MECHANICAL p / ADJUDICATED N
+                                                     k-crossing shape              352                step@tau     3                      hinge@tau     4    1  MECHANICAL p / ADJUDICATED N
+                                                     k-crossing shape              352                  linear     2                       step@tau     3    1  MECHANICAL p / ADJUDICATED N
+09-06_is-ETF36-a-third-cluster-or-just-a-small-sampl reversal ~ ETF share           49             linear in s     2      linear in s + step at s=1     3    1                    MECHANICAL
+                                                     reversal ~ ETF share           49             linear in s     2               step at s=1 only     2    0                    MECHANICAL
+                                                     reversal ~ ETF share           49             linear in s     2               step at s>=0.875     2    0                    MECHANICAL
+                                                     reversal ~ ETF share           49        step at s=1 only     2      linear in s + step at s=1     3    1                    MECHANICAL
+                                                     reversal ~ ETF share           49        step at s>=0.875     2      linear in s + step at s=1     3    1                    MECHANICAL
+                                                     reversal ~ ETF share           49        step at s=1 only     2               step at s>=0.875     2    0                    MECHANICAL
+09-06_can-a-panel-property-choose-the-cadence_cloud  cadence gap                   115        log episode_days     2            family dummies only     3    1                    MECHANICAL
+                                                     cadence gap                   115  log h* (IR, stride 21)     2            family dummies only     3    1                    MECHANICAL
+                                                     cadence gap                   115     family dummies only     3           log h* + log episode     3    0                    MECHANICAL
+                                                     cadence gap                   115     family dummies only     3  log h* + log episode + family     5    2                    MECHANICAL
+                                                     cadence gap                   115       log turnover at W     2            family dummies only     3    1                    MECHANICAL
+                                                     cadence gap                   115        log episode_days     2         log h* (IR, stride 21)     2    0                    MECHANICAL
+                                                     cadence gap                   115        log episode_days     2           log h* + log episode     3    1                    MECHANICAL
+                                                     cadence gap                   115        log episode_days     2  log h* + log episode + family     5    3                    MECHANICAL
+                                                     cadence gap                   115        log episode_days     2              log turnover at W     2    0                    MECHANICAL
+                                                     cadence gap                   115  log h* (IR, stride 21)     2           log h* + log episode     3    1                    MECHANICAL
+                                                     cadence gap                   115  log h* (IR, stride 21)     2  log h* + log episode + family     5    3                    MECHANICAL
+                                                     cadence gap                   115  log h* (IR, stride 21)     2              log turnover at W     2    0                    MECHANICAL
+                                                     cadence gap                   115    log h* + log episode     3  log h* + log episode + family     5    2                    MECHANICAL
+                                                     cadence gap                   115       log turnover at W     2           log h* + log episode     3    1                    MECHANICAL
+                                                     cadence gap                   115       log turnover at W     2  log h* + log episode + family     5    3                    MECHANICAL
+09-06_does-the-cash-drag-share-depend-on-the-panel-o cash-drag share               162              c_bar only     2   1+c_bar+panel+family+cadence     7    5                   ADJUDICATED
+09-06_is-phase-sensitivity-a-book-property-or-a-pane log(phase spread)             115                   P1+P2     3            family dummies only     3    0                   ADJUDICATED
+                                                     log(phase spread)             115                   P1+P2     3                   family+P1+P2     5    2                   ADJUDICATED
+                                                     log(phase spread)             115     family dummies only     3                   family+P1+P2     5    2                   ADJUDICATED
+09-09_name-level-fixed-effects_B                     draw Sharpe (B136)             50                sd alone     2          M name-additive ridge   136  134                   ADJUDICATED
+09-09_does-one-dispersion-number-really-out-predict- draw Sharpe (B136, SMALL484)   50                sd alone     2          M name-additive ridge   136  134                    MECHANICAL
+09-09_which-published-residualisations-are-IN-SAMPLE sd | control                  200                NARROW10    11             WIDE (panel width)   136  125                    MECHANICAL
+
+  CENSUS GRID - comparisons in scope (N <= Nfloor AND gap > G), all 16 points:
+G       2   5   10  20
+Nfloor                
+50       2   2   2   2
+75       2   2   2   2
+100      2   2   2   2
+150      5   2   2   2
+
+  (same grid, distinct FILES)
+G       2   5   10  20
+Nfloor                
+50       2   2   2   2
+75       2   2   2   2
+100      2   2   2   2
+150      3   2   2   2
+
+  (same grid, INDEPENDENT comparisons only - idea 484 is the re-read of idea 252's own
+   comparison and is excluded here so the class is not double-counted)
+G       2   5   10  20
+Nfloor                
+50       1   1   1   1
+75       1   1   1   1
+100      1   1   1   1
+150      4   1   1   1
+
+  THE QUEUE'S OWN CELL (Nfloor=100, G=10): 2 comparisons in 2 file(s), 1 independent:
+      09-09_name-level-fixed-effects_B  |  sd alone (p=2) vs M name-additive ridge (p=136)  gap 134  N 50  [DRAW-SOURCED (extensible)]
+      09-09_does-one-dispersion-number-really-out-predict-136-name-dummies_C  |  sd alone (p=2) vs M name-additive ridge (p=136)  gap 134  N 50  [DRAW-SOURCED (extensible)]  ** NOT INDEPENDENT: idea 484 is the re-read of idea 252's own comparison
+
+========================================================================================================================================================================================================
+STAGE 2b - RE-READ of every in-scope comparison that is NOT the wide-ridge class,
+at the largest N its own panel can supply, from that file's own committed output.
+========================================================================================================================================================================================================
+
+  (i) why-does-the-DD-ranking-die-on-U56: published at n=12 (cell means) and n=186 (per-cell slopes).  Refit here on the 186 committed cell slopes:
+      e only   R2 at n=12 +0.4093  ->  R2 at n=186 +0.1088   (published large-N row: +0.1697)
+      k only   R2 at n=12 +0.4672  ->  R2 at n=186 +0.1055   (published large-N row: +0.1697)
+      e + k    R2 at n=12 +0.6389  ->  R2 at n=186 +0.1697   (published large-N row: +0.1697)
+      ORDERING (e+k over e only): +0.2296 at n=12  ->  +0.0610 at n=186   HOLDS
+
+  (ii) is-phase-sensitivity - published per-cadence at n=115 (family dummies p=3 vs the two
+       properties p=3 vs both p=5).  Re-read on the pool, the largest N this panel supplies,
+       with CADENCE fixed effects added to every spec so pooling itself is not the change:
+       cad        n  R2 family   R2 P1+P2   R2 both  ordering
+       10W      115      0.087      0.326     0.409  properties > family   (p 3/3/5)
+       2M       115      0.026      0.015     0.036  family > properties   (p 3/3/5)
+       2W       115      0.038      0.065     0.097  properties > family   (p 3/3/5)
+       6W       115      0.112      0.129     0.206  properties > family   (p 3/3/5)
+       8W       115      0.068      0.307     0.378  properties > family   (p 3/3/5)
+       POOL     575      0.541      0.554     0.555  properties > family   (p 7/7/9)
+       The published claim is about which side wins per cadence; the pool row is the same
+       comparison at the largest N, and it is reported whether or not it agrees.
+
+========================================================================================================================================================================================================
+STAGE 2a - THE WIDE CLASS re-read at the largest N: draw ladder to D=1000 per k cell
+  Books for draws 0..499 are idea 484's committed grid (gate [c]); draws 500..999 are run here.
+========================================================================================================================================================================================================
+
+[c] GRID GATE - 25 draws of each k cell on each panel re-run fresh vs idea 484's committed grid
+    150 rows x 27 numeric columns, max abs difference 7.105e-15   GRID PASS - the ladder extends idea 484s own draws
+    B136 k=20  draws 500..999 done (75s)
+    B136 k=40  draws 500..999 done (142s)
+    B136 k=80  draws 500..999 done (274s)
+    B136: 3000 books (1000 draws x 3 k cells)
+    SMALL484 k=20  draws 500..999 done (312s)
+    SMALL484 k=40  draws 500..999 done (375s)
+    SMALL484 k=80  draws 500..999 done (495s)
+    SMALL484: 3000 books (1000 draws x 3 k cells)
+    B136: P=136 name columns, 3000 rows; N/P at D=50 0.37, at D=1000 7.35
+    SMALL484: P=483 name columns, 3000 rows; N/P at D=50 0.10, at D=1000 2.07
+
+  THE LADDER - out-of-fold R2 of  y ~ sd  vs  y ~ M (ridge)  vs  y ~ M + sd, 10 folds by draw index.
+  lambda: CV = nested inner 5-fold choice inside each training fold; ORACLE = best of the six penalties.
+    B136 k=20 ladder done (497s)
+    B136 k=40 ladder done (499s)
+    B136 k=80 ladder done (501s)
+    SMALL484 k=20 ladder done (515s)
+    SMALL484 k=40 ladder done (529s)
+    SMALL484 k=80 ladder done (543s)
+
+[d] IDEA 252's PUBLISHED NUMBER (its leg 3), recomputed here at D=50 on B136
+      name-additive M ALONE : median +0.1509  range -0.1968..+0.4237   (idea 252 published median +0.151, range -0.197..+0.424)
+      sd ALONE              : median +0.2894  range +0.0262..+0.3750   (idea 252 published median +0.289, range +0.026..+0.375)
+      nested gain M+sd - M  : improves in 72 of 72 points   (idea 252 published 72 of 72)
+      sd beats M in 58 of 72 of those points
+
+  THE RE-READ AT MAX N - smallest D with oofR2(M) >= oofR2(sd), and the ordering at each end.
+                                    sd_D50  sd_Dmax   M_D50  M_Dmax  gap_D50  gap_Dmax  slope_logD  D_cross
+panel    n  k  y            lam                                                                            
+B136     5  20 CAND Sharpe  cv      0.3165   0.3508 -0.0538  0.8249   0.3703   -0.4741     -0.2619      100
+                            oracle  0.3165   0.3508  0.0711  0.8249   0.2455   -0.4741     -0.2299      100
+               EWall Sharpe cv      0.2894   0.2802  0.1971  0.8952   0.0922   -0.6150     -0.2299      100
+                            oracle  0.2894   0.2802  0.2778  0.8952   0.0115   -0.6150     -0.2092      100
+               premium      cv     -0.0911   0.0293 -0.0572  0.5866  -0.0339   -0.5572     -0.1674       50
+                            oracle -0.0911   0.0293 -0.0313  0.5866  -0.0599   -0.5572     -0.1461       50
+            40 CAND Sharpe  cv      0.0262   0.2373  0.0057  0.8112   0.0205   -0.5738     -0.1885      100
+                            oracle  0.0262   0.2373  0.1533  0.8112  -0.1271   -0.5738     -0.1475       50
+               EWall Sharpe cv      0.2119   0.2851  0.3818  0.9106  -0.1699   -0.6254     -0.1623       50
+                            oracle  0.2119   0.2851  0.3818  0.9106  -0.1699   -0.6254     -0.1593       50
+               premium      cv     -0.0653  -0.0032  0.2408  0.7095  -0.3061   -0.7127     -0.1469       50
+                            oracle -0.0653  -0.0032  0.2600  0.7095  -0.3254   -0.7127     -0.1395       50
+            80 CAND Sharpe  cv      0.2042   0.2614  0.0928  0.8512   0.1114   -0.5898     -0.2207      100
+                            oracle  0.2042   0.2614  0.1612  0.8513   0.0430   -0.5899     -0.2020      100
+               EWall Sharpe cv      0.3642   0.3256  0.4237  0.9642  -0.0595   -0.6386     -0.2229       50
+                            oracle  0.3642   0.3256  0.4237  0.9644  -0.0595   -0.6387     -0.2158       50
+               premium      cv     -0.0385   0.0592 -0.0727  0.7911   0.0343   -0.7319     -0.2353      100
+                            oracle -0.0385   0.0592  0.0344  0.7916  -0.0729   -0.7323     -0.2037       50
+         20 20 CAND Sharpe  cv      0.3027   0.3452  0.1672  0.9798   0.1355   -0.6346     -0.2396      100
+                            oracle  0.3027   0.3452  0.2185  0.9798   0.0842   -0.6346     -0.2273      100
+               EWall Sharpe cv      0.2894   0.2802  0.1971  0.8952   0.0922   -0.6150     -0.2299      100
+                            oracle  0.2894   0.2802  0.2778  0.8952   0.0115   -0.6150     -0.2092      100
+               premium      cv      0.0398   0.0015  0.0789  0.6668  -0.0391   -0.6653     -0.2074       50
+                            oracle  0.0398   0.0015  0.1397  0.6668  -0.0999   -0.6653     -0.1850       50
+            40 CAND Sharpe  cv      0.2520   0.4202  0.0911  0.9442   0.1609   -0.5240     -0.2234      100
+                            oracle  0.2520   0.4202  0.1922  0.9442   0.0598   -0.5240     -0.1928      100
+               EWall Sharpe cv      0.2119   0.2851  0.3818  0.9106  -0.1699   -0.6254     -0.1623       50
+                            oracle  0.2119   0.2851  0.3818  0.9106  -0.1699   -0.6254     -0.1593       50
+               premium      cv     -0.0375  -0.0063  0.0402  0.6595  -0.0777   -0.6658     -0.2343       50
+                            oracle -0.0375  -0.0063  0.1292  0.6595  -0.1667   -0.6658     -0.2026       50
+            80 CAND Sharpe  cv      0.3750   0.3445  0.2986  0.9177   0.0764   -0.5732     -0.2361      100
+                            oracle  0.3750   0.3445  0.3049  0.9177   0.0701   -0.5732     -0.2342      100
+               EWall Sharpe cv      0.3642   0.3256  0.4237  0.9642  -0.0595   -0.6386     -0.2229       50
+                            oracle  0.3642   0.3256  0.4237  0.9644  -0.0595   -0.6387     -0.2158       50
+               premium      cv     -0.0654   0.0158  0.0503  0.7540  -0.1157   -0.7382     -0.2272       50
+                            oracle -0.0654   0.0158  0.1889  0.7540  -0.2543   -0.7382     -0.1845       50
+SMALL484 5  20 CAND Sharpe  cv     -0.0341  -0.0003 -0.1262  0.6676   0.0921   -0.6679     -0.2721      200
+                            oracle -0.0341  -0.0003 -0.0157  0.6698  -0.0184   -0.6701     -0.2388       50
+               EWall Sharpe cv     -0.0433  -0.0037 -0.0834  0.6507   0.0401   -0.6544     -0.2388      100
+                            oracle -0.0433  -0.0037  0.0151  0.6500  -0.0584   -0.6537     -0.2075       50
+               premium      cv     -0.0929  -0.0018  0.0794  0.2022  -0.1723   -0.2039     -0.0139       50
+                            oracle -0.0929  -0.0018  0.1003  0.2022  -0.1932   -0.2039     -0.0025       50
+            40 CAND Sharpe  cv     -0.0880   0.0051 -0.0447  0.6260  -0.0433   -0.6208     -0.1858       50
+                            oracle -0.0880   0.0051 -0.0145  0.6260  -0.0735   -0.6208     -0.1717       50
+               EWall Sharpe cv     -0.0144  -0.0006 -0.1007  0.7976   0.0863   -0.7981     -0.2816      100
+                            oracle -0.0144  -0.0006 -0.0203  0.7976   0.0059   -0.7981     -0.2618      100
+               premium      cv     -0.1615   0.0014 -0.1370  0.4276  -0.0245   -0.4262     -0.1531       50
+                            oracle -0.1615   0.0014 -0.0595  0.4276  -0.1020   -0.4262     -0.1331       50
+            80 CAND Sharpe  cv     -0.0197  -0.0071  0.0009  0.6178  -0.0206   -0.6249     -0.2167       50
+                            oracle -0.0197  -0.0071  0.0489  0.6186  -0.0686   -0.6257     -0.2015       50
+               EWall Sharpe cv     -0.0524  -0.0045 -0.0860  0.8513   0.0337   -0.8558     -0.3324      200
+                            oracle -0.0524  -0.0045 -0.0508  0.8535  -0.0016   -0.8581     -0.3170       50
+               premium      cv     -0.0839  -0.0050 -0.0839  0.5644   0.0000   -0.5695     -0.2127      200
+                            oracle -0.0839  -0.0050 -0.0008  0.5644  -0.0831   -0.5695     -0.1883       50
+         20 20 CAND Sharpe  cv     -0.0332  -0.0019 -0.0716  0.9748   0.0384   -0.9766     -0.3992      200
+                            oracle -0.0332  -0.0019  0.0052  0.9748  -0.0384   -0.9766     -0.3659       50
+               EWall Sharpe cv     -0.0433  -0.0037 -0.0834  0.6507   0.0401   -0.6544     -0.2388      100
+                            oracle -0.0433  -0.0037  0.0151  0.6500  -0.0584   -0.6537     -0.2075       50
+               premium      cv     -0.1393  -0.0018  0.1770  0.3170  -0.3163   -0.3188     -0.0021       50
+                            oracle -0.1393  -0.0018  0.1770  0.3294  -0.3163   -0.3312     -0.0049       50
+            40 CAND Sharpe  cv      0.0168  -0.0014  0.0874  0.9670  -0.0706   -0.9684     -0.3248       50
+                            oracle  0.0168  -0.0014  0.1253  0.9670  -0.1085   -0.9684     -0.3138       50
+               EWall Sharpe cv     -0.0144  -0.0006 -0.1007  0.7976   0.0863   -0.7981     -0.2816      100
+                            oracle -0.0144  -0.0006 -0.0203  0.7976   0.0059   -0.7981     -0.2618      100
+               premium      cv     -0.0698  -0.0036 -0.0732  0.4706   0.0035   -0.4742     -0.1559      100
+                            oracle -0.0698  -0.0036  0.0074  0.4706  -0.0771   -0.4742     -0.1286       50
+            80 CAND Sharpe  cv     -0.0507  -0.0065 -0.0623  0.8615   0.0116   -0.8680     -0.3093      100
+                            oracle -0.0507  -0.0065 -0.0297  0.8624  -0.0210   -0.8690     -0.2989       50
+               EWall Sharpe cv     -0.0524  -0.0045 -0.0860  0.8513   0.0337   -0.8558     -0.3324      200
+                            oracle -0.0524  -0.0045 -0.0508  0.8535  -0.0016   -0.8581     -0.3170       50
+               premium      cv     -0.1113  -0.0036 -0.1216  0.4762   0.0103   -0.4798     -0.1833      100
+                            oracle -0.1113  -0.0036 -0.0192  0.4762  -0.0921   -0.4798     -0.1486       50
+
+  B136 / lambda cv: M catches sd inside the ladder in 12 of 12 book-Sharpe cells (median D* 100.0)
+      sd  median +0.2894 (D=50) -> +0.3054 (D=1000)   [the FLAT side]
+      M   median +0.1971 (D=50) -> +0.9106 (D=1000)
+      gap median +0.0843 -> -0.6150; sd beats M in 8/12 at D=50 and 0/12 at D=1000
+
+  B136 / lambda oracle: M catches sd inside the ladder in 12 of 12 book-Sharpe cells (median D* 100.0)
+      sd  median +0.2894 (D=50) -> +0.3054 (D=1000)   [the FLAT side]
+      M   median +0.2778 (D=50) -> +0.9106 (D=1000)
+      gap median +0.0115 -> -0.6150; sd beats M in 7/12 at D=50 and 0/12 at D=1000
+
+  SMALL484 / lambda cv: M catches sd inside the ladder in 12 of 12 book-Sharpe cells (median D* 100.0)
+      sd  median -0.0387 (D=50) -> -0.0028 (D=1000)   [the FLAT side]
+      M   median -0.0834 (D=50) -> +0.7976 (D=1000)
+      gap median +0.0360 -> -0.7981; sd beats M in 9/12 at D=50 and 0/12 at D=1000
+
+  SMALL484 / lambda oracle: M catches sd inside the ladder in 12 of 12 book-Sharpe cells (median D* 50.0)
+      sd  median -0.0387 (D=50) -> -0.0028 (D=1000)   [the FLAT side]
+      M   median -0.0151 (D=50) -> +0.7976 (D=1000)
+      gap median -0.0297 -> -0.7981; sd beats M in 2/12 at D=50 and 0/12 at D=1000
+
+  FULL LADDER, book-Sharpe columns (CV lambda):
+                                     N    P     NP  oofR2_sd  oofR2_M_cv  oofR2_M_oracle  oofR2_Msd_cv  gap_cv  gap_oracle  gain_cv
+panel    n  k  y            D                                                                                                      
+B136     5  20 CAND Sharpe  50      50  136 0.3676    0.3165     -0.0538          0.0711        0.2930  0.3703      0.2455   0.3468
+               EWall Sharpe 50      50  136 0.3676    0.2894      0.1971          0.2778        0.5465  0.0922      0.0115   0.3494
+         20 20 CAND Sharpe  50      50  136 0.3676    0.3027      0.1672          0.2185        0.6370  0.1355      0.0842   0.4698
+               EWall Sharpe 50      50  136 0.3676    0.2894      0.1971          0.2778        0.5465  0.0922      0.0115   0.3494
+         5  20 CAND Sharpe  100    100  136 0.7353    0.3584      0.4455          0.4609        0.5384 -0.0871     -0.1025   0.0929
+               EWall Sharpe 100    100  136 0.7353    0.2942      0.5112          0.5219        0.6252 -0.2170     -0.2277   0.1139
+         20 20 CAND Sharpe  100    100  136 0.7353    0.3412      0.5898          0.5898        0.7746 -0.2486     -0.2486   0.1848
+               EWall Sharpe 100    100  136 0.7353    0.2942      0.5112          0.5219        0.6252 -0.2170     -0.2277   0.1139
+         5  20 CAND Sharpe  200    200  136 1.4706    0.3202      0.6297          0.6327        0.6725 -0.3095     -0.3125   0.0428
+               EWall Sharpe 200    200  136 1.4706    0.3073      0.7639          0.7639        0.7856 -0.4566     -0.4566   0.0216
+         20 20 CAND Sharpe  200    200  136 1.4706    0.3628      0.9080          0.9080        0.9429 -0.5452     -0.5452   0.0349
+               EWall Sharpe 200    200  136 1.4706    0.3073      0.7639          0.7639        0.7856 -0.4566     -0.4566   0.0216
+         5  20 CAND Sharpe  500    500  136 3.6765    0.3304      0.7898          0.7898        0.8002 -0.4594     -0.4594   0.0104
+               EWall Sharpe 500    500  136 3.6765    0.2737      0.8697          0.8697        0.8782 -0.5959     -0.5959   0.0085
+         20 20 CAND Sharpe  500    500  136 3.6765    0.3530      0.9755          0.9755        0.9820 -0.6225     -0.6225   0.0065
+               EWall Sharpe 500    500  136 3.6765    0.2737      0.8697          0.8697        0.8782 -0.5959     -0.5959   0.0085
+         5  20 CAND Sharpe  750    750  136 5.5147    0.3398      0.8214          0.8214        0.8315 -0.4816     -0.4816   0.0100
+               EWall Sharpe 750    750  136 5.5147    0.2683      0.8893          0.8893        0.8957 -0.6210     -0.6210   0.0064
+         20 20 CAND Sharpe  750    750  136 5.5147    0.3467      0.9778          0.9778        0.9832 -0.6310     -0.6310   0.0054
+               EWall Sharpe 750    750  136 5.5147    0.2683      0.8893          0.8893        0.8957 -0.6210     -0.6210   0.0064
+         5  20 CAND Sharpe  1000  1000  136 7.3529    0.3508      0.8249          0.8249        0.8364 -0.4741     -0.4741   0.0115
+               EWall Sharpe 1000  1000  136 7.3529    0.2802      0.8952          0.8952        0.9016 -0.6150     -0.6150   0.0065
+         20 20 CAND Sharpe  1000  1000  136 7.3529    0.3452      0.9798          0.9798        0.9848 -0.6346     -0.6346   0.0050
+               EWall Sharpe 1000  1000  136 7.3529    0.2802      0.8952          0.8952        0.9016 -0.6150     -0.6150   0.0065
+         5  40 CAND Sharpe  50      50  136 0.3676    0.0262      0.0057          0.1533        0.1195  0.0205     -0.1271   0.1138
+               EWall Sharpe 50      50  136 0.3676    0.2119      0.3818          0.3818        0.5052 -0.1699     -0.1699   0.1234
+         20 40 CAND Sharpe  50      50  136 0.3676    0.2520      0.0911          0.1922        0.3620  0.1609      0.0598   0.2709
+               EWall Sharpe 50      50  136 0.3676    0.2119      0.3818          0.3818        0.5052 -0.1699     -0.1699   0.1234
+         5  40 CAND Sharpe  100    100  136 0.7353    0.0963      0.3340          0.3772        0.4655 -0.2377     -0.2810   0.1315
+               EWall Sharpe 100    100  136 0.7353    0.2666      0.5109          0.5329        0.5880 -0.2443     -0.2663   0.0771
+         20 40 CAND Sharpe  100    100  136 0.7353    0.2822      0.3987          0.4456        0.6569 -0.1165     -0.1634   0.2581
+               EWall Sharpe 100    100  136 0.7353    0.2666      0.5109          0.5329        0.5880 -0.2443     -0.2663   0.0771
+         5  40 CAND Sharpe  200    200  136 1.4706    0.1809      0.6062          0.6062        0.6669 -0.4252     -0.4252   0.0608
+               EWall Sharpe 200    200  136 1.4706    0.2497      0.8220          0.8220        0.8391 -0.5723     -0.5723   0.0171
+         20 40 CAND Sharpe  200    200  136 1.4706    0.3504      0.7891          0.7891        0.8149 -0.4387     -0.4387   0.0259
+               EWall Sharpe 200    200  136 1.4706    0.2497      0.8220          0.8220        0.8391 -0.5723     -0.5723   0.0171
+         5  40 CAND Sharpe  500    500  136 3.6765    0.2489      0.7691          0.7707        0.7843 -0.5202     -0.5218   0.0153
+               EWall Sharpe 500    500  136 3.6765    0.2745      0.8826          0.8826        0.8845 -0.6081     -0.6081   0.0018
+         20 40 CAND Sharpe  500    500  136 3.6765    0.4158      0.9276          0.9281        0.9320 -0.5118     -0.5123   0.0044
+               EWall Sharpe 500    500  136 3.6765    0.2745      0.8826          0.8826        0.8845 -0.6081     -0.6081   0.0018
+         5  40 CAND Sharpe  750    750  136 5.5147    0.2453      0.8087          0.8087        0.8158 -0.5634     -0.5634   0.0072
+               EWall Sharpe 750    750  136 5.5147    0.2785      0.9025          0.9025        0.9038 -0.6240     -0.6240   0.0012
+         20 40 CAND Sharpe  750    750  136 5.5147    0.4121      0.9413          0.9414        0.9445 -0.5292     -0.5293   0.0032
+               EWall Sharpe 750    750  136 5.5147    0.2785      0.9025          0.9025        0.9038 -0.6240     -0.6240   0.0012
+         5  40 CAND Sharpe  1000  1000  136 7.3529    0.2373      0.8112          0.8112        0.8188 -0.5738     -0.5738   0.0076
+               EWall Sharpe 1000  1000  136 7.3529    0.2851      0.9106          0.9106        0.9128 -0.6254     -0.6254   0.0022
+         20 40 CAND Sharpe  1000  1000  136 7.3529    0.4202      0.9442          0.9442        0.9468 -0.5240     -0.5240   0.0026
+               EWall Sharpe 1000  1000  136 7.3529    0.2851      0.9106          0.9106        0.9128 -0.6254     -0.6254   0.0022
+         5  80 CAND Sharpe  50      50  136 0.3676    0.2042      0.0928          0.1612        0.2908  0.1114      0.0430   0.1979
+               EWall Sharpe 50      50  136 0.3676    0.3642      0.4237          0.4237        0.5598 -0.0595     -0.0595   0.1361
+         20 80 CAND Sharpe  50      50  136 0.3676    0.3750      0.2986          0.3049        0.6017  0.0764      0.0701   0.3031
+               EWall Sharpe 50      50  136 0.3676    0.3642      0.4237          0.4237        0.5598 -0.0595     -0.0595   0.1361
+         5  80 CAND Sharpe  100    100  136 0.7353    0.2805      0.5093          0.5268        0.5911 -0.2287     -0.2462   0.0818
+               EWall Sharpe 100    100  136 0.7353    0.4318      0.4884          0.5396        0.6599 -0.0567     -0.1078   0.1715
+         20 80 CAND Sharpe  100    100  136 0.7353    0.3992      0.4026          0.4026        0.5573 -0.0034     -0.0034   0.1548
+               EWall Sharpe 100    100  136 0.7353    0.4318      0.4884          0.5396        0.6599 -0.0567     -0.1078   0.1715
+         5  80 CAND Sharpe  200    200  136 1.4706    0.2634      0.6843          0.6843        0.7144 -0.4210     -0.4210   0.0301
+               EWall Sharpe 200    200  136 1.4706    0.3108      0.8980          0.8988        0.9029 -0.5871     -0.5880   0.0049
+         20 80 CAND Sharpe  200    200  136 1.4706    0.3333      0.7941          0.8040        0.8323 -0.4608     -0.4706   0.0382
+               EWall Sharpe 200    200  136 1.4706    0.3108      0.8980          0.8988        0.9029 -0.5871     -0.5880   0.0049
+         5  80 CAND Sharpe  500    500  136 3.6765    0.2550      0.8108          0.8106        0.8112 -0.5558     -0.5555   0.0004
+               EWall Sharpe 500    500  136 3.6765    0.3053      0.9605          0.9609        0.9604 -0.6552     -0.6556  -0.0001
+         20 80 CAND Sharpe  500    500  136 3.6765    0.3430      0.8969          0.8969        0.8962 -0.5539     -0.5539  -0.0007
+               EWall Sharpe 500    500  136 3.6765    0.3053      0.9605          0.9609        0.9604 -0.6552     -0.6556  -0.0001
+         5  80 CAND Sharpe  750    750  136 5.5147    0.2646      0.8481          0.8483        0.8476 -0.5836     -0.5838  -0.0005
+               EWall Sharpe 750    750  136 5.5147    0.3210      0.9588          0.9591        0.9586 -0.6378     -0.6381  -0.0002
+         20 80 CAND Sharpe  750    750  136 5.5147    0.3393      0.9036          0.9036        0.9047 -0.5643     -0.5643   0.0011
+               EWall Sharpe 750    750  136 5.5147    0.3210      0.9588          0.9591        0.9586 -0.6378     -0.6381  -0.0002
+         5  80 CAND Sharpe  1000  1000  136 7.3529    0.2614      0.8512          0.8513        0.8514 -0.5898     -0.5899   0.0002
+               EWall Sharpe 1000  1000  136 7.3529    0.3256      0.9642          0.9644        0.9642 -0.6386     -0.6387  -0.0000
+         20 80 CAND Sharpe  1000  1000  136 7.3529    0.3445      0.9177          0.9177        0.9191 -0.5732     -0.5732   0.0014
+               EWall Sharpe 1000  1000  136 7.3529    0.3256      0.9642          0.9644        0.9642 -0.6386     -0.6387  -0.0000
+SMALL484 5  20 CAND Sharpe  50      50  483 0.1035   -0.0341     -0.1262         -0.0157       -0.1440  0.0921     -0.0184  -0.0179
+               EWall Sharpe 50      50  483 0.1035   -0.0433     -0.0834          0.0151       -0.1092  0.0401     -0.0584  -0.0258
+         20 20 CAND Sharpe  50      50  483 0.1035   -0.0332     -0.0716          0.0052       -0.0802  0.0384     -0.0384  -0.0086
+               EWall Sharpe 50      50  483 0.1035   -0.0433     -0.0834          0.0151       -0.1092  0.0401     -0.0584  -0.0258
+         5  20 CAND Sharpe  100    100  483 0.2070   -0.0171     -0.0565         -0.0003       -0.0641  0.0393     -0.0169  -0.0077
+               EWall Sharpe 100    100  483 0.2070   -0.0215      0.0301          0.0904        0.0344 -0.0516     -0.1120   0.0043
+         20 20 CAND Sharpe  100    100  483 0.2070   -0.0238     -0.0589          0.0371       -0.0763  0.0351     -0.0609  -0.0174
+               EWall Sharpe 100    100  483 0.2070   -0.0215      0.0301          0.0904        0.0344 -0.0516     -0.1120   0.0043
+         5  20 CAND Sharpe  200    200  483 0.4141   -0.0332      0.0669          0.0827        0.0253 -0.1001     -0.1159  -0.0415
+               EWall Sharpe 200    200  483 0.4141   -0.0170      0.2069          0.2069        0.1978 -0.2240     -0.2240  -0.0092
+         20 20 CAND Sharpe  200    200  483 0.4141   -0.0309      0.1553          0.1926        0.1376 -0.1863     -0.2235  -0.0178
+               EWall Sharpe 200    200  483 0.4141   -0.0170      0.2069          0.2069        0.1978 -0.2240     -0.2240  -0.0092
+         5  20 CAND Sharpe  500    500  483 1.0352   -0.0120      0.4250          0.4370        0.4265 -0.4370     -0.4490   0.0015
+               EWall Sharpe 500    500  483 1.0352   -0.0065      0.4756          0.4756        0.4741 -0.4821     -0.4821  -0.0015
+         20 20 CAND Sharpe  500    500  483 1.0352   -0.0096      0.7984          0.7984        0.7982 -0.8080     -0.8080  -0.0002
+               EWall Sharpe 500    500  483 1.0352   -0.0065      0.4756          0.4756        0.4741 -0.4821     -0.4821  -0.0015
+         5  20 CAND Sharpe  750    750  483 1.5528   -0.0054      0.5854          0.5854        0.5855 -0.5908     -0.5908   0.0001
+               EWall Sharpe 750    750  483 1.5528   -0.0073      0.5527          0.5575        0.5503 -0.5600     -0.5648  -0.0025
+         20 20 CAND Sharpe  750    750  483 1.5528   -0.0049      0.9562          0.9562        0.9558 -0.9610     -0.9610  -0.0003
+               EWall Sharpe 750    750  483 1.5528   -0.0073      0.5527          0.5575        0.5503 -0.5600     -0.5648  -0.0025
+         5  20 CAND Sharpe  1000  1000  483 2.0704   -0.0003      0.6676          0.6698        0.6710 -0.6679     -0.6701   0.0034
+               EWall Sharpe 1000  1000  483 2.0704   -0.0037      0.6507          0.6500        0.6500 -0.6544     -0.6537  -0.0007
+         20 20 CAND Sharpe  1000  1000  483 2.0704   -0.0019      0.9748          0.9748        0.9748 -0.9766     -0.9766   0.0000
+               EWall Sharpe 1000  1000  483 2.0704   -0.0037      0.6507          0.6500        0.6500 -0.6544     -0.6537  -0.0007
+         5  40 CAND Sharpe  50      50  483 0.1035   -0.0880     -0.0447         -0.0145       -0.1001 -0.0433     -0.0735  -0.0554
+               EWall Sharpe 50      50  483 0.1035   -0.0144     -0.1007         -0.0203       -0.0810  0.0863      0.0059   0.0197
+         20 40 CAND Sharpe  50      50  483 0.1035    0.0168      0.0874          0.1253        0.1412 -0.0706     -0.1085   0.0538
+               EWall Sharpe 50      50  483 0.1035   -0.0144     -0.1007         -0.0203       -0.0810  0.0863      0.0059   0.0197
+         5  40 CAND Sharpe  100    100  483 0.2070   -0.0288      0.1899          0.2337        0.1821 -0.2187     -0.2625  -0.0078
+               EWall Sharpe 100    100  483 0.2070   -0.0381      0.1929          0.2030        0.1653 -0.2309     -0.2411  -0.0276
+         20 40 CAND Sharpe  100    100  483 0.2070   -0.0287      0.2286          0.2424        0.2059 -0.2573     -0.2711  -0.0227
+               EWall Sharpe 100    100  483 0.2070   -0.0381      0.1929          0.2030        0.1653 -0.2309     -0.2411  -0.0276
+         5  40 CAND Sharpe  200    200  483 0.4141   -0.0040      0.2124          0.2305        0.2122 -0.2164     -0.2345  -0.0002
+               EWall Sharpe 200    200  483 0.4141   -0.0250      0.3657          0.3672        0.3660 -0.3907     -0.3922   0.0003
+         20 40 CAND Sharpe  200    200  483 0.4141   -0.0173      0.4000          0.4003        0.4038 -0.4173     -0.4176   0.0037
+               EWall Sharpe 200    200  483 0.4141   -0.0250      0.3657          0.3672        0.3660 -0.3907     -0.3922   0.0003
+         5  40 CAND Sharpe  500    500  483 1.0352   -0.0022      0.4281          0.4281        0.4262 -0.4303     -0.4303  -0.0019
+               EWall Sharpe 500    500  483 1.0352   -0.0063      0.5865          0.5955        0.5872 -0.5927     -0.6018   0.0007
+         20 40 CAND Sharpe  500    500  483 1.0352   -0.0070      0.8491          0.8491        0.8489 -0.8561     -0.8561  -0.0002
+               EWall Sharpe 500    500  483 1.0352   -0.0063      0.5865          0.5955        0.5872 -0.5927     -0.6018   0.0007
+         5  40 CAND Sharpe  750    750  483 1.5528    0.0024      0.5673          0.5673        0.5678 -0.5649     -0.5649   0.0005
+               EWall Sharpe 750    750  483 1.5528   -0.0028      0.7452          0.7452        0.7451 -0.7480     -0.7480  -0.0001
+         20 40 CAND Sharpe  750    750  483 1.5528   -0.0026      0.9541          0.9541        0.9541 -0.9567     -0.9567  -0.0001
+               EWall Sharpe 750    750  483 1.5528   -0.0028      0.7452          0.7452        0.7451 -0.7480     -0.7480  -0.0001
+         5  40 CAND Sharpe  1000  1000  483 2.0704    0.0051      0.6260          0.6260        0.6265 -0.6208     -0.6208   0.0005
+               EWall Sharpe 1000  1000  483 2.0704   -0.0006      0.7976          0.7976        0.7975 -0.7981     -0.7981  -0.0001
+         20 40 CAND Sharpe  1000  1000  483 2.0704   -0.0014      0.9670          0.9670        0.9671 -0.9684     -0.9684   0.0001
+               EWall Sharpe 1000  1000  483 2.0704   -0.0006      0.7976          0.7976        0.7975 -0.7981     -0.7981  -0.0001
+         5  80 CAND Sharpe  50      50  483 0.1035   -0.0197      0.0009          0.0489        0.1072 -0.0206     -0.0686   0.1063
+               EWall Sharpe 50      50  483 0.1035   -0.0524     -0.0860         -0.0508       -0.0792  0.0337     -0.0016   0.0068
+         20 80 CAND Sharpe  50      50  483 0.1035   -0.0507     -0.0623         -0.0297       -0.0565  0.0116     -0.0210   0.0058
+               EWall Sharpe 50      50  483 0.1035   -0.0524     -0.0860         -0.0508       -0.0792  0.0337     -0.0016   0.0068
+         5  80 CAND Sharpe  100    100  483 0.2070   -0.0473      0.0043          0.0234       -0.0133 -0.0516     -0.0707  -0.0176
+               EWall Sharpe 100    100  483 0.2070   -0.0217     -0.0362          0.0125       -0.0313  0.0145     -0.0342   0.0049
+         20 80 CAND Sharpe  100    100  483 0.2070   -0.0414      0.0514          0.0830        0.0391 -0.0927     -0.1243  -0.0123
+               EWall Sharpe 100    100  483 0.2070   -0.0217     -0.0362          0.0125       -0.0313  0.0145     -0.0342   0.0049
+         5  80 CAND Sharpe  200    200  483 0.4141   -0.0138      0.0750          0.1467        0.0789 -0.0888     -0.1605   0.0039
+               EWall Sharpe 200    200  483 0.4141   -0.0209      0.2509          0.2780        0.2486 -0.2719     -0.2989  -0.0024
+         20 80 CAND Sharpe  200    200  483 0.4141   -0.0267      0.3650          0.3730        0.3643 -0.3917     -0.3997  -0.0007
+               EWall Sharpe 200    200  483 0.4141   -0.0209      0.2509          0.2780        0.2486 -0.2719     -0.2989  -0.0024
+         5  80 CAND Sharpe  500    500  483 1.0352   -0.0091      0.3907          0.4045        0.3890 -0.3998     -0.4136  -0.0017
+               EWall Sharpe 500    500  483 1.0352   -0.0037      0.6547          0.6602        0.6513 -0.6584     -0.6639  -0.0034
+         20 80 CAND Sharpe  500    500  483 1.0352   -0.0084      0.6337          0.6337        0.6335 -0.6421     -0.6421  -0.0002
+               EWall Sharpe 500    500  483 1.0352   -0.0037      0.6547          0.6602        0.6513 -0.6584     -0.6639  -0.0034
+         5  80 CAND Sharpe  750    750  483 1.5528   -0.0104      0.5458          0.5493        0.5450 -0.5561     -0.5596  -0.0007
+               EWall Sharpe 750    750  483 1.5528   -0.0061      0.7930          0.7930        0.7927 -0.7990     -0.7990  -0.0003
+         20 80 CAND Sharpe  750    750  483 1.5528   -0.0089      0.7992          0.8130        0.7990 -0.8081     -0.8219  -0.0002
+               EWall Sharpe 750    750  483 1.5528   -0.0061      0.7930          0.7930        0.7927 -0.7990     -0.7990  -0.0003
+         5  80 CAND Sharpe  1000  1000  483 2.0704   -0.0071      0.6178          0.6186        0.6175 -0.6249     -0.6257  -0.0003
+               EWall Sharpe 1000  1000  483 2.0704   -0.0045      0.8513          0.8535        0.8510 -0.8558     -0.8581  -0.0002
+         20 80 CAND Sharpe  1000  1000  483 2.0704   -0.0065      0.8615          0.8624        0.8614 -0.8680     -0.8690  -0.0001
+               EWall Sharpe 1000  1000  483 2.0704   -0.0045      0.8513          0.8535        0.8510 -0.8558     -0.8581  -0.0002
+
+  FULL LADDER, premium column:
+                        N  oofR2_sd  oofR2_M_cv  oofR2_M_oracle  gap_cv  gap_oracle
+panel    n  k  D                                                                   
+B136     5  20 50      50   -0.0911     -0.0572         -0.0313 -0.0339     -0.0599
+         20 20 50      50    0.0398      0.0789          0.1397 -0.0391     -0.0999
+         5  20 100    100   -0.0269      0.2365          0.3372 -0.2633     -0.3641
+         20 20 100    100    0.0012      0.2404          0.2972 -0.2392     -0.2960
+         5  20 200    200   -0.0125      0.3155          0.3401 -0.3280     -0.3527
+         20 20 200    200    0.0064      0.5091          0.5091 -0.5027     -0.5027
+         5  20 500    500    0.0192      0.5188          0.5188 -0.4996     -0.4996
+         20 20 500    500   -0.0053      0.5987          0.5987 -0.6041     -0.6041
+         5  20 750    750    0.0306      0.5683          0.5683 -0.5377     -0.5377
+         20 20 750    750   -0.0010      0.6454          0.6454 -0.6464     -0.6464
+         5  20 1000  1000    0.0293      0.5866          0.5866 -0.5572     -0.5572
+         20 20 1000  1000    0.0015      0.6668          0.6668 -0.6653     -0.6653
+         5  40 50      50   -0.0653      0.2408          0.2600 -0.3061     -0.3254
+         20 40 50      50   -0.0375      0.0402          0.1292 -0.0777     -0.1667
+         5  40 100    100   -0.0185      0.3063          0.3269 -0.3248     -0.3453
+         20 40 100    100   -0.0250     -0.0776         -0.0028  0.0526     -0.0221
+         5  40 200    200   -0.0269      0.5893          0.5893 -0.6162     -0.6162
+         20 40 200    200   -0.0461      0.4581          0.4581 -0.5042     -0.5042
+         5  40 500    500   -0.0066      0.6468          0.6468 -0.6534     -0.6534
+         20 40 500    500   -0.0143      0.5686          0.5686 -0.5829     -0.5829
+         5  40 750    750   -0.0018      0.6903          0.6903 -0.6921     -0.6921
+         20 40 750    750   -0.0101      0.6159          0.6159 -0.6260     -0.6260
+         5  40 1000  1000   -0.0032      0.7095          0.7095 -0.7127     -0.7127
+         20 40 1000  1000   -0.0063      0.6595          0.6595 -0.6658     -0.6658
+         5  80 50      50   -0.0385     -0.0727          0.0344  0.0343     -0.0729
+         20 80 50      50   -0.0654      0.0503          0.1889 -0.1157     -0.2543
+         5  80 100    100    0.0375      0.4001          0.4463 -0.3627     -0.4088
+         20 80 100    100   -0.0332      0.1166          0.1859 -0.1498     -0.2191
+         5  80 200    200    0.0604      0.5512          0.5512 -0.4908     -0.4908
+         20 80 200    200    0.0021      0.5728          0.5728 -0.5707     -0.5707
+         5  80 500    500    0.0676      0.7243          0.7243 -0.6568     -0.6568
+         20 80 500    500    0.0235      0.7081          0.7081 -0.6846     -0.6846
+         5  80 750    750    0.0656      0.7818          0.7839 -0.7162     -0.7183
+         20 80 750    750    0.0122      0.7112          0.7112 -0.6990     -0.6990
+         5  80 1000  1000    0.0592      0.7911          0.7916 -0.7319     -0.7323
+         20 80 1000  1000    0.0158      0.7540          0.7540 -0.7382     -0.7382
+SMALL484 5  20 50      50   -0.0929      0.0794          0.1003 -0.1723     -0.1932
+         20 20 50      50   -0.1393      0.1770          0.1770 -0.3163     -0.3163
+         5  20 100    100   -0.0355      0.0671          0.1091 -0.1026     -0.1446
+         20 20 100    100   -0.0665      0.1884          0.2086 -0.2548     -0.2751
+         5  20 200    200   -0.0259      0.1016          0.1132 -0.1275     -0.1391
+         20 20 200    200   -0.0229      0.1767          0.1827 -0.1996     -0.2056
+         5  20 500    500   -0.0011      0.1336          0.1336 -0.1348     -0.1348
+         20 20 500    500   -0.0100      0.2216          0.2426 -0.2316     -0.2526
+         5  20 750    750   -0.0028      0.1672          0.1672 -0.1699     -0.1699
+         20 20 750    750   -0.0034      0.2827          0.2951 -0.2860     -0.2984
+         5  20 1000  1000   -0.0018      0.2022          0.2022 -0.2039     -0.2039
+         20 20 1000  1000   -0.0018      0.3170          0.3294 -0.3188     -0.3312
+         5  40 50      50   -0.1615     -0.1370         -0.0595 -0.0245     -0.1020
+         20 40 50      50   -0.0698     -0.0732          0.0074  0.0035     -0.0771
+         5  40 100    100   -0.0695     -0.0585         -0.0440 -0.0110     -0.0255
+         20 40 100    100   -0.0524      0.0415          0.1069 -0.0939     -0.1593
+         5  40 200    200   -0.0173     -0.0082          0.0282 -0.0090     -0.0455
+         20 40 200    200   -0.0322      0.2800          0.2980 -0.3122     -0.3301
+         5  40 500    500   -0.0096      0.2820          0.2946 -0.2916     -0.3041
+         20 40 500    500   -0.0081      0.3444          0.3648 -0.3524     -0.3729
+         5  40 750    750   -0.0031      0.3802          0.3866 -0.3834     -0.3897
+         20 40 750    750   -0.0056      0.4195          0.4195 -0.4251     -0.4251
+         5  40 1000  1000    0.0014      0.4276          0.4276 -0.4262     -0.4262
+         20 40 1000  1000   -0.0036      0.4706          0.4706 -0.4742     -0.4742
+         5  80 50      50   -0.0839     -0.0839         -0.0008  0.0000     -0.0831
+         20 80 50      50   -0.1113     -0.1216         -0.0192  0.0103     -0.0921
+         5  80 100    100   -0.0101     -0.0203          0.0037  0.0102     -0.0138
+         20 80 100    100   -0.0582     -0.0302          0.0330 -0.0280     -0.0911
+         5  80 200    200   -0.0070      0.0472          0.0783 -0.0542     -0.0853
+         20 80 200    200   -0.0328      0.0891          0.1234 -0.1219     -0.1562
+         5  80 500    500   -0.0068      0.3815          0.3815 -0.3883     -0.3883
+         20 80 500    500   -0.0043      0.4099          0.4099 -0.4142     -0.4142
+         5  80 750    750   -0.0073      0.4962          0.4962 -0.5035     -0.5035
+         20 80 750    750   -0.0064      0.4334          0.4334 -0.4398     -0.4398
+         5  80 1000  1000   -0.0050      0.5644          0.5644 -0.5695     -0.5695
+         20 80 1000  1000   -0.0036      0.4762          0.4762 -0.4798     -0.4798
+
+  EVERY PENALTY at D=50 and D=1000 (book-Sharpe columns):
+                                  oofR2_sd  oofR2_M_lam0.5  oofR2_M_lam2  oofR2_M_lam8  oofR2_M_lam32  oofR2_M_lam128  oofR2_M_lam512
+panel    n  k  y            D                                                                                                        
+B136     5  20 CAND Sharpe  50      0.3165         -0.1968       -0.0908        0.0482         0.0711          0.0062         -0.0360
+               EWall Sharpe 50      0.2894          0.2144        0.2512        0.2778         0.2059          0.0743         -0.0017
+         20 20 CAND Sharpe  50      0.3027          0.0979        0.1599        0.2185         0.1716          0.0611         -0.0047
+               EWall Sharpe 50      0.2894          0.2144        0.2512        0.2778         0.2059          0.0743         -0.0017
+         5  20 CAND Sharpe  1000    0.3508          0.8242        0.8249        0.8232         0.7823          0.5835          0.2722
+               EWall Sharpe 1000    0.2802          0.8949        0.8952        0.8917         0.8427          0.6194          0.2838
+         20 20 CAND Sharpe  1000    0.3452          0.9798        0.9795        0.9742         0.9198          0.6810          0.3158
+               EWall Sharpe 1000    0.2802          0.8949        0.8952        0.8917         0.8427          0.6194          0.2838
+         5  40 CAND Sharpe  50      0.0262          0.1486        0.1533        0.1460         0.0959          0.0238         -0.0218
+               EWall Sharpe 50      0.2119          0.3818        0.3657        0.3150         0.2052          0.0742         -0.0005
+         20 40 CAND Sharpe  50      0.2520          0.1542        0.1770        0.1922         0.1376          0.0415         -0.0175
+               EWall Sharpe 50      0.2119          0.3818        0.3657        0.3150         0.2052          0.0742         -0.0005
+         5  40 CAND Sharpe  1000    0.2373          0.8102        0.8107        0.8112         0.7977          0.6833          0.3928
+               EWall Sharpe 1000    0.2851          0.9103        0.9106        0.9099         0.8910          0.7569          0.4332
+         20 40 CAND Sharpe  1000    0.4202          0.9441        0.9442        0.9428         0.9212          0.7816          0.4496
+               EWall Sharpe 1000    0.2851          0.9103        0.9106        0.9099         0.8910          0.7569          0.4332
+         5  80 CAND Sharpe  50      0.2042          0.1048        0.1268        0.1612         0.1464          0.0538         -0.0250
+               EWall Sharpe 50      0.3642          0.4237        0.4089        0.3589         0.2425          0.1004          0.0174
+         20 80 CAND Sharpe  50      0.3750          0.3049        0.2967        0.2622         0.1726          0.0643          0.0023
+               EWall Sharpe 50      0.3642          0.4237        0.4089        0.3589         0.2425          0.1004          0.0174
+         5  80 CAND Sharpe  1000    0.2614          0.8509        0.8513        0.8513         0.8385          0.7290          0.4310
+               EWall Sharpe 1000    0.3256          0.9643        0.9644        0.9632         0.9446          0.8146          0.4814
+         20 80 CAND Sharpe  1000    0.3445          0.9175        0.9177        0.9170         0.9014          0.7836          0.4687
+               EWall Sharpe 1000    0.3256          0.9643        0.9644        0.9632         0.9446          0.8146          0.4814
+SMALL484 5  20 CAND Sharpe  50     -0.0341         -0.1317       -0.1081       -0.0604        -0.0236         -0.0158         -0.0157
+               EWall Sharpe 50     -0.0433         -0.0351       -0.0211        0.0057         0.0151         -0.0020         -0.0142
+         20 20 CAND Sharpe  50     -0.0332         -0.0134       -0.0061        0.0052         0.0006         -0.0168         -0.0263
+               EWall Sharpe 50     -0.0433         -0.0351       -0.0211        0.0057         0.0151         -0.0020         -0.0142
+         5  20 CAND Sharpe  1000   -0.0003          0.6411        0.6698        0.6597         0.5127          0.2670          0.0923
+               EWall Sharpe 1000   -0.0037          0.6232        0.6500        0.6373         0.4903          0.2524          0.0864
+         20 20 CAND Sharpe  1000   -0.0019          0.9748        0.9601        0.8723         0.6321          0.3128          0.1051
+               EWall Sharpe 1000   -0.0037          0.6232        0.6500        0.6373         0.4903          0.2524          0.0864
+         5  40 CAND Sharpe  50     -0.0880         -0.0242       -0.0219       -0.0166        -0.0145         -0.0237         -0.0323
+               EWall Sharpe 50     -0.0144         -0.0256       -0.0244       -0.0215        -0.0203         -0.0266         -0.0327
+         20 40 CAND Sharpe  50      0.0168          0.1253        0.1215        0.1082         0.0734          0.0252         -0.0050
+               EWall Sharpe 50     -0.0144         -0.0256       -0.0244       -0.0215        -0.0203         -0.0266         -0.0327
+         5  40 CAND Sharpe  1000    0.0051          0.5428        0.5791        0.6260         0.5874          0.4005          0.1743
+               EWall Sharpe 1000   -0.0006          0.7858        0.7973        0.7976         0.7111          0.4755          0.2058
+         20 40 CAND Sharpe  1000   -0.0014          0.9670        0.9643        0.9303         0.7928          0.5139          0.2198
+               EWall Sharpe 1000   -0.0006          0.7858        0.7973        0.7976         0.7111          0.4755          0.2058
+         5  80 CAND Sharpe  50     -0.0197          0.0466        0.0473        0.0489         0.0447          0.0171         -0.0166
+               EWall Sharpe 50     -0.0524         -0.0508       -0.0508       -0.0509        -0.0520         -0.0568         -0.0630
+         20 80 CAND Sharpe  50     -0.0507         -0.0404       -0.0393       -0.0358        -0.0297         -0.0328         -0.0453
+               EWall Sharpe 50     -0.0524         -0.0508       -0.0508       -0.0509        -0.0520         -0.0568         -0.0630
+         5  80 CAND Sharpe  1000   -0.0071          0.5533        0.5755        0.6186         0.6152          0.4635          0.2277
+               EWall Sharpe 1000   -0.0045          0.8471        0.8528        0.8535         0.7891          0.5840          0.2952
+         20 80 CAND Sharpe  1000   -0.0065          0.8578        0.8624        0.8601         0.7895          0.5806          0.2921
+               EWall Sharpe 1000   -0.0045          0.8471        0.8528        0.8535         0.7891          0.5840          0.2952
+
+========================================================================================================================================================================================================
+STAGE 3 - BOTH KEEP PATHS on every one of the 6,000 books
+========================================================================================================================================================================================================
+  4a: Sharpe > the comparand book in BOTH halves AND MaxDD no worse.
+  4b: Sharpe > SPY in BOTH halves AND out of sample, MaxDD <= 60% of SPY's, CAGR >= 70% of SPY's.
+                    N  pass4a_v1  pass4a_v2  pass4b  both
+panel    book                                            
+B136     CAND5   3000        531          0      61     0
+         CAND20  3000       2911         21     747     1
+         EWall   3000         -1         -1      -1    -1
+SMALL484 CAND5   3000         48          0       0     0
+         CAND20  3000         22          2       0     0
+         EWall   3000         -1         -1      -1    -1
+  (EWall halves are not in idea 78's grid schema and are not restated: -1 = not measured.)
+  4a is shown against BOTH the superseded RULES v1 (idea 78's comparand) and the LIVE RULES v2.
+
+  Books clearing BOTH paths (1 of 12,000 book-rows):
+                       CAGR  Sharpe   MaxDD     H1     H2    OOS
+panel book   k  draw                                            
+B136  CAND20 20 80   0.1168  1.2597 -0.1204 1.2574 1.2663 1.3608
+  These are name lists found by scanning thousands of sub-panels, not rules; see the memo caveat.
+
+========================================================================================================================================================================================================
+STAGE 4 - RULE 8 WALK-FORWARD: selectors fitted on 2009-2016 only; 2017-2026 read once
+========================================================================================================================================================================================================
+    B136 walk-forward done (548s)
+    SMALL484 walk-forward done (579s)
+                                                   k     draw  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+panel    n  D    arm                                                                          
+B136     5  50   S0 do-nothing (whole panel)     NaN      NaN    0.1605      0.8138    -0.2336
+                 S1 IS-Sharpe argmax         20.0000  39.0000    0.1528      0.9077    -0.2101
+                 S2 max IS sd                20.0000  39.0000    0.1528      0.9077    -0.2101
+                 S3 sd-model OOF pred        20.0000  16.0000    0.1015      0.7787    -0.2691
+                 S4 M-model OOF pred         80.0000  34.0000    0.1239      0.7204    -0.2349
+                 S5 M+sd OOF pred            20.0000  19.0000    0.1520      0.9819    -0.2047
+                 S6 random draw              40.0000  32.0000    0.1158      0.7768    -0.2335
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            100  S0 do-nothing (whole panel)     NaN      NaN    0.1605      0.8138    -0.2336
+                 S1 IS-Sharpe argmax         20.0000  39.0000    0.1528      0.9077    -0.2101
+                 S2 max IS sd                20.0000  39.0000    0.1528      0.9077    -0.2101
+                 S3 sd-model OOF pred        20.0000  80.0000    0.2169      1.0873    -0.2361
+                 S4 M-model OOF pred         40.0000  44.0000    0.1152      0.7712    -0.2397
+                 S5 M+sd OOF pred            20.0000  19.0000    0.1520      0.9819    -0.2047
+                 S6 random draw              20.0000  64.0000    0.1348      1.0047    -0.2153
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            200  S0 do-nothing (whole panel)     NaN      NaN    0.1605      0.8138    -0.2336
+                 S1 IS-Sharpe argmax         20.0000 185.0000    0.1291      0.9688    -0.2227
+                 S2 max IS sd                20.0000 103.0000    0.1802      1.0207    -0.2420
+                 S3 sd-model OOF pred        20.0000 103.0000    0.1802      1.0207    -0.2420
+                 S4 M-model OOF pred         80.0000 142.0000    0.1710      0.8937    -0.2349
+                 S5 M+sd OOF pred            20.0000  19.0000    0.1520      0.9819    -0.2047
+                 S6 random draw              80.0000  77.0000    0.1624      0.8790    -0.2626
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            500  S0 do-nothing (whole panel)     NaN      NaN    0.1605      0.8138    -0.2336
+                 S1 IS-Sharpe argmax         20.0000 253.0000    0.1628      1.0559    -0.1958
+                 S2 max IS sd                20.0000 366.0000    0.1220      0.8142    -0.2393
+                 S3 sd-model OOF pred        20.0000 366.0000    0.1220      0.8142    -0.2393
+                 S4 M-model OOF pred         40.0000 337.0000    0.1897      1.0291    -0.2275
+                 S5 M+sd OOF pred            20.0000 253.0000    0.1628      1.0559    -0.1958
+                 S6 random draw              80.0000  33.0000    0.0950      0.5918    -0.2610
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            750  S0 do-nothing (whole panel)     NaN      NaN    0.1605      0.8138    -0.2336
+                 S1 IS-Sharpe argmax         20.0000 253.0000    0.1628      1.0559    -0.1958
+                 S2 max IS sd                20.0000 366.0000    0.1220      0.8142    -0.2393
+                 S3 sd-model OOF pred        20.0000 366.0000    0.1220      0.8142    -0.2393
+                 S4 M-model OOF pred         40.0000 337.0000    0.1897      1.0291    -0.2275
+                 S5 M+sd OOF pred            20.0000 253.0000    0.1628      1.0559    -0.1958
+                 S6 random draw              80.0000 376.0000    0.1310      0.7208    -0.2882
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            1000 S0 do-nothing (whole panel)     NaN      NaN    0.1605      0.8138    -0.2336
+                 S1 IS-Sharpe argmax         20.0000 253.0000    0.1628      1.0559    -0.1958
+                 S2 max IS sd                20.0000 366.0000    0.1220      0.8142    -0.2393
+                 S3 sd-model OOF pred        20.0000 366.0000    0.1220      0.8142    -0.2393
+                 S4 M-model OOF pred         40.0000 337.0000    0.1897      1.0291    -0.2275
+                 S5 M+sd OOF pred            20.0000 253.0000    0.1628      1.0559    -0.1958
+                 S6 random draw              20.0000 719.0000    0.1038      0.7471    -0.2728
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+         20 50   S0 do-nothing (whole panel)     NaN      NaN    0.1249      0.8919    -0.2005
+                 S1 IS-Sharpe argmax         20.0000  19.0000    0.0837      1.1045    -0.1054
+                 S2 max IS sd                20.0000  39.0000    0.0903      1.1841    -0.0943
+                 S3 sd-model OOF pred        20.0000  39.0000    0.0903      1.1841    -0.0943
+                 S4 M-model OOF pred         80.0000  47.0000    0.1289      0.9860    -0.2099
+                 S5 M+sd OOF pred            20.0000  19.0000    0.0837      1.1045    -0.1054
+                 S6 random draw              40.0000  32.0000    0.1056      0.9975    -0.1686
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            100  S0 do-nothing (whole panel)     NaN      NaN    0.1249      0.8919    -0.2005
+                 S1 IS-Sharpe argmax         20.0000  19.0000    0.0837      1.1045    -0.1054
+                 S2 max IS sd                20.0000  39.0000    0.0903      1.1841    -0.0943
+                 S3 sd-model OOF pred        20.0000  80.0000    0.1328      1.3608    -0.1204
+                 S4 M-model OOF pred         20.0000  19.0000    0.0837      1.1045    -0.1054
+                 S5 M+sd OOF pred            20.0000  19.0000    0.0837      1.1045    -0.1054
+                 S6 random draw              20.0000  64.0000    0.0603      0.8984    -0.1370
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            200  S0 do-nothing (whole panel)     NaN      NaN    0.1249      0.8919    -0.2005
+                 S1 IS-Sharpe argmax         20.0000 129.0000    0.0650      1.0135    -0.1050
+                 S2 max IS sd                20.0000 103.0000    0.1075      1.2564    -0.1348
+                 S3 sd-model OOF pred        20.0000 103.0000    0.1075      1.2564    -0.1348
+                 S4 M-model OOF pred         80.0000 149.0000    0.1335      1.0568    -0.1920
+                 S5 M+sd OOF pred            20.0000  19.0000    0.0837      1.1045    -0.1054
+                 S6 random draw              80.0000  77.0000    0.1186      0.9454    -0.1989
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            500  S0 do-nothing (whole panel)     NaN      NaN    0.1249      0.8919    -0.2005
+                 S1 IS-Sharpe argmax         20.0000 253.0000    0.0963      1.3063    -0.1386
+                 S2 max IS sd                20.0000 366.0000    0.0835      1.1386    -0.1229
+                 S3 sd-model OOF pred        20.0000 366.0000    0.0835      1.1386    -0.1229
+                 S4 M-model OOF pred         40.0000 337.0000    0.1508      1.2484    -0.1841
+                 S5 M+sd OOF pred            20.0000 253.0000    0.0963      1.3063    -0.1386
+                 S6 random draw              80.0000  33.0000    0.1024      0.8406    -0.2000
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            750  S0 do-nothing (whole panel)     NaN      NaN    0.1249      0.8919    -0.2005
+                 S1 IS-Sharpe argmax         20.0000 253.0000    0.0963      1.3063    -0.1386
+                 S2 max IS sd                20.0000 366.0000    0.0835      1.1386    -0.1229
+                 S3 sd-model OOF pred        20.0000 366.0000    0.0835      1.1386    -0.1229
+                 S4 M-model OOF pred         40.0000 337.0000    0.1508      1.2484    -0.1841
+                 S5 M+sd OOF pred            20.0000 253.0000    0.0963      1.3063    -0.1386
+                 S6 random draw              80.0000 376.0000    0.1239      0.9652    -0.2024
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+            1000 S0 do-nothing (whole panel)     NaN      NaN    0.1249      0.8919    -0.2005
+                 S1 IS-Sharpe argmax         20.0000 253.0000    0.0963      1.3063    -0.1386
+                 S2 max IS sd                20.0000 366.0000    0.0835      1.1386    -0.1229
+                 S3 sd-model OOF pred        20.0000 366.0000    0.0835      1.1386    -0.1229
+                 S4 M-model OOF pred         40.0000 337.0000    0.1508      1.2484    -0.1841
+                 S5 M+sd OOF pred            20.0000 253.0000    0.0963      1.3063    -0.1386
+                 S6 random draw              20.0000 719.0000    0.0730      0.9721    -0.1439
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0798      1.1185    -0.1224
+SMALL484 5  50   S0 do-nothing (whole panel)     NaN      NaN    0.0605      0.3544    -0.5278
+                 S1 IS-Sharpe argmax         20.0000  16.0000    0.1083      0.6693    -0.3289
+                 S2 max IS sd                20.0000  25.0000    0.0489      0.3623    -0.4431
+                 S3 sd-model OOF pred        20.0000  25.0000    0.0489      0.3623    -0.4431
+                 S4 M-model OOF pred         80.0000  45.0000    0.0196      0.1975    -0.4690
+                 S5 M+sd OOF pred            80.0000  45.0000    0.0196      0.1975    -0.4690
+                 S6 random draw              40.0000  32.0000    0.0922      0.3678    -0.3683
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            100  S0 do-nothing (whole panel)     NaN      NaN    0.0605      0.3544    -0.5278
+                 S1 IS-Sharpe argmax         40.0000  99.0000    0.1524      0.5016    -0.5140
+                 S2 max IS sd                20.0000  71.0000   -0.0057      0.0597    -0.4634
+                 S3 sd-model OOF pred        20.0000  25.0000    0.0489      0.3623    -0.4431
+                 S4 M-model OOF pred         80.0000  39.0000   -0.0130      0.0495    -0.6456
+                 S5 M+sd OOF pred            80.0000  88.0000    0.0490      0.3282    -0.3914
+                 S6 random draw              20.0000  64.0000    0.0626      0.4236    -0.3406
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            200  S0 do-nothing (whole panel)     NaN      NaN    0.0605      0.3544    -0.5278
+                 S1 IS-Sharpe argmax         40.0000  99.0000    0.1524      0.5016    -0.5140
+                 S2 max IS sd                20.0000  71.0000   -0.0057      0.0597    -0.4634
+                 S3 sd-model OOF pred        20.0000  71.0000   -0.0057      0.0597    -0.4634
+                 S4 M-model OOF pred         80.0000  90.0000    0.0501      0.3350    -0.4879
+                 S5 M+sd OOF pred            80.0000  90.0000    0.0501      0.3350    -0.4879
+                 S6 random draw              80.0000  77.0000    0.0389      0.2816    -0.3952
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            500  S0 do-nothing (whole panel)     NaN      NaN    0.0605      0.3544    -0.5278
+                 S1 IS-Sharpe argmax         20.0000 454.0000    0.1673      0.9025    -0.2269
+                 S2 max IS sd                20.0000  71.0000   -0.0057      0.0597    -0.4634
+                 S3 sd-model OOF pred        20.0000  71.0000   -0.0057      0.0597    -0.4634
+                 S4 M-model OOF pred         80.0000 490.0000    0.0370      0.2765    -0.4196
+                 S5 M+sd OOF pred            80.0000 490.0000    0.0370      0.2765    -0.4196
+                 S6 random draw              80.0000  33.0000    0.0207      0.2029    -0.5086
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            750  S0 do-nothing (whole panel)     NaN      NaN    0.0605      0.3544    -0.5278
+                 S1 IS-Sharpe argmax         20.0000 454.0000    0.1673      0.9025    -0.2269
+                 S2 max IS sd                20.0000 510.0000    0.0883      0.5307    -0.3634
+                 S3 sd-model OOF pred        20.0000 510.0000    0.0883      0.5307    -0.3634
+                 S4 M-model OOF pred         80.0000 647.0000    0.1167      0.6167    -0.3303
+                 S5 M+sd OOF pred            80.0000 647.0000    0.1167      0.6167    -0.3303
+                 S6 random draw              80.0000 376.0000    0.0193      0.1976    -0.4303
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            1000 S0 do-nothing (whole panel)     NaN      NaN    0.0605      0.3544    -0.5278
+                 S1 IS-Sharpe argmax         20.0000 922.0000   -0.0377     -0.1332    -0.5424
+                 S2 max IS sd                20.0000 510.0000    0.0883      0.5307    -0.3634
+                 S3 sd-model OOF pred        20.0000 510.0000    0.0883      0.5307    -0.3634
+                 S4 M-model OOF pred         80.0000 647.0000    0.1167      0.6167    -0.3303
+                 S5 M+sd OOF pred            80.0000 647.0000    0.1167      0.6167    -0.3303
+                 S6 random draw              20.0000 719.0000    0.0044      0.1134    -0.4365
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+         20 50   S0 do-nothing (whole panel)     NaN      NaN    0.0773      0.5104    -0.2635
+                 S1 IS-Sharpe argmax         80.0000  39.0000    0.0033      0.0942    -0.4252
+                 S2 max IS sd                20.0000  25.0000    0.0178      0.3184    -0.1690
+                 S3 sd-model OOF pred        20.0000  12.0000    0.0006      0.0376    -0.1241
+                 S4 M-model OOF pred         80.0000  11.0000    0.0508      0.4289    -0.3069
+                 S5 M+sd OOF pred            80.0000  11.0000    0.0508      0.4289    -0.3069
+                 S6 random draw              40.0000  32.0000    0.0333      0.3036    -0.1932
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            100  S0 do-nothing (whole panel)     NaN      NaN    0.0773      0.5104    -0.2635
+                 S1 IS-Sharpe argmax         80.0000  39.0000    0.0033      0.0942    -0.4252
+                 S2 max IS sd                20.0000  71.0000   -0.0052     -0.0600    -0.1491
+                 S3 sd-model OOF pred        20.0000  25.0000    0.0178      0.3184    -0.1690
+                 S4 M-model OOF pred         80.0000  16.0000    0.0339      0.3112    -0.3769
+                 S5 M+sd OOF pred            80.0000  16.0000    0.0339      0.3112    -0.3769
+                 S6 random draw              20.0000  64.0000    0.0167      0.3223    -0.1250
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            200  S0 do-nothing (whole panel)     NaN      NaN    0.0773      0.5104    -0.2635
+                 S1 IS-Sharpe argmax         20.0000 102.0000    0.0002      0.0327    -0.1853
+                 S2 max IS sd                20.0000  71.0000   -0.0052     -0.0600    -0.1491
+                 S3 sd-model OOF pred        20.0000  71.0000   -0.0052     -0.0600    -0.1491
+                 S4 M-model OOF pred         80.0000  21.0000    0.0096      0.1384    -0.2960
+                 S5 M+sd OOF pred            80.0000  21.0000    0.0096      0.1384    -0.2960
+                 S6 random draw              80.0000  77.0000    0.0464      0.3983    -0.3451
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            500  S0 do-nothing (whole panel)     NaN      NaN    0.0773      0.5104    -0.2635
+                 S1 IS-Sharpe argmax         20.0000 454.0000    0.0231      0.3973    -0.0849
+                 S2 max IS sd                20.0000  71.0000   -0.0052     -0.0600    -0.1491
+                 S3 sd-model OOF pred        20.0000  71.0000   -0.0052     -0.0600    -0.1491
+                 S4 M-model OOF pred         80.0000 403.0000    0.0243      0.2436    -0.2793
+                 S5 M+sd OOF pred            80.0000 309.0000    0.0048      0.1036    -0.3985
+                 S6 random draw              80.0000  33.0000    0.0293      0.2771    -0.3087
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            750  S0 do-nothing (whole panel)     NaN      NaN    0.0773      0.5104    -0.2635
+                 S1 IS-Sharpe argmax         20.0000 557.0000    0.0009      0.0463    -0.1326
+                 S2 max IS sd                20.0000 510.0000    0.0208      0.3715    -0.1098
+                 S3 sd-model OOF pred        20.0000 510.0000    0.0208      0.3715    -0.1098
+                 S4 M-model OOF pred         80.0000 647.0000    0.0309      0.2893    -0.2381
+                 S5 M+sd OOF pred            80.0000 647.0000    0.0309      0.2893    -0.2381
+                 S6 random draw              80.0000 376.0000    0.0599      0.4753    -0.2910
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+            1000 S0 do-nothing (whole panel)     NaN      NaN    0.0773      0.5104    -0.2635
+                 S1 IS-Sharpe argmax         40.0000 905.0000    0.0246      0.2928    -0.2928
+                 S2 max IS sd                20.0000 510.0000    0.0208      0.3715    -0.1098
+                 S3 sd-model OOF pred        20.0000 510.0000    0.0208      0.3715    -0.1098
+                 S4 M-model OOF pred         80.0000 890.0000    0.0606      0.4850    -0.2989
+                 S5 M+sd OOF pred            80.0000 890.0000    0.0606      0.4850    -0.2989
+                 S6 random draw              20.0000 719.0000   -0.0043     -0.0312    -0.2177
+                 SPY                             NaN      NaN    0.1545      0.8820    -0.3372
+                 RULES v2 (live book)            NaN      NaN    0.0455      0.6629    -0.1209
+
+  Selector summary - mean OOS over the 6 ladder points x 2 book sizes, by panel:
+                                      OOS_Sharpe  OOS_CAGR  OOS_MaxDD
+panel    arm                                                         
+B136     RULES v2 (live book)             1.1185    0.0798    -0.1224
+         S0 do-nothing (whole panel)      0.8529    0.1427    -0.2171
+         S1 IS-Sharpe argmax              1.0911    0.1204    -0.1635
+         S2 max IS sd                     1.0266    0.1158    -0.1727
+         S3 sd-model OOF pred             1.0455    0.1204    -0.1819
+         S4 M-model OOF pred              1.0304    0.1481    -0.2043
+         S5 M+sd OOF pred                 1.1121    0.1237    -0.1611
+         S6 random draw                   0.8616    0.1105    -0.2154
+         SPY                              0.8820    0.1545    -0.3372
+SMALL484 RULES v2 (live book)             0.6629    0.0455    -0.1209
+         S0 do-nothing (whole panel)      0.4324    0.0689    -0.3956
+         S1 IS-Sharpe argmax              0.3585    0.0638    -0.3249
+         S2 max IS sd                     0.2070    0.0210    -0.2830
+         S3 sd-model OOF pred             0.2404    0.0260    -0.2792
+         S4 M-model OOF pred              0.3324    0.0448    -0.3732
+         S5 M+sd OOF pred                 0.3439    0.0483    -0.3620
+         S6 random draw                   0.2777    0.0349    -0.3300
+         SPY                              0.8820    0.1545    -0.3372
+    B136 S3 sd-model OOF pred     beats SPY in 8/12, beats live v2 in 6/12 (mean +1.0455; SPY +0.8820, v2 +1.1185)
+    B136 S4 M-model OOF pred      beats SPY in 10/12, beats live v2 in 3/12 (mean +1.0304; SPY +0.8820, v2 +1.1185)
+    B136 S5 M+sd OOF pred         beats SPY in 12/12, beats live v2 in 3/12 (mean +1.1121; SPY +0.8820, v2 +1.1185)
+    B136 the name-additive selector beats the dispersion selector out of sample in 6 of 12 ladder points (mean difference -0.0151)
+    SMALL484 S3 sd-model OOF pred     beats SPY in 0/12, beats live v2 in 0/12 (mean +0.2404; SPY +0.8820, v2 +0.6629)
+    SMALL484 S4 M-model OOF pred      beats SPY in 0/12, beats live v2 in 0/12 (mean +0.3324; SPY +0.8820, v2 +0.6629)
+    SMALL484 S5 M+sd OOF pred         beats SPY in 0/12, beats live v2 in 0/12 (mean +0.3439; SPY +0.8820, v2 +0.6629)
+    SMALL484 the name-additive selector beats the dispersion selector out of sample in 8 of 12 ladder points (mean difference +0.0920)
+
+  wrote 2026-09-09_census-every-published-N-EQUALS-50-model-comparison-in-the-record_C.census.csv (72), .pairs.csv (52), .censusgrid.csv (16), .nested.csv (216), .crossover.csv (72), .keeppaths.csv (6), .walkforward.csv (216), .grid.csv.gz (6000 books)
+
+Elapsed 580s
