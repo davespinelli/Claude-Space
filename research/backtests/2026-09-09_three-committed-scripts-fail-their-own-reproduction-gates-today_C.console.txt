@@ -1,0 +1,142 @@
+=== IDEA 513 — 2026-09-09_three-committed-scripts-fail-their-own-reproduction-gates-today_C ===
+Q: is the reproduction-gate failure DATA DRIFT, a GENUINE failure, or the ENVIRONMENT?
+
+[0] VINTAGE FACTS
+    data/prices.csv today: 4700 rows x 58 cols, 2008-01-02 .. 2026-09-08
+    data/prices.csv at 44bc66f: 4699 rows x 58 cols, ends 2026-09-04
+    appended rows: ['2026-09-08']
+    RESTATEMENT of the shared block: index identical True, columns with any change 46/58, max |d| 3.000e-04 (price units), max |d/px| 5.094e-05
+    prices_broad.csv: 4699 rows, ends 2026-09-04  (did NOT move)
+    prices_small.csv.gz: 4194 rows, ends 2026-09-04  (did NOT move)
+    environment: python 3.11.15, pandas 3.0.5, numpy 2.4.6
+    every affected console.txt states its panels end 2026-09-04, i.e. the OLD vintage.
+
+[A] RE-EXECUTION OF THE FOUR FAILING SCRIPTS, ONE RUN PER VINTAGE
+    P1 vintage in ['NOW', 'TRUNC', 'OLD']; P2 script in the 4 rc=1 files.  timeout 480s, 4 concurrent.  Every write under research/backtests/ is redirected to /tmp/claude-0/-home-user-Claude-Space/e948ff9d-e548-5c64-ad57-d3bd1f7c1bdb/scratchpad/i513/mirror — no committed artefact is touched.
+    NOW   2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-art rc=1      35.0s  GATE-FAIL
+    NOW   2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_c rc=1      70.0s  GATE-FAIL
+    TRUNC 2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_c rc=1      55.7s  GATE-FAIL
+    NOW   2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C      rc=1     142.0s  GATE-FAIL
+    TRUNC 2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-art rc=1      31.3s  GATE-FAIL
+    TRUNC 2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C      rc=1     137.0s  GATE-FAIL
+    NOW   2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_ rc=1     207.0s  GATE-FAIL
+    OLD   2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_c rc=1      65.0s  GATE-FAIL
+    OLD   2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-art rc=1      30.0s  GATE-FAIL
+    OLD   2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C      rc=1     135.0s  GATE-FAIL
+    TRUNC 2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_ rc=0     189.3s  PASS-complete
+    OLD   2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_ rc=0     183.7s  PASS-complete
+
+    RE-EXECUTION TABLE (all 4 scripts x all vintages, nothing withheld)
+                                                                script vintage  rc  secs        status                                                        assertion
+           2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C     NOW   1 142.0     GATE-FAIL AssertionError: idea 138 reproduction FAILED on the exact subset
+           2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C     OLD   1 135.0     GATE-FAIL AssertionError: idea 138 reproduction FAILED on the exact subset
+           2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C   TRUNC   1 137.0     GATE-FAIL AssertionError: idea 138 reproduction FAILED on the exact subset
+  2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_cloud     NOW   1  70.0     GATE-FAIL                                                   AssertionError
+  2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_cloud     OLD   1  65.0     GATE-FAIL                                                   AssertionError
+  2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_cloud   TRUNC   1  55.7     GATE-FAIL                                                   AssertionError
+2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-artefa...     NOW   1  35.0     GATE-FAIL                                                   AssertionError
+2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-artefa...     OLD   1  30.0     GATE-FAIL                                                   AssertionError
+2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-artefa...   TRUNC   1  31.3     GATE-FAIL                                                   AssertionError
+ 2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_cloud     NOW   1 207.0     GATE-FAIL                                         reproduction gate failed
+ 2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_cloud     OLD   0 183.7 PASS-complete                                                                 
+ 2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_cloud   TRUNC   0 189.3 PASS-complete                                                                 
+
+    STATUS BY VINTAGE
+vintage                                 NOW            OLD          TRUNC
+script                                                                   
+2026-09-07_does-a-levered-f-0...  GATE-FAIL      GATE-FAIL      GATE-FAIL
+2026-09-07_does-the-MAB-DD-da...  GATE-FAIL      GATE-FAIL      GATE-FAIL
+2026-09-07_is-the-U56-6W-m20-...  GATE-FAIL      GATE-FAIL      GATE-FAIL
+2026-09-08_is-168c-s-k-CROSSI...  GATE-FAIL  PASS-complete  PASS-complete
+
+    ENVIRONMENT TEST — identical leading lines of the re-run stdout vs the COMMITTED console.txt
+                                                                 script vintage  committed_lines  verbatim_hits  share                                                                                                                          first_missing
+            2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C     OLD             1523             20 0.0131              EXACT subset (all f > 0 rows + EWall f = 0): 40 rows, max|dSharpe| 4.441e-16  max|dCAGR| 3.053e-16  max|dMaxDD| 2.776e-16
+            2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C   TRUNC             1523             20 0.0131              EXACT subset (all f > 0 rows + EWall f = 0): 40 rows, max|dSharpe| 4.441e-16  max|dCAGR| 3.053e-16  max|dMaxDD| 2.776e-16
+            2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C     NOW             1523             16 0.0105                                                                      [panel] u56: 56 cols 2008-01-02..2026-09-04, eval from 2009-01-13
+   2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_cloud     OLD              242            120 0.4959                                           U56  NT  5.0000       -0.1831    84.4051   0.0236    0.2116  -3.7755  0.0000 -0.1746  1.0871
+   2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_cloud   TRUNC              242            120 0.4959                                           U56  NT  5.0000       -0.1831    84.4051   0.0236    0.2116  -3.7755  0.0000 -0.1746  1.0871
+   2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_cloud     NOW              242            116 0.4793                                                                          U56            56 cols  2008-01-02 -> 2026-09-04  (4699 rows)
+2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-artefact_C     OLD              198             71 0.3586                                                           margins m_k(c) vs committed m4b_* at c=0/10/25, 540 values: max|d| 2.151e-16
+2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-artefact_C   TRUNC              198             69 0.3485           D   0    27.05 |        8       16       17       26       11 |          8          8          8          8 | H1           8
+2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-artefact_C     NOW              198             58 0.2929                                                                             ---- U56: 55 names + SPY, eval from 2009-01-13 (4439 days)
+  2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_cloud     OLD              338            334 0.9882                                                                                                              176 books done (24s cum.)
+  2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_cloud   TRUNC              338            315 0.9320                                                                                                              176 books done (24s cum.)
+  2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_cloud     NOW              338            119 0.3521                                     [panel] u56 = universe.json(56): 56 cols, eval 2009-01-13 -> 2026-09-04, mean weekly eligible 37.5
+
+[B] WHAT THE RECORD HANGS ON THESE FOUR RUNS
+    2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C        artefacts  8  csv cells   89556  importers  3  LEADERBOARD rows  4  CHANGELOG  0
+    2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_clo artefacts  9  csv cells    7846  importers  2  LEADERBOARD rows  8  CHANGELOG  0
+    2026-09-07_is-the-U56-6W-m20-cstar-of-104-bps-a-DRAWDOWN-CAP-artef artefacts  7  csv cells    5148  importers  1  LEADERBOARD rows  5  CHANGELOG  0
+    2026-09-08_is-168c-s-k-CROSSING-a-SMOOTHING-artefact-end-to-end_cl artefacts 10  csv cells   13982  importers  3  LEADERBOARD rows  7  CHANGELOG  0
+    RECORD-WIDE EXPOSURE: of 470 committed backtests, 158 carry an assert-style reproduction gate (136 with a tolerance <= 1e-6, 22 with exact == / .equals only); 26 of those read a committed artefact back. Every one of them is a test of the DATA VINTAGE as much as of the code.
+
+[C] THE SAME DRIFT PRICED IN PROTOCOL UNITS (U56, weekly, t+1, 10 bps)
+    NOW   priced 10 arms + live book + SPY on 4700 rows ending 2026-09-08
+    TRUNC priced 10 arms + live book + SPY on 4699 rows ending 2026-09-04
+    OLD   priced 10 arms + live book + SPY on 4699 rows ending 2026-09-04
+
+    FULL GRID (every arm x every vintage, nothing withheld)
+vintage           arm  rows   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  pass4a  pass4b
+    NOW     v2_band01  4700 0.0838  1.1876 -0.1203 1.2055 1.1741    0.0925      1.2738    -0.1203   False   False
+    NOW     v2_band02  4700 0.0850  1.1965 -0.1186 1.2086 1.1886    0.0941      1.2843    -0.1186   False   False
+    NOW     v2_band03  4700 0.0864  1.2037 -0.1205 1.2309 1.1828    0.0951      1.2817    -0.1205   False   False
+    NOW     v2_band04  4700 0.0845  1.1713 -0.1256 1.1923 1.1570    0.0942      1.2567    -0.1256   False   False
+    NOW     v2_band05  4700 0.0833  1.1482 -0.1257 1.1917 1.1135    0.0913      1.2151    -0.1257   False   False
+    NOW     v2_band06  4700 0.0833  1.1415 -0.1347 1.1880 1.1045    0.0915      1.2086    -0.1347   False   False
+    NOW       RULESv1  4700 0.0642  0.6611 -0.1383 0.6429 0.6804    0.0766      0.7408    -0.1383   False   False
+    NOW  TOP20_keep4b  4700 0.1181  1.0650 -0.1651 1.0809 1.0559    0.1324      1.1329    -0.1651   False    True
+    NOW  EWall_v1gate  4700 0.0732  1.1118 -0.1089 1.0759 1.1464    0.0829      1.2488    -0.1089   False   False
+    NOW EWall_ungated  4700 0.1325  1.1228 -0.2253 1.1936 1.0666    0.1379      1.1336    -0.2253   False   False
+  TRUNC     v2_band01  4699 0.0840  1.1895 -0.1203 1.2003 1.1824    0.0928      1.2772    -0.1203   False   False
+  TRUNC     v2_band02  4699 0.0851  1.1985 -0.1186 1.2035 1.1970    0.0944      1.2879    -0.1186   False   False
+  TRUNC     v2_band03  4699 0.0866  1.2056 -0.1205 1.2259 1.1909    0.0953      1.2851    -0.1205   False   False
+  TRUNC     v2_band04  4699 0.0846  1.1728 -0.1256 1.1877 1.1639    0.0945      1.2595    -0.1256   False   False
+  TRUNC     v2_band05  4699 0.0834  1.1497 -0.1257 1.1871 1.1205    0.0916      1.2178    -0.1257   False   False
+  TRUNC     v2_band06  4699 0.0834  1.1430 -0.1347 1.1834 1.1114    0.0917      1.2113    -0.1347   False   False
+  TRUNC       RULESv1  4699 0.0646  0.6647 -0.1383 0.6421 0.6878    0.0773      0.7471    -0.1383   False   False
+  TRUNC  TOP20_keep4b  4699 0.1181  1.0650 -0.1651 1.0748 1.0612    0.1324      1.1330    -0.1651   False    True
+  TRUNC  EWall_v1gate  4699 0.0733  1.1134 -0.1089 1.0702 1.1548    0.0831      1.2517    -0.1089   False   False
+  TRUNC EWall_ungated  4699 0.1327  1.1240 -0.2253 1.1901 1.0720    0.1382      1.1357    -0.2253   False   False
+    OLD     v2_band01  4699 0.0840  1.1895 -0.1203 1.2003 1.1824    0.0928      1.2772    -0.1203   False   False
+    OLD     v2_band02  4699 0.0851  1.1985 -0.1186 1.2035 1.1970    0.0944      1.2879    -0.1186   False   False
+    OLD     v2_band03  4699 0.0866  1.2056 -0.1205 1.2259 1.1909    0.0953      1.2851    -0.1205   False   False
+    OLD     v2_band04  4699 0.0846  1.1728 -0.1256 1.1877 1.1639    0.0945      1.2595    -0.1256   False   False
+    OLD     v2_band05  4699 0.0834  1.1497 -0.1257 1.1871 1.1205    0.0916      1.2178    -0.1257   False   False
+    OLD     v2_band06  4699 0.0834  1.1430 -0.1347 1.1834 1.1114    0.0917      1.2113    -0.1347   False   False
+    OLD       RULESv1  4699 0.0646  0.6647 -0.1383 0.6421 0.6878    0.0773      0.7471    -0.1383   False   False
+    OLD  TOP20_keep4b  4699 0.1181  1.0650 -0.1651 1.0748 1.0612    0.1324      1.1330    -0.1651   False    True
+    OLD  EWall_v1gate  4699 0.0733  1.1134 -0.1089 1.0702 1.1548    0.0831      1.2517    -0.1089   False   False
+    OLD EWall_ungated  4699 0.1327  1.1240 -0.2253 1.1901 1.0720    0.1382      1.1357    -0.2253   False   False
+
+    CHANNEL DECOMPOSITION (max |d| over the 10 arms, per metric)
+     pair                                    channel      CAGR    Sharpe     MaxDD        H1        H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  verdict_flips_4a  verdict_flips_4b
+NOW-TRUNC                    appended row 2026-09-08 3.911e-04 3.604e-03 0.000e+00 6.099e-03 8.473e-03 7.274e-04   6.280e-03  0.000e+00                 0                 0
+TRUNC-OLD            restatement of the shared block 2.118e-07 1.899e-06 9.998e-08 5.507e-06 1.206e-06 9.135e-08   8.358e-07  9.998e-08                 0                 0
+  NOW-OLD both channels = today vs published vintage 3.913e-04 3.606e-03 9.998e-08 6.098e-03 8.474e-03 7.274e-04   6.280e-03  9.998e-08                 0                 0
+
+[C-rule 8] WALK-FORWARD: band chosen on IS 2009-2016, evaluated OOS 2017-2026
+vintage      pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  base_OOS_CAGR  base_OOS_Sharpe  base_OOS_MaxDD  spy_OOS_CAGR  spy_OOS_Sharpe  spy_OOS_MaxDD  keep4b_of_pick  keep4a_of_pick
+    NOW v2_band03     1.1043    0.0951      1.2817    -0.1205         0.0951           1.2817         -0.1205        0.1538          0.8786        -0.3372           False           False
+    OLD v2_band03     1.1043    0.0953      1.2851    -0.1205         0.0953           1.2851         -0.1205        0.1545          0.8820        -0.3372           False           False
+  TRUNC v2_band03     1.1043    0.0953      1.2851    -0.1205         0.0953           1.2851         -0.1205        0.1545          0.8820        -0.3372           False           False
+
+[VERDICT]
+    gates today (NOW): 4/4 fail.  Row-append removed (TRUNC): 3/4 fail.  Published vintage (OLD): 3/4 fail.
+    4a passes: 0/30 grid points.  4b passes: 3/30  (['TOP20_keep4b']).
+    channel sizes (max |dSharpe| over arms): NOW-TRUNC 3.60e-03, TRUNC-OLD 1.90e-06, NOW-OLD 3.61e-03
+    A gate written as an exact-equality assertion against a committed artefact is a test of the DATA VINTAGE, not of the code.
+
+[A2] WHICH PANEL CARRIES THE FAILURE (recomputed artefact vs the committed reference the gate reads)
+    2026-09-07_does-a-levered-f-060-book-clear-the-CAGR-floor_C
+      reference 2026-09-07_sleeve-f-plateau-width_B.grid.csv, published gate: max|dSharpe| 4.441e-16 on 40 rows
+      NOW    40 joined rows, worst |d| by panel: broad 6.661e-16  u56 6.171e-03
+      TRUNC  40 joined rows, worst |d| by panel: broad 6.661e-16  u56 7.931e-06
+      OLD    40 joined rows, worst |d| by panel: broad 6.661e-16  u56 1.031e-05
+    2026-09-07_does-the-MAB-DD-damage-SCALE-survive-a-fourth-panel_cloud
+      reference 2026-09-07_split-the-band-lexicon-in-the-LEADERBOARD_C.matched.csv, published gate: max|d| 2.842e-14 on 21 cells
+      NOW    21 joined rows, worst |d| by panel: B136 0.000e+00  SMALL439 0.000e+00  U56 8.865e-03
+      TRUNC  21 joined rows, worst |d| by panel: B136 0.000e+00  SMALL439 0.000e+00  U56 1.931e-03
+      OLD    21 joined rows, worst |d| by panel: B136 0.000e+00  SMALL439 0.000e+00  U56 2.888e-03
+    U56 (the only panel served by data/prices.csv): worst |d| 8.865e-03 over 6 panel-vintage rows.
+    EVERY OTHER PANEL (broad136 / SMALL439, served by static caches): worst |d| 6.661e-16 over 9 panel-vintage rows — machine precision at EVERY vintage, today's included.
