@@ -1,0 +1,290 @@
+
+======================================================================================================================
+2026-09-09_is-the-vol-cap-the-real-universe-clause-not-the-trend-leg_B.py  -  idea 314: the vol cap's LEVEL vs a PANEL-SCALED cap, trend leg fixed
+======================================================================================================================
+panels: U56 55 names, B136 135, SMALL439 439 (44 dropped for max_1d_move >= 1.0)
+  U56: 2008-01-02 .. 2026-09-08  (4700 rows)
+  B136: 2008-01-02 .. 2026-09-04  (4699 rows)
+  SMALL439: 2010-01-04 .. 2026-09-04  (4194 rows)
+
+======================================================================================================================
+GATES (run before any hypothesis is read)
+======================================================================================================================
+G1 fast_backtest vs engine.backtest, 4 books: max |diff| = 1.388e-17  -> PASS
+G2 reproduction of 51R's WHICH-LEG statistic (SMALL439, RESPREAD, lb 200, warm-up 360, mean over cadences W/M/Q; dCAGR at 0 bps, dSharpe at 10 bps - 51R's own mixed rung):
+gate      MA   MAVOL     VOL
+cad                         
+M    -0.6648 -3.5748 -3.1188
+Q    -0.8599 -4.7643 -4.3352
+W    -2.8086 -5.3449 -4.3236   <- dCAGR0_pp by cell
+       dCAGR0_pp  dSharpe
+gate                     
+MA       -1.4444  -0.0735
+MAVOL    -4.5614  -0.2588
+VOL      -3.9258  -0.2043   <- cadence means
+   VOL: published -3.93 pp / -0.204; here -3.926 / -0.2043; |d| 0.004 pp / 0.0003 -> PASS
+   MA: published -1.44 pp / -0.074; here -1.444 / -0.0735; |d| 0.004 pp / 0.0005 -> PASS
+G2 -> PASS
+   BY-PRODUCT: the published 2.7x ratio is a THREE-CADENCE MEAN of a 0-bps column paired with a 10-bps column.  At the WEEKLY cell this script sweeps it reads MA -2.81 pp vs VOL -4.32 pp = 1.54x, not 2.73x.  The monthly cell alone reads -0.66 vs -3.12 = 4.69x.  The claim's SIGN and ORDERING hold at every cadence; its MAGNITUDE is a cadence average.
+
+G3 construction identities:
+   |ABS(inf) - QTL(1.00)| weight identity, max over panels = 0.000e+00 -> PASS
+q           0.4    0.6    0.8    1.0
+panel                               
+B136     0.4021 0.5987 0.7982 1.0000
+SMALL439 0.3995 0.5983 0.7971 1.0000
+U56      0.4025 0.5991 0.7960 1.0000
+   max |realised - nominal q| = 0.0040 (bar 0.02) -> PASS
+
+======================================================================================================================
+MATCHED ADMISSION: what fraction of live names does ABS 0.60 actually admit?
+======================================================================================================================
+   panel family  level  mean_rate    p05    p95     sd    min
+     U56    ABS 0.4000     0.8703 0.6545 0.9815 0.1328 0.0926
+     U56    ABS 0.6000     0.9588 0.8727 1.0000 0.0736 0.1481
+     U56    ABS 0.8000     0.9852 0.9455 1.0000 0.0511 0.2407
+     U56    ABS 1.0000     0.9940 0.9804 1.0000 0.0274 0.5556
+     U56    ABS    inf     1.0000 1.0000 1.0000 0.0000 1.0000
+    B136    ABS 0.4000     0.8759 0.5982 0.9845 0.1475 0.0376
+    B136    ABS 0.6000     0.9638 0.8872 1.0000 0.0852 0.0602
+    B136    ABS 0.8000     0.9866 0.9627 1.0000 0.0597 0.1053
+    B136    ABS 1.0000     0.9938 0.9846 1.0000 0.0362 0.3910
+    B136    ABS    inf     1.0000 1.0000 1.0000 0.0000 1.0000
+SMALL439    ABS 0.4000     0.5162 0.2104 0.7453 0.1715 0.0163
+SMALL439    ABS 0.6000     0.7812 0.5292 0.9127 0.1369 0.0163
+SMALL439    ABS 0.8000     0.8980 0.7683 0.9623 0.0944 0.0272
+SMALL439    ABS 1.0000     0.9470 0.8840 0.9816 0.0691 0.0872
+SMALL439    ABS    inf     1.0000 1.0000 1.0000 0.0000 1.0000
+
+MATCHED q per panel (= mean daily admission rate of ABS 0.60 on that panel):
+   U56: q_match = 0.9588
+   B136: q_match = 0.9638
+   SMALL439: q_match = 0.7812
+The ABS clause's admission rate is panel-dependent AND time-varying; the QTL clause's is neither (G3).  That difference is the whole of this idea's question.
+
+======================================================================================================================
+THE SWEEP - trend leg fixed, only the volatility clause moves.  ALL grid points.
+======================================================================================================================
+4a comparand  RULES v2 (live, universe.json): CAGR 8.64%  Sharpe 1.2037 (1.2309/1.1828)  MaxDD -12.05%  OOS 1.2817
+4b comparand  SPY on the U56 window: CAGR 15.19%  Sharpe 0.8871 (0.9587/0.8287)  MaxDD -33.72%  OOS 0.8786   [4b bars: CAGR >= 10.63%, |MaxDD| <= 20.23%]
+4b comparand  SPY on the B136 window: CAGR 15.23%  Sharpe 0.8890 (0.9566/0.8340)  MaxDD -33.72%  OOS 0.8820   [4b bars: CAGR >= 10.66%, |MaxDD| <= 20.23%]
+4b comparand  SPY on the SMALL439 window: CAGR 14.13%  Sharpe 0.8615 (0.8907/0.8577)  MaxDD -33.72%  OOS 0.8820   [4b bars: CAGR >= 9.89%, |MaxDD| <= 20.23%]
+
+60 books written to 2026-09-09_is-the-vol-cap-the-real-universe-clause-not-the-trend-leg_B.grid.csv (3 panels x 10 clause settings x 2 constructions)
+
+--- construction RESPREAD, weekly, 10 bps, gross 0.75, trend leg lb 200 FIXED ---
+   panel    clause   tag  adm_rate   n_held   CAGR  Sharpe   MaxDD     H1     H2  oSharpe  dCAGR_pp  dSharpe  dCAGR0_pp  dSharpe0  pass4a            fail4b
+     U56 ABS 0.400   abs    0.8703  34.4597 0.0926  1.0092 -0.1493 1.0604 0.9639   1.0664   -2.3372  -0.0857    -2.1858   -0.0585   False              CAGR
+     U56 ABS 0.600   abs    0.9588  36.6705 0.1044  1.0529 -0.1584 1.0775 1.0338   1.1152   -1.1546  -0.0419    -1.0966   -0.0314   False              CAGR
+     U56 ABS 0.800   abs    0.9852  37.3169 0.1077  1.0597 -0.1605 1.1578 0.9778   1.0666   -0.8277  -0.0351    -0.8044   -0.0297   False                 -
+     U56 ABS 1.000   abs    0.9940  37.5074 0.1111  1.0716 -0.1711 1.1664 0.9972   1.0828   -0.4800  -0.0232    -0.4713   -0.0208   False                 -
+     U56  ABS OFF    abs    1.0000  37.6245 0.1159  1.0948 -0.1862 1.1778 1.0347   1.1138    0.0000   0.0000     0.0000    0.0000   False                 -
+     U56 QTL 0.400   qtl    0.4025  16.3333 0.0501  0.7707 -0.2263 1.0496 0.5334   0.6511   -6.5867  -0.3241    -6.0202   -0.1934   False    H2,OOS,DD,CAGR
+     U56 QTL 0.600   qtl    0.5991  23.9137 0.0627  0.8098 -0.1704 0.9403 0.6960   0.7914   -5.3267  -0.2850    -4.9320   -0.2094   False    H1,H2,OOS,CAGR
+     U56 QTL 0.800   qtl    0.7960  31.1270 0.0851  0.9461 -0.1479 0.9944 0.9065   1.0072   -3.0875  -0.1487    -2.8612   -0.1118   False              CAGR
+     U56 QTL 1.000   qtl    1.0000  37.6245 0.1159  1.0948 -0.1862 1.1778 1.0347   1.1138    0.0000   0.0000     0.0000    0.0000   False                 -
+     U56 QTL 0.959 match    0.9437  35.8950 0.1020  1.0229 -0.1710 1.0594 0.9975   1.0896   -1.3975  -0.0719    -1.3121   -0.0592   False              CAGR
+    B136 ABS 0.400   abs    0.8759  85.2217 0.0976  0.9985 -0.1646 1.1276 0.8768   0.9926   -1.9026  -0.0600    -1.7665   -0.0379   False              CAGR
+    B136 ABS 0.600   abs    0.9638  90.6301 0.1073  1.0279 -0.1768 1.1482 0.9154   1.0198   -0.9251  -0.0307    -0.8850   -0.0230   False                 -
+    B136 ABS 0.800   abs    0.9866  91.8601 0.1136  1.0617 -0.1752 1.1612 0.9708   1.0721   -0.3032   0.0032    -0.2868    0.0069   False                 -
+    B136 ABS 1.000   abs    0.9938  92.1807 0.1147  1.0541 -0.1980 1.1658 0.9555   1.0542   -0.1881  -0.0044    -0.1829   -0.0031   False                 -
+    B136  ABS OFF    abs    1.0000  92.3764 0.1166  1.0585 -0.2012 1.1603 0.9707   1.0660    0.0000   0.0000     0.0000    0.0000   False                 -
+    B136 QTL 0.400   qtl    0.4021  40.3652 0.0687  0.8471 -0.1606 1.0377 0.6890   0.7869   -4.7891  -0.2114    -3.9992   -0.0947   False       H2,OOS,CAGR
+    B136 QTL 0.600   qtl    0.5987  58.6657 0.0792  0.8748 -0.1639 1.0178 0.7502   0.8526   -3.7408  -0.1838    -3.2314   -0.1161   False       H2,OOS,CAGR
+    B136 QTL 0.800   qtl    0.7982  76.4366 0.0942  0.9540 -0.1852 1.0860 0.8364   0.9353   -2.2367  -0.1045    -1.9886   -0.0730   False              CAGR
+    B136 QTL 1.000   qtl    1.0000  92.3764 0.1166  1.0585 -0.2012 1.1603 0.9707   1.0660    0.0000   0.0000     0.0000    0.0000   False                 -
+    B136 QTL 0.964 match    0.9612  89.5690 0.1117  1.0376 -0.2000 1.1408 0.9477   1.0443   -0.4924  -0.0209    -0.4259   -0.0136   False                 -
+SMALL439 ABS 0.400   abs    0.5162  98.1967 0.0392  0.3814 -0.3494 0.5889 0.2109   0.2418   -2.5579  -0.1220    -1.7942   -0.0437   False H1,H2,OOS,DD,CAGR
+SMALL439 ABS 0.600   abs    0.7812 141.2257 0.0367  0.3361 -0.3998 0.4394 0.2588   0.2910   -2.8124  -0.1673    -2.5239   -0.1382   False H1,H2,OOS,DD,CAGR
+SMALL439 ABS 0.800   abs    0.8980 158.4502 0.0501  0.4208 -0.3886 0.4746 0.3853   0.4023   -1.4703  -0.0826    -1.3455   -0.0697   False H1,H2,OOS,DD,CAGR
+SMALL439 ABS 1.000   abs    0.9470 165.4301 0.0529  0.4314 -0.4097 0.4723 0.4084   0.4216   -1.1896  -0.0720    -1.1274   -0.0659   False H1,H2,OOS,DD,CAGR
+SMALL439  ABS OFF    abs    1.0000 172.3706 0.0648  0.5034 -0.3824 0.4977 0.5178   0.5355    0.0000   0.0000     0.0000    0.0000   False H1,H2,OOS,DD,CAGR
+SMALL439 QTL 0.400   qtl    0.3995  77.1566 0.0444  0.4193 -0.3607 0.5205 0.3480   0.3588   -2.0373  -0.0840    -1.1106    0.0043   False H1,H2,OOS,DD,CAGR
+SMALL439 QTL 0.600   qtl    0.5983 110.8472 0.0510  0.4473 -0.3677 0.5758 0.3560   0.3856   -1.3787  -0.0561    -0.8045   -0.0051   False H1,H2,OOS,DD,CAGR
+SMALL439 QTL 0.800   qtl    0.7971 142.1571 0.0484  0.4120 -0.3933 0.4908 0.3590   0.3704   -1.6341  -0.0914    -1.3582   -0.0673   False H1,H2,OOS,DD,CAGR
+SMALL439 QTL 1.000   qtl    1.0000 172.3706 0.0648  0.5034 -0.3824 0.4977 0.5178   0.5355    0.0000   0.0000     0.0000    0.0000   False H1,H2,OOS,DD,CAGR
+SMALL439 QTL 0.781 match    0.7781 139.2450 0.0455  0.3930 -0.4010 0.4900 0.3258   0.3390   -1.9278  -0.1104    -1.6300   -0.0841   False H1,H2,OOS,DD,CAGR
+
+--- construction DEGROSS, weekly, 10 bps, gross 0.75, trend leg lb 200 FIXED ---
+   panel    clause   tag  adm_rate   n_held   CAGR  Sharpe   MaxDD     H1      H2  oSharpe  dCAGR_pp  dSharpe  dCAGR0_pp  dSharpe0  pass4a         fail4b
+     U56 ABS 0.400   abs    0.8703  34.4597 0.0638  1.0976 -0.0886 1.0662  1.1288   1.2585   -1.8302  -0.0770    -1.8011   -0.0625   False           CAGR
+     U56 ABS 0.600   abs    0.9588  36.6705 0.0732  1.1165 -0.1092 1.0812  1.1506   1.2530   -0.8875  -0.0581    -0.8729   -0.0528   False           CAGR
+     U56 ABS 0.800   abs    0.9852  37.3169 0.0780  1.1453 -0.1150 1.1583  1.1345   1.2427   -0.4030  -0.0294    -0.3964   -0.0273   False           CAGR
+     U56 ABS 1.000   abs    0.9940  37.5074 0.0802  1.1606 -0.1177 1.1784  1.1463   1.2528   -0.1836  -0.0141    -0.1807   -0.0132   False           CAGR
+     U56  ABS OFF    abs    1.0000  37.6245 0.0821  1.1746 -0.1206 1.1936  1.1602   1.2630    0.0000   0.0000     0.0000    0.0000   False           CAGR
+     U56 QTL 0.400   qtl    0.4025  16.3333 0.0179  0.9231 -0.0418 1.0906  0.7599   0.8864   -6.4203  -0.2516    -6.4439   -0.1358   False        H2,CAGR
+     U56 QTL 0.600   qtl    0.5991  23.9137 0.0305  0.9072 -0.0608 0.9701  0.8451   0.9606   -5.1563  -0.2674    -5.1164   -0.2033   False           CAGR
+     U56 QTL 0.800   qtl    0.7960  31.1270 0.0516  1.0383 -0.0821 1.0193  1.0567   1.1829   -3.0440  -0.1363    -2.9827   -0.1049   False           CAGR
+     U56 QTL 1.000   qtl    1.0000  37.6245 0.0821  1.1746 -0.1206 1.1936  1.1602   1.2630    0.0000   0.0000     0.0000    0.0000   False           CAGR
+     U56 QTL 0.959 match    0.9437  35.8950 0.0692  1.0976 -0.1055 1.0597  1.1342   1.2515   -1.2897  -0.0770    -1.2522   -0.0661   False           CAGR
+    B136 ABS 0.400   abs    0.8759  85.2217 0.0647  1.0636 -0.0889 1.1992  0.9211   1.0848   -1.3146  -0.0316    -1.2836   -0.0184   False           CAGR
+    B136 ABS 0.600   abs    0.9638  90.6301 0.0721  1.0565 -0.1209 1.1682  0.9433   1.0847   -0.5708  -0.0387    -0.5615   -0.0354   False           CAGR
+    B136 ABS 0.800   abs    0.9866  91.8601 0.0763  1.0874 -0.1241 1.1889  0.9858   1.1248   -0.1556  -0.0078    -0.1520   -0.0067   False           CAGR
+    B136 ABS 1.000   abs    0.9938  92.1807 0.0771  1.0903 -0.1252 1.1993  0.9822   1.1198   -0.0753  -0.0049    -0.0737   -0.0045   False           CAGR
+    B136  ABS OFF    abs    1.0000  92.3764 0.0778  1.0952 -0.1264 1.2015  0.9903   1.1260    0.0000   0.0000     0.0000    0.0000   False           CAGR
+    B136 QTL 0.400   qtl    0.4021  40.3652 0.0202  0.8669 -0.0411 1.0663  0.6770   0.8060   -5.7651  -0.2284    -5.7178   -0.1048   False    H2,OOS,CAGR
+    B136 QTL 0.600   qtl    0.5987  58.6657 0.0340  0.9044 -0.0722 1.0700  0.7406   0.8797   -4.3812  -0.1909    -4.2793   -0.1199   False    H2,OOS,CAGR
+    B136 QTL 0.800   qtl    0.7982  76.4366 0.0527  0.9973 -0.0970 1.1407  0.8521   0.9904   -2.5160  -0.0979    -2.4337   -0.0658   False           CAGR
+    B136 QTL 1.000   qtl    1.0000  92.3764 0.0778  1.0952 -0.1264 1.2015  0.9903   1.1260    0.0000   0.0000     0.0000    0.0000   False           CAGR
+    B136 QTL 0.964 match    0.9612  89.5690 0.0719  1.0702 -0.1195 1.1719  0.9686   1.1057   -0.5976  -0.0250    -0.5669   -0.0178   False           CAGR
+SMALL439 ABS 0.400   abs    0.5162  98.1967 0.0090  0.2698 -0.0873 0.4875 -0.0381   0.0001   -2.6608  -0.2698    -2.6620   -0.2163   False H1,H2,OOS,CAGR
+SMALL439 ABS 0.600   abs    0.7812 141.2257 0.0166  0.3358 -0.1192 0.4417  0.2185   0.2346   -1.8962  -0.2037    -1.8758   -0.1827   False H1,H2,OOS,CAGR
+SMALL439 ABS 0.800   abs    0.8980 158.4502 0.0249  0.4311 -0.1376 0.4920  0.3709   0.3683   -1.0667  -0.1085    -1.0538   -0.0990   False H1,H2,OOS,CAGR
+SMALL439 ABS 1.000   abs    0.9470 165.4301 0.0280  0.4554 -0.1455 0.4855  0.4279   0.4188   -0.7612  -0.0842    -0.7543   -0.0795   False H1,H2,OOS,CAGR
+SMALL439  ABS OFF    abs    1.0000 172.3706 0.0356  0.5395 -0.1427 0.5238  0.5557   0.5507    0.0000   0.0000     0.0000    0.0000   False H1,H2,OOS,CAGR
+SMALL439 QTL 0.400   qtl    0.3995  77.1566 0.0105  0.4183 -0.0610 0.4937  0.3462   0.3304   -2.5130  -0.1212    -2.5276   -0.0321   False H1,H2,OOS,CAGR
+SMALL439 QTL 0.600   qtl    0.5983 110.8472 0.0173  0.4538 -0.0924 0.5412  0.3707   0.3723   -1.8282  -0.0857    -1.7913   -0.0345   False H1,H2,OOS,CAGR
+SMALL439 QTL 0.800   qtl    0.7971 142.1571 0.0225  0.4398 -0.1237 0.4809  0.4019   0.3807   -1.3123  -0.0997    -1.2712   -0.0760   False H1,H2,OOS,CAGR
+SMALL439 QTL 1.000   qtl    1.0000 172.3706 0.0356  0.5395 -0.1427 0.5238  0.5557   0.5507    0.0000   0.0000     0.0000    0.0000   False H1,H2,OOS,CAGR
+SMALL439 QTL 0.781 match    0.7781 139.2450 0.0212  0.4269 -0.1248 0.4782  0.3793   0.3580   -1.4377  -0.1126    -1.3966   -0.0867   False H1,H2,OOS,CAGR
+
+======================================================================================================================
+H_LEVEL - is the ABS clause's damage MONOTONE in the cap level?
+======================================================================================================================
+dCAGR vs the same arm's cap-OFF book, pp/yr (10 bps; 0 bps in brackets).  Monotone = non-decreasing as c rises.
+family    panel      con  monotone10  monotone0                                  ladder10                                   ladder0
+   ABS      U56 RESPREAD        True       True -2.34 -> -1.15 -> -0.83 -> -0.48 -> +0.00 -2.19 -> -1.10 -> -0.80 -> -0.47 -> +0.00
+   ABS      U56  DEGROSS        True       True -1.83 -> -0.89 -> -0.40 -> -0.18 -> +0.00 -1.80 -> -0.87 -> -0.40 -> -0.18 -> +0.00
+   ABS     B136 RESPREAD        True       True -1.90 -> -0.93 -> -0.30 -> -0.19 -> +0.00 -1.77 -> -0.89 -> -0.29 -> -0.18 -> +0.00
+   ABS     B136  DEGROSS        True       True -1.31 -> -0.57 -> -0.16 -> -0.08 -> +0.00 -1.28 -> -0.56 -> -0.15 -> -0.07 -> +0.00
+   ABS SMALL439 RESPREAD       False      False -2.56 -> -2.81 -> -1.47 -> -1.19 -> +0.00 -1.79 -> -2.52 -> -1.35 -> -1.13 -> +0.00
+   ABS SMALL439  DEGROSS        True       True -2.66 -> -1.90 -> -1.07 -> -0.76 -> +0.00 -2.66 -> -1.88 -> -1.05 -> -0.75 -> +0.00
+   QTL      U56 RESPREAD        True       True          -6.59 -> -5.33 -> -3.09 -> +0.00          -6.02 -> -4.93 -> -2.86 -> +0.00
+   QTL      U56  DEGROSS        True       True          -6.42 -> -5.16 -> -3.04 -> +0.00          -6.44 -> -5.12 -> -2.98 -> +0.00
+   QTL     B136 RESPREAD        True       True          -4.79 -> -3.74 -> -2.24 -> +0.00          -4.00 -> -3.23 -> -1.99 -> +0.00
+   QTL     B136  DEGROSS        True       True          -5.77 -> -4.38 -> -2.52 -> +0.00          -5.72 -> -4.28 -> -2.43 -> +0.00
+   QTL SMALL439 RESPREAD       False      False          -2.04 -> -1.38 -> -1.63 -> +0.00          -1.11 -> -0.80 -> -1.36 -> +0.00
+   QTL SMALL439  DEGROSS        True       True          -2.51 -> -1.83 -> -1.31 -> +0.00          -2.53 -> -1.79 -> -1.27 -> +0.00
+H_LEVEL (ABS, the pre-registered family): monotone in 5/6 arms at 10 bps and 5/6 at 0 bps -> FAILS
+   QTL for comparison: monotone in 5/6 at 10 bps.
+
+======================================================================================================================
+WHEN does the ABSOLUTE cap fire?  (mean admission rate of ABS 0.60 by calendar year)
+======================================================================================================================
+       U56  B136  SMALL439
+Date                      
+2009 0.906 0.876       NaN
+2010 0.982 0.984       NaN
+2011 0.954 0.952     0.736
+2012 0.968 0.980     0.859
+2013 0.975 0.986     0.898
+2014 0.985 0.988     0.885
+2015 0.978 0.985     0.841
+2016 0.975 0.984     0.795
+2017 0.991 0.992     0.862
+2018 0.975 0.985     0.831
+2019 0.985 0.989     0.816
+2020 0.863 0.850     0.547
+2021 0.977 0.985     0.768
+2022 0.919 0.947     0.673
+2023 0.971 0.985     0.789
+2024 0.965 0.979     0.772
+2025 0.944 0.956     0.713
+2026 0.937 0.936     0.678
+A cross-sectional quantile clause is a flat line at q by construction (G3).  The absolute cap is not a universe clause at all in the years that matter: it is a market-wide DE-RISKING SWITCH whose firing rate is set by the panel's vol distribution (idea 400's frequency-vs-level artefact, here in the live RULES v1 filter).
+
+======================================================================================================================
+H_SCALE - does a PANEL-SCALED cap at MATCHED admission remove the small-cap damage?
+======================================================================================================================
+   panel      con  q_match  abs_rate  qtl_rate  abs_dCAGR0  qtl_dCAGR0   gain0  abs_dCAGR  qtl_dCAGR  gain10  abs_dSharpe  qtl_dSharpe   gainS
+     U56 RESPREAD  +0.9588   +0.9588   +0.9437     -1.0966     -1.3121 -0.2155    -1.1546    -1.3975 -0.2429      -0.0419      -0.0719 -0.0300
+     U56  DEGROSS  +0.9588   +0.9588   +0.9437     -0.8729     -1.2522 -0.3793    -0.8875    -1.2897 -0.4023      -0.0581      -0.0770 -0.0189
+    B136 RESPREAD  +0.9638   +0.9638   +0.9612     -0.8850     -0.4259 +0.4591    -0.9251    -0.4924 +0.4327      -0.0307      -0.0209 +0.0097
+    B136  DEGROSS  +0.9638   +0.9638   +0.9612     -0.5615     -0.5669 -0.0054    -0.5708    -0.5976 -0.0268      -0.0387      -0.0250 +0.0137
+SMALL439 RESPREAD  +0.7812   +0.7812   +0.7781     -2.5239     -1.6300 +0.8940    -2.8124    -1.9278 +0.8846      -0.1673      -0.1104 +0.0569
+SMALL439  DEGROSS  +0.7812   +0.7812   +0.7781     -1.8758     -1.3966 +0.4792    -1.8962    -1.4377 +0.4584      -0.2037      -0.1126 +0.0911
+H_SCALE on SMALL439/RESPREAD/0 bps (51R's cell): gain +0.89 pp (bar >= +1.0) -> FAIL;  |residual damage| 1.63 pp (bar <= 1.0) -> FAIL
+H_SCALE -> FAILS
+
+DECOMPOSITION implied by the matched pivot (0 bps, pp/yr).  The ABS clause differs from the matched QTL clause in ONE thing: its admission rate moves with the market (table above).  So  ABS damage = SELECTION (= the matched-QTL damage, dropping the panel's own highest-vol names) + TIMING (= the rest, firing harder in crises).
+   panel      con   TOTAL  SELECTION  TIMING  sel_share
+     U56 RESPREAD -1.0966    -1.3121 +0.2155    +1.1965
+     U56  DEGROSS -0.8729    -1.2522 +0.3793    +1.4346
+    B136 RESPREAD -0.8850    -0.4259 -0.4591    +0.4813
+    B136  DEGROSS -0.5615    -0.5669 +0.0054    +1.0097
+SMALL439 RESPREAD -2.5239    -1.6300 -0.8940    +0.6458
+SMALL439  DEGROSS -1.8758    -1.3966 -0.4792    +0.7445
+
+======================================================================================================================
+H_ORDER - is the cross-panel ORDERING of the damage an ABS-clause property?
+======================================================================================================================
+     con       clause    metric     U56    B136  SMALL439  spread
+RESPREAD     ABS 0.60 dCAGR0_pp -1.0966 -0.8850   -2.5239 +1.6389
+RESPREAD     ABS 0.60  dSharpe0 -0.0314 -0.0230   -0.1382 +0.1152
+RESPREAD QTL @MATCHED dCAGR0_pp -1.3121 -0.4259   -1.6300 +1.2040
+RESPREAD QTL @MATCHED  dSharpe0 -0.0592 -0.0136   -0.0841 +0.0705
+RESPREAD     QTL 0.60 dCAGR0_pp -4.9320 -3.2314   -0.8045 +4.1275
+RESPREAD     QTL 0.60  dSharpe0 -0.2094 -0.1161   -0.0051 +0.2043
+ DEGROSS     ABS 0.60 dCAGR0_pp -0.8729 -0.5615   -1.8758 +1.3142
+ DEGROSS     ABS 0.60  dSharpe0 -0.0528 -0.0354   -0.1827 +0.1473
+ DEGROSS QTL @MATCHED dCAGR0_pp -1.2522 -0.5669   -1.3966 +0.8296
+ DEGROSS QTL @MATCHED  dSharpe0 -0.0661 -0.0178   -0.0867 +0.0689
+ DEGROSS     QTL 0.60 dCAGR0_pp -5.1164 -4.2793   -1.7913 +3.3251
+ DEGROSS     QTL 0.60  dSharpe0 -0.2033 -0.1199   -0.0345 +0.1688
+H_ORDER (RESPREAD, 0 bps, dCAGR pp): ABS spread 1.64 vs QTL@MATCHED spread 1.20; ratio 0.73 (bar <= 0.50) -> FAILS
+
+======================================================================================================================
+H_CLAUSE - does ANY volatility clause earn its place? (PROTOCOL 4a and 4b)
+======================================================================================================================
+4a passes 0/60;  4b passes 10/60;  BOTH 0/60
+binding 4b bars: CAGR 50, H2 27, OOS 26, H1 21, DD 11
+
+The decisive comparison - every genuinely CAPPED book against ITS OWN cap-OFF control. ABS(inf) and QTL(1.00) are the control itself (G3) and are excluded from the treatment counts: 8 capped books x 6 arms = 48.
+   panel      con  off_4a  off_4b  capped_4a  capped_4b  n_capped  best_dSharpe  n_dSharpe_pos
+     U56 RESPREAD   False    True          0          2         8       -0.0232              0
+     U56  DEGROSS   False   False          0          0         8       -0.0141              0
+    B136 RESPREAD   False    True          0          4         8        0.0032              1
+    B136  DEGROSS   False   False          0          0         8       -0.0049              0
+SMALL439 RESPREAD   False   False          0          0         8       -0.0561              0
+SMALL439  DEGROSS   False   False          0          0         8       -0.0842              0
+H_CLAUSE: capped books beating their own cap-OFF control on Sharpe: 1/48  (best +0.0032, median -0.0849, worst -0.3241)
+   on CAGR: 0/48 (best -0.08 pp, median -1.55 pp)
+   on MaxDD (less deep): 41/48 (best +8.53 pp)  <- the ONE thing a vol cap is supposed to buy
+H_CLAUSE (a capped book clears a KEEP path its cap-OFF control does not) -> FAILS
+
+======================================================================================================================
+RULE 8 WALK-FORWARD - (family, level) chosen on 2009-2016 IS Sharpe, 2017-2026 read once
+======================================================================================================================
+   panel      con   IS_pick  isSharpe   oCAGR  oSharpe  oMaxDD  OOS_best  best_oSharpe  regret  off_oSharpe  beats_off  spy_oSharpe  spy_oCAGR  beats_spy  live_oSharpe  beats_live  pass4a            fail4b
+     U56 RESPREAD   ABS OFF    1.0734  0.1245   1.1138 -0.1862 ABS 0.600        1.1152  0.0014       1.1138      False       0.8786     0.1538       True        1.2817       False   False                 -
+     U56  DEGROSS   ABS OFF    1.0622  0.0909   1.2630 -0.1206   ABS OFF        1.2630  0.0000       1.2630      False       0.8786     0.1538       True        1.2817       False   False              CAGR
+    B136 RESPREAD ABS 1.000    1.0539  0.1163   1.0542 -0.1980 ABS 0.800        1.0721  0.0179       1.0660      False       0.8820     0.1545       True        1.2817       False   False                 -
+    B136  DEGROSS   ABS OFF    1.0598  0.0787   1.1260 -0.1264   ABS OFF        1.1260  0.0000       1.1260      False       0.8820     0.1545       True        1.2817       False   False              CAGR
+SMALL439 RESPREAD ABS 0.400    0.6307  0.0225   0.2418 -0.3494   ABS OFF        0.5355  0.2936       0.5355      False       0.8820     0.1545      False        1.2817       False   False H1,H2,OOS,DD,CAGR
+SMALL439  DEGROSS ABS 0.400    0.5848 -0.0004   0.0001 -0.0873   ABS OFF        0.5507  0.5506       0.5507      False       0.8820     0.1545      False        1.2817       False   False    H1,H2,OOS,CAGR
+IS pick beats its own cap-OFF control OOS in 0/6 arms; beats SPY in 4/6; beats the live RULES v2 book in 0/6.  Mean OOS regret vs the OOS-best clause: +0.1439.
+The IS pick IS the cap-OFF book in 3/6 arms; the OOS-best clause is the cap-OFF book in 4/6.
+
+======================================================================================================================
+WF-B - the arm with the highest IS Sharpe over ALL 60 books, read once out of sample
+======================================================================================================================
+IS-chosen book: U56 / RESPREAD / ABS OFF  (IS Sharpe 1.0734)
+  FULL   CAGR 11.59%  Sharpe 1.0948 (H1 1.1778 / H2 1.0347)  MaxDD -18.62%
+  OOS    CAGR 12.45%  Sharpe 1.1138  MaxDD -18.62%
+  cap-OFF control on the same arm: CAGR 11.59%  Sharpe 1.0948  MaxDD -18.62%  OOS 1.1138
+  SPY (U56 window): CAGR 15.19%  Sharpe 0.8871  MaxDD -33.72%  OOS 0.8786
+  RULES v2 (live): CAGR 8.64%  Sharpe 1.2037  MaxDD -12.05%  OOS 1.2817
+  4a False;  4b PASS
+
+======================================================================================================================
+ADDENDUM - idea 311's standing proposal: quote the admissible GROSS BAND of every 4b pass on a gross-scalar book
+======================================================================================================================
+Every book here is a gross scalar (weights are gross x a 0/1 pattern), so idea 311's census applies: a 4b pass at a single un-swept g is a DIAL PLACEMENT until the band is shown.  Each 4b passer is re-run on a 17-point g ladder 0.20..1.00 (step 0.05), the clause and everything else held fixed.  ALL 17 points are written to the .gband.csv.
+  U56       RESPREAD ABS 0.800  capped   admissible g [0.75, 0.95]  width 5 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  U56       RESPREAD ABS 1.000  capped   admissible g [0.75, 0.85]  width 3 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  U56       RESPREAD ABS OFF    CONTROL  admissible g [0.70, 0.80]  width 3 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  U56       RESPREAD QTL 1.000  CONTROL  admissible g [0.70, 0.80]  width 3 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  B136      RESPREAD ABS 0.600  capped   admissible g [0.75, 0.85]  width 3 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  B136      RESPREAD ABS 0.800  capped   admissible g [0.75, 0.85]  width 3 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  B136      RESPREAD ABS 1.000  capped   admissible g [0.70, 0.75]  width 2 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  B136      RESPREAD ABS OFF    CONTROL  admissible g [0.70, 0.75]  width 2 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  B136      RESPREAD QTL 1.000  CONTROL  admissible g [0.70, 0.75]  width 2 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+  B136      RESPREAD QTL 0.964  capped   admissible g [0.75, 0.75]  width 1 of 17 grid points  contiguous True  (the book above sits at g=0.75)
+Band widths over the 10 4b passers: min 1, median 3.0, max 5 of 17 grid points.
+
+======================================================================================================================
+SUMMARY
+======================================================================================================================
+G1 PASS  G2 PASS  G3 PASS
+H_LEVEL FAILS   H_SCALE FAILS   H_ORDER FAILS   H_CLAUSE FAILS
+KEEP paths over 60 books: 4a 0, 4b 10, BOTH 0
