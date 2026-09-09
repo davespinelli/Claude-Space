@@ -74,6 +74,13 @@ flatters most.
 ## What this means for the record
 
 Every SELECTION number the record has published is a "which names" claim that is, in ~2 cases
-out of 3, smaller than a leg that is not about which names are held at all. The fix is
-mechanical and is now the follow-up in idea 559: pin `k_q` to `k_ma` **daily** rather than on
-average, which sets BOTH to zero by construction.
+out of 3, smaller than a leg that is not about which names are held at all.
+
+**Cross-reference (idea 559, lane C, same day):** the obvious repair — pin `k_q` to `k_ma`
+*daily* so BOTH is zero by construction — does not rescue the split, it collapses it. Because
+`MA-THRESH` admits exactly `{dist > theta}` and idea 305's quantile control ranks on that same
+`dist`, a daily match returns the identical gate and the contrast vanishes. Read together, the
+two results say the same thing from opposite ends: **the depth mismatch was the contrast.** The
+`|BOTH|/|SEL|` ordering measured here — 100% majority-BOTH at overlap 0.79-0.84, 33% at overlap
+0.95-0.98 — is the continuous version of 559's discrete collapse, and it is why the ratio rises
+as the match loosens rather than falling.

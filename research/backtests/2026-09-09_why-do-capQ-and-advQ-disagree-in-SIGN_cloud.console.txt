@@ -42,3 +42,187 @@ Q1  DECILE LADDERS - 6 key x membership cells x 10 deciles x 3 arms = 180 books,
 ==============================================================================================================================
   capQ26-S done (44s)
   capC0-S done (82s)
+  capC-S done (118s)
+  capC-D done (264s)
+  advQ-S done (303s)
+  advQ-D done (452s)
+
+==============================================================================================================================
+G1  REPRODUCTION of idea 424's committed .deciles.csv (the advQ legs are unchanged here)
+==============================================================================================================================
+  advQ (STATIC+DYNAMIC): 60/60 rows x 6 columns, worst |d| = 9.931e-17 (CAGR)  (bar 1e-09)  PASS
+  capQ26-STATIC vs idea 424's capQ-STATIC: 30 rows, max |dSharpe| = 2.329e-01, 12 rows with a different decile size
+    (idea 424 built capQ from the `mktcap` column; this script builds it as price*shares.  G2 shows those are the
+     same number to 1e-02, so any residue here is qcut edge placement on ties, and it is reported, not hidden.)
+
+==============================================================================================================================
+Q2  THE SLOPES - rho(decile, dSharpe vs EWall), FULL / IS 2010-2016 / OOS 2017-2026
+    n = 10 deciles, so SE(rho) ~ 0.354; t = rho*sqrt(n-2)/sqrt(1-rho^2).  EVERY cell reported.
+==============================================================================================================================
+  key     memb     arm     rho_full      t   rho_IS      t  rho_OOS      t  rhoCAGR  +d/10
+  capQ26  STATIC   MA-RS     -0.125  -0.36   +0.372  +1.13   -0.515  -1.70   -0.205    0/10
+  capQ26  STATIC   MA-DG     -0.199  -0.57   +0.382  +1.17   -0.586  -2.05   -0.326    2/10
+  capC0   STATIC   MA-RS     +0.657  +2.46   +0.531  +1.77   +0.450  +1.43   +0.534    1/10
+  capC0   STATIC   MA-DG     +0.697  +2.75   +0.632  +2.30   +0.490  +1.59   +0.941    1/10
+  capC    STATIC   MA-RS     +0.243  +0.71   +0.445  +1.40   -0.164  -0.47   +0.113    0/10
+  capC    STATIC   MA-DG     +0.101  +0.29   +0.477  +1.53   -0.350  -1.06   +0.785    0/10
+  capC    DYNAMIC  MA-RS     +0.628  +2.28   +0.602  +2.13   +0.180  +0.52   +0.683    0/10
+  capC    DYNAMIC  MA-DG     +0.373  +1.14   +0.670  +2.55   -0.166  -0.48   +0.884    3/10
+  advQ    STATIC   MA-RS     +0.099  +0.28   +0.550  +1.86   -0.265  -0.78   -0.064    1/10
+  advQ    STATIC   MA-DG     +0.133  +0.38   +0.531  +1.77   -0.309  -0.92   +0.647    1/10
+  advQ    DYNAMIC  MA-RS     +0.335  +1.01   +0.462  +1.48   +0.120  +0.34   +0.185    0/10
+  advQ    DYNAMIC  MA-DG     +0.113  +0.32   +0.396  +1.22   -0.463  -1.48   +0.908    1/10
+
+==============================================================================================================================
+Q3  THE THREE CHANNELS.  G = rho(advQ,D) - rho(capQ26,S) is the published sign gap; each channel is measured TWICE.
+==============================================================================================================================
+  arm window       G  LOOKAHEAD_vs_capC0  LOOKAHEAD_vs_capC  CONTENT_at_S  CONTENT_at_D  MEMBERSHIP_capC  MEMBERSHIP_advQ   pathA   pathB  pathA_err  pathB_err  interaction  mean_LOOK  mean_CONT  mean_MEMB largest
+MA-RS   FULL +0.4600             -0.7815            -0.3681       -0.1445       -0.2930          +0.3848          +0.2363 +0.4600 +0.4600    +0.0000    +0.0000      +0.0000    +0.5748    +0.2187    +0.3106    LOOK
+MA-RS     IS +0.0902             -0.1592            -0.0724       +0.1051       -0.1391          +0.1569          -0.0873 +0.0902 +0.0902    +0.0000    +0.0000      +0.0000    +0.1158    +0.1221    +0.1221    CONT
+MA-RS    OOS +0.6343             -0.9648            -0.3505       -0.1014       -0.0600          +0.3438          +0.3851 +0.6343 +0.6343    -0.0000    -0.0000      +0.0000    +0.6576    +0.0807    +0.3645    LOOK
+MA-DG   FULL +0.3114             -0.8962            -0.2998       +0.0318       -0.2608          +0.2724          -0.0202 +0.3114 +0.3114    +0.0000    -0.0000      +0.0000    +0.5980    +0.1463    +0.1463    LOOK
+MA-DG     IS +0.0137             -0.2493            -0.0945       +0.0538       -0.2742          +0.1934          -0.1346 +0.0137 +0.0137    +0.0000    +0.0000      +0.0000    +0.1719    +0.1640    +0.1640    LOOK
+MA-DG    OOS +0.1234             -1.0760            -0.2363       +0.0413       -0.2968          +0.1839          -0.1542 +0.1234 +0.1234    +0.0000    +0.0000      +0.0000    +0.6561    +0.1690    +0.1690    LOOK
+
+  PATH A = -LOOKAHEAD_vs_capC + CONTENT_at_S + MEMBERSHIP_advQ  (must equal G exactly)
+  PATH B = -LOOKAHEAD_vs_capC + MEMBERSHIP_capC + CONTENT_at_D    (must equal G exactly)
+  identity check: max |pathA - G| = 1.11e-16, max |pathB - G| = 1.11e-16
+  MA-RS: G = +0.4600;  mean |LOOKAHEAD| 0.5748  |CONTENT| 0.2187  |MEMBERSHIP| 0.3106  -> largest = LOOK;  content x membership interaction +0.0000
+  MA-DG: G = +0.3114;  mean |LOOKAHEAD| 0.5980  |CONTENT| 0.1463  |MEMBERSHIP| 0.1463  -> largest = LOOK;  content x membership interaction +0.0000
+
+  H_MEMB FAILS | H_LOOK HOLDS | CONTENT largest: no   (MA-RS, FULL sample)
+  OOS reading of the same channels (rule-8 W1): MA-RS LOOK, MA-DG LOOK
+
+==============================================================================================================================
+Q4  CHANNEL (iii) SURVIVORSHIP IN THE THIN DECILES - leave-one-decile-out jackknife of every rho and of the gap G.
+==============================================================================================================================
+  arm  dropped  G_full    G_jk      dG  shrink  sign_flip  rho_capQ26_S  rho_capC0_S  rho_capC_S  rho_capC_D  rho_advQ_S  rho_advQ_D
+MA-RS        1 +0.4600 +0.0882 -0.3718 +0.8083      False       -0.4087      +0.5289     -0.4492     +0.4093     -0.5605     -0.3205
+MA-RS        2 +0.4600 +0.3919 -0.0681 +0.1480      False       +0.0949      +0.6379     +0.3417     +0.6376     +0.2332     +0.4868
+MA-RS        3 +0.4600 +0.4551 -0.0049 +0.0106      False       -0.0025      +0.7075     +0.3527     +0.8115     +0.3284     +0.4526
+MA-RS        4 +0.4600 +0.6511 +0.1912 -0.4156      False       -0.2957      +0.6584     +0.3077     +0.6197     +0.0839     +0.3554
+MA-RS        5 +0.4600 +0.4528 -0.0072 +0.0157      False       -0.1123      +0.6579     +0.2529     +0.6290     +0.1017     +0.3405
+MA-RS        6 +0.4600 +0.4669 +0.0070 -0.0151      False       -0.1225      +0.7034     +0.2576     +0.6421     +0.1006     +0.3444
+MA-RS        7 +0.4600 +0.4491 -0.0109 +0.0238      False       -0.1454      +0.6433     +0.2007     +0.6338     +0.0770     +0.3037
+MA-RS        8 +0.4600 +0.4445 -0.0155 +0.0337      False       -0.0701      +0.6220     +0.3287     +0.6265     +0.0559     +0.3743
+MA-RS        9 +0.4600 +0.5725 +0.1125 -0.2446      False       -0.1435      +0.8557     +0.2733     +0.5899     +0.2431     +0.4290
+MA-RS       10 +0.4600 +0.3107 -0.1493 +0.3245      False       -0.0735      +0.4781     +0.2267     +0.6169     +0.1065     +0.2372
+MA-DG        1 +0.3114 +0.0735 -0.2379 +0.7641      False       -0.4162      +0.6594     -0.1989     +0.0466     -0.2116     -0.3427
+MA-DG        2 +0.3114 +0.5528 +0.2414 -0.7752      False       -0.0732      +0.6944     +0.3431     +0.4654     +0.2715     +0.4795
+MA-DG        3 +0.3114 +0.1885 -0.1229 +0.3947      False       -0.0408      +0.7498     +0.1674     +0.5328     +0.4055     +0.1477
+MA-DG        4 +0.3114 +0.4481 +0.1367 -0.4391      False       -0.2838      +0.6871     +0.1230     +0.3881     +0.1393     +0.1643
+MA-DG        5 +0.3114 +0.2958 -0.0156 +0.0500      False       -0.1933      +0.7080     +0.1097     +0.3895     +0.1200     +0.1025
+MA-DG        6 +0.3114 +0.3308 +0.0194 -0.0623      False       -0.1980      +0.7808     +0.1660     +0.3791     +0.1565     +0.1328
+MA-DG        7 +0.3114 +0.2807 -0.0307 +0.0985      False       -0.1811      +0.6858     +0.1213     +0.4145     +0.1103     +0.0996
+MA-DG        8 +0.3114 +0.2340 -0.0774 +0.2486      False       -0.0948      +0.6889     +0.2064     +0.4346     +0.1639     +0.1392
+MA-DG        9 +0.3114 +0.6561 +0.3447 -1.1071      False       -0.4562      +0.7371     -0.0510     +0.3417     +0.1842     +0.1999
+MA-DG       10 +0.3114 -0.0249 -0.3363 +0.9199       True       -0.0548      +0.5458     -0.0225     +0.2343     -0.0559     -0.0797
+
+  MA-RS: the most influential decile is D1 - dropping it moves G +0.4600 -> +0.0882 (|G| cut 80.8%, sign flip False)  H_THIN HOLDS
+
+  MA-DG: the most influential decile is D10 - dropping it moves G +0.3114 -> -0.0249 (|G| cut 92.0%, sign flip True)  H_THIN HOLDS
+
+  decile-1 EWall Sharpe by scheme (the 2.03 the queue flags), and the decile sizes:
+     key membership  n_names            size   CAGR  Sharpe   MaxDD  OOS_Sharpe
+  capQ26     STATIC  43.0000 145.524M capQ26 0.0964  0.6218 -0.4530      0.4869
+   capC0     STATIC  43.0000   52.241M capC0 0.1884  1.3534 -0.2556      1.1787
+    capC     STATIC  43.0000   123.964M capC 0.1814  1.2091 -0.2824      1.3154
+    capC    DYNAMIC  33.0601    76.206M capC 0.4365  2.3037 -0.3239      2.3291
+    advQ     STATIC  44.0000     0.093M advQ 0.1821  1.2192 -0.2831      1.3458
+    advQ    DYNAMIC  33.3865     0.049M advQ 0.3172  2.0280 -0.2454      2.2131
+
+==============================================================================================================================
+Q5  PAIRED CALENDAR-YEAR BLOCK BOOTSTRAP (1000 draws, seed 313) - is the sign gap, and each channel, distinguishable from 0?
+    One year-resample per draw applied to EVERY book, so G and the channels are PAIRED statistics.
+==============================================================================================================================
+  MA-RS bootstrapped (456s)
+  MA-DG bootstrapped (459s)
+
+  arm          statistic   point  boot_mean     p05     p95  p_positive  excludes_zero
+MA-RS                  G +0.4600    +0.3811 -0.0162 +0.7275     +0.9420          False
+MA-RS LOOKAHEAD_vs_capC0 -0.7815    -0.6181 -1.0575 -0.0975     +0.0260           True
+MA-RS  LOOKAHEAD_vs_capC -0.3681    -0.2796 -0.6728 +0.1399     +0.1330          False
+MA-RS       CONTENT_at_S -0.1445    -0.0941 -0.3172 +0.1301     +0.2330          False
+MA-RS       CONTENT_at_D -0.2930    -0.2198 -0.4641 +0.0385     +0.0740          False
+MA-RS    MEMBERSHIP_capC +0.3848    +0.3213 +0.0030 +0.6309     +0.9520           True
+MA-RS    MEMBERSHIP_advQ +0.2363    +0.1955 -0.0424 +0.4157     +0.9150          False
+MA-DG                  G +0.3114    +0.2471 -0.1808 +0.6947     +0.8200          False
+MA-DG LOOKAHEAD_vs_capC0 -0.8962    -0.7148 -1.1411 -0.2527     +0.0100           True
+MA-DG  LOOKAHEAD_vs_capC -0.2998    -0.2093 -0.6760 +0.2613     +0.2480          False
+MA-DG       CONTENT_at_S +0.0318    +0.0528 -0.1477 +0.3105     +0.6090          False
+MA-DG       CONTENT_at_D -0.2608    -0.2055 -0.4264 +0.0228     +0.0740          False
+MA-DG    MEMBERSHIP_capC +0.2724    +0.2432 -0.0898 +0.5709     +0.8780          False
+MA-DG    MEMBERSHIP_advQ -0.0202    -0.0150 -0.2969 +0.3283     +0.4380          False
+
+  statistics whose 90% band excludes zero: 3/14
+
+==============================================================================================================================
+RULE 8 W2 - per scheme, pick the decile with the best IS (2016-12-31 and earlier) EWall Sharpe, read its OOS ONCE.
+==============================================================================================================================
+   key membership  pick   arm  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  spy_OOS  v2_OOS  ctrl_OOS  beat_spy  beat_v2  beat_ctrl
+capQ26     STATIC     2 EWall     1.0294    0.0678      0.4403    -0.4432   0.8820  0.5680    0.6367     False    False      False
+capQ26     STATIC     2 MA-RS     0.5254    0.1157      0.6330    -0.4429   0.8820  0.5680    0.6367     False     True      False
+capQ26     STATIC     2 MA-DG     0.7176    0.0398      0.5099    -0.1707   0.8820  0.5680    0.6367     False    False      False
+ capC0     STATIC     1 EWall     1.7643    0.1762      1.1787    -0.2556   0.8820  0.5680    0.6367      True     True       True
+ capC0     STATIC     1 MA-RS     0.7762    0.1538      0.9685    -0.3216   0.8820  0.5680    0.6367      True     True       True
+ capC0     STATIC     1 MA-DG     1.0579    0.0849      1.0228    -0.0941   0.8820  0.5680    0.6367      True     True       True
+  capC     STATIC     1 EWall     1.0145    0.2205      1.3154    -0.2824   0.8820  0.5680    0.6367      True     True       True
+  capC     STATIC     1 MA-RS    -0.2000    0.1900      1.0611    -0.3342   0.8820  0.5680    0.6367      True     True       True
+  capC     STATIC     1 MA-DG     0.0139    0.1145      1.2092    -0.1144   0.8820  0.5680    0.6367      True     True       True
+  capC    DYNAMIC     1 EWall     2.3509    0.5020      2.3291    -0.3239   0.8820  0.5680    0.6367      True     True       True
+  capC    DYNAMIC     1 MA-RS     0.8149    0.5397      2.1595    -0.2747   0.8820  0.5680    0.6367      True     True       True
+  capC    DYNAMIC     1 MA-DG     1.2123    0.1845      2.2179    -0.0683   0.8820  0.5680    0.6367      True     True       True
+  advQ     STATIC     1 EWall     0.9807    0.2254      1.3458    -0.2831   0.8820  0.5680    0.6367      True     True       True
+  advQ     STATIC     1 MA-RS    -0.1273    0.1503      0.8592    -0.3599   0.8820  0.5680    0.6367     False     True       True
+  advQ     STATIC     1 MA-DG     0.0906    0.1047      1.0918    -0.1243   0.8820  0.5680    0.6367      True     True       True
+  advQ    DYNAMIC     1 EWall     1.6948    0.3742      2.2131    -0.2454   0.8820  0.5680    0.6367      True     True       True
+  advQ    DYNAMIC     1 MA-RS     0.3929    0.3716      1.7724    -0.3504   0.8820  0.5680    0.6367      True     True       True
+  advQ    DYNAMIC     1 MA-DG     0.6538    0.1723      2.1541    -0.0731   0.8820  0.5680    0.6367      True     True       True
+
+  WF picks beating SPY OOS 14/18, RULES v2 OOS 16/18, the whole-panel EWall control 15/18
+
+==============================================================================================================================
+KEEP PATHS over all 180 decile books (4a vs RULES v2 live, 4b vs SPY).
+==============================================================================================================================
+  4a passers 4/180   4b passers 1/180   BOTH 0/180
+  4b failure reasons (fail SET, not first clause):
+                       n
+  f4b                   
+  H1,H2,OOS,DD,CAGR  107
+  H1,H2,OOS,CAGR      23
+  H1,H2,OOS,DD        16
+  H1,DD                9
+  DD                   8
+  H1,CAGR              4
+  H2,OOS,DD,CAGR       3
+  CAGR                 2
+  H1,DD,CAGR           2
+  OOS,DD               1
+  -                    1
+  H1,OOS,DD,CAGR       1
+  H1,OOS,DD            1
+  H1                   1
+  H2,OOS,DD            1
+
+  every 4b passer:
+   key membership  decile   arm  n_names   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe
+  capC    DYNAMIC       1 MA-DG  33.0601 0.1451  1.8590 -0.1646 1.2585 2.3714      2.2179
+
+  every 4a passer:
+    key membership  decile   arm  n_names   CAGR  Sharpe   MaxDD     H1     H2     f4b
+  capC0     STATIC       1 MA-DG  43.0000 0.0810  1.0319 -0.1426 1.0131 1.0612    CAGR
+   capC    DYNAMIC       2 MA-DG  33.5112 0.0821  1.0640 -0.1085 0.6692 1.3913 H1,CAGR
+   advQ     STATIC       3 MA-DG  44.0000 0.0678  0.8263 -0.1464 0.7514 0.8950 H1,CAGR
+   advQ    DYNAMIC       2 MA-DG  33.8672 0.0948  1.2504 -0.0814 1.3637 1.2029    CAGR
+
+==============================================================================================================================
+VERDICT
+==============================================================================================================================
+1. G2 PASSES: capQ IS price x shares (4.4e-16 relative), so the causal rebuild capC_t = px_t * shares is the same
+   object with the 2026 price removed, and capC-DYNAMIC - the cell idea 424 recorded as non-existent - exists.
+2. MA-RS FULL: G = +0.4600; channels |LOOK| 0.5748, |CONT| 0.2187, |MEMB| 0.3106 -> LOOK is largest.
+   H_MEMB FAILS, H_LOOK HOLDS.
+3. H_THIN MA-RS HOLDS, MA-DG HOLDS (leave-one-decile-out).
+4. n = 10: 3/14 bootstrap bands exclude zero - read every rho with SE ~ 0.354 in mind.
+5. KEEP: 4a 4/180, 4b 1/180.  WF picks beat SPY OOS 14/18.  No book promoted.
+6. SURVIVORSHIP restated: the small panel is current constituents only; every LEVEL is biased up, the thin deciles most.
