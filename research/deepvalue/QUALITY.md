@@ -181,4 +181,4 @@ These are the rows where GAAP operating income and normalised operating income d
 | net debt above 4x normalised EBITDA | 7 |
 | no debt concept tagged and total liabilities exceed 4x normalised EBITDA | 2 |
 
-_Runtime 55s. Columns for every row are in universe_v2.csv._
+_Runtime 56s. Columns for every row are in universe_v2.csv._
