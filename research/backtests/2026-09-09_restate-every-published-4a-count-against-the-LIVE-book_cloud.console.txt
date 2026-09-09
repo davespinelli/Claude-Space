@@ -1,0 +1,141 @@
+====================================================================================================
+IDEA 482 — restate every published 4a count against the LIVE book (RULES v2)
+====================================================================================================
+
+[A] Panel baselines (weekly, next-day execution, compare() convention)
+
+  (re-using committed .baselines.csv; delete it to recompute)
+   panel book    cost   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+     u56  SPY     NaN 0.1519  0.8871 -0.3372 0.9587 0.8287    0.1538      0.8786    -0.3372
+     u56   v1 10.0000 0.0642  0.6611 -0.1383 0.6429 0.6804    0.0766      0.7408    -0.1383
+     u56   v2 10.0000 0.0864  1.2037 -0.1205 1.2309 1.1828    0.0951      1.2817    -0.1205
+     u56   v1 25.0000 0.0271  0.3131 -0.1563 0.2869 0.3373    0.0370      0.3917    -0.1418
+     u56   v2 25.0000 0.0836  1.1661 -0.1209 1.1930 1.1453    0.0921      1.2448    -0.1209
+broad136  SPY     NaN 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372
+broad136   v1 10.0000 0.0639  0.6350 -0.2119 0.7562 0.5320    0.0594      0.5763    -0.2119
+broad136   v2 10.0000 0.0803  1.1058 -0.1224 1.2291 0.9844    0.0798      1.1185    -0.1224
+broad136   v1 25.0000 0.0179  0.2195 -0.2672 0.3350 0.1198    0.0111      0.1554    -0.2672
+broad136   v2 25.0000 0.0770  1.0640 -0.1228 1.1906 0.9393    0.0764      1.0740    -0.1228
+small439  SPY     NaN 0.1413  0.8615 -0.3372 0.8907 0.8577    0.1545      0.8820    -0.3372
+small439   v1 10.0000 0.0741  0.5647 -0.3612 0.7434 0.4044    0.0635      0.4923    -0.3612
+small439   v2 10.0000 0.0381  0.5725 -0.1468 0.5699 0.5770    0.0385      0.5680    -0.1468
+small439   v1 25.0000 0.0232  0.2302 -0.4543 0.3813 0.0940    0.0139      0.1673    -0.4543
+small439   v2 25.0000 0.0338  0.5122 -0.1525 0.5081 0.5178    0.0340      0.5072    -0.1525
+
+[B] Census of committed grid CSVs
+
+  files harvested: 240   rows: 208,030   panels: ['broad136', 'small439', 'u56']
+  files whose published 4a column is reproduced by 4a-vs-v1 at >=95%: 102/240  (median agreement 0.913)
+  reproduction distribution: exact 53  [0.95,1) 49  [0.80,0.95) 38  [0.50,0.80) 65  <0.50 35
+  (files below 0.95 used a different window, cost rung or half-split than compare();
+   they are EXCLUDED from every count below rather than restated on a mismatched bar.)
+  trusted subset: 137,642 rows in 102 files
+
+[B1] Published 4a passes, restated — ALL grid points, by panel x baseline version
+
+   panel   rows  published_pass  pass_v1  pass_v2  survive  survive_rate
+broad136  51641           33028    33030     1167     1167         0.035
+small439  30011            9795    10491     2236     2140         0.218
+     u56  55990           14342    14324       46       46         0.003
+     ALL 137642           57165    57845     3449     3353         0.059
+
+[B2] Which bar kills the published passes (census over pub & ~pass_v2)
+
+   panel  lost  fail_H1  fail_H2  fail_DD
+broad136 31861    27687    27250    25627
+small439  7655      993     2884     6577
+     u56 14296    12499    12880     4663
+     ALL 53812    41179    43014    36867
+
+[B2b] Cost rung: why the old bar was so easy to clear
+
+  cost  rows  published_pass  pass_v1  pass_v2  pub_rate  v2_rate
+10.000 74016           24614    24694     1617     0.333    0.022
+25.000 63626           32551    33151     1832     0.512    0.029
+
+  Baseline Sharpe by cost rung (the reason):
+cost             10.0    25.0  decay_10_to_25
+panel    book                                
+broad136 v1   +0.6350 +0.2195         -0.4155
+         v2   +1.1058 +1.0640         -0.0418
+small439 v1   +0.5647 +0.2302         -0.3344
+         v2   +0.5725 +0.5122         -0.0603
+u56      v1   +0.6611 +0.3131         -0.3480
+         v2   +1.2037 +1.1661         -0.0376
+
+[B3] Verdict flips: files whose 4a support vanishes entirely under the live book
+
+  files with >=1 published 4a pass: 102
+  files where ALL published 4a passes die against RULES v2: 76
+  files retaining >=1 4a pass against RULES v2: 26
+
+  Largest 4a counts that go to zero:
+                                                                                          file  rows  pub   v1  v2  flip
+               2026-09-06_is-the-null-key-result-one-draw-or-a-distribution_cloud.draws.csv.gz  8400 2604 2606   0  True
+                          2026-09-05_scale-free-as-a-corpus-eligibility-rule_C.grid.u56.csv.gz  4800 1797 1797   0  True
+                                                  2026-09-05_absorbing-state-audit_B.ddctl.csv  1340  432  433   0  True
+                      2026-09-05_does-a-random-screen-de-concentrate-just-as-well_B.corpus.csv  1003  302  301   0  True
+                               2026-09-05_is-the-IS-4b-screen-a-one-cell-accident_C.corpus.csv  1003  302  301   0  True
+                                    2026-09-05_the-screen-is-a-book-size-rule_cloud.corpus.csv  1003  302  301   0  True
+                                                      2026-09-04_which-4b-bar-binds_B.grid.csv   320  208  208   0  True
+                                 2026-09-05_is-075-the-argmax-on-every-corpus_cloud.ladder.csv   510  205  205   0  True
+                  2026-09-06_does-every-regime-conditional-dial-lose-its-own-regime_C.grid.csv   594  204  211   0  True
+                                    2026-09-05_does-share-price-any-key-or-only-vol_B.grid.csv   741  201  202   0  True
+                                                        2026-09-04_drawdown-control_C.grid.csv   476  176  179   0  True
+                                                   2026-09-05_absorbing-state-audit_B.stop.csv   396  174  177   0  True
+                             2026-09-05_execution-lag-sensitivity-of-the-price-list_C.grid.csv   612  167  165   0  True
+2026-09-08_is-LEAK-a-general-tax-on-every-published-per-armed-day-number_B.restated_record.csv   432  145  151   0  True
+                                       2026-09-05_price-the-broad-POS-near-miss_cloud.grid.csv   450  140  157   0  True
+
+  Files that KEEP 4a support under the live book:
+                                                                               file  rows   pub    v1   v2  flip
+    2026-09-06_the-IS-chosen-substitute-arm-for-every-named-asset-set_C.keep.csv.gz 25320 10743 10743    1 False
+                   2026-09-05_scale-free-as-a-corpus-eligibility-rule_C.grid.csv.gz 14400  7038  7100 1067 False
+                 2026-09-05_no-leverage-ceiling-is-load-bearing_cloud.family.csv.gz  7956  3461  3539  353 False
+                            2026-09-05_gross-interval-as-a-keep-bar_B.family.csv.gz  7650  3419  3490  353 False
+             2026-09-05_gross-interval-as-a-pre-registered-KEEP-bar_B.family.csv.gz  7650  3419  3490  353 False
+                          2026-09-05_is-the-ladder-even-a-candidate_C.family.csv.gz  7650  3419  3490  353 False
+                      2026-09-05_pin-m-or-let-the-screen-choose_cloud.family.csv.gz  7650  3419  3490  353 False
+             2026-09-05_scale-free-as-a-corpus-eligibility-rule_C.grid.broad.csv.gz  4800  2588  2588  217 False
+                   2026-09-06_ew-band3-at-085-does-not-hold-on-broad_cloud.grid.csv  2904  1911  2047  193 False
+      2026-09-06_back-fill-the-phase-spread-over-every-cadence-claim_cloud.keep.csv  6670  1260  1263   42 False
+                                       2026-09-05_defensive-class-census_B.grid.csv  2244  1053  1061   23 False
+                 2026-09-07_is-a-class-member-just-its-own-ladder-point_B2.grid.csv  1632   784   783   23 False
+   2026-09-07_is-the-4b-defensive-class-empty-under-BOTH-conventions_cloud.grid.csv  1632   784   783   23 False
+                           2026-09-05_sleeve-f-that-clears-the-floor_cloud.grid.csv   884   489   489    6 False
+2026-09-07_is-the-4b-defensive-class-empty-under-BOTH-conventions_cloud.members.csv   531   431   431   23 False
+
+[C] Rule 8 walk-forward — is 'passes 4a vs the live book' a better SELECTOR?
+
+  menus with an IS column and OOS columns: 232 (over 91 files)
+  panel=broad136 menus=89 all_n=89 all_Sh=1.0338 all_CAGR=0.1308 all_DD=-0.2026 4a_v1_n=89 4a_v1_Sh=1.0434 4a_v1_CAGR=0.1106 4a_v1_DD=-0.1749 4a_v2_n=20 4a_v2_Sh=1.1582 4a_v2_CAGR=0.0622 4a_v2_DD=-0.0965
+  panel=small439 menus=53 all_n=53 all_Sh=0.5370 all_CAGR=0.0687 all_DD=-0.3048 4a_v1_n=46 4a_v1_Sh=0.5727 4a_v1_CAGR=0.0816 4a_v1_DD=-0.2988 4a_v2_n=11 4a_v2_Sh=0.6338 4a_v2_CAGR=0.0355 4a_v2_DD=-0.1276
+  panel=u56 menus=90 all_n=90 all_Sh=1.1229 all_CAGR=0.1543 all_DD=-0.2065 4a_v1_n=76 4a_v1_Sh=1.1787 4a_v1_CAGR=0.0975 4a_v1_DD=-0.1270 4a_v2_n=7 4a_v2_Sh=1.2892 4a_v2_CAGR=0.1033 4a_v2_DD=-0.1147
+  panel=ALL menus=232 all_n=232 all_Sh=0.9549 all_CAGR=0.1257 all_DD=-0.2275 4a_v1_n=211 4a_v1_Sh=0.9895 4a_v1_CAGR=0.0995 4a_v1_DD=-0.1847 4a_v2_n=38 4a_v2_Sh=1.0305 4a_v2_CAGR=0.0620 4a_v2_DD=-0.1089
+
+  paired menus (both arms pick): 38  mean OOS Sharpe delta v2-v1 +0.0164  t +1.52  wins 19/38
+  paired vs unfiltered menu: 38  mean OOS Sharpe delta 4a_v2-all +0.0512  t +2.66  wins 21/38
+
+[D] Reference legs the OOS numbers above are judged against (10 bps)
+
+   panel book   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+     u56  SPY 0.1519  0.8871 -0.3372 0.9587 0.8287    0.1538      0.8786    -0.3372
+     u56   v1 0.0642  0.6611 -0.1383 0.6429 0.6804    0.0766      0.7408    -0.1383
+     u56   v2 0.0864  1.2037 -0.1205 1.2309 1.1828    0.0951      1.2817    -0.1205
+broad136  SPY 0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820    -0.3372
+broad136   v1 0.0639  0.6350 -0.2119 0.7562 0.5320    0.0594      0.5763    -0.2119
+broad136   v2 0.0803  1.1058 -0.1224 1.2291 0.9844    0.0798      1.1185    -0.1224
+small439  SPY 0.1413  0.8615 -0.3372 0.8907 0.8577    0.1545      0.8820    -0.3372
+small439   v1 0.0741  0.5647 -0.3612 0.7434 0.4044    0.0635      0.4923    -0.3612
+small439   v2 0.0381  0.5725 -0.1468 0.5699 0.5770    0.0385      0.5680    -0.1468
+
+[E] Both KEEP paths
+
+  No new book is introduced: idea 482 is a restatement of the committed record, so
+  there is nothing to promote.  4a and 4b are reported as COUNTS over the record.
+  4a (vs the live RULES v2): 3449/137642 committed grid points
+  4a (vs the superseded v1): 57845/137642
+  4b is not restated here: 4b is judged against SPY, which did not change on
+  2026-09-06, so no published 4b count moves.  (Ideas 481/253 own the 4b re-scoring.)
+
+Done.  Artefacts: 2026-09-09_restate-every-published-4a-count-against-the-LIVE-book_cloud.baselines.csv, 2026-09-09_restate-every-published-4a-count-against-the-LIVE-book_cloud.census.csv.gz, 2026-09-09_restate-every-published-4a-count-against-the-LIVE-book_cloud.reproduction.csv, 2026-09-09_restate-every-published-4a-count-against-the-LIVE-book_cloud.restated.csv, 2026-09-09_restate-every-published-4a-count-against-the-LIVE-book_cloud.failbars.csv, 2026-09-09_restate-every-published-4a-count-against-the-LIVE-book_cloud.perfile.csv, 2026-09-09_restate-every-published-4a-count-against-the-LIVE-book_cloud.walkforward.csv
