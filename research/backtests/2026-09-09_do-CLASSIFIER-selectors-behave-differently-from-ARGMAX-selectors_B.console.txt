@@ -1,0 +1,304 @@
+======================================================================================================================
+IDEA 278 - do-CLASSIFIER-selectors-behave-differently-from-ARGMAX-selectors  (lane B, 2026-09-09)
+======================================================================================================================
+-----------------------------------
+    idea 271's CSEL is one of the few selectors in the record that BEATS do-nothing out of
+    sample (+0.0476 of Sharpe over EWALL) while LOSING on the full sample, the opposite shape
+    to the argmax choosers in idea 229's pool.  Re-classify every selector in that pool by
+    whether it maximises an IS metric or thresholds a fitted probability, and test whether the
+    two classes have different OOS expectancy.
+
+Why this is not idea 229 Q3 again
+---------------------------------
+Idea 229 Q3 published FIVE name-classes with per-class instance-block CIs and read
+"overlapping CIs" as "not separable".  Two marginal CIs overlapping is not a test of a
+difference, and the five classes cut the pool along the selector's *name*, not along its
+*mechanism*.  This run does three things Q3 did not:
+    (1) collapses the record's name-classes onto the queue's declared MECHANISM axis
+        (ARGMAX vs CLASSIFIER) and publishes the crosswalk before any number is read;
+    (2) bootstraps the DIFFERENCE ARGMAX - CLASSIFIER directly, so the CI is on the quantity
+        the queue asks about;
+    (3) prices the obvious confound.  A CLASSIFIER can ABSTAIN - hold the control arm - and an
+        abstained cell contributes a margin of exactly zero.  A class that abstains often has
+        its mean shrunk toward zero and its variance compressed, which reads as "different
+        expectancy" while being pure inactivity (cf. idea 506's minimum-activity concern).
+        Every table is therefore repeated on the ACTIVE subset (|margin| > 1e-9).
+
+The declared mechanism map (fixed before any number in this run was read)
+------------------------------------------------------------------------
+    ARGMAX      the pick is the arm that maximises an IS-estimated PERFORMANCE metric over the
+                ladder.  Record classes: IS-SHARPE, IS-CAGR, SHRUNK-FIT (a shrunk estimate is
+                still argmaxed).
+    CLASSIFIER  the pick is set by a THRESHOLD on a fitted statistic that is not itself the
+                objective - a fitted probability, an IS margin gate, a sign/clause test - and
+                the selector may ABSTAIN back onto the control.  Record classes: GATED, ABSTAIN.
+    HELD OUT    RANDOM (not a selector, it is a null), OTHER (mode/incumbent, no mechanism),
+                ORACLE (already excluded by the parent's census).
+Idea 271's CSEL - "narrowest n whose fitted reversal probability is below the threshold" - is
+the archetype of CLASSIFIER and is why the queue asks.
+
+PART A - the record.  idea 229's `census()` is IMPORTED and re-run, not re-derived, so its
+published counts reproduce inside this run and any divergence is visible.
+
+PART B - out of corpus, live prices, PROTOCOL rule 8.  idea 229's 36-cell live corpus
+(3 panels x 2 cost rungs x 6 pre-registered dials, choice on IS <= 2016-12-31 only, 2017-2026
+read once) is re-run through its own `run_live()`, and a REAL classifier in idea 271's shape is
+built on it:
+    inner split of the IS window only - FIT 2009-01-01..2012-12-31, LABEL 2013-01-01..2016-12-31
+    features (both from the FIT window alone): d_is_sharpe = arm Sharpe - incumbent Sharpe, and
+        step = |ladder index - incumbent index|
+    label   1 if the arm beats the incumbent's Sharpe on the LABEL window
+    model   logistic regression, hand-rolled IRLS, deterministic, fitted ONCE on all cells
+    decide  features recomputed on the FULL IS window; take the highest-phat arm among those
+            with phat >= p*, else ABSTAIN onto the incumbent.  The OOS window is read once.
+The ARGMAX comparand is the parent's S1 (IS-Sharpe argmax) and the control is S0 (the dial's
+declared incumbent), both unchanged.
+
+TUNED PARAMETERS (PROTOCOL rule 4: at most two)
+    P1  the census vocabulary, STRICT | BROAD                (Part A)
+    P2  the classifier threshold p*, 7 rungs 0.50 .. 0.90    (Part B)
+ALL grid points are printed.  The bootstrap block (cell/instance/file) is a resampling axis,
+not a choice: all three are published, with the instance block declared in advance as the
+headline.  The 25 bps rung is the parent's robustness axis, carried unchanged.
+
+KEEP paths, both evaluated on the pooled live books
+    4a  Sharpe > RULES v2 (live) in BOTH halves AND MaxDD no worse than RULES v2 (the v1 column
+        is carried for continuity with the pre-2026-09-06 record).
+    4b  Sharpe > SPY in BOTH halves AND out of sample, MaxDD <= 60% of SPY's, CAGR >= 70% of SPY's.
+
+SURVIVORSHIP: the broad and small panels are CURRENT constituents (research/universe_broad.json,
+data/SMALL_PANEL_README.md), inherited whole from the parent corpus.  The bias inflates every
+book on those panels equally; this run reads only DIFFERENCES between selectors on the same
+panel, which is the comparison the bias leaves usable.
+
+======================================================================================================================
+PART A - THE RECORD.  idea 229's census() re-run, then collapsed onto the MECHANISM axis
+======================================================================================================================
+  declared map (fixed before any number below was read):
+      IS-SHARPE    -> ARGMAX
+      IS-CAGR      -> ARGMAX
+      SHRUNK-FIT   -> ARGMAX
+      GATED        -> CLASSIFIER
+      ABSTAIN      -> CLASSIFIER
+      RANDOM       -> HELD-OUT
+      OTHER        -> HELD-OUT
+      ORACLE       -> HELD-OUT
+  RANDOM and OTHER are HELD OUT: a null and an incumbent are not selection mechanisms.
+
+  vocabulary STRICT:  369 committed *.walkforward.csv files scanned
+      admitted instances 110  over 75 files (20.3% coverage), 5479 paired cells
+      by shape: W 72 instances / 5230 cells, L 38 instances / 249 cells
+      REJECTED 294 files, by reason (nothing dropped silently):
+           191  no control column and no control level in an arm column
+           101  no OOS_Sharpe column
+             2  control column but no evidence the rows are IS-selected
+      crosswalk (cells): IS-SHARPE->ARGMAX 4220, GATED->CLASSIFIER 1039, IS-CAGR->ARGMAX 206, RANDOM->HELD-OUT 14
+
+  vocabulary BROAD:  369 committed *.walkforward.csv files scanned
+      admitted instances 263  over 134 files (36.3% coverage), 20257 paired cells
+      by shape: W 219 instances / 17761 cells, L 44 instances / 2496 cells
+      REJECTED 235 files, by reason (nothing dropped silently):
+           126  no control column and no control level in an arm column
+           101  no OOS_Sharpe column
+             6  control column but no evidence the rows are IS-selected
+             2  control column present but no finite paired rows
+      crosswalk (cells): IS-SHARPE->ARGMAX 15004, GATED->CLASSIFIER 2379, OTHER->HELD-OUT 1125, SHRUNK-FIT->ARGMAX 1120, IS-CAGR->ARGMAX 600, RANDOM->HELD-OUT 27, ABSTAIN->CLASSIFIER 2
+
+  vocabulary STRICT, subset ALL:
+      mech         cells  inst  files  cell mean  inst mean  win rate  mean |m|  zero share       sd
+      ARGMAX        4426    85     73   -0.00381   -0.00856     32.1%   0.05026       31.3%  0.11109
+      CLASSIFIER    1039    42     23   +0.00240   -0.00480     44.7%   0.06841       18.3%  0.10076
+      DIFF ARGMAX-CLASSIFIER, cell     block: -0.00615  95% CI [-0.01316, +0.00068]  P(<0) 96.0%   not separable
+      DIFF ARGMAX-CLASSIFIER, instance block: -0.00709  95% CI [-0.04676, +0.02944]  P(<0) 63.4%   not separable
+      DIFF ARGMAX-CLASSIFIER, file     block: -0.00604  95% CI [-0.04435, +0.02880]  P(<0) 62.2%   not separable
+
+  vocabulary STRICT, subset ACTIVE (|margin|>0):
+      mech         cells  inst  files  cell mean  inst mean  win rate  mean |m|  zero share       sd
+      ARGMAX        3042    81     71   -0.00554   -0.01341     46.5%   0.07313        0.0%  0.13397
+      CLASSIFIER     849    35     23   +0.00294   -0.00247     54.7%   0.08372        0.0%  0.11147
+      DIFF ARGMAX-CLASSIFIER, cell     block: -0.00854  95% CI [-0.01723, +0.00033]  P(<0) 97.2%   not separable
+      DIFF ARGMAX-CLASSIFIER, instance block: -0.00974  95% CI [-0.05974, +0.03424]  P(<0) 64.3%   not separable
+      DIFF ARGMAX-CLASSIFIER, file     block: -0.00848  95% CI [-0.05504, +0.03504]  P(<0) 62.4%   not separable
+
+  vocabulary BROAD, subset ALL:
+      mech         cells  inst  files  cell mean  inst mean  win rate  mean |m|  zero share       sd
+      ARGMAX       16724   229    129   +0.14912   +0.09118     56.7%   0.24974        9.5%  0.32235
+      CLASSIFIER    2381    78     33   +0.16019   +0.11104     63.2%   0.24487        8.5%  0.31372
+      DIFF ARGMAX-CLASSIFIER, cell     block: -0.01124  95% CI [-0.02465, +0.00200]  P(<0) 95.2%   not separable
+      DIFF ARGMAX-CLASSIFIER, instance block: -0.01796  95% CI [-0.16337, +0.14060]  P(<0) 59.4%   not separable
+      DIFF ARGMAX-CLASSIFIER, file     block: -0.01585  95% CI [-0.12840, +0.12476]  P(<0) 61.7%   not separable
+
+  vocabulary BROAD, subset ACTIVE (|margin|>0):
+      mech         cells  inst  files  cell mean  inst mean  win rate  mean |m|  zero share       sd
+      ARGMAX       15130   225    128   +0.16483   +0.09149     62.6%   0.27606        0.0%  0.33506
+      CLASSIFIER    2178    71     33   +0.17512   +0.12372     69.1%   0.26770        0.0%  0.32400
+      DIFF ARGMAX-CLASSIFIER, cell     block: -0.01042  95% CI [-0.02486, +0.00470]  P(<0) 92.0%   not separable
+      DIFF ARGMAX-CLASSIFIER, instance block: -0.01771  95% CI [-0.16924, +0.13788]  P(<0) 58.5%   not separable
+      DIFF ARGMAX-CLASSIFIER, file     block: -0.01486  95% CI [-0.13391, +0.12898]  P(<0) 60.1%   not separable
+
+======================================================================================================================
+PART E — RULE 8 ON LIVE PRICES, OUT OF CORPUS: 6 pre-registered dials, choice on
+         IS (<= 2016-12-31) only, 2017-2026 read once.  36 cells = 3 panels x 2 costs
+         x 6 dials; the do-nothing arm of each dial is its declared INCUMBENT value.
+======================================================================================================================
+
+  [panel] u56 = universe.json(56): 56 cols, eval 2009-01-13 -> 2026-09-08, mean weekly eligible 37.5
+      SPY 15.19%/0.887/-33.72% | OOS 15.38%/0.879/-33.72%
+      RULES v2 @10bps 8.64%/1.204/-12.05%   RULES v1 @10bps 6.42%/0.661/-13.83%
+      RULES v2 @25bps 8.36%/1.166/-12.09%   RULES v1 @25bps 2.71%/0.313/-15.63%
+      78 books done (4s cum.)
+
+  [panel] broad = universe_broad.json(136): 136 cols, eval 2009-01-13 -> 2026-09-04, mean weekly eligible 91.5
+      SPY 15.23%/0.889/-33.72% | OOS 15.45%/0.882/-33.72%
+      RULES v2 @10bps 8.03%/1.106/-12.24%   RULES v1 @10bps 6.39%/0.635/-21.19%
+      RULES v2 @25bps 7.70%/1.064/-12.28%   RULES v1 @25bps 1.79%/0.219/-26.72%
+      78 books done (12s cum.)
+
+  [panel] small = prices_small(439, SPY held out): 439 cols, eval 2011-01-13 -> 2026-09-04, mean weekly eligible 141.2
+      SPY 14.13%/0.862/-33.72% | OOS 15.45%/0.882/-33.72%
+      RULES v2 @10bps 3.80%/0.571/-14.70%   RULES v1 @10bps 8.15%/0.603/-32.84%
+      RULES v2 @25bps 3.37%/0.511/-15.27%   RULES v1 @25bps 2.86%/0.265/-43.04%
+      78 books done (33s cum.)
+
+  (i) PER-CELL: the IS-Sharpe chooser against the dial's declared do-nothing arm.
+  panel    cost dial       IS pick       S0   OOS S1   OOS S0   margin  OOS best   regret  |IS-OOS| steps
+  u56        10 band          0.08     0.03    1.170    1.282  -0.1118     1.284   0.1144               3
+  u56        10 gross         1.00     0.75    1.281    1.282  -0.0007     1.282   0.0013               4
+  u56        10 cadence          M        W    1.229    1.282  -0.0524     1.282   0.0524               1
+  u56        10 share         0.75     0.20    1.066    0.829  +0.2373     1.066   0.0000               0
+  u56        10 volcap        0.90     0.60    0.791    0.829  -0.0381     0.829   0.0388               2
+  u56        10 kexp          0.50    -0.50    1.050    0.829  +0.2209     1.112   0.0622               2
+  u56        25 band          0.12     0.03    1.154    1.245  -0.0908     1.245   0.0908               3
+  u56        25 gross         1.00     0.75    1.244    1.245  -0.0005     1.245   0.0007               4
+  u56        25 cadence          M        W    1.205    1.245  -0.0397     1.245   0.0397               1
+  u56        25 share         0.75     0.20    0.922    0.552  +0.3700     0.922   0.0000               0
+  u56        25 volcap        0.90     0.60    0.516    0.552  -0.0368     0.552   0.0368               1
+  u56        25 kexp          0.50    -0.50    0.915    0.552  +0.3630     0.970   0.0541               2
+  broad      10 band          0.08     0.03    1.109    1.119  -0.0090     1.139   0.0293               3
+  broad      10 gross         1.00     0.75    1.117    1.119  -0.0011     1.119   0.0020               4
+  broad      10 cadence          W        W    1.119    1.119  +0.0000     1.119   0.0000               0
+  broad      10 share         0.27     0.20    0.799    0.700  +0.0984     0.983   0.1840               3
+  broad      10 volcap         off     0.60    0.738    0.700  +0.0376     0.739   0.0007               4
+  broad      10 kexp          0.75    -0.50    1.017    0.700  +0.3170     1.017   0.0000               0
+  broad      25 band          0.08     0.03    1.083    1.074  +0.0091     1.086   0.0028               3
+  broad      25 gross         1.00     0.75    1.073    1.074  -0.0008     1.075   0.0014               4
+  broad      25 cadence          M        W    1.068    1.074  -0.0065     1.074   0.0065               1
+  broad      25 share         0.75     0.20    0.847    0.431  +0.4162     0.847   0.0000               0
+  broad      25 volcap         off     0.60    0.482    0.431  +0.0513     0.482   0.0000               0
+  broad      25 kexp          0.75    -0.50    0.858    0.431  +0.4264     0.858   0.0000               0
+  small      10 band          0.20     0.03    0.625    0.566  +0.0590     0.635   0.0100               1
+  small      10 gross         1.00     0.75    0.566    0.566  -0.0008     0.567   0.0016               4
+  small      10 cadence          M        W    0.619    0.566  +0.0529     0.619   0.0000               0
+  small      10 share         0.15     0.20    0.334    0.406  -0.0725     0.504   0.1705               2
+  small      10 volcap        0.90     0.60    0.402    0.406  -0.0038     0.434   0.0315               2
+  small      10 kexp         -0.75    -0.50    0.467    0.406  +0.0608     0.523   0.0561               3
+  small      25 band          0.20     0.03    0.598    0.506  +0.0923     0.601   0.0030               1
+  small      25 gross         1.00     0.75    0.505    0.506  -0.0006     0.506   0.0011               4
+  small      25 cadence          M        W    0.584    0.506  +0.0785     0.584   0.0000               0
+  small      25 share         0.15     0.20    0.056    0.153  -0.0968     0.275   0.2189               2
+  small      25 volcap        0.90     0.60    0.150    0.153  -0.0025     0.170   0.0196               1
+  small      25 kexp         -0.75    -0.50    0.193    0.153  +0.0405     0.337   0.1435               3
+
+      chooser BEATS do-nothing in 17 of 36 cells; mean margin +0.06572 (sd 0.14703, median -0.00025)
+      bootstrap over cells: 95% CI [+0.02001, +0.11239], P(mean < 0) = 0.1%
+      by dial:
+          band      beats do-nothing 3/6, mean -0.00854, mean |IS-OOS argmax| 2.33 steps
+          cadence   beats do-nothing 2/6, mean +0.00546, mean |IS-OOS argmax| 0.50 steps
+          gross     beats do-nothing 0/6, mean -0.00076, mean |IS-OOS argmax| 4.00 steps
+          kexp      beats do-nothing 6/6, mean +0.23811, mean |IS-OOS argmax| 1.67 steps
+          share     beats do-nothing 4/6, mean +0.15878, mean |IS-OOS argmax| 1.17 steps
+          volcap    beats do-nothing 2/6, mean +0.00129, mean |IS-OOS argmax| 1.67 steps
+      by panel:
+          broad     beats do-nothing 7/12, mean +0.11155
+          small     beats do-nothing 6/12, mean +0.01725
+          u56       beats do-nothing 4/12, mean +0.06837
+
+  (ii) THE DECOMPOSITION THAT SETTLES THE SIGN.  By construction, for every cell
+       margin = (OOS_best - OOS_S0) - regret  =  ROOM - REGRET.
+       ROOM is a property of the DIAL and its declared default — how much a perfect
+       chooser could have won.  REGRET is the selector's own shortfall and is >= 0 by
+       construction.  Only REGRET is attributable to selection.
+
+  dial      cells  beats S0      ROOM    REGRET    MARGIN  |IS-OOS|
+  band          6     3/6    +0.03317   0.04172  -0.00854      2.33
+  cadence       6     2/6    +0.02190   0.01643  +0.00546      0.50
+  gross         6     0/6    +0.00058   0.00134  -0.00076      4.00
+  kexp          6     6/6    +0.29077   0.05266  +0.23811      1.67
+  share         6     4/6    +0.25435   0.09556  +0.15878      1.17
+  volcap        6     2/6    +0.02253   0.02124  +0.00129      1.67
+  ALL          36    17/36   +0.10388   0.03816  +0.06572      1.89
+
+      MEAN REGRET = 0.03816, 95% CI [0.02013, 0.05722] — strictly positive, and this is the only term selection controls.
+      Mean ROOM = +0.10388: the two dials whose declared incumbent the
+      record has ALREADY shown to be wrong (kexp default -0.50, share default 0.20) supply
+      +0.27256 of room; the other four supply +0.01955.
+      On those other four dials the chooser beats do-nothing in 7 of 24 cells, mean margin -0.00064 (regret 0.02018).
+
+  (iii) Q2 — DOES THE LOSS SCALE WITH THE DIAL'S IS-OOS ARGMAX DISTANCE?
+      IS and OOS argmax AGREE in 9 of 36 cells; there the margin is +0.21664 (all >= 0: True)
+      they DISAGREE in 27; there the margin is +0.01542, and the chooser still beats do-nothing in 9 of 27
+      Spearman(|IS-OOS| steps, margin) = -0.388;  OLS slope -0.04624 per grid step (intercept +0.15307)
+      Spearman(|IS-OOS| steps, regret) = +0.405;  OLS slope +0.00803 per grid step (intercept +0.02299)
+      normalised distance (steps / ladder length): Spearman vs margin -0.567
+
+======================================================================================================================
+PART B - OUT OF CORPUS, LIVE PRICES.  A REAL fitted-probability classifier (idea 271's
+         CSEL shape) against idea 229's IS-Sharpe ARGMAX on the same 36 cells.
+======================================================================================================================
+
+  classifier fitted on the INNER IS split only: FIT <= 2012-12-31 supplies the features,
+  2013-01-01..2016-12-31 supplies the label.  198 non-incumbent arms, base rate 0.530.
+      logit(p) = -0.9540 +3.4582*d_fit_sharpe +3.9986*(step/ladder_len)
+      in-fit accuracy at 0.50 0.626 (majority base 0.530)
+
+  (i) TUNED PARAMETER 2 - the threshold p*.  Every rung, all 36 cells, OOS read once.
+      the LABEL-window column is the only one a pre-registration may read; the OOS
+      columns beside it are published for completeness, not to choose on.
+         p*  picks  abstains  LAB margin  OOS margin  beats S0  vs ARGMAX
+       0.50     35         1    +0.11890    +0.04632    18/36    -0.01940
+       0.55     34         2    +0.11852    +0.04410    17/36    -0.02163
+       0.60     34         2    +0.11852    +0.04410    17/36    -0.02163
+       0.65     32         4    +0.13019    +0.04160    15/36    -0.02412
+       0.70     20        16    +0.12952    +0.03938    11/36    -0.02635
+       0.80     16        20    +0.11800    +0.04093    10/36    -0.02480
+       0.90      4        32    +0.05881    +0.03900     4/36    -0.02672
+
+  PRE-REGISTERED p* = 0.65 (the rung with the best LABEL-window margin, chosen
+  inside the IS window).  Its OOS margin is read once below.
+      CLASSIFIER @p*=0.65: beats do-nothing in 15 of 36 cells, mean OOS margin +0.04160, abstains 4/36
+      ARGMAX (idea 229 S1):       beats do-nothing in 17 of 36 cells, mean OOS margin +0.06572, abstains 0/36
+      PAIRED difference CLASSIFIER - ARGMAX over the 36 cells: -0.02412, 95% CI [-0.05286, +0.00268], P(<0) 96.0%  not separable
+      on the 32 cells where the classifier did NOT abstain: mean difference -0.02926
+
+  (ii) THE BOOKS, POOLED equal-weight over the 36 cells, and BOTH KEEP paths.
+      4b bars off the pooled SPY: H1>0.968 H2>0.831 OOS>0.881 |MaxDD|<=20.23% CAGR>=10.04%
+  book                                   |     CAGR  Sharpe    MaxDD     H1     H2 |  OOS CAGR  Sharpe    MaxDD |  4a v2  4a v1    4b  failing
+  CLASSIFIER p*=0.50                     |    8.03%   0.897  -18.41%  1.006  0.811 |     8.27%   0.880  -18.41% |  False  False False  H2|OOS|CAGR
+  CLASSIFIER p*=0.55                     |    8.01%   0.893  -18.40%  1.004  0.805 |     8.25%   0.875  -18.40% |  False  False False  H2|OOS|CAGR
+  CLASSIFIER p*=0.60                     |    8.01%   0.893  -18.40%  1.004  0.805 |     8.25%   0.875  -18.40% |  False  False False  H2|OOS|CAGR
+  CLASSIFIER p*=0.65  <- pre-registered  |    7.99%   0.888  -18.46%  1.004  0.796 |     8.20%   0.867  -18.46% |  False  False False  H2|OOS|CAGR
+  CLASSIFIER p*=0.70                     |    7.59%   0.880  -17.86%  0.997  0.787 |     7.77%   0.858  -17.86% |  False   True False  H2|OOS|CAGR
+  CLASSIFIER p*=0.80                     |    7.51%   0.878  -17.63%  0.996  0.784 |     7.68%   0.855  -17.63% |  False   True False  H2|OOS|CAGR
+  CLASSIFIER p*=0.90                     |    7.19%   0.863  -15.83%  0.974  0.773 |     7.34%   0.841  -15.83% |  False   True False  H2|OOS|CAGR
+  ARGMAX  IS-Sharpe (idea 229 S1)        |    8.05%   0.910  -17.31%  1.041  0.803 |     8.11%   0.877  -17.31% |  False   True False  H2|OOS|CAGR
+  S0  do nothing (declared defaults)     |    6.17%   0.796  -15.32%  0.927  0.691 |     6.18%   0.762  -15.32% |  False   True False  H1|H2|OOS|CAGR
+  ORACLE (OOS argmax, not a rule)        |    7.35%   0.893  -15.56%  0.977  0.827 |     7.77%   0.899  -15.56% |  False   True False  H2|CAGR
+  SPY                                    |   14.34%   0.882  -33.72%  0.968  0.831 |    15.42%   0.881  -33.72% |  False  False False  H1|H2|OOS|DD
+  RULES v2 (live) @10bps                 |    6.69%   1.031  -10.90%  1.089  0.983 |     7.12%   1.061  -10.90% |  False   True False  CAGR
+  RULES v1 @10bps                        |    6.92%   0.755  -18.24%  0.844  0.685 |     7.46%   0.765  -18.24% |  False  False False  H1|H2|OOS|CAGR
+
+      pooled OOS Sharpe: CLASSIFIER 0.8672  ARGMAX 0.8772  S0 0.7616  (CLASSIFIER - ARGMAX -0.0100, CLASSIFIER - S0 +0.1056)
+      pooled OOS CAGR:   CLASSIFIER 8.20%  ARGMAX 8.11%  S0 6.18%
+
+======================================================================================================================
+ANSWERS
+======================================================================================================================
+  A1 ARGMAX      STRICT/ALL: 4426 cells / 85 instances / 73 files, cell mean -0.00381, instance mean -0.00856, win 32.1%, mean |margin| 0.05026, exactly-zero 31.3%
+  A1 CLASSIFIER  STRICT/ALL: 1039 cells / 42 instances / 23 files, cell mean +0.00240, instance mean -0.00480, win 44.7%, mean |margin| 0.06841, exactly-zero 18.3%
+  A2 DIFFERENCE ARGMAX-CLASSIFIER separable at 0 of 12 grid points - NONE
+     headline (STRICT/ALL/instance block, declared in advance): -0.00709 95% CI [-0.04676, +0.02944]
+  A3 LIVE, out of corpus, p*=0.65: classifier mean OOS margin +0.04160 vs argmax +0.06572; abstains 4/36
+     every p* rung's OOS margin: 0.50 +0.04632, 0.55 +0.04410, 0.60 +0.04410, 0.65 +0.04160, 0.70 +0.03938, 0.80 +0.04093, 0.90 +0.03900
+  A4 KEEP paths on the pooled live books: 4a-v2 0/13, 4a-v1 7/13, 4b 0/13
+
+  runtime 42s
