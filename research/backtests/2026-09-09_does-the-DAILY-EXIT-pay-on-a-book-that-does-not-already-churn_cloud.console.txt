@@ -1,0 +1,726 @@
+QUEUE idea 507 — does-the-DAILY-EXIT-pay-on-a-book-that-does-not-already-churn (cloud, 2026-09-09).
+
+Idea 275 priced RULES v1's 'hard exit any day' clause and found it vacuous on v1 (the book
+already turns 23.6x/yr, so a Tuesday exit is at most three days ahead of the schedule) and
+net-negative on v2 (weekly, 1.78x/yr).  The queue's objection is that BOTH live books
+rebalance often enough to pre-empt the clause, so the test never gave it room to act.
+
+This run re-prices the SAME clause on SLOW books, where a Tuesday exit is up to a full
+quarter ahead of the next scheduled trade:
+
+  cadence   W (the rung idea 275 already tested, kept as the control rung)
+            M (idea 182's monthly R6 top-20 4b candidate cadence)
+            Q (quarterly — 60+ trading days of exposure the clause can cut into)
+
+Two tuned parameters, the queue's own:  x (exit depth) and cadence.  The confirmation-day
+dial c is PINNED at 1 (the literal clause) so the parameter count stays at 2.
+
+  x   {0.00, 0.01, 0.03, 0.05, 0.10}  depth below the name's own 200d MA at which a HELD
+      name is dumped.  x = 0.00 is v1's literal wording; x = 0.03 is v2's band restatement.
+
+Books (each carries its own daily eligibility, exactly as idea 275 built them):
+  R6-20   idea 182's KEEP-4b-candidate book: signal R6 = px/px.shift(126)-1 divided by
+          vol20.clip(0.08)**0.5, gate (px > 200dma AND vol20 < 0.60), top-20 equal weight,
+          gross 0.75.  Exit fires when px < ma200*(1-x) OR vol20 >= 0.60.
+  V2      RULES v2 (live): every name inside the 200d +/-3% band at 0.75/N, de-grossed to
+          cash otherwise.  Exit fires when px < ma200*(1-x).
+
+Panels: U56 (universe.json), B136 (universe_broad.json), SMALL439 (sub-$2B panel with the
+44 names carrying max_1d_move >= 1.0 dropped per data/small_meta.csv).
+SURVIVORSHIP: every panel is a current-constituent list; the small panel especially so
+(see data/SMALL_PANEL_README.md).  Read all small-panel numbers as an upper bound.
+
+Mechanics: weights decided at close t, applied at close t+1 (engine convention).  The daily
+exit is SELL-ONLY — the sold weight goes to cash and nothing is bought back until the next
+scheduled rebalance, so the book de-grosses between rebalances.  Every exit is charged
+through the same turnover accumulator at the arm's own cost rung.  Cost rungs 0/10/25 bps
+are derived exactly from one zero-cost run per arm (port = gross - turnover*bps/1e4).
+
+ALL grid points are reported.  Rule 8 walk-forward: (x, cadence) chosen on 2009-2016 IS
+Sharpe, evaluated untouched on 2017-2026 against the no-exit control, the live RULES v2
+baseline and SPY.  Both KEEP paths (4a vs live v2, 4b vs SPY) evaluated on every arm.
+
+Deterministic, standalone, no network.  Does not modify RULES.md, scan.py, bot.py, baseline.py.
+
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+SMALL panel: dropped 44 tickers with max_1d_move >= 1.0; 439 names + SPY benchmark column.
+  U56         56 cols  2008-01-02 -> 2026-09-08  4700 rows
+  B136       136 cols  2008-01-02 -> 2026-09-04  4699 rows
+  SMALL439   440 cols  2010-01-04 -> 2026-09-04  4194 rows
+
+============================================================================================================
+GATE 1 — backtest_exit(exit=None) vs engine.backtest, max |return diff| (must be ~0)
+  U56       R6-20  W: 0.000e+00
+  U56       R6-20  M: 0.000e+00
+  U56       R6-20  Q: 0.000e+00
+  U56       V2     W: 0.000e+00
+  U56       V2     M: 0.000e+00
+  U56       V2     Q: 0.000e+00
+  B136      R6-20  W: 0.000e+00
+  B136      R6-20  M: 0.000e+00
+  B136      R6-20  Q: 0.000e+00
+  B136      V2     W: 0.000e+00
+  B136      V2     M: 0.000e+00
+  B136      V2     Q: 0.000e+00
+  SMALL439  R6-20  W: 0.000e+00
+  SMALL439  R6-20  M: 0.000e+00
+  SMALL439  R6-20  Q: 0.000e+00
+  SMALL439  V2     W: 0.000e+00
+  SMALL439  V2     M: 0.000e+00
+  SMALL439  V2     Q: 0.000e+00
+
+============================================================================================================
+FULL GRID at 10 bps — every arm minus its OWN no-exit control at the same panel/book/cadence
+(fires = number of daily forced sells over the sample; gross_exp = mean invested weight)
+
+  U56 / R6-20 / W   control: CAGR 11.69%  Sharpe  1.0558  MaxDD -17.51%  H1/H2 1.1257/1.0000  OOS 1.0795  turn 10.56x  exp 0.682
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00  11.39%   1.0686  -14.19%   1.103   1.041   1.124  11.21  +0.0128  -0.30%  +3.32%  +0.044  +0.65    613  0.670
+    0.01  11.33%   1.0566  -14.27%   1.095   1.026   1.109  10.87  +0.0008  -0.37%  +3.24%  +0.029  +0.31    435  0.674
+    0.03  11.31%   1.0470  -15.38%   1.103   1.001   1.084  10.69  -0.0089  -0.39%  +2.13%  +0.005  +0.13    268  0.677
+    0.05  11.45%   1.0545  -16.08%   1.119   1.002   1.085  10.66  -0.0013  -0.24%  +1.43%  +0.005  +0.10    193  0.679
+    0.10  11.47%   1.0527  -16.76%   1.116   1.001   1.083  10.66  -0.0032  -0.22%  +0.75%  +0.004  +0.10    157  0.679
+
+  U56 / R6-20 / M   control: CAGR 13.61%  Sharpe  1.1557  MaxDD -18.81%  H1/H2 1.2328/1.0976  OOS 1.1695  turn  4.82x  exp 0.683
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00  11.81%   1.1431  -12.92%   1.126   1.163   1.227   5.47  -0.0126  -1.80%  +5.89%  +0.058  +0.65    543  0.634
+    0.01  11.94%   1.1402  -13.21%   1.135   1.149   1.214   5.29  -0.0155  -1.67%  +5.61%  +0.044  +0.47    458  0.644
+    0.03  11.95%   1.1215  -14.11%   1.113   1.133   1.197   5.10  -0.0342  -1.66%  +4.71%  +0.028  +0.29    340  0.655
+    0.05  12.01%   1.1134  -14.53%   1.116   1.115   1.180   5.03  -0.0423  -1.59%  +4.29%  +0.010  +0.21    268  0.661
+    0.10  12.53%   1.1336  -15.36%   1.151   1.122   1.185   4.93  -0.0221  -1.08%  +3.45%  +0.015  +0.11    175  0.669
+
+  U56 / R6-20 / Q   control: CAGR 13.30%  Sharpe  1.0373  MaxDD -26.04%  H1/H2 1.1952/0.9291  OOS 1.0198  turn  2.53x  exp 0.669
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00  10.27%   1.0876  -14.34%   1.061   1.115   1.216   3.02  +0.0503  -3.03%  +11.70%  +0.196  +0.48    443  0.554
+    0.01  10.35%   1.0747  -14.68%   1.064   1.088   1.189   2.97  +0.0375  -2.95%  +11.36%  +0.169  +0.43    395  0.569
+    0.03  10.61%   1.0637  -15.00%   1.056   1.074   1.176   2.88  +0.0265  -2.69%  +11.04%  +0.156  +0.34    317  0.592
+    0.05  10.59%   1.0418  -14.75%   1.036   1.052   1.152   2.84  +0.0045  -2.71%  +11.30%  +0.132  +0.31    271  0.604
+    0.10  11.24%   1.0601  -14.87%   1.056   1.067   1.163   2.77  +0.0228  -2.06%  +11.18%  +0.143  +0.24    191  0.624
+
+  U56 / V2 / W   control: CAGR  8.64%  Sharpe  1.2037  MaxDD -12.05%  H1/H2 1.2309/1.1828  OOS 1.2817  turn  1.78x  exp 0.504
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   7.68%   1.1473  -10.50%   1.180   1.120   1.227   5.32  -0.0564  -0.97%  +1.55%  -0.054  +3.55   3068  0.476
+    0.01   8.03%   1.1777  -10.79%   1.207   1.153   1.259   3.52  -0.0261  -0.61%  +1.26%  -0.022  +1.75   1892  0.488
+    0.03   8.38%   1.1991  -11.16%   1.216   1.186   1.289   1.81  -0.0047  -0.26%  +0.89%  +0.007  +0.04    677  0.499
+    0.05   8.45%   1.1951  -11.72%   1.218   1.177   1.278   1.79  -0.0087  -0.19%  +0.33%  -0.004  +0.01    255  0.502
+    0.10   8.59%   1.2020  -12.27%   1.233   1.177   1.277   1.78  -0.0018  -0.05%  -0.21%  -0.004  -0.00     37  0.504
+
+  U56 / V2 / M   control: CAGR  8.90%  Sharpe  1.1748  MaxDD -14.38%  H1/H2 1.2162/1.1415  OOS 1.2293  turn  1.24x  exp 0.505
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   7.44%   1.1697   -9.79%   1.191   1.152   1.264   2.77  -0.0051  -1.47%  +4.59%  +0.034  +1.53   1645  0.440
+    0.01   7.79%   1.1909   -9.96%   1.203   1.181   1.289   2.17  +0.0162  -1.11%  +4.42%  +0.060  +0.93   1252  0.459
+    0.03   8.21%   1.2033  -11.08%   1.210   1.199   1.300   1.41  +0.0285  -0.70%  +3.30%  +0.071  +0.17    731  0.481
+    0.05   8.22%   1.1774  -11.61%   1.187   1.171   1.270   1.32  +0.0026  -0.68%  +2.77%  +0.041  +0.09    473  0.491
+    0.10   8.60%   1.1839  -12.46%   1.194   1.177   1.270   1.24  +0.0091  -0.31%  +1.92%  +0.041  +0.01    156  0.501
+
+  U56 / V2 / Q   control: CAGR  8.03%  Sharpe  0.9967  MaxDD -19.90%  H1/H2 1.1429/0.8938  OOS 0.9800  turn  0.84x  exp 0.498
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   6.88%   1.1581  -10.04%   1.207   1.119   1.228   1.69  +0.1614  -1.16%  +9.87%  +0.248  +0.85   1025  0.387
+    0.01   7.09%   1.1580  -10.32%   1.213   1.114   1.224   1.43  +0.1613  -0.94%  +9.58%  +0.244  +0.59    856  0.411
+    0.03   7.49%   1.1566  -11.41%   1.210   1.115   1.219   1.08  +0.1598  -0.55%  +8.49%  +0.239  +0.25    621  0.442
+    0.05   7.37%   1.1006  -12.18%   1.145   1.067   1.167   1.00  +0.1039  -0.66%  +7.72%  +0.187  +0.16    482  0.459
+    0.10   7.95%   1.1039  -14.31%   1.155   1.064   1.158   0.87  +0.1072  -0.09%  +5.59%  +0.178  +0.03    237  0.483
+
+  B136 / R6-20 / W   control: CAGR 13.31%  Sharpe  1.0283  MaxDD -18.60%  H1/H2 1.2321/0.8488  OOS 0.9276  turn 15.55x  exp 0.704
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00  12.86%   1.0238  -15.52%   1.202   0.863   0.945  15.88  -0.0044  -0.45%  +3.08%  +0.017  +0.33    359  0.697
+    0.01  12.84%   1.0200  -15.90%   1.201   0.856   0.938  15.80  -0.0083  -0.48%  +2.70%  +0.011  +0.25    311  0.698
+    0.03  13.01%   1.0284  -16.06%   1.217   0.858   0.939  15.73  +0.0001  -0.31%  +2.54%  +0.012  +0.18    242  0.699
+    0.05  13.14%   1.0363  -15.91%   1.234   0.858   0.939  15.70  +0.0080  -0.17%  +2.69%  +0.011  +0.15    217  0.700
+    0.10  13.22%   1.0406  -15.79%   1.238   0.863   0.943  15.70  +0.0124  -0.09%  +2.82%  +0.016  +0.15    197  0.700
+
+  B136 / R6-20 / M   control: CAGR 15.95%  Sharpe  1.1298  MaxDD -24.51%  H1/H2 1.2636/1.0322  OOS 1.0976  turn  7.26x  exp 0.703
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00  13.54%   1.0921  -14.10%   1.189   1.008   1.079   7.51  -0.0377  -2.41%  +10.41%  -0.019  +0.25    373  0.672
+    0.01  13.47%   1.0813  -14.45%   1.175   1.000   1.070   7.48  -0.0485  -2.48%  +10.05%  -0.027  +0.22    340  0.675
+    0.03  13.72%   1.0902  -14.43%   1.173   1.020   1.088   7.43  -0.0396  -2.23%  +10.07%  -0.010  +0.16    284  0.680
+    0.05  13.97%   1.1020  -14.47%   1.201   1.016   1.084   7.39  -0.0278  -1.98%  +10.03%  -0.014  +0.13    250  0.682
+    0.10  14.28%   1.1133  -15.05%   1.208   1.031   1.097   7.38  -0.0165  -1.67%  +9.45%  -0.001  +0.12    195  0.686
+
+  B136 / R6-20 / Q   control: CAGR 14.68%  Sharpe  1.0278  MaxDD -27.43%  H1/H2 1.2535/0.8580  OOS 0.9539  turn  3.67x  exp 0.693
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00  11.04%   1.0055  -15.09%   1.147   0.878   0.992   3.97  -0.0223  -3.64%  +12.34%  +0.038  +0.30    411  0.592
+    0.01  11.19%   1.0051  -15.33%   1.161   0.865   0.979   3.95  -0.0227  -3.49%  +12.10%  +0.025  +0.28    380  0.602
+    0.03  11.23%   0.9882  -16.59%   1.131   0.861   0.972   3.93  -0.0396  -3.45%  +10.83%  +0.018  +0.26    329  0.617
+    0.05  11.48%   0.9951  -17.52%   1.151   0.856   0.966   3.91  -0.0327  -3.20%  +9.91%  +0.012  +0.24    289  0.625
+    0.10  12.00%   1.0119  -17.87%   1.146   0.893   0.997   3.90  -0.0159  -2.67%  +9.55%  +0.043  +0.23    227  0.640
+
+  B136 / V2 / W   control: CAGR  8.03%  Sharpe  1.1058  MaxDD -12.24%  H1/H2 1.2291/0.9844  OOS 1.1185  turn  2.01x  exp 0.503
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   7.13%   1.0578   -9.93%   1.153   0.961   1.100   5.19  -0.0480  -0.90%  +2.31%  -0.019  +3.18   7183  0.477
+    0.01   7.47%   1.0870  -10.13%   1.182   0.991   1.128   3.69  -0.0188  -0.56%  +2.11%  +0.010  +1.67   4785  0.487
+    0.03   7.80%   1.1055  -10.98%   1.201   1.009   1.147   2.04  -0.0003  -0.23%  +1.26%  +0.028  +0.03   1884  0.498
+    0.05   7.86%   1.1008  -11.67%   1.222   0.979   1.117   2.02  -0.0050  -0.17%  +0.57%  -0.001  +0.01    763  0.501
+    0.10   7.95%   1.0994  -12.10%   1.229   0.971   1.107   2.01  -0.0064  -0.08%  +0.14%  -0.011  -0.00    110  0.503
+
+  B136 / V2 / M   control: CAGR  8.40%  Sharpe  1.0924  MaxDD -15.69%  H1/H2 1.2143/0.9754  OOS 1.0963  turn  1.39x  exp 0.503
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   6.82%   1.0723   -9.19%   1.156   0.987   1.132   2.83  -0.0201  -1.58%  +6.50%  +0.036  +1.43   4078  0.439
+    0.01   7.11%   1.0872   -9.46%   1.179   0.994   1.136   2.32  -0.0052  -1.28%  +6.22%  +0.039  +0.92   3269  0.455
+    0.03   7.47%   1.0927  -10.74%   1.185   0.999   1.140   1.58  +0.0003  -0.92%  +4.95%  +0.044  +0.19   2038  0.477
+    0.05   7.61%   1.0816  -11.72%   1.190   0.971   1.112   1.48  -0.0109  -0.79%  +3.96%  +0.016  +0.09   1291  0.489
+    0.10   8.00%   1.0914  -12.82%   1.202   0.980   1.112   1.40  -0.0010  -0.40%  +2.86%  +0.016  +0.01    417  0.499
+
+  B136 / V2 / Q   control: CAGR  7.84%  Sharpe  0.9448  MaxDD -21.84%  H1/H2 1.1450/0.7806  OOS 0.8920  turn  0.90x  exp 0.497
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   6.12%   1.0602   -9.09%   1.174   0.947   1.098   1.75  +0.1154  -1.72%  +12.76%  +0.206  +0.85   2594  0.379
+    0.01   6.43%   1.0738   -9.37%   1.194   0.954   1.100   1.54  +0.1290  -1.41%  +12.47%  +0.208  +0.64   2253  0.400
+    0.03   6.84%   1.0721  -10.70%   1.190   0.956   1.098   1.21  +0.1274  -1.00%  +11.14%  +0.206  +0.31   1708  0.432
+    0.05   6.97%   1.0470  -11.97%   1.176   0.920   1.063   1.08  +0.1022  -0.87%  +9.88%  +0.171  +0.18   1316  0.451
+    0.10   7.50%   1.0397  -14.32%   1.177   0.906   1.040   0.94  +0.0949  -0.34%  +7.52%  +0.148  +0.04    660  0.479
+
+  SMALL439 / R6-20 / W   control: CAGR  4.47%  Sharpe  0.3498  MaxDD -31.76%  H1/H2 0.2697/0.4191  OOS 0.4568  turn 22.37x  exp 0.709
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   3.01%   0.2697  -36.35%   0.208   0.325   0.350  23.12  -0.0801  -1.47%  -4.59%  -0.107  +0.75   1228  0.682
+    0.01   2.93%   0.2649  -36.94%   0.202   0.321   0.345  23.10  -0.0849  -1.54%  -5.18%  -0.111  +0.73   1197  0.682
+    0.03   3.07%   0.2732  -36.34%   0.204   0.334   0.357  23.03  -0.0766  -1.41%  -4.58%  -0.100  +0.65   1154  0.683
+    0.05   3.13%   0.2772  -36.56%   0.209   0.337   0.360  23.01  -0.0726  -1.34%  -4.80%  -0.096  +0.63   1129  0.684
+    0.10   3.10%   0.2751  -36.28%   0.208   0.335   0.358  23.01  -0.0747  -1.37%  -4.52%  -0.099  +0.63   1104  0.684
+
+  SMALL439 / R6-20 / M   control: CAGR  7.18%  Sharpe  0.4934  MaxDD -38.23%  H1/H2 0.5463/0.4542  OOS 0.4720  turn 10.41x  exp 0.709
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   3.18%   0.2985  -23.43%   0.352   0.249   0.315  11.02  -0.1949  -4.01%  +14.80%  -0.157  +0.62   1071  0.594
+    0.01   3.18%   0.2985  -23.44%   0.355   0.246   0.311  11.02  -0.1949  -4.00%  +14.78%  -0.161  +0.62   1052  0.595
+    0.03   3.31%   0.3065  -23.72%   0.368   0.249   0.317  11.00  -0.1869  -3.88%  +14.50%  -0.155  +0.59   1016  0.599
+    0.05   3.79%   0.3395  -23.95%   0.416   0.269   0.341  10.96  -0.1539  -3.39%  +14.28%  -0.131  +0.56    978  0.602
+    0.10   3.88%   0.3452  -24.16%   0.436   0.262   0.334  10.96  -0.1482  -3.30%  +14.07%  -0.138  +0.55    939  0.605
+
+  SMALL439 / R6-20 / Q   control: CAGR  2.64%  Sharpe  0.2361  MaxDD -49.24%  H1/H2 0.4569/0.0651  OOS 0.0975  turn  4.60x  exp 0.695
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   2.18%   0.2525  -23.85%   0.305   0.200   0.249   5.24  +0.0164  -0.46%  +25.39%  +0.152  +0.64    771  0.452
+    0.01   2.09%   0.2439  -23.91%   0.305   0.184   0.233   5.24  +0.0078  -0.54%  +25.34%  +0.136  +0.63    760  0.456
+    0.03   2.09%   0.2425  -24.01%   0.313   0.172   0.229   5.23  +0.0064  -0.55%  +25.23%  +0.131  +0.62    729  0.463
+    0.05   2.17%   0.2476  -23.79%   0.325   0.171   0.224   5.22  +0.0116  -0.47%  +25.46%  +0.127  +0.61    701  0.470
+    0.10   2.32%   0.2592  -23.11%   0.371   0.148   0.196   5.22  +0.0231  -0.32%  +26.13%  +0.099  +0.61    666  0.478
+
+  SMALL439 / V2 / W   control: CAGR  3.81%  Sharpe  0.5725  MaxDD -14.68%  H1/H2 0.5699/0.5770  OOS 0.5680  turn  2.80x  exp 0.362
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   3.17%   0.5104  -13.19%   0.420   0.591   0.563   4.99  -0.0620  -0.65%  +1.49%  -0.005  +2.20  15349  0.339
+    0.01   3.30%   0.5223  -13.61%   0.451   0.587   0.566   4.07  -0.0502  -0.52%  +1.08%  -0.002  +1.27  11780  0.346
+    0.03   3.58%   0.5535  -13.80%   0.509   0.595   0.584   2.91  -0.0189  -0.23%  +0.88%  +0.016  +0.12   6684  0.354
+    0.05   3.68%   0.5619  -14.23%   0.536   0.587   0.576   2.83  -0.0106  -0.13%  +0.45%  +0.008  +0.04   3645  0.358
+    0.10   3.73%   0.5627  -14.95%   0.556   0.571   0.563   2.80  -0.0098  -0.09%  -0.27%  -0.005  +0.00   1025  0.361
+
+  SMALL439 / V2 / M   control: CAGR  4.64%  Sharpe  0.6643  MaxDD -16.75%  H1/H2 0.7215/0.6158  OOS 0.6207  turn  1.69x  exp 0.364
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   3.34%   0.5740  -11.88%   0.523   0.621   0.608   2.80  -0.0904  -1.31%  +4.86%  -0.013  +1.10   9365  0.302
+    0.01   3.47%   0.5835  -12.08%   0.554   0.612   0.603   2.52  -0.0809  -1.17%  +4.67%  -0.018  +0.82   8321  0.312
+    0.03   3.62%   0.5869  -12.33%   0.575   0.599   0.602   2.06  -0.0774  -1.02%  +4.42%  -0.018  +0.37   6489  0.328
+    0.05   3.85%   0.6056  -13.04%   0.624   0.591   0.599   1.88  -0.0587  -0.79%  +3.71%  -0.022  +0.19   4931  0.339
+    0.10   4.13%   0.6216  -14.34%   0.655   0.594   0.600   1.73  -0.0427  -0.51%  +2.41%  -0.020  +0.04   2469  0.354
+
+  SMALL439 / V2 / Q   control: CAGR  4.22%  Sharpe  0.5808  MaxDD -22.26%  H1/H2 0.6531/0.5208  OOS 0.5623  turn  0.99x  exp 0.358
+    x     CAGR    Sharpe    MaxDD     H1      H2     OOS    turn   dSharpe   dCAGR   dMaxDD   dOOS    dTurn  fires   exp
+    0.00   3.08%   0.5900   -9.34%   0.547   0.630   0.595   1.65  +0.0092  -1.14%  +12.92%  +0.033  +0.66   5778  0.247
+    0.01   3.14%   0.5846  -10.07%   0.561   0.607   0.582   1.57  +0.0038  -1.08%  +12.19%  +0.020  +0.58   5471  0.258
+    0.03   3.36%   0.5979  -10.66%   0.590   0.608   0.606   1.39  +0.0172  -0.85%  +11.60%  +0.043  +0.40   4793  0.277
+    0.05   3.58%   0.6101  -11.53%   0.637   0.589   0.600   1.27  +0.0294  -0.64%  +10.73%  +0.037  +0.28   4154  0.294
+    0.10   3.95%   0.6246  -13.49%   0.651   0.602   0.615   1.11  +0.0438  -0.27%  +8.77%  +0.053  +0.11   2823  0.323
+
+============================================================================================================
+THE QUEUE'S QUESTION — does the clause's value rise as the book slows down?
+dSharpe of the daily-exit arm vs its own control, averaged over the 5 x-points, by cadence
+
+  cost 0 bps — mean dSharpe by cadence
+freq                 W       M       Q
+panel    book                         
+B136     R6-20 +0.0062 -0.0267 -0.0179
+         V2    -0.0003 +0.0031 +0.1238
+SMALL439 R6-20 -0.0653 -0.1566 +0.0342
+         V2    -0.0180 -0.0589 +0.0318
+U56      R6-20 +0.0050 -0.0179 +0.0377
+         V2    -0.0028 +0.0206 +0.1475
+  cost 0 bps — share of the 5 x-points with dSharpe > 0
+freq              W    M    Q
+panel    book                
+B136     R6-20 0.80 0.00 0.00
+         V2    0.60 0.60 1.00
+SMALL439 R6-20 0.00 0.00 1.00
+         V2    0.00 0.00 1.00
+U56      R6-20 0.60 0.00 1.00
+         V2    0.20 1.00 1.00
+  pooled across all 6 (panel,book) cells: W mean -0.0125 best +0.0227 pos 11/30  M mean -0.0394 best +0.0330 pos 8/30  Q mean +0.0595 best +0.1795 pos 25/30
+
+  cost 10 bps — mean dSharpe by cadence
+freq                 W       M       Q
+panel    book                         
+B136     R6-20 +0.0016 -0.0340 -0.0266
+         V2    -0.0157 -0.0074 +0.1138
+SMALL439 R6-20 -0.0778 -0.1758 +0.0130
+         V2    -0.0303 -0.0700 +0.0207
+U56      R6-20 +0.0000 -0.0253 +0.0283
+         V2    -0.0195 +0.0103 +0.1387
+  cost 10 bps — share of the 5 x-points with dSharpe > 0
+freq              W    M    Q
+panel    book                
+B136     R6-20 0.60 0.00 0.00
+         V2    0.00 0.20 1.00
+SMALL439 R6-20 0.00 0.00 1.00
+         V2    0.00 0.00 1.00
+U56      R6-20 0.40 0.00 1.00
+         V2    0.00 0.80 1.00
+  pooled across all 6 (panel,book) cells: W mean -0.0236 best +0.0128 pos 5/30  M mean -0.0504 best +0.0285 pos 5/30  Q mean +0.0480 best +0.1614 pos 25/30
+
+  cost 25 bps — mean dSharpe by cadence
+freq                 W       M       Q
+panel    book                         
+B136     R6-20 -0.0054 -0.0451 -0.0399
+         V2    -0.0388 -0.0231 +0.0986
+SMALL439 R6-20 -0.0965 -0.2045 -0.0187
+         V2    -0.0488 -0.0867 +0.0040
+U56      R6-20 -0.0074 -0.0366 +0.0142
+         V2    -0.0446 -0.0053 +0.1255
+  cost 25 bps — share of the 5 x-points with dSharpe > 0
+freq              W    M    Q
+panel    book                
+B136     R6-20 0.40 0.00 0.00
+         V2    0.00 0.00 1.00
+SMALL439 R6-20 0.00 0.00 0.00
+         V2    0.00 0.00 0.60
+U56      R6-20 0.00 0.00 0.80
+         V2    0.00 0.40 1.00
+  pooled across all 6 (panel,book) cells: W mean -0.0402 best +0.0069 pos 2/30  M mean -0.0669 best +0.0220 pos 2/30  Q mean +0.0306 best +0.1501 pos 17/30
+
+  TURNOVER HEADROOM — control turnover (x/yr) by cadence, i.e. how much room the clause has
+/home/user/Claude-Space/research/backtests/2026-09-09_does-the-DAILY-EXIT-pay-on-a-book-that-does-not-already-churn_cloud.py:293: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
+  P(G[G.kind == "control"][G.cost == 10.0].pivot_table(index=["panel", "book"], columns="freq",
+freq               W     M    Q
+panel    book                  
+B136     R6-20 15.55  7.26 3.67
+         V2     2.01  1.39 0.90
+SMALL439 R6-20 22.37 10.41 4.60
+         V2     2.80  1.69 0.99
+U56      R6-20 10.56  4.82 2.53
+         V2     1.78  1.24 0.84
+
+  LITERAL CLAUSE (x = 0.00, the wording RULES v2 removed) at 10 bps, by cadence
+    panel     book    freq   dSharpe    dCAGR   dMaxDD    dOOS   dTurn   fires
+    U56       R6-20  W      +0.0128  -0.30%  +3.32%  +0.044  +0.65    613
+    U56       R6-20  M      -0.0126  -1.80%  +5.89%  +0.058  +0.65    543
+    U56       R6-20  Q      +0.0503  -3.03%  +11.70%  +0.196  +0.48    443
+    U56       V2     W      -0.0564  -0.97%  +1.55%  -0.054  +3.55   3068
+    U56       V2     M      -0.0051  -1.47%  +4.59%  +0.034  +1.53   1645
+    U56       V2     Q      +0.1614  -1.16%  +9.87%  +0.248  +0.85   1025
+    B136      R6-20  W      -0.0044  -0.45%  +3.08%  +0.017  +0.33    359
+    B136      R6-20  M      -0.0377  -2.41%  +10.41%  -0.019  +0.25    373
+    B136      R6-20  Q      -0.0223  -3.64%  +12.34%  +0.038  +0.30    411
+    B136      V2     W      -0.0480  -0.90%  +2.31%  -0.019  +3.18   7183
+    B136      V2     M      -0.0201  -1.58%  +6.50%  +0.036  +1.43   4078
+    B136      V2     Q      +0.1154  -1.72%  +12.76%  +0.206  +0.85   2594
+    SMALL439  R6-20  W      -0.0801  -1.47%  -4.59%  -0.107  +0.75   1228
+    SMALL439  R6-20  M      -0.1949  -4.01%  +14.80%  -0.157  +0.62   1071
+    SMALL439  R6-20  Q      +0.0164  -0.46%  +25.39%  +0.152  +0.64    771
+    SMALL439  V2     W      -0.0620  -0.65%  +1.49%  -0.005  +2.20  15349
+    SMALL439  V2     M      -0.0904  -1.31%  +4.86%  -0.013  +1.10   9365
+    SMALL439  V2     Q      +0.0092  -1.14%  +12.92%  +0.033  +0.66   5778
+
+============================================================================================================
+RULE 8 WALK-FORWARD — (x, cadence) chosen on 2009-2016 IS Sharpe, 2017-2026 untouched, 10 bps
+The chooser sees the 15 (x, cadence) points of its own book/panel and nothing else.
+
+  U56 / R6-20: IS argmax (x, cadence) = (0.10, M)  IS Sharpe 1.0683   |   control IS argmax cadence = M (1.1418)
+    OOS daily-exit x=0.10 M                  CAGR 13.67%  Sharpe  1.1847  MaxDD -15.36%
+    OOS no-exit control M                    CAGR 14.55%  Sharpe  1.1695  MaxDD -18.81%
+    OOS no-exit control (IS-picked M)        CAGR 14.55%  Sharpe  1.1695  MaxDD -18.81%
+    OOS RULES v2 baseline (live, W)          CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                                  CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+    OOS clause worth at the IS pick: dSharpe +0.0152  dCAGR -0.88%  dMaxDD +3.45%
+    OOS dSharpe over ALL 15 grid points: mean +0.0693  median +0.0442  best +0.1962  worst +0.0037  positive 15/15
+      cadence W: OOS dSharpe mean +0.0175  positive 5/5
+      cadence M: OOS dSharpe mean +0.0311  positive 5/5
+      cadence Q: OOS dSharpe mean +0.1594  positive 5/5
+
+  U56 / V2: IS argmax (x, cadence) = (0.10, W)  IS Sharpe 1.1062   |   control IS argmax cadence = M (1.1055)
+    OOS daily-exit x=0.10 W                  CAGR  9.40%  Sharpe  1.2773  MaxDD -12.27%
+    OOS no-exit control W                    CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS no-exit control (IS-picked M)        CAGR  9.61%  Sharpe  1.2293  MaxDD -14.38%
+    OOS RULES v2 baseline (live, W)          CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                                  CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+    OOS clause worth at the IS pick: dSharpe -0.0044  dCAGR -0.11%  dMaxDD -0.21%
+    OOS dSharpe over ALL 15 grid points: mean +0.0842  median +0.0406  best +0.2482  worst -0.0543  positive 11/15
+      cadence W: OOS dSharpe mean -0.0155  positive 1/5
+      cadence M: OOS dSharpe mean +0.0492  positive 5/5
+      cadence Q: OOS dSharpe mean +0.2189  positive 5/5
+
+  B136 / R6-20: IS argmax (x, cadence) = (0.10, W)  IS Sharpe 1.1650   |   control IS argmax cadence = M (1.1844)
+    OOS daily-exit x=0.10 W                  CAGR 12.09%  Sharpe  0.9434  MaxDD -15.79%
+    OOS no-exit control W                    CAGR 12.20%  Sharpe  0.9276  MaxDD -18.60%
+    OOS no-exit control (IS-picked M)        CAGR 16.51%  Sharpe  1.0976  MaxDD -24.51%
+    OOS RULES v2 baseline (live, W)          CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                                  CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    OOS clause worth at the IS pick: dSharpe +0.0159  dCAGR -0.11%  dMaxDD +2.82%
+    OOS dSharpe over ALL 15 grid points: mean +0.0089  median +0.0115  best +0.0431  worst -0.0272  positive 10/15
+      cadence W: OOS dSharpe mean +0.0133  positive 5/5
+      cadence M: OOS dSharpe mean -0.0141  positive 0/5
+      cadence Q: OOS dSharpe mean +0.0273  positive 5/5
+
+  B136 / V2: IS argmax (x, cadence) = (0.10, W)  IS Sharpe 1.0906   |   control IS argmax cadence = W (1.0912)
+    OOS daily-exit x=0.10 W                  CAGR  7.83%  Sharpe  1.1073  MaxDD -12.10%
+    OOS no-exit control W                    CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS no-exit control (IS-picked W)        CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS RULES v2 baseline (live, W)          CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                                  CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    OOS clause worth at the IS pick: dSharpe -0.0112  dCAGR -0.15%  dMaxDD +0.14%
+    OOS dSharpe over ALL 15 grid points: mean +0.0732  median +0.0360  best +0.2081  worst -0.0186  positive 12/15
+      cadence W: OOS dSharpe mean +0.0014  positive 2/5
+      cadence M: OOS dSharpe mean +0.0302  positive 5/5
+      cadence Q: OOS dSharpe mean +0.1880  positive 5/5
+
+  SMALL439 / R6-20: IS argmax (x, cadence) = (0.10, M)  IS Sharpe 0.3631   |   control IS argmax cadence = M (0.5358)
+    OOS daily-exit x=0.10 M                  CAGR  3.75%  Sharpe  0.3344  MaxDD -24.16%
+    OOS no-exit control M                    CAGR  7.05%  Sharpe  0.4720  MaxDD -38.23%
+    OOS no-exit control (IS-picked M)        CAGR  7.05%  Sharpe  0.4720  MaxDD -38.23%
+    OOS RULES v2 baseline (live, W)          CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                                  CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    OOS clause worth at the IS pick: dSharpe -0.1376  dCAGR -3.30%  dMaxDD +14.07%
+    OOS dSharpe over ALL 15 grid points: mean -0.0407  median -0.1000  best +0.1518  worst -0.1611  positive 5/15
+      cadence W: OOS dSharpe mean -0.1027  positive 0/5
+      cadence M: OOS dSharpe mean -0.1482  positive 0/5
+      cadence Q: OOS dSharpe mean +0.1289  positive 5/5
+
+  SMALL439 / V2: IS argmax (x, cadence) = (0.10, M)  IS Sharpe 0.6576   |   control IS argmax cadence = M (0.7380)
+    OOS daily-exit x=0.10 M                  CAGR  4.03%  Sharpe  0.6002  MaxDD -14.34%
+    OOS no-exit control M                    CAGR  4.38%  Sharpe  0.6207  MaxDD -16.75%
+    OOS no-exit control (IS-picked M)        CAGR  4.38%  Sharpe  0.6207  MaxDD -16.75%
+    OOS RULES v2 baseline (live, W)          CAGR  3.85%  Sharpe  0.5680  MaxDD -14.68%
+    OOS SPY                                  CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    OOS clause worth at the IS pick: dSharpe -0.0205  dCAGR -0.35%  dMaxDD +2.41%
+    OOS dSharpe over ALL 15 grid points: mean +0.0071  median -0.0025  best +0.0525  worst -0.0218  positive 7/15
+      cadence W: OOS dSharpe mean +0.0023  positive 2/5
+      cadence M: OOS dSharpe mean -0.0182  positive 0/5
+      cadence Q: OOS dSharpe mean +0.0371  positive 5/5
+
+  WALK-FORWARD SUMMARY: 2/6 cells where the IS-picked clause beats its own control out of sample; mean OOS dSharpe -0.0238
+  Across all 6 cells x 15 points = 90 arms, OOS-positive share 60/90 = 66.7%
+
+============================================================================================================
+KEEP PATHS — 4a vs the live RULES v2 book (weekly, same panel), 4b vs SPY (incl. rule-8 OOS)
+
+  U56 comparands @10bps:
+    live v2   CAGR  8.64%  Sharpe  1.2037  MaxDD -12.05%  H1/H2 1.2309/1.1828  OOS 1.2817  turn   nanx
+    SPY       CAGR 15.19%  Sharpe  0.8871  MaxDD -33.72%  H1/H2 0.9587/0.8287  OOS 0.8786  turn   nanx
+    4b bars: SPY H1 0.9587 / H2 0.8287 / OOS 0.8786; MaxDD floor -20.23%; CAGR floor 10.63%
+
+  B136 comparands @10bps:
+    live v2   CAGR  8.03%  Sharpe  1.1058  MaxDD -12.24%  H1/H2 1.2291/0.9844  OOS 1.1185  turn   nanx
+    SPY       CAGR 15.23%  Sharpe  0.8890  MaxDD -33.72%  H1/H2 0.9566/0.8340  OOS 0.8820  turn   nanx
+    4b bars: SPY H1 0.9566 / H2 0.8340 / OOS 0.8820; MaxDD floor -20.23%; CAGR floor 10.66%
+
+  SMALL439 comparands @10bps:
+    live v2   CAGR  3.81%  Sharpe  0.5725  MaxDD -14.68%  H1/H2 0.5699/0.5770  OOS 0.5680  turn   nanx
+    SPY       CAGR 14.13%  Sharpe  0.8615  MaxDD -33.72%  H1/H2 0.8907/0.8577  OOS 0.8820  turn   nanx
+    4b bars: SPY H1 0.8907 / H2 0.8577 / OOS 0.8820; MaxDD floor -20.23%; CAGR floor 9.89%
+
+  4a / 4b pass counts over the whole corpus (control rows included, 324 rows = 3 panels x 2 books x 3 cadences x 6 arms x 3 cost rungs):
+                     pass4a  pass4b
+panel    book  cost                
+B136     R6-20 0.0        0      16
+               10.0       0      16
+               25.0       0       6
+         V2    0.0        4       0
+               10.0       0       0
+               25.0       0       0
+SMALL439 R6-20 0.0        0       0
+               10.0       0       0
+               25.0       0       0
+         V2    0.0       13       0
+               10.0       6       0
+               25.0       1       0
+U56      R6-20 0.0        0      16
+               10.0       0      13
+               25.0       0       7
+         V2    0.0        8       0
+               10.0       0       0
+               25.0       0       0
+
+  Rows that pass EITHER path (all reported):
+    U56       R6-20  W x=ctl      0bps  CAGR 12.88% Sh  1.1510 DD -17.42% H1/H2 1.225/1.092 OOS 1.1708  [   4b]
+    U56       R6-20  W x=ctl     10bps  CAGR 11.69% Sh  1.0558 DD -17.51% H1/H2 1.126/1.000 OOS 1.0795  [   4b]
+    U56       R6-20  W x=0.00     0bps  CAGR 12.64% Sh  1.1738 DD -14.04% H1/H2 1.212/1.143 OOS 1.2248  [   4b]
+    U56       R6-20  W x=0.00    10bps  CAGR 11.39% Sh  1.0686 DD -14.19% H1/H2 1.103/1.041 OOS 1.1237  [   4b]
+    U56       R6-20  W x=0.01     0bps  CAGR 12.54% Sh  1.1579 DD -14.04% H1/H2 1.200/1.124 OOS 1.2062  [   4b]
+    U56       R6-20  W x=0.01    10bps  CAGR 11.33% Sh  1.0566 DD -14.27% H1/H2 1.095/1.026 OOS 1.1088  [   4b]
+    U56       R6-20  W x=0.03     0bps  CAGR 12.50% Sh  1.1457 DD -15.17% H1/H2 1.206/1.097 OOS 1.1796  [   4b]
+    U56       R6-20  W x=0.03    10bps  CAGR 11.31% Sh  1.0470 DD -15.38% H1/H2 1.103/1.001 OOS 1.0844  [   4b]
+    U56       R6-20  W x=0.05     0bps  CAGR 12.65% Sh  1.1525 DD -15.97% H1/H2 1.220/1.097 OOS 1.1792  [   4b]
+    U56       R6-20  W x=0.05    10bps  CAGR 11.45% Sh  1.0545 DD -16.08% H1/H2 1.119/1.002 OOS 1.0847  [   4b]
+    U56       R6-20  W x=0.10     0bps  CAGR 12.67% Sh  1.1503 DD -16.66% H1/H2 1.218/1.095 OOS 1.1773  [   4b]
+    U56       R6-20  W x=0.10    10bps  CAGR 11.47% Sh  1.0527 DD -16.76% H1/H2 1.116/1.001 OOS 1.0832  [   4b]
+    U56       R6-20  M x=ctl      0bps  CAGR 14.16% Sh  1.1968 DD -18.75% H1/H2 1.277/1.136 OOS 1.2088  [   4b]
+    U56       R6-20  M x=ctl     10bps  CAGR 13.61% Sh  1.1557 DD -18.81% H1/H2 1.233/1.098 OOS 1.1695  [   4b]
+    U56       R6-20  M x=ctl     25bps  CAGR 12.79% Sh  1.0938 DD -18.90% H1/H2 1.166/1.039 OOS 1.1102  [   4b]
+    U56       R6-20  M x=0.00     0bps  CAGR 12.42% Sh  1.1962 DD -12.77% H1/H2 1.182/1.213 OOS 1.2779  [   4b]
+    U56       R6-20  M x=0.00    10bps  CAGR 11.81% Sh  1.1431 DD -12.92% H1/H2 1.126/1.163 OOS 1.2275  [   4b]
+    U56       R6-20  M x=0.00    25bps  CAGR 10.90% Sh  1.0631 DD -13.50% H1/H2 1.040/1.087 OOS 1.1515  [   4b]
+    U56       R6-20  M x=0.01     0bps  CAGR 12.53% Sh  1.1908 DD -13.03% H1/H2 1.189/1.197 OOS 1.2623  [   4b]
+    U56       R6-20  M x=0.01    10bps  CAGR 11.94% Sh  1.1402 DD -13.21% H1/H2 1.135/1.149 OOS 1.2137  [   4b]
+    U56       R6-20  M x=0.01    25bps  CAGR 11.06% Sh  1.0639 DD -13.75% H1/H2 1.055/1.076 OOS 1.1406  [   4b]
+    U56       R6-20  M x=0.03     0bps  CAGR 12.52% Sh  1.1694 DD -14.03% H1/H2 1.164/1.178 OOS 1.2433  [   4b]
+    U56       R6-20  M x=0.03    10bps  CAGR 11.95% Sh  1.1215 DD -14.11% H1/H2 1.113/1.133 OOS 1.1974  [   4b]
+    U56       R6-20  M x=0.03    25bps  CAGR 11.10% Sh  1.0493 DD -14.25% H1/H2 1.037/1.064 OOS 1.1281  [   4b]
+    U56       R6-20  M x=0.05     0bps  CAGR 12.58% Sh  1.1599 DD -14.45% H1/H2 1.165/1.160 OOS 1.2249  [   4b]
+    U56       R6-20  M x=0.05    10bps  CAGR 12.01% Sh  1.1134 DD -14.53% H1/H2 1.116/1.115 OOS 1.1799  [   4b]
+    U56       R6-20  M x=0.05    25bps  CAGR 11.17% Sh  1.0432 DD -14.67% H1/H2 1.042/1.048 OOS 1.1122  [   4b]
+    U56       R6-20  M x=0.10     0bps  CAGR 13.09% Sh  1.1782 DD -15.27% H1/H2 1.198/1.165 OOS 1.2279  [   4b]
+    U56       R6-20  M x=0.10    10bps  CAGR 12.53% Sh  1.1336 DD -15.36% H1/H2 1.151/1.122 OOS 1.1847  [   4b]
+    U56       R6-20  M x=0.10    25bps  CAGR 11.70% Sh  1.0663 DD -15.51% H1/H2 1.080/1.058 OOS 1.1195  [   4b]
+    U56       R6-20  Q x=0.01     0bps  CAGR 10.68% Sh  1.1053 DD -14.34% H1/H2 1.096/1.117 OOS 1.2183  [   4b]
+    U56       R6-20  Q x=0.03     0bps  CAGR 10.93% Sh  1.0924 DD -14.69% H1/H2 1.087/1.101 OOS 1.2033  [   4b]
+    U56       R6-20  Q x=0.05     0bps  CAGR 10.91% Sh  1.0694 DD -14.45% H1/H2 1.065/1.077 OOS 1.1783  [   4b]
+    U56       R6-20  Q x=0.10     0bps  CAGR 11.55% Sh  1.0860 DD -14.57% H1/H2 1.084/1.092 OOS 1.1881  [   4b]
+    U56       R6-20  Q x=0.10    10bps  CAGR 11.24% Sh  1.0601 DD -14.87% H1/H2 1.056/1.067 OOS 1.1629  [   4b]
+    U56       R6-20  Q x=0.10    25bps  CAGR 10.78% Sh  1.0209 DD -15.31% H1/H2 1.014/1.030 OOS 1.1249  [   4b]
+    U56       V2     W x=ctl      0bps  CAGR  8.84% Sh  1.2288 DD -12.03% H1/H2 1.256/1.208 OOS 1.3062  [4a   ]
+    U56       V2     W x=0.00     0bps  CAGR  8.25% Sh  1.2273 DD -10.40% H1/H2 1.259/1.200 OOS 1.3080  [4a   ]
+    U56       V2     W x=0.01     0bps  CAGR  8.41% Sh  1.2297 DD -10.70% H1/H2 1.259/1.206 OOS 1.3113  [4a   ]
+    U56       V2     W x=0.03     0bps  CAGR  8.58% Sh  1.2253 DD -11.11% H1/H2 1.243/1.212 OOS 1.3146  [4a   ]
+    U56       V2     W x=0.05     0bps  CAGR  8.65% Sh  1.2206 DD -11.67% H1/H2 1.244/1.202 OOS 1.3031  [4a   ]
+    U56       V2     M x=0.00     0bps  CAGR  7.74% Sh  1.2134 DD  -9.71% H1/H2 1.235/1.196 OOS 1.3073  [4a   ]
+    U56       V2     M x=0.01     0bps  CAGR  8.02% Sh  1.2242 DD  -9.90% H1/H2 1.236/1.216 OOS 1.3224  [4a   ]
+    U56       V2     M x=0.03     0bps  CAGR  8.36% Sh  1.2240 DD -11.03% H1/H2 1.231/1.220 OOS 1.3207  [4a   ]
+    B136      R6-20  W x=ctl      0bps  CAGR 15.09% Sh  1.1479 DD -18.48% H1/H2 1.354/0.967 OOS 1.0471  [   4b]
+    B136      R6-20  W x=ctl     10bps  CAGR 13.31% Sh  1.0283 DD -18.60% H1/H2 1.232/0.849 OOS 0.9276  [   4b]
+    B136      R6-20  W x=0.00     0bps  CAGR 14.67% Sh  1.1497 DD -15.22% H1/H2 1.329/0.988 OOS 1.0706  [   4b]
+    B136      R6-20  W x=0.00    10bps  CAGR 12.86% Sh  1.0238 DD -15.52% H1/H2 1.202/0.863 OOS 0.9447  [   4b]
+    B136      R6-20  W x=0.01     0bps  CAGR 14.63% Sh  1.1449 DD -15.60% H1/H2 1.327/0.980 OOS 1.0633  [   4b]
+    B136      R6-20  W x=0.01    10bps  CAGR 12.84% Sh  1.0200 DD -15.90% H1/H2 1.201/0.856 OOS 0.9382  [   4b]
+    B136      R6-20  W x=0.03     0bps  CAGR 14.80% Sh  1.1523 DD -15.76% H1/H2 1.342/0.981 OOS 1.0634  [   4b]
+    B136      R6-20  W x=0.03    10bps  CAGR 13.01% Sh  1.0284 DD -16.06% H1/H2 1.217/0.858 OOS 0.9391  [   4b]
+    B136      R6-20  W x=0.05     0bps  CAGR 14.93% Sh  1.1598 DD -15.61% H1/H2 1.358/0.981 OOS 1.0632  [   4b]
+    B136      R6-20  W x=0.05    10bps  CAGR 13.14% Sh  1.0363 DD -15.91% H1/H2 1.234/0.858 OOS 0.9390  [   4b]
+    B136      R6-20  W x=0.10     0bps  CAGR 15.01% Sh  1.1640 DD -15.49% H1/H2 1.362/0.986 OOS 1.0675  [   4b]
+    B136      R6-20  W x=0.10    10bps  CAGR 13.22% Sh  1.0406 DD -15.79% H1/H2 1.238/0.863 OOS 0.9434  [   4b]
+    B136      R6-20  M x=0.00     0bps  CAGR 14.40% Sh  1.1526 DD -13.97% H1/H2 1.251/1.067 OOS 1.1385  [   4b]
+    B136      R6-20  M x=0.00    10bps  CAGR 13.54% Sh  1.0921 DD -14.10% H1/H2 1.189/1.008 OOS 1.0785  [   4b]
+    B136      R6-20  M x=0.00    25bps  CAGR 12.27% Sh  1.0007 DD -14.65% H1/H2 1.095/0.919 OOS 0.9879  [   4b]
+    B136      R6-20  M x=0.01     0bps  CAGR 14.32% Sh  1.1412 DD -14.32% H1/H2 1.237/1.059 OOS 1.1300  [   4b]
+    B136      R6-20  M x=0.01    10bps  CAGR 13.47% Sh  1.0813 DD -14.45% H1/H2 1.175/1.000 OOS 1.0704  [   4b]
+    B136      R6-20  M x=0.01    25bps  CAGR 12.20% Sh  0.9908 DD -14.67% H1/H2 1.082/0.912 OOS 0.9805  [   4b]
+    B136      R6-20  M x=0.03     0bps  CAGR 14.57% Sh  1.1492 DD -14.33% H1/H2 1.233/1.077 OOS 1.1463  [   4b]
+    B136      R6-20  M x=0.03    10bps  CAGR 13.72% Sh  1.0902 DD -14.43% H1/H2 1.173/1.020 OOS 1.0877  [   4b]
+    B136      R6-20  M x=0.03    25bps  CAGR 12.46% Sh  1.0013 DD -14.59% H1/H2 1.081/0.933 OOS 0.9992  [   4b]
+    B136      R6-20  M x=0.05     0bps  CAGR 14.82% Sh  1.1603 DD -14.37% H1/H2 1.260/1.073 OOS 1.1423  [   4b]
+    B136      R6-20  M x=0.05    10bps  CAGR 13.97% Sh  1.1020 DD -14.47% H1/H2 1.201/1.016 OOS 1.0841  [   4b]
+    B136      R6-20  M x=0.05    25bps  CAGR 12.72% Sh  1.0140 DD -14.62% H1/H2 1.110/0.930 OOS 0.9963  [   4b]
+    B136      R6-20  M x=0.10     0bps  CAGR 15.12% Sh  1.1709 DD -14.96% H1/H2 1.267/1.088 OOS 1.1547  [   4b]
+    B136      R6-20  M x=0.10    10bps  CAGR 14.28% Sh  1.1133 DD -15.05% H1/H2 1.208/1.031 OOS 1.0971  [   4b]
+    B136      R6-20  M x=0.10    25bps  CAGR 13.02% Sh  1.0262 DD -15.20% H1/H2 1.119/0.946 OOS 1.0102  [   4b]
+    B136      R6-20  Q x=0.00     0bps  CAGR 11.48% Sh  1.0415 DD -14.81% H1/H2 1.184/0.914 OOS 1.0282  [   4b]
+    B136      R6-20  Q x=0.00    10bps  CAGR 11.04% Sh  1.0055 DD -15.09% H1/H2 1.147/0.878 OOS 0.9922  [   4b]
+    B136      R6-20  Q x=0.01     0bps  CAGR 11.63% Sh  1.0404 DD -15.05% H1/H2 1.197/0.899 OOS 1.0145  [   4b]
+    B136      R6-20  Q x=0.01    10bps  CAGR 11.19% Sh  1.0051 DD -15.33% H1/H2 1.161/0.865 OOS 0.9790  [   4b]
+    B136      R6-20  Q x=0.03     0bps  CAGR 11.67% Sh  1.0225 DD -16.32% H1/H2 1.166/0.895 OOS 1.0067  [   4b]
+    B136      R6-20  Q x=0.03    10bps  CAGR 11.23% Sh  0.9882 DD -16.59% H1/H2 1.131/0.861 OOS 0.9721  [   4b]
+    B136      R6-20  Q x=0.05     0bps  CAGR 11.92% Sh  1.0288 DD -17.26% H1/H2 1.186/0.890 OOS 0.9998  [   4b]
+    B136      R6-20  Q x=0.05    10bps  CAGR 11.48% Sh  0.9951 DD -17.52% H1/H2 1.151/0.856 OOS 0.9658  [   4b]
+    B136      R6-20  Q x=0.10     0bps  CAGR 12.44% Sh  1.0446 DD -17.63% H1/H2 1.179/0.925 OOS 1.0301  [   4b]
+    B136      R6-20  Q x=0.10    10bps  CAGR 12.00% Sh  1.0119 DD -17.87% H1/H2 1.146/0.893 OOS 0.9971  [   4b]
+    B136      R6-20  Q x=0.10    25bps  CAGR 11.35% Sh  0.9624 DD -18.24% H1/H2 1.095/0.845 OOS 0.9471  [   4b]
+    B136      V2     W x=ctl      0bps  CAGR  8.25% Sh  1.1336 DD -12.21% H1/H2 1.255/1.014 OOS 1.1481  [4a   ]
+    B136      V2     W x=0.01     0bps  CAGR  7.87% Sh  1.1408 DD -10.05% H1/H2 1.232/1.049 OOS 1.1863  [4a   ]
+    B136      V2     W x=0.05     0bps  CAGR  8.08% Sh  1.1292 DD -11.61% H1/H2 1.248/1.010 OOS 1.1479  [4a   ]
+    B136      V2     W x=0.10     0bps  CAGR  8.16% Sh  1.1273 DD -12.04% H1/H2 1.254/1.001 OOS 1.1371  [4a   ]
+    SMALL439  V2     W x=ctl      0bps  CAGR  4.10% Sh  0.6126 DD -14.31% H1/H2 0.611/0.617 OOS 0.6086  [4a   ]
+    SMALL439  V2     W x=0.05     0bps  CAGR  3.98% Sh  0.6033 DD -13.84% H1/H2 0.578/0.628 OOS 0.6173  [4a   ]
+    SMALL439  V2     W x=0.10     0bps  CAGR  4.02% Sh  0.6031 DD -14.57% H1/H2 0.597/0.611 OOS 0.6037  [4a   ]
+    SMALL439  V2     M x=0.00     0bps  CAGR  3.62% Sh  0.6202 DD -10.92% H1/H2 0.575/0.662 OOS 0.6523  [4a   ]
+    SMALL439  V2     M x=0.01     0bps  CAGR  3.73% Sh  0.6242 DD -11.21% H1/H2 0.598/0.650 OOS 0.6429  [4a   ]
+    SMALL439  V2     M x=0.03     0bps  CAGR  3.84% Sh  0.6190 DD -12.02% H1/H2 0.609/0.630 OOS 0.6341  [4a   ]
+    SMALL439  V2     M x=0.03    10bps  CAGR  3.62% Sh  0.5869 DD -12.33% H1/H2 0.575/0.599 OOS 0.6022  [4a   ]
+    SMALL439  V2     M x=0.05     0bps  CAGR  4.05% Sh  0.6340 DD -12.76% H1/H2 0.653/0.619 OOS 0.6275  [4a   ]
+    SMALL439  V2     M x=0.05    10bps  CAGR  3.85% Sh  0.6056 DD -13.04% H1/H2 0.624/0.591 OOS 0.5989  [4a   ]
+    SMALL439  V2     M x=0.10     0bps  CAGR  4.31% Sh  0.6467 DD -14.08% H1/H2 0.681/0.618 OOS 0.6256  [4a   ]
+    SMALL439  V2     M x=0.10    10bps  CAGR  4.13% Sh  0.6216 DD -14.34% H1/H2 0.655/0.594 OOS 0.6002  [4a   ]
+    SMALL439  V2     Q x=0.00     0bps  CAGR  3.25% Sh  0.6206 DD  -9.10% H1/H2 0.583/0.656 OOS 0.6241  [4a   ]
+    SMALL439  V2     Q x=0.01     0bps  CAGR  3.30% Sh  0.6127 DD  -9.84% H1/H2 0.594/0.632 OOS 0.6090  [4a   ]
+    SMALL439  V2     Q x=0.03     0bps  CAGR  3.51% Sh  0.6218 DD -10.45% H1/H2 0.616/0.629 OOS 0.6286  [4a   ]
+    SMALL439  V2     Q x=0.03    10bps  CAGR  3.36% Sh  0.5979 DD -10.66% H1/H2 0.590/0.608 OOS 0.6056  [4a   ]
+    SMALL439  V2     Q x=0.05     0bps  CAGR  3.71% Sh  0.6310 DD -11.34% H1/H2 0.659/0.608 OOS 0.6203  [4a   ]
+    SMALL439  V2     Q x=0.05    10bps  CAGR  3.58% Sh  0.6101 DD -11.53% H1/H2 0.637/0.589 OOS 0.5997  [4a   ]
+    SMALL439  V2     Q x=0.10     0bps  CAGR  4.06% Sh  0.6414 DD -13.32% H1/H2 0.669/0.618 OOS 0.6318  [4a   ]
+    SMALL439  V2     Q x=0.10    10bps  CAGR  3.95% Sh  0.6246 DD -13.49% H1/H2 0.651/0.602 OOS 0.6149  [4a   ]
+    SMALL439  V2     Q x=0.10    25bps  CAGR  3.78% Sh  0.5993 DD -13.75% H1/H2 0.624/0.578 OOS 0.5895  [4a   ]
+
+  Of the passing rows, how many are EXIT arms (x != ctl) vs no-exit controls:
+    exit arms   4a 29  4b 67
+    controls    4a 3  4b 7
+  A clause that PAYS must produce a pass its own control does NOT.
+    NEW 4b from the clause: U56 R6-20 Q 0bps x in ['0.01', '0.03', '0.05', '0.10']
+    NEW 4b from the clause: U56 R6-20 Q 10bps x in ['0.10']
+    NEW 4b from the clause: U56 R6-20 Q 25bps x in ['0.10']
+    NEW 4a from the clause: U56 V2 M 0bps x in ['0.00', '0.01', '0.03']
+    NEW 4b from the clause: B136 R6-20 M 0bps x in ['0.00', '0.01', '0.03', '0.05', '0.10']
+    NEW 4b from the clause: B136 R6-20 M 10bps x in ['0.00', '0.01', '0.03', '0.05', '0.10']
+    NEW 4b from the clause: B136 R6-20 M 25bps x in ['0.00', '0.01', '0.03', '0.05', '0.10']
+    NEW 4b from the clause: B136 R6-20 Q 0bps x in ['0.00', '0.01', '0.03', '0.05', '0.10']
+    NEW 4b from the clause: B136 R6-20 Q 10bps x in ['0.00', '0.01', '0.03', '0.05', '0.10']
+    NEW 4b from the clause: B136 R6-20 Q 25bps x in ['0.10']
+    NEW 4a from the clause: SMALL439 V2 M 0bps x in ['0.00', '0.01', '0.03', '0.05', '0.10']
+    NEW 4a from the clause: SMALL439 V2 M 10bps x in ['0.03', '0.05', '0.10']
+    NEW 4a from the clause: SMALL439 V2 Q 0bps x in ['0.00', '0.01', '0.03', '0.05', '0.10']
+    NEW 4a from the clause: SMALL439 V2 Q 10bps x in ['0.03', '0.05', '0.10']
+    NEW 4a from the clause: SMALL439 V2 Q 25bps x in ['0.10']
+
+============================================================================================================
+APPENDIX A — the CHEAPER COMPARAND. The clause on a Q book buys back some of what the slow
+cadence gave up. So price the Q + daily-exit arm against the SAME book run WEEKLY and
+MONTHLY with no clause at all: if 'just rebalance faster' dominates, the clause is redundant.
+    panel     book   x      Q+exit Sh   W-ctl Sh   M-ctl Sh   dSh vs W   dSh vs M   Q+exit OOS  W-ctl OOS
+    U56       R6-20  0.00     1.0876     1.0558     1.1557    +0.0318    -0.0681      1.2160     1.0795
+    U56       R6-20  0.01     1.0747     1.0558     1.1557    +0.0189    -0.0810      1.1891     1.0795
+    U56       R6-20  0.03     1.0637     1.0558     1.1557    +0.0079    -0.0920      1.1759     1.0795
+    U56       R6-20  0.05     1.0418     1.0558     1.1557    -0.0140    -0.1139      1.1519     1.0795
+    U56       R6-20  0.10     1.0601     1.0558     1.1557    +0.0043    -0.0956      1.1629     1.0795
+    U56       V2     0.00     1.1581     1.2037     1.1748    -0.0457    -0.0167      1.2282     1.2817
+    U56       V2     0.01     1.1580     1.2037     1.1748    -0.0457    -0.0167      1.2236     1.2817
+    U56       V2     0.03     1.1566     1.2037     1.1748    -0.0472    -0.0182      1.2187     1.2817
+    U56       V2     0.05     1.1006     1.2037     1.1748    -0.1031    -0.0742      1.1668     1.2817
+    U56       V2     0.10     1.1039     1.2037     1.1748    -0.0998    -0.0708      1.1576     1.2817
+    B136      R6-20  0.00     1.0055     1.0283     1.1298    -0.0227    -0.1243      0.9922     0.9276
+    B136      R6-20  0.01     1.0051     1.0283     1.1298    -0.0231    -0.1247      0.9790     0.9276
+    B136      R6-20  0.03     0.9882     1.0283     1.1298    -0.0401    -0.1416      0.9721     0.9276
+    B136      R6-20  0.05     0.9951     1.0283     1.1298    -0.0332    -0.1347      0.9658     0.9276
+    B136      R6-20  0.10     1.0119     1.0283     1.1298    -0.0164    -0.1179      0.9971     0.9276
+    B136      V2     0.00     1.0602     1.1058     1.0924    -0.0456    -0.0322      1.0983     1.1185
+    B136      V2     0.01     1.0738     1.1058     1.0924    -0.0320    -0.0187      1.1001     1.1185
+    B136      V2     0.03     1.0721     1.1058     1.0924    -0.0337    -0.0203      1.0981     1.1185
+    B136      V2     0.05     1.0470     1.1058     1.0924    -0.0588    -0.0455      1.0634     1.1185
+    B136      V2     0.10     1.0397     1.1058     1.0924    -0.0661    -0.0527      1.0400     1.1185
+    SMALL439  R6-20  0.00     0.2525     0.3498     0.4934    -0.0973    -0.2409      0.2493     0.4568
+    SMALL439  R6-20  0.01     0.2439     0.3498     0.4934    -0.1059    -0.2495      0.2335     0.4568
+    SMALL439  R6-20  0.03     0.2425     0.3498     0.4934    -0.1073    -0.2509      0.2286     0.4568
+    SMALL439  R6-20  0.05     0.2476     0.3498     0.4934    -0.1021    -0.2458      0.2242     0.4568
+    SMALL439  R6-20  0.10     0.2592     0.3498     0.4934    -0.0906    -0.2343      0.1963     0.4568
+    SMALL439  V2     0.00     0.5900     0.5725     0.6643    +0.0175    -0.0744      0.5951     0.5680
+    SMALL439  V2     0.01     0.5846     0.5725     0.6643    +0.0121    -0.0798      0.5820     0.5680
+    SMALL439  V2     0.03     0.5979     0.5725     0.6643    +0.0255    -0.0664      0.6056     0.5680
+    SMALL439  V2     0.05     0.6101     0.5725     0.6643    +0.0377    -0.0542      0.5997     0.5680
+    SMALL439  V2     0.10     0.6246     0.5725     0.6643    +0.0521    -0.0398      0.6149     0.5680
+
+  Q+exit beats the same book's WEEKLY no-clause control: full-sample 9/30, OOS 15/30
+  Q+exit beats the same book's MONTHLY no-clause control: 0/30
+
+============================================================================================================
+APPENDIX B — MATCHED-EXPOSURE control (idea 396's bar: does the clause beat simply holding
+less of the same book?).  The Q no-exit control is scaled by a CONSTANT k = exposure(exit)/
+exposure(control) so both books run at the same mean invested weight, then re-run and re-costed.
+    panel     book   x     exp(exit)  exp(ctl)     k     exit Sh   matched Sh   dSharpe    dOOS
+    U56       R6-20  0.00      0.554     0.669   0.828    1.0876      1.0370   +0.0506  +0.1959
+    U56       R6-20  0.01      0.569     0.669   0.850    1.0747      1.0370   +0.0377  +0.1691
+    U56       R6-20  0.03      0.592     0.669   0.884    1.0637      1.0371   +0.0266  +0.1559
+    U56       R6-20  0.05      0.604     0.669   0.902    1.0418      1.0371   +0.0047  +0.1319
+    U56       R6-20  0.10      0.624     0.669   0.932    1.0601      1.0372   +0.0229  +0.1430
+    U56       V2     0.00      0.387     0.498   0.777    1.1581      0.9983   +0.1597  +0.2452
+    U56       V2     0.01      0.411     0.498   0.824    1.1580      0.9980   +0.1600  +0.2411
+    U56       V2     0.03      0.442     0.498   0.887    1.1566      0.9976   +0.1590  +0.2371
+    U56       V2     0.05      0.459     0.498   0.920    1.1006      0.9973   +0.1033  +0.1856
+    U56       V2     0.10      0.483     0.498   0.969    1.1039      0.9969   +0.1070  +0.1772
+    B136      R6-20  0.00      0.592     0.693   0.854    1.0055      1.0261   -0.0206  +0.0405
+    B136      R6-20  0.01      0.602     0.693   0.868    1.0051      1.0263   -0.0212  +0.0271
+    B136      R6-20  0.03      0.617     0.693   0.889    0.9882      1.0265   -0.0384  +0.0198
+    B136      R6-20  0.05      0.625     0.693   0.902    0.9951      1.0267   -0.0316  +0.0134
+    B136      R6-20  0.10      0.640     0.693   0.924    1.0119      1.0269   -0.0151  +0.0443
+    B136      V2     0.00      0.379     0.497   0.763    1.0602      0.9481   +0.1121  +0.2008
+    B136      V2     0.01      0.400     0.497   0.805    1.0738      0.9475   +0.1262  +0.2035
+    B136      V2     0.03      0.432     0.497   0.869    1.0721      0.9466   +0.1255  +0.2030
+    B136      V2     0.05      0.451     0.497   0.908    1.0470      0.9461   +0.1009  +0.1692
+    B136      V2     0.10      0.479     0.497   0.964    1.0397      0.9453   +0.0944  +0.1471
+    SMALL439  R6-20  0.00      0.452     0.695   0.650    0.2525      0.2369   +0.0156  +0.1493
+    SMALL439  R6-20  0.01      0.456     0.695   0.655    0.2439      0.2368   +0.0070  +0.1334
+    SMALL439  R6-20  0.03      0.463     0.695   0.666    0.2425      0.2368   +0.0057  +0.1287
+    SMALL439  R6-20  0.05      0.470     0.695   0.676    0.2476      0.2368   +0.0108  +0.1243
+    SMALL439  R6-20  0.10      0.478     0.695   0.687    0.2592      0.2368   +0.0224  +0.0965
+    SMALL439  V2     0.00      0.247     0.358   0.689    0.5900      0.5833   +0.0067  +0.0293
+    SMALL439  V2     0.01      0.258     0.358   0.719    0.5846      0.5831   +0.0015  +0.0165
+    SMALL439  V2     0.03      0.277     0.358   0.774    0.5979      0.5827   +0.0153  +0.0406
+    SMALL439  V2     0.05      0.294     0.358   0.822    0.6101      0.5823   +0.0278  +0.0353
+    SMALL439  V2     0.10      0.323     0.358   0.902    0.6246      0.5816   +0.0429  +0.0514
+
+  Q daily-exit beats its own MATCHED-EXPOSURE control: full-sample 25/30 (mean dSharpe +0.0473), OOS 30/30 (mean +0.1252)
+  mean dMaxDD vs matched control +7.91%, mean dCAGR -0.37%
+
+============================================================================================================
+APPENDIX C — the ZERO-TUNING arm.  Nothing on this line was chosen by this run:
+  book    = idea 182's published R6 top-20 (R6/vol20^0.5, gate 200dma & vol20<0.60, g=0.75)
+  cadence = MONTHLY, idea 182's published value
+  clause  = RULES v1's LITERAL daily hard exit, x = 0.00 (close below its own ma200), c = 1
+Rule 8 is therefore not a parameter question for this arm — there is no parameter to fit.
+Idea 182 reported this book failing 4b on broad in 0 of 9 cells on the drawdown cap;
+the control rows below must reproduce that failure for the comparison to mean anything.
+Execution-lag ladder (idea 182's convention): target, schedule and exit all delayed by
+the same number of BARS, so lag=5/7 is a true delayed fill, not a stale signal.
+
+    panel     arm       lag  cost   CAGR    Sharpe    MaxDD      H1      H2      OOS   OOS_CAGR  OOS_DD    4a  4b   bind
+    U56       control   1     0  14.16%   1.1968  -18.75%   1.277   1.136  1.2088  15.11%  -18.75%      4b   DD +0.0148
+    U56       control   1    10  13.61%   1.1557  -18.81%   1.233   1.098  1.1695  14.55%  -18.81%      4b   DD +0.0142
+    U56       control   1    25  12.79%   1.0938  -18.90%   1.166   1.039  1.1102  13.72%  -18.90%      4b   DD +0.0133
+    U56       exit0.00  1     0  12.42%   1.1962  -12.77%   1.182   1.213  1.2779  13.98%  -12.77%      4b   CAGR +0.0179
+    U56       exit0.00  1    10  11.81%   1.1431  -12.92%   1.126   1.163  1.2275  13.37%  -12.92%      4b   CAGR +0.0118
+    U56       exit0.00  1    25  10.90%   1.0631  -13.50%   1.040   1.087  1.1515  12.45%  -13.50%      4b   CAGR +0.0027
+    U56       control   5     0  13.46%   1.1227  -17.55%   1.193   1.072  1.1380  14.49%  -17.55%      4b   DD +0.0268
+    U56       control   5    10  12.91%   1.0820  -17.61%   1.149   1.034  1.0992  13.94%  -17.61%      4b   CAGR +0.0228
+    U56       control   5    25  12.10%   1.0205  -17.71%   1.083   0.976  1.0408  13.10%  -17.71%      4b   CAGR +0.0147
+    U56       exit0.00  5     0  11.69%   1.0944  -14.48%   1.090   1.104  1.1727  13.29%  -14.48%      4b   CAGR +0.0105
+    U56       exit0.00  5    10  11.07%   1.0426  -14.54%   1.034   1.055  1.1240  12.67%  -14.54%      4b   CAGR +0.0044
+    U56       exit0.00  5    25  10.16%   0.9646  -14.63%   0.951   0.982  1.0508  11.76%  -14.63%           H1 -0.0080
+    U56       control   7     0  13.39%   1.1060  -19.95%   1.150   1.078  1.1437  14.75%  -19.95%      4b   DD +0.0028
+    U56       control   7    10  12.84%   1.0661  -20.01%   1.106   1.040  1.1058  14.20%  -20.01%      4b   DD +0.0022
+    U56       control   7    25  12.03%   1.0058  -20.10%   1.041   0.984  1.0487  13.37%  -20.10%      4b   DD +0.0013
+    U56       exit0.00  7     0  11.70%   1.0794  -17.22%   1.095   1.073  1.1380  13.13%  -17.22%      4b   CAGR +0.0107
+    U56       exit0.00  7    10  11.09%   1.0287  -17.28%   1.040   1.026  1.0907  12.53%  -17.28%      4b   CAGR +0.0046
+    U56       exit0.00  7    25  10.19%   0.9525  -17.37%   0.957   0.955  1.0196  11.62%  -17.37%           CAGR -0.0045
+    U56       SPY                    15.19%   0.8871  -33.72%   0.959   0.829  0.8786
+    U56       live v2                 8.64%   1.2037  -12.05%   1.231   1.183  1.2817
+    B136      control   1     0  16.80%   1.1815  -24.44%   1.320   1.081  1.1475  17.39%  -24.44%           DD -0.0422
+    B136      control   1    10  15.95%   1.1298  -24.51%   1.264   1.032  1.0976  16.51%  -24.51%           DD -0.0428
+    B136      control   1    25  14.70%   1.0517  -24.60%   1.179   0.959  1.0224  15.21%  -24.60%           DD -0.0437
+    B136      exit0.00  1     0  14.40%   1.1526  -13.97%   1.251   1.067  1.1385  14.66%  -13.97%      4b   CAGR +0.0374
+    B136      exit0.00  1    10  13.54%   1.0921  -14.10%   1.189   1.008  1.0785  13.78%  -14.10%      4b   CAGR +0.0288
+    B136      exit0.00  1    25  12.27%   1.0007  -14.65%   1.095   0.919  0.9879  12.48%  -14.65%      4b   CAGR +0.0161
+    B136      control   5     0  15.03%   1.0576  -23.35%   1.302   0.873  0.9574  14.38%  -23.35%           DD -0.0312
+    B136      control   5    10  14.21%   1.0067  -23.41%   1.247   0.825  0.9087  13.53%  -23.41%           DD -0.0318
+    B136      control   5    25  12.97%   0.9299  -23.51%   1.163   0.752  0.8354  12.27%  -23.51%           H2 -0.0818
+    B136      exit0.00  5     0  13.25%   1.0297  -17.46%   1.220   0.872  0.9646  12.88%  -17.46%      4b   CAGR +0.0259
+    B136      exit0.00  5    10  12.41%   0.9716  -17.53%   1.159   0.816  0.9081  12.02%  -17.53%           H2 -0.0181
+    B136      exit0.00  5    25  11.15%   0.8840  -17.64%   1.067   0.732  0.8228  10.74%  -17.64%           H2 -0.1024
+    B136      control   7     0  15.27%   1.0632  -23.36%   1.257   0.921  1.0035  15.36%  -23.36%           DD -0.0313
+    B136      control   7    10  14.44%   1.0126  -23.42%   1.202   0.873  0.9550  14.50%  -23.42%           DD -0.0319
+    B136      control   7    25  13.20%   0.9363  -23.51%   1.119   0.801  0.8819  13.22%  -23.51%           DD -0.0328
+    B136      exit0.00  7     0  13.19%   1.0096  -19.28%   1.210   0.850  0.9377  12.83%  -19.28%      4b   DD +0.0095
+    B136      exit0.00  7    10  12.35%   0.9524  -19.35%   1.149   0.795  0.8825  11.97%  -19.35%           H2 -0.0385
+    B136      exit0.00  7    25  11.09%   0.8663  -19.45%   1.057   0.713  0.7994  10.69%  -19.45%           H2 -0.1206
+    B136      SPY                    15.23%   0.8890  -33.72%   0.957   0.834  0.8820
+    B136      live v2                 8.03%   1.1058  -12.24%   1.229   0.984  1.1185
+    SMALL439  control   1     0   8.30%   0.5546  -37.26%   0.610   0.514  0.5333   8.23%  -37.26%           OOS -0.3487
+    SMALL439  control   1    10   7.18%   0.4934  -38.23%   0.546   0.454  0.4720   7.05%  -38.23%           OOS -0.4100
+    SMALL439  control   1    25   5.52%   0.4014  -39.65%   0.450   0.364  0.3797   5.31%  -39.65%           OOS -0.5024
+    SMALL439  exit0.00  1     0   4.32%   0.3797  -22.99%   0.430   0.333  0.4002   4.64%  -22.99%           H2 -0.5243
+    SMALL439  exit0.00  1    10   3.18%   0.2985  -23.43%   0.352   0.249  0.3151   3.43%  -23.43%           H2 -0.6085
+    SMALL439  exit0.00  1    25   1.48%   0.1765  -26.41%   0.234   0.123  0.1873   1.64%  -26.41%           H2 -0.7350
+    SMALL439  control   5     0   8.20%   0.5434  -40.96%   0.754   0.377  0.4257   6.26%  -40.96%           H2 -0.4807
+    SMALL439  control   5    10   7.08%   0.4830  -41.91%   0.690   0.318  0.3655   5.11%  -41.91%           H2 -0.5395
+    SMALL439  control   5    25   5.42%   0.3923  -43.31%   0.596   0.230  0.2751   3.40%  -43.31%           H2 -0.6280
+    SMALL439  exit0.00  5     0   5.12%   0.4299  -28.46%   0.594   0.280  0.3593   4.14%  -28.46%           H2 -0.5779
+    SMALL439  exit0.00  5    10   3.97%   0.3501  -30.11%   0.517   0.197  0.2764   2.94%  -30.11%           H2 -0.6602
+    SMALL439  exit0.00  5    25   2.26%   0.2305  -32.56%   0.401   0.074  0.1520   1.15%  -32.56%           H2 -0.7837
+    SMALL439  control   7     0   9.28%   0.6004  -39.61%   0.805   0.437  0.4907   7.53%  -39.61%           H2 -0.4202
+    SMALL439  control   7    10   8.15%   0.5402  -40.59%   0.743   0.378  0.4304   6.36%  -40.59%           H2 -0.4794
+    SMALL439  control   7    25   6.47%   0.4495  -42.02%   0.650   0.289  0.3398   4.62%  -42.02%           H2 -0.5683
+    SMALL439  exit0.00  7     0   5.45%   0.4502  -34.21%   0.748   0.181  0.2942   3.22%  -34.21%           H2 -0.6766
+    SMALL439  exit0.00  7    10   4.29%   0.3710  -35.76%   0.671   0.100  0.2122   2.03%  -35.76%           H2 -0.7581
+    SMALL439  exit0.00  7    25   2.57%   0.2520  -38.01%   0.555  -0.023  0.0892   0.26%  -38.01%           H2 -0.8804
+    SMALL439  SPY                    14.13%   0.8615  -33.72%   0.891   0.858  0.8820
+    SMALL439  live v2                 3.81%   0.5725  -14.68%   0.570   0.577  0.5680
+
+  U56: control 4b 9/9 cells, zero-tuning exit arm 4b 7/9; clause dCAGR -1.81%, dSharpe -0.0317, dMaxDD +3.85%
+    binding bar on the exit arm: ['CAGR', 'H1'], worst margin -0.0080
+
+  B136: control 4b 0/9 cells, zero-tuning exit arm 4b 5/9; clause dCAGR -2.10%, dSharpe -0.0456, dMaxDD +6.74%
+    binding bar on the exit arm: ['CAGR', 'DD', 'H2'], worst margin -0.1206
+
+  SMALL439: control 4b 0/9 cells, zero-tuning exit arm 4b 0/9; clause dCAGR -3.67%, dSharpe -0.1689, dMaxDD +10.18%
+    binding bar on the exit arm: ['H2'], worst margin -0.8804
+
+wrote 2026-09-09_does-the-DAILY-EXIT-pay-on-a-book-that-does-not-already-churn_cloud.grid.csv / .walkforward.csv / .keep.csv / .appendixA.csv / .appendixB.csv / .appendixC.csv / .console.txt
