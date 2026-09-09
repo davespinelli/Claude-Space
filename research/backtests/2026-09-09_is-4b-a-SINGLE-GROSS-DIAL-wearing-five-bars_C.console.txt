@@ -1,0 +1,250 @@
+========================================================================================================
+IDEA 587 - is 4b a SINGLE GROSS DIAL wearing five bars?  (lane C, 2026-09-09)
+========================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+panel U56        4700 days x   56 names  2008-01-02 .. 2026-09-08
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+panel B136       4699 days x  136 names  2008-01-02 .. 2026-09-04
+panel SMALL484   4194 days x  484 names  2010-01-04 .. 2026-09-04
+SURVIVORSHIP (PROTOCOL 9): B136 and SMALL484 are CURRENT constituents.
+
+--- G1  fast_backtest vs engine.backtest (4 real books, bar 1e-12) ---
+  v2 band 0.03 W         max|diff| = 8.674e-18
+  BAND 0.00 g0.20 W      max|diff| = 1.735e-18
+  MOM  n10 g0.65 M       max|diff| = 6.939e-18
+  VOLQ q0.50 g1.00 M     max|diff| = 1.388e-17
+  G1 PASS  (worst 1.388e-17)
+
+--- G2  gross is an EXACT scalar exposure dial: w(g')*g == w(g)*g' (bar 0.0) ---
+  max|w(0.35)*0.90 - w(0.90)*0.35| = 3.469e-18  FAIL
+
+--- G3  committed U56 / RULES v1 anchor 6.4194% / 0.66110 / -13.8278% ---
+  rebuilt 6.4194% / 0.66110 / -13.8278%   max|d| = 1.19e-06  PASS
+
+SPY per panel (full / OOS):
+  U56       full CAGR  15.19% Sharpe  0.887 MaxDD -33.72% | OOS Sharpe  0.879 | bars: CAGR floor  10.63%, DD cap 20.23%
+  B136      full CAGR  15.23% Sharpe  0.889 MaxDD -33.72% | OOS Sharpe  0.882 | bars: CAGR floor  10.66%, DD cap 20.23%
+  SMALL484  full CAGR  14.13% Sharpe  0.862 MaxDD -33.72% | OOS Sharpe  0.882 | bars: CAGR floor   9.89%, DD cap 20.23%
+
+========================================================================================================
+PART 1  THE LADDER - 3 panels x 3 families x 10 dials x 17 gross x 2 cadences = 1,020 books, ALL reported (.grid.csv)
+========================================================================================================
+  U56       done (340 points)
+  B136      done (340 points)
+  SMALL484  done (340 points)
+  1020 grid points; 4b passes 41 (4.0%)
+
+  pass rate by panel x family (rows = panel, cols = family):
+family    BAND   MOM  VOLQ
+panel                     
+B136      5.1%  2.0%  0.0%
+SMALL484  0.0%  0.0%  0.0%
+U56      11.0% 16.7%  0.0%
+
+  pass rate by gross rung (pooled over 60 books):
+   0.20:0%  0.25:0%  0.30:0%  0.35:0%  0.40:0%  0.45:0%  0.50:0%  0.55:0%  0.60:0%  0.65:0%  0.70:2%  0.75:7%  0.80:8%  0.85:5%  0.90:10%  0.95:17%  1.00:20%
+
+========================================================================================================
+PART 2  HOW MUCH DOES ONE DIAL EXPLAIN?  variance decomposition of the binary 4b pass
+========================================================================================================
+  R2(pass ~ gross alone, 17 levels)       = 0.0983
+  R2(pass ~ book shape alone, 60 levels)  = 0.1539
+  R2(pass ~ book x gross, saturated)     = 1.0000   (must be 1.0)
+  H_ONE (gross alone >= 0.80): FAIL  (0.0983)
+
+  per-bar sensitivity to the gross dial (pooled, all 1,020 points):
+   B1_shH1    corr(g, margin) +0.006  slope  +0.0061/unit gross  bar passes 60.0%  flips on  0/60 ladders
+   B2_shH2    corr(g, margin) +0.003  slope  +0.0035/unit gross  bar passes 46.7%  flips on  0/60 ladders
+   B3_shOOS   corr(g, margin) +0.003  slope  +0.0035/unit gross  bar passes 47.3%  flips on  1/60 ladders
+   B4_dd      corr(g, margin) -0.516  slope  -0.2563/unit gross  bar passes 73.8%  flips on 37/60 ladders
+   B5_cagr    corr(g, margin) +0.831  slope  +0.1049/unit gross  bar passes 11.9%  flips on 37/60 ladders
+  H_FLAT (no Sharpe bar B1/B2/B3 ever flips along a gross ladder): FAIL
+
+========================================================================================================
+PART 3  IS THE 4b PASS SET AN INTERVAL IN g?  (60 ladders x 17 rungs)
+========================================================================================================
+  ladders with >=1 pass: 17/60;  contiguous pass set: 60/60 (100.0%)
+  H_INTERVAL (>= 90% contiguous): PASS
+  admissible band: g_lo median 0.90 (min 0.70), g_hi median 1.00 (max 1.00); width median 0.05
+  what binds just BELOW the band (count of ladders):
+   B5_cagr: 17
+  what binds just ABOVE the band (count of ladders):
+   (band runs to g=1.00): 12; B4_dd: 5
+
+  every ladder (shape, n_pass/17, admissible band, binding bars):
+                book  n_pass  contiguous  g_lo  g_hi binds_below_lo binds_above_hi
+    B136|BAND|0.03|M       1        True  0.95  0.95        B5_cagr          B4_dd
+    B136|BAND|0.03|W       1        True  1.00  1.00        B5_cagr               
+    B136|BAND|0.06|M       0        True   NaN   NaN                              
+    B136|BAND|0.06|W       1        True  1.00  1.00        B5_cagr               
+     B136|BAND|0.0|M       2        True  0.95  1.00        B5_cagr               
+     B136|BAND|0.0|W       0        True   NaN   NaN                              
+     B136|BAND|0.1|M       0        True   NaN   NaN                              
+     B136|BAND|0.1|W       2        True  0.95  1.00        B5_cagr               
+       B136|MOM|10|M       0        True   NaN   NaN                              
+       B136|MOM|10|W       0        True   NaN   NaN                              
+       B136|MOM|20|M       2        True  0.75  0.80        B5_cagr          B4_dd
+       B136|MOM|20|W       0        True   NaN   NaN                              
+        B136|MOM|5|M       0        True   NaN   NaN                              
+        B136|MOM|5|W       0        True   NaN   NaN                              
+    B136|VOLQ|0.25|M       0        True   NaN   NaN                              
+    B136|VOLQ|0.25|W       0        True   NaN   NaN                              
+     B136|VOLQ|0.5|M       0        True   NaN   NaN                              
+     B136|VOLQ|0.5|W       0        True   NaN   NaN                              
+    B136|VOLQ|0.75|M       0        True   NaN   NaN                              
+    B136|VOLQ|0.75|W       0        True   NaN   NaN                              
+SMALL484|BAND|0.03|M       0        True   NaN   NaN                              
+SMALL484|BAND|0.03|W       0        True   NaN   NaN                              
+SMALL484|BAND|0.06|M       0        True   NaN   NaN                              
+SMALL484|BAND|0.06|W       0        True   NaN   NaN                              
+ SMALL484|BAND|0.0|M       0        True   NaN   NaN                              
+ SMALL484|BAND|0.0|W       0        True   NaN   NaN                              
+ SMALL484|BAND|0.1|M       0        True   NaN   NaN                              
+ SMALL484|BAND|0.1|W       0        True   NaN   NaN                              
+   SMALL484|MOM|10|M       0        True   NaN   NaN                              
+   SMALL484|MOM|10|W       0        True   NaN   NaN                              
+   SMALL484|MOM|20|M       0        True   NaN   NaN                              
+   SMALL484|MOM|20|W       0        True   NaN   NaN                              
+    SMALL484|MOM|5|M       0        True   NaN   NaN                              
+    SMALL484|MOM|5|W       0        True   NaN   NaN                              
+SMALL484|VOLQ|0.25|M       0        True   NaN   NaN                              
+SMALL484|VOLQ|0.25|W       0        True   NaN   NaN                              
+ SMALL484|VOLQ|0.5|M       0        True   NaN   NaN                              
+ SMALL484|VOLQ|0.5|W       0        True   NaN   NaN                              
+SMALL484|VOLQ|0.75|M       0        True   NaN   NaN                              
+SMALL484|VOLQ|0.75|W       0        True   NaN   NaN                              
+     U56|BAND|0.03|M       3        True  0.90  1.00        B5_cagr               
+     U56|BAND|0.03|W       2        True  0.95  1.00        B5_cagr               
+     U56|BAND|0.06|M       0        True   NaN   NaN                              
+     U56|BAND|0.06|W       1        True  1.00  1.00        B5_cagr               
+      U56|BAND|0.0|M       3        True  0.90  1.00        B5_cagr               
+      U56|BAND|0.0|W       1        True  1.00  1.00        B5_cagr               
+      U56|BAND|0.1|M       2        True  0.90  0.95        B5_cagr          B4_dd
+      U56|BAND|0.1|W       3        True  0.90  1.00        B5_cagr               
+        U56|MOM|10|M       6        True  0.75  1.00        B5_cagr               
+        U56|MOM|10|W       0        True   NaN   NaN                              
+        U56|MOM|20|M       3        True  0.70  0.80        B5_cagr          B4_dd
+        U56|MOM|20|W       3        True  0.75  0.85        B5_cagr          B4_dd
+         U56|MOM|5|M       5        True  0.80  1.00        B5_cagr               
+         U56|MOM|5|W       0        True   NaN   NaN                              
+     U56|VOLQ|0.25|M       0        True   NaN   NaN                              
+     U56|VOLQ|0.25|W       0        True   NaN   NaN                              
+      U56|VOLQ|0.5|M       0        True   NaN   NaN                              
+      U56|VOLQ|0.5|W       0        True   NaN   NaN                              
+     U56|VOLQ|0.75|M       0        True   NaN   NaN                              
+     U56|VOLQ|0.75|W       0        True   NaN   NaN                              
+
+========================================================================================================
+PART 4  DO THE OTHER FOUR BARS EVER SPEAK?
+========================================================================================================
+  failing points: 979 of 1020
+  which bars are failing on a failing point (a point can fail several):
+   B1_shH1    fails on   408 ( 41.7% of failures); SOLE failing bar on     0 (  0.0%)
+   B2_shH2    fails on   544 ( 55.6% of failures); SOLE failing bar on     0 (  0.0%)
+   B3_shOOS   fails on   538 ( 55.0% of failures); SOLE failing bar on     0 (  0.0%)
+   B4_dd      fails on   267 ( 27.3% of failures); SOLE failing bar on    50 (  5.1%)
+   B5_cagr    fails on   899 ( 91.8% of failures); SOLE failing bar on   368 ( 37.6%)
+  H_CAGR (B5 binding on >= 75% of failures): PASS  (91.8%)
+
+  verdict under each SINGLE bar, and under each DROP-ONE 4-bar subset, vs the full five:
+   B1_shH1 ALONE          agrees on 44.02%  (571 disagreements)
+   B2_shH2 ALONE          agrees on 57.35%  (435 disagreements)
+   B3_shOOS ALONE         agrees on 56.76%  (441 disagreements)
+   B4_dd ALONE            agrees on 30.20%  (712 disagreements)
+   B5_cagr ALONE          agrees on 92.16%  (80 disagreements)
+   DROP B1_shH1           agrees on 100.00%  (0 points where B1_shH1 was the ONLY thing setting the verdict)
+   DROP B2_shH2           agrees on 100.00%  (0 points where B2_shH2 was the ONLY thing setting the verdict)
+   DROP B3_shOOS          agrees on 100.00%  (0 points where B3_shOOS was the ONLY thing setting the verdict)
+   DROP B4_dd             agrees on 95.10%  (50 points where B4_dd was the ONLY thing setting the verdict)
+   DROP B5_cagr           agrees on 63.92%  (368 points where B5_cagr was the ONLY thing setting the verdict)
+  H_DROP (B5 alone changes < 10% of verdicts): PASS  (7.8%)
+
+  the control the single-dial reading has to survive - WITHIN each gross rung,
+  how much pass/fail variance is left, and does shape explain it?
+ gross  n  pass_rate  within_var  r2_shape_within
+0.2000 60     0.0000      0.0000              NaN
+0.2500 60     0.0000      0.0000              NaN
+0.3000 60     0.0000      0.0000              NaN
+0.3500 60     0.0000      0.0000              NaN
+0.4000 60     0.0000      0.0000              NaN
+0.4500 60     0.0000      0.0000              NaN
+0.5000 60     0.0000      0.0000              NaN
+0.5500 60     0.0000      0.0000              NaN
+0.6000 60     0.0000      0.0000              NaN
+0.6500 60     0.0000      0.0000              NaN
+0.7000 60     0.0167      0.0164           1.0000
+0.7500 60     0.0667      0.0622           1.0000
+0.8000 60     0.0833      0.0764           1.0000
+0.8500 60     0.0500      0.0475           1.0000
+0.9000 60     0.1000      0.0900           1.0000
+0.9500 60     0.1667      0.1389           1.0000
+1.0000 60     0.2000      0.1600           1.0000
+  gross rungs that are NOT unanimous: 7/17 -> on those rungs the verdict is NOT set by gross alone.
+
+========================================================================================================
+PART 5  RULE 8 WALK-FORWARD - (family dial, gross g) chosen on IS <= 2016-12-31 ONLY,
+        OOS 2017- read ONCE.  Both KEEP paths.  Cadence fixed at W (not tuned).
+========================================================================================================
+   panel family              convention                pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  full_Sharpe    H1    H2  full_MaxDD KEEP_4a KEEP_4b
+     U56   BAND IS_Sharpe_unconstrained     dial=0.1 g=1.00      1.152     0.124       1.216     -0.161        1.187 1.258 1.126      -0.161   False    True
+     U56   BAND   IS_Sharpe_given_IS_4b     dial=0.1 g=1.00      1.152     0.124       1.216     -0.161        1.187 1.258 1.126      -0.161   False    True
+     U56    MOM IS_Sharpe_unconstrained    dial=20.0 g=0.95      0.976     0.150       1.086     -0.219        1.038 1.083 1.007      -0.219   False   False
+     U56    MOM   IS_Sharpe_given_IS_4b    dial=20.0 g=0.95      0.976     0.150       1.086     -0.219        1.038 1.083 1.007      -0.219   False   False
+     U56   VOLQ IS_Sharpe_unconstrained    dial=0.25 g=0.50      1.076     0.029       0.868     -0.079        0.953 1.184 0.773      -0.079   False   False
+     U56   VOLQ   IS_Sharpe_given_IS_4b    dial=0.75 g=0.80      1.039     0.114       1.061     -0.218        1.052 1.133 0.984      -0.218   False   False
+    B136   BAND IS_Sharpe_unconstrained     dial=0.1 g=1.00      1.150     0.113       1.110     -0.191        1.128 1.277 0.983      -0.191   False    True
+    B136   BAND   IS_Sharpe_given_IS_4b     dial=0.1 g=1.00      1.150     0.113       1.110     -0.191        1.128 1.277 0.983      -0.191   False    True
+    B136    MOM IS_Sharpe_unconstrained    dial=20.0 g=1.00      0.992     0.110       0.770     -0.259        0.862 1.074 0.691      -0.259   False   False
+    B136    MOM   IS_Sharpe_given_IS_4b    dial=20.0 g=1.00      0.992     0.110       0.770     -0.259        0.862 1.074 0.691      -0.259   False   False
+    B136   VOLQ IS_Sharpe_unconstrained    dial=0.25 g=1.00      1.162     0.083       0.790     -0.244        0.943 1.243 0.712      -0.244   False   False
+    B136   VOLQ   IS_Sharpe_given_IS_4b    dial=0.75 g=0.70      1.102     0.103       0.997     -0.221        1.043 1.193 0.914      -0.221   False   False
+SMALL484   BAND IS_Sharpe_unconstrained     dial=0.1 g=1.00      0.627     0.065       0.692     -0.198        0.668 0.658 0.679      -0.198   False   False
+SMALL484   BAND   IS_Sharpe_given_IS_4b (none clears IS 4b)        NaN       NaN         NaN        NaN          NaN   NaN   NaN         NaN     NaN     NaN
+SMALL484    MOM IS_Sharpe_unconstrained    dial=20.0 g=0.20      0.665     0.022       0.483     -0.103        0.530 0.721 0.435      -0.103   False   False
+SMALL484    MOM   IS_Sharpe_given_IS_4b (none clears IS 4b)        NaN       NaN         NaN        NaN          NaN   NaN   NaN         NaN     NaN     NaN
+SMALL484   VOLQ IS_Sharpe_unconstrained     dial=0.5 g=1.00      0.763     0.084       0.507     -0.414        0.589 0.724 0.509      -0.414   False   False
+SMALL484   VOLQ   IS_Sharpe_given_IS_4b (none clears IS 4b)        NaN       NaN         NaN        NaN          NaN   NaN   NaN         NaN     NaN     NaN
+
+  references on the same windows:
+   U56       RULES v2 (live) full  8.64%/1.204/-12.05%  OOS  9.51%/1.282/-12.05%
+             SPY             full 15.19%/0.887/-33.72%  OOS 15.38%/0.879/-33.72%
+   B136      RULES v2 (live) full  8.03%/1.106/-12.24%  OOS  7.98%/1.119/-12.24%
+             SPY             full 15.23%/0.889/-33.72%  OOS 15.45%/0.882/-33.72%
+   SMALL484  RULES v2 (live) full  4.07%/0.615/-12.09%  OOS  4.55%/0.663/-12.09%
+             SPY             full 14.13%/0.862/-33.72%  OOS 15.45%/0.882/-33.72%
+
+  DOES THE IS 4b GATE MOVE THE PICK?  (unconstrained vs IS-4b-constrained chooser)
+   pick identical on 4/9 (panel, family) cells
+   4b KEEPs among the 9 IS-gated picks: 2; 4a KEEPs: 0
+
+========================================================================================================
+PART 6  ADDENDUM (descriptive, POST-HOC - no hypothesis is scored on it)
+========================================================================================================
+  43/60 reading: 43 of 60 books never pass 4b at ANY gross, so the pooled
+  R2(pass ~ gross) in PART 2 is held down by books the dial cannot reach at all.
+  Restricted to the 289 points on the 17 books that pass SOMEWHERE:
+    R2(pass ~ gross alone) = 0.3881   R2(pass ~ book alone) = 0.0537
+  realised mean gross: passers min 0.619 / median 0.709 / max 1.000; failers median 0.460
+  NOTE on PART 5's within-rung r2_shape_within: with exactly ONE observation per
+  (book, gross) cell that statistic is 1.0 BY CONSTRUCTION and carries no information;
+  the informative line there is that 7 of 17 rungs are non-unanimous at all.
+  the single B3 flip (H_FLAT) in detail - it is a tie, not a dial effect:
+    B136|VOLQ|0.25|M: B3 margin runs +0.002674 -> -0.004971 (range 0.007644); it crosses zero at g=0.50 and the book passes 4b at 0 of 17 rungs.
+  best 4b passers by OOS Sharpe (all 41 passers are in .grid.csv):
+           book  gross  CAGR_full  Sharpe_full  MaxDD_full  CAGR_OOS  Sharpe_OOS  MaxDD_OOS
+U56|BAND|0.03|W 0.9500     0.1101       1.2107     -0.1495    0.1213      1.2898    -0.1495
+U56|BAND|0.03|W 1.0000     0.1160       1.2106     -0.1570    0.1278      1.2897    -0.1570
+ U56|BAND|0.0|M 1.0000     0.1198       1.2175     -0.1554    0.1276      1.2813    -0.1554
+ U56|BAND|0.0|M 0.9500     0.1136       1.2172     -0.1482    0.1210      1.2810    -0.1482
+ U56|BAND|0.0|M 0.9000     0.1075       1.2168     -0.1409    0.1145      1.2807    -0.1409
+
+========================================================================================================
+HYPOTHESES (all pre-registered)
+========================================================================================================
+  FAIL  H_ONE   gross alone explains >=0.80 of 4b pass variance  R2 = 0.0983
+  PASS  H_INTERVAL pass set contiguous in g on >=90% of ladders  100.0%
+  PASS  H_CAGR  B5 binding on >=75% of failing points            91.8%
+  PASS  H_DROP  B5 alone changes <10% of verdicts                7.8%
+  FAIL  H_FLAT  no Sharpe bar flips along any gross ladder       1 flips
+
+files: .grid.csv .ladders.csv .sensitivity.csv .subsets.csv .within_gross.csv .walkforward.csv .gates.json .hypotheses.json
