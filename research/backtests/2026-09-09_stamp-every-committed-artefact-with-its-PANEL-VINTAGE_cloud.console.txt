@@ -1,0 +1,176 @@
+====================================================================================================
+IDEA 514 — stamp every committed artefact with its PANEL VINTAGE   (cloud, 2026-09-09)
+====================================================================================================
+
+[A] THE STAMP — panel_stamp() on the three live panels, and the raw files beneath them
+                       object first_date  last_date  n_rows  n_cols        panel_sha
+                    PANEL U56 2008-01-02 2026-09-08    4700      56 fabfd5b814808b76
+                   PANEL B136 2008-01-02 2026-09-04    4699     136 e660835829f4a3c3
+               PANEL SMALL439 2010-01-04 2026-09-04    4194     440 e857282e3e67ec9a
+         FILE data/prices.csv                            -1      -1 68548b1de3629415
+   FILE data/prices_broad.csv                            -1      -1 a1db76ae968c017d
+FILE data/prices_small.csv.gz                            -1      -1 bc832ada6461349b
+     FILE data/small_meta.csv                            -1      -1 7df34da127bda9cd
+FILE data/volume_small.csv.gz                            -1      -1 23d10ef01d1e1078
+
+NOTE: the FILE sha and the PANEL sha are different facts.  data/prices.csv carries 58 columns;
+      U56 is the 56 names of research/universe.json minus EXCLUDE, ffilled — a derived object.
+      A stamp on the file alone does not identify the panel a backtest actually consumed;
+      the proposal below therefore stamps the PANEL, with the file sha as a secondary field.
+
+[B] CENSUS — how many committed artefacts carry ANY vintage-identifying token today?
+artefact files scanned: 3784   (474 .py, 2249 .csv, 550 .md, 452 .txt, 59 other)
+     75 /  3784  ( 1.98%)  any vintage-ish token (vintage/last_date/n_rows/panel_sha)
+    986 /  3784  (26.06%)  contains a CURRENT panel last_date string
+    105 /  3784  ( 2.77%)  contains a CURRENT panel n_rows as a standalone integer
+      1 /  3784  ( 0.03%)  contains a CURRENT panel sha
+  (the middle two are UPPER bounds on self-stamping: a file may print that date or integer for
+   an unrelated reason.  The sha row is the only exact test, and it is the one that is zero.)
+
+[C] BACK-FILL — how much of the record's vintage is still RECONSTRUCTIBLE from git?
+clone is shallow: true;  commits reachable: 50;  window 2026-09-08T23:26:54+00:00 .. 2026-09-09T08:37:32+00:00
+artefacts whose LAST-TOUCHING commit is inside the window: 3782 / 3784 (99.95%)
+distinct data/prices.csv BLOBS reachable: 2  -> the clone spans 1 real vintage step(s)
+VERDICT ON BACK-FILL: a full clone maps every artefact to the blob live at its commit, but THIS
+sandbox's clone reaches only the window above, so the back-fill is bounded by the clone, not by
+the record.  The sidecar below is written for the artefacts that ARE reachable.
+
+[C2] THE ONE REAL STEP — data/prices.csv at the two reachable blobs, diffed
+  blob 048a4741f36b  rows=4700  cols=58  last=2026-09-08
+  blob 031a3a69e522  rows=4699  cols=58  last=2026-09-04
+  appended rows: 1;  restated cells: 23055 in 46 of 58 columns;  max |d| 3.000e-04
+
+[D] PRICE IN PROTOCOL UNITS — vintage depth d x book size n x panel, 10 bps, weekly, next-day
+    (d = trailing trading days dropped from the panel = 'this artefact was computed d days ago')
+    U56       d=  0 last=2026-09-08 rows= 4700 done (  50.1s)
+    U56       d=  1 last=2026-09-04 rows= 4699 done (  54.9s)
+    U56       d=  2 last=2026-09-03 rows= 4698 done (  59.9s)
+    U56       d=  3 last=2026-09-02 rows= 4697 done (  64.7s)
+    U56       d=  5 last=2026-08-31 rows= 4695 done (  69.5s)
+    U56       d= 10 last=2026-08-24 rows= 4690 done (  74.3s)
+    U56       d= 21 last=2026-08-07 rows= 4679 done (  78.9s)
+    U56       d= 63 last=2026-06-08 rows= 4637 done (  83.2s)
+    U56       d=252 last=2025-09-05 rows= 4448 done (  87.7s)
+    B136      d=  0 last=2026-09-04 rows= 4699 done (  96.0s)
+    B136      d=  1 last=2026-09-03 rows= 4698 done ( 104.0s)
+    B136      d=  2 last=2026-09-02 rows= 4697 done ( 112.1s)
+    B136      d=  3 last=2026-09-01 rows= 4696 done ( 119.9s)
+    B136      d=  5 last=2026-08-28 rows= 4694 done ( 127.8s)
+    B136      d= 10 last=2026-08-21 rows= 4689 done ( 135.7s)
+    B136      d= 21 last=2026-08-06 rows= 4678 done ( 143.5s)
+    B136      d= 63 last=2026-06-05 rows= 4636 done ( 151.4s)
+    B136      d=252 last=2025-09-04 rows= 4447 done ( 158.9s)
+    SMALL439  d=  0 last=2026-09-04 rows= 4194 done ( 179.1s)
+    SMALL439  d=  1 last=2026-09-03 rows= 4193 done ( 198.2s)
+    SMALL439  d=  2 last=2026-09-02 rows= 4192 done ( 217.6s)
+    SMALL439  d=  3 last=2026-09-01 rows= 4191 done ( 237.0s)
+    SMALL439  d=  5 last=2026-08-28 rows= 4189 done ( 256.8s)
+    SMALL439  d= 10 last=2026-08-21 rows= 4184 done ( 275.1s)
+    SMALL439  d= 21 last=2026-08-06 rows= 4173 done ( 292.8s)
+    SMALL439  d= 63 last=2026-06-05 rows= 4131 done ( 310.9s)
+    SMALL439  d=252 last=2025-09-04 rows= 3942 done ( 327.3s)
+
+    ALL 216 GRID POINTS (panel x d x book) written to 2026-09-09_stamp-every-committed-artefact-with-its-PANEL-VINTAGE_cloud.grid.csv
+
+    Every point, full sample, by panel:
+
+    --- U56 ---
+d                  0      1      2      3      5      10     21     63     252
+book                                                                          
+EWall           1.0529 1.0544 1.0556 1.0532 1.0528 1.0535 1.0542 1.0456 1.0211
+FWD10           0.9326 0.9305 0.9334 0.9332 0.9274 0.9294 0.9359 0.9513 0.8835
+FWD20           1.0817 1.0821 1.0830 1.0812 1.0789 1.0809 1.0817 1.0773 1.0279
+FWD30           1.0726 1.0741 1.0750 1.0724 1.0718 1.0712 1.0736 1.0648 1.0327
+FWD40           1.0533 1.0548 1.0560 1.0536 1.0532 1.0539 1.0547 1.0463 1.0235
+FWD5            0.9237 0.9213 0.9228 0.9217 0.9161 0.9224 0.9243 0.9373 0.8946
+FWD60           1.0531 1.0546 1.0558 1.0534 1.0530 1.0537 1.0544 1.0458 1.0213
+RULES v2 (live) 1.2108 1.2127 1.2146 1.2109 1.2115 1.2103 1.2107 1.2057 1.1853
+
+    --- B136 ---
+d                  0      1      2      3      5      10     21     63     252
+book                                                                          
+EWall           1.0279 1.0292 1.0268 1.0252 1.0288 1.0299 1.0271 1.0183 0.9913
+FWD10           0.8946 0.8950 0.8936 0.8923 0.8957 0.9002 0.8996 0.9086 0.8127
+FWD20           0.9432 0.9444 0.9426 0.9412 0.9406 0.9444 0.9434 0.9500 0.8683
+FWD30           0.9557 0.9563 0.9544 0.9528 0.9532 0.9571 0.9547 0.9533 0.8816
+FWD40           0.9895 0.9902 0.9886 0.9871 0.9877 0.9909 0.9876 0.9835 0.9273
+FWD5            0.8760 0.8772 0.8758 0.8747 0.8753 0.8802 0.8866 0.8929 0.7668
+FWD60           1.0014 1.0019 0.9995 0.9976 1.0001 1.0018 0.9983 0.9934 0.9572
+RULES v2 (live) 1.1078 1.1095 1.1065 1.1053 1.1094 1.1110 1.1085 1.1034 1.0739
+
+    --- SMALL439 ---
+d                  0      1      2      3      5      10     21     63     252
+book                                                                          
+EWall           0.3361 0.3323 0.3317 0.3287 0.3341 0.3366 0.3291 0.3159 0.2975
+FWD10           0.4773 0.4739 0.4751 0.4747 0.4796 0.4830 0.4845 0.4823 0.4803
+FWD20           0.4499 0.4470 0.4478 0.4469 0.4520 0.4554 0.4420 0.4488 0.4661
+FWD30           0.4015 0.3964 0.3960 0.3935 0.3986 0.4007 0.3934 0.4002 0.4076
+FWD40           0.4101 0.4057 0.4047 0.4019 0.4078 0.4091 0.4051 0.4052 0.3867
+FWD5            0.3205 0.3182 0.3205 0.3209 0.3264 0.3289 0.3385 0.3134 0.3652
+FWD60           0.4190 0.4155 0.4146 0.4117 0.4173 0.4204 0.4114 0.4107 0.3856
+RULES v2 (live) 0.5710 0.5671 0.5670 0.5629 0.5698 0.5740 0.5717 0.5684 0.5545
+
+    VERDICT STABILITY vs the d=0 read (this is the number the queue is asking for):
+   panel   d  n_books  flips4a  flips4b  maxdSharpe  maxdCAGR  maxdMaxDD
+     U56   1        8        0        0      0.0024    0.0005     0.0000
+     U56   2        8        0        0      0.0038    0.0003     0.0000
+     U56   3        8        0        0      0.0020    0.0004     0.0000
+     U56   5        8        0        0      0.0076    0.0015     0.0000
+     U56  10        8        0        0      0.0032    0.0004     0.0000
+     U56  21        8        0        1      0.0033    0.0007     0.0000
+     U56  63        8        0        0      0.0187    0.0034     0.0000
+     U56 252        8        0        0      0.0538    0.0086     0.0000
+    B136   1        8        0        0      0.0017    0.0003     0.0000
+    B136   2        8        0        0      0.0019    0.0002     0.0000
+    B136   3        8        0        0      0.0038    0.0005     0.0000
+    B136   5        8        0        0      0.0026    0.0003     0.0000
+    B136  10        8        0        0      0.0057    0.0012     0.0000
+    B136  21        8        0        0      0.0106    0.0026     0.0000
+    B136  63        8        0        1      0.0170    0.0037     0.0000
+    B136 252        8        0        1      0.1091    0.0285     0.0000
+SMALL439   1        8        0        0      0.0051    0.0009     0.0000
+SMALL439   2        8        0        0      0.0055    0.0009     0.0000
+SMALL439   3        8        0        0      0.0082    0.0013     0.0000
+SMALL439   5        8        0        0      0.0059    0.0015     0.0000
+SMALL439  10        8        0        0      0.0083    0.0022     0.0000
+SMALL439  21        8        0        0      0.0180    0.0047     0.0000
+SMALL439  63        8        0        0      0.0202    0.0027     0.0000
+SMALL439 252        8        0        0      0.0447    0.0114     0.0000
+
+    TOTAL over 24 (panel,d) cells x 8 books = 192 re-reads: 4a flips 0, 4b flips 3
+    4a passes at d=0: 0 of 24;  4b passes at d=0: 6 of 24
+
+[E] RULE 8 — n chosen on IS (<= 2016-12-31) by IS Sharpe, read ONCE on 2017..end, per vintage
+   panel   d n_star  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  base_OOS_Sharpe  base_OOS_CAGR  spy_OOS_Sharpe  beats_base  beats_spy
+     U56   0  FWD20     0.9994    0.1466      1.1451    -0.1830           1.2904         0.0954          0.8786       False       True
+     U56   1  FWD20     0.9994    0.1467      1.1458    -0.1830           1.2938         0.0956          0.8820       False       True
+     U56   2  FWD20     0.9994    0.1469      1.1474    -0.1830           1.2971         0.0959          0.8844       False       True
+     U56   3  FWD20     0.9994    0.1465      1.1442    -0.1830           1.2906         0.0954          0.8788       False       True
+     U56   5  FWD20     0.9994    0.1460      1.1402    -0.1830           1.2918         0.0955          0.8806       False       True
+     U56  10  FWD20     0.9994    0.1467      1.1439    -0.1830           1.2899         0.0954          0.8789       False       True
+     U56  21  FWD20     0.9994    0.1472      1.1456    -0.1830           1.2908         0.0957          0.8885       False       True
+     U56  63  FWD20     0.9994    0.1469      1.1390    -0.1830           1.2830         0.0955          0.8727       False       True
+     U56 252  FWD20     0.9994    0.1344      1.0547    -0.1830           1.2516         0.0933          0.8367       False       True
+    B136   0  FWD10     1.0559    0.1277      0.7806    -0.2144           1.1206         0.0798          0.8820       False      False
+    B136   1  FWD10     1.0559    0.1278      0.7814    -0.2144           1.1238         0.0801          0.8844       False      False
+    B136   2  FWD10     1.0559    0.1274      0.7789    -0.2144           1.1181         0.0797          0.8788       False      False
+    B136   3  FWD10     1.0559    0.1269      0.7766    -0.2144           1.1160         0.0795          0.8764       False      False
+    B136   5  FWD10     1.0559    0.1281      0.7825    -0.2144           1.1236         0.0801          0.8825       False      False
+    B136  10  FWD10     1.0559    0.1298      0.7902    -0.2144           1.1266         0.0804          0.8808       False      False
+    B136  21  FWD10     1.0559    0.1295      0.7887    -0.2144           1.1219         0.0802          0.8852       False      False
+    B136  63  FWD10     1.0559    0.1319      0.8022    -0.2144           1.1124         0.0798          0.8715       False      False
+    B136 252  FWD10     1.0559    0.0931      0.6125    -0.2144           1.0556         0.0764          0.8387       False      False
+SMALL439   0  FWD20     0.4231    0.0695      0.4657    -0.3348           0.5665         0.0384          0.8820       False      False
+SMALL439   1  FWD20     0.4231    0.0687      0.4612    -0.3348           0.5603         0.0379          0.8844       False      False
+SMALL439   2  FWD20     0.4231    0.0689      0.4624    -0.3348           0.5601         0.0379          0.8788       False      False
+SMALL439   3  FWD20     0.4231    0.0687      0.4611    -0.3348           0.5535         0.0374          0.8764       False      False
+SMALL439   5  FWD20     0.4231    0.0702      0.4689    -0.3348           0.5646         0.0382          0.8825       False      False
+SMALL439  10  FWD20     0.4231    0.0712      0.4742    -0.3348           0.5711         0.0388          0.8808       False      False
+SMALL439  21  FWD20     0.4231    0.0674      0.4537    -0.3348           0.5676         0.0385          0.8852       False      False
+SMALL439  63  FWD20     0.4231    0.0695      0.4644    -0.3348           0.5623         0.0382          0.8715       False      False
+SMALL439 252  FWD20     0.4231    0.0748      0.4935    -0.3348           0.5384         0.0361          0.8387       False      False
+    U56       rule-8 pick across the 9 vintages: ['FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20'] -> STABLE
+    B136      rule-8 pick across the 9 vintages: ['FWD10', 'FWD10', 'FWD10', 'FWD10', 'FWD10', 'FWD10', 'FWD10', 'FWD10', 'FWD10'] -> STABLE
+    SMALL439  rule-8 pick across the 9 vintages: ['FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20', 'FWD20'] -> STABLE
+
+done in 327.4s
