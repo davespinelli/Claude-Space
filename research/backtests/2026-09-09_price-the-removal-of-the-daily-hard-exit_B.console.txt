@@ -1,0 +1,216 @@
+Idea 275 (lane B, 2026-09-09): price the removal of RULES v1's 'hard exit any day' clause.
+
+RULES v2 clause 6 removes v1's daily hard exit on the grounds that no backtest in the record
+ever priced it: every book in the corpus applies its weights on the rebalance schedule only,
+so a name that leaves the gate on a Tuesday is sold on Friday.  This run builds the daily-exit
+variant of BOTH books and prices the clause.
+
+Mechanics (faithful to the engine's conventions):
+  * weights decided at close t, applied at close t+1  (engine.backtest does this by shift(1))
+  * the daily exit is a SELL ONLY: a held name whose exit trigger fires at close t is sold in
+    full at close t+1 and the proceeds sit in cash; nothing is bought back until the next
+    scheduled rebalance.  The book therefore de-grosses between rebalances, exactly like v2's
+    OUT names do on a rebalance day.
+  * every exit is charged 10 bps of the sold weight through the same turnover accumulator.
+
+Two tuned parameters, both ladders reported in full:
+  x  exit depth below the 200d MA at which a held name is dumped:  {0.00, 0.01, 0.03, 0.05, 0.10}
+     x = 0.00 is the literal v1 clause (close below its own ma200).
+     x = 0.03 under v2 is the literal restatement (sell the day the name leaves the band).
+  c  confirmation days: consecutive closes below the trigger required before the exit fires,
+     {1, 2, 3}.  c = 1 is the literal clause.
+
+Corpus: 2 books (RULES v1, RULES v2) x 2 panels (U56, BROAD136) x 15 grid points, each against
+its own no-daily-exit control, at 0 / 10 / 25 bps.  Rule 8 walk-forward: (x, c) chosen on
+2009-2016 IS Sharpe, evaluated untouched on 2017-2026 against the live baseline and SPY.
+
+Deterministic, standalone, no network.  Does not modify RULES.md, scan.py, bot.py or baseline.py.
+
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+====================================================================================================
+GATE 1 — backtest_exit(exit=None) vs engine.backtest, max abs return difference
+  U56   v1: 6.939e-18
+  U56   v2: 8.674e-18
+  B136  v1: 6.939e-18
+  B136  v2: 2.429e-17
+
+GATE 2 — published RULES.md row is 8.66% / 1.2056 / -12.05%, halves 1.2259/1.1908
+  v2 live   CAGR  8.64%  Sharpe 1.2037  MaxDD -12.05%  H1/H2 1.2309/1.1828
+  v1 prev   CAGR  6.42%  Sharpe 0.6611  MaxDD -13.83%  H1/H2 0.6429/0.6804   (published 6.45% / 0.6642 / -13.83%)
+  SPY       CAGR 15.19%  Sharpe 0.8871  MaxDD -33.72%  H1/H2 0.9587/0.8287
+
+====================================================================================================
+FULL GRID at 10 bps — daily-exit arm minus its own no-exit control (same book/panel)
+
+  U56 / RULES v1  control: CAGR  6.42%  Sharpe 0.6611  MaxDD -13.83%  H1/H2 0.6429/0.6804  turn 23.63x
+    x      c   CAGR    Sharpe    MaxDD    H1      H2     turn   dSharpe  dMaxDD   dCAGR   dTurn
+    0.00  1   6.48%   0.6690  -15.56%  0.625  0.710  23.82  +0.0079  -1.73%  +0.06%  +0.19
+    0.00  2   6.49%   0.6685  -14.40%  0.651  0.688  23.70  +0.0074  -0.57%  +0.07%  +0.07
+    0.00  3   6.56%   0.6751  -13.83%  0.648  0.702  23.65  +0.0140  -0.00%  +0.15%  +0.02
+    0.01  1   6.58%   0.6775  -13.78%  0.641  0.712  23.63  +0.0164  +0.05%  +0.16%  +0.00
+    0.01  2   6.51%   0.6696  -14.40%  0.644  0.695  23.63  +0.0085  -0.57%  +0.09%  +0.00
+    0.01  3   6.48%   0.6668  -13.83%  0.643  0.691  23.63  +0.0057  +0.00%  +0.06%  +0.00
+    0.03  1   6.45%   0.6642  -14.35%  0.645  0.685  23.63  +0.0031  -0.52%  +0.03%  -0.00
+    0.03  2   6.50%   0.6688  -13.83%  0.643  0.695  23.63  +0.0077  +0.00%  +0.08%  +0.00
+    0.03  3   6.45%   0.6638  -13.83%  0.643  0.685  23.63  +0.0027  +0.00%  +0.03%  +0.00
+    0.05  1   6.44%   0.6632  -14.35%  0.645  0.683  23.63  +0.0021  -0.52%  +0.02%  -0.00
+    0.05  2   6.48%   0.6664  -13.83%  0.643  0.690  23.63  +0.0053  +0.00%  +0.06%  +0.00
+    0.05  3   6.44%   0.6630  -13.83%  0.643  0.684  23.63  +0.0019  +0.00%  +0.02%  +0.00
+    0.10  1   6.45%   0.6644  -13.83%  0.645  0.685  23.63  +0.0033  -0.00%  +0.03%  +0.00
+    0.10  2   6.48%   0.6664  -13.83%  0.643  0.690  23.63  +0.0053  +0.00%  +0.06%  +0.00
+    0.10  3   6.44%   0.6630  -13.83%  0.643  0.684  23.63  +0.0019  +0.00%  +0.02%  +0.00
+
+  U56 / RULES v2  control: CAGR  8.64%  Sharpe 1.2037  MaxDD -12.05%  H1/H2 1.2309/1.1828  turn 1.78x
+    x      c   CAGR    Sharpe    MaxDD    H1      H2     turn   dSharpe  dMaxDD   dCAGR   dTurn
+    0.00  1   7.68%   1.1473  -10.50%  1.180  1.120   5.32  -0.0564  +1.55%  -0.97%  +3.55
+    0.00  2   7.94%   1.1591  -11.14%  1.193  1.131   4.30  -0.0446  +0.91%  -0.71%  +2.52
+    0.00  3   8.20%   1.1783  -11.04%  1.209  1.154   3.66  -0.0254  +1.01%  -0.44%  +1.88
+    0.01  1   8.03%   1.1777  -10.79%  1.207  1.153   3.52  -0.0261  +1.26%  -0.61%  +1.75
+    0.01  2   8.21%   1.1817  -11.21%  1.206  1.162   2.79  -0.0221  +0.85%  -0.43%  +1.02
+    0.01  3   8.47%   1.2009  -11.05%  1.221  1.186   2.41  -0.0028  +1.01%  -0.18%  +0.63
+    0.03  1   8.38%   1.1991  -11.16%  1.216  1.186   1.81  -0.0047  +0.89%  -0.26%  +0.04
+    0.03  2   8.54%   1.2025  -11.46%  1.226  1.184   1.79  -0.0012  +0.59%  -0.11%  +0.01
+    0.03  3   8.61%   1.2057  -11.64%  1.229  1.188   1.78  +0.0019  +0.42%  -0.03%  +0.00
+    0.05  1   8.45%   1.1951  -11.72%  1.218  1.177   1.79  -0.0087  +0.33%  -0.19%  +0.01
+    0.05  2   8.62%   1.2046  -11.88%  1.229  1.186   1.78  +0.0008  +0.18%  -0.03%  +0.00
+    0.05  3   8.67%   1.2085  -11.94%  1.233  1.190   1.78  +0.0048  +0.11%  +0.02%  +0.00
+    0.10  1   8.59%   1.2020  -12.27%  1.233  1.177   1.78  -0.0018  -0.21%  -0.05%  -0.00
+    0.10  2   8.64%   1.2037  -12.05%  1.231  1.182   1.78  -0.0000  -0.00%  -0.00%  -0.00
+    0.10  3   8.65%   1.2039  -12.05%  1.231  1.183   1.78  +0.0002  +0.00%  +0.00%  +0.00
+
+  B136 / RULES v1  control: CAGR  6.39%  Sharpe 0.6350  MaxDD -21.19%  H1/H2 0.7562/0.5320  turn 29.43x
+    x      c   CAGR    Sharpe    MaxDD    H1      H2     turn   dSharpe  dMaxDD   dCAGR   dTurn
+    0.00  1   6.47%   0.6431  -20.12%  0.757  0.546  29.52  +0.0081  +1.07%  +0.09%  +0.09
+    0.00  2   6.38%   0.6346  -20.65%  0.756  0.531  29.45  -0.0004  +0.55%  -0.01%  +0.02
+    0.00  3   6.45%   0.6406  -20.79%  0.759  0.540  29.43  +0.0056  +0.40%  +0.06%  +0.00
+    0.01  1   6.44%   0.6401  -20.57%  0.758  0.540  29.43  +0.0051  +0.62%  +0.05%  +0.00
+    0.01  2   6.38%   0.6343  -20.79%  0.756  0.531  29.43  -0.0006  +0.40%  -0.01%  -0.00
+    0.01  3   6.39%   0.6357  -21.09%  0.756  0.533  29.43  +0.0007  +0.10%  +0.01%  -0.00
+    0.03  1   6.37%   0.6333  -21.09%  0.758  0.527  29.43  -0.0017  +0.10%  -0.02%  -0.00
+    0.03  2   6.39%   0.6350  -21.19%  0.756  0.532  29.43  +0.0000  +0.00%  +0.00%  +0.00
+    0.03  3   6.39%   0.6350  -21.19%  0.756  0.532  29.43  +0.0000  +0.00%  +0.00%  +0.00
+    0.05  1   6.37%   0.6333  -21.09%  0.758  0.527  29.43  -0.0017  +0.10%  -0.02%  -0.00
+    0.05  2   6.39%   0.6350  -21.19%  0.756  0.532  29.43  +0.0000  +0.00%  +0.00%  +0.00
+    0.05  3   6.39%   0.6350  -21.19%  0.756  0.532  29.43  +0.0000  +0.00%  +0.00%  +0.00
+    0.10  1   6.39%   0.6358  -21.19%  0.758  0.532  29.43  +0.0008  -0.00%  +0.01%  +0.00
+    0.10  2   6.39%   0.6350  -21.19%  0.756  0.532  29.43  +0.0000  +0.00%  +0.00%  +0.00
+    0.10  3   6.39%   0.6350  -21.19%  0.756  0.532  29.43  +0.0000  +0.00%  +0.00%  +0.00
+
+  B136 / RULES v2  control: CAGR  8.03%  Sharpe 1.1058  MaxDD -12.24%  H1/H2 1.2291/0.9844  turn 2.01x
+    x      c   CAGR    Sharpe    MaxDD    H1      H2     turn   dSharpe  dMaxDD   dCAGR   dTurn
+    0.00  1   7.13%   1.0578   -9.93%  1.153  0.961   5.19  -0.0480  +2.31%  -0.90%  +3.18
+    0.00  2   7.40%   1.0710  -10.88%  1.176  0.966   4.13  -0.0348  +1.36%  -0.63%  +2.12
+    0.00  3   7.65%   1.0874  -11.35%  1.190  0.986   3.52  -0.0184  +0.89%  -0.38%  +1.51
+    0.01  1   7.47%   1.0870  -10.13%  1.182  0.991   3.69  -0.0188  +2.11%  -0.56%  +1.67
+    0.01  2   7.65%   1.0884  -10.98%  1.188  0.989   2.93  -0.0174  +1.26%  -0.38%  +0.92
+    0.01  3   7.88%   1.1041  -11.46%  1.209  1.000   2.56  -0.0017  +0.78%  -0.15%  +0.54
+    0.03  1   7.80%   1.1055  -10.98%  1.201  1.009   2.04  -0.0003  +1.26%  -0.23%  +0.03
+    0.03  2   7.96%   1.1082  -11.69%  1.224  0.993   2.02  +0.0024  +0.55%  -0.07%  +0.01
+    0.03  3   8.03%   1.1097  -11.92%  1.226  0.995   2.01  +0.0039  +0.32%  -0.00%  +0.00
+    0.05  1   7.86%   1.1008  -11.67%  1.222  0.979   2.02  -0.0050  +0.57%  -0.17%  +0.01
+    0.05  2   7.97%   1.1035  -12.03%  1.227  0.981   2.01  -0.0023  +0.21%  -0.06%  +0.00
+    0.05  3   8.05%   1.1089  -12.16%  1.231  0.989   2.01  +0.0031  +0.09%  +0.02%  +0.00
+    0.10  1   7.95%   1.0994  -12.10%  1.229  0.971   2.01  -0.0064  +0.14%  -0.08%  -0.00
+    0.10  2   8.03%   1.1064  -12.23%  1.229  0.985   2.01  +0.0006  +0.01%  +0.00%  +0.00
+    0.10  3   8.03%   1.1062  -12.24%  1.229  0.985   2.01  +0.0004  -0.00%  +0.00%  +0.00
+
+====================================================================================================
+COST-RUNG SENSITIVITY of the clause (dSharpe of the daily-exit arm vs its control)
+              mean                    max               <lambda>              
+cost          0.0     10.0    25.0   0.0    10.0   25.0     0.0    10.0   25.0
+panel book                                                                    
+B136  v1    0.0012  0.0011  0.0009 0.0092 0.0081 0.0065   0.3333 0.3333 0.3333
+      v2    0.0008 -0.0095 -0.0249 0.0072 0.0039 0.0037   0.6667 0.3333 0.3333
+U56   v1    0.0066  0.0062  0.0057 0.0169 0.0164 0.0155   1.0000 1.0000 1.0000
+      v2   -0.0007 -0.0124 -0.0300 0.0067 0.0048 0.0047   0.4667 0.2667 0.2667
+
+LITERAL CLAUSE (the wording v2 removed) at 10 bps:
+  v1 literal = x 0.00 / c 1 (close below its own ma200, no confirmation)
+  v2 literal = x 0.03 / c 1 (sell the day the name leaves the band)
+  U56   v1: control CAGR  6.42%  Sharpe 0.6611  MaxDD -13.83%  H1/H2 0.6429/0.6804  turn 23.63x
+            literal CAGR  6.48%  Sharpe 0.6690  MaxDD -15.56%  H1/H2 0.6248/0.7104  turn 23.82x
+            worth   dSharpe +0.0079  dMaxDD -1.73%  dCAGR +0.06%  dTurnover +0.19x/yr
+  U56   v2: control CAGR  8.64%  Sharpe 1.2037  MaxDD -12.05%  H1/H2 1.2309/1.1828  turn 1.78x
+            literal CAGR  8.38%  Sharpe 1.1991  MaxDD -11.16%  H1/H2 1.2165/1.1855  turn 1.81x
+            worth   dSharpe -0.0047  dMaxDD +0.89%  dCAGR -0.26%  dTurnover +0.04x/yr
+  B136  v1: control CAGR  6.39%  Sharpe 0.6350  MaxDD -21.19%  H1/H2 0.7562/0.5320  turn 29.43x
+            literal CAGR  6.47%  Sharpe 0.6431  MaxDD -20.12%  H1/H2 0.7573/0.5462  turn 29.52x
+            worth   dSharpe +0.0081  dMaxDD +1.07%  dCAGR +0.09%  dTurnover +0.09x/yr
+  B136  v2: control CAGR  8.03%  Sharpe 1.1058  MaxDD -12.24%  H1/H2 1.2291/0.9844  turn 2.01x
+            literal CAGR  7.80%  Sharpe 1.1055  MaxDD -10.98%  H1/H2 1.2013/1.0090  turn 2.04x
+            worth   dSharpe -0.0003  dMaxDD +1.26%  dCAGR -0.23%  dTurnover +0.03x/yr
+
+====================================================================================================
+RULE 8 WALK-FORWARD — (x, c) chosen on IS 2009-2016 Sharpe, OOS 2017- untouched, 10 bps
+
+  U56 / RULES v1: IS argmax (x, c) = (0.0, 2)  IS Sharpe 0.5630
+    OOS daily-exit (0.0, 2)          CAGR  7.72%  Sharpe  0.7476  MaxDD -14.40%
+    OOS no-exit control              CAGR  7.66%  Sharpe  0.7408  MaxDD -13.83%
+    OOS RULES v2 baseline (live)     CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                          CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+    OOS clause worth: dSharpe +0.0069  dMaxDD -0.57%  dCAGR +0.06%
+    OOS dSharpe over all 15 grid points: mean +0.0109  median +0.0092  best +0.0300  positive 15/15
+
+  U56 / RULES v2: IS argmax (x, c) = (0.05, 3)  IS Sharpe 1.1068
+    OOS daily-exit (0.05, 3)         CAGR  9.54%  Sharpe  1.2882  MaxDD -11.94%
+    OOS no-exit control              CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS RULES v2 baseline (live)     CAGR  9.51%  Sharpe  1.2817  MaxDD -12.05%
+    OOS SPY                          CAGR 15.38%  Sharpe  0.8786  MaxDD -33.72%
+    OOS clause worth: dSharpe +0.0066  dMaxDD +0.11%  dCAGR +0.03%
+    OOS dSharpe over all 15 grid points: mean -0.0095  median -0.0003  best +0.0070  positive 7/15
+
+  B136 / RULES v1: IS argmax (x, c) = (0.0, 3)  IS Sharpe 0.7180
+    OOS daily-exit (0.0, 3)          CAGR  6.03%  Sharpe  0.5836  MaxDD -20.79%
+    OOS no-exit control              CAGR  5.94%  Sharpe  0.5763  MaxDD -21.19%
+    OOS RULES v2 baseline (live)     CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                          CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    OOS clause worth: dSharpe +0.0074  dMaxDD +0.40%  dCAGR +0.08%
+    OOS dSharpe over all 15 grid points: mean +0.0012  median +0.0000  best +0.0133  positive 4/15
+
+  B136 / RULES v2: IS argmax (x, c) = (0.05, 3)  IS Sharpe 1.0922
+    OOS daily-exit (0.05, 3)         CAGR  8.01%  Sharpe  1.1235  MaxDD -12.16%
+    OOS no-exit control              CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS RULES v2 baseline (live)     CAGR  7.98%  Sharpe  1.1185  MaxDD -12.24%
+    OOS SPY                          CAGR 15.45%  Sharpe  0.8820  MaxDD -33.72%
+    OOS clause worth: dSharpe +0.0050  dMaxDD +0.09%  dCAGR +0.02%
+    OOS dSharpe over all 15 grid points: mean +0.0025  median +0.0010  best +0.0282  positive 9/15
+
+====================================================================================================
+KEEP PATHS on U56 at 10 bps (4a vs live RULES v2; 4b vs SPY, incl. rule-8 OOS)
+  live v2  CAGR  8.64%  Sharpe 1.2037  MaxDD -12.05%  H1/H2 1.2309/1.1828   OOS Sharpe 1.2817
+  SPY      CAGR 15.19%  Sharpe 0.8871  MaxDD -33.72%  H1/H2 0.9587/0.8287   OOS Sharpe 0.8786
+  4b bars: SPY H1 0.9587 / H2 0.8287 / OOS 0.8786; MaxDD floor -20.23%; CAGR floor 10.63%
+  v1 x=0.00 c=1  CAGR  6.48%  Sharpe 0.6690  MaxDD -15.56%  H1/H2 0.6248/0.7104  OOS Sh 0.7691  [     ]
+  v1 x=0.00 c=2  CAGR  6.49%  Sharpe 0.6685  MaxDD -14.40%  H1/H2 0.6505/0.6876  OOS Sh 0.7476  [     ]
+  v1 x=0.00 c=3  CAGR  6.56%  Sharpe 0.6751  MaxDD -13.83%  H1/H2 0.6479/0.7021  OOS Sh 0.7611  [     ]
+  v1 x=0.01 c=1  CAGR  6.58%  Sharpe 0.6775  MaxDD -13.78%  H1/H2 0.6411/0.7123  OOS Sh 0.7708  [     ]
+  v1 x=0.01 c=2  CAGR  6.51%  Sharpe 0.6696  MaxDD -14.40%  H1/H2 0.6436/0.6955  OOS Sh 0.7549  [     ]
+  v1 x=0.01 c=3  CAGR  6.48%  Sharpe 0.6668  MaxDD -13.83%  H1/H2 0.6429/0.6910  OOS Sh 0.7507  [     ]
+  v1 x=0.03 c=1  CAGR  6.45%  Sharpe 0.6642  MaxDD -14.35%  H1/H2 0.6447/0.6845  OOS Sh 0.7447  [     ]
+  v1 x=0.03 c=2  CAGR  6.50%  Sharpe 0.6688  MaxDD -13.83%  H1/H2 0.6429/0.6946  OOS Sh 0.7541  [     ]
+  v1 x=0.03 c=3  CAGR  6.45%  Sharpe 0.6638  MaxDD -13.83%  H1/H2 0.6429/0.6854  OOS Sh 0.7455  [     ]
+  v1 x=0.05 c=1  CAGR  6.44%  Sharpe 0.6632  MaxDD -14.35%  H1/H2 0.6447/0.6828  OOS Sh 0.7430  [     ]
+  v1 x=0.05 c=2  CAGR  6.48%  Sharpe 0.6664  MaxDD -13.83%  H1/H2 0.6429/0.6903  OOS Sh 0.7500  [     ]
+  v1 x=0.05 c=3  CAGR  6.44%  Sharpe 0.6630  MaxDD -13.83%  H1/H2 0.6429/0.6840  OOS Sh 0.7441  [     ]
+  v1 x=0.10 c=1  CAGR  6.45%  Sharpe 0.6644  MaxDD -13.83%  H1/H2 0.6447/0.6849  OOS Sh 0.7450  [     ]
+  v1 x=0.10 c=2  CAGR  6.48%  Sharpe 0.6664  MaxDD -13.83%  H1/H2 0.6429/0.6903  OOS Sh 0.7500  [     ]
+  v1 x=0.10 c=3  CAGR  6.44%  Sharpe 0.6630  MaxDD -13.83%  H1/H2 0.6429/0.6840  OOS Sh 0.7441  [     ]
+  v2 x=0.00 c=1  CAGR  7.68%  Sharpe 1.1473  MaxDD -10.50%  H1/H2 1.1798/1.1196  OOS Sh 1.2273  [     ]
+  v2 x=0.00 c=2  CAGR  7.94%  Sharpe 1.1591  MaxDD -11.14%  H1/H2 1.1931/1.1313  OOS Sh 1.2359  [     ]
+  v2 x=0.00 c=3  CAGR  8.20%  Sharpe 1.1783  MaxDD -11.04%  H1/H2 1.2090/1.1536  OOS Sh 1.2556  [     ]
+  v2 x=0.01 c=1  CAGR  8.03%  Sharpe 1.1777  MaxDD -10.79%  H1/H2 1.2068/1.1532  OOS Sh 1.2595  [     ]
+  v2 x=0.01 c=2  CAGR  8.21%  Sharpe 1.1817  MaxDD -11.21%  H1/H2 1.2061/1.1625  OOS Sh 1.2663  [     ]
+  v2 x=0.01 c=3  CAGR  8.47%  Sharpe 1.2009  MaxDD -11.05%  H1/H2 1.2207/1.1860  OOS Sh 1.2865  [     ]
+  v2 x=0.03 c=1  CAGR  8.38%  Sharpe 1.1991  MaxDD -11.16%  H1/H2 1.2165/1.1855  OOS Sh 1.2887  [     ]
+  v2 x=0.03 c=2  CAGR  8.54%  Sharpe 1.2025  MaxDD -11.46%  H1/H2 1.2264/1.1839  OOS Sh 1.2845  [     ]
+  v2 x=0.03 c=3  CAGR  8.61%  Sharpe 1.2057  MaxDD -11.64%  H1/H2 1.2286/1.1881  OOS Sh 1.2871  [     ]
+  v2 x=0.05 c=1  CAGR  8.45%  Sharpe 1.1951  MaxDD -11.72%  H1/H2 1.2181/1.1765  OOS Sh 1.2779  [     ]
+  v2 x=0.05 c=2  CAGR  8.62%  Sharpe 1.2046  MaxDD -11.88%  H1/H2 1.2290/1.1859  OOS Sh 1.2851  [     ]
+  v2 x=0.05 c=3  CAGR  8.67%  Sharpe 1.2085  MaxDD -11.94%  H1/H2 1.2333/1.1896  OOS Sh 1.2882  [4a   ]
+  v2 x=0.10 c=1  CAGR  8.59%  Sharpe 1.2020  MaxDD -12.27%  H1/H2 1.2328/1.1771  OOS Sh 1.2773  [     ]
+  v2 x=0.10 c=2  CAGR  8.64%  Sharpe 1.2037  MaxDD -12.05%  H1/H2 1.2313/1.1824  OOS Sh 1.2814  [     ]
+  v2 x=0.10 c=3  CAGR  8.65%  Sharpe 1.2039  MaxDD -12.05%  H1/H2 1.2309/1.1832  OOS Sh 1.2820  [     ]
+
+grid written to 2026-09-09_price-the-removal-of-the-daily-hard-exit_B.csv
