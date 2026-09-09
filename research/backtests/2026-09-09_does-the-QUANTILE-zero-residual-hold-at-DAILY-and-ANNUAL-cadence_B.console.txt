@@ -1,0 +1,262 @@
+===============================================================================================================================================================================
+Idea 307 does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence (lane B) | 2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py
+===============================================================================================================================================================================
+PANEL SMALL439: 439 names (44 dropped for max_1d_move >= 1.0), 2010-01-04..2026-09-04; evaluation from 2011-01-13 (15.61 yrs).
+costs 10 bps (0-bps rung DERIVED exactly as r0 = r10 + turnover*bps/1e4), gross 0.75, next-day execution, no shorting, no leverage.
+tuned dials (2): theta [0.3, 0.2, 0.12, 0.06, 0.0, -0.06, -0.12, -0.25, -0.4] x cadence ['D', 'W', 'M', 'Q', 'A'].  x is a deterministic function of theta (the matching), not a dial.  All 45 combinations reported.
+reported contrasts: family ['MA-THRESH', 'QUANTILE-M'] x construction ['RESPREAD', 'DEGROSS']  ->  180 books.
+pre-registered bars (written before any D or A number was read):
+  H_ZERO_IS_A_CONTROL : on QUANTILE-M, ALL of (1) |mean resid0| <= 0.05 pp/yr at D AND at A; (2) max |resid0| <= 0.1 at D AND at A; (3) |mean OOS resid0| <= 0.05 at D AND at A; (4) D and A means inside the W/M/Q envelope +/- 0.05
+  H_ZERO_IS_INTERIOR  : any clause fails at D or A
+  G0.1 local runner == engine.backtest at D/W/M/Q, < 1e-15
+  G0.2 idea 300 .decomp.csv resid0 reproduces at W/M/Q, < 1e-06 pp/yr
+  G0.3 identity |r_dg - c_t*r_rs| < 1e-12 at EVERY cadence
+  G0.4 |d mask fraction(Q - MA)| < 0.01 at all 9 thetas
+SURVIVORSHIP: current constituents of the screen only; CAGR LEVELS inflated, arm-minus-arm residuals very largely immune, the 4a/4b columns are NOT.
+
+===============================================================================================================================================================================
+G0.1  LOCAL CADENCE-EXTENDED RUNNER vs engine.backtest  (read before anything else)
+===============================================================================================================================================================================
+     max_abs_dr  mask_diff_bars
+cad                            
+D         0.000           0.000
+W         0.000           0.000
+M         0.000           0.000
+Q         0.000           0.000
+cad  max_abs_dr  mask_diff_bars
+  D   0.000e+00       0.000e+00
+  W   0.000e+00       0.000e+00
+  M   0.000e+00       0.000e+00
+  Q   0.000e+00       0.000e+00
+G0.1 PASS  (worst |dr| 0.000e+00 at 1e-15; mask disagreement bars 0)
+rebalances in the evaluation window: D=3934, W=817, M=189, Q=63, A=16   (the dial spans 3 orders of magnitude: D/A = 246x)
+
+SPY                          : CAGR 0.1413 Sharpe 0.8615 MaxDD -0.3372 halves 0.8907/0.8577 OOS 0.8820
+RULES v2 (live, 4a comparand): CAGR 0.0819 Sharpe 1.1689 MaxDD -0.1205 halves 1.0556/1.2722 OOS 1.2851
+CONTROL EWall D (no gate)    : CAGR 0.1064 Sharpe 0.7007 MaxDD -0.3635 | 0 bps CAGR 0.1105
+CONTROL EWall W (no gate)    : CAGR 0.1020 Sharpe 0.6792 MaxDD -0.3616 | 0 bps CAGR 0.1039
+CONTROL EWall M (no gate)    : CAGR 0.0974 Sharpe 0.6596 MaxDD -0.3475 | 0 bps CAGR 0.0984
+CONTROL EWall Q (no gate)    : CAGR 0.1014 Sharpe 0.6821 MaxDD -0.3394 | 0 bps CAGR 0.1020
+CONTROL EWall A (no gate)    : CAGR 0.0972 Sharpe 0.6650 MaxDD -0.3478 | 0 bps CAGR 0.0975
+4b bars from SPY: H1>0.891 H2>0.858 OOS>0.882 MaxDD>=-20.2% CAGR>=9.89%
+
+===============================================================================================================================================================================
+G0.4  THE MATCHING: x = the MA gate's OWN mean mask fraction at that theta (cadence-free)
+===============================================================================================================================================================================
+           x  frac_ma  frac_q  d_frac  k_ma_sd  k_q_sd
+theta                                                 
+ 0.30 0.1011   0.1011  0.1028  0.0017  32.4737  6.7964
+ 0.20 0.1759   0.1759  0.1774  0.0015  42.9454 11.9240
+ 0.12 0.2767   0.2767  0.2782  0.0015  51.9332 18.6894
+ 0.06 0.3802   0.3802  0.3817  0.0015  57.2842 25.6536
+ 0.00 0.5036   0.5036  0.5052  0.0016  59.4008 34.1053
+-0.06 0.6238   0.6238  0.6253  0.0014  59.0594 42.0832
+-0.12 0.7234   0.7234  0.7249  0.0015  57.9125 48.8097
+-0.25 0.8599   0.8599  0.8614  0.0015  59.1379 58.0625
+-0.40 0.9323   0.9323  0.9337  0.0015  63.5262 62.9407
+G0.4 PASS  worst |d mask fraction| = 0.00166 at 0.01
+
+===============================================================================================================================================================================
+RUNNING THE 180-BOOK GRID (9 theta x 5 cadence x 2 family x 2 construction)
+===============================================================================================================================================================================
+  ... theta +0.30 done (20 books)
+  ... theta +0.20 done (20 books)
+  ... theta +0.12 done (20 books)
+  ... theta +0.06 done (20 books)
+  ... theta +0.00 done (20 books)
+  ... theta -0.06 done (20 books)
+  ... theta -0.12 done (20 books)
+  ... theta -0.25 done (20 books)
+  ... theta -0.40 done (20 books)
+
+===============================================================================================================================================================================
+G0.2  REPRODUCTION of idea 300's committed .decomp.csv at W/M/Q
+===============================================================================================================================================================================
+matched cells 162 of 162 committed | worst |d resid0| = 4.441e-14 pp/yr | worst |d c_bar| = 3.331e-16
+G0.2 PASS at 1e-06
+
+G0.3  IDENTITY r_dg,t == c_t * r_rs,t at 0 bps, BY CADENCE
+cad
+D   6.731e-16
+W   4.163e-16
+M   3.400e-16
+Q   2.429e-16
+A   1.457e-16
+G0.3 PASS  worst 6.731e-16 at 1e-12
+
+GATES: G0.1 PASS | G0.2 PASS | G0.3 PASS | G0.4 PASS
+
+===============================================================================================================================================================================
+THE HEADLINE - resid0 (pp/yr) BY CADENCE, FULL SAMPLE.  QUANTILE-M is the claimed ZERO.
+===============================================================================================================================================================================
+      MA-THRESH                                 QUANTILE-M                               
+              D       W       M       Q       A          D       W       M      Q       A
+theta                                                                                    
+-0.40   -0.3472 -0.3047 -0.2713 -0.3663 -0.0108     0.0021  0.0020 -0.0057 0.0069 -0.0347
+-0.25   -0.4800 -0.5176 -0.5265 -0.7734 -0.0522     0.0015  0.0004 -0.0193 0.0156 -0.0705
+-0.12   -0.1295 -0.4383 -0.4615 -1.1308 -0.0943     0.0031 -0.0043 -0.0304 0.0115 -0.1289
+-0.06    0.1582 -0.1756 -0.3185 -1.1598 -0.1159     0.0020 -0.0071 -0.0400 0.0170 -0.1633
+ 0.00    0.0280 -0.0874 -0.2348 -0.9097 -0.0288    -0.0013 -0.0146 -0.0571 0.0067 -0.1789
+ 0.06   -0.0189 -0.2566 -0.1940 -0.6324 -0.1817    -0.0034 -0.0189 -0.0624 0.0057 -0.1666
+ 0.12   -0.1177 -0.1760  0.0297 -0.4760 -0.2205    -0.0034 -0.0163 -0.0636 0.0144 -0.1471
+ 0.20    0.0221  0.0301  0.0443 -0.4174 -0.1004    -0.0032 -0.0147 -0.0418 0.0145 -0.1192
+ 0.30    0.0718 -0.0212 -0.2414 -0.3185 -0.1652    -0.0028 -0.0109 -0.0311 0.0099 -0.1063
+
+BY CADENCE (n = 9 thetas per cell):
+                       n  mean_resid0  sd_resid0  max_abs_resid0  min_resid0  max_resid0  n_pos  mean_c_bar  mean_c_sd
+family     cad window                                                                                                 
+MA-THRESH  D   FULL    9      -0.0904     0.2061          0.4800     -0.4800      0.1582      4      0.5086     0.1226
+               IS      9       0.0442     0.2036          0.3630     -0.1802      0.3630      5      0.5306     0.1177
+               OOS     9      -0.1663     0.2721          0.7127     -0.7127      0.1012      2      0.4950     0.1212
+           W   FULL    9      -0.2164     0.1831          0.5176     -0.5176      0.0301      1      0.5091     0.1230
+               IS      9       0.0310     0.1345          0.2170     -0.1447      0.2170      5      0.5316     0.1182
+               OOS     9      -0.3672     0.2227          0.7504     -0.7504     -0.0560      0      0.4951     0.1214
+           M   FULL    9      -0.2416     0.1917          0.5265     -0.5265      0.0443      2      0.5110     0.1188
+               IS      9       0.1138     0.2678          0.4383     -0.4139      0.4383      6      0.5351     0.1150
+               OOS     9      -0.4507     0.3260          0.8485     -0.8485      0.0779      1      0.4962     0.1166
+           Q   FULL    9      -0.6871     0.3233          1.1598     -1.1598     -0.3185      0      0.5106     0.1297
+               IS      9      -0.2050     0.2789          0.5996     -0.5996      0.1569      3      0.5383     0.1244
+               OOS     9      -0.9573     0.3943          1.4719     -1.4719     -0.3553      0      0.4935     0.1281
+           A   FULL    9      -0.1078     0.0712          0.2205     -0.2205     -0.0108      0      0.5347     0.1365
+               IS      9      -0.5988     0.3946          1.2675     -1.2675      0.0114      1      0.5424     0.1260
+               OOS     9       0.1812     0.1635          0.4317     -0.0253      0.4317      7      0.5300     0.1408
+QUANTILE-M D   FULL    9      -0.0006     0.0027          0.0034     -0.0034      0.0031      4      0.5101     0.0009
+               IS      9       0.0005     0.0066          0.0113     -0.0113      0.0092      5      0.5104     0.0011
+               OOS     9      -0.0007     0.0023          0.0033     -0.0031      0.0033      3      0.5099     0.0008
+           W   FULL    9      -0.0094     0.0075          0.0189     -0.0189      0.0020      2      0.5102     0.0025
+               IS      9      -0.0154     0.0123          0.0305     -0.0305      0.0053      1      0.5104     0.0023
+               OOS     9      -0.0053     0.0066          0.0135     -0.0135      0.0027      3      0.5100     0.0026
+           M   FULL    9      -0.0390     0.0197          0.0636     -0.0636     -0.0057      0      0.5105     0.0058
+               IS      9      -0.0588     0.0295          0.0921     -0.0921     -0.0113      0      0.5105     0.0048
+               OOS     9      -0.0268     0.0143          0.0460     -0.0460     -0.0023      0      0.5105     0.0063
+           Q   FULL    9       0.0114     0.0043          0.0170      0.0057      0.0170      9      0.5122     0.0097
+               IS      9      -0.0237     0.0159          0.0460     -0.0460      0.0010      1      0.5113     0.0077
+               OOS     9       0.0316     0.0099          0.0506      0.0211      0.0506      9      0.5128     0.0108
+           A   FULL    9      -0.1239     0.0476          0.1789     -0.1789     -0.0347      0      0.5164     0.0158
+               IS      9      -0.0508     0.0237          0.0740     -0.0740     -0.0104      0      0.5182     0.0138
+               OOS     9      -0.1700     0.0643          0.2450     -0.2450     -0.0499      0      0.5153     0.0168
+
+===============================================================================================================================================================================
+PRE-REGISTERED VERDICT  (QUANTILE-M only; MA-THRESH is the contrast)
+===============================================================================================================================================================================
+  PASS  (1) |mean FULL resid0| <= 0.05 at D
+  PASS  (2) max |resid0| <= 0.1 at D
+  PASS  (3) |mean OOS resid0| <= 0.05 at D
+  FAIL  (1) |mean FULL resid0| <= 0.05 at A
+  FAIL  (2) max |resid0| <= 0.1 at A
+  FAIL  (3) |mean OOS resid0| <= 0.05 at A
+  PASS  (4) mean FULL resid0 inside W/M/Q envelope [-0.0890,0.0614] at D
+  FAIL  (4) mean FULL resid0 inside W/M/Q envelope [-0.0890,0.0614] at A
+     mean_full  max_abs_full  mean_oos
+cad                                   
+D      -0.0006        0.0034   -0.0007
+A      -0.1239        0.1789   -0.1700
+
+H_ZERO_IS_A_CONTROL : FAILS
+H_ZERO_IS_INTERIOR  : HOLDS
+
+CONTRAST - MA-THRESH, the gate known NOT to be zero:
+     mean_resid0  sd_resid0  max_abs_resid0  mean_c_bar  mean_c_sd
+cad                                                               
+D        -0.0904     0.2061          0.4800      0.5086     0.1226
+W        -0.2164     0.1831          0.5176      0.5091     0.1230
+M        -0.2416     0.1917          0.5265      0.5110     0.1188
+Q        -0.6871     0.3233          1.1598      0.5106     0.1297
+A        -0.1078     0.0712          0.2205      0.5347     0.1365
+
+SEPARATION - is QUANTILE-M still distinguishable from MA-THRESH at the extremes?
+     resid0_Q  resid0_MA  gap_pp  gap_in_Q_sd
+cad                                          
+D     -0.0006    -0.0904 -0.0897     -32.9189
+W     -0.0094    -0.2164 -0.2070     -27.5123
+M     -0.0390    -0.2416 -0.2025     -10.2572
+Q      0.0114    -0.6871 -0.6985    -164.0829
+A     -0.1239    -0.1078  0.0162       0.3400
+
+===============================================================================================================================================================================
+RULE 8 WALK-FORWARD  (IS 2010..2016-12-31 chooses; OOS 2017-01-01..2026 read once)
+===============================================================================================================================================================================
+
+WF-A  (theta, cadence) chosen by IS Sharpe inside each family x construction arm
+                                  pick  isSharpe  oSharpe  oCAGR  oMaxDD  vs_SPY  vs_RULESv2  vs_ctrl  vs_ctrl_CAGR_pp  best_oSharpe_in_arm  regret
+arm                                                                                                                                                
+MA-THRESH/RESPREAD   theta=+0.30,cad=M    0.8874   1.1042 0.2402 -0.3078  0.2221     -0.1809   0.4807          14.3149               1.1042  0.0000
+MA-THRESH/DEGROSS    theta=-0.40,cad=Q    0.7368   0.5874 0.0798 -0.3247 -0.2946     -0.6977  -0.0593          -2.1845               0.8348  0.2474
+QUANTILE-M/RESPREAD  theta=-0.12,cad=Q    0.7192   0.6307 0.0935 -0.3483 -0.2513     -0.6544  -0.0161          -0.8080               0.7868  0.1561
+QUANTILE-M/DEGROSS   theta=-0.12,cad=Q    0.7214   0.6365 0.0703 -0.2543 -0.2456     -0.6486  -0.0103          -3.1314               0.7816  0.1451
+SPY OOS Sharpe 0.8820 CAGR 0.1545 MaxDD -0.3372 | RULES v2 OOS Sharpe 1.2851 CAGR 0.0953 MaxDD -0.1205
+
+WF-B  the CADENCE dial itself: IS-best cadence vs each always-CAD, per family x construction
+                    IS_pick  OOS_of_pick OOS_best_cad  OOS_best  agree  always_D  always_W  always_M  always_Q  always_A
+arm                                                                                                                     
+MA-THRESH/RESPREAD        M       1.1042            M    1.1042   True    0.8098    1.0431    1.1042    0.9013    0.6736
+MA-THRESH/DEGROSS         Q       0.6325            M    0.8348  False    0.7201    0.8117    0.8348    0.6325    0.5999
+QUANTILE-M/RESPREAD       Q       0.6582            M    0.7868  False    0.6857    0.7830    0.7868    0.6582    0.6980
+QUANTILE-M/DEGROSS        Q       0.6683            M    0.7816  False    0.6820    0.7787    0.7816    0.6683    0.6439
+IS->OOS cadence agreement: 1/4
+
+WF-C  does the IS resid0 predict the OOS resid0 better than a hard ZERO?  (MAE, pp/yr)
+                mean_is  mean_oos  MAE_vs_zero  MAE_vs_IS_cell  MAE_vs_IS_const  zero_wins  sign_agree
+family     cad                                                                                        
+MA-THRESH  D     0.0442   -0.1663       0.2055          0.2978           0.2301       True           4
+           W     0.0310   -0.3672       0.3672          0.3982           0.3982       True           4
+           M     0.1138   -0.4507       0.4681          0.6379           0.5645       True           2
+           Q    -0.2050   -0.9573       0.9573          0.7535           0.7523      False           6
+           A    -0.5988    0.1812       0.1870          0.7881           0.7799       True           1
+QUANTILE-M D     0.0005   -0.0007       0.0020          0.0057           0.0023       True           5
+           W    -0.0154   -0.0053       0.0063          0.0130           0.0102       True           5
+           M    -0.0588   -0.0268       0.0268          0.0320           0.0320       True           9
+           Q    -0.0237    0.0316       0.0316          0.0553           0.0553       True           1
+           A    -0.0508   -0.1700       0.1700          0.1192           0.1194      False           9
+ZERO is the best available predictor of OOS resid0 in 8/10 family x cadence cells (4/5 on QUANTILE-M).
+
+===============================================================================================================================================================================
+BOTH KEEP PATHS over all 180 books
+===============================================================================================================================================================================
+4a passes: 0/180   4b passes: 0/180   BOTH: 0/180
+
+4b failing clauses, count over 180 books:
+H1      179
+OOS     177
+H2      174
+CAGR    166
+DD      130
+
+by cadence (books = 36 each):
+     p4a  p4b
+cad          
+D      0    0
+W      0    0
+M      0    0
+Q      0    0
+A      0    0
+
+best book per cadence by full-sample Sharpe:
+      theta      family       con   CAGR  Sharpe   MaxDD     H1     H2  oSharpe  turn_yr    p4a                f4b
+cad                                                                                                               
+D   -0.4000  QUANTILE-M   DEGROSS 0.0828  0.6025 -0.3583 0.6714 0.5702   0.5806   4.4272  False  H1,H2,OOS,DD,CAGR
+W    0.3000   MA-THRESH  RESPREAD 0.1493  0.7714 -0.4338 0.4815 1.0185   1.0431  19.4675  False              H1,DD
+M    0.3000   MA-THRESH  RESPREAD 0.2086  1.0264 -0.3078 0.9383 1.1089   1.1042   8.1943  False                 DD
+Q    0.3000   MA-THRESH  RESPREAD 0.1575  0.7708 -0.3589 0.5954 0.9159   0.9013   4.3075  False              H1,DD
+A    0.3000   MA-THRESH  RESPREAD 0.1308  0.6802 -0.3589 0.7272 0.6586   0.6736   1.3214  False       H1,H2,OOS,DD
+
+===============================================================================================================================================================================
+LEADERBOARD rows
+===============================================================================================================================================================================
+| 2026-09-09 | idea307 QUANTILE-M DEGROSS cad=D (best theta -0.40) resid0 -0.0006 pp/yr (max |0.0034|) | 8.3% | 0.60 | -35.8% | 0.67 / 0.57 | 1.17 (1.06/1.27) | KILL | 2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py |
+| 2026-09-09 | idea307 QUANTILE-M DEGROSS cad=W (best theta +0.30) resid0 -0.0094 pp/yr (max |0.0189|) | 1.3% | 0.70 | -4.0% | 0.70 / 0.70 | 1.17 (1.06/1.27) | KILL | 2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py |
+| 2026-09-09 | idea307 QUANTILE-M DEGROSS cad=M (best theta +0.30) resid0 -0.0390 pp/yr (max |0.0636|) | 1.3% | 0.69 | -3.8% | 0.65 / 0.73 | 1.17 (1.06/1.27) | KILL | 2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py |
+| 2026-09-09 | idea307 QUANTILE-M DEGROSS cad=Q (best theta -0.06) resid0 +0.0114 pp/yr (max |0.0170|) | 6.1% | 0.67 | -21.8% | 0.75 / 0.63 | 1.17 (1.06/1.27) | KILL | 2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py |
+| 2026-09-09 | idea307 QUANTILE-M DEGROSS cad=A (best theta -0.40) resid0 -0.1239 pp/yr (max |0.1789|) | 8.4% | 0.62 | -32.3% | 0.70 / 0.57 | 1.17 (1.06/1.27) | KILL | 2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py |
+| 2026-09-09 | idea307 MA-THRESH DEGROSS cad=D (contrast, best theta -0.40) resid0 -0.0904 pp/yr | 7.5% | 0.59 | -29.7% | 0.69 / 0.51 | 1.17 (1.06/1.27) | KILL | 2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py |
+| 2026-09-09 | idea307 MA-THRESH DEGROSS cad=A (contrast, best theta -0.40) resid0 -0.1078 pp/yr | 8.5% | 0.63 | -33.5% | 0.72 / 0.57 | 1.17 (1.06/1.27) | KILL | 2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py |
+
+===============================================================================================================================================================================
+ANSWER
+===============================================================================================================================================================================
+QUANTILE-M mean resid0 (FULL, pp/yr): D=-0.0006, W=-0.0094, M=-0.0390, Q=+0.0114, A=-0.1239
+QUANTILE-M max|resid0| (FULL, pp/yr): D=0.0034, W=0.0189, M=0.0636, Q=0.0170, A=0.1789
+QUANTILE-M mean resid0 (OOS,  pp/yr): D=-0.0007, W=-0.0053, M=-0.0268, Q=+0.0316, A=-0.1700
+MA-THRESH  mean resid0 (FULL, pp/yr): D=-0.0904, W=-0.2164, M=-0.2416, Q=-0.6871, A=-0.1078
+H_ZERO_IS_A_CONTROL FAILS; H_ZERO_IS_INTERIOR HOLDS.
+KEEP paths: 4a 0/180, 4b 0/180, BOTH 0/180.
