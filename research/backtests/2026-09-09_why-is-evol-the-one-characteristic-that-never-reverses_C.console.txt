@@ -1,0 +1,416 @@
+Idea 533 — why is `evol` the one characteristic that never reverses?
+run started 2026-09-09 10:41 UTC
+
+[A] THE LADDER — idea 295's MIX rebuilt verbatim: k=40, 21 q rungs x 8 draws = 168 panels, seed 20260909, plus each book's OWN realised vol.
+  small panel: 44 tickers with max_1d_move >= 1.0 dropped first, 439 usable; large-cap STOCK pool 100 (ETFs excluded)
+  common window 2010-01-04 .. 2026-09-04 (4194 rows); books top-n for n in [10, 20] + EWall control, gross 0.75; RULES v2 is the 4a comparand
+  costs 10 bps, W, next-day execution, 260-day warm-up skip; rule 8 IS <= 2016-12-31, OOS 2016-12-31+1 .. end
+  SURVIVORSHIP: both ends of the q ladder are CURRENT-constituent sets; levels are optimistic, the WITHIN-stratum slope and its behaviour under the control are what is claimed.
+    21/168 panels (  50.5s)
+    42/168 panels (  99.7s)
+    63/168 panels ( 149.2s)
+    84/168 panels ( 199.7s)
+    105/168 panels ( 249.2s)
+    126/168 panels ( 299.7s)
+    147/168 panels ( 350.5s)
+    168/168 panels ( 400.2s)
+  504 arm-rows over 168 panels -> 2026-09-09_why-is-evol-the-one-characteristic-that-never-reverses_C.arms.csv
+
+[A1] GATE G1 — do these arm-rows reproduce idea 295's committed .arms.csv?
+  rows ref 504 / new 504 / joined 504; 42 shared numeric columns; max |delta| = 2.220e-16  -> G1 PASS
+  worst five columns: Sharpe_full=2.22e-16, Sharpe_IS=2.22e-16, Sharpe_OOS=2.22e-16, H1=2.22e-16, H2=2.22e-16
+
+[B] GATE G2 — idea 295's pooled/within slopes recomputed here, and its PREMISE re-derived.
+  rows ref 432 / new 432 / joined 432; max |delta| b_pooled=9.71e-17, t_pooled=3.55e-15, b_within=9.97e-17, t_within=1.78e-15  -> G2 PASS
+
+[B1] THE PREMISE, re-derived from those numbers (full window, 4 strata x 3 arms = 12 cells per characteristic-outcome):
+   char outcome  cells  sign_kept  sign_flipped  within_sig  t_min  t_max
+breadth  Sharpe     12          9             3           7 -0.657  8.114
+breadth    CAGR     12          9             3           5 -1.155  7.657
+breadth   MaxDD     12         12             0           9  0.011  6.369
+   disp  Sharpe     12          5             7           8 -4.042  3.901
+   disp    CAGR     12          3             9           9 -3.406  5.350
+   disp   MaxDD     12         10             2           6 -4.647  0.369
+   corr  Sharpe     12          3             9           7 -3.352  2.951
+   corr    CAGR     12          5             7           7 -2.911  3.144
+   corr   MaxDD     12          5             7           0 -1.913  1.749
+   evol  Sharpe     12         11             1           7 -8.464  0.688
+   evol    CAGR     12          8             4           7 -6.937  2.628
+   evol   MaxDD     12         12             0          10 -8.743 -1.619
+
+  evol, full window, all 36 cells: sign kept in 31, flipped in 5.
+  evol vs MaxDD (the queue's quoted cell): within t runs -8.74 .. -1.62 over 12 cells; on EWall alone -8.74 .. -5.96 (the queue quotes -8.7 .. -6.0).
+
+[C] COLLINEARITY — within-stratum correlation of each characteristic with THE BOOK'S OWN realised vol. This is the quantity the queue names; it is measured, not assumed.
+arm             EWall  top10  top20
+char    strata                     
+breadth 3      -0.641 -0.333 +0.401
+        5      -0.558 -0.269 +0.389
+        7      -0.481 -0.213 +0.314
+        21     -0.435 -0.244 +0.263
+corr    3      -0.221 -0.097 +0.435
+        5      -0.088 -0.016 +0.433
+        7      +0.003 +0.015 +0.381
+        21     +0.047 -0.044 +0.285
+disp    3      +0.585 +0.634 +0.061
+        5      +0.444 +0.604 +0.155
+        7      +0.370 +0.619 +0.312
+        21     +0.322 +0.642 +0.395
+evol    3      +0.851 +0.644 +0.066
+        5      +0.799 +0.645 +0.203
+        7      +0.779 +0.672 +0.418
+        21     +0.736 +0.748 +0.599
+
+  pooled (across the cap line) correlation with the book's vol, full window:
+arm      EWall  top10  top20
+char                        
+breadth -0.834 -0.483 +0.780
+corr    -0.680 -0.367 +0.782
+disp    +0.839 +0.631 -0.622
+evol    +0.930 +0.644 -0.611
+
+[D] THE GRID — 4 residualisations x 4 stratum resolutions, for every characteristic x outcome x arm x window. ALL POINTS REPORTED (2880 rows -> .grid.csv).
+  none    y ~ x                    (idea 295's published within-stratum fit)
+  partial y ~ x + bookvol          (x's coefficient and its own t)
+  residx  y ~ resid(x | bookvol)   (the queue's literal wording; FWL => same slope as partial, different t)
+  ratio   y ~ x / bookvol          (scale-free restatement)
+  x is standardized inside each cell, so slopes are per-1sd and comparable down a column.
+
+--- FULL WINDOW, the three real outcomes, t of the characteristic's within-stratum slope ---
+
+  outcome = Sharpe
+arm              EWall                           top10                           top20                        
+resid             none partial  residx   ratio    none partial  residx   ratio    none partial  residx   ratio
+char    strata                                                                                                
+breadth 3        +8.11   +3.40   +2.74   +8.41   +5.43   +5.24   +5.23   +4.26   +7.20   +6.32   +6.12   +6.29
+        5        +4.32   +1.23   +1.11   +4.62   +2.01   +2.10   +2.11   +0.91   +3.57   +2.89   +2.85   +2.51
+        7        +2.79   +0.33   +0.31   +3.51   -0.02   +0.18   +0.18   -0.95   +0.43   +0.20   +0.20   +0.02
+        21       +1.71   -0.05   -0.05   +2.48   -0.66   -0.33   -0.32   -1.60   -0.27   -0.63   -0.63   -1.02
+corr    3        +2.95   +1.54   +1.26   +5.26   +1.75   +1.63   +1.63   +1.59   +2.34   +1.12   +1.09   +1.47
+        5        -0.17   -0.75   -0.67   +1.84   -0.86   -0.85   -0.86   -1.23   -0.34   -1.47   -1.46   -1.42
+        7        -1.56   -1.68   -1.55   +0.59   -2.39   -2.40   -2.40   -2.85   -2.97   -3.58   -3.58   -3.68
+        21       -2.65   -2.58   -2.45   -0.46   -2.70   -2.65   -2.64   -3.21   -3.35   -3.95   -3.94   -4.10
+disp    3        -3.82   +1.11   +0.90   +4.46   -2.49   -2.13   -2.12   -1.80   -4.04   -4.39   -4.27   -5.58
+        5        -0.11   +3.09   +2.76   +5.55   +1.04   +1.24   +1.24   +1.60   -0.25   -0.61   -0.60   -1.74
+        7        +1.72   +4.44   +4.05   +6.73   +3.20   +3.35   +3.35   +3.51   +2.78   +2.66   +2.66   +2.06
+        21       +2.87   +4.84   +4.59   +6.31   +3.90   +3.88   +3.86   +3.88   +3.81   +3.55   +3.54   +2.76
+evol    3        -8.46   -1.61   -1.31   +3.67   -7.07   -8.37   -8.34   -7.63   -8.22   -8.93   -8.59   -9.56
+        5        -4.42   +0.68   +0.61   +4.44   -3.29   -4.49   -4.50   -3.87   -3.73   -4.41   -4.35   -5.04
+        7        -2.98   +1.90   +1.75   +5.23   -1.61   -3.06   -3.06   -2.74   -0.96   -1.42   -1.42   -1.58
+        21       -1.13   +2.88   +2.74   +4.97   -0.26   -1.99   -1.99   -2.11   +0.69   -0.11   -0.11   -0.85
+
+  outcome = CAGR
+arm              EWall                           top10                           top20                        
+resid             none partial  residx   ratio    none partial  residx   ratio    none partial  residx   ratio
+char    strata                                                                                                
+breadth 3        +6.47   +2.89   +2.54   +5.81   +4.71   +5.31   +5.32   +2.82   +7.66   +5.94   +5.40   +5.35
+        5        +3.46   +1.44   +1.37   +2.59   +1.54   +2.25   +2.23   -0.53   +3.83   +2.23   +2.09   +1.19
+        7        +1.84   +0.37   +0.36   +1.34   -0.39   +0.27   +0.27   -2.47   +0.84   -0.31   -0.30   -1.45
+        21       +0.84   +0.09   +0.09   +0.21   -1.16   -0.31   -0.29   -3.34   -0.14   -1.29   -1.23   -2.82
+corr    3        +2.38   +1.17   +1.04   +3.63   +1.57   +1.64   +1.64   +0.66   +3.14   +1.04   +0.96   +1.39
+        5        +0.00   -0.37   -0.35   +0.71   -0.78   -0.76   -0.75   -2.21   +0.35   -1.93   -1.81   -2.00
+        7        -1.47   -1.50   -1.46   -0.70   -2.25   -2.37   -2.30   -3.89   -2.05   -3.98   -3.82   -4.34
+        21       -2.21   -2.14   -2.13   -1.84   -2.71   -2.65   -2.55   -4.57   -2.91   -4.60   -4.36   -5.50
+disp    3        -2.37   +1.69   +1.49   +4.14   -1.32   -2.25   -2.26   -1.74   -3.41   -4.10   -3.76   -6.09
+        5        +0.97   +3.29   +3.13   +4.61   +2.16   +1.05   +1.03   +1.32   +0.50   -0.22   -0.21   -2.32
+        7        +2.96   +4.78   +4.63   +5.51   +4.49   +3.17   +3.09   +3.03   +3.84   +2.87   +2.76   +1.17
+        21       +4.18   +5.20   +5.16   +4.95   +5.35   +3.76   +3.61   +3.48   +5.12   +3.81   +3.63   +2.09
+evol    3        -6.43   -1.35   -1.19   +2.63   -5.56   -8.70   -8.71   -8.25   -6.94   -8.33   -7.46  -10.21
+        5        -2.95   +0.50   +0.48   +2.80   -2.05   -4.84   -4.78   -4.85   -2.45   -3.78   -3.53   -5.74
+        7        -1.37   +1.81   +1.76   +3.30   -0.32   -3.39   -3.30   -3.94   +0.52   -1.11   -1.07   -2.64
+        21       +0.68   +2.98   +2.96   +2.85   +1.26   -2.21   -2.13   -3.42   +2.63   +0.28   +0.27   -1.75
+
+  outcome = MaxDD
+arm              EWall                           top10                           top20                        
+resid             none partial  residx   ratio    none partial  residx   ratio    none partial  residx   ratio
+char    strata                                                                                                
+breadth 3        +6.37   -0.49   -0.34   +8.71   +3.87   +2.65   +2.50   +4.48   +2.56   +3.31   +3.31   +3.72
+        5        +5.99   +0.55   +0.39   +9.10   +3.34   +2.53   +2.44   +3.90   +2.46   +3.17   +3.17   +3.59
+        7        +5.21   +0.79   +0.57   +8.37   +2.35   +1.77   +1.72   +3.02   +0.65   +1.44   +1.42   +2.23
+        21       +4.87   +1.37   +1.05   +8.53   +1.33   +0.81   +0.80   +1.99   +0.01   +0.50   +0.49   +1.27
+corr    3        +1.75   -0.48   -0.33   +5.33   +0.39   -0.02   -0.02   +1.58   -0.69   -0.25   -0.25   -0.12
+        5        +0.97   +0.24   +0.17   +5.40   -0.04   -0.10   -0.10   +1.26   -0.56   -0.11   -0.11   +0.13
+        7        +0.12   +0.21   +0.15   +4.46   -0.66   -0.63   -0.61   +0.61   -1.91   -1.15   -1.14   -0.85
+        21       +0.10   +0.64   +0.49   +5.09   -0.82   -0.93   -0.92   +0.36   -1.21   -0.74   -0.73   -0.16
+disp    3        -4.65   +1.94   +1.34   +6.00   -2.91   -0.26   -0.24   -0.20   -2.47   -2.41   -2.41   -1.88
+        5        -3.35   +1.31   +0.92   +6.11   -1.71   +0.48   +0.46   +0.90   -1.69   -1.54   -1.54   -1.06
+        7        -2.66   +1.10   +0.79   +6.54   -0.87   +1.31   +1.28   +1.84   -0.37   +0.34   +0.33   +1.12
+        21       -2.01   +0.94   +0.72   +5.82   +0.27   +2.32   +2.29   +2.60   +0.37   +1.17   +1.16   +1.64
+evol    3        -8.74   +1.94   +1.33   +8.01   -5.82   -3.74   -3.54   -2.69   -5.43   -5.36   -5.36   -3.97
+        5        -8.06   +1.14   +0.80   +8.23   -4.57   -2.92   -2.82   -1.22   -4.84   -4.69   -4.69   -3.18
+        7        -7.72   +0.90   +0.64   +8.78   -3.97   -2.49   -2.43   -0.48   -3.42   -2.71   -2.67   -1.02
+        21       -5.96   +1.35   +1.04   +8.90   -1.62   +0.13   +0.13   +1.59   -1.63   -0.70   -0.70   +0.38
+
+--- FULL WINDOW, the VOL-NORMALISED outcomes (test (ii)) ---
+
+  outcome = DDnorm  (MaxDD / the book's own vol)
+arm              EWall   top10   top20
+char    strata                        
+breadth 3        +3.52   +2.92   +4.13
+        5        +3.82   +2.51   +4.08
+        7        +3.60   +1.71   +1.90
+        21       +3.59   +0.61   +1.17
+corr    3        +0.98   +0.11   +0.80
+        5        +0.70   -0.16   +0.97
+        7        +0.18   -0.64   -0.57
+        21       +0.31   -1.00   -0.10
+disp    3        -2.20   -1.03   -2.43
+        5        -1.82   +0.09   -1.34
+        7        -1.55   +0.99   +0.54
+        21       -1.17   +2.26   +1.56
+evol    3        -4.12   -3.63   -5.35
+        5        -4.28   -2.42   -4.25
+        7        -4.30   -1.75   -2.12
+        21       -3.23   +0.72   +0.22
+
+  outcome = CAGRnorm  (CAGR / the book's own vol)
+arm              EWall   top10   top20
+char    strata                        
+breadth 3        +8.25   +5.43   +7.11
+        5        +4.40   +1.99   +3.41
+        7        +2.87   -0.06   +0.28
+        21       +1.78   -0.67   -0.42
+corr    3        +3.00   +1.75   +2.29
+        5        -0.18   -0.90   -0.47
+        7        -1.58   -2.44   -3.12
+        21       -2.71   -2.77   -3.54
+disp    3        -3.92   -2.53   -4.01
+        5        -0.18   +1.00   -0.20
+        7        +1.65   +3.17   +2.81
+        21       +2.81   +3.84   +3.82
+evol    3        -8.61   -7.07   -8.13
+        5        -4.53   -3.29   -3.63
+        7        -3.09   -1.60   -0.90
+        21       -1.24   -0.29   +0.72
+
+[D1] THE ANSWER, cell by cell: does each characteristic's within-stratum slope SURVIVE the control? (|t| >= 1.96; 'none' vs 'partial' on the same cell.)
+
+  full window, per characteristic x outcome (12 cells each = 4 strata x 3 arms):
+                 cells  sig_none  sig_partial  killed  median_shrink
+char    outcome                                                     
+breadth CAGR        12         5            5       1          0.586
+        MaxDD       12         9            4       5          0.730
+        Sharpe      12         7            5       2          0.695
+corr    CAGR        12         7            5       2          1.007
+        MaxDD       12         0            0       0          0.641
+        Sharpe      12         7            5       2          0.994
+disp    CAGR        12         9            9       2          0.910
+        MaxDD       12         6            2       5          0.652
+        Sharpe      12         8            9       1          1.311
+evol    CAGR        12         7            7       3          1.947
+        MaxDD       12        10            6       4          0.689
+        Sharpe      12         7            7       3          1.326
+
+  ('sig_none' = the published within-stratum fit is non-zero; 'sig_partial' = it is still non-zero once the BOOK'S OWN VOL is in the regression; 'killed' = was, is not; 'median_shrink' = |b_partial| / |b_none|.)
+
+  the same cells split by ARM, because the arm is where the answer lives:
+                       cells  sig_none  sig_partial  killed
+char    outcome arm                                        
+breadth CAGR    EWall      4         2            1       1
+                top10      4         1            2       0
+                top20      4         2            2       0
+        MaxDD   EWall      4         4            0       4
+                top10      4         3            2       1
+                top20      4         2            2       0
+        Sharpe  EWall      4         3            1       2
+                top10      4         2            2       0
+                top20      4         2            2       0
+corr    CAGR    EWall      4         2            1       1
+                top10      4         2            2       0
+                top20      4         3            2       1
+        MaxDD   EWall      4         0            0       0
+                top10      4         0            0       0
+                top20      4         0            0       0
+        Sharpe  EWall      4         2            1       1
+                top10      4         2            2       0
+                top20      4         3            2       1
+disp    CAGR    EWall      4         3            3       1
+                top10      4         3            3       1
+                top20      4         3            3       0
+        MaxDD   EWall      4         4            0       4
+                top10      4         1            1       1
+                top20      4         1            1       0
+        Sharpe  EWall      4         2            3       1
+                top10      4         3            3       0
+                top20      4         3            3       0
+evol    CAGR    EWall      4         2            1       2
+                top10      4         2            4       0
+                top20      4         3            2       1
+        MaxDD   EWall      4         4            0       4
+                top10      4         3            3       0
+                top20      4         3            3       0
+        Sharpe  EWall      4         3            1       3
+                top10      4         2            4       0
+                top20      4         2            2       0
+
+[D2] ARBITRATION — the LINEAR partial and the RATIO specifications disagree, so neither is quoted alone. Drawdown is multiplicative in vol, so the clean form is a LOG-LOG elasticity:
+     log|MaxDD| ~ log(char) + log(bookvol), within stratum. The char's coefficient is its elasticity HOLDING the book's own vol; a ratio outcome cannot separate the two and a linear control mis-specifies the functional form. Only strictly positive characteristics can enter (corr and, on some panels, disp go negative) — those cells are reported NA, not dropped silently.
+
+  full window — elasticity of |MaxDD| wrt the characteristic, with and without log(bookvol):
+               elast_raw                   t_raw                 elast_ctrl                  t_ctrl                
+arm                EWall   top10   top20   EWall   top10   top20      EWall   top10   top20   EWall   top10   top20
+char    strata                                                                                                     
+breadth 3          -0.93   -0.53   -0.35   -6.41   -4.32   -3.07      +0.11   -0.40   -0.53   +0.67   -3.13   -4.31
+        5          -1.08   -0.54   -0.39   -5.68   -3.36   -2.74      -0.06   -0.42   -0.60   -0.29   -2.62   -3.88
+        7          -1.17   -0.48   -0.17   -5.22   -2.59   -1.02      -0.15   -0.39   -0.38   -0.72   -2.08   -2.16
+        21         -1.21   -0.31   -0.05   -4.66   -1.44   -0.24      -0.26   -0.22   -0.19   -1.10   -1.01   -0.98
+corr    3          -0.27   -0.04   +0.09   -1.71   -0.33   +0.80      +0.10   +0.01   +0.01   +0.77   +0.07   +0.08
+        5          -0.15   +0.05   +0.10   -0.80   +0.29   +0.72      +0.02   +0.05   +0.00   +0.14   +0.35   +0.01
+        7          +0.04   +0.16   +0.32   +0.20   +0.99   +2.31      +0.02   +0.14   +0.20   +0.11   +0.89   +1.32
+        21         +0.08   +0.22   +0.23   +0.34   +1.19   +1.47      -0.03   +0.22   +0.14   -0.15   +1.24   +0.83
+disp    3          +0.96   +0.42   +0.25   +4.33   +2.30   +1.52      -0.31   -0.12   +0.23   -1.48   -0.53   +1.41
+        5          +0.83   +0.27   +0.19   +3.21   +1.27   +0.99      -0.23   -0.29   +0.14   -1.03   -1.10   +0.75
+        7          +0.79   +0.15   -0.01   +2.79   +0.67   -0.03      -0.21   -0.49   -0.19   -0.87   -1.71   -0.91
+        21         +0.69   -0.08   -0.12   +2.43   -0.35   -0.62      -0.16   -0.76   -0.33   -0.68   -2.60   -1.57
+evol    3          +1.95   +1.06   +0.85   +7.43   +4.66   +4.15      -0.85   +0.71   +0.83   -2.08   +2.36   +4.04
+        5          +2.30   +1.00   +0.95   +6.81   +3.41   +3.65      -0.68   +0.57   +0.91   -1.48   +1.44   +3.39
+        7          +2.53   +0.98   +0.73   +6.59   +2.94   +2.48      -0.70   +0.51   +0.49   -1.37   +1.09   +1.50
+        21         +2.49   +0.41   +0.39   +5.64   +1.11   +1.21      -0.86   -0.61   -0.00   -1.55   -1.05   -0.00
+
+  elasticity of |MaxDD| wrt the BOOK'S OWN vol in the same fits (the mediator itself):
+arm              EWall   top10   top20
+char    strata                        
+breadth 3       +2.182  +0.964  +0.995
+        5       +2.289  +0.854  +0.909
+        7       +2.300  +0.813  +0.934
+        21      +2.261  +0.630  +0.640
+corr    3       +2.101  +1.282  +0.409
+        5       +2.336  +1.057  +0.396
+        7       +2.392  +0.921  +0.526
+        21      +2.390  +0.699  +0.457
+disp    3       +2.248  +1.410  +0.391
+        5       +2.438  +1.322  +0.360
+        7       +2.473  +1.361  +0.788
+        21      +2.448  +1.381  +0.734
+evol    3       +2.624  +0.680  +0.330
+        5       +2.716  +0.660  +0.179
+        7       +2.746  +0.608  +0.500
+        21      +2.779  +1.077  +0.543
+
+  evol, full window: 10/12 cells non-zero WITHOUT log(bookvol), 4/12 WITH it; per arm: EWall 1/4, top10 1/4, top20 2/4
+
+[E] RULE 8 — every slope and verdict re-fitted on the FIRST HALF only (<= 2016-12-31); the second half read ONCE.
+  576 (outcome x char x strata x resid x arm) cells; the IS verdict comes back OOS in 379 (65.8%), the IS SIGN in 441 (76.6%).
+
+  per characteristic x residualisation:
+outcome          CAGR  MaxDD  Sharpe
+char    resid                       
+breadth none    0.833  0.750   0.750
+        partial 0.500  0.833   0.583
+        ratio   0.583  0.750   0.583
+        residx  0.500  0.917   0.583
+corr    none    0.417  0.750   0.333
+        partial 0.750  0.750   0.500
+        ratio   0.917  0.833   0.833
+        residx  0.750  0.917   0.667
+disp    none    0.667  0.583   0.500
+        partial 0.667  0.667   0.750
+        ratio   0.583  0.667   0.583
+        residx  0.750  0.667   0.667
+evol    none    0.333  0.833   0.500
+        partial 0.583  0.583   0.500
+        ratio   0.667  0.833   0.750
+        residx  0.583  0.583   0.500
+
+  evol only, every grid point (t_IS -> t_OOS), outcome = MaxDD:
+  arm  strata   resid    t_IS   t_OOS IS_verdict OOS_verdict  holds
+EWall       3    none  -12.49   -7.44    NONZERO     NONZERO   True
+top10       3    none   -8.80   -4.31    NONZERO     NONZERO   True
+top20       3    none   -7.19   -3.93    NONZERO     NONZERO   True
+EWall       3 partial   -2.13   +2.45    NONZERO     NONZERO   True
+top10       3 partial   -6.59   -2.40    NONZERO     NONZERO   True
+top20       3 partial   -7.36   -3.58    NONZERO     NONZERO   True
+EWall       3  residx   -1.36   +1.73       ZERO        ZERO   True
+top10       3  residx   -5.95   -2.31    NONZERO     NONZERO   True
+top20       3  residx   -7.21   -3.55    NONZERO     NONZERO   True
+EWall       3   ratio   +3.01  +10.04    NONZERO     NONZERO   True
+top10       3   ratio   -4.29   -0.83    NONZERO        ZERO  False
+top20       3   ratio   -3.24   -2.14    NONZERO     NONZERO   True
+EWall       5    none   -9.13   -6.80    NONZERO     NONZERO   True
+top10       5    none   -7.02   -3.24    NONZERO     NONZERO   True
+top20       5    none   -6.31   -3.41    NONZERO     NONZERO   True
+EWall       5 partial   -1.27   +1.83       ZERO        ZERO   True
+top10       5 partial   -5.24   -1.48    NONZERO        ZERO  False
+top20       5 partial   -6.17   -2.87    NONZERO     NONZERO   True
+EWall       5  residx   -0.93   +1.31       ZERO        ZERO   True
+top10       5  residx   -4.86   -1.45    NONZERO        ZERO  False
+top20       5  residx   -5.94   -2.84    NONZERO     NONZERO   True
+EWall       5   ratio   +4.09  +10.08    NONZERO     NONZERO   True
+top10       5   ratio   -2.04   +0.41    NONZERO        ZERO  False
+top20       5   ratio   -1.47   -1.45       ZERO        ZERO   True
+EWall       7    none   -8.57   -6.78    NONZERO     NONZERO   True
+top10       7    none   -6.33   -3.06    NONZERO     NONZERO   True
+top20       7    none   -5.71   -2.12    NONZERO     NONZERO   True
+EWall       7 partial   -1.12   +1.36       ZERO        ZERO   True
+top10       7 partial   -3.93   -1.61    NONZERO        ZERO  False
+top20       7 partial   -4.53   -1.02    NONZERO        ZERO  False
+EWall       7  residx   -0.83   +0.97       ZERO        ZERO   True
+top10       7  residx   -3.60   -1.58    NONZERO        ZERO  False
+top20       7  residx   -4.20   -1.00    NONZERO        ZERO  False
+EWall       7   ratio   +4.75  +10.50    NONZERO     NONZERO   True
+top10       7   ratio   -0.59   +0.52       ZERO        ZERO   True
+top20       7   ratio   +0.16   +0.47       ZERO        ZERO   True
+EWall      21    none   -6.63   -5.48    NONZERO     NONZERO   True
+top10      21    none   -5.68   -1.15    NONZERO        ZERO  False
+top20      21    none   -5.20   -0.87    NONZERO        ZERO  False
+EWall      21 partial   +0.26   +1.43       ZERO        ZERO   True
+top10      21 partial   -2.69   +0.14    NONZERO        ZERO  False
+top20      21 partial   -3.17   -0.01    NONZERO        ZERO  False
+EWall      21  residx   +0.21   +1.08       ZERO        ZERO   True
+top10      21  residx   -2.46   +0.14    NONZERO        ZERO  False
+top20      21  residx   -2.92   -0.01    NONZERO        ZERO  False
+EWall      21   ratio   +5.67  +10.27    NONZERO     NONZERO   True
+top10      21   ratio   +0.69   +1.21       ZERO        ZERO   True
+top20      21   ratio   +1.08   +0.57       ZERO        ZERO   True
+
+[E1] THE BOOKS THEMSELVES — OOS CAGR / Sharpe / MaxDD vs the live RULES v2 baseline and SPY, and BOTH KEEP paths on every arm-row (no selection).
+                         arm  rows  CAGR  Sharpe  MaxDD   Vol    H1    H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  pass4a  pass4b
+                       EWall   168 0.088   0.726 -0.279 0.126 0.914 0.599     0.084       0.692     -0.278   0.000   0.065
+                       top10   168 0.091   0.712 -0.239 0.139 0.808 0.590     0.091       0.681     -0.237   0.000   0.018
+                       top20   168 0.077   0.777 -0.184 0.105 0.880 0.674     0.077       0.744     -0.183   0.000   0.161
+RULES v2 (live, same panels)   504 0.064   0.857 -0.132   NaN 0.941 0.767     0.063       0.835     -0.132     NaN     NaN
+                         SPY   504 0.141   0.862 -0.337   NaN 0.891 0.858     0.155       0.882     -0.337     NaN     NaN
+
+  4a passes 0/504 (0.0%); 4b passes 41/504 (8.1%) — no arm of this run is a KEEP candidate; the run's object is a slope, not a book.
+
+  per q rung (median), so the ladder is visible rather than averaged away:
+     Sharpe_OOS             bookvol_full             pass4b            
+arm       EWall top10 top20        EWall top10 top20  EWall top10 top20
+q                                                                      
+0.00      1.001 0.872 1.030        0.117 0.133 0.110  0.000 0.000 1.000
+0.05      1.094 0.925 1.076        0.118 0.137 0.113  0.500 0.000 1.000
+0.10      0.886 0.774 0.899        0.119 0.136 0.112  0.000 0.000 0.000
+0.15      0.914 0.794 0.912        0.118 0.132 0.110  0.000 0.000 0.000
+0.20      0.871 0.939 0.986        0.123 0.141 0.112  0.000 0.000 1.000
+0.25      0.839 0.784 0.982        0.118 0.132 0.107  0.000 0.000 0.000
+0.30      0.775 0.775 0.837        0.123 0.140 0.111  0.000 0.000 0.000
+0.35      0.829 0.767 0.850        0.119 0.136 0.108  0.000 0.000 0.000
+0.40      0.685 0.716 0.842        0.123 0.135 0.102  0.000 0.000 0.000
+0.45      0.686 0.584 0.725        0.121 0.133 0.103  0.000 0.000 0.000
+0.50      0.652 0.619 0.710        0.122 0.137 0.107  0.000 0.000 0.000
+0.55      0.653 0.701 0.697        0.125 0.134 0.102  0.000 0.000 0.000
+0.60      0.555 0.581 0.603        0.130 0.139 0.104  0.000 0.000 0.000
+0.65      0.585 0.556 0.483        0.127 0.140 0.103  0.000 0.000 0.000
+0.70      0.531 0.627 0.674        0.130 0.138 0.100  0.000 0.000 0.000
+0.75      0.553 0.611 0.585        0.137 0.141 0.103  0.000 0.000 0.000
+0.80      0.396 0.363 0.391        0.142 0.139 0.100  0.000 0.000 0.000
+0.85      0.323 0.401 0.368        0.148 0.145 0.103  0.000 0.000 0.000
+0.90      0.281 0.340 0.227        0.151 0.144 0.098  0.000 0.000 0.000
+0.95      0.246 0.337 0.257        0.153 0.146 0.096  0.000 0.000 0.000
+1.00      0.200 0.216 0.131        0.171 0.146 0.096  0.000 0.000 0.000
+
+[F] VERDICT
+  evol vs MaxDD: 10/12 cells non-zero WITHOUT the control, 6/12 WITH it; median |b| shrink 0.689.
+  evol, all outcomes: 24/36 -> 20/36; other three characteristics: 58/108 -> 44/108.
+  evol vs the VOL-NORMALISED drawdown (DDnorm), no control: 9/12 cells non-zero, |t| max 5.35.
+  within-stratum corr(evol, book vol), full window, median over strata x arms: +0.659; the other three: breadth -0.256, disp +0.419, corr +0.009
+  the arm split (this is where the answer lives) — evol vs MaxDD, none -> partial:
+    EWall : 4/4 -> 0/4   t_none  -8.74.. -5.96   t_partial  +0.90.. +1.94   corr(evol, bookvol) within +0.736..+0.851
+    top10 : 3/4 -> 3/4   t_none  -5.82.. -1.62   t_partial  -3.74.. +0.13   corr(evol, bookvol) within +0.644..+0.748
+    top20 : 3/4 -> 3/4   t_none  -5.43.. -1.63   t_partial  -5.36.. -0.70   corr(evol, bookvol) within +0.066..+0.599
+  the PREMISE ITSELF — sign-keeping cells per characteristic (full window, 36 each): breadth 30/36, disp 18/36, corr 13/36, evol 31/36
+  log-log arbitration, evol vs |MaxDD| holding log(book vol): 4/12 cells non-zero (elasticity -0.858..+0.908); on EWall 1/4.
+  gates: G1 PASS, G2 PASS.
+  (The classification of the surviving/dying slopes as MEDIATION vs SPURIOUS is argued in the .result.md from these numbers; this script reports the numbers.)
+
+done in 409.6s
