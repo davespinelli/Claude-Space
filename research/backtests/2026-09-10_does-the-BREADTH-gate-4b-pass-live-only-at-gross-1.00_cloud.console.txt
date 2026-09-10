@@ -1,0 +1,166 @@
+=== 2026-09-10_does-the-BREADTH-gate-4b-pass-live-only-at-gross-1.00_cloud ===
+Idea 585 — does the BREADTH gate's 4b pass live ONLY at gross 1.00?
+
+idea 581 PARKed `U56 BREADTH-DG q=0.20 g=1.00` as a 4b passer (full 16.01% / 1.258 / -16.48%,
+OOS 16.39% / 1.456 / -14.16%) while the 2026-09-09 KILL run failed the SAME family at g=0.75.
+Both runs are right; they differ by one dial.  This run prices that dial properly.
+
+WHAT IS SWEPT (the only two tuned parameters, per PROTOCOL rule 4):
+    g  — gross, 17-point ladder 0.20 .. 1.00 step 0.05.  No leverage (PROTOCOL rule 2).
+    q  — the breadth gate's trailing-quantile dial, in {0.10, 0.20, 0.35, 0.50} (idea 581's grid).
+Panels: U56 (research/universe.json) and B136 (research/universe_broad.json), as the idea says.
+ALL 2 x 17 x 4 = 136 clause books and 2 x 17 = 34 EWall controls are reported; nothing is hidden.
+
+THE BOOK (idea 581's BREADTH-DG, reproduced verbatim from its committed source):
+    hold every priced name at g/N; breadth = share of priced names above their own 200d MA;
+    the gate FIRES (whole book -> CASH at 0%) when breadth is below its own trailing 5-year
+    q-quantile (1260 trading days, min 504).  De-gross, never re-spread.  Weekly, t+1, 10 bps.
+
+RULE 8 (required, PROTOCOL rule 8): (q, g) chosen on 2009-01-01..2016-12-31 ONLY under two
+pre-stated conventions, then 2017-01-01..2026 read ONCE.
+    S1  max IS Sharpe over the whole 68-cell grid.
+    S2  max IS Sharpe among cells that pass a 4b-shaped screen computed on IS DATA ONLY
+        (IS Sharpe > IS SPY Sharpe, IS MaxDD >= 0.60 x IS SPY MaxDD, IS CAGR >= 0.70 x IS SPY CAGR);
+        falls back to S1 if the screen is empty.
+Both KEEP paths are evaluated on every grid point (4a vs RULES v2, 4b vs SPY incl. the OOS leg).
+
+Deterministic; no network (load_universe reads the committed caches).  Never calls yfinance.
+SURVIVORSHIP: B136 is a CURRENT-constituent list, so every LEVEL on it is biased up; the
+g-ladder SHAPE (which is what this idea asks about) is a within-panel comparison and is not.
+
+GATES (pre-registered, printed before any hypothesis number)
+  G1 U56/EWall g=0.75         max|fast_bt - engine.backtest| = 1.388e-17 over 4699 finite rows (2 engine-NaN warm-up rows, 0 of them inside the scored window)   PASS
+  G1 U56/BREADTH-DG q.20 g1.0 max|fast_bt - engine.backtest| = 1.388e-17 over 4699 finite rows (2 engine-NaN warm-up rows, 0 of them inside the scored window)   PASS
+  G1 B136/EWall g=0.75        max|fast_bt - engine.backtest| = 2.776e-17 over 4697 finite rows (2 engine-NaN warm-up rows, 0 of them inside the scored window)   PASS
+  G1 B136/BREADTH-DG q.20 g1.0 max|fast_bt - engine.backtest| = 2.082e-17 over 4697 finite rows (2 engine-NaN warm-up rows, 0 of them inside the scored window)   PASS
+  G2 gate path is g-invariant           max|W(g=.5)/.5 - W(g=1)/1| = 0.000e+00   PASS
+  GATES: ALL PASS
+
+PANEL U56: 56 cols, 56 tradable, 2008-01-02..2026-09-09, scored from 2009-01-13
+  SPY      full CAGR  15.15% Sharpe  0.886 MaxDD -33.72% H1/H2 0.959/0.826 | OOS  15.32%/ 0.876/-33.72%
+  RULESv2  full CAGR   8.63% Sharpe  1.202 MaxDD -12.05% H1/H2 1.231/1.180 | OOS   9.48%/ 1.279/-12.05%
+  4b bars on this panel: Sharpe > SPY halves (0.959/0.826) and OOS (0.876); MaxDD >= -20.23%; CAGR >= 10.61%
+  68 clause books + 17 controls  [4.8s]
+
+PANEL B136: 136 cols, 136 tradable, 2008-01-02..2026-09-04, scored from 2009-01-13
+  SPY      full CAGR  15.23% Sharpe  0.889 MaxDD -33.72% H1/H2 0.957/0.834 | OOS  15.45%/ 0.882/-33.72%
+  RULESv2  full CAGR   8.03% Sharpe  1.106 MaxDD -12.24% H1/H2 1.229/0.984 | OOS   7.98%/ 1.119/-12.24%
+  4b bars on this panel: Sharpe > SPY halves (0.957/0.834) and OOS (0.882); MaxDD >= -20.23%; CAGR >= 10.66%
+  68 clause books + 17 controls  [9.7s]
+
+====================================================================================================
+PART A — THE ADMISSIBLE 4b BAND IN GROSS (all 136 clause books, nothing dropped)
+
+  U56: 4b passes at 13/68 (q,g) cells; 4a at 0/68
+    q=0.10 fire  8.2%  4b band = [0.70, 0.80] (3/17 rungs, contiguous)
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:P  0.75:P  0.80:P  0.85:.  0.90:.  0.95:.  1.00:.
+      binding leg by rung: 0.20:CAGR  0.25:CAGR  0.30:CAGR  0.35:CAGR  0.40:CAGR  0.45:CAGR  0.50:CAGR  0.55:CAGR  0.60:CAGR  0.65:CAGR  0.70:-  0.75:-  0.80:-  0.85:DD  0.90:DD  0.95:DD  1.00:DD
+    q=0.20 fire 14.3%  4b band = [0.70, 1.00] (7/17 rungs, contiguous)
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:P  0.75:P  0.80:P  0.85:P  0.90:P  0.95:P  1.00:P
+      binding leg by rung: 0.20:CAGR  0.25:CAGR  0.30:CAGR  0.35:CAGR  0.40:CAGR  0.45:CAGR  0.50:CAGR  0.55:CAGR  0.60:CAGR  0.65:CAGR  0.70:-  0.75:-  0.80:-  0.85:-  0.90:-  0.95:-  1.00:-
+    q=0.35 fire 24.6%  4b band = [0.90, 1.00] (3/17 rungs, contiguous)
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:.  0.75:.  0.80:.  0.85:.  0.90:P  0.95:P  1.00:P
+      binding leg by rung: 0.20:CAGR  0.25:CAGR  0.30:CAGR  0.35:CAGR  0.40:CAGR  0.45:CAGR  0.50:CAGR  0.55:CAGR  0.60:CAGR  0.65:CAGR  0.70:CAGR  0.75:CAGR  0.80:CAGR  0.85:CAGR  0.90:-  0.95:-  1.00:-
+    q=0.50 fire 40.0%  4b band = none
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:.  0.75:.  0.80:.  0.85:.  0.90:.  0.95:.  1.00:.
+      binding leg by rung: 0.20:H1  0.25:H1  0.30:H1  0.35:H1  0.40:H1  0.45:H1  0.50:H1  0.55:H1  0.60:H1  0.65:H1  0.70:H1  0.75:H1  0.80:H1  0.85:H1  0.90:H1  0.95:H1  1.00:H1
+    CONTROL EWall (no gate)  4b band = [0.65, 0.65] (1/17)
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:P  0.70:.  0.75:.  0.80:.  0.85:.  0.90:.  0.95:.  1.00:.
+
+  B136: 4b passes at 7/68 (q,g) cells; 4a at 8/68
+    q=0.10 fire  8.2%  4b band = [0.70, 0.70] (1/17 rungs, contiguous)
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:P  0.75:.  0.80:.  0.85:.  0.90:.  0.95:.  1.00:.
+      binding leg by rung: 0.20:CAGR  0.25:CAGR  0.30:CAGR  0.35:CAGR  0.40:CAGR  0.45:CAGR  0.50:CAGR  0.55:CAGR  0.60:CAGR  0.65:CAGR  0.70:-  0.75:DD  0.80:DD  0.85:DD  0.90:DD  0.95:DD  1.00:DD
+    q=0.20 fire 14.6%  4b band = [0.75, 1.00] (6/17 rungs, contiguous)
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:.  0.75:P  0.80:P  0.85:P  0.90:P  0.95:P  1.00:P
+      binding leg by rung: 0.20:CAGR  0.25:CAGR  0.30:CAGR  0.35:CAGR  0.40:CAGR  0.45:CAGR  0.50:CAGR  0.55:CAGR  0.60:CAGR  0.65:CAGR  0.70:CAGR  0.75:-  0.80:-  0.85:-  0.90:-  0.95:-  1.00:-
+    q=0.35 fire 27.5%  4b band = none
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:.  0.75:.  0.80:.  0.85:.  0.90:.  0.95:.  1.00:.
+      binding leg by rung: 0.20:H2  0.25:H2  0.30:H2  0.35:H2  0.40:H2  0.45:H2  0.50:H2  0.55:H2  0.60:H2  0.65:H2  0.70:H2  0.75:H2  0.80:H2  0.85:H2  0.90:H2  0.95:H2  1.00:H2
+    q=0.50 fire 43.9%  4b band = none
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:.  0.75:.  0.80:.  0.85:.  0.90:.  0.95:.  1.00:.
+      binding leg by rung: 0.20:H1  0.25:H1  0.30:H1  0.35:H1  0.40:H1  0.45:H1  0.50:H1  0.55:H1  0.60:H1  0.65:H1  0.70:H1  0.75:H1  0.80:H1  0.85:H1  0.90:H1  0.95:H1  1.00:H1
+    CONTROL EWall (no gate)  4b band = none
+      0.20:.  0.25:.  0.30:.  0.35:.  0.40:.  0.45:.  0.50:.  0.55:.  0.60:.  0.65:.  0.70:.  0.75:.  0.80:.  0.85:.  0.90:.  0.95:.  1.00:.
+
+PART A2 — the full ladder for idea 581's own cell (q=0.20), every rung reported
+
+  U56   g    CAGR   Sharpe   MaxDD    H1     H2  | OOS CAGR  Shrp   MaxDD | 4a 4b  fail
+        0.20   3.13%   1.255  -3.48%  1.181  1.358 |    3.18%  1.457  -2.95% | n  n   CAGR
+        0.25   3.92%   1.255  -4.33%  1.181  1.358 |    3.98%  1.457  -3.68% | n  n   CAGR
+        0.30   4.71%   1.255  -5.18%  1.182  1.358 |    4.79%  1.457  -4.40% | n  n   CAGR
+        0.35   5.51%   1.255  -6.02%  1.182  1.358 |    5.59%  1.456  -5.12% | n  n   CAGR
+        0.40   6.30%   1.255  -6.86%  1.183  1.357 |    6.41%  1.456  -5.84% | n  n   CAGR
+        0.45   7.10%   1.256  -7.69%  1.183  1.357 |    7.22%  1.456  -6.55% | n  n   CAGR
+        0.50   7.90%   1.256  -8.52%  1.184  1.357 |    8.04%  1.456  -7.26% | n  n   CAGR
+        0.55   8.70%   1.256  -9.34%  1.184  1.357 |    8.86%  1.456  -7.97% | n  n   CAGR
+        0.60   9.50%   1.256 -10.16%  1.184  1.356 |    9.68%  1.455  -8.67% | n  n   CAGR
+        0.65  10.31%   1.256 -10.97%  1.185  1.356 |   10.50%  1.455  -9.37% | n  n   CAGR
+        0.70  11.12%   1.256 -11.77%  1.185  1.356 |   11.33%  1.455 -10.07% | n  Y   
+        0.75  11.92%   1.256 -12.57%  1.186  1.356 |   12.16%  1.455 -10.76% | n  Y   
+        0.80  12.73%   1.256 -13.36%  1.186  1.355 |   12.99%  1.454 -11.45% | n  Y   
+        0.85  13.55%   1.256 -14.15%  1.186  1.355 |   13.83%  1.454 -12.13% | n  Y   
+        0.90  14.36%   1.256 -14.93%  1.187  1.355 |   14.67%  1.454 -12.81% | n  Y   
+        0.95  15.17%   1.257 -15.71%  1.187  1.354 |   15.51%  1.454 -13.49% | n  Y   
+        1.00  15.99%   1.257 -16.48%  1.187  1.354 |   16.35%  1.453 -14.16% | n  Y   
+    (control EWall at g=1.00: CAGR 17.69% Sharpe 1.122 MaxDD -29.18%, 4b FAIL DD)
+
+  B136   g    CAGR   Sharpe   MaxDD    H1     H2  | OOS CAGR  Shrp   MaxDD | 4a 4b  fail
+        0.20   3.00%   1.134  -4.28%  1.240  1.021 |    2.50%  1.162  -3.20% | Y  n   CAGR
+        0.25   3.76%   1.134  -5.33%  1.241  1.021 |    3.13%  1.162  -3.99% | Y  n   CAGR
+        0.30   4.51%   1.135  -6.36%  1.241  1.020 |    3.76%  1.162  -4.78% | Y  n   CAGR
+        0.35   5.27%   1.135  -7.39%  1.242  1.020 |    4.39%  1.161  -5.56% | Y  n   CAGR
+        0.40   6.02%   1.135  -8.42%  1.242  1.020 |    5.02%  1.161  -6.34% | Y  n   CAGR
+        0.45   6.78%   1.135  -9.43%  1.243  1.019 |    5.65%  1.160  -7.11% | Y  n   CAGR
+        0.50   7.54%   1.135 -10.43%  1.243  1.019 |    6.27%  1.160  -7.88% | Y  n   CAGR
+        0.55   8.30%   1.135 -11.43%  1.244  1.018 |    6.90%  1.160  -8.64% | Y  n   CAGR
+        0.60   9.06%   1.135 -12.42%  1.244  1.018 |    7.53%  1.159  -9.40% | n  n   CAGR
+        0.65   9.82%   1.135 -13.39%  1.245  1.017 |    8.17%  1.159 -10.16% | n  n   CAGR
+        0.70  10.59%   1.135 -14.37%  1.245  1.017 |    8.80%  1.158 -10.91% | n  n   CAGR
+        0.75  11.35%   1.135 -15.33%  1.246  1.016 |    9.43%  1.158 -11.65% | n  Y   
+        0.80  12.11%   1.135 -16.28%  1.246  1.016 |   10.06%  1.157 -12.40% | n  Y   
+        0.85  12.88%   1.135 -17.23%  1.247  1.015 |   10.69%  1.157 -13.14% | n  Y   
+        0.90  13.64%   1.136 -18.17%  1.247  1.015 |   11.32%  1.156 -13.87% | n  Y   
+        0.95  14.40%   1.136 -19.10%  1.248  1.014 |   11.95%  1.156 -14.60% | n  Y   
+        1.00  15.17%   1.136 -20.02%  1.248  1.014 |   12.58%  1.155 -15.32% | n  Y   
+    (control EWall at g=1.00: CAGR 18.92% Sharpe 1.122 MaxDD -32.72%, 4b FAIL DD)
+
+====================================================================================================
+PART B — RULE 8 WALK-FORWARD.  (q, g) chosen on 2009-2016 ONLY; 2017-2026 read ONCE.
+  U56   S1_maxISsharpe  pool  68  ->  q=0.20 g=1.00 (IS Sharpe 1.095)
+        OOS  CAGR  16.35%  Sharpe  1.453  MaxDD -14.16%
+        SPY  CAGR  15.32%  Sharpe  0.876  MaxDD -33.72%
+        v2   CAGR   9.48%  Sharpe  1.279  MaxDD -12.05%
+        full-sample verdict of the PICKED cell: 4a FAIL, 4b PASS
+  U56   S2_IS4bscreen   pool   4  ->  q=0.20 g=0.75 (IS Sharpe 1.093)
+        OOS  CAGR  12.16%  Sharpe  1.455  MaxDD -10.76%
+        SPY  CAGR  15.32%  Sharpe  0.876  MaxDD -33.72%
+        v2   CAGR   9.48%  Sharpe  1.279  MaxDD -12.05%
+        full-sample verdict of the PICKED cell: 4a FAIL, 4b PASS
+  B136  S1_maxISsharpe  pool  68  ->  q=0.20 g=1.00 (IS Sharpe 1.156)
+        OOS  CAGR  12.58%  Sharpe  1.155  MaxDD -15.32%
+        SPY  CAGR  15.45%  Sharpe  0.882  MaxDD -33.72%
+        v2   CAGR   7.98%  Sharpe  1.119  MaxDD -12.24%
+        full-sample verdict of the PICKED cell: 4a FAIL, 4b PASS
+  B136  S2_IS4bscreen   pool   1  ->  q=0.20 g=0.60 (IS Sharpe 1.152)
+        OOS  CAGR   7.53%  Sharpe  1.159  MaxDD  -9.40%
+        SPY  CAGR  15.45%  Sharpe  0.882  MaxDD -33.72%
+        v2   CAGR   7.98%  Sharpe  1.119  MaxDD -12.24%
+        full-sample verdict of the PICKED cell: 4a FAIL, 4b FAIL (CAGR)
+
+====================================================================================================
+PART C — IS THE 4b VERDICT A GROSS ARTEFACT?  (Spearman of each 4b leg's margin on g)
+  U56 q=0.20:
+    CAGR  margin  rho(g) +1.0000   at g=0.20 -0.0747  at g=1.00 +0.0538   (positive = leg clears)
+    DD    margin  rho(g) -1.0000   at g=0.20 +0.1675  at g=1.00 +0.0375   (positive = leg clears)
+    H1    margin  rho(g) +1.0000   at g=0.20 +0.2223  at g=1.00 +0.2286   (positive = leg clears)
+    H2    margin  rho(g) -1.0000   at g=0.20 +0.5324  at g=1.00 +0.5285   (positive = leg clears)
+    OOS   margin  rho(g) -1.0000   at g=0.20 +0.5811  at g=1.00 +0.5775   (positive = leg clears)
+    Sharpe itself: g=0.20 1.255 -> g=1.00 1.257, rho(g, Sharpe) +1.0000  (a pure exposure dial with 0% cash leaves Sharpe ~flat and scales CAGR and MaxDD)
+  B136 q=0.20:
+    CAGR  margin  rho(g) +1.0000   at g=0.20 -0.0766  at g=1.00 +0.0451   (positive = leg clears)
+    DD    margin  rho(g) -1.0000   at g=0.20 +0.1595  at g=1.00 +0.0021   (positive = leg clears)
+    H1    margin  rho(g) +1.0000   at g=0.20 +0.2837  at g=1.00 +0.2913   (positive = leg clears)
+    H2    margin  rho(g) -1.0000   at g=0.20 +0.1872  at g=1.00 +0.1798   (positive = leg clears)
+    OOS   margin  rho(g) -1.0000   at g=0.20 +0.2805  at g=1.00 +0.2733   (positive = leg clears)
+    Sharpe itself: g=0.20 1.134 -> g=1.00 1.136, rho(g, Sharpe) +1.0000  (a pure exposure dial with 0% cash leaves Sharpe ~flat and scales CAGR and MaxDD)
