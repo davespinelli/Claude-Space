@@ -1,0 +1,259 @@
+======================================================================================================================
+IDEA 496 -- publish the PENALTY beside every residualisation   (cloud, 2026-09-10)
+======================================================================================================================
+  panel U56         56 cols  2008-01-02 .. 2026-09-09  (4701 rows)
+  panel B136       136 cols  2008-01-02 .. 2026-09-04  (4699 rows)
+  panel SMALL439   440 cols  2010-01-04 .. 2026-09-04  (4194 rows)
+  SMALL: dropped 44 tickers with max_1d_move >= 1.0 (idea 118)
+
+======================================================================================================================
+GATES
+======================================================================================================================
+  G1  fast_backtest vs engine.backtest on the read window (2009-01-13..)  returns 0.000e+00  turnover 0.000e+00  -> PASS
+  G2  exact cost re-rung r(c) = r(10bps) + turnover*(10-c)/1e4 vs a live re-run at [0, 10, 25] bps: 6.939e-18  -> PASS
+
+======================================================================================================================
+PART A -- CENSUS: every committed residualisation, and whether it publishes its penalty
+======================================================================================================================
+  scanned 3117 committed CSV artefacts in research/backtests/
+  23 artefacts carry a kill/survive flag with NO partial statistic -- survival claims, not residualisations; censused but NOT scored
+  COMMITTED residualisation artefacts (carry a partial-R2 / _given_ column): 9  (4 publish a penalty column, 5 do NOT)
+  of those that do, 4 carry 3 or more penalties (i.e. can be re-read at three without a re-fit)
+
+    artefact                                                                                 rows  lam?  #lam  columns
+    2026-09-05_extend-the-three-degenerate-ladders-past-their-endpoints_C.picks.csv             6 False     0  moved_past_old_given_was_at_old
+    2026-09-06_dispersion-as-a-survivorship-detector_B.regressions.csv                         24 False     0  pR2_sd_given_W;t_sd_given_W;t_W_given_sd;kill;pR2_sd_given_W
+    2026-09-06_is-within-stratum-CORR-a-SECTOR-concentration-proxy_C.fits.csv                   9 False     0  rho_corr_given_H;p_corr_given_H;rho_H_given_corr;p_H_given_c
+    2026-09-07_is-the-SLEEVE-S-OWN-SHARPE-the-real-design-variable_cloud.bivariate.csv         12 False     0  pr_corr_given_own;pr_own_given_corr
+    2026-09-08_is-cost-blind-choosing-worse-than-not-choosing-generally_C.rungcurve.csv        80 False     0  DELTA_given_moved
+    2026-09-09_name-level-fixed-effects_B.regressions.csv                                     288  True     6  pR2_sd_given_F;t_sd_given_F;t_F_given_sd;kill_F;pR2_sd_given
+    2026-09-09_which-published-residualisations-are-IN-SAMPLE-fits_C.rerun.csv               1008  True     7  pR2_sd_given_F;t_sd_given_F;kill_F
+    2026-09-09_which-published-residualisations-are-IN-SAMPLE-fits_cloud.grid.csv             144  True     6  pR2_insample;survive_insample;kill_insample;pR2_oof;survive_
+    2026-09-10_publish-the-PENALTY-beside-every-residualisation_cloud.grid.csv                144  True     6  pR2_insample;survive_insample;kill_insample;pR2_oof;survive_
+
+  PROSE residualisation claims across 658 committed prose files: 76 lines, of which 24 (31.6%) name a penalty at all
+  ALL claim set = 9 artefacts + 76 prose lines
+
+======================================================================================================================
+PART B1 -- COMMITTED RE-READ: every residualisation with its own lam ladder, at LOW/MID/HIGH
+======================================================================================================================
+  992 committed residualisation CONCLUSIONS re-read at three penalties off their own rows (no re-fit)
+  PENALTY-STABLE (identical verdict at LOW, MID and HIGH): 797 / 992 = 80.3%
+  median |value| spread across the three penalties: 0.1749, max 855.7322
+
+  by artefact:
+                                                                               conclusions  stable  med_spread  max_spread  stable_rate
+artefact                                                                                                                               
+2026-09-09_name-level-fixed-effects_B.regressions.csv                                  336     296      0.0257    855.7322       0.8810
+2026-09-09_which-published-residualisations-are-IN-SAMPLE-fits_C.rerun.csv             432     373      0.2282     16.6528       0.8634
+2026-09-09_which-published-residualisations-are-IN-SAMPLE-fits_cloud.grid.csv          112      64      0.3765      0.9388       0.5714
+2026-09-10_publish-the-PENALTY-beside-every-residualisation_cloud.grid.csv             112      64      0.3590      0.9388       0.5714
+
+  by statistic:
+                  conclusions  stable  med_spread  max_spread
+stat                                                         
+kill_F                    192     158      0.2798     16.6528
+kill_W                     48      48      0.0000      0.0000
+kill_insample              32       8      0.6314      0.9388
+kill_oof                   32       8      0.6363      0.9317
+pR2_insample               48      48      0.0178      0.0803
+pR2_oof                    48      48      0.0190      0.0797
+pR2_sd_given_F            192     192      0.0395      0.2712
+pR2_sd_given_W             48      48      0.0000      0.0000
+survive_insample           32       8      0.6314      0.9388
+survive_oof                32       8      0.6363      0.9317
+t_F_given_sd               48      31     16.9356    855.7322
+t_sd_given_F              192     144      0.9100      7.0002
+t_sd_given_W               48      48      0.0000      0.0000
+
+  the 12 widest-moving conclusions:
+                                             artefact         stat                       cell     v_low     v_mid   v_high    spread  stable
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd      k=80|premium|IS|50|20 +877.8619 +877.8619 +22.1296 +855.7322    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd  k=80|EWall Sharpe|IS|50|5 +606.9803 +606.9803 +15.5534 +591.4268    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd k=80|EWall Sharpe|IS|50|20 +606.9803 +606.9803 +15.5534 +591.4268    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd  k=40|EWall Sharpe|IS|50|5 +555.4161 +555.4161 +15.6627 +539.7535    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd k=40|EWall Sharpe|IS|50|20 +555.4161 +555.4161 +15.6627 +539.7535    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd       k=40|premium|IS|50|5 +539.2149 +539.2149 +17.1527 +522.0622    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd  k=80|CAND Sharpe|IS|50|20 +522.4959 +522.4959 +13.2497 +509.2461    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd       k=80|premium|IS|50|5 +499.1573 +499.1573 +12.3423 +486.8149    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd   k=80|CAND Sharpe|IS|50|5 +466.2996 +466.2996 +12.9689 +453.3307    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd   k=40|CAND Sharpe|IS|50|5 +465.0510 +465.0510 +13.8037 +451.2473    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd  k=40|CAND Sharpe|IS|50|20 +355.5922 +355.5922 +12.9895 +342.6026    True
+2026-09-09_name-level-fixed-effects_B.regressions.csv t_F_given_sd      k=40|premium|IS|50|20 +341.2769 +341.2769 +15.4640 +325.8129    True
+
+  B3 -- residualisation artefacts that publish NO penalty (the dial is unrecoverable from the artefact alone):
+    2026-09-05_extend-the-three-degenerate-ladders-past-their-endpoints_C.picks.csv                       6 rows  [moved_past_old_given_was_at_old]
+    2026-09-06_dispersion-as-a-survivorship-detector_B.regressions.csv                                   24 rows  [pR2_sd_given_W;t_sd_given_W;t_W_given_sd;kill;pR2_sd]
+    2026-09-06_is-within-stratum-CORR-a-SECTOR-concentration-proxy_C.fits.csv                             9 rows  [rho_corr_given_H;p_corr_given_H;rho_H_given_corr;p_H]
+    2026-09-07_is-the-SLEEVE-S-OWN-SHARPE-the-real-design-variable_cloud.bivariate.csv                   12 rows  [pr_corr_given_own;pr_own_given_corr]
+    2026-09-08_is-cost-blind-choosing-worse-than-not-choosing-generally_C.rungcurve.csv                  80 rows  [DELTA_given_moved]
+
+  (for the record, the 23 kill/survive artefacts that carry no partial statistic and are NOT scored as residualisations:)
+    2026-09-04_gross-matched-turnover-constraints_B.survival.csv                                         42 rows  [survives]
+    2026-09-05_the-CAGR-floor-is-what-kills-small-pools_cloud.flips.csv                                   4 rows  [KILL_to_KEEP]
+    2026-09-06_back-fill-the-phase-spread-over-every-cadence-claim_cloud.claims.csv                     240 rows  [survives;survives_weak]
+    2026-09-06_back-fill-the-phase-spread-over-every-cadence-claim_cloud.summary.csv                      5 rows  [survives;survives_weak]
+    2026-09-06_publish-the-cash-carve-out-beside-every-sleeve-MaxDD_C.survival.csv                        6 rows  [survive]
+    2026-09-07_does-the-NUMERAIRE-clause-screen-the-queues-open-overlay-ideas_C.census.csv             2630 rows  [kill_CF;kill_MED;kill_LO;kill_HI]
+    2026-09-07_does-the-NUMERAIRE-clause-screen-the-queues-open-overlay-ideas_C.leaderboard.csv          66 rows  [kill_CF;kill_MED]
+    2026-09-08_back-fill-the-EWall-column-on-panel-ORDERING-claims_C.cells.csv.gz                    119451 rows  [survives]
+    2026-09-08_back-fill-the-EWall-column-on-panel-ORDERING-claims_C.files.csv                          313 rows  [survives]
+    2026-09-08_census-every-CROSSING-in-the-record-for-dial-heterogeneity_C.census.csv                  200 rows  [survives_tol1;survives_tol0]
+    2026-09-09_does-S_CORR-beat-the-anchor-once-the-PANEL-is-controlled_B.survivors.csv                  14 rows  [SURVIVES]
+    2026-09-09_how-many-published-panel-shares-are-7-cell-binomials_B.census_grid.csv                    36 rows  [survive;survive_share]
+    2026-09-09_is-the-MARGINAL-rho-the-only-estimable-characteristic-statistic_C.claims.csv              68 rows  [survives_marginal;survives_own]
+    2026-09-09_is-the-MARGINAL-rho-the-only-estimable-characteristic-statistic_C.restate_cells.csv        6 rows  [survives_on_marginal;survive_share]
+    2026-09-09_price-the-14-breadth-files-on-their-own-books_cloud.verdicts.csv                           7 rows  [survives]
+    2026-09-09_restate-every-published-4a-count-against-the-LIVE-book_cloud.restated.csv                  4 rows  [survive;survive_rate]
+    2026-09-09_restate-the-26-characteristic-files-under-the-SIGN-FLIP_cloud.grid.csv                    64 rows  [SURVIVES]
+    2026-09-09_why-is-evol-the-one-characteristic-that-never-reverses_C.survival.csv                    432 rows  [killed]
+    2026-09-10_does-a-BASE-RATE-ADJUSTED-4b-change-the-records-KEEP-set_cloud.floor.csv                  10 rows  [survive]
+    2026-09-10_does-any-published-COLUMN-prescription-survive-its-own-L2-ladder_C.survive.csv           144 rows  [survives]
+    2026-09-10_does-every-published-MATCHED-GROSS-TWIN-claim-need-a-PLACEBO-column_cloud.survival.cs     54 rows  [survives]
+    2026-09-10_publish-p-and-n-beside-every-WIDE-flag-in-the-record_cloud.sites.csv                      10 rows  [survive;survive_rate]
+    2026-09-10_re-cut-every-published-BINDING-BAR-claim-as-a-STEP-NORMALISED-argmin_cloud.census.csv    233 rows  [survive_RAW;survive_SD;survive_IQR;survive_RANK]
+
+======================================================================================================================
+PART B2 -- FRESH RE-RUN of idea 483's construction over PENALTY x PANEL x K x width
+======================================================================================================================
+
+  U56: 55 names, 200 draw books, raw sd -> Sharpe t +2.435 R2 0.0291
+    RULES v2 8.63%/1.2021/-12.05%   SPY 15.15%/0.8855/-33.72% (halves 0.959/0.826, OOS 0.876)
+    U56 done (24s)
+
+  B136: 135 names, 200 draw books, raw sd -> Sharpe t +4.304 R2 0.0856
+    RULES v2 8.03%/1.1058/-12.24%   SPY 15.23%/0.8890/-33.72% (halves 0.957/0.834, OOS 0.882)
+    B136 done (42s)
+
+  SMALL439: 439 names, 200 draw books, raw sd -> Sharpe t +1.021 R2 0.0052  [|t|<2, kill suppressed]
+    RULES v2 3.81%/0.5725/-14.68%   SPY 14.13%/0.8615/-33.72% (halves 0.891/0.858, OOS 0.882)
+    SMALL439 done (76s)
+
+  144 grid points written (6 penalties x 4 folds x 2 widths x 3 panels)
+
+  G3  idea 483's committed grid re-derived: 144/144 rows joined on ['panel', 'width', 'lam', 'K'], over 9 published columns.
+      B136        48 rows  max|d| 4.441e-16  worst t_insample  -> PASS (machinery identical)
+      SMALL439    48 rows  max|d| 2.220e-16  worst t_insample  -> PASS (machinery identical)
+      U56         48 rows  max|d| 5.457e-02  worst t_raw  -> VINTAGE, reported not waived
+      whole grid max|d| = 5.457e-02; per published column:
+        t_raw                                  5.457e-02
+        t_oof                                  5.270e-02
+        t_insample                             5.142e-02
+        survive_oof                            4.090e-02
+        survive_insample                       2.070e-02
+        R2_control_reproduces_sd_insample      4.390e-03
+        pR2_oof                                1.340e-03
+        R2_raw                                 1.278e-03
+        pR2_insample                           1.261e-03
+
+  G4  the queue's headline (B136 WIDE, survive across lam 1e-3..100):
+         survive_IS  survive_OOF    t_IS   t_OOF  sd_repro_IS
+lam                                                          
+0.001       +0.0199      +0.0682 +0.5809 +0.9368      +0.9882
+0.010       +0.0212      +0.0545 +0.6005 +0.8627      +0.9882
+0.100       +0.0370      +0.0961 +0.7933 +1.1973      +0.9882
+1.000       +0.2746      +0.3168 +2.1823 +2.3484      +0.9851
+10.000      +0.8284      +0.7155 +3.8862 +3.5925      +0.9060
+100.000     +0.9587      +0.9415 +4.2059 +4.1648      +0.4543
+      penalty spread in survive_IS = 0.9388  (queue quotes 0.020 -> 0.959 = 0.939)
+
+======================================================================================================================
+WHICH CONCLUSIONS ARE PENALTY-STABLE?  (fresh grid, verdict = survive >= 0.5)
+======================================================================================================================
+  32 fresh conclusions; PENALTY-STABLE 8/32 = 25.0%; median spread 0.6357, max 0.9388
+                                 n  stable  med_spread  max_spread
+panel width    stat                                               
+B136  NARROW10 survive_insample  4       0      0.4113      0.4113
+               survive_oof       4       1      0.4757      0.4925
+      WIDE     survive_insample  4       0      0.9388      0.9388
+               survive_oof       4       0      0.8670      0.9317
+U56   NARROW10 survive_insample  4       4      0.3400      0.3400
+               survive_oof       4       2      0.4450      0.6222
+      WIDE     survive_insample  4       0      0.8515      0.8515
+               survive_oof       4       1      0.8241      0.8874
+
+======================================================================================================================
+PART C / RULE 8 -- does the penalty change the BOOK you would trade?  (control fitted on 2009-2016 only; OOS read once)
+======================================================================================================================
+   panel      lam      selector  book  IS_Sharpe  OOS_Sharpe  full_Sharpe  full_CAGR  full_MaxDD     H1     H2  OOS_CAGR  OOS_MaxDD  v2_OOS_Sharpe  spy_OOS_Sharpe  beats_v2  beats_spy  pass4a  pass4b
+     U56   0.0010         RESID   100     0.8767      1.0666       0.9747     0.1848     -0.3427 0.8767 1.0666    0.2138    -0.3427         1.2788          0.8758     False       True   False   False
+     U56   0.0010 RAW_IS_SHARPE    55     1.6255      1.1659       1.3468     0.2229     -0.2902 1.6255 1.1659    0.2252    -0.2902         1.2788          0.8758     False       True   False   False
+     U56   0.0010            SD    82     1.0899      0.8687       0.9737     0.1416     -0.2583 1.0899 0.8687    0.1378    -0.2583         1.2788          0.8758     False       True   False   False
+     U56   0.0100         RESID   100     0.8767      1.0666       0.9747     0.1848     -0.3427 0.8767 1.0666    0.2138    -0.3427         1.2788          0.8758     False       True   False   False
+     U56   0.0100 RAW_IS_SHARPE    55     1.6255      1.1659       1.3468     0.2229     -0.2902 1.6255 1.1659    0.2252    -0.2902         1.2788          0.8758     False       True   False   False
+     U56   0.0100            SD    82     1.0899      0.8687       0.9737     0.1416     -0.2583 1.0899 0.8687    0.1378    -0.2583         1.2788          0.8758     False       True   False   False
+     U56   0.1000         RESID   100     0.8767      1.0666       0.9747     0.1848     -0.3427 0.8767 1.0666    0.2138    -0.3427         1.2788          0.8758     False       True   False   False
+     U56   0.1000 RAW_IS_SHARPE    55     1.6255      1.1659       1.3468     0.2229     -0.2902 1.6255 1.1659    0.2252    -0.2902         1.2788          0.8758     False       True   False   False
+     U56   0.1000            SD    82     1.0899      0.8687       0.9737     0.1416     -0.2583 1.0899 0.8687    0.1378    -0.2583         1.2788          0.8758     False       True   False   False
+     U56   1.0000         RESID    99     1.3706      1.1458       1.2357     0.1694     -0.2528 1.3706 1.1458    0.1777    -0.2528         1.2788          0.8758     False       True   False   False
+     U56   1.0000 RAW_IS_SHARPE    55     1.6255      1.1659       1.3468     0.2229     -0.2902 1.6255 1.1659    0.2252    -0.2902         1.2788          0.8758     False       True   False   False
+     U56   1.0000            SD    82     1.0899      0.8687       0.9737     0.1416     -0.2583 1.0899 0.8687    0.1378    -0.2583         1.2788          0.8758     False       True   False   False
+     U56  10.0000         RESID    55     1.6255      1.1659       1.3468     0.2229     -0.2902 1.6255 1.1659    0.2252    -0.2902         1.2788          0.8758     False       True   False   False
+     U56  10.0000 RAW_IS_SHARPE    55     1.6255      1.1659       1.3468     0.2229     -0.2902 1.6255 1.1659    0.2252    -0.2902         1.2788          0.8758     False       True   False   False
+     U56  10.0000            SD    82     1.0899      0.8687       0.9737     0.1416     -0.2583 1.0899 0.8687    0.1378    -0.2583         1.2788          0.8758     False       True   False   False
+     U56 100.0000         RESID    55     1.6255      1.1659       1.3468     0.2229     -0.2902 1.6255 1.1659    0.2252    -0.2902         1.2788          0.8758     False       True   False   False
+     U56 100.0000 RAW_IS_SHARPE    55     1.6255      1.1659       1.3468     0.2229     -0.2902 1.6255 1.1659    0.2252    -0.2902         1.2788          0.8758     False       True   False   False
+     U56 100.0000            SD    82     1.0899      0.8687       0.9737     0.1416     -0.2583 1.0899 0.8687    0.1378    -0.2583         1.2788          0.8758     False       True   False   False
+    B136   0.0010         RESID    92     1.4069      1.0795       1.2208     0.2053     -0.2938 1.4069 1.0795    0.2067    -0.2938         1.1185          0.8820      True       True   False   False
+    B136   0.0010 RAW_IS_SHARPE    14     1.5554      1.0540       1.2825     0.2013     -0.2674 1.5554 1.0540    0.1842    -0.2674         1.1185          0.8820      True       True   False   False
+    B136   0.0010            SD    41     1.2800      1.0201       1.1476     0.1883     -0.2731 1.2800 1.0201    0.1719    -0.2731         1.1185          0.8820     False       True   False   False
+    B136   0.0100         RESID    92     1.4069      1.0795       1.2208     0.2053     -0.2938 1.4069 1.0795    0.2067    -0.2938         1.1185          0.8820      True       True   False   False
+    B136   0.0100 RAW_IS_SHARPE    14     1.5554      1.0540       1.2825     0.2013     -0.2674 1.5554 1.0540    0.1842    -0.2674         1.1185          0.8820      True       True   False   False
+    B136   0.0100            SD    41     1.2800      1.0201       1.1476     0.1883     -0.2731 1.2800 1.0201    0.1719    -0.2731         1.1185          0.8820     False       True   False   False
+    B136   0.1000         RESID    92     1.4069      1.0795       1.2208     0.2053     -0.2938 1.4069 1.0795    0.2067    -0.2938         1.1185          0.8820      True       True   False   False
+    B136   0.1000 RAW_IS_SHARPE    14     1.5554      1.0540       1.2825     0.2013     -0.2674 1.5554 1.0540    0.1842    -0.2674         1.1185          0.8820      True       True   False   False
+    B136   0.1000            SD    41     1.2800      1.0201       1.1476     0.1883     -0.2731 1.2800 1.0201    0.1719    -0.2731         1.1185          0.8820     False       True   False   False
+    B136   1.0000         RESID    92     1.4069      1.0795       1.2208     0.2053     -0.2938 1.4069 1.0795    0.2067    -0.2938         1.1185          0.8820      True       True   False   False
+    B136   1.0000 RAW_IS_SHARPE    14     1.5554      1.0540       1.2825     0.2013     -0.2674 1.5554 1.0540    0.1842    -0.2674         1.1185          0.8820      True       True   False   False
+    B136   1.0000            SD    41     1.2800      1.0201       1.1476     0.1883     -0.2731 1.2800 1.0201    0.1719    -0.2731         1.1185          0.8820     False       True   False   False
+    B136  10.0000         RESID   109     1.4213      1.0328       1.2085     0.1973     -0.2995 1.4213 1.0328    0.1878    -0.2995         1.1185          0.8820      True       True   False   False
+    B136  10.0000 RAW_IS_SHARPE    14     1.5554      1.0540       1.2825     0.2013     -0.2674 1.5554 1.0540    0.1842    -0.2674         1.1185          0.8820      True       True   False   False
+    B136  10.0000            SD    41     1.2800      1.0201       1.1476     0.1883     -0.2731 1.2800 1.0201    0.1719    -0.2731         1.1185          0.8820     False       True   False   False
+    B136 100.0000         RESID    14     1.5554      1.0540       1.2825     0.2013     -0.2674 1.5554 1.0540    0.1842    -0.2674         1.1185          0.8820      True       True   False   False
+    B136 100.0000 RAW_IS_SHARPE    14     1.5554      1.0540       1.2825     0.2013     -0.2674 1.5554 1.0540    0.1842    -0.2674         1.1185          0.8820      True       True   False   False
+    B136 100.0000            SD    41     1.2800      1.0201       1.1476     0.1883     -0.2731 1.2800 1.0201    0.1719    -0.2731         1.1185          0.8820     False       True   False   False
+SMALL439   0.0010         RESID    42     0.8980      0.5823       0.7202     0.1560     -0.5417 0.8980 0.5823    0.1800    -0.5417         0.5680          0.8820      True      False   False   False
+SMALL439   0.0010 RAW_IS_SHARPE     2     1.1874      0.4192       0.7581     0.1683     -0.4901 1.1874 0.4192    0.1390    -0.4901         0.5680          0.8820      True      False   False   False
+SMALL439   0.0010            SD   132     0.9118      0.3251       0.5671     0.1202     -0.5928 0.9118 0.3251    0.0680    -0.5928         0.5680          0.8820     False      False   False   False
+SMALL439   0.0100         RESID    42     0.8980      0.5823       0.7202     0.1560     -0.5417 0.8980 0.5823    0.1800    -0.5417         0.5680          0.8820      True      False   False   False
+SMALL439   0.0100 RAW_IS_SHARPE     2     1.1874      0.4192       0.7581     0.1683     -0.4901 1.1874 0.4192    0.1390    -0.4901         0.5680          0.8820      True      False   False   False
+SMALL439   0.0100            SD   132     0.9118      0.3251       0.5671     0.1202     -0.5928 0.9118 0.3251    0.0680    -0.5928         0.5680          0.8820     False      False   False   False
+SMALL439   0.1000         RESID    42     0.8980      0.5823       0.7202     0.1560     -0.5417 0.8980 0.5823    0.1800    -0.5417         0.5680          0.8820      True      False   False   False
+SMALL439   0.1000 RAW_IS_SHARPE     2     1.1874      0.4192       0.7581     0.1683     -0.4901 1.1874 0.4192    0.1390    -0.4901         0.5680          0.8820      True      False   False   False
+SMALL439   0.1000            SD   132     0.9118      0.3251       0.5671     0.1202     -0.5928 0.9118 0.3251    0.0680    -0.5928         0.5680          0.8820     False      False   False   False
+SMALL439   1.0000         RESID    42     0.8980      0.5823       0.7202     0.1560     -0.5417 0.8980 0.5823    0.1800    -0.5417         0.5680          0.8820      True      False   False   False
+SMALL439   1.0000 RAW_IS_SHARPE     2     1.1874      0.4192       0.7581     0.1683     -0.4901 1.1874 0.4192    0.1390    -0.4901         0.5680          0.8820      True      False   False   False
+SMALL439   1.0000            SD   132     0.9118      0.3251       0.5671     0.1202     -0.5928 0.9118 0.3251    0.0680    -0.5928         0.5680          0.8820     False      False   False   False
+SMALL439  10.0000         RESID     2     1.1874      0.4192       0.7581     0.1683     -0.4901 1.1874 0.4192    0.1390    -0.4901         0.5680          0.8820      True      False   False   False
+SMALL439  10.0000 RAW_IS_SHARPE     2     1.1874      0.4192       0.7581     0.1683     -0.4901 1.1874 0.4192    0.1390    -0.4901         0.5680          0.8820      True      False   False   False
+SMALL439  10.0000            SD   132     0.9118      0.3251       0.5671     0.1202     -0.5928 0.9118 0.3251    0.0680    -0.5928         0.5680          0.8820     False      False   False   False
+SMALL439 100.0000         RESID     2     1.1874      0.4192       0.7581     0.1683     -0.4901 1.1874 0.4192    0.1390    -0.4901         0.5680          0.8820      True      False   False   False
+SMALL439 100.0000 RAW_IS_SHARPE     2     1.1874      0.4192       0.7581     0.1683     -0.4901 1.1874 0.4192    0.1390    -0.4901         0.5680          0.8820      True      False   False   False
+SMALL439 100.0000            SD   132     0.9118      0.3251       0.5671     0.1202     -0.5928 0.9118 0.3251    0.0680    -0.5928         0.5680          0.8820     False      False   False   False
+
+  U56: RESID picks [55, 99, 100] across the 6 penalties (3 distinct books); OOS Sharpe +1.0666..+1.1659 (spread 0.0993)
+
+  B136: RESID picks [14, 92, 109] across the 6 penalties (3 distinct books); OOS Sharpe +1.0328..+1.0795 (spread 0.0467)
+
+  SMALL439: RESID picks [2, 42] across the 6 penalties (2 distinct books); OOS Sharpe +0.4192..+0.5823 (spread 0.1631)
+
+  rule-8 picks over all 54 (panel x lam x selector) cells: beats RULES v2 OOS 24/54, beats SPY OOS 36/54, 4a 0/54, 4b 0/54
+    RESID          mean OOS Sharpe +0.9028   beats v2 12/18   beats SPY 12/18   4a 0/18  4b 0/18
+    RAW_IS_SHARPE  mean OOS Sharpe +0.8797   beats v2 12/18   beats SPY 12/18   4a 0/18  4b 0/18
+    SD             mean OOS Sharpe +0.7380   beats v2 0/18   beats SPY 12/18   4a 0/18  4b 0/18
+
+  BOTH KEEP PATHS on all 600 draw books, every cost rung:
+               pass4a  pass4b  pass_both
+panel    rung                           
+B136     0          0       0          0
+         10         0       0          0
+         25         0       0          0
+SMALL439 0          0       0          0
+         10         0       0          0
+         25         0       0          0
+U56      0          0       0          0
+         10         0       0          0
+         25         0       0          0
+    at PROTOCOL's own 10 bps rung: 4a 0/600, 4b 0/600, BOTH 0/600
+
+done in 76s
