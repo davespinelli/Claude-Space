@@ -1,0 +1,201 @@
+====================================================================================================
+IDEA 412 — does PARTIAL REBALANCING beat CADENCE as the turnover dial?   (cloud)
+====================================================================================================
+tuned parameter 1 (cadence): k in [1, 5, 21, 63] trading days x up to 5 phases = 16 variants, all reported
+tuned parameter 2 (lambda) : [1.0, 0.7, 0.5, 0.35, 0.25, 0.15, 0.1, 0.06], all reported
+books ['TOP20', 'EWALL']; panels ['u56', 'broad', 'small']; rungs [0.0, 5.0, 10.0, 15.0, 25.0, 50.0] bps; t+1, gross 0.75; IS <= 2016-12-31, OOS >= 2017-01-01
+phase is a NUISANCE parameter, not a dial: every cadence number is reported phase-averaged with its spread.
+====================================================================================================
+GATES (run before any new number is read)
+====================================================================================================
+  G1   u56: fast_bt vs engine.backtest  D: dr 3.57e-16 dto 0.00e+00  W: dr 6.41e-16 dto 3.33e-16  M: dr 5.90e-16 dto 6.66e-16  Q: dr 5.81e-16 dto 9.99e-16
+  G2   u56: rung identity vs live 25 bps  max|dr| 6.409e-16
+  G3   u56: k=1 k-day cadence == calendar 'D'  max|dr| 0.000e+00
+  G1 broad: fast_bt vs engine.backtest  D: dr 3.08e-16 dto 0.00e+00  W: dr 6.30e-16 dto 3.33e-16  M: dr 5.93e-16 dto 8.88e-16  Q: dr 5.55e-16 dto 1.11e-15
+  G2 broad: rung identity vs live 25 bps  max|dr| 6.297e-16
+  G3 broad: k=1 k-day cadence == calendar 'D'  max|dr| 0.000e+00
+  G1 small: fast_bt vs engine.backtest  D: dr 3.68e-16 dto 0.00e+00  W: dr 6.09e-16 dto 2.78e-16  M: dr 6.04e-16 dto 6.66e-16  Q: dr 6.18e-16 dto 1.55e-15
+  G2 small: rung identity vs live 25 bps  max|dr| 6.093e-16
+  G3 small: k=1 k-day cadence == calendar 'D'  max|dr| 0.000e+00
+  GATES PASS (G4 is checked on the grid below)
+
+====================================================================================================
+GRID (3 panels x 2 books x 8 lambdas x 16 cadence variants, read at 6 rungs)
+====================================================================================================
+
+  panel u56: 56 cols (56 investable), evaluated from 2009-01-13 to 2026-09-09
+    SPY bars: H1 0.959  H2 0.826  OOS 0.876  MaxDD -33.7%  CAGR 15.15%
+
+  panel broad: 136 cols (136 investable), evaluated from 2009-01-13 to 2026-09-04
+    SPY bars: H1 0.957  H2 0.834  OOS 0.882  MaxDD -33.7%  CAGR 15.23%
+
+  panel small: 440 cols (439 investable, 44 dropped for max_1d_move>=1.0), evaluated from 2011-01-13 to 2026-09-04
+    SPY bars: H1 0.891  H2 0.858  OOS 0.882  MaxDD -33.7%  CAGR 14.13%
+
+  4608 arm-rows written (768 simulations x 6 rungs).
+  G4 turnover monotone DOWN in lambda: 87/96 cells; monotone DOWN in k: 48/48 cells
+     the 9 non-monotone cells, reported not hidden — all of them are cells where lambda BARELY MOVES turnover at all:
+                  cells  max_up_step  median_to_range
+     panel book                                      
+     broad EWALL      4     0.000038         0.000598
+     u56   EWALL      5     0.000166         0.000831
+     the largest wrong-way step is 1.66e-04 x/yr against a turnover LEVEL of order 1 x/yr, i.e. lambda is INERT on those cells, not non-monotone in any usable sense.
+
+----------------------------------------------------------------------------------------------------
+REACH — what each dial can actually do to turnover (0 bps, phase-averaged)
+----------------------------------------------------------------------------------------------------
+   panel   book  base(k=5,lam=1)              CADENCE reach               LAMBDA reach                overlap
+   broad  EWALL             0.85           0.25 - 1.84 x/yr           0.84 - 0.85 x/yr            0.84 - 0.85
+   broad  TOP20            12.86          3.40 - 31.43 x/yr          5.22 - 12.86 x/yr           5.22 - 12.86
+   small  EWALL             1.71           0.53 - 3.69 x/yr           1.70 - 1.71 x/yr            1.70 - 1.71
+   small  TOP20            16.01          4.25 - 38.15 x/yr          6.71 - 16.01 x/yr           6.71 - 16.01
+     u56  EWALL             0.81           0.24 - 1.78 x/yr           0.81 - 0.81 x/yr            0.81 - 0.81
+     u56  TOP20             8.80          2.38 - 22.35 x/yr           3.75 - 8.80 x/yr            3.75 - 8.80
+
+----------------------------------------------------------------------------------------------------
+H4 (PHASE) — a calendar cadence has a phase; how big is the nuisance?
+----------------------------------------------------------------------------------------------------
+  Sharpe spread ACROSS PHASES at the same k (lambda=1), by k and rung:
+         cells  mean_sd  max_range  mean_range
+k  cost                                       
+5  0.0       6   0.0117     0.0893      0.0303
+   5.0       6   0.0117     0.0895      0.0303
+   10.0      6   0.0117     0.0896      0.0303
+   15.0      6   0.0117     0.0898      0.0303
+   25.0      6   0.0117     0.0900      0.0302
+   50.0      6   0.0117     0.0901      0.0300
+21 0.0       6   0.0176     0.1188      0.0448
+   5.0       6   0.0176     0.1190      0.0449
+   10.0      6   0.0176     0.1192      0.0450
+   15.0      6   0.0176     0.1194      0.0450
+   25.0      6   0.0177     0.1198      0.0452
+   50.0      6   0.0178     0.1208      0.0454
+63 0.0       6   0.0461     0.3799      0.1222
+   5.0       6   0.0461     0.3797      0.1221
+   10.0      6   0.0461     0.3796      0.1221
+   15.0      6   0.0461     0.3795      0.1221
+   25.0      6   0.0461     0.3792      0.1220
+   50.0      6   0.0461     0.3784      0.1218
+  At PROTOCOL's 10 bps rung the phase range is up to 0.3796 of Sharpe (mean 0.0658) — and 4b passes disagree across phases in 0 of 18 (panel, book, k) cells.
+
+----------------------------------------------------------------------------------------------------
+H1 + H2 — CADENCE vs LAMBDA at MATCHED REALISED TURNOVER
+----------------------------------------------------------------------------------------------------
+  For every CADENCE arm (lambda=1) the LAMBDA curve (k=5, phase=0) is interpolated at
+  the SAME realised turnover, and vice versa.  Arms outside the other dial's turnover
+  range are NOT extrapolated: they are counted as unbracketed and reported.
+
+  bracketing: 474 of 864 matched sites are inside the other dial's turnover range (54.9%); the rest are reported and dropped, never extrapolated.
+
+  dSharpe = CADENCE minus LAMBDA at the same realised turnover.  Positive => cadence is the better dial.
+                 n  median_dSharpe  mean_dSharpe  cad_wins  median_dCAGR  median_dMaxDD
+direction cost                                                                         
+CAD->LAM  0.0   31          0.0000       -0.0032        10        0.0000        -0.0028
+          5.0   31          0.0000       -0.0031        10        0.0000        -0.0027
+          10.0  31          0.0000       -0.0030        10        0.0000        -0.0027
+          15.0  31          0.0000       -0.0029        10        0.0000        -0.0026
+          25.0  31          0.0000       -0.0028        10        0.0000        -0.0008
+          50.0  31          0.0000       -0.0026        10        0.0000         0.0000
+LAM->CAD  0.0   48          0.0006        0.0065        34       -0.0001         0.0010
+          5.0   48          0.0006        0.0064        34       -0.0001         0.0010
+          10.0  48          0.0005        0.0063        34       -0.0001         0.0010
+          15.0  48          0.0005        0.0062        34       -0.0001         0.0010
+          25.0  48          0.0004        0.0060        33       -0.0001         0.0010
+          50.0  48          0.0003        0.0057        32       -0.0001         0.0007
+
+  by panel and book, pooled over both directions and all rungs:
+               n  median_dSharpe  cad_wins  median_dTE
+panel book                                            
+broad EWALL   54          0.0001        34      0.0017
+      TOP20  102          0.0063        60      0.0091
+small EWALL   54         -0.0031         0      0.0030
+      TOP20  108          0.0138        60      0.0205
+u56   EWALL   54          0.0003        41      0.0015
+      TOP20  102          0.0089        66      0.0063
+
+  SELF-MATCHES, reported not hidden AND used as a check: 36 of 474 bracketed sites (7.6%) have dSharpe EXACTLY 0.  These are exactly the 36 sites where the two dials COINCIDE — the k=5/phase=0 cadence arm IS the lambda=1 arm — one per (panel, book, rung), 18 of them EWALL.  That the interpolated match returns 0.000000 there rather than a small residual is a correctness check on the matching machinery itself.  Excluding them:
+    cadence wins 261/438 (59.6%), median dSharpe +0.0003, median |dSharpe| 0.0114
+
+  POOLED: cadence beats lambda on Sharpe at matched turnover in 261 of 474 bracketed sites (55.1%); median dSharpe +0.0003, median dCAGR -0.0081%, median dMaxDD +0.0577%.
+  At PROTOCOL's 10 bps rung alone: 44/79, median +0.0003.
+
+  H1 — the queue's premise, 'only lambda changes the book's path', measured as tracking
+  error to the un-dialled base book at MATCHED realised turnover:
+    median TE(cadence) 0.0188   median TE(lambda) 0.0009   median dTE (cad - lam) +0.0052
+    cadence's TE is the LARGER one at 438 of 474 matched sites (92.4%)
+    --> PREMISE REFUTED: at matched turnover cadence moves the path AT LEAST as much as lambda.
+  by panel/book:
+             TE_cad  TE_lam    dTE  cad_TE_bigger    n
+panel book                                            
+broad EWALL  0.0019  0.0001 0.0017             48   54
+      TOP20  0.0256  0.0153 0.0091             96  102
+small EWALL  0.0035  0.0004 0.0030             48   54
+      TOP20  0.0557  0.0314 0.0205            102  108
+u56   EWALL  0.0019  0.0003 0.0015             48   54
+      TOP20  0.0183  0.0109 0.0063             96  102
+
+----------------------------------------------------------------------------------------------------
+RESOLUTION — is the cadence-vs-lambda gap larger than the PHASE noise of the cadence
+dial itself?  (a difference smaller than its own nuisance parameter is not a finding)
+----------------------------------------------------------------------------------------------------
+  median |dSharpe| between the two dials at matched turnover : 0.0114
+  median SD of the SAME cadence arm across its own phases     : 0.0150
+  ratio effect / noise                                        : 0.760
+  90th pct |dSharpe| 0.0299 vs 90th pct phase SD 0.0526
+  --> the head-to-head is BELOW its own noise floor: the two dials are not distinguishable at matched turnover on this evidence.
+
+----------------------------------------------------------------------------------------------------
+KEEP PATHS (PROTOCOL 4) — both evaluated on EVERY arm-row
+----------------------------------------------------------------------------------------------------
+  4a (vs live RULES v2, cost-matched): 0 / 4608
+  4b (vs SPY, all five bars)         : 0 / 4608
+  BOTH                                : 0 / 4608
+    @   0 bps: 4a    0  4b    0  BOTH    0   of 768
+    @   5 bps: 4a    0  4b    0  BOTH    0   of 768
+    @  10 bps: 4a    0  4b    0  BOTH    0   of 768
+    @  15 bps: 4a    0  4b    0  BOTH    0   of 768
+    @  25 bps: 4a    0  4b    0  BOTH    0   of 768
+    @  50 bps: 4a    0  4b    0  BOTH    0   of 768
+     broad  EWALL @10 bps: 4a   0  4b   0  of 128
+     broad  TOP20 @10 bps: 4a   0  4b   0  of 128
+     small  EWALL @10 bps: 4a   0  4b   0  of 128
+     small  TOP20 @10 bps: 4a   0  4b   0  of 128
+       u56  EWALL @10 bps: 4a   0  4b   0  of 128
+       u56  TOP20 @10 bps: 4a   0  4b   0  of 128
+
+----------------------------------------------------------------------------------------------------
+H3 / RULE 8 (PROTOCOL 8) — the dial chosen on 2009-2016 ONLY, 2017-2026 read once
+----------------------------------------------------------------------------------------------------
+  CADONLY: choose k (phase-averaged, phase 0 taken) at lambda=1.  LAMONLY: choose lambda
+  at the base weekly cadence.  JOINT: choose both.  NONE: the un-dialled base book.
+         picks  median_k  median_lam  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  beats_SPY  beats_V2  OOS_4b  OOS_4a
+menu                                                                                                      
+CADONLY     36   21.0000      1.0000      0.9356    0.1407    -0.2758         23        14       0       0
+JOINT       36   21.0000      0.7000      0.9365    0.1404    -0.2778         22        14       0       0
+LAMONLY     36    5.0000      0.2500      0.9499    0.1416    -0.2762         23        14       0       0
+NONE        36    5.0000      1.0000      0.9262    0.1358    -0.2739         22        14       0       0
+
+  head-to-head OOS Sharpe, 36 cells:
+    CADONLY beats LAMONLY in 19/36  (median gap +0.0001)
+    CADONLY beats NONE    in 19/36  (median gap +0.0062)
+    LAMONLY beats NONE    in 15/36  (median gap -0.0001)
+    JOINT   beats both    in 2/36  (median gap vs best single -0.0082)
+
+     u56 @10 bps  SPY OOS CAGR 15.32% Sharpe 0.876 MaxDD -33.7%  |  RULES v2 OOS CAGR 9.48% Sharpe 1.279 MaxDD -12.1%
+        CADONLY: picks k=[21, 63] lam=[1.0, 1.0]  OOS CAGR 15.37%  Sharpe 1.153  MaxDD -22.7%  4b 0/2  4a 0/2
+          JOINT: picks k=[21, 63] lam=[1.0, 0.06]  OOS CAGR 15.31%  Sharpe 1.149  MaxDD -22.7%  4b 0/2  4a 0/2
+        LAMONLY: picks k=[5, 5] lam=[0.15, 0.25]  OOS CAGR 15.88%  Sharpe 1.178  MaxDD -22.2%  4b 0/2  4a 0/2
+           NONE: picks k=[5, 5] lam=[1.0, 1.0]  OOS CAGR 15.67%  Sharpe 1.175  MaxDD -22.4%  4b 0/2  4a 0/2
+   broad @10 bps  SPY OOS CAGR 15.45% Sharpe 0.882 MaxDD -33.7%  |  RULES v2 OOS CAGR 7.98% Sharpe 1.119 MaxDD -12.2%
+        CADONLY: picks k=[63, 5] lam=[1.0, 1.0]  OOS CAGR 14.97%  Sharpe 1.007  MaxDD -26.2%  4b 0/2  4a 0/2
+          JOINT: picks k=[63, 5] lam=[0.7, 0.35]  OOS CAGR 14.90%  Sharpe 1.003  MaxDD -26.3%  4b 0/2  4a 0/2
+        LAMONLY: picks k=[5, 5] lam=[0.06, 0.35]  OOS CAGR 15.08%  Sharpe 1.039  MaxDD -25.9%  4b 0/2  4a 0/2
+           NONE: picks k=[5, 5] lam=[1.0, 1.0]  OOS CAGR 14.36%  Sharpe 1.015  MaxDD -25.7%  4b 0/2  4a 0/2
+   small @10 bps  SPY OOS CAGR 15.45% Sharpe 0.882 MaxDD -33.7%  |  RULES v2 OOS CAGR 3.85% Sharpe 0.568 MaxDD -14.7%
+        CADONLY: picks k=[5, 1] lam=[1.0, 1.0]  OOS CAGR 12.66%  Sharpe 0.686  MaxDD -33.6%  4b 0/2  4a 0/2
+          JOINT: picks k=[5, 1] lam=[0.5, 1.0]  OOS CAGR 12.86%  Sharpe 0.697  MaxDD -34.1%  4b 0/2  4a 0/2
+        LAMONLY: picks k=[5, 5] lam=[0.5, 0.35]  OOS CAGR 12.69%  Sharpe 0.690  MaxDD -34.0%  4b 0/2  4a 0/2
+           NONE: picks k=[5, 5] lam=[1.0, 1.0]  OOS CAGR 12.49%  Sharpe 0.679  MaxDD -33.6%  4b 0/2  4a 0/2
+
+====================================================================================================
+done in 142s
