@@ -1,0 +1,198 @@
+# 2026-09-10_why-does-the-n-dial-disagree-5x-more-than-every-other-dial_B
+# idea 494 — decompose each dial's IS Sharpe / IS CAGR surfaces into LEVEL and
+#            CURVATURE, and test whether selector disagreement tracks the CURVATURE GAP.
+# 10 bps, weekly base cadence, next-day execution, long only, seed 494.
+
+## Panels
+  U56        4701x56 tradable  56    45.4s
+  B136       4699x136 tradable 136    69.0s
+  BSTK100    4699x101 tradable 100    59.6s
+  SMALL439   4194x440 tradable 439   158.5s
+  S0_B60     4699x61 tradable  60    49.2s
+  S1_B60     4699x61 tradable  60    48.2s
+  S2_B60     4699x61 tradable  60    47.4s
+  S3_B60     4699x61 tradable  60    47.3s
+  S4_M120    4194x121 tradable 120    60.1s
+  S5_M120    4194x121 tradable 120    57.3s
+  S6_M120    4194x121 tradable 120    58.7s
+  S7_M120    4194x121 tradable 120    59.7s
+
+  grid rows (ALL grid points): 732  -> 2026-09-10_why-does-the-n-dial-disagree-5x-more-than-every-other-dial_B.arms.csv
+  cells: 264 (132 CAL + 132 MID)  -> 2026-09-10_why-does-the-n-dial-disagree-5x-more-than-every-other-dial_B.cells.csv
+  per-arm z-surfaces: 2700 rows  -> 2026-09-10_why-does-the-n-dial-disagree-5x-more-than-every-other-dial_B.geometry.csv
+
+## Reproduction gates against idea 499's published table (CAL, 10 bps, 12 panels)
+  B/n         reproduced  7/12  published  7/12  PASS
+  B/trim      reproduced  2/12  published  2/12  PASS
+  B/cadence   reproduced  1/12  published  1/12  PASS
+  B/gross     reproduced  1/12  published  1/12  PASS
+  B/volgate   reproduced  1/12  published  1/12  PASS
+  C/cadence   reproduced  6/12  published  6/12  PASS
+  C/band      reproduced  5/12  published  5/12  PASS
+  C/volcap    reproduced  3/12  published  3/12  PASS
+  C/quantile  reproduced  2/12  published  2/12  PASS
+  C/n         reproduced  1/12  published  1/12  PASS
+  C/gross     reproduced  0/12  published  0/12  PASS
+  GATE: PASS — the grid is idea 499s, to the cell
+  pooled: B 12/60  C 17/72
+
+## The premise: does `n` move gross AND concentration while other dials move one thing?
+                   rate  cells  gross_range  nheld_ratio
+dialset dial                                            
+B       n        0.5833     12       0.0000      10.9879
+        trim     0.1667     12       0.0107       1.0221
+        cadence  0.0833     12       0.0000       1.0000
+        gross    0.0833     12       0.7474       1.0000
+        volgate  0.0833     12       0.0117       1.9092
+C       cadence  0.5000     12       0.0000       1.0000
+        band     0.4167     12       0.0168       1.0358
+        volcap   0.2500     12       0.0122       1.9629
+        quantile 0.1667     12       0.0085      11.3724
+        n        0.0833     12       0.0000       8.9462
+        gross    0.0000     12       0.4690       1.0000
+
+## Surface decomposition, ORD spacing (headline = ORD)
+                   rate  LEVELGAP  CURVGAP  SHAPEDIST   R2_S   R2_C    b2_S    b2_C    b1_S    b1_C
+dialset dial                                                                                       
+B       n        0.5833    0.9641   0.2490     1.0730 0.6690 0.8669 -0.0525  0.1237  0.6865 -0.2776
+C       cadence  0.5000    0.7474   0.1507     0.8066 0.8942 0.8812 -0.6277 -0.5746 -0.1546  0.5928
+        band     0.4167    0.2409   0.1200     0.4013 0.6662 0.9157  0.0815  0.1848  0.6982  0.9356
+        volcap   0.2500    0.1538   0.2013     0.3553 0.7949 0.8616  0.0781 -0.0959  0.2810  0.4339
+B       trim     0.1667    0.2528   0.1088     0.3653 0.5813 0.8209  0.0159  0.1236  0.6178  0.8705
+C       quantile 0.1667    0.1366   0.1306     0.2567 0.6458 0.6896 -0.0643 -0.0205  0.3055  0.2786
+B       cadence  0.0833    0.0724   0.1511     0.2027 0.8234 0.7456 -0.0954 -0.2216  0.5268  0.5134
+        gross    0.0833    0.0484   0.1164     0.1301 1.0000 1.0000 -0.0931 -0.0151  0.9519  0.9997
+        volgate  0.0833    0.1364   0.2075     0.3259 0.6996 0.7058  0.1701 -0.0356  0.2197  0.3560
+C       n        0.0833    0.1030   0.0963     0.1815 0.6628 0.6844 -0.0296  0.0539  0.2958  0.2263
+        gross    0.0000    0.0038   0.0551     0.0553 1.0000 1.0000 -0.0582 -0.0033  0.9962  1.0000
+  Spearman across the 11 dials: rate vs CURVGAP  +0.5177   rate vs LEVELGAP +0.9374   rate vs SHAPEDIST +0.9327
+  cell-level point-biserial rate~CURVGAP   r +0.4416  panel-clustered perm p 0.0000  (n=132)
+  cell-level point-biserial rate~LEVELGAP  r +0.6248  panel-clustered perm p 0.0000  (n=132)
+  cell-level point-biserial rate~SHAPEDIST r +0.6645  panel-clustered perm p 0.0000  (n=132)
+  logistic disagree ~ z(CURVGAP) + z(LEVELGAP):  b_CURV +0.5095  b_LEVEL +1.3953  (intercept -1.6056, n 132)
+
+## Surface decomposition, VAL spacing (headline = ORD)
+                   rate  LEVELGAP  CURVGAP  SHAPEDIST   R2_S   R2_C    b2_S    b2_C    b1_S    b1_C
+dialset dial                                                                                       
+B       n        0.5833    0.9840   0.2068     1.0730 0.7037 0.8767 -0.0316  0.0775  0.7089 -0.2751
+C       cadence  0.5000    0.7427   0.1926     0.8066 0.8791 0.8407 -0.6175 -0.4804 -0.1012  0.6415
+        band     0.4167    0.2526   0.0914     0.4013 0.6713 0.9226 -0.0632 -0.0063  0.7022  0.9548
+        volcap   0.2500    0.0761   0.1580     0.3553 0.7412 0.7478 -0.2594 -0.4174  0.1698  0.2144
+B       trim     0.1667    0.2616   0.0622     0.3653 0.6227 0.8574  0.0173  0.0011  0.6346  0.8962
+C       quantile 0.1667    0.1328   0.1386     0.2567 0.6126 0.6522 -0.1323 -0.0938  0.3123  0.2902
+B       cadence  0.0833    0.0641   0.1547     0.2027 0.8105 0.7543 -0.0617 -0.1884  0.5320  0.5289
+        gross    0.0833    0.0484   0.1164     0.1301 1.0000 1.0000 -0.0931 -0.0151  0.9519  0.9997
+        volgate  0.0833    0.1103   0.1908     0.3259 0.6757 0.7036  0.1101 -0.0807  0.2493  0.3545
+C       n        0.0833    0.0947   0.0932     0.1815 0.6610 0.6722 -0.0575  0.0112  0.2872  0.2366
+        gross    0.0000    0.0038   0.0551     0.0553 1.0000 1.0000 -0.0582 -0.0033  0.9962  1.0000
+  Spearman across the 11 dials: rate vs CURVGAP  +0.5270   rate vs LEVELGAP +0.8394   rate vs SHAPEDIST +0.9327
+  cell-level point-biserial rate~CURVGAP   r +0.4026  panel-clustered perm p 0.0001  (n=132)
+  cell-level point-biserial rate~LEVELGAP  r +0.6215  panel-clustered perm p 0.0000  (n=132)
+  cell-level point-biserial rate~SHAPEDIST r +0.6645  panel-clustered perm p 0.0000  (n=132)
+  logistic disagree ~ z(CURVGAP) + z(LEVELGAP):  b_CURV +0.5693  b_LEVEL +1.4049  (intercept -1.5862, n 132)
+
+## T3 — does the `n` dial's excess SURVIVE the geometry? (ORD, CAL, 10 bps)
+                  observed  predicted  cells  residual
+dialset dial                                          
+C       band        0.4167     0.1904     12    0.2263
+        volcap      0.2500     0.1711     12    0.0789
+        quantile    0.1667     0.1274     12    0.0393
+        cadence     0.5000     0.4922     12    0.0078
+B       n           0.5833     0.6169     12   -0.0336
+        trim        0.1667     0.2049     12   -0.0382
+C       n           0.0833     0.1223     12   -0.0390
+B       gross       0.0833     0.1262     12   -0.0429
+        cadence     0.0833     0.1404     12   -0.0571
+C       gross       0.0000     0.0640     12   -0.0640
+B       volgate     0.0833     0.1607     12   -0.0774
+  lane B `n`: observed 0.5833  geometry-predicted 0.6169  residual -0.0336
+  mean |residual| over the 11 dials: 0.0640;  largest 0.2263 at ('C', 'band')
+
+## Same three readings on the MID split (robustness, not the headline)
+  MID rate~CURVGAP   r +0.4187  perm p 0.0000
+  MID rate~LEVELGAP  r +0.6795  perm p 0.0000
+  MID rate~SHAPEDIST r +0.7149  perm p 0.0000
+
+## PROTOCOL rule 8 — CURVGAP as an ABSTENTION rule (IS 2009-2016 chooses, OOS 2017+ read once)
+   ABSTAIN(tau): if ORD_CURVGAP > tau hold the cell's DONOTHING arm, else take S_SHARPE's pick.
+               tau   scope  cells  took  abstained  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  pass4a  pass4b
+0           0.0000     ALL    132     0        132      0.8071    0.0817    -0.2449       0       8
+1           0.0000  B_only     60     0         60      0.7578    0.0790    -0.2713       0       4
+2           0.0000  n_only     24     0         24      0.7290    0.0895    -0.3009       0       2
+3           0.2500     ALL    132   106         26      0.8042    0.0867    -0.2561       3      15
+4           0.2500  B_only     60    46         14      0.7619    0.0870    -0.2866       1       3
+5           0.2500  n_only     24    18          6      0.7087    0.0869    -0.2993       0       2
+6           0.5000     ALL    132   127          5      0.8037    0.0871    -0.2561       4      16
+7           0.5000  B_only     60    56          4      0.7686    0.0888    -0.2853       2       4
+8           0.5000  n_only     24    22          2      0.7097    0.0883    -0.3003       0       3
+9           0.7500     ALL    132   130          2      0.7999    0.0873    -0.2566       4      15
+10          0.7500  B_only     60    58          2      0.7603    0.0892    -0.2865       2       3
+11          0.7500  n_only     24    24          0      0.6889    0.0893    -0.3031       0       2
+12          1.0000     ALL    132   132          0      0.8005    0.0874    -0.2565       4      15
+13          1.0000  B_only     60    60          0      0.7617    0.0894    -0.2863       2       3
+14          1.0000  n_only     24    24          0      0.6889    0.0893    -0.3031       0       2
+15          1.5000     ALL    132   132          0      0.8005    0.0874    -0.2565       4      15
+16          1.5000  B_only     60    60          0      0.7617    0.0894    -0.2863       2       3
+17          1.5000  n_only     24    24          0      0.6889    0.0893    -0.3031       0       2
+18          2.0000     ALL    132   132          0      0.8005    0.0874    -0.2565       4      15
+19          2.0000  B_only     60    60          0      0.7617    0.0894    -0.2863       2       3
+20          2.0000  n_only     24    24          0      0.6889    0.0893    -0.3031       0       2
+21 1000000000.0000     ALL    132   132          0      0.8005    0.0874    -0.2565       4      15
+22 1000000000.0000  B_only     60    60          0      0.7617    0.0894    -0.2863       2       3
+23 1000000000.0000  n_only     24    24          0      0.6889    0.0893    -0.3031       0       2
+
+  Fixed comparands on the same cells (ALL scope, CAL, 10 bps):
+        book  cells  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  pass4a  pass4b
+0   S_SHARPE    132      0.8005    0.0874    -0.2565       4      15
+1     S_CAGR    132      0.7805    0.0877    -0.2642       3      16
+2  DONOTHING    132      0.8071    0.0817    -0.2449       0       8
+3   RULES_v2     12      0.9194    0.0700    -0.1438      -1      -1
+4   RULES_v1     12      0.4637    0.0548    -0.2570      -1      -1
+5        SPY     12      0.8815    0.1544    -0.3372      -1      -1
+
+  Per-panel OOS Sharpe of the best abstention rung vs the comparands:
+    best tau on OOS Sharpe (ALL) = 0.0  ->  0.8071 (took 0/132); tau=inf (never abstain, = S_SHARPE) = 0.8005; tau=0 (always abstain, = DONOTHING) = 0.8071
+    NOTE: picking tau on OOS Sharpe is NOT a rule-8 result; it is the ORACLE headroom of the ladder and is reported only as an upper bound.
+
+## KEEP paths over EVERY arm (both paths, both splits)
+  CAL: 4a 12/696   4b 46/696
+  MID: 4a 16/696   4b 42/696
+
+  CAL 4b passers (46), by (dialset, dial) and by panel:
+                   n
+dialset dial        
+B       cadence    3
+        gross      3
+        n          7
+        volgate   12
+C       band       2
+        gross      7
+        n          3
+        quantile   3
+        volcap     6
+          n
+panel      
+B136     14
+BSTK100   2
+S0_B60    3
+S1_B60    3
+S2_B60    4
+S3_B60    5
+U56      15
+
+  CAL 4a passers (12):
+        panel dialset  dial    arm  FULL_CAGR  FULL_Sharpe  FULL_MaxDD  CAL_IS_Sharpe  CAL_OOS_Sharpe
+210  SMALL439       B  trim  B0.05     0.0417       0.6170     -0.1460         0.6258          0.6121
+220  SMALL439       C  band  B0.05     0.0417       0.6170     -0.1460         0.6258          0.6121
+391    S2_B60       B  trim  B0.02     0.0997       1.2046     -0.1308         1.2086          1.2011
+588   S5_M120       C  band  B0.12     0.0476       0.6486     -0.1786         0.8120          0.5443
+637   S6_M120       B  trim  B0.05     0.0451       0.6316     -0.1570         0.6055          0.6470
+647   S6_M120       C  band  B0.05     0.0451       0.6316     -0.1570         0.6055          0.6470
+696   S7_M120       B  trim  B0.02     0.0403       0.5812     -0.1741         0.5494          0.5999
+698   S7_M120       B  trim  B0.05     0.0471       0.6658     -0.1677         0.6504          0.6751
+699   S7_M120       B  trim  B0.08     0.0517       0.7180     -0.1655         0.7173          0.7187
+708   S7_M120       C  band  B0.05     0.0471       0.6658     -0.1677         0.6504          0.6751
+709   S7_M120       C  band  B0.08     0.0517       0.7180     -0.1655         0.7173          0.7187
+710   S7_M120       C  band  B0.12     0.0534       0.7244     -0.1736         0.7854          0.6883
+
+Done in 780s
