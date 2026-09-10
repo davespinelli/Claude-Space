@@ -1,0 +1,138 @@
+=== 2026-09-10_price-the-three-free-lunch-cells_cloud ===
+Idea 495 — price the three "free lunch" cells.
+
+idea 270 ran a 12-cell (panel x dial) selector menu and found that in 3 cells — (B136, n),
+(BSTK100, n), (S5_M120, n) — choosing the dial value by IS **CAGR** beat choosing it by IS
+**Sharpe** on BOTH out-of-sample metrics at once, and all three picked a SHALLOW book (FWD5 or
+FWD10).  That is the opposite of the record's "selection loses" result, and it is concentrated on
+one dial.  Three cells out of twelve is also exactly what a coin flip on 12 cells would give.
+
+THE QUESTION: is the free lunch a stable property of shallow n, or three draws out of twelve?
+
+DESIGN — the queue's literal ask, "re-run those three cells over 40 seeded resamples of their own
+panels".  For each of the three parent panels, 40 sub-panels are drawn WITHOUT replacement from
+that panel's own tradable set at a fixed 75% coverage (no coverage tuning), seeds 2000..2039.
+On each sub-panel the whole n-dial menu is rebuilt and both selectors are re-run:
+
+    menu       EWall, FWD5, FWD10, FWD20, FWD30, FWD40, FWD60   (idea 270's lane-B n dial,
+               reproduced verbatim: eligible = above 200d MA and vol20 < 0.60, rank on the
+               NON-vol-scaled composite, equal weight, gross 0.75, weekly, t+1, 10 bps)
+    S_SHARPE   argmax IS Sharpe on 2009-01-01..2016-12-31
+    S_CAGR     argmax IS CAGR   on the same window
+    DONOTHING  EWall, the menu's no-choice arm
+    FREE LUNCH  S_CAGR beats S_SHARPE on OOS Sharpe AND on OOS CAGR, 2017-01-01..2026 read once.
+
+THE ONLY TWO TUNED PARAMETERS (PROTOCOL rule 4):
+    seeds   40 per panel (the queue's number)
+    nfloor  the shallowest book the menu is allowed to contain, in {5, 10, 20} — this is the
+            dial the hypothesis is about, since idea 270's three picks were FWD5/FWD10.
+ALL 3 panels x 40 seeds x 3 nfloors = 360 selector cells are reported, plus the 3 parent cells.
+
+RULE 8 (PROTOCOL 8) is intrinsic: every selector chooses on 2009-2016 ONLY and 2017-2026 is read
+once.  Both KEEP paths are additionally evaluated on every selected book against the live RULES v2
+baseline and against SPY, full sample and both halves.
+
+Deterministic (fixed seeds); no network; never calls yfinance.
+SURVIVORSHIP: B136/BSTK100 are current constituents of a current screen and SMALL439 (the parent
+of S5_M120) is a current sub-$2B screen, so every LEVEL is biased up.  The free-lunch RATE is a
+within-panel comparison of two selectors on the same books and is not.
+
+PANELS
+  SMALL panel: dropped 44 names with max_1d_move >= 1.0 -> 439 tradable.
+  B136      136 cols,  136 tradable, 2008-01-02..2026-09-04 (4699 rows)
+  BSTK100   101 cols,  100 tradable, 2008-01-02..2026-09-04 (4699 rows)
+  S5_M120   121 cols,  120 tradable, 2010-01-04..2026-09-04 (4194 rows)
+
+GATES (pre-registered, printed before any hypothesis number)
+  G1 fast_bt vs engine.backtest on B136/FWD20 = 1.388e-17 over 4697 finite rows (2 engine-NaN warm-up rows, 0 inside the scored window)   PASS
+  G2 resample is a strict subset at the stated coverage: 102/136 = 0.750   PASS
+  G3 the n menu is nested (FWD5 holdings inside FWD10): 0 violations   PASS
+  GATES: ALL PASS
+
+====================================================================================================
+PART A — THE THREE PARENT CELLS as idea 270 ran them (nfloor = 5), every arm reported
+
+  B136   SPY 15.23%/0.889/-33.72% (halves 0.957/0.834, OOS Sharpe 0.882)   RULES v2  8.03%/1.106/-12.24% (OOS 1.119)
+    arm      IS_Shrp  IS_CAGR | OOS_Shrp OOS_CAGR OOS_MaxDD | full CAGR Sharpe  MaxDD  H1/H2
+    EWall      1.035   10.88% |    1.019   10.58%   -17.69% |    10.72%  1.026 -17.69% 1.146/0.914
+    FWD5       0.955   16.93% |    0.824   16.39%   -23.99% |    16.63%  0.876 -23.99% 0.996/0.782
+    FWD10      1.056   16.08% |    0.781   12.77%   -21.44% |    14.25%  0.895 -21.44% 1.118/0.710
+    FWD20      1.023   13.65% |    0.884   12.45%   -20.05% |    12.99%  0.943 -20.05% 1.105/0.803
+    FWD30      1.027   12.81% |    0.895   11.60%   -20.30% |    12.15%  0.953 -20.30% 1.112/0.811
+    FWD40      1.010   12.11% |    0.971   11.98%   -19.11% |    12.04%  0.989 -19.11% 1.108/0.880
+    FWD60      0.993   11.19% |    1.005   11.54%   -18.68% |    11.38%  1.000 -18.68% 1.097/0.911
+    nfloor  5: S_SHARPE -> FWD10   S_CAGR -> FWD5    dOOS_Sharpe +0.0437  dOOS_CAGR +3.63 pp  FREE LUNCH
+    nfloor 10: S_SHARPE -> FWD10   S_CAGR -> FWD10   dOOS_Sharpe +0.0000  dOOS_CAGR +0.00 pp  mixed/tie
+    nfloor 20: S_SHARPE -> EWall   S_CAGR -> FWD20   dOOS_Sharpe -0.1349  dOOS_CAGR +1.87 pp  mixed/tie
+
+  BSTK100   SPY 15.23%/0.889/-33.72% (halves 0.957/0.834, OOS Sharpe 0.882)   RULES v2  9.18%/1.153/-12.96% (OOS 1.138)
+    arm      IS_Shrp  IS_CAGR | OOS_Shrp OOS_CAGR OOS_MaxDD | full CAGR Sharpe  MaxDD  H1/H2
+    EWall      1.039   13.45% |    1.010   12.16%   -26.09% |    12.74%  1.023 -26.09% 1.142/0.904
+    FWD5       0.945   17.63% |    0.779   15.35%   -28.67% |    16.37%  0.849 -28.67% 0.989/0.731
+    FWD10      1.050   17.22% |    0.749   12.34%   -29.13% |    14.52%  0.879 -29.13% 1.104/0.679
+    FWD20      1.013   14.90% |    0.891   13.05%   -27.29% |    13.88%  0.946 -27.29% 1.106/0.796
+    FWD30      1.009   14.16% |    0.929   12.65%   -26.75% |    13.33%  0.965 -26.75% 1.098/0.838
+    FWD40      1.006   13.71% |    0.976   12.76%   -26.30% |    13.19%  0.990 -26.30% 1.099/0.883
+    FWD60      1.024   13.50% |    1.021   12.67%   -26.36% |    13.04%  1.022 -26.36% 1.121/0.923
+    nfloor  5: S_SHARPE -> FWD10   S_CAGR -> FWD5    dOOS_Sharpe +0.0306  dOOS_CAGR +3.01 pp  FREE LUNCH
+    nfloor 10: S_SHARPE -> FWD10   S_CAGR -> FWD10   dOOS_Sharpe +0.0000  dOOS_CAGR +0.00 pp  mixed/tie
+    nfloor 20: S_SHARPE -> EWall   S_CAGR -> FWD20   dOOS_Sharpe -0.1185  dOOS_CAGR +0.89 pp  mixed/tie
+
+  S5_M120   SPY 14.13%/0.862/-33.72% (halves 0.891/0.858, OOS Sharpe 0.882)   RULES v2  4.20%/0.601/-17.92% (OOS 0.468)
+    arm      IS_Shrp  IS_CAGR | OOS_Shrp OOS_CAGR OOS_MaxDD | full CAGR Sharpe  MaxDD  H1/H2
+    EWall      0.616    7.35% |    0.135    0.87%   -50.54% |     3.29%  0.294 -50.54% 0.678/0.023
+    FWD5       0.477    8.13% |    0.253    3.19%   -53.67% |     5.05%  0.333 -54.06% 0.426/0.257
+    FWD10      0.431    6.05% |    0.221    2.40%   -50.09% |     3.78%  0.295 -50.09% 0.473/0.153
+    FWD20      0.459    5.75% |    0.251    2.85%   -48.56% |     3.95%  0.321 -48.56% 0.533/0.165
+    FWD30      0.554    6.82% |    0.109    0.41%   -50.00% |     2.81%  0.258 -50.00% 0.570/0.031
+    FWD40      0.599    7.20% |    0.153    1.15%   -50.40% |     3.42%  0.301 -50.40% 0.658/0.048
+    FWD60      0.609    7.25% |    0.136    0.88%   -50.50% |     3.27%  0.292 -50.50% 0.677/0.021
+    nfloor  5: S_SHARPE -> EWall   S_CAGR -> FWD5    dOOS_Sharpe +0.1175  dOOS_CAGR +2.33 pp  FREE LUNCH
+    nfloor 10: S_SHARPE -> EWall   S_CAGR -> EWall   dOOS_Sharpe +0.0000  dOOS_CAGR +0.00 pp  mixed/tie
+    nfloor 20: S_SHARPE -> EWall   S_CAGR -> EWall   dOOS_Sharpe +0.0000  dOOS_CAGR +0.00 pp  mixed/tie
+
+====================================================================================================
+PART B — 40 SEEDED RESAMPLES PER PANEL at 75% coverage (seeds 2000..2039), the whole menu rebuilt on each
+  B136     102/136 names x 40 seeds  [28.9s]
+  BSTK100  75/100 names x 40 seeds  [21.1s]
+  S5_M120  90/120 names x 40 seeds  [22.5s]
+
+====================================================================================================
+PART C — IS THE FREE LUNCH STABLE?  (all 360 resample cells, nothing dropped)
+
+  panel     nfloor  disagree  FREE LUNCH  reverse  p(FL=.5|disagree)  mean dOOS_Sharpe  mean dOOS_CAGR_pp
+  B136           5   34/40        1/40          3             0.0000           -0.1743              +2.16
+  B136          10   33/40        0/40          6             0.0000           -0.1520              +1.05
+  B136          20   27/40        0/40          1             0.0000           -0.0835              +0.75
+  BSTK100        5   34/40        1/40          7             0.0000           -0.1594              +1.25
+  BSTK100       10   29/40        0/40         13             0.0000           -0.1553              +0.03
+  BSTK100       20   32/40        0/40          8             0.0000           -0.0910              +0.18
+  S5_M120        5   15/40       10/40          5             0.3018           +0.0256              +0.41
+  S5_M120       10   13/40        9/40          2             0.2668           +0.0328              +0.58
+  S5_M120       20   11/40        6/40          3             1.0000           +0.0035              +0.05
+
+  POOLED over the 3 panels:
+    nfloor  5: disagree 83/120 (69.2%), FREE LUNCH 12/120 (10.0%), reverse 15/120 (12.5%), p(FL | disagree, coin) 0.0000, mean dOOS_Sharpe -0.1027, mean dOOS_CAGR +1.27 pp
+    nfloor 10: disagree 75/120 (62.5%), FREE LUNCH 9/120 (7.5%), reverse 21/120 (17.5%), p(FL | disagree, coin) 0.0000, mean dOOS_Sharpe -0.0915, mean dOOS_CAGR +0.55 pp
+    nfloor 20: disagree 70/120 (58.3%), FREE LUNCH 6/120 (5.0%), reverse 12/120 (10.0%), p(FL | disagree, coin) 0.0000, mean dOOS_Sharpe -0.0570, mean dOOS_CAGR +0.33 pp
+
+  WHICH ARM EACH SELECTOR PICKS (resamples, nfloor = 5) — is the pick SHALLOW?
+    B136      S_SHARPE  EWall:21  FWD20:8  FWD5:6  FWD10:4  FWD30:1
+    B136      S_CAGR    FWD5:35  FWD10:5
+    B136      S_CAGR picks FWD5/FWD10 in 40/40 seeds; free lunch among those 1/40, among the rest 0/0
+    BSTK100   S_SHARPE  EWall:14  FWD10:11  FWD60:10  FWD5:3  FWD20:2
+    BSTK100   S_CAGR    FWD5:31  FWD10:9
+    BSTK100   S_CAGR picks FWD5/FWD10 in 40/40 seeds; free lunch among those 1/40, among the rest 0/0
+    S5_M120   S_SHARPE  EWall:23  FWD5:9  FWD40:3  FWD60:2  FWD30:2  FWD10:1
+    S5_M120   S_CAGR    FWD5:22  EWall:11  FWD60:3  FWD30:3  FWD40:1
+    S5_M120   S_CAGR picks FWD5/FWD10 in 22/40 seeds; free lunch among those 9/22, among the rest 1/18
+
+  DOES EITHER SELECTOR BEAT DO-NOTHING (EWall) OOS?  (resamples, nfloor = 5)
+    B136      S_SHARPE > EWall on OOS Sharpe 0/40; S_CAGR > EWall 0/40  |  mean OOS Sharpe  S_SHARPE 0.9360  S_CAGR 0.7617  EWall 1.0118
+    BSTK100   S_SHARPE > EWall on OOS Sharpe 9/40; S_CAGR > EWall 0/40  |  mean OOS Sharpe  S_SHARPE 0.9184  S_CAGR 0.7590  EWall 0.9841
+    S5_M120   S_SHARPE > EWall on OOS Sharpe 14/40; S_CAGR > EWall 22/40  |  mean OOS Sharpe  S_SHARPE 0.1411  S_CAGR 0.1667  EWall 0.1121
+
+  BOTH KEEP PATHS on every selected book (resamples + parents, all nfloors)
+    S_SHARPE  4a 0/369   4b 35/369
+    S_CAGR    4a 0/369   4b 3/369
+    4b fail-bar census (both selectors, 700 failing books): H1;H2;OOS;DD;CAGR 242, H2;OOS;DD 194, DD 87, H2;DD 58, CAGR 36, H1;H2;OOS;DD 33
