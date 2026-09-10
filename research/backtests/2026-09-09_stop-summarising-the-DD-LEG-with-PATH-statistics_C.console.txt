@@ -1,0 +1,349 @@
+======================================================================================================================
+IDEA 592 — stop summarising the DD LEG with PATH statistics: does an EPISODE-LEVEL statistic predict the MaxDD flip?  (lane C, 2026-09-09)
+======================================================================================================================
+
+G0 VINTAGE (panels truncated to idea 584's window so its cells reproduce exactly)
+  U56       current 4701 rows to 2026-09-09 -> truncated 4700 rows to 2026-09-08 (idea 584 had 4700)   PASS   dropped 1 bar(s)
+  B136      current 4699 rows to 2026-09-04 -> truncated 4699 rows to 2026-09-04 (idea 584 had 4699)   PASS   dropped 0 bar(s)
+  SMALL439  current 4194 rows to 2026-09-04 -> truncated 4194 rows to 2026-09-04 (idea 584 had 4194)   PASS   dropped 0 bar(s)
+
+SMALL panel: dropped 44 names with max_1d_move >= 1.0 -> 439 tradable.
+SURVIVORSHIP: B136 and SMALL439 are CURRENT constituents; every LEVEL is biased up. Every claim here is a clause-vs-its-own-control DIFFERENCE on a fixed panel.
+
+PRE-REGISTERED DIRECTION: a MaxDD flip is the event 'the clause beats the nominal control on DD but loses to simply holding less',
+so it should carry a LOW BINDREL — the scored statistic is -BINDREL and the prediction is AUC(-BINDREL) > 0.5.  A reversal is reported as one.
+
+GATES
+  G1 U56/EWall              max|dReturn| = 1.388e-17   PASS
+  G1 U56/BREADTH-DG         max|dReturn| = 1.041e-17   PASS
+  G1 U56/MA-RS              max|dReturn| = 1.388e-17   PASS
+  G1 U56/RULES v2           max|dReturn| = 6.939e-18   PASS
+
+PANEL U56: 56 cols, 56 tradable, 2008-01-02..2026-09-08 (4700 rows), scored from 2009-01-13
+  SPY      CAGR  15.19% Sharpe  0.887 MaxDD -33.72%
+  RULESv2  CAGR   8.64% Sharpe  1.204 MaxDD -12.05%
+  built 108 cells + shuffle + placebo   [16.8s]
+
+PANEL B136: 136 cols, 136 tradable, 2008-01-02..2026-09-04 (4699 rows), scored from 2009-01-13
+  SPY      CAGR  15.23% Sharpe  0.889 MaxDD -33.72%
+  RULESv2  CAGR   8.03% Sharpe  1.106 MaxDD -12.24%
+  built 108 cells + shuffle + placebo   [29.8s]
+
+PANEL SMALL439: 440 cols, 439 tradable, 2010-01-04..2026-09-04 (4194 rows), scored from 2011-01-13
+  SPY      CAGR  14.13% Sharpe  0.862 MaxDD -33.72%
+  RULESv2  CAGR   3.81% Sharpe  0.572 MaxDD -14.68%
+  built 108 cells + shuffle + placebo   [81.9s]
+
+PANEL U56cur: 56 cols, 56 tradable, 2008-01-02..2026-09-09 (4701 rows), scored from 2009-01-13
+  SPY      CAGR  15.15% Sharpe  0.886 MaxDD -33.72%
+  RULESv2  CAGR   8.63% Sharpe  1.202 MaxDD -12.05%
+  VINTAGE ARM U56cur: built 72 DG cells on the untruncated panel   [4.2s]
+
+  G3a idea-584 cells       324 rows, max|d(delta)| = 1.187e-06 (bar 1e-04, price restatement), flip-flag disagreements = 0 (bar 0)   PASS
+      B136      108 cells  max|d(delta)| = 9.888e-17  bar 1e-12  PASS   <- data/prices_broad.csv is BIT-IDENTICAL: this is the CODE-identity gate
+      SMALL439  108 cells  max|d(delta)| = 9.888e-17  bar 1e-04  PASS   <- data/prices.csv restated since idea 584
+      U56       108 cells  max|d(delta)| = 1.187e-06  bar 1e-04  PASS   <- data/prices.csv restated since idea 584
+  G3b idea-584 shuffle     1404 rows, max|d(delta)| = 1.880e-06 (bar 1e-04), flip-flag disagreements = 166 of 4212 flags   PASS
+      B136       468 rows  max|d(delta)| = 9.975e-17  bar 1e-12  PASS   flip-flag disagreements 0
+      SMALL439   468 rows  max|d(delta)| = 9.975e-17  bar 1e-04  PASS   flip-flag disagreements 0
+      U56        468 rows  max|d(delta)| = 1.880e-06  bar 1e-04  PASS   flip-flag disagreements 166
+  G3d label fragility      every disagreement knife-edge (|delta to zero| < 1e-04)?   PASS
+      metric  disagreements  published_flips   max_margin  knife_edge
+      Sharpe              0                0 0.000000e+00           0
+        CAGR              0              437 0.000000e+00           0
+       MaxDD            166              679 8.881784e-16         166
+      READ: 166 of 1404 POP-B MaxDD labels move under a price restatement of at most 3.71e-4 — they were never determined, and they cap what ANY predictor can score on POP B.
+  G3c published DD ceiling  over idea 584's own subset (L>0, 1296 draws): published 0.6399, re-derived 0.6006, |d| = 3.92e-02
+      on the 1130 draws whose MaxDD LABEL agrees: 0.6337 vs 0.6337, |d| = 0.00e+00 (bar 1e-3)   PASS
+      so the whole 0.0392 gap in the headline ceiling is the 166 undetermined labels moving, not this run scoring a different statistic.
+  G4 episodes (9 panel x gross controls): PASS  max|bind depth - MaxDD| = 0.000e+00, underwater days == episode days on all 12 controls
+  G5 placebo shift invariance (count and length preserved at every shift): PASS
+
+======================================================================================================================
+THE EPISODE SETS THEMSELVES (the control at nominal gross; the binding episode decides the whole DD leg)
+======================================================================================================================
+   panel  episodes_all  bind_depth
+     U56           363      0.2253
+    B136           399      0.2537
+SMALL439           160      0.3617
+  mean episodes in the comparison set by theta: theta=0.05 -> 18.0  theta=0.10 -> 6.3  theta=0.15 -> 3.6  theta=0.20 -> 2.1   (the binding episode is always in the set)
+
+======================================================================================================================
+PART A0 — what a MaxDD 'flip' actually IS: the record's sign convention counts an EXACT TIE as a flip
+======================================================================================================================
+The record's flag is sign(A - U) != sign(A - M).  np.sign(0) = 0, so a comparison in which the clause's MaxDD EQUALS the control's
+to machine precision is labelled a flip.  G3d already showed all 166 label disagreements sit at a margin of 8.9e-16 — exact zeros, not near-misses.
+
+  POP_A (216 DG cells): MaxDD flips 28 of 216 (13.0%)
+    of which the clause's MaxDD is EXACTLY the nominal control's (|dU_MaxDD| < 1e-12): 0  (0.0% of the flips)
+    exactly the MATCHED control's (|dM_MaxDD| < 1e-12): 0;  both: 0
+    a NON-TIE sign change (both deltas non-zero, opposite signs): 28
+    BIND == 0 (the clause never de-grossed through the CONTROL'S BINDING EPISODE) holds for 0 rows;
+    it agrees with |dU_MaxDD| == 0 on 100.00% of rows (both-true 0, both-false 216, tie-without-zero-cover 0, zero-cover-without-tie 0)
+
+  POP_B (1404 shuffle rows): MaxDD flips 785 of 1404 (55.9%)
+    of which the clause's MaxDD is EXACTLY the nominal control's (|dU_MaxDD| < 1e-12): 342  (43.6% of the flips)
+    exactly the MATCHED control's (|dM_MaxDD| < 1e-12): 0;  both: 0
+    a NON-TIE sign change (both deltas non-zero, opposite signs): 443
+    BIND == 0 (the clause never de-grossed through the CONTROL'S BINDING EPISODE) holds for 257 rows;
+    it agrees with |dU_MaxDD| == 0 on 83.26% of rows (both-true 251, both-false 918, tie-without-zero-cover 229, zero-cover-without-tie 6)
+
+  BIND is theta-INVARIANT (the binding episode is in the set at every theta), so 'BIND == 0' is a parameter-free statement.
+
+======================================================================================================================
+PART A — POP A: the 216 real DE-GROSS cells (the record's published population)
+======================================================================================================================
+  MaxDD flips: 28 of 216 DG cells (13.0%); within the 108 market-DG cells 28 (25.9%).
+  Label robustness (G3d applied to POP A): 0 of 216 cells have a MaxDD label that is undetermined at the restatement's precision, of which 0 are published as flips.
+
+  PATH column (idea 584's 8 statistics), AUC for flip_MaxDD on THIS population:
+    GAP        all-DG 0.7629   within-market 0.9223
+    SD         all-DG 0.9669   within-market 0.9223
+    RHO1       all-DG 0.0940   within-market 0.2210
+    RHO5       all-DG 0.0992   within-market 0.2330
+    DRHO1      all-DG 0.2686   within-market 0.5188
+    RUN        all-DG 0.5266   within-market 0.6062
+    TIMING     all-DG 0.6244   within-market 0.6960
+    DDTIME     all-DG 0.6079   within-market 0.7442
+    PATH ceiling on POP A (max |AUC - 0.5| over the 8): 0.9669
+
+  EPISODE column, ALL 12 grid points x 8 statistics (directional AUC, pre-registered sign applied; > 0.5 = predicted direction):
+statistic      BIND  BINDISMAX  BINDRANK  BINDREL  EPMAX  EPMAXREL  EPSHARE  EPSPREAD
+theta weight                                                                         
+0.05  dd     0.0487     0.5296    0.6116   0.3117 0.0770    0.4707   0.4119    0.1123
+      deep   0.1915     0.3723    0.8266   0.4793 0.1995    0.6197   0.4250    0.1853
+      flat   0.0719     0.4612    0.5090   0.2285 0.1070    0.3712   0.4148    0.0916
+0.10  dd     0.0487     0.5141    0.5143   0.3117 0.0592    0.4286   0.6616    0.1832
+      deep   0.1915     0.3856    0.7530   0.4793 0.1941    0.5845   0.6727    0.2679
+      flat   0.0719     0.3716    0.3785   0.2285 0.1164    0.3353   0.6437    0.1420
+0.15  dd     0.0487     0.4633    0.4620   0.3117 0.0376    0.3837   0.7136    0.1597
+      deep   0.1915     0.4075    0.7377   0.4793 0.1915    0.5458   0.7192    0.2631
+      flat   0.0719     0.3176    0.3129   0.2285 0.0837    0.2842   0.6969    0.1258
+0.20  dd     0.0487     0.4175    0.4231   0.3117 0.0360    0.3309   0.7252    0.2683
+      deep   0.1915     0.4337    0.6905   0.4793 0.1915    0.5070   0.7335    0.3355
+      flat   0.0719     0.2660    0.2790   0.2285 0.0717    0.2342   0.7104    0.2386
+
+  same grid, WITHIN the 108 market-DG cells (form held constant):
+statistic      BIND  BINDISMAX  BINDRANK  BINDREL  EPMAX  EPMAXREL  EPSHARE  EPSPREAD
+theta weight                                                                         
+0.05  dd     0.1100     0.5223    0.6109   0.5906 0.1810    0.7330   0.1710    0.2638
+      deep   0.4500     0.4625    0.7989   0.9062 0.4688    0.9223   0.1750    0.4355
+      flat   0.1199     0.4607    0.5571   0.4036 0.1940    0.4781   0.2051    0.2152
+0.10  dd     0.1100     0.5321    0.5770   0.5906 0.1364    0.6951   0.3496    0.3364
+      deep   0.4500     0.4750    0.7509   0.9062 0.4562    0.9170   0.3701    0.5330
+      flat   0.1199     0.3991    0.4549   0.4036 0.1435    0.4473   0.3792    0.2444
+0.15  dd     0.1100     0.4890    0.5532   0.5906 0.0848    0.6701   0.4062    0.2566
+      deep   0.4500     0.4839    0.7504   0.9062 0.4500    0.9116   0.4194    0.4963
+      flat   0.1199     0.3578    0.4040   0.4036 0.0783    0.4259   0.4538    0.1965
+0.20  dd     0.1100     0.4879    0.5451   0.5906 0.0748    0.6223   0.5066    0.3308
+      deep   0.4500     0.5000    0.7429   0.9062 0.4500    0.9062   0.5264    0.4791
+      flat   0.1199     0.3440    0.3846   0.4036 0.0873    0.4022   0.5330    0.2868
+
+  BEST episode grid point on POP A: BINDRANK theta=0.05 deep -> AUC 0.8266 (within-market 0.7989); the PATH ceiling on the same cells is 0.9669.
+  Grid points beating the path ceiling: 0 of 96.
+
+  PER-FAMILY AUC at the mid grid point (theta=0.10, flat) — DD-DG is MECHANICALLY aligned with the episodes and is flagged, not hidden:
+    MA       n= 36 flips= 0   (degenerate: one class only)
+    VOL      n= 36 flips= 0   (degenerate: one class only)
+    BAND     n= 36 flips= 0   (degenerate: one class only)
+    BREADTH  n= 36 flips= 6   AUC(-BINDREL) 0.4111   AUC(GAP) 1.0000
+    SPYTR    n= 36 flips= 9   AUC(-BINDREL) 0.6543   AUC(GAP) 1.0000
+    DD       n= 36 flips=13   AUC(-BINDREL) 0.3077   AUC(GAP) 0.8796   <-- gate fires ON drawdown
+
+======================================================================================================================
+PART B — POP B: idea 584's BLOCK-SHUFFLE population, where the 0.640 ceiling was measured
+======================================================================================================================
+  1404 rows (1296 shuffled draws + 108 actual gates), MaxDD flip rate 55.9%.
+  A block permutation freezes the gross gap, amplitude, fire rate and the whole marginal distribution of the path EXACTLY; only WHEN the book was de-grossed moves.
+
+  PATH column on POP B (this is idea 584's published ceiling, re-derived):
+    GAP        pooled 0.6171
+    SD         pooled 0.6170
+    RHO1       pooled 0.4066
+    RHO5       pooled 0.4069
+    DRHO1      pooled 0.4740
+    RUN        pooled 0.4552
+    TIMING     pooled 0.4579
+    DDTIME     pooled 0.5767
+    PATH ceiling on POP B (max over the 8): 0.6171   <-- the number idea 592 quotes
+
+  EPISODE column on POP B, ALL 12 grid points (pooled AUC, pre-registered sign):
+statistic      BIND  BINDISMAX  BINDRANK  BINDREL  EPMAX  EPMAXREL  EPSHARE  EPSPREAD
+theta weight                                                                         
+0.05  dd     0.5845     0.5393    0.6708   0.6523 0.4799    0.5560   0.4337    0.5017
+      deep   0.6229     0.6124    0.6634   0.6656 0.5194    0.6033   0.4391    0.5186
+      flat   0.5478     0.5045    0.6422   0.6248 0.4688    0.5327   0.4450    0.4861
+0.10  dd     0.5845     0.5557    0.6322   0.6523 0.5249    0.5932   0.5170    0.5550
+      deep   0.6229     0.5934    0.6519   0.6656 0.5783    0.6385   0.5338    0.5806
+      flat   0.5478     0.5185    0.6050   0.6248 0.4997    0.5712   0.5353    0.5372
+0.15  dd     0.5845     0.5750    0.6014   0.6523 0.5573    0.6276   0.4945    0.5216
+      deep   0.6229     0.5922    0.6130   0.6656 0.6012    0.6517   0.5005    0.5315
+      flat   0.5478     0.5430    0.5810   0.6248 0.5294    0.6048   0.5236    0.5158
+0.20  dd     0.5845     0.5967    0.6347   0.6523 0.5558    0.6220   0.5003    0.5094
+      deep   0.6229     0.6039    0.6490   0.6656 0.6005    0.6442   0.5053    0.5256
+      flat   0.5478     0.5746    0.6218   0.6248 0.5248    0.5964   0.5179    0.5042
+
+  WITHIN-GROUP AUC (inside each panel x family x dial x gross group of 13 draws, where every path statistic is frozen):
+statistic      BIND  BINDISMAX  BINDRANK  BINDREL  EPMAX  EPMAXREL  EPSHARE  EPSPREAD
+theta weight                                                                         
+0.05  dd     0.6561     0.5449    0.6614   0.6599 0.5344    0.5255   0.4874    0.5538
+      deep   0.6714     0.6302    0.6697   0.6757 0.5654    0.5524   0.5073    0.5744
+      flat   0.6278     0.5116    0.6282   0.6301 0.5314    0.5225   0.5038    0.5549
+0.10  dd     0.6561     0.5812    0.6395   0.6599 0.5899    0.5888   0.5491    0.5813
+      deep   0.6714     0.6250    0.6638   0.6757 0.6302    0.6261   0.5692    0.6065
+      flat   0.6278     0.5459    0.6073   0.6301 0.5787    0.5779   0.5635    0.5672
+0.15  dd     0.6561     0.5590    0.5990   0.6599 0.6305    0.6286   0.5286    0.5813
+      deep   0.6714     0.5912    0.6263   0.6757 0.6455    0.6413   0.5390    0.5871
+      flat   0.6278     0.5269    0.5814   0.6301 0.6167    0.6159   0.5461    0.5712
+0.20  dd     0.6561     0.5741    0.6109   0.6599 0.6350    0.6360   0.5647    0.5571
+      deep   0.6714     0.5861    0.6492   0.6757 0.6526    0.6505   0.5632    0.5766
+      flat   0.6278     0.5560    0.5989   0.6301 0.6185    0.6200   0.5603    0.5675
+
+  ROBUST-LABEL SUBSET: 491 of 1404 POP-B rows carry a MaxDD label that is undetermined at the restatement's precision (G3d).  Dropping them leaves 913 rows, flip rate 48.0%:
+    episode column (theta=0.10, flat): BIND 0.4670/0.5874   BINDREL 0.6215/0.5856   EPMAX 0.4083/0.5668   EPMAXREL 0.5315/0.5661   BINDRANK 0.6310/0.5863   BINDISMAX 0.5637/0.5505   EPSPREAD 0.5132/0.6065   EPSHARE 0.5087/0.5028
+    path column: GAP 0.7374   SD 0.7373   RHO1 0.3659   RHO5 0.3655   DRHO1 0.4556   RUN 0.4589   TIMING 0.4501   DDTIME 0.5853
+
+  BEST episode grid point on POP B (within-group): BINDREL theta=0.05 deep -> 0.6757 over 108 groups (SD across groups 0.2345); pooled 0.6656.
+  Within-group AUC for the PATH statistics, same groups (they are frozen, so this is the structural floor, not an empirical one):
+    GAP        within-group 0.4619 over 108 groups
+    SD         within-group 0.4594 over 108 groups
+    RHO1       within-group 0.4036 over 108 groups
+    RHO5       within-group 0.3993 over 108 groups
+    DRHO1      within-group 0.4939 over 108 groups
+    RUN        within-group 0.4018 over 108 groups
+    TIMING     within-group 0.4687 over 108 groups
+    DDTIME     within-group 0.5747 over 108 groups
+
+======================================================================================================================
+PART C — the CHANCE FLOOR: circularly shift the episode windows and rescore (POP A)
+======================================================================================================================
+The episode set, its depths and the gross path are all held fixed; only the ALIGNMENT moves.  This is what 'an episode statistic discriminates' is worth by chance.
+  (theta=0.10, flat; directional AUC for flip_MaxDD over the 216 DG cells)
+ shift_w  BINDREL  EPMAXREL  BINDRANK
+    -104   0.2889    0.0931    0.3677
+     -52   0.1035    0.0718    0.3494
+     -26   0.4565    0.1774    0.3935
+     -13   0.4886    0.2291    0.5218
+      13   0.2821    0.1970    0.4040
+      26   0.4331    0.2181    0.4650
+      52   0.5933    0.3813    0.4759
+     104   0.4039    0.3150    0.4968
+  REAL alignment: BINDREL 0.2285   EPMAXREL 0.3353   BINDRANK 0.3785
+    BINDREL   real 0.2285 vs placebo mean 0.3812 [0.1035, 0.5933] over 8 shifts — real beats 1/8
+    EPMAXREL  real 0.3353 vs placebo mean 0.2103 [0.0718, 0.3813] over 8 shifts — real beats 7/8
+    BINDRANK  real 0.3785 vs placebo mean 0.4342 [0.3494, 0.5218] over 8 shifts — real beats 2/8
+
+======================================================================================================================
+RULE 8 — walk-forward: (dial, g) chosen on 2009-2016 by IS dSharpe vs the unmatched control, 2017-2026 untouched
+======================================================================================================================
+   panel  family form     dial  gross  IS_dU_Sharpe  OOS_dU_Sharpe  sign_holds  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  pass4a  pass4b
+     U56      MA   DG 150.0000 0.5000        0.0203         0.0611        True    0.0550      1.1948    -0.0767   False   False
+     U56     VOL   DG   0.9000 0.5000       -0.0157        -0.0308        True    0.0835      1.1028    -0.1393   False   False
+     U56    BAND   DG   0.1000 0.5000        0.0365         0.0678        True    0.0607      1.2015    -0.0832   False   False
+     U56 BREADTH   DG   0.2000 1.0000       -0.0169         0.3231       False    0.1639      1.4563    -0.1416   False    True
+     U56   SPYTR   DG   0.1000 0.5000       -0.0585         0.2034       False    0.0798      1.3371    -0.1125   False   False
+     U56      DD   DG   0.1000 0.7500       -0.0109         0.2100       False    0.1142      1.3436    -0.1494   False    True
+     U56      MA   RS 150.0000 0.5000        0.1012        -0.1256       False    0.0736      1.0080    -0.1291   False   False
+     U56     VOL   RS   0.9000 0.5000       -0.0147        -0.0176        True    0.0871      1.1161    -0.1473   False   False
+     U56    BAND   RS   0.1000 0.5000        0.0678         0.1253        True    0.0972      1.2590    -0.1243   False   False
+    B136      MA   DG 150.0000 0.5000       -0.0508        -0.0312        True    0.0477      1.0722    -0.0799   False   False
+    B136     VOL   DG   0.4500 0.5000        0.0243         0.0572        True    0.0721      1.1606    -0.1049    True   False
+    B136    BAND   DG   0.1000 0.5000        0.0014         0.0034        True    0.0559      1.1068    -0.0984   False   False
+    B136 BREADTH   DG   0.2000 1.0000        0.0076         0.0547        True    0.1258      1.1553    -0.1532   False    True
+    B136   SPYTR   DG   0.1000 0.5000       -0.0487         0.1947       False    0.0775      1.2981    -0.0911   False   False
+    B136      DD   DG   0.1000 0.5000       -0.0265         0.0788       False    0.0688      1.1822    -0.1120   False   False
+    B136      MA   RS 150.0000 1.0000       -0.0433        -0.1049        True    0.1452      0.9957    -0.2529   False   False
+    B136     VOL   RS   0.3500 0.5000        0.0032        -0.0276       False    0.0696      1.0758    -0.1142   False   False
+    B136    BAND   RS   0.1000 0.5000        0.0120         0.0439        True    0.0884      1.1473    -0.1386   False   False
+SMALL439      MA   DG 150.0000 1.0000       -0.1911        -0.1550        True    0.0422      0.4801    -0.1985   False   False
+SMALL439     VOL   DG   0.4500 1.0000       -0.0687        -0.4449        True    0.0136      0.1902    -0.1918   False   False
+SMALL439    BAND   DG   0.1000 1.0000       -0.1124         0.0025       False    0.0592      0.6376    -0.2031   False   False
+SMALL439 BREADTH   DG   0.2000 1.0000        0.0939        -0.0468       False    0.0898      0.5883    -0.2957   False   False
+SMALL439   SPYTR   DG   0.1000 0.5000       -0.0739         0.0657       False    0.0631      0.7037    -0.1534   False   False
+SMALL439      DD   DG   0.2000 0.7500       -0.0345        -0.0826        True    0.0629      0.5541    -0.2600   False   False
+SMALL439      MA   RS 150.0000 1.0000       -0.2910        -0.1532        True    0.0810      0.4819    -0.5014   False   False
+SMALL439     VOL   RS   0.4500 1.0000       -0.0205        -0.3776        True    0.0304      0.2575    -0.3981   False   False
+SMALL439    BAND   RS   0.1000 1.0000       -0.1031         0.0287       False    0.1255      0.6638    -0.4829   False   False
+
+  sign of the IS edge holds OOS: 16 of 27 picks.
+  KEEP paths on the picks: 4a 1/27, 4b 3/27.
+  KEEP paths over ALL 324 grid points: 4a 6, 4b 50, BOTH 0.
+
+  OOS levels of the picks against the benchmarks (per panel):
+   panel  spy_CAGR  spy_Sharpe  spy_MaxDD  v2_CAGR  v2_Sharpe  v2_MaxDD  spy_OOS_Sharpe  v2_OOS_Sharpe
+     U56    0.1519      0.8871    -0.3372   0.0864     1.2037   -0.1205          0.8786         1.2817
+    B136    0.1523      0.8890    -0.3372   0.0803     1.1058   -0.1224          0.8820         1.1185
+SMALL439    0.1413      0.8615    -0.3372   0.0381     0.5725   -0.1468          0.8820         0.5680
+
+  The 4b passers over the full grid (all re-derivations of books already in the record; no book here is new):
+panel  family form     dial  gross  clause_CAGR  clause_Sharpe  clause_MaxDD  clause_H1  clause_H2  clause_oSharpe
+  U56      MA   DG 150.0000 1.0000       0.1065         1.1654       -0.1502     1.2315     1.1055          1.1937
+  U56      MA   DG 200.0000 1.0000       0.1095         1.1691       -0.1584     1.1867     1.1559          1.2588
+  U56      MA   DG 250.0000 1.0000       0.1127         1.1825       -0.1538     1.1924     1.1780          1.2805
+  U56     VOL   DG   0.6000 0.7500       0.1157         1.1322       -0.1688     1.1600     1.1074          1.1838
+  U56     VOL   DG   0.3500 1.0000       0.1141         1.1526       -0.1454     1.1864     1.1188          1.2382
+  U56     VOL   DG   0.4500 1.0000       0.1352         1.1302       -0.1996     1.1461     1.1156          1.2143
+  U56    BAND   DG   0.0000 1.0000       0.1095         1.1691       -0.1584     1.1867     1.1559          1.2588
+  U56    BAND   DG   0.0300 1.0000       0.1157         1.2036       -0.1591     1.2314     1.1821          1.2810
+  U56    BAND   DG   0.0600 1.0000       0.1113         1.1412       -0.1776     1.1887     1.1035          1.2076
+  U56    BAND   DG   0.1000 1.0000       0.1177         1.1761       -0.1630     1.2514     1.1095          1.2003
+  U56 BREADTH   DG   0.1000 0.7500       0.1222         1.1871       -0.1799     1.1359     1.2412          1.3252
+  U56 BREADTH   DG   0.2000 0.7500       0.1194         1.2577       -0.1257     1.1856     1.3587          1.4576
+  U56 BREADTH   DG   0.2000 1.0000       0.1601         1.2580       -0.1648     1.1873     1.3573          1.4563
+  U56 BREADTH   DG   0.3500 1.0000       0.1237         1.0689       -0.2021     1.0192     1.1638          1.2759
+  U56   SPYTR   DG   0.1000 0.7500       0.1178         1.1859       -0.1649     1.1428     1.2414          1.3362
+  U56   SPYTR   DG   0.2000 0.7500       0.1071         1.1817       -0.1503     1.1425     1.2397          1.3503
+  U56   SPYTR   DG   0.2000 1.0000       0.1433         1.1816       -0.1971     1.1437     1.2381          1.3488
+  U56   SPYTR   DG   0.3500 1.0000       0.1078         0.9817       -0.1726     0.9725     0.9999          1.1073
+  U56      DD   DG   0.1000 0.7500       0.1181         1.2028       -0.1494     1.1852     1.2408          1.3436
+  U56      DD   DG   0.1000 1.0000       0.1639         1.2246       -0.1952     1.1866     1.2811          1.3766
+  U56      DD   DG   0.2000 1.0000       0.1356         1.0973       -0.1648     1.1447     1.0616          1.1894
+  U56      MA   RS 150.0000 0.7500       0.1151         1.0925       -0.1894     1.2865     0.9373          1.0079
+  U56      MA   RS 200.0000 0.7500       0.1153         1.0891       -0.1865     1.1711     1.0297          1.1086
+  U56      MA   RS 250.0000 0.7500       0.1147         1.0807       -0.1828     1.1783     1.0101          1.0913
+  U56     VOL   RS   0.4500 0.7500       0.1117         1.1000       -0.1774     1.1145     1.0877          1.1734
+  U56     VOL   RS   0.6000 0.7500       0.1219         1.1243       -0.1838     1.1446     1.1071          1.1775
+  U56    BAND   RS   0.0000 0.7500       0.1153         1.0891       -0.1865     1.1711     1.0297          1.1086
+  U56    BAND   RS   0.0300 0.7500       0.1223         1.1592       -0.1771     1.2143     1.1222          1.1995
+  U56    BAND   RS   0.0600 0.7500       0.1268         1.1410       -0.1960     1.1655     1.1274          1.2024
+  U56    BAND   RS   0.1000 0.7500       0.1352         1.2221       -0.1825     1.2656     1.1953          1.2588
+ B136     VOL   DG   0.4500 0.7500       0.1111         1.1635       -0.1551     1.2839     1.0465          1.1592
+ B136     VOL   DG   0.6000 0.7500       0.1236         1.1381       -0.1870     1.2551     1.0270          1.1225
+ B136     VOL   DG   0.3500 1.0000       0.1236         1.1737       -0.1428     1.3072     1.0367          1.1796
+ B136    BAND   DG   0.0300 1.0000       0.1072         1.1057       -0.1616     1.2301     0.9833          1.1174
+ B136    BAND   DG   0.0600 1.0000       0.1089         1.0915       -0.1804     1.2211     0.9656          1.1009
+ B136    BAND   DG   0.1000 1.0000       0.1164         1.1239       -0.1920     1.2739     0.9776          1.1042
+ B136 BREADTH   DG   0.2000 0.7500       0.1135         1.1354       -0.1533     1.2458     1.0164          1.1578
+ B136 BREADTH   DG   0.2000 1.0000       0.1517         1.1356       -0.2002     1.2480     1.0139          1.1553
+ B136   SPYTR   DG   0.1000 0.7500       0.1240         1.1767       -0.1533     1.1893     1.1788          1.2960
+ B136   SPYTR   DG   0.2000 0.7500       0.1106         1.1534       -0.1565     1.1765     1.1496          1.2877
+ B136   SPYTR   DG   0.1000 1.0000       0.1658         1.1765       -0.2002     1.1909     1.1765          1.2937
+ B136      DD   DG   0.1000 0.7500       0.1165         1.1163       -0.1641     1.2092     1.0175          1.1475
+ B136      DD   DG   0.2000 1.0000       0.1411         1.0699       -0.2002     1.1452     1.0059          1.1567
+ B136      MA   RS 100.0000 0.7500       0.1094         1.0048       -0.1839     1.1694     0.8460          0.9467
+ B136      MA   RS 150.0000 0.7500       0.1139         1.0438       -0.1941     1.2038     0.8996          0.9964
+ B136      MA   RS 200.0000 0.7500       0.1164         1.0566       -0.2012     1.1576     0.9695          1.0645
+ B136     VOL   RS   0.3500 0.7500       0.1101         1.1078       -0.1682     1.2580     0.9626          1.0738
+ B136     VOL   RS   0.4500 0.7500       0.1217         1.1220       -0.1871     1.2401     1.0089          1.1068
+ B136    BAND   RS   0.0000 0.7500       0.1164         1.0566       -0.2012     1.1576     0.9695          1.0645
+ B136    BAND   RS   0.0300 0.7500       0.1173         1.0690       -0.1853     1.1722     0.9791          1.0760
+
+======================================================================================================================
+PART E — VINTAGE ARM: U56's 108 DG cells re-run on the UNTRUNCATED current panel (the one bar idea 584 did not have)
+======================================================================================================================
+  matched-window U56: 72 DG cells, 7 MaxDD flips.   current-vintage U56: 72 DG cells, 7 MaxDD flips.
+  AUC over the 36 (statistic x theta x weight) points shown: mean |d| = 0.0000, max |d| = 0.0000; sign of (AUC - 0.5) disagrees on 0 of 36 points.
+  The extra bar therefore DOES NOT move the reading; the headline is reported on the matched window so that G3 is exact.
+
+======================================================================================================================
+HEADLINE
+======================================================================================================================
+G3: idea 584's 324 cells and 1404 shuffle rows reproduce on the BIT-IDENTICAL panel (B136) to < 1e-12 and elsewhere to 1.9e-06 — the residual is data/prices.csv being RESTATED since idea 584 (23,250 of 272,600 shared cells, max 3.71e-4 relative), not a code difference.  Its cell flip flags agree EXACTLY (0 of 972); its shuffle flags do not (166 of 4,212), and G3d shows every disagreement sits at a margin of 8.9e-16 — see A0.
+A0. THE FLIP FLAG COUNTS AN EXACT TIE AS A FLIP.  sign(0) = 0, so a book whose MaxDD EQUALS its control's is labelled a sign change.  On POP B that is 342 of 785 MaxDD 'flips' (43.6%), and 166 of them move under a 3.7e-4 price restatement — they were never determined.  On POP A, the record's own published population, there are ZERO ties: all 28 flips are genuine sign changes.
+A. THE PREMISE DOES NOT HOLD ON THE RECORD'S OWN POPULATION.  idea 592's '0.640, no scalar summary works' is a POP-B number.  On POP A the PATH column orders the MaxDD flips at AUC(SD) 0.9669 pooled and 0.9223 within the 108 market-DG cells (GAP, parameter-free), and PERFECTLY inside BREADTH and SPYTR (1.0000 each).  The best EPISODE grid point is BINDRANK theta=0.05/deep at 0.8266 (within-market 0.7989): 0 of 96 grid points beat the path ceiling of 0.9669.  The record's DD leg does NOT need an episode column.
+B. POP B (idea 584's 1404 shuffle rows, path ceiling 0.6171): best episode grid point WITHIN-GROUP BINDREL theta=0.05/deep 0.6757 over 108 groups (SD across groups 0.2345), pooled 0.6656 — a nominal win over the path column on a population whose positives are 44% ties.  The MECHANISM is partial, not an identity: BIND == 0 agrees with |dU_MaxDD| == 0 on 83.26% of rows (229 ties have non-zero binding-episode cover — de-grossing on the RECOVERY leg leaves MaxDD untouched too).
+C. placebo (POP A, the run's decisive test): shifting the episode windows keeps most of each statistic's discrimination, because cover tracks the gross gap whatever it is aligned to — BINDREL real 0.2285 vs shifted [0.1035, 0.5933], real beats 1/8; EPMAXREL real 0.3353 vs shifted [0.0718, 0.3813], real beats 7/8; BINDRANK real 0.3785 vs shifted [0.3494, 0.5218], real beats 2/8.
+   PRE-REGISTERED DIRECTION IS REVERSED on POP A: flips carry a HIGH binding-episode excess cover, not a low one (AUC(BINDREL) = 0.7715 raw), which is the gross gap showing through the episode statistic rather than an alignment effect.
+D. rule 8: 4a 1/27, 4b 3/27 on the picks; 4a 6, 4b 50, BOTH 0 over all 324 grid points.
+
+done in 139.9s
