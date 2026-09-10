@@ -9,6 +9,19 @@ Script `2026-09-10_put-the-T1-line-in-PROTOCOL-and-back-fill-it_cloud.py`; outpu
 **FORM** ∈ {RANK, VALUE} and **TOL** ∈ {0, ONE-RANK-STEP}. Panel and the 40-key menu cap are
 reported axes.
 
+**CONCURRENT REPLICATION (record convention 320R).** A lane B run answered idea 426 the same day
+while this one was in flight; the two were written independently and reach the **same two
+corrections**. Most importantly they hit the look-ahead defect from the other direction: their
+rule-8 pick is **forward-dated in 4 of 4 cells and T1-PASS** (`px.iloc[-1]/px - 1.0`, beating SPY
+4/4 and RULES v2 4/4 on pure look-ahead), which is the same key family this file's `causal_check`
+removes, and they price the gate at **exactly +0.0000** as this file does at 0 of 3 panels.
+Their harvest reaches further than this one's — by inlining single-assignment locals and defaulted
+parameters they reconstruct 111 admitted keys from 30,092 key-bearing sites (T1 PASS 72 / FAIL 39,
+or 72/21 after removing 18 identity handles of the panel), against the 52 self-contained keys
+here; the free-variable wall this file reports as a limit is exactly the 80.6% they measure. On
+the shared numbers the two agree: idea 433's 20-key table reproduces exactly in both, the VALUE
+form at one rank step is the recommended reading in both, and neither claims a KEEP.
+
 ## Gates (all pass)
 
 | gate | result |
