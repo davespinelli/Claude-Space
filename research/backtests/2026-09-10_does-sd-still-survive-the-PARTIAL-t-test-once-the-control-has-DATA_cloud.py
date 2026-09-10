@@ -55,8 +55,12 @@ STATED LIMITATIONS
     data/SMALL_PANEL_README.md), so their LEVELS are biased upward.  Only within-panel contrasts
     (draw vs draw, model vs model, D vs D on the same rows) are load-bearing.  SMALL484 is idea
     484's panel and is carried here so the test is run on the grid the queue names; it therefore
-    still contains the 44 names with max_1d_move >= 1.0 that this lane normally drops, and the
-    filtered SMALL439 panel is reported beside it in the live leg for exactly that reason.
+    still contains the 44 names with max_1d_move >= 1.0 that this lane normally drops.
+    THE LIVE LEG THEREFORE ALSO RUNS ON SMALL484, NOT ON THIS LANE'S USUAL SMALL439: the queue
+    names idea 484's grid, that grid is SMALL484, and re-drawing 3,000 filtered books to move the
+    live leg onto SMALL439 does not fit one run's compute budget.  SMALL439 is still built and its
+    SPY / live-book reference rows are printed so the reader can see what the filter changes at
+    the panel level; idea 487 (same day, same generator) priced SMALL439 selector books directly.
   * The small panel starts 2010, so its IS window is shorter than B136's.
 
 GATES (run before any new number is read; a failure stops the run)
@@ -595,31 +599,16 @@ def main():
     P("=" * 118)
     live = []
     t0 = time.time()
-    for pan in PANELS + ["SMALL439"]:
+    for pan in PANELS:
         c = ctx[pan]
-        gsrc = pan if pan in PANELS else "SMALL484"        # SMALL439 re-draws from its own names
         for k in KS:
-            if pan == "SMALL439":
-                dn = draw_names(c["names"], k, D_MAX, SEED_B + k)
-                idxn = {nm: i for i, nm in enumerate(c["names"])}
-                Mk = np.zeros((D_MAX, len(c["names"])))
-                for d, cols in enumerate(dn):
-                    for nm in cols:
-                        Mk[d, idxn[nm]] = 1.0
-                stats = pd.DataFrame([draw_stats(c["px"], cols, c["startb"]) for cols in dn])
-            else:
-                dn = NAMES[(pan, k)]
-                Mk = MEM[(pan, k)]
-                stats = G484[(G484.panel == pan) & (G484.k == k)].sort_values("draw")
+            dn = NAMES[(pan, k)]
+            Mk = MEM[(pan, k)]
+            stats = G484[(G484.panel == pan) & (G484.k == k)].sort_values("draw")
             fold = np.arange(D_MAX) % N_FOLDS
             for nb in N_BOOKS:
-                # IS-ONLY inputs
-                if pan == "SMALL439":
-                    isS = np.array([metrics((lambda t: t[0] - t[1] * COST / 1e4)(
-                        draw_book(c["px"], cols, nb, c["startb"])[:2]).loc[:IS_END])["Sharpe"]
-                        for cols in dn])
-                else:
-                    isS = stats[f"Sharpe_IS{nb}"].values
+                # IS-ONLY inputs, read off idea 484's committed grid (G3 gates the membership)
+                isS = stats[f"Sharpe_IS{nb}"].values
                 sd_is = stats["sd_IS"].values
                 lstar, _ = cv_lambda(Mk, isS, fold, 0)
                 _, Fo = fit_composition(Mk, isS, lstar, fold, 0)
