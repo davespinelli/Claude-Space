@@ -124,21 +124,49 @@ def rankpct(df):
     return df.rank(axis=1, pct=True)
 
 
+CELL_TOL = 1e-9          # idea 433's TOL, kept verbatim so the two runs are comparable
+
+
+def causal_check(fn, p, v, tol=1e-12):
+    """Is the key POINT-IN-TIME in the TIME dimension?  Perturb every price strictly after a
+    cut date and ask whether the key's values BEFORE that date move.  T1 says nothing about
+    this -- a forward return is perfectly scale-free -- so the clause must not be sold as a
+    look-ahead test, and the consequence book below must not be built on oracle keys."""
+    cut = len(p) // 2
+    q = p.copy()
+    q.iloc[cut:] = q.iloc[cut:] * 1.5
+    K0, K1 = fn(p, v), fn(q, v)
+    if isinstance(K0, pd.Series): K0 = K0.to_frame("K")
+    if isinstance(K1, pd.Series): K1 = K1.to_frame("K")
+    a = K0.iloc[:cut].to_numpy(dtype="float64", na_value=np.nan)
+    b = K1.iloc[:cut].to_numpy(dtype="float64", na_value=np.nan)
+    if a.shape != b.shape:
+        return 0
+    both_nan = np.isnan(a) & np.isnan(b)
+    d = np.where(both_nan, 0.0, np.abs(a - b))
+    return int(np.nanmax(np.where(np.isnan(d), np.inf, d)) <= tol)
+
+
 def cert_on_key(fn, p, v, ndraw=NDRAW, sigma=SIGMA, seed=SEED):
-    """Returns (rank_moved_tol0, value_moved_tol0, rank_moved_1step, value_moved_1step,
-    ncols) -- the fraction of comparable cells whose cross-sectional rank (resp. own value)
-    moves under px -> px @ diag(c).  The one-rank-step tolerance is 1/ncols on the rank scale
-    and, on the value scale, "moved enough to change a rank by one step" is read as a relative
-    move above the same 1/ncols (idea 433's convention, kept verbatim so the two runs compare).
+    """The certificate, in idea 433's construction (kept verbatim so this back-fill can be
+    read beside its table).  Returns (moved_rank, moved_value, ncols):
+
+      moved_rank   fraction of comparable cells whose cross-sectional rankpct changes by more
+                   than CELL_TOL under px -> px @ diag(c)
+      moved_value  the same on the cell's own value, relatively
+
+    The two TOLERANCES the clause could name are read off these fractions afterwards:
+        tol 0     PASS iff moved == 0                (an exact certificate)
+        1 step    PASS iff moved <= 1/ncols          (idea 433's calibration: a re-ordering
+                  smaller than one rank step cannot change any top-n selection)
     """
     rng = np.random.default_rng(seed)
     K0 = fn(p, v)
     if isinstance(K0, pd.Series):
         K0 = K0.to_frame("K")
     ncol = K0.shape[1]
-    step = 1.0 / max(ncol, 1)
     R0 = rankpct(K0)
-    out = {k: [] for k in ("r0", "v0", "r1", "v1")}
+    dr_, dv_ = [], []
     for _ in range(ndraw):
         c = pd.Series(rng.lognormal(0.0, sigma, size=p.shape[1]), index=p.columns)
         K1 = fn(p.mul(c, axis=1), v)
@@ -147,16 +175,12 @@ def cert_on_key(fn, p, v, ndraw=NDRAW, sigma=SIGMA, seed=SEED):
         ok = K0.notna() & K1.notna()
         n = int(ok.values.sum())
         if n == 0:
-            for k in out: out[k].append(np.nan)
-            continue
+            dr_.append(np.nan); dv_.append(np.nan); continue
         dr = (rankpct(K1) - R0).abs()
         rel = (K1 - K0).abs() / K0.abs().clip(lower=1e-12)
-        out["r0"].append(float(((dr > 0) & ok).values.sum()) / n)
-        out["v0"].append(float(((rel > 0) & ok).values.sum()) / n)
-        out["r1"].append(float(((dr > step) & ok).values.sum()) / n)
-        out["v1"].append(float(((rel > step) & ok).values.sum()) / n)
-    return (float(np.nanmean(out["r0"])), float(np.nanmean(out["v0"])),
-            float(np.nanmean(out["r1"])), float(np.nanmean(out["v1"])), ncol)
+        dr_.append(float(((dr > CELL_TOL) & ok).values.sum()) / n)
+        dv_.append(float(((rel > CELL_TOL) & ok).values.sum()) / n)
+    return float(np.nanmean(dr_)), float(np.nanmean(dv_)), ncol
 
 
 # ============================================================ PART A: harvest the record's keys
@@ -203,6 +227,18 @@ def normalise(src, names):
     return " ".join(out.split())
 
 
+def _seg(lines, node):
+    """Source text of a node, from a pre-split line list (ast.get_source_segment re-splits the
+    whole file on every call, which is 100x slower over a corpus this size)."""
+    a, b = getattr(node, "lineno", None), getattr(node, "end_lineno", None)
+    if a is None or b is None or b - a > 12:
+        return None
+    if a == b:
+        return lines[a - 1][node.col_offset:node.end_col_offset]
+    out = [lines[a - 1][node.col_offset:]] + lines[a:b - 1] + [lines[b - 1][:node.end_col_offset]]
+    return "".join(out)
+
+
 def harvest():
     log("\n=== PART A  HARVEST: every key the record can still reconstruct ===")
     files = sorted(set(list((ROOT / "research").rglob("*.py")) + list((ROOT / "products").rglob("*.py"))))
@@ -212,6 +248,7 @@ def harvest():
         try:
             src = f.read_text()
             tree = ast.parse(src)
+            lines = src.splitlines(keepends=True)
         except Exception:
             reasons["PARSE_FAIL"] += 1
             continue
@@ -223,7 +260,7 @@ def harvest():
             elif isinstance(node, ast.Return) and node.value is not None:
                 targets = [("<return>", node.value)]
             for vname, expr in targets:
-                seg = ast.get_source_segment(src, expr)
+                seg = _seg(lines, expr)
                 if seg is None or len(seg) > 300:
                     continue
                 names, why = _classify(expr, seg)
@@ -280,15 +317,24 @@ def cert_backfill(U, p, v):
             rows.append(dict(r, evaluable=0, why="all-NaN", ncols=K.shape[1]))
             continue
         try:
-            r0, v0, r1, v1, nc = cert_on_key(fn, p, v)
+            mr, mv, nc = cert_on_key(fn, p, v)
         except Exception as e:
             rows.append(dict(r, evaluable=0, why=f"cert {type(e).__name__}", ncols=np.nan))
             continue
-        rows.append(dict(r, evaluable=1, why="OK", ncols=nc,
-                         moved_rank_tol0=r0, moved_value_tol0=v0,
-                         moved_rank_1step=r1, moved_value_1step=v1,
-                         T1_RANK_tol0=int(r0 == 0), T1_VALUE_tol0=int(v0 == 0),
-                         T1_RANK_1step=int(r1 == 0), T1_VALUE_1step=int(v1 == 0),
+        step = 1.0 / p.shape[1]          # ONE RANK STEP ON THE PANEL, not on the key: a
+        #  single-column key must not clear the bar by being one column wide (idea 433's MKTLVL)
+        A = K.to_numpy(dtype="float64", na_value=np.nan)
+        with np.errstate(invalid="ignore"):
+            spread = np.nanmax(A, axis=1) - np.nanmin(A, axis=1)
+        degen = int(np.nanmax(spread) <= 0) if np.isfinite(spread).any() else 1
+        try:
+            causal = causal_check(fn, p, v)
+        except Exception:
+            causal = 0
+        rows.append(dict(r, evaluable=1, why="OK", ncols=nc, degenerate=degen, causal=causal,
+                         moved_rank=mr, moved_value=mv,
+                         T1_RANK_tol0=int(mr == 0), T1_VALUE_tol0=int(mv == 0),
+                         T1_RANK_1step=int(mr <= step), T1_VALUE_1step=int(mv <= step),
                          single_col=int(nc == 1)))
     K = pd.DataFrame(rows)
     log(f"  certificate run on {len(U)} keys in {time.time()-t0:.0f}s: "
@@ -303,6 +349,12 @@ def cert_backfill(U, p, v):
             f"{int(ok[ok.T1_VALUE_1step==1].single_col.sum())} are SINGLE-COLUMN keys "
             f"(idea 433's MKTLVL false-clearance class, which passes the RANK form vacuously: "
             f"{int(ok[ok.T1_RANK_1step==1].single_col.sum())} of its passers).")
+        nc_ = ok[ok.causal == 0]
+        log(f"      **T1 IS NOT A LOOK-AHEAD TEST.** {len(nc_)} of {len(ok)} evaluable keys are "
+            f"NON-CAUSAL as written (their value before a cut date moves when prices after it "
+            f"move), and {int(nc_.T1_VALUE_1step.sum())} of those PASS the certificate on the "
+            f"VALUE form -- a forward return is perfectly scale-free.  Examples: "
+            + "; ".join(nc_.norm.head(3).tolist())[:180])
         dis = ok[(ok.T1_RANK_1step != ok.T1_VALUE_1step)]
         log(f"      RANK and VALUE readings disagree on {len(dis)} of {len(ok)} keys "
             f"({len(dis)/len(ok):.1%}) -- the choice of form is not cosmetic.")
@@ -329,21 +381,25 @@ def gate_g0(p, v):
         f"src={col_src} rank={col_r} value={col_v}")
     if not (col_src and col_r and col_v):
         log("    columns: " + ", ".join(map(str, d.columns))); return
-    n, agree_r, agree_v, worst = 0, 0, 0, 0.0
+    n, ag0r, ag0v, ag1r, ag1v, worst = 0, 0, 0, 0, 0, 0.0
     for _, r in d.iterrows():
         try:
             fn = build_evaluator(" ".join(str(r[col_src]).split()))
-            a, b, _, _, _ = cert_on_key(fn, p, v, ndraw=NDRAW, sigma=SIGMA, seed=433)
+            a, b, nc = cert_on_key(fn, p, v, ndraw=NDRAW, sigma=SIGMA, seed=433)
         except Exception:
             continue
         n += 1
-        agree_r += int((a > 0) == (float(r[col_r]) > 0))
-        agree_v += int((b > 0) == (float(r[col_v]) > 0))
-        worst = max(worst, abs(a - float(r[col_r])), abs(b - float(r[col_v])))
-    log(f"    re-run here on {n} of its keys: the ZERO/NON-ZERO verdict agrees "
-        f"rank {agree_r}/{n}, value {agree_v}/{n}; max |difference in the moved fraction| "
-        f"{worst:.4f} (idea 433 used its own panel slice, so only the verdict is expected exact)")
-    assert n == 0 or (agree_r == n and agree_v == n), "G0 FAILED: a verdict disagrees"
+        pa, pb = float(r[col_r]), float(r[col_v])
+        st = st0 = 1.0 / p.shape[1]
+        ag0r += int((a == 0) == (pa == 0)); ag0v += int((b == 0) == (pb == 0))
+        ag1r += int((a <= st) == (pa <= st0)); ag1v += int((b <= st) == (pb <= st0))
+        worst = max(worst, abs(a - pa), abs(b - pb))
+    log(f"    re-run here on {n} of its keys with an independently written certificate: "
+        f"the PASS/FAIL partition agrees at tol 0 rank {ag0r}/{n} value {ag0v}/{n}, "
+        f"at one rank step rank {ag1r}/{n} value {ag1v}/{n}; "
+        f"max |difference in the moved fraction| {worst:.4f} "
+        f"(idea 433 drew its own panel slice, so only the partition is expected to be exact)")
+    assert n == 0 or (ag1r == n and ag1v == n), "G0 FAILED: a 1-step verdict disagrees"
 
 
 def gate_g1(px):
@@ -367,13 +423,19 @@ def gate_g2(px):
 
 
 def gate_g3(p, v):
-    """G3  the certificate returns EXACTLY 0 on a key that is scale-free by construction and
-    strictly positive on the price level itself -- the two poles of the theorem."""
+    """G3  the two poles of the theorem, and the reason the clause CANNOT be written as the
+    exact equality idea 426 drafts.  R6 is scale-free by construction and the price level is
+    not; the certificate must separate them by orders of magnitude at the tolerance it names,
+    and the float64 noise floor must be reported rather than assumed away."""
     a = cert_on_key(build_evaluator("px / px.shift(126) - 1"), p, v)
     b = cert_on_key(build_evaluator("px"), p, v)
-    log(f"G3  poles of the theorem: R6 moved rank {a[0]:.3e} value {a[1]:.3e}; "
-        f"PX moved rank {b[0]:.4f} value {b[1]:.4f}")
-    assert a[0] == 0.0 and a[1] == 0.0 and b[0] > 0 and b[1] > 0, "G3 FAILED"
+    step = 1.0 / p.shape[1]
+    log(f"G3  poles of the theorem (one rank step = {step:.5f}): "
+        f"R6 moved rank {a[0]:.3e} value {a[1]:.3e};  PX moved rank {b[0]:.4f} value {b[1]:.4f}")
+    log(f"    the EXACT reading (moved == 0) rejects R6 on the RANK form: float64 tie swaps put "
+        f"{a[0]:.2%} of cells over a zero tolerance, so idea 426's `ranks(key(px)) == "
+        f"ranks(key(px @ diag(c)))` is NOT implementable as an equality.")
+    assert a[0] <= step and a[1] <= step and b[0] > 0.5 and b[1] > 0.5, "G3 FAILED"
 
 
 # ============================================================ PART C: the consequence book
@@ -387,7 +449,8 @@ def key_book(K, px, topn=TOPN, gross=GROSS):
 
 def consequence(K, panels, vols):
     log("\n=== PART C  WHAT THE CLAUSE COSTS: a book per key, both KEEP paths, rule 8 ===")
-    ok = K[(K.evaluable == 1) & (K.ncols > 1)].copy()
+    ok = K[(K.evaluable == 1) & (K.ncols > 1) & (K.get("degenerate", 0) == 0)
+           & (K.get("causal", 0) == 1)].copy()
     menu = ok.sort_values(["n_files", "n_sites"], ascending=False).head(MENU_CAP).reset_index(drop=True)
     log(f"  menu: the {len(menu)} most-used reconstructible multi-column keys "
         f"(cap {MENU_CAP}, a reported axis).  T1 VALUE/1step: "
@@ -500,24 +563,48 @@ def rule8(G):
 CLAUSE = """\
 PROTOCOL 10 (proposed, NOT adopted by this run) -- T1, the key certificate.
 
-  Any statistic used to SELECT or SCREEN names (a "key") must be invariant under the
-  per-name rescaling  px -> px @ diag(c),  c_i > 0.  Auto-adjusted closes are only defined
-  up to one positive constant per name, so a key that moves under diag(c) is reading a
-  quantity the data does not carry, and every verdict resting on it is a data artefact.
+  (0) WHAT IT IS.  Any statistic used to SELECT or SCREEN names (a "key") must be invariant
+      under the per-name rescaling  px -> px @ diag(c),  c_i > 0.  Auto-adjusted closes are
+      only defined up to one positive constant per name, so a key that moves under diag(c)
+      is reading a quantity the data does not carry, and any verdict resting on it is an
+      artefact of the price source rather than a fact about the market.
 
-  (a) GATE.  Every committed research script is scanned by the degree detector
-      (idea 428's scan_file); a key typed degree != 0 in the price scale is flagged.
-  (b) ADJUDICATOR.  A flagged key is cleared only by the VALUE certificate at a
-      one-rank-step tolerance: with c drawn log-normal(0, 0.25), no cell of key(px @ diag(c))
-      may differ from key(px) by more than 1/N in relative terms, N = names in the panel.
-      The RANK form of the certificate MUST NOT be named alone: it clears single-column
-      keys vacuously (idea 433's MKTLVL) and, on this record's own back-fill, disagrees with
-      the value form on a material share of the keys actually committed.
-  (c) REPORTING.  A LEADERBOARD row whose book selects on a key carries that key's T1
-      column (PASS / FAIL / NOT-RECONSTRUCTIBLE).  A FAIL is not automatically a KILL --
-      it is a statement that the row's verdict is not transferable to another price source.
-  (d) SCOPE.  T1 is a REPORTING clause.  No verdict in this record may turn on it, because
-      the record has measured its book cost at approximately zero (idea 433; this file).
+  (1) IT MUST NAME A TOLERANCE.  Idea 197's wording, `ranks(key(px)) == ranks(key(px @
+      diag(c)))`, is NOT implementable as an equality: on this record's own panel, float64
+      tie swaps move the ranks of `px / px.shift(126) - 1` -- a key that is scale-free by
+      construction -- on 1.5e-4 of cells, so the exact reading REJECTS it.  Read at zero
+      tolerance the certificate clears 28.8% of the record's reconstructible keys on the
+      rank form and 48.1% on the value form; read at ONE RANK STEP (1/N of the panel's
+      names, N the panel width, not the key's width) it clears 59.6% and 57.7%, and the
+      two classes separate by four orders of magnitude (scale-free keys <= 8e-5 of cells
+      moved, price-borne keys >= 0.91).  The clause therefore names: moved fraction
+      <= 1/N, with c ~ lognormal(0, 0.25), 8 draws, on the panel under test.
+
+  (2) FORM.  Name the VALUE certificate and report the RANK one beside it.  The rank form
+      clears any SINGLE-COLUMN key vacuously (idea 433's MKTLVL): 8 of its 31 passers here
+      are one column wide.  On this record's own corpus the two forms disagree on only
+      1 of 52 keys, so the argument for naming the value form is the vacuous class, not
+      the disagreement rate.
+
+  (3) SCOPE -- T1 IS NOT A LOOK-AHEAD TEST.  A forward return is perfectly scale-free.
+      3 of the 52 reconstructible keys here are non-causal as written (`px.shift(-5)/px-1`,
+      `px.iloc[-1]/px`, `px.iloc[-1]/px - 1.0`) and ALL THREE PASS the certificate; built
+      into a top-10 book, `px.shift(-5)/px - 1` clears BOTH KEEP paths on all three panels
+      at 10 and 25 bps with OOS Sharpe 10.98 / 13.43 / 19.39.  Any adoption of T1 must be
+      accompanied by the separate causality check (perturb prices after a cut date; the
+      key before it may not move), or the clause will certify oracles.
+
+  (4) REPORTING.  A LEADERBOARD row whose book selects on a key carries that key's T1
+      column: PASS / FAIL / NOT-RECONSTRUCTIBLE.  FAIL is not automatically a KILL -- it
+      says the row's verdict is not transferable to another price source.  The column is
+      attached to the SELECTION key only: a back-fill over every price expression in a
+      script (this file's PART A) also catches panel-shaped intermediates such as
+      `px.rolling(200).mean()`, which fail T1 and are not selection keys.
+
+  (5) COST.  T1 is a REPORTING clause and no verdict may turn on it.  Its book cost is
+      measured at zero here and by idea 433: on a 39-key menu over three panels the
+      T1-passing sub-menu changes the walk-forward pick in 0 of 3 panels at both cost
+      rungs (Delta OOS Sharpe +0.0000).
 """
 
 

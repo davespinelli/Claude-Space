@@ -1,0 +1,128 @@
+====================================================================================================
+IDEA 426  put-the-T1-line-in-PROTOCOL-and-back-fill-it   (cloud, 2026-09-10)
+====================================================================================================
+panels: U56 55 names x 4701 rows [2008-01-02..2026-09-09]  B136 135 names x 4699 rows [2008-01-02..2026-09-04]  SMALL439 439 names x 4194 rows [2010-01-04..2026-09-04]
+certificate panel: SMALL439 slice 750d x 140 names [2023-09-11..2026-09-04], volume from data/volume_small.csv[.gz]; sigma 0.25, 8 draws, seed 426
+
+=== GATES ===
+G1  fast_backtest vs engine.backtest: max|dret| 1.041e-17  max|dturn| 2.220e-16
+G2  live RULES v2 on U56 @10bps: 8.65% / 1.2092 / -11.90%
+G3  poles of the theorem (one rank step = 0.00714): R6 moved rank 1.472e-04 value 0.000e+00;  PX moved rank 0.9355 value 1.0000
+    the EXACT reading (moved == 0) rejects R6 on the RANK form: float64 tie swaps put 0.01% of cells over a zero tolerance, so idea 426's `ranks(key(px)) == ranks(key(px @ diag(c)))` is NOT implementable as an equality.
+G0  idea 433 committed keys.csv: 20 rows, columns matched src=src rank=CERT_rank_moved value=CERT_level_moved
+    re-run here on 20 of its keys with an independently written certificate: the PASS/FAIL partition agrees at tol 0 rank 20/20 value 20/20, at one rank step rank 20/20 value 20/20; max |difference in the moved fraction| 0.0000 (idea 433 drew its own panel slice, so only the partition is expected to be exact)
+
+=== PART A  HARVEST: every key the record can still reconstruct ===
+  scanned 609 committed .py files; 531 contain at least one self-contained price expression.
+  2188 raw expressions extracted; NOT reconstructible, by reason: no price name 54460, free call or lambda 28093, references a local this file cannot supply 2895, PARSE_FAIL 1
+  126 DISTINCT keys after normalising the price/volume variable name.
+
+  A2  running the certificate on every distinct reconstructible key
+  certificate run on 126 keys in 7s: 52 evaluable, 74 not (not key-shaped 37, cert TypeError 18, KeyError 16, TypeError 2, all-NaN 1)
+
+  A3  THE BACK-FILLED PASS/FAIL COLUMN (52 keys, four readings of the clause)
+      T1_RANK_tol0     PASS   15 / 52  (28.8%)
+      T1_VALUE_tol0    PASS   25 / 52  (48.1%)
+      T1_RANK_1step    PASS   31 / 52  (59.6%)
+      T1_VALUE_1step   PASS   30 / 52  (57.7%)
+      of the passers under the recommended reading (VALUE, 1 step), 7 are SINGLE-COLUMN keys (idea 433's MKTLVL false-clearance class, which passes the RANK form vacuously: 8 of its passers).
+      **T1 IS NOT A LOOK-AHEAD TEST.** 3 of 52 evaluable keys are NON-CAUSAL as written (their value before a cut date moves when prices after it move), and 3 of those PASS the certificate on the VALUE form -- a forward return is perfectly scale-free.  Examples: px.iloc[-1] / px - 1.0; px.iloc[-1] / px; px.shift(-5) / px - 1
+      RANK and VALUE readings disagree on 1 of 52 keys (1.9%) -- the choice of form is not cosmetic.
+      weighted by SITES in the record: VALUE/1step pass rate 83.4% of 731 committed sites.
+
+=== PART B  THE CLAUSE AS IT WOULD BE WORDED (report-only; PROTOCOL.md untouched) ===
+  PROTOCOL 10 (proposed, NOT adopted by this run) -- T1, the key certificate.
+  
+    (0) WHAT IT IS.  Any statistic used to SELECT or SCREEN names (a "key") must be invariant
+        under the per-name rescaling  px -> px @ diag(c),  c_i > 0.  Auto-adjusted closes are
+        only defined up to one positive constant per name, so a key that moves under diag(c)
+        is reading a quantity the data does not carry, and any verdict resting on it is an
+        artefact of the price source rather than a fact about the market.
+  
+    (1) IT MUST NAME A TOLERANCE.  Idea 197's wording, `ranks(key(px)) == ranks(key(px @
+        diag(c)))`, is NOT implementable as an equality: on this record's own panel, float64
+        tie swaps move the ranks of `px / px.shift(126) - 1` -- a key that is scale-free by
+        construction -- on 1.5e-4 of cells, so the exact reading REJECTS it.  Read at zero
+        tolerance the certificate clears 28.8% of the record's reconstructible keys on the
+        rank form and 48.1% on the value form; read at ONE RANK STEP (1/N of the panel's
+        names, N the panel width, not the key's width) it clears 59.6% and 57.7%, and the
+        two classes separate by four orders of magnitude (scale-free keys <= 8e-5 of cells
+        moved, price-borne keys >= 0.91).  The clause therefore names: moved fraction
+        <= 1/N, with c ~ lognormal(0, 0.25), 8 draws, on the panel under test.
+  
+    (2) FORM.  Name the VALUE certificate and report the RANK one beside it.  The rank form
+        clears any SINGLE-COLUMN key vacuously (idea 433's MKTLVL): 8 of its 31 passers here
+        are one column wide.  On this record's own corpus the two forms disagree on only
+        1 of 52 keys, so the argument for naming the value form is the vacuous class, not
+        the disagreement rate.
+  
+    (3) SCOPE -- T1 IS NOT A LOOK-AHEAD TEST.  A forward return is perfectly scale-free.
+        3 of the 52 reconstructible keys here are non-causal as written (`px.shift(-5)/px-1`,
+        `px.iloc[-1]/px`, `px.iloc[-1]/px - 1.0`) and ALL THREE PASS the certificate; built
+        into a top-10 book, `px.shift(-5)/px - 1` clears BOTH KEEP paths on all three panels
+        at 10 and 25 bps with OOS Sharpe 10.98 / 13.43 / 19.39.  Any adoption of T1 must be
+        accompanied by the separate causality check (perturb prices after a cut date; the
+        key before it may not move), or the clause will certify oracles.
+  
+    (4) REPORTING.  A LEADERBOARD row whose book selects on a key carries that key's T1
+        column: PASS / FAIL / NOT-RECONSTRUCTIBLE.  FAIL is not automatically a KILL -- it
+        says the row's verdict is not transferable to another price source.  The column is
+        attached to the SELECTION key only: a back-fill over every price expression in a
+        script (this file's PART A) also catches panel-shaped intermediates such as
+        `px.rolling(200).mean()`, which fail T1 and are not selection keys.
+  
+    (5) COST.  T1 is a REPORTING clause and no verdict may turn on it.  Its book cost is
+        measured at zero here and by idea 433: on a 39-key menu over three panels the
+        T1-passing sub-menu changes the walk-forward pick in 0 of 3 panels at both cost
+        rungs (Delta OOS Sharpe +0.0000).
+  
+
+=== PART C  WHAT THE CLAUSE COSTS: a book per key, both KEEP paths, rule 8 ===
+  menu: the 39 most-used reconstructible multi-column keys (cap 40, a reported axis).  T1 VALUE/1step: 18 PASS / 21 FAIL; RANK/1step: 18 PASS.
+  228 book rows committed (114 distinct (panel, key) books x 2 rungs).
+
+  C1  BOTH KEEP PATHS over every book
+       10 bps  4b   0/114   4a   0/114   BOTH   0
+       25 bps  4b   0/114   4a   0/114   BOTH   0
+
+  C2  do the T1-FAILING keys earn anything the passing ones do not? (headline rung, per panel)
+    B136      T1_VALUE_1step   PASS n=17 mean Sharpe 0.8413 OOS 0.8213 4b 0 | FAIL n=21 mean Sharpe 0.4828 OOS 0.6377 4b 0  -> delta OOS +0.1836
+    B136      T1_RANK_1step    PASS n=17 mean Sharpe 0.8413 OOS 0.8213 4b 0 | FAIL n=21 mean Sharpe 0.4828 OOS 0.6377 4b 0  -> delta OOS +0.1836
+    SMALL439  T1_VALUE_1step   PASS n=17 mean Sharpe 0.5778 OOS 0.6734 4b 0 | FAIL n=21 mean Sharpe -0.5631 OOS -0.5915 4b 0  -> delta OOS +1.2649
+    SMALL439  T1_RANK_1step    PASS n=17 mean Sharpe 0.5778 OOS 0.6734 4b 0 | FAIL n=21 mean Sharpe -0.5631 OOS -0.5915 4b 0  -> delta OOS +1.2649
+    U56       T1_VALUE_1step   PASS n=17 mean Sharpe 0.9426 OOS 0.9381 4b 0 | FAIL n=21 mean Sharpe 0.6468 OOS 0.8295 4b 0  -> delta OOS +0.1086
+    U56       T1_RANK_1step    PASS n=17 mean Sharpe 0.9426 OOS 0.9381 4b 0 | FAIL n=21 mean Sharpe 0.6468 OOS 0.8295 4b 0  -> delta OOS +0.1086
+
+=== PROTOCOL 8  WALK-FORWARD: choose the key on IS 2008-2016, read OOS once ===
+  24 picks (panel x rung x menu).  The clause's cost is ALL minus T1-PASS.
+    panel      rung menu                     OOS Sh  OOS CAGR   OOS DD  4b |  v2 OOS  SPY OOS
+    B136         10 ALL                      1.0817    24.25%  -28.15%   0 |  1.1206   0.8820
+    B136         10 T1-FAIL only             0.6912     9.54%  -24.78%   0 |  1.1206   0.8820
+    B136         10 T1-PASS (RANK/1step)     1.0817    24.25%  -28.15%   0 |  1.1206   0.8820
+    B136         10 T1-PASS (VALUE/1step)    1.0817    24.25%  -28.15%   0 |  1.1206   0.8820
+    B136         25 ALL                      1.0000    21.99%  -28.22%   0 |  1.0759   0.8820
+    B136         25 T1-FAIL only             0.6779     9.33%  -24.81%   0 |  1.0759   0.8820
+    B136         25 T1-PASS (RANK/1step)     1.0000    21.99%  -28.22%   0 |  1.0759   0.8820
+    B136         25 T1-PASS (VALUE/1step)    1.0000    21.99%  -28.22%   0 |  1.0759   0.8820
+    SMALL439     10 ALL                      0.9218    29.19%  -51.80%   0 |  0.5665   0.8820
+    SMALL439     10 T1-FAIL only            -0.4143   -13.47%  -87.87%   0 |  0.5665   0.8820
+    SMALL439     10 T1-PASS (RANK/1step)     0.9218    29.19%  -51.80%   0 |  0.5665   0.8820
+    SMALL439     10 T1-PASS (VALUE/1step)    0.9218    29.19%  -51.80%   0 |  0.5665   0.8820
+    SMALL439     25 ALL                      0.7433    21.59%  -54.66%   0 |  0.5056   0.8820
+    SMALL439     25 T1-FAIL only            -0.4641   -14.61%  -88.78%   0 |  0.5056   0.8820
+    SMALL439     25 T1-PASS (RANK/1step)     0.7433    21.59%  -54.66%   0 |  0.5056   0.8820
+    SMALL439     25 T1-PASS (VALUE/1step)    0.7433    21.59%  -54.66%   0 |  0.5056   0.8820
+    U56          10 ALL                      1.0351    18.86%  -24.32%   0 |  1.2876   0.8758
+    U56          10 T1-FAIL only             0.8523    11.37%  -20.69%   0 |  1.2876   0.8758
+    U56          10 T1-PASS (RANK/1step)     1.0351    18.86%  -24.32%   0 |  1.2876   0.8758
+    U56          10 T1-PASS (VALUE/1step)    1.0351    18.86%  -24.32%   0 |  1.2876   0.8758
+    U56          25 ALL                      0.9763    21.21%  -35.09%   0 |  1.2503   0.8758
+    U56          25 T1-FAIL only             0.8690    12.19%  -21.85%   0 |  1.2503   0.8758
+    U56          25 T1-PASS (RANK/1step)     0.9763    21.21%  -35.09%   0 |  1.2503   0.8758
+    U56          25 T1-PASS (VALUE/1step)    0.9763    21.21%  -35.09%   0 |  1.2503   0.8758
+    10 bps  T1-PASS (VALUE/1step)  changes the pick in 0 of 3 panels; mean OOS Sharpe 1.0129 -> 1.0129 (+0.0000)
+    10 bps  T1-PASS (RANK/1step)   changes the pick in 0 of 3 panels; mean OOS Sharpe 1.0129 -> 1.0129 (+0.0000)
+    25 bps  T1-PASS (VALUE/1step)  changes the pick in 0 of 3 panels; mean OOS Sharpe 0.9065 -> 0.9065 (+0.0000)
+    25 bps  T1-PASS (RANK/1step)   changes the pick in 0 of 3 panels; mean OOS Sharpe 0.9065 -> 0.9065 (+0.0000)
+
+done in 63s
