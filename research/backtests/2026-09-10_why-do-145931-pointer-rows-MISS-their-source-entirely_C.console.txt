@@ -1,0 +1,198 @@
+Idea 661 -- why do 145,931 pointer rows MISS their source entirely?  (lane C, 2026-09-10)
+PROTOCOL: costs 10 bps, next-day execution, freq W, rule 8 IS<= 2016-12-31 / OOS >= 2017-01-01.  2 params: miss class x tolerance.
+
+====================================================================================================
+(A) CENSUS -- the pointer population, re-derived from the artefacts as committed
+====================================================================================================
+  committed CSVs scanned           : 3043
+  artefact index (unique basenames): 5519   ambiguous dropped: 473
+  git vintage index                : 6497 paths over 45 commit times (SHALLOW clone -- coverage reported below)
+  scan 10.7s -> pointer INSTANCES 250 over 240 files, 1,089,229 pointer rows (0.9997 resolve)
+
+====================================================================================================
+(B) THE JOIN -- reproducing idea 655's ladder and KEEPING the miss rows
+====================================================================================================
+  join 258.5s over 250 instances
+    pointer rows 1,089,229   J1 key-unique   198,357 (0.1821)
+    ambiguous      287,537 (0.2640)   no shared key   327,334 (0.3005)
+    KEY MISSES     146,008 (0.1340)   <- the population of idea 661
+    over 3940 (child, col, source) pairs carrying at least one miss
+
+====================================================================================================
+(G) GATES
+====================================================================================================
+  G1 FRESH == rules_v2_weights, and both channels meet there : max|dW| 0.000e+00  max|dR| 0.000e+00  DRIFT@L=0 0.000e+00  TRANS@b=0.03 0.000e+00   PASS
+  G2 cost-rung identity r(25) = r(0)-turn*25/1e4 : max|d| 0.000e+00   PASS
+  G3 today's corpus (superset of 655's): instances 250  pointer rows 1,089,229  misses 146,008 (0.1340)
+     idea 655 as committed: instances 246  pointer rows 1,088,554  misses 145,931 (0.1341)   (QUEUE 661 quotes 145,931 / 0.1341)
+     re-run on 655's OWN 246 instances: 246/246 miss counts reproduce EXACTLY, max|d| 0   PASS
+     queue block .cells.csv : rows 105,504 (655: 105,504)  misses 29,127 (0.2761, 655: 29,127 / 0.2761)   PASS
+     655 artefact self-consistent with QUEUE 661's quoted numbers : PASS
+
+====================================================================================================
+(C) CLASSIFYING THE MISSES -- vintage drift vs transformation vs neither
+====================================================================================================
+  classified 3940 pairs / 146,008 miss rows in 0.4s
+  git vintage COVERAGE (shallow clone): child 3940/3940 pairs, source 3940/3940 pairs
+
+====================================================================================================
+(D) THE 3 x 5 GRID -- every point reported (P1 miss class x P2 tolerance)
+====================================================================================================
+
+  C2_TRANSFORM_vs_NOT   (rows; total miss population 146,008)
+tol             EXACT   1e-06   1e-04   1e-02   5e-02     ANY
+cls                                                          
+NOT_TRANSFORM    1090    1090    1090    1090    1090    1090
+RECOVERED           0       0      23    2016    3443    3455
+TRANSFORM      144918  144918  144895  142902  141475  141463
+  C2_TRANSFORM_vs_NOT   (share of the miss population)
+tol            EXACT  1e-06  1e-04  1e-02  5e-02    ANY
+cls                                                    
+NOT_TRANSFORM 0.0075 0.0075 0.0075 0.0075 0.0075 0.0075
+RECOVERED     0.0000 0.0000 0.0002 0.0138 0.0236 0.0237
+TRANSFORM     0.9925 0.9925 0.9924 0.9787 0.9690 0.9689
+
+  C3_T_V_X   (rows; total miss population 146,008)
+tol         EXACT   1e-06   1e-04   1e-02   5e-02     ANY
+cls                                                      
+PHANTOM        14      14      14      14      14      14
+RECOVERED       0       0      23    2016    3443    3455
+TRANSFORM  144918  144918  144895  142902  141475  141463
+VINTAGE      1076    1076    1076    1076    1076    1076
+  C3_T_V_X   (share of the miss population)
+tol        EXACT  1e-06  1e-04  1e-02  5e-02    ANY
+cls                                                
+PHANTOM   0.0001 0.0001 0.0001 0.0001 0.0001 0.0001
+RECOVERED 0.0000 0.0000 0.0002 0.0138 0.0236 0.0237
+TRANSFORM 0.9925 0.9925 0.9924 0.9787 0.9690 0.9689
+VINTAGE   0.0074 0.0074 0.0074 0.0074 0.0074 0.0074
+
+  C4_T_Vname_Vgit_X   (rows; total miss population 146,008)
+tol                EXACT   1e-06   1e-04   1e-02   5e-02     ANY
+cls                                                             
+PHANTOM               14      14      14      14      14      14
+RECOVERED              0       0      23    2016    3443    3455
+TRANSFORM         144918  144918  144895  142902  141475  141463
+VINTAGE_gitonly     1076    1076    1076    1076    1076    1076
+VINTAGE_namedate       0       0       0       0       0       0
+  C4_T_Vname_Vgit_X   (share of the miss population)
+tol               EXACT  1e-06  1e-04  1e-02  5e-02    ANY
+cls                                                       
+PHANTOM          0.0001 0.0001 0.0001 0.0001 0.0001 0.0001
+RECOVERED        0.0000 0.0000 0.0002 0.0138 0.0236 0.0237
+TRANSFORM        0.9925 0.9925 0.9924 0.9787 0.9690 0.9689
+VINTAGE_gitonly  0.0074 0.0074 0.0074 0.0074 0.0074 0.0074
+VINTAGE_namedate 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
+
+  G4 partition exact at every rung  PASS
+     raw per-rung recovery [0, 0, 23, 2016, 3443] -> monotone in tolerance: YES
+     recovered at ANY rung (cumulative, monotone by construction): 3,455 (0.0237 of the miss population)
+
+====================================================================================================
+(E) PUBLISHED CLAIMS THAT READ A SOURCE WHICH NO LONGER SAYS WHAT THEY QUOTE
+====================================================================================================
+  child files carrying at least one miss                 : 102
+  ... still unmatched under the MOST GENEROUS reading    : 101  (142,553 rows)
+  ... of those, files with a committed .result.md memo   : 98
+  ... of those, files cited by LEADERBOARD/CHANGELOG/QUEUE: 101
+  ... PUBLISHED CLAIMS resting on an unmatched read      : 101  (142,553 rows)
+
+  10 largest unmatched (child, source) reads:
+    2026-09-10_re-cut-every-published-BINDING-BAR-claim-as-a   <- 2026-09-09_does-a-random-sub-panel-pass-4b-b    25,153 TRANSFORM minov 0.000 zero[family]
+    2026-09-07_is-the-CAGR-floor-only-ever-closable-by-the-G   <- 2026-09-05_does-the-modal-constant-result-su    16,211 TRANSFORM minov 0.000 zero[dial]
+    2026-09-07_is-the-CAGR-floor-only-ever-closable-by-the-G   <- 2026-09-05_does-any-fitted-dial-beat-its-own     3,729 TRANSFORM minov 0.000 zero[dial]
+    2026-09-06_back-fill-the-zero-bps-rung-under-every-gross   <- 2026-09-05_threshold-plateaus-are-the-genera     2,844 TRANSFORM minov 0.000 zero[dial]
+    2026-09-08_make-PROTOCOL-quote-REGRET-instead-of-the-sel   <- 2026-09-05_gross-as-the-missing-third-bar_B.     2,310 TRANSFORM minov 0.000 zero[oos_best]
+    2026-09-08_does-the-IS-WINDOW-DD-CAP-transfer-at-all_clo   <- 2026-09-07_re-price-the-fixed-ABSOLUTE-bread     1,998 TRANSFORM minov 0.000 zero[OOS_MaxDD|OOS_CAGR]
+    2026-09-10_does-a-BASE-RATE-ADJUSTED-4b-change-the-recor   <- 2026-09-10_is-the-4b-window-a-TURNOVER-COST-     1,770 TRANSFORM minov 0.000 zero[panel]
+    2026-09-07_is-the-CAGR-floor-only-ever-closable-by-the-G   <- 2026-09-05_does-any-fitted-dial-beat-its-own     1,743 TRANSFORM minov 0.000 zero[dial]
+    2026-09-08_make-PROTOCOL-quote-REGRET-instead-of-the-sel   <- 2026-09-07_is-the-CAGR-floor-only-ever-closa     1,620 TRANSFORM minov 0.000 zero[family|regret]
+    2026-09-10_re-cut-every-published-BINDING-BAR-claim-as-a   <- 2026-09-05_absorbing-state-audit_B.ddctl.csv     1,340 TRANSFORM minov 0.000 zero[family]
+
+====================================================================================================
+(F) H5 -- what the TWO MISS CLASSES cost in a book
+====================================================================================================
+  FRESH  the source as it stands (= RULES v2, band 0.03, no lag)
+  DRIFT  VINTAGE analogue: the band state is read L trading days STALE
+  TRANS  TRANSFORMATION analogue: the same rows keyed through band b != the source's 0.03
+  Full-sample 4a/4b at every grid point; rule 8 then fits (level, gross) on 2009-2016 ONLY.
+
+  --- U56 (56 cols, 2009-01-13 -> 2026-09-09) ---
+      SPY   CAGR  15.15%  Sharpe 0.886  MaxDD -33.72%  H1/H2 0.959/0.826  OOS Sh 0.876 CAGR  15.32% DD -33.72%
+      V2    CAGR   8.63%  Sharpe 1.202  MaxDD -12.05%  H1/H2 1.231/1.180  OOS Sh 1.279 CAGR   9.48% DD -12.05%
+      grid points 45   4a 0/45   4b 11/45
+      the STALENESS curve at g=0.75 (DRIFT):
+        L=  0  CAGR   8.63%  Sharpe 1.202  MaxDD -12.05%  OOS Sh 1.279  turn 1.77x/yr  4a n 4b n
+        L=  1  CAGR   8.60%  Sharpe 1.189  MaxDD -12.21%  OOS Sh 1.258  turn 1.80x/yr  4a n 4b n
+        L=  2  CAGR   8.63%  Sharpe 1.172  MaxDD -12.48%  OOS Sh 1.225  turn 1.82x/yr  4a n 4b n
+        L=  5  CAGR   8.73%  Sharpe 1.162  MaxDD -14.46%  OOS Sh 1.233  turn 1.81x/yr  4a n 4b n
+        L= 10  CAGR   8.50%  Sharpe 1.088  MaxDD -16.21%  OOS Sh 1.160  turn 1.82x/yr  4a n 4b n
+        L= 21  CAGR   9.00%  Sharpe 1.093  MaxDD -19.85%  OOS Sh 1.119  turn 1.84x/yr  4a n 4b n
+        L= 42  CAGR   8.40%  Sharpe 0.984  MaxDD -21.11%  OOS Sh 1.014  turn 1.83x/yr  4a n 4b n
+        L= 63  CAGR   8.69%  Sharpe 1.006  MaxDD -19.74%  OOS Sh 1.024  turn 1.83x/yr  4a n 4b n
+      the TRANSFORM curve at g=0.75 (band b):
+        b=0.00  CAGR   8.17%  Sharpe 1.168  MaxDD -12.01%  OOS Sh 1.257  turn 3.14x/yr  4a n 4b n
+        b=0.01  CAGR   8.37%  Sharpe 1.186  MaxDD -12.03%  OOS Sh 1.271  turn 2.61x/yr  4a n 4b n
+        b=0.03  CAGR   8.63%  Sharpe 1.202  MaxDD -12.05%  OOS Sh 1.279  turn 1.77x/yr  4a n 4b n
+        b=0.05  CAGR   8.31%  Sharpe 1.146  MaxDD -12.57%  OOS Sh 1.212  turn 1.42x/yr  4a n 4b n
+        b=0.10  CAGR   8.78%  Sharpe 1.174  MaxDD -12.35%  OOS Sh 1.198  turn 1.00x/yr  4a n 4b n
+        b=0.20  CAGR   8.56%  Sharpe 1.114  MaxDD -12.07%  OOS Sh 1.126  turn 0.72x/yr  4a n 4b n
+      rule 8: fit (level, gross) on 2009-2016 by IS Sharpe, score 2017-2026 untouched
+        FRESH pick level=0.0 g=1.00 (IS Sh 1.105) -> OOS CAGR  12.71% Sharpe 1.278 MaxDD -15.91%   4a n 4b Y   4b@0/10/25 1/1/1
+        DRIFT pick level=2.0 g=1.00 (IS Sh 1.105) -> OOS CAGR  12.47% Sharpe 1.225 MaxDD -16.42%   4a n 4b Y   4b@0/10/25 1/1/1
+        TRANS pick level=0.1 g=1.00 (IS Sh 1.146) -> OOS CAGR  12.19% Sharpe 1.197 MaxDD -16.30%   4a n 4b Y   4b@0/10/25 1/1/1
+
+  --- B136 (136 cols, 2009-01-13 -> 2026-09-04) ---
+      SPY   CAGR  15.23%  Sharpe 0.889  MaxDD -33.72%  H1/H2 0.957/0.834  OOS Sh 0.882 CAGR  15.45% DD -33.72%
+      V2    CAGR   8.03%  Sharpe 1.106  MaxDD -12.24%  H1/H2 1.229/0.984  OOS Sh 1.119 CAGR   7.98% DD -12.24%
+      grid points 45   4a 0/45   4b 8/45
+      the STALENESS curve at g=0.75 (DRIFT):
+        L=  0  CAGR   8.03%  Sharpe 1.106  MaxDD -12.24%  OOS Sh 1.119  turn 2.01x/yr  4a n 4b n
+        L=  1  CAGR   8.09%  Sharpe 1.102  MaxDD -12.62%  OOS Sh 1.115  turn 2.02x/yr  4a n 4b n
+        L=  2  CAGR   8.00%  Sharpe 1.072  MaxDD -12.79%  OOS Sh 1.070  turn 2.04x/yr  4a n 4b n
+        L=  5  CAGR   8.05%  Sharpe 1.056  MaxDD -15.22%  OOS Sh 1.061  turn 2.05x/yr  4a n 4b n
+        L= 10  CAGR   8.07%  Sharpe 1.004  MaxDD -18.07%  OOS Sh 0.999  turn 2.06x/yr  4a n 4b n
+        L= 21  CAGR   8.61%  Sharpe 1.005  MaxDD -22.56%  OOS Sh 0.975  turn 2.07x/yr  4a n 4b n
+        L= 42  CAGR   8.67%  Sharpe 0.978  MaxDD -23.24%  OOS Sh 0.973  turn 2.06x/yr  4a n 4b n
+        L= 63  CAGR   9.12%  Sharpe 1.014  MaxDD -22.18%  OOS Sh 1.000  turn 2.06x/yr  4a n 4b n
+      the TRANSFORM curve at g=0.75 (band b):
+        b=0.00  CAGR   7.78%  Sharpe 1.094  MaxDD -12.62%  OOS Sh 1.126  turn 3.32x/yr  4a n 4b n
+        b=0.01  CAGR   7.89%  Sharpe 1.103  MaxDD -12.42%  OOS Sh 1.134  turn 2.85x/yr  4a n 4b n
+        b=0.03  CAGR   8.03%  Sharpe 1.106  MaxDD -12.24%  OOS Sh 1.119  turn 2.01x/yr  4a n 4b n
+        b=0.05  CAGR   8.03%  Sharpe 1.086  MaxDD -13.14%  OOS Sh 1.095  turn 1.59x/yr  4a n 4b n
+        b=0.10  CAGR   8.71%  Sharpe 1.124  MaxDD -14.58%  OOS Sh 1.106  turn 1.10x/yr  4a n 4b n
+        b=0.20  CAGR   8.40%  Sharpe 1.038  MaxDD -15.87%  OOS Sh 1.012  turn 0.81x/yr  4a n 4b n
+      rule 8: fit (level, gross) on 2009-2016 by IS Sharpe, score 2017-2026 untouched
+        FRESH pick level=0.0 g=1.00 (IS Sh 1.092) -> OOS CAGR  10.66% Sharpe 1.117 MaxDD -16.16%   4a n 4b Y   4b@0/10/25 1/1/0
+        DRIFT pick level=0.0 g=1.00 (IS Sh 1.092) -> OOS CAGR  10.66% Sharpe 1.117 MaxDD -16.16%   4a n 4b Y   4b@0/10/25 1/1/0
+        TRANS pick level=0.1 g=1.00 (IS Sh 1.147) -> OOS CAGR  11.22% Sharpe 1.104 MaxDD -19.20%   4a n 4b Y   4b@0/10/25 1/1/1
+
+
+====================================================================================================
+(G) KEEP PATHS -- PROTOCOL 4a and 4b on every live grid point
+====================================================================================================
+panel  mode  points  p4a  p4b
+ B136 DRIFT      24    0    4
+ B136 FRESH       3    0    1
+ B136 TRANS      18    0    3
+  U56 DRIFT      24    0    4
+  U56 FRESH       3    0    1
+  U56 TRANS      18    0    6
+
+  TOTAL: 4a 0/90   4b 19/90
+  rule-8 picks clearing 4b at 0/10/25 bps: 6/6/4 of 6;  4a at 10 bps: 0/6
+  rule-8 picks beating SPY OOS Sharpe: 6/6;  beating the live book: 0/6
+
+====================================================================================================
+OUTPUTS
+====================================================================================================
+  wrote 2026-09-10_why-do-145931-pointer-rows-MISS-their-source-entirely_C.pointers.csv  (250 rows)
+  wrote 2026-09-10_why-do-145931-pointer-rows-MISS-their-source-entirely_C.miss.csv  (250 rows)
+  wrote 2026-09-10_why-do-145931-pointer-rows-MISS-their-source-entirely_C.misspairs.csv  (3940 rows)
+  wrote 2026-09-10_why-do-145931-pointer-rows-MISS-their-source-entirely_C.missgrid.csv  (72 rows)
+  wrote 2026-09-10_why-do-145931-pointer-rows-MISS-their-source-entirely_C.claims.csv  (102 rows)
+  wrote 2026-09-10_why-do-145931-pointer-rows-MISS-their-source-entirely_C.grid.csv  (90 rows)
+  wrote 2026-09-10_why-do-145931-pointer-rows-MISS-their-source-entirely_C.walkforward.csv  (6 rows)
+  wrote 2026-09-10_why-do-145931-pointer-rows-MISS-their-source-entirely_C.keeppaths.csv  (6 rows)
+
+total 400.6s
