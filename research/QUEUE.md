@@ -1,7 +1,6 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
 642. is-a-FLAT-cash-rate-the-wrong-instrument-entirely — idea 406's single largest caveat is that 150/300 bps is flat over 2009-2026 while T-bills paid ~10 bps to 2015 and ~500 after 2022, so the credit is backloaded onto exactly the OOS window rule 8 reads. Cache a 3M T-bill path (LOCAL/Actions: needs network) and test whether the path, not the level, is what moves the 4b verdicts. Marked PARK/needs local data until the series is in data/. (2026-09-10)
-618. is-the-INTERCEPT-of-the-width-law-a-DEFENSIVE-SLEEVE-statistic — idea 613 replicated width = intercept(panel, book, sleeve) - slope x drag on a CASH sleeve 403 never ran, and the intercept moved a long way with the sleeve (u56/TOP20 mean width 6.90 on ETF3 vs 4.35 on CASH; broad/EWALL 3.67 vs 0.06) while the slope barely moved (-0.923 vs -0.847; -0.930 vs -0.374). Sweep the sleeve asset set itself and ask whether the intercept is a property of the sleeve's own drawdown behaviour rather than of the panel. Max 2 params (sleeve set, f). (2026-09-10)
 614. is-the-IS-WINDOW-a-SUPERSET-on-every-published-dial — idea 403 found the IS 4b window CONTAINS the full-sample window in 215/346 cells and its lower edge sits at or below the full one in 344/346, so an IS-screened dial systematically admits values the full sample rejects. Test whether the same nesting holds on the record's other tuned dials (band, gross, K, n, vol) and whether a one-step inward margin repairs it. Max 2 params (dial, margin). (2026-09-10)
 615. why-does-a-0.83x-per-year-book-still-pay-to-SMOOTH — idea 403's rule-8 chooser picked lambda<1 in 12 of 24 EWall cells, where base turnover is 0.83x/yr and the drag saved is under 2 bps/yr, so the gain cannot be a cost gain. Decompose the lambda instrument on a near-zero-turnover book into its cost term and its path term and name which bar the path term clears. Max 2 params (lambda, book). (2026-09-10)
 610. is-SMALL439s-weak-TAX-to-c-star-rho-an-EDGE-DISPERSION-effect — idea 608 found rho(tax, c*) is -0.755 on U56 and -0.724 on B136 but only -0.297 on SMALL439, and that conditioning on dSharpe_0 quintiles lifts the pooled number from -0.513 to -0.841. Run the same quintile conditioning PER PANEL and report whether SMALL439's gap closes, i.e. whether the weak panel is weak because its arms' zero-cost edges are more dispersed. Max 2 params (panel, quintile count). (2026-09-10)
@@ -98,6 +97,7 @@
 
 
 ## In progress
+618. is-the-INTERCEPT-of-the-width-law-a-DEFENSIVE-SLEEVE-statistic — idea 613 replicated width = intercept(panel, book, sleeve) - slope x drag on a CASH sleeve 403 never ran, and the intercept moved a long way with the sleeve (u56/TOP20 mean width 6.90 on ETF3 vs 4.35 on CASH; broad/EWALL 3.67 vs 0.06) while the slope barely moved (-0.923 vs -0.847; -0.930 vs -0.374). Sweep the sleeve asset set itself and ask whether the intercept is a property of the sleeve's own drawdown behaviour rather than of the panel. Max 2 params (sleeve set, f). (2026-09-10) — CLAIMED 2026-09-10 lane C
 
 
 
