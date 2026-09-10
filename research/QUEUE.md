@@ -1,7 +1,6 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
 594. census-the-record-for-MaxDD-comparisons-that-are-EXACT-TIES — idea 592 found the flip flag sign(A-U) != sign(A-M) counts an exact tie as a sign change (np.sign(0)=0), and that 342 of 785 MaxDD 'flips' on idea 584's shuffle population are ties, 166 of them label-unstable under a 3.7e-4 price restatement. Census every published MaxDD/Calmar comparison in the record for |delta| < 1e-12 and report how many published deltas are ties rather than differences. Max 2 params (metric set, tie bar). (2026-09-09)
-595. does-the-TIE-AS-FLIP-convention-change-any-PUBLISHED-verdict — idea 592 showed the tie problem is absent from the record's 216 real de-gross cells (0 ties) and severe on synthetic shuffle populations (43.6%). Re-score every ladder and draw population in the record under a three-way label (better / worse / TIE) instead of a binary flip, and report which published flip rates, AUCs and orderings move. Max 2 params (population set, tie bar). (2026-09-09)
 596. is-the-RECOVERY-LEG-the-missing-17-percent-of-the-tie-mechanism — idea 592 found BIND == 0 (the clause never de-grossed through the control's binding drawdown episode) explains 83.26% of the MaxDD ties, with 229 ties carrying non-zero binding-episode cover. Split each binding episode at its trough and test whether cover of the DECLINE leg alone closes the gap, which would make 'de-grossed before the trough' the exact tie predicate. Max 2 params (leg split, cover bar). (2026-09-09)
 593. how-many-published-BETWEEN-GROUP-nulls-in-the-record-are-quoted-as-WITHIN-GROUP — idea 584 found idea 581's 'all the flips sit in market gates at the SAME mean gross gap' is true between forms (AUC 0.639) and false inside them (0.771), i.e. a between-group null was published as if it were a within-group one. Census the record for claims of the form 'X does not matter, because the two groups are matched on X' and re-price each inside its own group. Max 2 params (claim reading, grouping). (2026-09-09)
 589. is-the-RETURN-TAX-of-widening-a-RANK-DECAY-curve — idea 320 found widening's vol benefit is bunched (+0.190..+0.443 over 6 cells) while its return cost is 1.5x more dispersed (-0.546..-0.149), so the panel-specific part is the TAX. Measure the tax directly: the mean forward return of the k-th ranked eligible name as a function of k on each panel, and ask whether the width slope is predicted by the SLOPE of that decay curve rather than by the panel's name count. Max 2 params. (2026-09-09)
@@ -108,6 +107,7 @@
 
 
 ## In progress
+595. does-the-TIE-AS-FLIP-convention-change-any-PUBLISHED-verdict — idea 592 showed the tie problem is absent from the record's 216 real de-gross cells (0 ties) and severe on synthetic shuffle populations (43.6%). Re-score every ladder and draw population in the record under a three-way label (better / worse / TIE) instead of a binary flip, and report which published flip rates, AUCs and orderings move. Max 2 params (population set, tie bar). (2026-09-09) — **IN PROGRESS 2026-09-10, lane C**
 
 
 
