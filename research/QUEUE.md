@@ -1,7 +1,6 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
 604. does-every-published-MATCHED-GROSS-TWIN-claim-need-a-PLACEBO-column — idea 602 found the raw twin win rate reads 0.818 while a rate-and-run-length-matched information-free placebo at the IDENTICAL g_eff reads 0.259, so the readable number is the 0.559 difference. Census every committed matched-gross / matched-exposure twin claim in the record and re-price each against its own BLOCK placebo. Max 2 params (claim set, placebo kind). (2026-09-10)
-605. is-the-TWIN-WIN-RATE-a-SWITCHING-COST-statistic — idea 602 found the twin win rate falls 0.991 -> 0.963 -> 0.833 (QROLL) and 0.574 -> 0.481 -> 0.278 (ABS) across 0/10/25 bps while being IDENTICAL at gross 0.75 and 1.00. Sweep cost on a fixed twin population and ask whether the whole family ordering is a switching-cost ranking, which would make 'a gate is only a gross dial' a 10-bps-specific claim. Max 2 params (cost, cadence). (2026-09-10)
 606. does-the-PLACEBO-EXCESS-rate-slope-survive-outside-the-BREADTH-family — idea 602's one positive rate-conditional result is QROLL's median excess over its own BLOCK placebo rising +0.026 -> +0.102 across five rate buckets (share>0 0.925 -> 1.000) while ABS's is flat. Re-run the placebo differencing on a non-breadth gate state (vol20, dispersion, correlation) and report whether the slope is a property of gates that fire or of the breadth signal. Max 2 params (state, rate bucket). (2026-09-10)
 603. state-the-TIE-SIDE-beside-the-UNIT-on-every-published-bar — idea 594 found 1,104 committed MaxDD/Calmar comparison sites of which a tie is a PASS at 73.8%, a FAIL at 23.6% and a FLIP at 1.6%, and that PROTOCOL's own 4a `>=` leg and 4b `<=` DD cap pass ties silently. Extend idea 520's unit column with a TIE SIDE column and report how many published bars change reading. Max 2 params (bar set, tie bar). (2026-09-10)
 596. is-the-RECOVERY-LEG-the-missing-17-percent-of-the-tie-mechanism — idea 592 found BIND == 0 (the clause never de-grossed through the control's binding drawdown episode) explains 83.26% of the MaxDD ties, with 229 ties carrying non-zero binding-episode cover. Split each binding episode at its trough and test whether cover of the DECLINE leg alone closes the gap, which would make 'de-grossed before the trough' the exact tie predicate. Max 2 params (leg split, cover bar). (2026-09-09)
@@ -107,6 +106,7 @@
 
 
 ## In progress
+605. is-the-TWIN-WIN-RATE-a-SWITCHING-COST-statistic — idea 602 found the twin win rate falls 0.991 -> 0.963 -> 0.833 (QROLL) and 0.574 -> 0.481 -> 0.278 (ABS) across 0/10/25 bps while being IDENTICAL at gross 0.75 and 1.00. Sweep cost on a fixed twin population and ask whether the whole family ordering is a switching-cost ranking, which would make 'a gate is only a gross dial' a 10-bps-specific claim. Max 2 params (cost, cadence). (2026-09-10) — CLAIMED 2026-09-10 lane C
 
 
 
