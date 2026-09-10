@@ -1,6 +1,7 @@
 # Idea 487 — is-a-draw-s-IS-SHARPE-the-wrong-thing-to-PREDICT (lane B, 2026-09-10)
 
-**Verdict: ANSWERED — the queue's PREMISE IS FALSIFIED in its regime direction. KILL for capital.**
+**Verdict: ANSWERED/YES — the queue's own implication is CONFIRMED (nothing transfers even inside IS,
+so sub-panel choice is a null); the competing REGIME explanation is FALSIFIED. KILL for capital.**
 Script `2026-09-10_is-a-draw-s-IS-SHARPE-the-wrong-thing-to-PREDICT_B.py`, elapsed 866s, deterministic.
 
 ## The question and why the answer was not already in the record
@@ -43,9 +44,14 @@ Windows (IS cut in half by trading-day count): B136 IS 2009-01-13..2016-12-31 = 
 | | M+sd | +0.7018 | +0.0556 | −0.6082 | 12/36 | +0.0065 |
 
 **The mechanism, in one line: the model that wins the fit by +0.6741 out-of-fold R2 loses the transfer
-by −0.6800 centred R2.** Centred transfer R2 ≤ 0 in **104 of 108** model-cells.
+by −0.6800 centred R2.** Centred transfer R2 ≤ 0 in **104 of 108** model-cells. On the RAW (uncentred)
+transfer R2 the IS1→IS2 leg is **0 of 36 positive for every one of the three models (0/108 pooled)**,
+median −1.9894 (M) / −1.2424 (sd); the IS→OOS leg is 1/108 positive, median −0.7580 (M).
 
-## The ceiling — and the falsification
+## The ceiling — and what it falsifies
+
+The queue's own implication is confirmed: nothing transfers even inside IS. What the ceiling adds is
+which of the two *explanations* survives.
 
 The ceiling on any selector that predicts window 1 to choose for window 2 is the target's own
 persistence, ρ(y₁,y₂):
@@ -115,3 +121,29 @@ the ceiling measured here is if anything flattered by it.
 
 Artefacts: `.console.txt`, `.grid.csv.gz` (3,000 books, every window), `.legs.csv` (216 model-cells),
 `.scoring.csv`, `.keeppaths.csv`, `.walkforward.csv` (324 rows).
+
+## Reconciliation with the same-day cloud sibling (both designed and run before either landed on main)
+
+`2026-09-10_is-a-draw-s-IS-SHARPE-the-wrong-thing-to-PREDICT_cloud.py` (commit 4fdd8fb) ran the same
+idea independently. **The verdicts agree, the decisive numbers agree to the second digit, and one
+reading is ADDED rather than contested.**
+
+| Quantity | cloud | lane B (this run) |
+|---|---|---|
+| G1 fast backtest | 2.776e-17 | **2.776e-17** |
+| G2 vs idea 484's committed grid | 7.105e-15 (1,500 B136 rows, 25 cols) | **7.105e-15** (3,000 rows, 27 cols) |
+| fit oofR2, name-additive ridge | +0.796 (24 Sharpe cells) | +0.7091 (36 cells incl. CAGR/premium) |
+| IS1→IS2 raw transfer R2 positive | **0 of 72** (median −2.87) | **0 of 108** (median −1.9894 M / −1.2424 sd) |
+| IS1→IS2 transfer ρ | −0.03 | **−0.0118** (M) |
+| ρ(y₁,y₂) IS1/IS2 | **−0.023** | **−0.0249** |
+| ρ(y₁,y₂) IS/OOS | **+0.045** | **+0.0546** |
+| upper-tail qualifier (real, unusable) | argmax above cell median in 5 of 6 (panel,k) clusters | top-decile gain +0.0074 Sharpe, sig. in 23/108 vs ~5 expected |
+| KEEP paths on picks | 4a 0/120, 4b 13/120, BOTH 0/120 | **4a(v2) 0/216, 4b 20/216, BOTH 0/216** |
+
+Both runs reach ANSWERED/YES and KILL for capital, and both flag the same real-but-unusable upper tail.
+This run's addition: it reports the two seam ceilings **side by side and draws the directional
+conclusion** — the IS/OOS seam persists MORE (+0.055) than the seam wholly inside IS (−0.025), on the
+sibling's numbers as well as this run's — which kills the regime explanation of idea 484's result, and
+it supplies the clean percentile (S2, the only IS1-only selector, at **0.5015**, t +0.028) showing that
+the record's IS-argmax incumbent's apparent IS2 skill is contamination, not transfer. The sibling's
+stronger framing, "winning the fit and losing the choice are the same fact", is the same conclusion.
