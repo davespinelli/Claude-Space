@@ -1,0 +1,275 @@
+IDEA 641 -- price-the-rf-CONSISTENCY-fix-as-a-PROTOCOL-amendment  (cloud, 2026-09-10)
+Two tuned parameters: RATE in [0.0, 150.0, 300.0] bps x CORPUS in ['MEMO', 'RECORD']. Every grid point reported.
+Costs 10 bps headline (25 reported), next-day execution, no shorting, no leverage.
+
+==============================================================================================================
+GATES (five, pre-registered, run before any result is read)
+==============================================================================================================
+      (2 rows excluded: engine.backtest's own w_target.shift(1) NaN at the head of the sample, present in the record's every run)
+  G1  run_cash(c=0) vs engine.backtest, RULES v2 U56: returns 2.572e-16, turnover 0.000e+00  (bar 1e-12)  PASS
+  G2  RULES v2 U56 @10bps 8.66%/1.2056/-12.05% vs committed 8.63%/1.202/-12.05% (bar 6e-3; data/prices.csv is re-downloaded daily with auto-adjusted closes, so u56 rows in this record reproduce to ~3e-3, NOT bit-exact -- idea 406's finding)  PASS
+  G3  memo-headline reproduction (bar |dSharpe| <= 0.02; a miss EXCLUDES the book):
+      K1     12.79% /  1.0635 / -18.31%   published  12.79% /  1.0640 / -18.31%   d -0.0000 / -0.0005 / +0.0000   ok
+      K2     12.88% /  1.1207 / -17.24%   (no published headline to gate against -- carried)
+      K3     11.84% /  1.1631 / -12.37%   published  11.71% /  1.1454 / -12.37%   d +0.0013 / +0.0177 / -0.0000   ok
+      K4     11.96% /  1.2126 / -15.49%   published  11.96% /  1.2126 / -15.49%   d -0.0000 / +0.0000 / +0.0000   ok
+      K5     11.59% /  1.2054 / -15.91%   published  11.59% /  1.2055 / -15.91%   d -0.0000 / -0.0001 / -0.0000   ok
+      K6     14.02% /  1.2264 / -19.42%   published  14.02% /  1.2264 / -19.42%   d -0.0000 / -0.0000 / +0.0000   ok
+      K7      6.26% /  1.1766 / -11.13%   published   6.27% /  1.1777 / -11.10%   d -0.0001 / -0.0011 / -0.0003   ok
+      K8     14.21% /  1.2261 / -14.79%   published  14.13% /  1.2204 / -14.79%   d +0.0008 / +0.0057 / -0.0000   ok
+      LIVE    8.66% /  1.2056 / -12.05%   (no published headline to gate against -- carried)
+      V1      6.46% /  0.6647 / -13.83%   (no published headline to gate against -- carried)
+  G4  vol recovered from (Sharpe, CAGR) vs true vol on the corpus: max |err| 0.0083, median 0.0060  (a TOLERANCE, not an assert; PART C's census is first-order and says so)
+  G5  first-order credit (1-gbar)*c vs exact re-simulation at 300 bps:
+      K1    mean cash  0.250   first-order   74.9 bps   exact   84.7 bps   understatement  +9.8 bps
+      K2    mean cash  0.250   first-order   74.9 bps   exact   84.8 bps   understatement  +9.9 bps
+      K3    mean cash  0.281   first-order   84.4 bps   exact   94.8 bps   understatement +10.4 bps
+      K4    mean cash  0.289   first-order   86.7 bps   exact   97.2 bps   understatement +10.5 bps
+      K5    mean cash  0.290   first-order   87.0 bps   exact   97.4 bps   understatement +10.4 bps
+      K6    mean cash  0.250   first-order   74.9 bps   exact   85.6 bps   understatement +10.7 bps
+      K7    mean cash  0.000   first-order    0.0 bps   exact    0.0 bps   understatement  +0.0 bps
+      K8    mean cash  0.122   first-order   36.7 bps   exact   42.0 bps   understatement  +5.3 bps
+      LIVE  mean cash  0.467   first-order  140.2 bps   exact  153.3 bps   understatement +13.1 bps
+      V1    mean cash  0.250   first-order   75.1 bps   exact   80.3 bps   understatement  +5.1 bps
+      -> the first-order form understates the credit by at most 13.1 bps of CAGR (compounding); PART C is therefore CONSERVATIVE on the C1 direction.
+
+==============================================================================================================
+PART A -- the three-line amendment, as idea 641 asks. DRAFT ONLY: this script does NOT
+          edit PROTOCOL.md (rule 6: PROTOCOL/RULES change only at Sunday review).
+==============================================================================================================
+
+  PROPOSED PROTOCOL clause 10 (DRAFT -- not adopted by this run):
+
+    10. **Cash and the risk-free rate (one convention, three lines).**
+        (a) Un-invested NAV earns the credit rate c inside the drift renormalisation, so a
+            book at gross g earns (1-g)*c per year on its cash leg;
+        (b) every Sharpe and Sortino in the same comparison is computed at rf = c, including
+            SPY's and the live book's -- `engine.metrics(r, rf=c)`, never rf=0 beside a
+            credited book;
+        (c) c is a single number fixed for the whole record and stated in every memo; a run
+            may not choose it. Changing c re-prices EVERY committed verdict and is a
+            PROTOCOL amendment, not a run-level dial.
+
+  Line (a) alone is what idea 641's parent asked for. Lines (a) and (b) are inseparable:
+  (a) without (b) pays a risk-free return and then measures it as excess return.
+
+
+==============================================================================================================
+PART B -- the MEMO corpus: every committed KEEP-candidate the record filed a memo for,
+          re-simulated (not first-order) under C0 / C1@150 / C1@300 / C2@150 / C2@300
+==============================================================================================================
+  panel U56: 56 cols, 2008-01-02 -> 2026-09-04, eval from 2009-01-13 (4439 days)
+  panel B136: 136 cols, 2008-01-02 -> 2026-09-04, eval from 2009-01-13 (4439 days)
+
+  --- cost rung 10 bps ----------------------------------------------------------------------------------------
+  book   cash treat      CAGR    Shrp   MaxDD    m_H1    m_H2   m_OOS    m_DD  m_CAGR  bind  4b  4a
+  K1    0.250 C0       12.79%  1.0635 -18.31% +0.1115 +0.2324 +0.2487 +0.0192 +0.0213    DD   Y   .
+  K1    0.250 C1@150   13.21%  1.0948 -18.29% +0.1458 +0.2613 +0.2783 +0.0194 +0.0255    DD   Y   .
+  K1    0.250 C1@300   13.64%  1.1260 -18.27% +0.1800 +0.2902 +0.3079 +0.0196 +0.0298    DD   Y   .
+  K1    0.250 C2@150   13.21%  0.9697 -18.29% +0.0999 +0.2249 +0.2423 +0.0194 +0.0255    DD   Y   .
+  K1    0.250 C2@300   13.64%  0.8759 -18.27% +0.0883 +0.2175 +0.2359 +0.0196 +0.0298    DD   Y   .
+
+  K2    0.250 C0       12.88%  1.1207 -17.24% +0.1585 +0.2996 +0.3603 +0.0299 +0.0222  CAGR   Y   .
+  K2    0.250 C1@150   13.30%  1.1536 -17.22% +0.1948 +0.3299 +0.3914 +0.0301 +0.0264  CAGR   Y   .
+  K2    0.250 C1@300   13.73%  1.1865 -17.20% +0.2311 +0.3602 +0.4224 +0.0303 +0.0307    DD   Y   .
+  K2    0.250 C2@150   13.30%  1.0220 -17.22% +0.1407 +0.2880 +0.3496 +0.0301 +0.0264  CAGR   Y   .
+  K2    0.250 C2@300   13.73%  0.9232 -17.20% +0.1228 +0.2764 +0.3389 +0.0303 +0.0307    DD   Y   .
+
+  K3    0.281 C0       11.84%  1.1631 -12.37% +0.1718 +0.3641 +0.4130 +0.0786 +0.0118  CAGR   Y   .
+  K3    0.281 C1@150   12.32%  1.2051 -11.75% +0.2160 +0.4043 +0.4537 +0.0848 +0.0166  CAGR   Y   .
+  K3    0.281 C1@300   12.79%  1.2471 -11.60% +0.2603 +0.4445 +0.4944 +0.0863 +0.0213  CAGR   Y   .
+  K3    0.281 C2@150   12.32%  1.0560 -11.75% +0.1470 +0.3436 +0.3929 +0.0848 +0.0166  CAGR   Y   .
+  K3    0.281 C2@300   12.79%  0.9488 -11.60% +0.1223 +0.3231 +0.3727 +0.0863 +0.0213  CAGR   Y   .
+
+  K4    0.289 C0       11.96%  1.2126 -15.49% +0.2928 +0.3453 +0.3930 +0.0474 +0.0130  CAGR   Y   .
+  K4    0.289 C1@150   12.44%  1.2574 -15.44% +0.3377 +0.3899 +0.4371 +0.0479 +0.0178  CAGR   Y   .
+  K4    0.289 C1@300   12.93%  1.3021 -15.40% +0.3826 +0.4345 +0.4812 +0.0483 +0.0227  CAGR   Y   .
+  K4    0.289 C2@150   12.44%  1.1028 -15.44% +0.2689 +0.3196 +0.3660 +0.0479 +0.0178  CAGR   Y   .
+  K4    0.289 C2@300   12.93%  0.9930 -15.40% +0.2450 +0.2939 +0.3390 +0.0483 +0.0227  CAGR   Y   .
+
+  K5    0.290 C0       11.59%  1.2054 -15.91% +0.2698 +0.3561 +0.4024 +0.0432 +0.0093  CAGR   Y   .
+  K5    0.290 C1@150   12.07%  1.2514 -15.89% +0.3177 +0.4004 +0.4462 +0.0434 +0.0141  CAGR   Y   .
+  K5    0.290 C1@300   12.56%  1.2973 -15.87% +0.3656 +0.4447 +0.4901 +0.0436 +0.0190  CAGR   Y   .
+  K5    0.290 C2@150   12.07%  1.0930 -15.89% +0.2408 +0.3296 +0.3747 +0.0434 +0.0141  CAGR   Y   .
+  K5    0.290 C2@300   12.56%  0.9805 -15.87% +0.2117 +0.3032 +0.3470 +0.0436 +0.0190  CAGR   Y   .
+
+  K6    0.250 C0       14.02%  1.2264 -19.42% +0.3045 +0.3708 +0.3842 +0.0081 +0.0336    DD   Y   .
+  K6    0.250 C1@150   14.45%  1.2598 -19.39% +0.3411 +0.4017 +0.4163 +0.0084 +0.0379    DD   Y   .
+  K6    0.250 C1@300   14.88%  1.2932 -19.36% +0.3777 +0.4326 +0.4483 +0.0087 +0.0422    DD   Y   .
+  K6    0.250 C2@150   14.45%  1.1260 -19.39% +0.2857 +0.3572 +0.3705 +0.0084 +0.0379    DD   Y   .
+  K6    0.250 C2@300   14.88%  1.0257 -19.36% +0.2670 +0.3436 +0.3568 +0.0087 +0.0422    DD   Y   .
+
+  K7    0.000 C0        6.26%  1.1766 -11.13% +0.3035 +0.2685 +0.3183 +0.0910 -0.0440  CAGR   .   Y
+  K7    0.000 C1@150    6.26%  1.1766 -11.13% +0.3035 +0.2685 +0.3183 +0.0910 -0.0440  CAGR   .   .
+  K7    0.000 C1@300    6.26%  1.1766 -11.13% +0.3035 +0.2685 +0.3183 +0.0910 -0.0440  CAGR   .   .
+  K7    0.000 C2@150    6.26%  0.8927 -11.13% +0.0967 +0.0762 +0.1197 +0.0910 -0.0440  CAGR   .   .
+  K7    0.000 C2@300    6.26%  0.6088 -11.13% -0.1100 -0.1160 -0.0789 +0.0910 -0.0440    H2   .   .
+
+  K8    0.122 C0       14.21%  1.2261 -14.79% +0.1761 +0.4845 +0.5184 +0.0544 +0.0355  CAGR   Y   .
+  K8    0.122 C1@150   14.42%  1.2423 -14.79% +0.1876 +0.5053 +0.5379 +0.0544 +0.0376  CAGR   Y   .
+  K8    0.122 C1@300   14.63%  1.2585 -14.79% +0.1992 +0.5262 +0.5575 +0.0544 +0.0397  CAGR   Y   .
+  K8    0.122 C2@150   14.42%  1.1103 -14.79% +0.1464 +0.4533 +0.4857 +0.0544 +0.0376  CAGR   Y   .
+  K8    0.122 C2@300   14.63%  0.9946 -14.79% +0.1166 +0.4220 +0.4530 +0.0544 +0.0397  CAGR   Y   .
+
+  LIVE  0.467 C0        8.66%  1.2056 -12.05% +0.2693 +0.3568 +0.4031 +0.0818 -0.0200  CAGR   .   .
+  LIVE  0.467 C1@150    9.42%  1.3044 -12.02% +0.3732 +0.4513 +0.4984 +0.0821 -0.0124  CAGR   .   .
+  LIVE  0.467 C1@300   10.19%  1.4032 -11.98% +0.4772 +0.5457 +0.5937 +0.0825 -0.0047  CAGR   .   .
+  LIVE  0.467 C2@150    9.42%  1.0931 -12.02% +0.2402 +0.3303 +0.3753 +0.0821 -0.0124  CAGR   .   .
+  LIVE  0.467 C2@300   10.19%  0.9806 -11.98% +0.2111 +0.3037 +0.3475 +0.0825 -0.0047  CAGR   .   .
+
+  V1    0.250 C0        6.46%  0.6647 -13.83% -0.3146 -0.1462 -0.1349 +0.0640 -0.0420    H1   .   .
+  V1    0.250 C1@150    6.86%  0.7016 -13.80% -0.2744 -0.1120 -0.0999 +0.0643 -0.0380    H1   .   .
+  V1    0.250 C1@300    7.26%  0.7384 -13.77% -0.2343 -0.0777 -0.0648 +0.0646 -0.0340    H1   .   .
+  V1    0.250 C2@150    6.86%  0.5545 -13.80% -0.3436 -0.1692 -0.1570 +0.0643 -0.0380    H1   .   .
+  V1    0.250 C2@300    7.26%  0.4443 -13.77% -0.3726 -0.1921 -0.1790 +0.0646 -0.0340    H1   .   .
+
+
+  --- cost rung 25 bps ----------------------------------------------------------------------------------------
+  book   cash treat      CAGR    Shrp   MaxDD    m_H1    m_H2   m_OOS    m_DD  m_CAGR  bind  4b  4a
+  K1    0.250 C0       10.94%  0.9259 -18.44% -0.0334 +0.1000 +0.1165 +0.0179 +0.0028    H1   .   .
+  K1    0.250 C1@150   11.36%  0.9571 -18.42% +0.0008 +0.1289 +0.1461 +0.0181 +0.0070    H1   Y   .
+  K1    0.250 C1@300   11.78%  0.9883 -18.40% +0.0350 +0.1578 +0.1757 +0.0183 +0.0112  CAGR   Y   .
+  K1    0.250 C2@150   11.36%  0.8321 -18.42% -0.0450 +0.0926 +0.1101 +0.0181 +0.0070    H1   .   .
+  K1    0.250 C2@300   11.78%  0.7383 -18.40% -0.0566 +0.0851 +0.1038 +0.0183 +0.0112    H1   .   .
+
+  K2    0.250 C0       11.99%  1.0512 -17.35% +0.0895 +0.2290 +0.2928 +0.0288 +0.0133  CAGR   Y   .
+  K2    0.250 C1@150   12.41%  1.0841 -17.33% +0.1258 +0.2593 +0.3238 +0.0290 +0.0175  CAGR   Y   .
+  K2    0.250 C1@300   12.83%  1.1170 -17.31% +0.1622 +0.2896 +0.3548 +0.0292 +0.0217  CAGR   Y   .
+  K2    0.250 C2@150   12.41%  0.9524 -17.33% +0.0717 +0.2174 +0.2821 +0.0290 +0.0175  CAGR   Y   .
+  K2    0.250 C2@300   12.83%  0.8537 -17.31% +0.0539 +0.2059 +0.2714 +0.0292 +0.0217  CAGR   Y   .
+
+  K3    0.281 C0       10.88%  1.0766 -14.45% +0.0838 +0.2786 +0.3313 +0.0578 +0.0022  CAGR   Y   .
+  K3    0.281 C1@150   11.35%  1.1186 -13.78% +0.1280 +0.3188 +0.3720 +0.0645 +0.0069  CAGR   Y   .
+  K3    0.281 C1@300   11.82%  1.1606 -13.11% +0.1723 +0.3590 +0.4126 +0.0712 +0.0116  CAGR   Y   .
+  K3    0.281 C2@150   11.35%  0.9696 -13.78% +0.0591 +0.2581 +0.3111 +0.0645 +0.0069  CAGR   Y   .
+  K3    0.281 C2@300   11.82%  0.8625 -13.11% +0.0345 +0.2377 +0.2910 +0.0712 +0.0116  CAGR   Y   .
+
+  K4    0.289 C0       11.63%  1.1822 -15.54% +0.2639 +0.3133 +0.3614 +0.0469 +0.0097  CAGR   Y   .
+  K4    0.289 C1@150   12.11%  1.2269 -15.50% +0.3087 +0.3580 +0.4055 +0.0473 +0.0145  CAGR   Y   .
+  K4    0.289 C1@300   12.60%  1.2717 -15.45% +0.3537 +0.4026 +0.4496 +0.0478 +0.0194  CAGR   Y   .
+  K4    0.289 C2@150   12.11%  1.0723 -15.50% +0.2400 +0.2876 +0.3344 +0.0473 +0.0145  CAGR   Y   .
+  K4    0.289 C2@300   12.60%  0.9625 -15.45% +0.2161 +0.2619 +0.3074 +0.0478 +0.0194  CAGR   Y   .
+
+  K5    0.290 C0       11.19%  1.1681 -15.96% +0.2322 +0.3188 +0.3657 +0.0427 +0.0054  CAGR   Y   .
+  K5    0.290 C1@150   11.68%  1.2140 -15.94% +0.2801 +0.3632 +0.4096 +0.0429 +0.0102  CAGR   Y   .
+  K5    0.290 C1@300   12.17%  1.2600 -15.92% +0.3280 +0.4075 +0.4535 +0.0431 +0.0151  CAGR   Y   .
+  K5    0.290 C2@150   11.68%  1.0557 -15.94% +0.2032 +0.2924 +0.3381 +0.0429 +0.0102  CAGR   Y   .
+  K5    0.290 C2@300   12.17%  0.9432 -15.92% +0.1741 +0.2659 +0.3104 +0.0431 +0.0151  CAGR   Y   .
+
+  K6    0.250 C0       13.69%  1.2000 -19.53% +0.2797 +0.3429 +0.3569 +0.0070 +0.0303    DD   Y   .
+  K6    0.250 C1@150   14.11%  1.2334 -19.50% +0.3163 +0.3738 +0.3889 +0.0073 +0.0345    DD   Y   .
+  K6    0.250 C1@300   14.54%  1.2668 -19.47% +0.3529 +0.4047 +0.4209 +0.0076 +0.0388    DD   Y   .
+  K6    0.250 C2@150   14.11%  1.0997 -19.50% +0.2610 +0.3294 +0.3432 +0.0073 +0.0345    DD   Y   .
+  K6    0.250 C2@300   14.54%  0.9994 -19.47% +0.2423 +0.3159 +0.3295 +0.0076 +0.0388    DD   Y   .
+
+  K7    0.000 C0        5.56%  1.0498 -11.93% +0.1809 +0.1377 +0.1898 +0.0830 -0.0510  CAGR   .   .
+  K7    0.000 C1@150    5.56%  1.0498 -11.93% +0.1809 +0.1377 +0.1898 +0.0830 -0.0510  CAGR   .   .
+  K7    0.000 C1@300    5.56%  1.0498 -11.93% +0.1809 +0.1377 +0.1898 +0.0830 -0.0510  CAGR   .   .
+  K7    0.000 C2@150    5.56%  0.7662 -11.93% -0.0256 -0.0543 -0.0086 +0.0830 -0.0510    H2   .   .
+  K7    0.000 C2@300    5.56%  0.4825 -11.93% -0.2320 -0.2463 -0.2069 +0.0830 -0.0510    H2   .   .
+
+  K8    0.122 C0       12.73%  1.1108 -16.05% +0.0591 +0.3708 +0.4061 +0.0418 +0.0207  CAGR   Y   .
+  K8    0.122 C1@150   12.93%  1.1270 -16.05% +0.0706 +0.3917 +0.4256 +0.0418 +0.0227  CAGR   Y   .
+  K8    0.122 C1@300   13.14%  1.1432 -16.05% +0.0822 +0.4125 +0.4451 +0.0418 +0.0248  CAGR   Y   .
+  K8    0.122 C2@150   12.93%  0.9951 -16.05% +0.0294 +0.3396 +0.3734 +0.0418 +0.0227  CAGR   Y   .
+  K8    0.122 C2@300   13.14%  0.8793 -16.05% -0.0003 +0.3084 +0.3407 +0.0418 +0.0248    H1   .   .
+
+  LIVE  0.467 C0        8.37%  1.1681 -12.09% +0.2315 +0.3194 +0.3662 +0.0814 -0.0229  CAGR   .   .
+  LIVE  0.467 C1@150    9.13%  1.2668 -12.05% +0.3354 +0.4138 +0.4615 +0.0818 -0.0153  CAGR   .   .
+  LIVE  0.467 C1@300    9.90%  1.3656 -12.02% +0.4394 +0.5083 +0.5568 +0.0821 -0.0076  CAGR   .   .
+  LIVE  0.467 C2@150    9.13%  1.0555 -12.05% +0.2024 +0.2928 +0.3385 +0.0818 -0.0153  CAGR   .   .
+  LIVE  0.467 C2@300    9.90%  0.9430 -12.02% +0.1733 +0.2663 +0.3107 +0.0821 -0.0076  CAGR   .   .
+
+  V1    0.250 C0        2.76%  0.3174 -15.63% -0.6706 -0.4880 -0.4828 +0.0460 -0.0790    H1   .   .
+  V1    0.250 C1@150    3.14%  0.3542 -15.39% -0.6306 -0.4538 -0.4478 +0.0484 -0.0752    H1   .   .
+  V1    0.250 C1@300    3.53%  0.3910 -15.15% -0.5905 -0.4195 -0.4128 +0.0508 -0.0713    H1   .   .
+  V1    0.250 C2@150    3.14%  0.2074 -15.39% -0.6995 -0.5108 -0.5047 +0.0484 -0.0752    H1   .   .
+  V1    0.250 C2@300    3.53%  0.0974 -15.15% -0.7283 -0.5336 -0.5266 +0.0508 -0.0713    H1   .   .
+
+
+  VERDICT TRANSFER -- does the published (C0) verdict survive the amendment?
+  book  rung       C0   C1@150   C1@300   C2@150   C2@300   4b carries?   4a carries?
+  K1      10    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K1      25    --/--    4b/--    4b/--    --/--    --/--          NO           YES
+  K2      10    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K2      25    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K3      10    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K3      25    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K4      10    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K4      25    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K5      10    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K5      25    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K6      10    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K6      25    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K7      10    --/4a    --/--    --/--    --/--    --/--          YES          NO 
+  K7      25    --/--    --/--    --/--    --/--    --/--          YES          YES
+  K8      10    4b/--    4b/--    4b/--    4b/--    4b/--          YES          YES
+  K8      25    4b/--    4b/--    4b/--    4b/--    --/--          NO           YES
+  LIVE    10    --/--    --/--    --/--    --/--    --/--          YES          YES
+  LIVE    25    --/--    --/--    --/--    --/--    --/--          YES          YES
+  V1      10    --/--    --/--    --/--    --/--    --/--          YES          YES
+  V1      25    --/--    --/--    --/--    --/--    --/--          YES          YES
+
+  -> 4b verdict identical under all five treatments in 18 of 20 (book x rung) cells; 4a in 19 of 20.
+
+  SPY reference (10 bps, own panel window): U56 15.23%/0.8890/-33.72%; B136 15.23%/0.8890/-33.72%; SMALL 15.23%/0.8890/-33.72%
+
+==============================================================================================================
+PART C -- the RECORD corpus: every committed research/backtests CSV that publishes
+          (Sharpe, CAGR, MaxDD, gross) in ONE row, re-priced FIRST-ORDER under C1/C2
+==============================================================================================================
+  METHOD.  For a row publishing (S, CAGR, MaxDD, gross g):
+    dCAGR    = (1-g)*c                       (both C1 and C2; conservative, gate G5)
+    vol_hat  = S - sqrt(S^2 - 2*CAGR)        (Sharpe/CAGR identity, gate G4)
+    dS(C1)   = +(1-g)*c / vol_hat            (the queue's literal fix: cash paid, rf=0)
+    dS(C2)   = -g*c     / vol_hat            (the consistent fix: cash paid AND rf=c)
+  dS(C1) > 0 for every de-grossed row and dS(C2) < 0 for every row with ANY exposure:
+  the two lines of the amendment push the record's Sharpe column in OPPOSITE directions.
+
+  scanned 2905 committed CSVs in 24s: 461 usable, 2435 lack one of the four columns, 8 have the columns but no usable row, 0 unreadable, 0 too large.
+  -> 352,131 published book-rows across 461 files; mean gross 0.661, mean cash 0.339, de-grossed (g<1) 87.9%, levered (g>1) 1.3%
+  327,971 rows survive the vol-recovery domain check (vol_hat in [0.01, 1.5]); median vol_hat 0.110
+
+   rate  |dS(C1)| med  |dS(C2)| med   >0.05 C1   >0.05 C2  S-bar flips C1  S-bar flips C2  CAGR-floor flips
+    150        0.0361       -0.0913     36.16%     97.16%           5.63%          11.28%             3.35%
+    300        0.0722       -0.1827     73.52%     99.90%          10.27%          30.91%             7.15%
+
+  (the full-sample Sharpe-vs-SPY bar is NOT a 4b leg -- 4b reads halves + OOS -- so these
+   flip rates are a SIZE statistic for the record's Sharpe column, not a verdict count;
+   PART B counts verdicts exactly. Panel is inferred from the filename, default U56.)
+
+==============================================================================================================
+PART D -- PROTOCOL rule 8: the dial chosen on the FIRST half (<= 2016-12-31) by IS
+          Sharpe UNDER EACH TREATMENT, 2017-01-01.. read exactly once.
+==============================================================================================================
+
+  ALL 160 grid points written to 2026-09-10_price-the-rf-CONSISTENCY-fix-as-a-PROTOCOL-amendment_cloud.wf.csv
+
+  --- family BAND3-GROSS (10 dial cells) ------------------------------------------------------------
+  treatment IS pick         IS Sharpe  OOS Sharpe  OOS CAGR  OOS MaxDD  vs RULESv2   vs SPY
+  C0        (1.0, 'M')         1.1076      1.2336    12.93%    -18.81%     -0.0514  +0.3516
+  C1@150    (0.5, 'W')         1.3164      1.4839     7.35%     -8.06%     +0.1035  +0.6019
+  C1@300    (0.5, 'W')         1.5293      1.6821     8.39%     -8.01%     +0.2065  +0.8001
+  C2@150    (1.0, 'M')         0.9984      1.1294    13.41%    -18.77%     -0.0453  +0.3300
+  C2@300    (1.0, 'M')         0.8892      1.0252    13.90%    -18.74%     -0.0392  +0.3083
+
+  --- family MAGATE-GROSS (10 dial cells) ------------------------------------------------------------
+  treatment IS pick         IS Sharpe  OOS Sharpe  OOS CAGR  OOS MaxDD  vs RULESv2   vs SPY
+  C0        (1.0, 'M')         1.1145      1.1955    18.30%    -23.76%     -0.0896  +0.3134
+  C1@150    (0.5, 'M')         1.2195      1.2945     9.84%    -12.38%     -0.0858  +0.4125
+  C1@300    (0.5, 'M')         1.3307      1.3948    10.66%    -12.32%     -0.0809  +0.5128
+  C2@150    (1.0, 'M')         1.0037      1.0955    18.30%    -23.76%     -0.0792  +0.2961
+  C2@300    (1.0, 'M')         0.8929      0.9956    18.30%    -23.76%     -0.0688  +0.2787
+
+  --- family TOPN-GROSS (12 dial cells) ------------------------------------------------------------
+  treatment IS pick         IS Sharpe  OOS Sharpe  OOS CAGR  OOS MaxDD  vs RULESv2   vs SPY
+  C0        (20, 0.75)         0.9759      1.1307    14.45%    -18.31%     -0.1544  +0.2487
+  C1@150    (50, 0.5)          1.0842      1.2288     8.38%    -10.68%     -0.1516  +0.3468
+  C1@300    (50, 0.5)          1.2011      1.3401     9.20%    -10.64%     -0.1356  +0.4581
+  C2@150    (20, 0.75)         0.8750      1.0418    14.88%    -18.29%     -0.1330  +0.2423
+  C2@300    (20, 1.0)          0.7742      0.9535    19.32%    -23.98%     -0.1109  +0.2366
+
+  the AMENDMENT's effect on rule 8: the IS pick CHANGES under the amendment in 7 of 12 (family x treatment) cells.
+  OOS the pick beats RULES v2 in 2 of 15 cells and SPY in 15 of 15.
+
+DONE in 43s
