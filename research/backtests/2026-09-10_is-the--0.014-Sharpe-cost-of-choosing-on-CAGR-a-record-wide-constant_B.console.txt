@@ -1,0 +1,251 @@
+========================================================================================================================================================================================================
+IDEA 493 — is the -0.014 Sharpe cost of choosing on CAGR a record-wide constant?  (lane B, 2026-09-10)
+========================================================================================================================================================================================================
+
+[0] GATES (pre-registered, run before any new number is read)
+  G1 fast_backtest vs engine.backtest @10bps on U56 RULES v2 : max abs diff 6.939e-18
+  G2 local band book over ALL columns IS baseline.rules_v2_weights : max abs diff 3.600e-01
+     (the panel books below hold only the panel's TRADABLES, so SPY is a benchmark and never a holding: that convention moves the same book by 3.600e-01 on U56 — a stated design choice, not a gate)
+  G3 LIVE RULES v2 on U56 : CAGR 8.63% / Sharpe 1.2021 / MaxDD -12.05% (halves 1.2309 / 1.1798)  [record 2026-09-10: 8.66% / 1.2056 / -12.05% (1.2259/1.1909), read on data ending 2026-09-08]
+     data/prices.csv now ends 2026-09-09 (4701 rows) — one extra session, so G3 is REPRODUCTION, not equality; the deltas are CAGR -0.0003, Sharpe -0.0035, MaxDD -0.0000
+  G4 idea 270's committed census re-read: 6956 menus / 73 files [published 6956 / 73]; file-clustered dS -0.0162 (t -3.07, neg 36/73) [published -0.0162, t -3.07, 36/73]; dCAGR +0.6287 pp (t +5.07, pos 52/73) [published +0.63, t +5.07, 52/73]
+  G4b per-family FILE-CLUSTERED dS (published: cadence -0.0024, gross -0.0035, n -0.0446, other -0.0150, trim -0.0446):
+     cadence -0.0024  gross -0.0035  n -0.0446  other -0.0150  trim -0.0446
+
+[1] LEG A — the queue's literal ask: family and arm count on the record's 6,956 committed menus
+  families ['cadence', 'gross', 'n', 'other', 'trim'], base = 'other'; clusters = file (G = 73)
+
+  menu-size composition of idea 270's five families (the covariate its permutation never carried):
+         menus  files  mean_arms  med_arms  max_arms  disagree      dS
+family                                                                
+cadence    294      5     3.6667    4.0000         6    0.0986 -0.0075
+gross     1523     14     4.6743    3.0000        11    0.1431 -0.0056
+n         1187     13    18.0236    3.0000       800    0.4482 -0.0316
+other     3799     45     9.1745    3.0000       183    0.2280 -0.0064
+trim       153      4    17.6078   12.0000        35    0.4444 -0.0537
+
+  M0  dS ~ 1                    (the quotable constant)
+          coef      se        t     lo95     hi95
+term                                             
+const -0.01163 0.00449 -2.58981 -0.02056 -0.00269
+    wild cluster bootstrap (9999 draws): H0 const = -0.014 -> |t| 0.529, p 0.6157   |   H0 const = 0 -> |t| 2.590, p 0.0206
+
+  M1  dS ~ family               (idea 270's reading)
+                 coef      se        t     lo95     hi95
+term                                                    
+const        -0.00643 0.00625 -1.02863 -0.01887  0.00601
+fam[cadence] -0.00104 0.00761 -0.13655 -0.01618  0.01411
+fam[gross]    0.00085 0.00823  0.10324 -0.01552  0.01722
+fam[n]       -0.02518 0.00855 -2.94666 -0.04219 -0.00818
+fam[trim]    -0.04729 0.01854 -2.55077 -0.08418 -0.01040
+    family homogeneity Wald 23.051, wild-cluster-bootstrap p 0.1021
+
+  M2  dS ~ log2(arms)           (the covariate idea 270 never carried)
+               coef      se        t     lo95    hi95
+term                                                 
+const       0.00543 0.01183  0.45944 -0.01810 0.02897
+log2(arms) -0.00735 0.00630 -1.16720 -0.01989 0.00518
+    wild cluster bootstrap: H0 log2(arms) = 0 -> |t| 1.167, p 0.2759
+
+  M3  dS ~ family + log2(arms)  (the queue's ask: both covariates together)
+                 coef      se        t     lo95     hi95
+term                                                    
+const         0.00834 0.00773  1.08010 -0.00703  0.02372
+fam[cadence] -0.00425 0.00545 -0.77894 -0.01510  0.00660
+fam[gross]   -0.00090 0.00701 -0.12877 -0.01486  0.01305
+fam[n]       -0.02465 0.00941 -2.62000 -0.04336 -0.00593
+fam[trim]    -0.03981 0.01645 -2.42029 -0.07254 -0.00708
+log2(arms)   -0.00625 0.00545 -1.14675 -0.01711  0.00460
+    family homogeneity Wald 11.458, wild-cluster-bootstrap p 0.4860
+    wild cluster bootstrap: H0 log2(arms) = 0 | family -> |t| 1.147, p 0.2850
+
+  per-family file-clustered mean with its own 95% CI, and whether it contains the quoted constant:
+         files  menus     mean      se     lo95     hi95  contains_quoted
+family                                                                   
+cadence      5    294 -0.00747 0.00482 -0.01706  0.00212             True
+gross       14   1523 -0.00558 0.00468 -0.01490  0.00374             True
+n           13   1187 -0.03161 0.00605 -0.04365 -0.01957            False
+other       45   3799 -0.00643 0.00628 -0.01892  0.00606             True
+trim         4    153 -0.05372 0.02421 -0.10191 -0.00553             True
+
+  rate/size decomposition  E[dS] = P(disagree) * E[dS | disagree]:
+         menus  files   rate    cond  product  pooled
+family                                               
+cadence    294      5 0.0986 -0.0757  -0.0075 -0.0075
+gross     1523     14 0.1431 -0.0390  -0.0056 -0.0056
+n         1187     13 0.4482 -0.0705  -0.0316 -0.0316
+other     3799     45 0.2280 -0.0282  -0.0064 -0.0064
+trim       153      4 0.4444 -0.1209  -0.0537 -0.0537
+
+  by ARM BUCKET (the same decomposition, menu size on the rows):
+             menus  files   rate    cond  product  pooled
+bucket                                                   
+(2, 3]        3640     58 0.1585 -0.0477  -0.0076 -0.0076
+(3, 4]         715     42 0.2783 -0.0209  -0.0058 -0.0058
+(4, 6]         879     41 0.1638 -0.0067  -0.0011 -0.0011
+(6, 10]        819     28 0.2930 -0.0339  -0.0099 -0.0099
+(10, 20]       429     14 0.5012 -0.1274  -0.0639 -0.0639
+(20, 10000]    474      9 0.7131 -0.0374  -0.0267 -0.0267
+
+  PRE-REGISTERED BAR for '-0.014 survives as a quotable constant':
+    B1 M0 95% CI contains -0.014                 : True   [-0.02056, -0.00269]
+    B2 family Wald p > 0.05 in BOTH M1 and M3      : True   [M1 0.1021, M3 0.4860]
+    B3 |t| < 2 on log2(arms) in M2                 : True   [t -1.167]
+    B4 every family's own 95% CI contains -0.014  : False   [4/5 families]
+    VERDICT ON THE CONSTANT: DOES NOT SURVIVE (3/4 bars)
+
+[2] ROBUSTNESS — the same four models on TODAY's re-derived census (append-only superset)
+  3142 committed CSVs scanned in 162s (0 unreadable, 2 over 200000 rows, 1 with duplicated metric columns, all skipped); 93 carry the four metrics and a sweepable dial -> 8931 menus [idea 270 saw 2162 files / 73 used / 6956 menus]
+  file-clustered dS -0.0161 (t -3.56, neg 47/93)
+
+  M0'  dS ~ 1
+          coef      se        t     lo95     hi95
+term                                             
+const -0.01197 0.00374 -3.20292 -0.01940 -0.00453
+
+  M1'  dS ~ family 
+                 coef      se        t     lo95     hi95
+term                                                    
+const        -0.00921 0.00497 -1.85220 -0.01911  0.00069
+fam[cadence]  0.00174 0.00660  0.26403 -0.01139  0.01487
+fam[gross]    0.00363 0.00729  0.49785 -0.01088  0.01814
+fam[n]       -0.02240 0.00765 -2.92954 -0.03762 -0.00718
+fam[trim]    -0.00969 0.01151 -0.84164 -0.03260  0.01322
+    family homogeneity Wald 15.027, wild-cluster-bootstrap p 0.1879
+
+  M2'  dS ~ log2(arms)
+               coef      se        t     lo95    hi95
+term                                                 
+const       0.00168 0.01029  0.16343 -0.01880 0.02216
+log2(arms) -0.00566 0.00519 -1.09120 -0.01599 0.00467
+
+  M3'  dS ~ family + log2(arms)
+                 coef      se        t     lo95     hi95
+term                                                    
+const         0.00387 0.00812  0.47626 -0.01230  0.02004
+fam[cadence] -0.00145 0.00491 -0.29500 -0.01122  0.00832
+fam[gross]    0.00169 0.00634  0.26583 -0.01093  0.01430
+fam[n]       -0.02239 0.00801 -2.79350 -0.03834 -0.00644
+fam[trim]    -0.00448 0.01133 -0.39575 -0.02702  0.01806
+log2(arms)   -0.00535 0.00477 -1.12070 -0.01485  0.00415
+    family homogeneity Wald 8.405, wild-cluster-bootstrap p 0.5697
+
+[3] LEG B — the live twin: menu size set BY DESIGN (contiguous windows), rule 8 throughout
+  U56: 55 tradables, 38 arms backtested in 3s
+  B136: 135 tradables, 38 arms backtested in 9s
+  SMALL439: 439 tradables, 38 arms backtested in 29s
+  114 arms, 306 designed menus, 927 scored books
+
+  designed menus: dOOS_Sharpe by ARM COUNT (menu size varied, family held on the rows)
+arms         3       4       5      6      7      8      9      10
+family                                                            
+cadence -0.0138 -0.0276     NaN    NaN    NaN    NaN    NaN    NaN
+gross    0.0000  0.0000  0.0000 0.0000 0.0000 0.0000    NaN    NaN
+n        0.0072  0.0083  0.0096 0.0208 0.0115 0.0154 0.0231 0.0461
+trim    -0.0037 -0.0044 -0.0001 0.0000 0.0000 0.0000    NaN    NaN
+volgate  0.0385  0.0464  0.0501 0.0661 0.0505 0.0989    NaN    NaN
+
+  disagreement rate by the same grid:
+arms        3      4      5      6      7      8      9      10
+family                                                         
+cadence 0.1667 0.3333    NaN    NaN    NaN    NaN    NaN    NaN
+gross   0.0000 0.0000 0.0000 0.0000 0.0000 0.0000    NaN    NaN
+n       0.0417 0.0476 0.0556 0.1333 0.0833 0.1111 0.1667 0.3333
+trim    0.1111 0.1333 0.0833 0.0000 0.0000 0.0000    NaN    NaN
+volgate 0.2778 0.2667 0.1667 0.2222 0.1667 0.3333    NaN    NaN
+
+  pooled over families, by arm count:
+      menus   rate     dS     dC
+arms                            
+3        84 0.1071 0.0085 0.1305
+4        69 0.1159 0.0104 0.1743
+5        54 0.0741 0.0143 0.2303
+6        42 0.0952 0.0216 0.3736
+7        30 0.0667 0.0147 0.2903
+8        18 0.1111 0.0242 0.5097
+9         6 0.1667 0.0231 0.5601
+10        3 0.3333 0.0461 1.1202
+
+  conditional on DISAGREEMENT (the census's own dilution problem, stated for both corpora):
+    designed grid: 31/306 menus disagree (0.1013); E[dS | disagree] +0.1378; pooled +0.0140
+    record census: 1713/6956 menus disagree (0.2463); E[dS | disagree] -0.0472; pooled -0.0116
+
+  the SAME four models on the designed grid (clusters = panel|family, G = 15; base family 'n'):
+
+  L0  dS ~ 1
+         coef      se       t     lo95    hi95
+term                                          
+const 0.01396 0.00719 1.94047 -0.00036 0.02828
+    wild cluster bootstrap: H0 const = -0.014 (the record's quoted cost) -> |t| 3.886, p 0.0001   |   H0 const = 0 -> |t| 1.940, p 0.1218
+
+  L1  dS ~ family 
+                 coef      se        t     lo95     hi95
+term                                                    
+const         0.01283 0.00546  2.35086  0.00197  0.02368
+fam[cadence] -0.03121 0.01656 -1.88435 -0.06416  0.00175
+fam[gross]   -0.01283 0.00546 -2.35086 -0.02368 -0.00197
+fam[trim]    -0.01494 0.00574 -2.60058 -0.02637 -0.00351
+fam[volgate]  0.03774 0.02266  1.66504 -0.00736  0.08284
+    family homogeneity Wald 13.573, wild-cluster-bootstrap p 0.3394
+
+  L2  dS ~ log2(arms)
+               coef      se        t     lo95    hi95
+term                                                 
+const      -0.00921 0.01629 -0.56546 -0.04162 0.02320
+log2(arms)  0.01055 0.00771  1.36784 -0.00480 0.02589
+    wild cluster bootstrap: H0 log2(arms) = 0 -> |t| 1.368, p 0.2805
+
+  L3  dS ~ family + log2(arms)
+                 coef      se        t     lo95     hi95
+term                                                    
+const        -0.00955 0.01859 -0.51371 -0.04655  0.02745
+fam[cadence] -0.02547 0.01700 -1.49803 -0.05930  0.00836
+fam[gross]   -0.01122 0.00531 -2.11308 -0.02178 -0.00065
+fam[trim]    -0.01333 0.00557 -2.39119 -0.02442 -0.00224
+fam[volgate]  0.03934 0.02310  1.70304 -0.00663  0.08532
+log2(arms)    0.00966 0.00825  1.17042 -0.00676  0.02607
+    family homogeneity Wald 13.264, wild-cluster-bootstrap p 0.3408
+
+[4] RULE 8 — books chosen on IS 2009-2016 only, read once on OOS 2017-2026
+
+  panel comparands (OOS 2017+):
+                          OOS_CAGR  OOS_Sharpe  OOS_MaxDD  FULL_CAGR  FULL_Sharpe  FULL_MaxDD
+panel    selector                                                                            
+U56      RULES v2 (live)    0.1342      1.2051    -0.1764     0.1228       1.1650     -0.1764
+         RULES v1           0.0782      0.7502    -0.1383     0.0651       0.6667     -0.1383
+         SPY                0.1532      0.8758    -0.3372     0.1515       0.8855     -0.3372
+B136     RULES v2 (live)    0.1204      1.0784    -0.1849     0.1176       1.0712     -0.1849
+         RULES v1           0.0553      0.5392    -0.2148     0.0616       0.6136     -0.2148
+         SPY                0.1545      0.8820    -0.3372     0.1523       0.8890     -0.3372
+SMALL439 RULES v2 (live)    0.0808      0.5750    -0.3768     0.0731       0.5553     -0.3768
+         RULES v1           0.0777      0.5711    -0.3401     0.0804       0.5956     -0.3401
+         SPY                0.1545      0.8820    -0.3372     0.1413       0.8615     -0.3372
+
+  selector books, OOS means by panel x selector (all 918 books, every grid point in .keeppaths.csv):
+                    books  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  FULL_Sharpe  FULL_MaxDD  p4a  p4b
+panel    selector                                                                            
+B136     DONOTHING    102    0.0948      0.9445    -0.1758       0.9666     -0.1758    0   26
+         S_CAGR       102    0.1096      0.9775    -0.1976       1.0097     -0.1976    0   25
+         S_SHARPE     102    0.1065      0.9599    -0.1972       1.0019     -0.1972    0   22
+SMALL439 DONOTHING    102    0.0535      0.4487    -0.3382       0.4989     -0.3382    1    0
+         S_CAGR       102    0.0602      0.4489    -0.3732       0.5245     -0.3732   11    0
+         S_SHARPE     102    0.0589      0.4437    -0.3625       0.5216     -0.3625   13    0
+U56      DONOTHING    102    0.1098      1.0822    -0.1639       1.0518     -0.1639    0   45
+         S_CAGR       102    0.1278      1.1328    -0.1822       1.1043     -0.1822    0   72
+         S_SHARPE     102    0.1248      1.1136    -0.1825       1.0954     -0.1825    0   68
+
+  KEEP paths over EVERY selector book:
+           books  p4a  p4b  both
+selector                        
+DONOTHING    306    1   71     0
+S_CAGR       306   11   97     0
+S_SHARPE     306   13   90     0
+  4b failure legs over all books: H1,H2,OOS,DD,CAGR 292, - 258, CAGR 114, DD 81, H2,OOS,CAGR 67, H2,OOS,DD,CAGR 55, H1,H2,OOS,CAGR 26, H1,H2,OOS,DD 14, H2,DD,CAGR 7, H2,CAGR 4
+  distinct (panel, arm) books behind those rows: 98; 4a 3, 4b 25, both 0
+  walk-forward artefact -> 2026-09-10_is-the--0.014-Sharpe-cost-of-choosing-on-CAGR-a-record-wide-constant_B.walkforward.csv (918 rows)
+
+[5] SUMMARY
+  LEG A  constant -0.01163 [-0.02056, -0.00269]; family Wald p M1 0.1021 -> M3 0.4860; log2(arms) -0.00735 (t -1.17, p 0.2759); bars 3/4
+  LEG B  designed menus 306; pooled dS +0.01396; k=3 +0.00855 -> k=10 +0.04615
+  run time 252s
+========================================================================================================================================================================================================
