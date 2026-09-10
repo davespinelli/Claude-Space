@@ -1,0 +1,218 @@
+============================================================================================================
+IDEA 624 — is the SELECTION-vs-TRADING dial split a record-wide LAW?   (cloud 2026-09-10)
+============================================================================================================
+        u56: 56 cols  2008-01-02 .. 2026-09-09
+   broad136: 136 cols  2008-01-02 .. 2026-09-04
+   small439: 440 cols  2010-01-04 .. 2026-09-04  (44 dropped for max_1d_move>=1.0)
+
+GATES
+  G1       u56 D: max|dr| 3.574e-16  max|dto| 0.000e+00
+  G1       u56 W: max|dr| 6.409e-16  max|dto| 3.331e-16
+  G2       u56  : rung identity max|dr| 6.409e-16
+  G1  broad136 D: max|dr| 3.435e-16  max|dto| 0.000e+00
+  G1  broad136 W: max|dr| 5.725e-16  max|dto| 4.441e-16
+  G2  broad136  : rung identity max|dr| 5.725e-16
+  G1  small439 D: max|dr| 3.417e-16  max|dto| 0.000e+00
+  G1  small439 W: max|dr| 7.815e-16  max|dto| 4.441e-16
+  G2  small439  : rung identity max|dr| 7.815e-16
+  G3        n on TOP20: default 20 in ladder -> True
+  G3   lambda on TOP20: default 1.0 in ladder -> True
+  G3   lambda on  BAND: default 1.0 in ladder -> True
+  G3  cadence on TOP20: default W in ladder -> True
+  G3  cadence on  BAND: default W in ladder -> True
+  G3    gross on TOP20: default 0.75 in ladder -> True
+  G3    gross on  BAND: default 0.75 in ladder -> True
+  G3     band on  BAND: default 0.03 in ladder -> True
+  G3   volcap on TOP20: default 0.6 in ladder -> True
+  G3   volcap on  BAND: default 9.99 in ladder -> True
+  G4 windows: IS <= 2016-12-31, OOS >= 2017-01-01, disjoint and exhaustive -> True
+  G5 REPRODUCTION of idea 621's headline from its own committed .cells.csv:
+     SELECTION: 11/12 (median +0.0763)   target 11/12 and 20/36
+       TRADING: 20/36 (median +0.0002)   target 11/12 and 20/36
+     CONFOUND CHECK: SELECTION cells on the TOP20 book: 12/12 — class is PERFECTLY confounded with book in idea 621's grid
+     G5 -> PASS
+  G6       u56  : band_book(volcap=9.99) vs idea 621's band_book  max|dW| 0.000e+00
+  G6  broad136  : band_book(volcap=9.99) vs idea 621's band_book  max|dW| 0.000e+00
+  G6  small439  : band_book(volcap=9.99) vs idea 621's band_book  max|dW| 0.000e+00
+  GATES PASS
+
+GRID — every point reported (.grid.csv); rule 8 run per cell (.cells.csv)
+          u56        n TOP20 [SEL]: 14 points   [   28s]
+          u56   lambda TOP20 [TRA]: 16 points   [   31s]
+          u56   lambda  BAND [TRA]: 16 points   [   34s]
+          u56  cadence TOP20 [TRA]: 4 points   [   34s]
+          u56  cadence  BAND [TRA]: 4 points   [   35s]
+          u56    gross TOP20 [TRA]: 8 points   [   36s]
+          u56    gross  BAND [TRA]: 8 points   [   37s]
+          u56     band  BAND [TRA]: 14 points   [   40s]
+          u56   volcap TOP20 [SEL]: 12 points   [   42s]
+          u56   volcap  BAND [SEL]: 12 points   [   44s]
+     broad136        n TOP20 [SEL]: 14 points   [   47s]
+     broad136   lambda TOP20 [TRA]: 16 points   [   50s]
+     broad136   lambda  BAND [TRA]: 16 points   [   55s]
+     broad136  cadence TOP20 [TRA]: 4 points   [   55s]
+     broad136  cadence  BAND [TRA]: 4 points   [   56s]
+     broad136    gross TOP20 [TRA]: 8 points   [   58s]
+     broad136    gross  BAND [TRA]: 8 points   [   60s]
+     broad136     band  BAND [TRA]: 14 points   [   63s]
+     broad136   volcap TOP20 [SEL]: 12 points   [   66s]
+     broad136   volcap  BAND [SEL]: 12 points   [   68s]
+     small439        n TOP20 [SEL]: 14 points   [   77s]
+     small439   lambda TOP20 [TRA]: 16 points   [   85s]
+     small439   lambda  BAND [TRA]: 16 points   [   94s]
+     small439  cadence TOP20 [TRA]: 4 points   [   96s]
+     small439  cadence  BAND [TRA]: 4 points   [   98s]
+     small439    gross TOP20 [TRA]: 8 points   [  102s]
+     small439    gross  BAND [TRA]: 8 points   [  106s]
+     small439     band  BAND [TRA]: 14 points   [  114s]
+     small439   volcap TOP20 [SEL]: 12 points   [  120s]
+     small439   volcap  BAND [SEL]: 12 points   [  126s]
+  grid points 324   rule-8 cells 216   (at 10 bps: 54)
+
+============================================================================================================
+L1 BETWEEN — does the class gap survive the WIDER cell population?  (10 bps rung)
+============================================================================================================
+  P2 = DEFAULT control
+                cells  wins  median   mean   rate
+    dial_class                                   
+    SELECTION      18    11  0.0301 0.0711 0.6111
+    TRADING        36    20  0.0002 0.0228 0.5556
+    GAP (SEL - TRA) in win rate: +0.0556
+  P2 = MEDIAN-rung control
+                cells  wins  median    mean   rate
+    dial_class                                    
+    SELECTION      18    13  0.0277  0.0709 0.7222
+    TRADING        36    18  0.0000 -0.0000 0.5000
+    GAP (SEL - TRA) in win rate: +0.2222
+
+============================================================================================================
+L2 WITHIN — do the dials INSIDE a class agree?  (10 bps, DEFAULT control)
+============================================================================================================
+                    cells  wins  median   rate
+dial_class dial                               
+SELECTION  n            6     5  0.0980 0.8333
+           volcap      12     6  0.0067 0.5000
+TRADING    band         6     2 -0.0214 0.3333
+           cadence      6     3  0.0166 0.5000
+           gross       12     8  0.0002 0.6667
+           lambda      12     7  0.0256 0.5833
+  SELECTION: per-dial win rate spans 0.500 .. 0.833 (width 0.333) over 2 dials
+    TRADING: per-dial win rate spans 0.333 .. 0.667 (width 0.333) over 4 dials
+  BETWEEN-class gap of dial-level rates 0.1458  vs  max WITHIN-class spread 0.3333   -> WITHIN SPREAD IS LARGER — the dial, not the class
+
+============================================================================================================
+L3 NOT-A-CONFOUND — the BOOK-MATCHED re-cut  (10 bps, DEFAULT control)
+============================================================================================================
+  class x book cell counts (idea 621 had SELECTION on TOP20 only):
+    book        BAND  TOP20
+    dial_class             
+    SELECTION      6     12
+    TRADING       21     15
+  within TOP20:
+                cells  wins  median   rate
+    dial_class                            
+    SELECTION      12    11  0.0763 0.9167
+    TRADING        15    11  0.0013 0.7333
+    book-matched GAP (SEL - TRA): +0.1833
+  within BAND:
+                cells  wins  median   rate
+    dial_class                            
+    SELECTION       6     0  0.0000 0.0000
+    TRADING        21     9 -0.0007 0.4286
+    book-matched GAP (SEL - TRA): -0.4286
+  by book, pooled over class (is the BOOK the predictor?):
+           cells  wins  median   rate
+    book                             
+    BAND      27     9  0.0000 0.3333
+    TOP20     27    22  0.0516 0.8148
+
+============================================================================================================
+EXACT PERMUTATION over dial labels — every same-size SELECTION labelling of the dials
+present in each scope.  If the record's own labelling is not extreme, the CLASS carries no
+information the DIAL identities do not already carry.
+============================================================================================================
+  DEFAULT /     pooled: observed gap +0.0556   rank 6/15   p(one-sided) 0.400   p(two-sided) 0.733
+      top-3 labellings: gross,n +0.222; lambda,n +0.139; cadence,n +0.119
+  DEFAULT / TOP20-only: observed gap +0.1833   rank 2/10   p(one-sided) 0.200   p(two-sided) 0.300
+      top-3 labellings: gross,volcap +0.183; n,volcap +0.183; cadence,volcap +0.111
+  DEFAULT /  BAND-only: observed gap -0.4286   rank 5/5   p(one-sided) 1.000   p(two-sided) 0.200
+      top-3 labellings: gross +0.214; lambda +0.214; band +0.000
+   MEDIAN /     pooled: observed gap +0.2222   rank 1/15   p(one-sided) 0.200   p(two-sided) 0.267
+      top-3 labellings: n,volcap +0.222; lambda,n +0.222; gross,n +0.222
+   MEDIAN / TOP20-only: observed gap +0.2167   rank 3/10   p(one-sided) 0.300   p(two-sided) 0.500
+      top-3 labellings: gross,n +0.367; gross,volcap +0.217; n,volcap +0.217
+   MEDIAN /  BAND-only: observed gap +0.1905   rank 2/5   p(one-sided) 0.400   p(two-sided) 0.800
+      top-3 labellings: lambda +0.405; volcap +0.190; gross -0.024
+
+  THE COMPETING PREDICTOR — class gap vs book gap on the SAME 54 cells (DEFAULT, 10 bps):
+    CLASS (SELECTION - TRADING): +0.0556
+    BOOK  (TOP20     - BAND   ): +0.4815
+    -> the BOOK gap is 8.7x the CLASS gap
+
+============================================================================================================
+REPORTED AXES — cost rung and panel (never selected on)
+============================================================================================================
+  by cost rung (DEFAULT control):
+                     cells  wins  median
+    cost dial_class                     
+    0.0  SELECTION      18     9  0.0013
+         TRADING        36    18  0.0000
+    10.0 SELECTION      18    11  0.0301
+         TRADING        36    20  0.0002
+    25.0 SELECTION      18    11  0.0652
+         TRADING        36    23  0.0008
+    50.0 SELECTION      18    12  0.1267
+         TRADING        36    26  0.0092
+  by panel (DEFAULT control, 10 bps):
+                         cells  wins  median
+    panel    dial_class                     
+    broad136 SELECTION       6     4  0.0763
+             TRADING        12     7  0.0002
+    small439 SELECTION       6     3  0.0160
+             TRADING        12     8  0.0248
+    u56      SELECTION       6     4  0.0166
+             TRADING        12     5 -0.0004
+  SENSITIVITY — if BAND's volcap default were transplanted to 0.60 instead of 9.99:
+    volcap/BAND vs a 0.60 default: 5/6 at 10 bps (median +0.0300);  vs the native 9.99 default: 0/6
+
+============================================================================================================
+PROTOCOL 4 — LEVELS at 10 bps: rule-8 pick vs NO-DIAL vs RULES v2 vs SPY
+============================================================================================================
+  u56
+    SPY                        full CAGR  15.15% Sh  0.886 DD -33.72% | H1/H2  0.959/ 0.826 | OOS CAGR  15.32% Sh  0.876 DD -33.72%
+    RULES v2 baseline          full CAGR   8.63% Sh  1.202 DD -12.05% | H1/H2  1.231/ 1.180 | OOS CAGR   9.48% Sh  1.279 DD -12.05%
+    pick  [SELECTION] median   full CAGR  11.30% Sh  1.162 DD -15.78% | H1/H2  1.193/ 1.120 | OOS CAGR  11.98% Sh  1.192 DD -15.78%
+    no-dial [SELECTION] median full CAGR                        |               | OOS CAGR  13.43% Sh  1.160 DD -18.42%
+    pick  [TRADING] median     full CAGR  11.49% Sh  1.176 DD -15.20% | H1/H2  1.220/ 1.125 | OOS CAGR  12.68% Sh  1.216 DD -15.20%
+    no-dial [TRADING] median   full CAGR                        |               | OOS CAGR   9.54% Sh  1.289 DD -11.90%
+  broad136
+    SPY                        full CAGR  15.23% Sh  0.889 DD -33.72% | H1/H2  0.957/ 0.834 | OOS CAGR  15.45% Sh  0.882 DD -33.72%
+    RULES v2 baseline          full CAGR   8.03% Sh  1.106 DD -12.24% | H1/H2  1.229/ 0.984 | OOS CAGR   7.98% Sh  1.119 DD -12.24%
+    pick  [SELECTION] median   full CAGR  11.61% Sh  1.025 DD -18.20% | H1/H2  1.147/ 0.945 | OOS CAGR  11.36% Sh  1.035 DD -18.20%
+    no-dial [SELECTION] median full CAGR                        |               | OOS CAGR   8.93% Sh  0.878 DD -20.70%
+    pick  [TRADING] median     full CAGR  10.69% Sh  1.109 DD -15.96% | H1/H2  1.235/ 0.975 | OOS CAGR  10.67% Sh  1.104 DD -15.96%
+    no-dial [TRADING] median   full CAGR                        |               | OOS CAGR   8.00% Sh  1.120 DD -12.27%
+  small439
+    SPY                        full CAGR  14.13% Sh  0.862 DD -33.72% | H1/H2  0.891/ 0.858 | OOS CAGR  15.45% Sh  0.882 DD -33.72%
+    RULES v2 baseline          full CAGR   3.81% Sh  0.572 DD -14.68% | H1/H2  0.570/ 0.577 | OOS CAGR   3.85% Sh  0.568 DD -14.68%
+    pick  [SELECTION] median   full CAGR   5.08% Sh  0.448 DD -31.93% | H1/H2  0.521/ 0.385 | OOS CAGR   4.64% Sh  0.401 DD -31.93%
+    no-dial [SELECTION] median full CAGR                        |               | OOS CAGR   3.83% Sh  0.457 DD -31.04%
+    pick  [TRADING] median     full CAGR   4.79% Sh  0.549 DD -20.18% | H1/H2  0.646/ 0.557 | OOS CAGR   4.77% Sh  0.548 DD -20.18%
+    no-dial [TRADING] median   full CAGR                        |               | OOS CAGR   3.90% Sh  0.541 DD -15.68%
+
+KEEP PATHS (PROTOCOL 4, both priced on every arm, 10 bps)
+  ALL grid points  : 4a 11/324   4b 38/324   (OOS window: 4a 24/324   4b 41/324)
+  SELECTION picks: 4a 1/18  4b 3/18   |  its no-dial controls: 4a 1/18  4b 4/18
+    TRADING picks: 4a 1/36  4b 5/36   |  its no-dial controls: 4a 4/36  4b 5/36
+  4b passers (full sample), by panel/book/dial:
+    panel     book   dial   
+    broad136  BAND   gross       1
+              TOP20  n           3
+    u56       BAND   gross       2
+              TOP20  cadence     2
+                     gross       2
+                     lambda     16
+                     n           6
+                     volcap      6
+
+wrote .grid.csv .cells.csv .walkforward.csv .perm.csv   [127s]
