@@ -176,3 +176,44 @@ beats the live book's OOS Sharpe on either panel** (best is S4 at 1.0547 against
   (2009-01-13), which is one reason its `sd` has less to work with.
 * Costs 10 and 25 bps per unit turnover; weights decided at close *t*, applied at *t+1*; weekly
   cadence; gross 0.75; no shorting, no leverage.
+
+---
+
+## RECONCILIATION with the same-day lane B replication (added after both landed on main)
+
+Lane B claimed and ran this idea concurrently
+(`2026-09-10_does-sd-still-survive-the-PARTIAL-t-test-once-the-control-has-DATA_B.py`); neither run
+saw the other's code, and lane B's file carries the mirror of this note.
+
+**The two runs agree numerically to four decimals on every shared quantity.** B136, pooled, n=20
+CAND Sharpe, λ=2: `kill` 0.6751 / 0.3749 / 0.3204 / 0.2553 / 0.1989 / 0.1844 / **0.1713** and `t`
++6.19 → **+9.62** across D=50→500; control oofR²(F) +0.2100 → +0.7213; oofR²(sd ~ M) +0.268 →
+**+0.796**; whole-grid kill median 0.851 → **0.092**; and **both membership gates reproduce idea
+484's 3,000 committed rows at 7.105e-15**. Two independent implementations of idea 252's test, on
+the same rows, land on the same numbers.
+
+**On the verdict, lane B's reading is the better-supported one and this run's should defer to it.**
+This run stopped at the structural observation — "the bar's two legs are monotone in opposite
+directions in N, so the conjunction cannot be read as one verdict" — and therefore recorded SPLIT.
+Lane B resolved *which leg to believe* with two legs this run did not compute:
+
+1. **`t50`** — the same partial correlation restated at idea 252's own N=50. It falls +3.50 → **+1.71**
+   in the headline cell, and **both legs of the bar then clear in 88 of 96 cells at D=500 against 0
+   of 96 at D=50.** The raw-t leg's "survival" is an artefact of N and nothing else, which is what
+   this run asserted but did not demonstrate.
+2. **The per-k cells, undiluted by pooling.** At D=500, λ=2, oofR²(F) is 0.9736 / 0.9281 / 0.8969
+   and `kill` **0.0217 / 0.0202 / 0.0108** for k=20/40/80. This run's pooled 0.1713 is diluted by
+   the two unpenalised k dummies; unpooled, `sd` retains **1–2%** of its own univariate R². That is
+   a considerably stronger statement than the pooled figure supports.
+
+So the correct joint verdict is lane B's: **idea 252's headline is a POWER statement, and dispersion
+is dead on B136 by D≈300** (median D\* = 200, i.e. 4× idea 252's own N). This run's "SPLIT" and lane
+B's "PREMISE-CONFIRMED / KILLED-BY-DATA" are the same finding at two levels of resolve, not a
+disagreement, and the record should quote lane B's.
+
+Lane B also supplies the right reading of SMALL484, which this run reported but under-labelled:
+R²(sd) there is 0.003–0.012, so its kill ratios are **noise on a null panel**, not a killed effect.
+The KEEP-path counts differ only because the objects differ — lane B re-scored idea 484's 3,000
+committed books, this run scored its own 120 fresh ones. **Neither run claims a KEEP, and the two
+recommendations coincide** (publish `kill` and |t| separately with N beside them; retract the
+"STRUCTURAL, not a power result" reading of idea 83's 62%).
