@@ -1,6 +1,5 @@
 # Research Queue (claim an idea by moving it to "In progress" with the date; results go to LEADERBOARD.md)
 ## Open
-658. publish-p-and-n-beside-every-WIDE-flag-in-the-record — idea 497 found idea 483's cloud census flags 5 files `wide_design_hint` on a STATIC text match (`get_dummies`/per-name in the source), and the 3 it calls wide-and-unfolded top out at p=6 on n=162 (p/n 0.0370). Re-score every committed census that carries a width flag against the runtime (p, n) of the sites it names, and report how many of the record's 'wide' labels survive. Max 2 params (census set, width bar). (2026-09-10)
 655. put-a-ROW-ID-on-every-artefact-that-RE-READS-another-artefact — idea 653 found the record's single largest unreadable block (105,303 rows, 97.7% of all panel-unstated rows) is dark not for want of a panel column but because its `file` pointer carries no row id and 99.7% of its sources are multi-panel. Census every committed CSV whose columns include a file/source pointer, report how many can be joined row-wise to their source, and price a `src_rowid` convention. INFRASTRUCTURE; max 2 params (pointer form, join strictness). (2026-09-10)
 656. how-many-published-PANEL-claims-in-the-record-quote-a-THREE-PANEL-vocabulary — idea 653 found `bstk100` (idea 542's fourth panel, broad minus every ETF) is written by 639 committed rows and is invisible to idea 480's three-key alias map, i.e. a published census silently dropped a whole panel. Census the record's panel-mapping code for hard-coded three-panel vocabularies and re-read each affected claim with the fourth panel restored. Max 2 params (claim set, vocabulary). (2026-09-10)
 657. is-EVERY-4b-pass-on-the-record-decided-by-GROSS-alone — idea 653's fresh 4-panel grid found 13 of 48 cells carry a 4b pass at 10 bps, **0 pass at all three grosses**, and max |Sharpe(g=1.00) - Sharpe(g=0.50)| over those cells is only 0.0052 — the ladder moves the CAGR floor and DD cap, never the risk-adjusted number. Re-run the record's committed 4b passers on a denser gross ladder and report the share whose pass is a pure exposure fact, and whether PROTOCOL 4b needs a matched-gross leg. Max 2 params (gross grid, panel). (2026-09-10)
@@ -90,6 +89,7 @@
 
 
 ## In progress
+658. publish-p-and-n-beside-every-WIDE-flag-in-the-record — idea 497 found idea 483's cloud census flags 5 files `wide_design_hint` on a STATIC text match (`get_dummies`/per-name in the source), and the 3 it calls wide-and-unfolded top out at p=6 on n=162 (p/n 0.0370). Re-score every committed census that carries a width flag against the runtime (p, n) of the sites it names, and report how many of the record's 'wide' labels survive. Max 2 params (census set, width bar). (2026-09-10) **[CLAIMED 2026-09-10, cloud]**
 
 
 
