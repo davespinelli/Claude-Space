@@ -1,0 +1,195 @@
+============================================================================================================
+IDEA 624 — is the SELECTION-vs-TRADING dial split a record-wide law?   (lane C 2026-09-10)
+============================================================================================================
+A-PRIORI CLASSES (fixed before any run):
+   SELECTION  n*, volcap*, look (HELD OUT), skip (HELD OUT)
+   TRADING    gross*, lambda*, wscheme (HELD OUT), phase (HELD OUT)
+   * = anchor dial re-run from idea 621 (replication); HELD OUT = never run by 621.
+
+PART A — RE-CUT of the record's committed rule-8 stems by DIAL CLASS
+  committed rule-8 stems (idea 621's own population) : 576
+     BOTH      :  534  (92.7%)
+     SELECTION :    1  (0.2%)
+     TRADING   :   40  (6.9%)
+     NEITHER   :    1  (0.2%)
+  stems the queue's two-class cut can actually ASSIGN : 41  (7.1%)
+  -> the record's published rule-8 files overwhelmingly touch BOTH classes, so a text
+     re-cut cannot answer the queue's question.  PART B answers it by construction.
+
+GATES
+  G3 default rung present in every ladder:
+     PASS (True) — all 8 dials
+  panel u56         55 names  2008-01-02..2026-09-09  eval start 2009-03-12  (dropped 0 bad tickers)
+  panel broad136   135 names  2008-01-02..2026-09-04  eval start 2009-03-12  (dropped 0 bad tickers)
+  panel small439   439 names  2010-01-04..2026-09-04  eval start 2011-03-14  (dropped 44 bad tickers)
+  G1 fast runner vs engine.backtest (returns, turnover), phases D and W:
+     u56       D  max|dr| 3.57e-16  max|dto| 0.00e+00
+     u56       W  max|dr| 6.59e-16  max|dto| 3.61e-16
+     broad136  D  max|dr| 3.38e-16  max|dto| 0.00e+00
+     broad136  W  max|dr| 6.92e-16  max|dto| 4.44e-16
+     small439  D  max|dr| 3.02e-16  max|dto| 0.00e+00
+     small439  W  max|dr| 6.97e-16  max|dto| 4.44e-16
+  G2 cost-rung identity r(c) = r(0) - turnover*c/1e4 vs a live engine.backtest(25 bps):
+     max|d| 6.59e-16
+  G4 IS/OOS windows disjoint and exhaustive on the evaluated sample:
+     IS 1967 bars (2009-03-12..2016-12-31)  OOS 2434 bars (2017-01-01..2026-09-09)  sum 4401 == 4401  True
+
+PART C.1 — PRE-RETURN TAXONOMY (target weights only; no return is read)
+           JAC    WGT    EXP      class  heldout
+dial                                            
+n       0.4948 0.2474 0.0000  SELECTION    False
+volcap  0.2722 0.0032 0.0000  SELECTION    False
+look    0.5378 0.0011 0.0000  SELECTION     True
+skip    0.3570 0.0022 0.0000  SELECTION     True
+gross   0.0000 0.0000 0.3333    TRADING    False
+lambda  0.5933 0.0672 0.0000    TRADING    False
+wscheme 0.0000 0.1521 0.0000    TRADING     True
+phase   0.0000 0.0000 0.0000    TRADING     True
+  G5 CONSTRUCTION checks:
+     wscheme membership distance (JAC) max over all rungs/panels : 0.00e+00  (must be 0)
+     phase TARGET distance (JAC/WGT/EXP) max                      : 0.00e+00  (must be 0)
+     lambda TARGET distance (it is a timing dial too)             : 8.82e-01
+     => phase and lambda are TIMING dials: they move no target at all.  gross is an
+        EXPOSURE dial (EXP>0, JAC=WGT=0).  wscheme is a pure WEIGHTS dial (JAC=0).
+        n / volcap / look / skip all move MEMBERSHIP.  The taxonomy is readable with
+        zero backtests, which is the point.
+
+GRID — every dial x rung x leg x panel, all rungs of the cost ladder reported
+  u56       SPY full 16.50%/0.966/-33.72%  OOS 15.32%/0.876/-33.72%  || RULES v2 full 8.75%/1.213/-12.05%  OOS 9.48%/1.279/-12.05%
+  broad136  SPY full 16.57%/0.970/-33.72%  OOS 15.45%/0.882/-33.72%  || RULES v2 full 8.16%/1.118/-12.24%  OOS 7.98%/1.119/-12.24%
+  small439  SPY full 14.16%/0.861/-33.72%  OOS 15.45%/0.882/-33.72%  || RULES v2 full 3.82%/0.579/-14.68%  OOS 3.85%/0.568/-14.68%
+  grid points written: 396   ({'FULL': 132, 'SET': 132, 'WGT': 132})
+
+RULE 8 — dial chosen on 2010-2016 IS Sharpe alone; 2017-2026 read exactly once
+  cells: 96 FULL-leg (panel x dial x rung x control form) = 3 panels x 8 dials x 2 rungs x 2 forms
+
+  PER-DIAL (both control forms pooled; 6 cells per dial per form, 12 per dial)
+dial_class  heldout    dial  wins  n    med   mean  pick_eq_ctl   rate
+ SELECTION    False       n     8 12 0.0588 0.0634            0 0.6667
+ SELECTION    False  volcap     9 12 0.0307 0.1206            0 0.7500
+ SELECTION     True    look     8 12 0.0770 0.0807            4 0.6667
+ SELECTION     True    skip     6 12 0.0201 0.0442            4 0.5000
+   TRADING    False   gross    12 12 0.0017 0.0014            0 1.0000
+   TRADING    False  lambda     9 12 0.0419 0.0492            0 0.7500
+   TRADING     True   phase     4 12 0.0000 0.0392            4 0.3333
+   TRADING     True wscheme     5 12 0.0000 0.0040            3 0.4167
+
+  THE HELD-OUT TEST (the only cells 621's split did not see)
+     SELECTION (look, skip)   : 14/24  median d_sharpe +0.0542   sign p=0.541
+     TRADING  (wscheme, phase): 9/24  median d_sharpe +0.0000   sign p=0.307
+     Fisher exact (class x win), held-out dials only: p = 0.2476
+
+  G6 REPLICATION of idea 621's anchors, re-derived from THIS file's grid
+     n        SELECTION 8/12  median +0.0588   [621 reported: n 5/6, volcap 6/6, gross 8/12, lambda 7/12]
+     volcap   SELECTION 9/12  median +0.0307   [621 reported: n 5/6, volcap 6/6, gross 8/12, lambda 7/12]
+     gross    TRADING   12/12  median +0.0017   [621 reported: n 5/6, volcap 6/6, gross 8/12, lambda 7/12]
+     lambda   TRADING   9/12  median +0.0419   [621 reported: n 5/6, volcap 6/6, gross 8/12, lambda 7/12]
+     ANCHORS  SELECTION 17/24 (median +0.0307)   TRADING 21/24 (median +0.0021)
+
+  ALL EIGHT DIALS, a-priori class
+     SELECTION 31/48 (64.6%)  median +0.0411
+     TRADING   30/48 (62.5%)  median +0.0017
+     Fisher exact, all 8 dials: p = 1.0000
+
+  EXACT PARTITION TEST — is the a-priori class the SPECIAL 4-4 cut of these 8 dials?
+     balanced 4-4 partitions of the 8 dials: 35
+     the a-priori SELECTION/TRADING cut ranks 31 of 35 on win-rate gap  -> exact p = 0.886
+     its gap 0.021  vs the best cut 0.312 (n+phase+skip+wscheme | gross+lambda+look+volcap)
+     top 5 cuts by win-rate gap:
+                    A                         B  gap_rate  gap_med  is_apriori
+ n+phase+skip+wscheme  gross+lambda+look+volcap    0.3125   0.0181       False
+gross+lambda+n+volcap   look+phase+skip+wscheme    0.3125   0.0090       False
+  gross+look+n+volcap lambda+phase+skip+wscheme    0.2708   0.0265       False
+  gross+lambda+look+n phase+skip+volcap+wscheme    0.2708   0.0321       False
+ look+n+phase+wscheme  gross+lambda+skip+volcap    0.2292   0.0104       False
+
+  CONTINUOUS FORM — does MEASURED membership distance predict the chooser's edge?
+     Spearman(JAC, per-dial win rate) over 8 dials : +0.284
+     Spearman(JAC, per-dial median d_sharpe)       : +0.884
+     Spearman(WGT, per-dial win rate)              : +0.048
+     Spearman(EXP, per-dial win rate)              : +0.470
+     Spearman(JAC, d_sharpe) at the CELL level (n=96) : +0.388
+
+PART C.2 — WITHIN-DIAL DECOMPOSITION: which LEG carries the chooser's edge?
+                      med                  wins              
+leg                  FULL    SET    WGT    FULL    SET    WGT
+dial_class dial                                              
+SELECTION  n       0.0588 0.0588 0.0000  8.0000 8.0000 0.0000
+           volcap  0.0307 0.0307 0.0000  9.0000 9.0000 0.0000
+           look    0.0770 0.0770 0.0000  8.0000 8.0000 0.0000
+           skip    0.0201 0.0201 0.0000  6.0000 6.0000 0.0000
+TRADING    gross   0.0017 0.0000 0.0000 12.0000 0.0000 0.0000
+           lambda  0.0419 0.0000 0.0000  9.0000 0.0000 0.0000
+           wscheme 0.0000 0.0000 0.0000  5.0000 0.0000 5.0000
+           phase   0.0000 0.0000 0.0000  4.0000 0.0000 0.0000
+     leg FULL SELECTION 31/48 (median +0.0411)   TRADING 30/48 (median +0.0017)
+     leg SET  SELECTION 31/48 (median +0.0411)   TRADING 0/48 (median +0.0000)
+     leg WGT  SELECTION 0/48 (median +0.0000)   TRADING 5/48 (median +0.0000)
+
+COST DECOMPOSITION — the same cells at every rung (idea 621 Q3's question, held-out dials)
+      0 bps  ALL 22/48 med +0.0000  | SEL 11/24 med +0.0000 (held-out 7/12)  | TRA 11/24 med +0.0000 (held-out 5/12)
+     10 bps  ALL 29/48 med +0.0020  | SEL 15/24 med +0.0257 (held-out 7/12)  | TRA 14/24 med +0.0008 (held-out 5/12)
+     25 bps  ALL 32/48 med +0.0197  | SEL 16/24 med +0.0655 (held-out 7/12)  | TRA 16/24 med +0.0021 (held-out 4/12)
+     50 bps  ALL 38/48 med +0.0442  | SEL 21/24 med +0.0906 (held-out 9/12)  | TRA 17/24 med +0.0026 (held-out 5/12)
+
+PROTOCOL 4 — both KEEP paths priced on every one of the grid's arms
+  FULL-leg arms: 132   4a full 0   4b full 25   4a OOS 0   4b OOS 32
+  ALL arms (incl. SET/WGT legs): 396   4a 0   4b 101
+  chooser arms vs no-dial control arms (FULL leg, PROTOCOL's 10 bps rung):
+     chooser  4a 0/48   4b 12/48
+     no-dial  4a 0/48   4b 15/48
+  arms passing 4b on the FULL sample AND on the OOS window read separately: 24
+   panel    dial  value  turnover  cagr_full_10  sh_full_10  dd_full_10  cagr_oos_10  sh_oos_10  dd_oos_10
+     u56       n     20    9.7363        0.1448      1.1722     -0.1955       0.1514     1.1697    -0.1955
+     u56       n     30    6.9689        0.1339      1.1736     -0.1833       0.1415     1.2009    -0.1833
+     u56       n     40    4.7141        0.1325      1.2081     -0.1776       0.1322     1.1848    -0.1776
+     u56       n     60    1.8456        0.1283      1.1979     -0.1835       0.1292     1.1869    -0.1835
+     u56  volcap   0.45   10.1050        0.1408      1.2012     -0.1929       0.1511     1.2380    -0.1929
+     u56  volcap    0.6    9.7363        0.1448      1.1722     -0.1955       0.1514     1.1697    -0.1955
+     u56  volcap    0.8    9.5574        0.1517      1.1787     -0.1980       0.1555     1.1451    -0.1980
+     u56    look    REC    9.7363        0.1448      1.1722     -0.1955       0.1514     1.1697    -0.1955
+     u56    look    126   10.3356        0.1348      1.0500     -0.1953       0.1372     1.0204    -0.1953
+     u56    skip    REC    9.7363        0.1448      1.1722     -0.1955       0.1514     1.1697    -0.1955
+     u56    skip     21   10.5044        0.1429      1.0980     -0.1955       0.1477     1.0823    -0.1955
+     u56   gross   0.75    9.7363        0.1448      1.1722     -0.1955       0.1514     1.1697    -0.1955
+     u56  lambda    1.0    9.7363        0.1448      1.1722     -0.1955       0.1514     1.1697    -0.1955
+     u56  lambda    0.7    9.1359        0.1449      1.1713     -0.1932       0.1523     1.1736    -0.1932
+     u56  lambda    0.5    8.4395        0.1451      1.1693     -0.1938       0.1530     1.1738    -0.1938
+     u56  lambda   0.35    7.5899        0.1459      1.1698     -0.1957       0.1544     1.1768    -0.1957
+     u56  lambda   0.25    6.7665        0.1471      1.1723     -0.1981       0.1561     1.1812    -0.1981
+     u56 wscheme     EW    9.7363        0.1448      1.1722     -0.1955       0.1514     1.1697    -0.1955
+     u56 wscheme SQRTIV   11.1745        0.1292      1.1392     -0.1825       0.1362     1.1450    -0.1825
+     u56   phase      W    9.7363        0.1448      1.1722     -0.1955       0.1514     1.1697    -0.1955
+     u56   phase    TUE    9.3593        0.1556      1.2442     -0.1866       0.1685     1.2780    -0.1866
+     u56   phase    WED    9.6268        0.1448      1.1550     -0.1974       0.1524     1.1538    -0.1974
+     u56   phase    THU    9.5218        0.1486      1.1969     -0.2010       0.1579     1.2122    -0.2010
+broad136       n     60    8.1250        0.1321      1.1110     -0.2016       0.1236     1.0398    -0.2016
+
+RULE-8 OOS TABLE — the chooser's own pick, per dial, DEFAULT control form, 10 bps
+   panel    dial dial_class  heldout    pick control  oracle  oos_sh_pick  oos_sh_ctl  d_sharpe  oos_cagr_pick  oos_dd_pick
+     u56       n  SELECTION    False      40      20      30       1.1848      1.1697    0.0151         0.1322      -0.1776
+     u56  volcap  SELECTION    False    9.99     0.6    0.45       1.1618      1.1697   -0.0080         0.1662      -0.2263
+     u56    look  SELECTION     True     REC     REC     REC       1.1697      1.1697    0.0000         0.1514      -0.1955
+     u56    skip  SELECTION     True     REC     REC       5       1.1697      1.1697    0.0000         0.1514      -0.1955
+     u56   gross    TRADING    False     1.0    0.75     1.0       1.1699      1.1697    0.0001         0.2026      -0.2543
+     u56  lambda    TRADING    False    0.06     1.0    0.15       1.1641      1.1697   -0.0057         0.1611      -0.2196
+     u56 wscheme    TRADING     True      EW      EW      EW       1.1697      1.1697    0.0000         0.1514      -0.1955
+     u56   phase    TRADING     True     TUE       W     TUE       1.2780      1.1697    0.1083         0.1685      -0.1866
+broad136       n  SELECTION    False      60      20      60       1.0398      0.9020    0.1379         0.1236      -0.2016
+broad136  volcap  SELECTION    False    9.99     0.6     0.8       0.9367      0.9020    0.0347         0.1502      -0.2568
+broad136    look  SELECTION     True     126     REC     252       0.9683      0.9020    0.0663         0.1483      -0.2043
+broad136    skip  SELECTION     True      21     REC      42       0.9422      0.9020    0.0402         0.1428      -0.2250
+broad136   gross    TRADING    False     1.0    0.75     1.0       0.9035      0.9020    0.0015         0.1700      -0.2687
+broad136  lambda    TRADING    False    0.06     1.0    0.06       0.9578      0.9020    0.0558         0.1472      -0.2506
+broad136 wscheme    TRADING     True RANKLIN      EW      EW       0.8739      0.9020   -0.0281         0.1373      -0.2127
+broad136   phase    TRADING     True     WED       W     TUE       0.8795      0.9020   -0.0225         0.1267      -0.2170
+small439       n  SELECTION    False      60      20      10       0.3967      0.4380   -0.0414         0.0507      -0.3575
+small439  volcap  SELECTION    False    9.99     0.6    9.99       0.8081      0.4380    0.3701         0.1707      -0.3085
+small439    look  SELECTION     True     252     REC     252       0.5207      0.4380    0.0826         0.0865      -0.3751
+small439    skip  SELECTION     True       5     REC       5       0.5930      0.4380    0.1550         0.0953      -0.3007
+small439   gross    TRADING    False     1.0    0.75     1.0       0.4401      0.4380    0.0021         0.0802      -0.4106
+small439  lambda    TRADING    False    0.06     1.0    0.35       0.4770      0.4380    0.0389         0.0714      -0.3605
+small439 wscheme    TRADING     True  INVVOL      EW RANKLIN       0.4485      0.4380    0.0105         0.0635      -0.3095
+small439   phase    TRADING     True     TUE       W     TUE       0.6262      0.4380    0.1882         0.1021      -0.2831
+
+Done in 130.9s
