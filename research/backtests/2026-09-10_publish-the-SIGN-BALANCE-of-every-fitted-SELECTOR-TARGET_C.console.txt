@@ -1,0 +1,103 @@
+# Idea 659 -- publish the SIGN BALANCE of every fitted SELECTOR TARGET (lane C, 2026-09-10)
+# seed 659, K=5, ridge lam=1.0, cost 10 bps, weekly, next-day execution
+
+(0) GATES
+  G1 LIVE RULES v2, PUBLISHED vintage (<=2026-09-04): CAGR 8.6601%  Sharpe 1.2056  MaxDD -12.0549%  halves 1.2259 / 1.1909
+     RULES.md publishes 8.66% / 1.2056 / -12.05% / 1.2259 / 1.1908  -> max |d| 5.13e-05
+     CURRENT vintage (<=2026-09-09, used everywhere below): CAGR 8.6317%  Sharpe 1.2021  MaxDD -12.0549%  halves 1.2309 / 1.1798 (3 extra sessions move H1/H2 by ++0.0049/-0.0110)
+  G2 PROVENANCE, idea 497's own target on idea 175's committed ladder (115 books): IS share>0 0.9478 (published 0.948), OOS 0.2696 (published 0.270), Spearman -0.1801 (published -0.1801) -> max |d| 4.35e-04
+
+(1) THE CENSUS -- sign balance of every committed selector target
+  3104 committed CSVs scanned; 721 carry a paired-difference column; 1723 selector targets with >=30 non-zero rows.
+  sign_balance: min 0.5000  q25 0.6959  median 0.8438  q75 1.0000  mean 0.8236
+  EXACTLY one-signed (sign_balance = 1, i.e. NO choice exists at all): 495/1723 = 28.7%
+
+  GRID -- 18 points, study set x sign-balance bar (all reported in .grid.csv):
+    CHOOSER   ( 96 files,  223 targets): b=0.60  198 (88.8%)  b=0.70  160 (71.7%)  b=0.80  121 (54.3%)  b=0.90   97 (43.5%)  b=0.95   90 (40.4%)  b=0.99   84 (37.7%)
+    SELECTOR  (132 files,  250 targets): b=0.60  210 (84.0%)  b=0.70  168 (67.2%)  b=0.80  134 (53.6%)  b=0.90  113 (45.2%)  b=0.95  105 (42.0%)  b=0.99  100 (40.0%)
+    ALL       (721 files, 1723 targets): b=0.60 1505 (87.3%)  b=0.70 1283 (74.5%)  b=0.80 1001 (58.1%)  b=0.90  708 (41.1%)  b=0.95  591 (34.3%)  b=0.99  508 (29.5%)
+
+(2) ARE THE FITTED SELECTORS CONSTANTS IN DISGUISE?
+  1617 targets refitted out of fold on their own study's properties (median p = 21 predictors).
+  LITERAL constant (one value on every OOF row): 561/1617 = 34.7%
+  NO LIFT over the best constant (OOF accuracy <= constant's): 616/1617 = 38.1%
+  Spearman(sign_balance, OOF lift) = -0.8706
+  by sign-balance bucket:
+            bucket     n  literal  no lift  mean lift
+       [0.50,0.60)   205     0.0%     0.5%    +0.3252
+       [0.60,0.70)   211     1.4%     5.2%    +0.2279
+       [0.70,0.80)   273     4.8%     6.2%    +0.1615
+       [0.80,0.90)   285     9.1%    14.4%    +0.0794
+       [0.90,0.95)   114    21.1%    37.7%    +0.0224
+       [0.95,1.00)    94    63.8%    72.3%    +0.0060
+           == 1.00   435   100.0%   100.0%    +0.0000
+  DROPPING the 435 degenerate targets of these 1617 (sign_balance = 1, where a constant is the only possible answer):
+    literal 10.7%, no lift 15.3% over 1182 targets; at 0.95 <= sb < 1: literal 63.8%, no lift 72.3% over 94 targets.
+
+(3) THE IS -> OOS SIGN FLIP (idea 497's mechanism, censused)
+  90 targets committed as a matched IS/OOS pair over 69 files.
+  IS sign_balance median 0.8037; OOS median 0.8433; the majority SIDE flips IS->OOS on 6/90 = 6.7%.
+  Spearman(IS share>0, OOS share>0) = +0.9308  (idea 497's own pair: 0.9478 -> 0.2696).
+
+(4) PROTOCOL RULE 8 -- the same question run LIVE on prices
+  IS 2009-2016 chooses the bucket threshold and the per-bucket dial; 2017-2026 is untouched.
+  31 arms (16 fitted property->dial selectors, 12 fixed dials, 3 references).
+  COLLAPSED to a single dial value (both buckets picked the same arm): 8/16 = 50.0%; of those, 8 collapsed onto the IS-argmax constant arm.
+  IS sign_balance of rival-minus-constant: 0.5320 at DAY granularity, 0.6250 at the 126-day BOOK granularity a chooser actually reads (per family: band 0.533, gross 0.733, topn 0.567, volcap 0.667).
+  mean share of IS days whose best arm IS the constant 0.3641. Spearman(sb_window, collapsed) over the 16 selectors = +0.2236.
+
+  arms (full sample from 2009-01-13, then OOS 2017-):
+    arm                       CAGR  Sharpe    MaxDD     H1     H2   oCAGR    oSh      oDD  4a 4b  note
+    LIVE RULES v2            8.63%   1.202  -12.05%  1.231  1.180   9.48%  1.279  -12.05%   0  0  baseline
+    RULES v1                 6.39%   0.658  -13.83%  0.643  0.675   7.60%  0.736  -13.83%   0  0  previous book
+    SPY                     15.15%   0.886  -33.72%  0.959  0.826  15.32%  0.876  -33.72%   0  0  benchmark
+    topn:n=5                30.78%   1.137  -36.53%  1.292  1.046  30.98%  1.057  -36.53%   0  0  IS-argmax constant
+    topn:n=10               21.43%   1.050  -30.11%  1.147  0.990  22.73%  1.027  -30.11%   0  0  fixed dial
+    topn:n=20               19.05%   1.146  -25.37%  1.221  1.098  21.04%  1.170  -25.37%   0  0  fixed dial
+    topn<-BREADTH           24.64%   1.060  -34.46%  1.246  0.932  23.68%  0.963  -34.46%   0  0  LOW=n=5 HIGH=n=10
+    topn<-DISP              30.78%   1.137  -36.53%  1.292  1.046  30.98%  1.057  -36.53%   0  0  collapsed to n=5
+    topn<-SPYVOL            30.78%   1.137  -36.53%  1.292  1.046  30.98%  1.057  -36.53%   0  0  collapsed to n=5
+    topn<-SPYTREND          22.70%   1.059  -33.22%  1.158  0.995  23.61%  1.031  -33.22%   0  0  LOW=n=5 HIGH=n=20
+    gross:g=0.50             5.73%   1.202   -8.12%  1.230  1.180   6.29%  1.279   -8.12%   0  0  fixed dial
+    gross:g=0.75             8.63%   1.202  -12.05%  1.231  1.180   9.48%  1.279  -12.05%   0  0  fixed dial
+    gross:g=1.00            11.55%   1.202  -15.91%  1.231  1.179  12.71%  1.278  -15.91%   0  1  IS-argmax constant
+    gross<-BREADTH          11.55%   1.202  -15.91%  1.231  1.179  12.71%  1.278  -15.91%   0  1  collapsed to g=1.00
+    gross<-DISP              7.43%   0.954  -15.91%  0.975  0.947   8.55%  1.030  -15.91%   0  0  LOW=g=0.50 HIGH=g=1.00
+    gross<-SPYVOL            7.98%   1.080   -8.39%  1.092  1.071   9.25%  1.214   -8.39%   0  0  LOW=g=1.00 HIGH=g=0.50
+    gross<-SPYTREND         11.55%   1.202  -15.91%  1.231  1.179  12.71%  1.278  -15.91%   0  1  collapsed to g=1.00
+    band:b=0.01              8.37%   1.186  -12.03%  1.206  1.171   9.23%  1.271  -12.03%   0  0  fixed dial
+    band:b=0.03              8.63%   1.202  -12.05%  1.231  1.180   9.48%  1.279  -12.05%   0  0  IS-argmax constant
+    band:b=0.06              8.32%   1.140  -13.47%  1.188  1.101   9.12%  1.205  -13.47%   0  0  fixed dial
+    band<-BREADTH            8.35%   1.136  -13.34%  1.204  1.079   9.02%  1.184  -13.34%   0  0  LOW=b=0.06 HIGH=b=0.03
+    band<-DISP               8.63%   1.202  -12.05%  1.231  1.180   9.48%  1.279  -12.05%   0  0  collapsed to b=0.03
+    band<-SPYVOL             8.72%   1.219  -12.05%  1.237  1.207   9.61%  1.302  -12.05%   1  0  LOW=b=0.01 HIGH=b=0.03
+    band<-SPYTREND           8.40%   1.146  -13.34%  1.209  1.093   9.08%  1.196  -13.34%   0  0  LOW=b=0.06 HIGH=b=0.03
+    volcap:v=0.4            15.60%   1.117  -21.05%  1.123  1.114  17.73%  1.213  -21.05%   0  0  fixed dial
+    volcap:v=0.6            16.89%   1.092  -23.98%  1.094  1.097  19.21%  1.168  -23.98%   0  0  fixed dial
+    volcap:v=9.9            19.05%   1.146  -25.37%  1.221  1.098  21.04%  1.170  -25.37%   0  0  IS-argmax constant
+    volcap<-BREADTH         19.05%   1.146  -25.37%  1.221  1.098  21.04%  1.170  -25.37%   0  0  collapsed to v=9.9
+    volcap<-DISP            17.46%   1.097  -25.37%  1.188  1.040  19.57%  1.130  -25.37%   0  0  LOW=v=0.4 HIGH=v=9.9
+    volcap<-SPYVOL          19.05%   1.146  -25.37%  1.221  1.098  21.04%  1.170  -25.37%   0  0  collapsed to v=9.9
+    volcap<-SPYTREND        19.05%   1.146  -25.37%  1.221  1.098  21.04%  1.170  -25.37%   0  0  collapsed to v=9.9
+
+  KEEP paths over all 31 arms: 4a 1/31, 4b 3/31.
+  KEEP paths over the 16 FITTED selectors only: 4a 1/16, 4b 2/16.
+  fitted selector beats its own constant-dial arm OOS: 1/16 = 6.2%; mean OOS Sharpe 1.1566 vs constant 1.1958 (d -0.0392).
+  every 4b pass among the fitted selectors is a COLLAPSED one: 2/2 of the fitted 4b passes come from arms that chose one dial value for both buckets, i.e. they pass AS the constant.
+
+  (4b) AUDIT of every arm that clears a KEEP path -- cost ladder and the DD tie
+    gross:g=1.00  [4a=0 4b=1]  IS-argmax constant  
+      5bps Sh 1.2144 vs v2 1.2147 (--) | 10bps Sh 1.2020 vs v2 1.2021 (--) | 25bps Sh 1.1646 vs v2 1.1645 (--) | 50bps Sh 1.1022 vs v2 1.1018 (--)
+    gross<-BREADTH  [4a=0 4b=1]  collapsed to g=1.00  
+      5bps Sh 1.2144 vs v2 1.2147 (--) | 10bps Sh 1.2020 vs v2 1.2021 (--) | 25bps Sh 1.1646 vs v2 1.1645 (--) | 50bps Sh 1.1022 vs v2 1.1018 (--)
+    gross<-SPYTREND  [4a=0 4b=1]  collapsed to g=1.00  
+      5bps Sh 1.2144 vs v2 1.2147 (--) | 10bps Sh 1.2020 vs v2 1.2021 (--) | 25bps Sh 1.1646 vs v2 1.1645 (--) | 50bps Sh 1.1022 vs v2 1.1018 (--)
+    band<-SPYVOL  [4a=1 4b=0]  LOW=b=0.01 HIGH=b=0.03  TIE with the live book (PROTOCOL's >= passes it)
+      5bps Sh 1.2346 vs v2 1.2147 (4a) | 10bps Sh 1.2191 vs v2 1.2021 (4a) | 25bps Sh 1.1724 vs v2 1.1645 (--) | 50bps Sh 1.0945 vs v2 1.1018 (--)
+
+(5) VERDICT
+  The record's selector targets are ONE-SIGNED at scale: median sign_balance 0.8438, and 495 of 1723 (28.7%) admit NO choice at all (every row one sign).
+  Sign balance is what decides whether a fitted selector is a constant: literal-constant rate rises monotonically from 0.0% below 0.60 to 63.8% at 0.95<=sb<1 to 100.0% at sb=1.
+  Live, the same collapse reproduces: 8/16 fitted property->dial selectors are constants in disguise, and the fitted set beats its own constant OOS 6.2% of the time.
+  4a: 1/31 arms.  4b: 3/31 arms.
+  No RULES change. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
