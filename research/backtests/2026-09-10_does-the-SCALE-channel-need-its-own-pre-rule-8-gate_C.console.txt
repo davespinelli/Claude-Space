@@ -1,0 +1,256 @@
+================================================================================================================
+IDEA 628 - does the SCALE channel need its own pre-rule-8 gate?   (lane C, 2026-09-10)
+================================================================================================================
+Panel SMALL430 (ideas 195/623): 430 names, 2010-01-04..2026-09-04, SPY benchmark only.  Shares from the PINNED 2026-09-10_market-cap-as-the-third-substitution_B.shares.csv.
+Corpus: 26 keys = idea 623's 20 verbatim + 6 new (UPDAYS SKEW60 PXRANGE AMIHUD DVOLTERM FWDR21).
+
+----------------------------------------------------------------------------------------------------------------
+GATES (five, pre-registered)
+  G1  fast_backtest == engine.backtest (control book)      returns 1.388e-17  turnover 3.331e-16   [tol 1e-12, evaluation window]
+  G2  cost-rung identity r(c)=r(0)-turnover*c/1e4 @25bps    1.388e-17   [tol 1e-12]
+  G4  both certificates clear a causal scale-free control   T1 med 0.000e+00 (max 3.0)  T2 med 0.000e+00 (max 0.0)   [tol 0 exactly on the MEDIAN statistic]
+
+================================================================================================================
+PART A  THE INSTRUMENT: T1 (structural) vs the LEAK LAW (statistical) on the SCALE axis
+================================================================================================================
+  LEAKT dates: 63 (2011-01-13..2026-07-29), forward return to 2026-09-04 -- ORACLE.
+  LEAKH dates: 20 (2011-01-13..2015-10-16), 252d forward, every input dated on or before 2016-12-31 -- IMPLEMENTABLE.
+
+key        family    scale?  term?     T1   T1med    T2   T2med   |IC|T   |IC|H
+MOM        causal    False   False      .     0.0     .     0.0  0.0817  0.0214
+R6         causal    False   False      .     0.0     .     0.0  0.0650  0.0267
+DDTR       causal    False   False      .     0.0     .     0.0  0.0717  0.0389
+REBASED    causal    False   False      .     0.0     .     0.0  0.1840  0.0044
+VOL20      causal    False   False      .     0.0     .     0.0  0.0567  0.0733
+VOLSH      causal    False   False      .     0.0     .     0.0  0.4122  0.0294
+PRICE      level     True    False   FLAG   247.0     .     0.0  0.4420  0.1525
+FROZEN     level     True    False   FLAG   284.5     .     0.0  0.2604  0.1264
+DVOL       level     True    False   FLAG   182.0     .     0.0  0.5981  0.0898
+PXDVOL     level     True    False   FLAG   192.0     .     0.0  0.5996  0.0898
+MCAP       both      True    True    FLAG   248.0  FLAG     inf  0.7092  0.1809
+MCAPFRZ    both      True    True    FLAG   231.5  FLAG     inf  0.4493  0.1629
+PXTERM     both      True    True    FLAG   294.5  FLAG   294.0  0.4979  0.0794
+FWDRET     termonly  False   True       .     0.0  FLAG   330.0  1.0000  0.2048
+TERMREB    termonly  False   True       .     0.0  FLAG   368.0  1.0000  0.2048
+MCAPREB    termonly  False   True       .     0.0  FLAG     inf  0.4405  0.0686
+SHARES     termonly  False   True       .     0.0  FLAG     inf  0.3462  0.0761
+FULLVOL    termonly  False   True       .     0.0  FLAG   291.0  0.1274  0.1962
+FULLSHRP   termonly  False   True       .     0.0  FLAG   334.0  0.6104  0.1372
+MAXMOVE    termonly  False   True       .     1.0  FLAG   330.0  0.1099  0.1253
+UPDAYS     causal    False   False      .     0.0     .     0.0  0.2056  0.0041
+SKEW60     causal    False   False      .     0.0     .     0.0  0.0386  0.0026
+PXRANGE    level     True    False   FLAG   266.0     .     0.0  0.4260  0.1857
+AMIHUD     level     True    False   FLAG   166.0     .     0.0  0.5971  0.0753
+DVOLTERM   both      True    True    FLAG   211.0  FLAG   215.0  0.0925  0.0274
+FWDR21     termonly  False   True       .     0.0  FLAG   360.0  0.9834  0.2054
+
+  G5  idea 623's certificate FLAGS reproduced on the 20 shared keys under a NEW seed (628 vs 623):  T1 disagreements 0   T2 disagreements 0   [tol 0]
+
+SEPARATION ON THE SCALE AXIS.  The operative set is the T2-CLEARED one: dating is
+already gated (idea 623), so the only question is what is left to catch.
+  T2-cleared keys: 14 of 26 (AMIHUD, DDTR, DVOL, FROZEN, MOM, PRICE, PXDVOL, PXRANGE, R6, REBASED, SKEW60, UPDAYS, VOL20, VOLSH)
+  ... of which SCALE-LEAKING (truth): 6 (AMIHUD, DVOL, FROZEN, PRICE, PXDVOL, PXRANGE)
+
+  AUC for the SCALE axis:   screen    T2-cleared  all keys
+                            T1_med        1.0000    1.0000
+                            LEAKT         0.9792    0.6875
+                            LEAKH         1.0000    0.6438
+
+THRESHOLD LADDER (every point reported; no tau is selected).  On the T2-cleared set:
+  screen   tau admits  TP  FP  FN  TN catches PXDVOL causal killed  keys flagged
+  LEAKT   0.10      5   6   3   0   5           True             3  AMIHUD;DVOL;FROZEN;PRICE;PXDVOL;PXRANGE;REBA
+  LEAKT   0.20      6   6   2   0   6           True             2  AMIHUD;DVOL;FROZEN;PRICE;PXDVOL;PXRANGE;UPDA
+  LEAKT   0.30      8   5   1   1   7           True             1  AMIHUD;DVOL;PRICE;PXDVOL;PXRANGE;VOLSH
+  LEAKT   0.40      8   5   1   1   7           True             1  AMIHUD;DVOL;PRICE;PXDVOL;PXRANGE;VOLSH
+  LEAKT   0.50     11   3   0   3   8           True             0  AMIHUD;DVOL;PXDVOL
+  LEAKT   0.60     14   0   0   6   8          False             0  
+  LEAKT   0.70     14   0   0   6   8          False             0  
+  LEAKH   0.10     11   3   0   3   8          False             0  FROZEN;PRICE;PXRANGE
+  LEAKH   0.20     14   0   0   6   8          False             0  
+  LEAKH   0.30     14   0   0   6   8          False             0  
+  LEAKH   0.40     14   0   0   6   8          False             0  
+  LEAKH   0.50     14   0   0   6   8          False             0  
+  LEAKH   0.60     14   0   0   6   8          False             0  
+  LEAKH   0.70     14   0   0   6   8          False             0  
+
+  thresholds achieving T1's own reading (all scale leaks caught, zero false positives): 0 of 38
+  T1 on the same set: TP 6  FP 0  FN 0  TN 8
+
+----------------------------------------------------------------------------------------------------------------
+PART A2  THE BAND  [POST-HOC -- added after the ladder above was read, and every number
+         below is labelled ORACLE-PLACED: the band can only be located by someone who
+         already knows which keys are leaks, which is exactly what T1 certifies.]
+----------------------------------------------------------------------------------------------------------------
+  screen   max non-leak  min leak  band width  in ladder steps  separable
+  T1_med         0.0000  166.0000    166.0000         3320.000       True
+  LEAKT          0.4122    0.2604     -0.1518           -3.036      False
+  LEAKH          0.0733    0.0753      0.0020            0.040       True
+  (one ladder step = 0.05; T1's 'band' is the gap between a structural zero and the first flagged key, in RANK STEPS, and needs no threshold to be placed at all.)
+
+  STABILITY: |IC|_H re-estimated on two disjoint halves of its own IS date set
+  window    dates AUC (scale)  max non-leak  min leak    width  full-band tau* still clean?
+  IS-early     10      1.0000        0.0417    0.0447   0.0030                        False
+  IS-late      10      0.9792        0.1273    0.1058  -0.0215                        False
+  tau* (band midpoint on the FULL IS date set, ORACLE-PLACED) = 0.0743
+
+================================================================================================================
+PART C  THE GATE PRICED WHERE IT SITS: BEFORE RULE 8   (SMALL430, top-20 EW, g=0.75, W)
+================================================================================================================
+  SPY                         14.13% /  0.862 / -33.72%   (H1 0.891 / H2 0.858 / OOS 0.882)
+  control (untilted composite)   6.12% /  0.438 / -25.90%   (H1 0.628 / H2 0.281 / OOS 0.434)
+  RULES v1                     7.41% /  0.554 / -34.92%   (H1 0.721 / H2 0.407 / OOS 0.499)
+  RULES v2 (live baseline)     3.77% /  0.565 / -14.58%   (H1 0.568 / H2 0.566 / OOS 0.558)
+
+  471 grid points written to .arms.csv  (26 keys x 2 dirs x 3 m x 3 rungs + control)
+  PROTOCOL 4 over the whole grid: 4a 0/471   4b 0/471
+  4b leg failure counts: MaxDD 468  H1 433  H2 370  OOS 370  CAGR 347
+
+  G3  idea 623's committed .arms.csv reproduced on 363 shared rows (CAGR_F, Sharpe_F, MaxDD_F, Sharpe_OOS)   max |diff| 4.441e-16   [tol 0.005]
+
+================================================================================================================
+PART B  IDEA 185's LEAK LAW AS A PRICER on this corpus (10 bps, dirs and m pooled)
+================================================================================================================
+  Spearman(|IC|_T , mean NEG dSharpe_F)  = +0.1549    (idea 185 published +0.881 on its small panel)
+  Spearman(|IC|_H , mean NEG dSharpe_F)  = +0.0403
+  Spearman(|IC|_T , max dSharpe_OOS)     = +0.9205
+  Spearman(|IC|_H , max dSharpe_OOS)     = +0.6060
+
+  AUC for the event 'some arm of this key beats SPY OOS' (13 of 26 keys):
+    |IC|_T   AUC 0.9763
+    |IC|_H   AUC 0.7870
+    T1_flag  AUC 0.6538
+    T2_flag  AUC 0.5769
+    T1|T2    AUC 0.7308
+
+----------------------------------------------------------------------------------------------------------------
+RULE 8 (PROTOCOL 8): (KEY, m) chosen on 2010-2016 IS Sharpe ALONE; 2017-2026 read once.
+The GATE is applied BEFORE the choice.  Both tuned parameters vary here: GATE x FAMILY.
+----------------------------------------------------------------------------------------------------------------
+  1230 gate x family x rung cells written to .walkforward.csv (82 gates x 5 families x 3 rungs)
+
+  OOS comparands @10bps: SPY 15.45%/0.882/-33.72%   RULES v2 3.77%/0.558/-14.58%   RULES v1 6.66%/0.499   control 6.23%/0.434
+
+  FAMILY=ALL, the four structural gates and the tau ladder at every 4th rung:
+  gate             rung  adm pick                      IS Shrp  OOS CAGR  OOS Shrp  OOS MaxDD   vs SPY   vs v2
+  NONE                0   26 FWDRET/POS/m=1.00           1.104    41.47%     2.310    -26.51%   +1.428  +1.711
+  NONE               10   26 FWDRET/POS/m=1.00           0.974    39.03%     2.198    -26.70%   +1.316  +1.640
+  NONE               25   26 FWDRET/POS/m=1.00           0.779    35.44%     2.029    -26.97%   +1.147  +1.532
+  T1                  0   16 FWDRET/POS/m=1.00           1.104    41.47%     2.310    -26.51%   +1.428  +1.711
+  T1                 10   16 FWDRET/POS/m=1.00           0.974    39.03%     2.198    -26.70%   +1.316  +1.640
+  T1                 25   16 FWDRET/POS/m=1.00           0.779    35.44%     2.029    -26.97%   +1.147  +1.532
+  T2                  0   14 PXRANGE/NEG/m=1.00          1.048    18.36%     1.164    -26.39%   +0.282  +0.566
+  T2                 10   14 PXRANGE/NEG/m=1.00          0.907    16.04%     1.037    -26.53%   +0.155  +0.479
+  T2                 25   14 PXRANGE/NEG/m=1.00          0.696    12.65%     0.845    -26.75%   -0.037  +0.347
+  T1&T2               0    8 VOL20/NEG/m=0.50            0.973     8.42%     0.640    -24.14%   -0.242  +0.042
+  T1&T2              10    8 VOL20/NEG/m=0.50            0.796     5.79%     0.467    -26.88%   -0.415  -0.091
+  T1&T2              25    8 VOL20/NEG/m=0.50            0.531     1.96%     0.208    -31.06%   -0.674  -0.289
+  LEAKH>0.10          0   15 AMIHUD/POS/m=1.00           1.035    25.34%     1.565    -25.32%   +0.683  +0.967
+  LEAKH>0.10         10   15 AMIHUD/POS/m=1.00           0.887    22.87%     1.434    -25.47%   +0.552  +0.876
+  LEAKH>0.10         25   15 AMIHUD/POS/m=1.00           0.665    19.26%     1.237    -25.69%   +0.355  +0.740
+  T2&LEAKH>0.10       0   11 AMIHUD/POS/m=1.00           1.035    25.34%     1.565    -25.32%   +0.683  +0.967
+  T2&LEAKH>0.10      10   11 AMIHUD/POS/m=1.00           0.887    22.87%     1.434    -25.47%   +0.552  +0.876
+  T2&LEAKH>0.10      25   11 AMIHUD/POS/m=1.00           0.665    19.26%     1.237    -25.69%   +0.355  +0.740
+  LEAKH>0.20          0   23 MCAP/NEG/m=1.00             1.096    28.71%     1.706    -24.70%   +0.824  +1.107
+  LEAKH>0.20         10   23 MCAP/NEG/m=1.00             0.963    26.31%     1.584    -24.87%   +0.702  +1.026
+  LEAKH>0.20         25   23 MCAP/NEG/m=1.00             0.763    22.79%     1.401    -25.13%   +0.519  +0.904
+  T2&LEAKH>0.20       0   14 PXRANGE/NEG/m=1.00          1.048    18.36%     1.164    -26.39%   +0.282  +0.566
+  T2&LEAKH>0.20      10   14 PXRANGE/NEG/m=1.00          0.907    16.04%     1.037    -26.53%   +0.155  +0.479
+  T2&LEAKH>0.20      25   14 PXRANGE/NEG/m=1.00          0.696    12.65%     0.845    -26.75%   -0.037  +0.347
+  LEAKH>0.30          0   26 FWDRET/POS/m=1.00           1.104    41.47%     2.310    -26.51%   +1.428  +1.711
+  LEAKH>0.30         10   26 FWDRET/POS/m=1.00           0.974    39.03%     2.198    -26.70%   +1.316  +1.640
+  LEAKH>0.30         25   26 FWDRET/POS/m=1.00           0.779    35.44%     2.029    -26.97%   +1.147  +1.532
+  T2&LEAKH>0.30       0   14 PXRANGE/NEG/m=1.00          1.048    18.36%     1.164    -26.39%   +0.282  +0.566
+  T2&LEAKH>0.30      10   14 PXRANGE/NEG/m=1.00          0.907    16.04%     1.037    -26.53%   +0.155  +0.479
+  T2&LEAKH>0.30      25   14 PXRANGE/NEG/m=1.00          0.696    12.65%     0.845    -26.75%   -0.037  +0.347
+  LEAKH>0.40          0   26 FWDRET/POS/m=1.00           1.104    41.47%     2.310    -26.51%   +1.428  +1.711
+  LEAKH>0.40         10   26 FWDRET/POS/m=1.00           0.974    39.03%     2.198    -26.70%   +1.316  +1.640
+  LEAKH>0.40         25   26 FWDRET/POS/m=1.00           0.779    35.44%     2.029    -26.97%   +1.147  +1.532
+  T2&LEAKH>0.40       0   14 PXRANGE/NEG/m=1.00          1.048    18.36%     1.164    -26.39%   +0.282  +0.566
+  T2&LEAKH>0.40      10   14 PXRANGE/NEG/m=1.00          0.907    16.04%     1.037    -26.53%   +0.155  +0.479
+  T2&LEAKH>0.40      25   14 PXRANGE/NEG/m=1.00          0.696    12.65%     0.845    -26.75%   -0.037  +0.347
+  LEAKH>0.50          0   26 FWDRET/POS/m=1.00           1.104    41.47%     2.310    -26.51%   +1.428  +1.711
+  LEAKH>0.50         10   26 FWDRET/POS/m=1.00           0.974    39.03%     2.198    -26.70%   +1.316  +1.640
+  LEAKH>0.50         25   26 FWDRET/POS/m=1.00           0.779    35.44%     2.029    -26.97%   +1.147  +1.532
+  T2&LEAKH>0.50       0   14 PXRANGE/NEG/m=1.00          1.048    18.36%     1.164    -26.39%   +0.282  +0.566
+  T2&LEAKH>0.50      10   14 PXRANGE/NEG/m=1.00          0.907    16.04%     1.037    -26.53%   +0.155  +0.479
+  T2&LEAKH>0.50      25   14 PXRANGE/NEG/m=1.00          0.696    12.65%     0.845    -26.75%   -0.037  +0.347
+  LEAKH>0.60          0   26 FWDRET/POS/m=1.00           1.104    41.47%     2.310    -26.51%   +1.428  +1.711
+  LEAKH>0.60         10   26 FWDRET/POS/m=1.00           0.974    39.03%     2.198    -26.70%   +1.316  +1.640
+  LEAKH>0.60         25   26 FWDRET/POS/m=1.00           0.779    35.44%     2.029    -26.97%   +1.147  +1.532
+  T2&LEAKH>0.60       0   14 PXRANGE/NEG/m=1.00          1.048    18.36%     1.164    -26.39%   +0.282  +0.566
+  T2&LEAKH>0.60      10   14 PXRANGE/NEG/m=1.00          0.907    16.04%     1.037    -26.53%   +0.155  +0.479
+  T2&LEAKH>0.60      25   14 PXRANGE/NEG/m=1.00          0.696    12.65%     0.845    -26.75%   -0.037  +0.347
+  T2&LEAKT>0.20       0    6 VOL20/NEG/m=0.50            0.973     8.42%     0.640    -24.14%   -0.242  +0.042
+  T2&LEAKT>0.20      10    6 VOL20/NEG/m=0.50            0.796     5.79%     0.467    -26.88%   -0.415  -0.091
+  T2&LEAKT>0.20      25    6 VOL20/NEG/m=0.50            0.531     1.96%     0.208    -31.06%   -0.674  -0.289
+  T2&LEAKT>0.40       0    8 VOL20/NEG/m=0.50            0.973     8.42%     0.640    -24.14%   -0.242  +0.042
+  T2&LEAKT>0.40      10    8 VOL20/NEG/m=0.50            0.796     5.79%     0.467    -26.88%   -0.415  -0.091
+  T2&LEAKT>0.40      25    8 VOL20/NEG/m=0.50            0.531     1.96%     0.208    -31.06%   -0.674  -0.289
+  T2&LEAKT>0.60       0   14 PXRANGE/NEG/m=1.00          1.048    18.36%     1.164    -26.39%   +0.282  +0.566
+  T2&LEAKT>0.60      10   14 PXRANGE/NEG/m=1.00          0.907    16.04%     1.037    -26.53%   +0.155  +0.479
+  T2&LEAKT>0.60      25   14 PXRANGE/NEG/m=1.00          0.696    12.65%     0.845    -26.75%   -0.037  +0.347
+  LEAKH>tau*          0   10 VOL20/NEG/m=0.50            0.973     8.42%     0.640    -24.14%   -0.242  +0.042
+  LEAKH>tau*         10   10 VOL20/NEG/m=0.50            0.796     5.79%     0.467    -26.88%   -0.415  -0.091
+  LEAKH>tau*         25   10 VOL20/NEG/m=0.50            0.531     1.96%     0.208    -31.06%   -0.674  -0.289
+  T2&LEAKH>tau*       0    8 VOL20/NEG/m=0.50            0.973     8.42%     0.640    -24.14%   -0.242  +0.042
+  T2&LEAKH>tau*      10    8 VOL20/NEG/m=0.50            0.796     5.79%     0.467    -26.88%   -0.415  -0.091
+  T2&LEAKH>tau*      25    8 VOL20/NEG/m=0.50            0.531     1.96%     0.208    -31.06%   -0.674  -0.289
+
+  gate summary on FAMILY=ALL (beats-SPY-OOS out of 3 rungs; a gate that works should NOT beat SPY):
+    NONE             admits 26  beats SPY OOS 3/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 3/3   mean OOS Sharpe +2.179
+    T1               admits 16  beats SPY OOS 3/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 3/3   mean OOS Sharpe +2.179
+    T2               admits 14  beats SPY OOS 2/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.015
+    T1&T2            admits  8  beats SPY OOS 0/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 0/3   mean OOS Sharpe +0.438
+    LEAKH>0.10       admits 15  beats SPY OOS 3/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.412
+    T2&LEAKH>0.10    admits 11  beats SPY OOS 3/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.412
+    LEAKH>0.20       admits 23  beats SPY OOS 3/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 3/3   mean OOS Sharpe +1.564
+    T2&LEAKH>0.20    admits 14  beats SPY OOS 2/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.015
+    LEAKH>0.30       admits 26  beats SPY OOS 3/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 3/3   mean OOS Sharpe +2.179
+    T2&LEAKH>0.30    admits 14  beats SPY OOS 2/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.015
+    LEAKH>0.40       admits 26  beats SPY OOS 3/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 3/3   mean OOS Sharpe +2.179
+    T2&LEAKH>0.40    admits 14  beats SPY OOS 2/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.015
+    LEAKH>0.50       admits 26  beats SPY OOS 3/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 3/3   mean OOS Sharpe +2.179
+    T2&LEAKH>0.50    admits 14  beats SPY OOS 2/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.015
+    LEAKH>0.60       admits 26  beats SPY OOS 3/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 3/3   mean OOS Sharpe +2.179
+    T2&LEAKH>0.60    admits 14  beats SPY OOS 2/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.015
+    T2&LEAKT>0.20    admits  6  beats SPY OOS 0/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 0/3   mean OOS Sharpe +0.438
+    T2&LEAKT>0.40    admits  8  beats SPY OOS 0/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 0/3   mean OOS Sharpe +0.438
+    T2&LEAKT>0.60    admits 14  beats SPY OOS 2/3   picks a SCALE-LEAK 3/3   picks a TERMINAL 0/3   mean OOS Sharpe +1.015
+    LEAKH>tau*       admits 10  beats SPY OOS 0/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 0/3   mean OOS Sharpe +0.438
+    T2&LEAKH>tau*    admits  8  beats SPY OOS 0/3   picks a SCALE-LEAK 0/3   picks a TERMINAL 0/3   mean OOS Sharpe +0.438
+
+  the KEY-FAMILY cut (10 bps, the four structural gates):
+    gate                           ALL                    causal                     level                      both                  termonly
+    NONE            FWDRET +2.198*             VOL20 +0.467            PXRANGE +1.037*              MCAP +1.584*            FWDRET +2.198*    
+    T1              FWDRET +2.198*             VOL20 +0.467            CONTROL +0.434            CONTROL +0.434             FWDRET +2.198*    
+    T2             PXRANGE +1.037*             VOL20 +0.467            PXRANGE +1.037*           CONTROL +0.434            CONTROL +0.434     
+    T1&T2            VOL20 +0.467              VOL20 +0.467            CONTROL +0.434            CONTROL +0.434            CONTROL +0.434     
+    (* = beats SPY out of sample; SPY OOS Sharpe 0.882)
+
+  gates whose pick LOSES to SPY OOS at all 3 rungs (19 of 82): LEAKH>tau*, LEAKT>0.05, LEAKT>0.10, LEAKT>0.15, LEAKT>0.20, LEAKT>0.25, LEAKT>0.30, LEAKT>0.35, LEAKT>0.40, T1&T2, T2&LEAKH>tau*, T2&LEAKT>0.05, T2&LEAKT>0.10, T2&LEAKT>0.15 ...
+  T1&T2 admits 8: DDTR, MOM, R6, REBASED, SKEW60, UPDAYS, VOL20, VOLSH
+  honest LEAK-based gates vs the T1&T2 admitted set:
+    LEAKH>tau*         admits 10  overlap with T1&T2  8  identical set False
+    LEAKT>0.05         admits  1  overlap with T1&T2  1  identical set False
+    LEAKT>0.10         admits  6  overlap with T1&T2  5  identical set False
+    LEAKT>0.15         admits  8  overlap with T1&T2  5  identical set False
+    LEAKT>0.20         admits  9  overlap with T1&T2  6  identical set False
+    LEAKT>0.25         admits 10  overlap with T1&T2  7  identical set False
+    LEAKT>0.30         admits 11  overlap with T1&T2  7  identical set False
+    LEAKT>0.35         admits 12  overlap with T1&T2  7  identical set False
+    LEAKT>0.40         admits 12  overlap with T1&T2  7  identical set False
+    T2&LEAKH>tau*      admits  8  overlap with T1&T2  8  identical set True
+    T2&LEAKT>0.05      admits  1  overlap with T1&T2  1  identical set False
+    T2&LEAKT>0.10      admits  5  overlap with T1&T2  5  identical set False
+
+================================================================================================================
+PART D  PRE-REGISTERED PREDICTIONS, SCORED
+================================================================================================================
+  P1 HIT   gates all pass (5/5)
+  P2 HIT   LEAKH taus catching PXDVOL: 1; of those, taus that kill NO causal key: 0
+  P3 HIT   T2 picks ['PXRANGE', 'PXRANGE', 'PXRANGE'] -> T1&T2 picks ['VOL20', 'VOL20', 'VOL20'] (3/3 changed)
+  P4 MISS  AUC on the T2-cleared scale axis: LEAKT 0.9792 vs LEAKH 1.0000
+  P5 MISS  honest T2&LEAKH gates: []
+  P6 HIT   4a 0/471, 4b 0/471
+
+runtime 336.3s
