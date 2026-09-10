@@ -1,0 +1,200 @@
+# 2026-09-10_re-read-every-chooser-result-on-the-OOS-RANK-of-its-constant-arm_B
+Idea 466 — re-read every chooser result on the OOS RANK of its constant arm.  (lane B, 2026-09-10)
+
+QUEUE 466: "idea 458 found the arm that sweeps 400/400 of idea 241's IS sub-menus ranks 22/31
+(broad136), 7/31 (SMALL439) and 31/31 (u56) out of sample, so the degenerate menus are constant on
+the losing side.  Take the 121 degenerate (file,panel) menus idea 458 censused and, wherever the
+file publishes an OOS column, report the OOS rank of the constant winner; count how many published
+chooser verdicts are constant-on-a-loser.  Max 2 params."
+
+WHAT IS BEING TESTED
+  458's census marks a (file, panel) menu DEGENERATE when one arm is the IS-Sharpe argmax in EVERY
+  cell of that panel — the chooser is a constant there, so the file's "the chooser picks X" is not
+  a choice at all.  458 then showed, on ONE menu (its own probe), that the constant arm is BELOW
+  the median arm out of sample on two of three panels and LAST on the third.  466 asks whether that
+  is a property of the record, not of one probe.  So for every degenerate menu that publishes an
+  OOS column, this file reads off the OOS rank of the arm the file's chooser is constant on.
+
+  The statistic is the constant arm's NORMALISED OOS RANK
+        u = (rank - 1) / (n_arms - 1),      rank 1 = best OOS,  u in [0, 1]
+  A menu is CONSTANT-ON-A-LOSER when u > 0.5 (the arm the file always picks is worse than the
+  median arm out of sample).  u = 0.5 under a coin flip, so the null is explicit and pre-registered.
+
+  A degenerate menu is only damning if a NON-degenerate menu does better; otherwise IS-argmax is
+  simply uninformative everywhere and degeneracy is not the defect.  So the same statistic is
+  computed for the modal IS winner of every NON-degenerate menu, as the record's own control.
+
+AXES (PROTOCOL rule 4: no more than 2 tuned parameters — the queue names none, so both are mine)
+  P1 OOS METRIC in {Sharpe, CAGR, MaxDD}.  Which OOS column the rank is read on.  MaxDD is ranked
+     sign-correctly (less negative = better).  ALL THREE ARE REPORTED EVERYWHERE.
+  P2 AGGREGATION in {percell, pooled}.  `percell` ranks the arms inside each cell and averages the
+     constant arm's normalised rank over the menu's cells; `pooled` ranks the arms once on their
+     cell-mean OOS metric.  BOTH ARE REPORTED EVERYWHERE.
+  6 grid points, every one published in .grid.csv.
+  The CORPUS CUTOFF (458's frozen file set vs today's) and the cost rung in R2 are REPORTED axes,
+  not tuned: both settings of each are printed.
+
+GATES (run before any new number is read)
+  G1 CENSUS REPRODUCTION.  458's admission and degeneracy code is imported by path, not
+     re-implemented, and re-run over the file set as it stood on 2026-09-08.  It must return 458's
+     published 121 degenerate menus, in 57 files, 15 of them won by a labelled control arm.
+  G2 RANK CONVENTION.  A synthetic menu with a known answer must score u = 0 for an arm that is
+     best in every cell, u = 1 for one that is worst, and MaxDD must rank -0.10 above -0.30.
+  G3 NO IS/OOS COLLISION.  The detected OOS column must never be the IS column the star was chosen
+     on, and both must be finite on the rows used.
+  G4 R2 RUNNER.  `fast_bt` (vectorised) vs `engine.backtest`, returns AND turnover, W and M.
+  G5 WINDOWS.  IS and OOS are disjoint and jointly exhaust the evaluated live sample.
+
+R2 — RULE 8 ON LIVE PRICES (PROTOCOL rule 8, required)
+  The census is archaeology; rule 8 wants the claim re-run out of corpus.  R2 rebuilds 458's probe
+  menu (the ungated control plus ten 200d-band gated arms) on three live panels, makes the cells
+  seeded sub-panel draws, chooses the IS argmax on 2009-2016 ONLY, and reads 2017-2026 once:
+    - is the live menu degenerate, and if so what is the constant arm's OOS rank (the census
+      statistic, measured out of corpus)?
+    - the chooser run as a REAL BOOK: IS-argmax arm on the full panel, held OOS, reported against
+      the live RULES v2 baseline and SPY, with PROTOCOL 4a and 4b evaluated on both windows.
+
+loaded u56: 56 columns, 2008-01-02..2026-09-09
+
+loaded broad136: 136 columns, 2008-01-02..2026-09-04
+
+loaded small484: 484 columns, 2010-01-04..2026-09-04
+
+## GATES
+  G1 census reproduction (458's corpus, files dated < 2026-09-09): admitted 572 menus in 196 files; DEGENERATE 121 (published 121) in 57 files (published 57); control-won 15 (published 15)  -> PASS
+     458 published the denominator as 566 menus / 194 files; this run admits 572 / 196.  The drift is +6 menus in +2  files dated 2026-09-08 that landed AFTER 458 ran; all three degeneracy figures are exact.
+  G2 rank convention: worst arm u=1.00 (want 1.00), best u=0.00 (0.00), MaxDD -0.10 u=0.00 (0.00), all-tied u=0.50 (0.50) -> PASS
+  G3 no IS/OOS column collision over the corpus: 0 collisions -> PASS
+  G4 fast_bt vs engine.backtest (returns AND turnover, W and M): max abs diff 3.331e-16 -> PASS
+  G5 windows: IS 2009-01-13..2016-12-30 (2007d), OOS 2017-01-03..2026-09-09 (2434d), disjoint and exhaustive -> PASS
+
+## R1 — the census, re-read on the OOS rank of the constant arm
+  u = normalised OOS rank of the arm the chooser is constant on (0 = best arm out of
+  sample, 1 = worst, 0.5 = the coin-flip null).  CONSTANT-ON-A-LOSER := u > 0.5.
+
+  corpus 458-frozen: 572 admitted menus in 196 files; 121 degenerate (21.2%) in 57 files; 117 of the degenerate menus publish an OOS column
+    corpus metric     agg  degenerate   n  mean_u  median_u  loser_share  strict_last  strict_first  t_vs_half
+458-frozen Sharpe percell        True 117   0.290     0.181        0.111        0.034         0.299     -8.059
+458-frozen Sharpe percell       False 447   0.439     0.440        0.396        0.067         0.125     -4.229
+458-frozen Sharpe  pooled        True 117   0.283     0.167        0.137        0.077         0.419     -7.380
+458-frozen Sharpe  pooled       False 444   0.419     0.333        0.363        0.212         0.333     -4.296
+458-frozen   CAGR percell        True 115   0.369     0.333        0.191        0.139         0.261     -4.014
+458-frozen   CAGR percell       False 441   0.418     0.375        0.363        0.070         0.145     -5.250
+458-frozen   CAGR  pooled        True 115   0.352     0.304        0.191        0.165         0.374     -4.409
+458-frozen   CAGR  pooled       False 438   0.395     0.312        0.324        0.194         0.349     -5.602
+458-frozen  MaxDD percell        True 115   0.532     0.500        0.417        0.217         0.191      0.937
+458-frozen  MaxDD percell       False 438   0.531     0.528        0.534        0.112         0.098      2.062
+458-frozen  MaxDD  pooled        True 115   0.532     0.500        0.435        0.296         0.261      0.893
+458-frozen  MaxDD  pooled       False 435   0.541     0.500        0.490        0.290         0.237      2.183
+
+  corpus today: 1281 admitted menus in 240 files; 615 degenerate (48.0%) in 70 files; 611 of the degenerate menus publish an OOS column
+corpus metric     agg  degenerate   n  mean_u  median_u  loser_share  strict_last  strict_first  t_vs_half
+ today Sharpe percell        True 611   0.271     0.000        0.167        0.134         0.560    -15.621
+ today Sharpe percell       False 644   0.479     0.492        0.427        0.155         0.141     -1.536
+ today Sharpe  pooled        True 611   0.246     0.000        0.216        0.205         0.696    -15.470
+ today Sharpe  pooled       False 641   0.462     0.500        0.417        0.296         0.337     -2.269
+ today   CAGR percell        True 609   0.270     0.000        0.166        0.148         0.575    -15.325
+ today   CAGR percell       False 641   0.468     0.474        0.409        0.159         0.161     -2.261
+ today   CAGR  pooled        True 609   0.240     0.000        0.210        0.204         0.706    -15.836
+ today   CAGR  pooled       False 638   0.452     0.375        0.397        0.288         0.346     -2.842
+ today  MaxDD percell        True 609   0.484     0.500        0.402        0.351         0.383     -0.902
+ today  MaxDD percell       False 638   0.519     0.500        0.495        0.155         0.147      1.384
+ today  MaxDD  pooled        True 609   0.473     0.500        0.453        0.427         0.486     -1.391
+ today  MaxDD  pooled       False 635   0.524     0.500        0.479        0.323         0.290      1.483
+
+  HEADLINE (458's own frozen corpus, the queue's 121 menus, OOS Sharpe, per-cell):
+    117 of the 121 degenerate menus publish an OOS Sharpe column
+    mean u 0.290  median 0.181
+    CONSTANT-ON-A-LOSER (u > 0.5): 13 of 117 (11.1%)
+    constant on the OOS-WORST arm in every cell (u = 1.0): 4
+    constant on the OOS-BEST arm in every cell (u = 0.0): 35
+    CONTROL — non-degenerate menus, modal IS winner: n 447, mean u 0.439, loser share 39.6%
+
+  BY MENU WIDTH — with n_arms = 2 the statistic is binary (u is 0 or 1 only), so a
+  corpus full of 2-arm menus can move the mean without any arm ever being mid-ranked:
+    corpus 458-frozen:
+        n  mean_u  loser  worst
+width                          
+2      38   0.346  0.079  0.000
+3      16   0.166  0.125  0.062
+4-5    13   0.441  0.308  0.231
+6-10   15   0.234  0.000  0.000
+11+    35   0.254  0.114  0.000
+    corpus today:
+         n  mean_u  loser  worst
+width                           
+2      522   0.270  0.169  0.146
+3       18   0.152  0.111  0.056
+4-5     17   0.548  0.471  0.294
+6-10    18   0.196  0.000  0.000
+11+     36   0.247  0.111  0.000
+
+  458's OWN probe menu placed inside this distribution (its three published ranks):
+    u56       rank 31/31 -> u 1.000; census percentile 96.6% of the 117 degenerate menus
+    broad136  rank 22/31 -> u 0.700; census percentile 92.3% of the 117 degenerate menus
+    SMALL439  rank 7/31 -> u 0.200; census percentile 51.3% of the 117 degenerate menus
+    458's probe mean u 0.633 vs census mean 0.290 — the probe sits at the 91.5% percentile of the record it was generalised to
+
+  per-file worst offenders (degenerate menus, u_percell_Sharpe, today's corpus):
+                                                                                    file                   panel  n_cells  n_arms modal_arm  u_percell_Sharpe
+         2026-09-09_name-the-CARRIER-that-survives-a-CHARACTERISTIC-MATCH_cloud.grid.csv  tpers~POOL~L0.970456~1        6       2     MA-RS             1.000
+         2026-09-09_name-the-CARRIER-that-survives-a-CHARACTERISTIC-MATCH_cloud.grid.csv  tpers~POOL~L0.970456~2        6       2     EWall             1.000
+         2026-09-09_name-the-CARRIER-that-survives-a-CHARACTERISTIC-MATCH_cloud.grid.csv  tpers~POOL~L0.970456~3        6       2     EWall             1.000
+         2026-09-09_name-the-CARRIER-that-survives-a-CHARACTERISTIC-MATCH_cloud.grid.csv  tpers~POOL~L0.960691~2        6       2     EWall             1.000
+         2026-09-09_name-the-CARRIER-that-survives-a-CHARACTERISTIC-MATCH_cloud.grid.csv  tpers~POOL~L0.960691~5        6       2     MA-RS             1.000
+         2026-09-09_name-the-CARRIER-that-survives-a-CHARACTERISTIC-MATCH_cloud.grid.csv tpers~BONLY~L0.970456~2        6       2     MA-RS             1.000
+         2026-09-09_name-the-CARRIER-that-survives-a-CHARACTERISTIC-MATCH_cloud.grid.csv tpers~BONLY~L0.970456~0        6       2     EWall             1.000
+2026-09-09_can-any-B136-recomposition-reach-SMALL439-s-CHARACTERISTIC-SUPPORT_C.grid.csv  breadth~BONLY~L0.580~0        6       2     EWall             1.000
+2026-09-09_can-any-B136-recomposition-reach-SMALL439-s-CHARACTERISTIC-SUPPORT_C.grid.csv  breadth~BONLY~L0.580~2        6       2     EWall             1.000
+2026-09-09_can-any-B136-recomposition-reach-SMALL439-s-CHARACTERISTIC-SUPPORT_C.grid.csv  breadth~BONLY~L0.580~4        4       2     EWall             1.000
+2026-09-09_can-any-B136-recomposition-reach-SMALL439-s-CHARACTERISTIC-SUPPORT_C.grid.csv  breadth~BONLY~L0.640~0        6       2     MA-RS             1.000
+         2026-09-09_name-the-CARRIER-that-survives-a-CHARACTERISTIC-MATCH_cloud.grid.csv  mrho~BONLY~L0.278135~3        6       2     EWall             1.000
+
+## R2 — PROTOCOL rule 8: the same statistic on LIVE PRICES, out of corpus
+  cells = 30 seeded 60% sub-panel draws per panel (seed 20260910); arms = 458's
+  probe menu (control + 10 band-gated); arm chosen on IS Sharpe 2009-2016 ONLY; 2017- read once.
+   panel  cost_bps  n_cells  n_arms  modal_share  degenerate modal_arm  mean_u_oos  loser_share full_panel_IS_argmax  full_panel_u_oos full_panel_oos_rank
+     u56    10.000       30      11        0.533       False   control       0.943        1.000           b0-g1.00-M             0.100                2/11
+     u56    25.000       30      11        0.600       False   control       0.900        0.967           b0-g1.00-M             0.100                2/11
+broad136    10.000       30      11        0.700       False   control       0.587        0.533              control             0.700                8/11
+broad136    25.000       30      11        0.867       False   control       0.327        0.267              control             0.200                3/11
+small484    10.000       30      11        0.600       False   control       0.187        0.100              control             0.000                1/11
+small484    25.000       30      11        0.667       False   control       0.087        0.033              control             0.000                1/11
+
+  THE CHOOSER AS A REAL BOOK (10 bps, PROTOCOL rule 2): IS-argmax arm on the FULL panel,
+  held out of sample, vs the live RULES v2 baseline and SPY.  PROTOCOL 4a and 4b evaluated.
+    u56       arm b0-g1.00-M     halves 1.258/1.178 (v2 1.231/1.180, SPY 0.959/0.826) | OOS 12.72%/1.278/-15.54% vs SPY 15.32%/0.876/-33.72% | 4a False 4b True
+    broad136  arm control        halves 1.235/1.024 (v2 1.229/0.984, SPY 0.957/0.834) | OOS 18.62%/1.102/-32.71% vs SPY 15.45%/0.882/-33.72% | 4a False 4b False
+    small484  arm control        halves 0.846/0.719 (v2 0.542/0.680, SPY 0.891/0.858) | OOS 15.65%/0.734/-45.75% vs SPY 15.45%/0.882/-33.72% | 4a False 4b False
+
+  full metric table (every window, every comparand):
+   panel        arm   series window   CAGR  Sharpe   MaxDD
+     u56 b0-g1.00-M     book   FULL 0.1196  1.2159 -0.1554
+     u56 b0-g1.00-M     book     IS 0.1104  1.1389 -0.1029
+     u56 b0-g1.00-M     book    OOS 0.1272  1.2784 -0.1554
+     u56   RULES v2 RULES v2   FULL 0.0863  1.2021 -0.1205
+     u56   RULES v2 RULES v2     IS 0.0761  1.1043 -0.0789
+     u56   RULES v2 RULES v2    OOS 0.0948  1.2788 -0.1205
+     u56        SPY      SPY   FULL 0.1515  0.8855 -0.3372
+     u56        SPY      SPY     IS 0.1496  0.8986 -0.2206
+     u56        SPY      SPY    OOS 0.1532  0.8758 -0.3372
+broad136    control     book   FULL 0.1895  1.1238 -0.3271
+broad136    control     book     IS 0.1936  1.1500 -0.2001
+broad136    control     book    OOS 0.1862  1.1022 -0.3271
+broad136   RULES v2 RULES v2   FULL 0.0803  1.1058 -0.1224
+broad136   RULES v2 RULES v2     IS 0.0809  1.0912 -0.0790
+broad136   RULES v2 RULES v2    OOS 0.0798  1.1185 -0.1224
+broad136        SPY      SPY   FULL 0.1523  0.8890 -0.3372
+broad136        SPY      SPY     IS 0.1496  0.8987 -0.2206
+broad136        SPY      SPY    OOS 0.1545  0.8820 -0.3372
+small484    control     book   FULL 0.1801  0.7812 -0.4575
+small484    control     book     IS 0.2194  0.8515 -0.2873
+small484    control     book    OOS 0.1565  0.7342 -0.4575
+small484   RULES v2 RULES v2   FULL 0.0407  0.6146 -0.1209
+small484   RULES v2 RULES v2     IS 0.0330  0.5308 -0.1140
+small484   RULES v2 RULES v2    OOS 0.0455  0.6629 -0.1209
+small484        SPY      SPY   FULL 0.1413  0.8615 -0.3372
+small484        SPY      SPY     IS 0.1202  0.8316 -0.1861
+small484        SPY      SPY    OOS 0.1545  0.8820 -0.3372
+
+wrote 2026-09-10_re-read-every-chooser-result-on-the-OOS-RANK-of-its-constant-arm_B.{census,grid,walkforward,console}.csv/txt
