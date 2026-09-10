@@ -1,0 +1,484 @@
+IDEA 615 — why does a 0.83x/yr book still pay to SMOOTH?  (lane C, 2026-09-10)
+lambda grid (tuned param 1, idea 403's verbatim): [1.0, 0.7, 0.5, 0.35, 0.25, 0.15, 0.1, 0.06]
+books (tuned param 2): ['EWall', 'TOP20'];  panels: ['u56', 'broad', 'SMALL439'];  rungs: [0.0, 5.0, 10.0, 15.0, 25.0, 50.0] bps
+weekly cadence, t+1 execution, gross 0.75, IS <= 2016-12-31, OOS >= 2017-01-01.
+DECOMPOSITION: r[p,d] = r_0(lam=p) - to(lam=d)*c/1e4;  COST = M(r[1,lam]) - M(r[1,1]);
+               PATH = M(r[lam,1]) - M(r[1,1]);  TOTAL = COST + PATH + INTER (exact).
+
+====================================================================================================
+A0  PREMISE CHECK — idea 403's own committed .walkforward.csv and .grid.csv
+  selector S0: lambda<1 in 12 of 24 EWall cells; picked lambdas [np.float64(0.06), np.float64(1.0)]; by panel {'broad': np.int64(0), 'u56': np.int64(12)}
+  selector S1: lambda<1 in 12 of 24 EWall cells; picked lambdas [np.float64(0.06), np.float64(1.0)]; by panel {'broad': np.int64(0), 'u56': np.int64(12)}
+  => the queue's '12 of 24' reproduces EXACTLY, per selector; all 24 lambda<1 picks are on u56 and ALL of them sit at the grid's EXTREME lambda [0.06], none in the interior.
+  base turnover (x/yr) by panel x lambda, off 403's grid:
+lam     0.06   0.10   0.15   0.25   0.35   0.50   0.70   1.00
+panel                                                        
+broad 0.8636 0.8642 0.8645 0.8649 0.8651 0.8652 0.8652 0.8657
+u56   0.8263 0.8270 0.8275 0.8280 0.8283 0.8285 0.8287 0.8288
+    broad: the WHOLE lambda range saves 0.0021 x/yr of turnover = 0.0206 bps/yr of drag at 10 bps, 0.1029 bps/yr at 50 bps.
+    u56: the WHOLE lambda range saves 0.0025 x/yr of turnover = 0.0253 bps/yr of drag at 10 bps, 0.1264 bps/yr at 50 bps.
+  => the queue's 'under 2 bps/yr' is a LOOSE bound: the true figure at PROTOCOL's own rung is under 0.03 bps/yr.  The premise is confirmed and tightened.
+
+[panel] u56: 56 investable cols, 2008-01-02..2026-09-09, evaluated from 2009-01-13 (17.62 yrs)
+    SPY full CAGR 15.15% Sharpe 0.886 MaxDD -33.72% halves 0.959/0.826; OOS Sharpe 0.876 CAGR 15.32% MaxDD -33.72%
+    4b bars: H1>0.959 H2>0.826 OOS>0.876 MaxDD>=-20.23% CAGR>=10.61%
+    [G1] run(phase=0) vs engine.backtest, EWall @10bps: max|d| 0.000e+00
+    [G2] EWall: r_10 identity vs live 10bps run: max|d| 0.000e+00
+    [G2] TOP20: r_10 identity vs live 10bps run: max|d| 0.000e+00
+
+[panel] broad: 136 investable cols, 2008-01-02..2026-09-04, evaluated from 2009-01-13 (17.62 yrs)
+    SPY full CAGR 15.23% Sharpe 0.889 MaxDD -33.72% halves 0.957/0.834; OOS Sharpe 0.882 CAGR 15.45% MaxDD -33.72%
+    4b bars: H1>0.957 H2>0.834 OOS>0.882 MaxDD>=-20.23% CAGR>=10.66%
+    [G1] run(phase=0) vs engine.backtest, EWall @10bps: max|d| 0.000e+00
+    [G2] EWall: r_10 identity vs live 10bps run: max|d| 0.000e+00
+    [G2] TOP20: r_10 identity vs live 10bps run: max|d| 0.000e+00
+
+[panel] SMALL439: 439 investable cols, 2010-01-04..2026-09-04, evaluated from 2011-01-13 (15.61 yrs)
+    SPY full CAGR 14.13% Sharpe 0.862 MaxDD -33.72% halves 0.891/0.858; OOS Sharpe 0.882 CAGR 15.45% MaxDD -33.72%
+    4b bars: H1>0.891 H2>0.858 OOS>0.882 MaxDD>=-20.23% CAGR>=9.89%
+    [G1] run(phase=0) vs engine.backtest, EWall @10bps: max|d| 0.000e+00
+    [G2] EWall: r_10 identity vs live 10bps run: max|d| 0.000e+00
+    [G2] TOP20: r_10 identity vs live 10bps run: max|d| 0.000e+00
+
+====================================================================================================
+A1  THE LEVEL — realised annual turnover by panel x book x lambda, and the drag saved
+lam              0.06   0.10   0.15    0.25    0.35    0.50    0.70    1.00
+panel    book                                                              
+SMALL439 EWall 1.7303 1.7329 1.7347  1.7367  1.7377  1.7386  1.7396  1.7409
+         TOP20 6.7631 8.2972 9.6764 11.6236 12.9730 14.3249 15.3684 16.2625
+broad    EWall 0.8636 0.8642 0.8645  0.8649  0.8651  0.8652  0.8652  0.8657
+         TOP20 5.2443 6.4820 7.6196  9.2600 10.4063 11.5670 12.4734 13.1785
+u56      EWall 0.8263 0.8270 0.8275  0.8280  0.8283  0.8285  0.8287  0.8288
+         TOP20 3.7798 4.5724 5.3096  6.3917  7.1603  7.9557  8.5753  9.0513
+
+  SMALL439  EWall : base   1.7409 x/yr -> floor   1.7303 x/yr; the whole dial saves  0.0106 x/yr =  0.1057 bps/yr at 10 bps,   0.5287 bps/yr at 50 bps
+  SMALL439  TOP20 : base  16.2625 x/yr -> floor   6.7631 x/yr; the whole dial saves  9.4994 x/yr = 94.9936 bps/yr at 10 bps, 474.9679 bps/yr at 50 bps
+  broad     EWall : base   0.8657 x/yr -> floor   0.8636 x/yr; the whole dial saves  0.0021 x/yr =  0.0206 bps/yr at 10 bps,   0.1029 bps/yr at 50 bps
+  broad     TOP20 : base  13.1785 x/yr -> floor   5.2443 x/yr; the whole dial saves  7.9342 x/yr = 79.3419 bps/yr at 10 bps, 396.7097 bps/yr at 50 bps
+  u56       EWall : base   0.8288 x/yr -> floor   0.8263 x/yr; the whole dial saves  0.0025 x/yr =  0.0253 bps/yr at 10 bps,   0.1264 bps/yr at 50 bps
+  u56       TOP20 : base   9.0513 x/yr -> floor   3.7798 x/yr; the whole dial saves  5.2715 x/yr = 52.7145 bps/yr at 10 bps, 263.5727 bps/yr at 50 bps
+
+====================================================================================================
+A2  THE DECOMPOSITION — COST vs PATH vs INTER, all 288 arm-rows x 6 metrics
+
+  metric = Sharpe.  |PATH| and |COST| (median over the 7 lambda<1 points), by panel x book x rung:
+                     med_PATH  med_COST  med_INTER  max_TOTAL  path_gt_cost  path_beats_cost
+panel    book  cost                                                                         
+SMALL439 EWall 0.0   0.000653  0.000000   0.000000   0.003887             7         1.000000
+               5.0   0.000652  0.000013   0.000000   0.003849             7         1.000000
+               10.0  0.000651  0.000026   0.000000   0.003812             7         1.000000
+               15.0  0.000650  0.000039   0.000000   0.003775             7         1.000000
+               25.0  0.000649  0.000065   0.000000   0.003701             7         1.000000
+               50.0  0.000644  0.000130   0.000000   0.003515             7         0.857143
+         TOP20 0.0   0.057854  0.000000   0.000000   0.093532             7         1.000000
+               5.0   0.058080  0.011246   0.000061   0.070748             7         1.000000
+               10.0  0.058304  0.022505   0.000120   0.048243             7         1.000000
+               15.0  0.058526  0.033774   0.000179   0.029523             7         1.000000
+               25.0  0.058962  0.056337   0.000294   0.020597             7         0.571429
+               50.0  0.060011  0.112783   0.000562   0.135021             7         0.000000
+broad    EWall 0.0   0.000500  0.000000   0.000000   0.001308             7         1.000000
+               5.0   0.000500  0.000003   0.000000   0.001300             7         1.000000
+               10.0  0.000500  0.000007   0.000000   0.001291             7         1.000000
+               15.0  0.000500  0.000010   0.000000   0.001282             7         1.000000
+               25.0  0.000500  0.000017   0.000000   0.001265             7         1.000000
+               50.0  0.000499  0.000034   0.000000   0.001221             7         1.000000
+         TOP20 0.0   0.026647  0.000000   0.000000   0.039912             7         1.000000
+               5.0   0.026894  0.012911   0.000070   0.066415             7         1.000000
+               10.0  0.027140  0.025837   0.000140   0.092945             7         0.571429
+               15.0  0.027386  0.038774   0.000210   0.119497             7         0.285714
+               25.0  0.027876  0.064669   0.000350   0.172649             7         0.000000
+               50.0  0.029091  0.129391   0.000692   0.305621             7         0.000000
+u56      EWall 0.0   0.000681  0.000000   0.000000   0.000883             7         1.000000
+               5.0   0.000681  0.000003   0.000000   0.000888             7         1.000000
+               10.0  0.000682  0.000006   0.000000   0.000894             7         1.000000
+               15.0  0.000683  0.000009   0.000000   0.000900             7         1.000000
+               25.0  0.000684  0.000015   0.000000   0.000911             7         1.000000
+               50.0  0.000688  0.000029   0.000000   0.000939             7         1.000000
+         TOP20 0.0   0.005245  0.000000   0.000000   0.038714             7         1.000000
+               5.0   0.005419  0.010200   0.000139   0.017940             7         0.571429
+               10.0  0.005594  0.020418   0.000279   0.021603             7         0.142857
+               15.0  0.005768  0.030651   0.000419   0.035414             7         0.000000
+               25.0  0.005524  0.051156   0.000699   0.067616             7         0.000000
+               50.0  0.006675  0.102569   0.001402   0.170016             7         0.000000
+
+  metric = CAGR.  |PATH| and |COST| (median over the 7 lambda<1 points), by panel x book x rung:
+                     med_PATH  med_COST  med_INTER  max_TOTAL  path_gt_cost  path_beats_cost
+panel    book  cost                                                                         
+SMALL439 EWall 0.0   0.000102  0.000000   0.000000   0.000621             7         1.000000
+               5.0   0.000102  0.000002   0.000000   0.000614             7         1.000000
+               10.0  0.000101  0.000005   0.000000   0.000608             7         1.000000
+               15.0  0.000101  0.000007   0.000000   0.000602             7         1.000000
+               25.0  0.000101  0.000012   0.000000   0.000589             7         0.857143
+               50.0  0.000101  0.000023   0.000000   0.000557             7         0.857143
+         TOP20 0.0   0.014562  0.000000   0.000000   0.023816             7         1.000000
+               5.0   0.014445  0.002683   0.000033   0.018238             7         1.000000
+               10.0  0.014329  0.005329   0.000066   0.012722             7         1.000000
+               15.0  0.014214  0.007939   0.000099   0.007724             7         1.000000
+               25.0  0.013987  0.013053   0.000163   0.003459             7         0.571429
+               50.0  0.013434  0.025231   0.000315   0.029237             7         0.000000
+broad    EWall 0.0   0.000068  0.000000   0.000000   0.000180             7         1.000000
+               5.0   0.000068  0.000000   0.000000   0.000178             7         1.000000
+               10.0  0.000068  0.000001   0.000000   0.000177             7         1.000000
+               15.0  0.000068  0.000001   0.000000   0.000176             7         1.000000
+               25.0  0.000068  0.000002   0.000000   0.000173             7         1.000000
+               50.0  0.000068  0.000005   0.000000   0.000167             7         1.000000
+         TOP20 0.0   0.005696  0.000000   0.000000   0.011258             7         1.000000
+               5.0   0.005659  0.002264   0.000011   0.015816             7         1.000000
+               10.0  0.005622  0.004504   0.000022   0.020334             7         1.000000
+               15.0  0.005585  0.006719   0.000033   0.024810             7         0.285714
+               25.0  0.005512  0.011076   0.000055   0.033642             7         0.000000
+               50.0  0.005333  0.021553   0.000106   0.055028             7         0.000000
+u56      EWall 0.0   0.000107  0.000000   0.000000   0.000132             7         1.000000
+               5.0   0.000107  0.000000   0.000000   0.000133             7         1.000000
+               10.0  0.000107  0.000001   0.000000   0.000134             7         1.000000
+               15.0  0.000107  0.000001   0.000000   0.000134             7         1.000000
+               25.0  0.000107  0.000002   0.000000   0.000136             7         1.000000
+               50.0  0.000106  0.000004   0.000000   0.000139             7         1.000000
+         TOP20 0.0   0.001947  0.000000   0.000000   0.002425             7         1.000000
+               5.0   0.001939  0.001543   0.000003   0.004590             7         0.714286
+               10.0  0.001930  0.003074   0.000005   0.007119             7         0.285714
+               15.0  0.001921  0.004593   0.000008   0.010065             7         0.142857
+               25.0  0.001903  0.007598   0.000013   0.016047             7         0.000000
+               50.0  0.001861  0.014913   0.000026   0.030676             7         0.000000
+
+  EXACTNESS of the decomposition (COST+PATH+INTER-TOTAL): max|resid| 1.110e-16
+  At cost 0: max|COST| 0.000e+00, max|INTER| 0.000e+00  (both identically zero by construction)
+
+  The whole lambda curve, Sharpe, at PROTOCOL's own 10 bps rung (TOTAL = the number a chooser sees):
+panel SMALL439           broad             u56        
+book     EWall   TOP20   EWall   TOP20   EWall   TOP20
+lam                                                   
+0.06   0.67432 0.71951 1.12066 1.06900 1.12187 1.17311
+0.10   0.67584 0.71921 1.12108 1.05471 1.12238 1.18460
+0.15   0.67675 0.72211 1.12131 1.04369 1.12257 1.19083
+0.25   0.67751 0.73177 1.12146 1.02890 1.12257 1.19185
+0.35   0.67783 0.74013 1.12151 1.01802 1.12244 1.18882
+0.50   0.67809 0.74955 1.12159 1.00506 1.12224 1.18422
+0.70   0.67825 0.75863 1.12173 0.99151 1.12202 1.17921
+1.00   0.67814 0.76745 1.12195 0.97606 1.12168 1.17025
+
+====================================================================================================
+A3  THE NOISE YARDSTICK — five weekday phases of the SAME weekly cadence, lambda = 1
+  Sharpe spread across the five phases (max - min), by panel x book x rung:
+                  0.0     5.0     10.0    15.0    25.0    50.0
+SMALL439 EWall 0.01197 0.01198 0.01199 0.01199 0.01201 0.01203
+         TOP20 0.14305 0.14340 0.14375 0.14411 0.14483 0.14674
+broad    EWall 0.01210 0.01206 0.01202 0.01199 0.01192 0.01174
+         TOP20 0.03261 0.03294 0.03327 0.03359 0.03422 0.03581
+u56      EWall 0.01374 0.01374 0.01374 0.01374 0.01375 0.01375
+         TOP20 0.03412 0.03571 0.03730 0.03889 0.04209 0.05018
+
+  Sharpe by phase at 10 bps (the raw yardstick):
+panel SMALL439           broad             u56        
+book     EWall   TOP20   EWall   TOP20   EWall   TOP20
+phase                                                 
+0      0.67814 0.76745 1.12195 0.97606 1.12168 1.17025
+1      0.69012 0.65352 1.13093 0.98318 1.13542 1.16791
+2      0.68147 0.67954 1.11890 0.97340 1.12204 1.20520
+3      0.68453 0.79727 1.12545 1.00667 1.12746 1.17365
+4      0.68038 0.69931 1.12137 0.97875 1.12189 1.19316
+
+  THE VERDICT TABLE — is the best lambda's TOTAL Sharpe gain bigger than the phase spread?  (gain = max over lambda of Sharpe(lam) - Sharpe(1))
+   panel  book     cost  base_Sharpe  best_lam    gain  max_abs_PATH  max_abs_COST  phase_spread  gain_over_spread  beats_noise
+SMALL439 EWall  0.00000      0.68887   0.70000 0.00010       0.00389       0.00000       0.01197           0.00854        False
+SMALL439 EWall  5.00000      0.68350   0.70000 0.00011       0.00388       0.00003       0.01198           0.00887        False
+SMALL439 EWall 10.00000      0.67814   0.70000 0.00011       0.00388       0.00007       0.01199           0.00921        False
+SMALL439 EWall 15.00000      0.67277   0.70000 0.00011       0.00387       0.00010       0.01199           0.00954        False
+SMALL439 EWall 25.00000      0.66204   0.70000 0.00012       0.00386       0.00016       0.01201           0.01022        False
+SMALL439 EWall 50.00000      0.63520   0.70000 0.00014       0.00384       0.00033       0.01203           0.01190        False
+SMALL439 TOP20  0.00000      0.84624   1.00000 0.00000       0.09353       0.00000       0.14305           0.00000        False
+SMALL439 TOP20  5.00000      0.80686   1.00000 0.00000       0.09407       0.02301       0.14340           0.00000        False
+SMALL439 TOP20 10.00000      0.76745   1.00000 0.00000       0.09460       0.04604       0.14375           0.00000        False
+SMALL439 TOP20 15.00000      0.72802   1.00000 0.00000       0.09512       0.06909       0.14411           0.00000        False
+SMALL439 TOP20 25.00000      0.64910   0.06000 0.02060       0.09615       0.11524       0.14483           0.14221        False
+SMALL439 TOP20 50.00000      0.45160   0.06000 0.13502       0.09857       0.23074       0.14674           0.92017        False
+   broad EWall  0.00000      1.12892   1.00000 0.00000       0.00131       0.00000       0.01210           0.00000        False
+   broad EWall  5.00000      1.12544   1.00000 0.00000       0.00131       0.00001       0.01206           0.00000        False
+   broad EWall 10.00000      1.12195   1.00000 0.00000       0.00131       0.00002       0.01202           0.00000        False
+   broad EWall 15.00000      1.11847   1.00000 0.00000       0.00131       0.00003       0.01199           0.00000        False
+   broad EWall 25.00000      1.11151   1.00000 0.00000       0.00131       0.00004       0.01192           0.00000        False
+   broad EWall 50.00000      1.09410   1.00000 0.00000       0.00130       0.00008       0.01174           0.00000        False
+   broad TOP20  0.00000      1.06262   0.06000 0.03991       0.03991       0.00000       0.03261           1.22382         True
+   broad TOP20  5.00000      1.01935   0.06000 0.06642       0.04094       0.02609       0.03294           2.01604         True
+   broad TOP20 10.00000      0.97606   0.06000 0.09294       0.04198       0.05221       0.03327           2.79365         True
+   broad TOP20 15.00000      0.93274   0.06000 0.11950       0.04301       0.07835       0.03359           3.55725         True
+   broad TOP20 25.00000      0.84602   0.06000 0.17265       0.04508       0.13067       0.03422           5.04470         True
+   broad TOP20 50.00000      0.62907   0.06000 0.30562       0.05023       0.26158       0.03581           8.53459         True
+     u56 EWall  0.00000      1.12880   0.15000 0.00088       0.00088       0.00000       0.01374           0.06427        False
+     u56 EWall  5.00000      1.12524   0.15000 0.00089       0.00088       0.00001       0.01374           0.06466        False
+     u56 EWall 10.00000      1.12168   0.15000 0.00089       0.00088       0.00002       0.01374           0.06506        False
+     u56 EWall 15.00000      1.11812   0.15000 0.00090       0.00088       0.00003       0.01374           0.06546        False
+     u56 EWall 25.00000      1.11100   0.15000 0.00091       0.00089       0.00005       0.01375           0.06626        False
+     u56 EWall 50.00000      1.09321   0.15000 0.00094       0.00089       0.00010       0.01375           0.06829        False
+     u56 TOP20  0.00000      1.23958   0.50000 0.00525       0.03871       0.00000       0.03412           0.15372        False
+     u56 TOP20  5.00000      1.20493   0.35000 0.01106       0.03733       0.02019       0.03571           0.30985        False
+     u56 TOP20 10.00000      1.17025   0.25000 0.02160       0.03594       0.04042       0.03730           0.57923        False
+     u56 TOP20 15.00000      1.13553   0.15000 0.03541       0.03455       0.06067       0.03889           0.91063        False
+     u56 TOP20 25.00000      1.06603   0.10000 0.06762       0.03175       0.10123       0.04209           1.60628         True
+     u56 TOP20 50.00000      0.89189   0.06000 0.17002       0.02472       0.20291       0.05018           3.38807         True
+  EWall: the best-lambda Sharpe gain beats the weekday-phase yardstick in 0 of 18 (panel, rung) cells; median gain/spread 0.0094
+  TOP20: the best-lambda Sharpe gain beats the weekday-phase yardstick in 8 of 18 (panel, rung) cells; median gain/spread 0.9154
+
+====================================================================================================
+A4  WHICH BAR — the queue's literal ask: name the bar the PATH term clears
+  binding 4b bar at lambda = 1 (the bar with the smallest margin), by panel x book x rung:
+   panel  book     cost binding   margin  pass4b
+SMALL439 EWall  0.00000     OOS -0.23469   False
+SMALL439 EWall  5.00000     OOS -0.24002   False
+SMALL439 EWall 10.00000     OOS -0.24535   False
+SMALL439 EWall 15.00000     OOS -0.25068   False
+SMALL439 EWall 25.00000     OOS -0.26133   False
+SMALL439 EWall 50.00000     OOS -0.28798   False
+SMALL439 TOP20  0.00000      DD -0.10533   False
+SMALL439 TOP20  5.00000      DD -0.10577   False
+SMALL439 TOP20 10.00000      H2 -0.13614   False
+SMALL439 TOP20 15.00000      H2 -0.17224   False
+SMALL439 TOP20 25.00000      H2 -0.24449   False
+SMALL439 TOP20 50.00000      H2 -0.42530   False
+   broad EWall  0.00000      DD -0.05128   False
+   broad EWall  5.00000      DD -0.05135   False
+   broad EWall 10.00000      DD -0.05141   False
+   broad EWall 15.00000      DD -0.05148   False
+   broad EWall 25.00000      DD -0.05162   False
+   broad EWall 50.00000      DD -0.05196   False
+   broad TOP20  0.00000      DD -0.05620   False
+   broad TOP20  5.00000      DD -0.05680   False
+   broad TOP20 10.00000      DD -0.05740   False
+   broad TOP20 15.00000      DD -0.05800   False
+   broad TOP20 25.00000      H2 -0.10196   False
+   broad TOP20 50.00000      H2 -0.30539   False
+     u56 EWall  0.00000      DD -0.02281   False
+     u56 EWall  5.00000      DD -0.02288   False
+     u56 EWall 10.00000      DD -0.02296   False
+     u56 EWall 15.00000      DD -0.02303   False
+     u56 EWall 25.00000      DD -0.02317   False
+     u56 EWall 50.00000      DD -0.02353   False
+     u56 TOP20  0.00000      DD -0.01893   False
+     u56 TOP20  5.00000      DD -0.01937   False
+     u56 TOP20 10.00000      DD -0.01980   False
+     u56 TOP20 15.00000      DD -0.02023   False
+     u56 TOP20 25.00000      DD -0.02110   False
+     u56 TOP20 50.00000      DD -0.02326   False
+
+  EWall: PATH-term flips of a 4b bar from FAIL to PASS: 0 of 630 (bar, lambda, rung, panel) sites.
+      med_abs_PATH  med_abs_COST  max_abs_PATH
+bar                                           
+CAGR      0.000087      0.000002      0.000621
+DD        0.000000      0.000000      0.001710
+H1        0.001179      0.000018      0.005476
+H2        0.000409      0.000006      0.002837
+OOS       0.000383      0.000005      0.003645
+  TOP20: PATH-term flips of a 4b bar from FAIL to PASS: 3 of 630 (bar, lambda, rung, panel) sites.
+      med_abs_PATH  med_abs_COST  max_abs_PATH
+bar                                           
+CAGR      0.004481      0.004415      0.023816
+DD        0.005465      0.000350      0.040626
+H1        0.031535      0.024989      0.126444
+H2        0.024247      0.020774      0.147648
+OOS       0.019328      0.021871      0.143051
+
+  For the BINDING bar only: how far short does the PATH term fall of the margin it would have to cover?
+   panel  book     cost bar  margin_at_lam1  best_PATH  covers
+SMALL439 EWall  0.00000 OOS        -0.23469   -0.00007   False
+SMALL439 EWall  5.00000 OOS        -0.24002   -0.00007   False
+SMALL439 EWall 10.00000 OOS        -0.24535   -0.00007   False
+SMALL439 EWall 15.00000 OOS        -0.25068   -0.00007   False
+SMALL439 EWall 25.00000 OOS        -0.26133   -0.00007   False
+SMALL439 EWall 50.00000 OOS        -0.28798   -0.00007   False
+SMALL439 TOP20  0.00000  DD        -0.10533   -0.00547   False
+SMALL439 TOP20  5.00000  DD        -0.10577   -0.00547   False
+SMALL439 TOP20 10.00000  H2        -0.13614   -0.03294   False
+SMALL439 TOP20 15.00000  H2        -0.17224   -0.03306   False
+SMALL439 TOP20 25.00000  H2        -0.24449   -0.03330   False
+SMALL439 TOP20 50.00000  H2        -0.42530   -0.03390   False
+   broad EWall  0.00000  DD        -0.05128    0.00000   False
+   broad EWall  5.00000  DD        -0.05135    0.00000   False
+   broad EWall 10.00000  DD        -0.05141    0.00000   False
+   broad EWall 15.00000  DD        -0.05148    0.00000   False
+   broad EWall 25.00000  DD        -0.05162    0.00000   False
+   broad EWall 50.00000  DD        -0.05196    0.00000   False
+   broad TOP20  0.00000  DD        -0.05620    0.00556   False
+   broad TOP20  5.00000  DD        -0.05680    0.00556   False
+   broad TOP20 10.00000  DD        -0.05740    0.00555   False
+   broad TOP20 15.00000  DD        -0.05800    0.00555   False
+   broad TOP20 25.00000  H2        -0.10196    0.00489   False
+   broad TOP20 50.00000  H2        -0.30539    0.00465   False
+     u56 EWall  0.00000  DD        -0.02281    0.00000   False
+     u56 EWall  5.00000  DD        -0.02288    0.00000   False
+     u56 EWall 10.00000  DD        -0.02296    0.00000   False
+     u56 EWall 15.00000  DD        -0.02303    0.00000   False
+     u56 EWall 25.00000  DD        -0.02317    0.00000   False
+     u56 EWall 50.00000  DD        -0.02353    0.00000   False
+     u56 TOP20  0.00000  DD        -0.01893    0.00609   False
+     u56 TOP20  5.00000  DD        -0.01937    0.00609   False
+     u56 TOP20 10.00000  DD        -0.01980    0.00609   False
+     u56 TOP20 15.00000  DD        -0.02023    0.00608   False
+     u56 TOP20 25.00000  DD        -0.02110    0.00608   False
+     u56 TOP20 50.00000  DD        -0.02326    0.00606   False
+  => the PATH term covers the binding bar in 0 of 36 cells.
+
+====================================================================================================
+A5  TRANSFER — the sign and the ordering of the PATH term, IS vs OOS
+   panel  book      lam   PATH_IS  PATH_OOS  same_sign
+     u56 EWall 0.700000  0.000790 -0.000015      False
+     u56 EWall 0.500000  0.001376 -0.000068      False
+     u56 EWall 0.350000  0.001919 -0.000143      False
+     u56 EWall 0.250000  0.002295 -0.000217      False
+     u56 EWall 0.150000  0.002584 -0.000433      False
+     u56 EWall 0.100000  0.002751 -0.000922      False
+     u56 EWall 0.060000  0.003276 -0.002231      False
+     u56 TOP20 0.700000 -0.006380  0.013264      False
+     u56 TOP20 0.500000 -0.014516  0.019111      False
+     u56 TOP20 0.350000 -0.022333  0.021730      False
+     u56 TOP20 0.250000 -0.028740  0.021122      False
+     u56 TOP20 0.150000 -0.038340  0.011924      False
+     u56 TOP20 0.100000 -0.046731 -0.002201       True
+     u56 TOP20 0.060000 -0.056320 -0.024651       True
+   broad EWall 0.700000 -0.000496 -0.000005       True
+   broad EWall 0.500000 -0.000786 -0.000025       True
+   broad EWall 0.350000 -0.000929 -0.000054       True
+   broad EWall 0.250000 -0.001012 -0.000085       True
+   broad EWall 0.150000 -0.001233 -0.000180       True
+   broad EWall 0.100000 -0.001506 -0.000383       True
+   broad EWall 0.060000 -0.001836 -0.000883       True
+   broad TOP20 0.700000  0.017290  0.006367       True
+   broad TOP20 0.500000  0.035156  0.006749       True
+   broad TOP20 0.350000  0.054149  0.002565       True
+   broad TOP20 0.250000  0.071061 -0.003313      False
+   broad TOP20 0.150000  0.093005 -0.010797      False
+   broad TOP20 0.100000  0.106014 -0.012489      False
+   broad TOP20 0.060000  0.115962 -0.006767      False
+SMALL439 EWall 0.700000  0.000457 -0.000068      False
+SMALL439 EWall 0.500000  0.000649 -0.000405      False
+SMALL439 EWall 0.350000  0.000718 -0.000833      False
+SMALL439 EWall 0.250000  0.000575 -0.001243      False
+SMALL439 EWall 0.150000 -0.000334 -0.001939       True
+SMALL439 EWall 0.100000 -0.001750 -0.002625       True
+SMALL439 EWall 0.060000 -0.004323 -0.003645       True
+SMALL439 TOP20 0.700000  0.000727 -0.019361      False
+SMALL439 TOP20 0.500000  0.013191 -0.045772      False
+SMALL439 TOP20 0.350000  0.027749 -0.075952      False
+SMALL439 TOP20 0.250000  0.036056 -0.101803      False
+SMALL439 TOP20 0.150000  0.034861 -0.129739      False
+SMALL439 TOP20 0.100000  0.022353 -0.138485      False
+SMALL439 TOP20 0.060000 -0.007460 -0.135779       True
+  EWall: IS/OOS sign agreement 10/21 (47.6%); per-panel Spearman of the lambda curve IS vs OOS [0.75, 1.0, -1.0]
+  TOP20: IS/OOS sign agreement 6/21 (28.6%); per-panel Spearman of the lambda curve IS vs OOS [-0.107, -0.857, 0.679]
+
+====================================================================================================
+A6  RULE 8 — lambda chosen on 2009-2016 ALONE per (panel, book, rung), 2017-2026 read ONCE
+    S0 = argmax IS Sharpe.   S1 = argmax IS worst-of-four 4b margin (IS-window bars).
+   panel  book    cost sel    lam  IS_stat  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  lam1_OOS_Sharpe  regret  best_OOS_Sharpe  v2_OOS_Sharpe  spy_OOS_Sharpe  beats_spy  beats_v2  OOS_4b  full_pass4b  full_pass4a
+SMALL439 EWall  0.0000  S0 0.3500   0.7855      0.6465    0.1028    -0.3601           0.6473 -0.0008           0.6473         0.7036          0.8820      False     False   False        False        False
+SMALL439 EWall  0.0000  S1 0.7000  -0.2167      0.6473    0.1029    -0.3600           0.6473 -0.0001           0.6473         0.7036          0.8820      False     False   False        False        False
+SMALL439 EWall  5.0000  S0 0.3500   0.7800      0.6412    0.1018    -0.3610           0.6420 -0.0008           0.6420         0.6833          0.8820      False     False   False        False        False
+SMALL439 EWall  5.0000  S1 0.7000  -0.2230      0.6419    0.1019    -0.3608           0.6420 -0.0001           0.6420         0.6833          0.8820      False     False   False        False        False
+SMALL439 EWall 10.0000  S0 0.3500   0.7745      0.6358    0.1008    -0.3619           0.6367 -0.0008           0.6367         0.6629          0.8820      False     False   False        False        False
+SMALL439 EWall 10.0000  S1 0.7000  -0.2293      0.6366    0.1009    -0.3617           0.6367 -0.0001           0.6367         0.6629          0.8820      False     False   False        False        False
+SMALL439 EWall 15.0000  S0 0.3500   0.7689      0.6305    0.0997    -0.3627           0.6313 -0.0008           0.6313         0.6425          0.8820      False     False   False        False        False
+SMALL439 EWall 15.0000  S1 0.7000  -0.2355      0.6313    0.0999    -0.3626           0.6313 -0.0001           0.6313         0.6425          0.8820      False     False   False        False        False
+SMALL439 EWall 25.0000  S0 0.3500   0.7579      0.6199    0.0977    -0.3645           0.6207 -0.0008           0.6207         0.6018          0.8820      False      True   False        False        False
+SMALL439 EWall 25.0000  S1 0.7000  -0.2480      0.6206    0.0978    -0.3643           0.6207 -0.0000           0.6207         0.6018          0.8820      False      True   False        False        False
+SMALL439 EWall 50.0000  S0 0.3500   0.7302      0.5933    0.0926    -0.3688           0.5940 -0.0007           0.5940         0.4999          0.8820      False      True   False        False        False
+SMALL439 EWall 50.0000  S1 0.7000  -0.2793      0.5940    0.0927    -0.3686           0.5940 -0.0000           0.5940         0.4999          0.8820      False      True   False        False        False
+SMALL439 TOP20  0.0000  S0 0.2500   0.8264      0.7824    0.1629    -0.3260           0.8842 -0.1018           0.8842         0.7036          0.8820      False      True   False        False        False
+SMALL439 TOP20  0.0000  S1 0.1500  -0.4239      0.7545    0.1553    -0.3344           0.8842 -0.1297           0.8842         0.7036          0.8820      False      True   False        False        False
+SMALL439 TOP20  5.0000  S0 0.1500   0.7984      0.7320    0.1495    -0.3346           0.8467 -0.1146           0.8467         0.6833          0.8820      False      True   False        False        False
+SMALL439 TOP20  5.0000  S1 0.1000  -0.4537      0.7264    0.1477    -0.3411           0.8467 -0.1202           0.8467         0.6833          0.8820      False      True   False        False        False
+SMALL439 TOP20 10.0000  S0 0.1500   0.7715      0.7096    0.1437    -0.3349           0.8091 -0.0995           0.8091         0.6629          0.8820      False      True   False        False        False
+SMALL439 TOP20 10.0000  S1 0.1000  -0.4802      0.7071    0.1427    -0.3413           0.8091 -0.1020           0.8091         0.6629          0.8820      False      True   False        False        False
+SMALL439 TOP20 15.0000  S0 0.1500   0.7446      0.6872    0.1379    -0.3351           0.7715 -0.0844           0.7715         0.6425          0.8820      False      True   False        False        False
+SMALL439 TOP20 15.0000  S1 0.1000  -0.5067      0.6878    0.1378    -0.3415           0.7715 -0.0837           0.7715         0.6425          0.8820      False      True   False        False        False
+SMALL439 TOP20 25.0000  S0 0.1000   0.6978      0.6492    0.1279    -0.3420           0.6963 -0.0471           0.6963         0.6018          0.8820      False      True   False        False        False
+SMALL439 TOP20 25.0000  S1 0.0600  -0.5510      0.6693    0.1324    -0.3491           0.6963 -0.0270           0.6963         0.6018          0.8820      False      True   False        False        False
+SMALL439 TOP20 50.0000  S0 0.0600   0.5953      0.5902    0.1125    -0.3500           0.5080  0.0822           0.5902         0.4999          0.8820      False      True   False        False        False
+SMALL439 TOP20 50.0000  S1 0.0600  -0.6593      0.5902    0.1125    -0.3500           0.5080  0.0822           0.5902         0.4999          0.8820      False      True   False        False        False
+   broad EWall  0.0000  S0 1.0000   1.1525      1.1094    0.1404    -0.2536           1.1094  0.0000           1.1094         1.1481          0.8820       True     False   False        False        False
+   broad EWall  0.0000  S1 1.0000  -0.0208      1.1094    0.1404    -0.2536           1.1094  0.0000           1.1094         1.1481          0.8820       True     False   False        False        False
+   broad EWall  5.0000  S0 1.0000   1.1492      1.1058    0.1399    -0.2536           1.1058  0.0000           1.1058         1.1333          0.8820       True     False   False        False        False
+   broad EWall  5.0000  S1 1.0000  -0.0209      1.1058    0.1399    -0.2536           1.1058  0.0000           1.1058         1.1333          0.8820       True     False   False        False        False
+   broad EWall 10.0000  S0 1.0000   1.1459      1.1022    0.1393    -0.2537           1.1022  0.0000           1.1022         1.1185          0.8820       True     False   False        False        False
+   broad EWall 10.0000  S1 1.0000  -0.0209      1.1022    0.1393    -0.2537           1.1022  0.0000           1.1022         1.1185          0.8820       True     False   False        False        False
+   broad EWall 15.0000  S0 1.0000   1.1425      1.0986    0.1388    -0.2538           1.0986  0.0000           1.0986         1.1037          0.8820       True     False   False        False        False
+   broad EWall 15.0000  S1 1.0000  -0.0210      1.0986    0.1388    -0.2538           1.0986  0.0000           1.0986         1.1037          0.8820       True     False   False        False        False
+   broad EWall 25.0000  S0 1.0000   1.1359      1.0914    0.1378    -0.2539           1.0914  0.0000           1.0914         1.0740          0.8820       True      True   False        False        False
+   broad EWall 25.0000  S1 1.0000  -0.0212      1.0914    0.1378    -0.2539           1.0914  0.0000           1.0914         1.0740          0.8820       True      True   False        False        False
+   broad EWall 50.0000  S0 1.0000   1.1193      1.0733    0.1352    -0.2543           1.0733  0.0000           1.0733         0.9998          0.8820       True      True   False        False        False
+   broad EWall 50.0000  S1 1.0000  -0.0215      1.0733    0.1352    -0.2543           1.0733  0.0000           1.0733         0.9998          0.8820       True      True   False        False        False
+   broad TOP20  0.0000  S0 0.0600   1.2597      1.0056    0.1687    -0.2637           1.0123 -0.0068           1.0191         1.1481          0.8820       True     False   False        False        False
+   broad TOP20  0.0000  S1 0.0600   0.0107      1.0056    0.1687    -0.2637           1.0123 -0.0068           1.0191         1.1481          0.8820       True     False   False        False        False
+   broad TOP20  5.0000  S0 0.0600   1.2414      0.9897    0.1656    -0.2639           0.9712  0.0185           0.9897         1.1333          0.8820       True     False   False        False        False
+   broad TOP20  5.0000  S1 0.0600   0.0102      0.9897    0.1656    -0.2639           0.9712  0.0185           0.9897         1.1333          0.8820       True     False   False        False        False
+   broad TOP20 10.0000  S0 0.0600   1.2231      0.9738    0.1625    -0.2641           0.9301  0.0437           0.9738         1.1185          0.8820       True     False   False        False        False
+   broad TOP20 10.0000  S1 0.0600   0.0098      0.9738    0.1625    -0.2641           0.9301  0.0437           0.9738         1.1185          0.8820       True     False   False        False        False
+   broad TOP20 15.0000  S0 0.0600   1.2048      0.9580    0.1593    -0.2643           0.8890  0.0690           0.9580         1.1037          0.8820       True     False   False        False        False
+   broad TOP20 15.0000  S1 0.0600   0.0093      0.9580    0.1593    -0.2643           0.8890  0.0690           0.9580         1.1037          0.8820       True     False   False        False        False
+   broad TOP20 25.0000  S0 0.0600   1.1682      0.9262    0.1531    -0.2647           0.8066  0.1196           0.9262         1.0740          0.8820       True     False   False        False        False
+   broad TOP20 25.0000  S1 0.0600   0.0084      0.9262    0.1531    -0.2647           0.8066  0.1196           0.9262         1.0740          0.8820       True     False   False        False        False
+   broad TOP20 50.0000  S0 0.0600   1.0764      0.8468    0.1377    -0.2657           0.6005  0.2463           0.8468         0.9998          0.8820      False     False   False        False        False
+   broad TOP20 50.0000  S1 0.0600   0.0037      0.8468    0.1377    -0.2657           0.6005  0.2463           0.8468         0.9998          0.8820      False     False   False        False        False
+     u56 EWall  0.0000  S0 0.0600   1.1203      1.1365    0.1382    -0.2251           1.1387 -0.0022           1.1387         1.3034          0.8758       True     False   False        False        False
+     u56 EWall  0.0000  S1 1.0000   0.0068      1.1387    0.1385    -0.2251           1.1387  0.0000           1.1387         1.3034          0.8758       True     False   False        False        False
+     u56 EWall  5.0000  S0 0.0600   1.1168      1.1329    0.1377    -0.2252           1.1351 -0.0022           1.1351         1.2911          0.8758       True     False   False        False        False
+     u56 EWall  5.0000  S1 0.3500   0.0068      1.1350    0.1380    -0.2252           1.1351 -0.0001           1.1351         1.2911          0.8758       True     False   False        False        False
+     u56 EWall 10.0000  S0 0.0600   1.1133      1.1293    0.1372    -0.2253           1.1316 -0.0022           1.1316         1.2788          0.8758       True     False   False        False        False
+     u56 EWall 10.0000  S1 1.0000   0.0067      1.1316    0.1376    -0.2253           1.1316  0.0000           1.1316         1.2788          0.8758       True     False   False        False        False
+     u56 EWall 15.0000  S0 0.0600   1.1097      1.1258    0.1368    -0.2253           1.1280 -0.0022           1.1280         1.2666          0.8758       True     False   False        False        False
+     u56 EWall 15.0000  S1 1.0000   0.0066      1.1280    0.1371    -0.2253           1.1280  0.0000           1.1280         1.2666          0.8758       True     False   False        False        False
+     u56 EWall 25.0000  S0 0.0600   1.1027      1.1187    0.1358    -0.2255           1.1208 -0.0022           1.1208         1.2420          0.8758       True     False   False        False        False
+     u56 EWall 25.0000  S1 1.0000   0.0065      1.1208    0.1361    -0.2255           1.1208  0.0000           1.1208         1.2420          0.8758       True     False   False        False        False
+     u56 EWall 50.0000  S0 0.0600   1.0850      1.1008    0.1334    -0.2258           1.1030 -0.0021           1.1030         1.1805          0.8758       True     False   False        False        False
+     u56 EWall 50.0000  S1 1.0000   0.0061      1.1030    0.1337    -0.2258           1.1030  0.0000           1.1030         1.1805          0.8758       True     False   False        False        False
+     u56 TOP20  0.0000  S0 1.0000   1.2652      1.2300    0.1766    -0.2212           1.2300  0.0000           1.2518         1.3034          0.8758       True     False   False        False        False
+     u56 TOP20  0.0000  S1 1.0000   0.0194      1.2300    0.1766    -0.2212           1.2300  0.0000           1.2518         1.3034          0.8758       True     False   False        False        False
+     u56 TOP20  5.0000  S0 1.0000   1.2261      1.1982    0.1713    -0.2217           1.1982  0.0000           1.2289         1.2911          0.8758       True     False   False        False        False
+     u56 TOP20  5.0000  S1 0.1500   0.0181      1.2236    0.1802    -0.2183           1.1982  0.0254           1.2289         1.2911          0.8758       True     False   False        False        False
+     u56 TOP20 10.0000  S0 1.0000   1.1869      1.1664    0.1661    -0.2221           1.1664  0.0000           1.2066         1.2788          0.8758       True     False   False        False        False
+     u56 TOP20 10.0000  S1 0.1500   0.0177      1.2052    0.1771    -0.2185           1.1664  0.0388           1.2066         1.2788          0.8758       True     False   False        False        False
+     u56 TOP20 15.0000  S0 0.0600   1.1619      1.1670    0.1747    -0.2287           1.1345  0.0324           1.1868         1.2666          0.8758       True     False   False        False        False
+     u56 TOP20 15.0000  S1 0.1500   0.0168      1.1868    0.1739    -0.2187           1.1345  0.0523           1.1868         1.2666          0.8758       True     False   False        False        False
+     u56 TOP20 25.0000  S0 0.0600   1.1306      1.1413    0.1703    -0.2290           1.0707  0.0706           1.1500         1.2420          0.8758       True     False   False        False        False
+     u56 TOP20 25.0000  S1 0.1000   0.0147      1.1494    0.1694    -0.2229           1.0707  0.0787           1.1500         1.2420          0.8758       True     False   False        False        False
+     u56 TOP20 50.0000  S0 0.0600   1.0523      1.0771    0.1593    -0.2297           0.9109  0.1662           1.0771         1.1805          0.8758       True     False   False        False        False
+     u56 TOP20 50.0000  S1 0.0600  -0.0268      1.0771    0.1593    -0.2297           0.9109  0.1662           1.0771         1.1805          0.8758       True     False   False        False        False
+
+  S0: picks lambda<1 in 27 of 36 cells (EWall 12/18, TOP20 15/18).
+      OOS REGRET vs the do-nothing default lambda=1: median -0.00037 Sharpe, mean +0.01045, positive in 9/36; on EWall alone median -0.00081, positive in 0/18
+      OOS beats SPY 23/36; beats RULES v2 10/36; clears the 3 OOS 4b bars 0/36
+      mean OOS Sharpe 0.9423 vs lambda=1 0.9318 vs oracle-best-lambda 0.9590 vs RULES v2 0.9963 vs SPY 0.8799
+
+  S1: picks lambda<1 in 24 of 36 cells (EWall 7/18, TOP20 17/18).
+      OOS REGRET vs the do-nothing default lambda=1: median +0.00000 Sharpe, mean +0.01308, positive in 11/36; on EWall alone median +0.00000, positive in 0/18
+      OOS beats SPY 23/36; beats RULES v2 10/36; clears the 3 OOS 4b bars 0/36
+      mean OOS Sharpe 0.9449 vs lambda=1 0.9318 vs oracle-best-lambda 0.9590 vs RULES v2 0.9963 vs SPY 0.8799
+
+====================================================================================================
+KEEP PATHS — PROTOCOL 4, both, on all arm-rows
+  4a  0/288     4b  0/288     BOTH  0/288
+  by rung:
+      pass4a  pass4b  both
+cost                      
+0.0        0       0     0
+5.0        0       0     0
+10.0       0       0     0
+15.0       0       0     0
+25.0       0       0     0
+50.0       0       0     0
+  by panel x book (all rungs):
+                pass4a  pass4b  both
+panel    book                       
+SMALL439 EWall       0       0     0
+         TOP20       0       0     0
+broad    EWall       0       0     0
+         TOP20       0       0     0
+u56      EWall       0       0     0
+         TOP20       0       0     0
+  at PROTOCOL's own 10 bps rung: 4a 0/48, 4b 0/48, BOTH 0/48
+
+====================================================================================================
+VERDICT
+  EWall: |PATH| > |COST| in 99.2% of lambda x rung sites -> the queue is RIGHT that the gain is not a cost gain.
+  TOP20 (positive control): |PATH| > |COST| in 50.8% of sites.
+  But the EWall PATH term beats the weekday-phase noise yardstick in only 0/18 cells (TOP20 8/18), and it clears NO 4b bar: 0 fail->pass flips out of 720 sites.
+
+wrote 2026-09-10_why-does-a-0.83x-per-year-book-still-pay-to-SMOOTH_C.{grid,decomp,phase,bars,walkforward,keeppaths}.csv and .console.txt
