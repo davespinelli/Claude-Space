@@ -1,0 +1,244 @@
+====================================================================================================
+IDEA 411 — is H2 CUSHION AT ZERO COST a publishable panel column?   (cloud)
+====================================================================================================
+tuned parameter 1 (SCREEN COLUMN): ['H2CUSH0', 'TURNOVER', 'MINCUSH0', 'JOINT'], all reported
+tuned parameter 2 (THRESHOLD)    : the column's own 0..100th percentiles in steps of 5, all reported
+reporting axes (never selected on): 3 panels x 6 books x 2 gross x 2 cadences x 3 lambdas = 216 arms, x 3 rungs
+
+panels truncated to the common last date 2026-09-04 (idea 328)
+====================================================================================================
+GATES (run before any new number is read)
+====================================================================================================
+  G1   u56: fast_bt vs engine.backtest  W: dr 6.41e-16 dto 3.33e-16  M: dr 5.90e-16 dto 6.66e-16
+  G2   u56: cost-rung identity vs live 25 bps  max|dr| 6.409e-16
+  G3   u56: lambda=1.0 is a strict no-op on the weights  max|dW| 0.000e+00
+  G1 broad: fast_bt vs engine.backtest  W: dr 6.30e-16 dto 3.33e-16  M: dr 5.93e-16 dto 8.88e-16
+  G2 broad: cost-rung identity vs live 25 bps  max|dr| 6.297e-16
+  G3 broad: lambda=1.0 is a strict no-op on the weights  max|dW| 0.000e+00
+  G1 small: fast_bt vs engine.backtest  W: dr 6.09e-16 dto 2.78e-16  M: dr 6.04e-16 dto 6.66e-16
+  G2 small: cost-rung identity vs live 25 bps  max|dr| 6.093e-16
+  G3 small: lambda=1.0 is a strict no-op on the weights  max|dW| 0.000e+00
+  G4 AUC machinery: outcome as its own predictor 1.0000 (want 1.0000); mean AUC over 200 random permutations 0.4971 (want ~0.5000)
+
+  GATES PASS (turnover monotonicity in lambda checked on the arm menu below)
+
+====================================================================================================
+A. THE ARM MENU
+====================================================================================================
+
+  panel u56: 56 cols (56 investable), 2009-01-13 .. 2026-09-04
+    SPY bars: H1 0.9566  H2 0.8340  OOS 0.8820  MaxDD -33.72%  CAGR 15.23%  (IS bars H1 0.8378 H2 1.0603)
+
+  panel broad: 136 cols (136 investable), 2009-01-13 .. 2026-09-04
+    SPY bars: H1 0.9566  H2 0.8340  OOS 0.8820  MaxDD -33.72%  CAGR 15.23%  (IS bars H1 0.8378 H2 1.0604)
+
+  panel small: 440 cols (439 investable, 44 dropped for max_1d_move>=1.0), 2011-01-13 .. 2026-09-04
+    SPY bars: H1 0.8907  H2 0.8577  OOS 0.8820  MaxDD -33.72%  CAGR 14.13%  (IS bars H1 0.9337 H2 0.7152)
+
+  648 arm-rows (216 arms x 3 rungs)
+
+  A2 (MEASURED, not a gate — this is a property of the ARM MENU, not of the machinery): idea 137's lambda dial is turnover-NON-MONOTONE in 9 of 72 cells.
+      broad/RULESv2/g0.75/M 1.393->1.384->1.387
+      broad/RULESv2/g0.75/W 2.011->2.025->2.073
+      broad/RULESv2/g1.0/M 1.851->1.843->1.853
+      broad/RULESv2/g1.0/W 2.666->2.712->2.788
+      u56/EWALL/g0.75/M 0.406->0.405->0.405
+      u56/RULESv2/g0.75/M 1.236->1.235->1.246
+      u56/RULESv2/g0.75/W 1.775->1.835->1.924
+      u56/RULESv2/g1.0/M 1.644->1.646->1.665
+      u56/RULESv2/g1.0/W 2.353->2.454->2.585
+      every violating cell is a ['EWALL', 'RULESv2'] book: the dial's re-gross step restores the RAW book's daily gross onto an EWMA of it, so on a book whose gross MOVES day to day (RULESv2's band gates names to cash) the dial manufactures daily trading instead of removing it. On such books lambda RAISES turnover by up to 1.098x. Ideas 137/412 measured the dial on fixed-gross books only.
+
+====================================================================================================
+B. THE DECOMPOSITION THAT DECIDES IT (H2) — is a 4b failure a LEVEL fact or a COST fact?
+====================================================================================================
+
+  at 10 bps: 207 of 216 arms FAIL 4b — LEVEL (already failing at 0 bps) 207 = 100.0% ; COST (passes at 0 bps, fails here) 0 = 0.0%
+        u56: fail  66/72  LEVEL  66  COST   0  (pass at 0 bps 6)
+      broad: fail  69/72  LEVEL  69  COST   0  (pass at 0 bps 3)
+      small: fail  72/72  LEVEL  72  COST   0  (pass at 0 bps 0)
+
+  at 25 bps: 210 of 216 arms FAIL 4b — LEVEL (already failing at 0 bps) 207 = 98.6% ; COST (passes at 0 bps, fails here) 3 = 1.4%
+        u56: fail  66/72  LEVEL  66  COST   0  (pass at 0 bps 6)
+      broad: fail  72/72  LEVEL  69  COST   3  (pass at 0 bps 3)
+      small: fail  72/72  LEVEL  72  COST   0  (pass at 0 bps 0)
+
+====================================================================================================
+B2. WHICH 4b LEG BINDS?  (the argmin of the five margins, per arm)
+====================================================================================================
+
+  at 0 bps, over all 216 arms:
+bind_leg
+DD      150
+H2       28
+CAGR     18
+OOS      13
+H1        7
+  by panel:
+bind_leg  CAGR  DD  H1  H2  OOS
+panel                          
+broad        9  63   0   0    0
+small        0  24   7  28   13
+u56          9  63   0   0    0
+  by book family:
+bind_leg  CAGR  DD  H1  H2  OOS
+book                           
+EWALL        0  27   0   6    3
+RULESv2     18   6   2   0   10
+TOP10        0  31   0   5    0
+TOP20        0  31   0   5    0
+TOP40        0  24   0  12    0
+TOP5         0  31   5   0    0
+
+  at 10 bps, over all 216 arms:
+bind_leg
+DD      142
+H2       35
+CAGR     19
+OOS      13
+H1        7
+  by panel:
+bind_leg  CAGR  DD  H1  H2  OOS
+panel                          
+broad        9  63   0   0    0
+small        0  17   7  35   13
+u56         10  62   0   0    0
+  by book family:
+bind_leg  CAGR  DD  H1  H2  OOS
+book                           
+EWALL        0  27   0   6    3
+RULESv2     19   5   2   0   10
+TOP10        0  28   0   8    0
+TOP20        0  29   0   7    0
+TOP40        0  24   0  12    0
+TOP5         0  29   5   2    0
+
+  median margin per leg at 10 bps (a NEGATIVE median means the leg is failing for most arms):
+        mg_H1   mg_H2  mg_OOS   mg_DD  mg_CAGR
+panel                                         
+broad  0.2758  0.1290  0.1568 -0.0869   0.0815
+small -0.1037 -0.2433 -0.2230 -0.1896   0.0337
+u56    0.3005  0.2558  0.2715 -0.0582   0.0712
+
+====================================================================================================
+C. THE TWO COLUMNS AS PREDICTORS (higher AUC = better; TURNOVER is sign-flipped so that "more is better" holds for every row)
+====================================================================================================
+
+  READ MINCUSH0's ROW AS A TAUTOLOGY, NOT A RESULT: MINCUSH0 > 0 is by definition the 4b predicate evaluated at 0 bps, and section B shows the 10 bps verdict set is IDENTICAL to the 0 bps one, so its AUC of 1.0000 is an identity being restated. It is printed because that identity is exactly the finding.
+
+  at 10 bps (the PROTOCOL rung): 9 of 216 arms pass 4b  (base rate 4.2%)
+             AUC  rho_margin  rho_within  AUC_u56  AUC_broad  AUC_small
+column                                                                 
+H2CUSH0   0.8245      0.8077      0.3640   0.8586     0.6184        NaN
+TURNOVER  0.7359      0.4019      0.3385   0.7121     0.6957        NaN
+MINCUSH0  1.0000      0.9942      0.9571   1.0000     1.0000        NaN
+H1CUSH0   0.5395      0.5516     -0.1294   0.2348     0.4155        NaN
+OOSCUSH0  0.9147      0.8564      0.4664   0.8914     0.9614        NaN
+CAGRCUSH0 0.1594     -0.1943     -0.5855   0.0909     0.0870        NaN
+DDCUSH0   0.9206      0.7488      0.7164   0.9091     0.9179        NaN
+
+  at 25 bps (H3 control (a): the 0-bps column predicting a rung it was not measured at): 6 of 216 arms pass 4b  (base rate 2.8%)
+             AUC  rho_margin  rho_within  AUC_u56  AUC_broad  AUC_small
+column                                                                 
+H2CUSH0   0.9556      0.8169      0.2999   0.8586        NaN        NaN
+TURNOVER  0.7635      0.4599      0.4829   0.7121        NaN        NaN
+MINCUSH0  0.9976      0.9739      0.8401   1.0000        NaN        NaN
+H1CUSH0   0.5198      0.5437     -0.2218   0.2348        NaN        NaN
+OOSCUSH0  0.9659      0.8614      0.3895   0.8914        NaN        NaN
+CAGRCUSH0 0.1857     -0.1985     -0.6287   0.0909        NaN        NaN
+DDCUSH0   0.9119      0.7322      0.6577   0.9091        NaN        NaN
+
+  H2 CUSHION AT ZERO COST, by panel (idea 137's aside, re-measured on this menu):
+       H2CUSH0  H1CUSH0  MINCUSH0  TURNOVER
+panel                                      
+broad   0.1583   0.3135   -0.0866    7.0133
+small  -0.2092  -0.0774   -0.2393    8.7347
+u56     0.2856   0.3439   -0.0580    4.2970
+
+  ... and for the RANKED books only (TOP5..TOP40), which is idea 137's own comparison:
+       H1CUSH0  H2CUSH0  MINCUSH0  TURNOVER
+panel                                      
+broad   0.4106   0.1401   -0.1129    9.3314
+small  -0.0207  -0.1770   -0.2296   11.8649
+u56     0.3900   0.2856   -0.0778    6.5070
+
+====================================================================================================
+D. THE SCREENS — every column x every threshold, all points reported
+====================================================================================================
+
+  at 10 bps — best F1 per column (base rate 4.2%, i.e. the no-screen F1 is 0.0800):
+  column  q     thr  n_pred  precision  recall     F1
+ H2CUSH0 90  0.3260      22     0.2273  0.5556 0.3226
+   JOINT 95  0.7847      11     0.2727  0.3333 0.3000
+MINCUSH0 95 -0.0065      11     0.8182  1.0000 0.9000
+TURNOVER 35  3.2456      76     0.1184  1.0000 0.2118
+
+  at 25 bps — best F1 per column (base rate 2.8%, i.e. the no-screen F1 is 0.0541):
+  column  q     thr  n_pred  precision  recall     F1
+ H2CUSH0 90  0.3260      22     0.2273  0.8333 0.3571
+   JOINT 95  0.7847      11     0.2727  0.5000 0.3529
+MINCUSH0 95 -0.0065      11     0.5455  1.0000 0.7059
+TURNOVER 35  3.2456      76     0.0789  1.0000 0.1463
+
+  full threshold ladder at 10 bps (every point, as PROTOCOL rule 4 requires):
+column  H2CUSH0  JOINT  MINCUSH0  TURNOVER
+q                                         
+0        0.0800 0.0800    0.0800    0.0000
+5        0.0841 0.0841    0.0841    0.0000
+10       0.0887 0.0887    0.0887    0.0000
+15       0.0938 0.0938    0.0938    0.0000
+20       0.0989 0.0989    0.0989    0.1132
+25       0.1053 0.1053    0.1053    0.0952
+30       0.1125 0.1125    0.1125    0.1081
+35       0.1208 0.1200    0.1208    0.2118
+40       0.1295 0.1286    0.1295    0.1875
+45       0.1406 0.1406    0.1406    0.1698
+50       0.1538 0.1525    0.1538    0.1538
+55       0.1321 0.1698    0.1698    0.1406
+60       0.1250 0.1875    0.1875    0.1295
+65       0.1412 0.2118    0.2118    0.1208
+70       0.1622 0.2162    0.2432    0.1125
+75       0.1905 0.1905    0.2857    0.1053
+80       0.2264 0.2222    0.3396    0.0989
+85       0.2857 0.2791    0.4286    0.0938
+90       0.3226 0.1935    0.5806    0.0887
+95       0.3000 0.3000    0.9000    0.0841
+100      0.0000 0.0000    0.2000    0.0800
+
+====================================================================================================
+E. H3 controls (b) OUT OF PANEL and (c) PROTOCOL rule 8 OUT OF SAMPLE
+====================================================================================================
+          test chosen_on   column       q     thr  n_test   base  precision  recall     F1  IS_F1
+  OUT-OF-PANEL       u56  H2CUSH0 90.0000  0.3594     144 0.0208        NaN  0.0000 0.0000    NaN
+  OUT-OF-PANEL       u56 TURNOVER 45.0000  3.7916     144 0.0208     0.0625  1.0000 0.1176    NaN
+  OUT-OF-PANEL       u56 MINCUSH0 90.0000 -0.0091     144 0.0208     0.6000  1.0000 0.7500    NaN
+  OUT-OF-PANEL     broad  H2CUSH0 55.0000  0.1618     144 0.0417     0.0857  1.0000 0.1579    NaN
+  OUT-OF-PANEL     broad TURNOVER 35.0000  4.3555     144 0.0417     0.1000  1.0000 0.1818    NaN
+  OUT-OF-PANEL     broad MINCUSH0 95.0000 -0.0050     144 0.0417     0.8571  1.0000 0.9231    NaN
+  OUT-OF-PANEL     small  H2CUSH0  0.0000 -0.2765     144 0.0625     0.0625  1.0000 0.1176    NaN
+  OUT-OF-PANEL     small TURNOVER  0.0000  0.8849     144 0.0625     0.0000  0.0000 0.0000    NaN
+  OUT-OF-PANEL     small MINCUSH0  0.0000 -0.3506     144 0.0625     0.0625  1.0000 0.1176    NaN
+    RULE-8-OOS 2009-2016  H2CUSH0 35.0000  0.2353     216 0.6481     0.9714  0.9714 0.9714 0.4134
+RULE-8-OOS-AUC 2009-2016  H2CUSH0     NaN     NaN     216 0.6481        NaN     NaN 0.9632    NaN
+    RULE-8-OOS 2009-2016 TURNOVER 50.0000  6.4973     216 0.6481     0.7593  0.5857 0.6613 0.4218
+RULE-8-OOS-AUC 2009-2016 TURNOVER     NaN     NaN     216 0.6481        NaN     NaN 0.6616    NaN
+    RULE-8-OOS 2009-2016 MINCUSH0 80.0000 -0.0039     216 0.6481     0.9773  0.3071 0.4674 0.9398
+RULE-8-OOS-AUC 2009-2016 MINCUSH0     NaN     NaN     216 0.6481        NaN     NaN 0.9762    NaN
+
+  (RULE-8-OOS-AUC rows put the AUC in the F1 column; the OOS outcome is the arm's 2017-2026 Sharpe beating SPY's, and the IS column is measured on 2009-2016 alone.)
+
+====================================================================================================
+F. BOTH KEEP PATHS over every arm-row
+====================================================================================================
+  4a 0/648   4b 24/648   BOTH 0/648
+        0 bps: 4a    0/216  4b    9/216  BOTH    0/216
+       10 bps: 4a    0/216  4b    9/216  BOTH    0/216
+       25 bps: 4a    0/216  4b    6/216  BOTH    0/216
+
+  4b passers at 10 bps by (panel, book):
+panel  book   
+broad  RULESv2    3
+u56    RULESv2    6
+  widest-margin 4b row: u56/RULESv2 gross 1.0 lam 1.0 M  CAGR 11.96% Sharpe 1.1781 MaxDD -18.81% halves 1.214/1.150 OOS 1.2336 margin_min 0.0130
+
+done in 35s
