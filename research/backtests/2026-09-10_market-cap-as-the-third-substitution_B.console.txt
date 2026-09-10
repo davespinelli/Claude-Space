@@ -1,0 +1,168 @@
+================================================================================================================
+IDEA 195  market-cap-as-the-third-substitution   (lane B, 2026-09-10)
+================================================================================================================
+Leg (c) of idea 193's substitution.  PARKED since 2026-09-05 for want of a shares series;
+re-affirmed PARK 2026-09-08 after a search of data/ only.  The series is in the repo:
+  research/deepvalue/universe_under2b.csv  (filings job, rewritten NIGHTLY - snapshot pinned below)
+It is a SNAPSHOT, not a history, so the only market cap constructible is px_t * s_T,
+which is the true cap times two terminal-known per-name constants (s_T/s_t and the
+dividend-adjustment factor).  Leg (c) is therefore run in a LEAKING form, and that is
+reported as the finding, not hidden as a caveat.
+Two tuned params: KEY (all reported) x TILT STRENGTH m in [0.2, 0.5, 1.0] (all reported).
+
+G3  snapshot self-consistency  mktcap == price * shares : max rel err 4.367e-16 -> PASS
+G0  panel coverage: small panel 439 names after the max_1d_move>=1.0 drop (44 dropped); shares outstanding present for 430 (97.9%).
+    the 9 uncovered names are dropped from the leg-(c) panel: ALOT, ICHR, III, OLN, PCYO, PLPC, SPWR, TH, TYGO
+    snapshot price vs panel last adjusted close: median 0.0186, q90 0.0502, max 0.2208  (staleness + the dividend-adjustment
+    factor - exactly the terminal-known per-name constant that makes MCAP leak)
+    snapshot PINNED to 2026-09-10_market-cap-as-the-third-substitution_B.shares.csv (idea 565's convention: the source file is
+    rewritten nightly, so without the pin this run is irreproducible tomorrow)
+
+G2  REPRODUCTION of idea 185's published small-panel rows (its exact 439+SPY panel,
+    its keys, its construction).  Establishes that leg (c) is being added to the SAME
+    table.  Pre-stated tolerance 5e-03 (SPY is joined from the daily-rewritten
+    data/prices.csv - idea 137's drift allowance).
+G1  fast_backtest == engine.backtest on the control book : max abs err 2.776e-17 -> PASS
+G4  rung identity r(c) = r(0) - turnover*c/1e4 vs a live 25 bps engine run : 2.776e-17 -> PASS
+    matched 72 of the parent's 72 rows; max |dSharpe_F| 5.721e-08, max |ddSharpe_F| 5.721e-08 -> PASS
+
+================================================================================================================
+SMALL430 leg-(c) panel: 430 names, SPY benchmark only (not a constituent), sample 2011-01-13..2026-09-04
+  SPY  14.13% / 0.862 / -33.72%   (H1 0.891 / H2 0.858 / OOS 0.882)
+  control (untilted composite book)    @10bps   6.12% /  0.438 / -25.90%   (H1 0.628 / H2 0.281 / OOS 0.434)
+  RULES v1                             @10bps   7.41% /  0.554 / -34.92%   (H1 0.721 / H2 0.407 / OOS 0.499)
+  RULES v2 (live baseline)             @10bps   3.77% /  0.565 / -14.58%   (H1 0.568 / H2 0.566 / OOS 0.558)
+
+579 arm rows over 12 real keys + 20 nulls x 2 directions x 3 strengths x 3 rungs (141s).  ALL of them are in 2026-09-10_market-cap-as-the-third-substitution_B.arms.csv; nothing below is picked.
+
+================================================================================================================
+Q1  THE SUBSTITUTION TABLE, SMALL430.  dSharpe_F vs the untilted control at 10 bps.
+    The last column is the null band: the q95 of |dSharpe_F| over the 20 random-walk
+    keys at the same (dir, m).  A key inside its own band is indistinguishable from noise.
+
+  key       class              NEG m0.2      NEG m0.5      NEG m1.0      POS m0.2      POS m0.5      POS m1.0    mean NEG  null q95
+  MCAP      legc                +0.3247       +0.5936       +0.9361       -0.4395       -0.6635       -0.8061     +0.6181    0.1796
+  MCAPFRZ   legc                +0.1299       +0.2346       +0.2844       -0.0504       -0.3154       -0.4629     +0.2163    0.1796
+  SHARES    legc                +0.1608       +0.2593       +0.3283       -0.0071       -0.1768       -0.3563     +0.2495    0.1796
+  MCAPREB   legc                +0.2653       +0.3736       +0.4276       -0.2090       -0.3516       -0.3973     +0.3555    0.1796
+  PRICE     pricelevel          +0.3294       +0.4844       +0.5839       -0.3140       -0.4094       -0.5249     +0.4659    0.1796
+  FROZEN    pricelevel          +0.0732       +0.2408       +0.2044       -0.0267       -0.2377       -0.3038     +0.1728    0.1796
+  DVOL      levelproduct        +0.3105       +0.6898       +0.8664       -0.3697       -0.5872       -0.7666     +0.6222    0.1796
+  VOLSH     levelproduct        +0.2520       +0.3052       +0.4725       -0.0839       -0.3000       -0.3203     +0.3433    0.1796
+  DDTR      leakfree            +0.0940       -0.0623       -0.1385       -0.0009       -0.0182       -0.1397     -0.0356    0.1796
+  REBASED   leakfree            +0.2040       +0.2170       +0.3012       -0.1649       -0.2052       -0.1863     +0.2407    0.1796
+  PXTERM    oracle              -0.0694       -0.3004       -0.4014       +0.1977       +0.2883       +0.3647     -0.2571    0.1796
+  FWDRET    oracle              -0.5331       -0.8079       -1.0518       +0.5281       +1.1119       +1.3532     -0.7976    0.1796
+
+================================================================================================================
+Q2  IDEA 185'S LEAK LAW WITH THE FOUR NEW POINTS ON IT.
+    mean_IC_fwd = Spearman(key rank, realised forward total return to T), on a 252-day
+    date grid.  A key that knows the future has |IC| far from 0.  Idea 185 measured
+    Spearman(|IC|, mean NEG dSharpe) = +0.881 on the small panel over 10-12 keys.
+
+  key       class          mean IC vs fwd ret     |IC|  mean dS NEG  mean dS POS
+  MCAP      legc                      -0.6959   0.6959       0.6181      -0.6364
+  MCAPFRZ   legc                      -0.3995   0.3995       0.2163      -0.2762
+  SHARES    legc                      -0.3290   0.3290       0.2495      -0.1801
+  MCAPREB   legc                      -0.4389   0.4389       0.3555      -0.3193
+  PRICE     pricelevel                -0.4234   0.4234       0.4659      -0.4161
+  FROZEN    pricelevel                -0.2247   0.2247       0.1728      -0.1894
+  DVOL      levelproduct              -0.5998   0.5998       0.6222      -0.5745
+  VOLSH     levelproduct              -0.4183   0.4183       0.3433      -0.2347
+  DDTR      leakfree                  -0.0780   0.0780      -0.0356      -0.0529
+  REBASED   leakfree                  -0.1972   0.1972       0.2407      -0.1854
+  PXTERM    oracle                     0.4732   0.4732      -0.2571       0.2836
+  FWDRET    oracle                     1.0000   1.0000      -0.7976       0.9977
+
+  Spearman(|IC|, mean NEG dSharpe), record keys only (6 keys): +0.943
+  Spearman(|IC|, mean NEG dSharpe), with leg (c) added  (10 keys): +0.915
+
+================================================================================================================
+Q3  DECOMPOSITION - is leg (c) a SIZE key or a PRICE key wearing a size label?
+    MCAP = PRICE x (a frozen per-name share count).  SHARES is that share count alone.
+
+  @  0.0 bps  mean NEG dSharpe:  MCAP +0.6220 SHARES +0.2480 MCAPFRZ +0.2149 MCAPREB +0.3569 PRICE +0.4677 FROZEN +0.1668
+  @ 10.0 bps  mean NEG dSharpe:  MCAP +0.6181 SHARES +0.2495 MCAPFRZ +0.2163 MCAPREB +0.3555 PRICE +0.4659 FROZEN +0.1728
+  @ 25.0 bps  mean NEG dSharpe:  MCAP +0.6121 SHARES +0.2515 MCAPFRZ +0.2183 MCAPREB +0.3532 PRICE +0.4632 FROZEN +0.1819
+  SHARES / MCAP share of the mean NEG dSharpe at 10 bps: 0.404
+
+  Cross-sectional Spearman between key ranks (mean over the same 252-day date grid):
+    rho(MCAP    , PRICE   ) = +0.5555
+    rho(MCAP    , SHARES  ) = +0.5073
+    rho(MCAP    , DVOL    ) = +0.8195
+    rho(SHARES  , PRICE   ) = -0.3632
+    rho(MCAPFRZ , FROZEN  ) = +0.6773
+    rho(MCAPREB , REBASED ) = +0.6418
+
+================================================================================================================
+Q4  PROTOCOL 4 - BOTH KEEP PATHS ON EVERY ARM.  4a is judged against RULES v2 (live),
+    4b against SPY on this panel.  Counts are over ALL arms, nulls included.
+
+    rung   arms     4a     4b   BOTH    4a legc  4b legc  BOTH legc
+     0.0    193      0      0      0          0        0          0
+    10.0    193      0      0      0          0        0          0
+    25.0    193      0      0      0          0        0          0
+
+================================================================================================================
+Q5  PROTOCOL 8 WALK-FORWARD.  Both tuned parameters - KEY and TILT STRENGTH m - are
+    chosen on 2010-2016 IS Sharpe ALONE, inside a named menu, and 2017-2026 is read
+    once.  Four menus: the leg-(c) family, the record's keys, everything, and NO TILT.
+
+    rung menu                   IS pick   IS Sh |  OOS CAGR  OOS Sh  OOS MaxDD |  >ctrl   >v2   >v1  >SPY
+     0.0 LEGC            MCAP/NEG/m1.00   1.096 |    28.71%   1.706    -24.70% |   True  True  True  True
+     0.0 RECORD         PRICE/NEG/m1.00   0.937 |    21.91%   1.252    -27.94% |   True  True  True  True
+     0.0 ALL             MCAP/NEG/m1.00   1.096 |    28.71%   1.706    -24.70% |   True  True  True  True
+     0.0 NOTILT         CONTROL/-/m0.00   0.561 |     8.57%   0.559    -24.24% |  False False False False
+    10.0 LEGC            MCAP/NEG/m1.00   0.963 |    26.31%   1.584    -24.87% |   True  True  True  True
+    10.0 RECORD         PRICE/NEG/m1.00   0.814 |    19.47%   1.133    -28.09% |   True  True  True  True
+    10.0 ALL             MCAP/NEG/m1.00   0.963 |    26.31%   1.584    -24.87% |   True  True  True  True
+    10.0 NOTILT         CONTROL/-/m0.00   0.448 |     6.23%   0.434    -25.90% |  False False False False
+    25.0 LEGC            MCAP/NEG/m1.00   0.763 |    22.79%   1.401    -25.13% |   True  True  True  True
+    25.0 RECORD         PRICE/NEG/m1.00   0.630 |    15.91%   0.954    -28.33% |   True  True  True  True
+    25.0 ALL             MCAP/NEG/m1.00   0.763 |    22.79%   1.401    -25.13% |   True  True  True  True
+    25.0 NOTILT         CONTROL/-/m0.00   0.277 |     2.83%   0.247    -35.09% |  False False  True False
+
+  the OOS comparands, same window, same panel:
+    RULES v2 (live)      @10bps OOS   3.77% /  0.558 / -14.58%
+    RULES v1             @10bps OOS   6.66% /  0.499 / -34.92%
+    untilted control     @10bps OOS   6.23% /  0.434 / -25.90%
+    SPY                         OOS  15.45% /  0.882 / -33.72%
+
+  IS -> OOS sign stability of the leg-(c) tilt (does the tilt keep its direction?):
+    MCAP      NEG  mean dSharpe IS +0.2441 -> OOS +0.8138   (sign holds 2/3)
+    MCAPFRZ   NEG  mean dSharpe IS +0.0983 -> OOS +0.2815   (sign holds 2/3)
+    SHARES    NEG  mean dSharpe IS +0.0723 -> OOS +0.3477   (sign holds 2/3)
+    MCAPREB   NEG  mean dSharpe IS +0.1798 -> OOS +0.4490   (sign holds 3/3)
+
+================================================================================================================
+Q6  THE PLACEBO.  MCAP = PRICE composed with diag(s): a per-name constant multiplier,
+    which is EXACTLY idea 197's px -> px*diag(c) operator.  So the question 'does the
+    SIZE information matter' has an exact placebo: permute the share counts across
+    names, destroying the name<->shares link while keeping the multiplier distribution.
+    20 permutations, NEG direction, all 3 strengths, 10 bps.
+
+      m  REAL MCAP |  placebo mean      sd      q05      q95      max |  REAL > placebo max
+   0.20    +0.3247 |       +0.2304  0.0619  +0.1588  +0.3219  +0.3450 |               False
+   0.50    +0.5936 |       +0.3609  0.0828  +0.2273  +0.4603  +0.5658 |                True
+   1.00    +0.9361 |       +0.3764  0.0880  +0.2365  +0.5352  +0.5523 |                True
+  pooled: REAL +0.6181, placebo +0.3226  ->  the placebo reproduces 52.2% of leg (c)'s tilt; the SIZE information is the remaining 47.8%.
+
+  4b BINDING LEG over all 193 arms at 10 bps (which of the five bars each arm fails):
+    Sharpe_H1 <= SPY                       fails  189 / 193
+    Sharpe_H2 <= SPY                       fails  175 / 193
+    Sharpe_OOS <= SPY                      fails  176 / 193
+    MaxDD < 0.60x SPY (-20.23%)            fails  193 / 193
+    CAGR < 0.70x SPY (9.89%)               fails  168 / 193
+    the pure ORACLE key FWDRET (rank of realised forward return) passes 4b on 0 of its 6 arms.
+
+================================================================================================================
+PRE-REGISTERED PREDICTIONS, SCORED
+
+  P1 gates                        G1 2.776e-17 G4 2.776e-17 G3 4.367e-16 G2 5.721e-08 (tol 5e-03)   PASS
+  P2 MCAP/NEG positive and clears its null band   +0.6181 vs band 0.1796   HIT
+  P3 MCAP leaks more than PRICE and pays more     |IC| 0.6959 vs 0.4234, dS +0.6181 vs +0.4659   HIT
+  P4 SHARES alone carries < half of MCAP          +0.2495 / +0.6181 = 0.404   HIT
+  P5 the leak law survives leg (c)                rho +0.915 (record-only +0.943)   HIT
+  P6 no leg-(c) BOTH pass at 10 bps and the LEGC rule-8 pick loses to RULES v2 OOS   BOTH 0, beats v2 True   MISS
+
+done in 174s
