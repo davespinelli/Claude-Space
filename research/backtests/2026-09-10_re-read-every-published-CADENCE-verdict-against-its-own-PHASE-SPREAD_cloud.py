@@ -773,7 +773,7 @@ def main():
         say(C.file.value_counts().head(10).to_string())
 
     ALL = pd.concat([C, LBC], ignore_index=True) if len(LBC) else C
-    ALL.to_csv(OUT / f"{STEM}.claims.csv", index=False)
+    ALL.to_csv(OUT / f"{STEM}.claims.csv.gz", index=False)   # 190k rows: gzipped
 
     say("\n" + "=" * 100)
     say("C. THE RE-READ — how many published cadence effects are below their own phase spread?")
@@ -839,7 +839,7 @@ def main():
         say(M.groupby("metric").agg(n=("frag_union", "size"), frag=("frag_union", "mean"),
                                     ratio=("ratio", "median")).to_string(
             float_format=lambda x: f"{x:.4f}"))
-    RH.to_csv(OUT / f"{STEM}.reread.csv", index=False)
+    RH.to_csv(OUT / f"{STEM}.reread.csv.gz", index=False)    # 180k rows: gzipped
 
     say("\n" + "=" * 100)
     say("D. PROTOCOL rule 8 — cadence chosen on 2009-2016, 2017-2026 read once (10 bps)")

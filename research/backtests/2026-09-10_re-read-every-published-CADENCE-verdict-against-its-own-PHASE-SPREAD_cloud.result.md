@@ -10,7 +10,7 @@ RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. 4a 7/1188, 4b 
 
 Script `research/backtests/2026-09-10_re-read-every-published-CADENCE-verdict-against-its-own-PHASE-SPREAD_cloud.py`.
 Artefacts: `.console.txt`, `.grid.csv` (1,188 arm-rows), `.bands.csv` (7,128 measured phase
-bands), `.census.csv` (2,794 files), `.claims.csv` (189,649 claims), `.reread.csv`,
+bands), `.census.csv` (2,794 files), `.claims.csv.gz` (189,649 claims), `.reread.csv.gz`,
 `.summary.csv`, `.wf.csv`.
 
 ## What this run is, and how it differs from its parent
