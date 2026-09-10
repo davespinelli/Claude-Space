@@ -1,0 +1,119 @@
+==============================================================================================================
+[0] REPRODUCTION GATES (pre-registered; every one asserted before a statistic is printed)
+==============================================================================================================
+  G1  fast_backtest vs engine.backtest (U56 RULESv2 W): max|dret| 1.041e-17  max|dturn| 2.220e-16
+  G2  idea 84 EWALL U56 g=0.85 @10bps: 11.8% / 1.05 / -17.9% / H 1.07/1.03   (committed 11.8% / 1.05 / -17.9% / 1.07/1.04)
+  G3  derived cost rung r(c)=r(0)-turn*c/1e4: max|diff| 0.000e+00
+  G4  this file's EWALL(band 3%,K 200,vol none,g 0.75) vs baseline.rules_v2_weights: max|dret| 1.644e-02
+      (with the vol cap released, the record's own v2 book)          max|dret| 0.000e+00
+  G5  step_delta order-invariance: |diff| 0.000e+00
+  ALL GATES PASS
+
+# tuned params: exactly two — (1) the dial VALUE, chosen on IS only in PART C;
+#                              (2) the THIN threshold tau in {0.5, 1.0, 2.0}, headline 1.0.
+# every grid point of every dial at every rung is in .grid.csv; nothing else is selected on.
+
+==============================================================================================================
+[A] CENSUS — can the three proposed columns be BACK-FILLED over the record's KEEP rows?
+==============================================================================================================
+  LEADERBOARD rows 4520;  rows whose verdict cell contains 'KEEP': 572
+  rows whose script has ANY committed sidecar CSV: 337 (58.9%)
+  STRICT  BAR   45 ( 7.9%)   MARGIN   29 ( 5.1%)   STEP    3 ( 0.5%)   ALL THREE    0 ( 0.0%)
+  LOOSE   BAR   63 (11.0%)   MARGIN   76 (13.3%)   STEP   55 ( 9.6%)   ALL THREE    8 ( 1.4%)
+  distinct scripts behind the KEEP rows: 263;  largest single script contributes 40 KEEP rows
+
+==============================================================================================================
+[B] BACK-FILL — the three columns at EVERY grid point (not only at the adopted value)
+==============================================================================================================
+  panel U56      55 names  2009-03-12 -> 2026-09-09  SPY 16.50%/0.966/-33.72% H 1.158/0.817  OOS 0.876
+  panel B136    135 names  2009-03-12 -> 2026-09-04  SPY 16.57%/0.970/-33.72% H 1.160/0.822  OOS 0.882
+  panel SMALL   439 names  2011-03-14 -> 2026-09-04  SPY 14.16%/0.861/-33.72% H 0.866/0.874  OOS 0.882
+  (SMALL drops 44 tickers with max_1d_move >= 1.0 — idea 623's terminal-dated screen)
+    ran U56    band    (60 grid rows so far)
+    ran U56    K       (132 grid rows so far)
+    ran U56    vol     (192 grid rows so far)
+    ran U56    n       (228 grid rows so far)
+    ran U56    gross   (300 grid rows so far)
+    ran B136   band    (360 grid rows so far)
+    ran B136   K       (432 grid rows so far)
+    ran B136   vol     (492 grid rows so far)
+    ran B136   n       (528 grid rows so far)
+    ran B136   gross   (600 grid rows so far)
+    ran SMALL  band    (660 grid rows so far)
+    ran SMALL  K       (732 grid rows so far)
+    ran SMALL  vol     (792 grid rows so far)
+    ran SMALL  n       (828 grid rows so far)
+    ran SMALL  gross   (900 grid rows so far)
+  GRID: 900 rows = every dial value x panel x book x rung, all reported.
+  COLUMNS back-filled on 1269 (cell x grid point x density) rows.
+
+  T1  MARGIN / STEP over the cells that PASS a KEEP path (headline rung 10 bps, COARSE grid)
+      4b-passing  n=   5  median |MARGIN/STEP|   1.18  q25   0.48  q75   1.62  THIN(tau=0.5) 40.0%  THIN(tau=1.0) 40.0%  THIN(tau=2.0) 80.0%
+      4a-passing  n=0
+      all points  n= 150  median |MARGIN/STEP|   5.45  q25   2.39  q75  12.92  THIN(tau=0.5)  6.7%  THIN(tau=1.0) 11.3%  THIN(tau=2.0) 20.7%
+      ADOPTED values only (idea 401's 19-cell statistic, re-derived): n=27  passing 0  median |MARGIN/STEP| 6.35  THIN(tau=1) 22.2%
+      BAR disagreement — argmin over RAW margins vs argmin over margin/STEP: 41.3% of 150 points pick a DIFFERENT binding bar.
+      bind-bar frequency (raw): H1 32, H2 44, OOS 21, DD 5, CAGR 48
+      bind-bar frequency (step-normalised): H1 46, H2 21, OOS 22, DD 8, CAGR 53
+
+  T2  DOES THE STEP COLUMN EARN ITS PLACE?  predicting FLIP1 (the 4b verdict actually
+      differs at an immediate grid neighbour).  Pooled over 3 panels x 2 books x 5 dials.
+        0.0 bps  n= 150  FLIP1 base rate 16.0%   AUC(|MARGIN|/STEP) 0.956   AUC(|MARGIN| alone) 0.885   delta +0.071
+       10.0 bps  n= 150  FLIP1 base rate  6.7%   AUC(|MARGIN|/STEP) 0.861   AUC(|MARGIN| alone) 0.863   delta -0.002
+       25.0 bps  n= 150  FLIP1 base rate  0.0%   AUC(|MARGIN|/STEP) nan   AUC(|MARGIN| alone) nan   delta +nan
+      tau=0.5   THIN   10/150  precision 40.0%  recall 40.0%  (TP 4 FP 6 FN 6 TN 134)
+      tau=1.0   THIN   17/150  precision 29.4%  recall 50.0%  (TP 5 FP 12 FN 5 TN 128)
+      tau=2.0   THIN   31/150  precision 22.6%  recall 70.0%  (TP 7 FP 24 FN 3 TN 116)
+
+  T3  IS 'STEP' A PROPERTY OF THE FUNCTION, OR OF HOW DENSELY SOMEONE PUBLISHED?
+      n matched points 450 (same cell, same dial value, COARSE vs FINE grid)
+      STEP        COARSE/FINE  median 1.94  q25 1.56  q75 2.00   (2.00 = step scales with the spacing)
+      UNIT_STEP   COARSE/FINE  median 1.00  q25 0.91  q75 1.12   (1.00 = density-free)
+      |MARGIN/STEP| FINE/COARSE median 1.94: the same cell is 1.94x THICKER simply for being published on a grid twice as fine.
+      THIN(tau=1.0) share: COARSE 9.6% -> FINE 5.6%;  20 of 450 points (4.4%) CHANGE their THIN verdict on density alone.
+
+==============================================================================================================
+[C] RULE 8 WALK-FORWARD — the proposed columns as a SELECTOR (params on 2009-2016 only,
+    2017-2026 read ONCE).  S0 uses no column, S1 uses BAR+MARGIN, S2 uses all three.
+==============================================================================================================
+  486 walk-forward rows (panel x book x dial x rung x selector), all in .walkforward.csv
+
+  OOS Sharpe of the pick, by selector (median over cells; win = beats the comparand):
+  IS screen supply: of 150 IS grid points across the 27 cells, 0 pass 4b IN SAMPLE and 150 are THICK (tau=1.0).  S1/S2 can only differ where the first count is > 0.
+      S0        n= 27 abstain   0  median OOS Sharpe 0.971  CAGR 8.80%  MaxDD -17.13%  |  beats ctl 37.0%  RULESv2  3.7%  SPY 63.0%  adopted 37.0%
+      S1        n= 27 abstain  27  median OOS Sharpe 1.081  CAGR 11.66%  MaxDD -18.68%  |  beats ctl  0.0%  RULESv2 11.1%  SPY 59.3%  adopted 51.9%
+      S2        n= 27 abstain  27  median OOS Sharpe 1.081  CAGR 11.66%  MaxDD -18.68%  |  beats ctl  0.0%  RULESv2 11.1%  SPY 59.3%  adopted 51.9%
+      S3_tau0.5 n= 27 abstain   0  median OOS Sharpe 0.971  CAGR 8.80%  MaxDD -17.13%  |  beats ctl 37.0%  RULESv2  3.7%  SPY 63.0%  adopted 37.0%
+      S3_tau1.0 n= 27 abstain   0  median OOS Sharpe 0.971  CAGR 8.80%  MaxDD -17.13%  |  beats ctl 37.0%  RULESv2  3.7%  SPY 63.0%  adopted 37.0%
+      S3_tau2.0 n= 27 abstain   0  median OOS Sharpe 0.971  CAGR 8.80%  MaxDD -18.15%  |  beats ctl 40.7%  RULESv2  3.7%  SPY 63.0%  adopted 37.0%
+      S1       -S0        OOS Sharpe, the 4b screen (BAR+MARGIN)             median +0.0009  mean +0.0167  wins 17/27  identical picks 0
+      S2       -S1        OOS Sharpe, adding STEP on top of the 4b screen    median +0.0000  mean +0.0000  wins 0/27  identical picks 27
+      S3_tau1.0-S0        OOS Sharpe, the STEP column ALONE (tau=1)          median +0.0000  mean +0.0000  wins 0/27  identical picks 27
+      S3_tau0.5-S0        OOS Sharpe, the STEP column ALONE (tau=0.5)        median +0.0000  mean +0.0000  wins 0/27  identical picks 27
+      S3_tau2.0-S0        OOS Sharpe, the STEP column ALONE (tau=2)          median +0.0000  mean +0.0082  wins 3/27  identical picks 24
+      U56    S2 picks: OOS Sharpe 1.144-1.288  vs RULESv2 1.288  SPY 0.876  (SPY OOS CAGR 15.32%, DD -33.72%)
+      B136   S2 picks: OOS Sharpe 0.870-1.124  vs RULESv2 1.121  SPY 0.882  (SPY OOS CAGR 15.45%, DD -33.72%)
+      SMALL  S2 picks: OOS Sharpe 0.253-0.793  vs RULESv2 0.566  SPY 0.882  (SPY OOS CAGR 15.45%, DD -33.72%)
+
+==============================================================================================================
+[D] KEEP PATHS — PROTOCOL 4, on every arm at every rung
+==============================================================================================================
+    0.0 bps  arms  273   4a    0   4b   57   both    0   failing-leg counts CAGR 181 H1 108 H2 96 OOS 93 DD 63
+   10.0 bps  arms  273   4a    0   4b    9   both    0   failing-leg counts CAGR 194 H1 185 H2 130 OOS 105 DD 66
+   25.0 bps  arms  273   4a    0   4b    0   both    0   failing-leg counts CAGR 242 H1 235 H2 148 OOS 147 DD 71
+  at the protocol rung, arms passing BOTH paths: 0
+
+  Every 4b-passing arm at the protocol rung, WITH THE THREE PROPOSED COLUMNS — this is
+  what a back-filled LEADERBOARD row would look like:
+    panel  book   dial   val      CAGR   Sharpe    DD      H1/H2       OOS  | BAR  MARGIN    STEP   M/STEP  UNIT_STEP  FLIP1
+    U56    TOPN   vol    0.9      13.93%  1.137 -18.45% 1.193/1.099  1.154 | DD   +0.0178 0.0072   +2.47    0.0327  True
+    U56    TOPN   vol    1.2      14.60%  1.171 -19.38% 1.232/1.132  1.184 | DD   +0.0085 0.0072   +1.18    0.0327  False
+    B136   TOPN   n      40       12.38%  1.032 -19.11% 1.210/0.869  0.971 | CAGR +0.0078 0.0163   +0.48    0.0013  True
+    U56    TOPN   K      100      12.22%  1.086 -17.13% 1.169/1.019  1.070 | CAGR +0.0067 0.0041   +1.62    0.0001  True
+    B136   TOPN   band   0.08     13.52%  0.981 -20.05% 1.161/0.825  0.904 | H1   +0.0015 0.0092   +0.17    0.3556  True
+    NOTE: these are dial arms of the record's own books, not new instruments — every one
+    is already inside the record's committed grids; no new book is proposed here, and
+    none of them passes 4a, so none is a KEEP under either path.
+
+  4a is judged against the LIVE RULES v2 book at the same rung on the same panel; 4b
+  against SPY on the same window.  Warm-up index[300], W cadence, t+1, de-gross to CASH.
