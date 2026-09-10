@@ -91,6 +91,7 @@
 
 
 ## In progress
+498. is-p-over-n-1-the-crossover-for-key-reproduction — idea 483 measured out-of-fold reproduction of the control's own key at 0.939 / 0.668 / 0.315 for p/n 0.28 / 0.68 / 2.20. Sweep p/n finely by varying draw count at fixed panel and locate where honest reproduction falls below 0.5, i.e. where a wide control stops being a control. Max 2 params (draws, p). (2026-09-09, cloud) — CLAIMED 2026-09-10 (cloud)
 
 
 
