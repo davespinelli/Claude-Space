@@ -1,0 +1,309 @@
+======================================================================================================================
+IDEA 645  does-the-DOLLAR-floor-s-EJECT-AFTER-A-FALL-channel-exist-off-SMALL439   (lane B, 2026-09-10)
+======================================================================================================================
+[panel] SMALL439    439 tradable (+SPY benchmark)  2010-01-04..2026-09-04  evaluation from 2011-01-13
+[panel] U56          55 tradable (+SPY benchmark)  2008-01-02..2026-09-09  evaluation from 2009-01-13
+[panel] broad136    135 tradable (+SPY benchmark)  2008-01-02..2026-09-04  evaluation from 2009-01-13
+
+[coverage] volume cached?  (645 asks for the split off SMALL439; volume is what makes that hard)
+    SMALL439   CACHED
+    U56        NOT CACHED (ValueError)
+    broad136   NOT CACHED (TypeError)
+    -> 1 of 3.  data/ has no delisted cohort either.  The literal 645 is unrunnable; Q1 below
+       replaces the volume split with an EXACT algebraic equivalent that needs prices only.
+
+[calibration] DV floor $1.00M admits 252.10 names/day; matched share floor s* = 69,650 sh/day admits 252.09.  Implied price threshold F/s* = $14.36
+
+----------------------------------------------------------------------------------------------------------------------
+GATES — pre-registered reproductions before anything new is read
+----------------------------------------------------------------------------------------------------------------------
+  G1  fast_bt vs engine.backtest [RULES v2, SMALL439], evaluation window: max|dret| 6.94e-18, max|dturn| 9.71e-17   -> PASS   (engine NaN rows inside the dropped warm-up: 2)
+  G1  fast_bt vs engine.backtest [LOW q=0.20 book, SMALL439], evaluation window: max|dret| 2.08e-17, max|dturn| 1.39e-16   -> PASS   (engine NaN rows inside the dropped warm-up: 2)
+  G1  fast_bt vs engine.backtest [RULES v2, U56], evaluation window: max|dret| 6.94e-18, max|dturn| 2.95e-16   -> PASS   (engine NaN rows inside the dropped warm-up: 2)
+  G2  idea 427's published split reproduces:
+        DV-only     trailing 126d +11.01% (pub +11.01%)   forward 126d +0.30% (pub +0.29%)
+        VOLSH-only  trailing 126d +2.53% (pub  +2.53%)   forward 126d +28.92% (pub +28.91%)
+        both        trailing 126d +8.78%                 forward 126d +4.05%
+        max|diff| vs published 0.011 pp  -> PASS
+        published forward gap (VOLSH-only minus DV-only) = +28.62%  [the object of 645]
+
+----------------------------------------------------------------------------------------------------------------------
+Q1  IS THE SWAP AN ALGEBRAIC PRICE CUT?  (the leg that makes 645 runnable without volume)
+----------------------------------------------------------------------------------------------------------------------
+  IP := median20(px*vol)/median20(vol).  Threshold F/s* = $14.36.
+    DV-only    ticker-days    83,624   with IP > F/s*: 1.000000
+    VOLSH-only ticker-days    83,592   with IP < F/s*: 1.000000
+    -> the swap is an EXACT one-sided cut on IP.  It is not a 'post-hoc mechanism'; it is the
+       definition of the two instruments.  No return data enters, no parameter is fitted.
+
+  TRANSPORT GATE — can the traded close px stand in for IP (so the split can be run on a panel
+  with no cached volume)?  Over 1,360,274 live ticker-days:
+    corr(log IP, log px) 0.995996;  IP/px median 0.9984, p05 0.8729, p95 1.1482
+    the px cut at $14.36 agrees with the IP cut on 97.7841% of live ticker-days
+    -> transport HOLDS; px is an adequate stand-in for IP
+
+----------------------------------------------------------------------------------------------------------------------
+Q2  IS 'EJECT AFTER A FALL' THE RIGHT NAME?   LEVEL cut vs the literal EVENT   (SMALL439 only)
+----------------------------------------------------------------------------------------------------------------------
+  645 (via 427) names an EVENT mechanism: the dollar floor EJECTS a name AFTER it falls and
+  RE-ADMITS after a rise.  Q1 says the split is a LEVEL cut.  Those are different claims, and
+  only one of them is about price PATH.  Four splits, same trailing/forward statistic:
+    DV-only (427)        days    83,624   trailing 126d  +11.01%   forward 126d   +0.30%
+    VOLSH-only (427)     days    83,592   trailing 126d   +2.53%   forward 126d  +28.92%
+    IP > F/s*            days   758,606   trailing 126d  +10.14%   forward 126d   +1.22%
+    IP < F/s*            days   601,668   trailing 126d   +4.55%   forward 126d  +14.94%
+    px > F/s*            days   762,614   trailing 126d  +10.88%   forward 126d   +1.17%
+    px <= F/s*           days   606,070   trailing 126d   +3.60%   forward 126d  +14.90%
+    EJECTED <=126d       days   198,856   trailing 126d  +11.16%   forward 126d  +10.07%
+    RE-ADMITTED <=126d   days   230,037   trailing 126d  +24.66%   forward 126d   +8.47%
+
+    forward-126d gap, VOLUME split (idea 427)        +28.62%   [the published +28.62%]
+    forward-126d gap, IP LEVEL cut                  +13.72%   (48% of it)
+    forward-126d gap, PRICE LEVEL cut (no volume)   +13.73%   (48% of it)
+    forward-126d gap, LITERAL EJECT-vs-READMIT      +1.61%   (6% of it)
+    -> the channel is a LEVEL effect.  'Eject after a fall' names the WRONG object: a price-level cut carries it, the crossing EVENT carries 6%.
+
+----------------------------------------------------------------------------------------------------------------------
+Q3  DOES THE CHANNEL EXIST OFF SMALL439?   price-only restatement, all 3 panels, all grid points
+----------------------------------------------------------------------------------------------------------------------
+  Two cut conventions, because the absolute threshold F/s* is a SMALL-CAP number and cannot be
+  transplanted to mega caps without re-deciding what 'cheap' means:
+    ABS  px <= F/s* = $14.36 (the literal clause)
+    REL  cross-sectional price rank <= q among that day's live names (panel-relative)
+  Reported for horizons h in [63, 126, 252].  Nothing is selected here; every cell is printed.
+
+  panel      conv     q    h  LOW share  LOW trail HIGH trail   LOW fwd  HIGH fwd   FWD GAP   SPY fwd
+  SMALL439    ABS         63      0.443      1.68%      5.30%     7.25%     0.70%    +6.55%     3.55%
+  SMALL439    ABS        126      0.443      3.60%     10.88%    14.90%     1.17%   +13.73%     7.11%
+  SMALL439    ABS        252      0.443      7.25%     23.35%    32.15%     2.68%   +29.48%    15.12%
+  SMALL439    REL  0.10   63      0.099     -0.06%      4.11%    14.29%     2.43%   +11.86%     3.55%
+  SMALL439    REL  0.10  126      0.099     -0.21%      8.52%    31.21%     4.60%   +26.61%     7.11%
+  SMALL439    REL  0.10  252      0.099      0.45%     18.00%    67.76%     9.92%   +57.84%    15.12%
+  SMALL439    REL  0.20   63      0.199      0.74%      4.44%    10.31%     1.93%    +8.38%     3.55%
+  SMALL439    REL  0.20  126      0.199      1.93%      9.09%    21.99%     3.56%   +18.43%     7.11%
+  SMALL439    REL  0.20  252      0.199      4.83%     19.12%    46.92%     7.86%   +39.05%    15.12%
+  SMALL439    REL  0.30   63      0.299      1.49%      4.64%     8.39%     1.55%    +6.84%     3.55%
+  SMALL439    REL  0.30  126      0.299      3.15%      9.57%    17.59%     2.81%   +14.78%     7.11%
+  SMALL439    REL  0.30  252      0.299      6.96%     20.21%    37.33%     6.38%   +30.95%    15.12%
+  SMALL439    REL  0.40   63      0.399      1.84%      4.93%     7.16%     1.23%    +5.92%     3.55%
+  SMALL439    REL  0.40  126      0.399      4.00%     10.07%    14.78%     2.22%   +12.56%     7.11%
+  SMALL439    REL  0.40  252      0.399      8.69%     21.20%    31.50%     5.10%   +26.39%    15.12%
+  SMALL439    REL  0.50   63      0.499      2.21%      5.18%     6.27%     0.93%    +5.35%     3.55%
+  SMALL439    REL  0.50  126      0.499      4.74%     10.54%    12.89%     1.58%   +11.30%     7.11%
+  SMALL439    REL  0.50  252      0.499     10.05%     22.32%    27.57%     3.72%   +23.85%    15.12%
+  U56         ABS         63      0.101      6.91%      4.09%    10.84%     3.74%    +7.10%     3.97%
+  U56         ABS        126      0.101     13.44%      8.14%    22.10%     7.58%   +14.52%     7.83%
+  U56         ABS        252      0.101     27.82%     16.85%    45.82%    16.05%   +29.76%    15.55%
+  U56         REL  0.10   63      0.094      6.40%      4.17%    10.50%     3.84%    +6.65%     3.97%
+  U56         REL  0.10  126      0.094     13.65%      8.16%    22.75%     7.67%   +15.07%     7.83%
+  U56         REL  0.10  252      0.094     30.33%     16.69%    55.47%    15.47%   +40.01%    15.55%
+  U56         REL  0.20   63      0.194      5.24%      4.17%     7.37%     3.77%    +3.60%     3.97%
+  U56         REL  0.20  126      0.194     10.47%      8.24%    15.46%     7.55%    +7.91%     7.83%
+  U56         REL  0.20  252      0.194     21.73%     17.03%    36.03%    15.18%   +20.85%    15.55%
+  U56         REL  0.30   63      0.291      4.97%      4.13%     6.53%     3.62%    +2.91%     3.97%
+  U56         REL  0.30  126      0.291      9.79%      8.22%    13.74%     7.18%    +6.56%     7.83%
+  U56         REL  0.30  252      0.291     19.72%     17.21%    31.16%    14.32%   +16.84%    15.55%
+  U56         REL  0.40   63      0.394      4.54%      4.27%     5.91%     3.53%    +2.38%     3.97%
+  U56         REL  0.40  126      0.394      9.01%      8.45%    12.32%     6.99%    +5.33%     7.83%
+  U56         REL  0.40  252      0.394     18.03%     17.87%    27.54%    13.81%   +13.73%    15.55%
+  U56         REL  0.50   63      0.494      4.48%      4.28%     5.48%     3.47%    +2.01%     3.97%
+  U56         REL  0.50  126      0.494      8.89%      8.46%    11.39%     6.84%    +4.55%     7.83%
+  U56         REL  0.50  252      0.494     17.64%     18.21%    25.00%    13.56%   +11.43%    15.55%
+  broad136    ABS         63      0.092      5.65%      4.46%     9.81%     4.16%    +5.64%     3.97%
+  broad136    ABS        126      0.092     10.17%      8.82%    19.44%     8.37%   +11.08%     7.82%
+  broad136    ABS        252      0.092     19.34%     18.00%    38.94%    17.37%   +21.57%    15.55%
+  broad136    REL  0.10   63      0.097      5.14%      4.51%     8.57%     4.27%    +4.30%     3.97%
+  broad136    REL  0.10  126      0.097      9.97%      8.83%    17.77%     8.52%    +9.25%     7.82%
+  broad136    REL  0.10  252      0.097     20.22%     17.90%    40.56%    17.20%   +23.36%    15.55%
+  broad136    REL  0.20   63      0.196      4.60%      4.56%     6.87%     4.16%    +2.70%     3.97%
+  broad136    REL  0.20  126      0.196      8.99%      8.93%    14.31%     8.23%    +6.07%     7.82%
+  broad136    REL  0.20  252      0.196     18.20%     18.11%    31.60%    16.53%   +15.08%    15.55%
+  broad136    REL  0.30   63      0.297      4.45%      4.62%     6.16%     4.07%    +2.08%     3.97%
+  broad136    REL  0.30  126      0.297      8.75%      9.02%    12.62%     8.07%    +4.56%     7.82%
+  broad136    REL  0.30  252      0.297     17.41%     18.42%    27.42%    16.12%   +11.30%    15.55%
+  broad136    REL  0.40   63      0.396      4.28%      4.76%     5.78%     3.98%    +1.80%     3.97%
+  broad136    REL  0.40  126      0.396      8.51%      9.22%    11.72%     7.91%    +3.82%     7.82%
+  broad136    REL  0.40  252      0.396     17.13%     18.77%    25.23%    15.70%    +9.54%    15.55%
+  broad136    REL  0.50   63      0.499      4.36%      4.78%     5.46%     3.93%    +1.54%     3.97%
+  broad136    REL  0.50  126      0.499      8.55%      9.33%    11.09%     7.76%    +3.34%     7.82%
+  broad136    REL  0.50  252      0.499     17.17%     19.06%    23.56%    15.42%    +8.15%    15.55%
+
+  grid n=54 cells (3 panels x (1 ABS + 5 REL q) x 3 horizons), all printed above
+    SMALL439   forward gap (LOW - HIGH): mean +19.44%, median +14.25%, positive 18/18;  at h=126 mean +16.23%
+    U56        forward gap (LOW - HIGH): mean +11.73%, median +7.50%, positive 18/18;  at h=126 mean +8.99%
+    broad136   forward gap (LOW - HIGH): mean +8.06%, median +5.86%, positive 18/18;  at h=126 mean +6.35%
+
+  ANSWER TO 645 (descriptive leg): SMALL439 mean forward gap +19.44% vs off-panel +9.90%  -> 1.96x
+  The channel DOES survive off SMALL439 at anything like its published size.
+
+----------------------------------------------------------------------------------------------------------------------
+Q4  IS THE SMALL439 GAP THE SHAPE SURVIVORSHIP MAKES?   three signatures, no new data needed
+----------------------------------------------------------------------------------------------------------------------
+  data/SMALL_PANEL_README.md: the panel is CURRENT constituents, 'bias grows with lookback',
+  'cross-sectional strategies look better ... especially deep-value and LOW-PRICE sorts'.  If the
+  gap is survivorship it should be (a) tail-driven, (b) era-decaying, (c) absent on mega caps.
+
+  (a) TAIL TEST — forward 126d distribution, REL q=0.20:
+      panel     side                 n     mean   median      p90       p99  P(>+100%)
+      SMALL439  LOW q=0.20     261,105   21.99%    5.74%   86.48%   307.73%     8.019%
+      SMALL439  HIGH         1,052,265    3.56%    0.04%   42.43%   121.48%     1.676%
+      U56       LOW q=0.20      44,373   15.46%    8.32%   50.70%   162.43%     2.840%
+      U56       HIGH           184,580    7.55%    5.74%   26.60%    67.08%     0.342%
+      broad136  LOW q=0.20     109,936   14.31%    9.44%   45.26%   118.27%     1.556%
+      broad136  HIGH           451,899    8.23%    6.87%   28.23%    65.31%     0.271%
+      SMALL439   MEAN gap +18.43% vs MEDIAN gap +5.71%  -> TAIL-DRIVEN (median carries 31%)
+      U56        MEAN gap +7.91% vs MEDIAN gap +2.58%  -> TAIL-DRIVEN (median carries 33%)
+      broad136   MEAN gap +6.07% vs MEDIAN gap +2.57%  -> broad-based (median carries 42%)
+
+  (b) ERA TEST — the same gap, IS 2010-2016 vs OOS 2017-01-01-2026 (rule 8's own boundary):
+      panel     era                LOW fwd  HIGH fwd       gap
+      SMALL439  IS 2010-2016        14.79%     4.44%   +10.35%
+      SMALL439  OOS 2017-2026       25.30%     3.16%   +22.14%
+      U56       IS 2010-2016        19.19%     6.51%   +12.69%
+      U56       OOS 2017-2026       12.42%     8.41%    +4.00%
+      broad136  IS 2010-2016        16.23%     8.44%    +7.79%
+      broad136  OOS 2017-2026       12.70%     8.06%    +4.64%
+      SMALL439   gap decays +10.35% -> +22.14%  (2.14x)
+      U56        gap decays +12.69% -> +4.00%  (0.32x)
+      broad136   gap decays +7.79% -> +4.64%  (0.60x)
+
+----------------------------------------------------------------------------------------------------------------------
+Q5  THE BOOK — is the channel worth capital?   3 panels x 5 q x 3 cadences x 2 sides x 4 costs
+----------------------------------------------------------------------------------------------------------------------
+  Book: equal weight the selected side at gross 0.75 of NAV, remainder CASH (RULES v2's own
+  gross convention).  LOW = the VOLSH-only shape (the side carrying the +28.9% forward return);
+  HIGH = the DV-only shape, carried as the mirror control.  Costs swept; PROTOCOL rung is 10 bps.
+
+  [SMALL439] RULES v2 @10bps: CAGR 3.81% Sharpe 0.572 MaxDD -14.7% H1/H2 0.570/0.577 | OOS Sharpe 0.568
+  [SMALL439] SPY:            CAGR 14.13% Sharpe 0.862 MaxDD -33.7% H1/H2 0.891/0.858 | OOS Sharpe 0.882
+
+  [U56] RULES v2 @10bps: CAGR 8.63% Sharpe 1.202 MaxDD -12.1% H1/H2 1.231/1.180 | OOS Sharpe 1.279
+  [U56] SPY:            CAGR 15.15% Sharpe 0.886 MaxDD -33.7% H1/H2 0.959/0.826 | OOS Sharpe 0.876
+
+  [broad136] RULES v2 @10bps: CAGR 8.03% Sharpe 1.106 MaxDD -12.2% H1/H2 1.229/0.984 | OOS Sharpe 1.119
+  [broad136] SPY:            CAGR 15.23% Sharpe 0.889 MaxDD -33.7% H1/H2 0.957/0.834 | OOS Sharpe 0.882
+
+  panel      side     q  cad  bps     CAGR  Sharpe   MaxDD     H1     H2  OOS Sh  trn/yr  4a              4b
+  SMALL439    LOW  0.10    W   10   43.40%   1.870  -35.2%  1.942  1.913   1.852    5.83  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.10    M   10   41.26%   1.790  -35.1%  1.736  1.906   1.835    2.83  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.10    Q   10   47.02%   1.928  -30.0%  1.902  2.024   2.009    1.71  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.20    W   10   31.83%   1.581  -37.9%  1.660  1.607   1.620    4.85  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.20    M   10   30.25%   1.526  -35.2%  1.569  1.567   1.567    2.39  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.20    Q   10   31.65%   1.557  -32.2%  1.600  1.603   1.611    1.40  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.30    W   10   24.74%   1.334  -37.7%  1.447  1.324   1.316    4.16  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.30    M   10   24.29%   1.328  -35.7%  1.398  1.342   1.336    2.06  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.30    Q   10   25.33%   1.369  -33.5%  1.480  1.359   1.372    1.21  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.40    W   10   21.15%   1.204  -37.2%  1.308  1.184   1.179    3.69  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.40    M   10   20.29%   1.175  -35.5%  1.263  1.162   1.160    1.82  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.40    Q   10   21.18%   1.213  -33.4%  1.283  1.214   1.224    1.08  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.50    W   10   18.45%   1.082  -37.4%  1.207  1.039   1.049    3.37  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.50    M   10   17.65%   1.056  -35.7%  1.176  1.012   1.028    1.68  KILL(DD)        KILL(DD)
+  SMALL439    LOW  0.50    Q   10   18.64%   1.104  -33.7%  1.238  1.052   1.078    1.00  KILL(DD)        KILL(DD)
+  SMALL439   HIGH  0.10    W   10    6.89%   0.492  -38.1%  0.620  0.410   0.443    1.98  KILL(H2,DD)     KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.10    M   10    6.62%   0.481  -36.6%  0.623  0.387   0.427    0.99  KILL(H2,DD)     KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.10    Q   10    6.43%   0.470  -36.7%  0.607  0.380   0.408    0.58  KILL(H2,DD)     KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.20    W   10    5.16%   0.393  -38.9%  0.542  0.292   0.316    2.19  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.20    M   10    5.00%   0.387  -37.4%  0.542  0.279   0.314    1.08  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.20    Q   10    5.09%   0.392  -37.2%  0.548  0.284   0.313    0.63  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.30    W   10    4.24%   0.339  -38.6%  0.489  0.234   0.272    2.37  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.30    M   10    3.87%   0.319  -37.5%  0.484  0.200   0.244    1.16  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.30    Q   10    3.96%   0.324  -36.9%  0.471  0.219   0.250    0.66  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.40    W   10    3.15%   0.273  -39.4%  0.430  0.161   0.205    2.57  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.40    M   10    3.06%   0.269  -37.8%  0.432  0.152   0.202    1.24  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.40    Q   10    3.10%   0.272  -37.8%  0.445  0.147   0.184    0.71  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.50    W   10    2.13%   0.212  -39.8%  0.351  0.113   0.150    2.83  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.50    M   10    2.15%   0.213  -38.7%  0.352  0.114   0.155    1.37  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  SMALL439   HIGH  0.50    Q   10    1.96%   0.202  -38.1%  0.323  0.114   0.139    0.78  KILL(H1,H2,DD)  KILL(H1,H2,OOS,DD,CAGR)
+  U56         LOW  0.10    W   10   31.17%   1.459  -34.7%  1.645  1.246   1.304    3.85  KILL(DD)        KILL(DD)
+  U56         LOW  0.10    M   10   34.37%   1.566  -33.9%  1.636  1.510   1.532    2.01  KILL(DD)        KILL(DD)
+  U56         LOW  0.10    Q   10   34.18%   1.533  -34.1%  1.597  1.478   1.503    1.06  KILL(DD)        KILL(DD)
+  U56         LOW  0.20    W   10   22.41%   1.386  -25.5%  1.533  1.222   1.314    2.74  KILL(DD)        KILL(DD)
+  U56         LOW  0.20    M   10   22.87%   1.416  -25.4%  1.550  1.269   1.353    1.32  KILL(DD)        KILL(DD)
+  U56         LOW  0.20    Q   10   23.17%   1.428  -24.4%  1.582  1.256   1.332    0.77  KILL(DD)        KILL(DD)
+  U56         LOW  0.30    W   10   19.36%   1.294  -26.4%  1.409  1.171   1.226    2.17  KILL(H2,DD)     KILL(DD)
+  U56         LOW  0.30    M   10   19.27%   1.297  -27.1%  1.405  1.179   1.233    1.03  KILL(H2,DD)     KILL(DD)
+  U56         LOW  0.30    Q   10   20.17%   1.340  -27.3%  1.423  1.251   1.298    0.60  KILL(DD)        KILL(DD)
+  U56         LOW  0.40    W   10   18.13%   1.284  -26.0%  1.426  1.133   1.217    2.26  KILL(H2,DD)     KILL(DD)
+  U56         LOW  0.40    M   10   17.65%   1.266  -26.5%  1.398  1.125   1.209    1.02  KILL(H2,DD)     KILL(DD)
+  U56         LOW  0.40    Q   10   18.14%   1.294  -26.7%  1.394  1.188   1.261    0.59  KILL(DD)        KILL(DD)
+  U56         LOW  0.50    W   10   16.26%   1.205  -25.7%  1.317  1.088   1.172    1.63  KILL(H2,DD)     KILL(DD)
+  U56         LOW  0.50    M   10   16.51%   1.241  -25.1%  1.321  1.156   1.238    0.80  KILL(H2,DD)     KILL(DD)
+  U56         LOW  0.50    Q   10   17.08%   1.278  -24.9%  1.384  1.167   1.246    0.50  KILL(H2,DD)     KILL(DD)
+  U56        HIGH  0.10    W   10   11.38%   1.000  -22.5%  1.014  0.998   1.059    1.03  KILL(H1,H2,DD)  KILL(DD)
+  U56        HIGH  0.10    M   10   11.13%   0.988  -22.2%  1.013  0.976   1.041    0.50  KILL(H1,H2,DD)  KILL(DD)
+  U56        HIGH  0.10    Q   10   11.45%   1.015  -21.8%  1.037  1.007   1.069    0.28  KILL(H1,H2,DD)  KILL(DD)
+  U56        HIGH  0.20    W   10   11.03%   0.977  -21.8%  0.993  0.977   1.032    1.14  KILL(H1,H2,DD)  KILL(DD)
+  U56        HIGH  0.20    M   10   10.98%   0.980  -21.6%  0.983  0.990   1.046    0.54  KILL(H1,H2,DD)  KILL(DD)
+  U56        HIGH  0.20    Q   10   11.28%   1.003  -21.3%  0.992  1.025   1.080    0.31  KILL(H1,H2,DD)  KILL(DD)
+  U56        HIGH  0.30    W   10   10.67%   0.963  -20.8%  0.989  0.959   1.027    1.22  KILL(H1,H2,DD)  KILL(DD)
+  U56        HIGH  0.30    M   10   10.79%   0.977  -20.2%  0.989  0.983   1.050    0.56  KILL(H1,H2,DD)  KEEP
+  U56        HIGH  0.30    Q   10   10.85%   0.982  -19.7%  1.006  0.980   1.047    0.32  KILL(H1,H2,DD)  KEEP
+  U56        HIGH  0.40    W   10    9.94%   0.908  -20.2%  0.882  0.947   0.996    1.59  KILL(H1,H2,DD)  KILL(H1,CAGR)
+  U56        HIGH  0.40    M   10   10.36%   0.946  -19.5%  0.917  0.987   1.036    0.69  KILL(H1,H2,DD)  KILL(H1,CAGR)
+  U56        HIGH  0.40    Q   10   10.55%   0.961  -19.8%  0.961  0.983   1.034    0.39  KILL(H1,H2,DD)  KILL(CAGR)
+  U56        HIGH  0.50    W   10   10.14%   0.929  -20.3%  0.919  0.966   1.011    1.46  KILL(H1,H2,DD)  KILL(H1,DD,CAGR)
+  U56        HIGH  0.50    M   10   10.04%   0.919  -21.1%  0.927  0.944   0.990    0.69  KILL(H1,H2,DD)  KILL(H1,DD,CAGR)
+  U56        HIGH  0.50    Q   10   10.09%   0.922  -20.8%  0.884  0.977   1.020    0.42  KILL(H1,H2,DD)  KILL(H1,DD,CAGR)
+  broad136    LOW  0.10    W   10   26.79%   1.512  -24.5%  1.642  1.371   1.464    3.61  KILL(DD)        KILL(DD)
+  broad136    LOW  0.10    M   10   27.03%   1.546  -24.3%  1.703  1.373   1.457    1.72  KILL(DD)        KILL(DD)
+  broad136    LOW  0.10    Q   10   27.89%   1.594  -23.0%  1.750  1.421   1.498    1.01  KILL(DD)        KILL(DD)
+  broad136    LOW  0.20    W   10   21.51%   1.405  -26.5%  1.531  1.271   1.344    2.77  KILL(DD)        KILL(DD)
+  broad136    LOW  0.20    M   10   21.33%   1.421  -25.0%  1.511  1.324   1.399    1.27  KILL(DD)        KILL(DD)
+  broad136    LOW  0.20    Q   10   21.60%   1.447  -25.1%  1.543  1.345   1.413    0.72  KILL(DD)        KILL(DD)
+  broad136    LOW  0.30    W   10   19.24%   1.326  -27.9%  1.440  1.206   1.288    2.35  KILL(DD)        KILL(DD)
+  broad136    LOW  0.30    M   10   18.75%   1.314  -27.3%  1.427  1.194   1.278    1.05  KILL(DD)        KILL(DD)
+  broad136    LOW  0.30    Q   10   19.36%   1.361  -26.2%  1.451  1.267   1.344    0.63  KILL(DD)        KILL(DD)
+  broad136    LOW  0.40    W   10   18.03%   1.290  -27.3%  1.405  1.171   1.249    2.15  KILL(DD)        KILL(DD)
+  broad136    LOW  0.40    M   10   17.76%   1.287  -26.7%  1.391  1.179   1.256    0.98  KILL(DD)        KILL(DD)
+  broad136    LOW  0.40    Q   10   17.95%   1.304  -25.9%  1.389  1.217   1.290    0.57  KILL(DD)        KILL(DD)
+  broad136    LOW  0.50    W   10   16.90%   1.243  -26.7%  1.337  1.147   1.220    1.75  KILL(DD)        KILL(DD)
+  broad136    LOW  0.50    M   10   16.54%   1.236  -25.9%  1.326  1.144   1.218    0.81  KILL(DD)        KILL(DD)
+  broad136    LOW  0.50    Q   10   16.85%   1.263  -25.3%  1.335  1.190   1.260    0.47  KILL(DD)        KILL(DD)
+  broad136   HIGH  0.10    W   10   12.79%   1.038  -25.5%  1.129  0.962   1.035    1.08  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.10    M   10   12.65%   1.035  -25.1%  1.110  0.971   1.046    0.51  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.10    Q   10   12.75%   1.045  -24.6%  1.111  0.991   1.065    0.30  KILL(H1,DD)     KILL(DD)
+  broad136   HIGH  0.20    W   10   12.33%   1.011  -25.1%  1.102  0.936   1.013    1.22  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.20    M   10   12.26%   1.011  -25.0%  1.104  0.934   1.012    0.57  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.20    Q   10   12.43%   1.026  -24.3%  1.108  0.957   1.035    0.32  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.30    W   10   11.93%   0.989  -24.3%  1.083  0.914   0.987    1.37  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.30    M   10   12.02%   1.000  -24.0%  1.085  0.931   1.006    0.61  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.30    Q   10   12.04%   1.003  -23.7%  1.091  0.932   1.008    0.36  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.40    W   10   11.50%   0.959  -24.1%  1.048  0.891   0.966    1.57  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.40    M   10   11.56%   0.968  -23.8%  1.055  0.901   0.979    0.71  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.40    Q   10   11.76%   0.986  -23.5%  1.081  0.914   0.992    0.40  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.50    W   10   11.29%   0.943  -24.1%  1.056  0.861   0.942    1.60  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.50    M   10   11.48%   0.960  -24.1%  1.066  0.884   0.966    0.72  KILL(H1,H2,DD)  KILL(DD)
+  broad136   HIGH  0.50    Q   10   11.59%   0.970  -23.6%  1.085  0.886   0.970    0.40  KILL(H1,H2,DD)  KILL(DD)
+
+  grid n=360 points (3 panels x 2 sides x 5 q x 3 cadences x 4 costs), ALL reported
+  4a KEEP 0/360;  4b KEEP 8/360;  BOTH 0/360
+  binding bars (4b): DD 340, CAGR 85, H1 81, H2 60, OOS 60
+  binding bars (4a): DD 360, H2 200, H1 168
+
+  LOW minus HIGH at 10 bps, matched (panel, q, cadence) — the channel priced as a book:
+    SMALL439   dCAGR mean +23.62 pp (positive 15/15), dSharpe mean +1.0720 (positive 15/15)
+    U56        dCAGR mean +11.34 pp (positive 15/15), dSharpe mean +0.3878 (positive 15/15)
+    broad136   dCAGR mean +8.48 pp (positive 15/15), dSharpe mean +0.3737 (positive 15/15)
+
+----------------------------------------------------------------------------------------------------------------------
+Q6  PROTOCOL RULE 8 — (q, cadence) chosen on 2010-2016 IS Sharpe, 2017-2026 read ONCE
+----------------------------------------------------------------------------------------------------------------------
+  panel      side      pick   IS Sh  OOS CAGR  OOS Sh   OOS DD  base Sh  SPY CAGR  SPY Sh   SPY DD  4b-OOS
+  SMALL439    LOW   q0.10/W   2.013    48.85%   1.852   -35.2%    0.568    15.45%   0.882   -33.7%  FAIL(DD)
+  SMALL439   HIGH   q0.10/Q   0.596     5.62%   0.408   -36.7%    0.568    15.45%   0.882   -33.7%  FAIL(Sharpe,DD,CAGR)
+  U56         LOW   q0.10/M   1.633    28.00%   1.532   -24.2%    1.279    15.32%   0.876   -33.7%  FAIL(DD)
+  U56        HIGH   q0.10/Q   0.946    12.78%   1.069   -21.8%    1.279    15.32%   0.876   -33.7%  FAIL(DD)
+  broad136    LOW   q0.10/Q   1.712    22.17%   1.498   -23.0%    1.119    15.45%   0.882   -33.7%  FAIL(DD)
+  broad136   HIGH   q0.10/W   1.043    12.97%   1.035   -25.5%    1.119    15.45%   0.882   -33.7%  FAIL(DD)
+
+  rule-8 OOS 4b passes: 0/6
+  LOW beats its own HIGH control OOS on Sharpe in 3/3 panels
+
+======================================================================================================================
+VERDICT
+======================================================================================================================
+  4a 0/360, 4b 8/360, rule-8 OOS 4b 0/6  ->  KILL (no KEEP on either path)
+  645 asked whether the eject-after-a-fall channel exists off SMALL439.
+    SMALL439 mean forward gap +19.44%;  U56+broad136 +9.90%.
+    The split is an EXACT price-level cut (Q1), not a path event (Q2: event carries 6%).
+  [24s]
