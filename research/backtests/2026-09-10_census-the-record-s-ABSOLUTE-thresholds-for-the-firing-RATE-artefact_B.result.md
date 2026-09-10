@@ -150,3 +150,19 @@ if the census is ever repeated.
 **Artefacts:** `.gates.csv` `.census.csv` (118 rows) `.audit.csv` (39 rows, hand-classified)
 `.rates.csv` (37 cells) `.audited_rates.csv` (7) `.pername.csv` (5) `.books.csv` (333)
 `.decomp.csv` (111) `.walkforward.csv` (6) `.console.txt`.
+
+## Cross-check against the cloud lane's independent same-day run
+
+The cloud lane ran idea 400 concurrently with a separately written extractor and separately
+written statistic estimators, and measured the clause's OFF (firing) rate where this run
+measures its ON rate. On the **14 shared non-degenerate (family, level) cells** the identity
+`ON_B = 1 - OFF_cloud` holds to a maximum of **0.0516** per panel; the cross-panel spreads
+agree to max **0.0460**, median **0.0086**; and the two runs name the **same outlier panel in
+14 of 14** cells. Both KILL the queue's bar as stated, both find idea 336's rate share
+generalising (0.619 full / 0.572 OOS cloud, 0.600 / 0.526 here), both find the census
+population dominated by `vol20 < 0.60`, and both find their only 4a passer to be a book held
+~82–83% in cash. Where they differ is the contribution each adds: the cloud lane's tier-2 AST
+extractor reaches a wider population (88 hits, 81 of them that one number), while this run's
+**hand audit of all 39 in-domain hits** is what converts a 17.9%-precise extraction into an
+answerable denominator, and its per-NAME leg prices `vol20 < 0.60` on the admission-share
+denominator (spread 0.1807) instead of the meaningless panel-median one.
