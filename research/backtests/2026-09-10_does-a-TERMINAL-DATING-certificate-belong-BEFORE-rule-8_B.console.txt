@@ -1,0 +1,171 @@
+================================================================================================================
+IDEA 623 - does a TERMINAL-DATING certificate belong BEFORE rule 8?   (lane B, 2026-09-10)
+================================================================================================================
+Panel SMALL430 (idea 195's leg-(c) panel, reproduced): 430 names, 2010-01-04..2026-09-04, SPY benchmark only.
+Shares snapshot read from the PINNED artefact 2026-09-10_market-cap-as-the-third-substitution_B.shares.csv (idea 565), 430 rows -- NOT from the nightly file.
+
+----------------------------------------------------------------------------------------------------------------
+GATES (four, pre-registered)
+  G1  fast_backtest == engine.backtest (control book)      returns 1.388e-17  turnover 3.331e-16   [tol 1e-12, evaluation window]
+  G2  cost-rung identity r(c)=r(0)-turnover*c/1e4 @25bps    1.388e-17   [tol 1e-12]
+  G3  parent headline MCAP/NEG/m=1.00 @10bps reproduced     5.551e-17   [tol 0.005]  (here 20.29%/1.374/-24.87% vs committed 20.29%/1.374/-24.87%)
+  G4  both certificates clear a causal scale-free control   T1 med 0.000e+00 (max 3.0)  T2 med 0.000e+00 (max 0.0)   [tol 0 exactly on the MEDIAN statistic]
+
+================================================================================================================
+PART A  THE INSTRUMENT: does a T1-family certificate detect TERMINAL DATING?
+        T1 = idea 433's value certificate under px -> px x diag(c).  T2 = truncation invariance (new).
+================================================================================================================
+key        family    scale?  term?     T1   T1med   T1max    T2   T2med   T2max
+MOM        causal    False   False      .     0.0     4.0     .     0.0     0.0
+R6         causal    False   False      .     0.0     2.0     .     0.0     0.0
+DDTR       causal    False   False      .     0.0     2.0     .     0.0     0.0
+REBASED    causal    False   False      .     0.0     2.0     .     0.0     0.0
+VOL20      causal    False   False      .     0.0     2.0     .     0.0     0.0
+VOLSH      causal    False   False      .     0.0     0.0     .     0.0     0.0
+PRICE      level     True    False   FLAG   272.0   370.0     .     0.0     0.0
+FROZEN     level     True    False   FLAG   276.5   364.0     .     0.0     0.0
+DVOL       level     True    False   FLAG   185.0   350.0     .     0.0     0.0
+PXDVOL     level     True    False   FLAG   179.0   342.0     .     0.0     0.0
+MCAP       both      True    True    FLAG   239.0   409.0  FLAG     inf     inf
+MCAPFRZ    both      True    True    FLAG   216.5   271.0  FLAG     inf     inf
+PXTERM     both      True    True    FLAG   240.0   335.0  FLAG   294.0   343.0
+FWDRET     termonly  False   True       .     0.0     1.0  FLAG   330.0   411.0
+TERMREB    termonly  False   True       .     0.0     1.0  FLAG   368.0   417.0
+MCAPREB    termonly  False   True       .     0.0     0.0  FLAG     inf     inf
+SHARES     termonly  False   True       .     0.0     0.0  FLAG     inf     inf
+FULLVOL    termonly  False   True       .     0.0     0.0  FLAG   291.0   417.0
+FULLSHRP   termonly  False   True       .     0.0     0.0  FLAG   334.0   419.0
+MAXMOVE    termonly  False   True       .     1.0     1.0  FLAG   330.0   413.0
+
+STATISTIC MATTERS, and the record has never named one (ideas 520 / 564).  On this
+430 x 4194 panel the GLOBAL-MAX reading of the displacement — idea 433's
+literal statistic — flags every causal key too, at 2-4 rank steps out of 430, purely
+from float re-ordering of near-ties.  The MEDIAN-over-days reading separates cleanly.
+Both readings are published for every key below and in .certs.csv; the gate in PART C
+uses the MEDIAN, and that choice is a STATISTIC, not a tuned dial.
+
+Confusion matrices (20 keys, ground truth hand-derived from the algebra), BOTH readings:
+  instrument       axis               TP   FP   FN   TN
+  T1_flag          truth_scale_leak    7    0    0   13
+  T1_flag          truth_term_dated    3    4    7    6
+  T2_flag          truth_scale_leak    3    7    4    6
+  T2_flag          truth_term_dated   10    0    0   10
+  BOTH_flag        truth_scale_leak    7    7    0    6
+  BOTH_flag        truth_term_dated   10    4    0    6
+  T1_flag_maxstat  truth_scale_leak    7    5    0    8
+  T1_flag_maxstat  truth_term_dated    3    9    7    1
+  T2_flag_maxstat  truth_scale_leak    3    7    4    6
+  T2_flag_maxstat  truth_term_dated   10    0    0   10
+
+  T1's FALSE NEGATIVES on the TERMINAL-DATING axis (7): FULLSHRP, FULLVOL, FWDRET, MAXMOVE, MCAPREB, SHARES, TERMREB
+  T2's blind spot on the SCALE axis (4): DVOL, FROZEN, PRICE, PXDVOL
+  T2's FALSE POSITIVES on causal keys (0): NONE
+
+Leak content (|mean cross-sectional IC vs the REALISED forward return|), T1-cleared keys marked *:
+    FWDRET     |IC| 1.0000   T1   . *   T2 FLAG
+    TERMREB    |IC| 1.0000   T1   . *   T2 FLAG
+    MCAP       |IC| 0.7092   T1 FLAG    T2 FLAG
+    FULLSHRP   |IC| 0.6104   T1   . *   T2 FLAG
+    PXDVOL     |IC| 0.5996   T1 FLAG    T2   . 
+    DVOL       |IC| 0.5981   T1 FLAG    T2   . 
+    PXTERM     |IC| 0.4979   T1 FLAG    T2 FLAG
+    MCAPFRZ    |IC| 0.4493   T1 FLAG    T2 FLAG
+    PRICE      |IC| 0.4420   T1 FLAG    T2   . 
+    MCAPREB    |IC| 0.4405   T1   . *   T2 FLAG
+
+================================================================================================================
+PART B  CENSUS: how many committed rule-8 passes are built on a terminal-dated input?
+================================================================================================================
+  committed scripts in research/backtests/          : 566
+  ... that run a rule-8 / walk-forward leg          : 560 (98.9%)
+  TIER 1  rule-8 files with a SHARP terminal token  : 511 (91.2% of rule-8 files)   <- UPPER BOUND, includes reporting uses
+  TIER 2  ... the SHARP token sits in a KEY/SELECT fn: 390 (69.6% of rule-8 files)
+  SOFT    rule-8 files with a full-sample reduction : 560 (100.0%) -- reported SEPARATELY, never folded in
+
+  token classes over rule-8 files (a file may carry several):
+    iloc_last        tier1   63   tier2   43
+    index_last       tier1  423   tier2  376
+    last_valid       tier1    8   tier2    1
+    tail             tier1   10   tier2    9
+    snapshot_file    tier1  298   tier2   39
+    fullsample_red   tier1  560   tier2  528
+
+  HAND AUDIT of a deterministic sample of 30 TIER-2 hits (the automatic classifier's
+  precision -- a token in a selection function is still not necessarily a leaking KEY):
+    (tier-2 hits total 662; sampled every 22th, 30 rows -> .audit.csv)
+    index_last       2026-09-03_broad-momentum-top10.py                  :49    print(f"broad px: {px_b.shape[1]} tickers, {px_b.index[0].da
+    index_last       2026-09-04_crypto-sleeve_C.py                       :224   f"{px.index[0].date()} -> {px.index[-1].date()}")
+    index_last       2026-09-04_is-window-has-no-crash_C.py              :204   print(f"{tag}: {px.shape[1]} tickers, eval {start.date()} ->
+    index_last       2026-09-04_small-cap-pead.py                        :191   print(f"\ncommon sample: {smp.date()} -> {px.index[-1].date(
+    index_last       2026-09-04_vol-scaler-replacement_B.py              :193   print(f"Universe: {px.shape[1]} tickers, {px.index[0].date()
+    index_last       2026-09-05_defensive-class-census_B.py              :460   say(f"\n--- PANEL {pname}: {desc} | eval {start.date()} -> {
+    snapshot_file    2026-09-05_is-4b-internally-consistent-at-any-vol_cl:327   f"(data/small_meta.csv).  SURVIVORSHIP: current constituents
+    index_last       2026-09-05_quote-the-lift-not-the-rate_cloud.py     :207   f"{px.index[-1].date()}, eval from {start.date()}")
+    index_last       2026-09-05_vol20-as-the-hidden-ranking-key_cloud.py :219   f"{px.index[-1].date()}, eval from {start.date()}")
+    index_last       2026-09-06_does-every-regime-conditional-dial-lose-i:314   say(f"PANEL {pname}: {len(names)} tradable names, {px.index[
+    index_last       2026-09-06_is-RULES-v2-only-a-de-grossing-effect_C.p:215   print(f"u56 panel: {px.shape[1]} columns, {px.index[0].date(
+    iloc_last        2026-09-06_locate-the-band-width-ceiling_cloud.py   :274   f"({g.exit_frac.iloc[0]:.4f} at 3% -> {g.exit_frac.iloc[-1]:
+
+  REFINEMENT -- a terminal token is not a terminal KEY.  Splitting the two sharp
+  positional classes by whether the line is a report line:
+    index_last    582 hits in 423 rule-8 files ->   55 non-reporting hits in  41 files (90.5% of the token count is printing)
+    iloc_last     104 hits in  63 rule-8 files ->  101 non-reporting hits in  62 files (2.9% of the token count is printing)
+  and by the FILE the terminal value comes from (the class that cannot be printing):
+    data/small_meta.csv                read by  298 of 560 rule-8 files (53.2%)
+    deepvalue/universe_under2b.csv     read by    9 of 560 rule-8 files (1.6%)
+    a pinned shares snapshot           read by    3 of 560 rule-8 files (0.5%)
+
+  The panel filter the record uses everywhere is itself terminal-dated:
+    data/small_meta.csv `max_1d_move` is a FULL-SAMPLE max of |daily return| and the
+    SMALL panel is defined by dropping names with max_1d_move >= 1.0 -- a statistic
+    dated at the END of the sample, applied from day one.  It drops 44 names.
+    300 committed scripts read small_meta.csv / universe_under2b.csv / a shares pin.
+    That is the MAXMOVE key in PART A: T1 clears it, T2 flags it.
+
+================================================================================================================
+PART C  THE CERTIFICATE AS A PRE-RULE-8 GATE  (SMALL430, top-20 EW, gross 0.75, weekly)
+================================================================================================================
+  SPY                         14.13% /  0.862 / -33.72%   (H1 0.891 / H2 0.858 / OOS 0.882)
+  control (untilted composite)   6.12% /  0.438 / -25.90%   (H1 0.628 / H2 0.281 / OOS 0.434)
+  RULES v1                     7.41% /  0.554 / -34.92%   (H1 0.721 / H2 0.407 / OOS 0.499)
+  RULES v2 (live baseline)     3.77% /  0.565 / -14.58%   (H1 0.568 / H2 0.566 / OOS 0.558)
+
+  363 grid points written to .arms.csv  (20 keys x 2 dirs x 3 m x 3 rungs + control)
+  PROTOCOL 4 over the whole grid: 4a 0/363   4b 0/363
+  4b leg failure counts: MaxDD 360  H1 335  H2 289  OOS 288  CAGR 270
+
+----------------------------------------------------------------------------------------------------------------
+RULE 8 (PROTOCOL 8): (KEY, m) chosen on 2010-2016 IS Sharpe ALONE; 2017-2026 read once.
+The GATE is applied BEFORE the choice -- that is the whole proposal on trial.
+----------------------------------------------------------------------------------------------------------------
+gate     rung admits pick                   IS Sharpe  OOS CAGR  OOS Shrp  OOS MaxDD   vs SPY   vs v2
+NONE        0     20 FWDRET/POS/m=1.00          1.104    41.47%     2.310    -26.51%   +1.428  +1.711
+NONE       10     20 FWDRET/POS/m=1.00          0.974    39.03%     2.198    -26.70%   +1.316  +1.640
+NONE       25     20 FWDRET/POS/m=1.00          0.779    35.44%     2.029    -26.97%   +1.147  +1.532
+T1          0     13 FWDRET/POS/m=1.00          1.104    41.47%     2.310    -26.51%   +1.428  +1.711
+T1         10     13 FWDRET/POS/m=1.00          0.974    39.03%     2.198    -26.70%   +1.316  +1.640
+T1         25     13 FWDRET/POS/m=1.00          0.779    35.44%     2.029    -26.97%   +1.147  +1.532
+T2          0     10 PXDVOL/NEG/m=1.00          0.990    26.82%     1.721    -24.23%   +0.839  +1.122
+T2         10     10 PXDVOL/NEG/m=1.00          0.838    24.41%     1.588    -24.38%   +0.706  +1.030
+T2         25     10 PRICE/NEG/m=1.00           0.630    15.91%     0.954    -28.33%   +0.072  +0.457
+T1&T2       0      6 VOL20/NEG/m=0.50           0.973     8.42%     0.640    -24.14%   -0.242  +0.042
+T1&T2      10      6 VOL20/NEG/m=0.50           0.796     5.79%     0.467    -26.88%   -0.415  -0.091
+T1&T2      25      6 VOL20/NEG/m=0.50           0.531     1.96%     0.208    -31.06%   -0.674  -0.289
+
+  OOS comparands @10bps: SPY 15.45%/0.882/-33.72%   RULES v2 3.77%/0.558/-14.58%   RULES v1 6.66%/0.499/-34.92%   control 6.23%/0.434/-25.90%
+  gate NONE  : picks a TERMINAL-DATED key at 3/3 rungs; beats SPY OOS 3/3; beats RULES v2 OOS 3/3
+  gate T1    : picks a TERMINAL-DATED key at 3/3 rungs; beats SPY OOS 3/3; beats RULES v2 OOS 3/3
+  gate T2    : picks a TERMINAL-DATED key at 0/3 rungs; beats SPY OOS 3/3; beats RULES v2 OOS 3/3
+  gate T1&T2 : picks a TERMINAL-DATED key at 0/3 rungs; beats SPY OOS 0/3; beats RULES v2 OOS 1/3
+
+================================================================================================================
+PART D  PRE-REGISTERED PREDICTIONS, SCORED
+================================================================================================================
+  P1 HIT   gates all pass (4/4)
+  P2 HIT   T1 false negatives on the dating axis: ['FULLSHRP', 'FULLVOL', 'FWDRET', 'MAXMOVE', 'MCAPREB', 'SHARES', 'TERMREB']
+  P3 HIT   T2 false positives on causal keys: NONE
+  P4 HIT   disjoint content: T1-only ['DVOL', 'FROZEN', 'PRICE', 'PXDVOL'], T2-only ['FULLSHRP', 'FULLVOL', 'FWDRET', 'MAXMOVE', 'MCAPREB', 'SHARES', 'TERMREB']
+  P5 MISS  NONE picks ['FWDRET', 'FWDRET', 'FWDRET'], T1 picks ['FWDRET', 'FWDRET', 'FWDRET'], T2 picks ['PXDVOL', 'PXDVOL', 'PRICE']
+  P6 HIT   4a 0/363, 4b 0/363
+
+runtime 150.7s
