@@ -1,0 +1,163 @@
+================================================================================================================
+IDEA 629 - publish an AS-OF DATE beside every input the record reads   (lane C, 2026-09-10)
+================================================================================================================
+Panel SMALL430 (idea 195's leg-(c) panel, reproduced): 430 names, 2010-01-04..2026-09-04, SPY benchmark only.
+Shares snapshot from the PINNED artefact 2026-09-10_market-cap-as-the-third-substitution_B.shares.csv (idea 565), 430 rows.
+Tuned parameters: FILE CLASS (STRICT/LOOSE) and DATING RULE (NONE/ASOF_TRUE/ASOF_EARLY).
+
+----------------------------------------------------------------------------------------------------------------
+GATES (five, pre-registered)
+  G1  fast_backtest == engine.backtest (control book)      returns 1.388e-17  turnover 3.331e-16   [tol 1e-12, evaluation window]
+  G2  cost-rung identity r(c)=r(0)-turnover*c/1e4 @25bps    1.388e-17   [tol 1e-12]
+  G4  control key clears T1 and T2 under all 3 dating rules  worst median 0.000e+00   [tol 0 exactly]
+
+================================================================================================================
+PART A  CENSUS: is each input file's dating recoverable FROM THE FILE?
+        INDEX_DATE = dated row index (exact per-row as-of).  ROW_KNOWLEDGE = a column saying when the row
+        became knowable.  ROW_EVENT_ONLY = dates, but only of EVENTS (LOOSE reading only).  UNDATED = none.
+================================================================================================================
+  24 input files censused across 5 groups; 16 are read by at least one committed script, 12 by a rule-8-running one.
+
+  FILE CLASS = STRICT  all files: INDEX_DATE 10  UNDATED 8  ROW_KNOWLEDGE 6
+                       read by rule-8 scripts: UNDATED 5  INDEX_DATE 4  ROW_KNOWLEDGE 3
+  FILE CLASS = LOOSE   all files: INDEX_DATE 10  UNDATED 7  ROW_KNOWLEDGE 6  ROW_EVENT_ONLY 1
+                       read by rule-8 scripts: INDEX_DATE 4  UNDATED 4  ROW_KNOWLEDGE 3  ROW_EVENT_ONLY 1
+
+  Every file read by a rule-8-running committed script:
+    file                                                 readers  r8  STRICT         LOOSE          knowledge cols
+    data/small_meta.csv                                      304 301  UNDATED        ROW_EVENT_ONLY -
+    research/universe.json                                   258 253  UNDATED        UNDATED        -
+    research/universe_broad.json                             232 229  UNDATED        UNDATED        -
+    data/prices.csv                                           98  92  INDEX_DATE     INDEX_DATE     -
+    data/prices_small.csv.gz                                  42  41  INDEX_DATE     INDEX_DATE     -
+    data/prices_broad.csv                                     27  25  INDEX_DATE     INDEX_DATE     -
+    research/deepvalue/universe_under2b.csv                   11   9  UNDATED        UNDATED        -
+    data/volume_small.csv.gz                                   7   7  INDEX_DATE     INDEX_DATE     -
+    data/form4_purchases.csv                                   2   2  ROW_KNOWLEDGE  ROW_KNOWLEDGE  filing_date
+    research/deepvalue/data/company_tickers.json               4   2  UNDATED        UNDATED        -
+    data/form4_purchases_small.csv                             1   1  ROW_KNOWLEDGE  ROW_KNOWLEDGE  filing_date
+    data/earnings_dates.csv                                    2   1  ROW_KNOWLEDGE  ROW_KNOWLEDGE  filing_date
+
+  >>> 4 file(s) read by a rule-8-running script have NO recoverable dating under EITHER reading:
+        research/deepvalue/data/company_tickers.json  (4 readers, 2 run rule 8; only external dating = git 2026-09-09)
+        research/deepvalue/universe_under2b.csv  (11 readers, 9 run rule 8; only external dating = git 2026-09-09)
+        research/universe.json  (258 readers, 253 run rule 8; only external dating = git 2026-09-09)
+        research/universe_broad.json  (232 readers, 229 run rule 8; only external dating = git 2026-09-09)
+
+================================================================================================================
+PART B  INSTRUMENT: T1 and T2 under three DATING RULES for the ONE exogenous input
+        NONE      = the file publishes no as-of date (what an UNDATED file forces).
+        ASOF_TRUE = published as-of is the snapshot day (idea 623's G5 courtesy).
+        ASOF_EARLY= published as-of is the panel's first day: the counterfactual in which the value
+                    really was knowable in 2010, so a key built on it is CAUSAL.
+================================================================================================================
+  G3  idea 623's committed .certs.csv reproduced under ASOF_TRUE on 20/20 keys   max|dT2_med| 0.000e+00 [tol 0 exactly]   T1_flag agreement 20/20
+  G5  idea 623's |IC vs realised forward return| reproduced on 20/20 keys          max|d| 5.551e-17   [tol 0.005]
+
+  key       family    exog    |IC| |  T1med  T1? |       NONE T2med/flag/truth |  ASOF_TRUE T2med/flag/truth | ASOF_EARLY T2med/flag/truth
+  MOM       causal    False 0.0817 |    0.0  ok  |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  R6        causal    False 0.0650 |    0.0  ok  |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  DDTR      causal    False 0.0717 |    0.0  ok  |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  REBASED   causal    False 0.1840 |    0.0  ok  |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  VOL20     causal    False 0.0567 |    0.0  ok  |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  VOLSH     causal    False 0.4122 |    0.0  ok  |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  PRICE     level     False 0.4420 |  252.0 FLAG |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  FROZEN    level     False 0.2604 |  266.5 FLAG |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  DVOL      level     False 0.5981 |  182.0 FLAG |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  PXDVOL    level     False 0.5996 |  215.0 FLAG |        0.0  ok  F |        0.0  ok  F |        0.0  ok  F
+  MCAP      both      True  0.7092 |  252.0 FLAG |        0.0  ok  T |        inf FLAG T |        0.0  ok  F
+  MCAPFRZ   both      True  0.4493 |  230.5 FLAG |        0.0  ok  T |        inf FLAG T |        0.0  ok  F
+  PXTERM    both      False 0.4979 |  225.5 FLAG |      294.0 FLAG T |      294.0 FLAG T |      294.0 FLAG T
+  FWDRET    termonly  False 1.0000 |    0.0  ok  |      330.0 FLAG T |      330.0 FLAG T |      330.0 FLAG T
+  TERMREB   termonly  False 1.0000 |    0.0  ok  |      368.0 FLAG T |      368.0 FLAG T |      368.0 FLAG T
+  MCAPREB   termonly  True  0.4405 |    0.0  ok  |        0.0  ok  T |        inf FLAG T |        0.0  ok  F
+  SHARES    termonly  True  0.3462 |    0.0  ok  |        0.0  ok  T |        inf FLAG T |        0.0  ok  F
+  FULLVOL   termonly  False 0.1274 |    0.0  ok  |      291.0 FLAG T |      291.0 FLAG T |      291.0 FLAG T
+  FULLSHRP  termonly  False 0.6104 |    0.0  ok  |      334.0 FLAG T |      334.0 FLAG T |      334.0 FLAG T
+  MAXMOVE   termonly  False 0.1099 |    1.0  ok  |      330.0 FLAG T |      330.0 FLAG T |      330.0 FLAG T
+
+  P3 check  max|T1_med(rule) - T1_med(NONE)| over rules = 0.000e+00  -> T1 is INVARIANT to the dating rule.
+  P4 check  T2(NONE) == T2(ASOF_EARLY) on all 20 keys: True;  ground truths differ on 4 key(s) (MCAP, MCAPFRZ, MCAPREB, SHARES).
+            -> the certificate's OUTPUT is identical in a world where the snapshot is terminal and one
+               where the same value was knowable in 2010.  Without the column this is UNIDENTIFIED.
+
+  CONFUSION vs the dating ground truth (tol = 1 rank step), per rule and certificate:
+    NONE        T1     TP  3  FP  4  FN  7  TN  6   detection 3/10
+    NONE        T2     TP  6  FP  0  FN  4  TN 10   detection 6/10
+    NONE        BOTH   TP  8  FP  4  FN  2  TN  6   detection 8/10
+    ASOF_TRUE   T1     TP  3  FP  4  FN  7  TN  6   detection 3/10
+    ASOF_TRUE   T2     TP 10  FP  0  FN  0  TN 10   detection 10/10
+    ASOF_TRUE   BOTH   TP 10  FP  4  FN  0  TN  6   detection 10/10
+    ASOF_EARLY  T1     TP  1  FP  6  FN  5  TN  8   detection 1/6
+    ASOF_EARLY  T2     TP  6  FP  0  FN  0  TN 14   detection 6/6
+    ASOF_EARLY  BOTH   TP  6  FP  6  FN  0  TN  8   detection 6/6
+
+  EXOG-ONLY slice (MCAP, MCAPFRZ, MCAPREB, SHARES -- the keys the as-of column decides):
+    NONE        T1&T2  TP 2  FP 0  FN 2  TN 0   detection 2/4
+    ASOF_TRUE   T1&T2  TP 4  FP 0  FN 0  TN 0   detection 4/4
+    ASOF_EARLY  T1&T2  TP 0  FP 2  FN 0  TN 2   detection 0/0
+
+================================================================================================================
+PART C  CONSEQUENCE: the certificate as a PRE-rule-8 gate, under each dating rule
+        Book: score = composite + dir*m*(key-0.5), above own 200d MA, vol20 < 0.60, top n=20, gross 0.75, W.
+        20 keys x 2 dirs x 3 m x 3 cost rungs = 360 arms; every one written to .arms.csv.
+================================================================================================================
+  comparand                      CAGR_F   Sh_F     DD_F  Sh_H1  Sh_H2  CAGR_OOS  Sh_OOS   DD_OOS
+  SPY                            14.13%  0.862  -33.72%  0.891  0.858    15.45%   0.882  -33.72%
+  RULES v2 (live baseline)        3.77%  0.565  -14.58%  0.568  0.566     3.77%   0.558  -14.58%
+  RULES v1 (previous)             7.41%  0.554  -34.92%  0.721  0.407     6.66%   0.499  -34.92%
+  CONTROL (no tilt)               6.12%  0.438  -25.90%  0.628  0.281     6.23%   0.434  -25.90%
+  4b bars: MaxDD >= 0.60 x SPY = -20.23%;  CAGR >= 0.70 x SPY = 9.89%;  Sharpe > SPY in H1 0.891 / H2 0.858 / OOS 0.882
+
+  360 arms computed and written.  PROTOCOL 4a passes 0/360; 4b passes 0/360.
+  4b failing legs over all 360 arms: DD 357  H1 332  H2 286  OOS 285  CAGR 267
+
+  PROTOCOL 8: (KEY, dir, m) chosen on 2010-2016 IS Sharpe ALONE among the keys the gate admits;
+              2017-2026 read exactly once.  10 bps.  Both gate forms reported.
+
+    gate T2   / NONE       : admits 14/20 keys ( 84 arms) -> pick MCAP/NEG/m=1.00  [TERMINAL-DATED]
+                            IS Sharpe  0.963 | OOS  26.31% /  1.584 / -24.87%  vs SPY 15.45%/0.882/-33.72%  vs v2 3.77%/0.558/-14.58%
+                            full  20.29% /  1.374 / -24.87%  halves 1.148/1.570  4a False  4b False
+                            BLIND SPOT: 4 admitted key(s) are terminal-dated and unseen [MCAP;MCAPFRZ;MCAPREB;SHARES]; best of them MCAP/NEG IS 0.963 (OOS 1.584), margin under the pick +0.000
+    gate T2   / ASOF_TRUE  : admits 10/20 keys ( 60 arms) -> pick PXDVOL/NEG/m=1.00  [CAUSAL]
+                            IS Sharpe  0.838 | OOS  24.41% /  1.588 / -24.38%  vs SPY 15.45%/0.882/-33.72%  vs v2 3.77%/0.558/-14.58%
+                            full  18.17% /  1.339 / -24.38%  halves 0.993/1.616  4a False  4b False
+                            BLIND SPOT: none -- the gate admits no terminal-dated key.
+    gate T2   / ASOF_EARLY : admits 14/20 keys ( 84 arms) -> pick MCAP/NEG/m=1.00  [CAUSAL]
+                            IS Sharpe  0.963 | OOS  26.31% /  1.584 / -24.87%  vs SPY 15.45%/0.882/-33.72%  vs v2 3.77%/0.558/-14.58%
+                            full  20.29% /  1.374 / -24.87%  halves 1.148/1.570  4a False  4b False
+                            BLIND SPOT: none -- the gate admits no terminal-dated key.
+    gate BOTH / NONE       : admits  8/20 keys ( 48 arms) -> pick VOL20/NEG/m=0.50  [CAUSAL]
+                            IS Sharpe  0.796 | OOS   5.79% /  0.467 / -26.88%  vs SPY 15.45%/0.882/-33.72%  vs v2 3.77%/0.558/-14.58%
+                            full   7.26% /  0.583 / -26.88%  halves 0.839/0.372  4a False  4b False
+                            BLIND SPOT: 2 admitted key(s) are terminal-dated and unseen [MCAPREB;SHARES]; best of them MCAPREB/NEG IS 0.683 (OOS 0.962), margin under the pick +0.113
+    gate BOTH / ASOF_TRUE  : admits  6/20 keys ( 36 arms) -> pick VOL20/NEG/m=0.50  [CAUSAL]
+                            IS Sharpe  0.796 | OOS   5.79% /  0.467 / -26.88%  vs SPY 15.45%/0.882/-33.72%  vs v2 3.77%/0.558/-14.58%
+                            full   7.26% /  0.583 / -26.88%  halves 0.839/0.372  4a False  4b False
+                            BLIND SPOT: none -- the gate admits no terminal-dated key.
+    gate BOTH / ASOF_EARLY : admits  8/20 keys ( 48 arms) -> pick VOL20/NEG/m=0.50  [CAUSAL]
+                            IS Sharpe  0.796 | OOS   5.79% /  0.467 / -26.88%  vs SPY 15.45%/0.882/-33.72%  vs v2 3.77%/0.558/-14.58%
+                            full   7.26% /  0.583 / -26.88%  halves 0.839/0.372  4a False  4b False
+                            BLIND SPOT: none -- the gate admits no terminal-dated key.
+
+  P5 by gate form: T2-only MISS, T1&T2 (recommended) MISS.
+    gate T2  : the as-of column moves the pick MCAP/NEG -> PXDVOL/NEG  (MOVES);  dSharpe_OOS +0.0035;  admitted keys 14 -> 10
+    gate BOTH: the as-of column moves the pick VOL20/NEG -> VOL20/NEG  (NO MOVE);  dSharpe_OOS +0.0000;  admitted keys 8 -> 6
+
+================================================================================================================
+PART D  PRE-REGISTERED PREDICTIONS, scored
+================================================================================================================
+  P1  HIT   gates G1-G5 pass at their stated tolerances
+  P2  HIT   at least one file read by a rule-8 script has NO recoverable dating (both readings)
+  P3  HIT   T1's readings are bit-identical across all three dating rules
+  P4  HIT   T2(NONE) == T2(ASOF_EARLY) on every key while the ground truths differ
+  P5  MISS  NONE picks a terminal-dated key that beats SPY OOS; ASOF_TRUE picks a causal one that does not (headline reading = the recommended T1&T2 gate)
+  P6  HIT   4a 0/360 and 4b 0/360
+
+  PROPOSED PROTOCOL WORDING (report-only; PROTOCOL.md is NOT edited by this run):
+    10. Every non-price input a script reads must publish an AS-OF DATE -- a column, or a
+        stated constant in the script beside the read. An input with no as-of date is
+        UNDATED and any key built on it is treated as TERMINAL-DATED until dated: both
+        the T1 and the T2 certificates are structurally blind to it, so the certificate
+        result must not be quoted for that key.
+  RUNTIME 210.0s
