@@ -1,0 +1,416 @@
+=========================================================================================================================================================================================
+Idea 605 is-the-TWIN-WIN-RATE-a-SWITCHING-COST-statistic (lane C) | 2026-09-10_is-the-TWIN-WIN-RATE-a-SWITCHING-COST-statistic_C.py
+=========================================================================================================================================================================================
+Base book (fixed, idea 28/42/336/399's): EWALL(G) = equal weight every name above its
+  own 200d MA with vol20 < 0.60, at G/E_t, weekly, next-day execution.
+Overlay: carry the book at (1-depth) whenever panel breadth is BELOW the threshold.
+Comparand for EVERY arm: the MATCHED-MEAN-GROSS STATIC TWIN (EWALL at constant g_eff).
+Tuned (2): cost rung in [0.0, 1.0, 2.0, 3.0, 5.0, 7.5, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 75.0, 100.0] bps, and cadence in ['D', 'W'].
+Reported never tuned: family, level, w, depth, panel, gross.  Population is idea 602's,
+  joined row-for-row at rungs [0.0, 10.0, 25.0] in G3.  Tie bar |dSharpe| <= 1e-12.
+Exact ladder algebra: r_gate(c) = m*r0 - (c/1e4)*(m*t0 + g*|dm|), r_twin(c) = r0(g_eff)
+  - (c/1e4)*t0(g_eff); DRAG = SWITCH_TAX + TIMING with no residual (G5).
+
+=========================================================================================================================================================================================
+[0] REPRODUCTION GATES (all printed before any new number is read)
+  G1 derived ladder == live backtest through apply_gate, all 15 rungs: max |diff| = 3.469e-18 (bar 1e-12) -> PASS
+  G2 fast metrics vs engine.metrics on 200 series: max |diff| = 0.000e+00 (bar 1e-12) -> PASS
+  G4 idea 84 EWALL U56 g=0.85 @10bps: 11.755% / 1.046 / -17.894% / H 1.073 / 1.025  (published 11.8% / 1.05 / -17.9% / 1.07 / 1.04) -> PASS
+  G3 source: idea 602 2026-09-10_is-the-MATCHED-GROSS-TWIN-win-rate-a-FIRING-RATE-function_C.cells.csv, 1989 rows (1944 gated)
+  SMALL panel: dropped 44 names with max_1d_move >= 1.0 -> 439 names + SPY (idea 399/602's construction, so their rows join)
+
+=========================================================================================================================================================================================
+PANEL U56: 56 columns, 2008-01-02 -> 2026-09-09, eval from 2009-01-13 (4441 days)
+  SPY 15.15% / 0.886 / -33.72%; 4b bars: CAGR floor 10.61%, DD cap -20.23%, halves 0.959/0.826, OOS 0.876
+  twin gross cache: 37 backtests on a 0.01 grid spanning 0.60-1.00
+
+=========================================================================================================================================================================================
+PANEL B136: 136 columns, 2008-01-02 -> 2026-09-04, eval from 2009-01-13 (4439 days)
+  SPY 15.23% / 0.889 / -33.72%; 4b bars: CAGR floor 10.66%, DD cap -20.23%, halves 0.957/0.834, OOS 0.882
+  twin gross cache: 43 backtests on a 0.01 grid spanning 0.58-1.01
+
+=========================================================================================================================================================================================
+PANEL SMALL439: 440 columns, 2010-01-04 -> 2026-09-04, eval from 2011-01-13 (3934 days)
+  SPY 14.13% / 0.862 / -33.72%; 4b bars: CAGR floor 9.89%, DD cap -20.23%, halves 0.891/0.858, OOS 0.882
+  twin gross cache: 54 backtests on a 0.01 grid spanning 0.13-1.01
+
+=========================================================================================================================================================================================
+POPULATION: 9720 gated cells = 648 twin pairs x 15 cost rungs (3 panels x 18 arms x 3 depths x 2 cadences x 2 gross).  Ties: 270.
+
+=========================================================================================================================================================================================
+[0b] G3 / G5
+  G3 idea 602 join: 1944 rows on ['dSharpe', 'Sharpe', 'twin_Sharpe', 'on_share', 'g_eff', 'dOOS', 'dMaxDD']
+     max |diff| by column: dSharpe 3.192e-16  Sharpe 4.441e-16  twin_Sharpe 2.220e-16  on_share 9.714e-17  g_eff 1.110e-16  dOOS 3.123e-16  dMaxDD 4.857e-16
+     per panel: B136 4.441e-16  SMALL439 4.857e-16  U56 3.331e-16
+  -> G3 PASS (bar 1e-9)
+     idea 602's published family x rung win rate, recomputed here:
+rung    0.0   10.0  25.0
+family                  
+ABS    0.574 0.481 0.287
+QEXP   0.630 0.574 0.463
+QROLL  0.991 0.963 0.833
+     published: QROLL 0.991 / 0.963 / 0.833, QEXP 0.750 / 0.574* / --, ABS 0.574 / 0.481 / 0.278  (*idea 602 quotes ABS at 0/10/25)
+  G5 drag identity DRAG == SWITCH_TAX + TIMING on 648 arms: max |resid| 2.168e-17 (bar 1e-15) -> PASS
+
+=========================================================================================================================================================================================
+[1] Q1 - THE COST LADDER.  Twin win rate at every rung, by family (all panels, both
+    gross, both cadences, all depths pooled - i.e. the same population at every rung).
+rung    0.0    1.0    2.0    3.0    5.0    7.5    10.0   15.0   20.0   25.0   30.0   40.0   50.0   75.0   100.0
+family                                                                                                         
+ABS     0.574  0.574  0.574  0.556  0.537  0.500  0.481  0.444  0.398  0.287  0.222  0.185  0.111  0.074  0.056
+QEXP    0.630  0.630  0.630  0.630  0.602  0.574  0.574  0.519  0.481  0.463  0.444  0.426  0.370  0.204  0.148
+QROLL   0.991  0.988  0.984  0.981  0.977  0.972  0.963  0.917  0.889  0.833  0.741  0.634  0.477  0.278  0.213
+POOLED  0.861  0.860  0.856  0.852  0.841  0.827  0.818  0.772  0.739  0.681  0.605  0.525  0.398  0.231  0.176
+
+  median dSharpe at every rung:
+rung     0.0     1.0     2.0     3.0     5.0     7.5     10.0    15.0    20.0    25.0    30.0    40.0    50.0    75.0    100.0
+family                                                                                                                        
+ABS    +0.0090 +0.0076 +0.0052 +0.0036 +0.0026 +0.0003 -0.0024 -0.0101 -0.0166 -0.0222 -0.0258 -0.0343 -0.0498 -0.0648 -0.0797
+QEXP   +0.0078 +0.0072 +0.0069 +0.0068 +0.0066 +0.0064 +0.0062 +0.0024 +0.0000 +0.0000 +0.0000 +0.0000 +0.0000 -0.0081 -0.0134
+QROLL  +0.0510 +0.0500 +0.0491 +0.0465 +0.0439 +0.0411 +0.0396 +0.0356 +0.0307 +0.0263 +0.0204 +0.0084 -0.0009 -0.0204 -0.0423
+POOLED +0.0366 +0.0359 +0.0341 +0.0334 +0.0319 +0.0280 +0.0251 +0.0201 +0.0159 +0.0104 +0.0074 +0.0015 -0.0045 -0.0234 -0.0391
+
+  pre-registered Q1 bar: every adjacent step non-increasing AND rho <= -0.80
+family      w0     w10    w100    span  monotone_down  n_up_steps     rho
+   ABS +0.5741 +0.4815 +0.0556 +0.5185           True           0 -0.9964
+  QEXP +0.6296 +0.5741 +0.1481 +0.4815           True           0 -0.9901
+ QROLL +0.9907 +0.9630 +0.2130 +0.7778           True           0 -1.0000
+POOLED +0.8611 +0.8179 +0.1759 +0.6852           True           0 -1.0000
+  -> Q1 CONFIRMED
+
+  the same ladder split by panel (the population is fixed, only cost moves):
+rung             0.0    1.0    2.0    3.0    5.0    7.5    10.0   15.0   20.0   25.0   30.0   40.0   50.0   75.0   100.0
+panel    family                                                                                                         
+B136     ABS     0.444  0.444  0.444  0.444  0.444  0.444  0.389  0.333  0.222  0.111  0.111  0.056  0.000  0.000  0.000
+         QEXP    0.611  0.611  0.611  0.611  0.611  0.556  0.556  0.556  0.556  0.556  0.500  0.444  0.444  0.278  0.111
+         QROLL   0.986  0.979  0.972  0.972  0.972  0.972  0.944  0.903  0.889  0.819  0.708  0.611  0.465  0.306  0.257
+SMALL439 ABS     0.444  0.444  0.444  0.389  0.333  0.222  0.222  0.222  0.194  0.083  0.000  0.000  0.000  0.000  0.000
+         QEXP    0.611  0.611  0.611  0.611  0.528  0.500  0.500  0.333  0.222  0.167  0.167  0.167  0.000  0.000  0.000
+         QROLL   0.986  0.986  0.979  0.972  0.958  0.944  0.944  0.861  0.792  0.722  0.583  0.444  0.243  0.097  0.083
+U56      ABS     0.833  0.833  0.833  0.833  0.833  0.833  0.833  0.778  0.778  0.667  0.556  0.500  0.333  0.222  0.167
+         QEXP    0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.333  0.333
+         QROLL   1.000  1.000  1.000  1.000  1.000  1.000  1.000  0.986  0.986  0.958  0.931  0.847  0.722  0.431  0.299
+
+=========================================================================================================================================================================================
+[2] Q2 - IS THE FAMILY ORDERING A SWITCHING-COST RANKING?  (the deciding test)
+     rung  spread  rho_vs_c0   top bottom  win_ABS  win_QEXP  win_QROLL
+  +0.0000 +0.4167    +1.0000 QROLL    ABS  +0.5741   +0.6296    +0.9907
+  +1.0000 +0.4144    +1.0000 QROLL    ABS  +0.5741   +0.6296    +0.9884
+  +2.0000 +0.4097    +1.0000 QROLL    ABS  +0.5741   +0.6296    +0.9838
+  +3.0000 +0.4259    +1.0000 QROLL    ABS  +0.5556   +0.6296    +0.9815
+  +5.0000 +0.4398    +1.0000 QROLL    ABS  +0.5370   +0.6019    +0.9769
+  +7.5000 +0.4722    +1.0000 QROLL    ABS  +0.5000   +0.5741    +0.9722
+ +10.0000 +0.4815    +1.0000 QROLL    ABS  +0.4815   +0.5741    +0.9630
+ +15.0000 +0.4722    +1.0000 QROLL    ABS  +0.4444   +0.5185    +0.9167
+ +20.0000 +0.4907    +1.0000 QROLL    ABS  +0.3981   +0.4815    +0.8889
+ +25.0000 +0.5463    +1.0000 QROLL    ABS  +0.2870   +0.4630    +0.8333
+ +30.0000 +0.5185    +1.0000 QROLL    ABS  +0.2222   +0.4444    +0.7407
+ +40.0000 +0.4491    +1.0000 QROLL    ABS  +0.1852   +0.4259    +0.6343
+ +50.0000 +0.3657    +1.0000 QROLL    ABS  +0.1111   +0.3704    +0.4769
+ +75.0000 +0.2037    +1.0000 QROLL    ABS  +0.0741   +0.2037    +0.2778
++100.0000 +0.1574    +1.0000 QROLL    ABS  +0.0556   +0.1481    +0.2130
+
+  leg (a) between-family spread at 0 bps <= 0.10:  spread = 0.4167 -> FALSE
+  leg (b) ordering inverts at some rung (rho vs the 0-bps order <= 0):  min rho = +1.0000 -> FALSE
+  => the family ordering IS NOT a switching-cost ranking (pre-registered).
+  WHERE it inverts: first rung with rho <= 0 is nan bps; inside the TRADABLE band (0-25 bps, PROTOCOL charges 10) min rho = +1.0000, top family ['QROLL'], spread 0.410-0.546.  A ranking that only inverts above the band is not a
+  ranking any live book could observe; report both numbers, never just the inversion.
+
+  crossing cost: the first rung at which each family's win rate falls below 0.50
+    ABS     win@0 0.574  win@10 0.481  win@100 0.056  first rung < 0.50: 10.0
+    QEXP    win@0 0.630  win@10 0.574  win@100 0.148  first rung < 0.50: 20.0
+    QROLL   win@0 0.991  win@10 0.963  win@100 0.213  first rung < 0.50: 50.0
+    POOLED  win@0 0.861  win@10 0.818  win@100 0.176  first rung < 0.50: 50.0
+
+  arm-level rank stability: Spearman of the 648 arms' dSharpe at rung c against rung 0
+    rung  rho_vs_0  sign_agree
+  0.0000    1.0000      1.0000
+  1.0000    0.9997      0.9985
+  2.0000    0.9986      0.9954
+  3.0000    0.9971      0.9907
+  5.0000    0.9920      0.9799
+  7.5000    0.9810      0.9660
+ 10.0000    0.9643      0.9568
+ 15.0000    0.9205      0.9105
+ 20.0000    0.8698      0.8781
+ 25.0000    0.7934      0.8194
+ 30.0000    0.7142      0.7438
+ 40.0000    0.5654      0.6636
+ 50.0000    0.4141      0.5370
+ 75.0000    0.1570      0.3704
+100.0000    0.0293      0.3148
+
+=========================================================================================================================================================================================
+[3] Q3 - MECHANISM: DRAG = SWITCH_TAX + TIMING (exact, G5), and what orders c*
+    Units: drag terms are daily return per 1 bp of cost, x1e-4; i.e. a drag of 1.0 costs
+    1 bp of daily return at 1e4 bps.  Positive drag = the GATE pays more than its twin.
+          n  switch_yr      tax   timing    drag_  tax_share     cstar     dSh0
+family                                                                         
+ABS     108   +4.12843 +0.00716 -0.00272 +0.00353   +1.64718  +8.17674 +0.00896
+QEXP    108   +0.96483 +0.00137 -0.00077 +0.00053   +1.57763 +18.34884 +0.00780
+QROLL   432   +3.36857 +0.00542 -0.00240 +0.00292   +1.75895 +49.97311 +0.05097
+
+  by family x cadence (Q4's handle):
+                  n  switch_yr      tax   timing    drag_  cstar_med  cstar_finite
+family cadence                                                                    
+ABS    D         54   +6.24184 +0.01024 -0.00274 +0.00701   +5.69980            54
+       W         54   +3.17766 +0.00496 -0.00271 +0.00183  +16.82013            52
+QEXP   D         54   +1.40925 +0.00206 -0.00077 +0.00135  +17.14124            54
+       W         54   +0.76868 +0.00103 -0.00076 +0.00030  +40.29522            46
+QROLL  D        216   +4.88254 +0.00817 -0.00242 +0.00564  +36.84397           216
+       W        216   +1.86917 +0.00356 -0.00238 +0.00109  +97.71913           162
+
+  share of arms where TIMING (not the switch tax) carries the sign of the drag: 0.093; where |timing| > |tax|: 0.056
+  median tax / |drag| = +1.701; arms with drag <= 0 (the gate is CHEAPER than its own twin): 54 of 648
+
+  does the switch tax order the crossover cost c*?  (finite c* only)
+    ABS     n=  60  rho(tax, c*) -0.5950   rho(drag, c*) -0.6333   rho(dSharpe_0, c*) +0.4798   median c*   24.37 bps
+    QEXP    n=  60  rho(tax, c*) -0.4117   rho(drag, c*) -0.4662   rho(dSharpe_0, c*) +0.4890   median c*   50.71 bps
+    QROLL   n= 374  rho(tax, c*) -0.5614   rho(drag, c*) -0.6035   rho(dSharpe_0, c*) +0.2838   median c*   46.56 bps
+    POOLED  n= 494  rho(tax, c*) -0.5131   rho(drag, c*) -0.5521   rho(dSharpe_0, c*) +0.3620   median c*   45.79 bps
+  arms never crossing on 0-500 bps: 64; already <= 0 at zero cost: 90
+
+  SUFFICIENCY: at MATCHED switch tax, does the family gap in the win rate survive?
+   win rate at 10 bps inside equal-count switch-tax buckets:
+family    ABS   QEXP  QROLL  tax_med  max_gap
+tb                                           
+0      1.0000 0.4242 1.0000   0.0011   0.5758
+1      0.7222 0.8947 0.9890   0.0028   0.2668
+2      0.7500 0.7333 0.9787   0.0050   0.2454
+3      0.3214 0.6667 0.9681   0.0083   0.6467
+4      0.1875 1.0000 0.8936   0.0160   0.8125
+   cell counts:
+family  ABS  QEXP  QROLL
+tb                      
+0         6    66     59
+1        18    19     91
+2        24    15     94
+3        28     6     94
+4        32     2     94
+   median within-bucket family gap 0.576, max 0.812  -> the family label survives matching on the switch tax
+
+   pooled AUC for the win label at 10 bps: switch_tax 0.5103 (sign-flipped: less tax -> win) | drag 0.5292 | on_share 0.5592 | g_eff 0.5374
+
+=========================================================================================================================================================================================
+[4] Q4 - CADENCE (tuned param 2): the same signal, a different switch count
+rung            0.0    1.0    2.0    3.0    5.0    7.5    10.0   15.0   20.0   25.0   30.0   40.0   50.0   75.0   100.0
+family cadence                                                                                                         
+ABS    D        0.593  0.593  0.593  0.556  0.519  0.444  0.407  0.370  0.333  0.222  0.148  0.074  0.000  0.000  0.000
+       W        0.556  0.556  0.556  0.556  0.556  0.556  0.556  0.519  0.463  0.352  0.296  0.296  0.222  0.148  0.111
+QEXP   D        0.667  0.667  0.667  0.667  0.630  0.593  0.593  0.519  0.444  0.407  0.370  0.333  0.333  0.111  0.074
+       W        0.593  0.593  0.593  0.593  0.574  0.556  0.556  0.519  0.519  0.519  0.519  0.519  0.407  0.296  0.222
+QROLL  D        1.000  0.995  0.991  0.991  0.981  0.972  0.963  0.898  0.861  0.796  0.644  0.472  0.287  0.074  0.028
+       W        0.981  0.981  0.977  0.972  0.972  0.972  0.963  0.935  0.917  0.870  0.838  0.796  0.667  0.481  0.398
+
+  median dSharpe:
+rung             0.0     1.0     2.0     3.0     5.0     7.5     10.0    15.0    20.0    25.0    30.0    40.0    50.0    75.0    100.0
+family cadence                                                                                                                        
+ABS    D       +0.0117 +0.0092 +0.0056 +0.0034 +0.0009 -0.0023 -0.0055 -0.0138 -0.0223 -0.0308 -0.0393 -0.0562 -0.0732 -0.1143 -0.1568
+       W       +0.0048 +0.0045 +0.0041 +0.0038 +0.0031 +0.0022 +0.0013 +0.0003 -0.0006 -0.0039 -0.0076 -0.0140 -0.0173 -0.0286 -0.0435
+QEXP   D       +0.0142 +0.0136 +0.0129 +0.0123 +0.0109 +0.0093 +0.0076 +0.0007 +0.0000 +0.0000 -0.0031 -0.0045 -0.0071 -0.0180 -0.0260
+       W       +0.0069 +0.0069 +0.0068 +0.0067 +0.0066 +0.0063 +0.0060 +0.0054 +0.0047 +0.0040 +0.0033 +0.0002 +0.0000 +0.0000 -0.0015
+QROLL  D       +0.0567 +0.0539 +0.0512 +0.0492 +0.0462 +0.0431 +0.0400 +0.0318 +0.0225 +0.0148 +0.0093 -0.0034 -0.0176 -0.0545 -0.0949
+       W       +0.0454 +0.0441 +0.0435 +0.0427 +0.0417 +0.0406 +0.0391 +0.0364 +0.0337 +0.0317 +0.0281 +0.0205 +0.0126 -0.0017 -0.0151
+
+  decay by cadence (if the win rate is a switching-cost statistic, D - which switches far
+  more often - must decay far faster than W at the same signal):
+family cadence  switch_yr     tax    win0   win10  win100  decay_0_100     rho  cstar_med
+   ABS       D    +6.2418 +0.0102 +0.5926 +0.4074 +0.0000      +0.5926 -0.9928    +5.6998
+   ABS       W    +3.1777 +0.0050 +0.5556 +0.5556 +0.1111      +0.4444 -0.9477   +16.8201
+  QEXP       D    +1.4093 +0.0021 +0.6667 +0.5926 +0.0741      +0.5926 -0.9892   +17.1412
+  QEXP       W    +0.7687 +0.0010 +0.5926 +0.5556 +0.2222      +0.3704 -0.9719   +40.2952
+ QROLL       D    +4.8825 +0.0082 +1.0000 +0.9630 +0.0278      +0.9722 -0.9991   +36.8440
+ QROLL       W    +1.8692 +0.0036 +0.9815 +0.9630 +0.3981      +0.5833 -0.9955   +97.7191
+
+  switch-count ratio D:W vs decay ratio D:W  (the switching-cost story predicts the
+  two ratios move together; a decay ratio near 1 at a switch ratio far from 1 refutes it)
+    ABS     switches/yr D    6.24 vs W    3.18 (ratio  1.96x)   decay 0->100bps D +0.593 vs W +0.444 (ratio  1.33x)   tax D 0.01024 vs W 0.00496
+    QEXP    switches/yr D    1.41 vs W    0.77 (ratio  1.83x)   decay 0->100bps D +0.593 vs W +0.370 (ratio  1.60x)   tax D 0.00206 vs W 0.00103
+    QROLL   switches/yr D    4.88 vs W    1.87 (ratio  2.61x)   decay 0->100bps D +0.972 vs W +0.583 (ratio  1.67x)   tax D 0.00817 vs W 0.00356
+
+=========================================================================================================================================================================================
+[5] Q5 - PROTOCOL KEEP PATHS AND RULE 8
+  4a (Sharpe > RULES v2 both halves, MaxDD no worse) and 4b (vs SPY) on all 9720 gated grid points:
+         n  pass4a  pass4b  both
+rung                            
+0.0    648       3     306     1
+1.0    648       3     295     1
+2.0    648       3     285     1
+3.0    648       3     275     1
+5.0    648       2     245     0
+7.5    648       0     179     0
+10.0   648       0     141     0
+15.0   648       0      94     0
+20.0   648       0      79     0
+25.0   648       0      45     0
+30.0   648       0      13     0
+40.0   648       0       1     0
+50.0   648       0       0     0
+75.0   648       0       0     0
+100.0  648       0       0     0
+
+  by gross at the PROTOCOL rung (10 bps):
+                n  pass4a  pass4b
+gross family                     
+0.75  ABS      54       0       0
+      QEXP     54       0      10
+      QROLL   216       0      14
+1.00  ABS      54       0      10
+      QEXP     54       0       8
+      QROLL   216       0      99
+
+  every 4a pass (14):
+panel   rung  gross                            arm  on_share   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe  dSharpe
+ B136 0.0000 0.7500 QROLL L0.17 w252 d0.50 D g0.75    0.2183 0.1112  1.2563 -0.1139 1.3091 1.2015      1.3255   0.1506
+ B136 1.0000 0.7500 QROLL L0.17 w252 d0.50 D g0.75    0.2183 0.1101  1.2447 -0.1140 1.2987 1.1886      1.3130   0.1469
+ B136 2.0000 0.7500 QROLL L0.17 w252 d0.50 D g0.75    0.2183 0.1090  1.2331 -0.1141 1.2883 1.1757      1.3006   0.1433
+ B136 3.0000 0.7500 QROLL L0.17 w252 d0.50 D g0.75    0.2183 0.1079  1.2215 -0.1142 1.2779 1.1629      1.2881   0.1396
+ B136 5.0000 0.7500 QROLL L0.17 w252 d0.50 D g0.75    0.2183 0.1056  1.1983 -0.1146 1.2571 1.1371      1.2632   0.1323
+ B136 0.0000 0.7500 QROLL L0.17 w252 d1.00 D g0.75    0.2183 0.1049  1.2826 -0.0932 1.2936 1.2739      1.4104   0.1766
+ B136 1.0000 0.7500 QROLL L0.17 w252 d1.00 D g0.75    0.2183 0.1036  1.2678 -0.0947 1.2807 1.2569      1.3941   0.1697
+ B136 2.0000 0.7500 QROLL L0.17 w252 d1.00 D g0.75    0.2183 0.1023  1.2529 -0.0963 1.2678 1.2399      1.3778   0.1629
+ B136 3.0000 0.7500 QROLL L0.17 w252 d1.00 D g0.75    0.2183 0.1009  1.2381 -0.0978 1.2549 1.2228      1.3615   0.1560
+ B136 0.0000 0.7500 QROLL L0.17 w504 d1.00 W g0.75    0.1922 0.1008  1.1778 -0.1107 1.2975 1.0510      1.1905   0.0718
+ B136 1.0000 0.7500 QROLL L0.17 w504 d1.00 W g0.75    0.1922 0.0999  1.1686 -0.1113 1.2889 1.0411      1.1809   0.0707
+ B136 2.0000 0.7500 QROLL L0.17 w504 d1.00 W g0.75    0.1922 0.0991  1.1594 -0.1119 1.2804 1.0313      1.1713   0.0695
+ B136 3.0000 0.7500 QROLL L0.17 w504 d1.00 W g0.75    0.1922 0.0982  1.1503 -0.1124 1.2718 1.0214      1.1617   0.0683
+ B136 5.0000 0.7500 QROLL L0.17 w504 d1.00 W g0.75    0.1922 0.0965  1.1319 -0.1136 1.2547 1.0017      1.1424   0.0659
+
+  4b passes 1958; the ungated parents' own 4b at each rung (inheritance check):
+rung            0.0    1.0    2.0    3.0    5.0    7.5    10.0   15.0   20.0   25.0   30.0   40.0   50.0   75.0   100.0
+panel    gross                                                                                                         
+B136     0.75    True   True   True   True   True   True   True  False  False  False  False  False  False  False  False
+         1.00   False  False  False  False  False  False  False  False  False  False  False  False  False  False  False
+SMALL439 0.75   False  False  False  False  False  False  False  False  False  False  False  False  False  False  False
+         1.00   False  False  False  False  False  False  False  False  False  False  False  False  False  False  False
+U56      0.75    True   True   True   True   True  False  False  False  False  False  False  False  False  False  False
+         1.00   False  False  False  False  False  False  False  False  False  False  False  False  False  False  False
+  4b failure modes:
+fail4b
+H1,H2,OOS,DD,CAGR    4360
+-                    1958
+CAGR                 1077
+DD                    870
+H1,H2,OOS,CAGR        387
+H1,CAGR               351
+H1,H2,CAGR            113
+H1                    108
+H2,CAGR               107
+H2,DD                  86
+
+  Rule 8: chooser over (level, w, depth) on IS <= 2016-12-31 Sharpe, OOS 2017-01-01+ read once, g=0.75.  270 picks (3 panels x 3 families x 2 cadences x 15 rungs).
+        n  beat_nogate  mean_vs_nogate  OOS_twin_win  pass4b  pass4a  regret
+rung                                                                        
+0.0    18           12          0.0365        0.6667      11       1 -0.1193
+1.0    18           12          0.0349        0.6667      10       1 -0.1191
+2.0    18           11          0.0295        0.6111      10       1 -0.1227
+3.0    18           11          0.0279        0.6111       9       1 -0.1225
+5.0    18           11          0.0245        0.6111       7       1 -0.1223
+7.5    18           11          0.0204        0.6111       3       0 -0.1220
+10.0   18           11          0.0163        0.6111       2       0 -0.1218
+15.0   18           10          0.0200        0.5556       0       0 -0.1112
+20.0   18           10          0.0096        0.5556       0       0 -0.1148
+25.0   18           10          0.0042        0.5556       0       0 -0.1135
+30.0   18           10         -0.0033        0.5556       0       0 -0.1144
+40.0   18            8         -0.0068        0.4444       0       0 -0.1060
+50.0   18            6         -0.0166        0.3333       0       0 -0.1053
+75.0   18            5         -0.0401        0.2778       0       0 -0.1057
+100.0  18            4         -0.0171        0.2222       0       0 -0.0643
+
+  by family x rung, share of picks whose OOS Sharpe beats their own ungated parent:
+rung    0.0    1.0    2.0    3.0    5.0    7.5    10.0   15.0   20.0   25.0   30.0   40.0   50.0   75.0   100.0
+family                                                                                                         
+ABS     0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.500  0.333  0.333  0.333
+QEXP    0.333  0.333  0.167  0.167  0.167  0.167  0.167  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
+QROLL   1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  0.833  0.667  0.500  0.333
+
+  and the OOS twin win (does the pick beat its OWN matched-gross twin out of sample):
+rung    0.0    1.0    2.0    3.0    5.0    7.5    10.0   15.0   20.0   25.0   30.0   40.0   50.0   75.0   100.0
+family                                                                                                         
+ABS     0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.667  0.500  0.333  0.333  0.333
+QEXP    0.333  0.333  0.167  0.167  0.167  0.167  0.167  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.000
+QROLL   1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  1.000  0.833  0.667  0.500  0.333
+
+  picks beating SPY OOS 133 of 270; beating RULES v2 OOS 23; mean regret -0.1123; 4b passes 52, 4a 5
+
+  does the PICK ITSELF change with cost?  (per panel x family x cadence: how many distinct arms are picked across the 15 rungs)
+    distinct picks per chooser: median 1.5, max 5, unchanged across the whole ladder in 9 of 18 choosers
+
+  every rule-8 pick clearing 4b:
+panel    rung family cadence                           pick  OOS_Sharpe  OOS_CAGR  OOS_MaxDD  vs_nogate  OOS_dSharpe   p4a
+  U56  0.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.2450    0.1208    -0.1497     0.0554       0.0553 False
+  U56  0.0000    ABS       W     ABS L0.30 w0 d1.00 W g0.75      1.2554    0.1197    -0.1577     0.0658       0.0656 False
+  U56  0.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.1722    0.1198    -0.1577    -0.0174      -0.0174 False
+  U56  0.0000   QEXP       W    QEXP L0.17 w0 d0.25 W g0.75      1.2435    0.1234    -0.1577     0.0539       0.0539 False
+  U56  0.0000  QROLL       D QROLL L0.17 w504 d1.00 D g0.75      1.3781    0.1134    -0.1299     0.1885       0.1881 False
+  U56  1.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.2355    0.1198    -0.1499     0.0542       0.0541 False
+  U56  1.0000    ABS       W     ABS L0.30 w0 d1.00 W g0.75      1.2471    0.1189    -0.1578     0.0658       0.0657 False
+  U56  1.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.1638    0.1188    -0.1578    -0.0175      -0.0175 False
+  U56  1.0000   QEXP       W    QEXP L0.17 w0 d0.25 W g0.75      1.2351    0.1225    -0.1578     0.0538       0.0537 False
+  U56  2.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.2261    0.1187    -0.1500     0.0530       0.0530 False
+  U56  2.0000    ABS       W     ABS L0.30 w0 d1.00 W g0.75      1.2389    0.1180    -0.1579     0.0659       0.0657 False
+  U56  2.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.1554    0.1179    -0.1579    -0.0177      -0.0177 False
+  U56  2.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.1590    0.1183    -0.1579    -0.0140      -0.0140 False
+  U56  3.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.2167    0.1177    -0.1502     0.0519       0.0518 False
+  U56  3.0000    ABS       W     ABS L0.30 w0 d1.00 W g0.75      1.2307    0.1171    -0.1580     0.0659       0.0658 False
+  U56  3.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.1469    0.1169    -0.1580    -0.0178      -0.0178 False
+  U56  3.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.1507    0.1174    -0.1580    -0.0141      -0.0141 False
+  U56  5.0000    ABS       W     ABS L0.30 w0 d1.00 W g0.75      1.2142    0.1154    -0.1582     0.0660       0.0659 False
+  U56  5.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.1300    0.1150    -0.1582    -0.0181      -0.0181 False
+  U56  5.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.1340    0.1155    -0.1582    -0.0142      -0.0142 False
+ B136  0.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.1286    0.1122    -0.1706     0.0281       0.0280 False
+ B136  0.0000    ABS       W     ABS L0.30 w0 d0.25 W g0.75      1.1111    0.1140    -0.1734     0.0106       0.0105 False
+ B136  0.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.1005    0.1153    -0.1734     0.0000       0.0000 False
+ B136  0.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.1005    0.1153    -0.1734     0.0000       0.0000 False
+ B136  0.0000  QROLL       D QROLL L0.17 w252 d0.50 D g0.75      1.3255    0.1120    -0.1139     0.2250       0.2244  True
+ B136  0.0000  QROLL       W QROLL L0.17 w504 d0.50 W g0.75      1.2119    0.1062    -0.1294     0.1114       0.1108 False
+ B136  1.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.1197    0.1112    -0.1708     0.0274       0.0272 False
+ B136  1.0000    ABS       W     ABS L0.30 w0 d0.25 W g0.75      1.1028    0.1131    -0.1736     0.0104       0.0104 False
+ B136  1.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.0923    0.1143    -0.1737     0.0000       0.0000 False
+ B136  1.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.0923    0.1143    -0.1737     0.0000       0.0000 False
+ B136  1.0000  QROLL       D QROLL L0.17 w252 d0.50 D g0.75      1.3130    0.1109    -0.1140     0.2207       0.2201  True
+ B136  1.0000  QROLL       W QROLL L0.17 w504 d0.50 W g0.75      1.2026    0.1053    -0.1295     0.1102       0.1097 False
+ B136  2.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.1108    0.1102    -0.1710     0.0266       0.0265 False
+ B136  2.0000    ABS       W     ABS L0.30 w0 d0.25 W g0.75      1.0944    0.1121    -0.1737     0.0103       0.0102 False
+ B136  2.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.0841    0.1134    -0.1740     0.0000       0.0000 False
+ B136  2.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.0841    0.1134    -0.1740     0.0000       0.0000 False
+ B136  2.0000  QROLL       D QROLL L0.17 w252 d0.50 D g0.75      1.3006    0.1098    -0.1141     0.2165       0.2159  True
+ B136  2.0000  QROLL       W QROLL L0.17 w504 d0.50 W g0.75      1.1932    0.1044    -0.1296     0.1091       0.1086 False
+ B136  3.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.1018    0.1093    -0.1713     0.0259       0.0258 False
+ B136  3.0000    ABS       W     ABS L0.30 w0 d0.25 W g0.75      1.0861    0.1112    -0.1738     0.0102       0.0101 False
+ B136  3.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.0759    0.1124    -0.1744     0.0000       0.0000 False
+ B136  3.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.0759    0.1124    -0.1744     0.0000       0.0000 False
+ B136  3.0000  QROLL       D QROLL L0.17 w252 d0.50 D g0.75      1.2881    0.1086    -0.1142     0.2122       0.2116  True
+ B136  5.0000    ABS       D     ABS L0.40 w0 d0.25 D g0.75      1.0839    0.1073    -0.1721     0.0244       0.0243 False
+ B136  5.0000    ABS       W     ABS L0.30 w0 d0.25 W g0.75      1.0695    0.1093    -0.1740     0.0099       0.0099 False
+ B136  5.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.0595    0.1105    -0.1751     0.0000       0.0000 False
+ B136  5.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.0595    0.1105    -0.1751     0.0000       0.0000 False
+ B136  7.5000    ABS       W     ABS L0.30 w0 d0.25 W g0.75      1.0487    0.1070    -0.1744     0.0096       0.0096 False
+ B136  7.5000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.0391    0.1082    -0.1760     0.0000       0.0000 False
+ B136  7.5000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.0391    0.1082    -0.1760     0.0000       0.0000 False
+ B136 10.0000   QEXP       D    QEXP L0.07 w0 d0.25 D g0.75      1.0185    0.1058    -0.1769     0.0000       0.0000 False
+ B136 10.0000   QEXP       W    QEXP L0.07 w0 d0.25 W g0.75      1.0185    0.1058    -0.1769     0.0000       0.0000 False
+
+  Rule 8 on the CLAIM: the cost -> win relation fitted on IS Sharpes only, then read once on OOS.
+       win_IS                                                                                     win_OOS                                                                                    
+rung    0.0   1.0   2.0   3.0   5.0   7.5   10.0  15.0  20.0  25.0  30.0  40.0  50.0  75.0  100.0   0.0   1.0   2.0   3.0   5.0   7.5   10.0  15.0  20.0  25.0  30.0  40.0  50.0  75.0  100.0
+family                                                                                                                                                                                       
+ABS     0.333 0.333 0.333 0.315 0.296 0.296 0.278 0.241 0.222 0.222 0.222 0.222 0.204 0.093 0.074   0.704 0.704 0.704 0.676 0.657 0.648 0.639 0.620 0.611 0.593 0.546 0.491 0.426 0.333 0.269
+QEXP    0.407 0.398 0.389 0.389 0.389 0.611 0.611 0.611 0.593 0.556 0.556 0.556 0.556 0.556 0.556   0.611 0.602 0.593 0.593 0.583 0.574 0.565 0.519 0.463 0.463 0.463 0.463 0.361 0.259 0.204
+QROLL   0.565 0.565 0.556 0.551 0.542 0.572 0.556 0.523 0.500 0.472 0.417 0.380 0.352 0.306 0.269   0.991 0.991 0.991 0.991 0.986 0.986 0.986 0.958 0.942 0.903 0.870 0.764 0.653 0.451 0.338
+ group    n  rho_IS  rho_OOS  span_IS  span_OOS  win_IS_10  win_OOS_10  label_agree
+   ABS 1620 -0.9865  -0.9964  +0.2593   +0.4352    +0.2778     +0.6389      +0.3438
+  QEXP 1620 +0.4330  -0.9901  -0.1481   +0.4074    +0.6111     +0.5648      +0.5117
+ QROLL 6480 -0.9213  -0.9874  +0.2963   +0.6528    +0.5556     +0.9861      +0.5032
+POOLED 9720 -0.8418  -1.0000  +0.2160   +0.5756    +0.5185     +0.8580      +0.4781
+  the IS-fitted family ORDERING applied unchanged to OOS:
+    IS order {'ABS': 1.0, 'QEXP': 3.0, 'QROLL': 2.0}  OOS order {'ABS': 2.0, 'QEXP': 1.0, 'QROLL': 3.0}  rho -0.500
+
+=========================================================================================================================================================================================
+[6] SUMMARY
+  gates: G1 3.47e-18 | G2 0.00e+00 | G3 4.86e-16 | G4 PASS | G5 2.17e-17
+  Q1 ladder monotone-down (pre-registered): CONFIRMED  (pooled 0.861 @0 -> 0.818 @10 -> 0.176 @100 bps)
+  Q2 ordering: spread at 0 bps 0.4167 (leg a FALSE), min rho vs the 0-bps order +1.000 (leg b FALSE) -> the ordering is NOT a switching-cost ranking
+  Q3 median tax/|drag| +1.701; within-switch-tax-bucket family gap median 0.576; median c* 36.6 bps
+  Q4 cadence: D switches 4.9/yr vs W 1.9/yr; decay 0->100 bps D +0.593 vs W +0.444
+  Q5 4a 14 / 4b 1958 of 9720; rule-8 picks beating RULES v2 OOS 23 of 270, 4b 52
