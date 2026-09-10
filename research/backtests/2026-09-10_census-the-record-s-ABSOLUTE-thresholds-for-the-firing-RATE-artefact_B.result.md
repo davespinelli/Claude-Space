@@ -140,7 +140,12 @@ with U56/B136's (it starts 2010-01-04). The MATCH arm carries look-ahead in its 
 construction and is a control only — it never enters the rule-8 chooser. The census covers
 `research/LEADERBOARD.md` only, not CHANGELOG.md or the per-idea `.result.md` files, and its
 recall is unmeasured: the 17.9% figure is precision, and a hit the regex never made would not
-appear anywhere in this run.
+appear anywhere in this run. **Line numbers are a vintage, not an identifier:** every `line`
+in `.census.csv` / `.audit.csv` / `.audited_rates.csv` indexes `LEADERBOARD.md` as it stood at
+commit `77db351` (4,314 table lines), before this run's own six rows and lane A/C's same-day
+rows were appended. Re-running the script against a later LEADERBOARD will shift them, and the
+hand-audit table is keyed on those numbers — so the audit must be re-keyed, not merely re-run,
+if the census is ever repeated.
 
 **Artefacts:** `.gates.csv` `.census.csv` (118 rows) `.audit.csv` (39 rows, hand-classified)
 `.rates.csv` (37 cells) `.audited_rates.csv` (7) `.pername.csv` (5) `.books.csv` (333)

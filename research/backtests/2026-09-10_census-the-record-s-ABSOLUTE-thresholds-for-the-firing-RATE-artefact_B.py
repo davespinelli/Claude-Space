@@ -191,7 +191,10 @@ def census(md_path: Path) -> pd.DataFrame:
 
 # ---------------------------------------------------------------- hand audit
 # Every in-domain ABSOLUTE hit the extractor returns was read by hand and classified.
-# Keyed by (LEADERBOARD line, family, level).  PANEL = a genuine absolute cut on a
+# Keyed by (LEADERBOARD line, family, level).  THE LINE NUMBERS ARE A VINTAGE: they index
+# research/LEADERBOARD.md as it stood at commit 77db351 (4,314 table lines), before this
+# run's own rows were appended.  Re-running against a later LEADERBOARD shifts them, and the
+# audit must then be re-keyed, not merely re-run.  PANEL = a genuine absolute cut on a
 # panel-AGGREGATE statistic; NAME = a genuine absolute cut applied per NAME in the
 # cross-section (same artefact class, different denominator); FALSE = not a threshold at
 # all (a reported statistic value, a range, a regression coefficient, a Sharpe compare).
