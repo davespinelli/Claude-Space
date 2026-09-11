@@ -1,0 +1,209 @@
+========================================================================================================
+IDEA 692 -- is the record's LIVE BOOK CONSTANT drifting monotonically with the PRICES VINTAGE?
+========================================================================================================
+  universe.json tickers: 56   cost 10 bps   cadence W   band 0.03   gross 0.75   warm-up 260 rows
+
+========================================================================================================
+(A) PRE-REGISTERED GATES -- run before any new number is read
+========================================================================================================
+  G4 8 pinned commits extract to pinned (rows, cols, last)     : PASS
+       v1  rows  6059  cols 58  last 2026-09-04
+       v2  rows  6060  cols 58  last 2026-09-04
+       v3  rows  4698  cols 58  last 2026-09-03
+       v4  rows  4699  cols 58  last 2026-09-04
+       v5  rows  4699  cols 58  last 2026-09-04
+       v6  rows  4700  cols 58  last 2026-09-08
+       v7  rows  4701  cols 58  last 2026-09-09
+       v8  rows  4702  cols 58  last 2026-09-10
+  G7 every universe ticker present in all 8 vintages           : PASS
+  G8 weekend rows per vintage == pinned {'v1': 1248, 'v2': 1248, 'v3': 0, 'v4': 0, 'v5': 0, 'v6': 0, 'v7': 0, 'v8': 0}
+       got {'v1': 1248, 'v2': 1248, 'v3': 0, 'v4': 0, 'v5': 0, 'v6': 0, 'v7': 0, 'v8': 0}   PASS
+  G2 band_book(0.03,0.75) == rules_v2_weights                  : 0.000e+00  PASS
+  G1 fast_backtest == engine.backtest @10 bps                  : 6.939e-18  PASS
+  G3 v8 reproduces idea 523 G3b 8.61% / 1.1998 / -12.05%       : got 8.61% / 1.1998 / -12.05%  max|d| 4.945e-05  PASS
+  G5 weights causal: w(px[:d]) == w(px)[:d], both books        : 0.000e+00  PASS
+  G6 TRUNC(v8,d) is a value-for-value prefix of v8             : 0.000e+00  PASS
+  GATES: ALL PASS
+
+========================================================================================================
+(B) WHAT ACTUALLY CHANGES BETWEEN COMMITTED VINTAGES (cell level, U56 tickers)
+========================================================================================================
+  consecutive pairs: rows appended, and the cell-level envelope on the shared span.
+  SAMECON = both files share a panel construction (G8's weekend-row regime); a pair that
+  straddles the 2026-09-04 rebuild is NOT a restatement measurement and is marked so.
+  pair        con  +rows  shared   maxdPX_rel     maxdRET  cells>1e-9  cells>1e-4   worst ticker
+  v1->v2     True      1    6059    7.160e-02   7.713e-02       40161          60           PLTR
+  v2->v3    False      0    4698    3.712e-04   3.854e-04       40286           6           NVDA
+  v3->v4     True      1    4698    2.125e-04   2.224e-04       40722           6           NVDA
+  v4->v5     True      0    4699    6.543e-04   6.352e-04       44755           7          GOOGL
+  v5->v6     True      1    4699    5.095e-05   5.331e-05       40198           0           AVGO
+  v6->v7     True      1    4700    3.711e-04   3.854e-04       40473           4           NVDA
+  v7->v8     True      1    4701    3.712e-04   3.854e-04       40187           4           NVDA
+
+  Idea 514 published a restatement envelope of max |dreturn| = 3.000e-04 and idea 519
+  calibrated its synthetic draws to it.  Measured on the REAL files, SAME-CONSTRUCTION
+  pairs only: envelope spans 5.331e-05 .. 7.713e-02, i.e. 0.18x .. 257.09x that bound.
+  The widest is v1->v2 on PLTR with only 60 cells above 1e-4 out of 40161 that move at all -- the SPARSE-LARGE
+  corner idea 519 recorded as untested.  It is not hypothetical; it is in the record's
+  own committed files.
+  wrote 2026-09-11_is-the-record-s-LIVE-BOOK-CONSTANT-drifting-monotonically-with-the-PRICES-VINTAGE_C.cells.csv  (7 rows)
+
+========================================================================================================
+(C) THE GRID -- the constant at every vintage rung, both channels, both books
+========================================================================================================
+
+  BOOK = LIVE
+  chan  vint end           rows       start     CAGR   Sharpe    MaxDD     H1     H2   Sh_com   ISsh  OOSsh  4a  4b            fail4b
+  TRUE  v1   2026-09-04    6059  2009-01-13    5.91%   0.9797  -11.64%   1.10   0.85   0.9797   1.04   0.94FalseFalse              CAGR
+  TRUE  v2   2026-09-04    6060  2009-01-13    5.93%   0.9831  -11.64%   1.10   0.87   0.9832   1.04   0.94FalseFalse              CAGR
+  TRUE  v3   2026-09-03    4698  2009-01-13    8.68%   1.2075  -12.05%   1.23   1.19   1.2075   1.10   1.29FalseFalse              CAGR
+  TRUE  v4   2026-09-04    4699  2009-01-13    8.66%   1.2056  -12.05%   1.23   1.19   1.2075   1.10   1.29FalseFalse              CAGR
+  TRUE  v5   2026-09-04    4699  2009-01-13    8.66%   1.2056  -12.05%   1.23   1.19   1.2075   1.10   1.29FalseFalse              CAGR
+  TRUE  v6   2026-09-08    4700  2009-01-13    8.64%   1.2037  -12.05%   1.23   1.18   1.2075   1.10   1.28FalseFalse              CAGR
+  TRUE  v7   2026-09-09    4701  2009-01-13    8.63%   1.2021  -12.05%   1.23   1.18   1.2075   1.10   1.28FalseFalse              CAGR
+  TRUE  v8   2026-09-10    4702  2009-01-13    8.61%   1.1998  -12.05%   1.23   1.17   1.2075   1.10   1.27FalseFalse              CAGR
+  TRUNC v1   2026-09-04    4699  2009-01-13    8.66%   1.2056  -12.05%   1.23   1.19   1.2075   1.10   1.29FalseFalse              CAGR
+  TRUNC v2   2026-09-04    4699  2009-01-13    8.66%   1.2056  -12.05%   1.23   1.19   1.2075   1.10   1.29FalseFalse              CAGR
+  TRUNC v3   2026-09-03    4698  2009-01-13    8.68%   1.2075  -12.05%   1.23   1.19   1.2075   1.10   1.29FalseFalse              CAGR
+  TRUNC v4   2026-09-04    4699  2009-01-13    8.66%   1.2056  -12.05%   1.23   1.19   1.2075   1.10   1.29FalseFalse              CAGR
+  TRUNC v5   2026-09-04    4699  2009-01-13    8.66%   1.2056  -12.05%   1.23   1.19   1.2075   1.10   1.29FalseFalse              CAGR
+  TRUNC v6   2026-09-08    4700  2009-01-13    8.64%   1.2037  -12.05%   1.23   1.18   1.2075   1.10   1.28FalseFalse              CAGR
+  TRUNC v7   2026-09-09    4701  2009-01-13    8.63%   1.2021  -12.05%   1.23   1.18   1.2075   1.10   1.28FalseFalse              CAGR
+  TRUNC v8   2026-09-10    4702  2009-01-13    8.61%   1.1998  -12.05%   1.23   1.17   1.2075   1.10   1.27FalseFalse              CAGR
+
+  BOOK = CAND20
+  chan  vint end           rows       start     CAGR   Sharpe    MaxDD     H1     H2   Sh_com   ISsh  OOSsh  4a  4b            fail4b
+  TRUE  v1   2026-09-04    6059  2009-01-13    9.52%   0.9597  -16.57%   1.00   0.92   0.9598   0.93   0.98FalseTrue                 -
+  TRUE  v2   2026-09-04    6060  2009-01-13    9.56%   0.9629  -16.57%   1.00   0.93   0.9629   0.93   0.98FalseTrue                 -
+  TRUE  v3   2026-09-03    4698  2009-01-13   12.67%   1.0931  -18.31%   1.09   1.10   1.0931   0.99   1.17FalseTrue                 -
+  TRUE  v4   2026-09-04    4699  2009-01-13   12.66%   1.0921  -18.31%   1.09   1.10   1.0931   0.99   1.17FalseTrue                 -
+  TRUE  v5   2026-09-04    4699  2009-01-13   12.66%   1.0921  -18.31%   1.09   1.10   1.0931   0.99   1.17FalseTrue                 -
+  TRUE  v6   2026-09-08    4700  2009-01-13   12.65%   1.0917  -18.31%   1.09   1.10   1.0931   0.99   1.17FalseTrue                 -
+  TRUE  v7   2026-09-09    4701  2009-01-13   12.66%   1.0922  -18.31%   1.09   1.10   1.0931   0.99   1.17FalseTrue                 -
+  TRUE  v8   2026-09-10    4702  2009-01-13   12.63%   1.0903  -18.31%   1.10   1.09   1.0928   0.99   1.16FalseTrue                 -
+  TRUNC v1   2026-09-04    4699  2009-01-13   12.66%   1.0918  -18.31%   1.09   1.10   1.0928   0.99   1.17FalseTrue                 -
+  TRUNC v2   2026-09-04    4699  2009-01-13   12.66%   1.0918  -18.31%   1.09   1.10   1.0928   0.99   1.17FalseTrue                 -
+  TRUNC v3   2026-09-03    4698  2009-01-13   12.67%   1.0928  -18.31%   1.09   1.10   1.0928   0.99   1.17FalseTrue                 -
+  TRUNC v4   2026-09-04    4699  2009-01-13   12.66%   1.0918  -18.31%   1.09   1.10   1.0928   0.99   1.17FalseTrue                 -
+  TRUNC v5   2026-09-04    4699  2009-01-13   12.66%   1.0918  -18.31%   1.09   1.10   1.0928   0.99   1.17FalseTrue                 -
+  TRUNC v6   2026-09-08    4700  2009-01-13   12.65%   1.0914  -18.31%   1.09   1.10   1.0928   0.99   1.17FalseTrue                 -
+  TRUNC v7   2026-09-09    4701  2009-01-13   12.65%   1.0919  -18.31%   1.09   1.10   1.0928   0.99   1.17FalseTrue                 -
+  TRUNC v8   2026-09-10    4702  2009-01-13   12.63%   1.0903  -18.31%   1.10   1.09   1.0928   0.99   1.16FalseTrue                 -
+  wrote 2026-09-11_is-the-record-s-LIVE-BOOK-CONSTANT-drifting-monotonically-with-the-PRICES-VINTAGE_C.grid.csv  (32 rows)
+
+========================================================================================================
+(D) THE QUEUE'S TWO PUBLISHED READINGS, LOCATED ON THE LADDER
+========================================================================================================
+  idea 523 G3b (read 2026-09-11): published 8.61% / 1.1998 / -12.05%
+      nearest rung  TRUNC/v8 (end 2026-09-10)  8.61% / 1.1998 / -12.05%   max|d| 4.945e-05   REPRODUCED at 5e-3
+      rungs within 5e-3: 6 of 16  [TRUE/v6, TRUNC/v6, TRUE/v7, TRUNC/v7, TRUE/v8, TRUNC/v8]
+  idea 415 G2  (read 2026-09-10): published 8.66% / 1.2056 / -12.05%
+      nearest rung  TRUE/v4 (end 2026-09-04)  8.66% / 1.2056 / -12.05%   max|d| 4.942e-05   REPRODUCED at 5e-3
+      rungs within 5e-3: 12 of 16  [TRUNC/v1, TRUNC/v2, TRUE/v3, TRUNC/v3, TRUE/v4, TRUNC/v4, TRUE/v5, TRUNC/v5, TRUE/v6, TRUNC/v6, TRUE/v7, TRUNC/v7]
+
+========================================================================================================
+(E) IS THE DRIFT MONOTONE? -- committed ladder, then the long append ladder
+========================================================================================================
+  committed TRUE   LIVE    n=8  Spearman(end,Sharpe) -0.1190  sign flips 2  up 3 / down 4  Sharpe span 0.2279
+  committed TRUNC  LIVE    n=8  Spearman(end,Sharpe) -0.9386  sign flips 0  up 0 / down 4  Sharpe span 0.0077
+  committed TRUE   CAND20  n=8  Spearman(end,Sharpe) +0.0238  sign flips 4  up 4 / down 3  Sharpe span 0.1334
+  committed TRUNC  CAND20  n=8  Spearman(end,Sharpe) -0.5581  sign flips 2  up 1 / down 3  Sharpe span 0.0025
+
+  LONG APPEND LADDER (v8 truncated; append channel alone, no restatement by construction)
+  wrote 2026-09-11_is-the-record-s-LIVE-BOOK-CONSTANT-drifting-monotonically-with-the-PRICES-VINTAGE_C.ladder.csv  (1420 rows)
+  long U56   LIVE    n= 355  Spearman(end,Sharpe) +0.5222  sign flips 178  up 198 / down 156  Sharpe span 0.2924  [0.9997, 1.2921]
+  long U56   CAND20  n= 355  Spearman(end,Sharpe) +0.7045  sign flips 183  up 204 / down 150  Sharpe span 0.2022  [0.9495, 1.1516]
+  long B136  LIVE    n= 355  Spearman(end,Sharpe) +0.2202  sign flips 175  up 206 / down 148  Sharpe span 0.3067  [0.9928, 1.2994]
+  long B136  CAND20  n= 355  Spearman(end,Sharpe) +0.1562  sign flips 193  up 194 / down 160  Sharpe span 0.3396  [0.8281, 1.1677]
+  wrote 2026-09-11_is-the-record-s-LIVE-BOOK-CONSTANT-drifting-monotonically-with-the-PRICES-VINTAGE_C.monotonicity.csv  (8 rows)
+
+  A monotone series has ZERO sign flips.  Read the flip counts above before accepting
+  any (constant, vintage) extrapolation.
+
+========================================================================================================
+(F) PARAM 2 -- GATE BAR x VINTAGE: the shelf life of a published constant, in appended days
+========================================================================================================
+  panel  book          bar  1st exceed (appended days)   frac of 252 rungs within
+  U56    LIVE        5e-04                           1                      0.060
+  U56    LIVE        1e-03                           1                      0.095
+  U56    LIVE        5e-03                           3                      0.520
+  U56    LIVE        1e-02                          67                      0.810
+  U56    LIVE        2e-02                         110                      0.948
+  U56    LIVE        5e-02               never in 252d                      1.000
+  U56    CAND20      5e-04                           1                      0.056
+  U56    CAND20      1e-03                           1                      0.087
+  U56    CAND20      5e-03                          27                      0.262
+  U56    CAND20      1e-02                          67                      0.373
+  U56    CAND20      2e-02                         108                      0.667
+  U56    CAND20      5e-02               never in 252d                      1.000
+  B136   LIVE        5e-04                           1                      0.052
+  B136   LIVE        1e-03                           1                      0.111
+  B136   LIVE        5e-03                          16                      0.397
+  B136   LIVE        1e-02                          86                      0.496
+  B136   LIVE        2e-02                         105                      0.742
+  B136   LIVE        5e-02               never in 252d                      1.000
+  B136   CAND20      5e-04                           1                      0.044
+  B136   CAND20      1e-03                           1                      0.063
+  B136   CAND20      5e-03                          17                      0.306
+  B136   CAND20      1e-02                          40                      0.468
+  B136   CAND20      2e-02                          64                      0.671
+  B136   CAND20      5e-02                         243                      0.964
+
+  Same bars applied to the COMMITTED ladder.  TRUE minus TRUNC at a shared end-date is
+  the RESTATEMENT channel alone -- but ONLY for a vintage built the same way v8 is.  The
+  v1/v2 rows straddle the 2026-09-04 panel rebuild (G8: 1248 weekend rows), so their gap
+  is CONSTRUCTION + restatement and is marked BREAK; it is not a restatement reading.
+  book    vintage      con     dSharpe     dCAGR    dMaxDD                            bars cleared
+  LIVE    v1         BREAK     -0.2260    -2.75%     0.41%                                    none
+  LIVE    v2         BREAK     -0.2226    -2.73%     0.41%                                    none
+  LIVE    v3          same      0.0000     0.00%     0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  LIVE    v4          same     -0.0000    -0.00%     0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  LIVE    v5          same     -0.0000    -0.00%    -0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  LIVE    v6          same     -0.0000    -0.00%    -0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  LIVE    v7          same     -0.0000    -0.00%    -0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  LIVE    v8          same      0.0000     0.00%     0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  CAND20  v1         BREAK     -0.1321    -3.13%     1.74%                                    none
+  CAND20  v2         BREAK     -0.1290    -3.10%     1.74%                                    none
+  CAND20  v3          same      0.0003     0.00%     0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  CAND20  v4          same      0.0003     0.00%    -0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  CAND20  v5          same      0.0003     0.00%    -0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  CAND20  v6          same      0.0003     0.00%    -0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  CAND20  v7          same      0.0003     0.00%    -0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  CAND20  v8          same      0.0000     0.00%     0.00%     5e-04,1e-03,5e-03,1e-02,2e-02,5e-02
+  wrote 2026-09-11_is-the-record-s-LIVE-BOOK-CONSTANT-drifting-monotonically-with-the-PRICES-VINTAGE_C.channels.csv  (16 rows)
+  wrote 2026-09-11_is-the-record-s-LIVE-BOOK-CONSTANT-drifting-monotonically-with-the-PRICES-VINTAGE_C.shelflife.csv  (24 rows)
+  RESTATEMENT channel on same-construction vintages: max |dSharpe| 0.0003, max |dCAGR| 0.0037%, max |dMaxDD| 0.0000%  (12 rows)
+  4b verdict flips TRUE vs TRUNC at the same end-date: 0 of 16
+
+  The SPARSE-LARGE corner, read off the book rather than the cells: v1 and v2 share a
+  construction and differ by ONE appended row plus the PLTR restatement above, so their
+  book-level gap is the largest single-step restatement the record's own files contain.
+    LIVE     dSharpe +0.0034   dCAGR +0.0221%   dMaxDD -0.0000%   clears 5e-03,1e-02,2e-02,5e-02
+    CAND20   dSharpe +0.0031   dCAGR +0.0347%   dMaxDD -0.0000%   clears 5e-03,1e-02,2e-02,5e-02
+
+========================================================================================================
+(G) RULE 8 WALK-FORWARD (required) -- the VINTAGE treated as the dial the chooser tunes
+========================================================================================================
+  Chooser: pick the vintage rung with the highest IS Sharpe (through 2016-12-31), then
+  read that pick's 2017-2026 OOS untouched, against live RULES v2 OOS and SPY OOS.
+  LIVE    TRUE   pick v4  IS Sharpe 1.1043  IS spread 6.40e-02 (ex-BREAK 2.47e-06)  ->  OOS 9.53% / 1.2851 / -12.05%   vs RULES v2 OOS 1.2851  SPY OOS 0.8820   OOS spread over rungs 3.50e-01   blind-v8 cost +0.0104
+  LIVE    TRUNC  pick v1  IS Sharpe 1.1043  IS spread 0.00e+00 (ex-BREAK 0.00e+00)  ->  OOS 9.53% / 1.2851 / -12.05%   vs RULES v2 OOS 1.2851  SPY OOS 0.8820   OOS spread over rungs 1.38e-02   blind-v8 cost +0.0104
+  CAND20  TRUE   pick v5  IS Sharpe 0.9929  IS spread 6.06e-02 (ex-BREAK 3.63e-06)  ->  OOS 14.36% / 1.1680 / -18.31%   vs RULES v2 OOS 1.2851  SPY OOS 0.8820   OOS spread over rungs 1.92e-01   blind-v8 cost +0.0032
+  CAND20  TRUNC  pick v1  IS Sharpe 0.9929  IS spread 0.00e+00 (ex-BREAK 0.00e+00)  ->  OOS 14.35% / 1.1675 / -18.31%   vs RULES v2 OOS 1.2851  SPY OOS 0.8820   OOS spread over rungs 4.39e-03   blind-v8 cost +0.0027
+  wrote 2026-09-11_is-the-record-s-LIVE-BOOK-CONSTANT-drifting-monotonically-with-the-PRICES-VINTAGE_C.walkforward.csv  (4 rows)
+
+  OOS (2017-01-01 .. each book's own end, vintage v8) CAGR / Sharpe / MaxDD:
+    LIVE        9.45% / 1.2747 /  -12.05%
+    CAND20     14.31% / 1.1648 /  -18.31%
+    RULES v2    9.45% / 1.2747 /  -12.05%   (baseline)
+    SPY        15.24% / 0.8721 /  -33.72%
+
+========================================================================================================
+(H) BOTH KEEP PATHS AT EVERY VINTAGE RUNG (PROTOCOL rule 4)
+========================================================================================================
+  LIVE     4a passes 0/16   4b passes 0/16   distinct 4b fail-sets: ['CAGR']
+  CAND20   4a passes 0/16   4b passes 16/16   distinct 4b fail-sets: ['-']
+  4b verdict is vintage-INVARIANT within every (book, channel): YES
+
+  NOTHING PROMOTED: LIVE is the incumbent itself and CAND20 is the standing candidate;
+  this run adds no book and takes no KEEP.
