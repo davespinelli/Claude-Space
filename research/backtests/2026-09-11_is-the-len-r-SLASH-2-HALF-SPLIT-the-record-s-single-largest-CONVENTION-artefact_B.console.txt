@@ -1,0 +1,382 @@
+======================================================================================================================
+IDEA 697 (lane B) — is-the-len-r-SLASH-2-HALF-SPLIT-the-record-s-single-largest-CONVENTION-artefact
+======================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+======================================================================================================================
+GATES (five, pre-registered — printed before any result is read)
+======================================================================================================================
+  [PASS] G1 fast_bt vs engine.backtest (3 panels x 2 books): returns 2.429e-17 / turnover 0.000e+00
+  [PASS] G2 live RULES v2 U56 @10bps (idea 523 G3b: 8.61%/1.1998/-12.05%): 8.61%/1.1998/-12.05%
+  [PASS] G3 cost-rung identity net(25) = net(0) - turn*25/1e4: 0.000e+00
+  [PASS] G4 halves_at(NATIVE) == baseline._row H1/H2 (3 panels x 3 books): max|d| 0.000e+00
+  [PASS] G5 NATIVE boundary is panel-dependent and != calendar midpoint: cross-panel spread 368d, max offset from CALMID 6d
+
+======================================================================================================================
+PART A — HOW MUCH OF THE RECORD IS EXPOSED, and where len(r)//2 actually lands
+======================================================================================================================
+  committed backtest scripts: 667 (this run excluded); price-loading: 600
+    own `len(x)//2` split          : 524
+    call baseline.compare (uses _row): 26
+    EITHER (exposed to the convention): 531 of 600 = 88.5%
+    mention H1/H2/halves at all      : 589 of 600 = 98.2%
+  NOTE this is an EXPOSURE census, not a flip census: it counts files whose H-legs
+  are produced by an index-length split. PART B prices what that exposure is worth.
+
+  A2 — WHERE THE NATIVE BOUNDARY LANDS (full native window, BAND03 = live RULES v2):
+panel  n_days      start        end NATIVE_boundary CALMID_boundary  offset_days  H1_cal_days  H2_cal_days
+  U56    4442 2009-01-13 2026-09-10      2017-11-07      2017-11-13           -6         3220         3229
+ B136    4439 2009-01-13 2026-09-04      2017-11-03      2017-11-09           -6         3216         3227
+SMALL    3934 2011-01-13 2026-09-04      2018-11-06      2018-11-09           -3         2854         2859
+
+  -> len(r)//2 equalises TRADING-DAY COUNT, not calendar time. Wherever the tape has
+     holes (a panel that starts later, a cache one week stale, a truncation), the two
+     halves stop being the same length in calendar terms, and '>0 in both halves' is
+     then a statement about two different-length windows.
+
+======================================================================================================================
+PART B — THE QUEUE'S QUESTION: H1/H2 LEGS and 4a/4b VERDICTS under 8 split rules
+======================================================================================================================
+  4a leg  = (H1 > v2's H1) and (H2 > v2's H2)   [PROTOCOL 4a, Sharpe clause]
+  4b leg  = (H1 > SPY's H1) and (H2 > SPY's H2) [PROTOCOL 4b, Sharpe clause]
+  full 4a = 4a leg AND MaxDD >= v2's MaxDD ;  full 4b = 4b leg AND OOS AND DD cap AND CAGR floor
+  The MaxDD / CAGR / OOS legs DO NOT depend on the split rule — only the H-legs do.
+
+ALL 96 GRID CELLS (8 split rules x 6 books x 3 panels; claim sets are the 4-rung PARAM 2):
+claimset   book panel      split   boundary   n1   n2     H1     H2  v2_H1  v2_H2  SPY_H1  SPY_H2  leg4a  leg4b  full4a  full4b
+    LIVE BAND03   U56     NATIVE 2017-11-07 2221 2221 1.2349 1.1718 1.2349 1.1718  0.9595  0.8211  False   True   False   False
+    LIVE BAND03   U56     CALMID 2017-11-13 2225 2217 1.2262 1.1796 1.2262 1.1796  0.9566  0.8236  False   True   False   False
+    LIVE BAND03   U56 2014-01-01 2014-01-02 1251 3191 1.2157 1.1935 1.2157 1.1935  1.0013  0.8335  False   True   False   False
+    LIVE BAND03   U56 2015-01-01 2015-01-02 1503 2939 1.1790 1.2105 1.1790 1.2105  1.0067  0.8188  False   True   False   False
+    LIVE BAND03   U56 2016-01-01 2016-01-04 1755 2687 1.1079 1.2585 1.1079 1.2585  0.8988  0.8733  False   True   False   False
+    LIVE BAND03   U56 2017-01-01 2017-01-03 2007 2435 1.1043 1.2747 1.1043 1.2747  0.8986  0.8721  False   True   False   False
+    LIVE BAND03   U56 2018-01-01 2018-01-02 2258 2184 1.2370 1.1700 1.2370 1.1700  0.9750  0.8070  False   True   False   False
+    LIVE BAND03   U56 2019-01-01 2019-01-02 2509 1933 1.1051 1.3140 1.1051 1.3140  0.8538  0.9221  False   True   False   False
+    LIVE BAND03  B136     NATIVE 2017-11-03 2219 2220 1.2291 0.9844 1.2291 0.9844  0.9566  0.8340  False   True   False   False
+    LIVE BAND03  B136     CALMID 2017-11-09 2223 2216 1.2353 0.9781 1.2353 0.9781  0.9598  0.8313  False   True   False   False
+    LIVE BAND03  B136 2014-01-01 2014-01-02 1251 3188 1.2532 1.0428 1.2532 1.0428  1.0013  0.8414  False   True   False   False
+    LIVE BAND03  B136 2015-01-01 2015-01-02 1503 2936 1.2186 1.0437 1.2186 1.0437  1.0068  0.8272  False   True   False   False
+    LIVE BAND03  B136 2016-01-01 2016-01-04 1755 2684 1.0983 1.1124 1.0983 1.1124  0.8988  0.8825  False   True   False   False
+    LIVE BAND03  B136 2017-01-01 2017-01-03 2007 2432 1.0912 1.1185 1.0912 1.1185  0.8987  0.8820  False   True   False   False
+    LIVE BAND03  B136 2018-01-01 2018-01-02 2258 2181 1.2487 0.9619 1.2487 0.9619  0.9751  0.8175  False   True   False   False
+    LIVE BAND03  B136 2019-01-01 2019-01-02 2509 1930 1.0982 1.1156 1.0982 1.1156  0.8538  0.9340  False   True   False   False
+    LIVE BAND03 SMALL     NATIVE 2018-11-06 1967 1967 0.5416 0.6802 0.5416 0.6802  0.8907  0.8577  False  False   False   False
+    LIVE BAND03 SMALL     CALMID 2018-11-09 1970 1964 0.5509 0.6725 0.5509 0.6725  0.9119  0.8419  False  False   False   False
+    LIVE BAND03 SMALL 2014-01-01 2014-01-02  746 3188 0.8281 0.5604 0.8281 0.5604  0.9505  0.8414  False  False   False   False
+    LIVE BAND03 SMALL 2015-01-01 2015-01-02  998 2936 0.6189 0.6132 0.6189 0.6132  0.9824  0.8272  False  False   False   False
+    LIVE BAND03 SMALL 2016-01-01 2016-01-04 1250 2684 0.4258 0.6979 0.4258 0.6979  0.8156  0.8825  False  False   False   False
+    LIVE BAND03 SMALL 2017-01-01 2017-01-03 1502 2432 0.5308 0.6629 0.5308 0.6629  0.8316  0.8820  False  False   False   False
+    LIVE BAND03 SMALL 2018-01-01 2018-01-02 1753 2181 0.5265 0.6784 0.5265 0.6784  0.9593  0.8175  False  False   False   False
+    LIVE BAND03 SMALL 2019-01-01 2019-01-02 2004 1930 0.4731 0.7418 0.4731 0.7418  0.7883  0.9339  False  False   False   False
+    LIVE BAND08   U56     NATIVE 2017-11-07 2221 2221 1.2432 1.0629 1.2349 1.1718  0.9595  0.8211  False   True   False   False
+    LIVE BAND08   U56     CALMID 2017-11-13 2225 2217 1.2375 1.0679 1.2262 1.1796  0.9566  0.8236  False   True   False   False
+    LIVE BAND08   U56 2014-01-01 2014-01-02 1251 3191 1.1686 1.1345 1.2157 1.1935  1.0013  0.8335  False   True   False   False
+    LIVE BAND08   U56 2015-01-01 2015-01-02 1503 2939 1.1576 1.1373 1.1790 1.2105  1.0067  0.8188  False   True   False   False
+    LIVE BAND08   U56 2016-01-01 2016-01-04 1755 2687 1.1148 1.1632 1.1079 1.2585  0.8988  0.8733  False   True   False   False
+    LIVE BAND08   U56 2017-01-01 2017-01-03 2007 2435 1.1222 1.1627 1.1043 1.2747  0.8986  0.8721  False   True   False   False
+    LIVE BAND08   U56 2018-01-01 2018-01-02 2258 2184 1.2489 1.0569 1.2370 1.1700  0.9750  0.8070  False   True   False   False
+    LIVE BAND08   U56 2019-01-01 2019-01-02 2509 1933 1.0891 1.2121 1.1051 1.3140  0.8538  0.9221  False   True   False   False
+    LIVE BAND08  B136     NATIVE 2017-11-03 2219 2220 1.2713 0.9821 1.2291 0.9844  0.9566  0.8340  False   True   False   False
+    LIVE BAND08  B136     CALMID 2017-11-09 2223 2216 1.2788 0.9747 1.2353 0.9781  0.9598  0.8313  False   True   False   False
+    LIVE BAND08  B136 2014-01-01 2014-01-02 1251 3188 1.2575 1.0675 1.2532 1.0428  1.0013  0.8414   True   True   False   False
+    LIVE BAND08  B136 2015-01-01 2015-01-02 1503 2936 1.2493 1.0551 1.2186 1.0437  1.0068  0.8272   True   True   False   False
+    LIVE BAND08  B136 2016-01-01 2016-01-04 1755 2684 1.1441 1.1113 1.0983 1.1124  0.8988  0.8825  False   True   False   False
+    LIVE BAND08  B136 2017-01-01 2017-01-03 2007 2432 1.1412 1.1095 1.0912 1.1185  0.8987  0.8820  False   True   False   False
+    LIVE BAND08  B136 2018-01-01 2018-01-02 2258 2181 1.2908 0.9598 1.2487 0.9619  0.9751  0.8175  False   True   False   False
+    LIVE BAND08  B136 2019-01-01 2019-01-02 2509 1930 1.1456 1.0959 1.0982 1.1156  0.8538  0.9340  False   True   False   False
+    LIVE BAND08 SMALL     NATIVE 2018-11-06 1967 1967 0.6366 0.6666 0.5416 0.6802  0.8907  0.8577  False  False   False   False
+    LIVE BAND08 SMALL     CALMID 2018-11-09 1970 1964 0.6448 0.6596 0.5509 0.6725  0.9119  0.8419  False  False   False   False
+    LIVE BAND08 SMALL 2014-01-01 2014-01-02  746 3188 0.9058 0.5859 0.8281 0.5604  0.9505  0.8414   True  False   False   False
+    LIVE BAND08 SMALL 2015-01-01 2015-01-02  998 2936 0.6950 0.6351 0.6189 0.6132  0.9824  0.8272   True  False   False   False
+    LIVE BAND08 SMALL 2016-01-01 2016-01-04 1250 2684 0.4912 0.7222 0.4258 0.6979  0.8156  0.8825   True  False   False   False
+    LIVE BAND08 SMALL 2017-01-01 2017-01-03 1502 2432 0.6006 0.6801 0.5308 0.6629  0.8316  0.8820   True  False   False   False
+    LIVE BAND08 SMALL 2018-01-01 2018-01-02 1753 2181 0.6189 0.6756 0.5265 0.6784  0.9593  0.8175  False  False   False   False
+    LIVE BAND08 SMALL 2019-01-01 2019-01-02 2004 1930 0.5610 0.7339 0.4731 0.7418  0.7883  0.9339  False  False   False   False
+  RANKED  TOP20   U56     NATIVE 2017-11-07 2221 2221 1.2691 0.9420 1.2349 1.1718  0.9595  0.8211  False   True   False   False
+  RANKED  TOP20   U56     CALMID 2017-11-13 2225 2217 1.2579 0.9504 1.2262 1.1796  0.9566  0.8236  False   True   False   False
+  RANKED  TOP20   U56 2014-01-01 2014-01-02 1251 3191 1.2396 1.0227 1.2157 1.1935  1.0013  0.8335  False   True   False   False
+  RANKED  TOP20   U56 2015-01-01 2015-01-02 1503 2939 1.2077 1.0219 1.1790 1.2105  1.0067  0.8188  False   True   False   False
+  RANKED  TOP20   U56 2016-01-01 2016-01-04 1755 2687 1.1720 1.0266 1.1079 1.2585  0.8988  0.8733  False   True   False   False
+  RANKED  TOP20   U56 2017-01-01 2017-01-03 2007 2435 1.1751 1.0192 1.1043 1.2747  0.8986  0.8721  False   True   False   False
+  RANKED  TOP20   U56 2018-01-01 2018-01-02 2258 2184 1.2498 0.9550 1.2370 1.1700  0.9750  0.8070  False   True   False   False
+  RANKED  TOP20   U56 2019-01-01 2019-01-02 2509 1933 1.0839 1.0801 1.1051 1.3140  0.8538  0.9221  False   True   False   False
+  RANKED  TOP20  B136     NATIVE 2017-11-03 2219 2220 1.2105 0.9173 1.2291 0.9844  0.9566  0.8340  False   True   False   False
+  RANKED  TOP20  B136     CALMID 2017-11-09 2223 2216 1.2183 0.9111 1.2353 0.9781  0.9598  0.8313  False   True   False   False
+  RANKED  TOP20  B136 2014-01-01 2014-01-02 1251 3188 1.2364 0.9707 1.2532 1.0428  1.0013  0.8414  False   True   False   False
+  RANKED  TOP20  B136 2015-01-01 2015-01-02 1503 2936 1.2368 0.9519 1.2186 1.0437  1.0068  0.8272  False   True   False   False
+  RANKED  TOP20  B136 2016-01-01 2016-01-04 1755 2684 1.1375 0.9861 1.0983 1.1124  0.8988  0.8825  False   True   False   False
+  RANKED  TOP20  B136 2017-01-01 2017-01-03 2007 2432 1.1013 1.0042 1.0912 1.1185  0.8987  0.8820  False   True   False   False
+  RANKED  TOP20  B136 2018-01-01 2018-01-02 2258 2181 1.1931 0.9283 1.2487 0.9619  0.9751  0.8175  False   True   False   False
+  RANKED  TOP20  B136 2019-01-01 2019-01-02 2509 1930 1.0304 1.0573 1.0982 1.1156  0.8538  0.9340  False   True   False   False
+  RANKED  TOP20 SMALL     NATIVE 2018-11-06 1967 1967 0.7054 0.6672 0.5416 0.6802  0.8907  0.8577  False  False   False   False
+  RANKED  TOP20 SMALL     CALMID 2018-11-09 1970 1964 0.6851 0.6806 0.5509 0.6725  0.9119  0.8419   True  False   False   False
+  RANKED  TOP20 SMALL 2014-01-01 2014-01-02  746 3188 0.9423 0.6168 0.8281 0.5604  0.9505  0.8414   True  False   False   False
+  RANKED  TOP20 SMALL 2015-01-01 2015-01-02  998 2936 0.7327 0.6542 0.6189 0.6132  0.9824  0.8272   True  False   False   False
+  RANKED  TOP20 SMALL 2016-01-01 2016-01-04 1250 2684 0.5197 0.7271 0.4258 0.6979  0.8156  0.8825   True  False   False   False
+  RANKED  TOP20 SMALL 2017-01-01 2017-01-03 1502 2432 0.5498 0.7318 0.5308 0.6629  0.8316  0.8820   True  False   False   False
+  RANKED  TOP20 SMALL 2018-01-01 2018-01-02 1753 2181 0.6581 0.6922 0.5265 0.6784  0.9593  0.8175   True  False   False   False
+  RANKED  TOP20 SMALL 2019-01-01 2019-01-02 2004 1930 0.6026 0.7363 0.4731 0.7418  0.7883  0.9339  False  False   False   False
+  RANKED  TOP10   U56     NATIVE 2017-11-07 2221 2221 1.2108 1.1173 1.2349 1.1718  0.9595  0.8211  False   True   False   False
+  RANKED  TOP10   U56     CALMID 2017-11-13 2225 2217 1.2017 1.1242 1.2262 1.1796  0.9566  0.8236  False   True   False   False
+  RANKED  TOP10   U56 2014-01-01 2014-01-02 1251 3191 1.1665 1.1458 1.2157 1.1935  1.0013  0.8335  False   True   False   False
+  RANKED  TOP10   U56 2015-01-01 2015-01-02 1503 2939 1.1336 1.1586 1.1790 1.2105  1.0067  0.8188  False   True   False   False
+  RANKED  TOP10   U56 2016-01-01 2016-01-04 1755 2687 1.1279 1.1646 1.1079 1.2585  0.8988  0.8733  False   True   False   False
+  RANKED  TOP10   U56 2017-01-01 2017-01-03 2007 2435 1.1426 1.1627 1.1043 1.2747  0.8986  0.8721  False   True   False   False
+  RANKED  TOP10   U56 2018-01-01 2018-01-02 2258 2184 1.1848 1.1376 1.2370 1.1700  0.9750  0.8070  False   True   False   False
+  RANKED  TOP10   U56 2019-01-01 2019-01-02 2509 1933 1.0471 1.2635 1.1051 1.3140  0.8538  0.9221  False   True   False   False
+  RANKED  TOP10  B136     NATIVE 2017-11-03 2219 2220 1.4206 0.9584 1.2291 0.9844  0.9566  0.8340  False   True   False   False
+  RANKED  TOP10  B136     CALMID 2017-11-09 2223 2216 1.4339 0.9484 1.2353 0.9781  0.9598  0.8313  False   True   False   False
+  RANKED  TOP10  B136 2014-01-01 2014-01-02 1251 3188 1.5415 1.0153 1.2532 1.0428  1.0013  0.8414  False   True   False   False
+  RANKED  TOP10  B136 2015-01-01 2015-01-02 1503 2936 1.4852 1.0039 1.2186 1.0437  1.0068  0.8272  False   True   False   False
+  RANKED  TOP10  B136 2016-01-01 2016-01-04 1755 2684 1.3684 1.0316 1.0983 1.1124  0.8988  0.8825  False   True   False   False
+  RANKED  TOP10  B136 2017-01-01 2017-01-03 2007 2432 1.3354 1.0348 1.0912 1.1185  0.8987  0.8820  False   True   False   False
+  RANKED  TOP10  B136 2018-01-01 2018-01-02 2258 2181 1.3967 0.9707 1.2487 0.9619  0.9751  0.8175   True   True   False   False
+  RANKED  TOP10  B136 2019-01-01 2019-01-02 2509 1930 1.2231 1.0810 1.0982 1.1156  0.8538  0.9340  False   True   False   False
+  RANKED  TOP10 SMALL     NATIVE 2018-11-06 1967 1967 0.5170 0.5895 0.5416 0.6802  0.8907  0.8577  False  False   False   False
+  RANKED  TOP10 SMALL     CALMID 2018-11-09 1970 1964 0.4924 0.6066 0.5509 0.6725  0.9119  0.8419  False  False   False   False
+  RANKED  TOP10 SMALL 2014-01-01 2014-01-02  746 3188 0.5140 0.5593 0.8281 0.5604  0.9505  0.8414  False  False   False   False
+  RANKED  TOP10 SMALL 2015-01-01 2015-01-02  998 2936 0.3057 0.6205 0.6189 0.6132  0.9824  0.8272  False  False   False   False
+  RANKED  TOP10 SMALL 2016-01-01 2016-01-04 1250 2684 0.2070 0.6798 0.4258 0.6979  0.8156  0.8825  False  False   False   False
+  RANKED  TOP10 SMALL 2017-01-01 2017-01-03 1502 2432 0.2629 0.6904 0.5308 0.6629  0.8316  0.8820  False  False   False   False
+  RANKED  TOP10 SMALL 2018-01-01 2018-01-02 1753 2181 0.4278 0.6325 0.5265 0.6784  0.9593  0.8175  False  False   False   False
+  RANKED  TOP10 SMALL 2019-01-01 2019-01-02 2004 1930 0.4454 0.6420 0.4731 0.7418  0.7883  0.9339  False  False   False   False
+  EWGATE  EWALL   U56     NATIVE 2017-11-07 2221 2221 1.0757 1.0185 1.2349 1.1718  0.9595  0.8211  False   True   False   False
+  EWGATE  EWALL   U56     CALMID 2017-11-13 2225 2217 1.0691 1.0245 1.2262 1.1796  0.9566  0.8236  False   True   False   False
+  EWGATE  EWALL   U56 2014-01-01 2014-01-02 1251 3191 1.0808 1.0295 1.2157 1.1935  1.0013  0.8335  False   True   False   False
+  EWGATE  EWALL   U56 2015-01-01 2015-01-02 1503 2939 1.0686 1.0324 1.1790 1.2105  1.0067  0.8188  False   True   False   False
+  EWGATE  EWALL   U56 2016-01-01 2016-01-04 1755 2687 1.0007 1.0717 1.1079 1.2585  0.8988  0.8733  False   True   False   False
+  EWGATE  EWALL   U56 2017-01-01 2017-01-03 2007 2435 0.9696 1.1029 1.1043 1.2747  0.8986  0.8721  False   True   False   False
+  EWGATE  EWALL   U56 2018-01-01 2018-01-02 2258 2184 1.0789 1.0158 1.2370 1.1700  0.9750  0.8070  False   True   False   False
+  EWGATE  EWALL   U56 2019-01-01 2019-01-02 2509 1933 0.9368 1.1744 1.1051 1.3140  0.8538  0.9221  False   True   False   False
+  EWGATE  EWALL  B136     NATIVE 2017-11-03 2219 2220 1.1456 0.9144 1.2291 0.9844  0.9566  0.8340  False   True   False    True
+  EWGATE  EWALL  B136     CALMID 2017-11-09 2223 2216 1.1516 0.9086 1.2353 0.9781  0.9598  0.8313  False   True   False    True
+  EWGATE  EWALL  B136 2014-01-01 2014-01-02 1251 3188 1.1628 0.9689 1.2532 1.0428  1.0013  0.8414  False   True   False    True
+  EWGATE  EWALL  B136 2015-01-01 2015-01-02 1503 2936 1.1661 0.9522 1.2186 1.0437  1.0068  0.8272  False   True   False    True
+  EWGATE  EWALL  B136 2016-01-01 2016-01-04 1755 2684 1.0415 1.0159 1.0983 1.1124  0.8988  0.8825  False   True   False    True
+  EWGATE  EWALL  B136 2017-01-01 2017-01-03 2007 2432 1.0350 1.0185 1.0912 1.1185  0.8987  0.8820  False   True   False    True
+  EWGATE  EWALL  B136 2018-01-01 2018-01-02 2258 2181 1.1620 0.8967 1.2487 0.9619  0.9751  0.8175  False   True   False    True
+  EWGATE  EWALL  B136 2019-01-01 2019-01-02 2509 1930 1.0178 1.0366 1.0982 1.1156  0.8538  0.9340  False   True   False    True
+  EWGATE  EWALL SMALL     NATIVE 2018-11-06 1967 1967 0.4290 0.4123 0.5416 0.6802  0.8907  0.8577  False  False   False   False
+  EWGATE  EWALL SMALL     CALMID 2018-11-09 1970 1964 0.4451 0.4001 0.5509 0.6725  0.9119  0.8419  False  False   False   False
+  EWGATE  EWALL SMALL 2014-01-01 2014-01-02  746 3188 0.6548 0.3605 0.8281 0.5604  0.9505  0.8414  False  False   False   False
+  EWGATE  EWALL SMALL 2015-01-01 2015-01-02  998 2936 0.5372 0.3777 0.6189 0.6132  0.9824  0.8272  False  False   False   False
+  EWGATE  EWALL SMALL 2016-01-01 2016-01-04 1250 2684 0.3309 0.4513 0.4258 0.6979  0.8156  0.8825  False  False   False   False
+  EWGATE  EWALL SMALL 2017-01-01 2017-01-03 1502 2432 0.4188 0.4158 0.5308 0.6629  0.8316  0.8820  False  False   False   False
+  EWGATE  EWALL SMALL 2018-01-01 2018-01-02 1753 2181 0.4220 0.4161 0.5265 0.6784  0.9593  0.8175  False  False   False   False
+  EWGATE  EWALL SMALL 2019-01-01 2019-01-02 2004 1930 0.3327 0.4881 0.4731 0.7418  0.7883  0.9339  False  False   False   False
+ CONTROL  SPYBH   U56     NATIVE 2017-11-07 2221 2221 0.9595 0.8211 1.2349 1.1718  0.9595  0.8211  False  False   False   False
+ CONTROL  SPYBH   U56     CALMID 2017-11-13 2225 2217 0.9566 0.8236 1.2262 1.1796  0.9566  0.8236  False  False   False   False
+ CONTROL  SPYBH   U56 2014-01-01 2014-01-02 1251 3191 1.0013 0.8335 1.2157 1.1935  1.0013  0.8335  False  False   False   False
+ CONTROL  SPYBH   U56 2015-01-01 2015-01-02 1503 2939 1.0067 0.8188 1.1790 1.2105  1.0067  0.8188  False  False   False   False
+ CONTROL  SPYBH   U56 2016-01-01 2016-01-04 1755 2687 0.8988 0.8733 1.1079 1.2585  0.8988  0.8733  False  False   False   False
+ CONTROL  SPYBH   U56 2017-01-01 2017-01-03 2007 2435 0.8986 0.8721 1.1043 1.2747  0.8986  0.8721  False  False   False   False
+ CONTROL  SPYBH   U56 2018-01-01 2018-01-02 2258 2184 0.9750 0.8070 1.2370 1.1700  0.9750  0.8070  False  False   False   False
+ CONTROL  SPYBH   U56 2019-01-01 2019-01-02 2509 1933 0.8538 0.9221 1.1051 1.3140  0.8538  0.9221  False  False   False   False
+ CONTROL  SPYBH  B136     NATIVE 2017-11-03 2219 2220 0.9566 0.8340 1.2291 0.9844  0.9566  0.8340  False  False   False   False
+ CONTROL  SPYBH  B136     CALMID 2017-11-09 2223 2216 0.9598 0.8313 1.2353 0.9781  0.9598  0.8313  False  False   False   False
+ CONTROL  SPYBH  B136 2014-01-01 2014-01-02 1251 3188 1.0013 0.8414 1.2532 1.0428  1.0013  0.8414  False  False   False   False
+ CONTROL  SPYBH  B136 2015-01-01 2015-01-02 1503 2936 1.0068 0.8272 1.2186 1.0437  1.0068  0.8272  False  False   False   False
+ CONTROL  SPYBH  B136 2016-01-01 2016-01-04 1755 2684 0.8988 0.8825 1.0983 1.1124  0.8988  0.8825  False  False   False   False
+ CONTROL  SPYBH  B136 2017-01-01 2017-01-03 2007 2432 0.8987 0.8820 1.0912 1.1185  0.8987  0.8820  False  False   False   False
+ CONTROL  SPYBH  B136 2018-01-01 2018-01-02 2258 2181 0.9751 0.8175 1.2487 0.9619  0.9751  0.8175  False  False   False   False
+ CONTROL  SPYBH  B136 2019-01-01 2019-01-02 2509 1930 0.8538 0.9340 1.0982 1.1156  0.8538  0.9340  False  False   False   False
+ CONTROL  SPYBH SMALL     NATIVE 2018-11-06 1967 1967 0.8907 0.8577 0.5416 0.6802  0.8907  0.8577   True  False   False   False
+ CONTROL  SPYBH SMALL     CALMID 2018-11-09 1970 1964 0.9119 0.8419 0.5509 0.6725  0.9119  0.8419   True  False   False   False
+ CONTROL  SPYBH SMALL 2014-01-01 2014-01-02  746 3188 0.9505 0.8414 0.8281 0.5604  0.9505  0.8414   True  False   False   False
+ CONTROL  SPYBH SMALL 2015-01-01 2015-01-02  998 2936 0.9824 0.8272 0.6189 0.6132  0.9824  0.8272   True  False   False   False
+ CONTROL  SPYBH SMALL 2016-01-01 2016-01-04 1250 2684 0.8156 0.8825 0.4258 0.6979  0.8156  0.8825   True  False   False   False
+ CONTROL  SPYBH SMALL 2017-01-01 2017-01-03 1502 2432 0.8316 0.8820 0.5308 0.6629  0.8316  0.8820   True  False   False   False
+ CONTROL  SPYBH SMALL 2018-01-01 2018-01-02 1753 2181 0.9593 0.8175 0.5265 0.6784  0.9593  0.8175   True  False   False   False
+ CONTROL  SPYBH SMALL 2019-01-01 2019-01-02 2004 1930 0.7883 0.9339 0.4731 0.7418  0.7883  0.9339   True  False   False   False
+
+MOVEMENT vs NATIVE (unit = one book x panel, i.e. one published verdict):
+leg         leg4a  leg4b  full4a  full4b  H1_abs_shift  H2_abs_shift
+split                                                               
+CALMID     0.0556 0.0000  0.0000  0.0000        0.0104        0.0082
+2014-01-01 0.1667 0.0000  0.0000  0.0000        0.0857        0.0495
+2015-01-01 0.1667 0.0000  0.0000  0.0000        0.0613        0.0397
+2016-01-01 0.1111 0.0000  0.0000  0.0000        0.1137        0.0700
+2017-01-01 0.1111 0.0000  0.0000  0.0000        0.0965        0.0701
+2018-01-01 0.1111 0.0000  0.0000  0.0000        0.0240        0.0157
+2019-01-01 0.0000 0.0000  0.0000  0.0000        0.1255        0.1092
+
+  TOTAL leg/verdict comparisons made: 504
+    leg4a    moves  13 of 126 = 10.32%
+    leg4b    moves   0 of 126 = 0.00%
+    full4a   moves   0 of 126 = 0.00%
+    full4b   moves   0 of 126 = 0.00%
+
+  BY CLAIM SET (PARAM 2) — who is exposed:
+claimset  comparisons  full4a_moves  full4b_moves  mean_abs_dH1  max_abs_dH1
+    LIVE           42             0             0        0.0749       0.2866
+  RANKED           42             0             0        0.0882       0.3100
+  EWGATE           21             0             0        0.0622       0.2258
+ CONTROL           21             0             0        0.0547       0.1057
+
+  THE FLIPPED CELLS, NAMED — and how far the boundary had to move to flip them:
+  book panel      split   leg NATIVE_boundary   boundary  shift_days  NATIVE_val  new_val     dH1     dH2
+ TOP20 SMALL     CALMID leg4a      2018-11-06 2018-11-09           3       False     True -0.0203  0.0134
+BAND08  B136 2014-01-01 leg4a      2017-11-03 2014-01-02        1401       False     True -0.0138  0.0854
+BAND08 SMALL 2014-01-01 leg4a      2018-11-06 2014-01-02        1769       False     True  0.2692 -0.0807
+ TOP20 SMALL 2014-01-01 leg4a      2018-11-06 2014-01-02        1769       False     True  0.2370 -0.0504
+BAND08  B136 2015-01-01 leg4a      2017-11-03 2015-01-02        1036       False     True -0.0220  0.0730
+BAND08 SMALL 2015-01-01 leg4a      2018-11-06 2015-01-02        1404       False     True  0.0584 -0.0315
+ TOP20 SMALL 2015-01-01 leg4a      2018-11-06 2015-01-02        1404       False     True  0.0273 -0.0130
+BAND08 SMALL 2016-01-01 leg4a      2018-11-06 2016-01-04        1037       False     True -0.1454  0.0556
+ TOP20 SMALL 2016-01-01 leg4a      2018-11-06 2016-01-04        1037       False     True -0.1857  0.0599
+BAND08 SMALL 2017-01-01 leg4a      2018-11-06 2017-01-03         672       False     True -0.0360  0.0136
+ TOP20 SMALL 2017-01-01 leg4a      2018-11-06 2017-01-03         672       False     True -0.1556  0.0646
+ TOP20 SMALL 2018-01-01 leg4a      2018-11-06 2018-01-02         308       False     True -0.0473  0.0250
+ TOP10  B136 2018-01-01 leg4a      2017-11-03 2018-01-02          60       False     True -0.0239  0.0123
+
+  SMALLEST BOUNDARY MOVE THAT FLIPS A PROTOCOL LEG: 3 calendar days
+    TOP20 on SMALL, leg4a False -> True, boundary 2018-11-06 -> 2018-11-09
+    The record has never published that boundary, so this leg is unverifiable from
+    the committed numbers alone.
+
+  WHY THE FULL VERDICTS DO NOT MOVE — the non-half legs that bind first:
+  book panel   MaxDD  v2_MaxDD  dd_4a_ok  dd_cap_4b_ok  cagr_floor_4b_ok  oos_4b_ok
+BAND03   U56 -0.1205   -0.1205      True          True             False       True
+BAND03  B136 -0.1224   -0.1224      True          True             False       True
+BAND03 SMALL -0.1209   -0.1209      True          True             False      False
+BAND08   U56 -0.1447   -0.1205     False          True             False       True
+BAND08  B136 -0.1481   -0.1224     False          True             False       True
+BAND08 SMALL -0.1467   -0.1209     False          True             False      False
+ TOP20   U56 -0.2128   -0.1205     False         False              True       True
+ TOP20  B136 -0.2379   -0.1224     False         False              True       True
+ TOP20 SMALL -0.3277   -0.1209     False         False              True      False
+ TOP10   U56 -0.2430   -0.1205     False         False              True       True
+ TOP10  B136 -0.2664   -0.1224     False         False              True       True
+ TOP10 SMALL -0.4661   -0.1209     False         False              True      False
+ EWALL   U56 -0.1587   -0.1205     False          True             False       True
+ EWALL  B136 -0.1769   -0.1224     False          True              True       True
+ EWALL SMALL -0.3421   -0.1209     False         False             False      False
+ SPYBH   U56 -0.3372   -0.1205     False         False              True      False
+ SPYBH  B136 -0.3372   -0.1224     False         False              True      False
+ SPYBH SMALL -0.3372   -0.1209     False         False              True      False
+    4a's MaxDD leg passes 3 of 18 book x panel pairs;
+    4b's DD cap passes 8, its CAGR floor 10, its OOS leg 10.
+    Those legs are SPLIT-INVARIANT by construction, and they are what is binding —
+    which replicates ideas 530/531 (the DD cap does the cutting) from a new direction.
+
+  ZERO-SIGNAL CALENDAR CONTROL (SPYBH is ONE asset held one way; every H-leg move
+  it shows is 100% convention, 0% book):
+panel      split   boundary     H1     H2  SPY_H1  SPY_H2  leg4a  leg4b
+  U56     NATIVE 2017-11-07 0.9595 0.8211  0.9595  0.8211  False  False
+  U56     CALMID 2017-11-13 0.9566 0.8236  0.9566  0.8236  False  False
+  U56 2014-01-01 2014-01-02 1.0013 0.8335  1.0013  0.8335  False  False
+  U56 2015-01-01 2015-01-02 1.0067 0.8188  1.0067  0.8188  False  False
+  U56 2016-01-01 2016-01-04 0.8988 0.8733  0.8988  0.8733  False  False
+  U56 2017-01-01 2017-01-03 0.8986 0.8721  0.8986  0.8721  False  False
+  U56 2018-01-01 2018-01-02 0.9750 0.8070  0.9750  0.8070  False  False
+  U56 2019-01-01 2019-01-02 0.8538 0.9221  0.8538  0.9221  False  False
+ B136     NATIVE 2017-11-03 0.9566 0.8340  0.9566  0.8340  False  False
+ B136     CALMID 2017-11-09 0.9598 0.8313  0.9598  0.8313  False  False
+ B136 2014-01-01 2014-01-02 1.0013 0.8414  1.0013  0.8414  False  False
+ B136 2015-01-01 2015-01-02 1.0068 0.8272  1.0068  0.8272  False  False
+ B136 2016-01-01 2016-01-04 0.8988 0.8825  0.8988  0.8825  False  False
+ B136 2017-01-01 2017-01-03 0.8987 0.8820  0.8987  0.8820  False  False
+ B136 2018-01-01 2018-01-02 0.9751 0.8175  0.9751  0.8175  False  False
+ B136 2019-01-01 2019-01-02 0.8538 0.9340  0.8538  0.9340  False  False
+SMALL     NATIVE 2018-11-06 0.8907 0.8577  0.8907  0.8577   True  False
+SMALL     CALMID 2018-11-09 0.9119 0.8419  0.9119  0.8419   True  False
+SMALL 2014-01-01 2014-01-02 0.9505 0.8414  0.9505  0.8414   True  False
+SMALL 2015-01-01 2015-01-02 0.9824 0.8272  0.9824  0.8272   True  False
+SMALL 2016-01-01 2016-01-04 0.8156 0.8825  0.8156  0.8825   True  False
+SMALL 2017-01-01 2017-01-03 0.8316 0.8820  0.8316  0.8820   True  False
+SMALL 2018-01-01 2018-01-02 0.9593 0.8175  0.9593  0.8175   True  False
+SMALL 2019-01-01 2019-01-02 0.7883 0.9339  0.7883  0.9339   True  False
+
+  SPY-vs-itself H1 range across the 8 split rules, by panel: B136 0.1529, SMALL 0.1941, U56 0.1529
+  idea 517's published cross-panel CALENDAR NOISE FLOOR on Sharpe was 0.0275 —
+  the split-date dial alone moves SPY's own H1 by up to 0.1941 on one panel.
+
+======================================================================================================================
+PART C — WHY: is it the boundary MOVING, or the two sides carrying different REGIMES?
+======================================================================================================================
+Regime membership of the two sides, live RULES v2 book (BAND03):
+panel      split   boundary  H1_n  H2_n  H1_cal  H2_cal y2020_in y2022_in  H1_Sharpe  H2_Sharpe
+  U56     NATIVE 2017-11-07  2221  2221    3220    3229       H2       H2     1.2349     1.1718
+  U56     CALMID 2017-11-13  2225  2217    3226    3223       H2       H2     1.2262     1.1796
+  U56 2014-01-01 2014-01-02  1251  3191    1815    4634       H2       H2     1.2157     1.1935
+  U56 2015-01-01 2015-01-02  1503  2939    2180    4269       H2       H2     1.1790     1.2105
+  U56 2016-01-01 2016-01-04  1755  2687    2547    3902       H2       H2     1.1079     1.2585
+  U56 2017-01-01 2017-01-03  2007  2435    2912    3537       H2       H2     1.1043     1.2747
+  U56 2018-01-01 2018-01-02  2258  2184    3276    3173       H2       H2     1.2370     1.1700
+  U56 2019-01-01 2019-01-02  2509  1933    3641    2808       H2       H2     1.1051     1.3140
+ B136     NATIVE 2017-11-03  2219  2220    3216    3227       H2       H2     1.2291     0.9844
+ B136     CALMID 2017-11-09  2223  2216    3222    3221       H2       H2     1.2353     0.9781
+ B136 2014-01-01 2014-01-02  1251  3188    1815    4628       H2       H2     1.2532     1.0428
+ B136 2015-01-01 2015-01-02  1503  2936    2180    4263       H2       H2     1.2186     1.0437
+ B136 2016-01-01 2016-01-04  1755  2684    2547    3896       H2       H2     1.0983     1.1124
+ B136 2017-01-01 2017-01-03  2007  2432    2912    3531       H2       H2     1.0912     1.1185
+ B136 2018-01-01 2018-01-02  2258  2181    3276    3167       H2       H2     1.2487     0.9619
+ B136 2019-01-01 2019-01-02  2509  1930    3641    2802       H2       H2     1.0982     1.1156
+SMALL     NATIVE 2018-11-06  1967  1967    2854    2859       H2       H2     0.5416     0.6802
+SMALL     CALMID 2018-11-09  1970  1964    2857    2856       H2       H2     0.5509     0.6725
+SMALL 2014-01-01 2014-01-02   746  3188    1085    4628       H2       H2     0.8281     0.5604
+SMALL 2015-01-01 2015-01-02   998  2936    1450    4263       H2       H2     0.6189     0.6132
+SMALL 2016-01-01 2016-01-04  1250  2684    1817    3896       H2       H2     0.4258     0.6979
+SMALL 2017-01-01 2017-01-03  1502  2432    2182    3531       H2       H2     0.5308     0.6629
+SMALL 2018-01-01 2018-01-02  1753  2181    2546    3167       H2       H2     0.5265     0.6784
+SMALL 2019-01-01 2019-01-02  2004  1930    2911    2802       H2       H2     0.4731     0.7418
+
+  REGIME-REALLOCATION CHANNEL: INACTIVE on this ladder. 2020 and 2022 sit in H2 under
+  every one of the 8 split rules on all three panels (0 exceptions out of 48), because the ladder tops out at 2019-01-01. So the H-leg movement measured in
+  PART B is NOT the stress years changing sides — it is how much of the quiet 2013-2016
+  bull is counted in H1 rather than H2. A split date at or after 2020 WOULD move the
+  stress years and is expected to be larger; it is out of this run's pre-registered grid
+  and is left to the queue, not claimed here.
+
+======================================================================================================================
+PART D — PROTOCOL 8 WALK-FORWARD (band picked on 2009-2016 IS only) + BOTH KEEP PATHS
+======================================================================================================================
+
+  U56: IS band ladder 0.0:1.0548, 0.03:1.1043, 0.05:1.0625, 0.08:1.1222, 0.12:1.1202  -> PICK band=0.08 (IS Sharpe 1.1222)
+
+  B136: IS band ladder 0.0:1.0568, 0.03:1.0912, 0.05:1.0754, 0.08:1.1412, 0.12:1.1357  -> PICK band=0.08 (IS Sharpe 1.1412)
+
+  SMALL: IS band ladder 0.0:0.4625, 0.03:0.5308, 0.05:0.5767, 0.08:0.6006, 0.12:0.6437  -> PICK band=0.12 (IS Sharpe 0.6437)
+
+OOS 2017-2026 (untouched), rule-8 pick, vs RULES v2 baseline and vs SPY — every split rule:
+panel      split   pick  IS_Sharpe   boundary  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  v2_OOS_CAGR  v2_OOS_Sharpe  v2_OOS_MaxDD  SPY_OOS_CAGR  SPY_OOS_Sharpe  SPY_OOS_MaxDD     H1     H2  KEEP_4a  KEEP_4b
+  U56     NATIVE 0.0800     1.1222 2017-11-07    0.0897      1.1627    -0.1447       0.0945         1.2747       -0.1205        0.1524          0.8721        -0.3372 1.2432 1.0629    False    False
+  U56     CALMID 0.0800     1.1222 2017-11-13    0.0897      1.1627    -0.1447       0.0945         1.2747       -0.1205        0.1524          0.8721        -0.3372 1.2375 1.0679    False    False
+  U56 2014-01-01 0.0800     1.1222 2014-01-02    0.0897      1.1627    -0.1447       0.0945         1.2747       -0.1205        0.1524          0.8721        -0.3372 1.1686 1.1345    False    False
+  U56 2015-01-01 0.0800     1.1222 2015-01-02    0.0897      1.1627    -0.1447       0.0945         1.2747       -0.1205        0.1524          0.8721        -0.3372 1.1576 1.1373    False    False
+  U56 2016-01-01 0.0800     1.1222 2016-01-04    0.0897      1.1627    -0.1447       0.0945         1.2747       -0.1205        0.1524          0.8721        -0.3372 1.1148 1.1632    False    False
+  U56 2017-01-01 0.0800     1.1222 2017-01-03    0.0897      1.1627    -0.1447       0.0945         1.2747       -0.1205        0.1524          0.8721        -0.3372 1.1222 1.1627    False    False
+  U56 2018-01-01 0.0800     1.1222 2018-01-02    0.0897      1.1627    -0.1447       0.0945         1.2747       -0.1205        0.1524          0.8721        -0.3372 1.2489 1.0569    False    False
+  U56 2019-01-01 0.0800     1.1222 2019-01-02    0.0897      1.1627    -0.1447       0.0945         1.2747       -0.1205        0.1524          0.8721        -0.3372 1.0891 1.2121    False    False
+ B136     NATIVE 0.0800     1.1412 2017-11-03    0.0836      1.1095    -0.1481       0.0798         1.1185       -0.1224        0.1545          0.8820        -0.3372 1.2713 0.9821    False    False
+ B136     CALMID 0.0800     1.1412 2017-11-09    0.0836      1.1095    -0.1481       0.0798         1.1185       -0.1224        0.1545          0.8820        -0.3372 1.2788 0.9747    False    False
+ B136 2014-01-01 0.0800     1.1412 2014-01-02    0.0836      1.1095    -0.1481       0.0798         1.1185       -0.1224        0.1545          0.8820        -0.3372 1.2575 1.0675    False    False
+ B136 2015-01-01 0.0800     1.1412 2015-01-02    0.0836      1.1095    -0.1481       0.0798         1.1185       -0.1224        0.1545          0.8820        -0.3372 1.2493 1.0551    False    False
+ B136 2016-01-01 0.0800     1.1412 2016-01-04    0.0836      1.1095    -0.1481       0.0798         1.1185       -0.1224        0.1545          0.8820        -0.3372 1.1441 1.1113    False    False
+ B136 2017-01-01 0.0800     1.1412 2017-01-03    0.0836      1.1095    -0.1481       0.0798         1.1185       -0.1224        0.1545          0.8820        -0.3372 1.1412 1.1095    False    False
+ B136 2018-01-01 0.0800     1.1412 2018-01-02    0.0836      1.1095    -0.1481       0.0798         1.1185       -0.1224        0.1545          0.8820        -0.3372 1.2908 0.9598    False    False
+ B136 2019-01-01 0.0800     1.1412 2019-01-02    0.0836      1.1095    -0.1481       0.0798         1.1185       -0.1224        0.1545          0.8820        -0.3372 1.1456 1.0959    False    False
+SMALL     NATIVE 0.1200     0.6437 2018-11-06    0.0492      0.6888    -0.1559       0.0455         0.6629       -0.1209        0.1545          0.8820        -0.3372 0.6679 0.6785    False    False
+SMALL     CALMID 0.1200     0.6437 2018-11-09    0.0492      0.6888    -0.1559       0.0455         0.6629       -0.1209        0.1545          0.8820        -0.3372 0.6772 0.6705    False    False
+SMALL 2014-01-01 0.1200     0.6437 2014-01-02    0.0492      0.6888    -0.1559       0.0455         0.6629       -0.1209        0.1545          0.8820        -0.3372 0.9229 0.6076    False    False
+SMALL 2015-01-01 0.1200     0.6437 2015-01-02    0.0492      0.6888    -0.1559       0.0455         0.6629       -0.1209        0.1545          0.8820        -0.3372 0.7215 0.6542    False    False
+SMALL 2016-01-01 0.1200     0.6437 2016-01-04    0.0492      0.6888    -0.1559       0.0455         0.6629       -0.1209        0.1545          0.8820        -0.3372 0.5464 0.7295    False    False
+SMALL 2017-01-01 0.1200     0.6437 2017-01-03    0.0492      0.6888    -0.1559       0.0455         0.6629       -0.1209        0.1545          0.8820        -0.3372 0.6437 0.6888    False    False
+SMALL 2018-01-01 0.1200     0.6437 2018-01-02    0.0492      0.6888    -0.1559       0.0455         0.6629       -0.1209        0.1545          0.8820        -0.3372 0.6513 0.6886    False    False
+SMALL 2019-01-01 0.1200     0.6437 2019-01-02    0.0492      0.6888    -0.1559       0.0455         0.6629       -0.1209        0.1545          0.8820        -0.3372 0.5891 0.7495    False    False
+
+  4a passes: 0 of 24   |   4b passes: 0 of 24
+    U56    4a 0/8 split rules, 4b 0/8 split rules -> split-invariant
+    B136   4a 0/8 split rules, 4b 0/8 split rules -> split-invariant
+    SMALL  4a 0/8 split rules, 4b 0/8 split rules -> split-invariant
+
+  The OOS window (2017-2026) is FIXED by PROTOCOL 8 and does NOT move with the split
+  rule, so OOS CAGR/Sharpe/MaxDD above are identical down each panel's block. What the
+  split rule moves is the full-sample H-legs that sit INSIDE the 4a and 4b predicates.
+
+artefacts written: 2026-09-11_is-the-len-r-SLASH-2-HALF-SPLIT-the-record-s-single-largest-CONVENTION-artefact_B.{geometry,census,grid,moves,claimsets,flippedcells,bindinglegs,regimes,walkforward}.csv
+
+======================================================================================================================
+DONE
+======================================================================================================================
