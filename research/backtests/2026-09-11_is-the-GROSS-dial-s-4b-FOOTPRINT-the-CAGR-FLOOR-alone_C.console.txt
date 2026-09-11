@@ -1,0 +1,475 @@
+####################################################################################################
+# IDEA 670 -- is-the-GROSS-dial-s-4b-FOOTPRINT-the-CAGR-FLOOR-alone   (lane C, 2026-09-11)
+####################################################################################################
+ (verbatim intent)
+--------------------------------------
+  idea 668's entire GROSS 4b footprint is 16 points at g >= 0.95 with 0 at g=0.75 and 0 at
+  g <= 0.60, while Sharpe is flat across the whole ladder to three decimals (worst flip
+  0.0018/0.0030 OOS Sharpe).  Test 657's question as ONE experiment: hold gross MATCHED
+  across every arm and re-run 4b, reporting how many of the record's committed 4b passes
+  survive when exposure cannot buy the CAGR floor.  Max 2 params (gross grid, panel).
+
+WHAT IS TUNED AND WHAT IS NOT (PROTOCOL 4, "no more than 2 tuned parameters")
+-----------------------------------------------------------------------------
+  TUNED (2)  : GROSS g (the ladder rung) and PANEL.
+  NOT TUNED  : cost 10 bps (PROTOCOL 2); cadence W (RULES v2) except on the one arm where
+               cadence IS the arm's definition (BAND03_M, a fixed companion, not a swept
+               dial); band 0.03 (RULES v2) and 0.08 (idea 664's committed IS pick); n in
+               {5,10,20} and vol cap 0.60/OFF -- all are the record's OWN committed arm
+               definitions, restated, never chosen by looking at an outcome; warm-up 260
+               rows; IS/OOS split 2016-12-31 / 2017-01-01 (PROTOCOL 8).
+               The ARM LIST is a census of the record's committed 4b-passing families, not
+               a search: every arm below is named in a committed artefact (cited inline).
+
+THE DESIGN
+----------
+  Ten ARMS, each a book whose weights are exactly g x (its g=1.00 weights) -- gate G5 asserts
+  that scaling identity to 0.0, so on this grid "gross" is pure exposure and nothing else:
+
+    BAND03      RULES v2 live band book, band 0.03, W            baseline.rules_v2_weights
+    BAND08      band 0.08, W                                      idea 664's committed IS pick
+    BAND03_M    band 0.03, MONTHLY                                668's CADENCE dial companion
+    CAND20_VS   top-20 composite rank, vol scaler ON, cap 0.60    668's N dial (14 of its 4b)
+    CAND20      top-20 composite rank, NO vol scaler, cap 0.60    the 2026-09-04 KEEP 4b book
+    CAND10      top-10, no vol scaler, cap 0.60                   width companion
+    CAND05      top-5,  no vol scaler, cap 0.60                   RULES v1's width
+    CAND20_NOCAP top-20, no vol scaler, cap OFF                   668's VOLCAP dial (2 of its 4b)
+    EWELIG      equal-weight EVERY eligible name (>200d, vol20<0.60)  2026-09-03 memo Finding 2
+    SPYBH       g x SPY, weekly                                   the ZERO-SIGNAL exposure control
+
+  SPYBH is the load-bearing control: it carries no signal at all, so whatever part of the 4b
+  verdict it can move by turning g is, by construction, exposure and not edge.
+
+  Every arm is run at EVERY rung of the gross ladder {0.20 .. 1.00} on both panels and the
+  4b verdict is DECOMPOSED INTO ITS FIVE LEGS, reported separately at every point:
+     L1 H1 Sharpe > SPY H1      L2 H2 Sharpe > SPY H2      L3 OOS Sharpe > SPY OOS
+     L4 |MaxDD| <= 0.60 |MaxDD_SPY|                        L5 CAGR >= 0.70 CAGR_SPY
+  The queue's claim is a claim about WHICH LEG MOVES WITH g.  Legs, not the conjunction, are
+  the only way to answer it, and the conjunction is reported too (pass4b), with 4a beside it.
+
+  MATCHED-GROSS SURVIVAL (the queue's count): for every (panel, arm) that passes 4b at ANY
+  rung, does it still pass when g is held at the live constant 0.75, and at every rung?
+
+  CASH-RATE COUNTERFACTUAL: the engine pays 0% on the de-grossed sleeve, so at g<1 the CAGR
+  floor is mechanically harder.  For every failing point the run publishes the flat cash rate
+  that would flip L5, = (0.70 CAGR_SPY - CAGR) / mean cash share.  This is a DIAGNOSTIC, not
+  a tuned parameter and not a claim: open idea 642 PARKs the real T-bill path for lack of data.
+
+PANELS (PROTOCOL 9 survivorship)
+--------------------------------
+  U56  research/universe.json          B136  research/universe_broad.json
+  B136 is TODAY'S constituents; every B136 LEVEL below is biased upward.  The claims this run
+  makes are about which 4b LEG moves with g inside a panel, which survivorship biases far less
+  than it biases a level, but no B136 level here is a tradeable estimate.
+
+  panel U56     56 columns  2008-01-02 .. 2026-09-10  (4702 rows)
+  panel B136   136 columns  2008-01-02 .. 2026-09-04  (4699 rows)
+
+====================================================================================================
+(A) PRE-REGISTERED GATES -- run and printed before any new number is read
+====================================================================================================
+  G2 band_book(0.03,0.75) == baseline.rules_v2_weights   : 0.000e+00  PASS
+  G1 fast_backtest == engine.backtest @10 bps            : 6.939e-18  PASS
+  G3 idea 668's COMMITTED GROSS-dial rows (band 0.03, W, 10 bps), bar 5e-4.
+     668 itself reported the tape moves between runs, so the gate is tried on today's
+     tape AND on truncations and the reproducing vintage is NAMED (bears on idea 517).
+     U56   today         last 2026-09-10  max|d| over 5 rungs x 6 metrics + SPY = 4.607e-07
+     U56   <= 2026-09-10 last 2026-09-10  max|d| over 5 rungs x 6 metrics + SPY = 4.607e-07
+     U56   <= 2026-09-09 last 2026-09-09  max|d| over 5 rungs x 6 metrics + SPY = 7.989e-03
+     U56   <= 2026-09-08 last 2026-09-08  max|d| over 5 rungs x 6 metrics + SPY = 1.101e-02
+     U56   <= 2026-09-04 last 2026-09-04  max|d| over 5 rungs x 6 metrics + SPY = 1.903e-02
+     U56   best vintage today  max|d| 4.607e-07  PASS
+     B136  today         last 2026-09-04  max|d| over 5 rungs x 6 metrics + SPY = 4.885e-07
+     B136  <= 2026-09-10 last 2026-09-04  max|d| over 5 rungs x 6 metrics + SPY = 4.885e-07
+     B136  <= 2026-09-09 last 2026-09-04  max|d| over 5 rungs x 6 metrics + SPY = 4.885e-07
+     B136  <= 2026-09-08 last 2026-09-04  max|d| over 5 rungs x 6 metrics + SPY = 4.885e-07
+     B136  <= 2026-09-04 last 2026-09-04  max|d| over 5 rungs x 6 metrics + SPY = 4.885e-07
+     B136  best vintage today  max|d| 4.885e-07  PASS
+  wrote 2026-09-11_is-the-GROSS-dial-s-4b-FOOTPRINT-the-CAGR-FLOOR-alone_C.gate3.csv  (10 rows)
+  G4 ladder contains live 0.75 and full 1.00              : PASS
+  G5 weights(g) == g*weights(1.00), 10 arms x 2 panels    : 2.776e-17  FAIL  (pre-registered bar: exact 0.0)
+     CORRECTION, stated not hidden: the exact-0.0 bar was MIS-SET BY THIS RUN.  The two
+     sides divide by the name count in a different order (g/k vs g*(1/k)), so they differ
+     in the last bit of a double and can never be bit-identical.  Re-read at the SAME
+     float bar G1 uses for the same reason (1e-12):
+     G5' weights(g) == g*weights(1.00) at bar 1e-12         : 2.776e-17  PASS
+  G6 SPYBH(g=1.00) tracks SPY buy-and-hold (Sharpe)       : 0.000e+00  PASS
+  GATES: ALL PASS
+
+====================================================================================================
+(B) THE GRID -- 10 arms x 8 gross rungs x 2 panels = 160 points, ALL REPORTED
+====================================================================================================
+  wrote 2026-09-11_is-the-GROSS-dial-s-4b-FOOTPRINT-the-CAGR-FLOOR-alone_C.grid.csv  (160 rows)
+
+  FULL GRID (CAGR / Sharpe / MaxDD / 4b legs).  L1 H1>SPY  L2 H2>SPY  L3 OOS>SPY
+  L4 |DD|<=60%|SPY DD|  L5 CAGR>=70% SPY CAGR.
+
+  --- panel U56  (SPY: CAGR 15.1113%  Sharpe 0.8835  MaxDD -33.7173%  => floor 10.5779%  cap 20.2304%) ---
+  arm               g     CAGR   Sharpe    MaxDD      H1      H2   OOSsh  L1 L2 L3 L4 L5  4a 4b
+  BAND03         0.20    2.28%   1.1997   -3.29%   1.233   1.173   1.276   Y  Y  Y  Y  .   .  .
+  BAND03         0.35    3.99%   1.1998   -5.72%   1.234   1.173   1.275   Y  Y  Y  Y  .   .  .
+  BAND03         0.50    5.72%   1.1998   -8.12%   1.234   1.172   1.275   Y  Y  Y  Y  .   .  .
+  BAND03         0.60    6.87%   1.1998   -9.70%   1.234   1.172   1.275   Y  Y  Y  Y  .   .  .
+  BAND03         0.75    8.61%   1.1998  -12.05%   1.235   1.172   1.275   Y  Y  Y  Y  .   .  .
+  BAND03         0.85    9.78%   1.1998  -13.61%   1.235   1.172   1.274   Y  Y  Y  Y  .   .  .
+  BAND03         0.95   10.94%   1.1997  -15.15%   1.235   1.171   1.274   Y  Y  Y  Y  Y   .  Y
+  BAND03         1.00   11.52%   1.1996  -15.91%   1.235   1.171   1.274   Y  Y  Y  Y  Y   .  Y
+  BAND08         0.20    2.25%   1.1448   -3.96%   1.242   1.065   1.164   Y  Y  Y  Y  .   .  .
+  BAND08         0.35    3.95%   1.1448   -6.88%   1.242   1.064   1.164   Y  Y  Y  Y  .   .  .
+  BAND08         0.50    5.65%   1.1447   -9.76%   1.243   1.064   1.164   Y  Y  Y  Y  .   .  .
+  BAND08         0.60    6.79%   1.1446  -11.66%   1.243   1.063   1.163   Y  Y  Y  Y  .   .  .
+  BAND08         0.75    8.50%   1.1444  -14.47%   1.243   1.063   1.163   Y  Y  Y  Y  .   .  .
+  BAND08         0.85    9.65%   1.1442  -16.31%   1.243   1.063   1.162   Y  Y  Y  Y  .   .  .
+  BAND08         0.95   10.79%   1.1440  -18.14%   1.244   1.062   1.162   Y  Y  Y  Y  Y   .  Y
+  BAND08         1.00   11.37%   1.1439  -19.05%   1.244   1.062   1.162   Y  Y  Y  Y  Y   .  Y
+  BAND03_M       0.20    2.34%   1.1675   -4.01%   1.215   1.129   1.220   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.35    4.10%   1.1685   -6.93%   1.216   1.130   1.221   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.50    5.88%   1.1695   -9.78%   1.217   1.130   1.222   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.60    7.07%   1.1701  -11.64%   1.218   1.131   1.222   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.75    8.87%   1.1710  -14.38%   1.219   1.132   1.223   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.85   10.08%   1.1716  -16.17%   1.220   1.132   1.223   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.95   11.29%   1.1722  -17.93%   1.221   1.132   1.223   Y  Y  Y  Y  Y   .  Y
+  BAND03_M       1.00   11.89%   1.1725  -18.81%   1.221   1.133   1.224   Y  Y  Y  Y  Y   .  Y
+  CAND20_VS      0.20    2.68%   0.9626   -4.80%   1.041   0.900   0.982   Y  Y  Y  Y  .   .  .
+  CAND20_VS      0.35    4.68%   0.9628   -8.33%   1.041   0.900   0.981   Y  Y  Y  Y  .   .  .
+  CAND20_VS      0.50    6.68%   0.9628  -11.78%   1.042   0.900   0.981   Y  Y  Y  Y  .   .  .
+  CAND20_VS      0.60    8.01%   0.9628  -14.04%   1.042   0.900   0.981   Y  Y  Y  Y  .   .  .
+  CAND20_VS      0.75    9.99%   0.9628  -17.38%   1.042   0.900   0.981   Y  Y  Y  Y  .   .  .
+  CAND20_VS      0.85   11.31%   0.9627  -19.57%   1.043   0.899   0.980   Y  Y  Y  Y  Y   .  Y
+  CAND20_VS      0.95   12.62%   0.9625  -21.73%   1.043   0.899   0.980   Y  Y  Y  .  Y   .  .
+  CAND20_VS      1.00   13.27%   0.9624  -22.79%   1.043   0.899   0.980   Y  Y  Y  .  Y   .  .
+  CAND20         0.20    3.39%   1.0605   -5.07%   1.075   1.055   1.126   Y  Y  Y  Y  .   .  .
+  CAND20         0.35    5.94%   1.0609   -8.79%   1.075   1.056   1.126   Y  Y  Y  Y  .   .  .
+  CAND20         0.50    8.50%   1.0613  -12.42%   1.075   1.056   1.127   Y  Y  Y  Y  .   .  .
+  CAND20         0.60   10.21%   1.0615  -14.80%   1.075   1.057   1.127   Y  Y  Y  Y  .   .  .
+  CAND20         0.75   12.76%   1.0618  -18.31%   1.076   1.057   1.128   Y  Y  Y  Y  Y   .  Y
+  CAND20         0.85   14.46%   1.0619  -20.60%   1.076   1.057   1.128   Y  Y  Y  .  Y   .  .
+  CAND20         0.95   16.16%   1.0620  -22.86%   1.076   1.057   1.128   Y  Y  Y  .  Y   .  .
+  CAND20         1.00   17.01%   1.0620  -23.98%   1.076   1.057   1.128   Y  Y  Y  .  Y   .  .
+  CAND10         0.20    3.53%   0.9281   -4.85%   0.907   0.952   0.987   .  Y  Y  Y  .   .  .
+  CAND10         0.35    6.16%   0.9293   -8.40%   0.908   0.953   0.989   .  Y  Y  Y  .   .  .
+  CAND10         0.50    8.78%   0.9304  -11.89%   0.909   0.954   0.990   .  Y  Y  Y  .   .  .
+  CAND10         0.60   10.52%   0.9312  -14.17%   0.910   0.955   0.991   .  Y  Y  Y  .   .  .
+  CAND10         0.75   13.10%   0.9322  -17.54%   0.911   0.956   0.992   .  Y  Y  Y  Y   .  .
+  CAND10         0.85   14.81%   0.9328  -19.74%   0.911   0.957   0.993   .  Y  Y  Y  Y   .  .
+  CAND10         0.95   16.50%   0.9334  -21.92%   0.912   0.958   0.993   .  Y  Y  .  Y   .  .
+  CAND10         1.00   17.34%   0.9337  -23.00%   0.912   0.958   0.994   .  Y  Y  .  Y   .  .
+  CAND05         0.20    4.39%   0.9166   -6.08%   0.887   0.948   0.950   .  Y  Y  Y  .   .  .
+  CAND05         0.35    7.66%   0.9186  -10.48%   0.889   0.950   0.953   .  Y  Y  Y  .   .  .
+  CAND05         0.50   10.90%   0.9206  -14.73%   0.890   0.953   0.955   .  Y  Y  Y  Y   .  .
+  CAND05         0.60   13.05%   0.9219  -17.49%   0.891   0.954   0.957   .  Y  Y  Y  Y   .  .
+  CAND05         0.75   16.23%   0.9237  -21.51%   0.893   0.956   0.959   .  Y  Y  .  Y   .  .
+  CAND05         0.85   18.32%   0.9248  -24.11%   0.894   0.958   0.960   .  Y  Y  .  Y   .  .
+  CAND05         0.95   20.38%   0.9259  -26.66%   0.894   0.959   0.962   .  Y  Y  .  Y   .  .
+  CAND05         1.00   21.40%   0.9265  -27.91%   0.895   0.960   0.962   .  Y  Y  .  Y   .  .
+  CAND20_NOCAP   0.20    3.79%   1.1053   -6.03%   1.201   1.045   1.115   Y  Y  Y  Y  .   .  .
+  CAND20_NOCAP   0.35    6.65%   1.1057  -10.40%   1.201   1.045   1.116   Y  Y  Y  Y  .   .  .
+  CAND20_NOCAP   0.50    9.53%   1.1060  -14.62%   1.202   1.045   1.116   Y  Y  Y  Y  .   .  .
+  CAND20_NOCAP   0.60   11.44%   1.1061  -17.37%   1.202   1.046   1.116   Y  Y  Y  Y  Y   .  Y
+  CAND20_NOCAP   0.75   14.32%   1.1063  -21.37%   1.202   1.046   1.116   Y  Y  Y  .  Y   .  .
+  CAND20_NOCAP   0.85   16.24%   1.1064  -23.96%   1.202   1.046   1.117   Y  Y  Y  .  Y   .  .
+  CAND20_NOCAP   0.95   18.16%   1.1064  -26.50%   1.202   1.046   1.117   Y  Y  Y  .  Y   .  .
+  CAND20_NOCAP   1.00   19.11%   1.1064  -27.75%   1.202   1.046   1.117   Y  Y  Y  .  Y   .  .
+  EWELIG         0.20    2.75%   1.0435   -4.36%   1.075   1.018   1.103   Y  Y  Y  Y  .   .  .
+  EWELIG         0.35    4.82%   1.0437   -7.57%   1.075   1.018   1.103   Y  Y  Y  Y  .   .  .
+  EWELIG         0.50    6.89%   1.0438  -10.73%   1.075   1.018   1.103   Y  Y  Y  Y  .   .  .
+  EWELIG         0.60    8.28%   1.0439  -12.80%   1.076   1.018   1.103   Y  Y  Y  Y  .   .  .
+  EWELIG         0.75   10.35%   1.0440  -15.87%   1.076   1.018   1.103   Y  Y  Y  Y  .   .  .
+  EWELIG         0.85   11.73%   1.0441  -17.89%   1.076   1.019   1.103   Y  Y  Y  Y  Y   .  Y
+  EWELIG         0.95   13.11%   1.0441  -19.89%   1.076   1.019   1.103   Y  Y  Y  Y  Y   .  Y
+  EWELIG         1.00   13.79%   1.0442  -20.88%   1.076   1.019   1.103   Y  Y  Y  .  Y   .  .
+  SPYBH          0.20    3.08%   0.8768   -7.55%   0.949   0.817   0.868   .  .  .  Y  .   .  .
+  SPYBH          0.35    5.37%   0.8781  -12.93%   0.951   0.818   0.869   .  .  .  Y  .   .  .
+  SPYBH          0.50    7.65%   0.8793  -18.09%   0.953   0.818   0.870   .  .  .  Y  .   .  .
+  SPYBH          0.60    9.16%   0.8802  -21.40%   0.954   0.819   0.870   .  .  .  .  .   .  .
+  SPYBH          0.75   11.41%   0.8814  -26.20%   0.956   0.820   0.871   .  .  .  .  Y   .  .
+  SPYBH          0.85   12.90%   0.8823  -29.27%   0.958   0.820   0.871   .  .  .  .  Y   .  .
+  SPYBH          0.95   14.38%   0.8831  -32.26%   0.959   0.821   0.872   .  .  .  .  Y   .  .
+  SPYBH          1.00   15.11%   0.8835  -33.72%   0.960   0.821   0.872   .  .  .  .  Y   .  .
+
+  --- panel B136  (SPY: CAGR 15.2283%  Sharpe 0.8890  MaxDD -33.7160%  => floor 10.6598%  cap 20.2296%) ---
+  arm               g     CAGR   Sharpe    MaxDD      H1      H2   OOSsh  L1 L2 L3 L4 L5  4a 4b
+  BAND03         0.20    2.13%   1.1055   -3.34%   1.226   0.986   1.120   Y  Y  Y  Y  .   .  .
+  BAND03         0.35    3.73%   1.1057   -5.80%   1.227   0.986   1.120   Y  Y  Y  Y  .   .  .
+  BAND03         0.50    5.34%   1.1057   -8.24%   1.228   0.985   1.119   Y  Y  Y  Y  .   .  .
+  BAND03         0.60    6.42%   1.1058   -9.85%   1.228   0.985   1.119   Y  Y  Y  Y  .   .  .
+  BAND03         0.75    8.03%   1.1058  -12.24%   1.229   0.984   1.119   Y  Y  Y  Y  .   .  .
+  BAND03         0.85    9.11%   1.1058  -13.82%   1.229   0.984   1.118   Y  Y  Y  Y  .   .  .
+  BAND03         0.95   10.19%   1.1057  -15.38%   1.230   0.984   1.118   Y  Y  Y  Y  .   .  .
+  BAND03         1.00   10.72%   1.1057  -16.16%   1.230   0.983   1.117   Y  Y  Y  Y  Y   .  Y
+  BAND08         0.20    2.27%   1.1242   -4.06%   1.269   0.984   1.112   Y  Y  Y  Y  .   .  .
+  BAND08         0.35    3.98%   1.1242   -7.05%   1.269   0.984   1.111   Y  Y  Y  Y  .   .  .
+  BAND08         0.50    5.70%   1.1242  -10.00%   1.270   0.983   1.111   Y  Y  Y  Y  .   .  .
+  BAND08         0.60    6.85%   1.1241  -11.94%   1.271   0.983   1.110   Y  Y  Y  Y  .   .  .
+  BAND08         0.75    8.57%   1.1240  -14.81%   1.271   0.982   1.109   Y  Y  Y  Y  .   .  .
+  BAND08         0.85    9.72%   1.1239  -16.70%   1.272   0.982   1.109   Y  Y  Y  Y  .   .  .
+  BAND08         0.95   10.88%   1.1238  -18.57%   1.272   0.981   1.108   Y  Y  Y  Y  Y   .  Y
+  BAND08         1.00   11.46%   1.1237  -19.50%   1.272   0.981   1.108   Y  Y  Y  Y  Y   .  Y
+  BAND03_M       0.20    2.22%   1.0887   -4.37%   1.209   0.973   1.095   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.35    3.89%   1.0897   -7.56%   1.210   0.974   1.095   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.50    5.57%   1.0908  -10.67%   1.212   0.974   1.096   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.60    6.70%   1.0914  -12.70%   1.213   0.975   1.096   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.75    8.40%   1.0924  -15.69%   1.214   0.975   1.096   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.85    9.53%   1.0931  -17.64%   1.215   0.976   1.097   Y  Y  Y  Y  .   .  .
+  BAND03_M       0.95   10.67%   1.0937  -19.55%   1.216   0.976   1.097   Y  Y  Y  Y  Y   .  Y
+  BAND03_M       1.00   11.24%   1.0940  -20.50%   1.217   0.976   1.097   Y  Y  Y  .  Y   .  .
+  CAND20_VS      0.20    2.32%   0.8340   -5.05%   1.043   0.653   0.736   Y  .  .  Y  .   .  .
+  CAND20_VS      0.35    4.04%   0.8343   -8.73%   1.043   0.653   0.736   Y  .  .  Y  .   .  .
+  CAND20_VS      0.50    5.75%   0.8345  -12.31%   1.044   0.652   0.736   Y  .  .  Y  .   .  .
+  CAND20_VS      0.60    6.88%   0.8345  -14.65%   1.045   0.652   0.736   Y  .  .  Y  .   .  .
+  CAND20_VS      0.75    8.56%   0.8346  -18.09%   1.045   0.652   0.735   Y  .  .  Y  .   .  .
+  CAND20_VS      0.85    9.67%   0.8346  -20.33%   1.046   0.652   0.735   Y  .  .  .  .   .  .
+  CAND20_VS      0.95   10.77%   0.8345  -22.53%   1.046   0.651   0.735   Y  .  .  .  Y   .  .
+  CAND20_VS      1.00   11.31%   0.8345  -23.61%   1.046   0.651   0.735   Y  .  .  .  Y   .  .
+  CAND20         0.20    3.49%   0.9385   -5.59%   1.099   0.798   0.879   Y  .  .  Y  .   .  .
+  CAND20         0.35    6.09%   0.9399   -9.66%   1.101   0.799   0.880   Y  .  .  Y  .   .  .
+  CAND20         0.50    8.69%   0.9412  -13.64%   1.102   0.801   0.882   Y  .  .  Y  .   .  .
+  CAND20         0.60   10.42%   0.9420  -16.24%   1.103   0.801   0.882   Y  .  Y  Y  .   .  .
+  CAND20         0.75   12.99%   0.9432  -20.05%   1.105   0.803   0.884   Y  .  Y  Y  Y   .  .
+  CAND20         0.85   14.70%   0.9439  -22.54%   1.106   0.803   0.884   Y  .  Y  .  Y   .  .
+  CAND20         0.95   16.39%   0.9446  -24.99%   1.106   0.804   0.885   Y  .  Y  .  Y   .  .
+  CAND20         1.00   17.23%   0.9450  -26.20%   1.107   0.804   0.885   Y  .  Y  .  Y   .  .
+  CAND10         0.20    3.85%   0.8869   -6.01%   1.113   0.700   0.770   Y  .  .  Y  .   .  .
+  CAND10         0.35    6.72%   0.8891  -10.38%   1.115   0.703   0.773   Y  .  .  Y  .   .  .
+  CAND10         0.50    9.57%   0.8912  -14.62%   1.116   0.706   0.776   Y  .  .  Y  .   .  .
+  CAND10         0.60   11.45%   0.8926  -17.39%   1.117   0.708   0.778   Y  .  .  Y  Y   .  .
+  CAND10         0.75   14.25%   0.8946  -21.44%   1.118   0.710   0.781   Y  .  .  .  Y   .  .
+  CAND10         0.85   16.09%   0.8958  -24.08%   1.119   0.712   0.782   Y  .  .  .  Y   .  .
+  CAND10         0.95   17.92%   0.8971  -26.67%   1.120   0.714   0.784   Y  .  .  .  Y   .  .
+  CAND10         1.00   18.82%   0.8977  -27.95%   1.120   0.715   0.785   Y  .  .  .  Y   .  .
+  CAND05         0.20    4.53%   0.8655   -6.92%   0.992   0.767   0.809   Y  .  .  Y  .   .  .
+  CAND05         0.35    7.90%   0.8685  -11.85%   0.993   0.771   0.813   Y  .  .  Y  .   .  .
+  CAND05         0.50   11.22%   0.8713  -16.57%   0.995   0.775   0.817   Y  .  .  Y  Y   .  .
+  CAND05         0.60   13.41%   0.8732  -19.60%   0.995   0.778   0.820   Y  .  .  Y  Y   .  .
+  CAND05         0.75   16.63%   0.8760  -23.99%   0.996   0.782   0.824   Y  .  .  .  Y   .  .
+  CAND05         0.85   18.75%   0.8777  -26.81%   0.997   0.785   0.827   Y  .  .  .  Y   .  .
+  CAND05         0.95   20.82%   0.8794  -29.54%   0.998   0.788   0.830   Y  .  .  .  Y   .  .
+  CAND05         1.00   21.85%   0.8803  -30.88%   0.998   0.789   0.831   Y  .  .  .  Y   .  .
+  CAND20_NOCAP   0.20    3.95%   0.9841   -6.85%   1.160   0.850   0.927   Y  Y  Y  Y  .   .  .
+  CAND20_NOCAP   0.35    6.91%   0.9859  -11.77%   1.162   0.851   0.929   Y  Y  Y  Y  .   .  .
+  CAND20_NOCAP   0.50    9.88%   0.9876  -16.51%   1.164   0.853   0.930   Y  Y  Y  Y  .   .  .
+  CAND20_NOCAP   0.60   11.85%   0.9887  -19.56%   1.165   0.854   0.932   Y  Y  Y  Y  Y   .  Y
+  CAND20_NOCAP   0.75   14.80%   0.9902  -24.00%   1.167   0.856   0.933   Y  Y  Y  .  Y   .  .
+  CAND20_NOCAP   0.85   16.75%   0.9912  -26.87%   1.168   0.857   0.934   Y  Y  Y  .  Y   .  .
+  CAND20_NOCAP   0.95   18.70%   0.9922  -29.66%   1.169   0.858   0.935   Y  Y  Y  .  Y   .  .
+  CAND20_NOCAP   1.00   19.67%   0.9926  -31.02%   1.170   0.858   0.936   Y  Y  Y  .  Y   .  .
+  EWELIG         0.20    2.85%   1.0259   -4.94%   1.143   0.916   1.021   Y  Y  Y  Y  .   .  .
+  EWELIG         0.35    5.00%   1.0260   -8.54%   1.144   0.916   1.020   Y  Y  Y  Y  .   .  .
+  EWELIG         0.50    7.14%   1.0261  -12.04%   1.144   0.915   1.020   Y  Y  Y  Y  .   .  .
+  EWELIG         0.60    8.57%   1.0261  -14.33%   1.145   0.915   1.019   Y  Y  Y  Y  .   .  .
+  EWELIG         0.75   10.72%   1.0261  -17.69%   1.146   0.914   1.019   Y  Y  Y  Y  Y   .  Y
+  EWELIG         0.85   12.14%   1.0261  -19.88%   1.146   0.914   1.018   Y  Y  Y  Y  Y   .  Y
+  EWELIG         0.95   13.57%   1.0261  -22.03%   1.147   0.914   1.018   Y  Y  Y  .  Y   .  .
+  EWELIG         1.00   14.28%   1.0261  -23.09%   1.147   0.914   1.017   Y  Y  Y  .  Y   .  .
+  SPYBH          0.20    3.10%   0.8824   -7.55%   0.946   0.830   0.878   .  .  .  Y  .   .  .
+  SPYBH          0.35    5.41%   0.8837  -12.93%   0.948   0.831   0.879   .  .  .  Y  .   .  .
+  SPYBH          0.50    7.70%   0.8849  -18.09%   0.950   0.831   0.880   .  .  .  Y  .   .  .
+  SPYBH          0.60    9.23%   0.8858  -21.40%   0.951   0.832   0.880   .  .  .  .  .   .  .
+  SPYBH          0.75   11.50%   0.8870  -26.20%   0.953   0.833   0.881   .  .  .  .  Y   .  .
+  SPYBH          0.85   13.00%   0.8878  -29.27%   0.955   0.833   0.881   .  .  .  .  Y   .  .
+  SPYBH          0.95   14.49%   0.8886  -32.26%   0.956   0.834   0.882   .  .  .  .  Y   .  .
+  SPYBH          1.00   15.23%   0.8890  -33.72%   0.957   0.834   0.882   .  .  .  .  Y   .  .
+
+====================================================================================================
+(C) WHICH 4b LEG MOVES WITH GROSS  -- pass share of each leg at each rung, pooled over
+    10 arms x 2 panels (n = 20 per rung)
+====================================================================================================
+       g         L1_H1         L2_H2        L3_OOS      L4_DDcap  L5_CAGRfloor      4a      4b
+    0.20         0.800         0.700         0.700         1.000         0.000   0.000   0.000
+    0.35         0.800         0.700         0.700         1.000         0.000   0.000   0.000
+    0.50         0.800         0.700         0.700         1.000         0.100   0.000   0.000
+    0.60         0.800         0.700         0.750         0.900         0.250   0.000   0.100
+    0.75         0.800         0.700         0.750         0.650         0.550   0.000   0.100
+    0.85         0.800         0.700         0.750         0.500         0.650   0.000   0.150
+    0.95         0.800         0.700         0.750         0.350         0.950   0.000   0.300
+    1.00         0.800         0.700         0.750         0.250         1.000   0.000   0.250
+
+  Spearman(leg pass share, g) over the 8 rungs, and the SPREAD of the share:
+    L1_H1          CONSTANT (rho undefined)   share 0.800 -> 0.800   spread 0.000
+    L2_H2          CONSTANT (rho undefined)   share 0.700 -> 0.700   spread 0.000
+    L3_OOS         rho +0.8452             share 0.700 -> 0.750   spread 0.050
+    L4_DDcap       rho -0.9759             share 0.250 -> 1.000   spread 0.750
+    L5_CAGRfloor   rho +0.9940             share 0.000 -> 1.000   spread 1.000
+    pass4b         rho +0.9452             share 0.000 -> 0.300   spread 0.300
+  wrote 2026-09-11_is-the-GROSS-dial-s-4b-FOOTPRINT-the-CAGR-FLOOR-alone_C.legs.csv  (8 rows)
+
+====================================================================================================
+(D) IS THE LADDER FLAT IN SHARPE?  per (panel, arm): max|dSharpe| across the 8 rungs
+====================================================================================================
+  panel arm              dSharpe    dOOSsh     dCAGR     d|DD|  rho(Sh,g)  rho(CAGR,g)  rho(|DD|,g)
+  B136  BAND03            0.0003    0.0030     8.59%    12.82%      0.333        1.000        1.000
+  B136  BAND03_M          0.0053    0.0021     9.03%    16.13%      1.000        1.000        1.000
+  B136  BAND08            0.0005    0.0039     9.19%    15.44%     -0.929        1.000        1.000
+  B136  CAND05            0.0148    0.0219    17.31%    23.96%      1.000        1.000        1.000
+  B136  CAND10            0.0108    0.0148    14.97%    21.94%      1.000        1.000        1.000
+  B136  CAND20            0.0065    0.0063    13.75%    20.61%      1.000        1.000        1.000
+  B136  CAND20_NOCAP      0.0085    0.0089    15.72%    24.17%      1.000        1.000        1.000
+  B136  CAND20_VS         0.0005    0.0014     8.99%    18.56%      0.595        1.000        1.000
+  B136  EWELIG            0.0002    0.0031    11.42%    18.15%      0.786        1.000        1.000
+  B136  SPYBH             0.0067    0.0038    12.13%    26.17%      1.000        1.000        1.000
+  U56   BAND03            0.0002    0.0018     9.25%    12.63%     -0.476        1.000        1.000
+  U56   BAND03_M          0.0049    0.0032     9.56%    14.80%      1.000        1.000        1.000
+  U56   BAND08            0.0009    0.0028     9.12%    15.09%     -1.000        1.000        1.000
+  U56   CAND05            0.0098    0.0122    17.01%    21.83%      1.000        1.000        1.000
+  U56   CAND10            0.0056    0.0063    13.82%    18.15%      1.000        1.000        1.000
+  U56   CAND20            0.0016    0.0023    13.61%    18.90%      1.000        1.000        1.000
+  U56   CAND20_NOCAP      0.0011    0.0016    15.32%    21.72%      0.976        1.000        1.000
+  U56   CAND20_VS         0.0004    0.0015    10.59%    17.99%     -0.476        1.000        1.000
+  U56   EWELIG            0.0007    0.0002    11.04%    16.52%      1.000        1.000        1.000
+  U56   SPYBH             0.0067    0.0038    12.04%    26.17%      1.000        1.000        1.000
+  MEDIAN  dSharpe 0.0032   dCAGR 11.73%   d|DD| 18.36%   |  MAX dSharpe 0.0148 (B136/CAND05)
+  rho(CAGR,g) == +1.000 on 20/20 arms;  rho(|DD|,g) == +1.000 on 20/20;  |rho(Sharpe,g)| >= 0.9 on 15/20
+  wrote 2026-09-11_is-the-GROSS-dial-s-4b-FOOTPRINT-the-CAGR-FLOOR-alone_C.flatness.csv  (20 rows)
+
+====================================================================================================
+(E) MATCHED-GROSS SURVIVAL -- the queue's count.  For every (panel, arm) that passes 4b
+    at ANY rung: does it still pass at the LIVE matched gross 0.75, and at EVERY rung?
+====================================================================================================
+  panel arm             #4b/8  #4a/8   @0.75  @all g   passing grosses
+  B136  BAND03              1      0       .       .   1.00
+  B136  BAND03_M            1      0       .       .   0.95
+  B136  BAND08              2      0       .       .   0.95;1.00
+  B136  CAND05              0      0       .       .   (none)
+  B136  CAND10              0      0       .       .   (none)
+  B136  CAND20              0      0       .       .   (none)
+  B136  CAND20_NOCAP        1      0       .       .   0.60
+  B136  CAND20_VS           0      0       .       .   (none)
+  B136  EWELIG              2      0       Y       .   0.75;0.85
+  B136  SPYBH               0      0       .       .   (none)
+  U56   BAND03              2      0       .       .   0.95;1.00
+  U56   BAND03_M            2      0       .       .   0.95;1.00
+  U56   BAND08              2      0       .       .   0.95;1.00
+  U56   CAND05              0      0       .       .   (none)
+  U56   CAND10              0      0       .       .   (none)
+  U56   CAND20              1      0       Y       .   0.75
+  U56   CAND20_NOCAP        1      0       .       .   0.60
+  U56   CAND20_VS           1      0       .       .   0.85
+  U56   EWELIG              2      0       .       .   0.85;0.95
+  U56   SPYBH               0      0       .       .   (none)
+
+  ARMS WITH A 4b PASS AT SOME GROSS         : 12/20
+  ... that survive at the MATCHED live 0.75 : 2/12
+  ... that survive at EVERY rung            : 0/12
+  minimum passing gross over all arms       : 0.60
+  TOTAL 4b points 18/160;  TOTAL 4a points 0/160;  BOTH 0/160
+  wrote 2026-09-11_is-the-GROSS-dial-s-4b-FOOTPRINT-the-CAGR-FLOOR-alone_C.survival.csv  (20 rows)
+
+====================================================================================================
+(F) THE ZERO-SIGNAL CONTROL -- what can g buy with NO edge at all?  (arm SPYBH)
+====================================================================================================
+  U56:  g0.20[--|L4YL5.]  g0.35[--|L4YL5.]  g0.50[--|L4YL5.]  g0.60[--|L4.L5.]  g0.75[--|L4.L5Y]  g0.85[--|L4.L5Y]  g0.95[--|L4.L5Y]  g1.00[--|L4.L5Y]
+        smallest g clearing the CAGR FLOOR with no signal : 0.75
+        largest  g still inside the DD CAP with no signal : 0.50
+  B136:  g0.20[--|L4YL5.]  g0.35[--|L4YL5.]  g0.50[--|L4YL5.]  g0.60[--|L4.L5.]  g0.75[--|L4.L5Y]  g0.85[--|L4.L5Y]  g0.95[--|L4.L5Y]  g1.00[--|L4.L5Y]
+        smallest g clearing the CAGR FLOOR with no signal : 0.75
+        largest  g still inside the DD CAP with no signal : 0.50
+
+  THE TWO LEGS DEFINE A GROSS WINDOW.  L4 (DD cap) is satisfied at LOW g, L5 (CAGR floor)
+  at HIGH g, so 4b can only live in the overlap.  Per (panel, arm): the largest g inside
+  the cap, the smallest g clearing the floor, and whether the window is OPEN:
+  panel arm              g<=cap  g>=floor    width   open   #4b
+  B136  BAND03             1.00      1.00     0.00      Y     1
+  B136  BAND03_M           0.95      0.95     0.00      Y     1
+  B136  BAND08             1.00      0.95     0.05      Y     2
+  B136  CAND05             0.60      0.50     0.10      Y     0
+  B136  CAND10             0.60      0.60     0.00      Y     0
+  B136  CAND20             0.75      0.75     0.00      Y     0
+  B136  CAND20_NOCAP       0.60      0.60     0.00      Y     1
+  B136  CAND20_VS          0.75      0.95    -0.20      .     0
+  B136  EWELIG             0.85      0.75     0.10      Y     2
+  B136  SPYBH              0.50      0.75    -0.25      .     0
+  U56   BAND03             1.00      0.95     0.05      Y     2
+  U56   BAND03_M           1.00      0.95     0.05      Y     2
+  U56   BAND08             1.00      0.95     0.05      Y     2
+  U56   CAND05             0.60      0.50     0.10      Y     0
+  U56   CAND10             0.85      0.75     0.10      Y     0
+  U56   CAND20             0.75      0.75     0.00      Y     1
+  U56   CAND20_NOCAP       0.60      0.60     0.00      Y     1
+  U56   CAND20_VS          0.85      0.85     0.00      Y     1
+  U56   EWELIG             0.95      0.85     0.10      Y     2
+  U56   SPYBH              0.50      0.75    -0.25      .     0
+  window OPEN on 17/20 (panel, arm) cells; CLOSED on 3 -- including the zero-signal control on BOTH panels (width -0.25).
+  The width of that window IS the edge test: a book with no edge has a NEGATIVE width,
+  and every 4b pass on this grid is a book whose window opened.
+  wrote 2026-09-11_is-the-GROSS-dial-s-4b-FOOTPRINT-the-CAGR-FLOOR-alone_C.window.csv  (20 rows)
+
+====================================================================================================
+(G) CASH-RATE COUNTERFACTUAL (DIAGNOSTIC, not a claim -- open idea 642 PARKs the real
+    T-bill path).  The engine pays 0% on the de-grossed sleeve.  For every point that
+    FAILS the CAGR floor, the flat cash rate that would flip L5:
+====================================================================================================
+  points failing L5: 90/160
+       g  n_fail  med cash share  med rate to flip      min      max
+    0.20      20           0.800             9.54%    7.66%   10.43%
+    0.35      20           0.650             8.36%    4.25%   10.18%
+    0.50      18           0.500             7.17%    1.56%    9.82%
+    0.60      15           0.400             6.12%    0.16%    9.45%
+    0.75       9           0.467             4.22%    0.92%    8.40%
+    0.85       7           0.397             2.34%    1.27%    6.60%
+    0.95       1           0.326             1.45%    1.45%    1.45%
+  L5 failures a <=5%/yr flat cash rate would flip: 27/90
+    U56/CAND10@g0.60(0.16%), B136/CAND20@g0.60(0.60%), U56/EWELIG@g0.75(0.92%), U56/CAND20@g0.60(0.93%), U56/BAND03_M@g0.85(1.27%), B136/BAND03@g0.95(1.45%), B136/CAND20_NOCAP@g0.50(1.56%), U56/BAND03@g0.85(2.02%), U56/CAND20_NOCAP@g0.50(2.11%), B136/CAND10@g0.50(2.18%), U56/BAND08@g0.85(2.19%), B136/BAND08@g0.85(2.34%)
+
+====================================================================================================
+(H) PROTOCOL RULE 8 -- WALK-FORWARD.  g chosen on 2009-2016 only, evaluated 2017-2026.
+    Two pre-registered choosers, both reported at every (panel, arm).
+====================================================================================================
+  wrote 2026-09-11_is-the-GROSS-dial-s-4b-FOOTPRINT-the-CAGR-FLOOR-alone_C.walkforward.csv  (40 rows)
+  panel arm           chooser      pick g  OOS CAGR   OOS Sh   OOS DD   SPY Sh  LIVE Sh  >SPY  >LIVE  4b
+  B136  BAND03        CH_MEMO        1.00    10.66%    1.117  -16.16%    0.882    1.119     Y      .   Y
+  B136  BAND03        CH_SHARPE      1.00    10.66%    1.117  -16.16%    0.882    1.119     Y      .   Y
+  B136  BAND03_M      CH_MEMO        0.95    10.61%    1.097  -19.55%    0.882    1.119     Y      .   Y
+  B136  BAND03_M      CH_SHARPE      1.00    11.17%    1.097  -20.50%    0.882    1.119     Y      .   .
+  B136  BAND08        CH_MEMO        0.95    10.61%    1.108  -18.57%    0.882    1.119     Y      .   Y
+  B136  BAND08        CH_SHARPE      1.00    11.17%    1.108  -19.50%    0.882    1.119     Y      .   Y
+  B136  CAND05        CH_MEMO        0.75    16.39%    0.824  -23.99%    0.882    1.119     .      .   .
+  B136  CAND05        CH_SHARPE      1.00    21.45%    0.831  -30.88%    0.882    1.119     .      .   .
+  B136  CAND10        CH_MEMO        0.50     8.64%    0.776  -14.62%    0.882    1.119     .      .   .
+  B136  CAND10        CH_SHARPE      1.00    16.72%    0.785  -27.95%    0.882    1.119     .      .   .
+  B136  CAND20        CH_MEMO        0.60    10.01%    0.882  -16.24%    0.882    1.119     Y      .   .
+  B136  CAND20        CH_SHARPE      1.00    16.46%    0.885  -26.20%    0.882    1.119     Y      .   .
+  B136  CAND20_NOCAP  CH_MEMO        0.60    11.84%    0.932  -19.56%    0.882    1.119     Y      .   Y
+  B136  CAND20_NOCAP  CH_SHARPE      1.00    19.52%    0.936  -31.02%    0.882    1.119     Y      .   .
+  B136  CAND20_VS     CH_MEMO        0.85     8.63%    0.735  -20.33%    0.882    1.119     .      .   .
+  B136  CAND20_VS     CH_SHARPE      1.00    10.06%    0.735  -23.61%    0.882    1.119     .      .   .
+  B136  EWELIG        CH_MEMO        0.75    10.58%    1.019  -17.69%    0.882    1.119     Y      .   Y
+  B136  EWELIG        CH_SHARPE      1.00    14.09%    1.017  -23.09%    0.882    1.119     Y      .   .
+  B136  SPYBH         CH_MEMO        0.75    11.68%    0.881  -26.20%    0.882    1.119     .      .   .
+  B136  SPYBH         CH_SHARPE      1.00    15.45%    0.882  -33.72%    0.882    1.119     .      .   .
+  U56   BAND03        CH_MEMO        0.75     9.45%    1.275  -12.05%    0.872    1.275     Y      .   .
+  U56   BAND03        CH_SHARPE      1.00    12.66%    1.274  -15.91%    0.872    1.275     Y      .   Y
+  U56   BAND03_M      CH_MEMO        1.00    12.81%    1.224  -18.81%    0.872    1.275     Y      .   Y
+  U56   BAND03_M      CH_SHARPE      1.00    12.81%    1.224  -18.81%    0.872    1.275     Y      .   Y
+  U56   BAND08        CH_MEMO        1.00    12.00%    1.162  -19.05%    0.872    1.275     Y      .   Y
+  U56   BAND08        CH_SHARPE      1.00    12.00%    1.162  -19.05%    0.872    1.275     Y      .   Y
+  U56   CAND05        CH_MEMO        0.75    18.04%    0.959  -21.51%    0.872    1.275     Y      .   .
+  U56   CAND05        CH_SHARPE      1.00    23.84%    0.962  -27.91%    0.872    1.275     Y      .   .
+  U56   CAND10        CH_MEMO        0.75    14.91%    0.992  -17.54%    0.872    1.275     Y      .   .
+  U56   CAND10        CH_SHARPE      1.00    19.79%    0.994  -23.00%    0.872    1.275     Y      .   .
+  U56   CAND20        CH_MEMO        0.75    14.40%    1.128  -18.31%    0.872    1.275     Y      .   Y
+  U56   CAND20        CH_SHARPE      0.85    16.34%    1.128  -20.60%    0.872    1.275     Y      .   .
+  U56   CAND20_NOCAP  CH_MEMO        0.75    15.70%    1.116  -21.37%    0.872    1.275     Y      .   .
+  U56   CAND20_NOCAP  CH_SHARPE      0.85    17.81%    1.117  -23.96%    0.872    1.275     Y      .   .
+  U56   CAND20_VS     CH_MEMO        0.75    10.64%    0.981  -17.38%    0.872    1.275     Y      .   .
+  U56   CAND20_VS     CH_SHARPE      1.00    14.12%    0.980  -22.79%    0.872    1.275     Y      .   .
+  U56   EWELIG        CH_MEMO        0.85    12.73%    1.103  -17.89%    0.872    1.275     Y      .   Y
+  U56   EWELIG        CH_SHARPE      1.00    14.99%    1.103  -20.88%    0.872    1.275     Y      .   .
+  U56   SPYBH         CH_MEMO        0.75    11.53%    0.871  -26.20%    0.872    1.275     .      .   .
+  U56   SPYBH         CH_SHARPE      1.00    15.24%    0.872  -33.72%    0.872    1.275     .      .   .
+
+  CH_MEMO: picks g=1.00 on 3/20, g<=0.75 on 13/20;  beat SPY OOS 15/20;  beat LIVE book OOS 0/20;  4b 9/20;  4a 0/20
+    mean OOS CAGR 12.09% vs SPY 15.45% / LIVE 7.98%;  mean OOS Sharpe 1.009 vs SPY 0.882 / LIVE 1.119;  mean OOS MaxDD -19.15% vs SPY -33.72% / LIVE -12.24%
+
+  CH_SHARPE: picks g=1.00 on 18/20, g<=0.75 on 0/20;  beat SPY OOS 15/20;  beat LIVE book OOS 0/20;  4b 5/20;  4a 0/20
+    mean OOS CAGR 15.32% vs SPY 15.45% / LIVE 7.98%;  mean OOS Sharpe 1.010 vs SPY 0.882 / LIVE 1.119;  mean OOS MaxDD -23.96% vs SPY -33.72% / LIVE -12.24%
+
+  the two choosers agree on the pick in 15.0% of the 20 (panel, arm) cells; median |d OOS Sharpe| between them 0.0007
+
+====================================================================================================
+(I) VERDICT
+====================================================================================================
+  CAGR-floor leg L5 share 0.000 -> 1.000 (rho vs g +0.994);  DD-cap leg L4 1.000 -> 0.250 (rho -0.976)
+  Sharpe legs L1/L2/L3 spread across the whole ladder: L1_H1 0.000, L2_H2 0.000, L3_OOS 0.050
+  4b points 18/160; 4a 0/160; BOTH 0/160.  Nothing is promoted on a leg-decomposition result.
+  VERDICT: see the .result.md memo written beside this script.
+  GATES: ALL PASS
