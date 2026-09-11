@@ -1,0 +1,277 @@
+======================================================================================================================================================
+IDEA 557  re-read idea 300's WF-C KILL as a PANEL FACT
+cloud lane, 2026-09-11.  two tuned parameters: PANEL (3) x WINDOW SPLIT (5).
+Everything else inherited from ideas 300/305: theta ladder (9), cadence (3),
+families (3), gross 0.75, 10 bps, next-day.  Every grid point published.
+======================================================================================================================================================
+pre-registered gates: G0 engine < 1e-12 | G1 identity < 1e-9 | G2 idea 305's nine WF-C
+cells reproduce < 1e-4 | G3 |d mask frac| < 0.01 | G4 |mean QUANTILE resid0| < 0.05 pp/yr
+======================================================================================================================================================
+  PANEL U56      :  55 names, 2008-01-02..2026-09-10, 4702 bars
+  PANEL B136     : 135 names, 2008-01-02..2026-09-04, 4699 bars
+  PANEL SMALL439 : 439 names, 2010-01-04..2026-09-04, 4194 bars (44 dropped for max_1d_move >= 1.0)
+
+  G0 ENGINE      max|d| vs engine.backtest 6.939e-18 -> PASS
+
+building the grid: 3 panels x 9 theta x 3 cadences x 3 families x 2 constructions = 486 books
+  U56 done (12s)
+  B136 done (29s)
+  SMALL439 done (68s)
+
+======================================================================================================================================================
+GATES
+======================================================================================================================================================
+  G1 IDENTITY    max|r_dg0 - c_t*r_rs0| over all 162 cells 6.939e-17 -> PASS
+  G3 MATCHING    max |d mask frac| (QUANTILE vs MA) 0.01396 -> FAIL
+                 QUANTILE-M  max |d frac| 0.01396 | U56 0.01396 | B136 0.00442 | SMALL439 0.00166
+                 QUANTILE-F  max |d frac| 0.00225 | U56 0.00225 | B136 0.00103 | SMALL439 0.00000
+                 worst cell: U56 QUANTILE-M theta +0.30 d_frac +0.01396  (1/n_live = 0.01818)
+  G4 PURE-EXPO   max |mean QUANTILE resid0| by panel 0.0329 pp/yr -> PASS
+                 U56       -0.0248 pp/yr
+                 B136      -0.0310 pp/yr
+                 SMALL439  -0.0329 pp/yr
+
+======================================================================================================================================================
+G2 REPRODUCTION of idea 305's nine committed WF-C cells at the record's 2016-12-31 split
+======================================================================================================================================================
+panel     family        IS mean  OOS mean  MAE zero  MAE const  MAE cell | max|d| vs 305
+U56       MA-THRESH     -0.3162   -0.3383    0.3389     0.2360    0.2712 |     1.150e-03
+U56       QUANTILE-M    -0.0271   -0.0350    0.0356     0.0281    0.0203 |     1.856e-04
+U56       QUANTILE-F    -0.0226   -0.0361    0.0362     0.0275    0.0202 |     1.679e-04
+B136      MA-THRESH     -0.2864   -0.5287    0.5352     0.3562    0.3215 |     2.554e-15
+B136      QUANTILE-M    -0.0303   -0.0334    0.0334     0.0261    0.0150 |     5.138e-15
+B136      QUANTILE-F    -0.0317   -0.0335    0.0335     0.0260    0.0126 |     4.413e-15
+SMALL439  MA-THRESH     -0.0201   -0.5918    0.5975     0.5789    0.5966 |     4.947e-15
+SMALL439  QUANTILE-M    -0.0327   -0.0002    0.0216     0.0348    0.0334 |     6.543e-15
+SMALL439  QUANTILE-F    -0.0331    0.0000    0.0213     0.0348    0.0336 |     1.554e-15
+
+  G2 REPRODUCTION max|d| over 9 cells x 5 quantities 1.150e-03 -> FAIL
+  per-panel max|d|: U56 1.150e-03 | B136 5.138e-15 | SMALL439 6.543e-15
+
+  G2b VINTAGE DIAGNOSTIC — U56 MA-THRESH re-run on a panel truncated k trading days:
+    k=0 (ends 2026-09-10): IS -0.3162 OOS -0.3383 MAEzero 0.3389 MAEconst 0.2360 -> max|d| vs idea 305 1.150e-03
+    k=1 (ends 2026-09-09): IS -0.3162 OOS -0.3382 MAEzero 0.3385 MAEconst 0.2348 -> max|d| vs idea 305 4.801e-04
+    k=2 (ends 2026-09-08): IS -0.3162 OOS -0.3377 MAEzero 0.3382 MAEconst 0.2348 -> max|d| vs idea 305 9.839e-07   <== REPRODUCES
+    k=3 (ends 2026-09-04): IS -0.3162 OOS -0.3365 MAEzero 0.3372 MAEconst 0.2350 -> max|d| vs idea 305 1.228e-03
+
+  GATES: G0 True G1 True G2 False G3 False G4 True
+
+======================================================================================================================================================
+B1 + B2  WF-C OVER PANEL x SPLIT x FAMILY (45 cells, ALL REPORTED).
+'KILL' = ZERO beats the IS-mean constant on OOS MAE, i.e. the discount does not walk forward.
+======================================================================================================================================================
+panel     family      split         n   IS mean  OOS mean    drift  MAE zero  MAE const  MAE cell  gain %  verdict
+U56       MA-THRESH   2012-12-31   27   -0.2043   -0.3819  -0.1776    0.3819     0.2469    0.4011    35.4  CONSTANT WALKS
+U56       MA-THRESH   2014-12-31   27   -0.2744   -0.3648  -0.0904    0.3648     0.2078    0.2386    43.0  CONSTANT WALKS
+U56       MA-THRESH   2016-12-31   27   -0.3162   -0.3383  -0.0222    0.3389     0.2360    0.2712    30.4  CONSTANT WALKS
+U56       MA-THRESH   2018-12-31   27   -0.2373   -0.4502  -0.2128    0.4677     0.3189    0.3640    31.8  CONSTANT WALKS
+U56       MA-THRESH   2020-12-31   27   -0.4770    0.0542   0.5311    0.3952     0.6009    0.6792   -52.0  KILL (zero wins)
+U56       QUANTILE-M  2012-12-31   27   -0.0220   -0.0310  -0.0090    0.0310     0.0235    0.0243    24.0  CONSTANT WALKS
+U56       QUANTILE-M  2014-12-31   27   -0.0266   -0.0319  -0.0053    0.0321     0.0270    0.0246    16.1  CONSTANT WALKS
+U56       QUANTILE-M  2016-12-31   27   -0.0271   -0.0350  -0.0079    0.0356     0.0281    0.0203    20.9  CONSTANT WALKS
+U56       QUANTILE-M  2018-12-31   27   -0.0195   -0.0459  -0.0264    0.0459     0.0342    0.0306    25.5  CONSTANT WALKS
+U56       QUANTILE-M  2020-12-31   27   -0.0307   -0.0390  -0.0082    0.0390     0.0307    0.0169    21.3  CONSTANT WALKS
+U56       QUANTILE-F  2012-12-31   27   -0.0219   -0.0332  -0.0112    0.0332     0.0249    0.0227    25.0  CONSTANT WALKS
+U56       QUANTILE-F  2014-12-31   27   -0.0207   -0.0346  -0.0139    0.0346     0.0263    0.0206    23.9  CONSTANT WALKS
+U56       QUANTILE-F  2016-12-31   27   -0.0226   -0.0361  -0.0135    0.0362     0.0275    0.0202    24.0  CONSTANT WALKS
+U56       QUANTILE-F  2018-12-31   27   -0.0187   -0.0455  -0.0268    0.0455     0.0327    0.0268    28.2  CONSTANT WALKS
+U56       QUANTILE-F  2020-12-31   27   -0.0263   -0.0385  -0.0123    0.0385     0.0301    0.0176    21.9  CONSTANT WALKS
+B136      MA-THRESH   2012-12-31   27   -0.2848   -0.4638  -0.1790    0.4644     0.2957    0.3583    36.3  CONSTANT WALKS
+B136      MA-THRESH   2014-12-31   27   -0.2726   -0.5021  -0.2295    0.5036     0.3361    0.3434    33.2  CONSTANT WALKS
+B136      MA-THRESH   2016-12-31   27   -0.2864   -0.5287  -0.2423    0.5352     0.3562    0.3215    33.4  CONSTANT WALKS
+B136      MA-THRESH   2018-12-31   27   -0.2149   -0.6865  -0.4716    0.6865     0.5121    0.5060    25.4  CONSTANT WALKS
+B136      MA-THRESH   2020-12-31   27   -0.5487   -0.1234   0.4253    0.2684     0.4407    0.5015   -64.2  KILL (zero wins)
+B136      QUANTILE-M  2012-12-31   27   -0.0328   -0.0330  -0.0001    0.0330     0.0242    0.0187    26.7  CONSTANT WALKS
+B136      QUANTILE-M  2014-12-31   27   -0.0329   -0.0319   0.0010    0.0319     0.0263    0.0173    17.7  CONSTANT WALKS
+B136      QUANTILE-M  2016-12-31   27   -0.0303   -0.0334  -0.0031    0.0334     0.0261    0.0150    21.8  CONSTANT WALKS
+B136      QUANTILE-M  2018-12-31   27   -0.0276   -0.0382  -0.0106    0.0382     0.0280    0.0160    26.7  CONSTANT WALKS
+B136      QUANTILE-M  2020-12-31   27   -0.0362   -0.0239   0.0123    0.0239     0.0229    0.0161     4.2  CONSTANT WALKS
+B136      QUANTILE-F  2012-12-31   27   -0.0319   -0.0332  -0.0013    0.0332     0.0235    0.0165    29.3  CONSTANT WALKS
+B136      QUANTILE-F  2014-12-31   27   -0.0333   -0.0321   0.0013    0.0321     0.0257    0.0133    19.7  CONSTANT WALKS
+B136      QUANTILE-F  2016-12-31   27   -0.0317   -0.0335  -0.0018    0.0335     0.0260    0.0126    22.5  CONSTANT WALKS
+B136      QUANTILE-F  2018-12-31   27   -0.0291   -0.0378  -0.0087    0.0378     0.0278    0.0134    26.5  CONSTANT WALKS
+B136      QUANTILE-F  2020-12-31   27   -0.0373   -0.0232   0.0141    0.0232     0.0239    0.0164    -3.2  KILL (zero wins)
+SMALL439  MA-THRESH   2012-12-31   27   -1.0948   -0.2464   0.8484    0.3018     0.8484    0.8484  -181.1  KILL (zero wins)
+SMALL439  MA-THRESH   2014-12-31   27   -0.3291   -0.4060  -0.0769    0.4522     0.2978    0.3047    34.1  CONSTANT WALKS
+SMALL439  MA-THRESH   2016-12-31   27   -0.0201   -0.5918  -0.5717    0.5975     0.5789    0.5966     3.1  CONSTANT WALKS
+SMALL439  MA-THRESH   2018-12-31   27   -0.0069   -0.6785  -0.6717    0.6797     0.6733    0.6717     0.9  CONSTANT WALKS
+SMALL439  MA-THRESH   2020-12-31   27   -0.4921   -0.1828   0.3093    0.3424     0.3915    0.6793   -14.3  KILL (zero wins)
+SMALL439  QUANTILE-M  2012-12-31   27   -0.0749   -0.0045   0.0704    0.0171     0.0704    0.0708  -311.5  KILL (zero wins)
+SMALL439  QUANTILE-M  2014-12-31   27   -0.0418   -0.0024   0.0394    0.0188     0.0397    0.0403  -111.5  KILL (zero wins)
+SMALL439  QUANTILE-M  2016-12-31   27   -0.0327   -0.0002   0.0325    0.0216     0.0348    0.0334   -61.2  KILL (zero wins)
+SMALL439  QUANTILE-M  2018-12-31   27   -0.0181   -0.0078   0.0103    0.0227     0.0234    0.0151    -3.1  KILL (zero wins)
+SMALL439  QUANTILE-M  2020-12-31   27    0.0108   -0.0531  -0.0639    0.0531     0.0639    0.0639   -20.3  KILL (zero wins)
+SMALL439  QUANTILE-F  2012-12-31   27   -0.0745   -0.0048   0.0697    0.0166     0.0697    0.0705  -319.6  KILL (zero wins)
+SMALL439  QUANTILE-F  2014-12-31   27   -0.0429   -0.0018   0.0412    0.0182     0.0412    0.0415  -126.1  KILL (zero wins)
+SMALL439  QUANTILE-F  2016-12-31   27   -0.0331    0.0000   0.0332    0.0213     0.0348    0.0336   -63.5  KILL (zero wins)
+SMALL439  QUANTILE-F  2018-12-31   27   -0.0192   -0.0076   0.0116    0.0220     0.0240    0.0141    -8.9  KILL (zero wins)
+SMALL439  QUANTILE-F  2020-12-31   27    0.0110   -0.0530  -0.0640    0.0530     0.0640    0.0640   -20.8  KILL (zero wins)
+
+WF-C verdict counts (MA-THRESH = the family idea 298's discount is about):
+split     2012-12-31  2014-12-31  2016-12-31  2018-12-31  2020-12-31
+panel                                                               
+U56             35.4        43.0        30.4        31.8       -52.0
+B136            36.3        33.2        33.4        25.4       -64.2
+SMALL439      -181.1        34.1         3.1         0.9       -14.3
+
+  (cell value = % of OOS MAE the constant saves over zero; negative = the KILL)
+  U56       MA-THRESH: constant walks forward on 4/5 splits; mean gain +17.7%, IS->OOS drift +0.0056 pp/yr (|drift| range 0.0222..0.5311)
+  B136      MA-THRESH: constant walks forward on 4/5 splits; mean gain +12.8%, IS->OOS drift -0.1394 pp/yr (|drift| range 0.1790..0.4716)
+  SMALL439  MA-THRESH: constant walks forward on 3/5 splits; mean gain -31.4%, IS->OOS drift -0.0325 pp/yr (|drift| range 0.0769..0.8484)
+  QUANTILE arms (idea 298's ZERO claim): |OOS mean resid0| max 0.0531 pp/yr over 30 cells; zero wins 11/30
+
+======================================================================================================================================================
+B3  THE AUDIT — committed uses of 'the constant-residual discount is killed OOS'
+======================================================================================================================================================
+  768 deduped mentions (one row per file x line) in 62 files.
+  tier x kind:
+kind    CODE  PROSE
+tier               
+LOOSE    587    168
+STRICT     1     12
+
+  STRICT (discount phrase AND the residual object AND a kill word, all within the same
+  +/-160-char neighbourhood): 13 rows, 12 of them in committed PROSE.
+  automated scope of the STRICT prose rows: PANEL-QUALIFIED 6, OTHER-PANEL 0, GENERAL 6
+
+  HAND ADJUDICATION of every STRICT prose row (the automated label over-counts: a
+  LEADERBOARD 'KILL' verdict column, idea 298's share-CURVE kill and idea 305's own
+  CORRECTION all trip the regex).  Table is in the source and in .census.csv:
+
+file:line                                                                                                 scope            claim?  why
+research/CHANGELOG.md:214                                                                                 PANEL-QUALIFIED  YES     idea 300's changelog entry - states the WF-C kill; says 'on this panel'
+research/CHANGELOG.md:216                                                                                 PANEL-QUALIFIED  no      idea 298's entry - says the discount WALKS FORWARD; the kill is the share curve
+research/LEADERBOARD.md:2890                                                                              GENERAL          no      idea 298's WF-B row - the kill is of the share-vs-c_bar CURVE, not the discount
+research/LEADERBOARD.md:2901                                                                              GENERAL          YES     idea 300's WF-C row - 'KILL of the MA-gate constant-residual discount out of sample', NO panel named in the reader's neighbourhood
+research/LEADERBOARD.md:4274                                                                              PANEL-QUALIFIED  no      idea 305's row - this IS the correction ('WF-C REVERSES idea 300's OOS KILL')
+research/QUEUE.md:303                                                                                     PANEL-QUALIFIED  no      idea 305's Done entry - carries the reversal, names all three panels
+research/QUEUE.md:563                                                                                     GENERAL          YES     idea 300's Done entry - 'WF-C KILLS idea 298's MA constant-residual discount out of sample', NO panel named in the reader's neighbourhood
+research/backtests/2026-09-06_does-a-pure-exposure-gate-exist-on-the-small-panel_C.result.md:87           GENERAL          YES     idea 300's own result.md, the WF-C heading - states the kill; SMALL439 is named on the NEXT wrapped line, so the GENERAL label here is a line-wrap artefact
+research/backtests/2026-09-06_does-a-pure-exposure-gate-exist-on-the-small-panel_C.result.md:88           PANEL-QUALIFIED  YES     idea 300's own result.md - states the kill; the file name names the small panel
+research/backtests/2026-09-06_does-the-cash-drag-share-depend-on-the-panel-or-on-the-gate-level_cloud.result.md:9 GENERAL          no      idea 298's result.md - says the discount 'does' walk forward
+research/backtests/2026-09-09_does-the-uncompensated-residual-finding-replicate-off-SMALL439_B.result.md:89 PANEL-QUALIFIED  no      idea 305's result.md - the correction itself
+research/backtests/2026-09-09_is-the-gate-timing-residual-a-constant-in-pp-per-year_B.result.md:8         GENERAL          no      idea 551 - frames the prescription as untested OOS; not a kill claim
+
+  ADJUDICATED: 5 of 12 STRICT prose rows are genuine statements that
+  the constant-residual discount is killed OOS.  ALL 5 originate with IDEA 300.
+  Of those, 3 are stated with NO panel named in the reader's neighbourhood:  <== the queue's question
+    research/LEADERBOARD.md:2901
+      ...011; IS→OOS dSharpe sign agreement **16/27 (0.593)** | n/a | WF-C MA gate: IS mean resid0 **-0.0201** vs OOS **-0.5918** pp/yr; OOS MAE 0.5975 (zero) → 0.5789 (IS-mean constant) → 0.5966 (own IS cell). QUANTILE gate: IS -0.0327, OOS **-0.0002**; MAE **0.0216** (zero) vs 0.0348 (IS-mean constant) | n/a | **KILL of the M...
+    research/QUEUE.md:563
+      ...and to the no-gate control on CAGR (Q/DG 0.6365 > MA/DG 0.5874); WF-B always-QUANTILE-M OOS 0.6268 > IS-pick 0.6221 > always-MA 0.6011, sign agreement 16/27; **WF-C KILLS idea 298's MA constant-residual discount out of sample** (IS -0.0201 vs OOS -0.5918 pp/yr; MAE 0.5975 zero -> 0.5789 constant) while the QUANTILE gat...
+    research/backtests/2026-09-06_does-a-pure-exposure-gate-exist-on-the-small-panel_C.result.md:87
+      ...E-M 0.6268**. IS→OOS sign agreement of dSharpe **16/27 (0.593)**. Picking the gate form in sample does not beat simply always taking the pure-exposure gate.  **WF-C (a KILL, and a qualifier on idea 298)** — idea 298 replaced its share-vs-c_bar curve with a zero-parameter "subtract the gate's own constant residual". On ...
+  and 2 name the panel (one of those, result.md:87, is a
+  line-wrap artefact of the classifier, not a real omission — see the table).
+
+  The record has ALREADY published the correction in 3 places (idea 305: LEADERBOARD row 4274, QUEUE 303, its own result.md) — so the exposure
+  is the two idea-300 artefacts that were never restated, not a general mis-citation.
+
+  LOOSE rows (the WF-C label reused by later ideas for a DIFFERENT test, and resid0
+  table cells) are in .census.csv and are not claims about idea 298's discount.
+
+======================================================================================================================================================
+B4  RULE 8 WALK-FORWARD, BOOK LEG (mandatory).  (theta, cadence) picked on the IS
+window ALONE by IS Sharpe, per panel x family x construction x split; OOS read once.
+======================================================================================================================================================
+  (re-cutting the cached 486 books at each of the 5 splits)
+
+split       panel     family      con       pick            OOS CAGR   OOS Sh   OOS DD |   vs SPY    vs v2 | 4a  4b
+2016-12-31  U56       MA-THRESH   RESPREAD  th+0.20/Q          21.20%   0.9326  -32.51% |  +0.0605  -0.3421 | n   DD
+2016-12-31  U56       MA-THRESH   DEGROSS   th+0.30/Q           1.04%   0.5655   -3.38% |  -0.3066  -0.7091 | n   H2|OOS|CAGR
+2016-12-31  U56       QUANTILE-M  RESPREAD  th+0.30/W          29.86%   1.0947  -32.21% |  +0.2226  -0.1800 | n   DD
+2016-12-31  U56       QUANTILE-M  DEGROSS   th+0.30/W           1.63%   1.0787   -2.03% |  +0.2065  -0.1960 | n   CAGR
+2016-12-31  U56       QUANTILE-F  RESPREAD  th+0.20/Q          21.73%   0.9712  -32.74% |  +0.0990  -0.3035 | n   DD
+2016-12-31  U56       QUANTILE-F  DEGROSS   th+0.30/Q           1.22%   0.8490   -2.50% |  -0.0231  -0.4257 | n   OOS|CAGR
+2016-12-31  B136      MA-THRESH   RESPREAD  th+0.20/Q          21.11%   1.0665  -29.53% |  +0.1844  -0.2186 | n   DD
+2016-12-31  B136      MA-THRESH   DEGROSS   th-0.25/Q          13.58%   1.1384  -24.16% |  +0.2564  -0.1467 | n   DD
+2016-12-31  B136      QUANTILE-M  RESPREAD  th+0.30/Q          26.50%   1.0593  -31.93% |  +0.1773  -0.2257 | n   DD
+2016-12-31  B136      QUANTILE-M  DEGROSS   th+0.30/Q           1.20%   1.0070   -1.79% |  +0.1250  -0.2781 | n   CAGR
+2016-12-31  B136      QUANTILE-F  RESPREAD  th+0.30/Q          28.63%   1.0974  -33.31% |  +0.2153  -0.1877 | n   DD
+2016-12-31  B136      QUANTILE-F  DEGROSS   th+0.30/Q           1.15%   1.0396   -1.70% |  +0.1576  -0.2455 | n   CAGR
+2016-12-31  SMALL439  MA-THRESH   RESPREAD  th+0.30/M          24.02%   1.1042  -30.78% |  +0.2221  -0.1809 | n   DD
+2016-12-31  SMALL439  MA-THRESH   DEGROSS   th-0.40/Q           7.98%   0.5874  -32.47% |  -0.2946  -0.6977 | n   H1|H2|OOS|DD|CAGR
+2016-12-31  SMALL439  QUANTILE-M  RESPREAD  th-0.12/Q           9.35%   0.6307  -34.83% |  -0.2513  -0.6544 | n   H1|H2|OOS|DD|CAGR
+2016-12-31  SMALL439  QUANTILE-M  DEGROSS   th-0.12/Q           7.03%   0.6365  -25.43% |  -0.2456  -0.6486 | n   H1|H2|OOS|DD|CAGR
+2016-12-31  SMALL439  QUANTILE-F  RESPREAD  th-0.12/Q           9.33%   0.6294  -34.75% |  -0.2526  -0.6557 | n   H1|H2|OOS|DD|CAGR
+2016-12-31  SMALL439  QUANTILE-F  DEGROSS   th-0.12/Q           7.01%   0.6358  -25.30% |  -0.2462  -0.6492 | n   H1|H2|OOS|DD|CAGR
+
+  comparands OOS at the record's split:
+    U56       SPY 15.24% / 0.8721 / -33.72%   RULES v2 9.45% / 1.2747 / -12.05%
+    B136      SPY 15.45% / 0.8820 / -33.72%   RULES v2 9.53% / 1.2851 / -12.05%
+    SMALL439  SPY 15.45% / 0.8820 / -33.72%   RULES v2 9.53% / 1.2851 / -12.05%
+
+  over ALL 90 walk-forward picks (5 splits x 3 panels x 3 families x 2 con): 4a 0/90, 4b 2/90
+  over the full 486-cell grid at the record's split: 4a 2/486, 4b 20/486
+  4b passers:
+    panel   theta cad      family       con   CAGR  Sharpe   MaxDD     H1     H2  oCAGR  oSharpe  oMaxDD
+62    U56  0.0600   M  QUANTILE-M  RESPREAD 0.1582  1.2393 -0.1974 1.3138 1.1849 0.1693   1.2563 -0.1974
+64    U56  0.0600   M  QUANTILE-F  RESPREAD 0.1575  1.2291 -0.1973 1.3002 1.1779 0.1695   1.2492 -0.1973
+72    U56  0.0000   W   MA-THRESH  RESPREAD 0.1155  1.0914 -0.1862 1.1807 1.0260 0.1237   1.1078 -0.1862
+78    U56  0.0000   M   MA-THRESH  RESPREAD 0.1260  1.1594 -0.1821 1.2207 1.1151 0.1360   1.1930 -0.1821
+80    U56  0.0000   M  QUANTILE-M  RESPREAD 0.1430  1.2171 -0.2015 1.3241 1.1279 0.1471   1.2154 -0.2015
+90    U56 -0.0600   W   MA-THRESH  RESPREAD 0.1165  1.1300 -0.1881 1.2429 1.0388 0.1192   1.1177 -0.1881
+93    U56 -0.0600   W  QUANTILE-M   DEGROSS 0.1143  1.1481 -0.1867 1.2359 1.0754 0.1175   1.1501 -0.1867
+95    U56 -0.0600   W  QUANTILE-F   DEGROSS 0.1118  1.1418 -0.1837 1.2327 1.0656 0.1147   1.1429 -0.1837
+96    U56 -0.0600   M   MA-THRESH  RESPREAD 0.1240  1.1619 -0.2022 1.2574 1.0905 0.1299   1.1612 -0.2022
+99    U56 -0.0600   M  QUANTILE-M   DEGROSS 0.1162  1.1669 -0.1846 1.2799 1.0717 0.1170   1.1483 -0.1846
+101   U56 -0.0600   M  QUANTILE-F   DEGROSS 0.1144  1.1647 -0.1822 1.2771 1.0693 0.1151   1.1476 -0.1822
+108   U56 -0.1200   W   MA-THRESH  RESPREAD 0.1211  1.1325 -0.2010 1.2641 1.0248 0.1214   1.1020 -0.2010
+109   U56 -0.1200   W   MA-THRESH   DEGROSS 0.1075  1.1463 -0.1655 1.2561 1.0512 0.1093   1.1433 -0.1655
+111   U56 -0.1200   W  QUANTILE-M   DEGROSS 0.1239  1.1523 -0.2001 1.2578 1.0621 0.1241   1.1350 -0.2001
+113   U56 -0.1200   W  QUANTILE-F   DEGROSS 0.1225  1.1525 -0.1988 1.2601 1.0624 0.1235   1.1359 -0.1988
+115   U56 -0.1200   M   MA-THRESH   DEGROSS 0.1118  1.1381 -0.2013 1.2734 1.0306 0.1142   1.1171 -0.2013
+117   U56 -0.1200   M  QUANTILE-M   DEGROSS 0.1256  1.1728 -0.1974 1.2723 1.0873 0.1262   1.1589 -0.1974
+119   U56 -0.1200   M  QUANTILE-F   DEGROSS 0.1239  1.1706 -0.1961 1.2772 1.0808 0.1247   1.1535 -0.1961
+234  B136  0.0000   W   MA-THRESH  RESPREAD 0.1166  1.0585 -0.2012 1.1603 0.9707 0.1197   1.0660 -0.2012
+271  B136 -0.1200   W   MA-THRESH   DEGROSS 0.1115  1.1300 -0.1821 1.3001 0.9737 0.1067   1.0841 -0.1821
+  binding 4b legs over the grid:
+    DD    328
+    CAGR  243
+    OOS   183
+    H2    176
+    H1    168
+
+======================================================================================================================================================
+APPENDIX — the 4b passers re-scored against an EQUAL-WEIGHT bar (idea 742, same run)
+======================================================================================================================================================
+  U56       EW bar: CAGR 17.94% Sharpe 1.1357 MaxDD -28.87% halves 1.2129/1.0743 OOS Sharpe 1.1448 | 4b floors CAGR 12.56% DD 17.32%
+  B136      EW bar: CAGR 19.22% Sharpe 1.1361 MaxDD -32.52% halves 1.2469/1.0373 OOS Sharpe 1.1148 | 4b floors CAGR 13.46% DD 19.51%
+  SMALL439  EW bar: CAGR 14.35% Sharpe 0.7249 MaxDD -45.61% halves 0.8648/0.6481 OOS Sharpe 0.6725 | 4b floors CAGR 10.04% DD 27.36%
+
+panel      theta cad  family      con          CAGR  Sharpe | vs EW bar
+U56        +0.06 M    QUANTILE-M  RESPREAD  15.82%  1.2393 | FAIL DD
+U56        +0.06 M    QUANTILE-F  RESPREAD  15.75%  1.2291 | FAIL DD
+U56        +0.00 W    MA-THRESH   RESPREAD  11.55%  1.0914 | FAIL H1,H2,OOS,DD,CAGR
+U56        +0.00 M    MA-THRESH   RESPREAD  12.60%  1.1594 | FAIL DD
+U56        +0.00 M    QUANTILE-M  RESPREAD  14.30%  1.2171 | FAIL DD
+U56        -0.06 W    MA-THRESH   RESPREAD  11.65%  1.1300 | FAIL H2,OOS,DD,CAGR
+U56        -0.06 W    QUANTILE-M  DEGROSS   11.43%  1.1481 | FAIL DD,CAGR
+U56        -0.06 W    QUANTILE-F  DEGROSS   11.18%  1.1418 | FAIL H2,OOS,DD,CAGR
+U56        -0.06 M    MA-THRESH   RESPREAD  12.40%  1.1619 | FAIL DD,CAGR
+U56        -0.06 M    QUANTILE-M  DEGROSS   11.62%  1.1669 | FAIL H2,DD,CAGR
+U56        -0.06 M    QUANTILE-F  DEGROSS   11.44%  1.1647 | FAIL H2,DD,CAGR
+U56        -0.12 W    MA-THRESH   RESPREAD  12.11%  1.1325 | FAIL H2,OOS,DD,CAGR
+U56        -0.12 W    MA-THRESH   DEGROSS   10.75%  1.1463 | FAIL H2,OOS,CAGR
+U56        -0.12 W    QUANTILE-M  DEGROSS   12.39%  1.1523 | FAIL H2,OOS,DD,CAGR
+U56        -0.12 W    QUANTILE-F  DEGROSS   12.25%  1.1525 | FAIL H2,OOS,DD,CAGR
+U56        -0.12 M    MA-THRESH   DEGROSS   11.18%  1.1381 | FAIL H2,OOS,DD,CAGR
+U56        -0.12 M    QUANTILE-M  DEGROSS   12.56%  1.1728 | FAIL DD
+U56        -0.12 M    QUANTILE-F  DEGROSS   12.39%  1.1706 | FAIL DD,CAGR
+B136       +0.00 W    MA-THRESH   RESPREAD  11.66%  1.0585 | FAIL H1,H2,OOS,DD,CAGR
+B136       -0.12 W    MA-THRESH   DEGROSS   11.15%  1.1300 | FAIL H2,OOS,CAGR
+
+  0 of 20 SPY-4b passers also clear an equal-weight bar on their own panel.
+
+======================================================================================================================================================
+ANSWER
+======================================================================================================================================================
+  U56       at the record's split: MAE zero 0.3389 vs constant 0.2360 -> CONSTANT WALKS (+30.4%)
+  B136      at the record's split: MAE zero 0.5352 vs constant 0.3562 -> CONSTANT WALKS (+33.4%)
+  SMALL439  at the record's split: MAE zero 0.5975 vs constant 0.5789 -> CONSTANT WALKS (+3.1%)
+
+  Over all 15 MA-THRESH panel x split cells the constant walks forward in 11 and is killed in 4.
+  ADJUDICATED kill-claims in committed prose: 5 (all idea 300's), of which 3 state it with no panel named.
+
+wrote .grid.csv .decomp.csv .wfc.csv .census.csv .walkforward.csv .summary.json
+elapsed 90.6s
