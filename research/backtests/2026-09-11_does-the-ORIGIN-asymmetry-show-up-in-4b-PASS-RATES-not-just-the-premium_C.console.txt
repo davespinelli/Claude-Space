@@ -1,0 +1,298 @@
+================================================================================================================
+IDEA 784  does-the-ORIGIN-asymmetry-show-up-in-4b-PASS-RATES-not-just-the-premium  (lane C, 2026-09-11)
+================================================================================================================
+PROTOCOL: 10 bps, next-day fills, IS <= 2016-12-31, OOS >= 2017-01-01 read once.
+TUNED (2): BAR lambda in [0.6, 0.8, 1.0, 1.25] x k in [18, 36, 72] -- all 12 points reported.
+Pre-registered: idea 570's committed asymmetry B 225/2592 vs S 19/2592 = 11.84x.
+
+================================================================================================================
+GATES (pre-registered; printed before any leg is read)
+================================================================================================================
+G0 metrics      : numpy mstats vs engine.metrics, 3 real books x 3 statistics, max |d| = 0.000e+00 (bar 1e-12) -> PASS
+G1 identity     : fast_backtest vs engine.backtest, max |dret| = 1.388e-17 (bar 1e-12) -> PASS
+G2 pool         : 2010-01-04..2026-09-04 (4194 bars), B 134 + SMALL 439 = 573 names -> PASS (idea 568/570)
+                  SPY comparand over the pooled window: CAGR 14.13% Sharpe 0.8616 MaxDD -33.72% | H1 0.8907 H2 0.8577 OOS Sharpe 0.8820
+                  4b bars at lambda=1: Sharpe > 0.8907/0.8577/0.8820, MaxDD >= -20.23%, CAGR >= 9.89%
+
+================================================================================================================
+REBUILDING IDEA 570'S MATCHED GRID FROM PRICES (5184 books; G3/G4 gate it)
+================================================================================================================
+  cvol: matched and priced (70s)
+  breadth: matched and priced (137s)
+  grid 5184 books, 216 feasible draws x 2 sides
+
+G5 comparand    : 1 distinct warm-up start date across all matched frames (2011-01-13) -> PASS (one SPY comparand is valid)
+G3 grid repro   : 5184 of 5184 committed rows matched on 8 keys; max |d| over 11 numeric columns = 1.776e-15 (bar 1e-09); 0 verdict-string mismatches -> PASS
+G4 headline     : 4a 21/5184, 4b 244/5184, BOTH 1, by side B 225/2592 S 19/2592, by arm EWall 115 MA-RS 129; 6 binding-leg counts [1728, 997, 460, 320, 254, 244] vs committed [1728, 997, 460, 320, 254, 244] -> PASS
+
+  ALL GATES: PASS
+
+================================================================================================================
+WHAT THE TWO SIDES ACTUALLY LOOK LIKE (means over each side's 2592 books)
+================================================================================================================
+       CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe  OOS_MaxDD  turnover
+side                                                                      
+B    0.1302  1.0064 -0.2473 1.0203 1.0095      1.0488    -0.2466    3.3791
+S    0.0905  0.7037 -0.2969 0.9476 0.5477      0.5698    -0.2969    4.0641
+  selection premium (mean over 216 matched draws): B -0.0420  S -0.2816  gap +0.2396  (idea 570's headline gap range +0.1649..+0.3021)
+
+================================================================================================================
+LEG CENSUS - which of the five 4b legs the two sides fail (lambda = 1.00, PROTOCOL 4b)
+================================================================================================================
+         n  fail_H1  fail_H2  fail_OOS  fail_DD  fail_CAGR  pass4b
+side                                                              
+B     2592      497      271       182     1702        742     225
+S     2592     1329     1912      1895     2212       1643      19
+  how many of the five legs each book fails (count of books):
+n_fail    0     1    2    3    4    5
+side                                 
+B       225  1682  462  133   61   29
+S        19   531  158  360  556  968
+  and, for the books that fail EXACTLY ONE leg, which leg it is:
+fail4b  CAGR    DD  H1  H2
+side                      
+B        429  1228  22   3
+S         31   500   0   0
+  per-leg FAILURE RATE and the B-minus-S difference:
+      fail_H1  fail_H2  fail_OOS  fail_DD  fail_CAGR
+side                                                
+B      0.1917   0.1046    0.0702   0.6566     0.2863
+S      0.5127   0.7377    0.7311   0.8534     0.6339
+B-S   -0.3210  -0.6331   -0.6609  -0.1968    -0.3476
+
+================================================================================================================
+THE ASYMMETRY AT EVERY TUNED POINT (BAR lambda x k), and the LEAVE-ONE-LEG-OUT test
+================================================================================================================
+  drop_L = pass rate of 4b WITHOUT leg L.  If the asymmetry is carried by leg L, the
+  B/S ratio collapses toward 1 when L is dropped and survives when any other is.
+         n_side  pass_B  pass_S   ratio  mcn_Bonly  mcn_Sonly  mcn_chi2
+bar  k                                                                 
+0.60 18    1152     948     330   2.873        637         19   580.319
+     36    1152     998     331   3.015        668          1   663.013
+     72     288     278      74   3.757        204          0   202.005
+0.80 18    1152     436     128   3.406        362         54   226.560
+     36    1152     465     123   3.780        401         59   252.785
+     72     288     141      24   5.875        117          0   115.009
+1.00 18    1152      88      18   4.889         88         18    44.915
+     36    1152     123       1 123.000        123          1   118.073
+     72     288      14       0  29.000         14          0    12.071
+1.25 18    1152       1       0   3.000          1          0     0.000
+     36    1152       1       0   3.000          1          0     0.000
+     72     288       0       0     NaN          0          0       NaN
+
+  LEAVE-ONE-LEG-OUT pass counts (B / S) and the resulting B/S rate ratio:
+         ratio  dropH1_ratio  dropH2_ratio  dropOOS_ratio  dropDD_ratio  dropCAGR_ratio  SHARPEonly_ratio  LEVELonly_ratio
+bar  k                                                                                                                    
+0.60 18   2.87          2.87          2.82           2.80          2.04            2.85              2.04             1.93
+     36   3.02          3.02          3.02           3.01          2.12            2.75              2.00             2.16
+     72   3.76          3.76          3.35           3.76          2.57            3.66              2.53             2.60
+0.80 18   3.41          3.47          3.42           3.41          2.28            3.84              2.44             3.29
+     36   3.78          3.83          3.79           3.78          2.37            3.94              2.50             3.81
+     72   5.88          5.88          5.88           5.88          3.42            7.62              4.00             5.88
+1.00 18   4.89          5.50          5.00           4.89          2.02            9.76              2.44             5.67
+     36 123.00        134.00        124.00         123.00          2.94           12.04              2.55           135.00
+     72  29.00         29.00         29.00          29.00        369.00          219.00            559.00            29.00
+1.25 18   3.00          3.00          3.00           3.00          1.68           23.00              1.48             3.00
+     36   3.00          3.00          3.00           3.00         27.67           29.00             23.80             3.00
+     72    NaN           NaN           NaN            NaN         31.00            3.00             49.00              NaN
+  the same as counts:
+         pass_B  pass_S  dropH1_B  dropH1_S  dropH2_B  dropH2_S  dropOOS_B  dropOOS_S  dropDD_B  dropDD_S  dropCAGR_B  dropCAGR_S  SHARPEonly_B  SHARPEonly_S  LEVELonly_B  LEVELonly_S
+bar  k                                                                                                                                                                                 
+0.60 18     948     330       948       330       949       336        948        338      1128       553         966         339          1146           562          949          492
+     36     998     331       998       331       998       331        998        332      1148       542        1002         365          1152           576          998          462
+     72     278      74       278        74       278        83        278         74       288       112         278          76           288           114          278          107
+0.80 18     436     128       444       128       438       128        436        128       954       419         537         140          1055           432          447          136
+     36     465     123       471       123       466       123        465        123      1011       426         591         150          1137           454          472          124
+     72     141      24       141        24       141        24        141         24       246        72         183          24           288            72          141           24
+1.00 18      88      18        99        18        90        18         88         18       563       279         244          25           730           299          102           18
+     36     123       1       134         1       124         1        123          1       706       240         301          25           894           350          135            1
+     72      14       0        14         0        14         0         14          0       184         0         109           0           279             0           14            0
+1.25 18       1       0         1         0         1         0          1          0        57        34          11           0            80            54            1            0
+     36       1       0         1         0         1         0          1          0        83         3          14           0           119             5            1            0
+     72       0       0         0         0         0         0          0          0        15         0           1           0            24             0            0            0
+
+  POOLED over k (2592 books per side at every lambda):
+      pass_B  pass_S  ratio  dropH1_ratio  dropH2_ratio  dropOOS_ratio  dropDD_ratio  dropCAGR_ratio  SHARPEonly_B  SHARPEonly_S  SHARPEonly_ratio  LEVELonly_B  LEVELonly_S  LEVELonly_ratio
+bar                                                                                                                                                                                          
+0.60    2224     735   3.03          3.03          2.97           2.99          2.12            2.88          2586          1252              2.07         2225         1061             2.10
+0.80    1042     275   3.79          3.84          3.80           3.79          2.41            4.18          2480           958              2.59         1060          284             3.73
+1.00     225      19  11.84         13.00         12.00          11.84          2.80           13.08          1903           649              2.93          251           19            13.21
+1.25       2       0   5.00          5.00          5.00           5.00          4.19           53.00           223            59              3.78            2            0             5.00
+
+================================================================================================================
+H_PREM's SECOND PREDICTION: is the asymmetry an MA-GATE phenomenon? (arm split)
+================================================================================================================
+            n_side  pass_B  pass_S  ratio  capped
+bar  arm                                         
+0.60 EWall    1296    1053     425   2.48   False
+     MA-RS    1296    1171     310   3.78   False
+0.80 EWall    1296     477     214   2.23   False
+     MA-RS    1296     565      61   9.26   False
+1.00 EWall    1296      96      19   5.05   False
+     MA-RS    1296     129       0 259.00    True
+1.25 EWall    1296       0       0    NaN    True
+     MA-RS    1296       2       0   5.00    True
+  EWall carries NO selection at all, and its books are 96 B vs 19 S; MA-RS 129 vs 0.
+
+================================================================================================================
+H_COND: does conditioning on the book's OWN return statistic remove the asymmetry?
+================================================================================================================
+  Strata = deciles of the pooled (B+S) distribution of the conditioning variable.
+  MH_OR = Mantel-Haenszel common odds ratio; STD_DIFF = stratum-size-weighted B-S rate.
+                                                              crude_OR  MH_OR  STD_DIFF  n_same_decile  MH_OR_samedecile  STD_DIFF_samedecile
+bar  cond                                                                                                                                    
+0.60 Sharpe (the premium's own unit)                            15.269  3.595     0.277            172             4.806                0.273
+     CAGR                                                       15.269 16.005     0.445            289            15.396                0.270
+     MaxDD  [TAUTOLOGY CHECK - the DD leg is in the outcome]    15.269 35.167     0.491            385           144.123                0.626
+0.80 Sharpe (the premium's own unit)                             5.664  1.848     0.096            172             1.762                0.110
+     CAGR                                                        5.664 14.799     0.264            289             9.706                0.170
+     MaxDD  [TAUTOLOGY CHECK - the DD leg is in the outcome]     5.664 18.494     0.251            385            23.915                0.286
+1.00 Sharpe (the premium's own unit)                            12.873  7.635     0.060            172             1.000                0.000
+     CAGR                                                       12.873 11.911     0.071            289             4.346                0.021
+     MaxDD  [TAUTOLOGY CHECK - the DD leg is in the outcome]    12.873 10.230     0.061            385            13.228                0.109
+1.25 Sharpe (the premium's own unit)                               inf    inf     0.001            172               inf                0.000
+     CAGR                                                          inf    inf     0.001            289               inf                0.000
+     MaxDD  [TAUTOLOGY CHECK - the DD leg is in the outcome]       inf    inf     0.000            385               inf                0.003
+
+================================================================================================================
+WHERE THE TWO SIDES SEPARATE: paired per-leg MARGIN (positive = leg passes), lambda=1
+================================================================================================================
+      margin_B  margin_S   diff  sd_pairdiff       t  cohens_d  share_B_passes  share_S_passes  perm_p
+leg                                                                                                   
+H1      0.1296    0.0569 0.0727       0.3190 11.5985    0.3216          0.8083          0.4873  0.0000
+H2      0.1518   -0.3100 0.4618       0.3629 64.7817    1.3199          0.8954          0.2623  0.0000
+OOS     0.1668   -0.3122 0.4790       0.3655 66.7233    1.3578          0.9298          0.2689  0.0000
+DD     -0.0450   -0.0946 0.0496       0.0588 42.9886    0.6118          0.3434          0.1466  0.0000
+CAGR    0.0313   -0.0085 0.0398       0.0585 34.6013    0.7733          0.7137          0.3661  0.0000
+  permutation: 20000 sign-flips of the matched-pair label, seed 784, two-sided.
+
+================================================================================================================
+H_LINK: does the per-draw PREMIUM gap predict the per-draw PASS gap? (216 draws)
+================================================================================================================
+  n = 216 draws; premium gap mean +0.2396 (sd 0.0837); pass gap mean +0.954 of 12 books per side (sd 1.518)
+  Pearson rho +0.0123  Spearman -0.0449  permutation p 0.8506 (2000 draws) -> H_LINK FALSIFIED (bar |rho| 0.30)
+  pass gap by premium-gap quartile (does more premium buy more passes?):
+         prem_gap  pass_B  pass_S  pass_gap
+q                                          
+Q1 low      0.130   0.833   0.019     0.815
+Q2          0.220   1.185   0.074     1.111
+Q3          0.270   1.111   0.056     1.056
+Q4 high     0.338   1.037   0.204     0.833
+
+================================================================================================================
+RULE 8 WF-A: the same census with every leg computed INSIDE IS only and INSIDE OOS only
+================================================================================================================
+  period-local 4b (4 legs): both halves of the period vs SPY, the period's DD cap, the
+  period's CAGR floor.  FULL is shown in the same 4-leg form so the three are comparable.
+                pass_B  pass_S  ratio  dropH1_ratio  dropH2_ratio  dropDD_ratio  dropCAGR_ratio
+period bar  k                                                                                  
+FULL   0.60 18     948     338   2.80          2.80          1.93          2.01            2.77
+            36     998     332   3.01          3.01          2.16          2.11            2.73
+            72     278      74   3.76          3.76          2.60          2.57            3.66
+       0.80 18     436     128   3.41          3.47          3.23          2.22            3.77
+            36     465     123   3.78          3.83          3.76          2.37            3.94
+            72     141      24   5.88          5.88          5.88          3.42            7.62
+       1.00 18      88      18   4.89          5.50          5.06          1.97            9.42
+            36     123       1 123.00        134.00        124.00          2.87           11.58
+            72      14       0  29.00         29.00         29.00        369.00          219.00
+       1.25 18       1       0   3.00          3.00          3.00          0.95           23.00
+            36       1       0   3.00          3.00          3.00         16.60           29.00
+            72       0       0    NaN           NaN           NaN         31.00            3.00
+IS     0.60 18     736     927   0.79          0.77          0.80          1.02            0.81
+            36     747     886   0.84          0.83          0.83          1.07            0.83
+            72     281     201   1.40          1.40          1.32          1.14            1.40
+       0.80 18     322     531   0.61          0.59          0.63          1.03            0.68
+            36     298     451   0.66          0.65          0.64          1.07            0.86
+            72     171      86   1.99          1.99          1.97          1.20            1.98
+       1.00 18      72     208   0.35          0.35          0.35          0.91            0.57
+            36      40     142   0.28          0.28          0.29          0.98            0.59
+            72      20      26   0.77          0.77          0.81          1.28            2.15
+       1.25 18       1      57   0.02          0.02          0.02          0.34            0.12
+            36       0       1   0.00          0.00          0.00          0.26            0.14
+            72       0       0    NaN           NaN           NaN          1.00           45.00
+OOS    0.60 18     917     306   3.00          2.93          2.86          2.12            2.95
+            36     998     344   2.90          2.90          2.86          2.10            2.78
+            72     276      65   4.25          3.83          4.25          2.75            3.56
+       0.80 18     424     115   3.69          3.66          3.80          2.38            4.05
+            36     502     117   4.29          4.29          4.24          2.51            4.02
+            72     130       0 261.00        261.00        263.00          4.78            6.46
+       1.00 18     100       6  16.67         17.00         17.50          2.94           11.86
+            36     146       0 293.00        293.00        293.00          4.56           17.80
+            72      13       0  27.00         27.00         27.00        357.00          215.00
+       1.25 18       2       0   5.00          5.00          5.00          4.93           33.00
+            36       1       0   3.00          3.00          3.00        285.00           45.00
+            72       0       0    NaN           NaN           NaN         23.00            3.00
+
+  per-leg FAILURE RATE by period and side (lambda = 1.00, pooled over k):
+             fail_H1  fail_H2  fail_DD  fail_CAGR
+period side                                      
+FULL   B      0.1917   0.1046   0.6566     0.2863
+       S      0.5127   0.7377   0.8534     0.6339
+IS     B      0.2195   0.3009   0.7743     0.3121
+       S      0.3870   0.2188   0.6574     0.3140
+OOS    B      0.1169   0.1269   0.6524     0.2812
+       S      0.7531   0.7176   0.8534     0.7072
+
+  the asymmetry points the same way (B > S) in IS and OOS at 2 of 11 tuned points where both are defined (1 points have no passer on EITHER side in one period); ratio IS 0.00-1.99, OOS 2.90-293.00
+
+================================================================================================================
+RULE 8 WF-B: the census priced as a BOOK - pick (char, tau, k) on IS 4b pass rate of the
+             B side (tie-break IS Sharpe); OOS read ONCE.
+================================================================================================================
+                 IS_pass  IS_Sharpe
+char    tau  k                     
+breadth 0.01 18   0.0278     0.8433
+             36   0.0000     0.7978
+        0.02 18   0.0069     0.7924
+             36   0.0000     0.8388
+        0.05 18   0.0625     0.9365
+             36   0.0069     0.8394
+        inf  18   0.0972     1.0055
+             36   0.0278     1.0024
+             72   0.0486     1.0333
+cvol    0.01 18   0.0347     0.8760
+             36   0.0208     0.9438
+        0.02 18   0.0556     0.9670
+             36   0.0208     0.9738
+        0.05 18   0.1458     1.0058
+             36   0.0764     0.9821
+        inf  18   0.0694     0.9645
+             36   0.1250     0.9981
+             72   0.0903     1.0352
+  IS-best point: char=cvol, tau=0.05, k=18  (IS 4b pass rate 0.1458, IS Sharpe 1.0058)
+                               CAGR  Sharpe   MaxDD  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  keep4a             fail4b  keep4b
+book                                                                                                                   
+B-side (IS pick)             0.1315  1.0314 -0.2454    0.1408      1.0502    -0.2454   False                 DD   False
+S-side twin                  0.0308  0.3047 -0.2262   -0.0003      0.0629    -0.2262   False  H1,H2,OOS,DD,CAGR   False
+ORIGIN-BLIND control         0.0855  0.7645 -0.2207    0.0771      0.6783    -0.2207   False     H2,OOS,DD,CAGR   False
+INCUMBENT B136 MA-RS g0.75 W 0.1120  1.0450 -0.2012    0.1197      1.0660    -0.2012   False                  -    True
+SMALL439 MA-RS g0.75 W       0.0648  0.5034 -0.3824    0.0738      0.5355    -0.3824   False  H1,H2,OOS,DD,CAGR   False
+RULES v2 U56 (live book)     0.0866  1.2056 -0.1205    0.0953      1.2851    -0.1205   False               CAGR   False
+SPY                          0.1523  0.8890 -0.3372    0.1545      0.8820    -0.3372   False       H1,H2,OOS,DD   False
+  decision books beating RULES v2 U56 OOS Sharpe (1.2851): 0/3; beating SPY (0.8820): 1/3
+  decision books: 4a 0/3, 4b 0/3, BOTH 0/3
+  B-side book vs the incumbent whole-B136 MA-RS gate, daily-return correlation: 0.9859
+
+================================================================================================================
+KEEP PATHS (PROTOCOL 4a and 4b, every book on the grid and every decision book)
+================================================================================================================
+  matched grid (5184 books): 4a 21, 4b 244, BOTH 1  [G4 reproduction of idea 570: EXACT]
+  by side: B 4a 6 4b 225 | S 4a 15 4b 19
+  decision books (WF-B): 4a 0/3, 4b 0/3, BOTH 0/3
+  A matched draw is a DIAGNOSTIC panel, not a tradable rule: no book on this grid is a
+  capital candidate whatever it passes, as idea 570 stated when it built the grid.
+
+================================================================================================================
+PRE-REGISTERED HYPOTHESES
+================================================================================================================
+H_PREM (i)  : SHARPE-only sub-criterion B/S ratio 2.93 vs full-4b 11.84 (bar: half, 5.92) -> FALSIFIED
+H_PREM (ii) : EWall (no selection) ratio 5.05 vs MA-RS 259.00 [S side empty, continuity-corrected] -> HOLDS
+H_DD        : dropping DD moves the ratio to 2.80 = 0.24x of full (bar 0.50x); dropping a SHARPE leg leaves it at 11.84-13.00 = 1.00x-1.10x (bar 0.80x); LEVEL-only ratio 13.21 -> HOLDS
+H_COND      : crude OR 12.87 -> Sharpe-decile MH OR 7.63 (0.59x of crude) -> FALSIFIED - conditioning on return does NOT remove it
+H_LINK      : Spearman -0.0449 (bar 0.30) -> FALSIFIED
+
+SURVIVORSHIP: both panels are CURRENT constituents; SMALL439 is the heavier screen, and a
+  differential survivorship premium would push the SAME way as every number above. This
+  design controls the characteristic and the width, NOT the listing history - idea 782.
+
+wrote grid 5184, census 12, WF-A 36, link 216 in 144s
