@@ -129,6 +129,24 @@ that happens to pay, which is the opposite of what 4b is for; PROTOCOL rule 4b n
 SPY this book already passes (idea 787, 26 of 82). RULES.md, PROTOCOL.md, scan.py, bot.py and
 baseline.py are untouched (rule 6).
 
+## Unplanned cross-check — a CONCURRENT independent run of the same idea agrees on the bound
+
+The cloud lane ran idea 786 at the same time (commit `da613b8`, drag models CONT / LUMPY / NAME) and
+reached the same headline. Its bar-only bound is **d\* = 1.01–1.22 pp/yr on U56, 3.10–3.32 on B136**
+against this run's **1.184 / 3.624** from a completely separate construction — the required drag is
+robust to how the drag is modelled. Two differences are worth recording rather than reconciling:
+
+* **This run's extra quantity is `phi`.** The cloud run bounds the bar-only case; the HAZARD model
+  here measures how much of the same drag the *book* eats, which is what decides whether any drag
+  can close the floor at all.
+* **The two runs disagree on the DD leg's direction under drag.** The cloud run reports that dragging
+  the bar *shrinks* its drawdown and so tightens the 4b DD cap (`d** >= d*`). Under this run's FLAT
+  construction the bar's MaxDD **deepens** monotonically (−29.09% → −29.42% over d = 0 → 5 pp), which
+  *loosens* the cap, and the DD leg never binds on the U56 g1.00 column. Both can be true of their
+  own constructions — a lumpy drag landing near the equity peak is not the same object as a constant
+  daily deduction — and the verdict does not turn on it either way, since the CAGR leg is the binding
+  one in both runs. Stated, not adjudicated.
+
 ## Gates (pre-registered except G9, all PASS)
 
 | gate | value | bar |
