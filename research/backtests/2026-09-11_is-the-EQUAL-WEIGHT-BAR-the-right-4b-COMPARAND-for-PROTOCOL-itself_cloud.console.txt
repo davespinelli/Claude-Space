@@ -1,0 +1,178 @@
+# 2026-09-11_is-the-EQUAL-WEIGHT-BAR-the-right-4b-COMPARAND-for-PROTOCOL-itself_cloud
+# idea 785 - is the EQUAL-WEIGHT BAR the right 4b COMPARAND for PROTOCOL itself?
+# PROTOCOL: cost 10 bps, next-day fills, gross <= 1.00, IS <= 2016-12-31, OOS >= 2017-01-01
+# TUNED (2): BAR FORM in ['W0_SPY', 'W1_EWP_FULL', 'W2_EWP_GROSS', 'W3_EWP_BH', 'W4_MAX_SPY_EWP'] x CLAIM SET in ['ALL', 'GATED', 'U56', 'SHELF']  -- all 20 points reported
+# REPORTED not selected: panel (3) x family ['BAND-DG', 'MA-RS', 'CAND20', 'EWALL'] x gross [0.5, 0.75, 1.0] x cadence ['W', 'M'] = the book grid; 5 legs
+
+  SMALL panel: 44 tickers with max_1d_move >= 1.0 dropped (483 -> 439)
+PANELS: U56 (55 names, 2008-01-02..2026-09-10), B136 (135 names, 2008-01-02..2026-09-04), SMALL439 (439 names, 2010-01-04..2026-09-04)
+
+====================================================================================================
+GATES (pre-registered; printed before any pass count is read)
+====================================================================================================
+G1 identity  : fast_backtest vs engine.backtest, returns AND turnover, one book per panel, max |d| = 0.000e+00 (bar 1e-12) -> PASS
+G2 band      : BAND-DG g=0.75 vs baseline.rules_v2_weights on each panel's own tradable frame, max |dw| = 0.000e+00 -> PASS (exact)
+
+====================================================================================================
+THE FIVE CANDIDATE RULE-4b COMPARANDS
+====================================================================================================
+                      U56 B_SPY    : here 15.11% / 0.8835 / -33.72% / 0.9595 / 0.8211   787 published 15.11% / 0.8835 / -33.72% / 0.9595 / 0.8211   max|d| 4.338e-05
+                      U56 B_EWW10  : here 17.69% / 1.1237 / -29.09% / 1.2036 / 1.0598   787 published 17.69% / 1.1237 / -29.09% / 1.2036 / 1.0598   max|d| 4.197e-05
+                     B136 B_SPY    : here 15.23% / 0.8890 / -33.72% / 0.9566 / 0.8340   787 published 15.23% / 0.8890 / -33.72% / 0.9566 / 0.8340   max|d| 4.991e-05
+                     B136 B_EWW10  : here 18.95% / 1.1238 / -32.71% / 1.2354 / 1.0240   787 published 18.95% / 1.1238 / -32.71% / 1.2354 / 1.0240   max|d| 3.962e-05
+G3 787 repro : W0 (SPY) and W1 (EWP_FULL) vs idea 787's committed B_SPY / B_EWW10 digits, max |d| = 4.991e-05 (bar 5e-04) -> PASS
+
+====================================================================================================
+BOOK GRID - 3 panels x 4 families x 3 gross x 2 cadence
+====================================================================================================
+  U56: 24 books (+ the same number of gross-matched W2 comparands)  (9s)
+  B136: 24 books (+ the same number of gross-matched W2 comparands)  (13s)
+  SMALL439: 24 books (+ the same number of gross-matched W2 comparands)  (28s)
+
+G4 gross     : W2's realised daily gross vs the book's own TARGET gross (same decision day, same one-day fill lag) - mean |d| = 1.681e-16, max |d| = 4.441e-16 (bar 1e-12) -> PASS
+                reported, not matched: the BOOK's realised gross drifts from its own target between rebalances by 0.0457 on average (worst book).  Matching that drift would require tomorrow's prices, so W2 matches the target - the gross a manager could actually size to.
+
+  PANEL-LEVEL COMPARANDS (the wordings that do not depend on the book)
+                       CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe
+panel    wording                                                               
+U56      W0_SPY      0.1511  0.8835 -0.3372 0.9595 0.8211    0.1524      0.8721
+         W1_EWP_FULL 0.1769  1.1237 -0.2909 1.2036 1.0598    0.1835      1.1308
+         W3_EWP_BH   0.2141  1.0179 -0.4609 1.2569 0.9115    0.2391      0.9934
+B136     W0_SPY      0.1523  0.8890 -0.3372 0.9566 0.8340    0.1545      0.8820
+         W1_EWP_FULL 0.1895  1.1238 -0.3271 1.2354 1.0240    0.1862      1.1022
+         W3_EWP_BH   0.2007  1.0809 -0.3286 1.2666 0.9582    0.2078      1.0401
+SMALL439 W0_SPY      0.1413  0.8615 -0.3372 0.8907 0.8577    0.1545      0.8820
+         W1_EWP_FULL 0.1312  0.6770 -0.4603 0.7969 0.6124    0.1288      0.6351
+         W3_EWP_BH   0.0706  0.4343 -0.4538 0.6176 0.3009    0.0515      0.3402
+
+G5 non-degen : the INCUMBENT wording W0 (SPY) passes 9 of 72 books (12.5%) -> PASS (must be strictly inside 0%-100% or the grid cannot test any wording)
+
+====================================================================================================
+THE FIVE WORDINGS SCORED - feasibility, movement, and what binds
+====================================================================================================
+THE 20 TUNED POINTS (claim set x wording) - all shown
+                           n  passes  pass_rate  moved  convicted  acquitted  feasible
+claim_set wording                                                                     
+ALL       W0_SPY          72       9     0.1250      0          0          0      True
+          W1_EWP_FULL     72       0     0.0000      9          9          0     False
+          W2_EWP_GROSS    72       0     0.0000      9          9          0     False
+          W3_EWP_BH       72       3     0.0417     12          9          3      True
+          W4_MAX_SPY_EWP  72       0     0.0000      9          9          0     False
+GATED     W0_SPY          54       9     0.1667      0          0          0      True
+          W1_EWP_FULL     54       0     0.0000      9          9          0     False
+          W2_EWP_GROSS    54       0     0.0000      9          9          0     False
+          W3_EWP_BH       54       1     0.0185     10          9          1      True
+          W4_MAX_SPY_EWP  54       0     0.0000      9          9          0     False
+U56       W0_SPY          24       6     0.2500      0          0          0      True
+          W1_EWP_FULL     24       0     0.0000      6          6          0     False
+          W2_EWP_GROSS    24       0     0.0000      6          6          0     False
+          W3_EWP_BH       24       0     0.0000      6          6          0     False
+          W4_MAX_SPY_EWP  24       0     0.0000      6          6          0     False
+SHELF     W0_SPY           9       9     1.0000      0          0          0      True
+          W1_EWP_FULL      9       0     0.0000      9          9          0     False
+          W2_EWP_GROSS     9       0     0.0000      9          9          0     False
+          W3_EWP_BH        9       0     0.0000      9          9          0     False
+          W4_MAX_SPY_EWP   9       0     0.0000      9          9          0     False
+
+BINDING LEGS per wording (ALL claim set)
+                leg_H1  leg_H2  leg_OOS  leg_DD  leg_CAGR
+wording                                                  
+W0_SPY              24      27       27      37        41
+W1_EWP_FULL         60      47       46      37        51
+W2_EWP_GROSS        55      51       51      72        12
+W3_EWP_BH           54       9        9      27        43
+W4_MAX_SPY_EWP      62      53       49      44        52
+
+B1  FEASIBILITY: W0_SPY 9/72, W1_EWP_FULL 0/72, W2_EWP_GROSS 0/72, W3_EWP_BH 3/72, W4_MAX_SPY_EWP 0/72
+    INFEASIBLE (0 passes, must not be written into PROTOCOL): W1_EWP_FULL, W2_EWP_GROSS, W4_MAX_SPY_EWP
+
+B2  MOVEMENT vs the incumbent, ALL claim set: W1_EWP_FULL 9 moved (9 convicted / 0 acquitted), W2_EWP_GROSS 9 moved (9 convicted / 0 acquitted), W3_EWP_BH 12 moved (9 convicted / 3 acquitted), W4_MAX_SPY_EWP 9 moved (9 convicted / 0 acquitted)
+
+PASS COUNTS BY PANEL x WORDING
+          W0_SPY  W1_EWP_FULL  W2_EWP_GROSS  W3_EWP_BH  W4_MAX_SPY_EWP   n
+panel                                                                     
+B136           3            0             0          0               0  24
+SMALL439       0            0             0          3               0  24
+U56            6            0             0          0               0  24
+
+PASS COUNTS BY FAMILY x WORDING
+         W0_SPY  W1_EWP_FULL  W2_EWP_GROSS  W3_EWP_BH  W4_MAX_SPY_EWP   n
+family                                                                   
+BAND-DG       3            0             0          1               0  18
+CAND20        3            0             0          0               0  18
+EWALL         0            0             0          2               0  18
+MA-RS         3            0             0          0               0  18
+
+====================================================================================================
+APPENDIX (DIAGNOSTIC, NOT A PROPOSAL) - PROTOCOL 4b's two multipliers are calibrated
+to a FULLY-INVESTED comparand.  What would they have to become for an equal-weight
+wording to be feasible at all?
+====================================================================================================
+  W1_EWP_FULL: 12 of 72 books clear all THREE Sharpe legs (H1, H2, OOS) against this comparand.
+    cheapest DD re-calibration: lambda_DD >= 0.275 (PROTOCOL says 0.60) would admit U56/BAND-DG/g0.5/W; its CAGR leg then needs lambda_CAGR <= 0.324 (PROTOCOL says 0.70)
+    over those 12 books lambda_DD needed runs 0.275-0.994 and lambda_CAGR available runs 0.324-1.004
+  W2_EWP_GROSS: 14 of 72 books clear all THREE Sharpe legs (H1, H2, OOS) against this comparand.
+    cheapest DD re-calibration: lambda_DD >= 0.816 (PROTOCOL says 0.60) would admit U56/MA-RS/g0.5/M; its CAGR leg then needs lambda_CAGR <= 0.948 (PROTOCOL says 0.70)
+    over those 14 books lambda_DD needed runs 0.816-1.013 and lambda_CAGR available runs 0.948-1.058
+  This is arithmetic, not a recommendation: de-grossing cuts the book's drawdown and the gross-matched comparand's drawdown together, so a 0.60 cap written for a fully-invested SPY becomes a far harder test against a de-grossed basket.  The wording and the two constants are NOT separable.
+
+====================================================================================================
+RULE 8 WF-B - each wording used as the SELECTOR on the first half, OOS read once
+====================================================================================================
+  Rule: among the books whose five 4b legs all clear the wording's comparand using 2009-2016 data ONLY, hold the one with the best IS Sharpe through 2017-2026; if the wording admits nothing, stand down to the live book (RULES v2 on U56).
+
+  LIVE BOOK  RULES v2 U56 g0.75 W : OOS 9.48% / 1.2834 / -11.90%
+  SPY (U56 days)                  : OOS 15.24% / 0.8721 / -33.72%
+
+                          admitted                     picked  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+claim_set wording                                                                             
+ALL       W0_SPY                12          U56/MA-RS/g0.75/M    0.1360      1.1930    -0.1821
+          W1_EWP_FULL            0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W2_EWP_GROSS           0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W3_EWP_BH              0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W4_MAX_SPY_EWP         0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+GATED     W0_SPY                10          U56/MA-RS/g0.75/M    0.1360      1.1930    -0.1821
+          W1_EWP_FULL            0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W2_EWP_GROSS           0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W3_EWP_BH              0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W4_MAX_SPY_EWP         0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+U56       W0_SPY                 6          U56/MA-RS/g0.75/M    0.1360      1.1930    -0.1821
+          W1_EWP_FULL            0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W2_EWP_GROSS           0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W3_EWP_BH              0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W4_MAX_SPY_EWP         0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+SHELF     W0_SPY                 7          U56/MA-RS/g0.75/M    0.1360      1.1930    -0.1821
+          W1_EWP_FULL            0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W2_EWP_GROSS           0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W3_EWP_BH              0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+          W4_MAX_SPY_EWP         0  STAND-DOWN (RULES v2 U56)    0.0948      1.2834    -0.1190
+
+  Beating the live book OOS Sharpe (1.2834): 0 of 20
+  Beating SPY OOS Sharpe (0.8721): 20 of 20
+  B3  BEST SELECTOR: W1_EWP_FULL on ALL -> STAND-DOWN (RULES v2 U56), OOS 9.48% / 1.2834 / -11.90%
+  mean OOS Sharpe of each wording's selection over the 4 claim sets:
+                mean_OOS_Sharpe
+wording                        
+W0_SPY                   1.1930
+W1_EWP_FULL              1.2834
+W2_EWP_GROSS             1.2834
+W3_EWP_BH                1.2834
+W4_MAX_SPY_EWP           1.2834
+
+====================================================================================================
+SIZING CENSUS - how much of the record quotes a 4b verdict at all
+====================================================================================================
+  committed markdown files: 784;  mentioning 4b: 768;  total 4b sites: 13256;  sites asserting a 4b PASS/KEEP: 3153
+  NOT re-adjudicated: the census sizes the exposure only.  The rebuildable adjudication is this run's 72-book grid, where the wordings move W1_EWP_FULL 9, W2_EWP_GROSS 9, W3_EWP_BH 12, W4_MAX_SPY_EWP 9.
+
+====================================================================================================
+KEEP PATHS (PROTOCOL rule 4a and 4b as written today)
+====================================================================================================
+  BOOK GRID (72): 4a 1, 4b 9, BOTH 0   (4a comparand = each panel's own BAND-DG g0.75 W, i.e. the live book's form)
+  4b passes (vs SPY, the rule as written): U56/BAND-DG/g1.0/W; U56/BAND-DG/g1.0/M; U56/MA-RS/g0.75/W; U56/MA-RS/g0.75/M; U56/CAND20/g0.75/W; U56/CAND20/g0.75/M; B136/BAND-DG/g1.0/W; B136/MA-RS/g0.75/W; B136/CAND20/g0.75/M
+  WF-B SELECTION BOOKS (20): 4a 0, 4b 4
+
+SURVIVORSHIP: `universe_broad.json` and the small panel are CURRENT CONSTITUENTS only.  This matters MORE for this question than for most: every equal-weight comparand (W1, W2, W3) is a basket of exactly those surviving names, so the bar it sets is INFLATED by the full survivorship premium, while SPY is a real index with its own delisting history already inside it.  Any equal-weight wording is therefore measured here at its HARSHEST, and a conviction under W1/W2/W3 is a weaker result than the same conviction under W0.  Names with max_1d_move >= 1.0 are dropped from the small panel per PROTOCOL.
+
+# gates: G1 PASS, G2 PASS, G3 PASS, G4 PASS, G5 PASS
+# done in 29s
