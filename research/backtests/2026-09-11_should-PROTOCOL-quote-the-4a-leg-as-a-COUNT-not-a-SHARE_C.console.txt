@@ -1,0 +1,223 @@
+Idea 727 — should PROTOCOL quote the 4a leg as a COUNT, not a SHARE?
+lane C · 2026-09-11 · seed 727 · 10 bps · t+1
+
+Loading panels (committed caches only — no network)...
+  U56 (4702, 56)  B136 (4699, 136)  SMALL (4194, 440) (dropped 44 names with max_1d_move >= 1.0)
+
+==============================================================================
+GATES (pre-registered, printed before any new number is read)
+==============================================================================
+G1 fast_backtest == engine.backtest, max abs dev = 0.000e+00  (bar 1e-12) -> PASS
+G2 EWALL(g=0.75) == baseline.rules_v2_weights on U56, max abs dev = 0.000e+00  (bar 0.0) -> PASS
+G3 idea 721 corpus re-read from .bookgrid.csv: 4a 4/126 (3.17%), 4b 18/126 (14.29%)  -> PASS
+G3b idea 721 floors re-read from .pricefloor.csv: 4a BELOW readable at m >= 180, 4b at m >= 24  -> PASS
+G4 SPY OOS from baseline.load_universe: CAGR 15.24% Sharpe 0.8721 MaxDD -33.72% -> PASS
+
+GATES: ALL PASS
+
+==============================================================================
+THE FRESH CORPUS — families {CAND n, IVOL n, EWALL} x gross x cadence x panel
+==============================================================================
+
+U56: 54 books · sample 2009-01-13 -> 2026-09-10
+  SPY      full  15.11% / 0.8835 / -33.72%   OOS  15.24% / 0.8721 / -33.72%
+  RULES v2 full   8.63% / 1.2069 / -11.90%   OOS   9.48% / 1.2834 / -11.90%
+
+B136: 54 books · sample 2009-01-13 -> 2026-09-04
+  SPY      full  15.23% / 0.8890 / -33.72%   OOS  15.45% / 0.8820 / -33.72%
+  RULES v2 full   8.03% / 1.1078 / -12.18%   OOS   7.98% / 1.1206 / -12.18%
+
+SMALL: 54 books · sample 2011-01-13 -> 2026-09-04
+  SPY      full  14.13% / 0.8615 / -33.72%   OOS  15.45% / 0.8820 / -33.72%
+  RULES v2 full   3.80% / 0.5710 / -14.70%   OOS   3.84% / 0.5665 / -14.70%
+
+All grid points (4a / 4b pass counts by panel x family x gross x cadence):
+            pass4a                    pass4b                   
+gross         0.50    0.75    1.00      0.50    0.75    1.00   
+cadence          M  W    M  W    M  W      M  W    M  W    M  W
+panel fam                                                      
+B136  CAND       0  0    0  0    0  0      0  0    1  0    0  0
+      EWALL      0  0    0  0    0  0      0  0    0  0    0  1
+      IVOL       0  0    0  0    0  0      0  0    0  0    0  0
+SMALL CAND       0  0    0  0    0  0      0  0    0  0    0  0
+      EWALL      1  0    0  0    0  0      0  0    0  0    0  0
+      IVOL       0  0    0  0    0  0      0  0    0  0    0  0
+U56   CAND       0  0    0  0    0  0      0  0    4  3    1  0
+      EWALL      0  0    0  0    0  0      0  0    0  0    1  1
+      IVOL       0  0    0  0    0  0      0  0    0  0    2  2
+
+Corpus base rates (tuned parameter 1, both cells reported):
+  NARROW 108 books   4a   0 ( 0.00%)   4b  16 (14.81%)
+  WIDE   162 books   4a   1 ( 0.62%)   4b  16 ( 9.88%)
+
+==============================================================================
+RULE 8 (walk-forward) — selector picks on IS ONLY (<= 2016-12-31), read ONCE on OOS (>= 2017-01-01)
+==============================================================================
+
+corpus  selector  m  k4a  k4b OOS_CAGR OOS_Sharpe OOS_MaxDD  beat_v2  beat_spy
+NARROW IS_SHARPE 12    0    3   10.43%     1.1457   -15.60%        2        12
+NARROW   IS_CAGR 12    0    2   12.52%     1.0729   -20.24%        0        12
+NARROW IS_CALMAR 12    0    2   11.61%     0.9997   -18.62%        0         7
+NARROW  IS_MINDD 12    0    1    8.27%     0.9975   -15.15%        0         9
+  WIDE IS_SHARPE 18    0    3    8.48%     0.8980   -21.44%        2        12
+  WIDE   IS_CAGR 18    0    2   10.07%     0.8576   -24.80%        0        12
+  WIDE IS_CALMAR 18    0    2    9.22%     0.8007   -22.89%        0         7
+  WIDE  IS_MINDD 18    1    1    6.88%     0.8627   -15.32%        4         9
+
+OOS comparands (mean over the corpus's panels):
+  NARROW RULES v2 Sharpe 1.2020  CAGR 8.73%  MaxDD -12.04%   |   SPY Sharpe 0.8771  CAGR 15.34%  MaxDD -33.72%
+  WIDE   RULES v2 Sharpe 0.9902  CAGR 7.10%  MaxDD -12.93%   |   SPY Sharpe 0.8787  CAGR 15.38%  MaxDD -33.72%
+
+==============================================================================
+THE HEAD-TO-HEAD — SHARE (record practice) vs COUNT (the proposal), matched alpha
+==============================================================================
+Null: a uniform random pick inside each stratum.  Per-stratum pass probability
+p_s = (# passers in the stratum) / (# books in the stratum).  A leg of m picks is
+the Poisson-binomial of the cyclically-extended p_s (exact at m = S).
+
+[NARROW / 4a]  S = 12 strata, p_bar = 0.0000, per-stratum p_s = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  cross-check exact-vs-20k-MC pmf, max abs dev = 0.0000
+
+[NARROW / 4b]  S = 12 strata, p_bar = 0.1481, per-stratum p_s = [0.0, 0.0, 0.1111, 0.0, 0.0, 0.1111, 0.0, 0.0, 0.4444, 0.3333, 0.4444, 0.3333]
+  cross-check exact-vs-20k-MC pmf, max abs dev = 0.0021
+
+[WIDE / 4a]  S = 18 strata, p_bar = 0.0062, per-stratum p_s = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1111, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  cross-check exact-vs-20k-MC pmf, max abs dev = 0.0014
+
+[WIDE / 4b]  S = 18 strata, p_bar = 0.0988, per-stratum p_s = [0.0, 0.0, 0.1111, 0.0, 0.0, 0.1111, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4444, 0.3333, 0.4444, 0.3333]
+  cross-check exact-vs-20k-MC pmf, max abs dev = 0.0023
+
+FEASIBILITY FLOORS — smallest m at which a verdict in that direction is
+attainable AT ALL (alpha = 0.05), by EXACT integer search (not ladder rungs).
+ALL FOUR (corpus x form) cells reported, alongside the homogeneous closed form
+m* = ceil(ln(alpha)/ln(1 - p_bar)), which is what a PROTOCOL clause could quote.
+corpus  path form      p_bar FEAS_below  closed FEAS_above
+----------------------------------------------------------
+NARROW  4a   SHARE    0.0000        inf     inf          1
+NARROW  4a   COUNT    0.0000        inf     inf          1
+NARROW  4b   SHARE    0.1481         21      19          1
+NARROW  4b   COUNT    0.1481         21      19          1
+WIDE    4a   SHARE    0.0062        457     484          1
+WIDE    4a   COUNT    0.0062        457     484          1
+WIDE    4b   SHARE    0.0988         33      29          1
+WIDE    4b   COUNT    0.0988         33      29          1
+
+POWER at the record's actual leg lengths (theta = alternative / base rate):
+  NARROW 4a m=  12  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.000/C0.000  th3 S0.000/C0.000  th5 S0.000/C0.000
+  NARROW 4a m=  18  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.000/C0.000  th3 S0.000/C0.000  th5 S0.000/C0.000
+  NARROW 4a m=  96  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.000/C0.000  th3 S0.000/C0.000  th5 S0.000/C0.000
+  NARROW 4a m= 180  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.000/C0.000  th3 S0.000/C0.000  th5 S0.000/C0.000
+  NARROW 4b m=  12  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.160/C0.160  th3 S0.556/C0.556  th5 S0.802/C0.802
+  NARROW 4b m=  18  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.324/C0.324  th3 S0.802/C0.802  th5 S0.961/C0.961
+  NARROW 4b m=  96  th0 S1.000/C1.000  th0.25 S0.993/C0.993  th0.5 S0.727/C0.727  th2 S0.999/C0.999  th3 S1.000/C1.000  th5 S1.000/C1.000
+  NARROW 4b m= 180  th0 S1.000/C1.000  th0.25 S1.000/C1.000  th0.5 S0.964/C0.964  th2 S1.000/C1.000  th3 S1.000/C1.000  th5 S1.000/C1.000
+  WIDE   4a m=  12  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.000/C0.000  th3 S0.000/C0.000  th5 S0.000/C0.000
+  WIDE   4a m=  18  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.000/C0.000  th3 S0.000/C0.000  th5 S0.000/C0.000
+  WIDE   4a m=  96  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.076/C0.076  th3 S0.210/C0.210  th5 S0.603/C0.603
+  WIDE   4a m= 180  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.163/C0.163  th3 S0.441/C0.441  th5 S0.904/C0.904
+  WIDE   4b m=  12  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.049/C0.049  th3 S0.111/C0.111  th5 S0.309/C0.309
+  WIDE   4b m=  18  th0 S0.000/C0.000  th0.25 S0.000/C0.000  th0.5 S0.000/C0.000  th2 S0.160/C0.160  th3 S0.556/C0.556  th5 S0.802/C0.802
+  WIDE   4b m=  96  th0 S1.000/C1.000  th0.25 S0.928/C0.928  th0.5 S0.512/C0.512  th2 S0.980/C0.980  th3 S1.000/C1.000  th5 S1.000/C1.000
+  WIDE   4b m= 180  th0 S1.000/C1.000  th0.25 S0.999/C0.999  th0.5 S0.835/C0.835  th2 S1.000/C1.000  th3 S1.000/C1.000  th5 S1.000/C1.000
+
+FORM AGREEMENT: 120/120 feasibility cells identical across the two forms; max |power difference| over 360 matched (corpus,path,m,theta) points = 0.000000, mean 0.000000
+
+==============================================================================
+WHAT THE COUNT FORM ACTUALLY BUYS — graded evidence inside the INSIDE verdict
+==============================================================================
+corpus  selector path  m  k  share  null_lo  null_hi v_share v_count  ASL_below  ASL_above
+NARROW   IS_CAGR   4a 12  0 0.0000   0.0000   0.0000  INSIDE  INSIDE     1.0000     1.0000
+NARROW   IS_CAGR   4b 12  2 0.1667   0.0000   0.3333  INSIDE  INSIDE     0.7593     0.5827
+NARROW IS_CALMAR   4a 12  0 0.0000   0.0000   0.0000  INSIDE  INSIDE     1.0000     1.0000
+NARROW IS_CALMAR   4b 12  2 0.1667   0.0000   0.3333  INSIDE  INSIDE     0.7593     0.5827
+NARROW  IS_MINDD   4a 12  0 0.0000   0.0000   0.0000  INSIDE  INSIDE     1.0000     1.0000
+NARROW  IS_MINDD   4b 12  1 0.0833   0.0000   0.3333  INSIDE  INSIDE     0.4173     0.8916
+NARROW IS_SHARPE   4a 12  0 0.0000   0.0000   0.0000  INSIDE  INSIDE     1.0000     1.0000
+NARROW IS_SHARPE   4b 12  3 0.2500   0.0000   0.3333  INSIDE  INSIDE     0.9439     0.2407
+  WIDE   IS_CAGR   4a 18  0 0.0000   0.0000   0.0556  INSIDE  INSIDE     0.8889     1.0000
+  WIDE   IS_CAGR   4b 18  2 0.1111   0.0000   0.2222  INSIDE  INSIDE     0.7593     0.5827
+  WIDE IS_CALMAR   4a 18  0 0.0000   0.0000   0.0556  INSIDE  INSIDE     0.8889     1.0000
+  WIDE IS_CALMAR   4b 18  2 0.1111   0.0000   0.2222  INSIDE  INSIDE     0.7593     0.5827
+  WIDE  IS_MINDD   4a 18  1 0.0556   0.0000   0.0556  INSIDE  INSIDE     1.0000     0.1111
+  WIDE  IS_MINDD   4b 18  1 0.0556   0.0000   0.2222  INSIDE  INSIDE     0.4173     0.8916
+  WIDE IS_SHARPE   4a 18  0 0.0000   0.0000   0.0556  INSIDE  INSIDE     0.8889     1.0000
+  WIDE IS_SHARPE   4b 18  3 0.1667   0.0000   0.2222  INSIDE  INSIDE     0.9439     0.2407
+
+legs reading INSIDE under SHARE whose one-sided ASL is nonetheless <= 0.20: 1 of 16
+
+==============================================================================
+CENSUS — every committed leg in the record carrying a pass4a column, re-read
+against its OWN separation floor (files enumerated, nothing matched by keyword)
+==============================================================================
+457 committed tables carry a pass4a column.  Each is read as a claim
+population of size m = its row count; the floor is the m at which a BELOW verdict
+becomes feasible at that table's OWN observed 4a rate.  NOTE: only the LEG bucket
+is rule-8-leg scale; the GRID bucket is whole design grids, not selector legs.
+230 of 457 (50.3%) sit BELOW their own floor.
+
+                tables     med_m  med_rate  zero_rate  below_floor  share
+scale                                                                    
+LEG (m<=100)       171   30.0000    0.0000         87          110 0.6433
+MID (101-1000)     228  306.0000    0.0185         88          102 0.4474
+GRID (m>1000)       58 1792.0000    0.0162         14           18 0.3103
+
+The 25 largest tables:
+                                                                                                 file     m  k4a   rate  feas_below_floor  below_own_floor
+                 2026-09-10_is-the-CORRELATION-CUT-a-pre-registrable-SLEEVE-ADMISSION-test_C.grid.csv 84480   55 0.0007               inf             True
+                 2026-09-10_is-the-INTERCEPT-of-the-width-law-a-DEFENSIVE-SLEEVE-statistic_C.grid.csv 21120   55 0.0026         1149.0000            False
+                               2026-09-08_a-turnover-matched-null-for-suppressing-overlays_B.keep.csv  7260    0 0.0000               inf             True
+                               2026-09-08_a-turnover-matched-null-for-suppressing-overlays_B.grid.csv  7260    0 0.0000               inf             True
+                            2026-09-11_is-the-0.59-percent-4a-FLIP-RATE-a-PER-DAY-constant_C.grid.csv  6784  114 0.0168          177.0000            False
+                        2026-09-06_back-fill-the-phase-spread-over-every-cadence-claim_cloud.keep.csv  6670 1260 0.1889           15.0000            False
+       2026-09-10_does-the-record-quote-a-WINDOW-STAMP-beside-any-metric-it-publishes_C.keeppaths.csv  6120    7 0.0011         2618.0000            False
+                    2026-09-10_is-lambda-INERT-on-every-low-turnover-book-or-only-on-EWALL_C.grid.csv  6000    5 0.0008         3594.0000            False
+                                     2026-09-06_ew-band3-at-085-does-not-hold-on-broad_cloud.grid.csv  5808 3296 0.5675            4.0000            False
+                  2026-09-10_publish-DRAG-not-TURNOVER-beside-every-window-width-claim_cloud.grid.csv  5280   55 0.0104          287.0000            False
+                 2026-09-10_does-PARTIAL-REBALANCING-beat-CADENCE-as-the-turnover-dial_cloud.grid.csv  4608    0 0.0000               inf             True
+             2026-09-08_back-fill-the-matched-gross-column-on-every-published-regime-split_B.grid.csv  4536   49 0.0108          276.0000            False
+                    2026-09-05_does-the-leak-free-selector-edge-survive-a-third-corpus_cloud.keep.csv  4370 1759 0.4025            6.0000            False
+                    2026-09-05_does-the-leak-free-selector-edge-survive-a-third-corpus_cloud.arms.csv  4370 1759 0.4025            6.0000            False
+2026-09-11_price-the-APPEND-vs-RESTATE-channels-separately-on-a-LONGER-vintage-ladder_cloud.draws.csv  3840    0 0.0000               inf             True
+                                                        2026-09-05_the-on-share-column_cloud.keep.csv  3780  938 0.2481           11.0000            False
+                                                        2026-09-05_the-on-share-column_cloud.grid.csv  3780  938 0.2481           11.0000            False
+                          2026-09-10_is-p-over-n-1-the-crossover-for-key-reproduction_B.keeppaths.csv  3600    0 0.0000               inf             True
+                        2026-09-09_is-4b-PASSAGE-on-the-LIVE-FAMILY-a-pure-GROSS-BOUND_cloud.grid.csv  3456   72 0.0208          143.0000            False
+                     2026-09-10_does-PARTIAL-REBALANCING-beat-CADENCE-as-the-turnover-dial_B.grid.csv  3195    9 0.0028         1062.0000            False
+                                                2026-09-05_the-20-percent-oracle-ceiling_C.ladder.csv  3000 1974 0.6580            3.0000            False
+                              2026-09-08_does-modal-share-predict-VARIANCE-not-sign_B.walkforward.csv  2800 2248 0.8029            2.0000            False
+               2026-09-10_does-any-published-COLUMN-prescription-survive-its-own-L2-ladder_C.grid.csv  2592   36 0.0139          215.0000            False
+                   2026-09-05_the-null-column-for-instruments-that-are-not-keyed-tilts_cloud.keep.csv  2268  575 0.2535           11.0000            False
+                                                         2026-09-05_defensive-class-census_B.grid.csv  2244 1053 0.4693            5.0000            False
+
+LEG bucket (m <= 100, the scale a rule-8 book leg actually runs at): 171 tables, median m 30, median 4a rate 0.0000, 87 with a ZERO 4a rate (floor = infinite), 110 of 171 (64.3%) below their own floor.
+
+all-table m distribution: min 1  median 180  max 84480;  4a rate: min 0.0000 median 0.0148 max 1.0000
+
+==============================================================================
+BOTH KEEP PATHS ON THE CORPUS
+==============================================================================
+  NARROW: 4a 0/108, 4b 16/108
+  WIDE: 4a 1/162, 4b 16/162
+
+4b passers (full sample):
+panel                book  full_CAGR  full_Sharpe  full_MaxDD  H1_Sharpe  H2_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+  U56  U56|CAND10|g0.75|M     0.1133       1.0637     -0.1510     1.1038     1.0365    0.1223      1.0866    -0.1510
+  U56  U56|CAND20|g0.75|W     0.1096       1.0113     -0.1903     1.0184     1.0153    0.1266      1.0877    -0.1903
+  U56  U56|CAND20|g0.75|M     0.1166       1.0521     -0.1869     1.0824     1.0361    0.1301      1.1016    -0.1869
+  U56  U56|CAND30|g0.75|W     0.1186       1.0905     -0.1911     1.1238     1.0733    0.1328      1.1427    -0.1911
+  U56  U56|CAND30|g0.75|M     0.1311       1.1621     -0.2004     1.2197     1.1272    0.1447      1.1968    -0.2004
+  U56  U56|CAND40|g0.75|W     0.1229       1.1502     -0.1829     1.2011     1.1179    0.1356      1.1946    -0.1829
+  U56  U56|CAND40|g0.75|M     0.1273       1.1573     -0.1993     1.2040     1.1293    0.1412      1.2055    -0.1993
+  U56   U56|EWALL|g1.00|W     0.1155       1.2067     -0.1570     1.2405     1.1798    0.1270      1.2827    -0.1570
+  U56   U56|EWALL|g1.00|M     0.1193       1.1805     -0.1856     1.2281     1.1416    0.1286      1.2325    -0.1856
+  U56  U56|CAND10|g1.00|M     0.1513       1.0653     -0.1994     1.1071     1.0364    0.1629      1.0866    -0.1994
+  U56  U56|IVOL10|g1.00|M     0.1248       1.0208     -0.1948     1.1372     0.9242    0.1274      0.9998    -0.1948
+  U56  U56|IVOL20|g1.00|M     0.1244       1.0415     -0.2022     1.1540     0.9482    0.1297      1.0440    -0.2022
+  U56  U56|IVOL30|g1.00|W     0.1110       1.0164     -0.1874     1.0965     0.9526    0.1217      1.0613    -0.1874
+  U56  U56|IVOL40|g1.00|W     0.1130       1.0849     -0.1709     1.1610     1.0229    0.1230      1.1342    -0.1709
+ B136 B136|CAND20|g0.75|M     0.1151       1.0363     -0.1857     1.1499     0.9424    0.1158      1.0070    -0.1857
+ B136  B136|EWALL|g1.00|W     0.1073       1.1077     -0.1608     1.2323     0.9850    0.1066      1.1195    -0.1608
+
+This run's object is a REPORTING FORM, not a book.  No KEEP is claimed: no book
+here was selected out of sample by anything other than the rule-8 selectors above,
+and none of those legs separates from its own random-pick null (see the table).
