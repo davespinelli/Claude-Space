@@ -32,3 +32,16 @@
 10. **SURVIVORSHIP.** U56 is current constituents with no delistings, so the CAGR level — the leg
     this book's whole case rests on — is inflated by an unmeasured amount. That alone bars a
     capital allocation on this evidence.
+
+11. **AMENDED same day by idea 787 (lane B, whole-shelf equal-weight re-price) — READ BEFORE PROMOTING.**
+    Re-scored against an equal-weight basket of its OWN panel (`B_EWW10`: U56 tradables, weekly,
+    gross 1.00, the book's own 10 bps — 17.69% / 1.1237 / −29.09%, halves 1.2036 / 1.0598, OOS
+    18.35% / 1.1308), this book's 4b pass does **not** survive. The QUANT-RESP family clears the bar
+    on all three Sharpe legs across most of its level ladder — the gate is doing real work — but
+    **never clears the CAGR floor and the DD cap together**: q0.50 (this memo's pick) misses the DD
+    cap, and the only rung with enough return, q0.20 (19.63% CAGR, +7.25 pp over the floor), breaches
+    it by **−4.42 pp**. On B136, q0.20 is the single cell clearing all three Sharpe legs and misses DD
+    by −2.73 pp. Whole 82-cell shelf: **4b vs SPY 26, vs either equal-weight bar 0**; under rule 8 the
+    IS pick for this family is q0.60 (U56) / q0.20 (B136) and both fail the bar on DD.
+    Line 9's PARK stands, and its reason is now measured rather than owed: **PARK, not KEEP-candidate.**
+    See `2026-09-11_does-ANY-standing-4b-candidate-clear-an-EQUAL-WEIGHT-bar_B.result.md`.
