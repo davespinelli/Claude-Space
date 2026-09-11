@@ -1,0 +1,192 @@
+================================================================================================================
+IDEA 786  is-the-U56-CAGR-FLOOR-GAP-a-DELISTING-artefact  (cloud, 2026-09-11)
+================================================================================================================
+PROTOCOL: 10 bps, next-day fills, warm-up 260, IS <= 2016-12-31, OOS >= 2017-01-01 read once.
+TUNED (2): DRAG MODEL ['CONT', 'LUMPY', 'NAME'] x PANEL ['U56', 'B136'] -- all 6 points reported.
+SOLVED, never tuned: d* (drag closing the CAGR floor) and d** (drag closing all five 4b legs).  Pre-registered miss 0.0083 pp.
+
+================================================================================================================
+GATES (pre-registered; printed before any drag is solved)
+================================================================================================================
+G1 bars         : idea 787's committed .bars.csv, 6 rows x 8 columns (both panels x B_SPY/B_EW742/B_EWW10), max |d| = 5.551e-16 (bar 1e-12) -> PASS
+G2 band book    : idea 787's committed BAND-DG rows, 14 rows x 9 columns (7 gross rungs x 2 panels), max |d| = 4.441e-16 (bar 1e-12) -> PASS
+G3 headline     : U56 / g=1.00 / B_EWW10 CAGR-floor miss re-read = 0.008285 (0.83 pp) vs idea 787's published 0.0083; |d| = 1.482e-05 (bar 1e-04, the published figure carries 2dp) -> PASS
+G4 identity     : fast_backtest vs engine.backtest max |dret| = 2.082e-17 (bar 1e-12) -> PASS
+G5 drag no-op   : all three drag models at zero intensity reproduce the bar exactly, max |d| = 0.000e+00 (bar 1e-15) -> PASS
+G6 appendix     : idea 787's committed g_needed_for_CAGR_floor read back: U56 1.0716, B136 1.2356 (U56 1.0716 / B136 1.2356 as published) -> PASS
+G7 census       : U56 tradables 55 = 35 ETFs + 20 mega-cap single stocks (single-stock share 0.3636); B136 tradables 135 = 35 ETFs + 100 single stocks (share 0.7407) -> PASS (counts partition the panel)
+                  U56 ETF detail: broad 7, sectors 16, bond/FX/commodity 12. Broad and bond ETFs wind up at NAV, not at a performance delisting price.
+
+================================================================================================================
+PART A - THE DRAG REQUIRED ON THE BAR (d* solved per cell; all 6 tuned points)
+================================================================================================================
+The band book at gross 1.00 is the standing candidate; the floor is CAGR >= 0.70 x bar.
+                     bar_CAGR  book_CAGR  floor  miss_pp  bar_CAGR_needed  d_star_pp  d_starstar  closes_all_4b resid_leg
+panel bar     model                                                                                                      
+U56   B_EW742 CONT     0.1794     0.1155 0.1256   1.0023           0.1651     1.2223      0.0130           True          
+              LUMPY    0.1794     0.1155 0.1256   1.0023           0.1651     1.1891      0.0120          False      CAGR
+      B_EWW10 CONT     0.1769     0.1155 0.1238   0.8285           0.1651     1.0114      0.0110           True          
+              LUMPY    0.1769     0.1155 0.1238   0.8285           0.1651     0.9850      0.0100          False      CAGR
+B136  B_EW742 CONT     0.1922     0.1073 0.1346   2.7250           0.1533     3.3216      0.0340           True          
+              LUMPY    0.1922     0.1073 0.1346   2.7250           0.1533     3.1965      0.0320          False      CAGR
+      B_EWW10 CONT     0.1895     0.1073 0.1327   2.5365           0.1533     3.0953      0.0310           True          
+              LUMPY    0.1895     0.1073 0.1327   2.5365           0.1533     2.9821      0.0300          False      CAGR
+
+  NOTE the d** column: dragging the bar also SHRINKS its drawdown, which TIGHTENS the 4b
+  DD cap (0.60 x bar MaxDD) at the same time as it loosens the CAGR floor and the three
+  Sharpe legs.  d** is the drag that clears all five legs at once; where it exceeds d*,
+  the handicap needed is larger than the CAGR arithmetic alone suggests.
+
+================================================================================================================
+PART A (cont.) - THE NAME MODEL: real delistings, applied to the BAR and to the BOOK
+================================================================================================================
+hazard ladder h [0.0, 0.005, 0.01, 0.02, 0.03, 0.05] x loss L [0.3, 0.55, 1.0] x 6 seeds, both panels, both bar forms; every point reported.
+  U56: NAME ladder done (19s)
+  B136: NAME ladder done (36s)
+
+  U56  (h=0 reproduces the undragged objects: bar742 17.9376%, barW10 17.6894%, band book g1.00 11.5540%)
+            barW10_CAGR  book_CAGR  bar_drag_pp  book_drag_pp  shield_ratio  net_floor_gap_pp  barW10_sd  book_sd
+L    h                                                                                                           
+0.30 0.000       0.1769     0.1155       0.0000        0.0000           NaN            0.8285     0.0000   0.0000
+     0.005       0.1769     0.1155       0.0000        0.0000           NaN            0.8285     0.0000   0.0000
+     0.010       0.1742     0.1141       0.2663        0.1409        0.5290            0.7830     0.0049   0.0036
+     0.020       0.1687     0.1096       0.8188        0.5986        0.7311            0.8540     0.0124   0.0085
+     0.030       0.1644     0.1087       1.2449        0.6792        0.5456            0.6362     0.0068   0.0056
+     0.050       0.1559     0.1006       2.1018        1.4970        0.7122            0.8543     0.0069   0.0082
+0.55 0.000       0.1769     0.1155       0.0000        0.0000           NaN            0.8285     0.0000   0.0000
+     0.005       0.1769     0.1155       0.0000        0.0000           NaN            0.8285     0.0000   0.0000
+     0.010       0.1713     0.1125       0.5559        0.2993        0.5384            0.7387     0.0075   0.0066
+     0.020       0.1657     0.1074       1.1155        0.8102        0.7263            0.8578     0.0067   0.0046
+     0.030       0.1613     0.1031       1.5638        1.2395        0.7927            0.9734     0.0064   0.0065
+     0.050       0.1485     0.0969       2.8428        1.8618        0.6549            0.7003     0.0075   0.0048
+1.00 0.000       0.1769     0.1155       0.0000        0.0000           NaN            0.8285     0.0000   0.0000
+     0.005       0.1769     0.1155       0.0000        0.0000           NaN            0.8285     0.0000   0.0000
+     0.010       0.1695     0.1094       0.7356        0.6094        0.8285            0.9230     0.0055   0.0047
+     0.020       0.1536     0.0985       2.3324        1.7005        0.7291            0.8964     0.0081   0.0085
+     0.030       0.1468     0.0967       3.0129        1.8799        0.6240            0.5994     0.0139   0.0107
+     0.050       0.1270     0.0823       4.9878        3.3257        0.6668            0.6627     0.0130   0.0133
+
+  B136  (h=0 reproduces the undragged objects: bar742 19.2217%, barW10 18.9524%, band book g1.00 10.7302%)
+            barW10_CAGR  book_CAGR  bar_drag_pp  book_drag_pp  shield_ratio  net_floor_gap_pp  barW10_sd  book_sd
+L    h                                                                                                           
+0.30 0.000       0.1895     0.1073       0.0000        0.0000           NaN            2.5365     0.0000   0.0000
+     0.005       0.1891     0.1066       0.0450        0.0693        1.5378            2.5742     0.0019   0.0011
+     0.010       0.1869     0.1052       0.2660        0.2118        0.7961            2.5620     0.0018   0.0016
+     0.020       0.1833     0.1031       0.6232        0.4200        0.6740            2.5203     0.0028   0.0024
+     0.030       0.1797     0.1000       0.9855        0.7272        0.7379            2.5739     0.0036   0.0030
+     0.050       0.1720     0.0944       1.7495        1.2887        0.7366            2.6006     0.0066   0.0068
+0.55 0.000       0.1895     0.1073       0.0000        0.0000           NaN            2.5365     0.0000   0.0000
+     0.005       0.1841     0.1040       0.5450        0.3253        0.5969            2.4803     0.0021   0.0022
+     0.010       0.1862     0.1054       0.3344        0.1863        0.5571            2.4887     0.0018   0.0011
+     0.020       0.1787     0.1001       1.0805        0.7152        0.6619            2.4953     0.0026   0.0024
+     0.030       0.1709     0.0950       1.8625        1.2329        0.6620            2.4657     0.0054   0.0050
+     0.050       0.1557     0.0837       3.3804        2.3596        0.6980            2.5298     0.0105   0.0076
+1.00 0.000       0.1895     0.1073       0.0000        0.0000           NaN            2.5365     0.0000   0.0000
+     0.005       0.1804     0.1005       0.9171        0.6849        0.7468            2.5794     0.0018   0.0018
+     0.010       0.1815     0.1018       0.8029        0.5497        0.6847            2.5242     0.0018   0.0012
+     0.020       0.1657     0.0911       2.3854        1.6214        0.6797            2.4881     0.0039   0.0045
+     0.030       0.1559     0.0856       3.3598        2.1681        0.6453            2.3528     0.0040   0.0019
+     0.050       0.1349     0.0703       5.4609        3.6990        0.6774            2.4129     0.0037   0.0070
+
+  NET FLOOR GAP under a delisting-complete panel (the bar AND the book both book the
+  same delistings, which is what a delisting-complete panel would actually mean):
+            gap_h0_pp  gap_hmax_pp  slope_pp_per_1pct_hazard  h_closing_gap
+panel L                                                                    
+U56   0.30    0.82852      0.85427                  -0.00494        1.67629
+      0.55    0.82852      0.70035                  -0.00892        0.92930
+      1.00    0.82852      0.66271                  -0.04884        0.16965
+B136  0.30    2.53648      2.60060                   0.00929            NaN
+      0.55    2.53648      2.52976                   0.00131            NaN
+      1.00    2.53648      2.41289                  -0.03682        0.68885
+  h_closing_gap is the annual delisting hazard at which the NET gap reaches zero, read
+  off a linear fit to the ladder; NaN means the gap does not close in this direction at
+  any hazard - delisting WIDENS it.
+
+H_SHIELD: the band book loses strictly less CAGR than the bar at 26 of 30 (L, h) points (U56 12/15, B136 14/15) -> FALSIFIED at some points - the gate does NOT always shield the book
+
+================================================================================================================
+PART B - WHAT THE REQUIRED DRAG IMPLIES AS A DELISTING FREQUENCY
+================================================================================================================
+h_panel = d* / L is the panel-wide annual delisting frequency the drag needs.
+h_sleeve = d* / (L x single-stock share) is the frequency on the names that can actually
+delist at all - the number a delisting story has to defend.
+                    d_star_pp  h_panel  h_sleeve
+panel bar     L                                 
+U56   B_EW742 0.30    1.22225  0.04074   0.11204
+              0.55    1.22225  0.02222   0.06111
+              1.00    1.22225  0.01222   0.03361
+      B_EWW10 0.30    1.01137  0.03371   0.09271
+              0.55    1.01137  0.01839   0.05057
+              1.00    1.01137  0.01011   0.02781
+B136  B_EW742 0.30    3.32162  0.11072   0.14947
+              0.55    3.32162  0.06039   0.08153
+              1.00    3.32162  0.03322   0.04484
+      B_EWW10 0.30    3.09535  0.10318   0.13929
+              0.55    3.09535  0.05628   0.07598
+              1.00    3.09535  0.03095   0.04179
+
+  THE CITATION-FREE STATEMENT (L = 1.00, total wipeout, the physical maximum loss):
+    U56   vs B_EW742 : every year 1.22% of the panel (= 3.36% of its single-stock sleeve) must go to ZERO, and that is the LOWER bound - any smaller loss needs proportionally more delistings.
+    U56   vs B_EWW10 : every year 1.01% of the panel (= 2.78% of its single-stock sleeve) must go to ZERO, and that is the LOWER bound - any smaller loss needs proportionally more delistings.
+    B136  vs B_EW742 : every year 3.32% of the panel (= 4.48% of its single-stock sleeve) must go to ZERO, and that is the LOWER bound - any smaller loss needs proportionally more delistings.
+    B136  vs B_EWW10 : every year 3.10% of the panel (= 4.18% of its single-stock sleeve) must go to ZERO, and that is the LOWER bound - any smaller loss needs proportionally more delistings.
+
+H_DRAG  : on the weaker (conservative) bar the drag needs 2.78% of the single-stock sleeve wiped out EVERY year at L = 1.00; pre-registered bar 2.00% -> FALSIFIED - the bar-only drag is already beyond any defensible hazard
+          and that is the BAR-ONLY bound.  Under the honest joint experiment (PART A's NAME model, delistings hitting the bar AND the book), U56 needs h = 16.97% of the panel per year = 46.65% of its single-stock sleeve, every year, at total wipeout.
+  Recalled anchors (UNVERIFIED here - no network): Shumway 1997 NYSE/AMEX ~ -30%,
+  Shumway & Warther 1999 Nasdaq ~ -55% for performance-related delistings.  The verdict
+  below is stated against the L = 1.00 column and does not depend on either figure.
+
+================================================================================================================
+PART C - THE EMPIRICAL ANCHOR: RSP, an investable equal-weight fund that ATE the
+         delistings, against a synthetic equal-weight basket of current constituents
+================================================================================================================
+               bars  synth_CAGR  RSP_CAGR  gap_pp  synth_Sharpe  RSP_Sharpe
+panel bar                                                                  
+U56   B_EW742  4442      0.1794    0.1424  3.6936        1.1357      0.7957
+      B_EWW10  4442      0.1769    0.1424  3.4453        1.1237      0.7957
+B136  B_EW742  4439      0.1922    0.1443  4.7922        1.1361      0.8042
+      B_EWW10  4439      0.1895    0.1443  4.5229        1.1238      0.8042
+
+  U56: the synthetic current-constituent basket beats RSP by +3.45 pp/yr in total - survivorship, composition and weighting COMBINED - while the drag needed to close the floor is 1.01 pp/yr, i.e. 29% of that entire gap.
+  B136: the synthetic current-constituent basket beats RSP by +4.52 pp/yr in total - survivorship, composition and weighting COMBINED - while the drag needed to close the floor is 3.10 pp/yr, i.e. 68% of that entire gap.
+  UPPER BOUND, stated: neither panel IS the S&P 500, so composition and weighting
+  differences sit inside this gap alongside survivorship; RSP also carries its own fee.
+  It bounds the inflation from above, it does not estimate the survivorship part.
+
+================================================================================================================
+RULE 8 WALK-FORWARD
+================================================================================================================
+WF-A: d* solved inside IS only and inside OOS only, at every one of the 6 tuned points.
+                     d_FULL_pp  d_IS_pp  d_OOS_pp
+panel bar     model                              
+U56   B_EW742 CONT      1.2223   2.1994    0.4226
+              LUMPY     1.1891   2.1646    0.4073
+      B_EWW10 CONT      1.0114   2.0349    0.1735
+              LUMPY     0.9850   2.0044    0.1674
+B136  B_EW742 CONT      3.3216   3.5422    3.1396
+              LUMPY     3.1965   3.4629    2.9829
+      B_EWW10 CONT      3.0953   3.3319    2.9002
+              LUMPY     2.9821   3.2607    2.7586
+  IS vs OOS required drag: ratio OOS/IS ranges 0.08 to 0.89 over 8 cells -> H_STABLE FALSIFIED - the required drag is not a stable quantity across the split
+
+WF-B: the BAND-DG gross rung picked on IS Sharpe ALONE, OOS read once, scored 4b against
+      the OOS bar UNDRAGGED and DRAGGED by the solved d*, plus 4a vs the live book.
+               IS_pick_gross  IS_Sharpe  d_star_pp  book_oos_CAGR  book_oos_Sharpe  book_oos_MaxDD  bar_oos_CAGR  bar_oos_Sharpe  spy_oos_CAGR  spy_oos_Sharpe  keep4b_undragged miss_undragged  keep4b_dragged miss_dragged  keep4a    miss4a
+panel bar                                                                                                                                                                                                                                     
+U56   B_EW742         1.0000     1.1097     1.2223         0.1270           1.2827         -0.1570        0.1864          1.1448        0.1524          0.8721             False           CAGR            True                False  H2,MaxDD
+      B_EWW10         1.0000     1.1097     1.0114         0.1270           1.2827         -0.1570        0.1835          1.1308        0.1524          0.8721             False           CAGR            True                False  H2,MaxDD
+B136  B_EW742         1.0000     1.0942     3.3216         0.1066           1.1195         -0.1608        0.1890          1.1148        0.1545          0.8820             False     H1,H2,CAGR            True                False  H2,MaxDD
+      B_EWW10         1.0000     1.0942     3.0953         0.1066           1.1195         -0.1608        0.1862          1.1022        0.1545          0.8820             False     H1,H2,CAGR            True                False  H2,MaxDD
+  IS picks gross [1.0] on IS Sharpe alone.  4b vs the UNDRAGGED bar: 0/4; 4b vs the bar DRAGGED by its own d*: 4/4; 4a vs the live book: 0/4.
+  A pass in the DRAGGED column is a statement about the comparand, not a capital
+  candidate: the book is unchanged and the bar was handicapped to produce it.
+
+================================================================================================================
+KEEP PATHS (PROTOCOL 4a and 4b, every BAND-DG rung x panel x bar, undragged and dragged)
+================================================================================================================
+over 42 (rung, panel, bar) cells: 4a 0/42, 4b undragged 2/42, 4b dragged 6/42
+  by bar: B_EW742 4b 0/14 -> dragged 2/14, B_EWW10 4b 0/14 -> dragged 2/14, B_SPY 4b 2/14 -> dragged 2/14
+  binding legs (undragged): CAGR 26, H1,H2,CAGR 14,  2
+
+wrote drag 8, name 36, keeppaths 42 in 38s
