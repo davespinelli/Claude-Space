@@ -1,96 +1,86 @@
-# Freelancer.com shortlist — 2026-09-11 16:28 UTC
-96 matching jobs (budget ≥ $100, ≥2 skill hits). NEW = not seen before.
+# Freelancer.com shortlist — 2026-09-11 20:57 UTC
+92 matching jobs (budget ≥ $100, ≥2 skill hits). NEW = not seen before.
 
 | New | Fit | Bids | Age h | Budget | Title | Link |
 |---|---|---|---|---|---|---|
-| NEW | 3 | 77 | 0 | $487–$974 (hourly est.) | AI Automation Monitoring & Maintenance | [open](https://www.freelancer.com/projects/ai-automation/Automation-Monitoring-Maintenance) |
-| NEW | 2 | 4 | 0 | $157–$262 (hourly est.) | Sales Data Chart Reporting - 09/09/2026 06:35 EDT | [open](https://www.freelancer.com/projects/business-intelligence/Sales-Data-Chart-Reporting-EDT) |
-| NEW | 2 | 9 | 1 | $16–$131 | PDF & Handwritten Data Conversion | [open](https://www.freelancer.com/projects/data-entry/PDF-Handwritten-Data-Conversion-40705505) |
-| NEW | 2 | 30 | 3 | $16–$131 | Automated Lead Sync & WhatsApp Integration | [open](https://www.freelancer.com/projects/api/Automated-Lead-Sync-WhatsApp-Integration) |
-| NEW | 2 | 73 | 1 | $131–$393 | Gemini AI Resume Screener | [open](https://www.freelancer.com/projects/ai-chatbot-development/Gemini-Resume-Screener) |
-| NEW | 2 | 126 | 1 | $30–$250 | E-commerce CRM with Marketing Automation | [open](https://www.freelancer.com/projects/crm/commerce-CRM-with-Marketing-Automation) |
-|  | 4 | 57 | 118 | $40–$160 (hourly est.) | Data Analyst Tutor Needed — Intensive 2-Month Program (Python, SQL, Ex | [open](https://www.freelancer.com/projects/sql/Data-Analyst-Tutor-Needed-Intensive) |
-|  | 4 | 103 | 145 | $27–$338 | Real-Data Trading Bot Optimization & Validation | [open](https://www.freelancer.com/projects/python/Real-Data-Trading-Bot-Optimization) |
-|  | 4 | 161 | 137 | $30–$250 | Multi-tenant Web Scraping & Lead Gen App | [open](https://www.freelancer.com/projects/django/Multi-tenant-Web-Scraping-Lead) |
-|  | 4 | 181 | 124 | $27–$338 | Expertise Required: Python-based Web Scraper Development | [open](https://www.freelancer.com/projects/django/Expertise-Required-Python-based-Web) |
-|  | 4 | 186 | 54 | $30–$250 | Advanced Data Scraping and Lead Gen App | [open](https://www.freelancer.com/projects/django/Advanced-Data-Scraping-Lead-Gen) |
-|  | 4 | 243 | 70 | $1,500–$3,000 | FinTech AI SaaS: FastAPI + SQLModel + React/Vue | [open](https://www.freelancer.com/projects/fastapi/FinTech-SaaS-FastAPI-SQLModel-React) |
-|  | 4 | 317 | 165 | $1,500–$3,000 | AI-Powered Data Analysis Script Generator – SaaS Web Application | [open](https://www.freelancer.com/projects/api-developmet/Powered-Data-Analysis-Script-Generator) |
-|  | 3 | 17 | 7 | $157–$262 (hourly est.) | Excel Conditional Formatting Cleanup | [open](https://www.freelancer.com/projects/data-analysis/Excel-Conditional-Formatting-Cleanup) |
-|  | 3 | 18 | 29 | $131–$393 | Manual Data Entry to Excel | [open](https://www.freelancer.com/projects/customer-support/Manual-Data-Entry-Excel) |
-|  | 3 | 21 | 6 | $131–$393 | Excel Data Entry & Formatting | [open](https://www.freelancer.com/projects/data-analysis/Excel-Data-Entry-Formatting-40705083) |
-|  | 3 | 31 | 55 | $35–$116 (hourly est.) | Hacker Database Web Scraping | [open](https://www.freelancer.com/projects/data-extraction/Hacker-Database-Web-Scraping) |
-|  | 3 | 56 | 25 | $131–$393 | Comprehensive AI Automation Strategy & Workflow Optimization for Jewel | [open](https://www.freelancer.com/projects/java/Comprehensive-Automation-Strategy) |
-|  | 3 | 58 | 14 | $30–$250 | Romanian Company Database Scraping | [open](https://www.freelancer.com/projects/data-scraping/Romanian-Company-Database-Scraping) |
-|  | 3 | 66 | 47 | $40–$160 (hourly est.) | Prop Firm Trading API Integration -2 | [open](https://www.freelancer.com/projects/api-integration/Prop-Firm-Trading-API-Integration) |
-|  | 3 | 67 | 77 | $30–$250 | African B2B Contact Database Compilation | [open](https://www.freelancer.com/projects/data-scraping/African-Contact-Database-Compilation) |
-|  | 3 | 70 | 45 | $72,126–$92,321 | Lead Generation Systems Engineer | [open](https://www.freelancer.com/projects/data-management/Lead-Generation-Systems-Engineer) |
-|  | 3 | 78 | 149 | $262–$523 (hourly est.) | Excel to SQL Server Import | [open](https://www.freelancer.com/projects/c-sharp-programming/Excel-SQL-Server-Import) |
-|  | 3 | 84 | 7 | $216–$361 (hourly est.) | PDF Form Data to Excel | [open](https://www.freelancer.com/projects/data-extraction/PDF-Form-Data-Excel-40704961) |
-|  | 3 | 87 | 23 | $1,500–$3,000 | Synthetic Dataset & Generator for Waste Hauling Company | [open](https://www.freelancer.com/projects/accounting/Synthetic-Dataset-Generator-for-Waste) |
-|  | 3 | 89 | 53 | $131–$393 | Duplicate Web-Scraping Chrome Extension | [open](https://www.freelancer.com/projects/api-developmet/Duplicate-Web-Scraping-Chrome-Extension) |
-|  | 3 | 91 | 64 | $22–$179 | Targeted Web Scraping | [open](https://www.freelancer.com/projects/data-extraction/Targeted-Web-Scraping) |
-|  | 3 | 103 | 22 | $131–$393 | Upgrade AI Email Dashboard | [open](https://www.freelancer.com/projects/natural-language-processing/Upgrade-Email-Dashboard) |
-|  | 3 | 114 | 22 | $500–$1,000 (hourly est.) | Numeric Data Cleaning Automation - 10/09/2026 14:21 EDT | [open](https://www.freelancer.com/projects/data-analysis/Numeric-Data-Cleaning-Automation-EDT) |
-|  | 3 | 114 | 11 | $250–$750 | Python Customer Segmentation Predictive Analysis | [open](https://www.freelancer.com/projects/data-analysis/Python-Customer-Segmentation-Predictive) |
-|  | 3 | 122 | 24 | $131–$393 | Modern AI Dashboard Frontend Development | [open](https://www.freelancer.com/projects/react-js/Modern-Dashboard-Frontend-Development) |
-|  | 3 | 136 | 76 | $300–$500 (hourly est.) | AI Email Data Entry Automation | [open](https://www.freelancer.com/projects/ai-automation/Email-Data-Entry-Automation) |
-|  | 3 | 143 | 143 | $290–$870 | Troubleshooting C#/.NET FXCM Trading App | [open](https://www.freelancer.com/projects/api/Troubleshooting-NET-FXCM-Trading-App) |
-|  | 3 | 161 | 77 | $30–$250 | BLS Spain Visa Application Bot | [open](https://www.freelancer.com/projects/selenium/BLS-Spain-Visa-Application-Bot) |
-|  | 3 | 249 | 51 | $27–$338 | Scrape Store Data Spreadsheet | [open](https://www.freelancer.com/projects/data-scraping/Scrape-Store-Data-Spreadsheet) |
-|  | 2 | 7 | 11 | $157–$262 (hourly est.) | Excel Revenue Data Entry | [open](https://www.freelancer.com/projects/data-management/Excel-Revenue-Data-Entry) |
-|  | 2 | 8 | 10 | $157–$262 (hourly est.) | Accurate Data Processing Support - 11/09/2026 02:27 EDT | [open](https://www.freelancer.com/projects/data-analysis/Accurate-Data-Processing-Support-EDT) |
-|  | 2 | 12 | 15 | $7–$886 | Commission-Only AI B2B Sales Rep (Australia) - read description | [open](https://www.freelancer.com/projects/b2b-marketing/Commission-Only-Sales-Rep-Australia) |
-|  | 2 | 14 | 11 | $157–$262 (hourly est.) | API Throughput Load Testing | [open](https://www.freelancer.com/projects/api/API-Throughput-Load-Testing) |
-|  | 2 | 15 | 69 | $84–$157 (hourly est.) | PDF Manual Data Entry | [open](https://www.freelancer.com/projects/google-sheets/PDF-Manual-Data-Entry) |
-|  | 2 | 16 | 20 | $157–$262 (hourly est.) | Accurate Excel Data Entry | [open](https://www.freelancer.com/projects/data-management/Accurate-Excel-Data-Entry-40703894) |
-|  | 2 | 17 | 87 | $157–$262 (hourly est.) | Manual Data Entry From Online Forms | [open](https://www.freelancer.com/projects/google-sheets/Manual-Data-Entry-From-Online-40697440) |
-|  | 2 | 18 | 6 | $131–$393 | Categorized Website Text Data Entry | [open](https://www.freelancer.com/projects/data-analysis/Categorized-Website-Text-Data-Entry) |
-|  | 2 | 18 | 9 | $157–$262 (hourly est.) | Beginner-Friendly Web Data Transfer | [open](https://www.freelancer.com/projects/data-processing/Beginner-Friendly-Web-Data-Transfer) |
-|  | 2 | 22 | 27 | $131–$393 | Excel Budget Data Entry -- 2 | [open](https://www.freelancer.com/projects/data-processing/Excel-Budget-Data-Entry) |
-|  | 2 | 22 | 9 | $35–$290 | JSON σε XML & Web Scraper | [open](https://www.freelancer.com/projects/JSON-XML-Web-Scraper-fix) |
-|  | 2 | 26 | 8 | $131–$393 | Excel Data Entry and Formatting | [open](https://www.freelancer.com/projects/data-analysis/Excel-Data-Entry-Formatting-40704818) |
-|  | 2 | 26 | 27 | $131–$393 | Excel Budget Data Entry | [open](https://www.freelancer.com/projects/data-management/Excel-Budget-Data-Entry) |
-|  | 2 | 33 | 27 | $131–$393 | Monthly Expense Data Entry (Excel) | [open](https://www.freelancer.com/projects/data-management/Monthly-Expense-Data-Entry-Excel) |
-|  | 2 | 36 | 157 | $16–$131 | Automate Excel Form Submission | [open](https://www.freelancer.com/projects/selenium/Automate-Excel-Form-Submission) |
-|  | 2 | 37 | 52 | $131–$393 | Remote Image ML Generalist | [open](https://www.freelancer.com/projects/data-annotation/Remote-Image-Generalist) |
-|  | 2 | 37 | 54 | $157–$262 (hourly est.) | Interactive Brokers API Integration - 09/09/2026 05:49 EDT | [open](https://www.freelancer.com/projects/api-integration/Interactive-Brokers-API-Integration-EDT) |
-|  | 2 | 44 | 118 | $131–$393 | Interactive Website, Data Analysis, AI/Machine Learning Model | [open](https://www.freelancer.com/projects/data-analysis/Interactive-Website-Data-Analysis) |
-|  | 2 | 45 | 25 | $750–$1,500 | Nepali/Ukranian AI Automation Engineer Full Time | [open](https://www.freelancer.com/projects/ai-hw-sw/Nepali-Automation-Engineer-Full-Time) |
-|  | 2 | 46 | 71 | $131–$393 | Automate Diamond Market Data Reports | [open](https://www.freelancer.com/projects/beautifulsoup/Automate-Diamond-Market-Data-Reports) |
-|  | 2 | 48 | 55 | $157–$262 (hourly est.) | Interactive Brokers API Integration | [open](https://www.freelancer.com/projects/api-integration/Interactive-Brokers-API-Integration) |
-|  | 2 | 50 | 28 | $250–$750 | Manual Excel Client Data Compilation | [open](https://www.freelancer.com/projects/data-management/Manual-Excel-Client-Data-Compilation) |
-|  | 2 | 52 | 9 | $131–$393 | Simple Web Text Data Migration | [open](https://www.freelancer.com/projects/api/Simple-Web-Text-Data-Migration) |
-|  | 2 | 53 | 12 | $393–$785 | Playwright Python Regression Suite | [open](https://www.freelancer.com/projects/automation/Playwright-Python-Regression-Suite) |
-|  | 2 | 56 | 86 | $250–$750 | Futures Strategy Development and Testing | [open](https://www.freelancer.com/projects/trading/Futures-Strategy-Development-Testing) |
+| NEW | 4 | 166 | 2 | $160–$300 (hourly est.) | CRM Automation with API & AI | [open](https://www.freelancer.com/projects/api-developmet/CRM-Automation-with-API) |
+| NEW | 2 | 30 | 2 | $7,000–$13,500 | Chatbot Prompt Audit & Improvement | [open](https://www.freelancer.com/projects/english-spelling/Chatbot-Prompt-Audit-Improvement) |
+| NEW | 2 | 38 | 0 | $5,000–$10,000 | Pine Script AI Fund Automation | [open](https://www.freelancer.com/projects/algorithm/Pine-Script-Fund-Automation) |
+| NEW | 2 | 42 | 3 | $5,000–$10,000 | • Senior DevOps / Cloud / SRE Engineer • Senior AI / Machine Learning  | [open](https://www.freelancer.com/projects/devops/Senior-DevOps-Cloud-SRE-Engineer) |
+|  | 4 | 57 | 123 | $40–$160 (hourly est.) | Data Analyst Tutor Needed — Intensive 2-Month Program (Python, SQL, Ex | [open](https://www.freelancer.com/projects/sql/Data-Analyst-Tutor-Needed-Intensive) |
+|  | 4 | 103 | 150 | $27–$338 | Real-Data Trading Bot Optimization & Validation | [open](https://www.freelancer.com/projects/python/Real-Data-Trading-Bot-Optimization) |
+|  | 4 | 161 | 142 | $30–$250 | Multi-tenant Web Scraping & Lead Gen App | [open](https://www.freelancer.com/projects/django/Multi-tenant-Web-Scraping-Lead) |
+|  | 4 | 181 | 129 | $27–$338 | Expertise Required: Python-based Web Scraper Development | [open](https://www.freelancer.com/projects/django/Expertise-Required-Python-based-Web) |
+|  | 4 | 186 | 59 | $30–$250 | Advanced Data Scraping and Lead Gen App | [open](https://www.freelancer.com/projects/django/Advanced-Data-Scraping-Lead-Gen) |
+|  | 4 | 244 | 75 | $1,500–$3,000 | FinTech AI SaaS: FastAPI + SQLModel + React/Vue | [open](https://www.freelancer.com/projects/fastapi/FinTech-SaaS-FastAPI-SQLModel-React) |
+|  | 3 | 18 | 34 | $131–$392 | Manual Data Entry to Excel | [open](https://www.freelancer.com/projects/customer-support/Manual-Data-Entry-Excel) |
+|  | 3 | 19 | 11 | $157–$261 (hourly est.) | Excel Conditional Formatting Cleanup | [open](https://www.freelancer.com/projects/data-analysis/Excel-Conditional-Formatting-Cleanup) |
+|  | 3 | 24 | 10 | $131–$392 | Excel Data Entry & Formatting | [open](https://www.freelancer.com/projects/data-analysis/Excel-Data-Entry-Formatting-40705083) |
+|  | 3 | 31 | 59 | $35–$116 (hourly est.) | Hacker Database Web Scraping | [open](https://www.freelancer.com/projects/data-extraction/Hacker-Database-Web-Scraping) |
+|  | 3 | 52 | 29 | $131–$392 | Comprehensive AI Automation Strategy & Workflow Optimization for Jewel | [open](https://www.freelancer.com/projects/java/Comprehensive-Automation-Strategy) |
+|  | 3 | 59 | 19 | $30–$250 | Romanian Company Database Scraping | [open](https://www.freelancer.com/projects/data-scraping/Romanian-Company-Database-Scraping) |
+|  | 3 | 66 | 52 | $40–$160 (hourly est.) | Prop Firm Trading API Integration -2 | [open](https://www.freelancer.com/projects/api-integration/Prop-Firm-Trading-API-Integration) |
+|  | 3 | 67 | 82 | $30–$250 | African B2B Contact Database Compilation | [open](https://www.freelancer.com/projects/data-scraping/African-Contact-Database-Compilation) |
+|  | 3 | 70 | 50 | $72,091–$92,276 | Lead Generation Systems Engineer | [open](https://www.freelancer.com/projects/data-management/Lead-Generation-Systems-Engineer) |
+|  | 3 | 78 | 153 | $261–$523 (hourly est.) | Excel to SQL Server Import | [open](https://www.freelancer.com/projects/c-sharp-programming/Excel-SQL-Server-Import) |
+|  | 3 | 87 | 27 | $1,500–$3,000 | Synthetic Dataset & Generator for Waste Hauling Company | [open](https://www.freelancer.com/projects/accounting/Synthetic-Dataset-Generator-for-Waste) |
+|  | 3 | 88 | 11 | $216–$360 (hourly est.) | PDF Form Data to Excel | [open](https://www.freelancer.com/projects/data-extraction/PDF-Form-Data-Excel-40704961) |
+|  | 3 | 89 | 57 | $131–$392 | Duplicate Web-Scraping Chrome Extension | [open](https://www.freelancer.com/projects/api-developmet/Duplicate-Web-Scraping-Chrome-Extension) |
+|  | 3 | 91 | 69 | $22–$179 | Targeted Web Scraping | [open](https://www.freelancer.com/projects/data-extraction/Targeted-Web-Scraping) |
+|  | 3 | 95 | 5 | $487–$974 (hourly est.) | AI Automation Monitoring & Maintenance | [open](https://www.freelancer.com/projects/ai-automation/Automation-Monitoring-Maintenance) |
+|  | 3 | 100 | 27 | $131–$392 | Upgrade AI Email Dashboard | [open](https://www.freelancer.com/projects/natural-language-processing/Upgrade-Email-Dashboard) |
+|  | 3 | 117 | 26 | $500–$1,000 (hourly est.) | Numeric Data Cleaning Automation - 10/09/2026 14:21 EDT | [open](https://www.freelancer.com/projects/data-analysis/Numeric-Data-Cleaning-Automation-EDT) |
+|  | 3 | 117 | 16 | $250–$750 | Python Customer Segmentation Predictive Analysis | [open](https://www.freelancer.com/projects/data-analysis/Python-Customer-Segmentation-Predictive) |
+|  | 3 | 137 | 80 | $300–$500 (hourly est.) | AI Email Data Entry Automation | [open](https://www.freelancer.com/projects/ai-automation/Email-Data-Entry-Automation) |
+|  | 3 | 143 | 147 | $290–$870 | Troubleshooting C#/.NET FXCM Trading App | [open](https://www.freelancer.com/projects/api/Troubleshooting-NET-FXCM-Trading-App) |
+|  | 3 | 249 | 55 | $27–$338 | Scrape Store Data Spreadsheet | [open](https://www.freelancer.com/projects/data-scraping/Scrape-Store-Data-Spreadsheet) |
+|  | 2 | 8 | 14 | $157–$261 (hourly est.) | Accurate Data Processing Support - 11/09/2026 02:27 EDT | [open](https://www.freelancer.com/projects/data-analysis/Accurate-Data-Processing-Support-EDT) |
+|  | 2 | 8 | 15 | $157–$261 (hourly est.) | Excel Revenue Data Entry | [open](https://www.freelancer.com/projects/data-management/Excel-Revenue-Data-Entry) |
+|  | 2 | 11 | 20 | $7–$885 | Commission-Only AI B2B Sales Rep (Australia) - read description | [open](https://www.freelancer.com/projects/b2b-marketing/Commission-Only-Sales-Rep-Australia) |
+|  | 2 | 14 | 6 | $16–$131 | PDF & Handwritten Data Conversion | [open](https://www.freelancer.com/projects/data-entry/PDF-Handwritten-Data-Conversion-40705505) |
+|  | 2 | 15 | 5 | $157–$261 (hourly est.) | Sales Data Chart Reporting - 09/09/2026 06:35 EDT | [open](https://www.freelancer.com/projects/business-intelligence/Sales-Data-Chart-Reporting-EDT) |
+|  | 2 | 15 | 73 | $84–$157 (hourly est.) | PDF Manual Data Entry | [open](https://www.freelancer.com/projects/google-sheets/PDF-Manual-Data-Entry) |
+|  | 2 | 16 | 25 | $157–$261 (hourly est.) | Accurate Excel Data Entry | [open](https://www.freelancer.com/projects/data-management/Accurate-Excel-Data-Entry-40703894) |
+|  | 2 | 17 | 91 | $157–$261 (hourly est.) | Manual Data Entry From Online Forms | [open](https://www.freelancer.com/projects/google-sheets/Manual-Data-Entry-From-Online-40697440) |
+|  | 2 | 20 | 10 | $131–$392 | Categorized Website Text Data Entry | [open](https://www.freelancer.com/projects/data-analysis/Categorized-Website-Text-Data-Entry) |
+|  | 2 | 20 | 13 | $157–$261 (hourly est.) | Beginner-Friendly Web Data Transfer | [open](https://www.freelancer.com/projects/data-processing/Beginner-Friendly-Web-Data-Transfer) |
+|  | 2 | 22 | 31 | $131–$392 | Excel Budget Data Entry -- 2 | [open](https://www.freelancer.com/projects/data-processing/Excel-Budget-Data-Entry) |
+|  | 2 | 24 | 13 | $35–$290 | JSON σε XML & Web Scraper | [open](https://www.freelancer.com/projects/JSON-XML-Web-Scraper-fix) |
+|  | 2 | 26 | 32 | $131–$392 | Excel Budget Data Entry | [open](https://www.freelancer.com/projects/data-management/Excel-Budget-Data-Entry) |
+|  | 2 | 27 | 12 | $131–$392 | Excel Data Entry and Formatting | [open](https://www.freelancer.com/projects/data-analysis/Excel-Data-Entry-Formatting-40704818) |
+|  | 2 | 33 | 31 | $131–$392 | Monthly Expense Data Entry (Excel) | [open](https://www.freelancer.com/projects/data-management/Monthly-Expense-Data-Entry-Excel) |
+|  | 2 | 35 | 7 | $16–$131 | Automated Lead Sync & WhatsApp Integration | [open](https://www.freelancer.com/projects/api/Automated-Lead-Sync-WhatsApp-Integration) |
+|  | 2 | 36 | 162 | $16–$131 | Automate Excel Form Submission | [open](https://www.freelancer.com/projects/selenium/Automate-Excel-Form-Submission) |
+|  | 2 | 37 | 56 | $131–$392 | Remote Image ML Generalist | [open](https://www.freelancer.com/projects/data-annotation/Remote-Image-Generalist) |
+|  | 2 | 37 | 59 | $157–$261 (hourly est.) | Interactive Brokers API Integration - 09/09/2026 05:49 EDT | [open](https://www.freelancer.com/projects/api-integration/Interactive-Brokers-API-Integration-EDT) |
+|  | 2 | 44 | 123 | $131–$392 | Interactive Website, Data Analysis, AI/Machine Learning Model | [open](https://www.freelancer.com/projects/data-analysis/Interactive-Website-Data-Analysis) |
+|  | 2 | 45 | 30 | $750–$1,500 | Nepali/Ukranian AI Automation Engineer Full Time | [open](https://www.freelancer.com/projects/ai-hw-sw/Nepali-Automation-Engineer-Full-Time) |
+|  | 2 | 46 | 75 | $131–$392 | Automate Diamond Market Data Reports | [open](https://www.freelancer.com/projects/beautifulsoup/Automate-Diamond-Market-Data-Reports) |
+|  | 2 | 49 | 59 | $157–$261 (hourly est.) | Interactive Brokers API Integration | [open](https://www.freelancer.com/projects/api-integration/Interactive-Brokers-API-Integration) |
+|  | 2 | 52 | 32 | $250–$750 | Manual Excel Client Data Compilation | [open](https://www.freelancer.com/projects/data-management/Manual-Excel-Client-Data-Compilation) |
+|  | 2 | 54 | 13 | $131–$392 | Simple Web Text Data Migration | [open](https://www.freelancer.com/projects/api/Simple-Web-Text-Data-Migration) |
+|  | 2 | 56 | 91 | $250–$750 | Futures Strategy Development and Testing | [open](https://www.freelancer.com/projects/trading/Futures-Strategy-Development-Testing) |
+|  | 2 | 57 | 15171 | $200–$600 | Hotel Review Visualization and Analysis Dashboard | [open](https://www.freelancer.com/projects/chart-js/Hotel-Review-Visualization-Analysis) |
+|  | 2 | 58 | 17 | $392–$784 | Playwright Python Regression Suite | [open](https://www.freelancer.com/projects/automation/Playwright-Python-Regression-Suite) |
+|  | 2 | 62 | 11 | $1,000–$0 (hourly est.) | AI-powered CAD Tool for Security Systems | [open](https://www.freelancer.com/projects/python/powered-CAD-Tool-for-Security) |
 
 ## Descriptions (new jobs only)
-### 40705599 — AI Automation Monitoring & Maintenance
-$487–$974 (hourly est.) · 77 bids · https://www.freelancer.com/projects/ai-automation/Automation-Monitoring-Maintenance
+### 40705833 — CRM Automation with API & AI
+$160–$300 (hourly est.) · 166 bids · https://www.freelancer.com/projects/api-developmet/CRM-Automation-with-API
 
-I run several AI-driven services that rely on structured data stored in relational databases, and I 
+Python AI CRM Automation MVP — API Integration & AI Workflow  I am building an AI-powered CRM automa
 
-### 40700642 — Sales Data Chart Reporting - 09/09/2026 06:35 EDT
-$157–$262 (hourly est.) · 4 bids · https://www.freelancer.com/projects/business-intelligence/Sales-Data-Chart-Reporting-EDT
+### 40705877 — Chatbot Prompt Audit & Improvement
+$7,000–$13,500 · 30 bids · https://www.freelancer.com/projects/english-spelling/Chatbot-Prompt-Audit-Improvement
 
-I need an experienced Excel hand to turn a set of raw sales figures into clear, professional-looking
+About the assignment  For an AI project, we are looking for a freelancer to assist for one week wi
 
-### 40705505 — PDF & Handwritten Data Conversion
-$16–$131 · 9 bids · https://www.freelancer.com/projects/data-entry/PDF-Handwritten-Data-Conversion-40705505
+### 40706003 — Pine Script AI Fund Automation
+$5,000–$10,000 · 38 bids · https://www.freelancer.com/projects/algorithm/Pine-Script-Fund-Automation
 
-I have a steady flow of PDFs that must be turned into clean, fully-editable Word and Excel files, pl
+Looking to develop, integrate, and maintain an AI-operated proprietary fund under an LLC structure. 
 
-### 40705349 — Automated Lead Sync & WhatsApp Integration
-$16–$131 · 30 bids · https://www.freelancer.com/projects/api/Automated-Lead-Sync-WhatsApp-Integration
+### 40705757 — • Senior DevOps / Cloud / SRE Engineer • Senior AI / Machine Learning Engineer • Senior Data Engineer
+$5,000–$10,000 · 42 bids · https://www.freelancer.com/projects/devops/Senior-DevOps-Cloud-SRE-Engineer
 
-I currently collect enquiries from Meta, my website, Instagram, Email, LinkedIn and Facebook. All of
-
-### 40705539 — Gemini AI Resume Screener
-$131–$393 · 73 bids · https://www.freelancer.com/projects/ai-chatbot-development/Gemini-Resume-Screener
-
-I need a web-based application that taps into Gemini AI to automate the most time-consuming part of 
-
-### 40705499 — E-commerce CRM with Marketing Automation
-$30–$250 · 126 bids · https://www.freelancer.com/projects/crm/commerce-CRM-with-Marketing-Automation
-
-I'm seeking a skilled developer to create a CRM tailored for my e-commerce business, with a strong f
+Talsolution is seeking experienced U.S.-based technical professionals for potential client engagemen
