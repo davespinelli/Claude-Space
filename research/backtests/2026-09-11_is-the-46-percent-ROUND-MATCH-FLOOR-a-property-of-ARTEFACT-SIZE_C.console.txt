@@ -1,0 +1,85 @@
+====================================================================================================
+IDEA 792 — is the 46% ROUND-MATCH FLOOR a property of ARTEFACT SIZE?   (lane C, 2026-09-11)
+====================================================================================================
+PARAMS (2, declared): precision ladder d = [1, 2, 3, 4, 5, 6]; size buckets = 5 quintiles of the run's committed DATA value count.  All 30 cells reported.
+CONVENTION: idea 790's verifier verbatim (tol = 0.5*10^-d, candidates {q, q/100, q*100}); DATA leg = committed .csv/.json/.txt/.npz artefacts EXCLUDING .console.txt, per-file cap 30 MB; seed 2706497876.
+
+CORPUS: 791 committed run stems under research/backtests
+  ... 100 runs measured (8s)
+  ... 200 runs measured (13s)
+  ... 300 runs measured (23s)
+  ... 400 runs measured (34s)
+  ... 500 runs measured (47s)
+  ... 600 runs measured (66s)
+  ... 700 runs measured (75s)
+  713 runs measured, 78 excluded ({'no DATA artefact': 73, '< 50 values': 5}), 0 reads hit the cap, 731 MB read (76s)
+  artefact value count n: min 50, median 6954, p90 43725, max 817333; vintages 2026-09-04..2026-09-11
+
+GATES (pre-registered)
+  G1 verifier sound     : PLANT-TRUE at 4 dp 1.0000 of 42780 (bar >= 0.95) -> PASS
+  G2 790 reachable      : d=4 floor by size bucket 0.0434 / 0.1288 / 0.3509 / 0.5751 / 0.7837 brackets 790's 0.4600 -> PASS (pooled over all runs 0.3775 MC, 0.3764 exact)
+  G3 monotone in d      : pooled exact floor 0.8689 -> 0.7843 -> 0.6405 -> 0.3764 -> 0.1179 -> 0.0216 -> PASS
+  G4 closed form == MC  : |MC(identity) - exact(identity)| d=1 0.0010 d=2 0.0001 d=3 0.0008 d=4 0.0001 d=5 0.0006 d=6 0.0001 -> PASS
+  G5 comparands real    : RULES v2 full Sharpe 1.1998 (record 1.1998), MaxDD -0.1205 (record -0.1205), SPY OOS Sharpe 0.8721 (record 0.8721) -> PASS
+  ALL GATES PASS
+
+THE GRID — 30 cells (precision x artefact-size quintile), ALL reported
+  bucket  runs   median n   density/unit |  d=1     d=2     d=3     d=4     d=5     d=6    (exact 3-scaling floor)
+      Q1   143        833           7.81 | 0.6908  0.4984  0.2204  0.0434  0.0051  0.0005
+      Q2   142       2840          28.28 | 0.7929  0.6778  0.4565  0.1288  0.0161  0.0017
+      Q3   143       6954         193.90 | 0.9318  0.8715  0.7461  0.3509  0.0582  0.0064
+      Q4   142      14444         615.95 | 0.9646  0.9380  0.8811  0.5751  0.1289  0.0155
+      Q5   143      43805        3216.29 | 0.9647  0.9359  0.8989  0.7837  0.3805  0.0838
+  (identity-only leg, same cells — the /100 and x100 candidates are the difference)
+      Q1                                 | 0.1554  0.0604  0.0191  0.0031  0.0003  0.0000
+      Q2                                 | 0.2095  0.0757  0.0313  0.0064  0.0007  0.0001
+      Q3                                 | 0.4276  0.1874  0.0898  0.0254  0.0034  0.0004
+      Q4                                 | 0.6009  0.3286  0.1796  0.0667  0.0104  0.0011
+      Q5                                 | 0.7969  0.6111  0.3974  0.2373  0.0786  0.0136
+  (Monte Carlo through 790's own verifier, 40 draws/run — calibrates the closed form)
+      Q1                                 | 0.6887  0.5010  0.2228  0.0462  0.0045  0.0005
+      Q2                                 | 0.7917  0.6791  0.4568  0.1281  0.0174  0.0013
+      Q3                                 | 0.9314  0.8711  0.7476  0.3557  0.0587  0.0072
+      Q4                                 | 0.9663  0.9406  0.8791  0.5759  0.1245  0.0138
+      Q5                                 | 0.9646  0.9359  0.8956  0.7815  0.3730  0.0814
+  PLANT-TRUE (pooled, same draws budget): d=1 1.0000  d=2 1.0000  d=3 1.0000  d=4 1.0000  d=5 1.0000  d=6 1.0000
+  SEPARATION TRUE-FALSE by bucket:
+      Q1                                 | +0.3113  +0.4990  +0.7772  +0.9538  +0.9955  +0.9995
+      Q2                                 | +0.2083  +0.3209  +0.5432  +0.8719  +0.9826  +0.9987
+      Q3                                 | +0.0686  +0.1289  +0.2524  +0.6443  +0.9413  +0.9928
+      Q4                                 | +0.0337  +0.0594  +0.1209  +0.4241  +0.8755  +0.9862
+      Q5                                 | +0.0354  +0.0641  +0.1044  +0.2185  +0.6270  +0.9186
+
+  Spearman(log10 density, exact 3-scaling floor) per precision: d=1 +0.6740; d=2 +0.8297; d=3 +0.9367; d=4 +0.9565; d=5 +0.9567; d=6 +0.9558
+  pooled Poisson prediction 1-exp(-2*tol*density) 0.3113 vs realised identity-leg 0.1540 (the model is the identity leg only) vs the full 3-scaling convention 0.4683 — the /100 and x100 candidates are +0.3142 of floor the record never declared.
+
+d* — the smallest precision whose OWN floor clears the bar (per bucket, exact 3-scaling)
+  bar 5%: Q1 4   Q2 5   Q3 6   Q4 6   Q5 >6
+  bar 1%: Q1 5   Q2 6   Q3 6   Q4 >6   Q5 >6
+
+RULE 8 WALK-FORWARD — d* chosen on vintages <= 2026-09-08 (the corpus median vintage) ONLY, later vintages read ONCE
+  IS 429 runs (2026-09-04..2026-09-08), OOS 284 runs (2026-09-09..2026-09-11)
+  bar 5%: Q1 d*=5.0 IS 0.0059 -> OOS 0.0033 HOLDS; Q2 d*=5.0 IS 0.0199 -> OOS 0.0106 HOLDS; Q3 d*=6.0 IS 0.0071 -> OOS 0.0053 HOLDS; Q4 d*=6.0 IS 0.0168 -> OOS 0.0138 HOLDS; Q5 d*=>6 IS nan -> OOS nan FAILS
+  bar 1%: Q1 d*=5.0 IS 0.0059 -> OOS 0.0033 HOLDS; Q2 d*=6.0 IS 0.0021 -> OOS 0.0011 HOLDS; Q3 d*=6.0 IS 0.0071 -> OOS 0.0053 HOLDS; Q4 d*=>6 IS nan -> OOS nan FAILS; Q5 d*=>6 IS nan -> OOS nan FAILS
+  bar 5%: the IS-chosen precision holds out of sample in 4/5 buckets.
+  the record's standing 4-dp convention, read once on the OOS half: floor 0.3444 (IS 0.3976) — a 4-dp re-verification claim is 34.4% likely to succeed on noise alone.
+
+WHAT THE RECORD ACTUALLY QUOTES — every published headline token (>= 4 sig digits) against the floor at its OWN precision and its OWN run's artefact size
+  21294 published tokens across 629 runs; decimals quoted: median 4, 1 dp 0.6%, 2 dp 29.8%, 3 dp 19.0%, 4 dp 48.3%, 5 dp 1.5%, 6 dp 0.5%, 7 dp 0.0%, 8 dp 0.1%
+  share of published tokens whose own-run floor exceeds 46%: 0.5916 (12597 of 21294)
+  share of published tokens whose own-run floor exceeds 20%: 0.7096 (15111 of 21294)
+  share of published tokens whose own-run floor exceeds 5%: 0.8636 (18389 of 21294)
+  median own-run floor of a published token: 0.6261; mean 0.5716
+    Q1: 2900 tokens, median floor 0.0723, mean 0.2258
+    Q2: 3995 tokens, median floor 0.1868, mean 0.3686
+    Q3: 4457 tokens, median floor 0.5578, mean 0.5827
+    Q4: 4634 tokens, median floor 0.7558, mean 0.6850
+    Q5: 5308 tokens, median floor 0.9822, mean 0.8049
+
+KEEP PATHS (PROTOCOL rule 4)
+  comparands: RULES v2 full CAGR 0.0861 Sharpe 1.1998 (H1 1.2349 / H2 1.1718) MaxDD -0.1205; SPY full CAGR 0.1511 Sharpe 0.8835 MaxDD -0.3372
+  OOS (2017+): RULES v2 CAGR 0.0945 Sharpe 1.2747 MaxDD -0.1205; SPY CAGR 0.1524 Sharpe 0.8721 MaxDD -0.3372
+  4a (beat the book): N/A — this idea produces no book, no weights function and no return stream, so there is nothing to compare against RULES v2 in either half.
+  4b (capital-worthy): N/A — same reason.  NOT claimed either way; the row is recorded n/a rather than passed or failed.
+
+artefacts: 2026-09-11_is-the-46-percent-ROUND-MATCH-FLOOR-a-property-of-ARTEFACT-SIZE_C.runs.csv .grid.csv .walkforward.csv .headline.csv .console.txt   (78s)
