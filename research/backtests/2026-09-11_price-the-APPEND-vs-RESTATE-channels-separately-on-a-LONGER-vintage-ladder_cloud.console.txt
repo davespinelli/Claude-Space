@@ -1,0 +1,121 @@
+==================================================================================================
+IDEA 519  price-the-APPEND-vs-RESTATE-channels-separately  (cloud)  2026-09-11
+==================================================================================================
+  panel U56   4702 rows x 56 cols   2008-01-02 .. 2026-09-10
+  panel B136  4699 rows x 136 cols   2008-01-02 .. 2026-09-04
+  books: 8 committed families x gross [0.75, 1.0] = 16 per panel
+  envelopes (PARAM 1): [('IID', 0.0001), ('IID', 0.0003), ('IID', 0.001), ('IID', 0.003), ('BLOCK', 0.0003)]
+  draws (PARAM 2, nested): [6, 12, 24]
+
+--------------------------------------------------------------------------------------------------
+PRE-REGISTERED GATES
+--------------------------------------------------------------------------------------------------
+  [PASS] G1 fast_backtest == engine.backtest (U56 BAND03 @10bps)      got 6.93889e-18  bar 1e-12
+  [PASS] G1b engine NaNs all inside the discarded warm-up (row < 260) got 3  bar 260
+  [PASS] G2 eps=0 reproduces the panel EXACTLY (identity)             got 0  bar 0
+  [PASS] G3 realised IID envelope == requested 3.000e-04              got 0.000299999  bar 0.0003
+  [PASS] G4 same (envelope, draw) seed is bit-for-bit reproducible    got 0  bar 0
+  [PASS] G4b seed_of('IID',3e-4,0) is the pinned cross-process value  got 1.02634e+09  bar 1.02634e+09
+  [PASS] G4c draw 1 differs from draw 0 (seeds are not constant)      got 3.65076  bar 0
+  [PASS] G5 band_book(0.03,0.75) == rules_v2_weights                  got 0  bar 0
+  [PASS] G6 BLOCK leaves within-month returns untouched               got 2.22045e-16  bar 1e-15
+
+--------------------------------------------------------------------------------------------------
+UNPERTURBED REFERENCE (the vintage the record actually published on)
+--------------------------------------------------------------------------------------------------
+  U56: 4a 0/16   4b 4/16   rule-8 pick BAND08@g1.00
+  B136: 4a 0/16   4b 3/16   rule-8 pick BAND08@g1.00
+
+--------------------------------------------------------------------------------------------------
+RESTATEMENT DRAWS: 2 panels x 5 envelopes x 24 draws x 16 books = 3840 book-runs
+--------------------------------------------------------------------------------------------------
+  U56 IID eps=1e-04: 24 draws done
+  U56 IID eps=3e-04: 24 draws done
+  U56 IID eps=1e-03: 24 draws done
+  U56 IID eps=3e-03: 24 draws done
+  U56 BLOCK eps=3e-04: 24 draws done
+  B136 IID eps=1e-04: 24 draws done
+  B136 IID eps=3e-04: 24 draws done
+  B136 IID eps=1e-03: 24 draws done
+  B136 IID eps=3e-03: 24 draws done
+  B136 BLOCK eps=3e-04: 24 draws done
+  wrote 2026-09-11_price-the-APPEND-vs-RESTATE-channels-separately-on-a-LONGER-vintage-ladder_cloud.draws.csv  (3840 rows)
+  wrote 2026-09-11_price-the-APPEND-vs-RESTATE-channels-separately-on-a-LONGER-vintage-ladder_cloud.picks.csv  (240 rows)
+
+==================================================================================================
+RESULT 1 -- 4a / 4b VERDICT FLIP RATE under restatement, vs idea 514's APPEND channel
+            (comparand: truncation ladder = 3 flips in 192 = 1.56%)
+==================================================================================================
+  wrote 2026-09-11_price-the-APPEND-vs-RESTATE-channels-separately-on-a-LONGER-vintage-ladder_cloud.fliprates.csv  (15 rows)
+          envelope  draws      n |         4a flips         4b flips | max|dSharpe|  max|dCAGR|  max|dMaxDD|
+  ------------------------------------------------------------------------------------------------------------
+         IID 1e-04      6    192 |     0 ( 0.00%)     0 ( 0.00%) |       0.0097     0.240%      0.012%
+         IID 1e-04     12    384 |     0 ( 0.00%)     0 ( 0.00%) |       0.0110     0.364%      0.278%
+         IID 1e-04     24    768 |     0 ( 0.00%)     0 ( 0.00%) |       0.0110     0.364%      0.488%
+         IID 3e-04      6    192 |     0 ( 0.00%)     0 ( 0.00%) |       0.0131     0.398%      0.830%
+         IID 3e-04     12    384 |     0 ( 0.00%)     0 ( 0.00%) |       0.0172     0.512%      1.032%
+         IID 3e-04     24    768 |     0 ( 0.00%)     0 ( 0.00%) |       0.0260     0.813%      1.611%
+         IID 1e-03      6    192 |     0 ( 0.00%)     1 ( 0.52%) |       0.0292     0.974%      2.838%
+         IID 1e-03     12    384 |     0 ( 0.00%)     2 ( 0.52%) |       0.0292     0.974%      2.838%
+         IID 1e-03     24    768 |     0 ( 0.00%)     3 ( 0.39%) |       0.0292     0.978%      2.838%
+         IID 3e-03      6    192 |     0 ( 0.00%)     5 ( 2.60%) |       0.0466     1.421%      1.425%
+         IID 3e-03     12    384 |     0 ( 0.00%)     6 ( 1.56%) |       0.0517     1.615%      1.580%
+         IID 3e-03     24    768 |     0 ( 0.00%)    15 ( 1.95%) |       0.0833     2.594%      4.062%
+       BLOCK 3e-04      6    192 |     0 ( 0.00%)     0 ( 0.00%) |       0.0115     0.290%      1.033%
+       BLOCK 3e-04     12    384 |     0 ( 0.00%)     0 ( 0.00%) |       0.0115     0.346%      1.276%
+       BLOCK 3e-04     24    768 |     0 ( 0.00%)     0 ( 0.00%) |       0.0173     0.492%      1.276%
+
+==================================================================================================
+RESULT 2 -- WHICH BOOKS FLIP (at the OBSERVED 3.000e-04 envelope, both shapes, 24 draws)
+==================================================================================================
+
+  shape IID:  4a flips 0/768 (0.00%)   4b flips 0/768 (0.00%)
+    no book flipped either verdict on any draw.
+
+  shape BLOCK:  4a flips 0/768 (0.00%)   4b flips 0/768 (0.00%)
+    no book flipped either verdict on any draw.
+
+==================================================================================================
+RESULT 3 -- PROTOCOL 8: the rule-8 PICK is chosen on 2008-2016 ONLY, on each RESTATED panel,
+            and evaluated on 2017-2026 untouched.  Does restatement move the pick?
+==================================================================================================
+  wrote 2026-09-11_price-the-APPEND-vs-RESTATE-channels-separately-on-a-LONGER-vintage-ladder_cloud.pickstability.csv  (10 rows)
+
+  U56  unperturbed rule-8 pick = BAND08@g1.00
+                                    CAGR    Sharpe     MaxDD
+    PICK (OOS 2017-26)           12.00%     1.162  -19.05%
+    RULES v2 baseline             9.45%     1.275  -12.05%
+    SPY                          15.24%     0.872  -33.72%
+            envelope  pickflips |         OOS CAGR [min,max]       OOS Sharpe [min,max]
+         BLOCK 3e-04    0/24    |   [ 11.97%,  12.04%]        [ 1.159,  1.164]
+           IID 1e-04    0/24    |   [ 11.99%,  12.00%]        [ 1.159,  1.162]
+           IID 3e-04    0/24    |   [ 11.98%,  12.03%]        [ 1.159,  1.164]
+           IID 1e-03    0/24    |   [ 11.97%,  12.09%]        [ 1.157,  1.168]
+           IID 3e-03    0/24    |   [ 11.86%,  12.17%]        [ 1.147,  1.176]
+
+  B136  unperturbed rule-8 pick = BAND08@g1.00
+                                    CAGR    Sharpe     MaxDD
+    PICK (OOS 2017-26)           11.17%     1.108  -19.50%
+    RULES v2 baseline             7.98%     1.119  -12.24%
+    SPY                          15.45%     0.882  -33.72%
+            envelope  pickflips |         OOS CAGR [min,max]       OOS Sharpe [min,max]
+         BLOCK 3e-04    0/24    |   [ 11.15%,  11.17%]        [ 1.106,  1.108]
+           IID 1e-04    0/24    |   [ 11.16%,  11.17%]        [ 1.107,  1.108]
+           IID 3e-04    0/24    |   [ 11.16%,  11.18%]        [ 1.106,  1.108]
+           IID 1e-03    0/24    |   [ 11.09%,  11.20%]        [ 1.102,  1.111]
+           IID 3e-03    0/24    |   [ 11.03%,  11.24%]        [ 1.098,  1.118]
+
+==================================================================================================
+RESULT 4 -- APPEND vs RESTATE, priced side by side
+==================================================================================================
+  APPEND  (idea 514 truncation ladder)             3 /  192  =  1.56%
+  RESTATE (this run, IID   @3.000e-04, 24 draws)    0 /  768  =  0.00%   (4b)
+  RESTATE (this run, BLOCK @3.000e-04, 24 draws)    0 /  768  =  0.00%   (4b)
+  RESTATE (this run, IID   @3.000e-04, 24 draws)    0 /  768  =  0.00%   (4a)
+  RESTATE (this run, BLOCK @3.000e-04, 24 draws)    0 /  768  =  0.00%   (4a)
+
+  Envelope needed before 4b starts flipping (IID shape, 24 draws, both panels pooled):
+    eps 1e-04:  4b flips   0/768 ( 0.00%)   4a flips   0/768 ( 0.00%)   max|dSharpe| 0.0110
+    eps 3e-04:  4b flips   0/768 ( 0.00%)   4a flips   0/768 ( 0.00%)   max|dSharpe| 0.0260
+    eps 1e-03:  4b flips   3/768 ( 0.39%)   4a flips   0/768 ( 0.00%)   max|dSharpe| 0.0292
+    eps 3e-03:  4b flips  15/768 ( 1.95%)   4a flips   0/768 ( 0.00%)   max|dSharpe| 0.0833
