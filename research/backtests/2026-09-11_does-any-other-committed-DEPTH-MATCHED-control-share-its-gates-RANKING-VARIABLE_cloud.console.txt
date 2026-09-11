@@ -1,0 +1,260 @@
+==========================================================================================================================================================================
+IDEA 561 - does any other committed DEPTH-MATCHED control share its gate's RANKING VARIABLE?   (cloud lane, 2026-09-11)
+==========================================================================================================================================================================
+PROTOCOL: 10 bps per unit turnover (0/25 derived exactly and reported), next-day
+execution, no shorting, no leverage.  IS = start..2016-12-31, OOS = 2017-01-01..end.
+2 tuned params: RANKER ['MADIST', 'MA50D', 'MOM12', 'R6', 'R3', 'INVVOL'] x CADENCE ['D', 'W', 'M', 'Q'].
+PANEL ['U56', 'B136', 'SMALL439'] and CONSTRUCTION ['DEGROSS', 'RESPREAD'] are REPORTED axes, never selected
+over; gross PINNED at the live 0.75.  Both KEEP paths on every book; every grid
+point in .grid.csv.  Census params: SAMPLE {STRICT,WIDE} x MATCHRULE {DAILY,ANY}.
+SURVIVORSHIP: B136/SMALL439 are current constituents only; CAGR inflated, MaxDD
+understated.  SELECTION is depth-matched inside one panel and largely immune; the
+KEEP columns and rule-8 levels are not.
+
+Panels: U56 55x4702  B136 135x4699  SMALL439 439x4194   (44 SMALL names dropped for max_1d_move >= 1.0)
+
+==========================================================================================================================================================================
+PRE-REGISTERED GATES
+==========================================================================================================================================================================
+  G0  run() vs engine.backtest (returns AND turnover)      max |d| = 0.000e+00   bar 1e-12   PASS
+  G3  derived cost rung vs a fresh run (rungs [0, 10, 25])     max |d| = 0.000e+00   bar 1e-15   PASS
+  G1  DEGENERACY: MADIST-ranked control == the GATE, cell by cell
+        max |d selected-set| = 0.000e+00   max |d returns| = 0.000e+00   max |d turnover| = 0.000e+00   bar EXACT 0   PASS
+  G2  depth matched: |control_t| == k_t on every bar, every ranker, every panel   max |d| = 0.000e+00   bar EXACT 0   PASS
+
+  the rankable-count clip (bars where a ranker has fewer live values than k_gate):
+ranker    INVVOL  MA50D  MADIST  MOM12     R3     R6
+panel                                               
+B136      0.0000 0.0000  0.0000 0.0113 0.0000 0.0000
+SMALL439  0.0000 0.0000  0.0000 0.0126 0.0000 0.0000
+U56       0.0000 0.0000  0.0000 0.0113 0.0000 0.0000
+
+==========================================================================================================================================================================
+THE GRID - every point reported
+==========================================================================================================================================================================
+  168 runs = 3 panels x 7 arms x 2 constructions x 4 cadences, gross pinned 0.75.  Written to .grid.csv
+
+  full-sample Sharpe by arm and cadence (mean over panels x constructions):
+cad         D      M      Q      W
+ranker                            
+GATE   0.8045 0.9782 0.8954 0.9098
+MADIST 0.8045 0.9782 0.8954 0.9098
+MA50D  0.6165 0.8973 0.8402 0.8279
+MOM12  0.8633 0.9566 0.8866 0.9238
+R6     0.8452 0.9980 0.9170 0.9543
+R3     0.7021 0.9569 0.8764 0.8459
+INVVOL 0.7313 0.8812 0.8088 0.8626
+
+==========================================================================================================================================================================
+A.  THE SELECTION LEG - control minus gate at IDENTICAL daily depth
+==========================================================================================================================================================================
+  SELECTION_pp = 100 x (CAGR_control - CAGR_gate), same depth / gross / construction:
+                n  med_SEL_pp  min_SEL_pp  max_SEL_pp  max_abs  med_dSharpe  med_oSEL_pp
+family ranker                                                                           
+CLEAN  INVVOL  24     -2.1642     -3.8467      0.1766   3.8467      -0.0771      -2.4647
+       MOM12   24      0.4216     -0.1299      4.5139   4.5139      -0.0110       0.3771
+       R3      24     -0.3900     -1.4769      0.5380   1.4769      -0.0600      -0.9286
+       R6      24      0.4123     -0.0049      1.9908   1.9908       0.0229       0.5552
+DEGEN  MADIST  24      0.0000      0.0000      0.0000   0.0000       0.0000       0.0000
+NEAR   MA50D   24     -0.7449     -4.7610     -0.1007   4.7610      -0.0753      -1.5075
+
+  THE DEGENERACY, priced: over all 24 MADIST cells max |SELECTION_pp| = 0.000e+00, max |dSharpe| = 0.000e+00, max |OOS SELECTION_pp| = 0.000e+00  -> IDENTICALLY ZERO.
+  A NON-degenerate control on the same grid moves CAGR by a median 0.7388 pp (max 4.7610) and Sharpe by a median 0.0542 (max 0.3189).
+  So the ratio of a degenerate SELECTION leg to a real one is EXACTLY 0 : 0.7388 pp.  Any published SELECTION leg whose control ranks on
+  the gate's own variable at exact depth is an ARITHMETIC IDENTITY, not a measurement.
+
+  by panel x ranker (median SELECTION_pp):
+panel     B136  SMALL439     U56
+ranker                          
+MADIST  0.0000    0.0000  0.0000
+MA50D  -0.6303   -1.6572 -0.7393
+MOM12   0.7794    1.1722  0.8062
+R6      0.4039    0.9762  0.4119
+R3     -0.2018   -0.5317 -0.5667
+INVVOL -1.8817   -0.9764 -2.9228
+
+  by cadence x ranker (median SELECTION_pp):
+cad          D       M       Q       W
+ranker                                
+MADIST  0.0000  0.0000  0.0000  0.0000
+MA50D  -1.9179 -0.8074 -0.5429 -0.7674
+MOM12   1.6388  0.4493  0.4294  1.1595
+R6      0.6691  0.5084  0.4658  0.7460
+R3     -0.9532 -0.1129 -0.0911 -0.5764
+INVVOL -1.6839 -2.2734 -2.0820 -1.6685
+
+==========================================================================================================================================================================
+B.  THE CENSUS - committed scripts running a depth-matched gate-vs-quantile contrast
+==========================================================================================================================================================================
+  709 committed backtest scripts scanned (this file excluded).
+  patterns (printed so the classification is reproducible and falsifiable):
+    MATCH  DAILY = daily_matched|k_ma|exact daily depth|k_t\s*=\s*k_|matched.{0,12}depth|depth.{0,12}match
+    MATCH  ANY   = daily_matched|k_ma|matched|depth|quantile|top-?k|\.le\(k
+    QUANT        = rank\(axis=1|quantile|\.le\(k|top-?k
+    GATEVAR      = rolling\(\s*200\s*\)\s*\.mean\(\)|ma200|MA-DIST|MADIST|px\s*/\s*ma\s*-\s*1|dist\s*=\s*px\s*/
+    NEARFAM      = rolling\(\s*(?!200)\d+\s*\)\s*\.mean\(\)
+    CLEANVAR     = shift\(\s*252\s*\)|shift\(\s*126\s*\)|shift\(\s*63\s*\)|rolling\(\s*20\s*\)\s*\.std\(\)|vol20
+
+  counts by (sample, matchrule) x classification:
+kind              CLEAN  DEGEN  UNCLASSIFIED
+sample matchrule                            
+STRICT ANY           23      8             1
+       DAILY         23      8             1
+WIDE   ANY          319     40            63
+       DAILY         35      9             7
+    STRICT /DAILY:   32 contrast files, DEGEN 8 (25.0%), NEAR 0, CLEAN 23, UNCLASSIFIED 1
+    STRICT /ANY  :   32 contrast files, DEGEN 8 (25.0%), NEAR 0, CLEAN 23, UNCLASSIFIED 1
+    WIDE   /DAILY:   51 contrast files, DEGEN 9 (17.6%), NEAR 0, CLEAN 35, UNCLASSIFIED 7
+    WIDE   /ANY  :  422 contrast files, DEGEN 40 (9.5%), NEAR 0, CLEAN 319, UNCLASSIFIED 63
+
+  THE HEADLINE CENSUS (STRICT/DAILY - files that literally run an exact daily
+  depth match): 32 files, of which 8 rank their control on the GATE'S OWN VARIABLE and carry a degenerate SELECTION leg.
+                                                                                                      file         kind  gatevar  nearfam  cleanvar
+                                                                    2026-09-04_insider-cluster-smallcap.py UNCLASSIFIED    False    False     False
+                                        2026-09-06_does-a-pure-exposure-gate-exist-on-the-small-panel_C.py        DEGEN     True    False     False
+                                                       2026-09-06_does-any-dial-argmax-move-with-cost_C.py        CLEAN     True    False      True
+                                       2026-09-06_is-cadence-the-only-cost-chooser-on-other-books_cloud.py        CLEAN     True    False      True
+                                            2026-09-06_is-the-m999-u56-buffer-book-a-4b-candidate_cloud.py        CLEAN     True    False      True
+                                2026-09-06_the-hindsight-overlap-test-as-a-pre-registration-check_cloud.py        CLEAN    False    False      True
+                            2026-09-07_does-the-NUMERAIRE-clause-screen-the-queues-open-overlay-ideas_C.py        CLEAN     True    False      True
+                                             2026-09-07_does-the-c-star-EQUALITY-at-20-bps-generalise_C.py        CLEAN     True    False      True
+                                       2026-09-08_are-the-records-7-rung-ladders-two-rung-ladders_cloud.py        CLEAN     True    False      True
+                                 2026-09-08_does-the-MATCHED-margin-hold-off-the-Sharpe-statistic_cloud.py        CLEAN     True    False      True
+                                 2026-09-08_does-the-vol-gate-corner-survive-being-pre-registered_cloud.py        CLEAN    False    False      True
+                                                  2026-09-08_does-the-width-convergence-hold-past-n40_C.py        CLEAN    False    False      True
+                                             2026-09-08_does-turnover-level-predict-chooser-power_cloud.py        CLEAN     True    False      True
+                                  2026-09-08_is-cost-blind-choosing-worse-than-not-choosing-generally_C.py        CLEAN    False    False      True
+                                    2026-09-08_is-selection-beats-do-nothing-just-a-rung-artefact_cloud.py        CLEAN     True    False      True
+                                                         2026-09-08_locate-the-n-ceiling-above-60_cloud.py        CLEAN    False    False      True
+                                                    2026-09-08_publish-EWall-beside-every-panel-claim_B.py        CLEAN    False    False      True
+                                          2026-09-08_re-read-single-rung-argmaxes-on-V1C-shaped-books_B.py        CLEAN     True    False      True
+                                              2026-09-08_the-gap-vs-tilt-rule-as-a-leaderboard-column_B.py        CLEAN     True    False      True
+                          2026-09-09_does-the-QUANTILE-zero-residual-hold-at-DAILY-and-ANNUAL-cadence_B.py        DEGEN     True    False     False
+                              2026-09-09_does-the-TIMING-RESIDUAL-constant-survive-a-fourth-panel_cloud.py        DEGEN     True    False     False
+                            2026-09-09_does-the-uncompensated-residual-finding-replicate-off-SMALL439_B.py        DEGEN     True    False     False
+                                         2026-09-09_is-the-FAMILY-constant-really-a-c_sd-constant_cloud.py        DEGEN     True    False     False
+                                       2026-09-09_is-the-no-trade-BAND-argmax-interior-or-a-grid-edge_B.py        CLEAN    False    False      True
+                                            2026-09-09_pre-register-the-quantile-family-as-a-dial_cloud.py        DEGEN     True    False     False
+                                2026-09-09_publish-BOTH-beside-every-SELECTION-LEVEL-TIMING-split_cloud.py        DEGEN     True    False     False
+                                      2026-09-09_what-does-SELECTION-become-under-a-DAILY-depth-match_C.py        CLEAN     True    False      True
+                     2026-09-09_why-does-the-MA-SLICE-flip-from-better-to-worse-at-the-panel-boundary_C.py        DEGEN     True    False     False
+2026-09-11_does-any-published-COUNT-FORM-selector-claim-in-the-record-quote-its-FIXED-POLICY-twin_cloud.py        CLEAN    False    False      True
+                                  2026-09-11_is-the-4a-COLUMN-where-the-MOMENTUM-SLICE-actually-lives_C.py        CLEAN     True    False      True
+           2026-09-11_is-the-MA-GATE-worse-than-MOMENTUM-at-matched-daily-depth-a-book-level-fact_cloud.py        CLEAN     True    False      True
+                 2026-09-11_price-the-ENGINE-DRIFT-leg-on-every-published-arm-minus-arm-decomposition_B.py        CLEAN     True    False      True
+
+  CAVEAT: this is a source-regex classifier, so DEGEN is a LOWER bound (a file whose
+  ranker is the gate variable but ALSO mentions a momentum term is scored CLEAN) and
+  UNCLASSIFIED files are not evidence either way.  The PRICE leg above, not the
+  classifier, is what establishes that the degenerate case is an exact identity.
+
+==========================================================================================================================================================================
+C.  BOTH KEEP PATHS ON EVERY BOOK
+==========================================================================================================================================================================
+    U56       RULES v2  CAGR   8.63%  Sharpe 1.2069 (1.2400/1.1806)  MaxDD -11.90% | OOS   9.48%/1.2834/-11.90%
+              SPY       CAGR  15.11%  Sharpe 0.8835 (0.9595/0.8211)  MaxDD -33.72% | OOS  15.24%/0.8721/-33.72%
+    B136      RULES v2  CAGR   8.03%  Sharpe 1.1078 (1.2312/0.9861)  MaxDD -12.18% | OOS   7.98%/1.1206/-12.18%
+              SPY       CAGR  15.23%  Sharpe 0.8890 (0.9566/0.8340)  MaxDD -33.72% | OOS  15.45%/0.8820/-33.72%
+    SMALL439  RULES v2  CAGR   3.80%  Sharpe 0.5710 (0.5682/0.5757)  MaxDD -14.70% | OOS   3.84%/0.5665/-14.70%
+              SPY       CAGR  14.13%  Sharpe 0.8615 (0.8907/0.8577)  MaxDD -33.72% | OOS  15.45%/0.8820/-33.72%
+
+  4a PASS 2/168    4b PASS 12/168
+
+  by arm:
+                n  pass4a  pass4b
+family ranker                    
+-      GATE    24       0       3
+DEGEN  MADIST  24       0       3
+NEAR   MA50D   24       0       3
+CLEAN  MOM12   24       0       0
+       R6      24       1       1
+       R3      24       1       2
+       INVVOL  24       0       0
+
+  4b fail tokens (SET semantics, every failing bar listed):
+fail4b
+CAGR                 42
+H1,H2,OOS,DD,CAGR    35
+DD                   27
+H1,H2,OOS,CAGR       20
+-                    12
+DD,CAGR              10
+H2,OOS,DD,CAGR        9
+H2,DD,CAGR            5
+H2,CAGR               3
+H2,OOS,DD             1
+H1,CAGR               1
+H2,OOS,CAGR           1
+H1,H2,DD,CAGR         1
+H1,H2,OOS,DD          1
+
+  every 4b passer:
+panel ranker family      con cad   CAGR  Sharpe   MaxDD     H1     H2  oCAGR  oSharpe  oMaxDD
+  U56   GATE      - RESPREAD   W 0.1155  1.0914 -0.1862 1.1807 1.0260 0.1237   1.1078 -0.1862
+  U56   GATE      - RESPREAD   M 0.1260  1.1594 -0.1821 1.2207 1.1151 0.1360   1.1930 -0.1821
+  U56 MADIST  DEGEN RESPREAD   W 0.1155  1.0914 -0.1862 1.1807 1.0260 0.1237   1.1078 -0.1862
+  U56 MADIST  DEGEN RESPREAD   M 0.1260  1.1594 -0.1821 1.2207 1.1151 0.1360   1.1930 -0.1821
+  U56  MA50D   NEAR RESPREAD   W 0.1142  1.0629 -0.1758 1.1695 0.9614 0.1088   1.0302 -0.1758
+  U56  MA50D   NEAR RESPREAD   M 0.1207  1.1045 -0.1910 1.2512 0.9746 0.1156   1.0505 -0.1910
+  U56     R6  CLEAN RESPREAD   W 0.1246  1.1334 -0.1922 1.2962 1.0121 0.1263   1.0877 -0.1922
+  U56     R3  CLEAN RESPREAD   M 0.1285  1.1536 -0.1744 1.2721 1.0470 0.1252   1.1198 -0.1744
+ B136   GATE      - RESPREAD   W 0.1166  1.0585 -0.2012 1.1603 0.9707 0.1197   1.0660 -0.2012
+ B136 MADIST  DEGEN RESPREAD   W 0.1166  1.0585 -0.2012 1.1603 0.9707 0.1197   1.0660 -0.2012
+ B136  MA50D   NEAR RESPREAD   W 0.1120  0.9765 -0.1938 1.0715 0.8766 0.1041   0.9687 -0.1938
+ B136     R3  CLEAN RESPREAD   W 0.1129  0.9902 -0.1922 1.0869 0.8912 0.1069   0.9838 -0.1922
+
+  every 4a passer (2):
+   panel ranker family     con cad   CAGR  Sharpe   MaxDD     H1     H2
+    B136     R3  CLEAN DEGROSS   M 0.0850  1.1493 -0.1195 1.2658 1.0286
+SMALL439     R6  CLEAN DEGROSS   W 0.0398  0.5920 -0.1366 0.5809 0.6045
+
+==========================================================================================================================================================================
+D.  RULE 8 WALK-FORWARD - (ranker, cadence) chosen on IS Sharpe ALONE, OOS read ONCE
+==========================================================================================================================================================================
+  12 selector cells (panel x construction x pool), each choosing one of 28 (arm,cadence) points on IS Sharpe alone.
+   panel      con      pool pick_ranker pick_cad  isSharpe  oCAGR  oSharpe  oMaxDD  base_oSharpe  spy_oSharpe  oos4a  oos4b
+    B136  DEGROSS  ALL-ARMS          R3        M    1.1430 0.0817   1.1575 -0.1195        1.1206       0.8820   True  False
+    B136  DEGROSS NON-DEGEN          R3        M    1.1430 0.0817   1.1575 -0.1195        1.1206       0.8820   True  False
+    B136 RESPREAD  ALL-ARMS          R3        Q    1.2594 0.1148   0.9715 -0.2502        1.1206       0.8820  False  False
+    B136 RESPREAD NON-DEGEN          R3        Q    1.2594 0.1148   0.9715 -0.2502        1.1206       0.8820  False  False
+SMALL439  DEGROSS  ALL-ARMS      INVVOL        M    0.7763 0.0231   0.3899 -0.1367        0.5665       0.8820  False  False
+SMALL439  DEGROSS NON-DEGEN      INVVOL        M    0.7763 0.0231   0.3899 -0.1367        0.5665       0.8820  False  False
+SMALL439 RESPREAD  ALL-ARMS      INVVOL        Q    0.8197 0.0518   0.4348 -0.3254        0.5665       0.8820  False  False
+SMALL439 RESPREAD NON-DEGEN      INVVOL        Q    0.8197 0.0518   0.4348 -0.3254        0.5665       0.8820  False  False
+     U56  DEGROSS  ALL-ARMS          R6        M    1.1540 0.0956   1.2569 -0.1289        1.2834       0.8721  False  False
+     U56  DEGROSS NON-DEGEN          R6        M    1.1540 0.0956   1.2569 -0.1289        1.2834       0.8721  False  False
+     U56 RESPREAD  ALL-ARMS        GATE        Q    1.2144 0.1234   1.0456 -0.2214        1.2834       0.8721  False  False
+     U56 RESPREAD NON-DEGEN        GATE        Q    1.2144 0.1234   1.0456 -0.2214        1.2834       0.8721  False  False
+
+  OOS 4a PASS 2/12   OOS 4b PASS 0/12
+  OOS 4b fail tokens: oos4b_fail | CAGR                 4 | DD                   4 | H1,H2,OOS,CAGR       2 | H1,H2,OOS,DD,CAGR    2
+  the IS selector chooses the DEGENERATE arm (MADIST, i.e. the gate itself) in 1 of 6 ALL-ARMS cells.
+
+  OOS levels vs benchmarks, best NON-DEGEN cell per panel (by OOS Sharpe):
+    U56       best R6/DEGROSS @ M  OOS CAGR   9.56% Sharpe 1.2569 MaxDD -12.89%   vs RULES v2   9.48%/1.2834/-11.90%   vs SPY  15.24%/0.8721/-33.72%
+    B136      best R3/DEGROSS @ M  OOS CAGR   8.17% Sharpe 1.1575 MaxDD -11.95%   vs RULES v2   7.98%/1.1206/-12.18%   vs SPY  15.45%/0.8820/-33.72%
+    SMALL439  best INVVOL/RESPREAD @ Q  OOS CAGR   5.18% Sharpe 0.4348 MaxDD -32.54%   vs RULES v2   3.84%/0.5665/-14.70%   vs SPY  15.45%/0.8820/-33.72%
+
+==========================================================================================================================================================================
+E.  COST RUNGS - the SELECTION leg at 0 / 10 / 25 bps
+==========================================================================================================================================================================
+ bps family  n  med_SEL_pp  max_abs_SEL_pp
+   0  DEGEN 24      0.0000          0.0000
+   0   NEAR 24     -0.5482          3.4772
+   0  CLEAN 96      0.1554          4.5384
+  10  DEGEN 24      0.0000          0.0000
+  10   NEAR 24     -0.7449          4.7610
+  10  CLEAN 96      0.1284          4.5139
+  25  DEGEN 24      0.0000          0.0000
+  25   NEAR 24     -0.9931          6.5366
+  25  CLEAN 96      0.0372          4.4746
+  (DEGEN is exactly 0.0000 at every rung by construction - the identity survives cost,
+   because the two arms hold the same names at the same weights and trade identically.)
+
+==========================================================================================================================================================================
+VERDICT
+==========================================================================================================================================================================
+  The degenerate control's SELECTION leg is EXACTLY 0 at every one of the 24 cells and every cost rung; a real control on the same grid is worth a median 0.7388 pp.
+  KEEP: 4b 12/168, 4a 2/168; under rule 8 OOS 4b 0/12, OOS 4a 2/12.
+
+wrote: 2026-09-11_does-any-other-committed-DEPTH-MATCHED-control-share-its-gates-RANKING-VARIABLE_cloud.grid.csv, 2026-09-11_does-any-other-committed-DEPTH-MATCHED-control-share-its-gates-RANKING-VARIABLE_cloud.selection.csv, 2026-09-11_does-any-other-committed-DEPTH-MATCHED-control-share-its-gates-RANKING-VARIABLE_cloud.census.csv, 2026-09-11_does-any-other-committed-DEPTH-MATCHED-control-share-its-gates-RANKING-VARIABLE_cloud.keeppaths.csv, 2026-09-11_does-any-other-committed-DEPTH-MATCHED-control-share-its-gates-RANKING-VARIABLE_cloud.walkforward.csv, 2026-09-11_does-any-other-committed-DEPTH-MATCHED-control-share-its-gates-RANKING-VARIABLE_cloud.rungs.csv, 2026-09-11_does-any-other-committed-DEPTH-MATCHED-control-share-its-gates-RANKING-VARIABLE_cloud.console.txt
