@@ -1,0 +1,169 @@
+========================================================================================================
+IDEA 742  price the STANDING 4b CANDIDATE against an EQUAL-WEIGHT BENCHMARK
+cloud lane, 2026-09-11.  Candidate = RULES v2 band book at gross 1.00 (idea 733 memo).
+two tuned parameters: BENCHMARK FORM (5) x PANEL (3).  Every grid point published.
+Book fixed at band 0.03 / weekly / 10 bps / next-day / de-gross-to-cash, SPY-FREE frame.
+========================================================================================================
+pre-registered gates:
+  G1 MEMO REPRO   U56 g1.00 full + OOS reproduce memo lines 3-4 to < 1e-3
+  G2 PROTOCOL BAR U56 SPY buy-and-hold reads 15.11% / 0.8835 / -33.72% to < 1e-3
+  G3 EW SANITY    ew_index(1 col) == that col; ew_index(all,0bps) == mean live return
+  G4 DISTINCT     |Sharpe(B_EW) - Sharpe(B_SPY)| > 0.01 on U56
+  G5 BLEND        B_HALF == 0.5*(B_SPY+B_EW) to < 1e-15
+========================================================================================================
+
+PANELS (SMALL: 44 names with max_1d_move >= 1.0 dropped per this run's mandate)
+  U56         55 investable names + SPY benchmark | 2008-01-02 .. 2026-09-10 | 4702 rows
+  B136       135 investable names + SPY benchmark | 2008-01-02 .. 2026-09-04 | 4699 rows
+  SMALL439   439 investable names + SPY benchmark | 2010-01-04 .. 2026-09-04 | 4194 rows
+
+========================================================================================================
+GATES
+========================================================================================================
+  G1 MEMO REPRO   full max|d| 4.954e-05  OOS max|d| 4.954e-05  -> PASS
+     memo 3: 11.55% / 1.2067 / -15.70% / 1.2405 / 1.1798
+     here  : 11.55% / 1.2067 / -15.70% / 1.2405 / 1.1798
+  G2 PROTOCOL BAR max|d| 2.743e-05  (here 15.11% / 0.8835 / -33.72%)  -> PASS
+  G3 EW SANITY    single-name 0.000e+00, all-name mean 4.163e-17 -> PASS
+  G4 DISTINCT     |dSharpe(B_EW,B_SPY)| on U56 = 0.2522 -> PASS
+  G5 BLEND        max|d| 0.000e+00 -> PASS
+
+  GATES: G1 True G2 True G3 True G4 True G5 True
+
+========================================================================================================
+THE FIVE BARS, PANEL BY PANEL (full sample from the panel's own warm-up day)
+========================================================================================================
+panel     bar          CAGR   Sharpe    MaxDD      H1      H2    oCAGR  oSharpe | 4b CAGR floor  4b DD cap
+U56       B_SPY     15.11%   0.8835 -33.72%  0.9595  0.8211  15.24%   0.8721 |       10.58%    20.23%
+U56       B_EW      17.94%   1.1357 -28.87%  1.2129  1.0743  18.64%   1.1448 |       12.56%    17.32%
+U56       B_EW10    17.94%   1.1356 -28.87%  1.2128  1.0742  18.64%   1.1447 |       12.56%    17.32%
+U56       B_EWBH    23.39%   1.0326 -47.31%  1.3316  0.9377  27.10%   1.0124 |       16.37%    28.39%
+U56       B_HALF    16.55%   1.0098 -31.31%  1.0881  0.9466  16.96%   1.0077 |       11.58%    18.79%
+
+B136      B_SPY     15.23%   0.8890 -33.72%  0.9566  0.8340  15.45%   0.8820 |       10.66%    20.23%
+B136      B_EW      19.22%   1.1361 -32.52%  1.2469  1.0373  18.90%   1.1148 |       13.46%    19.51%
+B136      B_EW10    19.22%   1.1361 -32.52%  1.2468  1.0372  18.90%   1.1148 |       13.45%    19.51%
+B136      B_EWBH    21.08%   1.0793 -34.21%  1.3126  0.9677  23.01%   1.0428 |       14.75%    20.53%
+B136      B_HALF    17.23%   1.0137 -33.12%  1.1031  0.9368  17.19%   0.9995 |       12.06%    19.87%
+
+SMALL439  B_SPY     14.13%   0.8615 -33.72%  0.8907  0.8577  15.45%   0.8820 |        9.89%    20.23%
+SMALL439  B_EW      14.35%   0.7249 -45.61%  0.8648  0.6481  13.91%   0.6725 |       10.04%    27.36%
+SMALL439  B_EW10    14.34%   0.7246 -45.61%  0.8643  0.6479  13.91%   0.6722 |       10.04%    27.36%
+SMALL439  B_EWBH     5.47%   0.3826 -42.65%  0.6208  0.2611   4.34%   0.3091 |        3.83%    25.59%
+SMALL439  B_HALF    14.44%   0.8188 -37.53%  0.9067  0.7742  14.95%   0.8010 |       10.11%    22.52%
+
+========================================================================================================
+THE CANDIDATE (gross 1.00) — ITS FIVE 4b LEGS UNDER EACH BAR.  margins: >0 = leg passes
+Sharpe legs in Sharpe units; DD in pp of NAV; CAGR in pp/yr.
+========================================================================================================
+panel     bar            H1       H2      OOS   DD(pp)  CAGR(pp)  verdict   failed legs
+U56       B_SPY      0.2810   0.3588   0.4106     4.53      0.98  4b PASS   -
+U56       B_EW       0.0277   0.1055   0.1380     1.61     -1.00  4b FAIL   CAGR
+U56       B_EW10     0.0278   0.1056   0.1380     1.61     -1.00  4b FAIL   CAGR
+U56       B_EWBH    -0.0911   0.2422   0.2703    12.68     -4.82  4b FAIL   H1,CAGR
+U56       B_HALF     0.1524   0.2332   0.2751     3.08     -0.03  4b FAIL   CAGR
+
+B136      B_SPY      0.2756   0.1510   0.2375     4.15      0.07  4b PASS   -
+B136      B_EW      -0.0146  -0.0523   0.0047     3.44     -2.72  4b FAIL   H1,H2,CAGR
+B136      B_EW10    -0.0145  -0.0522   0.0047     3.44     -2.72  4b FAIL   H1,H2,CAGR
+B136      B_EWBH    -0.0803   0.0173   0.0767     4.45     -4.02  4b FAIL   H1,CAGR
+B136      B_HALF     0.1292   0.0482   0.1200     3.79     -1.33  4b FAIL   CAGR
+
+SMALL439  B_SPY     -0.3213  -0.2830  -0.3163     1.02     -4.90  4b FAIL   H1,H2,OOS,CAGR
+SMALL439  B_EW      -0.2954  -0.0735  -0.1068     8.15     -5.05  4b FAIL   H1,H2,OOS,CAGR
+SMALL439  B_EW10    -0.2949  -0.0732  -0.1065     8.15     -5.05  4b FAIL   H1,H2,OOS,CAGR
+SMALL439  B_EWBH    -0.0515   0.3136   0.2565     6.38      1.16  4b FAIL   H1
+SMALL439  B_HALF    -0.3374  -0.1996  -0.2353     3.31     -5.12  4b FAIL   H1,H2,OOS,CAGR
+
+========================================================================================================
+FULL GRID — 4b pass counts (5 gross rungs x 5 bars x 3 panels = 75 cells, all above in CSV)
+========================================================================================================
+bench     B_SPY  B_EW  B_EW10  B_EWBH  B_HALF
+panel                                        
+U56           1     0       0       0       0
+B136          1     0       0       0       0
+SMALL439      0     0       0       0       0
+
+  4b total: 2/75   4a total: 0/75
+  binding leg counts among the 4b failures:
+    CAGR  71
+    H1    45
+    H2    30
+    OOS   20
+
+========================================================================================================
+RULE 8 WALK-FORWARD — gross chosen on the IS window (<= 2016-12-31) ALONE by max IS
+Sharpe (the candidate's own selector, memo line 8), 2017-2026 read once.  ALL rungs
+reported; the OOS 4b verdict is restated under every bar.
+========================================================================================================
+panel      gross  IS Sharpe  IS CAGR |  OOS CAGR  OOS Sharpe  OOS MaxDD  pick
+U56         0.50     1.1087   5.07% |    6.28%      1.2840    -8.01%  
+U56         0.60     1.1089   6.09% |    7.56%      1.2838    -9.57%  
+U56         0.75     1.1093   7.62% |    9.48%      1.2834   -11.90%  
+U56         0.90     1.1096   9.15% |   11.41%      1.2830   -14.19%  
+U56         1.00     1.1097  10.18% |   12.70%      1.2827   -15.70%  <== IS PICK
+          IS-Sharpe spread across the ladder: 1.08e-03  (memo line 8: the selector is near-indifferent)
+
+B136        0.50     1.0919   5.38% |    5.31%      1.1216    -8.20%  
+B136        0.60     1.0924   6.47% |    6.38%      1.1212    -9.80%  
+B136        0.75     1.0931   8.10% |    7.98%      1.1206   -12.18%  
+B136        0.90     1.0938   9.73% |    9.59%      1.1200   -14.53%  
+B136        1.00     1.0942  10.82% |   10.66%      1.1195   -16.08%  <== IS PICK
+          IS-Sharpe spread across the ladder: 2.22e-03  (memo line 8: the selector is near-indifferent)
+
+SMALL439    0.50     0.5777   2.53% |    2.60%      0.5673   -10.00%  
+SMALL439    0.60     0.5782   3.02% |    3.10%      0.5670   -11.91%  
+SMALL439    0.75     0.5790   3.75% |    3.84%      0.5665   -14.70%  
+SMALL439    0.90     0.5797   4.46% |    4.56%      0.5660   -17.43%  
+SMALL439    1.00     0.5802   4.94% |    5.02%      0.5657   -19.21%  <== IS PICK
+          IS-Sharpe spread across the ladder: 2.51e-03  (memo line 8: the selector is near-indifferent)
+
+panel      gross bar           oH1      oH2   oSharpe   oDD(pp)  oCAGR(pp)  verdict   failed legs
+U56         1.00 B_SPY      0.4369   0.3803    0.4106      4.53       2.03  4b PASS   -
+U56         1.00 B_EW       0.1312   0.1403    0.1380      1.61      -0.35  4b FAIL   CAGR
+U56         1.00 B_EW10     0.1313   0.1403    0.1380      1.61      -0.35  4b FAIL   CAGR
+U56         1.00 B_EWBH    -0.0564   0.5054    0.2703     12.68      -6.27  4b FAIL   H1,CAGR
+U56         1.00 B_HALF     0.2867   0.2595    0.2751      3.08       0.83  4b PASS   -
+
+B136        1.00 B_SPY      0.2941   0.1653    0.2375      4.15      -0.16  4b FAIL   CAGR
+B136        1.00 B_EW       0.0829  -0.0931    0.0047      3.44      -2.57  4b FAIL   H2,CAGR
+B136        1.00 B_EW10     0.0829  -0.0931    0.0047      3.44      -2.57  4b FAIL   H2,CAGR
+B136        1.00 B_EWBH    -0.0920   0.1950    0.0767      4.45      -5.45  4b FAIL   H1,CAGR
+B136        1.00 B_HALF     0.1868   0.0382    0.1200      3.79      -1.37  4b FAIL   CAGR
+
+SMALL439    1.00 B_SPY     -0.0597  -0.6115   -0.3163      1.02      -5.79  4b FAIL   H1,H2,OOS,CAGR
+SMALL439    1.00 B_EW      -0.0034  -0.2473   -0.1068      8.15      -4.72  4b FAIL   H1,H2,OOS,CAGR
+SMALL439    1.00 B_EW10    -0.0029  -0.2472   -0.1065      8.15      -4.71  4b FAIL   H1,H2,OOS,CAGR
+SMALL439    1.00 B_EWBH     0.3260   0.1238    0.2565      6.38       1.98  4b PASS   -
+SMALL439    1.00 B_HALF    -0.0716  -0.4331   -0.2353      3.31      -5.44  4b FAIL   H1,H2,OOS,CAGR
+
+OOS 4b pass counts over ALL 75 walk-forward cells:
+bench     B_SPY  B_EW  B_EW10  B_EWBH  B_HALF
+panel                                        
+U56           2     0       0       0       1
+B136          0     0       0       0       0
+SMALL439      0     0       0       4       0
+
+  at the IS pick only (15 cells): OOS 4b 3/15
+  over all cells: OOS 4b 7/75
+
+========================================================================================================
+KEEP PATH 4a (vs RULES v2 live, gross 0.75, same frame) — benchmark-swap-INVARIANT
+========================================================================================================
+  U56       cand H1/H2/MaxDD 1.2405/1.1798/-15.70%  vs RULES v2 1.2400/1.1806/-11.90%  -> 4a FAIL
+  B136      cand H1/H2/MaxDD 1.2323/0.9850/-16.08%  vs RULES v2 1.2312/0.9861/-12.18%  -> 4a FAIL
+  SMALL439  cand H1/H2/MaxDD 0.5694/0.5747/-19.21%  vs RULES v2 0.5682/0.5757/-14.70%  -> 4a FAIL
+  4a over the full 75-cell grid: 0/75
+
+========================================================================================================
+ANSWER
+========================================================================================================
+  U56: under B_SPY PASS; under the equal-weight bars B_EW=FAIL(CAGR), B_EW10=FAIL(CAGR), B_EWBH=FAIL(H1|CAGR), B_HALF=FAIL(CAGR)
+  B136: under B_SPY PASS; under the equal-weight bars B_EW=FAIL(H1|H2|CAGR), B_EW10=FAIL(H1|H2|CAGR), B_EWBH=FAIL(H1|CAGR), B_HALF=FAIL(CAGR)
+  SMALL439: under B_SPY FAIL; under the equal-weight bars B_EW=FAIL(H1|H2|OOS|CAGR), B_EW10=FAIL(H1|H2|OOS|CAGR), B_EWBH=FAIL(H1), B_HALF=FAIL(H1|H2|OOS|CAGR)
+
+  the candidate's 4b survives 0 of 9 (3 panels x 3 equal-weight bars) full-sample.
+  out of sample it survives 1 of 9.
+
+wrote 2026-09-11_price-the-STANDING-4b-CANDIDATE-against-an-EQUAL-WEIGHT-BENCHMARK_cloud.grid.csv, 2026-09-11_price-the-STANDING-4b-CANDIDATE-against-an-EQUAL-WEIGHT-BENCHMARK_cloud.walkforward.csv, 2026-09-11_price-the-STANDING-4b-CANDIDATE-against-an-EQUAL-WEIGHT-BENCHMARK_cloud.summary.json
+elapsed 7.4s
