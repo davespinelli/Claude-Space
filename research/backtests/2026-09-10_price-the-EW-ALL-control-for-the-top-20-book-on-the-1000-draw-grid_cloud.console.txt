@@ -1,0 +1,179 @@
+====================================================================================================
+IDEA 504 -- price the EW-ALL control for the top-20 book on the 1,000-draw grid
+run 2026-09-11 00:21 UTC   costs [0.0, 10.0, 25.0]   k=40   draws=1000   seed=504   IS<= 2016-12-31   OOS >= 2017-01-01
+====================================================================================================
+  U56: 56 columns  2008-01-02 .. 2026-09-10  (4702 rows)
+  B136: 136 columns  2008-01-02 .. 2026-09-04  (4699 rows)
+  SMALL439: 440 columns  2010-01-04 .. 2026-09-04  (4194 rows)
+  SURVIVORSHIP (PROTOCOL 9): B136 and SMALL439 are today's constituents only -- levels
+  biased up.  The headline is a WITHIN-DRAW difference, which differences most of it out.
+
+====================================================================================================
+(A) PRE-REGISTERED GATES -- run before any new number is read
+====================================================================================================
+  G2 band_book(0.03,0.75) == rules_v2_weights            : 0.000e+00  PASS
+  G1 fast_backtest == engine.backtest @10 bps            : 6.939e-18  PASS
+  G3 2026-09-04 KEEP-4b incumbent (U56 top-20 EW, no vol scaler) re-derived:
+     got 12.63% / 1.0903 / -18.31%   published 12.66% / 1.0921 / -18.31%   max|d| 1.777e-03  PASS
+  G4 EWall holds exactly gross 0.75 whenever any name is eligible (never de-grossed
+     by selection, only by the gate)               : 8.882e-16  PASS
+  G4b EWmg gross == CAND20 gross, every day              : 9.992e-16  PASS
+  G5 draws nested across k in 20/40/60 (20 seeds checked) : PASS
+  G6 SMALL439 dropped 44 tickers with max_1d_move >= 1.0  : PASS
+
+  GATES A: ALL PASS
+
+====================================================================================================
+(B) THE GRID -- 1000 nested draws x k=40 x 3 books x 3 cost rungs x 3 panels
+====================================================================================================
+  U56: 55 tradable names   SPY 15.11% / 0.8835 / -33.72%  (H1 0.9595/H2 0.8211)  OOS 0.8721
+  U56: live RULES v2 @10 bps 8.61% / 1.1998 / -12.05%
+  U56: 1000 draws done
+  B136: 135 tradable names   SPY 15.23% / 0.8890 / -33.72%  (H1 0.9566/H2 0.8340)  OOS 0.8820
+  B136: live RULES v2 @10 bps 8.03% / 1.1058 / -12.24%
+  B136: 1000 draws done
+  SMALL439: 439 tradable names   SPY 14.13% / 0.8615 / -33.72%  (H1 0.8907/H2 0.8577)  OOS 0.8820
+  SMALL439: live RULES v2 @10 bps 3.81% / 0.5725 / -14.68%
+  SMALL439: 1000 draws done
+  wrote 2026-09-10_price-the-EW-ALL-control-for-the-top-20-book-on-the-1000-draw-grid_cloud.draws.csv  (9000 rows)
+
+====================================================================================================
+(C) THE PRICE OF THE RANKING CLAUSE -- CAND20 minus its OWN EWall control, per draw
+====================================================================================================
+
+  --- cost 0 bps ----------------------------------------------------------------------
+             n  dS_mean  dS_med  dS_sd    win  dC_mean  dC_med  dD_mean  dD_med  dSo_mean  dSo_med  win_oos   t_stat
+panel                                                                                                               
+B136      1000   0.0107  0.0035 0.0581 0.5180  -0.0014 -0.0012   0.0188  0.0095    0.0344   0.0297   0.6620   5.8196
+SMALL439  1000  -0.0374 -0.0376 0.0826 0.3230  -0.0197 -0.0201   0.1635  0.1601   -0.0698  -0.0732   0.2680 -14.3132
+U56       1000   0.0490  0.0478 0.0321 0.9400   0.0094  0.0094  -0.0013 -0.0078    0.1086   0.1035   0.9870  48.3094
+
+  --- cost 10 bps ----------------------------------------------------------------------
+             n  dS_mean  dS_med  dS_sd    win  dC_mean  dC_med  dD_mean  dD_med  dSo_mean  dSo_med  win_oos  t_stat
+panel                                                                                                              
+B136      1000   0.0171  0.0104 0.0581 0.5890  -0.0005 -0.0002   0.0227  0.0139    0.0441   0.0402   0.7180  9.3387
+SMALL439  1000  -0.0130 -0.0124 0.0827 0.4370  -0.0110 -0.0116   0.1706  0.1707   -0.0471  -0.0488   0.3280 -4.9579
+U56       1000   0.0597  0.0587 0.0324 0.9720   0.0102  0.0103   0.0022 -0.0055    0.1220   0.1176   0.9930 58.3774
+
+  --- cost 25 bps ----------------------------------------------------------------------
+             n  dS_mean  dS_med  dS_sd    win  dC_mean  dC_med  dD_mean  dD_med  dSo_mean  dSo_med  win_oos  t_stat
+panel                                                                                                              
+B136      1000   0.0269  0.0206 0.0583 0.6680   0.0010  0.0010   0.0295  0.0221    0.0588   0.0542   0.7870 14.6116
+SMALL439  1000   0.0236  0.0230 0.0831 0.6130   0.0016  0.0010   0.1877  0.1877   -0.0130  -0.0137   0.4410  8.9769
+U56       1000   0.0759  0.0742 0.0329 0.9950   0.0114  0.0114   0.0089 -0.0001    0.1422   0.1377   0.9990 72.8784
+
+  --- THE DECISIVE LEG: CAND20 minus EWmg, its EXACTLY GROSS-MATCHED control ---
+  (same names eligible, same gate, same gross every day -- the only difference is that
+   CAND20 ranks and EWmg does not, so this delta is SELECTION with exposure removed)
+    cost 0 bps
+             n  dS_mean  dS_med  dS_sd    win  dC_med  dD_med  dSo_med  win_oos   t_stat
+panel                                                                                   
+B136      1000  -0.0274 -0.0275 0.0337 0.2220  0.0070 -0.0095  -0.0138   0.3910 -25.7107
+SMALL439  1000  -0.0056 -0.0056 0.0184 0.3830 -0.0004 -0.0013  -0.0065   0.4060  -9.6783
+U56       1000   0.0014  0.0016 0.0209 0.5240  0.0161 -0.0169   0.0271   0.8290   2.0872
+    cost 10 bps
+             n  dS_mean  dS_med  dS_sd    win  dC_med  dD_med  dSo_med  win_oos   t_stat
+panel                                                                                   
+B136      1000  -0.0322 -0.0319 0.0350 0.1920  0.0058 -0.0094  -0.0154   0.3840 -29.1672
+SMALL439  1000  -0.0050 -0.0050 0.0185 0.3950 -0.0004 -0.0014  -0.0055   0.4180  -8.5993
+U56       1000  -0.0008 -0.0007 0.0211 0.4900  0.0146 -0.0169   0.0275   0.8330  -1.2446
+    cost 25 bps
+             n  dS_mean  dS_med  dS_sd    win  dC_med  dD_med  dSo_med  win_oos   t_stat
+panel                                                                                   
+B136      1000  -0.0394 -0.0395 0.0370 0.1480  0.0039 -0.0092  -0.0173   0.3770 -33.6635
+SMALL439  1000  -0.0041 -0.0041 0.0187 0.4150 -0.0004 -0.0014  -0.0045   0.4330  -7.0011
+U56       1000  -0.0042 -0.0042 0.0217 0.4320  0.0126 -0.0168   0.0285   0.8260  -6.0600
+
+  EXPOSURE vs SELECTION, decomposed at 10 bps (median over 1,000 draws):
+    B136      CAND20 - EWall +0.0104  =  SELECTION (vs EWmg) -0.0319  +  EXPOSURE (EWmg - EWall) +0.0423
+    SMALL439  CAND20 - EWall -0.0124  =  SELECTION (vs EWmg) -0.0050  +  EXPOSURE (EWmg - EWall) -0.0073
+    U56       CAND20 - EWall +0.0587  =  SELECTION (vs EWmg) -0.0007  +  EXPOSURE (EWmg - EWall) +0.0594
+
+  the same for CAND5 (a narrower book against the SAME control):
+    cost    0 bps  B136: dS -0.1290 win 0.097 dCAGR +0.0298 dDD -0.0368 dOOS -0.1874   SMALL439: dS +0.0090 win 0.536 dCAGR +0.0078 dDD -0.0078 dOOS +0.0657   U56: dS -0.1149 win 0.032 dCAGR +0.0514 dDD -0.0327 dOOS -0.1283
+    cost   10 bps  B136: dS -0.1478 win 0.076 dCAGR +0.0212 dDD -0.0412 dOOS -0.2060   SMALL439: dS +0.0119 win 0.540 dCAGR +0.0054 dDD -0.0129 dOOS +0.0676   U56: dS -0.1296 win 0.015 dCAGR +0.0419 dDD -0.0359 dOOS -0.1364
+    cost   25 bps  B136: dS -0.1765 win 0.048 dCAGR +0.0092 dDD -0.0502 dOOS -0.2302   SMALL439: dS +0.0123 win 0.547 dCAGR +0.0021 dDD -0.0202 dOOS +0.0724   U56: dS -0.1512 win 0.010 dCAGR +0.0282 dDD -0.0431 dOOS -0.1482
+  wrote 2026-09-10_price-the-EW-ALL-control-for-the-top-20-book-on-the-1000-draw-grid_cloud.summary.csv  (18 rows)
+
+====================================================================================================
+(D) BOTH KEEP PATHS FOR ALL THREE BOOKS -- EWall's halves restated, no -1 sentinels
+====================================================================================================
+   panel    cost   book    n  keep4a  keep4b  both  rate4b
+    B136  0.0000  CAND5 1000       0      47     0  0.0470
+    B136  0.0000 CAND20 1000       0     729     0  0.7290
+    B136  0.0000  EWall 1000       0     512     0  0.5120
+    B136  0.0000   EWmg 1000       0     550     0  0.5500
+    B136 10.0000  CAND5 1000       0      10     0  0.0100
+    B136 10.0000 CAND20 1000       0     444     0  0.4440
+    B136 10.0000  EWall 1000       0     308     0  0.3080
+    B136 10.0000   EWmg 1000       0     251     0  0.2510
+    B136 25.0000  CAND5 1000       0       0     0  0.0000
+    B136 25.0000 CAND20 1000       0     115     0  0.1150
+    B136 25.0000  EWall 1000       0      45     0  0.0450
+    B136 25.0000   EWmg 1000       0      42     0  0.0420
+SMALL439  0.0000  CAND5 1000       0       0     0  0.0000
+SMALL439  0.0000 CAND20 1000       1       0     0  0.0000
+SMALL439  0.0000  EWall 1000       0       0     0  0.0000
+SMALL439  0.0000   EWmg 1000       1       0     0  0.0000
+SMALL439 10.0000  CAND5 1000       0       0     0  0.0000
+SMALL439 10.0000 CAND20 1000       1       0     0  0.0000
+SMALL439 10.0000  EWall 1000       0       0     0  0.0000
+SMALL439 10.0000   EWmg 1000       1       0     0  0.0000
+SMALL439 25.0000  CAND5 1000       0       0     0  0.0000
+SMALL439 25.0000 CAND20 1000       0       0     0  0.0000
+SMALL439 25.0000  EWall 1000       0       0     0  0.0000
+SMALL439 25.0000   EWmg 1000       1       0     0  0.0000
+     U56  0.0000  CAND5 1000       0     373     0  0.3730
+     U56  0.0000 CAND20 1000       0     933     0  0.9330
+     U56  0.0000  EWall 1000       0     690     0  0.6900
+     U56  0.0000   EWmg 1000       0     514     0  0.5140
+     U56 10.0000  CAND5 1000       0     118     0  0.1180
+     U56 10.0000 CAND20 1000       0     723     0  0.7230
+     U56 10.0000  EWall 1000       0     348     0  0.3480
+     U56 10.0000   EWmg 1000       0     178     0  0.1780
+     U56 25.0000  CAND5 1000       0       1     0  0.0010
+     U56 25.0000 CAND20 1000       0     209     0  0.2090
+     U56 25.0000  EWall 1000       0      24     0  0.0240
+     U56 25.0000   EWmg 1000       0       2     0  0.0020
+  wrote 2026-09-10_price-the-EW-ALL-control-for-the-top-20-book-on-the-1000-draw-grid_cloud.keeppaths.csv  (36 rows)
+
+  4b pass RATE, CAND20 vs its own EWall control (the number the queue asks for):
+       0 bps  B136      CAND20 0.7290   EWall 0.5120   CAND5 0.0470   CAND20-EWall +0.2170
+       0 bps  SMALL439  CAND20 0.0000   EWall 0.0000   CAND5 0.0000   CAND20-EWall +0.0000
+       0 bps  U56       CAND20 0.9330   EWall 0.6900   CAND5 0.3730   CAND20-EWall +0.2430
+      10 bps  B136      CAND20 0.4440   EWall 0.3080   CAND5 0.0100   CAND20-EWall +0.1360
+      10 bps  SMALL439  CAND20 0.0000   EWall 0.0000   CAND5 0.0000   CAND20-EWall +0.0000
+      10 bps  U56       CAND20 0.7230   EWall 0.3480   CAND5 0.1180   CAND20-EWall +0.3750
+      25 bps  B136      CAND20 0.1150   EWall 0.0450   CAND5 0.0000   CAND20-EWall +0.0700
+      25 bps  SMALL439  CAND20 0.0000   EWall 0.0000   CAND5 0.0000   CAND20-EWall +0.0000
+      25 bps  U56       CAND20 0.2090   EWall 0.0240   CAND5 0.0010   CAND20-EWall +0.1850
+
+====================================================================================================
+(E) RULE 8 -- choose the book on 2009-2016 IS Sharpe, score 2017-2026 untouched
+====================================================================================================
+   panel    cost    n  pick_CAND5  pick_CAND20  pick_EWall  pick_EWmg  chosen_OOS  alwaysEW_OOS  alwaysEWmg_OOS  always20_OOS  oracle_OOS  regret  beats_EW  SPY_OOS  v2_OOS
+    B136  0.0000 1000      0.2590       0.0790      0.2690     0.3930      1.0369        1.0564          1.1043        1.0908      1.1213  0.0844    0.3680   0.8820  1.1481
+    B136 10.0000 1000      0.1820       0.0780      0.2380     0.5020      0.9779        0.9758          1.0345        1.0199      1.0503  0.0724    0.4800   0.8820  1.1185
+    B136 25.0000 1000      0.1020       0.0670      0.1690     0.6620      0.8882        0.8546          0.9296        0.9134      0.9444  0.0562    0.6460   0.8820  1.0740
+SMALL439  0.0000 1000      0.1960       0.2400      0.2830     0.2810      0.3098        0.3315          0.2684        0.2617      0.4414  0.1316    0.2630   0.8820  0.6086
+SMALL439 10.0000 1000      0.1790       0.2740      0.2430     0.3040      0.2259        0.2395          0.1984        0.1924      0.3539  0.1280    0.3070   0.8820  0.5680
+SMALL439 25.0000 1000      0.1510       0.3300      0.1630     0.3560      0.1049        0.1015          0.0935        0.0885      0.2249  0.1201    0.4070   0.8820  0.5072
+     U56  0.0000 1000      0.1220       0.0790      0.3430     0.4560      1.1910        1.1621          1.2440        1.2706      1.2736  0.0827    0.5370   0.8721  1.2992
+     U56 10.0000 1000      0.0750       0.0750      0.2140     0.6360      1.1370        1.0792          1.1741        1.2012      1.2043  0.0673    0.7120   0.8721  1.2747
+     U56 25.0000 1000      0.0250       0.0610      0.0820     0.8320      1.0534        0.9544          1.0690        1.0967      1.1001  0.0466    0.8930   0.8721  1.2378
+  wrote 2026-09-10_price-the-EW-ALL-control-for-the-top-20-book-on-the-1000-draw-grid_cloud.walkforward.csv  (9 rows)
+
+  reading: 'chosen_OOS' is the IS chooser's realised OOS Sharpe; 'alwaysEW_OOS' is the
+  zero-decision control that never ranks anything.  If the chooser does not beat it,
+  the record's ranking clause is not paying for its own selection step.
+
+====================================================================================================
+(F) SUMMARY
+====================================================================================================
+  B136      @10 bps  CAND20 - EWall  dSharpe median +0.0104 mean +0.0171 (t +9.34, win 0.589, N 1000)   dCAGR -0.0002  dMaxDD +0.0139  dOOS +0.0402 (win 0.718)
+                     CAND20 - EWmg   dSharpe median -0.0319 mean -0.0322 (t -29.17, win 0.192)   dCAGR +0.0058  dMaxDD -0.0094  dOOS -0.0154 (win 0.384)
+  SMALL439  @10 bps  CAND20 - EWall  dSharpe median -0.0124 mean -0.0130 (t -4.96, win 0.437, N 1000)   dCAGR -0.0116  dMaxDD +0.1707  dOOS -0.0488 (win 0.328)
+                     CAND20 - EWmg   dSharpe median -0.0050 mean -0.0050 (t -8.60, win 0.395)   dCAGR -0.0004  dMaxDD -0.0014  dOOS -0.0055 (win 0.418)
+  U56       @10 bps  CAND20 - EWall  dSharpe median +0.0587 mean +0.0597 (t +58.38, win 0.972, N 1000)   dCAGR +0.0103  dMaxDD -0.0055  dOOS +0.1176 (win 0.993)
+                     CAND20 - EWmg   dSharpe median -0.0007 mean -0.0008 (t -1.24, win 0.490)   dCAGR +0.0146  dMaxDD -0.0169  dOOS +0.0275 (win 0.833)
+  GATES: PASS
