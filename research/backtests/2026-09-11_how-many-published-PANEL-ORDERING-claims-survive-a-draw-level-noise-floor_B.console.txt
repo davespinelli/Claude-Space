@@ -1,0 +1,174 @@
+# 2026-09-11_how-many-published-PANEL-ORDERING-claims-survive-a-draw-level-noise-floor_B
+# idea 567 - do published PANEL-ORDERING claims clear a draw-level noise floor?
+# PROTOCOL: cost 10 bps, next-day fills, IS<= 2016-12-31, OOS >= 2017-01-01
+
+PARENTS: U56 (55 names, 2008-01-02..2026-09-10), B136 (135 names, 2008-01-02..2026-09-04), SMALL439 (439 names, 2010-01-04..2026-09-04)
+
+====================================================================================================
+GATES
+====================================================================================================
+G0 determinism  : 0 of 72 draws differ on rebuild (bar 0) -> PASS
+G1 identity     : fast_backtest vs engine.backtest max |dret| = 0.000e+00 (bar 1e-12) -> PASS
+G2 reproduction : idea 312 .noisefloor.csv rebuilt from its own .grid.csv, all 11 rungs, max |d| = 1.110e-16 (bar 1e-12) -> PASS
+G3 reproduction : idea 312 headline mean within-rung sd |d| = 3.234e-05 vs 0.0745; pair-crossing share |d| = 6.061e-05 vs 0.394 (bar 1e-04) -> PASS
+
+====================================================================================================
+PRICE LEG - 36-name draws out of each real parent
+====================================================================================================
+  U56: 25 panels x 3 gross x 2 cadence x 2 arms done (22s)
+  B136: 25 panels x 3 gross x 2 cadence x 2 arms done (36s)
+  SMALL439: 25 panels x 3 gross x 2 cadence x 2 arms done (55s)
+
+  BASE U56: RULES v2 8.61% / 1.1998 / -12.05% (OOS 1.2747)   SPY 15.11% / 0.8835 / -33.72% (OOS 0.8721)
+  BASE B136: RULES v2 8.03% / 1.1058 / -12.24% (OOS 1.1185)   SPY 15.23% / 0.8890 / -33.72% (OOS 0.8820)
+  BASE SMALL439: RULES v2 3.81% / 0.5725 / -14.68% (OOS 0.5680)   SPY 14.13% / 0.8615 / -33.72% (OOS 0.8820)
+
+KEEP PATHS over 900 books: 4a 2/900, 4b 52/900, BOTH 0/900
+  4a by parent: B136 0, SMALL439 0, U56 2
+  4b by parent: B136 13, SMALL439 0, U56 39
+  4b by kind  : DRAW 49, REAL 3
+  4b binding failure legs: DD 313, H1,H2,OOS,DD,CAGR 206, CAGR 191, H1,H2,OOS,DD 88, - 52, H1,CAGR 12
+
+====================================================================================================
+FLOORS - within-parent sd across k-matched draws, by (STATISTIC, DRAW COUNT)
+====================================================================================================
+                floor_pooled  floor_min  floor_max  parent_ratio
+statistic   D                                                   
+PREM_SHARPE 3         0.0907     0.0435     0.1393        3.1998
+            6         0.0813     0.0502     0.0995        1.9813
+            12        0.0811     0.0399     0.1202        3.0129
+            24        0.0809     0.0467     0.1243        2.6604
+PREM_CAGR   3         0.0134     0.0053     0.0271        5.1275
+            6         0.0133     0.0066     0.0182        2.7387
+            12        0.0130     0.0052     0.0232        4.4418
+            24        0.0128     0.0054     0.0241        4.5019
+SHARPE      3         0.1020     0.0824     0.1253        1.5212
+            6         0.1074     0.1026     0.1140        1.1118
+            12        0.1110     0.0919     0.1417        1.5420
+            24        0.1062     0.0899     0.1325        1.4728
+CAGR        3         0.0132     0.0069     0.0242        3.5281
+            6         0.0188     0.0170     0.0198        1.1649
+            12        0.0192     0.0154     0.0265        1.7150
+            24        0.0182     0.0145     0.0253        1.7467
+MAXDD       3         0.0295     0.0159     0.0526        3.3096
+            6         0.0308     0.0190     0.0497        2.6146
+            12        0.0392     0.0173     0.0687        3.9643
+            24        0.0415     0.0216     0.0707        3.2743
+
+H_FLOOR : pooled PREM_SHARPE floor at D=6 = 0.0813 vs idea 312's 0.0745 (ratio 1.09x) -> HOLDS
+H_PARENT: parent max/min = 1.98x (U56 0.0502, B136 0.0995, SMALL439 0.0941) -> HOLDS
+
+====================================================================================================
+CENSUS - committed panel-ordering claims
+====================================================================================================
+scanned 775 committed markdown files -> 607 harvested claims quoting >=2 panels with a recoverable number
+by family: SHARPE 260, MAXDD 118, PREM_SHARPE 101, CAGR 86, PREM_CAGR 42
+by panel count: 2-panel 345, 3-panel 262
+margin: median 0.1250, p25 0.0030, p75 1.1935, max 58.3600
+
+====================================================================================================
+VERDICTS - claim margin vs its own family floor (all 5 x 4 x 2 grid points reported)
+====================================================================================================
+                    floor  threshold  n_claims  inside  share_inside
+statistic   D  bar                                                  
+PREM_SHARPE 3  1.0 0.0907     0.0907       101      63        0.6238
+               2.0 0.0907     0.1815       101      76        0.7525
+            6  1.0 0.0813     0.0813       101      63        0.6238
+               2.0 0.0813     0.1625       101      70        0.6931
+            12 1.0 0.0811     0.0811       101      63        0.6238
+               2.0 0.0811     0.1622       101      70        0.6931
+            24 1.0 0.0809     0.0809       101      63        0.6238
+               2.0 0.0809     0.1619       101      70        0.6931
+PREM_CAGR   3  1.0 0.0134     0.0134        42      15        0.3571
+               2.0 0.0134     0.0268        42      16        0.3810
+            6  1.0 0.0133     0.0133        42      15        0.3571
+               2.0 0.0133     0.0265        42      16        0.3810
+            12 1.0 0.0130     0.0130        42      15        0.3571
+               2.0 0.0130     0.0261        42      16        0.3810
+            24 1.0 0.0128     0.0128        42      15        0.3571
+               2.0 0.0128     0.0256        42      16        0.3810
+SHARPE      3  1.0 0.1020     0.1020       260     101        0.3885
+               2.0 0.1020     0.2039       260     139        0.5346
+            6  1.0 0.1074     0.1074       260     103        0.3962
+               2.0 0.1074     0.2148       260     139        0.5346
+            12 1.0 0.1110     0.1110       260     103        0.3962
+               2.0 0.1110     0.2220       260     142        0.5462
+            24 1.0 0.1062     0.1062       260     103        0.3962
+               2.0 0.1062     0.2123       260     139        0.5346
+CAGR        3  1.0 0.0132     0.0132        86      25        0.2907
+               2.0 0.0132     0.0265        86      25        0.2907
+            6  1.0 0.0188     0.0188        86      25        0.2907
+               2.0 0.0188     0.0376        86      26        0.3023
+            12 1.0 0.0192     0.0192        86      25        0.2907
+               2.0 0.0192     0.0384        86      26        0.3023
+            24 1.0 0.0182     0.0182        86      25        0.2907
+               2.0 0.0182     0.0364        86      26        0.3023
+MAXDD       3  1.0 0.0295     0.0295       118      53        0.4492
+               2.0 0.0295     0.0591       118      56        0.4746
+            6  1.0 0.0308     0.0308       118      53        0.4492
+               2.0 0.0308     0.0617       118      57        0.4831
+            12 1.0 0.0392     0.0392       118      54        0.4576
+               2.0 0.0392     0.0784       118      61        0.5169
+            24 1.0 0.0415     0.0415       118      54        0.4576
+               2.0 0.0415     0.0830       118      61        0.5169
+
+H_MOST  : at D=6, bar 1.0 sd -> 259 of 607 claims (42.7%) are inside their own floor -> FALSIFIED
+H_D     : share inside by D = D3 42.3%, D6 42.7%, D12 42.8%, D24 42.8%  (swing 0.5 pp) -> HOLDS
+
+====================================================================================================
+RULE 8 WALK-FORWARD
+====================================================================================================
+WF-A (the ANSWER): floor rebuilt on IS only and on OOS only; does the verdict move?
+             n_claims  floor_FULL  floor_IS  floor_OOS  inside_FULL  inside_IS  inside_OOS
+statistic                                                                                 
+PREM_SHARPE       101      0.0813    0.1276     0.0863           63         68          63
+PREM_CAGR          42      0.0133    0.0183     0.0156           15         16          16
+SHARPE            260      0.1074    0.1990     0.1033          103        136         101
+CAGR               86      0.0188    0.0291     0.0217           25         25          25
+MAXDD             118      0.0308    0.0307     0.0305           53         53          53
+  IS and OOS floors put the SAME count inside in 3 of 5 statistic families.
+
+WF-B (a BOOK): take the ordering claim at face value - trade the panel it puts first.
+  Selector: (parent, gross, cadence) chosen by IS Sharpe of the MA-RS book ALONE, on the
+  REAL parents; OOS 2017+ read ONCE against RULES v2 on that panel and SPY.
+                        IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  base_OOS_Sharpe  base_OOS_CAGR  base_OOS_MaxDD  spy_OOS_Sharpe  spy_OOS_CAGR  spy_OOS_MaxDD  selected
+parent   gross cadence                                                                                                                                                   
+U56      0.50  W           1.0730    0.0823      1.1079    -0.1269           1.2747         0.0945         -0.1205          0.8721        0.1524        -0.3372     False
+               M           1.1144    0.0900      1.1924    -0.1242           1.2747         0.0945         -0.1205          0.8721        0.1524        -0.3372     False
+         0.75  W           1.0734    0.1237      1.1078    -0.1862           1.2747         0.0945         -0.1205          0.8721        0.1524        -0.3372     False
+               M           1.1174    0.1360      1.1930    -0.1821           1.2747         0.0945         -0.1205          0.8721        0.1524        -0.3372     False
+         1.00  W           1.0739    0.1653      1.1076    -0.2429           1.2747         0.0945         -0.1205          0.8721        0.1524        -0.3372     False
+               M           1.1204    0.1826      1.1936    -0.2373           1.2747         0.0945         -0.1205          0.8721        0.1524        -0.3372      True
+B136     0.50  W           1.0476    0.0797      1.0666    -0.1373           1.1185         0.0798         -0.1224          0.8820        0.1545        -0.3372     False
+               M           1.0863    0.0854      1.1026    -0.1488           1.1185         0.0798         -0.1224          0.8820        0.1545        -0.3372     False
+         0.75  W           1.0494    0.1197      1.0660    -0.2012           1.1185         0.0798         -0.1224          0.8820        0.1545        -0.3372     False
+               M           1.0902    0.1288      1.1022    -0.2178           1.1185         0.0798         -0.1224          0.8820        0.1545        -0.3372     False
+         1.00  W           1.0512    0.1597      1.0652    -0.2619           1.1185         0.0798         -0.1224          0.8820        0.1545        -0.3372     False
+               M           1.0940    0.1725      1.1016    -0.2835           1.1185         0.0798         -0.1224          0.8820        0.1545        -0.3372     False
+SMALL439 0.50  W           0.4440    0.0514      0.5357    -0.2699           0.5680         0.0385         -0.1468          0.8820        0.1545        -0.3372     False
+               M           0.6293    0.0633      0.6356    -0.2750           0.5680         0.0385         -0.1468          0.8820        0.1545        -0.3372     False
+         0.75  W           0.4464    0.0738      0.5355    -0.3824           0.5680         0.0385         -0.1468          0.8820        0.1545        -0.3372     False
+               M           0.6347    0.0920      0.6330    -0.3944           0.5680         0.0385         -0.1468          0.8820        0.1545        -0.3372     False
+         1.00  W           0.4489    0.0937      0.5352    -0.4813           0.5680         0.0385         -0.1468          0.8820        0.1545        -0.3372     False
+               M           0.6403    0.1185      0.6305    -0.5021           0.5680         0.0385         -0.1468          0.8820        0.1545        -0.3372     False
+
+  SELECTED on IS Sharpe alone: U56 gross 1.00 cadence M (IS Sharpe 1.1204)
+  OOS ONCE: CAGR 18.26% / Sharpe 1.1936 / MaxDD -23.73%
+     vs RULES v2 (same panel): 9.45% / 1.2747 / -12.05%    LOSES TO baseline on Sharpe
+     vs SPY                 : 15.24% / 0.8721 / -33.72%    BEATS SPY on Sharpe
+  ACROSS ALL 18 REAL books: beat RULES v2 OOS 3/18, beat SPY OOS 12/18
+
+  ORDERING STABILITY (the claim's real content): rank the three parents by the
+  MA-gate premium IS, then OOS, at every (gross, cadence).
+                        IS_order          OOS_order   same  IS_span  OOS_span
+gross cadence                                                                
+0.50  W        U56>B136>SMALL439  U56>B136>SMALL439   True   0.2904    0.0788
+      M        U56>B136>SMALL439  U56>SMALL439>B136  False   0.1202    0.0510
+0.75  W        U56>B136>SMALL439  U56>B136>SMALL439   True   0.2868    0.0777
+      M        U56>B136>SMALL439  U56>SMALL439>B136  False   0.1149    0.0516
+1.00  W        U56>B136>SMALL439  U56>B136>SMALL439   True   0.2831    0.0767
+      M        U56>B136>SMALL439  U56>SMALL439>B136  False   0.1097    0.0522
+  IS order == OOS order in 3 of 6 (gross, cadence) cells.
+  median IS span 0.2017 vs IS floor 0.1276 (1.58x); median OOS span 0.0645 vs OOS floor 0.0863 (0.75x)
+
+wrote grid 900 rows, floors 60, census 607, verdicts 40, keeppaths 900 in 108s
