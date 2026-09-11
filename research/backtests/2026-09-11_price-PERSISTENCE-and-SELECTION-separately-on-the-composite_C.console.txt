@@ -1,0 +1,198 @@
+====================================================================================================
+(A) PRE-REGISTERED GATES -- run before any new number is read
+====================================================================================================
+  G2 band_book(0.03,0.75) == rules_v2_weights             : 0.000e+00  PASS
+  G1 Panel.run == engine.backtest @10 bps                 : 6.939e-18  PASS
+  G1b Panel.run_sparse == Panel.run (incumbent book)      : 7.199e-16  PASS
+  G3 RANKED(h=1) == 2026-09-04 KEEP-4b incumbent (U56 top-20 EW, no vol scaler):
+     got 12.63% / 1.0903 / -18.31%   published 12.66% / 1.0921 / -18.31%   max|d| 1.777e-03  PASS
+     (the published triple is the 2026-09-04 vintage; on today's cache idea 672 re-derived the same book at 12.63% / 1.090 / -18.31%, which this reproduces exactly)
+  G4 coin-flip daily gross == RANKED's, all h             : 2.220e-16  PASS
+  G5 RMATCH churn shortfall (re-adds / target replacements, U56, all h): 0.4303%  PASS  (28 of 6507)
+  G6 SMALL439 dropped 44 tickers with max_1d_move >= 1.0  : PASS
+
+  GATES: ALL PASS
+
+====================================================================================================
+(B) THE DECOMPOSITION -- 3 panels x 7 holding periods x {RANKED, RMATCH(60), RFREE(60)}
+====================================================================================================
+
+  --- U56  (55 tradable names + SPY, 2009-01-13 -> 2026-09-10, mean eligible 37.5) ---
+      SPY             15.11% /  0.883 / -33.72%   H1  0.960 H2  0.821   OOS  15.24% /  0.872 / -33.72%
+      live RULES v2    8.61% /  1.200 / -12.05%   H1  1.235 H2  1.172   OOS   9.45% /  1.275 / -12.05%
+
+      h   book     churn/yr    CAGR   Sharpe    MaxDD     H1     H2 | OOS CAGR  OOS Shp  OOS DD | 4a  4b  fail4b
+       1  RANKED    122.09    12.63%   1.090  -18.31%  1.096  1.092 |   14.31%    1.165 -18.31% | n   Y   -
+       1  RMATCH    121.99    10.27%   1.037  -16.63%  1.119  0.963 |   10.57%    1.051 -16.61% | 0.00 0.30  CAGR  [p05 0.939 p95 1.176; RANKED at 80.0th pct; churn shortfall 0.08%]
+       1  RFREE     492.68     6.84%   0.735  -15.82%  0.743  0.732 |    7.58%    0.802 -15.82% | 0.00 0.00  H1+H2+OOS+CAGR  [p05 0.660 p95 0.814; RANKED at 100.0th pct]
+       2  RANKED     83.57    12.70%   1.087  -17.06%  1.135  1.052 |   14.10%    1.142 -17.06% | n   Y   -
+       2  RMATCH     83.48    10.18%   1.029  -17.03%  1.130  0.944 |   10.56%    1.046 -17.03% | 0.00 0.32  CAGR  [p05 0.926 p95 1.143; RANKED at 76.7th pct; churn shortfall 0.10%]
+       2  RFREE     255.65     8.99%   0.941  -14.78%  0.980  0.899 |    9.43%    0.975 -14.78% | 0.00 0.00  CAGR  [p05 0.854 p95 1.045; RANKED at 100.0th pct]
+       4  RANKED     56.96    13.72%   1.123  -20.14%  1.180  1.081 |   15.14%    1.168 -20.14% | n   Y   -
+       4  RMATCH     56.80    10.56%   1.077  -17.54%  1.171  0.970 |   10.72%    1.068 -17.54% | 0.00 0.47  -  [p05 0.994 p95 1.161; RANKED at 81.7th pct; churn shortfall 0.28%]
+       4  RFREE     133.29    10.42%   1.056  -17.43%  1.123  1.000 |   10.84%    1.073 -17.43% | 0.00 0.42  CAGR  [p05 0.973 p95 1.160; RANKED at 86.7th pct]
+       8  RANKED     42.26    14.01%   1.064  -24.39%  1.170  0.995 |   15.61%    1.092 -24.39% | n   n   DD
+       8  RMATCH     41.97    11.37%   1.063  -21.59%  1.172  0.951 |   11.87%    1.036 -21.59% | 0.00 0.18  DD  [p05 0.944 p95 1.157; RANKED at 50.0th pct; churn shortfall 0.69%]
+       8  RFREE      70.60    11.04%   1.039  -21.13%  1.176  0.938 |   11.58%    1.031 -21.13% | 0.00 0.27  DD  [p05 0.959 p95 1.093; RANKED at 70.0th pct]
+      13  RANKED     32.79    12.45%   0.974  -27.49%  1.125  0.861 |   13.14%    0.965 -27.49% | n   n   DD
+      13  RMATCH     32.44     9.50%   0.936  -23.59%  1.158  0.748 |    9.03%    0.848 -23.59% | 0.00 0.02  H2+OOS+DD+CAGR  [p05 0.817 p95 1.027; RANKED at 71.7th pct; churn shortfall 1.07%]
+      13  RFREE      44.92     9.78%   0.951  -23.91%  1.153  0.802 |    9.45%    0.894 -23.91% | 0.00 0.02  H2+OOS+DD+CAGR  [p05 0.887 p95 1.075; RANKED at 61.7th pct]
+      26  RANKED     20.03    13.26%   0.952  -31.21%  1.061  0.893 |   14.91%    0.963 -31.21% | n   n   DD
+      26  RMATCH     19.69    10.91%   0.990  -24.14%  1.125  0.907 |   11.41%    0.974 -24.14% | 0.00 0.12  DD  [p05 0.892 p95 1.090; RANKED at 30.0th pct; churn shortfall 1.68%]
+      26  RFREE      24.58    10.71%   0.965  -25.39%  1.118  0.843 |   10.60%    0.913 -25.39% | 0.00 0.00  DD  [p05 0.883 p95 1.080; RANKED at 43.3th pct]
+      52  RANKED     11.46    14.19%   1.000  -28.80%  1.106  0.946 |   16.07%    1.018 -28.80% | n   n   DD
+      52  RMATCH     11.38    10.60%   0.938  -25.67%  1.047  0.880 |   11.51%    0.953 -25.67% | 0.00 0.02  DD  [p05 0.855 p95 1.037; RANKED at 81.7th pct; churn shortfall 0.71%]
+      52  RFREE      12.51    10.72%   0.946  -26.12%  1.080  0.841 |   10.82%    0.929 -26.12% | 0.00 0.00  DD  [p05 0.862 p95 1.054; RANKED at 78.3th pct]
+
+  --- B136  (135 tradable names + SPY, 2009-01-13 -> 2026-09-04, mean eligible 91.5) ---
+      SPY             15.23% /  0.889 / -33.72%   H1  0.957 H2  0.834   OOS  15.45% /  0.882 / -33.72%
+      live RULES v2    8.03% /  1.106 / -12.24%   H1  1.229 H2  0.984   OOS   7.98% /  1.119 / -12.24%
+
+      h   book     churn/yr    CAGR   Sharpe    MaxDD     H1     H2 | OOS CAGR  OOS Shp  OOS DD | 4a  4b  fail4b
+       1  RANKED    177.29    13.09%   0.957  -20.05%  1.125  0.811 |   12.49%    0.892 -20.05% | n   n   H2
+       1  RMATCH    177.28    10.40%   0.961  -18.54%  1.073  0.849 |   10.24%    0.946 -18.54% | 0.00 0.32  -  [p05 0.820 p95 1.058; RANKED at 48.3th pct; churn shortfall 0.00%]
+       1  RFREE     796.74     5.15%   0.517  -19.43%  0.607  0.444 |    5.09%    0.511 -19.43% | 0.00 0.00  H1+H2+OOS+CAGR  [p05 0.400 p95 0.648; RANKED at 100.0th pct]
+       2  RANKED    123.53    14.17%   1.010  -20.58%  1.233  0.821 |   12.84%    0.895 -20.58% | n   n   H2+DD
+       2  RMATCH    123.51    11.04%   1.015  -18.75%  1.120  0.892 |   10.90%    0.989 -18.75% | 0.00 0.47  -  [p05 0.906 p95 1.096; RANKED at 48.3th pct; churn shortfall 0.02%]
+       2  RFREE     403.27     8.47%   0.805  -18.38%  0.933  0.674 |    8.01%    0.764 -18.38% | 0.00 0.02  H1+H2+OOS+CAGR  [p05 0.678 p95 0.905; RANKED at 98.3th pct]
+       4  RANKED     86.97    15.11%   1.054  -21.48%  1.269  0.875 |   14.15%    0.956 -21.48% | n   n   DD
+       4  RMATCH     86.94    11.24%   1.018  -18.97%  1.150  0.905 |   11.02%    0.994 -18.97% | 0.00 0.52  -  [p05 0.924 p95 1.143; RANKED at 66.7th pct; churn shortfall 0.03%]
+       4  RFREE     204.99    10.29%   0.954  -19.13%  1.101  0.828 |    9.92%    0.916 -19.13% | 0.00 0.20  -  [p05 0.868 p95 1.065; RANKED at 93.3th pct]
+       8  RANKED     61.20    15.54%   1.018  -26.15%  1.388  0.743 |   13.75%    0.858 -26.15% | n   n   H2+OOS+DD
+       8  RMATCH     61.13    11.83%   1.007  -25.19%  1.230  0.843 |   11.53%    0.937 -25.19% | 0.00 0.05  DD  [p05 0.923 p95 1.097; RANKED at 63.3th pct; churn shortfall 0.12%]
+       8  RFREE     104.79    10.95%   0.947  -24.40%  1.170  0.775 |   10.47%    0.872 -24.40% | 0.00 0.00  H2+OOS+DD  [p05 0.849 p95 1.034; RANKED at 91.7th pct]
+      13  RANKED     47.40    14.06%   0.949  -28.19%  1.307  0.669 |   11.94%    0.779 -28.19% | n   n   H2+OOS+DD
+      13  RMATCH     47.33    10.56%   0.941  -24.84%  1.205  0.733 |    9.51%    0.843 -24.84% | 0.00 0.00  H2+OOS+DD+CAGR  [p05 0.850 p95 1.050; RANKED at 56.7th pct; churn shortfall 0.15%]
+      13  RFREE      65.09    10.67%   0.945  -25.09%  1.181  0.738 |    9.41%    0.839 -25.09% | 0.00 0.00  H2+OOS+DD+CAGR  [p05 0.852 p95 1.043; RANKED at 51.7th pct]
+      26  RANKED     28.33    15.19%   0.944  -27.85%  1.182  0.791 |   15.23%    0.867 -27.85% | n   n   H2+OOS+DD
+      26  RMATCH     28.13    12.25%   1.008  -26.25%  1.219  0.860 |   11.89%    0.940 -26.25% | 0.00 0.00  DD  [p05 0.919 p95 1.132; RANKED at 11.7th pct; churn shortfall 0.71%]
+      26  RFREE      34.19    12.03%   0.996  -25.29%  1.163  0.866 |   11.81%    0.938 -25.29% | 0.00 0.00  DD  [p05 0.875 p95 1.099; RANKED at 15.0th pct]
+      52  RANKED     16.41    14.88%   0.937  -27.85%  1.085  0.859 |   16.75%    0.941 -27.85% | n   n   DD
+      52  RMATCH     16.28    11.21%   0.940  -26.28%  1.067  0.865 |   12.07%    0.932 -26.28% | 0.00 0.00  DD  [p05 0.852 p95 1.054; RANKED at 46.7th pct; churn shortfall 0.77%]
+      52  RFREE      17.17    11.74%   0.976  -25.66%  1.113  0.895 |   12.34%    0.963 -25.66% | 0.00 0.00  DD  [p05 0.863 p95 1.057; RANKED at 30.0th pct]
+
+  --- SMALL439  (439 tradable names + SPY, 2011-01-13 -> 2026-09-04, mean eligible 142.1) ---
+      SPY             14.13% /  0.862 / -33.72%   H1  0.891 H2  0.858   OOS  15.45% /  0.882 / -33.72%
+      live RULES v2    3.81% /  0.572 / -14.68%   H1  0.570 H2  0.577   OOS   3.85% /  0.568 / -14.68%
+
+      h   book     churn/yr    CAGR   Sharpe    MaxDD     H1     H2 | OOS CAGR  OOS Shp  OOS DD | 4a  4b  fail4b
+       1  RANKED    259.62     6.56%   0.463  -27.43%  0.603  0.348 |    7.23%    0.487 -27.43% | n   n   H1+H2+OOS+DD+CAGR
+       1  RMATCH    259.62     3.91%   0.338  -36.17%  0.439  0.279 |    3.42%    0.297 -36.17% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.149 p95 0.569; RANKED at 85.0th pct; churn shortfall 0.00%]
+       1  RFREE     889.36    -1.64%  -0.041  -49.20% -0.041 -0.030 |   -1.54%   -0.029 -42.63% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 -0.215 p95 0.164; RANKED at 100.0th pct]
+       2  RANKED    188.01     7.08%   0.483  -33.92%  0.676  0.332 |    6.73%    0.451 -33.92% | n   n   H1+H2+OOS+DD+CAGR
+       2  RMATCH    187.97     4.23%   0.353  -39.37%  0.419  0.263 |    3.41%    0.293 -39.37% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.146 p95 0.497; RANKED at 90.0th pct; churn shortfall 0.02%]
+       2  RFREE     452.36     1.27%   0.159  -43.31%  0.269  0.076 |    0.16%    0.088 -42.49% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.011 p95 0.295; RANKED at 100.0th pct]
+       4  RANKED    134.97     5.77%   0.408  -34.29%  0.631  0.228 |    4.68%    0.341 -34.29% | n   n   H1+H2+OOS+DD+CAGR
+       4  RMATCH    134.82     3.99%   0.335  -41.23%  0.507  0.196 |    2.48%    0.234 -41.23% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.157 p95 0.483; RANKED at 81.7th pct; churn shortfall 0.11%]
+       4  RFREE     230.55     2.67%   0.251  -45.82%  0.439  0.133 |    1.36%    0.165 -45.59% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.100 p95 0.407; RANKED at 95.0th pct]
+       8  RANKED     87.18     7.89%   0.517  -40.86%  0.817  0.273 |    5.87%    0.401 -40.86% | n   n   H1+H2+OOS+DD+CAGR
+       8  RMATCH     87.15     5.44%   0.417  -40.77%  0.589  0.330 |    4.51%    0.350 -40.62% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.272 p95 0.570; RANKED at 85.0th pct; churn shortfall 0.03%]
+       8  RFREE     117.10     5.36%   0.412  -41.50%  0.540  0.298 |    4.16%    0.332 -41.50% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.240 p95 0.524; RANKED at 93.3th pct]
+      13  RANKED     61.37     4.13%   0.313  -42.93%  0.491  0.173 |    2.33%    0.216 -42.93% | n   n   H1+H2+OOS+DD+CAGR
+      13  RMATCH     61.36     5.28%   0.415  -40.20%  0.499  0.356 |    5.08%    0.388 -40.20% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.273 p95 0.597; RANKED at 15.0th pct; churn shortfall 0.01%]
+      13  RFREE      72.43     5.08%   0.401  -41.81%  0.484  0.332 |    4.88%    0.378 -41.81% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.281 p95 0.543; RANKED at 18.3th pct]
+      26  RANKED     35.30     7.05%   0.450  -42.42%  0.527  0.395 |    6.45%    0.410 -42.42% | n   n   H1+H2+OOS+DD+CAGR
+      26  RMATCH     35.30     6.82%   0.484  -40.95%  0.564  0.403 |    5.91%    0.414 -40.95% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.346 p95 0.627; RANKED at 41.7th pct; churn shortfall 0.00%]
+      26  RFREE      38.02     6.92%   0.492  -41.21%  0.612  0.424 |    6.10%    0.435 -41.21% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.362 p95 0.619; RANKED at 33.3th pct]
+      52  RANKED     19.67     6.93%   0.442  -42.21%  0.489  0.406 |    6.24%    0.402 -42.21% | n   n   H1+H2+OOS+DD+CAGR
+      52  RMATCH     19.67     7.10%   0.492  -40.53%  0.618  0.408 |    5.92%    0.411 -40.53% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.326 p95 0.652; RANKED at 26.7th pct; churn shortfall 0.00%]
+      52  RFREE      19.22     6.83%   0.484  -40.06%  0.624  0.389 |    6.10%    0.422 -40.06% | 0.00 0.00  H1+H2+OOS+DD+CAGR  [p05 0.320 p95 0.608; RANKED at 33.3th pct]
+
+====================================================================================================
+(C) THE TWO LEGS @ 10 bps   SELECTION = RANKED - RMATCH   PERSISTENCE = RMATCH - RFREE
+====================================================================================================
+
+  --- U56 ---
+      h |  SELECTION (which names)        |  PERSISTENCE (how long, no skill) |  TOTAL vs free coin flip
+        |  dSharpe   dCAGR   dMaxDD  dOOS |  dSharpe   dCAGR   dMaxDD  dOOS   |  dSharpe   dCAGR   dOOS
+       1|  +0.0532  +2.36%   -1.68% +0.114 |  +0.3019  +3.43%   -0.81% +0.249   |  +0.3551  +5.79% +0.362
+       2|  +0.0587  +2.52%   -0.03% +0.096 |  +0.0873  +1.18%   -2.25% +0.071   |  +0.1460  +3.71% +0.167
+       4|  +0.0454  +3.16%   -2.60% +0.100 |  +0.0209  +0.14%   -0.11% -0.006   |  +0.0663  +3.30% +0.095
+       8|  +0.0009  +2.64%   -2.80% +0.057 |  +0.0237  +0.34%   -0.45% +0.005   |  +0.0246  +2.97% +0.061
+      13|  +0.0385  +2.95%   -3.90% +0.117 |  -0.0155  -0.28%   +0.32% -0.047   |  +0.0230  +2.67% +0.070
+      26|  -0.0386  +2.34%   -7.07% -0.011 |  +0.0252  +0.20%   +1.25% +0.060   |  -0.0134  +2.54% +0.049
+      52|  +0.0618  +3.58%   -3.13% +0.065 |  -0.0083  -0.11%   +0.45% +0.024   |  +0.0535  +3.47% +0.089
+      PERSISTENCE AT MATCHED NAMES (RANKED(h) - RANKED(1), the queue's second reading):
+        dSharpe  h=1: +0.0000  h=2: -0.0030  h=4: +0.0322  h=8: -0.0263  h=13: -0.1163  h=26: -0.1388  h=52: -0.0906
+
+  --- B136 ---
+      h |  SELECTION (which names)        |  PERSISTENCE (how long, no skill) |  TOTAL vs free coin flip
+        |  dSharpe   dCAGR   dMaxDD  dOOS |  dSharpe   dCAGR   dMaxDD  dOOS   |  dSharpe   dCAGR   dOOS
+       1|  -0.0037  +2.68%   -1.51% -0.054 |  +0.4431  +5.26%   +0.89% +0.435   |  +0.4395  +7.94% +0.381
+       2|  -0.0045  +3.12%   -1.83% -0.094 |  +0.2099  +2.58%   -0.37% +0.225   |  +0.2054  +5.70% +0.131
+       4|  +0.0363  +3.87%   -2.51% -0.037 |  +0.0639  +0.94%   +0.16% +0.078   |  +0.1001  +4.82% +0.041
+       8|  +0.0112  +3.71%   -0.96% -0.079 |  +0.0602  +0.88%   -0.79% +0.065   |  +0.0714  +4.59% -0.014
+      13|  +0.0083  +3.51%   -3.35% -0.064 |  -0.0042  -0.11%   +0.24% +0.004   |  +0.0041  +3.39% -0.059
+      26|  -0.0641  +2.95%   -1.60% -0.073 |  +0.0116  +0.22%   -0.96% +0.002   |  -0.0525  +3.17% -0.070
+      52|  -0.0022  +3.67%   -1.57% +0.009 |  -0.0359  -0.53%   -0.62% -0.031   |  -0.0381  +3.14% -0.022
+      PERSISTENCE AT MATCHED NAMES (RANKED(h) - RANKED(1), the queue's second reading):
+        dSharpe  h=1: +0.0000  h=2: +0.0534  h=4: +0.0971  h=8: +0.0615  h=13: -0.0079  h=26: -0.0132  h=52: -0.0195
+
+  --- SMALL439 ---
+      h |  SELECTION (which names)        |  PERSISTENCE (how long, no skill) |  TOTAL vs free coin flip
+        |  dSharpe   dCAGR   dMaxDD  dOOS |  dSharpe   dCAGR   dMaxDD  dOOS   |  dSharpe   dCAGR   dOOS
+       1|  +0.1251  +2.64%   +8.73% +0.190 |  +0.3785  +5.55%  +13.04% +0.326   |  +0.5036  +8.20% +0.516
+       2|  +0.1302  +2.85%   +5.44% +0.157 |  +0.1939  +2.97%   +3.94% +0.206   |  +0.3241  +5.81% +0.363
+       4|  +0.0726  +1.77%   +6.94% +0.108 |  +0.0844  +1.32%   +4.59% +0.069   |  +0.1570  +3.10% +0.177
+       8|  +0.1002  +2.45%   -0.09% +0.051 |  +0.0051  +0.08%   +0.73% +0.017   |  +0.1053  +2.53% +0.068
+      13|  -0.1028  -1.15%   -2.73% -0.172 |  +0.0147  +0.20%   +1.61% +0.011   |  -0.0882  -0.95% -0.162
+      26|  -0.0335  +0.23%   -1.47% -0.004 |  -0.0081  -0.10%   +0.26% -0.021   |  -0.0416  +0.13% -0.024
+      52|  -0.0501  -0.17%   -1.67% -0.009 |  +0.0081  +0.26%   -0.48% -0.012   |  -0.0420  +0.09% -0.020
+      PERSISTENCE AT MATCHED NAMES (RANKED(h) - RANKED(1), the queue's second reading):
+        dSharpe  h=1: +0.0000  h=2: +0.0206  h=4: -0.0550  h=8: +0.0540  h=13: -0.1503  h=26: -0.0126  h=52: -0.0211
+
+====================================================================================================
+(D) PROTOCOL RULE 8 -- h chosen on IS (2009-2016) only, scored on 2017-2026 untouched
+====================================================================================================
+
+  --- U56 ---   SPY OOS 15.24% / 0.872 / -33.72%   live v2 OOS Sharpe 1.275
+      RANKED   IS Sharpe by h: h=1: 0.993  h=2: 1.017  h=4: 1.065  h=8: 1.034  h=13: 0.994  h=26: 0.956  h=52: 0.993
+      RANKED   rule-8 pick h=4  ->  OOS  15.14% /  1.168 / -20.14%   (blind-commit h=1 OOS 1.165)
+      RMATCH   rule-8 picks over 60 draws: h=1x5  h=2x10  h=4x13  h=8x13  h=13x9  h=26x9  h=52x1  ->  median OOS  11.12% /  1.029 / -20.82%   beats SPY OOS in 87% of draws
+      RFREE    rule-8 picks over 60 draws: h=4x9  h=8x25  h=13x10  h=26x14  h=52x2  ->  median OOS  10.88% /  0.989 / -21.35%   beats SPY OOS in 90% of draws
+      SELECTION at the rule-8 pick: RANKED OOS Sharpe 1.168 vs turnover-matched coin flip 1.029  ->  +0.1396
+
+  --- B136 ---   SPY OOS 15.45% / 0.882 / -33.72%   live v2 OOS Sharpe 1.119
+      RANKED   IS Sharpe by h: h=1: 1.044  h=2: 1.168  h=4: 1.190  h=8: 1.267  h=13: 1.201  h=26: 1.088  h=52: 0.961
+      RANKED   rule-8 pick h=8  ->  OOS  13.75% /  0.858 / -26.15%   (blind-commit h=1 OOS 0.892)
+      RMATCH   rule-8 picks over 60 draws: h=1x2  h=2x6  h=4x5  h=8x13  h=13x11  h=26x22  h=52x1  ->  median OOS  11.03% /  0.939 / -24.71%   beats SPY OOS in 68% of draws
+      RFREE    rule-8 picks over 60 draws: h=4x4  h=8x14  h=13x22  h=26x18  h=52x2  ->  median OOS  10.45% /  0.874 / -24.79%   beats SPY OOS in 42% of draws
+      SELECTION at the rule-8 pick: RANKED OOS Sharpe 0.858 vs turnover-matched coin flip 0.939  ->  -0.0811
+
+  --- SMALL439 ---   SPY OOS 15.45% / 0.882 / -33.72%   live v2 OOS Sharpe 0.568
+      RANKED   IS Sharpe by h: h=1: 0.420  h=2: 0.548  h=4: 0.532  h=8: 0.731  h=13: 0.494  h=26: 0.528  h=52: 0.513
+      RANKED   rule-8 pick h=8  ->  OOS   5.87% /  0.401 / -40.86%   (blind-commit h=1 OOS 0.487)
+      RMATCH   rule-8 picks over 60 draws: h=1x6  h=2x3  h=4x7  h=8x9  h=13x3  h=26x16  h=52x16  ->  median OOS   5.51% /  0.410 / -38.62%   beats SPY OOS in 0% of draws
+      RFREE    rule-8 picks over 60 draws: h=4x4  h=8x11  h=13x6  h=26x18  h=52x21  ->  median OOS   5.28% /  0.379 / -41.88%   beats SPY OOS in 0% of draws
+      SELECTION at the rule-8 pick: RANKED OOS Sharpe 0.401 vs turnover-matched coin flip 0.410  ->  -0.0095
+
+====================================================================================================
+(E) THE ANSWER
+====================================================================================================
+
+  KEEP paths over the 21 RANKED cells @10 bps (PROTOCOL rule 4):
+    4a 0/21   4b 3/21   BOTH 0/21
+      4b PASS: U56 RANKED h=1  12.63% / 1.090 / -18.31%   OOS 14.31% / 1.165 / -18.31%
+      4b PASS: U56 RANKED h=2  12.70% / 1.087 / -17.06%   OOS 14.10% / 1.142 / -17.06%
+      4b PASS: U56 RANKED h=4  13.72% / 1.123 / -20.14%   OOS 15.14% / 1.168 / -20.14%
+
+  Coin-flip 4b pass SHARE at the same cells (60 draws each):
+    U56       RMATCH h1:0.30 h2:0.32 h4:0.47 h8:0.18 h13:0.02 h26:0.12 h52:0.02   |  RFREE h1:0.00 h2:0.00 h4:0.42 h8:0.27 h13:0.02 h26:0.00 h52:0.00
+    B136      RMATCH h1:0.32 h2:0.47 h4:0.52 h8:0.05 h13:0.00 h26:0.00 h52:0.00   |  RFREE h1:0.00 h2:0.02 h4:0.20 h8:0.00 h13:0.00 h26:0.00 h52:0.00
+    SMALL439  RMATCH h1:0.00 h2:0.00 h4:0.00 h8:0.00 h13:0.00 h26:0.00 h52:0.00   |  RFREE h1:0.00 h2:0.00 h4:0.00 h8:0.00 h13:0.00 h26:0.00 h52:0.00
+
+  WHICH LEG CARRIES IT -- mean over the 21 cells @10 bps:
+    SELECTION   dSharpe +0.0211  (median +0.0112, >0 in 13/21 cells)   dCAGR +2.46%   dOOS_Sharpe +0.0222
+    PERSISTENCE dSharpe +0.0886  (median +0.0237, >0 in 16/21 cells)   dCAGR +1.16%   dOOS_Sharpe +0.0825
+    TOTAL       dSharpe +0.1097   dCAGR +3.62%   dOOS_Sharpe +0.1047
+    share of TOTAL dSharpe carried by PERSISTENCE: 80.8%
+
+  COST APPENDIX (labelled robustness, NO verdict taken here): RANKED 4b / mean coin-flip 4b share
+      0.0 bps: RANKED 4a 0/21 4b 4/21   RMATCH mean 4b share 0.232   RFREE mean 4b share 0.249
+     10.0 bps: RANKED 4a 0/21 4b 3/21   RMATCH mean 4b share 0.132   RFREE mean 4b share 0.044
+     25.0 bps: RANKED 4a 0/21 4b 3/21   RMATCH mean 4b share 0.035   RFREE mean 4b share 0.001
+
+  wrote 2026-09-11_price-PERSISTENCE-and-SELECTION-separately-on-the-composite_C.grid.csv  (189 rows)
+  wrote 2026-09-11_price-PERSISTENCE-and-SELECTION-separately-on-the-composite_C.legs.csv  (21 rows)
+  wrote 2026-09-11_price-PERSISTENCE-and-SELECTION-separately-on-the-composite_C.walkforward.csv  (9 rows)
+  wrote 2026-09-11_price-PERSISTENCE-and-SELECTION-separately-on-the-composite_C.draws.csv  (2520 rows)
