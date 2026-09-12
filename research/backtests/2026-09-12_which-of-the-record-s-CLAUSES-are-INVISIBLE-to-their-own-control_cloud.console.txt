@@ -1,0 +1,274 @@
+======================================================================================================================
+# 2026-09-12_which-of-the-record-s-CLAUSES-are-INVISIBLE-to-their-own-control_cloud
+# IDEA 582 - for each clause family in the record, is there ANY control the clause is not
+#            degenerate against?  8 families x 5 controls x 3 panels, all reported.
+======================================================================================================================
+# PROTOCOL: 10 bps per unit turnover, next-day fills, weekly cadence, no shorting,
+#           no leverage (asserted: no scaled book exceeds gross 1.0).  IS <= 2016-12-31, OOS >= 2017-01-01.
+# TUNED (2): clause family (8) x control (5).  PINNED: gross 0.75, MA 200d, vol 20d, cap 0.6, band 0.03, n 10/20.
+#            REPORTED-NEVER-SELECTED: panel (3), window (FULL/IS/OOS), book form, offset.
+
+PRE-REGISTERED: H_ONE (every family VISIBLE under >=1 control on all 3 panels), H_GROSS (the
+  GROSS family is MECH_DEGEN under matched gross on ALL THREE panels - idea 317 measured it
+  on one), H_EXPO (matched exposure leaves the 5 holdings-changing families VISIBLE in >=80%
+  of cells), H_CONST (the constant-exposure comparand is STRICTLY MORE DEMANDING: >=1
+  non-GROSS family INVISIBLE against CONST while VISIBLE against its own parent at matched
+  gross), H_FLOOR (>=1 published-style comparison sits inside its own convention floor),
+  H_OOS (<=20% of 120 cells flip label between IS and OOS, each read once).
+
+PANEL U56      56 cols,   56 tradable, 4703 bars 2008-01-02..2026-09-11
+PANEL B136    136 cols,  136 tradable, 4703 bars 2008-01-02..2026-09-11
+PANEL SMALL   664 cols,  663 tradable, 4198 bars 2010-01-04..2026-09-11
+  SMALL drops 52 tickers with max_1d_move >= 1.0 per PROTOCOL; SPY is a joined
+  BENCHMARK there, not a constituent.  SURVIVORSHIP: B136 and SMALL are CURRENT constituents,
+  so every LEVEL on them is overstated; the object here is a DIFFERENCE on one panel.
+
+======================================================================================================================
+GATES
+======================================================================================================================
+  G1 engine     : U56    max |fast_bt - engine.backtest| 1.041e-17
+  G1 engine     : B136   max |fast_bt - engine.backtest| 6.939e-18
+  G1 engine     : SMALL  max |fast_bt - engine.backtest| 1.041e-17
+                  worst 1.041e-17  bar 1e-9 -> PASS
+
+  CONVENTION FLOOR - the same book, the same 5-day cadence, the five weekday offsets.
+  This is the yardstick a clause must clear to be visible at all.
+  panel     BAND-RS    EW-0375     EW-100      EWall   LOWVOL20      MA-DG      MA-RS      TOP10      TOP20  VOLCAP-DG
+  U56        0.0296     0.0293     0.0297     0.0296     0.0421     0.0207     0.0264     0.0823     0.0698     0.0378
+  B136       0.0181     0.0321     0.0331     0.0328     0.0628     0.0521     0.0377     0.0444     0.0460     0.0338
+  SMALL      0.0526     0.0212     0.0110     0.0152     0.0925     0.0623     0.0362     0.1266     0.0861     0.0312
+  (Sharpe spread over the 5 offsets; per-cell floor = max of the two compared books' spreads)
+
+======================================================================================================================
+THE GRID - 8 clause families x 5 controls x 3 panels, FULL sample.  A cell is MECH_DEGEN when
+the two target-weight paths coincide (max L1/2 < 1e-9), INVISIBLE when |dSharpe| <= its own
+convention floor, VISIBLE otherwise.
+======================================================================================================================
+  G2 matching   : max target gross over every scaled book 1.000000  bar <= 1.0 -> PASS;  worst matched-GROSS residual 2.665e-15 bar 1e-12 -> PASS
+                  VOL control residual |vol_A - vol_B| max 6.430e-07 (median 1.845e-07); BETA residual max 1.019e-05 (median 1.674e-06) - measured, not a bar: two scaling passes, stated.
+
+  G3 parent     : matched-gross |dSharpe| per family on U56 vs idea 317's committed G3
+      family      idea 317    this run  this L1max       label
+      TREND      1.747e-01   4.029e-02   6.964e-01     VISIBLE
+      VOLCAP     2.444e-01   6.961e-03   3.097e-01   INVISIBLE
+      WIDEN      2.773e-01   7.886e-02   4.955e-01     VISIBLE
+      CONC       1.402e-01   1.453e-01   4.125e-01     VISIBLE
+      GROSS      4.441e-16   0.000e+00   1.609e-16  MECH_DEGEN
+      DEFEND     6.073e-02   5.262e-02   7.500e-01   INVISIBLE
+      hard bar: GROSS must still collapse - |dSharpe| 0.000e+00 and L1max 1.609e-16 < 1e-9 -> PASS
+      The other five are a DRIFT reading: idea 317 took its max over 288 conditional cells'
+      parent legs (its panel mix and its cell set), this run compares the parent pair itself.
+
+  G5 semantics  : what the record's '-DG' books actually do (mean TARGET GROSS on rebalance
+                  days; a de-gross book must sit BELOW base gross 0.75, a re-spread book AT it)
+      U56    EWall 0.7500  MA-RS 0.7500  MA-DG 0.5321  BAND-RS 0.7500  BAND-DG 0.5327  VOLCAP-DG 0.7197  IDEA317-MADG 0.7500
+             idea 317's MA-DG vs this file's MA-RS: max L1/2 0.000e+00 -> THE SAME BOOK;  vs a true de-gross the mean gross differs by +0.2179
+      B136   EWall 0.7500  MA-RS 0.7500  MA-DG 0.5319  BAND-RS 0.7500  BAND-DG 0.5321  VOLCAP-DG 0.7232  IDEA317-MADG 0.7500
+             idea 317's MA-DG vs this file's MA-RS: max L1/2 0.000e+00 -> THE SAME BOOK;  vs a true de-gross the mean gross differs by +0.2181
+      SMALL  EWall 0.7500  MA-RS 0.7500  MA-DG 0.4094  BAND-RS 0.7500  BAND-DG 0.4101  VOLCAP-DG 0.6232  IDEA317-MADG 0.7500
+             idea 317's MA-DG vs this file's MA-RS: max L1/2 0.000e+00 -> THE SAME BOOK;  vs a true de-gross the mean gross differs by +0.3406
+                  bar: idea 317's 'MA-DG' IS its re-spread book on all 3 panels (max 0.000e+00 < 1e-9) -> PASS (the naming fault is established)
+  G4 determinism: rebuilt cell Sharpe differs by 0.000e+00  bar 0 -> PASS
+
+======================================================================================================================
+WHICH CLAUSES ARE INVISIBLE TO WHICH CONTROL  (FULL sample; M = MECH_DEGEN, I = INVISIBLE,
+V = VISIBLE; the number under each label is |dSharpe| and, in brackets, the cell's floor)
+======================================================================================================================
+  panel U56
+    family                    RAW                GROSS                  VOL                 BETA                CONST
+    TREND    V  0.0403 [0.0296] V  0.0403 [0.0296] V  0.0401 [0.0296] V  0.0399 [0.0296] V  0.0403 [0.0296] 
+    VOLCAP   I  0.0069 [0.0378] I  0.0070 [0.0378] I  0.0071 [0.0378] I  0.0072 [0.0378] I  0.0070 [0.0378] 
+    WIDEN    V  0.0789 [0.0698] V  0.0789 [0.0698] V  0.0787 [0.0698] V  0.0785 [0.0698] V  0.0789 [0.0698] 
+    CONC     V  0.1453 [0.0823] V  0.1453 [0.0823] V  0.1454 [0.0823] V  0.1456 [0.0823] V  0.2241 [0.0823] 
+    GROSS    I  0.0016 [0.0297] M  0.0000 [0.0297] I  0.0000 [0.0297] I  0.0000 [0.0297] M  0.0000 [0.0297] 
+    DEFEND   I  0.0526 [0.0698] I  0.0526 [0.0698] I  0.0531 [0.0698] I  0.0530 [0.0698] V  0.1315 [0.0421] 
+    BAND     V  0.0698 [0.0296] V  0.0698 [0.0296] V  0.0698 [0.0296] V  0.0698 [0.0296] V  0.0403 [0.0296] 
+    SPREAD   V  0.0803 [0.0264] V  0.0804 [0.0264] V  0.0805 [0.0264] V  0.0805 [0.0264] V  0.0407 [0.0296] 
+
+  panel B136
+    family                    RAW                GROSS                  VOL                 BETA                CONST
+    TREND    V  0.0737 [0.0377] V  0.0737 [0.0377] V  0.0736 [0.0377] V  0.0735 [0.0377] V  0.0737 [0.0377] 
+    VOLCAP   I  0.0112 [0.0338] I  0.0112 [0.0338] I  0.0113 [0.0338] I  0.0114 [0.0338] I  0.0112 [0.0338] 
+    WIDEN    V  0.2921 [0.0460] V  0.2921 [0.0460] V  0.2919 [0.0460] V  0.2917 [0.0460] V  0.2921 [0.0460] 
+    CONC     V  0.1436 [0.0460] V  0.1436 [0.0460] V  0.1436 [0.0460] V  0.1435 [0.0460] V  0.4357 [0.0444] 
+    GROSS    I  0.0008 [0.0331] M  0.0000 [0.0331] I  0.0000 [0.0331] I  0.0000 [0.0331] M  0.0000 [0.0331] 
+    DEFEND   I  0.0170 [0.0628] I  0.0170 [0.0628] I  0.0173 [0.0628] I  0.0173 [0.0628] V  0.2921 [0.0460] 
+    BAND     I  0.0127 [0.0377] I  0.0127 [0.0377] I  0.0127 [0.0377] I  0.0127 [0.0377] V  0.0737 [0.0377] 
+    SPREAD   I  0.0370 [0.0521] I  0.0373 [0.0521] I  0.0374 [0.0521] I  0.0375 [0.0521] V  0.0737 [0.0377] 
+
+  panel SMALL
+    family                    RAW                GROSS                  VOL                 BETA                CONST
+    TREND    V  0.1477 [0.0362] V  0.1477 [0.0362] V  0.1480 [0.0362] V  0.1481 [0.0362] V  0.1477 [0.0362] 
+    VOLCAP   V  0.1501 [0.0312] V  0.1505 [0.0312] V  0.1508 [0.0312] V  0.1509 [0.0312] V  0.1505 [0.0312] 
+    WIDEN    V  0.1563 [0.0861] V  0.1563 [0.0861] V  0.1569 [0.0861] V  0.1572 [0.0861] V  0.1563 [0.0861] 
+    CONC     V  0.2154 [0.1266] V  0.2154 [0.1266] V  0.2154 [0.1266] V  0.2141 [0.1266] V  0.1563 [0.0861] 
+    GROSS    I  0.0020 [0.0212] M  0.0000 [0.0212] I  0.0000 [0.0212] I  0.0000 [0.0212] M  0.0000 [0.0152] 
+    DEFEND   V  0.3768 [0.0925] V  0.3768 [0.0925] V  0.3746 [0.0925] V  0.3738 [0.0925] V  0.2206 [0.0925] 
+    BAND     V  0.0864 [0.0526] V  0.0864 [0.0526] V  0.0864 [0.0526] V  0.0864 [0.0526] V  0.1477 [0.0362] 
+    SPREAD   I  0.0455 [0.0623] I  0.0460 [0.0623] I  0.0460 [0.0623] I  0.0461 [0.0623] V  0.1477 [0.0362] 
+
+======================================================================================================================
+PRE-REGISTERED TESTS
+======================================================================================================================
+  H_ONE   : TREND    VISIBLE on all 3 panels under: RAW, GROSS, VOL, BETA, CONST
+  H_ONE   : VOLCAP   VISIBLE on all 3 panels under: NO CONTROL
+  H_ONE   : WIDEN    VISIBLE on all 3 panels under: RAW, GROSS, VOL, BETA, CONST
+  H_ONE   : CONC     VISIBLE on all 3 panels under: RAW, GROSS, VOL, BETA, CONST
+  H_ONE   : GROSS    VISIBLE on all 3 panels under: NO CONTROL
+  H_ONE   : DEFEND   VISIBLE on all 3 panels under: CONST
+  H_ONE   : BAND     VISIBLE on all 3 panels under: CONST
+  H_ONE   : SPREAD   VISIBLE on all 3 panels under: CONST
+            -> FAIL (6 of 8 families have such a control)
+
+  H_GROSS : GROSS family under matched gross, per panel: U56 L1max 1.61e-16 dSharpe 0.00e+00 MECH_DEGEN, B136 L1max 2.05e-16 dSharpe 0.00e+00 MECH_DEGEN, SMALL L1max 1.44e-16 dSharpe 1.11e-16 MECH_DEGEN
+            -> PASS (idea 317's one-panel collapse generalises to all three)
+
+  H_EXPO  : holdings-changing families under matched exposure: VISIBLE in 33 of 45 cells (73%), bar 80% -> FAIL
+            VISIBLE: 33
+            INVISIBLE: 12
+            not visible: U56/VOLCAP/GROSS |dSharpe| 0.0070 floor 0.0378 L1max 3.10e-01 -> INVISIBLE
+            not visible: U56/VOLCAP/VOL |dSharpe| 0.0071 floor 0.0378 L1max 2.85e-01 -> INVISIBLE
+            not visible: U56/VOLCAP/BETA |dSharpe| 0.0072 floor 0.0378 L1max 2.74e-01 -> INVISIBLE
+            not visible: U56/DEFEND/GROSS |dSharpe| 0.0526 floor 0.0698 L1max 7.50e-01 -> INVISIBLE
+            not visible: U56/DEFEND/VOL |dSharpe| 0.0531 floor 0.0698 L1max 6.14e-01 -> INVISIBLE
+            not visible: U56/DEFEND/BETA |dSharpe| 0.0530 floor 0.0698 L1max 6.33e-01 -> INVISIBLE
+            not visible: B136/VOLCAP/GROSS |dSharpe| 0.0112 floor 0.0338 L1max 3.41e-01 -> INVISIBLE
+            not visible: B136/VOLCAP/VOL |dSharpe| 0.0113 floor 0.0338 L1max 3.06e-01 -> INVISIBLE
+            not visible: B136/VOLCAP/BETA |dSharpe| 0.0114 floor 0.0338 L1max 2.92e-01 -> INVISIBLE
+            not visible: B136/DEFEND/GROSS |dSharpe| 0.0170 floor 0.0628 L1max 7.50e-01 -> INVISIBLE
+            not visible: B136/DEFEND/VOL |dSharpe| 0.0173 floor 0.0628 L1max 5.93e-01 -> INVISIBLE
+            not visible: B136/DEFEND/BETA |dSharpe| 0.0173 floor 0.0628 L1max 6.00e-01 -> INVISIBLE
+
+  H_CONST : non-GROSS families invisible to CONSTANT EXPOSURE but visible to their own parent: 0
+            -> FAIL
+
+  H_FLOOR : published-style comparisons (RAW or matched-GROSS) inside their own convention floor: 17 of 48
+            U56/VOLCAP/RAW |dSharpe| 0.0069 <= floor 0.0378  (L1 mean 0.015 - the books DO differ, the Sharpe gap does not)
+            U56/VOLCAP/GROSS |dSharpe| 0.0070 <= floor 0.0378  (L1 mean 0.029 - the books DO differ, the Sharpe gap does not)
+            U56/GROSS/RAW |dSharpe| 0.0016 <= floor 0.0297  (L1 mean 0.313 - the books DO differ, the Sharpe gap does not)
+            U56/DEFEND/RAW |dSharpe| 0.0526 <= floor 0.0698  (L1 mean 0.393 - the books DO differ, the Sharpe gap does not)
+            U56/DEFEND/GROSS |dSharpe| 0.0526 <= floor 0.0698  (L1 mean 0.393 - the books DO differ, the Sharpe gap does not)
+            B136/VOLCAP/RAW |dSharpe| 0.0112 <= floor 0.0338  (L1 mean 0.013 - the books DO differ, the Sharpe gap does not)
+            B136/VOLCAP/GROSS |dSharpe| 0.0112 <= floor 0.0338  (L1 mean 0.026 - the books DO differ, the Sharpe gap does not)
+            B136/GROSS/RAW |dSharpe| 0.0008 <= floor 0.0331  (L1 mean 0.313 - the books DO differ, the Sharpe gap does not)
+            B136/DEFEND/RAW |dSharpe| 0.0170 <= floor 0.0628  (L1 mean 0.542 - the books DO differ, the Sharpe gap does not)
+            B136/DEFEND/GROSS |dSharpe| 0.0170 <= floor 0.0628  (L1 mean 0.542 - the books DO differ, the Sharpe gap does not)
+            B136/BAND/RAW |dSharpe| 0.0127 <= floor 0.0377  (L1 mean 0.056 - the books DO differ, the Sharpe gap does not)
+            B136/BAND/GROSS |dSharpe| 0.0127 <= floor 0.0377  (L1 mean 0.056 - the books DO differ, the Sharpe gap does not)
+            B136/SPREAD/RAW |dSharpe| 0.0370 <= floor 0.0521  (L1 mean 0.109 - the books DO differ, the Sharpe gap does not)
+            B136/SPREAD/GROSS |dSharpe| 0.0373 <= floor 0.0521  (L1 mean 0.056 - the books DO differ, the Sharpe gap does not)
+            SMALL/GROSS/RAW |dSharpe| 0.0020 <= floor 0.0212  (L1 mean 0.312 - the books DO differ, the Sharpe gap does not)
+            SMALL/SPREAD/RAW |dSharpe| 0.0455 <= floor 0.0623  (L1 mean 0.170 - the books DO differ, the Sharpe gap does not)
+            SMALL/SPREAD/GROSS |dSharpe| 0.0460 <= floor 0.0623  (L1 mean 0.054 - the books DO differ, the Sharpe gap does not)
+            -> PASS
+
+======================================================================================================================
+RULE 8 / WF-A - the LABEL walked forward.  Each window is its own backtest and each control's
+scaling is re-derived inside it; the IS label is read, then the OOS label read ONCE.
+======================================================================================================================
+  120 cells labelled in both windows; 39 FLIP (32.5%), bar 20% -> FAIL
+  panel/family/control                        IS         OOS   IS dSh  OOS dSh  IS floor
+  U56/TREND/RAW                          VISIBLE   INVISIBLE   0.0603   0.0198    0.0296
+  U56/TREND/GROSS                        VISIBLE   INVISIBLE   0.0603   0.0198    0.0296
+  U56/TREND/VOL                          VISIBLE   INVISIBLE   0.0596   0.0199    0.0296
+  U56/TREND/BETA                         VISIBLE   INVISIBLE   0.0588   0.0199    0.0296
+  U56/TREND/CONST                        VISIBLE   INVISIBLE  -0.0603  -0.0198    0.0296
+  U56/WIDEN/RAW                          VISIBLE   INVISIBLE  -0.1396  -0.0286    0.0698
+  U56/WIDEN/GROSS                        VISIBLE   INVISIBLE  -0.1396  -0.0286    0.0698
+  U56/WIDEN/VOL                          VISIBLE   INVISIBLE  -0.1390  -0.0286    0.0698
+  U56/WIDEN/BETA                         VISIBLE   INVISIBLE  -0.1384  -0.0286    0.0698
+  U56/WIDEN/CONST                        VISIBLE   INVISIBLE  -0.1396  -0.0286    0.0698
+  U56/CONC/RAW                         INVISIBLE     VISIBLE   0.0274   0.2305    0.0823
+  U56/CONC/GROSS                       INVISIBLE     VISIBLE   0.0274   0.2305    0.0823
+  U56/CONC/VOL                         INVISIBLE     VISIBLE   0.0274   0.2307    0.0823
+  U56/CONC/BETA                        INVISIBLE     VISIBLE   0.0272   0.2311    0.0823
+  U56/SPREAD/RAW                       INVISIBLE     VISIBLE  -0.0115   0.1500    0.0264
+  U56/SPREAD/GROSS                     INVISIBLE     VISIBLE  -0.0111   0.1499    0.0264
+  U56/SPREAD/VOL                       INVISIBLE     VISIBLE  -0.0111   0.1499    0.0264
+  U56/SPREAD/BETA                      INVISIBLE     VISIBLE  -0.0110   0.1499    0.0264
+  B136/TREND/RAW                         VISIBLE   INVISIBLE   0.1190   0.0348    0.0377
+  B136/TREND/GROSS                       VISIBLE   INVISIBLE   0.1190   0.0348    0.0377
+  B136/TREND/VOL                         VISIBLE   INVISIBLE   0.1181   0.0352    0.0377
+  B136/TREND/BETA                        VISIBLE   INVISIBLE   0.1175   0.0354    0.0377
+  B136/TREND/CONST                       VISIBLE   INVISIBLE  -0.1190  -0.0348    0.0377
+  B136/BAND/CONST                        VISIBLE   INVISIBLE  -0.1190  -0.0348    0.0377
+  B136/SPREAD/RAW                      INVISIBLE     VISIBLE   0.0109   0.0585    0.0521
+  B136/SPREAD/GROSS                    INVISIBLE     VISIBLE   0.0124   0.0580    0.0521
+  B136/SPREAD/VOL                      INVISIBLE     VISIBLE   0.0127   0.0579    0.0521
+  B136/SPREAD/BETA                     INVISIBLE     VISIBLE   0.0130   0.0577    0.0521
+  B136/SPREAD/CONST                      VISIBLE   INVISIBLE  -0.1190  -0.0348    0.0377
+  SMALL/WIDEN/RAW                      INVISIBLE     VISIBLE  -0.0616  -0.2004    0.0861
+  SMALL/WIDEN/GROSS                    INVISIBLE     VISIBLE  -0.0616  -0.2004    0.0861
+  SMALL/WIDEN/VOL                      INVISIBLE     VISIBLE  -0.0610  -0.2015    0.0861
+  SMALL/WIDEN/BETA                     INVISIBLE     VISIBLE  -0.0606  -0.2019    0.0861
+  SMALL/WIDEN/CONST                    INVISIBLE     VISIBLE  -0.0616  -0.2004    0.0861
+  SMALL/CONC/CONST                     INVISIBLE     VISIBLE   0.1173  -0.2004    0.1266
+  SMALL/SPREAD/RAW                       VISIBLE   INVISIBLE   0.1119  -0.0022    0.0623
+  SMALL/SPREAD/GROSS                     VISIBLE   INVISIBLE   0.1146  -0.0028    0.0623
+  SMALL/SPREAD/VOL                       VISIBLE   INVISIBLE   0.1148  -0.0028    0.0623
+  SMALL/SPREAD/BETA                      VISIBLE   INVISIBLE   0.1152  -0.0029    0.0623
+  flips by family: SPREAD x13, TREND x10, WIDEN x10, CONC x5, BAND x1
+
+======================================================================================================================
+RULE 8 / WF-B + KEEP PATHS - every book this file runs, scored as a book.
+======================================================================================================================
+  comparands on U56 over 2009-01-13..2026-09-11
+    RULES v2 (U56, live)   CAGR 8.63% Sharpe 1.202 MaxDD -12.05% halves 1.235/1.176 | OOS CAGR 9.47% Sharpe 1.278 MaxDD -12.05%
+    SPY                    CAGR 15.16% Sharpe 0.886 MaxDD -33.72% halves 0.960/0.826 | OOS CAGR 15.33% Sharpe 0.877 MaxDD -33.72%
+  264 books (3 panels x 8 families x 5 controls x 2-3 legs; duplicates across families kept so every cell is scored)
+  KEEP paths: 4a vs RULES v2 on U56 0; 4a vs RULES v2 on the book's OWN panel 0; 4b 59; BOTH (U56 read) 0
+  most common 4b failure sets: - x59, DD x43, CAGR x39, H2,OOS,CAGR x35, H2,OOS,DD,CAGR x32
+  4b passes (diagnostic - these are the record's standard forms, not new candidates):
+    U56/MA-RS/RAW  CAGR 11.50% Sharpe 1.087 MaxDD -18.65% halves 1.173/1.025 OOS Sharpe 1.106
+    U56/MA-RS/GROSS  CAGR 11.50% Sharpe 1.087 MaxDD -18.65% halves 1.173/1.025 OOS Sharpe 1.106
+    U56/MA-RS/VOL  CAGR 11.50% Sharpe 1.087 MaxDD -18.64% halves 1.173/1.025 OOS Sharpe 1.106
+    U56/MA-RS/BETA  CAGR 11.49% Sharpe 1.087 MaxDD -18.63% halves 1.173/1.025 OOS Sharpe 1.106
+    U56/MA-RS/CONST  CAGR 11.50% Sharpe 1.087 MaxDD -18.65% halves 1.173/1.025 OOS Sharpe 1.106
+    U56/VOLCAP-DG/RAW  CAGR 11.59% Sharpe 1.134 MaxDD -16.88% halves 1.173/1.099 OOS Sharpe 1.179
+    U56/VOLCAP-DG/GROSS  CAGR 11.59% Sharpe 1.134 MaxDD -16.88% halves 1.173/1.099 OOS Sharpe 1.179
+    U56/EWall/VOL  CAGR 11.50% Sharpe 1.127 MaxDD -19.74% halves 1.213/1.059 OOS Sharpe 1.130
+    U56/VOLCAP-DG/VOL  CAGR 11.58% Sharpe 1.134 MaxDD -16.88% halves 1.173/1.099 OOS Sharpe 1.179
+    U56/EWall/BETA  CAGR 10.97% Sharpe 1.127 MaxDD -18.90% halves 1.213/1.059 OOS Sharpe 1.130
+    U56/VOLCAP-DG/BETA  CAGR 11.58% Sharpe 1.134 MaxDD -16.87% halves 1.173/1.099 OOS Sharpe 1.179
+    U56/VOLCAP-DG/CONST  CAGR 11.59% Sharpe 1.134 MaxDD -16.88% halves 1.173/1.099 OOS Sharpe 1.179
+    U56/TOP20/RAW  CAGR 11.24% Sharpe 1.049 MaxDD -19.35% halves 1.084/1.027 OOS Sharpe 1.097
+    U56/TOP20/GROSS  CAGR 11.24% Sharpe 1.049 MaxDD -19.35% halves 1.084/1.027 OOS Sharpe 1.097
+    U56/TOP20/VOL  CAGR 11.24% Sharpe 1.049 MaxDD -19.34% halves 1.084/1.027 OOS Sharpe 1.097
+    U56/TOP20/BETA  CAGR 11.23% Sharpe 1.049 MaxDD -19.34% halves 1.084/1.027 OOS Sharpe 1.097
+    U56/TOP20/CONST  CAGR 11.24% Sharpe 1.049 MaxDD -19.35% halves 1.084/1.027 OOS Sharpe 1.097
+    U56/BAND-RS/RAW  CAGR 12.20% Sharpe 1.157 MaxDD -17.71% halves 1.217/1.116 OOS Sharpe 1.196
+    U56/BAND-RS/GROSS  CAGR 12.20% Sharpe 1.157 MaxDD -17.71% halves 1.217/1.116 OOS Sharpe 1.196
+    U56/BAND-RS/VOL  CAGR 12.20% Sharpe 1.157 MaxDD -17.71% halves 1.217/1.116 OOS Sharpe 1.196
+    U56/BAND-RS/BETA  CAGR 12.20% Sharpe 1.157 MaxDD -17.71% halves 1.217/1.116 OOS Sharpe 1.196
+    U56/BAND-RS/CONST  CAGR 12.20% Sharpe 1.157 MaxDD -17.71% halves 1.217/1.116 OOS Sharpe 1.196
+    B136/MA-RS/RAW  CAGR 11.55% Sharpe 1.051 MaxDD -20.12% halves 1.161/0.955 OOS Sharpe 1.056
+    B136/MA-RS/GROSS  CAGR 11.55% Sharpe 1.051 MaxDD -20.12% halves 1.161/0.955 OOS Sharpe 1.056
+    B136/MA-RS/VOL  CAGR 11.55% Sharpe 1.051 MaxDD -20.11% halves 1.161/0.955 OOS Sharpe 1.056
+    B136/MA-RS/BETA  CAGR 11.54% Sharpe 1.051 MaxDD -20.11% halves 1.161/0.955 OOS Sharpe 1.056
+    B136/MA-RS/CONST  CAGR 11.55% Sharpe 1.051 MaxDD -20.12% halves 1.161/0.955 OOS Sharpe 1.056
+    B136/VOLCAP-DG/RAW  CAGR 12.32% Sharpe 1.136 MaxDD -18.70% halves 1.266/1.012 OOS Sharpe 1.112
+    B136/VOLCAP-DG/GROSS  CAGR 12.32% Sharpe 1.136 MaxDD -18.70% halves 1.266/1.012 OOS Sharpe 1.112
+    B136/VOLCAP-DG/VOL  CAGR 12.31% Sharpe 1.136 MaxDD -18.69% halves 1.266/1.012 OOS Sharpe 1.112
+    B136/VOLCAP-DG/BETA  CAGR 12.31% Sharpe 1.136 MaxDD -18.68% halves 1.266/1.012 OOS Sharpe 1.112
+    B136/VOLCAP-DG/CONST  CAGR 12.32% Sharpe 1.136 MaxDD -18.70% halves 1.266/1.012 OOS Sharpe 1.112
+    B136/BAND-RS/RAW  CAGR 11.66% Sharpe 1.063 MaxDD -18.53% halves 1.177/0.964 OOS Sharpe 1.065
+    B136/BAND-RS/GROSS  CAGR 11.66% Sharpe 1.063 MaxDD -18.53% halves 1.177/0.964 OOS Sharpe 1.065
+    B136/BAND-RS/VOL  CAGR 11.65% Sharpe 1.063 MaxDD -18.53% halves 1.177/0.964 OOS Sharpe 1.065
+    B136/BAND-RS/BETA  CAGR 11.65% Sharpe 1.063 MaxDD -18.53% halves 1.177/0.964 OOS Sharpe 1.065
+    B136/BAND-RS/CONST  CAGR 11.66% Sharpe 1.063 MaxDD -18.53% halves 1.177/0.964 OOS Sharpe 1.065
+
+  WF-B pick (IS Sharpe ALONE, OOS read once):
+    SMALL/LOWVOL20 under GROSS  IS Sharpe 1.886
+    OOS  CAGR 4.56%  Sharpe 0.603  MaxDD -23.52%   vs RULES v2 OOS 9.47%/1.278 and SPY OOS 15.33%/0.877
+    FULL CAGR 6.35% Sharpe 0.929 MaxDD -23.52% halves 1.933/0.471  4a(U56) False 4b fails [H2,OOS,DD,CAGR]
+
+======================================================================================================================
+VERDICT
+======================================================================================================================
+  H_ONE      FAIL
+  H_GROSS    PASS
+  H_EXPO     FAIL
+  H_CONST    FAIL
+  H_FLOOR    PASS
+  H_OOS      FAIL
+  ran in 254.7s
