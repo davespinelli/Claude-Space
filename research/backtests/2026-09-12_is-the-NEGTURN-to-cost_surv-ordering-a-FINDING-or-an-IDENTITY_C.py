@@ -143,6 +143,14 @@ DECOMPS = ["RAW", "MECHPRED", "DRAGFREE", "DIVTURN", "PARTIAL"]
 DEC_HEAD = "DRAGFREE"
 POPS = ["ALL39", "PASS0"]
 POP_HEAD = "ALL39"
+# REPORTED AXIS (not tuned): which 4b reading defines "survival".  Gate G1 established that idea
+# 837's committed +0.4637 cell is its cost_surv_OOS column - the OOS-WINDOW-LOCAL 4b (legs_window
+# on 2017..), NOT the fixed-window one, whose value on the same committed file is +0.5018.  Both
+# are carried at every cell so the queue's number is reproduced and the other is not hidden.
+WINDOWS = ["OOSLOC", "FIXED"]
+WIN_HEAD = "OOSLOC"
+WINLEG = {"OOSLOC": "OOS", "FIXED": "FULL"}
+CS_OOS_837, SH_OOS_837, CS_FIX_837 = 0.4637, 0.4587, 0.5018
 
 CMAX = 400.0                 # bisection bracket for c_star, bps
 DMAX = 4000.0                # bisection bracket for D_star, bps/yr
@@ -661,41 +669,38 @@ def main():
                 b = m
         return a
 
-    fineflags = {}
-    for key in ARMS:
-        flags = {}
-        for c in FINE:
-            ok = pass_cost(key, c)
-            flags[c] = ok
-            lrows.append(dict(book=key, ladder="cost", rung=float(c), window="FULL", passes=ok))
-        fineflags[key] = flags
-    # extra cost rungs used by R11 / COARSE but absent from FINE (5, 15, 25, 75)
-    for key in ARMS:
-        for c in sorted(set(R11 + COARSE) - set(FINE)):
-            lrows.append(dict(book=key, ladder="cost", rung=float(c), window="FULL",
-                              passes=pass_cost(key, c)))
-    LAD = pd.DataFrame(lrows)
-    costflag = {(r.book, r.rung): r.passes for r in LAD.itertuples() if r.ladder == "cost"}
+    ALLC = sorted(set(FINE + R11 + COARSE))
+    costflag = {}
+    for win in ("FULL", "OOS", "IS"):
+        for key in ARMS:
+            for c in ALLC:
+                ok = pass_cost(key, c, win)
+                costflag[(key, float(c), win)] = ok
+                lrows.append(dict(book=key, ladder="cost", rung=float(c), window=win, passes=ok))
 
-    # G3 monotonicity on the FINE ladder
-    viol, violbooks = 0, []
-    for key in ARMS:
-        seq = [fineflags[key][c] for c in FINE]
-        v = sum(1 for i in range(1, len(seq)) if seq[i] and not seq[i - 1])
-        viol += v
-        if v:
-            violbooks.append(f"{key}({v})")
-    P(f"   G3  monotonicity of the 4b pass indicator in c on the FINE ladder "
-      f"({len(FINE)} rungs x {len(ARMS)} books): {viol} up-steps  "
-      f"{'PASS' if viol == 0 else 'FAIL'}  {violbooks}")
-    G3ok = viol == 0
+    # G3 monotonicity on the FINE ladder, both reported windows
+    G3ok, g3msg = True, []
+    for win in ("FULL", "OOS"):
+        viol, violbooks = 0, []
+        for key in ARMS:
+            seq = [costflag[(key, float(c), win)] for c in FINE]
+            v = sum(1 for i in range(1, len(seq)) if seq[i] and not seq[i - 1])
+            viol += v
+            if v:
+                violbooks.append(f"{key}({v})")
+        P(f"   G3  monotonicity of the 4b pass indicator in c, window {win:4s}, FINE ladder "
+          f"({len(FINE)} rungs x {len(ARMS)} books): {viol} up-steps  "
+          f"{'PASS' if viol == 0 else 'FAIL'}  {violbooks}")
+        G3ok = G3ok and viol == 0
+        g3msg.append(f"{win} {viol}")
 
     # drag ladder + continuous survivals
     DRUNGS = [0, 25, 50, 100, 150, 200, 300, 400, 600, 800, 1200, 1600, 2400]
-    for key in ARMS:
-        for D in DRUNGS:
-            lrows.append(dict(book=key, ladder="drag", rung=float(D), window="FULL",
-                              passes=pass_drag(key, D)))
+    for win in ("FULL", "OOS", "IS"):
+        for key in ARMS:
+            for D in DRUNGS:
+                lrows.append(dict(book=key, ladder="drag", rung=float(D), window=win,
+                                  passes=pass_drag(key, D, win)))
     for key in ARMS:
         B.loc[key, "c_star"] = bisect(lambda c: pass_cost(key, c), 0.0, CMAX)
         B.loc[key, "D_star"] = bisect(lambda D: pass_drag(key, D), 0.0, DMAX)
@@ -705,55 +710,70 @@ def main():
         B.loc[key, "D_star_OOS"] = bisect(lambda D: pass_drag(key, D, "OOS"), 0.0, DMAX)
     pd.DataFrame(lrows).to_csv(f"{OUT}.ladders.csv", index=False)
 
-    # cost_surv per rung set
-    for name, rungs in RUNGSETS.items():
-        for key in ARMS:
-            if rungs is None:
-                B.loc[key, f"cost_surv_{name}"] = B.loc[key, "c_star"]
-            else:
-                s = -1.0
-                for c in rungs:
-                    if costflag[(key, float(c))]:
-                        s = float(c)
-                B.loc[key, f"cost_surv_{name}"] = s
-    B.loc[ARMS, "c_hat"] = B.loc[ARMS, "D_star"] / B.loc[ARMS, "turn_yr"]
-    B.loc[ARMS, "c_hat"] = B.loc[ARMS, "c_hat"].where(B.loc[ARMS, "D_star"] >= 0, -1.0)
-    B.loc[ARMS, "c_hat_OOS"] = (B.loc[ARMS, "D_star_OOS"] / B.loc[ARMS, "turn_yr"]).where(
-        B.loc[ARMS, "D_star_OOS"] >= 0, -1.0)
+    # cost_surv per (window, rung set); D_star / c_hat per window
+    SUF = {"FIXED": "", "OOSLOC": "_OOS"}
+    for win in WINDOWS:
+        leg, sfx = WINLEG[win], SUF[win]
+        for name, rungs in RUNGSETS.items():
+            for key in ARMS:
+                if rungs is None:
+                    B.loc[key, f"cs_{win}_{name}"] = B.loc[key, f"c_star{sfx}"]
+                else:
+                    s = -1.0
+                    for c in rungs:
+                        if costflag[(key, float(c), leg)]:
+                            s = float(c)
+                    B.loc[key, f"cs_{win}_{name}"] = s
+        d = B.loc[ARMS, f"D_star{sfx}"]
+        B.loc[ARMS, f"chat_{win}"] = (d / B.loc[ARMS, "turn_yr"]).where(d >= 0, -1.0)
+    # 837's own column names, kept so the gate can be read against the committed file
+    B.loc[ARMS, "cost_surv_R11"] = B.loc[ARMS, "cs_FIXED_R11"]
+    B.loc[ARMS, "cost_surv_OOS_R11"] = B.loc[ARMS, "cs_OOSLOC_R11"]
     B.loc[ARMS, "c_hat_IS"] = (B.loc[ARMS, "D_star_IS"] / B.loc[ARMS, "turn_yr"]).where(
         B.loc[ARMS, "D_star_IS"] >= 0, -1.0)
     B.loc[ARMS, "NEGTURN"] = -B.loc[ARMS, "turn_yr"]
     B.loc[ARMS, "INVTURN"] = 1.0 / B.loc[ARMS, "turn_yr"]
 
-    P("\n   " + f"{'book':<14}{'turn/yr':>8}{'c_R11':>7}{'c_FINE':>8}{'c_COAR':>7}{'c_star':>9}"
-      f"{'D_star':>9}{'c_hat':>9}{'D*/turn':>9}")
+    P("\n   FIXED = fixed-window 4b (5 legs).  OOSLOC = OOS-window-local 4b (4 legs) = the reading")
+    P("   idea 837's committed +0.4637 cell is on.")
+    P("   " + f"{'book':<14}{'turn/yr':>8}" + f"{'cFIX_R11':>9}{'cFIX*':>8}{'DFIX*':>8}"
+      f"{'chatFIX':>8}" + f"{'cOOS_R11':>10}{'cOOS*':>8}{'DOOS*':>8}{'chatOOS':>8}")
     for key in ARMS:
         b = B.loc[key]
-        P(f"   {key:<14}{b.turn_yr:8.2f}{b.cost_surv_R11:7.0f}{b.cost_surv_FINE:8.0f}"
-          f"{b.cost_surv_COARSE:7.0f}{b.c_star:9.2f}{b.D_star:9.1f}{b.c_hat:9.2f}"
-          f"{b.D_star/b.turn_yr:9.2f}")
+        P(f"   {key:<14}{b.turn_yr:8.2f}{b.cs_FIXED_R11:9.0f}{b.c_star:8.2f}{b.D_star:8.1f}"
+          f"{b.chat_FIXED:8.2f}{b.cs_OOSLOC_R11:10.0f}{b.c_star_OOS:8.2f}{b.D_star_OOS:8.1f}"
+          f"{b.chat_OOSLOC:8.2f}")
 
     # ---- G1 reproduction of idea 837 -----------------------------------------------------
     hdr("GATE G1 - reproduction of idea 837's committed .books.csv")
     G1ok = False
     if PRIOR.exists():
         prev = pd.read_csv(PRIOR).set_index("book")
-        cols = ["turn_yr", "full_CAGR", "full_Sharpe", "full_MaxDD", "IS_CAGR", "IS_Sharpe",
-                "IS_MaxDD", "OOS_CAGR", "OOS_Sharpe", "OOS_MaxDD", "cost_surv"]
+        cols = {"turn_yr": "turn_yr", "full_CAGR": "full_CAGR", "full_Sharpe": "full_Sharpe",
+                "full_MaxDD": "full_MaxDD", "IS_CAGR": "IS_CAGR", "IS_Sharpe": "IS_Sharpe",
+                "IS_MaxDD": "IS_MaxDD", "OOS_CAGR": "OOS_CAGR", "OOS_Sharpe": "OOS_Sharpe",
+                "OOS_MaxDD": "OOS_MaxDD", "cost_surv": "cost_surv_R11",
+                "cost_surv_OOS": "cost_surv_OOS_R11"}
         dmax = 0.0
-        for c in cols:
-            mine = B.loc[ARMS, "cost_surv_R11"] if c == "cost_surv" else B.loc[ARMS, c]
-            d = float(np.abs(mine.values - prev.loc[ARMS, c].values).max())
+        for c, mycol in cols.items():
+            d = float(np.abs(B.loc[ARMS, mycol].values - prev.loc[ARMS, c].values).max())
             dmax = max(dmax, d)
-            P(f"   {c:<12} max|d| over 39 arms {d:.3e}")
-        rho_cs = spearman(B.loc[ARMS, "NEGTURN"], B.loc[ARMS, "cost_surv_R11"])
-        rho_sh = spearman(B.loc[ARMS, "NEGTURN"], B.loc[ARMS, "OOS_Sharpe"])
-        P(f"   committed cell rho(NEGTURN, cost_surv) +0.4637 -> rebuilt {rho_cs:+.4f} "
-          f"|d| {abs(rho_cs-0.4637):.4f}")
-        P(f"   committed cell rho(NEGTURN, OOS_Sharpe) +0.4587 -> rebuilt {rho_sh:+.4f} "
-          f"|d| {abs(rho_sh-0.4587):.4f}")
-        G1ok = (dmax <= 1e-9 and abs(rho_cs - 0.4637) <= 1e-3 and abs(rho_sh - 0.4587) <= 1e-3)
+            P(f"   {c:<14} max|d| over 39 arms {d:.3e}")
+        neg = B.loc[ARMS, "NEGTURN"]
+        rho_cs = spearman(neg, B.loc[ARMS, "cost_surv_OOS_R11"])
+        rho_fx = spearman(neg, B.loc[ARMS, "cost_surv_R11"])
+        rho_sh = spearman(neg, B.loc[ARMS, "OOS_Sharpe"])
+        P(f"   committed cell rho(NEGTURN, cost_surv_OOS) {CS_OOS_837:+.4f} -> rebuilt "
+          f"{rho_cs:+.4f}  |d| {abs(rho_cs-CS_OOS_837):.4f}   <== the queue's +0.4637 cell")
+        P(f"   the FIXED-window column on the SAME committed file reads {CS_FIX_837:+.4f} -> "
+          f"rebuilt {rho_fx:+.4f}  |d| {abs(rho_fx-CS_FIX_837):.4f}")
+        P(f"   committed cell rho(NEGTURN, OOS_Sharpe) {SH_OOS_837:+.4f} -> rebuilt {rho_sh:+.4f}"
+          f"  |d| {abs(rho_sh-SH_OOS_837):.4f}")
+        G1ok = (dmax <= 1e-9 and abs(rho_cs - CS_OOS_837) <= 1e-3
+                and abs(rho_fx - CS_FIX_837) <= 1e-3 and abs(rho_sh - SH_OOS_837) <= 1e-3)
         P(f"   G1  {'PASS' if G1ok else 'FAIL'}  (max|d| {dmax:.3e})")
+        P("   NOTE: the queue calls the cell 'NEGTURN->cost_surv'.  It is the OOS-WINDOW-LOCAL")
+        P("   survival column; the fixed-window one is a different, higher number.  Both carried.")
     else:
         P("   G1  SKIP - idea 837's books.csv not found")
     P(f"\n   GATES: G1 {'PASS' if G1ok else 'FAIL'}  G2 {'PASS' if G2ok else 'FAIL'}  "
@@ -769,54 +789,63 @@ def main():
     K0ok = abs(k0 - 1.0) <= 1e-9
 
     # ---- the grid ------------------------------------------------------------------------
-    hdr("THE GRID - 5 decompositions x 4 rung sets x 2 populations (cost leg)")
-    pass0 = [k for k in ARMS if costflag[(k, 0.0)]]
-    P(f"   ALL39 n={len(ARMS)} (iid 95% band {null_band(len(ARMS)):.4f});  "
-      f"PASS0 n={len(pass0)} (band {null_band(len(pass0)):.4f}) = arms passing 4b at ZERO cost")
-    P(f"   the {len(ARMS)-len(pass0)} arms outside PASS0 fail 4b at every rung for reasons that")
-    P("   are NOT about cost: " + ", ".join(k for k in ARMS if k not in pass0))
+    hdr("THE GRID - 2 windows x 5 decompositions x 4 rung sets x 2 populations (cost leg)")
+    pass0 = {w: [k for k in ARMS if costflag[(k, 0.0, WINLEG[w])]] for w in WINDOWS}
+    for w in WINDOWS:
+        P(f"   window {w:7s} ALL39 n={len(ARMS)} (iid 95% band {null_band(len(ARMS)):.4f});  "
+          f"PASS0 n={len(pass0[w])} (band {null_band(len(pass0[w])):.4f}) = arms passing 4b at "
+          f"ZERO cost")
+        P(f"      the {len(ARMS)-len(pass0[w])} arms outside PASS0 fail 4b at EVERY rung for "
+          "reasons that are NOT about cost:")
+        P("      " + ", ".join(k for k in ARMS if k not in pass0[w]))
 
     grows = []
-    for pop in POPS:
-        keys = ARMS if pop == "ALL39" else pass0
-        fams = [FAMOF[k] for k in keys]
-        neg = B.loc[keys, "NEGTURN"].values
-        for rs in RUNGSETS:
-            cs = B.loc[keys, f"cost_surv_{rs}"].values
-            for dec in DECOMPS:
-                if dec == "RAW":
-                    tgt, ctrl, desc = cs, None, f"cost_surv({rs})"
-                elif dec == "MECHPRED":
-                    tgt, ctrl, desc = B.loc[keys, "c_hat"].values, None, "D_star/turn_yr"
-                elif dec == "DRAGFREE":
-                    tgt, ctrl, desc = B.loc[keys, "D_star"].values, None, "D_star (bps/yr)"
-                elif dec == "DIVTURN":
-                    # NOTE: a non-passer scores cost_surv = -1, and -1 x turn_yr IS NEGTURN, which
-                    # would manufacture a perfect correlation out of a coding convention.  Those
-                    # arms are dropped from this decomposition (n falls; it is reported).
-                    tv = B.loc[keys, "turn_yr"].values
-                    tgt = np.where(cs >= 0, cs * tv, np.nan)
-                    ctrl, desc = None, f"cost_surv({rs}) x turn_yr"
-                else:
-                    tgt, ctrl, desc = cs, B.loc[keys, "D_star"].values, \
-                        f"cost_surv({rs}) | D_star"
-                rho = partial_spearman(neg, tgt, ctrl) if ctrl is not None else spearman(neg, tgt)
-                p = np.nan if ctrl is not None else perm_p(neg, tgt)
-                lo, hi, nf = cluster_ci(neg, tgt, fams, ctrl)
-                grows.append(dict(leg="cost", population=pop, rung_set=rs, decomposition=dec,
-                                  target=desc, n=len(keys), n_fam=nf, spearman=rho, iid_p=p,
-                                  cl_lo=lo, cl_hi=hi,
-                                  cl_excl0=bool(np.isfinite(lo) and (lo > 0 or hi < 0))))
+    for win in WINDOWS:
+        sfx = SUF[win]
+        for pop in POPS:
+            keys = ARMS if pop == "ALL39" else pass0[win]
+            fams = [FAMOF[k] for k in keys]
+            neg = B.loc[keys, "NEGTURN"].values
+            dstar = B.loc[keys, f"D_star{sfx}"].values
+            chat = B.loc[keys, f"chat_{win}"].values
+            for rs in RUNGSETS:
+                cs = B.loc[keys, f"cs_{win}_{rs}"].values
+                for dec in DECOMPS:
+                    if dec == "RAW":
+                        tgt, ctrl, desc = cs, None, f"cost_surv({rs})"
+                    elif dec == "MECHPRED":
+                        tgt, ctrl, desc = chat, None, "D_star/turn_yr"
+                    elif dec == "DRAGFREE":
+                        tgt, ctrl, desc = dstar, None, "D_star (bps/yr)"
+                    elif dec == "DIVTURN":
+                        # a non-passer scores cost_surv = -1, and -1 x turn_yr IS NEGTURN, which
+                        # would manufacture a perfect correlation out of a coding convention.
+                        # Those arms are dropped here (n falls; it is reported).
+                        tv = B.loc[keys, "turn_yr"].values
+                        tgt = np.where(cs >= 0, cs * tv, np.nan)
+                        ctrl, desc = None, f"cost_surv({rs}) x turn_yr"
+                    else:
+                        tgt, ctrl, desc = cs, dstar, f"cost_surv({rs}) | D_star"
+                    rho = (partial_spearman(neg, tgt, ctrl) if ctrl is not None
+                           else spearman(neg, tgt))
+                    p = np.nan if ctrl is not None else perm_p(neg, tgt)
+                    lo, hi, nf = cluster_ci(neg, tgt, fams, ctrl)
+                    grows.append(dict(leg="cost", window=win, population=pop, rung_set=rs,
+                                      decomposition=dec, target=desc,
+                                      n=int(np.isfinite(tgt).sum()), n_fam=nf, spearman=rho,
+                                      iid_p=p, cl_lo=lo, cl_hi=hi,
+                                      cl_excl0=bool(np.isfinite(lo) and (lo > 0 or hi < 0))))
     G = pd.DataFrame(grows)
-    P("\n   " + f"{'pop':<7}{'rungs':<8}{'decomp':<10}{'target':<26}{'n':>4}{'rho':>9}"
-      f"{'iid p':>9}{'cluster 95% CI':>24}{'excl0':>7}")
+    P("\n   " + f"{'window':<8}{'pop':<7}{'rungs':<8}{'decomp':<10}{'target':<26}{'n':>4}"
+      f"{'rho':>9}{'iid p':>9}{'cluster 95% CI':>24}{'excl0':>7}")
     for r in G.itertuples():
         ci = (f"[{r.cl_lo:+.4f}, {r.cl_hi:+.4f}]" if np.isfinite(r.cl_lo) else "n/a")
         pp = f"{r.iid_p:.4f}" if np.isfinite(r.iid_p) else "   -  "
-        star = "  <== HEADLINE" if (r.population == POP_HEAD and r.rung_set == RUNG_HEAD
+        star = "  <== HEADLINE" if (r.window == WIN_HEAD and r.population == POP_HEAD
+                                    and r.rung_set == RUNG_HEAD
                                     and r.decomposition == DEC_HEAD) else ""
-        P(f"   {r.population:<7}{r.rung_set:<8}{r.decomposition:<10}{r.target:<26}{r.n:>4}"
-          f"{r.spearman:>+9.4f}{pp:>9}{ci:>24}{'Y' if r.cl_excl0 else 'n':>7}{star}")
+        P(f"   {r.window:<8}{r.population:<7}{r.rung_set:<8}{r.decomposition:<10}{r.target:<26}"
+          f"{r.n:>4}{r.spearman:>+9.4f}{pp:>9}{ci:>24}{'Y' if r.cl_excl0 else 'n':>7}{star}")
 
     # ---- the OOS-Sharpe leg: switch the cost channel off ---------------------------------
     hdr("THE OOS-SHARPE LEG - rho(NEGTURN, OOS_Sharpe) as the cost channel is switched off")
@@ -825,7 +854,7 @@ def main():
     srows = []
     shcache: dict = {}
     for pop in POPS:
-        keys = ARMS if pop == "ALL39" else pass0
+        keys = ARMS if pop == "ALL39" else pass0[WIN_HEAD]
         fams = [FAMOF[k] for k in keys]
         neg = B.loc[keys, "NEGTURN"].values
         for c in ALL_RUNGS:
@@ -873,36 +902,41 @@ def main():
     # ---- reconstruction ------------------------------------------------------------------
     hdr("RECONSTRUCTION - does D_star/turn_yr rebuild the observed cost survival rank by rank?")
     rec = {}
-    for pop in POPS:
-        keys = ARMS if pop == "ALL39" else pass0
-        for rs in RUNGSETS:
-            rec[(pop, rs)] = spearman(B.loc[keys, f"cost_surv_{rs}"], B.loc[keys, "c_hat"])
-        rec[(pop, "cstar")] = spearman(B.loc[keys, "c_star"], B.loc[keys, "c_hat"])
-        P(f"   {pop:<7} rho(cost_surv, c_hat): " +
-          "  ".join(f"{rs} {rec[(pop, rs)]:+.4f}" for rs in RUNGSETS) +
-          f"   |  rho(c_star, c_hat) {rec[(pop, 'cstar')]:+.4f}")
-    recon = rec[(POP_HEAD, "cstar")]
+    for win in WINDOWS:
+        sfx = SUF[win]
+        for pop in POPS:
+            keys = ARMS if pop == "ALL39" else pass0[win]
+            ch = B.loc[keys, f"chat_{win}"]
+            for rs in RUNGSETS:
+                rec[(win, pop, rs)] = spearman(B.loc[keys, f"cs_{win}_{rs}"], ch)
+            rec[(win, pop, "cstar")] = spearman(B.loc[keys, f"c_star{sfx}"], ch)
+            P(f"   {win:<7} {pop:<7} rho(cost_surv, c_hat): " +
+              "  ".join(f"{rs} {rec[(win, pop, rs)]:+.4f}" for rs in RUNGSETS) +
+              f"   |  rho(c_star, c_hat) {rec[(win, pop, 'cstar')]:+.4f}")
+    recon = rec[(WIN_HEAD, POP_HEAD, "cstar")]
 
     # ---- HYPOTHESES ----------------------------------------------------------------------
     hdr("PRE-REGISTERED HYPOTHESES")
-    def cell(pop, rs, dec):
-        return G[(G.population == pop) & (G.rung_set == rs) & (G.decomposition == dec)].iloc[0]
+    def cell(pop, rs, dec, win=WIN_HEAD):
+        return G[(G.window == win) & (G.population == pop) & (G.rung_set == rs)
+                 & (G.decomposition == dec)].iloc[0]
 
     raw = cell(POP_HEAD, RUNG_HEAD, "RAW")
     mech = cell(POP_HEAD, RUNG_HEAD, "MECHPRED")
     drag = cell(POP_HEAD, RUNG_HEAD, "DRAGFREE")
     part = cell(POP_HEAD, RUNG_HEAD, "PARTIAL")
     share = mech.spearman / raw.spearman if raw.spearman else np.nan
-    setspread = (G[(G.population == POP_HEAD) & (G.decomposition == "RAW")].spearman.max()
-                 - G[(G.population == POP_HEAD) & (G.decomposition == "RAW")].spearman.min())
+    _rawset = G[(G.window == WIN_HEAD) & (G.population == POP_HEAD)
+                & (G.decomposition == "RAW")].spearman
+    setspread = _rawset.max() - _rawset.min()
     raw0 = cell("PASS0", RUNG_HEAD, "RAW")
     s10 = S[(S.population == POP_HEAD) & (S.cost_bps == 10) & (S.target == "OOS_Sharpe")].iloc[0]
     s0 = S[(S.population == POP_HEAD) & (S.cost_bps == 0) & (S.target == "OOS_Sharpe")].iloc[0]
 
     H = {}
-    H["G1 repro"] = (G1ok, "837's books.csv + both committed cells rebuilt")
+    H["G1 repro"] = (G1ok, "837's books.csv + all three committed cells rebuilt")
     H["G2 cost identity"] = (G2ok, f"max|d| {d2:.3e}")
-    H["G3 monotone"] = (G3ok, f"{viol} up-steps on {len(FINE)}x{len(ARMS)}")
+    H["G3 monotone"] = (G3ok, f"up-steps: {', '.join(g3msg)} on {len(FINE)}x{len(ARMS)}")
     H["G4 no leverage"] = (G4ok, f"max gross {d4:.4f}")
     H["K0 ceiling"] = (K0ok, f"rho(NEGTURN, 1/turn) {k0:+.6f}")
     H["H_MECH"] = (mech.spearman >= raw.spearman,
@@ -942,10 +976,10 @@ def main():
                 B.loc[key, f"csIS_{rs}"] = B.loc[key, "c_star_IS"]
                 B.loc[key, f"csOOS_{rs}"] = B.loc[key, "c_star_OOS"]
             else:
-                for tag, win in (("csIS", "IS"), ("csOOS", "OOS")):
+                for tag, wn in (("csIS", "IS"), ("csOOS", "OOS")):
                     s = -1.0
                     for c in RUNGSETS[rs]:
-                        if pass_cost(key, c, win):
+                        if pass_cost(key, c, wn):
                             s = float(c)
                     B.loc[key, f"{tag}_{rs}"] = s
     for rs in RUNGSETS:
