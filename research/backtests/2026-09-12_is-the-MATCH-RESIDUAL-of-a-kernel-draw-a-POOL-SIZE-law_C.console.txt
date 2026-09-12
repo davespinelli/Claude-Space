@@ -1,0 +1,631 @@
+======================================================================================================================
+# 2026-09-12_is-the-MATCH-RESIDUAL-of-a-kernel-draw-a-POOL-SIZE-law_C
+# IDEA 800 - is the kernel draw's MATCH RESIDUAL a POOL-SIZE law?  Freeze the characteristic,
+#            the rungs and the bandwidth; vary only how many names each arm may draw from.
+======================================================================================================================
+# PROTOCOL: cost 10 bps, next-day fills, IS <= 2016-12-31, OOS >= 2017-01-01, sample truncated at 2026-09-04 (idea 796's last bar, so G3 can be exact)
+# TUNED (2): N in [36, 48, 64, 84, 110, 134] x K in [12, 24, 36] = 18 cells, all reported.
+# REPORTED-NOT-SELECTED: leg (SYM/ASYM_S/ASYM_B/ANCHOR/REEST), char (momac + tpers control),
+#   rep 0..5, seed 0..5, window (FULL/IS/OOS), flavour, gross, cadence.
+# BW fixed at 0.500 and rungs at idea 571's Q5 [0.1, 0.3, 0.5, 0.7, 0.9] - idea 796 already tuned those.
+
+PRE-REGISTERED: H_LAW (|resid| monotone decreasing in N at fixed k), H_RATIO (pooled log-log
+  fit on k/N has R2 >= 0.70, positive slope), H_THIN (ASYM_S flat past n_S=134, inside 1
+  replicate sd), H_FAT (= not H_THIN), H_PARENT (ANCHOR reproduces idea 796 to 1e-4),
+  H_REEST (re-estimating the char on the sub-sample moves |resid| MORE than density does),
+  H_ENTITLE (entitled |resid| at n=134/k=36 exceeds the record's tightest published
+  0.0017 / 0.0007).
+
+POOL: 2010-01-04..2026-09-04 (4194 bars); B 135 + SMALL 663 = 798 names; 52 small tickers dropped (max_1d_move >= 1.0, per PROTOCOL)
+SURVIVORSHIP: both arms are CURRENT constituents; dead small names are absent.  The residual
+  is a matching diagnostic, not a return, and both arms are drawn from survivor pools, so any
+  absolute residual here is an estimate FOR A SURVIVOR POOL OF THAT SIZE.
+
+WINDOW FULL: 2010-01-04..2026-09-04 (4194 bars)
+   momac  usable B 134 / S 657; sd 0.0909; h 0.0454; rungs 0.8020 0.8490 0.8744 0.8919 0.9166
+   tpers  usable B 134 / S 663; sd 0.0128; h 0.0064; rungs 0.9511 0.9599 0.9654 0.9702 0.9776
+WINDOW IS  : 2010-01-04..2016-12-30 (1762 bars)
+   momac  usable B 130 / S 465; sd 0.1159; h 0.0580; rungs 0.7060 0.8095 0.8497 0.8813 0.9167
+   tpers  usable B 131 / S 467; sd 0.0153; h 0.0077; rungs 0.9449 0.9590 0.9667 0.9738 0.9826
+WINDOW OOS : 2017-01-03..2026-09-04 (2432 bars)
+   momac  usable B 134 / S 657; sd 0.0948; h 0.0474; rungs 0.7868 0.8465 0.8747 0.8964 0.9224
+   tpers  usable B 134 / S 663; sd 0.0138; h 0.0069; rungs 0.9485 0.9588 0.9651 0.9704 0.9782
+   The characteristic, the rungs and the bandwidth are FROZEN at the full pool inside each
+   window.  Sub-sampling changes ONLY which names an arm may draw from - that is what
+   isolates density from the re-estimation idea 796's vintage change also performed.
+
+======================================================================================================================
+GATES (printed before any new number is read)
+======================================================================================================================
+G1 chars       : fast vs idea 796's panel_chars max |d| = 2.220e-16 (bar 1e-12) -> PASS
+G2 identity    : fast_backtest vs engine.backtest max |dret| = 2.776e-17 (bar 1e-09) -> PASS
+G0 determinism : 0 of 72 draws differ on rebuild (bar 0) -> PASS
+
+======================================================================================================================
+THE LAW - |match residual| by pool size, at fixed k, frozen characteristic
+======================================================================================================================
+  2346 (leg, window, char, n_B, n_S, k, rep) cells x up to 5 rungs x 6 seeds x 2 arms
+    400/2346 cells (128s)
+    800/2346 cells (229s)
+    1200/2346 cells (287s)
+    1600/2346 cells (346s)
+    2000/2346 cells (417s)
+  2346 cells measured, 7406 rung readings (483s)
+  112 cells have NO overlapping rung (both arms' k-name reach bands never bracket a
+  rung): these are reported as NaN, never dropped.  At N = k the reach band collapses to a
+  point (the draw must take the whole pool), which is what empties those cells.
+    empty: ASYM_B  momac  k 36 N   36 (18 window/rep cells)
+    empty: ASYM_B  tpers  k 36 N   36 (18 window/rep cells)
+    empty: ASYM_S  momac  k 36 N   36 (18 window/rep cells)
+    empty: ASYM_S  tpers  k 36 N   36 (18 window/rep cells)
+    empty: SYM     momac  k 36 N   36 (18 window/rep cells)
+    empty: SYM     momac  k 36 N   48 (1 window/rep cells)
+    empty: SYM     tpers  k 24 N   36 (1 window/rep cells)
+    empty: SYM     tpers  k 36 N   36 (18 window/rep cells)
+    empty: SYM     tpers  k 36 N   48 (2 window/rep cells)
+
+======================================================================================================================
+G3 ANCHOR - this run's full-pool cell vs idea 796's committed LIVE / BW0.500 / Q5 residual
+======================================================================================================================
+  momac  n_B 134 n_S 657 k 36 -> |resid| 0.002711  vs idea 796's 0.002711  |d| 2.78e-17
+  tpers  n_B 134 n_S 663 k 36 -> |resid| 0.001063  vs idea 796's 0.001063  |d| 1.58e-07
+G3 ANCHOR      : max |d| 1.58e-07 (bar 1e-04) -> PASS
+H_PARENT -> PASS
+
+======================================================================================================================
+SYM leg - the tuned grid.  n_B = n_S = N, so min(n_B,n_S) = N.  All 18 cells per
+          (window, char); mean over 6 sub-sample replicates, sd across them.
+======================================================================================================================
+  win  char     k    N    k/N   |resid|    sd_rep     worst  /sd(ch)  rungs
+  FULL momac   12   36  0.333   0.00899   0.00333   0.01312   0.0989   2.83
+  FULL momac   12   48  0.250   0.00847   0.00301   0.01597   0.0932   3.17
+  FULL momac   12   64  0.188   0.00643   0.00482   0.01206   0.0707   3.67
+  FULL momac   12   84  0.143   0.01502   0.00496   0.02226   0.1652   3.67
+  FULL momac   12  110  0.109   0.00857   0.00329   0.01355   0.0943   4.00
+  FULL momac   12  134  0.090   0.00587   0.00266   0.00998   0.0646   4.00
+  FULL momac   24   36  0.667   0.00335   0.00254   0.00383   0.0368   1.33
+  FULL momac   24   48  0.500   0.00665   0.00410   0.00751   0.0731   1.67
+  FULL momac   24   64  0.375   0.00782   0.00572   0.01293   0.0860   2.83
+  FULL momac   24   84  0.286   0.01003   0.00372   0.01570   0.1103   3.00
+  FULL momac   24  110  0.218   0.00595   0.00350   0.00923   0.0655   3.33
+  FULL momac   24  134  0.179   0.00616   0.00343   0.01044   0.0678   3.67
+  FULL momac   36   48  0.750   0.00670   0.00360   0.00670   0.0737   1.00
+  FULL momac   36   64  0.562   0.00755   0.00603   0.00824   0.0831   1.50
+  FULL momac   36   84  0.429   0.00865   0.00452   0.01067   0.0951   2.33
+  FULL momac   36  110  0.327   0.00845   0.00338   0.01251   0.0929   3.00
+  FULL momac   36  134  0.269   0.00493   0.00269   0.00830   0.0542   3.33
+  FULL tpers   12   36  0.333   0.00143   0.00109   0.00162   0.1110   2.17
+  FULL tpers   12   48  0.250   0.00171   0.00069   0.00228   0.1334   2.83
+  FULL tpers   12   64  0.188   0.00186   0.00054   0.00309   0.1451   3.17
+  FULL tpers   12   84  0.143   0.00139   0.00028   0.00208   0.1082   4.00
+  FULL tpers   12  110  0.109   0.00115   0.00043   0.00190   0.0896   4.00
+  FULL tpers   12  134  0.090   0.00155   0.00040   0.00238   0.1208   4.00
+  FULL tpers   24   36  0.667   0.00196   0.00156   0.00209   0.1525   1.60
+  FULL tpers   24   48  0.500   0.00182   0.00154   0.00209   0.1414   1.83
+  FULL tpers   24   64  0.375   0.00173   0.00062   0.00245   0.1347   2.17
+  FULL tpers   24   84  0.286   0.00148   0.00042   0.00206   0.1151   3.00
+  FULL tpers   24  110  0.218   0.00133   0.00040   0.00205   0.1036   3.50
+  FULL tpers   24  134  0.179   0.00132   0.00043   0.00203   0.1027   3.83
+  FULL tpers   36   48  0.750   0.00176   0.00100   0.00176   0.1370   1.20
+  FULL tpers   36   64  0.562   0.00170   0.00096   0.00209   0.1321   1.67
+  FULL tpers   36   84  0.429   0.00155   0.00066   0.00191   0.1207   2.00
+  FULL tpers   36  110  0.327   0.00147   0.00059   0.00200   0.1141   2.83
+  FULL tpers   36  134  0.269   0.00168   0.00034   0.00210   0.1311   3.00
+  IS   momac   12   36  0.333   0.01465   0.01045   0.02609   0.1264   3.00
+  IS   momac   12   48  0.250   0.00980   0.00605   0.01664   0.0845   3.00
+  IS   momac   12   64  0.188   0.01232   0.00771   0.01768   0.1063   3.67
+  IS   momac   12   84  0.143   0.01345   0.00576   0.03362   0.1160   4.17
+  IS   momac   12  110  0.109   0.01029   0.00234   0.02534   0.0888   4.67
+  IS   momac   12  134  0.090   0.01067   0.00382   0.01951   0.0920   5.00
+  IS   momac   24   36  0.667   0.01014   0.00665   0.01396   0.0875   2.00
+  IS   momac   24   48  0.500   0.01269   0.00486   0.02043   0.1095   2.83
+  IS   momac   24   64  0.375   0.01046   0.00525   0.01904   0.0903   3.00
+  IS   momac   24   84  0.286   0.00997   0.00278   0.01346   0.0861   3.00
+  IS   momac   24  110  0.218   0.00950   0.00417   0.01464   0.0820   3.33
+  IS   momac   24  134  0.179   0.00739   0.00293   0.01303   0.0637   3.67
+  IS   momac   36   48  0.750   0.01185   0.00949   0.01230   0.1022   1.17
+  IS   momac   36   64  0.562   0.00945   0.00590   0.01177   0.0815   2.33
+  IS   momac   36   84  0.429   0.01035   0.00508   0.01453   0.0893   3.00
+  IS   momac   36  110  0.327   0.00727   0.00265   0.01131   0.0628   3.00
+  IS   momac   36  134  0.269   0.00494   0.00230   0.00894   0.0426   3.17
+  IS   tpers   12   36  0.333   0.00212   0.00103   0.00318   0.1384   3.00
+  IS   tpers   12   48  0.250   0.00182   0.00096   0.00310   0.1186   2.83
+  IS   tpers   12   64  0.188   0.00172   0.00073   0.00278   0.1121   3.83
+  IS   tpers   12   84  0.143   0.00113   0.00048   0.00198   0.0737   3.83
+  IS   tpers   12  110  0.109   0.00185   0.00050   0.00298   0.1209   4.00
+  IS   tpers   12  134  0.090   0.00166   0.00042   0.00297   0.1083   4.00
+  IS   tpers   24   36  0.667   0.00189   0.00140   0.00210   0.1232   1.67
+  IS   tpers   24   48  0.500   0.00168   0.00090   0.00204   0.1092   2.00
+  IS   tpers   24   64  0.375   0.00128   0.00054   0.00187   0.0832   2.50
+  IS   tpers   24   84  0.286   0.00141   0.00089   0.00218   0.0921   3.00
+  IS   tpers   24  110  0.218   0.00132   0.00037   0.00191   0.0860   3.50
+  IS   tpers   24  134  0.179   0.00134   0.00057   0.00225   0.0876   4.00
+  IS   tpers   36   48  0.750   0.00204   0.00105   0.00204   0.1332   1.00
+  IS   tpers   36   64  0.562   0.00136   0.00096   0.00160   0.0887   1.83
+  IS   tpers   36   84  0.429   0.00113   0.00057   0.00138   0.0737   2.00
+  IS   tpers   36  110  0.327   0.00156   0.00059   0.00210   0.1015   3.00
+  IS   tpers   36  134  0.269   0.00191   0.00061   0.00285   0.1243   3.00
+  OOS  momac   12   36  0.333   0.01379   0.00485   0.02102   0.1454   2.83
+  OOS  momac   12   48  0.250   0.01685   0.00962   0.02311   0.1777   3.17
+  OOS  momac   12   64  0.188   0.01702   0.00597   0.02725   0.1795   3.67
+  OOS  momac   12   84  0.143   0.01217   0.00521   0.02446   0.1284   4.17
+  OOS  momac   12  110  0.109   0.01186   0.00371   0.02194   0.1251   4.67
+  OOS  momac   12  134  0.090   0.01367   0.00368   0.02580   0.1442   5.00
+  OOS  momac   24   36  0.667   0.01114   0.00650   0.01125   0.1175   1.33
+  OOS  momac   24   48  0.500   0.01656   0.00727   0.02023   0.1746   3.00
+  OOS  momac   24   64  0.375   0.00994   0.00458   0.01279   0.1048   3.00
+  OOS  momac   24   84  0.286   0.00754   0.00217   0.01239   0.0795   3.00
+  OOS  momac   24  110  0.218   0.01015   0.00189   0.01588   0.1070   3.17
+  OOS  momac   24  134  0.179   0.01325   0.00452   0.01883   0.1398   3.83
+  OOS  momac   36   48  0.750   0.01483   0.00968   0.01534   0.1564   1.33
+  OOS  momac   36   64  0.562   0.01214   0.00655   0.01457   0.1281   2.17
+  OOS  momac   36   84  0.429   0.00679   0.00363   0.01016   0.0716   3.00
+  OOS  momac   36  110  0.327   0.00828   0.00439   0.01263   0.0873   3.00
+  OOS  momac   36  134  0.269   0.01048   0.00484   0.01403   0.1105   3.00
+  OOS  tpers   12   36  0.333   0.00131   0.00063   0.00224   0.0953   3.00
+  OOS  tpers   12   48  0.250   0.00116   0.00038   0.00172   0.0840   3.00
+  OOS  tpers   12   64  0.188   0.00114   0.00045   0.00201   0.0827   3.83
+  OOS  tpers   12   84  0.143   0.00132   0.00036   0.00198   0.0962   4.17
+  OOS  tpers   12  110  0.109   0.00113   0.00036   0.00260   0.0818   4.67
+  OOS  tpers   12  134  0.090   0.00108   0.00037   0.00229   0.0785   5.00
+  OOS  tpers   24   36  0.667   0.00126   0.00102   0.00130   0.0913   1.50
+  OOS  tpers   24   48  0.500   0.00116   0.00036   0.00177   0.0840   2.83
+  OOS  tpers   24   64  0.375   0.00118   0.00064   0.00200   0.0855   3.00
+  OOS  tpers   24   84  0.286   0.00093   0.00041   0.00132   0.0676   3.00
+  OOS  tpers   24  110  0.218   0.00102   0.00036   0.00178   0.0743   3.33
+  OOS  tpers   24  134  0.179   0.00100   0.00037   0.00172   0.0730   4.00
+  OOS  tpers   36   48  0.750   0.00124   0.00097   0.00124   0.0902   1.00
+  OOS  tpers   36   64  0.562   0.00131   0.00082   0.00179   0.0950   2.17
+  OOS  tpers   36   84  0.429   0.00131   0.00055   0.00179   0.0949   3.00
+  OOS  tpers   36  110  0.327   0.00095   0.00016   0.00164   0.0693   3.00
+  OOS  tpers   36  134  0.269   0.00098   0.00045   0.00147   0.0709   3.00
+
+  H_LAW - |resid| monotone decreasing in N: 1/18 (window,char,k) curves; momac alone 0/9
+    NOT monotone ('FULL', 'momac', 12): 0.00899 0.00847 0.00643 0.01502 0.00857 0.00587
+    NOT monotone ('FULL', 'momac', 24): 0.00335 0.00665 0.00782 0.01003 0.00595 0.00616
+    NOT monotone ('FULL', 'momac', 36): 0.00670 0.00755 0.00865 0.00845 0.00493
+    NOT monotone ('FULL', 'tpers', 12): 0.00143 0.00171 0.00186 0.00139 0.00115 0.00155
+    NOT monotone ('FULL', 'tpers', 36): 0.00176 0.00170 0.00155 0.00147 0.00168
+    NOT monotone ('IS', 'momac', 12): 0.01465 0.00980 0.01232 0.01345 0.01029 0.01067
+    NOT monotone ('IS', 'momac', 24): 0.01014 0.01269 0.01046 0.00997 0.00950 0.00739
+    NOT monotone ('IS', 'momac', 36): 0.01185 0.00945 0.01035 0.00727 0.00494
+    NOT monotone ('IS', 'tpers', 12): 0.00212 0.00182 0.00172 0.00113 0.00185 0.00166
+    NOT monotone ('IS', 'tpers', 24): 0.00189 0.00168 0.00128 0.00141 0.00132 0.00134
+    NOT monotone ('IS', 'tpers', 36): 0.00204 0.00136 0.00113 0.00156 0.00191
+    NOT monotone ('OOS', 'momac', 12): 0.01379 0.01685 0.01702 0.01217 0.01186 0.01367
+    NOT monotone ('OOS', 'momac', 24): 0.01114 0.01656 0.00994 0.00754 0.01015 0.01325
+    NOT monotone ('OOS', 'momac', 36): 0.01483 0.01214 0.00679 0.00828 0.01048
+    NOT monotone ('OOS', 'tpers', 12): 0.00131 0.00116 0.00114 0.00132 0.00113 0.00108
+    NOT monotone ('OOS', 'tpers', 24): 0.00126 0.00116 0.00118 0.00093 0.00102 0.00100
+    NOT monotone ('OOS', 'tpers', 36): 0.00124 0.00131 0.00131 0.00095 0.00098
+  endpoint ratio |resid|(N=min) / |resid|(N=max) per curve:
+    FULL momac  k 12: 0.00899 (N=36) -> 0.00587 (N=134) =   1.53x
+    FULL momac  k 24: 0.00335 (N=36) -> 0.00616 (N=134) =   0.54x
+    FULL momac  k 36: 0.00670 (N=48) -> 0.00493 (N=134) =   1.36x
+    FULL tpers  k 12: 0.00143 (N=36) -> 0.00155 (N=134) =   0.92x
+    FULL tpers  k 24: 0.00196 (N=36) -> 0.00132 (N=134) =   1.49x
+    FULL tpers  k 36: 0.00176 (N=48) -> 0.00168 (N=134) =   1.05x
+    IS   momac  k 12: 0.01465 (N=36) -> 0.01067 (N=134) =   1.37x
+    IS   momac  k 24: 0.01014 (N=36) -> 0.00739 (N=134) =   1.37x
+    IS   momac  k 36: 0.01185 (N=48) -> 0.00494 (N=134) =   2.40x
+    IS   tpers  k 12: 0.00212 (N=36) -> 0.00166 (N=134) =   1.28x
+    IS   tpers  k 24: 0.00189 (N=36) -> 0.00134 (N=134) =   1.41x
+    IS   tpers  k 36: 0.00204 (N=48) -> 0.00191 (N=134) =   1.07x
+    OOS  momac  k 12: 0.01379 (N=36) -> 0.01367 (N=134) =   1.01x
+    OOS  momac  k 24: 0.01114 (N=36) -> 0.01325 (N=134) =   0.84x
+    OOS  momac  k 36: 0.01483 (N=48) -> 0.01048 (N=134) =   1.42x
+    OOS  tpers  k 12: 0.00131 (N=36) -> 0.00108 (N=134) =   1.21x
+    OOS  tpers  k 24: 0.00126 (N=36) -> 0.00100 (N=134) =   1.25x
+    OOS  tpers  k 36: 0.00124 (N=48) -> 0.00098 (N=134) =   1.27x
+  H_LAW -> FAIL (judged as pre-registered: momac, the question
+    variable, mean over EVERY overlapping rung)
+
+----------------------------------------------------------------------------------------------------------------------
+WHY the rung count moves with N (added AFTER the pilot exposed it; reported, not re-judged):
+  the k-name REACH band [mean of k lowest, mean of k highest] WIDENS as the pool grows, so a
+  bigger pool unlocks HARDER rungs.  The all-rung mean above is therefore taken over a
+  DIFFERENT rung set at each N.  The COMMON-RUNG ladder below fixes the rung set to those
+  feasible at EVERY N on the curve, which is the like-for-like density comparison.
+  win  char     k    N  reachW_B  reachW_S  rungs
+  FULL momac   12   36    0.0756    0.1247   2.83
+  FULL momac   12   48    0.0856    0.1735   3.17
+  FULL momac   12   64    0.0967    0.1717   3.67
+  FULL momac   12   84    0.1069    0.1778   3.67
+  FULL momac   12  110    0.1188    0.2442   4.00
+  FULL momac   12  134    0.1238    0.3209   4.00
+  FULL momac   24   36    0.0378    0.0623   1.33
+  FULL momac   24   48    0.0526    0.1016   1.67
+  FULL momac   24   64    0.0661    0.1120   2.83
+  FULL momac   24   84    0.0786    0.1237   3.00
+  FULL momac   24  110    0.0941    0.1619   3.33
+  FULL momac   24  134    0.1009    0.2097   3.67
+  FULL momac   36   48    0.0290    0.0548   1.00
+  FULL momac   36   64    0.0457    0.0770   1.50
+  FULL momac   36   84    0.0593    0.0922   2.33
+  FULL momac   36  110    0.0757    0.1237   3.00
+  FULL momac   36  134    0.0836    0.1624   3.33
+  FULL tpers   12   36    0.0166    0.0246   2.17
+  FULL tpers   12   48    0.0183    0.0282   2.83
+  FULL tpers   12   64    0.0208    0.0335   3.17
+  FULL tpers   12   84    0.0236    0.0400   4.00
+  FULL tpers   12  110    0.0251    0.0449   4.00
+  FULL tpers   12  134    0.0266    0.0523   4.00
+  FULL tpers   24   36    0.0084    0.0119   1.60
+  FULL tpers   24   48    0.0118    0.0171   1.83
+  FULL tpers   24   64    0.0149    0.0225   2.17
+  FULL tpers   24   84    0.0182    0.0285   3.00
+  FULL tpers   24  110    0.0203    0.0334   3.50
+  FULL tpers   24  134    0.0220    0.0380   3.83
+  FULL tpers   36   48    0.0062    0.0099   1.20
+  FULL tpers   36   64    0.0104    0.0155   1.67
+  FULL tpers   36   84    0.0142    0.0213   2.00
+  FULL tpers   36  110    0.0168    0.0265   2.83
+  FULL tpers   36  134    0.0188    0.0304   3.00
+
+  FULL momac  k 12: 4 common rung(s) 0.8490 0.8744 0.8919 0.9166  ->  |resid| by N N36:0.00906 N48:0.00869 N64:0.00678 N84:0.01532 N110:0.00857 N134:0.00587  monotone False
+  FULL momac  k 24: 2 common rung(s) 0.8744 0.8919  ->  |resid| by N N36:0.00363 N48:0.00568 N64:0.00735 N84:0.00928 N110:0.00607 N134:0.00573  monotone False
+  FULL momac  k 36: 1 common rung(s) 0.8744  ->  |resid| by N N48:0.00670 N64:0.00686 N84:0.00966 N110:0.00837 N134:0.00434  monotone False
+  FULL tpers  k 12: 3 common rung(s) 0.9599 0.9654 0.9702  ->  |resid| by N N36:0.00120 N48:0.00167 N64:0.00194 N84:0.00151 N110:0.00134 N134:0.00178  monotone False
+  FULL tpers  k 24: 2 common rung(s) 0.9654 0.9702  ->  |resid| by N N36:0.00154 N48:0.00158 N64:0.00181 N84:0.00133 N110:0.00124 N134:0.00136  monotone False
+  FULL tpers  k 36: 2 common rung(s) 0.9654 0.9702  ->  |resid| by N N48:0.00172 N64:0.00167 N84:0.00155 N110:0.00130 N134:0.00165  monotone False
+  IS   momac  k 12: 3 common rung(s) 0.8095 0.8497 0.8813  ->  |resid| by N N36:0.01465 N48:0.00980 N64:0.01158 N84:0.01260 N110:0.00662 N134:0.00925  monotone False
+  IS   momac  k 24: 3 common rung(s) 0.8095 0.8497 0.8813  ->  |resid| by N N36:0.01109 N48:0.01255 N64:0.01046 N84:0.00997 N110:0.00923 N134:0.00849  monotone False
+  IS   momac  k 36: 2 common rung(s) 0.8095 0.8497  ->  |resid| by N N48:0.01213 N64:0.00937 N84:0.01196 N110:0.00672 N134:0.00465  monotone False
+  IS   tpers  k 12: 3 common rung(s) 0.9590 0.9667 0.9738  ->  |resid| by N N36:0.00212 N48:0.00172 N64:0.00177 N84:0.00120 N110:0.00193 N134:0.00191  monotone False
+  IS   tpers  k 24: 2 common rung(s) 0.9667 0.9738  ->  |resid| by N N36:0.00181 N48:0.00156 N64:0.00110 N84:0.00127 N110:0.00110 N134:0.00124  monotone False
+  IS   tpers  k 36: 1 common rung(s) 0.9667  ->  |resid| by N N48:0.00204 N64:0.00160 N84:0.00109 N110:0.00141 N134:0.00200  monotone False
+  OOS  momac  k 12: 3 common rung(s) 0.8465 0.8747 0.8964  ->  |resid| by N N36:0.01351 N48:0.01649 N64:0.01657 N84:0.01207 N110:0.00974 N134:0.01259  monotone False
+  OOS  momac  k 24: 3 common rung(s) 0.8465 0.8747 0.8964  ->  |resid| by N N36:0.01153 N48:0.01656 N64:0.00994 N84:0.00754 N110:0.01007 N134:0.01216  monotone False
+  OOS  momac  k 36: 2 common rung(s) 0.8465 0.8747  ->  |resid| by N N48:0.01542 N64:0.00934 N84:0.00548 N110:0.00687 N134:0.01004  monotone False
+  OOS  tpers  k 12: 3 common rung(s) 0.9588 0.9651 0.9704  ->  |resid| by N N36:0.00131 N48:0.00116 N64:0.00093 N84:0.00136 N110:0.00114 N134:0.00107  monotone False
+  OOS  tpers  k 24: 2 common rung(s) 0.9651 0.9704  ->  |resid| by N N36:0.00115 N48:0.00121 N64:0.00108 N84:0.00080 N110:0.00108 N134:0.00089  monotone False
+  OOS  tpers  k 36: 1 common rung(s) 0.9651  ->  |resid| by N N48:0.00124 N64:0.00124 N84:0.00141 N110:0.00091 N134:0.00113  monotone False
+  COMMON-RUNG monotonicity: 0/18 curves; momac 0/9
+    endpoint FULL momac  k 12: 0.00906 (N=36) -> 0.00587 (N=134) = 1.54x
+    endpoint FULL momac  k 24: 0.00363 (N=36) -> 0.00573 (N=134) = 0.63x
+    endpoint FULL momac  k 36: 0.00670 (N=48) -> 0.00434 (N=134) = 1.55x
+    endpoint FULL tpers  k 12: 0.00120 (N=36) -> 0.00178 (N=134) = 0.67x
+    endpoint FULL tpers  k 24: 0.00154 (N=36) -> 0.00136 (N=134) = 1.13x
+    endpoint FULL tpers  k 36: 0.00172 (N=48) -> 0.00165 (N=134) = 1.04x
+    endpoint IS   momac  k 12: 0.01465 (N=36) -> 0.00925 (N=134) = 1.58x
+    endpoint IS   momac  k 24: 0.01109 (N=36) -> 0.00849 (N=134) = 1.31x
+    endpoint IS   momac  k 36: 0.01213 (N=48) -> 0.00465 (N=134) = 2.61x
+    endpoint IS   tpers  k 12: 0.00212 (N=36) -> 0.00191 (N=134) = 1.11x
+    endpoint IS   tpers  k 24: 0.00181 (N=36) -> 0.00124 (N=134) = 1.46x
+    endpoint IS   tpers  k 36: 0.00204 (N=48) -> 0.00200 (N=134) = 1.02x
+    endpoint OOS  momac  k 12: 0.01351 (N=36) -> 0.01259 (N=134) = 1.07x
+    endpoint OOS  momac  k 24: 0.01153 (N=36) -> 0.01216 (N=134) = 0.95x
+    endpoint OOS  momac  k 36: 0.01542 (N=48) -> 0.01004 (N=134) = 1.54x
+    endpoint OOS  tpers  k 12: 0.00131 (N=36) -> 0.00107 (N=134) = 1.23x
+    endpoint OOS  tpers  k 24: 0.00115 (N=36) -> 0.00089 (N=134) = 1.29x
+    endpoint OOS  tpers  k 36: 0.00124 (N=48) -> 0.00113 (N=134) = 1.09x
+  H_LAW on the common-rung ladder (momac) -> FAIL
+
+======================================================================================================================
+H_RATIO - is the governing variable the DRAW FRACTION k/N?  log|resid| = a + b log(k/N)
+======================================================================================================================
+  FULL momac  pooled(18) on k/N: slope -0.142 R2 0.071   |   on 1/N alone: slope -0.049 R2 0.005
+       k=12 only (6 pts): slope +0.115 R2 0.030  C=0.0104
+       k=24 only (6 pts): slope -0.340 R2 0.216  C=0.0044
+       k=36 only (5 pts): slope +0.160 R2 0.082  C=0.0081
+  FULL tpers  pooled(18) on k/N: slope +0.145 R2 0.383   |   on 1/N alone: slope +0.185 R2 0.339
+       k=12 only (6 pts): slope +0.118 R2 0.120  C=0.0019
+       k=24 only (6 pts): slope +0.330 R2 0.967  C=0.0023
+       k=36 only (5 pts): slope +0.100 R2 0.301  C=0.0018
+  IS   momac  pooled(18) on k/N: slope +0.020 R2 0.002   |   on 1/N alone: slope +0.350 R2 0.373
+       k=12 only (6 pts): slope +0.144 R2 0.202  C=0.0152
+       k=24 only (6 pts): slope +0.258 R2 0.543  C=0.0131
+       k=36 only (5 pts): slope +0.756 R2 0.808  C=0.0157
+  IS   tpers  pooled(18) on k/N: slope +0.044 R2 0.018   |   on 1/N alone: slope +0.175 R2 0.154
+       k=12 only (6 pts): slope +0.179 R2 0.175  C=0.0023
+       k=24 only (6 pts): slope +0.255 R2 0.667  C=0.0019
+       k=36 only (5 pts): slope +0.030 R2 0.003  C=0.0016
+  OOS  momac  pooled(18) on k/N: slope -0.054 R2 0.014   |   on 1/N alone: slope +0.228 R2 0.141
+       k=12 only (6 pts): slope +0.155 R2 0.251  C=0.0186
+       k=24 only (6 pts): slope +0.112 R2 0.043  C=0.0125
+       k=36 only (5 pts): slope +0.446 R2 0.354  C=0.0146
+  OOS  tpers  pooled(18) on k/N: slope +0.066 R2 0.115   |   on 1/N alone: slope +0.170 R2 0.417
+       k=12 only (6 pts): slope +0.094 R2 0.309  C=0.0014
+       k=24 only (6 pts): slope +0.188 R2 0.672  C=0.0013
+       k=36 only (5 pts): slope +0.303 R2 0.620  C=0.0015
+  H_RATIO -> FAIL (momac/FULL pooled fit on k/N: slope -0.142, R2 0.071; bar R2>=0.70 and slope>0)
+
+======================================================================================================================
+H_THIN vs H_FAT - which arm's size moves the residual?
+======================================================================================================================
+  ASYM_S: n_B held at the FULL big arm, only the (already fat) small arm moves
+  (columns are the requested n_S, each capped at that window/char's usable small arm, so the
+   last column is the FULL arm and a request above it never appears under a bigger label)
+  FULL momac   12 n36:0.00791 n48:0.00794 n64:0.00754 n84:0.00949 n110:0.00856 n134:0.00932 n200:0.00729 n330:0.00739 n500:0.00888 n657:0.00596
+  FULL momac   24 n36:0.00755 n48:0.00644 n64:0.00728 n84:0.00858 n110:0.00570 n134:0.00621 n200:0.00671 n330:0.00724 n500:0.00694 n657:0.00642
+  FULL momac   36 n48:0.00584 n64:0.00579 n84:0.00761 n110:0.00740 n134:0.00612 n200:0.00484 n330:0.00650 n500:0.00694 n657:0.00690
+  FULL tpers   12 n36:0.00153 n48:0.00154 n64:0.00124 n84:0.00105 n110:0.00107 n134:0.00140 n200:0.00110 n330:0.00099 n500:0.00126 n663:0.00113
+  FULL tpers   24 n36:0.00150 n48:0.00159 n64:0.00138 n84:0.00139 n110:0.00120 n134:0.00146 n200:0.00117 n330:0.00126 n500:0.00120 n663:0.00114
+  FULL tpers   36 n48:0.00187 n64:0.00143 n84:0.00174 n110:0.00157 n134:0.00172 n200:0.00147 n330:0.00154 n500:0.00165 n663:0.00158
+  IS   momac   12 n36:0.01429 n48:0.01733 n64:0.01200 n84:0.01398 n110:0.01174 n134:0.01083 n200:0.01315 n330:0.01205 n465:0.01104
+  IS   momac   24 n36:0.01103 n48:0.00973 n64:0.01158 n84:0.01075 n110:0.01101 n134:0.00492 n200:0.00610 n330:0.00751 n465:0.00823
+  IS   momac   36 n48:0.01088 n64:0.00964 n84:0.00812 n110:0.00598 n134:0.00495 n200:0.00631 n330:0.00559 n465:0.00635
+  IS   tpers   12 n36:0.00146 n48:0.00176 n64:0.00122 n84:0.00139 n110:0.00150 n134:0.00153 n200:0.00103 n330:0.00124 n467:0.00129
+  IS   tpers   24 n36:0.00109 n48:0.00175 n64:0.00151 n84:0.00128 n110:0.00136 n134:0.00140 n200:0.00115 n330:0.00126 n467:0.00146
+  IS   tpers   36 n48:0.00181 n64:0.00179 n84:0.00169 n110:0.00168 n134:0.00224 n200:0.00164 n330:0.00187 n467:0.00170
+  OOS  momac   12 n36:0.01337 n48:0.01456 n64:0.01051 n84:0.01231 n110:0.01158 n134:0.01288 n200:0.01370 n330:0.01169 n500:0.01154 n657:0.01260
+  OOS  momac   24 n36:0.01138 n48:0.01645 n64:0.01260 n84:0.00931 n110:0.01116 n134:0.01096 n200:0.01303 n330:0.01092 n500:0.00969 n657:0.01076
+  OOS  momac   36 n48:0.01615 n64:0.01377 n84:0.00734 n110:0.00913 n134:0.01154 n200:0.01119 n330:0.01122 n500:0.00950 n657:0.01106
+  OOS  tpers   12 n36:0.00103 n48:0.00104 n64:0.00155 n84:0.00088 n110:0.00120 n134:0.00118 n200:0.00115 n330:0.00077 n500:0.00095 n663:0.00111
+  OOS  tpers   24 n36:0.00101 n48:0.00104 n64:0.00141 n84:0.00082 n110:0.00077 n134:0.00075 n200:0.00080 n330:0.00075 n500:0.00076 n663:0.00082
+  OOS  tpers   36 n48:0.00110 n64:0.00127 n84:0.00095 n110:0.00090 n134:0.00091 n200:0.00113 n330:0.00097 n500:0.00081 n663:0.00093
+
+  ASYM_B: n_S held at the FULL small arm, only the thin big arm moves
+  (n_B capped at that window/char's usable big arm - 134 on FULL, 130/131 on IS)
+  FULL momac   12 n36:0.00892 n48:0.00808 n64:0.00948 n84:0.01153 n110:0.01039 n134:0.00823
+  FULL momac   24 n36:0.00513 n48:0.00628 n64:0.00671 n84:0.00768 n110:0.00834 n134:0.00661
+  FULL momac   36 n48:0.00660 n64:0.00630 n84:0.00592 n110:0.00752 n134:0.00619
+  FULL tpers   12 n36:0.00185 n48:0.00143 n64:0.00178 n84:0.00146 n110:0.00119 n134:0.00142
+  FULL tpers   24 n36:0.00159 n48:0.00090 n64:0.00136 n84:0.00141 n110:0.00119 n134:0.00113
+  FULL tpers   36 n48:0.00070 n64:0.00156 n84:0.00137 n110:0.00140 n134:0.00158
+  IS   momac   12 n36:0.01127 n48:0.01274 n64:0.01222 n84:0.00834 n110:0.01332 n130:0.00921
+  IS   momac   24 n36:0.00732 n48:0.00915 n64:0.00779 n84:0.00571 n110:0.00642 n130:0.00654
+  IS   momac   36 n48:0.01058 n64:0.00763 n84:0.00511 n110:0.00689 n130:0.00613
+  IS   tpers   12 n36:0.00158 n48:0.00137 n64:0.00154 n84:0.00123 n110:0.00136 n131:0.00124
+  IS   tpers   24 n36:0.00165 n48:0.00121 n64:0.00116 n84:0.00176 n110:0.00138 n131:0.00129
+  IS   tpers   36 n48:0.00129 n64:0.00106 n84:0.00094 n110:0.00133 n131:0.00151
+  OOS  momac   12 n36:0.01240 n48:0.01353 n64:0.01581 n84:0.01248 n110:0.01479 n134:0.01397
+  OOS  momac   24 n36:0.01581 n48:0.01249 n64:0.01304 n84:0.01202 n110:0.01272 n134:0.01414
+  OOS  momac   36 n48:0.00871 n64:0.01019 n84:0.00860 n110:0.00993 n134:0.00955
+  OOS  tpers   12 n36:0.00141 n48:0.00115 n64:0.00097 n84:0.00102 n110:0.00113 n134:0.00091
+  OOS  tpers   24 n36:0.00123 n48:0.00111 n64:0.00092 n84:0.00128 n110:0.00102 n134:0.00095
+  OOS  tpers   36 n48:0.00099 n64:0.00066 n84:0.00142 n110:0.00104 n134:0.00094
+
+  fat-arm test: n_S from the thin arm's size to the full small arm, n_B fixed
+    FULL momac  k 12: n_S 134 -> 657 moves |resid| 0.00932 -> 0.00596 (0.00336); replicate sd 0.00301 -> MOVES
+    FULL momac  k 24: n_S 134 -> 657 moves |resid| 0.00621 -> 0.00642 (0.00020); replicate sd 0.00334 -> FLAT
+    FULL momac  k 36: n_S 134 -> 657 moves |resid| 0.00612 -> 0.00690 (0.00078); replicate sd 0.00313 -> FLAT
+    FULL tpers  k 12: n_S 134 -> 663 moves |resid| 0.00140 -> 0.00113 (0.00027); replicate sd 0.00040 -> FLAT
+    FULL tpers  k 24: n_S 134 -> 663 moves |resid| 0.00146 -> 0.00114 (0.00032); replicate sd 0.00059 -> FLAT
+    FULL tpers  k 36: n_S 134 -> 663 moves |resid| 0.00172 -> 0.00158 (0.00015); replicate sd 0.00036 -> FLAT
+    IS   momac  k 12: n_S 134 -> 465 moves |resid| 0.01083 -> 0.01104 (0.00020); replicate sd 0.00299 -> FLAT
+    IS   momac  k 24: n_S 134 -> 465 moves |resid| 0.00492 -> 0.00823 (0.00331); replicate sd 0.00267 -> MOVES
+    IS   momac  k 36: n_S 134 -> 465 moves |resid| 0.00495 -> 0.00635 (0.00140); replicate sd 0.00308 -> FLAT
+    IS   tpers  k 12: n_S 134 -> 467 moves |resid| 0.00153 -> 0.00129 (0.00024); replicate sd 0.00066 -> FLAT
+    IS   tpers  k 24: n_S 134 -> 467 moves |resid| 0.00140 -> 0.00146 (0.00006); replicate sd 0.00049 -> FLAT
+    IS   tpers  k 36: n_S 134 -> 467 moves |resid| 0.00224 -> 0.00170 (0.00054); replicate sd 0.00067 -> FLAT
+    OOS  momac  k 12: n_S 134 -> 657 moves |resid| 0.01288 -> 0.01260 (0.00027); replicate sd 0.00477 -> FLAT
+    OOS  momac  k 24: n_S 134 -> 657 moves |resid| 0.01096 -> 0.01076 (0.00020); replicate sd 0.00246 -> FLAT
+    OOS  momac  k 36: n_S 134 -> 657 moves |resid| 0.01154 -> 0.01106 (0.00048); replicate sd 0.00395 -> FLAT
+    OOS  tpers  k 12: n_S 134 -> 663 moves |resid| 0.00118 -> 0.00111 (0.00007); replicate sd 0.00026 -> FLAT
+    OOS  tpers  k 24: n_S 134 -> 663 moves |resid| 0.00075 -> 0.00082 (0.00007); replicate sd 0.00037 -> FLAT
+    OOS  tpers  k 36: n_S 134 -> 663 moves |resid| 0.00091 -> 0.00093 (0.00002); replicate sd 0.00047 -> FLAT
+  H_THIN -> FAIL (16/18 curves flat past the thin arm);  H_FAT -> PASS
+
+  THIN-ARM test (the symmetric leg H_THIN needs but did not state): n_B moves, n_S full
+    FULL momac  k 12: n_B 36 -> 134 moves |resid| 0.00892 -> 0.00823 (0.00069); replicate sd 0.00332 -> FLAT
+    FULL momac  k 24: n_B 36 -> 134 moves |resid| 0.00513 -> 0.00661 (0.00148); replicate sd 0.00349 -> FLAT
+    FULL momac  k 36: n_B 48 -> 134 moves |resid| 0.00660 -> 0.00619 (0.00042); replicate sd 0.00567 -> FLAT
+    FULL tpers  k 12: n_B 36 -> 134 moves |resid| 0.00185 -> 0.00142 (0.00043); replicate sd 0.00079 -> FLAT
+    FULL tpers  k 24: n_B 36 -> 134 moves |resid| 0.00159 -> 0.00113 (0.00046); replicate sd 0.00077 -> FLAT
+    FULL tpers  k 36: n_B 48 -> 134 moves |resid| 0.00070 -> 0.00158 (0.00089); replicate sd 0.00050 -> MOVES
+    IS   momac  k 12: n_B 36 -> 130 moves |resid| 0.01127 -> 0.00921 (0.00207); replicate sd 0.00625 -> FLAT
+    IS   momac  k 24: n_B 36 -> 130 moves |resid| 0.00732 -> 0.00654 (0.00078); replicate sd 0.00626 -> FLAT
+    IS   momac  k 36: n_B 48 -> 130 moves |resid| 0.01058 -> 0.00613 (0.00445); replicate sd 0.00511 -> FLAT
+    IS   tpers  k 12: n_B 36 -> 131 moves |resid| 0.00158 -> 0.00124 (0.00033); replicate sd 0.00032 -> MOVES
+    IS   tpers  k 24: n_B 36 -> 131 moves |resid| 0.00165 -> 0.00129 (0.00036); replicate sd 0.00108 -> FLAT
+    IS   tpers  k 36: n_B 48 -> 131 moves |resid| 0.00129 -> 0.00151 (0.00022); replicate sd 0.00118 -> FLAT
+    OOS  momac  k 12: n_B 36 -> 134 moves |resid| 0.01240 -> 0.01397 (0.00157); replicate sd 0.00560 -> FLAT
+    OOS  momac  k 24: n_B 36 -> 134 moves |resid| 0.01581 -> 0.01414 (0.00167); replicate sd 0.00817 -> FLAT
+    OOS  momac  k 36: n_B 48 -> 134 moves |resid| 0.00871 -> 0.00955 (0.00084); replicate sd 0.00527 -> FLAT
+    OOS  tpers  k 12: n_B 36 -> 134 moves |resid| 0.00141 -> 0.00091 (0.00050); replicate sd 0.00051 -> FLAT
+    OOS  tpers  k 24: n_B 36 -> 134 moves |resid| 0.00123 -> 0.00095 (0.00028); replicate sd 0.00054 -> FLAT
+    OOS  tpers  k 36: n_B 48 -> 134 moves |resid| 0.00099 -> 0.00094 (0.00005); replicate sd 0.00058 -> FLAT
+  thin arm FLAT in 16/18 curves, fat arm FLAT in 16/18
+  STATED AFTER THE FACT, not pre-registered: if the residual is flat in BOTH arms over this
+  range then there is no pool-size law of either kind - min(n_B,n_S) does not govern it and
+  neither does max.  -> THAT IS WHAT IS MEASURED
+
+  NOISE DOMINANCE: median replicate sd / |resid| over the 102 SYM cells = 0.43
+    FULL momac : |resid| spans 0.00335..0.01502 (range 0.01167) across the whole N x k grid; mean replicate sd 0.00384 = 0.33x the range
+    FULL tpers : |resid| spans 0.00115..0.00196 (range 0.00081) across the whole N x k grid; mean replicate sd 0.00070 = 0.87x the range
+    IS   momac : |resid| spans 0.00494..0.01465 (range 0.00970) across the whole N x k grid; mean replicate sd 0.00519 = 0.53x the range
+    IS   tpers : |resid| spans 0.00113..0.00212 (range 0.00099) across the whole N x k grid; mean replicate sd 0.00074 = 0.75x the range
+    OOS  momac : |resid| spans 0.00679..0.01702 (range 0.01023) across the whole N x k grid; mean replicate sd 0.00524 = 0.51x the range
+    OOS  tpers : |resid| spans 0.00093..0.00132 (range 0.00039) across the whole N x k grid; mean replicate sd 0.00051 = 1.29x the range
+
+----------------------------------------------------------------------------------------------------------------------
+THE ANCHOR IN ITS OWN SAMPLING DISTRIBUTION
+  At n_S >= the usable small arm the sub-sample IS the full pool, so the replicates at that
+  column differ ONLY in the draw's seed key: they are a resampling distribution of idea
+  796's own statistic, on its own data, with nothing changed but the random draw.
+  momac  k=36, n_B=134, n_S=657: committed 0.00271; 6 re-draws give mean 0.00690 sd 0.00123, range 0.00535..0.00874; 0/6 re-draws land below the committed value
+         -> the committed value is 0.39x the mean of its own resampling distribution, i.e. +3.41 sd from it
+  tpers  k=36, n_B=134, n_S=663: committed 0.00106; 6 re-draws give mean 0.00158 sd 0.00013, range 0.00141..0.00174; 0/6 re-draws land below the committed value
+         -> the committed value is 0.67x the mean of its own resampling distribution, i.e. +3.94 sd from it
+  The six ASYM_S replicates above are only six.  40 more re-draws of the SAME
+  cell follow, so the committed value's position is a rank in a real distribution and not an
+  sd distance estimated off six points.  Nothing changes between them but the draw key.
+  momac  40 re-draws: mean 0.00682 sd 0.00187 median 0.00677 p05 0.00468 range 0.00228..0.01106
+         committed 0.00271 -> 1/40 re-draws below it (2.5%), 0.40x the mean, -2.20 sd
+  tpers  40 re-draws: mean 0.00149 sd 0.00025 median 0.00153 p05 0.00116 range 0.00104..0.00199
+         committed 0.00106 -> 1/40 re-draws below it (2.5%), 0.71x the mean, -1.71 sd
+
+======================================================================================================================
+H_REEST - was idea 796's 5x DENSITY, or CHARACTERISTIC RE-ESTIMATION?
+======================================================================================================================
+  REEST repeats the SYM leg with the characteristic, the rungs and the bandwidth recomputed
+  ON THE SUB-SAMPLED POOL - which is what idea 796's 430->663 vintage change actually did.
+  win     N  |resid| FROZEN  |resid| REEST   ratio  sd(ch) full  sd(ch) sub
+  FULL   48         0.00670        0.00084    0.12       0.0909      0.0519
+  FULL   64         0.00755        0.00397    0.53       0.0909      0.0637
+  FULL   84         0.00865        0.00707    0.82       0.0909      0.0593
+  FULL  110         0.00845        0.00795    0.94       0.0909      0.0699
+  FULL  134         0.00493        0.00521    1.06       0.0909      0.0873
+  IS     48         0.01185        0.00831    0.70       0.1159      0.1122
+  IS     64         0.00945        0.00886    0.94       0.1159      0.1167
+  IS     84         0.01035        0.01131    1.09       0.1159      0.1065
+  IS    110         0.00727        0.00988    1.36       0.1159      0.1063
+  IS    134         0.00494        0.00852    1.72       0.1159      0.1063
+  OOS    48         0.01483        0.01316    0.89       0.0948      0.1012
+  OOS    64         0.01214        0.01064    0.88       0.0948      0.0619
+  OOS    84         0.00679        0.00803    1.18       0.0948      0.0716
+  OOS   110         0.00828        0.00682    0.82       0.0948      0.0989
+  OOS   134         0.01048        0.00801    0.76       0.0948      0.0695
+  FULL window, momac, k=36: span across N is 1.75x with the characteristic FROZEN and 9.49x when it is RE-ESTIMATED
+  H_REEST -> PASS (re-estimation moves |resid| MORE than density alone)
+
+======================================================================================================================
+H_ENTITLE - the entitlement table.  What |resid| is a matched-level claim ENTITLED to?
+======================================================================================================================
+  FULL window, SYM leg, frozen characteristic; mean / p90 / max over 6 replicates
+  char     k    N      mean       p90       max  worstRung
+  momac   12   36   0.00899   0.01223   0.01332    0.01903
+  momac   12   48   0.00847   0.01180   0.01268    0.02191
+  momac   12   64   0.00643   0.01191   0.01436    0.02523
+  momac   12   84   0.01502   0.01833   0.01896    0.03182
+  momac   12  110   0.00857   0.01165   0.01241    0.01890
+  momac   12  134   0.00587   0.00864   0.01099    0.02497
+  momac   24   36   0.00335   0.00613   0.00626    0.00626
+  momac   24   48   0.00665   0.01149   0.01366    0.01366
+  momac   24   64   0.00782   0.01491   0.01552    0.02857
+  momac   24   84   0.01003   0.01394   0.01540    0.02107
+  momac   24  110   0.00595   0.00963   0.00974    0.01700
+  momac   24  134   0.00616   0.00904   0.00934    0.01566
+  momac   36   48   0.00670   0.00966   0.00987    0.00987
+  momac   36   64   0.00755   0.01402   0.01815    0.01913
+  momac   36   84   0.00865   0.01355   0.01492    0.01585
+  momac   36  110   0.00845   0.01142   0.01244    0.01751
+  momac   36  134   0.00493   0.00766   0.00945    0.01227
+  tpers   12   36   0.00143   0.00256   0.00282    0.00282
+  tpers   12   48   0.00171   0.00248   0.00249    0.00322
+  tpers   12   64   0.00186   0.00244   0.00274    0.00459
+  tpers   12   84   0.00139   0.00169   0.00188    0.00254
+  tpers   12  110   0.00115   0.00162   0.00180    0.00331
+  tpers   12  134   0.00155   0.00193   0.00197    0.00354
+  tpers   24   36   0.00196   0.00370   0.00395    0.00395
+  tpers   24   48   0.00182   0.00352   0.00442    0.00442
+  tpers   24   64   0.00173   0.00251   0.00257    0.00312
+  tpers   24   84   0.00148   0.00194   0.00196    0.00277
+  tpers   24  110   0.00133   0.00174   0.00200    0.00290
+  tpers   24  134   0.00132   0.00179   0.00211    0.00269
+  tpers   36   48   0.00176   0.00284   0.00307    0.00307
+  tpers   36   64   0.00170   0.00280   0.00303    0.00320
+  tpers   36   84   0.00155   0.00210   0.00214    0.00281
+  tpers   36  110   0.00147   0.00204   0.00215    0.00280
+  tpers   36  134   0.00168   0.00202   0.00208    0.00262
+  the record's working cell (momac, k=36, N=134): entitled |resid| mean 0.00493, p90 0.00766
+  the record's tightest published residuals: tpers 0.0017 (idea 571), volpers 0.0007 (idea 798)
+  H_ENTITLE -> PASS
+
+======================================================================================================================
+RULE 8 / WF-A - the law rebuilt inside each window; the IS exponent PREDICTS the OOS cells
+======================================================================================================================
+  momac  IS fit  slope +0.020 R2 0.002   ->  OOS cells: mean |log ratio| 0.264, median pred/actual 0.83x
+  momac  OOS own slope -0.054 R2 0.014;  FULL slope -0.142 R2 0.071
+  tpers  IS fit  slope +0.044 R2 0.018   ->  OOS cells: mean |log ratio| 0.324, median pred/actual 1.35x
+  tpers  OOS own slope +0.066 R2 0.115;  FULL slope +0.145 R2 0.383
+  H_LAW / H_THIN by window (momac):
+    FULL: monotone in N 0/3 k-curves; fat-arm FLAT 2/3
+    IS  : monotone in N 0/3 k-curves; fat-arm FLAT 2/3
+    OOS : monotone in N 0/3 k-curves; fat-arm FLAT 3/3
+
+======================================================================================================================
+BOOKS - the ladder read as a trading instruction, at every one of the 18 tuned cells
+======================================================================================================================
+  2484 draws x 2 arms x 3 gross x 2 cadence = 29808 books
+    300/2484 draws (694s)
+    600/2484 draws (805s)
+    900/2484 draws (908s)
+    1200/2484 draws (1025s)
+    1500/2484 draws (1149s)
+    1800/2484 draws (1272s)
+    2100/2484 draws (1414s)
+    2400/2484 draws (1558s)
+  29808 books (1599s)
+
+  KEEP paths per tuned cell (4a vs RULES v2 on the drawn panel; 4b vs SPY)
+    k    N  books    4a    4b  BOTH  bestSh top fail4b legs             
+   12   36   1800    50    73     2   1.314 H1,H2,OOS,DD,CAGR:743 DD:270 H1,H2,OOS,DD:216
+   12   48   1800    48    35     2   1.265 H1,H2,OOS,DD,CAGR:524 H2,OOS,DD:267 DD:223
+   12   64   2016    25    29     2   1.290 H1,H2,OOS,DD,CAGR:894 DD:226 H1,H2,OOS,DD:186
+   12   84   1944    38    41     3   1.217 H1,H2,OOS,DD,CAGR:675 H1,H2,OOS,DD:324 H2,OOS,DD:232
+   12  110   2016    28    34     2   1.301 H1,H2,OOS,DD,CAGR:640 H1,H2,OOS,DD:321 H2,OOS,DD:245
+   12  134   2016    34    37     0   1.259 H1,H2,OOS,DD,CAGR:640 H2,OOS,DD:337 H1,H2,OOS,DD:223
+   24   36   1224     7    59     2   1.348 H1,H2,OOS,DD,CAGR:389 DD:196 H1,H2,OOS,DD:157
+   24   48   1368    14    22     0   1.203 H1,H2,OOS,DD,CAGR:411 H2,OOS,DD:208 DD:177
+   24   64   1728    11    18     0   1.205 H1,H2,OOS,DD,CAGR:633 DD:242 H2,OOS,DD:197
+   24   84   1872    28    33     3   1.299 H1,H2,OOS,DD,CAGR:510 DD:285 H2,OOS,DD:273
+   24  110   1944     6    22     0   1.284 H1,H2,OOS,DD,CAGR:406 DD:348 H2,OOS,DD:308
+   24  134   1944     5    40     0   1.330 H1,H2,OOS,DD,CAGR:442 H2,OOS,DD:361 DD:343
+   36   36    432     0     0     0   1.125 H1,H2,OOS,DD,CAGR:90 DD:67 H2,OOS,DD:52
+   36   48   1008     3    21     0   1.170 H1,H2,OOS,DD,CAGR:217 DD:198 H2,OOS,DD:170
+   36   64   1368     1     5     0   1.199 H1,H2,OOS,DD,CAGR:510 DD:222 H2,OOS,DD:158
+   36   84   1656     4    19     0   1.225 H1,H2,OOS,DD,CAGR:434 DD:237 H2,OOS,DD:230
+   36  110   1800     3    34     0   1.238 DD:351 H1,H2,OOS,DD,CAGR:307 H2,OOS,DD:286
+   36  134   1872     5    41     0   1.225 DD:390 H2,OOS,DD:383 H1,H2,OOS,DD,CAGR:304
+  TOTAL: 29808 books, 4a 310, 4b 563, BOTH 16
+
+======================================================================================================================
+RULE 8 / WF-B - (flavour, level, seed, gross, cadence, arm) chosen by IS Sharpe ALONE at
+                every tuned cell; OOS read ONCE against RULES v2 (U56) and SPY
+======================================================================================================================
+  OOS comparands: RULES v2 on U56  CAGR 9.53% Sharpe 1.285 MaxDD -12.05%
+                  SPY               CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+    k    N pick                                IS_Sh  OOS_Sh  OOS_CAGR   OOS_DD  >v2  >SPY  4a           4b
+   12   36 BONLY/L0.892/s0/MA-RS/g1.00/W       1.442   1.109    16.78%  -28.51%    n     Y   n           DD
+   12   48 SONLY/L0.849/s0/EWall/g0.50/W       1.820   0.416     4.23%  -24.67%    n     n   n H2,OOS,DD,CAGR
+   12   64 POOL/L0.917/s0/MA-RS/g0.50/M        1.421   0.600     5.85%  -22.76%    n     n   n H2,OOS,DD,CAGR
+   12   84 BONLY/L0.917/s0/MA-RS/g1.00/M       1.382   1.140    22.61%  -29.74%    n     Y   n           DD
+   12  110 SONLY/L0.917/s4/MA-RS/g1.00/M       1.506   0.604    13.82%  -45.41%    n     n   n    H2,OOS,DD
+   12  134 BONLY/L0.917/s1/MA-RS/g1.00/W       1.581   1.049    13.63%  -16.00%    n     Y   n            -
+   24   36 BONLY/L0.874/s1/MA-RS/g1.00/W       1.311   1.271    19.07%  -24.55%    n     Y   n           DD
+   24   48 SONLY/L0.802/s4/EWall/g0.50/W       1.465   0.439     4.63%  -26.34%    n     n   Y H2,OOS,DD,CAGR
+   24   64 POOL/L0.892/s1/MA-RS/g1.00/M        1.395   0.810    13.57%  -29.51%    n     n   n    H2,OOS,DD
+   24   84 POOL/L0.892/s2/MA-RS/g1.00/M        1.450   0.892    17.54%  -42.27%    n     Y   n        H2,DD
+   24  110 BONLY/L0.874/s5/MA-RS/g1.00/M       1.362   0.890    13.18%  -26.10%    n     Y   n        H2,DD
+   24  134 SONLY/L0.849/s0/EWall/g0.50/W       1.435   0.633     7.34%  -24.07%    n     n   n H2,OOS,DD,CAGR
+   36   36 POOL/L0.874/s4/MA-RS/g1.00/M        1.128   0.999    18.81%  -32.62%    n     Y   n           DD
+   36   48 POOL/L0.849/s4/EWall/g1.00/W        1.283   0.791    13.60%  -35.56%    n     n   n    H2,OOS,DD
+   36   64 POOL/L0.892/s0/MA-RS/g1.00/M        1.321   0.676    10.80%  -34.25%    n     n   n    H2,OOS,DD
+   36   84 POOL/L0.917/s4/MA-RS/g1.00/W        1.409   1.019    17.75%  -26.77%    n     Y   n           DD
+   36  110 SONLY/L0.849/s1/MA-RS/g1.00/M       1.365   0.261     3.34%  -51.94%    n     n   n H2,OOS,DD,CAGR
+   36  134 POOL/L0.892/s5/MA-RS/g1.00/M        1.499   0.956    17.09%  -37.87%    n     Y   n        H2,DD
+  GLOBAL pick over all 18 cells: k=12 N=48 SONLY/L0.849/s0/EWall/g0.50/W  IS Sharpe 1.820 -> OOS Sharpe 0.416 CAGR 4.23% MaxDD -24.67%; 4a False, 4b fails [H2,OOS,DD,CAGR]
+  WF-B: 0/18 picks beat RULES v2 OOS Sharpe, 9/18 beat SPY, 4a 1/18, 4b 1/18
+
+======================================================================================================================
+SUMMARY
+======================================================================================================================
+  G0_draws_differ                    0
+  G1_chars_max_d                     2.220446049250313e-16
+  G2_backtest_max_d                  2.7755575615628914e-17
+  G3_anchor_max_d                    1.5783788641669447e-07
+  H_PARENT                           PASS
+  H_LAW                              FAIL
+  H_LAW_monotone_curves              1/18
+  H_LAW_common_rung                  FAIL
+  H_LAW_common_rung_curves           0/18
+  H_RATIO                            FAIL
+  H_RATIO_slope_R2                   -0.1420/0.0714
+  H_THIN                             FAIL
+  H_FAT                              PASS
+  H_THIN_fat_arm_flat_curves         16/18
+  thin_arm_flat_curves               16/18
+  NO_LAW_both_arms_flat              YES
+  median_rep_sd_over_resid           0.4282
+  anchor_resampled_mean_momac        0.006897301610988481
+  anchor_committed_momac             0.0027111023034787074
+  anchor_redraws_n                   40
+  anchor_redraw_mean_momac           0.00681956058778833
+  anchor_redraw_sd_momac             0.0018657318475578297
+  anchor_redraws_below_committed_momac 1/40
+  H_REEST                            PASS
+  H_REEST_span_frozen_vs_reest       1.755/9.491
+  H_ENTITLE                          PASS
+  entitled_resid_mean_n134_k36       0.004928412504996177
+  entitled_resid_p90_n134_k36        0.007661405841859749
+  books                              29808
+  keep4a                             310
+  keep4b                             563
+  keep_both                          16
+  wfb_beat_v2_oos                    0/18
+  wfb_beat_spy_oos                   9/18
+  runtime_s                          1598.9
+
+done in 1599s
