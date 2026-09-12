@@ -1,0 +1,336 @@
+======================================================================================================================
+# 2026-09-12_is-the-MATCH-RESIDUAL-of-a-kernel-draw-a-POOL-SIZE-law_cloud
+# IDEA 800 - is the kernel draw's MATCH RESIDUAL a POOL-SIZE law?  Sub-sample the arms at
+#            fixed k, measure |resid| against min(n), and publish the law - or kill it.
+======================================================================================================================
+# PROTOCOL: 10 bps per unit turnover, next-day fills, IS <= 2016-12-31, OOS >= 2017-01-01, sample truncated at 2026-09-04 (idea 571/796's last bar).
+# TUNED (2): pool size s in [40, 60, 90, 136, 200, 330] x k in [12, 24, 36, 48].  BW held at idea 569/571's 0.500.
+#            REPORTED-NOT-SELECTED: arm pair, characteristic, CHARBASIS, shape, replicate,
+#            rung, seed, window, gross, cadence, book form.
+
+PRE-REGISTERED: H_MONO (|resid| falls with min_n, Spearman <= -0.90), H_MIN (the THIN arm
+  governs: THICK-only moves are inert, THIN-only reproduces SYM to 1.25x), H_POWER (log-log
+  R^2 >= 0.80, slope in [-1.00,-0.25], agreeing across chars to 0.15), H_FILL (K/min_n beats
+  min_n), H_NEFF (kernel n_eff beats both), H_VINT (the min_n law explains idea 796's
+  430->663 move - pre-registered as EXPECTED TO FAIL, since that move held the thin arm
+  fixed; the stated alternative is the CHARBASIS rank-renormalisation channel).
+
+PANELS: B136 135 tradable, SMALL 663 tradable (52 max_1d_move>=1.0 tickers dropped per PROTOCOL), pool 798 names over 4194 bars 2010-01-04..2026-09-04
+SURVIVORSHIP: both arms are CURRENT constituents; dead names are absent.  The object here is
+  a difference of ACHIEVED CHARACTERISTIC LEVELS between two draws from the same screened
+  universe, so the bias is second-order for the law; the return legs carry the usual bias.
+
+POOL chars: momac usable 788 (B 134 / S 654), sd 0.0724, h 0.0362, tpers usable 797 (B 134 / S 663), sd 0.0128, h 0.0064
+  frozen rungs momac  (full-pool Q5 quantiles, raw units): 0.8040 0.8501 0.8748 0.8921 0.9166
+  frozen rungs tpers  (full-pool Q5 quantiles, raw units): 0.9511 0.9599 0.9654 0.9702 0.9776
+
+======================================================================================================================
+GATES
+======================================================================================================================
+  G1 contiguity : 1 of 798 names carry an interior gap (MMC) -> DROPPED from the pool, so the vectorised lag-21 AC is exact by
+                  construction for every remaining name.  Stated, not worked around.
+                  rungs re-frozen on the 797-name pool: momac 0.8040 0.8501 0.8748 0.8921 0.9166; tpers 0.9511 0.9599 0.9654 0.9702 0.9776
+  G2 estimator  : max |vectorised momac - idea 571 pandas momac| over 40 names 3.664e-15   bar 1e-12 -> PASS
+  G0 determinism: identical name sets on two rebuilds -> PASS
+  G3 engine     : max |fast_backtest - engine.backtest| on a drawn book 1.388e-17   bar 1e-9 -> PASS
+  G4 anchor     : this run's full-pool BW=0.500 / Q5 / k=36 |resid| vs idea 796's committed
+                  momac  this run 0.0056 on 4 rungs   |   idea 796 0.0050 on 14 rungs (its own rung set)
+                  tpers  this run 0.0014 on 3 rungs   |   idea 796 0.0013 on 6 rungs (its own rung set)
+                  MEASURED, not gated: data/prices_small.csv has been appended to since idea
+                  796 ran and its LIVE momac rung set was Q19, so this is a drift reading.
+
+======================================================================================================================
+GRID - |resid| over (pair, shape, s, k, basis, replicate).  All 144 (pair,shape,s,k) points
+       are listed; a point is INFEASIBLE when an arm cannot reach s, or when s <= k leaves
+       the kernel no freedom, or when no frozen rung is inside both arms' reach.
+======================================================================================================================
+  arm pairs: BS thin=B(134) thick=S(663);  SS thin=S1(331) thick=S2(332)  [disjoint random halves of the small panel,
+             a SAME-DISTRIBUTION null whose residual can only be matching error]
+  measured 9471 (cell, char, rung) residual rows over 1343 feasible cells; 30 (pair,shape,s,k) points unavailable
+
+SYM LADDER at k=36, CHARBASIS=FULL (mean over 6 replicates; |resid| in raw characteristic units)
+  pair char          40        60        90       136       200       330   spearman(min_n,|resid|)
+  BS   momac          -   0.00726   0.00929         -         -         -       n/a
+  BS   tpers    0.00156   0.00107   0.00153         -         -         -   -0.500
+  SS   momac    0.01086   0.00185   0.00340   0.00327   0.00301   0.00296   -0.429
+  SS   tpers    0.00064   0.00078   0.00088   0.00074   0.00068   0.00054   -0.371
+  H_MONO (all Spearman <= -0.90): FAIL   [BS/tpers -0.500, SS/momac -0.429, SS/tpers -0.371]
+
+H_MIN - which arm governs?  |resid| at k=36, CHARBASIS=FULL, mean over replicates.
+  pair char   shape        40        60        90       136       200       330
+  BS   momac  SYM           -   0.00726   0.00929         -         -         -
+  BS   momac  THIN    0.00872   0.00709   0.00879         -         -         -
+  BS   momac  THICK   0.00622   0.00557   0.00656   0.00628   0.00495   0.00465
+  BS   tpers  SYM     0.00156   0.00107   0.00153         -         -         -
+  BS   tpers  THIN    0.00128   0.00142   0.00158         -         -         -
+  BS   tpers  THICK   0.00168   0.00092   0.00126   0.00150   0.00143   0.00155
+  SS   momac  SYM     0.01086   0.00185   0.00340   0.00327   0.00301   0.00296
+  SS   momac  THIN    0.00517   0.00317   0.00431   0.00411   0.00236   0.00319
+  SS   momac  THICK   0.00656   0.00330   0.00327   0.00296   0.00333   0.00266
+  SS   tpers  SYM     0.00064   0.00078   0.00088   0.00074   0.00068   0.00054
+  SS   tpers  THIN    0.00044   0.00086   0.00092   0.00098   0.00081   0.00050
+  SS   tpers  THICK   0.00094   0.00076   0.00062   0.00058   0.00050   0.00063
+  leg readings (THICK-only inertness = max |d log10 |resid|| across the THICK ladder;
+   THIN-vs-SYM = worst two-sided ratio):
+    BS   momac  THICK max |dlog10| 0.277 (bar <0.10)   THIN/SYM worst ratio 1.057 (bar <=1.25)
+    BS   tpers  THICK max |dlog10| 0.044 (bar <0.10)   THIN/SYM worst ratio 1.335 (bar <=1.25)
+    SS   momac  THICK max |dlog10| nan (bar <0.10)   THIN/SYM worst ratio 2.103 (bar <=1.25)
+    SS   tpers  THICK max |dlog10| nan (bar <0.10)   THIN/SYM worst ratio 1.446 (bar <=1.25)
+  H_MIN: FAIL
+
+======================================================================================================================
+THE LAW - log10 |resid| against four candidate predictors, pooled over shapes, sizes, k,
+          replicates and rungs (CHARBASIS=FULL; SUB reported beside it).
+======================================================================================================================
+  basis pair char   predictor     n    slope      R2  sd_res   spear
+  FULL  BS   momac  min_n       255   -0.156   0.020   0.203  -0.216
+  FULL  BS   momac  tot_n       255   +0.002   0.000   0.205  -0.055
+  FULL  BS   momac  fill        255   +0.273   0.124   0.192  +0.368
+  FULL  BS   momac  neff_min    255   -0.142   0.016   0.204  -0.182
+  FULL  BS   tpers  min_n       259   +0.086   0.005   0.221  +0.042
+  FULL  BS   tpers  tot_n       259   +0.104   0.018   0.220  +0.137
+  FULL  BS   tpers  fill        259   -0.060   0.005   0.221  -0.016
+  FULL  BS   tpers  neff_min    259   +0.117   0.010   0.221  +0.080
+  FULL  SS   momac  min_n       407   -0.051   0.005   0.219  -0.129
+  FULL  SS   momac  tot_n       407   +0.037   0.001   0.219  -0.051
+  FULL  SS   momac  fill        407   -0.095   0.024   0.217  -0.104
+  FULL  SS   momac  neff_min    407   -0.073   0.009   0.218  -0.163
+  FULL  SS   tpers  min_n       410   -0.167   0.046   0.227  -0.303
+  FULL  SS   tpers  tot_n       410   -0.154   0.023   0.230  -0.227
+  FULL  SS   tpers  fill        410   +0.022   0.001   0.233  +0.134
+  FULL  SS   tpers  neff_min    410   -0.191   0.050   0.227  -0.296
+  SUB   BS   momac  min_n       251   -0.075   0.005   0.194  -0.215
+  SUB   BS   momac  tot_n       251   +0.104   0.023   0.192  +0.100
+  SUB   BS   momac  fill        251   +0.014   0.000   0.194  +0.180
+  SUB   BS   momac  neff_min    251   +0.021   0.000   0.194  -0.128
+  SUB   BS   tpers  min_n       259   +0.233   0.034   0.234  +0.123
+  SUB   BS   tpers  tot_n       259   +0.039   0.002   0.238  +0.057
+  SUB   BS   tpers  fill        259   -0.136   0.024   0.235  -0.052
+  SUB   BS   tpers  neff_min    259   +0.210   0.032   0.234  +0.167
+  SUB   SS   momac  min_n       406   -0.104   0.011   0.288  -0.184
+  SUB   SS   momac  tot_n       406   +0.052   0.002   0.289  -0.062
+  SUB   SS   momac  fill        406   -0.093   0.013   0.288  -0.055
+  SUB   SS   momac  neff_min    406   -0.088   0.008   0.288  -0.167
+  SUB   SS   tpers  min_n       410   -0.130   0.029   0.224  -0.245
+  SUB   SS   tpers  tot_n       410   -0.128   0.017   0.226  -0.183
+  SUB   SS   tpers  fill        410   -0.047   0.005   0.227  +0.016
+  SUB   SS   tpers  neff_min    410   -0.150   0.033   0.224  -0.239
+
+SYM-LADDER FIT (the clean ladder: rung- and replicate-averaged |resid| against min_n, one
+  fit per pair x char x k x basis).  This is the law the queue asked for, in isolation.
+  basis pair char     k  pts    slope      R2   spear   ladder |resid| by s
+  FULL  BS   momac   12    3   -0.244   0.399  -0.500   40:0.00773 60:0.00867 90:0.00636
+  FULL  BS   momac   24    3   +0.154   0.871  +1.000   40:0.00755 60:0.00836 90:0.00856
+  FULL  BS   tpers   12    3   -0.449   0.696  -0.500   40:0.00177 60:0.00120 90:0.00123
+  FULL  BS   tpers   24    3   -0.487   0.332  -0.500   40:0.00204 60:0.00103 90:0.00137
+  FULL  BS   tpers   36    3   -0.026   0.002  -0.500   40:0.00156 60:0.00107 90:0.00153
+  FULL  SS   momac   12    6   +0.025   0.011  -0.086   40:0.00470 60:0.00327 90:0.00541 136:0.00366 200:0.00447 330:0.00452
+  FULL  SS   momac   24    6   -0.162   0.516  -0.771   40:0.00452 60:0.00345 90:0.00393 136:0.00276 200:0.00339 330:0.00305
+  FULL  SS   momac   36    6   -0.342   0.205  -0.429   40:0.01086 60:0.00185 90:0.00340 136:0.00327 200:0.00301 330:0.00296
+  FULL  SS   momac   48    5   +0.009   0.005  +0.100   60:0.00293 90:0.00331 136:0.00276 200:0.00330 330:0.00300
+  FULL  SS   tpers   12    6   -0.239   0.708  -0.829   40:0.00111 60:0.00083 90:0.00104 136:0.00085 200:0.00079 330:0.00060
+  FULL  SS   tpers   24    6   -0.208   0.500  -0.829   40:0.00100 60:0.00065 90:0.00098 136:0.00075 200:0.00064 330:0.00058
+  FULL  SS   tpers   36    6   -0.096   0.199  -0.371   40:0.00064 60:0.00078 90:0.00088 136:0.00074 200:0.00068 330:0.00054
+  FULL  SS   tpers   48    5   -0.463   0.950  -1.000   60:0.00095 90:0.00087 136:0.00078 200:0.00059 330:0.00044
+  SUB   BS   momac   12    3   +0.005   0.000  +0.500   40:0.00632 60:0.00771 90:0.00637
+  SUB   BS   momac   24    3   +0.087   0.394  +0.500   40:0.00760 60:0.00729 90:0.00815
+  SUB   BS   tpers   12    3   -0.204   0.512  -0.500   40:0.00134 60:0.00108 90:0.00114
+  SUB   BS   tpers   24    3   -0.055   0.028  -0.500   40:0.00143 60:0.00111 90:0.00137
+  SUB   BS   tpers   36    3   -0.245   0.380  -0.500   40:0.00158 60:0.00115 90:0.00129
+  SUB   SS   momac   12    6   -0.043   0.021  -0.029   40:0.00580 60:0.00315 90:0.00370 136:0.00516 200:0.00372 330:0.00430
+  SUB   SS   momac   24    6   -0.206   0.413  -0.486   40:0.00493 60:0.00263 90:0.00297 136:0.00332 200:0.00312 330:0.00239
+  SUB   SS   momac   36    6   -0.313   0.190  -0.257   40:0.00868 60:0.00174 90:0.00278 136:0.00355 200:0.00354 330:0.00217
+  SUB   SS   momac   48    5   +0.192   0.407  +0.700   60:0.00212 90:0.00250 136:0.00313 200:0.00356 330:0.00271
+  SUB   SS   tpers   12    6   -0.133   0.787  -0.886   40:0.00109 60:0.00093 90:0.00094 136:0.00087 200:0.00078 330:0.00083
+  SUB   SS   tpers   24    6   -0.263   0.794  -0.943   40:0.00100 60:0.00076 90:0.00094 136:0.00074 200:0.00064 330:0.00054
+  SUB   SS   tpers   36    6   -0.152   0.283  -0.543   40:0.00069 60:0.00078 90:0.00103 136:0.00076 200:0.00057 330:0.00057
+  SUB   SS   tpers   48    5   -0.381   0.882  -1.000   60:0.00082 90:0.00077 136:0.00075 200:0.00056 330:0.00043
+  SYM-ladder summary (CHARBASIS=FULL, 13 fits): median slope -0.208, median R2 0.399, 1 of 13 with Spearman <= -0.90, 3 with a POSITIVE slope
+
+  H_POWER (min_n fit R2>=0.80, slope in [-1.00,-0.25], chars agree to 0.15): FAIL  [R2 0.020 0.005 0.005 0.046; slope -0.156 +0.086 -0.051 -0.167]
+  H_FILL  (K/min_n residual sd < min_n's): FAIL  ('BS', 'momac'): 0.192 vs 0.203 ('BS', 'tpers'): 0.221 vs 0.221 ('SS', 'momac'): 0.217 vs 0.219 ('SS', 'tpers'): 0.233 vs 0.227
+  H_NEFF  (kernel n_eff beats both on R2): FAIL  ('BS', 'momac'): 0.016 vs 0.020/0.124 ('BS', 'tpers'): 0.010 vs 0.005/0.005 ('SS', 'momac'): 0.009 vs 0.005/0.024 ('SS', 'tpers'): 0.050 vs 0.046/0.001
+
+======================================================================================================================
+POST-HOC (stated as post-hoc: this reading was formed AFTER the grid above was printed, and
+is NOT one of the six pre-registered hypotheses) - the residual in BANDWIDTH UNITS.
+  The kernel geometry is scale-equivariant: h = BW * sd(char) and the rungs are the pool's
+  own quantiles, so |resid| should scale with sd(char) and the DIMENSIONLESS residual
+  |resid| / sd(char) should be a constant of the machinery, not of the pool.
+======================================================================================================================
+  pair char   cells  sd(char)  med |resid|  med |resid|/sd               IQR
+  BS   momac    255    0.0724      0.00637          0.0881   [0.0631, 0.1113]
+  BS   tpers    259    0.0128      0.00129          0.1001   [0.0728, 0.1339]
+  SS   momac    407    0.0724      0.00343          0.0473   [0.0363, 0.0630]
+  SS   tpers    410    0.0128      0.00070          0.0546   [0.0386, 0.0747]
+  BS: momac-vs-tpers spread 4.95x in RAW units, 1.14x once divided by sd(char)
+  SS: momac-vs-tpers spread 4.89x in RAW units, 1.15x once divided by sd(char)
+  cross-panel excess (BS arms / SS same-distribution null), in bandwidth units: momac 1.86x, tpers 1.83x
+
+  HELD-OUT TEST, prediction stated BEFORE the number is computed: a THIRD characteristic
+  never used above (avol = annualised realised daily vol per name, a completely different
+  distribution and scale) must land inside the same dimensionless band -
+    predicted |resid|/sd for the BS arms in [0.0881, 0.1001], for the SS null in [0.0473, 0.0546].
+    avol: sd 0.2003 (momac 0.0724, tpers 0.0128); rungs 0.2629 0.3427 0.4265 0.5250 0.7167
+    READ: BS avol on 3 rungs, median |resid| 0.08221, |resid|/sd 0.4104  -> OUTSIDE the predicted band [0.0881, 0.1001]
+          its own pool-size ladder: slope +nan R2 nan Spearman +nan over 1 sizes
+    READ: SS avol on 99 rungs, median |resid| 0.00695, |resid|/sd 0.0347  -> OUTSIDE the predicted band [0.0473, 0.0546]
+          its own pool-size ladder: slope -0.659 R2 0.800 Spearman -0.829 over 6 sizes
+
+  THE ENTITLEMENT the queue asked for, in the only units this machinery supports: the
+  SPREAD of |resid| across cells that differ only in sub-sample.  Two readings: WITHIN-CELL
+  is the six replicates of one identical (shape, size, k) cell - pure draw/sub-sample noise;
+  POOLED adds the shape and size axes, which the grid above showed to be nearly inert.  Any
+  single-cell |resid| a future claim quotes is entitled to no more precision than this.
+  pair char     k cells median |resid|       p10       p90  p90/p10  max/min
+  BS   momac   12    72        0.00552   0.00252   0.00821     3.25    17.59
+  BS   momac   24    72        0.00673   0.00290   0.00983     3.39     6.47
+  BS   momac   36    58        0.00637   0.00345   0.01010     2.93    16.70
+  BS   momac   48    53        0.00715   0.00528   0.01101     2.09     3.90
+  BS   tpers   12    72        0.00139   0.00072   0.00198     2.75     7.46
+  BS   tpers   24    72        0.00123   0.00062   0.00223     3.58    27.63
+  BS   tpers   36    64        0.00141   0.00059   0.00223     3.80    13.80
+  BS   tpers   48    51        0.00130   0.00052   0.00197     3.78    11.70
+  SS   momac   12   108        0.00460   0.00271   0.00703     2.59    12.33
+  SS   momac   24   108        0.00310   0.00188   0.00485     2.58     9.99
+  SS   momac   36   101        0.00313   0.00171   0.00577     3.37    65.64
+  SS   momac   48    90        0.00305   0.00164   0.00451     2.75    41.64
+  SS   tpers   12   108        0.00077   0.00048   0.00140     2.92     8.66
+  SS   tpers   24   108        0.00071   0.00037   0.00123     3.32     7.86
+  SS   tpers   36   104        0.00064   0.00037   0.00114     3.11    42.76
+  SS   tpers   48    90        0.00059   0.00024   0.00142     5.89    59.10
+  POOLED: median p90/p10 across the 16 (pair,char,k) groups 3.18x; median max/min 13.06x.
+  WITHIN-CELL (6 replicates of one identical shape/size/k cell, 216 such cells): median max/min 2.56x, p90 5.49x, max 48.18x.
+  So a residual quoted from one cell of this machinery carries a factor of about 2.6x
+  from re-drawing alone, before any panel content is involved.  Idea 796's cited 0.0133 -> 0.0027
+  (4.90x, FROZEN vs LIVE, BW=0.500/Q5, 4 rungs each, from its own .summary.csv) sits
+  inside that noise band; this run's own re-measurement of the same contrast reads
+  0.83x (per-vintage rungs) and 0.48x (frozen rungs) - the opposite direction.
+
+  WHAT ACTUALLY MOVES IT (post-hoc, and the reason the held-out test lands outside): the two
+  arms' SEPARATION in the characteristic.  SMD = |mean_thin - mean_thick| / sd(pool); OVL =
+  the overlapping coefficient of the two arms' 40-bin histograms.  Six (pair, char) points.
+  pair char       SMD     OVL  |resid|/sd
+  BS   momac    0.328   0.817      0.0881
+  BS   tpers    0.369   0.759      0.1001
+  BS   avol     1.146   0.385      0.4104
+  SS   momac    0.048   0.889      0.0473
+  SS   tpers    0.127   0.890      0.0546
+  SS   avol     0.009   0.859      0.0347
+  Spearman(SMD, |resid|/sd) = +1.000   Spearman(OVL, |resid|/sd) = -0.771 over 6 points
+  Read plainly: the dimensionless residual tracks how far apart the two arms sit in the
+  characteristic, not how many names are in either.  This is post-hoc on six points and
+  is queued for a pre-registered test, not claimed here.
+
+======================================================================================================================
+H_VINT - does a min(n) law explain idea 796's 430 -> 663 observation?  Thin arm (B) held at
+         its full size, thick arm (S) set to idea 571's FROZEN survivors and to today's 663,
+         under BOTH bases.  A min(n) law predicts NO change (min stays n_B).
+======================================================================================================================
+  idea 571's committed pool: 573 names; survivors in today's data: B 134 + SMALL 430
+  basis char   thick arm   n_thin n_thick  min_n rungs   |resid|
+  FULL  momac  S439frozen     134     427    134     4   0.00270
+  FULL  tpers  S439frozen     134     430    134     3   0.00142
+  FULL  momac  S663today      134     654    134     4   0.00559
+  FULL  tpers  S663today      134     663    134     3   0.00138
+  SUB   momac  S439frozen     134     427    134     4   0.00439
+  SUB   tpers  S439frozen     134     430    134     3   0.00148
+  SUB   momac  S663today      134     654    134     4   0.00559
+  SUB   tpers  S663today      134     663    134     3   0.00138
+  ratio |resid|(439-name thick arm) / |resid|(663-name thick arm), thin arm identical:
+    FULL  momac 0.483  tpers 1.026
+    SUB   momac 0.785  tpers 1.070
+  Under a min(n) law every ratio above must be 1.000 (the thin arm never moved).  momac MOVES, tpers inert
+
+  LEG 2 - idea 796's OWN convention, where the rungs and the characteristics are re-derived
+  inside each vintage rather than frozen, so pool size, rung levels and momac's cross-
+  sectional rank all move together (which is what its 0.0133 -> 0.0027 reading actually
+  compared):
+    momac  S439frozen  n_thick 427 rungs 4 |resid| 0.00461
+    tpers  S439frozen  n_thick 430 rungs 3 |resid| 0.00135
+    momac  S663today   n_thick 654 rungs 4 |resid| 0.00559
+    tpers  S663today   n_thick 663 rungs 3 |resid| 0.00138
+    momac  439 -> 663 ratio 0.826  (idea 796 published 0.0133 -> 0.0027 = 4.93x for momac)
+    tpers  439 -> 663 ratio 0.975  (idea 796 published 0.0133 -> 0.0027 = 4.93x for momac)
+
+======================================================================================================================
+RULE 8 / WF-A - the law refit on IS-only and OOS-only characteristics.  Predictor CHOSEN on
+                IS by pooled R^2; its OOS R^2 and slope are then read ONCE.
+======================================================================================================================
+  window pair char   predictor     n    slope      R2  sd_res
+  IS     BS   momac  min_n        31   -0.230   0.013   0.278
+  IS     BS   momac  tot_n        31   -0.227   0.012   0.278
+  IS     BS   momac  fill         31   -0.063   0.003   0.279
+  IS     BS   momac  neff_min     31   -0.049   0.000   0.280
+  IS     BS   tpers  min_n        31   -0.060   0.000   0.382
+  IS     BS   tpers  tot_n        31   -0.060   0.000   0.382
+  IS     BS   tpers  fill         31   +0.049   0.001   0.382
+  IS     BS   tpers  neff_min     31   +0.112   0.001   0.382
+  IS     SS   momac  min_n        56   -0.332   0.164   0.181
+  IS     SS   momac  tot_n        56   -0.335   0.166   0.180
+  IS     SS   momac  fill         56   +0.093   0.021   0.195
+  IS     SS   momac  neff_min     56   -0.372   0.171   0.180
+  IS     SS   tpers  min_n        55   -0.414   0.162   0.223
+  IS     SS   tpers  tot_n        55   -0.414   0.162   0.223
+  IS     SS   tpers  fill         55   +0.200   0.063   0.235
+  IS     SS   tpers  neff_min     55   -0.481   0.180   0.220
+  OOS    BS   momac  min_n        31   +0.009   0.000   0.276
+  OOS    BS   momac  tot_n        31   -0.006   0.000   0.276
+  OOS    BS   momac  fill         31   -0.143   0.016   0.274
+  OOS    BS   momac  neff_min     31   -0.028   0.000   0.276
+  OOS    BS   tpers  min_n        32   +0.194   0.010   0.270
+  OOS    BS   tpers  tot_n        32   +0.194   0.010   0.270
+  OOS    BS   tpers  fill         32   -0.139   0.016   0.270
+  OOS    BS   tpers  neff_min     32   +0.212   0.010   0.270
+  OOS    SS   momac  min_n        66   -0.254   0.130   0.193
+  OOS    SS   momac  tot_n        66   -0.255   0.129   0.193
+  OOS    SS   momac  fill         66   -0.074   0.015   0.206
+  OOS    SS   momac  neff_min     66   -0.295   0.162   0.190
+  OOS    SS   tpers  min_n        67   -0.455   0.260   0.228
+  OOS    SS   tpers  tot_n        67   -0.455   0.260   0.228
+  OOS    SS   tpers  fill         67   +0.127   0.029   0.261
+  OOS    SS   tpers  neff_min     67   -0.505   0.290   0.224
+  IS-chosen predictor: neff_min (IS pooled mean R2 0.088); its OOS mean R2 0.115; OOS ranking neff_min 0.115 > min_n 0.100 > tot_n 0.100 > fill 0.019
+  IS->OOS predictor ranking agreement: SAME winner
+
+======================================================================================================================
+RULE 8 / WF-B + KEEP PATHS - every drawn book run as a real book (10 bps, next-day fills).
+======================================================================================================================
+  comparands over 2011-01-13..2026-09-04 (3934 bars)
+    RULES v2 (U56, live) CAGR 8.19% Sharpe 1.169 MaxDD -12.05% halves 1.056/1.272 | OOS CAGR 9.53% Sharpe 1.285 MaxDD -12.05%
+    SPY                  CAGR 14.13% Sharpe 0.862 MaxDD -33.72% halves 0.891/0.858 | OOS CAGR 15.45% Sharpe 0.882 MaxDD -33.72%
+  2496 books (2 arms x 2 chars x 2 shapes x 3 pool sizes x 4 k x 8 rungs x 2 seeds x 2 forms x 3 gross)
+  KEEP paths over all books: 4a 0   4b 51   BOTH 0
+  the same drawn name set can appear in two grid cells (SYM and THIN coincide when the
+  thick arm is already at its maximum); on 1560 DISTINCT books the counts are 4a 0   4b 26   BOTH 0
+  4b passers (diagnostic only - a kernel-weighted seeded draw is not a tradable rule):
+    momac  arm B  s= 90 k=24 L=0.9166 MA-RS g=0.75  CAGR 13.26% Sharpe 1.182 MaxDD -17.96% OOS 14.29%/1.184
+    momac  arm B  s= 90 k=12 L=0.9166 MA-RS g=0.75  CAGR 14.89% Sharpe 1.136 MaxDD -18.78% OOS 16.55%/1.168
+    momac  arm B  s= 90 k=12 L=0.8748 MA-RS g=0.75  CAGR 13.48% Sharpe 1.212 MaxDD -18.64% OOS 13.17%/1.138
+    tpers  arm B  s= 90 k=48 L=0.9702 MA-RS g=0.75  CAGR 11.58% Sharpe 1.059 MaxDD -18.02% OOS 12.92%/1.116
+    momac  arm B  s= 90 k=12 L=0.9166 MA-RS g=0.75  CAGR 12.46% Sharpe 1.137 MaxDD -19.54% OOS 12.88%/1.113
+    momac  arm B  s= 40 k=12 L=0.8921 MA-RS g=0.75  CAGR 11.18% Sharpe 0.983 MaxDD -18.06% OOS 13.76%/1.106
+    momac  arm B  s= 90 k=48 L=0.8921 MA-RS g=0.75  CAGR 11.74% Sharpe 1.109 MaxDD -17.74% OOS 12.04%/1.096
+    tpers  arm B  s= 90 k=36 L=0.9702 MA-RS g=0.75  CAGR 10.65% Sharpe 1.053 MaxDD -17.05% OOS 11.52%/1.087
+  fail-4b leg census: H1,H2,OOS,DD,CAGR 736, DD 524, CAGR 287, H1,H2,OOS,DD 265, H2,OOS,DD 201, H2,OOS,DD,CAGR 139, H2,DD 62, - 51
+
+  WF-B pick (IS Sharpe ALONE, OOS read once):
+    momac arm B s=90 k=12 L=0.8748 EWall g=1.00   IS Sharpe 1.396
+    OOS  CAGR 19.95%  Sharpe 1.203  MaxDD -29.01%
+    vs RULES v2 OOS  9.53% / 1.285 / -12.05%
+    vs SPY      OOS  15.45% / 0.882 / -33.72%
+    full sample CAGR 19.81% Sharpe 1.264 MaxDD -29.01% halves 1.478/1.122
+    4a False   4b FAIL on DD
+
+======================================================================================================================
+VERDICT
+======================================================================================================================
+  H_MONO                             FAIL
+  H_MIN                              FAIL
+  H_POWER                            FAIL
+  H_FILL                             FAIL
+  H_NEFF                             FAIL
+  H_VINT (min(n) law reproduces 430->663) FAIL
+  KEEP: 4a 0 / 4b 51 / BOTH 0 of 2496 books (0 / 26 / 0 of 1560 distinct).  No capital candidate is
+        claimed: every book here is a kernel-weighted seeded draw, not a rule.
+  runtime 252.1s
