@@ -1,0 +1,160 @@
+
+==============================================================================================================
+IDEA 529 — AUDIT EVERY FAIL-SET COLUMN IN THE RECORD FOR SET vs FIRSTFAIL (lane B)
+==============================================================================================================
+Protocol: 10 bps, t+1 (engine), weekly, no shorting/leverage. Seed 529
+Params: P1 parser in {strict, loose}; P2 sample in {all, singleton}. All 4 points reported.
+
+==============================================================================================================
+[1] THE AST STAMP — reading each producing SCRIPT's keep-paths expression
+==============================================================================================================
+587 committed artefacts carry a fail-set column (564 have a committed producing script).
+
+idea 527's DATA-DRIVEN tier (does ANY row emit >= 2 tokens?):
+tier527
+T1_DECLARED     524
+T1_SINGLETON     63
+
+AST stamp, parser=strict:
+ast_strict
+SET            415
+UNKNOWN         70
+EXTERNAL        37
+INHERITED       29
+NO_SCRIPT       23
+NO_COL_EXPR     12
+FIRSTFAIL        1
+
+AST stamp, parser=loose:
+ast_loose
+SET            432
+EXTERNAL        48
+UNKNOWN         46
+INHERITED       25
+NO_SCRIPT       23
+NO_COL_EXPR     12
+FIRSTFAIL        1
+
+[1a] THE MISLABEL THE QUEUE NAMES — files idea 527 calls AMBIGUOUS that the AST calls SET
+parser    sample  files  resolved  resolved_frac  SET  FIRSTFAIL  MIXED  UNKNOWN  mislabelled_files  mislabelled_rows  recovered_soleOOS
+strict       all    587       416         0.7087  415          1      0      171                 24              1488                  1
+strict singleton     63        25         0.3968   24          1      0       38                 24              1488                  1
+ loose       all    587       433         0.7376  432          1      0      154                 27              1524                  1
+ loose singleton     63        28         0.4444   27          1      0       35                 27              1524                  1
+
+==============================================================================================================
+[2] RE-RUNNING IDEA 527's HEADLINE ON THE CORRECTED PARTITION
+==============================================================================================================
+idea 527's partition: sole-OOS counted on T1_DECLARED only = 85 of 770748 failures (0.000110).
+  parser=strict   corrected partition (AST says SET, whatever 527's detector said): 415 files, sole-OOS 79 of 480825 failures (0.000164).
+             files the AST calls FIRSTFAIL and 527 read as DECLARED: 0 (their 0 single-OOS rows are NOT sole-fails).
+  parser=loose    corrected partition (AST says SET, whatever 527's detector said): 432 files, sole-OOS 79 of 482908 failures (0.000164).
+             files the AST calls FIRSTFAIL and 527 read as DECLARED: 0 (their 0 single-OOS rows are NOT sole-fails).
+
+==============================================================================================================
+[3] THE PRICE LEG — 1,200 REAL BOOKS, so the mislabel rate is MEASURED not assumed
+==============================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+  priced U56: 400 books (55 names, sample 2009-01-13..2026-09-11)
+  priced B136: 400 books (135 names, sample 2009-01-13..2026-09-11)
+  priced SMALL716: 400 books (715 names, sample 2011-01-13..2026-09-11)
+
+1200 books priced. Full grid (5 gross rungs x 80 draws x 3 panels):
+                 CAGR  Sharpe   MaxDD  nfail  p4b  p4a  multi  soleOOS
+panel    gross                                                        
+B136     0.375 0.0708  1.0828 -0.1325 1.1750    0    8 0.1125        0
+         0.500 0.0945  1.0832 -0.1737 1.0750    9    0 0.1250        0
+         0.625 0.1183  1.0835 -0.2135 1.1250   18    0 0.2000        0
+         0.750 0.1421  1.0838 -0.2520 1.1625    3    0 0.1125        0
+         1.000 0.1897  1.0840 -0.3250 1.1875    0    0 0.1250        0
+SMALL716 0.375 0.0628  0.6516 -0.2086 4.2625    0    0 0.9875        0
+         0.500 0.0818  0.6520 -0.2700 4.5875    0    0 0.9875        0
+         0.625 0.1001  0.6523 -0.3278 4.3125    0    0 0.9875        0
+         0.750 0.1176  0.6524 -0.3820 4.0250    0    0 0.9875        0
+         1.000 0.1500  0.6526 -0.4805 3.8125    0    0 0.9875        0
+U56      0.375 0.0645  1.0766 -0.1187 1.1625    0    0 0.1375        0
+         0.500 0.0862  1.0771 -0.1560 1.1250    3    0 0.1375        0
+         0.625 0.1078  1.0775 -0.1923 0.8750   29    0 0.1500        0
+         0.750 0.1295  1.0779 -0.2274 1.1000    8    0 0.1625        0
+         1.000 0.1729  1.0784 -0.2945 1.1500    0    0 0.1250        0
+
+[3a] THE MEASURED MULTI-FAIL RATE p = P(a failing book fails >= 2 bars)
+  B136      failures  370  p = 0.1459   P(a genuine SET file of n rows is INVISIBLE to 527's detector) = (1-p)^n:  n=10 0.2065  n=50 0.0004  n=200 0.0000
+  SMALL716  failures  400  p = 0.9875   P(a genuine SET file of n rows is INVISIBLE to 527's detector) = (1-p)^n:  n=10 0.0000  n=50 0.0000  n=200 0.0000
+  U56       failures  360  p = 0.1583   P(a genuine SET file of n rows is INVISIBLE to 527's detector) = (1-p)^n:  n=10 0.1784  n=50 0.0002  n=200 0.0000
+  POOLED    failures 1130  p = 0.4478
+
+[3b] HOW MANY OF THE RECORD'S FILES ARE ACTUALLY AT RISK, at the measured p
+  The exponent is the number of FAILING rows, not total rows: a row that passes 4b emits
+  no token at all and can never reveal the semantics.  Both are reported; nfail is the
+  correct one and the p used is the LOW-p reading (U56/B136), the panels the record uses.
+  p=0.4478 (pooled):  expected SET files hidden in the SINGLETON tier = 1.22 by TOTAL rows, 8.79 by FAILING rows (13 files above 5%)
+  p=0.1459 (low-p (U56/B136)):  expected SET files hidden in the SINGLETON tier = 8.00 by TOTAL rows, 15.78 by FAILING rows (34 files above 5%)
+  median rows in the SINGLETON tier = 36 (failing rows 16), DECLARED tier = 306 (failing rows 276)
+
+  WHY THE AST FINDS MORE MISLABELS THAN p PREDICTS — the SINGLETON tier is made of
+  files with almost NO FAILING ROWS, not of files whose books happen to fail one bar:
+    parser=strict  24 mislabelled files: 6 have ZERO failing rows, 10 have 1-9, 8 have >= 10 (median failing rows 7)
+    parser=loose   27 mislabelled files: 6 have ZERO failing rows, 11 have 1-9, 10 have >= 10 (median failing rows 8)
+
+[3c] THE OVERSTATEMENT idea 527 quoted at 25x, measured on real books
+  B136      SET sole-OOS    0 | FIRSTFAIL prints OOS    0 | overstatement NOT MEASURABLE (0 sole-OOS)
+  SMALL716  SET sole-OOS    0 | FIRSTFAIL prints OOS    0 | overstatement NOT MEASURABLE (0 sole-OOS)
+  U56       SET sole-OOS    0 | FIRSTFAIL prints OOS    0 | overstatement NOT MEASURABLE (0 sole-OOS)
+  POOLED    SET sole-OOS    0 | FIRSTFAIL prints OOS    0
+  NOT MEASURABLE ON THIS CORPUS, and that is itself the finding: across 1,200 random
+  books NOT ONE fails the OOS bar alone, and not one has OOS as its FIRST failing bar
+  either.  The OOS Sharpe bar is never reached before H1 or H2 has already failed, so
+  idea 527's 25x overstatement cannot be reproduced on priced books — it is a property
+  of the record's TUNED books, not of books in general.  This run does NOT confirm it.
+
+==============================================================================================================
+[4] RULE 8 WALK-FORWARD — reading picked on 2009-2016 ONLY, evaluated on 2017-2026
+==============================================================================================================
+  B136      multi-fail rate p:  IS(<=2016) 0.1642 (n=341)  OOS(2017+) 0.2546 (n=377)  |delta| 0.0904
+  SMALL716  multi-fail rate p:  IS(<=2016) 0.8706 (n=394)  OOS(2017+) 0.9875 (n=400)  |delta| 0.1169
+  U56       multi-fail rate p:  IS(<=2016) 0.3977 (n=347)  OOS(2017+) 0.1376 (n=356)  |delta| 0.2601
+
+  The IS-chosen reading is: 'a single-token column is NOT diagnostic; stamp it from the
+  script'.  It holds OOS iff p_OOS is also far from 1.  Reported above at every panel.
+
+[4a] BOOKS OUT OF SAMPLE vs BASELINE and SPY (rule 8, the lane's mandatory leg)
+   panel                        book  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  full_CAGR  full_Sharpe  full_MaxDD
+    B136    RULES v2 baseline (live)    0.0788      1.1059    -0.1224     0.0798       1.0993     -0.1224
+    B136         RULES v1 (previous)    0.0587      0.5702    -0.2119     0.0641       0.6375     -0.2119
+    B136                         SPY    0.1533      0.8767    -0.3372     0.1516       0.8861     -0.3372
+    B136          books MEAN (n=400)    0.1201      1.0577    -0.2193     0.1231       1.0835     -0.2193
+    B136 books BEST OOS Sharpe (n=1)    0.2365      1.3060    -0.3036     0.2165       1.2326     -0.3036
+    B136     books 4b PASSERS (n=30)    0.1190      1.1491    -0.1849     0.1199       1.1667     -0.1849
+SMALL716    RULES v2 baseline (live)    0.0447      0.6516    -0.1218     0.0464       0.7129     -0.1218
+SMALL716         RULES v1 (previous)    0.3302      0.7149    -0.2548     0.2200       0.6131     -0.2759
+SMALL716                         SPY    0.1533      0.8767    -0.3372     0.1406       0.8581     -0.3372
+SMALL716          books MEAN (n=400)    0.0941      0.6101    -0.3330     0.1025       0.6522     -0.3338
+SMALL716 books BEST OOS Sharpe (n=1)    0.0960      0.9624    -0.1972     0.0943       0.9403     -0.1972
+SMALL716            books 4b PASSERS       NaN         NaN        NaN        NaN          NaN         NaN
+     U56    RULES v2 baseline (live)    0.0947      1.2782    -0.1205     0.0863       1.2018     -0.1205
+     U56         RULES v1 (previous)    0.0760      0.7361    -0.1383     0.0641       0.6602     -0.1383
+     U56                         SPY    0.1533      0.8767    -0.3372     0.1516       0.8861     -0.3372
+     U56          books MEAN (n=400)    0.1163      1.0848    -0.1978     0.1122       1.0775     -0.1978
+     U56 books BEST OOS Sharpe (n=1)    0.2299      1.2487    -0.3021     0.2291       1.3138     -0.3021
+     U56     books 4b PASSERS (n=40)    0.1237      1.1329    -0.1865     0.1202       1.1488     -0.1865
+
+==============================================================================================================
+[5] KEEP PATHS — both evaluated on every one of the 1,200 books
+==============================================================================================================
+  4a (beat the book: Sharpe > RULES v2 in BOTH halves AND MaxDD no worse): 8 of 1200
+  4b (capital-worthy: Sharpe > SPY both halves AND OOS, MaxDD <= 60% SPY, CAGR >= 70% SPY): 70 of 1200
+    B136      4a   8/400   4b  30/400
+    SMALL716  4a   0/400   4b   0/400
+    U56       4a   0/400   4b  40/400
+
+  No book here is a candidate: they are RANDOM equal-weight draws built to EXERCISE the
+  bar vector, not to be traded.  The deliverable is the semantics stamp, not a book.
+
+==============================================================================================================
+VERDICT
+==============================================================================================================
+KILL as a capital idea (0 promotable books by construction); ANSWERED as an audit.
+
+wrote 2026-09-12_audit-every-fail-set-column-in-the-record-for-SET-vs-FIRSTFAIL_B.{console.txt,stamps.csv,grid.csv,books.csv,walkforward.csv}
