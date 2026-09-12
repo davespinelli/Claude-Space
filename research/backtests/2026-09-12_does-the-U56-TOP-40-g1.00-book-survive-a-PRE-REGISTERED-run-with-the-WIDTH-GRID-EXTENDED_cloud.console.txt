@@ -1,0 +1,194 @@
+# Idea 806 - does-the-U56-TOP-40-g1.00-book-survive-a-PRE-REGISTERED-run-with-the-WIDTH-GRID-EXTENDED
+# cloud lane, 2026-09-12.  Book FIXED in advance: U56 / v1 eligibility / top-n by the v1
+# composite / w = 1.00/n each / rest CASH / weekly / next-day fill.
+# TUNED: width n (17 rungs) and cost (5 rungs).  REPORTED-NEVER-SELECTED:
+# execution lag [1, 2, 3], and the IS/OOS split.  IS ..2016-12-31  OOS 2017-01-01..
+# SURVIVORSHIP: universe.json is a CURRENT-constituent list - every level is optimistic,
+# and widening flatters most, because the names a wide book adds are survivors.
+
+panel U56: 55 tradeable names (SPY excluded from the book), 4443 scored days 2009-01-13..2026-09-11
+v1-eligible count: min 3  p05 12  median 40  p95 49  MAX 54   (n=40 sits at the 53.0% quantile of the eligible count)
+
+====================================================================================================
+GATES (all four must pass before any verdict is read)
+====================================================================================================
+   G1 book == baseline.rules_v1_weights(n,w=g/n)        max|dw| 0.000e+00      PASS
+   G2 fast_run == engine.backtest (returns, turnover)   max|d| 3.886e-16       PASS
+   G3 derived cost rung == engine.backtest(cost_bps=25) max|d| 2.082e-17       PASS
+   G4 max eligible < tradeable count (ceiling is real)  54 < 55                PASS
+
+====================================================================================================
+MAIN GRID - 17 widths x 5 costs x 3 lags = 255 cells, ALL REPORTED
+====================================================================================================
+
+comparands on the scored sample (2009-01-13..):
+   SPY        full  15.16% / 0.886 / -33.72%   halves 0.960 / 0.826   IS 14.96%/0.899/-22.06%   OOS 15.33%/0.877/-33.72%
+   RULES v2   full   8.63% / 1.202 / -12.05%   halves 1.235 / 1.176   IS 7.61%/1.104/-7.89%   OOS 9.47%/1.278/-12.05%
+   4b bars: Sharpe > SPY in BOTH halves and OOS; MaxDD >= -20.23%; CAGR >= 10.61%   (OOS-window bars: DD >= -20.23%, CAGR >= 10.73%)
+
+----------------------------------------------------------------------------------------------------
+G5 / H_REPRO - idea 589's n=40 cell, re-read alone at 10 bps, lag 1
+----------------------------------------------------------------------------------------------------
+   committed  full 12.54% / 1.13 / -17.9%    OOS 14.47% / 1.26 / -17.9%
+   this run   full 12.54% / 1.13 / -17.9%    OOS 14.47% / 1.26 / -17.9%
+   deltas Sharpe -0.0034 / OOS -0.0049, CAGR -0.0000 / OOS -0.0000, MaxDD +0.0004 / OOS +0.0004
+   H_REPRO (tol Sharpe 0.02, CAGR 0.005, DD 0.01): PASS
+   NOTE data/prices.csv is re-downloaded daily, so U56 rows reproduce to ~3e-3, not
+   bit-exact (idea 406); the tolerances above are set for that, not for noise hiding.
+
+====================================================================================================
+A. WIDTH LADDER at the PROTOCOL cost (10 bps), lag 1, g = 1.00
+   EVERY rung reported.  The grid reaches n = 55 = the whole tradeable panel.
+====================================================================================================
+   n  mgross     CAGR  Sharpe    MaxDD     H1     H2   ISSh  OOSCAGR  OOSSh    OOSDD   turn  fail4b             4b   4a  4bOOS
+   5   0.999    8.36%   0.655  -18.24%  0.632  0.679  0.540   10.11%  0.741  -18.24%  31.70  H1+H2+OOS+CAGR   fail fail   fail
+  10   0.989   11.65%   0.889  -17.22%  1.015  0.786  0.948   11.52%  0.848  -17.22%  21.53  H2+OOS           fail fail   fail
+  15   0.976   12.17%   0.919  -20.95%  1.046  0.814  0.966   12.15%  0.885  -20.95%  17.18  H2+DD            fail fail   fail
+  20   0.959   13.42%   1.013  -22.46%  1.087  0.953  0.978   14.39%  1.041  -22.46%  13.87  DD               fail fail   fail
+  25   0.939   13.26%   1.025  -22.34%  1.066  0.993  0.934   14.87%  1.095  -22.34%  11.52  DD               fail fail   fail
+  30   0.917   13.18%   1.064  -20.62%  1.063  1.068  0.945   14.94%  1.156  -20.62%   9.53  DD               fail fail   fail
+  34   0.898   12.98%   1.087  -19.68%  1.085  1.091  0.961   14.65%  1.187  -19.68%   8.38  -none-           PASS fail   PASS
+  36   0.887   12.68%   1.086  -18.98%  1.075  1.099  0.944   14.47%  1.198  -18.98%   7.64  -none-           PASS fail   PASS
+  38   0.873   12.68%   1.109  -18.57%  1.093  1.125  0.952   14.57%  1.233  -18.57%   7.01  -none-           PASS fail   PASS
+  40   0.857   12.54%   1.127  -17.86%  1.101  1.152  0.963   14.47%  1.255  -17.86%   6.41  -none-           PASS fail   PASS
+  42   0.837   12.25%   1.135  -17.17%  1.104  1.165  0.970   14.15%  1.264  -17.17%   5.90  -none-           PASS fail   PASS
+  44   0.814   11.78%   1.131  -16.77%  1.091  1.169  0.957   13.70%  1.267  -16.77%   5.48  -none-           PASS fail   PASS
+  46   0.787   11.32%   1.128  -16.60%  1.106  1.151  0.967   13.07%  1.254  -16.60%   5.19  -none-           PASS fail   PASS
+  48   0.759   10.83%   1.124  -16.13%  1.102  1.146  0.963   12.52%  1.249  -16.13%   4.93  -none-           PASS fail   PASS
+  50   0.731   10.43%   1.126  -15.51%  1.100  1.153  0.960   12.09%  1.255  -15.51%   4.69  CAGR             fail fail   PASS
+  52   0.703   10.02%   1.125  -14.94%  1.100  1.151  0.960   11.61%  1.253  -14.94%   4.49  CAGR             fail fail   PASS
+  55   0.665    9.47%   1.125  -14.16%  1.100  1.150  0.960   10.96%  1.253  -14.16%   4.25  CAGR             fail fail   PASS
+
+   full-sample Sharpe argmax n = 42 (Sharpe 1.135); OOS Sharpe argmax n = 44
+   H_INTERIOR (argmax not at a grid endpoint 5 or 55): PASS
+   H_40 (n=40 passes 4b on the full sample at 10 bps): PASS
+   4b-pass width band, full sample: [34, 36, 38, 40, 42, 44, 46, 48]  (8 of 17 rungs)
+   4b-pass width band, OOS window : [34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 55]  (11 of 17 rungs)
+   Sharpe spread over the ladder 0.4796; OOS Sharpe spread 0.5259; MaxDD spread 8.31%
+
+====================================================================================================
+B. RULE 8 WALK-FORWARD - n chosen on IS (2009-01-13..2016-12-31) by IS SHARPE ALONE,
+   ties to the SMALLER n; OOS (2017-01-01..) read exactly ONCE.  10 bps, lag 1.
+====================================================================================================
+   IS Sharpe by width: 5:0.540  10:0.948  15:0.966  20:0.978  25:0.934  30:0.945  34:0.961  36:0.944  38:0.952  40:0.963  42:0.970  44:0.957  46:0.967  48:0.963  50:0.960  52:0.960  55:0.960
+   IS pick n* = 20 (IS Sharpe 0.9783); full-sample argmax was 42; |n* - argmax| = 22
+   H_PICK40 (the pre-registered selector picks idea 589's n=40): FAIL
+   Spearman(IS Sharpe, OOS Sharpe) over the 17 rungs: +0.370; excluding n=5 (the one degenerate rung): +0.244
+   IS Sharpe spread over the 16 non-degenerate rungs 0.0443 vs OOS spread 0.4189 - the IS objective the selector maximises is ~9.4x FLATTER than what it is choosing over.
+
+   selector                                        n   OOSCAGR   OOSSh    OOSDD  fail4b(OOS)     4bOOS  4aOOS
+   IS-SHARPE (pre-declared)                       20    14.39%   1.041  -22.46%  DD               fail   fail
+   589's PARKED n=40                              40    14.47%   1.255  -17.86%  -none-           PASS   fail
+   full-sample argmax (ORACLE, not a selector)    42    14.15%   1.264  -17.17%  -none-           PASS   fail
+   SPY (OOS comparand)                             -    15.33%   0.877  -33.72%
+   RULES v2 (OOS comparand)                        -     9.47%   1.278  -12.05%
+
+   H_PICK (the rule-8 IS pick passes 4b OUT OF SAMPLE): FAIL
+   neighbour n=15: OOS 4b fail (H1+DD)
+   neighbour n=25: OOS 4b fail (DD)
+   H_NEIGH (both adjacent rungs also pass 4b OOS): FAIL
+
+----------------------------------------------------------------------------------------------------
+B2. POST-HOC SELECTORS - declared AFTER the IS-SHARPE result above was read, and
+    labelled post-hoc for that reason.  They are NOT part of this run's verdict; they
+    exist to tell the next run whether any IS-ONLY rule could have reached the 4b band,
+    or whether the band is only visible once the full sample has been read.
+    Each one uses IS data ONLY, and the OOS window is read once per selector.
+----------------------------------------------------------------------------------------------------
+    IS-window 4b band (IS data only): EMPTY
+    IS DD cap (0.60 x SPY IS MaxDD) = -13.24%; widths clearing it in-sample: [10, 46, 48, 50, 52, 55]
+    IS Calmar by width: 5:0.36  10:1.08  15:0.91  20:0.85  25:0.78  30:0.73  34:0.74  36:0.73  38:0.75  40:0.74  42:0.73  44:0.71  46:0.72  48:0.72  50:0.71  52:0.71  55:0.71
+    IS-CALMAR (post-hoc)                     n=10   OOS  11.52% / 0.848 / -17.22%  fail4b H2+OOS     fail
+    IS-DD-FEASIBLE smallest n (post-hoc)     n=10   OOS  11.52% / 0.848 / -17.22%  fail4b H2+OOS     fail
+    IS-4b-BAND-MIDPOINT (post-hoc)           EMPTY - the selector has nothing to pick
+    0 of 2 post-hoc IS-only selectors reach a 4b pass OOS.
+
+====================================================================================================
+C. COST LADDER, lag 1 - at the rule-8 pick n=20 and at 589's n=40
+====================================================================================================
+
+   n = 20
+    bps     CAGR  Sharpe    MaxDD  OOSCAGR  OOSSh    OOSDD  fail4b             4b  4bOOS
+      0   15.00%   1.117  -22.35%   16.04%  1.145  -22.35%  DD               fail   fail
+      5   14.21%   1.065  -22.41%   15.21%  1.093  -22.41%  DD               fail   fail
+     10   13.42%   1.013  -22.46%   14.39%  1.041  -22.46%  DD               fail   fail
+     25   11.08%   0.857  -22.63%   11.95%  0.886  -22.63%  H1+H2+DD         fail   fail
+     50    7.30%   0.596  -23.56%    8.00%  0.626  -23.56%  H1+H2+OOS+DD+CAGR fail   fail
+
+   n = 40
+    bps     CAGR  Sharpe    MaxDD  OOSCAGR  OOSSh    OOSDD  fail4b             4b  4bOOS
+      0   13.26%   1.185  -17.79%   15.22%  1.313  -17.79%  -none-           PASS   PASS
+      5   12.90%   1.156  -17.83%   14.84%  1.284  -17.83%  -none-           PASS   PASS
+     10   12.54%   1.127  -17.86%   14.47%  1.255  -17.86%  -none-           PASS   PASS
+     25   11.46%   1.039  -17.98%   13.35%  1.168  -17.98%  -none-           PASS   PASS
+     50    9.69%   0.894  -18.17%   11.51%  1.023  -18.17%  H1+CAGR          fail   PASS
+
+   H_COST (the rule-8 pick passes 4b OOS at every rung through 25 bps): FAIL
+   cost rungs where n=20 passes 4b OOS: NONE
+
+====================================================================================================
+D. EXECUTION-DELAY LADDER at 10 bps (lag 1 = PROTOCOL next-day fill)
+====================================================================================================
+
+   n = 20
+    lag     CAGR  Sharpe    MaxDD     H1     H2  OOSCAGR  OOSSh  fail4b             4b  4bOOS
+      1   13.42%   1.013  -22.46%  1.087  0.953   14.39%  1.041  DD               fail   fail
+      2   12.64%   0.947  -23.41%  1.031  0.880   13.32%  0.955  DD               fail   fail
+      3   13.70%   1.009  -23.31%  1.059  0.973   14.85%  1.042  DD               fail   fail
+
+   n = 40
+    lag     CAGR  Sharpe    MaxDD     H1     H2  OOSCAGR  OOSSh  fail4b             4b  4bOOS
+      1   12.54%   1.127  -17.86%  1.101  1.152   14.47%  1.255  -none-           PASS   PASS
+      2   12.24%   1.083  -17.71%  1.055  1.111   14.22%  1.213  -none-           PASS   PASS
+      3   13.12%   1.144  -18.57%  1.146  1.145   14.81%  1.250  -none-           PASS   PASS
+
+   H_DELAY (the rule-8 pick passes 4b OOS with a +1-day fill, lag 2): FAIL
+
+====================================================================================================
+E. CENSUS over all 255 cells
+====================================================================================================
+   4b passes, full sample: 98 of 255; 4b passes, OOS window: 146; 4a passes, full sample: 0; 4a OOS: 0
+   binding 4b legs (full sample), most common first:
+      -none-                   98
+      DD                       39
+      CAGR                     33
+      H1+CAGR                  28
+      H1+H2+OOS+DD+CAGR        26
+      H1+H2+OOS+CAGR            8
+      H1                        6
+      H1+DD                     4
+      H1+H2+DD                  3
+      H2+OOS                    2
+      H1+H2+CAGR                2
+      H1+H2+OOS                 2
+      H1+DD+CAGR                2
+      H2+DD                     1
+      H2+OOS+DD                 1
+   4b pass count by cost rung (full / OOS):
+        0 bps    30 /  35   of 51
+        5 bps    29 /  33   of 51
+       10 bps    24 /  32   of 51
+       25 bps    15 /  30   of 51
+       50 bps     0 /  16   of 51
+   4b pass count by lag (full / OOS):
+      lag 1     34 /  49   of 85
+      lag 2     30 /  49   of 85
+      lag 3     34 /  48   of 85
+
+====================================================================================================
+PRE-REGISTERED HYPOTHESES
+====================================================================================================
+   H_REPRO    n=40 reproduces idea 589's committed headline   PASS
+   H_40       n=40 passes 4b on the full sample at 10 bps     PASS
+   H_INTERIOR the Sharpe argmax is interior on the extended grid PASS
+   H_PICK     the rule-8 IS pick passes 4b OUT OF SAMPLE      FAIL
+   H_PICK40   the rule-8 IS pick IS n=40                      FAIL
+   H_COST     the pick passes 4b OOS through 25 bps           FAIL
+   H_DELAY    the pick passes 4b OOS with a +1-day fill       FAIL
+   H_NEIGH    both width neighbours of the pick pass 4b OOS   FAIL
+
+   3 of 8 pre-registered hypotheses pass.
+
+   VERDICT: KILL
+
+RUNTIME 12.4s
