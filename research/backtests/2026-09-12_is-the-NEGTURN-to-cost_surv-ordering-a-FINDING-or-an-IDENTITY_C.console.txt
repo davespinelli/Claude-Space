@@ -1,0 +1,475 @@
+# Idea 839 - is-the-NEGTURN-to-cost_surv-ordering-a-FINDING-or-an-IDENTITY  (lane C, 2026-09-12)
+# QUESTION: cost survival is turnover x rung BY CONSTRUCTION.  Decompose 837's
+#   NEGTURN->cost_surv +0.4637 into its arithmetic part and its residual, and ask whether
+#   any ordering of OOS Sharpe survives when the cost channel is switched off.
+# TUNED: decomposition ['RAW', 'MECHPRED', 'DRAGFREE', 'DIVTURN', 'PARTIAL'] x rung set ['R11', 'FINE', 'COARSE', 'CONT']; HEADLINE DRAGFREE / R11 / ALL39.
+# GRID: 5 x 4 x 2 cells for the cost leg, plus the
+#   OOS-Sharpe leg at every rung of every ladder.  ALL written to .grid.csv.
+# NULLS: iid permutation (20000 shuffles) AND cluster bootstrap over the 14 FAMILIES (10000 resamples).
+# SURVIVORSHIP: U56/B136 are current-constituent lists; levels optimistic, orderings less.
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+   panel U56   55 tradeable names, 4703 rows, scored from 2009-01-13
+   panel B136  135 tradeable names, 4703 rows, scored from 2009-01-13
+   corpus: 39 arms in 14 families ['BANDM', 'BANDRS', 'BANDW', 'BANDWB', 'BRD', 'BUF', 'EWALL', 'MADIST', 'MARS', 'MARSB', 'R6', 'SHY', 'TOPN', 'TOPND']
+
+======================================================================================================================
+BUILDING THE CORPUS (no new constructors; next-day fill, each family's cadence)
+======================================================================================================================
+   built TOPN-n10       fam TOPN    U56   W  max gross 0.750  turn 13.97x/yr  (2.0s)
+   built TOPN-n20       fam TOPN    U56   W  max gross 0.750  turn 10.45x/yr  (2.1s)
+   built TOPN-n30       fam TOPN    U56   W  max gross 0.750  turn  8.83x/yr  (2.0s)
+   built TOPN-n40       fam TOPN    U56   W  max gross 0.750  turn  8.02x/yr  (2.0s)
+   built BUF-m10        fam BUF     U56   W  max gross 0.750  turn  6.06x/yr  (2.0s)
+   built BUF-m20        fam BUF     U56   W  max gross 0.750  turn  5.03x/yr  (2.0s)
+   built BUF-m50        fam BUF     U56   W  max gross 0.750  turn  4.69x/yr  (2.0s)
+   built TOPND-m20      fam TOPND   U56   D  max gross 0.750  turn  5.84x/yr  (2.7s)
+   built TOPND-m50      fam TOPND   U56   D  max gross 0.750  turn  5.48x/yr  (2.8s)
+   built BANDW-b0.00    fam BANDW   U56   W  max gross 0.982  turn  3.96x/yr  (1.9s)
+   built BANDW-b0.03    fam BANDW   U56   W  max gross 0.982  turn  2.23x/yr  (1.9s)
+   built BANDW-b0.06    fam BANDW   U56   W  max gross 0.946  turn  1.62x/yr  (1.9s)
+   built BANDW-b0.08    fam BANDW   U56   W  max gross 0.923  turn  1.41x/yr  (2.0s)
+   built BANDW-b0.12    fam BANDW   U56   W  max gross 0.926  turn  1.15x/yr  (1.9s)
+   built BANDM-b0.00    fam BANDM   U56   M  max gross 0.982  turn  1.88x/yr  (1.7s)
+   built BANDM-b0.03    fam BANDM   U56   M  max gross 0.982  turn  1.56x/yr  (1.7s)
+   built BANDRS-b0.03   fam BANDRS  U56   W  max gross 0.750  turn  4.19x/yr  (1.9s)
+   built BANDRS-b0.12   fam BANDRS  U56   W  max gross 0.750  turn  1.96x/yr  (2.0s)
+   built MARS-g0.50     fam MARS    U56   W  max gross 0.500  turn  4.95x/yr  (2.1s)
+   built MARS-g0.75     fam MARS    U56   W  max gross 0.750  turn  7.36x/yr  (2.1s)
+   built MARS-g1.00     fam MARS    U56   W  max gross 1.000  turn  9.72x/yr  (2.0s)
+   built MADIST-q0.25   fam MADIST  U56   M  max gross 0.750  turn  4.75x/yr  (1.8s)
+   built MADIST-q0.50   fam MADIST  U56   M  max gross 0.750  turn  3.08x/yr  (1.8s)
+   built MADIST-q0.75   fam MADIST  U56   M  max gross 0.750  turn  1.76x/yr  (1.9s)
+   built BRD-q0.10      fam BRD     U56   W  max gross 1.000  turn  9.38x/yr  (2.3s)
+   built BRD-q0.17      fam BRD     U56   W  max gross 1.000  turn  8.37x/yr  (2.2s)
+   built BRD-q0.25      fam BRD     U56   W  max gross 1.000  turn  8.78x/yr  (2.2s)
+   built EWALL-g0.75    fam EWALL   U56   W  max gross 0.750  turn  7.87x/yr  (2.2s)
+   built EWALL-g1.00    fam EWALL   U56   W  max gross 1.000  turn 10.41x/yr  (2.1s)
+   built SHY-g0.375     fam SHY     B136  W  max gross 1.000  turn  4.35x/yr  (4.0s)
+   built SHY-g0.625     fam SHY     B136  W  max gross 1.000  turn  7.07x/yr  (4.0s)
+   built R6-n10         fam R6      B136  W  max gross 0.650  turn 13.15x/yr  (3.3s)
+   built R6-n20         fam R6      B136  W  max gross 0.650  turn 11.20x/yr  (3.3s)
+   built R6-n30         fam R6      B136  W  max gross 0.650  turn  9.98x/yr  (3.4s)
+   built BANDWB-b0.00   fam BANDWB  B136  W  max gross 0.968  turn  4.20x/yr  (3.3s)
+   built BANDWB-b0.03   fam BANDWB  B136  W  max gross 0.952  turn  2.53x/yr  (3.2s)
+   built BANDWB-b0.08   fam BANDWB  B136  W  max gross 0.944  turn  1.53x/yr  (3.2s)
+   built MARSB-g0.50    fam MARSB   B136  W  max gross 0.500  turn  5.23x/yr  (3.5s)
+   built MARSB-g0.75    fam MARSB   B136  W  max gross 0.750  turn  7.75x/yr  (3.4s)
+   built LIVE           fam -       U56   W  max gross 0.737  turn  1.68x/yr  (1.9s)
+   built V1             fam -       U56   W  max gross 0.750  turn 22.35x/yr  (1.9s)
+
+======================================================================================================================
+GATES G2 and G4
+======================================================================================================================
+   G2  analytic ladder r0 - turnover*c/1e4 at c=10 == engine cost_bps=10, max|d| over all 41 books 0.000e+00  PASS
+   G4  max realised gross over every book 1.0000 (no leverage)  PASS
+
+======================================================================================================================
+PROTOCOL RULE 8 ON THE BOOKS - full window, IS (..2016-12-31), OOS (2017-01-01..)
+======================================================================================================================
+              family panel freq  turn_yr  full_CAGR  full_Sharpe  full_MaxDD  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD keep4a keep4b keep4b_OOSlocal  fail4b
+book                                                                                                                                                          
+TOPN-n10        TOPN   U56    W +13.9687    +0.1310      +0.9320     -0.1754    +0.8515   +0.1493     +0.9934    -0.1754   FAIL   FAIL            PASS      H1
+TOPN-n20        TOPN   U56    W +10.4471    +0.1278      +1.0632     -0.1831    +0.9765   +0.1443     +1.1296    -0.1831   FAIL   PASS            PASS  -none-
+TOPN-n30        TOPN   U56    W  +8.8275    +0.1149      +1.0508     -0.1747    +0.9232   +0.1318     +1.1488    -0.1747   FAIL   PASS            PASS  -none-
+TOPN-n40        TOPN   U56    W  +8.0188    +0.1069      +1.0478     -0.1666    +0.9416   +0.1197     +1.1306    -0.1666   FAIL   PASS            PASS  -none-
+BUF-m10          BUF   U56    W  +6.0620    +0.1270      +1.0698     -0.1866    +0.9182   +0.1504     +1.1830    -0.1866   FAIL   PASS            PASS  -none-
+BUF-m20          BUF   U56    W  +5.0286    +0.1282      +1.1168     -0.1724    +0.9578   +0.1522     +1.2354    -0.1724   FAIL   PASS            PASS  -none-
+BUF-m50          BUF   U56    W  +4.6857    +0.1243      +1.1422     -0.1519    +1.0048   +0.1440     +1.2463    -0.1519   FAIL   PASS            PASS  -none-
+TOPND-m20      TOPND   U56    D  +5.8428    +0.1231      +1.1408     -0.1575    +0.9656   +0.1462     +1.2725    -0.1575   FAIL   PASS            PASS  -none-
+TOPND-m50      TOPND   U56    D  +5.4783    +0.1178      +1.1582     -0.1237    +0.9906   +0.1376     +1.2864    -0.1237   FAIL   PASS            PASS  -none-
+BANDW-b0.00    BANDW   U56    W  +3.9552    +0.1093      +1.1676     -0.1584    +1.0552   +0.1212     +1.2560    -0.1584   FAIL   PASS            PASS  -none-
+BANDW-b0.03    BANDW   U56    W  +2.2299    +0.1154      +1.2017     -0.1591    +1.1047   +0.1270     +1.2775    -0.1591   FAIL   PASS            PASS  -none-
+BANDW-b0.06    BANDW   U56    W  +1.6223    +0.1111      +1.1388     -0.1776    +1.0561   +0.1219     +1.2034    -0.1776   FAIL   PASS            PASS  -none-
+BANDW-b0.08    BANDW   U56    W  +1.4054    +0.1139      +1.1461     -0.1905    +1.1226   +0.1204     +1.1654    -0.1905   FAIL   PASS            PASS  -none-
+BANDW-b0.12    BANDW   U56    W  +1.1462    +0.1161      +1.1479     -0.1604    +1.1207   +0.1199     +1.1698    -0.1604   FAIL   PASS            PASS  -none-
+BANDM-b0.00    BANDM   U56    M  +1.8828    +0.1192      +1.2095     -0.1549    +1.1359   +0.1265     +1.2693    -0.1549   FAIL   PASS            PASS  -none-
+BANDM-b0.03    BANDM   U56    M  +1.5575    +0.1191      +1.1744     -0.1881    +1.1076   +0.1285     +1.2270    -0.1881   FAIL   PASS            PASS  -none-
+BANDRS-b0.03  BANDRS   U56    W  +4.1900    +0.1221      +1.1575     -0.1771    +1.1087   +0.1333     +1.1965    -0.1771   FAIL   PASS            PASS  -none-
+BANDRS-b0.12  BANDRS   U56    W  +1.9584    +0.1397      +1.2233     -0.1942    +1.1762   +0.1507     +1.2608    -0.1942   FAIL   PASS            PASS  -none-
+MARS-g0.50      MARS   U56    W  +4.9535    +0.0766      +1.0876     -0.1271    +1.0665   +0.0821     +1.1062    -0.1271   FAIL   FAIL            FAIL      CG
+MARS-g0.75      MARS   U56    W  +7.3572    +0.1151      +1.0877     -0.1865    +1.0670   +0.1235     +1.1061    -0.1865   FAIL   PASS            PASS  -none-
+MARS-g1.00      MARS   U56    W  +9.7184    +0.1536      +1.0878     -0.2432    +1.0674   +0.1649     +1.1059    -0.2432   FAIL   FAIL            FAIL      DD
+MADIST-q0.25  MADIST   U56    M  +4.7516    +0.1774      +1.1924     -0.2132    +1.2070   +0.1903     +1.1897    -0.2132   FAIL   FAIL            FAIL      DD
+MADIST-q0.50  MADIST   U56    M  +3.0768    +0.1538      +1.2260     -0.1998    +1.2449   +0.1600     +1.2154    -0.1998   FAIL   PASS            PASS  -none-
+MADIST-q0.75  MADIST   U56    M  +1.7579    +0.1407      +1.2034     -0.2049    +1.2172   +0.1429     +1.1932    -0.2049   FAIL   FAIL            FAIL      DD
+BRD-q0.10        BRD   U56    W  +9.3821    +0.1349      +1.1052     -0.2226    +0.9932   +0.1493     +1.1947    -0.2226   FAIL   FAIL            FAIL      DD
+BRD-q0.17        BRD   U56    W  +8.3743    +0.1416      +1.2226     -0.1479    +1.0248   +0.1604     +1.3937    -0.1272   FAIL   PASS            PASS  -none-
+BRD-q0.25        BRD   U56    W  +8.7791    +0.1194      +1.0895     -0.1479    +0.9843   +0.1261     +1.1852    -0.1337   FAIL   PASS            PASS  -none-
+EWALL-g0.75    EWALL   U56    W  +7.8660    +0.1037      +1.0461     -0.1587    +0.9697   +0.1126     +1.1065    -0.1587   FAIL   FAIL            PASS      CG
+EWALL-g1.00    EWALL   U56    W +10.4068    +0.1382      +1.0462     -0.2088    +0.9700   +0.1504     +1.1065    -0.2088   FAIL   FAIL            FAIL      DD
+SHY-g0.375       SHY  B136    W  +4.3508    +0.0622      +1.1687     -0.1113    +1.1457   +0.0638     +1.1871    -0.1113   FAIL   FAIL            FAIL      CG
+SHY-g0.625       SHY  B136    W  +7.0694    +0.0947      +1.0720     -0.1542    +1.0715   +0.0945     +1.0721    -0.1542   FAIL   FAIL            FAIL      CG
+R6-n10            R6  B136    W +13.1473    +0.1751      +1.1070     -0.2186    +1.2955   +0.1687     +0.9941    -0.2186   FAIL   FAIL            FAIL      DD
+R6-n20            R6  B136    W +11.2019    +0.1499      +1.1264     -0.1943    +1.2538   +0.1452     +1.0400    -0.1943   FAIL   PASS            PASS  -none-
+R6-n30            R6  B136    W  +9.9765    +0.1316      +1.0854     -0.1941    +1.0984   +0.1366     +1.0780    -0.1941   FAIL   PASS            PASS  -none-
+BANDWB-b0.00  BANDWB  B136    W  +4.2030    +0.1032      +1.0875     -0.1663    +1.0566   +0.1040     +1.1141    -0.1663   FAIL   FAIL            FAIL      CG
+BANDWB-b0.03  BANDWB  B136    W  +2.5336    +0.1065      +1.0992     -0.1616    +1.0927   +0.1052     +1.1048    -0.1616   FAIL   PASS            FAIL  -none-
+BANDWB-b0.08  BANDWB  B136    W  +1.5342    +0.1139      +1.1179     -0.1950    +1.1421   +0.1105     +1.0974    -0.1950   FAIL   PASS            PASS  -none-
+MARSB-g0.50    MARSB  B136    W  +5.2267    +0.0770      +1.0509     -0.1373    +1.0442   +0.0789     +1.0563    -0.1373   FAIL   FAIL            FAIL      CG
+MARSB-g0.75    MARSB  B136    W  +7.7533    +0.1157      +1.0514     -0.2012    +1.0461   +0.1184     +1.0557    -0.2012   FAIL   PASS            PASS  -none-
+LIVE               -   U56    W  +1.6815    +0.0863      +1.2018     -0.1205    +1.1043   +0.0947     +1.2782    -0.1205    NaN    NaN             NaN     NaN
+V1                 -   U56    W +22.3508    +0.0641      +0.6602     -0.1383    +0.5588   +0.0760     +0.7361    -0.1383    NaN    NaN             NaN     NaN
+SPY_U56            -   U56    -  +0.0000    +0.1516      +0.8861     -0.3372    +0.8986   +0.1533     +0.8767    -0.3372    NaN    NaN             NaN     NaN
+SPY_B136           -  B136    -  +0.0000    +0.1516      +0.8861     -0.3372    +0.8987   +0.1533     +0.8767    -0.3372    NaN    NaN             NaN     NaN
+
+   fixed-window 4b PASS 26 of 39;  4a PASS 0;  OOS-local 4b PASS 27;  BOTH 0.
+   NOTE: these arms are a CENSUS corpus, not searched-for candidates; none is promoted.
+
+======================================================================================================================
+LADDERS - cost rung c (bps on turnover) and flat drag D (bps/yr), fixed-window 4b
+======================================================================================================================
+   G3  monotonicity of the 4b pass indicator in c, window FULL, FINE ladder (51 rungs x 39 books): 0 up-steps  PASS  []
+   G3  monotonicity of the 4b pass indicator in c, window OOS , FINE ladder (51 rungs x 39 books): 0 up-steps  PASS  []
+
+   FIXED = fixed-window 4b (5 legs).  OOSLOC = OOS-window-local 4b (4 legs) = the reading
+   idea 837's committed +0.4637 cell is on.
+   book           turn/yr cFIX_R11   cFIX*   DFIX* chatFIX  cOOS_R11   cOOS*   DOOS* chatOOS
+   TOPN-n10         13.97        5    5.37    77.0    5.51        15   15.82   231.5   16.57
+   TOPN-n20         10.45       20   22.05   233.2   22.32        30   37.91   427.7   40.94
+   TOPN-n30          8.83       15   17.91   157.4   17.84        30   33.22   312.6   35.42
+   TOPN-n40          8.02       10   10.85    91.4   11.40        20   22.90   197.0   24.57
+   BUF-m10           6.06       20   24.75   146.4   24.14        50   53.53   395.1   65.18
+   BUF-m20           5.03       40   45.57   216.7   43.10        75   76.55   451.4   89.77
+   BUF-m50           4.69       40   43.21   211.8   45.20        75   75.43   375.3   80.11
+   TOPND-m20         5.84       30   34.71   213.8   36.59        50   66.07   406.4   69.56
+   TOPND-m50         5.48       25   28.22   162.9   29.74        50   57.58   327.1   59.71
+   BANDW-b0.00       3.96       15   16.80    70.0   17.71        30   39.66   166.8   42.17
+   BANDW-b0.03       2.23       40   45.60   107.3   48.13        75   84.10   199.6   89.49
+   BANDW-b0.06       1.62       30   35.97    61.6   37.95        75   84.49   148.9   91.76
+   BANDW-b0.08       1.41       50   57.17    84.8   60.35        75   85.75   132.8   94.51
+   BANDW-b0.12       1.15       75   84.42   102.1   89.07        75   97.49   126.1  110.03
+   BANDM-b0.00       1.88       50   69.34   137.3   72.93        75   92.73   192.1  102.03
+   BANDM-b0.03       1.56       75   81.13   133.3   85.57       100  123.99   205.9  132.22
+   BANDRS-b0.03      4.19       40   43.08   186.1   44.41        50   63.70   274.8   65.59
+   BANDRS-b0.12      1.96      100  123.73   318.7  162.75       100  123.73   405.4  207.01
+   MARS-g0.50        4.95       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   MARS-g0.75        7.36       20   20.58   156.8   21.31        25   28.92   221.9   30.16
+   MARS-g1.00        9.72       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   MADIST-q0.25      4.75       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   MADIST-q0.50      3.08       75   83.46   410.2  133.31        75   83.46   333.9  108.51
+   MADIST-q0.75      1.76       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   BRD-q0.10         9.38       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   BRD-q0.17         8.37       30   33.20   293.0   34.99        50   63.40   551.5   65.85
+   BRD-q0.25         8.78       20   23.06   210.7   24.00        25   29.78   253.2   28.84
+   EWALL-g0.75       7.87        5    7.30    59.9    7.61        15   15.70   131.4   16.70
+   EWALL-g1.00      10.41       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   SHY-g0.375        4.35       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   SHY-g0.625        7.07       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   R6-n10           13.15       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   R6-n20           11.20       25   25.97   302.6   27.01        25   26.91   304.8   27.21
+   R6-n30            9.98       30   30.71   309.6   31.03        30   33.90   341.4   34.22
+   BANDWB-b0.00      4.20        0    3.98    17.6    4.18         0    3.41    15.6    3.70
+   BANDWB-b0.03      2.53       10   11.31    30.2   11.90         0    3.26     9.1    3.59
+   BANDWB-b0.08      1.53       50   53.04    85.9   55.97        25   26.43    45.7   29.81
+   MARSB-g0.50       5.23       -1   -1.00    -1.0   -1.00        -1   -1.00    -1.0   -1.00
+   MARSB-g0.75       7.75       15   15.29   164.5   21.22        15   15.29   179.3   23.12
+
+======================================================================================================================
+GATE G1 - reproduction of idea 837's committed .books.csv
+======================================================================================================================
+   turn_yr        max|d| over 39 arms 1.776e-15
+   full_CAGR      max|d| over 39 arms 8.327e-17
+   full_Sharpe    max|d| over 39 arms 2.220e-16
+   full_MaxDD     max|d| over 39 arms 8.327e-17
+   IS_CAGR        max|d| over 39 arms 9.714e-17
+   IS_Sharpe      max|d| over 39 arms 2.220e-16
+   IS_MaxDD       max|d| over 39 arms 8.327e-17
+   OOS_CAGR       max|d| over 39 arms 8.327e-17
+   OOS_Sharpe     max|d| over 39 arms 2.220e-16
+   OOS_MaxDD      max|d| over 39 arms 8.327e-17
+   cost_surv      max|d| over 39 arms 0.000e+00
+   cost_surv_OOS  max|d| over 39 arms 0.000e+00
+   committed cell rho(NEGTURN, cost_surv_OOS) +0.4637 -> rebuilt +0.4637  |d| 0.0000   <== the queue's +0.4637 cell
+   the FIXED-window column on the SAME committed file reads +0.5018 -> rebuilt +0.5018  |d| 0.0000
+   committed cell rho(NEGTURN, OOS_Sharpe) +0.4587 -> rebuilt +0.4587  |d| 0.0000
+   G1  PASS  (max|d| 1.776e-15)
+   NOTE: the queue calls the cell 'NEGTURN->cost_surv'.  It is the OOS-WINDOW-LOCAL
+   survival column; the fixed-window one is a different, higher number.  Both carried.
+
+   GATES: G1 PASS  G2 PASS  G3 PASS  G4 PASS
+
+======================================================================================================================
+K0 - the arithmetic ceiling of the association
+======================================================================================================================
+   rho(NEGTURN, 1/turn_yr) = +1.000000   (-turn and 1/turn are the SAME ranking)
+   => if D_star were CONSTANT across books, rho(NEGTURN, cost_surv) would be EXACTLY
+      +1.0000 with zero information in the corpus.  837's +0.4637 is what is LEFT of
+      that ceiling once D_star disperses - not a signal added on top of it.
+
+======================================================================================================================
+THE GRID - 2 windows x 5 decompositions x 4 rung sets x 2 populations (cost leg)
+======================================================================================================================
+   window OOSLOC  ALL39 n=39 (iid 95% band 0.3119);  PASS0 n=29 (band 0.3754) = arms passing 4b at ZERO cost
+      the 10 arms outside PASS0 fail 4b at EVERY rung for reasons that are NOT about cost:
+      MARS-g0.50, MARS-g1.00, MADIST-q0.25, MADIST-q0.75, BRD-q0.10, EWALL-g1.00, SHY-g0.375, SHY-g0.625, R6-n10, MARSB-g0.50
+   window FIXED   ALL39 n=39 (iid 95% band 0.3119);  PASS0 n=29 (band 0.3754) = arms passing 4b at ZERO cost
+      the 10 arms outside PASS0 fail 4b at EVERY rung for reasons that are NOT about cost:
+      MARS-g0.50, MARS-g1.00, MADIST-q0.25, MADIST-q0.75, BRD-q0.10, EWALL-g1.00, SHY-g0.375, SHY-g0.625, R6-n10, MARSB-g0.50
+
+   window  pop    rungs   decomp    target                       n      rho    iid p          cluster 95% CI  excl0
+   OOSLOC  ALL39  R11     RAW       cost_surv(R11)              39  +0.4637   0.0030      [+0.0326, +0.7657]      Y
+   OOSLOC  ALL39  R11     MECHPRED  D_star/turn_yr              39  +0.4871   0.0018      [+0.0415, +0.8001]      Y
+   OOSLOC  ALL39  R11     DRAGFREE  D_star (bps/yr)             39  -0.1137   0.4914      [-0.3875, +0.2308]      n  <== HEADLINE
+   OOSLOC  ALL39  R11     DIVTURN   cost_surv(R11) x turn_yr    29  -0.5740   0.0014      [-0.7576, -0.0144]      Y
+   OOSLOC  ALL39  R11     PARTIAL   cost_surv(R11) | D_star     39  +0.8092      -        [+0.5404, +0.9212]      Y
+   OOSLOC  ALL39  FINE    RAW       cost_surv(FINE)             39  +0.4827   0.0018      [+0.0288, +0.8012]      Y
+   OOSLOC  ALL39  FINE    MECHPRED  D_star/turn_yr              39  +0.4871   0.0018      [+0.0415, +0.8001]      Y
+   OOSLOC  ALL39  FINE    DRAGFREE  D_star (bps/yr)             39  -0.1137   0.4914      [-0.3875, +0.2308]      n
+   OOSLOC  ALL39  FINE    DIVTURN   cost_surv(FINE) x turn_yr   29  -0.5251   0.0037      [-0.7423, +0.0181]      n
+   OOSLOC  ALL39  FINE    PARTIAL   cost_surv(FINE) | D_star    39  +0.7947      -        [+0.5362, +0.9183]      Y
+   OOSLOC  ALL39  COARSE  RAW       cost_surv(COARSE)           39  +0.4404   0.0052      [+0.0547, +0.7065]      Y
+   OOSLOC  ALL39  COARSE  MECHPRED  D_star/turn_yr              39  +0.4871   0.0018      [+0.0415, +0.8001]      Y
+   OOSLOC  ALL39  COARSE  DRAGFREE  D_star (bps/yr)             39  -0.1137   0.4914      [-0.3875, +0.2308]      n
+   OOSLOC  ALL39  COARSE  DIVTURN   cost_surv(COARSE) x turn_yr  29  -0.3389   0.0722      [-0.7228, +0.0832]      n
+   OOSLOC  ALL39  COARSE  PARTIAL   cost_surv(COARSE) | D_star  39  +0.8294      -        [+0.5071, +0.9248]      Y
+   OOSLOC  ALL39  CONT    RAW       cost_surv(CONT)             39  +0.4785   0.0022      [+0.0134, +0.8109]      Y
+   OOSLOC  ALL39  CONT    MECHPRED  D_star/turn_yr              39  +0.4871   0.0018      [+0.0415, +0.8001]      Y
+   OOSLOC  ALL39  CONT    DRAGFREE  D_star (bps/yr)             39  -0.1137   0.4914      [-0.3875, +0.2308]      n
+   OOSLOC  ALL39  CONT    DIVTURN   cost_surv(CONT) x turn_yr   29  -0.5488   0.0026      [-0.7489, -0.0312]      Y
+   OOSLOC  ALL39  CONT    PARTIAL   cost_surv(CONT) | D_star    39  +0.7877      -        [+0.5093, +0.9188]      Y
+   OOSLOC  PASS0  R11     RAW       cost_surv(R11)              29  +0.5655   0.0018      [-0.0030, +0.8763]      n
+   OOSLOC  PASS0  R11     MECHPRED  D_star/turn_yr              29  +0.6054   0.0005      [+0.0256, +0.8902]      Y
+   OOSLOC  PASS0  R11     DRAGFREE  D_star (bps/yr)             29  -0.4680   0.0107      [-0.7151, +0.1524]      n
+   OOSLOC  PASS0  R11     DIVTURN   cost_surv(R11) x turn_yr    29  -0.5740   0.0014      [-0.7576, -0.0144]      Y
+   OOSLOC  PASS0  R11     PARTIAL   cost_surv(R11) | D_star     29  +0.8854      -        [+0.6929, +0.9651]      Y
+   OOSLOC  PASS0  FINE    RAW       cost_surv(FINE)             29  +0.5993   0.0006      [-0.0286, +0.9083]      n
+   OOSLOC  PASS0  FINE    MECHPRED  D_star/turn_yr              29  +0.6054   0.0005      [+0.0256, +0.8902]      Y
+   OOSLOC  PASS0  FINE    DRAGFREE  D_star (bps/yr)             29  -0.4680   0.0107      [-0.7151, +0.1524]      n
+   OOSLOC  PASS0  FINE    DIVTURN   cost_surv(FINE) x turn_yr   29  -0.5251   0.0037      [-0.7423, +0.0181]      n
+   OOSLOC  PASS0  FINE    PARTIAL   cost_surv(FINE) | D_star    29  +0.8653      -        [+0.6764, +0.9629]      Y
+   OOSLOC  PASS0  COARSE  RAW       cost_surv(COARSE)           29  +0.5322   0.0036      [+0.0681, +0.8283]      Y
+   OOSLOC  PASS0  COARSE  MECHPRED  D_star/turn_yr              29  +0.6054   0.0005      [+0.0256, +0.8902]      Y
+   OOSLOC  PASS0  COARSE  DRAGFREE  D_star (bps/yr)             29  -0.4680   0.0107      [-0.7151, +0.1524]      n
+   OOSLOC  PASS0  COARSE  DIVTURN   cost_surv(COARSE) x turn_yr  29  -0.3389   0.0722      [-0.7228, +0.0832]      n
+   OOSLOC  PASS0  COARSE  PARTIAL   cost_surv(COARSE) | D_star  29  +0.9136      -        [+0.6766, +0.9625]      Y
+   OOSLOC  PASS0  CONT    RAW       cost_surv(CONT)             29  +0.5916   0.0006      [-0.0616, +0.9145]      n
+   OOSLOC  PASS0  CONT    MECHPRED  D_star/turn_yr              29  +0.6054   0.0005      [+0.0256, +0.8902]      Y
+   OOSLOC  PASS0  CONT    DRAGFREE  D_star (bps/yr)             29  -0.4680   0.0107      [-0.7151, +0.1524]      n
+   OOSLOC  PASS0  CONT    DIVTURN   cost_surv(CONT) x turn_yr   29  -0.5488   0.0026      [-0.7489, -0.0312]      Y
+   OOSLOC  PASS0  CONT    PARTIAL   cost_surv(CONT) | D_star    29  +0.8552      -        [+0.6345, +0.9640]      Y
+   FIXED   ALL39  R11     RAW       cost_surv(R11)              39  +0.5018   0.0010      [+0.1037, +0.7588]      Y
+   FIXED   ALL39  R11     MECHPRED  D_star/turn_yr              39  +0.5138   0.0006      [+0.1174, +0.7703]      Y
+   FIXED   ALL39  R11     DRAGFREE  D_star (bps/yr)             39  -0.0470   0.7744      [-0.2371, +0.2611]      n
+   FIXED   ALL39  R11     DIVTURN   cost_surv(R11) x turn_yr    29  -0.4034   0.0316      [-0.7068, +0.1457]      n
+   FIXED   ALL39  R11     PARTIAL   cost_surv(R11) | D_star     39  +0.8208      -        [+0.5209, +0.9325]      Y
+   FIXED   ALL39  FINE    RAW       cost_surv(FINE)             39  +0.5145   0.0006      [+0.1095, +0.7698]      Y
+   FIXED   ALL39  FINE    MECHPRED  D_star/turn_yr              39  +0.5138   0.0006      [+0.1174, +0.7703]      Y
+   FIXED   ALL39  FINE    DRAGFREE  D_star (bps/yr)             39  -0.0470   0.7744      [-0.2371, +0.2611]      n
+   FIXED   ALL39  FINE    DIVTURN   cost_surv(FINE) x turn_yr   29  -0.3901   0.0370      [-0.7049, +0.1524]      n
+   FIXED   ALL39  FINE    PARTIAL   cost_surv(FINE) | D_star    39  +0.8223      -        [+0.5196, +0.9318]      Y
+   FIXED   ALL39  COARSE  RAW       cost_surv(COARSE)           39  +0.4987   0.0011      [+0.0926, +0.7655]      Y
+   FIXED   ALL39  COARSE  MECHPRED  D_star/turn_yr              39  +0.5138   0.0006      [+0.1174, +0.7703]      Y
+   FIXED   ALL39  COARSE  DRAGFREE  D_star (bps/yr)             39  -0.0470   0.7744      [-0.2371, +0.2611]      n
+   FIXED   ALL39  COARSE  DIVTURN   cost_surv(COARSE) x turn_yr  29  +0.1451   0.4434      [-0.4508, +0.6519]      n
+   FIXED   ALL39  COARSE  PARTIAL   cost_surv(COARSE) | D_star  39  +0.7674      -        [+0.3940, +0.9014]      Y
+   FIXED   ALL39  CONT    RAW       cost_surv(CONT)             39  +0.5159   0.0005      [+0.1124, +0.7707]      Y
+   FIXED   ALL39  CONT    MECHPRED  D_star/turn_yr              39  +0.5138   0.0006      [+0.1174, +0.7703]      Y
+   FIXED   ALL39  CONT    DRAGFREE  D_star (bps/yr)             39  -0.0470   0.7744      [-0.2371, +0.2611]      n
+   FIXED   ALL39  CONT    DIVTURN   cost_surv(CONT) x turn_yr   29  -0.3877   0.0380      [-0.6966, +0.1829]      n
+   FIXED   ALL39  CONT    PARTIAL   cost_surv(CONT) | D_star    39  +0.8215      -        [+0.5209, +0.9310]      Y
+   FIXED   PASS0  R11     RAW       cost_surv(R11)              29  +0.6388   0.0002      [+0.2661, +0.8518]      Y
+   FIXED   PASS0  R11     MECHPRED  D_star/turn_yr              29  +0.6576   0.0000      [+0.2996, +0.8526]      Y
+   FIXED   PASS0  R11     DRAGFREE  D_star (bps/yr)             29  -0.3483   0.0636      [-0.6654, +0.2312]      n
+   FIXED   PASS0  R11     DIVTURN   cost_surv(R11) x turn_yr    29  -0.4034   0.0316      [-0.7068, +0.1457]      n
+   FIXED   PASS0  R11     PARTIAL   cost_surv(R11) | D_star     29  +0.9164      -        [+0.7207, +0.9757]      Y
+   FIXED   PASS0  FINE    RAW       cost_surv(FINE)             29  +0.6604   0.0001      [+0.2886, +0.8512]      Y
+   FIXED   PASS0  FINE    MECHPRED  D_star/turn_yr              29  +0.6576   0.0000      [+0.2996, +0.8526]      Y
+   FIXED   PASS0  FINE    DRAGFREE  D_star (bps/yr)             29  -0.3483   0.0636      [-0.6654, +0.2312]      n
+   FIXED   PASS0  FINE    DIVTURN   cost_surv(FINE) x turn_yr   29  -0.3901   0.0370      [-0.7049, +0.1524]      n
+   FIXED   PASS0  FINE    PARTIAL   cost_surv(FINE) | D_star    29  +0.9188      -        [+0.7130, +0.9739]      Y
+   FIXED   PASS0  COARSE  RAW       cost_surv(COARSE)           29  +0.6521   0.0001      [+0.2843, +0.8501]      Y
+   FIXED   PASS0  COARSE  MECHPRED  D_star/turn_yr              29  +0.6576   0.0000      [+0.2996, +0.8526]      Y
+   FIXED   PASS0  COARSE  DRAGFREE  D_star (bps/yr)             29  -0.3483   0.0636      [-0.6654, +0.2312]      n
+   FIXED   PASS0  COARSE  DIVTURN   cost_surv(COARSE) x turn_yr  29  +0.1451   0.4434      [-0.4508, +0.6519]      n
+   FIXED   PASS0  COARSE  PARTIAL   cost_surv(COARSE) | D_star  29  +0.8486      -        [+0.5891, +0.9396]      Y
+   FIXED   PASS0  CONT    RAW       cost_surv(CONT)             29  +0.6621   0.0000      [+0.2890, +0.8480]      Y
+   FIXED   PASS0  CONT    MECHPRED  D_star/turn_yr              29  +0.6576   0.0000      [+0.2996, +0.8526]      Y
+   FIXED   PASS0  CONT    DRAGFREE  D_star (bps/yr)             29  -0.3483   0.0636      [-0.6654, +0.2312]      n
+   FIXED   PASS0  CONT    DIVTURN   cost_surv(CONT) x turn_yr   29  -0.3877   0.0380      [-0.6966, +0.1829]      n
+   FIXED   PASS0  CONT    PARTIAL   cost_surv(CONT) | D_star    29  +0.9172      -        [+0.7146, +0.9742]      Y
+
+======================================================================================================================
+THE OOS-SHARPE LEG - rho(NEGTURN, OOS_Sharpe) as the cost channel is switched off
+======================================================================================================================
+
+   population ALL39  (iid p and cluster CI computed at the R11+COARSE rungs; every
+   other rung of the FINE ladder is a rho-only sweep, all of it in .grid.csv)
+    cost  OOS_Sharpe rho    iid p              cluster CI  full_Sharpe rho  OOS_CAGR rho
+       0         +0.2518   0.1196      [-0.2452, +0.6760]          +0.2678       -0.5083
+       2         +0.3028     -                          -          +0.3789       -0.4931
+       4         +0.3241     -                          -          +0.4387       -0.4682
+       5         +0.3619   0.0236      [-0.1450, +0.7301]          +0.4893       -0.4522
+       6         +0.3791     -                          -          +0.5186       -0.4486
+       8         +0.4352     -                          -          +0.5650       -0.4051
+      10         +0.4587   0.0034      [-0.0152, +0.7741]          +0.6253       -0.3571
+      12         +0.5132     -                          -          +0.6634       -0.3377
+      14         +0.5555     -                          -          +0.6917       -0.3051
+      15         +0.5820   0.0001      [+0.1686, +0.8007]          +0.7099       -0.2891
+      16         +0.5921     -                          -          +0.7287       -0.2723
+      18         +0.6030     -                          -          +0.7468       -0.2225
+      20         +0.6105   0.0000      [+0.2098, +0.8205]          +0.7609       -0.2077
+      22         +0.6253     -                          -          +0.7723       -0.1692
+      24         +0.6423     -                          -          +0.7840       -0.1277
+      25         +0.6490   0.0000      [+0.2700, +0.8467]          +0.7899       -0.1012
+      26         +0.6654     -                          -          +0.7945       -0.0759
+      28         +0.6733     -                          -          +0.8128       -0.0344
+      30         +0.6820   0.0000      [+0.3510, +0.8548]          +0.8188       +0.0028
+      32         +0.6925     -                          -          +0.8271       +0.0613
+      34         +0.7202     -                          -          +0.8320       +0.1209
+      36         +0.7379     -                          -          +0.8439       +0.1615
+      38         +0.7512     -                          -          +0.8447       +0.1879
+      40         +0.7557   0.0000      [+0.4644, +0.8819]          +0.8508       +0.2275
+      42         +0.7646     -                          -          +0.8563       +0.2698
+      44         +0.7783     -                          -          +0.8607       +0.3016
+      46         +0.7917     -                          -          +0.8628       +0.3304
+      48         +0.7972     -                          -          +0.8617       +0.3512
+      50         +0.8038   0.0000      [+0.5145, +0.9074]          +0.8632       +0.3743
+      52         +0.8038     -                          -          +0.8690       +0.4091
+      54         +0.8069     -                          -          +0.8757       +0.4435
+      56         +0.8140     -                          -          +0.8787       +0.4646
+      58         +0.8294     -                          -          +0.8787       +0.4791
+      60         +0.8287     -                          -          +0.8824       +0.5014
+      62         +0.8439     -                          -          +0.8846       +0.5362
+      64         +0.8447     -                          -          +0.8860       +0.5577
+      66         +0.8510     -                          -          +0.8895       +0.5787
+      68         +0.8510     -                          -          +0.8941       +0.5955
+      70         +0.8528     -                          -          +0.8941       +0.6004
+      72         +0.8549     -                          -          +0.8941       +0.6213
+      74         +0.8615     -                          -          +0.8972       +0.6291
+      75         +0.8615   0.0000      [+0.5968, +0.9324]          +0.8972       +0.6364
+      76         +0.8650     -                          -          +0.8962       +0.6409
+      78         +0.8648     -                          -          +0.8962       +0.6516
+      80         +0.8684     -                          -          +0.8941       +0.6597
+      82         +0.8700     -                          -          +0.8941       +0.6745
+      84         +0.8735     -                          -          +0.8960       +0.6941
+      86         +0.8779     -                          -          +0.8966       +0.7034
+      88         +0.8779     -                          -          +0.8966       +0.7038
+      90         +0.8789     -                          -          +0.8966       +0.7077
+      92         +0.8789     -                          -          +0.8978       +0.7097
+      94         +0.8824     -                          -          +0.8978       +0.7152
+      96         +0.8846     -                          -          +0.8978       +0.7170
+      98         +0.8846     -                          -          +0.8992       +0.7204
+     100         +0.8864   0.0000      [+0.6501, +0.9475]          +0.8992       +0.7344
+
+   population PASS0  (iid p and cluster CI computed at the R11+COARSE rungs; every
+   other rung of the FINE ladder is a rho-only sweep, all of it in .grid.csv)
+    cost  OOS_Sharpe rho    iid p              cluster CI  full_Sharpe rho  OOS_CAGR rho
+       0         +0.1611   0.4074      [-0.3888, +0.7069]          +0.2148       -0.5473
+       2         +0.2103     -                          -          +0.3537       -0.5197
+       4         +0.2286     -                          -          +0.4286       -0.4867
+       5         +0.2892   0.1314      [-0.2849, +0.7386]          +0.4576       -0.4635
+       6         +0.3015     -                          -          +0.4798       -0.4571
+       8         +0.3616     -                          -          +0.5365       -0.3892
+      10         +0.3704   0.0484      [-0.2138, +0.7786]          +0.6212       -0.3251
+      12         +0.4074     -                          -          +0.6567       -0.3054
+      14         +0.4591     -                          -          +0.6926       -0.2601
+      15         +0.5005   0.0056      [-0.0303, +0.8099]          +0.7197       -0.2443
+      16         +0.5197     -                          -          +0.7389       -0.2153
+      18         +0.5429     -                          -          +0.7591       -0.1754
+      20         +0.5586   0.0022      [+0.0316, +0.8433]          +0.7818       -0.1645
+      22         +0.5793     -                          -          +0.7956       -0.0961
+      24         +0.5985     -                          -          +0.8123       -0.0350
+      25         +0.5985   0.0008      [+0.1036, +0.8661]          +0.8212       +0.0044
+      26         +0.6167     -                          -          +0.8256       +0.0404
+      28         +0.6236     -                          -          +0.8527       +0.1069
+      30         +0.6374   0.0003      [+0.1898, +0.8853]          +0.8626       +0.1616
+      32         +0.6448     -                          -          +0.8665       +0.2320
+      34         +0.6887     -                          -          +0.8690       +0.2778
+      36         +0.7128     -                          -          +0.8852       +0.3128
+      38         +0.7389     -                          -          +0.8852       +0.3251
+      40         +0.7478   0.0000      [+0.4088, +0.9122]          +0.8916       +0.3606
+      42         +0.7645     -                          -          +0.8951       +0.4020
+      44         +0.7764     -                          -          +0.8985       +0.4143
+      46         +0.7980     -                          -          +0.9025       +0.4458
+      48         +0.8034     -                          -          +0.9030       +0.4527
+      50         +0.8148   0.0000      [+0.5177, +0.9423]          +0.9039       +0.4936
+      52         +0.8148     -                          -          +0.9054       +0.5320
+      54         +0.8197     -                          -          +0.9118       +0.5542
+      56         +0.8320     -                          -          +0.9167       +0.5586
+      58         +0.8433     -                          -          +0.9167       +0.5783
+      60         +0.8493     -                          -          +0.9187       +0.6089
+      62         +0.8754     -                          -          +0.9227       +0.6596
+      64         +0.8798     -                          -          +0.9256       +0.6936
+      66         +0.8911     -                          -          +0.9256       +0.7207
+      68         +0.8911     -                          -          +0.9330       +0.7394
+      70         +0.8956     -                          -          +0.9330       +0.7483
+      72         +0.8995     -                          -          +0.9330       +0.7690
+      74         +0.9064     -                          -          +0.9345       +0.7700
+      75         +0.9064   0.0000      [+0.7222, +0.9685]          +0.9345       +0.7700
+      76         +0.9128     -                          -          +0.9384       +0.7714
+      78         +0.9128     -                          -          +0.9384       +0.7906
+      80         +0.9158     -                          -          +0.9384       +0.7975
+      82         +0.9158     -                          -          +0.9384       +0.8118
+      84         +0.9207     -                          -          +0.9424       +0.8315
+      86         +0.9207     -                          -          +0.9448       +0.8448
+      88         +0.9207     -                          -          +0.9448       +0.8448
+      90         +0.9232     -                          -          +0.9448       +0.8522
+      92         +0.9232     -                          -          +0.9448       +0.8522
+      94         +0.9271     -                          -          +0.9448       +0.8606
+      96         +0.9271     -                          -          +0.9448       +0.8635
+      98         +0.9271     -                          -          +0.9473       +0.8660
+     100         +0.9310   0.0000      [+0.7806, +0.9812]          +0.9473       +0.8729
+
+======================================================================================================================
+RECONSTRUCTION - does D_star/turn_yr rebuild the observed cost survival rank by rank?
+======================================================================================================================
+   OOSLOC  ALL39   rho(cost_surv, c_hat): R11 +0.9933  FINE +0.9960  COARSE +0.9748  CONT +0.9949   |  rho(c_star, c_hat) +0.9949
+   OOSLOC  PASS0   rho(cost_surv, c_hat): R11 +0.9839  FINE +0.9904  COARSE +0.9385  CONT +0.9877   |  rho(c_star, c_hat) +0.9877
+   FIXED   ALL39   rho(cost_surv, c_hat): R11 +0.9977  FINE +0.9980  COARSE +0.9747  CONT +0.9986   |  rho(c_star, c_hat) +0.9986
+   FIXED   PASS0   rho(cost_surv, c_hat): R11 +0.9944  FINE +0.9952  COARSE +0.9382  CONT +0.9966   |  rho(c_star, c_hat) +0.9966
+
+======================================================================================================================
+PRE-REGISTERED HYPOTHESES
+======================================================================================================================
+
+======================================================================================================================
+RULE 8 ON THE CLAIM - choose the cell on IS (..2016) ONLY, read it ONCE on OOS
+======================================================================================================================
+   rungs   decomp      rho IS(..2016)  rho OOS(2017..)      gap
+   R11     RAW                +0.4216          +0.4637   0.0420
+   R11     MECHPRED           +0.4376          +0.4871   0.0495
+   R11     DRAGFREE           +0.2667          -0.1137   0.3804
+   R11     DIVTURN            +0.4389          -0.1148   0.5537
+   R11     PARTIAL            +0.6791          +0.8092   0.1301
+   FINE    RAW                +0.4358          +0.4827   0.0469
+   FINE    MECHPRED           +0.4376          +0.4871   0.0495
+   FINE    DRAGFREE           +0.2667          -0.1137   0.3804
+   FINE    DIVTURN            +0.4431          -0.0877   0.5308
+   FINE    PARTIAL            +0.7053          +0.7947   0.0893
+   COARSE  RAW                +0.3907          +0.4404   0.0497
+   COARSE  MECHPRED           +0.4376          +0.4871   0.0495
+   COARSE  DRAGFREE           +0.2667          -0.1137   0.3804
+   COARSE  DIVTURN            +0.4887          +0.0170   0.4716
+   COARSE  PARTIAL            +0.4954          +0.8294   0.3340
+   CONT    RAW                +0.4436          +0.4785   0.0349
+   CONT    MECHPRED           +0.4376          +0.4871   0.0495
+   CONT    DRAGFREE           +0.2667          -0.1137   0.3804
+   CONT    DIVTURN            +0.4377          -0.1008   0.5385
+   CONT    PARTIAL            +0.7109          +0.7877   0.0768
+
+   IS-chosen cell (highest rho on ..2016 alone): (PARTIAL, CONT) rho_IS +0.7109
+   read ONCE on 2017.. : rho_OOS +0.7877   gap 0.0768  vs bar 0.3  PASS
+
+======================================================================================================================
+HYPOTHESIS SCORECARD
+======================================================================================================================
+   PASS  G1 repro           837's books.csv + all three committed cells rebuilt
+   PASS  G2 cost identity   max|d| 0.000e+00
+   PASS  G3 monotone        up-steps: FULL 0, OOS 0 on 51x39
+   PASS  G4 no leverage     max gross 1.0000
+   PASS  K0 ceiling         rho(NEGTURN, 1/turn) +1.000000
+   PASS  H_MECH             mech +0.4871 vs raw +0.4637
+   PASS  H_SHARE            arithmetic share 1.0505 vs bar 0.8
+   PASS  H_RECON            rho(c_star, c_hat) +0.9949 vs bar 0.9
+   PASS  H_RESID            DRAGFREE rho -0.1137, p 0.4914, CI [-0.3875, +0.2308]
+   FAIL  H_RESID_SIG        DRAGFREE rho -0.1137 vs bar 0.3, excl0 False
+   FAIL  H_OOSSH_0          0 bps rho +0.2518, p 0.1196, CI [-0.2452, +0.6760]
+   PASS  H_OOSSH_DROP       10bps +0.4587 - 0bps +0.2518 = +0.2069 vs bar 0.2
+   PASS  H_POP              ALL39 +0.4637 p 0.0030 | PASS0 +0.5655 p 0.0018
+   PASS  H_SETFREE          rung-set spread of RAW 0.0423 vs bar 0.15
+   PASS  H_R8CLAIM          (PARTIAL,CONT) IS +0.7109 -> OOS +0.7877, gap 0.0768
+
+   13 of 15 PASS
+
+# runtime 534s
