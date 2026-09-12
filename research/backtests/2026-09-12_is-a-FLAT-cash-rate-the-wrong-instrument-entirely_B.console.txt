@@ -1,0 +1,234 @@
+
+====================================================================================================
+SETUP — panel, windows, cash instruments
+====================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+panel U56: 56 names, 2008-01-02 -> 2026-09-11
+scored window: 2009-01-13 -> 2026-09-11  (warm-up 260 rows skipped)
+IS  2009-01-13 -> 2016-12-30  (2007 rows)
+OOS 2017-01-03 -> 2026-09-11  (2436 rows)
+
+SHY realised annual total return:  FULL 1.3202%   IS 0.8108%   OOS 1.7419%   (OOS/IS = 2.15x)
+BILLPATH implied annual rate: -5.3707% .. 6.9566%  (IS mean 1.2182%, OOS mean 1.7191%)
+FLATMATCH_ORACLE annual rate by window: FULL 1.3202%  IS 0.8108%  OOS 1.7419%
+FLATMATCH_IS annual rate (fixed at the 2009-2016 value, carried into OOS): 0.8108%
+the record's flat convention: 1.5000% and 3.0000% — IS error +0.6892%/+2.1892%, OOS error -0.2419%/+1.2581%
+
+====================================================================================================
+GATES — printed before any new number
+====================================================================================================
+G1 LIVE RULES v2 @10bps U56: 8.6282% / 1.2018 / -12.0549%  vs committed 8.6282% / 1.2018 / -12.0549%  max|d| 4.063e-05  -> PASS
+G2 SPY buy-and-hold:         15.1631% / 0.8861 / -33.7172%  vs committed 15.1631% / 0.8861 / -33.7172%  max|d| 4.561e-05  -> PASS
+G3 backtest_cash(cash=0) == engine.backtest: max|d| 0.000e+00  -> PASS
+G4 fully-idle book credited at SHY == SHY itself: max|d| 0.000e+00  -> PASS
+G5 live-book idle share: full 0.4672 / IS 0.4722 / OOS 0.4631  vs 796's 0.467/0.472/0.464  max|d| 8.944e-04  -> PASS
+
+GATES: 5 of 5 PASS
+
+====================================================================================================
+PART A — the 25-point (band, gross) grid x 7 cash arms, ALL 175 cells
+====================================================================================================
+175 cells written to 2026-09-12_is-a-FLAT-cash-rate-the-wrong-instrument-entirely_B.grid.csv (5x5 grid x 7 arms x 3 windows)
+
+LIVE CELL (band 0.03, gross 0.75) — all 7 arms, all 3 windows:
+                  FULL_CAGR  FULL_Sharpe  FULL_MaxDD  FULL_H1  FULL_H2  IS_CAGR  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+arm                                                                                                                        
+ZERO                 0.0863       1.2018     -0.1205   1.2349   1.1757   0.0761     1.1043    0.0947      1.2782    -0.1205
+FLAT150              0.0939       1.2999     -0.1202   1.3380   1.2695   0.0837     1.2069    0.1023      1.3729    -0.1202
+FLAT300              0.1014       1.3966     -0.1198   1.4397   1.3619   0.0912     1.3080    0.1098      1.4661    -0.1198
+FLATMATCH_ORACLE     0.0930       1.2882     -0.1202   1.3258   1.2583   0.0802     1.1599    0.1035      1.3880    -0.1201
+FLATMATCH_IS         0.0904       1.2550     -0.1203   1.2908   1.2265   0.0802     1.1599    0.0988      1.3296    -0.1203
+BILLPATH             0.0928       1.2859     -0.1194   1.3196   1.2594   0.0828     1.1944    0.1011      1.3576    -0.1194
+SHYPATH              0.0925       1.2834     -0.1147   1.3003   1.2733   0.0800     1.1688    0.1028      1.3723    -0.1147
+
+ARM MEANS over all 25 grid points (so the reading is not one tuned cell):
+                  FULL_CAGR  FULL_Sharpe  FULL_MaxDD  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+arm                                                                                             
+ZERO                 0.0852       1.1695     -0.1276     1.0844    0.0930      1.2365    -0.1276
+FLAT150              0.0927       1.2791     -0.1273     1.1986    0.1006      1.3426    -0.1273
+FLAT300              0.1002       1.3871     -0.1269     1.3112    0.1081      1.4471    -0.1269
+FLATMATCH_ORACLE     0.0918       1.2660     -0.1273     1.1463    0.1018      1.3595    -0.1272
+FLATMATCH_IS         0.0893       1.2289     -0.1274     1.1463    0.0971      1.2940    -0.1274
+BILLPATH             0.0918       1.2661     -0.1269     1.1841    0.0995      1.3306    -0.1269
+SHYPATH              0.0915       1.2617     -0.1225     1.1549    0.1014      1.3447    -0.1225
+
+====================================================================================================
+PART B — PATH vs LEVEL: the level-matched control
+====================================================================================================
+FLATMATCH_ORACLE pays exactly what SHY paid on the window being scored (same LEVEL,
+no PATH). Any gap to SHYPATH is the PATH, and nothing else.
+
+PATH effect (SHYPATH - FLATMATCH_ORACLE) across all 25 grid points, per window:
+        d_path                 d_path_CAGR                 d_path_MaxDD                 d_path_bill                   d_dur                
+          mean     min     max        mean     min     max         mean     min     max        mean     min     max    mean     min     max
+window                                                                                                                                     
+FULL   -0.0043 -0.0121 +0.0010     -0.0004 -0.0007 -0.0001      +0.0048 +0.0002 +0.0083     +0.0000 -0.0078 +0.0130 -0.0044 -0.0195 +0.0049
+IS     +0.0086 -0.0005 +0.0210     -0.0003 -0.0005 -0.0001      +0.0013 -0.0005 +0.0034     +0.0378 +0.0194 +0.0648 -0.0292 -0.0448 -0.0191
+OOS    -0.0149 -0.0392 -0.0018     -0.0004 -0.0010 +0.0000      +0.0047 +0.0001 +0.0081     -0.0289 -0.0363 -0.0195 +0.0140 -0.0038 +0.0236
+
+H_PATH (|OOS Sharpe gap| > 0.05 at some grid point): max |d_path| OOS = 0.0392 -> FAIL (LEVEL is all there is)
+H_BACKLOAD (SHY OOS credit >= 2x IS credit): 2.15x -> PASS
+H_FLATWRONG (150 bps errs in OPPOSITE directions IS vs OOS): IS +0.6892%, OOS -0.2419% -> PASS
+H_DURATION (|SHYPATH - BILLPATH| OOS Sharpe > 0.05): 0.0236 -> FAIL
+
+====================================================================================================
+PART C — both KEEP paths on all 175 cells
+====================================================================================================
+SPY FULL  15.1631% / 0.8861 / -33.7172%  halves 0.9595 / 0.8259
+SPY OOS   15.3317% / 0.8767 / -33.7172%
+4b bars: Sharpe > SPY in H1, H2 and OOS;  MaxDD >= -20.2303% (60% of SPY's);  CAGR >= 10.6142% (70% of SPY's)
+LIVE book (the 4a comparand, cash at ZERO as priced today): 8.6282% / 1.2018 / -12.0549%  halves 1.2349 / 1.1757
+
+the LIVE book itself under each cash arm (the matched 4a comparand):
+                   CAGR  Sharpe   MaxDD     H1     H2
+ZERO             0.0863  1.2018 -0.1205 1.2349 1.1757
+FLAT150          0.0939  1.2999 -0.1202 1.3380 1.2695
+FLAT300          0.1014  1.3966 -0.1198 1.4397 1.3619
+FLATMATCH_ORACLE 0.0930  1.2882 -0.1202 1.3258 1.2583
+FLATMATCH_IS     0.0904  1.2550 -0.1203 1.2908 1.2265
+BILLPATH         0.0928  1.2859 -0.1194 1.3196 1.2594
+SHYPATH          0.0925  1.2834 -0.1147 1.3003 1.2733
+
+KEEP-path pass counts per cash arm (25 cells each):
+                  pass_4a_vs_live  pass_4a_matched  pass_4b   n
+arm                                                            
+ZERO                            0                0        5  25
+FLAT150                        12                6        8  25
+FLAT300                        12                8       10  25
+FLATMATCH_ORACLE               12                6        7  25
+FLATMATCH_IS                   10                4        6  25
+BILLPATH                       12                7        7  25
+SHYPATH                        14                6        7  25
+
+TOTAL: 4a-vs-live 72/175, 4a-matched 37/175, 4b 50/175
+
+H_VERDICT (level-matched flat and the real path give DIFFERENT KEEP counts): PASS
+
+4b passers:
+  band  gross              arm  pass_4a_vs_live  pass_4a_matched  pass_4b  FULL_CAGR  FULL_Sharpe  FULL_MaxDD  FULL_H1  FULL_H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+0.0000 0.9000          FLAT300            False            False     True     0.1100       1.2961     -0.1425   1.3238   1.2740    0.1206      1.3800    -0.1425
+0.0000 1.0000             ZERO            False            False     True     0.1093       1.1676     -0.1584   1.1904   1.1497    0.1212      1.2560    -0.1584
+0.0000 1.0000          FLAT150            False            False     True     0.1141       1.2144     -0.1581   1.2388   1.1951    0.1260      1.3008    -0.1581
+0.0000 1.0000          FLAT300            False            False     True     0.1188       1.2605     -0.1578   1.2865   1.2398    0.1307      1.3450    -0.1578
+0.0000 1.0000 FLATMATCH_ORACLE            False            False     True     0.1135       1.2088     -0.1581   1.2330   1.1897    0.1267      1.3080    -0.1581
+0.0000 1.0000     FLATMATCH_IS            False            False     True     0.1119       1.1930     -0.1582   1.2166   1.1743    0.1238      1.2803    -0.1582
+0.0000 1.0000         BILLPATH            False            False     True     0.1127       1.2010     -0.1575   1.2335   1.1744    0.1237      1.2794    -0.1575
+0.0000 1.0000          SHYPATH            False            False     True     0.1131       1.2059     -0.1545   1.2179   1.1983    0.1264      1.3030    -0.1545
+0.0100 0.9000          FLAT150            False            False     True     0.1065       1.2499     -0.1430   1.2761   1.2291    0.1169      1.3321    -0.1430
+0.0100 0.9000          FLAT300            False            False     True     0.1124       1.3130     -0.1427   1.3418   1.2900    0.1227      1.3930    -0.1427
+0.0100 1.0000             ZERO            False            False     True     0.1119       1.1858     -0.1586   1.2096   1.1670    0.1235      1.2701    -0.1586
+0.0100 1.0000          FLAT150            False            False     True     0.1167       1.2321     -0.1583   1.2576   1.2119    0.1283      1.3145    -0.1583
+0.0100 1.0000          FLAT300            False            False     True     0.1215       1.2777     -0.1581   1.3048   1.2561    0.1330      1.3583    -0.1581
+0.0100 1.0000 FLATMATCH_ORACLE            False            False     True     0.1162       1.2266     -0.1584   1.2518   1.2065    0.1291      1.3216    -0.1583
+0.0100 1.0000     FLATMATCH_IS            False            False     True     0.1145       1.2109     -0.1584   1.2356   1.1913    0.1261      1.2942    -0.1584
+0.0100 1.0000         BILLPATH            False            False     True     0.1154       1.2188     -0.1578   1.2527   1.1909    0.1260      1.2929    -0.1578
+0.0100 1.0000          SHYPATH            False            False     True     0.1156       1.2229     -0.1549   1.2364   1.2140    0.1286      1.3157    -0.1549
+0.0300 0.9000          FLAT150            False            False     True     0.1097       1.2648     -0.1435   1.3013   1.2359    0.1200      1.3384    -0.1435
+0.0300 0.9000          FLAT300            False            False     True     0.1156       1.3270     -0.1432   1.3664   1.2956    0.1258      1.3981    -0.1432
+0.0300 0.9000 FLATMATCH_ORACLE            False            False     True     0.1090       1.2573     -0.1435   1.2934   1.2286    0.1209      1.3481    -0.1435
+0.0300 0.9000     FLATMATCH_IS            False            False     True     0.1070       1.2360     -0.1436   1.2710   1.2081    0.1172      1.3107    -0.1436
+0.0300 0.9000         BILLPATH            False            False     True     0.1085       1.2517     -0.1429   1.2923   1.2189    0.1181      1.3193    -0.1429
+0.0300 0.9000          SHYPATH            False            False     True     0.1084       1.2521     -0.1397   1.2754   1.2355    0.1200      1.3360    -0.1397
+0.0300 1.0000             ZERO            False            False     True     0.1154       1.2017     -0.1591   1.2354   1.1749    0.1270      1.2775    -0.1591
+0.0300 1.0000          FLAT150            False            False     True     0.1203       1.2473     -0.1589   1.2829   1.2190    0.1317      1.3211    -0.1589
+0.0300 1.0000          FLAT300            False            False     True     0.1250       1.2922     -0.1587   1.3298   1.2624    0.1365      1.3640    -0.1587
+0.0300 1.0000 FLATMATCH_ORACLE            False            False     True     0.1197       1.2418     -0.1589   1.2773   1.2137    0.1325      1.3281    -0.1589
+0.0300 1.0000     FLATMATCH_IS            False            False     True     0.1181       1.2264     -0.1590   1.2612   1.1988    0.1295      1.3012    -0.1590
+0.0300 1.0000         BILLPATH            False            False     True     0.1189       1.2345     -0.1585   1.2787   1.1986    0.1295      1.3001    -0.1585
+0.0300 1.0000          SHYPATH            False            False     True     0.1190       1.2359     -0.1562   1.2628   1.2159    0.1315      1.3170    -0.1562
+0.0500 0.9000          FLAT300            False            False     True     0.1124       1.2768     -0.1493   1.3342   1.2305    0.1219      1.3359    -0.1493
+0.0500 1.0000             ZERO            False            False     True     0.1110       1.1456     -0.1658   1.1962   1.1049    0.1217      1.2100    -0.1658
+0.0500 1.0000          FLAT150            False            False     True     0.1162       1.1944     -0.1656   1.2474   1.1517    0.1269      1.2565    -0.1656
+0.0500 1.0000          FLAT300            False            False     True     0.1214       1.2425     -0.1654   1.2979   1.1978    0.1320      1.3023    -0.1654
+0.0500 1.0000 FLATMATCH_ORACLE            False            False     True     0.1156       1.1886     -0.1656   1.2413   1.1461    0.1277      1.2640    -0.1656
+0.0500 1.0000     FLATMATCH_IS            False            False     True     0.1139       1.1721     -0.1657   1.2239   1.1303    0.1245      1.2353    -0.1657
+0.0500 1.0000         BILLPATH            False            False     True     0.1151       1.1835     -0.1652   1.2429   1.1351    0.1249      1.2387    -0.1652
+0.0500 1.0000          SHYPATH            False            False     True     0.1149       1.1835     -0.1633   1.2250   1.1514    0.1269      1.2549    -0.1633
+0.0800 0.9000          FLAT150            False            False     True     0.1088       1.2120     -0.1721   1.3108   1.1310    0.1148      1.2301    -0.1721
+0.0800 0.9000          FLAT300            False            False     True     0.1152       1.2768     -0.1719   1.3772   1.1947    0.1213      1.2934    -0.1719
+0.0800 0.9000 FLATMATCH_ORACLE            False            False     True     0.1081       1.2042     -0.1721   1.3028   1.1233    0.1158      1.2404    -0.1721
+0.0800 0.9000         BILLPATH            False            False     True     0.1081       1.2045     -0.1717   1.3032   1.1238    0.1138      1.2202    -0.1717
+0.0800 0.9000          SHYPATH            False            False     True     0.1079       1.2041     -0.1691   1.2828   1.1419    0.1158      1.2381    -0.1691
+0.0800 1.0000             ZERO            False            False     True     0.1139       1.1461     -0.1905   1.2437   1.0660    0.1204      1.1654    -0.1905
+0.0800 1.0000          FLAT150            False            False     True     0.1193       1.1950     -0.1904   1.2929   1.1148    0.1259      1.2134    -0.1904
+0.0800 1.0000          FLAT300            False            False     True     0.1246       1.2431     -0.1902   1.3414   1.1629    0.1313      1.2607    -0.1902
+0.0800 1.0000 FLATMATCH_ORACLE            False            False     True     0.1186       1.1891     -0.1904   1.2870   1.1090    0.1268      1.2211    -0.1903
+0.0800 1.0000     FLATMATCH_IS            False            False     True     0.1168       1.1726     -0.1904   1.2704   1.0925    0.1234      1.1915    -0.1904
+0.0800 1.0000         BILLPATH            False            False     True     0.1185       1.1879     -0.1901   1.2898   1.1043    0.1246      1.2016    -0.1901
+0.0800 1.0000          SHYPATH            False            False     True     0.1184       1.1882     -0.1885   1.2704   1.1224    0.1267      1.2193    -0.1885
+
+====================================================================================================
+PART D — RULE 8 walk-forward: (band, gross) chosen on 2009-2016 alone, 2017-2026 read once
+====================================================================================================
+                                arm  pick_band  pick_gross  IS_CAGR  IS_Sharpe  IS_MaxDD  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_H1  OOS_H2
+                               ZERO     0.0800      1.0000   0.1061     1.1226   -0.1122    0.1204      1.1654    -0.1905  1.2461  1.0785
+                            FLAT150     0.0800      0.5000   0.0632     1.3308   -0.0546    0.0703      1.3618    -0.0971  1.4243  1.2975
+                            FLAT300     0.0800      0.5000   0.0735     1.5368   -0.0525    0.0808      1.5535    -0.0966  1.5954  1.5146
+                   FLATMATCH_ORACLE     0.0800      0.5000   0.0584     1.2351   -0.0556    0.0720      1.3929    -0.0970  1.4521  1.3327
+                       FLATMATCH_IS     0.0800      0.5000   0.0584     1.2351   -0.0556    0.0655      1.2728    -0.0974  1.3449  1.1966
+                           BILLPATH     0.0800      0.5000   0.0616     1.2995   -0.0547    0.0707      1.3665    -0.0961  1.4516  1.2757
+                            SHYPATH     0.0800      0.5000   0.0582     1.2550   -0.0522    0.0720      1.3716    -0.0892  1.4852  1.2509
+RULES v2 baseline (live, cash ZERO)        NaN         NaN      NaN        NaN       NaN    0.0947      1.2782    -0.1205  1.4098  1.1340
+                RULES v1 (previous)        NaN         NaN      NaN        NaN       NaN    0.0760      0.7361    -0.1383  1.0293  0.4234
+                   SPY buy-and-hold        NaN         NaN      NaN        NaN       NaN    0.1533      0.8767    -0.3372  0.9802  0.7650
+
+IS->OOS transport of the arm ORDERING (does the IS window know which cash arm wins?):
+  Spearman(IS Sharpe, OOS Sharpe) over the 7 cash arms = +0.5766
+
+OOS 4b check on each arm's walk-forward pick (every bar read on the OOS window's own SPY:
+  Sharpe 0.8767, halves 0.9802/0.7650, CAGR floor 10.7322%, MaxDD cap -20.2303%):
+  ZERO               pick(band 0.08, gross 1.00)  OOS 12.0385% / 1.1654 / -19.0506%  4b PASS  
+  FLAT150            pick(band 0.08, gross 0.50)  OOS 7.0321% / 1.3618 / -9.7126%  4b FAIL  CAGR 7.03% < floor 10.73%
+  FLAT300            pick(band 0.08, gross 0.50)  OOS 8.0797% / 1.5535 / -9.6621%  4b FAIL  CAGR 8.08% < floor 10.73%
+  FLATMATCH_ORACLE   pick(band 0.08, gross 0.50)  OOS 7.2014% / 1.3929 / -9.7044%  4b FAIL  CAGR 7.20% < floor 10.73%
+  FLATMATCH_IS       pick(band 0.08, gross 0.50)  OOS 6.5491% / 1.2728 / -9.7360%  4b FAIL  CAGR 6.55% < floor 10.73%
+  BILLPATH           pick(band 0.08, gross 0.50)  OOS 7.0651% / 1.3665 / -9.6114%  4b FAIL  CAGR 7.07% < floor 10.73%
+  SHYPATH            pick(band 0.08, gross 0.50)  OOS 7.2016% / 1.3716 / -8.9224%  4b FAIL  CAGR 7.20% < floor 10.73%
+
+====================================================================================================
+PART E — where the credit actually lands (the queue's mechanism, in pp/yr)
+====================================================================================================
+credit over the ZERO convention at the LIVE cell (band 0.03, gross 0.75), pp/yr of CAGR:
+                  credit_IS_pp  credit_OOS_pp  credit_FULL_pp  dSharpe_IS  dSharpe_OOS  dSharpe_FULL  dMaxDD_FULL_pp
+arm                                                                                                                 
+ZERO                   +0.0000        +0.0000         +0.0000     +0.0000      +0.0000       +0.0000         +0.0000
+FLAT150                +0.7587        +0.7569         +0.7578     +0.1026      +0.0946       +0.0981         +0.0377
+FLAT300                +1.5116        +1.5079         +1.5097     +0.2037      +0.1879       +0.1947         +0.0749
+FLATMATCH_ORACLE       +0.4108        +0.8784         +0.6672     +0.0556      +0.1098       +0.0864         +0.0332
+FLATMATCH_IS           +0.4108        +0.4098         +0.4103     +0.0556      +0.0513       +0.0532         +0.0205
+BILLPATH               +0.6663        +0.6398         +0.6519     +0.0901      +0.0794       +0.0840         +0.1148
+SHYPATH                +0.3904        +0.8075         +0.6172     +0.0646      +0.0940       +0.0816         +0.5873
+
+idle share at the live cell: 0.4672 of NAV
+the flat convention's error is an IS OVER-credit and an OOS UNDER-credit — it flatters
+exactly the window rule 8 uses to choose, and starves the one rule 8 reads.
+
+====================================================================================================
+PART F — is GROSS even IDENTIFIABLE to an IS Sharpe selector? (why the picks flip)
+====================================================================================================
+Sharpe is scale-invariant, so with cash at ZERO the gross dial moves IS Sharpe only
+through costs — it is very nearly a no-op. A cash credit breaks that invariance and
+makes lower gross genuinely raise IS Sharpe. That is the mechanism behind PART D.
+
+IS Sharpe spread across the 5 gross rungs, by arm (mean over the 5 bands):
+                  IS_Sharpe_spread  modal_pick  OOS_CAGR_spread
+arm                                                            
+ZERO                        0.0010      1.0000           0.0619
+FLAT150                     0.1617      0.5000           0.0566
+FLAT300                     0.3222      0.5000           0.0513
+FLATMATCH_ORACLE            0.0872      0.5000           0.0558
+FLATMATCH_IS                0.0872      0.5000           0.0591
+BILLPATH                    0.1305      0.5000           0.0546
+SHYPATH                     0.1070      0.5000           0.0555
+
+ZERO's gross dial is worth 0.0010 of IS Sharpe — the selector is choosing on the 4th
+decimal — while it costs 6.19% of OOS CAGR. Every credited arm makes the
+dial 84x to 309x more visible in sample, and points it at LOW gross.
+
+So the ZERO arm's rule-8 4b PASS is a TIE-BREAK, not a selection: at band 0.08 its five
+gross rungs span IS Sharpe 1.121735..1.122612 and OOS CAGR 5.98%..12.04%. Not a KEEP.
+
+====================================================================================================
+DONE
+====================================================================================================
+artefacts: 2026-09-12_is-a-FLAT-cash-rate-the-wrong-instrument-entirely_B.{gates,grid,pathlevel,keeppaths,walkforward,credit}.csv
