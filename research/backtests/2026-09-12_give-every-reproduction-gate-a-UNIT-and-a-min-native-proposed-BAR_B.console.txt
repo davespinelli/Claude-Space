@@ -1,0 +1,391 @@
+Idea 520 — give every reproduction gate a UNIT and a min(native, proposed) BAR (lane B, 2026-09-12)
+10 bps, next-day execution, PROTOCOL rules 1-9.  Two tuned params: UNIT SOURCE W x BAR MULTIPLIER K, all grid points reported.  Floor quantile pre-registered at 0.99.
+
+Loading panels (committed caches only — no network)...
+  U56 (4703, 56)  B136 (4703, 136)  SMALL (4198, 665) (dropped 51 names, max 1d move >= 1.0)
+
+==============================================================================
+GATES (pre-registered, printed before any new number is read)
+==============================================================================
+G1 fast_backtest == engine.backtest: returns 0.000e+00, turnover 0.000e+00 (bar 1e-12) -> PASS
+G2 EWALL(0.75) == baseline.rules_v2_weights on U56: 0.000e+00 (bar 0.0) -> PASS
+G3 idea 515's census: 520 clauses, 412 unknown units (79.2%; published 520 / 412 / 79.2%) -> PASS
+G4 idea 515's S48 claim survival: native 0.6585 vs flat 1e-6 0.5854 (published 0.6585 / 0.5854) -> PASS
+   the queue's premise restated: a flat 1e-6 bar loses 3 of 41 published claims, so any adopted bar must be min(native, proposed).
+G5 min(native, proposed) <= native on all 472 declared bars -> PASS
+
+==============================================================================
+PART A — BACK-FILL the unit from the clause's surrounding source
+==============================================================================
+source scripts: 151 readable, 0 missing (0.0% of 151)
+
+UNIT SOURCE ladder (param 1) — ALL grid points:
+ W  named  named_share  newly_named  still_unknown  anchor_n  anchor_named  anchor_agree  precision
+ 0    105       0.2019           11            415       108            94            85     0.9043
+ 3    491       0.9442          383             29       108           108            48     0.4444
+ 6    516       0.9923          408              4       108           108            36     0.3333
+12    520       1.0000          412              0       108           108            27     0.2500
+25    520       1.0000          412              0       108           108            18     0.1667
+
+HEADLINE A: the queue's premise is CONFIRMED, and the back-fill it asks for does NOT work. Reading the clause text alone (W=0) names a unit on 105 of 520 clauses (20.2%) — statistically the same as idea 515's hand-assigned 108 (20.8%), and agreeing with it on 85/94 (90.4%). Widening the context reaches 100% coverage but precision falls MONOTONELY to 16.7% — i.e. wide context does not recover the unit, it invents one. The 79.2% is not back-fillable from the source.
+  W= 0: unit named on 105 (20.2%), agreement with the hand-assigned anchor 85/94 = 90.4%
+  W= 3: unit named on 491 (94.4%), agreement with the hand-assigned anchor 48/108 = 44.4%
+  W= 6: unit named on 516 (99.2%), agreement with the hand-assigned anchor 36/108 = 33.3%
+  W=12: unit named on 520 (100.0%), agreement with the hand-assigned anchor 27/108 = 25.0%
+  W=25: unit named on 520 (100.0%), agreement with the hand-assigned anchor 18/108 = 16.7%  <- WIDEST
+
+  Back-fill is only adoptable where it AGREES with the hand reading; precision is reported at every W and never assumed.
+
+unit mix at W=6 (the mid rung):
+u_W6
+turnover    169
+sharpe      126
+price       101
+count        37
+weight       36
+share        13
+cagr         12
+return       11
+dd           11
+unknown       4
+
+==============================================================================
+PART B — the MEASURED reproduction floor per unit (the price leg)
+==============================================================================
+perturbations: PERM (panel column order), VINTAGE (drop 2% of names), WINDOW (start 1 trading day later), IMPL (numpy runner vs engine.backtest)
+  U56: 9 books x 3 perturbations + 1 IMPL cell (engine.backtest emits 2 NaN return days the numpy runner emits as 0 — |dSharpe| 2.519e-04 on an otherwise bit-identical series)
+  B136: 9 books x 3 perturbations + 1 IMPL cell (engine.backtest emits 2 NaN return days the numpy runner emits as 0 — |dSharpe| 2.278e-04 on an otherwise bit-identical series)
+  SMALL: 9 books x 3 perturbations + 1 IMPL cell (engine.backtest emits 2 NaN return days the numpy runner emits as 0 — |dSharpe| 1.676e-04 on an otherwise bit-identical series)
+
+measured |delta| by unit x perturbation (max over every book):
+pert          IMPL      PERM   VINTAGE    WINDOW
+cagr     0.000e+00 2.220e-16 4.228e-03 2.530e-05
+sharpe   2.519e-04 6.661e-16 2.330e-02 1.695e-04
+dd       0.000e+00 5.551e-16 1.049e-02 1.998e-15
+turnover 0.000e+00 4.441e-16 5.002e-02 5.409e-04
+weight   0.000e+00 1.110e-16 2.790e-03 1.425e-04
+price    0.000e+00 0.000e+00 0.000e+00 0.000e+00
+share    0.000e+00 2.220e-16 2.514e-03 1.330e-04
+return   0.000e+00 1.665e-16 6.801e-03 1.404e-04
+count    0.000e+00 0.000e+00 4.880e+04 3.740e+02
+
+FLOOR per unit, stratum SELF (PERM+IMPL) — quantile ladder over 30 cells (q=0.99 is pre-registered; the rest are sensitivity, not choices):
+  unit              q0.5        q0.9       q0.99        q1.0      n
+  cagr         0.000e+00   2.220e-16   2.220e-16   2.220e-16     30
+  sharpe       2.220e-16   1.676e-05   2.449e-04   2.519e-04     30
+  dd           1.110e-16   4.552e-16   5.551e-16   5.551e-16     30
+  turnover     0.000e+00   2.220e-16   3.797e-16   4.441e-16     30
+  weight       0.000e+00   1.110e-16   1.110e-16   1.110e-16     30
+  price        0.000e+00   0.000e+00   0.000e+00   0.000e+00     30
+  share        5.551e-17   2.220e-16   2.220e-16   2.220e-16     30
+  return       1.735e-17   6.592e-17   1.585e-16   1.665e-16     30
+  count        0.000e+00   0.000e+00   0.000e+00   0.000e+00     30
+
+FLOOR per unit, stratum REPRO (VINTAGE+WINDOW) — quantile ladder over 54 cells (q=0.99 is pre-registered; the rest are sensitivity, not choices):
+  unit              q0.5        q0.9       q0.99        q1.0      n
+  cagr         1.535e-04   1.933e-03   3.761e-03   4.228e-03     54
+  sharpe       1.797e-03   1.210e-02   2.297e-02   2.330e-02     54
+  dd           1.772e-05   4.654e-03   9.650e-03   1.049e-02     54
+  turnover     4.399e-04   1.119e-02   4.324e-02   5.002e-02     54
+  weight       1.414e-04   2.073e-03   2.789e-03   2.790e-03     54
+  price        0.000e+00   0.000e+00   0.000e+00   0.000e+00     54
+  share        5.752e-04   2.514e-03   2.514e-03   2.514e-03     54
+  return       3.665e-04   3.541e-03   5.910e-03   6.801e-03     54
+  count        2.225e+03   4.880e+04   4.880e+04   4.880e+04     54
+
+HEADLINE B: the two strata are NOT the same object and must never be pooled.
+  SELF : floors span 1.11e-16 to 2.45e-04 (2.21e+12x across units)
+  REPRO: floors span 2.51e-03 to 4.88e+04 (1.94e+07x across units)
+  A SELF-CONSISTENCY gate is entitled to the SELF floor (float noise, ~1e-16 on every unit); a CROSS-SCRIPT reproduction gate is entitled to the REPRO floor, which is 12-14 orders of magnitude looser. Stamping the unit alone does NOT settle the bar — the gate must also say WHICH reproduction it claims.
+
+==============================================================================
+PART C — min(native, proposed) priced on all 520 clauses, W x K (ALL grid points)
+==============================================================================
+stratum  W    K  n_clauses  covered  coverage  with_native  gateable  unpassable  vacuous  proposed_binds  native_binds  med_native  med_proposed
+   SELF  0    1        520      105    0.2019          472        92          14       21              35            57           0      1.11e-16
+   SELF  0    3        520      105    0.2019          472        92          14       21              32            60           0     3.331e-16
+   SELF  0   10        520      105    0.2019          472        92          14       21              31            61           0      1.11e-15
+   SELF  0   30        520      105    0.2019          472        92          14       21              23            69           0     3.331e-15
+   SELF  0  100        520      105    0.2019          472        92          14       21              23            69           0      1.11e-14
+   SELF  0 1000        520      105    0.2019          472        92          14       21              23            69           0      1.11e-13
+   SELF  3    1        520      491    0.9442          472       444          87      187             289           155       1e-12      2.22e-16
+   SELF  3    3        520      491    0.9442          472       444          87      187             274           170       1e-12     6.661e-16
+   SELF  3   10        520      491    0.9442          472       444          87      187             271           173       1e-12      2.22e-15
+   SELF  3   30        520      491    0.9442          472       444          87      187             263           181       1e-12     6.661e-15
+   SELF  3  100        520      491    0.9442          472       444          87      187             263           181       1e-12      2.22e-14
+   SELF  3 1000        520      491    0.9442          472       444          87      187             263           181       1e-12      2.22e-13
+   SELF  6    1        520      516    0.9923          472       468         134      183             280           188       1e-12     3.797e-16
+   SELF  6    3        520      516    0.9923          472       468         134      183             262           206       1e-12     1.139e-15
+   SELF  6   10        520      516    0.9923          472       468         134      183             260           208       1e-12     3.797e-15
+   SELF  6   30        520      516    0.9923          472       468         134      183             252           216       1e-12     1.139e-14
+   SELF  6  100        520      516    0.9923          472       468         134      183             251           217       1e-12     3.797e-14
+   SELF  6 1000        520      516    0.9923          472       468         134      183             251           217       1e-12     3.797e-13
+   SELF 12    1        520      520         1          472       472         174      194             263           209       1e-12     3.797e-16
+   SELF 12    3        520      520         1          472       472         174      194             246           226       1e-12     1.139e-15
+   SELF 12   10        520      520         1          472       472         174      194             243           229       1e-12     3.797e-15
+   SELF 12   30        520      520         1          472       472         174      194             235           237       1e-12     1.139e-14
+   SELF 12  100        520      520         1          472       472         174      194             235           237       1e-12     3.797e-14
+   SELF 12 1000        520      520         1          472       472         174      194             235           237       1e-12     3.797e-13
+   SELF 25    1        520      520         1          472       472         197      224             264           208       1e-12     3.797e-16
+   SELF 25    3        520      520         1          472       472         197      224             245           227       1e-12     1.139e-15
+   SELF 25   10        520      520         1          472       472         197      224             244           228       1e-12     3.797e-15
+   SELF 25   30        520      520         1          472       472         197      224             238           234       1e-12     1.139e-14
+   SELF 25  100        520      520         1          472       472         197      224             238           234       1e-12     3.797e-14
+   SELF 25 1000        520      520         1          472       472         197      224             238           234       1e-12     3.797e-13
+  REPRO  0    1        520      105    0.2019          472        92          92        0               0            92           0       0.02297
+  REPRO  0    3        520      105    0.2019          472        92          92        0               0            92           0       0.06891
+  REPRO  0   10        520      105    0.2019          472        92          92        0               0            92           0        0.2297
+  REPRO  0   30        520      105    0.2019          472        92          92        0               0            92           0        0.6891
+  REPRO  0  100        520      105    0.2019          472        92          92        0               0            92           0         2.297
+  REPRO  0 1000        520      105    0.2019          472        92          92        0               0            92           0         22.97
+  REPRO  3    1        520      491    0.9442          472       444         365        1              54           390       1e-12       0.02297
+  REPRO  3    3        520      491    0.9442          472       444         365        1              53           391       1e-12       0.06891
+  REPRO  3   10        520      491    0.9442          472       444         365        1              53           391       1e-12        0.2297
+  REPRO  3   30        520      491    0.9442          472       444         365        1              53           391       1e-12        0.6891
+  REPRO  3  100        520      491    0.9442          472       444         365        1              53           391       1e-12         2.297
+  REPRO  3 1000        520      491    0.9442          472       444         365        1              53           391       1e-12         22.97
+  REPRO  6    1        520      516    0.9923          472       468         378        1              60           408       1e-12       0.02297
+  REPRO  6    3        520      516    0.9923          472       468         378        1              60           408       1e-12       0.06891
+  REPRO  6   10        520      516    0.9923          472       468         378        1              60           408       1e-12        0.2297
+  REPRO  6   30        520      516    0.9923          472       468         378        1              60           408       1e-12        0.6891
+  REPRO  6  100        520      516    0.9923          472       468         378        1              60           408       1e-12         2.297
+  REPRO  6 1000        520      516    0.9923          472       468         378        1              60           408       1e-12         22.97
+  REPRO 12    1        520      520         1          472       472         415        1              36           436       1e-12       0.02297
+  REPRO 12    3        520      520         1          472       472         415        1              36           436       1e-12       0.06891
+  REPRO 12   10        520      520         1          472       472         415        1              36           436       1e-12        0.2297
+  REPRO 12   30        520      520         1          472       472         415        1              36           436       1e-12        0.6891
+  REPRO 12  100        520      520         1          472       472         415        1              36           436       1e-12         2.297
+  REPRO 12 1000        520      520         1          472       472         415        1              36           436       1e-12         22.97
+  REPRO 25    1        520      520         1          472       472         449        1              12           460       1e-12       0.04324
+  REPRO 25    3        520      520         1          472       472         449        1              12           460       1e-12        0.1297
+  REPRO 25   10        520      520         1          472       472         449        1              12           460       1e-12        0.4324
+  REPRO 25   30        520      520         1          472       472         449        1              12           460       1e-12         1.297
+  REPRO 25  100        520      520         1          472       472         449        1              12           460       1e-12         4.324
+  REPRO 25 1000        520      520         1          472       472         449        1              12           460       1e-12         43.24
+
+reading of the grid:
+
+  stratum SELF:
+    W= 0: 105/520 clauses carry a unit (20.2%);  92 carry BOTH a unit and a native bar; of those  14 sit BELOW their own unit's measured floor (15.2% un-passable) and  21 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:35, 3:32, 10:31, 30:23, 100:23, 1000:23
+    W= 3: 491/520 clauses carry a unit (94.4%); 444 carry BOTH a unit and a native bar; of those  87 sit BELOW their own unit's measured floor (19.6% un-passable) and 187 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:289, 3:274, 10:271, 30:263, 100:263, 1000:263
+    W= 6: 516/520 clauses carry a unit (99.2%); 468 carry BOTH a unit and a native bar; of those 134 sit BELOW their own unit's measured floor (28.6% un-passable) and 183 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:280, 3:262, 10:260, 30:252, 100:251, 1000:251
+    W=12: 520/520 clauses carry a unit (100.0%); 472 carry BOTH a unit and a native bar; of those 174 sit BELOW their own unit's measured floor (36.9% un-passable) and 194 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:263, 3:246, 10:243, 30:235, 100:235, 1000:235
+    W=25: 520/520 clauses carry a unit (100.0%); 472 carry BOTH a unit and a native bar; of those 197 sit BELOW their own unit's measured floor (41.7% un-passable) and 224 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:264, 3:245, 10:244, 30:238, 100:238, 1000:238
+
+  stratum REPRO:
+    W= 0: 105/520 clauses carry a unit (20.2%);  92 carry BOTH a unit and a native bar; of those  92 sit BELOW their own unit's measured floor (100.0% un-passable) and   0 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:0, 3:0, 10:0, 30:0, 100:0, 1000:0
+    W= 3: 491/520 clauses carry a unit (94.4%); 444 carry BOTH a unit and a native bar; of those 365 sit BELOW their own unit's measured floor (82.2% un-passable) and   1 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:54, 3:53, 10:53, 30:53, 100:53, 1000:53
+    W= 6: 516/520 clauses carry a unit (99.2%); 468 carry BOTH a unit and a native bar; of those 378 sit BELOW their own unit's measured floor (80.8% un-passable) and   1 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:60, 3:60, 10:60, 30:60, 100:60, 1000:60
+    W=12: 520/520 clauses carry a unit (100.0%); 472 carry BOTH a unit and a native bar; of those 415 sit BELOW their own unit's measured floor (87.9% un-passable) and   1 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:36, 3:36, 10:36, 30:36, 100:36, 1000:36
+    W=25: 520/520 clauses carry a unit (100.0%); 472 carry BOTH a unit and a native bar; of those 449 sit BELOW their own unit's measured floor (95.1% un-passable) and   1 sit >1e+03x above it (vacuous).
+          min(native, proposed) TIGHTENS at K = 1:12, 3:12, 10:12, 30:12, 100:12, 1000:12
+
+==============================================================================
+PART D / RULE 8 leg 1 — the FLOOR calibrated on IS books, read ONCE on OOS books
+==============================================================================
+
+IS floor vs OOS floor per unit (q=0.99), and the share of OOS cells an IS-calibrated bar clears, at every K. NOTE: the IMPL cell is a single full-sample measurement and is not split, so only PERM carries the SELF stratum here:
+stratum     unit    K  floor_IS  floor_OOS  ratio  bar_from_IS  oos_cells  oos_clear_share
+   SELF     cagr    1 3.864e-16  4.441e-16  1.149    3.864e-16         27           0.9259
+   SELF     cagr    3 3.864e-16  4.441e-16  1.149    1.159e-15         27                1
+   SELF     cagr   10 3.864e-16  4.441e-16  1.149    3.864e-15         27                1
+   SELF     cagr   30 3.864e-16  4.441e-16  1.149    1.159e-14         27                1
+   SELF     cagr  100 3.864e-16  4.441e-16  1.149    3.864e-14         27                1
+   SELF     cagr 1000 3.864e-16  4.441e-16  1.149    3.864e-13         27                1
+   SELF   sharpe    1 5.551e-16  1.332e-15    2.4    5.551e-16         27           0.8889
+   SELF   sharpe    3 5.551e-16  1.332e-15    2.4    1.665e-15         27                1
+   SELF   sharpe   10 5.551e-16  1.332e-15    2.4    5.551e-15         27                1
+   SELF   sharpe   30 5.551e-16  1.332e-15    2.4    1.665e-14         27                1
+   SELF   sharpe  100 5.551e-16  1.332e-15    2.4    5.551e-14         27                1
+   SELF   sharpe 1000 5.551e-16  1.332e-15    2.4    5.551e-13         27                1
+   SELF       dd    1 7.727e-16  6.661e-16 0.8621    7.727e-16         27                1
+   SELF       dd    3 7.727e-16  6.661e-16 0.8621    2.318e-15         27                1
+   SELF       dd   10 7.727e-16  6.661e-16 0.8621    7.727e-15         27                1
+   SELF       dd   30 7.727e-16  6.661e-16 0.8621    2.318e-14         27                1
+   SELF       dd  100 7.727e-16  6.661e-16 0.8621    7.727e-14         27                1
+   SELF       dd 1000 7.727e-16  6.661e-16 0.8621    7.727e-13         27                1
+   SELF turnover    1 4.441e-16  4.441e-16      1    4.441e-16         27           0.8889
+   SELF turnover    3 4.441e-16  4.441e-16      1    1.332e-15         27                1
+   SELF turnover   10 4.441e-16  4.441e-16      1    4.441e-15         27                1
+   SELF turnover   30 4.441e-16  4.441e-16      1    1.332e-14         27                1
+   SELF turnover  100 4.441e-16  4.441e-16      1    4.441e-14         27                1
+   SELF turnover 1000 4.441e-16  4.441e-16      1    4.441e-13         27                1
+   SELF   weight    1  1.11e-16   1.11e-16      1     1.11e-16         27           0.8889
+   SELF   weight    3  1.11e-16   1.11e-16      1    3.331e-16         27                1
+   SELF   weight   10  1.11e-16   1.11e-16      1     1.11e-15         27                1
+   SELF   weight   30  1.11e-16   1.11e-16      1    3.331e-15         27                1
+   SELF   weight  100  1.11e-16   1.11e-16      1     1.11e-14         27                1
+   SELF   weight 1000  1.11e-16   1.11e-16      1     1.11e-13         27                1
+   SELF    price    1         0          0    NaN            0         27                0
+   SELF    price    3         0          0    NaN            0         27                0
+   SELF    price   10         0          0    NaN            0         27                0
+   SELF    price   30         0          0    NaN            0         27                0
+   SELF    price  100         0          0    NaN            0         27                0
+   SELF    price 1000         0          0    NaN            0         27                0
+   SELF    share    1  1.11e-16   1.11e-16      1     1.11e-16         27           0.6667
+   SELF    share    3  1.11e-16   1.11e-16      1    3.331e-16         27                1
+   SELF    share   10  1.11e-16   1.11e-16      1     1.11e-15         27                1
+   SELF    share   30  1.11e-16   1.11e-16      1    3.331e-15         27                1
+   SELF    share  100  1.11e-16   1.11e-16      1     1.11e-14         27                1
+   SELF    share 1000  1.11e-16   1.11e-16      1     1.11e-13         27                1
+   SELF   return    1 5.114e-17  1.768e-16  3.457    5.114e-17         27           0.8519
+   SELF   return    3 5.114e-17  1.768e-16  3.457    1.534e-16         27           0.9259
+   SELF   return   10 5.114e-17  1.768e-16  3.457    5.114e-16         27                1
+   SELF   return   30 5.114e-17  1.768e-16  3.457    1.534e-15         27                1
+   SELF   return  100 5.114e-17  1.768e-16  3.457    5.114e-15         27                1
+   SELF   return 1000 5.114e-17  1.768e-16  3.457    5.114e-14         27                1
+   SELF    count    1         0          0    NaN            0         27                0
+   SELF    count    3         0          0    NaN            0         27                0
+   SELF    count   10         0          0    NaN            0         27                0
+   SELF    count   30         0          0    NaN            0         27                0
+   SELF    count  100         0          0    NaN            0         27                0
+   SELF    count 1000         0          0    NaN            0         27                0
+  REPRO     cagr    1 0.0009422   0.003514  3.729    0.0009422         54           0.8148
+  REPRO     cagr    3 0.0009422   0.003514  3.729     0.002827         54            0.963
+  REPRO     cagr   10 0.0009422   0.003514  3.729     0.009422         54                1
+  REPRO     cagr   30 0.0009422   0.003514  3.729      0.02827         54                1
+  REPRO     cagr  100 0.0009422   0.003514  3.729      0.09422         54                1
+  REPRO     cagr 1000 0.0009422   0.003514  3.729       0.9422         54                1
+  REPRO   sharpe    1   0.01692   0.008492 0.5019      0.01692         54                1
+  REPRO   sharpe    3   0.01692   0.008492 0.5019      0.05076         54                1
+  REPRO   sharpe   10   0.01692   0.008492 0.5019       0.1692         54                1
+  REPRO   sharpe   30   0.01692   0.008492 0.5019       0.5076         54                1
+  REPRO   sharpe  100   0.01692   0.008492 0.5019        1.692         54                1
+  REPRO   sharpe 1000   0.01692   0.008492 0.5019        16.92         54                1
+  REPRO       dd    1  0.004326   0.002749 0.6354     0.004326         54                1
+  REPRO       dd    3  0.004326   0.002749 0.6354      0.01298         54                1
+  REPRO       dd   10  0.004326   0.002749 0.6354      0.04326         54                1
+  REPRO       dd   30  0.004326   0.002749 0.6354       0.1298         54                1
+  REPRO       dd  100  0.004326   0.002749 0.6354       0.4326         54                1
+  REPRO       dd 1000  0.004326   0.002749 0.6354        4.326         54                1
+  REPRO turnover    1   0.01008   0.006409 0.6361      0.01008         54                1
+  REPRO turnover    3   0.01008   0.006409 0.6361      0.03023         54                1
+  REPRO turnover   10   0.01008   0.006409 0.6361       0.1008         54                1
+  REPRO turnover   30   0.01008   0.006409 0.6361       0.3023         54                1
+  REPRO turnover  100   0.01008   0.006409 0.6361        1.008         54                1
+  REPRO turnover 1000   0.01008   0.006409 0.6361        10.08         54                1
+  REPRO   weight    1 0.0006315   0.002513   3.98    0.0006315         54           0.7037
+  REPRO   weight    3 0.0006315   0.002513   3.98     0.001894         54           0.9259
+  REPRO   weight   10 0.0006315   0.002513   3.98     0.006315         54                1
+  REPRO   weight   30 0.0006315   0.002513   3.98      0.01894         54                1
+  REPRO   weight  100 0.0006315   0.002513   3.98      0.06315         54                1
+  REPRO   weight 1000 0.0006315   0.002513   3.98       0.6315         54                1
+  REPRO    price    1         0          0    NaN            0         54                0
+  REPRO    price    3         0          0    NaN            0         54                0
+  REPRO    price   10         0          0    NaN            0         54                0
+  REPRO    price   30         0          0    NaN            0         54                0
+  REPRO    price  100         0          0    NaN            0         54                0
+  REPRO    price 1000         0          0    NaN            0         54                0
+  REPRO    share    1   0.00137   0.002523  1.841      0.00137         54           0.8333
+  REPRO    share    3   0.00137   0.002523  1.841     0.004111         54                1
+  REPRO    share   10   0.00137   0.002523  1.841       0.0137         54                1
+  REPRO    share   30   0.00137   0.002523  1.841      0.04111         54                1
+  REPRO    share  100   0.00137   0.002523  1.841        0.137         54                1
+  REPRO    share 1000   0.00137   0.002523  1.841         1.37         54                1
+  REPRO   return    1  0.001135   0.002074  1.827     0.001135         54           0.7593
+  REPRO   return    3  0.001135   0.002074  1.827     0.003405         54                1
+  REPRO   return   10  0.001135   0.002074  1.827      0.01135         54                1
+  REPRO   return   30  0.001135   0.002074  1.827      0.03405         54                1
+  REPRO   return  100  0.001135   0.002074  1.827       0.1135         54                1
+  REPRO   return 1000  0.001135   0.002074  1.827        1.135         54                1
+  REPRO    count    1 1.791e+04  3.134e+04   1.75    1.791e+04         54           0.8333
+  REPRO    count    3 1.791e+04  3.134e+04   1.75    5.372e+04         54                1
+  REPRO    count   10 1.791e+04  3.134e+04   1.75    1.791e+05         54                1
+  REPRO    count   30 1.791e+04  3.134e+04   1.75    5.372e+05         54                1
+  REPRO    count  100 1.791e+04  3.134e+04   1.75    1.791e+06         54                1
+  REPRO    count 1000 1.791e+04  3.134e+04   1.75    1.791e+07         54                1
+
+  [SELF] transfer: OOS/IS floor ratio median 1 (min 0.862, max 3.46) over 7 units with a non-zero IS floor
+    K=   1: the IS-calibrated bar clears 67.9% of OOS cells on average, and 100% on 1 of 9 units
+    K=   3: the IS-calibrated bar clears 77.0% of OOS cells on average, and 100% on 6 of 9 units
+    K=  10: the IS-calibrated bar clears 77.8% of OOS cells on average, and 100% on 7 of 9 units
+    K=  30: the IS-calibrated bar clears 77.8% of OOS cells on average, and 100% on 7 of 9 units
+    K= 100: the IS-calibrated bar clears 77.8% of OOS cells on average, and 100% on 7 of 9 units
+    K=1000: the IS-calibrated bar clears 77.8% of OOS cells on average, and 100% on 7 of 9 units
+
+  [REPRO] transfer: OOS/IS floor ratio median 1.79 (min 0.502, max 3.98) over 8 units with a non-zero IS floor
+    K=   1: the IS-calibrated bar clears 77.2% of OOS cells on average, and 100% on 3 of 9 units
+    K=   3: the IS-calibrated bar clears 87.7% of OOS cells on average, and 100% on 6 of 9 units
+    K=  10: the IS-calibrated bar clears 88.9% of OOS cells on average, and 100% on 8 of 9 units
+    K=  30: the IS-calibrated bar clears 88.9% of OOS cells on average, and 100% on 8 of 9 units
+    K= 100: the IS-calibrated bar clears 88.9% of OOS cells on average, and 100% on 8 of 9 units
+    K=1000: the IS-calibrated bar clears 88.9% of OOS cells on average, and 100% on 8 of 9 units
+
+==============================================================================
+PART D / RULE 8 leg 2 — IS-only selectors x panels, read ONCE on OOS; 4a and 4b
+==============================================================================
+
+book grid — all 27 books + 6 benchmark rows, every grid point reported:
+panel  gross     cad  IS_CAGR  IS_Sharpe  IS_MaxDD  OOS_CAGR  OOS_Sharpe  OOS_MaxDD   CAGR  Sharpe   MaxDD     H1     H2
+  U56 0.5000       W   0.0507     1.1087   -0.0528    0.0630      1.2875    -0.0801 0.0574  1.2089 -0.0801 1.2394 1.1850
+  U56 0.5000       M   0.0535     1.1100   -0.0556    0.0636      1.2338    -0.0965 0.0591  1.1793 -0.0965 1.2240 1.1431
+  U56 0.5000       Q   0.0500     1.0371   -0.0673    0.0567      0.9893    -0.1344 0.0537  1.0052 -0.1344 1.1542 0.8991
+  U56 0.7500       W   0.0762     1.1093   -0.0787    0.0950      1.2869    -0.1190 0.0865  1.2089 -0.1190 1.2400 1.1844
+  U56 0.7500       M   0.0807     1.1122   -0.0828    0.0961      1.2349    -0.1419 0.0891  1.1809 -0.1419 1.2261 1.1442
+  U56 0.7500       Q   0.0751     1.0384   -0.1003    0.0850      0.9850    -0.1980 0.0805  1.0029 -0.1980 1.1554 0.8954
+  U56 1.0000       W   0.1018     1.1098   -0.1043    0.1274      1.2862    -0.1570 0.1157  1.2087 -0.1570 1.2406 1.1836
+  U56 1.0000       M   0.1081     1.1144   -0.1097    0.1289      1.2359    -0.1856 0.1195  1.1824 -0.1856 1.2281 1.1453
+  U56 1.0000       Q   0.1003     1.0397   -0.1328    0.1131      0.9802    -0.2594 0.1073  1.0002 -0.2594 1.1565 0.8912
+  U56    NaN RULESv2   0.0762     1.1093   -0.0787    0.0950      1.2869    -0.1190 0.0865  1.2089 -0.1190 1.2400 1.1844
+  U56    NaN     SPY   0.1496     0.8986   -0.2206    0.1533      0.8767    -0.3372 0.1516  0.8861 -0.3372 0.9595 0.8259
+ B136 0.5000       W   0.0539     1.0925   -0.0529    0.0525      1.1089    -0.0820 0.0531  1.1012 -0.0820 1.2359 0.9684
+ B136 0.5000       M   0.0562     1.0875   -0.0545    0.0548      1.0861    -0.1062 0.0554  1.0868 -0.1062 1.2195 0.9592
+ B136 0.5000       Q   0.0536     1.0203   -0.0626    0.0512      0.8974    -0.1474 0.0522  0.9494 -0.1474 1.1539 0.7791
+ B136 0.7500       W   0.0810     1.0937   -0.0789    0.0788      1.1079    -0.1218 0.0798  1.1012 -0.1218 1.2370 0.9675
+ B136 0.7500       M   0.0847     1.0904   -0.0812    0.0825      1.0868    -0.1561 0.0835  1.0885 -0.1561 1.2220 0.9602
+ B136 0.7500       Q   0.0804     1.0211   -0.0928    0.0765      0.8899    -0.2181 0.0783  0.9448 -0.2181 1.1540 0.7731
+ B136 1.0000       W   0.1082     1.0947   -0.1045    0.1052      1.1068    -0.1608 0.1066  1.1012 -0.1608 1.2381 0.9664
+ B136 1.0000       M   0.1134     1.0931   -0.1075    0.1104      1.0874    -0.2040 0.1118  1.0901 -0.2040 1.2244 0.9613
+ B136 1.0000       Q   0.1074     1.0218   -0.1225    0.1016      0.8816    -0.2869 0.1042  0.9397 -0.2869 1.1541 0.7667
+ B136    NaN RULESv2   0.0810     1.0937   -0.0789    0.0788      1.1079    -0.1218 0.0798  1.1012 -0.1218 1.2370 0.9675
+ B136    NaN     SPY   0.1496     0.8987   -0.2206    0.1533      0.8767    -0.3372 0.1516  0.8861 -0.3372 0.9596 0.8259
+SMALL 0.5000       W   0.0347     0.8613   -0.0570    0.0255      0.5612    -0.0941 0.0290  0.6644 -0.0941 0.8089 0.5550
+SMALL 0.5000       M   0.0422     0.9938   -0.0479    0.0279      0.5926    -0.1142 0.0333  0.7321 -0.1142 0.9317 0.5761
+SMALL 0.5000       Q   0.0400     0.9189   -0.0556    0.0242      0.4774    -0.1623 0.0302  0.6239 -0.1623 0.9171 0.4100
+SMALL 0.7500       W   0.0520     0.8623   -0.0847    0.0376      0.5610    -0.1387 0.0431  0.6646 -0.1387 0.8099 0.5546
+SMALL 0.7500       M   0.0634     0.9955   -0.0712    0.0413      0.5944    -0.1679 0.0497  0.7340 -0.1679 0.9334 0.5780
+SMALL 0.7500       Q   0.0598     0.9169   -0.0834    0.0350      0.4709    -0.2406 0.0444  0.6183 -0.2406 0.9165 0.4022
+SMALL 1.0000       W   0.0691     0.8632   -0.1118    0.0493      0.5607    -0.1816 0.0568  0.6648 -0.1816 0.8108 0.5541
+SMALL 1.0000       M   0.0846     0.9972   -0.0941    0.0544      0.5961    -0.2194 0.0658  0.7359 -0.2194 0.9350 0.5797
+SMALL 1.0000       Q   0.0794     0.9149   -0.1112    0.0450      0.4635    -0.3170 0.0580  0.6119 -0.3170 0.9159 0.3938
+SMALL    NaN RULESv2   0.0520     0.8623   -0.0847    0.0376      0.5610    -0.1387 0.0431  0.6646 -0.1387 0.8099 0.5546
+SMALL    NaN     SPY   0.1202     0.8316   -0.1861    0.1533      0.8767    -0.3372 0.1406  0.8581 -0.3372 0.9138 0.8344
+
+rule-8 picks (chosen on 2009-2016 only, read ONCE on 2017-01-01+):
+panel  selector  gross cad   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  v2_OOS_Sharpe  v2_H1  v2_H2  spy_OOS_Sharpe  spy_OOS_CAGR  spy_OOS_MaxDD  spy_H1  spy_H2  pass4a  pass4b
+  U56 IS_Sharpe 1.0000   M 0.1195  1.1824 -0.1856 1.2281 1.1453    0.1289      1.2359    -0.1856         1.2869 1.2400 1.1844          0.8767        0.1533        -0.3372  0.9595  0.8259   False    True
+  U56   IS_CAGR 1.0000   M 0.1195  1.1824 -0.1856 1.2281 1.1453    0.1289      1.2359    -0.1856         1.2869 1.2400 1.1844          0.8767        0.1533        -0.3372  0.9595  0.8259   False    True
+  U56  IS_MaxDD 0.5000   W 0.0574  1.2089 -0.0801 1.2394 1.1850    0.0630      1.2875    -0.0801         1.2869 1.2400 1.1844          0.8767        0.1533        -0.3372  0.9595  0.8259   False   False
+  U56 IS_Calmar 1.0000   M 0.1195  1.1824 -0.1856 1.2281 1.1453    0.1289      1.2359    -0.1856         1.2869 1.2400 1.1844          0.8767        0.1533        -0.3372  0.9595  0.8259   False    True
+ B136 IS_Sharpe 1.0000   W 0.1066  1.1012 -0.1608 1.2381 0.9664    0.1052      1.1068    -0.1608         1.1079 1.2370 0.9675          0.8767        0.1533        -0.3372  0.9596  0.8259   False    True
+ B136   IS_CAGR 1.0000   M 0.1118  1.0901 -0.2040 1.2244 0.9613    0.1104      1.0874    -0.2040         1.1079 1.2370 0.9675          0.8767        0.1533        -0.3372  0.9596  0.8259   False   False
+ B136  IS_MaxDD 0.5000   W 0.0531  1.1012 -0.0820 1.2359 0.9684    0.0525      1.1089    -0.0820         1.1079 1.2370 0.9675          0.8767        0.1533        -0.3372  0.9596  0.8259   False   False
+ B136 IS_Calmar 1.0000   M 0.1118  1.0901 -0.2040 1.2244 0.9613    0.1104      1.0874    -0.2040         1.1079 1.2370 0.9675          0.8767        0.1533        -0.3372  0.9596  0.8259   False   False
+SMALL IS_Sharpe 1.0000   M 0.0658  0.7359 -0.2194 0.9350 0.5797    0.0544      0.5961    -0.2194         0.5610 0.8099 0.5546          0.8767        0.1533        -0.3372  0.9138  0.8344   False   False
+SMALL   IS_CAGR 1.0000   M 0.0658  0.7359 -0.2194 0.9350 0.5797    0.0544      0.5961    -0.2194         0.5610 0.8099 0.5546          0.8767        0.1533        -0.3372  0.9138  0.8344   False   False
+SMALL  IS_MaxDD 0.5000   M 0.0333  0.7321 -0.1142 0.9317 0.5761    0.0279      0.5926    -0.1142         0.5610 0.8099 0.5546          0.8767        0.1533        -0.3372  0.9138  0.8344    True   False
+SMALL IS_Calmar 1.0000   M 0.0658  0.7359 -0.2194 0.9350 0.5797    0.0544      0.5961    -0.2194         0.5610 0.8099 0.5546          0.8767        0.1533        -0.3372  0.9138  0.8344   False   False
+
+  RULE 8 VERDICT: 4a 1/12, 4b 4/12, BOTH 0/12
+
+==============================================================================
+VERDICT
+==============================================================================
+1. GATES: G1 True, G2 True, G3 True, G4 True, G5 True. Idea 515's census (520 clauses / 412 unknown / 79.2%) and its S48 ladder (native 0.6585 vs flat-1e-6 0.5854) both reproduce exactly, so the queue's premise is quoted correctly.
+2. The queue's premise is CONFIRMED and its BACK-FILL is KILLED. Reading the clause text alone (W=0) names a unit on 105 of 520 (20.2%) — statistically the same as idea 515's hand-assigned 108 (20.8%) and agreeing with it on 90.4% of the clauses where both name one. Widening the context to +/-25 lines reaches 100% coverage but precision falls monotonely 90.4% -> 44.4% -> 33.3% -> 25.0% -> 16.7%. Coverage bought that way is not recovery, it is invention: there is no rung at which the back-fill is both broad and right.
+3. The PROPOSED bar now has a measurement behind it, but it is TWO numbers, not one. Over 84 perturbation cells on real books the SELF floor (same panel, same window, different column order/implementation) is cagr 2.2e-16, sharpe 2.4e-04, dd 5.6e-16, turnover 3.8e-16, weight 1.1e-16, price 0.0e+00, share 2.2e-16, return 1.6e-16, count 0.0e+00; the REPRO floor (2% vintage drop or a one-day start shift) is cagr 3.8e-03, sharpe 2.3e-02, dd 9.7e-03, turnover 4.3e-02, weight 2.8e-03, price 0.0e+00, share 2.5e-03, return 5.9e-03, count 4.9e+04.
+4. Priced on the census at W=0 (the only rung whose stamp is trustworthy): 92 clauses carry BOTH a unit and a native bar. Judged against the SELF floor 14 are un-passable (15.2%) and 21 are vacuous; judged against the REPRO floor 92 are un-passable (100.0%). The same clause, the same unit, opposite verdicts — so (unit, bar) is NOT a sufficient stamp. At W=25 the REPRO count is 449 of 472, but at 16.7% precision.
+5. Rule 8 leg 1 (floor calibrated on 2009-2016 books, read once on 2017-2026): REPRO OOS/IS floor ratio median 1.79. An IS-calibrated REPRO bar at K=1 clears 77.2% of OOS cells; at K=1000 88.9%.
+   A unit whose floor is exactly 0 (price) can never clear a STRICT '<' bar: the K ladder saturates at 8 of 9 units for that reason alone, not because the bar is too tight. Any adopted rule must read '<=' where the floor is zero.
+6. Rule 8 leg 2 (book leg): 4a 1/12, 4b 4/12, BOTH 0/12 — the same picks and the same counts as the 2026-09-11 lane-B run on this book family, i.e. the book leg REPRODUCES the standing EW-band result and contributes no new book. No KEEP is claimed here.
+
+wrote 2026-09-12_give-every-reproduction-gate-a-UNIT-and-a-min-native-proposed-BAR_B.console.txt, .census.csv, .floors.csv, .grid.csv, .walkforward.csv, .bookleg.csv, .bookgrid.csv
