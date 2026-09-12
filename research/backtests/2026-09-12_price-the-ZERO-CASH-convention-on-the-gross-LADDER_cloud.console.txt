@@ -1,0 +1,194 @@
+========================================================================================================================
+# 2026-09-12_price-the-ZERO-CASH-convention-on-the-gross-LADDER_cloud
+# IDEA 576 - idea 311's +0.0065/unit-g Sharpe drift is the signature of idle cash earning
+#            ZERO.  Re-run its 612-book gross ladder with cash credited at 0 / 150 / 300 bps
+#            and report whether the slope flattens, whether any 4b band widens, and whether
+#            the panel ordering of band widths survives.
+========================================================================================================================
+# PROTOCOL: cost 10 bps on the RISKY legs, next-day fills, no leverage, IS <= 2016-12-31, OOS >= 2017-01-01, sample truncated at 2026-09-04
+# TUNED (2): CASH in {0, 150, 300} bps x g in 0.20..1.00 step 0.05 (17 points).  REPORTED-NOT-SELECTED:
+#            panel, book-form, cadence, window.  Every grid point is written to .grid.csv.
+
+PRE-REGISTERED: H_REPRO (CASH=0 reproduces idea 311's committed rows on U56/B136),
+  H_FLAT (median Sharpe slope in g falls monotonically in the cash rate and is smaller in
+  magnitude at 300 bps than at 0, where idea 311 read +0.0065), H_KILL (it reaches
+  zero or flips sign by 300 bps), H_WIDEN (more bands widen than narrow at 150 and at 300),
+  H_ORDER (the panel ordering of mean band width is rate-invariant), H_NOFREE (any 4b pass
+  bought by the credit is an asymmetric-comparand artefact - SPY holds no cash - and is
+  named as one).
+
+CAVEAT (before the result): a FLAT 150/300 bps over 2009-2026 is not the cash rate that
+  existed (~10 bps to 2015, ~500 after 2022).  This is a SENSITIVITY instrument for the
+  convention, not a return forecast; idea 642 holds the real-instrument (SHY) version.
+SURVIVORSHIP: B136 and the small panel are CURRENT constituents; dead names are absent, so
+  every panel return here is biased UPWARD.
+
+  U56         56 cols,   56 tradable, sample from 2009-01-13
+  B136       136 cols,  136 tradable, sample from 2009-01-13
+  SMALL663   664 cols,  663 tradable, sample from 2011-01-13
+  small panel: 52 tickers with max_1d_move >= 1.0 dropped per PROTOCOL
+
+========================================================================================================================
+GATES (printed before any new number is read)
+========================================================================================================================
+G1 identity : fast_backtest vs engine.backtest,  max |dret| = 2.776e-17 (bar 1e-12) -> PASS
+G2 cash-0   : cash_backtest(0) vs fast_backtest, max |dret| = 2.290e-16 (bar 1e-12) -> PASS
+   cash     0 bps: max |dret| vs the day-by-day loop = 1.388e-17
+   cash   150 bps: max |dret| vs the day-by-day loop = 2.082e-17
+   cash   300 bps: max |dret| vs the day-by-day loop = 1.388e-17
+G3 credit   : vectorised vs independent loop, max |dret| = 2.082e-17 (bar 1e-12) -> PASS
+
+========================================================================================================================
+THE LADDER - 6 forms x 3 panels x 2 cadences x 17 grosses x 3 cash rates
+========================================================================================================================
+  U56       done (47s)
+  B136      done (104s)
+  SMALL663  done (361s)
+  1836 books on the ladder (361s)
+
+========================================================================================================================
+G4 - reproduction of idea 311's committed grid at CASH=0 (no credited number read yet)
+========================================================================================================================
+  bar = idea 630's standing tolerance tol_X(k) = a*k^b at k = 3 elapsed days (both runs pin the sample end at 2026-09-04, so the residual is a price RESTATEMENT):
+    Sharpe 1.55e-02  H1 1.71e-02  H2 3.31e-02  OOS_Sharpe 3.94e-02  CAGR 2.79e-03
+  U56       vs U56      : 204 rows x 10 cols, max |d| 2.542e-03; worst vs its own bar IS_CAGR 5.426e-04 / 2.787e-03 = 0.195x  -> PASS
+  B136      vs B136     : 204 rows x 10 cols, max |d| 4.799e-03; worst vs its own bar IS_CAGR 1.012e-03 / 2.787e-03 = 0.363x  -> PASS
+  SMALL439  vs SMALL663 : 204 rows x 10 cols, max |d| 2.284e-01; worst vs its own bar OOS_MaxDD 7.348e-02 / 2.787e-03 = 26.365x  -> DIFFERENT PANEL (not a reproduction)
+  H_REPRO (U56 and B136 at CASH=0, inside idea 630's tolerance) -> PASS
+  the small panel carries 663 tradable names today against idea 311's 439: its rows are a different panel, not a failed reproduction.
+
+========================================================================================================================
+H_FLAT / H_KILL - does the Sharpe slope in g flatten once the idle cash is paid for?
+========================================================================================================================
+   cash  cells  median slope_Sharpe      mean       min       max      >0  median |slope|  median Sharpe span
+      0     36              0.00602   0.00727  -0.00881   0.03998   32/36         0.00662             0.00529
+    150     36             -0.34137  -0.36251  -0.68837  -0.13406    0/36         0.34137             0.33485
+    300     36             -0.68320  -0.72713  -1.36765  -0.30576    0/36         0.68320             0.66920
+  idea 311's committed slope at the zero-cash convention: +0.0065/unit g;  this run at 0 bps: +0.00602
+  H_FLAT (median slope monotone down in the rate AND |slope| smaller at 300 than at 0) -> FAIL
+  H_KILL (median slope <= 0 by 300 bps) -> PASS
+  c* (flat cash rate at which the median slope in g crosses ZERO, linear between the
+     bracketing rungs) = 2.6 bps/yr
+     -> that is the price of the zero-cash convention in cash-rate units: a book ladder
+        quoted at 0% idle cash is quoted at a cash rate c* below the one that would make
+        its Sharpe genuinely g-invariant.
+
+  per-panel medians (reported, never selected):
+    U56       0bps +0.00466  150bps -0.37139  300bps -0.73957
+    B136      0bps +0.00889  150bps -0.32853  300bps -0.65842
+    SMALL663  0bps +0.00282  150bps -0.26177  300bps -0.51969
+  per-form medians (reported, never selected):
+    EWall   0bps +0.00052  150bps -0.36766  300bps -0.73132   mean idle weight 0.399
+    MA-RS   0bps +0.00161  150bps -0.40807  300bps -0.81417   mean idle weight 0.399
+    MA-DG   0bps +0.00392  150bps -0.65088  300bps -1.29607   mean idle weight 0.607
+    TOP20   0bps +0.00996  150bps -0.28199  300bps -0.57478   mean idle weight 0.399
+    TOP10   0bps +0.01413  150bps -0.22917  300bps -0.47412   mean idle weight 0.399
+    MA20    0bps +0.00998  150bps -0.28294  300bps -0.57660   mean idle weight 0.399
+
+========================================================================================================================
+THE ADMISSIBLE 4b g-BAND AT EVERY CASH RATE
+========================================================================================================================
+  panel     form    cad |   0bps band     w | 150bps band     w | 300bps band     w
+  B136      EWall   M   |        EMPTY  0.00 |  [0.55,0.55]  0.00 |  [0.50,0.60]  0.10
+  B136      EWall   W   |        EMPTY  0.00 |  [0.55,0.55]  0.00 |  [0.50,0.55]  0.05
+  B136      MA-DG   M   |  [0.95,1.00]  0.05 |  [0.90,1.00]  0.10 |  [0.85,1.00]  0.15
+  B136      MA-DG   W   |        EMPTY  0.00 |  [1.00,1.00]  0.00 |  [0.95,1.00]  0.05
+  B136      MA-RS   M   |  [0.65,0.65]  0.00 |  [0.65,0.65]  0.00 |  [0.60,0.65]  0.05
+  B136      MA-RS   W   |  [0.70,0.75]  0.05 |  [0.70,0.75]  0.05 |  [0.65,0.75]  0.10
+  B136      MA20    M   |  [0.50,0.55]  0.05 |  [0.45,0.55]  0.10 |  [0.40,0.55]  0.15
+  B136      MA20    W   |  [0.55,0.60]  0.05 |  [0.50,0.60]  0.10 |  [0.45,0.60]  0.15
+  B136      TOP10   M   |  [0.45,0.50]  0.05 |  [0.40,0.50]  0.10 |  [0.35,0.50]  0.15
+  B136      TOP10   W   |        EMPTY  0.00 |        EMPTY  0.00 |  [0.40,0.55]  0.15
+  B136      TOP20   M   |  [0.50,0.55]  0.05 |  [0.45,0.55]  0.10 |  [0.40,0.55]  0.15
+  B136      TOP20   W   |  [0.55,0.60]  0.05 |  [0.50,0.60]  0.10 |  [0.45,0.60]  0.15
+  SMALL663  EWall   M   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  EWall   W   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  MA-DG   M   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  MA-DG   W   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  MA-RS   M   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  MA-RS   W   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  MA20    M   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  MA20    W   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  TOP10   M   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  TOP10   W   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  TOP20   M   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  SMALL663  TOP20   W   |        EMPTY  0.00 |        EMPTY  0.00 |        EMPTY  0.00
+  U56       EWall   M   |  [0.65,0.65]  0.00 |  [0.60,0.65]  0.05 |  [0.55,0.65]  0.10
+  U56       EWall   W   |  [0.65,0.65]  0.00 |  [0.60,0.65]  0.05 |  [0.55,0.65]  0.10
+  U56       MA-DG   M   |  [0.90,1.00]  0.10 |  [0.85,1.00]  0.15 |  [0.80,1.00]  0.20
+  U56       MA-DG   W   |  [1.00,1.00]  0.00 |  [0.95,1.00]  0.05 |  [0.90,1.00]  0.10
+  U56       MA-RS   M   |  [0.65,0.80]  0.15 |  [0.60,0.80]  0.20 |  [0.60,0.80]  0.20
+  U56       MA-RS   W   |  [0.70,0.80]  0.10 |  [0.70,0.80]  0.10 |  [0.65,0.80]  0.15
+  U56       MA20    M   |  [0.50,0.70]  0.20 |  [0.50,0.70]  0.20 |  [0.45,0.70]  0.25
+  U56       MA20    W   |  [0.60,0.70]  0.10 |  [0.55,0.70]  0.15 |  [0.50,0.70]  0.20
+  U56       TOP10   M   |  [0.45,0.55]  0.10 |  [0.40,0.55]  0.15 |  [0.35,0.55]  0.20
+  U56       TOP10   W   |  [0.50,0.60]  0.10 |  [0.45,0.60]  0.15 |  [0.45,0.60]  0.15
+  U56       TOP20   M   |  [0.50,0.70]  0.20 |  [0.45,0.70]  0.25 |  [0.40,0.70]  0.30
+  U56       TOP20   W   |  [0.55,0.65]  0.10 |  [0.50,0.65]  0.15 |  [0.45,0.65]  0.20
+
+  vs the 0-bps convention at 150 bps: WIDER 16, NARROWER 0, unchanged 20 of 36 cells;  bands that become non-empty 3, that vanish 0;  mean width 0.064 vs 0.042
+  vs the 0-bps convention at 300 bps: WIDER 24, NARROWER 0, unchanged 12 of 36 cells;  bands that become non-empty 4, that vanish 0;  mean width 0.099 vs 0.042
+  H_WIDEN -> PASS
+
+========================================================================================================================
+H_ORDER - does the PANEL ORDERING of mean band width survive the cash rate?
+========================================================================================================================
+      0 bps: U56 (0.096, 12/12 non-empty)  >  B136 (0.029, 8/12 non-empty)  >  SMALL663 (0.000, 0/12 non-empty)
+    150 bps: U56 (0.138, 12/12 non-empty)  >  B136 (0.054, 11/12 non-empty)  >  SMALL663 (0.000, 0/12 non-empty)
+    300 bps: U56 (0.179, 12/12 non-empty)  >  B136 (0.117, 12/12 non-empty)  >  SMALL663 (0.000, 0/12 non-empty)
+  H_ORDER (same ordering at every rate) -> PASS  [('U56', 'B136', 'SMALL663') | ('U56', 'B136', 'SMALL663') | ('U56', 'B136', 'SMALL663')]
+
+========================================================================================================================
+RULE 8 WF-A - band solved on IS <= 2016-12-31, g* = IS midpoint, OOS >= 2017-01-01 read ONCE
+========================================================================================================================
+   cash  IS non-empty  OOS non-empty  g* inside OOS band  mean IS width  mean OOS width
+      0     20/36          18/36              9/20                0.092           0.047
+    150     23/36          23/36             15/23                0.117           0.071
+    300     25/36          24/36             21/25                0.156           0.101
+  (idea 311 read 9 of 20 at the zero-cash convention: the IS band does not transport.)
+
+========================================================================================================================
+RULE 8 WF-B - a BOOK: form by IS Sharpe, g = IS band midpoint, B136/W, OOS read ONCE
+========================================================================================================================
+      0 bps: pick TOP10 g=0.50
+            FULL  11.63% / 0.9702 / -17.95% (H1 1.2684, H2 0.7645);  OOS  10.78% / 0.8349 / -17.95%
+            RULES v2 (B136, cash 0 bps) OOS   7.98% / 1.1185 / -12.24%;  SPY OOS  15.45% / 0.8820 / -33.72%
+            4a vs RULES v2 False;  4b fail legs (full) H2,OOS;  in the OOS window alone H1,OOS,CAGR
+    150 bps: pick TOP10 g=0.50
+            FULL  12.46% / 1.0318 / -17.89% (H1 1.3410, H2 0.8188);  OOS  11.61% / 0.8907 / -17.89%
+            RULES v2 (B136, cash 150 bps) OOS   8.74% / 1.2175 / -12.20%;  SPY OOS  15.45% / 0.8820 / -33.72%
+            4a vs RULES v2 False;  4b fail legs (full) H2;  in the OOS window alone H1
+    300 bps: pick MA-DG g=1.00
+            FULL  11.34% / 1.1844 / -16.57% (H1 1.2843, H2 1.0858);  OOS  11.48% / 1.2194 / -16.57%
+            RULES v2 (B136, cash 300 bps) OOS   9.50% / 1.3152 / -12.16%;  SPY OOS  15.45% / 0.8820 / -33.72%
+            4a vs RULES v2 False;  4b fail legs (full) -;  in the OOS window alone -
+
+========================================================================================================================
+KEEP PATHS 4a / 4b - every book, every cash rate
+========================================================================================================================
+  4a's comparand (RULES v2) is credited at the SAME rate as the book; 4b's comparand (SPY,
+  buy-and-hold) holds no cash and is therefore UNCHANGED by the rate - stated, not hidden.
+   cash  books     4a     4b   BOTH  binding 4b legs
+      0    612     34     50      0  CAGR 336  DD 273  H2 221  OOS 221  H1 130
+    150    612    124     69      0  CAGR 307  DD 268  H2 204  OOS 198  H1 76
+    300    612    142     95      1  CAGR 277  DD 266  H2 165  OOS 155  H1 51
+      0 bps 4b passers by panel: U56 35  B136 15   by form: TOP20 12  MA20 12  MA-RS 10  TOP10 8  MA-DG 6  EWall 2
+    150 bps 4b passers by panel: U56 45  B136 24   by form: TOP20 16  MA20 15  MA-RS 11  TOP10 11  MA-DG 10  EWall 6
+    300 bps 4b passers by panel: U56 55  B136 40   by form: TOP20 20  MA20 19  TOP10 17  MA-RS 14  MA-DG 14  EWall 11
+    150 bps: 4b passes BOUGHT by the credit 19, LOST 0
+    300 bps: 4b passes BOUGHT by the credit 45, LOST 0
+  Every pass bought by the credit is a pass against a comparand that does not receive it;
+  none is a capital candidate and none is claimed as one.
+
+========================================================================================================================
+VERDICT
+========================================================================================================================
+  H_REPRO  PASS
+  H_FLAT   FAIL
+  H_KILL   PASS
+  H_WIDEN  PASS
+  H_ORDER  PASS
+  median Sharpe slope in g: 0bps +0.00602  150bps -0.34137  300bps -0.68320
+  mean 4b band width:       0bps 0.042  150bps 0.064  300bps 0.099
+
+  wrote grid 1836, bands 108, slopes 108, order 9, wf 111 rows (362s)
