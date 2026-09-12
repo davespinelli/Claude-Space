@@ -1,0 +1,172 @@
+========================================================================================================================
+# 2026-09-12_is-every-DECILE-LADDER-claim-in-the-record-a-DECILE-1-claim_cloud
+# IDEA 566 - idea 313 found decile 1 carries 81% / 77% of idea 51's capQ-vs-advQ gap.  This
+#            run REBUILDS the record's decile ladders from prices, re-scores every ordering
+#            with the extreme bin dropped, walks the pick forward, and censuses how many
+#            committed ladder claims ever quote a trimmed ladder.
+========================================================================================================================
+# PROTOCOL: 10 bps per unit turnover, next-day fills, gross 0.75 fixed for
+#           every book, weekly, no leverage.  IS <= 2016-12-31, OOS >= 2017-01-01.
+# TUNED (2): TRIM in [0, 1, 2] (low end; a HIGH-end trim is a reported CONTROL) x FAMILY in
+#            ['advQ', 'volQ', 'momQ', 'capQ'].  REPORTED-NOT-SELECTED: panel, form, decile, window, trim end.
+
+PRE-REGISTERED: H_CORNER (idea 313 replicates: D1 carries >= 50% of the D10-D1 gap in at
+  least half the small-panel cells), H_FLIP (dropping D1 flips the sign of rho in a MAJORITY
+  of ladders), H_MAG (median |rho| falls >= 25% under TRIM=1), H_CENSUS (< 5% of committed
+  ladder claims quote a trimmed ladder), H_PICK (the IS-best decile is an EXTREME bin in a
+  majority of cells), H_NOFREE (the trim manufactures no KEEP; every pass is walked forward).
+
+CAVEATS (before the result): capQ is a STATIC present-day market cap broadcast over the whole
+  sample - look-ahead by construction - and its source file is rewritten nightly (idea 565);
+  it is included only because it is idea 51's and idea 313's own characteristic, and its
+  coverage is stamped below.  advQ / volQ / momQ are point-in-time.
+SURVIVORSHIP: the small panel is today's sub-$2B screen and B136/U56 are current
+  constituents; dead names are absent, so every return here is biased UPWARD and the thin,
+  most-distressed decile-1 book is biased most of all.
+
+  SMALL663   664 cols,  663 tradable, sample 2010-01-04 -> 2026-09-11, scored from 2011-01-13
+  U56         56 cols,   55 tradable, sample 2008-01-02 -> 2026-09-11, scored from 2009-01-13
+  B136       136 cols,  135 tradable, sample 2008-01-02 -> 2026-09-11, scored from 2009-01-13
+  small panel: 52 tickers with max_1d_move >= 1.0 dropped per PROTOCOL
+  capQ snapshot: research/deepvalue/universe_under2b.csv, 720 rows, 663 of 663 panel names covered (NIGHTLY REWRITTEN - idea 565)
+
+========================================================================================================================
+GATES (printed before any new number is read)
+========================================================================================================================
+G1 identity : fast_backtest vs engine.backtest, max |dret| = 1.388e-17 (bar 1e-12) -> PASS
+G2 partition: max overlap count 0 (bar 0), min coverage of eligible names 1.000000 (bar 1.0), max decile count spread 1 (bar 1) -> PASS
+G3 static   : capQ max daily rank change 3.344e-03 (bar 0 for a static characteristic; non-zero only where a name enters/leaves the panel) -> PASS
+G4 census   : 109 distinct decile/quantile ORDERING claims over 804 committed files; harvester idempotent -> PASS
+
+========================================================================================================================
+THE LADDERS - Sharpe by decile (FULL window, gross 0.75, weekly, 10 bps)
+========================================================================================================================
+  B136      momQ  MA-DG    0.598  0.515  0.105  0.467  0.659  0.502  0.669  0.722  0.683  1.057
+            rho full +0.7576  trim1 +0.8500 (1.12x) trim2 +0.9524 (1.26x)   D10-D1 gap +0.4589, D1 carries -18.1%   mean names D1 13
+  B136      momQ  MA-RS    0.732  0.508  0.161  0.541  0.637  0.375  0.572  0.665  0.678  1.087
+            rho full +0.4424  trim1 +0.8333 (1.88x) trim2 +0.8810 (1.99x)   D10-D1 gap +0.3550, D1 carries -63.0%   mean names D1 13
+  B136      volQ  MA-DG    0.711  0.494  0.487  0.376  0.384  0.455  0.484  0.795  0.809  0.911
+            rho full +0.4424  trim1 +0.5833 (1.32x) trim2 +0.7619 (1.72x)   D10-D1 gap +0.2000, D1 carries -108.7%   mean names D1 13
+  B136      volQ  MA-RS    0.571  0.499  0.519  0.444  0.348  0.346  0.540  0.718  0.860  0.929
+            rho full +0.5152  trim1 +0.6833 (1.33x) trim2 +0.7619 (1.48x)   D10-D1 gap +0.3579, D1 carries -20.2%   mean names D1 13
+  SMALL663  advQ  MA-DG    1.808  0.932  0.818  0.635  0.397  0.328  0.149  0.193  0.009 -0.217
+            rho full -0.9879  trim1 -0.9833 (1.00x) trim2 -0.9762 (0.99x)   D10-D1 gap -2.0244, D1 carries  43.3%   mean names D1 53
+  SMALL663  advQ  MA-RS    1.274  0.741  0.804  0.675  0.274  0.426  0.169  0.200  0.048 -0.218
+            rho full -0.9636  trim1 -0.9500 (0.99x) trim2 -0.9524 (0.99x)   D10-D1 gap -1.4928, D1 carries  35.7%   mean names D1 53
+  SMALL663  capQ  MA-DG    0.535  0.752  0.725  0.430  0.605  0.561  0.462  0.424  0.539  0.479
+            rho full -0.4545  trim1 -0.5833 (1.28x) trim2 -0.4048 (0.89x)   D10-D1 gap -0.0563, D1 carries -385.2%   mean names D1 53
+  SMALL663  capQ  MA-RS    0.455  0.618  0.558  0.290  0.536  0.549  0.459  0.442  0.562  0.378
+            rho full -0.2242  trim1 -0.3667 (1.64x) trim2 -0.0952 (0.42x)   D10-D1 gap -0.0776, D1 carries -209.3%   mean names D1 53
+  SMALL663  momQ  MA-DG    0.620  0.211  0.180  0.092  0.081  0.114  0.301  0.174  0.405  0.722
+            rho full +0.2121  trim1 +0.5167 (2.44x) trim2 +0.6905 (3.26x)   D10-D1 gap +0.1015, D1 carries -403.4%   mean names D1 51
+  SMALL663  momQ  MA-RS    0.365  0.052 -0.063  0.057  0.159  0.069  0.290  0.201  0.411  0.728
+            rho full +0.6242  trim1 +0.9500 (1.52x) trim2 +0.9524 (1.53x)   D10-D1 gap +0.3628, D1 carries -86.3%   mean names D1 51
+  SMALL663  volQ  MA-DG    0.736  0.344  0.100  0.243  0.162  0.037  0.181  0.054  0.311  0.634
+            rho full -0.1636  trim1 +0.1500 (0.92x) trim2 +0.4524 (2.76x)   D10-D1 gap -0.1016, D1 carries 385.4%   mean names D1 53
+  SMALL663  volQ  MA-RS    0.569  0.383  0.001  0.259  0.226  0.052  0.109 -0.024  0.443  0.520
+            rho full -0.0909  trim1 +0.2500 (2.75x) trim2 +0.4286 (4.71x)   D10-D1 gap -0.0491, D1 carries 379.9%   mean names D1 53
+  U56       momQ  MA-DG    0.458  0.311  0.446  0.258  0.487  0.589  0.479  0.660  0.701  1.189
+            rho full +0.8545  trim1 +0.9000 (1.05x) trim2 +0.9048 (1.06x)   D10-D1 gap +0.7309, D1 carries -20.0%   mean names D1 5
+  U56       momQ  MA-RS    0.489  0.267  0.583  0.273  0.567  0.448  0.292  0.659  0.624  1.213
+            rho full +0.6364  trim1 +0.7500 (1.18x) trim2 +0.6429 (1.01x)   D10-D1 gap +0.7248, D1 carries -30.5%   mean names D1 5
+  U56       volQ  MA-DG    0.615  0.626  0.539  0.393  0.610  0.235  0.678  0.740  0.849  0.967
+            rho full +0.6242  trim1 +0.7167 (1.15x) trim2 +0.8333 (1.33x)   D10-D1 gap +0.3524, D1 carries   3.1%   mean names D1 5
+  U56       volQ  MA-RS    0.460  0.507  0.562  0.330  0.708  0.282  0.677  0.511  0.928  1.002
+            rho full +0.6121  trim1 +0.6000 (0.98x) trim2 +0.5714 (0.93x)   D10-D1 gap +0.5420, D1 carries   8.8%   mean names D1 5
+
+========================================================================================================================
+TRIM SURVIVAL - how many published orderings survive dropping the extreme bin?
+========================================================================================================================
+  FULL trim 1 LOW : sign survives 14/16  median |rho| ratio 1.231  median rho +0.5917 (full +0.4424)
+  FULL trim 1 HIGH: sign survives 15/16  median |rho| ratio 0.780  median rho +0.2333 (full +0.4424)
+  FULL trim 2 LOW : sign survives 14/16  median |rho| ratio 1.296  median rho +0.6667 (full +0.4424)
+  FULL trim 2 HIGH: sign survives 14/16  median |rho| ratio 0.779  median rho -0.0238 (full +0.4424)
+  IS   trim 1 LOW : sign survives 15/16  median |rho| ratio 1.523  median rho +0.2083 (full +0.1152)
+  IS   trim 1 HIGH: sign survives 13/16  median |rho| ratio 0.794  median rho -0.1417 (full +0.1152)
+  IS   trim 2 LOW : sign survives 15/16  median |rho| ratio 1.469  median rho +0.3690 (full +0.1152)
+  IS   trim 2 HIGH: sign survives 12/16  median |rho| ratio 0.982  median rho -0.1786 (full +0.1152)
+  OOS  trim 1 LOW : sign survives 16/16  median |rho| ratio 1.063  median rho +0.5000 (full +0.3939)
+  OOS  trim 1 HIGH: sign survives 13/16  median |rho| ratio 0.842  median rho +0.1667 (full +0.3939)
+  OOS  trim 2 LOW : sign survives 14/16  median |rho| ratio 1.117  median rho +0.6786 (full +0.3939)
+  OOS  trim 2 HIGH: sign survives 10/16  median |rho| ratio 0.821  median rho -0.1190 (full +0.3939)
+
+  idea 313's statistic (share of the capQ-vs-advQ per-decile Sharpe gap carried by D1),
+  re-measured on today's 663-name panel - NOT a reproduction of its 430-name vintage:
+    MA-RS : D1 carries 22.8% of sum|capQ-advQ| (idea 313 read 81% MA-RS / 77% MA-DG on 430 names); D1 gap -0.8189, D2-D10 mean +0.1413
+    MA-DG : D1 carries 32.1% of sum|capQ-advQ| (idea 313 read 81% MA-RS / 77% MA-DG on 430 names); D1 gap -1.2728, D2-D10 mean +0.1924
+
+  H_CORNER: D1 carries >= 50% of the D10-D1 gap in 2 of 8 small-panel cells (median share -25.3%) -> FAIL
+  H_FLIP  : the sign of rho flips in 2 of 16 ladders under TRIM=1 -> FAIL
+  H_MAG   : median |rho| ratio under TRIM=1 is 1.231 (bar <= 0.75) -> FAIL
+
+========================================================================================================================
+THE CENSUS - committed decile/quantile ORDERING claims in the published record
+========================================================================================================================
+  109 distinct ordering claims over 36 files; 57 (52.3%) name an EXTREME bin; 1 (0.9%) mention a TRIMMED ladder at all
+  H_CENSUS: trimmed-ladder mentions 0.9% (bar < 5%) -> PASS
+  five committed ordering claims that name an extreme bin:
+    2026-09-04_small-cap-momentum-clean_cloud.result.md          L67    "not monotone: D1 (best momentum) 21.5%/0.865 but **D10 (worst momentum) 29.2%/0.937** —"
+    2026-09-05_where-does-the-POS-tilt-stop-transferring_C.resul L57    "TOP decile (`smDEC10`, +0.00253, t +1.09, the ≥$20M/day names)."
+    2026-09-06_a-phase-averaged-cadence-as-the-honest-estimator_ L27    "## Q1 — the phase-averaged ladder is NOT the ladder idea 175 published"
+    2026-09-06_dispersion-as-a-survivorship-detector_cloud.resul L59    "Panels ranked on their **2009–2016 dispersion alone**, top decile bought, 2017–2026 read"
+    2026-09-06_holding-period-as-the-hidden-variable_cloud.resul L68    "Direction is right and monotone by `L` quartile — mean cadence Sharpe range 0.321 (Q1,"
+
+========================================================================================================================
+RULE 8 WALK-FORWARD - decile picked by IS Sharpe, FULL ladder vs TRIMMED (D1 dropped);
+  OOS read ONCE against RULES v2 on the same panel and against SPY
+========================================================================================================================
+  the trim CHANGES the IS pick in 4 of 16 cells
+  panel      fam   form   pickF pickT  OOS Sh F  OOS Sh T  OOS CAGR F  OOS CAGR T RULESv2 Sh  SPY Sh
+  B136       momQ  MA-DG     10    10     0.984     0.984      17.60%      17.60%      1.106   0.877
+  B136       momQ  MA-RS     10    10     0.987     0.987      19.74%      19.74%      1.106   0.877
+  B136       volQ  MA-DG      1     9     0.548     0.814       2.10%       8.39%      1.106   0.877
+  B136       volQ  MA-RS      9     9     0.834     0.834      15.44%      15.44%      1.106   0.877
+  SMALL663   advQ  MA-DG      1     2     2.108     0.848      12.66%       6.41%      0.560   0.877
+  SMALL663   advQ  MA-RS      3     3     0.745     0.745      11.89%      11.89%      0.560   0.877
+  SMALL663   capQ  MA-DG      3     3     0.557     0.557       4.02%       4.02%      0.560   0.877
+  SMALL663   capQ  MA-RS      2     2     0.491     0.491       6.81%       6.81%      0.560   0.877
+  SMALL663   momQ  MA-DG     10    10     0.689     0.689      10.09%      10.09%      0.560   0.877
+  SMALL663   momQ  MA-RS     10    10     0.713     0.713      12.54%      12.54%      0.560   0.877
+  SMALL663   volQ  MA-DG      1     2     0.499     0.173       2.78%       1.02%      0.560   0.877
+  SMALL663   volQ  MA-RS      1     2     0.378     0.270       3.44%       2.82%      0.560   0.877
+  U56        momQ  MA-DG     10    10     1.173     1.173      25.34%      25.34%      1.278   0.877
+  U56        momQ  MA-RS     10    10     1.172     1.172      27.77%      27.77%      1.278   0.877
+  U56        volQ  MA-DG     10    10     0.887     0.887      14.75%      14.75%      1.278   0.877
+  U56        volQ  MA-RS     10    10     0.955     0.955      27.96%      27.96%      1.278   0.877
+  H_PICK  : the IS-best decile is an EXTREME bin (D1 or D10) in 12 of 16 cells -> PASS
+  OOS Sharpe cost/benefit of the trim: median +0.0000, mean -0.0893, min -1.2597, max +0.2656
+
+========================================================================================================================
+KEEP PATHS 4a / 4b - every book (4a vs RULES v2 on the SAME panel, 4b vs SPY)
+========================================================================================================================
+     panel family  books  keep4a  keep4b  both
+      B136   momQ     20       0       0     0
+      B136   volQ     20       0       0     0
+  SMALL663   advQ     20       2       1     1
+  SMALL663   capQ     20       0       0     0
+  SMALL663   momQ     20       0       0     0
+  SMALL663   volQ     20       0       0     0
+       U56   momQ     20       0       0     0
+       U56   volQ     20       0       0     0
+  binding 4b legs over 160 books: H1 141  H2 142  OOS 143  DD 103  CAGR 142
+  4b passers by decile: {1: 1}
+  of the 32 rule-8 picks, 1 carry a full-sample 4b pass; each is reported
+  with its OOS row above and none is banked on the full-sample reading alone.
+
+========================================================================================================================
+APPENDIX - COST AND CAPACITY STRESS on every book that passes 4b
+  (advQ decile 1 is the LEAST liquid bin of a survivorship-biased sub-$2B panel: PROTOCOL's
+   10 bps is an assumption, not a measurement, and it is the assumption most likely to be
+   wrong exactly there.  Reported so no reader banks the pass without seeing this.)
+========================================================================================================================
+  SMALL663  advQ  MA-DG  D1     10 bps: CAGR  10.11% Sharpe  1.808 MaxDD  -9.94% | OOS  12.66%/ 2.108/ -6.65% | 4a True  4b True  fail -
+  SMALL663  advQ  MA-DG  D1     25 bps: CAGR   9.00% Sharpe  1.617 MaxDD -10.81% | OOS  11.62%/ 1.943/ -7.90% | 4a True  4b False fail CAGR
+  SMALL663  advQ  MA-DG  D1     50 bps: CAGR   7.17% Sharpe  1.299 MaxDD -13.28% | OOS   9.89%/ 1.667/ -9.96% | 4a False 4b False fail H1,CAGR
+  SMALL663  advQ  MA-DG  D1    100 bps: CAGR   3.59% Sharpe  0.667 MaxDD -19.31% | OOS   6.53%/ 1.116/-14.21% | 4a False 4b False fail H1,CAGR
+  median 20d dollar volume of the names actually held: $55,280/day  -> a $1m position is 18.1x the median name's DAILY volume
+
+========================================================================================================================
+VERDICT
+========================================================================================================================
+  H_CORNER FAIL   H_FLIP FAIL   H_MAG FAIL   H_CENSUS PASS   H_PICK PASS   H_NOFREE PASS
+  wrote ladder 160, trim 240, claims 109, wf 32 rows (58s)
