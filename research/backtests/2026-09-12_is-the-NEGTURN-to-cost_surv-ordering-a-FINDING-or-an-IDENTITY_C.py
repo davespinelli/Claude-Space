@@ -996,7 +996,7 @@ def main():
                     return cs * B.loc[keys, "turn_yr"].values, None
                 return cs, B.loc[keys, dstar].values
             ti, ci_ = tgt_for("csIS", "D_star_IS", "c_hat_IS")
-            to, co_ = tgt_for("csOOS", "D_star_OOS", "c_hat_OOS")
+            to, co_ = tgt_for("csOOS", "D_star_OOS", "chat_OOSLOC")
             rIS = partial_spearman(neg, ti, ci_) if ci_ is not None else spearman(neg, ti)
             rOOS = partial_spearman(neg, to, co_) if co_ is not None else spearman(neg, to)
             ISrows.append(dict(rung_set=rs, decomposition=dec, rho_IS=rIS, rho_OOS=rOOS,
