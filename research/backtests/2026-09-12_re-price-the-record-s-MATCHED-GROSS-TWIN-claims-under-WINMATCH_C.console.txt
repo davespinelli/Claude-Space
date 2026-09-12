@@ -1,0 +1,414 @@
+# Idea 824 - re-price-the-record-s-MATCHED-GROSS-TWIN-claims-under-WINMATCH  (lane C, 2026-09-12)
+# OBJECT: the record's matched-gross twin is built with g_eff = g * mean(m) computed ONCE on
+#   the FULL sample and then SLICED into sub-windows to publish dIS and dOOS (FULLMATCH).
+#   WINMATCH re-matches g_eff on the evaluation window itself.  On the FULL sample the two
+#   are the same object, so only the record's SUB-WINDOW twin claims can move.
+# TUNED: claim window ['FULL', 'IS', 'OOS', 'H1', 'H2', 'EP2022'] x convention ['FULLMATCH', 'WINMATCH'] = 12 points,
+#   ALL reported; HEADLINE window = OOS (declared before anything is read).
+# REPORTED AXES (not tunes): cost rung [0.0, 10.0, 25.0] bps (headline 10); scope U56 /
+#   B136 / SMALL / REPRO2; sign read on dSharpe, dCAGR and dMaxDD separately.
+# SURVIVORSHIP: all panels are current-constituent lists; levels optimistic, SMALL worst.
+
+# THE COMMITTED CLAIM SET: 2026-09-10_is-the-TWIN-WIN-RATE-a-SWITCHING-COST-statistic_C.cells.csv.gz, 9720 twin cells (3 panels x 216 arms x 15 rungs).
+
+======================================================================================================================
+PANEL U56
+======================================================================================================================
+   55 tradable names, 4443 scored days 2009-01-13..2026-09-11
+
+----------------------------------------------------------------------------------------------------------------------
+GATES G1-G3
+----------------------------------------------------------------------------------------------------------------------
+   G1 fast_run == engine.backtest                  max|d| 1.041e-17 PASS
+   G2 fast metrics == engine.metrics               max|d| 0.000e+00 PASS
+   G3 0.01-grid interpolation vs an EXACT twin run |dSharpe| 2.010e-08 PASS  (g = 0.6237, Sharpe 1.045979)
+   claim windows: FULL 2009-01-13..2026-09-11 n=4443  IS 2009-01-13..2016-12-30 n=2007  OOS 2017-01-03..2026-09-11 n=2436  H1 2009-01-13..2017-11-06 n=2221  H2 2017-11-07..2026-09-11 n=2222  EP2022 2022-01-03..2022-12-30 n=251
+   216 arms built (36 ABS, 36 QEXP, 144 QROLL); twin grid 100 exact runs
+   SPY 15.16% / 0.886 / -33.72%;  4b bars: CAGR floor 10.61%, DD cap -20.23%, halves 0.960/0.826, OOS 0.877
+
+======================================================================================================================
+PANEL B136
+======================================================================================================================
+   135 tradable names, 4443 scored days 2009-01-13..2026-09-11
+   claim windows: FULL 2009-01-13..2026-09-11 n=4443  IS 2009-01-13..2016-12-30 n=2007  OOS 2017-01-03..2026-09-11 n=2436  H1 2009-01-13..2017-11-06 n=2221  H2 2017-11-07..2026-09-11 n=2222  EP2022 2022-01-03..2022-12-30 n=251
+   216 arms built (36 ABS, 36 QEXP, 144 QROLL); twin grid 100 exact runs
+   SPY 15.16% / 0.886 / -33.72%;  4b bars: CAGR floor 10.61%, DD cap -20.23%, halves 0.960/0.826, OOS 0.877
+
+======================================================================================================================
+PANEL SMALL
+======================================================================================================================
+   SMALL panel today: 715 columns, dropped 52 with max_1d_move >= 1.0, 663 tradable
+   663 tradable names, 3938 scored days 2011-01-13..2026-09-11
+   claim windows: FULL 2011-01-13..2026-09-11 n=3938  IS 2011-01-13..2016-12-30 n=1502  OOS 2017-01-03..2026-09-11 n=2436  H1 2011-01-13..2018-11-07 n=1969  H2 2018-11-08..2026-09-11 n=1969  EP2022 2022-01-03..2022-12-30 n=251
+   216 arms built (36 ABS, 36 QEXP, 144 QROLL); twin grid 100 exact runs
+   SPY 14.06% / 0.858 / -33.72%;  4b bars: CAGR floor 9.84%, DD cap -20.23%, halves 0.914/0.834, OOS 0.877
+
+   11664 claim cells written (6 windows x 3 rungs x 3 panels x 216 arms)
+
+======================================================================================================================
+G4 REPRODUCTION - the record's committed twin cells must rebuild before any re-pricing is read
+======================================================================================================================
+   PASS bar: max|d| < 6e-3 on dSharpe AND on twin_OOS (idea 406's known `data/prices.csv`
+   re-download drift).  Verdict flips are COUNTED and printed, never tolerated into the bar.
+   'closer to F' = the share of arms whose committed twin_OOS is nearer this run's
+   FULLMATCH twin than its WINMATCH twin - a SCALE-FREE test of idea 824's premise, which
+   the panel-drift bar above is only a proxy for.
+   panel  605/610 panel  rung     n win flips max|d dSharpe| max|d twin_OOS| closer to F  verdict
+   U56    U56               0   216         0       2.76e-03        2.36e-04       nan  PASS
+   U56    U56              10   216         0       3.29e-03        1.91e-04       nan  PASS
+   U56    U56              25   216         0       4.09e-03        1.23e-04       nan  PASS
+   B136   B136              0   216         0       1.61e-02        8.09e-03       nan  FAIL
+   B136   B136             10   216         2       1.70e-02        8.10e-03       nan  FAIL
+   B136   B136             25   216         3       1.83e-02        8.12e-03       nan  FAIL
+   SMALL  SMALL439          0   216        18       2.75e-01        3.46e-02       nan  FAIL
+   SMALL  SMALL439         10   216        38       2.46e-01        3.99e-02       nan  FAIL
+   SMALL  SMALL439         25   216        77       2.23e-01        4.87e-02       nan  FAIL
+
+   G4a U56 reproduces committed dSharpe/win/twin_OOS   PASS
+   G4b B136 reproduces                                 FAIL   (weekly prices_broad.csv refresh; idea 406's known drift)
+   G4c SMALL439 reproduces                             FAIL - idea 609's finding restated: the committed rows are
+       SMALL439 (439 tradable names) and today's panel is a DIFFERENT, LARGER panel, so no
+       tolerance can join them.  Today's SMALL is run and printed as its own scope.
+
+   G4d H_PREMISE - is the record's committed twin_OOS a FULLMATCH twin or a WINMATCH one?
+      The 6e-3 bar above is a PANEL-DRIFT bar and B136's twin_OOS LEVEL can exceed it
+      without the convention being in doubt, so the premise is tested scale-free as well.
+      Only arms whose FULLMATCH and WINMATCH OOS twins are separated by more than
+      SEP = 0.01 (above B136's own drift) can decide the question; n_sep is published.
+      panel   rung     n  n_sep  med|committed-FULLMATCH|  med|committed-WINMATCH|    ratio closer to F
+      U56        0   216      0                       nan                      nan      nanx        nan
+      U56       10   216      0                       nan                      nan      nanx        nan
+      U56       25   216      0                       nan                      nan      nanx        nan
+      B136       0   216      0                       nan                      nan      nanx        nan
+      B136      10   216      0                       nan                      nan      nanx        nan
+      B136      25   216      0                       nan                      nan      nanx        nan
+      SMALL      0   216      0                       nan                      nan      nanx        nan
+      SMALL     10   216      0                       nan                      nan      nanx        nan
+      SMALL     25   216      0                       nan                      nan      nanx        nan
+      => UNDECIDABLE, and the reason is the run's deepest finding: NO arm on ANY panel
+         has its two OOS twins separated by more than SEP = 0.01.  A static long-only
+         book's SHARPE is near-invariant to its gross, so re-matching the twin's gross
+         cannot move the twin's Sharpe by more than ~1e-4.  The committed column is
+         consistent with BOTH conventions because on this statistic they barely differ;
+         the FULLMATCH construction is read off the 2026-09-10 script's SOURCE instead
+         (g_eff = g * mean(m) computed once on the full sample, then sliced).
+
+   => HEADLINE SCOPE = REPRO2 (U56 + B136), fixed BY THE GATE before any answer is
+      read.  SMALL (today's panel) is printed at every point as its own scope.
+
+   G5 / H_ID  WINMATCH == FULLMATCH on the FULL window   max|d dSharpe| 0.000e+00, max|d dCAGR| 0.000e+00  PASS
+
+======================================================================================================================
+THE GRID - every claim window x convention x rung x scope, all 12 tuned points printed
+======================================================================================================================
+   'flip' = share of claims whose SIGN changes when the twin's gross is re-matched on the
+   window itself.  W->L = was a win under the record's FULLMATCH, is a loss under WINMATCH.
+
+   --- claim window FULL (COMMITTED - the record publishes a twin column on it)
+      scope    rung     n  win FULLMATCH  win WINMATCH  flips  flip share  W->L  L->W   med|d|   d g_eff
+      U56         0   216         0.9167        0.9167      0      0.0000     0     0   0.0000    0.0000
+      U56        10   216         0.9167        0.9167      0      0.0000     0     0   0.0000    0.0000
+      U56        25   216         0.8611        0.8611      0      0.0000     0     0   0.0000    0.0000
+      B136        0   216         0.8333        0.8333      0      0.0000     0     0   0.0000    0.0000
+      B136       10   216         0.7963        0.7963      0      0.0000     0     0   0.0000    0.0000
+      B136       25   216         0.6435        0.6435      0      0.0000     0     0   0.0000    0.0000
+      SMALL       0   216         0.8426        0.8426      0      0.0000     0     0   0.0000    0.0000
+      SMALL      10   216         0.7963        0.7963      0      0.0000     0     0   0.0000    0.0000
+      SMALL      25   216         0.7500        0.7500      0      0.0000     0     0   0.0000    0.0000
+      REPRO2      0   432         0.8750        0.8750      0      0.0000     0     0   0.0000    0.0000
+      REPRO2     10   432         0.8565        0.8565      0      0.0000     0     0   0.0000    0.0000
+      REPRO2     25   432         0.7523        0.7523      0      0.0000     0     0   0.0000    0.0000
+
+   --- claim window IS (COMMITTED - the record publishes a twin column on it)
+      scope    rung     n  win FULLMATCH  win WINMATCH  flips  flip share  W->L  L->W   med|d|   d g_eff
+      U56         0   216         0.4537        0.4537      0      0.0000     0     0   0.0000    0.0081
+      U56        10   216         0.6296        0.4074     48      0.2222    48     0   0.0000    0.0081
+      U56        25   216         0.5602        0.3380     48      0.2222    48     0   0.0000    0.0081
+      B136        0   216         0.4259        0.2315     42      0.1944    42     0   0.0000    0.0093
+      B136       10   216         0.3704        0.1759     42      0.1944    42     0   0.0001    0.0093
+      B136       25   216         0.2778        0.0833     42      0.1944    42     0   0.0001    0.0093
+      SMALL       0   216         0.6944        0.4398     55      0.2546    55     0   0.0000    0.0053
+      SMALL      10   216         0.5046        0.2500     55      0.2546    55     0   0.0001    0.0053
+      SMALL      25   216         0.3981        0.1528     55      0.2546    54     1   0.0001    0.0053
+      REPRO2      0   432         0.4398        0.3426     42      0.0972    42     0   0.0000    0.0086
+      REPRO2     10   432         0.5000        0.2917     90      0.2083    90     0   0.0000    0.0086
+      REPRO2     25   432         0.4190        0.2106     90      0.2083    90     0   0.0001    0.0086
+
+   --- claim window OOS (COMMITTED - the record publishes a twin column on it)
+      scope    rung     n  win FULLMATCH  win WINMATCH  flips  flip share  W->L  L->W   med|d|   d g_eff
+      U56         0   216         0.9444        0.9444      0      0.0000     0     0   0.0000   -0.0067
+      U56        10   216         0.9444        0.9444      0      0.0000     0     0   0.0000   -0.0067
+      U56        25   216         0.9352        0.9352      0      0.0000     0     0   0.0000   -0.0067
+      B136        0   216         0.9352        0.9352      0      0.0000     0     0   0.0001   -0.0077
+      B136       10   216         0.9167        0.9167      0      0.0000     0     0   0.0000   -0.0077
+      B136       25   216         0.8519        0.8519      0      0.0000     0     0   0.0000   -0.0077
+      SMALL       0   216         0.8426        0.8426      0      0.0000     0     0   0.0000   -0.0033
+      SMALL      10   216         0.7778        0.7778      0      0.0000     0     0   0.0000   -0.0033
+      SMALL      25   216         0.7083        0.7083      0      0.0000     0     0   0.0000   -0.0033
+      REPRO2      0   432         0.9398        0.9398      0      0.0000     0     0   0.0000   -0.0071
+      REPRO2     10   432         0.9306        0.9306      0      0.0000     0     0   0.0000   -0.0071
+      REPRO2     25   432         0.8935        0.8935      0      0.0000     0     0   0.0000   -0.0071
+
+   --- claim window H1 (extension window, not a committed claim)
+      scope    rung     n  win FULLMATCH  win WINMATCH  flips  flip share  W->L  L->W   med|d|   d g_eff
+      U56         0   216         0.4861        0.4861      0      0.0000     0     0   0.0000    0.0114
+      U56        10   216         0.6759        0.4537     48      0.2222    48     0   0.0000    0.0114
+      U56        25   216         0.5926        0.3704     48      0.2222    48     0   0.0001    0.0114
+      B136        0   216         0.5093        0.3148     42      0.1944    42     0   0.0000    0.0124
+      B136       10   216         0.4167        0.2222     42      0.1944    42     0   0.0001    0.0124
+      B136       25   216         0.3241        0.1296     42      0.1944    42     0   0.0001    0.0124
+      SMALL       0   216         0.3889        0.2500     30      0.1389    30     0   0.0000    0.0075
+      SMALL      10   216         0.3148        0.1759     30      0.1389    30     0   0.0001    0.0075
+      SMALL      25   216         0.2500        0.1111     30      0.1389    30     0   0.0001    0.0075
+      REPRO2      0   432         0.4977        0.4005     42      0.0972    42     0   0.0000    0.0119
+      REPRO2     10   432         0.5463        0.3380     90      0.2083    90     0   0.0000    0.0119
+      REPRO2     25   432         0.4583        0.2500     90      0.2083    90     0   0.0001    0.0119
+
+   --- claim window H2 (extension window, not a committed claim)
+      scope    rung     n  win FULLMATCH  win WINMATCH  flips  flip share  W->L  L->W   med|d|   d g_eff
+      U56         0   216         0.9352        0.9352      0      0.0000     0     0   0.0000   -0.0114
+      U56        10   216         0.9259        0.9259      0      0.0000     0     0   0.0000   -0.0114
+      U56        25   216         0.8935        0.8935      0      0.0000     0     0   0.0001   -0.0114
+      B136        0   216         0.9074        0.9074      0      0.0000     0     0   0.0001   -0.0124
+      B136       10   216         0.8796        0.8796      0      0.0000     0     0   0.0000   -0.0124
+      B136       25   216         0.8241        0.8241      0      0.0000     0     0   0.0000   -0.0124
+      SMALL       0   216         0.8889        0.8889      0      0.0000     0     0   0.0000   -0.0075
+      SMALL      10   216         0.8519        0.8519      0      0.0000     0     0   0.0000   -0.0075
+      SMALL      25   216         0.7963        0.7963      0      0.0000     0     0   0.0001   -0.0075
+      REPRO2      0   432         0.9213        0.9213      0      0.0000     0     0   0.0001   -0.0119
+      REPRO2     10   432         0.9028        0.9028      0      0.0000     0     0   0.0000   -0.0119
+      REPRO2     25   432         0.8588        0.8588      0      0.0000     0     0   0.0000   -0.0119
+
+   --- claim window EP2022 (extension window, not a committed claim)
+      scope    rung     n  win FULLMATCH  win WINMATCH  flips  flip share  W->L  L->W   med|d|   d g_eff
+      U56         0   216         0.2130        0.2130      0      0.0000     0     0   0.0010   -0.2134
+      U56        10   216         0.1204        0.1204      0      0.0000     0     0   0.0016   -0.2134
+      U56        25   216         0.0556        0.0556      0      0.0000     0     0   0.0026   -0.2134
+      B136        0   216         0.1481        0.1481      0      0.0000     0     0   0.0009   -0.1773
+      B136       10   216         0.1296        0.1296      0      0.0000     0     0   0.0003   -0.1773
+      B136       25   216         0.0648        0.0648      0      0.0000     0     0   0.0007   -0.1773
+      SMALL       0   214         0.1682        0.1402      6      0.0280     6     0   0.0003   -0.1029
+      SMALL      10   214         0.1402        0.1121      6      0.0280     6     0   0.0007   -0.1029
+      SMALL      25   214         0.1215        0.0935      6      0.0280     6     0   0.0012   -0.1029
+      REPRO2      0   432         0.1806        0.1806      0      0.0000     0     0   0.0010   -0.2008
+      REPRO2     10   432         0.1250        0.1250      0      0.0000     0     0   0.0006   -0.2008
+      REPRO2     25   432         0.0602        0.0602      0      0.0000     0     0   0.0014   -0.2008
+
+======================================================================================================================
+HOW MANY OF THE RECORD'S COMMITTED TWIN CLAIMS CHANGE SIGN
+======================================================================================================================
+      window   scope    rung     n  Sharpe flips  CAGR flips  MaxDD flips
+      FULL     REPRO2      0   432             0           0            0
+      FULL     REPRO2     10   432             0           0            0
+      FULL     REPRO2     25   432             0           0            0
+      IS       REPRO2      0   432            42         141            4
+      IS       REPRO2     10   432            90         158            6
+      IS       REPRO2     25   432            90         128            7
+      OOS      REPRO2      0   432             0          40            3
+      OOS      REPRO2     10   432             0          32           10
+      OOS      REPRO2     25   432             0          36           11
+
+   TOTAL over the record's three COMMITTED twin windows x 3 rungs on REPRO2: 222 of 3888 Sharpe verdicts change sign (0.0571).
+   Of the 2592 claims on SUB-WINDOWS alone (IS and OOS - the only committed twin
+   claims the convention can move), 222 change sign (0.0856).
+
+======================================================================================================================
+WHAT THE FLIPPED CLAIMS ARE - decomposition, not a summary statistic
+======================================================================================================================
+   A NEVERFIRE arm is one whose gate does not fire anywhere inside the claim window, so its
+   realised gross ON THAT WINDOW is exactly g.  Under WINMATCH its twin IS the arm itself
+   (dSharpe identically 0, scored a LOSS by the record's strict `win = dSharpe > 0`); under
+   FULLMATCH the twin is held at a DIFFERENT gross and the comparison returns a tiny
+   non-zero number whose sign is an artefact of that gross mismatch.
+      window   scope    rung     n  flips  NEVERFIRE  FIRING  neverfire arms  max|dS_F| among flips
+      FULL     U56         0   216      0          0       0               0                    nan
+      FULL     U56        10   216      0          0       0               0                    nan
+      FULL     U56        25   216      0          0       0               0                    nan
+      FULL     B136        0   216      0          0       0              12                    nan
+      FULL     B136       10   216      0          0       0              12                    nan
+      FULL     B136       25   216      0          0       0              12                    nan
+      FULL     SMALL       0   216      0          0       0               6                    nan
+      FULL     SMALL      10   216      0          0       0               6                    nan
+      FULL     SMALL      25   216      0          0       0               6                    nan
+      FULL     REPRO2      0   432      0          0       0              12                    nan
+      FULL     REPRO2     10   432      0          0       0              12                    nan
+      FULL     REPRO2     25   432      0          0       0              12                    nan
+      IS       U56         0   216      0          0       0              48                    nan
+      IS       U56        10   216     48         48       0              48               7.44e-05
+      IS       U56        25   216     48         48       0              48               3.41e-04
+      IS       B136        0   216     42         42       0              54               1.13e-04
+      IS       B136       10   216     42         42       0              54               3.50e-04
+      IS       B136       25   216     42         42       0              54               7.06e-04
+      IS       SMALL       0   216     55         54       1              60               4.09e-04
+      IS       SMALL      10   216     55         54       1              60               7.70e-04
+      IS       SMALL      25   216     55         54       1              60               1.31e-03
+      IS       REPRO2      0   432     42         42       0             102               1.13e-04
+      IS       REPRO2     10   432     90         90       0             102               3.50e-04
+      IS       REPRO2     25   432     90         90       0             102               7.06e-04
+      OOS      U56         0   216      0          0       0               0                    nan
+      OOS      U56        10   216      0          0       0               0                    nan
+      OOS      U56        25   216      0          0       0               0                    nan
+      OOS      B136        0   216      0          0       0              12                    nan
+      OOS      B136       10   216      0          0       0              12                    nan
+      OOS      B136       25   216      0          0       0              12                    nan
+      OOS      SMALL       0   216      0          0       0               6                    nan
+      OOS      SMALL      10   216      0          0       0               6                    nan
+      OOS      SMALL      25   216      0          0       0               6                    nan
+      OOS      REPRO2      0   432      0          0       0              12                    nan
+      OOS      REPRO2     10   432      0          0       0              12                    nan
+      OOS      REPRO2     25   432      0          0       0              12                    nan
+      H1       REPRO2      0   432     42         42       0             102               9.61e-05
+      H1       REPRO2     10   432     90         90       0             102               3.24e-04
+      H1       REPRO2     25   432     90         90       0             102               6.68e-04
+      H2       REPRO2      0   432      0          0       0              12                    nan
+      H2       REPRO2     10   432      0          0       0              12                    nan
+      H2       REPRO2     25   432      0          0       0              12                    nan
+      EP2022   REPRO2      0   432      0          0       0              12                    nan
+      EP2022   REPRO2     10   432      0          0       0              12                    nan
+      EP2022   REPRO2     25   432      0          0       0              12                    nan
+
+   ACROSS EVERY window, scope and rung in this run: 717 flips, of
+   which 714 are NEVERFIRE arms and 3 are arms whose gate actually fired in the window.
+   The largest |dSharpe| the record's FULLMATCH convention ever assigns to a flipped claim
+   is 1.31e-03.
+
+======================================================================================================================
+PRE-REGISTERED HYPOTHESES
+======================================================================================================================
+
+   H_CAND - the record's newest 4b KEEP-candidate, re-priced under WINMATCH
+   B136 breadth-QROLL q0.17 w252 depth 0.50 D g1.00 (idea 609's by-product)
+      window    rung  arm Sharpe  twin FULL  twin WIN  dS FULLMATCH  dS WINMATCH  g_eff F  g_eff W  verdict
+      FULL         0      1.2494     1.0999    1.0999        0.1495       0.1495   0.8908   0.8908  WIN both
+      FULL        10      1.1336     1.0212    1.0212        0.1125       0.1125   0.8908   0.8908  WIN both
+      FULL        25      0.9593     0.9027    0.9027        0.0567       0.0567   0.8908   0.8908  WIN both
+      IS           0      1.1826     1.1101    1.1101        0.0725       0.0725   0.8908   0.9143  WIN both
+      IS          10      1.0753     1.0345    1.0346        0.0409       0.0407   0.8908   0.9143  WIN both
+      IS          25      0.9140     0.9208    0.9211       -0.0068      -0.0070   0.8908   0.9143  LOSS both
+      OOS          0      1.3135     1.0913    1.0915        0.2222       0.2221   0.8908   0.8715  WIN both
+      OOS         10      1.1897     1.0099    1.0100        0.1798       0.1798   0.8908   0.8715  WIN both
+      OOS         25      1.0032     0.8874    0.8874        0.1157       0.1157   0.8908   0.8715  WIN both
+      EP2022       0     -0.3786    -0.5073   -0.5061        0.1287       0.1275   0.8908   0.6614  WIN both
+      EP2022      10     -0.5446    -0.6343   -0.6340        0.0897       0.0894   0.8908   0.6614  WIN both
+      EP2022      25     -0.7935    -0.8244   -0.8253        0.0309       0.0318   0.8908   0.6614  WIN both
+
+   H_R8CLAIM - RULE 8 ON THE CLAIM: rolling 756-day windows, step 63.
+   The flip share is measured on windows ENDING in the IS half and read ONCE on windows
+   ending in the OOS half.  Nothing is tuned on the OOS half.
+      513 rolling readings; REPRO2 at 10 bps: IS windows 40 mean flip 0.3686, OOS windows 78 mean flip 0.0278, |d| 0.3408
+      U56        0 bps  n_win  59  mean flip 0.0836  IS 0.2352  OOS 0.0058  win_F 0.6771 -> win_W 0.5942
+      U56       10 bps  n_win  59  mean flip 0.1352  IS 0.3590  OOS 0.0204  win_F 0.6956 -> win_W 0.5604
+      U56       25 bps  n_win  59  mean flip 0.1740  IS 0.3979  OOS 0.0592  win_F 0.6739 -> win_W 0.4998
+      B136       0 bps  n_win  59  mean flip 0.1299  IS 0.3336  OOS 0.0254  win_F 0.6585 -> win_W 0.5290
+      B136      10 bps  n_win  59  mean flip 0.1515  IS 0.3782  OOS 0.0353  win_F 0.6471 -> win_W 0.4958
+      B136      25 bps  n_win  59  mean flip 0.1551  IS 0.3780  OOS 0.0408  win_F 0.5964 -> win_W 0.4418
+      SMALL      0 bps  n_win  53  mean flip 0.1262  IS 0.4087  OOS 0.0248  win_F 0.5791 -> win_W 0.4529
+      SMALL     10 bps  n_win  53  mean flip 0.1468  IS 0.4091  OOS 0.0527  win_F 0.5456 -> win_W 0.3995
+      SMALL     25 bps  n_win  53  mean flip 0.1556  IS 0.4094  OOS 0.0645  win_F 0.4972 -> win_W 0.3423
+
+   hypothesis   verdict  evidence
+   H_ID         PASS         max|d| 0.00e+00 on FULL
+   H_PREMISE    UNDECIDABLE  UNDECIDABLE ON THE DATA - no arm's two OOS twins are separated by more than SEP = 0.01 of Sharpe; the convention is read off the 2026-09-10 script's source, where g_eff is matched once on the full sample
+   H_FLIP       PASS         flip share 0.0000 (0 of 432) at OOS/REPRO2/10 bps
+   H_SYM        FAIL         VACUOUS at the headline - 0 flips there.  Where flips exist (every window/rung on REPRO2) they are ONE-DIRECTIONAL: W->L 444, L->W 0
+   H_MAG        PASS         median |d dSharpe| 0.0000, max 0.0003
+   H_COSTINV    PASS         flip 0/10/25 bps = 0.0000 / 0.0000 / 0.0000
+   H_PANELINV   PASS         U56 0.0000  B136 0.0000  SMALL 0.0000  spread 0.0000
+   H_WINDOW     FAIL         IS 0.2083 vs OOS 0.0000, |d| 0.2083
+   H_CAND       PASS         beats its own WINMATCH twin on FULL and OOS at 0/10/25 bps
+   H_R8CLAIM    FAIL         IS 0.3686 -> OOS 0.0278 read once, |d| 0.3408
+
+======================================================================================================================
+PROTOCOL RULE 8 ON THE BOOKS + BOTH KEEP PATHS
+======================================================================================================================
+   1944 arm-rows (216 arms x 3 rungs x 3 panels).
+       0 bps   4a    3 of 648     4b  305 of 648     4b that beat their FULLMATCH OOS twin  292   their WINMATCH OOS twin  292
+      10 bps   4a    0 of 648     4b  141 of 648     4b that beat their FULLMATCH OOS twin  135   their WINMATCH OOS twin  135
+      25 bps   4a    0 of 648     4b   44 of 648     4b that beat their FULLMATCH OOS twin   44   their WINMATCH OOS twin   44
+
+   RULE-8 PICKS (dial chosen on IS by IS Sharpe alone; OOS read once):
+      panel   rung n picks   4a   4b  OOS CAGR OOS Sharpe  OOS MaxDD                 vs SPY OOS            vs RULES v2 OOS
+      U56        0      36    0   22    13.71%      1.244    -17.02%    15.33%/0.877/-33.72%       9.67%/1.303/-12.03%
+      U56       10      36    0    6    12.35%      1.157    -18.01%    15.33%/0.877/-33.72%       9.47%/1.278/-12.05%
+      U56       25      36    0    6    11.13%      1.017    -17.53%    15.33%/0.877/-33.72%       9.18%/1.241/-12.09%
+      B136       0      36    3   20    12.06%      1.104    -17.34%    15.33%/0.877/-33.72%       8.11%/1.136/-12.21%
+      B136      10      36    0   12    11.01%      1.021    -17.69%    15.33%/0.877/-33.72%       7.88%/1.106/-12.24%
+      B136      25      36    0    2     9.69%      0.890    -18.22%    15.33%/0.877/-33.72%       7.55%/1.061/-12.29%
+      SMALL      0      36    0    0     5.73%      0.464    -30.40%    15.33%/0.877/-33.72%       4.03%/0.598/-13.54%
+      SMALL     10      36    0    0     3.98%      0.353    -34.39%    15.33%/0.877/-33.72%       3.75%/0.560/-13.89%
+      SMALL     25      36    0    0     1.72%      0.193    -38.34%    15.33%/0.877/-33.72%       3.34%/0.503/-14.41%
+
+   rule-8 picks passing 4b: 68 of 324; passing 4a: 3 of 324
+      panel   rung arm                                 OOS CAGR  Sharpe    MaxDD  dOOS FULL  dOOS WIN  twin verdict
+      U56        0 ABS L0.40 w0 d0.25 D g0.75            12.07%   1.245  -14.97%     0.0553    0.0553  beats BOTH twins
+      U56        0 ABS L0.30 w0 d0.25 W g0.75            12.15%   1.221  -15.77%     0.0319    0.0319  beats BOTH twins
+      U56        0 ABS L0.40 w0 d0.50 D g0.75            11.93%   1.286  -14.19%     0.0970    0.0970  beats BOTH twins
+      U56        0 ABS L0.30 w0 d0.50 W g0.75            12.10%   1.244  -15.77%     0.0548    0.0548  beats BOTH twins
+      U56        0 ABS L0.30 w0 d1.00 W g0.75            11.97%   1.255  -15.77%     0.0656    0.0656  beats BOTH twins
+      U56        0 ABS L0.40 w0 d0.25 D g1.00            16.18%   1.244  -19.70%     0.0554    0.0554  beats BOTH twins
+      U56        0 ABS L0.40 w0 d0.50 D g1.00            15.99%   1.286  -18.67%     0.0973    0.0973  beats BOTH twins
+      U56        0 ABS L0.40 w0 d1.00 D g1.00            15.53%   1.301  -18.47%     0.1122    0.1122  beats BOTH twins
+      U56        0 QEXP L0.07 w0 d0.25 D g0.75           11.97%   1.172  -15.77%    -0.0174   -0.0174  beats neither twin
+      U56        0 QEXP L0.17 w0 d0.25 W g0.75           12.33%   1.243  -15.77%     0.0539    0.0538  beats BOTH twins
+      U56        0 QEXP L0.07 w0 d0.50 D g0.75           11.75%   1.154  -15.77%    -0.0356   -0.0356  beats neither twin
+      U56        0 QEXP L0.07 w0 d0.50 W g0.75           11.84%   1.161  -15.77%    -0.0284   -0.0284  beats neither twin
+      U56        0 QEXP L0.07 w0 d1.00 D g0.75           11.30%   1.115  -17.00%    -0.0743   -0.0743  beats neither twin
+      U56        0 QEXP L0.07 w0 d1.00 W g0.75           11.47%   1.130  -15.81%    -0.0595   -0.0595  beats neither twin
+      U56        0 QROLL L0.17 w504 d0.25 D g0.75        12.02%   1.273  -14.70%     0.0835    0.0835  beats BOTH twins
+      U56        0 QROLL L0.12 w504 d0.25 W g0.75        12.00%   1.240  -15.77%     0.0503    0.0503  beats BOTH twins
+      U56        0 QROLL L0.17 w504 d0.50 D g0.75        11.82%   1.343  -13.63%     0.1532    0.1532  beats BOTH twins
+      U56        0 QROLL L0.12 w504 d0.50 W g0.75        11.79%   1.276  -15.77%     0.0864    0.0864  beats BOTH twins
+      U56        0 QROLL L0.17 w504 d1.00 D g0.75        11.34%   1.378  -12.99%     0.1880    0.1879  beats BOTH twins
+      U56        0 QROLL L0.17 w504 d0.25 D g1.00        16.12%   1.273  -19.33%     0.0838    0.0838  beats BOTH twins
+      U56        0 QROLL L0.17 w504 d0.50 D g1.00        15.88%   1.343  -17.93%     0.1539    0.1539  beats BOTH twins
+      U56        0 QROLL L0.17 w504 d1.00 D g1.00        15.23%   1.378  -17.04%     0.1889    0.1888  beats BOTH twins
+      U56       10 ABS L0.40 w0 d0.25 D g1.00            14.80%   1.150  -19.89%     0.0440    0.0440  beats BOTH twins
+      U56       10 ABS L0.40 w0 d0.50 D g1.00            14.53%   1.181  -18.93%     0.0745    0.0745  beats BOTH twins
+      U56       10 ABS L0.40 w0 d1.00 D g1.00            13.88%   1.177  -19.37%     0.0706    0.0706  beats BOTH twins
+      U56       10 QROLL L0.17 w504 d0.25 D g1.00        14.72%   1.174  -19.50%     0.0673    0.0673  beats BOTH twins
+      U56       10 QROLL L0.17 w504 d0.50 D g1.00        14.35%   1.226  -18.15%     0.1200    0.1200  beats BOTH twins
+      U56       10 QROLL L0.17 w504 d1.00 D g1.00        13.46%   1.232  -17.86%     0.1257    0.1257  beats BOTH twins
+      U56       25 QROLL L0.12 w504 d0.25 D g1.00        12.83%   1.027  -20.19%     0.0442    0.0442  beats BOTH twins
+      U56       25 QROLL L0.17 w1008 d0.25 W g1.00       13.55%   1.078  -18.48%     0.0955    0.0955  beats BOTH twins
+      U56       25 QROLL L0.12 w504 d0.50 D g1.00        12.46%   1.057  -19.32%     0.0745    0.0745  beats BOTH twins
+      U56       25 QROLL L0.17 w1008 d0.50 W g1.00       13.91%   1.166  -15.87%     0.1838    0.1838  beats BOTH twins
+      U56       25 QROLL L0.12 w504 d1.00 D g1.00        11.61%   1.042  -17.99%     0.0596    0.0597  beats BOTH twins
+      U56       25 QROLL L0.17 w1008 d1.00 W g1.00       14.50%   1.273  -13.42%     0.2909    0.2910  beats BOTH twins
+      B136       0 ABS L0.40 w0 d0.25 D g0.75            11.12%   1.120  -17.06%     0.0275    0.0276  beats BOTH twins
+      B136       0 ABS L0.30 w0 d0.25 W g0.75            11.30%   1.103  -17.34%     0.0103    0.0103  beats BOTH twins
+      B136       0 ABS L0.40 w0 d0.50 D g0.75            10.80%   1.134  -16.81%     0.0414    0.0415  beats BOTH twins
+      B136       0 ABS L0.30 w0 d0.50 W g0.75            11.17%   1.107  -17.34%     0.0144    0.0144  beats BOTH twins
+      B136       0 QEXP L0.07 w0 d0.25 D g0.75           11.43%   1.092  -17.34%     0.0000    0.0000  beats neither twin
+      B136       0 QEXP L0.07 w0 d0.25 W g0.75           11.43%   1.092  -17.34%     0.0000    0.0000  beats neither twin
+      B136       0 QEXP L0.07 w0 d0.50 D g0.75           11.43%   1.092  -17.34%     0.0000    0.0000  beats neither twin
+      B136       0 QEXP L0.07 w0 d0.50 W g0.75           11.43%   1.092  -17.34%     0.0000    0.0000  beats neither twin
+      B136       0 QEXP L0.07 w0 d1.00 D g0.75           11.43%   1.092  -17.34%     0.0000    0.0000  beats neither twin
+      B136       0 QEXP L0.07 w0 d1.00 W g0.75           11.43%   1.092  -17.34%     0.0000    0.0000  beats neither twin
+      B136       0 QROLL L0.17 w252 d0.25 D g0.75        11.28%   1.206  -14.39%     0.1132    0.1132  beats BOTH twins
+      B136       0 QROLL L0.17 w504 d0.25 W g0.75        10.99%   1.155  -15.14%     0.0622    0.0622  beats BOTH twins
+      B136       0 QROLL L0.17 w252 d0.50 D g0.75        11.10%   1.314  -11.39%     0.2214    0.2212  beats BOTH twins
+      B136       0 QROLL L0.17 w504 d0.50 W g0.75        10.52%   1.202  -12.94%     0.1086    0.1085  beats BOTH twins
+      B136       0 QROLL L0.17 w252 d0.25 D g1.00        15.10%   1.204  -18.98%     0.1135    0.1135  beats BOTH twins
+      B136       0 QROLL L0.17 w504 d0.25 W g1.00        14.69%   1.153  -19.95%     0.0623    0.0623  beats BOTH twins
+      B136       0 QROLL L0.17 w252 d0.50 D g1.00        14.89%   1.314  -15.06%     0.2222    0.2221  beats BOTH twins
+      B136       0 QROLL L0.17 w504 d0.50 W g1.00        14.07%   1.200  -17.08%     0.1089    0.1088  beats BOTH twins
+      B136       0 QROLL L0.17 w252 d1.00 D g1.00        14.27%   1.397  -12.29%     0.3050    0.3047  beats BOTH twins
+      B136       0 QROLL L0.17 w504 d1.00 W g1.00        12.68%   1.177  -14.63%     0.0854    0.0853  beats BOTH twins
+      B136      10 QEXP L0.07 w0 d0.25 D g0.75           10.49%   1.010  -17.69%     0.0000    0.0000  beats neither twin
+      B136      10 QEXP L0.07 w0 d0.25 W g0.75           10.49%   1.010  -17.69%     0.0000    0.0000  beats neither twin
+      B136      10 QEXP L0.07 w0 d0.50 D g0.75           10.49%   1.010  -17.69%     0.0000    0.0000  beats neither twin
+      B136      10 QEXP L0.07 w0 d0.50 W g0.75           10.49%   1.010  -17.69%     0.0000    0.0000  beats neither twin
+      B136      10 QEXP L0.07 w0 d1.00 D g0.75           10.49%   1.010  -17.69%     0.0000    0.0000  beats neither twin
+      B136      10 QEXP L0.07 w0 d1.00 W g0.75           10.49%   1.010  -17.69%     0.0000    0.0000  beats neither twin
+      B136      10 QROLL L0.17 w252 d0.25 D g1.00        13.68%   1.103  -19.17%     0.0935    0.0935  beats BOTH twins
+      B136      10 QROLL L0.17 w504 d0.25 W g1.00        13.44%   1.066  -20.14%     0.0563    0.0563  beats BOTH twins
+      B136      10 QROLL L0.17 w252 d0.50 D g1.00        13.33%   1.190  -15.19%     0.1798    0.1798  beats BOTH twins
+      B136      10 QROLL L0.17 w504 d0.50 W g1.00        12.86%   1.107  -17.20%     0.0977    0.0976  beats BOTH twins
+      B136      10 QROLL L0.07 w2016 d1.00 D g1.00       12.77%   1.042  -19.13%     0.0321    0.0320  beats BOTH twins
+      B136      10 QROLL L0.17 w504 d1.00 W g1.00        11.54%   1.082  -15.42%     0.0716    0.0715  beats BOTH twins
+      B136      25 QROLL L0.17 w504 d0.50 W g1.00        11.06%   0.968  -17.62%     0.0806    0.0806  beats BOTH twins
+      B136      25 QROLL L0.12 w1008 d1.00 W g1.00       12.63%   1.084  -14.97%     0.1968    0.1969  beats BOTH twins
+
+   4b rule-8 picks whose OWN TWIN VERDICT flips with the convention: 0 of 68
+
+   runtime 80.0s
