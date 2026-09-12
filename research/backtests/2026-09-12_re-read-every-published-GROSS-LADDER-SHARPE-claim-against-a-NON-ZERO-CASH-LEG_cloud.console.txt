@@ -1,0 +1,140 @@
+========================================================================================================================
+# 2026-09-12_re-read-every-published-GROSS-LADDER-SHARPE-claim-against-a-NON-ZERO-CASH-LEG_cloud
+# IDEA 799 - idea 576 killed the record's g-invariance PREMISE on a fresh ladder.  This run
+#            applies that to the record's own PROSE: harvest every committed Sharpe-across-
+#            gross claim, re-measure it with cash credited at 150 bps, and report how many
+#            survive - with each book's IDLE WEIGHT beside it.
+========================================================================================================================
+# PROTOCOL: cost 10 bps on the RISKY legs, next-day fills, no leverage, IS <= 2016-12-31, OOS >= 2017-01-01, sample truncated at 2026-09-04
+# TUNED (2): CLAIM SET in {STRICT, WIDE} x CASH in {0, 150, 300} bps.  All 6 combinations reported.
+#            g ladder 0.20..1.00 step 0.05 (17 pts) is idea
+#            311's, NOT re-tuned.  REPORTED-NOT-SELECTED: panel, form, cadence, window, class.
+# DECLARED BARS (the record's own): SLOPE_BAR 0.0065 (idea 311), SPAN_BAR 0.0100 (idea 51).
+
+PRE-REGISTERED: H_HARVEST (>= 50 STRICT claims), H_FAIL (> 50% of INVARIANT claims fail at
+  150 bps), H_SIGN (no POSITIVE-slope claim survives at 150 bps), H_IDLE (the credited CAGR
+  gap = rate x idle weight to within 10% median, rho(idle, |dSharpe|) >= +0.80), H_WINDOW
+  (IS and OOS agree on >= 80% of survival verdicts), H_NOFREE (no claim is rescued into a
+  KEEP; 4b's SPY comparand is uncredited, so any pass bought by the credit is an artefact).
+
+CAVEAT (before the result): a FLAT 150/300 bps over 2009-2026 is not the cash rate that
+  existed (~10 bps to 2015, ~500 after 2022).  A claim that fails here is a claim whose
+  truth depends on an UNDECLARED dial - the finding - not one proven false at the real rate.
+SURVIVORSHIP: B136 and the small panel are CURRENT constituents; dead names are absent, so
+  every panel return here is biased UPWARD.
+
+  U56         56 cols,   56 tradable, sample from 2009-01-13
+  B136       136 cols,  136 tradable, sample from 2009-01-13
+  SMALL663   664 cols,  663 tradable, sample from 2011-01-13
+  small panel: 52 tickers with max_1d_move >= 1.0 dropped per PROTOCOL
+
+========================================================================================================================
+GATES (printed before any new number is read)
+========================================================================================================================
+G1 identity : fast_backtest vs engine.backtest,  max |dret| = 2.776e-17 (bar 1e-12) -> PASS
+G2 cash-0   : cash_backtest(0) vs fast_backtest, max |dret| = 2.290e-16 (bar 1e-12) -> PASS
+G3 repro    : idea 576 grid, 1836 matched rows, max |dSharpe| = 4.441e-16, max |d idle w| = 9.714e-17 (bar 1e-09) -> PASS
+G4 census   : 1030 distinct claims (507 STRICT / 523 WIDE-only) over 803 committed files; harvester idempotent -> PASS
+
+========================================================================================================================
+THE CENSUS - committed Sharpe-across-gross claims in the published record
+========================================================================================================================
+  corpus: 803 committed files (research/backtests/*.md + LEADERBOARD + CHANGELOG); QUEUE.md excluded (proposals are not claims)
+  claims by set x class:
+    cls        INVARIANT  OTHER  PAIR  SIGNED
+    claim_set                                
+    STRICT           118    360    17      12
+    WIDE               0    514     8       1
+  cell recoverable: panel named 232, form named 45, cadence named 55 of 1030
+
+========================================================================================================================
+SURVIVAL - how many published claims survive a non-zero cash leg (FULL window)
+========================================================================================================================
+set     class          n      @0bps    @150bps    @300bps  med idle w
+STRICT  INVARIANT    118      0.992      0.000      0.000      0.3997
+STRICT  SIGNED        12      0.833      0.167      0.167      0.3997
+STRICT  PAIR          17      0.824      0.000      0.000      0.4480
+STRICT  OTHER        360      0.933      0.000      0.000      0.3997
+STRICT  DIRECTIONAL   147      0.959      0.014      0.014      0.3997
+STRICT  ALL          507      0.941      0.004      0.004      0.3997
+WIDE    INVARIANT    118      0.992      0.000      0.000      0.3997
+WIDE    SIGNED        13      0.846      0.154      0.154      0.3997
+WIDE    PAIR          25      0.840      0.000      0.000      0.4479
+WIDE    OTHER        874      0.938      0.000      0.000      0.3997
+WIDE    DIRECTIONAL   156      0.955      0.013      0.013      0.3997
+WIDE    ALL         1030      0.941      0.002      0.002      0.3997
+
+  STRICT all        : 2 of 507 committed claims survive a 150 bps credit (0.4%)
+  STRICT directional: 2 of 147 committed claims survive a 150 bps credit (1.4%)
+  WIDE   all        : 2 of 1030 committed claims survive a 150 bps credit (0.2%)
+  WIDE   directional: 2 of 156 committed claims survive a 150 bps credit (1.3%)
+
+  TEN most idle-heavy FAILURES at 150 bps (idle weight = the mechanism):
+    idle 0.575  OTHER     LEADERBOARD.md                                             L2929  [implicit] |slope| 0.61290 vs bar 0.0065
+        "**4a 1/90 on the panel grid (B136/MA-DG/g0.50/M, Sharpe 1.132 H1 1.242/H2 1.020, MaxDD -8.33%) — but its Sharpe is 1.132/1.133/1.135 at g=0.50/0.75/1."
+    idle 0.574  OTHER     2026-09-12_price-the-ZERO-CASH-convention-on-the-gross-LAD L3     [implicit] |slope| 0.64658 vs bar 0.0065
+        "A 300 bps cash credit turns a failing book into a 4b pass on every leg: WF-B MA-DG g=1.00, B136 weekly, CAGR 11.35% / Sharpe 1.186 / MaxDD -16.57%, OO"
+    idle 0.573  OTHER     CHANGELOG.md                                               L420   [implicit] |slope| 0.64025 vs bar 0.0065
+        "**(4) Rule 8** (gross and cadence chosen on IS 2010-2016 Sharpe inside each panel x arm, the control re-selecting on its own IS window, 2017-2026 read"
+    idle 0.450  PAIR      CHANGELOG.md                                               L54    dSharpe(1.00-0.50) +0.00519 -> -0.08154
+        "**NOT PROMOTED:** full-sample **4a 0/90, 4b 27/90, BOTH 0/90**, and all 27 4b passes sit at **g=1.00 with 0 at g=0.75 and 0 at g=0.50** while Sharpe i"
+    idle 0.450  PAIR      CHANGELOG.md                                               L208   dSharpe(1.00-0.50) +0.00519 -> -0.08154
+        "What gross buys instead is the **4b verdict**: 6 of the grid's 8 4b passes sit at g=0.75, corners A/B (g=1.00) fail on **DD** (-23.6%/-23.4% vs the -2"
+    idle 0.450  PAIR      CHANGELOG.md                                               L273   dSharpe(1.00-0.80) +0.00194 -> -0.01872
+        "**GROSS reproduces idea 166 on a fresh corpus exactly as pre-registered (P2 HIT):** mean OOS Sharpe is flat to 0.001 across the entire 0.20-1.00 ladde"
+    idle 0.450  PAIR      2026-09-10_how-many-committed-GRID-files-cannot-state-thei L96    dSharpe(1.00-0.50) +0.00519 -> -0.08154
+        "|Sharpe(g=1.00) - Sharpe(g=0.50)| over the same cells is **0.0052**: the ladder moves the 4b CAGR"
+    idle 0.450  PAIR      LEADERBOARD.md                                             L4936  dSharpe(1.00-0.50) +0.00519 -> -0.08154
+        "Full sample 4a 0/90, 4b 27/90, BOTH 0/90 — and all 27 4b passes sit at g=1.00 with 0 at g=0.75 and 0 at g=0.50 while Sharpe is flat in gross to 3 dp: "
+    idle 0.450  PAIR      LEADERBOARD.md                                             L5073  dSharpe(1.00-0.95) +0.00047 -> -0.00387
+        "**WALKS FORWARD: band 0.08 is the IS pick at EVERY gross and beats SPY's OOS Sharpe at every gross.** 4b passes OOS at g=0.95 and g=1.00 only;"
+    idle 0.450  PAIR      2026-09-04_interior-4b-selection_cloud.result.md           L29    dSharpe(1.00-0.80) +0.00194 -> -0.01872
+        "g = 0.80 instead of R0's g = 1.00 — an OOS Sharpe difference of **+0.0009**."
+
+========================================================================================================================
+H_IDLE - is the failure the idle weight and nothing else?
+========================================================================================================================
+    150 bps: median actual/predicted CAGR gap 1.0841 (predicted = rate x idle weight), p05 1.0173 p95 1.1769; rho(idle, |dSharpe|) +0.9764 over 612 books
+    300 bps: median actual/predicted CAGR gap 1.0801 (predicted = rate x idle weight), p05 1.0163 p95 1.1696; rho(idle, |dSharpe|) +0.9764 over 612 books
+  -> H_IDLE PASS
+
+========================================================================================================================
+RULE 8 WALK-FORWARD
+========================================================================================================================
+  WF-A (claim level): is a claim's survival verdict an IS fact or an OOS fact?
+        0 bps: IS survival 0.166  OOS survival 0.945  agreement 0.219 over 1030 claims
+      150 bps: IS survival 0.002  OOS survival 0.010  agreement 0.992 over 1030 claims
+      300 bps: IS survival 0.002  OOS survival 0.010  agreement 0.992 over 1030 claims
+    -> H_WINDOW PASS (bar 0.80 at 150 bps)
+
+  WF-B (a book): form and g chosen by IS Sharpe on B136/W at each rate; OOS read ONCE
+        0 bps: pick TOP10  g=1.00 (idle 0.000)  OOS CAGR  20.93% Sharpe  0.846 MaxDD -33.52%  |  RULES v2  7.98%/1.119/-12.24%  SPY 15.45%/0.882/-33.72%  4a False 4b False fail H2,OOS,DD
+      150 bps: pick MA-DG  g=0.20 (idle 0.858)  OOS CAGR   3.40% Sharpe  1.821 MaxDD  -3.37%  |  RULES v2  8.74%/1.218/-12.20%  SPY 15.45%/0.882/-33.72%  4a True  4b False fail CAGR
+      300 bps: pick MA-DG  g=0.20 (idle 0.858)  OOS CAGR   4.72% Sharpe  2.503 MaxDD  -3.29%  |  RULES v2  9.50%/1.315/-12.16%  SPY 15.45%/0.882/-33.72%  4a True  4b False fail CAGR
+
+========================================================================================================================
+KEEP PATHS 4a / 4b - every book at every rate (4a vs RULES v2 credited at the SAME rate;
+  4b vs SPY, which is fully invested and receives NO credit)
+========================================================================================================================
+   cash_bps  books  keep4a  keep4b  both  H1  H2  OOS  DD  CAGR
+        0.0    612      34      50     0 130 221  221 273   336
+      150.0    612     124      69     0  76 204  198 268   307
+      300.0    612     142      95     1  51 165  155 266   277
+    150 bps: 4b passes BOUGHT by the credit 19, LOST 0
+    300 bps: 4b passes BOUGHT by the credit 45, LOST 0
+  Every pass bought by the credit is a pass against an UNCREDITED comparand (SPY holds no
+  cash); none is a capital candidate and none is claimed as one.
+
+========================================================================================================================
+VERDICT
+========================================================================================================================
+  H_HARVEST PASS  (507 STRICT claims, bar 50)
+  H_FAIL    PASS  (INVARIANT survival at 150 bps 0.000 over 118 claims, bar < 0.50)
+  H_SIGN    PASS  (0 of 5 positive-slope claims survive at 150 bps)
+  H_IDLE    PASS
+  H_WINDOW  PASS
+  H_NOFREE  PASS  (bought 4b passes named artefacts, not banked)
+  median Sharpe slope in g: 0bps +0.00602  150bps -0.34137  300bps -0.68320
+  cells with a POSITIVE slope at 150 bps: 0 of 36
+
+  wrote grid 1836, claims 1030, survival 9270, cells 324, wf 3 rows (352s)
