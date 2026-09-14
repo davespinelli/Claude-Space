@@ -1,0 +1,167 @@
+# Idea 850 — does the 4b CAGR FLOOR close on a TOTAL-RETURN comparand? (2026-09-14, lane B)
+# 2 tuned params: comparand drag d (7 rungs) x candidate set (2).  ALL 14 combinations reported, none selected.
+# SURVIVORSHIP: U56/B136 are current-constituent lists; every LEVEL is optimistic.
+
+   U56 (4703, 56), B136 (4703, 136); scored 2009-01-13..2026-09-11 (4443 days), OOS from 2017-01-01 (2436 days)
+
+### PART 0 — GATES (printed before any new number)
+   [PASS] G1 SPY headline reproduces the record's committed 15.1631/0.8861/-33.7172
+           15.1631% / 0.8861 / -33.7172%, max|d| 4.561e-05
+   [PASS] G2 the committed FIXED bars ARE 60%/70% of that SPY (so a comparand move moves them mechanically)
+           cap -20.2303% vs -20.23%, floor 10.6142% vs 10.61%
+   [PASS] G3 fast_run == engine.backtest on RULES v2 / U56 / 10 bps
+           max|d| 1.388e-17; engine 1.2018 vs fast 1.2018
+   [PASS] G4 the d=0 comparand IS the committed column (empty counterfactual = identity)
+           max|d| 0.000e+00
+   [PASS] G5 data/prices.csv and data/prices_broad.csv share ONE CONVENTION on the 48 of 56 shared tickers never under $5 — the sandbox holds no second comparand
+           max ratio DRIFT 1.680e-03 (a price-only/total-return gap would open 0.2-0.3 over this window); raw max|d| 5.200e-03 is 2-decimal quantization, priced in the BY-PRODUCT section. Dropped as quantization-contaminated: ['AAPL', 'AMD', 'AMZN', 'AVGO', 'NFLX', 'NVDA', 'TSLA', 'XLF']
+   >>> 5 of 5 gates PASS
+
+### PART A — THE PREMISE: is the SPY column in data/prices.csv PRICE-ONLY?
+   The queue filed this idea PARK for want of a dividend series. It does not need one:
+   data/prices.csv carries six fixed-income ETFs whose PRICE return is structurally
+   pinned and whose TOTAL return is not. They decide the convention of the file, and
+   SPY is a column of the SAME file, written by the SAME engine.load_prices call.
+
+   LEG 1 — par pull. A fund holding only bonds redeems them at par; its clean price
+   is a bounded series, not a compounding one. Cumulative PRICE change over the whole
+   cache should sit inside a few percent of zero for the short end.
+      ticker sleeve          first      last     cumul   CAGR/yr       min  min==first?  new-high days
+      SHY    1-3y UST       60.815    81.370    33.80%     1.57%    60.815         True          11.5%
+      IEF    7-10y UST      55.378    91.010    64.34%     2.69%    55.202        False           4.0%
+      TIP    TIPS           61.917   105.840    70.94%     2.91%    56.192        False           5.5%
+      LQD    IG corp        51.421   104.320   102.88%     3.86%    41.110        False           7.6%
+      HYG    HY corp        31.349    78.600   150.73%     5.04%    21.442        False          12.9%
+      TLT    20y+ UST       53.382    80.870    51.49%     2.25%    51.212        False           2.1%
+      LEG 1 verdict: SHY (1-3y UST) has compounded +33.80% over 18.7 years, outside any par-pull band (|10%|), and its MINIMUM IS ITS FIRST OBSERVATION
+      (True) — it never once revisits its starting level. A price-only short-Treasury series cannot do this. => ADJUSTED
+
+   LEG 2 — the ladder. Order the sleeves by YIELD (credit + term premium). A
+   dividend-reinvested set compounds in yield order; a price-only set does not
+   (its ordering would be driven by duration-weighted rate moves, not by carry).
+      SHY 1.57%  <  IEF 2.69%  <  TIP 2.91%  <  LQD 3.86%  <  HYG 5.04%
+      LEG 2 verdict: yield-monotone across all 5 sleeves = True => ADJUSTED
+
+   LEG 3 — the long end. TLT's price peaked and then gave back the 2020-2023 rate
+   rout; a PRICE-ONLY TLT over this window ends near or below where it started.
+      TLT 53.382 -> peak 141.584 (2020-08-04) -> 80.870: -42.88% from the peak, yet +51.49% from the start (+2.25%/yr).
+      LEG 3 verdict: a +51.49% cumulative gain through a -42.88% price collapse is coupon, not price => ADJUSTED
+
+   >>> PART A ANSWER: the premise is FALSE (3 of 3 legs say ADJUSTED).
+   data/prices.csv is a DIVIDEND-REINVESTED (total-return) panel. SPY is a column of
+   that same file. `engine.load_prices` fetches with auto_adjust=True and falls back to
+   this cache, so the benchmark and the traded panel are on ONE convention by
+   construction. THE MISMATCH THE IDEA POSTULATES IS ZERO BY CONSTRUCTION, not small.
+   G5 adds the corollary: the sandbox holds no SECOND convention — across the 48 never-under-$5 tickers both cache files carry, the ratio between them drifts by 1.680e-03 over the whole window, where a price-only/total-return gap would open 0.2-0.3. So there is nothing to mis-match against even if one wanted to, and a genuine price-only comparand would still have to be fetched from outside.
+
+### building books
+   44 books (8 SHELF, 36 GRID) x 3 rungs
+
+   SHELF reproduction (tolerance Sharpe 0.030 / MaxDD 1.5 pp, idea 851's):
+      ok  b136-qroll-q012-w1008-d050-g100      14.30%   1.1121   -17.31%  memo 14.30% / 1.1121 / -17.31%  dS 0.0000
+      ok  b136-r620-gross065-W                 14.99%   1.1264   -19.43%  memo 14.99% / 1.1264 / -19.43%  dS 0.0000
+      ok  u56-band008-gross100                 11.39%   1.1461   -19.05%  memo 11.37% / 1.1439 / -19.05%  dS 0.0022
+      ok  u56-k8-qroll-q017-w1008-d100-g100    14.15%   1.2223   -14.79%  memo 14.16% / 1.2226 / -14.79%  dS 0.0003
+      ok  u56-marsrespread-gross075            11.51%   1.0877   -18.65%  memo 11.55% / 1.0914 / n/a  dS 0.0037
+      ok  u56-quantile50-respread-M            15.41%   1.2270   -19.75%  memo 15.47% / 1.2359 / -19.80%  dS 0.0089
+      ok  u56-top20-band-m20                   12.65%   1.0918   -18.31%  memo 12.87% / 1.1120 / -17.22%  dS 0.0202
+      ok  u56-v2band-gross100                  11.54%   1.2017   -15.91%  memo 11.55% / 1.2067 / -15.70%  dS 0.0050
+      8 of 8 shelf books admitted; dropped (named, never re-specified): none
+
+### PART B — THE SIZE: what a price-only comparand would have done to PROTOCOL 4b
+   There is no price-only SPY to fetch, so the counterfactual is priced parametrically:
+   subtract a constant dividend drag d from the comparand and re-read all four 4b legs.
+   d=0 is the record's committed column. Bars are RE-PRICED at every d (cap = 60% of
+   the comparand's MaxDD, floor = 70% of its CAGR), which is what PROTOCOL 4b says.
+
+   THE COMPARAND ITSELF (full sample, 2009-01-13..2026-09-11):
+        d %/yr      CAGR    Sharpe     MaxDD       H1       H2   4b floor    4b cap  floor move
+          0.00  15.1631%    0.8861 -33.7172%   0.9595   0.8259   10.6142% -20.2303%     0.0000%
+          0.50  14.5890%    0.8578 -33.7481%   0.9291   0.7995   10.2123% -20.2488%    -0.4019%
+          1.00  14.0178%    0.8296 -33.7789%   0.8987   0.7730    9.8124% -20.2673%    -0.8017%
+          1.50  13.4493%    0.8014 -33.8097%   0.8683   0.7465    9.4145% -20.2858%    -1.1996%
+          1.80  13.1097%    0.7844 -33.8281%   0.8501   0.7307    9.1768% -20.2969%    -1.4374%
+          2.00  12.8838%    0.7731 -33.8404%   0.8379   0.7201    9.0186% -20.3043%    -1.5955%
+          2.50  12.3210%    0.7449 -33.8712%   0.8075   0.6936    8.6247% -20.3227%    -1.9895%
+
+   SIGN: the floor MOVES DOWN with the drag (-0.7978% of floor per 1.00 %/yr of
+   missing dividend, i.e. the 0.70 coefficient, essentially exactly). So had the record
+   really been using a price-only SPY, its 4b CAGR floor would have been TOO LOW and
+   every 4b verdict TOO GENEROUS. The convention it actually uses is the STRICTER one.
+   SECOND-ORDER: the drag also lowers the comparand's Sharpe legs and SHALLOWS its
+   MaxDD, so the cap TIGHTENS as the floor loosens — the two 4b level bars move in
+   OPPOSITE directions under a comparand error. They do not cancel; they trade off.
+
+   4b / 4a PASS COUNTS — all 7 x 2 grid points, headline 10 bps (0 / 25 bps in the .books.csv and the rung table below):
+        d %/yr    floor      cap |   SHELF 4b  SHELF 4a   |   GRID 4b  GRID 4a   | binding leg among SHELF failures
+          0.00   10.61%  -20.23% |      8 /  8      0 /  8   |    19 / 36     1 / 36   | -
+          0.50   10.21%  -20.25% |      8 /  8      0 /  8   |    19 / 36     1 / 36   | -
+          1.00    9.81%  -20.27% |      8 /  8      0 /  8   |    20 / 36     1 / 36   | -
+          1.50    9.41%  -20.29% |      8 /  8      0 /  8   |    20 / 36     1 / 36   | -
+          1.80    9.18%  -20.30% |      8 /  8      0 /  8   |    20 / 36     1 / 36   | -
+          2.00    9.02%  -20.30% |      8 /  8      0 /  8   |    20 / 36     1 / 36   | -
+          2.50    8.62%  -20.32% |      8 /  8      0 /  8   |    22 / 36     1 / 36   | -
+
+   RUNG SENSITIVITY — 4b passes at 0 / 10 / 25 bps:
+        d %/yr | SHELF 0/10/25  GRID 0/10/25
+          0.00 | 8/8/7      20/19/14
+          0.50 | 8/8/8      20/19/15
+          1.00 | 8/8/8      21/20/17
+          1.50 | 8/8/8      21/20/18
+          1.80 | 8/8/8      21/20/18
+          2.00 | 8/8/8      21/20/18
+          2.50 | 8/8/8      24/22/18
+
+   WHICH BOOKS FLIP, and at what drag (headline rung):
+      U56-band0.03-g0.75                 0.00:F 0.50:F 1.00:F 1.50:F 1.80:F 2.00:F 2.50:P   first flip at d=2.50 %/yr
+      U56-qroll-q0.12-w252-d1.00         0.00:F 0.50:F 1.00:P 1.50:P 1.80:P 2.00:P 2.50:P   first flip at d=1.00 %/yr
+      U56-qroll-q0.17-w252-d1.00         0.00:F 0.50:F 1.00:F 1.50:F 1.80:F 2.00:F 2.50:P   first flip at d=2.50 %/yr
+      3 of 44 books change their 4b verdict anywhere on the drag grid; 41 are invariant to the comparand convention.
+      4a is invariant to the comparand by construction (it never reads SPY): 44 of 44 books constant, 1 of 44 passing 4a at every d.
+
+   HOW MIS-SET COULD THE FLOOR BE AND STILL NOT MATTER: at d=0 the shelf's CAGR margins (CAGR - floor) run +0.78%..+4.80%; the SMALLEST is u56-band008-gross100 at +0.78%. A drag mis-sets the floor by 0.70*d, so it would take d = 1.11 %/yr of comparand error, in the WRONG direction (a floor too HIGH), to cost the shelf its first CAGR pass — and a price-only comparand errs the OTHER way.
+
+### PART C — RULE 8 walk-forward: GRID dial chosen on 2009-2016 IS Sharpe alone,
+    OOS 2017-2026 read ONCE per (d, panel). The comparand never touches the chooser,
+    only the bars — so a moving pick would mean the counterfactual leaked into the fit.
+   d= 0.00 U56   pick U56-band0.08-g1.00       IS 1.1226 | OOS  12.04% / 1.1654 / -19.05% (cap -20.23%, floor 10.73%) | v2  9.47%/1.2782/-12.05% | v1  7.60%/0.7361 | SPY 15.33%/0.8767/-33.72% | 4b PASS  4a FAIL
+   d= 0.00 B136  pick B136-band0.08-g1.00      IS 1.1421 | OOS  11.05% / 1.0974 / -19.50% (cap -20.23%, floor 10.73%) | v2  7.88%/1.1059/-12.24% | v1  5.87%/0.5702 | SPY 15.33%/0.8767/-33.72% | 4b PASS  4a FAIL
+   d= 0.50 U56   pick U56-band0.08-g1.00       IS 1.1226 | OOS  12.04% / 1.1654 / -19.05% (cap -20.25%, floor 10.33%) | v2  9.47%/1.2782/-12.05% | v1  7.60%/0.7361 | SPY 14.76%/0.8492/-33.75% | 4b PASS  4a FAIL
+   d= 0.50 B136  pick B136-band0.08-g1.00      IS 1.1421 | OOS  11.05% / 1.0974 / -19.50% (cap -20.25%, floor 10.33%) | v2  7.88%/1.1059/-12.24% | v1  5.87%/0.5702 | SPY 14.76%/0.8492/-33.75% | 4b PASS  4a FAIL
+   d= 1.00 U56   pick U56-band0.08-g1.00       IS 1.1226 | OOS  12.04% / 1.1654 / -19.05% (cap -20.27%, floor  9.93%) | v2  9.47%/1.2782/-12.05% | v1  7.60%/0.7361 | SPY 14.18%/0.8216/-33.78% | 4b PASS  4a FAIL
+   d= 1.00 B136  pick B136-band0.08-g1.00      IS 1.1421 | OOS  11.05% / 1.0974 / -19.50% (cap -20.27%, floor  9.93%) | v2  7.88%/1.1059/-12.24% | v1  5.87%/0.5702 | SPY 14.18%/0.8216/-33.78% | 4b PASS  4a FAIL
+   d= 1.50 U56   pick U56-band0.08-g1.00       IS 1.1226 | OOS  12.04% / 1.1654 / -19.05% (cap -20.29%, floor  9.53%) | v2  9.47%/1.2782/-12.05% | v1  7.60%/0.7361 | SPY 13.62%/0.7941/-33.81% | 4b PASS  4a FAIL
+   d= 1.50 B136  pick B136-band0.08-g1.00      IS 1.1421 | OOS  11.05% / 1.0974 / -19.50% (cap -20.29%, floor  9.53%) | v2  7.88%/1.1059/-12.24% | v1  5.87%/0.5702 | SPY 13.62%/0.7941/-33.81% | 4b PASS  4a FAIL
+   d= 1.80 U56   pick U56-band0.08-g1.00       IS 1.1226 | OOS  12.04% / 1.1654 / -19.05% (cap -20.30%, floor  9.29%) | v2  9.47%/1.2782/-12.05% | v1  7.60%/0.7361 | SPY 13.28%/0.7776/-33.83% | 4b PASS  4a FAIL
+   d= 1.80 B136  pick B136-band0.08-g1.00      IS 1.1421 | OOS  11.05% / 1.0974 / -19.50% (cap -20.30%, floor  9.29%) | v2  7.88%/1.1059/-12.24% | v1  5.87%/0.5702 | SPY 13.28%/0.7776/-33.83% | 4b PASS  4a FAIL
+   d= 2.00 U56   pick U56-band0.08-g1.00       IS 1.1226 | OOS  12.04% / 1.1654 / -19.05% (cap -20.30%, floor  9.13%) | v2  9.47%/1.2782/-12.05% | v1  7.60%/0.7361 | SPY 13.05%/0.7666/-33.84% | 4b PASS  4a FAIL
+   d= 2.00 B136  pick B136-band0.08-g1.00      IS 1.1421 | OOS  11.05% / 1.0974 / -19.50% (cap -20.30%, floor  9.13%) | v2  7.88%/1.1059/-12.24% | v1  5.87%/0.5702 | SPY 13.05%/0.7666/-33.84% | 4b PASS  4a FAIL
+   d= 2.50 U56   pick U56-band0.08-g1.00       IS 1.1226 | OOS  12.04% / 1.1654 / -19.05% (cap -20.32%, floor  8.74%) | v2  9.47%/1.2782/-12.05% | v1  7.60%/0.7361 | SPY 12.49%/0.7390/-33.87% | 4b PASS  4a FAIL
+   d= 2.50 B136  pick B136-band0.08-g1.00      IS 1.1421 | OOS  11.05% / 1.0974 / -19.50% (cap -20.32%, floor  8.74%) | v2  7.88%/1.1059/-12.24% | v1  5.87%/0.5702 | SPY 12.49%/0.7390/-33.87% | 4b PASS  4a FAIL
+   PICK STABILITY: {'B136': 1, 'U56': 1} distinct picks per panel across all 7 drags — the comparand never reaches the chooser (expected: the dial is IS Sharpe, which does not read SPY)
+   OOS 4b verdict differs from the d=0 reading in 0 of 14 (drag, panel) cells.
+   RE-PRICED vs the record's FIXED full-sample bars: verdict differs in 0 of 14 cells (the FIXED bars are a full-sample number read on an OOS leg).
+
+### BY-PRODUCT — found while gating the comparand, reported because it is a
+    property of a panel the record trades: data/prices_broad.csv is stored at TWO
+    DECIMALS while data/prices.csv is not. On back-adjusted low-priced history that
+    is not a rounding nicety — a split-adjusted NVDA trades near 0.14 in 2009, where
+    half a cent is percent-scale. Priced on the 56 tickers BOTH files carry, so the
+    only difference between the two runs is the quantization.
+      cells differing: 216,129 of 263,368 (82.1%); max absolute 0.0052 (= half a cent); max RELATIVE 3.6323%
+      worst relative offenders: NVDA 3.632%, NFLX 1.587%, AVGO 0.448%, TSLA 0.372%, AMZN 0.235%
+
+      the SAME U56 book, run on the full-precision file vs the 2-decimal one (56 cols):
+      book                                 CAGR fp  CAGR 2dp  Sharpe fp  Sharpe 2dp   dSharpe  dMaxDD pp
+      RULES v2 baseline (live)               8.63%     8.64%     1.2018      1.2027    0.0009       0.00
+      u56-v2band-gross100                   11.54%    11.56%     1.2017      1.2026    0.0009       0.00
+      u56-band008-gross100                  11.39%    11.40%     1.1461      1.1466    0.0005      -0.00
+      largest |dSharpe| from quantization alone: 0.0009. Idea 851's shelf reproduction tolerance is 0.030, so this is INSIDE the tolerance the record admits books on — but it is a floor under the reproducibility of every B136 number, and no committed file states it. NAMED, not fixed (cache_prices.py is out of scope).
+
+### VERDICT
+   PREMISE: FALSE — data/prices.csv is dividend-reinvested on 3 of 3 independent internal legs, so the 4b floor ALREADY closes on a total-return comparand and the mis-set the idea postulates is ZERO.
+   SIGN (if it had been true): the floor would have been TOO LOW by 0.70*d, i.e. 4b TOO GENEROUS; the cap would simultaneously have been TOO TIGHT. Not one direction — two, in opposition.
+   SIZE: -0.7978% of CAGR floor per 1.00 %/yr of drag. Over the whole plausible S&P yield range (0..2.5 %/yr) the floor spans 8.62%..10.61% and the shelf's 4b count moves 8 <- 8 of 8.
+   CAPITAL: nothing promoted. 4a is untouched by any comparand (it never reads SPY).
+
+### done in 8.3s
