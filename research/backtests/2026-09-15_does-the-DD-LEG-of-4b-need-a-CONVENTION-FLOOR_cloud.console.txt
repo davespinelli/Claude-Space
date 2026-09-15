@@ -1,0 +1,167 @@
+# 2026-09-15_does-the-DD-LEG-of-4b-need-a-CONVENTION-FLOOR_cloud
+# pandas 3.0.5 numpy 2.4.6
+# 12 books (6 forms x 2 panels) x 26 calendars (21 monthly + 5 weekly) x 2 lags x 2 costs
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+PANEL U56: 56 names x 4704 days, 2008-01-02 .. 2026-09-14
+PANEL B136: 136 names x 4703 days, 2008-01-02 .. 2026-09-11
+SPY is a tradable constituent of both panels AND the 4b comparand (the record's construction).
+WINDOW U56: 2009-01-13 .. 2026-09-14  IS ..2016-12-31  OOS 2017-01-01..
+WINDOW B136: 2009-01-13 .. 2026-09-11  IS ..2016-12-31  OOS 2017-01-01..
+
+G1 engine  max|fast_run - engine.backtest| = 2.082e-17   bar 1e-9   PASS
+
+G3 comparand bars on this window:
+  U56: SPY CAGR 15.13% Sharpe 0.885 halves 0.959/0.824 MaxDD -33.72%  ->  4b bars: DD cap -20.23%, CAGR floor 10.59%
+       RULES v2 (live, weekly) CAGR 8.62% Sharpe 1.201 MaxDD -12.05%
+  B136: SPY CAGR 15.16% Sharpe 0.886 halves 0.960/0.826 MaxDD -33.72%  ->  4b bars: DD cap -20.23%, CAGR floor 10.61%
+       RULES v2 (live, weekly) CAGR 7.98% Sharpe 1.099 MaxDD -12.24%
+
+running cells ...
+cells: 3744 rows -> 2026-09-15_does-the-DD-LEG-of-4b-need-a-CONVENTION-FLOOR_cloud.cells.csv   (56s)
+
+G2 reproduction of ideas 804/805's book (U56 / MADG100 / MONTHLY / k=0 / 10bps / lag 1):
+  CAGR    published +0.1192  here +0.1190  |d| 0.00016  bar 5e-05  MISS
+  Sharpe  published +1.2100  here +1.2081  |d| 0.00191  bar 5e-03  PASS
+  MaxDD   published -0.1550  here -0.1549  |d| 0.00014  bar 5e-04  PASS
+  (the panel gained trading days since 805 ran on 2026-09-12, so a CAGR miss of this size is a calendar fact about data/prices.csv, not a disagreement about the book; Sharpe and MaxDD are the fields that must hold.)
+  H_CAL census: 13 of 21 offsets pass 4b (805 published 13); 8 of the 8 failures are the DD leg ALONE PASS
+  DD-cap margin at k=0 4.74pp (805: 4.74pp, bar 0.1)   PASS
+  21-offset MaxDD spread 8.37pp (805: 8.37pp, bar 0.1)   PASS
+legs: 1440 rows -> 2026-09-15_does-the-DD-LEG-of-4b-need-a-CONVENTION-FLOOR_cloud.legs.csv
+
+====================================================================================================
+SECTION 1 - IS THE DD LEG THE CONVENTION-SENSITIVE ONE?  (FULL window, 10bps, lag 1)
+====================================================================================================
+
+MONTHLY family (21 calendars), 12 books:
+      median_ratio  min_ratio  n_ratio_lt1  total_flips  books_with_flips  mean_spread
+leg                                                                                   
+H1           2.441      1.376            0            0                 0        0.119
+H2           1.218      0.355            5           26                 5        0.219
+OOS          1.554      0.497            2            7                 1        0.217
+DD           0.466     -0.990           10           52                 8        7.714
+CAGR         0.877     -3.816            8            3                 2        1.458
+  DD share of all leg-level offset flips: 52/88 = 59.1%
+  H_DDWORST: lowest median margin/spread ratio is DD (0.466) -> CONFIRMED
+  H_DDFLIP : DD holds a strict majority of flips -> CONFIRMED
+
+WEEKLY family (5 calendars), 12 books:
+      median_ratio  min_ratio  n_ratio_lt1  total_flips  books_with_flips  mean_spread
+leg                                                                                   
+H1           2.742      1.311            0            0                 0        0.083
+H2           1.900     -0.400            3            0                 0        0.088
+OOS          3.213      0.103            2            4                 1        0.081
+DD           1.526     -0.703            5            5                 3        3.135
+CAGR        -0.109     -6.078            8            6                 4        0.948
+  DD share of all leg-level offset flips: 5/15 = 33.3%
+
+Per-book DD leg, MONTHLY, FULL window, 10bps, lag 1 (margin0/spread in pp; ratio<1 = the verdict is a date):
+panel    book  margin0  spread    sd  ratio_spread  pass0  n_pass  clause_FULLSPREAD  clause_SD2
+ B136   TOP40  -10.499  10.601 2.316        -0.990  False       0              False       False
+ B136   TOP20   -5.876   6.990 1.986        -0.841  False       1              False       False
+ B136  EWELIG   -1.433   5.017 1.332        -0.286  False       3              False       False
+  U56   TOP20    0.723   7.401 1.683         0.098   True       7              False       False
+  U56   TOP40    2.269  11.367 3.869         0.200   True       9              False       False
+ B136 MADG100    4.149   9.652 3.135         0.430   True      10              False       False
+  U56  EWELIG    3.218   6.401 1.441         0.503   True      19              False        True
+  U56 MADG100    4.745   8.369 2.937         0.567   True      13              False       False
+ B136 RULESV2    4.542   7.309 2.151         0.621   True      20              False        True
+  U56 RULESV2    5.849   6.012 1.954         0.973   True      21              False        True
+ B136 MADG075    7.956   7.205 2.307         1.104   True      21               True        True
+  U56 MADG075    8.404   6.248 2.155         1.345   True      21               True        True
+
+====================================================================================================
+SECTION 2 - DOES CADENCE CHANGE THE FLOOR?  (mean spread per leg, MONTHLY vs WEEKLY)
+====================================================================================================
+family  MONTHLY  WEEKLY  W/M ratio
+leg                               
+H1        0.119   0.083      0.697
+H2        0.219   0.088      0.403
+OOS       0.217   0.081      0.372
+DD        7.714   3.135      0.406
+CAGR      1.458   0.948      0.650
+  WEEKLY spread < MONTHLY spread in 57 of 60 book-leg pairs -> H_CADENCE CONFIRMED
+
+====================================================================================================
+SECTION 3 - THE CLAUSE PRICED (MONTHLY, FULL window, 10bps, lag 1)
+====================================================================================================
+panel    book  pass4b_k0  unanimous  survives_FULLSPREAD  DDonly_FULLSPREAD  survives_SD1  DDonly_SD1  survives_SD2  DDonly_SD2    binding_leg
+ B136  EWELIG      False      False                False              False         False       False         False       False        DD,CAGR
+ B136 MADG075      False      False                False              False         False       False         False       False        H2,CAGR
+ B136 MADG100       True      False                False              False          True        True         False       False     H2,DD,CAGR
+ B136 RULESV2      False      False                False              False         False       False         False       False H2,OOS,DD,CAGR
+ B136   TOP20      False      False                False              False         False       False         False       False      H2,OOS,DD
+ B136   TOP40      False      False                False              False         False       False         False       False          H2,DD
+  U56  EWELIG       True      False                False              False          True        True          True        True        DD,CAGR
+  U56 MADG075      False      False                False              False         False       False         False       False           CAGR
+  U56 MADG100       True      False                False              False          True        True         False       False        DD,CAGR
+  U56 RULESV2      False      False                False              False         False       False         False       False        DD,CAGR
+  U56   TOP20       True      False                False              False         False       False         False       False             DD
+  U56   TOP40       True      False                False              False         False       False         False       False             DD
+  floor FULLSPREAD : of the 5 books passing 4b at k=0, 0 survive the all-leg clause and 0 survive a DD-leg-only clause
+  floor SD1        : of the 5 books passing 4b at k=0, 3 survive the all-leg clause and 3 survive a DD-leg-only clause
+  floor SD2        : of the 5 books passing 4b at k=0, 1 survive the all-leg clause and 1 survive a DD-leg-only clause
+  H_BITE: the FULLSPREAD clause demotes 5 of 5 k=0 4b passes -> CONFIRMED
+
+====================================================================================================
+SECTION 4 - RULE 8 WALK-FORWARD: is the floor KNOWABLE IN SAMPLE?
+====================================================================================================
+
+Spearman rho(IS spread, OOS spread) across the 12 books, per leg:
+  H1    rho +0.322   IS mean spread 0.205  OOS mean spread 0.401
+  H2    rho +0.573   IS mean spread 0.179  OOS mean spread 0.212
+  OOS   rho +0.573   IS mean spread 0.179  OOS mean spread 0.212
+  DD    rho +0.469   IS mean spread 3.129  OOS mean spread 7.714
+  CAGR  rho +0.951   IS mean spread 1.520  OOS mean spread 2.227
+  H_WF: rho > +0.5 on 3 of 5 legs -> CONFIRMED
+
+Does the IS clause PREDICT OOS calendar stability?  (rows = book-leg pairs that pass the leg in sample)
+  IS margin > 0 only (naive)      : n= 54  OOS leg passes 96.3%  OOS unanimous across 21 calendars 64.8%
+  IS margin > IS spread (clause)  : n= 26  OOS leg passes 96.2%  OOS unanimous across 21 calendars 76.9%
+    H1    naive n=12 OOS-unanimous 41.7% | clause n= 2 OOS-unanimous  0.0%
+    H2    naive n=12 OOS-unanimous 91.7% | clause n= 8 OOS-unanimous 87.5%
+    OOS   naive n=12 OOS-unanimous 91.7% | clause n= 8 OOS-unanimous 87.5%
+    DD    naive n=11 OOS-unanimous 27.3% | clause n= 5 OOS-unanimous 60.0%
+    CAGR  naive n= 7 OOS-unanimous 71.4% | clause n= 3 OOS-unanimous 100.0%
+
+OOS (2017-01-01..) triples at k=0, 10bps, lag 1, MONTHLY, vs RULES v2 (live) and SPY:
+  --- U56 --- RULES v2 OOS 9.46% / 1.277 / -12.05%   SPY OOS 15.27% / 0.874 / -33.72%
+    MADG100  OOS 12.61% / 1.267 / -15.49%   4b PASS   4a fail
+    MADG075  OOS  9.40% / 1.265 / -11.83%   4b fail:CAGR   4a fail
+    TOP20    OOS 16.67% / 1.282 / -19.51%   4b PASS   4a fail
+    TOP40    OOS 16.10% / 1.292 / -17.96%   4b PASS   4a fail
+    EWELIG   OOS 12.98% / 1.216 / -17.01%   4b PASS   4a fail
+    RULESV2  OOS  9.56% / 1.224 / -14.38%   4b fail:CAGR   4a fail
+  --- B136 --- RULES v2 OOS 7.88% / 1.106 / -12.24%   SPY OOS 15.33% / 0.877 / -33.72%
+    MADG100  OOS 11.00% / 1.142 / -16.08%   4b PASS   4a fail
+    MADG075  OOS  8.22% / 1.142 / -12.27%   4b fail:CAGR   4a fail
+    TOP20    OOS 15.55% / 1.000 / -26.11%   4b fail:DD   4a fail
+    TOP40    OOS 19.49% / 1.100 / -30.73%   4b fail:DD   4a fail
+    EWELIG   OOS 12.02% / 1.074 / -21.66%   4b fail:DD   4a fail
+    RULESV2  OOS  8.25% / 1.084 / -15.69%   4b fail:CAGR   4a fail
+
+FULL-sample k=0 (10bps, lag 1, MONTHLY) - both KEEP paths, all 12 books:
+panel    book  CAGR  Sharpe  MaxDD    m_DD  m_CAGR  pass4b  pass4a  gross  turn_yr
+  U56 MADG100 0.119   1.208 -0.155   4.745   1.313    True   False  0.711    1.980
+  U56 MADG075 0.089   1.206 -0.118   8.404  -1.713   False   False  0.534    1.488
+  U56   TOP20 0.147   1.202 -0.195   0.723   4.097    True   False  0.718    4.326
+  U56   TOP40 0.145   1.191 -0.180   2.269   3.913    True   False  0.863    3.135
+  U56  EWELIG 0.118   1.139 -0.170   3.218   1.195    True   False  0.751    3.639
+  U56 RULESV2 0.089   1.172 -0.144   5.849  -1.714   False   False  0.534    1.235
+ B136 MADG100 0.112   1.129 -0.161   4.149   0.610    True   False  0.707    2.115
+ B136 MADG075 0.084   1.127 -0.123   7.956  -2.233   False   False  0.531    1.590
+ B136   TOP20 0.162   1.094 -0.261  -5.876   5.603   False   False  0.738    6.300
+ B136   TOP40 0.188   1.107 -0.307 -10.499   8.227   False   False  0.971    6.482
+ B136  EWELIG 0.116   1.064 -0.217  -1.433   1.035   False   False  0.751    3.766
+ B136 RULESV2 0.083   1.086 -0.157   4.542  -2.272   False   False  0.532    1.391
+
+4b passes at k=0: 5/12   4a passes: 0/12
+
+Robustness (reported, never selected) - 4b pass count over all 21 monthly calendars:
+    10bps lag 1: 61 of 252 book-calendar cells pass 4b; DD leg fails in 107, CAGR 87, H1 0, H2 26, OOS 7
+    10bps lag 2: 50 of 252 book-calendar cells pass 4b; DD leg fails in 124, CAGR 87, H1 0, H2 33, OOS 7
+    25bps lag 1: 54 of 252 book-calendar cells pass 4b; DD leg fails in 107, CAGR 110, H1 0, H2 47, OOS 19
+    25bps lag 2: 43 of 252 book-calendar cells pass 4b; DD leg fails in 126, CAGR 110, H1 0, H2 48, OOS 26
+
+done in 56s
