@@ -1,0 +1,280 @@
+====================================================================================================
+IDEA 882 - what is the RESIDUAL +0.0012 shared by every CAPPED null?  (cloud 2026-09-15)
+====================================================================================================
+# pandas 3.0.5 numpy 2.4.6  |  12 nulls x 20 seeds x 3 rungs
+# PARAM 1 gap draw  {UNIF (871's), REAL (the arm's own sequence, in order)}
+# PARAM 2 cap rule  ['REAL', 'DOM', 'SPLIT8', 'LONE', 'FILL']
+# quantity being explained: 881's capped-null residual, mean +0.00125
+  SMALL panel: 716 columns -> 664 kept (52 dropped for max_1d_move >= 1.0)
+  U56: 56 cols x 4704 days  2008-01-02 .. 2026-09-14
+  B136: 136 cols x 4703 days  2008-01-02 .. 2026-09-11
+  SMALL: 664 cols x 4198 days  2010-01-04 .. 2026-09-11
+
+[0] GATES (printed before any hypothesis is read)
+  G1 never-firing multiplier == ungated book   max|d| 0.000e+00  bar 1e-12  [PASS]
+  G6 fast Sharpe == engine.metrics()['Sharpe'] |d| 0.000e+00  bar 1e-10  [PASS]
+  G5a circular k and m preserved by all 10 matched nulls: 24 violations in 3000 synthetic draws  [FAIL]
+  G5b LONE / FILL (both gap draws) obey the cap (circ max <= L*): 3 violations  [FAIL]
+  G5e OP_* reuse the REAL arm's gap multiset: 0 violations  [PASS]
+  G5f UG_REAL / OP_REAL reuse the REAL arm's fire-length multiset: 0 violations  [PASS]
+  G8 OP_REAL == BLOCK bit-for-bit (the 2x2's zero cell)  max|d| 0.000e+00  bar 0  [PASS]
+  G5h boundary-split rate (a rotation landing inside a fire run inflates the LINEAR run
+      count; this is BLOCK's own device, which is why every stat above is circular):
+      BLOCK 0.257  OP_DOM 0.240  OP_SPLIT8 0.257  OP_LONE 0.300  OP_FILL 0.317  |  SM_* / UG_REAL 0.000  0.003  0.003  0.003  0.003
+      OP_* match BLOCK's rate to 0.060  bar 0.10  [PASS]
+  synthetic circ max/L* : SM_DOM 13.66  SM_SPLIT8 1.76  SM_LONE 1.00  SM_FILL 1.00  OP_DOM 13.63  OP_SPLIT8 1.76  OP_LONE 1.00  OP_FILL 1.00  UG_REAL 1.00  OP_REAL 1.00
+  synthetic circ disp   : SM_DOM 8.89  SM_SPLIT8 2.70  SM_LONE 0.32  SM_FILL 1.65  OP_DOM 8.88  OP_SPLIT8 2.70  OP_LONE 0.32  OP_FILL 1.65  UG_REAL 1.00  OP_REAL 1.00
+  G5g UG_REAL changes NO run length (circ max/L* and disp/real both exactly 1.00)  [PASS]
+    U56: BREADTH done  (29s)
+    U56: VOL20 done  (51s)
+    U56: DISP done  (72s)
+    U56: CORR done  (94s)
+    B136: BREADTH done  (36s)
+    B136: VOL20 done  (57s)
+    B136: DISP done  (78s)
+    B136: CORR done  (100s)
+    SMALL: BREADTH done  (63s)
+    SMALL: VOL20 done  (84s)
+    SMALL: DISP done  (105s)
+    SMALL: CORR done  (125s)
+
+  arms 1152 rows, excess 13824 rows  (324s)
+  G2 rate match  max|mean(placebo) - mean(real)| 0.000e+00  bar 1e-12  [PASS]
+  G4 determinism max|d| 0.000e+00  bar 0  [PASS]
+  G5a-LINEAR on REAL arms (881's own gate, on the nulls that do NOT roll): k and m violations 0 of 115200  [PASS]
+  G5a-CIRCULAR on REAL arms, all matched nulls: 1625 of 230400 (0.705%)  [FAIL]
+  G5b on REAL arms: LONE / FILL circular max run > L*: 113 of 92160 (0.123%)  [FAIL]
+  The two CIRCULAR gates fail at a small rate and the cause is named, not hidden: 871's
+  uniform gap draw may put BOTH the leading and the trailing gap at 0, which circularly
+  merges the first and last runs (m-1 circular runs, and for LONE/FILL a merged run of
+  up to 2*L*).  It is a property of THE RECORD'S OWN GAP DRAW, inherited from 871, not of
+  anything introduced here - note the linear gate above, which is the one 881 published,
+  reads 0.  Section [6b] re-prices every headline on the violation-free arms only.
+
+====================================================================================================
+[1] G7 CALIBRATION + G8 - the two zeros this run measures instead of assuming
+====================================================================================================
+  BLOCK2 (BLOCK, independent seed stream) signed median -0.00015  mean +0.00001 (SE 0.00088)  share below 50.3%  z +0.24
+  G7 |signed| <= 0.001 and |z| < 2.0  [PASS]   -> BAND for every reading below
+  OP_REAL (real gaps + real lengths + BLOCK's roll, on BLOCK's OWN seed stream) signed +0.000000000   max|per-arm gap| over all rungs 0.000e+00
+  G8 the 2x2's zero cell is EXACTLY zero on all 1152 real arms  bar 0  [PASS]   (its sign-test z is undefined for an exact zero and is not read)
+
+====================================================================================================
+[2] G3 REPRODUCTION OF IDEA 881
+    NOTE, stated so it is not over-read: this run's seed string has the same FORM as
+    881's, so the four SM_* nulls are handed the SAME md5 stream and reproduce 881
+    BIT-FOR-BIT.  That makes G3 an IDENTITY check on the pipeline (the refactor from
+    fire_lengths() to cap_lengths() changed nothing), NOT an independent confirmation of
+    881's numbers.  The residual re-measured below is 881's own residual, not a second
+    draw of it.  Every NEW null (OP_*, UG_REAL) is on its own fresh stream.
+====================================================================================================
+  SM_SPLIT8   signed @10bps +0.00130  (881 published +0.00130, bar 0.001)  z -1.65  [PASS]
+  SM_LONE     signed @10bps +0.00101  (881 published +0.00101, bar 0.001)  z -1.18  [PASS]
+  SM_FILL     signed @10bps +0.00144  (881 published +0.00144, bar 0.001)  z -1.77  [PASS]
+  SM_DOM      signed @10bps -0.00348  (881 published -0.00348, bar 0.002)  z +3.83  [PASS]
+  G3 overall [PASS]
+  the residual as measured HERE: mean of the three capped SM nulls +0.00125  (881: +0.00125)
+
+====================================================================================================
+[3] THE CONSTRUCTION AS MEASURED ON ALL REAL ARMS
+====================================================================================================
+  real arm: median runs 41, median L* 64 days, median firing rate 0.141
+  null          gaps  lengths   max/L*  disp/real  days>L*   switch  plac.vol
+  BLOCK         REAL     REAL     1.00       1.00    0.000     1.00    0.1183
+  BLOCK2        REAL     REAL     1.00       1.00    0.000     1.00    0.1183
+  OP_REAL       REAL     REAL     1.00       1.00    0.000     1.00    0.1183
+  UG_REAL       UNIF     REAL     1.00       1.00    0.000     1.00    0.1183
+  SM_DOM        UNIF      DOM     8.86       5.86    0.925     1.00    0.1184
+  SM_SPLIT8     UNIF   SPLIT8     1.13       1.86    0.583     1.00    0.1183
+  SM_LONE       UNIF     LONE     1.00       0.56    0.000     1.00    0.1184
+  SM_FILL       UNIF     FILL     1.00       1.73    0.000     1.00    0.1183
+  OP_DOM        REAL      DOM     8.86       5.87    0.925     1.00    0.1183
+  OP_SPLIT8     REAL   SPLIT8     1.13       1.86    0.583     1.00    0.1184
+  OP_LONE       REAL     LONE     1.00       0.56    0.000     1.00    0.1184
+  OP_FILL       REAL     FILL     1.00       1.73    0.000     1.00    0.1183
+  days>L* = share of firing days in runs STRICTLY LONGER than the real arm's longest run.
+
+====================================================================================================
+[4] H_PLACE - THE DECIDING NULL.  UG_REAL reshapes NO run: same lengths, same maximum,
+    same dispersion, same k / m / switches.  The ONLY thing it changes is where the runs
+    sit (871's uniform gap draw instead of the arm's own gap sequence).
+====================================================================================================
+  null            signed@0    signed@10    signed@25       mean        SE   mean/SE       z      band
+  UG_REAL         -0.00024     -0.00030     -0.00019   +0.00033   0.00083     +0.40   +0.18    INSIDE
+  SM_SPLIT8       +0.00139     +0.00130     +0.00126   +0.00169   0.00084     +2.02   -1.65   OUTSIDE
+  SM_LONE         +0.00130     +0.00101     +0.00100   +0.00159   0.00082     +1.93   -1.18   OUTSIDE
+  SM_FILL         +0.00159     +0.00144     +0.00130   +0.00114   0.00082     +1.40   -1.77   OUTSIDE
+  BLOCK2          -0.00054     -0.00015     -0.00007   +0.00001   0.00088     +0.01   +0.24    INSIDE
+
+  UG_REAL signed -0.00030 vs the capped-null residual +0.00125: difference -0.00155 (bar 0.0006)
+  legs: outside the band False | same side False | within 0.0006 False
+  H_PLACE REFUTED
+
+====================================================================================================
+[5] H_LEN0 - with PLACEMENT HELD AT THE REAL ARM'S, what does a legal cap cost?
+====================================================================================================
+  null          max/L*  days>L*     signed@0    signed@10    signed@25       z      band
+  OP_SPLIT8       1.13    0.583     +0.00079     +0.00044     +0.00010   -0.53    INSIDE
+  OP_LONE         1.00    0.000     -0.00103     -0.00097     -0.00079   +0.94    INSIDE
+  OP_FILL         1.00    0.000     +0.00063     +0.00042     +0.00044   -0.94    INSIDE
+  OP_DOM          8.86    0.925     -0.00181     -0.00191     -0.00110   +1.89   OUTSIDE
+  H_LEN0 (all three capped OP nulls inside the band) CONFIRMED
+  H_MAXSURV (OP_DOM signed <= -0.0020 and z >= +3.0): OP_DOM -0.00191, z +1.89  REFUTED
+
+====================================================================================================
+[6] H_ADD - THE 2x2 DECOMPOSITION.  signed(SM_X) = LENGTH + PLACEMENT + interaction
+====================================================================================================
+  cap rule     SM_X (both)  OP_X (length)  UG_REAL (place)        sum  interaction
+  DOM             -0.00348       -0.00191         -0.00030   -0.00221     -0.00127
+  SPLIT8          +0.00130       +0.00044         -0.00030   +0.00013     +0.00117
+  LONE            +0.00101       -0.00097         -0.00030   -0.00127     +0.00228
+  FILL            +0.00144       +0.00042         -0.00030   +0.00012     +0.00132
+  H_ADD (worst |interaction| 0.00228 <= 0.001) REFUTED
+
+====================================================================================================
+[6b] ROBUSTNESS - every headline re-priced on the VIOLATION-FREE arms only
+     (arms where all 10 matched nulls preserved circular k and m at all 20 seeds)
+====================================================================================================
+  clean arms 1110 of 1152 (96.4%)
+  null           all arms       z   clean only       z     shift
+  UG_REAL        -0.00030   +0.18     -0.00003   +0.00  +0.00028
+  SM_DOM         -0.00348   +3.83     -0.00369   +4.02  -0.00021
+  OP_DOM         -0.00191   +1.89     -0.00199   +1.98  -0.00008
+  SM_SPLIT8      +0.00130   -1.65     +0.00094   -1.26  -0.00036
+  OP_SPLIT8      +0.00044   -0.53     +0.00036   -0.42  -0.00007
+  SM_LONE        +0.00101   -1.18     +0.00088   -0.90  -0.00013
+  OP_LONE        -0.00097   +0.94     -0.00113   +1.26  -0.00015
+  SM_FILL        +0.00144   -1.77     +0.00121   -1.44  -0.00023
+  OP_FILL        +0.00042   -0.94     +0.00043   -1.02  +0.00001
+  BLOCK2         -0.00015   +0.24     -0.00013   +0.18  +0.00001
+  on clean arms: UG_REAL -0.00003, capped-SM residual +0.00101, worst interaction 0.00203
+  H_PLACE on clean arms REFUTED   H_ADD on clean arms REFUTED
+
+====================================================================================================
+[7] WHERE THE PLACEMENT EFFECT LIVES - every cut of UG_REAL printed
+====================================================================================================
+  cut                        n     median       mean        SE       sign z
+  depth=0.5                576   +0.00081   +0.00083   0.00074        -0.75
+  depth=1.0                576   -0.00126   -0.00017   0.00149        +1.00
+  cadence=D                576   -0.00064   +0.00028   0.00119        +0.42
+  cadence=W                576   +0.00032   +0.00038   0.00117        -0.17
+  gross=0.75               576   -0.00124   -0.00061   0.00118        +0.67
+  gross=1.0                576   +0.00030   +0.00127   0.00117        -0.42
+  panel=B136               384   +0.00048   +0.00085   0.00145        -0.61
+  panel=SMALL              384   -0.00161   -0.00094   0.00152        +0.82
+  panel=U56                384   -0.00026   +0.00109   0.00135        +0.10
+  SM_DOM depth=0.5         576   -0.00184   -0.00172   0.00069        +1.75
+  SM_DOM depth=1.0         576   -0.00590   -0.00623   0.00137        +3.67
+  OP_DOM depth=0.5         576   -0.00114   -0.00095   0.00066        +1.17
+  OP_DOM depth=1.0         576   -0.00328   -0.00300   0.00134        +1.50
+  placebo vol, all nulls: BLOCK 0.1183  BLOCK2 0.1183  OP_REAL 0.1183  UG_REAL 0.1183  SM_DOM 0.1184  SM_SPLIT8 0.1183  SM_LONE 0.1184  SM_FILL 0.1183  OP_DOM 0.1183  OP_SPLIT8 0.1184  OP_LONE 0.1184  OP_FILL 0.1183
+
+====================================================================================================
+[8] H_COSTINV - the switch counts are matched, so none of this may be a cost story
+====================================================================================================
+  BLOCK2      signed 0/10/25 = -0.00054 / -0.00015 / -0.00007   range 0.00047   switch ratio 1.00x
+  OP_REAL     signed 0/10/25 = +0.00000 / +0.00000 / +0.00000   range 0.00000   switch ratio 1.00x
+  UG_REAL     signed 0/10/25 = -0.00024 / -0.00030 / -0.00019   range 0.00012   switch ratio 1.00x
+  SM_DOM      signed 0/10/25 = -0.00384 / -0.00348 / -0.00306   range 0.00078   switch ratio 1.00x
+  SM_SPLIT8   signed 0/10/25 = +0.00139 / +0.00130 / +0.00126   range 0.00013   switch ratio 1.00x
+  SM_LONE     signed 0/10/25 = +0.00130 / +0.00101 / +0.00100   range 0.00030   switch ratio 1.00x
+  SM_FILL     signed 0/10/25 = +0.00159 / +0.00144 / +0.00130   range 0.00030   switch ratio 1.00x
+  OP_DOM      signed 0/10/25 = -0.00181 / -0.00191 / -0.00110   range 0.00081   switch ratio 1.00x
+  OP_SPLIT8   signed 0/10/25 = +0.00079 / +0.00044 / +0.00010   range 0.00069   switch ratio 1.00x
+  OP_LONE     signed 0/10/25 = -0.00103 / -0.00097 / -0.00079   range 0.00024   switch ratio 1.00x
+  OP_FILL     signed 0/10/25 = +0.00063 / +0.00042 / +0.00044   range 0.00021   switch ratio 1.00x
+  H_COSTINV (worst matched range 0.00081 < 0.005): CONFIRMED
+
+====================================================================================================
+[9] NOISE ACCOUNTING at 20 seeds - per-arm |gap| vs what seed noise alone predicts
+====================================================================================================
+  null         obs |gap|      pred  obs/pred     signed  SE(mean)  signed/SE
+  BLOCK2          0.0168    0.0178      0.94   -0.00015   0.00088      +0.01
+  OP_REAL         0.0000    0.0174      0.00   +0.00000   0.00000        n/a
+  UG_REAL         0.0151    0.0172      0.88   -0.00030   0.00083      +0.40
+  SM_DOM          0.0149    0.0155      0.96   -0.00348   0.00077      -5.17
+  SM_SPLIT8       0.0164    0.0173      0.95   +0.00130   0.00084      +2.02
+  SM_LONE         0.0158    0.0173      0.91   +0.00101   0.00082      +1.93
+  SM_FILL         0.0158    0.0173      0.91   +0.00144   0.00082      +1.40
+  OP_DOM          0.0145    0.0154      0.94   -0.00191   0.00075      -2.64
+  OP_SPLIT8       0.0162    0.0172      0.94   +0.00044   0.00083      -0.17
+  OP_LONE         0.0162    0.0174      0.93   -0.00097   0.00084      -0.88
+  OP_FILL         0.0164    0.0172      0.95   +0.00042   0.00086      -0.06
+  n arms = 1152
+
+====================================================================================================
+[10] BY PANEL AND BY FAMILY - signed gap at 10 bps
+====================================================================================================
+  null               U56       B136      SMALL                worst family
+  UG_REAL       -0.00026   +0.00048   -0.00161            DISP-LO +0.00349
+  SM_DOM        -0.00357   -0.00422   -0.00255            DISP-HI -0.00523
+  OP_DOM        -0.00209   -0.00071   -0.00298         BREADTH-LO -0.00328
+  SM_SPLIT8     +0.00125   +0.00254   +0.00045            DISP-LO +0.00554
+  OP_SPLIT8     -0.00096   +0.00337   +0.00028            DISP-HI +0.00347
+  SM_LONE       +0.00072   +0.00108   +0.00129            CORR-HI +0.00380
+  OP_LONE       -0.00056   -0.00152   -0.00021            CORR-LO -0.00479
+  SM_FILL       +0.00198   +0.00178   +0.00050         BREADTH-HI +0.00423
+  OP_FILL       +0.00011   +0.00059   +0.00123            DISP-HI -0.00230
+  BLOCK2        +0.00037   -0.00034   -0.00002            DISP-HI +0.00312
+
+====================================================================================================
+[11] RULE 8 (a) - DOES THE SIGNED GAP WALK FORWARD?  (IS fitted, OOS read once)
+====================================================================================================
+  UG_REAL     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_DOM      rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  OP_DOM      rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_SPLIT8   rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  OP_SPLIT8   rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_LONE     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  OP_LONE     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_FILL     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  OP_FILL     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  BLOCK2      rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+
+  IS-window and OOS-window medians of the signed gap (null - BLOCK), 10 bps:
+    UG_REAL     IS +0.00082   OOS +0.00093
+    SM_DOM      IS -0.01116   OOS -0.01471
+    OP_DOM      IS -0.01609   OOS -0.00999
+    SM_SPLIT8   IS +0.00472   OOS +0.00024
+    OP_SPLIT8   IS -0.00041   OOS -0.00086
+    SM_LONE     IS +0.00057   OOS +0.00123
+    OP_LONE     IS -0.00094   OOS -0.00042
+    SM_FILL     IS +0.00340   OOS +0.00224
+    OP_FILL     IS -0.00233   OOS -0.00215
+    BLOCK2      IS -0.00152   OOS -0.00012
+
+====================================================================================================
+[12] RULE 8 (b) - THE BOOKS: IS-only selector, OOS read once, BOTH KEEP PATHS
+====================================================================================================
+  B136: IS-pick CORR-HI q0.12 w252 d1.0 W g1.0
+     FULL 13.91% / 1.166 / -16.63%  halves 1.289/1.037   OOS 12.97% / 1.154 / -16.63%
+     RULES v2 (live) 7.98% / 1.101 / -12.18%  halves 1.237/0.967  OOS 7.88% / 1.108 / -12.18%
+     SPY            15.16% / 0.886 / -33.72%  halves 0.960/0.826  OOS 15.33% / 0.877 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 10.61%, OOS Sharpe > 0.877
+     4a fail   4b PASS
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 44 (11.5%)
+  SMALL: IS-pick VOL20-LO q0.17 w252 d1.0 D g1.0
+     FULL 5.04% / 0.404 / -48.52%  halves 0.736/0.201   OOS 2.00% / 0.203 / -48.52%
+     RULES v2 (live) 4.30% / 0.663 / -13.89%  halves 0.806/0.554  OOS 3.75% / 0.559 / -13.89%
+     SPY            14.06% / 0.858 / -33.72%  halves 0.914/0.834  OOS 15.33% / 0.877 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 9.84%, OOS Sharpe > 0.877
+     4a fail   4b fail
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 0 (0.0%)
+  U56: IS-pick CORR-HI q0.07 w1008 d1.0 W g1.0
+     FULL 12.73% / 1.034 / -22.93%  halves 1.160/0.915   OOS 12.41% / 1.016 / -22.93%
+     RULES v2 (live) 8.64% / 1.208 / -11.90%  halves 1.237/1.186  OOS 9.49% / 1.286 / -11.90%
+     SPY            15.13% / 0.885 / -33.72%  halves 0.959/0.824  OOS 15.27% / 0.874 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 10.59%, OOS Sharpe > 0.874
+     4a fail   4b fail
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 61 (15.9%)
+
+====================================================================================================
+[13] SUMMARY OF PRE-REGISTERED HYPOTHESES
+====================================================================================================
+  H_PLACE     REFUTED
+  H_LEN0      CONFIRMED
+  H_ADD       REFUTED
+  H_MAXSURV   REFUTED
+  H_COSTINV   CONFIRMED
+
+done in 325s
