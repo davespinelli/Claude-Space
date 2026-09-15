@@ -1,0 +1,89 @@
+# Idea 891 - does the MARGIN-OVER-SPREAD clause EMPTY THE SHELF on the record's COMMITTED 4b PASSES?  (2026-09-15, cloud lane)
+# 2 tuned dials: PASS SET [SHELF, GRID] x OFFSET GRID k (5 weekly / 21 monthly). ALL grid points reported.  Cost rung [10.0, 25.0] bps is a reported control.
+# SURVIVORSHIP: U56/B136 are current-constituent panels; every LEVEL below is optimistic.
+
+SHELF = 9 committed memo-backed 4b passes; GRID = 36 never-selected ladder books (control).
+
+## Reproduction gates
+                             book  memo_CAGR  got_CAGR  memo_Sharpe  got_Sharpe  memo_MaxDD  got_MaxDD  dCAGR  dSharpe  dMaxDD gate
+              u56-v2band-gross100     0.1155    0.1154       1.2067      1.2011     -0.1570    -0.1591 0.0001   0.0056  0.0021 PASS
+             u56-band008-gross100     0.1137    0.1138       1.1439      1.1450     -0.1905    -0.1905 0.0001   0.0011  0.0000 PASS
+               u56-top20-band-m20     0.1287    0.1260       1.1120      1.0880     -0.1722    -0.1831 0.0027   0.0240  0.0109 PASS
+        u56-marsrespread-gross075     0.1155    0.1150       1.0914      1.0872         NaN    -0.1865 0.0005   0.0042  0.0000 PASS
+        u56-quantile50-respread-M     0.1547    0.1539       1.2359      1.2256     -0.1980    -0.1975 0.0008   0.0103  0.0005 PASS
+             b136-r620-gross065-W     0.1499    0.1499       1.1264      1.1264     -0.1943    -0.1943 0.0000   0.0000  0.0000 PASS
+  b136-qroll-q012-w1008-d050-g100     0.1430    0.1430       1.1121      1.1121     -0.1731    -0.1731 0.0000   0.0000  0.0000 PASS
+u56-k8-qroll-q017-w1008-d100-g100     0.1416    0.1414       1.2226      1.2210     -0.1479    -0.1479 0.0002   0.0016  0.0000 PASS
+                 u56-top20-g065-M     0.1269    0.1269       1.2010      1.2012     -0.1711    -0.1711 0.0000   0.0002  0.0000 PASS
+G1 every SHELF book reproduces its committed memo triple: PASS
+G2 k=0 mask == engine.rebalance_mask: PASS
+G3 fast_run(k=0) vs engine.backtest max|d ret| = 8.674e-18: PASS
+G4 SPY comparand 0.1513 / 0.885 / -0.3372 vs committed 0.1513 / 0.886 / -0.3372: PASS
+   SPY halves 0.959 / 0.824, OOS 0.1527 / 0.874 / -0.3372
+GATES 4/4
+
+## Census: 514 (set x book x offset x rung) cells -> 2026-09-15_does-the-MARGIN-OVER-SPREAD-clause-EMPTY-THE-SHELF_cloud.arms.csv
+
+## The clause on the record's COMMITTED 4b passes (SHELF), headline rung 10 bps
+                             book panel freq  n_off  pass4b_k0  n_off_pass4b  4b_margin_DD  4b_spread_DD  4b_ratio_DD  4b_minratio 4b_binding  4b_clause
+              u56-v2band-gross100   U56    W      5       True             5         4.319         2.410        1.792        1.792         DD       True
+             u56-band008-gross100   U56    W      5       True             4         1.180         2.206        0.535        0.535         DD      False
+               u56-top20-band-m20   U56    W      5       True             5         1.922         4.137        0.465        0.465         DD      False
+        u56-marsrespread-gross075   U56    W      5       True             5         1.583         1.724        0.918        0.918         DD      False
+        u56-quantile50-respread-M   U56    M     21       True             4         0.478         3.046        0.157        0.157         DD      False
+             b136-r620-gross065-W  B136    W      5       True             5         0.797         0.766        1.040        1.040         DD       True
+  b136-qroll-q012-w1008-d050-g100  B136    W      5       True             5         2.915         3.005        0.970        0.970         DD      False
+u56-k8-qroll-q017-w1008-d100-g100   U56    W      5       True             5         5.439         2.825        1.925        1.925         DD       True
+                 u56-top20-g065-M   U56    M     21       True            21         3.121         6.434        0.485        0.485         DD      False
+
+Per-leg margin / spread / ratio, every leg, every committed pass (10 bps):
+  u56-v2band-gross100                  H1: +0.274/0.085=3.22  H2: +0.353/0.035=10.01  OOS: +0.403/0.036=11.18  DD: +4.319/2.410=1.79  CAGR: +0.946/0.505=1.87
+  u56-band008-gross100                 H1: +0.283/0.056=5.07  H2: +0.242/0.070=3.47  OOS: +0.290/0.066=4.40  DD: +1.180/2.206=0.53  CAGR: +0.787/0.413=1.90
+  u56-top20-band-m20                   H1: +0.135/0.103=1.31  H2: +0.266/0.134=1.99  OOS: +0.286/0.119=2.41  DD: +1.922/4.137=0.46  CAGR: +2.010/1.553=1.29
+  u56-marsrespread-gross075            H1: +0.213/0.098=2.18  H2: +0.202/0.103=1.96  OOS: +0.231/0.105=2.19  DD: +1.583/1.724=0.92  CAGR: +0.910/0.879=1.04
+  u56-quantile50-respread-M            H1: +0.368/0.132=2.80  H2: +0.324/0.108=2.99  OOS: +0.344/0.091=3.80  DD: +0.478/3.046=0.16  CAGR: +4.801/1.055=4.55
+  b136-r620-gross065-W                 H1: +0.383/0.115=3.34  H2: +0.130/0.040=3.23  OOS: +0.163/0.037=4.41  DD: +0.797/0.766=1.04  CAGR: +4.372/0.953=4.58
+  b136-qroll-q012-w1008-d050-g100      H1: +0.226/0.062=3.67  H2: +0.210/0.133=1.58  OOS: +0.280/0.123=2.27  DD: +2.915/3.005=0.97  CAGR: +3.686/1.582=2.33
+  u56-k8-qroll-q017-w1008-d100-g100    H1: +0.180/0.062=2.91  H2: +0.479/0.117=4.08  OOS: +0.517/0.104=4.99  DD: +5.439/2.825=1.93  CAGR: +3.545/0.794=4.47
+  u56-top20-g065-M                     H1: +0.256/0.186=1.37  H2: +0.374/0.234=1.59  OOS: +0.407/0.222=1.84  DD: +3.121/6.434=0.49  CAGR: +2.094/1.549=1.35
+
+## Control: the record's 21-sleeve calendar ENSEMBLE book (2026-09-15 lane C memo)
+  ENSEMBLE full 11.68% / 1.177 / -19.07%, halves 1.230 / 1.135, OOS 12.70% / 1.230 / -19.07%  (committed memo: 11.68% / 1.177 / -19.07%)
+  4b legs H1 +0.271, H2 +0.312, OOS +0.356, DD +1.165, CAGR +1.094 -> PASS
+  The clause is VACUOUS for this book: it holds all 21 calendars at once, so its calendar spread is 0 by construction and its ratio is infinite on every leg.  That is the only way a book passes the clause without having a margin bigger than a spread.
+
+## Pre-registered hypotheses
+H_EMPTY  clause leaves 0 of 9 committed 4b passes standing on path 4b: survivors = 3 -> FAIL
+H_DD     DD is the binding leg for a majority: {'DD': np.int64(9)} -> PASS
+H_MEDIAN median min-ratio < 1: 0.918 -> PASS
+H_RUNG   survivor count same at 10 and 25 bps: 3 vs 2 -> FAIL
+         survivors @10bps: ['b136-r620-gross065-W', 'u56-k8-qroll-q017-w1008-d100-g100', 'u56-v2band-gross100']
+         survivors @25bps: ['u56-k8-qroll-q017-w1008-d100-g100', 'u56-v2band-gross100']
+
+## Rule 8 walk-forward: choose on 2009-2016, evaluate on 2017+ untouched
+  IS-MINRATIO  SHELF picks b136-r620-gross065-W  (IS min-ratio 0.90, binding H1, IS Sharpe 1.254)
+      OOS 2017+  book 14.52% / 1.040 / -19.43%   SPY 15.33% / 0.877 / -33.72%   RULES v2 7.88% / 1.106 / -12.24%
+      OOS 4b PASS | OOS 4a FAIL | full-sample 4b PASS | full-sample CLAUSE PASS (full min-ratio 1.04)
+  IS-MINRATIO  GRID  picks B136-band0.08-g1.00  (IS min-ratio 0.95, binding DD, IS Sharpe 1.142)
+      OOS 2017+  book 11.05% / 1.097 / -19.50%   SPY 15.33% / 0.877 / -33.72%   RULES v2 7.88% / 1.106 / -12.24%
+      OOS 4b PASS | OOS 4a FAIL | full-sample 4b PASS | full-sample CLAUSE FAIL (full min-ratio 0.34)
+  IS-SHARPE    SHELF picks b136-r620-gross065-W  (IS min-ratio 0.90, binding H1, IS Sharpe 1.254)
+      OOS 2017+  book 14.52% / 1.040 / -19.43%   SPY 15.33% / 0.877 / -33.72%   RULES v2 7.88% / 1.106 / -12.24%
+      OOS 4b PASS | OOS 4a FAIL | full-sample 4b PASS | full-sample CLAUSE PASS (full min-ratio 1.04)
+  IS-SHARPE    GRID  picks B136-band0.08-g1.00  (IS min-ratio 0.95, binding DD, IS Sharpe 1.142)
+      OOS 2017+  book 11.05% / 1.097 / -19.50%   SPY 15.33% / 0.877 / -33.72%   RULES v2 7.88% / 1.106 / -12.24%
+      OOS 4b PASS | OOS 4a FAIL | full-sample 4b PASS | full-sample CLAUSE FAIL (full min-ratio 0.34)
+H_WF     IS and FULL agree on the clause verdict for a majority of books: 33/45 -> PASS
+
+## Control: the same clause on the never-selected GRID ladder (10 bps)
+  GRID books 36; 4b passes at k=0: 19; of those, clause survivors: 9
+  GRID 4b-pass min-ratios: median 0.970, max 1.925; binding legs {'DD': np.int64(10), 'H2': np.int64(4), 'H1': np.int64(3), 'CAGR': np.int64(2)}
+
+## Summary
+  Committed 4b passes priced: 9 (SHELF).  Pass 4b at their own published calendar k=0: 9.
+  Pass 4b at EVERY offset of their own cadence: 7 of 9.
+  Survive the margin/spread >= 1 clause: 3 of 9.
+  Median min-ratio 0.918; binding leg census {'DD': np.int64(9)}.
+  4a: passes at k=0 0, clause survivors 0.
+
+[36.3s]
