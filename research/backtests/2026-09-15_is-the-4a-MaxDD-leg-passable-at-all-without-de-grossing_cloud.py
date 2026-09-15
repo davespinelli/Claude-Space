@@ -22,12 +22,16 @@ THE TWO LEGS OF THIS RUN
           and the binding leg are reported.  This is literally "the record's committed 4a passers
           with gross held at each arm's own nominal level".
     LEG 2 (PRICE, new)  503 ran ONE gross (0.75).  The queue's own tuned pair is (GROSS RUNG,
-          PANEL), so this run sweeps the rung and reports 4a at each, in both forms, with a
-          rule-8 walk-forward and both KEEP paths.
+          PANEL), so this run sweeps the rung on the FULL panel and reports 4a at each, in both
+          forms, with a rule-8 walk-forward and both KEEP paths.
+    LEG 3 (PRICE, new)  the same sweep on the SUB-PANEL DRAW population — 503's 4a passers are all
+          k-name draws, where n_elig < n often and the NOM form de-grosses hard.  This is the only
+          population in which a NOM 4a pass exists, so it is the only one on which the cash-blend
+          control can be tested.
 
 TUNED PARAMETERS (PROTOCOL rule 4 — exactly two, the queue's own)
     1. gross rung g  in {0.10, 0.25, 0.40, 0.50, 0.75, 1.00}
-    2. panel         in {B136, SMALL431}
+    2. panel         in {B136, SMALL663}
 REPORTING AXES, every point published, never selected on:
     n     in {5, 10, 15, 20, 30, 40}     (503's own book-size axis)
     form  in {NOM, MATCH}                (503's own form axis)
@@ -39,8 +43,8 @@ THE BOOK (idea 78/83/486/503's CAND-n, verbatim)
     MATCH      w = g / min(n, n_elig_t)         — same names, same ranks, gross held at g
     cadence    weekly (freq="W"), next-day execution, 10 bps per unit turnover, no shorting,
                no leverage
-    panels     B136 = universe_broad.json; SMALL431 = the sub-$2B panel with every ticker whose
-               data/small_meta.csv max_1d_move >= 1.0 DROPPED FIRST (483 -> 431 names)
+    panels     B136 = universe_broad.json; SMALL663 = the sub-$2B panel with every ticker whose
+               data/small_meta.csv max_1d_move >= 1.0 DROPPED FIRST (715 -> 663 names)
 
 THE CASH-BLEND CONTROL (the decisive one)
     For every (panel, g, n) NOM arm, its STATIC CASH BLEND is the MATCH book at the SAME nominal
@@ -83,10 +87,10 @@ GATES (printed before any verdict is read)
     G2  the committed 503 grid loads with its published shape (6,000 rows x 172 cols) and its
         NOM/MATCH realised gross columns behave as documented (NOM <= MATCH at every n) bar exact
     G3  H_REPRO: this run's re-derived 4a counts off the committed grid equal 145 / 0    bar exact
-    G4  determinism: no RNG outside the seeded sub-panel draws; a repeated cell reproduces  bar 0
+    G4  determinism: no RNG outside the seeded LEG-3 draws; a LEG-2 cell recomputed      bar 0
     G5  the live RULES v2 comparand on each panel is printed before any arm is scored
 
-SURVIVORSHIP (PROTOCOL rule 9): B136 is universe_broad.json's CURRENT constituents and SMALL431 is
+SURVIVORSHIP (PROTOCOL rule 9): B136 is universe_broad.json's CURRENT constituents and SMALL663 is
 the CURRENT sub-$2B screen — both are survivor lists, so every CAGR level is optimistic and every
 MaxDD level is understated.  That bias makes the 4a DD leg EASIER here than it would be on a
 point-in-time panel, so a finding that it is still unpassable at matched gross is conservative.
@@ -118,7 +122,7 @@ IS_END, OOS_START = "2016-12-31", "2017-01-01"
 WARMUP = 260
 
 GROSSES = [0.10, 0.25, 0.40, 0.50, 0.75, 1.00]     # tuned axis 1
-PANELS = ["B136", "SMALL431"]                      # tuned axis 2
+PANELS = ["B136", "SMALL663"]                      # tuned axis 2
 NS = [5, 10, 15, 20, 30, 40]                       # reporting axis
 FORMS = ["NOM", "MATCH"]                           # reporting axis
 K_DRAW = 40
@@ -179,7 +183,7 @@ def trip(r):
     return m["CAGR"], m["Sharpe"], m["MaxDD"]
 
 
-def load_small431():
+def load_small663():
     """The sub-$2B panel with every max_1d_move >= 1.0 ticker DROPPED FIRST (run mandate)."""
     px = load_universe(small=True)
     meta = pd.read_csv(REPO / "data" / "small_meta.csv")
@@ -268,12 +272,12 @@ def main():
 
     # the live RULES v2 comparand on each panel, at 503's own gross rung and sample
     px136 = load_universe(broad=True)
-    px431, dropped = load_small431()
-    log(f"\n  SMALL431: dropped {len(dropped)} tickers with max_1d_move >= 1.0 from "
-        f"data/small_meta.csv -> {px431.shape[1] - 1} names + SPY "
+    px663, dropped = load_small663()
+    log(f"\n  SMALL663: dropped {len(dropped)} tickers with max_1d_move >= 1.0 from "
+        f"data/small_meta.csv -> {px663.shape[1] - 1} names + SPY "
         f"(SURVIVORSHIP: current constituents only — data/SMALL_PANEL_README.md)")
     PX = {"B136": (px136, [c for c in px136.columns]),
-          "SMALL431": (px431, [c for c in px431.columns if c != "SPY"])}
+          "SMALL663": (px663, [c for c in px663.columns if c != "SPY"])}
 
     log("\n  G5 the live RULES v2 comparand and SPY on each panel (10 bps, weekly, t+1)")
     V2, SPYR, START, B4A, B4B = {}, {}, {}, {}, {}
@@ -488,21 +492,90 @@ def main():
         f"DD leg alone {int(lo['dd_leg'].sum())} of {len(lo)} (vs {int(hi['dd_leg'].sum())} of "
         f"{len(hi)} at g >= 0.50)")
 
-    # H_BLEND
-    key = ["panel", "gross", "n"]
-    piv = A.pivot_table(index=key, columns="form", values="p4a")
+    # ================================================================ LEG 3 — THE DRAW POPULATION
+    log("\n" + "=" * 100)
+    log("LEG 3 — THE SUB-PANEL DRAW POPULATION (where the record's 4a passers actually live)")
+    log("=" * 100)
+    log(f"  LEG 2 is a FULL-panel sweep, where n_elig >= n on almost every day, so the NOM form")
+    log(f"  barely de-grosses (realised gross within 1% of MATCH at every rung) and no NOM 4a")
+    log(f"  cell exists to test the cash blend against.  Idea 503's 4a passers are all k-name")
+    log(f"  SUB-PANEL draws, where n_elig < n often and NOM de-grosses hard.  This leg rebuilds")
+    log(f"  that population at every rung: {N_DRAW} draws of k={K_DRAW} names per panel, 503's")
+    log(f"  own generator shape, seeded per (panel, k) so the draws are reproducible.")
+    d_rows = []
+    for pn, (p, cols) in PX.items():
+        st = START[pn]
+        bp4a, bp4b = B4A[pn], B4B[pn]
+        wm_full = rebalance_mask(p.index, FREQ).values
+        rng = np.random.default_rng(SEED + hash(pn) % 1000)
+        for d in range(N_DRAW):
+            pick = list(rng.choice(cols, size=K_DRAW, replace=False))
+            keep = list(dict.fromkeys(pick + (["SPY"] if "SPY" in p.columns else [])))
+            q = p[keep].dropna(how="all").ffill()
+            s, above, vol20 = score(q, vol_scale=False)
+            elig = (above & (vol20 < MAX_VOL)).copy()
+            drop = [c for c in q.columns if c not in set(pick)]
+            if drop:
+                elig[drop] = False
+            rank = s.where(elig).rank(axis=1, ascending=False)
+            ne_t = elig.sum(axis=1)
+            wmq = rebalance_mask(q.index, FREQ).values
+            for g in GROSSES:
+                for n in NS:
+                    sel = (rank <= n).astype(float)
+                    denom = np.minimum(ne_t, n).replace(0, np.nan)
+                    wN = sel * (g / n)
+                    wM = sel.div(denom, axis=0).mul(g).fillna(0.0)
+                    grN = float(wN[wmq].sum(axis=1).loc[st:].mean())
+                    grM = float(wM[wmq].sum(axis=1).loc[st:].mean())
+                    lam = grN / grM if grM else np.nan
+                    wB = wM * lam
+                    for form, w, gr in [("NOM", wN, grN), ("MATCH", wM, grM),
+                                        ("BLEND", wB, grN)]:
+                        r = fast_backtest(q, w).loc[st:]
+                        t4a, t4b = test_4a(r, bp4a), test_4b(r, bp4b)
+                        c, sh, dd = trip(r)
+                        d_rows.append(dict(panel=pn, draw=d, gross=g, n=n, form=form,
+                                           realised_gross=gr, CAGR=c, Sharpe=sh, MaxDD=dd,
+                                           p4a=all(t4a.values()), dd_leg=t4a["DD"],
+                                           fail4a=fails(t4a), p4b=all(t4b.values())))
+    D = pd.DataFrame(d_rows)
+    D.to_csv(f"{OUT}.draws.csv.gz", index=False, compression="gzip")
+    log(f"\n  {len(D)} draw-books = 2 panels x {N_DRAW} draws x {len(GROSSES)} rungs x "
+        f"{len(NS)} n x 3 forms.  All in .draws.csv.gz.")
+    dagg = D.groupby(["panel", "form", "gross"]).agg(
+        books=("p4a", "size"), p4a=("p4a", "sum"), dd_leg=("dd_leg", "sum"), p4b=("p4b", "sum"),
+        med_gross=("realised_gross", "median"), med_MaxDD=("MaxDD", "median"),
+        med_Sharpe=("Sharpe", "median"))
+    log("\n  4a / DD-leg / 4b counts per (panel, form, rung) — EVERY cell reported")
+    log("    " + dagg.to_string(float_format=lambda x: f"{x:.4f}").replace("\n", "\n    "))
+    dn = D.groupby(["panel", "form", "n"]).agg(
+        books=("p4a", "size"), p4a=("p4a", "sum"), dd_leg=("dd_leg", "sum"),
+        med_gross=("realised_gross", "median"))
+    log("\n  the same, by book size n")
+    log("    " + dn.to_string(float_format=lambda x: f"{x:.4f}").replace("\n", "\n    "))
+
+    # H_BLEND — tested on the draw population, cell by cell
+    key = ["panel", "draw", "gross", "n"]
+    piv = D.pivot_table(index=key, columns="form", values="p4a")
     nom_cells = piv[piv["NOM"] == True]                                   # noqa: E712
     if len(nom_cells):
         agree = int((nom_cells["BLEND"] == True).sum())                    # noqa: E712
+        match_agree = int((nom_cells["MATCH"] == True).sum())              # noqa: E712
         h_blend = agree / len(nom_cells) >= 0.80
-        log(f"\n  H_BLEND  the static cash blend clears 4a at {agree}/{len(nom_cells)} = "
-            f"{agree/len(nom_cells):.1%} of the cells where the NOM arm clears it -> "
+        log(f"\n  H_BLEND  of the {len(nom_cells)} draw-books where the DE-GROSSING (NOM) arm "
+            f"clears 4a:")
+        log(f"    the STATIC CASH BLEND at the same realised exposure clears it at "
+            f"{agree}/{len(nom_cells)} = {agree/len(nom_cells):.1%}  -> "
             f"{'PASS' if h_blend else 'FAIL'}")
+        log(f"    the MATCHED-GROSS arm (same names, gross held at nominal) clears it at "
+            f"{match_agree}/{len(nom_cells)} = {match_agree/len(nom_cells):.1%}")
+        log("    => the de-grossing carries NO timing information: a static cash blend at the "
+            "same exposure buys the same 4a pass." if h_blend else
+            "    => the blend does NOT reproduce the pass, so the de-grossing's TIMING matters.")
     else:
         h_blend = False
-        log("\n  H_BLEND  no NOM 4a cells in LEG 2 — the hypothesis is vacuous: FAIL")
-        log("    (that is itself the finding: at these rungs even the de-grossing form does not "
-            "clear 4a on the full panel)")
+        log("\n  H_BLEND  no NOM 4a draw-books at any rung — the hypothesis is vacuous: FAIL")
 
     # H_4B_SPLIT
     split = A[(A.form == "MATCH") & (A.p4b) & (~A.p4a)]
@@ -626,7 +699,7 @@ def main():
         "beside the arm's REALISED MEAN GROSS and beside the live rules' own. A 4a pass whose "
         "arm holds materially less than the comparand is an EXPOSURE pass and must be labelled "
         "one; the matched-gross reading of the same book is to be published beside it.")
-    log("\n  SURVIVORSHIP (PROTOCOL rule 9): B136 and SMALL431 are CURRENT-constituent lists, so "
+    log("\n  SURVIVORSHIP (PROTOCOL rule 9): B136 and SMALL663 are CURRENT-constituent lists, so "
         "every MaxDD level above is understated and the 4a DD leg is EASIER here than on a "
         "point-in-time panel — a negative finding is therefore conservative.")
     log(f"\n  runtime {time.time() - t0:.1f}s")

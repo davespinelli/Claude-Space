@@ -9,13 +9,13 @@ LEG 1 — THE CENSUS ON IDEA 503's COMMITTED 72,000 BOOK-ROWS (zero new backtest
   idea 503 grid: 6000 rows x 172 cols   panels ['B136', 'SMALL484']   k [np.int64(20), np.int64(40), np.int64(80)]
   G2 committed-grid shape (6000, 172) (published 6000 x 172) and NOM gross <= MATCH gross at every n: PASS
 
-  SMALL431: dropped 52 tickers with max_1d_move >= 1.0 from data/small_meta.csv -> 663 names + SPY (SURVIVORSHIP: current constituents only — data/SMALL_PANEL_README.md)
+  SMALL663: dropped 52 tickers with max_1d_move >= 1.0 from data/small_meta.csv -> 663 names + SPY (SURVIVORSHIP: current constituents only — data/SMALL_PANEL_README.md)
 
   G5 the live RULES v2 comparand and SPY on each panel (10 bps, weekly, t+1)
     B136      sample 2009-01-13 -> 2026-09-11 (4443 d)
       RULES v2    7.98% /  1.0993 /  -12.24%   halves 1.2348 / 0.9658   -> 4a bars: H1 > 1.2348, H2 > 0.9658, MaxDD >= -12.24%
       SPY        15.16% /  0.8861 /  -33.72%   -> 4b bars: H1 > 0.9596, H2 > 0.8259, OOS > 0.8767, |MaxDD| <= 20.23%, CAGR >= 10.61%
-    SMALL431  sample 2011-01-13 -> 2026-09-11 (3938 d)
+    SMALL663  sample 2011-01-13 -> 2026-09-11 (3938 d)
       RULES v2    4.30% /  0.6637 /  -13.89%   halves 0.8063 / 0.5552   -> 4a bars: H1 > 0.8063, H2 > 0.5552, MaxDD >= -13.89%
       SPY        14.06% /  0.8581 /  -33.72%   -> 4b bars: H1 > 0.9138, H2 > 0.8344, OOS > 0.8767, |MaxDD| <= 20.23%, CAGR >= 9.84%
 
@@ -283,7 +283,7 @@ LEG 2 — THE GROSS-RUNG SWEEP (new books; the queue's own tuned pair = rung x p
             0.75     0       0    1    -0.2087     0.7406
             1.00     0       0    0    -0.2724     0.9875
 
-  === SMALL431 ===  (4a bars: H1 > 0.8063, H2 > 0.5552, MaxDD >= -13.89%)
+  === SMALL663 ===  (4a bars: H1 > 0.8063, H2 > 0.5552, MaxDD >= -13.89%)
 
     Sharpe — NOM (rows = nominal gross, cols = n)
       n         5      10     15     20     30     40
@@ -514,8 +514,102 @@ LEG 2 — THE GROSS-RUNG SWEEP (new books; the queue's own tuned pair = rung x p
   H_RUNG (MATCH-form 4a passes = 0 at every rung g >= 0.50, both panels): 0 passes -> PASS
     for contrast, MATCH-form 4a passes at g < 0.50: 0 of 36; DD leg alone 28 of 36 (vs 0 of 36 at g >= 0.50)
 
-  H_BLEND  no NOM 4a cells in LEG 2 — the hypothesis is vacuous: FAIL
-    (that is itself the finding: at these rungs even the de-grossing form does not clear 4a on the full panel)
+====================================================================================================
+LEG 3 — THE SUB-PANEL DRAW POPULATION (where the record's 4a passers actually live)
+====================================================================================================
+  LEG 2 is a FULL-panel sweep, where n_elig >= n on almost every day, so the NOM form
+  barely de-grosses (realised gross within 1% of MATCH at every rung) and no NOM 4a
+  cell exists to test the cash blend against.  Idea 503's 4a passers are all k-name
+  SUB-PANEL draws, where n_elig < n often and NOM de-grosses hard.  This leg rebuilds
+  that population at every rung: 120 draws of k=40 names per panel, 503's
+  own generator shape, seeded per (panel, k) so the draws are reproducible.
+
+  25920 draw-books = 2 panels x 120 draws x 6 rungs x 6 n x 3 forms.  All in .draws.csv.gz.
+
+  4a / DD-leg / 4b counts per (panel, form, rung) — EVERY cell reported
+                          books  p4a  dd_leg  p4b  med_gross  med_MaxDD  med_Sharpe
+    panel    form  gross                                                           
+    B136     BLEND 0.10     720   23     720    0     0.0941    -0.0272      0.9336
+                   0.25     720   24     717    0     0.2352    -0.0670      0.9340
+                   0.40     720   24     540    1     0.3763    -0.1058      0.9345
+                   0.50     720   22     267    6     0.4704    -0.1312      0.9346
+                   0.75     720    5      37  104     0.7056    -0.1925      0.9351
+                   1.00     720    0       0   37     0.9408    -0.2510      0.9356
+             MATCH 0.10     720   23     720    0     0.0994    -0.0296      0.9336
+                   0.25     720   24     717    0     0.2486    -0.0729      0.9339
+                   0.40     720   24     472    1     0.3977    -0.1150      0.9345
+                   0.50     720   12     103   12     0.4971    -0.1424      0.9346
+                   0.75     720    0       0  140     0.7457    -0.2085      0.9351
+                   1.00     720    0       0    3     0.9942    -0.2709      0.9360
+             NOM   0.10     720   34     720    0     0.0941    -0.0255      0.9693
+                   0.25     720   34     718    0     0.2352    -0.0631      0.9699
+                   0.40     720   33     614    1     0.3763    -0.0999      0.9699
+                   0.50     720   29     346    5     0.4704    -0.1240      0.9698
+                   0.75     720    8      75  137     0.7056    -0.1828      0.9697
+                   1.00     720    0       0   70     0.9408    -0.2394      0.9699
+    SMALL663 BLEND 0.10     720    0     720    0     0.0796    -0.0440      0.3665
+                   0.25     720    0     534    0     0.1991    -0.1082      0.3669
+                   0.40     720    0     253    0     0.3186    -0.1692      0.3676
+                   0.50     720    0     156    0     0.3982    -0.2082      0.3678
+                   0.75     720    0      30    0     0.5973    -0.3011      0.3679
+                   1.00     720    0       1    0     0.7964    -0.3858      0.3691
+             MATCH 0.10     720    0     720    0     0.0986    -0.0600      0.3665
+                   0.25     720    0     303    0     0.2465    -0.1454      0.3673
+                   0.40     720    0       3    0     0.3943    -0.2255      0.3678
+                   0.50     720    0       0    0     0.4929    -0.2762      0.3686
+                   0.75     720    0       0    0     0.7394    -0.3921      0.3690
+                   1.00     720    0       0    0     0.9858    -0.4941      0.3698
+             NOM   0.10     720    5     720    0     0.0796    -0.0371      0.3848
+                   0.25     720    5     607    0     0.1991    -0.0910      0.3853
+                   0.40     720    5     335    0     0.3186    -0.1436      0.3853
+                   0.50     720    3     242    0     0.3982    -0.1776      0.3856
+                   0.75     720    2      86    0     0.5973    -0.2573      0.3858
+                   1.00     720    1      19    0     0.7964    -0.3337      0.3855
+
+  the same, by book size n
+                       books  p4a  dd_leg  med_gross
+    panel    form  n                                
+    B136     BLEND 5     720    0     275     0.4390
+                   10    720    7     328     0.4340
+                   15    720   18     358     0.4262
+                   20    720   19     386     0.4174
+                   30    720   20     430     0.3820
+                   40    720   34     504     0.3028
+             MATCH 5     720    0     270     0.4413
+                   10    720    7     320     0.4439
+                   15    720   16     340     0.4449
+                   20    720   17     347     0.4461
+                   30    720   18     361     0.4471
+                   40    720   25     374     0.4472
+             NOM   5     720    0     280     0.4390
+                   10    720    1     347     0.4340
+                   15    720   10     385     0.4262
+                   20    720   18     426     0.4174
+                   30    720   53     481     0.3820
+                   40    720   56     554     0.3028
+    SMALL663 BLEND 5     720    0     159     0.4325
+                   10    720    0     188     0.4032
+                   15    720    0     215     0.3588
+                   20    720    0     256     0.3208
+                   30    720    0     386     0.2259
+                   40    720    0     490     0.1694
+             MATCH 5     720    0     155     0.4423
+                   10    720    0     167     0.4435
+                   15    720    0     173     0.4428
+                   20    720    0     179     0.4423
+                   30    720    0     176     0.4421
+                   40    720    0     176     0.4421
+             NOM   5     720    0     168     0.4325
+                   10    720    0     218     0.4032
+                   15    720    3     268     0.3588
+                   20    720    7     323     0.3208
+                   30    720    5     466     0.2259
+                   40    720    6     566     0.1694
+
+  H_BLEND  of the 159 draw-books where the DE-GROSSING (NOM) arm clears 4a:
+    the STATIC CASH BLEND at the same realised exposure clears it at 58/159 = 36.5%  -> FAIL
+    the MATCHED-GROSS arm (same names, gross held at nominal) clears it at 51/159 = 32.1%
+    => the blend does NOT reproduce the pass, so the de-grossing's TIMING matters.
 
   H_4B_SPLIT  matched-gross arms that PASS 4b and FAIL 4a: 1 on 1 panel(s) -> PASS
     panel  gross  n   CAGR  Sharpe   MaxDD   fail4a
@@ -529,7 +623,7 @@ RULE 8 WALK-FORWARD — the RUNG chosen on 2009-2016 ALONE, 2017-2026 read ONCE
     SPY IS MaxDD -22.06%  ->  C2 cap |IS MaxDD| <= 13.24%
     OOS comparands: RULES v2 7.88% / 1.1059 / -12.24%   SPY 15.33% / 0.8767 / -33.72%
 
-  SMALL431:  IS 2011-01-13 -> 2016-12-31   OOS 2017-01-01 -> 2026-09-11
+  SMALL663:  IS 2011-01-13 -> 2016-12-31   OOS 2017-01-01 -> 2026-09-11
     SPY IS MaxDD -18.61%  ->  C2 cap |IS MaxDD| <= 11.16%
     OOS comparands: RULES v2 3.75% / 0.5600 / -13.89%   SPY 15.33% / 0.8767 / -33.72%
 
@@ -571,42 +665,42 @@ RULE 8 WALK-FORWARD — the RUNG chosen on 2009-2016 ALONE, 2017-2026 read ONCE
         B136 BLEND 30      C2 0.1000     1.0280   -0.0172    0.0154      0.8930    -0.0282    False       H1    False       H1,CAGR
         B136 BLEND 40      C1 1.0000     1.0162   -0.1620    0.1530      0.9639    -0.2441    False    H1,DD    False            DD
         B136 BLEND 40      C2 0.1000     1.0110   -0.0169    0.0154      0.9640    -0.0262    False       H1    False          CAGR
-    SMALL431   NOM  5      C1 0.1000     0.3105   -0.0366    0.0093      0.2855    -0.0976    False       H2    False       H2,CAGR
-    SMALL431   NOM  5      C2 0.1000     0.3105   -0.0366    0.0093      0.2855    -0.0976    False       H2    False       H2,CAGR
-    SMALL431   NOM 10      C1 1.0000     0.5780   -0.2624    0.0829      0.4280    -0.3905    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431   NOM 10      C2 0.1000     0.5701   -0.0287    0.0112      0.4201    -0.0448    False    H1,H2    False    H1,H2,CAGR
-    SMALL431   NOM 15      C1 1.0000     0.5921   -0.2572    0.0729      0.4101    -0.4057    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431   NOM 15      C2 0.1000     0.5863   -0.0277    0.0096      0.4019    -0.0463    False    H1,H2    False    H1,H2,CAGR
-    SMALL431   NOM 20      C1 1.0000     0.5533   -0.2600    0.0923      0.5011    -0.3412    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431   NOM 20      C2 0.1000     0.5455   -0.0283    0.0111      0.4948    -0.0368    False    H1,H2    False    H1,H2,CAGR
-    SMALL431   NOM 30      C1 1.0000     0.4422   -0.2546    0.0596      0.3794    -0.3689    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431   NOM 30      C2 0.1000     0.4364   -0.0278    0.0078      0.3787    -0.0382    False    H1,H2    False    H1,H2,CAGR
-    SMALL431   NOM 40      C1 1.0000     0.3798   -0.2667    0.0623      0.4007    -0.3740    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431   NOM 40      C2 0.1000     0.3742   -0.0294    0.0079      0.4031    -0.0394    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 MATCH  5      C1 0.1000     0.3105   -0.0366    0.0095      0.2906    -0.0976    False       H2    False       H2,CAGR
-    SMALL431 MATCH  5      C2 0.1000     0.3105   -0.0366    0.0095      0.2906    -0.0976    False       H2    False       H2,CAGR
-    SMALL431 MATCH 10      C1 1.0000     0.5780   -0.2624    0.0852      0.4358    -0.3905    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 MATCH 10      C2 0.1000     0.5701   -0.0287    0.0114      0.4278    -0.0448    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 MATCH 15      C1 1.0000     0.5921   -0.2572    0.0713      0.4023    -0.4057    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 MATCH 15      C2 0.1000     0.5863   -0.0277    0.0095      0.3932    -0.0463    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 MATCH 20      C1 1.0000     0.5533   -0.2600    0.0888      0.4824    -0.3991    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 MATCH 20      C2 0.1000     0.5455   -0.0283    0.0108      0.4750    -0.0446    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 MATCH 30      C1 1.0000     0.4422   -0.2546    0.0557      0.3586    -0.4139    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 MATCH 30      C2 0.1000     0.4364   -0.0278    0.0075      0.3560    -0.0469    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 MATCH 40      C1 1.0000     0.3798   -0.2667    0.0593      0.3812    -0.3988    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 MATCH 40      C2 0.1000     0.3742   -0.0294    0.0077      0.3816    -0.0453    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 BLEND  5      C1 0.1000     0.3105   -0.0365    0.0095      0.2906    -0.0973    False       H2    False       H2,CAGR
-    SMALL431 BLEND  5      C2 0.1000     0.3105   -0.0365    0.0095      0.2906    -0.0973    False       H2    False       H2,CAGR
-    SMALL431 BLEND 10      C1 1.0000     0.5779   -0.2614    0.0850      0.4357    -0.3891    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 BLEND 10      C2 0.1000     0.5701   -0.0286    0.0114      0.4278    -0.0446    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 BLEND 15      C1 1.0000     0.5921   -0.2560    0.0711      0.4023    -0.4038    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 BLEND 15      C2 0.1000     0.5863   -0.0275    0.0094      0.3932    -0.0460    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 BLEND 20      C1 1.0000     0.5533   -0.2586    0.0885      0.4824    -0.3971    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 BLEND 20      C2 0.1000     0.5455   -0.0281    0.0107      0.4750    -0.0444    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 BLEND 30      C1 1.0000     0.4421   -0.2531    0.0555      0.3586    -0.4115    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 BLEND 30      C2 0.1000     0.4364   -0.0276    0.0075      0.3560    -0.0466    False    H1,H2    False    H1,H2,CAGR
-    SMALL431 BLEND 40      C1 1.0000     0.3797   -0.2649    0.0590      0.3812    -0.3961    False H1,H2,DD    False H1,H2,DD,CAGR
-    SMALL431 BLEND 40      C2 0.1000     0.3742   -0.0292    0.0077      0.3816    -0.0450    False    H1,H2    False    H1,H2,CAGR
+    SMALL663   NOM  5      C1 0.1000     0.3105   -0.0366    0.0093      0.2855    -0.0976    False       H2    False       H2,CAGR
+    SMALL663   NOM  5      C2 0.1000     0.3105   -0.0366    0.0093      0.2855    -0.0976    False       H2    False       H2,CAGR
+    SMALL663   NOM 10      C1 1.0000     0.5780   -0.2624    0.0829      0.4280    -0.3905    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663   NOM 10      C2 0.1000     0.5701   -0.0287    0.0112      0.4201    -0.0448    False    H1,H2    False    H1,H2,CAGR
+    SMALL663   NOM 15      C1 1.0000     0.5921   -0.2572    0.0729      0.4101    -0.4057    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663   NOM 15      C2 0.1000     0.5863   -0.0277    0.0096      0.4019    -0.0463    False    H1,H2    False    H1,H2,CAGR
+    SMALL663   NOM 20      C1 1.0000     0.5533   -0.2600    0.0923      0.5011    -0.3412    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663   NOM 20      C2 0.1000     0.5455   -0.0283    0.0111      0.4948    -0.0368    False    H1,H2    False    H1,H2,CAGR
+    SMALL663   NOM 30      C1 1.0000     0.4422   -0.2546    0.0596      0.3794    -0.3689    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663   NOM 30      C2 0.1000     0.4364   -0.0278    0.0078      0.3787    -0.0382    False    H1,H2    False    H1,H2,CAGR
+    SMALL663   NOM 40      C1 1.0000     0.3798   -0.2667    0.0623      0.4007    -0.3740    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663   NOM 40      C2 0.1000     0.3742   -0.0294    0.0079      0.4031    -0.0394    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 MATCH  5      C1 0.1000     0.3105   -0.0366    0.0095      0.2906    -0.0976    False       H2    False       H2,CAGR
+    SMALL663 MATCH  5      C2 0.1000     0.3105   -0.0366    0.0095      0.2906    -0.0976    False       H2    False       H2,CAGR
+    SMALL663 MATCH 10      C1 1.0000     0.5780   -0.2624    0.0852      0.4358    -0.3905    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 MATCH 10      C2 0.1000     0.5701   -0.0287    0.0114      0.4278    -0.0448    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 MATCH 15      C1 1.0000     0.5921   -0.2572    0.0713      0.4023    -0.4057    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 MATCH 15      C2 0.1000     0.5863   -0.0277    0.0095      0.3932    -0.0463    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 MATCH 20      C1 1.0000     0.5533   -0.2600    0.0888      0.4824    -0.3991    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 MATCH 20      C2 0.1000     0.5455   -0.0283    0.0108      0.4750    -0.0446    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 MATCH 30      C1 1.0000     0.4422   -0.2546    0.0557      0.3586    -0.4139    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 MATCH 30      C2 0.1000     0.4364   -0.0278    0.0075      0.3560    -0.0469    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 MATCH 40      C1 1.0000     0.3798   -0.2667    0.0593      0.3812    -0.3988    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 MATCH 40      C2 0.1000     0.3742   -0.0294    0.0077      0.3816    -0.0453    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 BLEND  5      C1 0.1000     0.3105   -0.0365    0.0095      0.2906    -0.0973    False       H2    False       H2,CAGR
+    SMALL663 BLEND  5      C2 0.1000     0.3105   -0.0365    0.0095      0.2906    -0.0973    False       H2    False       H2,CAGR
+    SMALL663 BLEND 10      C1 1.0000     0.5779   -0.2614    0.0850      0.4357    -0.3891    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 BLEND 10      C2 0.1000     0.5701   -0.0286    0.0114      0.4278    -0.0446    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 BLEND 15      C1 1.0000     0.5921   -0.2560    0.0711      0.4023    -0.4038    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 BLEND 15      C2 0.1000     0.5863   -0.0275    0.0094      0.3932    -0.0460    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 BLEND 20      C1 1.0000     0.5533   -0.2586    0.0885      0.4824    -0.3971    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 BLEND 20      C2 0.1000     0.5455   -0.0281    0.0107      0.4750    -0.0444    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 BLEND 30      C1 1.0000     0.4421   -0.2531    0.0555      0.3586    -0.4115    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 BLEND 30      C2 0.1000     0.4364   -0.0276    0.0075      0.3560    -0.0466    False    H1,H2    False    H1,H2,CAGR
+    SMALL663 BLEND 40      C1 1.0000     0.3797   -0.2649    0.0590      0.3812    -0.3961    False H1,H2,DD    False H1,H2,DD,CAGR
+    SMALL663 BLEND 40      C2 0.1000     0.3742   -0.0292    0.0077      0.3816    -0.0450    False    H1,H2    False    H1,H2,CAGR
 
   OOS pass counts by panel and form
                     cells  p4a_oos  p4b_oos
@@ -614,7 +708,7 @@ RULE 8 WALK-FORWARD — the RUNG chosen on 2009-2016 ALONE, 2017-2026 read ONCE
     B136     BLEND     12        0        0
              MATCH     12        0        0
              NOM       12        0        0
-    SMALL431 BLEND     12        0        0
+    SMALL663 BLEND     12        0        0
              MATCH     12        0        0
              NOM       12        0        0
 
@@ -639,6 +733,6 @@ VERDICT
   PROPOSED PROTOCOL WORDING (rule 6 — NOT applied here, for the Sunday review):
     PROTOCOL 4a, drawdown leg: 'MaxDD no worse than the live rules' must be quoted beside the arm's REALISED MEAN GROSS and beside the live rules' own. A 4a pass whose arm holds materially less than the comparand is an EXPOSURE pass and must be labelled one; the matched-gross reading of the same book is to be published beside it.
 
-  SURVIVORSHIP (PROTOCOL rule 9): B136 and SMALL431 are CURRENT-constituent lists, so every MaxDD level above is understated and the 4a DD leg is EASIER here than on a point-in-time panel — a negative finding is therefore conservative.
+  SURVIVORSHIP (PROTOCOL rule 9): B136 and SMALL663 are CURRENT-constituent lists, so every MaxDD level above is understated and the 4a DD leg is EASIER here than on a point-in-time panel — a negative finding is therefore conservative.
 
-  runtime 61.1s
+  runtime 545.0s
