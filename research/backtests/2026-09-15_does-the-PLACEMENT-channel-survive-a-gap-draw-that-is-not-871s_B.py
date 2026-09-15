@@ -827,20 +827,24 @@ def main():
     prov = None
     if REF885.exists():
         ref = pd.read_csv(REF885)
-        mrg = gap.merge(ref[key + list(G3_COLS.values()) + ["clean"]].rename(
-            columns={"clean": "clean885"}), on=key, how="inner")
+        # 885's frame shares column NAMES with this one (s_OP_DOM_10, ...), so every carried
+        # column is prefixed before the merge - otherwise pandas silently renames both sides
+        # to _x / _y and the comparison below cannot find them.
+        car = {c: f"ref885_{c}" for c in list(G3_COLS.values()) + ["clean"]}
+        mrg = gap.merge(ref[key + list(car)].rename(columns=car), on=key, how="inner")
         log(f"  merged on {len(mrg)} of {len(gap)} arms")
         g3b = 0.0
         for k, c in G3_COLS.items():
-            d = float((mrg[f"s_{k}_10"] - mrg[c]).abs().max())
+            d = float((mrg[f"s_{k}_10"] - mrg[f"ref885_{c}"]).abs().max())
             g3b = max(g3b, d)
             log(f"    {k:12s} vs 885's {c:16s} max per-arm |delta| {d:.3e}")
         log(f"  G3b worst per-arm |delta| {g3b:.3e}  bar 1e-12  "
             f"[{'PASS' if g3b < 1e-12 else 'FAIL'}]")
         # the ONE published quantity that does not reproduce, and exactly why
         v_own = signed("UNIF_REAL", sub=cl)[0]
-        v_885 = float(mrg.loc[mrg["clean885"].astype(bool), "s_UNIF_REAL_10"].median())
-        prov = (v_own, v_885, int(mrg["clean885"].astype(bool).sum()), int(cl.shape[0]))
+        c885 = mrg["ref885_clean"].astype(bool)
+        v_885 = float(mrg.loc[c885, "s_UNIF_REAL_10"].median())
+        prov = (v_own, v_885, int(c885.sum()), int(cl.shape[0]))
         log("\n  [PROVENANCE FINDING, reported not buried]  885 also published UG_REAL on its")
         log(f"  CLEAN arms as {PUB885['UNIF_REAL_clean']:+.5f}.  Re-read here on THIS run's clean flag it is "
             f"{v_own:+.5f}")
