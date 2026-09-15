@@ -1,0 +1,134 @@
+================================================================================================================
+GATES (printed before any hypothesis is read)
+================================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+[U56] 4704 days x 56 candidates (SPY IS a candidate), 2008-01-02..2026-09-14, 225 monthly rebalances, metrics from 2009-01-13
+  shelf: 82 books priced
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+[B136] 4703 days x 136 candidates (SPY IS a candidate), 2008-01-02..2026-09-11, 225 monthly rebalances, metrics from 2009-01-13
+  shelf: 82 books priced
+  SMALL: 716 columns -> 664 kept (52 dropped for max_1d_move >= 1.0)
+
+[SMALL] 4198 days x 663 candidates (SPY is NOT a candidate), 2010-01-04..2026-09-11, 201 monthly rebalances, metrics from 2011-01-13
+  shelf: 82 books priced
+
+  G1 beta non-decreasing in gross at fixed (family, k), all estimators: PASS (180 of 180 blocks monotone)
+  G2 100% SPY book through the engine: beta OLSD 1.0000, OLSM 1.0000, DOWN 1.0000; MaxDD gap 0.000 pp  -> PASS
+  G3 U56 MOM k=20 g=0.65 vs idea 879 memo (12.69% / 1.201 / -17.11%): 12.69% / 1.201 / -17.11%  -> PASS
+  G4 the estimators are different numbers: max |OLSD - DOWN| over the shelf = 0.1293, max |OLSD - OLSM| = 0.3285  -> PASS
+
+  shelf: 246 books (240 grid + 6 reference) over 3 panels
+
+================================================================================================================
+H_AFFINE — regress each shelf book's MaxDD on its own SPY beta.  Every block reported.
+================================================================================================================
+panel  est  n   slope  intercept     R2  resid_sd_pp  resid_max_pp  spyMaxDD  dd_cap
+  U56 OLSD 82 -0.3118    -0.0249 0.8909       2.2798       11.5097   -0.3372 -0.2023
+  U56 OLSM 82 -0.3142    -0.0173 0.8982       2.2025        9.7952   -0.3372 -0.2023
+  U56 DOWN 82 -0.3212    -0.0278 0.8846       2.3443       11.4567   -0.3372 -0.2023
+ B136 OLSD 82 -0.3185    -0.0421 0.8793       2.9101       11.4030   -0.3372 -0.2023
+ B136 OLSM 82 -0.3411    -0.0310 0.9185       2.3919        9.2151   -0.3372 -0.2023
+ B136 DOWN 82 -0.3211    -0.0431 0.8721       2.9960       11.5916   -0.3372 -0.2023
+SMALL OLSD 82 -0.4296    -0.1150 0.7044       7.2087       26.4812   -0.3372 -0.2023
+SMALL OLSM 82 -0.3743    -0.1016 0.7395       6.7666       27.6319   -0.3372 -0.2023
+SMALL DOWN 82 -0.4026    -0.1099 0.7218       6.9926       29.2070   -0.3372 -0.2023
+
+H_AFFINE (R2 >= 0.90 somewhere): CONFIRMED — max R2 0.9185 (B136/OLSM), min 0.7044; residual SD 2.20-7.21 pp of drawdown against DD caps of U56 -20.2 pp, B136 -20.2 pp, SMALL -20.2 pp
+
+================================================================================================================
+H_CAP — is the DD cap reproducible as a BETA CAP?  (best threshold b*, and where it errs)
+================================================================================================================
+panel  est  n  b_star  agreement  n_dd_ok  false_pass  false_fail  rho_spearman
+  U56 OLSD 82  0.5964     1.0000       68           0           0       -0.9249
+  U56 OLSM 82  0.5685     0.9878       68           0           1       -0.9448
+  U56 DOWN 82  0.5938     1.0000       68           0           0       -0.9228
+ B136 OLSD 82  0.4805     0.9512       48           4           0       -0.9316
+ B136 OLSM 82  0.4527     0.9634       48           2           1       -0.9480
+ B136 DOWN 82  0.4811     0.9634       48           3           0       -0.9254
+SMALL OLSD 82  0.2458     0.9146       23           6           1       -0.8410
+SMALL OLSM 82  0.2796     0.9268       23           3           3       -0.8572
+SMALL DOWN 82  0.2432     0.9146       23           4           3       -0.8455
+
+H_CAP (>= 95% agreement in EVERY block): REFUTED — agreement 0.9146-1.0000, 6 of 9 blocks at or above 0.95
+
+================================================================================================================
+H_RESID — does any book buy the DD cap with CONSTRUCTION rather than with de-grossing?
+================================================================================================================
+panel  est  fail_median_beta  n_dd_ok_above books
+  U56 OLSD            0.6709              0      
+  U56 OLSM            0.7034              0      
+  U56 DOWN            0.6517              0      
+ B136 OLSD            0.6650              0      
+ B136 OLSM            0.6298              0      
+ B136 DOWN            0.6477              0      
+SMALL OLSD            0.4684              0      
+SMALL OLSM            0.5889              0      
+SMALL DOWN            0.5177              0      
+
+H_RESID (no book clears the DD cap above the failers' median beta): CONFIRMED — the cap is bought with beta and nothing else — 0 such books across 9 blocks
+
+  DD-cap pass rate by gross (grid books only, all panels pooled):
+       books  dd_ok  cagr_ok   CAGR   MaxDD   beta  both
+gross                                                   
+0.25      60     60        0 0.0361 -0.0885 0.1638     0
+0.50      60     41       10 0.0719 -0.1713 0.3295     9
+0.75      60     23       31 0.1074 -0.2492 0.4975    13
+1.00      60     11       39 0.1424 -0.3222 0.6680     6
+
+================================================================================================================
+PROTOCOL RULE 8 WALK-FORWARD — b*, betas and the pick all fitted on IS only; OOS read once
+================================================================================================================
+panel  est    selector  b_star_IS  is_agree            picked  is_Sharpe  oos_CAGR  oos_Sharpe  oos_MaxDD  oos_dd  oos_cagr  oos_h1  oos_h2  oos_4b  full_4b  full_4a
+  U56 OLSD   PICK-BETA     0.5840    0.9878     MOM/k=5/g=0.5     1.2651    0.1072      0.8299    -0.1911    True      True    True   False   False     True    False
+  U56 OLSD   PICK-DDIS     0.5840    0.9878     MOM/k=5/g=0.5     1.2651    0.1072      0.8299    -0.1911    True      True    True   False   False     True    False
+  U56 OLSD PICK-SHARPE     0.5840    0.9878     MOM/k=5/g=1.0     1.2706    0.2099      0.8463    -0.3461   False      True    True   False   False    False    False
+  U56 OLSM   PICK-BETA     0.6522    0.9756    MOM/k=5/g=0.75     1.2679    0.1593      0.8381    -0.2724   False      True    True   False   False    False    False
+  U56 OLSM   PICK-DDIS     0.6522    0.9756     MOM/k=5/g=0.5     1.2651    0.1072      0.8299    -0.1911    True      True    True   False   False     True    False
+  U56 OLSM PICK-SHARPE     0.6522    0.9756     MOM/k=5/g=1.0     1.2706    0.2099      0.8463    -0.3461   False      True    True   False   False    False    False
+  U56 DOWN   PICK-BETA     0.5263    0.9756     MOM/k=5/g=0.5     1.2651    0.1072      0.8299    -0.1911    True      True    True   False   False     True    False
+  U56 DOWN   PICK-DDIS     0.5263    0.9756     MOM/k=5/g=0.5     1.2651    0.1072      0.8299    -0.1911    True      True    True   False   False     True    False
+  U56 DOWN PICK-SHARPE     0.5263    0.9756     MOM/k=5/g=1.0     1.2706    0.2099      0.8463    -0.3461   False      True    True   False   False    False    False
+ B136 OLSD   PICK-BETA     0.6570    0.9390   MOM/k=20/g=0.75     1.2382    0.1562      1.0009    -0.2611   False      True    True    True   False    False    False
+ B136 OLSD   PICK-DDIS     0.6570    0.9390   MOM/k=20/g=0.75     1.2382    0.1562      1.0009    -0.2611   False      True    True    True   False    False    False
+ B136 OLSD PICK-SHARPE     0.6570    0.9390    MOM/k=20/g=1.0     1.2433    0.2091      1.0057    -0.3368   False      True    True    True   False    False    False
+ B136 OLSM   PICK-BETA     0.6427    0.9512   MOM/k=20/g=0.75     1.2382    0.1562      1.0009    -0.2611   False      True    True    True   False    False    False
+ B136 OLSM   PICK-DDIS     0.6427    0.9512   MOM/k=20/g=0.75     1.2382    0.1562      1.0009    -0.2611   False      True    True    True   False    False    False
+ B136 OLSM PICK-SHARPE     0.6427    0.9512    MOM/k=20/g=1.0     1.2433    0.2091      1.0057    -0.3368   False      True    True    True   False    False    False
+ B136 DOWN   PICK-BETA     0.6365    0.9390   MOM/k=20/g=0.75     1.2382    0.1562      1.0009    -0.2611   False      True    True    True   False    False    False
+ B136 DOWN   PICK-DDIS     0.6365    0.9390   MOM/k=20/g=0.75     1.2382    0.1562      1.0009    -0.2611   False      True    True    True   False    False    False
+ B136 DOWN PICK-SHARPE     0.6365    0.9390    MOM/k=20/g=1.0     1.2433    0.2091      1.0057    -0.3368   False      True    True    True   False    False    False
+SMALL OLSD   PICK-BETA     0.4697    0.9268 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+SMALL OLSD   PICK-DDIS     0.4697    0.9268 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+SMALL OLSD PICK-SHARPE     0.4697    0.9268 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+SMALL OLSM   PICK-BETA     0.5504    0.9390 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+SMALL OLSM   PICK-DDIS     0.5504    0.9390 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+SMALL OLSM PICK-SHARPE     0.5504    0.9390 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+SMALL DOWN   PICK-BETA     0.5107    0.9390 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+SMALL DOWN   PICK-DDIS     0.5107    0.9390 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+SMALL DOWN PICK-SHARPE     0.5107    0.9390 LOWVOL/k=10/g=1.0     1.8290    0.0484      0.4512    -0.3622   False     False   False   False   False    False    False
+
+H_REACH: 0 of 27 IS-only selector picks clear 4b OUT OF SAMPLE (9 of them are the beta-cap selector's).
+
+OOS comparands (2017-01-01..), per panel:
+  U56: SPY CAGR 15.27% Sharpe 0.874 MaxDD -33.72%  |  RULES v2 live CAGR 9.46% Sharpe 1.277 MaxDD -12.05%  |  OOS 4b bars: DD cap -20.23%, CAGR floor 10.69%
+  B136: SPY CAGR 15.33% Sharpe 0.877 MaxDD -33.72%  |  RULES v2 live CAGR 7.88% Sharpe 1.106 MaxDD -12.24%  |  OOS 4b bars: DD cap -20.23%, CAGR floor 10.73%
+  SMALL: SPY CAGR 15.33% Sharpe 0.877 MaxDD -33.72%  |  RULES v2 live CAGR 3.75% Sharpe 0.559 MaxDD -13.89%  |  OOS 4b bars: DD cap -20.23%, CAGR floor 10.73%
+
+================================================================================================================
+VERDICT
+================================================================================================================
+  shelf books priced                    246
+  clear the 4b DD cap (full sample)     139
+  clear the 4b CAGR floor               80
+  clear BOTH                            28
+  clear all four 4b legs (full sample)  28
+  clear all four 4b legs (OOS window)   26
+  clear 4a vs RULES v2 live             2
+  reached by an IS-only selector OOS    0
+
+  H_AFFINE CONFIRMED | H_CAP REFUTED | H_RESID CONFIRMED | H_REACH REFUTED
+
+  VERDICT: PARK
+  (KEEP-candidate requires an IS-only selector to land on a book that clears 4b OOS.)
