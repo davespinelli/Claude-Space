@@ -131,3 +131,28 @@ prior-direction families have almost nothing left to be measured on once it is h
 
 **KILL for capital.** No RULES change, no PROTOCOL edit applied. `RULES.md`, `PROTOCOL.md`,
 `scan.py`, `bot.py` and `baseline.py` untouched. Follow-ups filed: 869, 870, 871.
+
+## Reconciliation with lane C's concurrent, independent run of the same idea
+
+Lane C ran idea 815 in parallel (commit `eef6ebf`, script `..._C.py`, 10,368 gated / 248,832
+placebo cells, 12 placebo kinds including a `BLOCKYEAR`/`BLOCKEP` factorial and a ±shift ladder);
+this run's commit landed second and neither saw the other's work. **The two runs agree on every
+substantive point, from independently written code and different episode boundaries**
+(C: COVID_TIGHT to 2020-04-07; here: to 2020-03-23):
+
+| | lane C | here |
+|---|---|---|
+| the queue's premise | **refuted** — the tails are calendar-disjoint | **refuted** — same |
+| CORR-HI de-grossed days in episodes | 0.2335 | 0.186 |
+| CORR-LO de-grossed days in episodes | 0.0000 | 0.001 |
+| CORR-LO under a calendar+run-length-preserving null | **+0.0468** (share 0.965), nearly doubles | **+0.0519** (share 0.965), +52% |
+| the four prior-direction families | **collapse, three flip sign** | **collapse, three flip sign** (4 of 4 removed) |
+| the claim under rule 8 | passes | CORR-LO is the 1 of 8 that persists (ρ +0.392/+0.468) |
+| the book | **4b 0 of 1,152, 4a 0** | **4b 0 of 432, 4a 0** |
+| verdict | KILL for capital | KILL for capital |
+
+The one difference worth naming: lane C reads the claim as passing rule 8 outright, while this run
+reports it as 1 of 8 families passing a ρ ≥ +0.30 bar — the same underlying fact (CORR-LO is the
+only family whose excess walks forward), stated against a stricter pre-registered bar here.
+Lane C additionally proposes a PROTOCOL line; this run files it as follow-up 871 instead. Neither
+run promotes a book.
