@@ -1,0 +1,12 @@
+# CONFIRMATION memo — the standing TOP20 4b candidate survives the start date (idea 898, cloud, 2026-09-15)
+
+1. **What was tested.** The 2026-09-04 shelf KEEP 4b book, unchanged and un-tuned: u56, composite of three momentum percentile ranks with **no vol scaler**, gate = above 200d MA and vol20 < 0.60, top 20 equal-weight at g/20, shortfall to cash never respread, monthly, t+1, 10 bps, g = 0.65 imported from idea 879.
+2. **The question.** Every committed 4b verdict on this book is read on the one 2009–2026 window plus its 2017+ tail. Does the pass survive being read on windows that start somewhere else?
+3. **Answer: YES at 10 years.** 91 of 93 rolling 10-year windows at monthly starts clear the three-leg in-window 4b (97.8%). The two failures are adjacent starts (2009-03, 2009-04), each failing exactly one leg (H1 Sharpe; CAGR floor).
+4. **Rule 8.** IS-only selector on window length (5y 37.8% vs 7y 76.9% on windows ending ≤ 2016-12-31) picks L = 7y; OOS windows starting ≥ 2017 pass **33 of 33**, zero leg failures. The book's own OOS: 14.38% / 1.2814 / −17.11% vs SPY 15.27% / 0.874 / −33.72%.
+5. **4a is dead on every window.** 0 of 93 windows at the headline cell and 0.000 in all 32 grid cells — the MaxDD leg against the low-vol live book, as the record's other growth candidates keep finding.
+6. **The real fragility is GROSS, not the start date.** At g = 0.75 the same 10-year grid drops to 86.0%, and all 13 new failures are the DD cap alone. At L = 5y it drops to 69.3% (10 bps) and 62.7% (25 bps). Short windows and high gross break this book; start dates do not.
+7. **RULES wording, if the Sunday review ever adopts it (unchanged from the shelf; this memo adds no clause):** *"Hold the 20 highest-composite instruments that are above their 200-day average with vol20 < 0.60, equal weight at 0.65/20 of NAV each; any shortfall stays in cash and is never respread. Rebalance monthly on the last trading day, fill at the next close."*
+8. **This memo proposes nothing new.** No parameter was chosen here; the only two tuned values are the reading window (length, step) and every grid point is published.
+9. **SURVIVORSHIP.** research/universe.json is the current constituent list, so both 4b level bars are easier here than on a point-in-time panel and every pass rate above is an **upper bound**.
+10. **Overlap.** 10-year windows at monthly starts share 119 of 120 months with their neighbours — 93 windows are not 93 independent trials, and no p-value is claimed. Rule 6: a rules change is a Sunday-review decision.
