@@ -1,0 +1,292 @@
+====================================================================================================
+IDEA 677 (lane B, 2026-09-15) -- is the GROSS WINDOW WIDTH a better 4b statistic than the 4b PASS?
+====================================================================================================
+  costs 10 bps | freq W | lag 1 | IS <= 2016-12-31 | OOS >= 2017-01-01
+  TUNED 1 rung resolution STEP [0.25, 0.1, 0.05] | TUNED 2 chooser size TOPK [1, 3, 5, 10]
+  reported axes: 3 panels x 4 families x 3 modes x 5 thetas + 3 RANDGATE + 1 ZEROSIG per panel
+
+====================================================================================================
+(D) PANELS
+====================================================================================================
+  SMALL: dropped 52 of 715 meta tickers with max_1d_move >= 1.0
+  U56          56 cols  2008-01-02 -> 2026-09-14  4,704 rows   warm-up start 2009-01-13   IS 2,007d  OOS 2,437d
+  B136        136 cols  2008-01-02 -> 2026-09-11  4,703 rows   warm-up start 2009-01-13   IS 2,007d  OOS 2,436d
+  SMALL663    664 cols  2010-01-04 -> 2026-09-11  4,198 rows   warm-up start 2011-01-13   IS 1,502d  OOS 2,436d
+
+====================================================================================================
+(G) GATES -- run and printed before any result number is read
+====================================================================================================
+  G1 TREND/ROW @0.75 == RULES v2 :  max|dW| 0.000e+00   max|dreturn| 1.041e-17   -> PASS
+  G2 fast run == engine.backtest :  max|dreturn| 6.939e-18   max|dturnover| 1.561e-16   -> PASS
+  G3a SPY U56 full        : 15.1302% / 0.8845 / -33.7173%  vs committed 15.16% / 0.8861 / -33.72%  -> PASS
+  G3b RULES v2 U56 full   : 8.6227% / 1.2013 / -12.0549%  vs committed 8.63% / 1.2018 / -12.05%  -> PASS
+  G4 ZEROSIG (g x SPY, 0 bps) cash-blend check:
+      g=0.25  CAGR 3.8623%   MaxDD -9.3605%   MaxDD/MaxDD(SPY) 0.2776
+      g=0.50  CAGR 7.6821%   MaxDD -18.0817%   MaxDD/MaxDD(SPY) 0.5363
+      g=0.75  CAGR 11.4436%   MaxDD -26.1915%   MaxDD/MaxDD(SPY) 0.7768
+      g=1.00  CAGR 15.1302%   MaxDD -33.7173%   MaxDD/MaxDD(SPY) 1.0000
+      -> PASS  (ratio ~ g within 0.06, CAGR monotone in g)
+  GATES G1-G4: ALL PASS  (G5 monotonicity and G6 determinism are printed with the ladder)
+
+====================================================================================================
+(B) THE BOOK POPULATION AND ITS GROSS LADDER
+====================================================================================================
+  finest ladder: 30 rungs, 0.05 -> 1.50 step 0.05
+  built 192 books x 30 rungs = 5,760 runs in 18.5s
+  wrote 2026-09-15_is-the-GROSS-WINDOW-WIDTH-a-better-4b-statistic-than-the-4b-PASS_B.ladder.csv  (5,760 rows, 12 cols)
+  G5 MONOTONICITY on the IS window, 192 books, 30 rungs:
+      MaxDD(g) non-increasing : 192/192 = 100.0%
+      CAGR(g)  non-decreasing : 190/192 = 99.0%
+      (the window is solved by LAST-rung / FIRST-rung crossing, which is defined regardless; non-monotone books are flagged in .books.csv)
+  G6 DETERMINISM: max|d| on a rebuilt book = 0.000e+00 -> PASS
+
+====================================================================================================
+(W) THE GROSS WINDOW  [g_min, g_max],  W = g_max - g_min   (IS window, 2009-2016)
+====================================================================================================
+  wrote 2026-09-15_is-the-GROSS-WINDOW-WIDTH-a-better-4b-statistic-than-the-4b-PASS_B.books.csv  (192 rows, 30 cols)
+  192 books: 180 gate books, 3 ZEROSIG, 9 RANDGATE
+
+  WIDTH distribution by rung resolution (gate books only, n=180):
+      STEP       min       p25    median       p75       max     W>=0  gmin NaN
+      0.25   -0.8606   -0.1313   -0.0521    0.1125    0.4448    76/180        21
+      0.10   -0.8612   -0.1319   -0.0522    0.1120    0.4447    76/180        21
+      0.05   -0.8613   -0.1321   -0.0523    0.1119    0.4447    76/180        21
+
+  H4 -- the ZEROSIG control (g x SPY): the queue's reference book, expected W < 0
+    U56        STEP 0.25: gmin 0.696 gmax 0.578 W -0.1186  STEP 0.10: gmin 0.696 gmax 0.576 W -0.1195  STEP 0.05: gmin 0.696 gmax 0.576 W -0.1196
+    B136       STEP 0.25: gmin 0.696 gmax 0.578 W -0.1186  STEP 0.10: gmin 0.696 gmax 0.576 W -0.1195  STEP 0.05: gmin 0.696 gmax 0.576 W -0.1196
+    SMALL663   STEP 0.25: gmin 0.695 gmax 0.590 W -0.1052  STEP 0.10: gmin 0.695 gmax 0.589 W -0.1055  STEP 0.05: gmin 0.695 gmax 0.589 W -0.1055
+    H4 -> PASS  (W < 0 on every panel at every rung resolution)
+
+  RANDGATE control (a seeded coin-flip gate at ~50% breadth):
+    median W@0.05 -0.2723   W>=0 in 0/9   vs gate books median -0.0523, W>=0 in 76/180
+
+  the binary PASS at the live gross 0.75 (gate books): IS 4b 33/180, OOS 4b 29/180, IS 4a 0/180, OOS 4a 0/180
+  IS 4b failing legs (gate books), most common first:
+           C    40   (H=half, D=DD cap, C=CAGR floor; '-' = passes all four)
+          HC    40   (H=half, D=DD cap, C=CAGR floor; '-' = passes all four)
+           -    33   (H=half, D=DD cap, C=CAGR floor; '-' = passes all four)
+           D    22   (H=half, D=DD cap, C=CAGR floor; '-' = passes all four)
+         HHC    17   (H=half, D=DD cap, C=CAGR floor; '-' = passes all four)
+         HDC    15   (H=half, D=DD cap, C=CAGR floor; '-' = passes all four)
+
+====================================================================================================
+(P) THE DECIDING TEST -- W_IS vs PASS_IS as predictors of the OUT-OF-SAMPLE book
+====================================================================================================
+  wrote 2026-09-15_is-the-GROSS-WINDOW-WIDTH-a-better-4b-statistic-than-the-4b-PASS_B.predict.csv  (30 rows, 8 cols)
+  Spearman / AUC of each statistic against the untouched 2017-2026 window.
+  (rho_W = the continuous WIDTH; rho_PASS = the binary 4b PASS read at the live gross;
+   for AUC rows both are Mann-Whitney AUCs against the OOS verdict, 0.5 = no information.)
+
+  --- GATE BOOKS (n=180) ---
+      STEP             target          W       PASS      |gap|  W better?
+      0.25         OOS_Sharpe     0.7514     0.5196    +0.2318  YES
+      0.25          OOS_MaxDD     0.2982    -0.0438    +0.2544  YES
+      0.25           OOS_CAGR     0.5824     0.5759    +0.0065  YES
+      0.25   AUC->PASS_OOS_4b     0.8212     0.8840    -0.0628  no
+      0.25   AUC->PASS_OOS_4a        nan        nan       +nan  no
+      0.10         OOS_Sharpe     0.7515     0.5196    +0.2319  YES
+      0.10          OOS_MaxDD     0.2981    -0.0438    +0.2543  YES
+      0.10           OOS_CAGR     0.5826     0.5759    +0.0067  YES
+      0.10   AUC->PASS_OOS_4b     0.8212     0.8840    -0.0628  no
+      0.10   AUC->PASS_OOS_4a        nan        nan       +nan  no
+      0.05         OOS_Sharpe     0.7515     0.5196    +0.2319  YES
+      0.05          OOS_MaxDD     0.2981    -0.0438    +0.2543  YES
+      0.05           OOS_CAGR     0.5826     0.5759    +0.0067  YES
+      0.05   AUC->PASS_OOS_4b     0.8212     0.8840    -0.0628  no
+      0.05   AUC->PASS_OOS_4a        nan        nan       +nan  no
+
+  --- ALL BOOKS (+controls) (n=192) ---
+      STEP             target          W       PASS      |gap|  W better?
+      0.25         OOS_Sharpe     0.7531     0.5185    +0.2346  YES
+      0.25          OOS_MaxDD     0.2701    -0.0450    +0.2251  YES
+      0.25           OOS_CAGR     0.5849     0.5685    +0.0165  YES
+      0.25   AUC->PASS_OOS_4b     0.8327     0.8862    -0.0535  no
+      0.25   AUC->PASS_OOS_4a        nan        nan       +nan  no
+      0.10         OOS_Sharpe     0.7532     0.5185    +0.2347  YES
+      0.10          OOS_MaxDD     0.2700    -0.0450    +0.2250  YES
+      0.10           OOS_CAGR     0.5851     0.5685    +0.0166  YES
+      0.10   AUC->PASS_OOS_4b     0.8327     0.8862    -0.0535  no
+      0.10   AUC->PASS_OOS_4a        nan        nan       +nan  no
+      0.05         OOS_Sharpe     0.7532     0.5185    +0.2347  YES
+      0.05          OOS_MaxDD     0.2700    -0.0450    +0.2250  YES
+      0.05           OOS_CAGR     0.5851     0.5685    +0.0166  YES
+      0.05   AUC->PASS_OOS_4b     0.8327     0.8862    -0.0535  no
+      0.05   AUC->PASS_OOS_4a        nan        nan       +nan  no
+
+  DECOMPOSITION -- W = g_max - g_min.  Which leg carries the prediction, and what is each
+  leg correlated with in sample?  (GATE BOOKS, STEP 0.05, Spearman.)
+                   predictor   OOS Sh   OOS DD  OOS CAGR |    IS DD  IS CAGR
+               W = gmax-gmin   0.7515   0.2981    0.5826 |   0.2567   0.5227
+          gmax  (DD-cap leg)   0.3181   0.8103   -0.1511 |   0.9576  -0.4944
+      gmin  (CAGR-floor leg)  -0.1749   0.5805   -0.5057 |   0.7610  -0.9088
+         PASS_IS_4b (binary)   0.5196  -0.0438    0.5759 |  -0.2006   0.5548
+                   IS_Sharpe   0.7126   0.0350    0.7361 |  -0.0595   0.7722
+                    IS_MaxDD   0.1160   0.7942   -0.3321 |   1.0000  -0.6149
+                     IS_CAGR   0.5102  -0.4736    0.7837 |  -0.6149   1.0000
+  wrote 2026-09-15_is-the-GROSS-WINDOW-WIDTH-a-better-4b-statistic-than-the-4b-PASS_B.decompose.csv  (7 rows, 6 cols)
+
+  H1 (W beats PASS on OOS Sharpe at every STEP) -> PASS
+  H2 (W beats PASS on OOS MaxDD at every STEP)   -> PASS
+  H3 (W beats PASS on AUC -> OOS 4b at every STEP) -> FAIL
+
+  SHUFFLE NULL on the headline statistic (STEP 0.05, GATE BOOKS, OOS Sharpe),
+  20 draws, seed 677: W_IS relabelled across books, OOS untouched.
+    real rho +0.7515   null min -0.1502 / med -0.0179 / max +0.0961   real is the 100% percentile of the null
+  wrote 2026-09-15_is-the-GROSS-WINDOW-WIDTH-a-better-4b-statistic-than-the-4b-PASS_B.null.csv  (20 rows, 2 cols)
+
+====================================================================================================
+(C) THE CAPITAL LEG -- PROTOCOL 8 walk-forward: both choosers fitted on 2009-2016 ALONE,
+    2017-2026 read ONCE per (STEP, k, chooser).  Every grid point reported.
+====================================================================================================
+  wrote 2026-09-15_is-the-GROSS-WINDOW-WIDTH-a-better-4b-statistic-than-the-4b-PASS_B.walkforward.csv  (48 rows, 26 cols)
+
+  OOS (2017-2026) blends. SPY/v2 columns are the SAME-PANEL benchmarks on the blend's own
+  index.  4b legs: H=half vs SPY, D=DD cap (<=60% of SPY), C=CAGR floor (>=70% of SPY).
+   STEP   k   chooser  gross  OOS CAGR  OOS Sh   OOS DD |  SPY Sh   SPY DD  v2 Sh |  4b  4a  fail
+   0.25   1     WIDTH   1.00    12.39%   1.163  -17.37% |   0.877  -33.72%  1.106 | YES  no     -
+   0.25   1  WIDTH@75   0.75     9.28%   1.165  -13.19% |   0.877  -33.72%  1.106 |  no  no     C
+   0.25   1      PASS   0.75    11.89%   1.060  -19.53% |   0.877  -33.72%  1.106 | YES  no     -
+   0.25   1  ISSHARPE   0.75    11.89%   1.060  -19.53% |   0.877  -33.72%  1.106 | YES  no     -
+   0.25   3     WIDTH   1.00    10.60%   1.140  -14.13% |   0.877  -33.72%  1.106 |  no  no     C
+   0.25   3  WIDTH@75   0.75     7.94%   1.141  -10.69% |   0.877  -33.72%  1.106 |  no  no     C
+   0.25   3      PASS   0.75    11.98%   1.095  -19.25% |   0.877  -33.72%  1.106 | YES  no     -
+   0.25   3  ISSHARPE   0.75    11.98%   1.095  -19.25% |   0.877  -33.72%  1.106 | YES  no     -
+   0.25   5     WIDTH   1.00    10.58%   1.140  -14.09% |   0.877  -33.72%  1.106 |  no  no     C
+   0.25   5  WIDTH@75   0.75     7.92%   1.141  -10.66% |   0.877  -33.72%  1.106 |  no  no     C
+   0.25   5      PASS   0.75    11.94%   1.104  -19.03% |   0.877  -33.72%  1.106 | YES  no     -
+   0.25   5  ISSHARPE   0.75    11.47%   1.155  -17.08% |   0.877  -33.72%  1.106 | YES  no     -
+   0.25  10     WIDTH   1.00    10.56%   1.137  -15.10% |   0.877  -33.72%  1.206 |  no  no     C
+   0.25  10  WIDTH@75   0.75     7.91%   1.138  -11.43% |   0.877  -33.72%  1.206 |  no  no     C
+   0.25  10      PASS   0.75    11.92%   1.109  -18.86% |   0.877  -33.72%  1.106 | YES  no     -
+   0.25  10  ISSHARPE   0.75    11.68%   1.136  -17.89% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10   1     WIDTH   1.00    12.39%   1.163  -17.37% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10   1  WIDTH@75   0.75     9.28%   1.165  -13.19% |   0.877  -33.72%  1.106 |  no  no     C
+   0.10   1      PASS   0.75    11.89%   1.060  -19.53% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10   1  ISSHARPE   0.75    11.89%   1.060  -19.53% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10   3     WIDTH   1.00    10.60%   1.140  -14.13% |   0.877  -33.72%  1.106 |  no  no     C
+   0.10   3  WIDTH@75   0.75     7.94%   1.141  -10.69% |   0.877  -33.72%  1.106 |  no  no     C
+   0.10   3      PASS   0.75    11.98%   1.095  -19.25% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10   3  ISSHARPE   0.75    11.98%   1.095  -19.25% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10   5     WIDTH   1.00    10.58%   1.140  -14.09% |   0.877  -33.72%  1.106 |  no  no     C
+   0.10   5  WIDTH@75   0.75     7.92%   1.141  -10.66% |   0.877  -33.72%  1.106 |  no  no     C
+   0.10   5      PASS   0.75    11.94%   1.104  -19.03% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10   5  ISSHARPE   0.75    11.47%   1.155  -17.08% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10  10     WIDTH   1.00    10.56%   1.137  -15.10% |   0.877  -33.72%  1.206 |  no  no     C
+   0.10  10  WIDTH@75   0.75     7.91%   1.138  -11.43% |   0.877  -33.72%  1.206 |  no  no     C
+   0.10  10      PASS   0.75    11.92%   1.109  -18.86% |   0.877  -33.72%  1.106 | YES  no     -
+   0.10  10  ISSHARPE   0.75    11.68%   1.136  -17.89% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05   1     WIDTH   1.00    12.39%   1.163  -17.37% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05   1  WIDTH@75   0.75     9.28%   1.165  -13.19% |   0.877  -33.72%  1.106 |  no  no     C
+   0.05   1      PASS   0.75    11.89%   1.060  -19.53% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05   1  ISSHARPE   0.75    11.89%   1.060  -19.53% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05   3     WIDTH   1.00    10.60%   1.140  -14.13% |   0.877  -33.72%  1.106 |  no  no     C
+   0.05   3  WIDTH@75   0.75     7.94%   1.141  -10.69% |   0.877  -33.72%  1.106 |  no  no     C
+   0.05   3      PASS   0.75    11.98%   1.095  -19.25% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05   3  ISSHARPE   0.75    11.98%   1.095  -19.25% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05   5     WIDTH   1.00    10.58%   1.140  -14.09% |   0.877  -33.72%  1.106 |  no  no     C
+   0.05   5  WIDTH@75   0.75     7.92%   1.141  -10.66% |   0.877  -33.72%  1.106 |  no  no     C
+   0.05   5      PASS   0.75    11.94%   1.104  -19.03% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05   5  ISSHARPE   0.75    11.47%   1.155  -17.08% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05  10     WIDTH   1.00    10.56%   1.137  -15.10% |   0.877  -33.72%  1.206 |  no  no     C
+   0.05  10  WIDTH@75   0.75     7.91%   1.138  -11.43% |   0.877  -33.72%  1.206 |  no  no     C
+   0.05  10      PASS   0.75    11.92%   1.109  -18.86% |   0.877  -33.72%  1.106 | YES  no     -
+   0.05  10  ISSHARPE   0.75    11.68%   1.136  -17.89% |   0.877  -33.72%  1.106 | YES  no     -
+
+  H5 (WIDTH chooser's OOS Sharpe > PASS chooser's) -> 12/12 grid points = 100%  -> PASS
+      on OOS MaxDD (higher = shallower): WIDTH better at 12/12 points
+      on OOS CAGR: WIDTH better at 3/12 points
+      reference chooser ISSHARPE beats WIDTH on OOS Sharpe at 3/12 points
+
+  THE GROSS-MATCHED READING (WIDTH@75 = the SAME books, traded at the live 0.75, so the
+  only difference from PASS is WHICH books were chosen, not how big they are run):
+      WIDTH@75 beats PASS on OOS Sharpe at 12/12 points
+      WIDTH@75 beats PASS on OOS MaxDD  at 12/12 points
+      WIDTH@75 beats PASS on OOS CAGR   at 0/12 points
+      mean gross: WIDTH 1.000 vs WIDTH@75 / PASS / ISSHARPE 0.750  <- the unmatched-gross confound H5 carries
+
+  KEEP paths over the whole 48-point chooser grid: 4b 27/48, 4a 0/48
+  by chooser (12 grid points each) -- this is the leg that decides the verdict:
+          WIDTH  OOS 4b  3/12   OOS 4a  0/12   median OOS Sharpe 1.140  CAGR 10.59%  DD -14.61%   | 4b fails: Cx9
+       WIDTH@75  OOS 4b  0/12   OOS 4a  0/12   median OOS Sharpe 1.141  CAGR 7.93%  DD -11.06%   | 4b fails: Cx12
+           PASS  OOS 4b 12/12   OOS 4a  0/12   median OOS Sharpe 1.100  CAGR 11.93%  DD -19.14%
+       ISSHARPE  OOS 4b 12/12   OOS 4a  0/12   median OOS Sharpe 1.115  CAGR 11.78%  DD -18.57%
+  the 4b-passing cells:
+      STEP 0.25 k=1 WIDTH: OOS 12.39% / 1.163 / -17.37%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.60
+      STEP 0.25 k=1 PASS: OOS 11.89% / 1.060 / -19.53%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20
+      STEP 0.25 k=1 ISSHARPE: OOS 11.89% / 1.060 / -19.53%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20
+      STEP 0.25 k=3 PASS: OOS 11.98% / 1.095 / -19.25%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80
+      STEP 0.25 k=3 ISSHARPE: OOS 11.98% / 1.095 / -19.25%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80
+      STEP 0.25 k=5 PASS: OOS 11.94% / 1.104 / -19.03%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|VOL|ROW|0.40; B136|VOL|ROW|0.00
+      STEP 0.25 k=5 ISSHARPE: OOS 11.47% / 1.155 / -17.08%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|TREND|AGG|0.60; B136|VOL|ROW|0.60
+      STEP 0.25 k=10 PASS: OOS 11.92% / 1.109 / -18.86%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|VOL|ROW|0.40; B136|VOL|ROW|0.00; B136|VOL|ROW|0.80; B136|VOL|ROW|0.20; B136|VOL|HYB|0.00; B136|VOL|ROW|0.60; B136|VOL|HYB|0.40
+      STEP 0.25 k=10 ISSHARPE: OOS 11.68% / 1.136 / -17.89%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|TREND|AGG|0.60; B136|VOL|ROW|0.60; B136|VOL|ROW|0.20; B136|VOL|ROW|0.00; B136|VOL|ROW|0.80; B136|VOL|HYB|0.00; B136|VOL|ROW|0.40
+      STEP 0.10 k=1 WIDTH: OOS 12.39% / 1.163 / -17.37%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.60
+      STEP 0.10 k=1 PASS: OOS 11.89% / 1.060 / -19.53%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20
+      STEP 0.10 k=1 ISSHARPE: OOS 11.89% / 1.060 / -19.53%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20
+      STEP 0.10 k=3 PASS: OOS 11.98% / 1.095 / -19.25%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80
+      STEP 0.10 k=3 ISSHARPE: OOS 11.98% / 1.095 / -19.25%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80
+      STEP 0.10 k=5 PASS: OOS 11.94% / 1.104 / -19.03%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|VOL|ROW|0.40; B136|VOL|ROW|0.00
+      STEP 0.10 k=5 ISSHARPE: OOS 11.47% / 1.155 / -17.08%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|TREND|AGG|0.60; B136|VOL|ROW|0.60
+      STEP 0.10 k=10 PASS: OOS 11.92% / 1.109 / -18.86%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|VOL|ROW|0.40; B136|VOL|ROW|0.00; B136|VOL|ROW|0.80; B136|VOL|ROW|0.20; B136|VOL|HYB|0.00; B136|VOL|ROW|0.60; B136|VOL|HYB|0.40
+      STEP 0.10 k=10 ISSHARPE: OOS 11.68% / 1.136 / -17.89%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|TREND|AGG|0.60; B136|VOL|ROW|0.60; B136|VOL|ROW|0.20; B136|VOL|ROW|0.00; B136|VOL|ROW|0.80; B136|VOL|HYB|0.00; B136|VOL|ROW|0.40
+      STEP 0.05 k=1 WIDTH: OOS 12.39% / 1.163 / -17.37%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.60
+      STEP 0.05 k=1 PASS: OOS 11.89% / 1.060 / -19.53%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20
+      STEP 0.05 k=1 ISSHARPE: OOS 11.89% / 1.060 / -19.53%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20
+      STEP 0.05 k=3 PASS: OOS 11.98% / 1.095 / -19.25%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80
+      STEP 0.05 k=3 ISSHARPE: OOS 11.98% / 1.095 / -19.25%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80
+      STEP 0.05 k=5 PASS: OOS 11.94% / 1.104 / -19.03%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|VOL|ROW|0.40; B136|VOL|ROW|0.00
+      STEP 0.05 k=5 ISSHARPE: OOS 11.47% / 1.155 / -17.08%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|TREND|AGG|0.60; B136|VOL|ROW|0.60
+      STEP 0.05 k=10 PASS: OOS 11.92% / 1.109 / -18.86%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|VOL|ROW|0.40; B136|VOL|ROW|0.00; B136|VOL|ROW|0.80; B136|VOL|ROW|0.20; B136|VOL|HYB|0.00; B136|VOL|ROW|0.60; B136|VOL|HYB|0.40
+      STEP 0.05 k=10 ISSHARPE: OOS 11.68% / 1.136 / -17.89%  vs SPY 15.33% / 0.877 / -33.72%
+        books: B136|TREND|AGG|0.20; B136|VOL|HYB|0.80; B136|VOL|AGG|0.80; B136|TREND|AGG|0.60; B136|VOL|ROW|0.60; B136|VOL|ROW|0.20; B136|VOL|ROW|0.00; B136|VOL|ROW|0.80; B136|VOL|HYB|0.00; B136|VOL|ROW|0.40
+
+  COST LADDER on the headline cell of each chooser (STEP 0.05, k=5):
+        WIDTH: 0bps 10.90%/1.171/-14.04%   10bps 10.58%/1.140/-14.09%   25bps 10.10%/1.092/-14.18%
+     WIDTH@75: 0bps 8.16%/1.173/-10.61%   10bps 7.92%/1.141/-10.66%   25bps 7.57%/1.093/-10.72%
+         PASS: 0bps 12.10%/1.117/-19.02%   10bps 11.94%/1.104/-19.03%   25bps 11.71%/1.084/-19.04%
+     ISSHARPE: 0bps 11.64%/1.171/-17.06%   10bps 11.47%/1.155/-17.08%   25bps 11.21%/1.131/-17.10%
+  wrote 2026-09-15_is-the-GROSS-WINDOW-WIDTH-a-better-4b-statistic-than-the-4b-PASS_B.grid.csv  (12 rows, 9 cols)
+
+====================================================================================================
+(V) VERDICT
+====================================================================================================
+  GATES G1-G4 ALL PASS; G5 monotone 192/192 DD and 190/192 CAGR; G6 determinism exact.
+  H1 OOS-Sharpe prediction : PASS
+  H2 OOS-MaxDD prediction  : PASS
+  H3 OOS-4b AUC            : FAIL
+  H4 ZEROSIG W < 0         : PASS
+  H5 WIDTH chooser wins    : PASS (12/12)
+  KEEP paths for THIS IDEA'S OWN PROPOSAL (the WIDTH choosers, 24 points): 4b 3/24, 4a 0/24; the incumbent PASS chooser gets 4b 12/12.
+  THE ANSWER: the width is a BETTER RANKER of OOS Sharpe and OOS MaxDD than the binary
+  pass, and a WORSE CLASSIFIER of the OOS 4b verdict; and it is dominated by its own
+  g_max leg (OOS-DD rho 0.8103 vs the width's 0.2981) and by the plain IS MaxDD it is
+  built out of (0.7942), so the SUBTRACTION g_max - g_min destroys information.
+  KILL for capital: nothing is promoted, no RULES change is proposed.
+  total runtime 22.7s
