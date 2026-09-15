@@ -1,0 +1,239 @@
+==============================================================================================================================================================================================
+IDEA 675 - is U56/CAND20's SINGLE-RUNG 4b pass a KNIFE EDGE or a REAL WINDOW?   (lane B, 2026-09-15)
+The book: top-20 by the NO-VOL-SCALER composite among names above 200d with vol20<0.60,
+equal weight g/k, cash at 0%, weekly, t+1 fills. The 2026-09-04 KEEP 4b book = idea 670's CAND20 arm.
+TUNED 1 gross resolution STEP in [0.25, 0.1, 0.05, 0.01]   TUNED 2 cost rung [0, 10, 25, 50] bps
+Bars: PROTOCOL 4b DD cap 0.6x|MaxDD_SPY|, CAGR floor 0.7x CAGR_SPY. Support g in [0.01, 1.5], bisection tol 0.0001.
+PRE-REGISTERED: KNIFE EDGE if W_exact <= 0.02; REAL WINDOW if W_exact >= 0.1 and g=0.75 sits >= 0.03 inside both boundaries; NARROW otherwise.
+==============================================================================================================================================================================================
+
+[1] PANELS (today's price cache)
+    U56: 56 columns, 2008-01-02 -> 2026-09-14 (4704 rows), scored from 2009-01-13 (4444 days)
+      SPY      15.1302% / 0.8845 / -33.7173%  halves 0.9588/0.8236   -> 4b bars: DD cap -20.2304%, CAGR floor 10.5912%
+      RULES v2 8.6227% / 1.2013 / -12.0549%  halves 1.2322/1.1770   (the 4a comparand)
+    B136: 136 columns, 2008-01-02 -> 2026-09-11 (4703 rows), scored from 2009-01-13 (4443 days)
+      SPY      15.1634% / 0.8861 / -33.7160%  halves 0.9596/0.8259   -> 4b bars: DD cap -20.2296%, CAGR floor 10.6144%
+      RULES v2 7.9779% / 1.0993 / -12.2410%  halves 1.2348/0.9658   (the 4a comparand)
+
+==============================================================================================================================================================================================
+[2] GATES - printed BEFORE any hypothesis number is read
+==============================================================================================================================================================================================
+  G1  fast_backtest == engine.backtest         max|dret| 1.388e-17  max|dturn| 4.441e-16   bar 1e-12   PASS
+  G2  weights(g) == g * weights(1.00)          max|dev| 5.551e-17                       bar 1e-12   PASS
+      BAR CORRECTION (stated, not hidden): this run's FIRST pass set G2's bar at exact 0.0 and
+      recorded a FAIL at 5.551e-17.  The bar was unreachable: the two sides divide by the name
+      count in a different order (g/k vs g*(1/k)) and differ in the last bit of a double.
+      Idea 670 hit and published the same correction; 1e-12 is the record's float bar.
+  G7  ladder priced from g*W(1.00) == g/k book  max|dmetric| 6.661e-16                  bar 1e-12   PASS
+
+  G3a CROSS-RUN idea 670 CAND20 grid on TODAY's cache: 16 rows x 6 metrics, worst |dev| 1.868e-02   (REPORTED, no bar)
+      U56 vintage-matched to 2026-09-10: 4702 rows (today 4704)
+      B136 vintage-matched to 2026-09-04: 4699 rows (today 4703)
+  G3b CROSS-RUN VINTAGE-MATCHED to idea 670's own last dates: worst |dev| 1.006e-02   bar 5e-4   FAIL
+      Matching the row count removes 46% of the G3a gap but NOT all
+      of it, so the residual is NOT only the cache's 2-4 extra rows. WHERE IT SITS, per metric
+      (worst |dev| over the 8 rungs, and the residual's SIGN -- uniform sign means a tape
+      difference, not a construction difference):
+        U56   CAGR 9.91e-05(+)  Sharpe 5.57e-04(+)  MaxDD 7.50e-08(-)  H1 5.75e-04(+)  H2 5.50e-04(+)  OOS_Sharpe 5.14e-04(+)
+        B136  CAGR 1.31e-03(+)  Sharpe 5.98e-03(+)  MaxDD 4.78e-06(-)  H1 1.01e-02(+)  H2 2.32e-03(+)  OOS_Sharpe 2.32e-03(+)
+      DIAGNOSIS, stated as a limit of this reproduction and not explained away: MaxDD
+      reproduces to 1e-8 / 1e-6 and CAGR to 1e-5 / 1e-3, while the whole Sharpe family is off
+      by a uniform-signed ~5e-4 (U56) / ~6e-3 (B136). MaxDD is a path extremum and CAGR an
+      endpoint ratio; Sharpe is a mean/vol over every day. That is the signature of small
+      per-name revisions in the ADJUSTED price history (auto_adjust re-states past closes when
+      a dividend is paid), which the record already tracks as the PRICES-VINTAGE effect. A
+      20-name concentrated book is far more exposed to it than the 56-name band book, which is
+      why G4b passes at 1.8e-05 on the SAME frames where G3b fails.
+  G3c CROSS-RUN restricted to the TWO WINDOW-CUTTING metrics (CAGR, MaxDD -- the only two
+      this run's headline is measured on), U56 vintage-matched: worst |dev| 9.913e-05   bar 5e-4   PASS
+      the same restriction on B136 reads 1.310e-03 (fails 5e-4, clears 2e-3), so every
+      B136 number below is a PORTABILITY reading and no headline rests on it.
+  G4a SPY / RULES v2 committed U56 triples on TODAY's cache: worst |dev| 1.451e-03   (REPORTED, no bar)
+  G4b SPY / RULES v2 committed U56 triples VINTAGE-MATCHED: worst |dev| 1.782e-05   bar 5e-4   PASS
+
+    building the 0.01 ladder (150 rungs x 4 cost rungs x 2 panels) ...
+    done in 48.3s
+  G5  MONOTONICITY of the 0.01 ladder: 40 (panel,cost,window) blocks, worst DD violations 0, worst CAGR violations 0 of 149 steps   PASS
+  G6  DETERMINISM (ladder points rebuilt)      max|dSharpe|,|dMaxDD| 0.000e+00                bar 0.0     PASS
+
+  GATES WITH A BAR: 7 of 8 PASS   G1=PASS  G2=PASS  G7=PASS  G3b=FAIL  G3c=PASS  G4b=PASS  G5=PASS  G6=PASS   (G3a/G4a are reported diagnostics, no bar)
+    wrote 2026-09-15_is-U56-CAND20s-SINGLE-RUNG-4b-pass-a-KNIFE-EDGE-or-a-real-window_B.gates.csv  (32 rows)
+
+==============================================================================================================================================================================================
+[3] THE LADDER - every point of both tuned parameters, all five 4b legs decomposed
+==============================================================================================================================================================================================
+    wrote 2026-09-15_is-U56-CAND20s-SINGLE-RUNG-4b-pass-a-KNIFE-EDGE-or-a-real-window_B.ladder.csv  (6000 rows)
+
+  U56 / FULL / 10 bps - the rungs idea 670 sampled (*), then the interior it missed
+       g      CAGR     Sharpe    MaxDD     H1     H2   L1 L2 L3 L4 L5  4b  4a   DDslack  CAGRslack
+   * 0.20   3.384%   1.0583   -5.074%  1.073  1.053   Y Y Y Y .   .  .   +0.1516   -0.07207
+   * 0.35   5.930%   1.0587   -8.788%  1.073  1.053   Y Y Y Y .   .  .   +0.1144   -0.04661
+   * 0.50   8.480%   1.0591  -12.423%  1.073  1.054   Y Y Y Y .   .  .   +0.0781   -0.02111
+   * 0.60  10.181%   1.0593  -14.803%  1.073  1.054   Y Y Y Y .   .  .   +0.0543   -0.00410
+     0.61  10.351%   1.0593  -15.039%  1.073  1.054   Y Y Y Y .   .  .   +0.0519   -0.00240
+     0.62  10.521%   1.0594  -15.275%  1.073  1.054   Y Y Y Y .   .  .   +0.0496   -0.00070
+     0.63  10.691%   1.0594  -15.510%  1.073  1.054   Y Y Y Y Y   Y  .   +0.0472   +0.00100
+     0.65  11.031%   1.0594  -15.980%  1.073  1.054   Y Y Y Y Y   Y  .   +0.0425   +0.00440
+     0.70  11.880%   1.0595  -17.149%  1.073  1.055   Y Y Y Y Y   Y  .   +0.0308   +0.01289
+   * 0.75  12.729%   1.0596  -18.308%  1.073  1.055   Y Y Y Y Y   Y  .   +0.0192   +0.02138
+     0.80  13.578%   1.0597  -19.460%  1.073  1.055   Y Y Y Y Y   Y  .   +0.0077   +0.02987
+     0.82  13.917%   1.0597  -19.918%  1.073  1.055   Y Y Y Y Y   Y  .   +0.0031   +0.03326
+     0.83  14.087%   1.0597  -20.146%  1.073  1.055   Y Y Y Y Y   Y  .   +0.0008   +0.03496
+     0.84  14.256%   1.0597  -20.374%  1.073  1.055   Y Y Y . Y   .  .   -0.0014   +0.03665
+   * 0.85  14.426%   1.0597  -20.602%  1.073  1.055   Y Y Y . Y   .  .   -0.0037   +0.03835
+   * 0.95  16.118%   1.0598  -22.862%  1.073  1.055   Y Y Y . Y   .  .   -0.0263   +0.05527
+   * 1.00  16.963%   1.0598  -23.979%  1.073  1.055   Y Y Y . Y   .  .   -0.0375   +0.06371
+
+  WHICH LEGS BIND (pass counts over the 150-rung ladder, U56 FULL 10 bps) - the Sharpe legs
+  are reported rather than assumed away:
+      L1_H1 150/150   L2_H2 150/150   L3_OOS 150/150   L4_DDcap 83/150   L5_CAGRfloor 88/150
+
+==============================================================================================================================================================================================
+[4] H1 - THE TRUE WIDTH, and what each ladder resolution SEES of it
+==============================================================================================================================================================================================
+    wrote 2026-09-15_is-U56-CAND20s-SINGLE-RUNG-4b-pass-a-KNIFE-EDGE-or-a-real-window_B.window.csv  (200 rows)
+
+  U56 / FULL / 10 bps - THE ANSWER TO THE QUEUE'S QUESTION
+      g_min (CAGR floor L5 binds from below)  0.6242   [ok]   floor 10.5912%
+      g_max (DD cap L4 binds from above)      0.8337   [ok]   cap -20.2304%
+      W_exact = g_max - g_min                 0.2094 of gross (20.94 gross points)
+      live g=0.75 inside? True   margin below +0.1258, above +0.0837
+
+      WHAT EACH LADDER RESOLUTION SEES (contiguous 5-leg 4b pass run on that ladder):
+        ladder   rungs   4b-pass rungs   run             W_ladder   4a-pass rungs
+        0.25         6               1   [0.75, 0.75]        0.00               0
+        0.1         15               2   [0.70, 0.80]        0.10               0
+        0.05        30               4   [0.65, 0.80]        0.15               0
+        0.01       150              21   [0.63, 0.83]        0.20               0
+        670's own    8               1   [0.75, 0.75]        0.00               0
+
+      H1 pre-registered bar (W_exact >= 0.1): CONFIRMED    -> WIDTH VERDICT: REAL WINDOW
+
+      VINTAGE CHECK (does the width depend on the 2-row cache growth G3a found?):
+        today's cache      [0.6242, 0.8337]  W 0.2094
+        670's own vintage  [0.6216, 0.8337]  W 0.2121   -> |dW| 0.0026
+
+  Every other (panel, window) at 10 bps, for context:
+      panel  window    g_min    g_max   W_exact   0.75 in?   tradeable
+      U56    FULL     0.6242   0.8337   0.2094   True       True
+      U56    H1       0.6903   0.8408   0.1505   True       True
+      U56    H2       0.5668   0.8337   0.2668   True       True
+      U56    IS       0.7263   0.8408   0.1146   True       True
+      U56    OOS      0.5607   0.8337   0.2729   True       True
+      B136   FULL     0.6115   0.7570   0.1455   True       True
+      B136   H1       0.5481   0.7238   0.1757   False      True
+      B136   H2       0.6988   0.7570   0.0582   True       True
+      B136   IS       0.5688   0.7238   0.1551   False      True
+      B136   OOS      0.6515   0.7570   0.1055   True       True
+
+==============================================================================================================================================================================================
+[5] H2 - THE COST SWEEP (the queue's second dial)
+==============================================================================================================================================================================================
+  U56/CAND20 turnover at g=0.75: 11.01x per year, so each 10 bps of cost is about 1.10% of CAGR per year. The DD cap does not see cost; the CAGR floor does, so
+  cost walks g_min UP against a nearly fixed g_max and the window closes from below.
+      panel  cost   g_min    g_max   W_exact   0.75 in?   4b at 0.75?   note
+      U56      0    0.5699   0.8378   0.2679   True       True          
+      U56     10    0.6242   0.8337   0.2094   True       True          
+      U56     25    0.7295   0.8274   0.0979   True       False         
+      U56     50    1.0307   0.8171  -0.2136   False      False         WINDOW CLOSED (g_min > g_max)
+      B136     0    0.5450   0.7598   0.2148   True       True          
+      B136    10    0.6115   0.7570   0.1455   True       False         
+      B136    25    0.7516   0.7529   0.0013   False      False         
+      B136    50    1.2944   0.6924  -0.6019   False      False         WINDOW CLOSED (g_min > g_max)
+
+  TWO CLOSING PRICES, and the gap between them is the run's second real finding.
+  Note the 25 bps rows above: on U56 the window is still 0.0979 wide and 0.75 is still INSIDE
+  it, yet the 5-leg 4b pass is already FALSE. The window is cut by L4/L5 only; at 25 bps the
+  H1-SHARPE leg (L1) fails at 0 of 150 rungs on U56, because cost drags the book's first-half
+  Sharpe to 0.9283 against SPY's 0.9588. So the 4b PASS dies BEFORE the window closes.
+      U56: DD-cap x CAGR-floor WINDOW closes at 34.9 bps (3.5x PROTOCOL's rung);  the FIVE-LEG 4b PASS closes at 21.8 bps (2.2x)
+      B136: DD-cap x CAGR-floor WINDOW closes at 25.0 bps (2.5x PROTOCOL's rung);  the FIVE-LEG 4b PASS closes at 6.1 bps (0.6x)
+      -> the binding cost tolerance on U56 is 21.8 bps, not 34.9: a 1.6x difference, and quoting the window alone would overstate it.
+
+      H2 (window non-empty and contains 0.75 at EVERY cost rung on U56): REFUTED
+
+==============================================================================================================================================================================================
+[6] H5 - is the window a FULL-SAMPLE-ONLY object? (each half solved against its OWN SPY)
+==============================================================================================================================================================================================
+      U56   H1: window [0.6903, 0.8408] W 0.1505   contains that panel's full-sample midpoint 0.7289? True
+      U56   H2: window [0.5668, 0.8337] W 0.2668   contains that panel's full-sample midpoint 0.7289? True
+      B136  H1: window [0.5481, 0.7238] W 0.1757   contains that panel's full-sample midpoint 0.6842? True
+      B136  H2: window [0.6988, 0.7570] W 0.0582   contains that panel's full-sample midpoint 0.6842? False
+
+      H5 (both U56 half-windows contain the full-sample midpoint): CONFIRMED
+
+==============================================================================================================================================================================================
+[7] RULE 8 - the window and the pick computed on 2009-2016 ALONE; 2017-2026 read ONCE
+==============================================================================================================================================================================================
+  A CAVEAT THAT MUST COME FIRST, because it changes what 'IS-only chooser' can mean here:
+      U56 IN-SAMPLE 5-leg 4b pass set at 10 bps: 0 of 150 rungs.   legs: L1_H1 0/150  L2_H2 150/150  L3_OOS 150/150  L4_DDcap 84/150  L5_CAGRfloor 78/150
+      B136 IN-SAMPLE 5-leg 4b pass set at 10 bps: 16 of 150 rungs.   legs: L1_H1 150/150  L2_H2 150/150  L3_OOS 150/150  L4_DDcap 72/150  L5_CAGRfloor 94/150
+      On U56 the IS H1-Sharpe leg fails at EVERY rung, so there is NO in-sample 4b passer to
+      choose from: PICK-SHARPE has an empty feasible set and PICK-MIN / PICK-MID select from
+      the DD-cap x CAGR-floor window alone. That is reported as the finding it is.
+    wrote 2026-09-15_is-U56-CAND20s-SINGLE-RUNG-4b-pass-a-KNIFE-EDGE-or-a-real-window_B.walkforward.csv  (20 rows)
+
+    U56   IS SPY 14.959%/0.8986/-22.062%    OOS SPY 15.272%/0.8740/-33.717%
+         OOS RULES v2 (live) 9.464%/1.2772/-12.055%    OOS 4b bars: DD cap -20.230%, CAGR floor 10.690%
+      cost   0 bps   IS window [0.6537, 0.8920] W +0.2383
+           PICK-LIVE   g=0.7500 (used 0.75)  OOS 15.616% / 1.2114 / -18.220%  halves 1.319/1.104  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+           PICK-MIN    g=0.6537 (used 0.65)  OOS 13.501% / 1.2113 / -15.901%  halves 1.319/1.103  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+           PICK-MID    g=0.7728 (used 0.77)  OOS 16.040% / 1.2114 / -18.680%  halves 1.318/1.104  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+      cost  10 bps   IS window [0.7263, 0.8408] W +0.1146
+           PICK-LIVE   g=0.7500 (used 0.75)  OOS 14.335% / 1.1233 / -18.308%  halves 1.235/1.011  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+           PICK-MIN    g=0.7263 (used 0.73)  OOS 13.950% / 1.1232 / -17.845%  halves 1.235/1.011  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+           PICK-MID    g=0.7836 (used 0.78)  OOS 14.913% / 1.1234 / -19.000%  halves 1.235/1.011  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+      cost  25 bps   IS window [0.8746, 0.7738] W -0.1008  [IS WINDOW CLOSED]
+           PICK-LIVE   g=0.7500 (used 0.75)  OOS 12.439% / 0.9908 / -18.441%  halves 1.110/0.872  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+      cost  50 bps   IS window [1.3816, 0.6646] W -0.7170  [IS WINDOW CLOSED]
+           PICK-LIVE   g=0.7500 (used 0.75)  OOS  9.348% / 0.7694 / -18.661%  halves 0.900/0.639  legs L1. L2. L4Y L5.  OOS 4b fail  OOS 4a fail
+
+    B136   IS SPY 14.960%/0.8987/-22.058%    OOS SPY 15.331%/0.8767/-33.716%
+         OOS RULES v2 (live) 7.885%/1.1059/-12.241%    OOS 4b bars: DD cap -20.230%, CAGR floor 10.732%
+      cost   0 bps   IS window [0.5132, 0.7384] W +0.2252
+           PICK-LIVE   g=0.7500 (used 0.75)  OOS 13.997% / 0.9783 / -19.984%  halves 1.002/0.953  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+           PICK-MIN    g=0.5132 (used 0.51)  OOS  9.541% / 0.9768 / -13.851%  halves 1.000/0.953  legs L1Y L2Y L4Y L5.  OOS 4b fail  OOS 4a fail
+           PICK-MID    g=0.6258 (used 0.63)  OOS 11.774% / 0.9775 / -16.948%  halves 1.001/0.953  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+           PICK-SHARPE g=0.7300 (used 0.73)  OOS 13.627% / 0.9781 / -19.482%  halves 1.002/0.953  legs L1Y L2Y L4Y L5Y  OOS 4b PASS  OOS 4a fail
+      cost  10 bps   IS window [0.5688, 0.7238] W +0.1551
+           PICK-LIVE   g=0.7500 (used 0.75)  OOS 12.315% / 0.8754 / -20.052%  halves 0.903/0.846  legs L1. L2Y L4Y L5Y  OOS 4b fail  OOS 4a fail
+           PICK-MIN    g=0.5688 (used 0.57)  OOS  9.413% / 0.8740 / -15.462%  halves 0.901/0.846  legs L1. L2Y L4Y L5.  OOS 4b fail  OOS 4a fail
+           PICK-MID    g=0.6463 (used 0.65)  OOS 10.708% / 0.8747 / -17.520%  halves 0.902/0.846  legs L1. L2Y L4Y L5.  OOS 4b fail  OOS 4a fail
+           PICK-SHARPE g=0.7200 (used 0.72)  OOS 11.834% / 0.8752 / -19.297%  halves 0.903/0.846  legs L1. L2Y L4Y L5Y  OOS 4b fail  OOS 4a fail
+      cost  25 bps   IS window [0.6808, 0.7030] W +0.0222
+           PICK-LIVE   g=0.7500 (used 0.75)  OOS  9.837% / 0.7209 / -20.156%  halves 0.755/0.686  legs L1. L2. L4Y L5.  OOS 4b fail  OOS 4a fail
+           PICK-MIN    g=0.6808 (used 0.68)  OOS  8.964% / 0.7203 / -18.380%  halves 0.754/0.685  legs L1. L2. L4Y L5.  OOS 4b fail  OOS 4a fail
+           PICK-MID    g=0.6919 (used 0.69)  OOS  9.090% / 0.7204 / -18.635%  halves 0.754/0.685  legs L1. L2. L4Y L5.  OOS 4b fail  OOS 4a fail
+      cost  50 bps   IS window [1.0386, 0.6624] W -0.3761  [IS WINDOW CLOSED]
+           PICK-LIVE   g=0.7500 (used 0.75)  OOS  5.826% / 0.4633 / -21.778%  halves 0.508/0.417  legs L1. L2. L4. L5.  OOS 4b fail  OOS 4a fail
+
+      H3 (an IS-only pick clears 4b out of sample on U56 at 10 bps): CONFIRMED   (3 of 3 choosers)
+      across every (panel, cost, chooser): OOS 4b 10 of 20,  OOS 4a 0 of 20
+      restricted to TRADEABLE picks (g <= 1.00): OOS 4b 10 of 20
+
+==============================================================================================================================================================================================
+[8] PATH 4a (judged against RULES v2 live) - every ladder point, every cost rung
+==============================================================================================================================================================================================
+      U56: 4a passes 0 of 600 (gross x cost) points; 4b passes 48 of 600
+        best Sharpe anywhere on the ladder 1.1513 (g=1.19, 0 bps) vs RULES v2 1.2013 -- the 4a Sharpe legs are unreachable by exposure, which is why 4a is 0.
+      B136: 4a passes 0 of 600 (gross x cost) points; 4b passes 21 of 600
+        best Sharpe anywhere on the ladder 1.0500 (g=1.50, 0 bps) vs RULES v2 1.0993 -- the 4a Sharpe legs are unreachable by exposure, which is why 4a is 0.
+      4a is 0 because CAND20's Sharpe is ~0.14 BELOW the live band book's at every rung and
+      gross cannot move Sharpe (it moves 0.0015 across the whole ladder). 4b is the only path.
+
+==============================================================================================================================================================================================
+[9] VERDICT
+==============================================================================================================================================================================================
+  H1 width          CONFIRMED  W_exact 0.2094 -> REAL WINDOW
+  H2 cost           REFUTED  (U56: window closes at 34.9 bps but the 5-leg 4b PASS closes at 21.8 bps; B136 25.0 / 6.1)
+  H3 rule 8         CONFIRMED  (with the empty-IS-pass-set caveat in [7])
+  H4 well-posedness CONFIRMED (gate G5)
+  H5 halves         CONFIRMED
+
+  SURVIVORSHIP (PROTOCOL 9): U56 and B136 are CURRENT-constituent lists. Every CAGR and
+  drawdown LEVEL above is optimistic -- the book's, RULES v2's and SPY's alike -- and both 4b
+  bars are easier here than on a point-in-time panel. The WIDTH headline is a same-tape,
+  same-names statement about one book's gross axis against its own SPY bars and is far less
+  exposed; the OOS triples are levels and are upper bounds.
+
+  elapsed 131.7s
