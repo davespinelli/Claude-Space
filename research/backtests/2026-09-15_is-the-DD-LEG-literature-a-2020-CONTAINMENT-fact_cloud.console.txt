@@ -1,0 +1,436 @@
+==============================================================================================================
+IDEA 912 (cloud, 2026-09-15) -- is the record's whole DD-LEG literature a 2020
+                               CONTAINMENT fact?
+==============================================================================================================
+TUNED 1 excision window (5 levels, all reported): ['NONE', 'SPYDD', 'CRASH', 'H1_20', 'CAL20']
+TUNED 2 panel: ['U56', 'B136', 'SMALL']   (+ SMALLRAW, gates G4/G5/G6 only)
+reported axes: family ['TREND', 'VOL', 'MOM', 'DISP'] x mode ['ROW', 'AGG', 'HYB'] x theta [0.2, 0.4, 0.6] x gross [0.25, 0.5, 0.75, 1.0]
+                + ZEROSIG + RANDGATE[9101, 9102, 9103];  11 proxies, ['ALL', 'DDSUB'] populations, ['FULL', 'IS', 'OOS'] windows
+                cost 10 bps, W, LAG 1, warm-up 260d, IS <= 2016-12-31 / OOS >= 2017-01-01
+EXCISION CONVENTION: days are deleted from the STATISTIC, not from the tape -- books trade,
+  rebalance and pay costs on the full history, then the excised days are dropped from the
+  daily return vector before CAGR / Sharpe / MaxDD / every beta, for books, SPY and RULES
+  v2 alike.  MaxDD is therefore read on a SPLICED curve; that is what excising an episode
+  must mean for a path statistic.  Stated, not hidden.
+BARS: H_STRUCT containment >= 0.7; H_AGREE each committed bar re-read at every
+      excision; H_LEG flip share > 0.5; H_WF rule 8 with both KEEP paths.
+
+panel U56      4704 days x 56 cols  2008-01-02 .. 2026-09-14  eval from 2009-01-13
+panel B136     4703 days x 136 cols  2008-01-02 .. 2026-09-11  eval from 2009-01-13
+panel SMALL    4198 days x 664 cols  2010-01-04 .. 2026-09-11  eval from 2011-01-13
+panel SMALLRAW 4198 days x 716 cols  2010-01-04 .. 2026-09-11  eval from 2011-01-13
+  SMALL drops 52 tickers with max_1d_move >= 1.0 (data/small_meta.csv); SMALLRAW keeps them, which is 867's and 910's construction
+
+excision windows as materialised on each panel:
+  U56      SPYDD  SPY argmin peak-to-trough 2020-02-19 .. 2020-03-23  (24d)  dropped FULL   24 IS   0 OOS   24
+  U56      CRASH  calendar 2020-02-19 .. 2020-04-30  (51d)                   dropped FULL   51 IS   0 OOS   51
+  U56      H1_20  calendar 2020-01-01 .. 2020-06-30  (125d)                  dropped FULL  125 IS   0 OOS  125
+  U56      CAL20  calendar 2020-01-01 .. 2020-12-31  (253d)                  dropped FULL  253 IS   0 OOS  253
+  B136     SPYDD  SPY argmin peak-to-trough 2020-02-19 .. 2020-03-23  (24d)  dropped FULL   24 IS   0 OOS   24
+  B136     CRASH  calendar 2020-02-19 .. 2020-04-30  (51d)                   dropped FULL   51 IS   0 OOS   51
+  B136     H1_20  calendar 2020-01-01 .. 2020-06-30  (125d)                  dropped FULL  125 IS   0 OOS  125
+  B136     CAL20  calendar 2020-01-01 .. 2020-12-31  (253d)                  dropped FULL  253 IS   0 OOS  253
+  SMALL    SPYDD  SPY argmin peak-to-trough 2020-02-19 .. 2020-03-23  (24d)  dropped FULL   24 IS   0 OOS   24
+  SMALL    CRASH  calendar 2020-02-19 .. 2020-04-30  (51d)                   dropped FULL   51 IS   0 OOS   51
+  SMALL    H1_20  calendar 2020-01-01 .. 2020-06-30  (125d)                  dropped FULL  125 IS   0 OOS  125
+  SMALL    CAL20  calendar 2020-01-01 .. 2020-12-31  (253d)                  dropped FULL  253 IS   0 OOS  253
+  SMALLRAW SPYDD  SPY argmin peak-to-trough 2020-02-19 .. 2020-03-23  (24d)  dropped FULL   24 IS   0 OOS   24
+  SMALLRAW CRASH  calendar 2020-02-19 .. 2020-04-30  (51d)                   dropped FULL   51 IS   0 OOS   51
+  SMALLRAW H1_20  calendar 2020-01-01 .. 2020-06-30  (125d)                  dropped FULL  125 IS   0 OOS  125
+  SMALLRAW CAL20  calendar 2020-01-01 .. 2020-12-31  (253d)                  dropped FULL  253 IS   0 OOS  253
+
+==============================================================================================================
+GATES (printed before any result number is read)
+==============================================================================================================
+G1  TREND/ROW g=0.75 == rules_v2_weights   max|dw| 0.000e+00   -> PASS
+G2  fast Book.at == engine.backtest        max|dr| 1.041e-17  max|dturn| 2.429e-16   -> PASS
+G3  committed U56 triples @ NONE   SPY 15.1302%/0.8845/-33.7173%  (committed 15.16%/0.8861/-33.72%)
+                                   v2  8.6227%/1.2013/-12.0549%  (committed 8.63%/1.2018/-12.05%)   -> PASS
+G8  ZEROSIG ray at EVERY excision: every proxy of g x SPY must read g   max|beta-g| over 5x4x11 = 1.555e-02 (NONE/g=0.50/SPYDD)   -> PASS
+
+==============================================================================================================
+BUILDING THE BOOK GRID
+==============================================================================================================
+  U56       128 books x 5 excisions    1920 book-rows  (6.0s)
+  B136      128 books x 5 excisions    1920 book-rows  (7.1s)
+  SMALL     128 books x 5 excisions    1920 book-rows  (15.0s)
+  SMALLRAW  128 books x 1 excisions     384 book-rows  (11.8s)
+G7  DETERMINISM  max|dSharpe| 0.000e+00  max|dbeta_ROLL| 0.000e+00   -> PASS
+G9  IS-window invariance (no excision touches 2009-2016): max|d| over 16 statistics x 4 excisions = 0.000e+00   -> PASS
+
+
+G4  867's committed .agree.csv @ NONE: 12 of 12 rows reproduce exactly  (worst |d_agree| 1.110e-16, worst |d_best| 1.110e-16, n mismatches 0)   -> PASS
+      U56   ->U56      FULL     n 112/112  agree 0.9018/0.9018  best 0.9375/0.9375
+      U56   ->U56      DOWN     n 112/112  agree 0.9018/0.9018  best 0.9464/0.9464
+      U56   ->U56      ROLL     n 112/112  agree 0.9286/0.9286  best 0.9643/0.9643
+      U56   ->U56      DDWIN    n  64/ 64  agree 0.9531/0.9531  best 0.9844/0.9844
+      B136  ->B136     FULL     n 112/112  agree 0.8571/0.8571  best 0.8929/0.8929
+      B136  ->B136     DOWN     n 112/112  agree 0.8661/0.8661  best 0.9107/0.9107
+      B136  ->B136     ROLL     n 112/112  agree 0.8571/0.8571  best 0.8929/0.8929
+      B136  ->B136     DDWIN    n  60/ 60  agree 0.9833/0.9833  best 1.0000/1.0000
+      SMALL ->SMALLRAW FULL     n 112/112  agree 0.6786/0.6786  best 0.9107/0.9107
+      SMALL ->SMALLRAW DOWN     n 112/112  agree 0.6964/0.6964  best 0.9107/0.9107
+      SMALL ->SMALLRAW ROLL     n 112/112  agree 0.7321/0.7321  best 0.9107/0.9107
+      SMALL ->SMALLRAW DDWIN    n 112/112  agree 0.7321/0.7321  best 0.8571/0.8571
+
+G5  910's committed .agree.csv @ NONE: 66 of 66 (panel x popn x proxy) rows reproduce exactly on agree / best_agree / n / n_disagree   (worst |d_agree| 1.110e-16, worst |d_best| 1.110e-16)   -> PASS
+
+G6  910's committed .overlap.csv @ NONE: 9 (panel x window) cells, worst |d contained| 0.000e+00, worst |d median Jaccard| 1.388e-17   -> PASS
+      U56    FULL  contained 0.9286/0.9286  medJ 0.8542/0.8542  SPY DD len 24/24
+      U56    IS    contained 0.2857/0.2857  medJ 0.0000/0.0000  SPY DD len 28/28
+      U56    OOS   contained 0.9286/0.9286  medJ 0.8542/0.8542  SPY DD len 24/24
+      B136   FULL  contained 0.8929/0.8929  medJ 0.7083/0.7083  SPY DD len 24/24
+      B136   IS    contained 0.3571/0.3571  medJ 0.0000/0.0000  SPY DD len 28/28
+      B136   OOS   contained 0.8929/0.8929  medJ 0.7083/0.7083  SPY DD len 24/24
+      SMALL  FULL  contained 0.0000/0.0000  medJ 0.0537/0.0537  SPY DD len 24/24
+      SMALL  IS    contained 0.3929/0.3929  medJ 0.5688/0.5688  SPY DD len 109/109
+      SMALL  OOS   contained 0.0000/0.0000  medJ 0.0537/0.0537  SPY DD len 24/24
+
+GATES: 9 of 9 PASS  G1=PASS  G2=PASS  G3=PASS  G4=PASS  G5=PASS  G6=PASS  G7=PASS  G8=PASS  G9=PASS
+
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.books.csv  (6,144 rows, 34 cols)
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.agree.csv  (1,056 rows, 20 cols)
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.overlap.csv  (5,376 rows, 11 cols)
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.gates.csv  (78 rows, 18 cols)
+
+==============================================================================================================
+H_STRUCT  IS CONTAINMENT A 2020 FACT OR A MARKET-EPISODE FACT?
+          after excising 2020, SPY has a DIFFERENT worst decline; does the containment
+          share reappear around THAT one?
+==============================================================================================================
+  panel  excision window   SPY DD             SPY DD win   medJ  contained  len
+  U56    NONE     FULL    -33.72% 2020-02-19..2020-03-23  0.854      0.929   24
+  U56    NONE     IS      -22.06% 2009-01-28..2009-03-09  0.000      0.286   28
+  U56    NONE     OOS     -33.72% 2020-02-19..2020-03-23  0.854      0.929   24
+  U56    SPYDD    FULL    -24.50% 2022-01-03..2022-10-12  0.757      0.143  196
+  U56    SPYDD    IS      -22.06% 2009-01-28..2009-03-09  0.000      0.286   28
+  U56    SPYDD    OOS     -24.50% 2022-01-03..2022-10-12  0.757      0.143  196
+  U56    CRASH    FULL    -24.50% 2022-01-03..2022-10-12  0.757      0.143  196
+  U56    CRASH    IS      -22.06% 2009-01-28..2009-03-09  0.000      0.286   28
+  U56    CRASH    OOS     -24.50% 2022-01-03..2022-10-12  0.757      0.143  196
+  U56    H1_20    FULL    -24.50% 2022-01-03..2022-10-12  0.757      0.143  196
+  U56    H1_20    IS      -22.06% 2009-01-28..2009-03-09  0.000      0.286   28
+  U56    H1_20    OOS     -24.50% 2022-01-03..2022-10-12  0.757      0.143  196
+  U56    CAL20    FULL    -24.50% 2022-01-03..2022-10-12  0.757      0.143  196
+  U56    CAL20    IS      -22.06% 2009-01-28..2009-03-09  0.000      0.286   28
+  U56    CAL20    OOS     -24.50% 2022-01-03..2022-10-12  0.757      0.143  196
+  B136   NONE     FULL    -33.72% 2020-02-19..2020-03-23  0.708      0.893   24
+  B136   NONE     IS      -22.06% 2009-01-28..2009-03-09  0.000      0.357   28
+  B136   NONE     OOS     -33.72% 2020-02-19..2020-03-23  0.708      0.893   24
+  B136   SPYDD    FULL    -24.50% 2022-01-03..2022-10-12  0.000      0.250  196
+  B136   SPYDD    IS      -22.06% 2009-01-28..2009-03-09  0.000      0.357   28
+  B136   SPYDD    OOS     -24.50% 2022-01-03..2022-10-12  0.954      0.536  196
+  B136   CRASH    FULL    -24.50% 2022-01-03..2022-10-12  0.000      0.250  196
+  B136   CRASH    IS      -22.06% 2009-01-28..2009-03-09  0.000      0.357   28
+  B136   CRASH    OOS     -24.50% 2022-01-03..2022-10-12  0.954      0.536  196
+  B136   H1_20    FULL    -24.50% 2022-01-03..2022-10-12  0.000      0.250  196
+  B136   H1_20    IS      -22.06% 2009-01-28..2009-03-09  0.000      0.357   28
+  B136   H1_20    OOS     -24.50% 2022-01-03..2022-10-12  0.954      0.536  196
+  B136   CAL20    FULL    -24.50% 2022-01-03..2022-10-12  0.000      0.214  196
+  B136   CAL20    IS      -22.06% 2009-01-28..2009-03-09  0.000      0.357   28
+  B136   CAL20    OOS     -24.50% 2022-01-03..2022-10-12  0.937      0.500  196
+  SMALL  NONE     FULL    -33.72% 2020-02-19..2020-03-23  0.054      0.000   24
+  SMALL  NONE     IS      -18.61% 2011-04-29..2011-10-03  0.569      0.536  109
+  SMALL  NONE     OOS     -33.72% 2020-02-19..2020-03-23  0.054      0.000   24
+  SMALL  SPYDD    FULL    -24.50% 2022-01-03..2022-10-12  0.395      0.000  196
+  SMALL  SPYDD    IS      -18.61% 2011-04-29..2011-10-03  0.569      0.536  109
+  SMALL  SPYDD    OOS     -24.50% 2022-01-03..2022-10-12  0.395      0.000  196
+  SMALL  CRASH    FULL    -24.50% 2022-01-03..2022-10-12  0.395      0.000  196
+  SMALL  CRASH    IS      -18.61% 2011-04-29..2011-10-03  0.569      0.536  109
+  SMALL  CRASH    OOS     -24.50% 2022-01-03..2022-10-12  0.395      0.000  196
+  SMALL  H1_20    FULL    -24.50% 2022-01-03..2022-10-12  0.395      0.000  196
+  SMALL  H1_20    IS      -18.61% 2011-04-29..2011-10-03  0.569      0.536  109
+  SMALL  H1_20    OOS     -24.50% 2022-01-03..2022-10-12  0.395      0.000  196
+  SMALL  CAL20    FULL    -24.50% 2022-01-03..2022-10-12  0.395      0.000  196
+  SMALL  CAL20    IS      -18.61% 2011-04-29..2011-10-03  0.569      0.536  109
+  SMALL  CAL20    OOS     -24.50% 2022-01-03..2022-10-12  0.395      0.000  196
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.containment.csv  (45 rows, 9 cols)
+
+  U56    FULL-window contained: NONE 0.929 -> SPYDD 0.143  CRASH 0.143  H1_20 0.143  CAL20 0.143   H_STRUCT (0.70 bar): holds at 0 of 4
+  B136   FULL-window contained: NONE 0.893 -> SPYDD 0.250  CRASH 0.250  H1_20 0.250  CAL20 0.214   H_STRUCT (0.70 bar): holds at 0 of 4
+  SMALL  FULL-window contained: NONE 0.000 -> SPYDD 0.000  CRASH 0.000  H1_20 0.000  CAL20 0.000   H_STRUCT (0.70 bar): holds at 0 of 4
+
+==============================================================================================================
+H_AGREE  867's AND 910's AGREEMENT TABLES, RE-READ AT EVERY EXCISION
+==============================================================================================================
+
+  agreement with the DD leg at the FIXED cap beta <= 0.60, FULL window, DDSUB population
+  panel  proxy                NONE            SPYDD            CRASH            H1_20            CAL20
+  U56    FULL           0.8594/  9       0.8929/ 45       0.8929/ 28       0.8929/ 33       0.8929/ 35
+  U56    DOWN           0.8594/  6       0.8929/ 35       0.8929/ 34       0.8929/ 36       0.8929/ 45
+  U56    ROLL           0.9844/  0       0.9286/ 31       0.9196/ 32       0.8929/ 49       0.9196/ 43
+  U56    MAXROLL        0.9219/  0       0.8125/ 32       0.8125/ 32       0.8125/ 32       0.8125/ 32
+  U56    EWMA           0.9375/  2       0.9107/ 36       0.9286/ 37       0.9464/ 44       0.9107/ 37
+  U56    SEMI           0.8594/  3       0.8929/ 33       0.8929/ 24       0.8929/ 39       0.8929/ 37
+  U56    TAIL10         0.8906/  6       0.8750/ 42       0.8661/ 43       0.8661/ 50       0.8661/ 54
+  U56    HIVOL          0.8281/ 15       0.8750/ 51       0.8839/ 36       0.8839/ 35       0.8839/ 39
+  U56    SPYDD          0.9844/  3       0.8929/ 39       0.8929/ 39       0.8929/ 39       0.8929/ 39
+  U56    SPYDD10        0.8281/ 13       0.8839/ 35       0.8839/ 35       0.8839/ 35       0.8839/ 35
+  U56    DDWIN          0.9531/ 21       0.8482/ 49       0.8482/ 49       0.8482/ 49       0.8482/ 49   <-- CIRCULAR CEILING
+  B136   FULL           0.8000/  5       0.9732/ 18       0.9554/ 28       0.9464/ 20       0.9375/ 20
+  B136   DOWN           0.8167/  6       0.9643/ 16       0.9286/ 22       0.9375/ 12       0.9375/ 12
+  B136   ROLL           0.8667/  0       0.8929/ 32       0.8661/ 38       0.8482/ 42       0.8571/ 42
+  B136   MAXROLL        0.9333/ 12       0.7679/ 62       0.7679/ 78       0.7679/ 78       0.7679/ 78
+  B136   EWMA           0.8333/  7       0.9107/ 21       0.9107/ 19       0.9107/ 31       0.9107/ 25
+  B136   SEMI           0.8167/  8       0.9821/ 12       0.9554/ 22       0.9554/ 18       0.9554/ 17
+  B136   TAIL10         0.8500/  6       0.9643/ 14       0.9554/ 22       0.9554/ 11       0.9554/ 11
+  B136   HIVOL          0.7667/ 10       0.9643/ 21       0.9643/ 17       0.9643/ 14       0.9643/ 21
+  B136   SPYDD          1.0000/  0       0.9196/ 24       0.9196/ 24       0.9196/ 24       0.9196/ 24
+  B136   SPYDD10        0.7667/ 12       0.9464/ 15       0.9464/ 15       0.9464/ 15       0.9464/ 15
+  B136   DDWIN          0.9833/  0       0.8750/ 12       0.8750/ 12       0.8750/ 12       0.8661/ 20   <-- CIRCULAR CEILING
+  SMALL  FULL           0.6786/ 77       0.6964/ 90       0.7143/ 74       0.7054/ 80       0.7143/ 71
+  SMALL  DOWN           0.6429/ 69       0.6875/ 88       0.7054/ 80       0.7054/ 88       0.7143/ 66
+  SMALL  ROLL           0.7143/ 79       0.7232/ 72       0.7232/ 69       0.7232/ 61       0.7411/ 56
+  SMALL  MAXROLL        0.8482/ 70       0.9107/ 23       0.9107/ 29       0.9107/ 23       0.9018/ 23
+  SMALL  EWMA           0.7054/ 73       0.7143/ 76       0.7143/ 73       0.7143/ 66       0.7232/ 64
+  SMALL  SEMI           0.7054/ 75       0.7143/ 83       0.7143/ 82       0.7054/ 73       0.7143/ 72
+  SMALL  TAIL10         0.6786/ 78       0.6429/108       0.6607/105       0.6964/ 79       0.7054/ 76
+  SMALL  HIVOL          0.6339/ 83       0.6339/116       0.6607/ 98       0.6875/ 97       0.6964/ 82
+  SMALL  SPYDD          0.6429/127       0.6429/123       0.6429/123       0.6429/123       0.6518/118
+  SMALL  SPYDD10        0.6250/ 88       0.6786/ 96       0.6786/ 96       0.6786/ 96       0.6875/ 91
+  SMALL  DDWIN          0.6875/ 74       0.7054/ 91       0.7054/ 91       0.7054/ 74       0.7143/ 91   <-- CIRCULAR CEILING
+    (cell = agree / n_disagreeing matched pairs)
+
+  BAR-A (910's own bar: agree >= DDWIN's AND best_agree >= DDWIN's AND 0 disagreeing
+  pairs, FULL window / DDSUB), re-run at every excision:
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.barA.csv  (150 rows, 12 cols)
+  panel  excision    n     DDWIN agree/best/dis                   qualifying ex-ante proxies
+  U56    NONE       64         0.9531/0.9844/21                                         ROLL
+  U56    SPYDD     112         0.8482/0.8929/49                                       (none)
+  U56    CRASH     112         0.8482/0.8929/49                                       (none)
+  U56    H1_20     112         0.8482/0.8929/49                                       (none)
+  U56    CAL20     112         0.8482/0.8929/49                                       (none)
+  B136   NONE       60          0.9833/1.0000/0                                        SPYDD
+  B136   SPYDD     112         0.8750/0.9286/12                                       (none)
+  B136   CRASH     112         0.8750/0.9286/12                                       (none)
+  B136   H1_20     112         0.8750/0.9286/12                                       (none)
+  B136   CAL20     112         0.8661/0.9196/20                                       (none)
+  SMALL  NONE      112         0.6875/0.8482/74                                       (none)
+  SMALL  SPYDD     112         0.7054/0.8125/91                                       (none)
+  SMALL  CRASH     112         0.7054/0.8125/91                                       (none)
+  SMALL  H1_20     112         0.7054/0.8214/74                                       (none)
+  SMALL  CAL20     112         0.7143/0.8214/91                                       (none)
+
+  BAR-A totals: NONE 2/30  SPYDD 0/30  CRASH 0/30  H1_20 0/30  CAL20 0/30
+
+==============================================================================================================
+WHICH COMMITTED CLAIMS SURVIVE?  (each claim re-read against ITS OWN committed bar)
+==============================================================================================================
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.survival.csv  (65 rows, 7 cols)
+
+  claim                                                           NONE     SPYDD     CRASH     H1_20     CAL20
+  K1 DDWIN reaches 0.95 on U56                                SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K2 DDWIN reaches 0.95 on B136                               SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K2b DDWIN B136 has 0 disagreeing pairs                      SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K3 U56/ROLL clears BAR-A                                    SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K4 B136/SPYDD clears BAR-A                                  SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K5 |rho(beta_FULL, MaxDD)| in [0.69,0.97] on U56            SURVIVES  SURVIVES  SURVIVES  SURVIVES  SURVIVES
+  K5 |rho(beta_FULL, MaxDD)| in [0.69,0.97] on B136           SURVIVES  SURVIVES  SURVIVES  SURVIVES  SURVIVES
+  K6 ex-ante agreement span stays below 1.0 (not a beta cap)  SURVIVES  SURVIVES  SURVIVES  SURVIVES  SURVIVES
+  K7 U56 POPULATION < 0 and ESTIMATOR > 0                     SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K7 B136 POPULATION < 0 and ESTIMATOR > 0                    SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K8 containment share on U56                                 SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K8 containment share on B136                                SURVIVES   BREAKS    BREAKS    BREAKS    BREAKS 
+  K8 containment share on SMALL                               SURVIVES  SURVIVES  SURVIVES  SURVIVES  SURVIVES
+
+  SURVIVAL SUMMARY: of 52 (claim x excision) cells outside the control, 16 survive (30.8%).
+  at the control (NONE): 13 of 13 -- this is the reproduction check on the claims themselves.
+
+==============================================================================================================
+H_LEG / H_4b  DOES THE DD LEG'S PASS SET SURVIVE?  (every real book, nothing selected)
+==============================================================================================================
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.legflips.csv  (45 rows, 14 cols)
+
+  panel  window excision       DDleg pass        flips        4b pass     4b flips        4a pass
+  U56    FULL   NONE               85->85  0/112 0.000           9->9  0/112 0.000           0->0
+  U56    FULL   SPYDD              85->83 16/112 0.143           9->8 13/112 0.116           0->0
+  U56    FULL   CRASH              85->83 16/112 0.143           9->9 12/112 0.107           0->0
+  U56    FULL   H1_20              85->83 16/112 0.143           9->9 12/112 0.107           0->0
+  U56    FULL   CAL20              85->83 16/112 0.143           9->7 10/112 0.089           0->0
+  U56    IS     NONE               92->92  0/112 0.000         11->11  0/112 0.000           0->0
+  U56    IS     SPYDD              92->92  0/112 0.000         11->11  0/112 0.000           0->0
+  U56    IS     CRASH              92->92  0/112 0.000         11->11  0/112 0.000           0->0
+  U56    IS     H1_20              92->92  0/112 0.000         11->11  0/112 0.000           0->0
+  U56    IS     CAL20              92->92  0/112 0.000         11->11  0/112 0.000           0->0
+  U56    OOS    NONE               85->85  0/112 0.000         10->10  0/112 0.000           2->2
+  U56    OOS    SPYDD              85->84 15/112 0.134          10->9 15/112 0.134           2->3
+  U56    OOS    CRASH              85->84 15/112 0.134         10->12 14/112 0.125           2->4
+  U56    OOS    H1_20              85->84 15/112 0.134         10->12 14/112 0.125           2->6
+  U56    OOS    CAL20              85->84 15/112 0.134         10->11 13/112 0.116           2->6
+  B136   FULL   NONE               80->80  0/112 0.000         10->10  0/112 0.000           6->6
+  B136   FULL   SPYDD              80->90 18/112 0.161         10->10 12/112 0.107           6->9
+  B136   FULL   CRASH              80->90 18/112 0.161         10->13 11/112 0.098           6->9
+  B136   FULL   H1_20              80->90 18/112 0.161         10->13 11/112 0.098          6->12
+  B136   FULL   CAL20              80->90 18/112 0.161         10->12 10/112 0.089          6->11
+  B136   IS     NONE               86->86  0/112 0.000           9->9  0/112 0.000           9->9
+  B136   IS     SPYDD              86->86  0/112 0.000           9->9  0/112 0.000           9->9
+  B136   IS     CRASH              86->86  0/112 0.000           9->9  0/112 0.000           9->9
+  B136   IS     H1_20              86->86  0/112 0.000           9->9  0/112 0.000           9->9
+  B136   IS     CAL20              86->86  0/112 0.000           9->9  0/112 0.000           9->9
+  B136   OOS    NONE               80->80  0/112 0.000           9->9  0/112 0.000           5->5
+  B136   OOS    SPYDD              80->95 17/112 0.152          9->12 15/112 0.134          5->20
+  B136   OOS    CRASH              80->95 17/112 0.152          9->19 12/112 0.107          5->18
+  B136   OOS    H1_20              80->95 17/112 0.152          9->18 11/112 0.098          5->14
+  B136   OOS    CAL20              80->95 17/112 0.152          9->17 10/112 0.089          5->16
+  SMALL  FULL   NONE               58->58  0/112 0.000           0->0  0/112 0.000           5->5
+  SMALL  FULL   SPYDD              58->59 15/112 0.134           0->0  0/112 0.000          5->22
+  SMALL  FULL   CRASH              58->59 15/112 0.134           0->0  0/112 0.000          5->11
+  SMALL  FULL   H1_20              58->59 15/112 0.134           0->0  0/112 0.000           5->9
+  SMALL  FULL   CAL20              58->60 16/112 0.143           0->0  0/112 0.000          5->23
+  SMALL  IS     NONE               59->59  0/112 0.000           0->0  0/112 0.000         20->20
+  SMALL  IS     SPYDD              59->59  0/112 0.000           0->0  0/112 0.000         20->20
+  SMALL  IS     CRASH              59->59  0/112 0.000           0->0  0/112 0.000         20->20
+  SMALL  IS     H1_20              59->59  0/112 0.000           0->0  0/112 0.000         20->20
+  SMALL  IS     CAL20              59->59  0/112 0.000           0->0  0/112 0.000         20->20
+  SMALL  OOS    NONE               58->58  0/112 0.000           0->0  0/112 0.000           0->0
+  SMALL  OOS    SPYDD              58->59 15/112 0.134           0->0  0/112 0.000          0->19
+  SMALL  OOS    CRASH              58->59 15/112 0.134           0->0  0/112 0.000          0->10
+  SMALL  OOS    H1_20              58->59 15/112 0.134           0->0  0/112 0.000          0->19
+  SMALL  OOS    CAL20              58->60 16/112 0.143           0->0  0/112 0.000          0->19
+
+  H_LEG (bar: flip share > 0.5 = the leg is the episode): max flip share on the FULL window 0.161 (0 of 12 cells above the bar)
+
+==============================================================================================================
+H_WF / RULE 8  THE BOOKS: IS-only choosers on 2009-2016, OOS 2017-2026 read ONCE, at
+               EVERY excision.  10 bps, t+1, weekly.  BOTH KEEP PATHS (PROTOCOL 4a/4b).
+               The IS half carries no 2020 days (G9), so the chooser is IDENTICAL across
+               excisions and every OOS move below is the episode.
+==============================================================================================================
+  wrote 2026-09-15_is-the-DD-LEG-literature-a-2020-CONTAINMENT-fact_cloud.walkforward.csv  (75 rows, 22 cols)
+
+  panel  exc    chooser                book                        cand     CAGR   Shrp    MaxDD         H1/H2  4a  4b
+  U56    NONE   IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   16.41%  1.075  -29.18%  1.184/ 0.955   n   n
+  U56    NONE   IS_DDCAP               TREND/AGG/th=0.2/g=0.75       92   12.30%  1.076  -22.53%  1.186/ 0.953   n   n
+  U56    NONE   IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       81    8.18%  1.076  -15.46%  1.189/ 0.951   n   n
+  U56    NONE   IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      102   16.41%  1.075  -29.18%  1.184/ 0.955   n   n
+  U56    NONE   IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       74    8.18%  1.076  -15.46%  1.189/ 0.951   n   n
+  U56    SPYDD  IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   20.75%  1.440  -24.92%  1.969/ 0.941   n   n
+  U56    SPYDD  IS_DDCAP               TREND/AGG/th=0.2/g=0.75       92   15.39%  1.439  -19.17%  1.968/ 0.939   n   n
+  U56    SPYDD  IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       81   10.14%  1.438  -13.11%  1.967/ 0.936   n   n
+  U56    SPYDD  IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      102   20.75%  1.440  -24.92%  1.969/ 0.941   n   n
+  U56    SPYDD  IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       74   10.14%  1.438  -13.11%  1.967/ 0.936   n   n
+  U56    CRASH  IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   18.21%  1.344  -24.92%  1.759/ 0.997   n   n
+  U56    CRASH  IS_DDCAP               TREND/AGG/th=0.2/g=0.75       92   13.54%  1.344  -19.17%  1.759/ 0.995   n   n
+  U56    CRASH  IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       81    8.95%  1.343  -13.11%  1.759/ 0.992   n   n
+  U56    CRASH  IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      102   18.21%  1.344  -24.92%  1.759/ 0.997   n   n
+  U56    CRASH  IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       74    8.95%  1.343  -13.11%  1.759/ 0.992   n   n
+  U56    H1_20  IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   17.10%  1.288  -24.92%  1.584/ 1.047   n   n
+  U56    H1_20  IS_DDCAP               TREND/AGG/th=0.2/g=0.75       92   12.74%  1.288  -19.17%  1.586/ 1.045   n   n
+  U56    H1_20  IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       81    8.43%  1.287  -13.11%  1.587/ 1.042   n   n
+  U56    H1_20  IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      102   17.10%  1.288  -24.92%  1.584/ 1.047   n   n
+  U56    H1_20  IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       74    8.43%  1.287  -13.11%  1.587/ 1.042   n   n
+  U56    CAL20  IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   15.11%  1.166  -24.92%  1.044/ 1.280   n   n
+  U56    CAL20  IS_DDCAP               TREND/AGG/th=0.2/g=0.75       92   11.29%  1.165  -19.17%  1.043/ 1.279   n   n
+  U56    CAL20  IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       81    7.49%  1.164  -13.11%  1.041/ 1.278   n   n
+  U56    CAL20  IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      102   15.11%  1.166  -24.92%  1.044/ 1.280   n   n
+  U56    CAL20  IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       74    7.49%  1.164  -13.11%  1.041/ 1.278   n   n
+  B136   NONE   IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   15.85%  1.058  -25.59%  1.231/ 0.873   n   n
+  B136   NONE   IS_DDCAP               TREND/AGG/th=0.2/g=0.75       86   11.89%  1.060  -19.53%  1.235/ 0.873   n   y
+  B136   NONE   IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       76    7.91%  1.061  -13.25%  1.239/ 0.872   n   n
+  B136   NONE   IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      100   15.85%  1.058  -25.59%  1.231/ 0.873   n   n
+  B136   NONE   IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       69    7.91%  1.061  -13.25%  1.239/ 0.872   n   n
+  B136   SPYDD  IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   18.62%  1.304  -23.20%  1.797/ 0.857   n   n
+  B136   SPYDD  IS_DDCAP               TREND/AGG/th=0.2/g=0.75       86   13.86%  1.304  -17.73%  1.798/ 0.856   n   n
+  B136   SPYDD  IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       76    9.17%  1.304  -12.03%  1.798/ 0.856   n   n
+  B136   SPYDD  IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      100   18.62%  1.304  -23.20%  1.797/ 0.857   n   n
+  B136   SPYDD  IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       69    9.17%  1.304  -12.03%  1.798/ 0.856   n   n
+  B136   CRASH  IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   18.45%  1.304  -23.20%  1.783/ 0.875   n   n
+  B136   CRASH  IS_DDCAP               TREND/AGG/th=0.2/g=0.75       86   13.74%  1.305  -17.73%  1.785/ 0.874   n   n
+  B136   CRASH  IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       76    9.09%  1.305  -12.03%  1.786/ 0.873   n   n
+  B136   CRASH  IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      100   18.45%  1.304  -23.20%  1.783/ 0.875   n   n
+  B136   CRASH  IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       69    9.09%  1.305  -12.03%  1.786/ 0.873   n   n
+  B136   H1_20  IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   17.57%  1.273  -23.20%  1.693/ 0.918   n   n
+  B136   H1_20  IS_DDCAP               TREND/AGG/th=0.2/g=0.75       86   13.10%  1.274  -17.73%  1.695/ 0.917   n   n
+  B136   H1_20  IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       76    8.67%  1.274  -12.03%  1.697/ 0.916   n   n
+  B136   H1_20  IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      100   17.57%  1.273  -23.20%  1.693/ 0.918   n   n
+  B136   H1_20  IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       69    8.67%  1.274  -12.03%  1.697/ 0.916   n   n
+  B136   CAL20  IS_SHARPE              TREND/AGG/th=0.2/g=1.00      112   15.66%  1.159  -23.20%  1.277/ 1.052   n   n
+  B136   CAL20  IS_DDCAP               TREND/AGG/th=0.2/g=0.75       86   11.71%  1.159  -17.73%  1.277/ 1.052   n   n
+  B136   CAL20  IS_ROLLCAP[<=0.60]     TREND/AGG/th=0.2/g=0.50       76    7.78%  1.158  -12.03%  1.276/ 1.052   n   n
+  B136   CAL20  IS_SPYDDCAP[<=0.60]    TREND/AGG/th=0.2/g=1.00      100   15.66%  1.159  -23.20%  1.277/ 1.052   n   n
+  B136   CAL20  IS_DDWINCAP[circular]  TREND/AGG/th=0.2/g=0.50       69    7.78%  1.158  -12.03%  1.276/ 1.052   n   n
+  SMALL  NONE   IS_SHARPE              VOL/AGG/th=0.4/g=1.00        112    9.84%  0.576  -35.16%  0.819/ 0.384   n   n
+  SMALL  NONE   IS_DDCAP               VOL/AGG/th=0.4/g=0.25         59    2.75%  0.580   -9.63%  0.839/ 0.379   n   n
+  SMALL  NONE   IS_ROLLCAP[<=0.60]     VOL/AGG/th=0.4/g=0.50         89    5.32%  0.579  -18.68%  0.833/ 0.381   n   n
+  SMALL  NONE   IS_SPYDDCAP[<=0.60]    VOL/AGG/th=0.4/g=0.50         81    5.32%  0.579  -18.68%  0.833/ 0.381   n   n
+  SMALL  NONE   IS_DDWINCAP[circular]  VOL/AGG/th=0.4/g=0.75         84    7.69%  0.578  -27.19%  0.826/ 0.382   n   n
+  SMALL  SPYDD  IS_SHARPE              VOL/AGG/th=0.4/g=1.00        112   13.94%  0.789  -30.05%  1.386/ 0.379   n   n
+  SMALL  SPYDD  IS_DDCAP               VOL/AGG/th=0.4/g=0.25         59    3.65%  0.788   -8.16%  1.391/ 0.373   y   n
+  SMALL  SPYDD  IS_ROLLCAP[<=0.60]     VOL/AGG/th=0.4/g=0.50         89    7.21%  0.788  -15.89%  1.390/ 0.375   n   n
+  SMALL  SPYDD  IS_SPYDDCAP[<=0.60]    VOL/AGG/th=0.4/g=0.50         81    7.21%  0.788  -15.89%  1.390/ 0.375   n   n
+  SMALL  SPYDD  IS_DDWINCAP[circular]  VOL/AGG/th=0.4/g=0.75         84   10.65%  0.789  -23.19%  1.388/ 0.377   n   n
+  SMALL  CRASH  IS_SHARPE              VOL/AGG/th=0.4/g=1.00        112   14.11%  0.793  -30.05%  1.337/ 0.411   n   n
+  SMALL  CRASH  IS_DDCAP               VOL/AGG/th=0.4/g=0.25         59    3.70%  0.792   -8.16%  1.343/ 0.405   y   n
+  SMALL  CRASH  IS_ROLLCAP[<=0.60]     VOL/AGG/th=0.4/g=0.50         89    7.29%  0.793  -15.89%  1.341/ 0.407   n   n
+  SMALL  CRASH  IS_SPYDDCAP[<=0.60]    VOL/AGG/th=0.4/g=0.50         81    7.29%  0.793  -15.89%  1.341/ 0.407   n   n
+  SMALL  CRASH  IS_DDWINCAP[circular]  VOL/AGG/th=0.4/g=0.75         84   10.77%  0.793  -23.19%  1.339/ 0.410   n   n
+  SMALL  H1_20  IS_SHARPE              VOL/AGG/th=0.4/g=1.00        112   14.22%  0.791  -30.05%  1.221/ 0.481   n   n
+  SMALL  H1_20  IS_DDCAP               VOL/AGG/th=0.4/g=0.25         59    3.73%  0.790   -8.16%  1.227/ 0.474   y   n
+  SMALL  H1_20  IS_ROLLCAP[<=0.60]     VOL/AGG/th=0.4/g=0.50         89    7.35%  0.791  -15.89%  1.225/ 0.477   n   n
+  SMALL  H1_20  IS_SPYDDCAP[<=0.60]    VOL/AGG/th=0.4/g=0.50         81    7.35%  0.791  -15.89%  1.225/ 0.477   n   n
+  SMALL  H1_20  IS_DDWINCAP[circular]  VOL/AGG/th=0.4/g=0.75         84   10.86%  0.791  -23.19%  1.223/ 0.479   n   n
+  SMALL  CAL20  IS_SHARPE              VOL/AGG/th=0.4/g=1.00        112   10.42%  0.620  -30.05%  0.726/ 0.556   n   n
+  SMALL  CAL20  IS_DDCAP               VOL/AGG/th=0.4/g=0.25         59    2.83%  0.618   -8.16%  0.726/ 0.551   y   n
+  SMALL  CAL20  IS_ROLLCAP[<=0.60]     VOL/AGG/th=0.4/g=0.50         89    5.53%  0.619  -15.89%  0.727/ 0.553   n   n
+  SMALL  CAL20  IS_SPYDDCAP[<=0.60]    VOL/AGG/th=0.4/g=0.50         81    5.53%  0.619  -15.89%  0.727/ 0.553   n   n
+  SMALL  CAL20  IS_DDWINCAP[circular]  VOL/AGG/th=0.4/g=0.75         84    8.06%  0.620  -23.19%  0.727/ 0.555   n   n
+
+  comparands, SAME OOS window, SAME excision:
+  panel  exc                 SPY CAGR/Sharpe/MaxDD    RULES v2 (live) CAGR/Sharpe/MaxDD
+  U56    NONE            15.27% / 0.874 /  -33.72%             9.46% / 1.277 /  -12.05%
+  U56    SPYDD           20.44% / 1.210 /  -24.50%            10.85% / 1.523 /   -7.22%
+  U56    CRASH           17.37% / 1.099 /  -24.50%            10.57% / 1.485 /   -7.22%
+  U56    H1_20           16.57% / 1.066 /  -24.50%             9.99% / 1.415 /   -7.22%
+  U56    CAL20           14.93% / 0.977 /  -24.50%             8.92% / 1.313 /   -7.22%
+  B136   NONE            15.33% / 0.877 /  -33.72%             7.88% / 1.106 /  -12.24%
+  B136   SPYDD           20.51% / 1.213 /  -24.50%             9.21% / 1.347 /   -9.28%
+  B136   CRASH           17.43% / 1.102 /  -24.50%             9.10% / 1.329 /   -9.28%
+  B136   H1_20           16.64% / 1.070 /  -24.50%             8.74% / 1.291 /   -9.28%
+  B136   CAL20           15.00% / 0.981 /  -24.50%             7.82% / 1.188 /   -9.28%
+  SMALL  NONE            15.33% / 0.877 /  -33.72%             3.75% / 0.560 /  -13.89%
+  SMALL  SPYDD           20.51% / 1.213 /  -24.50%             4.74% / 0.700 /  -11.87%
+  SMALL  CRASH           17.43% / 1.102 /  -24.50%             4.69% / 0.690 /  -11.87%
+  SMALL  H1_20           16.64% / 1.070 /  -24.50%             4.75% / 0.694 /  -11.87%
+  SMALL  CAL20           15.00% / 0.981 /  -24.50%             3.18% / 0.485 /  -11.87%
+
+  full-window comparands (for the leaderboard rows), SAME excision:
+    U56    NONE   SPY  15.13% / 0.885 / -33.72% (halves 0.959/0.824)   RULES v2   8.62% / 1.201 / -12.05% (halves 1.232/1.177)
+    U56    SPYDD  SPY  17.92% / 1.065 / -24.50% (halves 0.957/1.170)   RULES v2   9.37% / 1.334 /  -7.89% (halves 1.222/1.440)
+    U56    CRASH  SPY  16.26% / 1.002 / -24.50% (halves 0.948/1.058)   RULES v2   9.21% / 1.312 /  -7.89% (halves 1.200/1.420)
+    U56    H1_20  SPY  15.82% / 0.983 / -24.50% (halves 0.940/1.029)   RULES v2   8.88% / 1.271 /  -7.89% (halves 1.198/1.342)
+    U56    CAL20  SPY  14.94% / 0.937 / -24.50% (halves 0.929/0.945)   RULES v2   8.29% / 1.212 /  -7.89% (halves 1.157/1.266)
+    B136   NONE   SPY  15.16% / 0.886 / -33.72% (halves 0.960/0.826)   RULES v2   7.98% / 1.099 / -12.24% (halves 1.235/0.966)
+    B136   SPYDD  SPY  17.95% / 1.067 / -24.50% (halves 0.954/1.176)   RULES v2   8.70% / 1.224 /  -9.28% (halves 1.227/1.221)
+    B136   CRASH  SPY  16.30% / 1.004 / -24.50% (halves 0.948/1.061)   RULES v2   8.64% / 1.214 /  -9.28% (halves 1.207/1.222)
+    B136   H1_20  SPY  15.86% / 0.985 / -24.50% (halves 0.940/1.032)   RULES v2   8.44% / 1.192 /  -9.28% (halves 1.186/1.199)
+    B136   CAL20  SPY  14.98% / 0.938 / -24.50% (halves 0.929/0.949)   RULES v2   7.95% / 1.137 /  -9.28% (halves 1.153/1.121)
+    SMALL  NONE   SPY  14.06% / 0.858 / -33.72% (halves 0.914/0.834)   RULES v2   4.30% / 0.664 / -13.89% (halves 0.806/0.555)
+    SMALL  SPYDD  SPY  17.18% / 1.074 / -24.50% (halves 0.903/1.223)   RULES v2   4.92% / 0.755 / -11.87% (halves 0.804/0.722)
+    SMALL  CRASH  SPY  15.31% / 1.000 / -24.50% (halves 0.967/1.035)   RULES v2   4.89% / 0.749 / -11.87% (halves 0.858/0.668)
+    SMALL  H1_20  SPY  14.80% / 0.978 / -24.50% (halves 0.953/1.004)   RULES v2   4.93% / 0.752 / -11.87% (halves 0.879/0.657)
+    SMALL  CAL20  SPY  13.78% / 0.921 / -24.50% (halves 0.916/0.928)   RULES v2   4.00% / 0.625 / -11.87% (halves 0.822/0.464)
+
+  RULE 8 SUMMARY by excision:
+    NONE   4a 0 of 15   4b 1 of 15   (books passing 4b: B136/IS_DDCAP)
+    SPYDD  4a 1 of 15   4b 0 of 15   (books passing 4b: none)
+    CRASH  4a 1 of 15   4b 0 of 15   (books passing 4b: none)
+    H1_20  4a 1 of 15   4b 0 of 15   (books passing 4b: none)
+    CAL20  4a 1 of 15   4b 0 of 15   (books passing 4b: none)
+
+==============================================================================================================
+VERDICT
+==============================================================================================================
+  H_STRUCT U56    containment NONE=0.929 SPYDD=0.143 CRASH=0.143 H1_20=0.143 CAL20=0.143
+  H_STRUCT B136   containment NONE=0.893 SPYDD=0.250 CRASH=0.250 H1_20=0.250 CAL20=0.214
+  H_STRUCT SMALL  containment NONE=0.000 SPYDD=0.000 CRASH=0.000 H1_20=0.000 CAL20=0.000
+  H_AGREE  16 of 52 committed (claim x excision) cells survive outside the control
+  H_LEG    max DD-leg flip share (FULL window) 0.161 against a 0.5 bar
+  H_4b     FULL-window 4b census by excision: NONE 9/10/0  SPYDD 8/10/0  CRASH 9/13/0  H1_20 9/13/0  CAL20 7/12/0   (U56/B136/SMALL of 112)
+  H_WF     rule 8: NONE 4a 0/4b 1  SPYDD 4a 1/4b 0  CRASH 4a 1/4b 0  H1_20 4a 1/4b 0  CAL20 4a 1/4b 0
+
+SURVIVORSHIP: U56 / B136 / SMALL are current-constituent lists (SMALL additionally drops the 52 tickers
+  with max_1d_move >= 1.0 per data/small_meta.csv), so every CAGR and drawdown LEVEL above is
+  optimistic -- the books' and the comparands' alike.  The agreement tables, flip counts and
+  containment shares are same-tape statistics and are unaffected.
+
+elapsed 52.3s
