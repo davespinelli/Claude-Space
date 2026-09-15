@@ -1,0 +1,269 @@
+====================================================================================================
+IDEA 965 (lane C, 2026-09-15) -- is the ANTI-PREDICTIVE phase correlation a SINGLE-PICK
+artefact or a ROLLING one?   3 re-choice cadences x 3 grids (W/M/Q) x 4 choosers x
+5 books x 3 panels.  PROTOCOL: 10 bps carries every verdict, next-day execution, both
+KEEP paths, rule 8 (phases only ever chosen on days before the year they are traded).
+====================================================================================================
+
+PRE-REGISTERED BARS (printed before any number of this run is read)
+  H_FRESH   median Spearman(EXPAND window CAGR, NEXT-YEAR CAGR) >= +0.30
+  H_STALE   re-choice lifts that correlation over STATIC in >= 60% of (family, year) pairs
+  H_WEEK    median within-family Spearman(IS CAGR, OOS CAGR) on the W grid >= +0.30
+  H_ROLLPAY rolling book's OOS CAGR > canonical's in >= 60% of verdict cells
+  H_ROLL4B  rolling OOS 4b pass rate >= canonical's AND above the blind-phase null
+
+  SMALL panel: 663 names + SPY benchmark (52 tickers with max_1d_move >= 1.0 dropped per data/small_meta.csv)
+  panel U56: 56 columns, 2008-01-02 .. 2026-09-14, 4704 rows
+  panel B136: 136 columns, 2008-01-02 .. 2026-09-11, 4703 rows
+  panel SMALL: 664 columns, 2010-01-04 .. 2026-09-11, 4198 rows
+
+====================================================================================================
+(A) GATES -- run before any number of the hypothesis is read
+====================================================================================================
+  G0 offset_mask(.,per,0) == engine.rebalance_mask on W/M/Q  : 0 differing rows   PASS
+  G2 BAND03 @0.75 == rules_v2_weights (the LIVE rules)       : 0.000e+00   PASS
+  G1 Ctx.run == engine.backtest @10 bps, worst of W/M/Q      : 2.082e-17   PASS
+  G4 determinism (TOP20 M phase 3 re-derived twice)          : 0.000e+00   PASS
+  G5 RULES v2 weekly 8.6227%/1.2014/-12.0549% == engine.backtest(freq='W'): 2.220e-16   PASS
+     REPORTED, not a gate -- SPY on today's cache 15.1302%/0.8846/-33.7173%; the record's published RULES v2 / SPY constants differ by up to 1.494e-03 (a DATA-CACHE drift; G3 pins the machinery against 962's committed grid).
+
+====================================================================================================
+(B) THE PHASE GRID + THE CHOOSING WINDOWS
+    every (panel, book, gross, cadence, phase, rung): full/IS/OOS metrics, plus the
+    STATIC / EXPAND / ROLL8 window statistics and the PER-YEAR OOS CAGR
+====================================================================================================
+  panel U56 cadence W done  (5s)
+  panel U56 cadence M done  (8s)
+  panel U56 cadence Q done  (21s)
+  panel B136 cadence W done  (25s)
+  panel B136 cadence M done  (30s)
+  panel B136 cadence Q done  (44s)
+  panel SMALL cadence W done  (62s)
+  panel SMALL cadence M done  (85s)
+  panel SMALL cadence Q done  (145s)
+  wrote 2026-09-15_is-the-ANTI-PREDICTIVE-phase-correlation-a-SINGLE-PICK-artefact-or-a-ROLLING-one_C.grid.csv  (13350 rows)
+  13,350 grid rows = 3 panels x 5 books x 2 gross x 89 phases x 5 rungs
+  G3 962's committed grid.csv replayed on 12600 of 12600 rows (M+Q), max|d| over 13 columns 1.776e-15   PASS
+
+====================================================================================================
+(C) THE PICK SEQUENCES -- STATIC (one 2009-2016 pick) vs EXPAND vs ROLL8 (re-picked
+    every January on data that ENDS before that January)
+====================================================================================================
+  1,890 pick sequences built; distinct phases used per sequence: STATIC 1.00, EXPAND 3.02, ROLL8 3.90, ORACLE 7.24 (of 10 years)
+  G6 causality: 0 choosing-window days on/after their own cut; 0 of 8 pick sequences moved when the FUTURE was permuted   PASS
+
+====================================================================================================
+(D) RULE 8 WALK-FORWARD -- the composite books, run as books
+====================================================================================================
+  panel U56: 196 distinct (cadence, sequence) masks for 630 cells
+    done (151s)
+  panel B136: 197 distinct (cadence, sequence) masks for 630 cells
+    done (159s)
+  panel SMALL: 183 distinct (cadence, sequence) masks for 630 cells
+    done (203s)
+  wrote 2026-09-15_is-the-ANTI-PREDICTIVE-phase-correlation-a-SINGLE-PICK-artefact-or-a-ROLLING-one_C.walkforward.csv  (1890 rows)
+  G7 composite machinery with a CONSTANT sequence == the phase-0 grid row on 135 cells, max|d| 0.000e+00   PASS
+  GATES 8 of 8 PASS  (none failing)
+
+====================================================================================================
+(E) H_FRESH / H_STALE -- does a FRESH window predict NEXT YEAR better than a STALE one?
+    Both estimators are scored against the SAME target: the phases' year-Y CAGR ranking.
+====================================================================================================
+  wrote 2026-09-15_is-the-ANTI-PREDICTIVE-phase-correlation-a-SINGLE-PICK-artefact-or-a-ROLLING-one_C.prediction.csv  (1350 rows)
+  450 (family, year) pairs at the verdict rung (3 panels x 5 books x 3 grids x 10 years)
+
+  median Spearman(window CAGR rank, NEXT-YEAR CAGR rank) across phases:
+         rho_STATIC  rho_EXPAND  rho_ROLL8    n
+cadence                                        
+M            -0.042      -0.097     -0.110  150
+Q            -0.038      -0.021     +0.044  150
+W            -0.100      +0.100     +0.100  150
+  POOLED: STATIC -0.057 | EXPAND -0.028 | ROLL8 +0.000   (means -0.027 / -0.023 / -0.006; share positive 0.449 / 0.464 / 0.489)
+  the same on the SHARPE ranking:
+         rhoS_STATIC  rhoS_EXPAND  rhoS_ROLL8
+cadence                                      
+M             -0.019       -0.106      -0.111
+Q             -0.081       -0.018      +0.024
+W             -0.100       +0.000      +0.000
+
+  PAIRED, same target: EXPAND beats STATIC in 0.427 of pairs (mean delta +0.0043); ROLL8 beats STATIC in 0.462 (mean delta +0.0206)
+  by YEAR (median rho, verdict rung, all grids pooled):
+      rho_STATIC  rho_EXPAND  rho_ROLL8
+year                                   
+2017      +0.100      +0.100     +0.100
+2018      +0.064      +0.070     +0.164
+2019      -0.116      -0.088     +0.009
+2020      -0.014      +0.029     +0.165
+2021      +0.000      -0.122     -0.200
+2022      -0.101      -0.008     +0.010
+2023      -0.059      -0.089     -0.056
+2024      -0.165      -0.015     -0.011
+2025      -0.292      -0.058     -0.012
+2026      +0.052      -0.055     -0.200
+
+  962's OWN statistic, re-derived here and extended to the WEEKLY grid --
+  within-family Spearman(IS 2009-2016 CAGR, FULL OOS 2017-2026 CAGR) over phases:
+  wrote 2026-09-15_is-the-ANTI-PREDICTIVE-phase-correlation-a-SINGLE-PICK-artefact-or-a-ROLLING-one_C.families.csv  (45 rows)
+         rho_IS_OOS_CAGR  rho_IS_OOS_Sharpe  spread_OOS_CAGR_pp
+cadence                                                        
+M                 -0.083             -0.108              +3.087
+Q                 -0.229             -0.215              +6.528
+W                 +0.100             +0.200              +1.750
+  W median rho +0.100; M+Q median rho -0.153 (962 published -0.153 on M+Q over its 30 families)
+
+====================================================================================================
+(F) DOES RE-CHOOSING PAY?  OOS levels and both KEEP paths at the verdict rung
+====================================================================================================
+  OOS 4b / 4a PASS and mean OOS CAGR regret vs the CANONICAL, by RE-CHOICE CADENCE:
+           cells  pass4b  pass4b_rate  pass4b_pure  pass4a  mean_OOS_CAGR  regret_canon_pp  regret_fam_pp  dd_vs_canon_pp  turn
+recadence                                                                                                                      
+CANON         45       4        0.089            5       0          0.106            0.000         -0.581           0.000 7.697
+EXPAND       180      19        0.106           21       1          0.106            0.058         -0.523          -0.312 7.638
+ORACLE        45      12        0.267           12       4          0.189            8.332          7.751          -3.707 7.514
+ROLL8        180      28        0.156           29       0          0.109            0.362         -0.219          -0.508 7.636
+STATIC       180      15        0.083           19       1          0.107            0.181         -0.400          -0.282 7.636
+
+  the same, split by GRID (W / M / Q):
+          pass4b_REC                             regret_vs_canon_pp                             
+recadence      CANON EXPAND ORACLE  ROLL8 STATIC              CANON EXPAND  ORACLE  ROLL8 STATIC
+cadence                                                                                         
+M             +0.133 +0.067 +0.333 +0.133 +0.050             +0.000 -1.580  +6.674 -1.477 -1.079
+Q             +0.000 +0.050 +0.200 +0.133 +0.000             +0.000 +2.053 +14.836 +2.766 +1.761
+W             +0.133 +0.200 +0.267 +0.200 +0.200             +0.000 -0.300  +3.485 -0.204 -0.139
+
+  by CHOOSER (rolling only), mean OOS CAGR regret vs canonical / vs family mean:
+                    regret_vs_canon_pp  regret_vs_fammean_pp  dd_vs_canon_pp  n_switches
+chooser  recadence                                                                      
+C_CAGR   EXPAND                 +0.198                -0.383          -0.165      +2.844
+         ROLL8                  +0.510                -0.071          -0.410      +3.756
+C_CALMAR EXPAND                 -0.106                -0.687          -0.443      +2.622
+         ROLL8                  +0.262                -0.319          -0.689      +3.911
+C_DDMIN  EXPAND                 +0.317                -0.264          -0.469      +1.800
+         ROLL8                  +0.344                -0.237          -0.728      +2.267
+C_SHARPE EXPAND                 -0.179                -0.759          -0.170      +2.822
+         ROLL8                  +0.331                -0.249          -0.206      +4.022
+
+  rolling OOS CAGR > canonical's in 176 of 360 cells (0.489); EXPAND alone 0.467; 962's STATIC pick 0.483
+  rolling OOS CAGR > the FAMILY MEAN in 0.464 of cells (mean regret -0.371 pp)
+  PAIRED AT THE BOOK LEVEL -- same chooser, same cell, rolling vs its OWN stale pick: rolling wins 0.467 of 360 pairs, mean +0.029 pp of OOS CAGR and +0.0123 of OOS Sharpe
+                   d_CAGR_pp  d_Sharpe
+recadence cadence                     
+EXPAND    M          -0.5017   -0.0282
+          Q          +0.2925   +0.0334
+          W          -0.1611   -0.0030
+ROLL8     M          -0.3987   -0.0251
+          Q          +1.0056   +0.0939
+          W          -0.0646   +0.0031
+  mean EXTRA OOS drawdown vs canonical: rolling -0.410 pp, static -0.282 pp
+  turnover: canonical 7.70 x/yr, rolling 7.64 x/yr (the switch year pays a real extra rebalance)
+
+  THE CEILING -- ORACLE_ANNUAL (best phase per year, chosen with hindsight):
+     mean OOS CAGR 18.890% vs canonical 10.558% and rolling 10.768%; regret vs canonical +8.332 pp; 4b 12 of 45
+     i.e. the annual dial is WORTH this much and no IS rule collects it.
+
+  every ROLLING cell that clears 4b OOS at the verdict rung (record convention):
+panel   book cadence  chooser recadence  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  n_switches  regret_vs_canon_pp
+  U56 EWELIG       W C_CALMAR    EXPAND     0.117       1.159     -0.170           2               0.508
+  U56  TOP20       W C_CALMAR    EXPAND     0.151       1.218     -0.178           1               0.808
+  U56  TOP20       W C_CALMAR     ROLL8     0.151       1.218     -0.178           1               0.808
+  U56  TOP20       W   C_CAGR    EXPAND     0.146       1.179     -0.176           1               0.361
+  U56  TOP20       W   C_CAGR     ROLL8     0.145       1.188     -0.138           4               0.226
+  U56  TOP20       W  C_DDMIN    EXPAND     0.151       1.220     -0.178           2               0.847
+  U56  TOP20       W  C_DDMIN     ROLL8     0.151       1.220     -0.178           2               0.847
+  U56  TOP20       W C_SHARPE    EXPAND     0.152       1.219     -0.176           0               0.915
+  U56  TOP20       W C_SHARPE     ROLL8     0.151       1.216     -0.176           5               0.905
+  U56 EWELIG       W   C_CAGR    EXPAND     0.113       1.116     -0.161           3               0.080
+  U56 EWELIG       W   C_CAGR     ROLL8     0.121       1.184     -0.170           1               0.860
+  U56 EWELIG       W C_SHARPE     ROLL8     0.121       1.184     -0.170           1               0.860
+  U56 EWELIG       W C_SHARPE    EXPAND     0.116       1.141     -0.170           2               0.355
+  U56 EWELIG       W C_CALMAR     ROLL8     0.124       1.213     -0.170           1               1.178
+  U56 EWELIG       W  C_DDMIN    EXPAND     0.118       1.164     -0.170           2               0.546
+  U56 EWELIG       W  C_DDMIN     ROLL8     0.118       1.164     -0.170           2               0.546
+  U56  TOP05       M  C_DDMIN    EXPAND     0.188       0.986     -0.198           3               3.224
+  U56  TOP05       M C_CALMAR     ROLL8     0.217       1.112     -0.192           2               6.176
+  U56 EWELIG       M  C_DDMIN    EXPAND     0.129       1.215     -0.170           1              -0.061
+  U56 EWELIG       M  C_DDMIN     ROLL8     0.129       1.215     -0.170           1              -0.061
+  U56  TOP20       M   C_CAGR    EXPAND     0.152       1.173     -0.195           5              -1.507
+  U56  TOP20       M   C_CAGR     ROLL8     0.159       1.243     -0.182           2              -0.817
+  U56  TOP20       M C_SHARPE    EXPAND     0.150       1.174     -0.182           4              -1.700
+  U56  TOP20       M C_SHARPE     ROLL8     0.153       1.206     -0.182           2              -1.368
+  U56  TOP20       M C_CALMAR     ROLL8     0.155       1.225     -0.182           3              -1.202
+  U56 EWELIG       M   C_CAGR     ROLL8     0.123       1.179     -0.176           5              -0.672
+  U56 EWELIG       M C_SHARPE     ROLL8     0.127       1.221     -0.176           2              -0.300
+  U56 EWELIG       M C_CALMAR     ROLL8     0.128       1.176     -0.188           3              -0.228
+  U56  TOP20       Q C_CALMAR    EXPAND     0.163       1.215     -0.194           1               1.045
+  U56  TOP20       Q  C_DDMIN    EXPAND     0.163       1.215     -0.194           1               1.045
+  U56  TOP20       Q C_CALMAR     ROLL8     0.162       1.221     -0.185           5               0.860
+  U56 EWELIG       Q   C_CAGR     ROLL8     0.138       1.237     -0.184           3               2.281
+  U56 EWELIG       Q C_SHARPE     ROLL8     0.138       1.237     -0.184           3               2.281
+  U56 EWELIG       Q  C_DDMIN     ROLL8     0.126       1.120     -0.201           3               1.057
+  U56 EWELIG       Q C_CALMAR    EXPAND     0.135       1.222     -0.175           4               1.959
+  U56 EWELIG       Q C_CALMAR     ROLL8     0.139       1.246     -0.184           6               2.367
+  U56 BAND03       Q   C_CAGR     ROLL8     0.107       1.282     -0.130           2               2.240
+  U56 BAND03       Q C_CALMAR     ROLL8     0.109       1.285     -0.145           4               2.452
+  U56 BAND03       Q  C_DDMIN     ROLL8     0.107       1.306     -0.140           2               2.321
+ B136 EWELIG       W   C_CAGR    EXPAND     0.111       1.065     -0.166           1               0.599
+ B136 EWELIG       W C_SHARPE    EXPAND     0.112       1.067     -0.170           1               0.754
+ B136 EWELIG       W   C_CAGR     ROLL8     0.113       1.073     -0.170           1               0.825
+ B136 EWELIG       W C_SHARPE     ROLL8     0.113       1.073     -0.170           1               0.825
+ B136 EWELIG       W C_CALMAR    EXPAND     0.108       1.047     -0.166           1               0.320
+ B136 EWELIG       W  C_DDMIN    EXPAND     0.108       1.047     -0.166           1               0.320
+ B136 EWELIG       W  C_DDMIN     ROLL8     0.108       1.047     -0.166           1               0.320
+ B136 EWELIG       W C_CALMAR     ROLL8     0.107       1.033     -0.166           4               0.201
+
+  rung robustness -- OOS 4b pass rate by (recadence, cost rung), CORE gross:
+recadence  CANON  EXPAND  ORACLE  ROLL8  STATIC
+cost_bps                                       
+0.0        0.156   0.139   0.267  0.194   0.117
+10.0       0.089   0.106   0.267  0.156   0.083
+25.0       0.067   0.039   0.222  0.094   0.022
+  and mean OOS CAGR by (recadence, cost rung):
+recadence  CANON  EXPAND  ORACLE  ROLL8  STATIC
+cost_bps                                       
+0.0       0.1145  0.1149  0.1982 0.1181  0.1161
+10.0      0.1056  0.1062  0.1889 0.1092  0.1074
+25.0      0.0924  0.0930  0.1752 0.0962  0.0943
+
+  THE BLIND-RANDOM-PHASE NULL -- a coin picking a phase at random on the same cells
+     blind expectation 41.19 passes (sd 3.71) over 360 rolling cells; the rolling choosers delivered 47.  P(X <= 47 | blind) = 0.9533, P(X >= 47 | blind) = 0.0780 (+1.57 sd)
+     the CANONICAL phase delivered 4 of 45 (0.089); 962's STATIC pick 15 of 180 (0.083)
+
+  NULL-DRAW AUDIT -- for every ROLLING cell that passes 4b, the fraction of ITS OWN
+  family's phases that also pass (i.e. what a blind coin would have scored on that cell):
+     47 passing cells: median own base rate 0.600, mean 0.623; 37 of 47 (0.787) sit on a family whose coin flip clears 4b at least 25% of the time, 29 at least 50%
+                      passes  blind_rate
+panel book   cadence                    
+B136  EWELIG W             8       0.600
+U56   BAND03 Q             3       0.254
+      EWELIG M             5       0.810
+             Q             5       0.413
+             W             8       1.000
+      TOP05  M             2       0.190
+      TOP20  M             5       0.238
+             Q             3       0.016
+             W             8       1.000
+
+  RULE 8 + BOTH KEEP PATHS -- the single best ROLLING cell by OOS Sharpe, in full:
+     U56/BAND03/Q/C_DDMIN/ROLL8  seq 40,40,40,19,15,15,15,15,15,15  (2 switches)
+     OOS  CAGR 10.74%  Sharpe 1.306  MaxDD -13.98%   |  FULL CAGR 9.26%  Sharpe 1.187  MaxDD -13.98%  halves 1.145 / 1.229
+     SPY  OOS CAGR 15.27%  Sharpe 0.874  MaxDD -33.72%  (full 15.13% / -33.72%)
+     LIVE RULES v2 OOS CAGR 9.46%  Sharpe 1.277  MaxDD -12.05%
+     4b True (fails: -) | 4b OOSPURE True | 4a False
+     its own CANONICAL twin: OOS CAGR 8.42% (regret +2.32 pp)
+     LEG MARGINS: CAGR floor +0.153 pp (needs >= 10.59%); DD cap +6.255 pp (cap 20.23%); OOS Sharpe +0.432; halves +0.186 / +0.406 over SPY's
+     its own family's blind base rate: 16 of 63 phases (0.254) clear 4b -- a coin on this cell passes that often.
+
+  4a across every cell in this run: 19 of 1890 composite cells and 37 of 13350 grid rows beat the live RULES v2 book out of sample on the 4a path.
+
+====================================================================================================
+(G) VERDICT -- pre-registered bars against the numbers above
+====================================================================================================
+hypothesis  supported                                                                                                                                                                              evidence
+   H_FRESH      False                                                                median Spearman(EXPAND window CAGR, next-year CAGR) -0.028 over 450 (family, year) pairs (ROLL8 +0.000, STATIC -0.057)
+   H_STALE      False EXPAND beats STATIC on the same year target in 0.427 of pairs (ROLL8 0.462); mean delta +0.0043; at the BOOK level rolling beats its own stale pick in 0.467 of 360 pairs (+0.029 pp)
+    H_WEEK      False                                                                                                         median within-family Spearman(IS, OOS) CAGR on the W grid +0.100 (M+Q -0.153)
+ H_ROLLPAY      False                                                                                                         rolling OOS CAGR beats canonical in 0.489 of 360 cells, mean regret +0.210 pp
+  H_ROLL4B       True                                                                                        rolling 4b 0.131 vs canonical 0.089; blind null expected 41.19, observed 47, P(X<=47) = 0.9533
+  wrote 2026-09-15_is-the-ANTI-PREDICTIVE-phase-correlation-a-SINGLE-PICK-artefact-or-a-ROLLING-one_C.hypotheses.csv  (5 rows)
+
+  GATES 8 of 8 PASS.  done in 204.9s
