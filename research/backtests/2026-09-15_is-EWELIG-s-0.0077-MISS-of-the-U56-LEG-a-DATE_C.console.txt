@@ -1,0 +1,394 @@
+====================================================================================================
+IDEA 925 (lane C, 2026-09-15) -- is EWELIG's 0.0077 MISS of the U56 IS-H1 leg a DATE?
+====================================================================================================
+CLAUSE (idea 806, as applied here): RATIO = |margin at the published calendar| / (max-min
+  of the BOOK's own statistic across the offset grid).  RATIO < 1 => a DATE.  SPY is
+  buy-and-hold and is NOT offset -- it has no rebalance calendar.
+2 TUNED DIALS: OFFSET GRID ['SHIFT5', 'PHASE5', 'ALT3'] x PANEL ['U56', 'B136', 'SMALL'].  All 9 points reported.
+REPORTED: gross 0.05..1.5 x30 | cost [0.0, 10.0, 25.0, 50.0] bps | arms ['EWELIG', 'CAND20', 'CAND20_NG', 'EWALL', 'BAND03', 'SPYBH'] | windows ['FULL', 'IS', 'OOS', 'ISH1_HALF', 'ISH2_HALF']
+
+panel U56    4704 days x 56 cols  2008-01-02 .. 2026-09-14
+panel B136   4703 days x 136 cols  2008-01-02 .. 2026-09-11
+panel SMALL  4198 days x 664 cols  2010-01-04 .. 2026-09-11
+  SMALL drops 52 tickers with max_1d_move >= 1.0 (data/small_meta.csv)
+
+====================================================================================================
+GATES (printed before any result number)
+====================================================================================================
+G1 runner  fast == engine.backtest (EWELIG, U56, g=0.75, 10 bps): max|dret| 1.39e-17  max|dturn| 5.00e-16  -> PASS
+G2 mask    shift k=0 == engine.rebalance_mask: True | phase masks partition the index: True -> PASS
+           rebalance-day counts {'shift0': 977, 'shift1': 976, 'shift2': 975, 'shift3': 975, 'shift4': 975, 'phase0': 941, 'phase1': 941, 'phase2': 941, 'phase3': 941, 'phase4': 940}
+G5 band03  == baseline.rules_v2_weights elementwise: max|d| 0.00e+00 -> PASS
+G4 triples SPY  mine (0.1513,0.8845,-0.3372) vs committed (0.1516, 0.8861, -0.3372) -> PASS
+           v2   mine (0.0862,1.2013,-0.1205) vs committed (0.0863, 1.2018, -0.1205) -> PASS
+G3 cross   idea 922 .factorial.csv U56/ISH1_HALF (g=0.75, 10 bps), worst |d| 0.00e+00 (bar 0.0005) -> PASS
+           CAND20     mine 0.730026  committed 0.730026  d +0.00e+00
+           EWELIG     mine 0.830068  committed 0.830068  d +0.00e+00
+           CAND20_NG  mine 0.912347  committed 0.912347  d +0.00e+00
+           EWALL      mine 1.038372  committed 1.038372  d +0.00e+00
+           SPY        mine 0.837753  committed 0.837753  d +0.00e+00
+           parent file present, 1 matching row(s) read directly from disk
+G6 determ  subject cell rebuilt bit-identical: PASS
+
+====================================================================================================
+THE OFFSET WALK -- every (panel x schedule x arm x gross x cost x window) cell
+====================================================================================================
+  panel U56    done  (7,200 rows cumulative, 7s)
+  panel B136   done  (14,400 rows cumulative, 15s)
+  panel SMALL  done  (21,600 rows cumulative, 39s)
+  wrote 2026-09-15_is-EWELIG-s-0.0077-MISS-of-the-U56-LEG-a-DATE_C.ladder.csv  (21,600 rows, 48 cols)
+G7 falsify SPYBH (never trades after day 1) offset spread on ISH1_HALF: U56 8.05e-03  B136 8.04e-03  SMALL 6.07e-03 -> FAIL
+   G7 FAILS AS PRE-REGISTERED, and the bar was mis-specified, not the machinery: at
+   g < 1 the SPYBH arm is a CONSTANT-MIX book (0.75 SPY / 0.25 cash) that rebalances
+   back to target on its own calendar, so it DOES trade weekly and a calendar spread is
+   correct.  Only g = 1.00 is the never-trades cell.  G7b reads it there; the failed
+   bar is left standing as written.
+G7b falsify SPYBH at g=1.00 (the true never-trades cell) spread on ISH1_HALF: U56 0.00e+00  B136 0.00e+00  SMALL 0.00e+00 -> PASS
+  wrote 2026-09-15_is-EWELIG-s-0.0077-MISS-of-the-U56-LEG-a-DATE_C.gates.csv  (8 rows, 3 cols)
+GATES: 7 of 8 PASS
+
+====================================================================================================
+THE CLAUSE -- margin at the published calendar vs the book's own offset spread
+====================================================================================================
+  wrote 2026-09-15_is-EWELIG-s-0.0077-MISS-of-the-U56-LEG-a-DATE_C.clause.csv  (32,400 rows, 18 cols)
+
+----------------------------------------------------------------------------------------------------
+H_DATE   EWELIG, U56, ISH1_HALF, g=0.75, 10 bps -- is the miss a DATE?
+----------------------------------------------------------------------------------------------------
+offgrid     margin    spread    ratio           sharpe range      SPY   verdict
+SHIFT5     -0.0077    0.1004    0.077 [0.8037, 0.9041]   0.8378      DATE
+PHASE5     -0.0077    0.0901    0.085 [0.7972, 0.8873]   0.8378      DATE
+ALT3       -0.0077    0.0741    0.104 [0.8301, 0.9041]   0.8378      DATE
+H_DATE (SHIFT5, headline): PASS -- the 0.0077 miss is INSIDE the book's own calendar spread
+  all 3 grids agree: True   {'SHIFT5': True, 'PHASE5': True, 'ALT3': True}
+
+----------------------------------------------------------------------------------------------------
+H_FLIP   the stronger form: does the LEG ITSELF flip on any offset? (>= 1 of 5 on SHIFT5)
+----------------------------------------------------------------------------------------------------
+offgrid   n_pass  n_off   flips   per-offset Sharpe (leg bar 0.8378)
+SHIFT5         3      5    True   shift0:0.8301  shift1:0.8037  shift2:0.9041*  shift3:0.8451*  shift4:0.8653*
+PHASE5         4      5    True   phase0:0.8729*  phase1:0.8670*  phase2:0.7972  phase3:0.8457*  phase4:0.8873*
+ALT3           2      3    True   shift0:0.8301  shift2:0.9041*  shift4:0.8653*
+H_FLIP (SHIFT5): PASS -- 3 of 5 offsets clear the leg   (* = clears)
+
+----------------------------------------------------------------------------------------------------
+H_LADDER not a single-rung fact: of 30 gross rungs (U56, 10 bps), how many have >= 1 offset clearing the leg?  (bar 15)
+----------------------------------------------------------------------------------------------------
+  wrote 2026-09-15_is-EWELIG-s-0.0077-MISS-of-the-U56-LEG-a-DATE_C.ladder_counts.csv  (18 rows, 7 cols)
+offgrid  arm           pub  any-off  all-off  is_date
+SHIFT5   EWELIG          0       30        0       30
+SHIFT5   CAND20          0        0        0       30
+SHIFT5   CAND20_NG      30       30       30       24
+SHIFT5   EWALL          30       30       30        0
+SHIFT5   BAND03         30       30        0       30
+SHIFT5   SPYBH          10       29        0       29
+PHASE5   EWELIG          0       30        0       30
+PHASE5   CAND20          0        0        0        0
+PHASE5   CAND20_NG      30       30       30        3
+PHASE5   EWALL          30       30       30        0
+PHASE5   BAND03         30       30       30        0
+PHASE5   SPYBH          10       29        0       29
+ALT3     EWELIG          0       30        0       30
+ALT3     CAND20          0        0        0        0
+ALT3     CAND20_NG      30       30       30        2
+ALT3     EWALL          30       30       30        0
+ALT3     BAND03         30       30       30        0
+ALT3     SPYBH          10       10       10       10
+
+  922's H_CONC bar re-read per calendar (U56, 10 bps): rungs of 30 clearing the leg, bar 15
+  sched        EWELIG   CAND20  CAND20_NG    EWALL    H_CONC would read
+  shift0            0        0         30       30 FAIL (922 published this)
+  shift1            0        0         30       30 FAIL (922 published this)
+  shift2           30        0         30       30 PASS -- CONCENTRATION IS THE CARRIER
+  shift3           30        0         30       30 PASS -- CONCENTRATION IS THE CARRIER
+  shift4           30        0         30       30 PASS -- CONCENTRATION IS THE CARRIER
+  phase0           30        0         30       30 PASS -- CONCENTRATION IS THE CARRIER
+  phase1           30        0         30       30 PASS -- CONCENTRATION IS THE CARRIER
+  phase2            0        0         30       30 FAIL (922 published this)
+  phase3           30        0         30       30 PASS -- CONCENTRATION IS THE CARRIER
+  phase4           30        0         30       30 PASS -- CONCENTRATION IS THE CARRIER
+  wrote 2026-09-15_is-EWELIG-s-0.0077-MISS-of-the-U56-LEG-a-DATE_C.hconc_by_calendar.csv  (10 rows, 6 cols)
+  922's H_CONC verdict flips on 7 of 10 calendars (3 of 5 SHIFT5, 4 of 5 PHASE5)
+H_LADDER: PASS -- EWELIG 30 of 30 rungs have an offset that clears (922 published 0 of 30 at the published calendar)
+
+----------------------------------------------------------------------------------------------------
+H_CAND20 does 922's OWN headline survive its own clause?  (CAND20 ratio >= 1 on all grids)
+----------------------------------------------------------------------------------------------------
+SHIFT5   margin  -0.1077  spread 0.1542  ratio  0.699  n_leg_pass 0 of 5  -> DATE
+PHASE5   margin  -0.1077  spread 0.0908  ratio  1.187  n_leg_pass 0 of 5  -> VERDICT
+ALT3     margin  -0.1077  spread 0.1042  ratio  1.034  n_leg_pass 0 of 3  -> VERDICT
+H_CAND20: FAIL
+
+----------------------------------------------------------------------------------------------------
+H_PANEL  does the answer travel?  EWELIG on every panel x every grid
+----------------------------------------------------------------------------------------------------
+panel   offgrid     margin    spread    ratio  n_pass   verdict
+U56     SHIFT5     -0.0077    0.1004    0.077       3      DATE
+U56     PHASE5     -0.0077    0.0901    0.085       4      DATE
+U56     ALT3       -0.0077    0.0741    0.104       2      DATE
+B136    SHIFT5     +0.0542    0.0976    0.556       4      DATE
+B136    PHASE5     +0.0542    0.0604    0.897       5      DATE
+B136    ALT3       +0.0542    0.0324    1.676       3   VERDICT
+SMALL   SHIFT5     -0.1744    0.0863    2.021       0   VERDICT
+SMALL   PHASE5     -0.1744    0.0925    1.884       0   VERDICT
+SMALL   ALT3       -0.1744    0.0841    2.074       0   VERDICT
+H_PANEL: FAIL -- panel-dependent   {'U56': True, 'B136': True, 'SMALL': False}
+
+----------------------------------------------------------------------------------------------------
+H_COST   is the spread a CALENDAR fact or a COST artefact?  (0 bps within 2.0x of 10 bps)
+----------------------------------------------------------------------------------------------------
+panel   arm           cost    spread    margin    ratio
+U56     EWELIG           0    0.1010   +0.0760    0.753
+U56     EWELIG          10    0.1004   -0.0077    0.077
+U56     EWELIG          25    0.0999   -0.1336    1.337
+U56     EWELIG          50    0.1000   -0.3438    3.440
+U56     CAND20           0    0.1503   -0.0115    0.076
+U56     CAND20          10    0.1542   -0.1077    0.699
+U56     CAND20          25    0.1602   -0.2526    1.577
+U56     CAND20          50    0.1701   -0.4946    2.907
+B136    EWELIG           0    0.0967   +0.1326    1.371
+B136    EWELIG          10    0.0976   +0.0542    0.556
+B136    EWELIG          25    0.0991   -0.0636    0.642
+B136    EWELIG          50    0.1020   -0.2604    2.553
+B136    CAND20           0    0.0629   +0.2261    3.597
+B136    CAND20          10    0.0633   +0.1296    2.046
+B136    CAND20          25    0.0637   -0.0155    0.243
+B136    CAND20          50    0.0635   -0.2580    4.066
+SMALL   EWELIG           0    0.0871   -0.0860    0.988
+SMALL   EWELIG          10    0.0863   -0.1744    2.021
+SMALL   EWELIG          25    0.0877   -0.3068    3.500
+SMALL   EWELIG          50    0.0955   -0.5267    5.518
+SMALL   CAND20           0    0.3191   +0.1348    0.423
+SMALL   CAND20          10    0.3200   +0.0108    0.034
+SMALL   CAND20          25    0.3208   -0.1756    0.547
+SMALL   CAND20          50    0.3202   -0.4863    1.519
+H_COST: PASS -- 0 bps spread 0.1010 vs 10 bps 0.1004 (ratio 1.01x, bar 2.0x)
+
+====================================================================================================
+H_WF -- RULE 8: parameters chosen on IS 2009-2016 ONLY, OOS 2017-2026 read ONCE
+====================================================================================================
+Choosers (all IS-only, no OOS number touched): BEST_IS_SHARPE (arm x gross at each offset),
+BEST_IS_4b (first arm x gross clearing window-local 4b in IS), and the PUBLISHED book
+(EWELIG at g=0.75) carried unchosen.  Each is read OOS on its own offset AND as the
+5-sleeve ENSEMBLE (equal-weight average of the SHIFT5 sleeves' net returns).
+  panel U56    walk-forward done  (89s)   OOS SPY 15.27%/0.874/-33.72%  RULES v2 9.46%/1.277/-12.05%
+  panel B136   walk-forward done  (90s)   OOS SPY 15.33%/0.877/-33.72%  RULES v2 7.88%/1.106/-12.24%
+  panel SMALL  walk-forward done  (95s)   OOS SPY 15.33%/0.877/-33.72%  RULES v2 3.75%/0.560/-13.89%
+  wrote 2026-09-15_is-EWELIG-s-0.0077-MISS-of-the-U56-LEG-a-DATE_C.walkforward.csv  (54 rows, 25 cols)
+
+panel   sched      chooser           arm             g  OOS CAGR  Sharpe    MaxDD    4b    4a
+U56     shift0     BEST_IS_SHARPE    CAND20_NG    0.80    17.25%   1.141  -23.29% False False
+U56     shift0     BEST_IS_4b        CAND20_NG    0.80    17.25%   1.141  -23.29% False False
+U56     shift0     PUBLISHED_EWELIG  EWELIG       0.75    11.24%   1.105  -15.87%  True False
+U56     shift1     BEST_IS_SHARPE    CAND20_NG    0.05     1.10%   1.189   -1.54% False False
+U56     shift1     BEST_IS_4b        CAND20_NG    0.60    13.45%   1.190  -17.27%  True False
+U56     shift1     PUBLISHED_EWELIG  EWELIG       0.75    11.30%   1.116  -17.57%  True False
+U56     shift2     BEST_IS_SHARPE    CAND20_NG    0.80    18.66%   1.215  -22.49% False False
+U56     shift2     BEST_IS_4b        CAND20_NG    0.80    18.66%   1.215  -22.49% False False
+U56     shift2     PUBLISHED_EWELIG  EWELIG       0.75    11.38%   1.101  -17.41%  True False
+U56     shift3     BEST_IS_SHARPE    CAND20_NG    0.05     1.09%   1.168   -1.46% False False
+U56     shift3     BEST_IS_4b        CAND20_NG    0.60    13.30%   1.167  -16.60%  True False
+U56     shift3     PUBLISHED_EWELIG  EWELIG       0.75    12.48%   1.216  -16.58%  True False
+U56     shift4     BEST_IS_SHARPE    CAND20_NG    0.40     8.98%   1.192  -11.88% False False
+U56     shift4     BEST_IS_4b        CAND20_NG    0.60    13.54%   1.193  -17.49%  True False
+U56     shift4     PUBLISHED_EWELIG  EWELIG       0.75    12.07%   1.193  -15.36%  True False
+U56     ENSEMBLE5  BEST_IS_SHARPE    CAND20_NG    0.05     1.10%   1.182   -1.52% False False
+U56     ENSEMBLE5  BEST_IS_4b        CAND20_NG    0.60    13.42%   1.184  -17.19%  True False
+U56     ENSEMBLE5  PUBLISHED_EWELIG  EWELIG       0.75    11.70%   1.155  -15.72%  True False
+B136    shift0     BEST_IS_SHARPE    EWALL        1.50    27.47%   1.086  -45.91% False False
+B136    shift0     BEST_IS_4b        EWALL        0.60    11.02%   1.093  -20.70% False False
+B136    shift0     PUBLISHED_EWELIG  EWELIG       0.75    10.49%   1.010  -17.69% False False
+B136    shift1     BEST_IS_SHARPE    EWALL        0.05     0.92%   1.096   -1.87% False False
+B136    shift1     BEST_IS_4b        EWALL        0.55    10.16%   1.097  -19.16% False False
+B136    shift1     PUBLISHED_EWELIG  EWELIG       0.75    10.12%   0.973  -20.62% False False
+B136    shift2     BEST_IS_SHARPE    EWALL        1.50    27.78%   1.094  -45.56% False False
+B136    shift2     BEST_IS_4b        EWALL        0.60    10.95%   1.091  -20.72% False False
+B136    shift2     PUBLISHED_EWELIG  EWELIG       0.75    11.01%   1.032  -18.31%  True False
+B136    shift3     BEST_IS_SHARPE    EWALL        1.50    27.72%   1.094  -45.36% False False
+B136    shift3     BEST_IS_4b        EWALL        0.60    11.05%   1.099  -20.43% False False
+B136    shift3     PUBLISHED_EWELIG  EWELIG       0.75    11.27%   1.068  -17.03%  True False
+B136    shift4     BEST_IS_SHARPE    EWALL        1.50    27.49%   1.090  -46.01% False False
+B136    shift4     BEST_IS_4b        EWALL        0.65    11.91%   1.089  -22.17% False False
+B136    shift4     PUBLISHED_EWELIG  EWELIG       0.75    11.47%   1.103  -16.68%  True False
+B136    ENSEMBLE5  BEST_IS_SHARPE    EWALL        1.50    27.62%   1.092  -45.70% False False
+B136    ENSEMBLE5  BEST_IS_4b        EWALL        0.60    11.02%   1.094  -20.64% False False
+B136    ENSEMBLE5  PUBLISHED_EWELIG  EWELIG       0.75    10.88%   1.044  -17.27%  True False
+SMALL   shift0     BEST_IS_SHARPE    EWALL        1.50    15.90%   0.605  -60.12% False False
+SMALL   shift0     PUBLISHED_EWELIG  EWELIG       0.75     3.61%   0.333  -37.38% False False
+SMALL   shift1     BEST_IS_SHARPE    EWALL        0.05     0.69%   0.613   -2.68% False False
+SMALL   shift1     PUBLISHED_EWELIG  EWELIG       0.75     3.11%   0.293  -41.19% False False
+SMALL   shift2     BEST_IS_SHARPE    EWALL        0.50     6.40%   0.608  -24.55% False False
+SMALL   shift2     PUBLISHED_EWELIG  EWELIG       0.75     4.31%   0.374  -36.71% False False
+SMALL   shift3     BEST_IS_SHARPE    EWALL        0.30     4.07%   0.624  -14.98% False False
+SMALL   shift3     PUBLISHED_EWELIG  EWELIG       0.75     3.09%   0.295  -36.16% False False
+SMALL   shift4     BEST_IS_SHARPE    EWALL        0.45     5.85%   0.610  -21.91% False False
+SMALL   shift4     PUBLISHED_EWELIG  EWELIG       0.75     3.03%   0.291  -34.64% False False
+SMALL   ENSEMBLE5  BEST_IS_SHARPE    EWALL        0.05     0.69%   0.614   -2.66% False False
+SMALL   ENSEMBLE5  PUBLISHED_EWELIG  EWELIG       0.75     3.45%   0.321  -37.07% False False
+RULE 8 SUMMARY: OOS 4b 14 of 48 live picks, 4a 0 of 48; 6 IS pick sets EMPTY
+
+====================================================================================================
+THE RE-READ -- every 4b leg WITH ITS OWN MARGIN for the two subject books at g=0.75,
+10 bps, on each SHIFT5 calendar and on the ENSEMBLE5 book (which has no date to pick)
+====================================================================================================
+  wrote 2026-09-15_is-EWELIG-s-0.0077-MISS-of-the-U56-LEG-a-DATE_C.reread.csv  (108 rows, 25 cols)
+
+  panel U56 / EWELIG / g=0.75 / 10 bps  (margins: + = the leg clears, - = it misses)
+  sched      win       CAGR  Sharpe    MaxDD     mgH1     mgH2     mgDD   mgCAGR     4b     4a
+  shift0     FULL    10.36%   1.045  -15.87%  +0.1148  +0.1986   +4.36%   -0.24%  False  False
+  shift0     IS       9.30%   0.970  -11.20%  -0.0077  +0.0711   +2.03%   -1.18%  False  False
+  shift0     OOS     11.24%   1.105  -15.87%  +0.2886  +0.1775   +4.36%   +0.55%   True  False
+  shift1     FULL    10.34%   1.048  -17.57%  +0.1141  +0.2055   +2.66%   -0.26%  False  False
+  shift1     IS       9.18%   0.963  -12.84%  -0.0340  +0.0870   +0.39%   -1.29%  False  False
+  shift1     OOS     11.30%   1.116  -17.57%  +0.2371  +0.2561   +2.66%   +0.61%   True  False
+  shift2     FULL    10.80%   1.078  -17.41%  +0.1934  +0.1928   +2.82%   +0.21%   True  False
+  shift2     IS      10.11%   1.049  -10.56%  +0.0664  +0.1611   +2.68%   -0.36%  False  False
+  shift2     OOS     11.38%   1.101  -17.41%  +0.3220  +0.1353   +2.82%   +0.69%   True  False
+  shift3     FULL    11.25%   1.127  -16.58%  +0.1544  +0.3178   +3.65%   +0.66%   True  False
+  shift3     IS       9.77%   1.013  -11.00%  +0.0074  +0.1485   +2.24%   -0.70%  False  False
+  shift3     OOS     12.48%   1.216  -16.58%  +0.4262  +0.2698   +3.65%   +1.79%   True  False
+  shift4     FULL    10.89%   1.101  -15.36%  +0.1346  +0.2858   +4.87%   +0.30%   True  False
+  shift4     IS       9.46%   0.985  -10.13%  +0.0276  +0.0635   +3.11%   -1.01%  False  False
+  shift4     OOS     12.07%   1.193  -15.36%  +0.3820  +0.2662   +4.87%   +1.38%   True  False
+  ENSEMBLE5  FULL    10.73%   1.087  -15.72%  +0.1470  +0.2487   +4.52%   +0.14%   True  False
+  ENSEMBLE5  IS       9.57%   1.000  -10.73%  +0.0166  +0.1098   +2.51%   -0.90%  False  False
+  ENSEMBLE5  OOS     11.70%   1.155  -15.72%  +0.3458  +0.2257   +4.52%   +1.01%   True  False
+
+  panel U56 / CAND20 / g=0.75 / 10 bps  (margins: + = the leg clears, - = it misses)
+  sched      win       CAGR  Sharpe    MaxDD     mgH1     mgH2     mgDD   mgCAGR     4b     4a
+  shift0     FULL    12.73%   1.060  -18.31%  +0.1146  +0.2310   +1.92%   +2.14%   True  False
+  shift0     IS      10.81%   0.977  -11.85%  -0.1077  +0.1978   +1.39%   +0.34%  False  False
+  shift0     OOS     14.34%   1.123  -18.31%  +0.2549  +0.2519   +1.92%   +3.64%   True  False
+  shift1     FULL    12.43%   1.039  -19.99%  +0.0855  +0.2163   +0.24%   +1.84%   True  False
+  shift1     IS      10.37%   0.940  -14.69%  -0.1577  +0.1746   -1.46%   -0.10%  False  False
+  shift1     OOS     14.15%   1.114  -19.99%  +0.1996  +0.2894   +0.24%   +3.46%   True  False
+  shift2     FULL    14.05%   1.154  -17.34%  +0.2045  +0.3296   +2.89%   +3.46%   True  False
+  shift2     IS      11.71%   1.050  -12.95%  -0.0035  +0.2409   +0.28%   +1.24%  False  False
+  shift2     OOS     16.02%   1.232  -17.34%  +0.4023  +0.3211   +2.89%   +5.33%   True  False
+  shift3     FULL    13.47%   1.110  -16.50%  +0.1067  +0.3317   +3.73%   +2.88%   True  False
+  shift3     IS      10.87%   0.976  -13.74%  -0.1383  +0.2285   -0.51%   +0.40%  False  False
+  shift3     OOS     15.65%   1.212  -16.50%  +0.3202  +0.3661   +3.73%   +4.96%   True  False
+  shift4     FULL    12.92%   1.078  -18.31%  +0.0789  +0.2954   +1.92%   +2.33%   True  False
+  shift4     IS      10.63%   0.958  -12.47%  -0.0937  +0.1436   +0.77%   +0.15%  False  False
+  shift4     OOS     14.85%   1.170  -18.31%  +0.3418  +0.2600   +1.92%   +4.16%   True  False
+  ENSEMBLE5  FULL    13.13%   1.096  -17.20%  +0.1241  +0.2896   +3.03%   +2.54%   True  False
+  ENSEMBLE5  IS      10.89%   0.986  -12.50%  -0.0956  +0.2040   +0.74%   +0.41%  False  False
+  ENSEMBLE5  OOS     15.01%   1.179  -17.20%  +0.3171  +0.3036   +3.03%   +4.32%   True  False
+
+  panel B136 / EWELIG / g=0.75 / 10 bps  (margins: + = the leg clears, - = it misses)
+  sched      win       CAGR  Sharpe    MaxDD     mgH1     mgH2     mgDD   mgCAGR     4b     4a
+  shift0     FULL    10.66%   1.021  -17.69%  +0.1906  +0.0745   +2.54%   +0.04%   True  False
+  shift0     IS      10.86%   1.034  -11.42%  +0.0542  +0.1623   +1.82%   +0.39%   True  False
+  shift0     OOS     10.49%   1.010  -17.69%  +0.1572  +0.1048   +2.54%   -0.25%  False  False
+  shift1     FULL    10.24%   0.986  -20.62%  +0.1626  +0.0344   -0.40%   -0.37%  False  False
+  shift1     IS      10.39%   1.001  -12.49%  -0.0110  +0.1655   +0.75%   -0.08%  False  False
+  shift1     OOS     10.12%   0.973  -20.62%  +0.0789  +0.1139   -0.40%   -0.61%  False  False
+  shift2     FULL    11.00%   1.039  -18.31%  +0.2034  +0.1016   +1.92%   +0.38%   True  False
+  shift2     IS      10.98%   1.047  -10.52%  +0.0562  +0.1902   +2.71%   +0.51%   True  False
+  shift2     OOS     11.01%   1.032  -18.31%  +0.2054  +0.0932   +1.92%   +0.28%   True  False
+  shift3     FULL    11.25%   1.069  -17.03%  +0.2237  +0.1387   +3.20%   +0.64%   True  False
+  shift3     IS      11.23%   1.070  -11.05%  +0.0662  +0.2255   +2.19%   +0.76%   True  False
+  shift3     OOS     11.27%   1.068  -17.03%  +0.2380  +0.1380   +3.20%   +0.54%   True  False
+  shift4     FULL    11.32%   1.082  -16.68%  +0.2143  +0.1689   +3.55%   +0.70%   True  False
+  shift4     IS      11.13%   1.056  -10.69%  +0.0866  +0.1707   +2.54%   +0.66%   True  False
+  shift4     OOS     11.47%   1.103  -16.68%  +0.2830  +0.1628   +3.55%   +0.74%   True  False
+  ENSEMBLE5  FULL    10.90%   1.044  -17.27%  +0.2017  +0.1094   +2.96%   +0.28%   True  False
+  ENSEMBLE5  IS      10.92%   1.044  -10.74%  +0.0535  +0.1842   +2.50%   +0.45%   True  False
+  ENSEMBLE5  OOS     10.88%   1.044  -17.27%  +0.2027  +0.1248   +2.96%   +0.15%   True  False
+
+  panel B136 / CAND20 / g=0.75 / 10 bps  (margins: + = the leg clears, - = it misses)
+  sched      win       CAGR  Sharpe    MaxDD     mgH1     mgH2     mgDD   mgCAGR     4b     4a
+  shift0     FULL    12.99%   0.943  -20.05%  +0.1639  -0.0401   +0.18%   +2.38%  False  False
+  shift0     IS      13.82%   1.033  -13.70%  +0.1296  +0.0602   -0.46%   +3.34%  False  False
+  shift0     OOS     12.32%   0.875  -20.05%  -0.0771  +0.0815   +0.18%   +1.58%  False  False
+  shift1     FULL    12.59%   0.917  -24.06%  +0.1574  -0.0806   -3.83%   +1.98%  False  False
+  shift1     IS      13.57%   1.025  -15.01%  +0.1259  +0.0458   -1.78%   +3.10%  False  False
+  shift1     OOS     11.79%   0.837  -24.06%  -0.2126  +0.1450   -3.83%   +1.06%  False  False
+  shift2     FULL    13.03%   0.939  -21.09%  +0.1588  -0.0407   -0.86%   +2.41%  False  False
+  shift2     IS      13.60%   1.018  -15.28%  +0.0663  +0.1049   -2.05%   +3.13%  False  False
+  shift2     OOS     12.56%   0.881  -21.09%  -0.0086  +0.0196   -0.86%   +1.83%  False  False
+  shift3     FULL    13.33%   0.962  -20.01%  +0.2080  -0.0438   +0.22%   +2.72%  False  False
+  shift3     IS      14.39%   1.069  -13.91%  +0.0983  +0.1762   -0.67%   +3.92%  False  False
+  shift3     OOS     12.47%   0.881  -20.01%  -0.0622  +0.0768   +0.22%   +1.74%  False  False
+  shift4     FULL    12.95%   0.941  -21.24%  +0.1519  -0.0343   -1.01%   +2.33%  False  False
+  shift4     IS      13.55%   1.016  -13.58%  +0.0943  +0.0629   -0.35%   +3.08%  False  False
+  shift4     OOS     12.45%   0.884  -21.24%  -0.0534  +0.0751   -1.01%   +1.72%  False  False
+  ENSEMBLE5  FULL    12.99%   0.947  -20.39%  +0.1742  -0.0410   -0.16%   +2.38%  False  False
+  ENSEMBLE5  IS      13.80%   1.038  -14.30%  +0.1082  +0.0960   -1.06%   +3.33%  False  False
+  ENSEMBLE5  OOS     12.34%   0.879  -20.39%  -0.0732  +0.0852   -0.16%   +1.61%  False  False
+
+  panel SMALL / EWELIG / g=0.75 / 10 bps  (margins: + = the leg clears, - = it misses)
+  sched      win       CAGR  Sharpe    MaxDD     mgH1     mgH2     mgDD   mgCAGR     4b     4a
+  shift0     FULL     4.69%   0.437  -37.38%  -0.2667  -0.5285  -17.15%   -5.15%  False  False
+  shift0     IS       6.48%   0.670  -17.73%  -0.1744  -0.1473   -6.57%   -1.94%  False  False
+  shift0     OOS      3.61%   0.333  -37.38%  -0.5029  -0.5769  -17.15%   -7.12%  False  False
+  shift1     FULL     4.44%   0.413  -41.19%  -0.2622  -0.5677  -20.96%   -5.40%  False  False
+  shift1     IS       6.64%   0.685  -18.37%  -0.2070  -0.0723   -7.21%   -1.78%  False  False
+  shift1     OOS      3.11%   0.293  -41.19%  -0.6029  -0.5584  -20.96%   -7.62%  False  False
+  shift2     FULL     5.39%   0.480  -36.71%  -0.2214  -0.4774  -16.48%   -4.45%  False  False
+  shift2     IS       7.16%   0.730  -16.57%  -0.1207  -0.0789   -5.40%   -1.25%  False  False
+  shift2     OOS      4.31%   0.374  -36.71%  -0.4088  -0.6015  -16.48%   -6.42%  False  False
+  shift3     FULL     4.66%   0.434  -36.16%  -0.2201  -0.5661  -15.93%   -5.18%  False  False
+  shift3     IS       7.26%   0.739  -17.07%  -0.1727  +0.0082   -5.91%   -1.15%  False  False
+  shift3     OOS      3.09%   0.295  -36.16%  -0.5203  -0.6330  -15.93%   -7.64%  False  False
+  shift4     FULL     4.44%   0.417  -34.64%  -0.2514  -0.5718  -14.41%   -5.40%  False  False
+  shift4     IS       6.78%   0.700  -17.25%  -0.2047  -0.0432   -6.09%   -1.64%  False  False
+  shift4     OOS      3.03%   0.291  -34.64%  -0.4925  -0.6696  -14.41%   -7.70%  False  False
+  ENSEMBLE5  FULL     4.74%   0.440  -37.07%  -0.2429  -0.5388  -16.84%   -5.10%  False  False
+  ENSEMBLE5  IS       6.87%   0.707  -17.35%  -0.1735  -0.0657   -6.18%   -1.55%  False  False
+  ENSEMBLE5  OOS      3.45%   0.321  -37.07%  -0.4964  -0.6077  -16.84%   -7.28%  False  False
+
+  panel SMALL / CAND20 / g=0.75 / 10 bps  (margins: + = the leg clears, - = it misses)
+  sched      win       CAGR  Sharpe    MaxDD     mgH1     mgH2     mgDD   mgCAGR     4b     4a
+  shift0     FULL     7.21%   0.504  -30.96%  -0.2242  -0.4727  -10.72%   -2.63%  False  False
+  shift0     IS       7.36%   0.551  -19.97%  +0.0108  -0.6140   -8.80%   -1.06%  False  False
+  shift0     OOS      7.11%   0.481  -30.96%  -0.1696  -0.6180  -10.72%   -3.62%  False  False
+  shift1     FULL     5.32%   0.394  -36.14%  -0.2195  -0.6686  -15.91%   -4.52%  False  False
+  shift1     IS       7.82%   0.582  -20.06%  +0.0330  -0.5704   -8.90%   -0.60%  False  False
+  shift1     OOS      3.82%   0.300  -36.14%  -0.3877  -0.7722  -15.91%   -6.92%  False  False
+  shift2     FULL     7.31%   0.504  -30.53%  -0.2782  -0.4270  -10.30%   -2.54%  False  False
+  shift2     IS       6.27%   0.482  -19.50%  -0.2388  -0.4793   -8.34%   -2.15%  False  False
+  shift2     OOS      7.95%   0.518  -30.53%  -0.0846  -0.6507  -10.30%   -2.78%  False  False
+  shift3     FULL     7.04%   0.495  -30.60%  -0.2287  -0.4833  -10.37%   -2.80%  False  False
+  shift3     IS       8.06%   0.600  -19.87%  +0.0813  -0.5908   -8.71%   -0.36%  False  False
+  shift3     OOS      6.43%   0.443  -30.60%  -0.1768  -0.6976  -10.37%   -4.31%  False  False
+  shift4     FULL     6.63%   0.471  -27.73%  -0.3616  -0.4227   -7.50%   -3.21%  False  False
+  shift4     IS       5.71%   0.447  -19.81%  -0.0712  -0.7428   -8.65%   -2.71%  False  False
+  shift4     OOS      7.21%   0.486  -27.73%  -0.0920  -0.6888   -7.50%   -3.52%  False  False
+  ENSEMBLE5  FULL     6.76%   0.483  -30.43%  -0.2520  -0.4872  -10.20%   -3.08%  False  False
+  ENSEMBLE5  IS       7.07%   0.540  -19.17%  -0.0258  -0.5976   -8.00%   -1.34%  False  False
+  ENSEMBLE5  OOS      6.57%   0.456  -30.43%  -0.1619  -0.6839  -10.20%   -4.17%  False  False
+
+  FULL-window 4b pass count over the 5 SHIFT5 calendars + ENSEMBLE5 (6 readings each):
+    U56    EWELIG   FULL 4 of 6   OOS 6 of 6   ENSEMBLE5 FULL True / OOS True
+    U56    CAND20   FULL 6 of 6   OOS 6 of 6   ENSEMBLE5 FULL True / OOS True
+    B136   EWELIG   FULL 5 of 6   OOS 4 of 6   ENSEMBLE5 FULL True / OOS True
+    B136   CAND20   FULL 0 of 6   OOS 0 of 6   ENSEMBLE5 FULL False / OOS False
+    SMALL  EWELIG   FULL 0 of 6   OOS 0 of 6   ENSEMBLE5 FULL False / OOS False
+    SMALL  CAND20   FULL 0 of 6   OOS 0 of 6   ENSEMBLE5 FULL False / OOS False
+
+====================================================================================================
+PRE-REGISTERED HYPOTHESES -- verdicts
+====================================================================================================
+  wrote 2026-09-15_is-EWELIG-s-0.0077-MISS-of-the-U56-LEG-a-DATE_C.hypotheses.csv  (7 rows, 4 cols)
+  H_DATE     PASS  bar: |margin| < offset spread, U56/EWELIG/ISH1_HALF/g=0.75/10bps
+                   got: ratio 0.077
+  H_FLIP     PASS  bar: >=1 of 5 offsets clears the leg
+                   got: 3 of 5
+  H_LADDER   PASS  bar: >=15 of 30 rungs with an offset clearing
+                   got: 30 of 30
+  H_CAND20   FAIL  bar: CAND20 ratio >= 1 on all 3 grids
+                   got: {'SHIFT5': 0.699, 'PHASE5': 1.187, 'ALT3': 1.034}
+  H_PANEL    FAIL  bar: same DATE/VERDICT reading on all 3 panels
+                   got: {'U56': True, 'B136': True, 'SMALL': False}
+  H_COST     PASS  bar: 0 bps spread within 2.0x of 10 bps
+                   got: 0.1010 vs 0.1004
+  H_WF       PASS  bar: rule 8: at least one IS-only pick reaches 4b OOS
+                   got: 4b 14/48, 4a 0/48
+
+====================================================================================================
+SURVIVORSHIP: U56/B136/SMALL are current-constituent lists; every CAGR and MaxDD LEVEL is
+  optimistic.  The headline object is a RATIO of a margin to a spread on the SAME book and
+  the SAME days and is far less exposed; the leg verdicts and rule-8 triples are read
+  against SPY, which is not survivorship-inflated, so those are upper bounds.
+done in 95s
