@@ -1,0 +1,313 @@
+====================================================================================================
+IDEA 905 - does the PLACEMENT channel (+0.0015) survive a gap draw that is NOT
+           871's uniform composition?   (lane B 2026-09-15)
+====================================================================================================
+# pandas 3.0.5 numpy 2.4.6  |  19 nulls x 200 seeds x 3 rungs  (construction stats on the first 20)
+# PARAM 1 gap draw ['UNIF', 'LNFIT', 'EBOOT', 'GBLOCK', 'GPERM']   PARAM 2 cap rule ['REAL', 'DOM', 'LONE']
+# object being re-priced: 885's signed(UG_REAL) = +0.00154 at 10 bps
+# GBLOCK block length b = round(sqrt(m+1)) is DERIVED from the sample size, not fitted
+  SMALL panel: 716 columns -> 664 kept (52 dropped for max_1d_move >= 1.0)
+  U56: 56 cols x 4704 days  2008-01-02 .. 2026-09-14
+  B136: 136 cols x 4703 days  2008-01-02 .. 2026-09-11
+  SMALL: 664 cols x 4198 days  2010-01-04 .. 2026-09-11
+
+[0] GATES (printed before any hypothesis is read)
+  G4a exact total  (sum gaps == n - k):          0 violations  [PASS]
+  G4b interior gaps >= 1 (no run merging):       0 violations  [PASS]
+  G4c k and m preserved by every draw:           0 violations  [PASS]
+  G4d GPERM reduced-gap multiset EXACTLY real:   0 violations  [PASS]
+  G8  OP_REAL == BLOCK bit-for-bit:              max|d| 0.000e+00  [PASS]
+
+  what each draw does to the MARGINAL (synthetic clustered arms, reduced gaps):
+  draw       W1/mean   gap CV  share 0  max/real max
+  UNIF         1.052    1.046    0.099         0.144
+  LNFIT        0.837    1.795    0.236         0.329
+  EBOOT        0.414    4.564    0.382         0.742
+  GBLOCK       0.451    4.365    0.387         0.722
+  GPERM        0.000    5.632    0.373         1.000
+  (the real arms' own reduced-gap CV is the GPERM row by construction; a draw whose
+   CV and share-of-zeros sit far from it has changed the marginal, which is exactly
+   the axis H_MONO regresses the channel on.)
+    U56: BREADTH-LO done  (70s)
+    U56: BREADTH-HI done  (141s)
+    U56: VOL20-HI done  (202s)
+    U56: VOL20-LO done  (269s)
+    U56: DISP-HI done  (332s)
+    U56: DISP-LO done  (396s)
+    U56: CORR-HI done  (458s)
+    U56: CORR-LO done  (527s)
+    B136: BREADTH-LO done  (69s)
+    B136: BREADTH-HI done  (137s)
+    B136: VOL20-HI done  (195s)
+    B136: VOL20-LO done  (258s)
+    B136: DISP-HI done  (318s)
+    B136: DISP-LO done  (382s)
+    B136: CORR-HI done  (443s)
+    B136: CORR-LO done  (512s)
+    SMALL: BREADTH-LO done  (90s)
+    SMALL: BREADTH-HI done  (156s)
+    SMALL: VOL20-HI done  (214s)
+    SMALL: VOL20-LO done  (275s)
+    SMALL: DISP-HI done  (334s)
+    SMALL: DISP-LO done  (394s)
+    SMALL: CORR-HI done  (454s)
+    SMALL: CORR-LO done  (521s)
+
+  arms 1152 rows, excess 21888 rows  (1566s)
+  G2 rate match  max|mean(placebo) - mean(real)| 0.000e+00  bar 1e-12  [PASS]
+  G5a-CIRCULAR on REAL arms, all matched nulls: 10394 of 391680 (2.654%)
+  G5b on REAL arms: LONE circular max run > L*: 67
+  Both circular counts inherit 882/885's named cause: a gap draw may put BOTH the
+  leading and the trailing gap at 0, circularly merging the first and last runs. It
+  is a property of the ENCODING every draw here shares, not of anything new, and
+  every headline below is re-read on the violation-free (clean) arms.
+
+====================================================================================================
+[1] G7 CALIBRATION at 200 seeds - the band every reading below is judged against
+====================================================================================================
+  BLOCK2 (BLOCK, independent seed stream) signed median -0.00000  mean +0.00023  (SE 0.00026)  share below 50.0%  z +0.00
+  G7 |signed| <= 0.001 and |z| < 2.0  [PASS]
+  seed-noise: median per-arm seed SD at 10 bps, BLOCK 0.0668 -> SE of a 200-seed median ~ 0.00592
+
+====================================================================================================
+[2] G3 - BIT-FOR-BIT REPRODUCTION of 885's committed 200-seed numbers
+    (UNIF_REAL / UNIF_DOM / UNIF_LONE are handed UG_REAL / SM_DOM / SM_LONE's own
+     md5 seed strings, so these must match to floating error, not merely agree)
+====================================================================================================
+  quantity                885 committed       here      delta
+  UNIF_REAL                    +0.00154   +0.00154   -0.00000
+  UNIF_DOM                     -0.00270   -0.00270   +0.00000
+  UNIF_LONE                    +0.00121   +0.00121   -0.00000
+  OP_DOM                       -0.00130   -0.00130   -0.00000
+  BLOCK2                       -0.00000   -0.00000   -0.00000
+  UNIF_REAL clean arms         +0.00153   +0.00166   +0.00013
+  UNIF_REAL @U56               +0.00136   +0.00136   -0.00000
+  UNIF_REAL @B136              +0.00133   +0.00133   -0.00000
+  UNIF_REAL @SMALL             +0.00205   +0.00205   +0.00000
+  OP_LONE @U56                 -0.00030   -0.00030   +0.00000
+  OP_LONE @B136                -0.00045   -0.00045   -0.00000
+  OP_LONE @SMALL               +0.00155   +0.00155   +0.00000
+  UNIF_REAL @0bps              +0.00179   +0.00179   +0.00000
+  UNIF_REAL @10bps             +0.00154   +0.00154   -0.00000
+  UNIF_REAL @25bps             +0.00157   +0.00157   -0.00000
+  G3 worst |delta| 1.34e-04  bar 1e-05 (885 published 5 d.p.)  [FAIL]
+
+====================================================================================================
+[3] WHAT EACH DRAW DOES TO THE MARGINAL, on the REAL arms
+====================================================================================================
+  real arms' own reduced-gap CV: median 1.529  IQR [1.246, 1.813]  mean gap 86.8 days
+  null           W1/mean   gap CV  share 0  max/real  ach rho_PRE  ach rho_ADJ
+  BLOCK            0.050    1.524    0.041     0.987        0.086        0.105
+  UNIF_REAL        0.416    0.973    0.011     0.635        0.002        0.002
+  UNIF_DOM         0.422    0.973    0.012     0.629        0.011        0.006
+  UNIF_LONE        0.421    0.971    0.012     0.628        0.004       -0.001
+  LNFIT_REAL       0.406    2.086    0.049     1.619        0.004        0.002
+  LNFIT_DOM        0.408    2.103    0.050     1.613        0.030        0.009
+  LNFIT_LONE       0.405    2.074    0.050     1.614        0.019        0.005
+  EBOOT_REAL       0.210    1.484    0.050     0.915        0.006        0.001
+  EBOOT_DOM        0.206    1.478    0.046     0.913        0.060        0.012
+  EBOOT_LONE       0.209    1.472    0.051     0.911        0.042        0.008
+  GBLOCK_REAL      0.194    1.478    0.049     0.918        0.009        0.004
+  GBLOCK_DOM       0.194    1.480    0.049     0.916        0.058        0.020
+  GBLOCK_LONE      0.194    1.480    0.048     0.912        0.042        0.012
+  GPERM_REAL       0.000    1.529    0.046     1.000        0.007        0.002
+  GPERM_DOM        0.000    1.529    0.046     1.000        0.041        0.009
+  GPERM_LONE       0.000    1.529    0.046     1.000        0.028        0.005
+  OP_DOM           0.049    1.532    0.038     0.987        0.012        0.003
+  OP_LONE          0.049    1.526    0.037     0.987        0.021        0.011
+  (W1 is only defined where the null produces the same NUMBER of gaps as the real arm;
+   BLOCK and OP roll the path, so whenever the roll splits a run across the boundary
+   they carry m+1 runs and the cell is undefined - that is why those rows read nan.
+   GPERM's W1 is 0.000 by construction: it permutes the real multiset and changes
+   nothing else, which is what makes it the decisive level.)
+
+====================================================================================================
+[4] THE HEADLINE - the PLACEMENT channel under five gap draws, cap rule REAL
+    signed(X) = median over arms of [ (Sharpe_real - Sharpe_X) - (Sharpe_real - Sharpe_BLOCK) ]
+====================================================================================================
+  draw          signed      mean       SE  mean/SE  share<0       z     clean
+  UNIF        +0.00154  +0.00199  0.00029    +6.95    42.2%   -5.30  +0.00166
+  LNFIT       +0.00125  +0.00168  0.00029    +5.75    44.0%   -4.07  +0.00205
+  EBOOT       +0.00009  +0.00021  0.00029    +0.71    49.2%   -0.53  +0.00061
+  GBLOCK      -0.00051  +0.00012  0.00032    +0.39    52.3%   +1.59  -0.00006
+  GPERM       +0.00059  +0.00093  0.00031    +2.98    47.9%   -1.41  +0.00122
+
+  band 0.001;  spread max-min 0.00205;  all five same sign: False
+  H_UNIF   (only UNIF outside the band):                    REFUTED
+  H_PLACE  (all five outside, same sign, spread <= 0.001):  REFUTED
+  H_ORDER  (GPERM - exactly real marginal - outside band):  REFUTED
+  H_SERIAL (|GBLOCK| < |GPERM|):                            CONFIRMED
+
+====================================================================================================
+[5] PARAM 2 - the same channel at the two RESHAPING cap rules, length channel removed
+    isolated(X, cap) = signed(X_cap) - signed(OP_cap)   [cap REAL: OP_REAL == BLOCK]
+====================================================================================================
+  draw              REAL    DOM raw   DOM isol   LONE raw  LONE isol
+  UNIF          +0.00154   -0.00270   -0.00139   +0.00121   +0.00097
+  LNFIT         +0.00125   -0.00128   +0.00003   +0.00049   +0.00025
+  EBOOT         +0.00009   -0.00220   -0.00089   -0.00087   -0.00111
+  GBLOCK        -0.00051   -0.00237   -0.00106   -0.00129   -0.00153
+  GPERM         +0.00059   -0.00207   -0.00076   -0.00064   -0.00088
+  OP (anchor)    +0.00000   -0.00130   +0.00000   +0.00024   +0.00000
+
+  H_CAPINV (same sign at all three cap rules): 2 of 5 draws  REFUTED
+
+====================================================================================================
+[6] H_MONO - is the channel a monotone read of MARGINAL DISTANCE?
+====================================================================================================
+  cell                 W1/mean   |channel|
+  GPERM_REAL             0.000     0.00059
+  GPERM_LONE             0.000     0.00088
+  GPERM_DOM              0.000     0.00076
+  GBLOCK_DOM             0.194     0.00106
+  GBLOCK_REAL            0.194     0.00051
+  GBLOCK_LONE            0.194     0.00153
+  EBOOT_DOM              0.206     0.00089
+  EBOOT_LONE             0.209     0.00111
+  EBOOT_REAL             0.210     0.00009
+  LNFIT_LONE             0.405     0.00025
+  LNFIT_REAL             0.406     0.00125
+  LNFIT_DOM              0.408     0.00003
+  UNIF_REAL              0.416     0.00154
+  UNIF_LONE              0.421     0.00097
+  UNIF_DOM               0.422     0.00139
+  spearman(W1, |channel|) over 15 cells = +0.258  (bar 0.5)  H_MONO REFUTED
+
+====================================================================================================
+[7] EVERY GRID POINT - signed gap at 10 bps by panel, and by (depth, cadence, gross)
+====================================================================================================
+  null                 U56       B136      SMALL                  worst family
+  UNIF_REAL       +0.00136   +0.00133   +0.00205           BREADTH-HI +0.00519
+  LNFIT_REAL      +0.00086   +0.00069   +0.00236           BREADTH-HI +0.00340
+  EBOOT_REAL      -0.00147   +0.00015   +0.00126           BREADTH-HI +0.00228
+  GBLOCK_REAL     -0.00260   -0.00083   +0.00199              DISP-LO +0.00307
+  GPERM_REAL      -0.00077   -0.00062   +0.00321           BREADTH-HI +0.00357
+  UNIF_DOM        -0.00298   -0.00350   -0.00143              DISP-HI -0.00335
+  LNFIT_DOM       -0.00150   -0.00117   -0.00090              CORR-LO -0.00357
+  EBOOT_DOM       -0.00343   -0.00249   -0.00074              CORR-HI -0.00312
+  GBLOCK_DOM      -0.00345   -0.00258   -0.00089              CORR-LO -0.00315
+  GPERM_DOM       -0.00330   -0.00269   -0.00013              CORR-LO -0.00364
+  UNIF_LONE       +0.00021   +0.00134   +0.00203           BREADTH-HI +0.00441
+  LNFIT_LONE      -0.00048   +0.00030   +0.00174           BREADTH-HI +0.00232
+  EBOOT_LONE      -0.00225   -0.00167   +0.00080           BREADTH-LO -0.00311
+  GBLOCK_LONE     -0.00283   -0.00236   +0.00127           BREADTH-LO -0.00401
+  GPERM_LONE      -0.00178   -0.00165   +0.00141           BREADTH-LO -0.00288
+  OP_DOM          -0.00152   -0.00085   -0.00162              CORR-HI -0.00289
+  OP_LONE         -0.00030   -0.00045   +0.00155           BREADTH-HI +0.00192
+  BLOCK2          +0.00021   +0.00016   -0.00024              DISP-LO -0.00103
+
+  cap-REAL channel at every (depth, cadence, gross) cell:
+    depth  cad  gross     n       UNIF      LNFIT      EBOOT     GBLOCK      GPERM
+     0.50    D   0.75   144   +0.00126   +0.00023   +0.00049   -0.00102   +0.00046
+     0.50    D   1.00   144   +0.00112   +0.00106   +0.00041   -0.00024   +0.00062
+     0.50    W   0.75   144   +0.00156   +0.00097   +0.00099   -0.00016   +0.00049
+     0.50    W   1.00   144   +0.00121   +0.00102   +0.00019   -0.00061   +0.00118
+     1.00    D   0.75   144   +0.00180   +0.00129   -0.00202   -0.00264   +0.00055
+     1.00    D   1.00   144   +0.00276   -0.00022   -0.00310   -0.00183   -0.00332
+     1.00    W   0.75   144   +0.00251   +0.00300   +0.00064   +0.00139   +0.00242
+     1.00    W   1.00   144   +0.00162   +0.00370   +0.00094   +0.00160   +0.00280
+
+  cap-REAL channel by family (all 8, median over 144 arms each):
+  family               UNIF      LNFIT      EBOOT     GBLOCK      GPERM
+  BREADTH-HI       +0.00519   +0.00340   +0.00228   +0.00084   +0.00357
+  BREADTH-LO       +0.00144   +0.00044   -0.00125   -0.00180   -0.00103
+  CORR-HI          -0.00048   -0.00003   -0.00208   -0.00258   -0.00096
+  CORR-LO          +0.00007   +0.00025   -0.00045   +0.00048   +0.00010
+  DISP-HI          +0.00143   +0.00125   -0.00008   -0.00075   -0.00011
+  DISP-LO          +0.00338   +0.00231   +0.00136   +0.00307   +0.00214
+  VOL20-HI         +0.00090   +0.00103   -0.00053   -0.00236   +0.00016
+  VOL20-LO         +0.00175   +0.00151   +0.00104   +0.00134   +0.00169
+
+====================================================================================================
+[8] H_COSTINV - the switch counts are matched, so none of this may be a cost story
+====================================================================================================
+  BLOCK2        signed 0/10/25 = -0.00004 / -0.00000 / -0.00006   range 0.00006
+  UNIF_REAL     signed 0/10/25 = +0.00179 / +0.00154 / +0.00157   range 0.00026
+  UNIF_DOM      signed 0/10/25 = -0.00287 / -0.00270 / -0.00251   range 0.00037
+  UNIF_LONE     signed 0/10/25 = +0.00135 / +0.00121 / +0.00106   range 0.00029
+  LNFIT_REAL    signed 0/10/25 = +0.00138 / +0.00125 / +0.00111   range 0.00027
+  LNFIT_DOM     signed 0/10/25 = -0.00128 / -0.00128 / -0.00077   range 0.00051
+  LNFIT_LONE    signed 0/10/25 = +0.00055 / +0.00049 / +0.00038   range 0.00017
+  EBOOT_REAL    signed 0/10/25 = +0.00001 / +0.00009 / -0.00001   range 0.00010
+  EBOOT_DOM     signed 0/10/25 = -0.00246 / -0.00220 / -0.00201   range 0.00045
+  EBOOT_LONE    signed 0/10/25 = -0.00081 / -0.00087 / -0.00105   range 0.00024
+  GBLOCK_REAL   signed 0/10/25 = -0.00031 / -0.00051 / -0.00069   range 0.00038
+  GBLOCK_DOM    signed 0/10/25 = -0.00254 / -0.00237 / -0.00224   range 0.00030
+  GBLOCK_LONE   signed 0/10/25 = -0.00116 / -0.00129 / -0.00155   range 0.00038
+  GPERM_REAL    signed 0/10/25 = +0.00068 / +0.00059 / +0.00020   range 0.00048
+  GPERM_DOM     signed 0/10/25 = -0.00219 / -0.00207 / -0.00191   range 0.00028
+  GPERM_LONE    signed 0/10/25 = -0.00059 / -0.00064 / -0.00106   range 0.00046
+  OP_DOM        signed 0/10/25 = -0.00149 / -0.00130 / -0.00101   range 0.00048
+  OP_LONE       signed 0/10/25 = +0.00025 / +0.00024 / +0.00018   range 0.00007
+  H_COSTINV (worst range 0.00051 < 0.005): CONFIRMED
+
+====================================================================================================
+[9] RULE 8 (a) - DOES THE CHANNEL WALK FORWARD?  (IS fitted, OOS read once)
+====================================================================================================
+  UNIF_REAL     rho(IS gap, OOS gap) >= +0.30 in 1 of 8 families
+  LNFIT_REAL    rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  EBOOT_REAL    rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  GBLOCK_REAL   rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  GPERM_REAL    rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  UNIF_DOM      rho(IS gap, OOS gap) >= +0.30 in 8 of 8 families
+  LNFIT_DOM     rho(IS gap, OOS gap) >= +0.30 in 8 of 8 families
+  EBOOT_DOM     rho(IS gap, OOS gap) >= +0.30 in 7 of 8 families
+  GBLOCK_DOM    rho(IS gap, OOS gap) >= +0.30 in 7 of 8 families
+  GPERM_DOM     rho(IS gap, OOS gap) >= +0.30 in 7 of 8 families
+  UNIF_LONE     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  LNFIT_LONE    rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  EBOOT_LONE    rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  GBLOCK_LONE   rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  GPERM_LONE    rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  OP_DOM        rho(IS gap, OOS gap) >= +0.30 in 4 of 8 families
+  OP_LONE       rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  BLOCK2        rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+
+  the cap-REAL channel measured on each window separately (median over arms):
+  draw                IS         OOS    OOS - IS
+  UNIF          +0.00330    +0.00155    -0.00175
+  LNFIT         -0.00353    +0.00094    +0.00446
+  EBOOT         -0.00285    +0.00186    +0.00470
+  GBLOCK        -0.00198    +0.00161    +0.00360
+  GPERM         -0.00215    +0.00200    +0.00415
+
+====================================================================================================
+[10] RULE 8 (b) - THE BOOKS: IS-only selector, OOS read once, BOTH KEEP PATHS
+====================================================================================================
+  B136: IS-pick CORR-HI q0.12 w252 d1.0 W g1.0
+     FULL 13.91% / 1.166 / -16.63%  halves 1.289/1.037   OOS 12.97% / 1.154 / -16.63%
+     RULES v2 (live) 7.98% / 1.101 / -12.18%  halves 1.237/0.967  OOS 7.88% / 1.108 / -12.18%
+     SPY            15.16% / 0.886 / -33.72%  halves 0.960/0.826  OOS 15.33% / 0.877 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 10.61%, OOS Sharpe > 0.877
+     4a fail   4b PASS
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 44 (11.5%)
+  SMALL: IS-pick VOL20-LO q0.17 w252 d1.0 D g1.0
+     FULL 5.04% / 0.404 / -48.52%  halves 0.736/0.201   OOS 2.00% / 0.203 / -48.52%
+     RULES v2 (live) 4.30% / 0.663 / -13.89%  halves 0.806/0.554  OOS 3.75% / 0.559 / -13.89%
+     SPY            14.06% / 0.858 / -33.72%  halves 0.914/0.834  OOS 15.33% / 0.877 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 9.84%, OOS Sharpe > 0.877
+     4a fail   4b fail
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 0 (0.0%)
+  U56: IS-pick CORR-HI q0.07 w1008 d1.0 W g1.0
+     FULL 12.73% / 1.034 / -22.93%  halves 1.160/0.915   OOS 12.41% / 1.016 / -22.93%
+     RULES v2 (live) 8.64% / 1.208 / -11.90%  halves 1.237/1.186  OOS 9.49% / 1.286 / -11.90%
+     SPY            15.13% / 0.885 / -33.72%  halves 0.959/0.824  OOS 15.27% / 0.874 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 10.59%, OOS Sharpe > 0.874
+     4a fail   4b fail
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 61 (15.9%)
+  NOTE: the arm grid is 885's, so these books are the SAME books 885 committed; the
+  agreement is a gate on this run's plumbing, not a new capital finding.
+
+====================================================================================================
+[11] SUMMARY OF PRE-REGISTERED HYPOTHESES
+====================================================================================================
+  H_UNIF      REFUTED
+  H_PLACE     REFUTED
+  H_ORDER     REFUTED
+  H_SERIAL    CONFIRMED
+  H_MONO      REFUTED
+  H_CAPINV    REFUTED
+  H_COSTINV   CONFIRMED
+  gates: G2 PASS  G3 FAIL  G4a-d PASS  G7 PASS  G8 PASS
+
+done in 1567s

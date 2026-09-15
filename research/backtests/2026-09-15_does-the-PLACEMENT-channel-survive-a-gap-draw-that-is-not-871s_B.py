@@ -93,9 +93,11 @@ reading on it is an upper bound.  This run's headline is a DIFFERENCE BETWEEN TW
 THE SAME ARM, far less exposed to that bias than any level.
 
 PROTOCOL: 10 bps per unit turnover (0 and 25 also reported), next-day fills, no shorting, no
-leverage.  Deterministic (md5-seeded), standalone, no network.  Modifies nothing but its own
-outputs:  .arms.csv  .excess.csv  .gap.csv  .draws.csv  .walkforward.csv  .books.csv
-          .console.txt
+leverage.  Deterministic (md5-seeded), standalone, no network.  READS one committed artifact
+besides the price caches - 885's own `.gap.csv` - so gate G3b can check the reproduction ARM
+BY ARM rather than only median against median.  Modifies nothing but its own outputs:
+    .arms.csv  .excess.csv  .gap.csv  .draws.csv  .grid.csv  .walkforward.csv  .books.csv
+    .console.txt
 """
 from __future__ import annotations
 
@@ -150,6 +152,11 @@ PUB885_RUNG = {"UNIF_REAL": {0: +0.00179, 10: +0.00154, 25: +0.00157}}
 G3_BAR = 1e-5
 CAL_BAR, CAL_Z = 0.0010, 2.0
 MONO_BAR = 0.50
+REF885 = OUT / "2026-09-15_conditional-gap-null-closes-the-INTERACTION_C.gap.csv"
+# the six committed per-arm columns this run must reproduce element-for-element
+G3_COLS = {"UNIF_REAL": "s_UG_REAL_10", "UNIF_DOM": "s_SM_DOM_10",
+           "UNIF_LONE": "s_SM_LONE_10", "OP_DOM": "s_OP_DOM_10",
+           "OP_LONE": "s_OP_LONE_10", "BLOCK2": "s_BLOCK2_10"}
 
 
 def log(s=""):
@@ -801,10 +808,6 @@ def main():
         v = signed(k)[0]
         g3_worst = max(g3_worst, abs(v - pub))
         log(f"  {k:22s}{pub:+15.5f}{v:+11.5f}{v-pub:+11.5f}")
-    v = signed("UNIF_REAL", sub=cl)[0]
-    g3_worst = max(g3_worst, abs(v - PUB885["UNIF_REAL_clean"]))
-    log(f"  {'UNIF_REAL clean arms':22s}{PUB885['UNIF_REAL_clean']:+15.5f}{v:+11.5f}"
-        f"{v-PUB885['UNIF_REAL_clean']:+11.5f}")
     for kind, d in PUB885_PANEL.items():
         for p, pub in d.items():
             vv = float(gap[gap.panel == p][f"s_{kind}_10"].median())
@@ -816,6 +819,43 @@ def main():
         log(f"  {'UNIF_REAL @' + str(c) + 'bps':22s}{pub:+15.5f}{vv:+11.5f}{vv-pub:+11.5f}")
     log(f"  G3 worst |delta| {g3_worst:.2e}  bar {G3_BAR:.0e} (885 published 5 d.p.)  "
         f"[{'PASS' if g3_worst <= G3_BAR + 5e-6 else 'FAIL'}]")
+
+    log("\n  G3b - the same check ARM BY ARM against 885's committed .gap.csv (1,152 arms,")
+    log("  six shared columns).  A median can agree by accident; 1,152 paired differences")
+    log("  cannot, so this is the gate that actually establishes the reproduction:")
+    g3b = np.nan
+    prov = None
+    if REF885.exists():
+        ref = pd.read_csv(REF885)
+        mrg = gap.merge(ref[key + list(G3_COLS.values()) + ["clean"]].rename(
+            columns={"clean": "clean885"}), on=key, how="inner")
+        log(f"  merged on {len(mrg)} of {len(gap)} arms")
+        g3b = 0.0
+        for k, c in G3_COLS.items():
+            d = float((mrg[f"s_{k}_10"] - mrg[c]).abs().max())
+            g3b = max(g3b, d)
+            log(f"    {k:12s} vs 885's {c:16s} max per-arm |delta| {d:.3e}")
+        log(f"  G3b worst per-arm |delta| {g3b:.3e}  bar 1e-12  "
+            f"[{'PASS' if g3b < 1e-12 else 'FAIL'}]")
+        # the ONE published quantity that does not reproduce, and exactly why
+        v_own = signed("UNIF_REAL", sub=cl)[0]
+        v_885 = float(mrg.loc[mrg["clean885"].astype(bool), "s_UNIF_REAL_10"].median())
+        prov = (v_own, v_885, int(mrg["clean885"].astype(bool).sum()), int(cl.shape[0]))
+        log("\n  [PROVENANCE FINDING, reported not buried]  885 also published UG_REAL on its")
+        log(f"  CLEAN arms as {PUB885['UNIF_REAL_clean']:+.5f}.  Re-read here on THIS run's clean flag it is "
+            f"{v_own:+.5f}")
+        log(f"  ({prov[3]} clean arms); re-read on 885's OWN committed clean flag ({prov[2]} arms) it is "
+            f"{v_885:+.5f},")
+        log(f"  reproducing the published number to {abs(v_885 - PUB885['UNIF_REAL_clean']):.0e}.  The arm-level numbers are")
+        log("  IDENTICAL either way (G3b); what moved is the SUBSET.  `clean` means 'no matched")
+        log("  null in THIS RUN violated the circular k/m match on this arm', so it is a property")
+        log("  of the ARM x NULL SET, not of the arm: pricing four draws that put a zero on a")
+        log("  boundary gap more often than 871's uniform composition does (share-0 ~0.05 vs")
+        log("  0.011, table [3]) disqualifies arms 885 never had to disqualify.  Any committed")
+        log("  'clean-arm' number in the record is therefore NOT reproducible by a run that")
+        log("  prices a different null set, and should be quoted with its null set attached.")
+    else:
+        log("  885's .gap.csv not found in this tree - G3b SKIPPED (not a pass)")
 
     log("\n" + "=" * 100)
     log("[3] WHAT EACH DRAW DOES TO THE MARGINAL, on the REAL arms")
@@ -829,11 +869,12 @@ def main():
         log(f"  {kind:12s}{gap[f'{kind}_wass'].median():10.3f}{gap[f'{kind}_gap_cv'].median():9.3f}"
             f"{gap[f'{kind}_share0'].median():9.3f}{gap[f'{kind}_max_gap_ratio'].median():10.3f}"
             f"{gap[f'{kind}_ach_PRE'].median():13.3f}{gap[f'{kind}_ach_ADJ'].median():13.3f}")
-    log("  (W1 is only defined where the null produces the same NUMBER of gaps as the real arm;")
-    log("   BLOCK and OP roll the path, so whenever the roll splits a run across the boundary")
-    log("   they carry m+1 runs and the cell is undefined - that is why those rows read nan.")
-    log("   GPERM's W1 is 0.000 by construction: it permutes the real multiset and changes")
-    log("   nothing else, which is what makes it the decisive level.)")
+    log("  (W1 is averaged over the seeds where the null produced the same NUMBER of gaps as")
+    log("   the real arm.  BLOCK and OP roll the path, so a roll that splits a run across the")
+    log("   boundary yields m+1 gaps and that seed is skipped; their small non-zero W1 is the")
+    log("   residue of the surviving seeds, not a change of marginal.  GPERM reads 0.000 at")
+    log("   every seed by construction - it permutes the real multiset and changes nothing")
+    log("   else - which is what makes it the decisive level.)")
 
     log("\n" + "=" * 100)
     log("[4] THE HEADLINE - the PLACEMENT channel under five gap draws, cap rule REAL")
@@ -870,6 +911,14 @@ def main():
         f"{'CONFIRMED' if h_order else 'REFUTED'}")
     log(f"  H_SERIAL (|GBLOCK| < |GPERM|):                            "
         f"{'CONFIRMED' if h_serial else 'REFUTED'}")
+    shape = [d for d in DRAWS if d in ("UNIF", "LNFIT")]
+    keepm = [d for d in DRAWS if d not in ("UNIF", "LNFIT")]
+    n_shape = sum(abs(head[d]) > CAL_BAR for d in shape)
+    n_keep = sum(abs(head[d]) <= CAL_BAR for d in keepm)
+    log(f"\n  the split the numbers actually draw: draws that CHANGE the gap marginal "
+        f"({'/'.join(shape)})")
+    log(f"  are outside the band in {n_shape} of {len(shape)}; draws that PRESERVE the arm's own gap")
+    log(f"  marginal ({'/'.join(keepm)}) are inside it in {n_keep} of {len(keepm)}.")
 
     log("\n" + "=" * 100)
     log("[5] PARAM 2 - the same channel at the two RESHAPING cap rules, length channel removed")
@@ -911,6 +960,16 @@ def main():
         log(f"  {r['draw'] + '_' + r['cap']:18s}{r['wass']:10.3f}{r['abs_signed']:12.5f}")
     log(f"  spearman(W1, |channel|) over {len(cells)} cells = {rho_mono:+.3f}  "
         f"(bar {MONO_BAR})  H_MONO {'CONFIRMED' if h_mono else 'REFUTED'}")
+    rc = cells[cells.cap == "REAL"].sort_values("wass")
+    rho_real_abs = spearman(rc["wass"], rc["abs_signed"])
+    rho_real_sgn = spearman(rc["wass"], rc["signed"])
+    log(f"\n  DIAGNOSTIC (NOT the pre-registered bar, which is |channel| over all 15 cells):")
+    log(f"  on the five cap-REAL cells alone - the object of the idea, where the channel is")
+    log(f"  read straight against BLOCK with no OP anchor of its own to carry noise -")
+    log(f"  spearman(W1, SIGNED channel) = {rho_real_sgn:+.3f} and spearman(W1, |channel|) = "
+        f"{rho_real_abs:+.3f}.")
+    log("  The DOM / LONE cells each subtract their own OP anchor, whose signed gap is itself")
+    log("  outside the band at DOM (-0.00130), so those ten cells carry a second noisy term.")
 
     log("\n" + "=" * 100)
     log("[7] EVERY GRID POINT - signed gap at 10 bps by panel, and by (depth, cadence, gross)")
@@ -1030,6 +1089,7 @@ def main():
         log(f"  {nm:11s} {'CONFIRMED' if v else 'REFUTED'}")
     log(f"  gates: G2 {'PASS' if g2m < 1e-12 else 'FAIL'}  "
         f"G3 {'PASS' if g3_worst <= G3_BAR + 5e-6 else 'FAIL'}  "
+        f"G3b {'PASS' if np.isfinite(g3b) and g3b < 1e-12 else 'FAIL/SKIP'}  "
         f"G4a-d {'PASS' if max(gt['bad_sum'], gt['bad_int'], gt['bad_km'], gt['bad_perm']) == 0 else 'FAIL'}  "
         f"G7 {'PASS' if g7 else 'FAIL'}  G8 {'PASS' if gt['g8'] == 0.0 else 'FAIL'}")
     log(f"\ndone in {time.time()-t0:.0f}s")
