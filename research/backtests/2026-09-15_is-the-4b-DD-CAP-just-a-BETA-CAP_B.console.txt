@@ -1,0 +1,201 @@
+================================================================================================
+IDEA 867 (lane B, 2026-09-15) -- is the 4b DD CAP just a BETA CAP?
+================================================================================================
+TUNED 1 beta estimator: ['FULL', 'DOWN', 'ROLL', 'DDWIN']
+TUNED 2 panel:          ['U56', 'B136', 'SMALL']
+reported axes: family ['TREND', 'VOL', 'MOM', 'DISP'] x mode ['ROW', 'AGG', 'HYB'] x theta [0.2, 0.4, 0.6] x gross [0.25, 0.5, 0.75, 1.0]
+                + ZEROSIG + RANDGATE[8671, 8672, 8673];  cost 10 bps, W, LAG 1
+
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+panel U56    4704 days x 56 cols  2008-01-02 .. 2026-09-14  eval from 2009-01-13
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+panel B136   4703 days x 136 cols  2008-01-02 .. 2026-09-11  eval from 2009-01-13
+panel SMALL  4198 days x 716 cols  2010-01-04 .. 2026-09-11  eval from 2011-01-13
+
+================================================================================================
+GATES (printed before any result number is read)
+================================================================================================
+G1  TREND/ROW g=0.75 == rules_v2_weights   max|dw| 0.000e+00   -> PASS
+G2  fast Book.at == engine.backtest        max|dr| 1.041e-17  max|dturn| 2.429e-16   -> PASS
+G3  committed triples on U56   SPY 15.1302%/0.8845/-33.7173%  (committed 15.16%/0.8861/-33.72%)
+                              v2  8.6227%/1.2013/-12.0549%  (committed 8.63%/1.2018/-12.05%)   -> PASS
+G4  ZEROSIG ray (g x SPY, 0 bps)   g=0.25 beta=0.249 ddratio=0.278   g=0.50 beta=0.498 ddratio=0.536   g=0.75 beta=0.749 ddratio=0.777   g=1.00 beta=1.000 ddratio=1.000
+      max|beta-g| 1.684e-03   max|ddratio-g| 3.627e-02   -> PASS
+
+================================================================================================
+BUILDING THE BOOK GRID
+================================================================================================
+  U56     128 books    384 book-windows  (1.1s)
+  B136    128 books    384 book-windows  (2.6s)
+  SMALL   128 books    384 book-windows  (13.2s)
+G5  DETERMINISM  max|dSharpe| 0.000e+00  max|dbeta| 0.000e+00   -> PASS
+
+GATES: 5 of 5 PASS  G1=PASS  G2=PASS  G3=PASS  G4=PASS  G5=PASS
+  wrote 2026-09-15_is-the-4b-DD-CAP-just-a-BETA-CAP_B.books.csv  (1,152 rows, 23 cols)
+
+book grid: 3 panels, 1152 book-windows, 384 traded books (336 real, 48 control)
+
+================================================================================================
+H1  MONOTONE READ -- Spearman(beta, MaxDD) within panel, ALL 4 x 3 grid points
+================================================================================================
+window  panel       FULL      DOWN      ROLL     DDWIN    (bar |rho| >= 0.90)
+FULL    U56       -0.947    -0.949    -0.959    -0.968
+FULL    B136      -0.950    -0.957    -0.941    -0.949
+FULL    SMALL     -0.857    -0.813    -0.842    -0.688
+IS      U56       -0.934    -0.903    -0.974    -0.801
+IS      B136      -0.971    -0.954    -0.980    -0.934
+IS      SMALL     -0.956    -0.939    -0.950    -0.869
+OOS     U56       -0.968    -0.974    -0.958    -0.968
+OOS     B136      -0.964    -0.974    -0.935    -0.949
+OOS     SMALL     -0.836    -0.802    -0.818    -0.778
+  FULL-window grid points clearing |rho| >= 0.90: 8 of 12   -> H1 HOLDS
+
+panel  est         R2   resid SD (pp of DD)   DD spread (pp)
+U56    FULL     0.872                  2.58             7.23
+U56    DOWN     0.886                  2.45             7.23
+U56    ROLL     0.906                  2.22             7.23
+U56    DDWIN    0.918                  2.19             7.65
+B136   FULL     0.862                  2.93             7.89
+B136   DOWN     0.888                  2.64             7.89
+B136   ROLL     0.849                  3.06             7.89
+B136   DDWIN    0.914                  2.49             8.50
+SMALL  FULL     0.766                  5.12            10.58
+SMALL  DOWN     0.729                  5.51            10.58
+SMALL  ROLL     0.747                  5.33            10.58
+SMALL  DDWIN    0.542                  7.16            10.58
+
+================================================================================================
+H2  SUBSTITUTION -- does `beta <= 0.60` reproduce the DD leg PASS/FAIL?
+    H2b the BEST beta* that exists (agreement maximised over a 0.001 grid)
+================================================================================================
+panel  est       n  DDpass  b<=.60   agree   TP   FP   FN   TN |  beta* best agree
+U56    FULL    112      85      96   0.902   85   11    0   16 |  0.529      0.938
+U56    DOWN    112      85      96   0.902   85   11    0   16 |  0.519      0.946
+U56    ROLL    112      85      81   0.929   79    2    6   25 |  0.611      0.964
+U56    DDWIN    64      45      48   0.953   45    3    0   16 |  0.568      0.984
+B136   FULL    112      80      90   0.857   77   13    3   19 |  0.433      0.893
+B136   DOWN    112      80      89   0.866   77   12    3   20 |  0.410      0.911
+B136   ROLL    112      80      80   0.857   72    8    8   24 |  0.699      0.893
+B136   DDWIN    60      37      38   0.983   37    1    0   22 |  0.469      1.000
+SMALL  FULL    112      61      97   0.679   61   36    0   15 |  0.348      0.911
+SMALL  DOWN    112      61      95   0.696   61   34    0   17 |  0.367      0.911
+SMALL  ROLL    112      61      91   0.732   61   30    0   21 |  0.388      0.911
+SMALL  DDWIN   112      61      85   0.732   58   27    3   24 |  0.360      0.857
+  wrote 2026-09-15_is-the-4b-DD-CAP-just-a-BETA-CAP_B.agree.csv  (12 rows, 12 cols)
+  H2  cells with agreement >= 0.95 at beta<=0.60 : 2 of 12   -> H2  FAILS
+  H2b cells with BEST-CASE agreement >= 0.95     : 3 of 12   -> H2b FAILS
+  best-case agreement: min 0.857  median 0.911  max 1.000
+
+  MARGIN DIAGNOSTIC -- the DD leg is a bar, and a bar is flipped by the RESIDUAL, not by R2.
+  panel  est    resid SD (pp) |margin| med (pp) share |margin| < 1 resid SD
+  U56    FULL            2.58              7.52                       0.196
+  U56    DOWN            2.45              7.52                       0.196
+  U56    ROLL            2.22              7.52                       0.107
+  U56    DDWIN           2.19              6.79                       0.125
+  B136   FULL            2.93              7.04                       0.214
+  B136   DOWN            2.64              7.04                       0.161
+  B136   ROLL            3.06              7.04                       0.214
+  B136   DDWIN           2.49              8.81                       0.133
+  SMALL  FULL            5.12              7.38                       0.259
+  SMALL  DOWN            5.51              7.38                       0.295
+  SMALL  ROLL            5.33              7.38                       0.295
+  SMALL  DDWIN           7.16              7.38                       0.464
+
+  DOES THE DISAGREEMENT REACH 4b? -- books where `beta<=0.60` and the DD leg differ AND
+  the other three 4b legs (H1, H2, CAGR floor) all pass, i.e. the swap flips the 4b verdict:
+  U56    FULL    4b verdict flipped by the swap:   9 of 112 books   (actual 4b passes 9)
+  U56    DOWN    4b verdict flipped by the swap:   9 of 112 books   (actual 4b passes 9)
+  U56    ROLL    4b verdict flipped by the swap:   7 of 112 books   (actual 4b passes 9)
+  U56    DDWIN   4b verdict flipped by the swap:   2 of  64 books   (actual 4b passes 0)
+  B136   FULL    4b verdict flipped by the swap:   6 of 112 books   (actual 4b passes 10)
+  B136   DOWN    4b verdict flipped by the swap:   5 of 112 books   (actual 4b passes 10)
+  B136   ROLL    4b verdict flipped by the swap:   8 of 112 books   (actual 4b passes 10)
+  B136   DDWIN   4b verdict flipped by the swap:   0 of  60 books   (actual 4b passes 1)
+  SMALL  FULL    4b verdict flipped by the swap:   0 of 112 books   (actual 4b passes 0)
+  SMALL  DOWN    4b verdict flipped by the swap:   0 of 112 books   (actual 4b passes 0)
+  SMALL  ROLL    4b verdict flipped by the swap:   0 of 112 books   (actual 4b passes 0)
+  SMALL  DDWIN   4b verdict flipped by the swap:   0 of 112 books   (actual 4b passes 0)
+
+  COST RUNG check of the headline agreement (FULL estimator, pooled real books):
+      0.0 bps   agreement 0.818  (n=336)
+     10.0 bps   agreement 0.812  (n=336)
+     25.0 bps   agreement 0.798  (n=336)
+
+================================================================================================
+H3  BETA-MATCHED PAIRS -- among books within |dbeta| <= 0.02 on the same panel,
+    how often do the two land on OPPOSITE sides of the DD leg?
+================================================================================================
+panel  est       pairs  disagree    rate  max |dMaxDD| within a matched pair (pp)
+U56    FULL        357        36   0.101                                     8.71
+U56    DOWN        387        40   0.103                                    11.41
+U56    ROLL        441        20   0.045                                     8.09
+U56    DDWIN       211        21   0.100                                    12.01
+B136   FULL        339        36   0.106                                    10.34
+B136   DOWN        360        43   0.119                                    10.34
+B136   ROLL        412        48   0.117                                    10.40
+B136   DDWIN       109         0   0.000                                     4.40
+SMALL  FULL        357        69   0.193                                    32.84
+SMALL  DOWN        345        62   0.180                                    34.11
+SMALL  ROLL        335        54   0.161                                    33.92
+SMALL  DDWIN       413        80   0.194                                    34.11
+  wrote 2026-09-15_is-the-4b-DD-CAP-just-a-BETA-CAP_B.matched.csv  (12 rows, 6 cols)
+  H3 cells with matched-pair disagreement <= 5%: 2 of 12   -> H3 FAILS
+
+================================================================================================
+H4  RESIDUAL PERSISTENCE (rule 8) -- fit MaxDD ~ beta on 2009-2016 ONLY, read 2017-2026
+================================================================================================
+panel  est       n  rho(res_IS,res_OOS)  rho(dd_IS,dd_OOS)  rho(beta_IS,beta_OOS)
+U56    FULL    112                0.437              0.950                  0.969
+U56    DOWN    112                0.540              0.950                  0.940
+U56    ROLL    112                0.178              0.950                  0.987
+U56    DDWIN    52                0.744              0.974                  0.910
+B136   FULL    112                0.536              0.959                  0.963
+B136   DOWN    112                0.542              0.959                  0.950
+B136   ROLL    112                0.188              0.959                  0.980
+B136   DDWIN    56               -0.139              0.964                  0.908
+SMALL  FULL    112                0.343              0.902                  0.958
+SMALL  DOWN    112                0.566              0.902                  0.931
+SMALL  ROLL    112                0.564              0.902                  0.959
+SMALL  DDWIN   112                0.590              0.902                  0.745
+  wrote 2026-09-15_is-the-4b-DD-CAP-just-a-BETA-CAP_B.residual.csv  (12 rows, 8 cols)
+  H4 cells with rho(residual) < 0.30: 3 of 12   -> H4 FAILS (residual persists)
+
+================================================================================================
+RULE 8 ON THE BOOKS -- IS-only choosers (2009-2016), OOS (2017-2026) read ONCE
+================================================================================================
+  wrote 2026-09-15_is-the-4b-DD-CAP-just-a-BETA-CAP_B.walkforward.csv  (18 rows, 16 cols)
+panel  chooser     book                                           bIS  bOOS  OOS CAGR  Sharpe    MaxDD         H1/H2  4a  4b
+U56    IS_SHARPE   TREND/AGG/th=0.2/g=1.00                       0.73  0.77    16.41%   1.075  -29.18%  1.184/ 0.955   n   n
+U56    IS_LOWBETA  DISP/HYB/th=0.6/g=0.25                        0.07  0.08     1.03%   0.555   -3.91%  0.655/ 0.449   n   n
+U56    IS_DDRESID  TREND/AGG/th=0.4/g=1.00                       0.54  0.54    15.69%   1.200  -23.59%  1.306/ 1.083   n   n
+U56    IS_MAXDD    TREND/HYB/th=0.6/g=0.25                       0.08  0.09     2.61%   1.125   -4.10%  1.361/ 0.853   n   n
+U56    SPY         buy-and-hold                                  1.00  1.00    15.27%   0.874  -33.72%  0.980/ 0.759   n   n
+U56    RULESv2     live baseline                                  nan   nan     9.46%   1.277  -12.05%  1.410/ 1.132   n   n
+B136   IS_SHARPE   TREND/AGG/th=0.2/g=1.00                       0.78  0.73    15.85%   1.058  -25.59%  1.231/ 0.873   n   n
+B136   IS_LOWBETA  TREND/HYB/th=0.6/g=0.25                       0.09  0.07     2.25%   1.058   -3.38%  1.319/ 0.743   n   n
+B136   IS_DDRESID  TREND/AGG/th=0.4/g=1.00                       0.57  0.58    13.55%   1.015  -25.59%  1.124/ 0.892   n   n
+B136   IS_MAXDD    TREND/HYB/th=0.6/g=0.25                       0.09  0.07     2.25%   1.058   -3.38%  1.319/ 0.743   n   n
+B136   SPY         buy-and-hold                                  1.00  1.00    15.33%   0.877  -33.72%  0.980/ 0.765   n   n
+B136   RULESv2     live baseline                                  nan   nan     7.88%   1.106  -12.24%  1.279/ 0.903   n   n
+SMALL  IS_SHARPE   VOL/AGG/th=0.2/g=1.00                         0.94  0.82    12.52%   0.673  -37.13%  0.932/ 0.447   n   n
+SMALL  IS_LOWBETA  TREND/HYB/th=0.6/g=0.25                       0.05  0.02     0.30%   0.190   -7.23%  0.870/-0.863   n   n
+SMALL  IS_DDRESID  MOM/AGG/th=0.6/g=1.00                         0.45  0.16     4.14%   0.472  -15.68%  0.575/ 0.367   n   n
+SMALL  IS_MAXDD    TREND/HYB/th=0.4/g=0.25                       0.08  0.05     1.20%   0.549   -4.81%  0.902/ 0.183   n   n
+SMALL  SPY         buy-and-hold                                  1.00  1.00    15.33%   0.877  -33.72%  0.980/ 0.765   n   n
+SMALL  RULESv2     live baseline                                  nan   nan     4.47%   0.652  -12.18%  1.073/ 0.223   n   n
+  H5  DDRESID chooser beats LOWBETA chooser on OOS Sharpe at 2 of 3 panels   -> H5 FAILS (residual picks)
+
+================================================================================================
+VERDICT
+================================================================================================
+  H1   HOLDS
+  H2   FAILS
+  H2b  FAILS
+  H3   FAILS
+  H4   FAILS
+  H5   FAILS
+  queue hypothesis (the DD cap IS a beta cap): REFUTED -- the DD leg carries information beta does not
+  OOS KEEP paths over the 12 rule-8 picks: 4a 0, 4b 0
+
+total 23.7s
+  wrote 2026-09-15_is-the-4b-DD-CAP-just-a-BETA-CAP_B.margin.csv  (24 rows, 9 cols)
