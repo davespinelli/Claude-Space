@@ -1,0 +1,228 @@
+# Idea 901 - does the BLOCK null MASK every LOW-TAIL gate in the record?  (lane B, 2026-09-15)
+# script: 2026-09-15_does-the-BLOCK-null-MASK-every-LOW-TAIL-gate_B.py   10 bps, t+1, weekly book, committed caches only, no network
+panels: U56 (4704, 56)  B136 (4703, 136)  SMALL (4198, 664)
+
+[0] REPRODUCTION GATES (printed before any new number is read)
+  G1 never-firing multiplier == ungated book       max|d| = 0.000e+00  [PASS]  (bar 1e-12)
+  G5 fast Sharpe == engine.metrics()['Sharpe']     |d|    = 0.000e+00  [PASS]  (bar 1e-10)
+  G6 VOLBLOCK at k=1 == BLOCK at the same seed     max|d| = 0.000e+00  [PASS]  (bar 0)
+  G7 VOL20 == idea 870's NAMEVOL                   max|d| = 0.000e+00  [PASS]  (bar 0; NAMEVOL is therefore not carried twice)
+  panel U56: 56 cols, 4444 days, 85s
+  panel B136: 136 cols, 4443 days, 86s
+  panel SMALL: 664 cols, 3938 days, 95s
+  G2 placebo mean multiplier == real arm's        max|d| = 0.000e+00  [PASS]  (bar 1e-12)
+  G4 determinism, every placebo re-seeded          max|d| = 0.000e+00  [PASS]  (bar 0)
+  G3 committed medians rebuilt here (bar: sign agrees and |d| <= 0.020)
+     source / family / kind                        committed       here      |d|
+     815 CORR-LO/BLOCK  -> here BLOCK                +0.0341    +0.0298   0.0043
+     815 CORR-LO/YEARBLOCK  -> here YEARBLOCK        +0.0568    +0.0541   0.0027
+     815 CORR-HI/BLOCK  -> here BLOCK                +0.0554    +0.0517   0.0037
+     815 CORR-HI/YEARBLOCK  -> here YEARBLOCK        +0.0249    +0.0210   0.0039
+     870 CORR-LO/BLOCK  -> here BLOCK                +0.0298    +0.0298   0.0000
+     870 CORR-LO/VOLBLOCK  -> here VOLBLOCK3         +0.0792    +0.0790   0.0001
+     G3 6/6 cells agree  [PASS]  (median |d| 0.0032)
+  grid: 4320 arms (10 families, 3 panels), 21600 placebo cells x 10 seeds = 216,000 placebo evaluations
+
+[1] Q1 (MASK) + Q3 (STRAT) - median placebo excess by family and null kind @10 bps
+    uplift = VOLBLOCKk - BLOCK.  positive uplift = the published BLOCK number is TOO SMALL
+    family        n/kind     BLOCK   YEARBLK       VB2      VB3      VB5     upl2     upl3     upl5  share>0 (k=3)
+    BREADTH-LO       432   +0.0683   +0.0181  +0.0566  +0.0676  +0.0529  -0.0117  -0.0007  -0.0154          0.424
+    CORR-LO          432   +0.0298   +0.0541  +0.0700  +0.0790  +0.1015  +0.0402  +0.0492  +0.0717          0.882
+    DISP-LO          432   -0.0361   -0.0185  -0.0130  -0.0070  +0.0149  +0.0232  +0.0292  +0.0510          0.898
+    PORTVOL-LO       432   +0.0128   +0.0402  +0.0472  +0.0612  +0.0846  +0.0344  +0.0484  +0.0718          0.903
+    VOL20-LO         432   -0.0192   +0.0055  +0.0132  +0.0221  +0.0434  +0.0324  +0.0413  +0.0626          0.917
+    ----------------------------------------------------------------------------------------------------
+    BREADTH-HI       432   +0.0112   +0.0490  +0.0272  +0.0383  +0.0523  +0.0160  +0.0272  +0.0412          0.877
+    CORR-HI          432   +0.0517   +0.0210  +0.0400  +0.0474  +0.0375  -0.0117  -0.0043  -0.0142          0.433
+    DISP-HI          432   +0.0276   +0.0021  +0.0234  +0.0286  +0.0239  -0.0042  +0.0010  -0.0036          0.593
+    PORTVOL-HI       432   +0.0328   -0.0009  +0.0213  +0.0301  +0.0086  -0.0114  -0.0027  -0.0242          0.451
+    VOL20-HI         432   +0.0189   -0.0150  +0.0081  +0.0151  -0.0030  -0.0108  -0.0038  -0.0219          0.463
+    ----------------------------------------------------------------------------------------------------
+    H_MASK (median VOLBLOCK3 - BLOCK > 0 for ALL 5 LO families): 4/5 -> FAIL
+    H_STRAT (sign of the uplift identical at k=2/3/5 on >= 90% of family x panel cells): 0.967 on 30 cells -> PASS
+      unstable cells: DISP-HI/B136
+
+[2] Q2 (SIGN) - is the BLOCK bias SIGNED BY TAIL?  per-arm uplift, pooled over families
+    side      arms    med upl k=2   med upl k=3   med upl k=5  share>0 (k=3)
+    LO        2160        +0.0217       +0.0305       +0.0479          0.805
+    HI        2160        -0.0030       +0.0044       -0.0020          0.563
+    H_SIGN (median uplift LO > 0 AND HI < 0 at k=3): LO +0.0305, HI +0.0044 -> FAIL
+
+[2b] POST-HOC (not pre-registered) - WHAT THE UPLIFT IS ACTUALLY KEYED TO.
+    H_MASK and H_SIGN are both stated on the LO/HI label.  The mechanism is not about
+    the label: it is about WHERE ON THE VOL DISTRIBUTION a gate's firing days sit.  A
+    BLOCK placebo lands at percentile 0.500 by construction, so it should score TOO
+    HIGH (excess understated) for a gate firing below 0.500 and TOO LOW (excess
+    overstated) for one firing above it.  fire_volpct is measured per arm, uplift is
+    that same arm's VOLBLOCK3 - BLOCK.  This table is a DIAGNOSTIC of a bar already
+    read, not a new bar.
+    family        panel   arms  fire_volpct  med uplift
+    PORTVOL-LO    SMALL    144        0.153     +0.0092
+    PORTVOL-LO    U56      144        0.165     +0.0683
+    PORTVOL-LO    B136     144        0.185     +0.0742
+    CORR-LO       B136     144        0.186     +0.0767
+    CORR-LO       U56      144        0.195     +0.0633
+    CORR-LO       SMALL    144        0.213     +0.0063
+    VOL20-LO      SMALL    144        0.218     +0.0079
+    VOL20-LO      U56      144        0.239     +0.0561
+    VOL20-LO      B136     144        0.257     +0.0556
+    DISP-LO       SMALL    144        0.303     +0.0125
+    DISP-LO       U56      144        0.326     +0.0408
+    DISP-LO       B136     144        0.345     +0.0342
+    BREADTH-HI    B136     144        0.411     +0.0383
+    BREADTH-HI    SMALL    144        0.416     +0.0136
+    BREADTH-HI    U56      144        0.432     +0.0304
+    DISP-HI       B136     144        0.655     +0.0027
+    DISP-HI       U56      144        0.711     -0.0081
+    BREADTH-LO    SMALL    144        0.731     +0.0170
+    DISP-HI       SMALL    144        0.733     +0.0224
+    VOL20-HI      SMALL    144        0.779     +0.0239
+    VOL20-HI      B136     144        0.780     -0.0063
+    BREADTH-LO    B136     144        0.786     -0.0091
+    BREADTH-LO    U56      144        0.800     -0.0139
+    PORTVOL-HI    SMALL    144        0.831     +0.0231
+    VOL20-HI      U56      144        0.840     -0.0192
+    CORR-HI       SMALL    144        0.842     +0.0251
+    CORR-HI       U56      144        0.861     -0.0176
+    CORR-HI       B136     144        0.869     -0.0055
+    PORTVOL-HI    U56      144        0.872     -0.0208
+    PORTVOL-HI    B136     144        0.874     -0.0086
+    rho(fire_volpct, uplift) = -0.684 over 30 family x panel cells, -0.500 over all 4320 arms
+    arms firing BELOW percentile 0.500: n=2160, median uplift +0.0362, share>0 0.895
+    arms firing AT/ABOVE percentile 0.500: n=2160, median uplift -0.0017, share>0 0.473
+    the two falsifiers, named: BREADTH-LO is a LO gate that fires in the HIGH-vol tail
+    (low breadth = a falling market), and BREADTH-HI is a HI gate that fires just below
+    the median.  Both take the sign fire_volpct predicts and not the sign the LO/HI
+    label predicts, which is what sinks H_MASK and H_SIGN.
+
+[3] Q4 (COUNT) - THE RECORD'S COMMITTED LOW-TAIL PLACEBO NUMBERS, RE-PRICED
+    harvested 79,920 committed LO-tail placebo-differenced numbers from 10 files; 25 file(s) carried the arm key but named no null and were SKIPPED
+       20,736  2026-09-15_is-the-CORR-LO-POSITIVE-EXCESS-a-DE-GROSSING-artefact_C.excess.csv.gz
+       13,824  2026-09-15_should-PROTOCOL-require-a-RUN-LENGTH-MATCHED-null-by-name_B.walkforward.csv
+        8,640  2026-09-15_is-the-CORR-LO-POSITIVE-EXCESS-a-DE-GROSSING-artefact_cloud.excess.csv
+        6,912  2026-09-12_does-the-PLACEBO-EXCESS-rate-slope-survive-outside-the-BREADTH-family_B.excess.csv
+        6,912  2026-09-15_should-PROTOCOL-require-a-RUN-LENGTH-MATCHED-null-by-name_B.nulls.csv
+        6,912  2026-09-15_what-is-the-RESIDUAL-PLUS-0.0012-shared-by-every-CAPPED-null_cloud.excess.csv
+        5,760  2026-09-15_is-the-ONE-SIDED-DISPERSION-defect-a-MAX-RUN-LENGTH-fact-or-a-TAIL-MASS-fact_B.excess.csv
+        3,888  2026-09-15_is-the-CORR-LO-excess-a-VOL-TARGET-in-disguise_B.cells.csv
+        3,456  2026-09-12_does-the-PLACEBO-EXCESS-rate-slope-survive-outside-the-BREADTH-family_B.placebo.csv.gz
+        2,880  2026-09-15_does-a-MIS-DISPERSED-run-length-null-stay-inside-the-NOISE-FLOOR_cloud.excess.csv
+      skipped (no named null): 2026-09-12_does-the-PLACEBO-EXCESS-rate-slope-survive-outside-the-BREADTH-family_B.cells.csv, 2026-09-12_does-the-PLACEBO-EXCESS-rate-slope-survive-outside-the-BREADTH-family_B.clean.csv, 2026-09-12_does-the-PLACEBO-EXCESS-rate-slope-survive-outside-the-BREADTH-family_B.control.csv, 2026-09-12_does-the-PLACEBO-EXCESS-rate-slope-survive-outside-the-BREADTH-family_B.walkforward.csv, 2026-09-15_does-a-MIS-DISPERSED-run-length-null-stay-inside-the-NOISE-FLOOR_cloud.arms.csv, 2026-09-15_does-a-MIS-DISPERSED-run-length-null-stay-inside-the-NOISE-FLOOR_cloud.gap.csv, 2026-09-15_does-the-MEDIAN-vs-MEAN-SIGN-INSTABILITY-track-a-SKEW-statistic_C.books.csv, 2026-09-15_how-many-committed-PLACEBO-DIFFERENCED-numbers-would-CHANGE-SIGN-under-the-SIGNED-estimator_B.arms.csv, 2026-09-15_how-many-committed-PLACEBO-DIFFERENCED-numbers-would-CHANGE-SIGN-under-the-SIGNED-estimator_B.books.csv, 2026-09-15_how-many-committed-PLACEBO-DIFFERENCED-numbers-would-CHANGE-SIGN-under-the-SIGNED-estimator_B.gaps.csv, 2026-09-15_is-the-CONTINUOUS-SCALER-uniformly-cheaper-than-the-BINARY-GATE_cloud.arms.csv, 2026-09-15_is-the-CORR-LO-POSITIVE-EXCESS-a-DE-GROSSING-artefact_C.cells.csv, 2026-09-15_is-the-CORR-LO-POSITIVE-EXCESS-a-DE-GROSSING-artefact_C.g5.csv.gz, 2026-09-15_is-the-CORR-LO-POSITIVE-EXCESS-a-DE-GROSSING-artefact_C.placebo.csv.gz, 2026-09-15_is-the-CORR-LO-POSITIVE-EXCESS-a-DE-GROSSING-artefact_C.walkforward.csv, 2026-09-15_is-the-CORR-LO-POSITIVE-EXCESS-a-DE-GROSSING-artefact_cloud.cells.csv, 2026-09-15_is-the-CORR-LO-POSITIVE-EXCESS-a-DE-GROSSING-artefact_cloud.honest4b.csv, 2026-09-15_is-the-CORR-LO-excess-a-VOL-TARGET-in-disguise_B.arms.csv, 2026-09-15_is-the-CORR-LO-excess-a-VOL-TARGET-in-disguise_B.picks.csv, 2026-09-15_is-the-ONE-SIDED-DISPERSION-defect-a-MAX-RUN-LENGTH-fact-or-a-TAIL-MASS-fact_B.arms.csv, 2026-09-15_is-the-ONE-SIDED-DISPERSION-defect-a-MAX-RUN-LENGTH-fact-or-a-TAIL-MASS-fact_B.gap.csv, 2026-09-15_should-PROTOCOL-require-a-RUN-LENGTH-MATCHED-null-by-name_B.cells.csv, 2026-09-15_should-PROTOCOL-require-a-RUN-LENGTH-MATCHED-null-by-name_B.keep.csv, 2026-09-15_what-is-the-RESIDUAL-PLUS-0.0012-shared-by-every-CAPPED-null_cloud.arms.csv, 2026-09-15_what-is-the-RESIDUAL-PLUS-0.0012-shared-by-every-CAPPED-null_cloud.gap.csv
+    kinds present: BLOCK, BLOCK2, BLOCKEP, BLOCKPOST, BLOCKYEAR, EPISODEFIX, EPMATCH, IS_BLOCK, IS_RAND, IS_RUNPERM, IS_SWITCHMATCH, OOS_BLOCK, OOS_RAND, OOS_RUNPERM, OOS_SWITCHMATCH, OP_DOM, OP_FILL, OP_LONE, OP_REAL, OP_SPLIT8, RAND, RUNPERM, SHIFT10, SHIFT126, SHIFT21, SHIFT252, SHIFT5, SHIFT63, SM_DOM, SM_FILL, SM_LONE, SM_SPLIT2, SM_SPLIT4, SM_SPLIT8, SM_UNIF, SWITCHMATCH, UG_REAL, VOLBLOCK, YEARBLOCK, YEARMATCH
+
+    claim set   k     rows  matched  understated  med uplift  restate>20%  sign flips  U56+B136 und.
+    NARROW     2   13,392   12,960        0.745     +0.0261        0.857       0.321          0.787
+    NARROW     3   13,392   12,960        0.806     +0.0357        0.864       0.369          0.839
+    NARROW     5   13,392   12,960        0.853     +0.0523        0.925       0.491          0.836
+    SHIFT      2   27,936   27,072        0.673     +0.0170        0.840       0.279          0.723
+    SHIFT      3   27,936   27,072        0.751     +0.0261        0.849       0.310          0.799
+    SHIFT      5   27,936   27,072        0.835     +0.0422        0.898       0.405          0.844
+    ALL        2   79,920   78,624        0.558     +0.0078        0.871       0.263          0.599
+    ALL        3   79,920   78,624        0.615     +0.0161        0.875       0.282          0.653
+    ALL        5   79,920   78,624        0.673     +0.0302        0.915       0.344          0.675
+    H_COUNT (>= 90% of NARROW committed LO rows understated at k=3): 0.806 of 12,960 matched -> FAIL
+    REPRODUCTION CONTROL - median |my BLOCK - published BLOCK| on the same keys: 0.0105  (the uplift must be read against this floor)
+    RECORD-INTERNAL FLOOR - the record's OWN committed BLOCK numbers disagree on the
+    same arm key by a median of 0.0581 across 1,728 keys carried by 2+ files (max 0.6220); idea 871's per-arm seed noise floor is 0.0145.
+    So the k=3 median uplift of +0.0357 is 0.61x the record's own key-level
+    disagreement, and the per-row understatement SHARES below are resolved only to
+    that floor.  The per-FAMILY medians are the part that survives it.
+    per-family census at the NARROW claim set, k=3:
+      family         matched   pub med  VOLBLOCK3    uplift  understated  restate>20%
+      BREADTH-LO       3,024   +0.0514    +0.0742   +0.0077        0.573        0.707
+      CORR-LO          3,456   +0.0180    +0.0866   +0.0632        0.919        0.889
+      DISP-LO          3,024   -0.0269    -0.0075   +0.0230        0.789        0.918
+      PORTVOL-LO         432   +0.0128    +0.0612   +0.0475        0.903        0.889
+      VOL20-LO         3,024   -0.0183    +0.0230   +0.0405        0.912        0.936
+
+[4] Q5 (CAPITAL) + PROTOCOL rule 8
+    (a) comparands @10 bps, weekly, t+1, per panel:
+      U56    SPY 15.13%/0.885/-33.72% (H 0.959/0.824; OOS 15.27%/0.874/-33.72%)   RULES v2 8.64%/1.208/-11.90% (H 1.237/1.186; OOS 9.49%/1.286/-11.90%)
+      B136   SPY 15.16%/0.886/-33.72% (H 0.960/0.826; OOS 15.33%/0.877/-33.72%)   RULES v2 7.98%/1.101/-12.18% (H 1.237/0.967; OOS 7.88%/1.108/-12.18%)
+      SMALL  SPY 14.06%/0.858/-33.72% (H 0.914/0.834; OOS 15.33%/0.877/-33.72%)   RULES v2 4.30%/0.663/-13.89% (H 0.806/0.554; OOS 3.75%/0.559/-13.89%)
+
+    (b) full-sample KEEP census over ALL grid points (nothing selected):
+    family          arms    4a    4b  med Sharpe   med CAGR  med MaxDD  best OOS Sh  OOS 4a  OOS 4b
+    BREADTH-HI       432     0    41       0.965      9.81%    -21.21%        1.150       0      72
+    BREADTH-LO       432     0   116       1.062     10.22%    -18.89%        1.452      10     171
+    CORR-HI          432     1   131       1.061     10.27%    -18.26%        1.469      23     186
+    CORR-LO          432     0     0       0.972      9.80%    -21.96%        1.127       0      27
+    DISP-HI          432     0    25       1.013      9.87%    -22.22%        1.280       0      54
+    DISP-LO          432     0     0       0.835      8.84%    -23.08%        1.111       0      24
+    PORTVOL-HI       432     0    97       1.039     10.09%    -19.17%        1.403       6     140
+    PORTVOL-LO       432     0     0       0.949      9.67%    -21.96%        1.100       0      18
+    VOL20-HI         432     0    65       1.010      9.84%    -20.17%        1.471       0     108
+    VOL20-LO         432     0     0       0.871      9.00%    -21.96%        1.106       0      20
+    TOTAL           4320     1   475                                                    39     820
+      LO: 2160 arms, 4a 0, 4b 116, OOS 4a 10, OOS 4b 260
+      HI: 2160 arms, 4a 1, 4b 359, OOS 4a 29, OOS 4b 560
+
+    (c) cost ladder over ALL arms, every rung reported:
+       0 bps  median Sharpe 1.001   median CAGR 10.01%   median MaxDD -20.84%   LO-side median Sharpe 0.967
+      10 bps  median Sharpe 0.975   median CAGR 9.77%   median MaxDD -20.84%   LO-side median Sharpe 0.932
+      25 bps  median Sharpe 0.930   median CAGR 9.39%   median MaxDD -20.84%   LO-side median Sharpe 0.880
+    and the excess itself at every rung (median over cells, k=3 vs BLOCK):
+       0 bps  LO  BLOCK +0.0114   VOLBLOCK3 +0.0303   uplift +0.0189
+       0 bps  HI  BLOCK +0.0274   VOLBLOCK3 +0.0197   uplift -0.0077
+      10 bps  LO  BLOCK +0.0120   VOLBLOCK3 +0.0437   uplift +0.0317
+      10 bps  HI  BLOCK +0.0272   VOLBLOCK3 +0.0315   uplift +0.0044
+      25 bps  LO  BLOCK +0.0126   VOLBLOCK3 +0.0676   uplift +0.0550
+      25 bps  HI  BLOCK +0.0267   VOLBLOCK3 +0.0498   uplift +0.0231
+
+    (d) RULE 8 - IS-ONLY SELECTOR (highest 2009-2016 Sharpe per panel x family), OOS 2017+ READ ONCE:
+    panel  family            q     w   dep  cad     g  OOS CAGR  OOS Sh   OOS DD      OOS H1/H2     4a     4b
+    U56    BREADTH-HI     0.12  2016  1.00    W  1.00    14.81%   1.150  -19.91%  1.276/1.025    False   True
+    U56    BREADTH-LO     0.17   504  1.00    D  1.00    13.46%   1.233  -17.82%  1.412/1.044    False   True
+    U56    CORR-HI        0.07  1008  1.00    W  1.00    12.41%   1.016  -22.93%  1.285/0.767    False  False
+    U56    CORR-LO        0.07   252  1.00    W  1.00    12.88%   0.993  -20.84%  1.192/0.784    False  False
+    U56    DISP-HI        0.12   504  1.00    W  1.00    14.20%   1.171  -19.01%  1.558/0.821    False   True
+    U56    DISP-LO        0.07   252  0.25    D  1.00    14.40%   1.078  -20.84%  1.210/0.943    False  False
+    U56    PORTVOL-HI     0.12   252  1.00    W  0.75    10.44%   1.210  -16.79%  1.551/0.883    False  False
+    U56    PORTVOL-LO     0.17  1008  0.50    D  1.00    13.58%   1.044  -20.84%  1.186/0.894    False  False
+    U56    VOL20-HI       0.17   504  0.25    W  1.00    14.43%   1.143  -18.73%  1.336/0.949    False   True
+    U56    VOL20-LO       0.07   504  0.25    D  1.00    14.81%   1.101  -20.84%  1.227/0.970    False  False
+    B136   BREADTH-HI     0.12  2016  1.00    D  1.00     9.49%   0.743  -21.58%  0.684/0.811    False  False
+    B136   BREADTH-LO     0.17   504  0.50    W  1.00    12.87%   1.109  -17.20%  1.284/0.914    False   True
+    B136   CORR-HI        0.12  2016  1.00    W  1.00    11.85%   1.014  -19.29%  1.137/0.887    False   True
+    B136   CORR-LO        0.07  1008  0.50    D  1.00    13.53%   1.004  -23.08%  1.082/0.919    False  False
+    B136   DISP-HI        0.07  2016  0.25    D  1.00    13.19%   1.015  -22.88%  1.195/0.821    False  False
+    B136   DISP-LO        0.12  2016  0.25    W  1.00    13.30%   0.972  -23.08%  1.064/0.871    False  False
+    B136   PORTVOL-HI     0.17  2016  1.00    W  1.00    10.36%   0.970  -16.35%  1.114/0.834    False  False
+    B136   PORTVOL-LO     0.07   504  0.50    W  1.00    13.02%   0.964  -23.08%  1.046/0.874    False  False
+    B136   VOL20-HI       0.17  2016  0.50    W  1.00    10.73%   0.950  -21.40%  1.153/0.749    False  False
+    B136   VOL20-LO       0.12  2016  0.25    W  1.00    13.20%   0.967  -23.08%  1.056/0.871    False  False
+    SMALL  BREADTH-HI     0.07   252  0.25    W  1.00     4.71%   0.352  -46.69%  0.453/0.248    False  False
+    SMALL  BREADTH-LO     0.07   504  1.00    W  1.00     6.67%   0.492  -31.92%  1.015/0.069    False  False
+    SMALL  CORR-HI        0.17  1008  1.00    W  1.00    -0.80%   0.014  -37.18%  0.026/0.006    False  False
+    SMALL  CORR-LO        0.17   504  1.00    D  1.00     6.33%   0.451  -45.59%  0.446/0.458    False  False
+    SMALL  DISP-HI        0.12   504  1.00    D  1.00     4.75%   0.383  -37.73%  0.897/-0.027   False  False
+    SMALL  DISP-LO        0.12   504  1.00    W  1.00     3.44%   0.283  -47.83%  0.384/0.179    False  False
+    SMALL  PORTVOL-HI     0.17  1008  0.50    W  1.00     1.08%   0.147  -36.18%  0.232/0.079    False  False
+    SMALL  PORTVOL-LO     0.17   504  1.00    D  1.00     4.59%   0.350  -46.01%  0.359/0.341    False  False
+    SMALL  VOL20-HI       0.17  1008  1.00    W  1.00    -0.96%   0.002  -37.59%  0.189/-0.126   False  False
+    SMALL  VOL20-LO       0.17   252  1.00    D  1.00     2.00%   0.203  -48.52%  0.254/0.152    False  False
+    rule-8 picks: 30   OOS 4a 0   OOS 4b 6   LO-side OOS 4b 2 of 15
+    H_CAP (>= 1 LO arm's rule-8 pick clears OOS 4b): 2 -> PASS
+
+    (e) does the RE-PRICED excess walk forward?  rho(IS excess, OOS excess), n=cells
+    family                BLOCK    YEARBLOCK    VOLBLOCK2    VOLBLOCK3    VOLBLOCK5
+    BREADTH-HI           +0.033       +0.390       +0.321       +0.391       +0.522
+    BREADTH-LO           +0.283       +0.029       +0.233       +0.284       +0.187
+    CORR-HI              +0.281       +0.227       +0.113       +0.071       -0.176
+    CORR-LO              +0.413       +0.467       +0.504       +0.460       +0.612
+    DISP-HI              -0.269       -0.249       -0.175       -0.125       +0.007
+    DISP-LO              +0.105       +0.171       -0.319       -0.506       -0.517
+    PORTVOL-HI           +0.146       -0.029       -0.030       -0.072       -0.221
+    PORTVOL-LO           +0.238       +0.363       +0.290       +0.415       +0.502
+    VOL20-HI             -0.270       -0.324       -0.311       -0.155       -0.012
+    VOL20-LO             +0.293       +0.108       -0.017       -0.183       -0.096
+
+[5] PRE-REGISTERED BARS, ALL FIVE
+    H_MASK   FAIL
+    H_SIGN   FAIL
+    H_STRAT  PASS
+    H_COUNT  FAIL
+    H_CAP    PASS
+
+wrote 2026-09-15_does-the-BLOCK-null-MASK-every-LOW-TAIL-gate_B.arms.csv (4320), .cells.csv (21600), .census.csv (9), .picks.csv (30), .repriced.csv.gz (12960)
+total 282s
