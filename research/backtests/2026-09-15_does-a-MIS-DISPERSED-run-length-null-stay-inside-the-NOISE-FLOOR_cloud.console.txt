@@ -1,0 +1,167 @@
+====================================================================================================
+IDEA 875 - does a DELIBERATELY MIS-DISPERSED run-length null still land inside the NOISE FLOOR?  (cloud lane 2026-09-15)
+====================================================================================================
+# pandas 3.0.5 numpy 2.4.6
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+  SMALL panel: 716 columns -> 664 kept (52 dropped for max_1d_move >= 1.0)
+  U56: 56 cols x 4704 days  2008-01-02 .. 2026-09-14
+  B136: 136 cols x 4703 days  2008-01-02 .. 2026-09-11
+  SMALL: 664 cols x 4198 days  2010-01-04 .. 2026-09-11
+
+[0] GATES (printed before any hypothesis is read)
+  G1 never-firing multiplier == ungated book   max|d| 0.000e+00  bar 1e-12  [PASS]
+  G6 fast Sharpe == engine.metrics()['Sharpe'] |d| 0.000e+00  bar 1e-10  [PASS]
+  G5 k and m preserved by all three switch-matched nulls: 0 violations in 900 draws  [PASS]
+     synthetic sd_runlen_ratio  SM_UNIF 0.058 < SWITCHMATCH 1.691 < SM_DOM 8.886  [PASS]
+    U56: BREADTH done  (6s)
+    U56: VOL20 done  (8s)
+    U56: DISP done  (11s)
+    U56: CORR done  (13s)
+    B136: BREADTH done  (8s)
+    B136: VOL20 done  (10s)
+    B136: DISP done  (12s)
+    B136: CORR done  (15s)
+    SMALL: BREADTH done  (29s)
+    SMALL: VOL20 done  (31s)
+    SMALL: DISP done  (32s)
+    SMALL: CORR done  (35s)
+
+  arms 1152 rows, excess 5760 rows  (64s)
+  G2 rate match  max|mean(placebo) - mean(real)| 0.000e+00  bar 1e-12  [PASS]
+  G4 determinism max|d| 0.000e+00  bar 0  [PASS]
+  G5 on REAL arms: k and m violations across all switch-matched cells: 0 of 34560  [PASS]
+
+====================================================================================================
+[1] G3 REPRODUCTION OF IDEA 871 ON THIS DECLARED AXIS SUBSET
+====================================================================================================
+  pooled median |SWITCHMATCH - BLOCK|: 0bps 0.0218  10bps 0.0215  25bps 0.0221   (871 published 0.0144-0.0146)
+    max distance to the published band 0.0075  bar 0.005  [DIFFERS]
+  seed-noise floor |RAND - BLOCK| at 0 bps = 0.0213  (871: 0.0145)  [DIFFERS]
+  RATIO |SWITCHMATCH - BLOCK| / floor = 1.010  (871: 1.007) — this is the scale-free form of 871's claim and it is what must reproduce, not the level
+  SWITCHMATCH sd_runlen_ratio 0.936  (871: 0.919)  [PASS]
+  RAND switch-count ratio 13.23x; every matched null 1.00x / 1.00x / 1.00x
+
+====================================================================================================
+[2] H_DISP - DID THE MANIPULATION WORK?  (fire-run sd ratio vs the real arm, all arms)
+====================================================================================================
+  SM_UNIF      mean   0.030   median   0.028   p05   0.009   p95   0.056
+  SWITCHMATCH  mean   0.936   median   0.873   p05   0.511   p95   1.503
+  SM_DOM       mean   5.867   median   5.969   p05   3.188   p95   8.543
+  BLOCK        mean   0.997   median   0.999   p05   0.981   p95   1.001
+  RAND         mean   0.031   median   0.030   p05   0.014   p95   0.055
+  H_DISP: SM_DOM mean >= 3.0 [PASS] and SM_UNIF mean <= 0.25 [PASS], k/m violations 0 -> CONFIRMED
+
+====================================================================================================
+[3] H_SUFF / H_SUFF2 - DOES SUFFICIENCY SURVIVE EXTREME DISPERSION?
+    seed-noise floor = 0.0213 of Sharpe (|RAND - BLOCK| at 0 bps, 871's own form)
+====================================================================================================
+  null               |d| @0bps     |d| @10bps     |d| @25bps   verdict vs floor
+  SWITCHMATCH           0.0218         0.0215         0.0221   OUTSIDE at 0,10,25bps
+  SM_UNIF               0.0232         0.0229         0.0227   OUTSIDE at 0,10,25bps
+  SM_DOM                0.0205         0.0209         0.0208   INSIDE at every rung
+  RAND                  0.0213         0.2720         0.6830   OUTSIDE at 10,25bps
+  H_SUFF  (SM_DOM inside the floor at every rung): CONFIRMED
+  H_SUFF2 (SM_UNIF inside the floor at every rung): REFUTED
+  SM_DOM's largest gap is 0.0209 = 0.98x the floor
+
+  by panel and by family (10 bps, median |null - BLOCK|):
+    SWITCHMATCH  B136 0.0214  SMALL 0.0212  U56 0.0217   |  worst family 0.0274 (VOL20-LO)
+    SM_UNIF      B136 0.0239  SMALL 0.0228  U56 0.0224   |  worst family 0.0282 (DISP-LO)
+    SM_DOM       B136 0.0202  SMALL 0.0231  U56 0.0188   |  worst family 0.0263 (DISP-LO)
+
+====================================================================================================
+[3b] THE SIGNED GAP - the statistic 871's |.| form cannot see
+     |per-arm gap| is a per-arm quantity dominated by seed noise; the SIGNED gap pooled
+     over 1,152 arms averages that noise away (SE of the pooled median ~ seed_sd / 
+     sqrt(NSEED * n_arms) ~ 0.0006), so a systematic difference shows up here or nowhere.
+====================================================================================================
+  null              signed @0    signed @10    signed @25   share below BLOCK  sign-test z
+  SWITCHMATCH         -0.0008       -0.0008       -0.0009              51.0%         +0.7
+  SM_UNIF             -0.0003       -0.0006       -0.0005              51.0%         +0.7
+  SM_DOM              -0.0044       -0.0046       -0.0042              55.6%         +3.8
+  RAND                -0.0040       +0.2720       +0.6830               0.0%        -33.9
+  A null that differs from BLOCK only by seed noise has a signed median of 0.0000, a
+  share of 50.0% and |z| < 2.  The reading is printed above for every null.
+
+====================================================================================================
+[8] NOISE ACCOUNTING - is |null - BLOCK| anything BUT the seed budget?
+    Predicted under pure independent seed noise, per arm:
+      median|gap| = 0.6745 * 1.2533 / sqrt(NSEED) * sqrt(sd_null^2 + sd_BLOCK^2)
+    (0.6745 = median of a half-normal in sd units; 1.2533 = SE inflation of a median
+     over a mean at n=10).  If observed / predicted ~ 1, the statistic is measuring the
+     seed budget and nothing else.
+====================================================================================================
+  null            observed  predicted  obs/pred  seeds for 0.010  seeds for 0.005
+  SWITCHMATCH       0.0215     0.0247      0.87               61              244
+  SM_UNIF           0.0229     0.0246      0.93               61              242
+  SM_DOM            0.0209     0.0221      0.95               49              195
+  RAND              0.2720     0.0239     11.37               57              229
+  'seeds for X' = the md5-seed budget at which pure noise alone would produce a median
+  |gap| below X, i.e. the budget at which a true difference of that size is resolvable.
+
+====================================================================================================
+[4] H_VAR - SEED DISPERSION OF THE EXCESS (a null can match the median and still be unusable)
+====================================================================================================
+  null              seed sd @0    seed sd @10    seed sd @25
+  RAND                  0.0612         0.0604         0.0599
+  BLOCK                 0.0643         0.0642         0.0637
+  SWITCHMATCH           0.0622         0.0616         0.0608
+  SM_DOM                0.0464         0.0465         0.0471
+  SM_UNIF               0.0621         0.0616         0.0607
+  SM_DOM seed sd / BLOCK seed sd at 10 bps = 0.73x  -> H_VAR REFUTED (bar 2.0)
+
+====================================================================================================
+[5] H_COSTINV - IS THE SM_DOM GAP A COST STORY LIKE RAND'S?
+====================================================================================================
+  RAND          |d| 0/10/25 bps = 0.0213 / 0.2720 / 0.6830   range 0.6617
+  SWITCHMATCH   |d| 0/10/25 bps = 0.0218 / 0.0215 / 0.0221   range 0.0006
+  SM_UNIF       |d| 0/10/25 bps = 0.0232 / 0.0229 / 0.0227   range 0.0005
+  SM_DOM        |d| 0/10/25 bps = 0.0205 / 0.0209 / 0.0208   range 0.0004
+  H_COSTINV: SM_DOM range across rungs 0.0004 < 0.02 -> CONFIRMED
+
+====================================================================================================
+[6] RULE 8 (a) - DOES THE DISPERSION GAP WALK FORWARD?  (IS fitted, OOS read once)
+====================================================================================================
+  SWITCHMATCH  rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_UNIF      rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_DOM       rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families  -> H_WF REFUTED
+kind        SM_DOM  SM_UNIF  SWITCHMATCH
+family                                  
+BREADTH-HI  -0.018   -0.074       -0.048
+BREADTH-LO  -0.018   -0.150       -0.167
+CORR-HI     +0.030   +0.077       -0.073
+CORR-LO     -0.092   -0.029       -0.062
+DISP-HI     -0.022   -0.041       +0.090
+DISP-LO     -0.038   +0.105       +0.000
+VOL20-HI    +0.018   +0.034       -0.009
+VOL20-LO    +0.021   +0.064       -0.030
+
+  IS-window and OOS-window medians of (null - BLOCK), 10 bps:
+    SWITCHMATCH  IS +0.0016   OOS +0.0027
+    SM_UNIF      IS +0.0002   OOS -0.0019
+    SM_DOM       IS -0.0096   OOS -0.0163
+
+====================================================================================================
+[7] RULE 8 (b) - THE BOOKS: IS-only selector, OOS read once, both KEEP paths
+====================================================================================================
+  B136: IS-pick CORR-HI q0.12 w252 d1.0 W g1.0
+     FULL 13.91% / 1.166 / -16.63%  halves 1.289/1.037   OOS 12.97% / 1.154 / -16.63%
+     RULES v2 (live) 7.98% / 1.101 / -12.18%  OOS 7.88% / 1.108 / -12.18%
+     SPY            15.16% / 0.886 / -33.72%  OOS 15.33% / 0.877 / -33.72%   4b bars: DD -20.23%, CAGR 10.61%
+     4a fail   4b PASS
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 44 (11.5%)
+  SMALL: IS-pick VOL20-LO q0.17 w252 d1.0 D g1.0
+     FULL 5.04% / 0.404 / -48.52%  halves 0.736/0.201   OOS 2.00% / 0.203 / -48.52%
+     RULES v2 (live) 4.30% / 0.663 / -13.89%  OOS 3.75% / 0.559 / -13.89%
+     SPY            14.06% / 0.858 / -33.72%  OOS 15.33% / 0.877 / -33.72%   4b bars: DD -20.23%, CAGR 9.84%
+     4a fail   4b fail
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 0 (0.0%)
+  U56: IS-pick CORR-HI q0.07 w1008 d1.0 W g1.0
+     FULL 12.73% / 1.034 / -22.93%  halves 1.160/0.915   OOS 12.41% / 1.016 / -22.93%
+     RULES v2 (live) 8.64% / 1.208 / -11.90%  OOS 9.49% / 1.286 / -11.90%
+     SPY            15.13% / 0.885 / -33.72%  OOS 15.27% / 0.874 / -33.72%   4b bars: DD -20.23%, CAGR 10.59%
+     4a fail   4b fail
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 61 (15.9%)
+
+done in 64s
