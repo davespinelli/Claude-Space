@@ -1,0 +1,210 @@
+# Idea 893 - do-the-SHARPE-LEGS-need-the-SAME-CONVENTION-CLAUSE  (2026-09-15, lane C)
+# pandas 3.0.5 numpy 2.4.6
+# 2 tuned dials: CLAIM SET [SHELF, GRID, LIVE] x OFFSET GRID [FULL, HALF, ALT].
+# ALL 9 grid points reported.  Cost rung {10, 25} bps, panel, comparand, window: reported
+# controls, never selected on.
+# SURVIVORSHIP: U56/B136 are current-constituent panels; every LEVEL below is optimistic.
+
+PANEL U56: 56 names x 4704 days, 2008-01-02 .. 2026-09-14
+PANEL B136: 136 names x 4703 days, 2008-01-02 .. 2026-09-11
+
+CLAIM SETS: SHELF 9 committed memo-backed 4b passes; GRID 36 never-selected ladder books; LIVE 2 (the 4a comparand itself).
+  total books = 47;  each carries TWO committed half-sample Sharpe claims per comparand (H1, H2) = 188 claims before the offset walk.
+WINDOW U56: 2009-01-13 .. 2026-09-14   IS ..2016-12-31   OOS 2017-01-01..
+WINDOW B136: 2009-01-13 .. 2026-09-11   IS ..2016-12-31   OOS 2017-01-01..
+CONVENTION: comparands are held at their OWN calendars - SPY has none, and RULES v2 is
+  scored on the live weekly calendar, not the candidate's.  Only the BOOK's calendar moves.
+
+## Gates (printed before any hypothesis is read)
+G1 memo   every SHELF book reproduces its committed triple: PASS  (worst dCAGR 0.0027 [u56-top20-band-m20], dSharpe 0.0240 [u56-top20-band-m20], dMaxDD 0.0109 [u56-top20-band-m20])
+G2 mask   offset_mask(k=0) == engine.rebalance_mask elementwise: PASS
+G3 engine max|fast_run(k=0) - engine.backtest| on u56-v2band-gross100 = 1.388e-17   bar 1e-9   PASS
+G5 bars   comparands on this window, against the record's committed values:
+  U56: SPY 15.13% / 0.885 / -33.72%   halves 0.959/0.824   ->  4b bars: DD cap -20.23%, CAGR floor 10.59%
+       RULES v2 (live, weekly) 8.62% / 1.201 / -12.05%   halves 1.232/1.177
+  B136: SPY 15.16% / 0.886 / -33.72%   halves 0.960/0.826   ->  4b bars: DD cap -20.23%, CAGR floor 10.61%
+       RULES v2 (live, weekly) 7.98% / 1.099 / -12.24%   halves 1.235/0.966
+  G5 max|SPY U56 here - record's committed triple (0.1513, 0.886, -0.3372)| = 0.0015  bar 0.010  PASS
+
+## The offset walk
+ARMS: 534 cells = books x offsets (W 0..4, M 0..20) x 2 rungs, all written to .arms.csv
+CLAUSE: 282 (book x rung x offset-grid) cells written to .clause.csv; every leg's margin, spread, ratio, flip count, published verdict and clause verdict published.
+
+G4 cross  idea 891's committed .clause.csv Sharpe-leg cells reproduced from this run's own arms: 108 cells, max abs diff 4.441e-16   bar 1e-6   PASS
+GATES 5/5 PASS
+
+## 1. H_SPY - what the clause costs the committed SPY-side half-sample Sharpe claims
+book                                  H1 margin  H1 spread  H1 ratio  H2 margin  H2 spread  H2 ratio  clause
+u56-top20-band-m20                      +0.1349     0.1029     1.311    +0.2656     0.1336     1.988  PASS
+u56-top20-g065-M                        +0.2558     0.1863     1.373    +0.3736     0.2344     1.594  PASS
+b136-qroll-q012-w1008-d050-g100         +0.2264     0.0617     3.668    +0.2102     0.1331     1.579  PASS
+u56-marsrespread-gross075               +0.2131     0.0976     2.184    +0.2018     0.1032     1.956  PASS
+u56-quantile50-respread-M               +0.3684     0.1318     2.795    +0.3237     0.1081     2.994  PASS
+u56-k8-qroll-q017-w1008-d100-g100       +0.1795     0.0616     2.913    +0.4792     0.1175     4.079  PASS
+u56-v2band-gross100                     +0.2739     0.0850     3.221    +0.3526     0.0352    10.013  PASS
+b136-r620-gross065-W                    +0.3829     0.1146     3.342    +0.1299     0.0402     3.231  PASS
+u56-band008-gross100                    +0.2834     0.0559     5.072    +0.2417     0.0696     3.475  PASS
+
+All 9 grid points x 2 rungs, SHELF 4b Sharpe legs failing the clause (of 18):
+  offgrid FULL  rung  10.0 bps : 0 / 18
+  offgrid FULL  rung  25.0 bps : 4 / 18
+  offgrid HALF  rung  10.0 bps : 0 / 18
+  offgrid HALF  rung  25.0 bps : 2 / 18
+  offgrid ALT   rung  10.0 bps : 0 / 18
+  offgrid ALT   rung  25.0 bps : 4 / 18
+H_SPY PASS as declared (the 9 grid points of the two DIALS, read at the headline 10 bps rung): the clause costs the committed SPY-side
+  Sharpe claims NOTHING there.  Once the 25 bps COST CONTROL is included the same bar BREAKS (4 of 18 legs fail at 25 bps) - reported, not used to move the bar.
+
+## 2. H_LIVE - the same clause on the 4a (vs RULES v2 live) Sharpe legs
+book                                  H1 margin  H1 spread  H1 ratio  H2 margin  H2 spread  H2 ratio  clause
+b136-qroll-q012-w1008-d050-g100         -0.0488     0.0617     0.791    +0.0704     0.1331     0.529  FAIL
+b136-r620-gross065-W                    +0.1076     0.1146     0.939    -0.0100     0.0402     0.248  FAIL
+u56-band008-gross100                    +0.0100     0.0559     0.180    -0.1117     0.0696     1.605  FAIL
+u56-k8-qroll-q017-w1008-d100-g100       -0.0938     0.0616     1.523    +0.1259     0.1175     1.071  PASS
+u56-marsrespread-gross075               -0.0603     0.0976     0.618    -0.1515     0.1032     1.468  FAIL
+u56-quantile50-respread-M               +0.0950     0.1318     0.721    -0.0296     0.1081     0.274  FAIL
+u56-top20-band-m20                      -0.1385     0.1029     1.345    -0.0877     0.1336     0.656  FAIL
+u56-top20-g065-M                        -0.0176     0.1863     0.094    +0.0203     0.2344     0.086  FAIL
+u56-v2band-gross100                     +0.0005     0.0850     0.006    -0.0007     0.0352     0.021  FAIL
+
+SHELF 4a Sharpe legs: median ratio 0.637, failing the clause 13/18 (72.2%)
+  offgrid FULL  rung  10.0 : median 0.637, fail 13/18 (72.2%)
+  offgrid FULL  rung  25.0 : median 0.557, fail 10/18 (55.6%)
+  offgrid HALF  rung  10.0 : median 0.783, fail 12/18 (66.7%)
+  offgrid HALF  rung  25.0 : median 0.754, fail 10/18 (55.6%)
+  offgrid ALT   rung  10.0 : median 0.917, fail 9/18 (50.0%)
+  offgrid ALT   rung  25.0 : median 0.827, fail 10/18 (55.6%)
+H_LIVE FAIL (bar: median < 0.5 AND >= 90% fail).
+
+## 3. H_ASYM vs H_SPREAD - is H1's immunity a MARGIN fact or a SPREAD fact?
+offgrid  rung  cmp    sprH1    sprH2   |mgH1|   |mgH2|    ratH1    ratH2  flipH1  flipH2  sprH1>H2
+FULL     10.0   4b   0.0773   0.1077   0.2259   0.2466    2.926    2.648       8       0    16/47 
+FULL     10.0   4a   0.0773   0.1077   0.0861   0.0704    0.872    0.381      35      63    16/47 
+FULL     25.0   4b   0.0802   0.1024   0.1215   0.1482    1.564    1.805      15       9    16/47 
+FULL     25.0   4a   0.0802   0.1024   0.1183   0.0478    1.883    0.386      32      81    16/47 
+HALF     10.0   4b   0.0674   0.0447   0.2259   0.2466    3.280    5.902       5       0    33/47 
+HALF     10.0   4a   0.0674   0.0447   0.0861   0.0704    0.872    1.305      21      30    33/47 
+HALF     25.0   4b   0.0673   0.0430   0.1215   0.1482    1.733    3.001       9       3    34/47 
+HALF     25.0   4a   0.0673   0.0430   0.1183   0.0478    1.983    0.730      17      34    34/47 
+ALT      10.0   4b   0.0351   0.0796   0.2259   0.2466    5.653    3.483       4       0    10/47 
+ALT      10.0   4a   0.0351   0.0796   0.0861   0.0704    1.576    0.381      15      32    10/47 
+ALT      25.0   4b   0.0372   0.0827   0.1215   0.1482    2.427    2.270       7       4    10/47 
+ALT      25.0   4a   0.0372   0.0827   0.1183   0.0478    2.431    0.530      16      44    10/47 
+
+On the comparand that flips (4a) at the headline grid point: median spread H1 0.0773 vs H2 0.1077; median |margin| H1 0.0861 vs H2 0.0704
+H_ASYM   FAIL (H1 not quieter AND H1 margin larger)
+H_SPREAD PASS (H1 spread <= 0.75 x H2's)
+
+STABILITY of the H1-vs-H2 spread ordering across the OFFSET GRID dial (share of books with spread(H1) > spread(H2), 4b comparand, headline rung):
+  offgrid FULL : median spread H1 0.0773 vs H2 0.1077  -> H1 quieter; books with sprH1>sprH2 16/47 (34.0%)
+  offgrid HALF : median spread H1 0.0674 vs H2 0.0447  -> H1 NOISIER; books with sprH1>sprH2 33/47 (70.2%)
+  offgrid ALT  : median spread H1 0.0351 vs H2 0.0796  -> H1 quieter; books with sprH1>sprH2 10/47 (21.3%)
+  ORDERING REVERSES across the three offset grids - the clause's own DENOMINATOR is NOT defined independently of how densely the calendar is sampled.
+
+FLIP ORDERING vs idea 879's published 'H1 flips 0, H2 flips 152':
+  comparand 4b: H1 flips 8, H2 flips 0  -> REVERSED vs 879
+  comparand 4a: H1 flips 35, H2 flips 63  -> MATCHES 879's direction
+
+## 4. H_SAME - is a Sharpe leg ever the BINDING leg of 4b?
+SHELF binding leg at the headline grid point: DD 9
+  offgrid ALT   rung  10.0 : Sharpe-bound books 3 / 9
+  offgrid ALT   rung  25.0 : Sharpe-bound books 4 / 9
+  offgrid FULL  rung  10.0 : Sharpe-bound books 0 / 9
+  offgrid FULL  rung  25.0 : Sharpe-bound books 4 / 9
+  offgrid HALF  rung  10.0 : Sharpe-bound books 2 / 9
+  offgrid HALF  rung  25.0 : Sharpe-bound books 4 / 9
+H_SAME PASS - the Sharpe legs DO bind 4b on the committed shelf somewhere on the grid.
+  BUT at the headline grid point they bind 0 of 9: the binding leg is DD on 9 of 9, which reproduces idea 891's unanimous DD result exactly.  The Sharpe legs only reach the binding position once an
+  offset grid or a cost rung is changed - i.e. H_SAME passes on dial movement, not on the record's own published cell.
+
+## 5. Census across all three claim sets (the clause's cost, by set and comparand)
+offgrid  rung set     cmp  claims  medRatio  minRatio  maxRatio  failClause  flips
+FULL     10.0 SHELF    4b      18     2.954     1.311    10.013     0/18         0
+FULL     10.0 SHELF    4a      18     0.637     0.006     1.605    13/18        37
+FULL     10.0 GRID     4b      72     2.763     0.124    10.542    10/72         8
+FULL     10.0 GRID     4a      72     0.741     0.000     2.572    44/72        55
+FULL     10.0 LIVE     4b       4     3.611     2.590    10.406     0/4          0
+FULL     10.0 LIVE     4a       4     0.000     0.000     0.000     4/4          6
+FULL     25.0 SHELF    4b      18     1.640     0.000     9.075     4/18         5
+FULL     25.0 SHELF    4a      18     0.557     0.009     2.765    10/18        40
+FULL     25.0 GRID     4b      72     1.645     0.009     9.715    28/72        19
+FULL     25.0 GRID     4a      72     0.751     0.000     3.584    40/72        67
+FULL     25.0 LIVE     4b       4     3.100     1.767     9.586     0/4          0
+FULL     25.0 LIVE     4a       4     0.000     0.000     0.000     4/4          6
+HALF     10.0 SHELF    4b      18     3.378     1.311    16.699     0/18         0
+HALF     10.0 SHELF    4a      18     0.783     0.006     5.387    12/18        23
+HALF     10.0 GRID     4b      72     4.136     0.293    21.095     5/72         5
+HALF     10.0 GRID     4a      72     1.387     0.000     6.674    30/72        26
+HALF     10.0 LIVE     4b       4     3.762     3.132    18.656     0/4          0
+HALF     10.0 LIVE     4a       4     0.000     0.000     0.000     4/4          2
+HALF     25.0 SHELF    4b      18     2.136     0.000    14.858     2/18         1
+HALF     25.0 SHELF    4a      18     0.754     0.009     8.953    10/18        23
+HALF     25.0 GRID     4b      72     2.214     0.031    18.642    16/72        11
+HALF     25.0 GRID     4a      72     1.397     0.000     8.414    30/72        26
+HALF     25.0 LIVE     4b       4     3.234     2.107    16.560     0/4          0
+HALF     25.0 LIVE     4a       4     0.000     0.000     0.000     4/4          2
+ALT      10.0 SHELF    4b      18     3.615     1.535    37.266     0/18         0
+ALT      10.0 SHELF    4a      18     0.917     0.021     5.015     9/18        17
+ALT      10.0 GRID     4b      72     4.220     0.124    44.839     8/72         4
+ALT      10.0 GRID     4a      72     1.086     0.000    10.731    33/72        26
+ALT      10.0 LIVE     4b       4    22.850     2.904    36.120     0/4          0
+ALT      10.0 LIVE     4a       4     0.000     0.000     0.000     4/4          4
+ALT      25.0 SHELF    4b      18     2.409     0.000    32.665     4/18         2
+ALT      25.0 SHELF    4a      18     0.827     0.016     5.187    10/18        21
+ALT      25.0 GRID     4b      72     2.203     0.011    43.838    20/72         9
+ALT      25.0 GRID     4a      72     0.917     0.000    15.541    39/72        35
+ALT      25.0 LIVE     4b       4    20.180     1.980    32.115     0/4          0
+ALT      25.0 LIVE     4a       4     0.000     0.000     0.000     4/4          4
+
+## 6. RULE 8 walk-forward - fitted on 2009-2016, 2017+ read once
+H_WF: Spearman rho(IS Sharpe-leg min-ratio, OOS min-ratio) over 47 books = -0.003 (bar +0.50); clause verdict agrees IS vs OOS on 10/47 (21.3%) (bar 50%)  ->  FAIL
+
+selector IS-min-ratio (this run's statistic) | set SHELF -> u56-quantile50-respread-M (U56)
+  OOS 2017+ : CAGR  16.06%  Sharpe  1.218  MaxDD -19.75%
+  SPY  OOS  : CAGR  15.27%  Sharpe  0.874  MaxDD -33.72%
+  v2   OOS  : CAGR   9.46%  Sharpe  1.277  MaxDD -12.05%
+  OOS 4b PASS, OOS 4a FAIL; full-sample 4b PASS, 4a FAIL; full-sample clause: Sharpe legs PASS, all legs FAIL
+
+selector IS-min-ratio (this run's statistic) | set GRID -> B136-qroll-q0.17-w504-d0.50 (B136)
+  OOS 2017+ : CAGR  12.95%  Sharpe  1.116  MaxDD -17.31%
+  SPY  OOS  : CAGR  15.33%  Sharpe  0.877  MaxDD -33.72%
+  v2   OOS  : CAGR   7.88%  Sharpe  1.106  MaxDD -12.24%
+  OOS 4b PASS, OOS 4a FAIL; full-sample 4b PASS, 4a FAIL; full-sample clause: Sharpe legs PASS, all legs PASS
+
+selector IS-min-ratio (this run's statistic) | set LIVE -> B136-RULESv2-live (B136)
+  OOS 2017+ : CAGR   7.88%  Sharpe  1.106  MaxDD -12.24%
+  SPY  OOS  : CAGR  15.33%  Sharpe  0.877  MaxDD -33.72%
+  v2   OOS  : CAGR   7.88%  Sharpe  1.106  MaxDD -12.24%
+  OOS 4b FAIL, OOS 4a FAIL; full-sample 4b FAIL, 4a FAIL; full-sample clause: Sharpe legs PASS, all legs PASS
+
+selector IS-Sharpe (the record's control) | set SHELF -> b136-r620-gross065-W (B136)
+  OOS 2017+ : CAGR  14.52%  Sharpe  1.040  MaxDD -19.43%
+  SPY  OOS  : CAGR  15.33%  Sharpe  0.877  MaxDD -33.72%
+  v2   OOS  : CAGR   7.88%  Sharpe  1.106  MaxDD -12.24%
+  OOS 4b PASS, OOS 4a FAIL; full-sample 4b PASS, 4a FAIL; full-sample clause: Sharpe legs PASS, all legs PASS
+
+selector IS-Sharpe (the record's control) | set GRID -> B136-band0.08-g1.00 (B136)
+  OOS 2017+ : CAGR  11.05%  Sharpe  1.097  MaxDD -19.50%
+  SPY  OOS  : CAGR  15.33%  Sharpe  0.877  MaxDD -33.72%
+  v2   OOS  : CAGR   7.88%  Sharpe  1.106  MaxDD -12.24%
+  OOS 4b PASS, OOS 4a FAIL; full-sample 4b PASS, 4a FAIL; full-sample clause: Sharpe legs PASS, all legs FAIL
+
+selector IS-Sharpe (the record's control) | set LIVE -> U56-RULESv2-live (U56)
+  OOS 2017+ : CAGR   9.46%  Sharpe  1.277  MaxDD -12.05%
+  SPY  OOS  : CAGR  15.27%  Sharpe  0.874  MaxDD -33.72%
+  v2   OOS  : CAGR   9.46%  Sharpe  1.277  MaxDD -12.05%
+  OOS 4b FAIL, OOS 4a FAIL; full-sample 4b FAIL, 4a FAIL; full-sample clause: Sharpe legs PASS, all legs PASS
+
+UNSELECTED BASE RATE over all 47 books at k=0, 10 bps: 4b PASS 28/47 (59.6%), 4a PASS 1/47 (2.1%); Sharpe-leg clause PASS 37/47 (78.7%), all-leg clause PASS 22/47 (46.8%)
+
+## 7. Verdict
+H_SPY    PASS as declared (dials, headline rung); breaks once the 25 bps control is added
+H_LIVE   FAIL  (median ratio 0.637 vs bar 0.50; fail share 72.2% vs bar 90%)
+H_ASYM   FAIL   H_SPREAD PASS
+H_SAME   PASS
+H_WF     FAIL
+No new book is proposed: this run prices an existing clause on existing committed claims.
+KILL for capital (no candidate book); the finding is a PROTOCOL reading, PROPOSED not
+APPLIED (rule 6 - RULES.md, PROTOCOL.md, scan.py, bot.py, baseline.py untouched).
+
+runtime 21.9s
