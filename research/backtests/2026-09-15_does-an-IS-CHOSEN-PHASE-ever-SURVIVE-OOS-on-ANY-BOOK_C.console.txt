@@ -1,0 +1,405 @@
+====================================================================================================
+IDEA 962 (lane C, 2026-09-15) -- does an IS-CHOSEN PHASE ever SURVIVE out of sample on
+ANY book?   6 choosers x 5 books x 3 panels x 2 cadences x 2 gross x 5 cost rungs.
+PROTOCOL: 10 bps carries every verdict, next-day execution, both KEEP paths, rule 8.
+====================================================================================================
+
+PRE-REGISTERED BARS (printed before any number of this run is read)
+  H_SURV    pooled chooser OOS 4b pass rate > 0% AND >= the canonical's
+  H_BEAT    chooser OOS CAGR > canonical's in >= 60% of verdict-rung cells
+  H_PRED    median within-family Spearman(IS CAGR, OOS CAGR) >= 0.30
+  H_DD      >= 90% of failing chooser cells fail on exactly `L4_DD`
+  H_ORACLE  the hindsight-best phase also fails 4b in >= 90% of families
+
+  SMALL panel: 663 names + SPY benchmark (52 tickers with max_1d_move >= 1.0 dropped per data/small_meta.csv)
+  panel U56: 56 columns, 2008-01-02 .. 2026-09-14, 4704 rows
+  panel B136: 136 columns, 2008-01-02 .. 2026-09-11, 4703 rows
+  panel SMALL: 664 columns, 2010-01-04 .. 2026-09-11, 4198 rows
+
+====================================================================================================
+(A) GATES -- run before any number of the hypothesis is read
+====================================================================================================
+  G0 offset_mask(.,per,0) == engine.rebalance_mask on W/M/Q  : 0 differing rows   PASS
+  G2 BAND03 @0.75 == rules_v2_weights (the LIVE rules)       : 0.000e+00   PASS
+  G1 Ctx.run == engine.backtest @10 bps, worse of M and Q    : 2.082e-17   PASS
+  G4 determinism (TOP20 M phase 3 re-derived twice)          : 0.000e+00   PASS
+  G5 RULES v2 weekly 8.6227%/1.2014/-12.0549% == engine.backtest(freq='W'): 2.220e-16   PASS
+     REPORTED, not a gate -- SPY on today's cache 15.1302%/0.8846/-33.7173%; the record's published RULES v2 / SPY constants (8.6282%/1.2018/-12.0549%, 15.16%/0.8861/-33.72%) now differ by up to 1.494e-03, a DATA-CACHE drift: 942's own committed grid agrees with this run at 1e-15 (G3).
+
+====================================================================================================
+(B) THE PHASE GRID -- 5 books x 3 panels x 2 gross x (21 M + 63 Q) phases x 5 rungs
+====================================================================================================
+  panel U56 done  (21s)
+  panel B136 done  (55s)
+  panel SMALL done  (188s)
+  wrote 2026-09-15_does-an-IS-CHOSEN-PHASE-ever-SURVIVE-OOS-on-ANY-BOOK_C.grid.csv  (12600 rows)
+  12,600 grid rows = 3 panels x 5 books x 2 gross x 84 phases x 5 rungs
+  G3 942's committed grid.csv replayed on 12600 of 12600 common rows, max|d| over 13 columns 1.776e-15   PASS
+  G6 choosers are IS-ONLY (picks invariant to permuted OOS columns): 0 mismatches of 1800   PASS
+  GATES 7 of 7 PASS  (none failing)
+
+====================================================================================================
+(C) RULE 8 WALK-FORWARD -- phase chosen on 2009-2016 ALONE, 2017-2026 read ONCE
+====================================================================================================
+  wrote 2026-09-15_does-an-IS-CHOSEN-PHASE-ever-SURVIVE-OOS-on-ANY-BOOK_C.walkforward.csv  (2400 rows)
+  wrote 2026-09-15_does-an-IS-CHOSEN-PHASE-ever-SURVIVE-OOS-on-ANY-BOOK_C.families.csv  (300 rows)
+  VERDICT RUNG = 10 bps, gross CORE: 180 chooser cells (6 choosers x 5 books x 3 panels x 2 cadences), 30 canonical controls.
+
+  OOS 4b PASS (record convention) and 4a PASS, by SOURCE:
+          pass4b_REC       pass4b_OOSPURE       pass4a      
+                 sum  mean            sum  mean    sum  mean
+source                                                      
+CANONICAL          2 0.067              2 0.067      0 0.000
+C_CAGR             1 0.033              1 0.033      0 0.000
+C_CALMAR           0 0.000              0 0.000      0 0.000
+C_DDMIN            1 0.033              1 0.033      0 0.000
+C_ISLEGS           1 0.033              1 0.033      0 0.000
+C_MEDIAN           2 0.067              2 0.067      0 0.000
+C_SHARPE           1 0.033              1 0.033      0 0.000
+ORACLE            12 0.400             11 0.367      0 0.000
+
+  OOS 4b PASS rate by BOOK x SOURCE-CLASS (chooser pooled vs canonical vs oracle):
+klass   CANONICAL  CHOOSER  ORACLE
+book                              
+BAND03      0.000    0.000   0.167
+EWELIG      0.167    0.056   0.667
+TOP05       0.000    0.028   0.333
+TOP10       0.000    0.000   0.333
+TOP20       0.167    0.083   0.500
+
+  and by CADENCE x SOURCE-CLASS:
+klass    CANONICAL  CHOOSER  ORACLE
+cadence                            
+M            0.133    0.067   0.400
+Q            0.000    0.000   0.400
+
+  every chooser cell at the verdict rung, MONTHLY cadence (OOS levels, pp regret):
+panel   book    source  phase  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  regret_vs_canon_pp  dd_vs_canon_pp  pass4b_REC                       fail4b_REC
+  U56  TOP05    C_CAGR      1     0.190       0.988     -0.252               3.475          -2.027       False                            L4_DD
+  U56  TOP05  C_SHARPE      1     0.190       0.988     -0.252               3.475          -2.027       False                            L4_DD
+  U56  TOP05  C_CALMAR     20     0.175       0.942     -0.219               1.977          -5.392       False                            L4_DD
+  U56  TOP05   C_DDMIN     19     0.152       0.823     -0.224              -0.332          -4.838       False               L2_H2,L3_OOS,L4_DD
+  U56  TOP05  C_ISLEGS      1     0.190       0.988     -0.252               3.475          -2.027       False                            L4_DD
+  U56  TOP05  C_MEDIAN     14     0.211       1.104     -0.198               5.567          -7.403        True                                -
+  U56  TOP05 CANONICAL      0     0.156       0.824     -0.272               0.000           0.000       False               L2_H2,L3_OOS,L4_DD
+  U56  TOP10    C_CAGR      0     0.172       1.097     -0.232               0.000           0.000       False                            L4_DD
+  U56  TOP10  C_SHARPE      5     0.173       1.066     -0.222               0.089          -1.022       False                            L4_DD
+  U56  TOP10  C_CALMAR      0     0.172       1.097     -0.232               0.000           0.000       False                            L4_DD
+  U56  TOP10   C_DDMIN      4     0.162       1.002     -0.238              -1.055           0.634       False                            L4_DD
+  U56  TOP10  C_ISLEGS      5     0.173       1.066     -0.222               0.089          -1.022       False                            L4_DD
+  U56  TOP10  C_MEDIAN     20     0.158       1.018     -0.225              -1.448          -0.729       False                            L4_DD
+  U56  TOP10 CANONICAL      0     0.172       1.097     -0.232               0.000           0.000       False                            L4_DD
+  U56  TOP20    C_CAGR     16     0.153       1.211     -0.182              -1.411          -1.333        True                                -
+  U56  TOP20  C_SHARPE     16     0.153       1.211     -0.182              -1.411          -1.333        True                                -
+  U56  TOP20  C_CALMAR     13     0.143       1.120     -0.204              -2.355           0.929       False                            L4_DD
+  U56  TOP20   C_DDMIN      5     0.159       1.161     -0.220              -0.757           2.527       False                            L4_DD
+  U56  TOP20  C_ISLEGS     16     0.153       1.211     -0.182              -1.411          -1.333        True                                -
+  U56  TOP20  C_MEDIAN     20     0.152       1.160     -0.206              -1.478           1.118       False                            L4_DD
+  U56  TOP20 CANONICAL      0     0.167       1.283     -0.195               0.000           0.000        True                                -
+  U56 EWELIG    C_CAGR     11     0.116       1.082     -0.205              -1.418           3.505       False                            L4_DD
+  U56 EWELIG  C_SHARPE     11     0.116       1.082     -0.205              -1.418           3.505       False                            L4_DD
+  U56 EWELIG  C_CALMAR     11     0.116       1.082     -0.205              -1.418           3.505       False                            L4_DD
+  U56 EWELIG   C_DDMIN      0     0.130       1.216     -0.170               0.000           0.000        True                                -
+  U56 EWELIG  C_ISLEGS     11     0.116       1.082     -0.205              -1.418           3.505       False                            L4_DD
+  U56 EWELIG  C_MEDIAN     15     0.124       1.159     -0.173              -0.602           0.335        True                                -
+  U56 EWELIG CANONICAL      0     0.130       1.216     -0.170               0.000           0.000        True                                -
+  U56 BAND03    C_CAGR     10     0.096       1.189     -0.172               0.067           2.816       False                          L5_CAGR
+  U56 BAND03  C_SHARPE      6     0.092       1.128     -0.183              -0.355           3.900       False                          L5_CAGR
+  U56 BAND03  C_CALMAR     19     0.097       1.234     -0.136               0.167          -0.783       False                          L5_CAGR
+  U56 BAND03   C_DDMIN     19     0.097       1.234     -0.136               0.167          -0.783       False                          L5_CAGR
+  U56 BAND03  C_ISLEGS      6     0.092       1.128     -0.183              -0.355           3.900       False                          L5_CAGR
+  U56 BAND03  C_MEDIAN      3     0.095       1.140     -0.183              -0.064           3.916       False                          L5_CAGR
+  U56 BAND03 CANONICAL      0     0.096       1.224     -0.144               0.000           0.000       False                          L5_CAGR
+ B136  TOP05    C_CAGR      8     0.166       0.808     -0.244              -9.526          -6.844       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP05  C_SHARPE      1     0.206       0.958     -0.284              -5.536          -2.882       False                            L4_DD
+ B136  TOP05  C_CALMAR      1     0.206       0.958     -0.284              -5.536          -2.882       False                            L4_DD
+ B136  TOP05   C_DDMIN      4     0.222       1.006     -0.256              -3.935          -5.664       False                            L4_DD
+ B136  TOP05  C_ISLEGS      1     0.206       0.958     -0.284              -5.536          -2.882       False                            L4_DD
+ B136  TOP05  C_MEDIAN      0     0.261       1.141     -0.313               0.000           0.000       False                            L4_DD
+ B136  TOP05 CANONICAL      0     0.261       1.141     -0.313               0.000           0.000       False                            L4_DD
+ B136  TOP10    C_CAGR      1     0.179       0.991     -0.282              -0.144           0.345       False                            L4_DD
+ B136  TOP10  C_SHARPE      1     0.179       0.991     -0.282              -0.144           0.345       False                            L4_DD
+ B136  TOP10  C_CALMAR     14     0.149       0.870     -0.216              -3.186          -6.230       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP10   C_DDMIN      5     0.183       0.998     -0.255               0.266          -2.339       False                            L4_DD
+ B136  TOP10  C_ISLEGS      1     0.179       0.991     -0.282              -0.144           0.345       False                            L4_DD
+ B136  TOP10  C_MEDIAN      8     0.143       0.821     -0.242              -3.766          -3.594       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP10 CANONICAL      0     0.181       0.991     -0.278               0.000           0.000       False                            L4_DD
+ B136  TOP20    C_CAGR      0     0.155       1.000     -0.261               0.000           0.000       False                            L4_DD
+ B136  TOP20  C_SHARPE      0     0.155       1.000     -0.261               0.000           0.000       False                            L4_DD
+ B136  TOP20  C_CALMAR      1     0.153       0.988     -0.266              -0.280           0.510       False                            L4_DD
+ B136  TOP20   C_DDMIN     20     0.133       0.887     -0.253              -2.206          -0.781       False                      L2_H2,L4_DD
+ B136  TOP20  C_ISLEGS      0     0.155       1.000     -0.261               0.000           0.000       False                            L4_DD
+ B136  TOP20  C_MEDIAN     16     0.139       0.937     -0.236              -1.599          -2.478       False                            L4_DD
+ B136  TOP20 CANONICAL      0     0.155       1.000     -0.261               0.000           0.000       False                            L4_DD
+ B136 EWELIG    C_CAGR      9     0.106       0.966     -0.208              -1.455          -0.910       False                    L4_DD,L5_CAGR
+ B136 EWELIG  C_SHARPE      9     0.106       0.966     -0.208              -1.455          -0.910       False                    L4_DD,L5_CAGR
+ B136 EWELIG  C_CALMAR     11     0.108       0.994     -0.223              -1.228           0.661       False                            L4_DD
+ B136 EWELIG   C_DDMIN     20     0.119       1.056     -0.221              -0.098           0.470       False                            L4_DD
+ B136 EWELIG  C_ISLEGS      9     0.106       0.966     -0.208              -1.455          -0.910       False                    L4_DD,L5_CAGR
+ B136 EWELIG  C_MEDIAN     19     0.113       1.003     -0.224              -0.742           0.763       False                            L4_DD
+ B136 EWELIG CANONICAL      0     0.120       1.074     -0.217               0.000           0.000       False                            L4_DD
+ B136 BAND03    C_CAGR      5     0.080       0.956     -0.211              -0.274           5.410       False                    L4_DD,L5_CAGR
+ B136 BAND03  C_SHARPE      5     0.080       0.956     -0.211              -0.274           5.410       False                    L4_DD,L5_CAGR
+ B136 BAND03  C_CALMAR      0     0.082       1.085     -0.157               0.000           0.000       False                          L5_CAGR
+ B136 BAND03   C_DDMIN     20     0.081       1.059     -0.151              -0.198          -0.599       False                          L5_CAGR
+ B136 BAND03  C_ISLEGS      5     0.080       0.956     -0.211              -0.274           5.410       False                    L4_DD,L5_CAGR
+ B136 BAND03  C_MEDIAN      7     0.077       0.941     -0.200              -0.585           4.274       False                    L2_H2,L5_CAGR
+ B136 BAND03 CANONICAL      0     0.082       1.085     -0.157               0.000           0.000       False                          L5_CAGR
+SMALL  TOP05    C_CAGR     11     0.045       0.298     -0.404              -3.304          -1.434       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05  C_SHARPE     11     0.045       0.298     -0.404              -3.304          -1.434       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05  C_CALMAR     11     0.045       0.298     -0.404              -3.304          -1.434       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05   C_DDMIN     11     0.045       0.298     -0.404              -3.304          -1.434       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05  C_ISLEGS     11     0.045       0.298     -0.404              -3.304          -1.434       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05  C_MEDIAN      4     0.107       0.519     -0.362               2.965          -5.625       False         L1_H1,L2_H2,L3_OOS,L4_DD
+SMALL  TOP05 CANONICAL      0     0.078       0.415     -0.419               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10    C_CAGR      5     0.047       0.327     -0.355              -4.225          -1.680       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10  C_SHARPE      5     0.047       0.327     -0.355              -4.225          -1.680       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10  C_CALMAR      5     0.047       0.327     -0.355              -4.225          -1.680       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10   C_DDMIN     15     0.033       0.259     -0.386              -5.648           1.421       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10  C_ISLEGS      5     0.047       0.327     -0.355              -4.225          -1.680       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10  C_MEDIAN      1     0.063       0.395     -0.408              -2.643           3.579       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10 CANONICAL      0     0.090       0.509     -0.372               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20    C_CAGR      5     0.065       0.443     -0.363               0.069           1.197       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20  C_SHARPE      5     0.065       0.443     -0.363               0.069           1.197       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20  C_CALMAR      5     0.065       0.443     -0.363               0.069           1.197       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20   C_DDMIN     13     0.083       0.538     -0.300               1.885          -5.118       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20  C_ISLEGS      5     0.065       0.443     -0.363               0.069           1.197       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20  C_MEDIAN      9     0.035       0.284     -0.364              -2.912           1.301       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20 CANONICAL      0     0.065       0.437     -0.351               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG    C_CAGR     12     0.066       0.538     -0.352               1.873          -3.487       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG  C_SHARPE     12     0.066       0.538     -0.352               1.873          -3.487       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG  C_CALMAR      0     0.048       0.408     -0.386               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG   C_DDMIN      1     0.042       0.365     -0.389              -0.615           0.296       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG  C_ISLEGS     12     0.066       0.538     -0.352               1.873          -3.487       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG  C_MEDIAN      2     0.047       0.405     -0.378              -0.026          -0.798       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG CANONICAL      0     0.048       0.408     -0.386               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL BAND03    C_CAGR      0     0.041       0.593     -0.168               0.000           0.000       False             L2_H2,L3_OOS,L5_CAGR
+SMALL BAND03  C_SHARPE      0     0.041       0.593     -0.168               0.000           0.000       False             L2_H2,L3_OOS,L5_CAGR
+SMALL BAND03  C_CALMAR      0     0.041       0.593     -0.168               0.000           0.000       False             L2_H2,L3_OOS,L5_CAGR
+SMALL BAND03   C_DDMIN     20     0.040       0.582     -0.158              -0.115          -0.973       False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+SMALL BAND03  C_ISLEGS      0     0.041       0.593     -0.168               0.000           0.000       False             L2_H2,L3_OOS,L5_CAGR
+SMALL BAND03  C_MEDIAN     10     0.032       0.458     -0.201              -0.908           3.338       False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+SMALL BAND03 CANONICAL      0     0.041       0.593     -0.168               0.000           0.000       False             L2_H2,L3_OOS,L5_CAGR
+
+  the same, QUARTERLY cadence:
+panel   book    source  phase  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  regret_vs_canon_pp  dd_vs_canon_pp  pass4b_REC                       fail4b_REC
+  U56  TOP05    C_CAGR     50     0.212       0.998     -0.245              11.875          -4.868       False                            L4_DD
+  U56  TOP05  C_SHARPE     50     0.212       0.998     -0.245              11.875          -4.868       False                            L4_DD
+  U56  TOP05  C_CALMAR     50     0.212       0.998     -0.245              11.875          -4.868       False                            L4_DD
+  U56  TOP05   C_DDMIN     48     0.233       1.056     -0.310              13.948           1.621       False                            L4_DD
+  U56  TOP05  C_ISLEGS     50     0.212       0.998     -0.245              11.875          -4.868       False                            L4_DD
+  U56  TOP05  C_MEDIAN      8     0.141       0.764     -0.261               4.802          -3.317       False               L2_H2,L3_OOS,L4_DD
+  U56  TOP05 CANONICAL      0     0.093       0.539     -0.294               0.000           0.000       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+  U56  TOP10    C_CAGR     62     0.141       0.869     -0.230               0.022          -1.475       False               L2_H2,L3_OOS,L4_DD
+  U56  TOP10  C_SHARPE     58     0.131       0.798     -0.266              -0.989           2.164       False               L2_H2,L3_OOS,L4_DD
+  U56  TOP10  C_CALMAR     56     0.153       0.909     -0.243               1.226          -0.162       False                            L4_DD
+  U56  TOP10   C_DDMIN     40     0.173       0.996     -0.245               3.210           0.030       False                            L4_DD
+  U56  TOP10  C_ISLEGS     53     0.180       1.028     -0.270               3.979           2.581       False                            L4_DD
+  U56  TOP10  C_MEDIAN     43     0.203       1.137     -0.266               6.266           2.172       False                            L4_DD
+  U56  TOP10 CANONICAL      0     0.140       0.858     -0.245               0.000           0.000       False               L2_H2,L3_OOS,L4_DD
+  U56  TOP20    C_CAGR     57     0.132       0.937     -0.268              -2.059          -0.330       False                            L4_DD
+  U56  TOP20  C_SHARPE     57     0.132       0.937     -0.268              -2.059          -0.330       False                            L4_DD
+  U56  TOP20  C_CALMAR     58     0.126       0.889     -0.272              -2.742           0.070       False                      L2_H2,L4_DD
+  U56  TOP20   C_DDMIN     58     0.126       0.889     -0.272              -2.742           0.070       False                      L2_H2,L4_DD
+  U56  TOP20  C_ISLEGS     57     0.132       0.937     -0.268              -2.059          -0.330       False                            L4_DD
+  U56  TOP20  C_MEDIAN     20     0.169       1.227     -0.211               1.600          -5.989       False                            L4_DD
+  U56  TOP20 CANONICAL      0     0.153       1.058     -0.271               0.000           0.000       False                            L4_DD
+  U56 EWELIG    C_CAGR     55     0.118       1.042     -0.216               0.232          -0.586       False                            L4_DD
+  U56 EWELIG  C_SHARPE     55     0.118       1.042     -0.216               0.232          -0.586       False                            L4_DD
+  U56 EWELIG  C_CALMAR     55     0.118       1.042     -0.216               0.232          -0.586       False                            L4_DD
+  U56 EWELIG   C_DDMIN     41     0.126       1.099     -0.210               1.023          -1.180       False                            L4_DD
+  U56 EWELIG  C_ISLEGS     55     0.118       1.042     -0.216               0.232          -0.586       False                            L4_DD
+  U56 EWELIG  C_MEDIAN      4     0.119       1.064     -0.221               0.383          -0.094       False                            L4_DD
+  U56 EWELIG CANONICAL      0     0.115       1.034     -0.222               0.000           0.000       False                            L4_DD
+  U56 BAND03    C_CAGR      8     0.089       1.056     -0.194               0.451          -0.455       False                          L5_CAGR
+  U56 BAND03  C_SHARPE      8     0.089       1.056     -0.194               0.451          -0.455       False                          L5_CAGR
+  U56 BAND03  C_CALMAR     59     0.082       0.930     -0.206              -0.210           0.746       False                    L4_DD,L5_CAGR
+  U56 BAND03   C_DDMIN     40     0.096       1.080     -0.187               1.226          -1.239       False                          L5_CAGR
+  U56 BAND03  C_ISLEGS      8     0.089       1.056     -0.194               0.451          -0.455       False                          L5_CAGR
+  U56 BAND03  C_MEDIAN     50     0.090       1.010     -0.204               0.625           0.515       False                    L4_DD,L5_CAGR
+  U56 BAND03 CANONICAL      0     0.084       0.974     -0.199               0.000           0.000       False                          L5_CAGR
+ B136  TOP05    C_CAGR     50     0.246       1.026     -0.283               6.960          -0.327       False                            L4_DD
+ B136  TOP05  C_SHARPE     50     0.246       1.026     -0.283               6.960          -0.327       False                            L4_DD
+ B136  TOP05  C_CALMAR      1     0.163       0.795     -0.286              -1.349           0.021       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP05   C_DDMIN     34     0.206       0.930     -0.267               2.983          -1.891       False                            L4_DD
+ B136  TOP05  C_ISLEGS     50     0.246       1.026     -0.283               6.960          -0.327       False                            L4_DD
+ B136  TOP05  C_MEDIAN      7     0.144       0.729     -0.293              -3.172           0.720       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP05 CANONICAL      0     0.176       0.838     -0.286               0.000           0.000       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP10    C_CAGR     52     0.155       0.818     -0.284               1.360          -0.188       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP10  C_SHARPE     52     0.155       0.818     -0.284               1.360          -0.188       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP10  C_CALMAR     52     0.155       0.818     -0.284               1.360          -0.188       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP10   C_DDMIN     52     0.155       0.818     -0.284               1.360          -0.188       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP10  C_ISLEGS     52     0.155       0.818     -0.284               1.360          -0.188       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP10  C_MEDIAN     25     0.189       0.979     -0.265               4.782          -2.135       False                            L4_DD
+ B136  TOP10 CANONICAL      0     0.141       0.793     -0.286               0.000           0.000       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP20    C_CAGR     51     0.157       0.955     -0.258               4.013          -1.255       False                            L4_DD
+ B136  TOP20  C_SHARPE     57     0.136       0.843     -0.289               1.934           1.818       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP20  C_CALMAR     53     0.156       0.948     -0.262               3.943          -0.911       False                            L4_DD
+ B136  TOP20   C_DDMIN     53     0.156       0.948     -0.262               3.943          -0.911       False                            L4_DD
+ B136  TOP20  C_ISLEGS     57     0.136       0.843     -0.289               1.934           1.818       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP20  C_MEDIAN     39     0.141       0.866     -0.260               2.404          -1.027       False               L2_H2,L3_OOS,L4_DD
+ B136  TOP20 CANONICAL      0     0.117       0.749     -0.271               0.000           0.000       False               L2_H2,L3_OOS,L4_DD
+ B136 EWELIG    C_CAGR     57     0.102       0.901     -0.241              -0.791          -0.305       False              L2_H2,L4_DD,L5_CAGR
+ B136 EWELIG  C_SHARPE     52     0.119       1.018     -0.242               0.906          -0.226       False                            L4_DD
+ B136 EWELIG  C_CALMAR     52     0.119       1.018     -0.242               0.906          -0.226       False                            L4_DD
+ B136 EWELIG   C_DDMIN     41     0.126       1.062     -0.240               1.604          -0.417       False                            L4_DD
+ B136 EWELIG  C_ISLEGS     52     0.119       1.018     -0.242               0.906          -0.226       False                            L4_DD
+ B136 EWELIG  C_MEDIAN     27     0.126       1.057     -0.235               1.612          -0.929       False                            L4_DD
+ B136 EWELIG CANONICAL      0     0.110       0.969     -0.244               0.000           0.000       False                            L4_DD
+ B136 BAND03    C_CAGR     47     0.084       0.918     -0.222               0.722           0.347       False              L2_H2,L4_DD,L5_CAGR
+ B136 BAND03  C_SHARPE     57     0.075       0.847     -0.223              -0.168           0.445       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+ B136 BAND03  C_CALMAR     47     0.084       0.918     -0.222               0.722           0.347       False              L2_H2,L4_DD,L5_CAGR
+ B136 BAND03   C_DDMIN     39     0.089       0.986     -0.211               1.232          -0.730       False                    L4_DD,L5_CAGR
+ B136 BAND03  C_ISLEGS     57     0.075       0.847     -0.223              -0.168           0.445       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+ B136 BAND03  C_MEDIAN     39     0.089       0.986     -0.211               1.232          -0.730       False                    L4_DD,L5_CAGR
+ B136 BAND03 CANONICAL      0     0.076       0.888     -0.218               0.000           0.000       False              L2_H2,L4_DD,L5_CAGR
+SMALL  TOP05    C_CAGR     56     0.056       0.338     -0.610               1.315          17.505       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05  C_SHARPE     56     0.056       0.338     -0.610               1.315          17.505       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05  C_CALMAR      8     0.129       0.586     -0.316               8.582         -11.957       False         L1_H1,L2_H2,L3_OOS,L4_DD
+SMALL  TOP05   C_DDMIN     11     0.095       0.476     -0.359               5.159          -7.652       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05  C_ISLEGS     56     0.056       0.338     -0.610               1.315          17.505       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP05  C_MEDIAN     25     0.150       0.646     -0.317              10.684         -11.763       False         L1_H1,L2_H2,L3_OOS,L4_DD
+SMALL  TOP05 CANONICAL      0     0.043       0.291     -0.435               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10    C_CAGR     44     0.046       0.312     -0.521               0.704          11.408       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10  C_SHARPE     44     0.046       0.312     -0.521               0.704          11.408       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10  C_CALMAR      5     0.013       0.166     -0.449              -2.630           4.233       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10   C_DDMIN      5     0.013       0.166     -0.449              -2.630           4.233       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10  C_ISLEGS     44     0.046       0.312     -0.521               0.704          11.408       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP10  C_MEDIAN     37     0.115       0.604     -0.396               7.637          -1.140       False         L1_H1,L2_H2,L3_OOS,L4_DD
+SMALL  TOP10 CANONICAL      0     0.039       0.284     -0.407               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20    C_CAGR     47     0.047       0.331     -0.414               2.919          -0.015       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20  C_SHARPE     47     0.047       0.331     -0.414               2.919          -0.015       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20  C_CALMAR     47     0.047       0.331     -0.414               2.919          -0.015       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20   C_DDMIN      5     0.019       0.196     -0.417               0.196           0.256       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20  C_ISLEGS     47     0.047       0.331     -0.414               2.919          -0.015       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL  TOP20  C_MEDIAN     32     0.105       0.635     -0.348               8.805          -6.598       False         L1_H1,L2_H2,L3_OOS,L4_DD
+SMALL  TOP20 CANONICAL      0     0.017       0.186     -0.414               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG    C_CAGR     42     0.065       0.506     -0.334               1.860          -2.148       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG  C_SHARPE     31     0.063       0.503     -0.328               1.722          -2.697       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG  C_CALMAR     23     0.070       0.552     -0.348               2.410          -0.724       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG   C_DDMIN     22     0.068       0.541     -0.342               2.204          -1.333       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG  C_ISLEGS     31     0.063       0.503     -0.328               1.722          -2.697       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG  C_MEDIAN     25     0.061       0.488     -0.347               1.503          -0.851       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL EWELIG CANONICAL      0     0.046       0.395     -0.355               0.000           0.000       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL BAND03    C_CAGR     43     0.037       0.484     -0.224               0.244          -1.696       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL BAND03  C_SHARPE     43     0.037       0.484     -0.224               0.244          -1.696       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL BAND03  C_CALMAR      8     0.032       0.443     -0.238              -0.299          -0.295       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL BAND03   C_DDMIN     10     0.037       0.510     -0.211               0.173          -2.947       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL BAND03  C_ISLEGS     43     0.037       0.484     -0.224               0.244          -1.696       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL BAND03  C_MEDIAN     31     0.041       0.531     -0.206               0.578          -3.451       False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL BAND03 CANONICAL      0     0.035       0.470     -0.241               0.000           0.000       False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+
+  DID CHOOSING PAY?  (chooser cell vs the canonical phase of the SAME family)
+     chooser OOS CAGR > canonical's in 95 of 180 cells (0.528); > the family MEAN in 0.400
+     mean regret vs canonical +0.634 pp (median +0.069, min -9.526, max +13.948)
+     mean EXTRA OOS drawdown vs canonical -0.209 pp (median -0.327, max +17.505)
+     by chooser:
+          regret_vs_canon_pp  regret_vs_fammean_pp  dd_vs_canon_pp
+source                                                            
+C_CAGR                +0.452                -0.466          +0.372
+C_CALMAR              +0.254                -0.664          -0.870
+C_DDMIN               +0.565                -0.353          -0.982
+C_ISLEGS              +0.659                -0.260          +0.732
+C_MEDIAN              +1.383                +0.465          -1.221
+C_SHARPE              +0.493                -0.425          +0.718
+
+  the choosers land ON the canonical phase in 13 of 180 cells (0.072) -- 942 measured 0 of 12 on its own 12-cell slice.
+
+  DOES THE IS PHASE RANKING PREDICT THE OOS ONE?  within-family Spearman over phases:
+     median rho(IS CAGR, OOS CAGR) -0.153 over 30 families (mean -0.186, 0.300 positive); Sharpe -0.164
+                rho_IS_OOS_CAGR  rho_IS_OOS_Sharpe
+book   cadence                                    
+BAND03 M                 +0.035             -0.295
+       Q                 -0.657             -0.683
+EWELIG M                 -0.391             -0.182
+       Q                 -0.363             -0.353
+TOP05  M                 -0.444             -0.429
+       Q                 -0.002             +0.000
+TOP10  M                 -0.083             -0.003
+       Q                 -0.163             -0.147
+TOP20  M                 +0.035             +0.048
+       Q                 -0.229             -0.215
+
+  WHICH LEG KILLS THE CHOSEN PHASE?  failing-leg strings over failing chooser cells (174 of 180), record convention:
+fail4b_REC
+L4_DD                               66
+L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR    29
+L2_H2,L3_OOS,L4_DD,L5_CAGR          22
+L2_H2,L3_OOS,L4_DD                  17
+L5_CAGR                             12
+L4_DD,L5_CAGR                       10
+L1_H1,L2_H2,L3_OOS,L4_DD             5
+L2_H2,L3_OOS,L5_CAGR                 4
+L2_H2,L4_DD                          3
+L2_H2,L4_DD,L5_CAGR                  3
+L1_H1,L2_H2,L3_OOS,L5_CAGR           2
+L2_H2,L5_CAGR                        1
+     exactly `L4_DD`: 0.379   (942's claim on its 12-cell slice: all of them)
+  and under the OOSPURE convention:
+fail4b_OOSPURE
+L4_DD                               47
+L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR    43
+L1_H1,L4_DD                         22
+L1_H1,L2_H2,L3_OOS,L4_DD            10
+L5_CAGR                              9
+L1_H1,L3_OOS,L4_DD                   9
+L2_H2,L3_OOS,L4_DD,L5_CAGR           7
+L1_H1,L4_DD,L5_CAGR                  6
+L4_DD,L5_CAGR                        6
+L1_H1,L2_H2,L3_OOS,L5_CAGR           6
+L1_H1,L5_CAGR                        4
+L1_H1,L3_OOS,L4_DD,L5_CAGR           2
+L2_H2,L3_OOS,L4_DD                   2
+L2_H2,L4_DD,L5_CAGR                  1
+
+  COULD ANY PHASE HAVE PASSED?  (the ORACLE reads OOS and is not a strategy)
+     oracle fails 4b in 0.600 of 30 verdict-rung families; families with >= 1 passing phase: 12 of 30
+panel   book cadence  n_phases  n_phases_pass4b_REC  canon_pass4b_REC  oracle_phase
+  U56  TOP05       M        21                    4             False             6
+  U56  TOP10       M        21                    3             False            12
+  U56  TOP20       M        21                    5              True             0
+  U56 EWELIG       M        21                   17              True            14
+  U56  TOP05       Q        63                    2             False            28
+  U56  TOP10       Q        63                    1             False            14
+  U56  TOP20       Q        63                    1             False            14
+  U56 EWELIG       Q        63                   26             False            23
+  U56 BAND03       Q        63                   16             False            21
+ B136  TOP20       M        21                    1             False            14
+ B136 EWELIG       M        21                    3             False            14
+ B136 EWELIG       Q        63                    3             False            13
+
+  THE BLIND-RANDOM-PHASE NULL -- how many 4b passes would a COIN have found on the same
+  180 cells?  (exact Poisson-binomial over each family's own passing-phase fraction)
+     blind expectation 14.10 passes (sd 2.81); the six IS choosers delivered 6.  P(X <= 6 | blind) = 0.0017
+     the CANONICAL phase delivered 2 against a blind expectation of 2.35 -- indistinguishable from chance
+     inside the 12 families where SOME phase passes, the choosers hit 6 of 72 (0.083) against a blind rate of 0.196
+
+  cost-rung robustness -- chooser vs canonical OOS 4b pass rate at every rung (CORE):
+klass     CANONICAL  CHOOSER  ORACLE
+cost_bps                            
+0.0           0.067    0.033   0.400
+5.0           0.067    0.033   0.400
+10.0          0.067    0.033   0.400
+25.0          0.067    0.033   0.367
+50.0          0.067    0.033   0.300
+  and at EXT gross (1.00):
+klass     CANONICAL  CHOOSER  ORACLE
+cost_bps                            
+0.0           0.033    0.017   0.233
+5.0           0.033    0.017   0.233
+10.0          0.033    0.017   0.233
+25.0          0.033    0.011   0.200
+50.0          0.033    0.011   0.167
+
+====================================================================================================
+(D) VERDICT -- pre-registered bars against the numbers above
+====================================================================================================
+hypothesis  supported                                                                                                  evidence
+    H_SURV      False chooser OOS 4b 0.033 (6 of 180) vs canonical 0.067 (2 of 30); blind null expected 14.10, P(X<=6) = 0.0017
+    H_BEAT      False                                 chooser OOS CAGR beats canonical in 0.528 of cells, mean regret +0.634 pp
+    H_PRED      False                                                         median within-family Spearman(IS,OOS) CAGR -0.153
+      H_DD      False                                                             exactly `L4_DD` in 0.379 of 174 failing cells
+  H_ORACLE      False                                                     hindsight-best phase fails 4b in 0.600 of 30 families
+  wrote 2026-09-15_does-an-IS-CHOSEN-PHASE-ever-SURVIVE-OOS-on-ANY-BOOK_C.hypotheses.csv  (5 rows)
+
+  GATES 7 of 7 PASS.  done in 194.6s
