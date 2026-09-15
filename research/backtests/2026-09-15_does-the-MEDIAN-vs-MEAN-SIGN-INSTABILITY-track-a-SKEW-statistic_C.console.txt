@@ -1,0 +1,249 @@
+====================================================================================================
+IDEA 887 - does the MEDIAN-vs-MEAN SIGN INSTABILITY track a SKEW statistic the record
+           could publish instead?   (lane C, 2026-09-15)
+====================================================================================================
+PARAM 1 shape statistic {SKEW, EXKURT, NEAR, SKEW+EXKURT, SKEW+EXKURT+NEAR, LAMBDA};
+PARAM 2 claim set {ALL, HEADLINE, HEADLINE_RAW, COST, WINDOW, NEARABLE}. All printed.
+Non-shape contrasts (|M_LOC|, SKEW+|M_LOC|, |z|) are reported but are NOT answers to the
+queue's question - they exist to price what the shape sets are missing.
+Bars fixed before any number was read: H_GAP R2>=0.50 & b in [0.20,0.47]; H_SHAPE LOFO
+balanced accuracy >= 0.8; H_SIGN >= 90% overall and >= 75% on the unstable subset; H_UNRES >= 95%; H_WF within 10%.
+
+----------------------------------------------------------------------------------------------------
+1. THE CUTS - recomputed from the raw per-arm CSVs, with the shape statistics attached
+----------------------------------------------------------------------------------------------------
+  re-priceable files: 5   cuts: 151
+
+  cuts per file x window:
+cut                                0bps  10bps  25bps  IS  OOS  strip
+file                                                                 
+does-a-MIS-DISPERSED-run-length-n     4      4      4   4    4      0
+is-the-CORR-LO-POSITIVE-EXCESS-a-     0      4      0   4    4      4
+is-the-ONE-SIDED-DISPERSION-defec     9      9      9   9    9      0
+should-PROTOCOL-require-a-RUN-LEN     3      3      3   3    3      0
+what-is-the-RESIDUAL-PLUS-0.0012-    11     11     11  11   11      0
+
+----------------------------------------------------------------------------------------------------
+2. GATES
+----------------------------------------------------------------------------------------------------
+  G0 reproduce idea 880's 151 cuts: rows 151 vs 151 (match); max |diff| over MED/MEAN/z/n = 7.105e-15 -> PASS
+  G1 de-duplicated headline set: mine 23 of 31, 880's 23; identical sets -> PASS
+  G2 identity  unstable <=> sign(M)!=sign(LAM) and |M|<|LAM| : 151 of 151 -> PASS
+  G3 unstable flags vs idea 880's committed column: 151 of 151 -> PASS
+  GATES: 4 of 4 PASS
+
+  cuts carrying NO shape statistic at all: 5 of 151 (cross-arm sd = 0, so skew/kurtosis/LAMBDA are undefined) -
+  what-is-the-RESIDUAL-PLUS-0.0|0bps|OP_REAL; what-is-the-RESIDUAL-PLUS-0.0|10bps|OP_REAL; what-is-the-RESIDUAL-PLUS-0.0|25bps|OP_REAL; what-is-the-RESIDUAL-PLUS-0.0|IS|OP_REAL; what-is-the-RESIDUAL-PLUS-0.0|OOS|OP_REAL
+  These are the exactly-zero nulls (idea 882's OP_REAL is BLOCK by construction). They
+  are DROPPED from every regression below, which is why n reads 146 not 151. They are
+  kept in the instability counts, where they read stable (median = mean = 0).
+
+  claim sets (PARAM 2) and their instability base rates:
+    ALL           n= 151  unstable  26 (17.2%)  NEAR computable on 72
+    HEADLINE      n=  23  unstable   7 (30.4%)  NEAR computable on 19
+    HEADLINE_RAW  n=  31  unstable   8 (25.8%)  NEAR computable on 24
+    COST          n=  89  unstable  20 (22.5%)  NEAR computable on 72
+    WINDOW        n=  62  unstable   6 (9.7%)  NEAR computable on 0
+    NEARABLE      n=  72  unstable  18 (25.0%)  NEAR computable on 72
+
+----------------------------------------------------------------------------------------------------
+3. Q1 - IS THE STANDARDISED MEDIAN-MEAN GAP A SHAPE FACT?   LAM ~ a + b*<stat>
+----------------------------------------------------------------------------------------------------
+   claim_set   stat   n     R2   slope  intercept
+         ALL   SKEW 146 0.8236  0.2242     0.0074
+         ALL EXKURT 146 0.1578 -0.0391     0.0987
+         ALL   NEAR  69 0.7878 -0.3833     0.2228
+    HEADLINE   SKEW  22 0.8079  0.2284     0.0154
+    HEADLINE EXKURT  22 0.2642 -0.0448     0.0957
+    HEADLINE   NEAR  18 0.8681 -0.4061     0.2343
+HEADLINE_RAW   SKEW  30 0.8906  0.2453     0.0142
+HEADLINE_RAW EXKURT  30 0.3013 -0.0646     0.1468
+HEADLINE_RAW   NEAR  23 0.8530 -0.3976     0.2326
+        COST   SKEW  86 0.8204  0.2308     0.0117
+        COST EXKURT  86 0.2685 -0.0494     0.1169
+        COST   NEAR  69 0.7878 -0.3833     0.2228
+      WINDOW   SKEW  60 0.8331  0.2207     0.0010
+      WINDOW EXKURT  60 0.0818 -0.0290     0.0811
+      WINDOW   NEAR   0    NaN     NaN        NaN
+    NEARABLE   SKEW  69 0.7489  0.2128     0.0176
+    NEARABLE EXKURT  69 0.4725 -0.0695     0.1313
+    NEARABLE   NEAR  69 0.7878 -0.3833     0.2228
+
+  Pearson's relation predicts slope 0.3333.  Measured ALL 0.2242 (R2 0.8236), HEADLINE 0.2284 (R2 0.8079)
+  H_GAP (R2 >= 0.5 on ALL and HEADLINE, slope in [0.20, 0.47]): CONFIRMED
+
+----------------------------------------------------------------------------------------------------
+4. Q2 - CAN SHAPE STATISTICS ALONE CLASSIFY THE INSTABILITY?  (leave-one-FILE-out)
+----------------------------------------------------------------------------------------------------
+      shape_stat                                                   kind    claim_set   n  n_unstable  bal_acc  bal_acc_trthr    auc  insample
+            SKEW                                                  shape          ALL 146          26   0.5000         0.5497 0.4785    0.5000
+            SKEW                                                  shape     HEADLINE  22           7   0.4667         0.3476 0.2667    0.5000
+            SKEW                                                  shape HEADLINE_RAW  30           8   0.5000         0.4886 0.4148    0.5000
+            SKEW                                                  shape         COST  86          20   0.5000         0.5038 0.3894    0.5000
+            SKEW                                                  shape       WINDOW  60           6   0.5000         0.7222 0.6512    0.5000
+            SKEW                                                  shape     NEARABLE  69          18   0.5000         0.4101 0.3780    0.5000
+          EXKURT                                                  shape          ALL 146          26   0.4958         0.5631 0.4551    0.5000
+          EXKURT                                                  shape     HEADLINE  22           7   0.4714         0.5571 0.5905    0.6095
+          EXKURT                                                  shape HEADLINE_RAW  30           8   0.5170         0.6989 0.6648    0.6023
+          EXKURT                                                  shape         COST  86          20   0.5273         0.6962 0.4939    0.5000
+          EXKURT                                                  shape       WINDOW  60           6   0.5000         0.5556 0.2562    0.5000
+          EXKURT                                                  shape     NEARABLE  69          18   0.4608         0.7369 0.5044    0.5163
+            NEAR                                                  shape          ALL  72          18   0.5000         0.6111 0.4059    0.5000
+            NEAR                                                  shape     HEADLINE  19           6   0.4615         0.5705 0.5000    0.4615
+            NEAR                                                  shape HEADLINE_RAW  24           7   0.4706         0.5462 0.5042    0.5000
+            NEAR                                                  shape         COST  72          18   0.5000         0.6111 0.4059    0.5000
+            NEAR                                                  shape       WINDOW   0           0      NaN            NaN    NaN       NaN
+            NEAR                                                  shape     NEARABLE  72          18   0.5000         0.6111 0.4059    0.5000
+     SKEW+EXKURT                                                  shape          ALL 146          26   0.5000         0.5673 0.4603    0.5000
+     SKEW+EXKURT                                                  shape     HEADLINE  22           7   0.4714         0.6238 0.5714    0.6095
+     SKEW+EXKURT                                                  shape HEADLINE_RAW  30           8   0.5170         0.6989 0.6534    0.6023
+     SKEW+EXKURT                                                  shape         COST  86          20   0.4924         0.6152 0.4652    0.5000
+     SKEW+EXKURT                                                  shape       WINDOW  60           6   0.5000         0.7222 0.6420    0.5000
+     SKEW+EXKURT                                                  shape     NEARABLE  69          18   0.4608         0.6275 0.5948    0.5359
+SKEW+EXKURT+NEAR                                                  shape          ALL  69          18   0.5539         0.7402 0.5719    0.6748
+SKEW+EXKURT+NEAR                                                  shape     HEADLINE  18           6   0.6667         0.7917 0.7222    0.6667
+SKEW+EXKURT+NEAR                                                  shape HEADLINE_RAW  23           7   0.6205         0.7321 0.6786    0.6518
+SKEW+EXKURT+NEAR                                                  shape         COST  69          18   0.5539         0.7402 0.5719    0.6748
+SKEW+EXKURT+NEAR                                                  shape       WINDOW   0           0      NaN            NaN    NaN       NaN
+SKEW+EXKURT+NEAR                                                  shape     NEARABLE  69          18   0.5539         0.7402 0.5719    0.6748
+          LAMBDA                                                  shape          ALL 146          26   0.5000         0.5173 0.4439    0.5000
+          LAMBDA                                                  shape     HEADLINE  22           7   0.4667         0.4238 0.3143    0.5000
+          LAMBDA                                                  shape HEADLINE_RAW  30           8   0.4773         0.5284 0.4716    0.5000
+          LAMBDA                                                  shape         COST  86          20   0.5000         0.4856 0.4091    0.5000
+          LAMBDA                                                  shape       WINDOW  60           6   0.5000         0.5278 0.4537    0.5000
+          LAMBDA                                                  shape     NEARABLE  69          18   0.5000         0.4951 0.3660    0.5000
+         |M_LOC|                       location (NOT a shape statistic)          ALL 146          26   0.5737         0.8449 0.8571    0.6849
+         |M_LOC|                       location (NOT a shape statistic)     HEADLINE  22           7   0.7190         0.8286 0.8667    0.8619
+         |M_LOC|                       location (NOT a shape statistic) HEADLINE_RAW  30           8   0.7670         0.8693 0.9318    0.8920
+         |M_LOC|                       location (NOT a shape statistic)         COST  86          20   0.6068         0.7788 0.8492    0.7220
+         |M_LOC|                       location (NOT a shape statistic)       WINDOW  60           6   0.4907         0.8148 0.7932    0.5000
+         |M_LOC|                       location (NOT a shape statistic)     NEARABLE  69          18   0.5882         0.7712 0.8279    0.7647
+    SKEW+|M_LOC|                          mixed (NOT a shape statistic)          ALL 146          26   0.5654         0.7872 0.8394    0.6849
+    SKEW+|M_LOC|                          mixed (NOT a shape statistic)     HEADLINE  22           7   0.5810         0.5810 0.7810    0.7905
+    SKEW+|M_LOC|                          mixed (NOT a shape statistic) HEADLINE_RAW  30           8   0.6818         0.6591 0.8580    0.8295
+    SKEW+|M_LOC|                          mixed (NOT a shape statistic)         COST  86          20   0.6318         0.6136 0.7947    0.7371
+    SKEW+|M_LOC|                          mixed (NOT a shape statistic)       WINDOW  60           6   0.4815         0.8333 0.8457    0.4815
+    SKEW+|M_LOC|                          mixed (NOT a shape statistic)     NEARABLE  69          18   0.6438         0.5850 0.7800    0.8873
+             |z| the signed estimator's own bar (NOT a shape statistic)          ALL 146          26   0.6782         0.8798 0.8928    0.7510
+             |z| the signed estimator's own bar (NOT a shape statistic)     HEADLINE  22           7   0.8619         0.8286 0.9190    0.8619
+             |z| the signed estimator's own bar (NOT a shape statistic) HEADLINE_RAW  30           8   0.8920         0.8693 0.9631    0.8920
+             |z| the signed estimator's own bar (NOT a shape statistic)         COST  86          20   0.7720         0.8394 0.8928    0.8295
+             |z| the signed estimator's own bar (NOT a shape statistic)       WINDOW  60           6   0.4815         0.8333 0.8441    0.5000
+             |z| the signed estimator's own bar (NOT a shape statistic)     NEARABLE  69          18   0.7467         0.8301 0.8644    0.8121
+
+  best SHAPE-only grid point: SKEW+EXKURT+NEAR on HEADLINE, LOFO balanced accuracy 0.6667 (AUC 0.7222, in-sample 0.6667)
+  best NON-shape contrast:     |z| on HEADLINE_RAW, LOFO balanced accuracy 0.8920 (AUC 0.9631)
+  H_SHAPE (shape alone >= 0.8 LOFO balanced accuracy): REFUTED
+
+----------------------------------------------------------------------------------------------------
+5. THE PRACTICAL FORM OF THE QUEUE'S PROPOSAL - does (median, sd, skew) recover the
+   MEAN'S SIGN, so that one pooled number plus a shape statistic replaces the convention?
+----------------------------------------------------------------------------------------------------
+   claim_set        form   n  sign_recovery  n_unstable  sign_recovery_unstable  sign_recovery_stable
+         ALL PEARSON_1/3 146         0.8151          26                  0.5385                0.8750
+         ALL      FITTED 146         0.8356          26                  0.4615                0.9167
+    HEADLINE PEARSON_1/3  22         0.8182           7                  0.5714                0.9333
+    HEADLINE      FITTED  22         0.7727           7                  0.4286                0.9333
+HEADLINE_RAW PEARSON_1/3  30         0.8667           8                  0.6250                0.9545
+HEADLINE_RAW      FITTED  30         0.8000           8                  0.5000                0.9091
+        COST PEARSON_1/3  86         0.8140          20                  0.5500                0.8939
+        COST      FITTED  86         0.8256          20                  0.5500                0.9091
+      WINDOW PEARSON_1/3  60         0.8167           6                  0.5000                0.8519
+      WINDOW      FITTED  60         0.8667           6                  0.5000                0.9074
+    NEARABLE PEARSON_1/3  69         0.8261          18                  0.6111                0.9020
+    NEARABLE      FITTED  69         0.8696          18                  0.6111                0.9608
+
+  H_SIGN (PEARSON form on ALL: >= 90% overall AND >= 75% on the unstable subset): measured 81.5% / 53.8% -> REFUTED
+
+----------------------------------------------------------------------------------------------------
+6. Q3 - THE RIVAL ONE NUMBER: DOES INSTABILITY LIVE ENTIRELY BELOW THE RESOLVABILITY BAR?
+----------------------------------------------------------------------------------------------------
+   claim_set   n  n_unstable  max_abs_z  share_below_bar  unstable_rate_unresolvable  unstable_rate_resolvable
+         ALL 151          26     1.2374           1.0000                      0.2889                    0.0000
+    HEADLINE  23           7     0.9428           1.0000                      0.3889                    0.0000
+HEADLINE_RAW  31           8     0.9428           1.0000                      0.3636                    0.0000
+        COST  89          20     1.2374           1.0000                      0.3333                    0.0000
+      WINDOW  62           6     1.2374           1.0000                      0.2000                    0.0000
+    NEARABLE  72          18     1.2374           1.0000                      0.3333                    0.0000
+
+  H_UNRES (>= 95% of unstable cuts sit below |z| = 2.0): 100.0%, max |z| among unstable = 1.2374 -> CONFIRMED
+  instability rate among UNRESOLVABLE cuts 28.9% vs among RESOLVABLE cuts 0.0%
+
+  WHAT THE RIVAL RULE WOULD COST - a declared 'quote no sign below |z| = 2' strips the
+  sign from every unresolvable cut, not just the unstable ones:
+   claim_set   n  n_unresolvable  share_stripped  unstable_left
+         ALL 151              90          0.5960              0
+    HEADLINE  23              18          0.7826              0
+HEADLINE_RAW  31              22          0.7097              0
+        COST  89              60          0.6742              0
+      WINDOW  62              30          0.4839              0
+    NEARABLE  72              54          0.7500              0
+
+  every unstable cut, with its shape statistics (the queue's 7 headline claims are the
+  subset with headline=True):
+                         file   cut        kind  headline  SIGNED_MED  SIGNED_MEAN   sign_z     SKEW  EXKURT    NEAR   LAMBDA    M_LOC
+does-a-MIS-DISPERSED-run-leng  0bps SWITCHMATCH     False    -0.00077      0.00101  0.53033  0.09658 1.35216 0.47049  0.04564 -0.01973
+does-a-MIS-DISPERSED-run-leng 10bps SWITCHMATCH      True    -0.00080      0.00099  0.70711  0.09651 1.35615 0.46181  0.04599 -0.02062
+does-a-MIS-DISPERSED-run-leng 25bps SWITCHMATCH     False    -0.00085      0.00098  0.70711  0.09696 1.37616 0.46267  0.04751 -0.02215
+is-the-ONE-SIDED-DISPERSION-d  0bps      BLOCK2     False    -0.00054      0.00001  0.29463  0.04383 2.19310 0.60156  0.01811 -0.01794
+is-the-ONE-SIDED-DISPERSION-d 10bps      BLOCK2      True    -0.00015      0.00001  0.23570  0.06177 2.18368 0.60156  0.00536 -0.00493
+is-the-ONE-SIDED-DISPERSION-d 10bps     SM_UNIF      True     0.00023     -0.00031 -0.41248 -0.06730 1.87739 0.61719 -0.01899  0.00801
+is-the-ONE-SIDED-DISPERSION-d 25bps      BLOCK2     False    -0.00007      0.00005  0.05893  0.08634 2.17962 0.60677  0.00398 -0.00233
+is-the-ONE-SIDED-DISPERSION-d    IS      BLOCK2     False    -0.00025      0.00062  0.23570 -0.09304 1.51974     NaN  0.02163 -0.00626
+is-the-ONE-SIDED-DISPERSION-d   OOS      BLOCK2     False     0.00098     -0.00074 -0.76603 -0.27492 2.00674     NaN -0.04387  0.02508
+is-the-ONE-SIDED-DISPERSION-d   OOS     SM_UNIF     False     0.00072     -0.00007 -0.58926  0.00255 1.68291     NaN -0.02065  0.01889
+should-PROTOCOL-require-a-RUN  0bps     RUNPERM     False     0.00016     -0.00012 -0.40825  0.23450 4.14961     NaN -0.00857  0.00493
+should-PROTOCOL-require-a-RUN 10bps     RUNPERM      True     0.00013     -0.00021 -0.37423  0.22112 4.17281     NaN -0.01017  0.00390
+what-is-the-RESIDUAL-PLUS-0.0  0bps      BLOCK2     False    -0.00054      0.00001  0.29463  0.04383 2.19310 0.60156  0.01811 -0.01794
+what-is-the-RESIDUAL-PLUS-0.0  0bps   OP_SPLIT8     False     0.00079     -0.00007 -1.23744 -0.03507 1.50498 0.59896 -0.03048  0.02796
+what-is-the-RESIDUAL-PLUS-0.0  0bps     UG_REAL     False    -0.00024      0.00034  0.35355 -0.10612 1.99611 0.63628  0.02066 -0.00861
+what-is-the-RESIDUAL-PLUS-0.0 10bps      BLOCK2     False    -0.00015      0.00001  0.23570  0.06177 2.18368 0.60156  0.00536 -0.00493
+what-is-the-RESIDUAL-PLUS-0.0 10bps     OP_FILL      True     0.00042     -0.00005 -0.94281 -0.44439 3.30258 0.59635 -0.01630  0.01451
+what-is-the-RESIDUAL-PLUS-0.0 10bps   OP_SPLIT8      True     0.00044     -0.00014 -0.53033 -0.03100 1.46663 0.60503 -0.02035  0.01543
+what-is-the-RESIDUAL-PLUS-0.0 10bps     UG_REAL      True    -0.00030      0.00033  0.17678 -0.10672 1.96954 0.63194  0.02237 -0.01066
+what-is-the-RESIDUAL-PLUS-0.0 25bps      BLOCK2     False    -0.00007      0.00005  0.05893  0.08634 2.17962 0.60677  0.00398 -0.00233
+what-is-the-RESIDUAL-PLUS-0.0 25bps     OP_FILL     False     0.00044     -0.00017 -0.58926 -0.45021 3.13778 0.59809 -0.02093  0.01518
+what-is-the-RESIDUAL-PLUS-0.0 25bps   OP_SPLIT8     False     0.00010     -0.00013 -0.17678 -0.03572 1.41813 0.60764 -0.00840  0.00360
+what-is-the-RESIDUAL-PLUS-0.0 25bps     UG_REAL     False    -0.00019      0.00026  0.05893 -0.10819 1.92123 0.63976  0.01580 -0.00666
+what-is-the-RESIDUAL-PLUS-0.0    IS      BLOCK2     False    -0.00025      0.00062  0.23570 -0.09304 1.51974     NaN  0.02163 -0.00626
+what-is-the-RESIDUAL-PLUS-0.0   OOS      BLOCK2     False     0.00098     -0.00074 -0.76603 -0.27492 2.00674     NaN -0.04387  0.02508
+what-is-the-RESIDUAL-PLUS-0.0   OOS     UG_REAL     False     0.00102     -0.00008 -1.23744 -0.26959 2.17641     NaN -0.02830  0.02629
+
+----------------------------------------------------------------------------------------------------
+7. RULE 8 (a) - the shape->gap law fitted on the IS-window cuts, read once on OOS
+----------------------------------------------------------------------------------------------------
+        window  n  R2_own  slope_own  sign_recovery_ISfit  n_unstable  sign_recovery_unstable  unstable_rate
+       IS(fit) 30  0.7028     0.2099               0.8333           2                  0.0000         0.0667
+OOS(read once) 30  0.9363     0.2403               0.9000           4                  0.7500         0.1333
+  IS-fitted law: LAM = -0.0059 +0.2099*SKEW (R2 0.7028); OOS own fit slope +0.2403 (R2 0.9363)
+  H_WF (OOS sign-recovery within 10% of IS): |83.3% - 90.0%| = 6.7% -> CONFIRMED
+
+----------------------------------------------------------------------------------------------------
+8. RULE 8 (b) - THE BOOKS, BOTH KEEP PATHS (10 bps, next-day, weekly). Idea 880's
+   declared grid and IS-only selector, verbatim.  A census has no book of its own.
+----------------------------------------------------------------------------------------------------
+  SMALL panel: 716 columns -> 664 kept (52 dropped for max_1d_move >= 1.0)
+panel                            pick   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  path_4a  path_4b  base_rate_4a  base_rate_4b
+  U56 CORR-HI q0.07 w1008 d1.0 W g1.0 0.1273  1.0344 -0.2293 1.1598 0.9155    0.1241      1.0160    -0.2293    False    False        0.0000        0.1589
+ B136  CORR-HI q0.12 w252 d1.0 W g1.0 0.1391  1.1661 -0.1663 1.2888 1.0369    0.1297      1.1539    -0.1663    False     True        0.0000        0.1146
+SMALL VOL20-LO q0.17 w252 d1.0 D g1.0 0.0504  0.4036 -0.4852 0.7364 0.2013    0.0200      0.2031    -0.4852    False    False        0.0000        0.0000
+
+  reference legs on the same windows:
+panel  bl_cagr  bl_sh   bl_dd  bl_h1  bl_h2  bl_oos_c  bl_oos_s  spy_cagr  spy_sh  spy_dd  spy_h1  spy_h2  spy_oos_c  spy_oos_s
+  U56   0.0864 1.2084 -0.1190 1.2373 1.1857    0.0949    1.2859    0.1513  0.8845 -0.3372  0.9588  0.8236     0.1527     0.8740
+ B136   0.0798 1.1012 -0.1218 1.2370 0.9675    0.0788    1.1079    0.1516  0.8861 -0.3372  0.9596  0.8259     0.1533     0.8767
+SMALL   0.0430 0.6629 -0.1389 0.8058 0.5543    0.0375    0.5590    0.1406  0.8581 -0.3372  0.9138  0.8344     0.1533     0.8767
+
+  IS-only selector 4a passes: 0 of 3 panels;  4b passes: 1 of 3.
+
+====================================================================================================
+VERDICT
+====================================================================================================
+  H_GAP    CONFIRMED   the standardised median-mean gap is a skew fact (ALL R2 0.8236, slope 0.2242 vs Pearson 0.3333)
+  H_SHAPE  REFUTED   shape alone classifies instability at LOFO balanced accuracy 0.6667 (bar 0.8)
+  H_SIGN   REFUTED   (median, sd, skew) recovers the mean's sign 81.5% overall / 53.8% unstable
+  H_UNRES  CONFIRMED   100.0% of unstable cuts sit below |z| = 2.0 (max |z| 1.2374)
+  H_WF     CONFIRMED   IS-fitted law's sign-recovery moves 6.7% IS -> OOS
+  BOOKS    4a 0/3, 4b 1/3 on the IS-only selector - nothing promoted here; KILL for capital.
+
+  wrote 2026-09-15_does-the-MEDIAN-vs-MEAN-SIGN-INSTABILITY-track-a-SKEW-statistic_C.[cuts|grid|regress|walkforward|books|keep].csv + .console.txt   (43.9s)
