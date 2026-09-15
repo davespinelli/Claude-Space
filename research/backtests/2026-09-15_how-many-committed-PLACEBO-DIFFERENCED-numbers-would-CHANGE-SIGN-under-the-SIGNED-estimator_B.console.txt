@@ -1,0 +1,174 @@
+====================================================================================================
+IDEA 880 - how many committed PLACEBO-DIFFERENCED numbers would CHANGE SIGN under the SIGNED estimator?  (lane B 2026-09-15)
+====================================================================================================
+# pandas 3.0.5 numpy 2.4.6  |  6 nulls x 40 seeds x 3 rungs x 4 seed budgets x 4 estimators
+  SMALL panel: 716 columns -> 664 kept (52 dropped for max_1d_move >= 1.0)
+  U56: 56 cols x 4704 days  2008-01-02 .. 2026-09-14
+  B136: 136 cols x 4703 days  2008-01-02 .. 2026-09-11
+  SMALL: 664 cols x 4198 days  2010-01-04 .. 2026-09-11
+
+[0] GATES (printed before any hypothesis is read)
+  G1 never-firing multiplier == ungated book   max|d| 0.000e+00  bar 1e-12  [PASS]
+  G3 fast Sharpe == engine.metrics()['Sharpe'] |d| 0.000e+00  bar 1e-10  [PASS]
+  G2b switch-matched nulls preserve k and m: 0 violations in 900 synthetic draws  [PASS]
+    U56: BREADTH-LO done  (8s)
+    U56: BREADTH-HI done  (11s)
+    U56: VOL20-HI done  (14s)
+    U56: VOL20-LO done  (18s)
+    U56: DISP-HI done  (21s)
+    U56: DISP-LO done  (25s)
+    U56: CORR-HI done  (28s)
+    U56: CORR-LO done  (31s)
+    B136: BREADTH-LO done  (10s)
+    B136: BREADTH-HI done  (14s)
+    B136: VOL20-HI done  (17s)
+    B136: VOL20-LO done  (21s)
+    B136: DISP-HI done  (24s)
+    B136: DISP-LO done  (27s)
+    B136: CORR-HI done  (31s)
+    B136: CORR-LO done  (35s)
+    SMALL: BREADTH-LO done  (24s)
+    SMALL: BREADTH-HI done  (28s)
+    SMALL: VOL20-HI done  (31s)
+    SMALL: VOL20-LO done  (34s)
+    SMALL: DISP-HI done  (37s)
+    SMALL: DISP-LO done  (41s)
+    SMALL: CORR-HI done  (44s)
+    SMALL: CORR-LO done  (47s)
+
+  arms 1152 rows, gaps 1152 rows  (114s)
+  G2 rate match  max|mean(placebo) - mean(real)| 0.000e+00  bar 1e-12  [PASS]
+  G4 determinism max|d| 0.000e+00  bar 0  [PASS]
+
+[1] THE 2x2 OF ESTIMATORS x THE SEED BUDGET LADDER (param 2: estimator)
+    every number below is (estimator on the null) - (the SAME estimator on BLOCK2, whose
+    true gap is zero by construction); z from a PAIRED bootstrap over arms, 500 draws.
+
+  G5 CALIBRATION  BLOCK2 signed pooled gap (E3, S=40, 10bps) +0.00035  z +0.54  bars |.|<=0.001 and |z|<2.0  [PASS]
+  G6 HALF-NORMAL IDENTITY on the true-zero cells: E1/sd_a(g_a) = 0.01120/0.02160 = 0.5183  vs 0.6745  |d| 0.1561  bar 0.12  [FAIL]
+     -> E1 has a POSITIVE FLOOR of 0.0112 under a TRUE EFFECT OF ZERO, and that floor is a property of the per-arm noise, not of the number of arms.
+  G6b CAUSE OF THE G6 MISS (diagnostic, does not move the G6 bar): the per-arm gap is NOT Gaussian - excess kurtosis +1.75, so median|g|/sd is 0.5183 rather than the Gaussian 0.6745.  The FLOOR ITSELF is unaffected: it is 0.0112 > 0 whatever the shape, and it does not shrink with the number of arms.
+  G7 REPRODUCTION SM_DOM signed @10bps S=20 +0.00397 vs 881's -0.00348 (875 published -0.0046)  |d| 0.00745  bar 0.002  [FAIL]
+     SM_UNIF signed inside the BLOCK2 band: z -0.28  [PASS]
+  G7b CONVENTION-CORRECTED REPRODUCTION (named, not a moved bar): idea 881 differences EXCESS = real - placebo, so its published statistic is (BLOCK - null) = MINUS this run's (null - BLOCK).  Under 881's own convention this run reads -0.00397 vs 881's -0.00348  |d| 0.00049  bar 0.002  [PASS]
+     G7 therefore FAILS AS PRINTED for a SIGN-CONVENTION reason only, and the convention is not named in 881's or 875's committed prose - which is this run's subject.
+
+  --- the full 2x2 x ladder at 10 bps (all rungs in .estimators.csv) ---
+  null         S                 E1                 E2                 E3                 E4
+  RAND         5    +0.24236 z+44.7    +0.26976 z+58.0    +0.30963 z+56.4    +0.27302 z+45.3
+  RAND        10    +0.24883 z+50.5    +0.28367 z+63.7    +0.31236 z+62.7    +0.27036 z+51.9
+  RAND        20    +0.25809 z+50.2    +0.29289 z+66.9    +0.31477 z+68.5    +0.27470 z+51.9
+  RAND        40    +0.26257 z+44.6    +0.29971 z+68.5    +0.31496 z+69.1    +0.27327 z+45.7
+
+  SM_UNIF      5    +0.00005 z +0.0    +0.00001 z +0.0    +0.00018 z +0.1    -0.00093 z -0.5
+  SM_UNIF     10    +0.00010 z +0.1    +0.00003 z +0.0    -0.00029 z -0.3    -0.00112 z -0.8
+  SM_UNIF     20    -0.00186 z -2.9    -0.00121 z -1.8    +0.00030 z +0.5    +0.00008 z +0.1
+  SM_UNIF     40    -0.00015 z -0.3    -0.00073 z -1.5    -0.00014 z -0.3    -0.00045 z -0.8
+
+  SM_DOM       5    -0.00468 z -2.7    -0.00561 z -4.7    +0.00252 z +1.6    +0.00139 z +0.8
+  SM_DOM      10    -0.00225 z -2.2    -0.00397 z -4.7    +0.00249 z +2.4    +0.00248 z +1.9
+  SM_DOM      20    -0.00186 z -2.7    -0.00207 z -3.2    +0.00396 z +4.4    +0.00333 z +3.7
+  SM_DOM      40    -0.00056 z -1.3    -0.00156 z -3.5    +0.00368 z +6.5    +0.00273 z +4.4
+
+  SM_SPLIT2    5    -0.00316 z -1.9    -0.00475 z -3.6    -0.00194 z -1.2    -0.00097 z -0.6
+  SM_SPLIT2   10    -0.00054 z -0.6    -0.00176 z -2.0    -0.00021 z -0.2    +0.00005 z +0.0
+  SM_SPLIT2   20    -0.00046 z -0.6    -0.00091 z -1.4    +0.00134 z +1.5    +0.00048 z +0.7
+  SM_SPLIT2   40    +0.00010 z +0.2    -0.00084 z -1.7    +0.00203 z +3.3    +0.00098 z +1.4
+
+  (E1 and E2 take |.| BEFORE pooling; E3 and E4 after.  diff = statistic - BLOCK2's own value of the same statistic; z from the paired bootstrap; RESOLVED iff |z| >= 2.0.)
+
+[2] H_ORDER vs H_BUDGET - is it the estimator or the seed budget?
+    SM_DOM @10bps:   S=5: E1 z -2.68 / E3 z +1.62  S=10: E1 z -2.22 / E3 z +2.43  S=20: E1 z -2.74 / E3 z +4.37  S=40: E1 z -1.25 / E3 z +6.52
+  H_ORDER  E1 unresolved at EVERY S and E3 resolved at every S>=10  [FAIL]
+    E1 |z| monotone INCREASING in S: False;  sqrt-S fit |z| = 0.4424*sqrt(S)  ->  S* (|z|=2) = 20 seeds
+  H_BUDGET E1 |z| increasing in S AND S* <= 200 seeds  [FAIL]
+    for scale: at S=40, E3's bootstrap SE is 0.00056 on 1,152 arms, while E1's BLOCK2 floor is 0.0112 - 20x the signed form's whole standard error.
+
+[3] H_CONSERV - can re-pricing ever RETRACT a resolved effect?
+    over 48 (rung x S x null) cells: E1 unresolved -> E3 RESOLVED in 9 (18.8%); E3 retracts an E1 resolution in 8; agree in 31
+  H_CONSERV no cell where E1 resolves and E3 does not  [FAIL]
+      RAND       resolved under E1  9/12  E2  8/12  E3 10/12  E4 10/12
+      SM_UNIF    resolved under E1  3/12  E2  0/12  E3  0/12  E4  0/12
+      SM_DOM     resolved under E1  8/12  E2 12/12  E3  9/12  E4  7/12
+      SM_SPLIT2  resolved under E1  1/12  E2  5/12  E3  3/12  E4  0/12
+
+[2b] WHAT E1 IS ACTUALLY MEASURING - its own shrinkage in the seed budget
+     if E1 were an EFFECT read it would be flat in S; if it were PURE SEED NOISE it would
+     fall exactly as 1/sqrt(S).  Fit log(E1 statistic) = a + b*log(S) and, separately,
+     E1^2 = noise^2/S + eff^2 for the asymptote eff = what E1 would read at INFINITE S.
+     RAND       E1 S5:0.27543 S10:0.27201 S20:0.27485 S40:0.27377   log-log slope -0.001 (pure noise = -0.500)   E1 asymptote 0.27340   |E3| 0.31531
+     BLOCK2     E1 S5:0.03307 S10:0.02317 S20:0.01676 S40:0.01120   log-log slope -0.515 (pure noise = -0.500)   E1 asymptote 0.00000   |E3| 0.00035
+     SM_UNIF    E1 S5:0.03312 S10:0.02327 S20:0.01490 S40:0.01105   log-log slope -0.539 (pure noise = -0.500)   E1 asymptote 0.00000   |E3| 0.00021
+     SM_DOM     E1 S5:0.02839 S10:0.02092 S20:0.01490 S40:0.01064   log-log slope -0.474 (pure noise = -0.500)   E1 asymptote 0.00499   |E3| 0.00403
+     SM_SPLIT2  E1 S5:0.02990 S10:0.02263 S20:0.01630 S40:0.01130   log-log slope -0.469 (pure noise = -0.500)   E1 asymptote 0.00663   |E3| 0.00238
+     -> an asymptote at or near zero means E1's whole published magnitude is the seed
+        noise it was supposed to be net of.
+
+[3b] THE QUESTION AS ASKED: how many numbers CHANGE SIGN between the two estimators?
+     sign of (E1 statistic - E1 on BLOCK2)  vs  sign of the SIGNED pooled gap E3 reads.
+     over 48 (rung x S x null) cells: SIGN DISAGREES in 40 (83.3%); both estimators RESOLVE in 13; both resolve AND disagree on the sign in 13 (100.0% of resolved cells).
+       RAND       sign disagreement 11/12   both-resolved-and-disagreeing  8
+       SM_UNIF    sign disagreement  8/12   both-resolved-and-disagreeing  0
+       SM_DOM     sign disagreement 12/12   both-resolved-and-disagreeing  5
+       SM_SPLIT2  sign disagreement  9/12   both-resolved-and-disagreeing  0
+
+[4] H_SIGN - is a re-priced SIGNED verdict portable across panel and cost rung?
+    RAND       pooled sign -  agreement 6/9 panel x rung cells   values +0.0023 -0.3383 -0.8440 +0.0023 -0.3314 -0.8276 +0.0038 -0.2762 -0.6915
+    SM_UNIF    pooled sign +  agreement 6/9 panel x rung cells   values +0.0005 +0.0006 +0.0007 -0.0011 -0.0011 -0.0012 +0.0013 +0.0011 +0.0010
+    SM_DOM     pooled sign +  agreement 9/9 panel x rung cells   values +0.0056 +0.0057 +0.0058 +0.0047 +0.0046 +0.0042 +0.0025 +0.0018 +0.0009
+    SM_SPLIT2  pooled sign +  agreement 9/9 panel x rung cells   values +0.0003 +0.0004 +0.0003 +0.0013 +0.0011 +0.0007 +0.0058 +0.0057 +0.0055
+  H_SIGN every null's E3 sign agrees in >= 8 of 9 panel x rung cells  [FAIL]
+
+[5] CENSUS of committed placebo-differenced numbers (param 1: claim set)
+  claim set ALL   : 876 committed placebo-bearing NUMBER-carrying lines across 132 files
+      ABS          39  (  4.5%)
+      SIGNED       61  (  7.0%)
+      BOTH          2  (  0.2%)
+      UNSTATED    774  ( 88.4%)
+  claim set NAMED : 304 lines name a null KIND (34.7% of ALL)
+      ABS          14  (  4.6%)
+      SIGNED       29  (  9.5%)
+      BOTH          2  (  0.7%)
+      UNSTATED    259  ( 85.2%)
+  descriptive (NOT the pre-registered bar): of the 102 lines that state a form at all, 39 (38.2%) are ABSOLUTE.
+  H_CENSUS bar: >= 50% of committed placebo-differenced numbers stated in the ABSOLUTE form -> 4.5%  [FAIL]
+  (a line is ABS only when it carries |.| notation and no 'signed'/'sign-test'/z wording; UNSTATED means the prose names neither form - those numbers cannot be re-priced from
+   prose alone, which is why the priced leg below rebuilds the cells instead.)
+
+[6] RULE 8 WALK-FORWARD (a) THE ESTIMATOR - IS ..2016 fitted, OOS 2017.. read once
+    RAND       pooled IS -0.34042  OOS -0.30518  rho(IS,OOS) over arms +0.940  family sign agreement 8/8
+    SM_UNIF    pooled IS -0.00344  OOS +0.00012  rho(IS,OOS) over arms -0.002  family sign agreement 3/8
+    SM_DOM     pooled IS +0.01559  OOS +0.02015  rho(IS,OOS) over arms +0.141  family sign agreement 8/8
+    SM_SPLIT2  pooled IS +0.00682  OOS +0.01276  rho(IS,OOS) over arms +0.043  family sign agreement 8/8
+  H_WF SM_DOM IS/OOS family sign agreement >= 6 of 8 -> 8/8  [PASS]
+
+[7] RULE 8 WALK-FORWARD (b) THE BOOKS - IS-only selector, OOS read once
+    selector, declared before the OOS window is read: the arm with the highest 2009-2016 Sharpe on each panel.
+    U56: CORR-HI q0.07 w1008 d1.00 W g1.00
+        FULL  CAGR  12.73%  Sharpe 1.034  MaxDD -22.93%  halves 1.160/0.915
+        OOS   CAGR  12.41%  Sharpe 1.016  MaxDD -22.93%
+        SPY   full  15.13%/0.885/-33.72%  OOS  15.27%/0.874/-33.72%
+        RULES v2 full   8.64%/1.208/-11.90%  OOS   9.49%/1.286/-11.90%
+        KEEP 4a FAIL   4b full-sample FAIL   4b OOS FAIL
+        unselected base rate over 384 arms: 4a 0, 4b full 61, 4b OOS 131
+    B136: CORR-HI q0.12 w252 d1.00 W g1.00
+        FULL  CAGR  13.91%  Sharpe 1.166  MaxDD -16.63%  halves 1.289/1.037
+        OOS   CAGR  12.97%  Sharpe 1.154  MaxDD -16.63%
+        SPY   full  15.16%/0.886/-33.72%  OOS  15.33%/0.877/-33.72%
+        RULES v2 full   7.98%/1.101/-12.18%  OOS   7.88%/1.108/-12.18%
+        KEEP 4a FAIL   4b full-sample PASS   4b OOS PASS
+        unselected base rate over 384 arms: 4a 0, 4b full 44, 4b OOS 54
+    SMALL: VOL20-LO q0.17 w252 d1.00 D g1.00
+        FULL  CAGR   5.04%  Sharpe 0.404  MaxDD -48.52%  halves 0.736/0.201
+        OOS   CAGR   2.00%  Sharpe 0.203  MaxDD -48.52%
+        SPY   full  14.06%/0.858/-33.72%  OOS  15.33%/0.877/-33.72%
+        RULES v2 full   4.30%/0.663/-13.89%  OOS   3.75%/0.559/-13.89%
+        KEEP 4a FAIL   4b full-sample FAIL   4b OOS FAIL
+        unselected base rate over 384 arms: 4a 0, 4b full 0, 4b OOS 0
+
+====================================================================================================
+VERDICT
+====================================================================================================
+  KEEP path 4a: 0 of 3 IS-selected books;  path 4b (OOS): 1 of 3.  Unselected base rates printed above.
+  H_ORDER FAIL | H_BUDGET FAIL | H_CONSERV FAIL | H_CENSUS FAIL | H_SIGN FAIL | H_WF PASS
+  total runtime 119s
