@@ -1,0 +1,119 @@
+================================================================================================
+IDEA 942 -- is the 4b OOS-SHARPE LEG DEAD on any MONTHLY U56 CELL?
+================================================================================================
+
+------------------------------------------------------------------------------------------------
+GATES
+------------------------------------------------------------------------------------------------
+  G1  closed-form Ctx.run == engine.backtest, 2 books x 3 cadences: max|d| = 4.163e-17  [PASS]
+  G1b closed-form Ctx.run == the literal day loop `run_ref`: max|d| = 3.816e-17  [PASS]
+  G2  BAND03 == rules_v2_weights/gross: 0.000e+00  [PASS]
+  G3  CAND20 weekly 12.7295% / 1.0596 / -18.31% vs published 12.66% / 1.0921 / -18.31%; |d| = 6.95e-04 / 3.25e-02 / 1.66e-05  [PASS]  (Sharpe tol 3.3e-2 = the record's own committed vintage drift)
+  G4  gross match on 5 draws: max|d gross| = 2.220e-16, max|d holding count| = 0, min realised annual turnover = 9.85x  [PASS]
+      (the turnover leg exists because the first cut of this run wrote the draw on the APPLICATION
+       rows; every other gate passed while the null sat in pure cash)
+  G5  draw nesting / seed reproducibility: max|d| = 0.000e+00  [PASS]
+
+------------------------------------------------------------------------------------------------
+THE WINDOW OVERLAP THAT 4b's THIRD LEG SITS ON
+------------------------------------------------------------------------------------------------
+  U56: H2 runs 2017-11-08 -> 2026-09-14 (2222 days); OOS runs 2017-01-01 -> 2026-09-14 (2437 days); overlap 2222 days = 91.2% of OOS and 100.0% of H2
+  B136: H2 runs 2017-11-07 -> 2026-09-11 (2222 days); OOS runs 2017-01-01 -> 2026-09-11 (2436 days); overlap 2222 days = 91.2% of OOS and 100.0% of H2
+
+------------------------------------------------------------------------------------------------
+NULL GRID -- 2 panels x 3 cadences x 3 null kinds x 250 draws = 4,500 coin-flip books
+------------------------------------------------------------------------------------------------
+  wrote 2026-09-15_is-the-4b-OOS-SHARPE-LEG-DEAD-on-any-MONTHLY-U56-CELL_cloud.nulls.csv  (4,500 rows, 16 cols)
+  wrote 2026-09-15_is-the-4b-OOS-SHARPE-LEG-DEAD-on-any-MONTHLY-U56-CELL_cloud.baserates.csv  (18 rows, 12 cols)
+
+  PER-LEG BASE RATE = fraction of gross-matched coin flips that CLEAR that 4b leg
+  panel cad kind        L_H1    L_H2   L_OOS    L_DD  L_CAGR      4b  4b-noOOS   turn  medOOSs
+  B136  M   RANDFIX    0.960   0.888   0.944   0.196   0.772   0.148     0.148   4.10    1.026
+  B136  M   RANDROT    0.748   0.584   0.720   0.140   0.364   0.036     0.036  14.47    0.929
+  B136  M   RANDROT_FREE   0.868   0.628   0.716   0.004   0.948   0.004     0.004  15.45    0.933
+  B136  Q   RANDFIX    0.996   0.544   0.708   0.024   0.732   0.016     0.016   2.10    0.932
+  B136  Q   RANDROT    0.984   0.440   0.624   0.024   0.652   0.024     0.024   4.96    0.907
+  B136  Q   RANDROT_FREE   0.956   0.860   0.896   0.016   0.996   0.016     0.016   5.15    1.025
+  B136  W   RANDFIX    0.928   0.596   0.824   0.916   0.448   0.360     0.360   9.36    0.952
+  B136  W   RANDROT    0.000   0.000   0.000   0.684   0.000   0.000     0.000  60.47    0.498
+  B136  W   RANDROT_FREE   0.000   0.000   0.000   0.004   0.000   0.000     0.000  66.81    0.531
+  U56   M   RANDFIX    0.948   1.000   1.000   1.000   0.860   0.836     0.836   3.90    1.185
+  U56   M   RANDROT    0.904   0.996   1.000   1.000   0.804   0.760     0.760   9.93    1.130
+  U56   M   RANDROT_FREE   0.800   0.864   0.892   0.084   0.904   0.068     0.068  11.93    1.012
+  U56   Q   RANDFIX    0.992   0.888   0.940   0.156   0.816   0.112     0.112   2.01    0.999
+  U56   Q   RANDROT    1.000   0.888   0.940   0.180   0.884   0.160     0.160   3.69    0.990
+  U56   Q   RANDROT_FREE   0.924   0.944   0.968   0.184   0.988   0.168     0.168   4.07    1.087
+  U56   W   RANDFIX    0.776   0.976   0.996   1.000   0.352   0.344     0.344   9.04    1.063
+  U56   W   RANDROT    0.000   0.048   0.048   1.000   0.000   0.000     0.000  38.70    0.759
+  U56   W   RANDROT_FREE   0.008   0.028   0.028   0.032   0.004   0.000     0.000  51.29    0.657
+
+------------------------------------------------------------------------------------------------
+PRE-REGISTERED HYPOTHESES
+------------------------------------------------------------------------------------------------
+  H_DEAD      U56/M RANDROT L_OOS base rate = 1.000  (bar >= 0.9; 931 read 1.000 at 500 draws)  -> PASS -- the leg is DEAD on this cell
+              same cell RANDFIX = 1.000  <- the kind, not the cadence, can own the number; both are printed, neither is the headline
+  H_CADENCE   U56   L_OOS  W 0.048 < M 1.000 < Q 0.940  -> NOT monotone
+  H_CADENCE   B136  L_OOS  W 0.000 < M 0.720 < Q 0.624  -> NOT monotone
+              -> FAIL
+
+  H_REDUNDANT does dropping L_OOS change the joint verdict?  P(all 5) / P(other 4), RANDROT:
+              U56   W    0.0000 / 0.0000 = n/a (no draw clears the other four)
+              U56   M    0.7600 / 0.7600 = 1.0000
+              U56   Q    0.1600 / 0.1600 = 1.0000
+              B136  W    0.0000 / 0.0000 = n/a (no draw clears the other four)
+              B136  M    0.0360 / 0.0360 = 1.0000
+              B136  Q    0.0240 / 0.0240 = 1.0000
+              cells at or above 0.95: 4 of 4 measurable (2 undefined)  (bar >= 5)  -> FAIL
+
+  H_LIVE      legs with base rate <= 0.25 in ALL 6 RANDROT cells: (none)  -> FAIL
+              per-leg worst-cell base rate (RANDROT): L_H1=1.000, L_H2=0.996, L_OOS=1.000, L_DD=1.000, L_CAGR=0.884
+
+------------------------------------------------------------------------------------------------
+THE REAL BOOKS -- RULE 8 (cadence chosen on IS <=2016 by Sharpe, OOS read once) + BOTH KEEP PATHS
+------------------------------------------------------------------------------------------------
+
+[U56]  SPY full 15.13%/0.8845/-33.72%  halves 0.9588/0.8236  OOS 15.27%/0.8740/-33.72%
+[U56]  RULES v2 baseline (W) OOS 9.46%/1.2772/-12.05%
+  CAND20  W  full  12.73%/ 1.060/-18.31%  halves 1.073/1.055  OOS  14.34%/ 1.123/-18.31%  turn 11.01x  4a=False 4b=True   fails:-                       null 4b 0.000 / L_OOS 0.048
+  CAND20  M* full  15.28%/ 1.212/-19.51%  halves 1.204/1.226  OOS  17.53%/ 1.305/-19.51%  turn  4.81x  4a=False 4b=True   fails:-                       null 4b 0.760 / L_OOS 1.000
+  CAND20  Q  full  14.33%/ 1.056/-27.12%  halves 1.140/1.005  OOS  16.17%/ 1.093/-27.12%  turn  2.70x  4a=False 4b=False  fails:L_DD                    null 4b 0.160 / L_OOS 0.940
+          ^ IS-chosen cadence = M
+  BAND03  W  full   8.62%/ 1.201/-12.05%  halves 1.232/1.177  OOS   9.46%/ 1.277/-12.05%  turn  1.78x  4a=False 4b=False  fails:L_CAGR                  null 4b 0.000 / L_OOS 0.048
+  BAND03  M* full   8.88%/ 1.172/-14.38%  halves 1.217/1.135  OOS   9.56%/ 1.224/-14.38%  turn  1.23x  4a=False 4b=False  fails:L_CAGR                  null 4b 0.760 / L_OOS 1.000
+  BAND03  Q  full   8.00%/ 0.993/-19.90%  halves 1.145/0.886  OOS   8.42%/ 0.974/-19.90%  turn  0.84x  4a=False 4b=False  fails:L_CAGR                  null 4b 0.160 / L_OOS 0.940
+          ^ IS-chosen cadence = M
+
+[B136]  SPY full 15.16%/0.8861/-33.72%  halves 0.9596/0.8259  OOS 15.33%/0.8767/-33.72%
+[B136]  RULES v2 baseline (W) OOS 7.88%/1.1059/-12.24%
+  CAND20  W  full  12.99%/ 0.943/-20.05%  halves 1.123/0.786  OOS  12.32%/ 0.875/-20.05%  turn 14.30x  4a=False 4b=False  fails:L_H2,L_OOS              null 4b 0.000 / L_OOS 0.000
+  CAND20  M* full  16.51%/ 1.103/-26.11%  halves 1.307/0.944  OOS  16.28%/ 1.035/-26.11%  turn  6.52x  4a=False 4b=False  fails:L_DD                    null 4b 0.036 / L_OOS 0.720
+  CAND20  Q  full  14.05%/ 0.927/-27.07%  halves 1.269/0.672  OOS  12.36%/ 0.778/-27.07%  turn  3.63x  4a=False 4b=False  fails:L_H2,L_OOS,L_DD         null 4b 0.024 / L_OOS 0.624
+          ^ IS-chosen cadence = M
+  BAND03  W* full   7.98%/ 1.099/-12.24%  halves 1.235/0.966  OOS   7.88%/ 1.106/-12.24%  turn  2.01x  4a=False 4b=False  fails:L_CAGR                  null 4b 0.000 / L_OOS 0.000
+  BAND03  M  full   8.34%/ 1.086/-15.69%  halves 1.219/0.958  OOS   8.25%/ 1.084/-15.69%  turn  1.39x  4a=False 4b=False  fails:L_CAGR                  null 4b 0.036 / L_OOS 0.720
+  BAND03  Q  full   7.82%/ 0.942/-21.84%  halves 1.151/0.771  OOS   7.64%/ 0.887/-21.84%  turn  0.90x  4a=False 4b=False  fails:L_H2,L_DD,L_CAGR        null 4b 0.024 / L_OOS 0.624
+          ^ IS-chosen cadence = W
+  wrote 2026-09-15_is-the-4b-OOS-SHARPE-LEG-DEAD-on-any-MONTHLY-U56-CELL_cloud.books.csv  (12 rows, 29 cols)
+
+  KEEP verdicts on the IS-chosen cadence only (rule 8):
+    U56   CAND20  cadence M: 4a=False  4b=True  OOS 17.53%/1.305/-19.51%  vs SPY 15.27%/0.874/-33.72%  vs RULES v2 9.46%/1.277/-12.05%   [its cell's coin flip clears 4b 76.0% of the time]
+    U56   BAND03  cadence M: 4a=False  4b=False  OOS 9.56%/1.224/-14.38%  vs SPY 15.27%/0.874/-33.72%  vs RULES v2 9.46%/1.277/-12.05%   [its cell's coin flip clears 4b 76.0% of the time]
+    B136  CAND20  cadence M: 4a=False  4b=False  OOS 16.28%/1.035/-26.11%  vs SPY 15.33%/0.877/-33.72%  vs RULES v2 7.88%/1.106/-12.24%   [its cell's coin flip clears 4b 3.6% of the time]
+    B136  BAND03  cadence W: 4a=False  4b=False  OOS 7.88%/1.106/-12.24%  vs SPY 15.33%/0.877/-33.72%  vs RULES v2 7.88%/1.106/-12.24%   [its cell's coin flip clears 4b 0.0% of the time]
+
+  4b PASS 2 of 12 book x cadence cells; 4a PASS 0 of 12.
+
+------------------------------------------------------------------------------------------------
+THE GUARD THIS RUN PROPOSES (PROPOSED, NOT APPLIED -- PROTOCOL rule 6)
+------------------------------------------------------------------------------------------------
+  PROTOCOL 4b currently reads THREE Sharpe legs: H1, H2 and rule-8 OOS. On this tree the
+  H2 and OOS windows overlap by the percentages printed above, so the third leg is close
+  to a restatement of the second rather than an independent test. Proposed amendment:
+  (i) rule 8's OOS window must be DISJOINT from the second half used by 4b -- either the
+      halves are taken INSIDE the IS window (2009-2016 split in two) or the 4b halves are
+      dropped in favour of IS/OOS; and
+  (ii) any published 4b PASS carries, beside it, the per-leg base rate of its OWN cell's
+      gross-matched null under BOTH null kinds, and any leg whose base rate exceeds 0.90
+      is reported as NOT CERTIFYING rather than as a pass.
+  Scored on this run's grid, clause (ii) would strip the OOS leg from every cell where it
+  reads >= 0.90 above, and clause (i) would make the H1/H2 split independent of rule 8.
