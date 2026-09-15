@@ -1,0 +1,238 @@
+====================================================================================================
+IDEA 881 - is the ONE-SIDED DISPERSION defect a MAX-RUN-LENGTH fact or a TAIL-MASS fact?  (lane B 2026-09-15)
+====================================================================================================
+# pandas 3.0.5 numpy 2.4.6  |  10 nulls x 20 seeds x 3 rungs
+  SMALL panel: 716 columns -> 664 kept (52 dropped for max_1d_move >= 1.0)
+  U56: 56 cols x 4704 days  2008-01-02 .. 2026-09-14
+  B136: 136 cols x 4703 days  2008-01-02 .. 2026-09-11
+  SMALL: 664 cols x 4198 days  2010-01-04 .. 2026-09-11
+
+[0] GATES (printed before any hypothesis is read)
+  G1 never-firing multiplier == ungated book   max|d| 0.000e+00  bar 1e-12  [PASS]
+  G6 fast Sharpe == engine.metrics()['Sharpe'] |d| 0.000e+00  bar 1e-10  [PASS]
+  G5a k and m preserved by all 7 switch-matched nulls: 0 violations in 2100 synthetic draws  [PASS]
+  G5b SM_LONE and SM_FILL have max run EXACTLY L*: 0 violations  [PASS]
+  G5c SPLIT ladder max-run ratio monotone DOWN in j: DOM 13.65 > SPLIT2 6.86 > SPLIT4 3.46 > SPLIT8 1.76  [PASS]
+     and its long-day share held: DOM 0.922 ~ SPLIT2 0.925 ~ SPLIT4 0.931 ~ SPLIT8 0.942
+  G5d at the SAME max (1.00x L*), SM_FILL long-day share 0.961 > SM_LONE 1.000  [FAIL]  (max ratios 1.00 / 1.00)
+    U56: BREADTH done  (17s)
+    U56: VOL20 done  (28s)
+    U56: DISP done  (40s)
+    U56: CORR done  (51s)
+    B136: BREADTH done  (20s)
+    B136: VOL20 done  (32s)
+    B136: DISP done  (43s)
+    B136: CORR done  (54s)
+    SMALL: BREADTH done  (43s)
+    SMALL: VOL20 done  (54s)
+    SMALL: DISP done  (65s)
+    SMALL: CORR done  (77s)
+
+  arms 1152 rows, excess 11520 rows  (185s)
+  G2 rate match  max|mean(placebo) - mean(real)| 0.000e+00  bar 1e-12  [PASS]
+  G4 determinism max|d| 0.000e+00  bar 0  [PASS]
+  G5a on REAL arms: k and m violations across all switch-matched cells: 0 of 161280  [PASS]
+  G5b on REAL arms: SM_LONE / SM_FILL max-run != L* violations: 0 of 46080  [PASS]
+
+====================================================================================================
+[1] G7 CALIBRATION - what does a null that differs from BLOCK ONLY BY SEED look like?
+    BLOCK2 is BLOCK from an independent seed stream.  Its true gap is EXACTLY ZERO by
+    construction, so it measures this grid's signed-statistic band instead of assuming one.
+====================================================================================================
+  BLOCK2 signed median -0.00015  mean +0.00001 (SE 0.00088)  share below BLOCK 50.3%  sign-test z +0.24
+  G7 |signed| <= 0.001 and |z| < 2.0  [PASS]   -> BAND for every reading below: |signed| <= 0.0010 AND |z| < 2.0
+
+====================================================================================================
+[2] G3 REPRODUCTION OF IDEA 875 (agreement bars: different seed strings, 20 seeds vs 10)
+====================================================================================================
+  SM_DOM signed @10bps -0.00348  (875 published -0.0046, bar 0.002)  [PASS]
+  SM_DOM sign-test z   +3.83      (875 published +3.8, bar >= +3.0)  [PASS]
+  SM_DOM dispersion    5.87x     (875 published 5.87x, bar 0.6)  [PASS]
+  SM_UNIF inside the BLOCK2 band: signed +0.00023, z -0.41  [PASS]
+  G3 overall [PASS]
+
+====================================================================================================
+[3] THE CONSTRUCTION AS MEASURED ON ALL 1,152 REAL ARMS
+====================================================================================================
+  real arm: median 1152 arms priced; median runs 41, median L* 64 days, median long-day share 0.999
+  null          max/L*  disp/real  longday  days>L*   switch  placebo vol
+  RAND            0.06       0.03    0.269    0.000    13.23       0.1185
+  BLOCK           1.00       1.00    0.986    0.000     1.00       0.1183
+  BLOCK2          1.00       1.00    0.986    0.000     1.00       0.1183
+  SM_DOM          8.86       5.87    0.925    0.925     1.00       0.1184
+  SM_SPLIT2       4.44       4.09    0.927    0.927     1.00       0.1184
+  SM_SPLIT4       2.24       2.81    0.931    0.843     1.00       0.1183
+  SM_SPLIT8       1.13       1.86    0.938    0.583     1.00       0.1183
+  SM_LONE         1.00       0.56    1.000    0.000     1.00       0.1184
+  SM_FILL         1.00       1.73    0.940    0.000     1.00       0.1183
+  SM_UNIF         0.24       0.03    1.000    0.000     1.00       0.1184
+  REAL ARM        1.00       1.00    0.986    0.000     1.00            -
+  days>L* = share of firing days in runs STRICTLY LONGER than the real arm's longest run,
+  i.e. the day mass 875's proposed cap would declare illegal.  0.000 = the null obeys it.
+
+====================================================================================================
+[4] H_MAX - CONTRAST A: TAIL-MASS DAY COUNT HELD, MAXIMUM DIVIDED BY j
+    Same long-run day mass (k-m+j), spread over j runs instead of 1.  If the -0.0046 is a
+    MAX fact it decays along this ladder; if it is a TAIL-MASS fact it is flat.
+====================================================================================================
+  null         j   max/L*  days>L*     signed@0    signed@10    signed@25       z  inside band
+  SM_DOM       1     8.86    0.925     -0.00384     -0.00348     -0.00306   +3.83      OUTSIDE
+  SM_SPLIT2    2     4.44    0.927     -0.00064     -0.00063     -0.00055   +0.94       INSIDE
+  SM_SPLIT4    4     2.24    0.843     +0.00044     +0.00042     +0.00066   -0.53       INSIDE
+  SM_SPLIT8    8     1.13    0.583     +0.00139     +0.00130     +0.00126   -1.65      OUTSIDE
+  |signed| monotone DECREASING along j=1,2,4,8: 0.00348 > 0.00063 > 0.00042 > 0.00130   [NO]
+  SM_SPLIT8 inside the BLOCK2 band: [NO]
+  H_MAX REFUTED   -> the bias is NOT purely a MAX-RUN-LENGTH fact
+  Spearman(max/L*, signed) over the four ladder points = -1.000
+
+====================================================================================================
+[5] H_TAIL - CONTRAST B: MAXIMUM HELD AT EXACTLY L*, TAIL MASS VARIED
+    Both nulls SATISFY 875's proposed clause (longest run <= the real arm's longest run).
+    If both are clean, the cap is a SUFFICIENT clause and no tail bound is needed.
+====================================================================================================
+  null          max/L*  days>L*    disp     signed@0    signed@10    signed@25       z  inside band
+  SM_LONE         1.00    0.000    0.56     +0.00130     +0.00101     +0.00100   -1.18      OUTSIDE
+  SM_FILL         1.00    0.000    1.73     +0.00159     +0.00144     +0.00130   -1.77      OUTSIDE
+  |SM_FILL - SM_LONE| at 10 bps = 0.00044  (bar 0.001)
+  dispersion multiple at the SAME max: SM_FILL 1.73x vs SM_LONE 0.56x of the real arm's  (3.07x each other)
+  H_TAIL REFUTED   -> a cap at the real arm's own longest run is NOT sufficient
+
+====================================================================================================
+[6] H_MECH - 875's PROPOSED MECHANISM AS A FALSIFIABLE PREDICTION
+    'a single giant de-grossed run is a long cash holiday that lowers the placebo's vol,
+     raising its Sharpe and SHRINKING the measured excess'  ->  more max, lower vol, more
+     negative gap.
+====================================================================================================
+  over the 7 switch-matched nulls (pooled values):
+    Spearman(max/L*,        signed gap) = -0.577   (H_MECH bar <= -0.80)
+    Spearman(days>L* share,  signed gap) = -0.667
+    Spearman(dispersion,    signed gap) = -0.536
+    Spearman(max/L*,        placebo vol)= +0.396   (mechanism: longer max -> lower vol)
+  placebo annualised vol along j=1,2,4,8: 0.1184 < 0.1184 < 0.1183 < 0.1183   [NOT monotone]
+  H_MECH REFUTED
+
+  [6b] WHERE DOES THE SM_DOM BIAS LIVE?  (all rows reported; nothing selected on)
+  The placebo vol column above is flat to 0.2% across all ten nulls, so under
+  Sharpe = mean / vol the whole signed gap is a MEAN-RETURN difference.  Converted:
+    SM_DOM      signed -0.00348 x vol 0.1184 =   -4.12 bps/yr of mean return
+    SM_SPLIT2   signed -0.00063 x vol 0.1184 =   -0.74 bps/yr of mean return
+    SM_SPLIT4   signed +0.00042 x vol 0.1183 =   +0.49 bps/yr of mean return
+    SM_SPLIT8   signed +0.00130 x vol 0.1183 =   +1.54 bps/yr of mean return
+    SM_LONE     signed +0.00101 x vol 0.1184 =   +1.19 bps/yr of mean return
+    SM_FILL     signed +0.00144 x vol 0.1183 =   +1.71 bps/yr of mean return
+    SM_UNIF     signed +0.00023 x vol 0.1184 =   +0.27 bps/yr of mean return
+    BLOCK2      signed -0.00015 x vol 0.1183 =   -0.17 bps/yr of mean return
+
+  per-arm Spearman(driver, SM_DOM signed gap): rate -0.016  nruns -0.046  max_runlen -0.002  depth -0.092  gross +0.016
+  cut                        n     median       mean        SE  sign-test z
+  depth=0.5                576   -0.00184   -0.00172   0.00069        +1.75
+  depth=1.0                576   -0.00590   -0.00623   0.00137        +3.67
+  cadence=D                576   -0.00350   -0.00467   0.00113        +3.17
+  cadence=W                576   -0.00324   -0.00327   0.00104        +2.25
+  gross=0.75               576   -0.00352   -0.00434   0.00106        +3.25
+  gross=1.0                576   -0.00342   -0.00361   0.00112        +2.17
+  panel=B136               384   -0.00422   -0.00516   0.00124        +2.35
+  panel=SMALL              384   -0.00255   -0.00303   0.00149        +2.25
+  panel=U56                384   -0.00357   -0.00374   0.00125        +2.04
+  DEPTH is the one cut that changes the reading: the bias is a FULL-DE-GROSSING effect.
+
+====================================================================================================
+[7] H_COSTINV - the switch counts are matched, so none of this may be a cost story
+====================================================================================================
+  RAND        signed 0/10/25 = -0.00264 / +0.27485 / +0.68841   range 0.69105   switch ratio 13.23x
+  BLOCK2      signed 0/10/25 = -0.00054 / -0.00015 / -0.00007   range 0.00047   switch ratio 1.00x
+  SM_DOM      signed 0/10/25 = -0.00384 / -0.00348 / -0.00306   range 0.00078   switch ratio 1.00x
+  SM_SPLIT2   signed 0/10/25 = -0.00064 / -0.00063 / -0.00055   range 0.00009   switch ratio 1.00x
+  SM_SPLIT4   signed 0/10/25 = +0.00044 / +0.00042 / +0.00066   range 0.00025   switch ratio 1.00x
+  SM_SPLIT8   signed 0/10/25 = +0.00139 / +0.00130 / +0.00126   range 0.00013   switch ratio 1.00x
+  SM_LONE     signed 0/10/25 = +0.00130 / +0.00101 / +0.00100   range 0.00030   switch ratio 1.00x
+  SM_FILL     signed 0/10/25 = +0.00159 / +0.00144 / +0.00130   range 0.00030   switch ratio 1.00x
+  SM_UNIF     signed 0/10/25 = -0.00003 / +0.00023 / -0.00002   range 0.00026   switch ratio 1.00x
+  H_COSTINV (worst switch-matched range 0.00078 < 0.005): CONFIRMED
+
+====================================================================================================
+[8] NOISE ACCOUNTING at 20 seeds - per-arm |gap| vs what seed noise alone predicts
+    median|gap| = 0.6745 * 1.2533 / sqrt(NSEED) * sqrt(sd_null^2 + sd_BLOCK^2)
+====================================================================================================
+  null         obs |gap|      pred  obs/pred     signed  SE(mean)  signed/SE
+  RAND            0.2749    0.0171     16.07   +0.27485   0.00471     +66.85
+  BLOCK2          0.0168    0.0178      0.94   -0.00015   0.00088      +0.01
+  SM_DOM          0.0149    0.0155      0.96   -0.00348   0.00077      -5.17
+  SM_SPLIT2       0.0163    0.0166      0.98   -0.00063   0.00083      -1.64
+  SM_SPLIT4       0.0160    0.0171      0.94   +0.00042   0.00084      +0.73
+  SM_SPLIT8       0.0164    0.0173      0.95   +0.00130   0.00084      +2.02
+  SM_LONE         0.0158    0.0173      0.91   +0.00101   0.00082      +1.93
+  SM_FILL         0.0158    0.0173      0.91   +0.00144   0.00082      +1.40
+  SM_UNIF         0.0149    0.0174      0.85   +0.00023   0.00083      -0.37
+  n arms = 1152.  The per-arm |.| statistic is the one 871 used; the pooled SIGNED
+  mean / SE column is the one that resolves an effect, and BLOCK2 fixes its zero.
+
+====================================================================================================
+[9] BY PANEL AND BY FAMILY - signed gap at 10 bps (is the answer a property of one panel?)
+====================================================================================================
+  null               U56       B136      SMALL                worst family
+  SM_DOM        -0.00357   -0.00422   -0.00255            DISP-HI -0.00523
+  SM_SPLIT2     +0.00027   +0.00030   -0.00230            DISP-LO +0.00538
+  SM_SPLIT4     +0.00127   +0.00091   -0.00109            CORR-HI +0.00481
+  SM_SPLIT8     +0.00125   +0.00254   +0.00045            DISP-LO +0.00554
+  SM_LONE       +0.00072   +0.00108   +0.00129            CORR-HI +0.00380
+  SM_FILL       +0.00198   +0.00178   +0.00050         BREADTH-HI +0.00423
+  SM_UNIF       -0.00100   +0.00039   +0.00122           VOL20-HI +0.00323
+  BLOCK2        +0.00037   -0.00034   -0.00002            DISP-HI +0.00312
+
+====================================================================================================
+[10] RULE 8 (a) - DOES THE SIGNED GAP WALK FORWARD?  (IS fitted, OOS read once)
+====================================================================================================
+  SM_DOM      rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families  -> H_WF REFUTED
+  SM_SPLIT2   rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_SPLIT4   rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_SPLIT8   rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_LONE     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_FILL     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  SM_UNIF     rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+  BLOCK2      rho(IS gap, OOS gap) >= +0.30 in 0 of 8 families
+
+  IS-window and OOS-window medians of the signed gap (null - BLOCK), 10 bps:
+    SM_DOM      IS -0.01116   OOS -0.01471
+    SM_SPLIT2   IS -0.00631   OOS -0.00877
+    SM_SPLIT4   IS +0.00187   OOS -0.00168
+    SM_SPLIT8   IS +0.00472   OOS +0.00024
+    SM_LONE     IS +0.00057   OOS +0.00123
+    SM_FILL     IS +0.00340   OOS +0.00224
+    SM_UNIF     IS +0.00104   OOS -0.00072
+    BLOCK2      IS -0.00152   OOS -0.00012
+
+====================================================================================================
+[11] RULE 8 (b) - THE BOOKS: IS-only selector, OOS read once, BOTH KEEP PATHS
+====================================================================================================
+  B136: IS-pick CORR-HI q0.12 w252 d1.0 W g1.0
+     FULL 13.91% / 1.166 / -16.63%  halves 1.289/1.037   OOS 12.97% / 1.154 / -16.63%
+     RULES v2 (live) 7.98% / 1.101 / -12.18%  halves 1.237/0.967  OOS 7.88% / 1.108 / -12.18%
+     SPY            15.16% / 0.886 / -33.72%  halves 0.960/0.826  OOS 15.33% / 0.877 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 10.61%, OOS Sharpe > 0.877
+     4a fail   4b PASS
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 44 (11.5%)
+  SMALL: IS-pick VOL20-LO q0.17 w252 d1.0 D g1.0
+     FULL 5.04% / 0.404 / -48.52%  halves 0.736/0.201   OOS 2.00% / 0.203 / -48.52%
+     RULES v2 (live) 4.30% / 0.663 / -13.89%  halves 0.806/0.554  OOS 3.75% / 0.559 / -13.89%
+     SPY            14.06% / 0.858 / -33.72%  halves 0.914/0.834  OOS 15.33% / 0.877 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 9.84%, OOS Sharpe > 0.877
+     4a fail   4b fail
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 0 (0.0%)
+  U56: IS-pick CORR-HI q0.07 w1008 d1.0 W g1.0
+     FULL 12.73% / 1.034 / -22.93%  halves 1.160/0.915   OOS 12.41% / 1.016 / -22.93%
+     RULES v2 (live) 8.64% / 1.208 / -11.90%  halves 1.237/1.186  OOS 9.49% / 1.286 / -11.90%
+     SPY            15.13% / 0.885 / -33.72%  halves 0.959/0.824  OOS 15.27% / 0.874 / -33.72%
+     4b bars: DD >= -20.23%, CAGR >= 10.59%, OOS Sharpe > 0.874
+     4a fail   4b fail
+     unselected base rate over 384 arms: 4a 0 (0.0%), 4b 61 (15.9%)
+
+====================================================================================================
+[12] SUMMARY OF PRE-REGISTERED HYPOTHESES
+====================================================================================================
+  H_MAX       REFUTED
+  H_TAIL      REFUTED
+  H_MECH      REFUTED
+  H_COSTINV   CONFIRMED
+
+done in 185s
