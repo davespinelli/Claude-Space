@@ -1,0 +1,172 @@
+====================================================================================================
+IDEA 964 (cloud) -- should the PHASE-AVERAGED MEAN replace the CANONICAL?
+  run 2026-09-15 21:51 UTC   PROTOCOL 10 bps / t+1 / warm-up 260
+====================================================================================================
+  panel U56      56 cols  2008-01-02 .. 2026-09-14  4,704 rows
+  panel B136    136 cols  2008-01-02 .. 2026-09-11  4,703 rows
+  panel SMALL   664 cols  2010-01-04 .. 2026-09-11  4,198 rows
+  SMALL drops 52 tickers with max_1d_move >= 1.0 per data/small_meta.csv; SURVIVORSHIP: all three panels are CURRENT-CONSTITUENT lists (rule 9).
+
+====================================================================================================
+(A) GATES
+====================================================================================================
+  G0 offset_mask(.,per,0) == engine.rebalance_mask on M/Q/W: 0 disagreeing rows  PASS
+  G2 BAND03@0.75 == baseline.rules_v2_weights: 0.000e+00  PASS
+  G1 Ctx == engine.backtest   returns 8.674e-18   turnover 1.978e-16  PASS
+
+====================================================================================================
+(B) THE PHASE GRID -- 5 books x 3 panels x 2 gross x (21 M + 63 Q) phases x 5 rungs
+    plus, for every family, the TRANCHED book FPORT = mean of the phase-books' NET returns
+====================================================================================================
+  panel U56 done  (11s)
+  panel B136 done  (30s)
+  panel SMALL done  (131s)
+  wrote 2026-09-15_should-the-PHASE-AVERAGED-MEAN-replace-the-CANONICAL_cloud.grid.csv  (12,600 rows, 42 cols)
+  12,600 grid rows = 3 panels x 5 books x 2 gross x 84 phases x 5 rungs
+  G3 idea 962's committed grid.csv replayed on 12,600 of 12,600 rows x 13 cols, max|d| 1.776e-15   PASS
+  wrote 2026-09-15_should-the-PHASE-AVERAGED-MEAN-replace-the-CANONICAL_cloud.fport.csv  (300 rows, 43 cols)
+  G4 FPORT over a ONE-phase family == that phase's CANON row: 0.000e+00  PASS
+  G5 determinism (subject family rebuilt): 0.000e+00  PASS
+
+====================================================================================================
+(C) THE THREE ESTIMATORS, FAMILY BY FAMILY
+====================================================================================================
+  wrote 2026-09-15_should-the-PHASE-AVERAGED-MEAN-replace-the-CANONICAL_cloud.families.csv  (300 rows, 62 cols)
+  300 families (60 at the 10 bps verdict rung).
+
+  H_BIAS -- is the CANONICAL biased inside its own family?  (CANON - FMEAN, pp of CAGR)
+    cadence M: median +0.600 pp   mean +0.728 pp   canonical percentile median 0.929 [0.119, 0.976]
+    cadence Q: median -1.112 pp   mean -2.152 pp   canonical percentile median 0.063 [0.008, 0.532]
+    POOLED median -0.213 pp (bar +/-0.25), canonical percentile median 0.444 (bar [0.4, 0.6])  ->  H_BIAS PASS (canonical is UNBIASED)
+
+  what the dial is worth -- family CAGR spread (max - min), pp:
+    M: median 3.05 pp   max 12.24 pp   sd(CAGR) median 0.79 pp
+    Q: median 4.37 pp   max 23.77 pp   sd(CAGR) median 0.92 pp
+
+  H_TRADE / H_CHEAP -- is the TRANCHED book better, and is it cheaper?
+    M: FPORT Sharpe > CANON in 0.300 of 30 families (median gain -0.0288); turnover <= CANON in 0.700; median turn/yr FPORT 6.80 vs CANON 6.76
+    Q: FPORT Sharpe > CANON in 1.000 of 30 families (median gain +0.1022); turnover <= CANON in 0.433; median turn/yr FPORT 3.45 vs CANON 3.41
+    POOLED win rate 0.650 (bar 0.75) -> H_TRADE FAIL;  turnover rate 0.567 (bar 0.9) -> H_CHEAP FAIL
+
+  4b pass counts at the verdict rung, by estimator (REC convention):
+    M: CANON 3 / 30    FPORT 2 / 30    mean within-family phase pass share 0.081
+    Q: CANON 0 / 30    FPORT 1 / 30    mean within-family phase pass share 0.035
+    4a at the same rung: CANON 0 / 60, FPORT 0 / 60
+
+====================================================================================================
+(D) THE CENSUS -- the record's committed MONTHLY / QUARTERLY claims, re-read three ways
+====================================================================================================
+  wrote 2026-09-15_should-the-PHASE-AVERAGED-MEAN-replace-the-CANONICAL_cloud.corpus.csv  (47 rows, 4 cols)
+  corpus: 4,746 csv artifacts in research/backtests/; 43 carry a committed M/Q CAGR claim with a nameable family key (31 MB), 3 otherwise-eligible files excluded as the record's own null/coin-flip generators, 1 keyed but carrying no M/Q row.
+  89,696 committed M/Q claim rows harvested from 43 files; a row with no `phase` column is read as the CANONICAL phase (phase 0), which is what those runs traded.
+  wrote 2026-09-15_should-the-PHASE-AVERAGED-MEAN-replace-the-CANONICAL_cloud.census.csv  (26,100 rows, 24 cols)
+    claim set STRICT: 600 of 65,096 rows map onto a family in this run's grid; 64,496 do not and are DROPPED, never counted as agreeing (29,332 gross not 0.75/1.00, 24,210 panel not on this grid, 10,794 book not on this grid, 160 cost rung not 0/5/10/25/50)
+    claim set WIDE  : 25,200 of 89,696 rows map onto a family in this run's grid; 64,496 do not and are DROPPED, never counted as agreeing (29,332 gross not 0.75/1.00, 24,210 panel not on this grid, 10,794 book not on this grid, 160 cost rung not 0/5/10/25/50)
+    claim set GRID  : 300 of 300 rows map onto a family in this run's grid; 0 do not and are DROPPED, never counted as agreeing
+
+  claim-set x cadence census (row-weighted / cell-weighted, per idea 973's warning):
+    set     cad     rows  cells  files  sign_FMEAN  sign_FPORT  verdict_FPORT  cellw_sign  cellw_verd
+    STRICT  M        300    150      2       0.053       0.047          0.033       0.053       0.033
+    STRICT  Q        300    150      2       0.053       0.053          0.027       0.053       0.027
+    STRICT  ALL      600    300      2       0.053       0.050          0.030       0.053       0.030
+    WIDE    M      6,300    150      2       0.053       0.047          0.033       0.053       0.033
+    WIDE    Q     18,900    150      2       0.053       0.053          0.027       0.053       0.027
+    WIDE    ALL   25,200    300      2       0.053       0.052          0.028       0.053       0.030
+    GRID    M        150    150      1       0.053       0.047          0.033       0.053       0.033
+    GRID    Q        150    150      1       0.053       0.053          0.027       0.053       0.027
+    GRID    ALL      300    300      1       0.053       0.050          0.030       0.053       0.030
+  wrote 2026-09-15_should-the-PHASE-AVERAGED-MEAN-replace-the-CANONICAL_cloud.censussummary.csv  (9 rows, 10 cols)
+    H_SIGN    STRICT sign flips 0.053 (bar 0.1) -> FAIL (not consequential)
+    H_VERDICT STRICT verdict flips 0.030 (bar 0.1) -> FAIL (not consequential)
+
+====================================================================================================
+(E) RULE 8 -- book x gross chosen on 2009-2016 ALONE, 2017-2026 read ONCE
+====================================================================================================
+  G6 choosers are IS-ONLY: 0 picks moved when OOS columns were permuted  PASS
+  wrote 2026-09-15_should-the-PHASE-AVERAGED-MEAN-replace-the-CANONICAL_cloud.walkforward.csv  (270 rows, 21 cols)
+  270 rule-8 picks (54 at 10 bps) = 3 choosers x 3 panels x 2 cadences x 3 estimators x 5 rungs
+
+  OOS pass counts at the verdict rung, by estimator:
+    CANON   4b  0 / 18    4a  0 / 18    median OOS CAGR 11.94%  median OOS Sharpe 0.832  median OOS MaxDD -34.14%
+    FMEAN   4b  0 / 18    4a  0 / 18    median OOS CAGR 13.90%  median OOS Sharpe 0.888  median OOS MaxDD -33.60%
+    FPORT   4b  1 / 18    4a  0 / 18    median OOS CAGR 15.45%  median OOS Sharpe 0.946  median OOS MaxDD -28.20%
+
+  every rule-8 pick at 10 bps (OOS 2017-2026, vs SPY OOS and RULES v2 OOS in the same window):
+    panel  cad est    chooser   book    g      OOS CAGR      Sh    MaxDD  4b  4a  fail-legs
+    B136   M   CANON  C_CAGR    TOP05   EXT      35.17%   1.152  -39.70%   n   n  L4_DD
+    B136   M   CANON  C_ISLEGS  TOP20   CORE     15.55%   1.000  -26.11%   n   n  L4_DD
+    B136   M   CANON  C_SHARPE  TOP20   EXT      20.81%   1.005  -33.68%   n   n  L4_DD
+    B136   M   FMEAN  C_CAGR    TOP05   EXT      24.63%   0.892  -35.70%   n   n  L2_H2,L4_DD
+    B136   M   FMEAN  C_ISLEGS  BAND03  EXT      10.68%   1.010  -23.02%   n   n  L4_DD
+    B136   M   FMEAN  C_SHARPE  TOP10   EXT      20.03%   0.863  -33.55%   n   n  L2_H2,L3_OOS,L4_DD
+    B136   M   FPORT  C_CAGR    TOP05   EXT      25.05%   0.935  -33.21%   n   n  L4_DD
+    B136   M   FPORT  C_ISLEGS  TOP20   CORE     13.81%   0.932  -23.85%   n   n  L4_DD
+    B136   M   FPORT  C_SHARPE  TOP10   EXT      20.23%   0.891  -32.15%   n   n  L2_H2,L4_DD
+    B136   Q   CANON  C_CAGR    TOP05   EXT      23.23%   0.853  -36.61%   n   n  L2_H2,L3_OOS,L4_DD
+    B136   Q   CANON  C_ISLEGS  EWELIG  CORE     10.97%   0.969  -24.44%   n   n  L4_DD
+    B136   Q   CANON  C_SHARPE  TOP05   EXT      23.23%   0.853  -36.61%   n   n  L2_H2,L3_OOS,L4_DD
+    B136   Q   FMEAN  C_CAGR    TOP05   EXT      25.34%   0.884  -35.99%   n   n  L2_H2,L4_DD
+    B136   Q   FMEAN  C_ISLEGS  EWELIG  CORE     11.97%   1.034  -23.38%   n   n  L4_DD
+    B136   Q   FMEAN  C_SHARPE  TOP05   EXT      25.34%   0.884  -35.99%   n   n  L2_H2,L4_DD
+    B136   Q   FPORT  C_CAGR    TOP05   EXT      26.12%   0.957  -35.11%   n   n  L4_DD
+    B136   Q   FPORT  C_ISLEGS  EWELIG  CORE     11.99%   1.055  -23.10%   n   n  L4_DD
+    B136   Q   FPORT  C_SHARPE  TOP05   EXT      26.12%   0.957  -35.11%   n   n  L4_DD
+    SMALL  M   CANON  C_CAGR    TOP10   EXT      11.04%   0.509  -48.37%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD
+    SMALL  M   CANON  C_ISLEGS  BAND03  EXT       5.43%   0.595  -21.94%   n   n  L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  M   CANON  C_SHARPE  BAND03  EXT       5.43%   0.595  -21.94%   n   n  L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  M   FMEAN  C_CAGR    TOP10   EXT       8.54%   0.429  -47.07%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  M   FMEAN  C_ISLEGS  BAND03  CORE      3.48%   0.501  -18.80%   n   n  L1_H1,L2_H2,L3_OOS,L5_CAGR
+    SMALL  M   FMEAN  C_SHARPE  BAND03  CORE      3.48%   0.501  -18.80%   n   n  L1_H1,L2_H2,L3_OOS,L5_CAGR
+    SMALL  M   FPORT  C_CAGR    TOP10   EXT       9.19%   0.466  -45.17%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  M   FPORT  C_ISLEGS  BAND03  CORE      3.49%   0.505  -18.70%   n   n  L1_H1,L2_H2,L3_OOS,L5_CAGR
+    SMALL  M   FPORT  C_SHARPE  BAND03  CORE      3.49%   0.505  -18.70%   n   n  L1_H1,L2_H2,L3_OOS,L5_CAGR
+    SMALL  Q   CANON  C_CAGR    TOP20   EXT       1.38%   0.182  -53.11%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  Q   CANON  C_ISLEGS  BAND03  CORE      3.50%   0.470  -24.08%   n   n  L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  Q   CANON  C_SHARPE  BAND03  CORE      3.50%   0.470  -24.08%   n   n  L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  Q   FMEAN  C_CAGR    TOP10   EXT       9.79%   0.461  -51.91%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  Q   FMEAN  C_ISLEGS  EWELIG  EXT       7.63%   0.478  -44.40%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  Q   FMEAN  C_SHARPE  EWELIG  EXT       7.63%   0.478  -44.40%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  Q   FPORT  C_CAGR    TOP10   EXT      10.70%   0.521  -44.92%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD
+    SMALL  Q   FPORT  C_ISLEGS  BAND03  CORE      3.78%   0.517  -20.85%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+    SMALL  Q   FPORT  C_SHARPE  BAND03  EXT       4.90%   0.512  -27.52%   n   n  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+    U56    M   CANON  C_CAGR    TOP05   EXT      20.50%   0.832  -34.61%   n   n  L2_H2,L3_OOS,L4_DD
+    U56    M   CANON  C_ISLEGS  TOP10   CORE     17.24%   1.097  -23.22%   n   n  L4_DD
+    U56    M   CANON  C_SHARPE  TOP05   EXT      20.50%   0.832  -34.61%   n   n  L2_H2,L3_OOS,L4_DD
+    U56    M   FMEAN  C_CAGR    TOP05   EXT      26.21%   1.015  -30.09%   n   n  L4_DD
+    U56    M   FMEAN  C_ISLEGS  TOP20   CORE     15.51%   1.175  -20.69%   n   n  L4_DD
+    U56    M   FMEAN  C_SHARPE  TOP05   EXT      26.21%   1.015  -30.09%   n   n  L4_DD
+    U56    M   FPORT  C_CAGR    TOP05   EXT      26.54%   1.061  -28.20%   n   n  L4_DD
+    U56    M   FPORT  C_ISLEGS  TOP10   CORE     17.08%   1.098  -21.44%   n   n  L4_DD
+    U56    M   FPORT  C_SHARPE  TOP05   EXT      26.54%   1.061  -28.20%   n   n  L4_DD
+    U56    Q   CANON  C_CAGR    TOP05   EXT      11.94%   0.550  -38.48%   n   n  L2_H2,L3_OOS,L4_DD
+    U56    Q   CANON  C_ISLEGS  EWELIG  CORE     11.53%   1.034  -22.21%   n   n  L4_DD
+    U56    Q   CANON  C_SHARPE  TOP05   EXT      11.94%   0.550  -38.48%   n   n  L2_H2,L3_OOS,L4_DD
+    U56    Q   FMEAN  C_CAGR    TOP05   EXT      25.80%   0.963  -33.66%   n   n  L4_DD
+    U56    Q   FMEAN  C_ISLEGS  EWELIG  CORE     12.28%   1.093  -20.57%   n   n  L4_DD
+    U56    Q   FMEAN  C_SHARPE  TOP05   EXT      25.80%   0.963  -33.66%   n   n  L4_DD
+    U56    Q   FPORT  C_CAGR    TOP05   EXT      26.42%   1.041  -31.84%   n   n  L4_DD
+    U56    Q   FPORT  C_ISLEGS  EWELIG  CORE     12.31%   1.121  -20.14%   Y   n  -
+    U56    Q   FPORT  C_SHARPE  TOP05   EXT      26.42%   1.041  -31.84%   n   n  L4_DD
+
+  comparands, U56 OOS 2017-2026 @ 10 bps:  SPY 15.27% / 0.874 / -33.72%    RULES v2 9.46% / 1.277 / -12.05%
+  comparands, B136 OOS 2017-2026 @ 10 bps:  SPY 15.33% / 0.877 / -33.72%    RULES v2 7.88% / 1.106 / -12.24%
+  comparands, SMALL OOS 2017-2026 @ 10 bps:  SPY 15.33% / 0.877 / -33.72%    RULES v2 3.75% / 0.560 / -13.89%
+
+  best three picks by OOS Sharpe at 10 bps:
+    U56/M/FMEAN/C_ISLEGS -> TOP20 @ CORE: OOS 15.51% / 1.175 / -20.69%   4b FAIL  4a FAIL
+    B136/M/CANON/C_CAGR -> TOP05 @ EXT: OOS 35.17% / 1.152 / -39.70%   4b FAIL  4a FAIL
+    U56/Q/FPORT/C_ISLEGS -> EWELIG @ CORE: OOS 12.31% / 1.121 / -20.14%   4b PASS  4a FAIL
+
+====================================================================================================
+(F) HYPOTHESES
+====================================================================================================
+  H_SIGN     FAIL   +0.0533   > 0.1 of STRICT claims change sign(CAGR - SPY)
+  H_VERDICT  FAIL   +0.0300   > 0.1 of STRICT claims change 4b verdict
+  H_BIAS     PASS   -0.2125   |median(CANON-FMEAN)| <= 0.25 pp AND pctile in [0.4,0.6]
+  H_TRADE    FAIL   +0.6500   FPORT Sharpe > CANON in >= 0.75 of families
+  H_CHEAP    FAIL   +0.5667   FPORT turn/yr <= CANON in >= 0.9 of families
+  H_KEEP     PASS   +1.0000   any rule-8 OOS 4b or 4a pass at 10 bps
+  wrote 2026-09-15_should-the-PHASE-AVERAGED-MEAN-replace-the-CANONICAL_cloud.hypotheses.csv  (6 rows, 4 cols)
+
+  GATES: G0=PASS  G1=PASS  G2=PASS  G3=PASS  G4=PASS  G5=PASS  G6=PASS   (7 of 7)
+  elapsed 153s
