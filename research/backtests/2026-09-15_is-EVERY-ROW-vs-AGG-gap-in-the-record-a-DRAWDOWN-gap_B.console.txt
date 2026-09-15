@@ -1,0 +1,214 @@
+====================================================================================================
+Idea 662 -- is EVERY ROW-vs-AGG gap in the record a DRAWDOWN gap?  (lane B, 2026-09-15)
+====================================================================================================
+Idea 662 (lane B, 2026-09-15) -- is EVERY ROW-vs-AGG gap in the record a DRAWDOWN gap?
+
+THE QUESTION (queue, 2026-09-10)
+  Idea 655 priced row-level vs aggregate-only resolution live on ONE gate family (the RULES v2
+  200d +/-3% band).  It found AGG buys +3.77 pp (U56) and +5.39 pp (B136) of OOS CAGR and pays
+  13.27 and 9.43 pp of extra MaxDD, so all six rule-8 picks beat SPY's OOS Sharpe and only the
+  WHICH-names modes clear 4b's DD cap.  The queue asks whether that trade -- resolution buys
+  drawdown control, aggregation buys return -- is a PROPERTY OF THE RESOLUTION or a property of
+  THAT ONE GATE.  Re-run the record's committed gate families split into per-name and
+  panel-aggregate form and report whether the resolution premium is ALWAYS paid in drawdown.
+
+THE THREE MODES (identical construction in every family -- this is the whole design)
+  ROW  knows WHICH names pass the gate: hold each passing name at gross/N of NAV, N = names
+       priced that day, the rest of the book in CASH.  (In the TREND family this IS RULES v2.)
+  AGG  knows only HOW MANY pass -- the breadth b_t = (# passing)/(# priced) -- and never which:
+       hold the WHOLE priced panel equal-weighted at `gross` when b_t >= theta, else all cash.
+  HYB  knows both: the ROW book, switched off entirely on days when b_t < theta.
+
+THE FOUR GATE FAMILIES (per-name thresholds are COMMITTED CONSTANTS or dial-free cross-sectional
+statistics -- none of them is tuned here; only theta and gross are tuned, PROTOCOL 4's max of 2)
+  TREND  name is inside its own 200d MA +/-3% band          (baseline.band_state, RULES v2 cl.2)
+  VOL    name's 20d realised ann. vol < 0.60                (rules_v1_weights' max_vol constant)
+  MOM    name's 12-1 momentum px[t-21]/px[t-252] - 1 > 0    (baseline.score's `mom` leg)
+  DISP   name's 60d IDIOSYNCRATIC vol (std of r_i - panel mean r) is below the panel's OWN
+         cross-sectional MEAN of that statistic that day    (dial-free; breadth moves with the
+         cross-sectional skew of dispersion, which is the point of a dispersion gate)
+
+PRE-REGISTERED HYPOTHESES (fixed before any number below was read)
+  H1  For EVERY family x panel, the rule-8 AGG pick has HIGHER OOS CAGR than the ROW pick.
+  H2  For EVERY family x panel, the rule-8 AGG pick has WORSE OOS MaxDD than the ROW pick.
+  H3  Across the whole matched-gross grid, every cell where AGG buys CAGR over ROW also pays
+      drawdown ("no free resolution premium").
+  H4  4b's DD cap is what separates the modes: ROW/HYB clear it where AGG does not.
+  H5  4a passes are ~absent in every family (655 found 3/126).
+
+PROTOCOL
+  2  10 bps per unit turnover, weights at close t applied t+1 (LAG=1), weekly, no leverage/shorts.
+  3  every book compared to RULES v2 (live) and to SPY buy-and-hold on the same sample.
+  4  BOTH KEEP paths evaluated at EVERY grid point; 2 tuned params (theta, gross); family, panel
+     and mode are REPORTED AXES, every point published in the .grid.csv.
+  8  walk-forward: (theta, gross) fitted on 2009-2016 by IS Sharpe, 2017-2026 read ONCE.
+  9  SURVIVORSHIP: all three panels are current-constituent lists; levels are optimistic.
+
+GATES (run and printed BEFORE any result number is read)
+  G1  TREND/ROW at gross 0.75 IS baseline.rules_v2_weights (weights and returns).
+  G2  fast_run == engine.backtest (returns and turnover) on a representative book.
+  G3  AGG at theta=0.00 is the SAME buy-and-hold panel in all four families.
+  G4  HYB at theta=0.00 == ROW in every family.
+  G5  an always-TRUE per-name gate makes ROW == AGG(theta=0) (the ROW machinery reduces).
+  G6  SPY and RULES v2 on U56 reproduce their committed triples (15.16%/0.8861/-33.72% and
+      8.63%/1.2018/-12.05%).
+====================================================================================================
+(D) PANELS
+====================================================================================================
+  SMALL: dropped 52 of 715 meta tickers with max_1d_move >= 1.0
+  U56          56 cols  2008-01-02 -> 2026-09-14  4,704 rows  (SPY in)
+  B136        136 cols  2008-01-02 -> 2026-09-11  4,703 rows  (SPY in)
+  SMALL663    664 cols  2010-01-04 -> 2026-09-11  4,198 rows  (SPY in)
+
+====================================================================================================
+(G) GATES -- run before any result number is read
+====================================================================================================
+  G1 TREND/ROW(g=0.75) == rules_v2_weights : max|dW| 0.000e+00  max|dR| 0.000e+00   PASS
+  G2 fast_run == engine.backtest           : max|dR| 8.674e-18  max|dTurn| 1.978e-16  over 4,702 finite rows   PASS
+  G3 AGG(theta=0) same in all 4 families   : max|dW| 0.000e+00   PASS
+  G4 HYB(theta=0) == ROW in every family   : max|dW| 0.000e+00   PASS
+  G5 ALLTRUE/ROW == AGG(theta=0)           : max|dW| 0.000e+00   PASS
+  G6 SPY       U56   15.13% / 0.8845 / -33.72%   committed  15.16% / 0.8861 / -33.72%   PASS
+  G6 RULES v2  U56    8.62% / 1.2013 / -12.05%   committed   8.63% / 1.2018 / -12.05%   PASS
+  GATES: ALL PASS
+
+====================================================================================================
+(A) THE GRID -- 4 families x 3 modes x theta x gross x panel, both KEEP paths at every point
+====================================================================================================
+  --- U56 (56 cols, 2009-01-13 -> 2026-09-14) ---
+      SPY  CAGR  15.13%  Sharpe 0.8845  MaxDD -33.72%  H1/H2 0.9588/0.8236  OOS  15.27%/0.8740/-33.72%
+      V2   CAGR   8.62%  Sharpe 1.2013  MaxDD -12.05%  H1/H2 1.2322/1.1770  OOS   9.46%/1.2772/-12.05%
+      4b bars: DD cap -20.23%   CAGR floor  10.59%
+      TREND breadth: mean 0.710  p10 0.365  p50 0.778  p90 0.893  days>=0.50 0.842
+      VOL   breadth: mean 0.959  p10 0.911  p50 0.981  p90 1.000  days>=0.50 0.994
+      MOM   breadth: mean 0.727  p10 0.365  p50 0.792  p90 0.911  days>=0.50 0.868
+      DISP  breadth: mean 0.627  p10 0.571  p50 0.625  p90 0.679  days>=0.50 0.998
+      (12.8s)
+  --- B136 (136 cols, 2009-01-13 -> 2026-09-11) ---
+      SPY  CAGR  15.16%  Sharpe 0.8861  MaxDD -33.72%  H1/H2 0.9596/0.8259  OOS  15.33%/0.8767/-33.72%
+      V2   CAGR   7.98%  Sharpe 1.0993  MaxDD -12.24%  H1/H2 1.2348/0.9658  OOS   7.88%/1.1059/-12.24%
+      4b bars: DD cap -20.23%   CAGR floor  10.61%
+      TREND breadth: mean 0.710  p10 0.385  p50 0.763  p90 0.902  days>=0.50 0.852
+      VOL   breadth: mean 0.964  p10 0.926  p50 0.985  p90 1.000  days>=0.50 0.993
+      MOM   breadth: mean 0.733  p10 0.444  p50 0.792  p90 0.924  days>=0.50 0.883
+      DISP  breadth: mean 0.616  p10 0.570  p50 0.615  p90 0.664  days>=0.50 1.000
+      (30.6s)
+  --- SMALL663 (664 cols, 2011-01-13 -> 2026-09-11) ---
+      SPY  CAGR  14.06%  Sharpe 0.8581  MaxDD -33.72%  H1/H2 0.9138/0.8344  OOS  15.33%/0.8767/-33.72%
+      V2   CAGR   4.30%  Sharpe 0.6637  MaxDD -13.89%  H1/H2 0.8063/0.5552  OOS   3.75%/0.5600/-13.89%
+      4b bars: DD cap -20.23%   CAGR floor   9.84%
+      TREND breadth: mean 0.547  p10 0.295  p50 0.571  p90 0.775  days>=0.50 0.646
+      VOL   breadth: mean 0.831  p10 0.707  p50 0.868  p90 0.924  days>=0.50 0.973
+      MOM   breadth: mean 0.558  p10 0.318  p50 0.567  p90 0.796  days>=0.50 0.623
+      DISP  breadth: mean 0.627  p10 0.597  p50 0.627  p90 0.655  days>=0.50 1.000
+      (192.2s)
+
+  grid points 756   4a 3   4b 51   BOTH 0
+
+====================================================================================================
+(B) THE MATCHED CONTRAST -- AGG(theta,g) and HYB(theta,g) against ROW(g), same family,
+    same panel, same gross.  H3: every cell that BUYS CAGR also PAYS drawdown.
+====================================================================================================
+  FULL AGG:  360 cells   buys CAGR over ROW  261   of those, pays DD  261   FREE (buys CAGR, no DD cost)    0
+  FULL HYB:  324 cells   buys CAGR over ROW   34   of those, pays DD    4   FREE (buys CAGR, no DD cost)   30
+  OOS  AGG:  360 cells   buys CAGR over ROW  246   of those, pays DD  244   FREE (buys CAGR, no DD cost)    2
+  OOS  HYB:  324 cells   buys CAGR over ROW   36   of those, pays DD    8   FREE (buys CAGR, no DD cost)   28
+
+  by family x panel (OOS leg, AGG only, all thetas/grosses pooled):
+    B136       DISP  n= 30  buys  18  free   0  median dCAGR  +4.95%  median dMaxDD  -6.20%
+    B136       MOM   n= 30  buys  21  free   0  median dCAGR  +2.24%  median dMaxDD  -2.96%
+    B136       TREND n= 30  buys  21  free   0  median dCAGR  +1.97%  median dMaxDD  -5.00%
+    B136       VOL   n= 30  buys  24  free   0  median dCAGR  +0.99%  median dMaxDD  -0.83%
+    SMALL663   DISP  n= 30  buys  21  free   0  median dCAGR  +3.98%  median dMaxDD -10.10%
+    SMALL663   MOM   n= 30  buys  10  free   0  median dCAGR  -1.33%  median dMaxDD  -9.49%
+    SMALL663   TREND n= 30  buys  15  free   0  median dCAGR  -0.21%  median dMaxDD -12.57%
+    SMALL663   VOL   n= 30  buys  24  free   0  median dCAGR  +2.83%  median dMaxDD  -7.25%
+    U56        DISP  n= 30  buys  21  free   0  median dCAGR  +5.10%  median dMaxDD  -5.22%
+    U56        MOM   n= 30  buys  24  free   0  median dCAGR  +1.82%  median dMaxDD  -2.85%
+    U56        TREND n= 30  buys  20  free   2  median dCAGR  +1.74%  median dMaxDD  -5.93%
+    U56        VOL   n= 30  buys  27  free   0  median dCAGR  +0.95%  median dMaxDD  -1.43%
+
+====================================================================================================
+(C) PROTOCOL RULE 8 -- (theta, gross) fitted on 2009-2016 by IS Sharpe, 2017-2026 read ONCE
+====================================================================================================
+  --- U56 ---   SPY OOS  15.27%/0.8740/-33.72%   V2 OOS   9.46%/1.2772/-12.05%
+      TREND ROW  pick th=0.00 g=1.00 (IS Sh 1.1047, 1 tied) -> OOS  12.68% / 1.2765 / -15.91%   4a n 4b Y [-]   4b@0/10/25 1/1/1
+      TREND AGG  pick th=0.20 g=1.00 (IS Sh 1.1451, 1 tied) -> OOS  16.41% / 1.0750 / -29.18%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      TREND HYB  pick th=0.30 g=1.00 (IS Sh 1.1193, 1 tied) -> OOS  12.64% / 1.2830 / -15.91%   4a n 4b Y [-]   4b@0/10/25 1/1/1
+      VOL   ROW  pick th=0.00 g=1.00 (IS Sh 1.0699, 1 tied) -> OOS  16.13% / 1.1761 / -22.16%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      VOL   AGG  pick th=0.00 g=1.00 (IS Sh 1.1116, 7 tied) -> OOS  18.31% / 1.1277 / -29.18%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      VOL   HYB  pick th=0.00 g=1.00 (IS Sh 1.0699, 7 tied) -> OOS  16.13% / 1.1761 / -22.16%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      MOM   ROW  pick th=0.00 g=1.00 (IS Sh 0.9880, 1 tied) -> OOS  13.50% / 1.0773 / -25.60%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      MOM   AGG  pick th=0.00 g=1.00 (IS Sh 1.1116, 2 tied) -> OOS  18.31% / 1.1277 / -29.18%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      MOM   HYB  pick th=0.00 g=1.00 (IS Sh 0.9880, 2 tied) -> OOS  13.50% / 1.0773 / -25.60%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      DISP  ROW  pick th=0.00 g=1.00 (IS Sh 0.9174, 1 tied) -> OOS   7.96% / 0.8851 / -19.72%   4a n 4b n [H2+CAGRFLOOR]   4b@0/10/25 0/0/0
+      DISP  AGG  pick th=0.50 g=1.00 (IS Sh 1.1280, 1 tied) -> OOS  18.27% / 1.1257 / -29.18%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      DISP  HYB  pick th=0.50 g=1.00 (IS Sh 0.9274, 1 tied) -> OOS   7.95% / 0.8836 / -19.72%   4a n 4b n [H2+CAGRFLOOR]   4b@0/10/25 0/0/0
+  --- B136 ---   SPY OOS  15.33%/0.8767/-33.72%   V2 OOS   7.88%/1.1059/-12.24%
+      TREND ROW  pick th=0.00 g=1.00 (IS Sh 1.0927, 1 tied) -> OOS  10.52% / 1.1048 / -16.16%   4a n 4b Y [-]   4b@0/10/25 1/1/0
+      TREND AGG  pick th=0.20 g=1.00 (IS Sh 1.2031, 1 tied) -> OOS  15.85% / 1.0584 / -25.59%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      TREND HYB  pick th=0.20 g=1.00 (IS Sh 1.1023, 1 tied) -> OOS  10.32% / 1.0889 / -16.16%   4a n 4b n [CAGRFLOOR]   4b@0/10/25 1/0/0
+      VOL   ROW  pick th=0.00 g=1.00 (IS Sh 1.1575, 1 tied) -> OOS  15.87% / 1.1102 / -24.51%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      VOL   AGG  pick th=0.90 g=1.00 (IS Sh 1.2352, 1 tied) -> OOS  14.48% / 0.9915 / -25.59%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      VOL   HYB  pick th=0.90 g=1.00 (IS Sh 1.2160, 1 tied) -> OOS  13.85% / 1.0001 / -24.51%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      MOM   ROW  pick th=0.00 g=1.00 (IS Sh 0.9814, 1 tied) -> OOS  12.92% / 1.0197 / -29.04%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      MOM   AGG  pick th=0.10 g=1.00 (IS Sh 1.1672, 1 tied) -> OOS  18.39% / 1.0907 / -32.72%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      MOM   HYB  pick th=0.00 g=1.00 (IS Sh 0.9814, 1 tied) -> OOS  12.92% / 1.0197 / -29.04%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      DISP  ROW  pick th=0.00 g=1.00 (IS Sh 1.0522, 1 tied) -> OOS   8.40% / 0.8950 / -21.65%   4a n 4b n [H2+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+      DISP  AGG  pick th=0.00 g=1.00 (IS Sh 1.1481, 6 tied) -> OOS  18.39% / 1.0907 / -32.72%   4a n 4b n [DDCAP]   4b@0/10/25 0/0/0
+      DISP  HYB  pick th=0.00 g=1.00 (IS Sh 1.0522, 6 tied) -> OOS   8.40% / 0.8950 / -21.65%   4a n 4b n [H2+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+  --- SMALL663 ---   SPY OOS  15.33%/0.8767/-33.72%   V2 OOS   3.75%/0.5600/-13.89%
+      TREND ROW  pick th=0.00 g=1.00 (IS Sh 0.8616, 1 tied) -> OOS   4.92% / 0.5598 / -18.19%   4a n 4b n [H1+H2+OOS+CAGRFLOOR]   4b@0/10/25 0/0/0
+      TREND AGG  pick th=0.50 g=1.00 (IS Sh 1.1502, 1 tied) -> OOS   1.95% / 0.2144 / -34.22%   4a n 4b n [H2+OOS+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+      TREND HYB  pick th=0.50 g=1.00 (IS Sh 0.9963, 1 tied) -> OOS   1.87% / 0.2650 / -18.37%   4a n 4b n [H1+H2+OOS+CAGRFLOOR]   4b@0/10/25 0/0/0
+      VOL   ROW  pick th=0.00 g=1.00 (IS Sh 0.9191, 1 tied) -> OOS   4.49% / 0.3726 / -27.91%   4a n 4b n [H1+H2+OOS+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+      VOL   AGG  pick th=0.50 g=0.50 (IS Sh 1.0355, 1 tied) -> OOS   4.97% / 0.5475 / -18.68%   4a n 4b n [H2+OOS+CAGRFLOOR]   4b@0/10/25 0/0/0
+      VOL   HYB  pick th=0.50 g=1.00 (IS Sh 0.9361, 1 tied) -> OOS   4.34% / 0.3641 / -27.91%   4a n 4b n [H1+H2+OOS+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+      MOM   ROW  pick th=0.00 g=1.00 (IS Sh 0.8806, 1 tied) -> OOS   4.64% / 0.4719 / -28.17%   4a n 4b n [H1+H2+OOS+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+      MOM   AGG  pick th=0.00 g=1.00 (IS Sh 0.9742, 3 tied) -> OOS  11.82% / 0.6076 / -44.16%   4a n 4b n [H2+OOS+DDCAP]   4b@0/10/25 0/0/0
+      MOM   HYB  pick th=0.00 g=1.00 (IS Sh 0.8806, 3 tied) -> OOS   4.64% / 0.4719 / -28.17%   4a n 4b n [H1+H2+OOS+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+      DISP  ROW  pick th=0.00 g=1.00 (IS Sh 1.0000, 1 tied) -> OOS   4.92% / 0.4378 / -28.03%   4a n 4b n [H2+OOS+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+      DISP  AGG  pick th=0.00 g=1.00 (IS Sh 0.9742, 6 tied) -> OOS  11.82% / 0.6076 / -44.16%   4a n 4b n [H2+OOS+DDCAP]   4b@0/10/25 0/0/0
+      DISP  HYB  pick th=0.00 g=1.00 (IS Sh 1.0000, 6 tied) -> OOS   4.92% / 0.4378 / -28.03%   4a n 4b n [H2+OOS+DDCAP+CAGRFLOOR]   4b@0/10/25 0/0/0
+
+  rule-8 picks: AGG vs ROW, per family x panel (the queue's question, out of sample)
+  panel      family         ROW OOS CAGR/MaxDD         AGG OOS CAGR/MaxDD    dCAGR   dMaxDD  H1  H2
+  B136       DISP          8.40% /   -21.65%       18.39% /   -32.72%   +9.99%  -11.07%  Y   Y
+  B136       MOM          12.92% /   -29.04%       18.39% /   -32.72%   +5.47%   -3.68%  Y   Y
+  B136       TREND        10.52% /   -16.16%       15.85% /   -25.59%   +5.33%   -9.43%  Y   Y
+  B136       VOL          15.87% /   -24.51%       14.48% /   -25.59%   -1.39%   -1.07%  n   Y
+  SMALL663   DISP          4.92% /   -28.03%       11.82% /   -44.16%   +6.90%  -16.13%  Y   Y
+  SMALL663   MOM           4.64% /   -28.17%       11.82% /   -44.16%   +7.18%  -15.99%  Y   Y
+  SMALL663   TREND         4.92% /   -18.19%        1.95% /   -34.22%   -2.96%  -16.02%  n   Y
+  SMALL663   VOL           4.49% /   -27.91%        4.97% /   -18.68%   +0.48%   +9.22%  Y   n
+  U56        DISP          7.96% /   -19.72%       18.27% /   -29.18%  +10.30%   -9.46%  Y   Y
+  U56        MOM          13.50% /   -25.60%       18.31% /   -29.18%   +4.81%   -3.58%  Y   Y
+  U56        TREND        12.68% /   -15.91%       16.41% /   -29.18%   +3.72%  -13.27%  Y   Y
+  U56        VOL          16.13% /   -22.16%       18.31% /   -29.18%   +2.19%   -7.02%  Y   Y
+  H1 (AGG buys OOS CAGR)      : 10/12
+  H2 (AGG pays OOS drawdown)  : 11/12
+
+====================================================================================================
+(V) HYPOTHESES AND VERDICT
+====================================================================================================
+  H1 AGG pick buys OOS CAGR in every family x panel : 10/12  REFUTED
+  H2 AGG pick pays OOS drawdown in every cell       : 11/12  REFUTED
+  H3 no FREE premium anywhere on the grid (OOS)     : 2/246 free  REFUTED
+  H4 DDCAP is the modal 4b blocker                  : 300 of 705 4b failures name DDCAP
+       ROW  n=  36  4a   0  4b   4  DDCAP-blocked   12
+       AGG  n= 360  4a   1  4b  20  DDCAP-blocked  186
+       HYB  n= 360  4a   2  4b  27  DDCAP-blocked  102
+  H5 4a is ~absent                                  : 3/756
+
+  rule-8 picks clearing 4b at ALL cost rungs: 2 of 36
+     U56        TREND ROW  th=0.00 g=1.00  OOS  12.68%/1.2765/-15.91%
+     U56        TREND HYB  th=0.30 g=1.00  OOS  12.64%/1.2830/-15.91%
+  rule-8 picks clearing 4a at 10 bps       : 0 of 36
+
+====================================================================================================
+(O) OUTPUTS
+====================================================================================================
+  wrote 2026-09-15_is-EVERY-ROW-vs-AGG-gap-in-the-record-a-DRAWDOWN-gap_B.grid.csv  (756 rows)
+  wrote 2026-09-15_is-EVERY-ROW-vs-AGG-gap-in-the-record-a-DRAWDOWN-gap_B.pairs.csv  (1,440 rows)
+  wrote 2026-09-15_is-EVERY-ROW-vs-AGG-gap-in-the-record-a-DRAWDOWN-gap_B.walkforward.csv  (36 rows)
+  gates ALL PASS   total runtime 273.1s
