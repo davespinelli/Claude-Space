@@ -1,0 +1,189 @@
+====================================================================================================
+IDEA 952 (lane C)  can the BINDING LEG of the SILENT 4b FAIL rows be recovered?
+====================================================================================================
+TUNED: (1) RECOVERY RULE, 5 nested rungs R0..R4, every rung reported;
+       (2) CLAIM SET, {ROW-WEIGHTED, FILE-WEIGHTED}, both reported, never merged.
+Everything else is a reported axis.  Bars were fixed before any number was read.
+
+  4,675 committed CSVs under research/backtests
+  LEADERBOARD-cited stems: 850 -> 4,486 CSVs (96.0% of the record).  This cut does not partition the record, so it is REPORTED and not used as a tuned level (see the docstring).
+
+  building SPY's panel comparands (used only at R4) ...
+    U56    SPY  CAGR 15.13%  MaxDD -33.72%  H1 0.959  H2 0.824  OOS_S 0.874
+    B136   SPY  CAGR 15.16%  MaxDD -33.72%  H1 0.960  H2 0.826  OOS_S 0.877
+    SMALL  SPY  CAGR 14.06%  MaxDD -33.72%  H1 0.914  H2 0.834  OOS_S 0.877
+
+====================================================================================================
+(A) THE LADDER -- every committed 4b FAIL row, rung by rung
+====================================================================================================
+  692 CSVs carry a 4b pass column; 837,860 committed 4b FAIL rows
+  944 committed 835,403 -- drift +2,457 rows from files committed after 944 ran (printed, not absorbed)
+
+    rung              rows NAMING a binding leg     rows fully decided      files
+    R0_ASBUILT           127,261    15.2%           127,261    15.2%      185
+    R1_ALPHABET          177,061    21.1%           177,061    21.1%      286
+    R2_LEGCOLS           238,811    28.5%           238,811    28.5%      312
+    R3_STATS_INFILE      282,508    33.7%           282,508    33.7%      435
+    R4_STATS_PANEL       567,526    67.7%           568,038    67.8%      595
+
+    944 booked 710,599 rows UNRECOVERABLE.  The ladder names a binding leg for 440,265 of them = 62.0%
+    irreducible residue (no rule reaches it): 270,334 rows = 32.3% of the record's 4b FAIL rows
+
+  CLAIM SET = FILE-WEIGHTED (684 CSVs carrying >= 1 committed 4b FAIL row; a file counts as recovered when >= 50% of its FAIL rows get a named leg)
+    rung              files RECOVERED               files fully decided
+    R0_ASBUILT               184    26.9%               184    26.9%
+    R1_ALPHABET              284    41.5%               284    41.5%
+    R2_LEGCOLS               310    45.3%               310    45.3%
+    R3_STATS_INFILE          391    57.2%               391    57.2%
+    R4_STATS_PANEL           551    80.6%               551    80.6%
+
+  REPORTED cut: LEADERBOARD-cited files only -- 526,154 of 790,648 FAIL rows named = 66.5%
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.ladder.csv  (10 rows, 7 cols)
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.recovery.csv  (684 rows, 12 cols)
+
+====================================================================================================
+(B) GATES
+====================================================================================================
+  [PASS] G1 CROSS-RUN reproduces 944's committed census
+         WIDE 837,860 vs 944's 835,403 (+0.29%); R0 rows naming a leg 127,261 vs 944's 125,090; L4_DD-alone share of R0 16.0% vs 944's 15.8%   (bar |dDD_alone| <= 2 pp and |dWIDE| <= 5%)
+  [PASS] G2 NESTING  R0 <= R1 <= R2 <= R3 <= R4 on every file
+         0 violations over 684 files   (bar 0 violations)
+  [PASS] G3 VALIDATION every R1 column parses on >= 90% of its FAIL values
+         75 columns admitted, 81 candidate columns REJECTED on their own values: leg_sharpe (0.00) x5; leg_halves (0.00) x5; leg_dd (0.00) x5; leg_cagr (0.00) x5; leg (0.00) x4; OOS4b_fail (0.89) x2   (bar admitted > 0 and rejects listed)
+  [PASS] G4 DETERMINISM re-read of the same files gives identical counts
+         32 files re-read, max|d| 0   (bar identical)
+  [PASS] G5 SELF-SEE the census sees idea 944's own committed FAIL rows
+         2,457 FAIL rows harvested from 944's own CSVs   (bar > 0)
+  [PASS] G6 WF ENGINE fast runner == engine.backtest (TOP20, U56, monthly, scored window)
+         max|dret| 2.08e-17  max|dturn| 7.77e-16   (bar < 1e-9)
+
+  GATES 6 of 6 PASS
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.gates.csv  (6 rows, 4 cols)
+
+====================================================================================================
+(C) FIDELITY -- where the record STATES the leg AND the statistics can rebuild it
+====================================================================================================
+  R3 (the file's OWN committed SPY comparand):   35,370 doubly-covered rows
+       PROTOCOL's FULL-sample DD/CAGR convention :   17,074 =  48.3%
+       the record's OOS-window convention        :    5,065 =  14.3%
+       EITHER convention explains the row        :   17,110 =  48.4%
+  R4 (this run's panel comparand):  227,022 doubly-covered rows
+       PROTOCOL's FULL-sample DD/CAGR convention :  197,719 =  87.1%
+       the record's OOS-window convention        :  124,828 =  55.0%
+       EITHER convention explains the row        :  197,952 =  87.2%
+  the largest disagreements (committed vs rebuilt):
+      R3  committed L1_H1+L2_H2+L3_OOS+L4_DD+L5_CAGR rebuilt L3_OOS+L4_DD+L5_CAGR             x4,954
+      R4  committed L1_H1+L2_H2+L3_OOS+L5_CAGR       rebuilt L1_H1+L2_H2+L5_CAGR              x2,921
+      R3  committed L1_H1+L2_H2+L3_OOS+L4_DD+L5_CAGR rebuilt L3_OOS                           x2,594
+      R4  committed L1_H1+L2_H2+L3_OOS+L4_DD+L5_CAGR rebuilt L1_H1+L2_H2+L4_DD+L5_CAGR        x1,942
+      R4  committed L1_H1+L2_H2+L3_OOS+L4_DD+L5_CAGR rebuilt L3_OOS                           x1,935
+      R3  committed L1_H1+L2_H2+L3_OOS+L4_DD         rebuilt L3_OOS                           x1,046
+      R4  committed L1_H1                            rebuilt L1_H1+L2_H2+L3_OOS+L5_CAGR       x992
+      R4  committed L2_H2                            rebuilt L1_H1+L2_H2+L3_OOS+L4_DD+L5_CAGR x913
+
+  idea 161's STRICTER per-file gate (the rebuild must match on EVERY row of a file, on
+  EITHER comparand): 42 of 296 doubly-covered files reconstruct
+  EXACTLY (14.2%); the rest are listed in the fidelity CSV.
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.fidelity_files.csv  (296 rows, 3 cols)
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.fidelity.csv  (339 rows, 4 cols)
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.fidelity_rung.csv  (2 rows, 8 cols)
+
+  THE FIDELITY-GATED LADDER (the number this run stands behind)
+    A statistics rung (R3/R4) is allowed on a file ONLY where the rebuild reproduces that
+    file's own committed legs on EVERY doubly-covered row (idea 161's gate).  Files with
+    no doubly-covered row cannot be checked either way and are reported as a RANGE.
+    files VERIFIED 42 (12,335 FAIL rows) | REFUTED 254 (220,874) | UNCHECKABLE 388 (604,651)
+    gated recovery of the whole record: 238,891 .. 567,507 rows = 28.5% .. 67.7% (ungated R4 reads 567,526 = 67.7%)
+    of 944's 710,599 UNRECOVERABLE rows, the gated ladder names 15.7% .. 62.0%; the TEXT-ONLY rungs (R0-R2, the record's own words, no modelling and no fidelity risk) name 15.7%
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.gated.csv  (3 rows, 5 cols)
+
+====================================================================================================
+(D) BIAS -- is the readable 15% a fair sample of the record's binding legs?
+====================================================================================================
+  R0-readable rows: 127,261   newly recovered: TEXT-ONLY (R1-R2, trustworthy) 111,550, including the statistics rungs 440,265
+    leg        alone R0   alone TEXT    d pp  |  alone ALL     d pp  |   any R0   any TEXT    d pp
+    L1_H1          1.6%       2.4%     +0.9  |     1.2%     -0.4  |    50.6%     26.5%    -24.1
+    L2_H2          0.5%       3.5%     +2.9  |     1.4%     +0.9  |    57.2%     36.7%    -20.4
+    L3_OOS         0.0%       1.0%     +1.0  |     2.7%     +2.7  |    53.7%     31.0%    -22.8
+    L4_DD         16.0%      30.7%    +14.7  |    32.8%    +16.8  |    60.7%     54.4%     -6.3
+    L5_CAGR       18.2%      25.1%     +6.9  |    18.0%     -0.2  |    65.0%     52.3%    -12.7
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.bias.csv  (5 rows, 11 cols)
+
+  944's published leg shares were computed on the R0 column alone.  On the rows the
+  record ALREADY named in another column -- no modelling, nothing to distrust -- the
+  DD-cap-ALONE share reads 30.7% against 16.0% (+14.7 pp) and the CAGR-floor-ALONE share 25.1% against 18.2% (+6.9 pp).
+  The 15% the census could read is NOT a fair sample of the record's binding legs.
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.signatures.csv  (154 rows, 3 cols)
+
+====================================================================================================
+(E) RECORD-TIME WALK-FORWARD -- alphabet learned on files dated <= 2026-09-08
+====================================================================================================
+  IS  files 2,121 (403,003 FAIL rows) -> vocabulary of 106 (rung, column) pairs
+  OOS files 2,554 (434,857 FAIL rows)
+     recovery with the FULL vocabulary   : 95.0%
+     recovery with the IS-ONLY vocabulary: 92.0%   ratio 0.968
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.recordwf.csv  (3 rows, 5 cols)
+
+====================================================================================================
+(F) PRICING THE REPORTING CLAUSE
+====================================================================================================
+  CLAUSE: every committed row carrying a 4b verdict also carries a `fail4b` string.
+    rows it would have made adjudicable that NO post-hoc rule reaches: 270,334 (32.3%)
+    files still wholly or partly silent after the ladder: 225 of 684
+    cost: 1 column, ~10.1 MB over the whole record (0.83% of its committed CSV bytes)
+    rows the ladder DOES rescue (the clause is worth less than the ladder there): 440,265 ungated, 111,630..440,246 once the rebuild has to verify against the file's own committed legs
+    -> the clause's real price is the FIDELITY-GATED residue: 270,353..598,969 rows (32.3%..71.5%) that no post-hoc rule adjudicates at all.
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.residue.csv  (225 rows, 7 cols)
+
+====================================================================================================
+(G) PROTOCOL RULE 8 -- book chosen on 2009-2016 ALONE, 2017-2026 read ONCE
+====================================================================================================
+  SPY        FULL  15.13% / 0.885 / -33.72%   H1 0.959  H2 0.824   OOS  15.27% / 0.874 / -33.72%
+  RULES v2   FULL   8.88% / 1.172 / -14.38%   H1 1.217  H2 1.135   OOS   9.56% / 1.224 / -14.38%
+
+   cost book     arm       CAGR   Sharpe   MaxDD      H1     H2 | OOS CAGR  Sh     DD  | 4a  4b  binding leg
+      0 TOP5     IS_PICK  19.51%   1.049 -27.18%  1.301  0.852 |  16.49% 0.864 -27.18% | False False  L3_OOS+L4_DD
+      0 TOP10    reported 17.40%   1.165 -23.17%  1.260  1.094 |  17.98% 1.137 -23.17% | False False  L4_DD
+      0 TOP20    reported 15.18%   1.238 -19.45%  1.254  1.232 |  17.17% 1.316 -19.45% | False  True  -
+      0 TOP30    reported 12.94%   1.220 -16.28%  1.232  1.213 |  14.22% 1.295 -16.28% | False  True  -
+      0 BAND03   reported  9.01%   1.188 -14.36%  1.234  1.152 |   9.70% 1.240 -14.36% | False False  L5_CAGR
+     10 TOP5     IS_PICK  18.59%   1.008 -27.24%  1.257  0.813 |  15.56% 0.824 -27.24% | False False  L2_H2+L3_OOS+L4_DD
+     10 TOP10    reported 16.69%   1.124 -23.22%  1.216  1.055 |  17.24% 1.097 -23.22% | False False  L4_DD
+     10 TOP20    reported 14.69%   1.202 -19.51%  1.216  1.198 |  16.67% 1.282 -19.51% | False  True  -
+     10 TOP30    reported 12.58%   1.190 -16.34%  1.203  1.182 |  13.83% 1.264 -16.34% | False  True  -
+     10 BAND03   reported  8.88%   1.172 -14.38%  1.217  1.135 |   9.56% 1.224 -14.38% | False False  L5_CAGR
+     25 TOP5     IS_PICK  17.23%   0.946 -27.34%  1.191  0.754 |  14.18% 0.764 -27.34% | False False  L2_H2+L3_OOS+L4_DD
+     25 TOP10    reported 15.63%   1.062 -23.29%  1.150  0.995 |  16.13% 1.036 -23.29% | False False  L4_DD
+     25 TOP20    reported 13.95%   1.149 -19.60%  1.158  1.147 |  15.91% 1.231 -19.60% | False  True  -
+     25 TOP30    reported 12.05%   1.145 -16.42%  1.159  1.136 |  13.26% 1.217 -16.42% | False  True  -
+     25 BAND03   reported  8.68%   1.147 -14.41%  1.192  1.111 |   9.35% 1.200 -14.41% | False False  L5_CAGR
+     50 TOP5     IS_PICK  14.99%   0.842 -27.51%  1.078  0.656 |  11.91% 0.663 -27.51% | False False  L2_H2+L3_OOS+L4_DD
+     50 TOP10    reported 13.88%   0.957 -23.40%  1.039  0.896 |  14.31% 0.934 -23.40% | False False  L4_DD
+     50 TOP20    reported 12.72%   1.058 -19.75%  1.061  1.062 |  14.67% 1.146 -19.75% | False  True  -
+     50 TOP30    reported 11.17%   1.069 -16.56%  1.086  1.058 |  12.31% 1.138 -16.56% | False  True  -
+     50 BAND03   reported  8.34%   1.106 -14.45%  1.150  1.070 |   9.01% 1.159 -14.45% | False False  L5_CAGR
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.walkforward.csv  (20 rows, 18 cols)
+
+  IS-chosen book at 10 bps: TOP5 (IS Sharpe 1.280) -> OOS 15.56% / 0.824 / -27.24%, 4a False, 4b False (binds on L2_H2+L3_OOS+L4_DD)
+  canonical TOP20 at 10 bps: OOS 16.67% / 1.282 / -19.51%, 4a False, 4b True (binds on -)
+  4a PASS 0 of 20 grid points; 4b PASS 8 of 20.  EVERY row above names its binding leg -- that is the clause this run prices, applied to this run.
+
+====================================================================================================
+(H) PRE-REGISTERED BARS
+====================================================================================================
+  H_RECOVER    PASS  440,265 of 710,599 = 62.0% ungated; FIDELITY-GATED 15.7%..62.0%; TEXT-ONLY (R0-R2, no modelling) 15.7%
+               (bar >= 50% of 944's UNRECOVERABLE rows get a named binding leg)
+  H_FIDELITY   FAIL  81.9% on 262,392 doubly-covered rows; idea 161's per-file gate 42/296 files exact
+               (bar >= 90% exact agreement text vs statistics)
+  H_BIAS       FAIL  on the TRUSTWORTHY text-only recoveries L4_DD +14.7 pp, L5_CAGR +6.9 pp; including the statistics rungs +16.8 / +0.2 pp
+               (bar L4_DD-alone and L5_CAGR-alone shares move <= 5 pp)
+  H_CLAIMSET   FAIL  12.8 pp
+               (bar headline recoverable share moves <= 10 pp ROW- vs FILE-WEIGHTED)
+  H_WFRULE     PASS  92.0% vs 95.0%, ratio 0.968
+               (bar IS-only vocabulary keeps >= 90% of the full-vocabulary recovery on later files)
+  H_WF         RUN   4a 0/20, 4b 8/20; IS pick TOP5 OOS Sharpe 0.824 vs SPY 0.874
+               (bar rule 8 run, both KEEP paths, every row names its leg)
+  wrote 2026-09-15_can-the-BINDING-LEG-of-the-710313-SILENT-4b-FAIL-rows-be-recovered-from-their-own-SCRIPTS_C.hypotheses.csv  (6 rows, 4 cols)
+
+====================================================================================================
+  elapsed 42s
