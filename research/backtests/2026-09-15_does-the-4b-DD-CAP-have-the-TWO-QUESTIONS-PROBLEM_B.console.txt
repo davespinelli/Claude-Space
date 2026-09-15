@@ -1,0 +1,208 @@
+====================================================================================================
+IDEA 874 - does the record's 4b DD CAP have the SAME two-questions problem as the CAGR FLOOR?  (lane B, 2026-09-15)
+====================================================================================================
+panels: U56 (4704, 56)  B136 (4703, 136)  SMALL (4198, 664) (sub-$2B, 52 max_1d_move>=1.0 tickers dropped)
+books: 8 SHELF (memo-backed) + 54 GRID = 62  (868's set, imported)
+ladder: 3 conventions x 6 cap fractions x 2 cost rungs x 62 books = 2232 verdict cells, all published
+
+[0] REPRODUCTION GATES (printed before any new number is read)
+  G1 SHELF books vs their committed memo triples (@10 bps) - the DD leg is the one this run is about
+    book                                   memo DD      here   |dDD|  memo CAGR     here    |dC|    |dS|
+    u56-v2band-gross100                    -0.1570   -0.1543  0.0027     0.1155   0.1135  0.0020  0.0016
+    u56-band008-gross100                   -0.1905   -0.1858  0.0047     0.1137   0.1122  0.0015  0.0102
+    u56-top20-band-m20                     -0.1722   -0.1789  0.0067     0.1287   0.1269  0.0018  0.0080
+    u56-marsrespread-gross075               n/a     -0.1848    n/a      0.1155   0.1134  0.0021  0.0024
+    u56-quantile50-respread-M              -0.1980   -0.1946  0.0034     0.1547   0.1523  0.0024  0.0008
+    b136-r620-gross065-W                   -0.1943   -0.1943  0.0000     0.1499   0.1499  0.0000  0.0000
+    b136-qroll-q012-w1008-d050-g100        -0.1731   -0.1722  0.0009     0.1430   0.1420  0.0010  0.0011
+    u56-k8-qroll-q017-w1008-d100-g100      -0.1479   -0.1438  0.0041     0.1416   0.1386  0.0030  0.0019
+    G1 CAGR/Sharpe legs: 8 of 8 within 1.00 pp / 0.10  [PASS]
+    G1 DD leg: 7 of 7 memo'd MaxDDs reproduce within 2.00 pp  [PASS]  (1 shelf memo published no MaxDD; tape vintage moves every LEVEL slightly, and the GAP this run measures is same-tape)
+  G2 comparand at constant g=1.00 == SPY                max|d| = 0.000e+00, |dMaxDD| = 0.000e+00  [PASS]
+  G3 PATH comparand's mean gross == the book's own      max|d| = 0.000e+00  [PASS]
+  G4 fast metrics == engine.metrics() (Sharpe and MaxDD) |d|   = 0.000e+00  [PASS]
+  G5 CROSS-RUN vs 868's COMMITTED gaps.csv (62 books joined): max|d b_CAGR| = 9.714e-17, max|d gap_PATH| = 9.758e-17  [PASS]
+
+====================================================================================================
+[1] H_TWO - does the DD cap conflate the SAME two questions the CAGR floor does?
+====================================================================================================
+    SHELF, @10 bps - the book's own drawdown against each convention's comparand
+    book                                   gbar  book DD   SPY100    CONST     PATH  slack@0.60 CUR     PATH
+    u56-k8-qroll-q017-w1008-d100-g100     0.857  -14.38%  -33.72%  -29.45%  -22.06%           5.85%   -1.14%
+    u56-v2band-gross100                   0.695  -15.43%  -33.72%  -24.37%  -19.86%           4.80%   -3.51%
+    b136-qroll-q012-w1008-d050-g100       0.944  -17.22%  -33.72%  -32.07%  -23.16%           3.01%   -3.32%
+    u56-top20-band-m20                    0.708  -17.89%  -33.72%  -24.80%  -18.27%           2.34%   -6.93%
+    u56-marsrespread-gross075             0.735  -18.48%  -33.72%  -25.65%  -25.87%           1.75%   -2.96%
+    u56-band008-gross100                  0.663  -18.58%  -33.72%  -23.36%  -21.39%           1.65%   -5.75%
+    b136-r620-gross065-W                  0.650  -19.43%  -33.72%  -22.93%  -22.93%           0.80%   -5.68%
+    u56-quantile50-respread-M             0.731  -19.46%  -33.72%  -25.52%  -25.96%           0.77%   -3.88%
+
+    THE MECHANISM: Spearman(mean gross, DD slack at kappa=0.60) on the GRID (n=54)
+      CURRENT  rho = -0.622   (per panel: U56 -0.429; B136 -0.518; SMALL -0.969)
+      CONST    rho = -0.002   (per panel: U56 +0.523; B136 +0.476; SMALL -0.946)
+      PATH     rho = -0.095   (per panel: U56 +0.280; B136 +0.162; SMALL -0.905)
+    H_TWO (CURRENT and PATH slacks rank the GRID in OPPOSITE orders): -0.622 vs -0.095  [FAIL]
+    868's CAGR-leg reading on the same books, recomputed here: rho(gross, gap_CURRENT) = +0.535, rho(gross, gap_PATH) = -0.619
+
+    H_EASY - is the cap mechanically easy for a de-grossed book (662/866/676)?
+      gbar < 0.70  n= 17  DD-leg pass rate under CURRENT at kappa=0.60: 1.000   (median book DD -13.89%, median gbar 0.498)
+      gbar >= 0.85 n= 25  DD-leg pass rate under CURRENT at kappa=0.60: 0.520   (median book DD -17.60%, median gbar 0.904)
+    H_EASY (lo-gross pass rate exceeds hi-gross by >= 20 pp): 1.000 - 0.520 = +48.0%  [PASS]
+
+====================================================================================================
+[2] THE DD LEG ALONE - pass rate at every (kappa x convention) cell, ALL 18 per set
+====================================================================================================
+    SHELF (n=8)  [kappa = cap fraction; PROTOCOL 0.60]
+      kappa    CURRENT      CONST       PATH
+       0.40      0.000      0.000      0.000
+       0.50      0.250      0.125      0.000
+       0.60      1.000      0.250      0.000
+       0.70      1.000      0.375      0.125
+       0.80      1.000      0.875      0.625
+       1.00      1.000      1.000      1.000
+    GRID (n=54)  [kappa = cap fraction; PROTOCOL 0.60]
+      kappa    CURRENT      CONST       PATH
+       0.40      0.148      0.000      0.000
+       0.50      0.444      0.111      0.000
+       0.60      0.648      0.278      0.000
+       0.70      0.759      0.463      0.167
+       0.80      0.815      0.630      0.389
+       1.00      0.907      0.815      0.704
+    GRID at PROTOCOL's kappa=0.60: CURRENT 0.648 -> PATH 0.000 = -64.8%  (868's CAGR leg moved +20%-scale in the OPPOSITE sense; the direct comparison is printed in [3])
+
+====================================================================================================
+[3] H_DIR / H_SAME - the FULL 4b verdict with the DD leg swapped, against 868's flips
+====================================================================================================
+    at PROTOCOL's kappa=0.60 / phi=0.70, 10 bps - 4b count by which leg is swapped:
+      set       n   CURRENT     CONST      PATH   | CAGR-leg swap (868)   CURRENT     CONST      PATH   | BOTH legs   CURRENT     CONST      PATH
+      SHELF     8         8         2         0   |                             8         8         8   |                   8         2         0
+      GRID     54        18        14         0   |                            18        27        27   |                  18        14         0
+
+    CONST vs CURRENT:
+      DD-leg swap : 10 verdict flips  (0 FAIL->PASS, 10 PASS->FAIL)
+      CAGR-leg swap (868's):  9 verdict flips  (9 FAIL->PASS, 0 PASS->FAIL)
+      overlap: |DD n CAGR| = 0, |union| = 19, Jaccard = 0.000
+           CAGR B136-band0.03-g0.50                GRID   gbar 0.352  CAGR FAIL->PASS
+           CAGR B136-band0.03-g0.75                GRID   gbar 0.527  CAGR FAIL->PASS
+           CAGR B136-band0.03-g1.00                GRID   gbar 0.703  CAGR FAIL->PASS
+           CAGR B136-band0.08-g0.50                GRID   gbar 0.350  CAGR FAIL->PASS
+           CAGR B136-band0.08-g0.75                GRID   gbar 0.525  CAGR FAIL->PASS
+        DD      B136-band0.08-g1.00                GRID   gbar 0.700  DD PASS->FAIL
+        DD      B136-qroll-q0.12-w252-d1.00        GRID   gbar 0.816  DD PASS->FAIL
+           CAGR U56-band0.03-g0.50                 GRID   gbar 0.347  CAGR FAIL->PASS
+           CAGR U56-band0.03-g0.75                 GRID   gbar 0.521  CAGR FAIL->PASS
+        DD      U56-band0.03-g1.00                 GRID   gbar 0.695  DD PASS->FAIL
+           CAGR U56-band0.08-g0.50                 GRID   gbar 0.332  CAGR FAIL->PASS
+           CAGR U56-band0.08-g0.75                 GRID   gbar 0.498  CAGR FAIL->PASS
+        DD      U56-band0.08-g1.00                 GRID   gbar 0.663  DD PASS->FAIL
+        DD      b136-r620-gross065-W               SHELF  gbar 0.650  DD PASS->FAIL
+        DD      u56-band008-gross100               SHELF  gbar 0.663  DD PASS->FAIL
+        DD      u56-marsrespread-gross075          SHELF  gbar 0.735  DD PASS->FAIL
+        DD      u56-quantile50-respread-M          SHELF  gbar 0.731  DD PASS->FAIL
+        DD      u56-top20-band-m20                 SHELF  gbar 0.708  DD PASS->FAIL
+        DD      u56-v2band-gross100                SHELF  gbar 0.695  DD PASS->FAIL
+
+    PATH vs CURRENT:
+      DD-leg swap : 26 verdict flips  (0 FAIL->PASS, 26 PASS->FAIL)
+      CAGR-leg swap (868's):  9 verdict flips  (9 FAIL->PASS, 0 PASS->FAIL)
+      overlap: |DD n CAGR| = 0, |union| = 35, Jaccard = 0.000
+           CAGR B136-band0.03-g0.50                GRID   gbar 0.352  CAGR FAIL->PASS
+           CAGR B136-band0.03-g0.75                GRID   gbar 0.527  CAGR FAIL->PASS
+           CAGR B136-band0.03-g1.00                GRID   gbar 0.703  CAGR FAIL->PASS
+           CAGR B136-band0.08-g0.50                GRID   gbar 0.350  CAGR FAIL->PASS
+           CAGR B136-band0.08-g0.75                GRID   gbar 0.525  CAGR FAIL->PASS
+        DD      B136-band0.08-g1.00                GRID   gbar 0.700  DD PASS->FAIL
+        DD      B136-qroll-q0.12-w1008-d0.50       GRID   gbar 0.944  DD PASS->FAIL
+        DD      B136-qroll-q0.12-w1008-d1.00       GRID   gbar 0.897  DD PASS->FAIL
+        DD      B136-qroll-q0.12-w252-d0.50        GRID   gbar 0.904  DD PASS->FAIL
+        DD      B136-qroll-q0.12-w252-d1.00        GRID   gbar 0.816  DD PASS->FAIL
+        DD      B136-qroll-q0.17-w1008-d0.50       GRID   gbar 0.930  DD PASS->FAIL
+        DD      B136-qroll-q0.17-w1008-d1.00       GRID   gbar 0.869  DD PASS->FAIL
+        DD      B136-qroll-q0.17-w252-d0.50        GRID   gbar 0.881  DD PASS->FAIL
+        DD      B136-qroll-q0.17-w504-d0.50        GRID   gbar 0.896  DD PASS->FAIL
+        DD      B136-qroll-q0.17-w504-d1.00        GRID   gbar 0.801  DD PASS->FAIL
+           CAGR U56-band0.03-g0.50                 GRID   gbar 0.347  CAGR FAIL->PASS
+           CAGR U56-band0.03-g0.75                 GRID   gbar 0.521  CAGR FAIL->PASS
+        DD      U56-band0.03-g1.00                 GRID   gbar 0.695  DD PASS->FAIL
+           CAGR U56-band0.08-g0.50                 GRID   gbar 0.332  CAGR FAIL->PASS
+           CAGR U56-band0.08-g0.75                 GRID   gbar 0.498  CAGR FAIL->PASS
+        DD      U56-band0.08-g1.00                 GRID   gbar 0.663  DD PASS->FAIL
+        DD      U56-qroll-q0.12-w1008-d0.50        GRID   gbar 0.932  DD PASS->FAIL
+        DD      U56-qroll-q0.12-w1008-d1.00        GRID   gbar 0.885  DD PASS->FAIL
+        DD      U56-qroll-q0.12-w252-d0.50         GRID   gbar 0.902  DD PASS->FAIL
+        DD      U56-qroll-q0.17-w1008-d0.50        GRID   gbar 0.919  DD PASS->FAIL
+        DD      U56-qroll-q0.17-w1008-d1.00        GRID   gbar 0.857  DD PASS->FAIL
+        DD      U56-qroll-q0.17-w252-d0.50         GRID   gbar 0.882  DD PASS->FAIL
+        DD      b136-qroll-q012-w1008-d050-g100    SHELF  gbar 0.944  DD PASS->FAIL
+        DD      b136-r620-gross065-W               SHELF  gbar 0.650  DD PASS->FAIL
+        DD      u56-band008-gross100               SHELF  gbar 0.663  DD PASS->FAIL
+        DD      u56-k8-qroll-q017-w1008-d100-g100  SHELF  gbar 0.857  DD PASS->FAIL
+        DD      u56-marsrespread-gross075          SHELF  gbar 0.735  DD PASS->FAIL
+        DD      u56-quantile50-respread-M          SHELF  gbar 0.731  DD PASS->FAIL
+        DD      u56-top20-band-m20                 SHELF  gbar 0.708  DD PASS->FAIL
+        DD      u56-v2band-gross100                SHELF  gbar 0.695  DD PASS->FAIL
+
+    H_DIR (a MAJORITY of DD-swap flips under PATH are PASS->FAIL, i.e. the OPPOSITE direction to 868's floor): 26 of 26  [PASS]
+    H_SAME (Jaccard(DD flip set, CAGR flip set) >= 0.20 under PATH): 0.000  [FAIL]
+
+    WHICH LEG BINDS at PROTOCOL's own convention (CURRENT, kappa=0.60, phi=0.70, 10 bps):
+      SHELF: H1 binds 0/8, H2 binds 0/8, OOS binds 0/8, DDCAP binds 0/8, CAGRFLOOR binds 0/8
+      GRID: H1 binds 17/54, H2 binds 18/54, OOS binds 18/54, DDCAP binds 19/54, CAGRFLOOR binds 27/54
+    and under PATH (DD leg swapped only):
+      SHELF: H1 binds 0/8, H2 binds 0/8, OOS binds 0/8, DDCAP binds 8/8, CAGRFLOOR binds 0/8
+      GRID: H1 binds 17/54, H2 binds 18/54, OOS binds 18/54, DDCAP binds 54/54, CAGRFLOOR binds 27/54
+
+    COST LADDER (4b count at kappa=0.60, phi=0.70, DD leg swapped):
+       10.0 bps: CURRENT 26/62, CONST 16/62, PATH 0/62
+       25.0 bps: CURRENT 21/62, CONST 13/62, PATH 0/62
+
+====================================================================================================
+[4] PROTOCOL rule 8 - the DD gap measured on 2009-2016 and read again on 2017+
+====================================================================================================
+    SHELF: IS DD gap median +5.48%, OOS +4.56%, same sign in 8 of 8; shallower than PATH IS 8/8, OOS 8/8
+    GRID: IS DD gap median +1.94%, OOS +2.19%, same sign in 52 of 54; shallower than PATH IS 38/54, OOS 36/54
+    H_WF (DD gap sign stable across the split for a majority): 60 of 62  [PASS]
+    IS-only DD-leg verdicts vs OOS-only, CURRENT kappa=0.60 (does an IS cap predict the OOS one?):
+      SHELF: IS pass 6/8, OOS pass 8/8, agree 6/8; IS-pass-but-OOS-fail (false positives) 0, IS-fail-but-OOS-pass 2
+      GRID: IS pass 18/54, OOS pass 36/54, agree 36/54; IS-pass-but-OOS-fail (false positives) 0, IS-fail-but-OOS-pass 18
+
+    RULE-8 CHOOSER (declared before the OOS window was read): pick each panel's best book by 2009-2016 IS Sharpe, read 2017+ ONCE.
+    panel  book                                    OOS CAGR  OOS Sh  OOS MaxDD   4a   4b  4b@PATH-DD
+    B136   b136-r620-gross065-W                      14.52%   1.040    -19.43% FAIL PASS        FAIL
+    SMALL  SMALL-band0.08-g1.00                       5.44%   0.599    -18.73% FAIL FAIL        FAIL
+    U56    u56-quantile50-respread-M                 15.90%   1.230    -19.46% FAIL PASS        FAIL
+
+    THE RULE-8 PICKS IN FULL, against BOTH comparands PROTOCOL names (10 bps, t+1, weekly):
+      B136 b136-r620-gross065-W
+        book     full  14.99% / 1.126 / -19.43%   halves 1.342/0.956   IS  15.56% / 1.254 / -10.15%   OOS  14.52% / 1.040 / -19.43%
+        SPY      full  15.16% / 0.886 / -33.72%                            OOS  15.33% /   n/a  / -33.72%
+        RULES v2 full   7.98% / 1.101 / -12.18%                            OOS   7.88% / 1.108 / -12.18%
+        4a FAIL   4b PASS   4b with the DD leg gross-matched (PATH) FAIL   gbar 0.650
+      SMALL SMALL-band0.08-g1.00
+        book     full   6.37% / 0.721 / -18.73%   halves 0.918/0.566   IS   7.92% / 0.951 / -10.09%   OOS   5.44% / 0.599 / -18.73%
+        SPY      full  14.06% / 0.858 / -33.72%                            OOS  15.33% /   n/a  / -33.72%
+        RULES v2 full   4.30% / 0.663 / -13.89%                            OOS   3.75% / 0.559 / -13.89%
+        4a FAIL   4b FAIL   4b with the DD leg gross-matched (PATH) FAIL   gbar 0.556
+      U56 u56-quantile50-respread-M
+        book     full  15.23% / 1.235 / -19.46%   halves 1.335/1.158   IS  14.41% / 1.247 / -10.54%   OOS  15.90% / 1.230 / -19.46%
+        SPY      full  15.13% / 0.885 / -33.72%                            OOS  15.27% /   n/a  / -33.72%
+        RULES v2 full   8.64% / 1.208 / -11.90%                            OOS   9.49% / 1.286 / -11.90%
+        4a FAIL   4b PASS   4b with the DD leg gross-matched (PATH) FAIL   gbar 0.731
+
+====================================================================================================
+[5] WHAT THE SWAP COSTS, and the answer to the queue's question
+====================================================================================================
+    DD-leg pass rate at kappa=0.60 by realised-gross bucket, under each convention:
+      gbar bucket     n    CURRENT      CONST       PATH  median bookDD
+      <0.50           9      1.000      0.000      0.000         -9.69%
+      0.50-0.70       8      1.000      0.000      0.000        -16.81%
+      0.70-0.85      12      0.417      0.167      0.000        -21.35%
+      >0.85          25      0.520      0.520      0.000        -17.60%
+
+    HOW MUCH SHALLOWER gross-matching makes the comparand (the arithmetic that sets the sign):
+      set     median SPY100 DD  median CONST DD  median PATH DD  median gbar
+      SHELF            -33.72%          -25.16%         -22.49%        0.720
+      GRID             -33.72%          -28.90%         -22.06%        0.839
+      a g-scaled path's MaxDD is NOT g x SPY's: median(CONST_DD - gbar x SPY_DD) = -0.599% on the GRID (max 1.113%) - small, so the tightening is close to linear in gross but is measured, not assumed.
+
+  wrote 2026-09-15_does-the-4b-DD-CAP-have-the-TWO-QUESTIONS-PROBLEM_B.{books,verdicts,ladder,g1,walkforward,flips}.csv   total 190s   G5 True
