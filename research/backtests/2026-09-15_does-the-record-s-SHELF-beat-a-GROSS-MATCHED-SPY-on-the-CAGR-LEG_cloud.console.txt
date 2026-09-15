@@ -1,0 +1,151 @@
+====================================================================================================
+IDEA 868 - does the record's SHELF beat a GROSS-MATCHED SPY on the CAGR leg?  (cloud 2026-09-15)
+====================================================================================================
+panels: U56 (4704, 56)  B136 (4703, 136)  SMALL (4198, 664) (sub-$2B, 52 max_1d_move>=1.0 tickers dropped)
+books: 8 SHELF (memo-backed) + 54 GRID = 62
+
+[0] REPRODUCTION GATES (printed before any new number is read)
+  G1 SHELF books vs their committed memo triples (@10 bps)
+    book                                  memo CAGR     here  memo Sh     here    |dC|    |dS|
+    u56-v2band-gross100                      0.1155   0.1135   1.2067   1.2083  0.0020  0.0016
+    u56-band008-gross100                     0.1137   0.1122   1.1439   1.1541  0.0015  0.0102
+    u56-top20-band-m20                       0.1287   0.1269   1.1120   1.1040  0.0018  0.0080
+    u56-marsrespread-gross075                0.1155   0.1134   1.0914   1.0890  0.0021  0.0024
+    u56-quantile50-respread-M                0.1547   0.1523   1.2359   1.2351  0.0024  0.0008
+    b136-r620-gross065-W                     0.1499   0.1499   1.1264   1.1264  0.0000  0.0000
+    b136-qroll-q012-w1008-d050-g100          0.1430   0.1420   1.1121   1.1132  0.0010  0.0011
+    u56-k8-qroll-q017-w1008-d100-g100        0.1416   0.1386   1.2226   1.2245  0.0030  0.0019
+    G1: 8 of 8 reproduce within 1.00 pp of CAGR and 0.10 of Sharpe  [PASS]  (tape vintage moves every level slightly; the GAP this run measures is a same-tape difference and is unaffected)
+  G2 gross-matched SPY at constant g=1.00 == SPY        max|d| = 0.000e+00  [PASS]
+  G3 PATH comparand's mean gross == the book's own      max|d| = 0.000e+00  [PASS]
+  G4 fast metrics == engine.metrics()                   |d|    = 0.000e+00  [PASS]
+
+====================================================================================================
+[1] H_BEAT - THE QUEUE'S TITLE: does the SHELF beat its own gross-matched SPY on CAGR?
+====================================================================================================
+    book                                   gbar  book CAGR  PATH gxSPY      gap    CONST      gap   SPY100      gap
+    b136-r620-gross065-W                  0.650     14.99%      10.01%   +4.98%   10.01%   +4.98%   15.16%   -0.18%
+    u56-quantile50-respread-M             0.731     15.23%      11.34%   +3.89%   11.19%   +4.04%   15.13%   +0.10%
+    u56-top20-band-m20                    0.708     12.69%      10.09%   +2.61%   10.85%   +1.84%   15.13%   -2.44%
+    u56-band008-gross100                  0.663     11.22%       8.62%   +2.60%   10.19%   +1.04%   15.13%   -3.91%
+    u56-v2band-gross100                   0.695     11.35%       9.14%   +2.21%   10.66%   +0.69%   15.13%   -3.78%
+    u56-marsrespread-gross075             0.735     11.34%      11.28%   +0.06%   11.25%   +0.08%   15.13%   -3.79%
+    b136-qroll-q012-w1008-d050-g100       0.944     14.20%      14.56%   -0.36%   14.36%   -0.16%   15.16%   -0.96%
+    u56-k8-qroll-q017-w1008-d100-g100     0.857     13.86%      14.23%   -0.37%   13.06%   +0.80%   15.13%   -1.27%
+    SHELF beats its PATH-matched SPY on CAGR in 6 of 8 books (median gap +2.41%); CONST 7/8; SPY at 100% 1/8
+    H_BEAT (majority beat PATH): [PASS]
+    GRID, for contrast: beats PATH in 16 of 54 (median -0.43%), beats SPY at 100% in 0 of 54 (median -4.38%)
+    by panel: U56 6/18; B136 10/18; SMALL 0/18
+
+====================================================================================================
+[2] H_FREE - the CAGR leg's pass rate under each floor, phi x convention, ALL 18 cells
+    (the leg alone, so the concession is read before it is mixed with the other legs)
+====================================================================================================
+    SHELF (n=8)
+        phi    CURRENT      CONST       PATH
+       0.50      1.000      1.000      1.000
+       0.60      1.000      1.000      1.000
+       0.70      1.000      1.000      1.000
+       0.80      0.625      1.000      1.000
+       0.90      0.500      1.000      1.000
+       1.00      0.125      0.875      0.750
+    GRID (n=54)
+        phi    CURRENT      CONST       PATH
+       0.50      0.611      0.852      0.889
+       0.60      0.519      0.796      0.796
+       0.70      0.500      0.778      0.778
+       0.80      0.352      0.704      0.778
+       0.90      0.111      0.667      0.722
+       1.00      0.000      0.222      0.296
+    H_FREE (GRID pass rate at phi=0.70 rises >= 20 pp under PATH): 0.500 -> 0.778 = +27.8%  [PASS]
+
+====================================================================================================
+[3] H_FLIP - the FULL 4b verdict under each floor (all four legs), and 4a beside it
+====================================================================================================
+    at PROTOCOL's phi=0.70, 10 bps:
+      set       n   CURRENT 4b     CONST 4b      PATH 4b    4a
+      SHELF     8            8            8            8     0
+      GRID     54           18           27           27     4
+    CONST: 9 verdict changes (0 on the SHELF, 9 on the GRID)
+      GRID   U56-band0.03-g0.50                       FAIL->PASS
+      GRID   U56-band0.03-g0.75                       FAIL->PASS
+      GRID   U56-band0.08-g0.50                       FAIL->PASS
+      GRID   U56-band0.08-g0.75                       FAIL->PASS
+      GRID   B136-band0.03-g0.50                      FAIL->PASS
+      GRID   B136-band0.03-g0.75                      FAIL->PASS
+      GRID   B136-band0.03-g1.00                      FAIL->PASS
+      GRID   B136-band0.08-g0.50                      FAIL->PASS
+      GRID   B136-band0.08-g0.75                      FAIL->PASS
+    PATH: 9 verdict changes (0 on the SHELF, 9 on the GRID)
+      GRID   U56-band0.03-g0.50                       FAIL->PASS
+      GRID   U56-band0.03-g0.75                       FAIL->PASS
+      GRID   U56-band0.08-g0.50                       FAIL->PASS
+      GRID   U56-band0.08-g0.75                       FAIL->PASS
+      GRID   B136-band0.03-g0.50                      FAIL->PASS
+      GRID   B136-band0.03-g0.75                      FAIL->PASS
+      GRID   B136-band0.03-g1.00                      FAIL->PASS
+      GRID   B136-band0.08-g0.50                      FAIL->PASS
+      GRID   B136-band0.08-g0.75                      FAIL->PASS
+    H_FLIP (>= 1 SHELF verdict changes under PATH at phi=0.70): 0  [FAIL]
+
+    WHICH LEG BINDS (CURRENT floor, phi=0.70, 10 bps) - the floor's own share:
+      SHELF: H1 binds 0/8, H2 binds 0/8, OOS binds 0/8, DDCAP binds 0/8, CAGRFLOOR binds 0/8
+      GRID: H1 binds 17/54, H2 binds 18/54, OOS binds 18/54, DDCAP binds 19/54, CAGRFLOOR binds 27/54
+
+====================================================================================================
+[4] PROTOCOL rule 8 - the gap measured on 2009-2016 and read again on 2017+
+====================================================================================================
+    SHELF: IS gap median +1.22%, OOS gap median +2.96%, same sign in 6 of 8; beats PATH IS 5/8, OOS 7/8
+    GRID: IS gap median -0.27%, OOS gap median -0.10%, same sign in 32 of 54; beats PATH IS 20/54, OOS 26/54
+    H_WF (gap sign stable across the split for a majority): 38 of 62  [PASS]
+
+    RULE-8 CHOOSER: pick each panel's best book by 2009-2016 IS Sharpe, read 2017+ once.
+    panel  book                                    OOS CAGR  OOS Sharpe  OOS MaxDD  vs SPY OOS  vs v2 OOS  PATH OOS CAGR
+    B136   b136-r620-gross065-W                      14.52%       1.040    -19.43%      15.33%      1.108         10.13%
+    SMALL  SMALL-band0.08-g1.00                       5.44%       0.599    -18.73%      15.33%      0.559          6.99%
+    U56    u56-quantile50-respread-M                 15.90%       1.230    -19.46%      15.27%      1.286         11.47%
+
+    comparands @10 bps (common window, t+1, weekly):
+      U56    SPY  15.13% / 0.885 / -33.72% (H 0.959/0.824; OOS CAGR 15.27%)   RULES v2 Sharpe 1.208 (H 1.237/1.186; OOS 1.286), MaxDD -11.90%
+      B136   SPY  15.16% / 0.886 / -33.72% (H 0.960/0.826; OOS CAGR 15.33%)   RULES v2 Sharpe 1.101 (H 1.237/0.967; OOS 1.108), MaxDD -12.18%
+      SMALL  SPY  14.06% / 0.858 / -33.72% (H 0.914/0.834; OOS CAGR 15.33%)   RULES v2 Sharpe 0.663 (H 0.806/0.554; OOS 0.559), MaxDD -13.89%
+
+====================================================================================================
+[5] WHO THE SWAP ADMITS, and the matched-gross contrast the title question needs
+====================================================================================================
+    the 9 books the gross-matched floor turns FAIL -> PASS at phi=0.70, 10 bps:
+      book                           gbar  book CAGR  its gxSPY      gap   SPY100
+      U56-band0.08-g0.50            0.332      5.58%      4.35%   +1.22%   15.13%
+      U56-band0.03-g0.50            0.347      5.63%      4.61%   +1.03%   15.13%
+      B136-band0.08-g0.50           0.350      5.63%      4.60%   +1.03%   15.16%
+      B136-band0.03-g0.50           0.352      5.27%      4.47%   +0.80%   15.16%
+      U56-band0.08-g0.75            0.498      8.39%      6.50%   +1.89%   15.13%
+      U56-band0.03-g0.75            0.521      8.48%      6.88%   +1.60%   15.13%
+      B136-band0.08-g0.75           0.525      8.47%      6.87%   +1.60%   15.16%
+      B136-band0.03-g0.75           0.527      7.92%      6.68%   +1.24%   15.16%
+      B136-band0.03-g1.00           0.703     10.58%      8.86%   +1.72%   15.16%
+    mean gross: admitted 0.462 vs all GRID 0.746 vs SHELF 0.748
+    of the 9 admitted, 9 DO beat their own gross-matched SPY (median +1.24%) - so the swap is NOT admitting books that lose to a passive blend at their own exposure.
+    but their ABSOLUTE CAGR runs 5.27%..10.58% against SPY's 15.13%: a 4b pass is a CAPITAL claim, and this is the same
+    shape of concession idea 676 priced on the cash leg - normalising a bar by a book's
+    own gross pays it for exposure it DECLINED to take.
+
+    THE MECHANISM: rho(mean gross, gap vs its own gxSPY) = -0.619 on the GRID, while rho(mean gross, gap vs SPY at 100%) = +0.535.
+    The two floors rank the SAME 54 books in OPPOSITE ORDERS. That is the finding: the
+    CAGR floor is doing two different jobs and they disagree by construction.
+
+    GRID by realised-gross bucket (beats its own gxSPY on CAGR):
+      gbar bucket     n  beats  median gap
+      <0.50           9      5      +0.80%
+      0.50-0.70       8      6      +1.60%
+      0.70-0.85      12      3      -0.35%
+      >0.85          25      2      -0.90%
+
+    MATCHED-GROSS CONTRAST (the control the title question needs): the SHELF sits at gbar 0.748 and beats its own gxSPY in 6 of 8; unselected GRID books in the SAME 0.70-0.85 gross bucket beat it in 3 of 12.
+    So 'beats a gross-matched SPY' is NOT a property of this book family - it is a property of the eight books that were already memo-selected for passing 4b.
+
+    COST LADDER (4b count at phi=0.70 under each convention):
+       10.0 bps: CURRENT 26/62, CONST 35/62, PATH 35/62
+       25.0 bps: CURRENT 21/62, CONST 31/62, PATH 31/62
+
+  wrote 2026-09-15_does-the-record-s-SHELF-beat-a-GROSS-MATCHED-SPY-on-the-CAGR-LEG_cloud.{books,verdicts,ladder,g1,gaps}.csv   total 344s
