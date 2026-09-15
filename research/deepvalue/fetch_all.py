@@ -54,6 +54,7 @@ import re
 import sys
 import threading
 import time
+import traceback
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -323,7 +324,11 @@ def do_filings(ticker: str, rec: dict, tries: int = 3) -> bool:
             )
             return True
         except Exception as exc:  # noqa: BLE001
-            last_err = f"{type(exc).__name__}: {exc}"
+            # record where it was raised: a bare "AttributeError: 'NoneType' ..."
+            # in the manifest is not diagnosable after the runner is gone.
+            tb = traceback.extract_tb(exc.__traceback__)
+            where = f" [{Path(tb[-1].filename).name}:{tb[-1].lineno}]" if tb else ""
+            last_err = f"{type(exc).__name__}: {exc}{where}"
             if attempt < tries - 1:
                 time.sleep(2 ** (attempt + 1))       # 2s, 4s
     rec.update(ok=False, error=last_err,

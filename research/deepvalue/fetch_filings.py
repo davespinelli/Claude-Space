@@ -433,11 +433,27 @@ def ticker_to_cik(ticker: str, shared_raw: Path):
 
 
 def get_submissions(cik: int, raw_dir: Path):
+    cache_name = f"submissions_{cik}.json"
     raw = fetch(f"https://data.sec.gov/submissions/CIK{cik:010d}.json",
-                raw_dir, f"submissions_{cik}.json")
+                raw_dir, cache_name)
     if raw is None:
         raise RuntimeError("could not fetch submissions")
-    return json.loads(raw)
+    try:
+        sub = json.loads(raw)
+    except ValueError as exc:
+        sub = None
+        err = f"submissions JSON unparseable ({exc})"
+    else:
+        err = "submissions JSON is not a filing index"
+    if not isinstance(sub, dict) or "filings" not in sub:
+        # fetch() serves any non-empty cached file forever, so a bad body cached
+        # once would fail this ticker on every future run. Drop it and fail loudly.
+        try:
+            (raw_dir / cache_name).unlink()
+        except OSError:
+            pass
+        raise RuntimeError(f"{err}; dropped the cached copy")
+    return sub
 
 
 def recent_filings(sub):
