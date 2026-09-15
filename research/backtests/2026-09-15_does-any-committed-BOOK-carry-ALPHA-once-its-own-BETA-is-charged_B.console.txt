@@ -1,0 +1,268 @@
+====================================================================================================
+Idea 869 -- does any committed BOOK carry ALPHA once its own BETA is charged?  (lane B, 2026-09-15)
+====================================================================================================
+Idea 869 (lane B, 2026-09-15) -- does any committed BOOK carry ALPHA once its own BETA is charged?
+
+THE QUESTION (queue, 2026-09-15)
+  The CHANGELOG says the same thing four different ways.  662: aggregation buys OOS CAGR and
+  pays MaxDD on every gate family.  866: a de-grossing clause priced as a FLOOR is worth no more
+  than the same state priced as a GATE -- "one dial read at two resolutions".  676: the 4b CAGR
+  floor does not survive a non-zero cash leg, because grading a cash-heavy book at rf=0 makes
+  holding cash look like alpha.  677: the gross window width ranks OOS Sharpe better than the 4b
+  pass does.  Every one of those is a statement that the record's KEEP legs are reading EXPOSURE.
+  Nobody has asked the direct question underneath: strip the exposure out by regression and see
+  whether ANY committed book has return left over.
+
+THE TWO THINGS THIS RUN DOES
+  A  CAPM census.  For every book x panel, OLS of DAILY book returns on DAILY SPY returns at
+     rf=0 -- annualised alpha 252a, Newey-West t (lag 21, Bartlett), beta, R^2 -- full sample,
+     both `baseline._row` count halves, and the rule-8 IS/OOS windows.  No new book is invented:
+     every book is built from `research/baseline.py` primitives only.
+  B  BETA-MATCHED COMPARAND.  PROTOCOL 4b grades a book against a 100%-invested SPY.  Replace
+     that comparand with beta_t x SPY + (1 - beta_t) x CASH at rf=0 -- the cheapest portfolio
+     with the book's own market exposure -- and report whether any 4b verdict moves.
+     The algebra, stated BEFORE the numbers and gated at G5: at rf=0 a CONSTANT beta scales the
+     comparand's returns, so Sharpe(beta x SPY) == Sharpe(SPY) EXACTLY and 4b's two Sharpe legs
+     are beta-invariant.  Only the CAGR floor (which beta-matching LOOSENS, since the comparand
+     earns less) and the DD cap (which beta-matching TIGHTENS, since the comparand draws down
+     less) can move.  Which way the shelf goes is the empirical question.
+
+THE BOOKS (7, every one a `baseline` primitive at a committed constant -- none is tuned here)
+  BAND03_g050 / _g075 / _g100   `rules_v2_weights(px, band=0.03, gross=g)`; g=0.75 IS the LIVE book
+  EWELIG_g075 / _g100           Finding 2 of the 2026-09-03 recommendation: equal-weight EVERY
+                                name above its 200d MA with 20d ann. vol < 0.60 (`baseline.score`
+                                returns both masks), at gross g, gated-out weight to CASH
+  V1_n5                         `rules_v1_weights(px)` at its committed n=5, w=0.15, max_vol=0.60
+  SPYBH                         100% SPY buy-and-hold -- the ZERO-SIGNAL control, alpha 0 by
+                                construction (gated at G7)
+
+THE TWO TUNED PARAMETERS (PROTOCOL 4's maximum; panel, book and window are REPORTED AXES)
+  P1 BETA ESTIMATOR  FULL (one OLS beta over the window graded)
+                     IS   (one OLS beta from 2009-01-01..2016-12-31 ONLY -- the honest one)
+                     R52  (causal rolling 252-day beta, lagged one day)
+                     R104 (causal rolling 504-day beta, lagged one day)
+                     EWMA (causal exponentially-weighted cov/var, halflife 126d, lagged one day)
+  P2 SHRINKAGE lam   0.00 0.25 0.50 0.75 1.00, beta_used = (1-lam) beta_hat + lam x 1.0
+                     (lam=1 collapses the comparand back to 100% SPY -- the committed 4b, and G4)
+  5 x 5 = 25 comparand cells x 21 book-panels = 525 grid points, EVERY ONE published in .grid.csv
+
+PROTOCOL
+  2  10 bps per unit turnover, weights decided at close t applied t+1 (engine does this), weekly
+     rebalance, no shorting, no leverage.
+  3  every book compared to RULES v2 (live baseline) AND SPY buy-and-hold on the same sample.
+  4  BOTH KEEP paths evaluated at every grid point; 4a against RULES v2, 4b against BOTH
+     comparand forms.
+  8  walk-forward: the two tuned params are fitted on 2009-2016 ALONE and 2017-2026 is read ONCE.
+  9  SURVIVORSHIP: U56, B136 and SMALL716 are all current-constituent lists; levels are optimistic
+     and the alpha estimates inherit that bias UPWARD.
+
+PRE-REGISTERED HYPOTHESES (fixed before any number below was read)
+  H1  No book x panel has annualised alpha with |NW t| > 2 in BOTH count halves.
+  H2  Beta-matching flips at least one committed 4b verdict (it must move SOME leg, or the
+      record's "decided by gross alone" diagnosis is wrong).
+  H3  Every flip beta-matching causes is a PASS -> FAIL flip through the DD cap (the tightening
+      leg), not a FAIL -> PASS flip through the CAGR floor.
+  H4  Choosing a book on its IS beta-charged EXCESS RETURN t does not beat choosing it on
+      IS Sharpe, out of sample.
+
+GATES (run and printed BEFORE any result number is read)
+  G1  the LIVE book (BAND03_g075 on U56) reproduces the record's committed 8.6227% / 1.2013 /
+      -12.0549% through `engine.backtest`.
+  G2  SPY on U56 reproduces the record's committed 15.1302% / 0.8845 / -33.7173%.
+  G3  this run's count halves ARE `baseline._row`'s len(r)//2 halves (max |d| over 21 books).
+  G4  at lam=1.00 the BETAMATCH comparand IS the committed SPY100 comparand, exactly, for every
+      estimator (max |d return| over 5 estimators x 3 panels).
+  G5  the beta-invariance of Sharpe: for a CONSTANT beta, Sharpe(beta x SPY) == Sharpe(SPY) over
+      a beta ladder 0.1..2.0 (max |d|).
+  G6  determinism -- the whole grid, rebuilt in a second pass, hashes identically.
+  G7  a PLANTED alpha of +5.00%/yr added to SPYBH is recovered at the right size and sign by the
+      estimator, and SPYBH itself reads alpha 0 / beta 1 / R^2 1.
+  G8  the EWELIG book rebuilt here reproduces Finding 2 of the committed 2026-09-03 recommendation
+      memo on U56 (10.4% / 1.05, halves 1.07 / 1.03).
+(0) PANELS
+  U56        4704 x   56   2008-01-02 .. 2026-09-14
+  B136       4703 x  136   2008-01-02 .. 2026-09-11
+  SMALL716   4198 x  716   2010-01-04 .. 2026-09-11
+  PROTOCOL 9: all three are CURRENT-CONSTITUENT lists; every level below is optimistic.
+
+====================================================================================================
+(G) GATES -- printed BEFORE any result number
+====================================================================================================
+  G1 LIVE book U56 = 8.6227% / 1.2013 / -12.0549%   committed 8.6227% / 1.2013 / -12.0549%   max|d| 4.795e-07  PASS
+  G2 SPY  U56      = 15.1302% / 0.8845 / -33.7173%   committed 15.1302% / 0.8845 / -33.7173%   max|d| 6.013e-06  PASS
+  G3 count halves == baseline._row's len(r)//2 over 21 books  max|d| 0.000e+00  PASS
+  G4 BETAMATCH at lam=1.00 IS the committed SPY100 comparand  max|d return| 0.000e+00  PASS
+  G5 Sharpe(beta x SPY) == Sharpe(SPY) over beta 0.1..2.0 at rf=0  max|d Sharpe| 2.220e-16  PASS
+  G7 SPYBH (the zero-signal control) reads alpha +2.930e-16 / beta 1.000000000 / R2 1.000000000, t NaN by the degeneracy guard (it IS the regressor)   PASS
+     PLANTED +5.00%/yr on the LIVE book moves alpha +3.6149% -> +8.4951% (d +4.8802%), t 3.93 -> 9.23, beta 0.313432 -> 0.313492   PASS
+  G8 EWELIG_g075 U56 = 10.3562% / 1.0450 (halves 1.07 / 1.02)   2026-09-03 memo Finding 2: 10.4% / 1.05 (1.07 / 1.03)   PASS
+
+====================================================================================================
+(A) THE CAPM CENSUS -- annualised alpha, Newey-West t (lag 21), beta, R^2
+====================================================================================================
+  panel     book             CAGR  Sharpe    MaxDD     alpha       t   beta     R2      a_H1   t_H1      a_H2   t_H2     a_OOS  t_OOS
+  U56       BAND03_g050     5.73%  1.2013   -8.12%    +2.41%   +3.93  0.209  0.612    +2.22%  +2.49    +2.61%  +3.08    +2.84%  +3.60
+  U56       BAND03_g075     8.62%  1.2013  -12.05%    +3.61%   +3.93  0.313  0.612    +3.33%  +2.50    +3.91%  +3.08    +4.25%  +3.60
+  U56       BAND03_g100    11.54%  1.2011  -15.91%    +4.82%   +3.93  0.418  0.612    +4.45%  +2.50    +5.20%  +3.08    +5.66%  +3.59
+  U56       EWELIG_g075    10.36%  1.0450  -15.87%    +3.32%   +2.99  0.449  0.644    +2.87%  +1.86    +3.75%  +2.39    +4.05%  +2.75
+  U56       EWELIG_g100    13.81%  1.0451  -20.88%    +4.43%   +3.00  0.599  0.644    +3.83%  +1.86    +5.00%  +2.40    +5.40%  +2.75
+  U56       V1_n5           6.37%  0.6563  -13.83%    +1.95%   +1.00  0.303  0.276    +1.48%  +0.61    +2.47%  +0.81    +2.79%  +0.97
+  U56       SPYBH          15.13%  0.8845  -33.72%    +0.00%    +nan  1.000  1.000    +0.00%   +nan    +0.00%   +nan    -0.00%   +nan
+  B136      BAND03_g050     5.31%  1.0992   -8.24%    +1.82%   +3.14  0.221  0.663    +2.17%  +2.48    +1.41%  +1.87    +1.84%  +2.56
+  B136      BAND03_g075     7.98%  1.0993  -12.24%    +2.73%   +3.14  0.332  0.664    +3.26%  +2.49    +2.10%  +1.86    +2.75%  +2.56
+  B136      BAND03_g100    10.65%  1.0992  -16.16%    +3.63%   +3.14  0.443  0.664    +4.36%  +2.50    +2.80%  +1.85    +3.66%  +2.55
+  B136      EWELIG_g075    10.66%  1.0211  -17.69%    +2.61%   +2.94  0.514  0.757    +3.03%  +2.41    +2.07%  +1.61    +2.68%  +2.26
+  B136      EWELIG_g100    14.20%  1.0211  -23.09%    +3.49%   +2.94  0.686  0.758    +4.06%  +2.43    +2.75%  +1.61    +3.57%  +2.25
+  B136      V1_n5           6.41%  0.6375  -21.19%    +2.05%   +1.02  0.302  0.252    +2.75%  +1.09    +1.25%  +0.40    +1.68%  +0.58
+  B136      SPYBH          15.16%  0.8861  -33.72%    +0.00%    +nan  1.000  1.000    -0.00%   +nan    -0.00%   +nan    -0.00%   +nan
+  SMALL716  BAND03_g050     3.12%  0.7128   -8.23%    +0.73%   +0.85  0.167  0.408    +0.46%  +0.52    +0.84%  +0.58    +0.67%  +0.55
+  SMALL716  BAND03_g075     4.64%  0.7129  -12.18%    +1.10%   +0.85  0.251  0.408    +0.70%  +0.53    +1.25%  +0.57    +1.01%  +0.54
+  SMALL716  BAND03_g100     6.13%  0.7130  -16.02%    +1.47%   +0.85  0.334  0.409    +0.93%  +0.53    +1.66%  +0.57    +1.33%  +0.54
+  SMALL716  EWELIG_g075     5.79%  0.5174  -31.81%    -1.57%   -0.71  0.545  0.564    -0.82%  -0.41    -2.46%  -0.61    -2.37%  -0.71
+  SMALL716  EWELIG_g100     7.42%  0.5168  -40.64%    -2.12%   -0.72  0.729  0.566    -1.07%  -0.40    -3.34%  -0.63    -3.22%  -0.72
+  SMALL716  V1_n5          22.00%  0.6131  -27.59%   +22.08%   +1.82  0.239  0.009   +21.68%  +1.44   +22.64%  +1.19   +33.21%  +1.72
+  SMALL716  SPYBH          14.06%  0.8581  -33.72%    -0.00%    +nan  1.000  1.000    -0.00%   +nan    +0.00%   +nan    -0.00%   +nan
+
+  H1 test: |NW t| > 2 in BOTH count halves -> 3 of 18 book-panels (U56/BAND03_g050, U56/BAND03_g075, U56/BAND03_g100)
+           POSITIVE t > +2 in both halves  -> 3 of 18 (U56/BAND03_g050, U56/BAND03_g075, U56/BAND03_g100)
+           full-sample t > +2             -> 10 of 18;  OOS t > +2 -> 10 of 18
+  beta range over the 18 signal book-panels: 0.167 .. 0.729   median R^2 0.612
+
+  IS THE ALPHA ONE OBJECT SCALED BY GROSS?  alpha / gross and beta / gross within a family:
+    U56       BAND03  alpha/g +4.8195% +4.8199% +4.8191%  (spread 8.05e-06)   beta/g 0.4176 0.4179 0.4182  (spread 6.06e-04)
+    U56       EWELIG  alpha/g +4.4252% +4.4283%  (spread 3.14e-05)   beta/g 0.5983 0.5990  (spread 7.65e-04)
+    B136      BAND03  alpha/g +3.6320% +3.6338% +3.6343%  (spread 2.29e-05)   beta/g 0.4425 0.4429 0.4432  (spread 7.04e-04)
+    B136      EWELIG  alpha/g +3.4843% +3.4885%  (spread 4.15e-05)   beta/g 0.6850 0.6861  (spread 1.11e-03)
+    SMALL716  BAND03  alpha/g +1.4680% +1.4669% +1.4654%  (spread 2.62e-05)   beta/g 0.3340 0.3342 0.3344  (spread 3.62e-04)
+    SMALL716  EWELIG  alpha/g -2.0986% -2.1235%  (spread 2.49e-04)   beta/g 0.7273 0.7293  (spread 2.01e-03)
+
+====================================================================================================
+(B) THE GRID -- 21 book-panels x 5 estimators x 5 shrinkages = 525 points, ALL published
+====================================================================================================
+  4a passes (vs RULES v2 on the same panel): 0 of 21 book-panels
+  4b passes, COMMITTED SPY100 comparand:     3 of 21 book-panels
+  4b passes, BETAMATCH comparand:            77 of 525 grid points
+  FLIPS: 86 of 525 points (16.4%)  FAIL->PASS 44   PASS->FAIL 42
+
+  per-leg pass counts over the 525 points (SPY100 leg -> BETAMATCH leg):
+    H1 Sharpe    250 ->  290   (moved on 40 points)
+    H2 Sharpe    250 ->  283   (moved on 33 points)
+    OOS Sharpe   250 ->  283   (moved on 33 points)
+    DD cap       300 ->  185   (moved on 115 points)
+    CAGR floor   225 ->  344   (moved on 119 points)
+
+  flips by leg, decomposed (which leg changed on a flipping point):
+    H1    moved on    0 of 86 flips
+    H2    moved on    0 of 86 flips
+    OOS   moved on    0 of 86 flips
+    DD    moved on   42 of 86 flips
+    CAGR  moved on   44 of 86 flips
+    flipping book-panels: B136/BAND03_g050, B136/BAND03_g075, B136/BAND03_g100, B136/EWELIG_g075, U56/BAND03_g050, U56/BAND03_g075, U56/BAND03_g100, U56/EWELIG_g075
+
+  THE LIKE-FOR-LIKE READING -- lam = 0.00 (beta charged in full), 21 book-panels per estimator:
+    FULL  4b BETAMATCH passes  0 of 21   (NONE)
+    IS    4b BETAMATCH passes  0 of 21   (NONE)
+    R52   4b BETAMATCH passes  4 of 21   (B136/BAND03_g050, B136/BAND03_g075, U56/BAND03_g050, U56/BAND03_g075)
+    R104  4b BETAMATCH passes  4 of 21   (B136/BAND03_g050, B136/BAND03_g075, U56/BAND03_g050, U56/BAND03_g075)
+    EWMA  4b BETAMATCH passes  4 of 21   (B136/BAND03_g050, B136/BAND03_g075, U56/BAND03_g050, U56/BAND03_g075)
+    committed SPY100 comparand, same 21: 3 (B136/BAND03_g100, B136/EWELIG_g075, U56/BAND03_g100)
+
+  WHAT KILLS THE COMMITTED PASSERS under a CONSTANT-beta comparand (FULL / IS, lam=0):
+    FULL  U56/BAND03_g100  -> FAIL   failing legs ['DD']   comparand 6.48% / 0.8845 / -15.18%   (0.60x cap -9.11%, 0.70x floor 4.53%)
+    FULL  B136/BAND03_g100  -> FAIL   failing legs ['DD']   comparand 6.87% / 0.8861 / -16.04%   (0.60x cap -9.63%, 0.70x floor 4.81%)
+    FULL  B136/EWELIG_g075  -> FAIL   failing legs ['DD']   comparand 7.95% / 0.8861 / -18.43%   (0.60x cap -11.06%, 0.70x floor 5.56%)
+    IS    U56/BAND03_g100  -> FAIL   failing legs ['DD']   comparand 6.32% / 0.8845 / -14.84%   (0.60x cap -8.90%, 0.70x floor 4.43%)
+    IS    B136/BAND03_g100  -> FAIL   failing legs ['DD']   comparand 7.21% / 0.8861 / -16.79%   (0.60x cap -10.07%, 0.70x floor 5.04%)
+    IS    B136/EWELIG_g075  -> FAIL   failing legs ['DD']   comparand 8.39% / 0.8861 / -19.42%   (0.60x cap -11.65%, 0.70x floor 5.87%)
+
+  the comparand itself, at lam=0 (what beta-matching actually charges):
+    U56       comparand CAGR  3.18%..15.13%   MaxDD -33.72%.. -7.60%   Sharpe 0.5036..0.8845 (SPY 0.8845)
+    B136      comparand CAGR  3.45%..15.16%   MaxDD -33.72%.. -8.23%   Sharpe 0.5263..0.8861 (SPY 0.8861)
+    SMALL716  comparand CAGR  2.43%..14.06%   MaxDD -33.72%.. -6.25%   Sharpe 0.4021..0.8607 (SPY 0.8581)
+
+  G6 determinism: grid hash 176b38141e433c12 vs rebuild 176b38141e433c12  PASS
+
+====================================================================================================
+(C) RULE 8 -- both tuned params fitted on 2009-2016 ALONE, 2017-2026 read ONCE
+====================================================================================================
+  CHOOSER (pre-stated): inside each (estimator, shrinkage) cell, score every book-panel by
+  the Newey-West t of its IS EXCESS RETURN OVER THAT CELL'S BETAMATCH COMPARAND, both built
+  on IS DATA ONLY; take the highest.  The excess-return form is used rather than a CAPM
+  intercept BECAUSE an OLS intercept is invariant to rescaling its regressor, so a
+  CAPM alpha vs beta x SPY is identically the alpha vs SPY and neither dial would bite.
+  SPYBH is excluded from the pick (it is the zero-signal control).  The IS-Sharpe chooser
+  and the two do-nothing controls are reported beside it.
+
+  chooser          est     lam pick                       IS a    IS t  OOS CAGR  OOS Sh  OOS MaxDD
+  IS_EXCESS_T      FULL   0.00 U56/BAND03_g100          +3.81%   +1.97    12.68%  1.2765    -15.91%
+  IS_EXCESS_T      FULL   0.25 B136/EWELIG_g100         +2.29%   +1.18    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      FULL   0.50 B136/EWELIG_g100         +1.22%   +0.60    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      FULL   0.75 B136/EWELIG_g100         +0.16%   +0.07    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      FULL   1.00 B136/EWELIG_g100         -0.90%   -0.38    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      IS     0.00 U56/BAND03_g100          +3.81%   +1.97    12.68%  1.2765    -15.91%
+  IS_EXCESS_T      IS     0.25 B136/EWELIG_g100         +2.29%   +1.18    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      IS     0.50 B136/EWELIG_g100         +1.22%   +0.60    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      IS     0.75 B136/EWELIG_g100         +0.16%   +0.07    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      IS     1.00 B136/EWELIG_g100         -0.90%   -0.38    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R52    0.00 B136/EWELIG_g100         +2.75%   +1.10    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R52    0.25 B136/EWELIG_g100         +1.84%   +0.76    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R52    0.50 B136/EWELIG_g100         +0.92%   +0.39    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R52    0.75 B136/EWELIG_g100         +0.01%   +0.01    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R52    1.00 B136/EWELIG_g100         -0.90%   -0.38    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R104   0.00 B136/EWELIG_g100         +1.74%   +0.72    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R104   0.25 B136/EWELIG_g100         +1.08%   +0.46    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R104   0.50 B136/EWELIG_g100         +0.42%   +0.18    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R104   0.75 B136/EWELIG_g100         -0.24%   -0.10    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      R104   1.00 B136/EWELIG_g100         -0.90%   -0.38    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      EWMA   0.00 B136/EWELIG_g100         +2.99%   +1.22    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      EWMA   0.25 B136/EWELIG_g100         +2.01%   +0.85    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      EWMA   0.50 B136/EWELIG_g100         +1.04%   +0.45    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      EWMA   0.75 B136/EWELIG_g100         +0.07%   +0.03    13.96%  1.0094    -23.09%
+  IS_EXCESS_T      EWMA   1.00 B136/EWELIG_g100         -0.90%   -0.38    13.96%  1.0094    -23.09%
+  IS_SHARPE        -       -   U56/BAND03_g100            -      +1.10    12.68%  1.2765    -15.91%
+  CONTROL_RULESv2  -       -   U56/BAND03_g075            -       -        9.46%  1.2772    -12.05%
+  CONTROL_SPY      -       -   U56/SPY_BENCH              -       -       15.27%  0.8740    -33.72%
+
+  25 IS-excess-t picks: OOS Sharpe median 1.0094 (min 1.0094, max 1.2765); OOS CAGR median 13.96%; distinct picks 2 (B136/EWELIG_g100, U56/BAND03_g100)
+  H4 test: IS-excess-t beats IS-Sharpe (1.2765) OOS on 0 of 25 cells; beats SPY (0.8740) on 25 of 25; beats RULES v2 (1.2772) on 0 of 25
+
+====================================================================================================
+(V) THE ANSWER
+====================================================================================================
+  H1 (no book has |t| > 2 in both halves)      -> FAILS (3 of 18 with t > +2 in both)
+  H2 (beta-matching flips at least one 4b)     -> HOLDS (86 of 525 points)
+  H3 (every flip is PASS->FAIL via the DD cap) -> FAILS (PASS->FAIL 42, FAIL->PASS 44)
+  H4 (excess-t chooser does not beat Sharpe) -> HOLDS (0 of 25 cells beat it)
+
+  THE ANSWER, in two parts, and they point opposite ways.
+  1. YES, ALPHA IS THERE, AND IT IS NOT THE WHOLE SHELF'S.  The U56 200d-band family
+     carries +4.82%/yr of CAPM alpha per unit gross (NW t +3.93, beta 0.418/unit gross,
+     R^2 0.61), positive at t > +2 in BOTH count halves (+2.50 / +3.08) AND out of sample
+     (+3.60).  H1 FAILS and that is a real positive.  It is ONE object scaled by gross:
+     alpha/gross is constant to 8.1e-06 across the three rungs.  It is PANEL-BOUND --
+     B136 +3.63%/unit gross (t +3.14) but H2 only +1.86, SMALL716 +1.47% (t +0.85), and
+     the EWELIG family's SMALL716 alpha is NEGATIVE (-2.10%/unit gross).
+  2. NO, IT DOES NOT BUY A KEEP.  4a: 0 of 21 book-panels.  4b under the committed
+     100%-SPY comparand: 3 of 21.  Charge each book its OWN CONSTANT beta and that
+     becomes 0 of 42 (FULL and IS at lam=0) -- all 3
+     committed passers die, all 3 through the DD cap, because a comparand at beta 0.42
+     draws down -15% and 60% of that is -9.1% against the book's -15.9%.
+  3. The two legs that move are the two the record already suspected: the DD cap (300 ->
+     185 of 525) and the CAGR floor (225 -> 344).  The three SHARPE legs move on 0 of 86
+     flips under a constant beta -- G5's algebra -- so 4b's Sharpe legs are exactly
+     beta-blind and its two level legs are exactly beta-scaled.  That IS the 'decided by
+     gross alone' diagnosis, stated as an identity rather than as a correlation.
+  4. RULE 8: pricing the beta charge into the CHOOSER buys nothing.  0 of 25 cells beat
+     the dial-free IS-Sharpe chooser OOS (1.2765) and 0 of 25 beat RULES v2 (1.2772);
+     25 of 25 beat SPY (0.8740), which is the same low-beta tautology as leg 2.
+  VERDICT: KILL for capital -- nothing promoted, no RULES change.  The alpha is real and
+  documented; it is the 200d band clause already live in RULES v2, and it is worth no
+  more capital than the gross dial that scales it.
+
+====================================================================================================
+(O) OUTPUTS
+====================================================================================================
+  wrote 2026-09-15_does-any-committed-BOOK-carry-ALPHA-once-its-own-BETA-is-charged_B.capm.csv  (21 rows)
+  wrote 2026-09-15_does-any-committed-BOOK-carry-ALPHA-once-its-own-BETA-is-charged_B.grid.csv  (525 rows)
+  wrote 2026-09-15_does-any-committed-BOOK-carry-ALPHA-once-its-own-BETA-is-charged_B.walkforward.csv  (28 rows)
+  gates ALL PASS   total runtime 45.2s
