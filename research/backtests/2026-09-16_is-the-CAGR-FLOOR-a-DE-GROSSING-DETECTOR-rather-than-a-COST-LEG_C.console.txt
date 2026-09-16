@@ -1,0 +1,180 @@
+# Idea 1150 (lane C, 2026-09-16) — is the CAGR FLOOR a DE-GROSSING DETECTOR rather than a
+#   COST LEG?  Walk gross FINE at several cost rungs; find the hand-over; ask if it moves with cost.
+# TUNED DIALS (2, PROTOCOL rule 4): GROSS RUNG (33 rungs 0.2..1.0 step 0.025) x COST RUNG (8 rungs [0.0, 2.0, 5.0, 7.5, 10.0, 15.0, 25.0, 50.0] bps)
+#   = 264 combinations per panel, 528 in all, EVERY ONE published in .grid.csv.
+# PANEL {U56, B136} is NOT a dial (both reported everywhere).  BENCHMARK VARIANT is NOT a dial:
+#   B_SPY is the PROTOCOL floor and the headline; B_SPYCOST (SPY charged the same cost rate on
+#   its OWN turnover) and B_SPYGROSS (SPY held at the SAME gross, rest in cash) are CONTROLS
+#   computed at every cell and never selected on.
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, min hold 126, N 20, cadence W,
+#   LAG 1, warm-up 260, IS end 2016-12-31, zero cash, block L=63, 1000 draws, crc32 seeds, q=0.9.
+#
+# THE BINDING-LEG RULE, DECLARED BEFORE ANY NUMBER: every 4b leg is re-expressed as the
+#   SIGNED FRACTION OF ITS OWN BAR still in hand (Sharpe legs (book-SPY)/|SPY|; L_DD
+#   (0.60|SPY_dd|-|dd|)/(0.60|SPY_dd|); L_CAGR (CAGR-0.70*SPY_CAGR)/|0.70*SPY_CAGR|).
+#   BINDING LEG = argmin of the five.  Negative == that leg FAILS.  Never re-chosen.
+#   g* (THE HAND-OVER) = the HIGHEST gross rung whose binding leg is L_CAGR.  MONOTONE means
+#   L_CAGR binds at every rung at or below g* and at none above it.
+#
+# DECLARED BEFORE ANY NUMBER:
+#   (a) H_PREMISE       the record's committed gross-ladder 4b legs reproduce exactly (G8),
+#                       i.e. at 10 bps L_CAGR is the ONLY failing leg on the low-gross rungs.
+#   (b) H_HANDOVER      a hand-over EXISTS and is MONOTONE on both panels at every cost rung:
+#                       L_CAGR binds below g*, a Sharpe-family leg above it.
+#   (c) H_NOT_COST      g* is INVARIANT to the cost rung across 0..50 bps (moves <= 1 rung of
+#                       0.025 on both panels).  This is the idea's question, stated as a bar.
+#   (d) H_SHARPE_FLAT   across the WHOLE 0.20..1.00 ladder the full-sample Sharpe spread is
+#                       < 0.05 while the CAGR spread is > 0.10 (absolute), at every cost rung.
+#   (e) H_GROSSMATCHED  under B_SPYGROSS (floor de-grossed with the book) L_CAGR binds at NO
+#                       rung on either panel at any cost rung.
+# DECISION RULE, declared before any number: the CAGR floor is a DE-GROSSING DETECTOR and
+#   NOT a cost leg iff H_NOT_COST holds AND H_GROSSMATCHED holds.  If g* moves materially
+#   with cost it is a cost object and the idea's premise dies.  If the hand-over does not
+#   exist or is not monotone (H_HANDOVER fails) the question is mis-posed and that is the answer.
+
+## GATES — printed before any result number
+  U56: 56 names, 4,705 rows 2008-01-02 -> 2026-09-15, warm 4,445, IS 2,007, OOS 2,438
+  B136: 136 names, 4,703 rows 2008-01-02 -> 2026-09-11, warm 4,443, IS 2,007, OOS 2,436
+  G1  fast runner == engine.backtest                         1.39e-17   PASS
+  G2  CROSS-RUN committed U56 W/H126/N=20 triple             3.18e-07   PASS  (15.5787% / 1.1397 / -19.1276%)
+  G3  SPY OOS triple                                         1.70e-04   PASS
+  G4  CROSS-RUN 1098/1102's committed U56 n=12 triple        4.97e-05   PASS
+  G5  live RULES v2 MaxDD == committed -12.05%               4.95e-05   PASS
+  G6  determinism                                            0.00e+00   PASS
+  G7  cadence_mask == engine.rebalance_mask (D/W/M/Q)        0.00e+00   PASS
+
+## BUILDING 66 books (2 panels x 33 gross rungs); costs applied afterwards
+  U56: 33 books built  (4s)
+  B136: 33 books built  (6s)
+  G9  post-hoc cost transform == engine cost_bps=25 (g=0.45) 6.94e-18   PASS
+  G10 fine ladder NESTS the committed 0.30..0.75 rungs       0.00e+00   PASS
+  G8  CROSS-RUN committed GROSS grid (20 rows, 6 stats)    2.22e-16   PASS   leg disagreements: 0
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.gates.csv  (10 rows, 4 cols)
+  GATES 10 of 10 PASS
+
+## THE GRID — every (panel x gross rung x cost rung) cell, all published
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.grid.csv  (528 rows, 59 cols)
+
+## THE HAND-OVER g* — highest gross rung whose BINDING leg is L_CAGR, at every cost rung
+ panel   cost |     g*  monotone  nCAGRbind                   above g* |  g* SPYGROSS  g* SPYCOST
+   U56    0.0 |    0.6      True         17                       L_DD |          nan         0.6
+   U56    2.0 |    0.6      True         17                       L_DD |          nan         0.6
+   U56    5.0 |    0.6      True         17                       L_DD |          nan         0.6
+   U56    7.5 |    0.6      True         17                       L_DD |          nan         0.6
+   U56   10.0 |    0.6      True         17                       L_DD |          nan         0.6
+   U56   15.0 |    0.6      True         17                       L_DD |          nan         0.6
+   U56   25.0 |  0.625      True         18                       L_DD |          nan       0.625
+   U56   50.0 |  0.625      True         18                  L_DD+L_H1 |          nan       0.625
+  B136    0.0 |  0.525      True         14                  L_DD+L_H2 |          nan       0.525
+  B136    2.0 |  0.525      True         14                  L_DD+L_H2 |          nan       0.525
+  B136    5.0 |  0.525      True         14                  L_DD+L_H2 |          nan       0.525
+  B136    7.5 |  0.525      True         14                  L_DD+L_H2 |          nan       0.525
+  B136   10.0 |  0.525      True         14                  L_DD+L_H2 |          nan       0.525
+  B136   15.0 |  0.525      True         14                  L_DD+L_H2 |          nan       0.525
+  B136   25.0 |  0.525      True         14                  L_DD+L_H2 |          nan       0.525
+  B136   50.0 |  0.525      True         14                  L_DD+L_H2 |          nan       0.525
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.handover.csv  (16 rows, 17 cols)
+
+## IS THE HAND-OVER A COST OBJECT?  g* across the whole 0..50 bps cost ladder
+  U56: g* = 0bp:0.6 2bp:0.6 5bp:0.6 7.5bp:0.6 10bp:0.6 15bp:0.6 25bp:0.625 50bp:0.625
+        span 0.025 of gross = 1 rung(s) of 0.025 over a 0->50 bps cost move; MONOTONE at 8 of 8 cost rungs
+        at g*=0.6: CAGR 0bps 12.6960%, 10bps 12.4326%, 50bps 11.3852%; floor 10.5676%; gross-1.00 zero-cost CAGR 21.2962%
+        SHORTFALL DECOMPOSITION at g*: EXPOSURE (de-grossing, 0 bps) 8.6003%/yr vs COST (0->10 bps) 0.2633%/yr  = cost is 3.0% of the drop
+  B136: g* = 0bp:0.525 2bp:0.525 5bp:0.525 7.5bp:0.525 10bp:0.525 15bp:0.525 25bp:0.525 50bp:0.525
+        span 0.000 of gross = 0 rung(s) of 0.025 over a 0->50 bps cost move; MONOTONE at 8 of 8 cost rungs
+        at g*=0.525: CAGR 0bps 11.4685%, 10bps 11.2118%, 50bps 10.1899%; floor 10.6144%; gross-1.00 zero-cost CAGR 21.9103%
+        SHORTFALL DECOMPOSITION at g*: EXPOSURE (de-grossing, 0 bps) 10.4418%/yr vs COST (0->10 bps) 0.2567%/yr  = cost is 2.4% of the drop
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.costobject.csv  (2 rows, 12 cols)
+
+## SHARPE vs CAGR ALONG THE GROSS LADDER (the queue's '1.1390 vs 1.1397')
+ panel   cost | Sharpe min Sharpe max   spread |  CAGR min  CAGR max   spread
+   U56    0.0 |     1.1601     1.1617   0.0016 |   4.1923%  21.2962% 17.1039%
+   U56    2.0 |     1.1555     1.1574   0.0018 |   4.1754%  21.2030% 17.0276%
+   U56    5.0 |     1.1487     1.1510   0.0022 |   4.1499%  21.0633% 16.9133%
+   U56    7.5 |     1.1431     1.1456   0.0025 |   4.1288%  20.9470% 16.8182%
+   U56   10.0 |     1.1374     1.1403   0.0029 |   4.1076%  20.8308% 16.7232%
+   U56   15.0 |     1.1261     1.1296   0.0035 |   4.0653%  20.5987% 16.5335%
+   U56   25.0 |     1.1034     1.1082   0.0048 |   3.9806%  20.1358% 16.1552%
+   U56   50.0 |     1.0465     1.0545   0.0080 |   3.7694%  18.9859% 15.2165%
+  B136    0.0 |     1.0811     1.0867   0.0056 |   4.3467%  21.9103% 17.5636%
+  B136    2.0 |     1.0766     1.0824   0.0058 |   4.3277%  21.8053% 17.4775%
+  B136    5.0 |     1.0698     1.0760   0.0062 |   4.2993%  21.6479% 17.3486%
+  B136    7.5 |     1.0641     1.0706   0.0065 |   4.2756%  21.5169% 17.2413%
+  B136   10.0 |     1.0585     1.0652   0.0068 |   4.2519%  21.3860% 17.1341%
+  B136   15.0 |     1.0471     1.0545   0.0074 |   4.2045%  21.1246% 16.9201%
+  B136   25.0 |     1.0243     1.0329   0.0086 |   4.1098%  20.6032% 16.4934%
+  B136   50.0 |     0.9671     0.9788   0.0116 |   3.8733%  19.3081% 15.4347%
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.flatness.csv  (16 rows, 8 cols)
+
+## BINDING-LEG CENSUS — the queue says the hand-over is 'from SHARPE to CAGR'.  Which
+##   leg actually binds ABOVE g*?  Counts over all 33 gross rungs at every cost rung.
+ panel   cost |    L_H1    L_H2   L_OOS    L_DD  L_CAGR  | sharpe-family share
+   U56    0.0 |       0       0       0      16      17  |   0.000
+   U56    2.0 |       0       0       0      16      17  |   0.000
+   U56    5.0 |       0       0       0      16      17  |   0.000
+   U56    7.5 |       0       0       0      16      17  |   0.000
+   U56   10.0 |       0       0       0      16      17  |   0.000
+   U56   15.0 |       0       0       0      16      17  |   0.000
+   U56   25.0 |       0       0       0      15      18  |   0.000
+   U56   50.0 |       1       0       0      14      18  |   0.030
+  B136    0.0 |       0       5       0      14      14  |   0.152
+  B136    2.0 |       0       5       0      14      14  |   0.152
+  B136    5.0 |       0       5       0      14      14  |   0.152
+  B136    7.5 |       0       5       0      14      14  |   0.152
+  B136   10.0 |       0       6       0      13      14  |   0.182
+  B136   15.0 |       0       6       0      13      14  |   0.182
+  B136   25.0 |       0       6       0      13      14  |   0.182
+  B136   50.0 |       0       8       0      11      14  |   0.242
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.binding.csv  (16 rows, 8 cols)
+  OVER ALL 528 CELLS: a SHARPE-family leg binds at 47 (0.089); L_DD binds at 231, L_CAGR at 250
+
+## THE HAND-OVER'S OWN RESOLUTION — paired block bootstrap, L=63, 1000 draws
+   L_OOS is NOT defined on a resampled tape and is EXCLUDED from the bootstrap arm only;
+   the bootstrap binding leg is argmin over {L_H1, L_H2, L_DD, L_CAGR}.  Stated, not hidden.
+  U56   0.0 bps: point g* 0.600  boot median 0.550  90% interval [0.450, 0.625] = 8 rungs  no hand-over in 0.0% of draws
+  U56  10.0 bps: point g* 0.600  boot median 0.550  90% interval [0.450, 0.625] = 8 rungs  no hand-over in 0.0% of draws
+  U56  50.0 bps: point g* 0.625  boot median 0.575  90% interval [0.475, 0.650] = 8 rungs  no hand-over in 0.0% of draws
+  B136   0.0 bps: point g* 0.525  boot median 0.500  90% interval [0.400, 0.575] = 8 rungs  no hand-over in 0.1% of draws
+  B136  10.0 bps: point g* 0.525  boot median 0.500  90% interval [0.400, 0.575] = 8 rungs  no hand-over in 0.1% of draws
+  B136  50.0 bps: point g* 0.525  boot median 0.500  90% interval [0.400, 0.600] = 9 rungs  no hand-over in 0.2% of draws
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.resolution.csv  (6 rows, 9 cols)
+
+## THE PAIRED RULER (idea 1012's basis) — g*(50 bps) - g*(0 bps) ON THE SAME DRAW.
+   The unpaired interval above prices WHERE g* is; this prices WHETHER COST MOVES IT,
+   which is the question asked.  Same block draws on both arms, so the tape cancels.
+  U56: median delta g* +0.0250 of gross, 90% interval [+0.000, +0.050]; |delta| <= 1 rung in 89.8% of draws, EXACTLY 0 in 35.2%
+  B136: median delta g* +0.0000 of gross, 90% interval [-0.025, +0.029]; |delta| <= 1 rung in 92.9% of draws, EXACTLY 0 in 44.1%
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.paired.csv  (2 rows, 7 cols)
+
+## RULE 8 WALK-FORWARD — gross rung chosen on IS (2009-2016) ONLY, OOS read ONCE
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.walkforward.csv  (48 rows, 22 cols)
+  48 IS-only picks: 4b full 0, 4b OOS 0, 4a 0; median OOS Sharpe 1.0536, median regret +0.0000
+  WHOLE GRID (528 cells): 4b full 152, 4b OOS 172, 4a 0
+  U56 SPY        full 15.10% / 0.8829 / -33.72%  (halves 0.9588/0.8207)  OOS 15.21% / 0.8711 / -33.72%
+  U56 RULES v2   full 8.62% / 1.2007 / -12.05%  (halves 1.2322/1.1760)  OOS 9.45% / 1.2762 / -12.05%
+  B136 SPY        full 15.16% / 0.8861 / -33.72%  (halves 0.9596/0.8259)  OOS 15.33% / 0.8767 / -33.72%
+  B136 RULES v2   full 7.98% / 1.0993 / -12.24%  (halves 1.2348/0.9658)  OOS 7.88% / 1.1059 / -12.24%
+
+  ONLY THE 10 bps RUNG IS A PROTOCOL-LEGAL BOOK (rule 2).  The other 7 cost rungs are
+  DIAL POINTS, not tradable alternatives — a book cannot choose its cost rate — so the
+  KEEP question is asked at 10 bps and nowhere else.
+  at 10 bps, 66 cells: 4b full 21, 4b OOS 22, 4a 0
+    U56: 4b-full passes on gross 0.525..0.775 (11 rungs) — a CONTIGUOUS WINDOW between the two binding legs, not a peak
+    B136: 4b-full passes on gross 0.500..0.725 (10 rungs) — a CONTIGUOUS WINDOW between the two binding legs, not a peak
+  best 10 bps cell passing 4b FULL and OOS, by OOS Sharpe: U56 gross 0.775 — full 16.10% / 1.1398 / -19.72% (halves 1.2038/1.0972), OOS 17.54% / 1.1644 / -19.72%, 2.99x/yr
+    the INCUMBENT rung (gross 0.75) in the same cell: full 15.58% / 1.1397 / -19.13%, OOS 16.97% / 1.1643 / -19.13%
+    the whole passing window differs by 0.1566 of OOS Sharpe end to end — NOTHING IS PROPOSED: every passing rung is the standing top-20/W/H126 family the
+    record already holds and has already PARKED, and no IS-only chooser reaches any of them (0 of 48).
+
+## HYPOTHESES — scored against what was declared before any number
+  H_PREMISE        SUPPORTED  committed GROSS-ladder grid reproduced on 20 rows, 0 leg disagreements
+  H_HANDOVER       SUPPORTED  g* exists at 16 of 16 (panel, cost) points; MONOTONE at 16 of 16
+  H_NOT_COST       SUPPORTED  g* span over 0->50 bps: U56 0.025 (1 rungs), B136 0.000 (0 rungs)
+  H_SHARPE_FLAT    SUPPORTED  max Sharpe spread 0.0116 (<0.05?), min CAGR spread 15.2165% (>10%?)
+  H_GROSSMATCHED   SUPPORTED  L_CAGR binds at 0 of 528 (cell) points under the gross-matched floor; it FAILS at 0
+  wrote 2026-09-16_is-the-CAGR-FLOOR-a-DE-GROSSING-DETECTOR-rather-than-a-COST-LEG_C.hypotheses.csv  (5 rows, 3 cols)
+
+## DECISION RULE OUTPUT: the CAGR floor is a DE-GROSSING DETECTOR
+   (H_NOT_COST True AND H_GROSSMATCHED True)
+
+# done in 21s
