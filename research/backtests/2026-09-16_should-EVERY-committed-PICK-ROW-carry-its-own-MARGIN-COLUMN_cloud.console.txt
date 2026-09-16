@@ -1,0 +1,171 @@
+# Idea 1135 (cloud lane, 2026-09-16) — should EVERY committed PICK ROW carry its own
+#   MARGIN COLUMN?  Price the schema clause against the record that already exists.
+# TUNED DIALS (2, PROTOCOL rule 4): CLAIM SET {ALL, RULE8} x REQUIRED COLUMNS
+#   {R_MARGIN, R_FULL} = 4 combinations, ALL published.
+# NOT dials: the corpus, the sibling grouping, the ladder vocabulary, the price rungs.
+# FROZEN (price ladder): CAND20 [(21, 252), (0, 126), (0, 63)], max_vol 0.6, gross 0.75, hold 126,
+#   N 20, cadence W, 10 bps, LAG 1, warm-up 260, IS end 2016-12-31.
+# DECLARED BEFORE ANY NUMBER:
+#   (a) H_PREMISE   1100's corpus scan reproduces FILE BY FILE on the files both runs
+#                   saw (its committed 479 / 79,368 / 30 / 12,208 is a total over a
+#                   corpus that has since grown; the shared list is the testable part).
+#   (b) H_RECOVER   the clause is CHEAP to the existing record: >= 0.50 of pick ROWS
+#                   are S_SELF or S_SIBLING, i.e. recoverable with no re-run.
+#   (c) H_FULLBITE  R_FULL is STRICTLY harder than R_MARGIN: the spread/rung-count leg
+#                   drops the compliant-today row share by >= 0.05.
+#   (d) H_RULE8     the RULE8 claim set is BETTER served than ALL (the picks rule 8
+#                   governs are the ones whose ladders got committed).
+#   (e) H_ZEROCOST  the clause costs a NEW run zero extra books: every margin and
+#                   spread in the price ladder is read off books the run already built.
+#   (f) NOT A KEEP PATH  no book is proposed.  4a/4b and rule 8 are scored for every
+#                   pick because rule 4 requires it, not because a KEEP is sought.
+# DECISION RULE, declared before any number: the clause is RECOMMENDED only if H_RECOVER
+#   and H_ZEROCOST both hold — a schema clause whose back-cost is a re-run of the record
+#   is not a schema clause, it is a re-run order.
+
+## [1] CORPUS — every committed .csv in research/backtests carrying a `pick` column
+  committed .csv files scanned: 5,442  (1276.5 MB)
+  pick-bearing files: 480  (79,508 pick rows)
+  of those, a column containing 'margin' (1100's own test): 31 files, 12,348 rows (0.155 of rows)
+  1100's committed corpus: 479 files / 79,368 rows / 30 with margin / 12,208 margin rows
+  shared with this scan: 479 files, identical on (rows, has_margin) in 479 of them; in 1100 but not here: 0; new since 1100: 1 (140 rows)
+    NEW     140 rows  margin=True  2026-09-16_should-a-RULE-8-PICK-be-PUBLISHED-when-its-MARGIN-is-BELOW-the-SEED-FLOOR_C.walkforward.csv
+  G1  CROSS-RUN reproduce 1100 file-by-file on the shared list        PASS
+  The TOTALS differ from 1100's committed 479 / 79,368 / 30 / 12,208 by exactly the
+  files committed after 1100 ran; the scan is the same scan.  Every share below is
+  reported on THIS corpus and stamped with its file count and row count.
+
+## [2] STATES — is the missing margin RECOVERABLE from what the same run committed?
+##   S_SELF     the margin (and, under R_FULL, spread + rung count) is in the file.
+##   S_SIBLING  a sibling file of the SAME run publishes the per-rung ladder of a
+##              choosing statistic, so the margin is derivable with no re-run.
+##   S_LOST     neither: recovering the margin means re-running the script.
+  wrote 2026-09-16_should-EVERY-committed-PICK-ROW-carry-its-own-MARGIN-COLUMN_cloud.states.csv  (1,890 rows, 16 cols)
+  claim  required   files      rows |        SELF f/rows     SIBLING f/rows        LOST f/rows | checkable rows
+  ALL    R_MARGIN     480    79,508 |    48/     16,241   321/     43,794   111/     19,473 |          0.755
+  ALL    R_FULL       480    79,508 |     2/         69   311/     45,081   167/     34,358 |          0.568
+  RULE8  R_MARGIN     465    79,056 |    48/     16,241   309/     43,510   108/     19,305 |          0.756
+  RULE8  R_FULL       465    79,056 |     2/         69   302/     44,933   161/     34,054 |          0.569
+  wrote 2026-09-16_should-EVERY-committed-PICK-ROW-carry-its-own-MARGIN-COLUMN_cloud.grid.csv  (4 rows, 14 cols)
+
+## [3] PRICE — what the clause would have cost the runs that already exist
+##   BACK-COST  re-runs forced: one per S_LOST run-stem (a stem is re-run once, not
+##              once per file).  Everything else is a column copy, not a computation.
+##   SCHEMA     3 float64 columns on every pick row, at the record's own csv width.
+  ALL    R_MARGIN   runs touched  425  re-runs forced  104 (0.245)  +1.11 MB on 22.4 MB (0.050)
+  ALL    R_FULL     runs touched  425  re-runs forced  154 (0.362)  +3.34 MB on 22.4 MB (0.149)
+  RULE8  R_MARGIN   runs touched  410  re-runs forced  101 (0.246)  +1.11 MB on 22.2 MB (0.050)
+  RULE8  R_FULL     runs touched  410  re-runs forced  148 (0.361)  +3.32 MB on 22.2 MB (0.149)
+  wrote 2026-09-16_should-EVERY-committed-PICK-ROW-carry-its-own-MARGIN-COLUMN_cloud.price.csv  (4 rows, 11 cols)
+  wrote 2026-09-16_should-EVERY-committed-PICK-ROW-carry-its-own-MARGIN-COLUMN_cloud.lost_runs.csv  (154 rows, 3 cols)
+  the 154 run-stems whose picks are UNRECOVERABLE carry 34,358 pick rows; the 10 largest:
+      8,814 rows   2 files  2026-09-08_the-013-margin-rule_cloud
+      6,900 rows   1 files  2026-09-05_does-the-leak-free-selector-edge-survive-a-third-corpus_cloud
+      1,674 rows   1 files  2026-09-11_is-the-SMALL439-ONLY-predictive-correlation-a-BREADTH-effect_cloud
+      1,380 rows   1 files  2026-09-06_can-a-panel-property-choose-the-cadence_cloud
+      1,230 rows   1 files  2026-09-10_does-the-SCALE-channel-need-its-own-pre-rule-8-gate_C
+      1,200 rows   1 files  2026-09-05_audit-every-committed-null-for-a-salted-seed_C
+      1,080 rows   1 files  2026-09-10_does-the-record-quote-a-WINDOW-STAMP-beside-any-metric-it-publishes_C
+      1,008 rows   3 files  2026-09-10_does-any-published-rule-8-pick-survive-the-NO-DIAL-control_cloud
+        540 rows   1 files  2026-09-09_does-S_CORR-beat-the-anchor-once-the-PANEL-is-controlled_B
+        486 rows   1 files  2026-09-10_publish-step_delta-beside-every-adopted-constant_B
+
+## [4] PRICE LADDER — the clause on REAL books.  Rungs built on both panels, picks made
+##   on 2009-2016 ALONE (rule 8), OOS 2017-2026 read ONCE, and every pick published WITH
+##   margin, ladder spread and rung count — the clause's own required trio.
+  U56: 56 names, 4,705 rows 2008-01-02 -> 2026-09-15, warm 4,445, IS 2,007, OOS 2,438
+  B136: 136 names, 4,703 rows 2008-01-02 -> 2026-09-11, warm 4,443, IS 2,007, OOS 2,436
+  G2  fast runner == engine.backtest                    1.39e-17  PASS
+  G3  CROSS-RUN committed U56 W/H126/N=20 triple        3.18e-07  PASS  (15.5787% / 1.1397 / -19.1276%)
+  G4  CROSS-RUN SPY OOS triple                          1.70e-04  PASS
+  G5  CROSS-RUN live RULES v2 MaxDD == -12.05%          4.95e-05  PASS
+  wrote 2026-09-16_should-EVERY-committed-PICK-ROW-carry-its-own-MARGIN-COLUMN_cloud.ladder.csv  (38 rows, 33 cols)
+  built 38 books on 2 panels x 2 ladders in 25s (every rung reported)
+
+  EVERY GRID POINT (PROTOCOL rule 4 — no rung is withheld):
+  panel lad     rung   turn     CAGR  Sharpe    MaxDD     H1     H2    IS_S   OOS_S   OOS_DD  4b  4bO  4a
+  U56   N          5   3.13   17.83%   0.986  -25.85%  1.197  0.827   1.116   0.900  -25.85% False False False
+  U56   N          8   3.05   16.84%   1.054  -21.43%  1.148  0.985   1.024   1.080  -21.43% False False False
+  U56   N         10   3.03   17.12%   1.113  -20.77%  1.247  1.003   1.141   1.095  -20.77% False False False
+  U56   N         12   3.04   17.71%   1.169  -20.17%  1.275  1.088   1.166   1.176  -20.17% True True False
+  U56   N         15   3.02   17.00%   1.162  -20.97%  1.251  1.106   1.133   1.191  -20.97% False False False
+  U56   N         20   2.90   15.58%   1.140  -19.13%  1.204  1.097   1.112   1.164  -19.13% True True False
+  U56   N         25   2.73   14.89%   1.129  -21.16%  1.202  1.082   1.095   1.158  -21.16% False False False
+  U56   N         30   2.65   14.01%   1.101  -22.07%  1.160  1.068   1.064   1.133  -22.07% False False False
+  U56   N         40   2.31   13.46%   1.127  -22.98%  1.272  1.025   1.176   1.098  -22.98% False False False
+  U56   GROSS    0.3   1.21    6.18%   1.138   -7.99%  1.202  1.095   1.111   1.162   -7.99% False False False
+  U56   GROSS   0.35   1.40    7.22%   1.138   -9.28%  1.202  1.095   1.111   1.162   -9.28% False False False
+  U56   GROSS    0.4   1.59    8.26%   1.138  -10.55%  1.203  1.095   1.111   1.163  -10.55% False False False
+  U56   GROSS   0.45   1.78    9.30%   1.139  -11.81%  1.203  1.096   1.111   1.163  -11.81% False False False
+  U56   GROSS    0.5   1.97   10.34%   1.139  -13.06%  1.203  1.096   1.111   1.163  -13.06% False True False
+  U56   GROSS   0.55   2.15   11.39%   1.139  -14.29%  1.203  1.096   1.111   1.163  -14.29% True True False
+  U56   GROSS    0.6   2.34   12.43%   1.139  -15.51%  1.203  1.096   1.112   1.164  -15.51% True True False
+  U56   GROSS   0.65   2.53   13.48%   1.139  -16.73%  1.203  1.097   1.112   1.164  -16.73% True True False
+  U56   GROSS    0.7   2.71   14.53%   1.140  -17.93%  1.204  1.097   1.112   1.164  -17.93% True True False
+  U56   GROSS   0.75   2.90   15.58%   1.140  -19.13%  1.204  1.097   1.112   1.164  -19.13% True True False
+  B136  N          5   3.43   18.91%   0.978  -28.12%  1.307  0.726   1.286   0.769  -28.12% False False False
+  B136  N          8   3.38   17.82%   0.988  -24.54%  1.369  0.707   1.295   0.787  -24.54% False False False
+  B136  N         10   3.36   18.09%   1.044  -20.20%  1.378  0.796   1.286   0.885  -20.20% False True False
+  B136  N         12   3.33   17.60%   1.054  -21.17%  1.326  0.852   1.228   0.940  -21.17% False False False
+  B136  N         15   3.28   16.78%   1.068  -19.66%  1.238  0.943   1.108   1.046  -19.66% True True False
+  B136  N         20   3.25   16.04%   1.063  -20.74%  1.290  0.884   1.144   1.010  -20.74% False False False
+  B136  N         25   3.22   16.37%   1.097  -21.61%  1.278  0.957   1.151   1.062  -21.61% False False False
+  B136  N         30   3.15   16.01%   1.098  -24.35%  1.273  0.969   1.147   1.070  -24.35% False False False
+  B136  N         40   3.07   15.31%   1.088  -25.38%  1.265  0.957   1.145   1.054  -25.38% False False False
+  B136  GROSS    0.3   1.35    6.39%   1.059   -8.67%  1.286  0.880   1.141   1.005   -8.67% False False False
+  B136  GROSS   0.35   1.56    7.46%   1.060  -10.07%  1.286  0.881   1.141   1.006  -10.07% False False False
+  B136  GROSS    0.4   1.78    8.53%   1.060  -11.45%  1.287  0.881   1.142   1.007  -11.45% False False False
+  B136  GROSS   0.45   1.99    9.60%   1.061  -12.82%  1.287  0.882   1.142   1.007  -12.82% False False False
+  B136  GROSS    0.5   2.20   10.68%   1.061  -14.17%  1.288  0.882   1.142   1.008  -14.17% True False False
+  B136  GROSS   0.55   2.41   11.75%   1.062  -15.51%  1.288  0.883   1.143   1.008  -15.51% True True False
+  B136  GROSS    0.6   2.62   12.82%   1.062  -16.84%  1.289  0.883   1.143   1.009  -16.84% True True False
+  B136  GROSS   0.65   2.83   13.90%   1.063  -18.15%  1.289  0.884   1.144   1.009  -18.15% True True False
+  B136  GROSS    0.7   3.04   14.97%   1.063  -19.45%  1.289  0.884   1.144   1.010  -19.45% True True False
+  B136  GROSS   0.75   3.25   16.04%   1.063  -20.74%  1.290  0.884   1.144   1.010  -20.74% False False False
+
+## [5] THE CLAUSE ON THOSE PICKS — every pick row carries margin, spread, rung count
+  wrote 2026-09-16_should-EVERY-committed-PICK-ROW-carry-its-own-MARGIN-COLUMN_cloud.walkforward.csv  (12 rows, 29 cols)
+  panel lad    chooser      pick run-up     margin    spread   m/spr  k   OOS_S   OOS_DD    4b   4bO    4a
+  U56   N      C_ISSHARPE     40     12    +0.0101    0.1518   0.066  9   1.098  -22.98% False False False
+  U56   N      C_ISCAGR        5     10    +0.0235    0.0660   0.356  9   0.900  -25.85% False False False
+  U56   N      C_ISDD         40     20    +0.0137    0.1166   0.118  9   1.098  -22.98% False False False
+  U56   GROSS  C_ISSHARPE   0.75    0.7    +0.0001    0.0014   0.078 10   1.164  -19.13%  True  True False
+  U56   GROSS  C_ISCAGR     0.75    0.7    +0.0093    0.0838   0.111 10   1.164  -19.13%  True  True False
+  U56   GROSS  C_ISDD        0.3   0.35    +0.0093    0.0827   0.113 10   1.162   -7.99% False False False
+  B136  N      C_ISSHARPE      8      5    +0.0094    0.1870   0.050  9   0.787  -24.54% False False False
+  B136  N      C_ISCAGR        5      8    +0.0188    0.0897   0.210  9   0.769  -28.12% False False False
+  B136  N      C_ISDD         30     40    +0.0008    0.1361   0.006  9   1.070  -24.35% False False False
+  B136  GROSS  C_ISSHARPE   0.75    0.7    +0.0003    0.0034   0.098 10   1.010  -20.74% False False False
+  B136  GROSS  C_ISCAGR     0.75    0.7    +0.0108    0.0970   0.112 10   1.010  -20.74% False False False
+  B136  GROSS  C_ISDD        0.3   0.35    +0.0098    0.0869   0.113 10   1.005   -8.67% False False False
+  U56 SPY      full 15.10% / 0.883 / -33.72%   OOS 15.21% / 0.871 / -33.72%
+  U56 RULES v2 full 8.62% / 1.201 / -12.05%   OOS 9.45% / 1.276 / -12.05%
+  B136 SPY      full 15.16% / 0.886 / -33.72%   OOS 15.33% / 0.877 / -33.72%
+  B136 RULES v2 full 7.98% / 1.099 / -12.24%   OOS 7.88% / 1.106 / -12.24%
+  BOOKS BUILT for the ladder: 39.  Books built ONLY to satisfy the clause: 0.
+  The margin, the spread and the rung count are functions of rungs the run already had;
+  no rung exists in this ladder because the clause asked for it.
+  G6  clause costs a NEW run zero extra books           0      PASS
+
+## [6] HYPOTHESES — declared before any number above was read
+  wrote 2026-09-16_should-EVERY-committed-PICK-ROW-carry-its-own-MARGIN-COLUMN_cloud.hypotheses.csv  (6 rows, 4 cols)
+  H_PREMISE   PASS  +0.1553   1100's corpus reproduces file-by-file on the shared list
+  H_RECOVER   PASS  +0.5679   checkable (SELF+SIBLING) row share >= 0.50 at EVERY dial point
+  H_FULLBITE  PASS  +0.2034   R_FULL drops compliant-today row share by >= 0.05
+  H_RULE8     PASS  +0.0007   RULE8 checkable share > ALL, both required sets
+  H_ZEROCOST  PASS  +0.0000   clause adds 0 books to the price ladder
+  H_NOKEEP    PASS  +2.0000   no book is proposed by this run
+  wrote 2026-09-16_should-EVERY-committed-PICK-ROW-carry-its-own-MARGIN-COLUMN_cloud.gates.csv  (6 rows, 4 cols)
+  GATES: 6 of 6 PASS.   HYPOTHESES: 6 of 6 PASS.
+
+## [7] VERDICT
+  Of 79,508 committed pick rows, 69 (0.001) are checkable TODAY under R_FULL; 45,150 (0.568) become
+  checkable under the clause with NO re-run, and 34,358 (0.432) cannot be recovered at all without re-running 154 runs.
+  CLAUSE: RECOMMENDED (forward-only either way — rule 6 forbids this run changing PROTOCOL.md).
+  NO BOOK IS PROPOSED.  The price ladder is a demonstration of the clause's cost, and
+  its 4a/4b columns are published because rule 4 requires them of every ladder, not
+  because a KEEP is claimed.
+  SURVIVORSHIP (rule 9): U56/B136 are current-constituent lists; every price-ladder
+  level is optimistic and every 4b count an UPPER bound.  The census layer reads
+  committed text only and carries no survivorship exposure.
+  runtime 25s
