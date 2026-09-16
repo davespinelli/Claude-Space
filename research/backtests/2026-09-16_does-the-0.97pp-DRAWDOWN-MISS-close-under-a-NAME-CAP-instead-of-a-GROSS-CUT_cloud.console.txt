@@ -1,0 +1,125 @@
+# Idea 1071 (cloud lane, 2026-09-16) — does the 0.97pp DRAWDOWN MISS close under a NAME CAP instead of a GROSS CUT?
+# 2 tuned dials: N [20, 25, 30, 40] x CAPMULT [1.0, 1.25, 1.5, 2.0, inf]. ALL 20 points reported, book AND null.
+# Fixed (NOT dials): CAND20 legs [(21, 252), (0, 126), (0, 63)], max_vol 0.6, gross 0.75, cost 10 bps, LAG 1, cadence W, min hold 126, canonical period-end dates.
+# DECLARED BEFORE ANY NUMBER:
+#   (a) cap k<1 IS a gross cut (uniform bind) and is therefore NOT on the ladder;
+#       k>=1 binds only through BREADTH (n_sel < N), i.e. it de-grosses exactly when the
+#       eligibility gate thins out.  If the bind share is ~0 the dial is INERT and is
+#       reported inert (gate G5), not as a null result.
+#   (b) the N dial cuts DD by diversification at UNCHANGED gross, so it is not forced to
+#       pay for drawdown with CAGR one for one the way 1064's gross ladder is.
+#   (c) MISS = max(|MaxDD|-|live|, 0.70*SPY_CAGR - CAGR) in pp; MISS<=0 = window open.
+
+## U56: 56 columns, 4705 days 2008-01-02..2026-09-15, 977 rebalance dates
+   SPY        full 15.10% / 0.8829 / -33.72%  halves 0.9588/0.8207  OOS 15.21% / 0.8711 / -33.72%
+   RULES v2   full 8.62% / 1.2007 / -12.05%  halves 1.2322/1.1760  OOS 9.45% / 1.2762 / -12.05%
+   G4b PRICING THE G4 FAILURE at g=0.375: REBUILT 7.7349%/1.1383/-9.9144% vs CASH-BLEND 7.7548%/1.1397/-9.9251%  -> dCAGR +0.020 pp, dMaxDD -0.011 pp, dSharpe +0.0014
+   grid done  (19s)
+## B136: 136 columns, 4703 days 2008-01-02..2026-09-11, 976 rebalance dates
+   SPY        full 15.16% / 0.8861 / -33.72%  halves 0.9596/0.8259  OOS 15.33% / 0.8767 / -33.72%
+   RULES v2   full 7.98% / 1.0993 / -12.24%  halves 1.2348/0.9658  OOS 7.88% / 1.1059 / -12.24%
+   grid done  (44s)
+
+## GATES (printed before any result number)
+   PASS  G1 fast runner == engine.backtest (U56, N20, k=INF): |d| = 1.388e-17
+   PASS  G2 CROSS-RUN vs 936 committed W/H126 triple: |d| = 3.183e-07
+   PASS  G3 CROSS-RUN SPY OOS triple: |d| = 1.702e-04
+   FAIL  G4 net returns scale EXACTLY with gross (lambda match is exact): |d| = 1.404e-03
+   PASS  G4b |dMaxDD| REBUILT vs CASH-BLEND at g=0.375 (pp): |d| = 1.068e-02
+   PASS  G6 live RULES v2 MaxDD == committed -12.05%: |d| = 4.949e-05
+   PASS  G5 cap dial is LIVE: k=1.00 binds on 21.9% of U56 rebalance dates
+
+## 1064's GROSS ladder, reproduced (N=20, k=INF) — the miss it reported
+   U56: min MISS over the 5 rungs = 1.270 pp at gross 0.45; window open at 0 of 5 rungs
+      g=0.75  15.58% / 1.1397 / -19.13%  MISS  7.073 pp   4b True  4a False
+      g=0.65  13.48% / 1.1394 / -16.73%  MISS  4.674 pp   4b True  4a False
+      g=0.55  11.39% / 1.1390 / -14.29%  MISS  2.236 pp   4b True  4a False
+      g=0.45   9.30% / 1.1386 / -11.81%  MISS  1.270 pp   4b False  4a False
+      g=0.35   7.22% / 1.1382 /  -9.28%  MISS  3.353 pp   4b False  4a False
+   B136: min MISS over the 5 rungs = 1.012 pp at gross 0.45; window open at 0 of 5 rungs
+      g=0.75  16.04% / 1.0634 / -20.74%  MISS  8.499 pp   4b False  4a False
+      g=0.65  13.90% / 1.0626 / -18.15%  MISS  5.913 pp   4b True  4a False
+      g=0.55  11.75% / 1.0618 / -15.51%  MISS  3.273 pp   4b True  4a False
+      g=0.45   9.60% / 1.0609 / -12.82%  MISS  1.012 pp   4b False  4a False
+      g=0.35   7.46% / 1.0599 / -10.07%  MISS  3.156 pp   4b False  4a False
+
+## THE 20-POINT GRID (all points, both panels)
+   --- U56 ---
+      N  cap   bind%  gross  nsel   CAGR    Sharpe   MaxDD    turn   MISS_pp  4b  4a  4bOOS
+      20 1.00   9.0%  0.702  18.7  15.27%   1.1340  -19.10%   2.78    7.049   1   0    1
+      20 1.25   7.6%  0.706  18.7  15.48%   1.1370  -19.13%   2.84    7.073   1   0    1
+      20 1.50   6.8%  0.708  18.7  15.57%   1.1403  -19.13%   2.87    7.073   1   0    1
+      20 2.00   5.8%  0.709  18.7  15.57%   1.1392  -19.13%   2.89    7.073   1   0    1
+      20  INF   5.3%  0.710  18.7  15.58%   1.1397  -19.13%   2.90    7.073   1   0    1
+      25 1.00   9.8%  0.700  23.3  14.58%   1.1237  -20.24%   2.61    8.181   0   0    0
+      25 1.25   7.9%  0.704  23.3  14.81%   1.1274  -21.16%   2.67    9.104   0   0    0
+      25 1.50   6.9%  0.706  23.3  14.87%   1.1299  -21.16%   2.70    9.104   0   0    0
+      25 2.00   6.4%  0.708  23.3  14.88%   1.1289  -21.16%   2.72    9.104   0   0    0
+      25  INF   5.3%  0.710  23.3  14.89%   1.1285  -21.16%   2.73    9.104   0   0    0
+      30 1.00  11.7%  0.696  27.8  13.71%   1.1028  -21.56%   2.48    9.510   0   0    0
+      30 1.25   8.9%  0.702  27.8  13.88%   1.0989  -22.07%   2.56   10.014   0   0    0
+      30 1.50   7.1%  0.705  27.8  13.97%   1.1019  -22.07%   2.60   10.014   0   0    0
+      30 2.00   6.8%  0.707  27.8  13.99%   1.1018  -22.07%   2.62   10.014   0   0    0
+      30  INF   5.3%  0.710  27.8  14.01%   1.1008  -22.07%   2.65   10.014   0   0    0
+      40 1.00  21.9%  0.686  36.6  12.99%   1.1304  -22.98%   1.99   10.929   0   0    0
+      40 1.25  10.5%  0.697  36.6  13.24%   1.1273  -22.98%   2.16   10.929   0   0    0
+      40 1.50   9.0%  0.701  36.6  13.26%   1.1221  -22.98%   2.20   10.929   0   0    0
+      40 2.00   7.4%  0.704  36.6  13.37%   1.1256  -22.98%   2.25   10.929   0   0    0
+      40  INF   5.3%  0.710  36.6  13.46%   1.1268  -22.98%   2.31   10.929   0   0    0
+      min MISS_full 7.049 pp at N=20 cap=1.00;  window open at 0 of 20 points
+      4b full 5/20   4b OOS 5/20   4a 0/20
+   --- B136 ---
+      N  cap   bind%  gross  nsel   CAGR    Sharpe   MaxDD    turn   MISS_pp  4b  4a  4bOOS
+      20 1.00   6.4%  0.707  18.9  15.91%   1.0620  -18.78%   3.17    6.538   1   0    1
+      20 1.25   5.9%  0.708  18.9  15.91%   1.0607  -18.79%   3.19    6.547   1   0    1
+      20 1.50   5.8%  0.709  18.9  15.92%   1.0600  -19.57%   3.20    7.329   1   0    1
+      20 2.00   5.6%  0.710  18.9  15.98%   1.0608  -20.64%   3.23    8.400   0   0    0
+      20  INF   5.3%  0.710  18.9  16.04%   1.0634  -20.74%   3.25    8.499   0   0    0
+      25 1.00   7.1%  0.706  23.5  16.23%   1.1025  -19.13%   3.15    6.886   1   0    1
+      25 1.25   6.4%  0.708  23.5  16.21%   1.0963  -20.22%   3.17    7.984   1   0    1
+      25 1.50   6.0%  0.709  23.5  16.23%   1.0927  -21.32%   3.20    9.082   0   0    0
+      25 2.00   5.3%  0.710  23.5  16.37%   1.0968  -21.61%   3.22    9.374   0   0    0
+      25  INF   5.3%  0.710  23.5  16.37%   1.0968  -21.61%   3.22    9.374   0   0    0
+      30 1.00   7.4%  0.705  28.2  15.92%   1.1128  -21.86%   3.08    9.617   0   0    0
+      30 1.25   7.0%  0.708  28.2  15.93%   1.1040  -23.31%   3.12   11.073   0   0    0
+      30 1.50   6.2%  0.709  28.2  15.95%   1.0967  -24.35%   3.14   12.113   0   0    0
+      30 2.00   5.3%  0.710  28.2  16.01%   1.0981  -24.35%   3.15   12.113   0   0    0
+      30  INF   5.3%  0.710  28.2  16.01%   1.0981  -24.35%   3.15   12.113   0   0    0
+      40 1.00   8.1%  0.703  37.5  15.27%   1.1089  -23.17%   2.99   10.928   0   0    0
+      40 1.25   7.3%  0.706  37.5  15.31%   1.0974  -25.03%   3.03   12.785   0   0    0
+      40 1.50   6.6%  0.708  37.5  15.38%   1.0954  -25.38%   3.05   13.142   0   0    0
+      40 2.00   5.8%  0.709  37.5  15.32%   1.0894  -25.38%   3.06   13.142   0   0    0
+      40  INF   5.3%  0.710  37.5  15.31%   1.0884  -25.38%   3.07   13.142   0   0    0
+      min MISS_full 6.538 pp at N=20 cap=1.00;  window open at 0 of 20 points
+      4b full 5/20   4b OOS 5/20   4a 0/20
+
+## THE NULL AT THE SAME REALISED DRAWDOWN (book CAGR vs the gross-matched null's, 20 seeds/point)
+   U56: median book percentile in its own DD-matched null = 1.000; book above the null MEDIAN at 20 of 20 points; median lambda 0.942
+      weakest N=40/1.00: book 12.99% vs null median 12.87% (pct 0.65)
+      strongest N=20/1.00: book 15.27% vs null median 10.91% (pct 1.00)
+   B136: median book percentile in its own DD-matched null = 1.000; book above the null MEDIAN at 20 of 20 points; median lambda 0.872
+      weakest N=20/1.00: book 15.91% vs null median 9.63% (pct 1.00)
+      strongest N=20/1.00: book 15.91% vs null median 9.63% (pct 1.00)
+
+## RULE 8 — IS(2009-2016)-only choosers over the 20 points, OOS(2017-2026) read ONCE
+   U56 C_ISSHARPE: picks N=40 cap=2.00 -> OOS 13.89% / 1.0925 / -22.98%  | SPY OOS 15.21% / 0.8711 / -33.72% | RULES v2 OOS 9.45% / 1.2762 / -12.05% | 4b_OOS False (O_S True O_DD False O_CAGR True) 4b_full False 4a False MISS_oos 10.929 pp
+   U56 C_ISDD: picks N=40 cap=2.00 -> OOS 13.89% / 1.0925 / -22.98%  | SPY OOS 15.21% / 0.8711 / -33.72% | RULES v2 OOS 9.45% / 1.2762 / -12.05% | 4b_OOS False (O_S True O_DD False O_CAGR True) 4b_full False 4a False MISS_oos 10.929 pp
+   B136 C_ISSHARPE: picks N=40 cap=1.00 -> OOS 15.47% / 1.0660 / -23.17%  | SPY OOS 15.33% / 0.8767 / -33.72% | RULES v2 OOS 7.88% / 1.1059 / -12.24% | 4b_OOS False (O_S True O_DD False O_CAGR True) 4b_full False 4a False MISS_oos 10.928 pp
+   B136 C_ISDD: picks N=30 cap=2.00 -> OOS 16.61% / 1.0696 / -24.35%  | SPY OOS 15.33% / 0.8767 / -33.72% | RULES v2 OOS 7.88% / 1.1059 / -12.24% | 4b_OOS False (O_S True O_DD False O_CAGR True) 4b_full False 4a False MISS_oos 12.113 pp
+
+## HYPOTHESES (declared before the run, scored as written)
+   FAIL  H_CLOSE  some (N, cap) point opens 1064's joint window (MISS_full <= 0)  [min MISS_full U56 7.049 pp, B136 6.538 pp]
+   FAIL  H_BETTER the best (N, cap) MISS beats the best GROSS-ladder MISS on U56  [7.049 vs 1.270 pp]
+   FAIL  H_NDIAL  MISS is monotone DECREASING in N at cap=INF (diversification cuts DD)  [7.073 -> 9.104 -> 10.014 -> 10.929]
+   PASS  H_CAPLIVE the cap dial moves MaxDD by >= 0.5 pp somewhere on U56  [max within-N MaxDD spread 0.923 pp]
+   PASS  H_NULL   the book beats its DD-matched null's MEDIAN CAGR at >= 75% of points  [1.000]
+   FAIL  H_WF     >= 1 rule-8 pick clears 4b OUT OF SAMPLE  [0 of 4 picks]
+   PASS  H_4A     no point clears 4a (the DD leg is a book fact, not a weighting fact)  [0 of 40 points pass 4a]
+  wrote 2026-09-16_does-the-0.97pp-DRAWDOWN-MISS-close-under-a-NAME-CAP-instead-of-a-GROSS-CUT_cloud.grid.csv  (40 rows, 36 cols)
+  wrote 2026-09-16_does-the-0.97pp-DRAWDOWN-MISS-close-under-a-NAME-CAP-instead-of-a-GROSS-CUT_cloud.null.csv  (40 rows, 12 cols)
+  wrote 2026-09-16_does-the-0.97pp-DRAWDOWN-MISS-close-under-a-NAME-CAP-instead-of-a-GROSS-CUT_cloud.ladder.csv  (10 rows, 25 cols)
+  wrote 2026-09-16_does-the-0.97pp-DRAWDOWN-MISS-close-under-a-NAME-CAP-instead-of-a-GROSS-CUT_cloud.rule8.csv  (4 rows, 23 cols)
+  wrote 2026-09-16_does-the-0.97pp-DRAWDOWN-MISS-close-under-a-NAME-CAP-instead-of-a-GROSS-CUT_cloud.benchmarks.csv  (4 rows, 13 cols)
+  wrote 2026-09-16_does-the-0.97pp-DRAWDOWN-MISS-close-under-a-NAME-CAP-instead-of-a-GROSS-CUT_cloud.gates.csv  (7 rows, 3 cols)
+  wrote 2026-09-16_does-the-0.97pp-DRAWDOWN-MISS-close-under-a-NAME-CAP-instead-of-a-GROSS-CUT_cloud.hypotheses.csv  (7 rows, 3 cols)
+# done in 44s
