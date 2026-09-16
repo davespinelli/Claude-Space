@@ -1,0 +1,197 @@
+====================================================================================================
+IDEA 967 (lane B) -- is the 15-24 DAY PRE-QUARTER-END WINDOW a real REBALANCE-DATE EDGE
+                    or a 63-WAY SEARCH?
+  run 2026-09-16 10:36 UTC   PROTOCOL 10 bps / t+1 / warm-up 260   SMOKE=0
+  TUNED 1 cadence {'Q': 63, 'M': 21, 'W': 5};  TUNED 2 null kind ['N_FIXED', 'N_ROTBLOCK', 'N_PERM'] (40 draws, k=20)
+  windows: W961=(15, 24)  WBUCKET=(18, 31)  WMONTH=(5, 8)  literal d=20
+====================================================================================================
+  panel U56      56 cols  2008-01-02 .. 2026-09-15  4,705 rows
+  panel B136    136 cols  2008-01-02 .. 2026-09-11  4,703 rows
+  panel SMALL   664 cols  2010-01-04 .. 2026-09-11  4,198 rows
+  SMALL drops 52 tickers with max_1d_move >= 1.0 per data/small_meta.csv; SURVIVORSHIP: all panels are CURRENT-CONSTITUENT lists (rule 9).
+
+====================================================================================================
+(A) GATES -- printed before any result number
+====================================================================================================
+  G0 offset_mask(.,per,0) == engine.rebalance_mask on D/W/M/Q: 0 disagreeing rows  PASS
+  G2 BAND03@0.75 == baseline.rules_v2_weights: max|d| 0.000e+00  PASS
+  G1 Ctx == engine.backtest on D and M (returns AND turnover, post warm-up): max|d| 2.498e-16  PASS
+  G3 CROSS-RUN READ idea 961's committed family.csv (768 rows, 756 non-canonical) on 961's OWN CAGR-leg convention (C_FULL): 4b passes 17 (published 17), dist_qe 15..24 (published 15..24)  PASS
+     FINDING, same file, the RECORD'S MAJORITY convention (C_OOS, as in 942 / 962 / 964 / 976 / 981's `legs_rec`): 33 passes over dist_qe 15..33.
+     961's headline '17, ALL at 15-24d' is therefore CONVENTION-DEPENDENT: on the convention the rest of the record uses, the count nearly doubles and the window
+     widens from 10 days to 19.  The queue's premise for this idea quotes the C_FULL reading.  Also: 961 published the denominator as 768, which counts its 12 CANONICAL rows; the phase family proper is 756.
+  G3b CROSS-RUN REBUILD 961's BAND03 modular-63 family CAGR: max|d| 6.251e-05 over 126 phases  FAIL
+     G3c U56   n= 63  FULL-sample max|d| 6.251e-05   IS-window max|d| 1.092e-07   this run's last bar 2026-09-15
+     G3c B136  n= 63  FULL-sample max|d| 2.914e-16   IS-window max|d| 4.580e-16   this run's last bar 2026-09-11
+     G3c DIAGNOSIS: the construction reproduces EXACTLY on B136 (2.9e-16, whose cached tape has not moved since 961 ran) and exactly inside U56's IS window (1.1e-07);
+     only U56's FULL-sample number drifts (6.3e-05), because data/prices.csv has gained bars (961 ran 2026-09-15; this run's U56 ends 2026-09-15).  G3b's failure is PRICE-VINTAGE DRIFT, not a construction disagreement  CONFIRMED
+  G4 PREMISE: within-phase sd of the TRUE distance-to-quarter-end on 961's modular-63 cycle: median 3.22 trading days (range 2.52..29.61), median within-phase SPREAD 21 days
+     bar: a phase that IS a rebalance date has sd < 1.0  ->  FAIL: 961 phase labels are NOT rebalance dates
+  G5 MATCHED GROSS: target weights identical across phases/cadences by construction (the mask alone moves): max|d| 0.000e+00  PASS
+  G6 determinism (U56/Q/d=20/BAND03 rebuilt from scratch): max|d| 0.000e+00  PASS
+
+====================================================================================================
+(B) THE TRADABLE GRID -- rebalance EXACTLY d trading days before every period end
+====================================================================================================
+  U56: 890 books (5 books x 2 gross x 89 phases)   t=12s
+  B136: 890 books (5 books x 2 gross x 89 phases)   t=31s
+  SMALL: 890 books (5 books x 2 gross x 89 phases)   t=102s
+  wrote 2026-09-16_is-the-15-to-24-DAY-PRE-QUARTER-END-WINDOW-a-real-REBALANCE-DATE-EDGE-or-a-63-WAY-SEARCH_B.grid.csv.gz  (2,670 rows, 22 cols)
+  wrote 2026-09-16_is-the-15-to-24-DAY-PRE-QUARTER-END-WINDOW-a-real-REBALANCE-DATE-EDGE-or-a-63-WAY-SEARCH_B.clamp.csv  (267 rows, 5 cols)
+  clamping inside the Q window d=15..24: 0 clamped rebalances out of 2,170  (a short quarter forces the rebalance to the quarter's first day)
+
+====================================================================================================
+(C) THE WINDOW PROFILE -- within-family de-meaned CAGR by d (pp/yr), 10 bps
+====================================================================================================
+  wrote 2026-09-16_is-the-15-to-24-DAY-PRE-QUARTER-END-WINDOW-a-real-REBALANCE-DATE-EDGE-or-a-63-WAY-SEARCH_B.premium.csv  (90 rows, 11 cols)
+
+  Q grid -- mean de-meaned CAGR (pp/yr) by distance-to-quarter-end bucket, all cells:
+          n  mean_pp  med_pp
+bucket                      
+0-8d    270   -1.531  -0.868
+9-14d   180   -0.354  -0.219
+15-24d  300   +0.452  +0.583
+25-31d  210   +0.683  +0.340
+32-45d  420   +0.592  +0.231
+46-62d  510   -0.099  -0.175
+
+  H_WINDOW  Q window d=15..24 pooled over all 30 cells: +0.452 pp/yr   (bar >= +0.25)  -> PASS
+            961's own bucket d=18..31: +0.646 pp/yr (961 published +0.529 pp on its MODULAR cycle)
+  H_MONTHLY M window d=5..8 pooled: +0.210 pp/yr   (bar >= +0.25)  -> FAIL
+  H_SMALL   Q window on SMALL alone: +0.974 pp/yr   (bar >= +0.25)  -> PASS
+
+  per-panel / per-cadence window premium (pp/yr), mean over books x gross:
+panel     B136  SMALL    U56
+cadence                     
+M       +0.064 +0.397 +0.169
+Q       -0.239 +0.974 +0.620
+W       +0.244 +0.186 +0.319
+
+  per-book Q-window premium (pp/yr):
+panel    B136  SMALL    U56
+book                       
+TOP05  -1.746 +0.045 +0.294
+TOP10  -0.634 +1.599 -0.001
+TOP20  +0.364 +1.879 +1.096
+EWELIG +0.387 +0.493 +0.981
+BAND03 +0.436 +0.853 +0.728
+
+  cost-rung sensitivity of the Q window premium (pp/yr, pooled over all cells):
+        0 bps: +0.455 pp/yr
+        5 bps: +0.453 pp/yr
+       10 bps: +0.452 pp/yr
+       25 bps: +0.446 pp/yr
+       50 bps: +0.437 pp/yr
+
+====================================================================================================
+(D) NULLS -- TUNED 2, all 3 kinds reported (40 draws, k=20, gross 0.75)
+====================================================================================================
+  U56: nulls done   t=131s
+  B136: nulls done   t=219s
+  SMALL: nulls done   t=659s
+  wrote 2026-09-16_is-the-15-to-24-DAY-PRE-QUARTER-END-WINDOW-a-real-REBALANCE-DATE-EDGE-or-a-63-WAY-SEARCH_B.nulls.csv  (2,880 rows, 9 cols)
+
+  window premium (pp/yr): REAL books vs each null kind, Q grid
+  panel        real |   N_FIXED     SE      z | N_ROTBLOCK     SE      z |    N_PERM     SE      z
+  U56        +0.620 |    -0.048  0.016 +41.25 |    +0.141  0.095  +5.06 |    +0.001  0.017 +35.94
+  B136       -0.239 |    +0.025  0.021 -12.81 |    -0.088  0.099  -1.53 |    -0.007  0.024  -9.47
+  SMALL      +0.974 |    -0.391  0.054 +25.50 |    -0.343  0.190  +6.95 |    +0.073  0.037 +24.31
+
+  H_NULL   min z over panels: N_FIXED -12.81, N_ROTBLOCK -1.53   (bar >= +2.0 on BOTH, as pre-registered)  -> FAIL: not distinguishable from the null
+           SECONDARY (reported, NOT the pre-registered bar): the bar above divides by the
+           NULL's SE alone, which treats the 10 real cells as exact.  The two-sample z,
+           sqrt(se_real^2 + se_null^2), and the share of real cells above the null's own
+           95th percentile, are the more conservative readings:
+             U56     se_real=0.144  N_FIXED z2=+4.60 cells>null_p95=0.80  N_ROTBLOCK z2=+2.78 cells>null_p95=0.20
+             B136    se_real=0.288  N_FIXED z2=-0.91 cells>null_p95=0.60  N_ROTBLOCK z2=-0.49 cells>null_p95=0.00
+             SMALL   se_real=0.240  N_FIXED z2=+5.54 cells>null_p95=0.90  N_ROTBLOCK z2=+4.30 cells>null_p95=0.30
+           NOTE the 10 real cells share one tape and are strongly correlated, so even z2
+           overstates; the window premium's SIGN and SIZE, not its z, are what matter here.
+  H_SEARCH per cell, observed BEST 10-wide window premium vs that cell's OWN N_PERM null: 30 of 30 cells at/above their own 0.95 quantile (median percentile 1.000; bar = a majority of cells)  -> PASS
+           SECONDARY (pooled): observed mean best-window premium +1.926 pp/yr vs the per-draw mean over cells, 95th pct +0.952 (percentile 1.000)
+           where the observed best window lands: median d = 29, 10 of 30 cells inside d=15..24 (uniform over the 54 windows would give 5.6)
+
+====================================================================================================
+(E) RULE 8 WALK-FORWARD -- window chosen on 2009-2016 ONLY, 2017-2026 read once
+====================================================================================================
+  wrote 2026-09-16_is-the-15-to-24-DAY-PRE-QUARTER-END-WINDOW-a-real-REBALANCE-DATE-EDGE-or-a-63-WAY-SEARCH_B.walkforward.csv  (30 rows, 34 cols)
+
+  cell                   ISpick |            pick OOS C/S/DD |            d=20 OOS C/S/DD |           canon OOS C/S/DD |  famMED C
+  B136/BAND03/CORE           45 |    8.63%   0.952  -21.98% |    9.91%   1.232  -15.17% |    7.64%   0.887  -21.84% |     8.63%
+  B136/BAND03/EXT            45 |   11.53%   0.943  -28.96% |   13.32%   1.236  -19.78% |   10.15%   0.879  -28.73% |    11.53%
+  B136/EWELIG/CORE           53 |   11.65%   0.999  -24.16% |   13.33%   1.132  -22.41% |   10.97%   0.969  -24.44% |    12.25%
+  B136/EWELIG/EXT            53 |   15.56%   0.990  -31.90% |   17.95%   1.134  -29.12% |   14.57%   0.961  -32.12% |    16.39%
+  B136/TOP05/CORE            53 |   21.59%   0.950  -27.79% |   18.69%   0.853  -28.88% |   17.61%   0.838  -28.63% |    18.19%
+  B136/TOP05/EXT             53 |   28.85%   0.966  -35.94% |   24.88%   0.873  -36.72% |   23.23%   0.853  -36.61% |    24.31%
+  B136/TOP10/CORE            53 |   17.20%   0.883  -27.26% |   16.92%   0.898  -28.49% |   14.14%   0.793  -28.61% |    16.46%
+  B136/TOP10/EXT             53 |   22.92%   0.893  -35.63% |   22.60%   0.912  -36.54% |   18.62%   0.799  -37.19% |    21.93%
+  B136/TOP20/CORE            53 |   15.64%   0.947  -26.16% |   15.97%   0.990  -25.62% |   11.70%   0.749  -27.07% |    15.64%
+  B136/TOP20/EXT             53 |   20.91%   0.950  -34.30% |   21.38%   0.998  -33.03% |   15.44%   0.754  -35.32% |    20.91%
+  SMALL/BAND03/CORE          45 |    3.39%   0.443  -22.48% |    5.00%   0.696  -13.59% |    3.50%   0.470  -24.08% |     3.64%
+  SMALL/BAND03/EXT           45 |    4.38%   0.438  -29.63% |    6.58%   0.697  -17.87% |    4.49%   0.463  -31.72% |     4.71%
+  SMALL/EWELIG/CORE          42 |    6.48%   0.506  -33.39% |    6.67%   0.532  -34.28% |    4.62%   0.395  -35.54% |     6.33%
+  SMALL/EWELIG/EXT           42 |    8.26%   0.501  -44.06% |    8.65%   0.533  -44.45% |    5.64%   0.386  -46.79% |     7.95%
+  SMALL/TOP05/CORE           45 |    6.91%   0.378  -54.44% |   10.23%   0.489  -42.94% |    4.30%   0.291  -43.51% |     9.08%
+  SMALL/TOP05/EXT            45 |    8.30%   0.400  -65.91% |   12.88%   0.511  -55.34% |    4.46%   0.300  -54.73% |    11.06%
+  SMALL/TOP10/CORE           44 |    4.59%   0.312  -52.12% |   10.69%   0.571  -35.41% |    3.88%   0.284  -40.71% |     8.31%
+  SMALL/TOP10/EXT            44 |    5.32%   0.323  -63.39% |   13.79%   0.585  -46.00% |    4.02%   0.282  -54.04% |    10.50%
+  SMALL/TOP20/CORE           46 |    7.43%   0.466  -36.42% |    8.67%   0.541  -34.63% |    1.74%   0.186  -41.40% |     6.82%
+  SMALL/TOP20/EXT            46 |    9.32%   0.472  -46.65% |   11.22%   0.551  -44.94% |    1.38%   0.182  -53.11% |     8.49%
+  U56/BAND03/CORE             7 |    8.67%   1.033  -19.80% |   11.07%   1.333  -13.93% |    8.41%   0.973  -19.90% |     9.47%
+  U56/BAND03/EXT              7 |   11.50%   1.027  -25.90% |   14.88%   1.336  -18.14% |   11.19%   0.968  -26.07% |    12.66%
+  U56/EWELIG/CORE            54 |   10.64%   0.946  -21.52% |   14.03%   1.254  -18.40% |   11.52%   1.033  -22.21% |    12.46%
+  U56/EWELIG/EXT             54 |   14.19%   0.943  -28.33% |   18.87%   1.256  -23.88% |   15.31%   1.027  -29.07% |    16.71%
+  U56/TOP05/CORE             53 |   21.19%   0.991  -26.03% |   23.36%   1.138  -22.34% |    9.23%   0.534  -29.38% |    19.51%
+  U56/TOP05/EXT              53 |   28.40%   1.004  -33.82% |   31.17%   1.146  -28.33% |   11.81%   0.545  -38.48% |    25.99%
+  U56/TOP10/CORE             57 |   15.32%   0.916  -25.14% |   19.17%   1.166  -22.77% |   13.97%   0.853  -24.46% |    17.89%
+  U56/TOP10/EXT              57 |   20.36%   0.918  -32.69% |   25.70%   1.173  -29.18% |   18.51%   0.860  -31.68% |    24.05%
+  U56/TOP20/CORE             57 |   13.22%   0.936  -26.79% |   16.94%   1.230  -21.13% |   15.26%   1.056  -27.12% |    15.39%
+  U56/TOP20/EXT              57 |   17.59%   0.935  -34.79% |   22.80%   1.234  -27.08% |   20.36%   1.056  -35.00% |    20.64%
+  SPY U56    OOS  15.21%   0.871  -33.72%   |  RULES v2 baseline OOS   9.45%   1.276  -12.05%
+  SPY B136   OOS  15.33%   0.877  -33.72%   |  RULES v2 baseline OOS   7.88%   1.106  -12.24%
+  SPY SMALL  OOS  15.33%   0.877  -33.72%   |  RULES v2 baseline OOS   3.75%   0.560  -13.89%
+
+  H_LITERAL the ZERO-TUNING rule d=20 beats the canonical quarter-end on OOS CAGR in 30 of 30 cells (1.000; bar >= 0.667)  -> PASS
+            BUT the canonical date is a WEAK comparand -- 942 and 961 both established d=0 sits LOW in its own family (961: mean percentile 0.255 over 12 cells).  Against the
+            FAMILY MEDIAN, a phase nobody chose, the same literal rule reads:
+              OOS: beats family median in 30 of 30 cells, mean margin +1.648 pp/yr, median within-family percentile 0.810
+              IS : beats family median in 4 of 30 cells, mean margin -0.945 pp/yr, median within-family percentile 0.333
+              IS : beats the CANONICAL date in 8 of 30 cells  (a real calendar effect should show in BOTH windows, not just OOS)
+  H_RULE8   the IS-chosen window beats its own family MEDIAN on OOS CAGR in 10 of 30 cells (0.333; bar >= 0.667); cells clearing 4b OOS: 0 (bar >= 1)  -> FAIL
+            d=20 literal rule clears 4b in 4 of 30 cells
+
+  G7 chooser IS-ONLY: picks invariant to permuting every OOS/full-sample column: PASS
+
+  KEEP PATHS on the rule-8 picks (4a: beat the LIVE book in BOTH halves with no worse MaxDD; 4b: capital-worthy vs SPY)
+  4a passes: 0 of 30   4b passes: 0 of 30   (d=20 literal: 4b 4 of 30)
+
+====================================================================================================
+(F) VERDICT
+====================================================================================================
+  GATES: G0=PASS  G2=PASS  G1=PASS  G3=PASS  G3b=FAIL  G3c=PASS  G4=FAIL  G5=PASS  G6=PASS  G7=PASS
+  HYPOTHESES: H_WINDOW=PASS  H_MONTHLY=FAIL  H_SMALL=PASS  H_NULL=FAIL  H_SEARCH=PASS  H_LITERAL=PASS  H_RULE8=FAIL
+
+  VERDICT: KILL -- TAPE PROPERTY -- a gross-matched coin flip collects the same window premium
+
+  THE THREE INDEPENDENT REASONS THIS DIES (the decision rule above used only the first):
+  1. NOT A BOOK EDGE. The Q-window premium is +0.620 pp/yr on U56 and +0.974 on SMALL but -0.239 on B136 -- it changes SIGN across
+     panels, and on B136 a gross-matched coin flip does BETTER than the real books.
+  2. IT LIVES ENTIRELY IN THE SECOND WINDOW. The literal d=20 rule beats its own family
+     median on OOS CAGR in 30 of 30 cells (+1.648 pp/yr) but in only 4 of 30 IN SAMPLE (-0.945 pp/yr).
+     A quarter-end flow effect that is absent 2009-2016 and present 2017-2026 is not a
+     calendar mechanism; it is one window's luck, and rule 8 is what catches it.
+  3. THE WINDOW IS NOT WHERE THE SHAPE IS. On the tradable grid the profile is not a peak
+     at d=15..24 -- it is a TROUGH at the quarter-end itself (-1.531 pp/yr at d=0..8) with everything
+     from d=15 to d=45 flat and mildly positive (+0.452 / +0.683 / +0.592 at 15-24 / 25-31 / 32-45).
+     '15-24 days' is a 63-way search LOCALISING a broad, shallow 'do not rebalance AT
+     quarter-end' effect, and H_SEARCH confirms the localisation is free: the best 10-wide
+     window beats its own permutation null in 30 of 30 cells, i.e. every
+     family has SOME good 10-wide window, and which one it is does not replicate.
+
+  WHAT SURVIVES (reported, not promoted): the ONLY robust part of 961's calendar reading is
+  the NEGATIVE end -- rebalancing within ~8 trading days of quarter-end costs -1.531 pp/yr
+  of de-meaned CAGR, which is consistent across all three panels and is what makes the
+  CANONICAL quarter-end date look bad (942's and 961's original observation). That is a
+  statement about the date to AVOID, not a window to TARGET, and it moves no KEEP path:
+  4a 0 of 30, 4b 0 of 30 on the rule-8 picks.
+  wrote 2026-09-16_is-the-15-to-24-DAY-PRE-QUARTER-END-WINDOW-a-real-REBALANCE-DATE-EDGE-or-a-63-WAY-SEARCH_B.gates.csv  (13 rows, 5 cols)
