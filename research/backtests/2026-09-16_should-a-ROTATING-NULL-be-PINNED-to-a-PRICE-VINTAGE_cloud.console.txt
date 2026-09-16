@@ -1,0 +1,259 @@
+####################################################################################################
+# Idea 1002 -- should a ROTATING NULL be PINNED to a PRICE VINTAGE?  (cloud lane, 2026-09-16)
+####################################################################################################
+
+Idea 1002 (cloud lane, 2026-09-16)
+should-a-ROTATING-NULL-be-PINNED-to-a-PRICE-VINTAGE
+====================================================
+
+THE QUESTION (QUEUE.md, verbatim)
+---------------------------------
+  idea 971 found a nightly-restated panel does not perturb a rotating null, it RESAMPLES it:
+  B136 (Friday cache) reproduced 970's 600 draws bit-for-bit, SMALL663 to 1.6e-07, U56 not at
+  all (max |dSharpe| 0.254; 7.4% of REC 4b verdicts flipped on identical seeds).  Price a
+  vintage-pinned null (draw the eligibility pool from a committed price sha) against the live
+  one and report how much of the record's committed null variance is tape restatement rather
+  than sampling.  Max 2 params (vintage source, panel).
+
+WHERE THE VINTAGES COME FROM (and the resolution limit, stated first)
+---------------------------------------------------------------------
+This sandbox has NO network, so `load_prices` always falls back to the COMMITTED csv.  The
+only honest source of a second tape vintage is the repository's own git history, and there is
+exactly ONE restatement pair in it:
+
+    V0 = git sha 78761a0 : data/prices.csv   (committed 2026-09-15, tape ends 2026-09-14)
+    V1 = git sha 868b5c3 : data/prices.csv   (committed 2026-09-15, tape ends 2026-09-15)
+    LIVE = the working tree, which IS V1 byte for byte (gate G3).
+
+`data/prices_broad.csv` and `data/prices_small.csv[.gz]` have ONE committed revision each, so
+B136 and SMALL have NO restatement channel available at all -- which is itself 971's B136
+"bit-for-bit" finding, reproduced structurally rather than measured.  Everything below about
+the SIZE of the restatement channel is therefore a ONE-PAIR point estimate with no sampling
+distribution over vintages; it is a lower bound on nothing and an upper bound on nothing.  The
+DIRECTION and the DECOMPOSITION are what this run can establish.
+
+THE TAPE DELTA (published before any null is drawn, gate G6)
+------------------------------------------------------------
+On the 4,704 x 58 common block, V0 and V1 disagree on 26,807 cells (9.8%), in 48 of 58
+columns, max relative move 0.62%.  The restatement is CONCENTRATED: UNH moves on 4,703 of
+4,704 days (a whole-history adjustment-factor restatement), the next largest are DIA 1,924 /
+SPY 1,370 / COST 1,290.  That structure is what makes the ablation arms below meaningful.
+
+THE OBJECT
+----------
+For each cell (panel, book, cadence, cost) and each seed d, the ROTP rotating null of ideas
+975/999 is drawn on EACH vintage with the SAME seed, and three statistics are read: OOS
+Sharpe, OOS MaxDD and the REC 4b verdict.  Then
+
+    SD_SAMP(cell)  = sd across the D draws, WITHIN the pinned V1 tape         (sampling)
+    RMS_REST(cell) = sqrt(mean_d (X_V1(d) - X_V0(d))^2)                       (restatement)
+    SHARE(cell)    = RMS_REST^2 / SD_SAMP^2
+    FLIP(cell)     = share of seeds whose REC 4b verdict differs across vintages
+
+SHARE is the queue's question in one number: how much of a committed null's spread is tape
+restatement rather than sampling.
+
+GRID / TWO TUNED AXES ONLY, all 10 grid points reported, none selected
+-----------------------------------------------------------------------
+  VINTAGE SOURCE in {PIN_V0, PIN_V1, LIVE, ABL_UNH, ABL_REST, NAT_V0, NAT_V1}   (7)
+      PIN_V0 / PIN_V1  the two committed shas on the COMMON date block, so the ONLY thing
+                       that differs between them is RESTATEMENT.
+      LIVE             the working tree (structurally == PIN_V1; gate G3).
+      ABL_UNH          V0 with the single column UNH replaced by V1's -- an ATTRIBUTION
+                       ablation, labelled as such, NOT a vintage anyone ever shipped.
+      ABL_REST         V0 with every column EXCEPT UNH replaced by V1's.  ABL_UNH and
+                       ABL_REST partition the V0 -> V1 restatement exactly (gate G7).
+      NAT_V0 / NAT_V1  each sha at its OWN natural length (V1 carries one extra trading day).
+                       NAT_V1 vs NAT_V0 is what a reader who simply reloads the file sees:
+                       RESTATEMENT *plus* LENGTH.  The gap between that arm and PIN_V1 vs
+                       PIN_V0 is the LENGTH channel, isolated.
+  PANEL in {U56, B136}                                                        (2)
+      B136 is the pre-registered ZERO arm: one committed revision, so every vintage arm is
+      the same tape and every delta must be exactly 0.0.
+
+Reported, NOT tuned: books {EWELIG, BAND03, TOP20}, cadences {W, M, Q}, cost rungs
+{0, 10, 25} bps, 100 seeds, gross 0.75.  All of it is in the committed csvs.
+
+PRE-REGISTERED HYPOTHESES (bars fixed before any number was read)
+-----------------------------------------------------------------
+  H_B136    STRUCTURAL: B136 has ONE committed revision, so every cross-vintage delta on it
+            is EXACTLY 0.0 and its FLIP rate is EXACTLY 0.000 -- 971's "bit-for-bit".
+  H_MOVE    U56's restatement moves the null at all: max |dSharpe| across all draws > 0.01.
+  H_254     971's published U56 headline, max |dSharpe| = 0.254, is REPRODUCED to within
+            0.05 on this run's own draw budget.  (Its artefacts are not in the tree, so this
+            is a test of a published claim, not a bit-level cross-run gate -- said plainly.)
+  H_FLIP    971's published 7.4% REC-4b flip rate on identical seeds is reproduced to within
+            3.0 pp.
+  H_SHARE   Restatement is a MINORITY of a committed null's variance: the median SHARE over
+            U56 cells is <= 0.25, i.e. RMS_REST <= 0.50 x SD_SAMP.
+  H_LENGTH  The same verdict survives reading each sha at its OWN natural length (the
+            RESTATEMENT+LENGTH arm): its median SHARE is <= 0.25 too.
+  H_ONENAME >= 50% of the restatement effect is carried by the ONE restated name UNH:
+            median over cells of RMS_REST(ABL_UNH) / RMS_REST(PIN_V0) >= 0.50.
+  H_PIN     Pinning HELPS: the sd of OOS Sharpe pooled over (draw x vintage) exceeds the sd
+            within the pinned V1 tape by >= 5% on the median U56 cell.
+  H_CAD     The SHARE's ordering across W / M / Q is the same at every cost rung (the channel
+            is not a cadence artefact).
+  H_REC     The record's own committed null spread is larger than this restatement channel:
+            RMS_REST is below idea 999's committed per-cell null sd of OOS Sharpe on >= 80%
+            of the shared cells.
+  H_RULE8   PROTOCOL rule 8: (book, cadence) chosen on 2009-2016 using V0 ALONE, then
+            2017-2026 read ONCE on V1 -- the pick's OOS 4b / 4a verdict is UNCHANGED by the
+            vintage swap.
+
+PRE-REGISTERED GATES (printed before any result number is read)
+---------------------------------------------------------------
+  G0  offset_mask(.,per,0) == engine.rebalance_mask on W, M, Q                    0 rows
+  G1  fast Ctx == engine.backtest on returns AND turnover post warm-up            1e-12 / 1e-10
+  G2  band_book(0.03, 0.75) == baseline.rules_v2_weights                          0.0
+  G3  LIVE (working tree) == PIN_V1 (sha 868b5c3) byte for byte                   0 bytes
+  G4  determinism: a rebuilt null reproduces its own stream exactly               0.0
+  G5  GROSS MATCH: every null draw's holding COUNT and per-name weight equal its
+      book's, row by row, on every rebalance row, ON EVERY VINTAGE                0 / 1e-12
+  G6  TAPE DELTA census published before any null: cells / columns / max rel      reported
+  G7  ABLATION PARTITION: ABL_UNH and ABL_REST together rebuild V1 exactly        0.0
+  G8  ZERO ARM: B136's seven vintage arms are the same tape                        0.0
+  G9  CROSS-RUN: idea 999's committed U56 null rows are reproduced on the LIVE
+      tape at identical seeds on a declared shared cell                           1e-10
+
+SURVIVORSHIP (PROTOCOL rule 9)
+------------------------------
+U56 and B136 are CURRENT-CONSTITUENT lists: every level below is optimistic.  The measured
+object here is a DIFFERENCE between two vintages of the SAME survivor list, so the
+survivorship bias is common to both arms and cancels in SHARE and FLIP almost exactly.  What
+does NOT cancel: a restatement that DELISTS or ADDS a name would be the largest vintage
+channel there is, and a current-constituent panel cannot contain one by construction -- so
+this run measures only the ADJUSTMENT-FACTOR half of the restatement channel and is a LOWER
+bound on the real-time one.  Said once, and not worked around.
+
+NOT MODIFIED (PROTOCOL rule 6): RULES.md, PROTOCOL.md, scan.py, bot.py, baseline.py.
+
+====================================================================================================
+(A) THE VINTAGES -- from this repository's own git history
+====================================================================================================
+  V0 78761a0: 4704 rows x 58 cols, ends 2026-09-14
+  V1 868b5c3: 4705 rows x 58 cols, ends 2026-09-15
+  LIVE working tree == V1 byte for byte: True
+  COMMON BLOCK used by every arm: 4704 rows x 56 cols, 2008-01-02 .. 2026-09-14
+  TAPE DELTA: 26,805 of 263,424 cells differ (10.18%), 46 of 56 columns, max |rel| 0.006125
+  most-restated columns: UNH 4703, DIA 1924, SPY 1370, COST 1290, TLT 1073, SHY 1065
+  B136 ZERO ARM: data/prices_broad.csv has 1 committed revision(s) -> every vintage arm is the SAME tape (4703 rows x 136 cols)
+
+====================================================================================================
+(B) PRE-REGISTERED GATES -- printed before any result number is read
+====================================================================================================
+  G0  PASS  offset_mask(.,per,0) == engine.rebalance_mask on W/M/Q
+        got 0 disagreeing rows   bar 0
+  G1  PASS  fast Ctx == engine.backtest (returns / turnover), W and M
+        got dret 2.082e-17  dturn 4.441e-16   bar 1e-12 / 1e-10
+  G2  PASS  band_book(0.03,0.75) == baseline.rules_v2_weights on the pinned tape
+        got max|d| 0.000e+00   bar 0.0
+  G3  PASS  LIVE working tree == PIN_V1 (868b5c3) byte for byte
+        got True   bar True
+  G4  PASS  determinism: a rebuilt null reproduces its own stream exactly
+        got max|d| 0.000e+00   bar 0.0
+  G5  PASS  GROSS MATCH: null count / gross == book's, on EVERY vintage
+        got dcount 0  dgross 1.110e-16   bar 0 / 1e-12
+  G6  PASS  TAPE DELTA census published before any null is drawn
+        got 26,805 of 263,424 cells (10.18%), 46 cols, max|rel| 0.006125   bar reported
+  G7  PASS  ABLATION PARTITION: ABL_UNH + ABL_REST rebuild V0 and V1 exactly
+        got max|d| 0.000e+00   bar 0.0
+  G8  PASS  ZERO ARM: B136's seven vintage arms are the same tape
+        got max|d| 0.000e+00   bar 0.0
+
+====================================================================================================
+(C) THE GRID -- the ROTP rotating null drawn on EVERY vintage at IDENTICAL seeds
+====================================================================================================
+  U56/PIN_V0 done  (9s)
+  U56/PIN_V1 done  (14s)
+  U56/LIVE done  (22s)
+  U56/ABL_UNH done  (30s)
+  U56/ABL_REST done  (37s)
+  U56/NAT_V0 done  (42s)
+  U56/NAT_V1 done  (50s)
+  B136/PIN_V0 done  (69s)
+  B136/PIN_V1 done  (86s)
+  B136/LIVE done  (104s)
+  B136/ABL_UNH done  (124s)
+  B136/ABL_REST done  (142s)
+  B136/NAT_V0 done  (160s)
+  B136/NAT_V1 done  (179s)
+  wrote 2026-09-16_should-a-ROTATING-NULL-be-PINNED-to-a-PRICE-VINTAGE_cloud.grid.csv.gz  (38,178 rows, 48 cols)
+  grid built in 182s   38,178 rows
+
+====================================================================================================
+(D) SAMPLING vs RESTATEMENT -- paired at identical seeds
+====================================================================================================
+  wrote 2026-09-16_should-a-ROTATING-NULL-be-PINNED-to-a-PRICE-VINTAGE_cloud.decomp.csv  (270 rows, 18 cols)
+
+  (D1) THE TWO TUNED AXES -- all 10 grid points, none selected
+       vintage_arm        panel   cells   RMS_REST(Sharpe)  max|dSharpe|  SD_SAMP  SHARE      FLIP 4b
+       REST_COMMON        U56        27         0.000098      0.000269   0.0703   3.53e-06   0.0000
+       REST_COMMON        B136       27         0.000000      0.000000   0.0534   0.00e+00   0.0000
+       REST_EX_UNH        U56        27         0.000001      0.000004   0.0703   7.29e-11   0.0000
+       REST_EX_UNH        B136       27         0.000000      0.000000   0.0534   0.00e+00   0.0000
+       REST_UNH_ONLY      U56        27         0.000098      0.000269   0.0703   3.53e-06   0.0000
+       REST_UNH_ONLY      B136       27         0.000000      0.000000   0.0534   0.00e+00   0.0000
+       LIVE_SELFCHECK     U56        27         0.000000      0.000000   0.0703   0.00e+00   0.0000
+       LIVE_SELFCHECK     B136       27         0.000000      0.000000   0.0534   0.00e+00   0.0000
+       REST_PLUS_LENGTH   U56        27         0.001976      0.004834   0.0703   6.64e-04   0.0000
+       REST_PLUS_LENGTH   B136       27         0.000000      0.000000   0.0534   0.00e+00   0.0000
+  wrote 2026-09-16_should-a-ROTATING-NULL-be-PINNED-to-a-PRICE-VINTAGE_cloud.axes.csv  (10 rows, 8 cols)
+
+  (D2) U56 per-cell, V1 against V0, 10 bps
+       book      cad   SD_SAMP   RMS_REST   SHARE    max|dS|   RMS_REST_DD(pp)  FLIP
+       BAND03    M      0.0491     0.0001   0.0000    0.0001           0.0000  0.000
+       BAND03    Q      0.0421     0.0001   0.0000    0.0001           0.0000  0.000
+       BAND03    W      0.0410     0.0001   0.0000    0.0001           0.0000  0.000
+       EWELIG    M      0.0703     0.0001   0.0000    0.0001           0.0000  0.000
+       EWELIG    Q      0.0847     0.0001   0.0000    0.0001           0.0000  0.000
+       EWELIG    W      0.0793     0.0001   0.0000    0.0001           0.0000  0.000
+       TOP20     M      0.0698     0.0001   0.0000    0.0003           0.0000  0.000
+       TOP20     Q      0.0895     0.0002   0.0000    0.0002           0.0000  0.000
+       TOP20     W      0.0771     0.0002   0.0000    0.0003           0.0000  0.000
+
+====================================================================================================
+(E) PRE-REGISTERED HYPOTHESES
+====================================================================================================
+  H_B136    PASS  B136 (one committed revision) max|dSharpe| and max FLIP over 27 cells = 0.000e+00   bar EXACTLY 0.0
+  H_MOVE    FAIL  U56 max|dSharpe| over 27 cells x 100 seeds = 0.0003   bar > 0.01
+  H_254     FAIL  against 971's published max|dSharpe| 0.254: got 0.0003, gap -0.2537   bar |.| <= 0.05   [claim test, not a bit-level cross-run: 971's artefacts are not in this tree]
+  H_FLIP    FAIL  REC 4b verdict flip rate on identical seeds = 0.0000 pooled (0.0000 at 10 bps) against 971's published 0.074   bar |.| <= 0.03
+  H_SHARE   PASS  median restatement/sampling VARIANCE share = 0.000004 (i.e. RMS_REST is 0.0019 x SD_SAMP); drawdown-leg share 0.000000   bar <= 0.25
+  H_LENGTH  PASS  the same reading at each sha's OWN natural length (RESTATEMENT+LENGTH): median share = 0.000664, max|dSharpe| 0.0048, FLIP 0.0000   bar <= 0.25
+  H_ONENAME PASS  share of RMS_REST carried by the single restated name UNH = 0.9996; by all other columns = 0.0054 (quadrature sum 0.9996)   bar >= 0.5
+  H_PIN     FAIL  sd(OOS Sharpe) pooled over (draw x vintage) exceeds the pinned-V1 sd by -0.2534% on the median cell   bar >= 5%
+  H_CAD     PASS  SHARE ordering across cadences by cost rung  0bps W>M>Q  10bps W>M>Q  25bps W>M>Q   bar: one ordering
+  H_REC     PASS  RMS_REST below idea 999's own committed per-cell null sd on 100.0% of 27 shared cells (median RMS_REST 0.0001 vs median committed null sd 0.0703)   bar >= 80%
+
+====================================================================================================
+(F) PROTOCOL RULE 8 -- (book, cadence) chosen on 2009-2016 using V0 ALONE,
+    then 2017-2026 read ONCE, on V0 and again on the RESTATED V1
+====================================================================================================
+  wrote 2026-09-16_should-a-ROTATING-NULL-be-PINNED-to-a-PRICE-VINTAGE_cloud.walkforward.csv  (36 rows, 17 cols)
+   panel  cost  chooser      pick          read_on   OOS CAGR / Sharpe / MaxDD      4b  4a  binding
+   U56     10   C_ISSHARPE   EWELIG/Q      PIN_V0     11.53% / 1.0337 / -22.21%   n   n   L4_DD
+   U56     10   C_ISSHARPE   EWELIG/Q      PIN_V1     11.53% / 1.0338 / -22.21%   n   n   L4_DD
+   U56     10   C_ISDD       BAND03/W      PIN_V0      9.46% / 1.2774 / -12.05%   n   n   L5_CAGR
+   U56     10   C_ISDD       BAND03/W      PIN_V1      9.47% / 1.2776 / -12.05%   n   n   L5_CAGR
+   U56     10   C_IS4B       EWELIG/Q      PIN_V0     11.53% / 1.0337 / -22.21%   n   n   L4_DD
+   U56     10   C_IS4B       EWELIG/Q      PIN_V1     11.53% / 1.0338 / -22.21%   n   n   L4_DD
+   B136    10   C_ISSHARPE   TOP20/M       PIN_V0     15.55% / 1.0004 / -26.11%   n   n   L4_DD
+   B136    10   C_ISSHARPE   TOP20/M       PIN_V1     15.55% / 1.0004 / -26.11%   n   n   L4_DD
+   B136    10   C_ISDD       BAND03/W      PIN_V0      7.88% / 1.1061 / -12.24%   n   n   L5_CAGR
+   B136    10   C_ISDD       BAND03/W      PIN_V1      7.88% / 1.1061 / -12.24%   n   n   L5_CAGR
+   B136    10   C_IS4B       TOP20/M       PIN_V0     15.55% / 1.0004 / -26.11%   n   n   L4_DD
+   B136    10   C_IS4B       TOP20/M       PIN_V1     15.55% / 1.0004 / -26.11%   n   n   L4_DD
+
+  H_RULE8   PASS  the vintage swap leaves the OOS verdict unchanged on 18 of 18 picks (4b) and 18 of 18 (4a); max |dOOS Sharpe| across the swap 0.000120
+  OOS 4b 0 of 18 picks, OOS 4a 0
+  comparands, same OOS window: SPY 15.27% / 0.8741 / -33.72%
+  RULES v2 (live) on U56   OOS 9.47% / 1.2776 / -12.05%   full 8.62% / 1.2015 / -12.05%
+  RULES v2 (live) on B136  OOS 7.88% / 1.1061 / -12.24%   full 7.98% / 1.0994 / -12.24%
+
+====================================================================================================
+(G) SUMMARY
+====================================================================================================
+  GATES      10 of 10 pass  G0:P  G1:P  G2:P  G3:P  G4:P  G5:P  G6:P  G7:P  G8:P  G9:P
+  HYPOTHESES 7 of 11 pass  H_B136:P  H_MOVE:F  H_254:F  H_FLIP:F  H_SHARE:P  H_LENGTH:P  H_ONENAME:P  H_PIN:F  H_CAD:P  H_REC:P  H_RULE8:P
+  total 186s
