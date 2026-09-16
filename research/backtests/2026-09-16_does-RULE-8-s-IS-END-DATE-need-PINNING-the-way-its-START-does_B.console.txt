@@ -1,0 +1,159 @@
+# Idea 1013 (lane B, 2026-09-16) — does RULE 8's IS END DATE need PINNING the way its START does?
+# 2 tuned dials: IS END GRID ['END_Q', 'END_Y'] x CHOOSER ['IS_SHARPE', 'IS_LEGS', 'IS_CAGR'].  All points reported, none selected.
+# CONTROLS at every point: CLAIM SET [SHELF, GRID], BAR ['REC_FULL', 'WIN'] (ref REC_FULL), COST [0.0, 10.0, 25.0] bps (head 10), PANEL [U56, B136].
+# START is PINNED at the record's own px.index[260]; only the SPLIT POINT moves.
+# SURVIVORSHIP: U56/B136 are current-constituent panels — every LEVEL is optimistic and
+#   the measured verdict instability is a LOWER bound, i.e. H_PIN is the EASIER call.
+
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+Fixed start (both panels): 2009-01-13 / 2009-01-13.  Panels keep their OWN calendars; every metric here is within-panel.
+SHELF = 9 committed memo-backed 4b passes; GRID = 36 never-memo-selected ladder books (the clean selection pool for rule 8).
+IS END grids: END_Q = 16 quarter-ends 2015-03-31..2018-12-31 (headline); END_Y = ['2015-12-31', '2016-12-31', '2017-12-31', '2018-12-31'].  PROTOCOL's own 2016-12-31 is in both.
+
+## Reproduction gates (printed BEFORE any hypothesis number is read)
+G1 fast_run == engine.backtest (returns / turnover): 6.939e-18 / 1.665e-16  PASS
+G2 rules_v2_weights(U,0.03,0.75) == baseline.rules_v2_weights(U): 0.000e+00  PASS
+G3 CROSS-RUN SPY OOS at E=2016-12-31: 15.2102% / 0.8711 / -33.7173% vs committed 15.21% / 0.8713 / -33.72%  max|d| 1.702e-04  PASS
+G4 SHELF memo triples: 9/9  PASS
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.shelf.csv  (9 rows, 13 cols)
+G5 determinism over the whole 2,160-row ladder: 0.000e+00  PASS
+G7 leg identity at E=2016-12-31 (independent recomputation): 0 disagreeing rows  PASS
+G6 IS purity (picks invariant under permuted OOS columns): 0 disagreements  PASS
+
+GATES 7 of 7 PASS.
+
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.gates.csv  (7 rows, 4 cols)
+## A. THE VERDICT LADDER — how many books change 4b verdict as the IS END slides
+  Headline cell (END_Q x REC_FULL x 10 bps):
+    SHELF    9 books   verdict CONSTANT over the 16 ends   9 (1.000)   binding-leg-set constant   9 (1.000)
+           4b passes: at E=2016-12-31   9 | at SOME E   9 | at EVERY E   9
+    GRID    36 books   verdict CONSTANT over the 16 ends  32 (0.889)   binding-leg-set constant  31 (0.861)
+           4b passes: at E=2016-12-31  19 | at SOME E  20 | at EVERY E  16
+    ALL     45 books   verdict CONSTANT over the 16 ends  41 (0.911)   binding-leg-set constant  40 (0.889)
+           4b passes: at E=2016-12-31  28 | at SOME E  29 | at EVERY E  25
+  Same cell under the WIN bar convention (SPY's own OOS drawdown/CAGR):
+    SHELF  verdict constant   9/  9 (1.000)   passes at REC   9 | ever   9 | always   9
+    GRID   verdict constant  34/ 36 (0.944)   passes at REC  19 | ever  19 | always  17
+    ALL    verdict constant  43/ 45 (0.956)   passes at REC  28 | ever  28 | always  26
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.stability.csv  (36 rows, 12 cols)
+
+  SHELF book by book (END_Q, REC_FULL, 10 bps) — the committed passes the queue asks about:
+    b136-qroll-q012-w1008-d050-g100    PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+    b136-r620-gross065-W               PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+    u56-band008-gross100               PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+    u56-k8-qroll-q017-w1008-d100-g100  PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+    u56-marsrespread-gross075          PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+    u56-quantile50-respread-M          PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+    u56-top20-band-m20                 PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+    u56-top20-g065-M                   PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+    u56-v2band-gross100                PASS@REC   4b passes at 16/16 ends   distinct binding-leg-sets 1
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.shelfladder.csv  (9 rows, 8 cols)
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.ladder.csv.gz  (2,160 rows, 40 cols)
+
+## B. THE COMPARAND'S OWN MOVEMENT — the END dial in 1001's units
+  U56: SPY OOS Sharpe over the 16 ends 0.7946 .. 0.9209  RANGE 0.1263  (at E=2016-12-31: 0.8711)
+      OOS CAGR range 0.0333   |OOS MaxDD| range 0.0000
+  B136: SPY OOS Sharpe over the 16 ends 0.8010 .. 0.9276  RANGE 0.1266  (at E=2016-12-31: 0.8767)
+      OOS CAGR range 0.0338   |OOS MaxDD| range 0.0000
+  1001's START dial, quoted: L_H1 bar moves 1.0717 over the legal starts against 0.1975 on the full tape (5.43x).
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.comparand.csv  (4 rows, 11 cols)
+
+## C. ATTRIBUTION — is the split point a BENCHMARK dial or a POWER dial?
+  SHELF 4b pass count over the 16 ends: 9..9 (at E=2016-12-31: 9)   monotone True   sign changes 0
+          Pearson vs SPY OOS Sharpe +nan | vs OOS years +nan
+  GRID  4b pass count over the 16 ends: 17..20 (at E=2016-12-31: 19)   monotone False   sign changes 1
+          Pearson vs SPY OOS Sharpe +0.7595 | vs OOS years +0.0806
+  ALL   4b pass count over the 16 ends: 26..29 (at E=2016-12-31: 28)   monotone False   sign changes 1
+          Pearson vs SPY OOS Sharpe +0.7595 | vs OOS years +0.0806
+  Pass count by end date (ALL books, REC_FULL, 10 bps):
+    15-03:26  15-06:26  15-09:28  15-12:28  16-03:29  16-06:28  16-09:28  16-12:28  17-03:28  17-06:27  17-09:26  17-12:26  18-03:27  18-06:27  18-09:27  18-12:28
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.attribution.csv  (6 rows, 10 cols)
+
+## D. RULE 8 — the walk-forward, and the picks as the IS END slides
+  Selection pool = GRID (36 never-memo-selected books); ALL (GRID+SHELF) is reported as a CONTAMINATED control.
+  U56   IS_SHARPE  distinct picks over the 16 ends  2 (modal U56-band0.08-g1.00 at 0.75); pick at E=2016-12-31: U56-band0.08-g1.00
+           OOS Sharpe 1.049..1.315 (at REC 1.162);  OOS 4b 16/16   OOS 4a 0/16
+  U56   IS_LEGS    distinct picks over the 16 ends  2 (modal U56-band0.08-g1.00 at 0.75); pick at E=2016-12-31: U56-band0.08-g1.00
+           OOS Sharpe 1.049..1.315 (at REC 1.162);  OOS 4b 16/16   OOS 4a 0/16
+  U56   IS_CAGR    distinct picks over the 16 ends  4 (modal U56-qroll-q0.17-w1008-d0.50 at 0.56); pick at E=2016-12-31: U56-qroll-q0.17-w1008-d0.50
+           OOS Sharpe 1.184..1.412 (at REC 1.293);  OOS 4b 15/16   OOS 4a 0/16
+  B136  IS_SHARPE  distinct picks over the 16 ends  1 (modal B136-band0.08-g1.00 at 1.00); pick at E=2016-12-31: B136-band0.08-g1.00
+           OOS Sharpe 0.932..1.127 (at REC 1.097);  OOS 4b 8/16   OOS 4a 0/16
+  B136  IS_LEGS    distinct picks over the 16 ends  1 (modal B136-band0.08-g1.00 at 1.00); pick at E=2016-12-31: B136-band0.08-g1.00
+           OOS Sharpe 0.932..1.127 (at REC 1.097);  OOS 4b 8/16   OOS 4a 0/16
+  B136  IS_CAGR    distinct picks over the 16 ends  1 (modal B136-qroll-q0.12-w1008-d0.50 at 1.00); pick at E=2016-12-31: B136-qroll-q0.12-w1008-d0.50
+           OOS Sharpe 1.018..1.192 (at REC 1.157);  OOS 4b 16/16   OOS 4a 0/16
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.pickstability.csv  (12 rows, 13 cols)
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.picks.csv  (192 rows, 27 cols)
+
+  THE MANDATORY RULE-8 WALK-FORWARD at PROTOCOL's own E = 2016-12-31 (pool GRID, 10 bps):
+    panel  chooser    pick                              OOS CAGR  OOS Sh   OOS DD  4b  4a
+    U56    IS_SHARPE  U56-band0.08-g1.00                 11.99%   1.162  -19.05%  Y   n   [-]
+    U56    IS_LEGS    U56-band0.08-g1.00                 11.99%   1.162  -19.05%  Y   n   [-]
+    U56    IS_CAGR    U56-qroll-q0.17-w1008-d0.50        15.60%   1.293  -15.59%  Y   n   [-]
+    B136   IS_SHARPE  B136-band0.08-g1.00                11.05%   1.097  -19.50%  Y   n   [-]
+    B136   IS_LEGS    B136-band0.08-g1.00                11.05%   1.097  -19.50%  Y   n   [-]
+    B136   IS_CAGR    B136-qroll-q0.12-w1008-d0.50       14.30%   1.157  -17.31%  Y   n   [-]
+    U56    SPY        (comparand)                        15.21%   0.871  -33.72%   full 0.883 / -33.72%
+    U56    RULESv2    (live baseline)                     9.45%   1.276  -12.05%   full 1.201 / -12.05%
+    B136   SPY        (comparand)                        15.33%   0.877  -33.72%   full 0.886 / -33.72%
+    B136   RULESv2    (live baseline)                     7.88%   1.106  -12.24%   full 1.099 / -12.24%
+    KEEP path 4a over the 96 GRID picks: 0; over the whole 720-row 10 bps ladder: 16.
+    KEEP path 4b over the GRID picks: 79; over the 10 bps ladder: 437 (WIN bar: 439).
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.walkforward.csv  (6 rows, 27 cols)
+
+## E. MECHANISM — WHICH leg the split point can move, and what the fiat costs
+  Per-leg E-sensitivity (END_Q, REC_FULL, 10 bps) — how many of the 45 books hold that leg at every end:
+    L1_H1    constant on  45/45 books (1.000)
+    L2_H2    constant on  45/45 books (1.000)
+    L3_OOS   constant on  45/45 books (1.000)
+    L4_DD    constant on  45/45 books (1.000)
+    L5_CAGR  constant on  40/45 books (0.889)
+  L1_H1 / L2_H2 are E-INVARIANT BY CONSTRUCTION: the record's halves are a COUNT split
+    of the FULL post-warm-up path (`baseline._row`), which the split point never touches.
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.legsensitivity.csv  (30 rows, 6 cols)
+
+  Every book whose 4b verdict FLIPS across the 16 ends (REC_FULL, 10 bps), in end order 2015Q1..2018Q4:
+    GRID  B136-band0.03-g1.00              ....P...........  1/16 ends   leg sets seen: -|L5_CAGR
+    GRID  B136-band0.08-g1.00              ..PPPPPPP......P  8/16 ends   leg sets seen: -|L5_CAGR
+    GRID  B136-qroll-q0.17-w252-d1.00      ..PPPPPPPPPPPPPP  14/16 ends   leg sets seen: -|L5_CAGR
+    GRID  B136-qroll-q0.17-w504-d1.00      PPPPPPPPPP..PPPP  14/16 ends   leg sets seen: -|L5_CAGR
+
+  COST-RUNG CONTROL — the same stability at every rung (REC_FULL, ALL books):
+      0.0 bps: verdict constant 43/45 (0.9556)   4b passes at E=2016-12-31: 30
+     10.0 bps: verdict constant 41/45 (0.9111)   4b passes at E=2016-12-31: 28
+     25.0 bps: verdict constant 38/45 (0.8444)   4b passes at E=2016-12-31: 23
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.flippers.csv  (22 rows, 9 cols)
+
+  THE PRICE OF THE FIAT — the rule-8 pick's PUBLISHED numbers across the 16 legal split points (pool GRID, 10 bps):
+    B136  IS_CAGR    1 distinct pick(s)   OOS Sharpe spread 0.1747   OOS CAGR spread 0.0235   OOS MaxDD spread 0.0000   4b 16/16
+    B136  IS_LEGS    1 distinct pick(s)   OOS Sharpe spread 0.1955   OOS CAGR spread 0.0177   OOS MaxDD spread 0.0000   4b 8/16
+    B136  IS_SHARPE  1 distinct pick(s)   OOS Sharpe spread 0.1955   OOS CAGR spread 0.0177   OOS MaxDD spread 0.0000   4b 8/16
+    U56   IS_CAGR    4 distinct pick(s)   OOS Sharpe spread 0.2285   OOS CAGR spread 0.0238   OOS MaxDD spread 0.0816   4b 15/16
+    U56   IS_LEGS    2 distinct pick(s)   OOS Sharpe spread 0.2666   OOS CAGR spread 0.0245   OOS MaxDD spread 0.0314   4b 16/16
+    U56   IS_SHARPE  2 distinct pick(s)   OOS Sharpe spread 0.2666   OOS CAGR spread 0.0245   OOS MaxDD spread 0.0314   4b 16/16
+    Worst cell: OOS Sharpe moves 0.2666 purely from the split date.  For scale, idea 1001's median SHELF HALFMIN leg margin is 0.2102 against
+    comparand bootstrap SEs of 0.2877 / 0.3350 — the split-point swing is the same order
+    as the leg margins the record certifies passes on.
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.fiatprice.csv  (6 rows, 8 cols)
+
+## HYPOTHESES (bars declared in the header, before any number above was read)
+  H_PIN     PASS   bar: >= 0.90 of ALL books hold the same 4b verdict at every E in END_Q
+            got: 0.9111 (41/45)   HEADLINE — PASS means the IS end does not need pinning
+  H_SHELF   PASS   bar: >= 0.90 of the committed SHELF holds its 4b verdict at every E
+            got: 1.0000 (9/9)   passes at E=2016-12-31: 9; at every E: 9; at some E: 9
+  H_PICK    FAIL   bar: the rule-8 pick is E-invariant in ALL 6 (panel x chooser) cells
+            got: 3/6 cells constant; distinct picks [1, 1, 1, 2, 2, 4]
+  H_BAR     PASS   bar: range(SPY OOS Sharpe over END_Q) <= 0.1975 (1001's full-tape START figure)
+            got: 0.1266 (worst panel)   1001's legal-start range was 1.0717
+  H_MONO    FAIL   bar: the 4b pass count is monotone in E over END_Q
+            got: monotone=False, 1 sign changes, count 26..29
+  H_LEG     FAIL   bar: >= 0.90 of ALL books hold the same binding-leg set at every E
+            got: 0.8889 (40/45)
+  H_COMP    PASS   bar: |Pearson(pass count, SPY OOS Sharpe)| > |Pearson(pass count, OOS years)|
+            got: |+0.7595| vs |+0.0806|
+
+  4 of 7 hypotheses PASS.
+  wrote 2026-09-16_does-RULE-8-s-IS-END-DATE-need-PINNING-the-way-its-START-does_B.hypotheses.csv  (7 rows, 5 cols)
+
+Runtime 7.3s
