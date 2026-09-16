@@ -1,0 +1,178 @@
+====================================================================================================
+IDEA 974 (lane B) -- is the MONTH-END vs QUARTER-END PHASE-BIAS REVERSAL
+                    a FLOW fact or a CALENDAR-COUNT artefact?
+  run 2026-09-16 01:23 UTC   PROTOCOL 10 bps / t+1 / warm-up 260
+====================================================================================================
+
+PRE-REGISTERED BARS (printed BEFORE any result number is computed):
+  H_COUNT  artefact iff BLOCK0 median canonical percentile > 0.5
+  H_MEND   month-end still good iff m=0 median percentile >= 0.5 in blocks 1 AND 2
+  H_QEND   quarter-end is the bad day iff MEND_Q3 worst of three in > 0.5 of families
+  H_FLOW   FLOW fact iff H_COUNT FAILS and H_MEND PASSES and H_QEND PASSES
+  H_TRADE  moving off quarter-end buys something iff best(Q1,Q2) OOS Sharpe > Q3's in >= 0.75
+  H_NULL   the winning arm is an OUTLIER iff MEND_Q2's median CAGR pctile in the record's
+           own 63-phase quarterly family (every phase of it also a 4x/yr book) >= 0.9
+  H_KEEP   rule 8: arm chosen on 2009-2016 alone, 2017-2026 read once, both KEEP paths
+
+  panel U56      56 cols  2008-01-02 .. 2026-09-15  4,705 rows
+  panel B136    136 cols  2008-01-02 .. 2026-09-11  4,703 rows
+  panel SMALL   664 cols  2010-01-04 .. 2026-09-11  4,198 rows
+  SMALL drops 52 tickers with max_1d_move >= 1.0 per data/small_meta.csv; SURVIVORSHIP: all three panels are CURRENT-CONSTITUENT lists (rule 9).
+
+====================================================================================================
+(A) GATES -- printed before any hypothesis is read
+====================================================================================================
+  G0 offset_mask(.,per,0) == engine.rebalance_mask on M/Q/W: 0 disagreeing rows  PASS
+  G2 BAND03@0.75 == baseline.rules_v2_weights: 0.000e+00  PASS
+  G1 Ctx == engine.backtest   returns 6.939e-18   turnover 1.665e-16  PASS
+  G4 CALENDAR IDENTITY  MEND_Q3 == offset_mask(idx,'Q',0): 0 disagreeing rows  PASS
+  G6 MEND_Q1/Q2/Q3 pairwise disjoint (0 overlaps) and fire MEND_Q1 4.02 / MEND_Q2 4.02 / MEND_Q3 4.02 / MEND_ALL 12.05 per yr  PASS
+  G7 MOD21 is APPROXIMATE (measured, not assumed) -- share of each phase's rebalance dates that are TRUE month-ends:
+       phase  0: 1.000 of 71 dates, mean month-phase 0.00 (max 0)
+       phase 21: 0.366 of 71 dates, mean month-phase 8.44 (max 21)
+       phase 42: 0.465 of 71 dates, mean month-phase 4.97 (max 22)
+     -> phase 0 is exactly the month-end; phases 21 and 42 are NOT, which is why CALEND exists.  PASS
+  G5 964's published headline recomputed from its own committed grid (60 families): M +0.600 pp / 0.929, Q -1.112 pp / 0.063, max|d| vs published 4.921e-04  PASS
+
+====================================================================================================
+(B) THE GRID -- rebuilt from scratch: 5 books x panels x 2 gross x (21 M + 63 Q) phases
+    x 5 rungs, PLUS the 4 CALEND arms.  G3/G8 check it against 964's committed grid.
+====================================================================================================
+  panel U56 done  (13s)
+  panel B136 done  (38s)
+  panel SMALL done  (140s)
+  wrote 2026-09-16_is-the-MONTH-END-vs-QUARTER-END-PHASE-BIAS-REVERSAL-a-FLOW-fact-or-a-CALENDAR-COUNT-artefact_B.grid.csv.gz  (12,600 rows, 42 cols)
+  wrote 2026-09-16_is-the-MONTH-END-vs-QUARTER-END-PHASE-BIAS-REVERSAL-a-FLOW-fact-or-a-CALENDAR-COUNT-artefact_B.arms.csv  (600 rows, 41 cols)
+  12,600 grid rows + 600 CALEND arm rows
+  G3 CROSS-RUN on TODAY's data: 964's committed grid.csv replayed on 12,600 of 12,600 rows x 13 cols, max|d| 5.349e-02   FAIL
+  G3b CROSS-RUN on 964's OWN DATA VINTAGE (c22e4d3): 4,200 of 4,200 U56 rows x 13 cols, max|d| 1.776e-15   PASS
+      the drift G3 measures is DATA, not code: data/prices.csv was RESTATED on 4,704 shared rows, max |d| 8.9609 (worst column BTC-USD), and gained one trading day (2026-09-14 -> 2026-09-15).
+      NOTHING this run reports moves with it: the canonical's Q percentile reads 0.0635 on both vintages (G5 reads 964's committed grid, section C rebuilds it).
+  G8 determinism: subject family {'panel': 'U56', 'book': 'TOP20', 'gross': 'CORE', 'cadence': 'Q', 'cost_bps': 10.0} rebuilt from scratch on 63 phases, max|d| 0.000e+00  PASS
+
+  GATES 9 of 10 PASS: G0=PASS  G1=PASS  G2=PASS  G3=FAIL  G3b=PASS  G4=PASS  G5=PASS  G6=PASS  G7=PASS  G8=PASS
+
+====================================================================================================
+(C) TUNED 1 = DECOMPOSITION, all 4 levels reported, none chosen
+====================================================================================================
+  wrote 2026-09-16_is-the-MONTH-END-vs-QUARTER-END-PHASE-BIAS-REVERSAL-a-FLOW-fact-or-a-CALENDAR-COUNT-artefact_B.decomp.csv  (150 rows, 20 cols)
+  150 family x rung cells (30 at the 10 bps verdict rung).
+
+  the REVERSAL as 964 published it, and under the CALENDAR-COUNT control:
+    decomposition                competitors   median pctile of the canonical
+    M_FULL   (964, monthly)               21                           0.9286
+    Q_FULL   (964, quarterly)             63                           0.0635
+    Q_BLOCK0 (width-matched)              21                           0.1190
+    Q_MPOS   (m-profile)                  21                           0.5476
+    -> H_COUNT (artefact iff BLOCK0 median > 0.5): median 0.1190  ->  FAIL (the reversal SURVIVES the width control)
+
+  MPOS -- where does m = 0 (the month-end) sit INSIDE each block of the quarter?
+    block                    median pctile of m=0   median block mean CAGR
+    0  (last month)                        0.1190                   11.70%
+    1  (middle month)                      0.6905                   13.94%
+    2  (first month)                       0.8333                   11.78%
+    -> H_MEND (month-end still good iff blocks 1 AND 2 >= 0.5): 0.6905 / 0.8333  ->  PASS
+
+  the same three numbers at every cost rung (reported, never selected on):
+      bps   M_FULL   Q_FULL  Q_BLOCK0  blk0 m0  blk1 m0  blk2 m0
+        0   0.9286   0.0635    0.1190   0.1190   0.6905   0.8333
+        5   0.9286   0.0635    0.1190   0.1190   0.6905   0.8333
+       10   0.9286   0.0635    0.1190   0.1190   0.6905   0.8333
+       25   0.9286   0.0635    0.1190   0.1190   0.6905   0.8333
+       50   0.9048   0.0714    0.1190   0.1190   0.6905   0.8333
+
+  by PANEL (TUNED 2, all 3 reported) and by BOOK, at 10 bps:
+    panel  B136    n= 10  M_FULL 0.9762  Q_FULL 0.1667  Q_BLOCK0 0.3571  blk1_m0 0.8333  blk2_m0 0.5952
+    panel  SMALL   n= 10  M_FULL 0.6905  Q_FULL 0.0635  Q_BLOCK0 0.1190  blk1_m0 0.5476  blk2_m0 0.9286
+    panel  U56     n= 10  M_FULL 0.9286  Q_FULL 0.0556  Q_BLOCK0 0.1190  blk1_m0 0.9286  blk2_m0 0.4286
+    book   BAND03  n=  6  M_FULL 0.9286  Q_FULL 0.0397  Q_BLOCK0 0.0238  blk1_m0 0.9286  blk2_m0 0.8571
+    book   EWELIG  n=  6  M_FULL 0.9524  Q_FULL 0.1667  Q_BLOCK0 0.3571  blk1_m0 0.9762  blk2_m0 0.4048
+    book   TOP05   n=  6  M_FULL 0.2143  Q_FULL 0.0873  Q_BLOCK0 0.1190  blk1_m0 0.3571  blk2_m0 0.5238
+    book   TOP10   n=  6  M_FULL 0.8810  Q_FULL 0.0556  Q_BLOCK0 0.1190  blk1_m0 0.6905  blk2_m0 0.5952
+    book   TOP20   n=  6  M_FULL 0.9762  Q_FULL 0.0397  Q_BLOCK0 0.0714  blk1_m0 0.8333  blk2_m0 0.8333
+    gross  CORE    n= 15  M_FULL 0.9286  Q_FULL 0.0556  Q_BLOCK0 0.1190  blk1_m0 0.6905  blk2_m0 0.8333
+    gross  EXT     n= 15  M_FULL 0.9286  Q_FULL 0.0714  Q_BLOCK0 0.1190  blk1_m0 0.6905  blk2_m0 0.8333
+
+====================================================================================================
+(D) CALEND -- the EXACT month-end arms.  Four rebalances a year in every arm, every one
+    a true month-end.  No 21-day approximation.  MEND_ALL (12/yr) is the cadence reference.
+====================================================================================================
+    arm           n     CAGR   Sharpe    MaxDD  OOS_CAGR  OOS_Shp   OOS_DD  turn/yr    4b   4a
+    MEND_Q1      30  14.37%   1.0480 -30.35%   14.44%   1.0256 -30.35%     3.36   0/30   0
+    MEND_Q2      30  12.98%   1.0981 -27.88%   14.67%   1.0134 -27.88%     3.48   3/30   0
+    MEND_Q3      30  11.47%   0.9396 -31.70%   11.08%   0.7960 -31.70%     3.41   0/30   0
+    MEND_ALL     30  12.11%   1.0783 -28.02%   12.89%   1.0028 -28.02%     6.76   3/30   0
+
+  H_QEND -- is the QUARTER-END specifically the bad day?  MEND_Q3 has the LOWEST full-sample CAGR of the three arms in 26 of 30 families = 0.8667 (chance rate 0.3333, bar > 0.5)  ->  PASS
+  H_TRADE -- best(Q1,Q2) OOS Sharpe > Q3's in 1.0000 of families (bar >= 0.75)  ->  PASS
+
+  the SAME arm ordering at every cost rung (median full-sample CAGR, all reported):
+      bps   MEND_Q1   MEND_Q2   MEND_Q3  MEND_ALL  Q3 worst share
+        0    15.06%    13.47%    11.69%    13.12%          0.8667
+        5    14.71%    13.22%    11.58%    12.59%          0.8667
+       10    14.37%    12.98%    11.47%    12.11%          0.8667
+       25    13.51%    12.73%    11.15%    11.40%          0.8667
+       50    12.44%    12.33%    10.61%    10.76%          0.8667
+
+  H_FLOW = (H_COUNT FAIL) and (H_MEND PASS) and (H_QEND PASS)  ->  PASS -- the reversal is a FLOW fact, not a calendar-count artefact
+
+  D2 -- THE NULL: where do the CALEND arms sit inside the record's own 63-phase family?
+       (every phase in that family is also a 4x/yr book; the family IS the null for
+        'which day of the quarter do you rebalance')
+  wrote 2026-09-16_is-the-MONTH-END-vs-QUARTER-END-PHASE-BIAS-REVERSAL-a-FLOW-fact-or-a-CALENDAR-COUNT-artefact_B.nullpctiles.csv  (150 rows, 11 cols)
+    arm         median CAGR pctile  median OOS Sharpe pctile
+    MEND_Q1                 0.8413                    0.6508
+    MEND_Q2                 0.9127                    0.9286
+    MEND_Q3                 0.0635                    0.1587
+    for scale: the 63-phase family's own CAGR spread (max - min) has median 4.38 pp, and the Q2 - Q3 gap is 1.51 pp.
+    -> H_NULL (MEND_Q2 is an OUTLIER in its own family iff median CAGR pctile >= 0.9): 0.9127  ->  PASS (outlier)
+
+====================================================================================================
+(E) RULE 8 WALK-FORWARD (REQUIRED).  Arm chosen on 2009-2016 ALONE; 2017-2026 read ONCE.
+    Both KEEP paths, against SPY and RULES v2 in the same window.
+====================================================================================================
+  wrote 2026-09-16_is-the-MONTH-END-vs-QUARTER-END-PHASE-BIAS-REVERSAL-a-FLOW-fact-or-a-CALENDAR-COUNT-artefact_B.walkforward.csv  (900 rows, 21 cols)
+    chooser             n  med OOS CAGR  med OOS Shp  med OOS DD   4b REC  4b PURE     4a  beats canon
+    C_CAGR             30       12.99%       0.8570     -29.00%   1/30     1/30    0/30        0.7333
+    C_SHARPE           30       12.99%       0.8453     -29.00%   1/30     1/30    0/30        0.6667
+    FIXED_MEND_ALL     30       12.89%       1.0028     -28.02%   3/30     3/30    0/30        1.0000
+    FIXED_MEND_Q1      30       14.44%       1.0256     -30.35%   0/30     0/30    0/30        1.0000
+    FIXED_MEND_Q2      30       14.67%       1.0134     -27.88%   3/30     3/30    0/30        1.0000
+    FIXED_MEND_Q3      30       11.08%       0.7960     -31.70%   0/30     0/30    0/30        0.0000
+    SPY (OOS)                   15.33%       0.8769     -33.72%
+    RULES v2 (OOS)                           1.1061     -12.24%
+
+  H_KEEP -- any IS-CHOSEN arm clearing either KEEP path at 10 bps: 4b 2 / 60, 4a 0  ->  PASS
+  4b failing legs on the IS-chosen arms (which leg binds):
+    L4_DD                              20
+    L2_H2,L3_OOS,L4_DD,L5_CAGR         14
+    L2_H2,L3_OOS,L4_DD                 12
+    L1_H1,L2_H2,L3_OOS,L4_DD            6
+    L4_DD,L5_CAGR                       2
+    L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR    2
+    L5_CAGR                             2
+    -                                   2
+
+  every rung, IS-chosen arms only (reported, never selected on):
+      bps     4b REC    4b PURE       4a  med OOS Sharpe
+        0    2/60       2/60      0/60            0.8740
+        5    2/60       2/60      0/60            0.8636
+       10    2/60       2/60      0/60            0.8531
+       25    2/60       2/60      0/60            0.8217
+       50    2/60       2/60      0/60            0.7689
+
+====================================================================================================
+(F) HYPOTHESES AND VERDICT
+====================================================================================================
+  wrote 2026-09-16_is-the-MONTH-END-vs-QUARTER-END-PHASE-BIAS-REVERSAL-a-FLOW-fact-or-a-CALENDAR-COUNT-artefact_B.hypotheses.csv  (7 rows, 4 cols)
+  H_COUNT   BLOCK0 median canonical pctile > 0.5                 0.1190                     FAIL (reversal survives the width control)
+  H_MEND    m=0 median pctile >= 0.5 in blocks 1 AND 2           0.6905 / 0.8333            PASS
+  H_QEND    MEND_Q3 worst of three in > 0.5 of families          0.8667 (chance 0.3333)     PASS
+  H_FLOW    H_COUNT FAIL and H_MEND PASS and H_QEND PASS         True / True / True         PASS
+  H_TRADE   best(Q1,Q2) OOS Sharpe > Q3 in >= 0.75               1.0000                     PASS
+  H_NULL    MEND_Q2 median CAGR pctile in its own 63-phase family >= 0.9 0.9127                     PASS (outlier)
+  H_KEEP    rule 8: IS-chosen arm clears 4a or 4b at 10 bps      4b 2 / 4a 0                PASS
+  wrote 2026-09-16_is-the-MONTH-END-vs-QUARTER-END-PHASE-BIAS-REVERSAL-a-FLOW-fact-or-a-CALENDAR-COUNT-artefact_B.gates.csv  (10 rows, 2 cols)
+  wrote 2026-09-16_is-the-MONTH-END-vs-QUARTER-END-PHASE-BIAS-REVERSAL-a-FLOW-fact-or-a-CALENDAR-COUNT-artefact_B.g7_mod21_approximation.csv  (3 rows, 5 cols)
+
+  GATES 9 of 10 PASS.   runtime 155s
