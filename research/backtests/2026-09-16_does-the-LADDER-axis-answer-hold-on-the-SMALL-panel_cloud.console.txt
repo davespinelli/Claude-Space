@@ -1,0 +1,353 @@
+# Idea 1119 (cloud lane, 2026-09-16) — does the LADDER axis answer hold on the SMALL panel?
+# TUNED DIALS (2, PROTOCOL rule 4): PANEL ['U56', 'B136', 'SMALL'] x CONFIDENCE q [0.8, 0.9, 0.95].
+#   LADDER and STATISTIC are NOT dials — they are the two candidate ANSWERS; all
+#   3 x 4 x 4 = 48 CORE cells published at every q.
+#   The un-resolvability DEFINITION is FROZEN at INF_FLOOR (1116's headline); ZERO_CONTENT and NO_TAPE_500
+#   are reported beside it and the decision rule never reads them.  BLOCK LENGTH frozen
+#   the same way: L=63 headline, L in [21, 126] beside, never selected on.
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, gross 0.75, cadence W,
+#   min hold 126, N 20, 10 bps, LAG 1, warm-up 260, IS end 2016-12-31, 1000 draws, crc32 seeds.
+# DECLARED BEFORE ANY NUMBER:
+#   H_REPRO       U56/B136 headline ETA2 reproduce 1116's 0.8095/0.0476 and 0.5556/0.0476.
+#   H_LADDER      ETA2_LAD > ETA2_STAT on SMALL's binary INF_FLOOR table at q=0.90.
+#   H_MARGIN_MONO the LAD/STAT margin falls with breadth: U56 17.0x > B136 11.7x > SMALL.
+#   H_SURVIVES    ETA2_LAD > ETA2_STAT on SMALL at a MAJORITY (>=2) of the three q.
+#   H_DEGENERATE  SMALL's binary table is CONSTANT (every cell un-resolvable), so ETA2 is
+#                 UNDEFINED and the binary reading cannot answer the question at all.
+#   H_CONCORD     within-LADDER agreement > within-STATISTIC agreement on SMALL.
+#   H_HCAD        H and CADENCE un-resolvable at all 4 statistics on SMALL (8 of 8).
+#   H_NGROSS      N and GROSS carry at most 1 of 8 un-resolvable cells on SMALL.
+#   NOT A KEEP PATH: the book at each rung is byte-identical across both dials.  PANEL is
+#     a real dial, so rule 8 and both KEEP paths are scored at all 81 rungs.
+
+## PANELS — loaded and STAMPED before any result number (idea 1074's recommendation)
+  U56      56 cols, 4,705 rows 2008-01-02 -> 2026-09-15  warm 4,445  IS 2,007  OOS 2,438  mean priced/day 54.1
+  B136    136 cols, 4,703 rows 2008-01-02 -> 2026-09-11  warm 4,443  IS 2,007  OOS 2,436  mean priced/day 131.4
+  SMALL   664 cols, 4,198 rows 2010-01-04 -> 2026-09-11  warm 3,938  IS 1,502  OOS 2,436  mean priced/day 533.7
+  SMALL STAMP: data/small_meta.csv lists 715 tickers; 52 dropped for max_1d_move >= 1.0; pool served = 663 names + SPY as benchmark; tape ends 2026-09-11.
+  NOTE: this idea's text says '485-name sub-$2B SMALL panel'.  The loader serves 663 usable names today — idea 706's 439->663 rebuild and idea 1072's finding that committed SMALL headlines move on it.  The stamp above, not the label, is what this run's SMALL numbers refer to.
+
+## GATES — printed before any result number
+  [PASS] G1      fast runner == engine.backtest (U56 W/H126/N=20): 1.3878e-17
+  [PASS] G2      CROSS-RUN 936/1071/1082/1094/1102/1108/1110/1116 U56 W/H126/N=20 triple: 3.1831e-07
+  [PASS] G3      SPY OOS triple (U56 tape): 1.7024e-04
+  [PASS] G4      live RULES v2 MaxDD == committed -12.05%: 4.9493e-05
+  [PASS] G5      determinism of the SMALL cell pipeline: 0.0000e+00
+  [MEASURED, not pass/fail] G_SPY: had SPY been left selectable on SMALL it would have been held at 0 of 871 rebalance dates (0.00%) at W/H126/N=20.  The exclusion is therefore priced, not asserted.
+
+## THE LADDERS — 4 families x 3 panels, every rung published
+  U56    SPY       full 15.10% / 0.8829 / -33.72%  halves 0.9588/0.8207  OOS 15.21% / 0.8711 / -33.72%
+  U56    RULES v2  full 8.62% / 1.2007 / -12.05%  halves 1.2322/1.1760  OOS 9.45% / 1.2762 / -12.05%
+  U56    N        rungs [5, 8, 10, 12, 15, 20, 25, 30, 40]
+           Sharpe 0.9860 1.0544 1.1125 1.1692 1.1621 1.1397 1.1285 1.1008 1.1268
+  U56    H        rungs [21, 63, 126, 252]
+           Sharpe 1.1152 1.1014 1.1397 1.1648
+  U56    GROSS    rungs [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75]
+           Sharpe 1.1379 1.1382 1.1384 1.1386 1.1388 1.1390 1.1392 1.1394 1.1395 1.1397
+  U56    CADENCE  rungs ['D', 'W', 'M', 'Q']
+           Sharpe 1.0977 1.1397 1.0808 1.1388
+  B136   SPY       full 15.16% / 0.8861 / -33.72%  halves 0.9596/0.8259  OOS 15.33% / 0.8767 / -33.72%
+  B136   RULES v2  full 7.98% / 1.0993 / -12.24%  halves 1.2348/0.9658  OOS 7.88% / 1.1059 / -12.24%
+  B136   N        rungs [5, 8, 10, 12, 15, 20, 25, 30, 40]
+           Sharpe 0.9776 0.9884 1.0437 1.0539 1.0682 1.0634 1.0968 1.0981 1.0884
+  B136   H        rungs [21, 63, 126, 252]
+           Sharpe 1.0848 1.0823 1.0634 1.0722
+  B136   GROSS    rungs [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75]
+           Sharpe 1.0594 1.0599 1.0604 1.0609 1.0613 1.0618 1.0622 1.0626 1.0630 1.0634
+  B136   CADENCE  rungs ['D', 'W', 'M', 'Q']
+           Sharpe 1.0108 1.0634 1.0721 1.0009
+  SMALL  SPY       full 14.06% / 0.8581 / -33.72%  halves 0.9138/0.8344  OOS 15.33% / 0.8767 / -33.72%
+  SMALL  RULES v2  full 4.30% / 0.6637 / -13.89%  halves 0.8063/0.5552  OOS 3.75% / 0.5600 / -13.89%
+  SMALL  N        rungs [5, 8, 10, 12, 15, 20, 25, 30, 40]
+           Sharpe 0.2732 0.3995 0.5076 0.5246 0.5204 0.5072 0.5285 0.5153 0.5094
+  SMALL  H        rungs [21, 63, 126, 252]
+           Sharpe 0.5289 0.5744 0.5072 0.7844
+  SMALL  GROSS    rungs [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75]
+           Sharpe 0.5051 0.5054 0.5056 0.5058 0.5061 0.5063 0.5066 0.5068 0.5070 0.5072
+  SMALL  CADENCE  rungs ['D', 'W', 'M', 'Q']
+           Sharpe 0.4544 0.5072 0.3811 0.4221
+  [PASS] G6      the ladders are live (Sharpe spread over all cells): 8.9595e-01
+  [PASS] G6-U56  U56's own ladders are live (Sharpe spread): 1.8322e-01
+  [PASS] G6-B136 B136's own ladders are live (Sharpe spread): 1.2053e-01
+  [PASS] G6-SMALL SMALL's own ladders are live (Sharpe spread): 5.1115e-01
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.grid.csv  (81 rows, 33 cols)
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.benchmarks.csv  (6 rows, 13 cols)
+
+## THE BOOTSTRAP — L in [63, 21, 126], 1000 draws, crc32 seeds
+  144 (L, panel, ladder, stat) cells built at seed base 11191119; 48 CORE cells at L=63  (25s elapsed)
+
+## SEED-MATCHED REPRODUCTION ARM — the SAME code re-run at 1116's own seed base
+   The first pass of this run used this lane's own seed base and FAILED its own
+   reproduction gates against 1116.  Before reading that as a code discrepancy it has to
+   be separated from a SEED REDRAW: 1116's bootstrap draws depend on its base 11161116,
+   and 1108 already found this machinery seed-fragile at the CELL level.  So the gates
+   below re-run the identical code at 11161116; they are a bit-level test of the CODE,
+   and everything the two bases disagree about is the DRAW, measured in the next block.
+  [PASS] G7-U56  SEED-MATCHED reproduce 1116's committed ETA2 pair (0.8095/0.0476); got 0.8095/0.0476: 1.9048e-07
+  [PASS] G8-U56  SEED-MATCHED reproduce 1116's committed concordance pair (0.8750/0.3750); got 0.8750/0.3750: 5.5511e-17
+  [PASS] G9-U56  SEED-MATCHED reproduce 1116's 4 committed per-ladder INF_FLOOR counts ([0, 4, 1, 4]); got [0, 4, 1, 4]: 0.0000e+00
+  [PASS] G7-B136 SEED-MATCHED reproduce 1116's committed ETA2 pair (0.5556/0.0476); got 0.5556/0.0476: 4.4444e-07
+  [PASS] G8-B136 SEED-MATCHED reproduce 1116's committed concordance pair (0.7083/0.3750); got 0.7083/0.3750: 3.3333e-07
+  [PASS] G9-B136 SEED-MATCHED reproduce 1116's 4 committed per-ladder INF_FLOOR counts ([2, 4, 0, 3]); got [2, 4, 0, 3]: 0.0000e+00
+
+## THE SEED REDRAW ARM — POST-HOC, declared AFTER the first pass failed its own gate
+   Labelled as post-hoc and not as a pre-registered hypothesis.  1116 itself ran 6
+   independent seed redraws for the axis question; this does the same for all three
+   panels at 8 bases (1116's and this lane's among them), and reports
+   the DISTRIBUTION of the quantity the idea's premise is a ratio of.  A point estimate
+   of ETA2 on a 4x4 BINARY table takes few distinct values, so its redraw spread is the
+   only honest yardstick for 'the margin is 17.0x on U56 but 11.7x on B136'.
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.redraws.csv  (24 rows, 20 cols)
+   panel   n_unres/16          ETA2_LAD              ETA2_STAT            margin x        LAD wins
+   U56       8-10   (med  9.0)  0.4286-0.8095 (med 0.6250)  0.0476-0.1746 (med 0.0958)    3.18-17.00  (med  7.00)  8/8
+   B136      9-10   (med 10.0)  0.5556-0.7333 (med 0.7333)  0.0476-0.0667 (med 0.0667)   11.00-11.67  (med 11.00)  8/8
+   SMALL     7-7    (med  7.0)  0.3016-0.3016 (med 0.3016)  0.0476-0.0476 (med 0.0476)    6.33-6.33   (med  6.33)  8/8
+   the same, on the two CONTINUOUS readings that need no threshold:
+     U56    REL_FLOOR eta2 LAD med 0.5743 vs STAT med 0.1154, LAD wins 8/8;  concordance LAD med 0.7500 vs STAT med 0.4167, LAD wins 8/8
+     B136   REL_FLOOR eta2 LAD med 0.9738 vs STAT med 0.0066, LAD wins 8/8;  concordance LAD med 0.8333 vs STAT med 0.4167, LAD wins 8/8
+     SMALL  REL_FLOOR eta2 LAD med 0.2893 vs STAT med 0.2201, LAD wins 8/8;  concordance LAD med 0.5417 vs STAT med 0.3750, LAD wins 8/8
+   per-ladder INF_FLOOR counts, median over the redraws (0-4 each):
+     U56    N 0-1 (med 0.0)  H 3-4 (med 3.0)  GROSS 1-2 (med 1.0)  CADENCE 4-4 (med 4.0)
+     B136   N 2-2 (med 2.0)  H 4-4 (med 4.0)  GROSS 0-0 (med 0.0)  CADENCE 3-4 (med 4.0)
+     SMALL  N 0-0 (med 0.0)  H 2-2 (med 2.0)  GROSS 2-2 (med 2.0)  CADENCE 3-3 (med 3.0)
+   THE IDEA'S PREMISE, re-read on the redraw distribution: median margin U56 7.00x, B136 11.00x, SMALL 6.33x.  1116's committed 17.0x / 11.7x sit inside the U56 and B136 redraw ranges above, so the
+   'weakens as the panel widens' gradient the idea is built on is not a measured
+   ordering of the two large panels at all — it is one draw of each.
+
+## PER-CELL RESOLVABILITY — 48 CORE cells x 3 q, all published
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.cells.csv  (432 rows, 20 cols)
+  HEADLINE (L=63, q=0.9) U56   : INF_FLOOR 10 of 16, ZERO_CONTENT 10 of 16, NO_TAPE_500 5 of 16, mean rel_floor 0.8641, median spread 0.5984
+  HEADLINE (L=63, q=0.9) B136  : INF_FLOOR 10 of 16, ZERO_CONTENT 10 of 16, NO_TAPE_500 5 of 16, mean rel_floor 0.7457, median spread 0.6058
+  HEADLINE (L=63, q=0.9) SMALL : INF_FLOOR 7 of 16, ZERO_CONTENT 7 of 16, NO_TAPE_500 4 of 16, mean rel_floor 0.8055, median spread 1.3944
+  (1116 committed 9 of 16 on U56 and 9 of 16 on B136 at this cell)
+
+  THE 4x4 TABLES, INF_FLOOR at q=0.9 (1 = UN-RESOLVABLE):
+    U56       S_FULL    S_OOS     CAGR       DD    row
+    N               0        0        0        0    0/4
+    H               1        1        1        1    4/4
+    GROSS           1        1        0        0    2/4
+    CADENCE         1        1        1        1    4/4
+    col           3/4      3/4      2/4      2/4
+    B136      S_FULL    S_OOS     CAGR       DD    row
+    N               1        0        1        0    2/4
+    H               1        1        1        1    4/4
+    GROSS           0        0        0        0    0/4
+    CADENCE         1        1        1        1    4/4
+    col           3/4      2/4      3/4      2/4
+    SMALL     S_FULL    S_OOS     CAGR       DD    row
+    N               0        0        0        0    0/4
+    H               0        1        0        1    2/4
+    GROSS           1        1        0        0    2/4
+    CADENCE         1        0        1        1    3/4
+    col           2/4      2/4      1/4      2/4
+  [MEASURED, not pass/fail] this lane's own seed base against 1116's COMMITTED per-ladder
+  INF_FLOOR counts — the bit-level test is the SEED-MATCHED arm above (G7/G8/G9); what
+  moves here is the DRAW:
+     U56    ['N', 'H', 'GROSS', 'CADENCE'] this base [0, 4, 2, 4] vs 1116 committed [0, 4, 1, 4] — 1 of 4 ladders move
+     B136   ['N', 'H', 'GROSS', 'CADENCE'] this base [2, 4, 0, 4] vs 1116 committed [2, 4, 0, 3] — 1 of 4 ladders move
+
+## THE DECOMPOSITION — ETA2 by axis, every panel x q, plus the two side definitions
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.decomp.csv  (45 rows, 23 cols)
+  defn          q     panel         n_un  eta2_LAD eta2_STAT   resid |  relF_LAD relF_STAT |  logM_LAD logM_STAT |  conc_LAD conc_STAT
+  INF_FLOOR     0.80  U56             4.0    0.5000   0.1667   0.3333 |   0.9732   0.0045 |   0.7245   0.0533 |   0.7500   0.5833
+  INF_FLOOR     0.80  B136            6.0    0.6000   0.2000   0.2000 |   0.9098   0.0234 |   0.5260   0.1046 |   0.7500   0.5000
+  INF_FLOOR     0.80  SMALL           3.0    0.0769   0.2821   0.6410 |   0.6162   0.0848 |   0.4098   0.2702 |   0.6250   0.7083
+  INF_FLOOR     0.80  POOLED          4.3    0.5671   0.1515   0.2814 |   0.9404   0.0161 |   0.7362   0.1263 |   0.3333   0.2500
+  INF_FLOOR     0.80  POOLED_LARGE    5.0    0.7436   0.1282   0.1282 |   0.9807   0.0076 |   0.7579   0.0786 |   0.5833   0.3333
+  INF_FLOOR     0.90  U56            10.0    0.7333   0.0667   0.2000 |   0.3912   0.1870 |   0.8188   0.0263 |   0.8333   0.4167
+  INF_FLOOR     0.90  B136           10.0    0.7333   0.0667   0.2000 |   0.9738   0.0066 |   0.6394   0.0842 |   0.8333   0.4167
+  INF_FLOOR     0.90  SMALL           7.0    0.3016   0.0476   0.6508 |   0.3055   0.2029 |   0.4767   0.1997 |   0.5417   0.3750
+  INF_FLOOR     0.90  POOLED          9.0    0.6851   0.0321   0.2828 |   0.6826   0.0923 |   0.7910   0.0834 |   0.3750   0.1667
+  INF_FLOOR     0.90  POOLED_LARGE   10.0    0.8182   0.0455   0.1364 |   0.8404   0.0470 |   0.8217   0.0529 |   0.6667   0.2500
+  INF_FLOOR     0.95  U56            14.0    0.4286   0.1429   0.4286 |   0.4286   0.1429 |   0.8579   0.0124 |   0.8333   0.7500
+  INF_FLOOR     0.95  B136           10.0    0.7333   0.0667   0.2000 |   0.9839   0.0040 |   0.7057   0.0726 |   0.8333   0.4167
+  INF_FLOOR     0.95  SMALL           9.0    0.3016   0.0476   0.6508 |   0.3700   0.2186 |   0.5101   0.1606 |   0.5417   0.3750
+  INF_FLOOR     0.95  POOLED         11.0    0.5424   0.0406   0.4170 |   0.7381   0.0852 |   0.8184   0.0612 |   0.4583   0.2500
+  INF_FLOOR     0.95  POOLED_LARGE   12.0    0.7500   0.0625   0.1875 |   0.8643   0.0415 |   0.8527   0.0389 |   0.6667   0.3750
+  ZERO_CONTENT  0.80  U56             4.0    0.5000   0.1667   0.3333 |   0.9732   0.0045 |   0.7245   0.0533 |   0.7500   0.5833
+  ZERO_CONTENT  0.80  B136            6.0    0.6000   0.2000   0.2000 |   0.9098   0.0234 |   0.5260   0.1046 |   0.7500   0.5000
+  ZERO_CONTENT  0.80  SMALL           3.0    0.0769   0.2821   0.6410 |   0.6162   0.0848 |   0.4098   0.2702 |   0.6250   0.7083
+  ZERO_CONTENT  0.80  POOLED          4.3    0.5671   0.1515   0.2814 |   0.9404   0.0161 |   0.7362   0.1263 |   0.3333   0.2500
+  ZERO_CONTENT  0.80  POOLED_LARGE    5.0    0.7436   0.1282   0.1282 |   0.9807   0.0076 |   0.7579   0.0786 |   0.5833   0.3333
+  ZERO_CONTENT  0.90  U56            10.0    0.7333   0.0667   0.2000 |   0.3912   0.1870 |   0.8188   0.0263 |   0.8333   0.4167
+  ZERO_CONTENT  0.90  B136           10.0    0.7333   0.0667   0.2000 |   0.9738   0.0066 |   0.6394   0.0842 |   0.8333   0.4167
+  ZERO_CONTENT  0.90  SMALL           7.0    0.3016   0.0476   0.6508 |   0.3055   0.2029 |   0.4767   0.1997 |   0.5417   0.3750
+  ZERO_CONTENT  0.90  POOLED          9.0    0.6851   0.0321   0.2828 |   0.6826   0.0923 |   0.7910   0.0834 |   0.3750   0.1667
+  ZERO_CONTENT  0.90  POOLED_LARGE   10.0    0.8182   0.0455   0.1364 |   0.8404   0.0470 |   0.8217   0.0529 |   0.6667   0.2500
+  ZERO_CONTENT  0.95  U56            14.0    0.4286   0.1429   0.4286 |   0.4286   0.1429 |   0.8579   0.0124 |   0.8333   0.7500
+  ZERO_CONTENT  0.95  B136           10.0    0.7333   0.0667   0.2000 |   0.9839   0.0040 |   0.7057   0.0726 |   0.8333   0.4167
+  ZERO_CONTENT  0.95  SMALL           9.0    0.3016   0.0476   0.6508 |   0.3700   0.2186 |   0.5101   0.1606 |   0.5417   0.3750
+  ZERO_CONTENT  0.95  POOLED         11.0    0.5424   0.0406   0.4170 |   0.7381   0.0852 |   0.8184   0.0612 |   0.4583   0.2500
+  ZERO_CONTENT  0.95  POOLED_LARGE   12.0    0.7500   0.0625   0.1875 |   0.8643   0.0415 |   0.8527   0.0389 |   0.6667   0.3750
+  NO_TAPE_500   0.80  U56             4.0    0.1667   0.1667   0.6667 |   0.9732   0.0045 |   0.7245   0.0533 |   0.5833   0.5833
+  NO_TAPE_500   0.80  B136            3.0    0.2821   0.0769   0.6410 |   0.9098   0.0234 |   0.5260   0.1046 |   0.7083   0.6250
+  NO_TAPE_500   0.80  SMALL           3.0    0.0769   0.6923   0.2308 |   0.6162   0.0848 |   0.4098   0.2702 |   0.6250   0.8750
+  NO_TAPE_500   0.80  POOLED          3.3    0.2766   0.3617   0.3617 |   0.9404   0.0161 |   0.7362   0.1263 |   0.4167   0.3333
+  NO_TAPE_500   0.80  POOLED_LARGE    3.5    0.3684   0.1158   0.5158 |   0.9807   0.0076 |   0.7579   0.0786 |   0.5000   0.3750
+  NO_TAPE_500   0.90  U56             5.0    0.3455   0.2000   0.4545 |   0.3912   0.1870 |   0.8188   0.0263 |   0.6250   0.5417
+  NO_TAPE_500   0.90  B136            5.0    0.3455   0.0545   0.6000 |   0.9738   0.0066 |   0.6394   0.0842 |   0.6250   0.4583
+  NO_TAPE_500   0.90  SMALL           4.0    0.1667   0.5000   0.3333 |   0.3055   0.2029 |   0.4767   0.1997 |   0.5833   0.7500
+  NO_TAPE_500   0.90  POOLED          4.7    0.5238   0.2698   0.2063 |   0.6826   0.0923 |   0.7910   0.0834 |   0.5000   0.2500
+  NO_TAPE_500   0.90  POOLED_LARGE    5.0    0.6129   0.1613   0.2258 |   0.8404   0.0470 |   0.8217   0.0529 |   0.5000   0.2917
+  NO_TAPE_500   0.95  U56             5.0    0.3455   0.2000   0.4545 |   0.4286   0.1429 |   0.8579   0.0124 |   0.6250   0.5417
+  NO_TAPE_500   0.95  B136            5.0    0.3455   0.0545   0.6000 |   0.9839   0.0040 |   0.7057   0.0726 |   0.6250   0.4583
+  NO_TAPE_500   0.95  SMALL           4.0    0.1667   0.5000   0.3333 |   0.3700   0.2186 |   0.5101   0.1606 |   0.5833   0.7500
+  NO_TAPE_500   0.95  POOLED          4.7    0.5238   0.2698   0.2063 |   0.7381   0.0852 |   0.8184   0.0612 |   0.5000   0.2500
+  NO_TAPE_500   0.95  POOLED_LARGE    5.0    0.6129   0.1613   0.2258 |   0.8643   0.0415 |   0.8527   0.0389 |   0.5000   0.2917
+  [MEASURED] this lane's base vs 1116's committed headline pair, the DRAW's own movement:
+     U56    ETA2 0.7333/0.0667 vs 1116's 0.8095/0.0476;  concordance 0.8333/0.4167 vs 1116's 0.8750/0.3750
+     B136   ETA2 0.7333/0.0667 vs 1116's 0.5556/0.0476;  concordance 0.8333/0.4167 vs 1116's 0.7083/0.3750
+
+## MATCHED-TAPE ARM — all three panels truncated to SMALL's own start, headline q only
+   Reported beside the headline so the panel comparison is not a tape-length comparison.
+   This is the SAME cell re-read on a common window, not a third dial.
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.matchedtape.csv  (48 rows, 10 cols)
+   U56    rows 4,200  n_un  9.0/16  eta2_LAD   0.8095 eta2_STAT   0.0476  relF_LAD   0.6595 relF_STAT   0.0962  conc 0.8750/0.3750
+   B136   rows 4,198  n_un 10.0/16  eta2_LAD   0.7333 eta2_STAT   0.0667  relF_LAD   0.9738 relF_STAT   0.0067  conc 0.8333/0.4167
+   SMALL  rows 3,938  n_un  7.0/16  eta2_LAD   0.3016 eta2_STAT   0.0476  relF_LAD   0.3020 relF_STAT   0.1948  conc 0.5417/0.3750
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.matchedtape_decomp.csv  (3 rows, 13 cols)
+
+## THE MARGINALS — mean REL_FLOOR by ladder and by statistic (L=63, q=0.9)
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.marginals.csv  (24 rows, 9 cols)
+   U56:
+     LADDER     N        mean rel_floor 0.9020  INF 0/4  mean log10 M 2.533  mean spread 2.8924
+     LADDER     H        mean rel_floor 1.0000  INF 4/4  mean log10 M 1.501  mean spread 2.0617
+     LADDER     GROSS    mean rel_floor 0.5544  INF 2/4  mean log10 M 0.105  mean spread 5.1357
+     LADDER     CADENCE  mean rel_floor 1.0000  INF 4/4  mean log10 M 2.074  mean spread 1.2664
+     STATISTIC  S_FULL   mean rel_floor 0.9904  INF 3/4  mean log10 M 1.643  mean spread 0.0768
+     STATISTIC  S_OOS    mean rel_floor 0.9873  INF 3/4  mean log10 M 1.321  mean spread 0.1195
+     STATISTIC  CAGR     mean rel_floor 0.7706  INF 2/4  mean log10 M 1.493  mean spread 4.0522
+     STATISTIC  DD       mean rel_floor 0.7082  INF 2/4  mean log10 M 1.757  mean spread 7.1078
+   B136:
+     LADDER     N        mean rel_floor 0.8779  INF 2/4  mean log10 M 2.214  mean spread 3.1200
+     LADDER     H        mean rel_floor 1.0000  INF 4/4  mean log10 M 1.766  mean spread 2.2345
+     LADDER     GROSS    mean rel_floor 0.1049  INF 0/4  mean log10 M 0.000  mean spread 5.4322
+     LADDER     CADENCE  mean rel_floor 1.0000  INF 4/4  mean log10 M 1.823  mean spread 2.4136
+     STATISTIC  S_FULL   mean rel_floor 0.7750  INF 3/4  mean log10 M 1.897  mean spread 0.0543
+     STATISTIC  S_OOS    mean rel_floor 0.7111  INF 2/4  mean log10 M 1.169  mean spread 0.1176
+     STATISTIC  CAGR     mean rel_floor 0.7777  INF 3/4  mean log10 M 1.153  mean spread 4.0009
+     STATISTIC  DD       mean rel_floor 0.7189  INF 2/4  mean log10 M 1.584  mean spread 9.0276
+   SMALL:
+     LADDER     N        mean rel_floor 0.7879  INF 0/4  mean log10 M 2.151  mean spread 5.2001
+     LADDER     H        mean rel_floor 0.8838  INF 2/4  mean log10 M 0.699  mean spread 2.1179
+     LADDER     GROSS    mean rel_floor 0.5503  INF 2/4  mean log10 M 0.279  mean spread 6.1393
+     LADDER     CADENCE  mean rel_floor 1.0000  INF 3/4  mean log10 M 1.720  mean spread 1.6233
+     STATISTIC  S_FULL   mean rel_floor 0.9186  INF 2/4  mean log10 M 0.996  mean spread 0.1652
+     STATISTIC  S_OOS    mean rel_floor 0.9577  INF 2/4  mean log10 M 1.101  mean spread 0.1869
+     STATISTIC  CAGR     mean rel_floor 0.7001  INF 1/4  mean log10 M 0.728  mean spread 4.3757
+     STATISTIC  DD       mean rel_floor 0.6455  INF 2/4  mean log10 M 2.024  mean spread 10.3529
+
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.hypotheses.csv  (9 rows, 4 cols)
+## HYPOTHESES
+   [SUPPORTED] H_REPRO        G7-U56 True; G7-B136 True; G8-U56 True; G8-B136 True; G9-U56 True; G9-B136 True
+   [SUPPORTED] H_LADDER       SMALL eta2_LAD 0.30158730158730157 vs eta2_STAT 0.047619047619047616 (n_unres 7/16, SST 3.9375)
+   [REFUTED  ] H_MARGIN_MONO  U56 11.0, B136 11.0, SMALL 6.333333333333333
+   [SUPPORTED] H_SURVIVES     lad wins at 2 of 3 q (degenerate at 0)
+   [REFUTED  ] H_DEGENERATE   SST 3.9375, n_unres 7 of 16
+   [SUPPORTED] H_CONCORD      0.5417 vs 0.3750
+   [REFUTED  ] H_HCAD         5 of 8
+   [REFUTED  ] H_NGROSS       2 of 8
+   [SUPPORTED] H_REDRAW [POST-HOC] LAD wins 8 of 8 redraws (binary), 8 of 8 on REL_FLOOR, 8 of 8 on concordance; margin median 6.33x, range 6.33-6.33x
+   5 of 9 SUPPORTED
+
+## THE ANSWER, read off the tables above
+   Continuous readings (no threshold, cannot degenerate) at the headline cell:
+     U56    REL_FLOOR eta2 LAD   0.3912 vs STAT   0.1870 (ratio   2.0923);  LOG_M eta2 LAD   0.8188 vs STAT   0.0263;  concordance LAD 0.8333 vs STAT 0.4167
+     B136   REL_FLOOR eta2 LAD   0.9738 vs STAT   0.0066 (ratio 146.5923);  LOG_M eta2 LAD   0.6394 vs STAT   0.0842;  concordance LAD 0.8333 vs STAT 0.4167
+     SMALL  REL_FLOOR eta2 LAD   0.3055 vs STAT   0.2029 (ratio   1.5054);  LOG_M eta2 LAD   0.4767 vs STAT   0.1997;  concordance LAD 0.5417 vs STAT 0.3750
+
+## RULE 8 — rung chosen on IS 2009-2016 ALONE, per ladder, three choosers, OOS read ONCE
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.walkforward.csv  (36 rows, 36 cols)
+    U56    N        C_ISSHARPE  pick 40     margin 0.0101  full 13.46%/1.1268/-22.98%  OOS 14.00%/1.0983/-22.98%  4b full False 4b OOS False 4a False OOS-best 15     regret +0.0922
+    U56    N        C_ISDD      pick 40     margin 0.0137  full 13.46%/1.1268/-22.98%  OOS 14.00%/1.0983/-22.98%  4b full False 4b OOS False 4a False OOS-best 15     regret +0.0922
+    U56    N        C_ISCAGR    pick 5      margin 0.0235  full 17.83%/0.9860/-25.85%  OOS 17.06%/0.9003/-25.85%  4b full False 4b OOS False 4a False OOS-best 15     regret +0.2903
+    U56    H        C_ISSHARPE  pick 252    margin 0.0097  full 15.88%/1.1648/-21.84%  OOS 17.31%/1.1931/-21.84%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.0000
+    U56    H        C_ISDD      pick 21     margin 0.0098  full 14.35%/1.1152/-20.24%  OOS 15.39%/1.1167/-20.24%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.0764
+    U56    H        C_ISCAGR    pick 252    margin 0.0027  full 15.88%/1.1648/-21.84%  OOS 17.31%/1.1931/-21.84%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.0000
+    U56    GROSS    C_ISSHARPE  pick 0.75   margin 0.0001  full 15.58%/1.1397/-19.13%  OOS 16.97%/1.1643/-19.13%  4b full True  4b OOS True  4a False OOS-best 0.75   regret +0.0000
+    U56    GROSS    C_ISDD      pick 0.3    margin 0.0093  full 6.18%/1.1379/-7.99%  OOS 6.71%/1.1622/-7.99%  4b full False 4b OOS False 4a False OOS-best 0.75   regret +0.0021
+    U56    GROSS    C_ISCAGR    pick 0.75   margin 0.0093  full 15.58%/1.1397/-19.13%  OOS 16.97%/1.1643/-19.13%  4b full True  4b OOS True  4a False OOS-best 0.75   regret +0.0000
+    U56    CADENCE  C_ISSHARPE  pick W      margin 0.0078  full 15.58%/1.1397/-19.13%  OOS 16.97%/1.1643/-19.13%  4b full True  4b OOS True  4a False OOS-best Q      regret +0.0083
+    U56    CADENCE  C_ISDD      pick D      margin 0.0075  full 15.42%/1.0977/-23.13%  OOS 17.20%/1.1220/-23.13%  4b full False 4b OOS False 4a False OOS-best Q      regret +0.0507
+    U56    CADENCE  C_ISCAGR    pick W      margin 0.0062  full 15.58%/1.1397/-19.13%  OOS 16.97%/1.1643/-19.13%  4b full True  4b OOS True  4a False OOS-best Q      regret +0.0083
+    B136   N        C_ISSHARPE  pick 8      margin 0.0094  full 17.82%/0.9884/-24.54%  OOS 14.56%/0.7866/-24.54%  4b full False 4b OOS False 4a False OOS-best 30     regret +0.2829
+    B136   N        C_ISDD      pick 30     margin 0.0008  full 16.01%/1.0981/-24.35%  OOS 16.61%/1.0696/-24.35%  4b full False 4b OOS False 4a False OOS-best 30     regret +0.0000
+    B136   N        C_ISCAGR    pick 5      margin 0.0188  full 18.91%/0.9776/-28.12%  OOS 15.03%/0.7687/-28.12%  4b full False 4b OOS False 4a False OOS-best 30     regret +0.3009
+    B136   H        C_ISSHARPE  pick 63     margin 0.0046  full 16.95%/1.0823/-28.69%  OOS 16.49%/0.9960/-28.69%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.0515
+    B136   H        C_ISDD      pick 21     margin 0.0032  full 16.27%/1.0848/-25.69%  OOS 15.55%/0.9966/-25.69%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.0510
+    B136   H        C_ISCAGR    pick 63     margin 0.0036  full 16.95%/1.0823/-28.69%  OOS 16.49%/0.9960/-28.69%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.0515
+    B136   GROSS    C_ISSHARPE  pick 0.75   margin 0.0003  full 16.04%/1.0634/-20.74%  OOS 16.02%/1.0100/-20.74%  4b full False 4b OOS False 4a False OOS-best 0.75   regret +0.0000
+    B136   GROSS    C_ISDD      pick 0.3    margin 0.0098  full 6.39%/1.0594/-8.67%  OOS 6.41%/1.0055/-8.67%  4b full False 4b OOS False 4a False OOS-best 0.75   regret +0.0045
+    B136   GROSS    C_ISCAGR    pick 0.75   margin 0.0108  full 16.04%/1.0634/-20.74%  OOS 16.02%/1.0100/-20.74%  4b full False 4b OOS False 4a False OOS-best 0.75   regret +0.0000
+    B136   CADENCE  C_ISSHARPE  pick W      margin 0.0205  full 16.04%/1.0634/-20.74%  OOS 16.02%/1.0100/-20.74%  4b full False 4b OOS False 4a False OOS-best M      regret +0.0554
+    B136   CADENCE  C_ISDD      pick D      margin 0.0076  full 16.58%/1.0108/-28.36%  OOS 17.05%/0.9522/-28.36%  4b full False 4b OOS False 4a False OOS-best M      regret +0.1133
+    B136   CADENCE  C_ISCAGR    pick W      margin 0.0004  full 16.04%/1.0634/-20.74%  OOS 16.02%/1.0100/-20.74%  4b full False 4b OOS False 4a False OOS-best M      regret +0.0554
+    SMALL  N        C_ISSHARPE  pick 25     margin 0.0740  full 8.06%/0.5285/-35.59%  OOS 6.17%/0.4164/-35.59%  4b full False 4b OOS False 4a False OOS-best 12     regret +0.0891
+    SMALL  N        C_ISDD      pick 40     margin 0.0168  full 7.32%/0.5094/-36.12%  OOS 6.13%/0.4281/-36.12%  4b full False 4b OOS False 4a False OOS-best 12     regret +0.0774
+    SMALL  N        C_ISCAGR    pick 25     margin 0.0112  full 8.06%/0.5285/-35.59%  OOS 6.17%/0.4164/-35.59%  4b full False 4b OOS False 4a False OOS-best 12     regret +0.0891
+    SMALL  H        C_ISSHARPE  pick 252    margin 0.1875  full 13.36%/0.7844/-37.41%  OOS 11.16%/0.6676/-37.41%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.0000
+    SMALL  H        C_ISDD      pick 21     margin 0.0417  full 8.08%/0.5289/-38.29%  OOS 6.61%/0.4353/-38.29%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.2323
+    SMALL  H        C_ISCAGR    pick 252    margin 0.0480  full 13.36%/0.7844/-37.41%  OOS 11.16%/0.6676/-37.41%  4b full False 4b OOS False 4a False OOS-best 252    regret +0.0000
+    SMALL  GROSS    C_ISSHARPE  pick 0.75   margin 0.0002  full 7.87%/0.5072/-35.81%  OOS 7.09%/0.4533/-35.81%  4b full False 4b OOS False 4a False OOS-best 0.75   regret +0.0000
+    SMALL  GROSS    C_ISDD      pick 0.3    margin 0.0171  full 3.47%/0.5051/-15.67%  OOS 3.21%/0.4513/-15.67%  4b full False 4b OOS False 4a False OOS-best 0.75   regret +0.0020
+    SMALL  GROSS    C_ISCAGR    pick 0.75   margin 0.0055  full 7.87%/0.5072/-35.81%  OOS 7.09%/0.4533/-35.81%  4b full False 4b OOS False 4a False OOS-best 0.75   regret +0.0000
+    SMALL  CADENCE  C_ISSHARPE  pick M      margin 0.0373  full 5.38%/0.3811/-38.52%  OOS 2.98%/0.2482/-38.52%  4b full False 4b OOS False 4a False OOS-best W      regret +0.2051
+    SMALL  CADENCE  C_ISDD      pick D      margin 0.0147  full 6.97%/0.4544/-38.31%  OOS 5.35%/0.3633/-38.31%  4b full False 4b OOS False 4a False OOS-best W      regret +0.0900
+    SMALL  CADENCE  C_ISCAGR    pick D      margin 0.0025  full 6.97%/0.4544/-38.31%  OOS 5.35%/0.3633/-38.31%  4b full False 4b OOS False 4a False OOS-best W      regret +0.0900
+  ALL PICKS: 4b full 4 of 36, 4b OOS 4 of 36, 4a 0 of 36; the IS chooser picks the OOS-best rung 11 of 36 times
+    U56    picks: 4b full 4/12, 4b OOS 4/12, 4a 0/12, median OOS Sharpe 1.1633 vs SPY OOS 0.8711 and RULES v2 OOS 1.2762; median regret +0.0083
+    B136   picks: 4b full 0/12, 4b OOS 0/12, 4a 0/12, median OOS Sharpe 1.0011 vs SPY OOS 0.8767 and RULES v2 OOS 1.1059; median regret +0.0515
+    SMALL  picks: 4b full 0/12, 4b OOS 0/12, 4a 0/12, median OOS Sharpe 0.4317 vs SPY OOS 0.8767 and RULES v2 OOS 0.5600; median regret +0.0832
+  WHOLE GRID (81 rungs): 4b full 16, 4b OOS 17, 4a 0
+    U56    4b full 10/27, 4b OOS 11/27, 4a 0/27;  legs L_H1 27/27, L_H2 27/27, L_OOS 27/27, L_DD 15/27, L_CAGR 22/27
+    B136   4b full 6/27, 4b OOS 6/27, 4a 0/27;  legs L_H1 27/27, L_H2 24/27, L_OOS 25/27, L_DD 11/27, L_CAGR 23/27
+    SMALL  4b full 0/27, 4b OOS 0/27, 4a 0/27;  legs L_H1 1/27, L_H2 0/27, L_OOS 0/27, L_DD 2/27, L_CAGR 1/27
+  BINDING LEG among the 65 full-sample 4b failures:
+     L_H1: fails at 26/65, SOLE failing leg at 0
+     L_H2: fails at 30/65, SOLE failing leg at 1
+     L_OOS: fails at 29/65, SOLE failing leg at 0
+     L_DD: fails at 53/65, SOLE failing leg at 26
+     L_CAGR: fails at 35/65, SOLE failing leg at 9
+  4b-full passing cells:
+    U56    N        rung 12     full 17.71%/1.1692/-20.17% halves 1.2753/1.0884  OOS 18.89%/1.1758/-20.17%  4b OOS True
+    U56    N        rung 20     full 15.58%/1.1397/-19.13% halves 1.2037/1.0971  OOS 16.97%/1.1643/-19.13%  4b OOS True
+    U56    H        rung 126    full 15.58%/1.1397/-19.13% halves 1.2037/1.0971  OOS 16.97%/1.1643/-19.13%  4b OOS True
+    U56    GROSS    rung 0.55   full 11.39%/1.1390/-14.29% halves 1.2031/1.0962  OOS 12.39%/1.1635/-14.29%  4b OOS True
+    U56    GROSS    rung 0.6    full 12.43%/1.1392/-15.51% halves 1.2033/1.0964  OOS 13.53%/1.1637/-15.51%  4b OOS True
+    U56    GROSS    rung 0.65   full 13.48%/1.1394/-16.73% halves 1.2035/1.0967  OOS 14.68%/1.1639/-16.73%  4b OOS True
+    U56    GROSS    rung 0.7    full 14.53%/1.1395/-17.93% halves 1.2036/1.0969  OOS 15.82%/1.1641/-17.93%  4b OOS True
+    U56    GROSS    rung 0.75   full 15.58%/1.1397/-19.13% halves 1.2037/1.0971  OOS 16.97%/1.1643/-19.13%  4b OOS True
+    U56    CADENCE  rung W      full 15.58%/1.1397/-19.13% halves 1.2037/1.0971  OOS 16.97%/1.1643/-19.13%  4b OOS True
+    U56    CADENCE  rung Q      full 15.40%/1.1388/-19.94% halves 1.2214/1.0911  OOS 17.28%/1.1726/-19.94%  4b OOS True
+    B136   N        rung 15     full 16.78%/1.0682/-19.66% halves 1.2378/0.9427  OOS 17.49%/1.0458/-19.66%  4b OOS True
+    B136   GROSS    rung 0.5    full 10.68%/1.0613/-14.17% halves 1.2878/0.8821  OOS 10.69%/1.0076/-14.17%  4b OOS False
+    B136   GROSS    rung 0.55   full 11.75%/1.0618/-15.51% halves 1.2882/0.8826  OOS 11.76%/1.0081/-15.51%  4b OOS True
+    B136   GROSS    rung 0.6    full 12.82%/1.0622/-16.84% halves 1.2887/0.8831  OOS 12.83%/1.0086/-16.84%  4b OOS True
+    B136   GROSS    rung 0.65   full 13.90%/1.0626/-18.15% halves 1.2891/0.8836  OOS 13.90%/1.0091/-18.15%  4b OOS True
+    B136   GROSS    rung 0.7    full 14.97%/1.0630/-19.45% halves 1.2895/0.8840  OOS 14.96%/1.0096/-19.45%  4b OOS True
+  The book at each rung is byte-identical across both dials — only which cells get CALLED
+  un-resolvable changes — so 4a and 4b are invariant to q and to the definition by
+  construction.  Scored at all 81 rungs because rule 4 says so.
+
+## GATE SUMMARY
+   15 of 15 PASS
+  wrote 2026-09-16_does-the-LADDER-axis-answer-hold-on-the-SMALL-panel_cloud.gates.csv  (16 rows, 4 cols)
+
+## SURVIVORSHIP (PROTOCOL rule 9)
+   U56 and B136 are CURRENT-CONSTITUENT lists.  The SMALL pool is worse: it is the
+   CURRENT constituents of a sub-$2B screen, so every name that fell below the screen,
+   delisted or went to zero is absent, and a small-cap pool loses names that way far more
+   often than a large-cap one.  Every CAGR and drawdown LEVEL on SMALL is optimistic by
+   an amount this run cannot measure and every 4a/4b count on it is an UPPER bound.  A
+   rung-to-rung GAP and a rung-to-rung AGREEMENT both contrast two books over the same
+   inflated tape, so the bias very largely cancels out of the floor, the ETA2 and every
+   quantity decomposed here; it does NOT cancel out of the 4b legs, measured against SPY.
+
+## THE DECLARED APPROXIMATION, AND ITS DIRECTION
+   NO_TAPE_500 rests on 1110's projection A' = Phi(sqrt(M) Phi^-1(A)): a fixed population
+   gap and an SE falling as 1/sqrt(T).  Both assumptions run TOWARD resolution, so every
+   M_needed is a LOWER bound and every NO_TAPE_500 count a LOWER bound on un-resolvability.
+   The exponent is INHERITED from 1110 and is NOT re-measured here, still less on the
+   SMALL tape, so the DD column's M_needed is this run's least trustworthy quantity.
+
+# done in 70s
