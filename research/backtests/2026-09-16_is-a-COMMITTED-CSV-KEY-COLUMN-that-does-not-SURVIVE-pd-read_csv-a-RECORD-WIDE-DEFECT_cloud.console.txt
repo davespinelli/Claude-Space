@@ -1,0 +1,181 @@
+# 2026-09-16_is-a-COMMITTED-CSV-KEY-COLUMN-that-does-not-SURVIVE-pd-read_csv-a-RECORD-WIDE-DEFECT_cloud
+# COST 10.0 bps | GROSS 0.75 | FREQ W | LAG 1 | WARM 260 | SEEDS 20 | H 126
+# N ladder [5, 10, 20] | caps ['INF', '2.00', '1.50', '1.00']
+# seed-key tokens harvested from 44 committed mdseed() call sites: ['boot', 'cap', 'capname', 'elig', 'gate', 'hold', 'int', 'kind', 'lad', 'ladder_for', 'lens', 'native', 'nsub', 'null', 'null_0', 'pan', 'panel', 'panel_head', 'perm1064', 'perm1065', 'perm936', 'pname', 'pxd', 'rung_head', 'seed', 'seed0', 'shape', 'swap', 'tlen', 'tuple', 'u56']
+
+================================================================================================
+GATES (printed BEFORE any result number)
+================================================================================================
+  [PASS] G1 fast runner NET returns == engine.backtest (post-warm-up): 1.38778e-17
+  [PASS] G1b fast runner turnover == engine.backtest (post-warm-up): 3.747e-16
+  [PASS] G2 cap=INF book holds exactly N=20 slots at gross 0.75: 0.75
+  [PASS] G2b cap=1.00 BINDS: per-name weight <= 1.00*gross/N on the capped book: 0.0375
+  [PASS] G2c the cap DE-GROSSES (capped book's gross <= uncapped's): -1.11022e-16
+  [PASS] G3 pandas re-reads 'INF'/'1.00' as something else (defect reproduced): 1
+  [PASS] G3b the two literals give DIFFERENT md5 seeds: 1
+  [PASS] G6 same key -> bit-identical null family (reproduction control): 0
+  [PASS] G6b 'INF' vs 'inf' -> a DIFFERENT null family (the defect, priced): 0.00995345
+  [PASS] G4 live RULES v2 MaxDD == record's -12.05%: -0.120549
+  [PASS] G5 SPY post-warm-up CAGR (context, not a pass/fail): 0.150966
+  GATES 11 of 11 PASS
+
+================================================================================================
+PART A — CENSUS of every committed CSV (D1 x D2)
+================================================================================================
+  committed CSVs to scan: 5,303  (self-excluded: this run's own 2026-09-16_is-a-COMMITTED-CSV-KEY-COLUMN-that-does-not-SURVIVE-pd-read_csv-a-RECORD-WIDE-DEFECT_cloud.*.csv outputs)
+    ... 1,000 / 5,303
+    ... 2,000 / 5,303
+    ... 3,000 / 5,303
+    ... 4,000 / 5,303
+    ... 5,000 / 5,303
+  unreadable CSVs (skipped, reported not hidden) : 0
+
+  columns scanned                               : 87,836 in 5,302 files
+  SEED_KEY columns (named in a committed mdseed): 3,541
+
+  D1 x D2 GRID (all four points):
+    class      test          cols  cols_fail    share  files_fail  file_share
+    SEED_KEY   LITERAL      3,541         98    2.77%          97       1.83%
+    SEED_KEY   SEMANTIC     3,541         60    1.69%          59       1.11%
+    ANY_KEY    LITERAL     87,836     45,644   51.97%       4,701      88.66%
+    ANY_KEY    SEMANTIC    87,836      7,281    8.29%       1,777      33.52%
+  wrote 2026-09-16_is-a-COMMITTED-CSV-KEY-COLUMN-that-does-not-SURVIVE-pd-read_csv-a-RECORD-WIDE-DEFECT_cloud.grid.csv  (4 rows, 7 cols)
+
+  HOW the LITERAL failures break down BY MODE (the decomposition that matters):
+    class      mode            cols   files        cells
+    SEED_KEY   KEY               22      22       22,357
+    SEED_KEY   EMPTY_NAN         42      41       40,599
+    SEED_KEY   FLOAT_REPR        34      34        6,195
+    ANY_KEY    KEY               99      64       76,467
+    ANY_KEY    EMPTY_NAN      6,136   1,471    2,876,275
+    ANY_KEY    FLOAT_REPR    39,409   4,290   18,222,013
+
+  WHICH SEED_KEY COLUMN NAMES FAIL LITERAL (every one, with an example):
+    U56             6 files         34 cells  modes {'FLOAT_REPR': np.int64(6)}  e.g. '0.04205128205128205' -> '0.042051282051282' (FLOAT_REPR)  SEMANTIC-lossy in 0 of 6
+    cap            23 files      5,856 cells  modes {'FLOAT_REPR': np.int64(18), 'KEY': np.int64(5)}  e.g. '-0.20230341170038982' -> '-0.2023034117003898' (FLOAT_REPR)  SEMANTIC-lossy in 1 of 23
+    elig            1 files         12 cells  modes {'FLOAT_REPR': np.int64(1)}  e.g. '23.289029060599233' -> '23.289029060599237' (FLOAT_REPR)  SEMANTIC-lossy in 0 of 1
+    gate            7 files        400 cells  modes {'EMPTY_NAN': np.int64(5), 'FLOAT_REPR': np.int64(2)}  e.g. '' -> 'nan' (EMPTY_NAN)  SEMANTIC-lossy in 5 of 7
+    kind           23 files     38,656 cells  modes {'KEY': np.int64(16), 'EMPTY_NAN': np.int64(7)}  e.g. '' -> 'nan' (EMPTY_NAN)  SEMANTIC-lossy in 23 of 23
+    native          1 files         44 cells  modes {'FLOAT_REPR': np.int64(1)}  e.g. '1.4445821130885335' -> '1.4445821130885337' (FLOAT_REPR)  SEMANTIC-lossy in 0 of 1
+    null            6 files        370 cells  modes {'FLOAT_REPR': np.int64(5), 'EMPTY_NAN': np.int64(1)}  e.g. '' -> 'nan' (EMPTY_NAN)  SEMANTIC-lossy in 1 of 6
+    panel          26 files     23,532 cells  modes {'EMPTY_NAN': np.int64(24), 'FLOAT_REPR': np.int64(1), 'KEY': np.int64(1)}  e.g. '' -> 'nan' (EMPTY_NAN)  SEMANTIC-lossy in 25 of 26
+    seed            4 files        228 cells  modes {'EMPTY_NAN': np.int64(4)}  e.g. '' -> 'nan' (EMPTY_NAN)  SEMANTIC-lossy in 4 of 4
+    u56             1 files         19 cells  modes {'EMPTY_NAN': np.int64(1)}  e.g. '' -> 'nan' (EMPTY_NAN)  SEMANTIC-lossy in 1 of 1
+
+  TOP NON-SEED columns by failing cells (context, not the claim):
+    CAGR                     1206 files  1,390,025 cells  SEMANTIC-lossy in 39
+    OOS_CAGR                 1469 files  1,029,674 cells  SEMANTIC-lossy in 112
+    MaxDD                    1210 files  1,025,636 cells  SEMANTIC-lossy in 41
+    OOS_MaxDD                1444 files    759,507 cells  SEMANTIC-lossy in 114
+    IS_CAGR                   442 files    608,669 cells  SEMANTIC-lossy in 19
+    IS_MaxDD                  375 files    533,256 cells  SEMANTIC-lossy in 20
+    Sharpe                   1149 files    371,312 cells  SEMANTIC-lossy in 109
+    OOS_Sharpe               1376 files    354,262 cells  SEMANTIC-lossy in 166
+    H2                       1043 files    315,655 cells  SEMANTIC-lossy in 84
+    H1                       1049 files    245,489 cells  SEMANTIC-lossy in 106
+  wrote 2026-09-16_is-a-COMMITTED-CSV-KEY-COLUMN-that-does-not-SURVIVE-pd-read_csv-a-RECORD-WIDE-DEFECT_cloud.census.csv  (87,836 rows, 12 cols)
+
+================================================================================================
+PART B — PRICE: what a default-dtype RE-READ of 1071's `cap` column gets wrong
+================================================================================================
+  The re-read map, taken from pandas itself (not asserted):
+    committed 'INF'  ->  re-read 'inf'   seed 4098319847 -> 643830407   DIFFERENT
+    committed '2.00'  ->  re-read '2.0'   seed 4013145077 -> 164185176   DIFFERENT
+    committed '1.50'  ->  re-read '1.5'   seed 2096969506 -> 2374877540   DIFFERENT
+    committed '1.00'  ->  re-read '1.0'   seed 1877672239 -> 625590099   DIFFERENT
+  U56   N=5   cap=INF  book   9.63%  EDGE raw -3.3575 pp  re-read -3.4556 pp  delta -0.0980 pp (seed SE 0.5479)
+  U56   N=10  cap=INF  book   9.84%  EDGE raw -3.4895 pp  re-read -3.2976 pp  delta +0.1919 pp (seed SE 0.2904)
+  U56   N=20  cap=INF  book  10.41%  EDGE raw -2.4477 pp  re-read -2.4440 pp  delta +0.0037 pp (seed SE 0.1945)
+  U56   N=5   cap=2.00 book   9.63%  EDGE raw -2.5448 pp  re-read -2.7727 pp  delta -0.2279 pp (seed SE 0.4802)
+  U56   N=10  cap=2.00 book   9.80%  EDGE raw -2.7271 pp  re-read -2.6387 pp  delta +0.0884 pp (seed SE 0.3030)
+  U56   N=20  cap=2.00 book  10.11%  EDGE raw -2.4692 pp  re-read -2.5635 pp  delta -0.0943 pp (seed SE 0.2075)
+  U56   N=5   cap=1.50 book   9.63%  EDGE raw -2.0261 pp  re-read -3.7397 pp  delta -1.7136 pp (seed SE 0.3597)
+  U56   N=10  cap=1.50 book   9.69%  EDGE raw -3.4795 pp  re-read -3.4925 pp  delta -0.0129 pp (seed SE 0.3785)
+  U56   N=20  cap=1.50 book  10.19%  EDGE raw -2.4729 pp  re-read -2.7575 pp  delta -0.2846 pp (seed SE 0.1775)
+  U56   N=5   cap=1.00 book   9.59%  EDGE raw -1.3875 pp  re-read -3.2910 pp  delta -1.9035 pp (seed SE 0.6126)
+  U56   N=10  cap=1.00 book   9.54%  EDGE raw -2.4699 pp  re-read -2.9616 pp  delta -0.4918 pp (seed SE 0.3291)
+  U56   N=20  cap=1.00 book  10.16%  EDGE raw -2.6308 pp  re-read -3.0766 pp  delta -0.4458 pp (seed SE 0.1931)
+  B136  N=5   cap=INF  book   8.95%  EDGE raw -4.8561 pp  re-read -6.2237 pp  delta -1.3676 pp (seed SE 0.5473)
+  B136  N=10  cap=INF  book   9.32%  EDGE raw -4.7104 pp  re-read -3.2775 pp  delta +1.4330 pp (seed SE 0.3150)
+  B136  N=20  cap=INF  book   9.62%  EDGE raw -3.8743 pp  re-read -4.3074 pp  delta -0.4331 pp (seed SE 0.2266)
+  B136  N=5   cap=2.00 book   8.95%  EDGE raw -3.5282 pp  re-read -4.9275 pp  delta -1.3993 pp (seed SE 0.4432)
+  B136  N=10  cap=2.00 book   9.32%  EDGE raw -4.1356 pp  re-read -3.7721 pp  delta +0.3635 pp (seed SE 0.3049)
+  B136  N=20  cap=2.00 book   9.53%  EDGE raw -4.2085 pp  re-read -3.8390 pp  delta +0.3696 pp (seed SE 0.2073)
+  B136  N=5   cap=1.50 book   8.95%  EDGE raw -4.2101 pp  re-read -5.1085 pp  delta -0.8985 pp (seed SE 0.5282)
+  B136  N=10  cap=1.50 book   9.27%  EDGE raw -3.7174 pp  re-read -4.4096 pp  delta -0.6923 pp (seed SE 0.3531)
+  B136  N=20  cap=1.50 book   9.59%  EDGE raw -4.4742 pp  re-read -3.8800 pp  delta +0.5942 pp (seed SE 0.2261)
+  B136  N=5   cap=1.00 book   8.95%  EDGE raw -4.3455 pp  re-read -6.4353 pp  delta -2.0898 pp (seed SE 0.4304)
+  B136  N=10  cap=1.00 book   9.23%  EDGE raw -4.0533 pp  re-read -4.1879 pp  delta -0.1346 pp (seed SE 0.3389)
+  B136  N=20  cap=1.00 book   9.62%  EDGE raw -3.6784 pp  re-read -3.9471 pp  delta -0.2687 pp (seed SE 0.2420)
+  wrote 2026-09-16_is-a-COMMITTED-CSV-KEY-COLUMN-that-does-not-SURVIVE-pd-read_csv-a-RECORD-WIDE-DEFECT_cloud.reprice.csv  (24 rows, 17 cols)
+
+================================================================================================
+PART C — THE ANSWER
+================================================================================================
+  SEED_KEY columns failing LITERAL: 98 of 3,541 (2.77%) across 97 of 5,302 files (1.83%)
+  ANY_KEY  columns failing LITERAL: 45,644 of 87,836 (51.97%)
+  SEED_KEY columns SEMANTICALLY lossy: 60
+  ANY_KEY  columns SEMANTICALLY lossy: 7,281
+
+  PRICED CELLS: 24 (24 whose committed cap literal does NOT survive)
+    EDGE shift |delta| median 0.4013 pp, max 2.0898 pp; seed SE median 0.3221 pp
+    cells reproducing the committed EDGE exactly : 0 of 24
+    cells inside 1 seed SE of it                 : 8 of 24 (33.3%)
+    CONTROL — cells whose literal DOES survive: 0 of 0 reproduce exactly (must be all of them)
+
+  HYPOTHESES (declared before any number):
+    [FAIL] H_WIDE      >5% of committed CSVs carry a SEED_KEY LITERAL failure
+    [FAIL] H_SEED      SEED_KEY LITERAL rate > ANY_KEY LITERAL rate
+    [PASS] H_SEMANTIC  at least one SEED_KEY column is SEMANTICALLY lossy
+    [PASS] H_PRICE     re-read reproduces < half of the affected cells
+    [FAIL] H_CAPONLY   `cap` is the ONLY seed-key column failing LITERAL
+    HYPOTHESES 2 of 5 PASS
+  wrote 2026-09-16_is-a-COMMITTED-CSV-KEY-COLUMN-that-does-not-SURVIVE-pd-read_csv-a-RECORD-WIDE-DEFECT_cloud.hypotheses.csv  (5 rows, 2 cols)
+
+================================================================================================
+PART D — RULE 8 WALK-FORWARD and BOTH KEEP PATHS
+================================================================================================
+  SPY on U56  : full  15.10% / 0.8829 / -33.72%   OOS  15.21% / 0.8711 / -33.72%   halves 0.9588 / 0.8207
+  SPY on B136 : full  15.16% / 0.8861 / -33.72%   OOS  15.33% / 0.8767 / -33.72%   halves 0.9596 / 0.8259
+  RULES v2 (live, U56, post-warm-up): 8.62% / 1.2007 / -12.05%
+
+  ALL GRID POINTS (no cell hidden):
+    panel   N   cap  fullCAGR  fullShp   fullDD      H1      H2   oosCAGR  oosShp    oosDD    4a    4b  4bOOS
+    U56     5   INF     9.63%   0.9427  -17.26%  1.1397  0.7797     9.80%  0.9138  -17.26% False False  False
+    U56    10   INF     9.84%   0.9465  -17.62%  1.0669  0.8541    10.79%  0.9787  -17.62% False False   True
+    U56    20   INF    10.41%   0.9946  -16.74%  1.0845  0.9243    11.16%  1.0145  -16.74% False False   True
+    U56     5  2.00     9.63%   0.9427  -17.26%  1.1397  0.7797     9.80%  0.9138  -17.26% False False  False
+    U56    10  2.00     9.80%   0.9437  -17.62%  1.0669  0.8488    10.72%  0.9738  -17.62% False False   True
+    U56    20  2.00    10.11%   0.9785  -16.74%  1.0957  0.8837    10.57%  0.9780  -16.74% False False  False
+    U56     5  1.50     9.63%   0.9427  -17.26%  1.1397  0.7797     9.80%  0.9138  -17.26% False False  False
+    U56    10  1.50     9.69%   0.9351  -17.62%  1.0684  0.8313    10.49%  0.9578  -17.62% False False  False
+    U56    20  1.50    10.19%   0.9945  -16.74%  1.1177  0.8934    10.55%  0.9887  -16.74% False False  False
+    U56     5  1.00     9.59%   0.9398  -17.26%  1.1397  0.7742     9.73%  0.9088  -17.26% False False  False
+    U56    10  1.00     9.54%   0.9297  -17.62%  1.0782  0.8127    10.20%  0.9418  -17.62% False False  False
+    U56    20  1.00    10.16%   1.0145  -16.74%  1.1246  0.9232    10.63%  1.0199  -16.74% False False  False
+    B136    5   INF     8.95%   0.7901  -17.57%  0.8539  0.7492    11.29%  0.9099  -17.57% False False   True
+    B136   10   INF     9.32%   0.8579  -18.84%  1.0803  0.6636     9.36%  0.8375  -18.84% False False  False
+    B136   20   INF     9.62%   0.9057  -17.96%  1.1266  0.7169     9.90%  0.8997  -17.96% False False  False
+    B136    5  2.00     8.95%   0.7901  -17.57%  0.8539  0.7492    11.29%  0.9099  -17.57% False False   True
+    B136   10  2.00     9.32%   0.8579  -18.84%  1.0803  0.6636     9.36%  0.8375  -18.84% False False  False
+    B136   20  2.00     9.53%   0.8994  -18.20%  1.1276  0.7047     9.75%  0.8885  -18.20% False False  False
+    B136    5  1.50     8.95%   0.7901  -17.57%  0.8539  0.7492    11.29%  0.9099  -17.57% False False   True
+    B136   10  1.50     9.27%   0.8547  -18.84%  1.0798  0.6579     9.29%  0.8323  -18.84% False False  False
+    B136   20  1.50     9.59%   0.9059  -18.53%  1.1477  0.7007     9.71%  0.8848  -18.53% False False  False
+    B136    5  1.00     8.95%   0.7901  -17.57%  0.8539  0.7492    11.29%  0.9099  -17.57% False False   True
+    B136   10  1.00     9.23%   0.8517  -18.84%  1.0810  0.6515     9.21%  0.8264  -18.84% False False  False
+    B136   20  1.00     9.62%   0.9124  -18.87%  1.1741  0.6907     9.57%  0.8761  -18.87% False False  False
+
+  RULE 8 CHOOSERS (choose on IS 2009-2016, read OOS ONCE):
+    U56   C_SHARPE  picks N=20 cap=1.00 -> OOS  10.63% / 1.0199 / -16.74%  vs SPY OOS  15.21% / 0.8711 / -33.72%  -> 4b OOS FAIL
+    U56   C_CAGR    picks N=20 cap=INF  -> OOS  11.16% / 1.0145 / -16.74%  vs SPY OOS  15.21% / 0.8711 / -33.72%  -> 4b OOS PASS
+    B136  C_SHARPE  picks N=20 cap=1.00 -> OOS   9.57% / 0.8761 / -18.87%  vs SPY OOS  15.33% / 0.8767 / -33.72%  -> 4b OOS FAIL
+    B136  C_CAGR    picks N=20 cap=1.00 -> OOS   9.57% / 0.8761 / -18.87%  vs SPY OOS  15.33% / 0.8767 / -33.72%  -> 4b OOS FAIL
+
+  4a: 0 of 24   4b full: 0 of 24   4b OOS: 7 of 24
+    L_CAGR   0 of 24
+    L_H1    20 of 24
+    L_H2     7 of 24
+    L_OOS   19 of 24
+    L_DD    24 of 24
+  wrote 2026-09-16_is-a-COMMITTED-CSV-KEY-COLUMN-that-does-not-SURVIVE-pd-read_csv-a-RECORD-WIDE-DEFECT_cloud.walkforward.csv  (24 rows, 20 cols)
