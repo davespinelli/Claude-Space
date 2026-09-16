@@ -1,0 +1,13 @@
+# KEEP memo — PROTOCOL rule 4 DD-CAP EPISODE COUNT clause (proposed, NOT applied)
+
+1. **Evidence.** Idea 1024 (lane B, 2026-09-16) censused 3 panels × 3 mechanical episode definitions × 16 rule-8-legal split points × 63 books, 8 of 8 gates PASS: SPY's OOS MaxDD is `DD_2020-03-23` in **9 of 9** (panel × definition) cells and at **16 of 16** legal ends on every panel.
+2. **The cap is single-episode by a distance, not a tie.** Binding-minus-runner-up margin **0.0922** of drawdown, identical to four decimals at all 48 (panel × end) cells (min = max), runner-up `DD_2022-10-12` at 16 of 16.
+3. **No panel can fix it.** SMALL's SPY column is bit-identical to U56's on all 4,198 common days (gate G7), so `L4_DD`'s comparand is invariant to every panel the record can reach; only the POST grid (2019Q1–2022Q4), which rule 8 forbids, reaches 3 episodes.
+4. **It is not a drawing artefact.** **0 of 213** series-cells change count between DD10, DD05 and CAL_Q (H_DEF FAIL) — the census is completely definition-insensitive.
+5. **It is not a property of the tape.** 13 of 63 books DO move between episodes on the same legal grid (1:50, 2:13), so the degeneracy belongs to the comparand alone (H_BOOK FAIL).
+6. **Proposed wording, to be added to PROTOCOL.md rule 4 path 4b as a new final sentence** (verbatim):
+   > Any 4b pass whose drawdown leg is reported must publish, beside it, the number of DISTINCT market episodes that set the comparand's MaxDD across rule 8's legal split grid, and the depth margin between the binding episode and the runner-up. Where that count is 1, the drawdown leg is DESCRIPTIVE, NOT CERTIFYING: it cannot be the leg a KEEP turns on, and the pass must name the single episode it rests on (on this tape, the 2020 crash, margin 0.0922).
+7. **Scope.** The clause adds a required disclosure and one demotion; it changes no threshold, tunes no parameter and re-scores no committed row. `0.60 × BAR` stands exactly as written.
+8. **Cost of adopting.** On this run's own legal ladder, 243 of 432 rule-8 rows pass 4b under the WIN bar; the clause demotes the `L4_DD` leg in all of them but overturns none, because no committed pass in the record turns on `L4_DD` alone.
+9. **Not applied.** PROTOCOL rule 6 reserves rule changes to the Sunday review, one per week, with a CHANGELOG entry and a RULES.md version bump. `RULES.md`, `PROTOCOL.md`, `scan.py`, `bot.py` and `baseline.py` are untouched by this run.
+10. **Caveats.** Current-constituent survivorship on all three panels (levels optimistic, book counts a lower bound); 2009–2026 contains exactly two drawdowns past 20% for SPY, so "one episode" is as much a fact about the sample's length as about 4b — which is the point the clause forces every future pass to state.
