@@ -1,0 +1,136 @@
+# Idea 1109 (cloud lane, idea 1 of 2, 2026-09-16) — does any committed GRID-EDGE ARGMAX
+#   survive being read as a BOUNDARY PICK?
+# TUNED DIALS (2, PROTOCOL rule 4): CLAIM SET ['CS_ALL32', 'CS_RESOLVED', 'CS_DECIDED'] x EDGE RULE ['E_END', 'E_OUTER2']
+#   = 6 combinations, ALL published.  PANEL, LADDER, STATISTIC are not dials (all 32 cells reported under each).
+# NOT A DIAL: the EXTENSION set, fixed before any number was read —
+#   N        CORE [5, 8, 10, 12, 15, 20, 25, 30, 40]  +LO [3, 4]  +HI [50, 60]
+#   H        CORE [21, 63, 126, 252]  +LO [5, 10]  +HI [378, 504]
+#   GROSS    CORE [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75]  +LO [0.2, 0.25]  +HI [0.8, 0.85, 0.9, 0.95, 1.0]
+#   CADENCE  CORE ['D', 'W', 'M', 'Q']  +LO []  +HI ['2Q', '4Q']
+#   GROSS stops at 1.00 (PROTOCOL rule 2, no leverage); CADENCE has NO low-end extension (nothing is finer than a daily bar).
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, gross 0.75, cadence W, min hold 126, N 20,
+#   10 bps, LAG 1, warm-up 260, IS end 2016-12-31, block L=63, 1000 draws, crc32 seeds, q=0.9.
+# DECLARED BEFORE ANY NUMBER:
+#   (a) H_EDGE_MAJORITY   > 50% of the 32 committed argmaxes sit at a ladder END.
+#   (b) H_EDGE_EXCESS     that share exceeds the random-argmax null share (mean 2/k).
+#   (c) H_RESOLVED_EDGE   1102's D1 reproduces: EVERY RESOLVED argmax is a ladder end.
+#   (d) H_MONO            a majority of EDGE cells sit on a monotone ladder (|Spearman(rung, stat)| >= 0.70), i.e. carry no interior optimum.
+#   (e) H_EXT_MOVES       extending the binding end moves the argmax OUTWARD in a majority of EDGE cells — the published optimum was a grid-edge statement.
+#   (f) H_SPREAD_TRIVIAL  a majority of EDGE cells have whole-ladder spread BELOW their own resolution floor (the argmax decides nothing at all).
+#   (g) NOT A KEEP PATH   this run proposes no book; 4a/4b and rule 8 are scored at every rung anyway because rule 4 requires it.
+
+## GATES — printed before any result number
+  U56: 56 names, 4,705 rows 2008-01-02 -> 2026-09-15, warm 4,445, IS 2,007, OOS 2,438
+  B136: 136 names, 4,703 rows 2008-01-02 -> 2026-09-11, warm 4,443, IS 2,007, OOS 2,436
+  G1  fast runner == engine.backtest                        1.39e-17   PASS
+  G2  CROSS-RUN committed U56 W/H126/N=20 triple            3.18e-07   PASS  (15.5787% / 1.1397 / -19.1276%)
+  G3  SPY OOS triple                                        1.70e-04   PASS
+  G4  CROSS-RUN 1098/1102's committed U56 n=12 triple       4.97e-05   PASS
+  G4b CROSS-RUN 1098/1102's committed B136 n=15 triple      2.13e-05   PASS
+  G5  live RULES v2 MaxDD == committed -12.05%              4.95e-05   PASS
+  G6  determinism                                           0.00e+00   PASS
+  G7  cadence_mask == engine.rebalance_mask (D/W/M/Q)       0.00e+00   PASS
+  built 88 books (54 CORE + 34 EXTENSION) in 11s
+  G8  reproduce 1110's committed 54-row CORE grid         0.00e+00   PASS
+  bootstrap done at 17s (1000 draws, L=63)
+  G9  reproduce 1102/1110's 32 committed argmaxes       2.22e-16   PASS  (0 peak mismatches)
+  G10 every ladder x statistic is LIVE (min spread)         1.79e-03   PASS
+  GATES: 11 of 11 PASS
+  wrote 2026-09-16_does-any-committed-GRID-EDGE-ARGMAX-survive-being-read-as-a-BOUNDARY-PICK_cloud.gates.csv  (11 rows, 4 cols)
+
+## THE CENSUS — all 6 dial points (CLAIM SET x EDGE RULE), every one published
+   claimset edge_rule  claims  edge  share  null_share  excess  mono_edge  spread_lt_floor
+   CS_ALL32     E_END      32    16 0.5000      0.3556  0.1444         15                8
+   CS_ALL32  E_OUTER2      32    28 0.8750      0.7111  0.1639         17               19
+CS_RESOLVED     E_END      13     8 0.6154      0.2316  0.3838          8                0
+CS_RESOLVED  E_OUTER2      13     9 0.6923      0.4632  0.2291          9                0
+ CS_DECIDED     E_END       6     6 1.0000      0.2000  0.8000          6                0
+ CS_DECIDED  E_OUTER2       6     6 1.0000      0.4000  0.6000          6                0
+  wrote 2026-09-16_does-any-committed-GRID-EDGE-ARGMAX-survive-being-read-as-a-BOUNDARY-PICK_cloud.claimsets.csv  (6 rows, 9 cols)
+
+## THE EXTENSION ARM — does the peak MOVE when the binding end is extended?
+  wrote 2026-09-16_does-any-committed-GRID-EDGE-ARGMAX-survive-being-read-as-a-BOUNDARY-PICK_cloud.extension.csv  (32 rows, 17 cols)
+  EDGE cells with an extendable side: 16 of 16 edge cells (0 sit on the one end that cannot be extended — CADENCE's daily bar)
+  peak MOVES on extension:           10 of 16
+  peak moves ONTO a NEW rung:        10 of 16
+  INTERIOR cells (control) that move: 8 of 16
+
+  per cell (EDGE cells only):
+panel  ladder   stat  core_k core_peak side  ext_k ext_peak  moved  moved_outward  ext_spread  ext_floor
+  U56       N   CAGR       9         5   LO     13        3   True           True      7.9217     6.5509
+  U56       H S_FULL       4       252   HI      8      252  False          False      0.0785        inf
+  U56       H  S_OOS       4       252   HI      8      252  False          False      0.1687     0.1687
+  U56       H   CAGR       4       252   HI      8      252  False          False      2.7755     2.0712
+  U56   GROSS S_FULL      10      0.75   HI     17      1.0   True           True      0.0029     0.0021
+  U56   GROSS  S_OOS      10      0.75   HI     17      1.0   True           True      0.0035        inf
+  U56   GROSS   CAGR      10      0.75   HI     17      1.0   True           True     16.7232     1.0335
+  U56   GROSS     DD      10       0.3   LO     17      0.2   True           True     19.5482     1.1377
+  U56 CADENCE  S_OOS       4         Q   HI      6        Q  False          False      0.2304     0.2221
+ B136       N   CAGR       9         5   LO     13        3   True           True      8.6886     4.8748
+ B136       H S_FULL       4        21   LO      8       21  False          False      0.1202     0.1090
+ B136       H  S_OOS       4       252   HI      8      252  False          False      0.2048     0.2048
+ B136   GROSS S_FULL      10      0.75   HI     17      1.0   True           True      0.0068     0.0003
+ B136   GROSS  S_OOS      10      0.75   HI     17      1.0   True           True      0.0078     0.0004
+ B136   GROSS   CAGR      10      0.75   HI     17      1.0   True           True     17.1341     1.0659
+ B136   GROSS     DD      10       0.3   LO     17      0.2   True           True     21.1349     1.2202
+
+## THE FULL 32-CELL CENSUS
+panel  ladder   stat  k peak  peak_i  E_END  E_OUTER2    gap  spread  floor  resolved  decided  tie_n     rho  monotone  spread_lt_floor
+  U56       N S_FULL  9   12       3  False     False 0.0071  0.1832 0.1762      True    False      8  0.3500     False            False
+  U56       N  S_OOS  9   15       4  False     False 0.0147  0.2903 0.2641      True    False      8  0.4333     False            False
+  U56       N   CAGR  9    5       0   True      True 0.1226  4.3700    inf     False    False      9 -0.8833      True             True
+  U56       N     DD  9   20       5  False     False 1.0417  6.7260 5.6844      True    False      8 -0.0333     False            False
+  U56       H S_FULL  4  252       3   True      True 0.0251  0.0634    inf     False    False      4  0.8000      True             True
+  U56       H  S_OOS  4  252       3   True      True 0.0288  0.0885    inf     False    False      4  0.8000      True             True
+  U56       H   CAGR  4  252       3   True      True 0.3050  1.5304 1.5304      True    False      3  1.0000      True            False
+  U56       H     DD  4  126       2  False      True 1.1141  6.5646    inf     False    False      4  0.0000     False             True
+  U56   GROSS S_FULL 10 0.75       9   True      True 0.0002  0.0018 0.0005      True    False      4  1.0000      True            False
+  U56   GROSS  S_OOS 10 0.75       9   True      True 0.0002  0.0021    inf     False    False     10  1.0000      True             True
+  U56   GROSS   CAGR 10 0.75       9   True      True 1.0495  9.4017 1.0381      True     True      1  1.0000      True            False
+  U56   GROSS     DD 10  0.3       0   True      True 1.2859 11.1372 1.1938      True     True      1 -1.0000      True            False
+  U56 CADENCE S_FULL  4    W       1  False      True 0.0009  0.0589    inf     False    False      4  0.0000     False             True
+  U56 CADENCE  S_OOS  4    Q       3   True      True 0.0083  0.0970    inf     False    False      4  0.4000     False             True
+  U56 CADENCE   CAGR  4    W       1  False      True 0.1604  0.9066    inf     False    False      4 -0.6000     False             True
+  U56 CADENCE     DD  4    W       1  False      True 0.8171  4.0033    inf     False    False      4  0.4000     False             True
+ B136       N S_FULL  9   30       7  False      True 0.0013  0.1205    inf     False    False      9  0.9333      True             True
+ B136       N  S_OOS  9   30       7  False      True 0.0073  0.3009 0.2234      True    False      7  0.9333      True            False
+ B136       N   CAGR  9    5       0   True      True 0.8113  3.5944    inf     False    False      9 -0.9667      True             True
+ B136       N     DD  9   15       4  False     False 0.5436  8.4642 6.5092      True    False      8  0.0333     False            False
+ B136       H S_FULL  4   21       0   True      True 0.0025  0.0214    inf     False    False      4 -0.8000      True             True
+ B136       H  S_OOS  4  252       3   True      True 0.0376  0.0515    inf     False    False      4  0.8000      True             True
+ B136       H   CAGR  4   63       1  False      True 0.5649  0.9107    inf     False    False      4  0.0000     False             True
+ B136       H     DD  4  126       2  False      True 2.7507  7.9545    inf     False    False      4  0.6000     False             True
+ B136   GROSS S_FULL 10 0.75       9   True      True 0.0004  0.0040 0.0004      True     True      1  1.0000      True            False
+ B136   GROSS  S_OOS 10 0.75       9   True      True 0.0005  0.0045 0.0005      True     True      1  1.0000      True            False
+ B136   GROSS   CAGR 10 0.75       9   True      True 1.0725  9.6522 1.0703      True     True      1  1.0000      True            False
+ B136   GROSS     DD 10  0.3       0   True      True 1.3960 12.0682 1.2864      True     True      1 -1.0000      True            False
+ B136 CADENCE S_FULL  4    M       2  False      True 0.0086  0.0712    inf     False    False      4 -0.2000     False             True
+ B136 CADENCE  S_OOS  4    M       2  False      True 0.0554  0.1133    inf     False    False      4  0.4000     False             True
+ B136 CADENCE   CAGR  4    M       2  False      True 0.0900  1.8463    inf     False    False      4 -0.4000     False             True
+ B136 CADENCE     DD  4    W       1  False      True 1.3764  7.6235    inf     False    False      4  0.4000     False             True
+  wrote 2026-09-16_does-any-committed-GRID-EDGE-ARGMAX-survive-being-read-as-a-BOUNDARY-PICK_cloud.census.csv  (32 rows, 21 cols)
+  wrote 2026-09-16_does-any-committed-GRID-EDGE-ARGMAX-survive-being-read-as-a-BOUNDARY-PICK_cloud.grid.csv  (88 rows, 34 cols)
+
+## RULE 8 WALK-FORWARD AND BOTH KEEP PATHS
+  wrote 2026-09-16_does-any-committed-GRID-EDGE-ARGMAX-survive-being-read-as-a-BOUNDARY-PICK_cloud.walkforward.csv  (48 rows, 21 cols)
+  U56 SPY       full 15.10% / 0.8829 / -33.72%   OOS 15.21% / 0.8711 / -33.72%
+  U56 RULES v2  full 8.62% / 1.2007 / -12.05%   OOS 9.45% / 1.2762 / -12.05%
+  B136 SPY       full 15.16% / 0.8861 / -33.72%   OOS 15.33% / 0.8767 / -33.72%
+  B136 RULES v2  full 7.98% / 1.0993 / -12.24%   OOS 7.88% / 1.1059 / -12.24%
+  IS picks, CORE    : 24 picks — 4b full 4, 4b OOS 4, 4a 0, median OOS Sharpe 1.0398, median regret +0.0508, picks landing on a NEW rung 0
+  IS picks, EXTENDED: 24 picks — 4b full 3, 4b OOS 3, 4a 0, median OOS Sharpe 1.0122, median regret +0.0719, picks landing on a NEW rung 15
+  whole grid, CORE    : 54 rungs — 4b full 16, 4b OOS 17, 4a 0
+  whole grid, EXTENDED: 88 rungs — 4b full 20, 4b OOS 22, 4a 0
+  4b full AND OOS: 19 of 88 rungs; on NEW (extension) rungs 4 of 34
+
+## HYPOTHESES, declared before any number
+  REFUTED    H_EDGE_MAJORITY    16/32 = 0.5000
+  SUPPORTED  H_EDGE_EXCESS      share 0.5000 vs null 0.3556 (excess +0.1444)
+  REFUTED    H_RESOLVED_EDGE    8/13 resolved argmaxes at a ladder end
+  SUPPORTED  H_MONO             15/16 edge cells monotone (|rho|>=0.70)
+  SUPPORTED  H_EXT_MOVES        10/16 extendable edge peaks move
+  REFUTED    H_SPREAD_TRIVIAL   8/16 edge cells have spread below their own floor
+  3 of 6 SUPPORTED
+  wrote 2026-09-16_does-any-committed-GRID-EDGE-ARGMAX-survive-being-read-as-a-BOUNDARY-PICK_cloud.hypotheses.csv  (6 rows, 3 cols)
+
+# done in 18s
