@@ -1,0 +1,234 @@
+# Idea 1036 (cloud lane, 2026-09-16) — does the CONTROL-BASIS SPREAD collapse once the END COUNT is MATCHED?
+# 2 tuned dials: END COUNT [1, 2, 4, 8, 16] x CONTROL BASIS ['SEQ', 'FIXED', 'RAW'] = 15 points, ALL reported, none selected.  HEADLINE = K 16 x SEQ (1035's own cell).
+# Controls at every point: PLACEMENT (all 16/K stride offsets), panel [U56, B136], cost [0.0, 10.0, 25.0] bps, POOL = 18 GRID books per panel, GAPS = 1035's own list.
+# DRAWS: NRAND = 2,000 per cell (1035's exactly); percentile resolves to 0.0005, binomial SE at p=0.5 = 0.0112.
+# CLOSED FORM declared BEFORE the numbers: with sd_raw the per-end 18-book sd and rho the
+#   measured cross-end correlation, SEQ sd(K) = sd_raw/sqrt(K); FIXED sd(K) =
+#   sd_raw*sqrt((1+(K-1)rho)/K); RAW sd(K) = sd_raw.  rho is MEASURED, not fitted.
+# SURVIVORSHIP: U56/B136 are current-constituent panels — every LEVEL is optimistic; the
+#   measured object is a RANK in a distribution from the SAME pool, and where the bias
+#   does not cancel it flatters the coin flip, so chooser percentiles are LOWER bounds.
+
+   CALENDAR: U56 ends 2026-09-15 (4705 days), B136 ends 2026-09-11 (4703 days); each panel keeps its OWN calendar (1013/1023/1031/1035's construction).  No splice.
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+POOL = 36 never-memo-selected GRID books (18 U56 / 18 B136).  END GRID Q16 = 16 ends 2015-03-31..2018-12-31; declared split 2016-12-31 read separately for rule 8.
+
+## Reproduction gates (printed BEFORE any hypothesis number is read)
+G1  fast_run == engine.backtest (returns / turnover): 6.939e-18 / 1.665e-16  PASS
+G2  POOL is the record's grid_books(): 18/18 per panel -> 18/18  PASS
+G3  CROSS-RUN SPY OOS triple at 2016-12-31: 0.1521 / 0.8711 / -0.3372 vs committed (0.1521, 0.8713, -0.3372)  max|d| 1.70e-04  PASS
+G4  CROSS-RUN 1013's four published declared-split picks: 4/4  max|d| 4.588e-04  PASS
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.crossrun1013.csv  (4 rows, 10 cols)
+G5  determinism (ladder rebuilt): max|d| 0.0e+00  PASS
+G6  NESTING of the K subsets: K1=1; K2=2; K4=4; K8=8; K16=16  PASS
+      K= 1: 2018-12-31..2018-12-31  (2018-12-31)
+      K= 2: 2016-12-31..2018-12-31  (2016-12-31, 2018-12-31)
+      K= 4: 2015-12-31..2018-12-31  (2015-12-31, 2016-12-31, 2017-12-31, 2018-12-31)
+      K= 8: 2015-06-30..2018-12-31
+      K=16: 2015-03-31..2018-12-31
+G7  SAMPLER UNBIASEDNESS (MC mean == exact pool mean, 3 SE) at K=16: 6/6  max|d| 1.113e-03  PASS
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.sampler.csv  (6 rows, 7 cols)
+G8  DEGENERACY AT K=1 (FIXED(1) and RAW(1) are the same 18 numbers): max|d| 0.0e+00  PASS  — this is the arithmetic H_K1 rests on, checked not assumed.
+
+## (A) THE MATRIX — per-end sd and the cross-end correlation the closed form needs
+panel   cost | sd_raw(mean over ends)  rho(cross-end) sd_FIXED(16)  sd_SEQ(16)
+U56        0 |                 0.1064          0.9587       0.1044      0.0257
+U56       10 |                 0.0869          0.9299       0.0843      0.0211
+U56       25 |                 0.0753          0.8859       0.0714      0.0184
+B136       0 |                 0.0786          0.9234       0.0759      0.0195
+B136      10 |                 0.0582          0.8422       0.0538      0.0143
+B136      25 |                 0.0520          0.8202       0.0475      0.0127
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.matrix.csv  (6 rows, 6 cols)
+   rho is HIGH by construction of the record's end grid: every Q16 end is followed by the
+   SAME 2019-2026 tape, so the 16 OOS windows overlap by 74%-99% of their length.  Mean
+   rho over the 6 cells = 0.8934.
+
+## (B) THE LADDER — null sd at every (END COUNT, BASIS) point, nested subsets
+  K |        SEQ      FIXED        RAW |    SEQ_pred  FIXED_pred    RAW_pred   (median over the 6 cells)
+  1 |     0.0674     0.0690     0.0690 |      0.0769      0.0769      0.0769
+  2 |     0.0542     0.0764     0.0780 |      0.0544      0.0751      0.0769
+  4 |     0.0391     0.0762     0.0786 |      0.0385      0.0741      0.0769
+  8 |     0.0276     0.0742     0.0776 |      0.0272      0.0737      0.0769
+ 16 |     0.0190     0.0737     0.0774 |      0.0192      0.0734      0.0769
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.sd_ladder.csv  (90 rows, 7 cols)
+
+   PLACEMENT CONTROL — the same sd read at ALL 16/K stride offsets (median over cells):
+  K  basis | n_placements       min    nested       max    spread
+  1    SEQ |           16    0.0624    0.0674    0.0813    0.0189
+  1  FIXED |           16    0.0645    0.0690    0.0836    0.0191
+  1    RAW |           16    0.0645    0.0690    0.0836    0.0191
+  2    SEQ |            8    0.0513    0.0542    0.0553    0.0040
+  2  FIXED |            8    0.0681    0.0764    0.0774    0.0092
+  2    RAW |            8    0.0653    0.0780    0.0790    0.0137
+  4    SEQ |            4    0.0371    0.0391    0.0391    0.0021
+  4  FIXED |            4    0.0717    0.0762    0.0762    0.0045
+  4    RAW |            4    0.0730    0.0786    0.0757    0.0027
+  8    SEQ |            2    0.0265    0.0276    0.0276    0.0010
+  8  FIXED |            2    0.0731    0.0742    0.0742    0.0011
+  8    RAW |            2    0.0739    0.0776    0.0744    0.0005
+ 16    SEQ |            1    0.0190    0.0190    0.0190    0.0000
+ 16  FIXED |            1    0.0737    0.0737    0.0737    0.0000
+ 16    RAW |            1    0.0739    0.0774    0.0739    0.0000
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.placement.csv  (15 rows, 7 cols)
+
+## (B2) COMPOSITION CONTROL — separating HOW MANY ends from WHICH ends
+   Flagged POST-HOC.  The nested subsets change the end COMPOSITION as well as the end
+   COUNT, which the pre-registration did not control.  Within ONE subset the composition
+   is held fixed, so sd_SEQ(K) / sd_raw(same subset) isolates the averaging effect and
+   must equal 1/sqrt(K) exactly if SEQ is doing nothing but averaging K independent draws.
+  K | sd_SEQ/sd_raw  1/sqrt(K)  rel err | sd_raw on this subset  (K=1 placement range)
+  1 |        0.9715     1.0000    0.029 |                0.0690         0.0645..0.0836
+  2 |        0.6929     0.7071    0.020 |                0.0780                       
+  4 |        0.4954     0.5000    0.009 |                0.0775                       
+  8 |        0.3490     0.3536    0.013 |                0.0771                       
+ 16 |        0.2445     0.2500    0.022 |                0.0769                       
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.composition.csv  (5 rows, 5 cols)
+   Composition-controlled, SEQ's shrinkage is 1/sqrt(K) to within 0.029 at every K — the two pre-registered FAILs below (H_SEQROOT,
+   H_RAWFLAT) are BOTH this one confound: sd_raw on the K=1 anchor end is 0.0690 against
+   0.0769 on the full grid, and across the 16 single-end placements RAW's own sd runs
+   0.0645..0.0836 — a band 0.0191 wide with K held at 1.
+   The pre-registered verdicts stand as recorded; this decomposition does not amend them.
+
+## (C) THE SPREAD — the percentile a published GAP earns, by END COUNT and BASIS
+   For gap g and distribution D the percentile is pct(mean(D)+g, D): closed form, no search.
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.spread.csv  (70 rows, 6 cols)
+
+  K |   -0.200   -0.100   -0.088   -0.050   -0.020   -0.010   +0.000   +0.010   +0.018   +0.020   +0.042   +0.050   +0.100   +0.200 |    max  median
+  1 |    0.000    0.001    0.006    0.002    0.000    0.000    0.032    0.008    0.018    0.027    0.007    0.008    0.001    0.000 |  0.032   0.004
+  2 |    0.000    0.094    0.112    0.067    0.049    0.011    0.028    0.009    0.075    0.048    0.081    0.119    0.079    0.000 |  0.119   0.058
+  4 |    0.000    0.109    0.160    0.172    0.135    0.036    0.047    0.046    0.120    0.135    0.188    0.171    0.104    0.000 |  0.188   0.114
+  8 |    0.000    0.083    0.139    0.245    0.181    0.089    0.050    0.085    0.183    0.180    0.216    0.242    0.111    0.000 |  0.245   0.125
+ 16 |    0.000    0.083    0.111    0.274    0.271    0.149    0.050    0.153    0.276    0.268    0.264    0.246    0.111    0.000 |  0.276   0.151
+   (each cell is the across-basis spread of the median percentile at that gap)
+
+   The same table read as LEVELS at 1035's headline gap -0.0500:
+  K |      SEQ    FIXED      RAW   spread
+  1 |    0.248    0.250    0.250    0.002
+  2 |    0.183    0.250    0.250    0.067
+  4 |    0.106    0.278    0.278    0.172
+  8 |    0.033    0.278    0.278    0.245
+ 16 |    0.004    0.278    0.278    0.274
+
+## (C2) THE EXACT SPREAD AT K = 1 — is the residual 0.03 a basis fact or the sampler?
+   At K = 1 all three bases ARE the same 18-point pool (G8 above proves FIXED(1) and
+   RAW(1) are bit-identical).  SEQ(1) is that same pool drawn WITH REPLACEMENT 2,000
+   times, so its EXACT distribution is the pool itself.  Scoring SEQ(1) exactly instead
+   of by Monte Carlo therefore makes the K=1 spread zero BY IDENTITY; the gap between
+   that and the measured spread is the estimator's own noise, and is reported as such.
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.exact_k1.csv  (14 rows, 3 cols)
+   EXACT K=1 across-basis spread: 0.0000 at every gap (identity).
+   MC SEQ(1) vs exact, per (gap, cell): max 0.1521, median 0.0060.  The max is NOT binomial noise — a binomial SE is
+   0.0112 and this is 13.6 of them.  It is ATOM CROSSING: an 18-point pool moves in steps of
+   1/18 = 0.0556, so a mean shifted by the sampler's own 0.0112 can step a whole atom.  The
+   published statistic in (C) is the MEDIAN over the 6 cells, which is robust to that (0.0060).
+   So the 0.0315 residual H_K1 fails on is the ESTIMATOR reading a 18-atom pool at a
+   quantisation boundary — it sits at gap +0.000, where the shifted point lands inside an
+   atom and the mid-rank tie split is maximally sensitive — and NOT a disagreement between
+   the bases, which at K = 1 are the same object by G8 and by identity.
+
+G9  CROSS-RUN 1035's K=16 figures: sd SEQ 0.0190(pub 0.0190) FIXED 0.0737(pub 0.0737) RAW 0.0774(pub 0.0739)  max|d| 0.0035; spread at gap -0.0500 0.274 (pub 0.274, |d| 0.000)  PASS
+
+## (D) THE CHOOSER READ-OUT — the record's three IS-only choosers at every (K, basis)
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.chooser.csv  (45 rows, 8 cols)
+  K  basis |    IS_SHARPE      IS_LEGS      IS_CAGR   (median percentile over the 6 cells)
+  1    SEQ |        0.586        0.360        0.859
+  1  FIXED |        0.583        0.361        0.861
+  1    RAW |        0.583        0.361        0.861
+  2    SEQ |        0.454        0.110        0.783
+  2  FIXED |        0.542        0.250        0.694
+  2    RAW |        0.472        0.222        0.694
+  4    SEQ |        0.211        0.034        0.822
+  4  FIXED |        0.306        0.194        0.667
+  4    RAW |        0.250        0.194        0.611
+  8    SEQ |        0.073        0.004        0.858
+  8  FIXED |        0.278        0.167        0.667
+  8    RAW |        0.250        0.194        0.583
+ 16    SEQ |        0.023        0.001        0.880
+ 16  FIXED |        0.278        0.167        0.583
+ 16    RAW |        0.250        0.194        0.583
+
+G10 CROSS-RUN 1023's committed chooser scores at K=16, 10 bps, U56: 3/3  max|d| 3.75e-07  PASS
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.crossrun1023.csv  (3 rows, 5 cols)
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.gates.csv  (10 rows, 4 cols)
+
+## (E) RULE-8 WALK-FORWARD at PROTOCOL's declared split 2016-12-31 (IS 2009-2016 chooses, OOS 2017-2026 read ONCE)
+   Every chooser's pick, its OOS triple, and BOTH KEEP paths against the LIVE RULES v2 baseline and against SPY.
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.walkforward.csv  (18 rows, 28 cols)
+panel  cost   chooser pick                         | OOS CAGR     Sh   MaxDD |  SPY OOS     Sh | v2 OOS Sh |  4a  4b    legs
+U56       0 IS_SHARPE U56-band0.08-g1.00           |   12.16%  1.177 -19.04% |   15.21%  0.871 |     1.301 |   n   Y   11111
+U56       0   IS_LEGS U56-band0.08-g1.00           |   12.16%  1.177 -19.04% |   15.21%  0.871 |     1.301 |   n   Y   11111
+U56       0   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   16.68%  1.372 -15.52% |   15.21%  0.871 |     1.301 |   n   Y   11111
+U56      10 IS_SHARPE U56-band0.08-g1.00           |   11.99%  1.162 -19.05% |   15.21%  0.871 |     1.276 |   n   Y   11111
+U56      10   IS_LEGS U56-band0.08-g1.00           |   11.99%  1.162 -19.05% |   15.21%  0.871 |     1.276 |   n   Y   11111
+U56      10   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   15.60%  1.293 -15.59% |   15.21%  0.871 |     1.276 |   n   Y   11111
+U56      25 IS_SHARPE U56-band0.08-g1.00           |   11.73%  1.139 -19.07% |   15.21%  0.871 |     1.239 |   n   Y   11111
+U56      25   IS_LEGS U56-band0.08-g1.00           |   11.73%  1.139 -19.07% |   15.21%  0.871 |     1.239 |   n   Y   11111
+U56      25   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   14.00%  1.174 -15.71% |   15.21%  0.871 |     1.239 |   n   Y   11111
+B136      0 IS_SHARPE B136-qroll-q0.17-w504-d0.50  |   14.06%  1.200 -17.07% |   15.33%  0.877 |     1.136 |   n   Y   11111
+B136      0   IS_LEGS B136-band0.08-g1.00          |   11.24%  1.115 -19.48% |   15.33%  0.877 |     1.136 |   n   Y   11111
+B136      0   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   15.43%  1.238 -17.07% |   15.33%  0.877 |     1.136 |   n   Y   11111
+B136     10 IS_SHARPE B136-band0.08-g1.00          |   11.05%  1.097 -19.50% |   15.33%  0.877 |     1.106 |   n   Y   11111
+B136     10   IS_LEGS B136-band0.08-g1.00          |   11.05%  1.097 -19.50% |   15.33%  0.877 |     1.106 |   n   Y   11111
+B136     10   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   14.30%  1.157 -17.31% |   15.33%  0.877 |     1.106 |   n   Y   11111
+B136     25 IS_SHARPE B136-band0.08-g1.00          |   10.76%  1.071 -19.53% |   15.33%  0.877 |     1.061 |   n   Y   11111
+B136     25   IS_LEGS B136-band0.08-g1.00          |   10.76%  1.071 -19.53% |   15.33%  0.877 |     1.061 |   n   Y   11111
+B136     25   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   12.62%  1.036 -17.72% |   15.33%  0.877 |     1.061 |   n   Y   11111
+   4a passes 0/18; 4b passes 18/18.  Baseline RULES v2 (U56, 10 bps) full 8.62% / 1.201 / -12.05%; SPY full 15.10% / 0.883 / -33.72%.
+   NOTE: this arm carries NO new book.  Every pick is a GRID ladder book the record
+   already holds; it is run here so the end-count question is answered on a rule-8 object
+   and not only on a sampler.
+
+## Pre-registered hypotheses
+H_K1        FAIL  bar: across-basis spread <= 0.02 at EVERY gap when K = 1
+            max spread at K=1 0.0315 (at gap +0.000); median 0.0038; K=16 max 0.2757
+H_GROW      PASS  bar: max-over-gaps spread monotone non-decreasing in K (tol 0.02)
+            max spread by K: K1=0.032, K2=0.119, K4=0.188, K8=0.245, K16=0.276
+H_K16       PASS  bar: spread at K = 16 reproduces 1035's, >= 0.20
+            K=16 max spread 0.276, at gap -0.0500 0.274 (1035 published 0.274)
+H_SEQROOT   FAIL  bar: sd_SEQ(K)*sqrt(K) constant in K to within 10%
+            sd_SEQ*sqrt(K): K1=0.0674, K2=0.0766, K4=0.0783, K8=0.0779, K16=0.0759; range/mean 0.145
+H_FIXRHO    PASS  bar: sd_FIXED(K) == sd_raw*sqrt((1+(K-1)rho)/K) to within 15%, rho MEASURED
+            worst relative error 0.104 at K=1 (observed 0.0690 vs predicted 0.0769); mean measured rho 0.8934
+H_RAWFLAT   FAIL  bar: sd_RAW constant in K to within 1e-12 (K must not leak into a K-free object)
+            sd_RAW by K: K1=0.068967, K2=0.077995, K4=0.078605, K8=0.077564, K16=0.077427; range 9.64e-03
+H_CHOOSER   FAIL  bar: chooser percentile invariant in K to within 0.10 under a FIXED basis
+            widest K-range of a chooser's median percentile under FIXED: 0.306; IS_SHARPE 0.583/0.542/0.306/0.278/0.278; IS_LEGS 0.361/0.250/0.194/0.167/0.167; IS_CAGR 0.861/0.694/0.667/0.667/0.583
+  wrote 2026-09-16_does-the-CONTROL-BASIS-SPREAD-collapse-once-the-END-COUNT-is-MATCHED_cloud.hypotheses.csv  (7 rows, 4 cols)
+
+## VERDICT
+   gates 10/10 PASS; hypotheses 3/7 PASS (H_K1, H_SEQROOT, H_RAWFLAT, H_CHOOSER FAIL).
+
+   ANSWER to the queue's question: 1035's 0.274 is an AVERAGING-COUNT fact.
+     - matched at K = 1 the three bases agree to 0.0038 (median over gaps), 0.0315 worst;
+       exactly scored the K=1 spread is 0.0000 BY IDENTITY (section C2) — FIXED(1) and
+       RAW(1) are bit-identical (G8) and SEQ(1) is the same pool resampled, so the 0.0315
+       is the 2,000-draw estimator crossing an atom of an 18-point pool (steps of 0.0556);
+     - the spread opens only as K grows: K1=0.032, K2=0.119, K4=0.188, K8=0.245, K16=0.276;
+     - composition-controlled, SEQ shrinks as 1/sqrt(K) to within 0.029 (section B2), FIXED
+       barely shrinks because the ends' OOS windows are nested (measured rho 0.8934,
+       H_FIXRHO PASS at 0.104 worst error), and RAW does not shrink at all.
+
+   BUT the run ALSO kills its own framing of the walk, and this is reported as loudly:
+     H_SEQROOT and H_RAWFLAT FAIL, and both fail for ONE reason the pre-registration did
+     not control — a nested subset changes WHICH ends as well as HOW MANY.  RAW's sd is
+     K-free by construction yet moves 0.0096 across the walk, and across the 16
+     single-end placements at K = 1 alone it runs a band 0.0191 wide.  END COMPOSITION is a
+     channel of comparable size to END COUNT at small K, and a walk that does not hold it
+     fixed cannot separate them.  The answer above survives only because the composition
+     control (B2) and the placement control were run; the raw walk on its own does not
+     establish it.
+
+   KEEP / KILL under PROTOCOL rule 4.  This run carries NO new book: its object is the
+   record's own null construction, and the rule-8 arm re-runs GRID ladder books the
+   record already holds.  So neither KEEP path is claimable and none is claimed.  The
+   reportable result is the MEASUREMENT plus a proposed PROTOCOL clause:
+
+     PROPOSED (not applied — PROTOCOL rule 6 reserves changes to the Sunday review):
+       rule 8 END COUNT clause — any published percentile, z or 'beats a coin flip' claim
+       must state the NUMBER OF ENDS its null averages over, AND the ends themselves.  A
+       basis label (SEQ / FIXED / RAW) does not identify the yardstick: at a matched end
+       count the three bases agree to 0.0038 (0.0000 scored exactly) and at K = 16 they
+       disagree by 0.276, entirely through the count.  The end LIST is required too,
+       because at K = 1 the same K-free null sd moves across a 0.0191-wide band on the choice of end.
+
+Runtime 8.8s.
