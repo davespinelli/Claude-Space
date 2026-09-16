@@ -1,0 +1,402 @@
+# Idea 1132 (lane B, 2026-09-16) — is the ARGMAX NEGATIVE-INFORMATION result a CHOOSER
+#   artefact or a GRID fact?  Price a SHRUNK chooser and publish the whole curve.
+# TUNED DIALS (2, PROTOCOL rule 4): CHOOSER ['C_ISSHARPE', 'C_ISCAGR', 'C_ISDD'] x SHRINK THRESHOLD tau
+#   [0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, inf] = 27 combinations, ALL published.
+# PANEL, LADDER, RUNG SET and KEYING are NOT dials: all reported at every dial point,
+#   nothing selected on any of them.
+#   KEYING ['K_SE', 'K_FLOOR']: K_SE = tau x IS bootstrap SD of the (argmax - default) gap;
+#     K_FLOOR = tau x that ladder's OWN IS-only resolution floor (1098's floor_sub,
+#     q=0.9).  They coincide at tau=0 by construction.
+#   CORE  H [21, 63, 126, 252]  CADENCE ['D', 'W', 'M', 'Q']    EXT  H [21, 42, 63, 84, 126, 168, 210, 252, 378]  CADENCE ['D', '2D', 'W', '2W', 'M', '2M', 'Q', '2Q', '4Q']
+#   N [5, 8, 10, 12, 15, 20, 25, 30, 40] and GROSS [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75] are the same at both rung sets.
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, gross 0.75, min hold 126, N 20, cadence W, 10 bps,
+#   LAG 1, warm-up 260, IS end 2016-12-31, block L=63, 1000 draws, crc32 seeds, 3 seed bases.
+# RULE 8 DISCIPLINE: the IS statistic, the bootstrap SD and the floor are ALL computed
+#   on 2009-2016 alone.  OOS 2017-2026 is read ONCE, for scoring only.
+# DECLARED BEFORE ANY NUMBER:
+#   (a) H_PREMISE     1117's result reproduces at tau=0: of 48 IS picks, 36 move off the
+#                     default, with median matched advantage -0.0195 and median
+#                     OOS-Sharpe advantage -0.0502.
+#   (b) H_RECOVER     (the CHOOSER-ARTEFACT reading) some FINITE tau > 0 lifts the
+#                     pooled median OOS-Sharpe advantage STRICTLY ABOVE 0.
+#   (c) H_MONOTONE    the pooled median advantage is non-decreasing in tau — i.e. the
+#                     loss really is carried by the small-gap picks.
+#   (d) H_GRID        (the pre-declared RIVAL) the supremum of the curve is exactly 0
+#                     and is reached only where the chooser has stopped choosing
+#                     (every cell back on its default), so shrinkage MUTES and never
+#                     RECOVERS.
+#   (e) H_KEYING      the K_SE and K_FLOOR curves agree on the verdict.
+#   (f) NOT A KEEP PATH  no book is proposed; 4a/4b and rule 8 are scored at every rung
+#                     and every chosen book because rule 4 requires it.
+# DECISION RULE, declared before any number: CHOOSER ARTEFACT requires H_RECOVER at a
+#   FINITE tau, in BOTH panels pooled AND at >= 2 of 3 choosers, under BOTH keyings.
+#   Anything less and the answer is GRID FACT and the premise 'a shrunk chooser
+#   recovers the loss' is KILLED.
+
+## GATES — printed before any result number
+  U56: 56 names, 4,705 rows 2008-01-02 -> 2026-09-15, warm 4,445, IS 2,007, OOS 2,438
+  B136: 136 names, 4,703 rows 2008-01-02 -> 2026-09-11, warm 4,443, IS 2,007, OOS 2,436
+  G1  fast runner == engine.backtest                        1.39e-17   PASS
+  G2  CROSS-RUN committed U56 W/H126/N=20 triple            3.18e-07   PASS  (15.5787% / 1.1397 / -19.1276%)
+  G3  SPY OOS triple                                        1.70e-04   PASS
+  G4  CROSS-RUN 1098/1102's committed U56 n=12 triple       4.97e-05   PASS
+  G4b CROSS-RUN 1098/1102's committed B136 n=15 triple      2.13e-05   PASS
+  G5  live RULES v2 MaxDD == committed -12.05%              4.95e-05   PASS
+  G6  determinism                                           0.00e+00   PASS
+  G7  cadence_mask == engine.rebalance_mask (D/W/M/Q)       0.00e+00   PASS
+  built 74 books (54 of them on 1110/1116's CORE rungs) in 10s
+  G8  reproduce 1117's committed 74-row grid              0.00e+00   PASS
+
+## IS-ONLY BOOTSTRAP — every quantity that selects a rung is built on 2009-2016 alone.
+  24 (seed base x panel x ladder) bootstraps, 1000 draws each, L=63, in 17s
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.scales.csv  (144 rows, 14 cols)
+  IS floors and gap SDs (headline seed base), by panel x ladder x rung set x chooser:
+panel  ladder rung_set    chooser  k pick  is_gap  gap_SE  IS_floor  gap_over_SE  gap_over_floor
+  U56       N     CORE C_ISSHARPE  9   40  0.0643  0.0915       inf       0.7026          0.0000
+  U56       N     CORE   C_ISCAGR  9    5  0.0485  0.0360    0.0412       1.3485          1.1789
+  U56       N     CORE     C_ISDD  9   40  0.0137  0.0148    0.0574       0.9293          0.2390
+  U56       N      EXT C_ISSHARPE  9   40  0.0643  0.0915       inf       0.7026          0.0000
+  U56       N      EXT   C_ISCAGR  9    5  0.0485  0.0360    0.0412       1.3485          1.1789
+  U56       N      EXT     C_ISDD  9   40  0.0137  0.0148    0.0574       0.9293          0.2390
+  U56       H     CORE C_ISSHARPE  4  252  0.0196  0.0879       inf       0.2231          0.0000
+  U56       H     CORE   C_ISCAGR  4  252  0.0027  0.0120       inf       0.2214          0.0000
+  U56       H     CORE     C_ISDD  4   21  0.0213  0.0189       inf       1.1225          0.0000
+  U56       H      EXT C_ISSHARPE  9  378  0.3066  0.1209    0.1791       2.5364          1.7115
+  U56       H      EXT   C_ISCAGR  9  378  0.0209  0.0138    0.0203       1.5163          1.0261
+  U56       H      EXT     C_ISDD  9  378  0.0239  0.0274    0.0451       0.8718          0.5294
+  U56   GROSS     CORE C_ISSHARPE 10 0.75  0.0000  0.0000       inf          NaN          0.0000
+  U56   GROSS     CORE   C_ISCAGR 10 0.75  0.0000  0.0000    0.0093          NaN          0.0000
+  U56   GROSS     CORE     C_ISDD 10  0.3  0.0827  0.0217    0.0090       3.8125          9.1590
+  U56   GROSS      EXT C_ISSHARPE 10 0.75  0.0000  0.0000       inf          NaN          0.0000
+  U56   GROSS      EXT   C_ISCAGR 10 0.75  0.0000  0.0000    0.0093          NaN          0.0000
+  U56   GROSS      EXT     C_ISDD 10  0.3  0.0827  0.0217    0.0090       3.8125          9.1590
+  U56 CADENCE     CORE C_ISSHARPE  4    W  0.0000  0.0000       inf          NaN          0.0000
+  U56 CADENCE     CORE   C_ISCAGR  4    W  0.0000  0.0000       inf          NaN          0.0000
+  U56 CADENCE     CORE     C_ISDD  4    D  0.0086  0.0103       inf       0.8336          0.0000
+  U56 CADENCE      EXT C_ISSHARPE  9   2W  0.0457  0.0763    0.1869       0.5985          0.2443
+  U56 CADENCE      EXT   C_ISCAGR  9   2W  0.0039  0.0109    0.0220       0.3612          0.1796
+  U56 CADENCE      EXT     C_ISDD  9    D  0.0086  0.0103       inf       0.8336          0.0000
+ B136       N     CORE C_ISSHARPE  9    8  0.1509  0.1261    0.1870       1.1971          0.8070
+ B136       N     CORE   C_ISCAGR  9    5  0.0773  0.0435    0.0365       1.7760          2.1189
+ B136       N     CORE     C_ISDD  9   30  0.0145  0.0172    0.0461       0.8420          0.3152
+ B136       N      EXT C_ISSHARPE  9    8  0.1509  0.1261    0.1870       1.1971          0.8070
+ B136       N      EXT   C_ISCAGR  9    5  0.0773  0.0435    0.0365       1.7760          2.1189
+ B136       N      EXT     C_ISDD  9   30  0.0145  0.0172    0.0461       0.8420          0.3152
+ B136       H     CORE C_ISSHARPE  4   63  0.0716  0.1117       inf       0.6409          0.0000
+ B136       H     CORE   C_ISCAGR  4   63  0.0146  0.0177       inf       0.8224          0.0000
+ B136       H     CORE     C_ISDD  4   21  0.0131  0.0197       inf       0.6624          0.0000
+ B136       H      EXT C_ISSHARPE  9  378  0.0761  0.1474       inf       0.5163          0.0000
+ B136       H      EXT   C_ISCAGR  9   84  0.0161  0.0163    0.0243       0.9913          0.6640
+ B136       H      EXT     C_ISDD  9   84  0.0163  0.0181       inf       0.8960          0.0000
+ B136   GROSS     CORE C_ISSHARPE 10 0.75  0.0000  0.0000    0.0003          NaN          0.0000
+ B136   GROSS     CORE   C_ISCAGR 10 0.75  0.0000  0.0000    0.0107          NaN          0.0000
+ B136   GROSS     CORE     C_ISDD 10  0.3  0.0869  0.0230    0.0095       3.7732          9.1480
+ B136   GROSS      EXT C_ISSHARPE 10 0.75  0.0000  0.0000    0.0003          NaN          0.0000
+ B136   GROSS      EXT   C_ISCAGR 10 0.75  0.0000  0.0000    0.0107          NaN          0.0000
+ B136   GROSS      EXT     C_ISDD 10  0.3  0.0869  0.0230    0.0095       3.7732          9.1480
+ B136 CADENCE     CORE C_ISSHARPE  4    W  0.0000  0.0000       inf          NaN          0.0000
+ B136 CADENCE     CORE   C_ISCAGR  4    W  0.0000  0.0000       inf          NaN          0.0000
+ B136 CADENCE     CORE     C_ISDD  4    D  0.0076  0.0161       inf       0.4751          0.0000
+ B136 CADENCE      EXT C_ISSHARPE  9   2M  0.0971  0.1208    0.1438       0.8044          0.6752
+ B136 CADENCE      EXT   C_ISCAGR  9   2M  0.0161  0.0193    0.0266       0.8314          0.6046
+ B136 CADENCE      EXT     C_ISDD  9    D  0.0076  0.0161       inf       0.4751          0.0000
+  INFINITE IS floors: 20 of 48 cells (K_FLOOR degenerates to 'always default' at every tau > 0 there)
+
+## THE CURVE — RULE 8 WALK-FORWARD.  Rung chosen on IS 2009-2016 ALONE by the SHRUNK
+##   chooser; OOS 2017-2026 read ONCE.  Scored against that ladder's FROZEN DEFAULT
+##   rung, against SPY and against the live RULES v2 book.
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.walkforward.csv  (2,592 rows, 34 cols)
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.grid.csv  (74 rows, 34 cols)
+  tau=0 reproduces 1117: 36 of 48 picks MOVE off the default; median
+    matched advantage -0.0195 (1117 committed -0.0195), median OOS-Sharpe advantage -0.0502 (1117 committed -0.0502)
+  G9  CROSS-RUN reproduce 1117's 36/48 mover headline                  PASS
+
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.gates.csv  (10 rows, 4 cols)
+  GATES: 10 of 10 PASS
+
+  U56 SPY       full 15.10% / 0.8829 / -33.72%   OOS 15.21% / 0.8711 / -33.72%
+  U56 RULES v2  full 8.62% / 1.2007 / -12.05%   OOS 9.45% / 1.2762 / -12.05%
+  U56 DEFAULT rungs (the comparand at every tau): N=20 OOS_S 1.1643, H=126 OOS_S 1.1643, GROSS=0.75 OOS_S 1.1643, CADENCE=W OOS_S 1.1643
+  B136 SPY       full 15.16% / 0.8861 / -33.72%   OOS 15.33% / 0.8767 / -33.72%
+  B136 RULES v2  full 7.98% / 1.0993 / -12.24%   OOS 7.88% / 1.1059 / -12.24%
+  B136 DEFAULT rungs (the comparand at every tau): N=20 OOS_S 1.0100, H=126 OOS_S 1.0100, GROSS=0.75 OOS_S 1.0100, CADENCE=W OOS_S 1.0100
+
+## THE 27 PUBLISHED DIAL POINTS (CHOOSER x tau), each under BOTH keyings.
+##   'adv' = matched-statistic OOS advantage over the ladder's frozen default rung;
+##   'advS' = OOS-Sharpe advantage.  n=48 cells (2 panels x 4 ladders x 2 rung sets x
+##   ... pooled per chooser: 16 cells).  'mv' = how many still move off the default.
+  --- K_SE ---
+  chooser       tau     mv    med adv  mean adv    wins   med advS mean advS  med OOS_S  med reg
+  C_ISSHARPE   0.00  10/16    -0.0070   -0.0460   2/16     -0.0070   -0.0460     1.0479  +0.0535
+  C_ISSHARPE   0.25   9/16    -0.0070   -0.0478   1/16     -0.0070   -0.0478     1.0479  +0.0535
+  C_ISSHARPE   0.50   9/16    -0.0070   -0.0478   1/16     -0.0070   -0.0478     1.0479  +0.0535
+  C_ISSHARPE   0.75   4/16    +0.0000   -0.0328   1/16     +0.0000   -0.0328     1.0479  +0.0275
+  C_ISSHARPE   1.00   3/16    +0.0000   -0.0367   0/16     +0.0000   -0.0367     1.0172  +0.0275
+  C_ISSHARPE   1.50   1/16    +0.0000   -0.0087   0/16     +0.0000   -0.0087     1.0172  +0.0275
+  C_ISSHARPE   2.00   1/16    +0.0000   -0.0087   0/16     +0.0000   -0.0087     1.0172  +0.0275
+  C_ISSHARPE   3.00   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0275
+  C_ISSHARPE    inf   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0275
+  C_ISCAGR     0.00  10/16    +0.0000   -0.0002   7/16     -0.0070   -0.0718     1.0100  +0.0084
+  C_ISCAGR     0.25   9/16    +0.0000   -0.0004   6/16     -0.0070   -0.0736     1.0100  +0.0084
+  C_ISCAGR     0.50   8/16    +0.0000   -0.0005   5/16     +0.0000   -0.0723     1.0100  +0.0084
+  C_ISCAGR     0.75   8/16    +0.0000   -0.0005   5/16     +0.0000   -0.0723     1.0100  +0.0084
+  C_ISCAGR     1.00   5/16    +0.0000   -0.0022   2/16     +0.0000   -0.0719     1.0100  +0.0144
+  C_ISCAGR     1.50   3/16    +0.0000   -0.0023   0/16     +0.0000   -0.0389     1.0172  +0.0149
+  C_ISCAGR     2.00   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0068
+  C_ISCAGR     3.00   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0068
+  C_ISCAGR      inf   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0068
+  C_ISDD       0.00  16/16    -0.0374   -0.0043   4/16     -0.0424   -0.0300     1.0696  +0.0393
+  C_ISDD       0.25  16/16    -0.0374   -0.0043   4/16     -0.0424   -0.0300     1.0696  +0.0393
+  C_ISDD       0.50  14/16    -0.0307   +0.0052   4/16     -0.0090   -0.0228     1.0696  +0.0319
+  C_ISDD       0.75  13/16    -0.0182   +0.0083   4/16     -0.0045   -0.0220     1.0696  +0.0182
+  C_ISDD       1.00   5/16    +0.0000   +0.0283   4/16     +0.0000   -0.0038     1.0634  +0.0000
+  C_ISDD       1.50   4/16    +0.0000   +0.0290   4/16     +0.0000   -0.0008     1.0861  +0.0000
+  C_ISDD       2.00   4/16    +0.0000   +0.0290   4/16     +0.0000   -0.0008     1.0861  +0.0000
+  C_ISDD       3.00   4/16    +0.0000   +0.0290   4/16     +0.0000   -0.0008     1.0861  +0.0000
+  C_ISDD        inf   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0000
+
+  --- K_FLOOR ---
+  chooser       tau     mv    med adv  mean adv    wins   med advS mean advS  med OOS_S  med reg
+  C_ISSHARPE   0.00  10/16    -0.0070   -0.0460   2/16     -0.0070   -0.0460     1.0479  +0.0535
+  C_ISSHARPE   0.25   4/16    +0.0000   -0.0328   1/16     +0.0000   -0.0328     1.0479  +0.0275
+  C_ISSHARPE   0.50   4/16    +0.0000   -0.0328   1/16     +0.0000   -0.0328     1.0479  +0.0275
+  C_ISSHARPE   0.75   3/16    +0.0000   -0.0367   0/16     +0.0000   -0.0367     1.0172  +0.0275
+  C_ISSHARPE   1.00   1/16    +0.0000   -0.0087   0/16     +0.0000   -0.0087     1.0172  +0.0275
+  C_ISSHARPE   1.50   1/16    +0.0000   -0.0087   0/16     +0.0000   -0.0087     1.0172  +0.0275
+  C_ISSHARPE   2.00   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0275
+  C_ISSHARPE   3.00   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0275
+  C_ISSHARPE    inf   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0275
+  C_ISCAGR     0.00  10/16    +0.0000   -0.0002   7/16     -0.0070   -0.0718     1.0100  +0.0084
+  C_ISCAGR     0.25   7/16    +0.0000   -0.0008   4/16     +0.0000   -0.0714     1.0100  +0.0107
+  C_ISCAGR     0.50   7/16    +0.0000   -0.0008   4/16     +0.0000   -0.0714     1.0100  +0.0107
+  C_ISCAGR     0.75   5/16    +0.0000   -0.0022   2/16     +0.0000   -0.0719     1.0100  +0.0144
+  C_ISCAGR     1.00   5/16    +0.0000   -0.0022   2/16     +0.0000   -0.0719     1.0100  +0.0144
+  C_ISCAGR     1.50   2/16    +0.0000   -0.0012   0/16     +0.0000   -0.0302     1.0872  +0.0068
+  C_ISCAGR     2.00   2/16    +0.0000   -0.0012   0/16     +0.0000   -0.0302     1.0872  +0.0068
+  C_ISCAGR     3.00   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0068
+  C_ISCAGR      inf   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0068
+  C_ISDD       0.00  16/16    -0.0374   -0.0043   4/16     -0.0424   -0.0300     1.0696  +0.0393
+  C_ISDD       0.25   7/16    +0.0000   +0.0229   4/16     +0.0000   -0.0021     1.0696  +0.0000
+  C_ISDD       0.50   5/16    +0.0000   +0.0274   4/16     +0.0000   -0.0096     1.0172  +0.0000
+  C_ISDD       0.75   4/16    +0.0000   +0.0290   4/16     +0.0000   -0.0008     1.0861  +0.0000
+  C_ISDD       1.00   4/16    +0.0000   +0.0290   4/16     +0.0000   -0.0008     1.0861  +0.0000
+  C_ISDD       1.50   4/16    +0.0000   +0.0290   4/16     +0.0000   -0.0008     1.0861  +0.0000
+  C_ISDD       2.00   4/16    +0.0000   +0.0290   4/16     +0.0000   -0.0008     1.0861  +0.0000
+  C_ISDD       3.00   4/16    +0.0000   +0.0290   4/16     +0.0000   -0.0008     1.0861  +0.0000
+  C_ISDD        inf   0/16    +0.0000   +0.0000   0/16     +0.0000   +0.0000     1.0872  +0.0000
+
+## THE CURVE, pooled over all 3 choosers (48 cells per tau):
+  keying     tau      mv    med adv  mean adv     wins   med advS mean advS
+  K_SE      0.00  36/48     +0.0000   -0.0168  13/48      -0.0140   -0.0493
+  K_SE      0.25  34/48     +0.0000   -0.0175  11/48      -0.0140   -0.0505
+  K_SE      0.50  31/48     +0.0000   -0.0144  10/48      -0.0045   -0.0476
+  K_SE      0.75  25/48     +0.0000   -0.0083  10/48      +0.0000   -0.0423
+  K_SE      1.00  13/48     +0.0000   -0.0035   6/48      +0.0000   -0.0375
+  K_SE      1.50   8/48     +0.0000   +0.0060   4/48      +0.0000   -0.0162
+  K_SE      2.00   5/48     +0.0000   +0.0068   4/48      +0.0000   -0.0032
+  K_SE      3.00   4/48     +0.0000   +0.0097   4/48      +0.0000   -0.0003
+  K_SE       inf   0/48     +0.0000   +0.0000   0/48      +0.0000   +0.0000
+  K_FLOOR   0.00  36/48     +0.0000   -0.0168  13/48      -0.0140   -0.0493
+  K_FLOOR   0.25  18/48     +0.0000   -0.0036   9/48      +0.0000   -0.0355
+  K_FLOOR   0.50  16/48     +0.0000   -0.0021   9/48      +0.0000   -0.0379
+  K_FLOOR   0.75  12/48     +0.0000   -0.0033   6/48      +0.0000   -0.0365
+  K_FLOOR   1.00  10/48     +0.0000   +0.0060   6/48      +0.0000   -0.0272
+  K_FLOOR   1.50   7/48     +0.0000   +0.0063   4/48      +0.0000   -0.0132
+  K_FLOOR   2.00   6/48     +0.0000   +0.0093   4/48      +0.0000   -0.0103
+  K_FLOOR   3.00   4/48     +0.0000   +0.0097   4/48      +0.0000   -0.0003
+  K_FLOOR    inf   0/48     +0.0000   +0.0000   0/48      +0.0000   +0.0000
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.curve.csv  (18 rows, 14 cols)
+
+  SAME CURVE restricted to the cells whose NAIVE argmax MOVES (1117's 36 of 48) —
+  the cells where shrinkage can do anything at all:
+  keying     tau      mv    med adv  mean adv     wins   med advS
+  K_SE      0.00  36/36     -0.0195   -0.0224  13/36      -0.0502
+  K_SE      0.25  34/36     -0.0195   -0.0233  11/36      -0.0502
+  K_SE      0.50  31/36     -0.0126   -0.0191  10/36      -0.0424
+  K_SE      0.75  25/36     +0.0000   -0.0111  10/36      -0.0045
+  K_SE      1.00  13/36     +0.0000   -0.0047   6/36      +0.0000
+  K_SE      1.50   8/36     +0.0000   +0.0080   4/36      +0.0000
+  K_SE      2.00   5/36     +0.0000   +0.0090   4/36      +0.0000
+  K_SE      3.00   4/36     +0.0000   +0.0129   4/36      +0.0000
+  K_SE       inf   0/36     +0.0000   +0.0000   0/36      +0.0000
+  K_FLOOR   0.00  36/36     -0.0195   -0.0224  13/36      -0.0502
+  K_FLOOR   0.25  18/36     +0.0000   -0.0048   9/36      +0.0000
+  K_FLOOR   0.50  16/36     +0.0000   -0.0028   9/36      +0.0000
+  K_FLOOR   0.75  12/36     +0.0000   -0.0044   6/36      +0.0000
+  K_FLOOR   1.00  10/36     +0.0000   +0.0080   6/36      +0.0000
+  K_FLOOR   1.50   7/36     +0.0000   +0.0085   4/36      +0.0000
+  K_FLOOR   2.00   6/36     +0.0000   +0.0123   4/36      +0.0000
+  K_FLOOR   3.00   4/36     +0.0000   +0.0129   4/36      +0.0000
+  K_FLOOR    inf   0/36     +0.0000   +0.0000   0/36      +0.0000
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.movers.csv  (18 rows, 8 cols)
+
+  by LADDER at the headline keying K_SE (pooled over panels, rung sets, choosers):
+ ladder    tau  n  moved  med_adv  med_advS
+CADENCE 0.0000 12      8   0.0000   -0.0107
+CADENCE 0.2500 12      8   0.0000   -0.0107
+CADENCE 0.5000 12      5   0.0000    0.0000
+CADENCE 0.7500 12      4   0.0000    0.0000
+CADENCE 1.0000 12      0   0.0000    0.0000
+CADENCE 1.5000 12      0   0.0000    0.0000
+CADENCE 2.0000 12      0   0.0000    0.0000
+CADENCE 3.0000 12      0   0.0000    0.0000
+CADENCE    inf 12      0   0.0000    0.0000
+  GROSS 0.0000 12      4   0.0000    0.0000
+  GROSS 0.2500 12      4   0.0000    0.0000
+  GROSS 0.5000 12      4   0.0000    0.0000
+  GROSS 0.7500 12      4   0.0000    0.0000
+  GROSS 1.0000 12      4   0.0000    0.0000
+  GROSS 1.5000 12      4   0.0000    0.0000
+  GROSS 2.0000 12      4   0.0000    0.0000
+  GROSS 3.0000 12      4   0.0000    0.0000
+  GROSS    inf 12      0   0.0000    0.0000
+      H 0.0000 12     12  -0.0158   -0.0502
+      H 0.2500 12     10  -0.0158   -0.0502
+      H 0.5000 12     10  -0.0158   -0.0502
+      H 0.7500 12      7   0.0000   -0.0308
+      H 1.0000 12      3   0.0000    0.0000
+      H 1.5000 12      2   0.0000    0.0000
+      H 2.0000 12      1   0.0000    0.0000
+      H 3.0000 12      0   0.0000    0.0000
+      H    inf 12      0   0.0000    0.0000
+      N 0.0000 12     12  -0.0374   -0.1447
+      N 0.2500 12     12  -0.0374   -0.1447
+      N 0.5000 12     12  -0.0374   -0.1447
+      N 0.7500 12     10  -0.0231   -0.1447
+      N 1.0000 12      6   0.0000   -0.1117
+      N 1.5000 12      2   0.0000    0.0000
+      N 2.0000 12      0   0.0000    0.0000
+      N 3.0000 12      0   0.0000    0.0000
+      N    inf 12      0   0.0000    0.0000
+
+  by PANEL and RUNG SET at K_SE (pooled over ladders and choosers):
+panel rung_set    tau  n  moved  med_adv  med_advS
+ B136     CORE 0.0000 12      8  -0.0050   -0.0090
+ B136     CORE 0.2500 12      8  -0.0050   -0.0090
+ B136     CORE 0.5000 12      7   0.0000   -0.0023
+ B136     CORE 0.7500 12      5   0.0000    0.0000
+ B136     CORE 1.0000 12      3   0.0000    0.0000
+ B136     CORE 1.5000 12      2   0.0000    0.0000
+ B136     CORE 2.0000 12      1   0.0000    0.0000
+ B136     CORE 3.0000 12      1   0.0000    0.0000
+ B136     CORE    inf 12      0   0.0000    0.0000
+ B136      EXT 0.0000 12     10  -0.0050   -0.0286
+ B136      EXT 0.2500 12     10  -0.0050   -0.0286
+ B136      EXT 0.5000 12      9   0.0000   -0.0023
+ B136      EXT 0.7500 12      8   0.0000    0.0000
+ B136      EXT 1.0000 12      3   0.0000    0.0000
+ B136      EXT 1.5000 12      2   0.0000    0.0000
+ B136      EXT 2.0000 12      1   0.0000    0.0000
+ B136      EXT 3.0000 12      1   0.0000    0.0000
+ B136      EXT    inf 12      0   0.0000    0.0000
+  U56     CORE 0.0000 12      8   0.0000   -0.0011
+  U56     CORE 0.2500 12      6   0.0000   -0.0011
+  U56     CORE 0.5000 12      6   0.0000   -0.0011
+  U56     CORE 0.7500 12      5   0.0000    0.0000
+  U56     CORE 1.0000 12      3   0.0000    0.0000
+  U56     CORE 1.5000 12      1   0.0000    0.0000
+  U56     CORE 2.0000 12      1   0.0000    0.0000
+  U56     CORE 3.0000 12      1   0.0000    0.0000
+  U56     CORE    inf 12      0   0.0000    0.0000
+  U56      EXT 0.0000 12     10  -0.0195   -0.0542
+  U56      EXT 0.2500 12     10  -0.0195   -0.0542
+  U56      EXT 0.5000 12      9  -0.0195   -0.0542
+  U56      EXT 0.7500 12      7   0.0000   -0.0222
+  U56      EXT 1.0000 12      4   0.0000    0.0000
+  U56      EXT 1.5000 12      3   0.0000    0.0000
+  U56      EXT 2.0000 12      2   0.0000    0.0000
+  U56      EXT 3.0000 12      1   0.0000    0.0000
+  U56      EXT    inf 12      0   0.0000    0.0000
+
+## POST-RUN D1, and it is labelled POST-RUN because it was NOT declared before the
+##   numbers.  The pooled MEDIAN above is degenerate: once more than half the cells
+##   stop moving, the median is 0 BY CONSTRUCTION whatever the movers do, so it cannot
+##   distinguish 'shrinkage helped' from 'shrinkage stopped'.  The statistic that can
+##   is the advantage CONDITIONAL ON STILL MOVING.  This runs in FAVOUR of H_RECOVER
+##   — i.e. against the verdict the declared rule reaches — and is reported anyway.
+  keying     tau  movers  med adv|mv mean adv|mv   wins|mv  med advS|mv mean advS|mv
+  K_SE      0.00      36     -0.0195     -0.0224   13/36        -0.0502      -0.0657
+  K_SE      0.25      34     -0.0234     -0.0247   11/34        -0.0527      -0.0712
+  K_SE      0.50      31     -0.0215     -0.0222   10/31        -0.0527      -0.0737
+  K_SE      0.75      25     -0.0111     -0.0160   10/25        -0.0527      -0.0813
+  K_SE      1.00      13     -0.0100     -0.0130    6/13        -0.1399      -0.1383
+  K_SE      1.50       8     +0.0507     +0.0358    4/8         -0.0722      -0.0970
+  K_SE      2.00       5     +0.1114     +0.0648    4/5         -0.0045      -0.0306
+  K_SE      3.00       4     +0.1160     +0.1160    4/4         -0.0033      -0.0033
+  K_SE       inf       0   (no cell still moves — the chooser has stopped choosing)
+  K_FLOOR   0.00      36     -0.0195     -0.0224   13/36        -0.0502      -0.0657
+  K_FLOOR   0.25      18     -0.0045     -0.0095    9/18        -0.0963      -0.0945
+  K_FLOOR   0.50      16     +0.0009     -0.0062    9/16        -0.1399      -0.1138
+  K_FLOOR   0.75      12     -0.0045     -0.0132    6/12        -0.1817      -0.1459
+  K_FLOOR   1.00      10     +0.0009     +0.0288    6/10        -0.1399      -0.1304
+  K_FLOOR   1.50       7     +0.1114     +0.0435    4/7         -0.0045      -0.0908
+  K_FLOOR   2.00       6     +0.1114     +0.0740    4/6         -0.0045      -0.0827
+  K_FLOOR   3.00       4     +0.1160     +0.1160    4/4         -0.0033      -0.0033
+  K_FLOOR    inf       0   (no cell still moves — the chooser has stopped choosing)
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.conditional.csv  (18 rows, 8 cols)
+
+  WHO SURVIVES THE STRICTEST SHRINK (tau=3, K_SE) — every cell that still moves:
+panel ladder rung_set chooser pick default  is_gap   unit  adv_matched  adv_oos_sharpe  OOS_Sharpe  OOS_MaxDD
+  U56  GROSS     CORE  C_ISDD  0.3    0.75  0.0827 0.0217       0.1114         -0.0021      1.1622    -0.0799
+  U56  GROSS      EXT  C_ISDD  0.3    0.75  0.0827 0.0217       0.1114         -0.0021      1.1622    -0.0799
+ B136  GROSS     CORE  C_ISDD  0.3    0.75  0.0869 0.0230       0.1207         -0.0045      1.0055    -0.0867
+ B136  GROSS      EXT  C_ISDD  0.3    0.75  0.0869 0.0230       0.1207         -0.0045      1.0055    -0.0867
+    all 4 survivors use chooser(s) ['C_ISDD'] on ['GROSS']; distinct picks [('B136', 'GROSS', '0.3'), ('U56', 'GROSS', '0.3')]
+    their mean MATCHED advantage is +0.1160 but their mean
+    OOS-SHARPE advantage is -0.0033 — the strict-shrink
+    survivors buy OOS DRAWDOWN, not OOS Sharpe.  That is a different claim from the
+    one the queue asked about and it rests on 4 cells, so it is PARKED, not kept.
+
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.oracle.csv  (48 rows, 7 cols)
+  THE ORACLE BOUND — what a chooser with OOS foreknowledge would have won over the
+  default: median matched advantage +0.0105 (mean +0.0260), median OOS-Sharpe advantage +0.0083, over 48 cells.
+  The ladders are NOT flat out of sample — there IS money on them.  The question is
+  only whether an IS-only rule can reach any of it.
+
+## PROTOCOL rule 4 — both KEEP paths, scored at every rung and every chosen book.
+  whole grid 74 rungs: 4b full 17, 4b OOS 18, 4a 0
+  chosen books (864 = 3 choosers x 9 taus x 2 keyings x 8 panel/ladder/rung-set cells at the headline seed base):
+    4b full 304, 4b OOS 304, 4a 0, median OOS Sharpe 1.0244, median regret +0.0102
+  DISTINCT books among the chosen that clear 4b (full sample), with OOS triples:
+panel  ladder rung_set    chooser keying    tau pick   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+  U56       N     CORE C_ISSHARPE   K_SE 0.7500   20 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1643    -0.1913
+  U56       H     CORE C_ISSHARPE   K_SE 0.2500  126 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1643    -0.1913
+  U56   GROSS     CORE C_ISSHARPE   K_SE 0.0000 0.75 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1643    -0.1913
+  U56 CADENCE     CORE C_ISSHARPE   K_SE 0.0000    W 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1643    -0.1913
+
+## HYPOTHESES, scored
+  wrote 2026-09-16_is-the-ARGMAX-NEGATIVE-INFORMATION-result-a-CHOOSER-artefact-or-a-GRID-fact_B.hypotheses.csv  (5 rows, 3 cols)
+  H_PREMISE    HOLDS  tau=0: 36 of 48 move, median matched adv -0.0195, median OOS-S adv -0.0502 vs 1117's committed 36/48, -0.0195, -0.0502
+  H_RECOVER    FAILS  best FINITE tau>0 pooled median OOS-S advantage: K_SE +0.0000 at tau=0.75, K_FLOOR +0.0000 at tau=0.25; choosers recovering: 0 of 3 (none)
+  H_MONOTONE   HOLDS  median OOS-S advantage non-decreasing in tau: K_SE YES, K_FLOOR YES
+  H_GRID       HOLDS  curve supremum: K_SE +0.0000, K_FLOOR +0.0000; movers at tau=inf: K_SE 0, K_FLOOR 0
+  H_KEYING     HOLDS  K_SE recovers False, K_FLOOR recovers False
+
+  SEED-BASE STABILITY (not a dial): pooled median OOS-S advantage at each tau, K_SE,
+  under each of the 3 seed bases —
+    tau  0.00  -0.0140  -0.0140  -0.0140   spread 0.0000
+    tau  0.25  -0.0140  -0.0140  -0.0140   spread 0.0000
+    tau  0.50  -0.0045  -0.0045  -0.0045   spread 0.0000
+    tau  0.75  +0.0000  +0.0000  +0.0000   spread 0.0000
+    tau  1.00  +0.0000  +0.0000  +0.0000   spread 0.0000
+    tau  1.50  +0.0000  +0.0000  +0.0000   spread 0.0000
+    tau  2.00  +0.0000  +0.0000  +0.0000   spread 0.0000
+    tau  3.00  +0.0000  +0.0000  +0.0000   spread 0.0000
+    tau   inf  +0.0000  +0.0000  +0.0000   spread 0.0000
+
+## VERDICT
+  GRID FACT.
+  No finite shrink threshold lifts the pooled median OOS advantage above zero under
+  both keyings and at >= 2 of 3 choosers.  The best a shrunk chooser achieves is to
+  stop choosing: the supremum of the curve is reached where every cell is back on
+  its default and the advantage is 0 BY CONSTRUCTION.  Shrinkage MUTES the loss; it
+  does not RECOVER it.  The negative-information result is a property of the GRID,
+  not of the chooser — which is what 1117's clause already assumes.
+  POST-RUN D1 does not overturn it: CONDITIONAL ON STILL MOVING, the best finite
+  tau>0 mean OOS-SHARPE advantage over the default is -0.0033 (at tau=3.00, 4 movers) — still
+  not a positive Sharpe advantage.  The one thing strict shrinkage does buy is
+  OOS DRAWDOWN under C_ISDD, on 4 cells; that is filed as a new queue idea, not
+  claimed here.
+  NOT a KEEP under either path: no book is proposed and nothing here beats SPY or the
+  live book out of sample on its own.
+# done in 18s
