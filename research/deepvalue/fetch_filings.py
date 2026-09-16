@@ -151,6 +151,12 @@ def html_to_text(raw: bytes) -> str:
                                                          "ix:references", "ix:resources"))):
         tag.decompose()
     for tag in soup.find_all(style=True):
+        # find_all() snapshots the tree, so a styled tag nested inside a
+        # display:none block we already decomposed is still in this list --
+        # and decompose() sets its .attrs to None, so tag.get() would raise
+        # "AttributeError: 'NoneType' object has no attribute 'get'".
+        if tag.decomposed:
+            continue
         st = (tag.get("style") or "").replace(" ", "").lower()
         if "display:none" in st:
             tag.decompose()
