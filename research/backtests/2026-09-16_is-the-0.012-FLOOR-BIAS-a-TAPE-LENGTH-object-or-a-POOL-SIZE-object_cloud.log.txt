@@ -1,0 +1,294 @@
+# Idea 1047 (cloud lane, 2026-09-16) — is the 0.012 FLOOR BIAS a TAPE-LENGTH object or a POOL-SIZE object?
+# 2 tuned dials: POOL ['GRID', 'SHELF', 'WIDE'] x TAPE FRACTION [0.25, 0.5, 0.75, 1.0] = 12 points, ALL reported, none selected.  HEADLINE cell = 1044's own (GRID, f=1.0, NATIVE ladder).
+# Controls at every point: ladder geometry [NATIVE, SCALED], panel [U56, B136], cost [10.0, 25.0] bps (10 binding, PROTOCOL rule 2), null kind [NULL_0 (1044's), NULL_0R (real idio)].  N-subsample ladder [6, 9, 12, 18, 24, 32, 48] is a reported RESOLUTION control, not a third dial.
+# DECLARED BEFORE ANY NUMBER: under NULL_0 the intercept D2_hat is UNBIASED for 0, so the
+#   published floor sqrt(max(D2_hat,0)) is a truncation artifact of SD(D2_hat), and
+#   FLOOR_BIAS ~ sqrt(C) * Lbar^-0.5 * (N-1)^-0.25.  PREDICTION: tape-length slope ~ -0.50,
+#   pool slope ~ -0.25 — both axes carry it, tape length about twice as fast per log unit.
+# CONFOUND 1 stated up front: shortening the tape also drops long rungs, so every length
+#   point is reported on BOTH the NATIVE and the SCALED (shape-held-fixed) ladder.
+# CONFOUND 2 stated up front: 1044's NULL_0 draws idio INDEPENDENTLY, so nominal N ==
+#   effective N; a real widened gross ladder is near-collinear.  NULL_0R inherits the real
+#   idio correlation and is published beside it at every point.
+# NREP = 500 per cell.  SURVIVORSHIP: U56/B136 are current-constituent panels; the
+#   level bias enters only through C and shifts every cell by the same sqrt(C), so it
+#   cannot create or destroy either slope.  C is published per cell.
+
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+   CALENDAR: each panel keeps its OWN calendar (the record's construction).  No splice.
+POOLS per panel: GRID=[U56 18, B136 18], SHELF=[U56 24, B136 20], WIDE=[U56 48, B136 48]
+Post-warmup tape: U56 4445 days, B136 4443 days.
+====================================================================================================
+REPRODUCTION GATES
+====================================================================================================
+  G1 PASS  fast_run == engine.backtest on U56-band0.03-g0.50: max|dret| 3.47e-18, max|dturn| 1.11e-16
+  G2 PASS  pools are the record's grid_books()/shelf_books() plus the widened band x gross ladder: GRID 18/18, SHELF 24/20, WIDE 48/48
+  G3 PASS  CROSS-RUN SPY OOS at 2016-12-31: 0.1521 / 0.8711 / -0.3372 vs committed (0.1521, 0.8713, -0.3372) (max|d| 1.70e-04)
+  G4 PASS  CROSS-RUN 1044 NULL_0 median floor at its own cell (GRID, f=1.00, NATIVE, TAIL, 10 bps): U56 0.0115 vs 0.0115 (|d| 0.0000), B136 0.0000 vs 0.0047 (|d| 0.0047)  [same construction, independent seed stream -> a sampling-noise band, not a bit match]
+  G5 PASS  CROSS-RUN 1044 NULL_0 median b and C: U56 b -0.5024 vs -0.5011, C 26.92 vs 26.84, B136 b -0.5032 vs -0.5049, C 28.32 vs 28.39
+  G6 PASS  closed-form SAT recovers known (D2 0.0037, C 11.5) to 7.11e-15
+  G7 PASS  window construction: every window is exactly L days and tail-anchored across all 16 (panel, fraction, ladder) points
+  G8 PASS  zero TRUE dispersion by construction: max|idio column mean| 3.44e-19, max|idio column sd - common scale| 6.07e-18  (so every synthetic book has the same population mean and variance under BOTH nulls)
+  G9 PASS  determinism: null floors rebuild bit-for-bit (max|d| 0.0e+00); md5 process-stable seed for the headline cell = 1444730364
+  G10 PASS  idio correlation: REAL -0.0489; NULL_0R -0.0574 (inherits it); NULL_0 -0.0588 (independent by construction)
+GATES: 10 of 10 pass.
+
+====================================================================================================
+(A) THE BIAS SURFACE — fitted floor under a ZERO-TRUE-DISPERSION null, every cell
+====================================================================================================
+  wrote 2026-09-16_is-the-0.012-FLOOR-BIAS-a-TAPE-LENGTH-object-or-a-POOL-SIZE-object_cloud.surface.csv  (192 rows, 21 cols)
+  HEADLINE SLICE (NULL_0, 10 bps) — median fitted floor, truth = 0 exactly:
+    ladder NATIVE:
+      frac             0.25   0.50   0.75   1.00
+      panel pool  N                             
+      B136  GRID  18 0.0393 0.0000 0.0331 0.0000
+            SHELF 20 0.0000 0.0087 0.0268 0.0000
+            WIDE  48 0.0307 0.0295 0.0000 0.0085
+      U56   GRID  18 0.0155 0.0000 0.0000 0.0000
+            SHELF 24 0.0161 0.0000 0.0023 0.0000
+            WIDE  48 0.0000 0.0253 0.0294 0.0225
+    ladder SCALED:
+      frac             0.25   0.50   0.75   1.00
+      panel pool  N                             
+      B136  GRID  18 0.0000 0.0357 0.0339 0.0000
+            SHELF 20 0.0000 0.0296 0.0000 0.0000
+            WIDE  48 0.0000 0.0000 0.0000 0.0085
+      U56   GRID  18 0.0000 0.0088 0.0000 0.0000
+            SHELF 24 0.0000 0.0000 0.0000 0.0000
+            WIDE  48 0.0000 0.0000 0.0136 0.0225
+  Global grid span of the p95 threshold: 0.1125 .. 0.6508  (5.79x); the record's single global bar is 0.012.
+
+  TRUNCATION DIAGNOSTIC (why the median above is so often exactly 0.0000).  The published
+  floor is sqrt(max(D2_hat, 0)), so its MEDIAN is exactly zero whenever fewer than half
+  the reps produce a positive intercept.  Share of reps with D2_hat > 0, per cell:
+    NULL_0 10 bps, pos_share range 0.462..0.552; cells with pos_share < 0.50 (median pinned to 0): 28 of 48
+    whole 192-cell grid: pos_share 0.462..1.000, 55 of 192 cells have the median pinned to 0; 55 cells report floor_med == 0 exactly.
+    => the record's published floor is a statistic sitting ON its own truncation point, so
+       its VALUE is a coin flip between 0 and ~0.03 and it cannot resolve either axis.
+
+====================================================================================================
+(B) THE TWO SLOPES — log-log, against the predicted -0.50 (tape) and -0.25 (pool)
+====================================================================================================
+  wrote 2026-09-16_is-the-0.012-FLOOR-BIAS-a-TAPE-LENGTH-object-or-a-POOL-SIZE-object_cloud.slopes.csv  (112 rows, 14 cols)
+  NULL_0, 10 bps.  n_used = how many of the ladder's points could enter a
+  log fit at all; a floor_med of exactly 0 cannot, so n_used < npoints means the
+  pre-registered slope is fitted off a truncated subset and is NOT a slope:
+    axis            pool panel ladder  npoints  n_used   slope     lo     hi
+    TAPE            GRID   U56 NATIVE        4       1     NaN 0.0000 0.0155
+    TAPE            GRID   U56 SCALED        4       1     NaN 0.0000 0.0088
+    TAPE            GRID  B136 NATIVE        4       2 -0.1570 0.0000 0.0393
+    TAPE            GRID  B136 SCALED        4       2 -0.1276 0.0000 0.0357
+    TAPE           SHELF   U56 NATIVE        4       2 -1.7810 0.0000 0.0161
+    TAPE           SHELF   U56 SCALED        4       0     NaN 0.0000 0.0000
+    TAPE           SHELF  B136 NATIVE        4       2  2.7829 0.0000 0.0268
+    TAPE           SHELF  B136 SCALED        4       1     NaN 0.0000 0.0296
+    TAPE            WIDE   U56 NATIVE        4       3 -0.1353 0.0000 0.0294
+    TAPE            WIDE   U56 SCALED        4       2  1.7379 0.0000 0.0225
+    TAPE            WIDE  B136 NATIVE        4       3 -0.9291 0.0000 0.0307
+    TAPE            WIDE  B136 SCALED        4       1     NaN 0.0000 0.0085
+    POOL GRID|SHELF|WIDE   U56 NATIVE        3       2  0.1164 0.0000 0.0161
+    POOL GRID|SHELF|WIDE   U56 SCALED        3       0     NaN 0.0000 0.0000
+    POOL GRID|SHELF|WIDE   U56 NATIVE        3       1     NaN 0.0000 0.0253
+    POOL GRID|SHELF|WIDE   U56 SCALED        3       1     NaN 0.0000 0.0088
+    POOL GRID|SHELF|WIDE   U56 NATIVE        3       2  3.5809 0.0000 0.0294
+    POOL GRID|SHELF|WIDE   U56 SCALED        3       1     NaN 0.0000 0.0136
+    POOL GRID|SHELF|WIDE   U56 NATIVE        3       1     NaN 0.0000 0.0225
+    POOL GRID|SHELF|WIDE   U56 SCALED        3       1     NaN 0.0000 0.0225
+    POOL GRID|SHELF|WIDE  B136 NATIVE        3       2 -0.2437 0.0000 0.0393
+    POOL GRID|SHELF|WIDE  B136 SCALED        3       0     NaN 0.0000 0.0000
+    POOL GRID|SHELF|WIDE  B136 NATIVE        3       2  1.3499 0.0000 0.0295
+    POOL GRID|SHELF|WIDE  B136 SCALED        3       2 -1.6736 0.0000 0.0357
+    POOL GRID|SHELF|WIDE  B136 NATIVE        3       2 -1.8791 0.0000 0.0331
+    POOL GRID|SHELF|WIDE  B136 SCALED        3       1     NaN 0.0000 0.0339
+    POOL GRID|SHELF|WIDE  B136 NATIVE        3       1     NaN 0.0000 0.0085
+    POOL GRID|SHELF|WIDE  B136 SCALED        3       1     NaN 0.0000 0.0085
+  n_used == npoints in 0 of 28 headline slope fits.
+
+----------------------------------------------------------------------------------------------------
+(B2) THE SAME TWO SLOPES ON A STATISTIC THAT IS NOT PINNED TO ITS TRUNCATION POINT
+     REPORTED, NOT PRE-REGISTERED.  Added after the pre-registered median turned out to
+     be truncation-degenerate (see the diagnostic in (A)); it is NOT scored as a
+     hypothesis and does not replace H_TAPE / H_POOL / H_AXIS, which FAIL as written.
+     Two un-truncated statistics carry the same theory: the p95 of the floor (the
+     threshold a practitioner would actually use) and sqrt(SD(D2_hat)) (the noise scale
+     the arithmetic in the header predicts directly).  Both predicted -0.50 in tape
+     length and -0.25 in pool size.
+----------------------------------------------------------------------------------------------------
+    axis            pool panel ladder  npoints  slope_p95  slope_noise
+    TAPE            GRID   U56 NATIVE        4    -0.3698      -0.3148
+    TAPE            GRID   U56 SCALED        4    -0.5868      -0.5588
+    TAPE            GRID  B136 NATIVE        4    -0.3895      -0.3606
+    TAPE            GRID  B136 SCALED        4    -0.6015      -0.6276
+    TAPE           SHELF   U56 NATIVE        4    -0.3173      -0.2622
+    TAPE           SHELF   U56 SCALED        4    -0.4870      -0.5332
+    TAPE           SHELF  B136 NATIVE        4    -0.3972      -0.3480
+    TAPE           SHELF  B136 SCALED        4    -0.5911      -0.6170
+    TAPE            WIDE   U56 NATIVE        4    -0.3206      -0.3047
+    TAPE            WIDE   U56 SCALED        4    -0.5007      -0.6001
+    TAPE            WIDE  B136 NATIVE        4    -0.3384      -0.3235
+    TAPE            WIDE  B136 SCALED        4    -0.5455      -0.6298
+    POOL GRID|SHELF|WIDE   U56 NATIVE        3    -0.0504      -0.0346
+    POOL GRID|SHELF|WIDE   U56 SCALED        3    -0.0840       0.0268
+    POOL GRID|SHELF|WIDE   U56 NATIVE        3     0.0411      -0.0534
+    POOL GRID|SHELF|WIDE   U56 SCALED        3    -0.0429      -0.0216
+    POOL GRID|SHELF|WIDE   U56 NATIVE        3     0.0078      -0.0392
+    POOL GRID|SHELF|WIDE   U56 SCALED        3    -0.0110      -0.0379
+    POOL GRID|SHELF|WIDE   U56 NATIVE        3     0.0065      -0.0402
+    POOL GRID|SHELF|WIDE   U56 SCALED        3     0.0065      -0.0402
+    POOL GRID|SHELF|WIDE  B136 NATIVE        3    -0.1235      -0.1124
+    POOL GRID|SHELF|WIDE  B136 SCALED        3    -0.1081      -0.0675
+    POOL GRID|SHELF|WIDE  B136 NATIVE        3     0.0097      -0.0610
+    POOL GRID|SHELF|WIDE  B136 SCALED        3    -0.0469      -0.0194
+    POOL GRID|SHELF|WIDE  B136 NATIVE        3    -0.0367      -0.0047
+    POOL GRID|SHELF|WIDE  B136 SCALED        3    -0.0247      -0.0148
+    POOL GRID|SHELF|WIDE  B136 NATIVE        3    -0.0429      -0.0986
+    POOL GRID|SHELF|WIDE  B136 SCALED        3    -0.0429      -0.0986
+    TAPE: median slope_p95 -0.4421, median slope_noise -0.4469, predicted -0.50
+       ladder NATIVE: slope_p95 -0.3541 [-0.3972, -0.3173], slope_noise -0.3191
+       ladder SCALED: slope_p95 -0.5661 [-0.6015, -0.4870], slope_noise -0.6085
+    POOL: median slope_p95 -0.0398, median slope_noise -0.0397, predicted -0.25
+       ladder NATIVE: slope_p95 -0.0151 [-0.1235, +0.0411], slope_noise -0.0468
+       ladder SCALED: slope_p95 -0.0429 [-0.1081, +0.0065], slope_noise -0.0297
+    The SCALED ladder is the clean tape axis (rung COUNT and ladder SHAPE held fixed);
+    NATIVE also loses rungs as the tape shortens, which flattens the fit.
+
+====================================================================================================
+(C) RESOLUTION CONTROL — the pool slope off SEVEN N points, subsampled from WIDE
+====================================================================================================
+  wrote 2026-09-16_is-the-0.012-FLOOR-BIAS-a-TAPE-LENGTH-object-or-a-POOL-SIZE-object_cloud.nsub.csv  (112 rows, 11 cols)
+  wrote 2026-09-16_is-the-0.012-FLOOR-BIAS-a-TAPE-LENGTH-object-or-a-POOL-SIZE-object_cloud.nsub_slopes.csv  (16 rows, 9 cols)
+  fitted pool slope on 7 N points (predicted -0.25).  slope_N is the
+  PRE-REGISTERED reading (on the median floor); slope_N_p95 and slope_N_noise are the
+  NOT-PRE-REGISTERED un-truncated readings described in (B2):
+    panel ladder    cost    kind  npoints  n_used  slope_N  slope_N_p95  slope_N_noise
+      U56 NATIVE 10.0000  NULL_0        7       5  -0.1162      -0.1174        -0.1275
+      U56 NATIVE 10.0000 NULL_0R        7       7   0.1603       0.1431         0.0023
+      U56 NATIVE 25.0000  NULL_0        7       6  -0.0903      -0.2721        -0.2764
+      U56 NATIVE 25.0000 NULL_0R        7       7   0.1999       0.1756         0.0529
+      U56 SCALED 10.0000  NULL_0        7       5  -0.0200      -0.2014        -0.2117
+      U56 SCALED 10.0000 NULL_0R        7       7   0.0835       0.0379        -0.1380
+      U56 SCALED 25.0000  NULL_0        7       5  -0.3530      -0.3194        -0.3264
+      U56 SCALED 25.0000 NULL_0R        7       7   0.1728       0.1205        -0.0728
+     B136 NATIVE 10.0000  NULL_0        7       3  -0.2978      -0.1935        -0.1872
+     B136 NATIVE 10.0000 NULL_0R        7       7  -0.2272      -0.2271        -0.2120
+     B136 NATIVE 25.0000  NULL_0        7       4   0.0778      -0.4146        -0.4088
+     B136 NATIVE 25.0000 NULL_0R        7       7   0.0410       0.0250        -0.0294
+     B136 SCALED 10.0000  NULL_0        7       4   1.4450      -0.2409        -0.2326
+     B136 SCALED 10.0000 NULL_0R        7       7   0.2372       0.2082         0.0950
+     B136 SCALED 25.0000  NULL_0        7       4  -0.0303      -0.3821        -0.3769
+     B136 SCALED 25.0000 NULL_0R        7       7   0.0299       0.0259         0.0318
+  n_used == 7 in 8 of 16 fits; pos_share over the control 0.474..1.000.
+
+====================================================================================================
+(D) IS D2_hat ITSELF BIASED? — mean D2_hat against its own standard error
+====================================================================================================
+     U56  GRID N=18  mean D2_hat -0.001026  SE 0.000444  t -2.31   median sqrt(max(D2,0)) 0.0000
+    B136  GRID N=18  mean D2_hat -0.000786  SE 0.000473  t -1.66   median sqrt(max(D2,0)) 0.0000
+     U56 SHELF N=24  mean D2_hat -0.000885  SE 0.000423  t -2.09   median sqrt(max(D2,0)) 0.0000
+    B136 SHELF N=20  mean D2_hat -0.001154  SE 0.000428  t -2.69   median sqrt(max(D2,0)) 0.0000
+     U56  WIDE N=48  mean D2_hat -0.000176  SE 0.000407  t -0.43   median sqrt(max(D2,0)) 0.0225
+    B136  WIDE N=48  mean D2_hat -0.000542  SE 0.000375  t -1.45   median sqrt(max(D2,0)) 0.0085
+  |t| <= 2 in 3 of 6 headline cells.
+
+====================================================================================================
+(E) THE PAYOFF — the record's 24 committed floors re-read against their OWN cell
+====================================================================================================
+  wrote 2026-09-16_is-the-0.012-FLOOR-BIAS-a-TAPE-LENGTH-object-or-a-POOL-SIZE-object_cloud.census.csv  (24 rows, 13 cols)
+  24 committed floors from 1044's fits.csv.
+    above the GLOBAL 0.012 bar : 8 of 24
+    above their OWN cell's p95 : 0 of 24
+    verdict MOVES              : 8 of 24
+    (of these, 8 floors are non-zero at all; 16 were already truncated to exactly 0 by 1044's own max(D2,0))
+  per-cell p95 thresholds actually used: B136@10bps 0.1237, B136@25bps 0.1239, U56@10bps 0.1165, U56@25bps 0.1163
+
+====================================================================================================
+(F) RULE-8 WALK-FORWARD — IS <= 2016-12-31 chooses, OOS read ONCE; both KEEP paths
+====================================================================================================
+  wrote 2026-09-16_is-the-0.012-FLOOR-BIAS-a-TAPE-LENGTH-object-or-a-POOL-SIZE-object_cloud.ladder.csv  (352 rows, 24 cols)
+  wrote 2026-09-16_is-the-0.012-FLOOR-BIAS-a-TAPE-LENGTH-object-or-a-POOL-SIZE-object_cloud.rule8.csv  (36 rows, 20 cols)
+     pool  N panel    cost   chooser                         pick  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  spy_OOS_Sharpe  v2_OOS_Sharpe  pass4b  pass4a
+     GRID 18   U56 10.0000 IS_SHARPE           U56-band0.08-g1.00    0.1199      1.1615    -0.1905          0.8711         1.2762    True   False
+     GRID 18   U56 10.0000   IS_CAGR  U56-qroll-q0.17-w1008-d0.50    0.1560      1.2933    -0.1559          0.8711         1.2762    True   False
+     GRID 18   U56 10.0000   IS_LEGS           U56-band0.08-g1.00    0.1199      1.1615    -0.1905          0.8711         1.2762    True   False
+     GRID 18   U56 25.0000 IS_SHARPE           U56-band0.08-g1.00    0.1173      1.1386    -0.1907          0.8711         1.2394    True   False
+     GRID 18   U56 25.0000   IS_CAGR  U56-qroll-q0.17-w1008-d0.50    0.1400      1.1742    -0.1571          0.8711         1.2394    True   False
+     GRID 18   U56 25.0000   IS_LEGS           U56-band0.08-g1.00    0.1173      1.1386    -0.1907          0.8711         1.2394    True   False
+     GRID 18  B136 10.0000 IS_SHARPE          B136-band0.08-g1.00    0.1105      1.0974    -0.1950          0.8767         1.1059    True   False
+     GRID 18  B136 10.0000   IS_CAGR B136-qroll-q0.12-w1008-d0.50    0.1430      1.1572    -0.1731          0.8767         1.1059    True   False
+     GRID 18  B136 10.0000   IS_LEGS          B136-band0.08-g1.00    0.1105      1.0974    -0.1950          0.8767         1.1059    True   False
+     GRID 18  B136 25.0000 IS_SHARPE          B136-band0.08-g1.00    0.1076      1.0714    -0.1953          0.8767         1.0614    True   False
+     GRID 18  B136 25.0000   IS_CAGR B136-qroll-q0.12-w1008-d0.50    0.1262      1.0360    -0.1772          0.8767         1.0614    True   False
+     GRID 18  B136 25.0000   IS_LEGS          B136-band0.08-g1.00    0.1076      1.0714    -0.1953          0.8767         1.0614    True   False
+    SHELF 24   U56 10.0000 IS_SHARPE    u56-quantile50-respread-M    0.1605      1.2181    -0.1975          0.8711         1.2762    True   False
+    SHELF 24   U56 10.0000   IS_CAGR    u56-quantile50-respread-M    0.1605      1.2181    -0.1975          0.8711         1.2762    True   False
+    SHELF 24   U56 10.0000   IS_LEGS    u56-quantile50-respread-M    0.1605      1.2181    -0.1975          0.8711         1.2762    True   False
+    SHELF 24   U56 25.0000 IS_SHARPE    u56-quantile50-respread-M    0.1548      1.1804    -0.1980          0.8711         1.2394    True   False
+    SHELF 24   U56 25.0000   IS_CAGR    u56-quantile50-respread-M    0.1548      1.1804    -0.1980          0.8711         1.2394    True   False
+    SHELF 24   U56 25.0000   IS_LEGS    u56-quantile50-respread-M    0.1548      1.1804    -0.1980          0.8711         1.2394    True   False
+    SHELF 20  B136 10.0000 IS_SHARPE         b136-r620-gross065-W    0.1452      1.0400    -0.1943          0.8767         1.1059    True   False
+    SHELF 20  B136 10.0000   IS_CAGR         b136-r620-gross065-W    0.1452      1.0400    -0.1943          0.8767         1.1059    True   False
+    SHELF 20  B136 10.0000   IS_LEGS         b136-r620-gross065-W    0.1452      1.0400    -0.1943          0.8767         1.1059    True   False
+    SHELF 20  B136 25.0000 IS_SHARPE          B136-band0.08-g1.00    0.1076      1.0714    -0.1953          0.8767         1.0614    True   False
+    SHELF 20  B136 25.0000   IS_CAGR         b136-r620-gross065-W    0.1256      0.9169    -0.1952          0.8767         1.0614    True   False
+    SHELF 20  B136 25.0000   IS_LEGS          B136-band0.08-g1.00    0.1076      1.0714    -0.1953          0.8767         1.0614    True   False
+     WIDE 48   U56 10.0000 IS_SHARPE          U56-wband0.08-g1.00    0.1199      1.1615    -0.1905          0.8711         1.2762    True   False
+     WIDE 48   U56 10.0000   IS_CAGR          U56-wband0.12-g1.00    0.1194      1.1658    -0.1604          0.8711         1.2762    True   False
+     WIDE 48   U56 10.0000   IS_LEGS          U56-wband0.08-g1.00    0.1199      1.1615    -0.1905          0.8711         1.2762    True   False
+     WIDE 48   U56 25.0000 IS_SHARPE          U56-wband0.12-g1.00    0.1172      1.1464    -0.1605          0.8711         1.2394    True   False
+     WIDE 48   U56 25.0000   IS_CAGR          U56-wband0.12-g1.00    0.1172      1.1464    -0.1605          0.8711         1.2394    True   False
+     WIDE 48   U56 25.0000   IS_LEGS          U56-wband0.12-g1.00    0.1172      1.1464    -0.1605          0.8711         1.2394    True   False
+     WIDE 48  B136 10.0000 IS_SHARPE         B136-wband0.08-g1.00    0.1105      1.0974    -0.1950          0.8767         1.1059    True   False
+     WIDE 48  B136 10.0000   IS_CAGR         B136-wband0.12-g1.00    0.1112      1.0805    -0.1950          0.8767         1.1059    True   False
+     WIDE 48  B136 10.0000   IS_LEGS         B136-wband0.08-g1.00    0.1105      1.0974    -0.1950          0.8767         1.1059    True   False
+     WIDE 48  B136 25.0000 IS_SHARPE         B136-wband0.08-g1.00    0.1076      1.0714    -0.1953          0.8767         1.0614    True   False
+     WIDE 48  B136 25.0000   IS_CAGR         B136-wband0.12-g1.00    0.1088      1.0591    -0.1952          0.8767         1.0614    True   False
+     WIDE 48  B136 25.0000   IS_LEGS         B136-wband0.08-g1.00    0.1076      1.0714    -0.1953          0.8767         1.0614    True   False
+  OOS 4b passes: 36 of 36;  OOS 4a passes: 0 of 36.
+  Whole ladder (every book, not a chooser's pick): 4b 105 of 352, 4a 13 of 352.
+    pool  GRID (N=18..18): mean OOS Sharpe 1.1332, mean OOS CAGR 0.1230, 4b 12/12
+    pool SHELF (N=24..24): mean OOS Sharpe 1.1146, mean OOS CAGR 0.1435, 4b 12/12
+    pool  WIDE (N=48..48): mean OOS Sharpe 1.1171, mean OOS CAGR 0.1139, 4b 12/12
+  SPY OOS: CAGR 0.1533 Sharpe 0.8767 MaxDD -0.3372   RULES v2 OOS (10 bps, U56): CAGR 0.0945 Sharpe 1.2762 MaxDD -0.1205
+
+====================================================================================================
+PRE-REGISTERED HYPOTHESES (bars fixed before any number above the gates was read)
+====================================================================================================
+  H_TAPE   FAIL  SCALED-ladder tape slope by panel {'B136': -0.1276, 'U56': 1.7379} in [-0.60,-0.40]?
+  H_POOL   FAIL  7-point pool slope by panel {'B136': 0.5736, 'U56': -0.0681} in [-0.35,-0.15]?
+  H_AXIS   FAIL  DECISIVE: 2 of 4 cells have |tape| > 1.5x|pool|.  U56/NATIVE |tape| 0.9581 vs 1.5x|pool| 0.1743 >; U56/SCALED |tape| 1.7379 vs 1.5x|pool| 0.0300 >; B136/NATIVE |tape| 0.1570 vs 1.5x|pool| 0.4466 <=; B136/SCALED |tape| 0.1276 vs 1.5x|pool| 2.1675 <=
+  H_UNB    FAIL  |mean D2_hat| <= 2 SE in 3 of 6 headline cells (so the floor is a sqrt-of-truncated-zero artifact, not a D2 bias)
+  H_CELL   PASS  PAYOFF: p95 threshold spans 5.79x (bar 2.0x) across the 192-cell grid; 8 of 24 committed floors change verdict on their own cell (bar >= 1)
+  H_EFF    FAIL  real-idio pool slope weaker than independent-idio: NULL_0R {'B136': 0.005, 'U56': 0.1219} vs NULL_0 {'B136': 0.5736, 'U56': -0.0681}
+HYPOTHESES: 1 of 6 pass.
+
+====================================================================================================
+THE ANSWER TO THE QUEUE'S QUESTION
+====================================================================================================
+  NEITHER.  The queue's either/or presumes the published floor is a BIAS with a scaling
+  law on one of two axes.  It is not a bias at all: sqrt(max(D2_hat, 0)) is a statistic
+  sitting ON its own truncation point (55 of 192 cells have fewer than half their reps positive,
+  and 55 cells report a median of exactly 0), so its value is a coin flip between 0
+  and ~0.03 that moves with neither tape length nor pool size in any resolvable way.
+  1044's +0.0115 and +0.0047 are two draws from that coin flip, and this run reproduces
+  the first exactly (G4).  The underlying intercept D2_hat is itself slightly NEGATIVE on
+  nested tail windows (mean below zero in every headline cell), i.e. the SAT model is
+  mildly misspecified downward on this geometry — so the floor is not even measuring an
+  upward bias.
+  The object the record should publish instead is the per-cell p95 of the null floor,
+  which IS resolved: 0.1125..0.6508 over the 192-cell grid, 5.8x wide and 25x the
+  record's single global 0.012 bar at the median cell.  Read against it, ALL 8 of the record's
+  24 committed floors that clear 0.012 fall INSIDE their own cell's noise (0 survive).
+
+  AND, once the question is asked of a statistic that CAN answer it (section B2, reported
+  but not pre-registered), the queue's either/or resolves cleanly and one-sidedly:
+    TAPE LENGTH carries it, at the predicted rate.  slope on the p95 threshold -0.566 on the
+      shape-held-fixed SCALED ladder (-0.354 on NATIVE), against the header's a-priori -0.50.
+    POOL SIZE does not.  Across the record's three actual pools (18 -> 24 -> 48 books) the slope is
+      -0.040 — flat.  Even on the idealised 7-point N ladder with INDEPENDENT idiosyncratic
+      draws (1044's own construction) it only reaches -0.197, and once the pool's REAL
+      cross-book idio correlation is inherited (NULL_0R) it collapses to +0.090.
+    PRACTICAL READING: four more years of tape buys what no achievable widening of the
+    book pool can buy.  Adding books to a near-collinear band x gross ladder buys nothing
+    at all, because the books are not independent measurements of the tape.
+
+Runtime 276.2s.
