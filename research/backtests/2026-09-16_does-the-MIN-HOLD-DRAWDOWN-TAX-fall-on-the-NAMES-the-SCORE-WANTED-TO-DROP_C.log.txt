@@ -1,0 +1,181 @@
+# Idea 1065 (lane C, 2026-09-16) — does the MIN-HOLD DRAWDOWN TAX fall on the NAMES the SCORE WANTED TO DROP?
+# 2 tuned dials: ATTRIBUTION RULE ['R_GATE', 'R_TOP2N', 'R_TOPN'] x MIN HOLD [5, 21, 63, 126] = 12 points, ALL reported, none selected.
+# Fixed (NOT dials): gross 0.75, cost 10 bps (PROTOCOL rule 2), N 20, max_vol 0.6; 3 mechanisms x 4 rebalance grids x 2 panels are REPORTED axes.
+# DECLARED BEFORE ANY NUMBER: (1) attribution — the retained bucket's share of the
+#   max-drawdown episode's loss must EXCEED its share of the weight (CONC > 1);
+#   (2) control — the gross-matched null's CONC must sit at 1.0, since a random key's
+#   'wanted-dropped' flag carries no information; if the books' CONC is 1.0 too, the tax
+#   is mechanical and 936's sentence is wrong however large the tax is;
+#   (3) causality/price — a SOFT min hold that releases exactly the flagged names must
+#   recover the tax while keeping the turnover rebate, and is scored on 4a/4b and rule 8.
+# SURVIVORSHIP: current-constituent panels; every LEVEL is optimistic.  The headlines are
+#   within-book (bucket vs its own book) and book-vs-own-null contrasts.
+
+  U56: 56 cols x 4705 days, 2008-01-02 -> 2026-09-15; SPY full 15.10% / 0.8829 / -33.72%
+  B136: 136 cols x 4703 days, 2008-01-02 -> 2026-09-11; SPY full 15.16% / 0.8861 / -33.72%
+====================================================================================================
+REPRODUCTION GATES (pre-registered, printed before any new number)
+====================================================================================================
+  G1 PASS  runner == engine.backtest at 10 bps on the min-hold book: max|dret| 2.08e-17
+  G2 PASS  CROSS-RUN idea 936's committed `.grid.csv` BOOK rows (U56, 4 cells incl. the W/H=63 tax cell) rebuilt here: max|d| 4.90e-07
+  G3 PASS  CROSS-RUN 936's committed realised turnover on the same two cells: max|d| 4.27e-07 turns/yr
+  G4 PASS  ATTRIBUTION IDENTITY: retained + free bucket contributions == the book's own gross return, every day; max|resid| 1.39e-17
+  G5 FAIL  live RULES v2 on U56 0.0862/1.2007/-0.1205 vs committed (0.0861, 1.1998, -0.1205) (|d| 9.32e-04; the committed triple is quoted to 4 dp and the panel has gained trading days since, and 936's own cross-run gate on this triple uses 5e-3 — at that tolerance this passes. Reported FAIL at the 5e-4 tolerance THIS run declared.)
+  G6 PASS  R_GATE subset R_TOP2N subset R_TOPN on the real tag stream: 0 violations; tagged share of held name-days R_GATE 0.109, R_TOP2N 0.115, R_TOPN 0.246
+  G7 PASS  H=0 produces ZERO retained-by-constraint name-days (0), so the whole tax is a min-hold object by construction
+  G8 PASS  SPY OOS 0.1521/0.8711/-0.3372 vs committed (0.1521, 0.8713, -0.3372) (max|d| 1.70e-04)
+GATES: 7 of 8 pass.
+
+====================================================================================================
+(A) BOOKS, THE TAX, AND THE BUCKET DECOMPOSITION
+====================================================================================================
+  books built: 408 arms  (63s)
+  null built: 256 arms x 3 tag rules  (151s)
+
+(A1) THE TAX (|MaxDD(H)| - |MaxDD(0)|, pp), median over mechanisms, 10 bps, gross 0.75
+hold         5     21    63    126
+panel freq                        
+B136  D    -1.60 +3.22 +5.18 +5.70
+      M    +0.00 +1.04 -0.12 +0.00
+      Q    +0.00 +0.00 +0.00 -4.95
+      W    -0.13 +5.64 +8.21 +0.69
+U56   D    -1.18 +1.49 +6.72 +6.11
+      M    +0.00 +5.96 +4.43 +0.54
+      Q    +0.00 +0.00 +0.00 -6.11
+      W    +0.02 +1.54 +7.38 +0.82
+  the gross-matched NULL's same tax (median over seeds), 936's control:
+hold          5      21     63     126
+panel freq                            
+B136  D    -70.45 -70.82 -72.43 -72.43
+      M     +0.00  +0.13  -0.78  -0.78
+      Q     +0.00  +0.00  +0.00  -2.41
+      W     +0.15  -0.25  -1.41  -0.47
+U56   D    -63.41 -64.36 -63.18 -63.18
+      M     +0.00  +0.35  -1.55  -1.55
+      Q     +0.00  +0.00  +0.00  +0.04
+      W     +0.14  +0.32  -0.44  +0.26
+
+(A2) ATTRIBUTION inside each book's own max-drawdown episode — ALL 12 DIAL POINTS
+     w_share = retained bucket's share of invested weight; c_share = its share of the
+     episode's loss; CONC = c_share / w_share.  CONC > 1 => the tax is concentrated in
+     the names the score wanted to drop.  n = 24 books per cell (2 panels x 3 mechs x 4 f).
+  rule        H    n   w_share   c_share  CONC med   CONC>1  NULL CONC   NULL>1
+  R_GATE      5   24    0.0000    0.0000    1.0473    0.500        nan      nan
+  R_GATE     21   24    0.2970    0.2948    0.9071    0.389        nan      nan
+  R_GATE     63   24    0.3512    0.3250    1.0131    0.556        nan      nan
+  R_GATE    126   24    0.3166    0.3376    0.9426    0.421        nan      nan
+  R_TOP2N     5   24    0.0000    0.0000    1.0254    0.500     1.1139    0.500
+  R_TOP2N    21   24    0.2970    0.2948    0.9152    0.389     1.0521    0.583
+  R_TOP2N    63   24    0.3970    0.3402    1.0163    0.611     0.9834    0.449
+  R_TOP2N   126   24    0.4346    0.3979    0.9256    0.333     0.9655    0.375
+  R_TOPN      5   24    0.0000    0.0000    1.1358    0.636     1.1582    0.562
+  R_TOPN     21   24    0.3407    0.3058    0.9465    0.389     1.0201    0.583
+  R_TOPN     63   24    0.4912    0.4880    1.0265    0.556     0.9886    0.449
+  R_TOPN    126   24    0.5367    0.5453    0.9576    0.375     0.9730    0.391
+
+(A2b) RESOLUTION — is the book's CONC distinguishable from its own null's at all?
+      yardstick = the null's across-seed sd of CONC in the same (panel, f, H, rule) cell;
+      a book CONC inside +/-2 of those sds of the null's mean is NOT a selection signal.
+  rule        H  book CONC  null mean  null sd       z   |z|>2
+  R_GATE      5     1.0473        nan      nan    +nan     nan
+  R_GATE     21     0.9071        nan      nan    +nan     nan
+  R_GATE     63     1.0131        nan      nan    +nan     nan
+  R_GATE    126     0.9426        nan      nan    +nan     nan
+  R_TOP2N     5     1.0254     1.1003   0.4472   +1.77   0.500
+  R_TOP2N    21     0.9152     1.0297   0.2138   -0.52   0.444
+  R_TOP2N    63     1.0163     0.9853   0.1711   +0.32   0.500
+  R_TOP2N   126     0.9256     0.9351   0.2000   -0.53   0.500
+  R_TOPN      5     1.1358     1.0593   0.4487   -0.14   0.364
+  R_TOPN     21     0.9465     1.0347   0.1585   -0.86   0.556
+  R_TOPN     63     1.0265     0.9947   0.2093   +0.52   0.389
+  R_TOPN    126     0.9576     0.9424   0.1375   -0.48   0.542
+
+(A3) the same 12 points on the FULL sample and split IS / OOS (WF-A)
+  rule        H  CONC dd  CONC full   CONC IS  CONC OOS   tax pp
+  R_GATE      5   1.0473     3.1675    3.5162    3.0773    +0.00
+  R_GATE     21   0.9071     2.1637    2.4091    1.6023    +1.51
+  R_GATE     63   1.0131     1.9464    1.7786    1.9942    +4.81
+  R_GATE    126   0.9426     1.6207    1.8481    1.4211    +0.69
+  R_TOP2N     5   1.0254     3.3253    3.2783    3.3489    +0.00
+  R_TOP2N    21   0.9152     1.8632    1.9875    1.6106    +1.51
+  R_TOP2N    63   1.0163     1.6252    1.4189    1.5410    +4.81
+  R_TOP2N   126   0.9256     1.3158    1.2495    1.3119    +0.69
+  R_TOPN      5   1.1358     1.5587    1.5741    1.5326    +0.00
+  R_TOPN     21   0.9465     1.2337    1.2673    1.0346    +1.51
+  R_TOPN     63   1.0265     1.2501    1.0616    1.2480    +4.81
+  R_TOPN    126   0.9576     1.0834    1.0490    1.0674    +0.69
+
+(A4) across the 24 books in each dial cell, rho(tax_pp, retained weight share) and
+     rho(tax_pp, CONC) — if the tax is the retained bucket's doing, the first is positive
+  R_GATE   n= 61  rho(tax, w_share) +0.7519   rho(tax, CONC) +0.2128
+  R_TOP2N  n= 66  rho(tax, w_share) +0.5142   rho(tax, CONC) +0.5350
+  R_TOPN   n= 71  rho(tax, w_share) +0.2658   rho(tax, CONC) +0.3201
+
+====================================================================================================
+(B) THE CAUSAL / PRICE LEG — a SOFT min hold releases exactly the flagged names
+====================================================================================================
+  tax recovered = 1 - (|MaxDD_soft| - |MaxDD_H0|) / (|MaxDD_hard| - |MaxDD_H0|)
+  rebate kept   = (turn_H0 - turn_soft) / (turn_H0 - turn_hard)
+  rule        H    n   tax rec   rebate    dCAGR  dSharpe  4b hard  4b soft  4a soft
+  R_GATE      5   24     0.000    0.765  +0.0000  +0.0000        9        9        0
+  R_GATE     21   24     1.000    0.716  -0.0056  -0.0005        2        9        0
+  R_GATE     63   24     1.082    0.691  -0.0197  -0.0283        0        9        0
+  R_GATE    126   24     0.998    0.712  -0.0207  -0.0281        6       12        0
+  R_TOP2N     5   24     0.000    0.757  +0.0000  +0.0000        9        9        0
+  R_TOP2N    21   24     1.002    0.693  -0.0058  +0.0000        2        9        0
+  R_TOP2N    63   24     1.039    0.562  -0.0199  -0.0296        0        9        0
+  R_TOP2N   126   24     1.010    0.602  -0.0210  -0.0252        6        9        0
+  R_TOPN      5   24     1.000    0.000  +0.0000  +0.0000        9        8        0
+  R_TOPN     21   24     1.000    0.000  -0.0063  -0.0020        2        8        0
+  R_TOPN     63   24     1.000    0.000  -0.0223  -0.0775        0        8        0
+  R_TOPN    126   24     1.000    0.000  -0.0206  -0.0841        6        8        0
+
+====================================================================================================
+(C) BOTH KEEP PATHS over every arm, and RULE 8
+====================================================================================================
+  BOOK_H0    n=  24   4a   0   4b   8   BOTH   0
+  BOOK_HARD  n=  96   4a   0   4b  17   BOTH   0
+  BOOK_SOFT  n= 288   4a   0   4b 107   BOTH   0
+  NULL_HARD  n= 256   4b  14  (base rate 0.055)
+  binding 4b legs over all book arms (count FAILING): L_DD 261, L_H2 103, L_OOS 48, L_H1 10, L_CAGR 5
+
+  RULE 8 — arm chosen on IS (<= 2016-12-31) Sharpe ALONE per (panel, mech); OOS read ONCE.
+  U56   CAND20   -> BOOK_SOFT  f=M H=126 rule=R_TOP2N  | IS Sh 1.1455 | OOS 15.50%/1.1863/-19.59% | full 14.36%/1.1667/-19.59% | halves 1.2631/1.0943 vs SPY 0.9588/0.8207 | turn 3.38/yr | 4a False 4b True
+  U56   R3_84    -> BOOK_HARD  f=W H= 63 rule=-        | IS Sh 1.2428 | OOS 15.73%/1.0581/-25.81% | full 15.47%/1.1251/-25.81% | halves 1.3321/0.9842 vs SPY 0.9588/0.8207 | turn 3.66/yr | 4a False 4b False
+  U56   MOMONLY  -> BOOK_HARD  f=W H=126 rule=-        | IS Sh 1.2491 | OOS 17.37%/1.1575/-20.58% | full 16.74%/1.1911/-20.58% | halves 1.3465/1.0795 vs SPY 0.9588/0.8207 | turn 2.62/yr | 4a False 4b False
+  B136  CAND20   -> BOOK_HARD  f=M H= 21 rule=-        | IS Sh 1.2543 | OOS 15.92%/0.9998/-27.14% | full 16.78%/1.1026/-27.14% | halves 1.3662/0.8941 vs SPY 0.9596/0.8259 | turn 5.64/yr | 4a False 4b False
+  B136  R3_84    -> BOOK_SOFT  f=M H= 21 rule=R_TOP2N  | IS Sh 1.2477 | OOS 15.81%/1.0005/-26.83% | full 16.56%/1.0996/-26.83% | halves 1.3407/0.9106 vs SPY 0.9596/0.8259 | turn 5.47/yr | 4a False 4b False
+  B136  MOMONLY  -> BOOK_HARD  f=D H= 21 rule=-        | IS Sh 1.2286 | OOS 15.95%/0.9782/-25.91% | full 16.63%/1.0769/-25.91% | halves 1.3083/0.9013 vs SPY 0.9596/0.8259 | turn 9.42/yr | 4a False 4b False
+  benchmarks U56: SPY full 15.10%/0.8829/-33.72% OOS 15.21%/0.8711/-33.72% | RULES v2 full 8.62%/1.2007/-12.05% OOS 9.45%/1.2762/-12.05%
+  benchmarks B136: SPY full 15.16%/0.8861/-33.72% OOS 15.33%/0.8767/-33.72% | RULES v2 full 7.98%/1.0993/-12.24% OOS 7.88%/1.1059/-12.24%
+  picks beating RULES v2 on OOS Sharpe: 0 of 6; beating SPY: 6 of 6
+
+====================================================================================================
+(D) PRE-REGISTERED HYPOTHESES (declared in the docstring before any number)
+====================================================================================================
+  H_CONC     FAIL  retained bucket's loss share exceeds its weight share (median CONC > 1) in 6 of 12 dial cells; range 0.9071..1.1358
+  H_NULLFLAT FAIL  the gross-matched null's CONC sits at 1.0 (max|CONC-1| 0.1582 over 12 cells, range 0.9655..1.1582)
+  H_GAP      FAIL  median (book CONC - null CONC) over the 12 cells = -0.0312; a gap at or below 0 makes the concentration mechanical, not selective
+  H_RESOLVE  FAIL  the book's CONC is resolvable against its own null at all: median z -0.31 over 12 cells, share of books with |z| > 2 = 0.474
+  H_SOFT     PASS  a SOFT min hold recovers >= 50% of the tax in its best dial cell (max median recovery +1.082, min +0.000)
+  H_REBATE   PASS  and keeps >= 70% of the turnover rebate somewhere (max median 0.765, min 0.000)
+  H_BOTH     PASS  56 of 288 (book, rule, H) arms recover >= 50% of the tax AND keep >= 70% of the rebate
+  H_KEEP     PASS  SOFT passes 4b more often than HARD: 107 of 288 vs 17 of 96
+  H_WF       PASS  the attribution verdict is the same in both windows: CONC IS 1.4588, CONC OOS 1.4254
+  H_4A       PASS  no arm on this grid clears 4a against the live RULES v2 book (0 of 408 do)
+  6 of 10 pre-registered hypotheses PASS.
+
+====================================================================================================
+OUTPUTS
+====================================================================================================
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.gates.csv  (8 rows, 3 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.arms.csv  (408 rows, 26 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.nullarms.csv  (256 rows, 25 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.attribution.csv  (288 rows, 25 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.nullattribution.csv  (768 rows, 17 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.dial.csv  (12 rows, 13 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.resolution.csv  (12 rows, 8 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.soft.csv  (288 rows, 24 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.walkforward.csv  (6 rows, 22 cols)
+  wrote 2026-09-16_does-the-MIN-HOLD-DRAWDOWN-TAX-fall-on-the-NAMES-the-SCORE-WANTED-TO-DROP_C.hypotheses.csv  (10 rows, 3 cols)
+# done in 154s
