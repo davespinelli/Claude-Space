@@ -1,0 +1,208 @@
+# Idea 1039 (lane C, 2026-09-16) — is the END-COMPOSITION BAND itself a RHO artefact?
+# 2 tuned dials: OVERLAP FRACTION [0.0, 0.25, 0.5, 0.75, 0.9] x END GRID (window length) [400, 550, 700] = 15 points, ALL reported, none selected.  HEADLINE L = 550.
+# Window COUNT held FIXED at K = 6 (a band is max-min and grows with K); 6 x 700 = 4,200 days is the largest DISJOINT grid this tape admits.
+# Controls at every point: PLACEMENT (<= 4 anchors), panel [U56, B136], cost [0.0, 10.0, 25.0] bps, POOL = the record's 18 GRID books per panel, and BOTH band conventions.
+# NULL: 1,000 JOINT day-resamples per cell — the same day draw for all 18 books, so
+#   cross-book correlation is inherited and only real time-variation is destroyed; the
+#   SAME windows are read off the synthetic path, so span, length and overlap are too.
+# CONFOUND STATED UP FRONT: at fixed (K, L) less overlap NECESSARILY spans more calendar,
+#   so the grid alone cannot separate overlap from macro heterogeneity.  That is why the
+#   PERCENTILE against a geometry-matched null, not the band, is the adjudicable object.
+# SURVIVORSHIP: U56/B136 are current-constituent panels — every LEVEL is optimistic; the
+#   measured object is a ratio of two bands off the SAME books, and where the bias does
+#   not cancel it INFLATES the null, making H_NULL the EASIER call.
+
+   CALENDAR: U56 ends 2026-09-15 (4705 days), B136 ends 2026-09-11 (4703 days); each panel keeps its OWN calendar (1013/1023/1031/1035/1036's construction).  No splice.
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+POOL = 36 never-memo-selected GRID books (18 U56 / 18 B136).  END GRID Q16 = 16 ends 2015-03-31..2018-12-31; declared split 2016-12-31 read separately for rule 8.
+Post-warmup net series: U56 4,445 days, B136 4,443 days (from 2009-01-13 / 2009-01-13).
+
+## Reproduction gates (printed BEFORE any hypothesis number is read)
+G1   fast_run == engine.backtest (returns / turnover): 6.939e-18/1.665e-16  PASS
+G2   POOL is the record's grid_books(), 18 per panel: 18/18  PASS
+G3   CROSS-RUN SPY OOS triple at 2016-12-31: 0.1521/0.8711/-0.3372 vs (0.1521, 0.8713, -0.3372), max|d| 1.70e-04  PASS
+G4   CROSS-RUN 1013's four published declared-split picks: 4/4, max|d| 4.59e-04  PASS
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.crossrun1013.csv  (4 rows, 10 cols)
+G5   determinism (ladder rebuilt): max|d| 0.0e+00  PASS
+G6   CROSS-RUN 1036's K=1 placement band on Q16: 0.0645..0.0836 spread 0.0191 vs published 0.0645..0.0836/0.0191, max|d| 0.0000  PASS
+G7   CROSS-RUN 1036's measured cross-end rho on Q16: 0.9046 vs published 0.8934  PASS
+G8   WINDOW CONSTRUCTION (length, count, realised overlap, disjointness at f=0): 30/30  PASS
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.windows.csv  (30 rows, 9 cols)
+G9   cumsum window Sharpe == fsharpe on the slice == the ladder's OOS_Sharpe: 7.33e-15 / 7.33e-15  PASS
+
+   building the null: 1,000 joint day-resamples x 6 cells x 17 grids ...
+   null built in 20s so far.
+G10  NULL SAMPLER (corr preserved; rho ~0 at f=0, high at f=0.90; non-degenerate): mean|dcorr| 0.0166; null rho f=0 +0.0404, f=0.90 +0.7348; null band sd 0.0670  PASS
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.gates.csv  (10 rows, 4 cols)
+
+## (A) THE GRIDS — observed composition band at every (OVERLAP, LENGTH) point
+   sd_RAW(w) = cross-book sd of the 18 GRID books' Sharpe on window w; band = max - min
+   over the K windows of the grid.  Two conventions, both published:
+     BAND_REC   the record's (1036's): median over the 6 panel x rung cells FIRST, band
+                over the windows SECOND — the convention 1036's 0.0191 is in;
+     BAND_CELL  band within a cell, median over the 6 cells — the one the null is read
+                against, because a null must be built on ONE book set at a time.
+
+   L     f stride  span(d)     rho | BAND_REC BAND_CELL null_med obs/null  pctile | anchors anchor band range
+ 400  0.00    400     2400 -0.0679 |   0.2016    0.2020   0.1992    1.014   0.480 |       4    0.1758..0.3736
+ 400  0.25    300     1900 -0.0185 |   0.0965    0.0967   0.1968    0.492   0.056 |       4    0.0967..0.3779
+ 400  0.50    200     1400 -0.0450 |   0.0641    0.0979   0.1851    0.529   0.094 |       4    0.0863..0.3322
+ 400  0.75    100      900  0.2936 |   0.0618    0.0786   0.1570    0.501   0.072 |       4    0.0786..0.2920
+ 400  0.90     40      600  0.7903 |   0.0529    0.0913   0.1091    0.838   0.363 |       4    0.0289..0.2034
+ 550  0.00    550     3300 -0.0725 |   0.1949    0.2382   0.1671    1.426   0.785 |       4    0.2069..0.2961
+ 550  0.25    412     2610  0.0193 |   0.1182    0.1353   0.1648    0.821   0.345 |       4    0.1199..0.3284
+ 550  0.50    275     1925 -0.0090 |   0.1028    0.1266   0.1574    0.804   0.335 |       4    0.1051..0.2611
+ 550  0.75    138     1240  0.1422 |   0.0538    0.0809   0.1346    0.601   0.159 |       4    0.0809..0.2631
+ 550  0.90     55      825  0.7052 |   0.0295    0.0682   0.0934    0.730   0.265 |       4    0.0439..0.1001
+ 700  0.00    700     4200 -0.0587 |   0.1328    0.1837   0.1499    1.225   0.641 |       4    0.1718..0.2467
+ 700  0.25    525     3325 -0.0290 |   0.2388    0.2813   0.1455    1.933   0.970 |       4    0.1720..0.2813
+ 700  0.50    350     2450 -0.0156 |   0.1166    0.1334   0.1390    0.960   0.431 |       4    0.0776..0.2236
+ 700  0.75    175     1575  0.1985 |   0.0502    0.0554   0.1221    0.454   0.055 |       4    0.0554..0.1733
+ 700  0.90     70     1050  0.7443 |   0.0270    0.0428   0.0836    0.512   0.087 |       4    0.0292..0.0909
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.grids.csv  (17 rows, 15 cols)
+
+   THE RECORD'S OWN GRID (K = 16 windows, so its band is NOT comparable to the K = 6 rows
+   above — a band grows with the window count; it is here for the LENGTH control):
+grid          K  len(d)     rho | BAND_REC BAND_CELL null_med obs/null  pctile
+Q16_TAIL     16 1936..2881  0.9046 |   0.0191    0.0335   0.0361    0.928   0.409
+Q16_FIXLEN   16 1936..1936  0.9063 |   0.0348    0.0469   0.0588    0.798   0.280
+
+   K-MATCHED read of Q16_TAIL (6 of its 16 ends, every stride-2 placement) so the
+   record's grid can be compared to the K = 6 rows above:
+      offset 0: band_cell 0.0196  (2015-03-31..2017-09-30)
+      offset 1: band_cell 0.0183  (2015-06-30..2017-12-31)
+      offset 2: band_cell 0.0228  (2015-09-30..2018-03-31)
+      offset 3: band_cell 0.0190  (2015-12-31..2018-06-30)
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.kmatched.csv  (4 rows, 3 cols)
+      median over placements: 0.0193  — the record's K=6-matched band, against 0.2382 for the DISJOINT L=550 grid.
+
+## (B) THE NULL — the observed band as a percentile of its own geometry-matched null
+   Per cell: the 18 books' daily net returns resampled JOINTLY by day, the SAME windows
+   read off the synthetic path, band recomputed, 1,000 reps.  Span, length, count and
+   overlap are inherited exactly; only real time-variation is destroyed.
+   L     f | U56/0 U56/10 U56/25 B136/0 B136/10 B136/25 |  median    max
+ 400  0.00 |  0.821  0.840  0.810  0.149  0.064  0.094 |   0.480  0.840
+ 400  0.25 |  0.264  0.185  0.085  0.027  0.015  0.018 |   0.056  0.264
+ 400  0.50 |  0.033  0.000  0.015  0.155  0.206  0.216 |   0.094  0.216
+ 400  0.75 |  0.171  0.065  0.215  0.078  0.048  0.059 |   0.072  0.215
+ 400  0.90 |  0.439  0.319  0.067  0.291  0.408  0.548 |   0.363  0.548
+ 550  0.00 |  0.861  0.871  0.796  0.618  0.737  0.774 |   0.785  0.871
+ 550  0.25 |  0.837  0.842  0.644  0.045  0.012  0.014 |   0.345  0.842
+ 550  0.50 |  0.523  0.534  0.539  0.147  0.136  0.087 |   0.335  0.539
+ 550  0.75 |  0.174  0.460  0.619  0.144  0.025  0.082 |   0.159  0.619
+ 550  0.90 |  0.320  0.299  0.136  0.122  0.231  0.445 |   0.265  0.445
+ 700  0.00 |  0.806  0.818  0.597  0.136  0.292  0.685 |   0.641  0.818
+ 700  0.25 |  0.976  0.978  0.973  0.799  0.888  0.966 |   0.970  0.978
+ 700  0.50 |  0.783  0.816  0.710  0.152  0.055  0.007 |   0.431  0.816
+ 700  0.75 |  0.038  0.069  0.364  0.101  0.027  0.040 |   0.055  0.364
+ 700  0.90 |  0.049  0.322  0.688  0.076  0.027  0.098 |   0.087  0.688
+  Q16_TAIL |  0.609  0.537  0.217  0.396  0.036  0.423 |   0.409  0.609
+Q16_FIXLEN |  0.383  0.469  0.374  0.015  0.000  0.187 |   0.280  0.469
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.nullread.csv  (102 rows, 9 cols)
+
+## (E) RULE-8 WALK-FORWARD at PROTOCOL's declared split 2016-12-31 (IS 2009-2016 chooses, OOS 2017-2026 read ONCE)
+   Every chooser's pick, its OOS triple, and BOTH KEEP paths against the LIVE RULES v2
+   baseline and against SPY.  18 points, all published.
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.walkforward.csv  (18 rows, 28 cols)
+panel  cost   chooser pick                         | OOS CAGR     Sh   MaxDD |  SPY OOS     Sh | v2 OOS Sh |  4a  4b    legs
+U56       0 IS_SHARPE U56-band0.08-g1.00           |   12.16%  1.177 -19.04% |   15.21%  0.871 |     1.301 |   n   Y   11111
+U56       0   IS_LEGS U56-band0.08-g1.00           |   12.16%  1.177 -19.04% |   15.21%  0.871 |     1.301 |   n   Y   11111
+U56       0   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   16.68%  1.372 -15.52% |   15.21%  0.871 |     1.301 |   n   Y   11111
+U56      10 IS_SHARPE U56-band0.08-g1.00           |   11.99%  1.162 -19.05% |   15.21%  0.871 |     1.276 |   n   Y   11111
+U56      10   IS_LEGS U56-band0.08-g1.00           |   11.99%  1.162 -19.05% |   15.21%  0.871 |     1.276 |   n   Y   11111
+U56      10   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   15.60%  1.293 -15.59% |   15.21%  0.871 |     1.276 |   n   Y   11111
+U56      25 IS_SHARPE U56-band0.08-g1.00           |   11.73%  1.139 -19.07% |   15.21%  0.871 |     1.239 |   n   Y   11111
+U56      25   IS_LEGS U56-band0.08-g1.00           |   11.73%  1.139 -19.07% |   15.21%  0.871 |     1.239 |   n   Y   11111
+U56      25   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   14.00%  1.174 -15.71% |   15.21%  0.871 |     1.239 |   n   Y   11111
+B136      0 IS_SHARPE B136-qroll-q0.17-w504-d0.50  |   14.06%  1.200 -17.07% |   15.33%  0.877 |     1.136 |   n   Y   11111
+B136      0   IS_LEGS B136-band0.08-g1.00          |   11.24%  1.115 -19.48% |   15.33%  0.877 |     1.136 |   n   Y   11111
+B136      0   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   15.43%  1.238 -17.07% |   15.33%  0.877 |     1.136 |   n   Y   11111
+B136     10 IS_SHARPE B136-band0.08-g1.00          |   11.05%  1.097 -19.50% |   15.33%  0.877 |     1.106 |   n   Y   11111
+B136     10   IS_LEGS B136-band0.08-g1.00          |   11.05%  1.097 -19.50% |   15.33%  0.877 |     1.106 |   n   Y   11111
+B136     10   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   14.30%  1.157 -17.31% |   15.33%  0.877 |     1.106 |   n   Y   11111
+B136     25 IS_SHARPE B136-band0.08-g1.00          |   10.76%  1.071 -19.53% |   15.33%  0.877 |     1.061 |   n   Y   11111
+B136     25   IS_LEGS B136-band0.08-g1.00          |   10.76%  1.071 -19.53% |   15.33%  0.877 |     1.061 |   n   Y   11111
+B136     25   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   12.62%  1.036 -17.72% |   15.33%  0.877 |     1.061 |   n   Y   11111
+   4a passes 0/18; 4b passes 18/18.  Baseline RULES v2 (U56, 10 bps) full 8.62% / 1.201 / -12.05% (halves 1.232/1.176, OOS Sharpe 1.276); SPY full 15.10% / 0.883 / -33.72%.
+   NOTE: this arm carries NO new book.  Every pick is a GRID ladder book the record
+   already holds; it is run so the band question is answered on a rule-8 object too.
+
+## Pre-registered hypotheses
+H_COLLAPSE  FAIL  bar: band at f=0.00 <= 0.5 x band at f=0.90, at L=550
+            L=550: f=0.00 0.2382 vs f=0.90 0.0682 (ratio 3.49x); all lengths L400 0.2020/0.0913 (2.21x), L550 0.2382/0.0682 (3.49x), L700 0.1837/0.0428 (4.29x)
+H_MONO      FAIL  bar: band monotone non-increasing in f (tol 0.005) at every length
+            L400: 0.2020 0.0967 0.0979 0.0786 0.0913; L550: 0.2382 0.1353 0.1266 0.0809 0.0682; L700: 0.1837 0.2813 0.1334 0.0554 0.0428; violations 2
+H_RHO       FAIL  bar: cross-window rho monotone in f (tol 0.02) and |rho| <= 0.30 at f = 0.00
+            L400: -0.068 -0.019 -0.045 +0.294 +0.790; L550: -0.073 +0.019 -0.009 +0.142 +0.705; L700: -0.059 -0.029 -0.016 +0.199 +0.744; worst |rho| at f=0 0.073; Q16_TAIL rho 0.9046
+H_NULL      FAIL  bar: observed band at percentile <= 0.95 of its own geometry-matched null at ALL 15 points (median over the 6 cells)
+            worst median percentile 0.970; worst SINGLE-CELL percentile 0.978; median over all points 0.335; median obs/null ratio 0.804
+H_LEN       FAIL  bar: length-matching the record's own Q16 grid moves its band by <= 0.010
+            Q16_TAIL band_cell 0.0335 (BAND_REC 0.0191, the convention 1036 published 0.0191 in) vs Q16_FIXLEN 0.0469 (BAND_REC 0.0348); |d| 0.0134; percentiles 0.409 -> 0.280
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.hypotheses.csv  (5 rows, 4 cols)
+  wrote 2026-09-16_is-the-END-COMPOSITION-BAND-itself-a-RHO-artefact_C.keeppaths.csv  (2 rows, 6 cols)
+
+## VERDICT
+   gates 10/10 PASS; hypotheses 0/5 PASS (H_COLLAPSE, H_MONO, H_RHO, H_NULL, H_LEN FAIL).
+
+   ANSWER to the queue's question: NO — the composition band is not a rho artefact, and
+   it does not collapse when the windows stop overlapping.  It does the OPPOSITE:
+     - at L = 550, K = 6, the band runs 0.2382 -> 0.1353 -> 0.1266 -> 0.0809 -> 0.0682 over f = 0.00/0.25/0.50/0.75/0.90,
+       i.e. the DISJOINT grid's band is 3.49x the f=0.90 grid's, not half of it;
+     - measured cross-window rho moves -0.073 -> +0.019 -> -0.009 -> +0.142 -> +0.705 (worst |rho| at f=0 over the three lengths 0.073, against 0.9046 on the
+       record's Q16), so the grid separates what its label says it separates;
+     - AT MATCHED WINDOW COUNT the gap is an order of magnitude: the record's own Q16
+       grid read at K = 6 (every stride-2 placement) bands 0.0193, against 0.2382 for
+       the DISJOINT L = 550 grid — 12.3x;
+     - and the reason is arithmetic, not economics: a band is max - min over K draws, and
+       K nearly-identical (overlapping) draws cannot spread.  Overlap SUPPRESSES a band.
+
+   THE TWO SHAPE FAILS, reported as loudly as the answer.  H_MONO and H_RHO both FAIL,
+   and neither failure touches the answer above:
+     - H_MONO: 2 violations of a 0.005 tolerance, L400 at f=0.90; L700 at f=0.25.  The large one is
+       L=700 f=0.25 (0.2813 against 0.1837 at f=0.00) — and it is the SAME point that
+       breaches H_NULL below, i.e. one grid, not a trend, and it sits in the direction of
+       MORE band at LOW overlap, which the answer already claims.
+     - H_RHO: its LEVEL leg passes (|rho| <= 0.073 at f=0.00 on all three lengths,
+       rising to +0.705..+0.790 at f=0.90); only its MONOTONICITY leg fails,
+       on wiggles of 0.026-0.028 at L=400 and L=550 where rho is statistically zero and a
+       6-window correlation read over 18 books cannot resolve 0.02.  The bar was too tight
+       for the object; it is scored FAIL as written.
+
+   WHAT SURVIVES, and it is the reusable half.  Almost every band in this run — the
+   record's own Q16 band included — is INSIDE the band its own geometry-matched null
+   produces, but NOT all of them, and H_NULL is recorded FAIL for it:
+     14 of 15 points sit at or below the 0.95 bar; the exception is L = 700, f = 0.25 at 0.970
+     (worst single cell 0.978).  Over 15 points a correct sampler is EXPECTED to breach 0.95 about 0.75 times, so one
+     breach is not evidence of a composition effect — but the bar was pre-registered at
+     ALL points and it is scored as it was written, not as it would be convenient.
+     Median percentile over the 15 points 0.335, median obs/null ratio 0.804;
+     Q16_TAIL itself sits at 0.409 of its own null (observed 0.0335 against a null median of 0.0361), and
+     Q16_FIXLEN at 0.280.  So 1036's 0.0191 is a SAMPLING-GEOMETRY fact
+     and not a statement about which episodes a window holds: it should never have been
+     read as END COMPOSITION.
+
+   THE LENGTH CHANNEL — H_LEN FAIL.  Length-matching the record's own 16 windows moves the band
+     from 0.0335 to 0.0469 (|d| 0.0134) and 1036's OWN convention from 0.0191 to 0.0348,
+     i.e. 1.82x.  So a large part of the published 0.0191 is WINDOW LENGTH, not content — and
+     equalising the lengths makes the band BIGGER, because equal-length staggered windows
+     are less nested than tail windows.  Both directions are geometry; neither is content.
+
+   WHAT THE RECORD MAY NO LONGER SAY: that the 0.0191 band shows END COMPOSITION moves
+   the K-free null sd, or that overlap between OOS windows INFLATES a published band.  On
+   this tape overlap deflates it, by roughly an order of magnitude at matched K.
+   WHAT IT MAY SAY: that a band over K windows is only interpretable beside (i) K, (ii)
+   the windows' lengths, (iii) their overlap, and (iv) the band the same books' own
+   resampled paths give on that same geometry.
+
+   KEEP / KILL under PROTOCOL rule 4.  This run carries NO new book: its object is the
+   record's own null construction, and the rule-8 arm re-runs GRID ladder books the
+   record already holds.  Neither KEEP path is claimable and none is claimed.
+
+   PROPOSED (not applied — PROTOCOL rule 6 reserves changes to the Sunday review):
+     rule 8 WINDOW GEOMETRY clause — a published band over a grid of windows states the
+     window COUNT, the window LENGTHS and the OVERLAP, and is read against the band the
+     SAME books' own resampled paths produce on that SAME geometry.  A band is max - min
+     over K correlated draws: on this tape, holding K = 6 and the length fixed, it runs
+     0.2382 at zero overlap against 0.0682 at 90% overlap, and the record's own Q16 grid bands 0.0193
+     at the same K.  Geometry, not composition, is what an unqualified band measures.
+Runtime 20.7s.
