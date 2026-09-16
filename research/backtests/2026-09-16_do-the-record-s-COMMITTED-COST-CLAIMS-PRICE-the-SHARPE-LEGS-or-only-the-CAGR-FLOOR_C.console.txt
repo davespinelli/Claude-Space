@@ -1,0 +1,151 @@
+# QUEUE idea 1098 (lane C, 2026-09-16) — do the record's COMMITTED COST CLAIMS price the
+#   SHARPE LEGS, or only the CAGR FLOOR?
+# TWO DIALS: CLAIM SET ['NARROW', 'PROX', 'WIDE'] x COST RUNG [0, 10, 25, 50] bps = 12 points,
+#   ALL published.  Panels, ladders, legs and choosers are NOT dials — all reported.
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)]; cap INF; max_vol 0.6; gross 0.75; cadence
+#   W; min hold 126; N 20; LAG 1; warm-up 260; IS end 2016-12-31;
+#   4b constants 0.6/0.7.  Fine ladder 0..200 bps is a MEASUREMENT AXIS.
+# DECLARED BEFORE ANY NUMBER:
+#   H_SHARPE_FIRST  killer leg is a SHARPE leg in a MAJORITY of books with finite c*.
+#   H_CAGR_LAST     L_CAGR is the LAST full leg to die in a MAJORITY of those books.
+#   H_DD_INERT      L_DD's verdict is unchanged 0->50 bps at >= 0.90 of 54 books.
+#   H_CAGR_ASSUMED  among committed cost claims naming a leg (headline set PROX), CAGR
+#                   is named in a MAJORITY — the queue's 'only the CAGR floor' reading.
+#   H_RESCORE_FLIPS among CAGR-naming claims that RESOLVE to a measured cell, a MAJORITY
+#                   are REFUTED by their own cell's measured killer leg.
+#   DECISION RULE   the binary is answered by the PROX census shares; the re-score is
+#                   published as CONFIRMED / REFUTED / UNDECIDED (resolved) and
+#                   TRANSFERRED (unresolved, an EXTRAPOLATION, never a re-derivation).
+
+## U56: 56 columns, 4705 days 2008-01-02..2026-09-15, 17.64 scored years
+   SPY (uncharged 4b bar)  full 15.10% / 0.8829 / -33.72%  halves 0.9588/0.8207  OOS 15.21% / 0.8711 / -33.72%
+   RULES v2 @10 bps  full 8.62% / 1.2007 / -12.05%  OOS 9.45% / 1.2762 / -12.05%
+## B136: 136 columns, 4703 days 2008-01-02..2026-09-11, 17.63 scored years
+   SPY (uncharged 4b bar)  full 15.16% / 0.8861 / -33.72%  halves 0.9596/0.8259  OOS 15.33% / 0.8767 / -33.72%
+   RULES v2 @10 bps  full 7.98% / 1.0993 / -12.24%  OOS 7.88% / 1.1059 / -12.24%
+
+## CORPUS STAMP: 888 files, 12,653,167 bytes, sha256(file list)[:16] = dfb0b9e49439fc08
+   harvested 2,088 cost-and-verdict sentences (59 NARROW, 125 PROX, 2,088 WIDE, 110 carry a numeric rung)
+
+## GATES
+   PASS  G3 CROSS-RUN committed SPY OOS triple   (1.70e-04)
+   PASS  G4 live RULES v2 MaxDD @10 bps == committed -12.05%   (4.95e-05)
+   PASS  G1 r(c)=g-tn*c/1e4 == engine.backtest @0 bps   (1.39e-17)
+   PASS  G1b r(c)=g-tn*c/1e4 == engine.backtest @10 bps   (1.39e-17)
+   PASS  G1c r(c)=g-tn*c/1e4 == engine.backtest @25 bps   (1.39e-17)
+   PASS  G2 CROSS-RUN committed U56 W/H126 N=20 triple @10 bps   (3.18e-07)
+   PASS  G5 CROSS-RUN 1094's committed n=12/H=21 ladder (0/10/25/50 bps triples)   (4.96e-05)
+   PASS  G5b 1094's c* full/OOS == 63/64 (got 63/64, killer L_H1)   (0.00e+00)
+   PASS  G5c 1094's killer leg is L_H1   (0.00e+00)
+   PASS  G6 CROSS-RUN 1097's committed c*_full on the 18 shared N/H126 cells   (0.00e+00)
+   PASS  G7 CAGR non-increasing in the cost rung at every book   (0.00e+00)
+   PASS  G9 harvest is reproducible (two scans identical)   (0.00e+00)
+   PASS  G10 corpus stamp (888 files / 12,653,167 bytes / dfb0b9e49439fc08)   (0.00e+00)
+   PASS  G8 determinism (incumbent book rebuilt end-to-end)   (0.00e+00)
+   14 of 14 PASS
+
+## PART A — WHICH LEG ACTUALLY BINDS AS COST RISES (54 books, 1-bp ladder 0..200)
+   books clearing all five FULL 4b legs at 0 bps: 17 of 54   (of which 0 survive the whole 0..200 bps ladder)
+   KILLER POPULATION (declared): the 17 books that both pass at 0 bps and die by 200
+     killer kind SHARPE   10  (0.588)
+     killer kind CAGR      4  (0.235)
+     killer kind DD        3  (0.176)
+   killer leg (exact):  L_H1=5  L_H2=5  L_CAGR=4  L_DD=3
+   killer contains a SHARPE leg 0.588 | a CAGR leg 0.235 | a DD leg 0.176
+   LAST full leg to die: L_DD=12  L_CAGR=4  L_H1=1
+   L_DD verdict unchanged 0->50 bps at 0.963 of 54 books
+   median c*_full over the 17 dying books = 68 bps  (min 8, max 172)
+     ladder N        n= 3  killer kinds SHARPE:2, DD:1
+     ladder H        n= 2  killer kinds DD:1, SHARPE:1
+     ladder GROSS    n=10  killer kinds SHARPE:6, CAGR:4
+     ladder CADENCE  n= 2  killer kinds SHARPE:1, DD:1
+
+## PART A2 — THE BINDING LEG AT EACH DIAL RUNG (headroom on the cost axis, bps)
+    0 bps: L_H2=29  L_H1=16  L_CAGR=5  L_DD=3  L_OOS=1   median headroom 80 bps
+   10 bps: L_H2=29  L_H1=17  L_CAGR=5  L_DD=2  L_OOS=1   median headroom 70 bps
+   25 bps: L_H2=27  L_H1=18  L_CAGR=4  L_OOS=3  L_DD=2   median headroom 58 bps
+   50 bps: L_H1=23  L_OOS=14  L_H2=11  L_CAGR=4  L_DD=2   median headroom 46 bps
+
+## PART B — THE RECORD'S COMMITTED COST CLAIMS (census, 12 dial points)
+claim_set  cost_rung  n_claims  n_named  share_unnamed  n_at_rung  share_CAGR  share_SHARPE  share_DD  share_CAGR_only  share_SHARPE_only  n_resolved  n_resolved_loose  share_CAGR_at_rung  share_SHARPE_at_rung
+   NARROW     0.0000        59       59         0.0000          8      0.3390        0.3051    0.4576           0.2881             0.2203           1                10              0.2500                0.2500
+   NARROW    10.0000        59       59         0.0000         20      0.3390        0.3051    0.4576           0.2881             0.2203           1                10              0.4000                0.2500
+   NARROW    25.0000        59       59         0.0000         16      0.3390        0.3051    0.4576           0.2881             0.2203           1                10              0.3125                0.3125
+   NARROW    50.0000        59       59         0.0000          5      0.3390        0.3051    0.4576           0.2881             0.2203           1                10              0.2000                0.2000
+     PROX     0.0000       125      125         0.0000          9      0.3920        0.4720    0.4880           0.2240             0.2160           2                18              0.3333                0.3333
+     PROX    10.0000       125      125         0.0000         51      0.3920        0.4720    0.4880           0.2240             0.2160           2                18              0.4118                0.5490
+     PROX    25.0000       125      125         0.0000         30      0.3920        0.4720    0.4880           0.2240             0.2160           2                18              0.4667                0.3667
+     PROX    50.0000       125      125         0.0000          6      0.3920        0.4720    0.4880           0.2240             0.2160           2                18              0.1667                0.5000
+     WIDE     0.0000      2088      212         0.8985        201      0.3915        0.4151    0.4717           0.2358             0.2311          82               425              0.4667                0.4000
+     WIDE    10.0000      2088      212         0.8985        915      0.3915        0.4151    0.4717           0.2358             0.2311          82               425              0.4382                0.4382
+     WIDE    25.0000      2088      212         0.8985        554      0.3915        0.4151    0.4717           0.2358             0.2311          82               425              0.4118                0.3922
+     WIDE    50.0000      2088      212         0.8985         98      0.3915        0.4151    0.4717           0.2358             0.2311          82               425              0.2500                0.4167
+   OF EVERY COMMITTED COST-AND-VERDICT SENTENCE, 0.8985 (1,876 of 2,088) NAMES NO LEG AT ALL.
+
+## PART B2 — RE-SCORING THE CLAIMS THAT ASSUMED THE CAGR FLOOR
+   NARROW   CAGR-only claims   17  resolved   0  TRANSFERRED=17
+   PROX     CAGR-only claims   28  resolved   0  TRANSFERRED=28
+   WIDE     CAGR-only claims   50  resolved   0  TRANSFERRED=50
+   RESOLUTION, both rules: R_STRICT (headline) resolves 82 of 2088 harvested claims; R_LOOSE — panel alone, unstated dimensions taking the frozen defaults — resolves 425.  R_LOOSE was this run's FIRST CUT and is published as an UPPER BOUND only: reading its output showed it re-scoring ensemble, sleeve and band claims against the frozen cell, which is a TRANSFER, not a re-derivation.
+   R_LOOSE UPPER BOUND, NARROW: 5 CAGR-only claims would have been re-scored — REFUTED=5  — every one is published above as TRANSFERRED instead.
+   R_LOOSE UPPER BOUND, PROX: 11 CAGR-only claims would have been re-scored — REFUTED=9  UNDECIDED_DEAD0=2  — every one is published above as TRANSFERRED instead.
+   R_LOOSE UPPER BOUND, WIDE: 14 CAGR-only claims would have been re-scored — REFUTED=11  UNDECIDED_DEAD0=3  — every one is published above as TRANSFERRED instead.
+   TRANSFERRED basis (an EXTRAPOLATION, not a re-derivation): the measured killer-kind base rate is SHARPE 0.588, CAGR 0.235, DD 0.176
+
+## PART C — BOTH KEEP PATHS AT EVERY GRID POINT, AND RULE 8
+    0 bps: 4b full 17/54   4b OOS 19/54   4a  0/54
+   10 bps: 4b full 16/54   4b OOS 17/54   4a  0/54
+   25 bps: 4b full 15/54   4b OOS 16/54   4a  0/54
+   50 bps: 4b full 10/54   4b OOS 14/54   4a  0/54
+   rule-8 picks: 96 (panel x ladder x rung x chooser); 4b full 18, 4b OOS 18, 4a 0
+   at PROTOCOL's 10 bps, OOS of each pick (CAGR / Sharpe / MaxDD):
+     U56  N       C_ISSHARPE  pick=40     14.00% / 1.0983 / -22.98%  4b=False 4bOOS=False 4a=False
+     U56  N       C_ISDD      pick=40     14.00% / 1.0983 / -22.98%  4b=False 4bOOS=False 4a=False
+     U56  N       C_ISCAGR    pick=5      17.06% / 0.9003 / -25.85%  4b=False 4bOOS=False 4a=False
+     U56  H       C_ISSHARPE  pick=252    17.31% / 1.1931 / -21.84%  4b=False 4bOOS=False 4a=False
+     U56  H       C_ISDD      pick=21     15.39% / 1.1167 / -20.24%  4b=False 4bOOS=False 4a=False
+     U56  H       C_ISCAGR    pick=252    17.31% / 1.1931 / -21.84%  4b=False 4bOOS=False 4a=False
+     U56  GROSS   C_ISSHARPE  pick=0.75   16.97% / 1.1643 / -19.13%  4b=True 4bOOS=True 4a=False
+     U56  GROSS   C_ISDD      pick=0.3     6.71% / 1.1622 /  -7.99%  4b=False 4bOOS=False 4a=False
+     U56  GROSS   C_ISCAGR    pick=0.75   16.97% / 1.1643 / -19.13%  4b=True 4bOOS=True 4a=False
+     U56  CADENCE C_ISSHARPE  pick=W      16.97% / 1.1643 / -19.13%  4b=True 4bOOS=True 4a=False
+     U56  CADENCE C_ISDD      pick=D      17.20% / 1.1220 / -23.13%  4b=False 4bOOS=False 4a=False
+     U56  CADENCE C_ISCAGR    pick=W      16.97% / 1.1643 / -19.13%  4b=True 4bOOS=True 4a=False
+     B136 N       C_ISSHARPE  pick=8      14.56% / 0.7866 / -24.54%  4b=False 4bOOS=False 4a=False
+     B136 N       C_ISDD      pick=30     16.61% / 1.0696 / -24.35%  4b=False 4bOOS=False 4a=False
+     B136 N       C_ISCAGR    pick=5      15.03% / 0.7687 / -28.12%  4b=False 4bOOS=False 4a=False
+     B136 H       C_ISSHARPE  pick=63     16.49% / 0.9960 / -28.69%  4b=False 4bOOS=False 4a=False
+     B136 H       C_ISDD      pick=21     15.55% / 0.9966 / -25.69%  4b=False 4bOOS=False 4a=False
+     B136 H       C_ISCAGR    pick=63     16.49% / 0.9960 / -28.69%  4b=False 4bOOS=False 4a=False
+     B136 GROSS   C_ISSHARPE  pick=0.75   16.02% / 1.0100 / -20.74%  4b=False 4bOOS=False 4a=False
+     B136 GROSS   C_ISDD      pick=0.3     6.41% / 1.0055 /  -8.67%  4b=False 4bOOS=False 4a=False
+     B136 GROSS   C_ISCAGR    pick=0.75   16.02% / 1.0100 / -20.74%  4b=False 4bOOS=False 4a=False
+     B136 CADENCE C_ISSHARPE  pick=W      16.02% / 1.0100 / -20.74%  4b=False 4bOOS=False 4a=False
+     B136 CADENCE C_ISDD      pick=D      17.05% / 0.9522 / -28.36%  4b=False 4bOOS=False 4a=False
+     B136 CADENCE C_ISCAGR    pick=W      16.02% / 1.0100 / -20.74%  4b=False 4bOOS=False 4a=False
+   BENCH U56  SPY              full  15.10% / 0.8829 / -33.72%   OOS  15.21% / 0.8711 / -33.72%
+   BENCH U56  RULESv2@10bps    full   8.62% / 1.2007 / -12.05%   OOS   9.45% / 1.2762 / -12.05%
+   BENCH B136 SPY              full  15.16% / 0.8861 / -33.72%   OOS  15.33% / 0.8767 / -33.72%
+   BENCH B136 RULESv2@10bps    full   7.98% / 1.0993 / -12.24%   OOS   7.88% / 1.1059 / -12.24%
+
+## HYPOTHESES (all declared before any number)
+     hypothesis  statistic      verdict                                                                                                                                                                          note
+ H_SHARPE_FIRST     0.5882         PASS                                                                                                            share of the 17 dying books whose killer set contains a SHARPE leg
+    H_CAGR_LAST     0.2353         FAIL                                                                                                           share of the 17 live books where L_CAGR is the LAST full leg to die
+     H_DD_INERT     0.9630         PASS                                                                                                                             share of books whose L_DD verdict is 0->50 stable
+ H_CAGR_ASSUMED     0.3920         FAIL                                                                                                                     PROX claims naming a leg that name the CAGR floor (n=125)
+H_RESCORE_FLIPS     0.8182 UNRESOLVABLE NO CAGR-only cost claim in the record states enough of its own cell to be re-derived (n=0 under R_STRICT); the statistic shown is R_LOOSE's upper bound over n=11, a TRANSFER
+
+## THE QUEUE'S BINARY, by the decision rule: PROX naming shares — CAGR 0.3920 vs SHARPE 0.4720 vs DD 0.4880
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.books.csv  (54 rows, 96 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.grid.csv  (216 rows, 19 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.ladder.csv  (54 rows, 11 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.census.csv  (12 rows, 15 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.rescore.csv  (95 rows, 12 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.claims.csv  (2,088 rows, 29 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.walkforward.csv  (96 rows, 16 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.benchmarks.csv  (4 rows, 13 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.hypotheses.csv  (5 rows, 4 cols)
+  wrote 2026-09-16_do-the-record-s-COMMITTED-COST-CLAIMS-PRICE-the-SHARPE-LEGS-or-only-the-CAGR-FLOOR_C.gates.csv  (14 rows, 3 cols)
+
+[16.9s]
