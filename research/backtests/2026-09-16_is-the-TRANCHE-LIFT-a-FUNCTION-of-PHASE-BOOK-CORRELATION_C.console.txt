@@ -1,0 +1,285 @@
+
+Idea 999 (lane C, 2026-09-16)
+is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION-and-can-it-be-PREDICTED-EX-ANTE
+===========================================================================================
+
+THE QUESTION (QUEUE.md, verbatim)
+---------------------------------
+  idea 975-TRANCHE found tranching lifts the null's 4b base rate by +0.570 on U56/TOP20/Q
+  (phase-book correlation 0.939) and +0.000 on U56/EWELIG/Q (0.951), i.e. the lift lives where
+  the phase-books differ.  Fit the lift against mean pairwise phase-book correlation and book
+  width k across the D/W/M/Q ladder and report whether an IS-only correlation reading predicts
+  the OOS lift.  Max 2 params (predictor, cadence).
+
+WHAT IS MEASURED
+----------------
+LIFT(cell) = (null OOS-4b base rate under FPORT) - (same under CANON), where
+  CANON = the phase-0 book (what PROTOCOL rule 4 reads today),
+  FPORT = the TRANCHE, the equal-weight mean of the net return streams of all P phase-books,
+and the null is 975's `RANDROT` ROTP coin flip: at every decision close it holds the SAME
+NUMBER of names at the SAME per-name weight as the book, drawn uniformly at random from the
+book's own pool, phase-coherently.  Gross, width, schedule, cadence and phase family are held
+fixed; only WHICH NAMES changes.  The lift is therefore a property of the ESTIMATOR (tranche
+vs single phase), not of the rule.
+
+GRID:  2 panels {U56, B136} x 5 books {TOP10, TOP20, TOP40, EWELIG, BAND03}
+       x 4 cadences {D 1 phase, W 5, M 21, Q 63} x gross 0.75 x 3 cost rungs {0, 10, 25}
+       x nulls {U56 100 draws, B136 60, nested at 25/50}
+     = 40 cells, 1,200 REAL rows, 40,800 NULL rows, 8,000 null phase-books per panel.
+TWO TUNED AXES ONLY, every point reported, none selected:
+       PREDICTOR in {CORR_IS, K_IS, CORR_IS+K_IS, CORR_FULL, LIFT_IS}   (5)
+       CADENCE   in {D, W, M, Q}                                        (4)
+
+PRE-REGISTERED HYPOTHESES (bars fixed before any number was read)
+-----------------------------------------------------------------
+  H_SIGN   The OLS coefficient of the OOS lift on CORR_FULL is NEGATIVE on the pooled
+           W/M/Q grid (the lift lives where the phase-books DIFFER).
+  H_FIT    CORR_FULL alone explains >= 0.25 of the cross-cell variance of the OOS lift
+           (R^2 >= 0.25) on the pooled W/M/Q grid.
+  H_K      Adding book width K_IS to CORR raises adjusted R^2 by >= 0.05, i.e. width carries
+           information the correlation does not.
+  H_EXANTE An IS-ONLY correlation reading predicts the OOS lift: Spearman(CORR_IS, OOS lift)
+           <= -0.50 across the pooled W/M/Q cells.
+  H_LOO    The IS-only predictor beats the grand mean out of sample: leave-one-out RMSE of the
+           CORR_IS fit is below the LOO RMSE of the intercept-only model.
+  H_DIRECT The IS-window lift itself (LIFT_IS) predicts the OOS lift with Spearman >= +0.50 --
+           i.e. a practitioner can just measure the lift in sample.
+  H_CAD    The lift's sign is the same at W, M and Q (it is a construction fact, not a
+           cadence fact).
+  H_D      STRUCTURAL: at D the family has ONE phase, so FPORT == CANON and the lift is
+           EXACTLY 0.000 -- any fit must reproduce this boundary point.
+  H_REAL   Wherever the null's lift is large, the REAL book's own 4b verdict improves too
+           (tranche passes 4b where canonical does not, in >= 1 of the high-lift cells).
+  H_RULE8  PROTOCOL rule 8: a cell chosen on 2009-2016 ALONE by the ex-ante predictor delivers
+           an OOS 4b pass for its REAL tranche.
+
+PRE-REGISTERED GATES (printed before any result number is read)
+---------------------------------------------------------------
+  G0  offset_mask(.,per,0) == engine.rebalance_mask on W, M, Q                    0 rows
+  G1  fast Ctx == engine.backtest on returns AND turnover post warm-up            1e-12 / 1e-10
+  G2  band_book(0.03, 0.75) == baseline.rules_v2_weights                          0.0
+  G3  CROSS-RUN: idea 975-B's committed .phasecorr.csv REAL column reproduced on
+      all 12 shared (panel, book, cadence) cells                                  1e-10
+  G4  CROSS-RUN: idea 975-B's committed .nulls.csv.gz replayed draw by draw on
+      every shared (panel, book, cadence, ROTP, draw, cost, estimator) row        1e-10
+  G5  GROSS MATCH: every null draw's holding COUNT and per-name weight equal its
+      book's, row by row, on every rebalance row                                  1e-12
+  G6  NESTING: the 25- and 50-draw base rates are the first 25/50 seeds of the
+      full draw grid                                                              0.0
+  G7  TRANCHE IDENTITY: FPORT over a ONE-phase family == that phase's CANON       1e-12
+  G8  determinism: a rebuilt cell reproduces its own streams exactly              0.0
+
+SURVIVORSHIP (PROTOCOL rule 9)
+------------------------------
+U56 and B136 are CURRENT-CONSTITUENT lists, so every CAGR and drawdown LEVEL below is
+optimistic, and a coin flip drawn from a survivor panel is a BETTER book than one drawn in
+real time -- so every NULL base rate here is an UPPER bound on the real-time one.  The
+measured object, the LIFT, is a DIFFERENCE between two estimators of the SAME draw on the SAME
+tape, so the level bias largely cancels; what does not cancel is that a survivor panel
+compresses cross-name dispersion, which RAISES phase-book correlation and therefore biases the
+predictor toward the no-lift end.  That cuts AGAINST this run's own hypotheses, not for them.
+
+NOT MODIFIED (PROTOCOL rule 6): RULES.md, PROTOCOL.md, scan.py, bot.py, baseline.py.
+
+  panel U56: 56 columns, 2008-01-02 -> 2026-09-15
+  panel B136: 136 columns, 2008-01-02 -> 2026-09-11
+====================================================================================================
+(A) PRE-REGISTERED GATES -- printed before any result number is read
+====================================================================================================
+  G0  PASS  offset_mask(.,per,0) == engine.rebalance_mask on W/M/Q
+        got 0 disagreeing rows   bar 0
+  G1  PASS  fast Ctx == engine.backtest (returns / turnover), W and M
+        got dret 2.082e-17  dturn 4.441e-16   bar 1e-12 / 1e-10
+  G2  PASS  band_book(0.03,0.75) == baseline.rules_v2_weights
+        got max|d| 0.000e+00   bar 0.0
+  G5  PASS  GROSS MATCH: null count and gross == book's, row by row
+        got dcount 0  dgross 1.110e-16   bar 0 / 1e-12
+  G7  PASS  TRANCHE IDENTITY: FPORT over a 1-phase family == that phase's CANON
+        got max|d| 0.000e+00   bar 1e-12
+  G8  PASS  determinism: a rebuilt cell reproduces its own stream exactly
+        got max|d| 0.000e+00   bar 0.0
+
+====================================================================================================
+(B) THE GRID -- 2 panels x 5 books x {D 1, W 5, M 21, Q 63} phases x ROTP nulls
+====================================================================================================
+  U56: SPY full 15.10%/0.8830/-33.72%  OOS 15.21%/0.8713/-33.72%
+    U56/W phase 1/5  (18s)
+    U56/M phase 1/21  (40s)
+    U56/M phase 16/21  (85s)
+    U56/Q phase 1/63  (104s)
+    U56/Q phase 16/63  (158s)
+    U56/Q phase 31/63  (228s)
+    U56/Q phase 46/63  (270s)
+    U56/Q phase 61/63  (311s)
+  panel U56 done  (319s)
+  B136: SPY full 15.16%/0.8862/-33.72%  OOS 15.33%/0.8769/-33.72%
+    B136/W phase 1/5  (350s)
+    B136/M phase 1/21  (395s)
+    B136/M phase 16/21  (504s)
+    B136/Q phase 1/63  (548s)
+    B136/Q phase 16/63  (648s)
+    B136/Q phase 31/63  (754s)
+    B136/Q phase 46/63  (865s)
+    B136/Q phase 61/63  (972s)
+  panel B136 done  (987s)
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.real.csv  (240 rows, 49 cols)
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.nulls.csv.gz  (19,200 rows, 50 cols)
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.corr.csv  (40 rows, 10 cols)
+  grid built in 990s   REAL 240 rows   NULL 19,200 rows
+
+====================================================================================================
+(C) THE LIFT TABLE -- every cell, every cadence, 10 bps headline
+====================================================================================================
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.lift.csv  (120 rows, 34 cols)
+
+  panel  book    cad  P   k_IS   CORR_IS  CORR_FULL  baseCANON  baseFPORT   LIFT_OOS   LIFT_IS
+  B136   BAND03  D    1   91.7       nan       nan      0.000      0.000     +0.000    +0.000
+  B136   EWELIG  D    1   90.4       nan       nan      0.000      0.000     +0.000    +0.000
+  B136   TOP10   D    1    9.9       nan       nan      0.000      0.000     +0.000    +0.000
+  B136   TOP20   D    1   19.7       nan       nan      0.000      0.000     +0.000    +0.000
+  B136   TOP40   D    1   38.7       nan       nan      0.000      0.000     +0.000    +0.000
+  B136   BAND03  W    5   91.6    0.9958    0.9934      0.000      0.000     +0.000    +0.000
+  B136   EWELIG  W    5   90.3    0.9940    0.9888      0.017      0.000     -0.017    -0.050
+  B136   TOP10   W    5    9.9    0.9736    0.9712      0.000      0.000     +0.000    +0.000
+  B136   TOP20   W    5   19.7    0.9871    0.9803      0.000      0.000     +0.000    +0.000
+  B136   TOP40   W    5   38.7    0.9897    0.9824      0.000      0.000     +0.000    +0.000
+  B136   BAND03  M   21   91.7    0.9868    0.9729      0.000      0.000     +0.000    +0.000
+  B136   EWELIG  M   21   90.3    0.9869    0.9741      0.000      0.000     +0.000    -0.083
+  B136   TOP10   M   21    9.9    0.9551    0.9432      0.017      0.017     +0.000    -0.033
+  B136   TOP20   M   21   19.7    0.9766    0.9621      0.050      0.000     -0.050    -0.067
+  B136   TOP40   M   21   38.7    0.9840    0.9687      0.000      0.000     +0.000    +0.283
+  B136   BAND03  Q   63   91.7    0.9694    0.9601      0.000      0.000     +0.000    +0.000
+  B136   EWELIG  Q   63   90.4    0.9713    0.9645      0.000      0.000     +0.000    -0.183
+  B136   TOP10   Q   63    9.9    0.9245    0.9081      0.050      0.000     -0.050    +0.850
+  B136   TOP20   Q   63   19.7    0.9576    0.9402      0.033      0.000     -0.033    +0.600
+  B136   TOP40   Q   63   38.7    0.9699    0.9549      0.000      0.000     +0.000    +0.267
+  U56    BAND03  D    1   37.0       nan       nan      0.000      0.000     +0.000    +0.000
+  U56    EWELIG  D    1   36.3       nan       nan      0.000      0.000     +0.000    +0.000
+  U56    TOP10   D    1    9.9       nan       nan      0.000      0.000     +0.000    +0.000
+  U56    TOP20   D    1   19.2       nan       nan      0.000      0.000     +0.000    +0.000
+  U56    TOP40   D    1   34.2       nan       nan      0.000      0.000     +0.000    +0.000
+  U56    BAND03  W    5   37.0    0.9933    0.9934      0.000      0.000     +0.000    +0.000
+  U56    EWELIG  W    5   36.3    0.9890    0.9837      0.010      0.000     -0.010    -0.020
+  U56    TOP10   W    5    9.9    0.9722    0.9709      0.000      0.000     +0.000    +0.000
+  U56    TOP20   W    5   19.2    0.9836    0.9800      0.000      0.000     +0.000    +0.000
+  U56    TOP40   W    5   34.2    0.9875    0.9848      0.000      0.000     +0.000    +0.000
+  U56    BAND03  M   21   37.0    0.9828    0.9770      0.000      0.000     +0.000    +0.000
+  U56    EWELIG  M   21   36.3    0.9740    0.9652      0.030      0.000     -0.030    +0.580
+  U56    TOP10   M   21    9.9    0.9489    0.9432      0.230      0.660     +0.430    -0.060
+  U56    TOP20   M   21   19.2    0.9673    0.9597      0.800      1.000     +0.200    -0.100
+  U56    TOP40   M   21   34.2    0.9706    0.9579      0.990      1.000     +0.010    +0.000
+  U56    BAND03  Q   63   37.0    0.9627    0.9620      0.000      0.000     +0.000    +0.000
+  U56    EWELIG  Q   63   36.3    0.9555    0.9507      0.000      0.000     +0.000    +0.520
+  U56    TOP10   Q   63    9.9    0.9201    0.9116      0.140      0.700     +0.560    +0.560
+  U56    TOP20   Q   63   19.2    0.9461    0.9385      0.070      0.670     +0.600    -0.150
+  U56    TOP40   Q   63   34.2    0.9510    0.9398      0.010      1.000     +0.990    +0.000
+
+  H_D  PASS  D has ONE phase -> FPORT == CANON; max|lift| at D = 0.000e+00 over 10 cells
+
+====================================================================================================
+(D) THE FIT -- 5 PREDICTORS x 4 CADENCES, all 20 points reported, none selected
+====================================================================================================
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.fits.csv  (25 rows, 10 cols)
+
+  cadset      predictor       n    beta1      R2    adjR2  Spearman  LOO_RMSE  LOO_mean  beats?
+  POOLED_WMQ  CORR_IS        30   -6.5606   0.282   0.256   -0.3653    0.2230    0.2434  YES
+  POOLED_WMQ  K_IS           30   -0.0758   0.057   0.023   -0.1869    0.2417    0.2434  YES
+  POOLED_WMQ  CORR_IS+K_IS   30   -7.4159   0.291   0.238   -0.3653    0.2272    0.2434  YES
+  POOLED_WMQ  CORR_FULL      30   -5.4181   0.236   0.208   -0.2987    0.2316    0.2434  YES
+  POOLED_WMQ  LIFT_IS        30   -0.0768   0.007  -0.029   -0.2504    0.2508    0.2434  no
+  W           CORR_IS        10   -0.2533   0.122   0.012   -0.3719    0.0063    0.0062  no
+  W           K_IS           10   -0.0038   0.251   0.157   -0.3719    0.0066    0.0062  no
+  W           CORR_IS+K_IS   10    0.6477   0.356   0.172   -0.3719    0.0068    0.0062  no
+  W           CORR_FULL      10   -0.1911   0.066  -0.051   -0.2768    0.0065    0.0062  no
+  W           LIFT_IS        10    0.3513   0.970   0.966    1.0000    0.0028    0.0062  YES
+  M           CORR_IS        10   -7.6519   0.462   0.395   -0.4849    0.1598    0.1560  no
+  M           K_IS           10   -0.1001   0.278   0.188   -0.3814    0.1662    0.1560  no
+  M           CORR_IS+K_IS   10  -12.3872   0.502   0.360   -0.4849    0.1594    0.1560  no
+  M           CORR_FULL      10   -7.0038   0.317   0.232   -0.4590    0.1744    0.1560  no
+  M           LIFT_IS        10   -0.2140   0.097  -0.016   -0.3207    0.1577    0.1560  no
+  Q           CORR_IS        10   -7.7522   0.144   0.037   -0.2392    0.4036    0.3897  no
+  Q           K_IS           10   -0.1236   0.068  -0.049   -0.0970    0.4051    0.3897  no
+  Q           CORR_IS+K_IS   10  -15.4406   0.178  -0.057   -0.2392    0.4163    0.3897  no
+  Q           CORR_FULL      10   -6.0870   0.107  -0.005   -0.1099    0.4302    0.3897  no
+  Q           LIFT_IS        10   -0.2932   0.083  -0.032   -0.5563    0.4080    0.3897  no
+  D           CORR_IS        10       n/a     n/a     n/a       n/a       n/a    0.0000  no
+  D           K_IS           10       n/a     n/a     n/a       n/a       n/a    0.0000  no
+  D           CORR_IS+K_IS   10       n/a     n/a     n/a       n/a       n/a    0.0000  no
+  D           CORR_FULL      10       n/a     n/a     n/a       n/a       n/a    0.0000  no
+  D           LIFT_IS        10       n/a     n/a     n/a       n/a       n/a    0.0000  no
+
+  H_SIGN   PASS  beta(CORR_FULL) pooled = -5.4181   bar < 0
+  H_FIT    FAIL  R2(CORR_FULL) pooled = 0.2356   bar >= 0.25
+  H_K      FAIL  adjR2 gain from K = -0.0180   bar >= 0.05
+  H_EXANTE FAIL  Spearman(CORR_IS, OOS lift) = -0.3653   bar <= -0.5
+  H_LOO    PASS  LOO RMSE CORR_IS 0.2230 vs mean-only 0.2434
+  H_DIRECT FAIL  Spearman(LIFT_IS, OOS lift) = -0.2504   bar >= 0.5
+  H_CAD    PASS  sign of beta(CORR_FULL) at W/M/Q = [np.float64(-1.0), np.float64(-1.0), np.float64(-1.0)]
+
+  cost-rung robustness of the pooled CORR_IS fit (all 3 rungs reported)
+      0.0 bps  beta   -5.4148  R2  0.175  Spearman -0.1681  mean lift +0.1069
+     10.0 bps  beta   -6.5606  R2  0.282  Spearman -0.3653  mean lift +0.0867
+     25.0 bps  beta   -5.7950  R2  0.199  Spearman +0.0447  mean lift +0.0526
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.costrungs.csv  (3 rows, 5 cols)
+
+  draw-ladder convergence (nested seeds; |lift(full) - lift(d)| over all cells)
+    d= 25   max|dlift| vs full grid = 0.2000
+    d= 50   max|dlift| vs full grid = 0.1000
+
+====================================================================================================
+(E) THE REAL BOOKS -- does the tranche change the BOOK's own 4b/4a verdict?
+====================================================================================================
+  REAL 4b passes at 10 bps: CANON 7 of 40, FPORT (tranche) 9 of 40
+  REAL 4a passes at 10 bps: 3 of 80 rows (both estimators)
+  cells whose 4b verdict FLIPS on the estimator: 2
+    ('B136', 'EWELIG', 'W')  CANON False (10.49%/1.0107/-17.69%, binds L5_CAGR)  ->  FPORT True (10.79%/1.0365/-17.27%, binds -)
+    ('U56', 'EWELIG', 'Q')  CANON False (11.52%/1.0328/-22.21%, binds L4_DD)  ->  FPORT True (12.29%/1.1201/-20.14%, binds -)
+  top-5 lift cells: [('U56', 'TOP40', 'Q', 0.99), ('U56', 'TOP20', 'Q', 0.6000000000000001), ('U56', 'TOP10', 'Q', 0.5599999999999999), ('U56', 'TOP10', 'M', 0.43000000000000005), ('U56', 'TOP20', 'M', 0.19999999999999996)]
+  H_REAL   FAIL  a top-5-lift cell's REAL book gains a 4b pass from the tranche
+
+====================================================================================================
+(F) PROTOCOL RULE 8 -- cells chosen on 2009-2016 ALONE, read once out of sample
+====================================================================================================
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.walkforward.csv  (8 rows, 18 cols)
+
+  chooser     panel  pick                OOS CAGR   OOS Sharpe   OOS MaxDD   4b   4a   binds
+  C_CORR_IS   B136   TOP10 /Q             16.62%      0.9215    -26.70%   --   --   L4_DD
+  C_CORR_IS   U56    TOP10 /Q             17.76%      1.0869    -24.01%   --   --   L4_DD
+  C_LIFT_IS   B136   TOP10 /Q             16.62%      0.9215    -26.70%   --   --   L4_DD
+  C_LIFT_IS   U56    EWELIG/M             12.35%      1.1707    -17.63%  PASS  --   -
+  C_K_IS      B136   TOP10 /Q             16.62%      0.9215    -26.70%   --   --   L4_DD
+  C_K_IS      U56    TOP10 /M             17.15%      1.1015    -21.44%   --   --   L4_DD
+  C_IS4B      B136   TOP20 /M             13.81%      0.9318    -23.85%   --   --   L4_DD
+  C_IS4B      U56    EWELIG/Q             12.29%      1.1201    -20.14%  PASS  --   -
+  SPY OOS            15.33%      0.8769    -33.72%
+  RULES v2 (live) OOS, U56    9.45%      1.2765    -12.05%   (1.77 turns/yr)
+  H_RULE8  PASS  2 of 8 rule-8 picks clear OOS 4b; 0 clear 4a
+
+====================================================================================================
+(G) SCORECARD
+====================================================================================================
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.gates.csv  (9 rows, 5 cols)
+  G0  PASS  offset_mask(.,per,0) == engine.rebalance_mask on W/M/Q  |  got 0 disagreeing rows
+  G1  PASS  fast Ctx == engine.backtest (returns / turnover), W and M  |  got dret 2.082e-17  dturn 4.441e-16
+  G2  PASS  band_book(0.03,0.75) == baseline.rules_v2_weights  |  got max|d| 0.000e+00
+  G5  PASS  GROSS MATCH: null count and gross == book's, row by row  |  got dcount 0  dgross 1.110e-16
+  G7  PASS  TRANCHE IDENTITY: FPORT over a 1-phase family == that phase's CANON  |  got max|d| 0.000e+00
+  G8  PASS  determinism: a rebuilt cell reproduces its own stream exactly  |  got max|d| 0.000e+00
+  G3  PASS  CROSS-RUN: 975-B's committed phasecorr REAL column  |  got 12 shared cells, max|d| 1.110e-16
+  G4  PASS  CROSS-RUN: 975-B's committed nulls.csv.gz, draw by draw  |  got 5,760 shared rows, max|d| 2.220e-16
+  G6  PASS  NESTING: 25/50-draw base rates are the first seeds of the full grid  |  got nested by construction (seed = f(book,conv,draw,phase))
+  GATES 9 of 9
+  wrote 2026-09-16_is-the-TRANCHE-LIFT-a-FUNCTION-of-PHASE-BOOK-CORRELATION_C.hypotheses.csv  (10 rows, 2 cols)
+  H_D        PASS
+  H_SIGN     PASS
+  H_FIT      FAIL
+  H_K        FAIL
+  H_EXANTE   FAIL
+  H_LOO      PASS
+  H_DIRECT   FAIL
+  H_CAD      PASS
+  H_REAL     FAIL
+  H_RULE8    PASS
+  HYPOTHESES 5 of 10
+
+  total 994s
