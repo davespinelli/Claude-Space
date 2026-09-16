@@ -1,0 +1,164 @@
+# Idea 1021 (cloud lane, 2026-09-16) — is the SPLIT-POINT BAND just the OOS WINDOW's OWN SAMPLING SE?
+# 2 tuned dials: SE ESTIMATOR ['IID', 'BLOCK21', 'NORMAL'] x END GRID ['Q16', 'Q28', 'Y8'] = 9 points, ALL reported, none selected.  HEADLINE = IID x Q16 (1013's own grid).
+# Controls at every point: panel [U56, B136], cost [0.0, 10.0, 25.0] bps, 18 GRID books per panel + 1013's 6 rule-8 cells; NBOOT = 2,000 resamples each.
+# STATED BEFORE ANY RESULT: the OOS windows are NESTED — all 16 end on the last day of
+#   the tape — so the 16 Sharpes are enormously correlated and a PER-END SE is NOT the
+#   yardstick.  The null resamples the book's OWN OOS path once and reads the SAME nested
+#   tail windows off it, so nesting, lengths and overlap are inherited exactly and only
+#   real time-variation in Sharpe is destroyed.
+# SURVIVORSHIP: U56/B136 are current-constituent panels — every LEVEL is optimistic.  The
+#   measured object is a RATIO of two bands off the SAME path, so the bias very largely
+#   cancels; where it does not it raises the Sharpe LEVEL, which RAISES the analytic SE
+#   and so FLATTERS H_NOISE.  The H_NOISE verdict below is the EASIER call.
+
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+POOL = 36 never-memo-selected GRID books (18 U56 / 18 B136).
+END GRID Q16  = 16 ends 2015-03-31..2018-12-31
+END GRID Q28  = 28 ends 2013-03-31..2019-12-31
+END GRID Y8   =  8 ends 2012-12-31..2019-12-31
+
+## Reproduction gates (printed BEFORE any hypothesis number is read)
+G1 fast_run == engine.backtest (returns / turnover): 6.939e-18 / 1.665e-16  PASS
+G2 CROSS-RUN SPY OOS triple at 2016-12-31: 0.1521 / 0.8711 / -0.3372  max|d| 1.70e-04  PASS
+G3 CROSS-RUN 1013's four published declared-split picks: 4/4  max|d| 4.588e-04  PASS
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.crossrun1013.csv  (4 rows, 4 cols)
+G4 CROSS-RUN 1013's split-point band on Q16: 3 pick-invariant cells, band 0.1747..0.1955 vs published (0.1747, 0.1955); worst of six 0.2666 vs published 0.2666  PASS
+     U56   IS_SHARPE  distinct picks 2              band 0.2666
+     U56   IS_LEGS    distinct picks 2              band 0.2666
+     U56   IS_CAGR    distinct picks 4              band 0.2285
+     B136  IS_SHARPE  distinct picks 1 (INVARIANT)  band 0.1955
+     B136  IS_LEGS    distinct picks 1 (INVARIANT)  band 0.1955
+     B136  IS_CAGR    distinct picks 1 (INVARIANT)  band 0.1747
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.cells1013.csv  (6 rows, 6 cols)
+G6 BOOTSTRAP CALIBRATION on a synthetic i.i.d. normal path (n=2,400): bootstrap SE 0.3229 vs analytic 0.3245, rel 0.005  PASS
+
+## (A)-(C) THE BAND, ITS OWN SAMPLING NULL, AND THE SHARE
+G9 SUFFIX-CUMSUM Sharpe == sliced Sharpe on the real path: max|d| 2.66e-15  PASS
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.bands.csv  (972 rows, 19 cols)
+   built 972 (estimator x grid x book x rung) cells in 285.4s, 2,000 resamples each.
+G7 NULL CENTRING (null full-window Sharpe == the book's own, 3 MC SE) at the headline point: 107/108  max|d| 2.14e-02  FAIL
+     at a 3-SE bar over 108 cells a correct sampler is EXPECTED to fail 0.29 of them (P(>=1) ~ 25%); the worst cell is 3.14 SE.  Recorded as FAIL regardless.
+G8 WINDOW ACCOUNTING (strict nesting, n decreasing in the end date): 3/3 grids  PASS; headline window lengths 2,881 down to 1,936 trading days
+G5 determinism (ladder 0.0e+00; bootstrap at a fixed seed 0.0e+00)  PASS
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.gates.csv  (9 rows, 4 cols)
+
+## THE 9 GRID POINTS — all reported, none selected  (36 books x 3 rungs = 108 cells each)
+     est  grid |  obs band  null med  null p95   SHARE    pct | indep med per-end SE   (medians over cells; the independent-window control is built at the HEADLINE point only)
+     IID   Q16 |    0.1661    0.2641    0.4814   1.586  0.101 |    1.1784     0.3241
+     IID   Q28 |    0.1868    0.3672    0.6526   1.973  0.019 |       n/a     0.3159
+     IID    Y8 |    0.1796    0.3203    0.6154   1.786  0.091 |       n/a     0.3143
+ BLOCK21   Q16 |    0.1661    0.2481    0.4631   1.511  0.144 |       n/a     0.3241
+ BLOCK21   Q28 |    0.1868    0.3451    0.6192   1.850  0.037 |       n/a     0.3159
+ BLOCK21    Y8 |    0.1796    0.3009    0.5837   1.700  0.119 |       n/a     0.3143
+  NORMAL   Q16 |    0.1661    0.2561    0.4631   1.532  0.127 |       n/a     0.3241
+  NORMAL   Q28 |    0.1868    0.3558    0.6274   1.910  0.026 |       n/a     0.3159
+  NORMAL    Y8 |    0.1796    0.3091    0.5976   1.709  0.107 |       n/a     0.3143
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.grid.csv  (9 rows, 11 cols)
+
+## 1013's OWN SIX CELLS — the objects its claim is about, at the headline point
+panel  chooser    pick                         | obs band null med null p95  SHARE    pct
+B136   IS_SHARPE  B136-band0.08-g1.00          |   0.1955   0.2667   0.4693  1.364  0.193
+B136   IS_LEGS    B136-band0.08-g1.00          |   0.1955   0.2685   0.4858  1.374  0.199
+B136   IS_CAGR    B136-qroll-q0.12-w1008-d0.50 |   0.1747   0.2604   0.4762  1.490  0.131
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.cells1013_null.csv  (3 rows, 8 cols)
+
+## (D2) WHY THE NULL BAND EXCEEDS THE OBSERVED ONE — the caveat, measured
+   The observed band lands BELOW the null's median, so the run must say why before it
+   banks the answer.  Mechanism: every window shares the COMMON TAIL after the last end,
+   and the tape's volatile episodes (2020, 2022) sit in that tail.  In the real path they
+   are therefore in EVERY window and cannot move the band; a resample scatters them, so
+   some land in the head that the later ends exclude and the null's windows differ more.
+   The test: variance density in the common tail against the head each end drops.
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.tailvar.csv  (108 rows, 8 cols)
+   variance density, common tail vs excluded head: median ratio 1.433x, 100.0% of 108 cells above 1.0 (tail 1,936 days, head 945 days).
+   So the i.i.d. and block nulls are CONSERVATIVE here — they over-disperse relative to
+   the real tape's episode placement, and that over-dispersion pushes the observed band's
+   percentile DOWN.  H_NOISE is therefore the EASIER call and is reported as such.  What
+   the run can still say safely is the weaker, sufficient claim: the observed band does
+   NOT exceed what sampling noise alone produces at these ends, under any of the three
+   estimators or three end grids.  What it CANNOT say is that the band is 1.59x smaller
+   than noise in any economically meaningful sense — that ratio is partly this artefact.
+
+## (E) RULE-8 WALK-FORWARD at PROTOCOL's declared split 2016-12-31 (IS 2009-2016 chooses, OOS 2017-2026 read ONCE)
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.walkforward.csv  (18 rows, 27 cols)
+panel  cost   chooser pick                         | OOS CAGR     Sh   MaxDD |  SPY OOS     Sh | v2 OOS Sh |  4a  4b
+U56       0 IS_SHARPE U56-band0.08-g1.00           |   12.16%  1.177 -19.04% |   15.21%  0.871 |     1.301 |   n   Y
+U56       0   IS_LEGS U56-band0.08-g1.00           |   12.16%  1.177 -19.04% |   15.21%  0.871 |     1.301 |   n   Y
+U56       0   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   16.68%  1.372 -15.52% |   15.21%  0.871 |     1.301 |   n   Y
+U56      10 IS_SHARPE U56-band0.08-g1.00           |   11.99%  1.162 -19.05% |   15.21%  0.871 |     1.276 |   n   Y
+U56      10   IS_LEGS U56-band0.08-g1.00           |   11.99%  1.162 -19.05% |   15.21%  0.871 |     1.276 |   n   Y
+U56      10   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   15.60%  1.293 -15.59% |   15.21%  0.871 |     1.276 |   n   Y
+U56      25 IS_SHARPE U56-band0.08-g1.00           |   11.73%  1.139 -19.07% |   15.21%  0.871 |     1.239 |   n   Y
+U56      25   IS_LEGS U56-band0.08-g1.00           |   11.73%  1.139 -19.07% |   15.21%  0.871 |     1.239 |   n   Y
+U56      25   IS_CAGR U56-qroll-q0.17-w1008-d0.50  |   14.00%  1.174 -15.71% |   15.21%  0.871 |     1.239 |   n   Y
+B136      0 IS_SHARPE B136-qroll-q0.17-w504-d0.50  |   14.06%  1.200 -17.07% |   15.33%  0.877 |     1.136 |   n   Y
+B136      0   IS_LEGS B136-band0.08-g1.00          |   11.24%  1.115 -19.48% |   15.33%  0.877 |     1.136 |   n   Y
+B136      0   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   15.43%  1.238 -17.07% |   15.33%  0.877 |     1.136 |   n   Y
+B136     10 IS_SHARPE B136-band0.08-g1.00          |   11.05%  1.097 -19.50% |   15.33%  0.877 |     1.106 |   n   Y
+B136     10   IS_LEGS B136-band0.08-g1.00          |   11.05%  1.097 -19.50% |   15.33%  0.877 |     1.106 |   n   Y
+B136     10   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   14.30%  1.157 -17.31% |   15.33%  0.877 |     1.106 |   n   Y
+B136     25 IS_SHARPE B136-band0.08-g1.00          |   10.76%  1.071 -19.53% |   15.33%  0.877 |     1.061 |   n   Y
+B136     25   IS_LEGS B136-band0.08-g1.00          |   10.76%  1.071 -19.53% |   15.33%  0.877 |     1.061 |   n   Y
+B136     25   IS_CAGR B136-qroll-q0.12-w1008-d0.50 |   12.62%  1.036 -17.72% |   15.33%  0.877 |     1.061 |   n   Y
+   4a passes 0/18; 4b passes 18/18.  RULES v2 live @10 bps full 8.62% / 1.201 / -12.05%; SPY full 15.10% / 0.883 / -33.72%.
+   NO new book: every pick is a GRID ladder book the record already holds, re-run so the
+   band question is answered on a rule-8 object and not only on a sampler.
+
+## Pre-registered hypotheses
+H_NOISE   PASS  bar: observed band's MEDIAN percentile in its own sampling null <= 0.95
+          headline (IID x Q16) median percentile 0.101; 0.0% of 108 cells above 0.95; IQR 0.060-0.166
+H_SHARE   PASS  bar: median SHARE (null median band / observed band) >= 0.70
+          median share 1.586 (obs band 0.1661, null median 0.2641); IQR 1.421-1.767
+H_EST     PASS  bar: the H_NOISE verdict is unchanged across all three SE estimators
+          median percentile by estimator: IID 0.101, BLOCK21 0.144, NORMAL 0.127
+H_GRID    PASS  bar: the H_NOISE verdict is unchanged across all three end grids
+          median percentile by grid: Q16 0.101, Q28 0.019, Y8 0.091
+H_NEST    PASS  bar: the INDEPENDENT-window band is >= 1.5x the nested null's band
+          median independent band 1.1784 vs nested null 0.2641, ratio 4.46x; median per-end analytic SE 0.3241
+H_1013    PASS  bar: 1013's three pick-invariant cells reproduce in [0.1747, 0.1955], worst 0.2666
+          3 invariant cells, band 0.1747..0.1955; worst of six 0.2666
+  wrote 2026-09-16_is-the-SPLIT-POINT-BAND-just-the-OOS-WINDOW-s-OWN-SAMPLING-SE_cloud.hypotheses.csv  (6 rows, 4 cols)
+
+## VERDICT
+   gates 8/9 PASS; hypotheses 6/6 PASS.
+
+   ANSWER: YES, and with room to spare — the split-point band is fully accounted for
+   by the OOS window's own sampling noise.  A CONSTANT-Sharpe book read at the same
+   nested ends pays a median band of 0.2641 against the 0.1661 actually observed, so the
+   published band is 1.59x SMALLER than noise alone produces and sits at the 0.101
+   percentile of its own null; 0.0% of 108 cells are above 0.95.  H_NOISE and H_SHARE PASS on
+   all three estimators (IID 0.101 / BLOCK21 0.144 / NORMAL 0.127) and all three end grids
+   (Q16 0.101 / Q28 0.019 / Y8 0.091).  On 1013's OWN three pick-invariant cells the observed
+   0.1747-0.1955 sits against nulls of 0.2604-0.2685, percentiles 0.131-0.199.
+
+   SO 1013's 'price of PROTOCOL's fiat' is KILLED as a charge against the protocol:
+   the split point is not adding swing to the published number, it is revealing swing
+   the OOS window has anyway.  A rule-8 result is that noisy at ONE split too.
+
+   WITH THE CAVEAT SECTION (D2) MEASURES: the null over-disperses because the tape's
+   volatile episodes sit in the tail every window shares (variance density 1.43x the
+   excluded head, 100% of cells).  The SAFE claim is the one-sided one — the band does not
+   EXCEED sampling noise.  The 1.59x margin itself is partly this artefact and is not banked.
+
+   THE TRAP, and it is the more useful half: a PER-END SE (0.3241 median) is NOT the yardstick
+   for this band, and neither is what independent windows would give (1.1784, 4.46x the
+   nested null).  The 16 windows all end on the last day of the tape, so they are mostly
+   the same returns read again; anyone pricing 1013's band against a per-end SE, or
+   against 1001's comparand SEs of 0.2877 / 0.3350, is comparing objects with different
+   correlation structures.
+
+   KEEP / KILL under PROTOCOL rule 4.  This run carries NO new book — its object is the
+   record's own split-point band, and the rule-8 arm re-runs GRID ladder books the record
+   already holds.  Neither KEEP path is claimable and none is claimed.  The reportable
+   result is the MEASUREMENT plus a proposed PROTOCOL clause:
+
+     PROPOSED (not applied — PROTOCOL rule 6 reserves changes to the Sunday review):
+       rule 8 SPLIT-POINT BAND clause — where a split-point band is published it is
+       published beside the band the SAME book's own resampled path produces at the SAME
+       nested ends (here median 0.2641 against 0.1661 observed), and it is never compared to a
+       per-end SE or to a comparand SE built from non-nested windows: those overstate the
+       yardstick by 1.2x and 4.5x respectively.  A band that does not exceed its own
+       nested null is reported as 'inside the window's sampling noise', never as a cost of
+       the split-point choice.
+
+Runtime 296.4s.

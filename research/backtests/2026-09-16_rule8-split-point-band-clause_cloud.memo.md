@@ -1,0 +1,19 @@
+# MEMO — PROTOCOL rule 8 SPLIT-POINT BAND clause (proposed 2026-09-16, cloud lane, idea 1021)
+
+1. **Finding.** 1013's split-point band is fully inside the OOS window's own sampling noise. A CONSTANT-Sharpe book, resampled from each book's own OOS path and read at the SAME nested ends, pays a median band of 0.2641 against the 0.1661 actually observed — the published band sits at the **0.101 percentile** of its own null, with **0.0% of 108 headline cells above 0.95**.
+2. **On 1013's own objects.** Its three pick-invariant cells published 0.1747–0.1955; their nulls are 0.2604–0.2685, percentiles 0.131–0.199. The band 1013 called "the price of PROTOCOL's fiat" is swing the OOS window has at ONE split too, not swing the split point adds.
+3. **Robust across both tuned dials.** Median percentile by SE estimator: IID 0.101, BLOCK21 0.144, NORMAL 0.127. By end grid: Q16 0.101, Q28 0.019, Y8 0.091. All 9 points published, none selected. H_NOISE, H_SHARE, H_EST, H_GRID, H_NEST and H_1013 all PASS.
+4. **The trap, and the more useful half.** The 16 OOS windows are NESTED — all end on the last day of the tape — so they are mostly the same returns read again. A per-end analytic SE (median 0.3241) overstates the yardstick by 1.2x and an independent-window band (1.1784) by 4.5x. Pricing this band against 1001's comparand SEs of 0.2877 / 0.3350, as the record has done, compares objects with different correlation structures.
+5. **Caveat, measured not asserted (section D2).** The observed band lands BELOW the null median partly because the tape's volatile episodes (2020, 2022) sit in the tail every window shares — variance density there is 1.433x the head each end drops, in 100.0% of 108 cells — so a resample scatters them and over-disperses. The SAFE claim is therefore the one-sided one: the band does not EXCEED sampling noise. The 1.59x margin is not banked.
+6. **Gates 8 of 9 PASS.** G4 reproduces 1013's published band exactly (three pick-invariant cells 0.1747–0.1955, worst of six 0.2666). **G7 FAILS 107/108** on null centring at a 3-SE bar; a correct sampler is expected to fail 0.29 of 108 (P(≥1) ≈ 25%) and the worst cell is 3.14 SE — recorded as FAIL regardless.
+7. **Survivorship.** U56/B136 are current-constituent panels, so every LEVEL is optimistic. The measured object is a RATIO of two bands off the SAME path, so the bias largely cancels; where it does not it raises the Sharpe level, which raises the analytic SE and flatters H_NOISE. The verdict is the easier call and is reported as such.
+8. **No book is promoted and neither KEEP path is claimed.** The rule-8 arm re-runs GRID ladder books the record already holds (4b 18/18, 4a 0/18).
+
+## EXACT WORDING PROPOSED (not applied — PROTOCOL rule 6 reserves changes to the Sunday review)
+
+Append to PROTOCOL rule 8:
+
+> **SPLIT-POINT BAND.** Where a split-point band is published it is published beside the band the SAME book's own resampled path produces at the SAME nested ends. It is never compared to a per-end SE, or to a comparand SE built from non-nested windows: on the record's own Q16 grid those overstate the yardstick by 1.2x and 4.5x respectively, because the windows all end on the last day of the tape and are mostly the same returns read again. A band that does not exceed its own nested null is reported as "inside the window's sampling noise", never as a cost of the split-point choice.
+
+9. **What the record may no longer say.** That the split-point choice costs 0.1747–0.2666 of OOS Sharpe, or that this swing is comparable to a 4b leg margin. It is not a cost of the choice; it is the OOS window's noise, which the record pays at any single split it picks.
+10. **Follow-up filed.** 1040 — if the split-point band is noise, is the 4b OOS Sharpe LEG decidable at any split? (This is 1012's question with the band supplied, and it makes 1012's answer sharper.)
