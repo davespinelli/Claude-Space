@@ -1,0 +1,206 @@
+# Idea 1035 (lane C, 2026-09-16) — re-express EVERY committed CHOOSER-vs-RANDOM claim as a PERCENTILE
+# 2 tuned dials: CLAIM SET ['STRICT', 'WIDE', 'NUMERIC'] x CONTROL BASIS ['SEQ', 'FIXED', 'RAW'] = 9 points, ALL reported, none selected.
+# HEADLINE = STRICT claims x SEQ basis; cell controls: panel [U56, B136] x cost [0.0, 10.0, 25.0] bps, POOL = 18 GRID books per panel, END GRID Q16 (1013/1023/1031's own 16 quarter-ends).
+# DRAWS: NRAND = 2,000 sequences per cell (5x 1023's 400); a percentile resolves to 0.0005, binomial SE at p=0.5 = 0.0112.
+# SCALE CAVEAT declared first: the record publishes gaps in Sharpe, in CAGR pp and in
+#   pass RATES.  Only a Sharpe-scale gap can be run through a Sharpe distribution, so the
+#   banding arm takes only numbers written with >= 3 decimals, |g| <= 0.5, in a sentence
+#   naming Sharpe.  Everything the filter excludes is COUNTED, never silently dropped.
+# SURVIVORSHIP: U56/B136 are current-constituent panels — every LEVEL is optimistic.  The
+#   measured object is a RANK inside a distribution from the SAME pool; where the bias
+#   does not cancel it flatters the coin flip, so every chooser percentile is a LOWER
+#   bound.
+
+## (A) THE CENSUS — every committed chooser-vs-random sentence in LEADERBOARD.md and CHANGELOG.md
+G0 HARVEST determinism (re-parse of the same bytes returns the same claim table): PASS  (LEADERBOARD.md 4,248,083B, CHANGELOG.md 2,507,450B)
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.claims.csv  (194 rows, 18 cols)
+   harvested 194 candidate sentences; STRICT 68, WIDE 194, NUMERIC 12
+   LEADERBOARD.md   candidates   110  STRICT    39  WIDE   110  NUMERIC     7
+   CHANGELOG.md     candidates    84  STRICT    29  WIDE    84  NUMERIC     5
+
+   FIELD STAMPS — the share of claims carrying each field a percentile needs
+claim set       n |   POOL  DRAWS   CELL   COST   YARD    PCT | POOL&DRAWS  MAPPABLE
+STRICT         68 |  0.059  0.074  0.162  0.059  0.147  0.118 |      0.015     0.015
+WIDE          194 |  0.052  0.082  0.165  0.067  0.160  0.098 |      0.005     0.005
+NUMERIC        12 |  0.000  0.083  0.167  0.000  0.000  0.083 |      0.000     0.000
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.stamps.csv  (3 rows, 11 cols)
+
+   CALENDAR: U56 ends 2026-09-15 (4705 days), B136 ends 2026-09-11 (4703 days); each panel keeps its OWN calendar (1013's, 1023's and 1031's construction, and what the cross-run gates are stated on). No splice.
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+POOL = 36 never-memo-selected GRID books (18 U56 / 18 B136).  END GRID Q16 = 16 ends 2015-03-31..2018-12-31; declared split 2016-12-31 read separately for rule 8.
+
+## Reproduction gates (printed BEFORE any hypothesis number is read)
+G1 fast_run == engine.backtest (returns / turnover): 6.939e-18 / 1.665e-16  PASS
+G2 rules_v2_weights(U,0.03,0.75) == baseline.rules_v2_weights(U): 0.000e+00  PASS
+G3 CROSS-RUN SPY OOS at 2016-12-31: 15.2102% / 0.8711 / -33.7173%  max|d| 1.702e-04  PASS
+G5 determinism over the 1,728-row ladder: 0.000e+00  PASS
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.ladder.csv  (1,728 rows, 26 cols)
+G4 CROSS-RUN 1013's four published declared-split picks: 4/4  max|d| 4.588e-04  PASS
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.crossrun.csv  (4 rows, 10 cols)
+G6 IS PURITY (picks invariant to an OOS permutation): 0 moved picks of 48  PASS
+G7 SAMPLER UNBIASEDNESS (MC mean == exact pool mean, 3 SE): 6/6  max|d| 1.113e-03  PASS
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.sampler.csv  (6 rows, 7 cols)
+G8 PERCENTILE VALIDITY (a distribution's own median scores 0.5000): SEQ worst |d| 0.00000 PASS;  FIXED 0.0000 (atom 0.0000), RAW 0.0000 (atom 0.0000) — both are 18-point pools quantised to 1/18 = 0.0556, so their deviation IS the atom and is printed, not hidden.
+   IS_SHARPE  score 1.155696 vs 1023's 1.155696 (|d| 3.75e-07);  percentile 0.000 vs 1031's 0.000 (|d| 0.000)
+   IS_LEGS    score 1.155696 vs 1023's 1.155696 (|d| 3.75e-07);  percentile 0.000 vs 1031's 0.000 (|d| 0.000)
+   IS_CAGR    score 1.261757 vs 1023's 1.261757 (|d| 2.69e-07);  percentile 0.812 vs 1031's 0.800 (|d| 0.012)
+G9 CROSS-RUN 1031's committed headline percentiles: 3/3  PASS
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.crossrun1031.csv  (3 rows, 8 cols)
+
+## (B) THE CALIBRATION — what percentile does a published GAP earn?
+   For a cell's null distribution D, a claim of gap g is the claim that the chooser scored
+   mean(D) + g.  Its percentile is pct(mean(D) + g, D) — a closed form, no search.
+
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.calibration.csv  (1,512 rows, 8 cols)
+basis       gap |  pct min  pct med  pct max   width n cells
+SEQ     -0.2000 |    0.000    0.000    0.000   0.000       6
+SEQ     -0.1000 |    0.000    0.000    0.000   0.000       6
+SEQ     -0.0884 |    0.000    0.000    0.000   0.000       6
+SEQ     -0.0500 |    0.000    0.004    0.023   0.023       6
+SEQ     -0.0200 |    0.063    0.146    0.210   0.147       6
+SEQ     -0.0100 |    0.210    0.296    0.351   0.140       6
+SEQ     +0.0000 |    0.485    0.506    0.518   0.033       6
+SEQ     +0.0100 |    0.657    0.708    0.780   0.123       6
+SEQ     +0.0177 |    0.749    0.827    0.921   0.172       6
+SEQ     +0.0200 |    0.780    0.851    0.945   0.164       6
+SEQ     +0.0418 |    0.947    0.986    1.000   0.053       6
+SEQ     +0.0500 |    0.974    0.996    1.000   0.026       6
+SEQ     +0.1000 |    1.000    1.000    1.000   0.000       6
+SEQ     +0.2000 |    1.000    1.000    1.000   0.000       6
+
+FIXED   -0.2000 |    0.000    0.000    0.000   0.000       6
+FIXED   -0.1000 |    0.000    0.083    0.167   0.167       6
+FIXED   -0.0884 |    0.000    0.111    0.167   0.167       6
+FIXED   -0.0500 |    0.111    0.278    0.389   0.278       6
+FIXED   -0.0200 |    0.222    0.417    0.556   0.333       6
+FIXED   -0.0100 |    0.278    0.417    0.556   0.278       6
+FIXED   +0.0000 |    0.444    0.556    0.556   0.111       6
+FIXED   +0.0100 |    0.500    0.556    0.611   0.111       6
+FIXED   +0.0177 |    0.556    0.556    0.611   0.056       6
+FIXED   +0.0200 |    0.556    0.583    0.667   0.111       6
+FIXED   +0.0418 |    0.611    0.722    0.889   0.278       6
+FIXED   +0.0500 |    0.611    0.750    0.889   0.278       6
+FIXED   +0.1000 |    0.778    0.889    1.000   0.222       6
+FIXED   +0.2000 |    1.000    1.000    1.000   0.000       6
+
+RAW     -0.2000 |    0.000    0.000    0.000   0.000      96
+RAW     -0.1000 |    0.000    0.056    0.278   0.278      96
+RAW     -0.0884 |    0.000    0.111    0.333   0.333      96
+RAW     -0.0500 |    0.056    0.278    0.444   0.389      96
+RAW     -0.0200 |    0.167    0.389    0.556   0.389      96
+RAW     -0.0100 |    0.222    0.444    0.611   0.389      96
+RAW     +0.0000 |    0.278    0.528    0.722   0.444      96
+RAW     +0.0100 |    0.389    0.556    0.722   0.333      96
+RAW     +0.0177 |    0.444    0.556    0.833   0.389      96
+RAW     +0.0200 |    0.444    0.611    0.833   0.389      96
+RAW     +0.0418 |    0.500    0.722    0.889   0.389      96
+RAW     +0.0500 |    0.611    0.750    0.944   0.333      96
+RAW     +0.1000 |    0.778    0.889    1.000   0.222      96
+RAW     +0.2000 |    0.944    1.000    1.000   0.056      96
+
+   null sd by basis (the yardstick the record does not publish):
+     SEQ    sd 0.0127..0.0257 (median 0.0190) over 6 cells
+     FIXED  sd 0.0475..0.1044 (median 0.0737) over 6 cells
+     RAW    sd 0.0347..0.1211 (median 0.0739) over 96 cells
+
+   THE RESOLVING WINDOW — a band width is only informative where the percentile is not
+   already SATURATED.  Outside +/- ~2 sd every gap earns 0.000 or 1.000 and gaps of very
+   different size become indistinguishable, which is a second way to be unadjudicable.
+     SEQ    null sd 0.0190 -> gaps inside +/-0.0379 resolve; 1031's pair re-read here: gap -0.0884 -> median pct 0.000, gap +0.0177 -> 0.827
+     FIXED  null sd 0.0737 -> gaps inside +/-0.1473 resolve; 1031's pair re-read here: gap -0.0884 -> median pct 0.111, gap +0.0177 -> 0.556
+     RAW    null sd 0.0739 -> gaps inside +/-0.1477 resolve; 1031's pair re-read here: gap -0.0884 -> median pct 0.111, gap +0.0177 -> 0.556
+
+## (C) THE RE-SCORE — every harvested Sharpe-scale gap, as the percentile BAND it is
+   consistent with across the record's own legal cells.
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.rescore.csv  (246 rows, 13 cols)
+
+   ALL NINE GRID POINTS (claim set x control basis).  'sat' = the gap is outside the
+   null's realised support, where every gap earns 0.000 or 1.000 and band width is
+   narrow for the WRONG reason; 'width|in' is the band width on the resolving gaps.
+claim set  basis   n gaps    sat | width med width mean width max |  width|in  >0.20|in
+STRICT     SEQ         18  0.444 |     0.036      0.052     0.153 |     0.048     0.000
+STRICT     FIXED       18  0.167 |     0.128      0.135     0.278 |     0.128     0.333
+STRICT     RAW         18  0.167 |     0.371      0.306     0.444 |     0.377     0.933
+WIDE       SEQ         82  0.524 |     0.027      0.043     0.172 |     0.068     0.000
+WIDE       FIXED       82  0.220 |     0.111      0.133     0.306 |     0.137     0.406
+WIDE       RAW         82  0.220 |     0.333      0.272     0.444 |     0.349     0.891
+NUMERIC    SEQ         18  0.444 |     0.036      0.052     0.153 |     0.048     0.000
+NUMERIC    FIXED       18  0.167 |     0.128      0.135     0.278 |     0.128     0.333
+NUMERIC    RAW         18  0.167 |     0.371      0.306     0.444 |     0.377     0.933
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.grid.csv  (9 rows, 10 cols)
+
+   the ten widest bands on the headline basis (a published gap consistent with this much of the null):
+     LEADERBOARD.md :2495  gap +0.0177 -> pct 0.749..0.921 (width 0.172)  pick - do-nothing **+0.0177** mean OOS Sharpe, 59.5% wins (random -0.0306)
+     LEADERBOARD.md :6594  gap +0.0222 -> pct 0.797..0.950 (width 0.153)  RANDOM (400 sequences x 16 ends) beats `IS_SHARPE` **5 of 6** (mean margin **+0.0418**), `
+     LEADERBOARD.md :6595  gap +0.0222 -> pct 0.797..0.950 (width 0.153)  `IS_CAGR` band 4b rate **0.979** vs RANDOM **0.469** (gap **+0.510**) against an OOS Sharp
+     CHANGELOG.md   :1740  gap +0.0222 -> pct 0.797..0.950 (width 0.153)  **WHAT IS FIT BUYS IS A VERDICT, NOT A SHARPE.** `IS_CAGR`'s band 4b pass rate is **0.979*
+     CHANGELOG.md   :1064  gap -0.0150 -> pct 0.137..0.280 (width 0.144)  **(2) THE NEW THING, and it is not a null result:** the selector is genuinely SKILLED — it
+     CHANGELOG.md   :1065  gap -0.0150 -> pct 0.137..0.280 (width 0.144)  **(2) THE NEW THING, and it is not a null result:** the selector is genuinely SKILLED — it
+     LEADERBOARD.md :2255  gap +0.0131 -> pct 0.694..0.837 (width 0.143)  **Inverted U, and the peak is 263% of the screen: s=1 +0.0121, s=2 +0.0648, s=3 +0.0756, s
+     CHANGELOG.md   :1187  gap -0.0124 -> pct 0.175..0.317 (width 0.142)  **RULE 8 THEN KILLS THE SELECTOR:** SEL-SHARPE falls from idea 175's +0.0388 (t +3.26, cap
+     LEADERBOARD.md :2255  gap +0.0121 -> pct 0.682..0.818 (width 0.136)  **Inverted U, and the peak is 263% of the screen: s=1 +0.0121, s=2 +0.0648, s=3 +0.0756, s
+     CHANGELOG.md   :965   gap +0.0258 -> pct 0.825..0.959 (width 0.134)  The decomposition names the cause: the control carries **+0.0258** of free OOS Sharpe over
+
+   EXACTLY MAPPABLE claims — those naming a panel, a cost rung and a chooser — re-scored
+   in their own cell under all three bases (no banding needed):
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.mappable.csv  (3 rows, 12 cols)
+src               line panel  cost chooser    basis    score    pct  >50th
+CHANGELOG.md      1738 U56      10 IS_SHARPE  SEQ     1.1557  0.000  False
+CHANGELOG.md      1738 U56      10 IS_SHARPE  FIXED   1.1557  0.167  False
+CHANGELOG.md      1738 U56      10 IS_SHARPE  RAW     1.1557  0.146  False
+
+## Hypotheses (bars declared in the docstring, before any number above was read)
+H_STAMP     FAIL  bar: >= 50% of STRICT claims carry BOTH a pool size and a draw count
+            1.471% of 68 STRICT claims (pool alone 5.882%, draws alone 7.353%)
+H_YARD      FAIL  bar: >= 50% of STRICT claims carry ANY yardstick (sd/SE/IQR/percentile)
+            14.706% carry a yardstick token; 11.765% already publish a percentile or a share-of-draws
+H_MAP       FAIL  bar: >= 50% of STRICT claims are EXACTLY mappable (panel + cost rung + chooser)
+            1.471% — 1 of 68 claims
+H_BAND      PASS  bar: median percentile-band width over re-scorable Sharpe gaps <= 0.20
+            median width 0.036 over 18 STRICT gaps on the SEQ basis (mean 0.052, max 0.153); 0.0% of gaps exceed the bar individually.  DIAGNOSIS, stated as loudly as the PASS: 44.4% of these gaps are SATURATED (median percentile <= 0.02 or >= 0.98), where the band is narrow because every gap of that size earns the same 0.000 or 1.000 — a second way to be unadjudicable, not a resolution.  On the 10 RESOLVING gaps the median width is 0.048 and on FIXED/RAW the same gaps run 0.128 / 0.371
+H_FUNCTION  FAIL  bar: gaps within 0.005 of each other earn percentiles within 0.10
+            worst spread 0.143 between gaps -0.0011 and +0.0034
+H_MONO      PASS  bar: pooled Spearman rho(gap, percentile) >= 0.90 across all (gap, cell) points
+            rho 0.9861 over 84 points on the SEQ basis; by basis SEQ=0.9861, FIXED=0.9655, RAW=0.9554
+H_SIGN      PASS  bar: sign(gap) agrees with the 50th-percentile verdict in >= 95% of points
+            100.000% agreement over 78 non-zero-gap points (SEQ basis); disagreements 0
+H_BASIS     FAIL  bar: the percentile a given gap earns is within 0.10 across the three bases
+            max across-basis spread of the MEDIAN percentile 0.274 at gap -0.0500; per-gap spreads -0.200:0.000 -0.100:0.083 -0.088:0.111 -0.050:0.274 -0.020:0.271 -0.010:0.149 +0.000:0.050 +0.010:0.153 +0.018:0.272 +0.020:0.268 +0.042:0.264 +0.050:0.246 +0.100:0.111 +0.200:0.000
+H_CLAIMSET  PASS  bar: H_STAMP / H_YARD / H_MAP return the same verdict on all three claim sets
+            STRICT: pool&draws 0.015, yard 0.147, mappable 0.015; WIDE: pool&draws 0.005, yard 0.160, mappable 0.005; NUMERIC: pool&draws 0.000, yard 0.000, mappable 0.000
+
+G10 BAND SELF-CONSISTENCY (a gap taken FROM a cell returns that cell's own percentile): max|d| 0.000e+00  PASS
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.hypotheses.csv  (9 rows, 4 cols)
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.gates.csv  (11 rows, 4 cols)
+
+## (D) RULE 8 WALK-FORWARD — PROTOCOL's own split, IS 2009-2016 / OOS 2017-2026 read ONCE
+   Each chooser picks a book using 2009-2016 data ONLY; the OOS triple is read once and
+   scored on BOTH KEEP paths, and the pick is percentiled inside its own 18-book pool.
+
+  wrote 2026-09-16_re-express-every-committed-CHOOSER-vs-RANDOM-claim-as-a-PERCENTILE_C.walkforward.csv  (18 rows, 23 cols)
+panel  cost chooser    pick                           | OOS CAGR     Sh   MaxDD |  4b  4a poolPct  binding legs
+U56       0 IS_SHARPE  U56-band0.08-g1.00             |   12.16%  1.177 -19.04% |   T   F   0.028  (none — passes 4b)
+U56       0 IS_LEGS    U56-band0.08-g1.00             |   12.16%  1.177 -19.04% |   T   F   0.028  (none — passes 4b)
+U56       0 IS_CAGR    U56-qroll-q0.17-w1008-d0.50    |   16.68%  1.372 -15.52% |   T   F   0.583  (none — passes 4b)
+U56      10 IS_SHARPE  U56-band0.08-g1.00             |   11.99%  1.162 -19.05% |   T   F   0.028  (none — passes 4b)
+U56      10 IS_LEGS    U56-band0.08-g1.00             |   11.99%  1.162 -19.05% |   T   F   0.028  (none — passes 4b)
+U56      10 IS_CAGR    U56-qroll-q0.17-w1008-d0.50    |   15.60%  1.293 -15.59% |   T   F   0.583  (none — passes 4b)
+U56      25 IS_SHARPE  U56-band0.08-g1.00             |   11.73%  1.139 -19.07% |   T   F   0.250  (none — passes 4b)
+U56      25 IS_LEGS    U56-band0.08-g1.00             |   11.73%  1.139 -19.07% |   T   F   0.250  (none — passes 4b)
+U56      25 IS_CAGR    U56-qroll-q0.17-w1008-d0.50    |   14.00%  1.174 -15.71% |   T   F   0.417  (none — passes 4b)
+B136      0 IS_SHARPE  B136-qroll-q0.17-w504-d0.50    |   14.06%  1.200 -17.07% |   T   F   0.528  (none — passes 4b)
+B136      0 IS_LEGS    B136-band0.08-g1.00            |   11.24%  1.115 -19.48% |   T   F   0.028  (none — passes 4b)
+B136      0 IS_CAGR    B136-qroll-q0.12-w1008-d0.50   |   15.43%  1.238 -17.07% |   T   F   0.639  (none — passes 4b)
+B136     10 IS_SHARPE  B136-band0.08-g1.00            |   11.05%  1.097 -19.50% |   T   F   0.194  (none — passes 4b)
+B136     10 IS_LEGS    B136-band0.08-g1.00            |   11.05%  1.097 -19.50% |   T   F   0.194  (none — passes 4b)
+B136     10 IS_CAGR    B136-qroll-q0.12-w1008-d0.50   |   14.30%  1.157 -17.31% |   T   F   0.639  (none — passes 4b)
+B136     25 IS_SHARPE  B136-band0.08-g1.00            |   10.76%  1.071 -19.53% |   T   F   0.750  (none — passes 4b)
+B136     25 IS_LEGS    B136-band0.08-g1.00            |   10.76%  1.071 -19.53% |   T   F   0.750  (none — passes 4b)
+B136     25 IS_CAGR    B136-qroll-q0.12-w1008-d0.50   |   12.62%  1.036 -17.72% |   T   F   0.306  (none — passes 4b)
+   comparands U56: SPY OOS 15.21% / 0.8711 / -33.72%  (4b DD cap 20.23%, CAGR floor 10.57%);  RULES v2 live @10 bps full 8.62% / 1.2007 / -12.05% (H1 1.2322 / H2 1.1760)
+   comparands B136: SPY OOS 15.33% / 0.8767 / -33.72%  (4b DD cap 20.23%, CAGR floor 10.61%);  RULES v2 live @10 bps full 7.98% / 1.0993 / -12.24% (H1 1.2348 / H2 0.9658)
+   OOS 4b passes: 18 of 18;  OOS 4a passes: 0 of 18.
+   KEEP paths: 4a needs Sharpe > RULES v2 in BOTH halves and MaxDD no worse; 4b needs Sharpe > SPY in both halves AND OOS, |MaxDD| <= 60% of SPY's and CAGR >= 70% of SPY's.
+
+GATES 11 of 11;  HYPOTHESES 4 of 9.
+elapsed 6.8s
