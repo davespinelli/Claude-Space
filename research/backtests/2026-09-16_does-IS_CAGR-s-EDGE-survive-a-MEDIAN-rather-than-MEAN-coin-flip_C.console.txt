@@ -1,0 +1,311 @@
+# Idea 1031 (lane C, 2026-09-16) — does IS_CAGR's EDGE survive a MEDIAN rather than a MEAN coin flip?
+# 2 tuned dials: PERCENTILE STATISTIC ['MEAN_SH', 'MED_SH', 'RATE4B'] x END GRID ['Q16', 'Q32', 'REC1'] = 9 points, ALL reported at every panel x cost, none selected.
+# HEADLINE = U56 / 10 bps / MEAN_SH / Q16 — 1023's own cell.  CONTROLS: cost [0.0, 10.0, 25.0] bps, panel [U56, B136], POOL = the 36 GRID books.
+# DRAWS: NRAND = 2,000 random chooser SEQUENCES per (panel, cost, end grid) — 5x 1023's 400.  A percentile resolves to 0.0005; its binomial SE at p=0.5 is 0.0112.
+# CAVEAT declared first: Q32's earliest ends leave an IS window of barely two years. It is
+#   legal under rule 8's letter and thin in substance — a SENSITIVITY axis, never a
+#   headline.
+# SURVIVORSHIP: U56/B136 are current-constituent panels — every LEVEL is optimistic.  The
+#   measured object is a RANK inside a distribution from the SAME pool; where the bias
+#   does not cancel it flatters the coin flip, so every chooser percentile is a LOWER
+#   bound and H_CAGR50 is the HARDER call.
+
+   CALENDAR: U56 ends 2026-09-15 (4705 days), B136 ends 2026-09-11 (4703 days); each panel keeps its OWN calendar (1023's and 1013's construction — the cross-run comparands are stated on it). No splice.
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+POOL = 36 never-memo-selected GRID books (18 U56 / 18 B136).
+END GRIDS: Q16 = 16 ends 2015-03-31..2018-12-31; Q32 = 32 ends 2011-03-31..2018-12-31; REC1 = [2016-12-31].  Union scored = 32 ends.
+
+## Reproduction gates (printed BEFORE any hypothesis number is read)
+G1 fast_run == engine.backtest (returns / turnover): 6.939e-18 / 1.665e-16  PASS
+G2 rules_v2_weights(U,0.03,0.75) == baseline.rules_v2_weights(U): 0.000e+00  PASS
+G3 CROSS-RUN SPY OOS at 2016-12-31: 15.2102% / 0.8711 / -33.7173%  max|d| 1.702e-04  PASS
+G5 determinism over the 3,456-row ladder: 0.000e+00  PASS
+G4 CROSS-RUN 1013's four published declared-split picks: 4/4  max|d| 4.588e-04  PASS
+  wrote 2026-09-16_does-IS_CAGR-s-EDGE-survive-a-MEDIAN-rather-than-MEAN-coin-flip_C.crossrun.csv  (4 rows, 10 cols)
+G6 IS PURITY (picks invariant to an OOS permutation): 0 moved picks of 96  PASS
+G7 SAMPLER UNBIASEDNESS (MC mean == exact pool mean, 3 SE): 6/6  max|d| 1.113e-03  PASS
+  wrote 2026-09-16_does-IS_CAGR-s-EDGE-survive-a-MEDIAN-rather-than-MEAN-coin-flip_C.sampler.csv  (6 rows, 7 cols)
+G8  PERCENTILE VALIDITY, all 9 dial points (own median scores 0.5000): worst |d| 0.2482  FAIL
+G8b PERCENTILE VALIDITY, the two CONTINUOUS statistics only: worst |d| 0.0255  FAIL
+G8d PERCENTILE VALIDITY, the 24 MULTI-END continuous cells (MEAN_SH/MED_SH on Q16/Q32): worst |d| 0.00075  PASS
+G8c DIAGNOSIS — the whole G8/G8b residual is ATOM MASS, not a defect in the percentile function.  A mid-rank percentile cannot return 0.5 at a point mass, and exactly two things put one there: (i) REC1 is ONE end, so the score distribution IS the 18-book pool and is quantised to 1/18 = 0.0556 (n_distinct 18, atom 0.0510..0.6790, dev <= 0.2482); (ii) RATE4B averages 0/1 indicators (2..20 distinct values, atom up to 0.6790).  Where the score is genuinely continuous the bar is met by more than an order of magnitude (G8d).  Every REC1 and RATE4B percentile below is therefore resolved only to its own atom and is read that way.
+  wrote 2026-09-16_does-IS_CAGR-s-EDGE-survive-a-MEDIAN-rather-than-MEAN-coin-flip_C.atoms.csv  (54 rows, 9 cols)
+  wrote 2026-09-16_does-IS_CAGR-s-EDGE-survive-a-MEDIAN-rather-than-MEAN-coin-flip_C.percentile.csv  (162 rows, 29 cols)
+
+## H_1023 — reproduce 1023's headline cell before re-scoring it
+   IS_SHARPE  mean OOS Sharpe 1.155696  vs 1023's 1.155696  |d| 3.75e-07
+   IS_LEGS    mean OOS Sharpe 1.155696  vs 1023's 1.155696  |d| 3.75e-07
+   IS_CAGR    mean OOS Sharpe 1.261757  vs 1023's 1.261757  |d| 2.69e-07
+   RANDOM     EXACT pool mean 1.243265 (closed form, no draws)  vs 1023's MC 1.243317  |d| 5.21e-05  (3 MC SE = 3.13e-03)
+   H_1023 (chooser tol 5e-4 AND pool mean within 3 MC SE): PASS
+
+## (A) THE PERCENTILE TABLE — every chooser re-expressed as the SHARE OF RANDOM SEQUENCES
+   IT BEATS.  2,000 sequences per cell.  'pct' > 0.500 = clears the 50th percentile.
+
+--- END GRID Q16 (16 ends) x STATISTIC MEAN_SH   <<< HEADLINE
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   1.2115   1.3075   1.3068  0.0257  -0.00069 |  -3.74  0.000  False  False
+U56       0 IS_LEGS    |   1.1954   1.3075   1.3068  0.0257  -0.00069 |  -4.37  0.000  False  False
+U56       0 IS_CAGR    |   1.3494   1.3075   1.3068  0.0257  -0.00069 |  +1.63  0.947   True   True
+U56      10 IS_SHARPE  |   1.1557   1.2441   1.2443  0.0212  +0.00028 |  -4.16  0.000  False  False
+U56      10 IS_LEGS    |   1.1557   1.2441   1.2443  0.0212  +0.00028 |  -4.16  0.000  False  False
+U56      10 IS_CAGR    |   1.2618   1.2441   1.2443  0.0212  +0.00028 |  +0.83  0.800   True   True
+U56      25 IS_SHARPE  |   1.1204   1.1481   1.1481  0.0182  -0.00003 |  -1.52  0.059  False  False
+U56      25 IS_LEGS    |   1.1161   1.1481   1.1481  0.0182  -0.00003 |  -1.76  0.042  False  False
+U56      25 IS_CAGR    |   1.1394   1.1481   1.1481  0.0182  -0.00003 |  -0.48  0.317  False  False
+B136      0 IS_SHARPE  |   1.1217   1.1541   1.1539  0.0194  -0.00022 |  -1.67  0.051  False  False
+B136      0 IS_LEGS    |   1.0658   1.1541   1.1539  0.0194  -0.00022 |  -4.55  0.000  False  False
+B136      0 IS_CAGR    |   1.2001   1.1541   1.1539  0.0194  -0.00022 |  +2.37  0.990   True   True
+B136     10 IS_SHARPE  |   1.0481   1.0876   1.0871  0.0142  -0.00050 |  -2.79  0.003  False  False
+B136     10 IS_LEGS    |   1.0481   1.0876   1.0871  0.0142  -0.00050 |  -2.79  0.003  False  False
+B136     10 IS_CAGR    |   1.1180   1.0876   1.0871  0.0142  -0.00050 |  +2.14  0.979   True   True
+B136     25 IS_SHARPE  |   1.0216   0.9883   0.9888  0.0129  +0.00055 |  +2.58  0.996   True   True
+B136     25 IS_LEGS    |   1.0216   0.9883   0.9888  0.0129  +0.00055 |  +2.58  0.996   True   True
+B136     25 IS_CAGR    |   0.9944   0.9883   0.9888  0.0129  +0.00055 |  +0.47  0.678   True   True
+
+--- END GRID Q16 (16 ends) x STATISTIC MED_SH
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   1.1945   1.3008   1.2968  0.0337  -0.00405 |  -3.16  0.000  False  False
+U56       0 IS_LEGS    |   1.1846   1.3008   1.2968  0.0337  -0.00405 |  -3.45  0.000  False  False
+U56       0 IS_CAGR    |   1.3438   1.3008   1.2968  0.0337  -0.00405 |  +1.28  0.893   True   True
+U56      10 IS_SHARPE  |   1.1618   1.2360   1.2341  0.0295  -0.00192 |  -2.52  0.000  False  False
+U56      10 IS_LEGS    |   1.1618   1.2360   1.2341  0.0295  -0.00192 |  -2.52  0.000  False  False
+U56      10 IS_CAGR    |   1.2569   1.2360   1.2341  0.0295  -0.00192 |  +0.71  0.746   True   True
+U56      25 IS_SHARPE  |   1.1125   1.1492   1.1499  0.0267  +0.00066 |  -1.38  0.088  False  False
+U56      25 IS_LEGS    |   1.1125   1.1492   1.1499  0.0267  +0.00066 |  -1.38  0.088  False  False
+U56      25 IS_CAGR    |   1.1344   1.1492   1.1499  0.0267  +0.00066 |  -0.56  0.264  False  False
+B136      0 IS_SHARPE  |   1.1253   1.1524   1.1486  0.0237  -0.00375 |  -1.14  0.081  False  False
+B136      0 IS_LEGS    |   1.0751   1.1524   1.1486  0.0237  -0.00375 |  -3.26  0.000  False  False
+B136      0 IS_CAGR    |   1.2007   1.1524   1.1486  0.0237  -0.00375 |  +2.04  0.958   True   True
+B136     10 IS_SHARPE  |   1.0577   1.0911   1.0930  0.0167  +0.00187 |  -2.01  0.027  False  False
+B136     10 IS_LEGS    |   1.0577   1.0911   1.0930  0.0167  +0.00187 |  -2.01  0.027  False  False
+B136     10 IS_CAGR    |   1.1194   1.0911   1.0930  0.0167  +0.00187 |  +1.69  0.968   True   True
+B136     25 IS_SHARPE  |   1.0314   0.9900   0.9910  0.0206  +0.00107 |  +2.01  0.986   True   True
+B136     25 IS_LEGS    |   1.0314   0.9900   0.9910  0.0206  +0.00107 |  +2.01  0.986   True   True
+B136     25 IS_CAGR    |   0.9970   0.9900   0.9910  0.0206  +0.00107 |  +0.34  0.592   True   True
+
+--- END GRID Q16 (16 ends) x STATISTIC RATE4B
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   0.8750   0.5078   0.5000  0.1263  -0.00775 |  +2.91  0.999   True   True
+U56       0 IS_LEGS    |   1.0000   0.5078   0.5000  0.1263  -0.00775 |  +3.90  1.000   True   True
+U56       0 IS_CAGR    |   1.0000   0.5078   0.5000  0.1263  -0.00775 |  +3.90  1.000   True   True
+U56      10 IS_SHARPE  |   1.0000   0.4459   0.4375  0.1262  -0.00838 |  +4.39  1.000   True   True
+U56      10 IS_LEGS    |   1.0000   0.4459   0.4375  0.1262  -0.00838 |  +4.39  1.000   True   True
+U56      10 IS_CAGR    |   0.9375   0.4459   0.4375  0.1262  -0.00838 |  +3.90  1.000   True   True
+U56      25 IS_SHARPE  |   1.0000   0.3332   0.3125  0.1188  -0.02069 |  +5.61  1.000   True   True
+U56      25 IS_LEGS    |   1.0000   0.3332   0.3125  0.1188  -0.02069 |  +5.61  1.000   True   True
+U56      25 IS_CAGR    |   0.9375   0.3332   0.3125  0.1188  -0.02069 |  +5.09  1.000   True   True
+B136      0 IS_SHARPE  |   0.6875   0.6042   0.6250  0.1207  +0.02084 |  +0.69  0.740   True   True
+B136      0 IS_LEGS    |   0.5625   0.6042   0.6250  0.1207  +0.02084 |  -0.35  0.360  False  False
+B136      0 IS_CAGR    |   1.0000   0.6042   0.6250  0.1207  +0.02084 |  +3.28  1.000   True   True
+B136     10 IS_SHARPE  |   0.5000   0.5710   0.5625  0.1219  -0.00850 |  -0.58  0.283  False  False
+B136     10 IS_LEGS    |   0.5000   0.5710   0.5625  0.1219  -0.00850 |  -0.58  0.283  False  False
+B136     10 IS_CAGR    |   1.0000   0.5710   0.5625  0.1219  -0.00850 |  +3.52  1.000   True   True
+B136     25 IS_SHARPE  |   0.3125   0.3375   0.3125  0.1140  -0.02503 |  -0.22  0.425  False  False
+B136     25 IS_LEGS    |   0.3125   0.3375   0.3125  0.1140  -0.02503 |  -0.22  0.425  False  False
+B136     25 IS_CAGR    |   1.0000   0.3375   0.3125  0.1140  -0.02503 |  +5.81  1.000   True   True
+
+--- END GRID Q32 (32 ends) x STATISTIC MEAN_SH
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   1.2351   1.2916   1.2915  0.0148  -0.00011 |  -3.82  0.000  False  False
+U56       0 IS_LEGS    |   1.2269   1.2916   1.2915  0.0148  -0.00011 |  -4.37  0.000  False  False
+U56       0 IS_CAGR    |   1.3233   1.2916   1.2915  0.0148  -0.00011 |  +2.15  0.984   True   True
+U56      10 IS_SHARPE  |   1.1923   1.2272   1.2272  0.0122  -0.00006 |  -2.86  0.002  False  False
+U56      10 IS_LEGS    |   1.1899   1.2272   1.2272  0.0122  -0.00006 |  -3.05  0.001  False  False
+U56      10 IS_CAGR    |   1.2385   1.2272   1.2272  0.0122  -0.00006 |  +0.92  0.825   True   True
+U56      25 IS_SHARPE  |   1.1543   1.1311   1.1315  0.0128  +0.00038 |  +1.82  0.968   True   True
+U56      25 IS_LEGS    |   1.1414   1.1311   1.1315  0.0128  +0.00038 |  +0.81  0.791   True   True
+U56      25 IS_CAGR    |   1.0922   1.1311   1.1315  0.0128  +0.00038 |  -3.06  0.002  False  False
+B136      0 IS_SHARPE  |   1.1209   1.1560   1.1559  0.0118  -0.00003 |  -2.96  0.002  False  False
+B136      0 IS_LEGS    |   1.0929   1.1560   1.1559  0.0118  -0.00003 |  -5.33  0.000  False  False
+B136      0 IS_CAGR    |   1.1868   1.1560   1.1559  0.0118  -0.00003 |  +2.61  0.996   True   True
+B136     10 IS_SHARPE  |   1.0468   1.0893   1.0892  0.0095  -0.00018 |  -4.46  0.000  False  False
+B136     10 IS_LEGS    |   1.0468   1.0893   1.0892  0.0095  -0.00018 |  -4.46  0.000  False  False
+B136     10 IS_CAGR    |   1.1008   1.0893   1.0892  0.0095  -0.00018 |  +1.20  0.885   True   True
+B136     25 IS_SHARPE  |   1.0212   0.9901   0.9901  0.0121  +0.00002 |  +2.58  0.997   True   True
+B136     25 IS_LEGS    |   0.9960   0.9901   0.9901  0.0121  +0.00002 |  +0.49  0.687   True   True
+B136     25 IS_CAGR    |   0.9698   0.9901   0.9901  0.0121  +0.00002 |  -1.68  0.050  False  False
+
+--- END GRID Q32 (32 ends) x STATISTIC MED_SH
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   1.2381   1.2846   1.2876  0.0170  +0.00299 |  -2.73  0.006  False  False
+U56       0 IS_LEGS    |   1.2361   1.2846   1.2876  0.0170  +0.00299 |  -2.85  0.003  False  False
+U56       0 IS_CAGR    |   1.3350   1.2846   1.2876  0.0170  +0.00299 |  +2.96  0.997   True   True
+U56      10 IS_SHARPE  |   1.1959   1.2170   1.2153  0.0141  -0.00171 |  -1.49  0.043  False  False
+U56      10 IS_LEGS    |   1.1959   1.2170   1.2153  0.0141  -0.00171 |  -1.49  0.043  False  False
+U56      10 IS_CAGR    |   1.2447   1.2170   1.2153  0.0141  -0.00171 |  +1.96  0.960   True   True
+U56      25 IS_SHARPE  |   1.1547   1.1305   1.1297  0.0197  -0.00079 |  +1.23  0.876   True   True
+U56      25 IS_LEGS    |   1.1547   1.1305   1.1297  0.0197  -0.00079 |  +1.23  0.876   True   True
+U56      25 IS_CAGR    |   1.0882   1.1305   1.1297  0.0197  -0.00079 |  -2.14  0.016  False  False
+B136      0 IS_SHARPE  |   1.1215   1.1531   1.1520  0.0144  -0.00113 |  -2.20  0.006  False  False
+B136      0 IS_LEGS    |   1.1141   1.1531   1.1520  0.0144  -0.00113 |  -2.72  0.001  False  False
+B136      0 IS_CAGR    |   1.1945   1.1531   1.1520  0.0144  -0.00113 |  +2.88  0.994   True   True
+B136     10 IS_SHARPE  |   1.0547   1.0906   1.0930  0.0132  +0.00238 |  -2.71  0.003  False  False
+B136     10 IS_LEGS    |   1.0547   1.0906   1.0930  0.0132  +0.00238 |  -2.71  0.003  False  False
+B136     10 IS_CAGR    |   1.1071   1.0906   1.0930  0.0132  +0.00238 |  +1.24  0.932   True   True
+B136     25 IS_SHARPE  |   1.0340   0.9947   0.9956  0.0174  +0.00093 |  +2.26  0.995   True   True
+B136     25 IS_LEGS    |   1.0288   0.9947   0.9956  0.0174  +0.00093 |  +1.95  0.978   True   True
+B136     25 IS_CAGR    |   0.9729   0.9947   0.9956  0.0174  +0.00093 |  -1.25  0.100  False  False
+
+--- END GRID Q32 (32 ends) x STATISTIC RATE4B
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   0.5312   0.4993   0.5000  0.0873  +0.00067 |  +0.37  0.642   True   True
+U56       0 IS_LEGS    |   0.6875   0.4993   0.5000  0.0873  +0.00067 |  +2.15  0.983   True   True
+U56       0 IS_CAGR    |   0.8750   0.4993   0.5000  0.0873  +0.00067 |  +4.30  1.000   True   True
+U56      10 IS_SHARPE  |   0.6250   0.4475   0.4375  0.0858  -0.01000 |  +2.07  0.980   True   True
+U56      10 IS_LEGS    |   0.7188   0.4475   0.4375  0.0858  -0.01000 |  +3.16  0.999   True   True
+U56      10 IS_CAGR    |   0.8438   0.4475   0.4375  0.0858  -0.01000 |  +4.62  1.000   True   True
+U56      25 IS_SHARPE  |   0.7188   0.3274   0.3125  0.0845  -0.01488 |  +4.63  1.000   True   True
+U56      25 IS_LEGS    |   0.7500   0.3274   0.3125  0.0845  -0.01488 |  +5.00  1.000   True   True
+U56      25 IS_CAGR    |   0.5000   0.3274   0.3125  0.0845  -0.01488 |  +2.04  0.978   True   True
+B136      0 IS_SHARPE  |   0.5625   0.5859   0.5938  0.0866  +0.00786 |  -0.27  0.382  False  False
+B136      0 IS_LEGS    |   0.5000   0.5859   0.5938  0.0866  +0.00786 |  -0.99  0.169  False  False
+B136      0 IS_CAGR    |   0.9375   0.5859   0.5938  0.0866  +0.00786 |  +4.06  1.000   True   True
+B136     10 IS_SHARPE  |   0.3438   0.5505   0.5625  0.0862  +0.01200 |  -2.40  0.009  False  False
+B136     10 IS_LEGS    |   0.3438   0.5505   0.5625  0.0862  +0.01200 |  -2.40  0.009  False  False
+B136     10 IS_CAGR    |   0.8438   0.5505   0.5625  0.0862  +0.01200 |  +3.40  0.999   True   True
+B136     25 IS_SHARPE  |   0.2812   0.3201   0.3125  0.0787  -0.00758 |  -0.49  0.323  False  False
+B136     25 IS_LEGS    |   0.1875   0.3201   0.3125  0.0787  -0.00758 |  -1.68  0.047  False  False
+B136     25 IS_CAGR    |   0.5312   0.3201   0.3125  0.0787  -0.00758 |  +2.68  0.997   True   True
+
+--- END GRID REC1 (1 ends) x STATISTIC MEAN_SH
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   1.1768   1.3419   1.3016  0.1147  -0.04031 |  -1.44  0.029  False  False
+U56       0 IS_LEGS    |   1.1768   1.3419   1.3016  0.1147  -0.04031 |  -1.44  0.029  False  False
+U56       0 IS_CAGR    |   1.3725   1.3419   1.3016  0.1147  -0.04031 |  +0.27  0.573   True   True
+U56      10 IS_SHARPE  |   1.1615   1.2774   1.2762  0.0935  -0.00121 |  -1.24  0.029  False  False
+U56      10 IS_LEGS    |   1.1615   1.2774   1.2762  0.0935  -0.00121 |  -1.24  0.029  False  False
+U56      10 IS_CAGR    |   1.2933   1.2774   1.2762  0.0935  -0.00121 |  +0.17  0.590   True   True
+U56      25 IS_SHARPE  |   1.1386   1.1862   1.2008  0.0818  +0.01461 |  -0.58  0.246  False  False
+U56      25 IS_LEGS    |   1.1386   1.1862   1.2008  0.0818  +0.01461 |  -0.58  0.246  False  False
+U56      25 IS_CAGR    |   1.1742   1.1862   1.2008  0.0818  +0.01461 |  -0.15  0.412  False  False
+B136      0 IS_SHARPE  |   1.2004   1.2034   1.2004  0.0763  -0.00299 |  -0.04  0.523   True  False
+B136      0 IS_LEGS    |   1.1148   1.2034   1.2004  0.0763  -0.00299 |  -1.16  0.029  False  False
+B136      0 IS_CAGR    |   1.2378   1.2034   1.2004  0.0763  -0.00299 |  +0.45  0.632   True   True
+B136     10 IS_SHARPE  |   1.0974   1.1386   1.1157  0.0580  -0.02292 |  -0.71  0.194  False  False
+B136     10 IS_LEGS    |   1.0974   1.1386   1.1157  0.0580  -0.02292 |  -0.71  0.194  False  False
+B136     10 IS_CAGR    |   1.1572   1.1386   1.1157  0.0580  -0.02292 |  +0.32  0.633   True   True
+B136     25 IS_SHARPE  |   1.0714   1.0401   1.0606  0.0523  +0.02048 |  +0.60  0.741   True   True
+B136     25 IS_LEGS    |   1.0714   1.0401   1.0606  0.0523  +0.02048 |  +0.60  0.741   True   True
+B136     25 IS_CAGR    |   1.0360   1.0401   1.0606  0.0523  +0.02048 |  -0.08  0.319  False  False
+
+--- END GRID REC1 (1 ends) x STATISTIC MED_SH
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   1.1768   1.3419   1.3016  0.1147  -0.04031 |  -1.44  0.029  False  False
+U56       0 IS_LEGS    |   1.1768   1.3419   1.3016  0.1147  -0.04031 |  -1.44  0.029  False  False
+U56       0 IS_CAGR    |   1.3725   1.3419   1.3016  0.1147  -0.04031 |  +0.27  0.573   True   True
+U56      10 IS_SHARPE  |   1.1615   1.2774   1.2762  0.0935  -0.00121 |  -1.24  0.029  False  False
+U56      10 IS_LEGS    |   1.1615   1.2774   1.2762  0.0935  -0.00121 |  -1.24  0.029  False  False
+U56      10 IS_CAGR    |   1.2933   1.2774   1.2762  0.0935  -0.00121 |  +0.17  0.590   True   True
+U56      25 IS_SHARPE  |   1.1386   1.1862   1.2008  0.0818  +0.01461 |  -0.58  0.246  False  False
+U56      25 IS_LEGS    |   1.1386   1.1862   1.2008  0.0818  +0.01461 |  -0.58  0.246  False  False
+U56      25 IS_CAGR    |   1.1742   1.1862   1.2008  0.0818  +0.01461 |  -0.15  0.412  False  False
+B136      0 IS_SHARPE  |   1.2004   1.2034   1.2004  0.0763  -0.00299 |  -0.04  0.523   True  False
+B136      0 IS_LEGS    |   1.1148   1.2034   1.2004  0.0763  -0.00299 |  -1.16  0.029  False  False
+B136      0 IS_CAGR    |   1.2378   1.2034   1.2004  0.0763  -0.00299 |  +0.45  0.632   True   True
+B136     10 IS_SHARPE  |   1.0974   1.1386   1.1157  0.0580  -0.02292 |  -0.71  0.194  False  False
+B136     10 IS_LEGS    |   1.0974   1.1386   1.1157  0.0580  -0.02292 |  -0.71  0.194  False  False
+B136     10 IS_CAGR    |   1.1572   1.1386   1.1157  0.0580  -0.02292 |  +0.32  0.633   True   True
+B136     25 IS_SHARPE  |   1.0714   1.0401   1.0606  0.0523  +0.02048 |  +0.60  0.741   True   True
+B136     25 IS_LEGS    |   1.0714   1.0401   1.0606  0.0523  +0.02048 |  +0.60  0.741   True   True
+B136     25 IS_CAGR    |   1.0360   1.0401   1.0606  0.0523  +0.02048 |  -0.08  0.319  False  False
+
+--- END GRID REC1 (1 ends) x STATISTIC RATE4B
+panel  cost chooser    |    score randMean  randMed  randSD  med-mean |      z    pct  >50th  >mean
+U56       0 IS_SHARPE  |   1.0000   0.5035   1.0000  0.5001  +0.49650 |  +0.99  0.748   True   True
+U56       0 IS_LEGS    |   1.0000   0.5035   1.0000  0.5001  +0.49650 |  +0.99  0.748   True   True
+U56       0 IS_CAGR    |   1.0000   0.5035   1.0000  0.5001  +0.49650 |  +0.99  0.748   True   True
+U56      10 IS_SHARPE  |   1.0000   0.4500   0.0000  0.4976  -0.45000 |  +1.11  0.775   True   True
+U56      10 IS_LEGS    |   1.0000   0.4500   0.0000  0.4976  -0.45000 |  +1.11  0.775   True   True
+U56      10 IS_CAGR    |   1.0000   0.4500   0.0000  0.4976  -0.45000 |  +1.11  0.775   True   True
+U56      25 IS_SHARPE  |   1.0000   0.3210   0.0000  0.4670  -0.32100 |  +1.45  0.840   True   True
+U56      25 IS_LEGS    |   1.0000   0.3210   0.0000  0.4670  -0.32100 |  +1.45  0.840   True   True
+U56      25 IS_CAGR    |   1.0000   0.3210   0.0000  0.4670  -0.32100 |  +1.45  0.840   True   True
+B136      0 IS_SHARPE  |   1.0000   0.6760   1.0000  0.4681  +0.32400 |  +0.69  0.662   True   True
+B136      0 IS_LEGS    |   1.0000   0.6760   1.0000  0.4681  +0.32400 |  +0.69  0.662   True   True
+B136      0 IS_CAGR    |   1.0000   0.6760   1.0000  0.4681  +0.32400 |  +0.69  0.662   True   True
+B136     10 IS_SHARPE  |   1.0000   0.6120   1.0000  0.4874  +0.38800 |  +0.80  0.694   True   True
+B136     10 IS_LEGS    |   1.0000   0.6120   1.0000  0.4874  +0.38800 |  +0.80  0.694   True   True
+B136     10 IS_CAGR    |   1.0000   0.6120   1.0000  0.4874  +0.38800 |  +0.80  0.694   True   True
+B136     25 IS_SHARPE  |   1.0000   0.4580   0.0000  0.4984  -0.45800 |  +1.09  0.771   True   True
+B136     25 IS_LEGS    |   1.0000   0.4580   0.0000  0.4984  -0.45800 |  +1.09  0.771   True   True
+B136     25 IS_CAGR    |   1.0000   0.4580   0.0000  0.4984  -0.45800 |  +1.09  0.771   True   True
+
+## (B) THE MEAN-vs-MEDIAN AUDIT — 1023's bar against this run's, on the headline grid
+   1023's bar: chooser mean OOS Sharpe > RANDOM's pool mean.  This run's: chooser score
+   above the MEDIAN of the random sequence distribution.  A FLIP is the only way the
+   queue's worry can be true.
+
+panel  cost chooser    | 1023 mean bar 50th pct bar |    pct  FLIP
+U56       0 IS_SHARPE  |         False        False |  0.000 False
+U56       0 IS_LEGS    |         False        False |  0.000 False
+U56       0 IS_CAGR    |          True         True |  0.947 False
+U56      10 IS_SHARPE  |         False        False |  0.000 False
+U56      10 IS_LEGS    |         False        False |  0.000 False
+U56      10 IS_CAGR    |          True         True |  0.800 False
+U56      25 IS_SHARPE  |         False        False |  0.059 False
+U56      25 IS_LEGS    |         False        False |  0.042 False
+U56      25 IS_CAGR    |         False        False |  0.317 False
+B136      0 IS_SHARPE  |         False        False |  0.051 False
+B136      0 IS_LEGS    |         False        False |  0.000 False
+B136      0 IS_CAGR    |          True         True |  0.990 False
+B136     10 IS_SHARPE  |         False        False |  0.003 False
+B136     10 IS_LEGS    |         False        False |  0.003 False
+B136     10 IS_CAGR    |          True         True |  0.979 False
+B136     25 IS_SHARPE  |          True         True |  0.996 False
+B136     25 IS_LEGS    |          True         True |  0.996 False
+B136     25 IS_CAGR    |          True         True |  0.678 False
+  wrote 2026-09-16_does-IS_CAGR-s-EDGE-survive-a-MEDIAN-rather-than-MEAN-coin-flip_C.audit.csv  (18 rows, 10 cols)
+   FLIPS: 0 of 18 (chooser, cell) pairs.
+
+## Hypotheses (bars declared in the docstring, before any number above was read)
+H_1023     PASS  bar: chooser means within 5e-4 of 1023 AND pool mean within 3 MC SE
+           max chooser |d| 3.75e-07; exact pool mean 1.243265 vs 1023's 1.243317 (|d| 5.21e-05, 3 SE 3.13e-03)
+H_PREMISE  PASS  bar: median - mean of the random score distribution > 0 in the headline cell
+           headline median - mean = +0.000280 (sd 0.0212); the underlying per-end BOOK distribution has median - mean -0.014246
+H_CAGR50   PASS  bar: IS_CAGR percentile > 0.500 in the headline cell
+           IS_CAGR scores 1.2618 at percentile 0.800 (z +0.83) — 20.0% of coin flips beat it
+H_CAGRALL  FAIL  bar: IS_CAGR clears the 50th in ALL 6 panel x cost cells
+           5 of 6; percentiles U56/0=0.947 U56/10=0.800 U56/25=0.317 B136/0=0.990 B136/10=0.979 B136/25=0.678
+H_STAB50   PASS  bar: IS_SHARPE and IS_LEGS FAIL the 50th in 10 of their 12 cells (1023's 5 of 6)
+           10 of 12 fail the 50th; percentiles SHARPE@U56/0=0.000 LEGS@U56/0=0.000 SHARPE@U56/10=0.000 LEGS@U56/10=0.000 SHARPE@U56/25=0.059 LEGS@U56/25=0.042 SHARPE@B136/0=0.051 LEGS@B136/0=0.000 SHARPE@B136/10=0.003 LEGS@B136/10=0.003 SHARPE@B136/25=0.996 LEGS@B136/25=0.996
+H_FLIP     PASS  bar: 0 of 18 (chooser, cell) pairs flip between the mean bar and the 50th
+           0 flips of 18
+H_DIAL     FAIL  bar: the set of choosers clearing the 50th is identical at all 9 dial points
+           Q16/MEAN_SH=['IS_CAGR']; Q16/MED_SH=['IS_CAGR']; Q16/RATE4B=['IS_CAGR', 'IS_LEGS', 'IS_SHARPE']; Q32/MEAN_SH=['IS_CAGR']; Q32/MED_SH=['IS_CAGR']; Q32/RATE4B=['IS_CAGR', 'IS_LEGS', 'IS_SHARPE']; REC1/MEAN_SH=['IS_CAGR']; REC1/MED_SH=['IS_CAGR']; REC1/RATE4B=['IS_CAGR', 'IS_LEGS', 'IS_SHARPE']
+H_VERDICT  PASS  bar: IS_CAGR's RATE4B percentile > its MEAN_SH percentile in the headline cell
+           RATE4B percentile 1.000 (score 0.938 vs random mean 0.446) against MEAN_SH percentile 0.800
+  wrote 2026-09-16_does-IS_CAGR-s-EDGE-survive-a-MEDIAN-rather-than-MEAN-coin-flip_C.hypotheses.csv  (8 rows, 4 cols)
+  wrote 2026-09-16_does-IS_CAGR-s-EDGE-survive-a-MEDIAN-rather-than-MEAN-coin-flip_C.gates.csv  (11 rows, 4 cols)
+
+## (D) RULE 8 WALK-FORWARD — PROTOCOL's own split, IS 2009-2016 / OOS 2017-2026 read ONCE
+   Each chooser picks a book using 2009-2016 data ONLY; the OOS triple is then read once
+   and scored on BOTH KEEP paths, and the pick is percentiled inside its own 18-book pool.
+
+  wrote 2026-09-16_does-IS_CAGR-s-EDGE-survive-a-MEDIAN-rather-than-MEAN-coin-flip_C.walkforward.csv  (18 rows, 23 cols)
+panel  cost chooser    pick                           | OOS CAGR     Sh   MaxDD |  4b  4a poolPct  binding legs
+U56       0 IS_SHARPE  U56-band0.08-g1.00             |   12.16%  1.177 -19.04% |   T   F   0.028  (none — passes 4b)
+U56       0 IS_LEGS    U56-band0.08-g1.00             |   12.16%  1.177 -19.04% |   T   F   0.028  (none — passes 4b)
+U56       0 IS_CAGR    U56-qroll-q0.17-w1008-d0.50    |   16.68%  1.372 -15.52% |   T   F   0.583  (none — passes 4b)
+U56      10 IS_SHARPE  U56-band0.08-g1.00             |   11.99%  1.162 -19.05% |   T   F   0.028  (none — passes 4b)
+U56      10 IS_LEGS    U56-band0.08-g1.00             |   11.99%  1.162 -19.05% |   T   F   0.028  (none — passes 4b)
+U56      10 IS_CAGR    U56-qroll-q0.17-w1008-d0.50    |   15.60%  1.293 -15.59% |   T   F   0.583  (none — passes 4b)
+U56      25 IS_SHARPE  U56-band0.08-g1.00             |   11.73%  1.139 -19.07% |   T   F   0.250  (none — passes 4b)
+U56      25 IS_LEGS    U56-band0.08-g1.00             |   11.73%  1.139 -19.07% |   T   F   0.250  (none — passes 4b)
+U56      25 IS_CAGR    U56-qroll-q0.17-w1008-d0.50    |   14.00%  1.174 -15.71% |   T   F   0.417  (none — passes 4b)
+B136      0 IS_SHARPE  B136-qroll-q0.17-w504-d0.50    |   14.06%  1.200 -17.07% |   T   F   0.528  (none — passes 4b)
+B136      0 IS_LEGS    B136-band0.08-g1.00            |   11.24%  1.115 -19.48% |   T   F   0.028  (none — passes 4b)
+B136      0 IS_CAGR    B136-qroll-q0.12-w1008-d0.50   |   15.43%  1.238 -17.07% |   T   F   0.639  (none — passes 4b)
+B136     10 IS_SHARPE  B136-band0.08-g1.00            |   11.05%  1.097 -19.50% |   T   F   0.194  (none — passes 4b)
+B136     10 IS_LEGS    B136-band0.08-g1.00            |   11.05%  1.097 -19.50% |   T   F   0.194  (none — passes 4b)
+B136     10 IS_CAGR    B136-qroll-q0.12-w1008-d0.50   |   14.30%  1.157 -17.31% |   T   F   0.639  (none — passes 4b)
+B136     25 IS_SHARPE  B136-band0.08-g1.00            |   10.76%  1.071 -19.53% |   T   F   0.750  (none — passes 4b)
+B136     25 IS_LEGS    B136-band0.08-g1.00            |   10.76%  1.071 -19.53% |   T   F   0.750  (none — passes 4b)
+B136     25 IS_CAGR    B136-qroll-q0.12-w1008-d0.50   |   12.62%  1.036 -17.72% |   T   F   0.306  (none — passes 4b)
+   comparands U56: SPY OOS 15.21% / 0.8711 / -33.72%  (4b DD cap 20.23%, CAGR floor 10.57%);  RULES v2 live @10 bps full 8.62% / 1.2007 / -12.05% (H1 1.2322 / H2 1.1760)
+   comparands B136: SPY OOS 15.33% / 0.8767 / -33.72%  (4b DD cap 20.23%, CAGR floor 10.61%);  RULES v2 live @10 bps full 7.98% / 1.0993 / -12.24% (H1 1.2348 / H2 0.9658)
+   OOS 4b passes: 18 of 18;  OOS 4a passes: 0 of 18.
+   KEEP paths: 4a needs Sharpe > RULES v2 in BOTH halves and MaxDD no worse; 4b needs Sharpe > SPY in both halves AND OOS, |MaxDD| <= 60% of SPY's and CAGR >= 70% of SPY's.
+
+GATES 8 of 11;  HYPOTHESES 6 of 8.
+elapsed 8.5s
