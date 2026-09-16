@@ -1,0 +1,413 @@
+
+Idea 1007 (lane C, 2026-09-16)
+does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE
+====================================================================
+
+THE QUESTION (QUEUE.md, verbatim)
+---------------------------------
+  idea 999 found U56/W cells sit INSIDE the -20.23% cap already (null DD leg 1.000) yet lift
+  +0.000 because `L5_CAGR` is pinned at 0.000 for the whole family, while B136/Q has the
+  mirror defect (CAGR 1.000, DD 0.000).  Census the null's per-leg pass rates across the
+  30-cell grid and report how many cells are 4b-unpassable on ONE pinned leg.  Max 2 params
+  (leg, cadence).
+
+WHAT IS MEASURED
+----------------
+4b is a CONJUNCTION of five legs, read here in the record's convention:
+  L1_H1   Sharpe(H1)   > SPY's        L2_H2   Sharpe(H2)   > SPY's
+  L3_OOS  Sharpe(OOS)  > SPY's        L4_DD   |OOS MaxDD|  <= 0.60 x |SPY MaxDD|
+  L5_CAGR OOS CAGR     >= 0.70 x SPY's CAGR
+For every cell (panel, book, cadence) the NULL -- 975/999's `ROTP` coin flip, which holds the
+SAME NUMBER of names at the SAME per-name weight as the book, drawn uniformly from the book's
+own pool, phase-coherently -- gives D independent draws.  The census reads, per cell and per
+estimator (CANON = the phase-0 book PROTOCOL rule 4 reads today; FPORT = 999's tranche):
+
+  p_leg  = share of the cell's D draws that clear that leg alone
+  base4b = share that clear all five at once
+
+and classifies the cell:
+
+  PINNED-ZERO leg : p_leg == 0.000 exactly (0 of D draws clear it)
+  PINNED-ONE  leg : p_leg == 1.000 exactly (D of D clear it -- the leg is free)
+  ZERO-1LEG  cell : base4b == 0 and EXACTLY ONE leg is pinned-zero
+                    -> the cell is 4b-unpassable on one leg; the other four are decorative
+  ZERO-MULTI cell : base4b == 0 and >= 2 legs pinned-zero
+  ZERO-NOPIN cell : base4b == 0 with NO pinned leg -- it dies on the CONJUNCTION, i.e. on
+                    leg dependence, which is the only honest kind of zero
+  LIVE       cell : base4b > 0
+
+A pin is a claim about a rate, made from D draws, so it is REPORTED WITH ITS RESOLUTION: the
+rule-of-three 95% upper bound on a 0-of-D rate is 1 - 0.05^(1/D) (0.0295 at D=100, 0.0487 at
+D=60).  A "pinned" leg is only distinguishable from a rate below that bound, and this run says
+so for every pin it publishes.
+
+GRID:  2 panels {U56, B136} x 5 books {TOP10, TOP20, TOP40, EWELIG, BAND03}
+       x 4 cadences {D 1 phase, W 5, M 21, Q 63} x gross 0.75 x 3 cost rungs {0, 10, 25}
+       x 2 estimators {CANON, FPORT} x nulls {U56 100 draws, B136 60}
+     = the 30-cell W/M/Q census the idea names, plus the 10 D cells as a boundary.
+TWO TUNED AXES ONLY, every point reported, none selected:
+       LEG     in {L1_H1, L2_H2, L3_OOS, L4_DD, L5_CAGR}   (5)
+       CADENCE in {D, W, M, Q}                             (4)
+
+PRE-REGISTERED HYPOTHESES (bars fixed before any number of this run was read)
+-----------------------------------------------------------------------------
+  H_PIN     At least one third of the 30 W/M/Q cells (>= 10) carry at least one PINNED-ZERO
+            leg at 10 bps under CANON.
+  H_ONE     Among the 30 cells whose base4b == 0, a MAJORITY (> 50%) are ZERO-1LEG, i.e. the
+            zero base rate is the work of a single leg rather than of the conjunction.
+  H_CAGR_W  999's specific claim: on U56/W, `L5_CAGR` is pinned at 0.000 in ALL 5 books, and
+            `L4_DD` is pinned at 1.000 in all 5 -- the cell is inside the cap and outside the
+            floor.
+  H_DD_Q    The mirror: on B136/Q, `L4_DD` is pinned at 0.000 and `L5_CAGR` at 1.000 in all
+            5 books.
+  H_MIRROR  The pinning leg TRADES with cadence: mean p_L5_CAGR rises monotonically over
+            D < W < M < Q and mean p_L4_DD falls monotonically, pooled over panels and books.
+  H_DEP     The legs are NOT independent: the median ratio of base4b to the independence
+            product prod(p_leg) over cells where the product is > 0 exceeds 1.0.
+  H_REAL    Where the REAL book fails 4b and its cell carries exactly one pinned-zero leg,
+            the real book binds THAT leg in >= 60% of cases -- the null's pin predicts the
+            rule's binding leg.
+  H_LIFT    999's zero lifts are pins: every cell whose CANON->FPORT 4b lift is exactly
+            +0.000 carries a pinned leg under BOTH estimators, and no cell with a non-zero
+            lift does.
+  H_RULE8   PROTOCOL rule 8: a (book, cadence) chosen on 2009-2016 ALONE by the FEWEST
+            IS-window pinned-zero legs delivers an OOS 4b pass for its REAL book.
+
+PRE-REGISTERED GATES (printed before any result number is read)
+---------------------------------------------------------------
+  G0  offset_mask(.,per,0) == engine.rebalance_mask on W, M, Q                    0 rows
+  G1  fast Ctx == engine.backtest on returns AND turnover post warm-up            1e-12 / 1e-10
+  G2  band_book(0.03, 0.75) == baseline.rules_v2_weights                          0.0
+  G3  CROSS-RUN: idea 999-C's committed .lift.csv per-leg base rates (legC_*,
+      legF_*, base_CANON, base_FPORT) reproduced on EVERY shared row              1e-12
+  G4  CROSS-RUN: idea 999-C's committed .real.csv reproduced row by row on the
+      OOS CAGR / Sharpe / MaxDD triple                                            1e-10
+  G5  GROSS MATCH: every null draw's holding COUNT and per-name weight equal its
+      book's, row by row, on every rebalance row                                  1e-12
+  G6  CENSUS CLOSURE: the four cell classes partition the grid exactly; and
+      base4b > 0 implies NO pinned-zero leg (a conjunction cannot beat its
+      weakest leg)                                                                0 rows
+  G7  TRANCHE IDENTITY: FPORT over a ONE-phase family == that phase's CANON       1e-12
+  G8  determinism: a rebuilt cell reproduces its own streams exactly              0.0
+  G9  LEG ARITHMETIC: base4b <= min_leg(p_leg) on every cell and estimator        0 rows
+
+SURVIVORSHIP (PROTOCOL rule 9)
+------------------------------
+U56 and B136 are CURRENT-CONSTITUENT lists, so every CAGR and drawdown LEVEL below is
+optimistic, and a coin flip drawn from a survivor panel is a BETTER book than one drawn in
+real time.  That cuts SPECIFICALLY against this run's own hypotheses: survivorship inflates
+the null's realised CAGR, so it pushes `L5_CAGR` pass rates UP and makes a CAGR pin HARDER to
+observe, and it compresses the panel's drawdowns, pushing `L4_DD` rates UP too.  Every pin
+reported here is therefore a LOWER bound on how pinned the same leg would be on a real-time
+panel; the mirror in H_MIRROR is a difference between cadences on the SAME panel, where the
+level bias largely cancels.
+
+NOT MODIFIED (PROTOCOL rule 6): RULES.md, PROTOCOL.md, scan.py, bot.py, baseline.py.
+
+  panel U56: 56 columns, 2008-01-02 -> 2026-09-15
+  panel B136: 136 columns, 2008-01-02 -> 2026-09-11
+====================================================================================================
+(A) PRE-REGISTERED GATES -- printed before any result number is read
+====================================================================================================
+  G0  PASS  offset_mask(.,per,0) == engine.rebalance_mask on W/M/Q
+        got 0 disagreeing rows   bar 0
+  G1  PASS  fast Ctx == engine.backtest (returns / turnover), W and M
+        got dret 2.082e-17  dturn 4.441e-16   bar 1e-12 / 1e-10
+  G2  PASS  band_book(0.03,0.75) == baseline.rules_v2_weights
+        got max|d| 0.000e+00   bar 0.0
+  G5  PASS  GROSS MATCH: null count and gross == book's, row by row
+        got dcount 0  dgross 1.110e-16   bar 0 / 1e-12
+  G7  PASS  TRANCHE IDENTITY: FPORT over a 1-phase family == that phase's CANON
+        got max|d| 0.000e+00   bar 1e-12
+  G8  PASS  determinism: a rebuilt cell reproduces its own stream exactly
+        got max|d| 0.000e+00   bar 0.0
+
+====================================================================================================
+(B) THE GRID -- 2 panels x 5 books x {D 1, W 5, M 21, Q 63} phases x ROTP nulls
+====================================================================================================
+  U56: SPY full 15.10%/0.8830/-33.72%  OOS 15.21%/0.8713/-33.72%
+    U56/W phase 1/5  (19s)
+    U56/M phase 1/21  (46s)
+    U56/M phase 16/21  (132s)
+    U56/Q phase 1/63  (172s)
+    U56/Q phase 16/63  (262s)
+    U56/Q phase 31/63  (309s)
+    U56/Q phase 46/63  (379s)
+    U56/Q phase 61/63  (431s)
+  panel U56 done  (439s)
+  B136: SPY full 15.16%/0.8862/-33.72%  OOS 15.33%/0.8769/-33.72%
+    B136/W phase 1/5  (471s)
+    B136/M phase 1/21  (520s)
+    B136/M phase 16/21  (634s)
+    B136/Q phase 1/63  (679s)
+    B136/Q phase 16/63  (784s)
+    B136/Q phase 31/63  (887s)
+    B136/Q phase 46/63  (989s)
+    B136/Q phase 61/63  (1093s)
+  panel B136 done  (1108s)
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.real.csv  (240 rows, 54 cols)
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.nulls.csv.gz  (19,200 rows, 55 cols)
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.corr.csv  (40 rows, 10 cols)
+  grid built in 1111s   REAL 240 rows   NULL 19,200 rows
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.census.csv  (240 rows, 29 cols)
+
+====================================================================================================
+(C) THE CENSUS -- the 30 W/M/Q cells at 10 bps, CANON (what PROTOCOL rule 4 reads)
+====================================================================================================
+  panel  book    cad  n_dr   L1_H1   L2_H2  L3_OOS   L4_DD  L5_CAGR   base4b  class       pinned-ZERO
+  B136   BAND03  M    60   1.000   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  B136   EWELIG  M    60   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  B136   TOP10   M    60   0.533   0.400   0.500   0.250   0.450    0.017  LIVE        -
+  B136   TOP20   M    60   0.900   0.467   0.567   0.200   0.400    0.050  LIVE        -
+  B136   TOP40   M    60   1.000   0.667   0.900   0.000   0.350    0.000  ZERO-1LEG   L4_DD
+  B136   BAND03  Q    60   1.000   0.417   0.983   0.000   0.000    0.000  ZERO-MULTI  L4_DD,L5_CAGR
+  B136   EWELIG  Q    60   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  B136   TOP10   Q    60   0.850   0.317   0.483   0.100   0.483    0.050  LIVE        -
+  B136   TOP20   Q    60   0.983   0.267   0.533   0.067   0.300    0.033  LIVE        -
+  B136   TOP40   Q    60   1.000   0.283   0.567   0.000   0.183    0.000  ZERO-1LEG   L4_DD
+  B136   BAND03  W    60   1.000   0.567   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  B136   EWELIG  W    60   0.833   0.317   0.533   0.017   0.700    0.017  LIVE        -
+  B136   TOP10   W    60   0.000   0.000   0.000   0.333   0.000    0.000  ZERO-MULTI  L1_H1,L2_H2,L3_OOS,L5_CAGR
+  B136   TOP20   W    60   0.000   0.000   0.000   0.833   0.000    0.000  ZERO-MULTI  L1_H1,L2_H2,L3_OOS,L5_CAGR
+  B136   TOP40   W    60   0.000   0.000   0.000   1.000   0.000    0.000  ZERO-MULTI  L1_H1,L2_H2,L3_OOS,L5_CAGR
+  U56    BAND03  M   100   1.000   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  U56    EWELIG  M   100   0.990   0.980   1.000   0.030   0.990    0.030  LIVE        -
+  U56    TOP10   M   100   0.500   0.740   0.800   0.870   0.530    0.230  LIVE        -
+  U56    TOP20   M   100   0.950   1.000   1.000   1.000   0.850    0.800  LIVE        -
+  U56    TOP40   M   100   1.000   1.000   1.000   1.000   0.990    0.990  LIVE        -
+  U56    BAND03  Q   100   1.000   1.000   1.000   0.740   0.000    0.000  ZERO-1LEG   L5_CAGR
+  U56    EWELIG  Q   100   0.990   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  U56    TOP10   Q   100   0.850   0.510   0.580   0.300   0.480    0.140  LIVE        -
+  U56    TOP20   Q   100   1.000   0.550   0.710   0.140   0.320    0.070  LIVE        -
+  U56    TOP40   Q   100   1.000   1.000   1.000   0.050   0.010    0.010  LIVE        -
+  U56    BAND03  W   100   0.910   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  U56    EWELIG  W   100   0.430   0.510   0.570   0.030   0.530    0.010  LIVE        -
+  U56    TOP10   W   100   0.000   0.000   0.000   0.860   0.000    0.000  ZERO-MULTI  L1_H1,L2_H2,L3_OOS,L5_CAGR
+  U56    TOP20   W   100   0.010   0.130   0.180   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  U56    TOP40   W   100   1.000   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+
+  the same 30 cells under FPORT (999's tranche estimator)
+  panel  book    cad  n_dr   L1_H1   L2_H2  L3_OOS   L4_DD  L5_CAGR   base4b  class       pinned-ZERO
+  B136   BAND03  M    60   1.000   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  B136   EWELIG  M    60   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  B136   TOP10   M    60   1.000   0.367   0.867   0.083   0.067    0.017  LIVE        -
+  B136   TOP20   M    60   1.000   0.433   0.967   0.017   0.000    0.000  ZERO-1LEG   L5_CAGR
+  B136   TOP40   M    60   1.000   0.933   1.000   0.000   0.000    0.000  ZERO-MULTI  L4_DD,L5_CAGR
+  B136   BAND03  Q    60   1.000   1.000   1.000   0.000   0.000    0.000  ZERO-MULTI  L4_DD,L5_CAGR
+  B136   EWELIG  Q    60   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  B136   TOP10   Q    60   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  B136   TOP20   Q    60   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  B136   TOP40   Q    60   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  B136   BAND03  W    60   1.000   0.850   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  B136   EWELIG  W    60   1.000   0.217   0.750   0.000   0.900    0.000  ZERO-1LEG   L4_DD
+  B136   TOP10   W    60   0.000   0.000   0.000   0.650   0.000    0.000  ZERO-MULTI  L1_H1,L2_H2,L3_OOS,L5_CAGR
+  B136   TOP20   W    60   0.000   0.000   0.000   1.000   0.000    0.000  ZERO-MULTI  L1_H1,L2_H2,L3_OOS,L5_CAGR
+  B136   TOP40   W    60   0.000   0.000   0.000   1.000   0.000    0.000  ZERO-MULTI  L1_H1,L2_H2,L3_OOS,L5_CAGR
+  U56    BAND03  M   100   1.000   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  U56    EWELIG  M   100   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  U56    TOP10   M   100   1.000   1.000   1.000   1.000   0.660    0.660  LIVE        -
+  U56    TOP20   M   100   1.000   1.000   1.000   1.000   1.000    1.000  LIVE        -
+  U56    TOP40   M   100   1.000   1.000   1.000   1.000   1.000    1.000  LIVE        -
+  U56    BAND03  Q   100   1.000   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  U56    EWELIG  Q   100   1.000   1.000   1.000   0.000   1.000    0.000  ZERO-1LEG   L4_DD
+  U56    TOP10   Q   100   1.000   1.000   1.000   0.700   1.000    0.700  LIVE        -
+  U56    TOP20   Q   100   1.000   1.000   1.000   0.670   1.000    0.670  LIVE        -
+  U56    TOP40   Q   100   1.000   1.000   1.000   1.000   1.000    1.000  LIVE        -
+  U56    BAND03  W   100   1.000   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+  U56    EWELIG  W   100   0.630   0.820   0.940   0.000   0.790    0.000  ZERO-1LEG   L4_DD
+  U56    TOP10   W   100   0.000   0.000   0.000   1.000   0.000    0.000  ZERO-MULTI  L1_H1,L2_H2,L3_OOS,L5_CAGR
+  U56    TOP20   W   100   0.000   0.140   0.320   1.000   0.000    0.000  ZERO-MULTI  L1_H1,L5_CAGR
+  U56    TOP40   W   100   1.000   1.000   1.000   1.000   0.000    0.000  ZERO-1LEG   L5_CAGR
+
+  CANON: of 30 W/M/Q cells -- LIVE 13  ZERO-1LEG 12  ZERO-MULTI 5  ZERO-NOPIN 0
+        17 cells have base4b == 0.000; 12 are killed by exactly ONE pinned leg, 5 by two or more, 0 by the CONJUNCTION alone (no pinned leg)
+
+  FPORT: of 30 W/M/Q cells -- LIVE 7  ZERO-1LEG 16  ZERO-MULTI 7  ZERO-NOPIN 0
+        23 cells have base4b == 0.000; 16 are killed by exactly ONE pinned leg, 7 by two or more, 0 by the CONJUNCTION alone (no pinned leg)
+  H_PIN     PASS   17 of 30 CANON cells carry >= 1 pinned-zero leg  (bar 10)
+  H_ONE     PASS   12 of 17 zero-base-rate CANON cells are ZERO-1LEG  (bar > 8.5)
+
+====================================================================================================
+(D) THE TWO TUNED AXES -- LEG x CADENCE, all 20 points, none selected  (10 bps)
+====================================================================================================
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.leggrid.csv  (40 rows, 9 cols)
+  CANON
+    leg        cad  cells   mean p   med p   pinned-0   pinned-1   SOLE killer
+    L1_H1      D     10     0.000   0.000      10          0           0
+    L2_H2      D     10     0.003   0.000       9          0           0
+    L3_OOS     D     10     0.026   0.000       9          0           0
+    L4_DD      D     10     0.300   0.000       7          3           0
+    L5_CAGR    D     10     0.000   0.000      10          0           0
+    L1_H1      W     10     0.418   0.220       4          2           0
+    L2_H2      W     10     0.352   0.223       4          2           0
+    L3_OOS     W     10     0.428   0.357       4          3           0
+    L4_DD      W     10     0.707   0.930       0          5           0
+    L5_CAGR    W     10     0.123   0.000       8          0           4
+    L1_H1      M     10     0.887   0.995       0          5           0
+    L2_H2      M     10     0.825   0.990       0          5           0
+    L3_OOS     M     10     0.877   1.000       0          6           0
+    L4_DD      M     10     0.535   0.560       2          4           2
+    L5_CAGR    M     10     0.556   0.490       2          1           2
+    L1_H1      Q     10     0.967   1.000       0          6           0
+    L2_H2      Q     10     0.634   0.530       0          4           0
+    L3_OOS     Q     10     0.786   0.847       0          4           0
+    L4_DD      Q     10     0.140   0.058       4          0           3
+    L5_CAGR    Q     10     0.378   0.310       2          2           1
+  FPORT
+    leg        cad  cells   mean p   med p   pinned-0   pinned-1   SOLE killer
+    L1_H1      D     10     0.000   0.000      10          0           0
+    L2_H2      D     10     0.003   0.000       9          0           0
+    L3_OOS     D     10     0.026   0.000       9          0           0
+    L4_DD      D     10     0.300   0.000       7          3           0
+    L5_CAGR    D     10     0.000   0.000      10          0           0
+    L1_H1      W     10     0.463   0.315       5          4           0
+    L2_H2      W     10     0.403   0.178       4          2           0
+    L3_OOS     W     10     0.501   0.535       4          3           0
+    L4_DD      W     10     0.765   1.000       2          7           2
+    L5_CAGR    W     10     0.169   0.000       8          0           3
+    L1_H1      M     10     1.000   1.000       0         10           0
+    L2_H2      M     10     0.873   1.000       0          7           0
+    L3_OOS     M     10     0.983   1.000       0          8           0
+    L4_DD      M     10     0.510   0.542       3          5           2
+    L5_CAGR    M     10     0.473   0.363       4          4           3
+    L1_H1      Q     10     1.000   1.000       0         10           0
+    L2_H2      Q     10     1.000   1.000       0         10           0
+    L3_OOS     Q     10     1.000   1.000       0         10           0
+    L4_DD      Q     10     0.337   0.000       6          2           5
+    L5_CAGR    Q     10     0.800   1.000       2          8           1
+
+====================================================================================================
+(E) RESOLUTION -- a pin is a 0-of-D rate, so it is published with its rule-of-three bar
+====================================================================================================
+  D =  60 draws -> a leg observed 0 of D is only known to lie below 0.0487 at 95%
+  D = 100 draws -> a leg observed 0 of D is only known to lie below 0.0295 at 95%
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.resolution.csv  (2 rows, 2 cols)
+  Every one of the 17 pinned CANON cells below is therefore a statement that the leg's rate is under 0.03-0.05, NOT that it is zero.
+  The census statistic that does NOT depend on that bar is the CLASS COUNT: a cell whose base4b is 0 with
+  exactly one leg at 0 is 4b-unpassable on that leg at this resolution whatever the leg's true rate is,
+  because the conjunction cannot exceed its weakest leg (gate G9).
+
+====================================================================================================
+(F) 999's TWO SPECIFIC CLAIMS, AND THE MIRROR
+====================================================================================================
+  U56 / W  : L5_CAGR pinned-0 in 4 of 5 books; L4_DD pinned-1 in 3 of 5
+  H_CAGR_W  FAIL
+  B136 / Q : L4_DD pinned-0 in 3 of 5 books; L5_CAGR pinned-1 in 1 of 5
+  H_DD_Q    FAIL
+
+  the cadence gradient of the two legs, CANON, pooled over panels and books
+    cadence   mean p_L5_CAGR   mean p_L4_DD   mean base4b
+    D               0.000          0.300         0.000
+    W               0.123          0.707         0.003
+    M               0.556          0.535         0.212
+    Q               0.378          0.140         0.030
+  H_MIRROR  FAIL   p_L5_CAGR monotone UP over D<W<M<Q False; p_L4_DD monotone DOWN False
+
+====================================================================================================
+(G) DEPENDENCE -- is the conjunction worse than the product of its legs?
+====================================================================================================
+  13 CANON cells have a non-zero independence product prod(p_leg).
+  median base4b / prod(p_leg) = 3.867   (1.0 = independent, > 1 = positively dependent legs)
+  range 0.991 .. 20.000; 11 of 13 above 1.0
+  H_DEP     PASS  (bar: median > 1.0)
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.dependence.csv  (13 rows, 9 cols)
+
+====================================================================================================
+(H) DOES THE NULL'S PIN PREDICT THE REAL BOOK'S BINDING LEG?
+====================================================================================================
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.pinvsreal.csv  (10 rows, 9 cols)
+  panel  book    cad   null pin     real book binds        agree
+  B136   BAND03  M     L5_CAGR      L5_CAGR                YES
+  B136   BAND03  W     L5_CAGR      L5_CAGR                YES
+  B136   EWELIG  M     L4_DD        L4_DD                  YES
+  B136   EWELIG  Q     L4_DD        L4_DD                  YES
+  B136   TOP40   M     L4_DD        L4_DD                  YES
+  B136   TOP40   Q     L4_DD        L2_H2,L4_DD            YES
+  U56    BAND03  M     L5_CAGR      L5_CAGR                YES
+  U56    BAND03  Q     L5_CAGR      L5_CAGR                YES
+  U56    BAND03  W     L5_CAGR      L5_CAGR                YES
+  U56    EWELIG  Q     L4_DD        L4_DD                  YES
+  the null's sole pinned leg is among the REAL book's binding legs in 10 of 10 cells (1.000)
+  H_REAL    PASS  (bar 0.60)
+
+====================================================================================================
+(I) IS 999's ZERO LIFT A PIN?
+====================================================================================================
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.liftpin.csv  (30 rows, 9 cols)
+  18 of 30 cells have lift exactly +0.000; 17 of them carry a pinned leg under BOTH estimators
+  12 cells have a non-zero lift; 0 of those carry a pin under both
+  H_LIFT    FAIL  (bar: every zero-lift cell is pinned under both)
+
+====================================================================================================
+(J) PROTOCOL RULE 8 -- parameters chosen on 2009-2016 ALONE, 2017-2026 read ONCE
+====================================================================================================
+  choosers, all legal on the IS window only:
+    C_NOPIN    fewest IS-window pinned-zero legs in the cell's own null (ties -> highest real IS Sharpe)
+    C_ISSHARPE highest REAL-book IS Sharpe
+    C_IS4B     most IS 4b legs passed by the REAL book (ties -> IS Sharpe)
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.walkforward.csv  (12 rows, 33 cols)
+
+  est    chooser     panel  pick        pin0_IS   OOS CAGR  OOS Sharpe  OOS MaxDD  4b   4a   binds
+  CANON  C_NOPIN     B136   TOP10 /Q       0       14.14%     0.7931   -28.61%   --   --   L2_H2,L3_OOS,L4_DD
+  CANON  C_ISSHARPE  B136   TOP10 /Q       0       14.14%     0.7931   -28.61%   --   --   L2_H2,L3_OOS,L4_DD
+  CANON  C_IS4B      B136   TOP20 /M       0       15.55%     1.0004   -26.11%   --   --   L4_DD
+  CANON  C_NOPIN     U56    TOP10 /M       0       17.31%     1.1009   -23.22%   --   --   L4_DD
+  CANON  C_ISSHARPE  U56    TOP10 /M       0       17.31%     1.1009   -23.22%   --   --   L4_DD
+  CANON  C_IS4B      U56    TOP10 /M       0       17.31%     1.1009   -23.22%   --   --   L4_DD
+  FPORT  C_NOPIN     B136   TOP10 /Q       0       16.62%     0.9215   -26.70%   --   --   L4_DD
+  FPORT  C_ISSHARPE  B136   TOP10 /Q       0       16.62%     0.9215   -26.70%   --   --   L4_DD
+  FPORT  C_IS4B      B136   TOP20 /M       0       13.81%     0.9318   -23.85%   --   --   L4_DD
+  FPORT  C_NOPIN     U56    TOP10 /Q       0       17.76%     1.0869   -24.01%   --   --   L4_DD
+  FPORT  C_ISSHARPE  U56    TOP10 /Q       0       17.76%     1.0869   -24.01%   --   --   L4_DD
+  FPORT  C_IS4B      U56    EWELIG/Q       0       12.29%     1.1201   -20.14%  PASS  --   -
+
+  FULL SAMPLE (PROTOCOL rule 4: full + halves) for the same picks
+  est    chooser     panel  pick         CAGR    Sharpe    MaxDD      H1 / H2
+  CANON  C_NOPIN     B136   TOP10 /Q      17.60%    1.0182   -28.61%   1.4393 / 0.7001
+  CANON  C_ISSHARPE  B136   TOP10 /Q      17.60%    1.0182   -28.61%   1.4393 / 0.7001
+  CANON  C_IS4B      B136   TOP20 /M      16.22%    1.0943   -26.11%   1.3330 / 0.9069
+  CANON  C_NOPIN     U56    TOP10 /M      16.73%    1.1263   -23.22%   1.2167 / 1.0594
+  CANON  C_ISSHARPE  U56    TOP10 /M      16.73%    1.1263   -23.22%   1.2167 / 1.0594
+  CANON  C_IS4B      U56    TOP10 /M      16.73%    1.1263   -23.22%   1.2167 / 1.0594
+  FPORT  C_NOPIN     B136   TOP10 /Q      18.82%    1.0995   -26.70%   1.4689 / 0.8277
+  FPORT  C_ISSHARPE  B136   TOP10 /Q      18.82%    1.0995   -26.70%   1.4689 / 0.8277
+  FPORT  C_IS4B      B136   TOP20 /M      14.62%    1.0248   -23.85%   1.2676 / 0.8269
+  FPORT  C_NOPIN     U56    TOP10 /Q      16.61%    1.1044   -24.01%   1.2338 / 1.0196
+  FPORT  C_ISSHARPE  U56    TOP10 /Q      16.61%    1.1044   -24.01%   1.2338 / 1.0196
+  FPORT  C_IS4B      U56    EWELIG/Q      11.59%    1.1067   -20.14%   1.2030 / 1.0333
+
+  SPY                       full  15.16%    0.8862   -33.72%   0.9598 / 0.8261
+  SPY                       OOS   15.33%    0.8769   -33.72%
+  RULES v2 (live), U56      full   8.62%    1.2009   -12.05%   1.2325 / 1.1762
+  RULES v2 (live), U56      OOS    9.45%    1.2765   -12.05%   (1.77 turns/yr)
+
+  H_RULE8   FAIL   C_NOPIN 0 of 4 OOS 4b; all choosers 1 of 12 OOS 4b and 0 of 12 OOS 4a
+
+====================================================================================================
+(K) SCORECARD
+====================================================================================================
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.gates.csv  (10 rows, 5 cols)
+  G0  PASS  offset_mask(.,per,0) == engine.rebalance_mask on W/M/Q  |  got 0 disagreeing rows
+  G1  PASS  fast Ctx == engine.backtest (returns / turnover), W and M  |  got dret 2.082e-17  dturn 4.441e-16
+  G2  PASS  band_book(0.03,0.75) == baseline.rules_v2_weights  |  got max|d| 0.000e+00
+  G3  PASS  CROSS-RUN: 999-C's committed per-leg base rates (lift.csv)  |  got 1,440 shared values, max|d| 1.110e-16
+  G4  PASS  CROSS-RUN: 999-C's committed real.csv, OOS CAGR/Sharpe/MaxDD  |  got 240 shared rows, max|d| 2.220e-16
+  G5  PASS  GROSS MATCH: null count and gross == book's, row by row  |  got dcount 0  dgross 1.110e-16
+  G6  PASS  CENSUS CLOSURE: classes partition; base4b>0 implies no pinned leg  |  got classes ['LIVE', 'ZERO-1LEG', 'ZERO-MULTI']; 0 violating rows
+  G7  PASS  TRANCHE IDENTITY: FPORT over a 1-phase family == that phase's CANON  |  got max|d| 0.000e+00
+  G8  PASS  determinism: a rebuilt cell reproduces its own stream exactly  |  got max|d| 0.000e+00
+  G9  PASS  LEG ARITHMETIC: base4b <= min_leg(p_leg) on every cell  |  got 0 violating rows of 240
+  GATES 10 of 10
+  wrote 2026-09-16_does-the-4b-CAGR-FLOOR-pin-every-U56-WEEKLY-cell-at-a-ZERO-BASE-RATE_C.hypotheses.csv  (9 rows, 2 cols)
+  H_PIN      PASS
+  H_ONE      PASS
+  H_CAGR_W   FAIL
+  H_DD_Q     FAIL
+  H_MIRROR   FAIL
+  H_DEP      PASS
+  H_REAL     PASS
+  H_LIFT     FAIL
+  H_RULE8    FAIL
+  HYPOTHESES 4 of 9
+
+  total 1114s
