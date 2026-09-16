@@ -1,0 +1,233 @@
+============================================================================================================
+IDEA 1073 — is-the-CAP-AXIS-a-STRENGTH-dial-rather-than-a-SIGN-dial (lane C, 2026-09-16)
+============================================================================================================
+TUNED (2): q (cap mix) in [0.0, 0.5, 1.0]  x  tau (vol-match tolerance) in ['UNMATCHED', 0.45, 0.3, 0.2].  All 12 cells reported.
+REPORTED, NOT TUNED: k in [20, 30, 40] (the control), 8 seeded draws per cell, the n/k
+  ladder at [0.1, 0.2, 0.35, 0.5], idea 706's own k<=100 panel set (the reproduction), the CROSSING
+  arm (each pool cut at its OWN median IS vol), and the cross-draw NOISE decomposition.
+Costs 10 bps, weekly, next-day execution, GROSS 0.75, IS ..2016 / OOS 2017.. .
+NO LOOK-AHEAD: every vol used to build a panel is computed on 2010..2016 ONLY.
+SURVIVORSHIP: SMALL / BSTK are current constituents; vol-matching selects on a realised
+  vol measured from survivors, so BOTH arms inherit it.  Nothing here is a candidate.
+
+common calendar 2010-01-04 .. 2026-09-11 (4198 days); pools SMALL 663, BSTK 100
+names carrying an IS vol (coverage >= 0.9): SMALL 383 of 663, BSTK 91 of 100
+  SMALL IS vol q10/25/50/75/90 = 0.251/0.299/0.377/0.473/0.612   mean 0.4153
+  BSTK  IS vol q10/25/50/75/90 = 0.163/0.193/0.242/0.282/0.358   mean 0.2574
+
+V* = 0.25 by the declared feasibility rule (max min(nS,nB) at tau=0.45, ties to the lower V).  Window counts at V*:
+   tau=0.45  vol in [0.138, 0.362]  SMALL 181  BSTK 83   (largest feasible k at q=0.00 is the BSTK count)
+   tau=0.30  vol in [0.175, 0.325]  SMALL 135  BSTK 64   (largest feasible k at q=0.00 is the BSTK count)
+   tau=0.20  vol in [0.200, 0.300]  SMALL 94  BSTK 45   (largest feasible k at q=0.00 is the BSTK count)
+
+MATCH arm: 288 panels over 4x3x3 cells; no infeasible cells
+
+CROSSING arm pools (each cut at its OWN median IS vol):
+   SMALL-LO  192 names, mean IS vol 0.2929
+   SMALL-HI  191 names, mean IS vol 0.5385
+   BSTK-LO    46 names, mean IS vol 0.1945
+   BSTK-HI    45 names, mean IS vol 0.3218
+CROSS arm: 96 panels
+REPRO arm: 89 panels (idea 706's own construction and seed, k in [40, 60, 80, 100], its own rungs [0.05, 0.1, 0.25, 0.5])
+
+TOTAL 473 panels x 4 books
+  G1 PASS  fast runner == engine.backtest on RETURNS (1.04e-17) and TURNOVER (0.00e+00); cached-rank CAND-20 == idea 286's committed cand_weights(20) (max|dw| 0.00e+00)
+  G2 PASS  ENVELOPE over all 473 panels: exact width, no duplicate columns, exact cap mix on the MATCH arm, and EVERY name inside its declared vol window (not just the panel mean).  Violations: 0
+  G3 PASS  NO LOOK-AHEAD, reported not gated: the IS name vol used to build every panel ranks +0.8424 against the FULL-sample vol it was not allowed to see — high, but the OOS window never entered any choice
+  G4 PASS  DETERMINISM: the reference book re-runs bit-identical (True)
+
+============================================================================================================
+RUNNING THE LADDER
+============================================================================================================
+  [   1/473] q0.00/UNM k=20 d0  0.19s  (elapsed    2.1s)
+  [  80/473] q0.00/t0.45 k=20 d7  0.16s  (elapsed   18.7s)
+  [ 160/473] q0.00/t0.30 k=30 d7  0.17s  (elapsed   34.4s)
+  [ 240/473] q0.00/t0.20 k=40 d7  0.25s  (elapsed   52.7s)
+  [ 320/473] SMALL-HI k=20 d7  0.20s  (elapsed   70.4s)
+  [ 400/473] q0.00/REPRO k=60 d7  0.24s  (elapsed   87.6s)
+
+1,892 book rows over 473 panels written.
+
+============================================================================================================
+GATES
+============================================================================================================
+  G1 PASS  fast runner == engine.backtest on RETURNS (1.04e-17) and TURNOVER (0.00e+00); cached-rank CAND-20 == idea 286's committed cand_weights(20) (max|dw| 0.00e+00)
+  G2 PASS  ENVELOPE over all 473 panels: exact width, no duplicate columns, exact cap mix on the MATCH arm, and EVERY name inside its declared vol window (not just the panel mean).  Violations: 0
+  G3 PASS  NO LOOK-AHEAD, reported not gated: the IS name vol used to build every panel ranks +0.8424 against the FULL-sample vol it was not allowed to see — high, but the OOS window never entered any choice
+  G4 PASS  DETERMINISM: the reference book re-runs bit-identical (True)
+  G5 PASS  CROSS-RUN idea 706's committed partial rho(n/k, OOS S | k) on its k<=100 block, its own panel construction and seed: q=0.00 +0.7988 vs committed +0.7988; q=0.50 +0.6520 vs committed +0.6520; q=1.00 +0.1481 vs committed +0.1481  max|d| 0.0000
+  G6 PASS  CROSS-RUN at the BOOK level: 356 of 356 REPRO rows join idea 706's committed books.csv on (q,k,draw,n); max|d OOS Sharpe| 2.22e-16
+  G7 PASS  the tau dial BINDS: panel mean IS vol SD across panels falls 0.0674 (UNMATCHED) -> 0.0065 (tau=0.20); and the q=1.00 / q=0.00 mean-vol RATIO falls 1.583 -> 1.239 -> 1.136 -> 1.055
+  G8 PASS  V* GRID published in full (23 points, tau=0.45 counts): V* 0.25 won with min(nS,nB) = 83; runner-up 0.26 at 80
+GATES: 8 of 8 PASS.
+
+============================================================================================================
+PART A — rho(n/k, OOS Sharpe | k) BY CAP MIX AND VOL-MATCH TOLERANCE  (the published grid)
+============================================================================================================
+      tau      q  rows  panels  panel_vol    rho  rho_raw  rho_IS  OOS_S_sd  OOS_S_mean
+UNMATCHED 0.0000    96      24     0.2593 0.6886   0.6751  0.2209    0.1659      0.8625
+UNMATCHED 0.5000    96      24     0.3355 0.5483   0.5400  0.3320    0.1937      0.5250
+UNMATCHED 1.0000    96      24     0.4103 0.1182   0.1103  0.4618    0.2293      0.3081
+     0.45 0.0000    96      24     0.2333 0.6745   0.6674  0.0804    0.1690      0.7481
+     0.45 0.5000    96      24     0.2631 0.5078   0.5077  0.4323    0.1806      0.4521
+     0.45 1.0000    96      24     0.2890 0.2113   0.2108  0.7629    0.1744      0.1022
+     0.30 0.0000    96      24     0.2415 0.6816   0.6670  0.1579    0.1428      0.8243
+     0.30 0.5000    96      24     0.2546 0.5282   0.5265  0.3855    0.2001      0.4661
+     0.30 1.0000    96      24     0.2743 0.3992   0.3581  0.6905    0.1747     -0.0051
+     0.20 0.0000    96      24     0.2461 0.7077   0.6792 -0.4835    0.1292      0.7663
+     0.20 0.5000    96      24     0.2535 0.5752   0.5689  0.4032    0.1859      0.4752
+     0.20 1.0000    96      24     0.2597 0.2986   0.2986  0.6382    0.1973      0.0218
+
+THE GAP rho(q=0.00) - rho(q=1.00), the object the queue calls the '8x attenuation':
+   tau=UNMATCHED gap +0.5704   ratio +5.82x   (q=0.00 +0.6886, q=0.50 +0.5483, q=1.00 +0.1182)
+   tau=0.45      gap +0.4632   ratio +3.19x   (q=0.00 +0.6745, q=0.50 +0.5078, q=1.00 +0.2113)
+   tau=0.30      gap +0.2825   ratio +1.71x   (q=0.00 +0.6816, q=0.50 +0.5282, q=1.00 +0.3992)
+   tau=0.20      gap +0.4091   ratio +2.37x   (q=0.00 +0.7077, q=0.50 +0.5752, q=1.00 +0.2986)
+
+REPORTED ON BOTH BASES (the queue's own framing is a RATIO — '~8x more weakly' — while
+  H_MATCH was declared on the GAP; neither reading is allowed to stand in for the other):
+   tau=0.45  closes   18.8% of the UNMATCHED GAP (+0.5704)   and   34.1% of the UNMATCHED log-RATIO (+5.82x -> +3.19x)
+   tau=0.30  closes   50.5% of the UNMATCHED GAP (+0.5704)   and   69.6% of the UNMATCHED log-RATIO (+5.82x -> +1.71x)
+   tau=0.20  closes   28.3% of the UNMATCHED GAP (+0.5704)   and   51.0% of the UNMATCHED log-RATIO (+5.82x -> +2.37x)
+
+============================================================================================================
+PART B — THE CROSSING ARM: hold CAP fixed and move VOL, hold VOL fixed and move CAP
+============================================================================================================
+    cell   cap  rows  panel_vol    rho  OOS_S_mean  OOS_S_sd  breadth
+ BSTK-LO LARGE    96     0.1945 0.8759      0.5443    0.2112   0.7376
+ BSTK-HI LARGE    96     0.3252 0.7649      0.9628    0.1367   0.6796
+SMALL-LO SMALL    96     0.2974 0.3586      0.1412    0.1425   0.5943
+SMALL-HI SMALL    96     0.5485 0.1769      0.3147    0.1856   0.4179
+
+   SAME CAP, different vol : |rho(BSTK-HI 0.325) - rho(BSTK-LO 0.194)| = 0.1110
+   SAME VOL, different cap : |rho(BSTK-HI 0.325) - rho(SMALL-LO 0.297)| = 0.4063   (vol gap 0.0277)
+   within SMALL, vol alone : rho(SMALL-LO) +0.3586 vs rho(SMALL-HI) +0.1769
+
+============================================================================================================
+PART C — IS THE ATTENUATION A NOISE OBJECT?  cross-draw SD of OOS Sharpe -> reliability
+============================================================================================================
+      tau      q  n_draws  sd_within  sd_between  sd_total  reliability    rho  rho_disatt
+UNMATCHED 0.0000   8.0000     0.1181      0.1211    0.1659       0.5126 0.6886      0.9619
+UNMATCHED 0.5000   8.0000     0.1623      0.1099    0.1937       0.3145 0.5483      0.9777
+UNMATCHED 1.0000   8.0000     0.2193      0.0696    0.2293       0.0915 0.1182      0.3908
+     0.45 0.0000   8.0000     0.1262      0.1168    0.1690       0.4611 0.6745      0.9933
+     0.45 0.5000   8.0000     0.1518      0.1017    0.1806       0.3100 0.5078      0.9120
+     0.45 1.0000   8.0000     0.1763      0.0000    0.1744       0.0000 0.2113         NaN
+     0.30 0.0000   8.0000     0.1084      0.0965    0.1428       0.4422 0.6816      1.0251
+     0.30 0.5000   8.0000     0.1720      0.1063    0.2001       0.2763 0.5282      1.0050
+     0.30 1.0000   8.0000     0.1453      0.1007    0.1747       0.3243 0.3992      0.7010
+     0.20 0.0000   8.0000     0.0976      0.0879    0.1292       0.4477 0.7077      1.0577
+     0.20 0.5000   8.0000     0.1564      0.1045    0.1859       0.3085 0.5752      1.0355
+     0.20 1.0000   8.0000     0.1969      0.0132    0.1973       0.0045 0.2986      4.4699
+
+   UNMATCHED: cross-draw SD of OOS Sharpe 0.1181 (q=0.00) vs 0.2193 (q=1.00)
+   DISATTENUATED gap +0.5711 against the raw gap +0.5704 — closes  -0.1%
+   DISATTENUATED ratio +2.46x against the raw +5.82x — closes  48.9% of the log-RATIO.  REPORTED, NOT DECLARED: H_NOISE was written on the GAP basis before any number was read, and it FAILS there; the ratio
+   basis is published because the queue's own '8x' wording is a ratio.  The two disagree BECAUSE disattenuation multiplies, so it shrinks a ratio while leaving a difference alone.
+   STABILITY: 2 of 12 cells carry reliability < 0.05 — all at q=1.00 (min 0.0000).  In those cells the n/k dial's BETWEEN-cell signal is statistically indistinguishable from zero next to draw noise, so their disattenuated rho (up to 4.47) is an artefact of dividing by ~0 and carries no weight.
+   That near-zero reliability at q=1.00 is itself the cleanest statement of the finding: in small caps the concentration dial moves OOS Sharpe barely more than the draw does.
+
+============================================================================================================
+PART D — RULE 8 WALK-FORWARD: n/k chosen on 2009-2016 IS Sharpe ONLY, 2017- read ONCE
+============================================================================================================
+   tau      q      selector  sets   OOS_S  OOS_CAGR  OOS_DD  edge_vs_anchor  beat_SPY  beat_v2
+0.2000 0.0000 IS-SHARPE-MAX    24  0.6697    0.1044 -0.2475         -0.0966    0.0000   0.0000
+0.2000 0.0000        RANDOM    24  0.7993    0.1072 -0.2104          0.0331    0.1667   0.2083
+0.2000 0.0000     RATIO-MAX    24  0.8640    0.1017 -0.1979          0.0977    0.4167   0.3750
+0.2000 0.0000     RATIO-MIN    24  0.6362    0.1055 -0.2504         -0.1300    0.0000   0.0000
+0.2000 0.5000 IS-SHARPE-MAX    24  0.5008    0.0512 -0.2196          0.0255    0.0000   0.2083
+0.2000 0.5000        RANDOM    24  0.4805    0.0548 -0.2296          0.0053    0.0000   0.2500
+0.2000 0.5000     RATIO-MAX    24  0.5899    0.0605 -0.1791          0.1147    0.0000   0.2500
+0.2000 0.5000     RATIO-MIN    24  0.3101    0.0399 -0.3420         -0.1651    0.0000   0.0000
+0.2000 1.0000 IS-SHARPE-MAX    24  0.0643    0.0008 -0.2961          0.0425    0.0000   0.0833
+0.2000 1.0000        RANDOM    24  0.0492   -0.0019 -0.3360          0.0274    0.0000   0.1250
+0.2000 1.0000     RATIO-MAX    24  0.0612    0.0005 -0.2804          0.0394    0.0000   0.0417
+0.2000 1.0000     RATIO-MIN    24 -0.0793   -0.0265 -0.4942         -0.1011    0.0000   0.1667
+0.3000 0.0000 IS-SHARPE-MAX    24  0.8430    0.1141 -0.2227          0.0187    0.4167   0.3333
+0.3000 0.0000        RANDOM    24  0.8081    0.1131 -0.2197         -0.0162    0.2917   0.2083
+0.3000 0.0000     RATIO-MAX    24  0.9503    0.1103 -0.1904          0.1260    0.7500   0.5417
+0.3000 0.0000     RATIO-MIN    24  0.6978    0.1174 -0.2611         -0.1265    0.0417   0.0417
+0.3000 0.5000 IS-SHARPE-MAX    24  0.5288    0.0532 -0.2055          0.0626    0.0000   0.1667
+0.3000 0.5000        RANDOM    24  0.4404    0.0525 -0.2731         -0.0258    0.0000   0.0417
+0.3000 0.5000     RATIO-MAX    24  0.5846    0.0586 -0.1739          0.1185    0.0000   0.2083
+0.3000 0.5000     RATIO-MIN    24  0.2971    0.0385 -0.3470         -0.1690    0.0000   0.0000
+0.3000 1.0000 IS-SHARPE-MAX    24  0.0490   -0.0023 -0.3161          0.0541    0.0000   0.0000
+0.3000 1.0000        RANDOM    24 -0.0663   -0.0213 -0.4139         -0.0612    0.0000   0.0000
+0.3000 1.0000     RATIO-MAX    24  0.0621    0.0007 -0.2987          0.0672    0.0000   0.0000
+0.3000 1.0000     RATIO-MIN    24 -0.1170   -0.0337 -0.5107         -0.1119    0.0000   0.0000
+0.4500 0.0000 IS-SHARPE-MAX    24  0.7664    0.0956 -0.2266          0.0183    0.2917   0.1250
+0.4500 0.0000        RANDOM    24  0.7394    0.0975 -0.2336         -0.0088    0.1667   0.0833
+0.4500 0.0000     RATIO-MAX    24  0.8745    0.0950 -0.1920          0.1263    0.5000   0.2500
+0.4500 0.0000     RATIO-MIN    24  0.5757    0.0885 -0.2870         -0.1724    0.0417   0.0417
+0.4500 0.5000 IS-SHARPE-MAX    24  0.5095    0.0532 -0.2119          0.0574    0.0000   0.0833
+0.4500 0.5000        RANDOM    24  0.4569    0.0519 -0.2524          0.0048    0.0000   0.0833
+0.4500 0.5000     RATIO-MAX    24  0.5457    0.0542 -0.1834          0.0936    0.0000   0.1250
+0.4500 0.5000     RATIO-MIN    24  0.2809    0.0343 -0.3471         -0.1713    0.0000   0.0000
+0.4500 1.0000 IS-SHARPE-MAX    24  0.1353    0.0084 -0.2961          0.0332    0.0000   0.0417
+0.4500 1.0000        RANDOM    24  0.1471    0.0111 -0.3356          0.0449    0.0000   0.1667
+0.4500 1.0000     RATIO-MAX    24  0.1361    0.0090 -0.2853          0.0339    0.0000   0.0417
+0.4500 1.0000     RATIO-MIN    24  0.0252   -0.0099 -0.4602         -0.0769    0.0000   0.1667
+   NaN 0.0000 IS-SHARPE-MAX    24  0.9116    0.1269 -0.2263          0.0492    0.6250   0.1667
+   NaN 0.0000        RANDOM    24  0.8893    0.1243 -0.2210          0.0268    0.6667   0.0833
+   NaN 0.0000     RATIO-MAX    24  0.9976    0.1171 -0.1902          0.1352    0.9167   0.3750
+   NaN 0.0000     RATIO-MIN    24  0.6958    0.1246 -0.2892         -0.1666    0.2083   0.0000
+   NaN 0.5000 IS-SHARPE-MAX    24  0.6059    0.0704 -0.2199          0.0810    0.0000   0.1250
+   NaN 0.5000        RANDOM    24  0.5090    0.0668 -0.2627         -0.0160    0.0000   0.0417
+   NaN 0.5000     RATIO-MAX    24  0.6248    0.0661 -0.1909          0.0998    0.0000   0.1250
+   NaN 0.5000     RATIO-MIN    24  0.3425    0.0499 -0.3676         -0.1824    0.0000   0.0000
+   NaN 1.0000 IS-SHARPE-MAX    24  0.3393    0.0373 -0.2875          0.0312    0.0000   0.0833
+   NaN 1.0000        RANDOM    24  0.3167    0.0352 -0.3423          0.0085    0.0000   0.0417
+   NaN 1.0000     RATIO-MAX    24  0.3299    0.0334 -0.2557          0.0218    0.0000   0.1250
+   NaN 1.0000     RATIO-MIN    24  0.2395    0.0296 -0.4654         -0.0686    0.0000   0.0833
+
+   comparands on the SAME panels: SPY OOS Sharpe 0.8767 / CAGR 15.33% / MaxDD -33.72%;  RULES v2 OOS Sharpe 0.6240 / CAGR 4.57% / MaxDD -13.54%
+   the rule-8 arm changes NOTHING about the rho question; it is run because PROTOCOL rule 8 requires it of every run.
+
+============================================================================================================
+BOTH KEEP PATHS, EVERY BOOK ROW (idea 286's committed keep_paths; rule 4)
+============================================================================================================
+  arm      q  rows  p4a  p4b  rate4b
+CROSS 0.0000   192    0   19  0.0990
+CROSS 1.0000   192    0    0  0.0000
+MATCH 0.0000   384    0   36  0.0938
+MATCH 0.5000   384    0    0  0.0000
+MATCH 1.0000   384    0    0  0.0000
+REPRO 0.0000   100    0   24  0.2400
+REPRO 0.5000   128    0    2  0.0156
+REPRO 1.0000   128    0    0  0.0000
+
+  TOTAL: 4a 0 of 1,892; 4b 81 of 1,892
+  These are committed CAND-n books on RANDOM sub-panels of a survivor screen; a 4b pass here is a statement about the draw, not a capital candidate.  NOTHING IS PROMOTED.
+
+============================================================================================================
+LIMITS, STATED BEFORE THE VERDICT
+============================================================================================================
+  1. The CROSSING arm's large-cap halves hold only 45 names each, so its k=40 panels overlap heavily and its 8 draws are far from independent.  Its rho is a firmer POINT than an INTERVAL; the MATCH arm, drawn from wider windows, is the arm to weigh.
+  2. Vol matching can only be done where the two pools OVERLAP.  At V*=0.25 that is the bottom of the small pool and the top of the large one, so the matched arm speaks for NEITHER pool's typical name: the matched small panels run at vol 0.260 against the pool's 0.415.  Nothing here extends to a high-vol small-cap book.
+  3. rho is measured on 8 draws x 3 widths x 4 rungs = 96 rows per cell.  No interval is published for it, so a 0.28 and a 0.40 in this table are not shown to differ; only the cell ORDERING and the SIGN are claimed (idea 1044's rule).
+  4. Realised name vol is one proxy for 'small caps are noisier'.  A liquidity, spread or factor-loading match would be a different control and is not run here.
+  5. SURVIVORSHIP again: the vol used to match is measured on names that survived to be screened today, so the matched window is a window on survivors in BOTH pools.
+
+============================================================================================================
+THE DECLARED HYPOTHESES
+============================================================================================================
+  H_REPRO     PASS  idea 706's committed rho(n/k, OOS S | k) on its k<=100 block reproduces to |d|<0.05
+              -> q=0.00 +0.7988 vs +0.7988; q=0.50 +0.6520 vs +0.6520; q=1.00 +0.1481 vs +0.1481  max|d| 0.0000
+  H_VOLGAP    PASS  the pools really do differ in name vol (mean IS small / large >= 1.4)
+              -> SMALL 0.4153 / BSTK 0.2574 = 1.613x
+  H_SPREAD    PASS  the attenuation is present on THIS run's own UNMATCHED k in {20,30,40} block (gap >= 0.20)
+              -> gap +0.5704 (q=0.00 +0.6886, q=1.00 +0.1182)
+  H_MATCH     FAIL  vol matching CLOSES it: at tau=0.20 the gap is <= 50% of its UNMATCHED value
+              -> tau=0.20 gap +0.4091 vs UNMATCHED +0.5704 — closes 28.3%
+  H_MONO      FAIL  the closing is MONOTONE in tau (0.45 -> 0.30 -> 0.20)
+              -> +0.5704 -> +0.4632 -> +0.2825 -> +0.4091
+  H_CROSS     FAIL  the crossing arm says VOL, not CAP: moving CAP at matched vol shifts rho LESS than moving VOL at matched cap
+              -> |d| cap-at-matched-vol 0.4063 vs vol-at-matched-cap 0.1110
+  H_NOISE     FAIL  the attenuation is a NOISE object: small-cap books have the larger cross-draw OOS Sharpe SD AND disattenuation closes >= 50% of the gap
+              -> SD 0.2193 (q=1.00) vs 0.1181 (q=0.00); disattenuated gap +0.5711 vs +0.5704
+  H_SIGN      PASS  the 'strength dial, not sign dial' claim itself: rho > 0 in EVERY (q, tau) cell
+              -> min rho over 12 cells +0.1182 (cell tau=UNMATCHED q=1.00); max +0.7077
+
+HYPOTHESES: 4 of 8 PASS.
+
+total elapsed 112.1s
