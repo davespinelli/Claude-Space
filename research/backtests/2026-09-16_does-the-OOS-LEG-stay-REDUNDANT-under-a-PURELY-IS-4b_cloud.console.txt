@@ -1,0 +1,210 @@
+====================================================================================================
+IDEA 972 (cloud lane, 2026-09-16) -- DOES THE OOS LEG STAY REDUNDANT UNDER A PURELY IS 4b?
+====================================================================================================
+  SMOKE=False  headline cost 10 bps  LAG=1  WARM=260
+  tuned axes: leg set ['LS_REC', 'LS_970', 'LS_ISALL'] x panel ['U56', 'B136', 'SMALL'] -- ALL reported, none selected
+  reported ladder (not tuned): book ['TOP05', 'TOP10', 'TOP20', 'EWELIG', 'BAND03'] x gross ['CORE', 'EXT'] x cadence ['D', 'W', 'M', 'Q'] x phase [1, 5, 21, 63] x cost [0.0, 5.0, 10.0, 25.0, 50.0]
+  R(L) = P(all five legs) / P(the other four).  R = 1.0000 means L never binds.
+
+  U56      56 cols  2008-01-02 .. 2026-09-15  (4,705 rows)
+  B136    136 cols  2008-01-02 .. 2026-09-11  (4,703 rows)
+  SMALL   664 cols  2010-01-04 .. 2026-09-11  (4,198 rows)
+  SMALL dropped 52 tickers with max_1d_move >= 1.0 (data/small_meta.csv)
+
+----------------------------------------------------------------------------------------------------
+GATES -- printed before any hypothesis number
+----------------------------------------------------------------------------------------------------
+  G0  masks vs engine.rebalance_mask         : 0 disagreeing rows
+  G1  Ctx vs engine.backtest                 : max|d| 1.665e-16
+  G2  BAND03@0.75 vs rules_v2_weights        : max|d| 0.000e+00
+  G7  IS/OOS window overlap                  : 0 shared trading days
+  G6  SMALL hygiene drop count               : 52
+
+====================================================================================================
+(A) THE LADDER -- 13,500 rows rebuilt from scratch (993's own axes)
+====================================================================================================
+  U56    done (10s, 4,500 rows so far)
+  B136   done (27s, 9,000 rows so far)
+  SMALL  done (109s, 13,500 rows so far)
+  wrote 2026-09-16_does-the-OOS-LEG-stay-REDUNDANT-under-a-PURELY-IS-4b_cloud.ladder.csv  (13,500 rows, 57 cols)
+  G3  cross-run vs 993's committed ladder    : max|d| 7.105e-15  [13,500 rows x 14 cols]
+  G4  LS_REC verdict vs 993's pass4b column  : 0 disagreements  [13,500 rows]
+  G5  determinism (U56/TOP20/CORE/M ph 0)    : max|d| 0.000e+00
+  wrote 2026-09-16_does-the-OOS-LEG-stay-REDUNDANT-under-a-PURELY-IS-4b_cloud.gates.csv  (8 rows, 5 cols)
+  GATES: 8 of 8 PASS
+
+====================================================================================================
+(B) THE REDUNDANCY RATIO  R(L) = P(all five) / P(the other four)
+====================================================================================================
+  wrote 2026-09-16_does-the-OOS-LEG-stay-REDUNDANT-under-a-PURELY-IS-4b_cloud.redundancy.csv  (240 rows, 11 cols)
+  R(L) per panel, pooled over cadence, 10 bps (NaN = the other four never all hold):
+   panel               U56   B136  SMALL
+   leg_set  leg                         
+   LS_970   L1_H1   0.5169 0.5385    NaN
+            L2_H2   0.9683 1.0000    NaN
+            L3_OOS  1.0000 0.9333    NaN
+            L4_DD   0.1210 0.0326    NaN
+            L5_CAGR 0.6040 0.3182    NaN
+   LS_ISALL L1_H1   0.8714 0.8896 1.0000
+            L2_H2   0.9919 1.0000 1.0000
+            L3_OOS  1.0000 1.0000 1.0000
+            L4_DD   0.2406 0.2003 0.0083
+            L5_CAGR 0.5782 0.7005 0.0111
+   LS_REC   L1_H1   0.9426 1.0000    NaN
+            L2_H2   1.0000 0.9615    NaN
+            L3_OOS  1.0000 1.0000    NaN
+            L4_DD   0.1531 0.0604    NaN
+            L5_CAGR 0.6609 0.3571    NaN
+
+  n_binding (rows where the other four hold and THIS leg refuses), per panel, 10 bps:
+   panel             U56  B136  SMALL
+   leg_set  leg                      
+   LS_970   L1_H1     57    12      0
+            L2_H2      2     0      0
+            L3_OOS     0     1      0
+            L4_DD    443   415      0
+            L5_CAGR   40    30      0
+   LS_ISALL L1_H1     18    18      0
+            L2_H2      1     0      0
+            L3_OOS     0     0      0
+            L4_DD    385   579    120
+            L5_CAGR   89    62     89
+   LS_REC   L1_H1      7     0      0
+            L2_H2      0     1      0
+            L3_OOS     0     0      0
+            L4_DD    636   389      0
+            L5_CAGR   59    45      0
+
+  n_other4 (the denominator), per panel, 10 bps:
+   panel             U56  B136  SMALL
+   leg_set  leg                      
+   LS_970   L1_H1    118    26      0
+            L2_H2     63    14      0
+            L3_OOS    61    15      0
+            L4_DD    504   429      0
+            L5_CAGR  101    44      0
+   LS_ISALL L1_H1    140   163      1
+            L2_H2    123   145      1
+            L3_OOS   122   145      1
+            L4_DD    507   724    121
+            L5_CAGR  211   207     90
+   LS_REC   L1_H1    122    25      0
+            L2_H2    115    26      0
+            L3_OOS   115    25      0
+            L4_DD    751   414      0
+            L5_CAGR  174    70      0
+
+  970's own cells -- U56 at M and Q, LS_970, R(L3_OOS):
+    U56/M: R 1.0000  all5 36 / other4 36  n_binding 0
+    U56/Q: R 1.0000  all5 17 / other4 17  n_binding 0
+
+====================================================================================================
+(C) DOES THE FULLY-IS 4b AGREE WITH THE RECORD'S OOS 4b?
+====================================================================================================
+  wrote 2026-09-16_does-the-OOS-LEG-stay-REDUNDANT-under-a-PURELY-IS-4b_cloud.agreement.csv  (20 rows, 9 cols)
+   panel  cost_bps    n  agree  is_pass  rec_pass  both  is_only  rec_only
+     U56   10.0000  900 0.7856      122       115    22      100        93
+    B136   10.0000  900 0.8378      145        25    12      133        13
+   SMALL   10.0000  900 0.9989        1         0     0        1         0
+     ALL   10.0000 2700 0.8741      268       140    34      234       106
+
+  BINDING ORDER -- how many rows each leg REFUSES outright (1 - pass rate), 10 bps:
+  wrote 2026-09-16_does-the-OOS-LEG-stay-REDUNDANT-under-a-PURELY-IS-4b_cloud.binding_order.csv  (45 rows, 4 cols)
+   leg_set        LS_REC  LS_970  LS_ISALL
+   panel leg                              
+   B136  L1_H1    0.0067  0.1267    0.1267
+         L2_H2    0.4367  0.0067    0.0067
+         L3_OOS   0.3311  0.3311    0.0067
+         L4_DD    0.9178  0.9178    0.7044
+         L5_CAGR  0.1433  0.1433    0.1300
+   SMALL L1_H1    0.8456  0.2867    0.2867
+         L2_H2    0.9978  0.6344    0.6344
+         L3_OOS   1.0000  1.0000    0.5789
+         L4_DD    0.9411  0.9411    0.8778
+         L5_CAGR  0.7956  0.7956    0.3244
+   U56   L1_H1    0.0222  0.3200    0.3200
+         L2_H2    0.0556  0.0289    0.0289
+         L3_OOS   0.0411  0.0411    0.0300
+         L4_DD    0.7989  0.7989    0.6733
+         L5_CAGR  0.0911  0.0911    0.2122
+    U56    Spearman(IS fail rate, OOS fail rate) over the 5 legs = +0.3000
+    B136   Spearman(IS fail rate, OOS fail rate) over the 5 legs = +0.1539
+    SMALL  Spearman(IS fail rate, OOS fail rate) over the 5 legs = +0.5000
+
+====================================================================================================
+(D) RULE 8 -- (book, gross) chosen on 2009-2016 ALONE, OOS read ONCE
+====================================================================================================
+  wrote 2026-09-16_does-the-OOS-LEG-stay-REDUNDANT-under-a-PURELY-IS-4b_cloud.walkforward.csv  (36 rows, 23 cols)
+  OOS 4b 4 of 36 picks | OOS 4a 0
+   panel cadence    chooser   book gross  IS_legs  IS_pass4b  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_4b  OOS_4a                        fail_legs
+     U56       D     C_IS4B BAND03   EXT        4      False    0.1245      1.2871    -0.1477    True   False                                -
+     U56       D C_ISSHARPE BAND03   EXT        4      False    0.1245      1.2871    -0.1477    True   False                                -
+     U56       D   C_ISCAGR  TOP05   EXT        2      False    0.2012      0.8711    -0.2826   False   False               L1_H1,L3_OOS,L4_DD
+     U56       W     C_IS4B BAND03   EXT        4      False    0.1267      1.2758    -0.1591    True   False                                -
+     U56       W C_ISSHARPE BAND03   EXT        4      False    0.1267      1.2758    -0.1591    True   False                                -
+     U56       W   C_ISCAGR  TOP05   EXT        2      False    0.2454      1.0012    -0.2798   False   False                      L1_H1,L4_DD
+     U56       M     C_IS4B  TOP10  CORE        5       True    0.1731      1.1009    -0.2322   False   False                            L4_DD
+     U56       M C_ISSHARPE  TOP05   EXT        4      False    0.2045      0.8312    -0.3461   False   False               L2_H2,L3_OOS,L4_DD
+     U56       M   C_ISCAGR  TOP05   EXT        4      False    0.2045      0.8312    -0.3461   False   False               L2_H2,L3_OOS,L4_DD
+     U56       Q     C_IS4B EWELIG  CORE        5       True    0.1152      1.0328    -0.2221   False   False                            L4_DD
+     U56       Q C_ISSHARPE  TOP05   EXT        4      False    0.1181      0.5454    -0.3848   False   False               L2_H2,L3_OOS,L4_DD
+     U56       Q   C_ISCAGR  TOP05   EXT        4      False    0.1181      0.5454    -0.3848   False   False               L2_H2,L3_OOS,L4_DD
+    B136       D     C_IS4B BAND03   EXT        4      False    0.1051      1.1331    -0.1472   False   False                          L5_CAGR
+    B136       D C_ISSHARPE BAND03   EXT        4      False    0.1051      1.1331    -0.1472   False   False                          L5_CAGR
+    B136       D   C_ISCAGR  TOP20   EXT        1      False    0.1144      0.6768    -0.2554   False   False         L1_H1,L2_H2,L3_OOS,L4_DD
+    B136       W     C_IS4B BAND03   EXT        5       True    0.1052      1.1050    -0.1616   False   False                          L5_CAGR
+    B136       W C_ISSHARPE BAND03   EXT        5       True    0.1052      1.1050    -0.1616   False   False                          L5_CAGR
+    B136       W   C_ISCAGR  TOP05   EXT        4      False    0.2017      0.7965    -0.3010   False   False               L2_H2,L3_OOS,L4_DD
+    B136       M     C_IS4B  TOP20  CORE        5       True    0.1555      1.0004    -0.2611   False   False                            L4_DD
+    B136       M C_ISSHARPE  TOP20   EXT        4      False    0.2081      1.0051    -0.3368   False   False                            L4_DD
+    B136       M   C_ISCAGR  TOP05   EXT        3      False    0.3517      1.1522    -0.3970   False   False                            L4_DD
+    B136       Q     C_IS4B EWELIG  CORE        5       True    0.1097      0.9695    -0.2444   False   False                            L4_DD
+    B136       Q C_ISSHARPE  TOP05   EXT        4      False    0.2323      0.8528    -0.3661   False   False               L2_H2,L3_OOS,L4_DD
+    B136       Q   C_ISCAGR  TOP05   EXT        4      False    0.2323      0.8528    -0.3661   False   False               L2_H2,L3_OOS,L4_DD
+   SMALL       D     C_IS4B BAND03  CORE        2      False    0.0368      0.5519    -0.1285   False   False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+   SMALL       D C_ISSHARPE BAND03   EXT        1      False    0.0482      0.5523    -0.1682   False   False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+   SMALL       D   C_ISCAGR BAND03   EXT        1      False    0.0482      0.5523    -0.1682   False   False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+   SMALL       W     C_IS4B BAND03  CORE        3      False    0.0375      0.5601    -0.1389   False   False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+   SMALL       W C_ISSHARPE BAND03   EXT        2      False    0.0492      0.5599    -0.1819   False   False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+   SMALL       W   C_ISCAGR  TOP10   EXT        2      False    0.0829      0.4281    -0.3905   False   False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+   SMALL       M     C_IS4B BAND03   EXT        5       True    0.0543      0.5951    -0.2194   False   False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+   SMALL       M C_ISSHARPE BAND03   EXT        5       True    0.0543      0.5951    -0.2194   False   False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+   SMALL       M   C_ISCAGR  TOP10   EXT        2      False    0.1104      0.5094    -0.4837   False   False         L1_H1,L2_H2,L3_OOS,L4_DD
+   SMALL       Q     C_IS4B BAND03  CORE        4      False    0.0350      0.4701    -0.2408   False   False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+   SMALL       Q C_ISSHARPE BAND03  CORE        4      False    0.0350      0.4701    -0.2408   False   False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+   SMALL       Q   C_ISCAGR  TOP20   EXT        2      False    0.0138      0.1818    -0.5311   False   False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+
+  ladder-wide at 10 bps: OOS 4b (LS_REC) 140 of 2,700 | OOS 4a 5
+
+====================================================================================================
+(E) PRE-REGISTERED HYPOTHESES
+====================================================================================================
+  H_970     PASS at 1.0000  (bar 1.0)  970's R(L3_OOS) = 1.0000 under LS_970 on U56 at M and Q
+            U56/M R 1.0000 (all5 36/other4 36, binding 0); U56/Q R 1.0000 (all5 17/other4 17, binding 0)
+  H_ISRED   PASS at 1.0000  (bar 0.95)  under LS_ISALL the Sharpe leg stays redundant (R >= 0.95) on every panel
+            U56 R 1.0000 binding 0/122; B136 R 1.0000 binding 0/145; SMALL R 1.0000 binding 0/1
+  H_BIND    PASS at 1361.0000  (bar 1.0)  >= 1 leg binds under LS_ISALL on >= 1 panel
+            binding by leg (summed over panels): L1_H1 36, L2_H2 1, L3_OOS 0, L4_DD 1084, L5_CAGR 240 | worst single cell L4_DD on B136 (579)
+  H_SAME    FAIL at 0.8741  (bar 0.9)  fully-IS 4b agrees with the record's OOS 4b on >= 0.90 of rows
+            IS-pass 268 / OOS-pass 140 / both 34 of 2,700; IS-only 234, OOS-only 106
+  H_ORDER   FAIL at 0.1539  (bar 0.5)  binding order is the same IS and OOS (Spearman >= +0.50 on every panel)
+            per panel: U56 +0.3000, B136 +0.1539, SMALL +0.5000
+  H_R8      PASS at 4.0000  (bar 1.0)  >= 1 OOS 4b among the IS-only choosers' picks
+            4 of 36 picks; by chooser C_IS4B 2, C_ISSHARPE 2, C_ISCAGR 0
+  H_4A      PASS at 38.0000  (bar 1.0)  >= 1 OOS 4a anywhere in this run
+            38 of 13,500 ladder rows; at 10 bps 5 of 2,700
+  wrote 2026-09-16_does-the-OOS-LEG-stay-REDUNDANT-under-a-PURELY-IS-4b_cloud.hypotheses.csv  (7 rows, 6 cols)
+  HYPOTHESES: 5 of 7 PASS
+
+  COST ROBUSTNESS -- R(L3_OOS) under LS_ISALL, per panel x cost rung:
+  wrote 2026-09-16_does-the-OOS-LEG-stay-REDUNDANT-under-a-PURELY-IS-4b_cloud.cost_robustness.csv  (15 rows, 5 cols)
+   panel       U56   B136  SMALL
+   cost_bps                     
+   0.0      1.0000 1.0000 1.0000
+   5.0      1.0000 1.0000 1.0000
+   10.0     1.0000 1.0000 1.0000
+   25.0     1.0000 1.0000    NaN
+   50.0     1.0000 1.0000    NaN
+
+  SURVIVORSHIP (rule 9): U56/B136/SMALL are current-constituent lists; SMALL drops 52 names with max_1d_move >= 1.0. Every LEVEL is optimistic and every 4b/4a count is an UPPER bound. R(L) is a ratio of two pass rates over the same rows on the same tape, so a bias lifting both largely cancels; what does not cancel is that an optimistic panel pushes MORE rows over every level bar at once, so every R reported here is an UPPER bound on redundancy and a CONSERVATIVE reading of how often a leg binds.
+  elapsed 110s
