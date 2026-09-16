@@ -1,0 +1,183 @@
+====================================================================================================
+IDEA 930 (lane B) -- re-score the record's committed 4b PASSES by their own book's
+                     ANNUAL COST DRAG  (drag bp/yr = realised annual turnover x cost bps)
+tree 812ab0e   draws 200   rungs [0.0, 5.0, 10.0, 25.0, 50.0] bps   10 bps BINDING   smoke=False
+====================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+PANELS
+  U56     55 names + SPY   2008-01-02 -> 2026-09-15   OOS starts 2017-01-03
+        SPY full  15.10% / 0.8829 / -33.72%   OOS  15.21% / 0.8711 / -33.72%   H1 0.9588  H2 0.8207
+  B136   135 names + SPY   2008-01-02 -> 2026-09-11   OOS starts 2017-01-03
+        SPY full  15.16% / 0.8861 / -33.72%   OOS  15.33% / 0.8767 / -33.72%   H1 0.9596  H2 0.8259
+
+----------------------------------------------------------------------------------------------------
+GATES
+----------------------------------------------------------------------------------------------------
+  G0  rebalance masks == engine.rebalance_mask       : 0 disagreeing rows   PASS
+  G1  Ctx == engine.backtest @10 and @25 bps (r / t) : 0.000e+00 / 0.000e+00   PASS
+  G8  COST LINEARITY net(c) == gross - turn*c/1e4    : 3.469e-18   PASS
+  G2  BAND03@0.75 == baseline.rules_v2_weights       : 0.000e+00   PASS
+  G3  CROSS-RUN SPY OOS triple vs the record         : 15.2102% / 0.8711 / -33.7173%  vs 15.2102% / 0.8711 / -33.7173%   max|d| 2.98e-05   PASS
+
+----------------------------------------------------------------------------------------------------
+THE LADDER  (90 cells x 5 cost rungs = 450 points).  DRAG = realised annual turnover x rung.
+----------------------------------------------------------------------------------------------------
+  structural 4b PASS cells @10 bps: 10 of 90
+  G7  CROSS-RUN ladder 4b count vs idea 969's 10/90  : 10 vs 10   PASS
+
+  BOOK DRAG at 10 bps (bp/yr), median over panel x book x gross:
+    W  median   109.6   range   12.0 ..   291.2   (turnover 10.96x/yr)
+    M  median    48.9   range    8.3 ..   126.4   (turnover  4.89x/yr)
+    Q  median    26.4   range    5.6 ..    59.9   (turnover  2.64x/yr)
+  REPORTED reconciliation against 926's committed 161 (W) / 73 (M) bp/yr -- gross is a linear scale on turnover, so the median over a gross ladder is not the same object:
+    W  median drag by gross: @0.50    84.6   @0.75   126.5   @1.00   168.5
+    M  median drag by gross: @0.50    37.3   @0.75    55.7   @1.00    74.0
+    Q  median drag by gross: @0.50    20.5   @0.75    30.5   @1.00    40.3
+
+----------------------------------------------------------------------------------------------------
+THE NULLS  (RANDROT, gross-matched; 200 draws x 30 (panel,book,cadence) families x 3 gross x 5 rungs)
+----------------------------------------------------------------------------------------------------
+  U56: nulls built  (110s elapsed)
+  B136: nulls built  (320s elapsed)
+  G4  GROSS MATCH (row sum / holding count)          : 2.998e-15 / 0   PASS
+  G5  DETERMINISM (redrawn null identical)           : PASS
+  degenerate null families (< 50% distinct draws)    : 18 of 90
+
+====================================================================================================
+THE DRAG CURVE  (450 (cell, rung) points; BOOK drag on the x axis, NULL 4b base rate on y)
+====================================================================================================
+  Spearman rho(BOOK drag, null 4b base rate) = -0.2659   rho(rung, base) = -0.3384   rho(turnover, base) = +0.1814
+  Spearman rho(NULL's OWN drag, base)        = -0.2634   (the null churns more than the book: median null turnover 7.34x/yr vs book 4.67x/yr)
+
+  base rate by BOOK-drag decile:
+    decile  1  drag     0.0 ..      0.0 bp/yr   mean base4b 0.1713   max 1.0000   share >= 0.05 0.356
+    decile  2  drag     0.0 ..      0.0 bp/yr   mean base4b 0.0796   max 1.0000   share >= 0.05 0.200
+    decile  3  drag     2.8 ..     13.9 bp/yr   mean base4b 0.0057   max 0.1650   share >= 0.05 0.044
+    decile  4  drag    14.0 ..     27.6 bp/yr   mean base4b 0.0558   max 1.0000   share >= 0.05 0.156
+    decile  5  drag    27.6 ..     46.2 bp/yr   mean base4b 0.0971   max 1.0000   share >= 0.05 0.244
+    decile  6  drag    46.7 ..     67.1 bp/yr   mean base4b 0.0272   max 0.7700   share >= 0.05 0.067
+    decile  7  drag    67.6 ..    109.2 bp/yr   mean base4b 0.0573   max 1.0000   share >= 0.05 0.156
+    decile  8  drag   110.0 ..    181.5 bp/yr   mean base4b 0.0013   max 0.0250   share >= 0.05 0.000
+    decile  9  drag   181.9 ..    316.1 bp/yr   mean base4b 0.0003   max 0.0150   share >= 0.05 0.000
+    decile 10  drag   319.0 ..   1455.8 bp/yr   mean base4b 0.0000   max 0.0000   share >= 0.05 0.000
+
+  within-cadence rho(BOOK drag, base):
+    W  rho -0.4612  (150 points)
+    M  rho -0.2584  (150 points)
+    Q  rho -0.0162  (150 points)
+
+  DECOMPOSITION (reported, no bar -- the rung-0 column has drag identically 0 for EVERY
+  cell, so pooling it makes the x axis degenerate; and 18 of 90 null families are
+  idea 998's DEGENERATE construction).  rho(., null 4b base rate) on each subset:
+    ALL 450 points                     n 450   rho(drag) -0.2659   rho(rung) -0.3384   rho(turnover) +0.1814
+    non-degenerate nulls               n 360   rho(drag) -0.3033   rho(rung) -0.3706   rho(turnover) +0.1600
+    rung > 0 (drag axis non-trivial)   n 360   rho(drag) -0.1460   rho(rung) -0.2751   rho(turnover) +0.0788
+    rung > 0 AND non-degenerate        n 288   rho(drag) -0.1671   rho(rung) -0.2881   rho(turnover) +0.0467
+    the BINDING rung only (10 bps)     n  90   rho(drag) +0.0784   rho(rung) +nan   rho(turnover) +0.0784
+
+  D*(bar) = largest BOOK drag at which ANY (cell, rung) point still has base4b >= bar:
+    bar 0.05   D*     91.0 bp/yr   ( 55 of 450 points at or above the bar; 95th pct of their drag    83.1)   D* on NON-DEGENERATE nulls only    84.7
+    bar 0.10   D*     91.0 bp/yr   ( 41 of 450 points at or above the bar; 95th pct of their drag    67.6)   D* on NON-DEGENERATE nulls only    67.6
+    bar 0.25   D*     91.0 bp/yr   ( 24 of 450 points at or above the bar; 95th pct of their drag    79.7)   D* on NON-DEGENERATE nulls only    63.2
+    NOTE: D* is a MAX over points, so it is set by ONE cell.  The cell setting D*(0.05) is:
+      U56 / EWELIG @0.75 / M at the 25 bps rung, base4b 1.000, degenerate=True
+
+  cells where a coin flip clears ALL FIVE 4b legs >= 5% of the time AT THE BINDING 10 bps RUNG:
+    11 of 90 cells
+      U56   BAND03  @1.00 M   drag   16.4 bp/yr   base4b 0.075   degenerate=False
+      U56   TOP20   @0.75 Q   drag   27.0 bp/yr   base4b 0.160   degenerate=False
+      U56   TOP10   @0.75 Q   drag   33.9 bp/yr   base4b 0.120   degenerate=False
+      U56   EWELIG  @0.75 M   drag   36.4 bp/yr   base4b 1.000   degenerate=True
+      U56   TOP5    @0.75 Q   drag   39.9 bp/yr   base4b 0.060   degenerate=False
+      B136  TOP10   @0.75 Q   drag   41.8 bp/yr   base4b 0.055   degenerate=False
+      U56   TOP20   @0.75 M   drag   48.1 bp/yr   base4b 0.770   degenerate=False
+      U56   TOP10   @0.75 M   drag   63.2 bp/yr   base4b 0.280   degenerate=False
+      U56   TOP5    @0.75 M   drag   78.2 bp/yr   base4b 0.070   degenerate=False
+      B136  EWELIG  @0.75 W   drag   82.6 bp/yr   base4b 1.000   degenerate=True
+      U56   TOP10   @1.00 M   drag   84.0 bp/yr   base4b 0.050   degenerate=False
+
+====================================================================================================
+THE RECORD'S COMMITTED 4b PASSES, RE-SCORED BY THEIR OWN BOOK'S DRAG
+====================================================================================================
+  claim units scanned 7,414   units asserting a 4b pass 2,171   naming >=1 panel AND >=1 book 256
+  units naming SMALL663 (not priced here, counted unresolvable): 234
+
+  STRICT  (100 claim-cells -> 18 distinct cells)   median book drag 80.1 bp/yr   structurally 4b here 0.278
+    bar 0.05   BELOW THE LINE  direct 0.278   drag-line 0.611   agreement 0.667
+    bar 0.10   BELOW THE LINE  direct 0.167   drag-line 0.611   agreement 0.556
+    bar 0.25   BELOW THE LINE  direct 0.111   drag-line 0.611   agreement 0.500
+
+  WIDE  (1,114 claim-cells -> 88 distinct cells)   median book drag 48.1 bp/yr   structurally 4b here 0.114
+    bar 0.05   BELOW THE LINE  direct 0.125   drag-line 0.739   agreement 0.386
+    bar 0.10   BELOW THE LINE  direct 0.068   drag-line 0.739   agreement 0.330
+    bar 0.25   BELOW THE LINE  direct 0.045   drag-line 0.739   agreement 0.307
+
+  STRUCT  (10 claim-cells -> 10 distinct cells)   median book drag 43.0 bp/yr   structurally 4b here 1.000
+    bar 0.05   BELOW THE LINE  direct 0.400   drag-line 0.900   agreement 0.500
+    bar 0.10   BELOW THE LINE  direct 0.300   drag-line 0.900   agreement 0.400
+    bar 0.25   BELOW THE LINE  direct 0.300   drag-line 0.900   agreement 0.400
+
+----------------------------------------------------------------------------------------------------
+PRE-REGISTERED HYPOTHESES
+----------------------------------------------------------------------------------------------------
+  H_MONO     rho(drag, base4b) <= -0.50         : -0.2659   FAIL
+  H_NOTRUNG  |rho(drag)| > |rho(rung)|          : 0.2659 vs 0.3384   FAIL
+  H_WITHIN   rho <= -0.30 inside EACH cadence   : W -0.461  M -0.258  Q -0.016   FAIL
+  H_100      D*(0.05) in [50, 200] bp/yr        : 91.0   PASS
+  H_CADENCE  W/M median drag within 25% of 161/73: 109.6 / 48.9   FAIL
+  H_BELOW    STRICT below (direct, 0.05) >= 0.50: 0.278   FAIL
+  H_PREDICT  direct vs drag-line agree >= 0.80  : 0.667   FAIL
+  H_CLAIM    |STRICT - WIDE| <= 0.10            : 0.153   FAIL
+  H_STRUCT   |STRICT - STRUCT| <= 0.10          : 0.122   FAIL
+
+====================================================================================================
+RULE 8 -- WALK-FORWARD (picks on 2009-2016 ALONE; 2017-2026 read ONCE; 10 bps binding)
+====================================================================================================
+  G6  choosers are IS-ONLY (picks invariant to permuted OOS/full rows): PASS
+
+  panel cad  chooser      pick          drag   OOS CAGR / Sharpe / MaxDD        baseline OOS               SPY OOS                 4b 4a null4b
+  U56   W    C_ISSHARPE   BAND03@1.00      24   12.67% /  1.276 / -15.91%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   Y  n  0.000
+  U56   W    C_IS4B       BAND03@1.00      24   12.67% /  1.276 / -15.91%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   Y  n  0.000
+  U56   W    C_ISDRAG     TOP5@1.00       248   23.81% /  0.962 / -27.91%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   n  n  0.000
+  U56   M    C_ISSHARPE   TOP5@1.00       104   21.31% /  0.852 / -34.61%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   n  n  0.010
+  U56   M    C_IS4B       TOP5@0.50        52   10.89% /  0.836 / -19.11%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   n  n  0.000
+  U56   M    C_ISDRAG     TOP5@1.00       104   21.31% /  0.852 / -34.61%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   n  n  0.010
+  U56   Q    C_ISSHARPE   TOP5@1.00        53   12.40% /  0.562 / -38.48%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   n  n  0.000
+  U56   Q    C_IS4B       TOP10@0.50       23    9.79% /  0.872 / -16.80%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   n  n  0.000
+  U56   Q    C_ISDRAG     TOP5@1.00        53   12.40% /  0.562 / -38.48%    9.45% / 1.276 / -12.05%   15.21% / 0.871 / -33.72%   n  n  0.000
+  B136  W    C_ISSHARPE   BAND03@1.00      27   10.52% /  1.105 / -16.16%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   Y  n  0.000
+  B136  W    C_IS4B       BAND03@1.00      27   10.52% /  1.105 / -16.16%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   Y  n  0.000
+  B136  W    C_ISDRAG     TOP5@1.00       291   20.62% /  0.807 / -30.88%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   n  n  0.000
+  B136  M    C_ISSHARPE   TOP10@1.00      105   24.32% /  1.003 / -35.79%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   n  n  0.000
+  B136  M    C_IS4B       TOP10@0.50       53   12.05% /  0.986 / -19.27%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   Y  n  0.000
+  B136  M    C_ISDRAG     TOP5@1.00       126   35.89% /  1.163 / -39.70%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   n  n  0.000
+  B136  Q    C_ISSHARPE   TOP5@1.00        60   23.55% /  0.859 / -36.61%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   n  n  0.000
+  B136  Q    C_IS4B       TOP5@0.50        31   12.00% /  0.828 / -19.93%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   n  n  0.000
+  B136  Q    C_ISDRAG     TOP5@1.00        60   23.55% /  0.859 / -36.61%    7.88% / 1.106 / -12.24%   15.33% / 0.877 / -33.72%   n  n  0.000
+
+  OOS 4b PASS: 5 of 18    OOS 4a PASS: 0 of 18
+    C_ISSHARPE  4b 2/6   4a 0/6   mean OOS Sharpe 0.943   mean drag     62 bp/yr   picks below the line 0/6
+    C_IS4B      4b 3/6   4a 0/6   mean OOS Sharpe 0.984   mean drag     35 bp/yr   picks below the line 0/6
+    C_ISDRAG    4b 0/6   4a 0/6   mean OOS Sharpe 0.868   mean drag    147 bp/yr   picks below the line 0/6
+  H_RULE8    C_ISDRAG OOS 4b >= C_ISSHARPE's    : 0 vs 2   FAIL
+
+  FULL-SAMPLE ladder @10 bps, BOTH KEEP paths over all 90 cells:
+    U56  RULES v2 (live) full 8.62% / 1.2007 / -12.05%   halves 1.232 / 1.176   drag 18 bp/yr
+    B136  RULES v2 (live) full 7.98% / 1.0993 / -12.24%   halves 1.235 / 0.966   drag 20 bp/yr
+    4b 10 of 90    4a 0 of 90
+
+====================================================================================================
+GATES 9 of 9 PASS   G0 PASS  G1 PASS  G2 PASS  G3 PASS  G4 PASS  G5 PASS  G6 PASS  G7 PASS  G8 PASS
+HYPOTHESES 1 of 10 PASS   H_MONO FAIL  H_NOTRUNG FAIL  H_WITHIN FAIL  H_100 PASS  H_CADENCE FAIL  H_BELOW FAIL  H_PREDICT FAIL  H_CLAIM FAIL  H_STRUCT FAIL  H_RULE8 FAIL
+====================================================================================================
+  wrote 2026-09-16_re-score-the-record-s-committed-4b-PASSES-by-their-own-book-s-ANNUAL-COST-DRAG_B.ladder.csv  (450 rows, 31 cols)
+  wrote 2026-09-16_re-score-the-record-s-committed-4b-PASSES-by-their-own-book-s-ANNUAL-COST-DRAG_B.nulls.csv  (450 rows, 16 cols)
+  wrote 2026-09-16_re-score-the-record-s-committed-4b-PASSES-by-their-own-book-s-ANNUAL-COST-DRAG_B.dragcurve.csv  (450 rows, 13 cols)
+  wrote 2026-09-16_re-score-the-record-s-committed-4b-PASSES-by-their-own-book-s-ANNUAL-COST-DRAG_B.cells.csv  (116 rows, 15 cols)
+  wrote 2026-09-16_re-score-the-record-s-committed-4b-PASSES-by-their-own-book-s-ANNUAL-COST-DRAG_B.census.csv  (2,171 rows, 11 cols)
+  wrote 2026-09-16_re-score-the-record-s-committed-4b-PASSES-by-their-own-book-s-ANNUAL-COST-DRAG_B.answer.csv  (3 rows, 14 cols)
+  wrote 2026-09-16_re-score-the-record-s-committed-4b-PASSES-by-their-own-book-s-ANNUAL-COST-DRAG_B.walkforward.csv  (18 rows, 20 cols)
+
+elapsed 322s
