@@ -1,0 +1,564 @@
+====================================================================================================
+IDEA 995 (cloud lane, 2026-09-16) -- IS REFUSAL COST A CADENCE OBJECT THE WAY L4_DD IS?
+====================================================================================================
+  SMOKE=False  headline cost 10 bps (rungs [0.0, 5.0, 10.0, 25.0, 50.0])  LAG=1  WARM=260
+  tuned axes: fallback ['FB_NONE', 'FB_CASH', 'FB_SPY', 'FB_LIVE'] x floor [0.0, 0.1, 0.25, 0.4, 0.5, 0.75, 0.9] -- ALL reported, none selected
+  MEASURED axis (not tuned): cadence ['D', 'W', 'M', 'Q'], all four rungs reported everywhere
+  share basis FIXED at S_IS4B; ['S_ISLEG4', 'S_FULL4B'] appendix only
+  comparand: idea 981's L4_DD cadence gradient {'D': 0.633, 'W': 0.647, 'M': 0.832, 'Q': 0.927} (recomputed at G3c)
+  DECLARED: cash Sharpe := 0.0, cash MaxDD := 0.0; cash and SPY costless; live book pays 10 bps
+
+loading panels ...
+  U56      56 cols  2008-01-02 .. 2026-09-15
+  B136    136 cols  2008-01-02 .. 2026-09-11
+  SMALL   664 cols  2010-01-04 .. 2026-09-11
+  SMALL dropped 52 tickers with max_1d_move >= 1.0 (data/small_meta.csv)
+
+====================================================================================================
+(A) GATES -- printed before any hypothesis number
+====================================================================================================
+  G0  offset_mask vs engine.rebalance_mask : 0 disagreeing rows
+  G1  Ctx vs engine.backtest, D: max|d ret| 4.337e-19  max|d turn| 6.245e-17
+  G1  Ctx vs engine.backtest, M: max|d ret| 1.735e-17  max|d turn| 2.498e-16
+  G2  BAND03@0.75 vs baseline.rules_v2_weights : max|d| 0.000e+00
+  G4  matched gross: 30 target matrices built once, reused across all cadences
+
+====================================================================================================
+(B) THE LADDER -- every (panel, book, gross, cadence, phase), all phases, 5 rungs
+====================================================================================================
+  U56    D  1 phases x 10 book-gross x 5 rungs   [    18s]
+  U56    W  5 phases x 10 book-gross x 5 rungs   [    19s]
+  U56    M  21 phases x 10 book-gross x 5 rungs   [    20s]
+  U56    Q  63 phases x 10 book-gross x 5 rungs   [    23s]
+  B136   D  1 phases x 10 book-gross x 5 rungs   [    24s]
+  B136   W  5 phases x 10 book-gross x 5 rungs   [    24s]
+  B136   M  21 phases x 10 book-gross x 5 rungs   [    27s]
+  B136   Q  63 phases x 10 book-gross x 5 rungs   [    34s]
+  SMALL  D  1 phases x 10 book-gross x 5 rungs   [    39s]
+  SMALL  W  5 phases x 10 book-gross x 5 rungs   [    43s]
+  SMALL  M  21 phases x 10 book-gross x 5 rungs   [    59s]
+  SMALL  Q  63 phases x 10 book-gross x 5 rungs   [   109s]
+  ladder 13,500 rows over 2,700 phase-books
+  G5  determinism : max|d| 0.000e+00
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.ladder.csv  (13,500 rows, 53 cols)
+  G2b FB_LIVE vs the ladder's live-book row : max|d| 2.220e-16
+  G3a cross-run vs idea 993's ladder : max|d| 7.105e-15  (13,500 shared phase-book-rungs x 46 numeric cols)
+
+  --- the COMPARAND: L4_DD fail rate by cadence, recomputed from this run's ladder ---
+    cadence   L4_DD fail @10bps   @0bps   idea 981 published
+    D                    0.6333   0.5667   0.633
+    W                    0.6467   0.6467   0.647
+    M                    0.8317   0.8286   0.832
+    Q                    0.9270   0.9238   0.927
+  G3c cross-run vs 981's L4_DD gradient : max|d| 0.0003
+
+====================================================================================================
+(C) THE SCREEN AND ITS REFUSALS, RESOLVED BY CADENCE -- (book, gross) chosen on 2009-2016
+====================================================================================================
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.shares.csv  (120 rows, 8 cols)
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.picks.csv  (756 rows, 34 cols)
+  G7  IS-purity : 0 pick disagreements under permuted OOS columns
+
+  --- REFUSAL RATE by cadence (S_IS4B, 9 slots per cadence = 3 panels x 3 choosers) ---
+cadence  D  W  M  Q
+floor              
+0.00     0  0  0  0
+0.10     9  3  3  3
+0.25     9  6  3  3
+0.40     9  6  3  3
+0.50     9  6  3  3
+0.75     9  6  6  6
+0.90     9  9  9  9
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.refusal_rate.csv  (7 rows, 5 cols)
+
+====================================================================================================
+(D) THE FALLBACK OBJECTS -- what a declined slot actually holds, 2017-2026
+====================================================================================================
+panel fallback  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  FULL_Sharpe  FULL_MaxDD  OOS_4b  OOS_4a                  fail_legs
+  U56  FB_CASH    0.0000      0.0000     0.0000       0.0000      0.0000   False   False L1_H1,L2_H2,L3_OOS,L5_CAGR
+  U56   FB_SPY    0.1521      0.8713    -0.3372       0.8830     -0.3372   False   False   L1_H1,L2_H2,L3_OOS,L4_DD
+  U56  FB_LIVE    0.0945      1.2765    -0.1205       1.2009     -0.1205   False   False                    L5_CAGR
+ B136  FB_CASH    0.0000      0.0000     0.0000       0.0000      0.0000   False   False L1_H1,L2_H2,L3_OOS,L5_CAGR
+ B136   FB_SPY    0.1533      0.8769    -0.3372       0.8862     -0.3372   False   False   L1_H1,L2_H2,L3_OOS,L4_DD
+ B136  FB_LIVE    0.0788      1.1061    -0.1224       1.0994     -0.1224   False   False                    L5_CAGR
+SMALL  FB_CASH    0.0000      0.0000     0.0000       0.0000      0.0000   False   False L1_H1,L2_H2,L3_OOS,L5_CAGR
+SMALL   FB_SPY    0.1533      0.8769    -0.3372       0.8582     -0.3372   False   False   L1_H1,L2_H2,L3_OOS,L4_DD
+SMALL  FB_LIVE    0.0375      0.5601    -0.1389       0.6637     -0.1389   False   False L1_H1,L2_H2,L3_OOS,L5_CAGR
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.fallbacks.csv  (9 rows, 38 cols)
+
+====================================================================================================
+(E) THE PAID SUMMARY -- every (cadence x fallback x floor), ALL 9 SLOTS PER CADENCE
+====================================================================================================
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.paid_by_cadence.csv  (112 rows, 14 cols)
+
+  --- cadence D ---
+fallback  floor  n_slots  n_declined  n_scored  OOS_4b  OOS_4a  med_OOS_Sharpe  mean_OOS_Sharpe  med_OOS_CAGR  med_OOS_MaxDD  med_FULL_Sharpe  med_FULL_MaxDD
+ FB_NONE   0.00        9           0         9       2       0          0.8711           0.8939        0.1051        -0.1477           0.8426         -0.1477
+ FB_NONE   0.10        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_NONE   0.25        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_NONE   0.40        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_NONE   0.50        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_NONE   0.75        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_NONE   0.90        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_CASH   0.00        9           0         9       2       0          0.8711           0.8939        0.1051        -0.1477           0.8426         -0.1477
+ FB_CASH   0.10        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.25        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.40        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.50        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.75        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.90        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+  FB_SPY   0.00        9           0         9       2       0          0.8711           0.8939        0.1051        -0.1477           0.8426         -0.1477
+  FB_SPY   0.10        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+  FB_SPY   0.25        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+  FB_SPY   0.40        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+  FB_SPY   0.50        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+  FB_SPY   0.75        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+  FB_SPY   0.90        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+ FB_LIVE   0.00        9           0         9       2       0          0.8711           0.8939        0.1051        -0.1477           0.8426         -0.1477
+ FB_LIVE   0.10        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+ FB_LIVE   0.25        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+ FB_LIVE   0.40        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+ FB_LIVE   0.50        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+ FB_LIVE   0.75        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+ FB_LIVE   0.90        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+
+  --- cadence W ---
+fallback  floor  n_slots  n_declined  n_scored  OOS_4b  OOS_4a  med_OOS_Sharpe  mean_OOS_Sharpe  med_OOS_CAGR  med_OOS_MaxDD  med_FULL_Sharpe  med_FULL_MaxDD
+ FB_NONE   0.00        9           0         9       2       0          1.0012           0.9008        0.1052        -0.1616           0.9554         -0.1616
+ FB_NONE   0.10        9           3         6       0       0          1.1041           1.0501        0.1382        -0.2088           1.0449         -0.2088
+ FB_NONE   0.25        9           6         3       0       0          1.1050           1.0736        0.1052        -0.1616           1.0993         -0.1616
+ FB_NONE   0.40        9           6         3       0       0          1.1050           1.0736        0.1052        -0.1616           1.0993         -0.1616
+ FB_NONE   0.50        9           6         3       0       0          1.1050           1.0736        0.1052        -0.1616           1.0993         -0.1616
+ FB_NONE   0.75        9           6         3       0       0          1.1050           1.0736        0.1052        -0.1616           1.0993         -0.1616
+ FB_NONE   0.90        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_CASH   0.00        9           0         9       2       0          1.0012           0.9008        0.1052        -0.1616           0.9554         -0.1616
+ FB_CASH   0.10        9           3         9       0       0          1.1041           0.7001        0.1052        -0.1616           1.0449         -0.1616
+ FB_CASH   0.25        9           6         9       0       0          0.0000           0.3579        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.40        9           6         9       0       0          0.0000           0.3579        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.50        9           6         9       0       0          0.0000           0.3579        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.75        9           6         9       0       0          0.0000           0.3579        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.90        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+  FB_SPY   0.00        9           0         9       2       0          1.0012           0.9008        0.1052        -0.1616           0.9554         -0.1616
+  FB_SPY   0.10        9           3         9       0       0          1.1041           0.9924        0.1500        -0.2088           1.0449         -0.2088
+  FB_SPY   0.25        9           6         9       0       0          0.8769           0.9406        0.1521        -0.3372           0.8830         -0.3372
+  FB_SPY   0.40        9           6         9       0       0          0.8769           0.9406        0.1521        -0.3372           0.8830         -0.3372
+  FB_SPY   0.50        9           6         9       0       0          0.8769           0.9406        0.1521        -0.3372           0.8830         -0.3372
+  FB_SPY   0.75        9           6         9       0       0          0.8769           0.9406        0.1521        -0.3372           0.8830         -0.3372
+  FB_SPY   0.90        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+ FB_LIVE   0.00        9           0         9       2       0          1.0012           0.9008        0.1052        -0.1616           0.9554         -0.1616
+ FB_LIVE   0.10        9           3         9       0       0          1.1041           0.8868        0.1052        -0.1616           1.0449         -0.1616
+ FB_LIVE   0.25        9           6         9       0       0          1.1050           0.9701        0.0945        -0.1389           1.0993         -0.1389
+ FB_LIVE   0.40        9           6         9       0       0          1.1050           0.9701        0.0945        -0.1389           1.0993         -0.1389
+ FB_LIVE   0.50        9           6         9       0       0          1.1050           0.9701        0.0945        -0.1389           1.0993         -0.1389
+ FB_LIVE   0.75        9           6         9       0       0          1.1050           0.9701        0.0945        -0.1389           1.0993         -0.1389
+ FB_LIVE   0.90        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+
+  --- cadence M ---
+fallback  floor  n_slots  n_declined  n_scored  OOS_4b  OOS_4a  med_OOS_Sharpe  mean_OOS_Sharpe  med_OOS_CAGR  med_OOS_MaxDD  med_FULL_Sharpe  med_FULL_MaxDD
+ FB_NONE   0.00        9           0         9       0       0          0.8312           0.8467        0.1731        -0.3368           1.0132         -0.3368
+ FB_NONE   0.10        9           3         6       0       0          1.0506           1.0506        0.1643        -0.2466           1.1103         -0.2466
+ FB_NONE   0.25        9           3         6       0       0          1.0506           1.0506        0.1643        -0.2466           1.1103         -0.2466
+ FB_NONE   0.40        9           3         6       3       0          1.1549           1.1647        0.1192        -0.2000           1.1304         -0.2000
+ FB_NONE   0.50        9           3         6       3       0          1.1549           1.1647        0.1192        -0.2000           1.1304         -0.2000
+ FB_NONE   0.75        9           6         3       0       0          1.0852           1.0852        0.1104        -0.2050           1.0877         -0.2050
+ FB_NONE   0.90        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_CASH   0.00        9           0         9       0       0          0.8312           0.8467        0.1731        -0.3368           1.0132         -0.3368
+ FB_CASH   0.10        9           3         9       0       0          1.0004           0.7004        0.1555        -0.2322           1.0943         -0.2322
+ FB_CASH   0.25        9           3         9       0       0          1.0004           0.7004        0.1555        -0.2322           1.0943         -0.2322
+ FB_CASH   0.40        9           3         9       3       0          1.0852           0.7765        0.1104        -0.1881           1.0877         -0.1881
+ FB_CASH   0.50        9           3         9       3       0          1.0852           0.7765        0.1104        -0.1881           1.0877         -0.1881
+ FB_CASH   0.75        9           6         9       0       0          0.0000           0.3617        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.90        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+  FB_SPY   0.00        9           0         9       0       0          0.8312           0.8467        0.1731        -0.3368           1.0132         -0.3368
+  FB_SPY   0.10        9           3         9       0       0          1.0004           0.9927        0.1555        -0.2611           1.0943         -0.2611
+  FB_SPY   0.25        9           3         9       0       0          1.0004           0.9927        0.1555        -0.2611           1.0943         -0.2611
+  FB_SPY   0.40        9           3         9       3       0          1.0852           1.0688        0.1281        -0.2050           1.0877         -0.2050
+  FB_SPY   0.50        9           3         9       3       0          1.0852           1.0688        0.1281        -0.2050           1.0877         -0.2050
+  FB_SPY   0.75        9           6         9       0       0          0.8769           0.9445        0.1521        -0.3372           0.8830         -0.3372
+  FB_SPY   0.90        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+ FB_LIVE   0.00        9           0         9       0       0          0.8312           0.8467        0.1731        -0.3368           1.0132         -0.3368
+ FB_LIVE   0.10        9           3         9       0       0          1.0004           0.8871        0.1555        -0.2322           1.0943         -0.2322
+ FB_LIVE   0.25        9           3         9       0       0          1.0004           0.8871        0.1555        -0.2322           1.0943         -0.2322
+ FB_LIVE   0.40        9           3         9       3       0          1.0852           0.9632        0.1104        -0.1881           1.0877         -0.1881
+ FB_LIVE   0.50        9           3         9       3       0          1.0852           0.9632        0.1104        -0.1881           1.0877         -0.1881
+ FB_LIVE   0.75        9           6         9       0       0          1.0852           0.9740        0.0945        -0.1389           1.0877         -0.1389
+ FB_LIVE   0.90        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+
+  --- cadence Q ---
+fallback  floor  n_slots  n_declined  n_scored  OOS_4b  OOS_4a  med_OOS_Sharpe  mean_OOS_Sharpe  med_OOS_CAGR  med_OOS_MaxDD  med_FULL_Sharpe  med_FULL_MaxDD
+ FB_NONE   0.00        9           0         9       0       0          0.5454           0.6578        0.1152        -0.3661           0.8546         -0.3661
+ FB_NONE   0.10        9           3         6       0       0          1.0011           0.9277        0.1152        -0.2332           1.0538         -0.2332
+ FB_NONE   0.25        9           3         6       0       0          1.0011           1.0011        0.1124        -0.2332           1.0538         -0.2332
+ FB_NONE   0.40        9           3         6       0       0          1.0011           1.0011        0.1124        -0.2332           1.0538         -0.2332
+ FB_NONE   0.50        9           3         6       0       0          1.0011           1.0011        0.1124        -0.2332           1.0538         -0.2332
+ FB_NONE   0.75        9           6         3       0       0          0.9695           0.9695        0.1097        -0.2444           1.0325         -0.2444
+ FB_NONE   0.90        9           9         0       0       0             NaN              NaN           NaN            NaN              NaN             NaN
+ FB_CASH   0.00        9           0         9       0       0          0.5454           0.6578        0.1152        -0.3661           0.8546         -0.3661
+ FB_CASH   0.10        9           3         9       0       0          0.7490           0.6184        0.1152        -0.2221           0.9158         -0.2221
+ FB_CASH   0.25        9           3         9       0       0          0.9695           0.6674        0.1097        -0.2221           1.0325         -0.2221
+ FB_CASH   0.40        9           3         9       0       0          0.9695           0.6674        0.1097        -0.2221           1.0325         -0.2221
+ FB_CASH   0.50        9           3         9       0       0          0.9695           0.6674        0.1097        -0.2221           1.0325         -0.2221
+ FB_CASH   0.75        9           6         9       0       0          0.0000           0.3232        0.0000         0.0000           0.0000          0.0000
+ FB_CASH   0.90        9           9         9       0       0          0.0000           0.0000        0.0000         0.0000           0.0000          0.0000
+  FB_SPY   0.00        9           0         9       0       0          0.5454           0.6578        0.1152        -0.3661           0.8546         -0.3661
+  FB_SPY   0.10        9           3         9       0       0          0.8769           0.9107        0.1170        -0.2707           0.9158         -0.2707
+  FB_SPY   0.25        9           3         9       0       0          0.9695           0.9597        0.1152        -0.2444           1.0325         -0.2444
+  FB_SPY   0.40        9           3         9       0       0          0.9695           0.9597        0.1152        -0.2444           1.0325         -0.2444
+  FB_SPY   0.50        9           3         9       0       0          0.9695           0.9597        0.1152        -0.2444           1.0325         -0.2444
+  FB_SPY   0.75        9           6         9       0       0          0.8769           0.9059        0.1521        -0.3372           0.8830         -0.3372
+  FB_SPY   0.90        9           9         9       0       0          0.8769           0.8750        0.1533        -0.3372           0.8830         -0.3372
+ FB_LIVE   0.00        9           0         9       0       0          0.5454           0.6578        0.1152        -0.3661           0.8546         -0.3661
+ FB_LIVE   0.10        9           3         9       0       0          0.7490           0.8052        0.1152        -0.2221           0.9158         -0.2221
+ FB_LIVE   0.25        9           3         9       0       0          0.9695           0.8541        0.1097        -0.2221           1.0325         -0.2221
+ FB_LIVE   0.40        9           3         9       0       0          0.9695           0.8541        0.1097        -0.2221           1.0325         -0.2221
+ FB_LIVE   0.50        9           3         9       0       0          0.9695           0.8541        0.1097        -0.2221           1.0325         -0.2221
+ FB_LIVE   0.75        9           6         9       0       0          0.9695           0.9354        0.0945        -0.1389           1.0325         -0.1389
+ FB_LIVE   0.90        9           9         9       0       0          1.1061           0.9809        0.0788        -0.1224           1.0994         -0.1224
+
+  G6  accounting identity at floor 0.00, all four cadences : max|d| 0.000e+00
+
+====================================================================================================
+(F) RC_CONV -- the ACCOUNTING gap, per cadence:  med OOS Sharpe(FB_NONE) - med(fb)
+    positive = the free-refusal convention FLATTERS the screen by that much
+====================================================================================================
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.rc_conv.csv  (84 rows, 7 cols)
+cadence             D      W      M      Q
+fallback floor                            
+FB_CASH  0.00  0.0000 0.0000 0.0000 0.0000
+         0.10     NaN 0.0000 0.0502 0.2521
+         0.25     NaN 1.1050 0.0502 0.0316
+         0.40     NaN 1.1050 0.0697 0.0316
+         0.50     NaN 1.1050 0.0697 0.0316
+         0.75     NaN 1.1050 1.0852 0.9695
+FB_LIVE  0.00  0.0000 0.0000 0.0000 0.0000
+         0.10     NaN 0.0000 0.0502 0.2521
+         0.25     NaN 0.0000 0.0502 0.0316
+         0.40     NaN 0.0000 0.0697 0.0316
+         0.50     NaN 0.0000 0.0697 0.0316
+         0.75     NaN 0.0000 0.0000 0.0000
+FB_SPY   0.00  0.0000 0.0000 0.0000 0.0000
+         0.10     NaN 0.0000 0.0502 0.1242
+         0.25     NaN 0.2281 0.0502 0.0316
+         0.40     NaN 0.2281 0.0697 0.0316
+         0.50     NaN 0.2281 0.0697 0.0316
+         0.75     NaN 0.2281 0.2083 0.0926
+
+====================================================================================================
+(G) RC_PAIR / RC_4B -- the PAIRED test on EMPTIED slots only, resolved by cadence
+    dSharpe = fallback - the UNSCREENED control's pick in the SAME slot.
+    NEGATIVE = refusing was EXPENSIVE.  RC_4B = control OOS 4b passes destroyed.
+====================================================================================================
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.decline_by_cadence.csv  (144 rows, 12 cols)
+
+  --- cadence D (10 bps) ---
+fallback  floor  n_emptied  mean_dSharpe  med_dSharpe  win_Sharpe  mean_dMaxDD  win_MaxDD  mean_dCAGR  ctrl_4b_in_emptied
+ FB_CASH   0.10          9       -0.8939      -0.8711      0.0000       0.1770     1.0000     -0.1009                   2
+ FB_CASH   0.25          9       -0.8939      -0.8711      0.0000       0.1770     1.0000     -0.1009                   2
+ FB_CASH   0.40          9       -0.8939      -0.8711      0.0000       0.1770     1.0000     -0.1009                   2
+ FB_CASH   0.50          9       -0.8939      -0.8711      0.0000       0.1770     1.0000     -0.1009                   2
+ FB_CASH   0.75          9       -0.8939      -0.8711      0.0000       0.1770     1.0000     -0.1009                   2
+ FB_CASH   0.90          9       -0.8939      -0.8711      0.0000       0.1770     1.0000     -0.1009                   2
+  FB_SPY   0.10          9       -0.0188       0.0003      0.5556      -0.1602     0.0000      0.0520                   2
+  FB_SPY   0.25          9       -0.0188       0.0003      0.5556      -0.1602     0.0000      0.0520                   2
+  FB_SPY   0.40          9       -0.0188       0.0003      0.5556      -0.1602     0.0000      0.0520                   2
+  FB_SPY   0.50          9       -0.0188       0.0003      0.5556      -0.1602     0.0000      0.0520                   2
+  FB_SPY   0.75          9       -0.0188       0.0003      0.5556      -0.1602     0.0000      0.0520                   2
+  FB_SPY   0.90          9       -0.0188       0.0003      0.5556      -0.1602     0.0000      0.0520                   2
+ FB_LIVE   0.10          9        0.0871       0.0079      0.5556       0.0497     0.8889     -0.0306                   2
+ FB_LIVE   0.25          9        0.0871       0.0079      0.5556       0.0497     0.8889     -0.0306                   2
+ FB_LIVE   0.40          9        0.0871       0.0079      0.5556       0.0497     0.8889     -0.0306                   2
+ FB_LIVE   0.50          9        0.0871       0.0079      0.5556       0.0497     0.8889     -0.0306                   2
+ FB_LIVE   0.75          9        0.0871       0.0079      0.5556       0.0497     0.8889     -0.0306                   2
+ FB_LIVE   0.90          9        0.0871       0.0079      0.5556       0.0497     0.8889     -0.0306                   2
+
+  --- cadence W (10 bps) ---
+fallback  floor  n_emptied  mean_dSharpe  med_dSharpe  win_Sharpe  mean_dMaxDD  win_MaxDD  mean_dCAGR  ctrl_4b_in_emptied
+ FB_CASH   0.10          3       -0.5160      -0.5599      0.0000       0.2371     1.0000     -0.0565                   0
+ FB_CASH   0.25          6       -0.8502      -0.7807      0.0000       0.2182     1.0000     -0.1114                   2
+ FB_CASH   0.40          6       -0.8502      -0.7807      0.0000       0.2182     1.0000     -0.1114                   2
+ FB_CASH   0.50          6       -0.8502      -0.7807      0.0000       0.2182     1.0000     -0.1114                   2
+ FB_CASH   0.75          6       -0.8502      -0.7807      0.0000       0.2182     1.0000     -0.1114                   2
+ FB_CASH   0.90          9       -0.9008      -1.0012      0.0000       0.2148     1.0000     -0.1201                   2
+  FB_SPY   0.10          3        0.3608       0.3170      1.0000      -0.1001     0.3333      0.0968                   0
+  FB_SPY   0.25          6        0.0239       0.0934      0.5000      -0.1189     0.1667      0.0413                   2
+  FB_SPY   0.40          6        0.0239       0.0934      0.5000      -0.1189     0.1667      0.0413                   2
+  FB_SPY   0.50          6        0.0239       0.0934      0.5000      -0.1189     0.1667      0.0413                   2
+  FB_SPY   0.75          6        0.0239       0.0934      0.5000      -0.1189     0.1667      0.0413                   2
+  FB_SPY   0.90          9       -0.0258      -0.1299      0.4444      -0.1223     0.1111      0.0329                   2
+ FB_LIVE   0.10          3        0.0441       0.0003      1.0000       0.0982     0.6667     -0.0190                   0
+ FB_LIVE   0.25          6        0.0682       0.0007      1.0000       0.0885     0.8333     -0.0453                   2
+ FB_LIVE   0.40          6        0.0682       0.0007      1.0000       0.0885     0.8333     -0.0453                   2
+ FB_LIVE   0.50          6        0.0682       0.0007      1.0000       0.0885     0.8333     -0.0453                   2
+ FB_LIVE   0.75          6        0.0682       0.0007      1.0000       0.0885     0.8333     -0.0453                   2
+ FB_LIVE   0.90          9        0.0801       0.0011      1.0000       0.0875     0.8889     -0.0498                   2
+
+  --- cadence M (10 bps) ---
+fallback  floor  n_emptied  mean_dSharpe  med_dSharpe  win_Sharpe  mean_dMaxDD  win_MaxDD  mean_dCAGR  ctrl_4b_in_emptied
+ FB_CASH   0.10          3       -0.5665      -0.5951      0.0000       0.3075     1.0000     -0.0730                   0
+ FB_CASH   0.25          3       -0.5665      -0.5951      0.0000       0.3075     1.0000     -0.0730                   0
+ FB_CASH   0.40          3       -0.5665      -0.5951      0.0000       0.3075     1.0000     -0.0730                   0
+ FB_CASH   0.50          3       -0.5665      -0.5951      0.0000       0.3075     1.0000     -0.0730                   0
+ FB_CASH   0.75          6       -0.7438      -0.7131      0.0000       0.3078     1.0000     -0.1335                   0
+ FB_CASH   0.90          9       -0.8467      -0.8312      0.0000       0.3157     1.0000     -0.1685                   0
+  FB_SPY   0.10          3        0.3104       0.2818      1.0000      -0.0297     0.3333      0.0803                   0
+  FB_SPY   0.25          3        0.3104       0.2818      1.0000      -0.0297     0.3333      0.0803                   0
+  FB_SPY   0.40          3        0.3104       0.2818      1.0000      -0.0297     0.3333      0.0803                   0
+  FB_SPY   0.50          3        0.3104       0.2818      1.0000      -0.0297     0.3333      0.0803                   0
+  FB_SPY   0.75          6        0.1303       0.1610      0.8333      -0.0294     0.5000      0.0192                   0
+  FB_SPY   0.90          9        0.0283       0.0401      0.5556      -0.0214     0.4444     -0.0156                   0
+ FB_LIVE   0.10          3       -0.0064      -0.0349      0.3333       0.1686     1.0000     -0.0355                   0
+ FB_LIVE   0.25          3       -0.0064      -0.0349      0.3333       0.1686     1.0000     -0.0355                   0
+ FB_LIVE   0.40          3       -0.0064      -0.0349      0.3333       0.1686     1.0000     -0.0355                   0
+ FB_LIVE   0.50          3       -0.0064      -0.0349      0.3333       0.1686     1.0000     -0.0355                   0
+ FB_LIVE   0.75          6        0.1745       0.1132      0.6667       0.1781     1.0000     -0.0675                   0
+ FB_LIVE   0.90          9        0.1342       0.1010      0.6667       0.1884     1.0000     -0.0982                   0
+
+  --- cadence Q (10 bps) ---
+fallback  floor  n_emptied  mean_dSharpe  med_dSharpe  win_Sharpe  mean_dMaxDD  win_MaxDD  mean_dCAGR  ctrl_4b_in_emptied
+ FB_CASH   0.10          3       -0.3740      -0.4701      0.0000       0.3375     1.0000     -0.0279                   0
+ FB_CASH   0.25          3       -0.3740      -0.4701      0.0000       0.3375     1.0000     -0.0279                   0
+ FB_CASH   0.40          3       -0.3740      -0.4701      0.0000       0.3375     1.0000     -0.0279                   0
+ FB_CASH   0.50          3       -0.3740      -0.4701      0.0000       0.3375     1.0000     -0.0279                   0
+ FB_CASH   0.75          6       -0.5409      -0.5077      0.0000       0.3340     1.0000     -0.0725                   0
+ FB_CASH   0.90          9       -0.6578      -0.5454      0.0000       0.3312     1.0000     -0.1122                   0
+  FB_SPY   0.10          3        0.5029       0.4068      1.0000       0.0004     0.3333      0.1254                   0
+  FB_SPY   0.25          3        0.5029       0.4068      1.0000       0.0004     0.3333      0.1254                   0
+  FB_SPY   0.40          3        0.5029       0.4068      1.0000       0.0004     0.3333      0.1254                   0
+  FB_SPY   0.50          3        0.5029       0.4068      1.0000       0.0004     0.3333      0.1254                   0
+  FB_SPY   0.75          6        0.3332       0.3664      0.8333      -0.0031     0.5000      0.0802                   0
+  FB_SPY   0.90          9        0.2172       0.3259      0.7778      -0.0060     0.5556      0.0407                   0
+ FB_LIVE   0.10          3        0.1862       0.0901      1.0000       0.1986     1.0000      0.0096                   0
+ FB_LIVE   0.25          3        0.1862       0.0901      1.0000       0.1986     1.0000      0.0096                   0
+ FB_LIVE   0.40          3        0.1862       0.0901      1.0000       0.1986     1.0000      0.0096                   0
+ FB_LIVE   0.50          3        0.1862       0.0901      1.0000       0.1986     1.0000      0.0096                   0
+ FB_LIVE   0.75          6        0.3774       0.3110      1.0000       0.2043     1.0000     -0.0065                   0
+ FB_LIVE   0.90          9        0.3231       0.2533      1.0000       0.2039     1.0000     -0.0419                   0
+
+  --- RC_4B: control OOS 4b passes DESTROYED, by cadence x floor ---
+cadence  D  W  M  Q
+floor              
+0.10     2  0  0  0
+0.25     2  2  0  0
+0.40     2  2  0  0
+0.50     2  2  0  0
+0.75     2  2  0  0
+0.90     2  2  0  0
+  control (floor 0.00) OOS 4b passes available to destroy, by cadence: {'D': 2, 'W': 2, 'M': 0, 'Q': 0}
+
+  G3b cross-run vs 993's committed decline table : 36 shared (grid x fallback x floor) rows; max|d n_emptied| 0, max|d ctrl_4b| 0, max|d mean_dSharpe| 5.00e-05
+
+  GATES: 11 of 11 PASS
+gate                                                                                                                                                                      what        value          bar   ok
+  G0                                                                                                                  offset_mask(.,per,0) == engine.rebalance_mask on D/W/M/Q 0.000000e+00 0.000000e+00 True
+  G1                                                                                                                        fast Ctx == engine.backtest (returns and turnover) 2.498002e-16 1.000000e-10 True
+  G2                                                                                                                                  BAND03@0.75 == baseline.rules_v2_weights 0.000000e+00 1.000000e-12 True
+  G4                                                                                                                    MATCHED GROSS: one target matrix reused across D/W/M/Q 0.000000e+00 0.000000e+00 True
+  G5                                                                                                                                determinism: one cell rebuilt from scratch 0.000000e+00 1.000000e-15 True
+ G2b                                                                                                                    FB_LIVE == the ladder's (BAND03, CORE, W, phase 0) row 2.220446e-16 1.000000e-12 True
+ G3a                                                                                 CROSS-RUN: idea 993's committed ladder (13,500 shared phase-book-rungs x 46 numeric cols) 7.105427e-15 1.000000e-10 True
+ G3c                                                                                                                       CROSS-RUN: 981's published L4_DD fail rates D/W/M/Q 3.333333e-04 2.000000e-03 True
+  G7                                                                                                                  IS-PURITY: screen and picks invariant under permuted OOS 0.000000e+00 0.000000e+00 True
+  G6                                                                                                    ACCOUNTING IDENTITY: 4 fallbacks identical at floor 0 in EVERY cadence 0.000000e+00 0.000000e+00 True
+ G3b CROSS-RUN: per-cadence table aggregates to 993's MQ18/DW18 (36 shared (grid x fallback x floor) rows; max|d n_emptied| 0, max|d ctrl_4b| 0, max|d mean_dSharpe| 5.00e-05) 5.000000e-05 5.000000e-04 True
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.gates.csv  (11 rows, 5 cols)
+
+====================================================================================================
+(H) PRE-REGISTERED HYPOTHESES
+====================================================================================================
+
+  --- RC_PAIR at the inherited headline floor 0.40, by CADENCE and by PANEL ---
+    FB_CASH: cadence D=-0.8939 W=-0.8502 M=-0.5665 Q=-0.3740   range 0.5199
+    FB_CASH: panel   U56=-1.1663 B136=-0.9810 SMALL=-0.5022   range 0.6642
+    FB_SPY: cadence D=-0.0188 W=+0.0239 M=+0.3104 Q=+0.5029   range 0.5217
+    FB_SPY: panel   U56=-0.2950 B136=-0.1041 SMALL=+0.3747   range 0.6697
+    FB_LIVE: cadence D=+0.0871 W=+0.0682 M=-0.0064 Q=+0.1862   range 0.1925
+    FB_LIVE: panel   U56=+0.1102 B136=+0.1251 SMALL=+0.0580   range 0.0671
+
+  --- H_MONO: Spearman(RC_PAIR magnitude, cadence rank D<W<M<Q) at every floor ---
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.mono.csv  (18 rows, 8 cols)
+fallback  floor    RC_D    RC_W    RC_M    RC_Q  rho_signed  rho_cost
+ FB_CASH   0.10 -0.8939 -0.5160 -0.5665 -0.3740         0.8      -0.8
+ FB_CASH   0.25 -0.8939 -0.8502 -0.5665 -0.3740         1.0      -1.0
+ FB_CASH   0.40 -0.8939 -0.8502 -0.5665 -0.3740         1.0      -1.0
+ FB_CASH   0.50 -0.8939 -0.8502 -0.5665 -0.3740         1.0      -1.0
+ FB_CASH   0.75 -0.8939 -0.8502 -0.7438 -0.5409         1.0      -1.0
+ FB_CASH   0.90 -0.8939 -0.9008 -0.8467 -0.6578         0.8      -0.8
+  FB_SPY   0.10 -0.0188  0.3608  0.3104  0.5029         0.8      -0.8
+  FB_SPY   0.25 -0.0188  0.0239  0.3104  0.5029         1.0      -1.0
+  FB_SPY   0.40 -0.0188  0.0239  0.3104  0.5029         1.0      -1.0
+  FB_SPY   0.50 -0.0188  0.0239  0.3104  0.5029         1.0      -1.0
+  FB_SPY   0.75 -0.0188  0.0239  0.1303  0.3332         1.0      -1.0
+  FB_SPY   0.90 -0.0188 -0.0258  0.0283  0.2172         0.8      -0.8
+ FB_LIVE   0.10  0.0871  0.0441 -0.0064  0.1862         0.2      -0.2
+ FB_LIVE   0.25  0.0871  0.0682 -0.0064  0.1862         0.2      -0.2
+ FB_LIVE   0.40  0.0871  0.0682 -0.0064  0.1862         0.2      -0.2
+ FB_LIVE   0.50  0.0871  0.0682 -0.0064  0.1862         0.2      -0.2
+ FB_LIVE   0.75  0.0871  0.0682  0.1745  0.3774         0.8      -0.8
+ FB_LIVE   0.90  0.0871  0.0801  0.1342  0.3231         0.8      -0.8
+
+  --- H_TRACK: RC_PAIR vs L4_DD fail rate over the 12 (panel x cadence) cells ---
+    FB_CASH: 7 non-empty cells, Spearman(L4_DD fail, RC cost) = -0.8829
+    FB_SPY: 7 non-empty cells, Spearman(L4_DD fail, RC cost) = -0.8829
+    FB_LIVE: 7 non-empty cells, Spearman(L4_DD fail, RC cost) = 0.1261
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.track.csv  (3 rows, 4 cols)
+
+  --- H_ZERO: does the cadence gradient survive at 0 bps? (981's drift diagnostic) ---
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.zerocost.csv  (3 rows, 8 cols)
+fallback  range_10bps  range_0bps  retained   RC0_D   RC0_W   RC0_M   RC0_Q
+ FB_CASH       0.5199      0.4977    0.9573 -0.8883 -0.5851 -0.6002 -0.3907
+  FB_SPY       0.5217      0.5005    0.9592 -0.0142  0.2918  0.2767  0.4862
+ FB_LIVE       0.1925      0.2096    1.0885  0.0300 -0.0250 -0.0401  0.1695
+
+====================================================================================================
+(I) RATE-MATCHED RANDOM-SCREEN NULL -- 2,000 draws, seed 995
+    the null refuses the SAME slots-count in the SAME cell and pays the SAME fallback,
+    so it holds refusal RATE fixed and asks only what a refusal COSTS.
+====================================================================================================
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.null.csv  (12 rows, 9 cols)
+fallback cadence  n_emptied    real  null_mean  null_p05  null_p95    pct  outside90
+ FB_CASH       D          9 -0.8939    -0.8312   -0.9378   -0.7204 0.1900      False
+ FB_CASH       W          6 -0.8502    -0.8315   -0.8984   -0.7583 0.3600      False
+ FB_CASH       M          3 -0.5665    -0.5272   -0.5945   -0.4508 0.1415      False
+ FB_CASH       Q          3 -0.3740    -0.3808   -0.4676   -0.2530 0.4725      False
+  FB_SPY       D          9 -0.0188     0.0449   -0.0670    0.1612 0.1755      False
+  FB_SPY       W          6  0.0239     0.0428   -0.0248    0.1177 0.3585      False
+  FB_SPY       M          3  0.3104     0.3514    0.2824    0.4260 0.1310      False
+  FB_SPY       Q          3  0.5029     0.4955    0.4093    0.6225 0.4680      False
+ FB_LIVE       D          9  0.0871     0.1506    0.0409    0.2681 0.1785      False
+ FB_LIVE       W          6  0.0682     0.0874    0.0194    0.1622 0.3490      False
+ FB_LIVE       M          3 -0.0064     0.0345   -0.0344    0.1093 0.1325      False
+ FB_LIVE       Q          3  0.1862     0.1798    0.0925    0.3057 0.4625      False
+
+        H                                                                                              what   value  bar  passed                                                                note
+    H_CAD                                           cadence range of RC_PAIR > panel range, ALL 3 fallbacks  1.0000 3.00   False                                      cadence wins under ['FB_LIVE']
+  H_PANEL                                                      panel range > cadence range, ALL 3 fallbacks  2.0000 3.00   False                                                 the mirror of H_CAD
+   H_MONO              RC cost rises monotonically D->Q (rho >= 0.8) at the headline floor, all 3 fallbacks -1.0000 0.80   False   rho_cost = Spearman(cadence rank, -mean dSharpe on emptied slots)
+  H_TRACK            Spearman(L4_DD fail, RC cost) >= 0.5 over the (panel x cadence) cells, all 3 fallbacks -0.8829 0.50   False                                            the title's literal test
+   H_ZERO cadence gradient retains >= 0.75 of its magnitude at 0 bps (drift, not turnover), all 3 fallbacks  0.9573 0.75    True                                                981's own diagnostic
+H_4B_FAST              destroyed control 4b passes concentrate at the FAST end (max over floors: D+W > M+Q)  4.0000 0.00    True                                                D+W max 4, M+Q max 0
+   H_RATE                     real RC_PAIR outside the central 90% of the rate-matched null in >= 1 cadence  0.0000 1.00   False FAIL = the cadence gradient is a RATE gradient, not a COST gradient
+     H_4B                                          max paid OOS 4b at any (cadence, fallback, floor>0) >= 1  3.0000 1.00    True                                                                    
+     H_4A                                                                      max OOS 4a at any point >= 1  0.0000 1.00   False                                                        993: 0 of 28
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.hypotheses.csv  (9 rows, 6 cols)
+
+====================================================================================================
+(J) RULE 8 WALK-FORWARD -- (book, gross) chosen on 2009-2016 ALONE, OOS 2017-2026
+    both KEEP paths evaluated at every grid point; nothing selected on the OOS tape
+====================================================================================================
+  --- the UNSCREENED control's 36 rule-8 picks (9 per cadence) ---
+panel cadence  chooser   book gross  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  spy_OOS_CAGR  spy_OOS_Sharpe  spy_OOS_MaxDD  v2_Sharpe  v2_MaxDD OOS_4b OOS_4a                        fail_legs
+  U56       D   C_CAGR  TOP05   EXT    0.2012      0.8711    -0.2826        0.1521          0.8713        -0.3372     1.2009   -0.1205  False  False               L1_H1,L3_OOS,L4_DD
+  U56       D C_SHARPE BAND03   EXT    0.1245      1.2871    -0.1477        0.1521          0.8713        -0.3372     1.2009   -0.1205   True  False                                -
+  U56       D C_ISLEGS BAND03   EXT    0.1245      1.2871    -0.1477        0.1521          0.8713        -0.3372     1.2009   -0.1205   True  False                                -
+  U56       W   C_CAGR  TOP05   EXT    0.2454      1.0012    -0.2798        0.1521          0.8713        -0.3372     1.2009   -0.1205  False  False                      L1_H1,L4_DD
+  U56       W C_SHARPE BAND03   EXT    0.1267      1.2758    -0.1591        0.1521          0.8713        -0.3372     1.2009   -0.1205   True  False                                -
+  U56       W C_ISLEGS BAND03   EXT    0.1267      1.2758    -0.1591        0.1521          0.8713        -0.3372     1.2009   -0.1205   True  False                                -
+  U56       M   C_CAGR  TOP05   EXT    0.2045      0.8312    -0.3461        0.1521          0.8713        -0.3372     1.2009   -0.1205  False  False               L2_H2,L3_OOS,L4_DD
+  U56       M C_SHARPE  TOP05   EXT    0.2045      0.8312    -0.3461        0.1521          0.8713        -0.3372     1.2009   -0.1205  False  False               L2_H2,L3_OOS,L4_DD
+  U56       M C_ISLEGS  TOP10  CORE    0.1731      1.1009    -0.2322        0.1521          0.8713        -0.3372     1.2009   -0.1205  False  False                            L4_DD
+  U56       Q   C_CAGR  TOP05   EXT    0.1181      0.5454    -0.3848        0.1521          0.8713        -0.3372     1.2009   -0.1205  False  False               L2_H2,L3_OOS,L4_DD
+  U56       Q C_SHARPE  TOP05   EXT    0.1181      0.5454    -0.3848        0.1521          0.8713        -0.3372     1.2009   -0.1205  False  False               L2_H2,L3_OOS,L4_DD
+  U56       Q C_ISLEGS EWELIG  CORE    0.1152      1.0328    -0.2221        0.1521          0.8713        -0.3372     1.2009   -0.1205  False  False                            L4_DD
+ B136       D   C_CAGR  TOP20   EXT    0.1144      0.6768    -0.2554        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False         L1_H1,L2_H2,L3_OOS,L4_DD
+ B136       D C_SHARPE BAND03   EXT    0.1051      1.1331    -0.1472        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False                          L5_CAGR
+ B136       D C_ISLEGS BAND03   EXT    0.1051      1.1331    -0.1472        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False                          L5_CAGR
+ B136       W   C_CAGR  TOP05   EXT    0.2017      0.7965    -0.3010        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False               L2_H2,L3_OOS,L4_DD
+ B136       W C_SHARPE BAND03   EXT    0.1052      1.1050    -0.1616        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False                          L5_CAGR
+ B136       W C_ISLEGS BAND03   EXT    0.1052      1.1050    -0.1616        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False                          L5_CAGR
+ B136       M   C_CAGR  TOP05   EXT    0.3517      1.1522    -0.3970        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False                            L4_DD
+ B136       M C_SHARPE  TOP20   EXT    0.2081      1.0051    -0.3368        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False                            L4_DD
+ B136       M C_ISLEGS  TOP20  CORE    0.1555      1.0004    -0.2611        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False                            L4_DD
+ B136       Q   C_CAGR  TOP05   EXT    0.2323      0.8528    -0.3661        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False               L2_H2,L3_OOS,L4_DD
+ B136       Q C_SHARPE  TOP05   EXT    0.2323      0.8528    -0.3661        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False               L2_H2,L3_OOS,L4_DD
+ B136       Q C_ISLEGS EWELIG  CORE    0.1097      0.9695    -0.2444        0.1533          0.8769        -0.3372     1.0994   -0.1224  False  False                            L4_DD
+SMALL       D   C_CAGR BAND03   EXT    0.0482      0.5523    -0.1682        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+SMALL       D C_SHARPE BAND03   EXT    0.0482      0.5523    -0.1682        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+SMALL       D C_ISLEGS BAND03  CORE    0.0368      0.5519    -0.1285        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+SMALL       W   C_CAGR  TOP10   EXT    0.0829      0.4281    -0.3905        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL       W C_SHARPE BAND03   EXT    0.0492      0.5599    -0.1819        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+SMALL       W C_ISLEGS BAND03  CORE    0.0375      0.5601    -0.1389        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L1_H1,L2_H2,L3_OOS,L5_CAGR
+SMALL       M   C_CAGR  TOP10   EXT    0.1104      0.5094    -0.4837        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False         L1_H1,L2_H2,L3_OOS,L4_DD
+SMALL       M C_SHARPE BAND03   EXT    0.0543      0.5951    -0.2194        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL       M C_ISLEGS BAND03   EXT    0.0543      0.5951    -0.2194        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL       Q   C_CAGR  TOP20   EXT    0.0138      0.1818    -0.5311        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL       Q C_SHARPE BAND03  CORE    0.0350      0.4701    -0.2408        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL       Q C_ISLEGS BAND03  CORE    0.0350      0.4701    -0.2408        0.1533          0.8769        -0.3372     0.6637   -0.1389  False  False       L2_H2,L3_OOS,L4_DD,L5_CAGR
+
+  control OOS 4b 4 of 36 | OOS 4a 0 of 36
+  by cadence: D: 4b 2/9  4a 0  W: 4b 2/9  4a 0  M: 4b 0/9  4a 0  Q: 4b 0/9  4a 0
+
+  --- paid OOS 4b / 4a counts, every (cadence x fallback x floor) ---
+cadence           D    W    M    Q
+fallback floor                    
+FB_CASH  0.00   2.0  2.0  0.0  0.0
+         0.10   0.0  0.0  0.0  0.0
+         0.25   0.0  0.0  0.0  0.0
+         0.40   0.0  0.0  3.0  0.0
+         0.50   0.0  0.0  3.0  0.0
+         0.75   0.0  0.0  0.0  0.0
+         0.90   0.0  0.0  0.0  0.0
+FB_LIVE  0.00   2.0  2.0  0.0  0.0
+         0.10   0.0  0.0  0.0  0.0
+         0.25   0.0  0.0  0.0  0.0
+         0.40   0.0  0.0  3.0  0.0
+         0.50   0.0  0.0  3.0  0.0
+         0.75   0.0  0.0  0.0  0.0
+         0.90   0.0  0.0  0.0  0.0
+FB_NONE  0.00   2.0  2.0  0.0  0.0
+         0.10   0.0  0.0  0.0  0.0
+         0.25   0.0  0.0  0.0  0.0
+         0.40   0.0  0.0  3.0  0.0
+         0.50   0.0  0.0  3.0  0.0
+         0.75   0.0  0.0  0.0  0.0
+         0.90   0.0  0.0  0.0  0.0
+FB_SPY   0.00   2.0  2.0  0.0  0.0
+         0.10   0.0  0.0  0.0  0.0
+         0.25   0.0  0.0  0.0  0.0
+         0.40   0.0  0.0  3.0  0.0
+         0.50   0.0  0.0  3.0  0.0
+         0.75   0.0  0.0  0.0  0.0
+         0.90   0.0  0.0  0.0  0.0
+
+  --- full-sample 4b / 4a over the whole 13,500-row ladder ---
+  full-sample 4b 662 of 13500 rows | 4a 38 of 13500
+    D: 4b 16/150  4a 3/150
+    W: 4b 97/750  4a 18/750
+    M: 4b 231/3150  4a 0/3150
+    Q: 4b 318/9450  4a 17/9450
+
+  --- every screened pick that clears OOS 4b (the capital reading) ---
+panel cadence  chooser  floor   book gross  share  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  spy_OOS_CAGR  spy_OOS_Sharpe  spy_OOS_MaxDD OOS_4a
+  U56       D C_SHARPE 0.0000 BAND03   EXT 0.0000    0.1245      1.2871    -0.1477        0.1521          0.8713        -0.3372  False
+  U56       D C_ISLEGS 0.0000 BAND03   EXT 0.0000    0.1245      1.2871    -0.1477        0.1521          0.8713        -0.3372  False
+  U56       W C_SHARPE 0.0000 BAND03   EXT 0.0000    0.1267      1.2758    -0.1591        0.1521          0.8713        -0.3372  False
+  U56       W C_ISLEGS 0.0000 BAND03   EXT 0.0000    0.1267      1.2758    -0.1591        0.1521          0.8713        -0.3372  False
+  U56       M   C_CAGR 0.4000  TOP20  CORE 0.5714    0.1668      1.2833    -0.1951        0.1521          0.8713        -0.3372  False
+  U56       M C_SHARPE 0.4000 BAND03   EXT 0.5238    0.1281      1.2245    -0.1881        0.1521          0.8713        -0.3372  False
+  U56       M C_ISLEGS 0.4000 BAND03   EXT 0.5238    0.1281      1.2245    -0.1881        0.1521          0.8713        -0.3372  False
+
+  --- APPENDIX: the other two share bases, reported, NOT selected on ---
+  wrote 2026-09-16_is-REFUSAL-COST-a-CADENCE-object_cloud.appendix_bases.csv  (21 rows, 9 cols)
+   basis  legal  floor  n_slots  n_declined  decl_D  decl_W  decl_M  decl_Q
+  S_IS4B   True   0.00       36           0       0       0       0       0
+  S_IS4B   True   0.10       36          18       9       3       3       3
+  S_IS4B   True   0.25       36          21       9       6       3       3
+  S_IS4B   True   0.40       36          21       9       6       3       3
+  S_IS4B   True   0.50       36          21       9       6       3       3
+  S_IS4B   True   0.75       36          27       9       6       6       6
+  S_IS4B   True   0.90       36          36       9       9       9       9
+S_ISLEG4   True   0.00       36           0       0       0       0       0
+S_ISLEG4   True   0.10       36           6       3       3       0       0
+S_ISLEG4   True   0.25       36           6       3       3       0       0
+S_ISLEG4   True   0.40       36           6       3       3       0       0
+S_ISLEG4   True   0.50       36           6       3       3       0       0
+S_ISLEG4   True   0.75       36           6       3       3       0       0
+S_ISLEG4   True   0.90       36          18       3       6       3       6
+S_FULL4B  False   0.00       36           0       0       0       0       0
+S_FULL4B  False   0.10       36          15       6       3       3       3
+S_FULL4B  False   0.25       36          18       6       3       3       6
+S_FULL4B  False   0.40       36          21       6       3       6       6
+S_FULL4B  False   0.50       36          24       6       3       6       9
+S_FULL4B  False   0.75       36          27       6       6       6       9
+S_FULL4B  False   0.90       36          30       6       6       9       9
+
+  [117s]
