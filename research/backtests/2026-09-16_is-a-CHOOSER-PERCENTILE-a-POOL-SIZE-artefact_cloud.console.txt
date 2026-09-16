@@ -1,0 +1,145 @@
+# Idea 1033 (cloud lane, 2026-09-16) — is a CHOOSER PERCENTILE a POOL-SIZE artefact, the way 1030 asks of the FLOOR?
+# 2 tuned dials: POOL (6) x END GRID (4) = 24 points, ALL reported at every panel x cost, none selected.
+# HEADLINE = U56 / 10 bps / GRID18 / Q16 — 1031's own cell.  CONTROLS: cost [0.0, 10.0, 25.0] bps, panel [U56, B136], choosers ['IS_SHARPE', 'IS_LEGS', 'IS_CAGR'].
+# DRAWS: NRAND = 2,000 random chooser SEQUENCES per (panel, cost, pool, end grid).
+# CAVEAT 1: GRIDSHELF is NOT a legal rule-8 pool — its SHELF members were selected on the
+#   full tape.  Carried because the queue names it; never a headline.
+# CAVEAT 2: Q32's earliest ends leave an IS window of barely two years — legal under rule
+#   8's letter, thin in substance, a SENSITIVITY axis only.
+# SURVIVORSHIP: U56/B136 are current-constituent panels — every LEVEL is optimistic.  The
+#   measured object is a RANK inside a distribution from the SAME pool; where the bias
+#   does not cancel it flatters the coin flip, so every chooser percentile is a LOWER
+#   bound.
+
+   CALENDAR: U56 ends 2026-09-15 (4705 days), B136 ends 2026-09-11 (4703 days); each panel keeps its OWN calendar (1013's / 1023's / 1031's construction — the cross-run comparands are stated on it). No splice.
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+POOLS (books per panel): GRID18 U56=18 B136=18; GRIDSHELF U56=24 B136=20; WIDE10 U56=10 B136=10; WIDE20 U56=20 B136=20; WIDE40 U56=40 B136=40; WIDE80 U56=80 B136=80
+MASTER book set actually run: 168 books (86 U56 / 82 B136).
+END GRIDS: REC1=1 ends; Q8=8 ends; Q16=16 ends; Q32=32 ends.  Union scored = 32 ends 2011-03-31..2018-12-31.
+   ran 168 books x 3 rungs in 12.9s
+
+## Reproduction gates (printed BEFORE any hypothesis number is read)
+G1 fast_run == engine.backtest (returns / turnover): 6.939e-18/1.665e-16  PASS
+G2 rules_v2_weights(U,0.03,0.75) == baseline: 0.000e+00  PASS
+G3 CROSS-RUN SPY OOS at 2016-12-31 (15.2102%/0.8711/-33.7173%) vs record: max|d| 1.702e-04  PASS
+G5 determinism over the 16,128-row ladder: 0.000e+00  PASS
+  wrote 2026-09-16_is-a-CHOOSER-PERCENTILE-a-POOL-SIZE-artefact_cloud.ladder.csv.gz  (16,128 rows, 26 cols)
+G4 CROSS-RUN 1013's four published declared-split picks: 4/4 max|d| 4.588e-04  PASS
+  wrote 2026-09-16_is-a-CHOOSER-PERCENTILE-a-POOL-SIZE-artefact_cloud.crossrun.csv  (4 rows, 10 cols)
+G9 WIDE10 c WIDE20 c WIDE40 c WIDE80 and GRID18 c WIDE80: True  PASS
+G6 IS purity — picks invariant under an OOS permutation: 96/96  PASS
+
+## (A) THE RESOLUTION TABLE and (B) THE PERCENTILE TABLE
+   RESOLUTION is arithmetic: at ONE end a coin flip is a uniform draw from N books, so a
+   chooser's percentile lies on the (k+1/2)/N grid and the smallest p it could earn is
+   0.5/N.  DECIDABILITY is the observed percentile itself: under the null 'the chooser is
+   a uniform draw from this pool', one-sided p = 1 - percentile.
+
+  wrote 2026-09-16_is-a-CHOOSER-PERCENTILE-a-POOL-SIZE-artefact_cloud.percentile.csv  (432 rows, 17 cols)
+  wrote 2026-09-16_is-a-CHOOSER-PERCENTILE-a-POOL-SIZE-artefact_cloud.resolution.csv  (144 rows, 17 cols)
+G7 sampler unbiasedness (MC mean == exact pool mean, 3 SE): 144/144 cells  PASS
+G8 percentile validity, ALL cells (own median -> 0.500 +/- 0.01): 126/144 cells  FAIL
+G8b percentile validity, K > 1 (continuous) cells only: 108/108 cells  PASS
+G8c the 36 REC1 cells are N POINT MASSES: median atom mass 0.0095..0.1080, deviation from 0.500 0.0008..0.0500.  A mid-rank percentile CANNOT return 0.500 at a point mass, so G8's failures are exactly the quantisation this run is measuring — 1031 reported the same for its RATE4B statistic.
+
+
+   RESOLUTION, U56 @ 10 bps (arithmetic — identical at every cost):
+   pool          N |  1/N step min p (0.5/N)  5% reachable? | distinct random scores REC1 / Q8 / Q16 / Q32
+   GRID18       18 |    0.0556        0.0278           True |    18  2000  2000  2000
+   GRIDSHELF    24 |    0.0417        0.0208           True |    21  2000  2000  2000
+   WIDE10       10 |    0.1000        0.0500           True |    10  2000  2000  2000
+   WIDE20       20 |    0.0500        0.0250           True |    20  2000  2000  2000
+   WIDE40       40 |    0.0250        0.0125           True |    40  2000  2000  2000
+   WIDE80       80 |    0.0125        0.0063           True |    80  2000  2000  2000
+
+   PERCENTILES, U56 @ 10 bps — chooser percentile (one-sided p) at every pool x end grid:
+   pool          N |           IS_SHARPE            |            IS_LEGS             |            IS_CAGR            
+                   |   REC1      Q8     Q16     Q32       |   REC1      Q8     Q16     Q32       |   REC1      Q8     Q16     Q32      
+   GRID18       18 |  0.025   0.000   0.000   0.002       |  0.025   0.000   0.000   0.000       |  0.604   0.858   0.801   0.859      
+   GRIDSHELF    24 |  0.429   0.104   0.083   0.201       |  0.429   0.150   0.111   0.236       |  0.429   0.104   0.083   0.201      
+   WIDE10       10 |  0.140   0.000   0.000   0.002       |  0.140   0.000   0.000   0.001       |  0.045   0.001   0.000   0.000      
+   WIDE20       20 |  0.167   0.001   0.000   0.037       |  0.167   0.002   0.000   0.038       |  0.072   0.009   0.000   0.000      
+   WIDE40       40 |  0.143   0.002   0.000   0.132       |  0.143   0.002   0.000   0.111       |  0.404   0.468   0.054   0.000      
+   WIDE80       80 |  0.107   0.000   0.001   0.017       |  0.107   0.000   0.001   0.017       |  0.397   0.339   0.014   0.000      
+
+## (C) POOL-QUALITY DECOMPOSITION — 1030's FLOOR, measured on the nested ladder
+   If a percentile rises with N because the added books are WORSE, the move is the pool's,
+   not the chooser's.  Absolute levels (mean OOS Sharpe over the headline grid):
+
+   pool          N | coin flip  pool sd |    IS_SHARPE      IS_LEGS      IS_CAGR | SHARPE pct   LEGS pct   CAGR pct
+   GRID18       18 |    1.2431   0.0215 |       1.1557       1.1557       1.2618 |      0.000      0.000      0.801
+   GRIDSHELF    24 |    1.2312   0.0226 |       1.1996       1.2032       1.1996 |      0.083      0.111      0.083
+   WIDE10       10 |    1.2133   0.0184 |       1.1380       1.1339       1.1305 |      0.000      0.000      0.000
+   WIDE20       20 |    1.2097   0.0201 |       1.1425       1.1444       1.1360 |      0.000      0.000      0.000
+   WIDE40       40 |    1.1988   0.0181 |       1.1424       1.1424       1.1702 |      0.000      0.000      0.054
+   WIDE80       80 |    1.2095   0.0196 |       1.1424       1.1424       1.1675 |      0.001      0.001      0.014
+  wrote 2026-09-16_is-a-CHOOSER-PERCENTILE-a-POOL-SIZE-artefact_cloud.poolquality.csv  (6 rows, 7 cols)
+
+   POST-HOC (NOT pre-registered — H_MOVE's bar was set on the NESTED WIDE axis alone, and
+   the nested axis is where the percentile turns out to be stable).  Across ALL SIX named
+   pools at the headline grid the same chooser spans:
+      IS_SHARPE  0.000 .. 0.083  (range 0.083) — GRID18=0.000 GRIDSHELF=0.083 WIDE10=0.000 WIDE20=0.000 WIDE40=0.000 WIDE80=0.001
+      IS_LEGS    0.000 .. 0.111  (range 0.111) — GRID18=0.000 GRIDSHELF=0.111 WIDE10=0.000 WIDE20=0.000 WIDE40=0.000 WIDE80=0.001
+      IS_CAGR    0.000 .. 0.801  (range 0.801) — GRID18=0.801 GRIDSHELF=0.083 WIDE10=0.000 WIDE20=0.000 WIDE40=0.054 WIDE80=0.014
+   and the SAME CHOOSER picks a DIFFERENT BOOK as the menu widens, so the move is a
+   MENU-COMPOSITION object, not a SIZE object.  A percentile is therefore only ever a
+   statement about the pool it was computed in.
+
+   THE QUEUE'S QUESTION, ANSWERED IN ITS OWN TERMS.  RESOLUTION is sufficient at N >= 10
+   (0.5/N <= 0.05 needs only N >= 10) and the record's own 18-book pool already resolves
+   to 0.0278 — finer than the 5% bar.  So there is NO N at which resolution becomes the
+   binding constraint, because it never was: 0.800 fails to separate from a coin flip
+   because 1 draw in 5 beats it, and that is a RANK, readable at any N.
+
+## Hypotheses (bars declared in the docstring, before any number above was read)
+H_1031     PASS  bar: 1031's headline percentiles reproduce within 3 MC SE (0.0335)
+           IS_SHARPE 0.000 vs 0.000 (|d| 0.0000); IS_LEGS 0.000 vs 0.000 (|d| 0.0000); IS_CAGR 0.801 vs 0.800 (|d| 0.0015)
+H_QUANT    PASS  bar: at REC1 the percentile step equals 1/N exactly for all six pools
+           max |step - 1/N| = 0.00e+00; GRID18 step 0.0556 (1031's 1/18 = 0.0556); GRID18 1/18=0.0556, GRIDSHELF 1/24=0.0417, WIDE10 1/10=0.1000, WIDE20 1/20=0.0500, WIDE40 1/40=0.0250, WIDE80 1/80=0.0125
+H_RESOLVE  FAIL  bar: some pool on the ladder separates IS_CAGR from a coin flip at REC1, p <= 0.05
+           NONE of the 6 pools: GRID18(N=18, pct=0.604, p=0.3958), GRIDSHELF(N=24, pct=0.429, p=0.5705), WIDE10(N=10, pct=0.045, p=0.9547), WIDE20(N=20, pct=0.072, p=0.9280), WIDE40(N=40, pct=0.404, p=0.5958), WIDE80(N=80, pct=0.397, p=0.6030)
+H_NOTRES   PASS  bar: at every pool with N >= 20 the smallest attainable p is <= 0.05 while IS_CAGR's actual p at REC1 stays > 0.05
+           GRIDSHELF N=24 min_p=0.0208 actual_p=0.5705; WIDE20 N=20 min_p=0.0250 actual_p=0.9280; WIDE40 N=40 min_p=0.0125 actual_p=0.5958; WIDE80 N=80 min_p=0.0063 actual_p=0.6030
+H_MOVE     FAIL  bar: IS_CAGR's headline-grid percentile moves > 0.10 between WIDE10 and WIDE80
+           WIDE10 0.000 -> WIDE80 0.014 (|d| 0.014); full ladder GRID18=0.801 GRIDSHELF=0.083 WIDE10=0.000 WIDE20=0.000 WIDE40=0.054 WIDE80=0.014
+H_FLOOR    FAIL  bar: the coin flip's own mean OOS Sharpe falls monotonically WIDE10->WIDE80
+           1.2133 -> 1.2097 -> 1.1988 -> 1.2095  (total -0.0038)
+H_POWER    PASS  bar: spread of IS_CAGR's p across the 4 END GRIDS (fixed GRID18) exceeds its spread across the 4 WIDE POOLS (fixed Q16)
+           end-grid spread 0.2548 (0.1410..0.3958) vs pool-size spread 0.0545 (0.9455..1.0000)
+H_ORDER    FAIL  bar: the chooser ordering by percentile is identical at all six pools
+           GRID18=CAGR>SHARPE>LEGS; GRIDSHELF=LEGS>SHARPE>CAGR; WIDE10=SHARPE>LEGS>CAGR; WIDE20=SHARPE>LEGS>CAGR; WIDE40=CAGR>SHARPE>LEGS; WIDE80=CAGR>SHARPE>LEGS
+  wrote 2026-09-16_is-a-CHOOSER-PERCENTILE-a-POOL-SIZE-artefact_cloud.hypotheses.csv  (8 rows, 4 cols)
+  wrote 2026-09-16_is-a-CHOOSER-PERCENTILE-a-POOL-SIZE-artefact_cloud.gates.csv  (11 rows, 4 cols)
+
+## (D) RULE 8 WALK-FORWARD — PROTOCOL's own split, IS 2009-2016 / OOS 2017-2026 read ONCE
+   Each chooser picks from its POOL using 2009-2016 data ONLY; the OOS triple is read once
+   and scored on BOTH KEEP paths against the live RULES v2 baseline and against SPY.
+
+  wrote 2026-09-16_is-a-CHOOSER-PERCENTILE-a-POOL-SIZE-artefact_cloud.walkforward.csv  (108 rows, 33 cols)
+   panel  cost pool       chooser    pick                             | OOS CAGR     Sh   MaxDD | 4b 4a poolPct  binding
+   U56      10 GRID18     IS_SHARPE  U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.028  (none — 4b)
+   U56      10 GRID18     IS_LEGS    U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.028  (none — 4b)
+   U56      10 GRID18     IS_CAGR    U56-qroll-q0.17-w1008-d0.50      |   15.60%  1.293 -15.59% |  T  F   0.583  (none — 4b)
+   U56      10 GRIDSHELF  IS_SHARPE  u56-quantile50-respread-M        |   16.05%  1.218 -19.75% |  T  F   0.438  (none — 4b)
+   U56      10 GRIDSHELF  IS_LEGS    u56-quantile50-respread-M        |   16.05%  1.218 -19.75% |  T  F   0.438  (none — 4b)
+   U56      10 GRIDSHELF  IS_CAGR    u56-quantile50-respread-M        |   16.05%  1.218 -19.75% |  T  F   0.438  (none — 4b)
+   U56      10 WIDE10     IS_SHARPE  U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.150  (none — 4b)
+   U56      10 WIDE10     IS_LEGS    U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.150  (none — 4b)
+   U56      10 WIDE10     IS_CAGR    U56-qroll-q0.17-w504-d0.25       |   14.75%  1.160 -21.19% |  F  F   0.050  L4_DD
+   U56      10 WIDE20     IS_SHARPE  U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.175  (none — 4b)
+   U56      10 WIDE20     IS_LEGS    U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.175  (none — 4b)
+   U56      10 WIDE20     IS_CAGR    U56-qroll-q0.12-w504-d0.25       |   14.88%  1.157 -20.88% |  F  F   0.075  L4_DD
+   U56      10 WIDE40     IS_SHARPE  U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.138  (none — 4b)
+   U56      10 WIDE40     IS_LEGS    U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.138  (none — 4b)
+   U56      10 WIDE40     IS_CAGR    U56-qroll-q0.17-w1008-d0.25      |   15.34%  1.205 -18.23% |  T  F   0.388  (none — 4b)
+   U56      10 WIDE80     IS_SHARPE  U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.094  (none — 4b)
+   U56      10 WIDE80     IS_LEGS    U56-band0.08-g1.00               |   11.99%  1.162 -19.05% |  T  F   0.094  (none — 4b)
+   U56      10 WIDE80     IS_CAGR    U56-qroll-q0.17-w1008-d0.25      |   15.34%  1.205 -18.23% |  T  F   0.369  (none — 4b)
+   comparands U56: SPY OOS 15.21% / 0.8711 / -33.72%; SPY full 15.10% / 0.8829 / -33.72% (H1 0.9588 / H2 0.8207; 4b DD cap 20.23%, CAGR floor 10.57%);  RULES v2 live @10 bps 8.62% / 1.2007 / -12.05% (H1 1.2322 / H2 1.1760)
+   comparands B136: SPY OOS 15.33% / 0.8767 / -33.72%; SPY full 15.16% / 0.8861 / -33.72% (H1 0.9596 / H2 0.8259; 4b DD cap 20.23%, CAGR floor 10.61%);  RULES v2 live @10 bps 7.98% / 1.0993 / -12.24% (H1 1.2348 / H2 0.9658)
+   OOS 4b passes: 99 of 108;  OOS 4a passes: 0 of 108.
+   KEEP paths: 4a needs Sharpe > RULES v2 in BOTH halves and MaxDD no worse; 4b needs Sharpe > SPY in both halves AND OOS, |MaxDD| <= 60% of SPY's and CAGR >= 70% of SPY's.
+   DISTINCT picks across the 6 pools x 3 choosers in the headline cell: 6 of 18.
+
+GATES 9 of 11;  HYPOTHESES 4 of 8.
+elapsed 33.8s
