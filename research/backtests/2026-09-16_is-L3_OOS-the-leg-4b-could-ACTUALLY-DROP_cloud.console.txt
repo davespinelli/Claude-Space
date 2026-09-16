@@ -1,0 +1,111 @@
+# Idea 1018 (cloud lane, 2026-09-16) — is `L3_OOS` the leg 4b could ACTUALLY DROP?
+# 2 tuned dials: CLAIM SET ['REC', 'GRID', 'SHELF'] x BINDING DEFINITION ['SOLE', 'ANY'].  All points reported, none selected.
+# CONTROLS at every point: COST [0.0, 10.0, 25.0] bps (head 10), PANEL [U56, B136], SPLIT 2016-12-31 (PROTOCOL rule 8's own), BAR REC_FULL (the record's own).
+# NULL: 100 gross-matched ROT draws per book, seed 20260916.
+# SURVIVORSHIP: U56/B136 are current-constituent panels — every LEVEL is optimistic; the
+#   null is drawn from the SAME survivor panel, so every null pass rate is an UPPER bound
+#   and every DISC a LOWER bound, i.e. H_NULL is the EASIER call.
+
+Tape: U56 (4705, 56) 2008-01-02..2026-09-15; B136 (4703, 136) 2008-01-02..2026-09-11.
+Post-warm-up start: U56 2009-01-13, B136 2009-01-13.
+SHELF = 9 committed memo-backed 4b passes; GRID = 36 never-memo-selected ladder books; REC = 45.
+
+## Reproduction gates (printed BEFORE any hypothesis number is read)
+G1 fast_run == engine.backtest (returns / turnover): 6.939e-18 / 1.665e-16  PASS
+G2 rules_v2_weights(U,0.03,0.75) == baseline.rules_v2_weights(U): 0.000e+00  PASS
+G3 CROSS-RUN SPY OOS at 2016-12-31: 15.2102% / 0.8711 / -33.7173% vs committed 15.21% / 0.8713 / -33.72%  max|d| 1.702e-04  PASS
+G4 SHELF memo triples: 9/9  PASS
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.shelf.csv  (9 rows, 13 cols)
+G6 determinism over the 135-row real ladder: 0.000e+00  PASS
+G7 leg identity (independent recomputation): 0 disagreeing rows  PASS
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.real.csv  (135 rows, 29 cols)
+
+## Building the gross-matched null: 45 books x 100 draws (926's ROT convention)
+   ... 10/45 books  (75s)
+   ... 20/45 books  (136s)
+   ... 30/45 books  (158s)
+   ... 40/45 books  (191s)
+G5 GROSS MATCH null vs book (max |d gross| / max |d count|): 4.441e-16 / 0  PASS
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.gates.csv  (7 rows, 4 cols)
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.null.csv.gz  (13,500 rows, 16 cols)
+
+## (A) THE WIDENING and (B) THE NULL PRICE — 2 tuned dials, all points reported
+
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.cells.csv  (9 rows, 17 cols)
+claim   cost  nbk |  real4b real4b1   dreal |  null4b null4b1   dnull |  DISC4b DISC4b1   dDISC |   sole    any flip
+REC        0   45 |  0.6667  0.6667 +0.0000 |  0.3811  0.3811 +0.0000 | +0.2856 +0.2856 +0.0000 | 0.0000 0.0000    0
+REC       10   45 |  0.6222  0.6222 +0.0000 |  0.1344  0.1344 +0.0000 | +0.4878 +0.4878 +0.0000 | 0.0000 0.0000    0
+REC       25   45 |  0.5111  0.5111 +0.0000 |  0.0007  0.0007 +0.0000 | +0.5104 +0.5104 +0.0000 | 0.0000 0.0000    0
+GRID       0   36 |  0.5833  0.5833 +0.0000 |  0.3619  0.3619 +0.0000 | +0.2214 +0.2214 +0.0000 | 0.0000 0.0000    0
+GRID      10   36 |  0.5278  0.5278 +0.0000 |  0.1336  0.1336 +0.0000 | +0.3942 +0.3942 +0.0000 | 0.0000 0.0000    0
+GRID      25   36 |  0.3889  0.3889 +0.0000 |  0.0000  0.0000 +0.0000 | +0.3889 +0.3889 +0.0000 | 0.0000 0.0000    0
+SHELF      0    9 |  1.0000  1.0000 +0.0000 |  0.4578  0.4578 +0.0000 | +0.5422 +0.5422 +0.0000 |    nan    nan    0
+SHELF     10    9 |  1.0000  1.0000 +0.0000 |  0.1378  0.1378 +0.0000 | +0.8622 +0.8622 +0.0000 |    nan    nan    0
+SHELF     25    9 |  1.0000  1.0000 +0.0000 |  0.0033  0.0033 +0.0000 | +0.9967 +0.9967 +0.0000 |    nan    nan    0
+
+H_BIND  bar: `L3_OOS` SOLE-binder rate < 0.01 in EVERY cell.  max over 9 cells = 0.0000  -> PASS
+H_WIDEN bar: real pass population widens <= 0.10 in every cell.  max d_real = +0.0000  -> PASS
+H_NULL  HEADLINE bar: d_null <= d_real at REC/10bps.  d_null +0.0000 vs d_real +0.0000  -> PASS
+H_DISC  bar: real-minus-null GAP shrinks <= 0.05 in every cell.  min d_DISC = +0.0000  -> PASS
+
+PER-LEG NULL PASS RATES (REC, 10 bps, 4,500 draws) — which leg the coin flip cannot clear:
+   L1_H1    null 0.7187   real 0.9556   lift +0.2369
+   L2_H2    null 0.7864   real 1.0000   lift +0.2136
+   L3_OOS   null 0.9313   real 1.0000   lift +0.0687
+   L4_DD    null 0.5396   real 0.8667   lift +0.3271
+   L5_CAGR  null 0.6189   real 0.8000   lift +0.1811
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.perleg.csv  (5 rows, 4 cols)
+
+BINDING DEFINITION on the NULL's FAIL rows (the population 1014 could not see):
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.bindingdef.csv  (9 rows, 5 cols)
+   REC        0bps  n_fail   2785  SOLE 0.0000  ANY 0.0014
+   REC       10bps  n_fail   3895  SOLE 0.0000  ANY 0.0793
+   REC       25bps  n_fail   4497  SOLE 0.0000  ANY 0.8630
+   GRID       0bps  n_fail   2297  SOLE 0.0000  ANY 0.0000
+   GRID      10bps  n_fail   3119  SOLE 0.0000  ANY 0.0176
+   GRID      25bps  n_fail   3600  SOLE 0.0000  ANY 0.8828
+   SHELF      0bps  n_fail    488  SOLE 0.0000  ANY 0.0082
+   SHELF     10bps  n_fail    776  SOLE 0.0000  ANY 0.3273
+   SHELF     25bps  n_fail    897  SOLE 0.0000  ANY 0.7837
+
+CO-FAIL DEPTH — among FAIL rows where `L3_OOS` fails, the TOTAL number of failing legs.
+   depth 1 = SOLE (the leg decides).  depth 2 = one co-binder away from deciding.
+   REAL     0bps  FAIL rows     15  of which `L3_OOS` fails      0  depths 1:0 2:0 3:0 4:0 5:0  (none)
+   REAL    10bps  FAIL rows     17  of which `L3_OOS` fails      0  depths 1:0 2:0 3:0 4:0 5:0  (none)
+   REAL    25bps  FAIL rows     22  of which `L3_OOS` fails      0  depths 1:0 2:0 3:0 4:0 5:0  (none)
+   NULL     0bps  FAIL rows   2785  of which `L3_OOS` fails      4  depths 1:0 2:0 3:1 4:3 5:0  min 3
+   NULL    10bps  FAIL rows   3895  of which `L3_OOS` fails    309  depths 1:0 2:0 3:53 4:75 5:181  min 3
+   NULL    25bps  FAIL rows   4497  of which `L3_OOS` fails   3881  depths 1:0 2:0 3:19 4:1807 5:2055  min 3
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.cofaildepth.csv  (6 rows, 10 cols)
+H_DEPTH bar: `L3_OOS` never fails at depth 1 (never SOLE) on ANY population.  min depth observed = 3.0  -> PASS
+
+## (C) RULE 8 walk-forward — IS-only choosers on [start, 2016-12-31], 2017-2026 read once
+   Pool = GRID (36 never-memo-selected books).  SHELF is excluded from the pool: it was selected on the FULL tape.
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.walkforward.csv  (18 rows, 26 cols)
+
+panel   cost chooser    pick                                OOS CAGR     Sh    MaxDD |  4b  4b-  4a  binding
+U56        0 IS_SHARPE  U56-band0.08-g1.00                    12.16%  1.177  -19.04% | True True False  -
+U56        0 IS_LEGS    U56-band0.08-g1.00                    12.16%  1.177  -19.04% | True True False  -
+U56        0 IS_CAGR    U56-qroll-q0.17-w1008-d0.50           16.68%  1.372  -15.52% | True True False  -
+U56       10 IS_SHARPE  U56-band0.08-g1.00                    11.99%  1.162  -19.05% | True True False  -
+U56       10 IS_LEGS    U56-band0.08-g1.00                    11.99%  1.162  -19.05% | True True False  -
+U56       10 IS_CAGR    U56-qroll-q0.17-w1008-d0.50           15.60%  1.293  -15.59% | True True False  -
+U56       25 IS_SHARPE  U56-band0.08-g1.00                    11.73%  1.139  -19.07% | True True False  -
+U56       25 IS_LEGS    U56-band0.08-g1.00                    11.73%  1.139  -19.07% | True True False  -
+U56       25 IS_CAGR    U56-qroll-q0.17-w1008-d0.50           14.00%  1.174  -15.71% | True True False  -
+B136       0 IS_SHARPE  B136-qroll-q0.17-w504-d0.50           14.06%  1.200  -17.07% | True True False  -
+B136       0 IS_LEGS    B136-band0.08-g1.00                   11.24%  1.115  -19.48% | True True False  -
+B136       0 IS_CAGR    B136-qroll-q0.12-w1008-d0.50          15.43%  1.238  -17.07% | True True False  -
+B136      10 IS_SHARPE  B136-band0.08-g1.00                   11.05%  1.097  -19.50% | True True False  -
+B136      10 IS_LEGS    B136-band0.08-g1.00                   11.05%  1.097  -19.50% | True True False  -
+B136      10 IS_CAGR    B136-qroll-q0.12-w1008-d0.50          14.30%  1.157  -17.31% | True True False  -
+B136      25 IS_SHARPE  B136-band0.08-g1.00                   10.76%  1.071  -19.53% | True True False  -
+B136      25 IS_LEGS    B136-band0.08-g1.00                   10.76%  1.071  -19.53% | True True False  -
+B136      25 IS_CAGR    B136-qroll-q0.12-w1008-d0.50          12.62%  1.036  -17.72% | True True False  -
+   comparands U56: SPY OOS 15.21% / 0.871 / -33.72%;  RULES v2 (live, 10 bps) full 8.62% / 1.201 / -12.05% (H1 1.232 / H2 1.176)
+   comparands B136: SPY OOS 15.33% / 0.877 / -33.72%;  RULES v2 (live, 10 bps) full 7.98% / 1.099 / -12.24% (H1 1.235 / H2 0.966)
+
+H_RULE8 bar: no rule-8 PICK changes verdict when `L3_OOS` is dropped, and no committed 4b FAIL becomes a 4b' pass among the picks.  changed picks = 0 of 18  -> PASS
+   FAIL->PASS flips at 10 bps over all 45 books: 0
+   4a (beat the live book) over the whole 135-row real ladder: 2 of 135.
+  wrote 2026-09-16_is-L3_OOS-the-leg-4b-could-ACTUALLY-DROP_cloud.hypotheses.csv  (6 rows, 4 cols)
