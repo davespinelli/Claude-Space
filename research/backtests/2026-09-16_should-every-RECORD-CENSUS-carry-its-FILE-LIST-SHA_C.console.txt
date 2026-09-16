@@ -1,0 +1,146 @@
+==============================================================================================
+IDEA 1019 -- should every RECORD CENSUS carry its FILE-LIST SHA?   (lane C)
+==============================================================================================
+TUNED 1 STAMP SCOPE  {NONE, DATE_AT, DATE_PARENT, LIST}
+TUNED 2 CLAIM SET    {REPRO2, CENSUS_N, PROSE}
+All grid points reported.  10 bps, next-day execution, rule 8, both KEEP paths.
+
+[1] CORPUS AT HEAD
+  scanned 456 committed CSVs carrying `fail4b` of 5,023 corpus CSVs  (5s)
+  HEAD census: 456 files, 1,011,630 rows, 896,559 parsed 4b FAIL rows (276,854 null-draw, 651,691 real-FAIL)
+  EXCLUDING this run's own 0 eligible artifacts: 456 files, 1,011,630 rows, 896,559 FAIL rows
+  (`.grid` / `.keeppaths` / `.walkforward` carry a `fail4b` column, so THIS script's
+   own outputs are census-eligible: a second pass over a directory holding them reads
+   459 files, not 456 -- the 1019 defect, reproduced
+   live.  The headline is taken on the self-excluded set; both are stamped below.)
+
+[2] GIT TIMELINE of research/backtests
+  967 commits touching research/backtests, 7,910 distinct files added, 63 modified after add, 13 deleted
+  census-eligible files modified after their add commit: 2 of 456  -> append-only rate 0.9956
+    2026-09-15_is-the-4a-MaxDD-leg-passable-at-all-without-de-grossing_cloud.arms.csv, 2026-09-15_is-the-4a-MaxDD-leg-passable-at-all-without-de-grossing_cloud.walkforward.csv
+
+[3] GATES  (printed before any result number)
+  G0   PASS  2.323e-04  fail4b parse coverage (unparsed values are EXCLUDED, never guessed)
+        235 unparsed of 1,011,630
+  G1   PASS  1.665e-16  fast Ctx == engine.backtest (U56/BAND03@0.75/W, post-warm-up net returns AND turnover)
+        max|d| 1.665e-16
+  G2   PASS  0.000e+00  band_book(px,0.03,0.75) == baseline.rules_v2_weights(px)
+        max|d| 0.000e+00
+  G3   PASS  0.000e+00  CROSS-RUN PER-FILE: idea 1010's committed 449-file manifest re-read at HEAD (rows and n_fail)
+        449 files, 995,110 rows / 883,294 FAIL, max per-file |d| 0
+  G3b  FAIL  4.800e+01  INTERNAL: idea 1010's PUBLISHED prose totals == its OWN committed manifest
+        manifest 995,110 rows / 883,294 FAIL vs prose 995,062 / 883,294  -> rows +48, FAIL +0
+  G3c  PASS  0.000e+00  CONTROL: in-place edits are NOT the channel -- rows added by editing a file after its add commit
+        2 edited eligible files (2 of them on 1010's manifest) moved +0 rows: 2026-09-15_is-the-4a-MaxDD-leg-passabl 216->216; 2026-09-15_is-the-4a-MaxDD-leg-passabl 72->72
+  G4   PASS  0.000e+00  CROSS-RUN: idea 1014's 896,542 FAIL rows on its OWN list
+        896,542 vs published 896,542
+  G5   PASS  2.743e-05  SPY OOS triple == the record's committed 15.21%/0.8713/-33.72%
+        15.2102% / 0.8713 / -33.7173%
+  G6   PASS  0.000e+00  determinism: census_of re-run on the same file set
+        0.0
+  G7   PASS  0.000e+00  APPEND-ONLY: sampled census files byte-identical at add-commit and HEAD
+        0 of 30 sampled differ
+  GATES 9 of 10 PASS
+
+[4] TUNED2 = REPRO2  x  TUNED1 = the four STAMP SCOPES
+    the 2 committed censuses that shipped a file list, re-derived four ways
+idea       scope   commit  n_files  n_rows  n_fail max_relerr  rederivable
+1010        NONE ab857701      456 1011630  896559  1.665e-02        False
+1010     DATE_AT ab857701      449  995110  883294  4.824e-05         True
+1010 DATE_PARENT ab857701      446  995014  883221  6.682e-03        False
+1010        LIST ab857701      449  995110  883294  4.824e-05         True
+1014        NONE 20d1f165      456 1011630  896559  1.896e-05         True
+1014     DATE_AT 20d1f165      454 1011432  896542  0.000e+00         True
+1014 DATE_PARENT 20d1f165      452 1011294  896431  1.238e-04         True
+1014        LIST 20d1f165      441 1011059  896542  0.000e+00         True
+    `pub` is what each run PUBLISHED IN PROSE.  1010's residual under LIST and
+    DATE_AT is NOT corpus drift: G3 reproduces its manifest per file at |d| = 0, and
+    G3b shows the 48 rows are a gap between 1010's prose and 1010's OWN manifest.
+
+    MANIFEST COMPLETENESS -- does a committed file list enumerate everything the run
+    SCANNED, or only the files that HIT?  A partial manifest pins a numerator and
+    leaves the denominator loose.
+      idea 1010: manifest 449 files; eligible files in its own tree 449; 0 eligible files ABSENT from the manifest, of which 0 carry ZERO FAIL rows; 13 listed files carry zero
+      idea 1014: manifest 441 files; eligible files in its own tree 454; 13 eligible files ABSENT from the manifest, of which 13 carry ZERO FAIL rows; 0 listed files carry zero
+
+[5] TUNED2 = CENSUS_N -- every committed census artifact: stamp level + drift
+  214 committed census artifacts
+    L0_NONE     37   (0.1729)
+    L1_COUNT   175   (0.8178)
+    L2_LIST      2   (0.0093)
+    L3_SHA       0   (0.0000)
+  file-list-or-better stamp: 0.0093  (2 of 214)
+  git-recoverable file list (add-commit found): 1.0000
+  denominator DRIFT to HEAD over 214 locatable censuses (census-eligible FAIL rows):
+    median 0.9055   mean 6.4049   p90 2.7778   max 553.4583
+  SELF-INCLUSION (the census's OWN commit adds CSVs the run could not have scanned):
+    on ALL committed CSVs:      1.0000 of censuses, median 6.0, max 16 files
+    on census-ELIGIBLE CSVs:    0.3131 of censuses, median 0.0 files / 0 FAIL rows, max 41,338 FAIL rows
+
+[6] TUNED2 = PROSE -- every committed document's claim about HOW BIG THE CORPUS WAS
+    ground truth: the number of CSVs under research/backtests in the git tree, which
+    a reader can rebuild with NO stamp.  Exact match, and 1% / 5% bands.
+    corpus size at HEAD: 5,027 CSVs
+  80 corpus-SIZE claims located in 72 committed documents
+  scope           exact     <=1%     <=5%   median relerr
+  NONE           0.0000   0.0000   0.0000   0.6526
+  DATE_AT        0.0125   0.2375   0.6625   0.0307
+  DATE_PARENT    0.0625   0.2500   0.6625   0.0270
+  exact under ANY of the three scopes: 0.0750 (6 of 80)
+  closest scope per claim: DATE_AT 2, DATE_PARENT 78
+
+[7] THE COST OF THE STAMP
+  file_list_sha (sha256 of sorted file,size,sha256 over 456 files)
+    = fab818ff7b8d200618779520abbd58701ae8f1c415f51a0cd7d60db526bc4e32
+  STANDALONE cost (re-read + hash): 0.78s vs 5s for the census scan -> 0.1524 of it
+  MARGINAL cost (hash only; a real census already holds the bytes): 0.60s -> 0.1175 of the scan
+  bytes: 105 for the one-line stamp, 68,744 for the full manifest
+  NOTE: the ratio's denominator is THIS run's scan (5.1s), which is page-cache dependent (32s cold, ~5s warm on this box); the absolute cost -- 0.60s and 67 KB -- is the durable number.
+
+[8] HYPOTHESES  (pre-registered, bars fixed before the numbers)
+  H_STAMP    FAIL  >= 50% of committed censuses carry a file-list stamp
+        0.0093 of 214
+  H_APPEND   PASS  >= 99% of census-eligible files blob-stable after add
+        2 modified of 456
+  H_GITDATE  FAIL  a DATE stamp substitutes for a file-list SHA: DATE_PARENT re-derives 1010 within 1e-3
+        DATE_PARENT relerr 6.682e-03; DATE_AT relerr 4.824e-05 (reported, not the registered arm); LIST re-derives True
+  H_SELF     PASS  a census's OWN commit adds CSVs it could not have scanned, so DATE_AT is the wrong tree (self-inclusion > 0 in > 50%)
+        1.0000 of 214 censuses on all CSVs; 0.3131 on eligible CSVs
+  H_DERIVE   FAIL  an UNSTAMPED census is re-derivable at HEAD within 1e-03
+        worst NONE-scope relerr 1.665e-02
+  H_DRIFT    FAIL  median denominator drift commit->HEAD < 1%
+        median 0.9055, max 553.4583
+  H_COST     FAIL  the stamp's MARGINAL cost is < 1% of the scan and < 100,000 bytes
+        marginal 0.1175 / standalone 0.1524 of scan time; 68,744 bytes full / 105 bytes minimal
+  H_PROSE    FAIL  the record's corpus-SIZE claims are re-derivable today without a stamp (exact match at HEAD, > 50%)
+        HEAD 0.0000, any git scope 0.0750, of 80 claims
+  H_RULE8    PASS  the meta-question moves no price verdict: the ladder's 4a/4b counts are what they are
+        rule-8 picks 4b 0 of 6; full grid 4b 14 of 60, 4a 0 of 60
+  HYPOTHESES 3 of 9 PASS
+
+[9] RULE 8 WALK-FORWARD  (picks made on 2009-2016 ALONE, 2017-2026 read once)
+panel   chooser  book cad  gross  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  pass4b fail4b  spy_OOS_CAGR  spy_OOS_Sharpe  spy_OOS_MaxDD
+  U56 IS_SHARPE TOP10   M 1.0000    0.2317      1.1045    -0.2979   False  L4_DD        0.1521          0.8713        -0.3372
+  U56   IS_CAGR TOP10   M 1.0000    0.2317      1.1045    -0.2979   False  L4_DD        0.1521          0.8713        -0.3372
+  U56   IS_LEGS TOP10   M 0.7500    0.1731      1.1009    -0.2322   False  L4_DD        0.1521          0.8713        -0.3372
+ B136 IS_SHARPE TOP20   M 1.0000    0.2081      1.0051    -0.3368   False  L4_DD        0.1533          0.8769        -0.3372
+ B136   IS_CAGR TOP10   M 1.0000    0.2416      0.9992    -0.3579   False  L4_DD        0.1533          0.8769        -0.3372
+ B136   IS_LEGS TOP20   M 0.7500    0.1555      1.0004    -0.2611   False  L4_DD        0.1533          0.8769        -0.3372
+
+  full grid at 10 bps: 60 books;  KEEP path 4b 14;  KEEP path 4a 0
+  B136: SPY OOS 15.33% / 0.8769 / -33.72%   |   RULES v2 (live) OOS 7.88% / 1.1061 / -12.24%  (full Sharpe 1.0994, MaxDD -12.24%)
+  U56: SPY OOS 15.21% / 0.8713 / -33.72%   |   RULES v2 (live) OOS 9.45% / 1.2765 / -12.05%  (full Sharpe 1.2009, MaxDD -12.05%)
+
+[10] OUTPUTS
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.gates.csv  (10 rows, 5 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.hypotheses.csv  (9 rows, 5 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.rederive.csv  (8 rows, 25 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.census.csv  (214 rows, 17 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.prose.csv  (80 rows, 16 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.corpusfiles.csv  (456 rows, 17 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.grid.csv  (60 rows, 21 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.walkforward.csv  (6 rows, 13 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.keeppaths.csv  (60 rows, 13 cols)
+  wrote 2026-09-16_should-every-RECORD-CENSUS-carry-its-FILE-LIST-SHA_C.stamp.txt  (this run's OWN file-list stamp)
+
+total 30s
