@@ -1,0 +1,187 @@
+============================================================================================================
+IDEA 1227 (cloud lane, 2026-09-17) — should PROTOCOL require a COUNT-MATCHED NULL
+beside EVERY chooser claim?
+============================================================================================================
+PROTOCOL: costs 10 bps, decide-at-t / apply-at-t+1, warm-up 260 rows,
+rule-8 walk-forward — every fold decision reads only data before that fold, OOS folds
+2017-2026 read once.  Both KEEP paths.  All 12 grid points published.
+
+============================================================================================================
+ARM 0 — PANELS AND GATES
+============================================================================================================
+  SMALL: dropping 52 names with max_1d_move >= 1.0 -> 663 investable.
+  SURVIVORSHIP (rule 9): B136 and SMALL are CURRENT constituents of their screens, so
+  every level read on them is biased UP.  The survival rate below is a WITHIN-panel
+  comparison of a rule against a null drawn from the SAME rungs, which the bias moves
+  only through second-order interaction.
+  [PASS] G1 fast runner == engine.backtest on RULES v2 (U56): 1.388e-17 (target < 1e-12)
+
+============================================================================================================
+ARM 1 — THE RUNG SPACE (4 attainable ladders; COST excluded, see header)
+============================================================================================================
+  22 rungs: N:6  H:4  GROSS:10  CADENCE:2   anchor = ('N', 20) at index 3
+  U56    22 rung books priced  t=6s
+  B136   22 rung books priced  t=7s
+  SMALL  22 rung books priced  t=10s
+  [PASS] G2 the anchor book is identical wherever it appears in a ladder: 0.000e+00 (target < 1e-12)
+
+============================================================================================================
+ARM 2 — FOLD ARITHMETIC (Sharpe of ANY stitched rule from precomputed sums)
+============================================================================================================
+  Sharpe(r) = sqrt(252) * mean/sd with sd on ddof=0, so a stitched series' Sharpe is a
+  function of (n, sum r, sum r^2) accumulated over its folds only.  That makes a
+  4,000-draw count-matched null exact and cheap; gated bit-for-bit below.
+  [PASS] G3 sums-based Sharpe == direct Sharpe on stitched paths: 6.661e-16 (target < 1e-10)
+
+============================================================================================================
+ARM 3 — THE 36 REAL PUBLISH RULES, WALKED FORWARD
+============================================================================================================
+  At the start of fold Y a rule reads IS = [warm-up, Y-01-01) ONLY.  R_<L>@q moves to
+  ladder L's IS-argmax rung when that rung's IS Sharpe exceeds the anchor's by more
+  than q, else holds the anchor.  R_WIDEST@q does the same on whichever ladder has the
+  widest IS Sharpe spread that fold.  R_ANCHOR never moves.  q is a REPORTED ladder,
+  not a tuned dial: every value of q is published.
+
+  41 rules per panel (5 ladder choices x 8 thresholds + R_ANCHOR).
+
+  MOVE COUNT vs OOS SHARPE GAIN over do-nothing, pooled over the three panels:
+    rules with a POSITIVE gain (the record's naive bar): 8 of 123 (0.0650)
+       count    mean     max
+moves                       
+0         70 +0.0000 +0.0000
+1         11 -0.0437 -0.0110
+2          3 -0.0163 -0.0162
+3          1 -0.0548 -0.0548
+4          3 -0.0521 +0.0203
+5          4 -0.0644 +0.0200
+6          1 -0.0911 -0.0911
+7          2 -0.0823 -0.0777
+8          3 -0.1573 -0.0783
+9          6 -0.1408 -0.0989
+10        19 -0.0146 +0.2143
+    Spearman rho(move count, gain) = -0.6108
+
+============================================================================================================
+ARM 4 — THE COUNT-MATCHED NULLS (DIAL 2), 4000 DRAWS EACH
+============================================================================================================
+  U56    nulls built  t=13s
+  B136   nulls built  t=16s
+  SMALL  nulls built  t=21s
+
+============================================================================================================
+ARM 5 — THE 12 GRID POINTS: DOES THE COUNT-MATCHED BAR CHANGE THE VERDICT?
+============================================================================================================
+  104,632 committed text units harvested; 18,087 carry a rule token or
+  an adjudication verb.
+
+  claimset     claims   state a MOVE COUNT   state ANY null   state a COUNT-MATCHED null
+  C_STRICT        746          147 (0.1971)       136 (0.1823)                 9 (0.0121)
+  C_PROX        1,065          185 (0.1737)       162 (0.1521)                 9 (0.0085)
+  C_ALL        16,468          755 (0.0458)     1,319 (0.0801)                46 (0.0028)
+
+  The census dial changes WHICH committed sentences are counted; the price arm below
+  is independent of it, so the 12 cells are (census share) x (survival rate).  Both
+  legs are printed at every grid point.
+
+  null           rules   pass naive gain>0   pass count-matched 95%  verdict flips
+  NL_UNIF          123             8 (0.0650)                6 (0.0488)           2 (0.2500 of naive passes)
+  NL_SAMELAD       107             8 (0.0748)                6 (0.0561)           2 (0.2500 of naive passes)
+  NL_SAMEFOLD      123             8 (0.0650)                6 (0.0488)           2 (0.2500 of naive passes)
+  NL_PERM          123             8 (0.0650)                0 (0.0000)           8 (1.0000 of naive passes)
+
+  Expected survivals if the gain were pure move count: 0.05 x rules =
+    NL_UNIF      chance predicts 6.2, observed 6  (ratio 0.98)
+    NL_SAMELAD   chance predicts 5.4, observed 6  (ratio 1.12)
+    NL_SAMEFOLD  chance predicts 6.2, observed 6  (ratio 0.98)
+    NL_PERM      chance predicts 6.2, observed 0  (ratio 0.00)
+
+  PER-PANEL, at the two matched-on-more-than-count nulls:
+    NL_SAMEFOLD  U56    naive  0/41  matched  0/41  flips  0
+    NL_SAMEFOLD  B136   naive  0/41  matched  0/41  flips  0
+    NL_SAMEFOLD  SMALL  naive  8/41  matched  6/41  flips  2
+    NL_PERM      U56    naive  0/41  matched  0/41  flips  0
+    NL_PERM      B136   naive  0/41  matched  0/41  flips  0
+    NL_PERM      SMALL  naive  8/41  matched  0/41  flips  8
+
+  NL_PERM IS THE ONE THAT BITES, AND IT BITES EVERYTHING.  It holds the rule's move
+  COUNT and its DESTINATIONS fixed and randomises only WHEN the moves happen: 0 of 8
+  naive passes survive it.  So the whole published gain of this rule family is a
+  property of fold TIMING, not of the rungs the rule reads or how often it moves.
+
+  AND THE SURVIVALS COLLAPSE (1210's inflation, in this run's own numbers):
+    18 surviving (panel, null, rule) scorings collapse to 1 DISTINCT (panel, realised path) books:
+      SMALL  moves 10  named by 6 threshold labels ['R_H@0.00', 'R_H@0.01', 'R_H@0.02', 'R_H@0.05', 'R_H@0.10', 'R_H@0.20']
+    The threshold ladder q does not change the path at all below the gap it
+    gates on, so one book is published under six names — which is exactly the
+    decision-row-vs-book inflation 1210 found, reproduced here from scratch.
+
+  THE SURVIVORS, every one of them, at every null:
+panel        null     rule  moves    gain     bar     pct
+SMALL NL_SAMEFOLD R_H@0.00     10 +0.2143 +0.1228 +0.9932
+SMALL NL_SAMEFOLD R_H@0.01     10 +0.2143 +0.1312 +0.9925
+SMALL NL_SAMEFOLD R_H@0.02     10 +0.2143 +0.1309 +0.9928
+SMALL NL_SAMEFOLD R_H@0.05     10 +0.2143 +0.1344 +0.9912
+SMALL NL_SAMEFOLD R_H@0.10     10 +0.2143 +0.1299 +0.9912
+SMALL NL_SAMEFOLD R_H@0.20     10 +0.2143 +0.1332 +0.9908
+SMALL  NL_SAMELAD R_H@0.00     10 +0.2143 +0.1942 +0.9728
+SMALL  NL_SAMELAD R_H@0.01     10 +0.2143 +0.1969 +0.9688
+SMALL  NL_SAMELAD R_H@0.02     10 +0.2143 +0.1905 +0.9720
+SMALL  NL_SAMELAD R_H@0.05     10 +0.2143 +0.1952 +0.9675
+SMALL  NL_SAMELAD R_H@0.10     10 +0.2143 +0.1943 +0.9708
+SMALL  NL_SAMELAD R_H@0.20     10 +0.2143 +0.1926 +0.9688
+SMALL     NL_UNIF R_H@0.00     10 +0.2143 +0.1354 +0.9928
+SMALL     NL_UNIF R_H@0.01     10 +0.2143 +0.1256 +0.9905
+SMALL     NL_UNIF R_H@0.02     10 +0.2143 +0.1309 +0.9922
+SMALL     NL_UNIF R_H@0.05     10 +0.2143 +0.1271 +0.9920
+SMALL     NL_UNIF R_H@0.10     10 +0.2143 +0.1322 +0.9920
+SMALL     NL_UNIF R_H@0.20     10 +0.2143 +0.1314 +0.9932
+
+============================================================================================================
+ARM 6 — BOTH KEEP PATHS ON THE STITCHED CURVES (full / halves / OOS vs SPY and live)
+============================================================================================================
+  Reported for: R_ANCHOR (do nothing), the BEST-gain rule per panel (the one a naive
+  reading would publish), and any count-matched SURVIVOR.
+
+panel              rule           win   CAGR  Sharpe   MaxDD     H1     H2  spy_C  spy_S  spy_DD  live_S  KEEP4a  KEEP4b
+  U56          R_ANCHOR OOS(stitched) 0.1716  1.1759 -0.1913 1.2547 1.0977 0.1515 0.8686 -0.3372  1.2717   False    True
+  U56     BEST:R_ANCHOR OOS(stitched) 0.1716  1.1759 -0.1913 1.2547 1.0977 0.1515 0.8686 -0.3372  1.2717   False    True
+  U56          R_ANCHOR          FULL 0.1571  1.1480 -0.1913 1.2127 1.1050 0.1506 0.8815 -0.3372  1.1982   False    True
+ B136          R_ANCHOR OOS(stitched) 0.1629  1.0240 -0.2074 1.0533 1.0023 0.1533 0.8769 -0.3372  1.1061   False   False
+ B136 BEST:R_GROSS@0.20 OOS(stitched) 0.1629  1.0240 -0.2074 1.0533 1.0023 0.1533 0.8769 -0.3372  1.1061   False   False
+ B136          R_ANCHOR          FULL 0.1618  1.0715 -0.2074 1.2902 0.8995 0.1516 0.8862 -0.3372  1.0994   False   False
+SMALL          R_ANCHOR OOS(stitched) 0.0709  0.4534 -0.3581 0.7917 0.1007 0.1533 0.8769 -0.3372  0.6518   False   False
+SMALL     BEST:R_H@0.00 OOS(stitched) 0.1116  0.6677 -0.3741 1.2072 0.0769 0.1533 0.8769 -0.3372  0.6518   False   False
+SMALL SURVIVOR:R_H@0.00 OOS(stitched) 0.1116  0.6677 -0.3741 1.2072 0.0769 0.1533 0.8769 -0.3372  0.6518   False   False
+SMALL SURVIVOR:R_H@0.01 OOS(stitched) 0.1116  0.6677 -0.3741 1.2072 0.0769 0.1533 0.8769 -0.3372  0.6518   False   False
+SMALL SURVIVOR:R_H@0.02 OOS(stitched) 0.1116  0.6677 -0.3741 1.2072 0.0769 0.1533 0.8769 -0.3372  0.6518   False   False
+SMALL SURVIVOR:R_H@0.05 OOS(stitched) 0.1116  0.6677 -0.3741 1.2072 0.0769 0.1533 0.8769 -0.3372  0.6518   False   False
+SMALL SURVIVOR:R_H@0.10 OOS(stitched) 0.1116  0.6677 -0.3741 1.2072 0.0769 0.1533 0.8769 -0.3372  0.6518   False   False
+SMALL SURVIVOR:R_H@0.20 OOS(stitched) 0.1116  0.6677 -0.3741 1.2072 0.0769 0.1533 0.8769 -0.3372  0.6518   False   False
+SMALL          R_ANCHOR          FULL 0.0787  0.5073 -0.3581 0.6636 0.3942 0.1406 0.8582 -0.3372  0.7130   False   False
+
+============================================================================================================
+VERDICT
+============================================================================================================
+  ANSWER: YES — the clause would change verdicts.  Across the 12 grid points (476 (panel, null, rule) scorings), 32 clear the record's naive
+  'gain > 0' bar and 18 clear their own count-matched bar; 14 published-by-the-naive-bar gains FLIP to non-findings
+  (0.4375 of them).
+  Chance predicts 0.05 x 476 = 23.8 survivals; observed 18 (ratio 0.76) — AT OR BELOW CHANCE.
+  Under NL_PERM, which matches the move count AND the destinations and randomises
+  only the timing, 0 of 8 naive passes survive.
+  The 18 survivals collapse to 1 DISTINCT book(s); the rest
+  is one path published under several threshold labels.
+  CENSUS: of 746 C_STRICT committed chooser claims, 147 (0.1971) state a
+  move count and 9 (0.0121) state a COUNT-MATCHED null.
+  rho(move count, OOS Sharpe gain) = -0.6108 on the rule population built here.
+  KEEP paths: 4b passes at 3 of 15 scored curves; 4a at 0 of 15.
+  VERDICT: KILL (capital) / ANSWERED = YES.  No rule in this population is a tradable
+  improvement on holding the anchor once its own move count is priced, which is
+  exactly the finding: the queue's proposed PROTOCOL clause is supported, and it is a
+  REPORTING clause, not a rule that earns capital.
+
+GATES
+  [PASS] G1 fast runner == engine.backtest on RULES v2 (U56): 1.388e-17 (target < 1e-12)
+  [PASS] G2 the anchor book is identical wherever it appears in a ladder: 0.000e+00 (target < 1e-12)
+  [PASS] G3 sums-based Sharpe == direct Sharpe on stitched paths: 6.661e-16 (target < 1e-10)
+
+total 31s
