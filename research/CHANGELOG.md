@@ -2331,3 +2331,61 @@ rather than a lookalike.
   current-constituent panel is KIND to GATE = NONE — a name that fell below its 200d MA and never
   recovered is disproportionately one the screen dropped from the panel — so the ungated arm's wins
   reported here are UPPER BOUNDS on its wins.
+
+## 2026-09-17 (lane B) — 1252 is-B_GAPEXCEEDS-a-USABLE-DECISIVENESS-BAR-the-record-never-adopted — KILL (capital)
+- THE QUESTION. 1242's bycatch: B_GAPEXCEEDS (observed top-minus-second margin > the 95th
+  percentile of the DRAW top-minus-second gap) "moves on only 12 of 72 decisions and has exactly
+  zero seed swing, the most stable bar-side output measured", yet appears in 36 committed units
+  against B_RESOLVED's 595. Priced head-to-head with the incumbent P_boot >= 0.90 on 1208/1242's
+  SAME 72 decisions and on rule-8 OOS Sharpe. Two dials, 24 cells, every one published:
+  BAR PERCENTILE {50, 75, 90, 95, 97.5, 99} x CLAIM SET {CS_ALL, CS_SHARPE, CS_LARGE, CS_NODEG}.
+  A BAR HAS THREE JOBS — MOVE, STABLE, INFORM — and only INFORM is a capital claim. Declared
+  before measuring; the record had priced neither MOVE at a usable L nor INFORM at all.
+- THE PREMISE AUDIT, FIRST. Replaying 1242's committed .outputs.csv row by row (dev 0.000e+00 on
+  both bars, G3/G4): B_GAPEXCEEDS fires 0/0/0/0/0/0/0/0/0/0/2/10 at L = 1/2/5/10/21/42/63/126/
+  252/504/1008/T against P_boot's 11/12/12/13/14/16/16/17/20/23/34/72. THE QUEUE'S "12 of 72" IS
+  THE BAR'S ENTIRE LIFETIME FIRE COUNT OVER ALL 864 COMMITTED ROWS, AND 12 OF 12 SIT AT L = 1008
+  OR L = T — the rungs where the moving-block resample is at or near the IDENTITY. AT THE RECORD'S
+  FROZEN L = 63, AND AT EVERY RUNG FROM 1 TO 504, THE BAR FIRES ZERO TIMES.
+- WHY, WITH NO TAPE INVOLVED (400 synthetic ladders, k 3-10): 0 fires of 400 — declared gate G0b
+  FAILS and that failure is the finding. The bar asks the OBSERVED margin of a k-rung ladder to
+  exceed the 95th percentile of the DRAWS' OWN maximum gap, and a resample of k correlated books
+  has a max-minus-second spread dominated by sampling noise and systematically WIDER than the real
+  ladder's separation. Mean observed margin / draw-gap q95 = 0.2980; the observed margin sits at
+  the 41.6th percentile of the draw-gap distribution. It is a property of the statistic.
+- THE STABILITY IS A CONSTANT, AND INVERTS THE MOMENT THE BAR LICENSES ANYTHING. 9 rng streams at
+  L = 63: GAPEX at p >= 90 flips on 0 of 72 because it fires on 0 of 72. At p = 50, the
+  MOVE-MATCHED rung (18 fires vs the incumbent's 16), it flips on 10 of 72 against B_RESOLVED's 2
+  — 5x LESS stable than the incumbent. Dial-1 fire counts 18 / 1 / 0 / 0 / 0 / 0; agreement with
+  the incumbent 0.6944 (kappa 0.1538) at p = 50 and 0.7778 (kappa 0.0000) at p >= 90, i.e.
+  agreement by mutual silence.
+- JOB 3, THE ONLY CAPITAL CLAIM, AND THE INCUMBENT FAILS IT BACKWARDS. d = OOS Sharpe(pick) -
+  OOS Sharpe(anchor), paired per decision, picks on warm-up..2016-12-31, 2017-2026 read ONCE:
+  P_boot >= 0.90 gives mean d GIVEN FIRE -0.0061 (t -1.28, n 16) against +0.0133 on the decisions
+  it REFUSES, a difference of -0.0194; GAPEX at p = 50 gives +0.0111 vs +0.0082 (t +0.33). Rank
+  correlation of each bar's score against the OOS delta is NEGATIVE on both (-0.1423 P_pick,
+  -0.1201 gap percentile rank). Mean d over all 72 is +0.0090 — acting pays a little on this tape
+  and neither bar finds where.
+- CAPITAL. Mean OOS Sharpe of each selector's realised book over the 72 decisions: do-nothing
+  anchor 0.8268, ALWAYS-ACT 0.8357, SEL_PBOOT090 0.8254 (-0.0014, t -1.26), SEL_GAPEX_50 =
+  MATCHED 0.8296 (+0.0028, t +0.34), GAPEX_75 0.8276, GAPEX_90/95/97.5/99 and AND-both 0.8268
+  (identical to the anchor — they never fire), OR-either 0.8254. The matched challenger beats the
+  incumbent by +0.0042, inside noise, and FLIPS SIGN to -0.0068 (t -1.16) on CS_LARGE. 4b BOTH per
+  72: anchor 24, GAPEX >= 90 24, GAPEX_50 and PBOOT090 19, ALWAYS-ACT 6 — GATING IS A DESTRUCTION
+  OPERATOR HERE. 4a 0 of 1026 rows (A_H1 532, A_H2 10, A_DD 21); 4b 274 of 1026 collapsing to 19
+  DISTINCT realised books (269 on U56, 5 on B136), every one a plain rung book or the anchor. Best
+  U56 anchor B N=20: full 11.03% / 1.1354 / -18.01%, OOS 12.42% / 1.1771 / -18.01% vs U56 SPY OOS
+  15.15% / 0.8684 / -33.72%; the 2026-09-04 incumbent replays at 15.55% / 1.1381 / -19.13% (1.6e-03
+  from the committed 1.139701) / OOS 1.1615. NO NEW BOOK, NO MEMO, NO RULES CHANGE. Script:
+  research/backtests/2026-09-17_is-B_GAPEXCEEDS-a-USABLE-DECISIVENESS-BAR-the-record-never-adopted_B.py
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: A DECISIVENESS BAR SHOULD BE PUBLISHED WITH ITS
+  FIRE COUNT AT THE BLOCK LENGTH IT WILL BE USED AT AND WITH THE OOS DELTA OF THE DECISIONS IT
+  LICENSES AGAINST THE ONES IT REFUSES — B_GAPEXCEEDS' CELEBRATED STABILITY IS A CONSTANT-ZERO
+  FIRE COUNT AT EVERY HONEST L, AND THE INCUMBENT P_boot >= 0.90, WHICH DOES FIRE, LICENSES THE
+  WORSE HALF OF ITS OWN DECISIONS — PROPOSED for the Sunday review (rule 6) as a PROTOCOL
+  reporting line only, never as a chooser (rule 8 puts every gating policy in this family between
+  -0.0014 and +0.0028 of mean OOS Sharpe against doing nothing).
+- SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL is a current sub-$2B screen
+  (data/SMALL_PANEL_README.md). Every LEVEL is optimistic and every 4b pass is an upper bound. The
+  headline is a CONTRAST between two bars over the same 72 decisions on the same tape, first-order
+  immune to a common level bias; the 4b legs are not.
