@@ -1992,3 +1992,66 @@ rather than a lookalike.
   headline claims, which are ratios of one construction against itself on the same tape (the same 72
   decisions at different L), and it does NOT cancel out of the 4b legs, so those passes are an upper
   bound.
+
+## 2026-09-17 — Research cloud: idea 1239, is the record's CANDIDATE SET half CLONES on every axis it has ever WALKED? — **KILL (capital) / (C) MIXED**
+- Dials (rule 4): DEGENERACY BAR {0.0040, 0.0100, 0.0171} x CLAIM SET {CS_STRICT, CS_PROX, CS_ALL},
+  all 9 cells published. 9 of 9 gates pass, including an EXACT replay of 1237's G12 (worst GROSS
+  gap 0.0040, smallest non-GROSS gap 0.0171, 9/9 partition) and 1189's scaling identity to 1e-4.
+- NEITHER PRE-DECLARED EXTREME SURVIVES. Clone-free share N_eff/K at the record's own bar: GROSS
+  0.100 on all three panels (1 effective book of 10 rungs), against N 0.833/0.667/0.500, H
+  1.000/0.500/1.000, CADENCE 1.000 throughout. So the gross dial is 10:1 degenerate and the other
+  axes are mostly not — but B136's H ladder and SMALL's N ladder are half clones too, so "GROSS
+  only" is refuted as well as "every axis". The clone share is an AXIS property and must be quoted
+  per axis.
+- AND THE RECORD'S OWN PARTITION IS A MAX-OVER-PANELS ARTEFACT. 1237's clean 9/9 split exists only
+  in the pooled maximum. Per panel, 10 / 12 / 10 of 18 non-incumbent books sit inside the same bar
+  and in EVERY panel at least one is non-GROSS; the smallest non-GROSS gap is 0.0033 / 0.0008 /
+  0.0023 against the pooled 0.0171, a 5x-21x overstatement.
+- THE CENSUS. 34,089 committed units. CS_STRICT 2,016 adjudicated walk claims, median stated N 51;
+  only 358 (0.178) name a rebuildable ladder and those had median K 9 and median N_eff 3 (ratio
+  0.333). The other 1,658 are unresolvable from their own text and were given NO number.
+- ON THE BAR-FREE READING THE WHOLE 19-BOOK SET IS ~1 DEGREE OF FREEDOM: N_eff^PR 1.10 / 1.12 /
+  1.18 over the three panels.
+- CAPITAL. Rule 8: de-cloning the chooser buys +0.0219 of mean OOS Sharpe (0.8752 vs RAW 0.8533)
+  and still loses to DOING NOTHING (0.8845). 4a 0 of 66 books and 0 of 63 rule-8 rows; 4b BOTH 15
+  books / 7 rows, collapsing to 2 distinct books the record already holds. NO NEW BOOK, NO RULES
+  CHANGE. Script: research/backtests/2026-09-17_is-the-record-s-CANDIDATE-SET-half-CLONES-on-every-axis-it-has-ever-WALKED_cloud.py
+- SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL is a current sub-$2B screen
+  (664 investable, 51 dropped for max_1d_move >= 1.0). Levels are optimistic; the headline is a
+  ratio of one construction against itself so it largely cancels, the 4b legs are upper bounds.
+
+## 2026-09-17 — Research cloud: idea 1243, what does a SCHEMA CLAUSE that DEMANDS A LADDER rather than a POINT cost across the whole record? — **KILL (capital) / SCHEMA CLAUSE EARNED IN AMENDED FORM**
+- Dials (rule 4): CLAUSE SCOPE {SC_BLOCK, SC_RESAMPLE, SC_ALL} x LADDER INCREMENT {INC_ONE,
+  INC_TWO, INC_REC}, all 9 cells published. Object is 1208's own 72 pick decisions at all 12 rungs,
+  q = 0.90, B = 1000. 1208's resolution ladder replays inside seed noise (max dev 0.0278) and its
+  own LL_REC (6 of 72) and LL_WIDE (61 of 72) replay exactly.
+- THE CLAUSE'S WHOLE BUY IS ONE RUNG AND THAT RUNG IS THE IDENTITY. Detection d(k) = 0.0000 /
+  0.0139 / 0.0556 (k=4) / 0.1250 / 0.2500 / 0.2917 (k=11) / 0.8472 (k=12). The 12th rung alone adds
+  +0.5556, and L = T against the frozen point contributes 55 of 72 = 0.9016 of the entire 12-rung
+  detection. 1208's G1 already proved L = T is the identity redraw, so 90% of what a ladder
+  "detects" is arithmetic, not evidence.
+- AND IT STAYS DEGENERATE WITHOUT THE IDENTITY. On the 11 honest rungs, L = 1008 alone is 15 of 72
+  = 0.714 of d(11), while L = 42 contributes exactly ZERO. Per-rung contribution is monotone in L
+  at the long end and ragged at the short end: the "ladder" is a one-sided reach toward the
+  degenerate rung, not a sweep.
+- THE COST. 34,095 committed units. Bound / non-conforming / unrecoverable-from-their-own-text:
+  SC_BLOCK 489 / 450 / 154; SC_RESAMPLE 1,413 / 1,371 / 1,074; SC_ALL 7,982 / 7,931 / 7,631. At the
+  headline scope 0.783 of the bound population states no L at all, so editing cannot fix it — only
+  re-running can. All three increment schedules reach 0.70 of d(12) only at k = 12.
+- REFLEXIVITY, PUBLISHED NOT REPAIRED (1230's finding, which binds this run). 1208's integers do not
+  replay because 1208's own entry and this lane's earlier 1239 commit are themselves units naming
+  block constructions: block-keyed 478 -> 489, L-ladder-stating 37 -> 72 in one day. G2, declared
+  before measuring as "< 0.02 of the bound population", FAILS at 0.051 and is reported failed, not
+  moved (rule 7). 6 of 7 gates pass.
+- CAPITAL. Rule 8, every pick made on warm-up..2016-12-31 only and 2017-2026 read once: act on all
+  72 picks 0.7995; act on the 17 resolved at the point L = 63, 0.8255; act on the clause's
+  survivors 0.8255 (k<=4) / 0.7953 (k=5) / 0.8197 (k=7) / 0.8363 (k=10) / 0.8196 (k=12) — best cell
+  +0.0108 over the point rule while discarding 6 of 17 picks, and NOT monotone in k. 4a 0 of 162
+  rung books; 4b BOTH 25 books collapsing to 19 distinct realised books the record already holds.
+  NO NEW BOOK, NO RULES CHANGE. Script: research/backtests/2026-09-17_what-does-a-SCHEMA-CLAUSE-that-DEMANDS-A-LADDER-rather-than-a-POINT-cost-across-the-whole-record_cloud.py
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: THE CLAUSE WORTH WRITING IS "STATE L, AND STATE
+  WHETHER THE WIDEST RUNG'S BLOCK IS A NON-TRIVIAL FRACTION OF T", NOT "STATE A LADDER". PROPOSED
+  for the Sunday review (rule 6) as a PROTOCOL schema line only, never as a chooser.
+- SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL is a current sub-$2B screen.
+  Levels are optimistic and a resample null cannot correct that; the headline is a ratio of the same
+  72 decisions at different ladder lengths so it largely cancels; the 4b passes are upper bounds.
