@@ -2055,3 +2055,49 @@ rather than a lookalike.
 - SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL is a current sub-$2B screen.
   Levels are optimistic and a resample null cannot correct that; the headline is a ratio of the same
   72 decisions at different ladder lengths so it largely cancels; the 4b passes are upper bounds.
+
+## 2026-09-17 — idea 1242 (lane B): is REACH the only resampling output that is L-FREE? ANSWERED NO
+- Script: `research/backtests/2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.py`.
+  Dials (rule 4): OUTPUT SET {OS_CORE, OS_WIDE, OS_ALL} x L RUNG PAIR {LP_REC (21,252),
+  LP_NEAR (42,126), LP_EXTREME (1,T)}; all 9 cells published. Object is 1208's own 72 pick
+  decisions at all 12 L rungs, B = 1000, q = 0.90, 1208's seeds. G4/G5 replay 1208's committed
+  `P_pick` and `is_anchor` on all 864 rows with max dev 0.000e+00, so this is the same object.
+- THE L-FREE SET IS A CLASS, NOT A SINGLETON. 5 of 18 outputs are bit-identical at every rung
+  including the degenerate L = T: O_REACH, O_PICK, O_MARGIN, O_LEVEL, O_GAPRATIO. What they share
+  is that the draws are not an argument of the function. Reach is not special; 1208's "reach is
+  L-free" is a corollary of "reach is observed".
+- AND NO BAR-SIDE OUTPUT IS L-FREE, NOT EVEN UP TO ITS OWN NOISE. Exact invariance cannot convict
+  a bar output (different L = different draws), so each L swing is measured against its own SEED
+  swing (8 rng streams at L = 63), with the bar L_swing/SEED_swing > 2.0 DECLARED BEFORE
+  measuring. Cell 2 (bar-side, noise-bound) is EMPTY: B_SD 13.01, B_RESOLVED 11.50, B_Q05 11.02,
+  B_RECRANGE 10.77, B_PPICK 9.67, B_PMAX 8.80, B_PCTRANK 8.72, B_NULLMED 5.74, B_BOOT95 5.73,
+  B_Q95 5.16, B_MODALRUNG 4.05, B_MODALMATCH 3.50; B_GAPEXCEEDS moves on 12 of 72 decisions with a
+  seed swing of exactly 0. The partition is the OBSERVED / BAR line and nothing finer.
+- L-DEPENDENCE IS A WIDE-RUNG FACT. At LP_NEAR (42,126) **0 of 7 / 0 of 14 / 0 of 18** outputs
+  separate — every gap sits inside its own seed noise — against 8 of 18 at (21,252) and 10 of 18
+  at (1,T). A claim keyed to the record's L = 63 is robust to its neighbour rungs and fragile only
+  across the decade-wide span. Mean B_PCTRANK is not monotone in L either: 0.5903 / 0.4942 / 0.2729
+  / 0.8750 at L = 1 / 126 / 1008 / T.
+- THE COST, PRICED. 34,103 committed units over LEADERBOARD.md + CHANGELOG.md + 1,166 .md files;
+  4,031 name at least one of the 18 outputs. OS_CORE: 1,129 verdict-carrying units, of which 158
+  (0.1399) name a bar-side output and so NEED an L — 141 of those state none; 971 rest on observed
+  outputs only and need no L at all. OS_WIDE: 748 of 1,681 need an L, 700 state none. So the
+  record's L debt is 141 (OS_CORE) / 700 (OS_WIDE) units, NOT the whole resampling corpus — which
+  is a materially smaller bill than 1208/1243's 1,074-unit figure implied.
+- CAPITAL. Rule 8, every pick made on warm-up..2016-12-31 only and 2017-2026 read once, 10 bps,
+  next-day execution: 1,122 rows. 4a 0 of 1,122 (0 of 162 rung books). 4b BOTH legs 295 rows / 25
+  of 162 rung books, collapsing to 19 DISTINCT realised books the record already holds; best U56
+  N=20 anchor B, full 11.03% / 1.1354 / -18.01%, OOS 12.42% / 1.1771 / -18.01% against U56 SPY OOS
+  15.15% / 0.8684 / -33.72% and LIVE v2 OOS 9.42% / 1.2714 / -12.05%. Best L-FREE (observed) gate
+  0.8508 mean OOS Sharpe vs best L-KEYED (bar) gate 0.8477 vs no gate 0.8403; paired delta of the
+  L-free gate over no gate +0.0105 (t +1.02, n 24). An L-free gate is worth at least as much as
+  every L-keyed one, so the record's exposure to L buys no money. NO NEW BOOK, NO RULES CHANGE.
+  14/14 gates pass.
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: A CLAIM NEEDS AN L ONLY IF ITS OUTPUT TOUCHES THE
+  DRAWS, so the schema line worth writing is "state L beside any BAR-side output" — which binds 141
+  (OS_CORE) / 700 (OS_WIDE) units and lets the 971 observed-side verdicts stand as they are.
+  PROPOSED for the Sunday review (rule 6) as a PROTOCOL schema line only, never as a chooser.
+- SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL is a current sub-$2B screen.
+  Every level is optimistic and a resample null cannot correct that; the headline is a ratio of the
+  same 72 decisions at different L and different seeds so it largely cancels; the 4b passes are
+  upper bounds. Follow-ups filed: 1250, 1251, 1252.

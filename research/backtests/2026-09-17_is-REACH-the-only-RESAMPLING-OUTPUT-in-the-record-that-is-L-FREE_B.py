@@ -185,6 +185,21 @@ GATES: list[dict] = []
 HYP: list[dict] = []
 
 
+def cached(suffix, builder):
+    """Reuse this script's OWN deterministic artefact if it is already on disk (delete the
+    .csv to force a rebuild).  Same construction, same seeds, same numbers either way."""
+    p = Path(f"{OUT}.{suffix}.csv")
+    if p.exists():
+        df = pd.read_csv(p)
+        if "L" in df.columns:
+            df["L"] = df.L.map(lambda v: "T" if str(v) == "T" else int(float(v)))
+        P(f"  reused {p.name}  ({len(df):,} rows) — deterministic artefact already on disk")
+        return df
+    df = builder()
+    dump(df, suffix)
+    return df
+
+
 def gate(name, what, value, ok):
     GATES.append(dict(gate=name, what=what, value=float(value), pass_=bool(ok)))
     P(f"  {name:<6s} {'PASS' if ok else 'FAIL'}  {what:<66s} {value:.3e}")
@@ -447,6 +462,8 @@ OUTPUT_TOKENS = {
     "B_SD":         r"\bbootstrap SD\b|\bboot(?:strap)? standard deviation\b|\bsampling SD\b",
     "B_RESOLVED":   r"\bresolved\b|\bunresolved\b|\bdecisive\b|\bindecisive\b|\bresolution rate\b",
     "B_MODALRUNG":  r"\bmodal (?:rung|argmax|twin|order)\b|\bshare_?top\b",
+    "B_MODALMATCH": r"\bargmax is the modal\b|\bis the modal (?:rung|argmax|draw)\b|"
+                    r"\bmodal(?:ly)? (?:matches|agrees)\b|\bargmax_is_modal\b",
     "B_PMAX":       r"\bP_?max\b|\blargest P_?boot\b",
     "B_GAPEXCEEDS": r"\bexceeds? its (?:own )?(?:bar|band)\b|\bclears? the (?:bar|band)\b",
     "O_REACH":      r"\breach(?:es|ed)?\b|\bargmax (?:rung )?(?:==|is|equals) (?:the )?anchor\b",
@@ -455,6 +472,7 @@ OUTPUT_TOKENS = {
     "O_LEVEL":      r"\bIS Sharpe\b|\bIS CAGR\b|\bIS[- ]DD\b|\bobserved (?:level|maximum)\b",
     "O_GAPRATIO":   r"\bgap ratio\b|\bspread[- ]normalis?zed\b|\bfraction of the spread\b",
 }
+assert set(OUTPUT_TOKENS) == set(OUTPUTS), sorted(set(OUTPUTS) ^ set(OUTPUT_TOKENS))
 OUTPUT_RE = {k: re.compile(v, re.I) for k, v in OUTPUT_TOKENS.items()}
 LTOK = re.compile(
     r"\b(?:L\s*=\s*(\d+)|block length(?:\s+of)?\s+(\d+)|blocks? of (\d+)|"
@@ -613,7 +631,6 @@ def main():
     DEC = [(pn, an, lad, ch) for pn in PANELS for an in ANCHORS
            for lad in LADNAMES for ch in CHOOSERS]
     P(f"  decisions: {len(DEC)}   x {len(L_ALL)} L rungs x {len(OUTPUTS)} outputs")
-    rows = []
     pre = {}
     for (pn, an, lad, ch) in DEC:
         pan = pans[pn]
@@ -622,14 +639,20 @@ def main():
         obs = np.array([is_stat(LB[(pn, an, lad)][rg], pan.ins, ch) for rg in rungs])
         j, oout = observed_outputs(obs, rungs, ANCHORS[an][lad])
         pre[(pn, an, lad, ch)] = (R, obs, j, oout, rungs)
-        for L in L_ALL:
-            Lv = R.shape[0] if L == "T" else int(L)
-            D = draw_stats(R, ch, Lv, seed_of(pn, an, lad, ch, L), B=BDRAWS)
-            rows.append(dict(panel=pn, anchor=an, ladder=lad, chooser=ch, k=len(rungs),
-                             L=("T" if L == "T" else L), L_eff=Lv,
-                             pick=str(rungs[j]), **oout, **bar_outputs(D, obs, j)))
-    odf = pd.DataFrame(rows)
-    dump(odf, "outputs")
+
+    def build_outputs():
+        rows = []
+        for (pn, an, lad, ch) in DEC:
+            R, obs, j, oout, rungs = pre[(pn, an, lad, ch)]
+            for L in L_ALL:
+                Lv = R.shape[0] if L == "T" else int(L)
+                D = draw_stats(R, ch, Lv, seed_of(pn, an, lad, ch, L), B=BDRAWS)
+                rows.append(dict(panel=pn, anchor=an, ladder=lad, chooser=ch, k=len(rungs),
+                                 L=("T" if L == "T" else L), L_eff=Lv,
+                                 pick=str(rungs[j]), **oout, **bar_outputs(D, obs, j)))
+        return pd.DataFrame(rows)
+
+    odf = cached("outputs", build_outputs)
     P(f"  ({time.time() - t0:.0f}s)")
 
     # cross-check against 1208's committed artefact, row by row
@@ -673,15 +696,17 @@ def main():
     P("-" * 100)
     P(f"ARM C — THE NOISE YARDSTICK.  Every output recomputed at L = {L_HEAD} on {len(SEED_LADDER)} rng streams.")
     P("-" * 100)
-    srows = []
-    for sd in SEED_LADDER:
-        for (pn, an, lad, ch) in DEC:
-            R, obs, j, oout, rungs = pre[(pn, an, lad, ch)]
-            D = draw_stats(R, ch, L_HEAD, seed_of("SEED", sd, pn, an, lad, ch), B=BDRAWS)
-            srows.append(dict(panel=pn, anchor=an, ladder=lad, chooser=ch, seed=sd,
-                              **oout, **bar_outputs(D, obs, j)))
-    sdf = pd.DataFrame(srows)
-    dump(sdf, "seedsweep")
+    def build_seedsweep():
+        srows = []
+        for sd in SEED_LADDER:
+            for (pn, an, lad, ch) in DEC:
+                R, obs, j, oout, rungs = pre[(pn, an, lad, ch)]
+                D = draw_stats(R, ch, L_HEAD, seed_of("SEED", sd, pn, an, lad, ch), B=BDRAWS)
+                srows.append(dict(panel=pn, anchor=an, ladder=lad, chooser=ch, seed=sd,
+                                  **oout, **bar_outputs(D, obs, j)))
+        return pd.DataFrame(srows)
+
+    sdf = cached("seedsweep", build_seedsweep)
     P(f"  ({time.time() - t0:.0f}s)")
 
     KEY = ["panel", "anchor", "ladder", "chooser"]

@@ -1,0 +1,234 @@
+====================================================================================================
+IDEA 1242 (lane B, 2026-09-17) — is REACH the only RESAMPLING OUTPUT in the record that is L-FREE?
+====================================================================================================
+  dial 1 = OUTPUT SET  {OS_CORE, OS_WIDE, OS_ALL}          (headline OS_CORE)
+  dial 2 = L RUNG PAIR {LP_REC, LP_NEAR, LP_EXTREME}       (headline LP_REC = (21, 252))
+  NOT dials: 1208's same 72 decisions (3 panels x 2 anchors x 4 ladders x 3 choosers),
+             all 12 L rungs, B = 1000, q = 0.90.  SEED is the NOISE YARDSTICK (8 streams
+             at L = 63), and the cell-3 bar L_swing/SEED_swing > 2.0 is DECLARED HERE.
+
+----------------------------------------------------------------------------------------------------
+ARM 0 — DATA-FREE.  What makes an output L-free before any tape is read.
+----------------------------------------------------------------------------------------------------
+      output declared_class  kind                                             definition  in_OS_CORE  in_OS_WIDE
+     O_REACH            OBS  bool                          IS argmax rung == anchor rung        True        True
+     B_PPICK            BAR float     P_boot that the observed argmax is the draw argmax        True        True
+       B_Q95            BAR float      95th percentile of the pick rung's null statistic        True        True
+   B_NULLMED            BAR float               median of the pick rung's null statistic        True        True
+  B_RECRANGE            BAR float          recentred null range q95-q05 of the pick rung        True        True
+    B_BOOT95            BAR float       95th percentile of the draw top-minus-second gap        True        True
+   B_PCTRANK            BAR float percentile rank of the observed level in its own draws        True        True
+      B_PMAX            BAR float                              largest P_boot over rungs       False        True
+ B_MODALRUNG            BAR   int                         index of the modal draw argmax       False        True
+B_MODALMATCH            BAR  bool               observed argmax IS the modal draw argmax       False        True
+        B_SD            BAR float              bootstrap SD of the pick rung's statistic       False        True
+B_GAPEXCEEDS            BAR  bool                       observed margin exceeds B_BOOT95       False        True
+  B_RESOLVED            BAR  bool             P_pick >= 0.90 (the record's decisive bar)       False        True
+       B_Q05            BAR float       5th percentile of the pick rung's null statistic       False        True
+      O_PICK            OBS   int                            index of the IS argmax rung       False       False
+    O_MARGIN            OBS float                observed top-minus-second statistic gap       False       False
+     O_LEVEL            OBS float                    observed statistic at the pick rung       False       False
+  O_GAPRATIO            OBS float                 observed margin / observed rung spread       False       False
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.classes.csv  (18 rows, 6 cols)
+  The OBS rows take the observed IS path and nothing else; the draws are not an argument
+  of the function, so their value is bit-identical at every L.  The BAR rows are
+  functionals of the resample law, so different L means different DRAWS and they move
+  even where they do not depend on L.  That is why cell 2 exists and why the yardstick is
+  the SEED swing, not zero.
+  G1     PASS  OBS outputs bit-identical when L changes on a synthetic tape (max dev) 0.000e+00
+  G2     PASS  BAR outputs DO move on that same synthetic tape (max dev > 0)      1.000e+00
+  G3     PASS  L=T joint redraw is the identity (max |idx - arange|)              0.000e+00
+
+----------------------------------------------------------------------------------------------------
+PANELS (rule 9: all three are current-constituent lists; every LEVEL is optimistic).
+----------------------------------------------------------------------------------------------------
+  U56     4706 rows x   56 cols   2008-01-02 .. 2026-09-16   IS 2007 / OOS 2439
+  B136    4703 rows x  136 cols   2008-01-02 .. 2026-09-11   IS 2007 / OOS 2436
+  SMALL   4198 rows x  716 cols   2010-01-04 .. 2026-09-11   IS 1502 / OOS 2436
+  144 distinct rung books built (14s)
+  G4a    PASS  U56 anchor A full Sharpe replays 1101/1208's 1.139701              1.622e-03
+
+----------------------------------------------------------------------------------------------------
+ARM B — EVERY OUTPUT AT EVERY L RUNG, ON 1208's SAME 72 DECISIONS.
+----------------------------------------------------------------------------------------------------
+  decisions: 72   x 12 L rungs x 18 outputs
+  reused 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.outputs.csv  (864 rows) — deterministic artefact already on disk
+  (14s)
+  G4     PASS  P_boot replays 1208's committed ladder on all 864 rows (max dev)   0.000e+00
+  G5     PASS  reach replays 1208's is_anchor on every row (max dev)              0.000e+00
+  G6     PASS  reach = 14 of 72 at EVERY L rung incl. L=T (max |dev|)             0.000e+00
+  G7_1   PASS  1208's resolution rate at L=1 (0.1528) replays                     2.222e-07
+  G7_21  PASS  1208's resolution rate at L=21 (0.1944) replays                    4.444e-07
+  G7_63  PASS  1208's resolution rate at L=63 (0.2222) replays                    2.222e-07
+  G7_252 PASS  1208's resolution rate at L=252 (0.2778) replays                   2.222e-07
+  G7_1008 PASS  1208's resolution rate at L=1008 (0.4722) replays                  2.222e-07
+  G8     PASS  L=T resolves all 72 by construction (rate)                         1.000e+00
+
+  the two ends of the queue's premise, side by side, over the SAME 72 decisions:
+   L   reach  resolution_rate  mean_P_pick  mean_B_BOOT95  mean_B_PCTRANK
+   1 14.0000           0.1528       0.5604         0.0813          0.5903
+   2 14.0000           0.1667       0.5636         0.0809          0.5938
+   5 14.0000           0.1667       0.5633         0.0810          0.5929
+  10 14.0000           0.1806       0.5672         0.0789          0.5735
+  21 14.0000           0.1944       0.5781         0.0788          0.5637
+  42 14.0000           0.2222       0.5949         0.0770          0.5419
+  63 14.0000           0.2222       0.6070         0.0766          0.5274
+ 126 14.0000           0.2361       0.6276         0.0740          0.4942
+ 252 14.0000           0.2778       0.6590         0.0691          0.5118
+ 504 14.0000           0.3194       0.6904         0.0648          0.4163
+1008 14.0000           0.4722       0.7054         0.0490          0.2729
+   T 14.0000           1.0000       1.0000         0.0155          0.8750
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.ends.csv  (12 rows, 6 cols)
+
+----------------------------------------------------------------------------------------------------
+ARM C — THE NOISE YARDSTICK.  Every output recomputed at L = 63 on 8 rng streams.
+----------------------------------------------------------------------------------------------------
+  reused 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.seedsweep.csv  (576 rows) — deterministic artefact already on disk
+  (14s)
+      output declared_class                  cell  mean_abs_swing_L  mean_abs_swing_S  ratio_L_over_SEED  decisions_moving_L  decisions_moving_SEED  mean_abs_swing_LT  n_decisions_moving_LT
+     O_REACH            OBS 1_STRUCTURALLY_L_FREE            0.0000            0.0000                NaN                   0                      0             0.0000                 0.0000
+      O_PICK            OBS 1_STRUCTURALLY_L_FREE            0.0000            0.0000                NaN                   0                      0             0.0000                 0.0000
+    O_MARGIN            OBS 1_STRUCTURALLY_L_FREE            0.0000            0.0000                NaN                   0                      0             0.0000                 0.0000
+     O_LEVEL            OBS 1_STRUCTURALLY_L_FREE            0.0000            0.0000                NaN                   0                      0             0.0000                 0.0000
+  O_GAPRATIO            OBS 1_STRUCTURALLY_L_FREE            0.0000            0.0000                NaN                   0                      0             0.0000                 0.0000
+        B_SD            BAR     3_BAR_L_DEPENDENT            0.1179            0.0091            13.0101                  72                     72             0.1669                72.0000
+  B_RESOLVED            BAR     3_BAR_L_DEPENDENT            0.3194            0.0278            11.5000                  23                      2             0.8472                61.0000
+       B_Q05            BAR     3_BAR_L_DEPENDENT            0.2779            0.0252            11.0194                  72                     72             0.3044                72.0000
+  B_RECRANGE            BAR     3_BAR_L_DEPENDENT            0.3913            0.0363            10.7657                  72                     72             0.5491                72.0000
+     B_PPICK            BAR     3_BAR_L_DEPENDENT            0.3116            0.0322             9.6661                  66                     65             0.5209                66.0000
+      B_PMAX            BAR     3_BAR_L_DEPENDENT            0.2795            0.0318             8.7950                  66                     65             0.4514                66.0000
+   B_PCTRANK            BAR     3_BAR_L_DEPENDENT            0.3854            0.0442             8.7185                  72                     72             0.7072                72.0000
+   B_NULLMED            BAR     3_BAR_L_DEPENDENT            0.0894            0.0156             5.7397                  72                     72             0.0899                72.0000
+    B_BOOT95            BAR     3_BAR_L_DEPENDENT            0.0408            0.0071             5.7321                  72                     72             0.0733                72.0000
+       B_Q95            BAR     3_BAR_L_DEPENDENT            0.1430            0.0277             5.1595                  72                     72             0.2802                72.0000
+ B_MODALRUNG            BAR     3_BAR_L_DEPENDENT            1.0694            0.2639             4.0526                  31                      9             1.1111                32.0000
+B_MODALMATCH            BAR     3_BAR_L_DEPENDENT            0.3889            0.1111             3.5000                  28                      8             0.4444                32.0000
+B_GAPEXCEEDS            BAR     3_BAR_L_DEPENDENT            0.0278            0.0000                NaN                   2                      0             0.1667                12.0000
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.partition.csv  (18 rows, 18 cols)
+
+  CELL 1 structurally L-free (5): ['O_REACH', 'O_PICK', 'O_MARGIN', 'O_LEVEL', 'O_GAPRATIO']
+  CELL 2 bar-side, noise-bound (0): []
+  CELL 3 bar-side, L-dependent (13): ['B_SD', 'B_RESOLVED', 'B_Q05', 'B_RECRANGE', 'B_PPICK', 'B_PMAX', 'B_PCTRANK', 'B_NULLMED', 'B_BOOT95', 'B_Q95', 'B_MODALRUNG', 'B_MODALMATCH', 'B_GAPEXCEEDS']
+  H_UNIQUE         REFUTED    cell 1 holds 5 outputs: ['O_REACH', 'O_PICK', 'O_MARGIN', 'O_LEVEL', 'O_GAPRATIO']
+  H_CLASS          SUPPORTED  cell1=['O_GAPRATIO', 'O_LEVEL', 'O_MARGIN', 'O_PICK', 'O_REACH'] vs OBS=['O_GAPRATIO', 'O_LEVEL', 'O_MARGIN', 'O_PICK', 'O_REACH']
+  H_ALLBAR         SUPPORTED  13 of 13 BAR outputs in cell 3; noise-bound: []
+
+----------------------------------------------------------------------------------------------------
+DIAL GRID — all 9 cells (OUTPUT SET x L RUNG PAIR), each one published.
+----------------------------------------------------------------------------------------------------
+output_set     L_pair     pair  n_outputs  n_L_FREE  n_L_DEPENDENT  frac_L_free                                          L_free_outputs
+   OS_CORE     LP_REC (21,252)          7         3              4       0.4286                                                 O_REACH
+   OS_CORE    LP_NEAR (42,126)          7         7              0       1.0000                                                 O_REACH
+   OS_CORE LP_EXTREME    (1,T)          7         2              5       0.2857                                                 O_REACH
+   OS_WIDE     LP_REC (21,252)         14         6              8       0.4286                                    O_REACH;B_GAPEXCEEDS
+   OS_WIDE    LP_NEAR (42,126)         14        14              0       1.0000                                    O_REACH;B_GAPEXCEEDS
+   OS_WIDE LP_EXTREME    (1,T)         14         4             10       0.2857                                                 O_REACH
+    OS_ALL     LP_REC (21,252)         18        10              8       0.5556 O_REACH;B_GAPEXCEEDS;O_PICK;O_MARGIN;O_LEVEL;O_GAPRATIO
+    OS_ALL    LP_NEAR (42,126)         18        18              0       1.0000 O_REACH;B_GAPEXCEEDS;O_PICK;O_MARGIN;O_LEVEL;O_GAPRATIO
+    OS_ALL LP_EXTREME    (1,T)         18         8             10       0.4444              O_REACH;O_PICK;O_MARGIN;O_LEVEL;O_GAPRATIO
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.dialgrid.csv  (9 rows, 8 cols)
+  HEADLINE (OS_CORE / LP_REC): 3 of 7 outputs L-free; exactly invariant: O_REACH
+
+----------------------------------------------------------------------------------------------------
+ARM D — CENSUS.  How the record's committed sentences SPLIT across the partition.
+----------------------------------------------------------------------------------------------------
+  corpus: 34,103 committed text units over LEADERBOARD.md + CHANGELOG.md + 1166 .md files; 4,031 name at least one of the 18 outputs.
+output_set  n_units  OBS_ONLY  BAR_ANY  MIXED  n_with_verdict  verdict_BAR_ANY  verdict_BAR_no_L  verdict_OBS_ONLY  frac_verdict_needing_L  states_L  frac_states_L
+   OS_CORE     1272       972      300     32            1129              158               141               971                  0.1399        35         0.0275
+   OS_WIDE     1858       934      924     70            1681              748               700               933                  0.4450        65         0.0350
+    OS_ALL     4031      3107      924    184            2705              748               700              1957                  0.2765        88         0.0218
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.census_units.csv  (4,031 rows, 27 cols)
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.census.csv  (3 rows, 12 cols)
+      output declared_class                  cell  n_units  n_with_verdict  n_states_L  frac_states_L
+    O_MARGIN            OBS 1_STRUCTURALLY_L_FREE     1189             675          10         0.0084
+     O_REACH            OBS 1_STRUCTURALLY_L_FREE     1004            1003          16         0.0159
+     O_LEVEL            OBS 1_STRUCTURALLY_L_FREE      997             468          18         0.0181
+  B_RESOLVED            BAR     3_BAR_L_DEPENDENT      595             589          38         0.0639
+      O_PICK            OBS 1_STRUCTURALLY_L_FREE      463             254          17         0.0367
+   B_NULLMED            BAR     3_BAR_L_DEPENDENT      110              66          12         0.1091
+       B_Q95            BAR     3_BAR_L_DEPENDENT      100              30           1         0.0100
+     B_PPICK            BAR     3_BAR_L_DEPENDENT       48              39           9         0.1875
+B_GAPEXCEEDS            BAR     3_BAR_L_DEPENDENT       36              22           1         0.0278
+   B_PCTRANK            BAR     3_BAR_L_DEPENDENT       28              16           1         0.0357
+        B_SD            BAR     3_BAR_L_DEPENDENT       28              19           1         0.0357
+    B_BOOT95            BAR     3_BAR_L_DEPENDENT       19              11           3         0.1579
+ B_MODALRUNG            BAR     3_BAR_L_DEPENDENT       12               6           3         0.2500
+       B_Q05            BAR     3_BAR_L_DEPENDENT        9               9           0         0.0000
+  B_RECRANGE            BAR     3_BAR_L_DEPENDENT        7               4           0         0.0000
+  O_GAPRATIO            OBS 1_STRUCTURALLY_L_FREE        1               1           0         0.0000
+B_MODALMATCH            BAR     3_BAR_L_DEPENDENT        0               0           0            NaN
+      B_PMAX            BAR     3_BAR_L_DEPENDENT        0               0           0            NaN
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.per_output_census.csv  (18 rows, 7 cols)
+  HEADLINE (OS_CORE): of 1129 verdict-carrying units naming one of
+  these outputs, 158 (0.1399) name a BAR-side
+  output and so NEED an L; 141 of those state none. 971 rest on OBSERVED outputs only and need no L at all.
+
+----------------------------------------------------------------------------------------------------
+ARM E — RULE 8 WALK-FORWARD + BOTH KEEP PATHS.  Every pick made on warm-up..2016-12-31
+        ONLY; 2017-2026 read once.  10 bps, next-day execution, 260-row warm-up.
+----------------------------------------------------------------------------------------------------
+  U56    LIVE v2  full   8.60% / 1.1980 / -12.05%   OOS   9.42% / 1.2714 / -12.05%
+  U56    SPY      full  15.06% / 0.8814 / -33.72%   OOS  15.15% / 0.8684 / -33.72%
+  B136   LIVE v2  full   7.98% / 1.0993 / -12.24%   OOS   7.88% / 1.1059 / -12.24%
+  B136   SPY      full  15.16% / 0.8861 / -33.72%   OOS  15.33% / 0.8767 / -33.72%
+  SMALL  LIVE v2  full   4.64% / 0.7129 / -12.18%   OOS   4.47% / 0.6516 / -12.18%
+  SMALL  SPY      full  14.06% / 0.8581 / -33.72%   OOS  15.33% / 0.8767 / -33.72%
+  G9     PASS  U56 SPY OOS Sharpe replays the record's committed 0.8713           2.894e-03
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.walkforward.csv  (1,122 rows, 31 cols)
+  rule-8 rows: 1122   4a passes 0   4b full 296   4b OOS 300   4b BOTH 295
+  of the 162 rung books: 4a 0, 4b full 26, 4b BOTH 25
+  the 295 4b-BOTH rows collapse to 19 DISTINCT realised books.
+  best: U56 N=20 anchor B [RUNG_BOOK]  full 11.03% / 1.1354 / -18.01%   OOS 12.42% / 1.1771 / -18.01%
+        vs U56 SPY OOS 15.15% / 0.8684 / -33.72%   vs LIVE v2 OOS 9.42% / 1.2714 / -12.05%
+  does the OBSERVED / BAR split move MONEY, or only the word?
+            selector  n  mean_OOS_Sharpe  mean_OOS_CAGR  mean_OOS_MaxDD  mean_full_Sharpe  n4a  n4b  gate_class
+        SEL_ALLPICKS 24           0.8403         0.1313         -0.2572            0.9109    0    3     NO_GATE
+   SEL_REACH_obsfree 24           0.8268         0.1191         -0.2421            0.8841    0    8  OBS_L_FREE
+  SEL_MARGIN_obsfree 24           0.8488         0.1262         -0.2400            0.9113    0    6  OBS_L_FREE
+SEL_GAPRATIO_obsfree 24           0.8508         0.1281         -0.2434            0.9120    0    5  OBS_L_FREE
+     SEL_RESOLVED_L1 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+   SEL_GAPEXCEEDS_L1 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+      SEL_PCTRANK_L1 24           0.8182         0.1190         -0.2448            0.8817    0    6 BAR_L_KEYED
+     SEL_RESOLVED_L2 24           0.8271         0.1205         -0.2450            0.8843    0    8 BAR_L_KEYED
+   SEL_GAPEXCEEDS_L2 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+      SEL_PCTRANK_L2 24           0.8288         0.1212         -0.2445            0.8902    0    7 BAR_L_KEYED
+     SEL_RESOLVED_L5 24           0.8271         0.1205         -0.2450            0.8843    0    8 BAR_L_KEYED
+   SEL_GAPEXCEEDS_L5 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+      SEL_PCTRANK_L5 24           0.8253         0.1234         -0.2549            0.8876    0    8 BAR_L_KEYED
+    SEL_RESOLVED_L10 24           0.8273         0.1223         -0.2476            0.8845    0    7 BAR_L_KEYED
+  SEL_GAPEXCEEDS_L10 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+     SEL_PCTRANK_L10 24           0.8212         0.1186         -0.2449            0.8831    0    8 BAR_L_KEYED
+    SEL_RESOLVED_L21 24           0.8273         0.1223         -0.2476            0.8845    0    7 BAR_L_KEYED
+  SEL_GAPEXCEEDS_L21 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+     SEL_PCTRANK_L21 24           0.8361         0.1225         -0.2439            0.8962    0    5 BAR_L_KEYED
+    SEL_RESOLVED_L42 24           0.8273         0.1223         -0.2476            0.8845    0    7 BAR_L_KEYED
+  SEL_GAPEXCEEDS_L42 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+     SEL_PCTRANK_L42 24           0.8426         0.1292         -0.2495            0.8998    0    6 BAR_L_KEYED
+    SEL_RESOLVED_L63 24           0.8273         0.1223         -0.2476            0.8845    0    7 BAR_L_KEYED
+  SEL_GAPEXCEEDS_L63 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+     SEL_PCTRANK_L63 24           0.8477         0.1298         -0.2473            0.9031    0    7 BAR_L_KEYED
+   SEL_RESOLVED_L126 24           0.8273         0.1223         -0.2476            0.8845    0    7 BAR_L_KEYED
+ SEL_GAPEXCEEDS_L126 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+    SEL_PCTRANK_L126 24           0.8440         0.1260         -0.2454            0.8995    0    8 BAR_L_KEYED
+   SEL_RESOLVED_L252 24           0.8273         0.1223         -0.2476            0.8845    0    7 BAR_L_KEYED
+ SEL_GAPEXCEEDS_L252 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+    SEL_PCTRANK_L252 24           0.8361         0.1230         -0.2486            0.8943    0    3 BAR_L_KEYED
+   SEL_RESOLVED_L504 24           0.8321         0.1235         -0.2462            0.8898    0    7 BAR_L_KEYED
+ SEL_GAPEXCEEDS_L504 24           0.8268         0.1191         -0.2421            0.8841    0    8 BAR_L_KEYED
+    SEL_PCTRANK_L504 24           0.8220         0.1197         -0.2481            0.8831    0    4 BAR_L_KEYED
+  SEL_RESOLVED_L1008 24           0.8307         0.1225         -0.2461            0.8927    0    6 BAR_L_KEYED
+SEL_GAPEXCEEDS_L1008 24           0.8266         0.1203         -0.2455            0.8840    0    8 BAR_L_KEYED
+   SEL_PCTRANK_L1008 24           0.8241         0.1197         -0.2463            0.8837    0    6 BAR_L_KEYED
+     SEL_RESOLVED_LT 24           0.8403         0.1313         -0.2572            0.9109    0    3 BAR_L_KEYED
+   SEL_GAPEXCEEDS_LT 24           0.8424         0.1247         -0.2460            0.9014    0    5 BAR_L_KEYED
+      SEL_PCTRANK_LT 24           0.8444         0.1279         -0.2478            0.9070    0    5 BAR_L_KEYED
+  wrote 2026-09-17_is-REACH-the-only-RESAMPLING-OUTPUT-in-the-record-that-is-L-FREE_B.money.csv  (40 rows, 9 cols)
+  best OBS (L-free) gate 0.8508 vs best BAR (L-keyed) gate 0.8477 vs no gate 0.8403
+  H_MONEY          SUPPORTED  OBS 0.8508 vs BAR 0.8477 (no gate 0.8403)
+  paired delta of SEL_GAPRATIO_obsfree over SEL_ALLPICKS: +0.0105 mean OOS Sharpe (t +1.02, n 24)
+
+====================================================================================================
+GATES: 14/14 pass
+VERDICT: KILL (capital) — no new book; the deliverable is the PARTITION, a schema fact.
+runtime 29s
+====================================================================================================
