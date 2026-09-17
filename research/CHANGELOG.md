@@ -1507,3 +1507,63 @@ own commit 0743d51 (gates G1, G9), so the comparison is like for like.
 - SURVIVORSHIP (rule 9). B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B screen with
   52 of 715 tickers dropped for max_1d_move >= 1.0 (663 names), SPY excluded from its eligible set.
 - Gates 11 of 11. Runtime 103s, offline, deterministic.
+
+## 2026-09-17 — lane B, idea 1226: does-any-committed-SE-in-the-record-state-what-it-DIVIDED-BY — KILL (capital) / ANSWERED = NO
+
+1219 published as declared bycatch that the SAME Newey-West SE of the same daily difference
+calibrates at crit95 2.0161-2.4754 when the pooled BOOK volatility puts it on the Sharpe scale
+and 0.9219-1.2778 when the SD of the DIFFERENCE does, stated its own choice in a source comment
+and stopped. An SE on a ratio scale is a quotient; 1212 and 1219 censused the numerator's basis
+and its L, and nobody has ever censused the bottom half. Two dials, CLAIM SET {C_1219, C_HEAD,
+C_MEMO, C_ALL} x DENOMINATOR SET {D_PAIR, D_VOL3, D_VOL4, D_ALL5}, 16 cells all published. The
+SE NUMERATOR is held FIXED at one HAC/Bartlett construction for the whole run and the L ladder
+is 1212's, reported at every rung and never chosen, so the spread below is the denominator and
+nothing else. 1219's two committed bands reproduce to 3.3e-05 and 4.7e-05 on its own null pairs
+(gates G7, G8), so this measures the record's object rather than a lookalike.
+
+- THE ANSWER, AND IT IS NO. 0 of 113 (C_1219), 0 of 115 (C_HEAD) and 0 of 264 (C_MEMO)
+  committed SEs name their denominator in the committed sentence; the emitting script pins one
+  for 3, 3 and 4. C_ALL rises to 43 of 316 (0.1361) ONLY because every one of its 38
+  text-stating hits is in QUEUE.md — the entries that ASK this question, 1219's bycatch note
+  and idea 1226 itself. NOT ONE result sentence in LEADERBOARD.md or CHANGELOG.md names what
+  its SE divided by, at any claim set. Same on the t population: 0 of 211 in text, 7 in script.
+  NOT_RATIO (38-81 per set) is published separately and folded into neither pass nor fail.
+- THE SIZE OF THE DIAL. D_PAIR band [0.9219, 2.4754] = x2.69 with numerator, basis and L held
+  fixed; D_ALL5 [0.9219, 4.0721] = x4.42; at a SINGLE L it is x2.80-x3.35, so L cannot be
+  blamed. THE EXPOSURE IS ONE DISTINCTION, NOT FIVE: D_BOOKVOL, D_ANCHOR and D_MAXVOL agree to
+  0.4% — any book-volatility reading gives the same bar — and the whole factor is difference-SD
+  against any book vol, because two books correlated at 0.9037 have a difference whose SD is
+  0.4381 of theirs. D_SPYVOL (the information-ratio scale) 2.9064-4.0721. The iid-bootstrap SE
+  of the Sharpe DIFFERENCE calibrates at 1.9697, which is where the quoted 1.96 comes from.
+- THE EXPOSURE, 16 CELLS. On the narrowest honest reading 55 of 211 C_HEAD committed t's
+  (0.2607), and 0.4365 of the ones published as significant, have a verdict that is a function
+  of a choice nobody wrote down; 15 are significant at 1.96 and not at the strictest bar in the
+  pair. C_1219 54 of 210, C_MEMO 95 of 359, C_ALL 131 of 482. D_ALL5 takes C_HEAD to 96 of 211.
+- BYCATCH, MEASURED FIRST AND NOT REPAIRED QUIETLY. The crit95 is itself a measurement: per
+  cell its Monte-Carlo SE (resampling the 90 PAIRS, 400 draws) is 0.1120-0.2028 on the book-vol
+  rungs and 0.2634-0.4863 on D_SPYVOL, and an independent seed base moves the same bands by up
+  to 0.4035 — about 2 SE, and larger than several differences the record has published as
+  findings. The headline deliberately uses 1219's OWN pairs so nothing rests on this run's
+  draw; the 16 exposure cells move by at most 30 claims on the replicated bands and do not
+  reorder.
+- RULE 8 AND THE CAPITAL CONTENT. 216 books chosen on 2009-2016 with 2017-2026 read ONCE, plus
+  1,200 publish decisions (24 contexts x 5 denominators x 5 L x 2 bars). HONEST bar minus
+  QUOTED 1.96: +0.0014 of mean OOS Sharpe (SE 0.0014, t +1.05), moves -1.72, 4b +0.00, and the
+  two bars make IDENTICAL decisions at 10 of 25 cells. But the DIAL is not nothing: at the
+  quoted bar D_DIFFSD moves 0 of 24 contexts at EVERY L while D_BOOKVOL moves 7.0, D_ANCHOR
+  7.2, D_MAXVOL 8.2 and D_SPYVOL 10.6 — had the record divided by the difference SD, no publish
+  decision in this whole family would ever have been made. Every reading still lands at or
+  below doing nothing (0.8505-0.8575 against 0.8575). 9 of 50 rules clear their own
+  count-matched random bar against 5.0 by chance (one-sided binomial p 0.0579) — not
+  separation, and H_ANCHOR's declared "at least one rule" bar was too weak; read it as no.
+  1210's, 1219's, 1221's and 1227's finding arriving a fifth time.
+- BOTH KEEP PATHS. 4a 0 of 216; 4b full AND OOS 12 of 216 over 12 DISTINCT books (U56 11, B136
+  1, SMALL 0). Best U56 / W / N=12 / H=126: full 17.65% / 1.1658 / -20.17% (halves 1.2741 /
+  1.0833), OOS 18.78% / 1.1701 / -20.17% — the book 1183, 1212 and 1219 already committed.
+  CONFIRMATORY, NOT GENERATIVE. NOT PROMOTED, NO MEMO, NO RULES CHANGE.
+- SURVIVORSHIP (rule 9). B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B screen
+  with 52 of 715 tickers dropped for max_1d_move >= 1.0 (663 names), SPY excluded from its
+  eligible set. The census arms scan committed text and source and carry no market bias; the
+  bias largely cancels out of a critical-value RATIO, which is the whole headline, and does NOT
+  cancel out of the OOS levels or the 4b legs, so any pass there is an upper bound.
+- Gates 12 of 12. Runtime 76s, offline, deterministic.
