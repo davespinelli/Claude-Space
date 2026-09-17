@@ -1,0 +1,112 @@
+====================================================================================================
+IDEA 1212 (cloud lane, 2026-09-17) — is-a-CALENDAR-FOLD-SE-systematically-LOOSER-than-the-BLOCK-BOOTSTRAP-it-was-added-to-correct
+====================================================================================================
+
+## PANELS
+  U56      56 cols, 4,706 rows 2008-01-02 -> 2026-09-16  warm 4,446  IS 2,007  OOS 2,439
+  B136    136 cols, 4,703 rows 2008-01-02 -> 2026-09-11  warm 4,443  IS 2,007  OOS 2,436
+  SMALL   664 cols, 4,198 rows 2010-01-04 -> 2026-09-11  warm 3,938  IS 1,502  OOS 2,436
+  SMALL STAMP: data/small_meta.csv lists 715 tickers; 52 dropped for max_1d_move >= 1.0; pool served = 663 names + SPY as benchmark.
+
+## GATES — printed before any result number
+  G1    PASS  fast runner == engine.backtest (U56 anchor, post warm-up)        1.3878e-17
+  G2    PASS  determinism: same book twice                                     0.0000e+00
+  G3    PASS  P_SPLIT halves are DISTINCT books (|corr| < 0.999)               8.1260e-01
+  NOTE   P_SPLIT pair corr 0.8126 vs P_NULL 0.9534 — P_SPLIT is the LESS contemporaneously correlated pair, not the more; persistence is reported in ARM 1.
+  G4    PASS  P_SPLIT's two halves hold NO name in common at any rebalance     0.0000e+00
+  G5    PASS  S_BLOCK at L = 1 == S_IID (relative, both 600 draws)             4.6077e-03
+  G6    PASS  S_FOLD with < 2 usable folds returns NaN                         1.0000e+00
+
+## BENCHMARKS (per panel, 10 bps, post warm-up)
+  U56    SPY    15.06% / 0.8814 /  -33.72%  halves 0.9598/0.8170  OOS  15.15% / 0.8684 /  -33.72%
+  U56    LIVE    8.60% / 1.1980 /  -12.05%  halves 1.2329/1.1702  OOS   9.42% / 1.2714 /  -12.05%
+  B136   SPY    15.16% / 0.8861 /  -33.72%  halves 0.9596/0.8259  OOS  15.33% / 0.8767 /  -33.72%
+  B136   LIVE    7.98% / 1.0993 /  -12.24%  halves 1.2348/0.9658  OOS   7.88% / 1.1059 /  -12.24%
+  SMALL  SPY    14.06% / 0.8581 /  -33.72%  halves 0.9138/0.8344  OOS  15.33% / 0.8767 /  -33.72%
+  SMALL  LIVE    4.30% / 0.6637 /  -13.89%  halves 0.8063/0.5552  OOS   3.75% / 0.5600 /  -13.89%
+
+## ARM 1 — 30 DISJOINT pairs per (panel, pair kind), true Sharpe difference = 0
+  U56    built  (6s elapsed)
+  B136   built  (10s elapsed)
+  SMALL  built  (27s elapsed)
+  wrote 2026-09-17_is-a-CALENDAR-FOLD-SE-systematically-LOOSER-than-the-BLOCK-BOOTSTRAP-it-was-added-to-correct_cloud.pairs.csv  (183 rows, 6 cols)
+    P_NULL   n= 90  mean dSharpe +0.0052  sd 0.0956  mean pair corr 0.9033  mean |lag-1 autocorr of the yearly difference| 0.2004
+    P_SPLIT  n= 90  mean dSharpe -0.0189  sd 0.1404  mean pair corr 0.8234  mean |lag-1 autocorr of the yearly difference| 0.2159
+    P_SPY    n=  3  mean dSharpe +0.0274  sd 0.3299  mean pair corr 0.8066  mean |lag-1 autocorr of the yearly difference| 0.2159
+  H_EXCH         SUPPORTED  P_NULL +0.0052, P_SPLIT -0.0189
+
+## ARM 2 — SE and |t| under every (SE BASIS x FOLD LENGTH) cell
+  wrote 2026-09-17_is-a-CALENDAR-FOLD-SE-systematically-LOOSER-than-the-BLOCK-BOOTSTRAP-it-was-added-to-correct_cloud.dialgrid.csv  (2,745 rows, 9 cols)
+  MEDIAN SE of the Sharpe difference, every one of the 15 cells (null pairs only):
+    basis     L=21      L=63      L=126     L=252     L=504     
+    S_IID     0.1311    0.1296    0.1278    0.1326    0.1312    
+    S_BLOCK   0.1274    0.1210    0.1197    0.1116    0.1054    
+    S_FOLD    0.1423    0.1330    0.1328    0.1247    0.1108    
+  1210's ordering leg, re-read: share of null pairs with SE_IID <= SE_BLOCK, by L:
+    L=21    0.3167  (n=180)
+    L=63    0.3667  (n=180)
+    L=126   0.2722  (n=180)
+    L=252   0.2944  (n=180)
+    L=504   0.2944  (n=180)
+
+## ARM 3 — THE FINDING: false-positive rate on a difference that is TRULY ZERO.
+##          A correct SE rejects at the nominal level.  Above it, the t is INFLATED.
+  wrote 2026-09-17_is-a-CALENDAR-FOLD-SE-systematically-LOOSER-than-the-BLOCK-BOOTSTRAP-it-was-added-to-correct_cloud.calibration.csv  (180 rows, 12 cols)
+  POOLED over 3 panels x 2 null kinds (n = 180 pairs).  Nominal 5% rejection = 0.0500.
+    basis     L=21       L=63       L=126      L=252      L=504      
+    S_IID     0.0500     0.0500     0.0500     0.0389     0.0500     
+    S_BLOCK   0.0500     0.0611     0.0500     0.0722     0.0944     
+    S_FOLD    0.0111     0.0333     0.0389     0.0611     0.0833     
+  Empirical 95th percentile of |t| (the honest critical value; 1.96 is the quoted one):
+    S_IID     1.9496     1.8901     1.9224     1.8346     1.9076     
+    S_BLOCK   1.9379     1.9874     1.9438     2.0507     2.4004     
+    S_FOLD    1.6417     1.6897     1.7996     2.0748     2.5341     
+  By null kind at the record's own L = 252 (14 calendar-year folds):
+    P_NULL   S_IID: reject 0.0222 (crit 1.74)  S_BLOCK: reject 0.0556 (crit 1.95)  S_FOLD: reject 0.0444 (crit 1.67)
+    P_SPLIT  S_IID: reject 0.0556 (crit 1.93)  S_BLOCK: reject 0.0889 (crit 2.16)  S_FOLD: reject 0.0778 (crit 2.08)
+  H_LOOSE        SUPPORTED  S_FOLD 0.0611 vs S_BLOCK 0.0722 vs S_IID 0.0389 (nominal 0.0500)
+  H_CAL          SUPPORTED  S_IID 0.0389; S_BLOCK 0.0722; S_FOLD 0.0611
+  POWER control (anchor vs SPY, a difference that is REAL), L = 252: S_IID |t| median 1.90  S_BLOCK |t| median 2.35  S_FOLD |t| median 2.11
+
+## ARM 4 — WHICH COMMITTED t's ARE INFLATED (census of the record's own text)
+  RECOVERY RULE, published: scan research/LEADERBOARD.md and research/CHANGELOG.md for
+  `t = X`, `t of X`, `t's to X`, `(t X)`, `mean/SE +X`; classify a hit FOLD-CLUSTERED if
+  'fold', 'cluster' or 'year' occurs within 200 characters of it, else UNCLASSIFIED.
+  wrote 2026-09-17_is-a-CALENDAR-FOLD-SE-systematically-LOOSER-than-the-BLOCK-BOOTSTRAP-it-was-added-to-correct_cloud.census.csv  (210 rows, 6 cols)
+  210 committed t-values recovered (10 fold-clustered by the rule).
+  Honest critical value for a fold-clustered t at L = 252 is |t| > 2.07,
+  not 1.96.  Of the 10 fold-clustered t's: 4 clear 1.96, 4 clear 2.07 — 0 are INFLATED.
+  H_CENSUS       SUPPORTED  4 clear 1.96, 4 clear 2.07
+
+## ARM 5 — RULE 8 WALK-FORWARD.  Each (basis, L) is a CHOOSER: from the 9-rung N ladder
+##         take the book whose IS Sharpe difference vs the anchor has the largest SIGNED t
+##         under that basis.  Chosen on warm-up..2016-12-31 ONLY; 2017-2026 read ONCE.
+  U56    chooser arm done  (105s elapsed)
+  B136   chooser arm done  (107s elapsed)
+  SMALL  chooser arm done  (109s elapsed)
+  wrote 2026-09-17_is-a-CALENDAR-FOLD-SE-systematically-LOOSER-than-the-BLOCK-BOOTSTRAP-it-was-added-to-correct_cloud.picks.csv  (48 rows, 31 cols)
+  mean OOS Sharpe of the chosen book, by chooser (anchor = do nothing):
+    S_IID       0.8202  over 15 picks  (anchor 0.8750)
+    S_BLOCK     0.8174  over 15 picks  (anchor 0.8750)
+    S_FOLD      0.8103  over 15 picks  (anchor 0.8750)
+    C_ISSHARPE  0.7910  over 3 picks  (anchor 0.8750)
+  per (panel, basis) at the record's L = 252:
+    U56    S_IID       N=12  OOS  18.78% / 1.1701 /  -20.17%  (SPY 0.8684, LIVE 1.2714, anchor 1.1615)  4b full Y OOS Y 4a n
+    U56    S_BLOCK     N=12  OOS  18.78% / 1.1701 /  -20.17%  (SPY 0.8684, LIVE 1.2714, anchor 1.1615)  4b full Y OOS Y 4a n
+    U56    S_FOLD      N=15  OOS  18.86% / 1.1869 /  -20.97%  (SPY 0.8684, LIVE 1.2714, anchor 1.1615)  4b full n OOS n 4a n
+    U56    C_ISSHARPE  N=12  OOS  18.78% / 1.1701 /  -20.17%  (SPY 0.8684, LIVE 1.2714, anchor 1.1615)  4b full Y OOS Y 4a n
+    B136   S_IID       N=10  OOS  16.01% / 0.8855 /  -20.20%  (SPY 0.8767, LIVE 1.1059, anchor 1.0100)  4b full n OOS Y 4a n
+    B136   S_BLOCK     N=10  OOS  16.01% / 0.8855 /  -20.20%  (SPY 0.8767, LIVE 1.1059, anchor 1.0100)  4b full n OOS Y 4a n
+    B136   S_FOLD      N=5   OOS  15.03% / 0.7687 /  -28.12%  (SPY 0.8767, LIVE 1.1059, anchor 1.0100)  4b full n OOS n 4a n
+    B136   C_ISSHARPE  N=8   OOS  14.56% / 0.7866 /  -24.54%  (SPY 0.8767, LIVE 1.1059, anchor 1.0100)  4b full n OOS n 4a n
+    SMALL  S_IID       N=25  OOS   6.17% / 0.4164 /  -35.59%  (SPY 0.8767, LIVE 0.5600, anchor 0.4533)  4b full n OOS n 4a n
+    SMALL  S_BLOCK     N=25  OOS   6.17% / 0.4164 /  -35.59%  (SPY 0.8767, LIVE 0.5600, anchor 0.4533)  4b full n OOS n 4a n
+    SMALL  S_FOLD      N=25  OOS   6.17% / 0.4164 /  -35.59%  (SPY 0.8767, LIVE 0.5600, anchor 0.4533)  4b full n OOS n 4a n
+    SMALL  C_ISSHARPE  N=25  OOS   6.17% / 0.4164 /  -35.59%  (SPY 0.8767, LIVE 0.5600, anchor 0.4533)  4b full n OOS n 4a n
+  4b full 14 of 48; 4b OOS 26; BOTH 14; 4a 0 of 48
+  H_WF           REFUTED    S_FOLD 0.8103 vs S_BLOCK 0.8174; doing nothing 0.8750
+
+  wrote 2026-09-17_is-a-CALENDAR-FOLD-SE-systematically-LOOSER-than-the-BLOCK-BOOTSTRAP-it-was-added-to-correct_cloud.gates.csv  (6 rows, 4 cols)
+  wrote 2026-09-17_is-a-CALENDAR-FOLD-SE-systematically-LOOSER-than-the-BLOCK-BOOTSTRAP-it-was-added-to-correct_cloud.hypotheses.csv  (5 rows, 5 cols)
+## GATES 6 of 6 PASS
+## RUNTIME 109s
