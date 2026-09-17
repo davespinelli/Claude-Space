@@ -1277,3 +1277,44 @@
   **GATES 10 of 10** (G1 fast runner == `engine.backtest` 1.388e-17; G2 cross-run 1101's committed U56 anchor-A triple 1.622e-03; G3 live RULES v2 U56 MaxDD -12.0549% vs -12.05%; G4 SPY OOS triple 2.894e-03; G5 claim sets nest 0; G6 exchangeable ladders' position-mean P_boot == uniform null 1/5 at 1.848e-02 against a derived 3-SE bar of 0.0849; G7 degenerate ladder puts all mass on the FIRST rung at 0, re-gating 1199's first-wins; G8 bootstrap determinism 0; G9 cross-run 1101's U56 anchor-A reach set {GROSS, CADENCE} 0; G10 GROSS exactly monotone at 6 of 6 cells 0).
 
   **KILL as a capital finding.** Script `research/backtests/2026-09-17_does-any-committed-REACH-or-CHOOSER-claim-survive-its-OWN-P_boot-BAR_B.py`, 11 CSVs, console log, result note, 5 LEADERBOARD rows. Follow-ups filed 1208 (is the block length the record's largest unstated dial across every resampling claim it publishes), 1209 (does a monotone-ladder exclusion leave the record any resolvable pick at all) and 1210 (how many committed picks would change if the chooser had to beat the anchor by its own bootstrap SE rather than merely outrank it).
+
+## 2026-09-17 — cloud lane, idea 1208: is-the-SMALL-PANEL-REVERSAL-of-the-DO-NOTHING-ADVANTAGE-a-PANEL-FACT-or-a-TURNOVER-FACT — KILL (capital) / ANSWERED = NEITHER
+
+1206 committed a large panel split as "the largest real effect in the run": the do-nothing control
+C_ANCHOR top on U56 (1.2165) and B136 (1.1708) and BEHIND on SMALL (0.5298 vs 0.6718-0.6783). The
+queue read it as a cost rebate the count-matched rules collect on a higher-turnover panel. Re-walking
+all 472 picks per rule over 12 grid points (COST {0,10,25,50} bps x MATCH {T_NONE, T_BAND, T_CHARGE}),
+39,648 pick-cells, 1206's 21 BY PANEL cells reproduced to 4.69e-05:
+
+- THE COST CHANNEL IS DEAD. SMALL reversal +0.1455 / +0.1463 / +0.1451 / +0.1744 across the four cost
+  rungs — 0.99x of its 10 bps size at ZERO bps, and not monotone. Charging every book the anchor's
+  own selection turnover moves it -0.0046 (3.1% of its level, the WRONG SIGN for the hypothesis).
+- THE EXACT ARITHMETIC. The count-matched picks turn over 4.85/yr against the anchor's 5.32/yr; at
+  16.32% vol that 0.47/yr rebate is worth +0.0029 of Sharpe = 1.96% of the reversal at 10 bps and
+  9.80% at 50 bps. The mechanism 1206 pointed at is absent: the count-matched rules land on
+  CADENCE=M at 0.2014 of SMALL picks, LESS often than the anchor set's own 0.2500.
+- WHAT IT IS INSTEAD. The whole effect is a REACH channel: restricting the chooser to rungs within
+  +/-25% of the anchor's turnover moves it -0.2175, and reads -0.2103 at ZERO cost, so it prices
+  nothing. The rules' SMALL advantage is that they reach books far from the anchor in turnover whose
+  GROSS return is higher — not that their moves are cheap.
+- AND IT DOES NOT CLEAR ITS OWN ERROR BAR. Paired on (anchor, window, fold) with SE clustered by the
+  14 non-overlapping calendar folds: +0.1463, SE 0.0985, t +1.48. 0 of 12 grid points clear 2 SE on
+  SMALL, 0 of 12 on U56, 0 of 12 on B136. Resolution needs 25 folds against the 14 this tape
+  supplies. 1206's "largest real effect" is the largest UNRESOLVED effect.
+- A DEFECT THE GATES CAUGHT FIRST. Both matches were written on the natural reading that turnover is
+  LINEAR IN GROSS (turn(g) = g*turn(1)). G2 rejected it at 0.0173 of one-way turnover on the record's
+  anchor before any result was read: drifted weights are renormalised by a portfolio value carrying a
+  1-g CASH SLEEVE, so the restoring trade depends on the rung. The gross ladder is the selection frame
+  scaled in WEIGHTS (1206's G2) but NOT in TURNOVER. Any committed claim that re-prices a gross ladder
+  by scaling its turnover is wrong by up to this much.
+- RULE 8. The reversal read separately IS (2013-2016) vs OOS (2017-2026): SMALL +0.3103 / +0.1135,
+  U56 -0.0303 / -0.0505, B136 +0.0054 / -0.0618 at the reference cell. T_CHARGE tracks T_NONE in both
+  windows (+0.3205 / +0.1059); T_BAND FLIPS SIGN out of sample (+0.0436 / -0.0942) and is not monotone
+  in its own band (-0.0451 / -0.0712 / +0.0191 at 0.10 / 0.25 / 0.50), so it is reported, not relied on.
+- BOTH KEEP PATHS. Books: 4a 0/228 at 0 bps, 1/228 at 10/25/50; 4b full+OOS 51/43/36/25 of 228.
+  Stitched curves: 4a 0 of 252 at EVERY one of the 12 grid points; 4b full+OOS 276 of 3,024 — U56 240,
+  B136 36, SMALL 0. The 43 book-level passers at 10 bps are the same 43 1206 recorded and declined to
+  promote. NOT PROMOTED, NO MEMO, NO RULES CHANGE.
+- SURVIVORSHIP (rule 9): B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B screen (663
+  names after dropping every max_1d_move >= 1.0 ticker) starting 2010.
+- Gates 11 of 11 after G2 failed at 0.0173 on the first cut. Runtime 57s, offline, deterministic.
