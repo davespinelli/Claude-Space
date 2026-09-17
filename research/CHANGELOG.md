@@ -2178,3 +2178,52 @@ rather than a lookalike.
   (664 investable, 51 dropped for max_1d_move >= 1.0). Levels are optimistic; the headline is a
   ratio of one construction against itself (the same decisions at different window lengths) so it
   largely cancels, and the 4b legs do not — those passes are upper bounds.
+## 2026-09-17 — Research B: idea 1254, is the 2026-09-04 KEEP 4b BOOK's OOS PASS CARRIED BY A HANDFUL OF YEARS? — **KILL (capital) / (N) THE RETURN CASE IS BROAD, THE DRAWDOWN CASE IS ONE YEAR WIDE**
+- Dials (rule 4): DELETION COUNT k {0,1,2,3,4,5}, EXHAUSTIVE over every subset (nothing searched,
+  nothing chosen) x PANEL {U56, B136, SMALL663}. ARENA {OOS 2017-26, IS 2009-16} reported at both
+  values as a matched control, not a dial. 2,571 grid points, ALL published. 4 of 4 gates pass.
+  The book is NOT rebuilt — positions are history; what is deleted is the SCORING window, and the
+  days leave the book, SPY and LIVE v2 IDENTICALLY.
+- THE PREMISE IS HALF-CONFIRMED, AND THE CONFIRMING HALF IS THE OPPOSITE OF THE ONE ASKED FOR.
+  The leg the idea aimed at — book OOS Sharpe > SPY OOS Sharpe on the same surviving days —
+  SURVIVES ALL 10 SINGLE-YEAR AND ALL 45 PAIR DELETIONS on U56 and first fails on 2 of 120 triples.
+  Worst single year to lose is 2024 (OOS Sharpe 1.1759 -> 1.0594) against a matched SPY of 0.7988,
+  still +0.2251 of slack. Deleting the melt-up years does not kill it either: drop 2022 and the book
+  goes to 1.3762 while SPY goes to 1.1295, because the same days leave both.
+- BUT ALL 234 FAILING SUBSETS CONTAIN 2020, AND ALL 382 SUBSETS WITHOUT 2020 PASS — including every
+  way of deleting 5 of the other 9 years. Deleting 2020 leaves the BOOK's drawdown at -19.10%
+  (was -19.13%, i.e. unmoved) while SPY's goes -33.72% -> -24.50%, so 4b's cap tightens
+  -20.23% -> -14.70% and the DD margin flips +0.0110 -> -0.0441. THE BOOK DID NOT GET RISKIER; THE
+  BAR MOVED. 4b's DD leg is 60% OF SPY'S OWN WORST CRASH, so it is EASIEST to pass in exactly the
+  windows that contain one, and the committed +0.0110 of DD slack is a statement about the
+  benchmark's path rather than about the book's risk.
+- CAPITAL. Rule 8. R8a: every grid point is an OOS report (dials frozen pre-2017, 2017-2026 read
+  once). U56 k=0 replays the committed triple to <5e-3: book full 15.71% / 1.1480 / -19.13%, halves
+  1.2127/1.1050, OOS 17.16% / 1.1759 / -19.13%; SPY full 15.06% / 0.8815 / -33.72%, halves
+  0.9600/0.8171, OOS 15.15% / 0.8686 / -33.72%; LIVE v2 8.60% / 1.1982 / -12.05%, OOS 9.42% /
+  1.2717. 4a 0 of 2,571 (unchanged from the record). R8b (matched control): worst single-year
+  Sharpe drop, IS vs OOS — U56 0.1588 vs 0.1165 (ratio 0.734), B136 0.2261 vs 0.1200, SMALL663
+  0.2162 vs 0.0968. THE OOS DECADE IS LESS YEAR-FRAGILE THAN THE IS WINDOW ON ALL THREE PANELS, so
+  "the OOS window is a lucky sample" is refuted on the return side. R8c: the diagnostic does not
+  transfer (IS worst year is 2013 on all three panels and cannot name an OOS year).
+  B136 fails 4b at k=0 already (DD margin -0.0051) and SMALL663 fails all five legs, so the
+  question is a U56 question. NO NEW BOOK, NO MEMO, NO RULES CHANGE.
+  Script: research/backtests/2026-09-17_is-the-2026-09-04-KEEP-4b-BOOK-s-OOS-PASS-CARRIED-BY-A-HANDFUL-OF-YEARS_B.py
+- A METHOD ERROR FOUND AND PUBLISHED RATHER THAN QUIETLY FIXED (rule 7). This script's first draft
+  asserted spliced MaxDD is biased TOWARD the book. It is not: deleting 2019 concatenates the
+  Q4-2018 and Q1-2020 troughs into a -27.24% drawdown THAT NEVER HAPPENED (true -19.13%), and the
+  first draft scored it a 4b failure. Every DD verdict is now published under BOTH conventions at
+  every grid point — DD_SPLICE (naive, contaminated) and DD_SEG (worst drawdown WITHIN a contiguous
+  surviving segment, the headline). The spliced convention manufactures 2 of 10 single-year failures
+  on U56; the splice-immune one leaves 1. Pre-declared outcome (A) FAILS two of three clauses and
+  (B) lands on the letter only; both scored as they fell, neither moved.
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: EVERY 4b DRAWDOWN PASS SHOULD QUOTE THE BENCHMARK'S
+  OWN MaxDD OVER THE SAME WINDOW BESIDE IT, and a candidate whose DD slack is thinner than the cap's
+  sensitivity to deleting one benchmark crash year should be recorded as CRASH-CONTINGENT —
+  PROPOSED for the Sunday review (rule 6) as a PROTOCOL reporting line only, never as a chooser.
+- SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL663 is a current sub-$2B
+  screen (52 of 715 dropped for max_1d_move >= 1.0). Levels are optimistic and every 4b pass is an
+  upper bound. The headline is a DIFFERENCE between scorings of the same book on the same panel
+  (with and without a year), first-order immune to a common level bias; 1255 prices the panel bias
+  itself. The 2020 finding is a property of the BAR, not the panel, and survives any level bias
+  that moves book and benchmark together.
