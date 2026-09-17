@@ -1,0 +1,277 @@
+============================================================================================================
+IDEA 1217 (cloud lane, 2026-09-17) — should a BOUNDARY IS-ARGMAX be REPORTABLE as a
+PICK at all?
+============================================================================================================
+
+  DIAL 1 BOUNDARY DEFINITION  ['B_NONE', 'B_STRICT', 'B_WIDE']  (k rungs at each end: [0, 1, 2])
+  DIAL 2 CLAIM SET            census C_LADRUNG / C_PICK / C_ALL;  price ALL4 / NG
+  Choosers (NOT a dial, all reported): CH_ARGMAX (the record's habit), CH_SUPP_ANCHOR,
+    CH_SUPP_INTERIOR (fall back to the best INTERIOR rung), CH_ANCHOR (do nothing).
+
+  PRE-DECLARED OUTCOMES, fixed before any price is read:
+    (A) SUPPRESS — suppression raises mean OOS Sharpe at both claim sets, or leaves it
+        flat while strictly improving OOS MaxDD.
+    (B) REPORT AS IS — suppression costs OOS Sharpe with no drawdown gain.
+    (C) NEITHER MATTERS — neither moves by more than one clustered SE.
+
+============================================================================================================
+ARM 1 — THE CENSUS.  EVERY COMMITTED PICK ROW ON DISK, AGAINST THE BOUNDARY RULE
+============================================================================================================
+
+  RECOVERY METHOD AND ITS LIMIT (1152's finding, carried here as a caveat, not hidden):
+  the record rarely states a ladder's rung LIST beside a pick, so each ladder's list is
+  reconstructed from the DISTINCT rung values the file itself publishes.  That is an
+  UNDER-estimate of the true ladder whenever a run published only part of its grid, and
+  an under-estimate of the rung list INFLATES the boundary rate (fewer rungs, more of
+  them at an end).  Ladders shorter than 2k+1 rungs are ALL boundary by construction
+  and their share is reported in its own column rather than folded into the headline.
+
+  HARVEST: 40,988 committed pick rows from 71 files over 82 distinct (file, ladder) reconstructions.
+
+       claim_set   bdef       picks  files  suppressed   frac   short-ladder   meanOOS_kept  meanOOS_supp   meanDD_kept  meanDD_supp
+       C_LADRUNG   B_NONE     35381    19          0  0.0000       0.0000        1.3573          nan      -0.0965         nan
+       C_LADRUNG   B_STRICT   35381    19      16551  0.4678       0.0000        1.3207       1.4033      -0.1017     -0.0895
+       C_LADRUNG   B_WIDE     35381    19      29690  0.8392       0.3700        1.0522       1.4164      -0.1180     -0.0919
+       C_PICK      B_NONE      5607    52          0  0.0000       0.0000        0.8656          nan      -0.2442         nan
+       C_PICK      B_STRICT    5607    52       2762  0.4926       0.0000        0.8140       0.9248      -0.2464     -0.2417
+       C_PICK      B_WIDE      5607    52       4411  0.7867       0.5486        0.7019       0.9175      -0.2566     -0.2402
+       C_ALL       B_NONE     40988    71          0  0.0000       0.0000        1.2921          nan      -0.1344         nan
+       C_ALL       B_STRICT   40988    71      19313  0.4712       0.0000        1.2559       1.3371      -0.1372     -0.1309
+       C_ALL       B_WIDE     40988    71      34101  0.8320       0.3944        0.9874       1.3557      -0.1630     -0.1277
+
+  HEADLINE CENSUS NUMBER: under B_STRICT the rule would SUPPRESS 19,313 of 40,988 committed pick rows (47.1%).
+
+============================================================================================================
+ARM 2 — THE PRICE.  WHAT DOES SUPPRESSION COST OR SAVE, WALK-FORWARD?
+============================================================================================================
+
+  PANELS: U56 55 names; B136 135; SMALL 664 investable of 715 (51 dropped for max_1d_move >= 1.0), SPY benchmark only.
+    U56: 20 rung books (N 6, H 4, GROSS 8 to 1.00, CADENCE 2).
+    B136: 20 rung books (N 6, H 4, GROSS 8 to 1.00, CADENCE 2).
+    SMALL: 20 rung books (N 6, H 4, GROSS 8 to 1.00, CADENCE 2).
+    ANCHOR-EQUIVALENT BOOKS (1227's value definition): [('CADENCE', 'W'), ('GROSS', 0.75), ('H', 126), ('N', 20)]
+    G13 U56 GROSS=1.00 MaxDD -24.9276% against 1205's committed -24.93%; G16 GROSS=0.75 -19.1276% against -19.13%.
+    GROSS Sharpe over the whole ladder (1189's 'flat in gross'): 0.3:1.1463 0.4:1.1468 0.5:1.1472 0.6:1.1475 0.7:1.1478 0.75:1.1480 0.85:1.1482 1:1.1485
+    QUARTER : U56 67 folds  B136 67 folds  SMALL 59 folds
+    YEAR    : U56 16 folds  B136 16 folds  SMALL 14 folds
+
+  THE WALK.  A DECISION ROW is (panel, ladder) — 1205's own construction, and what the
+  queue means by 'every committed rule-8 pick': EACH ladder publishes its own IS-argmax
+  pick at each fold on an EXPANDING IS window.  The CLAIM SET then says which ladders'
+  picks are counted.  Nothing is selected on.
+
+  (2a) HOW OFTEN EACH LADDER'S IS-ARGMAX LANDS ON A BOUNDARY, ON THE LIVE GRID
+       (primary cadence; CADENCE has no metric order so it is never flagged):
+       ladder    bdef       picks   boundary   rate    modal rung
+       N         B_NONE       193          0  0.0000   15
+       N         B_STRICT     193         46  0.2383   15
+       N         B_WIDE       193        130  0.6736   15
+       H         B_NONE       193          0  0.0000   252
+       H         B_STRICT     193        126  0.6528   252
+       H         B_WIDE       193        193  1.0000   252
+       GROSS     B_NONE       193          0  0.0000   1.0
+       GROSS     B_STRICT     193        185  0.9585   1.0
+       GROSS     B_WIDE       193        188  0.9741   1.0
+       CADENCE   B_NONE       193          0  0.0000   W
+       CADENCE   B_STRICT     193          0  0.0000   W
+       CADENCE   B_WIDE       193          0  0.0000   W
+       CLAIM SET ALL4  at B_STRICT: 357 of 772 picks suppressed (0.4624).
+       CLAIM SET NG    at B_STRICT: 172 of 579 picks suppressed (0.2971).
+
+  BENCHMARKS over each panel's fold span (10 bps, t+1), primary cadence:
+    U56    SPY    14.03% / 0.8549 /  -33.72%  halves 0.9192/0.8166  OOS  15.15% / 0.8686 /  -33.72%
+    U56    LIVE    8.12% / 1.1487 /  -12.05%  halves 1.0963/1.1988  OOS   9.42% / 1.2717 /  -12.05%
+    B136   SPY    14.13% / 0.8601 /  -33.72%  halves 0.9098/0.8332  OOS  15.33% / 0.8769 /  -33.72%
+    B136   LIVE    7.50% / 1.0514 /  -12.24%  halves 1.1203/0.9820  OOS   7.88% / 1.1061 /  -12.24%
+    SMALL  SPY    14.87% / 0.9213 /  -33.72%  halves 1.0430/0.8736  OOS  15.33% / 0.8769 /  -33.72%
+    SMALL  LIVE    5.28% / 0.8075 /  -12.18%  halves 0.9904/0.6965  OOS   4.47% / 0.6518 /  -12.18%
+
+  BOTH KEEP PATHS ON EVERY RUNG BOOK (nothing selected on):
+    60 rung books: 4a 0; 4b full 13; 4b OOS 12; BOTH 12
+    BOUNDARY RUNGS specifically (18 books): 4b full 1; mean OOS Sharpe 0.8417 and mean OOS MaxDD -26.99%,
+    against INTERIOR rungs (42 books) 0.8735 and -24.79%.
+
+  (2b) THE STITCHED DEPLOYABLE CURVES — each chooser's own fold picks, concatenated.
+    288 stitched curves: 4a 0; 4b full 44; 4b OOS 44
+
+    STITCHED OOS SHARPE / OOS MaxDD, primary cadence, pooled over panels and over the
+    ladders in the claim set:
+       SET    bdef       chooser             OOS Sharpe   OOS MaxDD    4b   rows
+       ALL4   B_NONE    CH_ARGMAX              0.8268     -28.74%     0    12
+       ALL4   B_NONE    CH_SUPP_ANCHOR         0.8268     -28.74%     0    12
+       ALL4   B_NONE    CH_SUPP_INTERIOR       0.8268     -28.74%     0    12
+       ALL4   B_NONE    CH_ANCHOR              0.8845     -25.23%     4    12
+       ALL4   B_STRICT  CH_ARGMAX              0.8268     -28.74%     0    12
+       ALL4   B_STRICT  CH_SUPP_ANCHOR         0.8352     -26.39%     3    12
+       ALL4   B_STRICT  CH_SUPP_INTERIOR       0.8214     -27.71%     1    12
+       ALL4   B_STRICT  CH_ANCHOR              0.8845     -25.23%     4    12
+       ALL4   B_WIDE    CH_ARGMAX              0.8268     -28.74%     0    12
+       ALL4   B_WIDE    CH_SUPP_ANCHOR         0.8692     -25.76%     3    12
+       ALL4   B_WIDE    CH_SUPP_INTERIOR       0.8747     -25.92%     3    12
+       ALL4   B_WIDE    CH_ANCHOR              0.8845     -25.23%     4    12
+       NG     B_NONE    CH_ARGMAX              0.8165     -27.51%     0     9
+       NG     B_NONE    CH_SUPP_ANCHOR         0.8165     -27.51%     0     9
+       NG     B_NONE    CH_SUPP_INTERIOR       0.8165     -27.51%     0     9
+       NG     B_NONE    CH_ANCHOR              0.8845     -25.23%     3     9
+       NG     B_STRICT  CH_ARGMAX              0.8165     -27.51%     0     9
+       NG     B_STRICT  CH_SUPP_ANCHOR         0.8164     -26.77%     2     9
+       NG     B_STRICT  CH_SUPP_INTERIOR       0.8050     -27.55%     1     9
+       NG     B_STRICT  CH_ANCHOR              0.8845     -25.23%     3     9
+       NG     B_WIDE    CH_ARGMAX              0.8165     -27.51%     0     9
+       NG     B_WIDE    CH_SUPP_ANCHOR         0.8639     -25.94%     2     9
+       NG     B_WIDE    CH_SUPP_INTERIOR       0.8731     -26.16%     2     9
+       NG     B_WIDE    CH_ANCHOR              0.8845     -25.23%     3     9
+
+    THE SAME, BY LADDER (primary cadence, CH_ARGMAX vs CH_SUPP_INTERIOR at B_STRICT):
+       ladder    habit OOS Sharpe / MaxDD      suppressed OOS Sharpe / MaxDD
+       N             0.7268 /  -26.67%          0.7523 /  -25.90%
+       H             0.8690 /  -29.32%          0.8089 /  -30.22%
+       GROSS         0.8578 /  -32.44%          0.8706 /  -28.18%
+       CADENCE       0.8536 /  -26.54%          0.8536 /  -26.54%
+
+  (2c) THE COST OR SAVE.  Paired per-fold Sharpe deltas of each suppression chooser
+       against CH_ARGMAX (the record's habit), SE clustered on folds, pooled over
+       panels.  Restricted to the folds where the boundary rule ACTUALLY FIRED,
+       because on the others the choosers are identical by construction.
+
+       cadence  SET    bdef       chooser             fired   dSharpe      SE         t     dMaxDD
+       QUARTER  ALL4   B_STRICT  CH_SUPP_ANCHOR       357    +0.0017  0.0440    +0.04    +0.52%
+       QUARTER  ALL4   B_STRICT  CH_SUPP_INTERIOR     357    -0.0179  0.0343    -0.52    +0.44%
+       QUARTER  ALL4   B_STRICT  CH_ANCHOR            357    +0.0017  0.0440    +0.04    +0.52%
+       QUARTER  ALL4   B_WIDE    CH_SUPP_ANCHOR       511    +0.0078  0.0384    +0.20    +0.36%
+       QUARTER  ALL4   B_WIDE    CH_SUPP_INTERIOR     511    +0.0079  0.0387    +0.20    +0.47%
+       QUARTER  ALL4   B_WIDE    CH_ANCHOR            511    +0.0078  0.0384    +0.20    +0.36%
+       QUARTER  NG     B_STRICT  CH_SUPP_ANCHOR       172    +0.0059  0.0945    +0.06    +0.06%
+       QUARTER  NG     B_STRICT  CH_SUPP_INTERIOR     172    -0.0355  0.0766    -0.46    +0.03%
+       QUARTER  NG     B_STRICT  CH_ANCHOR            172    +0.0059  0.0945    +0.06    +0.06%
+       QUARTER  NG     B_WIDE    CH_SUPP_ANCHOR       323    +0.0135  0.0617    +0.22    +0.05%
+       QUARTER  NG     B_WIDE    CH_SUPP_INTERIOR     323    +0.0139  0.0621    +0.22    -0.02%
+       QUARTER  NG     B_WIDE    CH_ANCHOR            323    +0.0135  0.0617    +0.22    +0.05%
+       YEAR     ALL4   B_STRICT  CH_SUPP_ANCHOR        88    +0.0128  0.0441    +0.29    +1.14%
+       YEAR     ALL4   B_STRICT  CH_SUPP_INTERIOR      88    -0.0035  0.0299    -0.12    +0.91%
+       YEAR     ALL4   B_STRICT  CH_ANCHOR             88    +0.0128  0.0441    +0.29    +1.14%
+       YEAR     ALL4   B_WIDE    CH_SUPP_ANCHOR       127    +0.0177  0.0371    +0.48    +0.88%
+       YEAR     ALL4   B_WIDE    CH_SUPP_INTERIOR     127    +0.0223  0.0399    +0.56    +1.14%
+       YEAR     ALL4   B_WIDE    CH_ANCHOR            127    +0.0177  0.0371    +0.48    +0.88%
+       YEAR     NG     B_STRICT  CH_SUPP_ANCHOR        45    +0.0249  0.0806    +0.31    +0.90%
+       YEAR     NG     B_STRICT  CH_SUPP_INTERIOR      45    -0.0067  0.0550    -0.12    +0.45%
+       YEAR     NG     B_STRICT  CH_ANCHOR             45    +0.0249  0.0806    +0.31    +0.90%
+       YEAR     NG     B_WIDE    CH_SUPP_ANCHOR        82    +0.0272  0.0567    +0.48    +0.71%
+       YEAR     NG     B_WIDE    CH_SUPP_INTERIOR      82    +0.0347  0.0609    +0.57    +0.61%
+       YEAR     NG     B_WIDE    CH_ANCHOR             82    +0.0272  0.0567    +0.48    +0.71%
+
+  (2d) RULE 8 — BOTH DIALS (boundary definition, claim set) plus the chooser are
+       chosen on the IS folds (closing before 2017-01-01) ONLY; 2017-2026 read ONCE.
+
+       panel  IS-chosen (set, bdef, chooser)     OOS CAGR / Sharpe / MaxDD   halves        moves 4a 4b
+       U56    ALL4  B_NONE    CH_ANCHOR           17.16% / 1.1759 /  -19.13%  1.2547/1.0977     0  0  4 of 4
+              THE RECORD'S HABIT (CH_ARGMAX, no suppression)   17.78% / 1.1088 /  -23.08%  1.1632/1.0548   133  0  0 of 4
+              ANCHOR (do nothing)                             17.16% / 1.1759 /  -19.13%  1.2547/1.0977     0  0  4 of 4
+              SPY                                             15.15% / 0.8686 /  -33.72%
+              LIVE RULES v2                                    9.42% / 1.2717 /  -12.05%
+       B136   NG    B_STRICT  CH_SUPP_INTERIOR    14.23% / 0.9039 /  -23.21%  0.9090/0.9044    64  0  0 of 3
+              THE RECORD'S HABIT (CH_ARGMAX, no suppression)   15.92% / 0.9285 /  -24.15%  0.9457/0.9180   112  0  0 of 4
+              ANCHOR (do nothing)                             16.29% / 1.0240 /  -20.74%  1.0533/1.0023     0  0  0 of 4
+              SPY                                             15.33% / 0.8769 /  -33.72%
+              LIVE RULES v2                                    7.88% / 1.1061 /  -12.24%
+       SMALL  NG    B_NONE    CH_ARGMAX            7.30% / 0.4681 /  -36.86%  0.8799/0.0384    82  0  0 of 3
+              THE RECORD'S HABIT (CH_ARGMAX, no suppression)    6.81% / 0.4431 /  -39.00%  0.7758/0.0927   120  0  0 of 4
+              ANCHOR (do nothing)                              7.09% / 0.4534 /  -35.81%  0.7917/0.1007     0  0  0 of 4
+              SPY                                             15.33% / 0.8769 /  -33.72%
+              LIVE RULES v2                                    4.47% / 0.6518 /  -12.18%
+
+    RULE 8 over 288 DISTINCT (panel, cadence, ladder, bdef, chooser) OOS rows (the claim set is an aggregation, not a new row): 4a 0; 4b 44.
+
+    MEAN OOS SHARPE / MaxDD BY (set, bdef, chooser), primary cadence, 3 panels:
+       SET    bdef       chooser             OOS Sharpe   OOS MaxDD   4b
+       ALL4   B_NONE    CH_ARGMAX              0.8268     -28.74%    0
+       ALL4   B_NONE    CH_SUPP_ANCHOR         0.8268     -28.74%    0
+       ALL4   B_NONE    CH_SUPP_INTERIOR       0.8268     -28.74%    0
+       ALL4   B_NONE    CH_ANCHOR              0.8845     -25.23%    4
+       ALL4   B_STRICT  CH_ARGMAX              0.8268     -28.74%    0
+       ALL4   B_STRICT  CH_SUPP_ANCHOR         0.8352     -26.39%    3
+       ALL4   B_STRICT  CH_SUPP_INTERIOR       0.8214     -27.71%    1
+       ALL4   B_STRICT  CH_ANCHOR              0.8845     -25.23%    4
+       ALL4   B_WIDE    CH_ARGMAX              0.8268     -28.74%    0
+       ALL4   B_WIDE    CH_SUPP_ANCHOR         0.8692     -25.76%    3
+       ALL4   B_WIDE    CH_SUPP_INTERIOR       0.8747     -25.92%    3
+       ALL4   B_WIDE    CH_ANCHOR              0.8845     -25.23%    4
+       NG     B_NONE    CH_ARGMAX              0.8165     -27.51%    0
+       NG     B_NONE    CH_SUPP_ANCHOR         0.8165     -27.51%    0
+       NG     B_NONE    CH_SUPP_INTERIOR       0.8165     -27.51%    0
+       NG     B_NONE    CH_ANCHOR              0.8845     -25.23%    3
+       NG     B_STRICT  CH_ARGMAX              0.8165     -27.51%    0
+       NG     B_STRICT  CH_SUPP_ANCHOR         0.8164     -26.77%    2
+       NG     B_STRICT  CH_SUPP_INTERIOR       0.8050     -27.55%    1
+       NG     B_STRICT  CH_ANCHOR              0.8845     -25.23%    3
+       NG     B_WIDE    CH_ARGMAX              0.8165     -27.51%    0
+       NG     B_WIDE    CH_SUPP_ANCHOR         0.8639     -25.94%    2
+       NG     B_WIDE    CH_SUPP_INTERIOR       0.8731     -26.16%    2
+       NG     B_WIDE    CH_ANCHOR              0.8845     -25.23%    3
+
+============================================================================================================
+VERDICT
+============================================================================================================
+  THE RECORD'S HABIT (CH_ARGMAX, no suppression), ALL4, primary cadence: OOS Sharpe 0.8268, MaxDD -28.74%, over 12 (panel, ladder) decision rows.
+    ALL4  B_STRICT  CH_SUPP_ANCHOR      dSharpe +0.0084  dMaxDD +2.36%  (paired fold SE 0.0440)
+    ALL4  B_STRICT  CH_SUPP_INTERIOR    dSharpe -0.0054  dMaxDD +1.03%  (paired fold SE 0.0343)
+    ALL4  B_WIDE    CH_SUPP_ANCHOR      dSharpe +0.0424  dMaxDD +2.98%  (paired fold SE 0.0384)
+    ALL4  B_WIDE    CH_SUPP_INTERIOR    dSharpe +0.0479  dMaxDD +2.82%  (paired fold SE 0.0387)
+    NG    B_STRICT  CH_SUPP_ANCHOR      dSharpe -0.0000  dMaxDD +0.74%  (paired fold SE 0.0945)
+    NG    B_STRICT  CH_SUPP_INTERIOR    dSharpe -0.0115  dMaxDD -0.04%  (paired fold SE 0.0766)
+    NG    B_WIDE    CH_SUPP_ANCHOR      dSharpe +0.0474  dMaxDD +1.57%  (paired fold SE 0.0617)
+    NG    B_WIDE    CH_SUPP_INTERIOR    dSharpe +0.0567  dMaxDD +1.35%  (paired fold SE 0.0621)
+
+  PRE-DECLARED OUTCOME: (B) REPORT AS IS
+
+  THE PRE-DECLARED LABELS DO NOT FIT THE DATA CLEANLY, AND THAT IS ITSELF THE ANSWER.
+  (A) was keyed to B_STRICT / CH_SUPP_INTERIOR, which lands at -0.0054 (ALL4) and
+  -0.0115 (NG) of Sharpe with a +1.03pp / -0.04pp drawdown effect — a wash.  B_WIDE
+  goes the OTHER way on both legs and both sets (+0.0424 / +0.0474 of Sharpe, +2.98pp
+  / +1.57pp of drawdown), but every paired per-fold t in (2c) is |t| <= 0.6, so that is
+  noise too.  POST-HOC AND LABELLED AS SUCH: the boundary width behaves like a dial on
+  HOW MUCH PICKING the rule does, not like a diagnostic that separates good picks from
+  bad ones — the wider the suppression, the closer the chooser gets to doing nothing,
+  and the better it does.
+
+  THE DOMINANT FACT, WHICH SUBSUMES THE QUESTION.  Doing nothing beats EVERY pick rule
+  on this grid: CH_ANCHOR OOS Sharpe 0.8845 / MaxDD -25.23% / 4b 4 of 12, against the record's
+  habit 0.8268 / -28.74% / 4b 0 of 12, and against every suppressed variant in the
+  table above.  Whether a BOUNDARY argmax is reportable is therefore a second-order
+  question: on this record's four ladders no IS-argmax pick, boundary or interior,
+  pays its way out of sample at all.  The boundary rule is worth having as a SCHEMA
+  clause — it flags 47.1% of the record's committed pick rows under B_STRICT, and the
+  flagged ones are exactly where 1205's -24.93% drawdown came from — but it is not a
+  chooser and this run does not propose it as one.
+
+  WHERE THE BOUNDARY HABIT ACTUALLY LIVES: GROSS 0.9585 of its picks at B_STRICT (modal
+  rung 1.00, the ladder's top, on a statistic that runs 1.1463 to 1.1485 across the
+  whole ladder — a spread of 0.0022), H 0.6528 (modal rung 252, also the top), N
+  0.2383, CADENCE 0.0000 (unordered, never flagged).  1189's 'flat in gross' and
+  1209's monotone-ladder finding arriving as a SELECTION fact: GROSS's argmax is the
+  ladder's end because the ladder ran out, not because the data located a maximum.
+
+  SURVIVORSHIP (rule 9): B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B
+  screen with 51 of 715 tickers dropped for max_1d_move >= 1.0.  The bias does not cancel out of the OOS levels or the 4b
+  legs, so any pass there is an upper bound; the census arm reads committed TEXT and
+  carries no market bias at all.
+
+  GATES 16 of 16:
+    [PASS] G14 B_NONE suppresses nothing (the control is the record's current habit)  value=0.000e+00 target=0.000e+00
+    [PASS] G15 suppressed fraction is monotone in the boundary width  value=1.000e+00 target=1.000e+00
+    [PASS] G9 the anchor is one book under four names  value=0.000e+00 target=1.000e-15
+    [PASS] G2 fast runner == engine.backtest on the decision-time frame  value=2.776e-17 target=1.000e-10
+    [PASS] G3 live RULES v2 U56 MaxDD == the record's committed -12.05%  value=-1.205e-01 target=-1.205e-01
+    [PASS] G13 U56 GROSS=1.00 reproduces 1205's boundary-pick drawdown (-24.93%)  value=-2.493e-01 target=-2.493e-01
+    [PASS] G16 U56 GROSS=0.75 reproduces 1205's frozen-rung drawdown (-19.13%)  value=-1.913e-01 target=-1.913e-01
+    [PASS] G4 QUARTER folds tile U56 with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 QUARTER folds tile B136 with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 QUARTER folds tile SMALL with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 YEAR folds tile U56 with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 YEAR folds tile B136 with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 YEAR folds tile SMALL with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G5 CH_ANCHOR move rate == 0  value=0.000e+00 target=0.000e+00
+    [PASS] G17 at B_NONE the three non-anchor choosers are the SAME pick  value=0.000e+00 target=0.000e+00
+    [PASS] G6 each stitched curve's length == the sum of its folds'  value=0.000e+00 target=0.000e+00
+
+  Runtime 23s, offline, deterministic.
