@@ -2248,3 +2248,38 @@ rather than a lookalike.
   (with and without a year), first-order immune to a common level bias; 1255 prices the panel bias
   itself. The 2020 finding is a property of the BAR, not the panel, and survives any level bias
   that moves book and benchmark together.
+
+## 2026-09-17 (lane cloud) — 1256 does-the-2026-09-04-KEEP-4b-BOOK-SURVIVE-ITS-OWN-TREND-GATE-LENGTH — KILL (capital)
+- THE QUESTION. The standing 4b candidate screens on "above own 200d MA". 200 is INHERITED from
+  scan.py / RULES v1 and no run has walked it on THIS book. Two dials, 25 cells per panel, 75 in
+  all, every one published: MA LENGTH L {50,100,150,200,250} x HYSTERESIS BAND b
+  {0.00,0.01,0.03,0.05,0.10} (RULES v2 clause-2 semantics). Everything else frozen at the
+  committed construction; the anchor (200/0.00) replays the committed U56 triple to 4.65e-05.
+- ANSWER: NO. 4b passes 12 of 25 rungs on U56, 13 of 25 on B136, 0 of 25 on SMALL663. The verdict
+  flips inside a dial the record never walked, so the committed pass is GATE-CONTINGENT.
+- EVERY U56 AND B136 FAILURE FAILS ON THE DRAWDOWN LEG AND ONLY THE DRAWDOWN LEG (H1/H2/OOS/CAGR
+  fail 0 of 25 on both panels). The return case is gate-length-free; the risk case is not. Grid
+  MaxDD runs -18.90%..-23.41% against 4b's -20.23% cap. L=250 fails at every band on U56; L=200
+  fails at every band on B136 — a LONGER gate is not a SAFER gate.
+- A WIDER BAND IS STRICTLY WORSE ON THE COMMITTED RUNG: at L=200, OOS Sharpe falls monotonically
+  1.1759 / 1.1440 / 1.1247 / 1.0659 / 1.0364 as b goes 0.00 -> 0.10 and 4b fails from b=0.05 up.
+  The live RULES v2 +/-3% clause is NOT free on this book.
+- THE ANCHOR IS NEAR THE TOP OF ITS OWN GRID: 84th percentile on full Sharpe, 88th on OOS Sharpe
+  (median cell 1.1190 / 1.1193). It IS inside its local neighbourhood (150/250 x 0.00/0.01 spans
+  1.1126..1.1524), so pre-declared outcome (C) fails and (B) lands.
+- CAPITAL. Rule 8: (L,b) chosen on warm-up..2016-12-31 by IS Sharpe alone, 2017-2026 read ONCE.
+  U56 picks L=100/b=0.01 (IS 1.2722, the grid's best) -> OOS 1.0567 against the do-nothing anchor
+  1.1759 (-0.1192); B136 picks 200/0.10 -> 1.1497 (+0.1257, still a 4b FAIL on DD); SMALL663 picks
+  100/0.00 -> 0.4030, the grid's WORST. Pooled IS-chosen 0.8698 vs grid-mean 0.8670 (+0.0028) vs
+  anchor 0.8845 (-0.0146); IS/OOS rank corr NEGATIVE on two of three panels. CHOOSING THIS DIAL IN
+  SAMPLE IS WORTH NOTHING AND LOSES TO DOING NOTHING — the spread is implementation risk.
+  4a 0 of 75 (every cell's DD worse than live v2's -12.05%). NO NEW BOOK, NO MEMO, NO RULES CHANGE.
+  Script: research/backtests/2026-09-17_does-the-2026-09-04-KEEP-4b-BOOK-SURVIVE-ITS-OWN-TREND-GATE-LENGTH_cloud.py
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: EVERY 4b VERDICT SHOULD QUOTE THE GATE LENGTH IT
+  WAS DECIDED AT, AND A CANDIDATE WHOSE PASS DOES NOT SURVIVE +/-50 DAYS OF ITS OWN INHERITED TREND
+  WINDOW SHOULD BE RECORDED AS GATE-CONTINGENT — PROPOSED for the Sunday review (rule 6) as a
+  PROTOCOL reporting line only, never as a chooser (rule 8 shows the dial is negative-value).
+- SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL663 is a current sub-$2B
+  screen (52 of 715 dropped for max_1d_move >= 1.0 before anything was computed). Levels are
+  optimistic and every 4b pass is an upper bound; the headline is a SPREAD ACROSS RUNGS of the same
+  book on the same panel, first-order immune to a common level bias.
