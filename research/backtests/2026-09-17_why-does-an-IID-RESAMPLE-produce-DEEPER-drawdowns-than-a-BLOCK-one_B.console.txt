@@ -1,0 +1,239 @@
+====================================================================================================
+IDEA 1162 (lane B, 2026-09-17) — why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one
+====================================================================================================
+
+## PRICE-VINTAGE STAMP (PROTOCOL draft rule 12, proposed by 1163 — complied with, not enacted)
+  data/prices.csv  @HEAD  crc32=85eebc60  2,095,298 bytes
+  data/prices.csv  vintage 2026-09-15 recovered from git  crc32=5f9b8015  4,705 rows -> 2026-09-15
+  Headline is computed on HEAD because HEAD *is* 1159's tape (no daily close has
+  landed since 6f1fcb1), and 1159's cell numbers are this run's cross-run gate.
+  Every headline is re-read on the pinned vintage in the VINTAGE arm below.
+
+## PRE-REGISTRATION — declared here, before a single result number
+  DIAL 1 NULL TYPE  : N_IID, N_BLOCK (L=63), N_STAT (mean block 63)
+  DIAL 2 CONTROL    : C_BOOK, C_GATEOFF, C_NOREBAL, C_SHUFFLE, C_SPY
+  NOT DIALS         : PANEL (all 3 built), L LADDER (all rungs published, headline
+                      frozen at L=63), GROSS LADDER (all 15 rungs published), q,
+                      SEED (3 run, spread published, never selected on)
+  H_INTERP  the moving-block null INTERPOLATES between the observed path (L->T) and
+            the iid null (L=1), so sign(BLOCK-IID) == sign(OBS-IID) and BLOCK lies
+            BETWEEN them.  BAR: sign agreement >= 14 of 15 cells AND betweenness
+            >= 14 of 15 AND spearman(BLOCK/IID-1, OBS/IID-1) >= 0.80.
+  H_MONO    the L ladder is monotone in L, signed toward the observed value.
+            BAR: correct sign of spearman(L, median) at >= 12 of 15 cells AND
+            |spearman| >= 0.80 at >= 12 of 15.
+  H_VR      the TEXTBOOK/variance story: the sign of (BLOCK-IID) is the sign of
+            (VR(63)-1), i.e. it is carried by long-horizon variance.  BAR: sign
+            agreement >= 14 of 15 cells.
+  H_SHUFFLE FALSIFICATION: on C_SHUFFLE, which has no order left, the three nulls
+            must agree.  BAR: |BLOCK/IID - 1| <= 0.02 at 3 of 3 panels AND at least
+            5x smaller than C_BOOK's on the same panel.  If this fails, the effect
+            is the bootstrap machinery's and nothing below means anything.
+  H_GATE    the queue's candidate 1: removing the eligibility gate at least HALVES
+            |OBS/IID - 1|.  BAR: at >= 2 of 3 panels.
+  H_CADENCE the queue's candidate 2: removing rebalancing at least HALVES
+            |OBS/IID - 1|.  BAR: at >= 2 of 3 panels.
+  H_MEANREV the queue's candidate 3: short-horizon mean reversion carries it, so
+            C_SPY — more negatively autocorrelated than the book — shows the SAME
+            sign of (BLOCK-IID) as C_BOOK.  BAR: at 3 of 3 panels.
+
+## PANELS
+  U56      56 cols, 4,706 rows 2008-01-02 -> 2026-09-16  warm 4,446  IS 2,007  OOS 2,439
+  B136    136 cols, 4,703 rows 2008-01-02 -> 2026-09-11  warm 4,443  IS 2,007  OOS 2,436
+  SMALL   664 cols, 4,198 rows 2010-01-04 -> 2026-09-11  warm 3,938  IS 1,502  OOS 2,436
+  SMALL STAMP: data/small_meta.csv lists 715 tickers; 52 dropped for max_1d_move >= 1.0; pool served = 663 names + SPY as benchmark.
+
+## GATES — printed before any result number
+  G1    PASS  fast runner == engine.backtest (U56 W/H126/N=20)               1.388e-17
+  G2    PASS  control_returns('U56','C_BOOK') == the anchor book             2.776e-17
+  G3    PASS  committed U56 triple on the HEAD tape (1161 reads 1.62e-03 here) 1.622e-03
+  G4    PASS  CROSS-RUN 1159's committed SPY and live OOS Sharpe, full precision 0.000e+00
+  G5    PASS  live RULES v2 MaxDD == committed -12.05%                       4.949e-05
+  G6    PASS  N_BLOCK at L=1 IS N_IID, bit for bit (same seed)               0.000e+00
+  G7    PASS  N_STAT realised mean block length == 63                        4.306e+00
+  G8    PASS  all three nulls share the observed MARGINAL mean (order is all that differs) 1.150e-02
+  G9    PASS  CROSS-RUN 1159's committed U56 OBJ_MAXDD observed level        7.105e-15
+     1159 committed N_IID > N_BLOCK at 12 of 12 OBJ_MAXDD cells (its headline '12 of 12'), read from its own file.
+  G10   PASS  1159's committed ordering re-read from its file (12 of 12)     0.000e+00
+  G11   PASS  determinism of the SMALL pipeline (cache dropped and rebuilt)  0.000e+00
+  G13   PASS  gross ladder scaling W(g) == g*W(1) is exact, not approximate  6.939e-18
+
+## ARM A — THE 2-DIAL GRID (NULL TYPE x CONTROL), ALL 45 CELLS PUBLISHED
+  1,000 draws, block L=63, q=0.9 headline, seeds [0, 1, 2]
+
+  U56 done  (9s)
+  B136 done  (14s)
+  SMALL done  (18s)
+
+  THE 15 CELLS (median |MaxDD| %, 1000 draws, seed 0):
+  panel  control        OBS   N_IID  N_BLOCK  N_STAT  BLK/IID  OBS/IID     phi   epi  btwn
+  B136   C_BOOK      20.740  25.765   22.451  21.337   0.8714   0.8050   0.660    23  True
+  B136   C_GATEOFF   22.306  26.588   23.781  22.417   0.8944   0.8390   0.656    23  True
+  B136   C_NOREBAL   60.004  45.332   49.359  52.013   1.0889   1.3237   0.275   143  True
+  B136   C_SHUFFLE   25.717  25.977   25.257  24.948   0.9723   0.9900   2.773   155  True
+  B136   C_SPY       26.196  25.017   26.196  26.196   1.0471   1.0471   1.000    23  True
+  SMALL  C_BOOK      35.814  40.246   37.830  37.692   0.9400   0.8899   0.545    39  True
+  SMALL  C_GATEOFF   33.143  41.643   38.461  37.120   0.9236   0.7959   0.374    23  True
+  SMALL  C_NOREBAL   38.937  50.631   49.341  48.664   0.9745   0.7690   0.110  1439  True
+  SMALL  C_SHUFFLE   46.781  40.104   40.705  39.960   1.0150   1.1665   0.090  1006  True
+  SMALL  C_SPY       26.197  24.184   26.197  26.197   1.0832   1.0832   1.000    23  True
+  U56    C_BOOK      19.128  22.572   19.880  19.519   0.8807   0.8474   0.781    18  True
+  U56    C_GATEOFF   20.107  22.426   20.121  20.107   0.8972   0.8966   0.994    58  True
+  U56    C_NOREBAL   71.945  57.115   62.246  66.419   1.0898   1.2597   0.346   120  True
+  U56    C_SHUFFLE   23.161  22.386   22.648  22.810   1.0117   1.0346   0.338   148  True
+  U56    C_SPY       26.197  24.790   26.197  26.197   1.0568   1.0568   1.000    23  True
+
+  phi = (BLOCK - IID) / (OBS - IID): 0 is the iid null, 1 is the observed path.
+  epi = the observed max-drawdown EPISODE's length in bars (peak to trough).
+
+## ARM B — THE BLOCK-LENGTH LADDER (not a dial; every rung published, nothing selected)
+  U56 ladder done  (23s)
+  B136 ladder done  (29s)
+  SMALL ladder done  (33s)
+
+  L-LADDER ENDPOINTS AND MONOTONICITY (median |MaxDD| at L=1 vs L=T vs OBSERVED):
+  panel  control        L=1     L=T     OBS  rho(L,med)  signOK
+  U56    C_BOOK      22.407  19.128  19.128     -0.9614    True
+  U56    C_GATEOFF   22.029  20.107  20.107     -0.8873    True
+  U56    C_NOREBAL   57.643  71.945  71.945      0.9983    True
+  U56    C_SHUFFLE   22.912  23.161  23.161      0.4518    True
+  U56    C_SPY       24.807  26.197  26.197      0.6384    True
+  B136   C_BOOK      25.617  20.740  20.740     -0.9930    True
+  B136   C_GATEOFF   26.942  22.306  22.306     -0.9965    True
+  B136   C_NOREBAL   45.496  60.004  60.004      0.9632    True
+  B136   C_SHUFFLE   25.345  25.717  25.717     -0.3986   False
+  B136   C_SPY       25.078  26.196  26.196      0.8266    True
+  SMALL  C_BOOK      40.706  35.814  35.814     -0.9578    True
+  SMALL  C_GATEOFF   41.259  33.143  33.143     -0.9352    True
+  SMALL  C_NOREBAL   51.787  38.937  38.937     -0.9371    True
+  SMALL  C_SHUFFLE   40.654  46.781  46.781     -0.1329   False
+  SMALL  C_SPY       23.911  26.197  26.197      0.9112    True
+
+## HYPOTHESES — scored against the bars declared above, before any of these numbers
+  H_INTERP     SUPPORTED  sign 15/15, between 14/15, spearman 0.8286
+  H_MONO       REFUTED    sign 13/15, |rho|>=0.80 at 11/15
+  H_VR         REFUTED    9/15 (VR63 range 0.458..1.126, <1 at 14/15)
+  H_SHUFFLE    REFUTED    1/3; C_SHUFFLE U56 0.0117, B136 0.0277, SMALL 0.0150 vs C_BOOK 0.1193, 0.1286, 0.0600; cross-seed relative spread on C_BOOK 0.0330, 0.0052, 0.0050
+    WHY IT FAILS, AND IT IS THIS RUN'S OWN BAR THAT IS WRONG, NOT THE MEASUREMENT.
+    The bar demanded BLOCK == IID on a shuffled series.  The interpolation identity
+    FORBIDS that: a shuffled path still HAS an observed drawdown, which differs from
+    the iid median by sampling noise, and the block null still interpolates toward
+    it.  The verdict stands as declared and is NOT re-cut; the corrected reading is
+    the multi-permutation sub-arm below, which asks the question the bar meant to.
+
+  C_SHUFFLE SUB-ARM — 5 independent permutations per panel (the same control, with
+  its own noise published; not a new dial, nothing selected on it):
+    U56    BLOCK/IID mean 0.9804 (range 0.9427..1.0291), sign agrees with OBS/IID at 0/5
+    B136   BLOCK/IID mean 0.9789 (range 0.9231..1.0376), sign agrees with OBS/IID at 4/5
+    SMALL  BLOCK/IID mean 0.9495 (range 0.8893..1.0253), sign agrees with OBS/IID at 4/5
+    POOLED over 15 permutations: mean BLOCK/IID 0.9696, sign agreement 8/15, spearman(BLK/IID-1, OBS/IID-1) 0.2821
+    AND THE SUB-ARM DOES NOT SAY WHAT THE RUN EXPECTED IT TO SAY.  With order
+    DESTROYED the block null is NOT centred on the iid null: it sits systematically
+    BELOW it.  That is a MACHINERY effect and it has a mechanism — a moving block is
+    a contiguous slice of a fixed array, so it cannot contain the same bar twice,
+    while an iid draw can stack the tape's worst days on top of each other.  Block
+    sampling therefore shallows drawdowns even on a series with no order at all.
+
+  THE DECOMPOSITION THIS FORCES — how much of 1159's effect is the BOOK and how much
+  is the BOOTSTRAP.  The shuffled series has C_BOOK's exact marginal distribution, so
+  its mean BLOCK/IID over 5 permutations IS the machinery baseline for that panel.
+    U56    total -0.1193  =  machinery -0.0196  +  ORDER -0.0996   (machinery is 16.5% of it)
+    B136   total -0.1286  =  machinery -0.0211  +  ORDER -0.1076   (machinery is 16.4% of it)
+    SMALL  total -0.0600  =  machinery -0.0505  +  ORDER -0.0095   (machinery is 84.1% of it)
+    So 1159's ordering is REAL on U56 and B136 and mostly MACHINERY on SMALL — a
+    correction to the parent idea that no amount of re-running its own grid finds,
+    because its grid never contained a series with the order taken out.
+
+  H_GATE       REFUTED    0/3; U56 0.1526->0.1034, B136 0.1950->0.1610, SMALL 0.1101->0.2041
+  H_CADENCE    REFUTED    0/3; U56 0.1526->0.2597, B136 0.1950->0.3237, SMALL 0.1101->0.2310
+  H_MONO DECOMPOSED (reported, NOT re-cut — the verdict above stands as declared):
+    dropping the C_SHUFFLE falsification cells, whose OBS-IID gap is pure sampling
+    noise so their 'want sign' is a coin flip: sign 12/12, |rho|>=0.80 11/12.
+
+  H_MEANREV    REFUTED    0/3; ac1 C_BOOK -0.0501 vs C_SPY -0.0991; BLK/IID C_BOOK 0.8807, 0.8714, 0.9400 vs C_SPY 1.0568, 1.0471, 1.0832
+
+## THE MECHANISM — H_EPISODE, DECLARED **POST HOC** AFTER SEEING ARM A
+  This was NOT pre-registered and is flagged as exploratory wherever it is quoted.
+  All three of the queue's named carriers are dead above, so what sets phi — HOW FAR
+  along the interpolation the frozen L=63 sits — is still open.  The candidate the
+  data suggests: a block of length L can carry the observed worst drawdown EPISODE
+  intact only if L exceeds that episode's length, so L* (the block length at which
+  the null median has covered 95% of the way to the observed value) should sit near
+  the episode's own length.  BAR, declared before L* is printed: 0.25 <= L*/episode
+  <= 4 at >= 8 of the 12 non-shuffle cells.
+  panel  control        L*  episode   L*/epi
+  U56    C_BOOK        126       18     7.00
+  U56    C_GATEOFF      63       58     1.09
+  U56    C_NOREBAL     252      120     2.10
+  U56    C_SHUFFLE      21      148     0.14   (falsification control)
+  U56    C_SPY          42       23     1.83
+  B136   C_BOOK        252       23    10.96
+  B136   C_GATEOFF     126       23     5.48
+  B136   C_NOREBAL     504      143     3.52
+  B136   C_SHUFFLE       2      155     0.01   (falsification control)
+  B136   C_SPY          42       23     1.83
+  SMALL  C_BOOK        252       39     6.46
+  SMALL  C_GATEOFF     504       23    21.91
+  SMALL  C_NOREBAL    3938     1439     2.74
+  SMALL  C_SHUFFLE    3938     1006     3.91   (falsification control)
+  SMALL  C_SPY          42       23     1.83
+  MEASURED BESIDE THE BAR: L* >= the episode length at 12 of 12 non-shuffle cells, and L*/episode
+  runs 1.09 to 21.91 — the episode's length is a LOWER BOUND on L*, not a predictor
+  of it.  A block must be at least as long as the episode to carry it, and being
+  long enough is not sufficient, because the block must also START early enough.
+  H_EPISODE    REFUTED    7/12; spearman(L*, episode) 0.5547
+
+## ARM C — VINTAGE INVARIANCE (1163's defect, checked rather than assured)
+  G12   PASS  committed U56 triple on the PINNED 2026-09-15 vintage          3.183e-07
+  crc32 5f9b8015 (4,705 rows) vs HEAD 85eebc60 (4,706 rows)
+  sign of (BLOCK-IID) unchanged at 4 of 5 controls; max |delta BLOCK/IID| = 0.0357
+
+## ARM D — RULE 8 WALK-FORWARD AND BOTH KEEP PATHS (PROTOCOL rules 4 and 8)
+  The 4 TRADABLE controls x the 15-rung GROSS ladder x 3 panels = 180 books, ALL
+  published.  C_SHUFFLE is excluded because a permuted return stream is not a book;
+  it is a falsification control and is said so rather than scored as capital.
+  U56    SPY   15.06% / 0.8814 / -33.72% (H 0.9598/0.8170)  OOS  15.15% / 0.8684 / -33.72%
+  U56    v2     8.60% / 1.1980 / -12.05% (H 1.2329/1.1702)  OOS   9.42% / 1.2714 / -12.05%
+  B136   SPY   15.16% / 0.8861 / -33.72% (H 0.9596/0.8259)  OOS  15.33% / 0.8767 / -33.72%
+  B136   v2     7.98% / 1.0993 / -12.24% (H 1.2348/0.9658)  OOS   7.88% / 1.1059 / -12.24%
+  SMALL  SPY   14.06% / 0.8581 / -33.72% (H 0.9138/0.8344)  OOS  15.33% / 0.8767 / -33.72%
+  SMALL  v2     4.30% / 0.6637 / -13.89% (H 0.8063/0.5552)  OOS   3.75% / 0.5600 / -13.89%
+
+  BASE RATES over all 180 books: 4b full 19, 4b OOS 21, 4a 2
+    U56    4b full  10/60  4b OOS  12/60  4a   0/60
+    B136   4b full   9/60  4b OOS   9/60  4a   0/60
+    SMALL  4b full   0/60  4b OOS   0/60  4a   2/60
+
+  RULE-8 PICKS (chosen on 2009..2016 IS only, scored on the untouched OOS window):
+  panel  chooser      pick       gross  OOS CAGR  OOS Shrp   OOS DD  4bF  4bO   4a
+  U56    C_ISSHARPE   C_GATEOFF   0.95    21.40%    1.1466  -24.94% False False False
+  U56    C_ISCAGR     C_NOREBAL   1.00    18.65%    0.6433  -72.83% False False False
+  U56    C_ISDD       C_GATEOFF   0.30     6.68%    1.1441   -8.43% False False False
+  B136   C_ISSHARPE   C_BOOK      1.00    21.30%    1.0122  -26.97% False False False
+  B136   C_ISCAGR     C_BOOK      1.00    21.30%    1.0122  -26.97% False False False
+  B136   C_ISDD       C_BOOK      0.30     6.41%    1.0055   -8.67% False False False
+  SMALL  C_ISSHARPE   C_SPY       1.00    15.33%    0.8767  -33.72% False False False
+  SMALL  C_ISCAGR     C_SPY       1.00    15.33%    0.8767  -33.72% False False False
+  SMALL  C_ISDD       C_SPY       0.30     4.69%    0.8734  -11.16% False False True
+
+  BEST book clearing 4b FULL and 4b OOS: U56 C_BOOK gross 0.75 — full 15.55% / 1.1381 / -19.13% (H 1.2049/1.0932), OOS 16.92% / 1.1615 / -19.13%
+  Reachable by an IS-only chooser?  NO
+  4a passes: 2 of 180 books and 1 of 9 picks.
+
+## OUTPUTS
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.gates.csv  (13 rows, 4 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.hypotheses.csv  (8 rows, 5 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.dialgrid.csv  (45 rows, 20 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.cells.csv  (15 rows, 16 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.diagnostics.csv  (15 rows, 22 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.ladder.csv  (180 rows, 10 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.monotonicity.csv  (15 rows, 9 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.lstar.csv  (15 rows, 8 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.shuffle.csv  (15 rows, 8 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.decomposition.csv  (3 rows, 7 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.vintage.csv  (5 rows, 11 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.walkforward.csv  (180 rows, 28 cols)
+  wrote 2026-09-17_why-does-an-IID-RESAMPLE-produce-DEEPER-drawdowns-than-a-BLOCK-one_B.picks.csv  (9 rows, 14 cols)
+
+GATES 13 of 13 PASS   HYPOTHESES 1 of 8 SUPPORTED
+runtime 49s
