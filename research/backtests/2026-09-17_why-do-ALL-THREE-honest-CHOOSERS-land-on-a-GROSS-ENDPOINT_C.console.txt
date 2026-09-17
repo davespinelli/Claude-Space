@@ -1,0 +1,210 @@
+# Idea 1154 (lane C, 2026-09-17) — why do ALL THREE honest CHOOSERS land on a GROSS ENDPOINT?
+#
+# THE QUESTION SPLIT BEFORE ANY NUMBER IS READ.
+#   (Q1) is an ENDPOINT pick a general property of a MONOTONE dial?
+#   (Q2) what would a chooser have to SCORE to reach the INTERIOR?
+# Q1's forward direction is an ALGEBRAIC IDENTITY, NOT A FINDING: the argmax of a weakly
+#   monotone sequence is always attainable at an endpoint.  G9 verifies the identity on
+#   random sequences so this run cannot be read as having discovered it.  The empirical
+#   content is (i) how often a dial IS monotone in the statistic a chooser reads, (ii) the
+#   CONVERSE — do NON-monotone dials still pick endpoints — and (iii) Q2's premium.
+#
+# TUNED DIALS (2, PROTOCOL rule 4, the two the queue names): CHOOSER ['C_ISSHARPE', 'C_ISCAGR', 'C_ISDD', 'C_ISMAR', 'C_IS4B']
+#   x DIAL ['D_GROSS', 'D_N', 'D_HOLD', 'D_CADENCE', 'D_MAXVOL'] = 25 cells per panel, 50 in all, EVERY ONE PUBLISHED.
+#   The RUNG inside a dial is NOT a third tuned parameter — it is the object the chooser
+#   SELECTS, which is the subject of the run; all 66 rungs per panel are published in .grid.csv whatever any chooser did.
+# PANEL {U56, B136} is NOT a dial (both reported everywhere, nothing selected on the pair).
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, min hold 126, N 20,
+#   gross 0.75, cadence W, cost 10.0 bps (rule 2), LAG 1, warm-up 260,
+#   IS end 2016-12-31, zero cash, block L=63, 1000 draws, crc32 seeds, q=0.9.
+# PRICE VINTAGE PINNED at 2026-09-15 (idea 1160's defect); G2/G3 run BOTH ways.
+#
+# LADDERS, canonical order declared here and never re-chosen:
+#   D_GROSS    33 rungs  [0.2, 0.225, 0.25, 0.275, 0.3, 0.325, 0.35, 0.375, 0.4, 0.425, 0.45, 0.475, 0.5, 0.525, 0.55, 0.575, 0.6, 0.625, 0.65, 0.675, 0.7, 0.725, 0.75, 0.775, 0.8, 0.825, 0.85, 0.875, 0.9, 0.925, 0.95, 0.975, 1.0]
+#   D_N        11 rungs  [3, 5, 8, 10, 12, 15, 20, 25, 30, 40, 50]
+#   D_HOLD      9 rungs  [5, 10, 21, 42, 63, 90, 126, 189, 252]
+#   D_CADENCE   6 rungs  ['D', 'W', '2W', 'M', '2M', 'Q']
+#   D_MAXVOL    7 rungs  [0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 2.0]
+#
+# DEFINITIONS, DECLARED BEFORE ANY NUMBER:
+#   MONO(dial, chooser) — every consecutive difference of the chooser's statistic over the
+#     ladder's canonical order has ONE sign (ties allowed).  mono_score = largest share of
+#     steps with a single strict sign, so a near-ladder is distinguishable from a jumble.
+#   ENDPOINT pick — argmax rung index in {0, R-1}.  INTERIOR pick — anything else.
+#   PREMIUM (Q2's answer) — need = best ENDPOINT value - best INTERIOR value, in the
+#     chooser's own units.  need > 0 means the interior FALLS SHORT by that much and the
+#     chooser would have to see the interior gain `need` to select it.  need/SD is the same
+#     figure in units of the PAIRED block-bootstrap SD of that very difference (same draws
+#     on both arms, so the tape cancels), i.e. how many noise units the preference is worth.
+#
+# HYPOTHESES, DECLARED BEFORE ANY NUMBER:
+#   H_IDENTITY   MONO => ENDPOINT holds at 100% of monotone cells.  This is an IDENTITY;
+#                a failure would mean a code bug, not a discovery.  Bar: 1.000.
+#   H_CONVERSE   the converse FAILS: >= 1 NON-monotone (chooser, dial, panel) cell still
+#                picks an endpoint.  Endpoint picking is therefore NOT diagnostic of
+#                monotonicity, which is what 1150's three-for-three would otherwise suggest.
+#   H_GROSSFLAT  on D_GROSS, IS Sharpe is NOT monotone (1150 measured a full-sample Sharpe
+#                spread of 0.0016 across the whole ladder) while IS CAGR and IS MaxDD ARE.
+#                So C_ISSHARPE's gross-1.00 pick is a FLAT-DIAL NOISE ARGMAX and C_ISCAGR's
+#                and C_ISDD's are MECHANICAL — the same pick for two different reasons.
+#   H_INTERIOR   at least one (chooser, dial) cell picks the INTERIOR, i.e. endpoint picking
+#                is a property of the GROSS dial's shape and not of IS-only choosing.
+#   H_UNRESOLVED at the majority of ENDPOINT picks on NON-monotone dials, |need|/SD < 1:
+#                the endpoint is preferred by less than one unit of its own noise.
+#   H_NOPAY      chooser picks clear 4b at a LOWER rate than the ladders' own base rate
+#                (1150: 0 of 48 picks vs 21 of 66 cells).  Rule 8, on five dials this time.
+# DECISION RULE, declared before any number: the queue's question is ANSWERED 'YES BUT
+#   TRIVIALLY, AND MONOTONICITY IS NOT THE REASON ON THE GROSS DIAL' iff H_IDENTITY holds
+#   (as it must), H_CONVERSE holds and H_GROSSFLAT holds.  If IS Sharpe turns out MONOTONE
+#   in gross, the three picks have one common mechanical cause and the answer is a flat YES.
+#   If H_INTERIOR fails, endpoint picking is a property of IS-only choosing itself and that
+#   is a stronger and more troubling answer than the one the queue expects.
+
+## PANELS — loaded, PINNED and stamped before any result number
+  U56     56 names, PINNED 4,705 rows 2008-01-02 -> 2026-09-15 (unpinned ends 2026-09-16), warm 4,445, IS 2,007, OOS 2,438
+  B136   136 names, PINNED 4,703 rows 2008-01-02 -> 2026-09-11 (unpinned ends 2026-09-11), warm 4,443, IS 2,007, OOS 2,436
+
+## GATES — printed before any result number
+  G1   fast runner == engine.backtest                                 1.39e-17   PASS
+  G2   committed U56 W/H126/N=20 triple, PINNED at 2026-09-15         4.12e-05   PASS
+       (15.5793% / 1.1397 / -19.1276%)
+       THE VINTAGE, PUBLISHED NOT ABSORBED: the same gate UNPINNED reads 1.62e-03 (39.4x the pinned reading) from ONE extra bar of 4,706.
+  G3   SPY OOS triple, PINNED at 2026-09-15                           1.70e-04   PASS
+  G4   CROSS-RUN 1098/1102's committed U56 n=12 triple                4.71e-05   PASS
+  G5   live RULES v2 MaxDD == committed -12.05%                       4.95e-05   PASS
+  G6   determinism (same cell twice)                                  0.00e+00   PASS
+  G7   cadence_mask == engine.rebalance_mask (D/W/M/Q)                0.00e+00   PASS
+
+## THE GRID — every rung of every dial on both panels, published whatever a chooser did
+  U56: 66 rungs run  (6s)
+  B136: 66 rungs run  (9s)
+  wrote 2026-09-17_why-do-ALL-THREE-honest-CHOOSERS-land-on-a-GROSS-ENDPOINT_C.grid.csv  (132 rows, 39 cols)
+  G8   CROSS-RUN 1150's three gross-dial picks on both panels         0.00e+00   PASS
+  G9   IDENTITY argmax(monotone) is an endpoint, 20,000 synthetic     0.00e+00   PASS
+  G10  ladders NEST the record's committed rungs (0.05 gross, n=12/20, H=126, W/M) 1.00e+00   PASS
+  GATES 10 of 10 PASS
+
+## MONOTONICITY, PICKS AND THE INTERIOR PREMIUM — 5 choosers x 5 dials x 2 panels = 50 cells
+  U56: 25 cells scored  (11s)
+  B136: 25 cells scored  (12s)
+  wrote 2026-09-17_why-do-ALL-THREE-honest-CHOOSERS-land-on-a-GROSS-ENDPOINT_C.mono.csv  (50 rows, 13 cols)
+  wrote 2026-09-17_why-do-ALL-THREE-honest-CHOOSERS-land-on-a-GROSS-ENDPOINT_C.picks.csv  (50 rows, 25 cols)
+  wrote 2026-09-17_why-do-ALL-THREE-honest-CHOOSERS-land-on-a-GROSS-ENDPOINT_C.premium.csv  (50 rows, 17 cols)
+  wrote 2026-09-17_why-do-ALL-THREE-honest-CHOOSERS-land-on-a-GROSS-ENDPOINT_C.reach.csv  (40 rows, 11 cols)
+
+## THE ANSWER
+  MONOTONE at 8 of 50 (chooser, dial, panel) cells; of those 8 pick an ENDPOINT  -> H_IDENTITY HOLDS (as it must)
+  NON-MONOTONE at 42 cells; of those 17 (40.5%) STILL pick an endpoint -> H_CONVERSE SUPPORTED
+  ENDPOINT picks overall: 25 of 50 (50.0%);  INTERIOR picks 25
+
+  BY DIAL (endpoint share / monotone share, both panels, all five choosers):
+    D_GROSS    endpoint 8/10   monotone 8/10   median spread 0.1475
+    D_N        endpoint 3/10   monotone 0/10   median spread 0.2136
+    D_HOLD     endpoint 0/10   monotone 0/10   median spread 0.2002
+    D_CADENCE  endpoint 5/10   monotone 0/10   median spread 0.1446
+    D_MAXVOL   endpoint 9/10   monotone 0/10   median spread 0.163
+  BY CHOOSER:
+    C_ISSHARPE  endpoint 5/10   monotone 2/10
+    C_ISCAGR    endpoint 5/10   monotone 2/10
+    C_ISDD      endpoint 6/10   monotone 2/10
+    C_ISMAR     endpoint 5/10   monotone 2/10
+    C_IS4B      endpoint 4/10   monotone 0/10
+
+  H_GROSSFLAT — the gross dial, statistic by statistic (this is the queue's own cell):
+    U56   C_ISSHARPE  mono True  dir up    score 1.000  rho +1.000  spread 0.002127  pick 1.0
+    U56   C_ISCAGR    mono True  dir up    score 1.000  rho +1.000  spread 0.1489  pick 1.0
+    U56   C_ISDD      mono True  dir down  score 1.000  rho -1.000  spread 0.146  pick 0.2
+    U56   C_ISMAR     mono True  dir up    score 1.000  rho +1.000  spread 0.04137  pick 1.0
+    U56   C_IS4B      mono False dir none  score 0.531  rho +0.372  spread 0.7542  pick 0.625
+    B136  C_ISSHARPE  mono True  dir up    score 1.000  rho +1.000  spread 0.00573  pick 1.0
+    B136  C_ISCAGR    mono True  dir up    score 1.000  rho +1.000  spread 0.1726  pick 1.0
+    B136  C_ISDD      mono True  dir down  score 1.000  rho -1.000  spread 0.1534  pick 0.2
+    B136  C_ISMAR     mono True  dir up    score 1.000  rho +1.000  spread 0.04994  pick 1.0
+    B136  C_IS4B      mono False dir none  score 0.531  rho +0.098  spread 0.7428  pick 0.575
+    -> H_GROSSFLAT REFUTED: IS Sharpe IS monotone in gross, IS CAGR and IS MaxDD ARE.
+
+  H_INTERIOR SUPPORTED — 25 of 50 cells pick the interior:
+    U56   D_GROSS    C_IS4B      picks rung 0.625 (index 17 of 32), mono False
+    U56   D_N        C_ISDD      picks rung 40 (index 9 of 10), mono False
+    U56   D_N        C_ISMAR     picks rung 40 (index 9 of 10), mono False
+    U56   D_N        C_IS4B      picks rung 40 (index 9 of 10), mono False
+    U56   D_HOLD     C_ISSHARPE  picks rung 189 (index 7 of 8), mono False
+    U56   D_HOLD     C_ISCAGR    picks rung 189 (index 7 of 8), mono False
+    U56   D_HOLD     C_ISDD      picks rung 10 (index 1 of 8), mono False
+    U56   D_HOLD     C_ISMAR     picks rung 189 (index 7 of 8), mono False
+    U56   D_HOLD     C_IS4B      picks rung 10 (index 1 of 8), mono False
+    U56   D_CADENCE  C_ISSHARPE  picks rung 2W (index 2 of 5), mono False
+    U56   D_CADENCE  C_ISCAGR    picks rung 2W (index 2 of 5), mono False
+    U56   D_CADENCE  C_ISMAR     picks rung 2W (index 2 of 5), mono False
+    B136  D_GROSS    C_IS4B      picks rung 0.575 (index 15 of 32), mono False
+    B136  D_N        C_ISSHARPE  picks rung 8 (index 2 of 10), mono False
+    B136  D_N        C_ISDD      picks rung 30 (index 8 of 10), mono False
+    B136  D_N        C_ISMAR     picks rung 25 (index 7 of 10), mono False
+    B136  D_N        C_IS4B      picks rung 30 (index 8 of 10), mono False
+    B136  D_HOLD     C_ISSHARPE  picks rung 63 (index 4 of 8), mono False
+    B136  D_HOLD     C_ISCAGR    picks rung 63 (index 4 of 8), mono False
+    B136  D_HOLD     C_ISDD      picks rung 10 (index 1 of 8), mono False
+    B136  D_HOLD     C_ISMAR     picks rung 21 (index 2 of 8), mono False
+    B136  D_HOLD     C_IS4B      picks rung 10 (index 1 of 8), mono False
+    B136  D_CADENCE  C_ISSHARPE  picks rung 2M (index 4 of 5), mono False
+    B136  D_CADENCE  C_ISCAGR    picks rung 2M (index 4 of 5), mono False
+    B136  D_MAXVOL   C_ISCAGR    picks rung 0.4 (index 1 of 6), mono False
+
+  Q2 — THE INTERIOR PREMIUM.  need = best endpoint - best interior, in the chooser's own
+     units; need/SD is the same figure in paired block-bootstrap SDs (IS window, same
+     draws on both arms).  need <= 0 means the interior already wins (an interior pick).
+     over all 25 endpoint picks with a finite premium: median need/SD 0.477, share |need/SD| < 1 = 72.0%
+     over the 17 endpoint picks on NON-MONOTONE dials: median need/SD 0.464, share |need/SD| < 1 = 88.2%  -> H_UNRESOLVED SUPPORTED
+     the queue's own three, on D_GROSS:
+       U56   C_ISSHARPE  endpoint 1.0 beats best interior 0.975 by need +1.35487e-05 = +0.130 SD [90% -0.0001531, +0.0001896]  resolvable False
+       U56   C_ISCAGR    endpoint 1.0 beats best interior 0.975 by need +0.00465564 = +3.153 SD [90% +0.00225, +0.007255]  resolvable True
+       U56   C_ISDD      endpoint 0.2 beats best interior 0.225 by need +0.00471374 = +3.718 SD [90% +0.003618, +0.007805]  resolvable True
+       B136  C_ISSHARPE  endpoint 1.0 beats best interior 0.975 by need +0.000136221 = +1.297 SD [90% -3.403e-05, +0.0003136]  resolvable True
+       B136  C_ISCAGR    endpoint 1.0 beats best interior 0.975 by need +0.00543131 = +2.857 SD [90% +0.002592, +0.008729]  resolvable True
+       B136  C_ISDD      endpoint 0.2 beats best interior 0.225 by need +0.00493877 = +3.337 SD [90% +0.004359, +0.008971]  resolvable True
+
+## RULE 8 (walk-forward) AND BOTH KEEP PATHS
+   Every chooser is IS-ONLY by construction, so each of the 50 picks IS a rule-8 decision:
+   parameters read on 2009-01..2016-12-31 and scored on 2016-12-31..2026-09-15 untouched.
+   U56 SPY        full 15.10% / 0.8829 / -33.72% (halves 0.9588/0.8207), OOS 15.21% / 0.8711 / -33.72%
+   U56 RULES v2   full 8.62% / 1.2008 / -12.05% (halves 1.2322/1.1760), OOS 9.46% / 1.2763 / -12.05%
+   B136 SPY        full 15.16% / 0.8861 / -33.72% (halves 0.9596/0.8259), OOS 15.33% / 0.8767 / -33.72%
+   B136 RULES v2   full 7.98% / 1.0993 / -12.24% (halves 1.2348/0.9658), OOS 7.88% / 1.1059 / -12.24%
+   LADDER BASE RATES over all 132 published cells: 4b full 35, 4b OOS 38, both 34, 4a 0
+   CHOOSER PICKS over all 50 picks:       4b full 5, 4b OOS 5, both 5, 4a 0
+   pick pass-rate 10.0% vs ladder base rate 25.8%  -> H_NOPAY SUPPORTED
+   PER DIAL (passing rungs / rungs, both panels; picks that pass / picks):
+     D_GROSS    ladder 20/66   picks 2/10
+     D_N        ladder 3/22   picks 0/10
+     D_HOLD     ladder 3/18   picks 2/10
+     D_CADENCE  ladder 2/12   picks 0/10
+     D_MAXVOL   ladder 6/14   picks 1/10
+   BEST cell passing 4b FULL and OOS: U56 D_N rung 12 — full 17.71% / 1.1692 / -20.17% (halves 1.2753/1.0885), OOS 18.89% / 1.1759 / -20.17%, 3.04x/yr
+   4a is 0 of 132 cells and 0 of 50 picks.
+   WHAT A CHOOSER WOULD HAVE TO SCORE TO REACH A 4b-PASSING RUNG (capital-relevant Q2):
+     B136  D_MAXVOL   C_ISMAR     picked 0.3    (passes False); nearest passing rung 0.8    sits +0.258742 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.0623 vs picked 0.8920
+     B136  D_N        C_IS4B      picked 30     (passes False); nearest passing rung 15     sits +0.236213 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.0458 vs picked 1.0696
+     B136  D_MAXVOL   C_IS4B      picked 0.3    (passes False); nearest passing rung 0.8    sits +0.220378 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.0623 vs picked 0.8920
+     B136  D_N        C_ISMAR     picked 25     (passes False); nearest passing rung 15     sits +0.196438 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.0458 vs picked 1.0623
+     B136  D_N        C_ISSHARPE  picked 8      (passes False); nearest passing rung 15     sits +0.187006 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.0458 vs picked 0.7866
+     B136  D_MAXVOL   C_ISSHARPE  picked 0.3    (passes False); nearest passing rung 0.8    sits +0.161272 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.0623 vs picked 0.8920
+     U56   D_HOLD     C_ISMAR     picked 189    (passes False); nearest passing rung 10     sits +0.148417 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.1485 vs picked 1.0509
+     U56   D_HOLD     C_ISSHARPE  picked 189    (passes False); nearest passing rung 126    sits +0.133922 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.1644 vs picked 1.0509
+     B136  D_N        C_ISCAGR    picked 3      (passes False); nearest passing rung 15     sits +0.117697 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.0458 vs picked 0.8564
+     U56   D_N        C_IS4B      picked 40     (passes False); nearest passing rung 20     sits +0.103561 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.1644 vs picked 1.0985
+     U56   D_N        C_ISCAGR    picked 3      (passes False); nearest passing rung 12     sits +0.0825053 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.1759 vs picked 0.8132
+     U56   D_MAXVOL   C_ISSHARPE  picked 0.3    (passes False); nearest passing rung 1.0    sits +0.0670626 BELOW the pick in the chooser's own statistic, OOS Sharpe 1.1543 vs picked 1.0208
+  wrote 2026-09-17_why-do-ALL-THREE-honest-CHOOSERS-land-on-a-GROSS-ENDPOINT_C.walkforward.csv  (54 rows, 16 cols)
+  wrote 2026-09-17_why-do-ALL-THREE-honest-CHOOSERS-land-on-a-GROSS-ENDPOINT_C.hypotheses.csv  (6 rows, 4 cols)
+  wrote 2026-09-17_why-do-ALL-THREE-honest-CHOOSERS-land-on-a-GROSS-ENDPOINT_C.gates.csv  (11 rows, 4 cols)
+
+## HYPOTHESES
+  hypothesis                                                                 bar                                                        value   verdict
+  H_IDENTITY            MONO => ENDPOINT at 100% of monotone cells (an IDENTITY)                                                          8/8     HOLDS
+  H_CONVERSE                       >=1 NON-monotone cell still picks an endpoint                                                        17/42 SUPPORTED
+ H_GROSSFLAT           IS Sharpe NOT monotone in gross; IS CAGR and IS MaxDD ARE Sharpe mono=[True, True], CAGR=[True, True], DD=[True, True]   REFUTED
+  H_INTERIOR                         >=1 (chooser, dial) cell picks the interior                                                        25/50 SUPPORTED
+H_UNRESOLVED |need|/SD < 1 at a majority of endpoint picks on NON-monotone dials                                                0.882 over 17 SUPPORTED
+     H_NOPAY                                pick 4b pass-rate < ladder base rate                                               0.100 vs 0.258 SUPPORTED
+
+# done in 12s
