@@ -1,0 +1,216 @@
+====================================================================================================
+IDEA 1221 (lane B, 2026-09-17) — is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample
+====================================================================================================
+
+## ARM 0 — DECLARED BEFORE ANY NUMBER IS COMPUTED
+  H_NONE   : no chooser's paired mean OOS-Sharpe gap vs C_ANCHOR clears +2 of its own SE.
+  H_COIN   : the 13 data-reading choosers do not separate from C_RANDOM/C_MEDIAN — their
+             mean OOS Sharpe lies inside the [min, max] of the two data-free rows +/- 1 SE.
+  H_SPREAD : the whole 16-chooser spread of mean OOS Sharpe is SMALLER than the SD of a
+             single decision's OOS Sharpe across the grid (a chooser family cannot be
+             ranked by a statistic whose one-draw noise exceeds its whole range).
+  TIE-BREAK: lowest rung INDEX wins every argmax tie (stable argmax), declared here.
+  BAR      : the SE choosers' bar is |t| > 1.9600 on the signed IS t vs the anchor rung.
+
+## PANELS
+  U56      56 cols, 4,706 rows 2008-01-02 -> 2026-09-16  warm 4,446  IS 2,007  OOS 2,439
+  B136    136 cols, 4,703 rows 2008-01-02 -> 2026-09-11  warm 4,443  IS 2,007  OOS 2,436
+  SMALL   664 cols, 4,198 rows 2010-01-04 -> 2026-09-11  warm 3,938  IS 1,502  OOS 2,436
+  SMALL STAMP: data/small_meta.csv lists 715 tickers; 52 dropped for max_1d_move >= 1.0; pool served = 663 names + SPY as benchmark.
+
+## BENCHMARKS (per panel, 10 bps, post warm-up)
+  U56    SPY    15.06% / 0.8814 /  -33.72%  halves 0.9598/0.8170  OOS  15.15% / 0.8684 /  -33.72%
+  U56    LIVE    8.60% / 1.1980 /  -12.05%  halves 1.2329/1.1702  OOS   9.42% / 1.2714 /  -12.05%
+  B136   SPY    15.16% / 0.8861 /  -33.72%  halves 0.9596/0.8259  OOS  15.33% / 0.8767 /  -33.72%
+  B136   LIVE    7.98% / 1.0993 /  -12.24%  halves 1.2348/0.9658  OOS   7.88% / 1.1059 /  -12.24%
+  SMALL  SPY    14.06% / 0.8581 /  -33.72%  halves 0.9138/0.8344  OOS  15.33% / 0.8767 /  -33.72%
+  SMALL  LIVE    4.30% / 0.6637 /  -13.89%  halves 0.8063/0.5552  OOS   3.75% / 0.5600 /  -13.89%
+
+## ARM 1 — THE MATCHED GRID: 3 panels x 2 contexts x 4 ladders = 24 decisions
+  U56    CTX_A built (27s elapsed, 44 books, 16 null keys)
+  U56    CTX_B built (40s elapsed, 88 books, 32 null keys)
+  B136   CTX_A built (78s elapsed, 132 books, 48 null keys)
+  B136   CTX_B built (106s elapsed, 176 books, 64 null keys)
+  SMALL  CTX_A built (239s elapsed, 220 books, 80 null keys)
+  SMALL  CTX_B built (357s elapsed, 264 books, 96 null keys)
+  wrote 2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.rungs.csv  (150 rows, 30 cols)
+  24 decisions, 150 priced rungs, 9,600 null books, 264 real book runs.
+  Ladders exactly monotone in IS Sharpe: 9 of 24.
+
+## GATES
+  G1    PASS  every decision has EXACTLY ONE anchor rung (do-nothing is reachable) 1.0000e+00
+  G2    PASS  declared ladder rung sets contain every context anchor value       0.0000e+00
+  G3    PASS  LAG 1 binds: same-day execution scores DIFFERENTLY (no free lag)   3.7379e-02
+  G4    PASS  10 bps costs bind: gross - net > 0 over the sample                 5.0970e-02
+  G5    PASS  IS-truncated run == full run restricted to IS (no OOS leakage)     0.0000e+00
+  G6    PASS  null bank: NULL_B finite, non-degenerate draws (SD > 0)            1.0000e+02
+  G6b   PASS  every rung's null percentile lies in [0, 1]                        1.0000e+00
+  G7    PASS  SPY is never eligible in any panel                                 0.0000e+00
+  G8    PASS  book() is deterministic on re-run                                  0.0000e+00
+  G9    PASS  S_BLOCK at L = 1 == S_IID (relative, both 600 draws)               3.0329e-02
+  G10   PASS  the anchor rung's own t vs itself is exactly 0                     0.0000e+00
+
+## ARM 2 — EVERY CHOOSER PICKS ON IS DATA ONLY (PROTOCOL rule 8); 2017-2026 read ONCE
+  wrote 2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.picks.csv  (384 rows, 35 cols)
+  G11   PASS  every chooser makes exactly 24 picks                               1.0000e+00
+  G12   PASS  C_ANCHOR moves at 0 of 24 decisions                                0.0000e+00
+
+## ARM 3 — THE FINDING: the full ranking on OOS Sharpe, with the anchor's row in it
+  wrote 2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.ranking.csv  (16 rows, 19 cols)
+  chooser      moved  meanOOS_S  meanOOS_CAGR  meanOOS_DD   gap vs ANCHOR  SE      t      t_panel  win/tie  4a  4b  4bOOS  >SPY >LIVE
+  C_NULLZ      20/24     0.8291       12.53%    -26.80%        +0.0713  0.0268   +2.66   +3.78  14/4     0   2    2     14    1
+  C_ISDD       22/24     0.8199       10.15%    -22.52%        +0.0621  0.0361   +1.72   +1.48   9/2     0   0    0     15    1
+  C_ISCALMAR   21/24     0.8120       12.99%    -27.82%        +0.0542  0.0304   +1.79   +1.89  14/3     0   2    2     14    1
+  C_TIID       21/24     0.8069       12.87%    -27.63%        +0.0491  0.0287   +1.71   +2.76  15/3     0   3    4     14    1
+  C_TBLOCK     21/24     0.8069       12.87%    -27.63%        +0.0491  0.0287   +1.71   +2.76  15/3     0   3    4     14    1
+  C_RANDOM     19/24     0.8068       11.57%    -25.56%        +0.0491  0.0310   +1.58   +1.25  12/5     0   4    4     14    0
+  C_ISSHARPE   21/24     0.7995       13.23%    -28.56%        +0.0418  0.0302   +1.38   +4.21  15/3     0   3    3     13    1
+  C_NULLPCT    21/24     0.7981       10.54%    -24.35%        +0.0403  0.0315   +1.28   +2.31  10/3     0   1    1     13    0
+  C_MEDIAN     15/24     0.7959       11.98%    -26.53%        +0.0381  0.0251   +1.52   +1.21  12/9     0   4    4     13    0
+  C_TFOLD      21/24     0.7919       12.52%    -27.61%        +0.0341  0.0298   +1.15   +5.63  14/3     0   2    2     13    1
+  C_ISCAGR     22/24     0.7857       13.22%    -29.36%        +0.0279  0.0381   +0.73   +0.95  14/2     0   2    2     12    2
+  C_MONO        8/24     0.7740       12.49%    -27.93%        +0.0162  0.0106   +1.53   +2.04   8/16    0   3    3     12    0
+  C_BARIID      2/24     0.7610       11.14%    -25.18%        +0.0032  0.0108   +0.30   +0.25   1/22    0   3    3     12    1
+  C_ANCHOR      0/24     0.7578       11.04%    -25.01%        +0.0000  0.0000    +nan    +nan   0/24    0   4    4     12    0 <== DOING NOTHING
+  C_BARBLOCK    2/24     0.7523       11.23%    -25.53%        -0.0055  0.0057   -0.95   -1.00   1/22    0   3    3     12    0
+  C_BARFOLD     5/24     0.7425       11.28%    -26.01%        -0.0153  0.0114   -1.34   -1.81   3/19    0   3    3     11    0
+
+  C_ANCHOR RANKS 14 of 16 on mean OOS Sharpe (0.7578); the top row is C_NULLZ (0.8291).
+  CHOOSERS CLEARING +2 SE OVER DOING NOTHING: 1 of 15 — C_NULLZ
+  H_NONE     REFUTED    1 of 15 clear it; best t +2.66 (C_NULLZ)
+## ARM 3b — COUNT-MATCHED RANDOM-CHOOSER NULL (added after the first full run; see
+##          the disclosure in the source).  A chooser that moves m of 24 times is read
+##          against 2,000 random choosers that move the SAME m times on the SAME grid.
+  wrote 2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.countmatched.csv  (16 rows, 7 cols)
+  chooser      moved   observed gap   null mean   null SD   null p90   PERCENTILE
+  C_NULLZ      20/24        +0.0713     +0.0411    0.0175    +0.0635   0.9630
+  C_ISDD       22/24        +0.0621     +0.0451    0.0174    +0.0681   0.8285
+  C_ISCALMAR   21/24        +0.0542     +0.0434    0.0174    +0.0662   0.7290
+  C_RANDOM     19/24        +0.0491     +0.0384    0.0179    +0.0617   0.7245
+  C_MEDIAN     15/24        +0.0381     +0.0304    0.0179    +0.0539   0.6605
+  C_TBLOCK     21/24        +0.0491     +0.0427    0.0175    +0.0652   0.6330
+  C_TIID       21/24        +0.0491     +0.0432    0.0179    +0.0659   0.6100
+  C_BARIID      2/24        +0.0032     +0.0043    0.0086    +0.0167   0.5105
+  C_MONO        8/24        +0.0162     +0.0165    0.0154    +0.0365   0.5055
+  C_ISSHARPE   21/24        +0.0418     +0.0425    0.0179    +0.0650   0.4655
+  C_NULLPCT    21/24        +0.0403     +0.0425    0.0176    +0.0651   0.4445
+  C_TFOLD      21/24        +0.0341     +0.0428    0.0178    +0.0652   0.2985
+  C_ISCAGR     22/24        +0.0279     +0.0453    0.0168    +0.0669   0.1475
+  C_BARBLOCK    2/24        -0.0055     +0.0040    0.0084    +0.0164   0.0885
+  C_BARFOLD     5/24        -0.0153     +0.0099    0.0124    +0.0260   0.0155
+  C_ANCHOR      0/24        +0.0000     +0.0000    0.0000    +0.0000   0.0000
+  CHOOSERS CLEARING THE 90th PERCENTILE OF THEIR OWN COUNT-MATCHED NULL: 1 of 15 — C_NULLZ
+  MULTIPLICITY: 15 choosers were tested against one anchor, so the family-wise 0.05 bar is |t| > 2.9354, not 1.96.
+  CHOOSERS CLEARING THE FAMILY-WISE BAR: 0 of 15
+
+  H_COIN     SUPPORTED  13 of 13 inside [0.7959, 0.8068] +/- 0.2935
+  H_SPREAD   SUPPORTED  spread 0.0867 vs per-pick SD 0.3012 (ratio 0.2877)
+
+## ARM 4 — EVERY ONE OF THE 64 DIAL CELLS (CHOOSER x CANDIDATE LADDER), mean OOS Sharpe
+  wrote 2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.dialgrid.csv  (64 rows, 6 cols)
+  chooser      LAD_N         LAD_H         LAD_GROSS     LAD_CADENCE     (mean OOS Sharpe; 6 picks each)
+  C_ANCHOR     0.7578        0.7578        0.7578        0.7578        
+  C_ISSHARPE   0.7229        0.8578        0.7646        0.8529        
+  C_ISCAGR     0.6194        0.9058        0.7646        0.8529        
+  C_ISCALMAR   0.7898        0.8600        0.7643        0.8337        
+  C_ISDD       0.8599        0.8502        0.7520        0.8175        
+  C_NULLPCT    0.7103        0.8404        0.7547        0.8871        
+  C_NULLZ      0.8097        0.8578        0.7619        0.8871        
+  C_TIID       0.7450        0.8674        0.7622        0.8529        
+  C_TBLOCK     0.7450        0.8674        0.7622        0.8529        
+  C_TFOLD      0.7227        0.8599        0.7604        0.8246        
+  C_BARIID     0.7578        0.7706        0.7578        0.7578        
+  C_BARBLOCK   0.7578        0.7348        0.7588        0.7578        
+  C_BARFOLD    0.7175        0.7348        0.7597        0.7578        
+  C_MONO       0.7578        0.7578        0.7646        0.8157        
+  C_MEDIAN     0.8224        0.8844        0.7600        0.7166        
+  C_RANDOM     0.7606        0.8503        0.7600        0.8564        
+  gap vs DOING NOTHING in the same cell:
+  chooser      LAD_N         LAD_H         LAD_GROSS     LAD_CADENCE   
+  C_ANCHOR     +0.0000       +0.0000       +0.0000       +0.0000       
+  C_ISSHARPE   -0.0349       +0.1001       +0.0069       +0.0951       
+  C_ISCAGR     -0.1384       +0.1480       +0.0069       +0.0951       
+  C_ISCALMAR   +0.0320       +0.1023       +0.0066       +0.0759       
+  C_ISDD       +0.1022       +0.0924       -0.0058       +0.0597       
+  C_NULLPCT    -0.0474       +0.0826       -0.0031       +0.1293       
+  C_NULLZ      +0.0519       +0.1001       +0.0041       +0.1293       
+  C_TIID       -0.0127       +0.1096       +0.0044       +0.0951       
+  C_TBLOCK     -0.0127       +0.1096       +0.0044       +0.0951       
+  C_TFOLD      -0.0351       +0.1022       +0.0027       +0.0668       
+  C_BARIID     +0.0000       +0.0128       +0.0000       +0.0000       
+  C_BARBLOCK   +0.0000       -0.0229       +0.0010       +0.0000       
+  C_BARFOLD    -0.0402       -0.0229       +0.0019       +0.0000       
+  C_MONO       +0.0000       +0.0000       +0.0069       +0.0579       
+  C_MEDIAN     +0.0647       +0.1266       +0.0023       -0.0411       
+  C_RANDOM     +0.0029       +0.0925       +0.0023       +0.0986       
+  CELLS WHERE A CHOOSER BEATS DOING NOTHING ON AVERAGE: 40 of 60
+
+## ARM 5 — HOW MUCH IS THERE TO WIN? the OOS spread of each decision's own ladder
+  wrote 2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.spread.csv  (24 rows, 12 cols)
+  mean best-possible gain over the anchor +0.1314  (median +0.0531, max +0.5149)
+  mean worst-possible loss              -0.0779  (median -0.0248, min -0.2638)
+  the anchor's own percentile inside its ladder's OOS Sharpes: mean 0.3376 (a do-nothing rule sitting at 0.5 is an AVERAGE rung)
+  IS->OOS rank correlation across the ladder: mean +0.2717, median +0.3583, positive at 17 of 24 decisions
+  by ladder:
+    LAD_N        best gain +0.1371  worst loss -0.1867  anchor pctile 0.4259  IS->OOS rho -0.0917
+    LAD_H        best gain +0.2390  worst loss -0.0628  anchor pctile 0.2857  IS->OOS rho -0.2381
+    LAD_GROSS    best gain +0.0069  worst loss -0.0058  anchor pctile 0.4167  IS->OOS rho +1.0000
+    LAD_CADENCE  best gain +0.1425  worst loss -0.0563  anchor pctile 0.2222  IS->OOS rho +0.4167
+  by panel:
+    U56          best gain +0.0900  worst loss -0.1071  anchor pctile 0.3641  IS->OOS rho +0.3932
+    B136         best gain +0.1839  worst loss -0.0459  anchor pctile 0.2728  IS->OOS rho +0.1164
+    SMALL        best gain +0.1202  worst loss -0.0808  anchor pctile 0.3760  IS->OOS rho +0.3057
+
+## ARM 6 — 1206's LEG RE-READ: does the anchor win on U56/B136 and lose on SMALL?
+  panel   anchor    best chooser (mean OOS Sharpe)      anchor's rank
+  U56     1.0499    C_NULLZ        1.0989              12 of 16
+  B136    0.8203    C_ISDD         0.9661              14 of 16
+  SMALL   0.4032    C_NULLZ        0.4593              14 of 16
+
+## ARM 7 — BOTH KEEP PATHS on all 384 picks (PROTOCOL rule 4)
+  distinct BOOKS behind the 384 picks: 106 (a chooser that declines to move re-selects the same anchor book — 1211's inflation)
+  4a (beat the live book) : 0 of 384 picks, 0 of 106 distinct books
+  4b full sample vs SPY   : 42 of 384 picks, 10 of 106 distinct books
+  4b OOS-only vs SPY      : 44 of 384 picks, 11 of 106 distinct books
+  BOTH 4b full AND 4b OOS : 10 of 106 distinct books
+    4b leg L_H1    passes at  72 of 106 books
+    4b leg L_H2    passes at  52 of 106 books
+    4b leg L_OOS   passes at  55 of 106 books
+    4b leg L_DD    passes at  18 of 106 books
+    4b leg L_CAGR  passes at  68 of 106 books
+    4a leg A_H1    passes at  48 of 106 books
+    4a leg A_H2    passes at   4 of 106 books
+    4a leg A_DD    passes at   4 of 106 books
+  the books passing both, by panel: U56 9, B136 1
+
+## VERDICT
+  LEG 1 (paired 2 SE vs the anchor)      : 1 of 15 — C_NULLZ
+  LEG 2 (own count-matched null, p90)    : 1 of 15 — C_NULLZ
+  LEG 3 (family-wise bar |t| > 2.94)    : 0 of 15
+  CHOOSERS PASSING ALL THREE             : 0
+  4b (full AND OOS) books each chooser actually SELECTED, against DOING NOTHING's 4 of 24:
+    C_ISSHARPE    3 of 24   <-- fewer than doing nothing
+    C_ISCAGR      2 of 24   <-- fewer than doing nothing
+    C_ISCALMAR    2 of 24   <-- fewer than doing nothing
+    C_ISDD        0 of 24   <-- fewer than doing nothing
+    C_NULLPCT     1 of 24   <-- fewer than doing nothing
+    C_NULLZ       2 of 24   <-- fewer than doing nothing
+    C_TIID        3 of 24   <-- fewer than doing nothing
+    C_TBLOCK      3 of 24   <-- fewer than doing nothing
+    C_TFOLD       2 of 24   <-- fewer than doing nothing
+    C_BARIID      3 of 24   <-- fewer than doing nothing
+    C_BARBLOCK    3 of 24   <-- fewer than doing nothing
+    C_BARFOLD     3 of 24   <-- fewer than doing nothing
+    C_MONO        3 of 24   <-- fewer than doing nothing
+    C_MEDIAN      4 of 24   == doing nothing
+    C_RANDOM      4 of 24   == doing nothing
+  ANSWERED = YES, but only on the raw paired bar.  1 of 15 published choosers beat DOING NOTHING by their own paired 2 SE over 24 matched decisions; 0 survive all three legs; 0 of those book MORE capital-worthy rules than the anchor.
+  Verdict: KILL (capital).  Gates 13 of 13.
+
+## LEADERBOARD ROWS
+| 2026-09-17 | 1221 B — **THE FULL CHOOSER RANKING ON ONE MATCHED GRID**: all 16 published choosers (IS Sharpe / IS CAGR / IS Calmar / IS DD / null percentile / null z / 3 signed-t / 3 t>1.96-else-anchor / mono filter / median rung / random rung) + DOING NOTHING, 24 decisions each (3 panels x 2 anchor contexts x 4 candidate ladders), rule-8 picks on warm-up..2016-12-31, 2017-2026 read ONCE, all 64 dial cells published | 12.5% (best chooser mean OOS) | 0.83 | -26.8% | n/a | DOING NOTHING mean OOS Sharpe 0.7578 | **YES, but only on the raw paired bar: 1 of 15 CHOOSERS CLEAR +2 SE OVER THE ANCHOR. C_ANCHOR ranks 14 of 16; top row C_NULLZ 0.8291 vs anchor 0.7578 (gap +0.0713, t +2.66); whole-family spread 0.0867 against a per-pick SD of 0.3012.** | `2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.py` |
+| 2026-09-17 | 1221 B — **IS IT INFORMATION OR IS IT MOVING?** each chooser read against 2,000 RANDOM choosers count-matched to its own move count on the same 24 decisions (bar = the record's own 90th-percentile non-certifying bar), plus the family-wise |t| > 2.94 the 15 tests imply (ARM 3b, added after the first full run — disclosed in the source) | n/a | n/a | n/a | n/a | a seeded RANDOM chooser gains +0.0491 over the anchor by itself | **1 of 15 choosers clear their own count-matched null at p90 and 0 clear the family-wise bar; 0 clear all three legs. Every chooser's gap is bought by MOVING: the null of a coin that moves as often gains +0.0425 on its own.** | `2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.py` |
+| 2026-09-17 | 1221 B — **HOW MUCH IS THERE TO WIN AT ALL**: the OOS Sharpe spread of each decision's own ladder, 24 decisions, and the IS->OOS rank correlation that a chooser would have to exploit | n/a | n/a | n/a | n/a | the anchor rung's own ladder percentile 0.3376 | **best-possible gain over the anchor averages +0.1314 and the worst-possible loss -0.0779; IS->OOS rank correlation across the ladder averages +0.2717 (positive at 17 of 24 decisions) — the ladder carries some selection signal.** | `2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.py` |
+| 2026-09-17 | 1221 B — **RULE 8 WALK-FORWARD + BOTH KEEP PATHS**, 384 picks over 106 distinct books, 10 bps, next-day execution | 21.4% (best book) | 1.23 | -20.2% | 1.60 / 1.02 | U56 SPY 0.8814 (0.9598/0.8170), OOS 0.8684; U56 LIVE 1.1980, OOS 1.2714 | **4a 0 of 106 books; 4b full 10, 4b OOS 11, BOTH 10. Verdict KILL (capital).** | `2026-09-17_is-there-ANY-CHOOSER-in-the-record-that-BEATS-DOING-NOTHING-out-of-sample_B.py` |
+
+Runtime 360s. Gates 13 of 13. Offline, deterministic.
