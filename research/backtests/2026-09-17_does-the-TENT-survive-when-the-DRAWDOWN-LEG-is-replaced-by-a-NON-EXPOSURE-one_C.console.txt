@@ -1,0 +1,248 @@
+# Idea 1166 (lane C, 2026-09-17) — does the TENT survive when the DRAWDOWN LEG is replaced
+#   by a NON-EXPOSURE one?   (claimed as queue 1163; renumbered 1164 then 1166, defect 932)
+#
+# 1154: C_IS4B = argmax over a dial of min(M_S, M_DD, M_CAGR) is the ONE chooser that
+#   reaches the gross INTERIOR (0.625 U56 / 0.575 B136), and its mechanism is that M_DD
+#   and M_CAGR are monotone in OPPOSITE directions in gross — two EXPOSURE legs — so the
+#   MIN is a TENT.  This run swaps the third leg and keeps M_S and M_CAGR fixed.
+#
+# TUNED PARAMETERS (2, PROTOCOL rule 4, the two the queue names): LEG ['L_DD', 'L_VOLTGT', 'L_TUW', 'L_ULCER']
+#   x DIAL ['D_GROSS', 'D_N', 'D_HOLD', 'D_CADENCE', 'D_MAXVOL'] = 20 cells per panel, 40 in all, EVERY ONE PUBLISHED.
+#   The RUNG is NOT a third parameter: it is the object the chooser selects, and all
+#   66 rungs per panel are published in .grid.csv regardless.
+#   PANEL {U56, B136} is NOT a dial (both reported everywhere, nothing selected on the pair).
+#
+# THE LEGS, WITH THEIR PRE-DECLARED HOMOGENEITY DEGREE (measured later, not assumed):
+#   L_DD      form cap  stat ADD  primary mult 0.6   EXPOSURE (declared degree 1)
+#   L_VOLTGT  form cap  stat VOL  primary mult 1.0   EXPOSURE (declared degree 1)
+#   L_TUW     form cap  stat TUW  primary mult 1.0   NON-EXPOSURE (declared degree 0)
+#   L_ULCER   form beat stat UPI  primary mult None  NON-EXPOSURE (declared degree 0)
+# THE CAP MULTIPLIER IS NOT A THIRD PARAMETER: (mult*spy - book)/(mult*spy) is a POSITIVE
+#   AFFINE transform of -book, so each leg's monotonicity/direction/rho over any ladder is
+#   EXACTLY multiplier-invariant (G11).  It can only move where the legs CROSS, so all
+#   4 multipliers [0.6, 0.8, 1.0, 1.25] are published in .mult.csv and the VERDICT is read at the
+#   pre-declared primary (0.60 for L_DD = 4b's own constant, 1.00 for L_VOLTGT / L_TUW).
+#
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, min hold 126, N 20,
+#   gross 0.75, cadence W, cost 10.0 bps (rule 2), LAG 1, warm-up 260,
+#   IS end 2016-12-31, zero cash, block L=63, 500 draws, crc32 seeds, q=0.9.
+# PRICE VINTAGE PINNED at 2026-09-15 (idea 1159/1163's restatement defect); G2/G3 BOTH ways.
+#
+# LADDERS, canonical order declared here and never re-chosen:
+#   D_GROSS    33 rungs  [0.2, 0.225, 0.25, 0.275, 0.3, 0.325, 0.35, 0.375, 0.4, 0.425, 0.45, 0.475, 0.5, 0.525, 0.55, 0.575, 0.6, 0.625, 0.65, 0.675, 0.7, 0.725, 0.75, 0.775, 0.8, 0.825, 0.85, 0.875, 0.9, 0.925, 0.95, 0.975, 1.0]
+#   D_N        11 rungs  [3, 5, 8, 10, 12, 15, 20, 25, 30, 40, 50]
+#   D_HOLD      9 rungs  [5, 10, 21, 42, 63, 90, 126, 189, 252]
+#   D_CADENCE   6 rungs  ['D', 'W', '2W', 'M', '2M', 'Q']
+#   D_MAXVOL    7 rungs  [0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 2.0]
+#
+# SHAPE TAXONOMY, DECLARED BEFORE ANY NUMBER (the three ways a min can look):
+#   TENT  — the BINDING (arg-min) leg CHANGES across the ladder AND the min sequence is
+#           NON-MONOTONE AND the argmax is INTERIOR.  This is 1154's object.
+#   RAMP  — the min sequence is MONOTONE; its argmax is then an endpoint BY IDENTITY (G9).
+#   FLAT  — the min's whole-ladder spread is under ONE paired block-bootstrap SD, i.e. the
+#           argmax is a noise pick whatever its position.  Reported alongside, because a
+#           degenerate leg can produce an interior pick WITHOUT a tent and must not be
+#           allowed to read as one.
+#   DEGREE(stat) — OLS slope of log|stat| on log(gross) over D_GROSS.  An EXPOSURE object
+#           has slope ~1, a scale-free one ~0.  G12 measures the same slopes on an EXACTLY
+#           SCALED synthetic book so the machinery is validated before it is believed.
+#
+# HYPOTHESES, DECLARED BEFORE ANY NUMBER:
+#   H_DEGREE     the declared degrees are the MEASURED ones on D_GROSS, both panels:
+#                slope >= 0.5 for |MaxDD|, VOL, ULC, CAGR and |slope| <= 0.25 for Sharpe,
+#                UPI, TUW.  If this fails the whole exposure/non-exposure split is wrong
+#                and nothing below can be read.
+#   H_TENTLIVES  swapping in the OTHER exposure leg (L_VOLTGT) KEEPS the tent: on D_GROSS,
+#                non-monotone AND interior pick AND binding leg changes, on BOTH panels.
+#   H_TENTDIES   swapping in a NON-exposure leg (L_TUW, L_ULCER) KILLS it: on D_GROSS the
+#                min becomes MONOTONE and the pick lands on an ENDPOINT, on BOTH panels.
+#   H_PAIRONLY   over all 40 cells, TENT shape occurs ONLY where the swapped leg is an
+#                exposure object, i.e. no L_TUW / L_ULCER cell on ANY dial is a TENT.
+#                (Stronger than H_TENTDIES: it is about the pair, not about gross.)
+#   H_PICKPAY    the interior picks that survive still clear 4b FULL and OOS at least as
+#                often as their ladder's own base rate — i.e. the tent was buying
+#                something and not just sitting in the middle.
+#   H_NOPAY4a    4a is 0 of every cell and every pick, as at 1150's 528, 1154's 132 and
+#                1161's 66.  A single 4a pass would be the headline instead.
+#   H_PEAKRESOLVED  *** POST-HOC, ADDED AFTER THE FIRST RUN AND LABELLED AS SUCH ***.  The
+#                pre-declared FLAT test compares the min's WHOLE-LADDER spread with one paired
+#                SD, and the first run showed that test is too weak: where the swapped leg is
+#                near-constant the min is a RAMP-then-PLATEAU whose spread is carried entirely
+#                by the ramp, so a peak sitting on a dead-flat plateau still reads 7 SD.  The
+#                sharper object is the peak's height over EACH endpoint separately:
+#                need_lo = v[pick]-v[0], need_hi = v[pick]-v[R-1], each against the PAIRED
+#                block-bootstrap SD of that very difference.  A RESOLVED tent needs BOTH over
+#                one SD.  Bar: resolved only where the swapped leg is an EXPOSURE object.
+#                The pre-registered verdicts above are published UNCHANGED regardless.
+# DECISION RULE, declared before any number: the queue's question is ANSWERED 'NO, THE TENT
+#   IS AN EXPOSURE-PAIR OBJECT AND DIES WITH THE SECOND EXPOSURE LEG' iff H_DEGREE holds
+#   AND H_TENTLIVES holds AND H_TENTDIES holds.  It is ANSWERED 'YES, THE TENT SURVIVES AND
+#   1154's MECHANISM READING IS WRONG' if a NON-exposure leg still gives a non-monotone min
+#   with an interior pick that is not FLAT.  A mixed reading is published as mixed.
+
+## PANELS — loaded, PINNED and stamped before any result number
+  U56     56 names, PINNED 4,705 rows 2008-01-02 -> 2026-09-15 (unpinned ends 2026-09-16), warm 4,445, IS 2,007, OOS 2,438
+  B136   136 names, PINNED 4,703 rows 2008-01-02 -> 2026-09-11 (unpinned ends 2026-09-11), warm 4,443, IS 2,007, OOS 2,436
+
+## GATES — printed before any result number
+  G1   fast runner == engine.backtest                                   1.39e-17   PASS
+  G2   committed U56 W/H126/N=20 triple, PINNED at 2026-09-15           4.12e-05   PASS
+       (15.5793% / 1.1397 / -19.1276%) vs committed (15.5787% / 1.1397 / -19.1276%)
+       THE VINTAGE, PUBLISHED NOT ABSORBED: the same gate UNPINNED reads 1.62e-03 (39.4x the pinned reading).
+  G3   SPY OOS triple, PINNED at 2026-09-15                             1.70e-04   PASS
+  G4   CROSS-RUN 1098/1102's committed U56 n=12 triple                  4.71e-05   PASS
+  G5   live RULES v2 MaxDD == committed -12.05%                         4.95e-05   PASS
+  G6   determinism (same cell twice)                                    0.00e+00   PASS
+  G7   cadence_mask == engine.rebalance_mask (D/W/M/Q)                  0.00e+00   PASS
+
+## THE GRID — every rung of every dial on both panels, published whatever a chooser did
+  U56: 66 rungs run  (5s)
+  B136: 66 rungs run  (9s)
+  wrote 2026-09-17_does-the-TENT-survive-when-the-DRAWDOWN-LEG-is-replaced-by-a-NON-EXPOSURE-one_C.grid.csv  (132 rows, 64 cols)
+       CONTROL: min(M_S, M_DD, M_CAGR) on U56 D_GROSS picks 0.625 (1154 committed 0.625)
+       CONTROL: min(M_S, M_DD, M_CAGR) on B136 D_GROSS picks 0.575 (1154 committed 0.575)
+  G8   CROSS-RUN 1150's 8 single picks + 1154's 2 tent picks            0.00e+00   PASS
+  G8b  CROSS-RUN 1154's committed U56 margin endpoints (gross 0.20 -> 1.00) 4.94e-05   PASS
+       M_S     +0.2353 -> +0.2377   (1154: +0.2353 -> +0.2377)
+       M_DD    +0.7127 -> -0.3903   (1154: +0.7127 -> -0.3903)
+       M_CAGR  -0.6485 -> +0.7738   (1154: -0.6485 -> +0.7738)
+  G9   ALGEBRA: min(mono, flat) is mono -> endpoint, 20,000 synthetic   0.00e+00   PASS
+  G9b  ALGEBRA: min of two OPPOSED monos is UNIMODAL (up then down)     0.00e+00   PASS
+       and its argmax is INTERIOR in 20,000 of 20,000 synthetic draws (100.0%).
+  G10  ladders NEST the record's committed rungs                        1.00e+00   PASS
+  G11  cap multiplier is AFFINE: per-leg rho/mono invariant over 4 multipliers 0.00e+00   PASS
+  G12  DEGREE machinery on an EXACTLY SCALED book: deg-1 ~1, deg-0 ~0 (tol 0.15) 1.77e-02   PASS
+       synthetic slopes: ADD +0.982  VOL +1.000  ULC +1.017  CAGR +1.004  Sharpe -0.000  UPI -0.013  TUW +0.011
+  GATES 14 of 14 PASS
+
+## THE MEASURED HOMOGENEITY DEGREES ON D_GROSS — is each leg an EXPOSURE object?
+  U56   |MaxDD|  declared degree 1  measured slope +0.9791  OK       (0.03803 -> 0.184)
+  U56   vol      declared degree 1  measured slope +1.0011  OK       (0.03306 -> 0.1656)
+  U56   ulcer    declared degree 1  measured slope +1.0139  OK       (0.01063 -> 0.05432)
+  U56   CAGR     declared degree 1  measured slope +1.0061  OK       (0.03681 -> 0.1857)
+  U56   Sharpe   declared degree 0  measured slope +0.0013  OK       (1.11 -> 1.112)
+  U56   UPI      declared degree 0  measured slope -0.0078  OK       (3.462 -> 3.42)
+  U56   TUW      declared degree 0  measured slope +0.0077  OK       (0.8555 -> 0.864)
+  B136  |MaxDD|  declared degree 1  measured slope +0.9811  OK       (0.0398 -> 0.1932)
+  B136  vol      declared degree 1  measured slope +1.0010  OK       (0.03693 -> 0.1849)
+  B136  ulcer    declared degree 1  measured slope +1.0023  OK       (0.01188 -> 0.05961)
+  B136  CAGR     declared degree 1  measured slope +1.0108  OK       (0.04228 -> 0.2149)
+  B136  Sharpe   declared degree 0  measured slope +0.0033  OK       (1.14 -> 1.146)
+  B136  UPI      declared degree 0  measured slope +0.0084  OK       (3.56 -> 3.605)
+  B136  TUW      declared degree 0  measured slope +0.0053  OK       (0.851 -> 0.857)
+  wrote 2026-09-17_does-the-TENT-survive-when-the-DRAWDOWN-LEG-is-replaced-by-a-NON-EXPOSURE-one_C.degree.csv  (14 rows, 8 cols)
+  -> H_DEGREE HOLDS: 14 of 14 (panel, stat) slopes match their declared degree.
+
+## SHAPES AND PICKS — 4 legs x 5 dials x 2 panels = 40 cells, every one published
+  U56: 20 cells scored  (11s)
+  B136: 20 cells scored  (11s)
+  wrote 2026-09-17_does-the-TENT-survive-when-the-DRAWDOWN-LEG-is-replaced-by-a-NON-EXPOSURE-one_C.shapes.csv  (40 rows, 33 cols)
+  wrote 2026-09-17_does-the-TENT-survive-when-the-DRAWDOWN-LEG-is-replaced-by-a-NON-EXPOSURE-one_C.picks.csv  (40 rows, 26 cols)
+  wrote 2026-09-17_does-the-TENT-survive-when-the-DRAWDOWN-LEG-is-replaced-by-a-NON-EXPOSURE-one_C.mult.csv  (120 rows, 11 cols)
+
+## THE ANSWER
+  D_GROSS, the queue's own cell — the min's shape leg by leg, both panels:
+    U56   L_DD      EXPOSURE (dec shape TENT          mono False dir none  rho +0.372  pick 0.625  INTERIOR binding M_CAGR->M_SWAP (2)  spread 0.7542 = 3.68 SD
+    U56   L_VOLTGT  EXPOSURE (dec shape TENT          mono False dir none  rho +0.814  pick 0.775  INTERIOR binding M_CAGR->M_SWAP (3)  spread 0.8858 = 6.61 SD
+    U56   L_TUW     NON-EXPOSURE  shape TENT          mono False dir none  rho +0.696  pick 0.575  INTERIOR binding M_CAGR->M_SWAP (2)  spread 0.6302 = 7.23 SD
+    U56   L_ULCER   NON-EXPOSURE  shape TENT          mono False dir none  rho +0.773  pick 0.625  INTERIOR binding M_CAGR->M_SWAP (2)  spread 0.7304 = 2.44 SD
+    B136  L_DD      EXPOSURE (dec shape TENT          mono False dir none  rho +0.098  pick 0.575  INTERIOR binding M_CAGR->M_SWAP (2)  spread 0.7428 = 3.75 SD
+    B136  L_VOLTGT  EXPOSURE (dec shape TENT          mono False dir none  rho +0.580  pick 0.675  INTERIOR binding M_CAGR->M_SWAP (3)  spread 0.8689 = 6.67 SD
+    B136  L_TUW     NON-EXPOSURE  shape TENT          mono False dir none  rho +0.548  pick 0.5    INTERIOR binding M_CAGR->M_SWAP (2)  spread 0.5838 = 7.11 SD
+    B136  L_ULCER   NON-EXPOSURE  shape RAMP          mono True  dir up    rho +1.000  pick 1.0    ENDPOINT binding M_CAGR->M_SWAP (2)  spread 0.7267 = 1.79 SD
+  -> H_TENTLIVES HOLDS (L_VOLTGT, the OTHER exposure leg, is a TENT on both panels: [True, True])
+  -> H_TENTDIES  FAILS (L_TUW and L_ULCER monotone AND endpoint on both panels)
+  -> H_PAIRONLY  FAILS: TENT shape at 15 of 40 cells overall, of which 9 carry an EXPOSURE leg and 6 a NON-exposure one.
+
+  SHAPE BY LEG (all five dials, both panels):
+    L_DD      TENT 3/10  RAMP 0  FLAT 0  OTHER 7  interior picks 6/10
+    L_VOLTGT  TENT 6/10  RAMP 2  FLAT 2  OTHER 0  interior picks 7/10
+    L_TUW     TENT 2/10  RAMP 0  FLAT 8  OTHER 0  interior picks 7/10
+    L_ULCER   TENT 4/10  RAMP 1  FLAT 0  OTHER 5  interior picks 7/10
+  SHAPE BY DIAL:
+    D_GROSS    TENT 7/8  interior picks 7/8  median binding-leg count 2.0
+    D_N        TENT 3/8  interior picks 6/8  median binding-leg count 1.0
+    D_HOLD     TENT 4/8  interior picks 8/8  median binding-leg count 1.5
+    D_CADENCE  TENT 1/8  interior picks 6/8  median binding-leg count 1.0
+    D_MAXVOL   TENT 0/8  interior picks 0/8  median binding-leg count 1.0
+  EVERY NON-EXPOSURE TENT, named (these are what would REFUTE 1154's mechanism):
+    U56   D_GROSS    L_TUW     pick 0.575 spread 0.6302 = 7.23 SD  flat False
+    U56   D_GROSS    L_ULCER   pick 0.625 spread 0.7304 = 2.44 SD  flat False
+    U56   D_N        L_ULCER   pick 40 spread 0.3438 = 1.18 SD  flat False
+    B136  D_GROSS    L_TUW     pick 0.5 spread 0.5838 = 7.11 SD  flat False
+    B136  D_N        L_ULCER   pick 30 spread 0.2971 = 0.78 SD  flat True
+    B136  D_HOLD     L_ULCER   pick 63 spread 0.2618 = 1.58 SD  flat False
+
+  THE MULTIPLIER ANNEX (not a tuned parameter; verdict read at the primary row only):
+    U56   L_DD      picks over mult [0.6, 0.8, 1.0, 1.25]: ['0.625', '0.7', '0.9', '1.0']  tent [True, True, True, False]
+    B136  L_DD      picks over mult [0.6, 0.8, 1.0, 1.25]: ['0.575', '0.65', '0.8', '1.0']  tent [True, True, True, False]
+    U56   L_VOLTGT  picks over mult [0.6, 0.8, 1.0, 1.25]: ['0.6', '0.675', '0.775', '0.975']  tent [True, True, True, True]
+    B136  L_VOLTGT  picks over mult [0.6, 0.8, 1.0, 1.25]: ['0.525', '0.6', '0.675', '0.825']  tent [True, True, True, True]
+    U56   L_TUW     picks over mult [0.6, 0.8, 1.0, 1.25]: ['0.2', '0.425', '0.575', '0.675']  tent [False, True, True, True]
+    B136  L_TUW     picks over mult [0.6, 0.8, 1.0, 1.25]: ['0.2', '0.375', '0.5', '0.6']  tent [False, True, True, True]
+
+## *** POST-HOC (added after the first run, labelled, pre-registered verdicts unchanged) ***
+## IS THE PEAK RESOLVABLE? — the peak's height over EACH endpoint in paired bootstrap SDs
+   The first run made the pre-declared FLAT test look useless: it compares the min's
+   WHOLE-LADDER spread with one SD, and where the swapped leg is near-constant the min is a
+   RAMP-then-PLATEAU whose spread is ALL ramp, so a peak on a dead-flat plateau reads 7 SD.
+   need_lo = v[pick]-v[0] (the ramp side), need_hi = v[pick]-v[R-1] (the plateau side).
+    U56   L_DD      pick 0.625  need_lo +0.7542 =  +3.68 SD RESOLVED   | need_hi +0.4961 =  +2.81 SD RESOLVED   | plateau 15 rungs tilt -0.4730 vs ramp +0.7542  -> TENT RESOLVED True
+    U56   L_VOLTGT  pick 0.775  need_lo +0.8858 =  +6.61 SD RESOLVED   | need_hi +0.2025 =  +2.15 SD RESOLVED   | plateau  9 rungs tilt -0.1934 vs ramp +0.8858  -> TENT RESOLVED True
+    U56   L_TUW     pick 0.575  need_lo +0.6302 =  +7.23 SD RESOLVED   | need_hi +0.0041 =  +0.06 SD unresolved | plateau 18 rungs tilt -0.0041 vs ramp +0.6302  -> TENT RESOLVED False
+    U56   L_ULCER   pick 0.625  need_lo +0.7304 =  +2.44 SD RESOLVED   | need_hi +0.0096 =  +0.10 SD unresolved | plateau 16 rungs tilt -0.0096 vs ramp +0.7304  -> TENT RESOLVED False
+    B136  L_DD      pick 0.575  need_lo +0.7428 =  +3.75 SD RESOLVED   | need_hi +0.6063 =  +3.52 SD RESOLVED   | plateau 18 rungs tilt -0.6063 vs ramp +0.7428  -> TENT RESOLVED True
+    B136  L_VOLTGT  pick 0.675  need_lo +0.8689 =  +6.67 SD RESOLVED   | need_hi +0.3506 =  +2.66 SD RESOLVED   | plateau 13 rungs tilt -0.3239 vs ramp +0.8689  -> TENT RESOLVED True
+    B136  L_TUW     pick 0.5    need_lo +0.5838 =  +7.11 SD RESOLVED   | need_hi +0.0035 =  +0.05 SD unresolved | plateau 21 rungs tilt -0.0035 vs ramp +0.5838  -> TENT RESOLVED False
+    B136  L_ULCER   pick 1.0    need_lo +0.7267 =  +1.79 SD RESOLVED   | need_hi +0.0000 =   +nan SD unresolved | plateau 18 rungs tilt +0.0053 vs ramp +0.7267  -> TENT RESOLVED False
+  -> H_PEAKRESOLVED (POST-HOC) HOLDS: on D_GROSS the peak is
+     resolved against BOTH endpoints at 4 of 8 cells; EXPOSURE legs 4/4, NON-exposure legs 0/4.
+  ACROSS ALL 40 CELLS: TENT 15, of which RESOLVED 5; by leg L_DD 3/3  L_VOLTGT 2/6  L_TUW 0/2  L_ULCER 0/4
+  THE SIGN OF A DEGREE-0 LEG'S TILT IS NOISE, WHICH IS THE WHOLE POINT:
+    U56   L_TUW     margin -0.0124 -> -0.0224 (range -0.0100), measured degree slope +0.0077
+    B136  L_TUW     margin -0.0089 -> -0.0159 (range -0.0071), measured degree slope +0.0053
+    U56   L_ULCER   margin +0.0858 -> +0.0723 (range -0.0134), measured degree slope -0.0078
+    B136  L_ULCER   margin +0.1161 -> +0.1305 (range +0.0143), measured degree slope +0.0084
+
+## RULE 8 (walk-forward) AND BOTH KEEP PATHS
+   Every chooser here is IS-ONLY by construction, so each of the 40 picks IS a rule-8
+   decision: read on 2009-01..2016-12-31, scored on 2016-12-31..2026-09-15 untouched.
+   U56 SPY       full 15.10% / 0.8829 / -33.72% (halves 0.9588/0.8207), OOS 15.21% / 0.8711 / -33.72%
+   U56 RULES v2  full 8.62% / 1.2008 / -12.05% (halves 1.2322/1.1760), OOS 9.46% / 1.2763 / -12.05%
+   B136 SPY       full 15.16% / 0.8861 / -33.72% (halves 0.9596/0.8259), OOS 15.33% / 0.8767 / -33.72%
+   B136 RULES v2  full 7.98% / 1.0993 / -12.24% (halves 1.2348/0.9658), OOS 7.88% / 1.1059 / -12.24%
+   LADDER BASE RATES over all 132 published cells: 4b full 35, 4b OOS 38, both 34 (25.8%), 4a 0
+   THE 40 PICKS: 4b full 8, 4b OOS 7, both 7 (17.5%), 4a 0
+   PICK PASS RATE BY LEG (4b full+OOS):
+     L_DD      3/10   (interior picks 6/10)
+     L_VOLTGT  2/10   (interior picks 7/10)
+     L_TUW     1/10   (interior picks 7/10)
+     L_ULCER   1/10   (interior picks 7/10)
+   INTERIOR picks 7/27 vs ENDPOINT picks 0/13 vs ladder base rate 25.8%  -> H_PICKPAY HOLDS
+   4a is 0 of 132 cells and 0 of 40 picks  -> H_NOPAY4a HOLDS
+   EVERY PICK THAT CLEARS 4b FULL AND OOS (the capital-relevant rows):
+     U56   D_GROSS    L_VOLTGT  TENT          pick 0.775  full 16.10% / 1.1398 / -19.72% (halves 1.2038/1.0972), OOS 17.54% / 1.1645 / -19.72%, 2.99x/yr  [SPY OOS 15.21% / 0.8711 / -33.72%]
+     U56   D_GROSS    L_DD      TENT          pick 0.625  full 12.96% / 1.1393 / -16.12% (halves 1.2034/1.0966), OOS 14.10% / 1.1639 / -16.12%, 2.43x/yr  [SPY OOS 15.21% / 0.8711 / -33.72%]
+     U56   D_GROSS    L_ULCER   TENT          pick 0.625  full 12.96% / 1.1393 / -16.12% (halves 1.2034/1.0966), OOS 14.10% / 1.1639 / -16.12%, 2.43x/yr  [SPY OOS 15.21% / 0.8711 / -33.72%]
+     U56   D_GROSS    L_TUW     TENT          pick 0.575  full 11.91% / 1.1391 / -14.90% (halves 1.2032/1.0964), OOS 12.96% / 1.1637 / -14.90%, 2.25x/yr  [SPY OOS 15.21% / 0.8711 / -33.72%]
+     U56   D_HOLD     L_DD      TENT          pick 10     full 13.51% / 1.0936 / -19.33% (halves 1.1318/1.0684), OOS 15.07% / 1.1485 / -19.33%, 7.92x/yr  [SPY OOS 15.21% / 0.8711 / -33.72%]
+     B136  D_GROSS    L_VOLTGT  TENT          pick 0.675  full 14.43% / 1.0628 / -18.81% (halves 1.2893/0.8838), OOS 14.43% / 1.0093 / -18.81%, 2.93x/yr  [SPY OOS 15.33% / 0.8767 / -33.72%]
+     B136  D_GROSS    L_DD      TENT          pick 0.575  full 12.29% / 1.0620 / -16.18% (halves 1.2884/0.8829), OOS 12.30% / 1.0084 / -16.18%, 2.52x/yr  [SPY OOS 15.33% / 0.8767 / -33.72%]
+   BEST LADDER cell (not a pick) passing 4b full+OOS: U56 D_N rung 12 — full 17.71% / 1.1692 / -20.17%, OOS 18.89% / 1.1759 / -20.17%
+  wrote 2026-09-17_does-the-TENT-survive-when-the-DRAWDOWN-LEG-is-replaced-by-a-NON-EXPOSURE-one_C.walkforward.csv  (44 rows, 17 cols)
+  wrote 2026-09-17_does-the-TENT-survive-when-the-DRAWDOWN-LEG-is-replaced-by-a-NON-EXPOSURE-one_C.hypotheses.csv  (7 rows, 4 cols)
+  wrote 2026-09-17_does-the-TENT-survive-when-the-DRAWDOWN-LEG-is-replaced-by-a-NON-EXPOSURE-one_C.gates.csv  (15 rows, 4 cols)
+
+## HYPOTHESES
+               hypothesis                                                                             bar                                                          value verdict
+                 H_DEGREE                 declared degrees == measured slopes (deg1 >= 0.5, deg0 <= 0.25)                                                          14/14   HOLDS
+              H_TENTLIVES                           L_VOLTGT (exposure) is a TENT on D_GROSS, both panels                                                   [True, True]   HOLDS
+               H_TENTDIES                 L_TUW and L_ULCER monotone AND endpoint on D_GROSS, both panels [[False, False], [False, False], [False, False], [True, True]]   FAILS
+               H_PAIRONLY                                       no NON-exposure leg is a TENT on ANY dial                               6 non-exposure tents of 15 total   FAILS
+                H_PICKPAY                     interior picks clear 4b full+OOS at >= the ladder base rate                                                 0.259 vs 0.258   HOLDS
+H_PEAKRESOLVED (POST-HOC) on D_GROSS the peak beats BOTH endpoints by >1 paired SD only for EXPOSURE legs                                 exposure 4/4, non-exposure 0/4   HOLDS
+                H_NOPAY4a                                            4a is 0 of every cell and every pick                                        0/132 cells, 0/40 picks   HOLDS
+
+## DECISION RULE SAYS: YES IN SHAPE, NO IN SUBSTANCE — the decision rule's three conditions are H_DEGREE True, H_TENTLIVES True, H_TENTDIES False; the POST-HOC peak test reads H_PEAKRESOLVED True
+
+# done in 11s
