@@ -1796,3 +1796,76 @@ rather than a lookalike.
   with 51 of 715 tickers dropped for max_1d_move >= 1.0 (664 names), SPY excluded from its
   eligible set. The bias does not cancel out of the OOS levels or the 4b legs, so any pass there
   is an upper bound.
+
+## 2026-09-17 — lane B, idea 1209: does-a-MONOTONE-LADDER-EXCLUSION-leave-the-record-ANY-resolvable-PICK-at-all — KILL (capital) / ANSWERED = NO, ZERO
+- THE QUESTION. 1154 found 15 of its 17 resolved pick decisions sit on the GROSS ladder, which is
+  exactly monotone in IS Sharpe at 6 of 6 cells over a spread of 0.0014-0.0090 — the bar certifies
+  an identity — and the queue named the repair: score every ladder for monotonicity in its own
+  chooser's statistic, drop the monotone ones as uninformative by construction, and report what
+  fraction of committed picks survives. This run builds that exclusion (Spearman |rho| of IS
+  Sharpe against rung index), walks its strictness over {T_NONE, T_EXACT, T_095, T_090, T_080,
+  T_060} x {ALL4, NG3, NHG, NH}, and re-prices every chooser. 24 cells, all published. 12 of 12
+  gates, 59s, offline, deterministic.
+- THE ANSWER IS ZERO, AT EVERY TOLERANCE AND EVERY LADDER SET. The exclusion keeps 0.286-0.476 of
+  the record's 168 picks and 0.000 of its RESOLUTIONS, on BOTH bars, at all 20 non-control cells.
+  At the record's own habit (T_NONE x ALL4) 4 of 168 picks resolve on R_SPREAD and 3 on R_ARGMAX,
+  and ALL of them are GROSS: N 0 of 42, H 0 of 42, CADENCE 0 of 42. 1154's CONCENTRATION
+  replicates and strengthens (0.88 -> 1.00); its LEVEL does not (0.236 -> 0.024) and the
+  disagreement is published rather than absorbed — 1154's bar is pairwise ladder-against-ladder,
+  this run's is each ladder against its OWN recentred block-bootstrap null range.
+- AND THE FOUR RESOLVED PICKS ARE THE ANCHOR. All four name rung GROSS=0.75 — the anchor's own
+  gross — against runner-up 0.70, at an IS Sharpe gap of 0.00038 to 0.00042, all four on B136
+  (folds 2016/2018/2019/2020) at R_obs/q95 of 1.03-1.21. Gate G3 re-establishes bit for bit
+  (dev 0.00e+00) that N=20 / H=126 / GROSS=0.75 / CADENCE=W are ONE book, so the record's entire
+  inventory of resolved picks is a re-selection of the book it already holds, at four
+  ten-thousandths of Sharpe. CH_RESOLVED therefore has a value-move rate of exactly 0.000 at 24
+  of 24 cells and is bit-for-bit CH_ANCHOR in every arm: a chooser that acts only on resolved
+  picks IS the do-nothing rule, on this tape, BY MEASUREMENT and not by assumption.
+- THE RULE IS A RUNG-COUNT FILTER WEARING A SHAPE FILTER'S CLOTHES, AND ARM 0 SAYS SO BEFORE THE
+  TAPE IS READ. A k-rung ladder is exactly monotone under a random ordering with probability
+  2/k!. CADENCE (k=2) is monotone with probability 1.000 — a two-rung ladder cannot be anything
+  else — so ANY monotone exclusion deletes it at 42 of 42 cells for a reason that has nothing to
+  do with the tape. GROSS (k=10) fires 40 of 42 against a null of 5.51e-07 (binomial p 3.9e-248):
+  not a shape discovery but 1189's structural fact (Sharpe is invariant to gross at a 0% cash
+  rate; what survives is a monotone cost drag), which is also why its median realised spread is
+  0.0018 against N's 0.1604. AND THE TWO LADDERS WHERE THE RULE COULD DO REAL WORK NEVER FIRE:
+  N 0 of 42 (expected 0.117, p 1.000) and H 6 of 42 (expected 3.500, p 0.134), neither exceeding
+  its own null. The rule deletes exactly what is monotone by construction and keeps exactly what
+  is indistinguishable from chance — its 0.476 -> 0.286 pick attrition is a k effect.
+- IT DOES NOT PAY, AND THE MATCHED NULL SETTLES THE ONE CELL THAT LOOKED LIKE IT DID. Doing
+  nothing = 1.0362 mean OOS fold Sharpe over 42 (panel, fold) cells. CH_WIDEST at ALL4 reads
+  T_NONE 0.9959, T_EXACT 0.9892, T_095 0.9892, T_090 0.9803, T_080 1.0292, T_060 1.0649 — every
+  cell a loss except T_060's +0.0287, whose count-matched null (own destination multiset, own
+  move count, re-dealt to random folds, 4,000 reps) puts it at p = 0.568. Over the 24 (set, tol,
+  chooser) cells that move at all, the observed mean sits ABOVE its own null at 0 of 24, mean gap
+  -0.0593, and 0 reach p < 0.05 against 1.2 expected by chance. 1206's, 1221's, 1226's, 1227's,
+  1230's and 1231's finding arriving a SEVENTH time.
+- THE LADDER-SET DIAL IS THE MONOTONICITY DIAL. NG3, NHG and NH reproduce ALL4's OOS column to
+  within 0.011 at every tolerance: removing GROSS and CADENCE BY HAND and removing them BY
+  MONOTONICITY are the same operation. That is the cleanest statement of what the queue's
+  proposal actually buys.
+- RULE 8 AND BOTH KEEP PATHS. Every dial and chooser chosen on the pre-2017 window only,
+  2017-2026 read once: 216 rule-8 rows, 216 stitched chooser curves, 66 rung books. 4a 0 of 216
+  rows, 0 of 216 curves, 0 of 66 books. 4b 48 of 216 rule-8 rows pass full AND OOS and COLLAPSE
+  TO ONE DISTINCT BOOK — the frozen U56 anchor N=20, full 15.71% / 1.1480 / -19.13%, OOS
+  17.16% / 1.1759 / -19.13% against U56 SPY OOS 15.15% / 0.8686 / -33.72%. Stitched 52 full /
+  52 OOS / 52 both, the best being ALL4/T_NONE/CH_ANCHOR on U56, i.e. doing nothing. Rung books
+  17 full / 18 OOS / 17 both, 57 distinct on 1211's realised-return key. Mean OOS Sharpe by
+  chooser over the 216 rows: CH_ANCHOR 0.8845, CH_RESOLVED 0.8845 (identical), CH_WIDEST 0.8458.
+  CONFIRMATORY, NOT GENERATIVE — every pass is a book the record already committed. NOT PROMOTED,
+  NO MEMO, NO RULES CHANGE.
+  Script: research/backtests/2026-09-17_does-a-MONOTONE-LADDER-EXCLUSION-leave-the-record-ANY-resolvable-PICK-at-all_B.py
+- WHAT THE RECORD SHOULD TAKE. Not a PROTOCOL clause excluding monotone ladders: on this record
+  that clause is a rung-count filter, it deletes 100% of the resolutions, and the resolutions it
+  deletes were the anchor anyway. The defensible line is the one worth a future run's header:
+  THE RECORD DOES NOT HAVE RESOLVABLE PICKS TO LOSE — 4 in 168, all on one structurally monotone
+  ladder, all naming the book already held, at a Sharpe gap of 0.0004. PROPOSED for the Sunday
+  review (rule 6) as that sentence and nothing more, never as a chooser.
+- NUMBER COLLISION (defect 932 again). The number 1209 was already in use in '## Done' by a
+  DIFFERENT question (the count-matched widest-dial shift, cloud lane, same day). Both are now
+  committed; this entry is the one lane B claimed from '## Open' and is read by its SLUG.
+  Follow-ups filed: 1232, 1233, 1234.
+- SURVIVORSHIP (rule 9). U56 (55 names) and B136 (135) are CURRENT constituents; SMALL is the
+  sub-$2B screen with 51 of 715 tickers dropped for max_1d_move >= 1.0 (664 investable), SPY
+  excluded from every eligible set and used as benchmark only. The bias does not cancel out of
+  the OOS levels or the 4b legs, so any pass there is an upper bound.

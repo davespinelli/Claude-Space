@@ -1,0 +1,705 @@
+============================================================================================================
+IDEA 1209 (lane B, 2026-09-17) — does a MONOTONE-LADDER EXCLUSION leave the record ANY
+resolvable PICK at all?
+============================================================================================================
+
+============================================================================================================
+ARM 0 — WHAT THE EXCLUSION IS, BEFORE ANY PRICE IS READ
+============================================================================================================
+
+  A ladder of k rungs is EXACTLY monotone under a random ordering with probability 2/k!.
+  The four ladders the record owns have four completely different null rates, so ONE
+  exclusion rule is four different rules:
+
+     ladder      k     P(|rho|=1)   P(|rho|>=0.95)  P(>=0.90)  P(>=0.80)  P(>=0.60)
+     N           6     2.778e-03         0.0028     0.0167     0.0583     0.2417
+     H           4     8.333e-02         0.0833     0.0833     0.3333     0.4167
+     GROSS      10     5.511e-07         0.0001     0.0008     0.0070     0.0720
+     CADENCE     2     1.000e+00         1.0000     1.0000     1.0000     1.0000
+
+  READ IT BEFORE THE DATA: CADENCE is monotone with probability 1.000 — a two-rung
+  ladder cannot be anything else — so ANY monotone exclusion deletes it unconditionally,
+  on any tape, for a reason that has nothing to do with the tape.  GROSS's null is
+  5.5e-07, so GROSS being monotone at 6 of 6 cells (1154) is either a 1-in-a-million
+  coincidence six times over or a STRUCTURAL fact (1189: Sharpe is invariant to gross at
+  a 0% cash rate; what survives is a monotone cost drag).  N and H are where the rule
+  does actual work: 0.00278 and 0.0833.
+
+============================================================================================================
+ARM A — THE LADDERS, THEIR MONOTONICITY, AND THEIR RESOLUTION
+============================================================================================================
+
+  PANELS: U56 55 names; B136 135; SMALL 664 investable of 715 (51 dropped for max_1d_move >= 1.0), SPY benchmark only.
+    U56: 22 rung books built.
+    B136: 22 rung books built.
+    SMALL: 22 rung books built.
+    G1 2.776e-17  G2 live U56 MaxDD -12.0549%  G3 0.000e+00  G4 0.000e+00  G5 0.000e+00
+
+    42 (panel, fold) cells = 3 panels x 14 folds (2013-2026).
+
+  (A1) EVERY LADDER AT EVERY (panel, fold): monotonicity in its OWN chooser statistic
+       (IS Sharpe), realised spread, and the two resolution bars.
+
+       ladder   k   |rho|>=1  >=0.95  >=0.90  >=0.80  >=0.60 | null(=1)  | med R_obs  med R/q95 | R_SPREAD  R_ARGMAX
+       N         6     0.000   0.000   0.095   0.262   0.500 |  2.78e-03 |    0.1604     0.3748 |    0.000     0.000
+       H         4     0.143   0.143   0.143   0.381   0.381 |  8.33e-02 |    0.0944     0.3392 |    0.000     0.000
+       GROSS    10     0.952   0.952   0.952   0.952   0.976 |  5.51e-07 |    0.0018     0.4225 |    0.095     0.071
+       CADENCE   2     1.000   1.000   1.000   1.000   1.000 |  1.00e+00 |    0.0428     0.1761 |    0.000     0.000
+
+  (A2) IS THE MONOTONICITY IN EXCESS OF ITS OWN NULL?  Binomial one-sided p of the
+       observed exact-monotone count against 2/k! over the 42 cells.
+
+       ladder   k   exact of 42   expected   p(one-sided)
+       N         6     0 of 42      0.1167      1.000e+00
+       H         4     6 of 42      3.5000      1.336e-01
+       GROSS    10    40 of 42      0.0000     3.852e-248
+       CADENCE   2    42 of 42     42.0000      1.000e+00
+
+============================================================================================================
+ARM B — THE 24-CELL GRID: WHAT SURVIVES THE EXCLUSION
+============================================================================================================
+
+  A PICK is one (panel, fold, ladder) decision: the ladder's IS-Sharpe argmax rung.
+  The record's committed habit is T_NONE x ALL4 = 4 picks per cell, 168 in all.
+
+   set    tol       ladders/cell  picks  survive  surv%  | RESOLVED of survivors
+                                                         |  R_SPREAD        R_ARGMAX
+   ALL4   T_NONE          4.000    168     168  1.000  |    4 (0.024)     3 (0.018)
+   ALL4   T_EXACT         1.905    168      80  0.476  |    0 (0.000)     0 (0.000)
+   ALL4   T_095           1.905    168      80  0.476  |    0 (0.000)     0 (0.000)
+   ALL4   T_090           1.810    168      76  0.452  |    0 (0.000)     0 (0.000)
+   ALL4   T_080           1.405    168      59  0.351  |    0 (0.000)     0 (0.000)
+   ALL4   T_060           1.143    168      48  0.286  |    0 (0.000)     0 (0.000)
+   NG3    T_NONE          3.000    126     126  1.000  |    0 (0.000)     0 (0.000)
+   NG3    T_EXACT         1.857    126      78  0.619  |    0 (0.000)     0 (0.000)
+   NG3    T_095           1.857    126      78  0.619  |    0 (0.000)     0 (0.000)
+   NG3    T_090           1.762    126      74  0.587  |    0 (0.000)     0 (0.000)
+   NG3    T_080           1.357    126      57  0.452  |    0 (0.000)     0 (0.000)
+   NG3    T_060           1.119    126      47  0.373  |    0 (0.000)     0 (0.000)
+   NHG    T_NONE          3.000    126     126  1.000  |    4 (0.032)     3 (0.024)
+   NHG    T_EXACT         1.905    126      80  0.635  |    0 (0.000)     0 (0.000)
+   NHG    T_095           1.905    126      80  0.635  |    0 (0.000)     0 (0.000)
+   NHG    T_090           1.810    126      76  0.603  |    0 (0.000)     0 (0.000)
+   NHG    T_080           1.405    126      59  0.468  |    0 (0.000)     0 (0.000)
+   NHG    T_060           1.143    126      48  0.381  |    0 (0.000)     0 (0.000)
+   NH     T_NONE          2.000     84      84  1.000  |    0 (0.000)     0 (0.000)
+   NH     T_EXACT         1.857     84      78  0.929  |    0 (0.000)     0 (0.000)
+   NH     T_095           1.857     84      78  0.929  |    0 (0.000)     0 (0.000)
+   NH     T_090           1.762     84      74  0.881  |    0 (0.000)     0 (0.000)
+   NH     T_080           1.357     84      57  0.679  |    0 (0.000)     0 (0.000)
+   NH     T_060           1.119     84      47  0.560  |    0 (0.000)     0 (0.000)
+
+  (B1) THE QUEUE'S QUESTION, ANSWERED AT THE RECORD'S OWN SET (ALL4):
+       T_NONE  : 168 picks,   4 resolved on R_SPREAD,   3 on R_ARGMAX.
+       T_EXACT :  80 picks,   0 resolved on R_SPREAD,   0 on R_ARGMAX.
+       T_095   :  80 picks,   0 resolved on R_SPREAD,   0 on R_ARGMAX.
+       T_090   :  76 picks,   0 resolved on R_SPREAD,   0 on R_ARGMAX.
+       T_080   :  59 picks,   0 resolved on R_SPREAD,   0 on R_ARGMAX.
+       T_060   :  48 picks,   0 resolved on R_SPREAD,   0 on R_ARGMAX.
+
+  (B2) WHO CARRIES THE RESOLUTIONS (T_NONE, ALL4 — the record's habit):
+
+       ladder    picks   R_SPREAD  share of all   R_ARGMAX  share of all
+       N            42          0         0.0000          0         0.0000
+       H            42          0         0.0000          0         0.0000
+       GROSS        42          4         1.0000          3         1.0000
+       CADENCE      42          0         0.0000          0         0.0000
+
+============================================================================================================
+ARM C — DOES THE EXCLUSION PAY OUT OF SAMPLE (42 rolling folds)?
+============================================================================================================
+
+  Each (panel, fold): choose on the IS window [warm-up, fold start) ONLY, read the fold.
+  A move onto a rung that IS the anchor is a NO-OP (1230's correction): the move rate
+  below is the VALUE rate, not the KEY rate.
+
+   set    tol      chooser        move   mean OOS fold S   vs anchor   med OOS S
+   ALL4   T_NONE   CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   ALL4   T_NONE   CH_WIDEST      0.905            0.9959     -0.0404      0.9965
+   ALL4   T_NONE   CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   ALL4   T_EXACT  CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   ALL4   T_EXACT  CH_WIDEST      1.000            0.9892     -0.0470      0.9545
+   ALL4   T_EXACT  CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   ALL4   T_095    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   ALL4   T_095    CH_WIDEST      1.000            0.9892     -0.0470      0.9545
+   ALL4   T_095    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   ALL4   T_090    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   ALL4   T_090    CH_WIDEST      1.000            0.9803     -0.0560      0.9545
+   ALL4   T_090    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   ALL4   T_080    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   ALL4   T_080    CH_WIDEST      0.857            1.0292     -0.0070      0.9965
+   ALL4   T_080    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   ALL4   T_060    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   ALL4   T_060    CH_WIDEST      0.810            1.0649     +0.0287      0.9965
+   ALL4   T_060    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NG3    T_NONE   CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NG3    T_NONE   CH_WIDEST      0.905            0.9959     -0.0404      0.9965
+   NG3    T_NONE   CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NG3    T_EXACT  CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NG3    T_EXACT  CH_WIDEST      1.000            0.9892     -0.0470      0.9545
+   NG3    T_EXACT  CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NG3    T_095    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NG3    T_095    CH_WIDEST      1.000            0.9892     -0.0470      0.9545
+   NG3    T_095    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NG3    T_090    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NG3    T_090    CH_WIDEST      1.000            0.9803     -0.0560      0.9545
+   NG3    T_090    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NG3    T_080    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NG3    T_080    CH_WIDEST      0.857            1.0292     -0.0070      0.9965
+   NG3    T_080    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NG3    T_060    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NG3    T_060    CH_WIDEST      0.810            1.0649     +0.0287      0.9965
+   NG3    T_060    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NHG    T_NONE   CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NHG    T_NONE   CH_WIDEST      1.000            1.0069     -0.0293      0.9965
+   NHG    T_NONE   CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NHG    T_EXACT  CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NHG    T_EXACT  CH_WIDEST      1.000            0.9892     -0.0470      0.9545
+   NHG    T_EXACT  CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NHG    T_095    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NHG    T_095    CH_WIDEST      1.000            0.9892     -0.0470      0.9545
+   NHG    T_095    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NHG    T_090    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NHG    T_090    CH_WIDEST      1.000            0.9803     -0.0560      0.9545
+   NHG    T_090    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NHG    T_080    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NHG    T_080    CH_WIDEST      0.857            1.0292     -0.0070      0.9965
+   NHG    T_080    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NHG    T_060    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NHG    T_060    CH_WIDEST      0.810            1.0649     +0.0287      0.9965
+   NHG    T_060    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NH     T_NONE   CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NH     T_NONE   CH_WIDEST      1.000            1.0069     -0.0293      0.9965
+   NH     T_NONE   CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NH     T_EXACT  CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NH     T_EXACT  CH_WIDEST      1.000            0.9892     -0.0470      0.9545
+   NH     T_EXACT  CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NH     T_095    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NH     T_095    CH_WIDEST      1.000            0.9892     -0.0470      0.9545
+   NH     T_095    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NH     T_090    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NH     T_090    CH_WIDEST      1.000            0.9803     -0.0560      0.9545
+   NH     T_090    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NH     T_080    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NH     T_080    CH_WIDEST      0.857            1.0292     -0.0070      0.9965
+   NH     T_080    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+   NH     T_060    CH_ANCHOR      0.000            1.0362     +0.0000      1.0023
+   NH     T_060    CH_WIDEST      0.810            1.0649     +0.0287      0.9965
+   NH     T_060    CH_RESOLVED    0.000            1.0362     +0.0000      1.0023
+
+   DOING NOTHING (CH_ANCHOR, identical at every cell by construction) = 1.0362.
+
+  (C1) THE MOVE-COUNT-MATCHED NULL.  For each (set, tol, chooser) that moves at all:
+       take its OWN destination multiset and its OWN move count, re-deal them to random
+       folds 4000 times, and ask whether the observed mean sits above its own null.
+
+   set    tol      chooser        moves  observed   null mean     gap        p
+   ALL4   T_NONE   CH_WIDEST         38     0.9959      1.0701   -0.0743   0.9485
+   ALL4   T_EXACT  CH_WIDEST         42     0.9892      1.0669   -0.0777   0.9547
+   ALL4   T_095    CH_WIDEST         42     0.9892      1.0678   -0.0786   0.9535
+   ALL4   T_090    CH_WIDEST         42     0.9803      1.0636   -0.0834   0.9625
+   ALL4   T_080    CH_WIDEST         36     1.0292      1.0653   -0.0361   0.7708
+   ALL4   T_060    CH_WIDEST         34     1.0649      1.0736   -0.0087   0.5680
+   NG3    T_NONE   CH_WIDEST         38     0.9959      1.0696   -0.0738   0.9397
+   NG3    T_EXACT  CH_WIDEST         42     0.9892      1.0674   -0.0782   0.9525
+   NG3    T_095    CH_WIDEST         42     0.9892      1.0680   -0.0788   0.9555
+   NG3    T_090    CH_WIDEST         42     0.9803      1.0633   -0.0831   0.9607
+   NG3    T_080    CH_WIDEST         36     1.0292      1.0655   -0.0363   0.7628
+   NG3    T_060    CH_WIDEST         34     1.0649      1.0749   -0.0100   0.5757
+   NHG    T_NONE   CH_WIDEST         42     1.0069      1.0738   -0.0669   0.9193
+   NHG    T_EXACT  CH_WIDEST         42     0.9892      1.0676   -0.0784   0.9495
+   NHG    T_095    CH_WIDEST         42     0.9892      1.0681   -0.0789   0.9520
+   NHG    T_090    CH_WIDEST         42     0.9803      1.0622   -0.0820   0.9570
+   NHG    T_080    CH_WIDEST         36     1.0292      1.0653   -0.0361   0.7682
+   NHG    T_060    CH_WIDEST         34     1.0649      1.0732   -0.0083   0.5705
+   NH     T_NONE   CH_WIDEST         42     1.0069      1.0745   -0.0675   0.9283
+   NH     T_EXACT  CH_WIDEST         42     0.9892      1.0681   -0.0789   0.9540
+   NH     T_095    CH_WIDEST         42     0.9892      1.0681   -0.0789   0.9493
+   NH     T_090    CH_WIDEST         42     0.9803      1.0649   -0.0846   0.9653
+   NH     T_080    CH_WIDEST         36     1.0292      1.0646   -0.0353   0.7735
+   NH     T_060    CH_WIDEST         34     1.0649      1.0737   -0.0087   0.5695
+
+   Cells that move at all: 24.  Observed ABOVE its own null at 0 of 24; mean gap -0.0593; p < 0.05 at 0 (expected by chance 1.2).
+
+============================================================================================================
+ARM D — PROTOCOL RULE 8 (choose on 2009-2016 ONLY, read 2017-2026 ONCE) AND BOTH KEEP
+PATHS
+============================================================================================================
+
+   U56    SPY  full  15.06% / 0.8815 / -33.72%  (halves 0.9600/0.8171)   OOS  15.15% / 0.8686 / -33.72%
+   U56    LIVE full   8.60% / 1.1982 / -12.05%  (halves 1.2332/1.1705)   OOS   9.42% / 1.2717 / -12.05%
+   B136   SPY  full  15.16% / 0.8862 / -33.72%  (halves 0.9598/0.8261)   OOS  15.33% / 0.8769 / -33.72%
+   B136   LIVE full   7.98% / 1.0994 / -12.24%  (halves 1.2351/0.9660)   OOS   7.88% / 1.1061 / -12.24%
+   SMALL  SPY  full  14.06% / 0.8582 / -33.72%  (halves 0.9140/0.8346)   OOS  15.33% / 0.8769 / -33.72%
+   SMALL  LIVE full   4.64% / 0.7130 / -12.18%  (halves 0.8170/0.6425)   OOS   4.47% / 0.6518 / -12.18%
+
+  (D1) EVERY RUNG BOOK against both KEEP paths, full sample and OOS.
+       66 rung books: 4a 0, 4b full 17, 4b OOS 18, BOTH 17.
+       Distinct (panel, CAGR, Sharpe, MaxDD) books: 57 of 66 — the GROSS ladder's Sharpe is near-invariant by construction (1189).
+
+  (D2) THE RULE-8 PICKS: every (set, tol, chooser) chosen on the pre-2017 window only,
+       2017-2026 read once, and the stitched full-sample curve of the same rule.
+
+   set    tol      chooser       panel   ladder  rung     OOS CAGR  OOS S   OOS DD  >SPY  4a  4b  4bOOS
+   ALL4   T_NONE   CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_NONE   CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_NONE   CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_NONE   CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   ALL4   T_NONE   CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   ALL4   T_NONE   CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   ALL4   T_NONE   CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_NONE   CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_NONE   CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_EXACT  CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_EXACT  CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_EXACT  CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_EXACT  CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   ALL4   T_EXACT  CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   ALL4   T_EXACT  CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   ALL4   T_EXACT  CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_EXACT  CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_EXACT  CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_095    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_095    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_095    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_095    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   ALL4   T_095    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   ALL4   T_095    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   ALL4   T_095    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_095    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_095    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_090    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_090    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_090    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_090    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   ALL4   T_090    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   ALL4   T_090    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   ALL4   T_090    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_090    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_090    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_080    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_080    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_080    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_080    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   ALL4   T_080    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   ALL4   T_080    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   ALL4   T_080    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_080    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_080    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_060    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_060    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_060    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   ALL4   T_060    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   ALL4   T_060    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   ALL4   T_060    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   ALL4   T_060    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   ALL4   T_060    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   ALL4   T_060    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_NONE   CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_NONE   CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_NONE   CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_NONE   CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NG3    T_NONE   CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NG3    T_NONE   CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NG3    T_NONE   CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_NONE   CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_NONE   CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_EXACT  CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_EXACT  CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_EXACT  CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_EXACT  CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NG3    T_EXACT  CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NG3    T_EXACT  CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NG3    T_EXACT  CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_EXACT  CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_EXACT  CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_095    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_095    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_095    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_095    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NG3    T_095    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NG3    T_095    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NG3    T_095    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_095    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_095    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_090    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_090    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_090    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_090    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NG3    T_090    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NG3    T_090    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NG3    T_090    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_090    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_090    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_080    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_080    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_080    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_080    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NG3    T_080    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NG3    T_080    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NG3    T_080    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_080    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_080    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_060    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_060    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_060    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NG3    T_060    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NG3    T_060    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NG3    T_060    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NG3    T_060    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NG3    T_060    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NG3    T_060    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_NONE   CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_NONE   CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_NONE   CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_NONE   CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NHG    T_NONE   CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NHG    T_NONE   CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NHG    T_NONE   CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_NONE   CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_NONE   CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_EXACT  CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_EXACT  CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_EXACT  CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_EXACT  CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NHG    T_EXACT  CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NHG    T_EXACT  CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NHG    T_EXACT  CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_EXACT  CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_EXACT  CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_095    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_095    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_095    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_095    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NHG    T_095    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NHG    T_095    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NHG    T_095    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_095    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_095    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_090    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_090    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_090    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_090    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NHG    T_090    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NHG    T_090    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NHG    T_090    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_090    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_090    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_080    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_080    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_080    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_080    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NHG    T_080    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NHG    T_080    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NHG    T_080    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_080    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_080    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_060    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_060    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_060    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NHG    T_060    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NHG    T_060    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NHG    T_060    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NHG    T_060    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NHG    T_060    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NHG    T_060    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_NONE   CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_NONE   CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_NONE   CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_NONE   CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NH     T_NONE   CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NH     T_NONE   CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NH     T_NONE   CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_NONE   CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_NONE   CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_EXACT  CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_EXACT  CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_EXACT  CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_EXACT  CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NH     T_EXACT  CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NH     T_EXACT  CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NH     T_EXACT  CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_EXACT  CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_EXACT  CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_095    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_095    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_095    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_095    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NH     T_095    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NH     T_095    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NH     T_095    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_095    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_095    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_090    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_090    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_090    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_090    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NH     T_090    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NH     T_090    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NH     T_090    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_090    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_090    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_080    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_080    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_080    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_080    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NH     T_080    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NH     T_080    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NH     T_080    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_080    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_080    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_060    CH_ANCHOR     U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_060    CH_ANCHOR     B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_060    CH_ANCHOR     SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+   NH     T_060    CH_WIDEST     U56    N       40        14.08%  1.115  -22.46%  Y    .   .   .    
+   NH     T_060    CH_WIDEST     B136   N       5         14.71%  0.755  -28.12%  .    .   .   .    
+   NH     T_060    CH_WIDEST     SMALL  H       252       11.16%  0.668  -37.41%  .    .   .   .    
+   NH     T_060    CH_RESOLVED   U56    N       20        17.16%  1.176  -19.13%  Y    .   Y   Y    
+   NH     T_060    CH_RESOLVED   B136   N       20        16.29%  1.024  -20.74%  Y    .   .   .    
+   NH     T_060    CH_RESOLVED   SMALL  N       20         7.09%  0.453  -35.81%  .    .   .   .    
+
+       RULE-8 ROWS: 216.  4a 0 of 216; 4b full 48; 4b OOS 48; BOTH 48; beats SPY OOS Sharpe 120.
+       The 48 passing rule-8 rows collapse to 1 DISTINCT (panel, ladder, rung) books: U56/N=20
+
+  (D3) STITCHED CHOOSER CURVES — the rule itself as a book: re-choose at every fold
+       boundary on that fold's IS window only, hold the choice through the fold.
+
+   set    tol      chooser       panel    CAGR    Sharpe   MaxDD    H1/H2      4a  4b  4bOOS
+   ALL4   T_NONE   CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_NONE   CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_NONE   CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_NONE   CH_WIDEST     U56     15.81%   1.1130  -22.46%  1.090/1.149   .   .   .    
+   ALL4   T_NONE   CH_WIDEST     B136    14.74%   0.9368  -28.69%  1.101/0.817   .   .   .    
+   ALL4   T_NONE   CH_WIDEST     SMALL    8.34%   0.5486  -37.41%  0.633/0.502   .   .   .    
+   ALL4   T_NONE   CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_NONE   CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_NONE   CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_EXACT  CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_EXACT  CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_EXACT  CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_EXACT  CH_WIDEST     U56     15.98%   1.0891  -22.46%  1.105/1.099   .   .   .    
+   ALL4   T_EXACT  CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   ALL4   T_EXACT  CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   ALL4   T_EXACT  CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_EXACT  CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_EXACT  CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_095    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_095    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_095    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_095    CH_WIDEST     U56     15.98%   1.0891  -22.46%  1.105/1.099   .   .   .    
+   ALL4   T_095    CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   ALL4   T_095    CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   ALL4   T_095    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_095    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_095    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_090    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_090    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_090    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_090    CH_WIDEST     U56     15.96%   1.0952  -22.46%  1.105/1.108   .   .   .    
+   ALL4   T_090    CH_WIDEST     B136    13.51%   0.8675  -28.69%  1.101/0.693   .   .   .    
+   ALL4   T_090    CH_WIDEST     SMALL    9.25%   0.5961  -37.41%  0.747/0.502   .   .   .    
+   ALL4   T_090    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_090    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_090    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_080    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_080    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_080    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_080    CH_WIDEST     U56     15.96%   1.0952  -22.46%  1.105/1.108   .   .   .    
+   ALL4   T_080    CH_WIDEST     B136    13.50%   0.9280  -20.20%  1.132/0.752   .   .   .    
+   ALL4   T_080    CH_WIDEST     SMALL   10.92%   0.6821  -37.41%  0.953/0.502   .   .   .    
+   ALL4   T_080    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_080    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_080    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_060    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_060    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_060    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   ALL4   T_060    CH_WIDEST     U56     15.87%   1.0984  -20.19%  1.101/1.106   .   Y   Y    
+   ALL4   T_060    CH_WIDEST     B136    13.42%   0.9298  -19.41%  1.141/0.752   .   .   .    
+   ALL4   T_060    CH_WIDEST     SMALL   12.18%   0.7478  -37.41%  1.042/0.554   .   .   .    
+   ALL4   T_060    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   ALL4   T_060    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   ALL4   T_060    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_NONE   CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_NONE   CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_NONE   CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_NONE   CH_WIDEST     U56     15.81%   1.1130  -22.46%  1.090/1.149   .   .   .    
+   NG3    T_NONE   CH_WIDEST     B136    14.74%   0.9368  -28.69%  1.101/0.817   .   .   .    
+   NG3    T_NONE   CH_WIDEST     SMALL    8.34%   0.5486  -37.41%  0.633/0.502   .   .   .    
+   NG3    T_NONE   CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_NONE   CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_NONE   CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_EXACT  CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_EXACT  CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_EXACT  CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_EXACT  CH_WIDEST     U56     15.98%   1.0891  -22.46%  1.105/1.099   .   .   .    
+   NG3    T_EXACT  CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   NG3    T_EXACT  CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   NG3    T_EXACT  CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_EXACT  CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_EXACT  CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_095    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_095    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_095    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_095    CH_WIDEST     U56     15.98%   1.0891  -22.46%  1.105/1.099   .   .   .    
+   NG3    T_095    CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   NG3    T_095    CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   NG3    T_095    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_095    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_095    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_090    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_090    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_090    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_090    CH_WIDEST     U56     15.96%   1.0952  -22.46%  1.105/1.108   .   .   .    
+   NG3    T_090    CH_WIDEST     B136    13.51%   0.8675  -28.69%  1.101/0.693   .   .   .    
+   NG3    T_090    CH_WIDEST     SMALL    9.25%   0.5961  -37.41%  0.747/0.502   .   .   .    
+   NG3    T_090    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_090    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_090    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_080    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_080    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_080    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_080    CH_WIDEST     U56     15.96%   1.0952  -22.46%  1.105/1.108   .   .   .    
+   NG3    T_080    CH_WIDEST     B136    13.50%   0.9280  -20.20%  1.132/0.752   .   .   .    
+   NG3    T_080    CH_WIDEST     SMALL   10.92%   0.6821  -37.41%  0.953/0.502   .   .   .    
+   NG3    T_080    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_080    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_080    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_060    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_060    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_060    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NG3    T_060    CH_WIDEST     U56     15.87%   1.0984  -20.19%  1.101/1.106   .   Y   Y    
+   NG3    T_060    CH_WIDEST     B136    13.42%   0.9298  -19.41%  1.141/0.752   .   .   .    
+   NG3    T_060    CH_WIDEST     SMALL   12.18%   0.7478  -37.41%  1.042/0.554   .   .   .    
+   NG3    T_060    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NG3    T_060    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NG3    T_060    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_NONE   CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_NONE   CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_NONE   CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_NONE   CH_WIDEST     U56     16.15%   1.1313  -22.46%  1.090/1.182   .   .   .    
+   NHG    T_NONE   CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   NHG    T_NONE   CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   NHG    T_NONE   CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_NONE   CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_NONE   CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_EXACT  CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_EXACT  CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_EXACT  CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_EXACT  CH_WIDEST     U56     15.98%   1.0891  -22.46%  1.105/1.099   .   .   .    
+   NHG    T_EXACT  CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   NHG    T_EXACT  CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   NHG    T_EXACT  CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_EXACT  CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_EXACT  CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_095    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_095    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_095    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_095    CH_WIDEST     U56     15.98%   1.0891  -22.46%  1.105/1.099   .   .   .    
+   NHG    T_095    CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   NHG    T_095    CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   NHG    T_095    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_095    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_095    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_090    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_090    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_090    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_090    CH_WIDEST     U56     15.96%   1.0952  -22.46%  1.105/1.108   .   .   .    
+   NHG    T_090    CH_WIDEST     B136    13.51%   0.8675  -28.69%  1.101/0.693   .   .   .    
+   NHG    T_090    CH_WIDEST     SMALL    9.25%   0.5961  -37.41%  0.747/0.502   .   .   .    
+   NHG    T_090    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_090    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_090    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_080    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_080    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_080    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_080    CH_WIDEST     U56     15.96%   1.0952  -22.46%  1.105/1.108   .   .   .    
+   NHG    T_080    CH_WIDEST     B136    13.50%   0.9280  -20.20%  1.132/0.752   .   .   .    
+   NHG    T_080    CH_WIDEST     SMALL   10.92%   0.6821  -37.41%  0.953/0.502   .   .   .    
+   NHG    T_080    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_080    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_080    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_060    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_060    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_060    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NHG    T_060    CH_WIDEST     U56     15.87%   1.0984  -20.19%  1.101/1.106   .   Y   Y    
+   NHG    T_060    CH_WIDEST     B136    13.42%   0.9298  -19.41%  1.141/0.752   .   .   .    
+   NHG    T_060    CH_WIDEST     SMALL   12.18%   0.7478  -37.41%  1.042/0.554   .   .   .    
+   NHG    T_060    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NHG    T_060    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NHG    T_060    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_NONE   CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_NONE   CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_NONE   CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_NONE   CH_WIDEST     U56     16.15%   1.1313  -22.46%  1.090/1.182   .   .   .    
+   NH     T_NONE   CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   NH     T_NONE   CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   NH     T_NONE   CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_NONE   CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_NONE   CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_EXACT  CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_EXACT  CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_EXACT  CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_EXACT  CH_WIDEST     U56     15.98%   1.0891  -22.46%  1.105/1.099   .   .   .    
+   NH     T_EXACT  CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   NH     T_EXACT  CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   NH     T_EXACT  CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_EXACT  CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_EXACT  CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_095    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_095    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_095    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_095    CH_WIDEST     U56     15.98%   1.0891  -22.46%  1.105/1.099   .   .   .    
+   NH     T_095    CH_WIDEST     B136    13.89%   0.8847  -28.69%  1.101/0.726   .   .   .    
+   NH     T_095    CH_WIDEST     SMALL    9.21%   0.5952  -37.41%  0.747/0.502   .   .   .    
+   NH     T_095    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_095    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_095    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_090    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_090    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_090    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_090    CH_WIDEST     U56     15.96%   1.0952  -22.46%  1.105/1.108   .   .   .    
+   NH     T_090    CH_WIDEST     B136    13.51%   0.8675  -28.69%  1.101/0.693   .   .   .    
+   NH     T_090    CH_WIDEST     SMALL    9.25%   0.5961  -37.41%  0.747/0.502   .   .   .    
+   NH     T_090    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_090    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_090    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_080    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_080    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_080    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_080    CH_WIDEST     U56     15.96%   1.0952  -22.46%  1.105/1.108   .   .   .    
+   NH     T_080    CH_WIDEST     B136    13.50%   0.9280  -20.20%  1.132/0.752   .   .   .    
+   NH     T_080    CH_WIDEST     SMALL   10.92%   0.6821  -37.41%  0.953/0.502   .   .   .    
+   NH     T_080    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_080    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_080    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_060    CH_ANCHOR     U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_060    CH_ANCHOR     B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_060    CH_ANCHOR     SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+   NH     T_060    CH_WIDEST     U56     15.87%   1.0984  -20.19%  1.101/1.106   .   Y   Y    
+   NH     T_060    CH_WIDEST     B136    13.42%   0.9298  -19.41%  1.141/0.752   .   .   .    
+   NH     T_060    CH_WIDEST     SMALL   12.18%   0.7478  -37.41%  1.042/0.554   .   .   .    
+   NH     T_060    CH_RESOLVED   U56     16.89%   1.2199  -19.13%  1.264/1.204   .   Y   Y    
+   NH     T_060    CH_RESOLVED   B136    16.36%   1.0776  -20.74%  1.306/0.910   .   .   .    
+   NH     T_060    CH_RESOLVED   SMALL    7.45%   0.4889  -35.81%  0.693/0.362   .   .   .    
+
+       STITCHED CURVES: 216.  4a 0; 4b full 52; 4b OOS 52; BOTH 52.
+
+============================================================================================================
+GATES
+============================================================================================================
+   PASS  G0 a two-rung ladder (CADENCE) is monotone with probability 1             value 1
+   PASS  G1 fast runner == engine.backtest on the decision-time frame              value 2.77556e-17
+   PASS  G2 live RULES v2 U56 MaxDD == the record's committed -12.05%              value -0.120549
+   PASS  G3 the anchor rung is the SAME book on all four ladders                   value 0
+   PASS  G4 spearman() returns +1 / -1 on the two monotone orderings               value 0
+   PASS  G5 enumerated P(|rho|=1 | k=4) == 2/4! exactly                            value 0
+   PASS  G6 block-sum bootstrap == direct Sharpe on the identity tiling            value 4.44089e-15
+   PASS  G7 folds tile U56 with no overlap and no gap                              value 0
+   PASS  G7 folds tile B136 with no overlap and no gap                             value 0
+   PASS  G7 folds tile SMALL with no overlap and no gap                            value 0
+   PASS  G8 GROSS is exactly monotone at >= 0.80 of cells (1154's premise)         value 0.952381
+   PASS  G9 CADENCE is exactly monotone at 1.000 of cells (k=2, by construction)   value 1
+
+   12 of 12 gates pass.
+
+   Runtime 59.0s.  Outputs: 2026-09-17_does-a-MONOTONE-LADDER-EXCLUSION-leave-the-record-ANY-resolvable-PICK-at-all_B.*
