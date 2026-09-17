@@ -1,0 +1,339 @@
+====================================================================================================
+IDEA 1161 (lane B, 2026-09-17) — why does a RESAMPLE NULL sit ABOVE the OBSERVED MAXIMUM
+====================================================================================================
+Idea 1161 (lane B, 2026-09-17) — WHY does a RESAMPLE NULL sit ABOVE the OBSERVED MAXIMUM?
+
+THE PREMISE, READ FROM THE RECORD AND NEVER RECALLED.  Idea 1159 published 108 (panel x
+ladder x null type x object) cells in
+`2026-09-17_does-ANY-committed-MAXIMUM-KEYED-claim-in-the-record-carry-a-RESAMPLE-NULL_B.objects.csv`
+and the observed value sits BELOW its own null's median at 89 of them.  OBJ_MAXDD -- the
+book's own |MaxDD| -- is below at 36 of 36.  Idea 1178 (cloud) hit the same wall from the
+other side: 8 of its 9 cells have the IID null DEEPER than the observed path, which put a
+NEGATIVE denominator under a quantity the record publishes in [0, 1].  A null biased in a
+known direction is not a bar.  This run asks whether the bias belongs to the RESAMPLE or to
+the BOOK, and what a published band would have to do about it.
+
+THE TWO DIALS AND NO MORE (PROTOCOL rule 4; the queue names both):
+
+  NULL TYPE  {N_IID, N_BLOCK, N_STAT}          -- 1159's three, constructors copied verbatim
+  CORRECTION {R_NONE, R_CENTER, R_PERM, R_PIVOT, R_MACH}
+
+  = 15 dial cells, EVERY ONE PUBLISHED, scored on all 36 (panel x ladder x object) cells
+  = 540 rows in `.corrections.csv`.  NOTHING IS TUNED: the headline null is 1159's own
+  N_BLOCK at L = 63, 1000 draws, on 1159's own seeds, and R_NONE is required to REPRODUCE
+  1159's committed file at machine zero (gate G9).  Every correction is then a strict
+  re-processing of the record's own draws.
+
+  R_NONE    the record's band: percentiles of the raw resample draws.
+  R_CENTER  each draw recentred to the observed total log return before the object is read.
+            Kills the DRIFT channel -- a resample's mean is random, |MaxDD| is convex in the
+            drift, so E[MaxDD] > MaxDD(at the observed drift) by Jensen alone.
+  R_PERM    the without-replacement counterpart of the same null at the same order scale
+            (N_IID -> full permutation, N_BLOCK -> block permutation at L = 63, N_STAT ->
+            geometric-length block permutation).  The multiset is preserved EXACTLY, so this
+            kills the MARGINAL-RESAMPLING channel outright.
+  R_PIVOT   the textbook basic/pivotal interval [2*obs - hi, 2*obs - lo] on R_NONE's own
+            draws.  Costs no draws; a pure reflection.
+  R_MACH    divide the null by the MACHINERY BIAS measured in Arm C on tapes where the truth
+            is known.  This is the correction the record would actually have to adopt.
+
+WHAT IS NOT A DIAL.  PANEL {U56, B136, SMALL} is not a dial.  The four LADDERS (N, H, GROSS,
+CADENCE) and the three OBJECTS are 1159's, inherited whole.  The TAPE FAMILY {S_REAL, S_PERM,
+S_MA1} in Arm C is a FALSIFICATION LADDER, one factor at a time, every cell published and
+nothing ever selected on it -- S_PERM and S_MA1 exist only to put a KNOWN answer under the
+machinery.  The CHANNEL ladder in Arm D is a one-factor-at-a-time decomposition of the null
+CONSTRUCTOR, not a search.  The 216-book population in Arm F is not a dial and every book is
+published.  SEED is not a dial (1159's own seeds at the headline; the calibration arm runs 25
+independent pseudo-tapes and publishes the spread).
+
+Frozen at 1082/1094/1098/1102/1110/1148/1159/1162's construction: CAND20 legs, max_vol 0.60,
+gross 0.75, min hold 126, N = 20, cadence W, 10 bps (rule 2), LAG 1, warm-up 260, IS end
+2016-12-31, block L = 63, 1000 draws, crc32 seeds, SEED_BASE 11591159 (1159's).
+
+PROTOCOL: rule 2 costs 10 bps and t+1 execution throughout; rule 8 walk-forward and BOTH KEEP
+paths in Arm F; rule 9 survivorship stated.  RULES.md, PROTOCOL.md, scan.py, bot.py and
+baseline.py are NOT modified by this script.
+
+Runs standalone and offline:  python research/backtests/2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.py
+
+## PANELS
+  U56      56 cols, 4,706 rows 2008-01-02 -> 2026-09-16  warm 4,446  IS 2,007  OOS 2,439
+  B136    136 cols, 4,703 rows 2008-01-02 -> 2026-09-11  warm 4,443  IS 2,007  OOS 2,436
+  SMALL   664 cols, 4,198 rows 2010-01-04 -> 2026-09-11  warm 3,938  IS 1,502  OOS 2,436
+  SMALL STAMP: data/small_meta.csv lists 715 tickers; 52 dropped for max_1d_move >= 1.0; pool served = 663 names + SPY as benchmark.
+
+## GATES — printed before any result number
+  [PASS] G1    fast runner == engine.backtest (U56 W/H126/N=20)  ->  1.388e-17
+  [PASS] G2    CROSS-RUN the committed U56 W/H126/N=20 triple  ->  1.622e-03
+     this run 0.155520/1.138079/-0.191276 vs committed 0.155787/1.139701/-0.191276  (1163's price-vintage defect is CARRIED, not absorbed: the bar is 5e-3, not 5e-5)
+  [PASS] G3    SPY OOS triple  ->  2.894e-03
+  [PASS] G4    live RULES v2 MaxDD == committed -12.05%  ->  4.949e-05
+  [PASS] G5    determinism of the SMALL pipeline  ->  0.000e+00
+  [PASS] G6    N_BLOCK at L=1 IS N_IID bit for bit (1162's identity)  ->  0.000e+00
+  [PASS] G7    perm_index rows are exact permutations for all 3 nulls  ->  0.000e+00
+  [PASS] G8    R_CENTER forces each draw's total log return onto the observed  ->  0.000e+00
+  [PASS] G11   boot_maxdd on the identity index == the observed |MaxDD|  ->  1.421e-14
+
+## ARM A — THE PREMISE, RE-READ FROM 1159's COMMITTED CSV (never recalled)
+   2026-09-17_does-ANY-committed-MAXIMUM-KEYED-claim-in-the-record-carry-a-RESAMPLE-NULL_B.objects.csv: 108 cells, observed BELOW its own null median at 89 (0.824).
+   median ratio observed/null by NULL TYPE: N_BLOCK 0.9358, N_IID 0.8507, N_STAT 0.9641
+   by OBJECT:
+     OBJ_ARGMAX    36 cells, below at  27, median ratio 0.9198
+     OBJ_MAXDD     36 cells, below at  36, median ratio 0.9415
+     OBJ_SPREAD    36 cells, below at  26, median ratio 0.9050
+  [PASS] G9a   1159's committed file carries 108 cells  ->  0.000e+00
+  [PASS] G9b   1159's committed 'below at 89 of 108' reproduced from its own file  ->  0.000e+00
+  [PASS] G9c   the queue's median ratios 0.936 / 0.851 / 0.964 reproduced from that file  ->  2.691e-04
+     REPORTED, NOT ABSORBED: the queue quotes that triple UNLABELLED. Only 1159's own
+     CSV says which number belongs to which null, and the two readings are far apart
+     (N_BLOCK 0.9358 against N_IID 0.8507, a 0.085 difference on a 0.15 effect). The
+     first cut of this script mapped them in the other order and G9c failed at 8.5e-02.
+
+   AND A SECOND DEFECT IN THE PARENT'S DENOMINATOR, found while rebuilding its cells.
+   Every ladder's ANCHOR rung is the SAME book — N=20, H=126, gross=0.75, weekly — so
+   OBJ_MAXDD's 36 cells are 9 DISTINCT (panel x null) measurements replicated 4 times,
+   differing only by the null's seed.  OBJ_SPREAD and OBJ_ARGMAX are genuinely 36 each
+   (different rung sets).  On DISTINCT cells the parent's headline reads:
+     OBJ_MAXDD 9 of 9 distinct cells (all 4 replicates agree at 9 of 9),
+     OBJ_SPREAD and OBJ_ARGMAX unchanged, so the honest denominator is 62 of 81 (0.765), not 89 of 108 (0.824).
+   This run publishes BOTH and quotes the distinct-cell reading in its own headline.
+
+## ARM B — REBUILD 1159's 108 CELLS, then apply the CORRECTION dial to its own draws.
+   The ladder books are rebuilt from scratch; the null seeds are 1159's (SEED_BASE 11591159, crc32 of panel|ladder|null), so R_NONE must reproduce its committed file.
+  U56    built 27 rung books   SPY 15.06%/0.8814/-33.72%   live v2 8.60%/1.1980/-12.05%   (6s)
+  B136   built 27 rung books   SPY 15.16%/0.8861/-33.72%   live v2 7.98%/1.0993/-12.24%   (8s)
+  SMALL  built 27 rung books   SPY 14.06%/0.8581/-33.72%   live v2 4.30%/0.6637/-13.89%   (18s)
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.ladder.csv  (81 rows, 14 cols)
+
+   drawing the nulls (1000 draws each, 1159's seeds) plus their CENTRED and PERMUTATION counterparts ...
+   U56    N        9 rungs x 3 nulls x 3 constructors (23s)
+   U56    H        4 rungs x 3 nulls x 3 constructors (25s)
+   U56    GROSS    10 rungs x 3 nulls x 3 constructors (30s)
+   U56    CADENCE  4 rungs x 3 nulls x 3 constructors (32s)
+   B136   N        9 rungs x 3 nulls x 3 constructors (37s)
+   B136   H        4 rungs x 3 nulls x 3 constructors (40s)
+   B136   GROSS    10 rungs x 3 nulls x 3 constructors (46s)
+   B136   CADENCE  4 rungs x 3 nulls x 3 constructors (48s)
+   SMALL  N        9 rungs x 3 nulls x 3 constructors (53s)
+   SMALL  H        4 rungs x 3 nulls x 3 constructors (55s)
+   SMALL  GROSS    10 rungs x 3 nulls x 3 constructors (60s)
+   SMALL  CADENCE  4 rungs x 3 nulls x 3 constructors (62s)
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.objects.csv  (108 rows, 20 cols)
+  [PASS] G9    R_NONE reproduces 1159's committed OBSERVED values (108 cells)  ->  3.553e-15
+  [PASS] G10   R_NONE reproduces 1159's committed NULL MEDIANS on its own seeds  ->  3.553e-15
+  [PASS] G12   OBJ_MAXDD's 4 ladders per panel ARE the same book (observed identical)  ->  0.000e+00
+     so the only thing separating those 4 replicates is the null's SEED.  The replicate spread of the null MEDIAN is 0.0182 (median) and 0.0256 (max)
+     of the median itself, against a headline gap of 0.0585 — so the 36-of-36 is NOT a seed artefact, but it is 9 measurements, not 36.
+
+## THE 15 DIAL CELLS (NULL TYPE x CORRECTION), EVERY ONE PUBLISHED
+   R_MACH needs Arm C's machinery factor, so it is filled in after the calibration.
+
+## ARM C — THE DECISIVE ARM.  Put a KNOWN answer under the machinery.
+   S_PERM: the SAME ladder, its rungs re-ordered by ONE common random permutation.
+           Every rung's marginal is EXACT, the cross-rung dependence is EXACT, and
+           there is NO serial structure left to lose.  A resample null of an S_PERM
+           tape is CORRECTLY SPECIFIED, so the truth is ratio = 1.000 and share_le =
+           0.500.  Whatever the machinery reads here is MACHINERY BIAS and nothing else.
+   S_MA1:  the S_PERM tape run through a common MA(1) filter whose lag-1 autocorrelation
+           is the anchor book's OWN.  Serial structure of a KNOWN sign and size, so it
+           prices how much of the real gap an ac1 of that size can possibly explain.
+   25 independent pseudo-tapes per cell, 400 draws each.
+   U56    N        ac1 -0.0501 -> phi -0.0502   (92s)
+   U56    H        ac1 -0.0501 -> phi -0.0502   (107s)
+   U56    GROSS    ac1 -0.0501 -> phi -0.0502   (141s)
+   U56    CADENCE  ac1 -0.0501 -> phi -0.0502   (155s)
+   B136   N        ac1 -0.0378 -> phi -0.0379   (187s)
+   B136   H        ac1 -0.0378 -> phi -0.0379   (202s)
+   B136   GROSS    ac1 -0.0378 -> phi -0.0379   (235s)
+   B136   CADENCE  ac1 -0.0378 -> phi -0.0379   (251s)
+   SMALL  N        ac1 -0.0301 -> phi -0.0302   (279s)
+   SMALL  H        ac1 -0.0301 -> phi -0.0302   (293s)
+   SMALL  GROSS    ac1 -0.0301 -> phi -0.0302   (325s)
+   SMALL  CADENCE  ac1 -0.0301 -> phi -0.0302   (340s)
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.calibration.csv  (5,400 rows, 12 cols)
+
+   THE MACHINERY FLOOR.  On S_PERM the truth is ratio 1.000 / share_le 0.500:
+   tape    null      object       median ratio   mean share_le   below-median share
+   S_PERM  N_BLOCK   OBJ_MAXDD          1.0096          0.5221               0.4867
+   S_PERM  N_BLOCK   OBJ_SPREAD         0.9453          0.4607               0.5633
+   S_PERM  N_BLOCK   OBJ_ARGMAX         0.9724          0.4811               0.5133
+   S_PERM  N_IID     OBJ_MAXDD          0.9998          0.5056               0.5000
+   S_PERM  N_IID     OBJ_SPREAD         0.9509          0.4608               0.5600
+   S_PERM  N_IID     OBJ_ARGMAX         0.9665          0.4797               0.5267
+   S_PERM  N_STAT    OBJ_MAXDD          1.0020          0.5266               0.4867
+   S_PERM  N_STAT    OBJ_SPREAD         0.9636          0.4625               0.5667
+   S_PERM  N_STAT    OBJ_ARGMAX         0.9902          0.4811               0.5167
+   S_MA1   N_BLOCK   OBJ_MAXDD          1.0065          0.4996               0.4867
+   S_MA1   N_BLOCK   OBJ_SPREAD         0.9732          0.4775               0.5367
+   S_MA1   N_BLOCK   OBJ_ARGMAX         0.9365          0.4797               0.5400
+   S_MA1   N_IID     OBJ_MAXDD          0.9415          0.4185               0.6267
+   S_MA1   N_IID     OBJ_SPREAD         0.9532          0.4461               0.5600
+   S_MA1   N_IID     OBJ_ARGMAX         0.8883          0.4531               0.5733
+   S_MA1   N_STAT    OBJ_MAXDD          1.0020          0.5043               0.4767
+   S_MA1   N_STAT    OBJ_SPREAD         0.9911          0.4791               0.5133
+   S_MA1   N_STAT    OBJ_ARGMAX         0.9605          0.4803               0.5500
+
+   Read per (panel, ladder) cell too — the factor R_MACH actually uses is CELL-LEVEL:
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.machinery.csv  (108 rows, 5 cols)
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.corrections.csv  (540 rows, 21 cols)
+
+## THE HEADLINE TABLE — the 108 cells re-scored under every correction
+   correction   null       below median   median ratio   inside 90%   mean share_le
+   R_NONE       N_BLOCK       30 / 36           0.9358        0.972          0.3851
+   R_NONE       N_IID         29 / 36           0.8507        0.944          0.3174
+   R_NONE       N_STAT        30 / 36           0.9641        0.972          0.4079
+   R_CENTER     N_BLOCK       29 / 36           0.9394        1.000          0.3830
+   R_CENTER     N_IID         30 / 36           0.8568        0.972          0.3089
+   R_CENTER     N_STAT        29 / 36           0.9672        1.000          0.4059
+   R_PERM       N_BLOCK       30 / 36           0.9357        0.917          0.3188
+   R_PERM       N_IID         30 / 36           0.8529        0.972          0.3054
+   R_PERM       N_STAT        29 / 36           0.9576        1.000          0.3790
+   R_PIVOT      N_BLOCK        6 / 36           1.0605        0.972          0.6150
+   R_PIVOT      N_IID          7 / 36           1.1541        0.944          0.6826
+   R_PIVOT      N_STAT         6 / 36           1.0249        0.972          0.5923
+   R_MACH       N_BLOCK       27 / 36           0.9237        0.972          0.3820
+   R_MACH       N_IID         30 / 36           0.8501        0.944          0.2966
+   R_MACH       N_STAT        25 / 36           0.9657        0.972          0.3902
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.dialgrid.csv  (15 rows, 8 cols)
+
+   ALL 108 cells, R_NONE   : below median at  89 (0.824), median ratio 0.9304   |  on the 81 DISTINCT cells:  62 (0.765)
+   ALL 108 cells, R_CENTER : below median at  88 (0.815), median ratio 0.9341   |  on the 81 DISTINCT cells:  61 (0.753)
+   ALL 108 cells, R_PERM   : below median at  89 (0.824), median ratio 0.9319   |  on the 81 DISTINCT cells:  62 (0.765)
+   ALL 108 cells, R_PIVOT  : below median at  19 (0.176), median ratio 1.0495   |  on the 81 DISTINCT cells:  19 (0.235)
+   ALL 108 cells, R_MACH   : below median at  82 (0.759), median ratio 0.9003   |  on the 81 DISTINCT cells:  60 (0.741)
+
+## ARM D — THE CHANNEL LADDER.  One factor at a time off the record's own N_BLOCK,
+   on the ANCHOR object OBJ_MAXDD (the 36-of-36 cell set).  Each step reports the
+   change in log(observed / null median), so the channels ADD to the total gap.
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.channels.csv  (72 rows, 7 cols)
+   variant       what it removes                       median log gap   vs K0_RECORD
+   K0_RECORD     nothing (the record's N_BLOCK, L=63)          -0.0603        +0.0000
+   K1_NOWRAP     wrap-around only                              -0.0614        +0.0026
+   K2_CENTER     the DRIFT channel (Jensen)                    -0.0567        +0.0046
+   K3_PERM       the MARGINAL-RESAMPLING channel               -0.0861        -0.0066
+   K4_IID        all block order (L=63 -> L=1)                 -0.1617        -0.1128
+   K5_IIDPERM    marginal resampling AND all order             -0.1589        -0.1039
+
+## ARM E — IF ANY GAP SURVIVES, WHOSE STRUCTURE IS IT?  The three carriers the queue
+   names, measured on the 12 ANCHOR books and correlated with the residual gap.
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.structure.csv  (12 rows, 9 cols)
+   panel  ladder     ac1      VR(21)   VR(63)   recovery drift   raw gap   perm gap
+   U56    N         -0.0501   0.7343   0.5298       -0.001476   -0.0412   -0.0613
+   U56    H         -0.0501   0.7343   0.5298       -0.001476   -0.0566   -0.0569
+   U56    GROSS     -0.0501   0.7343   0.5298       -0.001476   -0.0595   -0.0596
+   U56    CADENCE   -0.0501   0.7343   0.5298       -0.001476   -0.0544   -0.0635
+   B136   N         -0.0378   0.6692   0.5350       -0.001690   -0.0805   -0.0695
+   B136   H         -0.0378   0.6692   0.5350       -0.001690   -0.0824   -0.0853
+   B136   GROSS     -0.0378   0.6692   0.5350       -0.001690   -0.0934   -0.0868
+   B136   CADENCE   -0.0378   0.6692   0.5350       -0.001690   -0.0838   -0.0880
+   SMALL  N         -0.0301   0.9147   0.5665       -0.000998   -0.0611   -0.1092
+   SMALL  H         -0.0301   0.9147   0.5665       -0.000998   -0.0504   -0.1023
+   SMALL  GROSS     -0.0301   0.9147   0.5665       -0.000998   -0.0717   -0.1106
+   SMALL  CADENCE   -0.0301   0.9147   0.5665       -0.000998   -0.0492   -0.1033
+   READ THE LEFT-HAND COLUMNS FIRST: ac1, VR and the recovery drift are IDENTICAL down
+   each panel, because all four anchor rungs ARE the same book (gate G12).  There are
+   THREE distinct books here, not twelve, and the four rows per panel differ ONLY by the
+   null's seed.  A rank correlation over the 12 rows would therefore be a correlation
+   over 3 points with each point counted four times, so this run does NOT report one.
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.structure_panel.csv  (3 rows, 8 cols)
+   panel   ac1      VR(21)   VR(63)   recovery      perm gap (median of 4 seeds)  seed spread
+   B136    -0.0378   0.6692   0.5350    -0.001690                      -0.0861       0.0185
+   SMALL   -0.0301   0.9147   0.5665    -0.000998                      -0.1062       0.0083
+   U56     -0.0501   0.7343   0.5298    -0.001476                      -0.0605       0.0066
+   THE ORDER IS THE SAME ON EVERY COLUMN AND THE SAMPLE IS THREE: the panel with the
+   least negative ac1 and the highest VR(21) (SMALL) carries the LARGEST gap and the
+   most negative ac1 (U56) the smallest, which is the OPPOSITE of the naive mean-
+   reversion story and is exactly 1162's H_MEANREV refutation seen from this side.
+   n = 3.  A DIAGNOSTIC, not a test; no hypothesis in this run turns on it, and the
+   seed spread column shows the gap's own 1000-draw noise for scale.
+
+## ARM F — PROTOCOL rule 8 WALK-FORWARD AND BOTH KEEP PATHS
+   9x4x2 = 72 books per panel, 216 in all, EVERY ONE PUBLISHED.
+   Parameters are chosen on 2009-2016 ONLY (IS) and read once on 2017-2026 (OOS).
+   U56    72 books done (357s)
+   B136   72 books done (369s)
+   SMALL  72 books done (392s)
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.walkforward.csv  (216 rows, 44 cols)
+   4b full 12 of 216, 4b OOS 13 of 216, 4a 0 of 216
+     B136   4b full  1/72  4b OOS  2/72  4a  0/72
+     SMALL  4b full  0/72  4b OOS  0/72  4a  0/72
+     U56    4b full 11/72  4b OOS 11/72  4a  0/72
+   BEST 4b book (full AND OOS): U56 / W / N=12 / H=126  full 17.65%/1.1658/-20.17% (H1 1.2741 / H2 1.0833)  OOS 18.78%/1.1701/-20.17%
+     U56    SPY full 15.06%/0.8814/-33.72% OOS 15.15%/0.8684/-33.72% | live v2 full 8.60%/1.1980/-12.05% OOS 9.42%/1.2714/-12.05%
+     B136   SPY full 15.16%/0.8861/-33.72% OOS 15.33%/0.8767/-33.72% | live v2 full 7.98%/1.0993/-12.24% OOS 7.88%/1.1059/-12.24%
+     SMALL  SPY full 14.06%/0.8581/-33.72% OOS 15.33%/0.8767/-33.72% | live v2 full 4.30%/0.6637/-13.89% OOS 3.75%/0.5600/-13.89%
+
+   THE CAPITAL QUESTION: does CORRECTING the null change what an IS chooser BUYS?
+   CH_NULLDD picks the book whose IS |MaxDD| is SHALLOWEST relative to its OWN IS null
+   median — the null used as a selector.  If the correction is capital-relevant, the
+   pick must move.  CH_ISSHARPE / CH_ISCAGR / CH_ISDD are the record's three, unmoved
+   by any correction by construction and published as the reference.
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.picks.csv  (180 rows, 11 cols)
+   CH_NULLDD: the CORRECTION moves the pick at 9 of 9 (panel, null type) cells — but 3 of 9 once R_PIVOT is set aside.
+   R_PIVOT is the whole of it, and R_PIVOT is a REFLECTION, not a repair: it maps the
+   null through the observed value, which turns 'the null sits above' into 'the null
+   sits below' by construction and does NOT price why.  Its mean OOS Sharpe advantage
+   is reported below and is an n = 9 curiosity, not a finding.
+     B136   N_BLOCK   NONE:N15/H21/W(0.870)  CENTER:N15/H21/W(0.870)  PERM:N15/H21/W(0.870)  PIVOT:N40/H252/W(1.078)  MACH:N15/H21/W(0.870)
+     B136   N_IID     NONE:N10/H21/W(0.846)  CENTER:N10/H21/W(0.846)  PERM:N15/H21/W(0.870)  PIVOT:N5/H126/W(0.769)  MACH:N10/H21/W(0.846)
+     B136   N_STAT    NONE:N15/H21/W(0.870)  CENTER:N15/H21/W(0.870)  PERM:N15/H21/W(0.870)  PIVOT:N40/H252/W(1.078)  MACH:N15/H21/W(0.870)
+     SMALL  N_BLOCK   NONE:N5/H21/W(0.160)  CENTER:N5/H21/W(0.160)  PERM:N5/H21/W(0.160)  PIVOT:N10/H252/W(0.859)  MACH:N5/H21/W(0.160)
+     SMALL  N_IID     NONE:N5/H21/W(0.160)  CENTER:N5/H21/W(0.160)  PERM:N12/H21/W(0.279)  PIVOT:N25/H252/W(0.610)  MACH:N5/H21/W(0.160)
+     SMALL  N_STAT    NONE:N5/H21/W(0.160)  CENTER:N12/H21/W(0.279)  PERM:N15/H21/W(0.343)  PIVOT:N8/H252/W(0.888)  MACH:N5/H21/W(0.160)
+     U56    N_BLOCK   NONE:N15/H21/W(1.110)  CENTER:N15/H21/W(1.110)  PERM:N15/H21/W(1.110)  PIVOT:N8/H252/M(0.963)  MACH:N15/H21/W(1.110)
+     U56    N_IID     NONE:N15/H21/W(1.110)  CENTER:N15/H21/W(1.110)  PERM:N15/H21/W(1.110)  PIVOT:N5/H252/M(0.986)  MACH:N15/H21/W(1.110)
+     U56    N_STAT    NONE:N15/H21/W(1.110)  CENTER:N15/H21/W(1.110)  PERM:N15/H21/W(1.110)  PIVOT:N8/H252/M(0.963)  MACH:N15/H21/W(1.110)
+   picks clearing 4b full AND OOS: 27 of 180;  4a: 0 of 180
+   mean OOS Sharpe of the CH_NULLDD pick, by correction (the capital content, at its
+   true weight):  R_NONE 0.7110,  R_CENTER 0.7241,  R_PERM 0.7471,  R_PIVOT 0.9103,  R_MACH 0.7110
+   by chooser:  CH_ISSHARPE n=45 4b(full+OOS) 0 meanOOS 0.8770,  CH_ISCAGR n=45 4b(full+OOS) 0 meanOOS 0.9460,  CH_ISDD n=45 4b(full+OOS) 15 meanOOS 0.8638,  CH_NULLDD n=45 4b(full+OOS) 12 meanOOS 0.7607
+
+## HYPOTHESES — declared with their bars, scored once
+   [REFUTED  ] H_MACHINERY  the bias survives on a tape with NO serial structure (S_PERM)
+                   bar share below median >= 0.70 on S_PERM | measured 0.5244 (1416 of 2700)
+   [REFUTED  ] H_MARGINAL   the MARGINAL-RESAMPLING channel carries most of the gap (R_PERM halves it)
+                   bar |1 - median ratio| at least HALVED by R_PERM | measured R_NONE 0.9304 -> R_PERM 0.9319
+   [REFUTED  ] H_DRIFT      the DRIFT channel (Jensen) carries most of the gap (R_CENTER halves it)
+                   bar |1 - median ratio| at least HALVED by R_CENTER | measured R_NONE 0.9304 -> R_CENTER 0.9341
+   [REFUTED  ] H_WRAP       wrap-around is a material block artefact
+                   bar median |delta log gap| >= 0.02 | measured 0.0095
+   [SUPPORTED] H_BOOK       a BOOK gap survives every machinery repair on OBJ_MAXDD
+                   bar R_PERM still below median at >= 30 of 36 | measured 36 of 36 (R_NONE 36 of 36)
+   [REFUTED  ] H_AC1        an ac1 of the book's OWN size reproduces most of the residual gap
+                   bar S_MA1 closes >= 50% of the S_PERM -> REAL distance on OBJ_MAXDD | measured S_PERM 1.0054, S_MA1 0.9876, REAL 0.9415 -> 0.278
+   [REFUTED  ] H_BAND       R_MACH widens the record's effective coverage of its own observed value
+                   bar inside-90% share strictly higher than R_NONE's | measured R_NONE 0.9630 -> R_MACH 0.9630
+   [SUPPORTED] H_CAPITAL    correcting the null moves what an IS chooser buys
+                   bar CH_NULLDD pick moves at >= 5 of 9 (panel, null) cells | measured 9 of 9, but 3 of 9 once the R_PIVOT REFLECTION is set aside; mean OOS Sharpe of the pick R_NONE 0.7110 vs R_MACH 0.7110 vs R_PERM 0.7471
+   [SUPPORTED] H_OBJECT     the machinery floor is OBJECT-dependent: clean on a LEVEL, biased on a max-minus-min SPREAD (1148's count inflation, inside the null)
+                   bar |1 - S_PERM ratio| < 0.02 on OBJ_MAXDD and > 0.02 on OBJ_SPREAD | measured OBJ_MAXDD 1.0054, OBJ_SPREAD 0.9505, OBJ_ARGMAX 0.9796
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.hypotheses.csv  (9 rows, 5 cols)
+  wrote 2026-09-17_why-does-a-RESAMPLE-NULL-sit-ABOVE-the-OBSERVED-MAXIMUM-at-108-of-108-cells_B.gates.csv  (15 rows, 4 cols)
+   GATES 15 of 15 PASS.  HYPOTHESES 3 of 9 SUPPORTED.
+
+## WHAT A PUBLISHED BAND WOULD NEED — the deliverable the queue asked for
+   N_BLOCK   the record's band is centred 1.0686x ABOVE the observed; the S_PERM machinery floor accounts for 0.9877x of it, and after R_MACH the centre sits at 0.9237x (R_PERM 0.9357x).
+   N_IID     the record's band is centred 1.1755x ABOVE the observed; the S_PERM machinery floor accounts for 0.9857x of it, and after R_MACH the centre sits at 0.8501x (R_PERM 0.8529x).
+   N_STAT    the record's band is centred 1.0373x ABOVE the observed; the S_PERM machinery floor accounts for 0.9983x of it, and after R_MACH the centre sits at 0.9657x (R_PERM 0.9576x).
+
+   PER OBJECT, because the answer is NOT the same for a LEVEL and for a SPREAD:
+   object       S_PERM machinery floor   real median ratio   residual after R_MACH
+   OBJ_MAXDD                    1.0054              0.9415                  0.9248
+   OBJ_SPREAD                   0.9505              0.9050                  0.8501
+   OBJ_ARGMAX                   0.9796              0.9198                  0.8553
+   A LEVEL needs NO machinery correction and the whole of its gap is the book's.  A
+   max-minus-min SPREAD needs one of about 5%, and it is the SAME count-inflation
+   idea 1148 corrected in the observed statistic and nobody had checked in the null.
+
+## SURVIVORSHIP (PROTOCOL rule 9)
+   U56, B136 and SMALL are CURRENT-CONSTITUENT lists.  SMALL is the current constituents
+   of a sub-$2B screen, 663 columns after dropping the 52 tickers with max_1d_move >= 1.0
+   from data/small_meta.csv (tape 2010-01-04 -> 2026-09-11).  Every delisted, zeroed or screened-out name is
+   absent, so every CAGR, drawdown and 4b pass rate above is the MOST FLATTERING the
+   period could have produced.  It bears on this idea's headline DIRECTLY and in the
+   direction of the finding: a survivor-only panel has SHALLOWER observed drawdowns than
+   the real one, which pushes the observed value further BELOW its own null.  The
+   machinery floor measured in Arm C is immune (it is a ratio read on the same panel),
+   the residual book gap is NOT, and that is stated in the result memo.
+
+DONE in 392s
