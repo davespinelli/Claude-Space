@@ -1,0 +1,274 @@
+============================================================================================================
+IDEA 1225 (cloud lane, 2026-09-17) — how many committed WIDEST-DIAL claims had a
+DEGENERATE MEMBER in their COMPARISON SET?
+============================================================================================================
+PROTOCOL: costs 10 bps, decide-at-t / apply-at-t+1, warm-up 260 rows,
+rule-8 IS < 2017-01-01 / OOS >= 2017-01-01, both KEEP paths, all grid points published.
+
+============================================================================================================
+ARM 0 — PANELS AND GATES
+============================================================================================================
+  SMALL: 715 priced names, dropping 52 with max_1d_move >= 1.0 -> 663 investable.
+  SURVIVORSHIP (rule 9): B136 and SMALL are CURRENT constituents of their screens as of
+  the cache build; names that delisted or were acquired are absent, so every level read
+  on them is biased UP.  Every claim below is a WITHIN-panel comparison of ladders run
+  on the SAME names, which the bias affects only through second-order interaction.
+  [PASS] G1 fast runner == engine.backtest on RULES v2 (U56, all rows after 0): 1.388e-17 (target < 1e-12)
+  [PASS] G1b engine.backtest NaN count in returns (1191's finding, ndarray not skipna): 2 (target reported)
+  U56    SPY  CAGR  15.06% Sharpe 0.881 MaxDD -33.72%   RULESv2 CAGR   8.60% Sharpe 1.198 MaxDD -12.05%
+  B136   SPY  CAGR  15.16% Sharpe 0.886 MaxDD -33.72%   RULESv2 CAGR   7.98% Sharpe 1.099 MaxDD -12.24%
+  SMALL  SPY  CAGR  14.06% Sharpe 0.858 MaxDD -33.72%   RULESv2 CAGR   4.64% Sharpe 0.713 MaxDD -12.18%
+
+============================================================================================================
+ARM 1 — THE FIVE LADDERS, PRICED (one daily net-return series per rung, per panel)
+============================================================================================================
+  U56    built 26 rung books (N:6/H:4/GROSS:10/CADENCE:2/COST:4)  t=6s
+  B136   built 26 rung books (N:6/H:4/GROSS:10/CADENCE:2/COST:4)  t=7s
+  SMALL  built 26 rung books (N:6/H:4/GROSS:10/CADENCE:2/COST:4)  t=11s
+  [PASS] G2 the anchor book is identical wherever it appears in a ladder: 0.000e+00 (target < 1e-12)
+
+============================================================================================================
+ARM 2 — IS SHARPE SPREAD PER LADDER, PER (PANEL, FOLD), AND THE SPREAD RATIO
+============================================================================================================
+  A fold Y is IS = [warm-up, Y-01-01), which is exactly how a rule-8 chooser sees the
+  tape at the start of Y.  SPREAD(ladder) = max rung IS Sharpe - min rung IS Sharpe.
+  RATIO(ladder) = SPREAD(ladder) / max over the set.  The set here is all five ladders.
+
+  MEDIAN SPREAD RATIO over the 14 folds (1.000 = this ladder is the widest that fold):
+panel     B136  SMALL    U56
+lad                         
+N       1.0000 1.0000 1.0000
+H       0.5637 0.8672 0.4455
+GROSS   0.0178 0.0060 0.0089
+CADENCE 0.2557 0.2169 0.2619
+COST    0.8386 0.3155 0.8544
+
+  WIDEST-LADDER SHARE (fraction of (panel, fold) cells where each ladder is widest):
+lad        N      H  GROSS  CADENCE   COST
+panel                                     
+B136  0.6429 0.0000 0.0000   0.0000 0.3571
+SMALL 0.9231 0.0769 0.0000   0.0000 0.0000
+U56   0.5714 0.0000 0.0000   0.0000 0.4286
+
+  DEGENERATE SHARE at each tau (fraction of (panel, fold) cells with ratio < tau):
+         tau=0.02  tau=0.05  tau=0.1  tau=0.2
+lad                                          
+N          0.0000    0.0000   0.0000   0.0000
+H          0.0000    0.0000   0.0000   0.0244
+GROSS      0.9024    1.0000   1.0000   1.0000
+CADENCE    0.0000    0.0732   0.0976   0.3659
+COST       0.0000    0.0000   0.0000   0.0000
+
+  Per-panel degenerate share at the queue's own bar tau = 0.05:
+    U56    N 0.0000  H 0.0000  GROSS 1.0000  CADENCE 0.0714  COST 0.0000
+    B136   N 0.0000  H 0.0000  GROSS 1.0000  CADENCE 0.0000  COST 0.0000
+    SMALL  N 0.0000  H 0.0000  GROSS 1.0000  CADENCE 0.1538  COST 0.0000
+
+  SAMPLING CHECK — a moving-block bootstrap (L = 63, 200 reps, paired across rungs) on
+  the rule-8 IS window, so 'this ladder is degenerate' carries an interval and is not
+  a point read.  Reported as the 5th/95th percentile of each ladder's spread RATIO.
+    U56    N [0.5596,1.0000]  H [0.2252,1.0000]  GROSS [0.0011,0.0225]  CADENCE [0.0353,0.9478]  COST [0.2253,0.8999]
+    B136   N [0.5218,1.0000]  H [0.2534,1.0000]  GROSS [0.0018,0.0252]  CADENCE [0.0321,0.9672]  COST [0.2050,0.6215]
+    SMALL  N [0.3145,1.0000]  H [0.3604,1.0000]  GROSS [0.0005,0.0254]  CADENCE [0.0496,0.9222]  COST [0.1233,0.5027]
+
+============================================================================================================
+ARM 3 — THE CENSUS OF COMMITTED WIDEST-DIAL CLAIMS
+============================================================================================================
+  104,631 committed text units harvested: MD 96,840, LEADERBOARD 7,107, CHANGELOG 684
+  675 carry an ADJUDICATION verb (the C_ALL population).
+  [PASS] G3 census population non-empty and adjudicating units are a strict subset: 675/104631 (target 0 < r < u)
+
+  --- C_STRICT: 79 claims
+      of which name >= 2 dials (a RECOVERABLE comparison set): 79 (1.0000)
+      SET-UNSTATED (adjudicates but names < 2 comparands): 0 (0.0000) — NOT scored either way
+      dial mentions: N 42  H 12  GROSS 74  CADENCE 38  COST 12
+      panel named:   U56 52  B136 45  SMALL 31   NONE 20
+
+  --- C_PROX: 258 claims
+      of which name >= 2 dials (a RECOVERABLE comparison set): 79 (0.3062)
+      SET-UNSTATED (adjudicates but names < 2 comparands): 179 (0.6938) — NOT scored either way
+      dial mentions: N 83  H 16  GROSS 166  CADENCE 77  COST 15
+      panel named:   U56 131  B136 99  SMALL 84   NONE 97
+
+  --- C_ALL: 675 claims
+      of which name >= 2 dials (a RECOVERABLE comparison set): 79 (0.1170)
+      SET-UNSTATED (adjudicates but names < 2 comparands): 596 (0.8830) — NOT scored either way
+      dial mentions: N 83  H 16  GROSS 166  CADENCE 77  COST 15
+      panel named:   U56 214  B136 168  SMALL 161   NONE 386
+
+  EXPOSURE: a claim with a recoverable set is EXPOSED at tau when its set contains a
+  ladder whose measured degenerate share at tau exceeds 0.50 on the panel the claim
+  names (or, when it names none, on the MEDIAN panel — reported separately).
+
+  claimset     tau  recoverable   exposed    share  exposed(pooled panel)
+  C_STRICT    0.02           79        74   0.9367                     74
+  C_STRICT    0.05           79        74   0.9367                     74
+  C_STRICT    0.10           79        74   0.9367                     74
+  C_STRICT    0.20           79        74   0.9367                     74
+  C_PROX      0.02           79        74   0.9367                     74
+  C_PROX      0.05           79        74   0.9367                     74
+  C_PROX      0.10           79        74   0.9367                     74
+  C_PROX      0.20           79        74   0.9367                     74
+  C_ALL       0.02           79        74   0.9367                     74
+  C_ALL       0.05           79        74   0.9367                     74
+  C_ALL       0.10           79        74   0.9367                     74
+  C_ALL       0.20           79        74   0.9367                     74
+
+  BOTH DIALS ARE INERT, AND THAT IS THE FINDING, NOT A DEFECT OF THE GRID:
+   (i) CLAIM SET collapses.  Requiring a RECOVERABLE comparison set (>= 2 named
+       comparands) IS the C_STRICT predicate, so C_PROX and C_ALL admit 179 and 596
+       extra ADJUDICATING units that name too few comparands to be scored at all.
+       The scorable population is 79 at all three settings.  The record's widest-dial
+       talk is therefore 0.8830 SET-UNSTATED: it adjudicates without writing
+       down what it adjudicated against.
+  (ii) TAU collapses.  GROSS's measured degenerate share is 0.9024 at tau = 0.02 and
+       1.0000 at 0.05 / 0.10 / 0.20, and no other ladder crosses 0.50 at any tau, so
+       exposure is a GROSS-membership test at every bar in the queue's range.  The
+       bootstrap puts GROSS's ratio in [0.0005, 0.0254] at the 5th/95th percentile on
+       all three panels — degenerate with room to spare, not a point read.
+
+============================================================================================================
+ARM 4 — WHICH HEADLINE FORM THE EXPOSURE ACTUALLY BITES (1223's three readings)
+============================================================================================================
+  H_RUNNERUP  widest vs SECOND-widest        — a degenerate member is never top-2: IMMUNE
+  H_NARROWEST widest vs NARROWEST in the set — the degenerate member IS the narrowest
+  H_ANY       any ordered pair is decisive   — the degenerate member supplies a pair
+
+  Measured on the priced ladders: for each (panel, fold) and each headline form, which
+  ladder the form names, and whether that name CHANGES when the degenerate members are
+  struck from the set at tau = 0.05.
+
+    H_RUNNERUP   the named ladder MOVES at 0.0000 of 41 (panel, fold) cells when degenerate members are struck
+    H_NARROWEST  the named ladder MOVES at 0.0000 of 41 (panel, fold) cells when degenerate members are struck
+    H_ANY        the named ladder MOVES at 0.0000 of 41 (panel, fold) cells when degenerate members are struck
+  [PASS] G4 H_RUNNERUP is immune to striking degenerate members (1223's prediction): 0.0000 (target == 0.0000)
+
+  WHICH LADDER EACH FORM NAMES DOES NOT MOVE — but that is NOT what 1223's channel is.
+  The degenerate member enters through the MARGIN the call is made on, i.e. the ratio
+  widest/narrowest the bar is asked to adjudicate.  Measured directly:
+    H_NARROWEST margin (widest/narrowest) WITH degenerate members: median    106.10  (min 27.62, max 4106.21)
+    H_NARROWEST margin WITHOUT them (struck at tau = 0.05): median      4.03  (min 1.81, max 14.97)
+    INFLATION FACTOR the degenerate member supplies: median x25.70
+    So the record's set does not name a DIFFERENT ladder — it names the SAME one on a
+    margin inflated by the factor above, which is exactly the channel 1223 priced.
+  [PASS] G4b the degenerate member inflates the H_NARROWEST margin (not the name): x25.70 (target > 2)
+
+============================================================================================================
+ARM 5 — WHAT THE EXPOSURE COSTS OUT OF SAMPLE (PROTOCOL rule 8 walk-forward)
+============================================================================================================
+  Choice made on IS (< 2017-01-01) ONLY; 2017-2026 read once.  Three choosers:
+    CH_RECORD  pick the widest ladder over ALL FIVE (the record's habit), then take
+               that ladder's IS-argmax rung.
+    CH_CLEAN   same, but ladders whose IS spread ratio < tau are struck first.
+    CH_ATT     same as CH_CLEAN, but restricted to ATTAINABLE ladders.  COST is not a
+               dial an investor can turn: its rungs are the SAME book priced at
+               different fees, and its IS argmax is 0 bps at every panel — a book that
+               cannot be traded.  PROTOCOL rule 2 fixes costs at 10 bps, so any
+               chooser allowed to read COST reports a fiction.  This run found that
+               exact failure on U56 and reports both.
+    CH_ANCHOR  do nothing: hold the frozen anchor book (N=20, H=126, GROSS=0.75, W).
+
+  U56    IS spreads: N 0.0465  H 0.0164  GROSS 0.0011  CADENCE 0.0161  COST 0.1119
+         IS argmax rungs: N=40  H=252  GROSS=0.75  CADENCE=W  COST=0.0
+         CH_RECORD picks ('COST', 0.0), CH_CLEAN picks ('COST', 0.0), CH_ATT picks ('N', 40) (struck: ['GROSS'])
+         *** CH_RECORD's pick is UNTRADABLE: the COST ladder's IS argmax is 0 bps, i.e. the same book with the fee switched off. ***
+  B136   IS spreads: N 0.1777  H 0.1156  GROSS 0.0034  CADENCE 0.0467  COST 0.1093
+         IS argmax rungs: N=5  H=63  GROSS=0.75  CADENCE=W  COST=0.0
+         CH_RECORD picks ('N', 5), CH_CLEAN picks ('N', 5), CH_ATT picks ('N', 5) (struck: ['GROSS'])
+  SMALL  IS spreads: N 0.2516  H 0.3719  GROSS 0.0024  CADENCE 0.0552  COST 0.1173
+         IS argmax rungs: N=40  H=252  GROSS=0.75  CADENCE=M  COST=0.0
+         CH_RECORD picks ('H', 252), CH_CLEAN picks ('H', 252), CH_ATT picks ('H', 252) (struck: ['GROSS'])
+
+panel   chooser     pick  win   CAGR  Sharpe   MaxDD     H1     H2  spy_S  spy_C  spy_DD  live_S  KEEP4a  KEEP4b
+  U56 CH_RECORD COST=0.0 FULL 0.1605  1.1693 -0.1908 1.2351 1.1255 0.8815 0.1506 -0.3372  1.1982   False    True
+  U56 CH_RECORD COST=0.0   IS 0.1430  1.1381 -0.1382 0.9531 1.3637 0.8989 0.1496 -0.2206  1.1045   False   False
+  U56 CH_RECORD COST=0.0  OOS 0.1751  1.1966 -0.1908 1.2738 1.1200 0.8686 0.1515 -0.3372  1.2717   False    True
+  U56  CH_CLEAN COST=0.0 FULL 0.1605  1.1693 -0.1908 1.2351 1.1255 0.8815 0.1506 -0.3372  1.1982   False    True
+  U56  CH_CLEAN COST=0.0   IS 0.1430  1.1381 -0.1382 0.9531 1.3637 0.8989 0.1496 -0.2206  1.1045   False   False
+  U56  CH_CLEAN COST=0.0  OOS 0.1751  1.1966 -0.1908 1.2738 1.1200 0.8686 0.1515 -0.3372  1.2717   False    True
+  U56    CH_ATT     N=40 FULL 0.1340  1.1311 -0.2246 1.2663 1.0361 0.8815 0.1506 -0.3372  1.1982   False   False
+  U56    CH_ATT     N=40   IS 0.1257  1.1623 -0.1258 1.0570 1.3129 0.8989 0.1496 -0.2206  1.1045   False    True
+  U56    CH_ATT     N=40  OOS 0.1408  1.1150 -0.2246 1.2607 0.9558 0.8686 0.1515 -0.3372  1.2717   False   False
+  U56 CH_ANCHOR     N=20 FULL 0.1571  1.1480 -0.1913 1.2127 1.1050 0.8815 0.1506 -0.3372  1.1982   False    True
+  U56 CH_ANCHOR     N=20   IS 0.1398  1.1158 -0.1395 0.9309 1.3410 0.8989 0.1496 -0.2206  1.1045   False   False
+  U56 CH_ANCHOR     N=20  OOS 0.1716  1.1759 -0.1913 1.2547 1.0977 0.8686 0.1515 -0.3372  1.2717   False    True
+ B136 CH_RECORD      N=5 FULL 0.1873  0.9690 -0.2812 1.3074 0.7109 0.8862 0.1516 -0.3372  1.0994   False   False
+ B136 CH_RECORD      N=5   IS 0.2379  1.2860 -0.2679 1.2203 1.3834 0.8989 0.1496 -0.2206  1.0920   False   False
+ B136 CH_RECORD      N=5  OOS 0.1471  0.7546 -0.2812 0.6004 0.8832 0.8769 0.1533 -0.3372  1.1061   False   False
+ B136  CH_CLEAN      N=5 FULL 0.1873  0.9690 -0.2812 1.3074 0.7109 0.8862 0.1516 -0.3372  1.0994   False   False
+ B136  CH_CLEAN      N=5   IS 0.2379  1.2860 -0.2679 1.2203 1.3834 0.8989 0.1496 -0.2206  1.0920   False   False
+ B136  CH_CLEAN      N=5  OOS 0.1471  0.7546 -0.2812 0.6004 0.8832 0.8769 0.1533 -0.3372  1.1061   False   False
+ B136    CH_ATT      N=5 FULL 0.1873  0.9690 -0.2812 1.3074 0.7109 0.8862 0.1516 -0.3372  1.0994   False   False
+ B136    CH_ATT      N=5   IS 0.2379  1.2860 -0.2679 1.2203 1.3834 0.8989 0.1496 -0.2206  1.0920   False   False
+ B136    CH_ATT      N=5  OOS 0.1471  0.7546 -0.2812 0.6004 0.8832 0.8769 0.1533 -0.3372  1.1061   False   False
+ B136 CH_ANCHOR     N=20 FULL 0.1618  1.0715 -0.2074 1.2902 0.8995 0.8862 0.1516 -0.3372  1.0994   False   False
+ B136 CH_ANCHOR     N=20   IS 0.1606  1.1445 -0.1464 1.0891 1.2152 0.8989 0.1496 -0.2206  1.0920   False   False
+ B136 CH_ANCHOR     N=20  OOS 0.1629  1.0240 -0.2074 1.0533 1.0023 0.8769 0.1533 -0.3372  1.1061   False   False
+SMALL CH_RECORD    H=252 FULL 0.1336  0.7845 -0.3741 0.9555 0.6419 0.8582 0.1406 -0.3372  0.7130   False   False
+SMALL CH_RECORD    H=252   IS 0.1701  0.9836 -0.3098 0.8761 1.1756 0.8318 0.1202 -0.1861  0.8390   False   False
+SMALL CH_RECORD    H=252  OOS 0.1116  0.6677 -0.3741 1.2072 0.0769 0.8769 0.1533 -0.3372  0.6518   False   False
+SMALL  CH_CLEAN    H=252 FULL 0.1336  0.7845 -0.3741 0.9555 0.6419 0.8582 0.1406 -0.3372  0.7130   False   False
+SMALL  CH_CLEAN    H=252   IS 0.1701  0.9836 -0.3098 0.8761 1.1756 0.8318 0.1202 -0.1861  0.8390   False   False
+SMALL  CH_CLEAN    H=252  OOS 0.1116  0.6677 -0.3741 1.2072 0.0769 0.8769 0.1533 -0.3372  0.6518   False   False
+SMALL    CH_ATT    H=252 FULL 0.1336  0.7845 -0.3741 0.9555 0.6419 0.8582 0.1406 -0.3372  0.7130   False   False
+SMALL    CH_ATT    H=252   IS 0.1701  0.9836 -0.3098 0.8761 1.1756 0.8318 0.1202 -0.1861  0.8390   False   False
+SMALL    CH_ATT    H=252  OOS 0.1116  0.6677 -0.3741 1.2072 0.0769 0.8769 0.1533 -0.3372  0.6518   False   False
+SMALL CH_ANCHOR     N=20 FULL 0.0787  0.5073 -0.3581 0.6636 0.3942 0.8582 0.1406 -0.3372  0.7130   False   False
+SMALL CH_ANCHOR     N=20   IS 0.0917  0.6117 -0.2528 0.9464 0.2242 0.8318 0.1202 -0.1861  0.8390   False   False
+SMALL CH_ANCHOR     N=20  OOS 0.0709  0.4534 -0.3581 0.7917 0.1007 0.8769 0.1533 -0.3372  0.6518   False   False
+
+  PROTOCOL 4b is a CONJUNCTION of the full-sample halves leg AND the rule-8 OOS leg.
+  Reported jointly here (a book passing only one leg is NOT a 4b pass):
+    CH_RECORD  U56    pick COST=0.0  4b_FULL True  4b_OOS True   -> 4b PASS   [UNTRADABLE 0 bps rung]
+    CH_CLEAN   U56    pick COST=0.0  4b_FULL True  4b_OOS True   -> 4b PASS   [UNTRADABLE 0 bps rung]
+    CH_ATT     U56    pick N=40      4b_FULL False 4b_OOS False  -> 4b FAIL
+    CH_ANCHOR  U56    pick N=20      4b_FULL True  4b_OOS True   -> 4b PASS
+    CH_RECORD  B136   pick N=5       4b_FULL False 4b_OOS False  -> 4b FAIL
+    CH_CLEAN   B136   pick N=5       4b_FULL False 4b_OOS False  -> 4b FAIL
+    CH_ATT     B136   pick N=5       4b_FULL False 4b_OOS False  -> 4b FAIL
+    CH_ANCHOR  B136   pick N=20      4b_FULL False 4b_OOS False  -> 4b FAIL
+    CH_RECORD  SMALL  pick H=252     4b_FULL False 4b_OOS False  -> 4b FAIL
+    CH_CLEAN   SMALL  pick H=252     4b_FULL False 4b_OOS False  -> 4b FAIL
+    CH_ATT     SMALL  pick H=252     4b_FULL False 4b_OOS False  -> 4b FAIL
+    CH_ANCHOR  SMALL  pick N=20      4b_FULL False 4b_OOS False  -> 4b FAIL
+
+  OOS MEAN over the three panels:
+    CH_RECORD  CAGR  14.46%  Sharpe 0.8730  MaxDD -28.20%  4a 0/3  4b 1/3
+    CH_CLEAN   CAGR  14.46%  Sharpe 0.8730  MaxDD -28.20%  4a 0/3  4b 1/3
+    CH_ATT     CAGR  13.32%  Sharpe 0.8458  MaxDD -29.33%  4a 0/3  4b 0/3
+    CH_ANCHOR  CAGR  13.51%  Sharpe 0.8845  MaxDD -25.23%  4a 0/3  4b 1/3
+    delta(CH_CLEAN  - CH_RECORD)  OOS Sharpe mean +0.0000
+    delta(CH_CLEAN  - CH_ANCHOR)  OOS Sharpe mean -0.0115
+    delta(CH_ATT    - CH_ANCHOR)  OOS Sharpe mean -0.0387
+    delta(CH_ATT    - CH_RECORD)  OOS Sharpe mean -0.0272   (the cost of reading an untradable dial)
+    SPY OOS per panel: U56 CAGR 15.15% S 0.869 DD -33.72%  B136 CAGR 15.33% S 0.877 DD -33.72%  SMALL CAGR 15.33% S 0.877 DD -33.72%
+
+============================================================================================================
+VERDICT
+============================================================================================================
+  ANSWER (C_STRICT, tau = 0.05): 74 of 79 committed
+  widest-dial claims with a RECOVERABLE comparison set contained a degenerate member
+  (0.9367).
+  The exposure is a GROSS fact: GROSS's degenerate share at tau = 0.05 is 1.0000/1.0000/1.0000 on U56/B136/SMALL.
+  But H_RUNNERUP moves at 0.0000 and H_ANY at 0.0000, so the exposure is a property of the HEADLINE FORM,
+  not of the claim count.
+  PRICE: striking degenerate members is worth +0.0000 of
+  mean OOS Sharpe against the record's chooser and -0.0115 against doing nothing.
+  KEEP paths: 4b (FULL halves AND rule-8 OOS, jointly) passes at 3 of 12 (chooser, panel) books,
+  1 of which are TRADABLE at the protocol's 10 bps; 4a at 0 of 12 OOS books.
+  Every tradable 4b pass here is the U56 ANCHOR book (N=20 equal weight, GROSS 0.75,
+  weekly) which the record already carries as its 2026-09-04 candidate — no chooser
+  studied here improves on it out of sample.
+  VERDICT: KILL (capital) — the census answers the queue's question, but no chooser
+  built from it clears 4b with a margin over doing nothing; this is a REPORTING
+  finding, not a new tradable rule.
+
+GATES
+  [PASS] G1 fast runner == engine.backtest on RULES v2 (U56, all rows after 0): 1.388e-17 (target < 1e-12)
+  [PASS] G1b engine.backtest NaN count in returns (1191's finding, ndarray not skipna): 2 (target reported)
+  [PASS] G2 the anchor book is identical wherever it appears in a ladder: 0.000e+00 (target < 1e-12)
+  [PASS] G3 census population non-empty and adjudicating units are a strict subset: 675/104631 (target 0 < r < u)
+  [PASS] G4 H_RUNNERUP is immune to striking degenerate members (1223's prediction): 0.0000 (target == 0.0000)
+  [PASS] G4b the degenerate member inflates the H_NARROWEST margin (not the name): x25.70 (target > 2)
+
+total 24s
