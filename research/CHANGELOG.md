@@ -2101,3 +2101,52 @@ rather than a lookalike.
   Every level is optimistic and a resample null cannot correct that; the headline is a ratio of the
   same 72 decisions at different L and different seeds so it largely cancels; the 4b passes are
   upper bounds. Follow-ups filed: 1250, 1251, 1252.
+## 2026-09-17 — Research C: idea 1248, is the DETECTION CURVE'S LONG-END CONCENTRATION a BLOCK-FRACTION (L/T) LAW? — **KILL (capital) / (N) NO SINGLE LAW, BUT f IS THE BETTER UNIT**
+- Dials (rule 4): WINDOW LENGTH {W252, W504, W1008, WFULL} x PANEL {U56, B136, SMALL}, all 12 cells
+  published. Rung keying {ABS = the record's 12 rungs, FRAC = 11 fraction-keyed rungs} is the
+  measurement axis, not a tuned parameter, and both are published in full. Object is 1208/1243's
+  own 72 pick decisions re-decided on EACH window, q = 0.90, B = 1000. 8 of 9 gates pass.
+- THE PREMISE IS REFUTED AS A LAW. 1243 conjectured that the ladder's long-end concentration is a
+  function of the block fraction f = L/T. It is not: at matched f the resolution rate spreads
+  0.2500 across the four window lengths WITHIN a panel (0.3333 over all 12 cells) against a
+  pre-declared 0.10 bar and measured seed noise of 0.0417. Cross-panel spread at matched f and
+  matched window reaches 0.2083, so a single curve does not predict all three panels either.
+- BUT THE RECORD'S ABSOLUTE L IS STRICTLY WORSE, AND THAT IS THE USABLE HALF. Mean spread across
+  windows: matched f 0.1199 vs matched absolute L 0.1713 (G6 PASS). At the long end the gap is
+  decisive: L = 252 reads 1.000 / 0.417 / 0.333 / 0.333 on U56 over W252 / W504 / W1008 / WFULL
+  (spread 0.6667; 0.7500 on SMALL), because on a one-year window a 252-day block IS the identity
+  redraw, while fraction-matched f = 0.6 spreads only 0.2500. The record's frozen L = 63 is
+  f = 0.250 on a one-year window and f = 0.031 on the full IS window: two runs quoting "L = 63"
+  are not quoting the same test, and an L quoted without its T is uninterpretable.
+- AND THE MONOTONICITY THE RECORD ASSUMES IS NOT UNIVERSAL. G8, declared before measuring as
+  "resolution is monotone in f in every cell", FAILS and is reported failed, not moved (rule 7):
+  Spearman per cell U56 +0.9293 / +0.9793 / +0.9723 / +0.9886; B136 +0.9677 / +0.8748 / +0.9145 /
+  +0.9439; SMALL -0.0094 (W252) / +0.3130 (W504) / +0.9467 / +0.9677. On the sub-$2B panel at a
+  one-year window a wider block resolves NOTHING extra, so "longer L is a stronger test" is a
+  large-panel / long-window fact, not a property of block resampling.
+- REPLAYS. 1208's 12-rung ladder replays in the WFULL cell (max dev 0.0277, inside its own seed
+  noise); 1243's per-rung contribution table replays exactly bar one decision (6/5/3/3/2/0/1/4/
+  7/16/55 against its 6/5/3/3/2/0/1/4/7/15/55); the identity rung f = 1 resolves 24 of 24 in all
+  12 cells; 1101's U56 anchor triple and the live v2 -12.05% MaxDD both replay.
+- CAPITAL. Rule 8, every pick made on ITS OWN IS window only and 2017-2026 read once. Pooled mean
+  OOS Sharpe: 0.7834 (W252) / 0.7914 / 0.7858 / 0.7995 (WFULL) — an 8x range of IS window moves it
+  0.0161 and all four sit 0.07-0.09 BELOW mean SPY OOS. The f-keyed resolution filter beats the
+  record's absolute-L filter at 1 of 4 windows (+0.0141 at WFULL; -0.0263 / -0.0035 / -0.0221
+  elsewhere). 4a 0 of 162 rung books; 4b BOTH 25 books, 19 distinct, 20 U56 / 5 B136 / 0 SMALL —
+  bit-for-bit 1243's committed counts, all books the record already holds. Best is U56 anchor A
+  ladder N rung 12: full 17.65% / 1.1658 / -20.17%, OOS 18.78% / 1.1701 / -20.17% against SPY OOS
+  15.15% / 0.8684 / -33.72%. CONFIRMATORY, NOT GENERATIVE. NO NEW BOOK, NO MEMO, NO RULES CHANGE.
+  Script: research/backtests/2026-09-17_is-the-DETECTION-CURVE-s-LONG-END-CONCENTRATION-a-BLOCK-FRACTION-LAW_C.py
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: EVERY BLOCK-RESAMPLING VERDICT SHOULD QUOTE L/T
+  (OR L AND T), NOT L — PROPOSED for the Sunday review (rule 6) as a PROTOCOL schema line only,
+  never as a chooser. It sharpens 1243's amended clause: the widest rung's block fraction is the
+  quantity that travels, and even it travels only on large panels and long windows.
+- REPRODUCIBILITY NOTE. The committed console shows the resolution table LOADED from the run's own
+  seeded .resolution.csv after a mid-run crash (pandas Spearman needs scipy, which the sandbox does
+  not have; the fix was a scipy-free rank correlation). Every draw is keyed by seed_of(panel,
+  anchor, ladder, chooser, window, L), so deleting that CSV reproduces it; the pre-crash and
+  post-fix runs agree on every published figure, and the replay gates G4 / G9 are computed from it.
+- SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL is a current sub-$2B screen
+  (664 investable, 51 dropped for max_1d_move >= 1.0). Levels are optimistic; the headline is a
+  ratio of one construction against itself (the same decisions at different window lengths) so it
+  largely cancels, and the 4b legs do not — those passes are upper bounds.
