@@ -1911,3 +1911,63 @@ rather than a lookalike.
   sub-$2B screen with 51 of 715 tickers dropped for max_1d_move >= 1.0 (664 investable), SPY
   excluded from every eligible set and used as benchmark only. The bias does not cancel out of
   the OOS levels or the 4b legs, so any pass there is an upper bound.
+
+## 2026-09-17 — Research B: idea 1208, is the BLOCK LENGTH the record's LARGEST UNSTATED DIAL across every RESAMPLING claim? — **KILL (capital) / SCHEMA CLAUSE EARNED**
+- ANSWERED YES ON THE WORD, NO ON THE MONEY. Dials (rule 4): CLAIM SET {CS_STRICT, CS_PROX, CS_ALL}
+  and L LADDER {LL_REC, LL_FULL, LL_WIDE}, 9 cells all published. The object is 1101/1154's own: 72
+  pick decisions (3 panels x 2 anchors x 4 ladders x 3 choosers) over 144 distinct rung books,
+  resolved at every rung of L = 1,2,5,10,21,42,63,126,252,504,1008,T with NOTHING else changed.
+  14/14 gates pass, including G3/G4 replaying 1101's U56 anchor triple to 1.6e-03 / 2.7e-04 and G7
+  replaying 1154's own rate ladder inside seed noise (L=21 dev 4.4e-05).
+- THE LADDER HAS A DEGENERATE TOP RUNG AND THE RECORD HAS NEVER WRITTEN IT DOWN. G1 proves bit for
+  bit (max dev 0.000e+00) that the joint moving-block redraw at L = T is the IDENTITY: nb = 1, one
+  legal start, every draw replays the observed path, P_pick of the observed argmax = 1.000 exactly.
+  So resolution rate = 1.000 AT THE TOP OF THE LADDER BY ARITHMETIC, and a rate quoted without L is
+  quoted from an interval whose upper end is 1.000 by construction rather than by evidence.
+- THE CENSUS. 34,011 committed text units over LEADERBOARD.md + CHANGELOG.md + 1,164 .md files.
+  CS_STRICT: 478 units name a block construction, 267 of those carry a verdict word, and 77 (0.2884)
+  state NO L. CS_PROX: 998 of 1,189. Where L IS stated it is 63 in 145 of 325 cases — 1101's choice,
+  inherited without argument — against 21 (34), 126 (27), 252 (20); only 37 units anywhere in the
+  record state an L LADDER rather than a point.
+- THE RATE IS MONOTONE IN L AT ALL 12 RUNGS, 0.1528 -> 1.0000. On the same 72 decisions, bar 0.90,
+  B = 1000: .1528 / .1667 / .1667 / .1806 / .1944 / .2222 / .2222 (L=63, the record's) / .2361 /
+  .2778 / .3194 / .4722 / 1.000. Mean P_pick rises with it, .5604 -> 1.000. AND REACH IS 14 AT EVERY
+  SINGLE L: the argmax rung is an IS-observed fact and carries no L-dependence whatever — only the
+  BAR moves. That is the cleanest statement of what L actually buys.
+- HOW MANY COMMITTED VERDICTS ARE L-DEPENDENT. Per decision, verdict changing anywhere on the ladder:
+  LL_REC (1154's 4 rungs) 6 of 72 (0.0833), LL_FULL 23 of 72 (0.3194), LL_WIDE 61 of 72 (0.8472).
+  Spread evenly over the record's own structure — N 7/18, GROSS 6/18, CADENCE 5/18, H 5/18;
+  CH_ISCAGR 9/24, CH_ISSHARPE 8/24, CH_ISDD 6/24; U56 9/24, SMALL 8/24, B136 6/24 — no cell immune.
+  PROJECTED onto the unstated-L population: 24.6 [16.3, 32.9] L-dependent committed verdicts under
+  CS_STRICT, 318.8 [211.3, 426.3] under CS_PROX. PUBLISHED AS A PROJECTION AND NOT AS 77 RE-RUNS:
+  the rate is measured on the record's own pick decisions, and sentences resting on a block null for
+  something other than a pick are not covered and nothing is claimed about them.
+- THE COMPARATIVE THE WORD "LARGEST" DEMANDS, WHICH THE RECORD HAD NEVER RUN. Each of the four knobs
+  of a resolution rate moved across its own range with the other three frozen, same 72 decisions:
+  L swing 0.3194 (1..1008) > q swing 0.3056 (0.60..0.99, ALWAYS published) > SEED 0.0278 (8 streams)
+  > B 0.0139 (125..4000). L IS THE LARGEST KNOB OF ALL FOUR — bigger than the one the record always
+  publishes, 11.5x the seed and 23x the draw count — and it is the one the record never argues.
+- RULE 8 AND BOTH KEEP PATHS. Every dial fixed on the pre-2017 window only, 2017-2026 read once:
+  426 rows (162 rung books + 264 CH_RESOLVED_L* chooser rows, one per L rung). 4a 0 of 426 (A_H1 218,
+  A_H2 3, A_DD 9 — the live book's -12.05% is not beatable by a growth book, rule 4's own reason for
+  path 4b). 4b 105 full / 109 OOS / 104 BOTH, COLLAPSING TO 19 DISTINCT REALISED BOOKS, AND ALL 19
+  ARE RUNG BOOKS THE RECORD ALREADY HOLDS. Best U56 N=20 anchor B: full 11.03% / 1.1354 / -18.01%,
+  OOS 12.42% / 1.1771 / -18.01% against U56 SPY OOS 15.15% / 0.8684 / -33.72% and LIVE v2 OOS
+  9.42% / 1.2714 / -12.05%. CONFIRMATORY, NOT GENERATIVE — NOT PROMOTED, NO MEMO, NO RULES CHANGE.
+  Script: research/backtests/2026-09-17_is-the-BLOCK-LENGTH-the-record-s-LARGEST-UNSTATED-DIAL-across-every-RESAMPLING-claim_B.py
+- AND THE DIAL IS INERT ON CAPITAL, WHICH IS WHY THIS IS A KILL. Acting only on RESOLVED picks, mean
+  OOS Sharpe over the L ladder runs 0.8268 (L=1) / 0.8273 (L=10..126) / 0.8321 (L=504) / 0.8307
+  (L=1008): a total spread of 0.0053 against a resolution swing of 0.3194. The word "resolved"
+  swings by a factor of 3.1; the money behind it moves four thousandths of Sharpe. 1206's, 1221's,
+  1226's, 1227's, 1230's, 1231's and 1237's finding arriving again on a new dial.
+- WHAT THE RECORD SHOULD TAKE. One sentence: L IS THE LARGEST UNSTATED DIAL IN THE RECORD'S
+  RESAMPLING VOCABULARY AND THE SMALLEST ONE IN ITS BOOK. A schema clause requiring L (and, where the
+  claim is a rate, the ladder) beside every block-resampling verdict costs 77 CS_STRICT sentences to
+  amend and buys checkability, not return. PROPOSED for the Sunday review (rule 6) as a PROTOCOL
+  schema line only, never as a chooser. Follow-ups filed: 1241, 1242, 1243.
+- SURVIVORSHIP (rule 9). U56 (56 cols) and B136 (136) are CURRENT-constituent lists; SMALL is the
+  current constituents of a sub-$2B screen. Every LEVEL is optimistic and a resample null prices
+  sampling error on the tape it is handed and cannot correct that. It largely cancels out of the
+  headline claims, which are ratios of one construction against itself on the same tape (the same 72
+  decisions at different L), and it does NOT cancel out of the 4b legs, so those passes are an upper
+  bound.
