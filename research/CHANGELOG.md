@@ -1438,3 +1438,52 @@ mean OOS Sharpes to 0.0, Spearman 0.1551 to 2.06e-05, resolved count 17 of 72 ex
 - SURVIVORSHIP (rule 9): B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B screen with
   52 of 715 tickers dropped for max_1d_move >= 1.0 (663 names), SPY excluded from its eligible set.
 - Gates 12 of 12. Runtime 105s, offline, deterministic.
+
+## 2026-09-17 — lane B, idea 1219: should-every-committed-t-carry-its-SE-BASIS-and-its-L — KILL (capital) / ANSWERED = YES for the clause, NO for the money
+
+1212 published "210 committed t-values recovered; 10 classify as fold-clustered" from a scan of
+the record's TEXT, and stated its own limitation: most committed t's do not name their SE basis
+within 200 characters. This run reads the EMITTING SCRIPT instead. Two dials, CLAIM SET
+{C_1212, C_HEAD, C_MEMO, C_ALL} x RECOVERY {R_TEXT200, R_TEXTWIDE, R_SCRIPT, R_SCRIPT_STRICT},
+16 cells all published. 1212's census reproduces at EXACTLY 210 hits and EXACTLY 10 fold at its
+own commit 0743d51 (gates G1, G9), so the comparison is like for like.
+
+- THE RECOVERY. Script 86 of 210 (0.410) against text 18 of 210 (0.086) — 4.78x. But
+  R_SCRIPT_STRICT, which is what "carries its basis AND its L" actually means, is 4 of 210
+  (0.019). All 210 claims map to a script and all 210 scripts are on disk, so the mapping is not
+  the bottleneck: 201 of 210 sit in a script that declares NO L at all, 9 in one that pins a
+  unique L. Basis mix S_IID 82, S_BLOCK 4, AMBIGUOUS 6, NO NAMED BASIS 118.
+- THE CORRECTION TO 1212, AND IT POINTS THE HARDER WAY. 0 of its 10 fold-clustered t's have an
+  emitting script containing ANY fold-SE machinery, and R_SCRIPT finds 0 fold-SE t's in the whole
+  210. The 10 were keyword collisions, chiefly on the word "year". 1212's census should be read
+  as 0, not 10, and its limitation note understated the problem rather than overstating it.
+  NO_SE is reported as a FLOOR and not a proof: 47 of the 53 NO_SE scripts contain "SE", "std(",
+  ".sem(" or "np.sqrt(" somewhere, so the rule means "no NAMED basis it recognises".
+- THE BARS, RE-MEASURED NOT QUOTED. 90 disjoint gross-matched null pairs (mean dSharpe -0.0025,
+  pair corr 0.9037, exchangeability gated before anything was read). 1212's 15-cell crit95 table
+  reproduces to a worst deviation of 0.1636 on independent seeds and its central claim survives:
+  L is the dial, not the basis — S_FOLD 1.6375 -> 2.5605 (x1.56 against 1212's x1.54), S_BLOCK
+  1.9530 -> 2.3266 (x1.19 against x1.24), S_IID x1.03, S_NW x1.23.
+- THE EXPOSURE. Ambiguity band [1.6375, 2.5605]: 27 of 210 committed t's (0.1286), and 27 of the
+  126 that clear 1.96 (0.2143), are significant under some (basis, L) the record leaves open and
+  not under others. 0 of the 86 RESOLVABLE t's are lost at their own bar — they are overwhelmingly
+  S_IID, whose honest bar already IS 1.96. The exposure is entirely in the 124 that cannot be
+  resolved. C_MEMO 44 of 358 in band, C_ALL 64 of 480.
+- BYCATCH, MEASURED FIRST AND NOT REPAIRED QUIETLY. A Sharpe-scale HAC SE's DENOMINATOR is an
+  unstated dial of its own: dividing by sd(ra - rb) instead of the pooled BOOK volatility
+  under-rejects by ~2x (crit95 0.9219-1.2778 against a nominal 1.96), because two books correlated
+  at 0.90 have a difference whose SD is far below either book's. Published as S_NW_DIFFSD; it is
+  not a rung and enters nothing downstream.
+- RULE 8 AND THE CAPITAL CONTENT. 216 books chosen on 2009-2016 with 2017-2026 read ONCE, plus 960
+  publish decisions (24 contexts x 4 bases x 5 L x 2 bars). HONEST bar minus QUOTED 1.96 over the
+  20 (basis, L) cells: +0.0010 of mean OOS Sharpe (SE 0.0014, t +0.71), moves -0.10, 4b +0.00, and
+  the two bars make IDENTICAL decisions at 13 of 20 cells. Doing nothing returns 0.8575; 10 of 40
+  rules beat it and 5 of 40 clear their own count-matched random bar against the 4.0 of 40 chance
+  predicts — 1210's and 1221's finding arriving a third time.
+- BOTH KEEP PATHS. 4a 0 of 216; 4b full 12, 4b OOS 13, BOTH 12 over 12 DISTINCT books (U56 11,
+  B136 1, SMALL 0). Best U56 / W / N=12 / H=126: full 17.65% / 1.1658 / -20.17% (halves 1.2741 /
+  1.0833), OOS 18.78% / 1.1701 / -20.17% — the book 1183 and 1212 already committed.
+  CONFIRMATORY, NOT GENERATIVE. NOT PROMOTED, NO MEMO, NO RULES CHANGE.
+- SURVIVORSHIP (rule 9). B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B screen with
+  52 of 715 tickers dropped for max_1d_move >= 1.0 (663 names), SPY excluded from its eligible set.
+- Gates 11 of 11. Runtime 103s, offline, deterministic.
