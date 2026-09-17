@@ -2283,3 +2283,51 @@ rather than a lookalike.
   screen (52 of 715 dropped for max_1d_move >= 1.0 before anything was computed). Levels are
   optimistic and every 4b pass is an upper bound; the headline is a SPREAD ACROSS RUNGS of the same
   book on the same panel, first-order immune to a common level bias.
+
+## 2026-09-17 (lane cloud) — 1096 is-the-GATE-WORTH-NEGATIVE-on-the-BOOK-too-or-only-on-a-RANDOM-ORDERING — KILL (capital)
+- THE QUESTION. Idea 1085 priced the 200d/vol gate on a RANDOMLY-ORDERED book at 0.54-1.89 pp/yr of
+  CAGR for 0.9-3.3 pp of drawdown. Nobody had priced it on the REAL book, whose momentum ranking
+  may already select the names the gate admits. Two dials, 32 cells per panel, 96 in all, every one
+  published: n {5,10,12,15,20,25,30,40} x GATE {BOTH, MA, VOL, NONE}, plus two control arms per
+  rung. Anchor (n=20, BOTH) replays the committed U56 triple to 4.65e-05.
+- ANSWER: NOT NEGATIVE ON THE LARGE-CAP BOOK — WORTH ALMOST EXACTLY NOTHING THERE. U56 n=20: BOTH
+  15.71% / 1.1480 / -19.13% (OOS 1.1759) vs NONE 15.94% / 1.1531 / -20.06% (OOS 1.1463); the screen
+  costs 0.23 pp/yr of CAGR and 0.0051 of Sharpe and buys 0.94 pp of drawdown, and deleting it
+  entirely does not change the 4b verdict. Gate-on share of panel-days is 0.684 (MA) / 0.926 (VOL)
+  / 0.667 (BOTH), but the top-20 momentum names are already above their own 200d MA.
+- AND WORTH NEGATIVE ON THE SMALL-CAP PANEL AT EVERY RUNG: SMALL663 n=20 BOTH 7.87% / 0.5073 /
+  -35.81% vs NONE 11.79% / 0.6412 / -33.14%; across rungs the gate costs 2.80-4.11 pp/yr of CAGR
+  while making drawdown WORSE at 7 of 8 rungs. Over the 8 rungs it improves MaxDD at 4 of 8 (U56),
+  6 of 8 (B136), 1 of 8 (SMALL663); CAGR at 3 / 3 / 0; Sharpe at 3 / 4 / 0. At n=5 on U56 it costs
+  5.05 pp/yr (17.79% vs 22.84%) to buy 1.21 pp of drawdown.
+- THE TWO LEGS ARE NOT ONE SCREEN. U56 4b passes by gate: VOL 5 of 8, BOTH 3, NONE 3, MA 2. The vol
+  leg does the risk work; the MA leg buys return with drawdown (MA alone at n=10 is the grid's best
+  Sharpe, 1.2349 full / 1.2337 OOS, and fails 4b on DD at -22.36%).
+- A DEFECT FOUND AND PUBLISHED RATHER THAN QUIETLY FIXED (rule 7). Every memo describes the book as
+  "gated-out weight to CASH, de-gross, never re-spread". IT DOES NOT: every committed script sets
+  each holding to 1/len(selected), so MEAN NET EXPOSURE IS 0.750 AT ALL 96 GRID POINTS and the
+  committed gate is a PURE SELECTION FILTER that cannot time exposure. The main grid is left exactly
+  as the record built it and the missing behaviour is measured as controls, never as a chooser:
+  CASH* (1/N weights, unfilled slots to cash) de-grosses only to 0.722-0.750 on U56, 0.744-0.750 on
+  B136 and 0.750 at EVERY rung on SMALL663 (with 663 names the clause is unreachable); MTCH* =
+  UNGATED at a constant gross equal to CASH*'s own mean exposure. CASH* beats MTCH* on MaxDD at
+  4 of 8 rungs on U56 (mean dCAGR -0.83 pp, mean dMaxDD -0.48 pp — worse on both), 7 of 8 on B136
+  (-1.31 pp of CAGR for +3.26 pp of DD) and 1 of 8 on SMALL663 (-3.48 pp for -2.58 pp). TIMING IS
+  CHEAPER THAN SIMPLY HOLDING LESS ON ONE PANEL ONLY.
+- CAPITAL. Rule 8: (n, GATE) chosen on warm-up..2016-12-31 by IS Sharpe alone, 2017-2026 read ONCE.
+  THE CHOOSER TURNS THE GATE OFF ON BOTH LARGE-CAP PANELS (U56 picks n=5/NONE, B136 n=10/NONE,
+  SMALL663 n=25/BOTH) AND IS WORSE OUT OF SAMPLE FOR IT ON ALL THREE: pooled IS-chosen OOS Sharpe
+  0.7984 vs grid-mean 0.8783 (-0.0799) vs do-nothing anchor 0.8845 (-0.0861); IS/OOS rank corr
+  NEGATIVE on all three (-0.0546 / -0.7615 / -0.2304); every IS-chosen cell FAILS 4b while the
+  anchor passes on U56. 4a 0 of 96; 4b 13 / 2 / 0 of 32. NO NEW BOOK, NO MEMO, NO RULES CHANGE.
+  Script: research/backtests/2026-09-17_is-the-GATE-WORTH-NEGATIVE-on-the-BOOK-too-or-only-on-a-RANDOM-ORDERING_cloud.py
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: THE 200d/vol SCREEN EARNS ITS PLACE AS A TAIL CLAUSE
+  AT THE SMALL-n END AND AS NOTHING AT ALL AT THE COMMITTED n = 20, AND THE MEMOS' "de-gross to CASH"
+  LANGUAGE DESCRIBES BEHAVIOUR THE COMMITTED CODE DOES NOT HAVE — PROPOSED for the Sunday review
+  (rule 6) as a memo/PROTOCOL wording correction, never as a chooser (rule 8 shows the dial is
+  negative-value).
+- SURVIVORSHIP (rule 9). U56/B136 are current-constituent lists; SMALL663 is a current sub-$2B screen
+  (52 of 715 dropped for max_1d_move >= 1.0 before anything was computed). Levels are optimistic. A
+  current-constituent panel is KIND to GATE = NONE — a name that fell below its 200d MA and never
+  recovered is disproportionately one the screen dropped from the panel — so the ungated arm's wins
+  reported here are UPPER BOUNDS on its wins.
