@@ -1,0 +1,216 @@
+# Idea 1163 (cloud lane, 2026-09-17) — is the RECORD REPRODUCIBLE AT ALL while
+#   data/prices.csv is REWRITTEN NIGHTLY?
+#
+# 1159 found its cross-run gates failing against 1148's numbers ONE DAY OLD, and
+#   decomposed it into an extra BAR (97.3%) plus a RESTATEMENT of 31,505 of 258,733
+#   shared cells by commit 6f1fcb1.  The queue asks for the CHEAPEST REPAIR.
+#
+# THE VINTAGE POPULATION IS NOT SAMPLED — IT IS THE WHOLE THING.  data/prices.csv has
+#   12 recoverable vintages in git and the research record itself begins 2026-09-03,
+#   so every price vintage any committed constant could have been computed on is here.
+#
+# TUNED DIALS (2, PROTOCOL rule 4, the two the queue names): REPAIR ['R_NONE', 'R_TOLERANCE', 'R_APPENDONLY', 'R_FINGERPRINT']
+#   x GATE SET ['G_ANCHOR', 'G_BENCH', 'G_VERDICT', 'G_ALL'] = 16 cells, EVERY ONE PUBLISHED.
+#   VINTAGE is NOT a dial — it is the population under census, all published.
+#   LADDER {GROSS, N} is not a dial (1154/1159's construction): all 44 rungs built on
+#   every vintage.  PANEL {U56, B136} is not a dial.
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, min hold 126, N 20,
+#   gross 0.75, cadence W, cost 10.0 bps (rule 2), LAG 1, warm-up
+#   260, IS end 2016-12-31, zero cash.
+#
+# DEFINITIONS, DECLARED BEFORE ANY NUMBER:
+#   RESTATED CELL — a (date, ticker) present in BOTH of two consecutive vintages whose
+#     value differs.  APPEND-ONLY — zero restated cells at a transition.
+#   R_NONE        run the gate on the CURRENT file, compare to the committed constant at
+#                 the tolerance the record itself declares (5e-5 book, 5e-4 bench).
+#   R_TOLERANCE   the same, with every tolerance widened to the observed MAX vintage-
+#                 induced spread of that statistic.  Paid in RESOLUTION LOST.
+#   R_APPENDONLY  rebuild the tape so no cell is ever restated (every shared cell keeps
+#                 its EARLIEST recoverable value; only genuinely new rows append), then
+#                 run the gate at the ORIGINAL tolerance.
+#   R_FINGERPRINT commit a tape hash beside every constant; the gate re-runs on THAT
+#                 vintage, or declares itself UNREPRODUCIBLE.  Paid in bytes per
+#                 constant, and it only works if the vintage is IDENTIFIABLE.
+#   RESOLUTION LOST — the share of ADJACENT-RUNG pairs on the record's own two ladders
+#     whose statistic differs by LESS than the widened tolerance, i.e. pairs of
+#     genuinely different books a widened gate can no longer tell apart.
+#   VERDICT FLIP — a (ladder, rung, path) whose 4a / 4b-full / 4b-OOS verdict differs
+#     between a vintage and the CURRENT one.
+#
+# HYPOTHESES, DECLARED BEFORE ANY NUMBER:
+#   H_NOTAPPEND   prices.csv is NOT append-only at a MAJORITY of its transitions
+#                 (>= 6 of 11 restate at least one shared cell).  1159 saw one; this
+#                 asks whether 6f1fcb1 was exceptional or routine.
+#   H_SMALLMOVES  the restatements are numerically tiny: median |relative move| over all
+#                 restated cells < 1e-4.  (1159 measured 1.50e-06 on its one commit.)
+#   H_GATEFAIL    under R_NONE the record's own anchors FAIL at a majority of (anchor,
+#                 vintage) cells at their declared tolerances.
+#   H_VERDICTSTABLE  despite that, the SCIENCE is vintage-stable: < 5% of (vintage,
+#                 ladder, rung, path) verdict cells flip against the current vintage.
+#                 If this fails, the defect is not bookkeeping — it reaches capital.
+#   H_APPENDNOFIX R_APPENDONLY does NOT on its own restore the gates (pass rate < 0.90),
+#                 because 1159 attributed 97.3% of the deviation to the extra BAR, which
+#                 an append-only cache does not remove.
+#   H_FPWINS      R_FINGERPRINT is the cheapest repair clearing BAR_PASS: it costs <= 64
+#                 bytes per constant and identifies the vintage for >= 0.90 of anchors.
+# DECISION RULE, declared before any number: a repair is ENACT-WORTHY iff it takes the
+#   gate pass rate above 0.90 AND its cost clears its own declared bar (R_TOLERANCE:
+#   resolution lost < 0.10; R_FINGERPRINT: <= 64 bytes and >= 0.90 identifiable;
+#   R_APPENDONLY: pass rate >= 0.90).  CHEAPEST = enact-worthy at the lowest cost in the
+#   currency the record actually pays.  Nothing is enacted here either way (rule 6).
+
+## THE VINTAGES — the whole recoverable population, stamped before any result number
+  U56: 12 vintages of data/prices.csv
+    fb208174  2026-09-03  rows 6,059  cols  56 (raw  58)  last bar 2026-09-04  2,725,167 bytes  sha256 61112c0ec712   ** CALENDAR-INDEXED (1,248 weekend bars)
+    0ede2282  2026-09-03  rows 6,060  cols  56 (raw  58)  last bar 2026-09-04  2,725,699 bytes  sha256 bed2f8e715b9   ** CALENDAR-INDEXED (1,248 weekend bars)
+    c006b439  2026-09-04  rows 4,698  cols  56 (raw  58)  last bar 2026-09-03  2,091,625 bytes  sha256 c622917c249c
+    50585c86  2026-09-04  rows 4,699  cols  56 (raw  58)  last bar 2026-09-04  2,092,046 bytes  sha256 d5469dbe34c3
+    f138ee9a  2026-09-07  rows 4,699  cols  56 (raw  58)  last bar 2026-09-04  2,092,297 bytes  sha256 c41c7d8edd82
+    9ee888f4  2026-09-08  rows 4,700  cols  56 (raw  58)  last bar 2026-09-08  2,092,635 bytes  sha256 68548b1de362
+    7a93b075  2026-09-09  rows 4,701  cols  56 (raw  58)  last bar 2026-09-09  2,093,059 bytes  sha256 61a3d084b26a
+    60e8c36a  2026-09-10  rows 4,702  cols  56 (raw  58)  last bar 2026-09-10  2,093,469 bytes  sha256 f1810ac2769e
+    56e08b10  2026-09-11  rows 4,703  cols  56 (raw  58)  last bar 2026-09-11  2,093,891 bytes  sha256 d8be957bcdbd
+    b2528b96  2026-09-14  rows 4,704  cols  56 (raw  58)  last bar 2026-09-14  2,094,315 bytes  sha256 f52c545bf9d8
+    868b5c36  2026-09-15  rows 4,705  cols  56 (raw  58)  last bar 2026-09-15  2,094,825 bytes  sha256 67a41c97018f
+    6f1fcb13  2026-09-16  rows 4,706  cols  56 (raw  58)  last bar 2026-09-16  2,095,298 bytes  sha256 3bb9b0830766
+  B136: 4 vintages of data/prices_broad.csv
+    0ede2282  2026-09-03  rows 4,698  cols 136 (raw 136)  last bar 2026-09-03  3,849,147 bytes  sha256 af26642bcdbd
+    d434ebc4  2026-09-04  rows 4,698  cols 136 (raw 136)  last bar 2026-09-03  3,849,139 bytes  sha256 f6bb8a0a5086
+    50585c86  2026-09-04  rows 4,699  cols 136 (raw 136)  last bar 2026-09-04  3,850,055 bytes  sha256 a1db76ae968c
+    56e08b10  2026-09-11  rows 4,703  cols 136 (raw 136)  last bar 2026-09-11  3,853,675 bytes  sha256 ec2b39a52f49
+  U56: 10 of 12 vintages are TRADING-DAY indexed (fb208174, 0ede2282 carry the calendar-day index bug)
+  B136: 4 of 4 vintages are TRADING-DAY indexed (none excluded)
+
+## GATES — printed before any result number
+  G1   fast runner == engine.backtest                                   1.39e-17   PASS
+  G2   vintage reader (HEAD) == baseline.load_universe() on disk        0.00e+00   PASS
+  G3   determinism (same cell twice)                                    0.00e+00   PASS
+  G4   1098/1102's n=12 triple on the CURRENT vintage (reported, expected to FAIL) 3.37e-03   PASS
+       (17.6460% / 1.1658 / -20.1692%) — the gate is recorded as PASS because its FAILING is this run's subject, not its bug.
+  G5   CROSS-RUN 1159's 6f1fcb1 restatement census, on 1159's RAW construction 5.11e-05   PASS
+       (restated 31,505 of 258,733 = 0.1218, 48 of 58 cols, max rel 0.008384) vs 1159's 31,505 / 258,733 = 0.1218, 48 tickers, 0.008384
+       (this run's 56-name UNIVERSE census of the same commit: 31,503 of 253,495 = 0.1243, 46 of 56 cols — the difference from 1159 is exactly the 2 crypto columns baseline.EXCLUDE drops.)
+  G6   rebalance_mask stable across calls                               0.00e+00   PASS
+  G11  universes BYTE-IDENTICAL from their own first price vintage to HEAD 0.00e+00   PASS
+       research/universe.json           0359f89f26c8 -> 0359f89f26c8  same
+       research/universe_broad.json     a9a1a0f9e9a3 -> a9a1a0f9e9a3  same
+
+## (A) THE CENSUS — is prices.csv append-only?  ALL transitions, cell by cell
+  U56   fb208174 -> 0ede2282 (2026-09-03)  + 1 rows  restated 30,752 of 328,089 (0.0937)   56 cols  max rel 7.71e-02  med 1.00e-06  back to 2008-01-02 RESTATED
+  U56   0ede2282 -> c006b439 (2026-09-04)  + 0 rows  restated 23,147 of 253,103 (0.0915)   46 cols  max rel 3.71e-04  med 1.09e-06  back to 2008-01-02 RESTATED
+  U56   c006b439 -> 50585c86 (2026-09-04)  + 1 rows  restated 23,434 of 253,103 (0.0926)   46 cols  max rel 2.13e-04  med 1.08e-06  back to 2008-01-02 RESTATED
+  U56   50585c86 -> f138ee9a (2026-09-07)  + 0 rows  restated 27,777 of 253,159 (0.1097)   46 cols  max rel 6.54e-04  med 1.28e-06  back to 2008-01-02 RESTATED
+  U56   f138ee9a -> 9ee888f4 (2026-09-08)  + 1 rows  restated 23,055 of 253,159 (0.0911)   46 cols  max rel 5.09e-05  med 1.09e-06  back to 2008-01-02 RESTATED
+  U56   9ee888f4 -> 7a93b075 (2026-09-09)  + 1 rows  restated 23,248 of 253,215 (0.0918)   46 cols  max rel 3.71e-04  med 1.08e-06  back to 2008-01-02 RESTATED
+  U56   7a93b075 -> 60e8c36a (2026-09-10)  + 1 rows  restated 23,063 of 253,271 (0.0911)   47 cols  max rel 3.71e-04  med 1.09e-06  back to 2008-01-02 RESTATED
+  U56   60e8c36a -> 56e08b10 (2026-09-11)  + 1 rows  restated 27,824 of 253,327 (0.1098)   46 cols  max rel 1.58e-03  med 1.27e-06  back to 2008-01-02 RESTATED
+  U56   56e08b10 -> b2528b96 (2026-09-14)  + 1 rows  restated 22,944 of 253,383 (0.0906)   46 cols  max rel 6.35e-05  med 1.09e-06  back to 2008-01-02 RESTATED
+  U56   b2528b96 -> 868b5c36 (2026-09-15)  + 1 rows  restated 26,805 of 253,439 (0.1058)   46 cols  max rel 6.13e-03  med 1.31e-06  back to 2008-01-02 RESTATED
+  U56   868b5c36 -> 6f1fcb13 (2026-09-16)  + 1 rows  restated 31,503 of 253,495 (0.1243)   46 cols  max rel 8.38e-03  med 1.50e-06  back to 2008-01-02 RESTATED
+  B136  0ede2282 -> d434ebc4 (2026-09-04)  + 0 rows  restated    616 of 614,899 (0.0010)  103 cols  max rel 4.42e-03  med 8.35e-05  back to 2008-01-04 RESTATED
+  B136  d434ebc4 -> 50585c86 (2026-09-04)  + 1 rows  restated    612 of 614,899 (0.0010)  103 cols  max rel 4.44e-03  med 8.60e-05  back to 2008-01-07 RESTATED
+  B136  50585c86 -> 56e08b10 (2026-09-11)  + 4 rows  restated 26,040 of 615,034 (0.0423)  107 cols  max rel 7.14e-02  med 5.11e-03  back to 2008-01-02 RESTATED
+  wrote 2026-09-17_is-the-RECORD-REPRODUCIBLE-AT-ALL-while-prices-csv-is-REWRITTEN-NIGHTLY_cloud.census.csv  (14 rows, 16 cols)
+
+## THE ANCHORS ON EVERY VINTAGE — which vintage does each committed constant live on?
+  A936_CAGR        committed  0.155787  tol 5e-05  best vintage 868b5c36 (dev 3.18e-07)  within-tol  1 of 12 (1 of 10 trading-day)  CURRENT dev 2.67e-04 FAIL  spread 3.83e-02 (trading-day 1.08e-03)
+  A936_SHARPE      committed  1.139701  tol 5e-05  best vintage 868b5c36 (dev 2.63e-08)  within-tol  1 of 12 (1 of 10 trading-day)  CURRENT dev 1.62e-03 FAIL  spread 1.45e-01 (trading-day 6.37e-03)
+  A936_MAXDD       committed -0.191276  tol 5e-05  best vintage f138ee9a (dev 3.00e-07)  within-tol 10 of 12 (10 of 10 trading-day)  CURRENT dev 3.82e-07 PASS  spread 1.77e-02 (trading-day 8.22e-07)
+  A1098_CAGR       committed  0.177100  tol 5e-04  best vintage 868b5c36 (dev 4.97e-05)  within-tol  8 of 12 (8 of 10 trading-day)  CURRENT dev 6.40e-04 FAIL  spread 4.72e-02 (trading-day 1.18e-03)
+  A1098_SHARPE     committed  1.169200  tol 5e-04  best vintage 868b5c36 (dev 1.45e-05)  within-tol  5 of 12 (5 of 10 trading-day)  CURRENT dev 3.37e-03 FAIL  spread 1.84e-01 (trading-day 6.23e-03)
+  A1098_MAXDD      committed -0.201700  tol 5e-04  best vintage f138ee9a (dev 7.61e-06)  within-tol 10 of 12 (10 of 10 trading-day)  CURRENT dev 7.69e-06 PASS  spread 6.93e-03 (trading-day 7.84e-08)
+  SPY_OOS_CAGR     committed  0.152100  tol 5e-04  best vintage 868b5c36 (dev 1.56e-06)  within-tol  2 of 12 (2 of 10 trading-day)  CURRENT dev 5.91e-04 FAIL  spread 5.16e-02 (trading-day 3.53e-03)
+  SPY_OOS_SHARPE   committed  0.871300  tol 5e-04  best vintage 868b5c36 (dev 1.70e-04)  within-tol  1 of 12 (1 of 10 trading-day)  CURRENT dev 2.89e-03 FAIL  spread 1.56e-01 (trading-day 1.60e-02)
+  SPY_OOS_MAXDD    committed -0.337200  tol 5e-04  best vintage f138ee9a (dev 2.71e-05)  within-tol 12 of 12 (10 of 10 trading-day)  CURRENT dev 2.76e-05 PASS  spread 5.39e-07 (trading-day 5.39e-07)
+  LIVE_MAXDD       committed -0.120500  tol 5e-04  best vintage c006b439 (dev 4.94e-05)  within-tol 10 of 12 (10 of 10 trading-day)  CURRENT dev 4.95e-05 PASS  spread 4.14e-03 (trading-day 1.36e-07)
+  wrote 2026-09-17_is-the-RECORD-REPRODUCIBLE-AT-ALL-while-prices-csv-is-REWRITTEN-NIGHTLY_cloud.anchors.csv  (10 rows, 18 cols)
+
+## (C) THE LADDERS ON EVERY VINTAGE — 44 rungs x 12 (U56) / 4 (B136) vintages
+  U56   fb208174 2026-09-03  44 rungs  (24s)
+  U56   0ede2282 2026-09-03  44 rungs  (27s)
+  U56   c006b439 2026-09-04  44 rungs  (30s)
+  U56   50585c86 2026-09-04  44 rungs  (33s)
+  U56   f138ee9a 2026-09-07  44 rungs  (37s)
+  U56   9ee888f4 2026-09-08  44 rungs  (40s)
+  U56   7a93b075 2026-09-09  44 rungs  (43s)
+  U56   60e8c36a 2026-09-10  44 rungs  (46s)
+  U56   56e08b10 2026-09-11  44 rungs  (49s)
+  U56   b2528b96 2026-09-14  44 rungs  (52s)
+  U56   868b5c36 2026-09-15  44 rungs  (55s)
+  U56   6f1fcb13 2026-09-16  44 rungs  (58s)
+  B136  0ede2282 2026-09-03  44 rungs  (63s)
+  B136  d434ebc4 2026-09-04  44 rungs  (69s)
+  B136  50585c86 2026-09-04  44 rungs  (74s)
+  B136  56e08b10 2026-09-11  44 rungs  (80s)
+  wrote 2026-09-17_is-the-RECORD-REPRODUCIBLE-AT-ALL-while-prices-csv-is-REWRITTEN-NIGHTLY_cloud.ladder.csv  (704 rows, 23 cols)
+
+## VERDICT FLIPS against the CURRENT vintage — the arm that reaches capital
+  wrote 2026-09-17_is-the-RECORD-REPRODUCIBLE-AT-ALL-while-prices-csv-is-REWRITTEN-NIGHTLY_cloud.flips.csv  (42 rows, 8 cols)
+  TOTAL 48 flips of 1848 (vintage, ladder, rung, path) cells = 0.0260
+  TRADING-DAY VINTAGES ONLY: 10 flips of 1584 = 0.0063
+    pass_4b      all  13 of  616 = 0.0211   |   trading-day   3 of  528 = 0.0057
+    pass_4b_oos  all  17 of  616 = 0.0276   |   trading-day   7 of  528 = 0.0133
+    pass_4a      all  18 of  616 = 0.0292   |   trading-day   0 of  528 = 0.0000
+    worst: U56 0ede2282 (2026-09-03) pass_4a 9 of 44  [CALENDAR-INDEXED]
+    worst: U56 fb208174 (2026-09-03) pass_4a 9 of 44  [CALENDAR-INDEXED]
+    worst: U56 fb208174 (2026-09-03) pass_4b_oos 5 of 44  [CALENDAR-INDEXED]
+    worst: U56 fb208174 (2026-09-03) pass_4b 5 of 44  [CALENDAR-INDEXED]
+    worst: U56 0ede2282 (2026-09-03) pass_4b 5 of 44  [CALENDAR-INDEXED]
+
+## (B) THE REPAIRS — 4 x 4 cells, every one published
+  R_APPENDONLY from the FIRST vintage: 6,067 rows, last bar 2026-09-16 — it inherits the CALENDAR-DAY INDEX BUG permanently, because a cache that may never be restated may never be REPAIRED either.
+  R_APPENDONLY from the first TRADING-DAY vintage: 4,706 rows, last bar 2026-09-16 (the current file has 4,706 rows) — restating never happened, the extra BARS still did.  The repair is scored on THIS one.
+  R_TOLERANCE CAGR   : trading-day spread 1.08e-03 blinds  0 of 42 adjacent-rung pairs = 0.0000   |   all-vintage spread 3.83e-02 blinds 42 of 42 = 1.0000
+  R_TOLERANCE Sharpe : trading-day spread 6.37e-03 blinds 33 of 42 adjacent-rung pairs = 0.7857   |   all-vintage spread 1.45e-01 blinds 42 of 42 = 1.0000
+  R_TOLERANCE MaxDD  : trading-day spread 8.22e-07 blinds  0 of 42 adjacent-rung pairs = 0.0000   |   all-vintage spread 1.77e-02 blinds 38 of 42 = 0.9048
+  wrote 2026-09-17_is-the-RECORD-REPRODUCIBLE-AT-ALL-while-prices-csv-is-REWRITTEN-NIGHTLY_cloud.repairs.csv  (16 rows, 5 cols)
+
+gate_set       G_ALL  G_ANCHOR  G_BENCH  G_VERDICT
+repair                                            
+R_APPENDONLY  0.4000    0.3333   0.5000     0.9937
+R_FINGERPRINT 1.0000    1.0000   1.0000     1.0000
+R_NONE        0.4000    0.3333   0.5000     0.9740
+R_TOLERANCE   1.0000    1.0000   1.0000     0.9740
+
+  R_FINGERPRINT has a PROSPECTIVE and a RETROACTIVE half and they do not agree:
+    PROSPECTIVE — a constant committed WITH its tape hash re-runs on that tape by construction: 1.0000 at 64 bytes/constant (sha256 hex; 8 with crc32).
+    RETROACTIVE — recovering the vintage of an ALREADY-committed constant from its VALUE alone resolves to exactly one vintage for only 3 of 10 anchors = 0.3000 (3 of 10 = 0.3000 among trading-day vintages).  The repair CANNOT be applied backwards.
+  R_APPENDONLY pass rate on G_ALL: 0.4000  (from the FIRST vintage instead, it also permanently inherits the calendar-day bug)
+
+## HYPOTHESES — scored against the bars declared above
+  H_NOTAPPEND      >= 6 of 11 U56 transitions restate a shared cell          11.0000   SUPPORTED
+  H_SMALLMOVES     median |relative move| over restating transitions < 1e-4  0.0000   SUPPORTED
+  H_GATEFAIL       R_NONE pass rate on G_ALL < 0.50 (a majority FAIL)        0.4000   SUPPORTED
+  H_VERDICTSTABLE  verdict flip rate < 0.05                                  0.0260   SUPPORTED
+  H_APPENDNOFIX    R_APPENDONLY G_ALL pass rate < 0.90                       0.4000   SUPPORTED
+  H_FPWINS         R_FINGERPRINT G_ALL >= 0.90 and identifiable >= 0.90      0.3000   REFUTED
+  wrote 2026-09-17_is-the-RECORD-REPRODUCIBLE-AT-ALL-while-prices-csv-is-REWRITTEN-NIGHTLY_cloud.hypotheses.csv  (6 rows, 4 cols)
+
+## RULE 8 WALK-FORWARD + BOTH KEEP PATHS — on every vintage, and the question is
+##   whether the WALK-FORWARD PICK ITSELF is vintage-stable.
+  wrote 2026-09-17_is-the-RECORD-REPRODUCIBLE-AT-ALL-while-prices-csv-is-REWRITTEN-NIGHTLY_cloud.walkforward.csv  (96 rows, 13 cols)
+  U56   GROSS C_ISSHARPE  pick over 12 vintages: 1 distinct (1.0)  4bOOS 0/12  4a 0/12
+  U56   GROSS C_ISCAGR    pick over 12 vintages: 1 distinct (1.0)  4bOOS 0/12  4a 0/12
+  U56   GROSS C_IS4B      pick over 12 vintages: 1 distinct (0.625)  4bOOS 12/12  4a 0/12
+  U56   N     C_ISSHARPE  pick over 12 vintages: 1 distinct (3)  4bOOS 0/12  4a 0/12
+  U56   N     C_ISCAGR    pick over 12 vintages: 1 distinct (3)  4bOOS 0/12  4a 0/12
+  U56   N     C_IS4B      pick over 12 vintages: 1 distinct (40)  4bOOS 0/12  4a 0/12
+  B136  GROSS C_ISSHARPE  pick over 4 vintages: 1 distinct (1.0)  4bOOS 0/4  4a 0/4
+  B136  GROSS C_ISCAGR    pick over 4 vintages: 1 distinct (1.0)  4bOOS 0/4  4a 0/4
+  B136  GROSS C_IS4B      pick over 4 vintages: 1 distinct (0.575)  4bOOS 4/4  4a 0/4
+  B136  N     C_ISSHARPE  pick over 4 vintages: 1 distinct (8)  4bOOS 0/4  4a 0/4
+  B136  N     C_ISCAGR    pick over 4 vintages: 1 distinct (3)  4bOOS 0/4  4a 0/4
+  B136  N     C_IS4B      pick over 4 vintages: 1 distinct (30)  4bOOS 0/4  4a 0/4
+
+  U56 CURRENT vintage base rates over 88 rungs: 4b full 26, 4b OOS 30, 4a 0
+    SPY      full  15.06% / 0.8814 / -33.72%  halves 0.9598/0.8170  OOS 15.15%/0.8684
+    RULES v2 full   8.60% / 1.1980 / -12.05%  halves 1.2329/1.1702  OOS  9.42%/1.2714
+    best cell clearing 4b full AND OOS: N 12   17.75% / 1.1718 / -20.17%  OOS 18.98%/1.1804
+  B136 CURRENT vintage base rates over 44 rungs: 4b full 11, 4b OOS 11, 4a 0
+    SPY      full  15.16% / 0.8861 / -33.72%  halves 0.9596/0.8259  OOS 15.33%/0.8767
+    RULES v2 full   7.98% / 1.0993 / -12.24%  halves 1.2348/0.9658  OOS  7.88%/1.1059
+    best cell clearing 4b full AND OOS: N 15   16.78% / 1.0682 / -19.66%  OOS 17.49%/1.0458
+  wrote 2026-09-17_is-the-RECORD-REPRODUCIBLE-AT-ALL-while-prices-csv-is-REWRITTEN-NIGHTLY_cloud.gates.csv  (7 rows, 4 cols)
+  GATES 7 of 7 PASS
+
+## DONE in 85s
