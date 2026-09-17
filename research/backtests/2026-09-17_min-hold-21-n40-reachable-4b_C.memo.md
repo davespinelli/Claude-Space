@@ -1,0 +1,12 @@
+# Memo — the one rule-8-reachable 4b cell in idea 1093's grid (U56, N=40, H=21). RECOMMEND PARK.
+
+1. **The cell.** U56, 40 slots, min hold 21 trading days, cap INF, CAND20 legs, gross 0.75, weekly, 10 bps, LAG 1. Full 12.03% / 1.0940 / −19.27%, halves 1.1667 / 1.0391; OOS 12.95% / 1.1243 / −19.27%; turnover 4.78x/yr, mean 34.4 names held.
+2. **It clears 4b full AND OOS.** vs SPY (15.06% / 0.8814 / −33.72%, halves 0.9598 / 0.8170, OOS 15.15% / 0.8684 / −33.72%): both halves and OOS Sharpe above SPY, MaxDD 19.27% ≤ 20.23% cap, CAGR 12.03% ≥ 10.54% floor.
+3. **It is rule-8 reachable.** C_ISDD, choosing on 2009–2016 IS MaxDD alone over all 63 (N, H) cells, picks it; OOS read once.
+4. **It fails 4a.** H1 1.1667 < live RULES v2 1.2329; the live book's −12.05% MaxDD is unreachable here (0 of 126 cells pass 4a).
+5. **Exact RULES wording, were it ever adopted:** *"Hold up to 40 names, weekly. Rank every instrument above its 200d average with vol20 < 0.60 by the CAND20 composite (mean percentile rank of 12-1 momentum, 6-month and 3-month return, halved when below the 200d average). Each name entered is held a minimum of 21 trading days; vacant slots are refilled at the weekly rebalance from the top of the ranking. Equal weight at 0.75/N of NAV, cash otherwise. Costs 10 bps per unit turnover, weights decided at close t and applied at t+1."*
+6. **Why PARK and not KEEP: it is prior art.** Idea 1086 committed this exact cell, reached by this exact chooser, on 2026-09-16. Nothing here is new capital information; this run merely reproduces it on a finer H ladder (to 0.031 pp of CAGR — the U56 tape gained one trading day, `prices.csv` nightly drift).
+7. **Why PARK and not KEEP: it is a strict regression on the incumbent.** The standing 2026-09-04 book (U56, N=20, H=126) reads 15.55% / 1.1381 / −19.13%, OOS 16.92% / 1.1615. This cell is 3.5 pp/yr of CAGR worse, lower Sharpe, deeper drawdown, OOS worse on every leg, and turns over 1.6x as fast.
+8. **Why PARK and not KEEP: the binding margin is undecidable.** Its DD leg clears by **+0.960 pp** against a cap of 20.23%; idea 1083 measured the 90% width of a quantity of this kind at **4.1–7.2 pp** on this tape. The pass is inside the noise of its own binding leg.
+9. **Survivorship (rule 9).** U56 is a current-constituent list; the CAGR is optimistic and the 4b pass is an upper bound. Nothing here should reach real capital on a current-constituent panel alone.
+10. **Action: none.** Not proposed for the Sunday review. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched by idea 1093.
