@@ -1,0 +1,175 @@
+# Idea 1173 (lane cloud, 2026-09-17) — should a MONOTONE-LADDER claim be PUBLISHABLE as a
+# BINARY at all?
+# 2 tuned dials: CLAIM SET ['NARROW', 'PROX', 'WIDE'] x GRADED STATISTIC ['G_DOWNSHARE', 'G_DECSTEPS', 'G_SPEARMAN', 'G_ENDSE'] = 12 cells, ALL published.
+# NOT dials, all values reported: PANEL ['U56', 'B136', 'SMALL']; n-ladder [5, 8, 10, 12, 15, 20, 25, 30, 40] (8 adjacent steps);
+#   HOLD ladder [21, 42, 52, 63, 76, 90, 126]; LADDER METRIC ['SHARPE', 'CAGR', 'MAXDD', 'ULCER']; block bootstrap (63d x 500);
+#   permutation null (2000 draws); 3 rule-8 choosers.
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, gross 0.75, cost 10 bps, LAG 1, cadence W, WARMUP 260.
+# DECLARED BEFORE ANY NUMBER:
+#   (A) BINARY IS PUBLISHABLE       : binary stability >= 0.90 and its across-hold
+#       replication within 0.20 of the best graded statistic's.
+#   (B) BINARY IS NOT PUBLISHABLE   : binary stability < 0.90 AND some graded stat
+#       beats it by >= 0.20 on BOTH stability and across-hold replication.
+#   (C) BINARY IS CONSERVATIVE ONLY : >= 90% of reversals are UNDER-READ.
+#   (D) NOT RESOLVABLE              : none of the above separates.
+# MONOTONICITY IS NOT A KEEP PATH: 4a/4b scored at all 189 books; rule 8 picks (n,H) on
+#   2009-2016 and reads 2017-2026 once.
+
+## PANELS AND THE SMALL STAMP
+  U56     4706 bars x   56 cols  2008-01-02 .. 2026-09-16  (4446 warm, 2007 IS, 2439 OOS)
+  B136    4703 bars x  136 cols  2008-01-02 .. 2026-09-11  (4443 warm, 2007 IS, 2436 OOS)
+  SMALL STAMP: data/small_meta.csv lists 715 tickers; 52 dropped for max_1d_move >= 1.0; pool served = 663 names + SPY as benchmark.
+  SMALL   4198 bars x  664 cols  2010-01-04 .. 2026-09-11  (3938 warm, 1502 IS, 2436 OOS)
+
+## BOOKS — 9 n-rungs x 7 holds x 3 panels = 189, every one published
+  U56    built 63 books  (6s)
+  B136   built 63 books  (10s)
+  SMALL  built 63 books  (22s)
+
+## GATES — printed before any result number
+  G1   PASS  fast runner == engine.backtest (U56 W/H126/N=20, gross 0.75)   (dev 1.388e-17)
+  G2   FAIL  CROSS-RUN the committed U56 W/H126/N=20 triple as 936/1082/1093 published it   (dev 1.622e-03)
+  G2b  PASS  CROSS-RUN the SAME cell as 1151/1171/1172 published it TODAY (the later vintage)   (dev 3.817e-07)
+     this run 0.155520 / 1.138079 / -0.191276
+     936/1082/1093 0.155787 / 1.139701 / -0.191276   (dev 1.622e-03)
+     1151/1171/1172 0.155520 / 1.138079 / -0.191276   (dev 3.817e-07)
+     THE VINTAGE, PUBLISHED NOT ABSORBED: G2 fails and G2b passes because data/prices.csv is
+     rewritten nightly (idea 1163's defect).  This run reproduces the CURRENT committed
+     vintage of the same cell bit for bit; the older one is 1.6e-03 of CAGR away.  Nothing
+     in this run's answer depends on the level, but the reader is told, not shielded.
+  G3   FAIL  CROSS-RUN the committed SPY OOS triple on U56's tape   (dev 2.894e-03)
+  G4   PASS  build() deterministic   (dev 0.000e+00)
+  G5   PASS  permutation machinery is correct: at a FIXED direction the down-share null centres on 0.5 (order destroyed, content kept)   (dev 1.813e-04)
+  G5b  REPORTED NOT GATED — and it is a finding, not a nuisance.  The null that every
+       graded statistic here ACTUALLY uses is SELF-ORIENTED (each ladder scored in its own
+       end-to-end direction, as the record's claims are), and it centres on 0.5420 +/- 0.0005, NOT on 0.500.  Orienting by the endpoints conditions on them and
+       buys 0.0420 of down-share for free.  A record sentence reading 'k of 8 steps
+       down, against the 4 of 8 you would get by chance' is scored against the WRONG null by
+       that margin; at 9 rungs the honest chance level is 0.542 of 8 = 4.34 steps.
+  G6   PASS  permutation null of M_STRICT sits at the exact 2/9! = 5.511e-06 (strict monotonicity is a 1-in-181,440 ORDERING, not a 1-in-2 one)   (dev 5.511e-06)
+  G7   PASS  moving-block bootstrap is unbiased for the mean (< 0.5 SE of the tape mean)   (dev 1.141e-01)
+  G8   PASS  the three claim sets NEST: NARROW subset of PROX subset of WIDE   (dev 0.000e+00)
+
+## BLOCK BOOTSTRAP — step and end-to-end SEs for every ladder, and verdict STABILITY
+  U56    500 reps x 63 books x 4 metrics  (26s)
+  B136   500 reps x 63 books x 4 metrics  (29s)
+  SMALL  500 reps x 63 books x 4 metrics  (31s)
+
+## THE 84 LADDERS — binary and four graded readings, each against its own null
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.ladders.csv  (84 rows, 29 cols)
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.steps.csv  (756 rows, 8 cols)
+
+## (A) THE HEADLINE READING — replication ACROSS HOLDS and bootstrap STABILITY
+  panel  metric    BINARY holds   stab    DOWNSHARE    DECSTEPS    SPEARMAN       ENDSE
+  U56    SHARPE        0 of 7     0.988     1/7@0.65    0/7@0.82    2/7@0.62    0/7@0.78
+  U56    CAGR          2 of 7     0.739     7/7@0.78    0/7@0.83    7/7@0.85    4/7@0.65
+  U56    MAXDD         0 of 7     0.955     3/7@0.58    0/7@0.80    3/7@0.58    0/7@0.53
+  U56    ULCER         2 of 7     0.699     5/7@0.64    0/7@0.91    7/7@0.88    5/7@0.58
+  B136   SHARPE        0 of 7     0.989     3/7@0.61    0/7@0.70    4/7@0.62    0/7@0.85
+  B136   CAGR          1 of 7     0.872     7/7@0.77    0/7@0.83    7/7@0.85    5/7@0.76
+  B136   MAXDD         0 of 7     0.942     0/7@0.60    2/7@0.71    0/7@0.43    0/7@0.65
+  B136   ULCER         0 of 7     0.834     7/7@0.73    0/7@0.87    7/7@0.83    5/7@0.55
+  SMALL  SHARPE        0 of 7     0.986     0/7@0.68    0/7@0.74    4/7@0.57    0/7@0.71
+  SMALL  CAGR          0 of 7     0.993     0/7@0.75    0/7@0.78    0/7@0.60    0/7@0.86
+  SMALL  MAXDD         0 of 7     0.949     4/7@0.60    0/7@0.87    6/7@0.71    2/7@0.49
+  SMALL  ULCER         1 of 7     0.804     5/7@0.61    0/7@0.90    7/7@0.80    1/7@0.54
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.replication.csv  (12 rows, 18 cols)
+  (cells read 'decisive holds / 7 @ mean bootstrap stability')
+
+## (B) THE CENSUS — every committed monotone/non-monotone claim in the record
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.claims.csv  (1,417 rows, 14 cols)
+  1,417 committed sentences carry a monotonicity token across 353 files.
+  NARROW      187 claims | states a NULL 0.0909 | states a RUNG SET 0.3102 | GRADED phrasing 0.3690 | NEGATED ('non-monotone') 0.2406 | names a PANEL 0.2941 | names a METRIC 0.2674 | names a HOLD 0.1551 | about EDGE 0.0642
+  PROX        412 claims | states a NULL 0.0534 | states a RUNG SET 0.2621 | GRADED phrasing 0.2524 | NEGATED ('non-monotone') 0.2354 | names a PANEL 0.1796 | names a METRIC 0.2209 | names a HOLD 0.0704 | about EDGE 0.0364
+  WIDE      1,417 claims | states a NULL 0.0381 | states a RUNG SET 0.1574 | GRADED phrasing 0.1750 | NEGATED ('non-monotone') 0.1983 | names a PANEL 0.1299 | names a METRIC 0.2082 | names a HOLD 0.0268 | about EDGE 0.0183
+  SCOPE, DECLARED AND NOT GLOSSED: the ladders MEASURED here carry the four METRICS
+    ['SHARPE', 'CAGR', 'MAXDD', 'ULCER'].  1093's own object was the EDGE ladder (book CAGR minus a DD-matched null's
+    median over 40 seeds), which costs ~86k rebuilt paths per panel and is NOT rebuilt here.
+    Every re-score below is therefore a TRANSFER onto a metric ladder of the same shape, and
+    is labelled TRANSFERRED throughout; it is not a re-derivation of 1093's cell.
+
+## (C) THE 12-CELL GRID (dial 1 x dial 2) — how many committed claims REVERSE
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.grid.csv  (12 rows, 14 cols)
+  TRANSFERRED (claim names a panel and a metric; scored against the MAJORITY of the 7 holds)
+  and PINNED (the claim also names one of the 7 holds; scored against THAT hold alone).
+  claim_set graded         claims  resolv  agree   rev   rev_sh  under  over  pinned  p_rev    p_sh
+  NARROW    G_DOWNSHARE       187      15      3    12   0.8000      2    10       2      2  1.0000
+  NARROW    G_DECSTEPS        187      15      3    12   0.8000      0    12       2      2  1.0000
+  NARROW    G_SPEARMAN        187      15      6     9   0.6000      2     7       2      2  1.0000
+  NARROW    G_ENDSE           187      15      3    12   0.8000      2    10       2      2  1.0000
+  PROX      G_DOWNSHARE       412      21      5    16   0.7619      2    14       2      2  1.0000
+  PROX      G_DECSTEPS        412      21      4    17   0.8095      0    17       2      2  1.0000
+  PROX      G_SPEARMAN        412      21     10    11   0.5238      2     9       2      2  1.0000
+  PROX      G_ENDSE           412      21      5    16   0.7619      2    14       2      2  1.0000
+  WIDE      G_DOWNSHARE     1,417      50     15    35   0.7000      3    32       2      2  1.0000
+  WIDE      G_DECSTEPS      1,417      50     11    39   0.7800      0    39       2      2  1.0000
+  WIDE      G_SPEARMAN      1,417      50     23    27   0.5400      3    24       2      2  1.0000
+  WIDE      G_ENDSE         1,417      50     15    35   0.7000      3    32       2      2  1.0000
+
+## (D) LADDER-LEVEL REVERSALS — the 84 measured ladders, binary vs each graded statistic
+  G_DOWNSHARE   agree  48 / 84   UNDER-READ  36   OVER-READ   0   under share of reversals 1.0000
+  G_DECSTEPS    agree  76 / 84   UNDER-READ   2   OVER-READ   6   under share of reversals 0.2500
+  G_SPEARMAN    agree  36 / 84   UNDER-READ  48   OVER-READ   0   under share of reversals 1.0000
+  G_ENDSE       agree  66 / 84   UNDER-READ  17   OVER-READ   1   under share of reversals 0.9444
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.reversals.csv  (4 rows, 6 cols)
+
+## RULE 8 WALK-FORWARD AND BOTH KEEP PATHS — 189 books, every one published
+  U56    SPY 15.06% / 0.8814 / -33.72% (halves 0.9598/0.8170), OOS 15.15% / 0.8684 / -33.72%
+         LIVE 8.60% / 1.1980 / -12.05%, OOS 9.42% / 1.2714 / -12.05%
+  B136   SPY 15.16% / 0.8861 / -33.72% (halves 0.9596/0.8259), OOS 15.33% / 0.8767 / -33.72%
+         LIVE 7.98% / 1.0993 / -12.24%, OOS 7.88% / 1.1059 / -12.24%
+  SMALL  SPY 14.06% / 0.8581 / -33.72% (halves 0.9138/0.8344), OOS 15.33% / 0.8767 / -33.72%
+         LIVE 4.30% / 0.6637 / -13.89%, OOS 3.75% / 0.5600 / -13.89%
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.books.csv  (189 rows, 28 cols)
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.benchmarks.csv  (6 rows, 13 cols)
+  4b FULL 9 of 189 | 4b OOS 10 | BOTH 9 | 4a 0 of 189
+    U56    4b full  8/63  4b OOS  8/63  4a  0/63
+    B136   4b full  1/63  4b OOS  2/63  4a  0/63
+    SMALL  4b full  0/63  4b OOS  0/63  4a  0/63
+
+  THE THREE CHOOSERS (all choose on 2009-2016 ONLY and read 2017-2026 ONCE):
+    CH_ISSHARPE — argmax IS Sharpe over all 63 books.  The honest incumbent.
+    CH_MONO     — restrict to holds whose IS n-ladder is BINARY monotone, then argmax IS
+                  Sharpe.  Falls back to CH_ISSHARPE when no hold qualifies (and says so).
+    CH_GRADED   — restrict to holds whose IS n-ladder is DECISIVE on the dial-2 statistic,
+                  then argmax IS Sharpe.  Same fallback rule.
+  U56    IS-monotone holds NONE;  DOWNSHARE NONE; DECSTEPS [63, 126]; SPEARMAN NONE; ENDSE NONE
+  B136   IS-monotone holds [63];  DOWNSHARE [42, 63, 76]; DECSTEPS [90]; SPEARMAN [63, 76, 126]; ENDSE NONE
+  SMALL  IS-monotone holds NONE;  DOWNSHARE [63, 76]; DECSTEPS NONE; SPEARMAN [52, 63, 76, 126]; ENDSE [52]
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.picks.csv  (18 rows, 16 cols)
+  panel  chooser                  N    H  fb    IS_S   OOS_S   SPY_S  >SPY  4b  4bO  4a
+  U56    CH_ISSHARPE             15   90   .  1.3340  1.1033  0.8684     Y   .    .   .
+  U56    CH_MONO                 15   90   Y  1.3340  1.1033  0.8684     Y   .    .   .
+  U56    CH_GRADED:G_DOWNSHARE   15   90   Y  1.3340  1.1033  0.8684     Y   .    .   .
+  U56    CH_GRADED:G_DECSTEPS     5   63   .  1.1967  0.8948  0.8684     Y   .    .   .
+  U56    CH_GRADED:G_SPEARMAN    15   90   Y  1.3340  1.1033  0.8684     Y   .    .   .
+  U56    CH_GRADED:G_ENDSE       15   90   Y  1.3340  1.1033  0.8684     Y   .    .   .
+  B136   CH_ISSHARPE              5   63   .  1.4241  0.9156  0.8767     Y   .    .   .
+  B136   CH_MONO                  5   63   .  1.4241  0.9156  0.8767     Y   .    .   .
+  B136   CH_GRADED:G_DOWNSHARE    5   63   .  1.4241  0.9156  0.8767     Y   .    .   .
+  B136   CH_GRADED:G_DECSTEPS    30   90   .  1.2420  0.9106  0.8767     Y   .    .   .
+  B136   CH_GRADED:G_SPEARMAN     5   63   .  1.4241  0.9156  0.8767     Y   .    .   .
+  B136   CH_GRADED:G_ENDSE        5   63   Y  1.4241  0.9156  0.8767     Y   .    .   .
+  SMALL  CH_ISSHARPE              8   42   .  0.9880  0.5385  0.8767     .   .    .   .
+  SMALL  CH_MONO                  8   42   Y  0.9880  0.5385  0.8767     .   .    .   .
+  SMALL  CH_GRADED:G_DOWNSHARE   25   63   .  0.8278  0.5043  0.8767     .   .    .   .
+  SMALL  CH_GRADED:G_DECSTEPS     8   42   Y  0.9880  0.5385  0.8767     .   .    .   .
+  SMALL  CH_GRADED:G_SPEARMAN    25   63   .  0.8278  0.5043  0.8767     .   .    .   .
+  SMALL  CH_GRADED:G_ENDSE       15   52   .  0.7794  0.6502  0.8767     .   .    .   .
+
+## VERDICT AGAINST THE PRE-DECLARED OUTCOMES
+  THE BINARY'S STABILITY IS MOSTLY THE STABILITY OF SAYING 'NO', AND IT IS PUBLISHED SPLIT:
+    M_STRICT is TRUE at 6 of 84 ladders with mean bootstrap stability 0.2840 (min 0.1040),
+    FALSE at 78 with mean stability 0.9428.  The headline 0.8958 is a 78/84-weighted average of the two, so a run that quotes
+    'the binary is stable' is quoting the stability of a verdict that is almost always NO.
+    A PUBLISHED 'THIS LADDER IS MONOTONE' REPRODUCES ON ITS OWN TAPE 28.4% OF THE TIME.
+  G_DOWNSHARE   stability 0.6666 (binary 0.8958)   replication 0.5000 (binary 0.0714)   min gap -0.2291
+  G_DECSTEPS    stability 0.8134 (binary 0.8958)   replication 0.0238 (binary 0.0714)   min gap -0.0824
+  G_SPEARMAN    stability 0.6947 (binary 0.8958)   replication 0.6429 (binary 0.0714)   min gap -0.2011
+  G_ENDSE       stability 0.6638 (binary 0.8958)   replication 0.2619 (binary 0.0714)   min gap -0.2319
+  binary bootstrap stability 0.8958 (bar 0.90);  best graded G_DECSTEPS min gap -0.0824 (bar +0.20);  UNDER-READ share of all reversals 0.9364
+  OUTCOME: (C) BINARY IS CONSERVATIVE ONLY
+
+  wrote 2026-09-17_should-a-MONOTONE-LADDER-claim-be-PUBLISHABLE-as-a-BINARY-at-all_cloud.gates.csv  (10 rows, 4 cols)
+## GATES 8 of 10 PASS
+## DONE in 48s
