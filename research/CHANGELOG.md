@@ -1318,3 +1318,52 @@ all 472 picks per rule over 12 grid points (COST {0,10,25,50} bps x MATCH {T_NON
 - SURVIVORSHIP (rule 9): B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B screen (663
   names after dropping every max_1d_move >= 1.0 ticker) starting 2010.
 - Gates 11 of 11 after G2 failed at 0.0173 on the first cut. Runtime 57s, offline, deterministic.
+
+## 2026-09-17 — cloud lane, idea 1210: should-a-CHOOSER-have-to-BEAT-THE-ANCHOR-BY-ITS-OWN-BOOTSTRAP-SE-rather-than-merely-OUTRANK-IT — KILL (capital) / ANSWERED = NO
+
+1154 published R_RAW (publish the IS argmax) at mean OOS Sharpe 0.7996 and 6 of 72 4b books,
+R_BAR (publish only if P_pick >= 0.90) at 0.7887 / 19, R_ANCHOR (never move) at 0.7901 / 24, and
+read it as "the publish-the-argmax habit loses three quarters of its capital-worthy books to doing
+nothing". The queue proposed a third rule, R_SE(k, basis): move only when the IS argmax beats the
+ANCHOR by k bootstrap SE of the DIFFERENCE. Tested at 7 k x 3 SE bases, every cell published, with
+1154's construction and SEED BASE inherited whole so the reproductions are bit-level (all three
+mean OOS Sharpes to 0.0, Spearman 0.1551 to 2.06e-05, resolved count 17 of 72 exactly):
+
+- THE TRAP, DECLARED BEFORE ANY NUMBER. R_SE is monotone in k (G9) and at large k IS R_ANCHOR, so
+  "R_SE recovers the 18 books R_RAW loses" is true by construction and worth nothing. The only
+  test that means anything is at a MATCHED MOVE COUNT, against R_BAR and against a count-matched
+  RANDOM bar (500 seeded uniform draws of the same size from R_RAW's 59 movers).
+- NEITHER BAR CARRIES INFORMATION. Of the 18 R_SE cells with k > 0, 0 clear the 90th percentile of
+  their own count-matched null on 4b count and 0 on mean OOS Sharpe; the best sits at 0.815 and
+  k=0.5 SE_JOINT sits at 0.006 on Sharpe.
+- AND THE RANK BAR IS WORSE THAN A COIN. R_BAR moves 13 and books 19 where a random bar moving 13
+  books a median of 20 (p10 18, p90 22): percentile 0.263 on 4b, 0.248 on Sharpe. 1154's "19 books
+  against R_RAW's 6" is bought entirely by moving 13 times instead of 59.
+- THE LAW, FITTED TO NO DATA. The line through the record's own two endpoints (R_ANCHOR 24 at 0
+  moves, R_RAW 6 at 59) is 4b(m) = 24.0 - 0.3051*m. It tracks the count-matched null median to a
+  worst deviation of 0.66 of a book over m = 0-59, and across all 20 published rules move count
+  alone explains R^2 = 0.9798 of the 4b count. Mean OOS Sharpe over those same 20 rules spans only
+  0.7828-0.7996. THE 4b COUNT IN THIS FAMILY IS A THRESHOLD CENSUS OF HOW OFTEN A RULE DECLINED TO
+  MOVE, NOT A RETURN.
+- BYCATCH 1: A CORRELATION-BLIND ERROR BAR OVERSTATES A LADDER DIFFERENCE BY ~3.2x. The pick's and
+  the anchor's bootstrap statistics co-move at median correlation 0.9247 (min 0.6777), so the SD of
+  the difference is far below the legs added in quadrature: median SE_MARGINAL / SE_JOINT = 3.1580
+  (G10). SE_MARGINAL moves 6 times at k=1 where SE_JOINT moves 28.
+- BYCATCH 2: THE BOOTSTRAP SEED IS AN UNSTATED DIAL IN EVERY P_boot CLAIM. P_pick is a mean of
+  B=1000 Bernoulli draws with MC SE up to 0.0158, so a decision within that of the 0.90 bar is
+  called by the seed: the same 72 decisions at L=63 under four seed bases give resolved 16-17 of
+  72, Spearman 0.1551-0.1749 and R_BAR move count 12-13, nothing else changed. 1154 stated its seed
+  base; no other P_boot claim in the record does.
+- THE SE BAR IS NOT MERELY A RE-SCALED MARGIN BAR. Spearman(delta, delta/SE) +0.5560 over the 59
+  movers, SE max/min 158.6 (G8): it varies, it just does not vary in a way that predicts which
+  moves keep a book.
+- RULE 8 TWICE. Picks use 2009-2016 only (1154's split); this run's own two dials were chosen on
+  2017-2021 and 2022-2026 read ONCE. IS-chosen cell k=1.5 SE_JOINT (19 moves), IS 1.0100 ->
+  OOS-B 0.5580 / 7.17% / -17.23%, against R_BAR 0.5517, R_ANCHOR 0.5543 and R_RAW 0.6042 — the rule
+  that moved all 59 times is the best of the four out of sample.
+- BOTH KEEP PATHS on 144 distinct rung books: 4a 0 of 144; 4b full 20, 4b OOS 24, BOTH 19 — U56
+  14/48, B136 6/48, SMALL 0/48. These are 1154's own rung books; this run adds none. NOT PROMOTED,
+  NO MEMO, NO RULES CHANGE.
+- SURVIVORSHIP (rule 9): B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B screen with
+  52 of 715 tickers dropped for max_1d_move >= 1.0 (663 names), SPY excluded from its eligible set.
+- Gates 12 of 12. Runtime 105s, offline, deterministic.
