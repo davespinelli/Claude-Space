@@ -1,0 +1,217 @@
+============================================================================================================
+IDEA 1230 (lane C, 2026-09-17) — how many committed MOVE RATES count a pick onto an
+ANCHOR-EQUIVALENT KEY as a MOVE?
+============================================================================================================
+
+  DIAL 1 CLAIM CLASS       C_HEAD / C_MEMO / C_ALL / C_SCRIPT
+  DIAL 2 EQUIVALENCE TEST  E_KEY / E_EXACT / E_FP12 / E_RET8 / E_DEC6 / E_DEC3
+  24 cells, every one published.  Panel, comparison set, IS window and fold cadence
+  are NOT dials: reported at every value, never selected on.
+
+  PRE-DECLARED OUTCOMES, fixed before any file or price is read:
+    (A) THE RECORD IS CLEAN — no committed move rate is key-based on a degenerate grid.
+    (B) THE RECORD IS EXPOSED — some committed move rates are key-based, and the
+        re-pricing changes at least one publish decision.
+    (C) EXPOSED BUT INERT — key-based figures exist, no publish decision moves.
+
+============================================================================================================
+ARM A — THE CENSUS.  EVERY COMMITTED MOVE RATE IN THE RECORD, AND WHAT DEFINED IT
+============================================================================================================
+
+  Sources scanned: LEADERBOARD.md, CHANGELOG.md, QUEUE.md, 941 memos, 965 console logs, 1069 scripts.
+  479 candidate text units carry a move phrase; 195 are MOVE RATES by the pre-declared test (a number AND a chooser context),
+  284 are NOT_MOVE_RATE and are published separately, folded into neither pass nor fail.
+
+  (A1) DIAL 1, EVERY CLAIM CLASS.  'EXPOSED' = the emitting script defines a move by
+       KEY on a grid whose anchor book appears under two or more keys.
+       class      units  CLEAN  EXPOSED  EXP_IMPL  NOT_DEGEN  UNRECOV  states_basis
+       C_HEAD        81     15        1         2         46       17            10
+       C_MEMO       118     20        4         7         70       17            12
+       C_ALL        195     31        7        11        122       24            16
+       C_SCRIPT     118      2        2         5        109        0             0
+
+  (A2) WHERE THE COMMITTED MOVE RATES LIVE (text classes, MOVE RATE units only):
+       LEADERBOARD     58   CLEAN   12   EXPOSED    3   UNRECOV    0   attributed to a script   58
+       CHANGELOG       23   CLEAN    3   EXPOSED    0   UNRECOV   17   attributed to a script    5
+       QUEUE           31   CLEAN    2   EXPOSED    2   UNRECOV    7   attributed to a script   23
+       MEMO            37   CLEAN    5   EXPOSED    8   UNRECOV    0   attributed to a script   37
+       CONSOLE         46   CLEAN    9   EXPOSED    5   UNRECOV    0   attributed to a script   46
+
+============================================================================================================
+ARM B — THE RE-PRICING.  THE SAME BOOKS, SIX EQUIVALENCE TESTS
+============================================================================================================
+
+  PANELS: U56 55 names; B136 135; SMALL 664 investable of 715 (51 dropped for max_1d_move >= 1.0), SPY benchmark only.
+
+  (B1) THE ANCHOR-EQUIVALENT CLASS, DIAL 2.  22 keys over 4 ladders; the anchor is
+       ('CADENCE','W').  A pick landing inside the class is NOT a move, and a null
+       drawing from inside it has drawn a NO-OP.
+
+       test     |class|  members
+       E_KEY         1  CADENCE=W
+       E_EXACT       4  CADENCE=W, GROSS=0.75, H=126, N=20
+       E_FP12        4  CADENCE=W, GROSS=0.75, H=126, N=20
+       E_RET8        4  CADENCE=W, GROSS=0.75, H=126, N=20
+       E_DEC6        4  CADENCE=W, GROSS=0.75, H=126, N=20
+       E_DEC3        4  CADENCE=W, GROSS=0.75, H=126, N=20
+
+       max |Delta r| to the anchor, non-equivalent books: 8.453e-03 (nearest) .. 7.608e-02 (farthest)
+       max |Delta fold Sharpe| to the anchor, GROSS rungs only: 4.915e-02
+
+  (B2) THE MOVE RATE ITSELF, DIAL 2 x every pick-cell in the grid (14,520 pick-cells).
+       test      move rate   overstatement vs E_EXACT   pool size   no-ops in pool
+       E_KEY        0.3817                  +0.0280          21                3
+       E_EXACT      0.3537                  +0.0000          18                0
+       E_FP12       0.3537                  +0.0000          18                0
+       E_RET8       0.3537                  +0.0000          18                0
+       E_DEC6       0.3537                  +0.0000          18                0
+       E_DEC3       0.3537                  +0.0000          18                0
+
+  (B3) THE NULLS.  NL_COUNT draws m destinations uniformly from the pool; NL_PERM
+       re-deals the chooser's OWN destinations to random folds.  Both are functions of
+       the equivalence test through m and through the pool.  2,000 reps, seed fixed.
+
+  (B4) PUBLISH DECISIONS AT ALL4 / QUARTER.  A cell PUBLISHES when its gain over
+       holding is positive AND clears its own matched null at p <= 0.05.
+       test      cells  pub_COUNT  pub_PERM  pub_BOTH   mean p_COUNT  mean p_PERM
+       E_KEY        24          0         0         0        0.5352       0.6902
+       E_EXACT      24          0         0         0        0.5299       0.6767
+       E_FP12       24          0         0         0        0.5323       0.6764
+       E_RET8       24          0         0         0        0.5323       0.6760
+       E_DEC6       24          0         0         0        0.5330       0.6772
+       E_DEC3       24          0         0         0        0.5318       0.6752
+
+  (B5) FLIPS.  Every (cadence, set, window, chooser) cell, KEY against each test.
+       test      cells  p_COUNT flips  p_PERM flips   worst |dp_COUNT|  worst |dp_PERM|
+       E_EXACT     120              0             0             0.2695          0.3310
+       E_FP12      120              0             0             0.2730          0.3235
+       E_RET8      120              0             0             0.2680          0.3220
+       E_DEC6      120              0             0             0.2695          0.3220
+       E_DEC3      120              0             0             0.2685          0.3280
+
+       SIGN OF THE CONTAMINATION.  p(KEY) - p(EXACT), averaged over the same cells:
+       E_EXACT  NL_COUNT -0.0141   NL_PERM +0.0143
+       E_FP12   NL_COUNT -0.0147   NL_PERM +0.0146
+       E_RET8   NL_COUNT -0.0145   NL_PERM +0.0145
+       E_DEC6   NL_COUNT -0.0144   NL_PERM +0.0141
+       E_DEC3   NL_COUNT -0.0153   NL_PERM +0.0151
+
+       ZERO FLIPS AT 0.05 IS NOT THE SAME AS AN INERT DIAL, SO THE BAR IS WALKED.
+       Flips between the CONTAMINATED (E_KEY) and CLEAN (E_EXACT) pool at every alpha,
+       over all 120 (cadence, set, window, chooser) cells.  Alpha is NOT a dial: the
+       verdict is read at 0.05 and the whole ladder is published.
+       alpha   pub_KEY  pub_EXACT   flips_COUNT  flips_PERM
+        0.01         1          1             0           0
+        0.02         1          1             0           0
+        0.05         1          1             0           0
+        0.10         4          4             0           0
+        0.15         4          6             2           0
+        0.20         6          8             2           0
+        0.25        10         13             3           0
+        0.30        13         14             1           2
+        0.40        19         19             0           3
+        0.50        25         26             1           4
+       WORST CASE OVER THE LADDER: 4 of 120 cells change their publish
+       decision at some alpha; at the record's own 0.05 it is 0.
+
+============================================================================================================
+ARM C — THE CAPITAL LEG.  RULE 8, BOTH KEEP PATHS, AND THE PRICE OF THE PUBLISH RULE
+============================================================================================================
+
+  BENCHMARKS over each panel's QUARTER fold span (10 bps, t+1):
+    U56    SPY    14.03% / 0.8549 /  -33.72%  halves 0.9192/0.8166  OOS  15.15% / 0.8686 /  -33.72%
+    U56    LIVE    8.12% / 1.1487 /  -12.05%  halves 1.0963/1.1988  OOS   9.42% / 1.2717 /  -12.05%
+    B136   SPY    14.13% / 0.8601 /  -33.72%  halves 0.9098/0.8332  OOS  15.33% / 0.8769 /  -33.72%
+    B136   LIVE    7.50% / 1.0514 /  -12.24%  halves 1.1203/0.9820  OOS   7.88% / 1.1061 /  -12.24%
+    SMALL  SPY    14.87% / 0.9213 /  -33.72%  halves 1.0430/0.8736  OOS  15.33% / 0.8769 /  -33.72%
+    SMALL  LIVE    5.28% / 0.8075 /  -12.18%  halves 0.9904/0.6965  OOS   4.47% / 0.6518 /  -12.18%
+
+  (C1) BOTH KEEP PATHS ON EVERY RUNG BOOK (nothing selected on):
+    66 rung books (57 DISTINCT by value): 4a 0; 4b full 17; 4b OOS 16; BOTH 16
+    Best book passing 4b FULL and OOS: U56 N=15  full 16.70% / 1.1349 / -20.14% (halves 1.2022/1.0910), OOS 18.87% / 1.1894 / -20.14%
+
+  (C2) STITCHED DEPLOYABLE CURVES, BOTH KEEP PATHS:
+    360 stitched curves: 4a 0; 4b full 84; 4b OOS 82; BOTH 82
+
+  (C3) RULE 8 — THE PRICE OF THE PUBLISH RULE.  For every (cadence, panel, set, window,
+       chooser) the IS folds (closing before 2017-01-01) decide DEPLOY vs HOLD: deploy
+       iff the IS gain is positive AND clears the matched null at p <= 0.05 under the
+       named equivalence test.  2017-2026 is then read ONCE.
+
+       test      deploys/decisions   mean OOS fold Sharpe   vs ALWAYS-HOLD   4a  4b
+       E_KEY        18 /    360                1.1157          -0.0021     0 120
+       E_EXACT      16 /    360                1.1167          -0.0011     0 120
+       E_FP12       16 /    360                1.1164          -0.0014     0 120
+       E_RET8       16 /    360                1.1164          -0.0014     0 120
+       E_DEC6       15 /    360                1.1169          -0.0008     0 120
+       E_DEC3       15 /    360                1.1169          -0.0008     0 120
+       ALWAYS-HOLD (do nothing) mean OOS fold Sharpe 1.1178
+
+  (C4) THE CLASSIC RULE-8 PICK (window, chooser chosen on IS mean fold Sharpe at ALL4,
+       2017-2026 read once) — unchanged by the dial, because the books are unchanged:
+       panel  IS-chosen (window, form)   OOS CAGR / Sharpe / MaxDD   halves       4a 4b
+       --- QUARTER folds ---
+       U56    L504    H_RUNNERUP     17.46% / 1.1885 /  -19.13%  1.2547/1.1234   F  T
+              EXPAND  CH_ANCHOR      17.16% / 1.1759 /  -19.13%  1.2547/1.0977   F  T
+              SPY                     15.15% / 0.8686 /  -33.72%
+              LIVE RULES v2            9.42% / 1.2717 /  -12.05%
+       B136   L252    H_RUNNERUP     16.89% / 1.0518 /  -20.74%  1.1217/0.9984   F  F
+              EXPAND  CH_ANCHOR      16.29% / 1.0240 /  -20.74%  1.0533/1.0023   F  F
+              SPY                     15.33% / 0.8769 /  -33.72%
+              LIVE RULES v2            7.88% / 1.1061 /  -12.24%
+       SMALL  L504    CH_RAW          5.25% / 0.3564 /  -37.41%  0.8725/-0.1312   F  F
+              EXPAND  CH_ANCHOR       7.09% / 0.4534 /  -35.81%  0.7917/0.1007   F  F
+              SPY                     15.33% / 0.8769 /  -33.72%
+              LIVE RULES v2            4.47% / 0.6518 /  -12.18%
+       --- YEAR folds ---
+       U56    L252    H_RUNNERUP     17.16% / 1.1759 /  -19.13%  1.2547/1.0977   F  T
+              EXPAND  CH_ANCHOR      17.16% / 1.1759 /  -19.13%  1.2547/1.0977   F  T
+              SPY                     15.15% / 0.8686 /  -33.72%
+              LIVE RULES v2            9.42% / 1.2717 /  -12.05%
+       B136   L252    CH_RAW         16.47% / 1.0024 /  -24.35%  1.0642/0.9517   F  F
+              EXPAND  CH_ANCHOR      16.29% / 1.0240 /  -20.74%  1.0533/1.0023   F  F
+              SPY                     15.33% / 0.8769 /  -33.72%
+              LIVE RULES v2            7.88% / 1.1061 /  -12.24%
+       SMALL  L504    CH_RAW          7.37% / 0.4666 /  -37.41%  1.0129/-0.0896   F  F
+              EXPAND  CH_ANCHOR       7.09% / 0.4534 /  -35.81%  0.7917/0.1007   F  F
+              SPY                     15.33% / 0.8769 /  -33.72%
+              LIVE RULES v2            4.47% / 0.6518 /  -12.18%
+
+============================================================================================================
+VERDICT
+============================================================================================================
+  CENSUS (C_HEAD, the record's result sentences): 3 of 81 committed move rates are EXPOSED — key-based on a grid whose
+  anchor is degenerate; 15 CLEAN, 17 UNRECOVERABLE, 46 on a non-degenerate grid. 10 state their basis in the sentence.
+  RE-PRICING: the key definition overstates the move rate by 0.0280 of pick-cells; 0 publish decisions flip at the record's 0.05,
+  4 of 120 cells flip at some alpha on the published ladder, and the p-value itself moves by up to 0.2730.
+  PRE-DECLARED OUTCOME: (C) EXPOSED BUT INERT
+
+  SURVIVORSHIP (rule 9): B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B
+  screen with 51 of 715 tickers dropped for
+  max_1d_move >= 1.0, SPY excluded from its eligible set.  The census arms scan
+  committed text and source and carry no market bias; the bias does NOT cancel out of
+  the OOS levels or the 4b legs, so any pass there is an upper bound.
+
+  GATES 20 of 20:
+    [PASS] G13 the census population is non-empty at every claim class  value=8.100e+01 target=1.000e+00
+    [PASS] G0 Monte-Carlo d2(k) == published Hartley constants  value=9.663e-04 target=5.000e-03
+    [PASS] G1 R_k/d2(k) unbiased for sigma under the iid null  value=8.564e-04 target=5.000e-03
+    [PASS] G2 fast runner == engine.backtest on the decision-time frame  value=2.776e-17 target=1.000e-10
+    [PASS] G3 live RULES v2 U56 MaxDD == the record's committed -12.05%  value=-1.205e-01 target=-1.205e-01
+    [PASS] G4 QUARTER folds tile U56 with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 QUARTER folds tile B136 with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 QUARTER folds tile SMALL with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 YEAR folds tile U56 with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 YEAR folds tile B136 with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G4 YEAR folds tile SMALL with no overlap and no gap  value=0.000e+00 target=0.000e+00
+    [PASS] G10 the E_EXACT class is exactly {N=20, H=126, GROSS=0.75, CADENCE=W} (1227's G10)  value=4.000e+00 target=4.000e+00
+    [PASS] G14 the equivalence tests are nested: E_KEY c E_EXACT c E_FP12 c E_RET8 and E_EXACT c E_DEC6 c E_DEC3  value=1.000e+00 target=1.000e+00
+    [PASS] G11 a value-based move rate never exceeds the key-based one  value=2.796e-02 target=0.000e+00
+    [PASS] G15 the key-minus-value overstatement reproduces 1227's committed 0.0280  value=3.857e-05 target=2.000e-03
+    [PASS] G5 CH_ANCHOR move rate == 0 under every equivalence test  value=0.000e+00 target=0.000e+00
+    [PASS] G7 stitched Sharpe from per-fold aggregates == direct Sharpe  value=2.220e-16 target=1.000e-12
+    [PASS] G12 every Sharpe and every delta is identical across the equivalence dial (the books do not change)  value=0.000e+00 target=0.000e+00
+    [PASS] G8 (YEAR, EXPAND) replicates 1223's committed KEY move rates and mean OOS Sharpes  value=3.810e-04 target=2.000e-02
+    [PASS] G6 each stitched curve's length == the sum of its folds'  value=0.000e+00 target=0.000e+00
+
+  Runtime 32s, offline, deterministic.

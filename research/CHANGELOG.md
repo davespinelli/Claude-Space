@@ -1623,3 +1623,80 @@ nothing else. 1219's two committed bands reproduce to 3.3e-05 and 4.7e-05 on its
   bias largely cancels out of a critical-value RATIO, which is the whole headline, and does NOT
   cancel out of the OOS levels or the 4b legs, so any pass there is an upper bound.
 - Gates 12 of 12. Runtime 76s, offline, deterministic.
+
+## 2026-09-17 — lane C, idea 1230: how-many-committed-MOVE-RATES-count-a-pick-onto-an-ANCHOR-EQUIVALENT-KEY-as-a-MOVE — KILL (capital) / ANSWERED = 3 of 70
+
+1227 gated that ("N",20), ("H",126), ("GROSS",0.75) and ("CADENCE","W") are ONE book bit for
+bit, so a chooser "moving" onto one of them has not moved and a null drawing one has drawn a
+NO-OP. It measured the damage on its own grid and stopped. This run censuses the record for the
+same error and re-prices what turns on it. Two dials, CLAIM CLASS {C_HEAD, C_MEMO, C_ALL,
+C_SCRIPT} x EQUIVALENCE TEST {E_KEY, E_EXACT, E_FP12, E_RET8, E_DEC6, E_DEC3}, 24 cells all
+published. The BOOKS are frozen at 1207/1214/1223/1227's construction and do not change with
+either dial (gate G12, max deviation exactly 0.0), so every Sharpe and every delta below is
+identical across the equivalence dial; what moves is the move rate, the null, and the publish
+decision. 1223's committed move rates and mean OOS Sharpes reproduce to 3.810e-04 (G8) and
+1227's committed 0.0280 overstatement to 3.857e-05 (G15), so this measures the record's object
+rather than a lookalike.
+
+- THE ANSWER, AND IT IS 3 of 70. Of 179 committed MOVE RATES (from 447 candidate text units;
+  268 NOT_MOVE_RATE are published separately and folded into neither pass nor fail), 3 of 70
+  C_HEAD units and 11 of 107 C_MEMO units are EXPOSED — key-based on a grid whose anchor book
+  appears under two or more keys. 46 of 70 C_HEAD units sit on a grid that is NOT degenerate and
+  are therefore correct as written; 17 are UNRECOVERABLE. THE BIGGER NUMBER IS THE SILENCE: only
+  3 of 70 committed move rates (0.0429) state their equivalence basis in the committed sentence,
+  and 0 of 118 move-computing SCRIPTS name one. Attribution reaches 49 of 49 LEADERBOARD rows,
+  because rule 5 puts the script in the last column, and 3 of 21 CHANGELOG ones, because this
+  file does not.
+- THE EQUIVALENCE TEST IS NOT THE DIAL. E_EXACT, E_FP12 (1e-12), E_RET8 (1e-8), E_DEC6 and
+  E_DEC3 all return the IDENTICAL class of four keys: the nearest non-equivalent book is
+  8.453e-03 away in max |Delta r|, four orders above the loosest tolerance, so no borderline
+  case exists for a tolerance to adjudicate. The whole exposure is the KEY/VALUE distinction.
+  Bycatch: the GROSS rungs are NOT decision-equivalent per fold (max |Delta fold Sharpe|
+  4.915e-02) — the record's gross-Sharpe degeneracy is a FULL-SAMPLE fact, not a per-fold one.
+- THE SIZE OF THE ERROR. Move rate 0.3817 on the KEY definition against 0.3537 on every value
+  test over 14,520 pick-cells: 0.0280 of all pick-cells are "moves" onto a book that IS the
+  anchor. The null's destination pool is 21 books of which 3 are no-ops, against a clean 18.
+- WHAT IT COSTS THE NULL, AND WHAT IT DOES NOT. Individual p-values move by up to 0.2695
+  (NL_COUNT) and 0.3310 (NL_PERM), and the shift is NOT one-signed: mean p(KEY) - p(EXACT) is
+  -0.0141 on NL_COUNT, where no-op destinations shrink the null toward zero and the contaminated
+  pool OVER-publishes, and +0.0143 on NL_PERM, where dropping no-ops from the chooser's own
+  destination multiset makes the re-dealt null more aggressive. 0 of 120 publish decisions flip
+  at 0.05 — but exactly 1 cell publishes at all at 0.05 under either pool, so that zero is a
+  fact about this family's emptiness and not about the dial. The bar is walked rather than
+  assumed: 4 of 120 cells flip at some alpha (2 at 0.15-0.20 on NL_COUNT, 4 at 0.50 on NL_PERM).
+  INERT HERE, NOT INERT IN GENERAL.
+- RULE 8 AND THE CAPITAL CONTENT. 360 deploy/hold decisions per equivalence test, chosen on the
+  folds closing before 2017-01-01 and read once on 2017-2026: deploy-iff-the-IS-gain-clears-its-
+  own-matched-null returns mean OOS fold Sharpe 1.1157 (E_KEY, 18 deploys), 1.1164 (E_FP12 /
+  E_RET8), 1.1167 (E_EXACT, 16) and 1.1169 (E_DEC6 / E_DEC3, 15), against 1.1178 for ALWAYS-HOLD.
+  EVERY POOL LOSES TO DOING NOTHING; cleaning the pool is worth +0.0010 of mean OOS fold Sharpe
+  and removes 2 of 18 deployments that were bought with no-op destinations. It improves the loss
+  without reversing it. 1206's, 1221's, 1226's and 1227's finding arriving a fifth time.
+- BOTH KEEP PATHS, AND THE BYCATCH SCORED AGAINST THIS RUN ITSELF. 4a 0 of 66 rung books and 0
+  of 360 stitched curves. 4b full 17, 4b OOS 16, BOTH 16 — but those 16 key-rows are 13 DISTINCT
+  books, because the U56 anchor passes four times under N=20, H=126, GROSS=0.75 and CADENCE=W.
+  This run's own headline pass count carries the exact error it censuses, and the honest figures
+  are 14 / 13 / 13; that is idea 1194's gross-free key confirmed by VALUE rather than argued.
+  Best 4b book U56 / N=15: full 16.70% / 1.1349 / -20.14% (halves 1.2022 / 1.0910), OOS 18.87% /
+  1.1894 / -20.14% against SPY OOS 15.15% / 0.8686 / -33.72%. Its drawdown leg clears by 9 bp
+  (-20.14% against the 0.60 x SPY cap of -20.23%), so read it as marginal. CONFIRMATORY, NOT
+  GENERATIVE — the books pre-date this idea. NOT PROMOTED, NO MEMO, NO RULES CHANGE.
+- THE CENSUS IS REFLEXIVE, AND RE-RUNNING IT IS HOW THAT WAS CAUGHT. A census of the record,
+  committed to the record, changes the record it censused. Measured, not argued, on three
+  executions of this one script: C_ALL read 179, then 185 once the run's OWN console log was on
+  disk for the next pass to scan; C_HEAD read 70 on the tree AS READ and 81 once this entry and
+  this run's five LEADERBOARD rows landed. THE FINDING IS INVARIANT AND THE DENOMINATOR IS NOT:
+  EXPOSED (1 + 2), NOT_DEGENERATE (46) and UNRECOVERABLE (17) are bit-identical across both
+  C_HEAD readings; all 11 new units are CLEAN, because this run's own sentences state their
+  basis, and states_basis rises 3 -> 10 for the same reason. The headline 3 of 70 is the census
+  of the record as it stood BEFORE this run; the same script on the post-commit tree reads 3 of
+  81. The committed .console.txt carries the second reading. NO FIXED POINT EXISTS for the
+  console leg, because each execution overwrites the input the next one reads — 1088's rotating
+  -window problem in a second place, and a standing hazard for every census the record runs.
+  7 of the 32 QUEUE units sit on this very 1223/1227/1230 thread, i.e. are entries that ASK the
+  question; they are counted where they fall and named here so the population is reproducible.
+- SURVIVORSHIP (rule 9). B136 and SMALL are CURRENT constituents; SMALL is the sub-$2B screen
+  with 51 of 715 tickers dropped for max_1d_move >= 1.0 (664 names), SPY excluded from its
+  eligible set. The census arms scan committed text and source and carry no market bias; the
+  bias does NOT cancel out of the OOS levels or the 4b legs, so any pass there is an upper bound.
+- Gates 20 of 20. Runtime 32s, offline, deterministic.
