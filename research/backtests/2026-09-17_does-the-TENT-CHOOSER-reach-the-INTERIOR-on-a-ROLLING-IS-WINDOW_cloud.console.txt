@@ -1,0 +1,147 @@
+# Idea 1161 (cloud lane, 2026-09-17) — does the TENT CHOOSER reach the INTERIOR on a
+#   ROLLING IS WINDOW, or only on the ONE-SHOT SPLIT?
+#
+# 1154: C_IS4B = min(M_S, M_DD, M_CAGR) on the IS window is the ONE non-monotone chooser
+#   on the 33-rung gross ladder (a min of two oppositely-sloped monotone legs is a TENT),
+#   picked 0.625 (U56) / 0.575 (B136) and was the only chooser clearing 4b full AND OOS.
+#   It chose ONCE.  This run re-chooses it on a rolling window and asks whether the
+#   interior pick, and the 4b OOS pass, are properties of the CHOOSER or of THAT WINDOW.
+#
+# TUNED DIALS (2, PROTOCOL rule 4, the two the queue names): WINDOW ['W504', 'W756', 'W1260', 'WEXP']
+#   x CADENCE ['R6M', 'R1Y', 'R2Y'] = 12 cells per panel, 24 in all, EVERY ONE PUBLISHED.
+#   The gross RUNG is NOT a third parameter: it is the object the chooser selects
+#   (1154's framing).  All 33 rungs of both panels are in .grid.csv.
+# PANEL {U56, B136} is NOT a dial (both reported everywhere, nothing selected on the pair).
+# COMMON SPAN: every cell, control and benchmark scored from bar 1520 (= warm-up 260 + longest window 1260) so the four windows differ in LOOKBACK
+#   only, never in scored tape.  These figures are NOT comparable to 1154's full-tape
+#   ones (which start at bar 260); 1154's own numbers are replayed in G8 on 1154's span.
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], cap INF, max_vol 0.6, min hold 126, N 20,
+#   cadence W, cost 10.0 bps (rule 2), LAG 1, warm-up 260, zero cash,
+#   block L=63, 1000 draws, crc32 seeds, q=0.9.  PRICE VINTAGE PINNED at 2026-09-15.
+#
+# DEFINITIONS, DECLARED BEFORE ANY NUMBER:
+#   PICK(t) — argmax over the 33 gross rungs of C_IS4B computed on the trailing window
+#     ending at bar t (exclusive).  Applied from the NEXT weekly rebalance forward.
+#   INTERIOR — pick not in {0.200, 1.000}.  ENDPOINT — either of those two rungs.
+#   MOVE — consecutive picks differ.  MOVE RATE = moves / (choices - 1).
+#   SWITCH COST — the rolling cell's turnover per year MINUS the same cell's turnover
+#     with its gross frozen at the cell's own MEDIAN pick, i.e. the turnover the moving
+#     itself adds, in units of NAV per year; times 10 bps it is the drag in bps/yr.
+#
+# HYPOTHESES, DECLARED BEFORE ANY NUMBER:
+#   H_INTERIOR  the rolling tent still reaches the INTERIOR: >= 75% of all choices across
+#               all 24 cells are interior rungs.  If it collapses to an endpoint once the
+#               window moves, 1154's 0.625 was a property of THAT window.
+#   H_STABLE    the pick is UNSTABLE: median move rate >= 0.50 across the 24 cells.  A
+#               tent's peak sits where two noisy legs cross, which is the least resolvable
+#               place on the ladder (1154 measured the ladder's own Sharpe spread at
+#               0.0021 on U56), so the argmax should wander.
+#   H_CHEAP     the SWITCH COST is small: median added turnover < 0.50x NAV/yr, i.e. under
+#               5 bps/yr of drag.  Gross switching trades only the cash leg.
+#   H_OOSPASS   the 4b OOS pass does NOT survive re-choosing at a majority of cells: fewer
+#               than 12 of 24 cells clear 4b OOS on the common span.
+#   H_NOGAIN    rolling does not beat the frozen incumbent: median (rolling Sharpe -
+#               K_FROZEN Sharpe) <= 0 on the common span.
+# DECISION RULE, declared before any number: the queue's question is ANSWERED 'YES, THE
+#   TENT REACHES THE INTERIOR ON A ROLLING WINDOW TOO' iff H_INTERIOR holds.  It is
+#   ANSWERED 'ONLY ON THE ONE-SHOT SPLIT' if H_INTERIOR fails.  Whether that is WORTH
+#   ANYTHING is a separate question answered by H_NOGAIN and H_OOSPASS, and a KEEP is
+#   asked only on PROTOCOL's own two paths, never on the move rate.
+
+## PANELS — loaded, PINNED and stamped before any result number
+  U56     56 names, PINNED 4,705 rows 2008-01-02 -> 2026-09-15 (unpinned ends 2026-09-16); warm 4,445; COMMON SPAN 3,185 bars 2014-01-15 -> 2026-09-15; of which post-2016-12-31 2,438
+  B136   136 names, PINNED 4,703 rows 2008-01-02 -> 2026-09-11 (unpinned ends 2026-09-11); warm 4,443; COMMON SPAN 3,183 bars 2014-01-15 -> 2026-09-11; of which post-2016-12-31 2,436
+
+## GATES — printed before any result number
+  G1   fast runner == engine.backtest                                   1.39e-17   PASS
+  G2   committed U56 W/H126/N=20 full-tape triple, PINNED at 2026-09-15 4.12e-05   PASS
+       (15.5793% / 1.1397 / -19.1276%)
+       THE VINTAGE, PUBLISHED NOT ABSORBED: the same gate UNPINNED reads 1.62e-03 (39.4x the pinned reading) from ONE extra bar of 4,706.
+  G3   SPY OOS triple, PINNED at 2026-09-15                             1.70e-04   PASS
+  G4   CROSS-RUN 1098/1102's committed U56 n=12 triple                  4.71e-05   PASS
+  G5   live RULES v2 full-tape MaxDD == committed -12.05%               4.95e-05   PASS
+  G6   determinism (same cell twice)                                    0.00e+00   PASS
+  G7   cadence_mask == engine.rebalance_mask (D/W/M/Q)                  0.00e+00   PASS
+
+## THE GROSS LADDER — all 33 rungs on both panels, published whatever a chooser did
+  U56: 33 rungs run  (6s)
+  B136: 33 rungs run  (9s)
+  wrote 2026-09-17_does-the-TENT-CHOOSER-reach-the-INTERIOR-on-a-ROLLING-IS-WINDOW_cloud.grid.csv  (66 rows, 26 cols)
+
+  G8   CROSS-RUN 1154's one-shot C_IS4B picks (0.625 U56 / 0.575 B136)  0.00e+00   PASS
+  G9   time-varying build with a CONSTANT vector == the scalar path     0.00e+00   PASS
+  G10  gross ladder nests the record's committed rungs                  0.00e+00   PASS
+  wrote 2026-09-17_does-the-TENT-CHOOSER-reach-the-INTERIOR-on-a-ROLLING-IS-WINDOW_cloud.gates.csv  (11 rows, 4 cols)
+  GATES 10 of 10 PASS
+
+## THE ROLLING TENT — 12 (window, cadence) cells per panel, all 24 published
+  U56: 12 cells run  (10s)
+  B136: 12 cells run  (12s)
+  wrote 2026-09-17_does-the-TENT-CHOOSER-reach-the-INTERIOR-on-a-ROLLING-IS-WINDOW_cloud.cells.csv  (24 rows, 43 cols)
+  wrote 2026-09-17_does-the-TENT-CHOOSER-reach-the-INTERIOR-on-a-ROLLING-IS-WINDOW_cloud.picks.csv  (368 rows, 10 cols)
+  wrote 2026-09-17_does-the-TENT-CHOOSER-reach-the-INTERIOR-on-a-ROLLING-IS-WINDOW_cloud.moves.csv  (24 rows, 9 cols)
+
+## CONTROLS on the SAME common span (never selected on)
+  U56   K_FROZEN   gross 0.750  CAGR  15.80%  Sharpe 1.1334  MaxDD -19.13%  halves 0.9215/1.3332  OOS 16.97%/1.1644  4b PASS  4bOOS PASS
+  U56   K_ONESHOT  gross 0.625  CAGR  13.14%  Sharpe 1.1328  MaxDD -16.12%  halves 0.9209/1.3324  OOS 14.10%/1.1639  4b PASS  4bOOS PASS
+  U56   K_ORACLE   gross 1.000  CAGR  21.13%  Sharpe 1.1344  MaxDD -24.93%  halves 0.9224/1.3346  OOS 22.72%/1.1652  4b fail  4bOOS fail
+  U56   SPY                    CAGR  13.74%  Sharpe 0.8368  MaxDD -33.72%  halves 0.6054/1.0746  OOS 15.21%/0.8711
+  U56   RULESv2                CAGR   8.46%  Sharpe 1.1960  MaxDD -12.05%  halves 0.8727/1.4954  OOS  9.46%/1.2763
+  B136  K_FROZEN   gross 0.750  CAGR  14.29%  Sharpe 0.9462  MaxDD -20.74%  halves 0.8458/1.0385  OOS 16.02%/1.0100  4b fail  4bOOS fail
+  B136  K_ONESHOT  gross 0.575  CAGR  10.99%  Sharpe 0.9444  MaxDD -16.18%  halves 0.8446/1.0362  OOS 12.30%/1.0084  4b fail  4bOOS PASS
+  B136  K_ORACLE   gross 1.000  CAGR  18.94%  Sharpe 0.9485  MaxDD -26.97%  halves 0.8473/1.0417  OOS 21.30%/1.0122  4b fail  4bOOS fail
+  B136  SPY                    CAGR  13.83%  Sharpe 0.8413  MaxDD -33.72%  halves 0.6245/1.0637  OOS 15.33%/0.8767
+  B136  RULESv2                CAGR   7.19%  Sharpe 1.0342  MaxDD -12.24%  halves 0.7968/1.2818  OOS  7.88%/1.1059
+
+## HYPOTHESES — scored against the bars declared above, before any narrative
+  H_INTERIOR  interior share of all choices >= 0.75                 0.9810   SUPPORTED
+  H_STABLE    median move rate >= 0.50 (pick is UNSTABLE)           0.8333   SUPPORTED
+  H_CHEAP     median added turnover < 0.50 NAV/yr                   0.1177   SUPPORTED
+  H_OOSPASS   fewer than 12 of 24 cells clear 4b OOS                19.0000   REFUTED
+  H_NOGAIN    median (rolling - K_FROZEN) Sharpe <= 0              -0.0245   SUPPORTED
+  wrote 2026-09-17_does-the-TENT-CHOOSER-reach-the-INTERIOR-on-a-ROLLING-IS-WINDOW_cloud.hypotheses.csv  (5 rows, 4 cols)
+
+## RULE 8 WALK-FORWARD — the (window, cadence) PAIR chosen on the FIRST HALF of the
+##   common span and evaluated on the SECOND HALF untouched.  Three honest choosers.
+  U56   C_H1SHARPE  picks (W1260, R2Y)  2nd half  14.73% / 1.2932 / -13.28%  vs SPY  18.22% / 1.0746 / -24.50%  4bOOS PASS
+  U56   C_H1CAGR    picks (WEXP, R2Y)  2nd half  15.79% / 1.3168 / -13.28%  vs SPY  18.22% / 1.0746 / -24.50%  4bOOS PASS
+  U56   C_H1TENT    picks (W1260, R2Y)  2nd half  14.73% / 1.2932 / -13.28%  vs SPY  18.22% / 1.0746 / -24.50%  4bOOS PASS
+  U56   K_FROZEN    gross 0.750           2nd half  19.65% / 1.3332 / -15.77%  vs SPY  18.22% / 1.0746 / -24.50%  4bOOS fail
+  B136  C_H1SHARPE  picks (WEXP, R2Y)  2nd half  13.09% / 1.0329 / -14.24%  vs SPY  18.03% / 1.0637 / -24.50%  4bOOS fail
+  B136  C_H1CAGR    picks (WEXP, R2Y)  2nd half  13.09% / 1.0329 / -14.24%  vs SPY  18.03% / 1.0637 / -24.50%  4bOOS fail
+  B136  C_H1TENT    picks (WEXP, R2Y)  2nd half  13.09% / 1.0329 / -14.24%  vs SPY  18.03% / 1.0637 / -24.50%  4bOOS fail
+  B136  K_FROZEN    gross 0.750           2nd half  16.78% / 1.0385 / -17.55%  vs SPY  18.03% / 1.0637 / -24.50%  4bOOS fail
+  wrote 2026-09-17_does-the-TENT-CHOOSER-reach-the-INTERIOR-on-a-ROLLING-IS-WINDOW_cloud.walkforward.csv  (8 rows, 15 cols)
+
+## BOTH KEEP PATHS on the common span
+  ladder base rate: 4b full 13 of 66, 4b OOS 22 of 66, 4a 0 of 66
+  rolling cells:    4b full 10 of 24, 4b OOS 19 of 24, 4a 0 of 24
+
+## THE CELLS
+panel window cadence  n_choices  n_moves  move_rate  interior_share  pick_med  pick_min  pick_max  switch_turn_per_yr   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  pass_4b  pass_4b_oos  pass_4a
+  U56   W504     R6M         26       20     0.8000          1.0000    0.4750    0.3250    0.7000              0.2216 0.1015  1.0488 -0.1367 0.8237 1.2407    0.1109      1.0745    -0.1367     True         True    False
+  U56   W504     R1Y         13       12     1.0000          1.0000    0.4750    0.3250    0.6750              0.1266 0.0916  0.9906 -0.1367 0.7866 1.1718    0.0983      1.0128    -0.1367    False        False    False
+  U56   W504     R2Y          7        6     1.0000          1.0000    0.4750    0.3250    0.6250              0.1029 0.0933  1.0198 -0.1367 0.7812 1.2466    0.0996      1.0578    -0.1367    False        False    False
+  U56   W756     R6M         26       22     0.8800          1.0000    0.5000    0.4000    0.7750              0.2041 0.1090  1.0948 -0.1304 0.9121 1.2530    0.1151      1.1112    -0.1304     True         True    False
+  U56   W756     R1Y         13       10     0.8333          1.0000    0.5000    0.4250    0.7000              0.1812 0.1058  1.0712 -0.1304 0.8887 1.2321    0.1113      1.0976    -0.1304     True         True    False
+  U56   W756     R2Y          7        6     1.0000          1.0000    0.5000    0.4250    0.7000              0.2591 0.1147  1.1098 -0.1304 0.9075 1.2855    0.1224      1.1517    -0.1304     True         True    False
+  U56  W1260     R6M         26       18     0.7200          1.0000    0.5750    0.4250    0.6750             -0.0083 0.1171  1.1325 -0.1179 0.9499 1.2921    0.1234      1.1679    -0.1179     True         True    False
+  U56  W1260     R1Y         13       11     0.9167          1.0000    0.5500    0.4250    0.6750              0.0784 0.1138  1.1048 -0.1243 0.9141 1.2734    0.1193      1.1404    -0.1243     True         True    False
+  U56  W1260     R2Y          7        6     1.0000          1.0000    0.5500    0.4500    0.6750              0.1088 0.1189  1.1312 -0.1328 0.9507 1.2932    0.1255      1.1801    -0.1328     True         True    False
+  U56   WEXP     R6M         26        9     0.3600          1.0000    0.6250    0.5250    0.6750              0.0194 0.1313  1.1364 -0.1551 0.9378 1.3180    0.1395      1.1688    -0.1551     True         True    False
+  U56   WEXP     R1Y         13        5     0.4167          1.0000    0.6250    0.5250    0.6750              0.0111 0.1287  1.1193 -0.1612 0.9221 1.3030    0.1363      1.1520    -0.1612     True         True    False
+  U56   WEXP     R2Y          7        4     0.6667          1.0000    0.6250    0.5500    0.6750              0.0126 0.1302  1.1356 -0.1612 0.9449 1.3168    0.1383      1.1728    -0.1612     True         True    False
+ B136   W504     R6M         26       20     0.8000          0.8846    0.4500    0.3000    1.0000              0.6035 0.0943  0.8173 -0.1805 0.8110 0.8725    0.1086      0.8554    -0.1805    False        False    False
+ B136   W504     R1Y         13       11     0.9167          0.9231    0.4750    0.3000    1.0000              0.2993 0.0860  0.7930 -0.1805 0.8232 0.8095    0.0965      0.8201    -0.1805    False        False    False
+ B136   W504     R2Y          7        6     1.0000          0.8571    0.4750    0.3000    1.0000              0.2710 0.0886  0.8259 -0.1805 0.7334 0.9147    0.0998      0.8710    -0.1805    False        False    False
+ B136   W756     R6M         26       23     0.9200          0.9231    0.4750    0.3750    1.0000              0.5420 0.1081  0.9207 -0.1462 0.8511 1.0138    0.1241      0.9695    -0.1462    False         True    False
+ B136   W756     R1Y         13       10     0.8333          1.0000    0.4750    0.4000    0.9000              0.4281 0.1066  0.9259 -0.1462 0.8597 1.0126    0.1235      0.9820    -0.1462    False         True    False
+ B136   W756     R2Y          7        6     1.0000          1.0000    0.4750    0.4000    0.8000              0.3606 0.1044  0.9136 -0.1646 0.7990 1.0263    0.1205      0.9732    -0.1646    False         True    False
+ B136  W1260     R6M         26       20     0.8000          1.0000    0.5375    0.4000    0.9000              0.1756 0.1110  0.9363 -0.1536 0.8231 1.0482    0.1272      1.0002    -0.1536    False         True    False
+ B136  W1260     R1Y         13        9     0.7500          1.0000    0.5500    0.4250    0.7250              0.0783 0.1071  0.9209 -0.1536 0.8283 1.0164    0.1212      0.9752    -0.1536    False         True    False
+ B136  W1260     R2Y          7        6     1.0000          1.0000    0.5500    0.4250    0.7250              0.0697 0.1080  0.9282 -0.1701 0.8180 1.0314    0.1224      0.9949    -0.1701    False         True    False
+ B136   WEXP     R6M         26       10     0.4000          1.0000    0.5750    0.4750    0.6250              0.0069 0.1097  0.9430 -0.1424 0.8645 1.0161    0.1229      1.0043    -0.1424    False         True    False
+ B136   WEXP     R1Y         13        8     0.6667          1.0000    0.5750    0.4750    0.6250             -0.0028 0.1091  0.9398 -0.1424 0.8630 1.0112    0.1222      1.0001    -0.1424    False         True    False
+ B136   WEXP     R2Y          7        4     0.6667          1.0000    0.5750    0.5000    0.6250             -0.0120 0.1102  0.9532 -0.1424 0.8660 1.0329    0.1236      1.0201    -0.1424    False         True    False
+
+## DONE in 12s
