@@ -1,0 +1,334 @@
+====================================================================================================
+IDEA 1228 (cloud lane, 2026-09-17) — does the RECORD read its CHOOSER RESULTS off a LISTING NOBODY CHOSE?
+====================================================================================================
+Idea 1228 (cloud lane, 2026-09-17) — does the RECORD read its CHOOSER RESULTS off a
+LISTING NOBODY CHOSE?
+
+Idea 1227 found U56 / NG / L252 / H_ANY stitches to OOS Sharpe 1.2377 against the anchor's
+1.1759 while its OWN pooled fold delta is -0.0197: the best CURVE in a listing is not the
+best DECISION.  The queue asks two things:
+
+  (Q1) CENSUS — how many committed chooser claims quote a LISTING MAXIMUM (a statistic
+       maximised over a grid, read on the same window it is reported on) rather than a
+       WALK-FORWARD PICK (chosen in-sample, evaluated out-of-sample)?
+  (Q2) PRICE — how big is the gap between the two readings, in OOS Sharpe, on real books?
+
+WHAT IS AN IDENTITY AND NOT A FINDING, DECLARED BEFORE ANY NUMBER.  When the listing
+statistic IS the evaluation statistic, max-over-the-listing >= any-single-pick is true by
+construction on any tape, any ladder, any panel: a maximum dominates every element of the
+set it is taken over.  Gate G6 verifies it so this run cannot be read as having discovered
+it.  The empirical content is entirely in (i) HOW BIG the gap is in Sharpe units, (ii)
+whether it survives when the listing statistic is NOT the evaluation statistic (where no
+identity applies and the gap may be negative), and (iii) what share of the record's
+committed chooser prose is written in the dominated form.
+
+THE TWO TUNED PARAMETERS AND NO MORE (PROTOCOL rule 4), exactly the two the queue names:
+  CLAIM CLASS       {K_N, K_H, K_GROSS, K_CADENCE, K_ALL4}     (5 listings)
+  LISTING STATISTIC {S_SHARPE, S_CAGR, S_MAR, S_4BMARGIN}      (4 statistics)
+= 20 (claim class, listing statistic) cells per panel, 60 in all, EVERY ONE PUBLISHED.
+The RUNG inside a listing is NOT a third tuned parameter: it is the object a chooser
+selects, which is the subject of the run, and every rung of every listing is published in
+.grid.csv regardless of what any reading did with it.  PANEL {U56, B136, SMALL} is NOT a
+dial (PROTOCOL rule 9) — all three are reported at every cell and nothing is selected on
+the triple.
+
+FROZEN, NOT TUNED (so the numbers cross-read against the record): CAND20 legs
+[(21,252),(0,126),(0,63)], max_vol 0.60, min hold H=126, N=20, gross 0.75, cadence W,
+cost 10 bps (PROTOCOL rule 2 — a book cannot choose its cost rate), LAG 1 (next-day
+execution), warm-up 260 rows, IS end 2016-12-31 for the rule-8 split, DD cap 0.60 and CAGR
+floor 0.70 for 4b.  The FOLD construction is frozen at 14 equal consecutive OOS folds over
+the post-warm-up tape with an EXPANDING in-sample window (minimum 756 bars).  The IS window
+FORM is not a dial here: the L252 rolling variant is run once, as gate G9, and published,
+but nothing is ever selected on it.
+
+PRICE VINTAGE, PINNED AND DECLARED (defect published by idea 1160 on 2026-09-17).
+data/prices.csv now carries a 2026-09-16 bar.  Every tape here is truncated at
+PIN = 2026-09-15 so the committed anchors reproduce; G2 carries the 5e-3 tolerance the
+record's vintage defect requires rather than absorbing it.
+
+SURVIVORSHIP (PROTOCOL rule 9).  U56, B136 and SMALL are CURRENT-CONSTITUENT lists.  SMALL
+is the current constituents of a sub-$2B screen, served after dropping every ticker with
+max_1d_move >= 1.0 in data/small_meta.csv.  The pool was REBUILT on 2026-09-11 (idea 706 /
+1072): the label "SMALL439" no longer denotes 439 names, and this run prints the served
+count rather than quoting a label.  Every delisted, acquired or screened-out name is absent
+from all three panels, so every small-cap number here is an upper bound.
+
+Writes: .gates.csv .grid.csv .readings.csv .folds.csv .census.csv .walkforward.csv
+        .console.txt
+Deterministic, standalone, no network.  Does not modify RULES.md / scan.py / bot.py /
+baseline.py / PROTOCOL.md.
+
+## PANELS  (pinned at 2026-09-15)
+  U56      56 cols, 4,705 rows 2008-01-02 -> 2026-09-15  warm 4,445  IS 2,007  OOS 2,438
+  B136    136 cols, 4,703 rows 2008-01-02 -> 2026-09-11  warm 4,443  IS 2,007  OOS 2,436
+  SMALL   664 cols, 4,198 rows 2010-01-04 -> 2026-09-11  warm 3,938  IS 1,502  OOS 2,436
+  SMALL STAMP: data/small_meta.csv lists 715 tickers; 52 dropped for max_1d_move >= 1.0; pool served = 663 names + SPY as benchmark.
+  (idea 706/1072's defect: the pool was rebuilt 2026-09-11, so the served count is printed rather than a label.)
+
+## GATES — printed before any result number
+  G1  PASS  fast runner == engine.backtest (U56 W/H126/N=20)   value=1.3877787807814457e-17
+  G2  PASS  CROSS-RUN the committed U56 W/H126/N=20 triple   value=4.1154385608477284e-05
+     this run 0.155793/1.139742/-0.191276 vs committed 0.155787/1.139701/-0.191276  (1160's price-vintage defect is CARRIED, not absorbed: the bar is 5e-3)
+  G3  PASS  SPY OOS triple == committed   value=0.0001703764894058768
+  G4  PASS  live RULES v2 MaxDD == committed -12.05%   value=4.9488215128346e-05
+  G5  PASS  determinism of the SMALL pipeline (two independent rebuilds, no cache)   value=0.0
+  G7  PASS  the ANCHOR rung is a member of EVERY listing (do-nothing is always available)   value=0
+
+## FOLDS — 14 equal consecutive OOS folds over the post-warm-up tape, EXPANDING IS
+  U56    14 folds, first OOS 2012-01-12 -> last OOS 2026-09-15, fold length 264 bars
+  B136   14 folds, first OOS 2012-01-12 -> last OOS 2026-09-11, fold length 263 bars
+  SMALL  14 folds, first OOS 2014-01-16 -> last OOS 2026-09-11, fold length 227 bars
+  G8  PASS  fold partitions are contiguous and non-overlapping in every panel   value=42
+
+## GRID — every rung of every listing, on every panel, published
+  wrote 2026-09-17_does-the-RECORD-read-its-CHOOSER-RESULTS-off-a-LISTING-NOBODY-CHOSE_cloud.grid.csv  (72 rows, 26 cols)
+  24 distinct books per panel x 3 panels = 72 book runs.
+  G6  PASS  IDENTITY: max-over-listing >= every member (declared, not discovered)   value=0
+
+## THE THREE READINGS, at every (panel, claim class, listing statistic) cell
+   R_LIST   the LISTING MAXIMUM: argmax of the statistic read on the EVALUATION window
+            (2017-01-01 onward).  This is the dominated form.  NOT DEPLOYABLE: it
+            requires the evaluation window to pick.
+   R_WF     the WALK-FORWARD PICK: at each fold, argmax of the SAME statistic on the
+            expanding IS window only; the pick is held through the fold; the fold
+            returns are stitched into one deployable curve.
+   R_ANCH   the DO-NOTHING reading: the anchor book (N=20/H=126/g=0.75/W) at every fold.
+
+  wrote 2026-09-17_does-the-RECORD-read-its-CHOOSER-RESULTS-off-a-LISTING-NOBODY-CHOSE_cloud.readings.csv  (60 rows, 26 cols)
+  wrote 2026-09-17_does-the-RECORD-read-its-CHOOSER-RESULTS-off-a-LISTING-NOBODY-CHOSE_cloud.folds.csv  (840 rows, 16 cols)
+
+### Q2 — THE PRICED GAP, all 60 cells (Sharpe units on the stitched evaluation window)
+panel claim_class listing_stat  S_LIST   S_WF  S_ANCH  GAP_curve  GAP_pooled  GAP_se   GAP_t  move_rate  share_anchor_picks
+  U56         K_N     S_SHARPE  1.2454 1.0204  1.2116     0.2250      0.1765  0.0592  2.9801     0.4615              0.0000
+  U56         K_N       S_CAGR  1.0470 0.9492  1.2116     0.0978      0.1494  0.1192  1.2536     0.2308              0.0000
+  U56         K_N        S_MAR  1.2454 1.0847  1.2116     0.1607      0.1466  0.0592  2.4771     0.6154              0.0000
+  U56         K_N   S_4BMARGIN  1.2116 1.0923  1.2116     0.1193      0.0732  0.0709  1.0334     0.1538              0.0714
+  U56         K_H     S_SHARPE  1.2321 1.1652  1.2116     0.0669      0.0528  0.0533  0.9898     0.1538              0.0000
+  U56         K_H       S_CAGR  1.2116 1.1558  1.2116     0.0557      0.0253  0.0812  0.3112     0.0769              0.0000
+  U56         K_H        S_MAR  1.2116 1.1959  1.2116     0.0157      0.0222  0.0478  0.4641     0.2308              0.4286
+  U56         K_H   S_4BMARGIN  1.2116 1.2052  1.2116     0.0064      0.0249  0.0506  0.4929     0.0769              0.4286
+  U56     K_GROSS     S_SHARPE  1.2124 1.1086  1.2116     0.1038      0.0010  0.0007  1.3078     0.1538              0.0714
+  U56     K_GROSS       S_CAGR  1.2124 1.2124  1.2116     0.0000      0.0000  0.0000     NaN     0.0000              0.0000
+  U56     K_GROSS        S_MAR  1.2124 1.1790  1.2116     0.0334     -0.0000  0.0000 -1.0000     0.0769              0.0000
+  U56     K_GROSS   S_4BMARGIN  1.2111 1.2388  1.2116    -0.0276     -0.0000  0.0001 -0.3772     0.2308              0.1429
+  U56   K_CADENCE     S_SHARPE  1.2116 1.1574  1.2116     0.0541      0.0496  0.0459  1.0805     0.3077              0.2857
+  U56   K_CADENCE       S_CAGR  1.2116 1.0482  1.2116     0.1634      0.1221  0.0379  3.2190     0.5385              0.4286
+  U56   K_CADENCE        S_MAR  1.2116 1.2151  1.2116    -0.0035      0.0091  0.0359  0.2530     0.1538              0.4286
+  U56   K_CADENCE   S_4BMARGIN  1.2116 1.2151  1.2116    -0.0035      0.0091  0.0359  0.2530     0.1538              0.4286
+  U56      K_ALL4     S_SHARPE  1.2454 1.1091  1.2116     0.1364      0.1386  0.0899  1.5423     0.3077              0.0000
+  U56      K_ALL4       S_CAGR  1.2124 1.1432  1.2116     0.0692      0.1252  0.0776  1.6126     0.3077              0.0000
+  U56      K_ALL4        S_MAR  1.2454 1.1159  1.2116     0.1296      0.1504  0.0676  2.2235     0.3846              0.0000
+  U56      K_ALL4   S_4BMARGIN  1.2111 1.2221  1.2116    -0.0110      0.0208  0.0504  0.4123     0.3077              0.0000
+ B136         K_N     S_SHARPE  1.1399 1.0539  1.0919     0.0860      0.1167  0.1001  1.1657     0.3077              0.0000
+ B136         K_N       S_CAGR  0.9645 0.9230  1.0919     0.0415      0.0457  0.0322  1.4205     0.3077              0.0000
+ B136         K_N        S_MAR  1.0239 1.0341  1.0919    -0.0103     -0.0291  0.0262 -1.1120     0.1538              0.0000
+ B136         K_N   S_4BMARGIN  1.0961 1.0962  1.0919    -0.0001     -0.0564  0.0425 -1.3272     0.2308              0.0000
+ B136         K_H     S_SHARPE  1.1434 0.9536  1.0919     0.1897      0.1814  0.0747  2.4276     0.3846              0.2143
+ B136         K_H       S_CAGR  1.0784 0.9742  1.0919     0.1042      0.0939  0.0716  1.3126     0.4615              0.0714
+ B136         K_H        S_MAR  1.0919 1.0204  1.0919     0.0715      0.0669  0.0475  1.4101     0.3077              0.4286
+ B136         K_H   S_4BMARGIN  1.0919 1.0287  1.0919     0.0632      0.0627  0.0504  1.2444     0.0769              0.4286
+ B136     K_GROSS     S_SHARPE  1.0939 1.0939  1.0919     0.0000      0.0000  0.0000     NaN     0.0000              0.0000
+ B136     K_GROSS       S_CAGR  1.0939 1.0939  1.0919     0.0000      0.0000  0.0000     NaN     0.0000              0.0000
+ B136     K_GROSS        S_MAR  1.0939 1.0852  1.0919     0.0087      0.0000  0.0000  1.0000     0.0769              0.0000
+ B136     K_GROSS   S_4BMARGIN  1.0901 1.1105  1.0919    -0.0204     -0.0005  0.0004 -1.1336     0.3077              0.0000
+ B136   K_CADENCE     S_SHARPE  1.1052 1.0789  1.0919     0.0263      0.0448  0.0636  0.7045     0.0769              0.8571
+ B136   K_CADENCE       S_CAGR  1.1052 1.0421  1.0919     0.0631      0.1017  0.0814  1.2490     0.3077              0.3571
+ B136   K_CADENCE        S_MAR  1.0919 1.0049  1.0919     0.0870      0.0591  0.0739  0.7998     0.3077              0.5000
+ B136   K_CADENCE   S_4BMARGIN  1.0919 1.0312  1.0919     0.0607      0.0292  0.0814  0.3580     0.1538              0.4286
+ B136      K_ALL4     S_SHARPE  1.1434 1.0203  1.0919     0.1231      0.1950  0.1189  1.6397     0.3077              0.0000
+ B136      K_ALL4       S_CAGR  1.0939 1.0758  1.0919     0.0181      0.0170  0.0520  0.3259     0.0769              0.0000
+ B136      K_ALL4        S_MAR  1.0239 0.9128  1.0919     0.1110      0.0939  0.0622  1.5102     0.4615              0.0000
+ B136      K_ALL4   S_4BMARGIN  1.0901 1.1105  1.0919    -0.0204     -0.0005  0.0004 -1.1336     0.3077              0.0000
+SMALL         K_N     S_SHARPE  0.4675 0.3387  0.4044     0.1288      0.1159  0.0923  1.2566     0.3846              0.0000
+SMALL         K_N       S_CAGR  0.4675 0.3687  0.4044     0.0988      0.1260  0.0849  1.4853     0.5385              0.0000
+SMALL         K_N        S_MAR  0.4675 0.3406  0.4044     0.1269      0.1220  0.0935  1.3051     0.3846              0.0000
+SMALL         K_N   S_4BMARGIN  0.3959 0.4110  0.4044    -0.0151     -0.0311  0.0474 -0.6561     0.1538              0.0000
+SMALL         K_H     S_SHARPE  0.7629 0.5219  0.4044     0.2409      0.2728  0.1293  2.1105     0.2308              0.0000
+SMALL         K_H       S_CAGR  0.7629 0.6086  0.4044     0.1543      0.1806  0.1038  1.7404     0.0769              0.0000
+SMALL         K_H        S_MAR  0.7629 0.5427  0.4044     0.2202      0.2466  0.1360  1.8135     0.0769              0.0000
+SMALL         K_H   S_4BMARGIN  0.4044 0.3022  0.4044     0.1023      0.1067  0.1087  0.9811     0.2308              0.0714
+SMALL     K_GROSS     S_SHARPE  0.4053 0.2731  0.4044     0.1322      0.0040  0.0026  1.5575     0.1538              0.0000
+SMALL     K_GROSS       S_CAGR  0.4053 0.4053  0.4044     0.0000      0.0000  0.0000     NaN     0.0000              0.0000
+SMALL     K_GROSS        S_MAR  0.4029 0.2767  0.4044     0.1261     -0.0040  0.0027 -1.4731     0.5385              0.2143
+SMALL     K_GROSS   S_4BMARGIN  0.4037 0.4281  0.4044    -0.0245      0.0002  0.0004  0.4571     0.3846              0.0000
+SMALL   K_CADENCE     S_SHARPE  0.4044 0.2793  0.4044     0.1251      0.1502  0.0729  2.0613     0.5385              0.7143
+SMALL   K_CADENCE       S_CAGR  0.4044 0.2357  0.4044     0.1687      0.1890  0.0758  2.4928     0.5385              0.6429
+SMALL   K_CADENCE        S_MAR  0.4044 0.3583  0.4044     0.0462      0.0797  0.0908  0.8781     0.2308              0.5714
+SMALL   K_CADENCE   S_4BMARGIN  0.3956 0.4937  0.4044    -0.0981     -0.0929  0.1426 -0.6518     0.1538              0.2143
+SMALL      K_ALL4     S_SHARPE  0.7629 0.5219  0.4044     0.2409      0.2728  0.1293  2.1105     0.2308              0.0000
+SMALL      K_ALL4       S_CAGR  0.7629 0.6086  0.4044     0.1543      0.1806  0.1038  1.7404     0.0769              0.0000
+SMALL      K_ALL4        S_MAR  0.7629 0.5427  0.4044     0.2202      0.2466  0.1360  1.8135     0.0769              0.0000
+SMALL      K_ALL4   S_4BMARGIN  0.4037 0.4281  0.4044    -0.0245      0.0002  0.0004  0.4571     0.3846              0.0000
+
+### POOLED over the 60 cells
+  mean GAP_curve (listing max minus walk-forward stitch) = +0.0753   median +0.0680   max +0.2409
+  cells where the LISTING MAX beats the WALK-FORWARD stitch: 44 of 60
+  cells where the WALK-FORWARD stitch beats the DO-NOTHING anchor: 21 of 60
+  cells where the LISTING MAX beats the DO-NOTHING anchor: 30 of 60
+  mean pooled fold delta WF - ANCHOR = -0.0328 (mean |t| 1.33); cells with |t| > 2: 12 of 60
+  1227's headline for cross-read: listing max 1.2377 / anchor 1.1759 / pooled fold delta -0.0197
+
+  by LISTING STATISTIC (dial 2):
+              GAP_curve  GAP_pooled  WF_vs_ANCH_pooled
+listing_stat                                          
+S_4BMARGIN      +0.0071     +0.0097            -0.0135
+S_CAGR          +0.0793     +0.0904            -0.0521
+S_MAR           +0.0896     +0.0807            -0.0297
+S_SHARPE        +0.1253     +0.1181            -0.0357
+  by CLAIM CLASS (dial 1):
+             GAP_curve  GAP_pooled  WF_vs_ANCH_pooled
+claim_class                                          
+K_ALL4         +0.0956     +0.1200            -0.0174
+K_CADENCE      +0.0574     +0.0626            -0.0593
+K_GROSS        +0.0277     +0.0000            +0.0007
+K_H            +0.1076     +0.1114            -0.0074
+K_N            +0.0883     +0.0796            -0.0804
+
+## Q1 — THE CENSUS of the record's committed chooser prose
+   CORPUS: research/LEADERBOARD.md + research/CHANGELOG.md + research/backtests/*.md.
+   UNIT: a sentence containing a CHOOSER VERB (pick / choose / chosen / argmax / select /
+         reaches / lands on / best / top / maximum / peak / stitches to / wins).
+   CLASSIFICATION, applied in this order and published as a rule, not a judgement:
+     WF     the sentence carries a WALK-FORWARD MARKER (rule 8, walk-forward, IS-only,
+            chosen on 2009-2016 / in-sample, out-of-sample evaluated, expanding IS, fold).
+     LIST   no WF marker AND a SUPERLATIVE-OVER-A-SET marker (best/highest/maximum/top/
+            argmax/peak/stitches to/widest) — i.e. a listing maximum.
+     OTHER  a chooser verb with neither marker (unclassifiable from the text alone).
+
+  wrote 2026-09-17_does-the-RECORD-read-its-CHOOSER-RESULTS-off-a-LISTING-NOBODY-CHOSE_cloud.census.csv  (11,300 rows, 6 cols)
+  corpus: 1157 files, 121,366 candidate sentences, 11,300 chooser sentences.
+    WF       2,487   0.2201 of chooser sentences
+    LIST     3,922   0.3471 of chooser sentences
+    OTHER    4,891   0.4328 of chooser sentences
+  LISTING-MAX share among sentences the text CAN classify (WF + LIST): 0.6120
+
+  by SOURCE:
+klass                         LIST  OTHER  WF  LIST_share
+source                                                   
+2026-09-04_spinoff-calendar.     6      0   0         1.0
+2026-09-12_does-TIE-SUFFICIE     1      0   0         1.0
+2026-09-11_u56-band008-gross     1      0   0         1.0
+2026-09-08_a-within-cell-DIF    10      0   0         1.0
+2026-09-11_u56-marsrespread-     1      0   0         1.0
+2026-09-05_is-4b-internally-     1      0   0         1.0
+2026-09-05_how-many-draws-do     7      0   0         1.0
+2026-09-08_publish-the-HALF-    16      0   0         1.0
+2026-09-15_4b-leg-certificat     1      0   0         1.0
+2026-09-06_drawdown-budget-T     1      0   0         1.0
+2026-09-07_is-the-CAGR-floor     5      0   0         1.0
+2026-09-08_census-every-CROS     3      0   0         1.0
+
+### PRICING THE CENSUS — a LIST-form claim naming a ladder family inherits that
+    family's measured GAP_curve (mean over panels and listing statistics).
+   family  list_claims  mean_GAP_curve
+      K_N          250          0.0883
+      K_H          203          0.1076
+  K_GROSS          391          0.0277
+K_CADENCE          272          0.0574
+  LIST-form claims naming at least one ladder family: 870 of 3,922 (0.2218); the rest name no family and cannot be priced from the text alone.
+  UNWEIGHTED mean overstatement a LIST-form claim carries, over the four families: +0.0702 of Sharpe.
+
+## PROTOCOL RULE 8 — parameters chosen on 2009-2016 ONLY, evaluated on 2017-2026
+   For every (panel, claim class, listing statistic) cell the rule-8 PICK is the
+   argmax of the listing statistic over the IS window; the OOS triple below is that
+   single book's untouched 2017-2026 record.  R_LIST is shown beside it as the
+   NON-DEPLOYABLE comparand the record's LIST-form prose quotes.
+  wrote 2026-09-17_does-the-RECORD-read-its-CHOOSER-RESULTS-off-a-LISTING-NOBODY-CHOSE_cloud.walkforward.csv  (60 rows, 36 cols)
+panel claim_class listing_stat       rule8_pick      listing_max  same_book  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  LISTMAX_OOS_Sharpe  ANCH_OOS_Sharpe  SPY_OOS_Sharpe  BASE_OOS_Sharpe  PASS_4b  PASS_4a
+  U56         K_N     S_SHARPE N40/H126/g0.75/W N15/H126/g0.75/W      False    0.1400      1.0985    -0.2298              1.1907           1.1644          0.8711           1.2763    False    False
+  U56         K_N       S_CAGR  N5/H126/g0.75/W N15/H126/g0.75/W      False    0.1706      0.9003    -0.2585              1.1907           1.1644          0.8711           1.2763    False    False
+  U56         K_N        S_MAR N40/H126/g0.75/W N12/H126/g0.75/W      False    0.1400      1.0985    -0.2298              1.1759           1.1644          0.8711           1.2763    False    False
+  U56         K_N   S_4BMARGIN N40/H126/g0.75/W N20/H126/g0.75/W      False    0.1400      1.0985    -0.2298              1.1644           1.1644          0.8711           1.2763    False    False
+  U56         K_H     S_SHARPE N20/H189/g0.75/W N20/H252/g0.75/W      False    0.1588      1.0509    -0.2221              1.1932           1.1644          0.8711           1.2763    False    False
+  U56         K_H       S_CAGR N20/H189/g0.75/W N20/H252/g0.75/W      False    0.1588      1.0509    -0.2221              1.1932           1.1644          0.8711           1.2763    False    False
+  U56         K_H        S_MAR N20/H189/g0.75/W N20/H126/g0.75/W      False    0.1588      1.0509    -0.2221              1.1644           1.1644          0.8711           1.2763    False    False
+  U56         K_H   S_4BMARGIN  N20/H21/g0.75/W N20/H126/g0.75/W      False    0.1539      1.1167    -0.2024              1.1644           1.1644          0.8711           1.2763    False    False
+  U56     K_GROSS     S_SHARPE  N20/H126/g1.0/W  N20/H126/g1.0/W       True    0.2272      1.1652    -0.2493              1.1652           1.1644          0.8711           1.2763    False    False
+  U56     K_GROSS       S_CAGR  N20/H126/g1.0/W  N20/H126/g1.0/W       True    0.2272      1.1652    -0.2493              1.1652           1.1644          0.8711           1.2763    False    False
+  U56     K_GROSS        S_MAR  N20/H126/g1.0/W  N20/H126/g1.0/W       True    0.2272      1.1652    -0.2493              1.1652           1.1644          0.8711           1.2763    False    False
+  U56     K_GROSS   S_4BMARGIN N20/H126/g0.65/W N20/H126/g0.65/W       True    0.1468      1.1640    -0.1673              1.1640           1.1644          0.8711           1.2763     True    False
+  U56   K_CADENCE     S_SHARPE N20/H126/g0.75/W N20/H126/g0.75/Q      False    0.1697      1.1644    -0.1913              1.1727           1.1644          0.8711           1.2763     True    False
+  U56   K_CADENCE       S_CAGR N20/H126/g0.75/W N20/H126/g0.75/Q      False    0.1697      1.1644    -0.1913              1.1727           1.1644          0.8711           1.2763     True    False
+  U56   K_CADENCE        S_MAR N20/H126/g0.75/D N20/H126/g0.75/W      False    0.1720      1.1220    -0.2313              1.1644           1.1644          0.8711           1.2763    False    False
+  U56   K_CADENCE   S_4BMARGIN N20/H126/g0.75/D N20/H126/g0.75/W      False    0.1720      1.1220    -0.2313              1.1644           1.1644          0.8711           1.2763    False    False
+  U56      K_ALL4     S_SHARPE N20/H189/g0.75/W N20/H252/g0.75/W      False    0.1588      1.0509    -0.2221              1.1932           1.1644          0.8711           1.2763    False    False
+  U56      K_ALL4       S_CAGR  N5/H126/g0.75/W  N20/H126/g1.0/W      False    0.1706      0.9003    -0.2585              1.1652           1.1644          0.8711           1.2763    False    False
+  U56      K_ALL4        S_MAR N20/H189/g0.75/W N12/H126/g0.75/W      False    0.1588      1.0509    -0.2221              1.1759           1.1644          0.8711           1.2763    False    False
+  U56      K_ALL4   S_4BMARGIN  N20/H21/g0.75/W N20/H126/g0.65/W      False    0.1539      1.1167    -0.2024              1.1640           1.1644          0.8711           1.2763    False    False
+ B136         K_N     S_SHARPE  N8/H126/g0.75/W N30/H126/g0.75/W      False    0.1456      0.7866    -0.2454              1.0696           1.0100          0.8767           1.1059    False    False
+ B136         K_N       S_CAGR  N5/H126/g0.75/W N15/H126/g0.75/W      False    0.1503      0.7687    -0.2812              1.0458           1.0100          0.8767           1.1059    False    False
+ B136         K_N        S_MAR N25/H126/g0.75/W N15/H126/g0.75/W      False    0.1673      1.0623    -0.2161              1.0458           1.0100          0.8767           1.1059    False    False
+ B136         K_N   S_4BMARGIN N30/H126/g0.75/W N15/H126/g0.75/W      False    0.1661      1.0696    -0.2435              1.0458           1.0100          0.8767           1.1059    False    False
+ B136         K_H     S_SHARPE  N20/H63/g0.75/W N20/H252/g0.75/W      False    0.1649      0.9960    -0.2869              1.0476           1.0100          0.8767           1.1059    False    False
+ B136         K_H       S_CAGR  N20/H63/g0.75/W N20/H189/g0.75/W      False    0.1649      0.9960    -0.2869              1.0179           1.0100          0.8767           1.1059    False    False
+ B136         K_H        S_MAR  N20/H21/g0.75/W N20/H126/g0.75/W      False    0.1555      0.9966    -0.2569              1.0100           1.0100          0.8767           1.1059    False    False
+ B136         K_H   S_4BMARGIN  N20/H21/g0.75/W N20/H126/g0.75/W      False    0.1555      0.9966    -0.2569              1.0100           1.0100          0.8767           1.1059    False    False
+ B136     K_GROSS     S_SHARPE  N20/H126/g1.0/W  N20/H126/g1.0/W       True    0.2130      1.0122    -0.2697              1.0122           1.0100          0.8767           1.1059    False    False
+ B136     K_GROSS       S_CAGR  N20/H126/g1.0/W  N20/H126/g1.0/W       True    0.2130      1.0122    -0.2697              1.0122           1.0100          0.8767           1.1059    False    False
+ B136     K_GROSS        S_MAR  N20/H126/g1.0/W  N20/H126/g1.0/W       True    0.2130      1.0122    -0.2697              1.0122           1.0100          0.8767           1.1059    False    False
+ B136     K_GROSS   S_4BMARGIN N20/H126/g0.55/W N20/H126/g0.65/W      False    0.1176      1.0081    -0.1551              1.0091           1.0100          0.8767           1.1059     True    False
+ B136   K_CADENCE     S_SHARPE N20/H126/g0.75/W N20/H126/g0.75/M      False    0.1602      1.0100    -0.2074              1.0655           1.0100          0.8767           1.1059    False    False
+ B136   K_CADENCE       S_CAGR N20/H126/g0.75/W N20/H126/g0.75/M      False    0.1602      1.0100    -0.2074              1.0655           1.0100          0.8767           1.1059    False    False
+ B136   K_CADENCE        S_MAR N20/H126/g0.75/D N20/H126/g0.75/W      False    0.1705      0.9522    -0.2836              1.0100           1.0100          0.8767           1.1059    False    False
+ B136   K_CADENCE   S_4BMARGIN N20/H126/g0.75/D N20/H126/g0.75/W      False    0.1705      0.9522    -0.2836              1.0100           1.0100          0.8767           1.1059    False    False
+ B136      K_ALL4     S_SHARPE  N8/H126/g0.75/W N30/H126/g0.75/W      False    0.1456      0.7866    -0.2454              1.0696           1.0100          0.8767           1.1059    False    False
+ B136      K_ALL4       S_CAGR  N5/H126/g0.75/W  N20/H126/g1.0/W      False    0.1503      0.7687    -0.2812              1.0122           1.0100          0.8767           1.1059    False    False
+ B136      K_ALL4        S_MAR  N20/H21/g0.75/W N15/H126/g0.75/W      False    0.1555      0.9966    -0.2569              1.0458           1.0100          0.8767           1.1059    False    False
+ B136      K_ALL4   S_4BMARGIN N20/H126/g0.55/W N20/H126/g0.65/W      False    0.1176      1.0081    -0.1551              1.0091           1.0100          0.8767           1.1059     True    False
+SMALL         K_N     S_SHARPE N25/H126/g0.75/W N12/H126/g0.75/W      False    0.0617      0.4164    -0.3559              0.5055           0.4533          0.8767           0.5600    False    False
+SMALL         K_N       S_CAGR N25/H126/g0.75/W N12/H126/g0.75/W      False    0.0617      0.4164    -0.3559              0.5055           0.4533          0.8767           0.5600    False    False
+SMALL         K_N        S_MAR N25/H126/g0.75/W N12/H126/g0.75/W      False    0.0617      0.4164    -0.3559              0.5055           0.4533          0.8767           0.5600    False    False
+SMALL         K_N   S_4BMARGIN N40/H126/g0.75/W N25/H126/g0.75/W      False    0.0613      0.4281    -0.3612              0.4164           0.4533          0.8767           0.5600    False    False
+SMALL         K_H     S_SHARPE N20/H252/g0.75/W N20/H252/g0.75/W       True    0.1116      0.6676    -0.3741              0.6676           0.4533          0.8767           0.5600    False    False
+SMALL         K_H       S_CAGR N20/H252/g0.75/W N20/H252/g0.75/W       True    0.1116      0.6676    -0.3741              0.6676           0.4533          0.8767           0.5600    False    False
+SMALL         K_H        S_MAR  N20/H42/g0.75/W N20/H252/g0.75/W      False    0.0574      0.3926    -0.4123              0.6676           0.4533          0.8767           0.5600    False    False
+SMALL         K_H   S_4BMARGIN  N20/H42/g0.75/W N20/H126/g0.75/W      False    0.0574      0.3926    -0.4123              0.4533           0.4533          0.8767           0.5600    False    False
+SMALL     K_GROSS     S_SHARPE  N20/H126/g1.0/W  N20/H126/g1.0/W       True    0.0869      0.4544    -0.4542              0.4544           0.4533          0.8767           0.5600    False    False
+SMALL     K_GROSS       S_CAGR  N20/H126/g1.0/W  N20/H126/g1.0/W       True    0.0869      0.4544    -0.4542              0.4544           0.4533          0.8767           0.5600    False    False
+SMALL     K_GROSS        S_MAR N20/H126/g0.65/W N20/H126/g0.35/W      False    0.0633      0.4529    -0.3166              0.4515           0.4533          0.8767           0.5600    False    False
+SMALL     K_GROSS   S_4BMARGIN N20/H126/g0.45/W N20/H126/g0.55/W      False    0.0464      0.4520    -0.2281              0.4524           0.4533          0.8767           0.5600    False    False
+SMALL   K_CADENCE     S_SHARPE N20/H126/g0.75/M N20/H126/g0.75/W      False    0.0298      0.2482    -0.3852              0.4533           0.4533          0.8767           0.5600    False    False
+SMALL   K_CADENCE       S_CAGR N20/H126/g0.75/D N20/H126/g0.75/W      False    0.0535      0.3633    -0.3831              0.4533           0.4533          0.8767           0.5600    False    False
+SMALL   K_CADENCE        S_MAR N20/H126/g0.75/D N20/H126/g0.75/W      False    0.0535      0.3633    -0.3831              0.4533           0.4533          0.8767           0.5600    False    False
+SMALL   K_CADENCE   S_4BMARGIN N20/H126/g0.75/D N20/H126/g0.75/Q      False    0.0535      0.3633    -0.3831              0.4323           0.4533          0.8767           0.5600    False    False
+SMALL      K_ALL4     S_SHARPE N20/H252/g0.75/W N20/H252/g0.75/W       True    0.1116      0.6676    -0.3741              0.6676           0.4533          0.8767           0.5600    False    False
+SMALL      K_ALL4       S_CAGR N20/H252/g0.75/W N20/H252/g0.75/W       True    0.1116      0.6676    -0.3741              0.6676           0.4533          0.8767           0.5600    False    False
+SMALL      K_ALL4        S_MAR  N20/H42/g0.75/W N20/H252/g0.75/W      False    0.0574      0.3926    -0.4123              0.6676           0.4533          0.8767           0.5600    False    False
+SMALL      K_ALL4   S_4BMARGIN N20/H126/g0.45/W N20/H126/g0.55/W      False    0.0464      0.4520    -0.2281              0.4524           0.4533          0.8767           0.5600    False    False
+
+  rule-8 pick == listing maximum at 13 of 60 cells (0.2167); the two readings name the SAME book only there.
+  mean OOS Sharpe: rule-8 pick 0.8358 | listing max 0.9091 | anchor 0.8759 | SPY 0.8749 | RULES v2 0.9807
+  mean OOS overstatement of the LIST reading over the rule-8 pick: +0.0733 of Sharpe (43 of 60 cells positive).
+  4b PASS at 5 of 60 cells; 4a PASS at 0 of 60.
+
+## G9 — the ROLLING (L=252) IS window, run once and published, NEVER selected on
+  mean stitched Sharpe: EXPAND 0.8644 | L252 0.8704 | LISTING MAX 0.9397 | ANCHOR 0.9026
+  the LISTING MAX beats BOTH honest windows at 35 of 60 cells.
+  G9  PASS  the IS-window FORM is published at both settings and selected on at neither   value=0.005957273928473672
+
+====================================================================================================
+## ANSWERS
+====================================================================================================
+Q1 CENSUS: of 11,300 committed chooser sentences in the record, 3,922 (0.6120 of the classifiable ones) are written in the LISTING-MAXIMUM form — a superlative over a set with no walk-forward marker — against 2,487 in the walk-forward form.
+Q2 PRICE: on 60 real (panel, claim class, listing statistic) cells the listing maximum overstates the deployable walk-forward stitch by a mean of +0.0753 of Sharpe (median +0.0680, max +0.2409), positive at 44 of 60.  On the single rule-8 split the same overstatement is +0.0733.
+   The chooser itself is not worth its motion: the walk-forward stitch beats the do-nothing anchor at only 21 of 60 cells, pooled fold delta -0.0328 (|t| > 2 at 12 of 60).
+
+CAPITAL VERDICT — KILL.  No book here is promotable.
+  best rule-8 pick anywhere in the run: U56 / K_GROSS / S_MAR -> N20/H126/g1.0/W, OOS CAGR 0.2272, OOS Sharpe 1.1652, OOS MaxDD -0.2493 against SPY 0.1521/0.8711/-0.3372 and RULES v2 0.0946/1.2763/-0.1205.
+  KEEP path 4a (beat the live book in BOTH halves, MaxDD no worse): 0 of 60 cells.
+  KEEP path 4b (beat SPY in both halves AND OOS, DD <= 60% of SPY's, CAGR >= 70%): 5 of 60 cells.
+  Every 4b pass in this run, if any, is a rung of an existing committed ladder re-read, not a new rule; nothing here changes RULES.md (PROTOCOL rule 6).
+
+## WHAT THIS RUN DOES NOT SHOW
+  - The census classifies SENTENCES by marker words, not by what their author did.
+    A sentence can be a walk-forward result reported in superlative prose; the
+    classification is a property of the TEXT, which is exactly the queue's question
+    ('quote a listing maximum'), but it is an upper bound on genuine LIST-form errors.
+  - OTHER-class sentences are unclassifiable from text alone and are excluded from the
+    share denominator, which raises the reported LIST share relative to a denominator
+    of all chooser sentences.  Both denominators are printed.
+  - The gap is measured on FOUR ladders and FOUR statistics on THIS tape.  It is not a
+    universal constant and the per-cell spread is published in full.
+  - Survivorship: all three panels are current-constituent lists (see PANELS above).
+
+gates: 9 / 9 pass
