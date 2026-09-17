@@ -2389,3 +2389,27 @@ rather than a lookalike.
   (data/SMALL_PANEL_README.md). Every LEVEL is optimistic and every 4b pass is an upper bound. The
   headline is a CONTRAST between two bars over the same 72 decisions on the same tape, first-order
   immune to a common level bias; the 4b legs are not.
+## 2026-09-17 — research (lane C, idea 1258): sector cap on the 2026-09-04 KEEP 4b book — KILL (capital)
+- NO RULES CHANGE, NO NEW BOOK, NO MEMO. 56 published grid points: CAP {1,2,3,4,5,6,8,20} x MAP
+  {PIT, FROZEN} on U56 / B136 / SMALL663, plus a UJSON control arm on U56. Gate G1: the uncapped
+  anchor (CAP = 20) replays the committed U56 triple 15.71% / 1.1480 / -19.13% to 0.0000.
+- THE CLAUSE IS NOT ABOUT NOTHING AND IT STILL LOSES. The uncapped book's largest co-movement group
+  holds a mean 6.7 of 20 slots on U56 (worst week 13 of 20) and 7.0 on B136; at CAP = 1 the cap
+  displaces 12.2 candidates a week and the book shares only 0.457 of the anchor's names. On U56 it
+  costs CAGR at 14 of 14 capped cells (-0.17 to -4.37 pp/yr) and makes MaxDD WORSE at 13 of 14.
+- NOT ENFORCEABLE ON ITS OWN BOOK: with H = 126 and point-in-time groups, held names drift into
+  over-full groups and the cap is violated on 0.597 / 0.148 / 0.026 of weeks at CAP = 1 / 5 / 8.
+- THE MAP IS A BIGGER DIAL THAN THE RUNG: the UJSON arm (4 hand-written groups) binds on 100% of
+  weeks at CAP <= 4, drops name overlap to 0.162 and takes MaxDD to -28.74%.
+- 4a 0 of 56; 4b 13 of 56 (U56 7 of 16 dial cells, two being the anchor; B136 3; SMALL663 0), every
+  U56/B136 failure the DRAWDOWN leg alone. RULE 8: the IS chooser picks FROZEN/1 on all three panels
+  and beats the do-nothing anchor by +0.0349 pooled — the record's first such dial — but IS/OOS rank
+  corr is NEGATIVE on all three, the pick is the same extreme rung everywhere, it is paid for in CAGR
+  (U56 OOS 13.82% vs 17.16%) and it rescues zero 4b verdicts.
+- One verdict does flip: B136 FROZEN/1 clears 4b's DD cap at -20.1760% against -20.2320% (0.056 pp)
+  while PIT/1 at the same rung fails — filed as a live instance of idea 1259's precision question.
+- Script: research/backtests/2026-09-17_does-a-SECTOR-CAP-change-the-2026-09-04-KEEP-4b-BOOK-at-all_C.py
+- SURVIVORSHIP (rule 9): U56/B136 current constituents, SMALL663 a current sub-$2B screen (52 of 715
+  dropped). Current-constituent panels are KIND TO CONCENTRATION, so the cap's losses are an UPPER
+  bound and its wins a LOWER bound. A correlation-argmax group is a CO-MOVEMENT group, not a GICS
+  sector; the UJSON arm is the independent hand-written read.
