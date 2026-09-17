@@ -1,0 +1,517 @@
+============================================================================================================
+IDEA 1226 (lane C, 2026-09-17) — does an ELIGIBILITY BAR on COMPARISON-SET MEMBERSHIP
+pay out of sample?
+============================================================================================================
+
+============================================================================================================
+ARM 0 — WHAT THE BAR DOES BEFORE ANY PRICE IS READ
+============================================================================================================
+  d2(k) MC at 1,500,000 draws reproduces Hartley to 9.663e-04.
+
+  (0a) A PERFECTLY DEGENERATE LADDER FAILS THE CHEAPEST BAR THAT EXISTS.  Its rungs are
+       the same book, so every bootstrap draw gives the same Sharpe at every rung: the
+       recentred null range is 0 in EVERY rep AND the observed spread is 0.  R_obs > 0
+       is FALSE, so A_POS already excludes it — and A_MED / A_90 / A_95 / A_99, which
+       are strictly stronger, exclude it too.  THE EXPENSIVE BAR IS NOT NEEDED FOR THE
+       CASE 1223 BUILT.  What the expensive bars can still do is exclude ladders whose
+       spread is real but not distinguishable from their own sampling noise — GROSS,
+       whose spread 1214 measured at 0.0011-0.0034, is the live candidate.
+
+  (0b) THE BAR IS ALSO A DO-NOTHING DIAL, AND THAT IS THE WHOLE DIFFICULTY.  Excluding
+       ladders shrinks the comparison set; a set of 0 or 1 ladder has no pair, so every
+       headline form returns TIE and the chooser HOLDS THE ANCHOR.  The record has found
+       five times that holding the anchor beats every chooser out of sample, so a bar
+       that merely holds more often WILL look like it pays.  ARM D prices the bar
+       against a null that moves exactly as often as it does (1227's NL_PERM).
+
+============================================================================================================
+ARM A — THE LADDERS AND THE ADMISSION TEST
+============================================================================================================
+
+  PANELS: U56 55 names; B136 135; SMALL 664 investable of 715 (51 dropped for max_1d_move >= 1.0), SPY benchmark only.
+    U56: 28 rung books built (6 of them the DEG rung).
+    B136: 28 rung books built (6 of them the DEG rung).
+    SMALL: 28 rung books built (6 of them the DEG rung).
+    G2 0.000e+00  G4 2.776e-17  G5 live U56 MaxDD -12.0549%
+
+    42 (panel, fold) cells = 3 panels x 14 folds (2013-2026).
+
+  (A1) THE ADMISSION TEST AT EVERY (panel, fold, ladder).  R_obs is the ladder's realised
+       IS Sharpe spread; q50/q90/q95/q99 are quantiles of its OWN recentred null range
+       (800 block-bootstrap reps, B = 63 rows, starts SHARED across books).
+
+       ADMISSION RATE BY LADDER AND BAR (over the 42 (panel, fold) cells):
+
+       ladder    k   med R_obs   med q95    med R/q95    A_NONE    A_POS    A_MED     A_90     A_95     A_99
+       N          6      0.1604     0.4133      0.3800     1.000    1.000    0.405    0.095    0.000    0.000
+       H          4      0.0944     0.3343      0.3285     1.000    1.000    0.262    0.000    0.000    0.000
+       GROSS     10      0.0018     0.0042      0.4347     1.000    1.000    0.714    0.143    0.071    0.024
+       CADENCE    2      0.0428     0.2372      0.1734     1.000    1.000    0.167    0.024    0.000    0.000
+       DEG@0.00   6      0.0000     0.0000         nan     1.000    0.000    0.000    0.000    0.000    0.000
+
+       ADMITTED SET SIZE BY (set, bar), mean over the 42 cells:
+
+       set        A_NONE     A_POS     A_MED      A_90      A_95      A_99
+       NG          3.000     3.000     0.833     0.119     0.000     0.000
+       NG_D        4.000     3.000     0.833     0.119     0.000     0.000
+       ALL4        4.000     4.000     1.548     0.262     0.071     0.024
+       ALL4_D      5.000     4.000     1.548     0.262     0.071     0.024
+
+============================================================================================================
+ARM B — THE 24-CELL GRID: WHAT THE BAR DOES TO THE HEADLINE CALL
+============================================================================================================
+  1,904 pair rows and 3,024 headline rows over 4 sets x 6 bars x 42 (panel, fold) cells.
+  1223 ALL4 replay: 252 rows, max |dMULTIPLE| 4.547e-13 — PASS.
+
+  (B1) DECISIVE RATE AND HEADLINE CALLS AT EVERY GRID POINT.  decisive = the bar names
+       a widest dial (W or N) at B_IID95; TIE = it declines or no pair exists.
+
+       set      bar       pairs  decisive   rate    H_RUNNERUP  H_NARROWEST   H_ANY   names DEG  names GROSS
+       NG       A_NONE      126         5  0.0397     0.0476      0.0476     0.1190         0          0
+       NG       A_POS       126         5  0.0397     0.0476      0.0476     0.1190         0          0
+       NG       A_MED        16         1  0.0625     0.0000      0.0238     0.0238         0          0
+       NG       A_90          0         0  nan     0.0000      0.0000     0.0000         0          0
+       NG       A_95          0         0  nan     0.0000      0.0000     0.0000         0          0
+       NG       A_99          0         0  nan     0.0000      0.0000     0.0000         0          0
+       NG_D     A_NONE      252       131  0.5198     0.0476      1.0000     1.0000         0          0
+       NG_D     A_POS       126         5  0.0397     0.0476      0.0476     0.1190         0          0
+       NG_D     A_MED        16         1  0.0625     0.0000      0.0238     0.0238         0          0
+       NG_D     A_90          0         0  nan     0.0000      0.0000     0.0000         0          0
+       NG_D     A_95          0         0  nan     0.0000      0.0000     0.0000         0          0
+       NG_D     A_99          0         0  nan     0.0000      0.0000     0.0000         0          0
+       ALL4     A_NONE      252       131  0.5198     0.0476      1.0000     1.0000         0          0
+       ALL4     A_POS       252       131  0.5198     0.0476      1.0000     1.0000         0          0
+       ALL4     A_MED        33        18  0.5455     0.2619      0.3571     0.3571         0          0
+       ALL4     A_90          0         0  nan     0.0000      0.0000     0.0000         0          0
+       ALL4     A_95          0         0  nan     0.0000      0.0000     0.0000         0          0
+       ALL4     A_99          0         0  nan     0.0000      0.0000     0.0000         0          0
+       ALL4_D   A_NONE      420       299  0.7119     0.0476      1.0000     1.0000         0          0
+       ALL4_D   A_POS       252       131  0.5198     0.0476      1.0000     1.0000         0          0
+       ALL4_D   A_MED        33        18  0.5455     0.2619      0.3571     0.3571         0          0
+       ALL4_D   A_90          0         0  nan     0.0000      0.0000     0.0000         0          0
+       ALL4_D   A_95          0         0  nan     0.0000      0.0000     0.0000         0          0
+       ALL4_D   A_99          0         0  nan     0.0000      0.0000     0.0000         0          0
+
+  (B2) THE SAME GRID THROUGH ALL FIVE BAR FORMS (pairwise decisive rate):
+
+       set      bar        B_RAW   B_POINT   B_MED   B_IID95  B_BOOT95
+       NG       A_NONE    1.0000  1.0000   1.0000  0.0397   0.0238
+       NG       A_POS     1.0000  1.0000   1.0000  0.0397   0.0238
+       NG       A_MED     1.0000  1.0000   1.0000  0.0625   0.0000
+       NG       A_90      nan  nan   nan  nan   nan
+       NG       A_95      nan  nan   nan  nan   nan
+       NG       A_99      nan  nan   nan  nan   nan
+       NG_D     A_NONE    1.0000  1.0000   1.0000  0.5198   0.5119
+       NG_D     A_POS     1.0000  1.0000   1.0000  0.0397   0.0238
+       NG_D     A_MED     1.0000  1.0000   1.0000  0.0625   0.0000
+       NG_D     A_90      nan  nan   nan  nan   nan
+       NG_D     A_95      nan  nan   nan  nan   nan
+       NG_D     A_99      nan  nan   nan  nan   nan
+       ALL4     A_NONE    1.0000  1.0000   1.0000  0.5198   0.4286
+       ALL4     A_POS     1.0000  1.0000   1.0000  0.5198   0.4286
+       ALL4     A_MED     1.0000  1.0000   1.0000  0.5455   0.5152
+       ALL4     A_90      nan  nan   nan  nan   nan
+       ALL4     A_95      nan  nan   nan  nan   nan
+       ALL4     A_99      nan  nan   nan  nan   nan
+       ALL4_D   A_NONE    1.0000  1.0000   1.0000  0.7119   0.6571
+       ALL4_D   A_POS     1.0000  1.0000   1.0000  0.5198   0.4286
+       ALL4_D   A_MED     1.0000  1.0000   1.0000  0.5455   0.5152
+       ALL4_D   A_90      nan  nan   nan  nan   nan
+       ALL4_D   A_95      nan  nan   nan  nan   nan
+       ALL4_D   A_99      nan  nan   nan  nan   nan
+
+============================================================================================================
+ARM C — PRICING THE BAR.  RULE 8 WALK-FORWARD AND BOTH KEEP PATHS.
+============================================================================================================
+
+  BENCHMARKS (10 bps, t+1, post warm-up):
+    U56    SPY    15.06% / 0.8815 /  -33.72%  halves 0.9600/0.8171  OOS  15.15% / 0.8686 /  -33.72%
+    U56    LIVE    8.60% / 1.1982 /  -12.05%  halves 1.2332/1.1705  OOS   9.42% / 1.2717 /  -12.05%
+    B136   SPY    15.16% / 0.8862 /  -33.72%  halves 0.9598/0.8261  OOS  15.33% / 0.8769 /  -33.72%
+    B136   LIVE    7.98% / 1.0994 /  -12.24%  halves 1.2351/0.9660  OOS   7.88% / 1.1061 /  -12.24%
+    SMALL  SPY    14.06% / 0.8582 /  -33.72%  halves 0.9140/0.8346  OOS  15.33% / 0.8769 /  -33.72%
+    SMALL  LIVE    4.64% / 0.7130 /  -12.18%  halves 0.8170/0.6425  OOS   4.47% / 0.6518 /  -12.18%
+
+  BOTH KEEP PATHS ON EVERY RUNG BOOK (rule 4; nothing selected on):
+    84 rung books (57 DISTINCT by (panel, CAGR, Sharpe, MaxDD) — 1194's key): 4a 0; 4b full 23; 4b OOS 22; BOTH 21
+    on DISTINCT books: 4a 0; 4b full 14; 4b OOS 13; BOTH 12
+
+  (C1) THE ROLLING WALK — one calendar year of OOS per fold, IS = warm-up to the day
+       before the fold.  Every choice made on the IS window ONLY.
+       5,040 pick-cells = 42 (panel, fold) x 4 sets x 6 bars x 5 choosers.
+       1230's correction applied: 10 of 28 U56 book keys are the ANCHOR bit for bit, so a 'move' onto one is a NO-OP.
+       move rate on KEYS 0.1859 vs on VALUES 0.1756 (overstatement +0.0103 of pick-cells).
+
+       MOVE RATE AND MEAN OOS SHARPE AT EVERY GRID POINT, PAIRED vs CH_ANCHOR
+       (SE clustered on the 14 folds, which tile the tape without overlap):
+
+       set      bar       chooser       move(KEY/VALUE)   mean OOS Sharpe   d vs ANCHOR    SE      t
+       NG       A_NONE    H_RUNNERUP   0.048/0.048            1.0179      -0.0183   0.0158 -1.16
+       NG       A_NONE    H_NARROWEST  0.024/0.024            1.0368      +0.0006   0.0006 +1.00
+       NG       A_NONE    H_ANY        0.095/0.095            1.0394      +0.0032   0.0226 +0.14
+       NG       A_NONE    CH_RAW       1.000/1.000            0.9677      -0.0685   0.0514 -1.33
+       NG       A_NONE    CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_POS     H_RUNNERUP   0.048/0.048            1.0179      -0.0183   0.0158 -1.16
+       NG       A_POS     H_NARROWEST  0.024/0.024            1.0368      +0.0006   0.0006 +1.00
+       NG       A_POS     H_ANY        0.095/0.095            1.0394      +0.0032   0.0226 +0.14
+       NG       A_POS     CH_RAW       1.000/1.000            0.9677      -0.0685   0.0514 -1.33
+       NG       A_POS     CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_MED     H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_MED     H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_MED     H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_MED     CH_RAW       0.429/0.429            1.0222      -0.0141   0.0319 -0.44
+       NG       A_MED     CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_90      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_90      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_90      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_90      CH_RAW       0.095/0.095            1.0273      -0.0090   0.0075 -1.20
+       NG       A_90      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_95      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_95      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_95      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_95      CH_RAW       0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_95      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_99      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_99      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_99      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_99      CH_RAW       0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG       A_99      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_NONE    H_RUNNERUP   0.048/0.048            1.0179      -0.0183   0.0158 -1.16
+       NG_D     A_NONE    H_NARROWEST  0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       NG_D     A_NONE    H_ANY        0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       NG_D     A_NONE    CH_RAW       1.000/1.000            0.9677      -0.0685   0.0514 -1.33
+       NG_D     A_NONE    CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_POS     H_RUNNERUP   0.048/0.048            1.0179      -0.0183   0.0158 -1.16
+       NG_D     A_POS     H_NARROWEST  0.024/0.024            1.0368      +0.0006   0.0006 +1.00
+       NG_D     A_POS     H_ANY        0.095/0.095            1.0394      +0.0032   0.0226 +0.14
+       NG_D     A_POS     CH_RAW       1.000/1.000            0.9677      -0.0685   0.0514 -1.33
+       NG_D     A_POS     CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_MED     H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_MED     H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_MED     H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_MED     CH_RAW       0.429/0.429            1.0222      -0.0141   0.0319 -0.44
+       NG_D     A_MED     CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_90      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_90      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_90      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_90      CH_RAW       0.095/0.095            1.0273      -0.0090   0.0075 -1.20
+       NG_D     A_90      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_95      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_95      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_95      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_95      CH_RAW       0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_95      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_99      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_99      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_99      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_99      CH_RAW       0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       NG_D     A_99      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_NONE    H_RUNNERUP   0.048/0.048            1.0179      -0.0183   0.0158 -1.16
+       ALL4     A_NONE    H_NARROWEST  0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       ALL4     A_NONE    H_ANY        0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       ALL4     A_NONE    CH_RAW       1.000/1.000            0.9677      -0.0685   0.0514 -1.33
+       ALL4     A_NONE    CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_POS     H_RUNNERUP   0.048/0.048            1.0179      -0.0183   0.0158 -1.16
+       ALL4     A_POS     H_NARROWEST  0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       ALL4     A_POS     H_ANY        0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       ALL4     A_POS     CH_RAW       1.000/1.000            0.9677      -0.0685   0.0514 -1.33
+       ALL4     A_POS     CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_MED     H_RUNNERUP   0.190/0.190            1.0213      -0.0149   0.0213 -0.70
+       ALL4     A_MED     H_NARROWEST  0.262/0.262            1.0316      -0.0046   0.0239 -0.19
+       ALL4     A_MED     H_ANY        0.262/0.262            1.0316      -0.0046   0.0239 -0.19
+       ALL4     A_MED     CH_RAW       0.810/0.429            1.0222      -0.0141   0.0319 -0.44
+       ALL4     A_MED     CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_90      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_90      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_90      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_90      CH_RAW       0.238/0.095            1.0273      -0.0090   0.0075 -1.20
+       ALL4     A_90      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_95      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_95      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_95      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_95      CH_RAW       0.071/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_95      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_99      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_99      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_99      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_99      CH_RAW       0.024/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4     A_99      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_NONE    H_RUNNERUP   0.048/0.048            1.0179      -0.0183   0.0158 -1.16
+       ALL4_D   A_NONE    H_NARROWEST  0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       ALL4_D   A_NONE    H_ANY        0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       ALL4_D   A_NONE    CH_RAW       1.000/1.000            0.9677      -0.0685   0.0514 -1.33
+       ALL4_D   A_NONE    CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_POS     H_RUNNERUP   0.048/0.048            1.0179      -0.0183   0.0158 -1.16
+       ALL4_D   A_POS     H_NARROWEST  0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       ALL4_D   A_POS     H_ANY        0.881/0.881            0.9875      -0.0487   0.0502 -0.97
+       ALL4_D   A_POS     CH_RAW       1.000/1.000            0.9677      -0.0685   0.0514 -1.33
+       ALL4_D   A_POS     CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_MED     H_RUNNERUP   0.190/0.190            1.0213      -0.0149   0.0213 -0.70
+       ALL4_D   A_MED     H_NARROWEST  0.262/0.262            1.0316      -0.0046   0.0239 -0.19
+       ALL4_D   A_MED     H_ANY        0.262/0.262            1.0316      -0.0046   0.0239 -0.19
+       ALL4_D   A_MED     CH_RAW       0.810/0.429            1.0222      -0.0141   0.0319 -0.44
+       ALL4_D   A_MED     CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_90      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_90      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_90      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_90      CH_RAW       0.238/0.095            1.0273      -0.0090   0.0075 -1.20
+       ALL4_D   A_90      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_95      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_95      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_95      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_95      CH_RAW       0.071/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_95      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_99      H_RUNNERUP   0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_99      H_NARROWEST  0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_99      H_ANY        0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_99      CH_RAW       0.024/0.000            1.0362      +0.0000   0.0000 +0.00
+       ALL4_D   A_99      CH_ANCHOR    0.000/0.000            1.0362      +0.0000   0.0000 +0.00
+
+============================================================================================================
+ARM D — DOES THE BAR PAY FOR A REASON OTHER THAN MOVING LESS?
+============================================================================================================
+
+  THE NULL (1227's NL_PERM, count-matched).  For each (set, bar, form) the chooser makes
+  a decision at each of the 42 cells: MOVE to some book, or HOLD the anchor.  The null
+  keeps the chooser's OWN destination multiset and its OWN move COUNT and re-deals the
+  destinations to RANDOMLY chosen cells.  If the observed mean OOS Sharpe sits inside
+  that band, the bar buys nothing beyond the number of times it declines to move.
+
+       set      bar       form           moves  obs mean   null mean   null SD   gap      p
+       NG       A_NONE    H_RUNNERUP        2    1.0179      1.0354    0.0110  -0.0175  0.9393
+       NG       A_NONE    H_NARROWEST       1    1.0368      1.0356    0.0098  +0.0012  0.3735
+       NG       A_NONE    H_ANY             4    1.0394      1.0380    0.0162  +0.0014  0.4505
+       NG       A_NONE    CH_RAW           42    0.9677      1.0404    0.0417  -0.0727  0.9565
+       NG       A_NONE    CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_POS     H_RUNNERUP        2    1.0179      1.0353    0.0111  -0.0174  0.9343
+       NG       A_POS     H_NARROWEST       1    1.0368      1.0355    0.0100  +0.0014  0.3725
+       NG       A_POS     H_ANY             4    1.0394      1.0383    0.0164  +0.0011  0.4597
+       NG       A_POS     CH_RAW           42    0.9677      1.0402    0.0414  -0.0724  0.9677
+       NG       A_POS     CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_MED     H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_MED     H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_MED     H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_MED     CH_RAW           18    1.0222      1.0468    0.0267  -0.0246  0.8227
+       NG       A_MED     CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_90      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_90      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_90      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_90      CH_RAW            4    1.0273      1.0406    0.0107  -0.0133  0.8935
+       NG       A_90      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_95      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_95      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_95      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_95      CH_RAW            0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_95      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_99      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_99      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_99      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_99      CH_RAW            0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG       A_99      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_NONE    H_RUNNERUP        2    1.0179      1.0356    0.0110  -0.0177  0.9390
+       NG_D     A_NONE    H_NARROWEST      37    0.9875      1.0691    0.0456  -0.0815  0.9667
+       NG_D     A_NONE    H_ANY            37    0.9875      1.0695    0.0452  -0.0820  0.9667
+       NG_D     A_NONE    CH_RAW           42    0.9677      1.0395    0.0417  -0.0718  0.9535
+       NG_D     A_NONE    CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_POS     H_RUNNERUP        2    1.0179      1.0357    0.0110  -0.0178  0.9413
+       NG_D     A_POS     H_NARROWEST       1    1.0368      1.0358    0.0102  +0.0010  0.3960
+       NG_D     A_POS     H_ANY             4    1.0394      1.0381    0.0161  +0.0012  0.4515
+       NG_D     A_POS     CH_RAW           42    0.9677      1.0400    0.0426  -0.0722  0.9543
+       NG_D     A_POS     CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_MED     H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_MED     H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_MED     H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_MED     CH_RAW           18    1.0222      1.0461    0.0262  -0.0240  0.8250
+       NG_D     A_MED     CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_90      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_90      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_90      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_90      CH_RAW            4    1.0273      1.0403    0.0108  -0.0131  0.8865
+       NG_D     A_90      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_95      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_95      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_95      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_95      CH_RAW            0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_95      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_99      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_99      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_99      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_99      CH_RAW            0    1.0362      1.0362    0.0000  +0.0000   n/a
+       NG_D     A_99      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_NONE    H_RUNNERUP        2    1.0179      1.0354    0.0109  -0.0176  0.9395
+       ALL4     A_NONE    H_NARROWEST      37    0.9875      1.0692    0.0452  -0.0816  0.9688
+       ALL4     A_NONE    H_ANY            37    0.9875      1.0688    0.0455  -0.0813  0.9657
+       ALL4     A_NONE    CH_RAW           42    0.9677      1.0401    0.0411  -0.0723  0.9597
+       ALL4     A_NONE    CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_POS     H_RUNNERUP        2    1.0179      1.0357    0.0110  -0.0178  0.9413
+       ALL4     A_POS     H_NARROWEST      37    0.9875      1.0688    0.0457  -0.0813  0.9637
+       ALL4     A_POS     H_ANY            37    0.9875      1.0699    0.0456  -0.0823  0.9680
+       ALL4     A_POS     CH_RAW           42    0.9677      1.0404    0.0423  -0.0726  0.9595
+       ALL4     A_POS     CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_MED     H_RUNNERUP        8    1.0213      1.0395    0.0208  -0.0182  0.8055
+       ALL4     A_MED     H_NARROWEST      11    1.0316      1.0488    0.0278  -0.0171  0.7220
+       ALL4     A_MED     H_ANY            11    1.0316      1.0488    0.0277  -0.0171  0.7230
+       ALL4     A_MED     CH_RAW           18    1.0222      1.0462    0.0264  -0.0241  0.8155
+       ALL4     A_MED     CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_90      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_90      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_90      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_90      CH_RAW            4    1.0273      1.0406    0.0109  -0.0134  0.8922
+       ALL4     A_90      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_95      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_95      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_95      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_95      CH_RAW            0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_95      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_99      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_99      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_99      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_99      CH_RAW            0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4     A_99      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_NONE    H_RUNNERUP        2    1.0179      1.0356    0.0110  -0.0177  0.9395
+       ALL4_D   A_NONE    H_NARROWEST      37    0.9875      1.0686    0.0459  -0.0811  0.9615
+       ALL4_D   A_NONE    H_ANY            37    0.9875      1.0685    0.0452  -0.0810  0.9647
+       ALL4_D   A_NONE    CH_RAW           42    0.9677      1.0409    0.0422  -0.0731  0.9575
+       ALL4_D   A_NONE    CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_POS     H_RUNNERUP        2    1.0179      1.0355    0.0110  -0.0176  0.9360
+       ALL4_D   A_POS     H_NARROWEST      37    0.9875      1.0686    0.0465  -0.0811  0.9605
+       ALL4_D   A_POS     H_ANY            37    0.9875      1.0690    0.0443  -0.0815  0.9745
+       ALL4_D   A_POS     CH_RAW           42    0.9677      1.0405    0.0419  -0.0728  0.9585
+       ALL4_D   A_POS     CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_MED     H_RUNNERUP        8    1.0213      1.0395    0.0207  -0.0182  0.8115
+       ALL4_D   A_MED     H_NARROWEST      11    1.0316      1.0492    0.0268  -0.0175  0.7380
+       ALL4_D   A_MED     H_ANY            11    1.0316      1.0478    0.0269  -0.0161  0.7212
+       ALL4_D   A_MED     CH_RAW           18    1.0222      1.0466    0.0265  -0.0244  0.8167
+       ALL4_D   A_MED     CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_90      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_90      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_90      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_90      CH_RAW            4    1.0273      1.0403    0.0106  -0.0130  0.8880
+       ALL4_D   A_90      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_95      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_95      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_95      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_95      CH_RAW            0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_95      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_99      H_RUNNERUP        0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_99      H_NARROWEST       0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_99      H_ANY             0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_99      CH_RAW            0    1.0362      1.0362    0.0000  +0.0000   n/a
+       ALL4_D   A_99      CH_ANCHOR         0    1.0362      1.0362    0.0000  +0.0000   n/a
+
+       Over the 46 (set, bar, chooser) cells that move at all: the observed
+       mean sits ABOVE its own count-matched null at 6 of 46; mean gap -0.0388; p < 0.05 at 0; p < 0.05 expected by chance 2.3.
+
+============================================================================================================
+ARM E — RULE 8: THE SINGLE SPLIT THE PROTOCOL NAMES
+============================================================================================================
+  Both dials AND the chooser chosen on the IS window (to 2016-12-31) ONLY;
+  2017-2026 read ONCE.
+
+  EVERY DISTINCT RULE-8 OUTCOME (rows collapse where the pick is the same book):
+  panel  pick            full CAGR/Sharpe/MaxDD       halves         OOS CAGR/Sharpe/MaxDD      4a   4b   4bOOS
+  B136   CADENCE=W        16.18% / 1.0715 /  -20.74%  1.2902/0.8995   16.29% / 1.0240 /  -20.74%   False False False
+  B136   GROSS=0.75       16.18% / 1.0715 /  -20.74%  1.2902/0.8995   16.29% / 1.0240 /  -20.74%   False False False
+  B136   N=5              18.73% / 0.9690 /  -28.12%  1.3074/0.7109   14.71% / 0.7546 /  -28.12%   False False False
+  SMALL  CADENCE=W         7.84% / 0.5055 /  -35.81%  0.6594/0.3942    7.09% / 0.4534 /  -35.81%   False False False
+  SMALL  H=252            13.36% / 0.7845 /  -37.41%  0.9555/0.6419   11.16% / 0.6677 /  -37.41%   False False False
+  U56    CADENCE=W        15.71% / 1.1480 /  -19.13%  1.2127/1.1050   17.16% / 1.1759 /  -19.13%   False True  True 
+  U56    N=40             13.40% / 1.1311 /  -22.46%  1.2663/1.0361   14.08% / 1.1150 /  -22.46%   False False False
+
+  RULE-8 ROWS BY GRID CELL (all 24 cells x 5 choosers x 3 panels):
+       set      bar       moved(K/V)   mean OOS Sharpe   4a   4b   4bOOS
+       NG       A_NONE    0.267/0.267             0.8727     0    3      3
+       NG       A_POS     0.267/0.267             0.8727     0    3      3
+       NG       A_MED     0.067/0.067             0.8988     0    5      5
+       NG       A_90      0.000/0.000             0.8845     0    5      5
+       NG       A_95      0.000/0.000             0.8845     0    5      5
+       NG       A_99      0.000/0.000             0.8845     0    5      5
+       NG_D     A_NONE    0.600/0.600             0.8613     0    2      2
+       NG_D     A_POS     0.267/0.267             0.8727     0    3      3
+       NG_D     A_MED     0.067/0.067             0.8988     0    5      5
+       NG_D     A_90      0.000/0.000             0.8845     0    5      5
+       NG_D     A_95      0.000/0.000             0.8845     0    5      5
+       NG_D     A_99      0.000/0.000             0.8845     0    5      5
+       ALL4     A_NONE    0.600/0.600             0.8613     0    2      2
+       ALL4     A_POS     0.600/0.600             0.8613     0    2      2
+       ALL4     A_MED     0.333/0.267             0.9416     0    5      5
+       ALL4     A_90      0.067/0.000             0.8845     0    5      5
+       ALL4     A_95      0.000/0.000             0.8845     0    5      5
+       ALL4     A_99      0.000/0.000             0.8845     0    5      5
+       ALL4_D   A_NONE    0.600/0.600             0.8613     0    2      2
+       ALL4_D   A_POS     0.600/0.600             0.8613     0    2      2
+       ALL4_D   A_MED     0.333/0.267             0.9416     0    5      5
+       ALL4_D   A_90      0.067/0.000             0.8845     0    5      5
+       ALL4_D   A_95      0.000/0.000             0.8845     0    5      5
+       ALL4_D   A_99      0.000/0.000             0.8845     0    5      5
+
+  (E1) THE STITCHED DEPLOYABLE CURVES — each chooser's own fold picks, concatenated.
+       360 stitched curves, 18 DISTINCT outcomes:
+       B136   CH_ANCHOR|ALL4_D|A_90     16.36% / 1.0776 /  -20.74%  halves 1.3055/0.9101  OOS  16.29% / 1.0240 /  -20.74%   4a False  4b False  4b_OOS False
+       B136   CH_RAW|ALL4_D|A_MED       16.75% / 1.0853 /  -20.74%  halves 1.3094/0.9101  OOS  16.29% / 1.0240 /  -20.74%   4a False  4b False  4b_OOS False
+       B136   CH_RAW|ALL4_D|A_NONE      15.30% / 0.9497 /  -28.69%  halves 1.2240/0.7351  OOS  13.07% / 0.7993 /  -28.69%   4a False  4b False  4b_OOS False
+       B136   H_ANY|ALL4_D|A_NONE       14.74% / 0.9368 /  -28.69%  halves 1.1010/0.8167  OOS  13.71% / 0.8441 /  -28.69%   4a False  4b False  4b_OOS False
+       B136   H_ANY|NG_D|A_POS          16.25% / 1.0062 /  -28.69%  halves 1.2270/0.8782  OOS  16.12% / 0.9411 /  -28.69%   4a False  4b False  4b_OOS False
+       B136   H_RUNNERUP|ALL4_D|A_NONE  15.50% / 1.0304 /  -19.41%  halves 1.2270/0.8887  OOS  15.07% / 0.9604 /  -19.41%   4a False  4b True  4b_OOS False
+       SMALL  CH_ANCHOR|ALL4_D|A_90      7.45% / 0.4889 /  -35.81%  halves 0.6925/0.3625  OOS   7.09% / 0.4534 /  -35.81%   4a False  4b False  4b_OOS False
+       SMALL  CH_RAW|ALL4_D|A_90         7.05% / 0.4731 /  -36.31%  halves 0.6925/0.3301  OOS   6.53% / 0.4310 /  -36.31%   4a False  4b False  4b_OOS False
+       SMALL  CH_RAW|ALL4_D|A_MED        6.79% / 0.4564 /  -36.31%  halves 0.7470/0.2738  OOS   5.21% / 0.3612 /  -36.31%   4a False  4b False  4b_OOS False
+       SMALL  H_ANY|ALL4_D|A_MED         7.99% / 0.5201 /  -37.41%  halves 0.6341/0.4556  OOS   8.11% / 0.5048 /  -37.41%   4a False  4b False  4b_OOS False
+       SMALL  H_ANY|ALL4_D|A_NONE        7.64% / 0.5065 /  -37.41%  halves 0.6329/0.4322  OOS   7.62% / 0.4859 /  -37.41%   4a False  4b False  4b_OOS False
+       SMALL  H_RUNNERUP|ALL4_D|A_MED    7.10% / 0.4700 /  -35.81%  halves 0.6429/0.3625  OOS   6.67% / 0.4321 /  -35.81%   4a False  4b False  4b_OOS False
+       U56    CH_ANCHOR|ALL4_D|A_90     16.89% / 1.2199 /  -19.13%  halves 1.2635/1.2043  OOS  17.16% / 1.1759 /  -19.13%   4a False  4b True  4b_OOS True
+       U56    CH_RAW|ALL4_D|A_MED       16.63% / 1.2051 /  -19.13%  halves 1.2635/1.1774  OOS  16.79% / 1.1559 /  -19.13%   4a False  4b True  4b_OOS True
+       U56    CH_RAW|ALL4_D|A_NONE      15.91% / 1.0920 /  -22.46%  halves 1.0903/1.1177  OOS  16.51% / 1.0995 /  -22.46%   4a False  4b False  4b_OOS False
+       U56    H_ANY|ALL4_D|A_NONE       15.81% / 1.1371 /  -23.08%  halves 1.1347/1.1684  OOS  16.62% / 1.1427 /  -23.08%   4a False  4b False  4b_OOS False
+       U56    H_ANY|NG_D|A_POS          16.87% / 1.2153 /  -23.08%  halves 1.2627/1.2033  OOS  17.14% / 1.1703 /  -23.08%   4a False  4b False  4b_OOS False
+       U56    H_NARROWEST|NG_D|A_POS    17.04% / 1.2177 /  -23.08%  halves 1.2635/1.2033  OOS  17.38% / 1.1747 /  -23.08%   4a False  4b False  4b_OOS False
+
+     STITCHED CURVES (360): 4a 0; 4b full 104; 4b OOS 96; BOTH 96
+     RULE-8 PICKS (360): 4a 0; 4b full 99; 4b OOS 99; BOTH 99
+     the 4b-passing rule-8 rows, by DISTINCT BOOK (1194's gross-free key):
+       ('U56', 'CADENCE', 'W')  x99 rows  full  15.71% / 1.1480 /  -19.13%  OOS  17.16% / 1.1759 /  -19.13%
+
+  (E2) THE HEADLINE — MEAN OOS SHARPE BY BAR, POOLED OVER SETS AND HEADLINE FORMS
+       (the 3 headline forms only; CH_RAW and CH_ANCHOR reported beside them).
+
+       bar       rolling folds (42 cells x 4 sets x 3 forms)     rule 8 (3 panels)
+                 mean OOS Sh   d vs A_NONE   move(V)             mean OOS Sh   d vs A_NONE
+       A_NONE         1.0061       +0.0000   0.466                    0.8634       +0.0000
+       A_POS          1.0145       +0.0084   0.329                    0.8682       +0.0048
+       A_MED          1.0322       +0.0261   0.119                    0.9202       +0.0567
+       A_90           1.0362       +0.0301   0.000                    0.8845       +0.0210
+       A_95           1.0362       +0.0301   0.000                    0.8845       +0.0210
+       A_99           1.0362       +0.0301   0.000                    0.8845       +0.0210
+       ANCHOR         1.0362   (do nothing)                         0.8845   (do nothing)
+
+       BEST BAR ON THE ROLLING WALK: A_90 at 1.0362 (+0.0301 vs the record's habit A_NONE), still +0.0000 against DOING NOTHING (1.0362).
+
+============================================================================================================
+GATES
+============================================================================================================
+  PASS  G0 Monte-Carlo d2(k) == published Hartley constants                  0.00096632 (target 0.005)
+  PASS  G2 every DEG rung == the anchor book, bit for bit                             0 (target 1e-15)
+  PASS  G4 fast runner == engine.backtest on the decision-time frame        2.77556e-17 (target 1e-10)
+  PASS  G5 live RULES v2 U56 MaxDD == the record's committed -12.05%          -0.120549 (target -0.1205)
+  PASS  G6 block-sum bootstrap == direct Sharpe on the identity tiling      4.44089e-15 (target 1e-10)
+  PASS  G7 folds tile U56 with no overlap and no gap                                  0 (target 0)
+  PASS  G7 folds tile B136 with no overlap and no gap                                 0 (target 0)
+  PASS  G7 folds tile SMALL with no overlap and no gap                                0 (target 0)
+  PASS  G3 the DEG ladder's IS spread is exactly 0 at every cell                      0 (target 0)
+  PASS  G8 the DEG ladder is admitted by NO bar above A_NONE                          0 (target 0)
+  PASS  G9 the A_NONE / ALL4 pairs replay 1223's committed table            4.54747e-13 (target 1e-12)
+  PASS  G10 CH_ANCHOR move rate == 0 (inert to both dials)                            0 (target 0)
+  PASS  G11 the VALUE move rate never exceeds the KEY move rate              -0.0103175 (target 0)
+  PASS  G12 the count-matched null is computed at every moving cell                   1 (target 1)
+  PASS  G13 each stitched curve's length == the sum of its folds'                     0 (target 0)
+  PASS  G14 the null bands are deterministic across two constructions                 0 (target 0)
+  PASS  G15 the admission bands are deterministic across two constructions              0 (target 0)
+  17 of 17 gates pass.
+
+============================================================================================================
+ANSWER: (B) THE BAR REPAIRS THE DAMAGE BUT DOES NOT BEAT DOING NOTHING
+  the best bar buys +0.0301 of mean OOS fold Sharpe over the record's
+  habit of admitting everything, and still gives up +0.0000 against doing nothing;
+  6 of 46 moving cells sit above their own count-matched null, 0 at p < 0.05 against 2.3 expected.
+============================================================================================================
+runtime 18.8s
