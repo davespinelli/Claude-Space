@@ -1,0 +1,146 @@
+====================================================================================================
+IDEA 1205 (cloud lane, 2026-09-17) — does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF
+====================================================================================================
+
+## PANELS
+  U56      56 cols, 4,706 rows 2008-01-02 -> 2026-09-16  warm 4,446  IS 2,007  OOS 2,439
+  B136    136 cols, 4,703 rows 2008-01-02 -> 2026-09-11  warm 4,443  IS 2,007  OOS 2,436
+  SMALL   664 cols, 4,198 rows 2010-01-04 -> 2026-09-11  warm 3,938  IS 1,502  OOS 2,436
+  SMALL STAMP: data/small_meta.csv lists 715 tickers; 52 dropped for max_1d_move >= 1.0; pool served = 663 names + SPY as benchmark.
+
+## GATES — printed before any result number
+  G_D2  PASS  d2(2) == 2/sqrt(pi) (quadrature vs closed form)                  0.0000e+00
+  G_D2b PASS  d2(5) == 2.325929 (published control-chart table)                5.2719e-08
+  G1    PASS  fast runner == engine.backtest (U56 anchor, post warm-up)        1.3878e-17
+  G2    PASS  book() == the gate's own anchor path                             2.7756e-17
+  G3    PASS  W(g) == g * W(1.0) exactly (gross rung reuses one selection)     6.9389e-18
+  G4    PASS  determinism: same book twice                                     0.0000e+00
+  G5    PASS  two null books are NOT the same path (|corr| < 0.99)             9.5412e-01
+
+## BENCHMARKS (per panel, 10 bps, post warm-up)
+  U56    SPY    15.06% / 0.8814 /  -33.72%  halves 0.9598/0.8170  OOS  15.15% / 0.8684 /  -33.72%
+  U56    LIVE    8.60% / 1.1980 /  -12.05%  halves 1.2329/1.1702  OOS   9.42% / 1.2714 /  -12.05%
+  B136   SPY    15.16% / 0.8861 /  -33.72%  halves 0.9596/0.8259  OOS  15.33% / 0.8767 /  -33.72%
+  B136   LIVE    7.98% / 1.0993 /  -12.24%  halves 1.2348/0.9658  OOS   7.88% / 1.1059 /  -12.24%
+  SMALL  SPY    14.06% / 0.8581 /  -33.72%  halves 0.9138/0.8344  OOS  15.33% / 0.8767 /  -33.72%
+  SMALL  LIVE    4.30% / 0.6637 /  -13.89%  halves 0.8063/0.5552  OOS   3.75% / 0.5600 /  -13.89%
+
+## ARM 1 — every rung of every ladder on every panel (published in .rungs.csv)
+  U56    done  (6s elapsed)
+  B136   done  (10s elapsed)
+  SMALL  done  (22s elapsed)
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.rungs.csv  (279 rows, 15 cols)
+
+## ARM 1b — the per-rung sampling SD of Sharpe under each SD BASIS
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.rungsd.csv  (837 rows, 6 cols)
+  median SD of a single rung's Sharpe, by basis and panel:
+    S_IID    U56=0.2421 B136=0.2420 SMALL=0.2557
+    S_BLOCK  U56=0.2075 B136=0.2041 SMALL=0.2211
+    S_FOLD   U56=0.1929 B136=0.2138 SMALL=0.2077
+
+## ARM 2 — R = range / (d2(k) x rung SD), against RANGE and RANGE/|MEAN|
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.dialgrid.csv  (396 rows, 13 cols)
+  R on SHARPE, every one of the 9 dial cells x every ladder x every panel:
+    L_RECORD  S_IID    N:0.2535  H:0.1009  GROSS:0.0054  CADENCE:0.3895
+    L_RECORD  S_BLOCK  N:0.2903  H:0.1129  GROSS:0.0064  CADENCE:0.4585
+    L_RECORD  S_FOLD   N:0.2954  H:0.1244  GROSS:0.0064  CADENCE:0.4712
+    L_RECORD  S_CROSS  N:0.9976  H:1.1335  GROSS:1.0383  CADENCE:1.0535
+    L_WIDE    S_IID    N:0.2921  H:0.1623  GROSS:0.0044  CADENCE:0.2873
+    L_WIDE    S_BLOCK  N:0.3381  H:0.1830  GROSS:0.0052  CADENCE:0.3460
+    L_WIDE    S_FOLD   N:0.3373  H:0.1972  GROSS:0.0053  CADENCE:0.3560
+    L_WIDE    S_CROSS  N:0.9049  H:0.9838  GROSS:0.8960  CADENCE:1.0721
+    L_CTRL    S_IID    CTRL_DEGEN:0.0000  CTRL_SEED:0.0116  CTRL_LIVE:0.3906
+    L_CTRL    S_BLOCK  CTRL_DEGEN:0.0000  CTRL_SEED:0.0138  CTRL_LIVE:0.4260
+    L_CTRL    S_FOLD   CTRL_DEGEN:0.0000  CTRL_SEED:0.0138  CTRL_LIVE:0.4390
+    L_CTRL    S_CROSS  CTRL_DEGEN:nan  CTRL_SEED:1.0424  CTRL_LIVE:0.9787
+
+## ARM 2b — THE CALIBRATION: does R read 1 where its null actually holds?
+    S_IID    CTRL_DEGEN  R = 0.0000  [0.0000, 0.0000]  over 3 panels
+    S_IID    CTRL_SEED   R = 0.0116  [0.0000, 0.0174]  over 3 panels
+    S_IID    CTRL_LIVE   R = 0.3906  [0.1266, 0.6086]  over 3 panels
+    S_BLOCK  CTRL_DEGEN  R = 0.0000  [0.0000, 0.0000]  over 3 panels
+    S_BLOCK  CTRL_SEED   R = 0.0138  [0.0000, 0.0213]  over 3 panels
+    S_BLOCK  CTRL_LIVE   R = 0.4260  [0.1489, 0.6152]  over 3 panels
+    S_FOLD   CTRL_DEGEN  R = 0.0000  [0.0000, 0.0000]  over 3 panels
+    S_FOLD   CTRL_SEED   R = 0.0138  [0.0000, 0.0214]  over 3 panels
+    S_FOLD   CTRL_LIVE   R = 0.4390  [0.1649, 0.6186]  over 3 panels
+    S_CROSS  CTRL_DEGEN  R = nan  [nan, nan]  over 3 panels
+    S_CROSS  CTRL_SEED   R = 1.0424  [0.9395, 1.1453]  over 3 panels
+    S_CROSS  CTRL_LIVE   R = 0.9787  [0.9028, 1.0799]  over 3 panels
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.calibration.csv  (12 rows, 5 cols)
+  H_NULL         REFUTED    CTRL_LIVE mean R = 0.4186, range [0.1266, 0.6186]
+  H_REACH        REFUTED    max real-ladder R = 0.6894 over 72 cells; 0 of 72 at or above 1
+  H_TAUT         SUPPORTED  S_CROSS R over 29 ladders with non-zero range: mean 1.0090, range [0.8347, 1.1625]
+
+## ARM 2c — DOES R SEPARATE GROSS FROM THE LIVE DIALS BETTER THAN THE SPREAD?
+    L_RECORD  S_IID    AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    L_RECORD  S_BLOCK  AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    L_RECORD  S_FOLD   AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    L_RECORD  S_CROSS  AUC  R 0.6667 | RANGE 1.0000 | REL 1.0000   R-RANGE -0.3333  R-REL -0.3333
+    L_WIDE    S_IID    AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    L_WIDE    S_BLOCK  AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    L_WIDE    S_FOLD   AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    L_WIDE    S_CROSS  AUC  R 0.8148 | RANGE 1.0000 | REL 1.0000   R-RANGE -0.1852  R-REL -0.1852
+    BOTH      S_IID    AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    BOTH      S_BLOCK  AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    BOTH      S_FOLD   AUC  R 1.0000 | RANGE 1.0000 | REL 1.0000   R-RANGE +0.0000  R-REL +0.0000
+    BOTH      S_CROSS  AUC  R 0.6852 | RANGE 1.0000 | REL 1.0000   R-RANGE -0.3148  R-REL -0.3148
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.separation.csv  (12 rows, 9 cols)
+  WHY: within a panel the denominator d2(k) x rung-SD barely moves, so R is the
+       RANGE divided by a near-constant -- a monotone transform, hence the same order.
+    U56    S_IID    denominator spread x  2.01   RANGE spread x   107.79
+    U56    S_BLOCK  denominator spread x  2.03   RANGE spread x   107.79
+    U56    S_FOLD   denominator spread x  2.38   RANGE spread x   107.79
+    B136   S_IID    denominator spread x  2.05   RANGE spread x    35.37
+    B136   S_BLOCK  denominator spread x  1.96   RANGE spread x    35.37
+    B136   S_FOLD   denominator spread x  2.52   RANGE spread x    35.37
+    SMALL  S_IID    denominator spread x  2.09   RANGE spread x   106.98
+    SMALL  S_BLOCK  denominator spread x  1.99   RANGE spread x   106.98
+    SMALL  S_FOLD   denominator spread x  1.97   RANGE spread x   106.98
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.mechanism.csv  (9 rows, 5 cols)
+  H_MECH         SUPPORTED  denominator x2.52 at worst against RANGE x35.37 at best
+  H_SEP          REFUTED    gain vs RANGE -0.3148..+0.0000; vs REL-RANGE -0.3148..+0.0000
+
+## ARM 3 — RULE 8 WALK-FORWARD.  Rung chosen on IS (warm-up..2016-12-31) by IS Sharpe;
+##         2017-2026 read ONCE.  Both KEEP paths evaluated on the chosen book.
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.picks.csv  (24 rows, 39 cols)
+    U56    L_RECORD  N        rung=40.0   OOS  13.94% / 1.0945 /  -22.98%  (SPY 0.8684, LIVE 1.2714)  4b full n OOS n 4a n  choose-gain -0.0119
+    U56    L_RECORD  H        rung=21.0   OOS  15.31% / 1.1117 /  -20.24%  (SPY 0.8684, LIVE 1.2714)  4b full n OOS n 4a n  choose-gain -0.0129
+    U56    L_RECORD  GROSS    rung=1.0    OOS  22.65% / 1.1623 /  -24.93%  (SPY 0.8684, LIVE 1.2714)  4b full n OOS n 4a n  choose-gain +0.0013
+    U56    L_RECORD  CADENCE  rung=5.0    OOS  16.89% / 1.1197 /  -22.15%  (SPY 0.8684, LIVE 1.2714)  4b full n OOS n 4a n  choose-gain +0.0139
+    U56    L_WIDE    N        rung=3.0    OOS  17.45% / 0.8157 /  -27.65%  (SPY 0.8684, LIVE 1.2714)  4b full n OOS n 4a n  choose-gain -0.2508
+    U56    L_WIDE    H        rung=90.0   OOS  16.59% / 1.0993 /  -23.87%  (SPY 0.8684, LIVE 1.2714)  4b full n OOS n 4a n  choose-gain -0.0260
+    U56    L_WIDE    GROSS    rung=1.0    OOS  22.65% / 1.1623 /  -24.93%  (SPY 0.8684, LIVE 1.2714)  4b full n OOS n 4a n  choose-gain +0.0013
+    U56    L_WIDE    CADENCE  rung=5.0    OOS  16.89% / 1.1197 /  -22.15%  (SPY 0.8684, LIVE 1.2714)  4b full n OOS n 4a n  choose-gain +0.0084
+    B136   L_RECORD  N        rung=8.0    OOS  14.56% / 0.7866 /  -24.54%  (SPY 0.8767, LIVE 1.1059)  4b full n OOS n 4a n  choose-gain -0.1714
+    B136   L_RECORD  H        rung=63.0   OOS  16.49% / 0.9960 /  -28.69%  (SPY 0.8767, LIVE 1.1059)  4b full n OOS n 4a n  choose-gain -0.0049
+    B136   L_RECORD  GROSS    rung=1.0    OOS  21.30% / 1.0122 /  -26.97%  (SPY 0.8767, LIVE 1.1059)  4b full n OOS n 4a n  choose-gain +0.0033
+    B136   L_RECORD  CADENCE  rung=63.0   OOS  18.76% / 1.1235 /  -23.22%  (SPY 0.8767, LIVE 1.1059)  4b full n OOS n 4a n  choose-gain +0.0812
+    B136   L_WIDE    N        rung=8.0    OOS  14.56% / 0.7866 /  -24.54%  (SPY 0.8767, LIVE 1.1059)  4b full n OOS n 4a n  choose-gain -0.1649
+    B136   L_WIDE    H        rung=63.0   OOS  16.49% / 0.9960 /  -28.69%  (SPY 0.8767, LIVE 1.1059)  4b full n OOS n 4a n  choose-gain +0.0234
+    B136   L_WIDE    GROSS    rung=1.0    OOS  21.30% / 1.0122 /  -26.97%  (SPY 0.8767, LIVE 1.1059)  4b full n OOS n 4a n  choose-gain +0.0032
+    B136   L_WIDE    CADENCE  rung=42.0   OOS  16.01% / 0.9713 /  -24.09%  (SPY 0.8767, LIVE 1.1059)  4b full n OOS n 4a n  choose-gain -0.0387
+    SMALL  L_RECORD  N        rung=25.0   OOS   6.17% / 0.4164 /  -35.59%  (SPY 0.8767, LIVE 0.5600)  4b full n OOS n 4a n  choose-gain +0.0051
+    SMALL  L_RECORD  H        rung=63.0   OOS   7.22% / 0.4616 /  -36.59%  (SPY 0.8767, LIVE 0.5600)  4b full n OOS n 4a n  choose-gain +0.0115
+    SMALL  L_RECORD  GROSS    rung=1.0    OOS   8.69% / 0.4544 /  -45.42%  (SPY 0.8767, LIVE 0.5600)  4b full n OOS n 4a n  choose-gain +0.0016
+    SMALL  L_RECORD  CADENCE  rung=5.0    OOS   6.55% / 0.4151 /  -36.74%  (SPY 0.8767, LIVE 0.5600)  4b full n OOS n 4a n  choose-gain -0.0803
+    SMALL  L_WIDE    N        rung=25.0   OOS   6.17% / 0.4164 /  -35.59%  (SPY 0.8767, LIVE 0.5600)  4b full n OOS n 4a n  choose-gain +0.0397
+    SMALL  L_WIDE    H        rung=42.0   OOS   5.74% / 0.3926 /  -41.23%  (SPY 0.8767, LIVE 0.5600)  4b full n OOS n 4a n  choose-gain -0.0856
+    SMALL  L_WIDE    GROSS    rung=1.0    OOS   8.69% / 0.4544 /  -45.42%  (SPY 0.8767, LIVE 0.5600)  4b full n OOS n 4a n  choose-gain +0.0015
+    SMALL  L_WIDE    CADENCE  rung=5.0    OOS   6.55% / 0.4151 /  -36.74%  (SPY 0.8767, LIVE 0.5600)  4b full n OOS n 4a n  choose-gain -0.0416
+  4b full 0 of 24; 4b OOS 0; BOTH 0; 4a 0 of 24
+
+## ARM 3b — does R PREDICT what choosing on a ladder is worth out of sample?
+    R_SIID     spearman vs |OOS choose-gain| = +0.7591  (n=24)
+    R_SBLOCK   spearman vs |OOS choose-gain| = +0.7513  (n=24)
+    R_SFOLD    spearman vs |OOS choose-gain| = +0.7348  (n=24)
+    R_SCROSS   spearman vs |OOS choose-gain| = -0.0357  (n=24)
+    range_     spearman vs |OOS choose-gain| = +0.7678  (n=24)
+    rel_range  spearman vs |OOS choose-gain| = +0.7522  (n=24)
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.prediction.csv  (6 rows, 3 cols)
+  H_PRED         REFUTED    best |rho| R 0.7591 vs spread 0.7678
+
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.gates.csv  (7 rows, 4 cols)
+  wrote 2026-09-17_does-the-GAP-FROM-d2-MEASURE-LADDER-DEGENERACY-BETTER-THAN-THE-SPREAD-ITSELF_cloud.hypotheses.csv  (6 rows, 5 cols)
+## GATES 7 of 7 PASS
+## RUNTIME 31s
