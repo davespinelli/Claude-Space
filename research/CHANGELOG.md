@@ -2599,3 +2599,65 @@ rather than a lookalike.
   days below -20% on a live panel, and this mechanism's DD gain is a LOWER bound while the CAGR it
   gives up is measured against a flattered comparand. The headline contrast (braked vs gross-matched
   control on identical holdings) is first-order immune; the 4a/4b legs are not.
+
+## 2026-09-18 — idea 1244 (lane C): does a CLONE BAR need its PANEL before it can PARTITION anything?
+- ANSWER (C) MIXED, PRE-DECLARED AND READ OFF, NOT ARGUED FOR. Both legs of outcome (A) fall short of
+  their own bars and the run says so rather than moving them: the non-exact PANEL-SILENT share of the
+  record's committed clone claims is 0.4325 at CQ_CLONE (0.4606 CQ_SAME, 0.4838 CQ_ALL) against a 0.50
+  bar, and P_MAX misstates the per-panel clone label on 5 of 18 books (0.2778) against a 0.50 bar.
+  Corpus 34,465 committed units over LEADERBOARD.md + CHANGELOG.md + 1,181 memos; CQ_CLONE 766 units
+  split 188 EXACT / 47 POOLED / 281 PER_PANEL / 250 SILENT.
+- THE HALF OF THE RECORD'S CLONE LANGUAGE THAT NEEDS NO PANEL, AND WHY. G9 proves the asymmetry the
+  census rests on: max_p d_p = 0 forces d_p = 0 on every panel, so a ZERO-TOLERANCE identity pooled by
+  max is per-panel automatically. The record's 188 EXACT claims ("bit for bit", "0.000e+00", "to 6
+  decimals", "deviation 0") are therefore safe however they were pooled. The exposure is the 250
+  POSITIVE-BAR claims that name no panel.
+- THE POOLING *RULE* IS INERT; POOLING AT ALL IS NOT. P_MAX, P_MEAN, P_MEDIAN and P_MIN misstate the
+  SAME 5 books (N=10, N=15, N=30, H=21, H=252), giving identical agreement 0.7222 at the record's own
+  0.0040 bar (0.6667 at 0.0100, 0.6111 at 0.0171). There is no better pooling rule to pick — the
+  choice that matters is whether a panel is named at all. And the panel-dependence is not spread
+  evenly: 0 of 10 GROSS rungs and 0 of 2 CADENCE rungs are panel-dependent against 3 of 6 N and 2 of
+  4 H, i.e. it sits entirely on the two ladders the record actually selects with. On the full pairwise
+  clone graph P_MAX reports a candidate-set diversity NO PANEL HAS: N_eff 6 on the N ladder against a
+  per-panel range of 3-5, and 10 on the 19-book UNION against 4-8.
+- BYCATCH, AND THE SHARPER HALF OF THE RUN: THE CLONE SIDE OF THE BAR IS STRUCTURAL, THE NON-CLONE SIDE
+  IS A TAPE READING THAT DOES NOT REPLAY. Re-read at 25 tape ends, the worst GROSS gap holds at
+  0.0039-0.0040 (width 0.0001) and the 9-GROSS-clone partition at 25 of 25 — exactly what 1189's
+  scaling identity requires of a cash-sleeve re-levering. The smallest NON-GROSS gap, which 1239
+  committed as the B_LOOSE bar 0.0171, wanders 0.0164-0.0211: width 0.0047, or 1.2x the 0.0040 clone
+  bar it is quoted against. Rebuilt from the PINNED tree 1239 itself committed (d8729f9) at that tree's
+  own tape end it reads 0.0189, not 0.0171 — G6d FAILS and is published as a FAIL, not loosened. Today
+  it reads 0.0175 and the sweep lands on 0.0171 at 1 of 25 tape ends (2026-08-13, five weeks before
+  1239 ran), which is a wandering statistic crossing a value rather than a recovery of it. Attribution:
+  restatement of data/prices.csv by the daily-close job (46 of 56 U56 columns, max relative deviation
+  5.09e-05) moves the bar +0.0000; one further session moves it -0.0014. STATED PLAINLY IN THE RUN: the
+  clone available here is shallow and holds only two versions of data/prices.csv, so the tape that
+  produced 0.0171 cannot be reconstructed and this run does NOT claim 1239 was wrong. It claims the
+  narrower thing it can check — a four-decimal bar read off this tape is not a constant.
+- RULE 8 AND BOTH KEEP PATHS: NO CHOOSER BEATS NOT CHOOSING, AND NO POOLING RULE BUYS A BOOK. Clone
+  clusters built on IS Sharpes (warm-up..2016-12-31) ONLY, 2017-2026 read once. Paired against the
+  incumbent on the SAME panel over the 15 (panel, ladder) rows: RAW -0.0314 (positive at 3 of 15),
+  DEDUP_P_MAX / P_MEAN / P_MEDIAN -0.0319 (3 of 15), DEDUP_PANEL -0.0094 (3 of 15), DEDUP_P_MIN +0.0190
+  (7 of 15 — still below half, so it is recorded and NOT parked). Every pooled dedup is worth -0.0006
+  against the raw chooser. 4a 0 of 66 books and 0 of 93 rule-8 rows; 4b BOTH 15 books (U56 10, B136 5,
+  SMALL 0) and 10 rule-8 rows, collapsing to 2 DISTINCT realised books, both PRIOR ART: the incumbent
+  U56 GROSS=0.75 (15.78% / 1.1522 / -19.13%, OOS 1.1832) and U56 N=15 (17.13% / 1.1711 / -20.14%, OOS
+  1.1953). NO NEW BOOK, NO RULES CHANGE, NO PROTOCOL EDIT FROM THIS RUN.
+- THE RE-COUNT ARM, REPORTED WITH ITS OWN OVER-BINDING (1249's lesson). Of the '{n} of 18' tokens
+  inside clone claims, 6 of 39 (CQ_CLONE), 15 of 121 (CQ_SAME) and 21 of 151 (CQ_ALL) are reproduced by
+  some (pooling rule, bar) cell on the record's own candidate set. That is an UPPER bound on mis-stated
+  clone counts and not a measurement of them: the record has many other 18-object populations (reach
+  decisions, phase books, grid cells) and the token test cannot tell them apart.
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: A CLONE BAR NEEDS ITS PANEL ONLY WHEN ITS TOLERANCE IS
+  POSITIVE, AND WHERE IT DOES NEED ONE THE RECORD OMITS IT ABOUT 43% OF THE TIME — but the cost is a
+  disclosure cost, not a capital cost, because every pooling rule picks the same books and none of them
+  beats holding the incumbent. The live question this opens is 1259's, one level up: 1237's non-clone
+  bar is a tape reading with a 0.0047 wander, so a partition quoted to four decimals against it is
+  inside its own noise.
+- Script: research/backtests/2026-09-18_does-a-CLONE-BAR-need-its-PANEL-before-it-can-PARTITION-anything_C.py
+- Gates 12 of 13; the single FAIL (G6d) is deliberate, published, and is the run's own headline.
+- SURVIVORSHIP (rule 9): U56 and B136 are CURRENT-constituent lists; SMALL is the current constituents
+  of a sub-$2B screen with max_1d_move >= 1.0 names dropped. Every LEVEL is optimistic. The headline is
+  a DISAGREEMENT between two readings of the SAME books on the SAME tape and is first-order immune; the
+  tape-end wander is measured on the same flattered panel and would if anything be wider on a live one;
+  the 4a and 4b legs are NOT immune and those passes are upper bounds.
