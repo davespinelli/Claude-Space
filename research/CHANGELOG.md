@@ -2836,3 +2836,39 @@ rather than a lookalike.
   the 4b passes are UPPER bounds. EDGE is a book-minus-null contrast on the same panel and dates, so
   the level bias cancels to first order in the headline rho; the 4a/4b legs and the parked cell's
   0.061 pp drawdown margin do not — that margin is the part survivorship flatters most.
+
+## 2026-09-18 (lane cloud, idea 1066) — the MIN-HOLD TAX is FROZEN SHARE, not the NAMES
+- QUESTION (queue 1066): 1065 found the min hold's drawdown tax tracks the retained bucket's
+  WEIGHT share (rho +0.7519) and not its loss concentration. Price the pure exposure channel: a
+  control that freezes the same weight share at RANDOM names (no score, no age) against the real
+  book at matched share, and report whether the whole ~7pp is reproduced without any selection.
+- ANSWER: YES. At matched frozen share the random-freeze control reproduces 113% / 132% / 73% of
+  the real tax on U56 / B135 / SMALL663 (REAL +2.85 / +3.77 / +4.67pp of MaxDD vs RANDOM +3.22 /
+  +4.97 / +3.39pp over five matched rungs, 8 seeds each). SELECTION CHANNEL over 15 matched rungs:
+  d_MaxDD +0.10pp (REAL worse at 7 of 15), d_CAGR -0.87pp (>0 at 5 of 15), d_Sharpe -0.0212
+  (>0 at 6 of 15), d_OOS -0.0386 (>0 at 7 of 15) — no reliable sign on any leg. Freezing by AGE
+  is not better than freezing by COIN; the constraint's cost and its CAGR gain are both bought
+  with frozen weight.
+- THE LADDER: the tax is NOT monotone in H (U56 MaxDD -18.18 / -18.46 / -20.19 / -25.53 / -19.13 /
+  -21.84% at H = 0/5/21/63/126/252 — 1065's "7 pp" is the H=63 rung, replayed here to 0.16pp)
+  while the control's is smooth in f (+0.59 / +3.35 / +3.42 / +3.14 / +5.60pp).
+- BYCATCH FOR THE STANDING 4b PASS: the committed anchor's binding DD leg is a favourable draw.
+  U56 H=126 posts -19.13% where its own share-matched random control posts -21.32% +- 0.66pp
+  (z +3.34) — a control that would itself FAIL 4b's -20.23% cap, which the anchor clears by
+  1.10pp. Only 3 of 8 share-matched seeds pass 4b at s=0.962. The eighth dial running on which
+  the 2026-09-04 pass is decided by drawdown and nothing else.
+- RULE 8: IS-Sharpe choosers on warm-up..2016, OOS read once, pick REAL H=252 (U56, SMALL663) and
+  REAL H=63 (B135) once the artefact below is excluded — all three 4b FAIL on DD. Chooser-minus-
+  anchor mean +0.0880 over 12 choosers, IS/OOS rank corr +0.280 with 3 of 12 negative.
+- VERDICT: KILL (capital), no new book. 4a 0 of 228, 4b 40 of 228 (all U56), none reachable.
+- ARTEFACT PUBLISHED, NOT BANKED: RANDOM f=1.00 on U56 reads 12.45% / 1.3231 / -16.91%, OOS
+  1.2445 at 0.91 turns/yr and passes 4b at 5 of 5 seeds — a buy-and-hold of the twenty names
+  picked in the first warm-up week of 2009 on a CURRENT-CONSTITUENT panel. The pooled IS chooser
+  lands on it at 2 of 3 panels. Excluded from every KEEP reading via C_ALLx (declared after the
+  first pass and said so in the script). Gates 11 of 11.
+- Script: research/backtests/2026-09-18_is-the-MIN-HOLD-TAX-just-a-FROZEN-GROSS-fact_cloud.py
+- SURVIVORSHIP (rule 9): U56/B135 current-constituent lists; SMALL663 a current sub-$2B screen
+  (52 of 715 dropped for max_1d_move >= 1.0). Levels are optimistic and every 4b pass is an UPPER
+  bound. The headline is a DIFFERENCE between two retention rules on one panel and is first-order
+  immune; a current panel cannot hold the names a min hold would have ridden to delisting, so the
+  REAL arm's tax is a LOWER bound on the live one.
