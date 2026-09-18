@@ -1,0 +1,269 @@
+# 2026-09-18 idea 1285 lane C -- is-the-STANDING-G-0.60-BOOK-s-4b-PASS-a-REBALANCE-FREQUENCY-ARTEFACT
+# DIAL 1 CADENCE = ['D', 'W', 'M', 'Q'];  DIAL 2 COST = [0.0, 10.0, 25.0, 50.0] bps (0 = reference column)
+# ARMS: RANK (the standing book) / RAND (12 seeds, same N/H/cadence, ranking removed = the turnover-matched control) / SPYONLY (exposure alone, cadence-invariant)
+# GROSS published at every grid point, never tuned: [0.5, 0.6, 0.75, 0.85, 1.0]; standing rung G = 0.6, standing cadence W, fill t+1
+# frozen: N=20 H=126 warm-up=260 elig=above200d & vol20<0.6
+# SMALL panel: 715 names, 52 dropped for max_1d_move >= 1.0 -> 663 investable
+
+## U56  n_names=55  2009-01-13..2026-09-17
+   SPY      full  15.13% / 0.8849 / -33.72%   OOS Sh 0.8747
+   LIVE v2  full   8.62% / 1.2018 / -12.05%   OOS Sh 1.2781
+   decision counts D/W/M/Q = 4707 / 977 / 225 / 75
+   GATE G1 fast runner == engine.backtest (standing book, W, 10bps): 2.082e-17 vs < 1e-12 -> PASS
+
+## B135  n_names=135  2009-01-13..2026-09-11
+   SPY      full  15.16% / 0.8862 / -33.72%   OOS Sh 0.8769
+   LIVE v2  full   7.98% / 1.0994 / -12.24%   OOS Sh 1.1061
+   decision counts D/W/M/Q = 4703 / 976 / 225 / 75
+
+## SMALL663  n_names=663  2011-01-13..2026-09-11
+   SPY      full  14.06% / 0.8582 / -33.72%   OOS Sh 0.8769
+   LIVE v2  full   4.64% / 0.7130 / -12.18%   OOS Sh 0.6518
+   decision counts D/W/M/Q = 4198 / 871 / 201 / 67
+
+# published cells: 3360   chooser rows: 336   turnover-neutral rows: 2880
+
+### GATES
+   GATE G2 SPYONLY at gross 1.00, 0 bps reproduces that panel's OWN SPY Sharpe: 0.000e+00 vs < 1e-9 -> PASS
+   GATE G3 CAGR non-increasing in the cost rung: 0 violations vs 0 -> PASS
+   GATE G4 (pre-declared, REFUTED) SPYONLY invariant to cadence at EVERY gross: max distinct = 4 vs 1 -> FAIL
+   GATE G4b SPYONLY at gross 1.00 (NO cash sleeve) IS cadence- and cost-invariant: max distinct Sharpe = 1, max turnover/yr = 0.00e+00 vs 1 and ~0 -> PASS
+   -- the refutation, quantified: SPYONLY's own Sharpe spread across D/W/M/Q at G = 0.6, by (panel, cost):
+            U56    0 bps: D 0.8849 W 0.8836 M 0.8832 Q 0.8912   spread 0.0080
+            U56   10 bps: D 0.8807 W 0.8816 M 0.8823 Q 0.8906   spread 0.0099
+            U56   25 bps: D 0.8743 W 0.8786 M 0.8808 Q 0.8896   spread 0.0153
+            U56   50 bps: D 0.8638 W 0.8737 M 0.8784 Q 0.8880   spread 0.0243
+           B135    0 bps: D 0.8862 W 0.8849 M 0.8845 Q 0.8925   spread 0.0080
+           B135   10 bps: D 0.8819 W 0.8829 M 0.8835 Q 0.8919   spread 0.0100
+           B135   25 bps: D 0.8756 W 0.8799 M 0.8821 Q 0.8909   spread 0.0153
+           B135   50 bps: D 0.8650 W 0.8749 M 0.8797 Q 0.8893   spread 0.0243
+       SMALL663    0 bps: D 0.8582 W 0.8574 M 0.8575 Q 0.8638   spread 0.0064
+       SMALL663   10 bps: D 0.8540 W 0.8554 M 0.8566 Q 0.8631   spread 0.0092
+       SMALL663   25 bps: D 0.8476 W 0.8524 M 0.8551 Q 0.8622   spread 0.0146
+       SMALL663   50 bps: D 0.8371 W 0.8475 M 0.8528 Q 0.8606   spread 0.0236
+   GATE G5 SPY never a panel constituent: asserted in Panel.__init__ vs true -> PASS
+   GATE G6 every chooser decided on IS rows only: structural (legs_4b_is / is_ windows) vs true -> PASS
+   GATE G7 RANK turnover/yr non-increasing as the cadence slows (D>=W>=M>=Q): 0 violations of 9 vs 0 -> PASS
+   GATE G8 reproduces the record's committed standing-rung triple (idea 1281, U56 G=0.60 W 10bps): full 12.59%/1.1517/-15.51% OOS 1.1826  (max|dSharpe| 0.0000) vs 12.59%/1.1517/-15.51% OOS 1.1826, tol 0.01 -> PASS
+
+### ARM A -- THE STANDING RUNG (G = 0.60) RE-PRICED AT D / W / M / Q, both KEEP paths, every cost rung
+
+   -- U56 --   (4a is vs LIVE RULES v2; 4b is vs SPY)
+   cad  cost |  RANK  CAGR   Sharpe    MaxDD    H1/H2      OOS Sh | turn/yr | 4a   4b    failing 4b legs
+     D     0 |  12.26%   1.0903  -18.73%  1.18/ 1.04   1.1154 |   3.28 | n    Y    -
+     D    10 |  11.89%   1.0610  -18.77%  1.15/ 1.01   1.0871 |   3.28 | n    Y    -
+     D    25 |  11.34%   1.0170  -18.82%  1.10/ 0.97   1.0447 |   3.28 | n    Y    -
+     D    50 |  10.44%   0.9437  -18.91%  1.02/ 0.90   0.9738 |   3.28 | n    n    CAGR
+     W     0 |  12.85%   1.1732  -15.47%  1.23/ 1.13   1.2034 |   2.32 | n    Y    -
+     W    10 |  12.59%   1.1517  -15.51%  1.21/ 1.11   1.1826 |   2.32 | n    Y    -
+     W    25 |  12.20%   1.1194  -15.59%  1.18/ 1.08   1.1512 |   2.32 | n    Y    -
+     W    50 |  11.55%   1.0655  -15.72%  1.12/ 1.03   1.0989 |   2.32 | n    Y    -
+     M     0 |  11.70%   1.0832  -18.77%  1.24/ 0.98   1.0716 |   1.74 | n    Y    -
+     M    10 |  11.51%   1.0671  -18.77%  1.22/ 0.97   1.0562 |   1.74 | n    Y    -
+     M    25 |  11.22%   1.0428  -18.78%  1.19/ 0.94   1.0330 |   1.74 | n    Y    -
+     M    50 |  10.74%   1.0020  -18.78%  1.15/ 0.91   0.9942 |   1.74 | n    Y    -
+     Q     0 |  12.52%   1.1637  -16.11%  1.24/ 1.12   1.2003 |   1.32 | n    Y    -
+     Q    10 |  12.37%   1.1513  -16.11%  1.23/ 1.11   1.1884 |   1.32 | n    Y    -
+     Q    25 |  12.15%   1.1326  -16.11%  1.21/ 1.09   1.1703 |   1.32 | n    Y    -
+     Q    50 |  11.78%   1.1011  -16.11%  1.17/ 1.06   1.1399 |   1.32 | n    Y    -
+
+   -- B135 --   (4a is vs LIVE RULES v2; 4b is vs SPY)
+   cad  cost |  RANK  CAGR   Sharpe    MaxDD    H1/H2      OOS Sh | turn/yr | 4a   4b    failing 4b legs
+     D     0 |  13.53%   1.0286  -23.07%  1.28/ 0.87   0.9621 |   3.55 | n    n    DD
+     D    10 |  13.13%   1.0018  -23.10%  1.25/ 0.84   0.9367 |   3.55 | n    n    DD
+     D    25 |  12.53%   0.9615  -23.14%  1.20/ 0.80   0.8985 |   3.55 | n    n    H2,DD
+     D    50 |  11.53%   0.8941  -23.22%  1.12/ 0.74   0.8348 |   3.55 | n    n    H2,OOS,DD
+     W     0 |  13.23%   1.0921  -16.74%  1.31/ 0.92   1.0444 |   2.62 | n    Y    -
+     W    10 |  12.93%   1.0703  -16.84%  1.29/ 0.90   1.0226 |   2.62 | n    Y    -
+     W    25 |  12.49%   1.0376  -16.99%  1.25/ 0.87   0.9899 |   2.62 | n    Y    -
+     W    50 |  11.76%   0.9827  -17.25%  1.20/ 0.81   0.9352 |   2.62 | n    n    H2
+     M     0 |  13.65%   1.0959  -22.51%  1.27/ 0.98   1.0945 |   1.98 | n    n    DD
+     M    10 |  13.42%   1.0799  -22.51%  1.25/ 0.96   1.0796 |   1.98 | n    n    DD
+     M    25 |  13.08%   1.0559  -22.52%  1.22/ 0.94   1.0572 |   1.98 | n    n    DD
+     M    50 |  12.53%   1.0155  -22.52%  1.18/ 0.91   1.0196 |   1.98 | n    n    DD
+     Q     0 |  11.92%   1.0041  -17.85%  1.19/ 0.87   0.9714 |   1.59 | n    Y    -
+     Q    10 |  11.74%   0.9908  -17.85%  1.18/ 0.85   0.9576 |   1.59 | n    Y    -
+     Q    25 |  11.48%   0.9706  -17.85%  1.16/ 0.83   0.9369 |   1.59 | n    Y    -
+     Q    50 |  11.03%   0.9366  -17.85%  1.12/ 0.80   0.9019 |   1.59 | n    n    H2
+
+   -- SMALL663 --   (4a is vs LIVE RULES v2; 4b is vs SPY)
+   cad  cost |  RANK  CAGR   Sharpe    MaxDD    H1/H2      OOS Sh | turn/yr | 4a   4b    failing 4b legs
+     D     0 |   6.36%   0.4871  -31.09%  0.71/ 0.32   0.3965 |   4.93 | n    n    H1,H2,OOS,DD,CAGR
+     D    10 |   5.83%   0.4542  -31.60%  0.68/ 0.28   0.3631 |   4.93 | n    n    H1,H2,OOS,DD,CAGR
+     D    25 |   5.05%   0.4047  -32.35%  0.63/ 0.24   0.3130 |   4.93 | n    n    H1,H2,OOS,DD,CAGR
+     D    50 |   3.77%   0.3221  -33.60%  0.54/ 0.16   0.2293 |   4.93 | n    n    H1,H2,OOS,DD,CAGR
+     W     0 |   6.88%   0.5297  -29.42%  0.69/ 0.42   0.4757 |   3.34 | n    n    H1,H2,OOS,DD,CAGR
+     W    10 |   6.52%   0.5066  -29.52%  0.66/ 0.39   0.4528 |   3.34 | n    n    H1,H2,OOS,DD,CAGR
+     W    25 |   5.99%   0.4720  -29.67%  0.62/ 0.36   0.4183 |   3.34 | n    n    H1,H2,OOS,DD,CAGR
+     W    50 |   5.10%   0.4141  -30.13%  0.56/ 0.31   0.3608 |   3.34 | n    n    H1,H2,OOS,DD,CAGR
+     M     0 |   4.76%   0.3958  -30.79%  0.62/ 0.24   0.2619 |   2.56 | n    n    H1,H2,OOS,DD,CAGR
+     M    10 |   4.49%   0.3780  -31.57%  0.60/ 0.23   0.2448 |   2.56 | n    n    H1,H2,OOS,DD,CAGR
+     M    25 |   4.09%   0.3512  -32.74%  0.57/ 0.20   0.2193 |   2.56 | n    n    H1,H2,OOS,DD,CAGR
+     M    50 |   3.43%   0.3063  -34.63%  0.51/ 0.16   0.1766 |   2.56 | n    n    H1,H2,OOS,DD,CAGR
+     Q     0 |   5.32%   0.4363  -27.66%  0.49/ 0.40   0.4458 |   1.93 | n    n    H1,H2,OOS,DD,CAGR
+     Q    10 |   5.12%   0.4227  -27.84%  0.48/ 0.39   0.4322 |   1.93 | n    n    H1,H2,OOS,DD,CAGR
+     Q    25 |   4.81%   0.4023  -28.12%  0.45/ 0.37   0.4117 |   1.93 | n    n    H1,H2,OOS,DD,CAGR
+     Q    50 |   4.31%   0.3681  -28.57%  0.42/ 0.33   0.3774 |   1.93 | n    n    H1,H2,OOS,DD,CAGR
+
+   4b PASS COUNT for the standing construction at G = 0.60, by (panel, cadence), over the 3 costed rungs {10,25,50} and over all 4 incl. 0:
+           U56: D 2/3 (3/4)  W 3/3 (4/4)  M 3/3 (4/4)  Q 3/3 (4/4)
+          B135: D 0/3 (0/4)  W 2/3 (3/4)  M 0/3 (0/4)  Q 2/3 (3/4)
+      SMALL663: D 0/3 (0/4)  W 0/3 (0/4)  M 0/3 (0/4)  Q 0/3 (0/4)
+
+### ARM B -- RANK minus the TURNOVER-MATCHED CONTROL, at every (cadence, cost). z = (RANK - median RAND) / sd(RAND); pct = RANK's percentile among the 12 seeds.
+
+   -- U56 --  G = 0.6
+   cad  cost |  RANK Sh   medRAND    diff       z    pct | turn RANK/RAND | NEUTRAL diff | RANK 4b / RAND 4b passes
+     D     0 |   1.0903    1.0607   +0.0296   +0.43  0.75 |  3.28/ 3.60 |      +0.0296 | Y / 1/12
+     D    10 |   1.0610    1.0198   +0.0412   +0.60  0.75 |  3.28/ 3.60 |      +0.0373 | Y / 0/12
+     D    25 |   1.0170    0.9584   +0.0587   +0.85  0.75 |  3.28/ 3.60 |      +0.0490 | Y / 0/12
+     D    50 |   0.9437    0.8559   +0.0878   +1.26  0.83 |  3.28/ 3.60 |      +0.0684 | n / 0/12
+     W     0 |   1.1732    1.0581   +0.1152   +2.13  1.00 |  2.32/ 2.78 |      +0.1152 | Y / 0/12
+     W    10 |   1.1517    1.0273   +0.1244   +2.30  1.00 |  2.32/ 2.78 |      +0.1193 | Y / 0/12
+     W    25 |   1.1194    0.9811   +0.1383   +2.57  1.00 |  2.32/ 2.78 |      +0.1254 | Y / 0/12
+     W    50 |   1.0655    0.9039   +0.1615   +3.00  1.00 |  2.32/ 2.78 |      +0.1357 | Y / 0/12
+     M     0 |   1.0832    1.0480   +0.0352   +1.08  0.83 |  1.74/ 2.02 |      +0.0352 | Y / 0/12
+     M    10 |   1.0671    1.0250   +0.0421   +1.29  0.83 |  1.74/ 2.02 |      +0.0388 | Y / 0/12
+     M    25 |   1.0428    0.9904   +0.0524   +1.62  0.83 |  1.74/ 2.02 |      +0.0441 | Y / 0/12
+     M    50 |   1.0020    0.9322   +0.0699   +2.18  1.00 |  1.74/ 2.02 |      +0.0532 | Y / 0/12
+     Q     0 |   1.1637    1.1103   +0.0534   +1.08  0.92 |  1.32/ 1.56 |      +0.0534 | Y / 1/12
+     Q    10 |   1.1513    1.0927   +0.0587   +1.18  0.92 |  1.32/ 1.56 |      +0.0558 | Y / 1/12
+     Q    25 |   1.1326    1.0660   +0.0666   +1.34  0.92 |  1.32/ 1.56 |      +0.0593 | Y / 1/12
+     Q    50 |   1.1011    1.0210   +0.0801   +1.60  0.92 |  1.32/ 1.56 |      +0.0653 | Y / 0/12
+
+   -- B135 --  G = 0.6
+   cad  cost |  RANK Sh   medRAND    diff       z    pct | turn RANK/RAND | NEUTRAL diff | RANK 4b / RAND 4b passes
+     D     0 |   1.0286    1.0547   -0.0262   -0.43  0.42 |  3.55/ 3.70 |      -0.0262 | n / 1/12
+     D    10 |   1.0018    1.0161   -0.0143   -0.24  0.42 |  3.55/ 3.70 |      -0.0161 | n / 1/12
+     D    25 |   0.9615    0.9581   +0.0034   +0.06  0.50 |  3.55/ 3.70 |      -0.0010 | n / 0/12
+     D    50 |   0.8941    0.8610   +0.0332   +0.59  0.83 |  3.55/ 3.70 |      +0.0250 | n / 0/12
+     W     0 |   1.0921    1.0884   +0.0037   +0.06  0.50 |  2.62/ 2.89 |      +0.0037 | Y / 2/12
+     W    10 |   1.0703    1.0567   +0.0136   +0.22  0.58 |  2.62/ 2.89 |      +0.0106 | Y / 1/12
+     W    25 |   1.0376    1.0096   +0.0280   +0.46  0.75 |  2.62/ 2.89 |      +0.0204 | Y / 0/12
+     W    50 |   0.9827    0.9321   +0.0505   +0.84  0.83 |  2.62/ 2.89 |      +0.0354 | n / 0/12
+     M     0 |   1.0959    1.0380   +0.0578   +0.66  0.83 |  1.98/ 2.34 |      +0.0578 | n / 0/12
+     M    10 |   1.0799    1.0130   +0.0670   +0.76  0.83 |  1.98/ 2.34 |      +0.0629 | n / 0/12
+     M    25 |   1.0559    0.9752   +0.0807   +0.92  0.83 |  1.98/ 2.34 |      +0.0704 | n / 0/12
+     M    50 |   1.0155    0.9119   +0.1036   +1.18  0.92 |  1.98/ 2.34 |      +0.0829 | n / 0/12
+     Q     0 |   1.0041    0.9893   +0.0148   +0.24  0.58 |  1.59/ 1.78 |      +0.0148 | Y / 0/12
+     Q    10 |   0.9908    0.9695   +0.0213   +0.34  0.58 |  1.59/ 1.78 |      +0.0192 | Y / 0/12
+     Q    25 |   0.9706    0.9394   +0.0312   +0.51  0.58 |  1.59/ 1.78 |      +0.0259 | Y / 0/12
+     Q    50 |   0.9366    0.8885   +0.0481   +0.79  0.67 |  1.59/ 1.78 |      +0.0372 | n / 0/12
+
+   -- SMALL663 --  G = 0.6
+   cad  cost |  RANK Sh   medRAND    diff       z    pct | turn RANK/RAND | NEUTRAL diff | RANK 4b / RAND 4b passes
+     D     0 |   0.4871    0.5649   -0.0778   -1.10  0.17 |  4.93/ 4.43 |      -0.0778 | n / 0/12
+     D    10 |   0.4542    0.5270   -0.0728   -1.04  0.25 |  4.93/ 4.43 |      -0.0686 | n / 0/12
+     D    25 |   0.4047    0.4699   -0.0652   -0.94  0.25 |  4.93/ 4.43 |      -0.0546 | n / 0/12
+     D    50 |   0.3221    0.3746   -0.0525   -0.78  0.33 |  4.93/ 4.43 |      -0.0313 | n / 0/12
+     W     0 |   0.5297    0.5645   -0.0348   -0.32  0.33 |  3.34/ 3.23 |      -0.0348 | n / 0/12
+     W    10 |   0.5066    0.5385   -0.0319   -0.29  0.33 |  3.34/ 3.23 |      -0.0310 | n / 0/12
+     W    25 |   0.4720    0.4995   -0.0275   -0.26  0.33 |  3.34/ 3.23 |      -0.0252 | n / 0/12
+     W    50 |   0.4141    0.4341   -0.0200   -0.19  0.33 |  3.34/ 3.23 |      -0.0154 | n / 0/12
+     M     0 |   0.3958    0.5735   -0.1776   -2.11  0.00 |  2.56/ 2.52 |      -0.1776 | n / 0/12
+     M    10 |   0.3780    0.5510   -0.1730   -2.06  0.00 |  2.56/ 2.52 |      -0.1725 | n / 0/12
+     M    25 |   0.3512    0.5171   -0.1659   -1.98  0.00 |  2.56/ 2.52 |      -0.1648 | n / 0/12
+     M    50 |   0.3063    0.4603   -0.1540   -1.84  0.00 |  2.56/ 2.52 |      -0.1516 | n / 0/12
+     Q     0 |   0.4363    0.4993   -0.0630   -0.49  0.33 |  1.93/ 1.94 |      -0.0630 | n / 0/12
+     Q    10 |   0.4227    0.4820   -0.0593   -0.46  0.33 |  1.93/ 1.94 |      -0.0594 | n / 0/12
+     Q    25 |   0.4023    0.4559   -0.0536   -0.42  0.33 |  1.93/ 1.94 |      -0.0539 | n / 0/12
+     Q    50 |   0.3681    0.4120   -0.0440   -0.34  0.42 |  1.93/ 1.94 |      -0.0446 | n / 0/12
+
+### ARM C -- THE CADENCE GAIN, DECOMPOSED AGAINST ITS OWN SAME-CADENCE NULL (idea 943's turnover rebate). gain = Sharpe(cad) - Sharpe(W), same arm, same cost.
+   If book_gain ~= null_gain the cadence dial is a rebate every book collects and the record must not read it as an edge.
+
+   -- U56 --  G = 0.6
+   cad  cost |  RANK gain   NULL(med) gain    excess |  RANK OOS gain   NULL OOS gain
+     D     0 |    -0.0830          +0.0272   -0.1102 |       -0.0881         -0.0201
+     D    10 |    -0.0908          +0.0177   -0.1084 |       -0.0955         -0.0285
+     D    25 |    -0.1024          +0.0035   -0.1059 |       -0.1066         -0.0411
+     D    50 |    -0.1218          -0.0202   -0.1016 |       -0.1250         -0.0621
+     M     0 |    -0.0900          -0.0025   -0.0876 |       -0.1318         -0.0629
+     M    10 |    -0.0847          +0.0057   -0.0904 |       -0.1264         -0.0568
+     M    25 |    -0.0767          +0.0174   -0.0940 |       -0.1182         -0.0478
+     M    50 |    -0.0634          +0.0365   -0.0999 |       -0.1046         -0.0325
+     Q     0 |    -0.0095          +0.0487   -0.0582 |       -0.0031         +0.0863
+     Q    10 |    -0.0004          +0.0612   -0.0616 |       +0.0058         +0.0987
+     Q    25 |    +0.0132          +0.0799   -0.0667 |       +0.0191         +0.1173
+     Q    50 |    +0.0356          +0.1117   -0.0761 |       +0.0410         +0.1477
+
+   -- B135 --  G = 0.6
+   cad  cost |  RANK gain   NULL(med) gain    excess |  RANK OOS gain   NULL OOS gain
+     D     0 |    -0.0635          -0.0461   -0.0174 |       -0.0823         -0.0225
+     D    10 |    -0.0685          -0.0522   -0.0163 |       -0.0859         -0.0282
+     D    25 |    -0.0761          -0.0613   -0.0147 |       -0.0914         -0.0368
+     D    50 |    -0.0885          -0.0766   -0.0120 |       -0.1004         -0.0511
+     M     0 |    +0.0038          -0.0431   +0.0469 |       +0.0501         -0.0717
+     M    10 |    +0.0096          -0.0368   +0.0464 |       +0.0570         -0.0661
+     M    25 |    +0.0183          -0.0274   +0.0457 |       +0.0673         -0.0578
+     M    50 |    +0.0329          -0.0124   +0.0453 |       +0.0844         -0.0441
+     Q     0 |    -0.0879          -0.0802   -0.0078 |       -0.0730         +0.0183
+     Q    10 |    -0.0795          -0.0689   -0.0106 |       -0.0650         +0.0304
+     Q    25 |    -0.0670          -0.0522   -0.0148 |       -0.0531         +0.0457
+     Q    50 |    -0.0460          -0.0249   -0.0211 |       -0.0333         +0.0703
+
+   -- SMALL663 --  G = 0.6
+   cad  cost |  RANK gain   NULL(med) gain    excess |  RANK OOS gain   NULL OOS gain
+     D     0 |    -0.0426          -0.0021   -0.0405 |       -0.0792         -0.0369
+     D    10 |    -0.0525          -0.0130   -0.0395 |       -0.0896         -0.0474
+     D    25 |    -0.0673          -0.0293   -0.0379 |       -0.1053         -0.0632
+     D    50 |    -0.0920          -0.0565   -0.0355 |       -0.1315         -0.0894
+     M     0 |    -0.1339          +0.0509   -0.1847 |       -0.2138         -0.0267
+     M    10 |    -0.1286          +0.0547   -0.1833 |       -0.2079         -0.0238
+     M    25 |    -0.1208          +0.0603   -0.1811 |       -0.1990         -0.0196
+     M    50 |    -0.1077          +0.0696   -0.1773 |       -0.1842         -0.0124
+     Q     0 |    -0.0934          -0.1282   +0.0348 |       -0.0299         -0.1510
+     Q    10 |    -0.0839          -0.1184   +0.0345 |       -0.0205         -0.1426
+     Q    25 |    -0.0697          -0.1037   +0.0340 |       -0.0066         -0.1299
+     Q    50 |    -0.0460          -0.0791   +0.0331 |       +0.0166         -0.1086
+
+### ARM D -- RULE 8. Parameters chosen on warm-up..2016-12-31 only; 2017-2026 read ONCE.  FREE picks (cadence, gross); FROZEN_W pins the standing weekly cadence.
+
+   d(OOS Sharpe) = FREE - FROZEN_W over all 168 chooser cells: mean -0.0369  SE 0.0104  t -3.55  positive 53/168  zero 48
+         RANK: n=12  mean -0.0611  SE 0.0283  positive 1  negative 4  identical picks 7
+         RAND: n=144  mean -0.0381  SE 0.0118  positive 48  negative 62  identical picks 34
+      SPYONLY: n=12  mean +0.0025  SE 0.0012  positive 4  negative 1  identical picks 7
+
+   FREE chooser's IS pick of CADENCE (how often the standing W is chosen in sample):
+         RANK: D 0  W 7  M 4  Q 1
+         RAND: D 36  W 34  M 53  Q 21
+      SPYONLY: D 1  W 0  M 0  Q 11
+
+   RANK chooser rows in full (the capital-relevant ones):
+   panel      cost mode      pick        IS Sh    OOS CAGR   OOS Sh   OOS MaxDD  4a 4b  failing 4b
+        B135     0 FREE      W/0.60    1.1653    13.35%   1.0444   -16.74%  n  Y   -
+        B135     0 FROZEN_W  W/0.60    1.1653    13.35%   1.0444   -16.74%  n  Y   -
+        B135    10 FREE      W/0.60    1.1434    13.03%   1.0226   -16.84%  n  Y   -
+        B135    10 FROZEN_W  W/0.60    1.1434    13.03%   1.0226   -16.84%  n  Y   -
+        B135    25 FREE      W/0.60    1.1105    12.57%   0.9899   -16.99%  n  Y   -
+        B135    25 FROZEN_W  W/0.60    1.1105    12.57%   0.9899   -16.99%  n  Y   -
+        B135    50 FREE      W/0.60    1.0551    11.79%   0.9352   -17.25%  n  n   H2
+        B135    50 FROZEN_W  W/0.60    1.0551    11.79%   0.9352   -17.25%  n  n   H2
+    SMALL663     0 FREE      M/1.00    0.6916     3.72%   0.2716   -48.18%  n  n   H1,H2,OOS,DD,CAGR
+    SMALL663     0 FROZEN_W  W/1.00    0.6362     9.33%   0.4772   -45.29%  n  n   H1,H2,OOS,DD
+    SMALL663    10 FREE      M/1.00    0.6718     3.27%   0.2549   -49.15%  n  n   H1,H2,OOS,DD,CAGR
+    SMALL663    10 FROZEN_W  W/1.00    0.6128     8.69%   0.4545   -45.42%  n  n   H1,H2,OOS,DD
+    SMALL663    25 FREE      M/1.00    0.6421     2.59%   0.2299   -50.58%  n  n   H1,H2,OOS,DD,CAGR
+    SMALL663    25 FROZEN_W  W/1.00    0.5777     7.75%   0.4204   -45.61%  n  n   H1,H2,OOS,DD,CAGR
+    SMALL663    50 FREE      M/1.00    0.5922     1.46%   0.1882   -52.87%  n  n   H1,H2,OOS,DD,CAGR
+    SMALL663    50 FROZEN_W  W/1.00    0.5190     6.19%   0.3634   -46.92%  n  n   H1,H2,OOS,DD,CAGR
+         U56     0 FREE      W/0.60    1.1380    14.05%   1.2034   -15.47%  n  Y   -
+         U56     0 FROZEN_W  W/0.60    1.1380    14.05%   1.2034   -15.47%  n  Y   -
+         U56    10 FREE      W/0.60    1.1155    13.78%   1.1826   -15.51%  n  Y   -
+         U56    10 FROZEN_W  W/0.60    1.1155    13.78%   1.1826   -15.51%  n  Y   -
+         U56    25 FREE      W/0.60    1.0816    13.37%   1.1512   -15.59%  n  Y   -
+         U56    25 FROZEN_W  W/0.60    1.0816    13.37%   1.1512   -15.59%  n  Y   -
+         U56    50 FREE      Q/1.00    1.0574    22.17%   1.1389   -26.28%  n  n   DD
+         U56    50 FROZEN_W  W/1.00    1.0267    21.25%   1.1017   -25.18%  n  n   DD
+
+   rule-8 4b passes by arm (of own n): RANK 12/24  RAND 13/288  SPYONLY 0/24
+   rule-8 4a passes, ALL arms and modes: 0/336
+   published cells passing 4a: 0/3360;  passing 4b: 102/3360
+
+   FAILING-4b-LEG SHARE by arm (share of that arm's failing published cells naming each leg):
+         RANK (n=203): H1 0.3941  H2 0.4926  OOS 0.4187  DD 0.8670  CAGR 0.5074
+         RAND (n=2815): H1 0.2824  H2 0.5670  OOS 0.5044  DD 0.7542  CAGR 0.6188
+      SPYONLY (n=240): H1 0.8958  H2 0.7167  OOS 0.6500  DD 0.8000  CAGR 0.4000
+
+# gates: 8 of 9 passing
+# elapsed 65s
