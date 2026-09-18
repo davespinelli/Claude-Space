@@ -3314,3 +3314,52 @@ rather than a lookalike.
   rule-8 arm carries no full-sample information, and its gate G10 failed at 2.54pp because the line
   then drifts out of sample. Read together, the exact-match version is not implementable forward
   and the implementable version worsens monotonically in N. Both records stand; cross-read them.
+
+## 2026-09-18 — idea 1273 (lane cloud, idea 1 of 2): is a DECISIVENESS BAR worth anything once ITS OWN DIAL is priced at EVERY INNER SPLIT?
+- ANSWERED (A) ON THE ORDERING, (C) ON THE MONEY. VERDICT: KILL (capital). No new book, no RULES,
+  PROTOCOL, scan.py, bot.py or baseline.py change. 15 of 15 gates, 70s, offline, deterministic.
+- 1260 killed the observed-side decisiveness bar on ONE number: the dial's inner/outer licensed-
+  minus-refused rank corr -0.4292, measured at ONE inner split. This run walks dial 1 = INNER
+  BOUNDARY {2011,2012,2013,2014}-12-31 x dial 2 = SCORE CLASS {OBS, BAR, ALL} = 12 grid points, all
+  published, over the SAME 72 decisions and the SAME 24 (score, quantile) cells.
+- THE ORDERING: rank corr is NEGATIVE at 9 of 12 grid points, mean -0.2877, median -0.3007, range
+  [-0.6503, +0.1652]. By class: OBS -0.3007 / -0.6503 / -0.5734 / -0.3007 (mean -0.4563, 4 of 4
+  negative), BAR +0.1652 / +0.0108 / -0.5246 / +0.1131 (mean -0.0589), ALL -0.2626 / -0.4292 /
+  -0.6437 / -0.0568. 1260's own -0.4292 is the SECOND most negative of four ALL-class draws, not an
+  outlier. 'The dial does not transfer' is a fact at every split this tape supports, and it is
+  SHARPEST ON THE OBSERVED SIDE — the class 1260 recommended the record publish.
+- WHY IT IS STILL NOT MONEY, AND THE CORRECTION THIS RUN ADDS: d_sel spans only +0.0149 to -0.0058
+  across ALL 24 cells, so the ordering inverts freely inside its own range. Mean outer d_sel of the
+  12 chosen cells +0.0023 (8 of 12 > 0, so H_TRANSFER is technically SUPPORTED and materially
+  empty); mean regret against the best outer cell in class is +0.0953 of licensed-minus-refused but
+  only +0.0089 of d_sel. The honest reason to leave the bar out is NOT the anti-selection; it is
+  that the whole dial is worth less than +/-0.015 of mean OOS Sharpe.
+- GATING IS STILL A DESTRUCTION OPERATOR: realised 4b BOTH over the 72 — do-nothing 24, always-act
+  6, the 12 rule-8 selectors mean 18.92. 8 of 12 chosen cells beat do-nothing on mean OOS Sharpe;
+  only 2 of 12 do so WITHOUT costing a 4b pass, and both are the same cell (S_OBS_MARGIN @ q0.95
+  from the 2014 boundary, d_sel +0.0102, 4b 24) which fires 4 times = 2 DISTINCT book choices, both
+  the H ladder on SMALL663 — the two choices lane C's 1274 traced to a spread artefact the same day.
+- H_STABLE REFUTED: the chosen cell moves with the boundary in every class (modal cell 2 of 4).
+- INDEPENDENCE CAVEAT, STATED BECAUSE IT LIMITS THE HEADLINE: the 12 points are not 12 independent
+  draws — they share one outer column, the four inner training windows are nested (749/999/1251/1503
+  U56 rows) and ALL contains OBS and BAR. At most 4 quasi-independent draws back the '9 of 12'; the
+  defensible claim is the per-class one.
+- CAPITAL: 4a 0 of 162 (A_DD fails at 153 of 162 — live RULES v2's -12.05% MaxDD). 4b full 26, 4b
+  OOS 30, BOTH 25 rows -> 19 distinct books (U56 20 rows, B136 5, SMALL663 0), every one prior art.
+  Binding leg remains the DD cap (fails at 106 of 162). Incumbent U56 N=20/H126/G0.75/W replays
+  15.62% / 1.1423 / -19.13%, halves 1.2049/1.1009, OOS 17.04% / 1.1688. U56 SPY 15.13% / 0.8848 /
+  -33.72% (halves 0.9598/0.8234), OOS 15.28% / 0.8745; U56 live RULES v2 @10 bps 8.62% / 1.2017 /
+  -12.05%, OOS 9.47% / 1.2778.
+- GATES 15 of 15, including four that bind this run to 1260 exactly: G8 its rule-8 chosen cell
+  (S_OBS_MARGIN @ q0.90) reproduced, G9 its outer LIC-REF +0.0297 at 3.02e-05, G10 its d_sel +0.0040
+  at 1.94e-05, G11 its rank corr -0.4292 at 2.66e-05. Also G6 mean d over the 72 +0.0095 at 4.77e-05
+  and G7 do-nothing / always-act 0.7922 / 0.8017 at 9.98e-05 (1246's level, not 1252's — see 1272).
+- FOR THE SUNDAY REVIEW, PUBLISHING NOTE ONLY (rule 6): any future bar result must quote its d_sel
+  RANGE over the whole dial beside its rank correlation, because the correlation is only
+  interpretable against that range.
+- Script: research/backtests/2026-09-18_is-a-DECISIVENESS-BAR-WORTH-ANYTHING-ONCE-ITS-OWN-DIAL-IS-PRICED-AT-EVERY-INNER-SPLIT_cloud.py
+- SURVIVORSHIP (rule 9): U56 and B136 are CURRENT-CONSTITUENT lists; SMALL663 is a current sub-$2B
+  screen with 52 of 715 names dropped on max_1d_move >= 1.0. Every level and 4b count is an UPPER
+  bound. The headline compares two scorings of the SAME 72 decisions on the SAME pool and is
+  first-order immune; the one number that is not is the 2-distinct-choice 'win', which lives
+  entirely on SMALL663, the most survivorship-flattered panel.
