@@ -3102,3 +3102,93 @@ rather than a lookalike.
   the same biased pool over the same tape, and is first-order immune; the correlation contrast
   is understated if anything, because the missing small caps are the failures whose returns
   would have been most idiosyncratic.
+
+## 2026-09-18 (lane B, idea 1270) — the DD leg is an EXPOSURE fact, not a CONCENTRATION fact: correcting the exposure confound leaves the breadth slide's sign untouched at 8 of 8 level rows
+- QUESTION (queue 1270): N and GROSS have each been dialled alone and each is a pure
+  CAGR-for-drawdown slide; nobody had moved them TOGETHER along an iso-exposure line, where
+  breadth is bought out of the exposure budget rather than out of cash. Walk (N, GROSS) pairs
+  holding realised mean exposure at the committed 0.75, publish the realised exposure of every
+  cell as proof the line is level, and report both KEEP paths and rule-8 OOS.
+- TWO DIALS AND NO MORE (rule 4): N {10, 20, 30, 40, 50} x EBAR (TARGET REALISED MEAN EXPOSURE)
+  {0.55, 0.65, 0.75, 0.85}. GROSS is NOT a third dial — it is SOLVED per (panel, N, EBAR) as the
+  unique G whose IN-SAMPLE realised mean exposure equals EBAR, by bisection, capped at 1.00 (no
+  leverage). All 20 cells published per panel; all 40 feasible (max solved G 0.9547). Book frozen
+  at 936/1064/1071/1081's construction (RAW composite 21/252 + 0/126 + 0/63, no vol scaler,
+  above-200d AND vol20 < 0.60, H=126, weekly decide / t+1, 10 bps, warm-up 260); the only
+  departure is the sizing clause under study, G/N per slot with unfilled slots in CASH (== 1081's
+  cap = 1.00 corner). NOT dials, reported at every value: PANEL {U56, B136}.
+- (A) THE CONFOUND IS REAL AND SMALL. At fixed G = 0.75 realised exposure slides 0.7482 -> 0.6869
+  over N 10 -> 50 on U56 (-6.13 pp, -0.1397 pp/slot) and 0.7496 -> 0.7422 on B136 (-0.74 pp). The
+  G that restores 0.75 runs 0.7507 -> 0.8423 (U56) / 0.7496 -> 0.7647 (B136). So 1071's and
+  1081's N ladders really did slide down in exposure as they widened — the queue's premise is
+  correct — but the correction is worth ~6 pp of exposure at the extreme and under 1 pp on the
+  broad panel.
+- (B) THE ANSWER IS NO, AT EVERY ROW. With exposure held level, d|MaxDD|/dN > 0 at 8 of 8 (panel,
+  EBAR) rows, rank corr (N, |DD|) +0.90 at ALL EIGHT. N = 10 -> 50 costs +2.34 / +2.72 / +3.09 /
+  +3.44 pp of drawdown on U56 and +3.48 / +4.01 / +4.51 / +4.98 pp on B136, while CAGR falls at
+  every row (-0.0722..-0.1111 and -0.0459..-0.0691 pp per slot). Breadth paid for out of the same
+  exposure budget still costs BOTH legs.
+- (C) THE MECHANISM: EXPOSURE IS A SHARPE-INVARIANT LEVER, BREADTH IS NOT. The N = 20 flat-cut
+  column over exposure 0.55 -> 0.85 moves |MaxDD| 14.49% -> 21.73% and CAGR 11.36% -> 17.64% with
+  Sharpe 1.1360 -> 1.1369, a spread of 0.00088 (B136 0.00245); the EBAR = 0.75 breadth row moves
+  Sharpe by 0.0488 / 0.0767 and deepens the drawdown. Priced against the N = 20 flat-cut curve
+  interpolated at each cell's OWN |MaxDD|: the gap is positive at 6 of 17 comparable cells and
+  ALL SIX ARE N = 10 (best +0.90 pp) — NARROWING buys the drawdown slightly more cheaply than
+  cash, WIDENING loses -2.17 to -5.53 pp of CAGR at equal drawdown. Dominance 0 of 24.
+- (D) THE SAME WALL, REACHED FOR THE SEVENTH TIME. At EBAR = 0.75 the deepest trough is
+  2020-02-19 -> 2020-03-2x at N >= 30 on BOTH panels; only the N = 10 and N = 20 books escape
+  Feb-Mar 2020 as their deepest event. Depth brake (1262), vol target (1263), slot sizing (1264),
+  correlation brake (1266), defensive rotation (1267), breadth alone (1071/1081) and now breadth
+  at MATCHED exposure all fail to reach the one macro episode that binds the 4b drawdown leg.
+- CAPITAL: 4a 0 of 40, failing A_DD at 40 of 40 (live RULES v2's -12.05% is shallower than every
+  cell). 4b 13 of 40, of which 2 ARE the anchor cell (N=20 / EBAR 0.75) on its own panel.
+- RULE 8: 8 choosers (IS Sharpe / IS |MaxDD| / IS CAGR / IS Calmar x 2 panels) on
+  warm-up..2016-12-31, with G calibrated on that window ONLY so the OOS arm carries no
+  full-sample information at all, 2017-2026 read once. 3 of 8 beat the do-nothing anchor, mean
+  d_OOS_Sharpe -0.0305, so the pre-registered majority test H_R8 is REFUTED. IS/OOS Sharpe rank
+  corr -0.28 / -0.10 (IS Sharpe is not a chooser here either); IS/OOS |MaxDD| rank corr +0.53 /
+  +0.48 — NOTE THE CONTRAST WITH 1081, where the n dial alone read -0.19 / -0.78: once exposure
+  is in the grid the drawdown ordering becomes forward-persistent, because exposure is the
+  persistent part and breadth is not.
+- VERDICT: KILL (capital) on the question, ONE CONDITIONAL 4b KEEP-CANDIDATE PARKED, nothing
+  enacted (rule 6). RULES.md, scan.py, bot.py and baseline.py untouched.
+- THE CANDIDATE, REPORTED BECAUSE THE PRE-DECLARED RULE REACHES IT, RECOMMENDED AGAINST:
+  B136 N = 30 / EBAR 0.55 (solved G 0.5545, realised exposure 0.5516) reads 11.74% / 1.1116 /
+  -16.50%, halves 1.2930 / 0.9724, OOS 12.03% / 1.0764 / -16.50%, turnover 2.31x, and clears all
+  five 4b legs; C_ISDD reaches it with d_OOS_Sharpe +0.0715. It is PANEL-SPECIFIC: the same cell
+  FAILS 4b on the committed U56 panel (10.29% CAGR against a 10.59% floor) and its U56 OOS Sharpe
+  1.1384 is BELOW the U56 anchor's 1.1559. Memo:
+  research/backtests/2026-09-18_iso-exposure-breadth_B.memo.md (recommendation: do NOT adopt).
+- Gates 13 of 14, AND THE ONE FAILURE IS A PROPERTY OF THE IDEA, NOT OF THE RUNNER: G10 (iso-
+  exposure rows level to 0.010 of realised exposure) FAILS on U56 at 0.0254. G11 shows the line is
+  EXACT in sample (max |expo_IS - EBAR| = 1.78e-15 on both panels, by construction); the whole
+  2.54 pp is OOS DRIFT in the N = 50 book on a 56-name panel (fill 86.6% in sample, higher out),
+  and at N <= 40 the spread is 0.78 pp (U56) / 0.72 pp (B136), with B136 passing at 0.95 pp over
+  the full ladder. Every conclusion above holds when read at N <= 40 alone. THE IMPLICATION FOR
+  ANY FUTURE ISO-EXPOSURE CLAUSE: a rule can name a GROSS, which is implementable, or an
+  EXPOSURE, which is not choosable forward without lookahead. G1 fast runner == engine.backtest
+  1.39e-17; G2 936/1071/1081's committed U56 W/H126 triple 2.60e-03 (tape vintage differs,
+  tolerance declared before the run); G3 SPY OOS triple 3.22e-03; G4 live RULES v2 MaxDD -12.05%
+  at 4.95e-05; G7 max solved gross 0.9547, no leverage; G8/G9 both dials live on both panels.
+- Hypotheses 4 of 7: H_ENTANGLE, H_BREADTH, H_CHEAPER supported (H_CHEAPER only in the NARROWING
+  direction, which is the opposite of what the queue was hoping for), H_4b supported; H_LEVEL,
+  H_DOMINATE, H_R8 refuted.
+- Script: research/backtests/2026-09-18_is-the-DD-LEG-a-CONCENTRATION-fact-once-N-and-GROSS-are-moved-TOGETHER-at-MATCHED-EXPOSURE_B.py
+- SURVIVORSHIP (rule 9): U56 (research/universe.json) and B136 (research/universe_broad.json) are
+  CURRENT-CONSTITUENT lists, so every LEVEL here is optimistic and every 4b count is an UPPER
+  bound. The headline results are DIFFERENCES INSIDE ONE PANEL over the SAME tape — the sign of
+  d|MaxDD|/dN along a level-exposure row, the row-vs-column contrast and the flat-cut isoquant gap
+  — drawn from the same biased pool, and are first-order immune. The parked B136 candidate is NOT:
+  it is a level claim on a survivorship-selected 136-name pool and must be read as such.
+- LANE COLLISION, RECORDED NOT RESOLVED: lane cloud claimed and completed idea 1270 in the same
+  window (its entry is above this one in LEADERBOARD.md and QUEUE.md). The two runs AGREE on the
+  headline (the 4b drawdown leg is an exposure fact, not a concentration fact; no book worth
+  capital) and on the structural point each reached separately — under the incumbent's re-spread
+  w = G/n_sel sizing realised exposure does not depend on N, so the iso-exposure line IS the plain
+  N ladder, and the confound exists only under FIXED G/N slots. They DISAGREE on the N = 40/50 tail
+  at exposure 0.75 (cloud rank corr(N, |MaxDD|) -0.60 with N=50 improving; this run +0.90, monotone
+  worsening) and the cause is the CALIBRATION WINDOW, not the tape: cloud matched realised exposure
+  over the whole sample to 9.0e-13, this run matched it on warm-up..2016-12-31 only so that its
+  rule-8 arm carries no full-sample information, and its gate G10 failed at 2.54pp because the line
+  then drifts out of sample. Read together, the exact-match version is not implementable forward
+  and the implementable version worsens monotonically in N. Both records stand; cross-read them.
