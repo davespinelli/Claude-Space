@@ -3363,3 +3363,58 @@ rather than a lookalike.
   bound. The headline compares two scorings of the SAME 72 decisions on the SAME pool and is
   first-order immune; the one number that is not is the 2-distinct-choice 'win', which lives
   entirely on SMALL663, the most survivorship-flattered panel.
+
+## 2026-09-18 — idea 1241 (lane B): does the record's BLOCK LENGTH 63 have ANY argument other than INHERITANCE?
+- ANSWERED: NO. VERDICT: KILL (capital). No new book, no RULES, PROTOCOL, scan.py, bot.py or
+  baseline.py change. PUBLISHING NOTE earned (rule 6). 15 of 15 gates, 86s, offline, deterministic.
+- DIALS (max 2): ESTIMATOR {PW_SB, PW_CB, HHJ, VMATCH} x PANEL {U56, B135, SMALL663, SPY} = 16
+  cells, published at each of 3 SERIES kinds (S_RAW / S_PSI / S_DIFF) x 2 WINDOWS (FULL / IS):
+  928 estimates, every one in `.blocklen.csv`. SERIES and WINDOW are controls, never chosen on.
+- THE TAPE'S ANSWER. Politis-White plug-in (Patton-Politis-White 2009 constants) on the frozen
+  2026-09-04 book's SHARPE INFLUENCE FUNCTION, full sample: U56 3.49, B135 2.55, SMALL663 2.85,
+  SPY 6.47 (PW_SB 3.05 / 2.23 / 2.49 / 5.66). 63 is 18.1x / 24.7x / 22.1x / 9.7x the panel's own
+  number. Median PW_CB over the 11 full-sample cells 3.46; median over all 928 estimates 4.52;
+  0.9601 of them below 63. Estimator validated on known inputs: seeded iid noise 1.21, seeded
+  AR(1) phi = 0.8 42.92 (G3/G4). H_FAR HELD.
+- AND NO RIVAL IS A POINT EITHER — H_AGREE REFUTED, and this is half the finding. The four
+  estimators span 10.35x over the full-sample cells (2.09..21.66); median per-cell spread 4.96x,
+  worst 9.43x, only 2 of 11 cells within 3x. VMATCH is IDENTIFIED (bootstrap-SD spread over the
+  1..504 ladder 1.38-1.88 at 8 of 8 cells) but its within-5%-of-HAC set runs [1, 42] on U56 and
+  [1, 63] on B135. HHJ's pilot is the PW_CB rung and is stated, so HHJ is not independent
+  evidence of PW's level. On ~4,400 daily rows the class of arguments that could justify ANY L
+  does not resolve to a number; 63's defect is that it is inherited, not that a rival is right.
+- THE INHERITANCE IS NOT HARMLESS — H_NOCHANGE REFUTED. Read off idea 1208's committed
+  `.Ldependence.csv` (the SAME 72 decisions, re-read, not re-derived; G6 reproduces its 16/72 at
+  L=63 and 14/72 at L=21): a PW_CB L-hat of 3.46 brackets [2, 5] -> 12 of 72 resolved, FOUR FEWER
+  than 63's 16, a 25% inflation; VMATCH 13.00 and HHJ 12.55 both bracket [10, 21] -> 13..14, -3..-2.
+  The rung ladder is monotone (11/12/12/13/14/16/16/17/20/23/34 at L = 1..1008), so the bias is
+  ONE-DIRECTIONAL: every committed decisiveness claim written at L=63 is quoted from a rung more
+  generous than the tape's own.
+- CAPITAL (rule 8, both KEEP paths). 108 books, N {10,12,16,20,25,30} x H {21,42,63,126,189,252}
+  on three panels, 10 bps, t+1, 260-row warm-up, picks on warm-up..2016-12-31 and 2017-2026 read
+  ONCE. 4a 0 of 108 (A_DD fails 108 of 108 against live RULES v2's -12.05% MaxDD). 4b 11 of 108 —
+  U56 9, B135 2, SMALL663 0 — binding leg the DD cap (97 of 97 failures), then H2 40, OOS 38,
+  H1 29, CAGR 21; every pass is the incumbent's own family, prior art.
+- THE BAR AS A CHOOSER: do-nothing 0.8869 mean OOS Sharpe (4b 1 of 3); C_DEC_L63 0.8406
+  (-0.0463), C_DEC_L252 -0.0463, C_DEC_L504 -0.0894, C_DEC_L21 +0.0000, C_RANDOM -0.0141,
+  C_ISSHARPE +0.0962, C_DEC_LHAT +0.1299. H_CAPITAL FAILED BY THE LETTER AND IS EMPTY ON
+  INSPECTION, REPORTED AS SUCH: the bar fires 8 times in 525 pair-tests (0.0152), and
+  C_DEC_LHAT's +0.1299 is a mean of three numbers of which two are exactly 0.0000 — ONE decision
+  on SMALL663 where L-hat = 1 (an iid redraw, the most generous possible SE) picked (N=12,H=252),
+  the IDENTICAL cell C_ISSHARPE picks with no bar at all, at an OOS MaxDD of -41.35% on the panel
+  with 0 of 36 4b passes. On U56, the only panel carrying a 4b book, every bar that fires loses
+  (-0.1389). The inherited 63 is the worst of the three rungs that ever fire.
+- INCUMBENT REPLAY: U56 N=20/H126/G0.75/W 15.78% / 1.1522 / -19.13%, halves 1.2127/1.1128,
+  OOS 17.28% / 1.1832 / -19.13%, turnover 2.75/yr, 4b PASS — prior art, not promoted (rule 6).
+  U56 SPY 15.13% / 0.8849 / -33.72% (halves 0.9600/0.8236), OOS 15.28% / 0.8747; live RULES v2
+  @10 bps 8.62% / 1.2018 / -12.05%, OOS 9.47% / 1.2781. G1 pins the anchor to the 2026-09-16
+  vintage its committed triple was produced on (max dev < 1e-4).
+- FOR THE SUNDAY REVIEW, PUBLISHING NOTE ONLY (rule 6): a committed decisiveness or resolution
+  claim must state its block length L AND that L = 63 is an inherited convention, not a fitted
+  one; where the claim is load-bearing it should quote the count at a plug-in L beside it.
+- Script: research/backtests/2026-09-18_does-the-record-s-BLOCK-LENGTH-63-have-ANY-argument-other-than-INHERITANCE_B.py
+- SURVIVORSHIP (rule 9): U56 and B135 are CURRENT-CONSTITUENT lists; SMALL663 is a current
+  sub-$2B screen with 52 of 715 names dropped on max_1d_move >= 1.0. Every ARM C level and 4b
+  count is an UPPER bound. ARM A measures dependence structure, not level, so a common level bias
+  does not move an autocorrelation — but the series are the surviving names' series, so even the
+  block lengths are the survivors'. ARM B re-reads committed numbers and changes none of them.
