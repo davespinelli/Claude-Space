@@ -2688,3 +2688,35 @@ rather than a lookalike.
   a DISAGREEMENT between two readings of the SAME books on the SAME tape and is first-order immune; the
   tape-end wander is measured on the same flattered panel and would if anything be wider on a live one;
   the 4a and 4b legs are NOT immune and those passes are upper bounds.
+## 2026-09-18 (lane cloud, idea 1095) — the H min-hold dial: non-monotone in sign, unresolved in size
+- QUESTION (queue 1095): does 1086's H-dial non-monotonicity — "H=63 is not between H=21 and H=126 on
+  either panel" — survive a finer ladder, or is it a three-point artefact?
+- ANSWER: pre-declared outcome (C). On the queue's own 8-rung ladder {5,10,21,42,63,90,126,189} x N
+  {5,20} x {U56, B135, SMALL663} (48 cells, all published) NO family is monotone in full-sample Sharpe,
+  but only 1 of 42 adjacent-rung steps clears 2 paired block-bootstrap SE (median |step|/SE 0.5574) and
+  NO family's top rung is decisive (top-minus-second 0.04-0.32 SE; P(bootstrap argmax) peaks at
+  0.298-0.453, and the argmax sits at a DIFFERENT H in each of the six families).
+- 1086 RE-READ: its BETWEEN(63 | 21,126) failure REPRODUCES at 5 of 6 families, so the finding is real,
+  but the excess is 0.0000-0.1073 of Sharpe = 0.00-0.78 paired SE, past 1 SE nowhere; and on the fine
+  ladder 63 sits INSIDE its own neighbours 42 and 90 at 3 of 6. 63 is not mis-placed — the coarse
+  ladder skipped 42..90 and read its own spacing as a shape. The record should stop citing 1086's
+  reading as evidence that the hold dial has structure.
+- CAPITAL: 4a 0 of 48. 4b 3 of 48, all on U56 / N=20: H=5, H=10 and the incumbent H=126. Every one of
+  the five failures in that family is L_DD ALONE (MaxDD -20.24 / -22.82 / -25.69 / -23.87 / -22.21%
+  against the exact cap -20.2304%), and L_DD appears in 44 of 45 failures book-wide — the four-runs-
+  running diagnosis holds on a fifth dial. The two new passes are STRICTLY DOMINATED by the incumbent:
+  13.13% / 13.51% CAGR and 1.0879 / 1.0941 Sharpe at 9.85 / 7.92 turns per year against 15.62% /
+  1.1424 at 2.90. Memo written; NOT proposed for capital, nothing enacted (rule 6).
+- RULE 8: IS-only choosers pick H over all 8 rungs on warm-up..2016-12-31, OOS read once. Pick-minus-
+  anchor(H=126) OOS Sharpe mean +0.0198, positive at 7 of 18; the incumbent rung is reached 0 of 18
+  times; per-family IS/OOS Sharpe rank correlation -0.5952 / -0.1667 / +0.2619 / +0.0238 / -0.1429 /
+  -0.4762 (mean -0.1825). The dial carries no out-of-sample selection information, which agrees with
+  1181's finding that the H argmax is unresolvable at any attainable rung count and with 1153's
+  negative H rank correlation (-0.164).
+- VERDICT: KILL (no new book). 14 of 14 gates PASS, including the mechanical G7 (annual turnover is
+  non-increasing in H at all six (panel, N) families, worst step -0.4129/yr).
+- Script: research/backtests/2026-09-18_is-the-H-DIAL-NON-MONOTONE-on-a-FINER-HOLD-LADDER-or-is-63-MIS-PLACED_cloud.py
+- SURVIVORSHIP (rule 9): U56/B135 current-constituent lists; SMALL663 a current sub-$2B screen (52 of
+  715 dropped for max_1d_move >= 1.0). Levels are optimistic and both new 4b passes are UPPER bounds —
+  they clear on the drawdown leg, the leg a survivorship-free panel would hurt most. The headline is a
+  CONTRAST between rungs of one ladder on one tape and is first-order immune; the 4a/4b legs are not.
