@@ -1,0 +1,156 @@
+# 2026-09-18 idea 1084 lane cloud — is-the-EDGE-ARGMAX-CHOOSABLE-OUT-OF-SAMPLE-AT-ALL
+# DIAL 1 N = [5, 8, 10, 12, 15, 20, 25, 30, 40] (1082's 9 rungs)   DIAL 2 SPLIT = ['2014-12-31', '2016-12-31', '2018-12-31'] (rule 8's own is 2016-12-31)
+# NOT dials, all reported: PANEL ['U56', 'B136']; H [63, 126] (+[21] for gate G4); CHOOSER ['C_ISEDGE', 'C_ISSHARPE', 'C_ISCAGR']
+# EDGE = book CAGR - median over 40 seeds of the DD-MATCHED (rebuilt, lam<=1, 34-step bisection) null CAGR, computed SEPARATELY INSIDE EACH WINDOW
+# frozen: CAND20 legs [(21, 252), (0, 126), (0, 63)], elig above-200d & vol20<0.6, cap INF, gross 0.75, cadence W, 10 bps, t+1, warm-up 260, seed recipe md5(panel|N|INF|seed)
+# PRE-DECLARED: (A) no information / (B) positive / (C) anti-information / (D) split-dependent; |rho| bar 0.3
+
+## U56  n_days=4707  n_cols=56  2008-01-02..2026-09-17
+   split 2014-12-31: IS rows 1503  OOS rows 2944
+   split 2016-12-31: IS rows 2007  OOS rows 2440
+   split 2018-12-31: IS rows 2509  OOS rows 1938
+   GATE G8 the three splits are strictly nested and every OOS window has >= 1000 rows: nested=True, min OOS rows 1938 vs True and >= 1000 -> PASS
+   SPY     full  15.13% / 0.8848 / -33.72%   OOS(2016-12-31)  15.28% / 0.8745 / -33.72%
+   RULESv2 full   8.62% / 1.2017 / -12.05%
+   GATE G1 fast runner == engine.backtest (U56 N=20 H=126): 1.388e-17 vs < 1e-12 -> PASS
+   GATE G1b gross_rescaler f(1.0) == the fast runner's net path: 1.388e-17 vs < 1e-14 -> PASS
+   U56 anchor on the LIVE tape (ungated): 0.156187/1.142304/-0.191276
+   GATE G2 CROSS-RUN U56 N=20 H=126 triple == committed (tape to 2026-09-15): 0.155793/1.139742/-0.191276 maxdiff 4.15e-05 vs (0.155787, 1.139701, -0.191276) < 5e-3 -> PASS
+   GATE G3 CROSS-RUN SPY OOS triple (tape to 2026-09-15; live tape 0.1528/0.8745/-0.3372): 0.1521/0.8711/-0.3372 maxdiff 1.70e-04 vs (0.1521, 0.8713, -0.3372) < 5e-4 -> PASS
+   GATE G5 live RULES v2 MaxDD == committed -12.05%: -0.1205 vs -0.1205 < 5e-4 -> PASS
+   GATE G6 |MaxDD| of the rebuilt null is monotone in lam over [0.05, 1.0] (the bisection is well posed): 0.000e+00 vs < 1e-12 -> PASS
+   GATE G7 the null draw is deterministic in its seed recipe: 0.000e+00 vs == 0.0 -> PASS
+   GATE G9 determinism (anchor book recomputes bit for bit): 0.000e+00 vs == 0.0 -> PASS
+   U56 H=63: books+nulls done  [t=22s]
+   U56 H=126: books+nulls done  [t=46s]
+   U56 H=21: books+nulls done  [t=61s]
+   GATE G4 CROSS-RUN 1093's committed full-sample EDGE, U56, n in {5,8,10} x H in {21,63,126} (9 cells — the premise itself; tape truncated to 2026-09-15, where 1093's figures were committed): maxdiff 5.540e-02 vs < 5e-3 -> FAIL
+   G4b UNGATED, the same 9 cells on the LIVE tape: maxdiff 9.801e-02 pp. U56's cache ends 2026-09-17; where it has grown since 2026-09-15 the committed EDGE figures no longer reproduce, which is a property of the tape, not of the machinery.
+
+   U56 H=63 split 2014-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.8167   rho(Sharpe) = +0.1167
+      EDGE_IS  5:+2.61  8:+4.07  10:+3.74  12:+5.79  15:+3.47  20:+1.02  25:+1.20  30:+2.08  40:+0.89
+      EDGE_OOS 5:+8.57  8:+10.64  10:+8.61  12:+5.92  15:+5.02  20:+2.62  25:+3.17  30:+2.27  40:+0.31
+      argmax EDGE IS=12 OOS=8 FULL=8; mean seed SE IS 0.425 OOS 0.289 pp
+      rule8 C_ISEDGE    picks N=12 (anchor 20)  OOS S 1.1027 vs anchor 1.0925 (d +0.0101, SPY 0.8209)  OOS EDGE +5.92 vs anchor +2.62 (d +3.30 = +5.10 x 2SE)  4b FAIL L_DD
+      rule8 C_ISSHARPE  picks N=12 (anchor 20)  OOS S 1.1027 vs anchor 1.0925 (d +0.0101, SPY 0.8209)  OOS EDGE +5.92 vs anchor +2.62 (d +3.30 = +5.10 x 2SE)  4b FAIL L_DD
+      rule8 C_ISCAGR    picks N=12 (anchor 20)  OOS S 1.1027 vs anchor 1.0925 (d +0.0101, SPY 0.8209)  OOS EDGE +5.92 vs anchor +2.62 (d +3.30 = +5.10 x 2SE)  4b FAIL L_DD
+
+   U56 H=63 split 2016-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.8333   rho(Sharpe) = -0.0333
+      EDGE_IS  5:+8.30  8:+6.12  10:+5.19  12:+5.44  15:+4.11  20:+1.70  25:+1.78  30:+2.41  40:+1.10
+      EDGE_OOS 5:+5.34  8:+10.56  10:+8.28  12:+5.65  15:+5.04  20:+2.77  25:+3.05  30:+2.13  40:+0.34
+      argmax EDGE IS=5 OOS=8 FULL=8; mean seed SE IS 0.356 OOS 0.336 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.8960 vs anchor 1.1063 (d -0.2103, SPY 0.8745)  OOS EDGE +5.34 vs anchor +2.77 (d +2.57 = +2.11 x 2SE)  4b FAIL L_DD
+      rule8 C_ISSHARPE  picks N= 5 (anchor 20)  OOS S 0.8960 vs anchor 1.1063 (d -0.2103, SPY 0.8745)  OOS EDGE +5.34 vs anchor +2.77 (d +2.57 = +2.11 x 2SE)  4b FAIL L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.8960 vs anchor 1.1063 (d -0.2103, SPY 0.8745)  OOS EDGE +5.34 vs anchor +2.77 (d +2.57 = +2.11 x 2SE)  4b FAIL L_DD
+
+   U56 H=63 split 2018-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.8833   rho(Sharpe) = +0.4000
+      EDGE_IS  5:+7.85  8:+7.27  10:+6.20  12:+4.82  15:+4.30  20:+1.59  25:+1.41  30:+0.99  40:-0.21
+      EDGE_OOS 5:+4.80  8:+9.67  10:+8.17  12:+6.16  15:+4.80  20:+2.67  25:+2.90  30:+2.24  40:+0.19
+      argmax EDGE IS=5 OOS=8 FULL=8; mean seed SE IS 0.277 OOS 0.392 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.9054 vs anchor 1.1419 (d -0.2365, SPY 0.9248)  OOS EDGE +4.80 vs anchor +2.67 (d +2.13 = +1.46 x 2SE)  4b FAIL L_OOS,L_DD
+      rule8 C_ISSHARPE  picks N= 8 (anchor 20)  OOS S 1.1875 vs anchor 1.1419 (d +0.0456, SPY 0.9248)  OOS EDGE +9.67 vs anchor +2.67 (d +6.99 = +5.31 x 2SE)  4b FAIL L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.9054 vs anchor 1.1419 (d -0.2365, SPY 0.9248)  OOS EDGE +4.80 vs anchor +2.67 (d +2.13 = +1.46 x 2SE)  4b FAIL L_OOS,L_DD
+
+   U56 H=126 split 2014-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.5833   rho(Sharpe) = -0.3833
+      EDGE_IS  5:+8.42  8:+3.40  10:+5.08  12:+4.25  15:+2.06  20:+0.69  25:-0.37  30:-1.04  40:+0.26
+      EDGE_OOS 5:+4.82  8:+5.70  10:+6.45  12:+7.65  15:+6.72  20:+6.12  25:+4.13  30:+2.67  40:+0.71
+      argmax EDGE IS=5 OOS=12 FULL=12; mean seed SE IS 0.384 OOS 0.335 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.8779 vs anchor 1.1582 (d -0.2803, SPY 0.8209)  OOS EDGE +4.82 vs anchor +6.12 (d -1.30 = -1.17 x 2SE)  4b FAIL L_DD
+      rule8 C_ISSHARPE  picks N= 5 (anchor 20)  OOS S 0.8779 vs anchor 1.1582 (d -0.2803, SPY 0.8209)  OOS EDGE +4.82 vs anchor +6.12 (d -1.30 = -1.17 x 2SE)  4b FAIL L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.8779 vs anchor 1.1582 (d -0.2803, SPY 0.8209)  OOS EDGE +4.82 vs anchor +6.12 (d -1.30 = -1.17 x 2SE)  4b FAIL L_DD
+
+   U56 H=126 split 2016-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.6333   rho(Sharpe) = +0.2167
+      EDGE_IS  5:+7.45  8:+2.65  10:+4.50  12:+3.82  15:+2.89  20:+1.78  25:+0.49  30:-0.30  40:+0.29
+      EDGE_OOS 5:+5.12  8:+6.74  10:+6.30  12:+7.81  15:+6.76  20:+6.09  25:+4.11  30:+2.78  40:+0.74
+      argmax EDGE IS=5 OOS=12 FULL=12; mean seed SE IS 0.340 OOS 0.379 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.9059 vs anchor 1.1688 (d -0.2629, SPY 0.8745)  OOS EDGE +5.12 vs anchor +6.09 (d -0.96 = -0.73 x 2SE)  4b FAIL L_DD
+      rule8 C_ISSHARPE  picks N=40 (anchor 20)  OOS S 1.1010 vs anchor 1.1688 (d -0.0678, SPY 0.8745)  OOS EDGE +0.74 vs anchor +6.09 (d -5.34 = -7.49 x 2SE)  4b FAIL L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.9059 vs anchor 1.1688 (d -0.2629, SPY 0.8745)  OOS EDGE +5.12 vs anchor +6.09 (d -0.96 = -0.73 x 2SE)  4b FAIL L_DD
+
+   U56 H=126 split 2018-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.4333   rho(Sharpe) = -0.2167
+      EDGE_IS  5:+7.76  8:+3.84  10:+5.75  12:+4.50  15:+3.29  20:+1.60  25:+1.41  30:+0.26  40:+0.10
+      EDGE_OOS 5:+3.24  8:+6.85  10:+5.59  12:+7.53  15:+7.59  20:+6.73  25:+3.96  30:+3.00  40:+0.84
+      argmax EDGE IS=5 OOS=15 FULL=12; mean seed SE IS 0.283 OOS 0.454 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.8680 vs anchor 1.2385 (d -0.3705, SPY 0.9248)  OOS EDGE +3.24 vs anchor +6.73 (d -3.49 = -2.19 x 2SE)  4b FAIL L_OOS,L_DD
+      rule8 C_ISSHARPE  picks N=10 (anchor 20)  OOS S 1.0861 vs anchor 1.2385 (d -0.1524, SPY 0.9248)  OOS EDGE +5.59 vs anchor +6.73 (d -1.14 = -0.71 x 2SE)  4b FAIL L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.8680 vs anchor 1.2385 (d -0.3705, SPY 0.9248)  OOS EDGE +3.24 vs anchor +6.73 (d -3.49 = -2.19 x 2SE)  4b FAIL L_OOS,L_DD
+
+## B136  n_days=4703  n_cols=136  2008-01-02..2026-09-11
+   split 2014-12-31: IS rows 1503  OOS rows 2940
+   split 2016-12-31: IS rows 2007  OOS rows 2436
+   split 2018-12-31: IS rows 2509  OOS rows 1934
+   SPY     full  15.16% / 0.8861 / -33.72%   OOS(2016-12-31)  15.33% / 0.8767 / -33.72%
+   RULESv2 full   7.98% / 1.0993 / -12.24%
+   B136 H=63: books+nulls done  [t=103s]
+   B136 H=126: books+nulls done  [t=157s]
+   B136 H=21: books+nulls done  [t=182s]
+   GATE G4 CROSS-RUN 1093's committed full-sample EDGE, B136, n in {5,8,10} x H in {21,63,126} (9 cells — the premise itself; tape truncated to 2026-09-15, where 1093's figures were committed): maxdiff 4.587e-07 vs < 5e-3 -> PASS
+   G4b UNGATED, the same 9 cells on the LIVE tape: maxdiff 4.587e-07 pp. B136's cache ends 2026-09-11; where it has grown since 2026-09-15 the committed EDGE figures no longer reproduce, which is a property of the tape, not of the machinery.
+
+   B136 H=63 split 2014-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.9500   rho(Sharpe) = +0.2500
+      EDGE_IS  5:+13.44  8:+8.31  10:+8.21  12:+7.83  15:+7.29  20:+5.85  25:+5.70  30:+2.18  40:+3.54
+      EDGE_OOS 5:+10.53  8:+10.01  10:+8.22  12:+5.63  15:+4.39  20:+3.23  25:+1.64  30:+1.66  40:+0.37
+      argmax EDGE IS=5 OOS=5 FULL=5; mean seed SE IS 0.502 OOS 0.289 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.9791 vs anchor 0.9756 (d +0.0034, SPY 0.8227)  OOS EDGE +10.53 vs anchor +3.23 (d +7.30 = +6.32 x 2SE)  4b FAIL L_DD
+      rule8 C_ISSHARPE  picks N= 5 (anchor 20)  OOS S 0.9791 vs anchor 0.9756 (d +0.0034, SPY 0.8227)  OOS EDGE +10.53 vs anchor +3.23 (d +7.30 = +6.32 x 2SE)  4b FAIL L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.9791 vs anchor 0.9756 (d +0.0034, SPY 0.8227)  OOS EDGE +10.53 vs anchor +3.23 (d +7.30 = +6.32 x 2SE)  4b FAIL L_DD
+
+   B136 H=63 split 2016-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.9000   rho(Sharpe) = +0.2333
+      EDGE_IS  5:+15.37  8:+9.22  10:+9.51  12:+8.51  15:+7.26  20:+5.56  25:+4.69  30:+2.18  40:+3.03
+      EDGE_OOS 5:+8.72  8:+9.33  10:+7.67  12:+5.09  15:+3.61  20:+2.94  25:+1.33  30:+1.50  40:+0.32
+      argmax EDGE IS=5 OOS=8 FULL=5; mean seed SE IS 0.419 OOS 0.329 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.9156 vs anchor 0.9960 (d -0.0804, SPY 0.8767)  OOS EDGE +8.72 vs anchor +2.94 (d +5.77 = +4.16 x 2SE)  4b FAIL L_DD
+      rule8 C_ISSHARPE  picks N= 5 (anchor 20)  OOS S 0.9156 vs anchor 0.9960 (d -0.0804, SPY 0.8767)  OOS EDGE +8.72 vs anchor +2.94 (d +5.77 = +4.16 x 2SE)  4b FAIL L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.9156 vs anchor 0.9960 (d -0.0804, SPY 0.8767)  OOS EDGE +8.72 vs anchor +2.94 (d +5.77 = +4.16 x 2SE)  4b FAIL L_DD
+
+   B136 H=63 split 2018-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.9333   rho(Sharpe) = -0.0833
+      EDGE_IS  5:+15.14  8:+9.80  10:+10.43  12:+8.25  15:+6.86  20:+4.46  25:+3.54  30:+2.48  40:+1.47
+      EDGE_OOS 5:+6.75  8:+8.72  10:+5.48  12:+3.11  15:+1.94  20:+1.68  25:+0.25  30:+0.74  40:-0.26
+      argmax EDGE IS=5 OOS=8 FULL=5; mean seed SE IS 0.350 OOS 0.396 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.8682 vs anchor 0.9685 (d -0.1003, SPY 0.9276)  OOS EDGE +6.75 vs anchor +1.68 (d +5.07 = +2.96 x 2SE)  4b FAIL L_OOS,L_DD
+      rule8 C_ISSHARPE  picks N= 5 (anchor 20)  OOS S 0.8682 vs anchor 0.9685 (d -0.1003, SPY 0.9276)  OOS EDGE +6.75 vs anchor +1.68 (d +5.07 = +2.96 x 2SE)  4b FAIL L_OOS,L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.8682 vs anchor 0.9685 (d -0.1003, SPY 0.9276)  OOS EDGE +6.75 vs anchor +1.68 (d +5.07 = +2.96 x 2SE)  4b FAIL L_OOS,L_DD
+
+   B136 H=126 split 2014-12-31:  rho(EDGE_IS, EDGE_OOS) = -0.1167   rho(Sharpe) = -0.9167
+      EDGE_IS  5:+14.38  8:+12.25  10:+11.50  12:+9.00  15:+5.94  20:+5.27  25:+4.77  30:+3.74  40:+3.21
+      EDGE_OOS 5:+1.76  8:+1.28  10:+5.58  12:+4.38  15:+5.96  20:+3.93  25:+4.05  30:+3.33  40:+2.09
+      argmax EDGE IS=5 OOS=15 FULL=10; mean seed SE IS 0.474 OOS 0.318 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.7349 vs anchor 0.9247 (d -0.1898, SPY 0.8227)  OOS EDGE +1.76 vs anchor +3.93 (d -2.17 = -1.95 x 2SE)  4b FAIL L_H2,L_OOS,L_DD
+      rule8 C_ISSHARPE  picks N=10 (anchor 20)  OOS S 0.8163 vs anchor 0.9247 (d -0.1083, SPY 0.8227)  OOS EDGE +5.58 vs anchor +3.93 (d +1.65 = +1.86 x 2SE)  4b FAIL L_H2,L_OOS
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.7349 vs anchor 0.9247 (d -0.1898, SPY 0.8227)  OOS EDGE +1.76 vs anchor +3.93 (d -2.17 = -1.95 x 2SE)  4b FAIL L_H2,L_OOS,L_DD
+
+   B136 H=126 split 2016-12-31:  rho(EDGE_IS, EDGE_OOS) = -0.3167   rho(Sharpe) = -0.6833
+      EDGE_IS  5:+10.73  8:+8.17  10:+6.87  12:+4.88  15:+2.65  20:+3.58  25:+3.54  30:+3.04  40:+2.49
+      EDGE_OOS 5:+2.19  8:+2.30  10:+6.45  12:+5.58  15:+7.89  20:+5.15  25:+4.62  30:+4.06  40:+2.47
+      argmax EDGE IS=5 OOS=15 FULL=10; mean seed SE IS 0.401 OOS 0.355 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.7687 vs anchor 1.0100 (d -0.2413, SPY 0.8767)  OOS EDGE +2.19 vs anchor +5.15 (d -2.95 = -2.42 x 2SE)  4b FAIL L_H2,L_OOS,L_DD
+      rule8 C_ISSHARPE  picks N= 8 (anchor 20)  OOS S 0.7866 vs anchor 1.0100 (d -0.2234, SPY 0.8767)  OOS EDGE +2.30 vs anchor +5.15 (d -2.85 = -2.68 x 2SE)  4b FAIL L_H2,L_OOS,L_DD
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.7687 vs anchor 1.0100 (d -0.2413, SPY 0.8767)  OOS EDGE +2.19 vs anchor +5.15 (d -2.95 = -2.42 x 2SE)  4b FAIL L_H2,L_OOS,L_DD
+
+   B136 H=126 split 2018-12-31:  rho(EDGE_IS, EDGE_OOS) = +0.1000   rho(Sharpe) = -0.8000
+      EDGE_IS  5:+9.04  8:+7.51  10:+7.70  12:+5.08  15:+3.22  20:+3.46  25:+2.68  30:+1.99  40:+1.34
+      EDGE_OOS 5:+2.66  8:+1.03  10:+6.01  12:+5.88  15:+7.51  20:+3.88  25:+3.80  30:+3.37  40:+2.27
+      argmax EDGE IS=5 OOS=15 FULL=10; mean seed SE IS 0.307 OOS 0.415 pp
+      rule8 C_ISEDGE    picks N= 5 (anchor 20)  OOS S 0.7974 vs anchor 0.9756 (d -0.1782, SPY 0.9276)  OOS EDGE +2.66 vs anchor +3.88 (d -1.22 = -0.83 x 2SE)  4b FAIL L_H2,L_OOS,L_DD
+      rule8 C_ISSHARPE  picks N=10 (anchor 20)  OOS S 0.8506 vs anchor 0.9756 (d -0.1250, SPY 0.9276)  OOS EDGE +6.01 vs anchor +3.88 (d +2.14 = +1.83 x 2SE)  4b FAIL L_H2,L_OOS
+      rule8 C_ISCAGR    picks N= 5 (anchor 20)  OOS S 0.7974 vs anchor 0.9756 (d -0.1782, SPY 0.9276)  OOS EDGE +2.66 vs anchor +3.88 (d -1.22 = -0.83 x 2SE)  4b FAIL L_H2,L_OOS,L_DD
+   wrote 2026-09-18_is-the-EDGE-ARGMAX-CHOOSABLE-OUT-OF-SAMPLE-AT-ALL_cloud.grid.csv  (36 rows, 28 cols)
+   wrote 2026-09-18_is-the-EDGE-ARGMAX-CHOOSABLE-OUT-OF-SAMPLE-AT-ALL_cloud.null.csv  (324 rows, 13 cols)
+   wrote 2026-09-18_is-the-EDGE-ARGMAX-CHOOSABLE-OUT-OF-SAMPLE-AT-ALL_cloud.rho.csv  (12 rows, 14 cols)
+   wrote 2026-09-18_is-the-EDGE-ARGMAX-CHOOSABLE-OUT-OF-SAMPLE-AT-ALL_cloud.walkforward.csv  (36 rows, 31 cols)
+   wrote 2026-09-18_is-the-EDGE-ARGMAX-CHOOSABLE-OUT-OF-SAMPLE-AT-ALL_cloud.seeds.csv  (2,160 rows, 12 cols)
+   wrote 2026-09-18_is-the-EDGE-ARGMAX-CHOOSABLE-OUT-OF-SAMPLE-AT-ALL_cloud.gates.csv  (11 rows, 4 cols)
+
+====================================================================================================
+## ANSWER
+   rho(EDGE_IS, EDGE_OOS) over 12 (panel, H, split) cells: mean +0.5528, median +0.7250, min -0.3167, max +0.9500
+   |rho| >= 0.3 at 10/12 cells; rho > 0 at 10/12
+   rho(Sharpe_IS, Sharpe_OOS) for comparison: mean -0.1583, positive at 5/12
+   SIGN of rho flips across the split dial at 1/4 (panel, H) families
+   IS EDGE argmax == OOS EDGE argmax at 1/12 cells; IS argmax rungs [5, 12], OOS argmax rungs [5, 8, 12, 15]
+   C_ISEDGE: pick-minus-anchor OOS EDGE mean +1.1720 pp, positive at 6/12, past 2 paired seed SE at 10/12
+   C_ISEDGE: pick-minus-anchor OOS SHARPE mean -0.1781, positive at 2/12; reaches the OOS EDGE argmax at 1/12, the anchor at 0/12
+   ALL choosers: pick-minus-anchor OOS Sharpe mean -0.1545, positive at 7/36
+   4b PASS at 3/36 rung books; 4a PASS at 0/36; picks 4b PASS at 0/36
+   gates: 10/11 PASS
+   [t=182s]

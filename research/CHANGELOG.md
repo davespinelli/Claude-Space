@@ -2720,3 +2720,46 @@ rather than a lookalike.
   715 dropped for max_1d_move >= 1.0). Levels are optimistic and both new 4b passes are UPPER bounds —
   they clear on the drawdown leg, the leg a survivorship-free panel would hurt most. The headline is a
   CONTRAST between rungs of one ladder on one tape and is first-order immune; the 4a/4b legs are not.
+
+## 2026-09-18 (lane cloud, idea 1084) — the EDGE ladder transfers a SLOPE, not a PEAK
+- QUESTION (queue 1084): is the EDGE argmax choosable out of sample at all? 1082 found the full-sample
+  argmax (n=12 / n=10) is not what any IS-only chooser picks, so a 3.9-8.1 SE effect in the record was
+  unreachable by an honest procedure; the queue asked for the IS-vs-OOS rank correlation of EDGE.
+- ANSWER, and it is NOT the expected null: the ladder DOES transfer. Over 12 (panel, H, split) cells —
+  9 rungs N {5..40} x splits {2014/2016/2018-12-31} x H {63,126} x {U56, B136}, EDGE recomputed
+  SEPARATELY INSIDE EACH WINDOW (40 seeds, DD-matched rebuilt null, lam <= 1) — rho(EDGE_IS, EDGE_OOS)
+  is mean +0.5528, median +0.7250, |rho| >= 0.30 at 10 of 12 and positive at 10 of 12, while
+  rho(Sharpe_IS, Sharpe_OOS) on the IDENTICAL rungs is mean -0.1583 (positive at 5 of 12).
+- AND YET THE ARGMAX IS UNREACHABLE: the IS EDGE argmax equals the OOS one at 1 of 12 cells. The IS
+  argmax is N=5 — the ladder's LEFT END — at 10 of 12, while the OOS argmax sits at N=8/12/15. The
+  mechanism is that EDGE is essentially DECREASING in N (rho(N, EDGE) -0.72 to -0.97 at 7 of the 8
+  headline-split cells), so what transfers is a SLOPE and the "peak" every committed EDGE argmax names
+  is a boundary. That reconciles 1082's H_ISEDGE failure with this run's positive correlation: both are
+  true, and the record should quote the slope, never the argmax.
+- CAPITAL: C_ISEDGE pick-minus-anchor(N=20) OOS Sharpe mean -0.1781, positive at 2 of 12 (worst
+  -0.3705); all three choosers -0.1545, positive at 7 of 36. 4a 0 of 36 rung books; picks 4b 0 of 36.
+  Acting on EDGE costs about 0.18 of OOS Sharpe because EDGE ranks small-N books top and Sharpe ranks
+  them bottom. KILL as a capital finding.
+- A SECOND FINDING ABOUT THE RECORD'S OWN SE: C_ISEDGE's OOS EDGE gain over the anchor reads DECISIVE
+  at 2 paired seed SE at 10 of 12 cells — in BOTH directions, +6.3 to -2.4 x 2SE. A 40-seed median's SE
+  (0.29-0.45 pp) is an order of magnitude too small to be the operative uncertainty on this statistic,
+  so every committed "EDGE is decisive at k SE" figure is measuring seed noise, not sampling noise.
+- BYCATCH, PARKED NOT ENACTED: U56 / N=12 / H=126 passes all five 4b legs and DOMINATES the standing
+  2026-09-04 book — 17.69% vs 15.62% CAGR, 1.1686 vs 1.1423 full Sharpe, 1.1748 vs 1.1688 OOS Sharpe,
+  3.04 vs 2.90 turns/yr — with MaxDD -20.169% sitting 0.061 pp inside the -20.2304% cap (1259's
+  rounding-width complaint). No IS-only chooser reaches it (IS-Sharpe rank 2 of 9; C_ISSHARPE takes
+  N=40 by 0.0101 of IS Sharpe), so by rule 8 it is PARK. Memo written; nothing enacted (rule 6).
+- GATES 10 of 11, and the FAILURE IS PUBLISHED WITH ITS CAUSE MEASURED: G4 replays 1093's nine
+  committed EDGE figures per panel. B136 reproduces to 4.587e-07 pp; U56 only to 5.540e-02 pp
+  (truncated to 2026-09-15) and 9.801e-02 pp on the live tape. data/prices.csv has been REWRITTEN
+  since 1093 ran — against the copy at commit 0d82185 there is one added row AND revised history on
+  shared cells (max relative change 5.1e-05 AVGO, 2.7e-05 AAPL, 2.4e-05 NVDA), while
+  data/prices_broad.csv has not moved. A 1e-05 shift in a close moves the DD-matching bisection, hence
+  lam, hence the null CAGR: a committed EDGE figure on the daily-refreshed panel is reproducible only
+  to ~0.06 pp, about 1% of its own value. That belongs beside 1088's rotation finding as a
+  reproducibility defect of the record, and it is why G4 was reported FAIL rather than re-tuned.
+- Script: research/backtests/2026-09-18_is-the-EDGE-ARGMAX-CHOOSABLE-OUT-OF-SAMPLE-AT-ALL_cloud.py
+- SURVIVORSHIP (rule 9): U56 and B136 are current-constituent lists, so every level is optimistic and
+  the 4b passes are UPPER bounds. EDGE is a book-minus-null contrast on the same panel and dates, so
+  the level bias cancels to first order in the headline rho; the 4a/4b legs and the parked cell's
+  0.061 pp drawdown margin do not — that margin is the part survivorship flatters most.
