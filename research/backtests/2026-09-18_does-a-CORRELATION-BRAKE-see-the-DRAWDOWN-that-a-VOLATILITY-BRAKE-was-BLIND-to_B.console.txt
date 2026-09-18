@@ -1,0 +1,473 @@
+# 2026-09-18 idea 1266 lane B — does-a-CORRELATION-BRAKE-see-the-DRAWDOWN-that-a-VOLATILITY-BRAKE-was-BLIND-to
+# frozen book: RAW composite, gate = above 200d MA AND vol20 < 0.6, N=20, H=126, base GROSS=0.75, weekly, 10 bps, t+1, warm-up 260, equal slots
+# DIAL 1 LOOK  = [20, 60, 126, 252]   (correlation / volatility lookback, days)
+# DIAL 2 SLOPE = [0.0, 0.25, 0.5, 0.75, 1.0]  (0.00 = COMMITTED CONSTANT-GROSS ANCHOR; 1.00 = flat at a new historical high of the statistic)
+# reported-not-dials: panel {U56,B135,SMALL} x signal ['COMPOSITE3', 'M12_1'] x brake ['CORR', 'VOL']
+# comparands at every cell: (1) gross-matched FLAT control, (2) the VOLATILITY TWIN, (3) a TIMING PLACEBO = the same intensity series permuted, seeds [11, 23, 37]
+# frozen constants (NOT dials): MINHIST=52 decision dates before the brake may arm; no hysteresis band; no minimum duration; gross never above 0.75; priced-at-both-ends column filter; equal-weighted pairs
+# SELECTION IS IDENTICAL AT EVERY CELL BY CONSTRUCTION — only the gross schedule moves
+# BOTH BRAKES SHARE THE EXPANDING-PERCENTILE FORM, SO THEIR INTENSITY DISTRIBUTIONS ARE IDENTICAL AND THE HEAD-TO-HEAD IS A PURE TIMING COMPARISON
+# SMALL panel: 715 names, 52 dropped for max_1d_move >= 1.0 -> 663 investable
+
+## U56  n_days=4707  n_names=55  2009-01-13..2026-09-17  n_rebalances=977
+   SPY     full  15.13% / 0.8849 / -33.72% / vol 17.70%   halves 0.9600/0.8236   OOS 0.8747
+   LIVE v2 full   8.62% / 1.2018 / -12.05%   OOS 1.2781
+   4b bars: DD cap -20.23%   CAGR floor  10.59%   Sharpe bars H1 0.9600 H2 0.8236 OOS 0.8747
+
+   --- signal COMPOSITE3 ---   anchor 15.78% / 1.1522 / -19.13%, turnover 2.75/yr
+   worst drawdown episode: peak 2020-02-19 -> trough 2020-03-16 (-19.13%)
+      LOOK  20: rank corr u(CORR) vs u(VOL) +0.500 | over the 4 decision dates INSIDE the episode mean u CORR 0.129 vs VOL 0.739 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR None VOL 2020-03-02
+      LOOK  60: rank corr u(CORR) vs u(VOL) +0.365 | over the 4 decision dates INSIDE the episode mean u CORR 0.000 vs VOL 0.473 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR None VOL 2020-03-09
+      LOOK 126: rank corr u(CORR) vs u(VOL) +0.147 | over the 4 decision dates INSIDE the episode mean u CORR 0.000 vs VOL 0.245 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR None VOL 2020-03-16
+      LOOK 252: rank corr u(CORR) vs u(VOL) +0.253 | over the 4 decision dates INSIDE the episode mean u CORR 0.000 vs VOL 0.164 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR None VOL 2020-03-16
+   brake LOOK slope |    CAGR   Sharpe    MaxDD    vol |  H1/H2 Sharpe |  OOS Sh | turn  gmean gmin  on% ep | 4a 4b | fail4b | vs FLAT / vs PLACEBO
+   CORR    20  0.00 |  15.78%   1.1522  -19.13% 13.52% | 1.2127/1.1128 |  1.1832 |  2.75 0.750 0.75  0.0   0 | n  Y | -            | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    20  0.25 |  15.07%   1.1794  -18.69% 12.58% | 1.2545/1.1294 |  1.1958 |  3.19 0.712 0.56 43.6  65 | n  Y | -            | FLAT dCAGR +0.10pp dSh +0.0273 dDD -0.47pp | PLAC dCAGR +0.35pp dSh +0.0534 dDD +0.15pp
+   CORR    20  0.50 |  14.32%   1.1965  -18.26% 11.77% | 1.2863/1.1358 |  1.1969 |  3.88 0.674 0.38 43.6  65 | n  Y | -            | FLAT dCAGR +0.16pp dSh +0.0446 dDD -0.95pp | PLAC dCAGR +0.72pp dSh +0.1098 dDD +0.31pp
+   CORR    20  0.75 |  13.54%   1.1999  -17.82% 11.10% | 1.3032/1.1291 |  1.1835 |  4.60 0.636 0.19 43.6  65 | n  Y | -            | FLAT dCAGR +0.19pp dSh +0.0481 dDD -1.44pp | PLAC dCAGR +1.06pp dSh +0.1635 dDD +0.47pp
+   CORR    20  1.00 |  12.74%   1.1839  -17.39% 10.61% | 1.2976/1.1047 |  1.1511 |  5.33 0.598 0.00 43.6  65 | n  Y | -            | FLAT dCAGR +0.20pp dSh +0.0322 dDD -1.94pp | PLAC dCAGR +1.39pp dSh +0.2094 dDD +0.64pp
+   CORR    60  0.00 |  15.78%   1.1522  -19.13% 13.52% | 1.2127/1.1128 |  1.1832 |  2.75 0.750 0.75  0.0   0 | n  Y | -            | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    60  0.25 |  15.09%   1.1625  -19.13% 12.80% | 1.2554/1.0995 |  1.1685 |  2.94 0.715 0.56 43.2  43 | n  Y | -            | FLAT dCAGR +0.05pp dSh +0.0104 dDD -0.83pp | PLAC dCAGR +0.18pp dSh +0.0293 dDD -0.29pp
+   CORR    60  0.50 |  14.37%   1.1623  -19.13% 12.19% | 1.2899/1.0748 |  1.1416 |  3.26 0.681 0.38 43.2  43 | n  Y | -            | FLAT dCAGR +0.06pp dSh +0.0103 dDD -1.66pp | PLAC dCAGR +0.39pp dSh +0.0590 dDD -0.57pp
+   CORR    60  0.75 |  13.62%   1.1493  -19.13% 11.71% | 1.3123/1.0374 |  1.1011 |  3.63 0.646 0.19 43.2  43 | n  Y | -            | FLAT dCAGR +0.05pp dSh -0.0026 dDD -2.49pp | PLAC dCAGR +0.58pp dSh +0.0848 dDD -0.85pp
+   CORR    60  1.00 |  12.86%   1.1208  -19.13% 11.38% | 1.3173/0.9861 |  1.0458 |  4.00 0.612 0.00 43.2  43 | n  Y | -            | FLAT dCAGR +0.03pp dSh -0.0310 dDD -3.33pp | PLAC dCAGR +0.76pp dSh +0.1045 dDD -1.12pp
+   CORR   126  0.00 |  15.78%   1.1522  -19.13% 13.52% | 1.2127/1.1128 |  1.1832 |  2.75 0.750 0.75  0.0   0 | n  Y | -            | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   126  0.25 |  15.05%   1.1537  -19.13% 12.88% | 1.2706/1.0695 |  1.1435 |  2.85 0.715 0.56 42.1  30 | n  Y | -            | FLAT dCAGR +0.02pp dSh +0.0016 dDD -0.84pp | PLAC dCAGR +0.12pp dSh +0.0175 dDD -0.22pp
+   CORR   126  0.50 |  14.29%   1.1459  -19.13% 12.33% | 1.3238/1.0139 |  1.0915 |  3.07 0.680 0.38 42.1  30 | n  Y | -            | FLAT dCAGR +0.01pp dSh -0.0061 dDD -1.68pp | PLAC dCAGR +0.27pp dSh +0.0366 dDD -0.44pp
+   CORR   126  0.75 |  13.52%   1.1271  -19.13% 11.88% | 1.3695/0.9453 |  1.0264 |  3.32 0.645 0.19 42.1  30 | n  Y | -            | FLAT dCAGR -0.02pp dSh -0.0248 dDD -2.53pp | PLAC dCAGR +0.41pp dSh +0.0539 dDD -0.66pp
+   CORR   126  1.00 |  12.73%   1.0957  -19.13% 11.55% | 1.4037/0.8634 |  0.9476 |  3.58 0.609 0.00 42.1  30 | n  Y | -            | FLAT dCAGR -0.06pp dSh -0.0561 dDD -3.38pp | PLAC dCAGR +0.54pp dSh +0.0681 dDD -0.87pp
+   CORR   252  0.00 |  15.78%   1.1522  -19.13% 13.52% | 1.2127/1.1128 |  1.1832 |  2.75 0.750 0.75  0.0   0 | n  Y | -            | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   252  0.25 |  15.24%   1.1620  -19.13% 12.93% | 1.2404/1.1042 |  1.1786 |  2.77 0.720 0.56 41.4  24 | n  Y | -            | FLAT dCAGR +0.11pp dSh +0.0098 dDD -0.73pp | PLAC dCAGR +0.10pp dSh +0.0172 dDD -0.22pp
+   CORR   252  0.50 |  14.68%   1.1642  -19.13% 12.43% | 1.2638/1.0851 |  1.1634 |  2.87 0.689 0.38 41.4  24 | n  Y | -            | FLAT dCAGR +0.19pp dSh +0.0122 dDD -1.46pp | PLAC dCAGR +0.23pp dSh +0.0363 dDD -0.43pp
+   CORR   252  0.75 |  14.10%   1.1574  -19.13% 12.02% | 1.2823/1.0533 |  1.1356 |  3.00 0.659 0.19 41.4  24 | n  Y | -            | FLAT dCAGR +0.26pp dSh +0.0054 dDD -2.19pp | PLAC dCAGR +0.36pp dSh +0.0537 dDD -0.65pp
+   CORR   252  1.00 |  13.50%   1.1399  -19.13% 11.72% | 1.2950/1.0069 |  1.0930 |  3.13 0.628 0.00 41.4  24 | n  Y | -            | FLAT dCAGR +0.32pp dSh -0.0120 dDD -2.93pp | PLAC dCAGR +0.47pp dSh +0.0682 dDD -0.87pp
+   VOL     20  0.00 |  15.78%   1.1522  -19.13% 13.52% | 1.2127/1.1128 |  1.1832 |  2.75 0.750 0.75  0.0   0 | n  Y | -            | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     20  0.25 |  14.11%   1.1776  -16.24% 11.80% | 1.2367/1.1362 |  1.2147 |  3.02 0.687 0.56 61.8  50 | n  Y | -            | FLAT dCAGR -0.32pp dSh +0.0256 dDD +1.37pp | PLAC dCAGR -0.17pp dSh +0.0460 dDD +2.31pp
+   VOL     20  0.50 |  12.38%   1.1882  -13.31% 10.27% | 1.2443/1.1453 |  1.2327 |  3.57 0.623 0.38 61.8  50 | n  Y | -            | FLAT dCAGR -0.70pp dSh +0.0363 dDD +2.76pp | PLAC dCAGR -0.32pp dSh +0.0989 dDD +4.98pp
+   VOL     20  0.75 |  10.62%   1.1664  -12.12%  9.00% | 1.2204/1.1213 |  1.2186 |  4.19 0.560 0.19 61.8  50 | n  Y | -            | FLAT dCAGR -1.12pp dSh +0.0148 dDD +2.40pp | PLAC dCAGR -0.49pp dSh +0.1429 dDD +6.07pp
+   VOL     20  1.00 |   8.83%   1.0828  -12.61%  8.13% | 1.1422/1.0295 |  1.1385 |  4.84 0.496 0.00 61.8  50 | n  n | CAGR         | FLAT dCAGR -1.55pp dSh -0.0686 dDD +0.35pp | PLAC dCAGR -0.68pp dSh +0.1530 dDD +5.58pp
+   VOL     60  0.00 |  15.78%   1.1522  -19.13% 13.52% | 1.2127/1.1128 |  1.1832 |  2.75 0.750 0.75  0.0   0 | n  Y | -            | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     60  0.25 |  14.02%   1.1588  -16.71% 11.94% | 1.2274/1.1091 |  1.1919 |  2.70 0.685 0.56 62.8  19 | n  Y | -            | FLAT dCAGR -0.37pp dSh +0.0067 dDD +0.86pp | PLAC dCAGR -0.18pp dSh +0.0322 dDD +0.88pp
+   VOL     60  0.50 |  12.23%   1.1479  -14.27% 10.54% | 1.2242/1.0872 |  1.1846 |  2.80 0.620 0.38 62.8  19 | n  Y | -            | FLAT dCAGR -0.78pp dSh -0.0039 dDD +1.72pp | PLAC dCAGR -0.31pp dSh +0.0698 dDD +2.00pp
+   VOL     60  0.75 |  10.41%   1.1049  -12.21%  9.36% | 1.1896/1.0309 |  1.1461 |  2.96 0.554 0.19 62.8  19 | n  n | CAGR         | FLAT dCAGR -1.21pp dSh -0.0467 dDD +2.19pp | PLAC dCAGR -0.46pp dSh +0.0994 dDD +3.85pp
+   VOL     60  1.00 |   8.58%   1.0086  -11.39%  8.52% | 1.1071/0.9158 |  1.0525 |  3.15 0.489 0.00 62.8  19 | n  n | CAGR         | FLAT dCAGR -1.66pp dSh -0.1428 dDD +1.39pp | PLAC dCAGR -0.63pp dSh +0.1043 dDD +5.47pp
+   VOL    126  0.00 |  15.78%   1.1522  -19.13% 13.52% | 1.2127/1.1128 |  1.1832 |  2.75 0.750 0.75  0.0   0 | n  Y | -            | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    126  0.25 |  13.78%   1.1274  -17.71% 12.11% | 1.2287/1.0520 |  1.1381 |  2.58 0.683 0.56 64.0  13 | n  Y | -            | FLAT dCAGR -0.58pp dSh -0.0246 dDD -0.18pp | PLAC dCAGR -0.44pp dSh -0.0017 dDD +0.25pp
+   VOL    126  0.50 |  11.77%   1.0793  -16.95% 10.86% | 1.2261/0.9613 |  1.0668 |  2.52 0.617 0.38 64.0  13 | n  Y | -            | FLAT dCAGR -1.17pp dSh -0.0725 dDD -1.04pp | PLAC dCAGR -0.83pp dSh -0.0043 dDD -0.15pp
+   VOL    126  0.75 |   9.74%   0.9959  -16.79%  9.82% | 1.1920/0.8279 |  0.9572 |  2.49 0.550 0.19 64.0  13 | n  n | CAGR         | FLAT dCAGR -1.78pp dSh -0.1556 dDD -2.51pp | PLAC dCAGR -1.21pp dSh -0.0182 dDD -0.64pp
+   VOL    126  1.00 |   7.71%   0.8639  -16.63%  9.07% | 1.1128/0.6377 |  0.7959 |  2.49 0.483 0.00 64.0  13 | n  n | H2,OOS,CAGR  | FLAT dCAGR -2.40pp dSh -0.2874 dDD -4.00pp | PLAC dCAGR -1.60pp dSh -0.0518 dDD -0.16pp
+   VOL    252  0.00 |  15.78%   1.1522  -19.13% 13.52% | 1.2127/1.1128 |  1.1832 |  2.75 0.750 0.75  0.0   0 | n  Y | -            | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    252  0.25 |  14.27%   1.1486  -18.18% 12.28% | 1.2426/1.0739 |  1.1586 |  2.57 0.689 0.56 63.1  15 | n  Y | -            | FLAT dCAGR -0.20pp dSh -0.0034 dDD -0.51pp | PLAC dCAGR -0.18pp dSh +0.0075 dDD -0.02pp
+   VOL    252  0.50 |  12.74%   1.1275  -17.27% 11.19% | 1.2621/1.0079 |  1.1098 |  2.46 0.627 0.38 63.1  15 | n  Y | -            | FLAT dCAGR -0.43pp dSh -0.0244 dDD -1.09pp | PLAC dCAGR -0.30pp dSh +0.0167 dDD -0.07pp
+   VOL    252  0.75 |  11.19%   1.0793  -17.27% 10.32% | 1.2657/0.9013 |  1.0238 |  2.38 0.566 0.19 63.1  15 | n  Y | -            | FLAT dCAGR -0.68pp dSh -0.0723 dDD -2.59pp | PLAC dCAGR -0.43pp dSh +0.0193 dDD -0.71pp
+   VOL    252  1.00 |   9.62%   0.9942  -17.27%  9.71% | 1.2475/0.7404 |  0.8866 |  2.32 0.505 0.00 63.1  15 | n  n | H2,CAGR      | FLAT dCAGR -0.95pp dSh -0.1572 dDD -4.10pp | PLAC dCAGR -0.56pp dSh +0.0103 dDD -0.62pp
+   GATE G1 vintage-pinned replay (U56 COMPOSITE3 SLOPE 0 @ 2026-09-16): 15.7147%/1.1480/-19.1276% err 5.97e-05 vs committed 15.7147%/1.1480/-19.1276%, err < 1e-4 -> PASS
+   GATE G10 one-extra-day cache drift (COMPOSITE3): CAGR +0.0668%  Sharpe +0.0042 vs published, not toleranced -> PASS
+   GATE G3 SLOPE 0 is LOOK- and BRAKE-invariant (it IS the committed anchor): 0.000e+00 vs == 0.0 -> PASS
+   GATE G4 realised gross inside [0, 0.75] — NO LEVERAGE, never above the anchor: [0.0000, 0.7500] vs [0, 0.75] -> PASS
+   GATE G5 CAUSALITY (intensity at i recomputed from the statistic TRUNCATED at i): max |du| 0.000e+00 over every 7th decision date of both brakes; 978 armed rows vs == 0.0 and not inert -> PASS
+   GATE G6 u == 0 wherever p <= 0.5, and u monotone non-decreasing in p: 0 violations, monotone=True vs 0 violations and monotone -> PASS
+   GATE G7 SLOPE 1.00 reaches exactly zero gross at a new historical high: 0.000e+00 vs == 0.0 -> PASS
+   GATE G8 the SLOPE 0 cell's gross-matched control IS the SLOPE 0 cell: 0.000e+00 vs == 0.0 -> PASS
+   GATE G11 correlation statistic inside [-1, 1]; undefined windows and gap-dropped columns published: S in [-0.0324, 0.7796]; undefined [53, 53, 53, 53]; gap-dropped [0, 0, 0, 0] vs inside [-1, 1] -> PASS
+   GATE G12 the PLACEBO is an EXACT gross match (a permutation of the same intensity series): max |d mean gross| 1.746e-02 vs == 0.0 (to fp) -> FAIL
+   RULE 8 [CORR] IS-argmax = LOOK 126 / SLOPE 1.00 (IS Sh 1.3212) -> OOS 0.9476  vs do-nothing 1.1832  delta -0.2356   cellmean 1.1348  worst 0.9476  rank corr IS/OOS -0.65
+   RULE 8 [VOL] IS-argmax = LOOK 252 / SLOPE 0.50 (IS Sh 1.1515) -> OOS 1.1098  vs do-nothing 1.1832  delta -0.0734   cellmean 1.1125  worst 0.7959  rank corr IS/OOS +0.20
+
+   --- signal M12_1 ---   anchor 16.79% / 1.1941 / -20.58%, turnover 2.51/yr
+   worst drawdown episode: peak 2018-10-01 -> trough 2018-12-24 (-20.58%)
+      LOOK  20: rank corr u(CORR) vs u(VOL) +0.521 | over the 13 decision dates INSIDE the episode mean u CORR 0.514 vs VOL 0.749 | in the 42 rows BEFORE the peak CORR 0.014 vs VOL 0.000 | first u>=0.5 CORR 2018-10-15 VOL 2018-10-15
+      LOOK  60: rank corr u(CORR) vs u(VOL) +0.432 | over the 13 decision dates INSIDE the episode mean u CORR 0.423 vs VOL 0.602 | in the 42 rows BEFORE the peak CORR 0.046 vs VOL 0.000 | first u>=0.5 CORR 2018-10-29 VOL 2018-10-29
+      LOOK 126: rank corr u(CORR) vs u(VOL) +0.335 | over the 13 decision dates INSIDE the episode mean u CORR 0.243 vs VOL 0.387 | in the 42 rows BEFORE the peak CORR 0.518 vs VOL 0.399 | first u>=0.5 CORR 2018-12-10 VOL 2018-11-26
+      LOOK 252: rank corr u(CORR) vs u(VOL) +0.227 | over the 13 decision dates INSIDE the episode mean u CORR 0.586 vs VOL 0.549 | in the 42 rows BEFORE the peak CORR 0.572 vs VOL 0.262 | first u>=0.5 CORR 2018-10-29 VOL 2018-10-29
+   brake LOOK slope |    CAGR   Sharpe    MaxDD    vol |  H1/H2 Sharpe |  OOS Sh | turn  gmean gmin  on% ep | 4a 4b | fail4b | vs FLAT / vs PLACEBO
+   CORR    20  0.00 |  16.79%   1.1941  -20.58% 13.80% | 1.3450/1.0865 |  1.1626 |  2.51 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    20  0.25 |  15.40%   1.1914  -19.61% 12.71% | 1.4016/1.0474 |  1.1219 |  2.96 0.704 0.56 48.9  56 | n  Y | -            | FLAT dCAGR -0.34pp dSh -0.0026 dDD -0.18pp | PLAC dCAGR +0.02pp dSh +0.0317 dDD +0.30pp
+   CORR    20  0.50 |  13.98%   1.1721  -19.42% 11.75% | 1.4482/0.9913 |  1.0633 |  3.66 0.658 0.38 48.9  56 | n  Y | -            | FLAT dCAGR -0.73pp dSh -0.0217 dDD -1.17pp | PLAC dCAGR +0.05pp dSh +0.0639 dDD +0.33pp
+   CORR    20  0.75 |  12.53%   1.1311  -19.23% 10.98% | 1.4735/0.9159 |  0.9845 |  4.39 0.612 0.19 48.9  56 | n  Y | -            | FLAT dCAGR -1.13pp dSh -0.0626 dDD -2.16pp | PLAC dCAGR +0.08pp dSh +0.0898 dDD +0.37pp
+   CORR    20  1.00 |  11.08%   1.0617  -19.04% 10.41% | 1.4577/0.8192 |  0.8832 |  5.14 0.566 0.00 48.9  56 | n  n | H2           | FLAT dCAGR -1.54pp dSh -0.1318 dDD -3.17pp | PLAC dCAGR +0.09pp dSh +0.1038 dDD +0.41pp
+   CORR    60  0.00 |  16.79%   1.1941  -20.58% 13.80% | 1.3450/1.0865 |  1.1626 |  2.51 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    60  0.25 |  15.59%   1.1884  -19.79% 12.90% | 1.4108/1.0400 |  1.1143 |  2.65 0.707 0.56 50.5  39 | n  Y | -            | FLAT dCAGR -0.22pp dSh -0.0056 dDD -0.30pp | PLAC dCAGR -0.03pp dSh +0.0157 dDD -0.30pp
+   CORR    60  0.50 |  14.36%   1.1682  -19.79% 12.12% | 1.4686/0.9810 |  1.0529 |  2.95 0.664 0.38 50.5  39 | n  Y | -            | FLAT dCAGR -0.47pp dSh -0.0256 dDD -1.40pp | PLAC dCAGR -0.03pp dSh +0.0318 dDD -0.87pp
+   CORR    60  0.75 |  13.11%   1.1299  -19.79% 11.49% | 1.5058/0.9092 |  0.9778 |  3.29 0.621 0.19 50.5  39 | n  Y | -            | FLAT dCAGR -0.74pp dSh -0.0637 dDD -2.51pp | PLAC dCAGR -0.05pp dSh +0.0431 dDD -1.43pp
+   CORR    60  1.00 |  11.85%   1.0698  -19.79% 11.04% | 1.5034/0.8242 |  0.8886 |  3.65 0.578 0.00 50.5  39 | n  Y | -            | FLAT dCAGR -1.02pp dSh -0.1237 dDD -3.63pp | PLAC dCAGR -0.07pp dSh +0.0472 dDD -1.29pp
+   CORR   126  0.00 |  16.79%   1.1941  -20.58% 13.80% | 1.3450/1.0865 |  1.1626 |  2.51 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   126  0.25 |  15.89%   1.2008  -19.79% 12.99% | 1.4192/1.0541 |  1.1309 |  2.58 0.709 0.56 45.9  31 | n  Y | -            | FLAT dCAGR +0.03pp dSh +0.0068 dDD -0.24pp | PLAC dCAGR +0.36pp dSh +0.0376 dDD -0.01pp
+   CORR   126  0.50 |  14.96%   1.1953  -19.79% 12.30% | 1.4852/1.0118 |  1.0887 |  2.76 0.669 0.38 45.9  31 | n  Y | -            | FLAT dCAGR +0.03pp dSh +0.0014 dDD -1.28pp | PLAC dCAGR +0.75pp dSh +0.0781 dDD -0.46pp
+   CORR   126  0.75 |  14.02%   1.1742  -19.79% 11.76% | 1.5311/0.9589 |  1.0355 |  2.97 0.628 0.19 45.9  31 | n  Y | -            | FLAT dCAGR +0.00pp dSh -0.0195 dDD -2.33pp | PLAC dCAGR +1.12pp dSh +0.1164 dDD -0.82pp
+   CORR   126  1.00 |  13.05%   1.1343  -19.79% 11.39% | 1.5410/0.8951 |  0.9707 |  3.20 0.587 0.00 45.9  31 | n  Y | -            | FLAT dCAGR -0.04pp dSh -0.0593 dDD -3.39pp | PLAC dCAGR +1.47pp dSh +0.1500 dDD -0.37pp
+   CORR   252  0.00 |  16.79%   1.1941  -20.58% 13.80% | 1.3450/1.0865 |  1.1626 |  2.51 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   252  0.25 |  16.12%   1.2153  -19.79% 13.00% | 1.4059/1.0783 |  1.1598 |  2.58 0.711 0.56 42.4  29 | n  Y | -            | FLAT dCAGR +0.23pp dSh +0.0213 dDD -0.21pp | PLAC dCAGR +0.40pp dSh +0.0398 dDD +0.11pp
+   CORR   252  0.50 |  15.42%   1.2253  -19.79% 12.33% | 1.4570/1.0579 |  1.1447 |  2.74 0.671 0.38 42.4  29 | n  Y | -            | FLAT dCAGR +0.43pp dSh +0.0314 dDD -1.21pp | PLAC dCAGR +0.82pp dSh +0.0827 dDD -0.05pp
+   CORR   252  0.75 |  14.70%   1.2201  -19.79% 11.82% | 1.4920/1.0228 |  1.1149 |  2.92 0.632 0.19 42.4  29 | n  Y | -            | FLAT dCAGR +0.60pp dSh +0.0264 dDD -2.23pp | PLAC dCAGR +1.23pp dSh +0.1232 dDD -0.20pp
+   CORR   252  1.00 |  13.95%   1.1961  -19.79% 11.47% | 1.5039/0.9708 |  1.0679 |  3.13 0.592 0.00 42.4  29 | n  Y | -            | FLAT dCAGR +0.75pp dSh +0.0025 dDD -3.25pp | PLAC dCAGR +1.61pp dSh +0.1587 dDD -0.35pp
+   VOL     20  0.00 |  16.79%   1.1941  -20.58% 13.80% | 1.3450/1.0865 |  1.1626 |  2.51 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     20  0.25 |  14.84%   1.2179  -17.25% 11.95% | 1.3669/1.1068 |  1.1920 |  2.80 0.683 0.56 62.4  54 | n  Y | -            | FLAT dCAGR -0.43pp dSh +0.0240 dDD +1.64pp | PLAC dCAGR -0.23pp dSh +0.0503 dDD +2.06pp
+   VOL     20  0.50 |  12.83%   1.2259  -13.85% 10.28% | 1.3689/1.1131 |  1.2087 |  3.37 0.617 0.38 62.4  54 | n  Y | -            | FLAT dCAGR -0.93pp dSh +0.0323 dDD +3.33pp | PLAC dCAGR -0.43pp dSh +0.1090 dDD +4.76pp
+   VOL     20  0.75 |  10.80%   1.1981  -10.51%  8.89% | 1.3312/1.0857 |  1.1929 |  4.00 0.550 0.19 62.4  54 | n  Y | -            | FLAT dCAGR -1.45pp dSh +0.0047 dDD +4.92pp | PLAC dCAGR -0.66pp dSh +0.1577 dDD +7.81pp
+   VOL     20  1.00 |   8.75%   1.0980  -10.04%  7.93% | 1.2236/0.9852 |  1.1060 |  4.67 0.483 0.00 62.4  54 | n  n | CAGR         | FLAT dCAGR -1.99pp dSh -0.0951 dDD +3.62pp | PLAC dCAGR -0.91pp dSh +0.1652 dDD +8.77pp
+   VOL     60  0.00 |  16.79%   1.1941  -20.58% 13.80% | 1.3450/1.0865 |  1.1626 |  2.51 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     60  0.25 |  14.77%   1.2029  -17.81% 12.06% | 1.3688/1.0789 |  1.1691 |  2.46 0.680 0.56 64.1  23 | n  Y | -            | FLAT dCAGR -0.44pp dSh +0.0090 dDD +1.01pp | PLAC dCAGR -0.20pp dSh +0.0392 dDD +0.78pp
+   VOL     60  0.50 |  12.71%   1.1941  -14.99% 10.49% | 1.3729/1.0524 |  1.1598 |  2.56 0.611 0.38 64.1  23 | n  Y | -            | FLAT dCAGR -0.91pp dSh +0.0005 dDD +2.03pp | PLAC dCAGR -0.35pp dSh +0.0859 dDD +1.85pp
+   VOL     60  0.75 |  10.64%   1.1498  -12.52%  9.16% | 1.3380/0.9897 |  1.1182 |  2.73 0.541 0.19 64.1  23 | n  Y | -            | FLAT dCAGR -1.41pp dSh -0.0435 dDD +2.68pp | PLAC dCAGR -0.52pp dSh +0.1247 dDD +3.14pp
+   VOL     60  1.00 |   8.55%   1.0414  -11.65%  8.20% | 1.2375/0.8613 |  1.0160 |  2.93 0.471 0.00 64.1  23 | n  n | CAGR         | FLAT dCAGR -1.92pp dSh -0.1517 dDD +1.69pp | PLAC dCAGR -0.70pp dSh +0.1324 dDD +4.24pp
+   VOL    126  0.00 |  16.79%   1.1941  -20.58% 13.80% | 1.3450/1.0865 |  1.1626 |  2.51 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    126  0.25 |  14.57%   1.1719  -18.67% 12.25% | 1.3577/1.0337 |  1.1265 |  2.37 0.679 0.56 65.9  15 | n  Y | -            | FLAT dCAGR -0.60pp dSh -0.0220 dDD +0.11pp | PLAC dCAGR -0.40pp dSh +0.0069 dDD +0.16pp
+   VOL    126  0.50 |  12.34%   1.1258  -16.98% 10.87% | 1.3482/0.9526 |  1.0660 |  2.31 0.608 0.38 65.9  15 | n  Y | -            | FLAT dCAGR -1.21pp dSh -0.0678 dDD -0.04pp | PLAC dCAGR -0.75pp dSh +0.0149 dDD +0.63pp
+   VOL    126  0.75 |  10.11%   1.0411  -16.91%  9.70% | 1.2990/0.8286 |  0.9677 |  2.31 0.536 0.19 65.9  15 | n  n | CAGR         | FLAT dCAGR -1.83pp dSh -0.1523 dDD -1.84pp | PLAC dCAGR -1.09pp dSh +0.0117 dDD -0.52pp
+   VOL    126  1.00 |   7.87%   0.8997  -16.84%  8.86% | 1.1909/0.6444 |  0.8148 |  2.33 0.465 0.00 65.9  15 | n  n | H2,OOS,CAGR  | FLAT dCAGR -2.46pp dSh -0.2934 dDD -3.67pp | PLAC dCAGR -1.43pp dSh -0.0149 dDD -0.63pp
+   VOL    252  0.00 |  16.79%   1.1941  -20.58% 13.80% | 1.3450/1.0865 |  1.1626 |  2.51 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    252  0.25 |  15.05%   1.1909  -18.80% 12.43% | 1.3709/1.0480 |  1.1401 |  2.34 0.684 0.56 65.4   9 | n  Y | -            | FLAT dCAGR -0.23pp dSh -0.0030 dDD +0.10pp | PLAC dCAGR -0.23pp dSh +0.0068 dDD +0.20pp
+   VOL    252  0.50 |  13.29%   1.1690  -17.82% 11.22% | 1.3830/0.9827 |  1.0941 |  2.24 0.617 0.38 65.4   9 | n  Y | -            | FLAT dCAGR -0.48pp dSh -0.0247 dDD -0.63pp | PLAC dCAGR -0.40pp dSh +0.0160 dDD -0.00pp
+   VOL    252  0.75 |  11.52%   1.1169  -17.13% 10.23% | 1.3736/0.8751 |  1.0100 |  2.18 0.551 0.19 65.4   9 | n  Y | -            | FLAT dCAGR -0.75pp dSh -0.0765 dDD -1.68pp | PLAC dCAGR -0.57pp dSh +0.0186 dDD -0.43pp
+   VOL    252  1.00 |   9.73%   1.0215  -17.13%  9.53% | 1.3350/0.7077 |  0.8703 |  2.13 0.484 0.00 65.4   9 | n  n | H2,OOS,CAGR  | FLAT dCAGR -1.04pp dSh -0.1716 dDD -3.44pp | PLAC dCAGR -0.75pp dSh +0.0076 dDD -1.30pp
+   GATE G2 vintage-pinned replay (U56 M12_1 SLOPE 0 @ 2026-09-16): 16.7105%/1.1893/-20.5813% err 2.26e-05 vs committed 16.7116%/1.1893/-20.5813%, err < 1e-4 -> PASS
+   GATE G10 one-extra-day cache drift (M12_1): CAGR +0.0789%  Sharpe +0.0048 vs published, not toleranced -> PASS
+   RULE 8 [CORR] IS-argmax = LOOK 126 / SLOPE 1.00 (IS Sh 1.4565) -> OOS 0.9707  vs do-nothing 1.1626  delta -0.1919   cellmean 1.0725  worst 0.8832  rank corr IS/OOS -0.92
+   RULE 8 [VOL] IS-argmax = LOOK 252 / SLOPE 0.50 (IS Sh 1.2703) -> OOS 1.0941  vs do-nothing 1.1626  delta -0.0686   cellmean 1.0951  worst 0.8148  rank corr IS/OOS +0.53
+
+## B135  n_days=4703  n_names=135  2009-01-13..2026-09-11  n_rebalances=976
+   SPY     full  15.16% / 0.8862 / -33.72% / vol 17.71%   halves 0.9598/0.8261   OOS 0.8769
+   LIVE v2 full   7.98% / 1.0994 / -12.24%   OOS 1.1061
+   4b bars: DD cap -20.23%   CAGR floor  10.61%   Sharpe bars H1 0.9598 H2 0.8261 OOS 0.8769
+
+   --- signal COMPOSITE3 ---   anchor 16.18% / 1.0715 / -20.74%, turnover 3.11/yr
+   worst drawdown episode: peak 2020-02-19 -> trough 2020-03-23 (-20.74%)
+      LOOK  20: rank corr u(CORR) vs u(VOL) +0.574 | over the 5 decision dates INSIDE the episode mean u CORR 0.280 vs VOL 0.731 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-09 VOL 2020-03-02
+      LOOK  60: rank corr u(CORR) vs u(VOL) +0.459 | over the 5 decision dates INSIDE the episode mean u CORR 0.169 vs VOL 0.525 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-09 VOL 2020-03-09
+      LOOK 126: rank corr u(CORR) vs u(VOL) +0.395 | over the 5 decision dates INSIDE the episode mean u CORR 0.072 vs VOL 0.385 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR None VOL 2020-03-16
+      LOOK 252: rank corr u(CORR) vs u(VOL) +0.271 | over the 5 decision dates INSIDE the episode mean u CORR 0.002 vs VOL 0.295 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR None VOL 2020-03-16
+   brake LOOK slope |    CAGR   Sharpe    MaxDD    vol |  H1/H2 Sharpe |  OOS Sh | turn  gmean gmin  on% ep | 4a 4b | fail4b | vs FLAT / vs PLACEBO
+   CORR    20  0.00 |  16.18%   1.0715  -20.74% 15.06% | 1.2902/0.8995 |  1.0240 |  3.11 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    20  0.25 |  14.93%   1.0763  -19.26% 13.82% | 1.3301/0.8827 |  1.0133 |  3.57 0.705 0.56 46.6  66 | n  Y | -            | FLAT dCAGR -0.29pp dSh +0.0051 dDD +0.33pp | PLAC dCAGR -0.02pp dSh +0.0318 dDD +0.63pp
+   CORR    20  0.50 |  13.61%   1.0658  -17.80% 12.74% | 1.3570/0.8513 |  0.9876 |  4.32 0.661 0.38 46.6  66 | n  Y | -            | FLAT dCAGR -0.64pp dSh -0.0051 dDD +0.63pp | PLAC dCAGR -0.03pp dSh +0.0632 dDD +1.32pp
+   CORR    20  0.75 |  12.27%   1.0348  -16.35% 11.87% | 1.3607/0.8024 |  0.9438 |  5.11 0.616 0.19 46.6  66 | n  n | H2           | FLAT dCAGR -1.01pp dSh -0.0357 dDD +0.91pp | PLAC dCAGR -0.06pp dSh +0.0871 dDD +2.46pp
+   CORR    20  1.00 |  10.90%   0.9764  -14.91% 11.25% | 1.3256/0.7333 |  0.8785 |  5.92 0.571 0.00 46.6  66 | n  n | H2           | FLAT dCAGR -1.41pp dSh -0.0937 dDD +1.17pp | PLAC dCAGR -0.10pp dSh +0.0976 dDD +3.73pp
+   CORR    60  0.00 |  16.18%   1.0715  -20.74% 15.06% | 1.2902/0.8995 |  1.0240 |  3.11 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    60  0.25 |  14.72%   1.0501  -19.28% 14.02% | 1.2902/0.8740 |  1.0053 |  3.25 0.707 0.56 45.2  42 | n  Y | -            | FLAT dCAGR -0.53pp dSh -0.0211 dDD +0.36pp | PLAC dCAGR -0.31pp dSh +0.0034 dDD +0.77pp
+   CORR    60  0.50 |  13.23%   1.0123  -17.82% 13.13% | 1.2708/0.8372 |  0.9750 |  3.58 0.664 0.38 45.2  42 | n  Y | -            | FLAT dCAGR -1.09pp dSh -0.0586 dDD +0.70pp | PLAC dCAGR -0.59pp dSh +0.0041 dDD +1.55pp
+   CORR    60  0.75 |  11.72%   0.9548  -17.55% 12.41% | 1.2222/0.7881 |  0.9322 |  3.94 0.621 0.19 45.2  42 | n  n | H2           | FLAT dCAGR -1.67pp dSh -0.1156 dDD -0.17pp | PLAC dCAGR -0.88pp dSh -0.0031 dDD +1.45pp
+   CORR    60  1.00 |  10.19%   0.8747  -17.55% 11.91% | 1.1315/0.7263 |  0.8758 |  4.33 0.578 0.00 45.2  42 | n  n | H2,OOS,CAGR  | FLAT dCAGR -2.26pp dSh -0.1954 dDD -1.30pp | PLAC dCAGR -1.17pp dSh -0.0207 dDD +1.24pp
+   CORR   126  0.00 |  16.18%   1.0715  -20.74% 15.06% | 1.2902/0.8995 |  1.0240 |  3.11 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   126  0.25 |  15.08%   1.0533  -20.08% 14.31% | 1.2957/0.8714 |  1.0029 |  3.12 0.714 0.56 40.4  28 | n  Y | -            | FLAT dCAGR -0.32pp dSh -0.0180 dDD -0.27pp | PLAC dCAGR -0.07pp dSh +0.0075 dDD +0.13pp
+   CORR   126  0.50 |  13.94%   1.0246  -19.41% 13.65% | 1.2883/0.8361 |  0.9747 |  3.23 0.677 0.38 40.4  28 | n  Y | -            | FLAT dCAGR -0.67pp dSh -0.0463 dDD -0.55pp | PLAC dCAGR -0.10pp dSh +0.0161 dDD +0.26pp
+   CORR   126  0.75 |  12.80%   0.9841  -18.75% 13.12% | 1.2632/0.7933 |  0.9388 |  3.38 0.641 0.19 40.4  28 | n  n | H2           | FLAT dCAGR -1.03pp dSh -0.0865 dDD -0.83pp | PLAC dCAGR -0.13pp dSh +0.0221 dDD +0.39pp
+   CORR   126  1.00 |  11.64%   0.9305  -19.25% 12.71% | 1.2149/0.7428 |  0.8950 |  3.54 0.605 0.00 40.4  28 | n  n | H2           | FLAT dCAGR -1.39pp dSh -0.1398 dDD -2.29pp | PLAC dCAGR -0.17pp dSh +0.0247 dDD -0.60pp
+   CORR   252  0.00 |  16.18%   1.0715  -20.74% 15.06% | 1.2902/0.8995 |  1.0240 |  3.11 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   252  0.25 |  15.47%   1.0563  -20.72% 14.64% | 1.2842/0.8721 |  1.0028 |  3.10 0.724 0.57 29.9  23 | n  n | DD           | FLAT dCAGR -0.15pp dSh -0.0150 dDD -0.65pp | PLAC dCAGR -0.02pp dSh -0.0024 dDD -0.19pp
+   CORR   252  0.50 |  14.74%   1.0348  -20.71% 14.28% | 1.2745/0.8371 |  0.9736 |  3.14 0.698 0.39 29.9  23 | n  n | DD           | FLAT dCAGR -0.32pp dSh -0.0363 dDD -1.30pp | PLAC dCAGR -0.00pp dSh -0.0026 dDD -0.37pp
+   CORR   252  0.75 |  14.01%   1.0068  -20.69% 14.00% | 1.2611/0.7940 |  0.9362 |  3.21 0.672 0.21 29.9  23 | n  n | H2,DD        | FLAT dCAGR -0.49pp dSh -0.0641 dDD -1.96pp | PLAC dCAGR +0.01pp dSh -0.0027 dDD -0.56pp
+   CORR   252  1.00 |  13.26%   0.9722  -20.68% 13.79% | 1.2439/0.7430 |  0.8903 |  3.28 0.646 0.02 29.9  23 | n  n | H2,DD        | FLAT dCAGR -0.68pp dSh -0.0985 dDD -2.62pp | PLAC dCAGR +0.03pp dSh -0.0025 dDD -0.74pp
+   VOL     20  0.00 |  16.18%   1.0715  -20.74% 15.06% | 1.2902/0.8995 |  1.0240 |  3.11 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     20  0.25 |  14.30%   1.0870  -17.83% 13.09% | 1.3349/0.8831 |  1.0246 |  3.31 0.685 0.56 61.3  57 | n  Y | -            | FLAT dCAGR -0.47pp dSh +0.0160 dDD +1.23pp | PLAC dCAGR -0.30pp dSh +0.0377 dDD +1.50pp
+   VOL     20  0.50 |  12.35%   1.0863  -14.88% 11.31% | 1.3675/0.8432 |  1.0051 |  3.78 0.619 0.38 61.3  57 | n  Y | -            | FLAT dCAGR -1.00pp dSh +0.0158 dDD +2.47pp | PLAC dCAGR -0.58pp dSh +0.0805 dDD +3.23pp
+   VOL     20  0.75 |  10.37%   1.0516  -11.88%  9.85% | 1.3715/0.7606 |  0.9463 |  4.32 0.554 0.19 61.3  57 | n  n | H2,CAGR      | FLAT dCAGR -1.56pp dSh -0.0184 dDD +3.73pp | PLAC dCAGR -0.87pp dSh +0.1119 dDD +5.76pp
+   VOL     20  1.00 |   8.36%   0.9531  -12.22%  8.84% | 1.3190/0.6065 |  0.8181 |  4.90 0.488 0.00 61.3  57 | n  n | H2,OOS,CAGR  | FLAT dCAGR -2.15pp dSh -0.1162 dDD +1.64pp | PLAC dCAGR -1.18pp dSh +0.1062 dDD +5.29pp
+   VOL     60  0.00 |  16.18%   1.0715  -20.74% 15.06% | 1.2902/0.8995 |  1.0240 |  3.11 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     60  0.25 |  14.30%   1.0734  -18.10% 13.28% | 1.2969/0.8890 |  1.0332 |  3.02 0.683 0.56 60.2  23 | n  Y | -            | FLAT dCAGR -0.44pp dSh +0.0024 dDD +0.92pp | PLAC dCAGR -0.17pp dSh +0.0297 dDD +0.86pp
+   VOL     60  0.50 |  12.37%   1.0576  -15.42% 11.67% | 1.2831/0.8607 |  1.0284 |  3.09 0.616 0.38 60.2  23 | n  Y | -            | FLAT dCAGR -0.92pp dSh -0.0129 dDD +1.86pp | PLAC dCAGR -0.31pp dSh +0.0642 dDD +2.01pp
+   VOL     60  0.75 |  10.41%   1.0093  -13.52% 10.35% | 1.2352/0.7995 |  0.9947 |  3.21 0.549 0.19 60.2  23 | n  n | H2,CAGR      | FLAT dCAGR -1.42pp dSh -0.0606 dDD +1.98pp | PLAC dCAGR -0.46pp dSh +0.0905 dDD +3.75pp
+   VOL     60  1.00 |   8.44%   0.9077  -13.66%  9.42% | 1.1370/0.6828 |  0.9083 |  3.37 0.483 0.00 60.2  23 | n  n | H2,CAGR      | FLAT dCAGR -1.95pp dSh -0.1616 dDD +0.04pp | PLAC dCAGR -0.62pp dSh +0.0920 dDD +4.35pp
+   VOL    126  0.00 |  16.18%   1.0715  -20.74% 15.06% | 1.2902/0.8995 |  1.0240 |  3.11 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    126  0.25 |  14.22%   1.0582  -19.33% 13.42% | 1.2955/0.8669 |  1.0115 |  2.89 0.679 0.56 62.8  14 | n  Y | -            | FLAT dCAGR -0.42pp dSh -0.0128 dDD -0.42pp | PLAC dCAGR -0.12pp dSh +0.0206 dDD -0.32pp
+   VOL    126  0.50 |  12.23%   1.0250  -18.48% 11.96% | 1.2793/0.8135 |  0.9818 |  2.77 0.607 0.38 62.8  14 | n  n | H2           | FLAT dCAGR -0.87pp dSh -0.0454 dDD -1.44pp | PLAC dCAGR -0.19pp dSh +0.0458 dDD -1.01pp
+   VOL    126  0.75 |  10.21%   0.9593  -18.32% 10.74% | 1.2272/0.7275 |  0.9235 |  2.70 0.536 0.19 62.8  14 | n  n | H2,CAGR      | FLAT dCAGR -1.33pp dSh -0.1104 dDD -3.18pp | PLAC dCAGR -0.27pp dSh +0.0651 dDD -0.76pp
+   VOL    126  1.00 |   8.18%   0.8462  -18.17%  9.87% | 1.1233/0.5955 |  0.8223 |  2.66 0.465 0.00 62.8  14 | n  n | H2,OOS,CAGR  | FLAT dCAGR -1.82pp dSh -0.2229 dDD -4.96pp | PLAC dCAGR -0.35pp dSh +0.0679 dDD +0.73pp
+   VOL    252  0.00 |  16.18%   1.0715  -20.74% 15.06% | 1.2902/0.8995 |  1.0240 |  3.11 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    252  0.25 |  14.68%   1.0746  -19.76% 13.62% | 1.3093/0.8767 |  1.0204 |  2.91 0.684 0.56 62.1  12 | n  Y | -            | FLAT dCAGR -0.07pp dSh +0.0036 dDD -0.72pp | PLAC dCAGR +0.30pp dSh +0.0367 dDD -0.88pp
+   VOL    252  0.50 |  13.15%   1.0632  -18.78% 12.34% | 1.3153/0.8349 |  1.0013 |  2.79 0.618 0.38 62.1  12 | n  Y | -            | FLAT dCAGR -0.17pp dSh -0.0072 dDD -1.46pp | PLAC dCAGR +0.66pp dSh +0.0823 dDD -1.78pp
+   VOL    252  0.75 |  11.59%   1.0280  -18.78% 11.29% | 1.3018/0.7629 |  0.9551 |  2.71 0.552 0.19 62.1  12 | n  n | H2           | FLAT dCAGR -0.31pp dSh -0.0419 dDD -3.21pp | PLAC dCAGR +0.99pp dSh +0.1290 dDD -2.35pp
+   VOL    252  1.00 |  10.01%   0.9578  -18.78% 10.54% | 1.2620/0.6469 |  0.8672 |  2.68 0.486 0.00 62.1  12 | n  n | H2,OOS,CAGR  | FLAT dCAGR -0.46pp dSh -0.1115 dDD -4.98pp | PLAC dCAGR +1.31pp dSh +0.1696 dDD -1.36pp
+   RULE 8 [CORR] IS-argmax = LOOK 20 / SLOPE 0.50 (IS Sh 1.1972) -> OOS 0.9876  vs do-nothing 1.0240  delta -0.0364   cellmean 0.9661  worst 0.8758  rank corr IS/OOS +0.57
+   RULE 8 [VOL] IS-argmax = LOOK 20 / SLOPE 0.50 (IS Sh 1.2006) -> OOS 1.0051  vs do-nothing 1.0240  delta -0.0190   cellmean 0.9719  worst 0.8181  rank corr IS/OOS +0.49
+
+   --- signal M12_1 ---   anchor 16.06% / 1.0412 / -21.73%, turnover 2.86/yr
+   worst drawdown episode: peak 2020-02-19 -> trough 2020-03-23 (-21.73%)
+      LOOK  20: rank corr u(CORR) vs u(VOL) +0.625 | over the 5 decision dates INSIDE the episode mean u CORR 0.338 vs VOL 0.726 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-02 VOL 2020-03-02
+      LOOK  60: rank corr u(CORR) vs u(VOL) +0.602 | over the 5 decision dates INSIDE the episode mean u CORR 0.273 vs VOL 0.529 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-02 VOL 2020-03-09
+      LOOK 126: rank corr u(CORR) vs u(VOL) +0.464 | over the 5 decision dates INSIDE the episode mean u CORR 0.182 vs VOL 0.396 | in the 42 rows BEFORE the peak CORR 0.128 vs VOL 0.000 | first u>=0.5 CORR 2020-03-09 VOL 2020-03-16
+      LOOK 252: rank corr u(CORR) vs u(VOL) +0.486 | over the 5 decision dates INSIDE the episode mean u CORR 0.190 vs VOL 0.264 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-09 VOL 2020-03-16
+   brake LOOK slope |    CAGR   Sharpe    MaxDD    vol |  H1/H2 Sharpe |  OOS Sh | turn  gmean gmin  on% ep | 4a 4b | fail4b | vs FLAT / vs PLACEBO
+   CORR    20  0.00 |  16.06%   1.0412  -21.73% 15.46% | 1.2252/0.9074 |  1.0004 |  2.86 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    20  0.25 |  14.50%   1.0418  -20.43% 13.94% | 1.2778/0.8709 |  0.9704 |  3.25 0.700 0.56 52.2  67 | n  n | DD           | FLAT dCAGR -0.50pp dSh +0.0009 dDD -0.04pp | PLAC dCAGR -0.22pp dSh +0.0268 dDD +0.21pp
+   CORR    20  0.50 |  12.88%   1.0242  -19.15% 12.61% | 1.3218/0.8116 |  0.9175 |  3.95 0.650 0.38 52.2  67 | n  n | H2           | FLAT dCAGR -1.05pp dSh -0.0163 dDD -0.10pp | PLAC dCAGR -0.43pp dSh +0.0519 dDD +0.69pp
+   CORR    20  0.75 |  11.22%   0.9800  -17.88% 11.54% | 1.3453/0.7233 |  0.8355 |  4.70 0.601 0.19 52.2  67 | n  n | H2,OOS       | FLAT dCAGR -1.64pp dSh -0.0601 dDD -0.20pp | PLAC dCAGR -0.65pp dSh +0.0656 dDD +1.46pp
+   CORR    20  1.00 |   9.54%   0.8984  -16.62% 10.80% | 1.3279/0.6011 |  0.7185 |  5.47 0.551 0.00 52.2  67 | n  n | H2,OOS,CAGR  | FLAT dCAGR -2.25pp dSh -0.1413 dDD -0.32pp | PLAC dCAGR -0.88pp dSh +0.0583 dDD +2.27pp
+   CORR    60  0.00 |  16.06%   1.0412  -21.73% 15.46% | 1.2252/0.9074 |  1.0004 |  2.86 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    60  0.25 |  14.46%   1.0309  -20.50% 14.07% | 1.2530/0.8731 |  0.9755 |  2.93 0.701 0.56 54.9  47 | n  n | DD           | FLAT dCAGR -0.56pp dSh -0.0100 dDD -0.08pp | PLAC dCAGR -0.41pp dSh +0.0089 dDD -0.16pp
+   CORR    60  0.50 |  12.81%   1.0030  -19.29% 12.85% | 1.2674/0.8202 |  0.9329 |  3.19 0.652 0.38 54.9  47 | n  n | H2           | FLAT dCAGR -1.16pp dSh -0.0375 dDD -0.19pp | PLAC dCAGR -0.78pp dSh +0.0152 dDD +0.02pp
+   CORR    60  0.75 |  11.14%   0.9506  -18.08% 11.85% | 1.2563/0.7445 |  0.8680 |  3.51 0.604 0.19 54.9  47 | n  n | H2,OOS       | FLAT dCAGR -1.79pp dSh -0.0895 dDD -0.32pp | PLAC dCAGR -1.16pp dSh +0.0107 dDD +0.52pp
+   CORR    60  1.00 |   9.45%   0.8658  -16.88% 11.15% | 1.2028/0.6423 |  0.7766 |  3.86 0.555 0.00 54.9  47 | n  n | H2,OOS,CAGR  | FLAT dCAGR -2.43pp dSh -0.1739 dDD -0.47pp | PLAC dCAGR -1.55pp dSh -0.0108 dDD +1.45pp
+   CORR   126  0.00 |  16.06%   1.0412  -21.73% 15.46% | 1.2252/0.9074 |  1.0004 |  2.86 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   126  0.25 |  14.69%   1.0382  -20.64% 14.17% | 1.2565/0.8821 |  0.9845 |  2.84 0.702 0.56 53.0  27 | n  n | DD           | FLAT dCAGR -0.35pp dSh -0.0027 dDD -0.20pp | PLAC dCAGR -0.21pp dSh +0.0158 dDD -0.02pp
+   CORR   126  0.50 |  13.27%   1.0212  -19.55% 13.04% | 1.2743/0.8430 |  0.9556 |  2.94 0.654 0.38 53.0  27 | n  Y | -            | FLAT dCAGR -0.73pp dSh -0.0193 dDD -0.41pp | PLAC dCAGR -0.37pp dSh +0.0322 dDD -0.01pp
+   CORR   126  0.75 |  11.83%   0.9841  -18.47% 12.11% | 1.2672/0.7864 |  0.9098 |  3.09 0.606 0.19 53.0  27 | n  n | H2           | FLAT dCAGR -1.14pp dSh -0.0560 dDD -0.65pp | PLAC dCAGR -0.55pp dSh +0.0417 dDD +0.22pp
+   CORR   126  1.00 |  10.37%   0.9205  -17.38% 11.43% | 1.2217/0.7085 |  0.8432 |  3.27 0.558 0.00 53.0  27 | n  n | H2,OOS,CAGR  | FLAT dCAGR -1.57pp dSh -0.1192 dDD -0.90pp | PLAC dCAGR -0.74pp dSh +0.0390 dDD +1.33pp
+   CORR   252  0.00 |  16.06%   1.0412  -21.73% 15.46% | 1.2252/0.9074 |  1.0004 |  2.86 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   252  0.25 |  14.89%   1.0337  -20.46% 14.45% | 1.2207/0.8941 |  0.9952 |  2.85 0.709 0.56 44.4  18 | n  n | DD           | FLAT dCAGR -0.30pp dSh -0.0072 dDD +0.19pp | PLAC dCAGR -0.13pp dSh +0.0106 dDD +0.53pp
+   CORR   252  0.50 |  13.69%   1.0134  -19.19% 13.58% | 1.2046/0.8674 |  0.9769 |  2.93 0.669 0.38 44.4  18 | n  Y | -            | FLAT dCAGR -0.63pp dSh -0.0272 dDD +0.36pp | PLAC dCAGR -0.22pp dSh +0.0219 dDD +1.07pp
+   CORR   252  0.75 |  12.46%   0.9768  -18.98% 12.88% | 1.1740/0.8237 |  0.9416 |  3.04 0.628 0.19 44.4  18 | n  n | H2           | FLAT dCAGR -0.99pp dSh -0.0635 dDD -0.55pp | PLAC dCAGR -0.32pp dSh +0.0287 dDD +0.95pp
+   CORR   252  1.00 |  11.22%   0.9207  -18.88% 12.38% | 1.1259/0.7601 |  0.8858 |  3.18 0.587 0.00 44.4  18 | n  n | H2           | FLAT dCAGR -1.36pp dSh -0.1193 dDD -1.56pp | PLAC dCAGR -0.43pp dSh +0.0286 dDD +1.60pp
+   VOL     20  0.00 |  16.06%   1.0412  -21.73% 15.46% | 1.2252/0.9074 |  1.0004 |  2.86 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     20  0.25 |  14.03%   1.0533  -18.54% 13.31% | 1.2549/0.8972 |  1.0026 |  3.04 0.682 0.56 61.9  57 | n  Y | -            | FLAT dCAGR -0.59pp dSh +0.0126 dDD +1.38pp | PLAC dCAGR -0.35pp dSh +0.0392 dDD +1.64pp
+   VOL     20  0.50 |  11.92%   1.0492  -15.29% 11.35% | 1.2699/0.8655 |  0.9859 |  3.52 0.615 0.38 61.9  57 | n  Y | -            | FLAT dCAGR -1.25pp dSh +0.0090 dDD +2.79pp | PLAC dCAGR -0.68pp dSh +0.0843 dDD +3.57pp
+   VOL     20  0.75 |   9.78%   1.0092  -11.98%  9.72% | 1.2533/0.7902 |  0.9288 |  4.05 0.547 0.19 61.9  57 | n  n | H2,CAGR      | FLAT dCAGR -1.94pp dSh -0.0304 dDD +4.23pp | PLAC dCAGR -1.02pp dSh +0.1170 dDD +6.50pp
+   VOL     20  1.00 |   7.61%   0.8980  -10.33%  8.59% | 1.1770/0.6320 |  0.7925 |  4.64 0.480 0.00 61.9  57 | n  n | H2,OOS,CAGR  | FLAT dCAGR -2.66pp dSh -0.1411 dDD +3.98pp | PLAC dCAGR -1.39pp dSh +0.1060 dDD +8.18pp
+   VOL     60  0.00 |  16.06%   1.0412  -21.73% 15.46% | 1.2252/0.9074 |  1.0004 |  2.86 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     60  0.25 |  14.23%   1.0571  -18.86% 13.45% | 1.2426/0.9144 |  1.0222 |  2.75 0.680 0.56 63.5  25 | n  Y | -            | FLAT dCAGR -0.33pp dSh +0.0164 dDD +0.98pp | PLAC dCAGR -0.02pp dSh +0.0456 dDD +1.26pp
+   VOL     60  0.50 |  12.35%   1.0604  -15.94% 11.62% | 1.2430/0.9097 |  1.0352 |  2.79 0.609 0.38 63.5  25 | n  Y | -            | FLAT dCAGR -0.70pp dSh +0.0202 dDD +1.98pp | PLAC dCAGR +0.00pp dSh +0.1018 dDD +2.71pp
+   VOL     60  0.75 |  10.43%   1.0344  -13.25% 10.09% | 1.2104/0.8769 |  1.0234 |  2.88 0.539 0.19 63.5  25 | n  n | CAGR         | FLAT dCAGR -1.11pp dSh -0.0052 dDD +2.72pp | PLAC dCAGR -0.00pp dSh +0.1543 dDD +5.33pp
+   VOL     60  1.00 |   8.48%   0.9507  -12.13%  8.99% | 1.1232/0.7844 |  0.9553 |  3.03 0.469 0.00 63.5  25 | n  n | H2,CAGR      | FLAT dCAGR -1.56pp dSh -0.0883 dDD +1.87pp | PLAC dCAGR -0.04pp dSh +0.1798 dDD +7.25pp
+   VOL    126  0.00 |  16.06%   1.0412  -21.73% 15.46% | 1.2252/0.9074 |  1.0004 |  2.86 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    126  0.25 |  14.12%   1.0366  -19.81% 13.64% | 1.2339/0.8891 |  0.9982 |  2.66 0.676 0.56 66.3  17 | n  Y | -            | FLAT dCAGR -0.37pp dSh -0.0041 dDD -0.07pp | PLAC dCAGR +0.01pp dSh +0.0328 dDD +0.37pp
+   VOL    126  0.50 |  12.14%   1.0147  -17.88% 12.00% | 1.2233/0.8531 |  0.9816 |  2.56 0.602 0.38 66.3  17 | n  Y | -            | FLAT dCAGR -0.77pp dSh -0.0254 dDD -0.15pp | PLAC dCAGR +0.06pp dSh +0.0735 dDD +1.18pp
+   VOL    126  0.75 |  10.13%   0.9616  -16.87% 10.62% | 1.1777/0.7865 |  0.9381 |  2.51 0.529 0.19 66.3  17 | n  n | H2,CAGR      | FLAT dCAGR -1.19pp dSh -0.0779 dDD -1.19pp | PLAC dCAGR +0.10pp dSh +0.1105 dDD +2.86pp
+   VOL    126  1.00 |   8.09%   0.8581  -16.27%  9.61% | 1.0770/0.6709 |  0.8494 |  2.50 0.455 0.00 66.3  17 | n  n | H2,OOS,CAGR  | FLAT dCAGR -1.64pp dSh -0.1807 dDD -2.67pp | PLAC dCAGR +0.12pp dSh +0.1293 dDD +4.75pp
+   VOL    252  0.00 |  16.06%   1.0412  -21.73% 15.46% | 1.2252/0.9074 |  1.0004 |  2.86 0.750 0.75  0.0   0 | n  n | DD           | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    252  0.25 |  14.54%   1.0500  -20.70% 13.85% | 1.2362/0.9041 |  1.0123 |  2.65 0.678 0.56 65.5  10 | n  n | DD           | FLAT dCAGR +0.01pp dSh +0.0094 dDD -0.89pp | PLAC dCAGR +0.44pp dSh +0.0452 dDD -0.48pp
+   VOL    252  0.50 |  12.97%   1.0442  -19.67% 12.43% | 1.2315/0.8851 |  1.0111 |  2.52 0.607 0.38 65.5  10 | n  Y | -            | FLAT dCAGR -0.02pp dSh +0.0041 dDD -1.82pp | PLAC dCAGR +0.92pp dSh +0.1023 dDD -0.58pp
+   VOL    252  0.75 |  11.37%   1.0122  -18.67% 11.27% | 1.2031/0.8373 |  0.9837 |  2.43 0.535 0.19 65.5  10 | n  Y | -            | FLAT dCAGR -0.09pp dSh -0.0273 dDD -2.80pp | PLAC dCAGR +1.38pp dSh +0.1627 dDD +0.31pp
+   VOL    252  1.00 |   9.74%   0.9399  -18.67% 10.47% | 1.1429/0.7426 |  0.9113 |  2.38 0.464 0.00 65.5  10 | n  n | H2,CAGR      | FLAT dCAGR -0.19pp dSh -0.0991 dDD -4.82pp | PLAC dCAGR +1.81pp dSh +0.2165 dDD +0.37pp
+   RULE 8 [CORR] IS-argmax = LOOK 20 / SLOPE 0.75 (IS Sh 1.2293) -> OOS 0.8355  vs do-nothing 1.0004  delta -0.1649   cellmean 0.9244  worst 0.7185  rank corr IS/OOS -0.07
+   RULE 8 [VOL] IS-argmax = LOOK 20 / SLOPE 0.50 (IS Sh 1.1431) -> OOS 0.9859  vs do-nothing 1.0004  delta -0.0145   cellmean 0.9717  worst 0.7925  rank corr IS/OOS +0.46
+
+## SMALL663  n_days=4198  n_names=663  2011-01-13..2026-09-11  n_rebalances=871
+   SPY     full  14.06% / 0.8582 / -33.72% / vol 17.03%   halves 0.9140/0.8346   OOS 0.8769
+   LIVE v2 full   4.64% / 0.7130 / -12.18%   OOS 0.6518
+   4b bars: DD cap -20.23%   CAGR floor   9.84%   Sharpe bars H1 0.9140 H2 0.8346 OOS 0.8769
+
+   --- signal COMPOSITE3 ---   anchor 7.87% / 0.5073 / -35.81%, turnover 3.94/yr
+   worst drawdown episode: peak 2020-01-22 -> trough 2020-03-18 (-35.81%)
+      LOOK  20: rank corr u(CORR) vs u(VOL) +0.662 | over the 8 decision dates INSIDE the episode mean u CORR 0.420 vs VOL 0.294 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-02 VOL 2020-03-02
+      LOOK  60: rank corr u(CORR) vs u(VOL) +0.641 | over the 8 decision dates INSIDE the episode mean u CORR 0.207 vs VOL 0.146 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-16 VOL 2020-03-16
+      LOOK 126: rank corr u(CORR) vs u(VOL) +0.627 | over the 8 decision dates INSIDE the episode mean u CORR 0.138 vs VOL 0.094 | in the 42 rows BEFORE the peak CORR 0.104 vs VOL 0.000 | first u>=0.5 CORR 2020-03-16 VOL 2020-03-16
+      LOOK 252: rank corr u(CORR) vs u(VOL) +0.726 | over the 8 decision dates INSIDE the episode mean u CORR 0.330 vs VOL 0.060 | in the 42 rows BEFORE the peak CORR 0.451 vs VOL 0.000 | first u>=0.5 CORR 2020-03-16 VOL None
+   brake LOOK slope |    CAGR   Sharpe    MaxDD    vol |  H1/H2 Sharpe |  OOS Sh | turn  gmean gmin  on% ep | 4a 4b | fail4b | vs FLAT / vs PLACEBO
+   CORR    20  0.00 |   7.87%   0.5073  -35.81% 18.24% | 0.6636/0.3942 |  0.4534 |  3.94 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD -0.00pp
+   CORR    20  0.25 |   7.37%   0.5095  -30.14% 16.70% | 0.6727/0.3757 |  0.4435 |  4.08 0.711 0.56 43.5  61 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.17pp dSh +0.0024 dDD +4.07pp | PLAC dCAGR -0.02pp dSh +0.0120 dDD +3.31pp
+   CORR    20  0.50 |   6.77%   0.5024  -25.43% 15.40% | 0.6768/0.3428 |  0.4208 |  4.53 0.672 0.38 43.5  61 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.42pp dSh -0.0045 dDD +7.15pp | PLAC dCAGR -0.03pp dSh +0.0237 dDD +5.80pp
+   CORR    20  0.75 |   6.10%   0.4837  -20.69% 14.38% | 0.6766/0.2911 |  0.3811 |  5.07 0.633 0.19 43.5  61 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.73pp dSh -0.0230 dDD +10.23pp | PLAC dCAGR -0.07pp dSh +0.0299 dDD +8.77pp
+   CORR    20  1.00 |   5.37%   0.4503  -19.36% 13.71% | 0.6716/0.2161 |  0.3196 |  5.64 0.594 0.00 43.5  61 | n  n | H1,H2,OOS,CAGR | FLAT dCAGR -1.09pp dSh -0.0563 dDD +9.88pp | PLAC dCAGR -0.15pp dSh +0.0276 dDD +9.86pp
+   CORR    60  0.00 |   7.87%   0.5073  -35.81% 18.24% | 0.6636/0.3942 |  0.4534 |  3.94 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD -0.00pp
+   CORR    60  0.25 |   7.25%   0.5011  -32.28% 16.80% | 0.6752/0.3570 |  0.4275 |  3.87 0.712 0.56 42.1  37 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.29pp dSh -0.0060 dDD +1.98pp | PLAC dCAGR -0.12pp dSh +0.0064 dDD +1.96pp
+   CORR    60  0.50 |   6.55%   0.4860  -29.87% 15.56% | 0.6843/0.3024 |  0.3869 |  3.97 0.674 0.38 42.1  37 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.65pp dSh -0.0209 dDD +2.80pp | PLAC dCAGR -0.21pp dSh +0.0124 dDD +2.96pp
+   CORR    60  0.75 |   5.80%   0.4596  -27.59% 14.58% | 0.6908/0.2254 |  0.3273 |  4.14 0.636 0.19 42.1  37 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.06pp dSh -0.0472 dDD +3.47pp | PLAC dCAGR -0.33pp dSh +0.0125 dDD +3.97pp
+   CORR    60  1.00 |   4.99%   0.4195  -26.53% 13.92% | 0.6948/0.1231 |  0.2453 |  4.36 0.598 0.00 42.1  37 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.51pp dSh -0.0871 dDD +2.89pp | PLAC dCAGR -0.48pp dSh +0.0044 dDD +3.78pp
+   CORR   126  0.00 |   7.87%   0.5073  -35.81% 18.24% | 0.6636/0.3942 |  0.4534 |  3.94 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD -0.00pp
+   CORR   126  0.25 |   7.08%   0.4906  -33.45% 16.86% | 0.6766/0.3367 |  0.4115 |  3.78 0.711 0.56 47.0  21 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.45pp dSh -0.0165 dDD +0.77pp | PLAC dCAGR -0.40pp dSh -0.0114 dDD +0.42pp
+   CORR   126  0.50 |   6.24%   0.4648  -32.22% 15.67% | 0.6878/0.2587 |  0.3533 |  3.70 0.672 0.38 47.0  21 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.95pp dSh -0.0422 dDD +0.37pp | PLAC dCAGR -0.75pp dSh -0.0239 dDD -0.34pp
+   CORR   126  0.75 |   5.34%   0.4274  -31.12% 14.72% | 0.6970/0.1550 |  0.2745 |  3.68 0.633 0.19 47.0  21 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.49pp dSh -0.0794 dDD -0.18pp | PLAC dCAGR -1.12pp dSh -0.0428 dDD -1.27pp
+   CORR   126  1.00 |   4.39%   0.3768  -30.91% 14.04% | 0.7040/0.0239 |  0.1730 |  3.69 0.594 0.00 47.0  21 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.07pp dSh -0.1298 dDD -1.65pp | PLAC dCAGR -1.52pp dSh -0.0695 dDD -1.32pp
+   CORR   252  0.00 |   7.87%   0.5073  -35.81% 18.24% | 0.6636/0.3942 |  0.4534 |  3.94 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD -0.00pp
+   CORR   252  0.25 |   6.83%   0.4777  -33.33% 16.80% | 0.6752/0.3146 |  0.3932 |  3.72 0.704 0.56 55.1  14 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.65pp dSh -0.0294 dDD +0.61pp | PLAC dCAGR -0.46pp dSh -0.0172 dDD +0.48pp
+   CORR   252  0.50 |   5.74%   0.4374  -31.92% 15.54% | 0.6844/0.2093 |  0.3134 |  3.56 0.659 0.38 55.1  14 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.33pp dSh -0.0695 dDD +0.12pp | PLAC dCAGR -0.85pp dSh -0.0353 dDD -0.17pp
+   CORR   252  0.75 |   4.61%   0.3839  -30.59% 14.48% | 0.6909/0.0714 |  0.2090 |  3.43 0.613 0.19 55.1  14 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.04pp dSh -0.1228 dDD -0.49pp | PLAC dCAGR -1.26pp dSh -0.0598 dDD -0.54pp
+   CORR   252  1.00 |   3.43%   0.3155  -32.24% 13.68% | 0.6942/-0.1031 |  0.0769 |  3.32 0.568 0.00 55.1  14 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.78pp dSh -0.1910 dDD -4.13pp | PLAC dCAGR -1.68pp dSh -0.0921 dDD -2.91pp
+   VOL     20  0.00 |   7.87%   0.5073  -35.81% 18.24% | 0.6636/0.3942 |  0.4534 |  3.94 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD -0.00pp
+   VOL     20  0.25 |   6.93%   0.5014  -30.55% 15.89% | 0.6814/0.3608 |  0.4400 |  3.94 0.688 0.56 64.5  52 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.40pp dSh -0.0056 dDD +2.72pp | PLAC dCAGR -0.27pp dSh +0.0036 dDD +1.75pp
+   VOL     20  0.50 |   5.87%   0.4828  -25.09% 13.78% | 0.6910/0.3062 |  0.4120 |  4.28 0.627 0.38 64.5  52 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.90pp dSh -0.0239 dDD +5.58pp | PLAC dCAGR -0.50pp dSh +0.0078 dDD +4.06pp
+   VOL     20  0.75 |   4.72%   0.4435  -19.42% 12.04% | 0.6869/0.2192 |  0.3607 |  4.72 0.565 0.19 64.5  52 | n  n | H1,H2,OOS,CAGR | FLAT dCAGR -1.47pp dSh -0.0630 dDD +8.58pp | PLAC dCAGR -0.77pp dSh +0.0027 dDD +7.89pp
+   VOL     20  1.00 |   3.49%   0.3715  -17.81% 10.82% | 0.6600/0.0872 |  0.2742 |  5.23 0.503 0.00 64.5  52 | n  n | H1,H2,OOS,CAGR | FLAT dCAGR -2.09pp dSh -0.1346 dDD +7.44pp | PLAC dCAGR -1.07pp dSh -0.0219 dDD +10.23pp
+   VOL     60  0.00 |   7.87%   0.5073  -35.81% 18.24% | 0.6636/0.3942 |  0.4534 |  3.94 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD -0.00pp
+   VOL     60  0.25 |   6.89%   0.4968  -32.33% 15.99% | 0.7037/0.3334 |  0.4129 |  3.71 0.688 0.56 61.2  26 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.44pp dSh -0.0102 dDD +0.91pp | PLAC dCAGR -0.39pp dSh -0.0047 dDD +0.56pp
+   VOL     60  0.50 |   5.81%   0.4740  -28.81% 13.99% | 0.7401/0.2442 |  0.3517 |  3.63 0.625 0.38 61.2  26 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.95pp dSh -0.0327 dDD +1.80pp | PLAC dCAGR -0.72pp dSh -0.0092 dDD +1.53pp
+   VOL     60  0.75 |   4.66%   0.4305  -25.79% 12.35% | 0.7662/0.1129 |  0.2598 |  3.63 0.563 0.19 61.2  26 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.51pp dSh -0.0759 dDD +2.10pp | PLAC dCAGR -1.08pp dSh -0.0239 dDD +4.02pp
+   VOL     60  1.00 |   3.43%   0.3566  -23.36% 11.22% | 0.7727/-0.0712 |  0.1289 |  3.69 0.500 0.00 61.2  26 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.13pp dSh -0.1496 dDD +1.75pp | PLAC dCAGR -1.47pp dSh -0.0569 dDD +7.17pp
+   VOL    126  0.00 |   7.87%   0.5073  -35.81% 18.24% | 0.6636/0.3942 |  0.4534 |  3.94 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD -0.00pp
+   VOL    126  0.25 |   6.74%   0.4858  -33.87% 16.10% | 0.6909/0.3211 |  0.4020 |  3.65 0.687 0.56 61.2  14 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.58pp dSh -0.0213 dDD -0.66pp | PLAC dCAGR -0.69pp dSh -0.0252 dDD -1.48pp
+   VOL    126  0.50 |   5.52%   0.4500  -33.05% 14.20% | 0.7117/0.2166 |  0.3279 |  3.43 0.624 0.38 61.2  14 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.22pp dSh -0.0567 dDD -2.50pp | PLAC dCAGR -1.30pp dSh -0.0537 dDD -4.01pp
+   VOL    126  0.75 |   4.24%   0.3924  -32.34% 12.63% | 0.7205/0.0653 |  0.2212 |  3.26 0.561 0.19 61.2  14 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.90pp dSh -0.1140 dDD -4.54pp | PLAC dCAGR -1.94pp dSh -0.0950 dDD -4.34pp
+   VOL    126  1.00 |   2.89%   0.3054  -31.74% 11.52% | 0.7117/-0.1462 |  0.0731 |  3.14 0.497 0.00 61.2  14 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.64pp dSh -0.2007 dDD -6.76pp | PLAC dCAGR -2.59pp dSh -0.1542 dDD -2.11pp
+   VOL    252  0.00 |   7.87%   0.5073  -35.81% 18.24% | 0.6636/0.3942 |  0.4534 |  3.94 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD -0.00pp
+   VOL    252  0.25 |   6.45%   0.4601  -35.31% 16.59% | 0.6551/0.2956 |  0.3803 |  3.66 0.692 0.56 61.9   9 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.91pp dSh -0.0469 dDD -1.89pp | PLAC dCAGR -0.86pp dSh -0.0410 dDD -2.23pp
+   VOL    252  0.50 |   4.98%   0.3976  -35.86% 15.10% | 0.6439/0.1606 |  0.2810 |  3.44 0.633 0.38 61.9   9 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.85pp dSh -0.1091 dDD -4.90pp | PLAC dCAGR -1.62pp dSh -0.0867 dDD -5.59pp
+   VOL    252  0.75 |   3.47%   0.3161  -36.47% 13.83% | 0.6299/-0.0250 |  0.1465 |  3.25 0.575 0.19 61.9   9 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.82pp dSh -0.1904 dDD -8.03pp | PLAC dCAGR -2.39pp dSh -0.1435 dDD -8.38pp
+   VOL    252  1.00 |   1.92%   0.2128  -41.60% 12.85% | 0.6128/-0.2726 | -0.0297 |  3.08 0.517 0.00 61.9   9 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -3.80pp dSh -0.2934 dDD -15.75pp | PLAC dCAGR -3.16pp dSh -0.2126 dDD -13.38pp
+   RULE 8 [CORR] IS-argmax = LOOK 126 / SLOPE 1.00 (IS Sh 0.6679) -> OOS 0.1730  vs do-nothing 0.4534  delta -0.2804   cellmean 0.3485  worst 0.0769  rank corr IS/OOS -0.91
+   RULE 8 [VOL] IS-argmax = LOOK 60 / SLOPE 1.00 (IS Sh 0.7296) -> OOS 0.1289  vs do-nothing 0.4534  delta -0.3246   cellmean 0.3128  worst -0.0297  rank corr IS/OOS -0.06
+
+   --- signal M12_1 ---   anchor 8.25% / 0.5177 / -35.09%, turnover 3.80/yr
+   worst drawdown episode: peak 2020-02-13 -> trough 2020-03-18 (-35.09%)
+      LOOK  20: rank corr u(CORR) vs u(VOL) +0.605 | over the 5 decision dates INSIDE the episode mean u CORR 0.487 vs VOL 0.470 | in the 42 rows BEFORE the peak CORR 0.007 vs VOL 0.000 | first u>=0.5 CORR 2020-03-02 VOL 2020-03-02
+      LOOK  60: rank corr u(CORR) vs u(VOL) +0.619 | over the 5 decision dates INSIDE the episode mean u CORR 0.256 vs VOL 0.257 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-16 VOL 2020-03-16
+      LOOK 126: rank corr u(CORR) vs u(VOL) +0.655 | over the 5 decision dates INSIDE the episode mean u CORR 0.181 vs VOL 0.153 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.000 | first u>=0.5 CORR 2020-03-16 VOL 2020-03-16
+      LOOK 252: rank corr u(CORR) vs u(VOL) +0.693 | over the 5 decision dates INSIDE the episode mean u CORR 0.159 vs VOL 0.110 | in the 42 rows BEFORE the peak CORR 0.000 vs VOL 0.014 | first u>=0.5 CORR 2020-03-16 VOL 2020-03-16
+   brake LOOK slope |    CAGR   Sharpe    MaxDD    vol |  H1/H2 Sharpe |  OOS Sh | turn  gmean gmin  on% ep | 4a 4b | fail4b | vs FLAT / vs PLACEBO
+   CORR    20  0.00 |   8.25%   0.5177  -35.09% 18.71% | 0.5141/0.5249 |  0.4875 |  3.80 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    20  0.25 |   7.50%   0.5066  -29.64% 17.20% | 0.5043/0.5101 |  0.4692 |  4.02 0.708 0.57 48.5  76 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.36pp dSh -0.0110 dDD +3.73pp | PLAC dCAGR -0.52pp dSh -0.0176 dDD +2.57pp
+   CORR    20  0.50 |   6.65%   0.4843  -27.95% 15.91% | 0.4890/0.4797 |  0.4360 |  4.62 0.665 0.38 48.5  76 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.82pp dSh -0.0331 dDD +3.66pp | PLAC dCAGR -1.02pp dSh -0.0385 dDD +3.13pp
+   CORR    20  0.75 |   5.73%   0.4494  -27.95% 14.88% | 0.4694/0.4286 |  0.3843 |  5.33 0.623 0.20 48.5  76 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.32pp dSh -0.0678 dDD +1.88pp | PLAC dCAGR -1.54pp dSh -0.0666 dDD +2.49pp
+   CORR    20  1.00 |   4.77%   0.4000  -27.95% 14.16% | 0.4453/0.3505 |  0.3102 |  6.08 0.580 0.02 48.5  76 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.87pp dSh -0.1171 dDD +0.07pp | PLAC dCAGR -2.08pp dSh -0.1031 dDD +1.88pp
+   CORR    60  0.00 |   8.25%   0.5177  -35.09% 18.71% | 0.5141/0.5249 |  0.4875 |  3.80 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR    60  0.25 |   7.29%   0.4957  -31.03% 17.20% | 0.5049/0.4887 |  0.4542 |  3.75 0.705 0.57 45.8  32 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.55pp dSh -0.0218 dDD +2.25pp | PLAC dCAGR -0.77pp dSh -0.0304 dDD +1.61pp
+   CORR    60  0.50 |   6.27%   0.4624  -27.95% 15.89% | 0.4915/0.4337 |  0.4047 |  3.92 0.661 0.39 45.8  32 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.15pp dSh -0.0550 dDD +3.48pp | PLAC dCAGR -1.50pp dSh -0.0645 dDD +2.83pp
+   CORR    60  0.75 |   5.19%   0.4156  -27.95% 14.83% | 0.4746/0.3528 |  0.3342 |  4.17 0.616 0.22 45.8  32 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.80pp dSh -0.1016 dDD +1.61pp | PLAC dCAGR -2.23pp dSh -0.1070 dDD +1.88pp
+   CORR    60  1.00 |   4.06%   0.3538  -28.26% 14.06% | 0.4539/0.2402 |  0.2392 |  4.46 0.572 0.04 45.8  32 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.49pp dSh -0.1633 dDD -0.61pp | PLAC dCAGR -2.99pp dSh -0.1590 dDD +0.63pp
+   CORR   126  0.00 |   8.25%   0.5177  -35.09% 18.71% | 0.5141/0.5249 |  0.4875 |  3.80 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   126  0.25 |   7.42%   0.5005  -31.97% 17.31% | 0.5252/0.4795 |  0.4463 |  3.66 0.706 0.57 47.5  30 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.43pp dSh -0.0170 dDD +1.35pp | PLAC dCAGR -0.34pp dSh -0.0091 dDD +1.69pp
+   CORR   126  0.50 |   6.54%   0.4741  -28.86% 16.11% | 0.5344/0.4149 |  0.3889 |  3.62 0.663 0.40 47.5  30 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.90pp dSh -0.0432 dDD +2.66pp | PLAC dCAGR -0.63pp dSh -0.0184 dDD +3.38pp
+   CORR   126  0.75 |   5.61%   0.4365  -27.95% 15.13% | 0.5418/0.3247 |  0.3110 |  3.63 0.619 0.23 47.5  30 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.42pp dSh -0.0807 dDD +1.74pp | PLAC dCAGR -0.93pp dSh -0.0330 dDD +2.86pp
+   CORR   126  1.00 |   4.62%   0.3860  -27.95% 14.41% | 0.5469/0.2044 |  0.2101 |  3.69 0.576 0.05 47.5  30 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.97pp dSh -0.1310 dDD -0.12pp | PLAC dCAGR -1.25pp dSh -0.0544 dDD +2.38pp
+   CORR   252  0.00 |   8.25%   0.5177  -35.09% 18.71% | 0.5141/0.5249 |  0.4875 |  3.80 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   CORR   252  0.25 |   7.55%   0.5031  -32.35% 17.53% | 0.5453/0.4669 |  0.4456 |  3.65 0.714 0.57 47.1  21 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.38pp dSh -0.0145 dDD +1.29pp | PLAC dCAGR -0.42pp dSh -0.0144 dDD +1.74pp
+   CORR   252  0.50 |   6.80%   0.4816  -29.61% 16.50% | 0.5764/0.3905 |  0.3900 |  3.54 0.678 0.39 47.1  21 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.79pp dSh -0.0358 dDD +2.55pp | PLAC dCAGR -0.79pp dSh -0.0288 dDD +3.48pp
+   CORR   252  0.75 |   6.01%   0.4518  -27.95% 15.65% | 0.6072/0.2912 |  0.3173 |  3.45 0.642 0.21 47.1  21 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.23pp dSh -0.0655 dDD +2.70pp | PLAC dCAGR -1.16pp dSh -0.0476 dDD +4.15pp
+   CORR   252  1.00 |   5.19%   0.4124  -28.78% 15.01% | 0.6375/0.1670 |  0.2259 |  3.40 0.606 0.03 47.1  21 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.71pp dSh -0.1048 dDD +0.35pp | PLAC dCAGR -1.56pp dSh -0.0717 dDD +2.56pp
+   VOL     20  0.00 |   8.25%   0.5177  -35.09% 18.71% | 0.5141/0.5249 |  0.4875 |  3.80 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     20  0.25 |   7.23%   0.5129  -29.60% 16.16% | 0.5277/0.5039 |  0.4663 |  3.82 0.682 0.56 69.8  54 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.40pp dSh -0.0046 dDD +2.71pp | PLAC dCAGR -0.51pp dSh -0.0090 dDD +1.39pp
+   VOL     20  0.50 |   6.07%   0.4950  -24.21% 13.86% | 0.5342/0.4637 |  0.4272 |  4.19 0.614 0.38 69.8  54 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.90pp dSh -0.0222 dDD +5.25pp | PLAC dCAGR -0.98pp dSh -0.0194 dDD +3.38pp
+   VOL     20  0.75 |   4.82%   0.4543  -23.49% 11.93% | 0.5260/0.3918 |  0.3607 |  4.68 0.546 0.19 69.8  54 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.47pp dSh -0.0626 dDD +3.04pp | PLAC dCAGR -1.49pp dSh -0.0422 dDD +3.35pp
+   VOL     20  1.00 |   3.48%   0.3759  -22.91% 10.59% | 0.4903/0.2711 |  0.2546 |  5.24 0.478 0.00 69.8  54 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.11pp dSh -0.1408 dDD +0.61pp | PLAC dCAGR -2.03pp dSh -0.0889 dDD +4.70pp
+   VOL     60  0.00 |   8.25%   0.5177  -35.09% 18.71% | 0.5141/0.5249 |  0.4875 |  3.80 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL     60  0.25 |   7.23%   0.5116  -31.03% 16.23% | 0.5491/0.4832 |  0.4496 |  3.56 0.682 0.56 72.1  25 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.39pp dSh -0.0059 dDD +1.27pp | PLAC dCAGR -0.43pp dSh -0.0059 dDD +0.72pp
+   VOL     60  0.50 |   6.10%   0.4940  -26.89% 13.98% | 0.5830/0.4180 |  0.3916 |  3.48 0.613 0.38 72.1  25 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.86pp dSh -0.0232 dDD +2.53pp | PLAC dCAGR -0.81pp dSh -0.0114 dDD +1.52pp
+   VOL     60  0.75 |   4.89%   0.4552  -23.48% 12.10% | 0.6076/0.3152 |  0.3031 |  3.48 0.545 0.19 72.1  25 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.39pp dSh -0.0617 dDD +2.99pp | PLAC dCAGR -1.23pp dSh -0.0278 dDD +4.69pp
+   VOL     60  1.00 |   3.59%   0.3815  -24.90% 10.76% | 0.6089/0.1567 |  0.1724 |  3.55 0.476 0.00 72.1  25 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.98pp dSh -0.1352 dDD -1.46pp | PLAC dCAGR -1.68pp dSh -0.0658 dDD +4.36pp
+   VOL    126  0.00 |   8.25%   0.5177  -35.09% 18.71% | 0.5141/0.5249 |  0.4875 |  3.80 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    126  0.25 |   7.05%   0.4985  -32.45% 16.37% | 0.5439/0.4632 |  0.4308 |  3.50 0.682 0.56 71.0  13 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.57pp dSh -0.0190 dDD -0.15pp | PLAC dCAGR -0.67pp dSh -0.0227 dDD -0.99pp
+   VOL    126  0.50 |   5.77%   0.4648  -29.81% 14.26% | 0.5700/0.3740 |  0.3510 |  3.29 0.613 0.38 71.0  13 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.19pp dSh -0.0524 dDD -0.38pp | PLAC dCAGR -1.27pp dSh -0.0488 dDD -1.12pp
+   VOL    126  0.75 |   4.40%   0.4077  -27.70% 12.48% | 0.5846/0.2429 |  0.2385 |  3.14 0.545 0.19 71.0  13 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.88pp dSh -0.1092 dDD -1.23pp | PLAC dCAGR -1.89pp dSh -0.0887 dDD +1.31pp
+   VOL    126  1.00 |   2.96%   0.3166  -31.12% 11.21% | 0.5762/0.0539 |  0.0846 |  3.02 0.476 0.00 71.0  13 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.61pp dSh -0.2001 dDD -7.69pp | PLAC dCAGR -2.53pp dSh -0.1496 dDD +0.20pp
+   VOL    252  0.00 |   8.25%   0.5177  -35.09% 18.71% | 0.5141/0.5249 |  0.4875 |  3.80 0.750 0.75  0.0   0 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR +0.00pp dSh +0.0000 dDD +0.00pp | PLAC dCAGR +0.00pp dSh +0.0000 dDD +0.00pp
+   VOL    252  0.25 |   6.93%   0.4771  -33.19% 17.13% | 0.5023/0.4548 |  0.4267 |  3.53 0.691 0.56 62.7   6 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -0.78pp dSh -0.0403 dDD -0.49pp | PLAC dCAGR -0.71pp dSh -0.0341 dDD -0.89pp
+   VOL    252  0.50 |   5.57%   0.4238  -31.30% 15.71% | 0.4884/0.3572 |  0.3441 |  3.30 0.633 0.38 62.7   6 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -1.59pp dSh -0.0934 dDD -1.04pp | PLAC dCAGR -1.33pp dSh -0.0701 dDD -1.46pp
+   VOL    252  0.75 |   4.17%   0.3547  -32.03% 14.49% | 0.4725/0.2191 |  0.2320 |  3.11 0.574 0.19 62.7   6 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -2.41pp dSh -0.1624 dDD -4.26pp | PLAC dCAGR -1.94pp dSh -0.1137 dDD -3.31pp
+   VOL    252  1.00 |   2.73%   0.2675  -39.73% 13.53% | 0.4546/0.0267 |  0.0838 |  2.94 0.516 0.00 62.7   6 | n  n | H1,H2,OOS,DD,CAGR | FLAT dCAGR -3.25pp dSh -0.2494 dDD -14.52pp | PLAC dCAGR -2.55pp dSh -0.1657 dDD -11.20pp
+   RULE 8 [CORR] IS-argmax = LOOK 252 / SLOPE 1.00 (IS Sh 0.6732) -> OOS 0.2259  vs do-nothing 0.4875  delta -0.2616   cellmean 0.3859  worst 0.2101  rank corr IS/OOS -0.13
+   RULE 8 [VOL] IS-argmax = LOOK 60 / SLOPE 1.00 (IS Sh 0.7481) -> OOS 0.1724  vs do-nothing 0.4875  delta -0.3151   cellmean 0.3484  worst 0.0838  rank corr IS/OOS -0.25
+   GATE G9 determinism (U56 COMPOSITE3 CORR grid re-run): 0.000e+00 vs == 0.0 -> PASS
+
+## SUMMARY
+   cells 240   4a passes 0   4b passes 83
+   U56       COMPOSITE3  CORR  4b 20/20   SLOPE0 15.78%/1.1522/-19.13%   MaxDD -19.13%..-17.39%   CAGR 12.73%..15.78%   Sharpe 1.0957..1.1999   turn 2.75..5.33
+   U56       COMPOSITE3  VOL   4b 14/20   SLOPE0 15.78%/1.1522/-19.13%   MaxDD -19.13%..-11.39%   CAGR  7.71%..15.78%   Sharpe 0.8639..1.1882   turn 2.32..4.84
+   U56       M12_1       CORR  4b 15/20   SLOPE0 16.79%/1.1941/-20.58%   MaxDD -20.58%..-19.04%   CAGR 11.08%..16.79%   Sharpe 1.0617..1.2253   turn 2.51..5.14
+   U56       M12_1       VOL   4b 11/20   SLOPE0 16.79%/1.1941/-20.58%   MaxDD -20.58%..-10.04%   CAGR  7.87%..16.79%   Sharpe 0.8997..1.2259   turn 2.13..4.67
+   B135      COMPOSITE3  CORR  4b  6/20   SLOPE0 16.18%/1.0715/-20.74%   MaxDD -20.74%..-14.91%   CAGR 10.19%..16.18%   Sharpe 0.8747..1.0763   turn 3.10..5.92
+   B135      COMPOSITE3  VOL   4b  7/20   SLOPE0 16.18%/1.0715/-20.74%   MaxDD -20.74%..-11.88%   CAGR  8.18%..16.18%   Sharpe 0.8462..1.0870   turn 2.66..4.90
+   B135      M12_1       CORR  4b  2/20   SLOPE0 16.06%/1.0412/-21.73%   MaxDD -21.73%..-16.62%   CAGR  9.45%..16.06%   Sharpe 0.8658..1.0418   turn 2.84..5.47
+   B135      M12_1       VOL   4b  8/20   SLOPE0 16.06%/1.0412/-21.73%   MaxDD -21.73%..-10.33%   CAGR  7.61%..16.06%   Sharpe 0.8581..1.0604   turn 2.38..4.64
+   SMALL663  COMPOSITE3  CORR  4b  0/20   SLOPE0  7.87%/0.5073/-35.81%   MaxDD -35.81%..-19.36%   CAGR  3.43%.. 7.87%   Sharpe 0.3155..0.5095   turn 3.32..5.64
+   SMALL663  COMPOSITE3  VOL   4b  0/20   SLOPE0  7.87%/0.5073/-35.81%   MaxDD -41.60%..-17.81%   CAGR  1.92%.. 7.87%   Sharpe 0.2128..0.5073   turn 3.08..5.23
+   SMALL663  M12_1       CORR  4b  0/20   SLOPE0  8.25%/0.5177/-35.09%   MaxDD -35.09%..-27.95%   CAGR  4.06%.. 8.25%   Sharpe 0.3538..0.5177   turn 3.40..6.08
+   SMALL663  M12_1       VOL   4b  0/20   SLOPE0  8.25%/0.5177/-35.09%   MaxDD -39.73%..-22.91%   CAGR  2.73%.. 8.25%   Sharpe 0.2675..0.5177   turn 2.94..5.24
+
+   (1) THE MECHANISM AGAINST A FLAT SCHEDULE AT THE SAME MEAN EXPOSURE:
+      CORR  n=96  d_CAGR -0.75pp  d_Sharpe -0.0449 (>0 at 19/96)  d_MaxDD -0.05pp (>0 at 34/96)  d_OOS -0.0992 (>0 at 3/96)
+      VOL   n=96  d_CAGR -1.18pp  d_Sharpe -0.0668 (>0 at 19/96)  d_MaxDD -0.22pp (>0 at 49/96)  d_OOS -0.1030 (>0 at 18/96)
+   (2) THE MECHANISM AGAINST ITS OWN TIMING PLACEBO (exact gross match, timing destroyed):
+      CORR  n=96  t_CAGR -0.27pp  t_Sharpe +0.0215 (>0 at 65/96)  t_MaxDD +0.91pp (>0 at 59/96)  t_OOS -0.0462 (>0 at 26/96)
+      VOL   n=96  t_CAGR -0.65pp  t_Sharpe +0.0282 (>0 at 62/96)  t_MaxDD +1.32pp (>0 at 61/96)  t_OOS -0.0284 (>0 at 49/96)
+   (3) THE LITERAL QUESTION — CORR MINUS VOL AT MATCHED (panel, signal, LOOK, SLOPE):
+      pooled over 96 matched pairs: d_MaxDD -1.83pp (CORR better at 20/96)  d_CAGR +1.61pp  d_Sharpe +0.0222 (CORR better at 59/96)  d_OOS +0.0042 (CORR better at 53/96)
+      U56       COMPOSITE3  d_MaxDD -3.42pp (CORR better at 0/16)  d_Sharpe +0.0656  d_OOS +0.0280
+      U56       M12_1       d_MaxDD -4.12pp (CORR better at 0/16)  d_Sharpe +0.0381  d_OOS -0.0283
+      B135      COMPOSITE3  d_MaxDD -2.06pp (CORR better at 0/16)  d_Sharpe -0.0081  d_OOS -0.0073
+      B135      M12_1       d_MaxDD -2.34pp (CORR better at 2/16)  d_Sharpe -0.0204  d_OOS -0.0590
+      SMALL663  COMPOSITE3  d_MaxDD +0.98pp (CORR better at 10/16)  d_Sharpe +0.0381  d_OOS +0.0446
+      SMALL663  M12_1       d_MaxDD -0.02pp (CORR better at 8/16)  d_Sharpe +0.0202  d_OOS +0.0469
+      rank corr of the two intensity series: mean +0.495, range +0.147..+0.726 over 24 (panel, signal, LOOK) cells
+      INSIDE the worst drawdown episode mean intensity: CORR 0.232 vs VOL 0.389; in the 42 rows BEFORE the peak CORR 0.077 vs VOL 0.028  (CORR higher pre-peak at 8/24)
+
+   (4) STRUCTURE IN THE DIALS (pooled over panels and signals, braked cells only):
+      CORR  LOOK   20: d_CAGR -0.78pp  d_Sharpe -0.0301  d_MaxDD +1.32pp  d_OOS -0.0842  t_Sharpe +0.0490  on% 47.2
+      CORR  LOOK   60: d_CAGR -0.97pp  d_Sharpe -0.0598  d_MaxDD +0.01pp  d_OOS -0.1075  t_Sharpe +0.0041  on% 47.0
+      CORR  LOOK  126: d_CAGR -0.70pp  d_Sharpe -0.0493  d_MaxDD -0.70pp  d_OOS -0.1135  t_Sharpe +0.0206  on% 46.0
+      CORR  LOOK  252: d_CAGR -0.54pp  d_Sharpe -0.0403  d_MaxDD -0.81pp  d_OOS -0.0918  t_Sharpe +0.0122  on% 43.4
+      VOL   LOOK   20: d_CAGR -1.24pp  d_Sharpe -0.0307  d_MaxDD +3.24pp  d_OOS -0.0508  t_Sharpe +0.0600  on% 63.6
+      VOL   LOOK   60: d_CAGR -1.12pp  d_Sharpe -0.0482  d_MaxDD +1.58pp  d_OOS -0.0714  t_Sharpe +0.0517  on% 64.0
+      VOL   LOOK  126: d_CAGR -1.38pp  d_Sharpe -0.1054  d_MaxDD -2.13pp  d_OOS -0.1522  t_Sharpe -0.0062  on% 65.2
+      VOL   LOOK  252: d_CAGR -0.98pp  d_Sharpe -0.0829  d_MaxDD -3.56pp  d_OOS -0.1376  t_Sharpe +0.0075  on% 63.5
+      CORR  SLOPE 0.25: d_CAGR -0.26pp  d_Sharpe -0.0047  d_MaxDD +0.50pp  d_OOS -0.0244  t_Sharpe +0.0110
+      CORR  SLOPE 0.50: d_CAGR -0.57pp  d_Sharpe -0.0210  d_MaxDD +0.46pp  d_OOS -0.0627  t_Sharpe +0.0220
+      CORR  SLOPE 0.75: d_CAGR -0.90pp  d_Sharpe -0.0522  d_MaxDD -0.03pp  d_OOS -0.1177  t_Sharpe +0.0277
+      CORR  SLOPE 1.00: d_CAGR -1.26pp  d_Sharpe -0.1017  d_MaxDD -1.11pp  d_OOS -0.1922  t_Sharpe +0.0252
+      VOL   SLOPE 0.25: d_CAGR -0.43pp  d_Sharpe -0.0041  d_MaxDD +0.47pp  d_OOS -0.0155  t_Sharpe +0.0140
+      VOL   SLOPE 0.50: d_CAGR -0.91pp  d_Sharpe -0.0242  d_MaxDD +0.73pp  d_OOS -0.0495  t_Sharpe +0.0313
+      VOL   SLOPE 0.75: d_CAGR -1.42pp  d_Sharpe -0.0725  d_MaxDD +0.19pp  d_OOS -0.1153  t_Sharpe +0.0402
+      VOL   SLOPE 1.00: d_CAGR -1.96pp  d_Sharpe -0.1664  d_MaxDD -2.27pp  d_OOS -0.2317  t_Sharpe +0.0274
+
+   (5) COST OF THE DD LEG, PER PANEL/SIGNAL/BRAKE (best MaxDD cell and its price):
+      U56       COMPOSITE3  CORR  best DD cell LOOK 20/SLOPE 1.00: MaxDD -19.13% -> -17.39% (+1.73pp) costs CAGR -3.04pp, Sharpe +0.0317, turnover +2.58/yr; 4b PASS vs SLOPE0 PASS
+      U56       COMPOSITE3  VOL   best DD cell LOOK 60/SLOPE 1.00: MaxDD -19.13% -> -11.39% (+7.74pp) costs CAGR -7.21pp, Sharpe -0.1436, turnover +0.40/yr; 4b FAIL(CAGR) vs SLOPE0 PASS
+      U56       M12_1       CORR  best DD cell LOOK 20/SLOPE 1.00: MaxDD -20.58% -> -19.04% (+1.54pp) costs CAGR -5.71pp, Sharpe -0.1324, turnover +2.62/yr; 4b FAIL(H2) vs SLOPE0 FAIL(DD)
+      U56       M12_1       VOL   best DD cell LOOK 20/SLOPE 1.00: MaxDD -20.58% -> -10.04% (+10.54pp) costs CAGR -8.04pp, Sharpe -0.0961, turnover +2.16/yr; 4b FAIL(CAGR) vs SLOPE0 FAIL(DD)
+      B135      COMPOSITE3  CORR  best DD cell LOOK 20/SLOPE 1.00: MaxDD -20.74% -> -14.91% (+5.83pp) costs CAGR -5.28pp, Sharpe -0.0951, turnover +2.81/yr; 4b FAIL(H2) vs SLOPE0 FAIL(DD)
+      B135      COMPOSITE3  VOL   best DD cell LOOK 20/SLOPE 0.75: MaxDD -20.74% -> -11.88% (+8.86pp) costs CAGR -5.82pp, Sharpe -0.0200, turnover +1.21/yr; 4b FAIL(H2,CAGR) vs SLOPE0 FAIL(DD)
+      B135      M12_1       CORR  best DD cell LOOK 20/SLOPE 1.00: MaxDD -21.73% -> -16.62% (+5.12pp) costs CAGR -6.52pp, Sharpe -0.1428, turnover +2.61/yr; 4b FAIL(H2,OOS,CAGR) vs SLOPE0 FAIL(DD)
+      B135      M12_1       VOL   best DD cell LOOK 20/SLOPE 1.00: MaxDD -21.73% -> -10.33% (+11.40pp) costs CAGR -8.45pp, Sharpe -0.1433, turnover +1.78/yr; 4b FAIL(H2,OOS,CAGR) vs SLOPE0 FAIL(DD)
+      SMALL663  COMPOSITE3  CORR  best DD cell LOOK 20/SLOPE 1.00: MaxDD -35.81% -> -19.36% (+16.45pp) costs CAGR -2.50pp, Sharpe -0.0570, turnover +1.70/yr; 4b FAIL(H1,H2,OOS,CAGR) vs SLOPE0 FAIL(H1,H2,OOS,DD,CAGR)
+      SMALL663  COMPOSITE3  VOL   best DD cell LOOK 20/SLOPE 1.00: MaxDD -35.81% -> -17.81% (+18.01pp) costs CAGR -4.38pp, Sharpe -0.1358, turnover +1.29/yr; 4b FAIL(H1,H2,OOS,CAGR) vs SLOPE0 FAIL(H1,H2,OOS,DD,CAGR)
+      SMALL663  M12_1       CORR  best DD cell LOOK 20/SLOPE 0.50: MaxDD -35.09% -> -27.95% (+7.14pp) costs CAGR -1.60pp, Sharpe -0.0334, turnover +0.82/yr; 4b FAIL(H1,H2,OOS,DD,CAGR) vs SLOPE0 FAIL(H1,H2,OOS,DD,CAGR)
+      SMALL663  M12_1       VOL   best DD cell LOOK 20/SLOPE 1.00: MaxDD -35.09% -> -22.91% (+12.19pp) costs CAGR -4.77pp, Sharpe -0.1418, turnover +1.44/yr; 4b FAIL(H1,H2,OOS,DD,CAGR) vs SLOPE0 FAIL(H1,H2,OOS,DD,CAGR)
+
+   (6) 4b CONVERSIONS (the cell's own SLOPE 0 fails 4b, the cell passes): 49 of 240 cells
+      U56       M12_1       CORR  LOOK 20/SLOPE 0.25: 15.40% / 1.1914 / -19.61%  OOS 1.1219  turn 2.96 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0317 dDD +0.30pp
+      U56       M12_1       CORR  LOOK 20/SLOPE 0.50: 13.98% / 1.1721 / -19.42%  OOS 1.0633  turn 3.66 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0639 dDD +0.33pp
+      U56       M12_1       CORR  LOOK 20/SLOPE 0.75: 12.53% / 1.1311 / -19.23%  OOS 0.9845  turn 4.39 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0898 dDD +0.37pp
+      U56       M12_1       CORR  LOOK 60/SLOPE 0.25: 15.59% / 1.1884 / -19.79%  OOS 1.1143  turn 2.65 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0157 dDD -0.30pp
+      U56       M12_1       CORR  LOOK 60/SLOPE 0.50: 14.36% / 1.1682 / -19.79%  OOS 1.0529  turn 2.95 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0318 dDD -0.87pp
+      U56       M12_1       CORR  LOOK 60/SLOPE 0.75: 13.11% / 1.1299 / -19.79%  OOS 0.9778  turn 3.29 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0431 dDD -1.43pp
+      U56       M12_1       CORR  LOOK 60/SLOPE 1.00: 11.85% / 1.0698 / -19.79%  OOS 0.8886  turn 3.65 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0472 dDD -1.29pp
+      U56       M12_1       CORR  LOOK 126/SLOPE 0.25: 15.89% / 1.2008 / -19.79%  OOS 1.1309  turn 2.58 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0376 dDD -0.01pp
+      U56       M12_1       CORR  LOOK 126/SLOPE 0.50: 14.96% / 1.1953 / -19.79%  OOS 1.0887  turn 2.76 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0781 dDD -0.46pp
+      U56       M12_1       CORR  LOOK 126/SLOPE 0.75: 14.02% / 1.1742 / -19.79%  OOS 1.0355  turn 2.97 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1164 dDD -0.82pp
+      U56       M12_1       CORR  LOOK 126/SLOPE 1.00: 13.05% / 1.1343 / -19.79%  OOS 0.9707  turn 3.20 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1500 dDD -0.37pp
+      U56       M12_1       CORR  LOOK 252/SLOPE 0.25: 16.12% / 1.2153 / -19.79%  OOS 1.1598  turn 2.58 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0398 dDD +0.11pp
+      U56       M12_1       CORR  LOOK 252/SLOPE 0.50: 15.42% / 1.2253 / -19.79%  OOS 1.1447  turn 2.74 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0827 dDD -0.05pp
+      U56       M12_1       CORR  LOOK 252/SLOPE 0.75: 14.70% / 1.2201 / -19.79%  OOS 1.1149  turn 2.92 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1232 dDD -0.20pp
+      U56       M12_1       CORR  LOOK 252/SLOPE 1.00: 13.95% / 1.1961 / -19.79%  OOS 1.0679  turn 3.13 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1587 dDD -0.35pp
+      U56       M12_1       VOL   LOOK 20/SLOPE 0.25: 14.84% / 1.2179 / -17.25%  OOS 1.1920  turn 2.80 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0503 dDD +2.06pp
+      U56       M12_1       VOL   LOOK 20/SLOPE 0.50: 12.83% / 1.2259 / -13.85%  OOS 1.2087  turn 3.37 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1090 dDD +4.76pp
+      U56       M12_1       VOL   LOOK 20/SLOPE 0.75: 10.80% / 1.1981 / -10.51%  OOS 1.1929  turn 4.00 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1577 dDD +7.81pp
+      U56       M12_1       VOL   LOOK 60/SLOPE 0.25: 14.77% / 1.2029 / -17.81%  OOS 1.1691  turn 2.46 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0392 dDD +0.78pp
+      U56       M12_1       VOL   LOOK 60/SLOPE 0.50: 12.71% / 1.1941 / -14.99%  OOS 1.1598  turn 2.56 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0859 dDD +1.85pp
+      U56       M12_1       VOL   LOOK 60/SLOPE 0.75: 10.64% / 1.1498 / -12.52%  OOS 1.1182  turn 2.73 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1247 dDD +3.14pp
+      U56       M12_1       VOL   LOOK 126/SLOPE 0.25: 14.57% / 1.1719 / -18.67%  OOS 1.1265  turn 2.37 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0069 dDD +0.16pp
+      U56       M12_1       VOL   LOOK 126/SLOPE 0.50: 12.34% / 1.1258 / -16.98%  OOS 1.0660  turn 2.31 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0149 dDD +0.63pp
+      U56       M12_1       VOL   LOOK 252/SLOPE 0.25: 15.05% / 1.1909 / -18.80%  OOS 1.1401  turn 2.34 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0068 dDD +0.20pp
+      U56       M12_1       VOL   LOOK 252/SLOPE 0.50: 13.29% / 1.1690 / -17.82%  OOS 1.0941  turn 2.24 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0160 dDD -0.00pp
+      U56       M12_1       VOL   LOOK 252/SLOPE 0.75: 11.52% / 1.1169 / -17.13%  OOS 1.0100  turn 2.18 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0186 dDD -0.43pp
+      B135      COMPOSITE3  CORR  LOOK 20/SLOPE 0.25: 14.93% / 1.0763 / -19.26%  OOS 1.0133  turn 3.57 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0318 dDD +0.63pp
+      B135      COMPOSITE3  CORR  LOOK 20/SLOPE 0.50: 13.61% / 1.0658 / -17.80%  OOS 0.9876  turn 4.32 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0632 dDD +1.32pp
+      B135      COMPOSITE3  CORR  LOOK 60/SLOPE 0.25: 14.72% / 1.0501 / -19.28%  OOS 1.0053  turn 3.25 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0034 dDD +0.77pp
+      B135      COMPOSITE3  CORR  LOOK 60/SLOPE 0.50: 13.23% / 1.0123 / -17.82%  OOS 0.9750  turn 3.58 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0041 dDD +1.55pp
+      B135      COMPOSITE3  CORR  LOOK 126/SLOPE 0.25: 15.08% / 1.0533 / -20.08%  OOS 1.0029  turn 3.12 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0075 dDD +0.13pp
+      B135      COMPOSITE3  CORR  LOOK 126/SLOPE 0.50: 13.94% / 1.0246 / -19.41%  OOS 0.9747  turn 3.23 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0161 dDD +0.26pp
+      B135      COMPOSITE3  VOL   LOOK 20/SLOPE 0.25: 14.30% / 1.0870 / -17.83%  OOS 1.0246  turn 3.31 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0377 dDD +1.50pp
+      B135      COMPOSITE3  VOL   LOOK 20/SLOPE 0.50: 12.35% / 1.0863 / -14.88%  OOS 1.0051  turn 3.78 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0805 dDD +3.23pp
+      B135      COMPOSITE3  VOL   LOOK 60/SLOPE 0.25: 14.30% / 1.0734 / -18.10%  OOS 1.0332  turn 3.02 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0297 dDD +0.86pp
+      B135      COMPOSITE3  VOL   LOOK 60/SLOPE 0.50: 12.37% / 1.0576 / -15.42%  OOS 1.0284  turn 3.09 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0642 dDD +2.01pp
+      B135      COMPOSITE3  VOL   LOOK 126/SLOPE 0.25: 14.22% / 1.0582 / -19.33%  OOS 1.0115  turn 2.89 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0206 dDD -0.32pp
+      B135      COMPOSITE3  VOL   LOOK 252/SLOPE 0.25: 14.68% / 1.0746 / -19.76%  OOS 1.0204  turn 2.91 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0367 dDD -0.88pp
+      B135      COMPOSITE3  VOL   LOOK 252/SLOPE 0.50: 13.15% / 1.0632 / -18.78%  OOS 1.0013  turn 2.79 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0823 dDD -1.78pp
+      B135      M12_1       CORR  LOOK 126/SLOPE 0.50: 13.27% / 1.0212 / -19.55%  OOS 0.9556  turn 2.94 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0322 dDD -0.01pp
+      B135      M12_1       CORR  LOOK 252/SLOPE 0.50: 13.69% / 1.0134 / -19.19%  OOS 0.9769  turn 2.93 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0219 dDD +1.07pp
+      B135      M12_1       VOL   LOOK 20/SLOPE 0.25: 14.03% / 1.0533 / -18.54%  OOS 1.0026  turn 3.04 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0392 dDD +1.64pp
+      B135      M12_1       VOL   LOOK 20/SLOPE 0.50: 11.92% / 1.0492 / -15.29%  OOS 0.9859  turn 3.52 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0843 dDD +3.57pp
+      B135      M12_1       VOL   LOOK 60/SLOPE 0.25: 14.23% / 1.0571 / -18.86%  OOS 1.0222  turn 2.75 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0456 dDD +1.26pp
+      B135      M12_1       VOL   LOOK 60/SLOPE 0.50: 12.35% / 1.0604 / -15.94%  OOS 1.0352  turn 2.79 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1018 dDD +2.71pp
+      B135      M12_1       VOL   LOOK 126/SLOPE 0.25: 14.12% / 1.0366 / -19.81%  OOS 0.9982  turn 2.66 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0328 dDD +0.37pp
+      B135      M12_1       VOL   LOOK 126/SLOPE 0.50: 12.14% / 1.0147 / -17.88%  OOS 0.9816  turn 2.56 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.0735 dDD +1.18pp
+      B135      M12_1       VOL   LOOK 252/SLOPE 0.50: 12.97% / 1.0442 / -19.67%  OOS 1.0111  turn 2.52 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1023 dDD -0.58pp
+      B135      M12_1       VOL   LOOK 252/SLOPE 0.75: 11.37% / 1.0122 / -18.67%  OOS 0.9837  turn 2.43 | flat gross-matched control ALSO PASSES (not the timing) | vs placebo dSh +0.1627 dDD +0.31pp
+   cells beating BOTH the flat control AND the placebo on BOTH DD and Sharpe: 18 of 192  -> U56/COMPOSITE3/VOL/20/0.25, U56/COMPOSITE3/VOL/20/0.50, U56/COMPOSITE3/VOL/20/0.75, U56/COMPOSITE3/VOL/60/0.25, U56/M12_1/VOL/20/0.25, U56/M12_1/VOL/20/0.50, U56/M12_1/VOL/20/0.75, U56/M12_1/VOL/60/0.25, U56/M12_1/VOL/60/0.50, B135/COMPOSITE3/CORR/20/0.25, B135/COMPOSITE3/VOL/20/0.25, B135/COMPOSITE3/VOL/20/0.50, B135/COMPOSITE3/VOL/60/0.25, B135/M12_1/VOL/20/0.25, B135/M12_1/VOL/20/0.50, B135/M12_1/VOL/60/0.25, B135/M12_1/VOL/60/0.50, SMALL663/COMPOSITE3/CORR/20/0.25
+
+   (7) RULE 8 chooser-minus-do-nothing: mean -0.1655, beats do-nothing at 0 of 12
+      CORR  mean -0.1951  positive at 0/6  mean rank corr IS/OOS -0.351
+      VOL   mean -0.1358  positive at 0/6  mean rank corr IS/OOS +0.228
+      U56       COMPOSITE3  CORR  pick LOOK 126/SLOPE 1.00  OOS 0.9476 vs do-nothing 1.1832 (-0.2356)  SPY OOS 0.8747  live v2 OOS 1.2781  4b pick PASS / SLOPE0 PASS
+      U56       COMPOSITE3  VOL   pick LOOK 252/SLOPE 0.50  OOS 1.1098 vs do-nothing 1.1832 (-0.0734)  SPY OOS 0.8747  live v2 OOS 1.2781  4b pick PASS / SLOPE0 PASS
+      U56       M12_1       CORR  pick LOOK 126/SLOPE 1.00  OOS 0.9707 vs do-nothing 1.1626 (-0.1919)  SPY OOS 0.8747  live v2 OOS 1.2781  4b pick PASS / SLOPE0 FAIL
+      U56       M12_1       VOL   pick LOOK 252/SLOPE 0.50  OOS 1.0941 vs do-nothing 1.1626 (-0.0686)  SPY OOS 0.8747  live v2 OOS 1.2781  4b pick PASS / SLOPE0 FAIL
+      B135      COMPOSITE3  CORR  pick LOOK 20/SLOPE 0.50  OOS 0.9876 vs do-nothing 1.0240 (-0.0364)  SPY OOS 0.8769  live v2 OOS 1.1061  4b pick PASS / SLOPE0 FAIL
+      B135      COMPOSITE3  VOL   pick LOOK 20/SLOPE 0.50  OOS 1.0051 vs do-nothing 1.0240 (-0.0190)  SPY OOS 0.8769  live v2 OOS 1.1061  4b pick PASS / SLOPE0 FAIL
+      B135      M12_1       CORR  pick LOOK 20/SLOPE 0.75  OOS 0.8355 vs do-nothing 1.0004 (-0.1649)  SPY OOS 0.8769  live v2 OOS 1.1061  4b pick FAIL / SLOPE0 FAIL
+      B135      M12_1       VOL   pick LOOK 20/SLOPE 0.50  OOS 0.9859 vs do-nothing 1.0004 (-0.0145)  SPY OOS 0.8769  live v2 OOS 1.1061  4b pick PASS / SLOPE0 FAIL
+      SMALL663  COMPOSITE3  CORR  pick LOOK 126/SLOPE 1.00  OOS 0.1730 vs do-nothing 0.4534 (-0.2804)  SPY OOS 0.8769  live v2 OOS 0.6518  4b pick FAIL / SLOPE0 FAIL
+      SMALL663  COMPOSITE3  VOL   pick LOOK 60/SLOPE 1.00  OOS 0.1289 vs do-nothing 0.4534 (-0.3246)  SPY OOS 0.8769  live v2 OOS 0.6518  4b pick FAIL / SLOPE0 FAIL
+      SMALL663  M12_1       CORR  pick LOOK 252/SLOPE 1.00  OOS 0.2259 vs do-nothing 0.4875 (-0.2616)  SPY OOS 0.8769  live v2 OOS 0.6518  4b pick FAIL / SLOPE0 FAIL
+      SMALL663  M12_1       VOL   pick LOOK 60/SLOPE 1.00  OOS 0.1724 vs do-nothing 0.4875 (-0.3151)  SPY OOS 0.8769  live v2 OOS 0.6518  4b pick FAIL / SLOPE0 FAIL
+
+   (8) WHICH 4b LEG FAILS, over the 157 failures: DD 110  CAGR 109  H1 80  H2 118  OOS 94
+   GATES 12 of 13 pass   66s
