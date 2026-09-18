@@ -2,6 +2,11 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-18 | 40718062 | Resolve AI System Inconsistency Issue | $650 | 133 | drafted |
+| 2026-09-18 | 40718088 | Excel Names & Addresses Entry | $290 | 17 | drafted |
+| 2026-09-18 | 40715862 | Excel Data Cleaning & Formatting | $280 | 26 | drafted |
+| 2026-09-18 | 40717921 | Jewellery Business AI Automation Required | $225 | 20 | drafted |
+| 2026-09-18 | 40718082 | Automated NSE & US Stock Screener | $130 | 24 | drafted |
 | 2026-09-17 | 40717752 | Email-to-Excel Data Entry | $135 | 8 | drafted |
 | 2026-09-17 | 40717618 | Transcribe Scans to Spreadsheet | $125 | 8 | drafted |
 | 2026-09-17 | 40717336 | Excel Data Cleaning & Validation | $85 | 15 | drafted |
@@ -282,6 +287,10 @@
 Proposals live in `products/freelance/proposals/<job id>.md`.
 
 ## Skipped on purpose
+- Pembuatan Laporan & Excel Keuangan (40717996) (Indonesian-language posting and delivery, same reason as the earlier Indonesian data entry rows)
+- Gold Shop Billing and WhatsApp Automation System (40717962) (a private billing website with data ownership and backup guarantees, plus WhatsApp integration, posted at $16-$130; scope and budget do not meet)
+- Italian AI & Automation Project Discovery (40718051) (a lead-sourcing service that means trawling freelance platforms for open postings, much of it behind logins; Italian-language delivery, 68 bids)
+- Technical Co-Founder for AI Automation Ventures (40718207) (equity co-founder role across four unspecified ventures, not paid delivery work; 88 bids)
 - Multi-Sniper Spot Trading Bot (sniper bot, exchange terms risk)
 - 500k Contact Email Scrape / Targeted Company Email Scraping (bulk personal contact harvesting)
 - Profile Data Web Scraping Tool, Build OSINT Intelligence Platform (scraping behind logins, personal data)
