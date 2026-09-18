@@ -4513,3 +4513,42 @@ rather than a lookalike.
   sub-$2B screen (max_1d_move >= 1.0 dropped). Delisted and bankrupt names are absent, which flatters
   every book here and the drawdown leg specifically. The bias is common to all 48 cells and cannot
   manufacture the SPREAD that is this run's object, but no cell's level is a live expectancy.
+
+## 2026-09-18 — idea 1288 (lane cloud): the 2026-09-04 KEEP-4b BOOK IS A U56 FACT, and on SMALL it is not a SIZING failure
+- **ANSWERED (B) PANEL FACT. KILL (capital).** The committed 2026-09-04 recipe (top-N equal
+  weight, no vol scaler, H=126 min hold, weekly Fri decision at t+1, 10 bps) walked over its own
+  two dials — N {5,10,15,20,25,30} x GROSS {0.55..0.85 step 0.05} — clears 4b at **0 of 42** cells
+  on the 663-name sub-$2B SMALL panel, against **21 of 42 on U56** and **19 of 42 on B136**.
+  4a passes **0 of 126**. All 126 cells published in `.grid.csv`.
+- **ANCHOR REPRODUCED, so the panel comparison stands.** U56 / N=20 / g=0.65 reads
+  **13.66% / 1.1526 / -16.73%, OOS 14.95% / 1.1833** — idea 1293's certified uncapped cell to
+  max |d| **4.77e-05** across all five committed figures.
+- **AND IT IS NOT A SIZING PROBLEM, WHICH IS THE NEW CONTENT.** On U56 and B136 the 4b failures
+  are a drawdown story: the MaxDD cap binds on **21 of 21** and **23 of 23** failures and is the
+  **SOLE** binder on 21 and 16 — de-gross and the cell passes. On SMALL **all five 4b legs fail
+  at all 42 cells** (H1 Sharpe, H2 Sharpe, OOS Sharpe, MaxDD cap, CAGR floor), so no leg is ever
+  a sole binder and no rung of size repairs it. Outcome (C) RESIZABLE is **REFUTED**, not merely
+  unselected. SMALL's best full Sharpe anywhere on the grid is **0.5246** against its own SPY
+  **0.8581**; its best joint margin is **-6.79 pp**.
+- **RULE 8, 2017-2026 READ ONCE.** Both dials chosen on warm-up..2016-12-31 only by IS joint
+  margin (idea 1290's chooser; ties to the lower gross, then the lower N). SMALL picks
+  **N=30 / g=0.55**: full 5.97% / 0.5245 / -27.72%, halves 0.7564 / 0.3519, **OOS 5.22% / 0.4517
+  / -27.72%** — it loses to SMALL-panel SPY (OOS 15.33% / 0.8767 / -33.72%) on every leg, and
+  loses to live RULES v2 on SMALL (OOS 4.47% / 0.6516 / -12.18%) on Sharpe and drawdown while
+  beating it by 0.75 pp of CAGR. U56 picks N=15 / g=0.60 (OOS 15.14% / 1.1952 / -16.38%, 4b PASS)
+  and B136 picks N=25 / g=0.60 (OOS 13.39% / 1.0629 / -17.56%, 4b PASS); neither is stress-run
+  here, so **neither is promoted** (rule 6).
+- **CORROBORATION, LABELLED AS SUCH.** Idea 1215 (lane C, same day) read SMALL 0 of 66 on an
+  overlapping grid with a wider gross ladder. This is an independent build of the same recipe and
+  agrees; what is new is the per-leg census, which says the SMALL failure is a different failure
+  from the U56/B136 one.
+- **NOT CLAIMED:** that any cell here is a new candidate book (the recipe is the committed one,
+  re-priced, never re-tuned); that the small-cap panel is untradeable for some other rule; that
+  the U56/B136 rule-8 picks are capital-worthy without a stress run; that anything in RULES.md
+  changes (rule 6).
+  Script: research/backtests/2026-09-18_does-the-2026-09-04-KEEP-4b-BOOK-EXIST-AT-ALL-on-the-SMALL-CAP-PANEL_cloud.py
+- **SURVIVORSHIP (rule 9):** current constituents only on all three panels; SMALL additionally
+  drops 52 tickers with max_1d_move >= 1.0 from data/small_meta.csv, leaving 663. The bias is
+  **worst on SMALL** — small caps delist and go bankrupt far more often than mega caps — so
+  SMALL's readings here are an **upper bound** on what the recipe would have earned and the KILL
+  is the stronger reading, not the weaker one. No cell's level is a live expectancy.
