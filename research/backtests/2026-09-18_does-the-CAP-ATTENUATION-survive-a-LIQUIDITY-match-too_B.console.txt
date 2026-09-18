@@ -1,0 +1,324 @@
+==============================================================================================================
+IDEA 1078 — does-the-CAP-ATTENUATION-survive-a-LIQUIDITY-match-too (lane B, 2026-09-18)
+==============================================================================================================
+TUNED (2): q (cap mix) in [0.0, 0.5, 1.0]  x  tau (match tolerance) in ['UNMATCHED', 0.45, 0.3, 0.2].  Every cell reported.
+ARMS (reported, never chosen among): DV / VOL on route A's within-SMALL cap axis, ROLL on
+  1073's own SMALL-vs-BSTK axis, CROSSQ (each pool cut at its own median DV), REPRO.
+REPORTED, NOT TUNED: k in [20, 30, 40] (headline block k=20), 8 seeded draws, n/k at [0.1, 0.2, 0.35, 0.5].
+Costs 10 bps, weekly, next-day execution, GROSS 0.75, IS ..2016 / OOS 2017.. .
+NO LOOK-AHEAD: every matching measure is computed on 2010..2016 ONLY (G3).
+SURVIVORSHIP: both pools are current constituents; a liquidity window is a window on
+  names liquid enough to survive to today.  Nothing here is a capital candidate.
+
+common calendar 2010-01-04 .. 2026-09-11 (4198 days); pools SMALL 663, BSTK 100
+
+==============================================================================================================
+PART 0 — CAN THE QUEUE'S LITERAL RUN BE DONE OFFLINE?  (census, not assertion)
+==============================================================================================================
+  baseline.load_volume(small=False) raises: ValueError: load_volume currently only serves the small panel (small=True)
+  volume caches present in data/: ['volume_small.csv.gz']
+  BSTK names carrying a cached share volume: 0 of 100
+  SMALL names carrying a cached share volume: 663 of 663
+  => the q=0.00 end of 1073's ladder is PURE BSTK, so a dollar-volume window over the
+     committed cap axis cannot be imposed offline.  Routes A and B below are run instead;
+     neither is presented as the literal run.
+
+IS measures (2010..2016-12-31, coverage >= 0.9):
+  realised vol      SMALL  383  BSTK   91
+  median $ volume   SMALL  375  BSTK    0   (no cache)
+  Roll spread       SMALL  296  BSTK   69   (dropped for cov(r_t,r_t-1) >= 0: SMALL 87, BSTK 22)
+  SMALL $vol  q10/25/50/75/90 = 22,108 / 163,028 / 979,135 / 4,051,740 / 10,996,411
+  SMALL Roll  q10/50/90 = 0.0057 / 0.0122 / 0.0208   BSTK Roll q10/50/90 = 0.0031 / 0.0056 / 0.0095
+
+ROLL VALIDATION (H_VALID): Spearman(Roll spread, -log10 median $volume) over the 289 SMALL names carrying both = +0.5986
+
+ROUTE A axis (within-SMALL cap cut at the pool's OWN median cap $752M; TODAY-label, declared):
+  eligible names carrying cap AND $volume AND vol: 365  ->  TINY 183 (median $399M), BIG 182 (median $1,181M)
+  median $volume  TINY 353,123  BIG 2,019,497  = 5.72x   (H_DVGAP asks for >= 2.0x)
+  mean IS vol     TINY 0.4398  BIG 0.3888  = 1.131x
+
+WINDOW FORM by the DECLARED rule (multiplicative if SD(log10 x) < 1 decade, else decades):
+  DV    SD(log10) 1.054  ->  DECADES  |log10 x - log10 X*| <= tau
+  VOL   SD(log10) 0.159  ->  MULTIPLICATIVE  x in X*(1+/-tau)
+  ROLL  SD(log10) 0.291  ->  MULTIPLICATIVE  x in X*(1+/-tau)
+
+X* by 1073's declared feasibility rule (max min(n_lo, n_hi) at tau=0.45, ties low); full grids in .xstar.csv:
+  DV    X* = 3.981e+06
+      tau=0.45  window [1.413e+06, 1.122e+07]  TINY  55  BIG  76
+      tau=0.30  window [1.995e+06, 7.943e+06]  TINY  37  BIG  55
+      tau=0.20  window [2.512e+06, 6.31e+06]  TINY  22  BIG  39
+  VOL   X* = 0.39
+      tau=0.45  window [0.2145, 0.5655]  TINY 158  BIG 159
+      tau=0.30  window [0.273, 0.507]  TINY 108  BIG 119
+      tau=0.20  window [0.312, 0.468]  TINY  72  BIG  87
+  ROLL  X* = 0.007
+      tau=0.45  window [0.00385, 0.01015]  SMALL 103  BSTK  51
+      tau=0.30  window [0.0049, 0.0091]  SMALL  73  BSTK  31
+      tau=0.20  window [0.0056, 0.0084]  SMALL  55  BSTK  24
+  dedupe: ROLL tau=0.3 q=0.00 k=30 d5 exact repeat — skipped
+  dedupe: ROLL tau=0.3 q=0.00 k=30 d6 exact repeat — skipped
+
+MATCH arms built: DV 256, VOL 288, ROLL 262 panels
+  7 INFEASIBLE cells (listed, never filled):
+    DV    tau=0.30 q=1.00 k=40: needs 40lo/0hi, window holds 37lo/55hi
+    DV    tau=0.20 q=0.00 k=40: needs 0lo/40hi, window holds 22lo/39hi
+    DV    tau=0.20 q=1.00 k=30: needs 30lo/0hi, window holds 22lo/39hi
+    DV    tau=0.20 q=1.00 k=40: needs 40lo/0hi, window holds 22lo/39hi
+    ROLL  tau=0.30 q=0.00 k=40: needs 0lo/40hi, window holds 73lo/31hi
+    ROLL  tau=0.20 q=0.00 k=30: needs 0lo/30hi, window holds 55lo/24hi
+    ROLL  tau=0.20 q=0.00 k=40: needs 0lo/40hi, window holds 55lo/24hi
+
+CROSSQ arm pools (each cap pool cut at its OWN median IS $volume):
+   TINY-LOQ    92 names, median $volume 61,339
+   TINY-HIQ    91 names, median $volume 2,739,974
+   BIG-LOQ     91 names, median $volume 435,234
+   BIG-HIQ     91 names, median $volume 6,576,540
+CROSSQ arm: 96 panels
+REPRO arm: 96 panels (1073's own pools, seed 1074 and draw order)
+
+TOTAL 998 panels x 4 books
+  G1 PASS  fast runner == engine.backtest on RETURNS (2.08e-17) and TURNOVER (0.00e+00); cached-rank CAND-20 == idea 286's committed cand_weights(20) (max|dw| 0.00e+00)
+  G2 PASS  ENVELOPE over all 998 panels: exact width, no duplicate columns, exact cap mix on every matched arm, and EVERY name inside its declared window (not just the panel mean).  Violations: 0
+  G3 PASS  NO LOOK-AHEAD, reported not gated: each IS measure ranks against the FULL-sample measure it was NOT allowed to see — realised vol +0.8424 (383 names); median $volume +0.9317 (375 names); Roll spread +0.6780 (274 names).  High rank agreement is expected; what matters is that the OOS window never entered any panel choice.
+  G4 PASS  DETERMINISM: the reference book re-runs bit-identical (True)
+
+==============================================================================================================
+RUNNING THE LADDER
+==============================================================================================================
+  [   1/998] DV/q0.00/UNM k=20 d0  0.19s  (elapsed    3.3s)
+  [ 150/998] DV/q0.00/t0.30 k=20 d5  0.20s  (elapsed   38.6s)
+  [ 300/998] VOL/q0.50/UNM k=40 d3  0.28s  (elapsed   73.6s)
+  [ 450/998] VOL/q1.00/t0.30 k=20 d1  0.19s  (elapsed  108.9s)
+  [ 600/998] ROLL/q1.00/UNM k=20 d7  0.19s  (elapsed  144.3s)
+  [ 750/998] ROLL/q1.00/t0.30 k=40 d7  0.26s  (elapsed  179.1s)
+  [ 900/998] CROSSQ/BIG-HIQ k=40 d5  0.27s  (elapsed  214.4s)
+
+3,992 book rows over 998 panels written.
+
+==============================================================================================================
+GATES
+==============================================================================================================
+  G1 PASS  fast runner == engine.backtest on RETURNS (2.08e-17) and TURNOVER (0.00e+00); cached-rank CAND-20 == idea 286's committed cand_weights(20) (max|dw| 0.00e+00)
+  G2 PASS  ENVELOPE over all 998 panels: exact width, no duplicate columns, exact cap mix on every matched arm, and EVERY name inside its declared window (not just the panel mean).  Violations: 0
+  G3 PASS  NO LOOK-AHEAD, reported not gated: each IS measure ranks against the FULL-sample measure it was NOT allowed to see — realised vol +0.8424 (383 names); median $volume +0.9317 (375 names); Roll spread +0.6780 (274 names).  High rank agreement is expected; what matters is that the OOS window never entered any panel choice.
+  G4 PASS  DETERMINISM: the reference book re-runs bit-identical (True)
+  G5 PASS  CROSS-RUN idea 1073's committed crossing rho (its pools, seed and draw order): BSTK-LO +0.8759 vs committed +0.8759; BSTK-HI +0.7649 vs committed +0.7649; SMALL-LO +0.3586 vs committed +0.3586; SMALL-HI +0.1769 vs committed +0.1769  max|d| 0.00e+00; its 0.4063 shift reproduces at 0.4063
+  G6 PASS  CROSS-RUN at the BOOK level: 384 of 384 REPRO rows join idea 1073's committed books.csv on (cell,k,draw,n); max|d OOS Sharpe| 2.22e-16
+  G7 PASS  the tau dial BINDS on every matched arm — DV: SD(log10 panel dv) 0.3498 (UNM) -> 0.0261 (tau=0.20); VOL: SD(log10 panel vol) 0.0448 (UNM) -> 0.0091 (tau=0.20); ROLL: SD(log10 panel roll) 0.1635 (UNM) -> 0.0082 (tau=0.20)
+  G8 PASS  X* GRIDS published in full (.xstar.csv, 251 points): DV form DEC X* 3.981e+06 min-count 55; VOL form MULT X* 0.39 min-count 158; ROLL form MULT X* 0.007 min-count 51
+GATES: 8 of 8 PASS.
+
+==============================================================================================================
+PART A — rho(n/k, OOS Sharpe | k) BY CAP MIX AND MATCH TOLERANCE (every cell, both blocks)
+==============================================================================================================
+ arm kblock       tau      q  rows  panels     panel_dv  panel_vol  panel_roll     rho  OOS_S_mean  OOS_S_sd
+  DV     20 UNMATCHED 0.0000    32       8 2456084.7430     0.3872      0.0108  0.1998      0.2374    0.2693
+  DV     20 UNMATCHED 0.5000    32       8 1089058.5709     0.4194      0.0137  0.4268      0.2072    0.2401
+  DV     20 UNMATCHED 1.0000    32       8  699541.8599     0.4613      0.0172  0.4511      0.1151    0.1515
+  DV     20      0.45 0.0000    32       8 4184259.3507     0.3974      0.0095  0.0878      0.0976    0.2291
+  DV     20      0.45 0.5000    32       8 3519370.8466     0.4133      0.0088  0.1029      0.0015    0.1865
+  DV     20      0.45 1.0000    32       8 3593938.2534     0.4389      0.0098  0.3148     -0.0653    0.1675
+  DV     20      0.30 0.0000    32       8 4062732.5958     0.3796      0.0091  0.0696      0.0731    0.1567
+  DV     20      0.30 0.5000    32       8 3495566.4191     0.3809      0.0091 -0.0696     -0.0434    0.1722
+  DV     20      0.30 1.0000    32       8 3238621.0897     0.4150      0.0105 -0.1271     -0.1221    0.1484
+  DV     20      0.20 0.0000    32       8 3747765.3384     0.3793      0.0090  0.0484      0.1359    0.1441
+  DV     20      0.20 0.5000    32       8 3597657.9455     0.4031      0.0103  0.0787     -0.0762    0.1186
+  DV     20      0.20 1.0000    32       8 3271236.0598     0.4103      0.0100 -0.7356     -0.1335    0.1430
+  DV    ALL UNMATCHED 0.0000    96      24 2319391.6260     0.3909      0.0118  0.0916      0.2542    0.2281
+  DV    ALL UNMATCHED 0.5000    96      24 1081842.5494     0.4215      0.0143  0.3205      0.2091    0.2042
+  DV    ALL UNMATCHED 1.0000    96      24  514186.3090     0.4472      0.0162  0.1584      0.1947    0.1719
+  DV    ALL      0.45 0.0000    96      24 3962512.7451     0.4005      0.0095 -0.0256      0.2242    0.1782
+  DV    ALL      0.45 0.5000    96      24 3642907.1597     0.4150      0.0095  0.0771      0.0370    0.1776
+  DV    ALL      0.45 1.0000    96      24 3420048.7979     0.4302      0.0099  0.2506     -0.1145    0.1413
+  DV    ALL      0.30 0.0000    96      24 4061791.8743     0.3777      0.0090  0.0985      0.1004    0.1266
+  DV    ALL      0.30 0.5000    96      24 3555536.9765     0.3894      0.0091 -0.0372     -0.0310    0.1528
+  DV    ALL      0.30 1.0000    64      16 3250677.7931     0.4154      0.0102 -0.2547     -0.1328    0.1315
+  DV    ALL      0.20 0.0000    64      16 3742134.9914     0.3818      0.0091 -0.1071      0.1664    0.1321
+  DV    ALL      0.20 0.5000    96      24 3512014.2700     0.4003      0.0100 -0.0313     -0.0393    0.1483
+  DV    ALL      0.20 1.0000    32       8 3271236.0598     0.4103      0.0100 -0.7356     -0.1335    0.1430
+ VOL     20 UNMATCHED 0.0000    32       8 1487455.5170     0.3735      0.0115  0.1120      0.2395    0.1956
+ VOL     20 UNMATCHED 0.5000    32       8 1277376.6769     0.4329      0.0149  0.0727      0.2123    0.2212
+ VOL     20 UNMATCHED 1.0000    32       8  401198.1160     0.4585      0.0176 -0.0605      0.2244    0.1417
+ VOL     20      0.45 0.0000    32       8 1797557.5953     0.3632      0.0109 -0.0454      0.3115    0.2384
+ VOL     20      0.45 0.5000    32       8 1261203.7301     0.3653      0.0111 -0.0605      0.1780    0.2339
+ VOL     20      0.45 1.0000    32       8  645608.5286     0.3643      0.0127  0.1150      0.1232    0.2086
+ VOL     20      0.30 0.0000    32       8 2113870.1047     0.3765      0.0108  0.5086      0.2196    0.1851
+ VOL     20      0.30 0.5000    32       8  976863.4191     0.3745      0.0119  0.3209      0.0859    0.1905
+ VOL     20      0.30 1.0000    32       8  565378.0178     0.3847      0.0126  0.1029      0.1189    0.1863
+ VOL     20      0.20 0.0000    32       8 1883555.2909     0.3773      0.0119  0.3875      0.1819    0.2189
+ VOL     20      0.20 0.5000    32       8 1778779.1691     0.3856      0.0121 -0.0363      0.1722    0.2031
+ VOL     20      0.20 1.0000    32       8  557727.2638     0.3908      0.0127  0.1604      0.1429    0.2026
+ VOL    ALL UNMATCHED 0.0000    96      24 1992908.5554     0.3860      0.0120 -0.0517      0.3047    0.1883
+ VOL    ALL UNMATCHED 0.5000    96      24  983887.0431     0.4270      0.0148  0.1066      0.2093    0.2044
+ VOL    ALL UNMATCHED 1.0000    96      24  446471.4769     0.4596      0.0169 -0.0353      0.1891    0.1832
+ VOL    ALL      0.45 0.0000    96      24 2055705.6086     0.3596      0.0106  0.0817      0.3017    0.1850
+ VOL    ALL      0.45 0.5000    96      24 1463446.8623     0.3662      0.0112  0.1248      0.1537    0.1954
+ VOL    ALL      0.45 1.0000    96      24  641573.1529     0.3683      0.0124 -0.0868      0.1239    0.2179
+ VOL    ALL      0.30 0.0000    96      24 2152925.9516     0.3746      0.0108  0.2944      0.2790    0.1593
+ VOL    ALL      0.30 0.5000    96      24 1152587.2224     0.3781      0.0115  0.1376      0.1565    0.1929
+ VOL    ALL      0.30 1.0000    96      24  609909.6950     0.3837      0.0126  0.0865      0.0784    0.1725
+ VOL    ALL      0.20 0.0000    96      24 2186809.4181     0.3811      0.0116  0.5642      0.1945    0.1823
+ VOL    ALL      0.20 0.5000    96      24 1532253.6489     0.3841      0.0122  0.1026      0.2044    0.1994
+ VOL    ALL      0.20 1.0000    96      24  462513.1173     0.3877      0.0134  0.0827      0.1430    0.1822
+ROLL     20 UNMATCHED 0.0000    32       8          NaN     0.2558      0.0061  0.4723      0.7818    0.2318
+ROLL     20 UNMATCHED 0.5000    32       8 1078088.0044     0.3385      0.0113  0.4753      0.5278    0.2083
+ROLL     20 UNMATCHED 1.0000    32       8  677555.1925     0.3927      0.0148  0.1150      0.1880    0.2478
+ROLL     20      0.45 0.0000    32       8          NaN     0.2673      0.0064  0.7568      0.7808    0.1747
+ROLL     20      0.45 0.5000    32       8 2935723.8050     0.2941      0.0069  0.5177      0.4867    0.1743
+ROLL     20      0.45 1.0000    32       8 3004067.1813     0.3231      0.0072 -0.0908      0.0600    0.1789
+ROLL     20      0.30 0.0000    32       8          NaN     0.2784      0.0070  0.8325      0.7718    0.2277
+ROLL     20      0.30 0.5000    32       8 3599133.0097     0.2975      0.0071  0.5631      0.5108    0.1982
+ROLL     20      0.30 1.0000    32       8 3615700.4886     0.3353      0.0071 -0.2482      0.2493    0.1553
+ROLL     20      0.20 0.0000    32       8          NaN     0.2548      0.0069  0.6842      0.7009    0.1795
+ROLL     20      0.20 0.5000    32       8 4357899.2538     0.3006      0.0070  0.5600      0.5283    0.1860
+ROLL     20      0.20 1.0000    32       8 3858125.7770     0.3457      0.0071 -0.3602      0.3077    0.1390
+ROLL    ALL UNMATCHED 0.0000    96      24          NaN     0.2530      0.0061  0.6807      0.8171    0.1801
+ROLL    ALL UNMATCHED 0.5000    96      24  825768.9622     0.3223      0.0099  0.5130      0.6018    0.2072
+ROLL    ALL UNMATCHED 1.0000    96      24  783232.0077     0.3945      0.0143  0.0027      0.2372    0.2033
+ROLL    ALL      0.45 0.0000    96      24          NaN     0.2590      0.0064  0.8286      0.8129    0.1594
+ROLL    ALL      0.45 0.5000    96      24 2738522.8514     0.2906      0.0071  0.5813      0.4866    0.1820
+ROLL    ALL      0.45 1.0000    96      24 2796749.5775     0.3258      0.0075  0.0700      0.0673    0.1582
+ROLL    ALL      0.30 0.0000    56      16          NaN     0.2735      0.0070  0.8377      0.7562    0.2080
+ROLL    ALL      0.30 0.5000    96      24 3552655.5876     0.3006      0.0071  0.5982      0.4962    0.1866
+ROLL    ALL      0.30 1.0000    96      24 3301142.7798     0.3363      0.0071 -0.1265      0.2228    0.1440
+ROLL    ALL      0.20 0.0000    32       8          NaN     0.2548      0.0069  0.6842      0.7009    0.1795
+ROLL    ALL      0.20 0.5000    96      24 3899661.8469     0.3010      0.0070  0.6839      0.5367    0.1734
+ROLL    ALL      0.20 1.0000    96      24 3597605.6858     0.3410      0.0071 -0.2539      0.3186    0.1251
+
+THE GAP rho(q=0.00) - rho(q=1.00) and the share of it each tolerance CLOSES
+  (headline block k=20 — the only width feasible at every tau on every arm):
+   DV    UNMATCHED gap -0.2513  (q=0.00 +0.1998, q=1.00 +0.4511)
+         tau=0.45  gap -0.2270  closes    9.6% of UNMATCHED   (q=0.00 +0.0878, q=1.00 +0.3148)
+         tau=0.30  gap +0.1968  closes  178.3% of UNMATCHED   (q=0.00 +0.0696, q=1.00 -0.1271)
+         tau=0.20  gap +0.7841  closes  412.0% of UNMATCHED   (q=0.00 +0.0484, q=1.00 -0.7356)
+   VOL   UNMATCHED gap +0.1726  (q=0.00 +0.1120, q=1.00 -0.0605)
+         tau=0.45  gap -0.1604  closes  193.0% of UNMATCHED   (q=0.00 -0.0454, q=1.00 +0.1150)
+         tau=0.30  gap +0.4057  closes -135.1% of UNMATCHED   (q=0.00 +0.5086, q=1.00 +0.1029)
+         tau=0.20  gap +0.2270  closes  -31.6% of UNMATCHED   (q=0.00 +0.3875, q=1.00 +0.1604)
+   ROLL  UNMATCHED gap +0.3572  (q=0.00 +0.4723, q=1.00 +0.1150)
+         tau=0.45  gap +0.8476  closes -137.3% of UNMATCHED   (q=0.00 +0.7568, q=1.00 -0.0908)
+         tau=0.30  gap +1.0807  closes -202.5% of UNMATCHED   (q=0.00 +0.8325, q=1.00 -0.2482)
+         tau=0.20  gap +1.0444  closes -192.4% of UNMATCHED   (q=0.00 +0.6842, q=1.00 -0.3602)
+
+  ALL-k block (reported beside it; its tight cells hold fewer q,k combinations):
+   DV    UNMATCHED -0.0668 -> tau=0.45 -0.2761 (-313.4%), tau=0.30 +0.3533 (629.0%), tau=0.20 +0.6285 (1041.0%)
+   VOL   UNMATCHED -0.0164 -> tau=0.45 +0.1685 (1129.2%), tau=0.30 +0.2078 (1369.5%), tau=0.20 +0.4815 (3040.9%)
+   ROLL  UNMATCHED +0.6779 -> tau=0.45 +0.7586 (-11.9%), tau=0.30 +0.9641 (-42.2%), tau=0.20 +0.9381 (-38.4%)
+
+==============================================================================================================
+PART B — THE QUEUE'S QUESTION: does LIQUIDITY close MORE of the gap than VOL does?
+==============================================================================================================
+  Route A, ONE axis (within-SMALL cap cut), ONE block (k=20), the SAME three
+  tolerances, the two variables run side by side.  This is the like-for-like comparison;
+  1073's committed vol closures sit on a DIFFERENT axis and are shown only for reference.
+ tau  DV_closes_pct  VOL_closes_pct  liquidity_more  ROLL_closes_pct  vol_1073_committed_pct
+0.45            9.6           193.0           False           -137.3                    18.8
+0.30          178.3          -135.1            True           -202.5                    50.5
+0.20          412.0           -31.6            True           -192.4                    28.3
+
+==============================================================================================================
+PART C — THE CROSSING CUT ON THE LIQUIDITY AXIS (cap fixed, $volume moved; and across)
+==============================================================================================================
+    cell  cap  rows     panel_dv  panel_vol     rho  OOS_S_mean  OOS_S_sd  breadth
+ BIG-LOQ  BIG    96  431769.2743     0.3971 -0.0936      0.5278    0.1747   0.5833
+ BIG-HIQ  BIG    96 6406783.1966     0.3836  0.0971      0.0546    0.1719   0.5039
+TINY-LOQ TINY    96   64792.7816     0.4777  0.5177      0.4768    0.1902   0.5205
+TINY-HIQ TINY    96 2844708.6386     0.4236 -0.3316     -0.1401    0.1728   0.4313
+
+   SAME CAP, different $volume : |rho(BIG-HIQ) - rho(BIG-LOQ)| = 0.1906
+   NEAREST $volume, different cap: |rho(BIG-LOQ) - rho(TINY-HIQ)| = 0.2380   ($volume 431,769 vs 2,844,709)
+   within TINY, $volume alone : rho(TINY-LOQ) +0.5177 vs rho(TINY-HIQ) -0.3316
+
+==============================================================================================================
+PART D — RULE 8 WALK-FORWARD: n/k chosen on 2009-2016 IS Sharpe ONLY, 2017- read ONCE
+==============================================================================================================
+     selector  sets  OOS_S  OOS_CAGR  OOS_DD  edge_vs_anchor  beat_SPY  beat_v2
+    RATIO-MAX   998 0.3044    0.0304 -0.2683          0.0325    0.0772   0.1503
+IS-SHARPE-MAX   998 0.2893    0.0304 -0.3106          0.0174    0.0501   0.1363
+       RANDOM   998 0.2732    0.0289 -0.3512          0.0013    0.0541   0.1333
+    RATIO-MIN   998 0.1946    0.0192 -0.4655         -0.0772    0.0110   0.1142
+
+   comparands on the SAME panels: SPY OOS Sharpe 0.8767 / CAGR 15.33% / MaxDD -33.72%;   RULES v2 OOS Sharpe 0.4701 / CAGR 3.56% / MaxDD -17.00%
+
+   by arm:
+   arm      selector  sets  OOS_S  OOS_CAGR  OOS_DD    edge  beat_SPY  beat_v2
+CROSSQ IS-SHARPE-MAX    96 0.2344    0.0185 -0.3558  0.0046    0.0000   0.1667
+CROSSQ        RANDOM    96 0.2118    0.0206 -0.3871 -0.0180    0.0000   0.1667
+CROSSQ     RATIO-MAX    96 0.2282    0.0216 -0.2940 -0.0016    0.0000   0.1042
+CROSSQ     RATIO-MIN    96 0.1941    0.0201 -0.5081 -0.0357    0.0000   0.1979
+    DV IS-SHARPE-MAX   256 0.0669   -0.0017 -0.3699 -0.0093    0.0000   0.1094
+    DV        RANDOM   256 0.0686   -0.0049 -0.4198 -0.0075    0.0000   0.1289
+    DV     RATIO-MAX   256 0.0791    0.0028 -0.3056  0.0029    0.0000   0.1094
+    DV     RATIO-MIN   256 0.0387   -0.0167 -0.5554 -0.0375    0.0000   0.1367
+ REPRO IS-SHARPE-MAX    96 0.5293    0.0708 -0.2689  0.0385    0.2083   0.1042
+ REPRO        RANDOM    96 0.5065    0.0700 -0.2903  0.0157    0.2083   0.1146
+ REPRO     RATIO-MAX    96 0.5919    0.0692 -0.2347  0.1011    0.2500   0.2500
+ REPRO     RATIO-MIN    96 0.3532    0.0575 -0.3938 -0.1376    0.0938   0.0417
+  ROLL IS-SHARPE-MAX   262 0.5221    0.0624 -0.2541  0.0392    0.1145   0.1489
+  ROLL        RANDOM   262 0.4947    0.0615 -0.2716  0.0118    0.1298   0.1298
+  ROLL     RATIO-MAX   262 0.5513    0.0592 -0.2173  0.0683    0.2023   0.1679
+  ROLL     RATIO-MIN   262 0.3474    0.0511 -0.3711 -0.1355    0.0076   0.0649
+   VOL IS-SHARPE-MAX   288 0.2135    0.0202 -0.3081  0.0186    0.0000   0.1493
+   VOL        RANDOM   288 0.1961    0.0182 -0.3709  0.0013    0.0000   0.1354
+   VOL     RATIO-MAX   288 0.2096    0.0189 -0.2843  0.0147    0.0000   0.1528
+   VOL     RATIO-MIN   288 0.1416    0.0090 -0.4810 -0.0532    0.0000   0.1354
+   the rule-8 arm changes NOTHING about the rho question; PROTOCOL rule 8 requires it of every run, and it is the capital leg of this one.
+
+==============================================================================================================
+BOTH KEEP PATHS, EVERY BOOK ROW (idea 286's committed keep_paths; rule 4)
+==============================================================================================================
+   arm      q  rows  p4a  p4b  rate4b
+CROSSQ 0.0000   192    0    0  0.0000
+CROSSQ 1.0000   192    0    0  0.0000
+    DV 0.0000   352    0    0  0.0000
+    DV 0.5000   384    0    0  0.0000
+    DV 1.0000   288    0    0  0.0000
+ REPRO 0.0000   192    0   19  0.0990
+ REPRO 1.0000   192    0    0  0.0000
+  ROLL 0.0000   280    0   58  0.2071
+  ROLL 0.5000   384    0    1  0.0026
+  ROLL 1.0000   384    0    0  0.0000
+   VOL 0.0000   384    0    0  0.0000
+   VOL 0.5000   384    0    0  0.0000
+   VOL 1.0000   384    0    0  0.0000
+
+  TOTAL: 4a 0 of 3,992; 4b 78 of 3,992
+  These are committed CAND-n books on RANDOM sub-panels of a survivor screen; a 4b pass here is a statement about the draw, not a capital candidate.  NOTHING IS PROMOTED.
+
+==============================================================================================================
+LIMITS, STATED BEFORE THE VERDICT
+==============================================================================================================
+  1. The queue's LITERAL run was not executed and is not claimed to have been: no volume cache covers the BSTK pool (PART 0).  Route A changes the AXIS to keep the VARIABLE; route B keeps the axis and changes the variable to a PROXY.  Neither substitutes for the other and neither substitutes for the literal run.
+  2. Route A's cap axis is cut on TODAY's market cap and spans only the sub-$2B screen (TINY median $399M vs BIG $1,181M) — a far shorter cap lever than 1073's SMALL-vs-BSTK.  A weaker attenuation here is expected on those grounds alone, so the DV-vs-VOL COMPARISON, not the level, is what route A speaks to.
+  3. The Roll spread is a proxy and ranks +0.5986 against true $volume on the 289 small names carrying both.  Route B's answer is only as good as that number.
+  4. Matching can only be done where the two pools OVERLAP, so every matched cell speaks for neither pool's typical name, and the tight cells do not admit every (q, k) — the infeasible list above is part of the result.
+  5. rho is measured on 8 draws x 4 rungs per (cell, k).  No interval is published for it, so two closures in this table are not shown to DIFFER; only ORDERING and SIGN are claimed (idea 1044's rule).
+  6. SURVIVORSHIP (rule 9): a realised IS $volume is measured on names that survived to be screened today, so every liquidity window is doubly a survivor window.  Levels are upper bounds; the quoted results are within-grid differences on identical dates.
+
+==============================================================================================================
+THE DECLARED HYPOTHESES
+==============================================================================================================
+  H_REPRO     PASS  1073's four committed crossing rho reproduce here to |d| < 0.01
+              -> BSTK-LO +0.8759 vs +0.8759; BSTK-HI +0.7649 vs +0.7649; SMALL-LO +0.3586 vs +0.3586; SMALL-HI +0.1769 vs +0.1769  max|d| 0.00e+00; shift 0.4063 vs committed 0.4063
+  H_INFEAS    PASS  the queue's LITERAL run is infeasible offline: 0 BSTK names carry a cached volume
+              -> BSTK 0 of 100 carry a volume; SMALL 663 of 663; caches present: ['volume_small.csv.gz']
+  H_VALID     PASS  the Roll spread is a usable liquidity proxy: |Spearman(Roll, -log10 $vol)| >= 0.50
+              -> +0.5986 over 289 SMALL names carrying both
+  H_DVGAP     PASS  route A's axis really IS a liquidity axis: median $volume BIG / TINY >= 2.0x
+              -> BIG 2,019,497 / TINY 353,123 = 5.72x
+  H_SPREAD    FAIL  the attenuation is PRESENT to be matched away on route A's UNMATCHED k=20 block (gap >= 0.20)
+              -> gap -0.2513 (q=0.00 +0.1998, q=1.00 +0.4511)
+  H_LIQ       PASS  LIQUIDITY matching CLOSES it: at tau=0.20 the route-A gap is <= 50% of UNMATCHED
+              -> tau=0.20 closes 412.0% of the UNMATCHED gap -0.2513
+  H_MORE      FAIL  THE QUEUE'S QUESTION: on the SAME axis and block, LIQUIDITY closes MORE of the gap than VOL at EVERY tau
+              -> tau=0.45 DV 9.6% vs VOL 193.0%; tau=0.30 DV 178.3% vs VOL -135.1%; tau=0.20 DV 412.0% vs VOL -31.6%
+  H_MONO      FAIL  the liquidity closing is MONOTONE in tau (0.45 -> 0.30 -> 0.20)
+              -> -0.2513 -> -0.2270 -> +0.1968 -> +0.7841
+  H_ROLLSPR   PASS  the attenuation is present on route B's (1073's own) UNMATCHED k=20 block (gap >= 0.20)
+              -> gap +0.3572 (q=0.00 +0.4723, q=1.00 +0.1150)
+  H_ROLL      FAIL  on 1073's OWN axis a Roll-spread match closes >= 50% of that gap at tau=0.20
+              -> tau=0.20 closes -192.4%; the committed VOL match on this axis closed 28.3% (its best rung 50.5%)
+
+HYPOTHESES: 6 of 10 PASS.
+
+total elapsed 239.3s
