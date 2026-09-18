@@ -1,0 +1,144 @@
+# Idea 1067 (lane C, 2026-09-18) — does R_GATE RELEASE buy anything a LOWER GROSS does not?
+# 2 tuned dials: GROSS RUNG [0.75, 0.65, 0.55, 0.45, 0.35] x MIN HOLD [5, 21, 63, 126] = 20 points, ALL reported for BOTH kinds, none selected.
+# Fixed (NOT dials): cost 10 bps (PROTOCOL rule 2), N 20, max_vol 0.6, next-day execution; 2 panels x 3 mechanisms x 4 rebalance grids are REPORTED axes.
+# DECLARED BEFORE ANY NUMBER:
+#   (1) HEAD TO HEAD — SOFT(R_GATE) at gross 0.75 against the HARD book de-grossed to the
+#       same |MaxDD|.  The mechanism survives ONLY if d_CAGR > 0 at a majority of cells.
+#   (2) GROSS INVARIANCE — Sharpe should be near-invariant in g while CAGR and MaxDD are
+#       not; if so the 4b DD leg is purchasable by de-grossing at a known CAGR price.
+#   (3) both KEEP paths + rule 8 over the whole grid, against a gross-matched null.
+# SURVIVORSHIP (rule 9): current-constituent panels; every LEVEL is optimistic.  The
+#   headline is a within-cell, matched-drawdown contrast; the 4a/4b counts are levels.
+
+  U56: 56 cols x 4707 days, 2008-01-02 -> 2026-09-17; SPY full 15.13% / 0.8848 / -33.72%
+  B136: 136 cols x 4703 days, 2008-01-02 -> 2026-09-11; SPY full 15.16% / 0.8861 / -33.72%
+  RULES v2 U56: full 8.62% / 1.2017 / -12.05%  OOS 9.47% / 1.2778
+  RULES v2 B136: full 7.98% / 1.0993 / -12.24%  OOS 7.88% / 1.1059
+====================================================================================================
+REPRODUCTION GATES (pre-registered, printed before any new number)
+====================================================================================================
+  G1       PASS  nrun+cost == engine.backtest on U56/CAND20/W/H=63: max|d| 2.776e-17 over 4,705 days.  PUBLISHED: engine.backtest itself returns 2 non-finite day(s) on this panel (index [0, 3]), an engine edge artefact inside the 260-day warm-up that no statistic here reads; nrun returns 0.
+  G2       PASS  this script's `minhold_book` is BIT-IDENTICAL to 1065's own on 1065's tape: max|dW| 0.0e+00 over 8 books (HARD and SOFT-R_GATE x H [5, 21, 63, 126], U56/CAND20/W).  The SOFT release implemented here IS 1065's R_GATE release, not a re-reading of it.
+  G2b      PASS  1065's 9 committed U56/CAND20/W arms (H0 / HARD / SOFT-R_GATE x 4 holds) reproduce on 1065's OWN tape end (2026-09-15, 4,705 days) at 8 of 9 rows to <5e-5; the exception is BOOK_SOFT/H=63 at 2.39e-03 (Sharpe 2.39e-03, turnover 1.29e-02/yr; |MaxDD| agrees to 3.2e-07).  Since G2 shows the builder is bit-identical, that row of 1065's committed `.arms.csv` does NOT reproduce from 1065's OWN code on today's cache. PUBLISHED, NOT REPAIRED — it moves no verdict here (the head-to-head below re-derives every number from this run).  On today's tape (2026-09-17, 4,707 days) the nine rows deviate 2.60e-03: two extra trading days.
+  G3       PASS  the gross ladder's top rung IS the rung 1065 quoted (0.75); every SOFT number in the queue's premise is a gross-0.75 number
+
+====================================================================================================
+(A) THE FULL GRID — 2 kinds x 5 gross rungs x 4 holds x 3 mechanisms x 4 grids x 2 panels
+====================================================================================================
+  books scored: 1,080 arms  (33s)
+  G4       PASS  |MaxDD| falls monotonically with gross at 216 of 216 cells (0 violations)
+  G5       PASS  Sharpe is near-invariant in gross: max|Sharpe(g) - Sharpe(0.75)| 0.0087 over 216 cells, against CAGR spread 0.0909 and |MaxDD| spread 0.1490 over the same 0.75 -> 0.35 range
+    1065(B) R_GATE H=  5: tax rec +0.000 (cmt +0.000, n=11)  rebate 0.765 (cmt 0.765, n=12)  dCAGR +0.0000 (cmt +0.0000)   [medians over 24 cells, 1065's own statistic]
+    1065(B) R_GATE H= 21: tax rec +1.000 (cmt +1.000, n=18)  rebate 0.716 (cmt 0.716, n=18)  dCAGR -0.0056 (cmt -0.0056)   [medians over 24 cells, 1065's own statistic]
+    1065(B) R_GATE H= 63: tax rec +1.082 (cmt +1.082, n=18)  rebate 0.691 (cmt 0.691, n=24)  dCAGR -0.0198 (cmt -0.0197)   [medians over 24 cells, 1065's own statistic]
+    1065(B) R_GATE H=126: tax rec +0.998 (cmt +0.998, n=24)  rebate 0.712 (cmt 0.712, n=24)  dCAGR -0.0209 (cmt -0.0207)   [medians over 24 cells, 1065's own statistic]
+  G6       PASS  1065's committed (B) R_GATE table (MEDIANS over 24 cells, cells with |tax| or |rebate denominator| <= 1e-6 dropped — 1065's own convention) reproduces over all 24 cells x 4 holds: max deviation 4.62e-04
+  G7       PASS  the queue's premise levels '15.58% -> 14.16% / MaxDD -21.68% at H=63' match 0 committed gross-0.75 arm(s); 15.58% is U56/CAND20/W HARD at H=126 and 14.16% / -21.68% appear in NO arm — the premise LEVELS are a mis-transcription of 1065's (B) table (means over 24 cells, dCAGR -0.0197 at H=63), which G6 reproduces. PUBLISHED, NOT REPAIRED: the head-to-head below uses the committed artefact, not the queue text.
+
+====================================================================================================
+(B) THE HEAD TO HEAD — SOFT(R_GATE) at gross 0.75 vs the HARD book DE-GROSSED to match it
+====================================================================================================
+  d_X = X(SOFT, g=0.75) - X(HARD, g*) where g* is the gross at which HARD matches SOFT's
+  |MaxDD|.  RUNG = lowest declared rung with |MaxDD| <= SOFT's; EXACT = bisection solve.
+
+  by MIN HOLD, over the 24 (panel, mech, grid) cells at each H — EXACT match:
+     H   n  g* med    d_CAGR    win  d_Sharpe     d_OOS   d_turn   4b S/H
+     5  24   0.750   -0.0043  0.583   -0.0096   -0.0076   +0.403   9/9   
+    21  24   0.654   +0.0074  0.792   -0.0158   +0.0092   +2.082   9/8   
+    63  24   0.596   +0.0087  0.667   -0.0251   -0.0114   +2.660   9/4   
+   126  24   0.689   -0.0043  0.333   -0.0276   -0.0387   +2.440  12/10  
+
+  by MIN HOLD — RUNG match (lowest declared rung that clears SOFT's |MaxDD|):
+     H   n g* mode    d_CAGR    win  d_Sharpe     d_OOS   d_turn
+     5  24    0.75   -0.0015  0.125   -0.0096   -0.0075   +0.743
+    21  24    0.55   +0.0135  0.625   -0.0156   +0.0094   +2.365
+    63  24    0.45   +0.0173  0.708   -0.0248   -0.0110   +2.887
+   126  24    0.65   +0.0075  0.750   -0.0272   -0.0382   +2.627
+
+  POOLED over all 96 matched cells: d_CAGR +0.0019 (median +0.0000, SOFT wins 0.594), d_Sharpe -0.0195 (wins 0.427), d_OOS_Sharpe -0.0121 (wins 0.490), d_turnover +1.896/yr (SOFT trades LESS at 0.010 of cells)
+
+  the same head-to-head read separately IN and OUT of sample (window, not chooser):
+    U56   n= 48  d_CAGR +0.0038  d_Sharpe -0.0264  d_OOS_Sharpe -0.0006  SOFT wins CAGR 0.604 / OOS Sharpe 0.542
+    B136  n= 48  d_CAGR -0.0001  d_Sharpe -0.0127  d_OOS_Sharpe -0.0236  SOFT wins CAGR 0.583 / OOS Sharpe 0.438
+
+====================================================================================================
+(C) GROSS-MATCHED NULL — random key, no gate, same mechanics, so 4b counts have a base rate
+====================================================================================================
+   gross   null 4b   book 4b  null L_DD  null L_CAGR
+    0.75     0.075     0.296      0.087        0.850
+    0.65     0.250     0.343      0.450        0.550
+    0.55     0.037     0.287      0.875        0.037
+    0.45     0.000     0.000      1.000        0.000
+    0.35     0.000     0.000      1.000        0.000
+  null 4b base rate overall 0.072 over 400 arms; book 4b rate 0.185 over 1,080 arms
+
+====================================================================================================
+(D) BOTH KEEP PATHS over the whole grid, and RULE 8
+====================================================================================================
+  BOOK_H0    n= 120   4a    0   4b   20   BOTH    0
+  BOOK_HARD  n= 480   4a    0   4b   92   BOTH    0
+  BOOK_SOFT  n= 480   4a    0   4b   88   BOTH    0
+  4b PASS count by gross rung:
+    g=0.75  4b   64 of  216 (0.296)   4a   0
+    g=0.65  4b   74 of  216 (0.343)   4a   0
+    g=0.55  4b   62 of  216 (0.287)   4a   0
+    g=0.45  4b    0 of  216 (0.000)   4a   0
+    g=0.35  4b    0 of  216 (0.000)   4a   0
+  binding 4b legs over all book arms (count FAILING): L_CAGR 567, L_DD 295, L_H2 250, L_OOS 91, L_H1 10
+
+  RULE 8 — arm (kind x freq x H x gross) chosen on IS (<= 2016-12-31) Sharpe ALONE per (panel, mech); OOS read ONCE.
+  U56   CAND20   -> BOOK_SOFT  f=M H=126 g=0.75 | IS Sh 1.1383 | OOS 15.53%/1.2025/-18.91% | full 14.30%/1.1733/-18.91% | halves 1.2565/1.1107 vs SPY 0.9598/0.8234 | turn 3.34/yr | 4a False 4b True
+  U56   R3_84    -> BOOK_HARD  f=W H= 63 g=0.75 | IS Sh 1.2428 | OOS 15.80%/1.0621/-25.81% | full 15.50%/1.1275/-25.81% | halves 1.3316/0.9889 vs SPY 0.9598/0.8234 | turn 3.66/yr | 4a False 4b False
+  U56   MOMONLY  -> BOOK_HARD  f=W H=126 g=0.75 | IS Sh 1.2491 | OOS 17.46%/1.1624/-20.58% | full 16.79%/1.1940/-20.58% | halves 1.3447/1.0862 vs SPY 0.9598/0.8234 | turn 2.62/yr | 4a False 4b False
+  B136  CAND20   -> BOOK_HARD  f=M H= 21 g=0.75 | IS Sh 1.2543 | OOS 15.92%/0.9998/-27.14% | full 16.78%/1.1026/-27.14% | halves 1.3662/0.8941 vs SPY 0.9596/0.8259 | turn 5.64/yr | 4a False 4b False
+  B136  R3_84    -> BOOK_HARD  f=M H= 21 g=0.75 | IS Sh 1.2470 | OOS 15.47%/0.9565/-28.10% | full 16.50%/1.0719/-28.10% | halves 1.3420/0.8641 vs SPY 0.9596/0.8259 | turn 5.25/yr | 4a False 4b False
+  B136  MOMONLY  -> BOOK_HARD  f=D H= 21 g=0.75 | IS Sh 1.2286 | OOS 15.95%/0.9782/-25.91% | full 16.63%/1.0769/-25.91% | halves 1.3083/0.9013 vs SPY 0.9596/0.8259 | turn 9.42/yr | 4a False 4b False
+  benchmarks U56: SPY full 15.13%/0.8848/-33.72% OOS 15.28%/0.8745/-33.72% | RULES v2 full 8.62%/1.2017/-12.05% OOS 9.47%/1.2778/-12.05%
+  benchmarks B136: SPY full 15.16%/0.8861/-33.72% OOS 15.33%/0.8767/-33.72% | RULES v2 full 7.98%/1.0993/-12.24% OOS 7.88%/1.1059/-12.24%
+  picks beating RULES v2 on OOS Sharpe: 0 of 6; beating SPY: 6 of 6; SOFT picked at 1 of 6
+
+  RULE 8, HEAD TO HEAD — best SOFT arm on IS Sharpe vs best HARD arm on IS Sharpe among
+  HARD arms whose IS |MaxDD| is no worse than that SOFT arm's; OOS read ONCE.
+  U56   CAND20   SOFT f=M H=126 g=0.75 OOS 15.53%/1.2025/-18.91%  vs  HARD f=D H= 21 g=0.65 OOS 13.03%/1.1046/-17.65%  ->  d_OOS_Sharpe +0.0979
+  U56   R3_84    SOFT f=Q H= 63 g=0.75 OOS 15.18%/1.0435/-28.04%  vs  HARD f=W H= 63 g=0.75 OOS 15.80%/1.0621/-25.81%  ->  d_OOS_Sharpe -0.0186
+  U56   MOMONLY  SOFT f=M H= 21 g=0.75 OOS 14.43%/1.1105/-19.77%  vs  HARD f=W H=126 g=0.55 OOS 12.75%/1.1616/-15.43%  ->  d_OOS_Sharpe -0.0511
+  B136  CAND20   SOFT f=M H= 21 g=0.75 OOS 16.34%/1.0523/-25.44%  vs  HARD f=M H= 21 g=0.75 OOS 15.92%/0.9998/-27.14%  ->  d_OOS_Sharpe +0.0525
+  B136  R3_84    SOFT f=M H= 63 g=0.75 OOS 14.10%/0.9183/-25.59%  vs  HARD f=M H= 21 g=0.75 OOS 15.47%/0.9565/-28.10%  ->  d_OOS_Sharpe -0.0382
+  B136  MOMONLY  SOFT f=Q H=126 g=0.75 OOS 15.52%/0.9963/-21.64%  vs  HARD f=D H= 21 g=0.75 OOS 15.95%/0.9782/-25.91%  ->  d_OOS_Sharpe +0.0181
+  SOFT beats the IS-DD-matched HARD arm OOS at 3 of 6 (panel, mech) groups; mean d_OOS_Sharpe +0.0101, mean d_OOS_CAGR +0.0036
+
+====================================================================================================
+(E) THE DO-NOTHING CONTROL — the SOFT apparatus against NO MIN HOLD AT ALL
+====================================================================================================
+  Per (panel, mech, grid): best SOFT arm over (H, gross) on IS Sharpe ALONE, against the
+  H=0 book at the gross rung whose IS |MaxDD| is no worse.  OOS read ONCE.
+  SOFT beats the IS-DD-matched DO-NOTHING book on OOS Sharpe at 13 of 22 (panel, mech, grid) cells; mean d_OOS_Sharpe +0.0354, mean d_OOS_CAGR +0.0171, mean d_turnover -4.573/yr
+  4b: SOFT pick passes at 6 of 22, the do-nothing comparand at 5 of 22
+  the cell the rule-8 pick came from, all three kinds side by side (U56/CAND20/M, g=0.75):
+    BOOK_SOFT  H=126  full 14.30%/1.1733/-18.91%  halves 1.2565/1.1107  OOS 15.53%/1.2025/-18.91%  turn 3.34/yr  4b True
+    BOOK_HARD  H=126  full 14.71%/1.0830/-23.08%  halves 1.2253/0.9919  OOS 15.98%/1.0793/-23.08%  turn 2.14/yr  4b False
+    BOOK_H0    H=  0  full 15.26%/1.2123/-19.51%  halves 1.2039/1.2267  OOS 17.50%/1.3059/-19.51%  turn 4.77/yr  4b True
+
+====================================================================================================
+(F) PRE-REGISTERED HYPOTHESES (declared in the docstring before any number)
+====================================================================================================
+  H_MECHANISM  PASS  SOFT(R_GATE) beats the DD-matched de-grossed HARD book on CAGR at 0.594 of 96 matched cells (mean d_CAGR +0.0019)
+  H_OOS        FAIL  and on OOS Sharpe at 0.490 of them (mean -0.0121)
+  H_TURNOVER   FAIL  SOFT trades LESS than the de-grossed HARD book at 0.010 of matched cells (mean d_turnover +1.896/yr)
+  H_GROSSINV   PASS  Sharpe is near-invariant in gross (max|dSharpe| 0.0087 over 0.75 -> 0.35) while |MaxDD| moves up to 0.1490 — the 4b DD leg is purchasable by de-grossing
+  H_DDLEG      PASS  the 4b DD leg fails at 0.676 of arms at g=0.75 and 0.000 at g=0.35
+
+====================================================================================================
+OUTPUTS
+====================================================================================================
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.grid.csv  (1,080 rows, 26 cols)
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.head2head.csv  (96 rows, 35 cols)
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.reproduce1065.csv  (96 rows, 9 cols)
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.null.csv  (400 rows, 27 cols)
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.walkforward.csv  (6 rows, 22 cols)
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.walkforward_h2h.csv  (6 rows, 16 cols)
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.donothing.csv  (22 rows, 18 cols)
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.gates.csv  (8 rows, 3 cols)
+  wrote 2026-09-18_does-R_GATE-RELEASE-buy-anything-a-LOWER-GROSS-does-not_C.hypotheses.csv  (5 rows, 3 cols)
+  gates 8 of 8 PASS; hypotheses 3 of 5 PASS
+  total runtime 94s
