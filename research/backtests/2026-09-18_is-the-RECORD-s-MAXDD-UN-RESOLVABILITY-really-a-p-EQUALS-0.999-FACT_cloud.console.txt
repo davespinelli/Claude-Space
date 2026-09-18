@@ -1,0 +1,139 @@
+# 2026-09-18 idea 1281 lane cloud -- is-the-RECORD-s-MAXDD-UN-RESOLVABILITY-really-a-p-EQUALS-0.999-FACT
+# DIAL 1 QUANTILE p = [0.9, 0.95, 0.975, 0.99, 0.995, 0.999, 1.0]  (p=1.00 IS |MaxDD| exactly, gate G2)
+# DIAL 2 PANEL = U56 / B136 / SMALL
+# cap multiples REPORTED (not tuned): [0.5, 0.6, 0.75, 1.0]; PROTOCOL's own is 0.6
+# books: the record's four ladders around N=20 H=126 G=0.75 C=W; 10 bps, t+1, warm-up 260
+# bootstrap: PAIRED circular block, L=63, B=300, seed 20260918
+# SMALL panel: 715 names, 52 dropped for max_1d_move >= 1.0 -> 663 investable
+# anchor book label = N=20
+# 20 distinct books per panel x 3 panels = 60 books
+
+## U56  n_days=4707  n_names=55  2009-01-13..2026-09-17
+   SPY      full  15.13% / 0.8849 / -33.72%   OOS Sh 0.8747
+   LIVE v2  full   8.62% / 1.2018 / -12.05%   OOS Sh 1.2781
+   SPY |dd| quantiles  Q900=0.1134  Q950=0.1523  Q975=0.1773  Q990=0.2094  Q995=0.2297  Q999=0.2838  Q1000(=MaxDD)=0.3372
+   GATE G1 fast runner == engine.backtest (anchor): 2.082e-17 vs < 1e-12 -> PASS
+   GATE G2 Q_1.00 == |MaxDD| exactly: 0.000e+00 vs 0.0 -> PASS
+   GATE G3 Q_p non-decreasing in p: 0 vs 0 violations -> PASS
+
+## B135  n_days=4703  n_names=135  2009-01-13..2026-09-11
+   SPY      full  15.16% / 0.8862 / -33.72%   OOS Sh 0.8769
+   LIVE v2  full   7.98% / 1.0994 / -12.24%   OOS Sh 1.1061
+   SPY |dd| quantiles  Q900=0.1134  Q950=0.1523  Q975=0.1774  Q990=0.2094  Q995=0.2298  Q999=0.2838  Q1000(=MaxDD)=0.3372
+
+## SMALL663  n_days=4198  n_names=663  2011-01-13..2026-09-11
+   SPY      full  14.06% / 0.8582 / -33.72%   OOS Sh 0.8769
+   LIVE v2  full   4.64% / 0.7130 / -12.18%   OOS Sh 0.6518
+   SPY |dd| quantiles  Q900=0.1142  Q950=0.1549  Q975=0.1805  Q990=0.2113  Q995=0.2318  Q999=0.2892  Q1000(=MaxDD)=0.3372
+   GATE G4 incumbent cell == PROTOCOL 4b DD leg: 0 vs 0 disagreements -> PASS
+   GATE G5 bootstrap SD stable across streams: 0.0934 vs < 0.25 -> PASS
+   GATE G6 chooser decided on IS rows only: structural (legs_4b_is, no OOS field) vs true -> PASS
+   GATE G7 SPY never a constituent: asserted in Panel.__init__ vs true -> PASS
+
+### ARM 0 -- DOES 1146's PREMISE REPRODUCE? b_sd = OLS slope of log SD(Q_p) on log(tape fraction), anchor book, DISJOINT windows
+   1146 committed, for reference: p=0.90 -0.0926, p=1.00 (MaxDD) +0.1654
+            Q900    Q950    Q975    Q990    Q995    Q999  Q1000(=MaxDD)
+U56      -0.0847 -0.0024 +0.0403 +0.0554 +0.0505 +0.0513        +0.0482
+B135     -0.1106 -0.0396 -0.0008 +0.0150 +0.0098 +0.0072        +0.0122
+SMALL663 +0.2156 +0.2130 +0.2094 +0.1913 +0.1798 +0.1806        +0.1779
+   (b_sd > 0 = sampling noise GROWS with tape length = 'un-resolvable'; b_sd < 0 = converges normally)
+
+### ARM 1 -- DOES THE RE-KEY MOVE ANYTHING (all panels, all books, all windows, at PROTOCOL's own multiple 0.60)
+               identical_share  DD_flip_share
+Q900                    0.0000         0.2033
+Q950                    0.0000         0.1867
+Q975                    0.0000         0.1733
+Q990                    0.0000         0.1667
+Q995                    0.0000         0.1533
+Q999                    0.0000         0.0867
+Q1000(=MaxDD)           1.0000         0.0000
+
+   DD-leg flip share by panel x p (m = 0.60):
+           Q900   Q950   Q975   Q990   Q995   Q999  Q1000(=MaxDD)
+panel                                                            
+B135     0.2100 0.1800 0.1700 0.1500 0.1500 0.1200         0.0000
+SMALL663 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000         0.0000
+U56      0.4000 0.3800 0.3500 0.3500 0.3100 0.1400         0.0000
+
+   DD-leg PASS RATE by p and multiple (all cells):
+       Q900   Q950   Q975   Q990   Q995   Q999  Q1000(=MaxDD)
+mult                                                         
+0.50 0.0133 0.0200 0.0200 0.0200 0.0233 0.0333         0.0533
+0.60 0.0633 0.0667 0.0600 0.0533 0.0667 0.1333         0.2200
+0.75 0.2300 0.3233 0.3967 0.4567 0.4533 0.4400         0.5100
+1.00 0.5933 0.6433 0.6500 0.6567 0.6800 0.6967         0.7033
+
+### ARM 2 -- IS THE QUANTILE KEY BETTER RESOLVED (paired circular block bootstrap, L=63, B=300)
+               share_inside_1SD  median_|M|/SD  median_SD
+Q900                     0.4833         1.0486     0.0270
+Q950                     0.5833         0.9250     0.0321
+Q975                     0.4833         1.0027     0.0343
+Q990                     0.4833         1.0870     0.0355
+Q995                     0.4500         1.1439     0.0357
+Q999                     0.2333         1.7050     0.0354
+Q1000(=MaxDD)            0.3167         1.6282     0.0379
+
+   share decided inside 1 SD, by multiple:
+       Q900   Q950   Q975   Q990   Q995   Q999  Q1000(=MaxDD)
+mult                                                         
+0.50 0.1167 0.2500 0.2167 0.1833 0.1000 0.1000         0.1833
+0.60 0.4833 0.5833 0.4833 0.4833 0.4500 0.2333         0.3167
+0.75 0.7500 0.7500 0.7167 0.6333 0.6333 0.5833         0.4667
+1.00 0.7833 0.5667 0.4667 0.3500 0.2333 0.3000         0.2667
+
+### ARM 3 -- THE VERDICT CENSUS THE QUEUE ASKED FOR (whole 4b, full window, m = 0.60)
+   incumbent (MaxDD) whole-4b passes: 10 of 60
+             Q900: passes   1  changed   9 of 60  (pass->fail 9, fail->pass 0)
+             Q950: passes   3  changed   7 of 60  (pass->fail 7, fail->pass 0)
+             Q975: passes   3  changed   7 of 60  (pass->fail 7, fail->pass 0)
+             Q990: passes   3  changed   7 of 60  (pass->fail 7, fail->pass 0)
+             Q995: passes   3  changed   7 of 60  (pass->fail 7, fail->pass 0)
+             Q999: passes   4  changed   6 of 60  (pass->fail 6, fail->pass 0)
+    Q1000(=MaxDD): passes  10  changed   0 of 60  (pass->fail 0, fail->pass 0)
+
+   NAMED FLIPS at the queue's nominated p = 0.99 (7 of 60):
+panel book  keep4b_incumbent  keep4b fail_incumbent fail  margin_incumbent  margin
+  U56 N=15              True   False              -   DD           +0.0009 -0.0166
+  U56 N=20              True   False              -   DD           +0.0110 -0.0085
+  U56  H=5              True   False              -   DD           +0.0177 -0.0066
+  U56 H=10              True   False              -   DD           +0.0084 -0.0248
+  U56 H=21              True   False              -   DD           +0.0004 -0.0070
+ B135 N=10              True   False              -   DD           +0.0003 -0.0260
+ B135 N=15              True   False              -   DD           +0.0057 -0.0162
+
+### ARM 4 -- CAPITAL, RULE 8, OOS 2017-2026 READ ONCE
+   chooser OOS Sharpe by (panel, multiple) x p:
+                Q900   Q950   Q975   Q990   Q995   Q999  Q1000(=MaxDD)
+panel    mult                                                         
+B135     0.50 0.7546 0.7546 0.7546 0.7546 0.7546 1.0216         1.0216
+         0.60 0.7546 1.0216 1.0216 1.0216 1.0216 1.0226         1.0663
+         0.75 1.0216 1.0023 1.0023 1.0023 1.0023 1.0023         1.0023
+         1.00 1.0023 1.0023 1.0023 0.9235 0.9235 0.9235         0.9235
+SMALL663 0.50 0.6677 0.6677 0.6677 0.6677 0.6677 0.6677         0.6677
+         0.60 0.6677 0.6677 0.6677 0.6677 0.6677 0.6677         0.6677
+         0.75 0.6677 0.6677 0.6677 0.6677 0.6677 0.6677         0.6677
+         1.00 0.6677 0.6677 0.6677 0.6677 0.6677 0.6677         0.6677
+U56      0.50 1.0530 1.0530 1.0530 1.0530 1.0530 1.0530         1.0530
+         0.60 1.0530 1.0530 1.0530 1.0530 1.1826 1.0530         1.0530
+         0.75 1.1212 1.1212 1.0530 1.0530 1.0530 1.0530         1.0530
+         1.00 1.0530 1.0530 1.0530 1.0530 1.0530 1.0530         1.0530
+
+   d(OOS Sharpe) vs the MaxDD-keyed chooser, over all 12 (panel, multiple) cells:
+        mean      se  n_diff_pick        n
+Q900 -0.0344 +0.0354      +5.0000 +12.0000
+Q950 -0.0137 +0.0249      +4.0000 +12.0000
+Q975 -0.0194 +0.0238      +3.0000 +12.0000
+Q990 -0.0260 +0.0222      +2.0000 +12.0000
+Q995 -0.0152 +0.0257      +3.0000 +12.0000
+Q999 -0.0036 +0.0036      +1.0000 +12.0000
+
+   4a passes: 0 of 84 chooser rows; 4b (own key): 33 of 84
+   published books: 4a 0 of 60, 4b 10 of 60 (incumbent key)
+
+   BEST quantile-keyed chooser: U56 p=Q995 m=0.6 -> G=0.60
+     full  12.59% / 1.1517 / -15.51%   halves 1.2123 / 1.1121
+     OOS   13.78% / 1.1826 / -15.51%
+     vs SPY OOS  15.28% / 0.8747 / -33.72%;  live RULES v2 OOS 1.2781;  anchor OOS 1.1832
+     4a FAIL (H1,H2,DD)   4b PASS (-)
+
+# gates 7/7  elapsed 21s
