@@ -1,3 +1,57 @@
+- 2026-09-18 (lane cloud, ideas 1296 + 1298 — the sprint's two-idea run)
+  — SELECTION: the FIRST numbered item standing in '## Open' was 1204 and the LAST was 932; both,
+  and every numbered item between them, are record-bookkeeping censuses, schema clauses or
+  LOCAL-ONLY/PARK items, none of which yields the sprint's binding step-3 deliverable. The
+  documented fallback was taken: 1296 / 1297 / 1298 filed as new price-only stress tests of the
+  standing 2026-09-04 / 1294 / 1215 incumbent, and the FIRST (1296) and LAST (1298) claimed.
+  No RULES change, no PROTOCOL edit (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py untouched. Both runs offline and deterministic, 11.0s and 10.1s.
+
+  **IDEA 1296 — DE-GROSSING DRAWDOWN BRAKE. Verdict KILL.** Two dials, BRAKE BASIS
+  {NONE, SPY200, OWN200} x BRAKE DEPTH {0.00, 0.25, 0.50, 0.75, 1.00}, 33 books on three panels,
+  every cell published, both KEEP paths at each. 4a **0 of 33**; 4b **14 of 33** and **not one is
+  a cell the unbraked anchor did not already win** (U56 anchor joint margin +3.06 pp vs best
+  braked +2.27; B136 +2.46 vs +1.62; SMALL nothing passes either way). The brake works on its
+  target leg — U56 MaxDD -16.38% -> -13.28%, B136 -17.56% -> -13.15% — and then fails 4b on the
+  **CAGR floor** instead. THE LESSON: idea 1215 found the DD cap the modal binder across its 148
+  FAILING cells, but at the cells that PASS the nearest leg is the CAGR floor, so an instrument
+  aimed at a failing population's binder is aimed at the wrong leg of the incumbent. Price of the
+  brake, pp of CAGR sold per pp of MaxDD bought: U56 0.63-4.30, B136 0.34-1.83, SMALL 0.10-0.34.
+  STRUCTURAL: an own-equity brake at depth 0.00 is an ABSORBING STATE — a constant equity is
+  never strictly above its own trailing mean, so the brake never releases and all three panels
+  read 0.00% CAGR; a self-referential brake needs depth > 0 or an exogenous re-entry trigger.
+  RULE 8 (2017-2026 read once): U56's IS chooser DECLINES the brake unprompted (reach +0.0000,
+  OOS 15.12% / 1.1947 / -16.38%, 4b PASS); B136 picks SPY200/0.75 for +0.0179 Sharpe and -0.86 pp
+  of CAGR; SMALL's IS 4b set is empty. H_OOS 0 of 3 above the +0.02 bar, mean reach +0.0060.
+  GATES 7 of 7.
+
+  **IDEA 1298 — EXECUTION-LAG STALENESS. Verdict KEEP-4b RE-CONFIRMATION (stress) + KILL
+  (capital); memo written.** EXECUTION LAG d in {1,2,3,5,10,21} x panel, 18 books, all published.
+  4a **0 of 18**; 4b **10 of 18**. **U56 clears 4b at ALL SIX LAGS** (Sharpe 1.1399-1.1967 vs SPY
+  0.8849; MaxDD -16.38%..-18.49% against the -20.23% cap; joint margin +1.74..+3.08 pp) at a slot
+  overlap with d=1 of only **0.760** by d=21 — a quarter of the book is different names and it
+  still passes. H_CLIFF fires on NO panel. **B136 passes only to d=5** and fails at d=10 / d=21 on
+  the **DD leg ALONE** (-0.20 / -0.55 pp), so 1215's first second-panel certification of this
+  family is a **d <= 5 result** and should be quoted as one; its Sharpe RISES with d (1.0965 ->
+  1.1854), so the failure is drawdown, not signal decay. **H_MONO fails 0 of 3**: the d=21 rung
+  carries the HIGHER full-sample Sharpe on both large-cap panels and turnover is flat in d, so
+  freshness is not where this book's edge lives and the +/-0.09 rung spread is noise about a
+  common level, not a decay curve. RULE 8 (2017-2026 read once): **U56's IS chooser picks d=3 and
+  it COSTS -0.0944 of OOS Sharpe against simply obeying PROTOCOL rule 2**; B136 picks d=2 (+0.0644);
+  SMALL's IS set is empty. H_OOS 1 of 3, **mean reach -0.0100** — choosing the lag in sample is
+  value-destroying, so rule 2's d=1 stands exactly as written. GATES 7 of 7.
+
+  **BOTH RUNS, SHARED GATES.** The fast runner reproduces `products/backtester/engine.backtest` to
+  **1.39e-17** on ndarray with no skipna, once the decide/apply row convention is translated
+  (engine consumes weights.shift(1); build() emits application-time weights). Queue item 1198's
+  NaN rows are confirmed and located: rows 0 and 3 (2008-01-02, 2008-01-07), both inside the
+  260-row warm-up, so no figure in either run is affected. Both U56 anchors replay idea 1215's
+  committed 13.66% / 1.1706 / -16.38% to 3e-5 / 0.0000 / 1e-5.
+  SURVIVORSHIP (rule 9): U56 / B136 / SMALL are current-constituent lists; every absolute level is
+  optimistic and every 4b pass is an UPPER bound. Both headlines are DIFFERENCES between settings
+  on the SAME names in the SAME book, so a level bias common to a panel moves every cell together
+  and the findings are first-order immune; the pass COUNTS are not.
+
 - 2026-09-18 (lane C, idea 1215 how-many-committed-CENSUS-HEADLINES-have-NEVER-BEEN-TRACED-TO-A-VERDICT)
   — **ANSWERED = (B) PARTLY TRACED, AND THE TRACED PART OVERWHELMINGLY FOUND NOTHING.** Verdict
   **KILL (capital)** for any RULES change plus a **KEEP-4b RE-CONFIRMATION** of the standing
