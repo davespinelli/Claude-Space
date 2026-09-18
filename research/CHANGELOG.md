@@ -3967,3 +3967,44 @@ rather than a lookalike.
   Script: research/backtests/2026-09-18_is-the-FLOOR-CLAUSE-s-own-CONFIDENCE-q-a-FREE-PARAMETER-the-RECORD-never-PRICED_cloud.py
 - SURVIVORSHIP (rule 9): same caveat as above; every LEVEL is an upper bound, the quoted numbers are
   within-grid differences on identical panels and dates.
+
+## 2026-09-18 (lane B) — idea 1080, is the CAP ATTENUATION a BREADTH fact after all, once VOL is held FIXED? ANSWERED NO / KILL (capital) + KILL of the queue's own premise
+- THE OBJECT, REPRODUCED. Idea 1073's crossing arm replays here on its own pools, seed and k set:
+  rho(n/k, OOS S | k) BSTK-LO +0.8759 / BSTK-HI +0.7649 / SMALL-LO +0.3586 / SMALL-HI +0.1769, the
+  four FULL-SAMPLE breadths 0.7376 / 0.6796 / 0.5943 / 0.4179, and the shift |rho(BSTK-HI) -
+  rho(SMALL-LO)| = 0.4063 — all to max|d| 0.00e+00 (G5, G6). Gates 8 of 8 PASS.
+- THE PREMISE IS MEASURE-DEPENDENT. 1073's four breadths are FULL-SAMPLE (they see the OOS window)
+  and cannot build a panel. On the IS-only per-name breadth that can, the two cells the 0.4063
+  shift is taken between are ALREADY matched: BSTK-HI 0.6957 vs SMALL-LO 0.6875, |d| 0.0082,
+  against 0.0853 on the full-sample measure. There was almost nothing at the decisive contrast for
+  a breadth match to remove.
+- THE DIAL BINDS, THE OBJECT DOES NOT MOVE. On the pre-declared common k=20 block the shift reads
+  UNMATCHED 0.1708, beta 0.25 0.0928 (54.3%), beta 0.20 0.2300 (134.6%), beta 0.15 0.1614 (94.5%
+  survives) — non-monotone and on both sides of its unmatched value, while SD of panel IS breadth
+  falls 0.1287 -> 0.0279, |d breadth_IS| to 0.0021-0.0106 and |d vol| to 0.0038-0.0180.
+- BLOCK HONESTY. 1073's committed 0.4063 pools k in {20,30,40}; on k=20 alone the same shift is
+  0.1708 = 42.0% of it. Part of the published figure is a k-pooling object. NOT CLAIMED that the
+  two differ — no interval is published for either.
+- ON THE LADDER IT GOES THE WRONG WAY. rho(q=0.00) - rho(q=1.00) inside 1073's frozen tau=0.20 vol
+  window, k=20: +0.2852 (UNMATCHED) -> +0.3783 (beta 0.20, 133%) -> +0.7520 (beta 0.12, 264%).
+  Holding breadth fixed makes the cap axis STRONGER.
+- WHERE BREADTH DOES BITE IT IS CAP-SPECIFIC. Mirror arm (cap fixed, breadth moved): within SMALL
+  rho runs +0.0750 -> +0.4879, a shift of 0.4129 — the size of the cap shift itself; within BSTK
+  +0.7284 -> +0.6059, a shift of 0.1225 in the OPPOSITE direction. Breadth cannot stand in for cap
+  because it is not the same dial in the two pools. PARKED, not killed, as a small-cap-only axis.
+- 1073's H_SIGN IS REFUTED ON THIS BLOCK: SMALL-HI UNMATCHED rho reads -0.0740 (min over 29 cells,
+  max +0.8824). Only the failure of "positive everywhere" is claimed, not a negative sign.
+- RULE 8 + KEEP PATHS. n/k chosen on 2009-2016 IS Sharpe ONLY inside each (arm, cell, beta, k,
+  draw) choice set, 2017- read ONCE. CROSS arm mean OOS Sharpe / CAGR / MaxDD: RATIO-MAX 0.5383 /
+  6.20% / -23.27%; IS-SHARPE-MAX 0.4908 / 6.50% / -25.88%; RANDOM 0.4373 / 5.76% / -30.60%;
+  RATIO-MIN 0.2965 / 4.52% / -41.61%. SAME PANELS: SPY OOS 0.8767 / 15.33% / -33.72%; RULES v2 OOS
+  0.6169 / 4.90% / -14.27%. Best selector beats SPY on 29.6% of choice sets. Chooser edge over the
+  do-nothing anchor by beta +0.0987 / +0.1077 / +0.1126 / +0.0849 — no ordering in the dial.
+  4a 0 of 3,344; 4b 153 of 3,344. NOTHING PROMOTED, no memo, no RULES change.
+- NOT CLAIMED: that breadth is irrelevant (it is the dominant dial inside the small pool); that
+  1073's 0.4063 is wrong (it reproduces exactly); that any committed verdict flips.
+  Script: research/backtests/2026-09-18_is-the-CAP-ATTENUATION-a-BREADTH-fact-after-all-once-VOL-is-held-FIXED_B.py
+- SURVIVORSHIP (rule 9): SMALL/BSTK are current constituents and a realised gate-pass rate is
+  measured on names that survived to be screened today, so a high-breadth window is doubly a
+  survivor window. Every LEVEL is an upper bound; the quoted results are within-grid differences on
+  identical panels and dates and are first-order immune.
