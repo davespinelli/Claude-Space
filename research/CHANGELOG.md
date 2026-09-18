@@ -2872,3 +2872,46 @@ rather than a lookalike.
   bound. The headline is a DIFFERENCE between two retention rules on one panel and is first-order
   immune; a current panel cannot hold the names a min hold would have ridden to delisting, so the
   REAL arm's tax is a LOWER bound on the live one.
+
+## 2026-09-18 (lane cloud, idea 1267) — a DEFENSIVE ROTATION cannot buy a leg it cannot reach
+- QUESTION (queue 1267): 1262/1263/1264 all reduce EXPOSURE and none changes WHAT is held when
+  the trend is off. On a gate-off week, rotate the freed slots into the lowest-beta names instead
+  of to cash — is the binding 4b drawdown leg cheaper to buy inside equities?
+- TWO CORRECTIONS STATED UP FRONT: (i) the committed book does NOT go to cash when the gate
+  empties the pool — it RE-SPREADS onto the survivors at GROSS 0.75 — so both fills are run
+  (RESPREAD = the committed book, CASH = the fixed-slot de-grossing variant); (ii) a slot is
+  freed only when the ELIGIBLE pool is exhausted, so there is never an eligible name to rotate
+  into: the rotation pool is the priced, not-held, vol20 < 0.60 names ranked by trailing beta.
+- (A) NO DOSE ON THE BOOK IT WAS PROPOSED FOR. The H=126 minimum hold has already filled the
+  slots the gate would free: rotation touches 3.7% of rebalances and 0.205 of a slot per week on
+  U56, 0.9% / 0.03 on B135, and NOTHING on SMALL663 (G3 FAIL, published not repaired — a
+  663-name pool never empties). All 43 U56 cells span MaxDD -19.54%..-19.10% against the
+  do-nothing -19.13%. This is idea 1066's result from the other side: the min hold IS frozen
+  weight, so there is nothing left to free. MINHOLD {126, 0} was added as a REPORTED axis after
+  the first pass for exactly this reason, and the script says so.
+- (B) WHERE THE DOSE EXISTS, ROTATION IS WORSE THAN CASH. At ROT=1.00 against its own
+  de-grossing control, LOWBETA costs MaxDD -1.13pp (B135) / -5.46pp (SMALL663) / -0.25pp (U56)
+  and CAGR -0.15 / -0.41 / -0.09pp, OOS Sharpe -0.031 / -0.039 / -0.005. Outcome (D).
+- (C) THE BETA AXIS IS DECORATIVE AND ITS SIGN IS BACKWARDS. LOWBETA minus its RANDOM control at
+  matched ROT: |d_MaxDD| <= 0.60pp, d_Sharpe within +-0.0096 and negative at 8 of 12 (panel,
+  minhold, fill) groups. HIGHBETA earns +1.44pp of CAGR over cash on U56 H=0 with MaxDD
+  unchanged where LOWBETA earns +0.32pp — the weeks the gate empties the book are not the weeks
+  the drawdown is made.
+- RULE 8: 36 IS-Sharpe choosers, OOS read once. Chooser-minus-do-nothing mean +0.0042, positive
+  at 9 of 36, best +0.0072. 4a 0 of 516. Only 9 of 516 cells convert a 4b FAIL to a PASS, all
+  B135/H=126/RESPREAD and 6 of the 9 from RANDOM or HIGHBETA.
+- VERDICT: KILL (capital), no new book, nothing enacted (rule 6).
+- PARKED BYCATCH — THE CONTROL IS THE THING THAT WORKS. On B135 the freed-slots-to-CASH fill
+  converts the committed 4b FAIL: 16.06% / 1.0702 / -18.78%, halves 1.2924 / 0.8926, OOS 1.0190,
+  4b PASS, against the committed re-spread rule's 16.18% / 1.0715 / -20.74% FAIL(DD) — 1.96pp of
+  drawdown for 0.12pp of CAGR. NOT proposed: strictly dominated on U56 (15.47% / 1.1467 /
+  -19.10%, OOS 1.1706 vs 15.78% / 1.1522 / -19.13%, OOS 1.1832) and bit-identical on SMALL663.
+- Gates 17 of 18: G1 vintage replay of the committed anchor err 5.97e-05; G2 ROT=0 identical
+  across every BETA_LOOK and ROT_KIND; G4 LOWBETA's realised book beta below HIGHBETA's at 6 of
+  6; G5 determinism 0.0; G7 restated to gate the gross SET at each rebalance (max 0.750000) with
+  the drifted intra-week figure published, since the do-nothing book drifts identically.
+- Script: research/backtests/2026-09-18_does-a-DEFENSIVE-SECTOR-ROTATION-buy-the-DD-LEG-more-cheaply-than-DE-GROSSING_cloud.py
+- SURVIVORSHIP (rule 9): U56/B135 current-constituent lists; SMALL663 a current sub-$2B screen
+  (52 of 715 dropped). The rotation pool is drawn from names that FAILED the trend gate — the
+  population a current panel has cleaned of its casualties — so the defensive sleeve's return is
+  FLATTERED here and the negative result is understated; the cash control carries no such bias.
