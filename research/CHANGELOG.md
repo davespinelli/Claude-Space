@@ -2436,3 +2436,45 @@ rather than a lookalike.
   dropped). Current-constituent panels are KIND TO CONCENTRATION, so the cap's losses are an UPPER
   bound and its wins a LOWER bound. A correlation-argmax group is a CO-MOVEMENT group, not a GICS
   sector; the UJSON arm is the independent hand-written read.
+## 2026-09-18 — research (lane cloud, idea 1201): does CH_Z's +0.0393 of OOS Sharpe survive a ROLLING IS WINDOW — KILL (capital)
+- NO RULES CHANGE, NO NEW BOOK, NO MEMO. 180 published cells: CHOOSER {CH_PCT, CH_Z, CH_ISSHARPE,
+  DO_NOTHING} x WINDOW {252, 504, 756, 1008, 1260} x STEP {21, 63, 126} on U56 / B135 / SMALL663.
+  Candidate set frozen at 1197's four anchors {(20,W),(12,W),(20,M),(10,M)}; NDRAW = 200 gross-matched
+  null books per anchor per decision (K frozen, the setting most favourable to CH_PCT); switching
+  charged at an upper-bound 15 bps of NAV per changed pick. Gates 7 of 7.
+- THE +0.0393 DOES NOT SURVIVE AND ITS SIGN IS A PANEL FACT. Giving each chooser 12-190 picks instead
+  of 1197's ONE 2009-2016/2017-2026 split puts CH_Z minus CH_PCT at -0.0042 of OOS Sharpe over the 45
+  (panel, WINDOW, STEP) cells (paired t -0.58, CH_Z ahead at 20 of 45) and -0.0054 of full Sharpe. Per
+  panel: U56 -0.0330, B135 -0.0083, SMALL663 +0.0289. The ONLY panel where the challenger wins is the
+  one 1197 and 1204 already showed CH_PCT DE-SATURATES on — the committed +0.0393 was the small-cap
+  draw carrying three picks, and on the two panels the record actually trades it is NEGATIVE.
+- BOTH CHOOSERS LOSE TO DOING NOTHING, WHICH IS THE ONLY CAPITAL CLAIM IN THE QUESTION. Against always
+  holding the incumbent (N=20, weekly) anchor over the same rows: CH_Z -0.0195 of OOS Sharpe (t -1.78,
+  ahead at 17 of 45), CH_PCT -0.0154 (t -1.95, 19 of 45), full Sharpe -0.0141 / -0.0086. RULE 8 (the
+  two dials chosen on warm-up..2016-12-31 by IS Sharpe, 2017-2026 read ONCE) gives chooser-minus-
+  do-nothing means of -0.0267 (CH_Z), -0.0099 (CH_PCT), -0.0347 (CH_ISSHARPE), with IS/OOS rank
+  correlation NEGATIVE at 5 of 9 (panel, chooser) cells, worst -0.61. This is the fifth consecutive
+  gating/selection family the record has priced between -0.035 and +0.003 of mean OOS Sharpe.
+- THE MECHANISM, AND IT IS NOT FLATTERING: CH_PCT'S BEST CELLS ARE THE ONES WHERE IT CANNOT ACT. Its
+  tie rate climbs 0.115 -> 0.203 -> 0.500 -> 0.775 -> 0.848 as WINDOW goes 252 -> 1260 (mean 0.41;
+  CH_Z ties at 0.000 at every one of the 45 cells, confirming 1197's G5 out of sample). At WINDOW 1260
+  on U56 CH_PCT makes ZERO switches and its realised book is BIT-IDENTICAL to do-nothing (14.72% /
+  1.1562 / -19.09%, OOS 1.1769); where it does act (WINDOW 252, 45 switches) it posts its worst cells
+  (1.0383-1.0748). A saturated statistic does not choose well, it declines to choose, and FIRST-WINS
+  hands the decision back to the incumbent. CH_Z, which never ties, acts on every decision and pays.
+- 4a 0 OF 180 (the DD leg fails at 180 of 180; 141 also fail H2) and the LIVE RULES v2 book beats every
+  one of the 180 realised books on OOS Sharpe (U56 1.2781). 4b 38 of 180, EVERY ONE on U56, and 15 of
+  them are the do-nothing anchor itself. CH_ISSHARPE — the free control that uses no null at all —
+  posts the best U56 full Sharpe and CAGR (1.3011 / 18.81% at WINDOW 1008 / STEP 21) and clears 4b at
+  0 of 15, failing on the DRAWDOWN leg ALONE at all 15: the standing diagnosis holds, return is on the
+  table and the DD cap is what refuses it.
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: A CHOOSER GAP MEASURED ON ONE SPLIT IS THREE DRAWS AND
+  NOT A MEASUREMENT — 1197's +0.0393 reverses on both large-cap panels once the same two statistics
+  each make dozens of picks, and neither beats the frozen incumbent. PROPOSED for the Sunday review
+  (rule 6) as a PROTOCOL reporting line only: a published chooser gap must state how many PICKS it
+  rests on, never only how many seeds.
+- Script: research/backtests/2026-09-18_does-CH_Z-s-PLUS-0-0393-of-OOS-SHARPE-survive-a-ROLLING-IS-WINDOW_cloud.py
+- SURVIVORSHIP (rule 9): U56/B135 are current-constituent lists, SMALL663 a current sub-$2B screen (52
+  of 715 dropped for max_1d_move >= 1.0). Every level is optimistic and every 4b pass an upper bound.
+  The headline is a CONTRAST between two choosers picking from the SAME four books on the SAME tape,
+  first-order immune to a common level bias; the 4a/4b legs are not.
