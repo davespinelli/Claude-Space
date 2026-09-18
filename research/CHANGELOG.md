@@ -3903,3 +3903,67 @@ rather than a lookalike.
   inside-share results are ratios of a margin to its own sampling SD on the SAME book and are
   first-order immune to a level bias; the capital arm's OOS levels are not, and are quoted as upper
   bounds.
+
+## 2026-09-18 (cloud, idea 1 of 2) — idea 1284, does a SECTOR or NAME CONCENTRATION CAP change the STANDING G=0.60 BOOK's 4b VERDICT? ANSWERED NO / KILL
+- THE OBJECT. The record's single confirmed 4b candidate (U56, N=20, H=126, equal weight, gross
+  0.60, weekly decide-Friday) with two dials and nothing else moved: a SECTOR CAP S in {2,3,4,6,20}
+  over 13 static risk buckets (hand map frozen in the script, 55/55 coverage, binds on new adds
+  only) and a NAME CAP C in {0.05,0.0625,0.075,0.10,1.00} of the book, excess to CASH. The
+  (S=20, C=1.00) cell IS the standing book: gate G2 reproduces idea 1286's committed 10 bps / t+1
+  row (12.5911% / 1.151737 / -15.5135%) to 3.6e-07; G1 fast runner == engine.backtest to 2.08e-17.
+- THE CAP DOES NOT MOVE THE LEG IT WAS AIMED AT. Only 2 of 24 capped U56 cells have a SHALLOWER
+  MaxDD than the uncapped book, and the best of them (S=4, C=0.05) buys +0.51 pp of MaxDD for
+  -0.75 pp of CAGR and -0.0016 of OOS Sharpe. Over all 144 U56 capped cells: mean dMaxDD -0.0083
+  (DEEPER), shallower at 26; mean dCAGR -0.0136, NEGATIVE at 144 of 144; mean dSharpe -0.0436;
+  mean dOOS_S -0.0539. The book's drawdown is not a concentration event.
+- RULE 8 (both dials chosen on warm-up..2016 ONLY, 2017-2026 read ONCE): d(OOS Sharpe) CHOOSER -
+  FROZEN over 18 cells is mean -0.0100, SE 0.0029, t -3.45; positive 0 / negative 12 / identical 6.
+  The chooser moved off the uncapped book at 18 of 18 cells and was right at none. Pre-declared
+  outcome (D), the tuning trap, on top of (C).
+- OTHER PANELS. B135 (no sector labels in repo, so DIAL 2 only, stated not guessed): shallower DD at
+  21 of 24 cells but dCAGR < 0 at 24 of 24 and dOOS_S < 0 at 24 of 24. SMALL663 (house
+  max_1d_move >= 1.0 filter first, 663 kept): the name cap NEVER binds and 4b fails 30 of 30.
+  4a: 0 of 210 cells, as rule 4 anticipates for any growth book.
+- ACTION: NONE. The standing book is carried UNCHANGED and UNCAPPED. No memo is filed because
+  there is no KEEP candidate. Script:
+  research/backtests/2026-09-18_does-a-SECTOR-or-NAME-CONCENTRATION-CAP-change-the-STANDING-G-0.60-BOOK-s-4b-VERDICT_cloud.py
+  Gates 5/5.
+- SURVIVORSHIP (rule 9): U56 and B135 are CURRENT-constituent lists, SMALL663 a current sub-$2B
+  screen; every LEVEL is an upper bound. The quoted result is a within-grid difference (capped minus
+  uncapped, same panel, same dates) and is first-order immune. Only 2020 and 2022 are real stress in
+  this tape — which cuts AGAINST this run's power to detect a cap that helps, and is stated as a
+  limitation of the KILL rather than an argument for it.
+
+## 2026-09-18 (cloud, idea 2 of 2) — idea 1114, is the FLOOR CLAUSE's own CONFIDENCE q a FREE PARAMETER the RECORD never PRICED? ANSWERED YES AND PRICED / KILL (capital) + PUBLISHING clause
+- THE CAPITAL READING. The clause is a bar a candidate must clear before a chooser may move the
+  book. A chooser sees warm-up..2016 only, computes each rung's IS Sharpe margin against the
+  incumbent and that margin's own PAIRED moving-block bootstrap SD (block 21, B 400, shared draws,
+  seed 20260918), adopts the best rung clearing z_q * SD, else STAYS. 2017-2026 read ONCE. DIAL 1
+  q in {0.50, 0.80, 0.90, 0.95, 0.99} (0.50 = no bar, the record's habit); DIAL 2 claim set in
+  {N, GROSS, HOLD, ALL}. 360 cells. Gates 4/4; G2 reproduces idea 1286's committed row to 3.6e-07.
+- q IS NOT INERT: the adopted rung differs across the five q at 72 of 72 (panel, claim set, cost,
+  fill) cells. Pre-declared outcome (C) is REFUTED.
+- NO DIAL MOVE ON THE CAPITAL PANEL IS DISTINGUISHABLE FROM NOISE. Every U56 rung's IS margin sits
+  inside its own SD: max |t| 0.50 at the PROTOCOL rung, 1.43 over all costs and fills. At q >= 0.80
+  the chooser therefore adopts NOTHING on U56, on all four claim sets.
+- THE PRICE OF LEAVING q AT 0.50. mean d(OOS Sharpe) chooser - frozen over 72 cells per q:
+  0.50 +0.0122 (t +1.05), 0.80 +0.0178 (+1.64), 0.90 +0.0177, 0.95 +0.0070, 0.99 +0.0001 — NONE
+  resolvable, and every pooled positive is carried by SMALL663, where no 4b leg passes at any rung.
+  By panel: U56 -0.0156 / +0.0003 / +0.0002 / 0.0000 / 0.0000; B135 -0.0517 / -0.0490 / -0.0492 /
+  +0.0008 / +0.0002. With no bar the U56 chooser takes N=40 (-0.0613 OOS Sharpe) and, on the GROSS
+  ladder, G=1.00 — a book that then FAILS 4b on the DD leg at -24.93%. 4a 0 of 360.
+- RECOMMENDED TO THE SUNDAY REVIEW, PUBLISHING ONLY (changes no book): the floor clause must
+  DECLARE its q, and the declared value must be >= 0.80 — "a dial move is adopted only if its
+  in-sample margin exceeds z(q) x the margin's own paired-block-bootstrap SD, q declared in advance
+  and >= 0.80; otherwise the incumbent rung stands." The evidence does NOT separate 0.80 from 0.99
+  (on the capital panel nothing clears any of them) but separates all of them from 0.50, the only
+  tested value that loses and the only one that would have adopted a 4b-failing book. Cost nil.
+- CENSUS ARM (crude LEXICAL, reporting only, moves no gate): over 358 committed .md files, 1,697
+  lines quote a confidence level (0.80/0.90/0.95/0.99) and 213 of them (0.126) carry any
+  justification token at all. NOT CLAIMED that the rest are unjustified — a lexical test cannot read
+  an argument, only show that the number and its reason are rarely in the same sentence.
+- NOT CLAIMED: that q = 0.95 beats q = 0.80; that any committed verdict in the record flips (none is
+  re-adjudicated here); that SMALL663's gains mean anything — that panel fails every 4b leg.
+  Script: research/backtests/2026-09-18_is-the-FLOOR-CLAUSE-s-own-CONFIDENCE-q-a-FREE-PARAMETER-the-RECORD-never-PRICED_cloud.py
+- SURVIVORSHIP (rule 9): same caveat as above; every LEVEL is an upper bound, the quoted numbers are
+  within-grid differences on identical panels and dates.
