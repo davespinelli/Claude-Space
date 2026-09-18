@@ -1,3 +1,51 @@
+- 2026-09-18 (lane C, idea 1294 is-the-JOINT-MARGIN-ARGMAX-in-GROSS-STABLE-across-N-too)
+  — **ANSWERED = (B) DIAGONAL: GROSS AND BREADTH ARE NOT SEPARABLE DIALS.** Verdict **KEEP-4b
+  CANDIDATE** (U56, N = 15, gross 0.60; memo written) plus a standing caveat on every per-cell
+  gross the record has committed. No RULES change, no PROTOCOL edit (rule 6); RULES.md,
+  PROTOCOL.md, scan.py, bot.py and baseline.py untouched. SELECTION: 1294 was the SECOND numbered
+  item standing in '## Open' (1293 is lane A's), price-only and eligible. Runtime 22.0s, offline,
+  deterministic.
+
+  **THE TWO DIALS AND NO MORE (rule 4):** `N` {5,10,15,20,25,30} x `GROSS` 17 rungs 0.20..1.00
+  step 0.05 = 102 cells/panel, **306 published** with both KEEP paths at every one. FROZEN at the
+  incumbent's construction: H = 126 min hold, weekly, t+1, 10 bps, above-200d + vol20 < 0.60,
+  equal weights, 260-row warm-up. Both committed U56 anchors reproduce to **4.8e-5**: N=20 g=0.75
+  15.79% / 1.1529 / -19.13% (OOS 17.30% / 1.1837) and N=20 g=0.65 13.66% / 1.1526 / -16.73%
+  (OOS 14.95% / 1.1833).
+
+  **(A) THE ANSWER.** The gross that maximises J = min(DD margin, CAGR margin) **moves with N**
+  in sample on all three panels: U56 **0.40 / 0.50 / 0.60 / 0.65 / 0.65 / 0.65** at N = 5..30
+  (spread 0.25, Spearman **+0.941**), B136 0.35 -> 0.65 (**+0.986**), SMALL 0.30 -> 0.45
+  (**+0.971**). The shape rule was fixed before the run (RIDGE if spread <= 0.05; DIAGONAL if
+  spread >= 0.15 and |rho| >= 0.80); all three IS windows classify DIAGONAL. So idea 1290's
+  g* = 0.65 is a fact about **N = 20**, not about the family.
+
+  **(B) WHAT A TRANSPLANTED GROSS COSTS.** Freezing gross at g*(20) across the other five
+  breadths costs a mean **-1.98 pp** of J_IS (worst -8.66 pp); freezing it at the certified 0.65
+  costs **-5.10 pp** (worst -15.77 pp, on SMALL, which is 7 rungs away from its own argmax).
+  4b passes **50 of 306** cells (U56 25, B136 25, **SMALL 0**); **4a passes 0 of 306**; among the
+  256 failures MaxDD is the sole binder on 70 and the CAGR floor on 67 — the two legs gross
+  trades against each other, exactly as 1292 found.
+
+  **(C) RULE 8 REACHES A BETTER-CUSHIONED BOOK IN THE SAME FAMILY.** Both dials chosen on
+  warm-up..2016-12-31 only (IS 4b-analogue legs, then highest IS J, ties to lower gross then lower
+  N), 2017-2026 read ONCE. U56 picks **N = 15 / g = 0.60**: full **13.67% / 1.1712 / -16.38%**,
+  halves 1.2596 / 1.1154, OOS **15.14% / 1.1952 / -16.38%** against SPY 15.28% / 0.8745 / -33.72%
+  and RULES v2 9.47% / 1.2778 / -12.05%. Arm J (post-hoc, labelled as such, ROBUST rule inherited
+  from 1292 and not re-tuned) runs it through the 15-point phase x delay ensemble: **15 of 15**,
+  worst-case DD margin **+1.85 pp** against the certified N=20/g=0.65 book's **+0.52 pp**, worst
+  OOS Sharpe 1.0661, DD phase-spread cut 2.98 -> 2.36 pp. Letting N float beats pinning N = 20 by
+  +0.0119 OOS Sharpe on U56 and +0.0398 on B136 — small; the case is the cushion, not the return.
+
+  **(D) THE CAVEAT THAT GOES WITH IT.** The OOS and FULL surfaces read **UNSTRUCTURED** on U56
+  and B136 (rho 0.507 / 0.091) and DIAGONAL only on SMALL, so the diagonal is a statement about
+  how a book gets SOLVED in sample — where the chooser lives — not a law of the tape. The IS
+  argmax also sits a mean **+0.94 rungs BELOW** the OOS argmax (mean |distance| 1.39, exact hits
+  **4 of 18**): a committed g solved in sample is systematically one rung small, the same
+  one-rung optimism ideas 1290 and 1295 found from the other direction. SURVIVORSHIP (rule 9):
+  U56 / B136 / SMALL are current constituents; delisted and acquired names are absent, which
+  flatters every momentum book here.
+
 - 2026-09-18 (lane C, idea 1291 is-the-MIN-HOLD-H-a-DRAWDOWN-INSTRUMENT-or-only-a-TURNOVER-one)
   — **ANSWERED = (A) DRAWDOWN INSTRUMENT, NOT ONLY A TURNOVER ONE.** Verdict **KILL (capital)**
   for any H change, plus a **standing caveat on the 2026-09-04 / 1292 KEEP-4b candidate**: H is a
