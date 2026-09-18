@@ -1,0 +1,107 @@
+====================================================================================================
+IDEA 1321 (lane cloud, 2026-09-18) — does the 4b DD CAP's SPY BASIS make SMALL UNPASSABLE BY CONSTRUCTION?
+====================================================================================================
+  SMALL filter (house rule, data/small_meta.csv): drops 52, keeps 663 of 715 priced
+    U56: 2008-01-02 .. 2026-09-17  4707 rows (18.7y), 55 names, 49 in the PANEL_EW buy-and-hold, OOS from row 2267
+    B136: 2008-01-02 .. 2026-09-11  4703 rows (18.7y), 135 names, 122 in the PANEL_EW buy-and-hold, OOS from row 2267
+    SMALL663: 2010-01-04 .. 2026-09-11  4198 rows (16.7y), 663 names, 389 in the PANEL_EW buy-and-hold, OOS from row 1762
+    [PASS] G0 min sample >= 10 years (rule 1): 16.66 (target >= 10.0)
+
+----------------------------------------------------------------------------------------------------
+THE YARDSTICKS — both costless, both full-sample post-warm-up (rule 3's convention)
+----------------------------------------------------------------------------------------------------
+  U56       SPY        15.13% / 0.8849 / -33.72% (H1 0.9600 H2 0.8236) -> 4b cap -20.23%, floor 10.59%
+  U56       PANEL_EW   24.86% / 1.0849 / -44.14% (H1 1.2577 H2 1.0384) -> 4b cap -26.48%, floor 17.40%
+  U56       [arm]  DAILY-REBAL EW  17.95% / 1.1368 / -28.87% -> cap -17.32%, floor 12.56%
+  B136      SPY        15.16% / 0.8862 / -33.72% (H1 0.9598 H2 0.8261) -> 4b cap -20.23%, floor 10.61%
+  B136      PANEL_EW   22.25% / 1.0932 / -32.99% (H1 1.2416 H2 1.0103) -> 4b cap -19.79%, floor 15.58%
+  B136      [arm]  DAILY-REBAL EW  19.11% / 1.1308 / -32.52% -> cap -19.51%, floor 13.38%
+  SMALL663  SPY        14.06% / 0.8582 / -33.72% (H1 0.9140 H2 0.8346) -> 4b cap -20.23%, floor  9.84%
+  SMALL663  PANEL_EW    8.88% / 0.5368 / -41.96% (H1 0.8605 H2 0.3530) -> 4b cap -25.17%, floor  6.22%
+  SMALL663  [arm]  DAILY-REBAL EW  14.37% / 0.7595 / -44.40% -> cap -26.64%, floor 10.06%
+
+----------------------------------------------------------------------------------------------------
+THE DIAL GRID — BASIS ['SPY', 'PANEL_EW'] x COST [10.0, 25.0] bps over the 72 inherited books (N [5, 10, 15, 20, 30, 40] x H [21, 63, 126, 252] x 3 panels), 288 scorings
+----------------------------------------------------------------------------------------------------
+  U56: 24 books x 2 rungs x 2 bases
+  B136: 24 books x 2 rungs x 2 bases
+  SMALL663: 24 books x 2 rungs x 2 bases
+
+----------------------------------------------------------------------------------------------------
+REPLAY GATES against idea 1301's / 1215's committed numbers (nothing tuned on them)
+----------------------------------------------------------------------------------------------------
+    [PASS] G1 U56 incumbent at 10 bps replays 13.66% / 1.1706 / -16.38%: 13.6573% / 1.1706 / -16.3815% (max|dev| 3.34e-05) (target max|dev| <= 5e-3)
+    [PASS] G2 SMALL at 10 bps on the SPY basis replays 1301's 0 of 24 4b-full passes: 0 of 24 (target == 0 of 24)
+    [PASS] G2b SMALL's shallowest cell replays 1301's -28.69%: -28.6927% (target |dev| <= 5e-3)
+    [PASS] G3 U56 / B136 replay 1301's 4b BOTH counts of 14 / 8: 14 / 8 (target == 14 / 8)
+    [PASS] G4 the SPY yardstick is identical on all three panels (one index, one tape): MaxDD [-0.3372] (target one value)
+
+----------------------------------------------------------------------------------------------------
+THE QUEUE'S QUESTION — how much of SMALL's 4b failure is the BOOK and how much the YARDSTICK?
+----------------------------------------------------------------------------------------------------
+      panel   basis      cost |  cap      floor  | 4b-full 4b-OOS 4b-BOTH of 24 | leg fails: H1  H2  DD CAGR
+    U56       SPY         10 | -20.23% 10.59% |      14     15      14      |           1   1   7    3
+    U56       SPY         25 | -20.23% 10.59% |      12     14      12      |           1   2   7    5
+    U56       PANEL_EW    10 | -26.48% 17.40% |       0      0       0      |          19   7   0   24
+    U56       PANEL_EW    25 | -26.48% 17.40% |       0      0       0      |          24  15   0   24
+    B136      SPY         10 | -20.23% 10.61% |       8      8       8      |           0   3  16    0
+    B136      SPY         25 | -20.23% 10.61% |       7      8       7      |           0   9  16    2
+    B136      PANEL_EW    10 | -19.79% 15.58% |       0      0       0      |           9  23  18   20
+    B136      PANEL_EW    25 | -19.79% 15.58% |       0      0       0      |          17  24  18   21
+    SMALL663  SPY         10 | -20.23%  9.84% |       0      0       0      |          21  22  24   20
+    SMALL663  SPY         25 | -20.23%  9.84% |       0      0       0      |          21  23  24   20
+    SMALL663  PANEL_EW    10 | -25.17%  6.22% |       0      0       0      |          18  10  24    8
+    SMALL663  PANEL_EW    25 | -25.17%  6.22% |       0      0       0      |          21  12  24   11
+
+  SMALL663 at 10 bps: the DD cap moves -20.23% (SPY) -> -25.17% (PANEL_EW), i.e. -4.94 pp, and the CAGR floor 9.84% -> 6.22% (-3.62 pp)
+  4b-full passes go 0 of 24 -> 0 of 24; 4b BOTH 0 -> 0; DD-leg failures 24 of 24 -> 24 of 24
+    [PASS] G5 SMALL 4b-full passes on the PANEL_EW basis at 10 bps: 0 of 24 (target reported either way)
+    [PASS] G6 SMALL DD-leg failures on the PANEL_EW basis at 10 bps: 24 of 24 (target reported either way)
+  of SMALL's 24 SPY-basis 4b-full failures, 0 become passes on the panel-matched basis; of its 24 DD-leg failures, 0 clear the panel-matched cap
+
+----------------------------------------------------------------------------------------------------
+RULE 8 WALK-FORWARD — (N, H) by argmax IS Sharpe on warm-up..2016-12-31 at each cost rung (basis-invariant by construction); 2017-01-01.. read ONCE, scored under BOTH bases
+----------------------------------------------------------------------------------------------------
+  U56         10 bps  pick N= 5 H= 63 (IS Sharpe 1.1956)
+    OOS pick    14.44% / 0.8963 / -21.46%   | OOS anchor N15/H126  15.12% / 1.1947 / -16.38% (pick - anchor -0.2984)
+    OOS v2       9.47% / 1.2781 / -12.05%
+    vs SPY       OOS  15.28% / 0.8747 / -33.72% (cap -20.23%, floor 10.69%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+    vs PANEL_EW  OOS  29.84% / 1.1086 / -44.14% (cap -26.48%, floor 20.89%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+  U56         25 bps  pick N= 5 H= 63 (IS Sharpe 1.1566)
+    OOS pick    13.75% / 0.8597 / -21.47%   | OOS anchor N15/H126  14.68% / 1.1637 / -16.44% (pick - anchor -0.3041)
+    OOS v2       9.47% / 1.2781 / -12.05%
+    vs SPY       OOS  15.28% / 0.8747 / -33.72% (cap -20.23%, floor 10.69%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+    vs PANEL_EW  OOS  29.84% / 1.1086 / -44.14% (cap -26.48%, floor 20.89%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+  B136        10 bps  pick N= 5 H= 63 (IS Sharpe 1.4601)
+    OOS pick    16.43% / 0.9095 / -23.42%   | OOS anchor N15/H126  14.11% / 1.0454 / -15.97% (pick - anchor -0.1360)
+    OOS v2       7.88% / 1.1061 / -12.24%
+    vs SPY       OOS  15.33% / 0.8769 / -33.72% (cap -20.23%, floor 10.73%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+    vs PANEL_EW  OOS  24.27% / 1.0852 / -32.99% (cap -19.79%, floor 16.99%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+  B136        25 bps  pick N= 5 H= 63 (IS Sharpe 1.4180)
+    OOS pick    15.60% / 0.8711 / -23.43%   | OOS anchor N15/H126  13.64% / 1.0144 / -16.00% (pick - anchor -0.1433)
+    OOS v2       7.88% / 1.1061 / -12.24%
+    vs SPY       OOS  15.33% / 0.8769 / -33.72% (cap -20.23%, floor 10.73%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+    vs PANEL_EW  OOS  24.27% / 1.0852 / -32.99% (cap -19.79%, floor 16.99%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+  SMALL663    10 bps  pick N=15 H=252 (IS Sharpe 1.0212)
+    OOS pick    10.74% / 0.7328 / -33.11%   | OOS anchor N15/H126   6.40% / 0.4653 / -33.35% (pick - anchor +0.2675)
+    OOS v2       4.47% / 0.6518 / -12.18%
+    vs SPY       OOS  15.33% / 0.8769 / -33.72% (cap -20.23%, floor 10.73%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+    vs PANEL_EW  OOS   6.15% / 0.3863 / -41.96% (cap -25.17%, floor 4.30%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+  SMALL663    25 bps  pick N=15 H=252 (IS Sharpe 0.9987)
+    OOS pick    10.32% / 0.7084 / -33.23%   | OOS anchor N15/H126   5.84% / 0.4320 / -33.87% (pick - anchor +0.2764)
+    OOS v2       4.47% / 0.6518 / -12.18%
+    vs SPY       OOS  15.33% / 0.8769 / -33.72% (cap -20.23%, floor 10.73%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+    vs PANEL_EW  OOS   6.15% / 0.3863 / -41.96% (cap -25.17%, floor 4.30%) -> 4b full False, 4b OOS False, BOTH False, 4a False
+    [PASS] G7 rule 8 run at every (panel, cost, basis): 12 (target == 12)
+    [PASS] G8 rule-8 picks clearing 4b BOTH on the COMMITTED basis and rung: 0 of 3 (target reported either way)
+    [PASS] G9 4a passes anywhere in the grid: 0 (target reported either way)
+
+----------------------------------------------------------------------------------------------------
+THE COMMITTED READING (basis SPY, 10 bps) — the only verdict this run reads
+----------------------------------------------------------------------------------------------------
+  U56       4a  0  4b full 14  4b OOS 15  4b BOTH 14   of 24
+  B136      4a  0  4b full  8  4b OOS  8  4b BOTH  8   of 24
+  SMALL663  4a  0  4b full  0  4b OOS  0  4b BOTH  0   of 24
+
+GATES: 11 of 11 pass
+elapsed 10.5s

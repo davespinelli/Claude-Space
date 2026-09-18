@@ -1,3 +1,66 @@
+- 2026-09-18 (lane cloud, TWO ideas: 1301 is-the-SMALL-panel-s-DD-BINDER-a-GROSS-problem-at-all,
+  1321 does-the-4b-DD-CAP-s-SPY-BASIS-make-SMALL-UNPASSABLE-BY-CONSTRUCTION)
+  — **VERDICTS: (1301) KILL (capital) for SELECTION at SMALL's 4b drawdown leg; (1321) KILL for the
+  "unpassable by construction" hypothesis. BOTH runs re-confirm KEEP-4b for the FLAT incumbent on
+  U56 and B136, full sample AND rule-8 OOS, and 1321 re-confirms it at the 25 bps stress rung.**
+  No RULES change, no PROTOCOL edit (rule 6). RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py untouched. Offline, deterministic; 11 of 11 gates each; 12.7s and 10.5s.
+  SELECTION: 1301 was the FIRST numbered item standing in '## Open'. For idea 2 no eligible LAST
+  item existed (904/903/896/895/894/877/876 are censuses or null contrasts with no book; 353 needs a
+  live yf.download; 429 still PARKed — data/ carries only volume_small.csv.gz, verified), so the
+  documented fallback was taken: 1313 / 1317 / 1321 filed as price-only follow-ups from 1301's own
+  findings, and the LAST of them claimed.
+
+  **1301 — SMALL'S DRAWDOWN IS NOT A GROSS PROBLEM.** Exact additive split of the incumbent's own
+  worst peak-to-trough on SMALL663 (368 days, -33.35%) at beta 0.658 / R2 0.528: **21.2%
+  systematic / 78.8% residual**. Standalone the residual stream draws **-44.68%** against
+  beta*SPY's **-23.18%** (252d rolling-beta arm: -42.41% vs -19.30%). On U56/B136 the same episode
+  is 58 days and 62.4% / 66.5% SYSTEMATIC. A gross multiplier scales both parts by the same k, so
+  it cannot reach a leg that is four-fifths residual — the mechanism behind idea 1297's 2.20 pp miss.
+
+  **1301 — SELECTION IS FREE AND STILL 8.46 pp SHORT.** N {5,10,15,20,30,40} x H {21,63,126,252} at
+  frozen g=0.60, all 24 cells published on 3 panels. SMALL663 MaxDD range **-42.63% .. -28.69%**
+  against a -20.23% cap: **0 of 24 clear the cap, 0 of 24 clear cap AND the 9.84% floor.** The
+  shallowest cell (N=30/H=63) gets there **for free** — +4.66 pp of drawdown AND +0.70 pp of CAGR
+  over the incumbent, where 1297's exposure ladder paid -2.58 pp of CAGR for +9.90 pp. Neither
+  instrument closes the 13.12 pp required, and neither was tested with the other (filed as 1313).
+  SMALL 4b-full binding legs over 24 cells: **DD 24 of 24**, H2 22, H1 21, CAGR 20.
+
+  **1301 — RECORD DEFECT, PRICED.** The two committed SMALL filters are not interchangeable on a
+  drawdown: house data/small_meta.csv (663) gives the incumbent 7.0580% / 0.5202 / -33.3508%,
+  idea 1297's on-panel max|1d move| < 1.0 (664) gives 6.9818% / 0.5184 / -32.3309% (replayed to
+  3.6e-05). The whole gap is **one name, OBT**, worth **-1.02 pp of MaxDD**. The record's committed
+  reading that the 663/664 gap "moves the level by 0.000e+00" is true of a CHOOSER LEVEL and false
+  of this book's drawdown.
+
+  **1321 — THE HYPOTHESIS IS FALSE.** Swapping SPY for a costless buy-and-hold of the panel's own
+  names moves SMALL's DD cap **-20.23% -> -25.17%** (4.94 pp LOOSER: the small-cap panel's own EW
+  hold drew **-41.96%**) and the floor 9.84% -> 6.22%. **0 of SMALL's 24 SPY-basis 4b failures flip
+  and 0 of its 24 DD-leg failures clear the looser cap**; the shallowest book is still 3.52 pp
+  short of even the panel-matched cap, and of the daily-rebalanced arm's -26.64% too.
+
+  **1321 — THE 4b YARDSTICK CARRIES THE LARGE-CAP PASSES, WITH A SURVIVORSHIP CAVEAT.** Against a
+  panel-matched hold, U56's 14 4b-BOTH passes and B136's 8 ALL vanish, on the CAGR FLOOR: a
+  buy-and-hold of 49 current U56 names compounded at 24.86% (floor 17.40%) and 122 current B136
+  names at 22.25% (floor 15.58%), which 24 of 24 / 20 of 24 gross-0.60 books fail. **U56/B136 are
+  current-constituent lists, so that 24.86% is a hindsight portfolio nobody could have held** — the
+  collapse is a caveat on the yardstick, not evidence against the books, and NO bar change is
+  proposed. The SMALL leg is the defensible half precisely because it fails on both bases.
+
+  **1321 — 25 bps AND RULE 8.** At the committed SPY basis 4b BOTH runs 14 of 24 at 10 bps and
+  **12 of 24 at 25 bps** on U56, 8 and 7 on B136, 0 and 0 on SMALL663 — the family survives a 2.5x
+  cost rung and SMALL's failure is not a cost artefact. Rule 8 at every (panel, cost, basis), 12 of
+  12, 2017-2026 read ONCE: picks U56 N=5/H=63 (OOS 14.44% / 0.8963 / -21.46%, **-0.2984 of OOS
+  Sharpe against the N15/H126 anchor's 1.1947**), B136 N=5/H=63 (16.43% / 0.9095 / -23.42%,
+  **-0.1360**), SMALL663 N=15/H=252 (10.74% / 0.7328 / -33.11%, +0.2675 but fails the OOS Sharpe leg
+  and the cap). **0 of 12 picks clear 4b on either basis at either rung; 4a is 0 of 288 scorings.**
+  Across both runs the IS-Sharpe chooser buys N=5 concentration and pays for it in OOS drawdown on
+  exactly the two panels that pass: **what passes 4b is the cell nobody had to choose.**
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 / SMALL663 are current-constituent lists; SMALL663 is a
+  sub-$2B screen carried back to 2010, so every absolute SMALL number is biased UP — which makes
+  both KILLs stronger, not weaker.
+
 - 2026-09-18 (lane C, idea 1297 does-a-VOL-TARGETED-GROSS-clear-the-same-MaxDD-CAP-more-cheaply-than-a-BRAKE)
   — **VERDICT: KILL (capital) for the overlay — no RULES change; KEEP-4b RE-CONFIRMATION of the
   FLAT incumbent on U56, full sample AND rule-8 OOS** (memo written). SELECTION: 1297 is the
