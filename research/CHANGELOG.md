@@ -3565,3 +3565,43 @@ rather than a lookalike.
   with 52 of 715 names dropped on max_1d_move >= 1.0. Every level is an UPPER bound. The gap results
   are differences of the same statistic on the same book under two aggregations and are first-order
   immune to a level bias; the capital arm's OOS levels are not, and are quoted as upper bounds.
+
+## 2026-09-18 (cloud, idea 2 of 2) — idea 1147, are the H and CADENCE argmaxes waiting on data that cannot help? ANSWERED / KILL (capital)
+- THE ZERO READING, TESTED HEAD-ON. A circular block-bootstrap null of "every rung is the same book"
+  (63d blocks, 400 reps, seed 1147) is DECISIVE at 0 of 18 (panel, ladder, stat) cells. p runs
+  0.1675..0.9700, median 0.5788, and the OBSERVED rung gap sits BELOW the null's MEDIAN gap in 16 of
+  18 cells — U56/H/Sharpe observed 0.0325 against a null median of 0.0887 (p 0.9700). The ladders do
+  not merely fail to separate: the null OVER-PRODUCES the gap they show. That is a zero, not a
+  sample-size complaint.
+- 1140'S BYCATCH REPLICATES AND A LONGER TAPE MAKES IT WORSE. b(RATIO) <= 0 at 11 of 18 cells, median
+  -0.0956 (1140 read -0.1251 on the mover ladders); median b(GAP) -0.2259 against median b(SD)
+  -0.3203. Strongest on SMALL663's H ladder: b(RATIO) -0.6547 (Sharpe) / -0.7267 (CAGR). RATIO at the
+  full tape is <= 2 at 18 of 18 cells, median 0.8829; the best cell in the run is B136/CADENCE/CAGR
+  at 1.9357.
+- QUALIFIES 1140: THE TWO LADDERS ARE NOT THE SAME OBJECT. On the H ladder b(GAP) is negative at 6 of
+  9 cells, but on the CADENCE ladder it is POSITIVE on U56 and B136 (CAGR +0.5389 / +0.2026, Sharpe
+  +0.1995 / +0.1018), so cadence's resolution GROWS with tape. H is un-resolvable; CADENCE is merely
+  not there yet. A blanket "the rung effect is zero" over-reads the evidence.
+- CAPITAL ARM (rule 8, OOS read once) — KILL. ARGMAX chooser (best H rung and best cadence rung on
+  2009-2016) minus ZERO chooser (the standing default H=1, weekly), read once on 2017-2026:
+  d(OOS Sharpe) mean +0.0144, SE 0.0189, t +0.76, n=9 — indistinguishable from zero; d(OOS CAGR)
+  +0.0154; d(OOS MaxDD) -0.0425, NEGATIVE in 8 of 9 cells. The argmax pick differs from the default
+  in 8 of 9 cells, so it is a genuinely different book and not a better one. Levels: U56
+  ARGMAX(H=63,M) 22.98% / 1.1093 / -33.18% vs ZERO 21.42% / 1.1391 / -27.24%; B136 ARGMAX(H=63,M)
+  23.47% / 1.0166 / -35.27% vs ZERO 19.26% / 0.9256 / -31.03%; SMALL663 ARGMAX(H=21,W) 17.79% /
+  0.6911 / -44.08% vs ZERO 19.38% / 0.7358 / -39.01%. SPY OOS 15.28-15.33% / 0.8745-0.8767 / -33.72%;
+  RULES v2 OOS Sharpe 1.2778 / 1.1059 / 0.5600.
+- KEEP PATHS over all 18 OOS grid points: 4b 0, 4a 0. Binding leg is the DD cap, failing at 18 of 18
+  (L_H2 6, L_H1 0, L_CAGR 0) — the same leg that binds the incumbent MOM20 book, and the H overlay's
+  only reliable effect is to deepen it.
+- RECOMMENDED TO THE SUNDAY REVIEW, PUBLISHING ONLY (changes no book): a committed H argmax, tie-set
+  or floor claim must be published as ZERO, not as "under-powered at this sample length"; a CADENCE
+  argmax may still be published as under-powered but must quote its ratio (best in the record: 1.94).
+- NOT CLAIMED: that H and cadence are interchangeable in cost. The DAILY rung is plainly worse
+  everywhere (U56 full-tape Sharpe 1.0122 vs weekly 1.1266; SMALL663 0.5024 vs 0.7464). The zero
+  reading is about the argmax WITHIN the ladder, not about its endpoints.
+- Script: research/backtests/2026-09-18_H-and-cadence-argmax-waiting-on-data_cloud.py
+- SURVIVORSHIP (rule 9): U56/B136 are current-constituent lists; SMALL663 is a current sub-$2B screen
+  with 52 of 715 names dropped on max_1d_move >= 1.0. Every LEVEL is an UPPER bound. The gap and
+  ratio results are BETWEEN rungs of the same panel and are first-order immune to a level bias; the
+  capital arm's OOS levels are not, and are quoted as upper bounds.
