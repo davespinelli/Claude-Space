@@ -2523,3 +2523,55 @@ rather than a lookalike.
   names later delisted, so the anchor's drawdown is FLATTERED: this mechanism's DD gain is a LOWER
   bound and the CAGR it gives up is measured against a flattered comparand. The headline contrast
   (targeted vs gross-matched control on identical holdings) is first-order immune; the 4b legs are not.
+## 2026-09-18 — research (lane B, idea 1262): an explicit DRAWDOWN BRAKE on the binding 4b DD leg — KILL (capital), nothing parked
+- NO RULES CHANGE, NO NEW BOOK, NO MEMO. 144 published cells: TRIGGER {OFF, 0.05, 0.10, 0.15, 0.20, 0.25}
+  x DEGROSS {0.25, 0.50, 0.75, 1.00} on U56 / B135 / SMALL663 x COMPOSITE3 / M12_1.
+  gross(t) = 0.75 x (1 - DEGROSS) if the FROZEN book's own equity drawdown at t-1 is at or below
+  -TRIGGER, else 0.75; read at the decision close and applied at t+1; no hysteresis band and no
+  minimum duration (either would be a third parameter, rule 4), gross never above the anchor's 0.75.
+  Gates 11 of 11, including the vintage-pinned replay of the committed U56 anchors to 5.97e-05
+  (COMPOSITE3) and 2.26e-05 (M12_1).
+- 4b's DD LEG IS A *MOMENT*; A BRAKE CAN ONLY ACT ON A *STATE*. On U56/M12_1 — 1257's higher-return
+  book, disqualified by 1.45pp of drawdown and nothing else — the -20.58% trough (2018-12-24) is ONE
+  DAY OF 4,447 and ZERO OF 922 REBALANCE DECISION DATES. TRIGGER 0.20 and 0.25 therefore have
+  brake_share 0.0000 and are BIT-IDENTICAL to do-nothing at 8 of 8 U56 cells. Every brake shallow
+  enough to fire (0.05-0.15) fires in drawdowns that NEVER SET THE MAXIMUM: it pays CAGR for 22-26%
+  of weeks to be flat for the one week that counts, and cannot be at the trough that matters.
+- AGAINST ITS OWN GROSS-MATCHED CONTROL IT IS A DRAG AND A COIN FLIP ON DRAWDOWN. Over the 120 braked
+  cells, braked minus constant gross held at that cell's OWN realised mean gross: d_CAGR -1.36pp,
+  d_Sharpe -0.0833 (POSITIVE AT 2 OF 120), d_OOS_Sharpe -0.0967 (3 of 120), d_MaxDD -0.35pp and
+  POSITIVE AT ONLY 52 OF 120 — worse than chance at the one thing the clause exists to do, and worse
+  than 1263's vol targeting (+1.18pp, 60 of 108). Plain flat controls clear 4b at 41 of 144 against
+  the braked cells' 38: DE-GROSSING FLAT PASSES 4b MORE OFTEN THAN BRAKING DOES. 16 cells convert a
+  committed 4b FAIL and 6 of the 16 are reproduced by the flat control, i.e. no timing at all.
+- PRE-DECLARED OUTCOME (D) FIRES ON THE DEGROSS DIAL. d_MaxDD runs +0.88 / +1.41 / -0.16 / -3.52pp at
+  DEGROSS 0.25 / 0.50 / 0.75 / 1.00 and d_Sharpe -0.0198 / -0.0517 / -0.0992 / -0.1626: going FULLY
+  FLAT while braked makes realised drawdown 3.52pp WORSE than simply holding less stock all the time.
+  The brake sells the bottom and buys the recovery back higher. (A) fires at the deep triggers, (C) at
+  the shallow ones. A gate bug was found and fixed rather than loosened: G5's first version shocked
+  200 rebalance rows at once, letting an earlier shock contaminate a later row's legitimate t-1
+  decision date; rewritten one row at a time it passes at 0.000e+00 and is checked non-vacuous.
+- RULE 8 ASKS FOR NO BRAKE AT ALL, AND THE REFUSAL IS EXACTLY WHERE THE MECHANISM'S ONLY WINS LIVE.
+  (TRIGGER, DEGROSS) chosen on warm-up..2016-12-31 by IS Sharpe, 2017-2026 read ONCE: the IS-argmax is
+  TRIGGER OFF at 5 of 6 arms with delta EXACTLY +0.0000, and the one arm that picks a brake
+  (B135/M12_1, 0.05/0.50) loses -0.0401 of OOS Sharpe while buying its 4b pass by giving up return
+  (0.9603 vs the anchor's 1.0004). Mean -0.0067, beats do-nothing at 0 of 6. 4a 0 of 144, failing on
+  the DD leg at 144 of 144. NOTHING IS PARKED: the 3 cells that beat their control on BOTH DD and OOS
+  Sharpe are all U56/COMPOSITE3/TRIGGER 0.05 and all have IS Sharpe BELOW do-nothing (1.0935 / 1.0421
+  / 0.9538 vs 1.1158) — an out-of-sample-only edge at 3 of 120 cells is what chance produces, and
+  parking it would dress three lucky cells as a finding.
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: ALL THREE MECHANISMS FOR BUYING THE BINDING 4b DD LEG
+  ARE NOW PRICED AND ALL THREE FAIL — inverse-vol slot sizing (1264: rule 8 picks equal weight),
+  portfolio vol targeting (1263: half the conversions are flat de-grossing) and the explicit drawdown
+  brake (1262: blind to the only drawdown that matters). The standing diagnosis should change from
+  "the DD cap refuses available return" to "the DD cap refuses available return AND EVERY RISK CLAUSE
+  THAT WOULD SATISFY IT COSTS MORE RETURN THAN IT SAVES, at 10 bps, on this tape." The mechanism side
+  is exhausted; the open question is whether a -20.23% cap read off a single-day trough is the bar
+  (1259's and 1265's questions).
+- Script: research/backtests/2026-09-18_does-an-explicit-DRAWDOWN-BRAKE-buy-the-BINDING-4b-DD-LEG-on-the-HIGHER-RETURN-BOOK_B.py
+- SURVIVORSHIP (rule 9): U56/B135 current-constituent lists, SMALL663 a current sub-$2B screen (52 of
+  715 dropped). A current-constituent panel UNDERSTATES the deep drawdowns a momentum book took in
+  names later delisted, so the anchor's drawdown is FLATTERED, the day-count table would show more
+  days below -20% on a live panel, and this mechanism's DD gain is a LOWER bound while the CAGR it
+  gives up is measured against a flattered comparand. The headline contrast (braked vs gross-matched
+  control on identical holdings) is first-order immune; the 4a/4b legs are not.
