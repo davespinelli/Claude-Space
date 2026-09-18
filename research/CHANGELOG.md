@@ -4552,3 +4552,59 @@ rather than a lookalike.
   **worst on SMALL** — small caps delist and go bankrupt far more often than mega caps — so
   SMALL's readings here are an **upper bound** on what the recipe would have earned and the KILL
   is the stronger reading, not the weaker one. No cell's level is a live expectancy.
+
+## 2026-09-18 — idea 978 (lane cloud): the WEIGHTING CONVENTION flips 96 of 325 pooled CONCLUSIONS, and it BUYS A DIFFERENT BOOK
+- **ANSWERED (C) LOAD-BEARING IN MONEY, and the SEVEN standing SKIPs are OVERTURNED, not repeated.**
+  978 was skipped seven times for having "no capital book to price". It has one: a pooled share is
+  how the record says which CELL its evidence supports, and 45 committed (panel, n, gross, pass4b)
+  artifacts name rebuildable books. Both currencies are reported below.
+- **THE CENSUS (7,000 committed csv artifacts; 3,882 carry a boolean statistic).** 4,356 distinct
+  statistics over 31.4M committed rows. **96 of 325** statistics pooled over >= 5 artifacts
+  (**29.54%**) land on OPPOSITE sides of a frozen decision bar {0.25, 0.50, 0.75} under row- vs
+  file-weighting. The record's most-pooled statistic, `pass4b` (751 files, 1.38M rows), reads
+  **0.1249 row-weighted against 0.1932 file-weighted** — a 6.83 pp gap and a **55% relative
+  inflation** of the record's headline 4b pass rate, with no bar crossed. Largest movers among
+  statistics in >= 10 files: `strict` 0.8361 -> 0.3638 (47.24 pp, crosses 0.50 AND 0.75), `passed`
+  0.4403 -> 0.8315 (39.11), `WIDE` 0.3365 -> 0.6859 (34.94), `a_dd` 0.4283 -> 0.1170 (31.13),
+  `leg_DD` 0.2646 -> 0.5673 (30.27), **`beats_spy` 0.2884 -> 0.5379** (a MINORITY of the record's
+  cells beating SPY becomes a MAJORITY) and **`OOS_4b` 0.0712 -> 0.3156** (one cell in fourteen
+  becomes one in three).
+- **973's 10 pp GAP BAR IS THE WRONG TRIGGER, at every claim set.** All 25 dial cells published
+  (CLAIM SET MINFILES {2,5,10,25,50} x BAR {5,10,15,20,25} pp). At MINFILES=5, 97 statistics
+  qualify at 973's bar and 96 flip a conclusion, but only **69 are in both sets**: **27 conclusions
+  flip on a gap SMALLER than 10 pp** while **28 qualify without their conclusion moving**. A share
+  sitting near a bar needs very little to cross it, so a gap in pp cannot be the trigger for a
+  clause about conclusions.
+- **PROPOSED CLAUSE (978's deliverable), for the Sunday review — PROTOCOL only, no code change.**
+  *A committed pooled share must state its WEIGHTING, and where the two weightings fall on opposite
+  sides of the bar the claim is making, both figures.* Triggered by crossing the claim's own bar,
+  never by a fixed gap in pp.
+- **THE CAPITAL ARM, WHICH IS THE POINT: THE CONVENTION BUYS A DIFFERENT BOOK AND THE OTHER ONE
+  FAILS 4b.** 45 keyed artifacts, 17,309 committed cell-rows after canonicalising the panel column
+  (2,315 rows dropped — those files use `panel` for something else), 601 distinct cells, 3..3,960
+  rows per file; cell-support gap mean 2.94 pp, **max 68.24 pp**, > 10 pp on 50 of 601. Each
+  convention's argmax cell was REBUILT here as a real book. **B136 at >= 10 files: ROW nominates
+  N=40 / g=1.00 (20.47% / 1.0902 / -32.73%, 4b FAIL); FILE nominates N=20 / g=0.65 (14.03% /
+  1.0714 / -18.15%, 4b PASS).** **B136 at >= 25 files: ROW N=20 / g=0.75 (16.20% / 1.0721 /
+  -20.74%, 4b FAIL); FILE N=10 / g=0.75 (18.54% / 1.0671 / -20.20%, 4b PASS).** Both differences
+  run the same way — row weighting buys the bigger, more levered cell and dies on the drawdown cap.
+  U56 and SMALL agree at every claim set; at >= 10 files U56 nominates the standing certified
+  N=20 / g=0.65 under BOTH conventions.
+- **RULE 8, 2017-2026 READ ONCE, on this run's OWN grid so nothing is contaminated.** IS-only
+  chooser (1290's; warm-up..2016-12-31; ties to lower gross then lower N) on a freshly built
+  N {5..30} x GROSS {0.55..0.85} grid: U56 **N=15 / g=0.60, OOS 15.14% / 1.1952 / -16.38%, 4b
+  PASS**; B136 N=25 / g=0.60, OOS 13.39% / 1.0629 / -17.56%, 4b PASS; SMALL N=30 / g=0.55, OOS
+  5.22% / 0.4517 / -27.72%, 4b FAIL. SPY OOS 15.28% / 0.8745 / -33.72%; RULES v2 OOS 9.47% /
+  1.2778 / -12.05%. 4b PASS U56 21/42, B136 19/42, SMALL 0/42; **4a PASS 0 of 126**.
+- **CONTAMINATION, STATED AS A LIMIT ON THE NOMINATIONS.** The committed rows the capital arm
+  nominates from were produced by runs that had already read 2017-2026, so **no nominated cell's
+  OOS number is a walk-forward result**. What is clean is the DIFFERENCE between the two
+  conventions — 978's whole object, invariant to that contamination — and the rule-8 arm above.
+- **NOT CLAIMED:** that either weighting is the RIGHT one; that any cell here is a new candidate
+  book; that the two B136 flips are the only ones the record contains (601 cells were keyable, the
+  record makes more claims than that); that anything in RULES.md changes (rule 6).
+  Script: research/backtests/2026-09-18_do-the-record-s-CROSS-ARTIFACT-SHARES-change-any-VERDICT-under-FILE-weighting_cloud.py
+- **SURVIVORSHIP (rule 9):** current constituents only on all three panels (SMALL with
+  max_1d_move >= 1.0 dropped). This flatters every book here and the drawdown leg specifically. The
+  bias is common to both weighting conventions and cannot manufacture a DIFFERENCE between them,
+  but no cell's level is a live expectancy.
