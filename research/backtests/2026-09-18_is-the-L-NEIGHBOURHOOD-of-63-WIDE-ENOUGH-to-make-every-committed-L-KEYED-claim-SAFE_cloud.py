@@ -551,6 +551,7 @@ def main():
         gate("G6", f"all {len(cols)} outputs replay 1242's committed rows bit for bit "
                    f"({len(mg)} of {len(ref)} rows)", dev, dev == 0.0 and len(mg) == len(ref))
     else:
+        mg = pd.DataFrame()
         gate("G6", "1242's committed outputs.csv present for the row-by-row replay", 1.0, False)
     reach_by_L = odf.groupby("L", sort=False).O_REACH.sum()
     gate("G7", f"reach = {C1208_REACH} of 72 at EVERY rung incl. the 10 NEW ones",
@@ -558,6 +559,46 @@ def main():
     rate_by_L = odf.groupby("L", sort=False).B_RESOLVED.mean()
     dev_rates = max(abs(float(rate_by_L.loc[L]) - v) for L, v in C1208_RATES.items())
     gate("G8", "1208's resolution rates at L = 21 / 63 / 252 replay", dev_rates, dev_rates < 1e-6)
+
+    # ---- G6/G7/G8 DECOMPOSED.  The pooled replay gates above are EXPECTED to fail and are kept
+    # failing rather than relaxed: this lane's SMALL panel is the 663-name max_1d_move-filtered one
+    # (mandated), 1242's was the unfiltered 715-name panel — 1272's finding, restated here as a
+    # measurement.  These sub-gates locate the failure instead of excusing it.
+    if ref_p.exists():
+        cols_all = [c for c in OUTPUTS if f"{c}_r" in mg.columns]
+        devs = {}
+        for pan in PANELS:
+            sub = mg[mg.panel == pan]
+            devs[pan] = max(float(np.nanmax(np.abs(sub[f"{c}_r"] - sub[f"{c}_m"]))) for c in cols_all)
+            P(f"  replay deviation on {pan:<6s}: {devs[pan]:.4e}  ({len(sub)} rows)")
+        gate("G6a", "B136 (weekly-cached tape, same panel) replays 1242 BIT FOR BIT",
+             devs["B136"], devs["B136"] == 0.0)
+        mgx = mg[mg.L != "T"]
+        u = mgx[mgx.panel == "U56"]
+        devu = max(float(np.nanmax(np.abs(u[f"{c}_r"] - u[f"{c}_m"]))) for c in cols_all)
+        P(f"  U56 replay deviation OFF the degenerate rung L = T: {devu:.4e}")
+        gate("G6b", "U56 replays 1242 to the daily tape restatement (< 5e-5) once L = T is dropped",
+             devu, devu < 5e-5)
+        movers = mg[np.abs(mg.O_PICK_r - mg.O_PICK_m) > 0][["panel", "anchor", "ladder", "chooser"]].drop_duplicates()
+        n_small = int((movers.panel == "SMALL").sum())
+        P(f"  decisions whose PICK differs from 1242: {len(movers)} of 72, all on SMALL: "
+          f"{bool(len(movers) == n_small)}")
+        for _, r in movers.iterrows():
+            P(f"    {r.panel:<6s} {r.anchor} {r.ladder:<8s} {r.chooser}")
+        gate("G6c", "every pick that differs from 1242 is a SMALL decision (the panel-filter split)",
+             float(len(movers) - n_small), len(movers) == n_small)
+        u2 = mgx[mgx.panel.isin(["U56", "B136"])]
+        tie = mg[(mg.L == "T") & (np.abs(mg.B_PCTRANK_r - mg.B_PCTRANK_m) > 0.5)]
+        P(f"  TIE-SENSITIVITY, a finding about the record rather than about this run: at the")
+        P(f"  degenerate rung L = T every draw reproduces the observed path, so B_PCTRANK and")
+        P(f"  B_GAPEXCEEDS are decided on exact equality — a 1e-6 tape restatement flips")
+        P(f"  B_PCTRANK between 0 and 1 on {len(tie)} U56 rows.  No other rung is tie-decided.")
+    rate_u = odf[odf.panel.isin(["U56", "B136"])].groupby("L", sort=False).B_RESOLVED.mean()
+    P(f"  reach per rung in THIS run (the L-freeness claim itself): "
+      f"{sorted(set(int(v) for v in reach_by_L))} — constant across all {len(L_ALL)} rungs: "
+      f"{bool(reach_by_L.nunique() == 1)}")
+    gate("G7a", "reach is CONSTANT across all 22 rungs (the L-free claim, panel level aside)",
+         float(reach_by_L.nunique() - 1), int(reach_by_L.nunique()) == 1)
 
     # --------------------------------------------------------- ARM 3: the seed noise yardstick
     P("")
