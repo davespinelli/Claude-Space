@@ -1,0 +1,191 @@
+====================================================================================================
+IDEA 1290 (lane cloud, 2026-09-18) — does the 4b MaxDD CAP and CAGR FLOOR have a JOINT
+MARGIN ARGMAX in GROSS, and is that argmax the SAME IN-SAMPLE AS OUT?
+====================================================================================================
+
+  DIALS (2, rule 4): GROSS 0.2..1.0 step 0.05 (17 rungs)
+                     x PANEL {U56, B136, SMALL}.  All 51 cells published.
+  FROZEN: N=20, H=126, weekly (Fri decision), t+1 application, 10 bps,
+          above-200d & vol20<0.60, equal weights, 260-row warm-up, cash at 0%.
+  J(w,g) := min(dd_margin, cagr_margin) in pp on window w; g*(w) := argmax_g J(w,g).
+  OUTCOMES: (A) STABLE within one rung  (B) MOVES  (C) DEGENERATE (no rung has J>0).
+
+  PANELS: U56 55 investable; B136 135; SMALL 663 (52 dropped for max_1d_move >= 1.0). SPY = benchmark only.
+
+====================================================================================================
+ARM A — BENCHMARKS (post-warm-up, 10 bps, weekly for the live book)
+====================================================================================================
+
+  panel  series                     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR   OOS Sh   OOS DD
+  U56    SPY (buy & hold)         15.13%   0.8848  -33.72%  0.9598  0.8234    15.28%   0.8745  -33.72%
+  U56    RULES v2 (live book)      8.62%   1.2017  -12.05%  1.2329  1.1771     9.47%   1.2778  -12.05%
+  B136   SPY (buy & hold)         15.16%   0.8861  -33.72%  0.9596  0.8259    15.33%   0.8767  -33.72%
+  B136   RULES v2 (live book)      7.98%   1.0993  -12.24%  1.2348  0.9658     7.88%   1.1059  -12.24%
+  SMALL  SPY (buy & hold)         14.06%   0.8581  -33.72%  0.9138  0.8344    15.33%   0.8767  -33.72%
+  SMALL  RULES v2 (live book)      4.64%   0.7129  -12.18%  0.8168  0.6424     4.47%   0.6516  -12.18%
+
+  Note: the 4b bar moves with the panel because SPY's window is the panel's own dates.
+
+====================================================================================================
+ARM B — THE ANCHOR CHECK: (U56, N=20, gross 0.75, Fri, t+1) against the committed
+incumbent 15.79% / 1.1529 / -19.13%, OOS 17.30% / 1.1837 (ideas 1287 / 1292)
+====================================================================================================
+
+  stat           this run    committed         diff
+  CAGR             0.1579       0.1579     3.77e-05
+  Sharpe           1.1529       1.1529    -3.90e-05
+  MaxDD           -0.1913      -0.1913     1.09e-05
+  OOS_CAGR         0.1730       0.1730    -2.36e-05
+  OOS_Sharpe       1.1837       1.1837     1.44e-05
+
+  ANCHOR REPRODUCES: YES (all five within 5e-4). 4b at the anchor: PASS; 4a: FAIL.
+
+====================================================================================================
+ARM C — THE GROSS LADDER, every rung, every panel (all 51 cells; .grid.csv has all
+windows).  dd/cg/J in pp on the FULL sample; J>0 iff both non-Sharpe 4b legs clear.
+====================================================================================================
+
+  --- U56 ------------------------------------------------------------------------------------
+   gross     CAGR   Sharpe    MaxDD  turn/yr   ddFULL   cgFULL   J_FULL     J_IS    J_OOS  4a  4b
+    0.20    4.16%   1.1509   -5.38%     0.77    14.85    -6.43    -6.43    -6.77    -6.16   .   .
+    0.25    5.21%   1.1511   -6.69%     0.96    13.54    -5.39    -5.39    -5.84    -5.01   .   .
+    0.30    6.26%   1.1513   -7.99%     1.15    12.24    -4.34    -4.34    -4.91    -3.86   .   .
+    0.35    7.31%   1.1515   -9.27%     1.33    10.96    -3.28    -3.28    -3.97    -2.71   .   .
+    0.40    8.36%   1.1517  -10.55%     1.51     9.68    -2.23    -2.23    -3.04    -1.56   .   .
+    0.45    9.42%   1.1519  -11.81%     1.69     8.42    -1.17    -1.17    -2.10    -0.40   .   .
+    0.50   10.48%   1.1521  -13.05%     1.87     7.18    -0.11    -0.11    -1.17     0.76   .   .
+    0.55   11.54%   1.1523  -14.29%     2.05     5.94     0.95     0.95    -0.23     1.93   .   Y
+    0.60   12.60%   1.1524  -15.51%     2.23     4.72     2.01     2.01     0.71     3.09   .   Y
+    0.65   13.66%   1.1526  -16.73%     2.41     3.50     3.07     3.07     1.10     3.50   .   Y
+    0.70   14.73%   1.1527  -17.93%     2.59     2.30     4.13     2.30     0.19     2.30   .   Y
+    0.75   15.79%   1.1529  -19.13%     2.77     1.10     5.20     1.10    -0.71     1.10   .   Y <-inc
+    0.80   16.86%   1.1530  -20.31%     2.94    -0.08     6.27    -0.08    -1.61    -0.08   .   .
+    0.85   17.93%   1.1531  -21.48%     3.12    -1.25     7.33    -1.25    -2.50    -1.25   .   .
+    0.90   18.99%   1.1532  -22.64%     3.31    -2.41     8.40    -2.41    -3.39    -2.41   .   .
+    0.95   20.06%   1.1533  -23.79%     3.49    -3.56     9.47    -3.56    -4.28    -3.56   .   .
+    1.00   21.13%   1.1533  -24.93%     3.67    -4.70    10.53    -4.70    -5.16    -4.70   .   .
+
+  --- B136 ------------------------------------------------------------------------------------
+   gross     CAGR   Sharpe    MaxDD  turn/yr   ddFULL   cgFULL   J_FULL     J_IS    J_OOS  4a  4b
+    0.20    4.29%   1.0674   -5.84%     0.87    14.39    -6.32    -6.32    -6.24    -6.39   .   .
+    0.25    5.37%   1.0678   -7.26%     1.09    12.97    -5.25    -5.25    -5.17    -5.31   .   .
+    0.30    6.45%   1.0683   -8.67%     1.30    11.56    -4.17    -4.17    -4.11    -4.22   .   .
+    0.35    7.53%   1.0688  -10.07%     1.50    10.16    -3.09    -3.09    -3.04    -3.13   .   .
+    0.40    8.61%   1.0692  -11.45%     1.71     8.78    -2.00    -2.00    -1.96    -2.04   .   .
+    0.45    9.69%   1.0697  -12.82%     1.92     7.41    -0.92    -0.92    -0.89    -0.95   .   .
+    0.50   10.78%   1.0701  -14.17%     2.12     6.06     0.16     0.16     0.19     0.14   .   Y
+    0.55   11.86%   1.0705  -15.51%     2.33     4.72     1.25     1.25     1.27     1.23   .   Y
+    0.60   12.94%   1.0710  -16.84%     2.53     3.39     2.33     2.33     1.46     2.31   .   Y
+    0.65   14.03%   1.0714  -18.15%     2.73     2.08     3.41     2.08     0.51     2.08   .   Y
+    0.70   15.11%   1.0718  -19.45%     2.93     0.78     4.50     0.78    -0.45     0.78   .   Y
+    0.75   16.20%   1.0721  -20.74%     3.14    -0.51     5.58    -0.51    -1.39    -0.51   .   . <-inc
+    0.80   17.28%   1.0725  -22.01%     3.34    -1.78     6.67    -1.78    -2.34    -1.78   .   .
+    0.85   18.36%   1.0729  -23.27%     3.54    -3.04     7.75    -3.04    -3.28    -3.04   .   .
+    0.90   19.45%   1.0732  -24.52%     3.75    -4.29     8.83    -4.29    -4.22    -4.29   .   .
+    0.95   20.53%   1.0736  -25.75%     3.96    -5.52     9.91    -5.52    -5.15    -5.52   .   .
+    1.00   21.60%   1.0739  -26.97%     4.17    -6.74    10.99    -6.74    -6.08    -6.74   .   .
+
+  --- SMALL ------------------------------------------------------------------------------------
+   gross     CAGR   Sharpe    MaxDD  turn/yr   ddFULL   cgFULL   J_FULL     J_IS    J_OOS  4a  4b
+    0.20    2.36%   0.5056  -10.65%     1.09     9.58    -7.48    -7.48    -5.79    -8.53   .   .
+    0.25    2.93%   0.5058  -13.18%     1.36     7.05    -6.92    -6.92    -5.15    -8.02   .   .
+    0.30    3.48%   0.5061  -15.67%     1.63     4.56    -6.36    -6.36    -4.52    -7.51   .   .
+    0.35    4.02%   0.5063  -18.10%     1.89     2.13    -5.82    -5.82    -3.90    -7.02   .   .
+    0.40    4.55%   0.5066  -20.48%     2.16    -0.25    -5.29    -5.29    -3.28    -6.55   .   .
+    0.45    5.06%   0.5068  -22.81%     2.42    -2.58    -4.78    -4.78    -4.65    -6.09   .   .
+    0.50    5.57%   0.5070  -25.10%     2.68    -4.86    -4.27    -4.86    -6.29    -5.64   .   .
+    0.55    6.06%   0.5073  -27.33%     2.94    -7.10    -3.78    -7.10    -7.90    -7.10   .   .
+    0.60    6.54%   0.5075  -29.52%     3.20    -9.29    -3.30    -9.29    -9.49    -9.29   .   .
+    0.65    7.00%   0.5077  -31.66%     3.46   -11.43    -2.84   -11.43   -11.05   -11.43   .   .
+    0.70    7.45%   0.5079  -33.76%     3.72   -13.53    -2.39   -13.53   -12.59   -13.53   .   .
+    0.75    7.89%   0.5081  -35.81%     3.98   -15.58    -1.95   -15.58   -14.11   -15.58   .   . <-inc
+    0.80    8.32%   0.5084  -37.82%     4.25   -17.59    -1.52   -17.59   -15.61   -17.59   .   .
+    0.85    8.73%   0.5086  -39.78%     4.51   -19.55    -1.11   -19.55   -17.08   -19.55   .   .
+    0.90    9.12%   0.5088  -41.70%     4.77   -21.47    -0.72   -21.47   -18.53   -21.47   .   .
+    0.95    9.51%   0.5090  -43.58%     5.04   -23.35    -0.33   -23.35   -19.96   -23.35   .   .
+    1.00    9.87%   0.5092  -45.42%     5.31   -25.19     0.03   -25.19   -21.37   -25.19   .   .
+
+  LADDER-WIDE: 4b passes 10 of 51 cells; 4a passes 0 of 51.
+  4b by panel: U56: 5/17, B136: 5/17, SMALL: 0/17.
+
+  WHICH LEG BINDS over the 41 failing cells of 51:
+  leg            fails    share  SOLE binder
+  H1 Sharpe         17   0.4146            0
+  H2 Sharpe         17   0.4146            0
+  OOS Sharpe        17   0.4146            0
+  MaxDD cap         24   0.5854           11
+  CAGR floor        29   0.7073           13
+
+====================================================================================================
+ARM D — THE JOINT ARGMAX, window by window.  g*(w) = argmax_g J(w,g), ties to the
+LOWER gross.  'defined' means max_g J(w,g) > 0, i.e. some rung clears both legs.
+====================================================================================================
+
+  panel         g*/J FULL          g*/J H1          g*/J H2          g*/J IS         g*/J OOS
+  U56      0.65 /    3.07   0.65 /    1.10   0.65 /    3.50   0.65 /    1.10   0.65 /    3.50
+  B136     0.60 /    2.33   0.55 /    2.27   0.65 /    2.08   0.60 /    1.46   0.60 /    2.31
+  SMALL    0.45 /   -4.78   0.40 /   -3.58   0.50 /   -6.24   0.40 /   -3.28   0.50 /   -5.64
+
+  panel  defined FULL   defined H1   defined H2   defined IS  defined OOS   interior maxima
+  U56             YES          YES          YES          YES          YES   FULL,H1,H2,IS,OOS
+  B136            YES          YES          YES          YES          YES   FULL,H1,H2,IS,OOS
+  SMALL            no           no           no           no           no   FULL,H1,H2,IS,OOS
+
+====================================================================================================
+ARM E — IS THE ARGMAX THE SAME IN-SAMPLE AS OUT?  Rung distance and OOS REGRET.
+====================================================================================================
+
+  panel   g*(IS)  g*(OOS)  rungs  J_OOS@IS  J_OOS@OOS  regret pp  g=0.75 regret  rho(J_IS,J_OOS)
+  U56       0.65     0.65      0      3.50       3.50       0.00          -2.40           1.0000
+  B136      0.60     0.60      0      2.31       2.31       0.00          -2.82           0.9828
+  SMALL     0.40     0.50      2     -6.55      -5.64      -0.91          -9.94           0.9093
+
+  Read: regret is NEGATIVE by construction (the OOS argmax maximises J_OOS); its SIZE
+  in pp is what choosing gross in-sample costs on the untouched window.  A rung
+  distance of 0-1 with small regret is outcome (A); anything larger is (B).
+
+====================================================================================================
+ARM F — RULE 8 WALK-FORWARD: gross chosen on warm-up..2016 ONLY, 2017-2026 read ONCE
+====================================================================================================
+
+  CHOOSER (declared in the header): argmax_g J(IS, g), ties to the LOWER gross.
+  COMPARANDS, also IS-only: argmax_g IS Sharpe; and the frozen incumbent g=0.75.
+
+  panel  chooser                      g  OOS CAGR   OOS Sh   OOS DD    J_OOS  >SPY?  4b full
+  U56    JOINT-MARGIN (this run)   0.65    14.95%   1.1833  -16.73%     3.50    YES     PASS
+  U56    IS-SHARPE-MAX             1.00    23.18%   1.1845  -24.93%    -4.70    YES     FAIL
+  U56    INCUMBENT g=0.75          0.75    17.30%   1.1837  -19.13%     1.10    YES     PASS
+  B136   JOINT-MARGIN (this run)   0.60    13.04%   1.0231  -16.84%     2.31    YES     PASS
+  B136   IS-SHARPE-MAX             1.00    21.68%   1.0266  -26.97%    -6.74    YES     FAIL
+  B136   INCUMBENT g=0.75          0.75    16.30%   1.0245  -20.74%    -0.51    YES     FAIL
+  SMALL  JOINT-MARGIN (this run)   0.40     4.18%   0.4527  -20.48%    -6.55     no     FAIL
+  SMALL  IS-SHARPE-MAX             1.00     8.72%   0.4553  -45.42%   -25.19     no     FAIL
+  SMALL  INCUMBENT g=0.75          0.75     7.10%   0.4542  -35.81%   -15.58     no     FAIL
+
+  Same OOS window, the two things a real account is measured against:
+  panel  series                      CAGR    Sharpe     MaxDD
+  U56    RULES v2 (live)            9.47%    1.2778   -12.05%
+  U56    SPY                       15.28%    0.8745   -33.72%
+  B136   RULES v2 (live)            7.88%    1.1059   -12.24%
+  B136   SPY                       15.33%    0.8767   -33.72%
+  SMALL  RULES v2 (live)            4.47%    0.6516   -12.18%
+  SMALL  SPY                       15.33%    0.8767   -33.72%
+
+====================================================================================================
+ARM G — THE ANSWER
+====================================================================================================
+
+  OUTCOME: (A) STABLE — g*(IS) and g*(OOS) agree within one rung on every panel where J is defined on both windows.
+
+    U56    g*(IS)=0.65 g*(OOS)=0.65 (0 rungs, regret +0.00 pp, J defined IS=Y OOS=Y)
+    B136   g*(IS)=0.60 g*(OOS)=0.60 (0 rungs, regret +0.00 pp, J defined IS=Y OOS=Y)
+    SMALL  g*(IS)=0.40 g*(OOS)=0.50 (2 rungs, regret -0.91 pp, J defined IS=N OOS=N)
+
+  KEEP-4b CANDIDATE(S) from the declared chooser: U56 g=0.65 (OOS 14.95% / 1.1833 / -16.73%), B136 g=0.60 (OOS 13.04% / 1.0231 / -16.84%)
+  A memo is written for these; RULES.md is NOT touched (rule 6: Sunday review).
+
+  SURVIVORSHIP (rule 9): U56 / B136 / SMALL are CURRENT constituents; delisted and
+  bankrupt names are absent, which flatters the drawdown leg specifically. Every
+  number here is a within-grid difference on fixed panels and identical dates.
+
+  (9.7s)

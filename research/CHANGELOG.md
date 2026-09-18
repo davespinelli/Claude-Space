@@ -4290,3 +4290,41 @@ rather than a lookalike.
   measured on names that survived to be screened today, so a high-breadth window is doubly a
   survivor window. Every LEVEL is an upper bound; the quoted results are within-grid differences on
   identical panels and dates and are first-order immune.
+
+## 2026-09-18 — idea 1290 (lane cloud): the JOINT 4b MARGIN ARGMAX in GROSS
+- **ANSWERED (A) STABLE.** With the incumbent's construction frozen (N=20, H=126, weekly, Fri decision,
+  t+1, 10 bps) and gross walked 0.20→1.00 in 17 rungs on U56 / B136 / SMALL, the gross maximising
+  `J = min(4b DD-cap margin, 4b CAGR-floor margin)` is the SAME in-sample and out: U56 g*(IS) = g*(OOS)
+  = **0.65** (OOS regret 0.00 pp, rank corr of the two J profiles **1.0000** over 17 rungs); B136 **0.60
+  / 0.60** (regret 0.00 pp, rho 0.9828). It is the whole profile that is stable, not just its peak.
+- **WHY GROSS IS A LEGITIMATE SIZING DIAL.** U56 Sharpe is flat across the entire ladder (1.1509 →
+  1.1533, range 0.0024): de-grossing into cash scales returns and costs together, so gross moves only
+  the MaxDD cap and the CAGR floor, in opposite directions. Over the 41 failing cells of 51 no Sharpe
+  leg is EVER a sole binder; MaxDD is sole binder on 11 and the CAGR floor on 13.
+- **ANCHOR REPRODUCES.** (U56, N=20, g=0.75, Fri, t+1) reads 15.79% / 1.1529 / −19.13%, OOS 17.30% /
+  1.1837 — all five within 5e-4 of the committed incumbent.
+- **RULE 8, 2017-2026 READ ONCE.** A chooser that never looks at Sharpe (argmax J on warm-up..2016)
+  lands on U56 **g = 0.65**: OOS **14.95% / 1.1833 / −16.73%**, full sample 13.66% / 1.1526 / −16.73%,
+  halves 1.2130 / 1.1129, 2.41 turns/yr — the SAME cell idea 1292 reached by highest worst-case IS
+  Sharpe over its 15-point stress ensemble. Two independent choosers, one book. **KEEP-4b (U56):
+  confirmation of the standing candidate, memo written, RULES.md NOT touched (rule 6).**
+- **IS SHARPE CANNOT SIZE A BOOK.** argmax IS Sharpe picks g = **1.00** on all three panels — the highest
+  OOS Sharpe on offer (U56 1.1845) and a full-sample 4b FAIL at −24.93% MaxDD. The committed g = 0.75
+  gives up 2.40 pp of J on U56 and 2.82 pp on B136, where it fails 4b outright.
+- **B136 g = 0.60 is PARK, not KEEP.** 4b PASS on the full sample (OOS 13.04% / 1.0231 / −16.84%) but its
+  H2 Sharpe clears SPY's by only 0.8986 vs 0.8259, and it has not been run through the phase × delay
+  ensemble whose neighbours straddle it (1292: B136/N=20 robust 15/15 at g=0.55, 5/15 at g=0.65).
+- **SMALL IS DEGENERATE.** No rung has J > 0 on any window — the DD cap and the CAGR floor never clear
+  together on the sub-$2B panel — so 4b passes 0 of 17 and its argmax (0.40 IS / 0.50 OOS) certifies
+  nothing. 4a passes 0 of 51 everywhere, as in the whole family.
+- **CAVEAT AGAINST THIS RUN.** J is read here at ONE phase and ONE lag. Against 1292's 15-point ensemble
+  at N=20 the ensemble-worst J peaks at the same 0.65 on U56 but at **0.55** on B136 — so a single-point
+  joint argmax is biased HIGH in gross by up to one 0.05 rung, and should not be published without its
+  ensemble.
+- **NOT CLAIMED:** that 0.65 is optimal off the U56 panel; that the argmax is stable under a different N
+  or H (both frozen here); that anything changes in RULES.md.
+  Script: research/backtests/2026-09-18_does-the-4b-MaxDD-CAP-and-CAGR-FLOOR-have-a-JOINT-MARGIN-ARGMAX-in-GROSS_cloud.py
+- **SURVIVORSHIP (rule 9):** U56 / B136 are current-constituent hand-kept lists, SMALL a current sub-$2B
+  screen (max_1d_move ≥ 1.0 dropped). Delisted and bankrupt names are absent, which flatters momentum
+  books and the drawdown leg specifically; every J above is an upper bound. All claims are within-grid
+  differences on fixed panels and identical dates.
