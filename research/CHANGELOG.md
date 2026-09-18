@@ -109,3 +109,78 @@
   the 4-of-54 pass count is not.
 
   **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
+
+
+## 2026-09-18 — idea 904 (lane B): which committed PLACEBO numbers are below their own SEED FLOOR? **ANSWERED (almost none can be scored at all) / CAPITAL ARM KILL.**
+
+  **Why this run has a price leg.** Four lanes had skipped 904 as "a census, no book". Lane B's
+  own idea 1265 overturned that premise, so this run gave 904 a real capital arm: a placebo-
+  differenced statistic IS a selector, and the floor IS a licensing gate on it. 24 committed
+  (N,H) books per panel (N {5,10,15,20,25,30} x H {21,63,126,252}, MAXVOL 0.60, GROSS 0.75,
+  weekly, 10 bps, t+1) were scored against a gross-matched RAND null — the same machine with
+  only the ORDERING randomised — at S = 5/10/20/50 seeds, and the pick was gated on k x the
+  arm's own floor, k in {0, 0.5, 1, 2}. 48 cells, every one published.
+
+  **THE FLOOR CONSTANT IS WRONG BY A FACTOR OF 1.95.** Idea 885's arithmetic assumed
+  sigma ~ 0.067 of Sharpe. Measured here on 3,600 null books (24 arms x 50 seeds x 3 panels),
+  the per-arm null-Sharpe dispersion is **sigma_hat = 0.1307** (panel means 0.1077 U56 / 0.1086
+  B136 / 0.1759 SMALL). Every floor the record computed from 0.067 is understated about
+  two-fold, so every "this number is resolvable" claim built on it is optimistic by the same
+  factor. The typical per-arm floor is 0.0733 / 0.0518 / 0.0366 / 0.0232 of Sharpe at
+  S = 5/10/20/50, and 3 to 8 of each panel's 24 arms have a placebo excess smaller than their
+  own floor even at 50 seeds.
+
+  **THE CENSUS ANSWER — the record cannot ask 904 of itself.** Over research/backtests/*.md and
+  CHANGELOG.md (LEADERBOARD.md and QUEUE.md excluded by declaration: their 4-dp numbers are
+  Sharpe LEVELS): 306 placebo-cued sentences under the NARROW cue, of which 19 carry a >=4 dp
+  decimal, 13 are DIFFERENCES (|x| < 0.1), and **1** carries both a seed count and an arm count.
+  Under the WIDE cue: 386 -> 22 -> 17 -> **2**. So 7.7% (NARROW) / 11.8% (WIDE) of the record's
+  committed placebo-differenced numbers are scoreable against their own floor AT ALL; the rest
+  are unstamped, and imputing counts for them would be inventing the answer. Of those that can
+  be scored, 1 of 1 and 2 of 2 sit INSIDE k = 1 x their own floor. The funnel IS the finding:
+  the defect is not that the record's placebo numbers are below the floor, it is that they do
+  not carry the two integers needed to find out.
+
+  **THE CAPITAL ANSWER — KILL, on both the statistic and the gate.** Rule 8 (S, k picked on
+  warm-up..2016 by argmax IS Sharpe of the selected book; 2017-2026 read ONCE):
+  U56 S=5/k=0.0 -> (5,63), OOS 17.95% / 0.8996 / -26.26%; B136 S=10/k=0.0 -> (5,63), OOS
+  20.43% / 0.9144 / -28.62%; SMALL S=10/k=0.0 -> (10,252), OOS 17.35% / 0.8590 / -42.63%.
+  4a 0 of 48, 4b 0 of 48, OOS 4b 0 of 48 — the DD leg fails everywhere. Against the RAW
+  IS-Sharpe chooser the placebo chooser wins 16 of 48 cells OOS, and all 16 are SMALL
+  (0 of 16 on U56, 0 of 16 on B136).
+
+  **THE FLOOR GATE IS AN INERT DIAL.** k changes the pick in **0 of 12** (panel, S) groups and
+  0 of 48 cells ever fell back to the raw chooser, although the licensed set shrinks from 18-22
+  arms at k=0 to 9-20 at k=2 (SMALL 7-9 down to 2-4). Only S moves the pick, and it moves it
+  between exactly two arms per panel. Gating a chooser on its own resolution buys nothing
+  because the arms the gate removes are never the argmax.
+
+  **THE MECHANISM — placebo-differencing is a CONCENTRATION BIAS, not a neutral correction.**
+  Mean placebo excess falls monotonically in N (U56 +0.1913 at N=5 -> +0.0289 at N=30; B136
+  +0.2919 -> +0.0627) while mean OOS Sharpe RISES monotonically in N (U56 0.9456 -> 1.1237;
+  B136 0.9301 -> 1.0254). A random 5-name portfolio is a terrible null, so subtracting it
+  rewards exactly the arms that lose out of sample. Spearman(IS placebo excess, OOS Sharpe)
+  over the 24 arms is **-0.765** on B136 and **-0.274** on U56 (raw IS Sharpe: -0.724 and
+  +0.192); only on SMALL, where the composite's mean excess is NEGATIVE (-0.0419, i.e. the
+  live score loses to coin-flipping on that panel), does the statistic help (+0.582) — and
+  even there it is beaten by the raw IS Sharpe (+0.803). The record's standing habit of
+  reporting a gross-matched null difference as the "clean" number is therefore not clean: on
+  a grid that contains a size dial it imports a size preference of its own.
+
+  **H_HINDSIGHT fires again.** The frozen N=20/H=126 anchor on U56 — 15.78% / 1.1522 / -19.13%
+  full, OOS 17.28% / 1.1832 / -19.13%, 4b PASS on all four legs — beats all 16 placebo-chooser
+  cells, the raw chooser (0.8996) and the no-choice GRIDAVG (1.1676) out of sample. Consistent
+  with 1321 / 1323 / 1331: every chooser the record builds loses to the cell nobody had to
+  choose. Reported, not claimed.
+
+  **GATES 5/5**: G0 sample >= 10y; G1 the null shares every argument with its real arm except
+  the ordering; G2 the chooser reads no row at or after 2017-01-01 (null frames built with
+  stop=i_oos); G3 sigma measured, not assumed; G4 all 48 cells published; G5 exactly two tuned
+  parameters (S, k).
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 / SMALL are current-constituent lists, so every absolute
+  level is an upper bound. The headline is a DIFFERENCE between choosers built from the SAME
+  names on the SAME days and the N-monotonicity is a within-panel shape, so both are
+  first-order immune; the 4b pass count is not.
+
+  **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
