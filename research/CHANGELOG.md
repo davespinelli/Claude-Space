@@ -2529,6 +2529,79 @@ rather than a lookalike.
   of 715 dropped for max_1d_move >= 1.0). Every level is optimistic and every 4b pass an upper bound.
   The headline is a CONTRAST between two choosers picking from the SAME four books on the SAME tape,
   first-order immune to a common level bias; the 4a/4b legs are not.
+## 2026-09-18 — research (lane B, idea 1268): WHAT THE IDLE SLEEVE HOLDS — KILL (capital), one cell PARKED
+- 2026-09-18 (lane B, idea 1268 is-the-BINDING-4b-DD-LEG-buyable-by-WHAT-THE-IDLE-SLEEVE-HOLDS) —
+  **THE BINDING DRAWDOWN LEG IS BUYABLE WITHOUT PAYING RETURN, AND THE THING THAT BUYS IT IS THE
+  BILL RATE, NOT DURATION.** Verdict KILL (capital). No RULES change, no PROTOCOL edit, nothing
+  enacted (rule 6). 180 cells all published, 21 of 21 gates, 28s, offline, deterministic.
+- WHY THIS IDEA AND NOT ONE FROM '## Open'. The LAST items standing in Open at the start of this run
+  were 1260, 1251, 1250 and 1241 — a decisiveness-bar re-scoring, two resample-knob partitions and a
+  block-length estimator. None can produce this protocol's step-3 deliverables (a weights function
+  scored against the baseline and SPY, 4a/4b verdicts, rule-8 OOS), so all four were left Open and
+  unclaimed and the sprint's documented fallback was used (precedent: the 1253 / 1257 / 1262 runs):
+  three NEW price-only ideas filed as 1266 / 1267 / 1268, and the LAST claimed.
+- THE DESIGN, AND THE CONFOUND IT REMOVES. 1262 (brake), 1263 (vol target) and 1264 (inverse-vol
+  sizing) all REDUCE EQUITY EXPOSURE, so each confounds "the risk clause worked" with "less equity was
+  held". The committed 2026-09-04 book runs GROSS 0.75, i.e. a CONSTANT 25% of NAV in cash, so routing
+  that idle sleeve into {SHY, IEF, TLT, LQD, TIP, SPY} x FILL {0, 0.25, 0.50, 0.75, 1.00} moves CAGR and
+  MaxDD with the EQUITY BOOK BIT-IDENTICAL at all 180 cells — gate G2 confirms the 30 FILL-0 rows are
+  one book at 0.000e+00. No leverage anywhere (G3: max gross 1.000000, min cash -0.000000).
+- IT WORKS, AND THAT IS THE FIRST TIME IN THIS LINE. Pooled over the 24 non-SPY cells at FILL 1.00
+  against each cell's OWN cash anchor: d_CAGR **+0.70pp**, d_Sharpe **+0.0400 positive at 30 of 30**,
+  d_OOS_Sharpe **+0.0116**, for +0.27/yr of turnover. SHY and IEF improve MaxDD at **6 of 6 arms at
+  every FILL** (IEF +0.73pp at FILL 1.00); LQD (-3.28pp, 0 of 6) and TIP (-1.05pp, 0 of 6) worsen it, so
+  the DD gain is a DURATION-CURVE fact and not a bond fact. 12 cells convert a committed 4b FAIL into a
+  PASS. Best cell U56/COMPOSITE3 IEF@1.00 = **16.41% / 1.2077 / -18.53%, halves 1.3285/1.1264, OOS
+  1.2022, 3.02/yr**, STRICTLY DOMINATING the committed anchor (15.78% / 1.1522 / -19.13%, halves
+  1.2127/1.1128, OOS 1.1832, 2.75/yr) on CAGR, Sharpe, MaxDD, both halves and OOS.
+- AND THE CONTROL KILLS IT. The engine pays 0% on cash, so SHY@FILL 1.00 is approximately the bill
+  rate the book should already have been earning — 1193's point, here with a HELD asset instead of an
+  rf assumption — and not a strategy. Scored against SHY at the SAME FILL on the SAME equity book, the
+  DURATION EXCESS is **in-sample only and reverses out of sample at 0 of 24 for every duration rung**:
+  d_OOS_Sharpe IEF **-0.0044 (0/24)**, TLT **-0.0192 (0/24)**, LQD **-0.0145 (0/24)**, TIP +0.0003
+  (16/24) — monotone in duration and growing with FILL (IEF -0.0012 / -0.0030 / -0.0053 / -0.0082 over
+  FILL 0.25..1.00). What survives the control is the cash rate; what dies is duration.
+- RULE 8 AS DECLARED REFUSES THE IDEA, AT EVERY ARM. (SLEEVE, FILL) chosen on warm-up..2016-12-31 by
+  IS Sharpe, 2017-2026 read ONCE: the IS-argmax is **TLT @ FILL 1.00 at 6 of 6 arms** and it **loses OOS
+  Sharpe at 6 of 6** (mean **-0.0110**; per-arm -0.0189 / -0.0175 / -0.0089 / -0.0120 / -0.0046 /
+  -0.0042; IS/OOS rank corr +0.01..+0.31). The chooser buys the 2009-2016 duration bull. POST HOC AND
+  DECLARED AS SUCH (written after the grid was read, because the loss is entirely the ASSET choice and
+  not the FILL choice): with the sleeve FROZEN this is a ONE-dial idea, FILL-only rule 8 picks 1.00
+  everywhere and beats do-nothing at 6 of 6 for SHY (+0.0257), IEF (+0.0175) and TIP (+0.0253) and 0 of
+  6 for TLT — but IEF's own pick still sits **-0.0082 of OOS Sharpe UNDER the SHY control at 0 of 6**.
+- STRESS: IN 2022 EVERY SLEEVE IS WORSE THAN CASH. U56/COMPOSITE3 at FILL 1.00: cash -7.12%, SHY
+  -8.08%, TIP -10.17%, IEF -10.86%, LQD -11.67%, TLT -15.19%. The full-sample gain is a falling-rate
+  fact, which is exactly what the OOS reversal says in the other direction.
+- BOTH KEEP PATHS AND THE DRAWDOWN LEG FOR THE SEVENTH DIAL RUNNING. **4a 0 of 180** (live v2's
+  -12.05% MaxDD is not beatable by a growth book — rule 4b's own reason for existing). **4b 32 of 180:
+  U56/COMPOSITE3 20/30, U56/M12_1 5/30, B135/COMPOSITE3 7/30, B135/M12_1 0/30, SMALL663 0/60.** Of the
+  **148 failures the DD leg fails at 148 — every single one** (H1 60, H2 60, OOS 60, CAGR 55 alongside
+  it). Phase (1253), years (1254), names (1255), signal (1257), sizing (1264), the N x H frame (1265)
+  and now the idle sleeve: seven dials saying the committed pass is a statement about drawdown alone.
+  H_DUR HELD 24 of 24 — the best duration sleeve beats the SPY equity fill on MaxDD at every matched
+  FILL, and the SPY fill buys 2.08pp of CAGR with 4.54pp of drawdown and -0.0030 of Sharpe, so the
+  mechanism is about duration and not about merely being invested.
+- HYPOTHESES SCORED AS THEY FELL: H_DD HELD (12 conversions), H_FREE HELD (cheapest conversion
+  U56/M12_1 IEF@1.00 costs NO CAGR: d_CAGR +0.63pp, d_MaxDD +0.70pp, d_Sharpe +0.0553, d_OOS +0.0188),
+  **H_R8 FAILED** (0 of 6), H_DUR HELD (24 of 24). The pre-declared verdict rule — KEEP only if a 4b
+  cell is REACHED by rule 8 and beats the anchor OOS — is not met, so KILL, and it is not re-cut.
+- PARKED, AND THE MEMO RECOMMENDS AGAINST ENACTMENT: U56/COMPOSITE3 **SHY@FILL 1.00** = 16.15% /
+  1.1774 / -18.87%, halves 1.2325/1.1432, **OOS 1.2126**, 3.00/yr — the only strictly-dominating 4b
+  pass a one-dial honest chooser reaches. It is a MEASUREMENT convention (pay the idle sleeve the bill
+  rate), not a signal, and its home is a Sunday-review PROTOCOL argument beside 1193's finding that the
+  record's implicit 0% cash is its strictest convention — not a v3 of RULES.md.
+- WHAT THE RECORD SHOULD TAKE, IN ONE SENTENCE: the standing diagnosis "every risk clause that would
+  satisfy the DD cap costs more return than it saves" is now WRONG AS STATED — the idle sleeve buys the
+  cap and pays nothing — but the corrected version is no more useful for capital: **the only part of the
+  sleeve gain that survives its own bill-rate control is the bill rate itself, and every rung of duration
+  beyond bills is an in-sample fact that reverses out of sample at 0 of 24.**
+- Script: research/backtests/2026-09-18_is-the-BINDING-4b-DD-LEG-buyable-by-WHAT-THE-IDLE-SLEEVE-HOLDS_B.py
+- SURVIVORSHIP (rule 9): U56/B135 are current-constituent lists and SMALL663 a current sub-$2B screen
+  (52 of 715 dropped for max_1d_move >= 1.0). Every LEVEL is optimistic and all 32 4b passes are UPPER
+  bounds — they clear on the drawdown leg, the leg a survivorship-free panel would hurt most. The
+  headline is a CONTRAST between sleeves on an IDENTICAL equity book over identical dates and is
+  first-order immune; the 4a and 4b legs are not.
+
 ## 2026-09-18 — research (lane cloud, idea 1263): portfolio VOL TARGETING on the binding 4b DD leg — KILL (capital), one cell PARKED
 - NO RULES CHANGE, NO NEW BOOK. 126 published cells: TARGET {OFF, 0.06, 0.08, 0.10, 0.12, 0.15, 0.20}
   annualised x VOL_LOOK {21, 63, 126} days on U56 / B135 / SMALL663 x COMPOSITE3 / M12_1.
