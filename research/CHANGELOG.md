@@ -1,3 +1,58 @@
+- 2026-09-18 (lane cloud, idea 1289 is-the-2026-09-04-KEEP-4b-BOOK-a-ONE-GROUP-BET)
+  — **ANSWERED = NO ON THE LITERAL QUESTION, (B) CAP-SENSITIVE ON THE VERDICT. THE BOOK IS
+  CONCENTRATED BUT NOT ONE-GROUP; WHAT A GROUP CAP MOVES IS THE 4b VERDICT, NOT THE EDGE.**
+  Verdict KILL (capital): no book promoted, no RULES change, no PROTOCOL edit (rule 6);
+  RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. SELECTION: second of the
+  two ideas filed under this sprint's documented fallback (see the 1287 entry below), claimed
+  as the LAST of the three. Runtime 10.9s, offline, deterministic.
+
+  **THE TWO DIALS AND NO MORE (rule 4):** `GROUP CAP` {2, 3, 5, 8, 20} x `N` {10, 20} = 10 cells
+  per panel, **30 published**. c = 20 is no cap and reproduces the incumbent bit for bit. The
+  GROUPING is construction, not a dial, and it is POINT-IN-TIME: each name is assigned to
+  whichever of nine sector ETFs (XLK/XLF/XLV/XLE/XLI/XLY/XLP/XLU/XLB) its returns correlate with
+  most over THE FIRST 252 TRADING DAYS OF ITS OWN HISTORY, and is cap-exempt until then, so no
+  assignment uses data from after the day it first applies. XLRE and XLC are excluded for having
+  no history at the start of the tape — declared, not chosen on a result. universe.json's own
+  four labels are re-run on U56 N=20 as a declared cross-check (4b passes 2 of 5 caps there).
+  FROZEN: H=126, gross 0.75, weekly, 10 bps, t+1, above-200d + vol20 < 0.60, 260-row warm-up.
+
+  **(A) THE CENSUS — THE LITERAL QUESTION.** Over the uncapped incumbent's **87,969 held
+  name-days**, the largest group is **XLK at 0.382** and the Herfindahl over ten groups is
+  **0.2147** against 0.1000 for an even split. B136: XLK 0.328, HHI 0.1838. SMALL: XLY 0.255,
+  HHI 0.1534. So the book is roughly twice as concentrated as an even split and tilted to
+  technology — but it is **not** a one-group bet, and the answer to the queue's literal question
+  is NO.
+
+  **(B) THE FINDING THAT MATTERS, AND IT CORROBORATES 1287 DOWN AN UNRELATED AXIS.** Capping
+  sector exposure **flips the 4b verdict**: U56 N=20 clears 4b uncapped and at c=8 and **FAILS at
+  c=2, 3 and 5**. At every one of those failures `b_h1`, `b_h2`, `b_oos` and `b_cagr` are **Y** and
+  the binding leg is the **MaxDD cap ALONE**. DD margin against the -20.23% bar, by cap:
+  **-1.06 / -1.34 / -1.53 / +0.67 / +1.10 pp**. Most sharply: **c = 5 is Sharpe-DOMINANT over the
+  incumbent** — 1.2115 vs 1.1529 full, 1.2258 vs 1.1837 OOS, CAGR 15.91% vs 15.79% — **and 4b
+  rejects it on drawdown alone.** Idea 1287 found the same knife-edge by perturbing execution lag;
+  this run reaches it by perturbing sector concentration. Two unrelated axes, one binding leg.
+
+  **(C) ONE PARKED BOOK, STATED WITH WHAT DISQUALIFIES IT.** `U56 / N=10 / H=126 / gross 0.75 /
+  weekly / SECTOR CAP 3` reads **17.35% / 1.2109 / -18.26%**, halves **1.2930 / 1.1412**, OOS
+  **18.47% / 1.2446** — better than the standing incumbent on **every** 4b leg, and 4b PASSES.
+  It is **PARK, not KEEP.** With N held fixed the IS cap chooser does land on c=3 (IS 1.1682, OOS
+  1.2446, +0.1486 over the uncapped anchor, 4b Y) — but **N is a dial too**, and the STRICT joint
+  (N, cap) IS chooser lands on **N=20 / c=5**, which fails 4b. Rule 8 does not certify a cell you
+  can only reach by fixing a dial after the fact.
+
+  **RULE 8 AND BOTH KEEP PATHS.** Both readings published. N-fixed: beats the uncapped anchor OOS
+  in **4 of 6** (panel, N) pairs, mean delta **+0.0560**, clears 4b in **1 of 6** against the
+  anchor's 2. STRICT joint: U56 -> N=20/c=5 (OOS 1.2258, +0.0421), B136 -> N=10/c=3 (1.0172,
+  -0.0073), SMALL -> N=20/c=2 (0.5212, +0.0670); beats the anchor in 2 of 3 and **clears 4b in
+  0 of 3**. Grid-wide **4a 0 of 30, 4b 7 of 30** (U56 5/10, B136 2/10, SMALL 0/10).
+  **NOTHING ENACTED.**
+
+  **SURVIVORSHIP (rule 9).** U56, B136 and SMALL (663 investable, 52 dropped for max_1d_move
+  >= 1.0 in data/small_meta.csv) are all CURRENT-constituent lists. This flatters the UNCAPPED
+  book most, because the corner the screen concentrates into is the corner whose survivors are
+  known in advance — which is a reason to read (C)'s capped book charitably and the incumbent's
+  uncapped 4b pass sceptically, not the other way round.
+
 - 2026-09-18 (lane cloud, idea 1287 does-the-2026-09-04-KEEP-4b-BOOK-survive-EXECUTION-DELAY-beyond-rule-2-s-t-plus-1)
   — **ANSWERED = (C) FRAGILE. THE INCUMBENT'S 4b PASS IS ONE DAY DEEP, AND WHAT IS FRAGILE IS THE
   VERDICT, NOT THE EDGE.** Verdict KILL (capital): no new book promoted, no RULES change, no
