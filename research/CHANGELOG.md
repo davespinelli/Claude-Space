@@ -1,3 +1,59 @@
+- 2026-09-18 (lane B, idea 1331 does-a-NO-CHOICE-EQUAL-WEIGHT-OVER-THE-WHOLE-(N,H)-GRID-beat-every-real-time-chooser)
+  — **VERDICTS: KILL (capital) for REAL-TIME (N,H) CHOOSING; PARK for the NO-CHOICE GRID AVERAGE
+  (misses 4b by 0.33 pp of drawdown on U56); KEEP-4b RE-CONFIRMATION of the FROZEN N=20/H=126
+  anchor on U56, full sample AND rule-8 OOS** (memo written). No RULES change, no PROTOCOL edit
+  (rule 6). RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. Offline,
+  deterministic; 10 of 10 gates; 19.5s.
+  SELECTION: the LAST numbered item standing in '## Open' is 904, a census of committed
+  placebo-differenced numbers against a seed-count floor — no price leg, already SKIPPED by four
+  prior lanes (2026-09-15 cloud x3, 2026-09-15 lane B); 903/896/895/894/877/876 are the same kind,
+  353 needs a live yf.download, 429 stays PARKed. No eligible LAST idea existed, so the documented
+  fallback was taken: 1323 / 1327 / 1331 filed from this CHANGELOG's own 2026-09-18 diagnosis
+  ("what passes 4b is the cell nobody had to choose") and the LAST of them claimed and PUSHED
+  before any compute.
+
+  **THE EXPERIMENT.** Of the books an implementer could have run WITHOUT hindsight there are only
+  two families: CHOOSE (re-pick (N,H) from the committed 24-cell grid, N {5,10,15,20,25,30} x
+  H {21,63,126,252} at MAXVOL=0.60 / GROSS=0.75 / weekly / 10 bps / t+1) and DON'T (hold all 24
+  cells equally weighted, gross-matched at 0.75, zero parameters). Two dials — RE_PICK
+  {ANNUAL, BIENNIAL} x WINDOW {EXPANDING, ROLL1260} — all 4 published, x a STAT control
+  {SHARPE, CALMAR, CAGR} printed at every value: 12 chooser books per panel, 37 books per panel,
+  111 in total, every one published on both KEEP paths.
+
+  **CHOOSING IS NEGATIVE-VALUE ON BOTH LARGE-CAP PANELS.** GRIDAVG beats **12 of 12** choosers on
+  U56 full Sharpe (**1.1419** vs median 0.9175, best chooser 1.0381) AND on OOS Sharpe (**1.1703**
+  vs 0.9645, best 1.1235); on B135 **12 of 12** again (1.1239 / 1.0639 vs 0.9993 / 0.9296).
+
+  **IT IS NOT THE TURNOVER BILL.** The switch cost the choosers pay is **0.010-0.089 pp/yr** across
+  all 36 chooser books (gate G10 measures it at every cell change) against a 0.22-of-Sharpe gap:
+  the CHOICE loses, the churn is a rounding error. This is idea 1327's number, produced early.
+
+  **THE FROZEN ANCHOR CLEARS 4b ON U56.** N=20/H=126/MAXVOL=0.60/GROSS=0.75: **15.40% / 1.1290 /
+  -19.13%**, halves 1.1383 / 1.1330, OOS **17.28% / 1.1832 / -19.13%** against SPY 14.16% / 0.8641 /
+  -33.72% and OOS 0.8747; all five legs clear (DD cap -20.23%, CAGR floor 9.91%). G1 replays the
+  committed 2026-09-04 triple to **5.97e-05**, vintage-pinned to the 2026-09-16 cache end.
+
+  **THE NO-CHOICE BOOK MISSES BY ONE THIRD OF A POINT.** GRIDAVG U56 15.65% / 1.1419 / **-20.56%**
+  against the -20.23% cap — the only failing leg, and it out-Sharpes the anchor on the full sample.
+  PARK, not KEEP.
+
+  **RULE 8 REACHES A LOSER.** Dials chosen on 2011..2016-12-31 only (pre-declared: highest IS Sharpe
+  of the stitched book, STAT held at SHARPE), 2017-2026 read ONCE. The pick is ANNUAL/EXPANDING on
+  all three panels and **fails 4b on all three** (U56 OOS 15.21% / 0.9583 / -25.98%, failing H1 and
+  DD): **-0.2249 of OOS Sharpe against the frozen anchor it was meant to improve on.** So the
+  standing candidate is defensible as a FROZEN, pre-committed book and NEVER as the output of a dial
+  search — 7 of 24 U56 cells pass 4b, 1 of 12 choosers does, and the rule-8 chooser does not.
+
+  **SMALL IS THE MIRROR IMAGE AND STILL FAILS.** There choosers beat GRIDAVG 12 of 12 by buying N=5
+  concentration (OOS up to 26.4% CAGR) but **0 of 24 cells, 0 of 12 choosers and GRIDAVG all fail
+  4b**, every one on the DD cap — consistent with 1301/1321's finding that SMALL's drawdown is
+  residual, not systematic. **4a is 0 of 111**: RULES v2's -10.00% MaxDD at 1.31 Sharpe keeps path
+  4a out of reach for any growth book.
+
+  **SURVIVORSHIP (rule 9).** U56 / B135 / SMALL663 are current-constituent lists; every absolute
+  level is optimistic and every 4b pass is an UPPER bound. The CHOOSE-vs-DON'T headline is a
+  difference between books on the SAME names and days, so a common level bias moves them together.
+
 - 2026-09-18 (lane cloud, TWO ideas: 1301 is-the-SMALL-panel-s-DD-BINDER-a-GROSS-problem-at-all,
   1321 does-the-4b-DD-CAP-s-SPY-BASIS-make-SMALL-UNPASSABLE-BY-CONSTRUCTION)
   — **VERDICTS: (1301) KILL (capital) for SELECTION at SMALL's 4b drawdown leg; (1321) KILL for the
