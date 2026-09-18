@@ -4415,3 +4415,48 @@ rather than a lookalike.
   dropped). This flatters the UNCAPPED book most, because the corner the screen concentrates into is the
   corner whose survivors are known — so the cap's measured cost is if anything over-stated and its
   measured benefit under-stated. Every claim is a within-grid difference on fixed panels and dates.
+
+## 2026-09-18 — idea 979 (lane B): the UNIT column is LOAD-BEARING, and the STANDING CANDIDATE's 4b verdict is PHASE-CONTINGENT
+- **ANSWERED (A), AND THE SEVEN SKIPS WERE WRONG.** 979 was skipped seven times for having "no capital
+  book to price". It has one: a committed row that names no cadence and no phase does not identify a
+  book, it identifies a SET of books, and the cost of the missing column is the SPREAD of that set
+  across the 4b bar. This run measures both legs.
+- **THE CENSUS (header-only, 6,993 committed csv artifacts under research/).** Self-describing
+  (`unit` / `cell_key` / `key`): **188, 2.69%**. Naming all eight capital-determining dials
+  {panel, book/arm, n/k, gross, cadence, phase, cost, hold}: **0, 0.00%**. Named individually: panel
+  56.69%, book 27.83%, n/k 23.32%, cost 21.08%, gross 15.27%, cadence 13.06%, hold 3.13%,
+  **phase 1.83%**. Naming NEITHER cadence nor phase: **5,988, 85.63%**.
+- **THE COSTING (48 real books, all published).** Idea 1295's certified triple (U56 / N=20 / sector
+  cap 5 / g=0.65, H=126, t+1, 10 bps) rebuilt at every (cadence {D,W,M,Q} x phase {0..4}) a silent row
+  permits. U56: **11 of 16 clear 4b, 5 do not** — Sharpe **1.0751..1.2116**, MaxDD
+  **-22.16%..-18.37%**, CAGR 12.07%..13.76%, joint margin **-1.93..+1.87 pp**. B136 6 of 16
+  (-6.08..+2.08 pp). SMALL **0 of 16**. Even a row that names cadence but not phase leaves U56 at
+  **3 of 5** passing and 2.65 pp of drawdown open.
+- **THE ANCHOR REPRODUCED.** (U56, W, phase 0) = 13.76% / 1.2116 / -19.06%, OOS 14.60% / 1.2261,
+  max |d| **4.60e-05** against 1295's committed pick.
+- **RULE 8, 2017-2026 READ ONCE.** Dials chosen on warm-up..2016 only by IS joint margin (1290's
+  chooser; ties to the slower cadence, then the lower phase). U56 picks **W / phase 1** (strict IS set
+  10 of 16): FULL 12.83% / 1.1262 / -19.09%, halves 1.2676 / 1.0190, **OOS 13.01% / 1.0840 / -19.09%,
+  4b PASS**. SPY OOS 15.28% / 0.8745 / -33.72%; RULES v2 OOS 9.47% / 1.2778 / -12.05%. B136 picks D/0
+  (OOS 14.07% / 0.9541 / -26.31%, 4b FAIL). SMALL's strict set is **EMPTY**; the declared fallback
+  picks M/0 (OOS 3.23% / 0.2726, FAIL).
+- **THE CAPITAL WARNING, WHICH IS THE POINT.** The IS chooser lands on a phase that is **WORSE** than
+  the committed one by 0.0854 of full Sharpe and **0.1421 of OOS Sharpe**. The standing candidate's
+  published phase is not one any legal in-sample rule recovers — it is the record's default. Its 4b
+  margin is therefore an upper bound over the phases an implementer might actually trade.
+- **BINDING LEG, UNCHANGED FROM THE WHOLE FAMILY.** Of the 31 4b failures the MaxDD cap binds **31 of
+  31** and is the **SOLE binder on 15**; no Sharpe leg is ever a sole binder. **4a passes 0 of 48.**
+- **PROPOSED SCHEMA (979's deliverable), for the Sunday review — PROTOCOL only, no code change.** Every
+  committed csv carrying a per-cell result gains one `cell_key` column whose value is the
+  colon-joined 8-tuple `panel:book:n:gross:cadence:phase:cost:hold`, with `-` for a field the run
+  genuinely does not have. Cost: one column. It would have disambiguated **6,805 of 6,993** artifacts
+  (97.31%) and, on the evidence above, is the difference between a row that states a 4b verdict and a
+  row that states a 68.8% chance of one.
+- **NOT CLAIMED:** that cadence and phase are the only unnamed fields (all eight are measured); that
+  any cell here is a new candidate book (1295's recipe is frozen and not re-tuned); that the schema
+  fixes claims made before it exists; that anything changes in RULES.md (rule 6).
+  Script: research/backtests/2026-09-18_should-a-SHARE-CLAIM-s-UNIT-be-a-REQUIRED-COLUMN-in-every-committed-csv_B.py
+- **SURVIVORSHIP (rule 9):** U56 / B136 are current-constituent hand-kept lists, SMALL a current
+  sub-$2B screen (max_1d_move >= 1.0 dropped). Delisted and bankrupt names are absent, which flatters
+  every book here and the drawdown leg specifically. The bias is common to all 48 cells and cannot
+  manufacture the SPREAD that is this run's object, but no cell's level is a live expectancy.
