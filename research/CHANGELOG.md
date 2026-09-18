@@ -52,3 +52,60 @@
   into N=5 is precisely the number that bias inflates most, a further reason not to read that
   cell as an opportunity.
 
+
+## 2026-09-18 — idea 1323 (lane B): does the 4b PASS survive ANNUAL REAL-TIME RE-SELECTION of (N,H)? **NO. KILL.**
+
+  **The question, answered directly.** 1323 asked for the book an implementer could actually
+  have run: re-pick (N,H) from the committed 24-cell grid (N {5,10,15,20,25,30} x H
+  {21,63,126,252}, MAXVOL 0.60, GROSS 0.75, weekly, 10 bps, t+1) on an EXPANDING window every
+  January, stitch the real equity curve with switch turnover costed, and score both KEEP paths
+  and rule-8 OOS against the frozen anchor, RULES v2 and SPY. The literal book (ANNUAL /
+  EXPANDING / argmax) fails 4b at every chooser statistic on every panel: U56 FAIL(H1,DD) at
+  SHARPE, FAIL(DD) at CALMAR, FAIL(H2,OOS,DD) at CAGR; B135 and SMALL663 fail at all three.
+
+  **Rule 8 (two dials, K and WINDOW, picked on 2011-2016 IS only; STAT held at SHARPE).**
+  U56 picks k=24/EXPANDING (IS Sharpe 1.0992, top of the full 18-point ladder): OOS 17.18% /
+  1.1703 / -20.56%, 4b FAIL on the DD leg alone, missing the -20.23% cap (0.60 x SPY's -33.72%)
+  by 0.33 pp, against the frozen anchor's 17.28% / 1.1832 / -19.13% and SPY's 15.28% / 0.8747 /
+  -33.72%. B135 picks k=1/EXPANDING: OOS 20.43% / 0.9144 / -28.62%, 4b FAIL(H2,DD). SMALL663
+  picks k=16/EXPANDING: OOS 10.16% / 0.6308 / -37.31%, 4b FAIL(H1,H2,OOS,DD) — worse than SPY
+  OOS on Sharpe and CAGR both.
+
+  **THE NEW RESULT — churn is not the cause; selection variance is.** The run's content beyond
+  1327 and 1331 is the K-LADDER that bridges their two extremes: k=1 is 1323's argmax, k=24 is
+  1331's no-choice GRIDAVG (reproduced bit-identically, gate G7). Across all 54 rungs (9 K x 2
+  WINDOW x 3 STAT) on every panel the switch-turnover bill never exceeds 0.089 pp/yr and is
+  0.000 at k=24 — the real-time book is not being eaten by trading costs. What it is being
+  eaten by is the variance of the pick itself: at STAT=SHARPE on U56, OOS Sharpe rises
+  monotonically in k, 0.9583 (k=1) -> 1.0876 -> 1.1021 -> 1.1132 -> 1.1238 -> 1.1420 -> 1.1703
+  (k=24), i.e. every unit of real-time choosing subtracts return. The monotone shape is
+  CHOOSER-CONDITIONAL, not universal: it holds at 1 of 6 (WINDOW, STAT) pairs strictly and
+  collapses under CALMAR/CAGR on SMALL663, where k=1 is the best rung. This is the same
+  direction 1327 found (the STAT is the binding dial) measured on a different axis.
+
+  **H_HINDSIGHT fires.** The frozen N=20/H=126 anchor beats ALL 54 real-time books on U56 OOS
+  Sharpe (1.1832). Taken with 1321 and 1331, the record's position is now: every committed
+  KEEP-4b is reachable only by freezing a cell nobody could have named in 2011, and the best
+  implementable approximation (hold the whole grid, choose nothing) lands 0.33 pp of drawdown
+  short of the 4b cap.
+
+  **Four rungs do pass 4b on U56** — k=3/EXPANDING/CALMAR, k=4/EXPANDING/CAGR, k=1 and
+  k=2/ROLL1260/SHARPE — and NONE of them is the rule-8 pick. Each passes the DD leg by at most
+  0.33 pp of margin (-19.90% to -19.97% against the -20.23% cap) and they sit at scattered,
+  non-adjacent (K, WINDOW, STAT) coordinates with no shared structure. They are reported, not
+  banked: a 4-of-54 pass rate at sub-0.4 pp margins on a razor-edge leg is what selection noise
+  looks like, and PROTOCOL rule 8 exists precisely so that such rungs are not promoted.
+  B135 and SMALL663 pass 0 of 54.
+
+  **GATES 11/11.** Including G1 (anchor replays the committed 15.7147% / 1.14804 / -19.1276%
+  U56 triple to 6.0e-5 when vintage-pinned to 2026-09-16), G3 (chooser scores unchanged under
+  IS-truncation), G6 (no row at or after a re-pick date is read), G7 (k=24 == GRIDAVG to 0.0),
+  G8 (k=1 == plain argmax) and G10 (the switch cost is actually charged: the k=1 book's
+  turnover/yr, 4.289, strictly exceeds the mean of its own held cells', 3.936).
+
+  **SURVIVORSHIP (rule 9).** U56 / B135 / SMALL663 are current-constituent lists. Every absolute
+  level is optimistic and every 4b pass is an upper bound. The headline is a DIFFERENCE between
+  books built from the SAME names on the SAME days, so the k-ladder shape is first-order immune;
+  the 4-of-54 pass count is not.
+
+  **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
