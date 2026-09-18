@@ -1,3 +1,75 @@
+## 2026-09-18 — idea 1335 (lane cloud): is WEEKLY the CADENCE ARGMAX for the INCUMBENT, or just PROTOCOL's DEFAULT? **IT IS THE ARGMAX. KILL as a dial.**
+
+  **VERDICT: ANSWERED, and the queue's own rationale FALSIFIED — the cadence argmax does NOT
+  move with the cost rung on ANY of the three panels, so the committed numbers in this family
+  are NOT a 10-bps artifact.** SELECTION: 1335 was the FIRST numbered item standing in '## Open';
+  price-only, eligible, claimed and pushed before any compute. No RULES change, no PROTOCOL edit
+  (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. Offline,
+  deterministic, 35s.
+
+  **THE INSTRUMENT.** Two dials (rule 4): CADENCE {D, W, 2W, M, Q} x COST {0, 10, 25, 50} bps =
+  20 cells per panel, **all 60 published** in `.grid.csv`, at the record's frozen incumbent
+  (3-leg composite, above-200d AND vol20 < 0.60, N=15 equal weight, H=126 min hold, gross 0.60,
+  t+1). Gross returns and turnover are cadence properties, so each (panel, cadence) is run ONCE
+  and every rung is read off the same pair — the grid is exact, not interpolated. 2W is the
+  engine's own W array subsampled every second entry, never a phase shift.
+
+  **1. THE ARGMAX IS STABLE ACROSS THE WHOLE COST LADDER.** Full-sample Sharpe argmax at
+  0 / 10 / 25 / 50 bps: **U56 W, W, W, W** (1.1931 / 1.1717 / 1.1394 / 1.0855); **B136 M, M, M,
+  M**; **SMALL W, W, W, W**. Moves on **0 of 3 panels**; W is the argmax in **8 of 12** (panel,
+  rung) cells. The rung moves every LEVEL and no RANKING. What it does move is the size of
+  B136's M-over-W gap, monotonically in M's favour: **+0.0261 / +0.0320 / +0.0408 / +0.0554** —
+  the rebate reading, priced, and still not enough to flip an argmax anywhere.
+
+  **2. WEEKLY IS EARNED ON THE PANEL THAT MATTERS.** OOS Sharpe order at 10 bps: U56 **W 1.1965**
+  > 2W 1.1251 > M 1.0902 > D 1.0769 > Q 1.0110 (**W ranks 1 of 5**); B136 M 1.1196 > W 1.0387
+  (2 of 5); SMALL 2W 0.5750 > W 0.4728 (2 of 5). PROTOCOL's inherited default is simultaneously
+  the full-sample argmax at every rung and the OOS argmax on U56 — the only panel this family
+  has ever cleared 4b on. Idea 1305's W->M sign reproduces on all three panels (-0.1061 /
+  +0.0320 / -0.1427 against its -0.1053 / +0.0283 / -0.0796, gate G2); turnover is monotone
+  D >= W >= 2W >= M >= Q on all three (G3), U56 3.39 / 2.46 / 2.12 / 1.86 / 1.41 per year, with
+  the W->M refund +6.0 bp/yr at 10 bps and +30.2 at 50.
+
+  **3. B136's BETTER CADENCE IS UNBUYABLE.** M beats W on B136 at every rung full-sample and by
+  +0.0809 out of sample, and is the ex-post best OOS cadence there — but it **fails 4b on the
+  drawdown leg at every rung, MaxDD -22.76% against the -20.23% cap (0.60 x SPY's -33.72%), a
+  2.53 pp miss**, while W on B136 passes all four legs at -15.97%. D and 2W fail the same leg.
+  **4a 0 of 60. 4b 23 of 60 full-sample and 23 of 60 full AND OOS** (U56 19/20, B136 4/20,
+  SMALL 0/20), and every U56 pass is the incumbent or a slower version no cell dominates.
+
+  **4. RULE 8 (cadence chosen on warm-up..2016-12-31 by argmax IS Sharpe AT EACH RUNG,
+  2017-2026 read ONCE).** The IS chooser picks PROTOCOL's W in only **4 of 12** cells. Choosing
+  costs a mean **-0.0746 of OOS Sharpe** (min -0.2268, max +0.0010) and -0.75 pp of OOS CAGR,
+  and beats W in **1 of 12** (B136 @50 bps, +0.0010). At 10 bps: U56 picks W -> 15.15% / 1.1965 /
+  -16.38% (4b OOS PASS); B136 picks 2W -> 15.17% / 1.0230 / -21.85% (4b FAIL, DD); SMALL picks
+  M -> 2.85% / 0.2525 / -32.36% (4b FAIL on Sharpe, DD and CAGR) against W's 6.38% / 0.4728.
+  **4b on every OOS leg after rule 8: 4 of 12 — all four are the U56 rungs where the pick IS W**,
+  so every surviving pass comes from NOT choosing. H_HINDSIGHT fires in **8 of 12**: the ex-post
+  best OOS cadence is not the IS pick.
+
+  **5. A RECORD-WIDE TAPE-VINTAGE CAVEAT, MEASURED BECAUSE A GATE FAILED.** The U56 W@10bps cell
+  IS idea 1305's committed flat control and idea 1339's PROTOCOL_DEFAULT cell. This run replays
+  its **MaxDD to 1e-8 and its IS-window Sharpe to 6.6e-7** (G1a — the construction is identical),
+  but the tape-sensitive statistics land off the committed values: dCAGR +0.000129, dSharpe
+  +0.001096, **dH1 -0.006378, dH2 +0.006984**, dOOS Sharpe +0.001826. Cause: commit **4e19a80
+  "Daily close 2026-09-18" rewrote data/prices.csv, prices_broad.csv and prices_small.csv.gz
+  wholesale (9410 lines replaced, +6 net rows) AFTER 1305 was committed** — 1305 ran on a tape
+  ending 2026-09-17 / 09-11 / 09-11 (4707 / 4703 / 4198 rows), this run on 2026-09-18
+  (4708 / 4708 / 4203) with the whole history re-adjusted (G1c). The declared 3e-3 replay
+  tolerance **FAILS at 6.98e-3 and is published as a failure rather than widened**:
+  cross-run replay of a HALF-SAMPLE Sharpe in this repo is resolution-limited to ~7e-3 by daily
+  re-adjustment of `data/prices*.csv`, and **no committed number in this family carries a tape
+  stamp.** The committed cell's verdict is unaffected (G1d: 4b PASS on all four legs, Sharpe
+  1.1717 vs SPY 0.8844, MaxDD -16.38% inside the cap). Gates 11 of 12, the twelfth diagnosed.
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 / SMALL are CURRENT-constituent lists; SMALL is a
+  sub-$2B screen carried back to 2010 with the mandated 52 `max_1d_move >= 1.0` tickers dropped
+  (663 of 715 kept), so its LEVELS are an upper bound and only its cadence CONTRASTS are read —
+  its best cell (2W, OOS Sharpe 0.5750) still fails all four 4b legs.
+
+  **NOTHING PROMOTED, NOTHING RETRACTED.** Weekly stays because it wins, not because nobody
+  looked.
+
 - 2026-09-18 (lane cloud, idea 1327 is-the-CHOOSER-STATISTIC-or-the-RE-PICK-CADENCE-the-binding-dial)
   — **VERDICT: KILL for real-time (N, H) re-selection, and the queue's premise FALSIFIED — the
   binding dial is the CHOOSER STATISTIC, not the cadence, and the switch-turnover bill is ~0.1
