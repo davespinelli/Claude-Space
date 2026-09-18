@@ -3527,3 +3527,41 @@ rather than a lookalike.
   bound. The bands are swings of the SAME statistic on the SAME books at different block lengths, so
   a level bias moves every rung together and they are first-order immune; the capital table's 4b
   counts are not, and are quoted as upper bounds.
+
+## 2026-09-18 (cloud, idea 1 of 2) — idea 1278, pooled-fold-mean vs whole-span AGGREGATION GAP: ANSWERED / SCHEMA / KILL (capital)
+- SHAPE-INVARIANCE IS EXACT. GAP = GAP_shape + GAP_trunc decomposed over 504 grid points (7 statistics
+  x 3 panels x 5 books x 4 fold lengths). turnover/yr, drag/yr and meanret/yr read max|GAP_shape| of
+  7.1e-15 / 6.9e-18 / 8.3e-17 — floating-point zero at every point — while max|GAP| reads 0.2954 /
+  2.95e-04 / 0.0242. The record's apparent gap on its LINEAR figures is entirely the dropped trailing
+  remainder, not an aggregation effect. 1276's framing did not separate the two.
+- FOUR STATISTICS CARRY A REAL, SIGN-CONSISTENT BIAS. Share of 72 points with GAP_shape > 0: MaxDD
+  1.000, CAGR 1.000, Sharpe 0.944, vol 0.000 (always negative). Median |GAP_shape| at L=252: MaxDD
+  +0.1665, Sharpe +0.0842, vol -0.0056, CAGR +0.0080. Fold-averaging makes a book's drawdown look
+  ~17pp shallower than the same rows read whole.
+- 1276'S YARDSTICK REVERSES ON SHARPE. GAP_shape at L=252 against the whole 0->50 bps cost ladder's
+  move of the SAME statistic: MaxDD 9.59x, vol 21.32x, but Sharpe only 0.20x (0.0842 vs 0.4205) and
+  CAGR 0.07x (0.0080 vs 0.1077). On the two statistics the record's verdicts turn on, the COST RUNG
+  dominates the aggregation gap when it is read on book levels rather than chooser differences.
+- MaxDD'S GAP IS STRUCTURAL. Over L = 126/189/252/378 the median |GAP_shape| roughly halves per
+  doubling for CAGR (0.0181 -> 0.0032) and Sharpe (0.1607 -> 0.0640) but barely moves for MaxDD
+  (0.1992 -> 0.1400). A drawdown cannot span a fold boundary. Worst on SMALL663 (0.2046).
+- A FOLD-AVERAGED 4b READ FLIPS THE PATH LEGS. Fold pass-share lands on the wrong side of 0.5 against
+  the whole-span leg at L_H1 0.400/0.400/0.333/0.400 and L_H2 0.400/0.400/0.267/0.133 over the four
+  L's; L_CAGR 0.000/0.067/0.000/0.200 and L_DD 0.067/0.067/0.067/0.000.
+- CAPITAL ARM (rule 8, OOS read once) — KILL. U56 chooser on 2009-2016: WHOLE-SPAN Sharpe picks MOM20
+  (+1.1212), FOLD-MEAN picks RULESv2 (+1.0461 vs MOM20 +1.0442, margin 0.0019). OOS 2017-2026: MOM20
+  21.42% / 1.1391 / -27.24%; RULESv2 9.47% / 1.2778 / -12.05%; SPY 15.28% / 0.8745 / -33.72%. B136 and
+  SMALL663 pick identically under both. 4b OOS 0 of 6 chooser cells, 4a 0 of 6: U56/MOM20 fails L_DD
+  alone (-27.24% vs a -20.23% cap), U56/RULESv2 fails L_CAGR alone (9.47% vs a 10.70% floor),
+  B136/MOM10 fails L_H1 and L_DD, SMALL663/RULESv1 fails all four.
+- RECOMMENDED TO THE SUNDAY REVIEW, PUBLISHING ONLY (changes no book): "A figure published as a mean
+  over folds must name its fold length and fold count, and may be published fold-averaged ONLY if it
+  is linear in the per-day return or turnover series. CAGR, vol, Sharpe and MaxDD must be published
+  whole-span; a fold-averaged value of one of these must be labelled with its whole-span value beside
+  it. MaxDD may not be fold-averaged at all." The permission costs nothing (exact zero at 216 of 216
+  points); the prohibition is measured (MaxDD's bias is 9.59x the whole cost ladder and L-proof).
+- Script: research/backtests/2026-09-18_pooled-fold-mean-vs-whole-span-gap_cloud.py
+- SURVIVORSHIP (rule 9): U56/B136 are current-constituent lists; SMALL663 is a current sub-$2B screen
+  with 52 of 715 names dropped on max_1d_move >= 1.0. Every level is an UPPER bound. The gap results
+  are differences of the same statistic on the same book under two aggregations and are first-order
+  immune to a level bias; the capital arm's OOS levels are not, and are quoted as upper bounds.
