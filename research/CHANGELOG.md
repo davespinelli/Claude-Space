@@ -1,3 +1,61 @@
+- 2026-09-18 (lane C, idea 1291 is-the-MIN-HOLD-H-a-DRAWDOWN-INSTRUMENT-or-only-a-TURNOVER-one)
+  — **ANSWERED = (A) DRAWDOWN INSTRUMENT, NOT ONLY A TURNOVER ONE.** Verdict **KILL (capital)**
+  for any H change, plus a **standing caveat on the 2026-09-04 / 1292 KEEP-4b candidate**: H is a
+  THIRD dial in that family and the committed rung was never priced. No RULES change, no PROTOCOL
+  edit (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. SELECTION: 1291
+  was the SECOND numbered item standing in '## Open' (1290 is lane A's), price-only and eligible.
+  Runtime 22.0s, offline, deterministic.
+
+  **THE TWO DIALS AND NO MORE (rule 4):** `H` {0,5,21,42,63,126,189,252} x `N` {10,15,20} = 24
+  cells, every one published at both of 1292's robust grosses {0.55, 0.65} (inherited construction,
+  never tuned here) and at every point of 1292's 15-point stress ensemble (5 decision weekdays x
+  delays 1,2,3) — **720 published (cell, point, gross) rows**. ANCHOR (Fri, t+1) = PROTOCOL rule 2
+  and reproduces the committed books to **4.8e-5**: g=0.65 13.66% / 1.1526 / -16.73% (OOS 14.95% /
+  1.1833) and g=0.75 15.79% / 1.1529 / -19.13% (OOS 17.30% / 1.1837). FROZEN: weekly, 10 bps,
+  above-200d + vol20 < 0.60, equal weights, 260-row warm-up.
+
+  **(A) THE ANSWER.** H moves the leg that binds this whole family by **more than the timing noise
+  the record already accepts**. Per cell the H ladder's dd_margin range is scored against that
+  cell's OWN 15-point ensemble range at H=126 (a conservative yardstick: 15 points against 8 rungs):
+  ratios **5.80 / 5.84 / 2.54 / 2.51 / 2.20 / 2.20**, i.e. DD-MATERIAL in **6 of 6** cells, median
+  range **6.46 pp** against **2.36 pp**. Stress-robust-4b status changes across the ladder in all
+  six cells. So the pre-declared (A) fires, and (B) "turnover only" is refuted on its own terms.
+
+  **(B) THE TWO AXES DO NOT BEHAVE ALIKE.** Turnover is *perfectly* monotone in H (rho **-1.000**
+  in 6 of 6, range 8.09 turns/yr = 74x-129x the ensemble's 0.09). Drawdown is **not** (rho median
+  **-0.595**): margins run +4.37 / +4.12 / +2.56 / +0.22 / **-2.20** / +3.50 / +1.17 / +1.07 pp
+  over H = 0..252 at U56 N=20 g=0.65. H=63 is the trough at every cell and is stress-robust at
+  **0 of 6**; longer holding buys DD margin only up to a point and then loses it again.
+
+  **(C) THE FROZEN RUNG SITS ON A RIDGE, AND RULE 8 CANNOT FIND IT.** Stress-robust cells per rung
+  (of 6): **H=126 6, H=252 4, H=189 3, H=42 2, H=21 2, H=0 1, H=5 1, H=63 0**. H=126 is a LOCAL
+  MAXIMUM of dd_margin against both its neighbours in **6 of 6** cells. When H is admitted as a
+  dial, the rule-8 chooser (IS window only, warm-up..2016-12-31, criterion declared before the run;
+  4 of 24 cells clear the IS legs at all 15 points) lands on **H=189 / N=20 / g=0.65** — anchor
+  13.50% / 1.1235 / -19.06%, halves 1.3249 / 0.9899, OOS **13.70% / 1.0530 / -19.06%**, 4b PASS at
+  the anchor but stress-robust at only 14 of 15 — which is **0.130 of OOS Sharpe and 1.25 pp of OOS
+  CAGR WORSE** than the frozen H=126 book (14.95% / 1.1833) that rule 8 does not reach. SPY OOS
+  15.28% / 0.8745 / -33.72%; live RULES v2 OOS 9.47% / 1.2778 / -12.05%.
+
+  **(D) H IS NOT A COST DIAL.** Per rung, the CAGR change predicted by the turnover change alone at
+  10 bps has median magnitude **0.167 pp** against a median realised residual of **1.212 pp** —
+  **7.25x**. The min hold changes WHICH names are held, not merely how often they are traded.
+
+  **(E) SECOND PANEL.** B136 at the anchor: dd_margin H-range **6.15-7.93 pp** across the same six
+  cells (4b passes 14 of 48 against U56's 30 of 48). The instrument is not a U56 artefact; the
+  4b pass rate is (1292's panel finding, unchanged). SMALL not run — 1292 read it at 0 of 240.
+
+  **WHAT THIS MEANS FOR CAPITAL.** Nothing here beats the standing candidate, so KILL: the best H
+  the record's own walk-forward can legally choose is worse out of sample than the rung already
+  committed. But the committed rung is exactly the local maximum of the binding leg, which is the
+  signature of an in-sample choice, and it was carried through 1253 / 1255 / 1286 / 1287 / 1289 /
+  1292 as a constant. Any Sunday review of the 1292 KEEP-4b candidate should read its -16.73%
+  MaxDD as **the best of eight rungs of an undeclared dial**, not as a property of the mechanism.
+
+  **SURVIVORSHIP (rule 9).** U56 and B136 are current-constituent hand-kept lists; delisted,
+  acquired and bankrupt names are absent, which flatters every momentum book here. Nothing above
+  estimates live expectancy; all readings are relative, across cells, on fixed panels.
+
 - 2026-09-18 (lane B, idea 1292 does-ANY-N-x-GROSS-CELL-clear-4b-at-EVERY-PHASE-and-DELAY-at-once)
   — **ANSWERED = (A) YES: A STRESS-ROBUST CELL EXISTS AND THE RULE-8 CHOOSER REACHES IT.**
   Verdict KEEP-4b CANDIDATE (U56 only), memo written for the Sunday review; no RULES change, no
