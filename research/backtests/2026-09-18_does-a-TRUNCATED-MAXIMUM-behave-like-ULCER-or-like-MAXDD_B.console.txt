@@ -1,0 +1,327 @@
+# Idea 1146 (lane B, 2026-09-18) — does a TRUNCATED MAXIMUM behave like ULCER or like MAXDD?
+#   1140: MAXDD is the ONLY one of six statistics whose realised rung GAP and bootstrap
+#   SD BOTH GROW with tape length (median b +0.1419 / +0.1654); ULCER and CALMAR, on the
+#   SAME drawdown path, both have FALLING SD.  1140 read the carrier as MAX-ness.  This
+#   run builds the TRUNCATION LADDER that reading predicts and reports where the MAXDD
+#   signature switches off.
+# TUNED DIALS (2, PROTOCOL rule 4): TRUNCATION RULE ['QUANT', 'KDAY', 'BOTH'] x SUB-TAPE
+#   FRACTION ['1/1', '1/2', '1/3'] = 9 combinations, ALL published.
+#   TRUNCATION LEVEL is NOT a dial — every rung of both ladders reported at every cell.
+#   PANEL, LADDER and RUNG SET are NOT dials — all 2 x 4 x 2 cells reported everywhere.
+#   q is NOT a dial: 0.9 headline, [0.8, 0.9, 0.95] reported beside, never selected on.
+#   BLOCK LENGTH is NOT a dial: L=63 frozen from 1098/1102/1110/1131/1140.
+#   THE TWO TRUNCATION LADDERS (both NEST MAXDD exactly at their top rung):
+     QUANT  ['Q0500', 'Q0750', 'Q0900', 'Q0950', 'Q0990', 'Q0999', 'MAXDD']   (p = [0.5, 0.75, 0.9, 0.95, 0.99, 0.999, 1.0])
+     KDAY   ['K0021', 'K0063', 'K0126', 'K0252', 'K0504', 'MAXDD']   (k = [21, 63, 126, 252, 504, 'INF'])
+   REFERENCE ARMS (1140's six, same draws, same seeds): ['CAGR', 'VOL', 'SHARPE', 'MAXDD', 'ULCER', 'CALMAR']
+   17 distinct statistics in total.
+#   CORE  H [21, 63, 126, 252]  CADENCE ['D', 'W', 'M', 'Q']
+#   EXT   H [21, 42, 63, 84, 126, 168, 210, 252, 378]  CADENCE ['D', '2D', 'W', '2W', 'M', '2M', 'Q', '2Q', '4Q']
+# FROZEN: CAND20 legs [(21, 252), (0, 126), (0, 63)], max_vol 0.6, gross 0.75, hold 126, N 20,
+#   cadence W, 10 bps, LAG 1, warm-up 260, IS end 2016-12-31,
+#   block L=63, 1000 draws, crc32 seeds, seed bases [11311131, 11171117, 11161116].
+# PRIOR QUOTED, NOT RECOMPUTED: 1141: DD's 'un-resolvable everywhere' is a LARGE-PANEL fact; SMALL fires less.
+# DEFINITIONS, declared before any number:
+#   MAXDD SIGNATURE  b_gap > 0 AND b_sd > 0   (both grow with tape length)
+#   ULCER SIGNATURE  b_sd < 0                 (sampling SD falls with tape length)
+#   SWITCH-OFF RUNG  the rung of a truncation ladder, reading from the truncated end
+#                    TOWARD MAXDD, at which the MAXDD signature first turns ON.
+# DECLARED BEFORE ANY NUMBER:
+#   (a) H_MAXDD_SIG   MAXDD reproduces 1140: median b_gap > 0 AND median b_sd > 0.
+#   (b) H_ULCER_SIG   ULCER reproduces 1140: median b_sd < 0.
+#   (c) H_SWITCH      the ladders are NOT uniform: at least one truncated rung on each
+#                     rule carries the ULCER signature (b_sd < 0), i.e. the signature
+#                     switches off somewhere strictly below the maximum.
+#   (d) H_KNIFE_EDGE  1140's reading in its STRONGEST form: the signature is confined
+#                     to the extreme — ON at p >= 0.99 / k >= 504 and OFF at p <= 0.95
+#                     and k <= 252.
+#   (e) H_MONOTONE    b_sd is NON-DECREASING along each ladder toward MAXDD (>= 80% of
+#                     adjacent rung pairs, per rule, at the headline).
+#   (f) H_CAPITAL     THE CAPITAL LEG: some truncated-maximum CHOOSER beats 1140's
+#                     MaxDD chooser C_ISDD on median rule-8 OOS Sharpe across cells.
+# DECISION RULE, declared before any number:
+#   LIKE ULCER  iff H_MAXDD_SIG and H_ULCER_SIG and H_SWITCH and H_KNIFE_EDGE —
+#               truncating the maximum AT ALL removes the signature.
+#   LIKE MAXDD  iff H_MAXDD_SIG and the signature survives at EVERY truncated rung of
+#               at least one rule (that rule has NO switch-off).
+#   MIXED       anything else, reported as MIXED and not rounded to either.
+#   THE CONFOUND, NAMED FIRST: a lower quantile / shorter horizon is a SMALLER number
+#   in level as well as a less extreme one, and a smaller level mechanically carries a
+#   smaller gap.  That is why the headline is the EXPONENT of the gap and of the SD
+#   SEPARATELY (a level shift moves both together and cancels in neither), and why the
+#   LEVELS are published beside them (levels.csv) so the reader can check it.
+
+## GATES — printed before any result number
+  U56: 56 names, 4,705 rows 2008-01-02 -> 2026-09-15, warm 4,445, IS 2,007, OOS 2,438   [cache holds 4,707 rows; 2 bar(s) after 2026-09-15 EXCLUDED by the pin]
+  B136: 136 names, 4,703 rows 2008-01-02 -> 2026-09-11, warm 4,443, IS 2,007, OOS 2,436   [cache holds 4,703 rows; 0 bar(s) after 2026-09-15 EXCLUDED by the pin]
+  G1  fast runner == engine.backtest                        1.39e-17   PASS
+  G2  CROSS-RUN committed U56 W/H126/N=20 triple            4.15e-05   PASS  (15.5793% / 1.1397 / -19.1276%)
+  TAPE DRIFT  the 2 excluded U56 bar(s) move the default book's full-tape triple from
+              15.5793% / 1.1397 / -19.1276%  (pinned, == 1140) to
+              15.6187% / 1.1423 / -19.1276%  (unpinned cache), i.e. CAGR +0.0394%, Sharpe +0.0026.
+              That drift is LARGER than several of the gate tolerances below, which is
+              why the pin exists.  It is NOT a dial and nothing is selected on it.
+  G3  SPY OOS triple                                        1.70e-04   PASS
+  G4  CROSS-RUN 1098/1102's committed U56 n=12 triple       4.71e-05   PASS
+  G4b CROSS-RUN 1098/1102's committed B136 n=15 triple      2.13e-05   PASS
+  G5  live RULES v2 MaxDD == committed -12.05%              4.95e-05   PASS
+  G6  determinism                                           0.00e+00   PASS
+  G7  cadence_mask == engine.rebalance_mask (D/W/M/Q)       0.00e+00   PASS
+  G11 QUANT p=1.000 IS MAXDD (and == stats_all)             0.00e+00   PASS
+  G12 sliding_max == rolling max; K_INF IS MAXDD            0.00e+00   PASS
+  G13 both ladders nest monotonically toward MAXDD          0.00e+00   PASS
+  built 74 books (54 on 1110/1116's CORE rungs) in 6s
+  G8  reproduce 1110's committed 54-row CORE grid         1.71e-04   FAIL
+## THE SIX DISJOINT SUB-TAPES (warm tape only; contiguous, disjoint within a fraction)
+  U56   F1_1   1/1  n=4,445  2009-01-13 -> 2026-09-15
+  U56   F2_1   1/2  n=2,222  2009-01-13 -> 2017-11-07
+  U56   F2_2   1/2  n=2,223  2017-11-08 -> 2026-09-15
+  U56   F3_1   1/3  n=1,482  2009-01-13 -> 2014-12-01
+  U56   F3_2   1/3  n=1,481  2014-12-02 -> 2020-10-19
+  U56   F3_3   1/3  n=1,482  2020-10-20 -> 2026-09-15
+  B136  F1_1   1/1  n=4,443  2009-01-13 -> 2026-09-11
+  B136  F2_1   1/2  n=2,222  2009-01-13 -> 2017-11-07
+  B136  F2_2   1/2  n=2,221  2017-11-08 -> 2026-09-11
+  B136  F3_1   1/3  n=1,481  2009-01-13 -> 2014-11-28
+  B136  F3_2   1/3  n=1,481  2014-12-01 -> 2020-10-16
+  B136  F3_3   1/3  n=1,481  2020-10-19 -> 2026-09-11
+## BOOTSTRAP — 3 seed bases x 2 panels x 4 ladders x 6 sub-tapes x 17 statistics
+  bootstrap base 11311131 done at 124s
+  bootstrap base 11171117 done at 243s
+  bootstrap base 11161116 done at 362s
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.cells.csv  (14,688 rows, 19 cols)
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.levels.csv  (7,548 rows, 10 cols)
+## THE EXPONENTS — 1140's fit, verbatim.  For each (panel, ladder, rung set, statistic)
+##   fit log(y) = a + b*log(n) over the SIX sub-tapes, pooled over the 3 seed bases by
+##   taking the median y per (cell, sub-tape) first.
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.exponents.csv  (272 rows, 12 cols)
+  G9  CROSS-RUN 1140's committed 96-cell exponent table       1.93e-03   FAIL
+      CAGR    median b_gap -0.3493 (1140 -0.3495)   b_sd -0.4675 (1140 -0.4675)
+      VOL     median b_gap +0.0004 (1140 +0.0004)   b_sd -0.3181 (1140 -0.3181)
+      SHARPE  median b_gap -0.4224 (1140 -0.4231)   b_sd -0.4482 (1140 -0.4482)
+      MAXDD   median b_gap +0.1419 (1140 +0.1419)   b_sd +0.1654 (1140 +0.1654)
+      ULCER   median b_gap -0.1221 (1140 -0.1221)   b_sd -0.1916 (1140 -0.1916)
+      CALMAR  median b_gap -0.1699 (1140 -0.1699)   b_sd -0.5543 (1140 -0.5543)
+  G10 every statistic live (min median |gap|)               6.09e-04   PASS
+  G14 1140's SIGNATURE survives the restatement             0.00e+00   PASS  (0 of 12 medians flip sign; headline dev 0.0e+00)
+  NOTE ON G8/G9 — both compare against artifacts committed on 2026-09-16 at a 1e-9 bar.
+  data/prices.csv has been RE-CACHED since and its adjusted closes RESTATED; the TAPE
+  DRIFT block above measures the restatement on the SAME pinned bars.  A 1e-9 bar cannot
+  survive that, so G8/G9 are reported FAILED, with their deviations published, and G14
+  carries the reproduction claim instead.  No bar was widened to make anything pass.
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.gates.csv  (15 rows, 4 cols)
+  GATES 13 of 15 PASS
+  !! A GATE FAILED — every number below is reported anyway and must be read as suspect.
+
+## RESULT 1 — THE TRUNCATION LADDER.  Median exponents over the 96 (panel, ladder,
+##   rung set) cells at the headline seed base, q = 0.90.  SIG = the MAXDD signature
+##   (b_gap > 0 AND b_sd > 0).  Reading DOWN each block runs from the most truncated
+##   rung to MAXDD itself.
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.ladder.csv  (13 rows, 11 cols)
+  --- rule QUANT ---
+     level  stat  med_b_gap  med_b_sd  med_b_ratio  sig_MAXDD  sig_ULCER  cell_share_sig
+     p=0.5 Q0500    +0.0367   -0.6251      +0.7020      False       True         +0.0000
+    p=0.75 Q0750    -0.0124   -0.3221      +0.3122      False       True         +0.0000
+     p=0.9 Q0900    -0.3252   -0.0926      -0.2306      False       True         +0.0000
+    p=0.95 Q0950    -0.2099   +0.0326      -0.2184      False      False         +0.0625
+    p=0.99 Q0990    -0.0219   +0.1223      -0.1612      False      False         +0.5000
+   p=0.999 Q0999    +0.1083   +0.1353      -0.0181       True      False         +0.5625
+     p=1.0 MAXDD    +0.1419   +0.1654      +0.1142       True      False         +0.6875
+  --- rule KDAY ---
+   level  stat  med_b_gap  med_b_sd  med_b_ratio  sig_MAXDD  sig_ULCER  cell_share_sig
+    k=21 K0021    +0.3974   +0.5287      +0.0177       True      False         +0.8750
+    k=63 K0063    +0.2467   +0.2083      +0.1770       True      False         +0.6250
+   k=126 K0126    +0.1945   +0.1590      +0.1853       True      False         +0.5625
+   k=252 K0252    +0.1924   +0.1397      +0.1634       True      False         +0.5625
+   k=504 K0504    +0.1419   +0.1581      +0.1361       True      False         +0.6875
+   k=INF MAXDD    +0.1419   +0.1654      +0.1142       True      False         +0.6875
+  REFERENCE  ULCER  b_gap -0.1221  b_sd -0.1916  (1140: -0.1221 / -0.1916)
+
+## RESULT 2 — THE SWITCH-OFF RUNG (the deliverable the idea asks for)
+  QUANT  5 of 7 rungs carry the ULCER side; the MAXDD signature
+         first turns ON at p=0.999; uniform-MAXDD = False
+  KDAY   0 of 6 rungs carry the ULCER side; the MAXDD signature
+         first turns ON at k=21; uniform-MAXDD = True
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.switch.csv  (2 rows, 6 cols)
+
+## RESULT 3 — BOTH TUNED DIALS, ALL 9 COMBINATIONS (rule 4 requires every grid point)
+##   Read: median b_sd over the truncated rungs of that rule, computed from the tape
+##   lengths that dial 2 admits.  frac 1 = whole tape only is a DEGENERATE fit (a
+##   single length cannot identify a slope) and is reported as nan, not as zero.
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.dials.csv  (9 rows, 7 cols)
+   trunc_rule subtape_fraction  n_tape_lengths  n_trunc_rungs  med_b_gap_trunc  med_b_sd_trunc              verdict
+        QUANT              1/1               2              6              NaN             NaN nan (degenerate fit)
+        QUANT              1/2               5              6          -0.0085         -0.0384           LIKE ULCER
+        QUANT              1/3               7              6          -0.0272         -0.0365           LIKE ULCER
+         KDAY              1/1               2              5              NaN             NaN nan (degenerate fit)
+         KDAY              1/2               5              5          +0.2759         +0.2620           LIKE MAXDD
+         KDAY              1/3               7              5          +0.2620         +0.1789           LIKE MAXDD
+         BOTH              1/1               2             11              NaN             NaN nan (degenerate fit)
+         BOTH              1/2               5             11          +0.0968         +0.0882           LIKE MAXDD
+         BOTH              1/3               7             11          +0.0978         +0.0715           LIKE MAXDD
+
+## RESULT 4 — IS b_sd MONOTONE ALONG EACH LADDER?  Share of adjacent rung pairs whose
+##   b_sd RISES toward MAXDD, cell by cell (not on the medians), at the headline base.
+  QUANT  83 of 96 adjacent (cell, rung-pair) comparisons rise toward MAXDD (86.5%)
+  KDAY   32 of 80 adjacent (cell, rung-pair) comparisons rise toward MAXDD (40.0%)
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.monotone.csv  (2 rows, 4 cols)
+
+## RESULT 5 — THE LEVELS, so the level-shift confound is checkable and not asserted.
+##   Median realised statistic over every (panel, ladder, rung) on the FULL warm tape.
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.levelsummary.csv  (17 rows, 3 cols)
+  QUANT  Q0500=-1.80%  Q0750=-4.96%  Q0900=-8.78%  Q0950=-10.68%  Q0990=-14.16%  Q0999=-19.24%  MAXDD=-21.52%
+  KDAY   K0021=-19.81%  K0063=-21.52%  K0126=-21.52%  K0252=-21.52%  K0504=-21.52%  MAXDD=-21.52%
+  ULCER  +4.79%   (a DEPTH, positive by construction)
+  DEGENERACY CHECK — THE BIGGEST CAVEAT ON THE KDAY ARM, MEASURED.  A horizon rung only
+  truncates anything if the book's worst drawdown actually took LONGER than k days to
+  reach its trough from its peak.  Share of the 74 (panel, ladder, rung) books on the
+  FULL warm tape at which K_k is BIT-IDENTICAL to MAXDD, i.e. the rung truncates NOTHING:
+    K0021  k=  21    11 of 74 books (14.9%)   median K_k - MAXDD +0.888 pp
+    K0063  k=  63    73 of 74 books (98.6%)   median K_k - MAXDD +0.000 pp
+    K0126  k= 126    74 of 74 books (100.0%)   median K_k - MAXDD +0.000 pp
+    K0252  k= 252    74 of 74 books (100.0%)   median K_k - MAXDD +0.000 pp
+    K0504  k= 504    74 of 74 books (100.0%)   median K_k - MAXDD +0.000 pp
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.kday_degeneracy.csv  (5 rows, 6 cols)
+  READ THIS BEFORE THE KDAY RESULT: wherever the share above is high the KDAY rung is
+  MAXDD under another name, and its exponents MUST agree with MAXDD's trivially.  The
+  KDAY arm therefore rests on the rungs where the share is LOW, and the conclusion drawn
+  from it is only as strong as those rungs.
+
+## THE PRICE LEG — RULE 8 WALK-FORWARD.  Rung chosen on IS 2009-2016 ALONE; OOS
+##   2017-2026 read ONCE.  Every truncation rung supplies a CHOOSER (maximise IS
+##   CAGR / |truncated DD|) beside 1140's three.  Scored against the ladder's FROZEN
+##   DEFAULT rung, against SPY and against the live RULES v2 book, BOTH KEEP PATHS.
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.walkforward.csv  (240 rows, 26 cols)
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.books.csv  (74 rows, 58 cols)
+  U56 SPY       full 15.10% / 0.8829 / -33.72%   halves 0.9588/0.8207   OOS 15.21% / 0.8711 / -33.72%
+  U56 RULES v2  full 8.62% / 1.2008 / -12.05%   halves 1.2322/1.1760   OOS 9.46% / 1.2763 / -12.05%
+  B136 SPY       full 15.16% / 0.8861 / -33.72%   halves 0.9596/0.8259   OOS 15.33% / 0.8767 / -33.72%
+  B136 RULES v2  full 7.98% / 1.0993 / -12.24%   halves 1.2348/0.9658   OOS 7.88% / 1.1059 / -12.24%
+  IS picks: 240 across 15 choosers — 4b full 36, 4b OOS 38, 4a 0, median OOS Sharpe 1.0623
+  whole grid 74 rungs: 4b full 17, 4b OOS 18, 4a 0
+  PER-CHOOSER rule-8 OOS (median over the 16 panel x ladder x rung-set cells):
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.choosers.csv  (15 rows, 10 cols)
+                 med_OOS_Sharpe  med_OOS_CAGR  med_OOS_MaxDD  med_adv_vs_default  share_pick_is_default  n_4b_full  n_4b_oos  n_4a   n
+   chooser                                                                                                                            
+   C_CALM_Q0990          1.0705        0.1655        -0.2306             -0.0177                 0.2500          2         2     0  16
+   C_CALM_Q0950          1.0705        0.1565        -0.2303             -0.0140                 0.0000          2         2     0  16
+   C_CALM_K0063          1.0696        0.1648        -0.2298             -0.0174                 0.3125          3         3     0  16
+   C_ISDD                1.0696        0.1547        -0.2306             -0.0424                 0.0000          0         0     0  16
+   C_CALM_Q0900          1.0625        0.1602        -0.2298             -0.0021                 0.1875          1         1     0  16
+   C_CALM_Q0500          1.0625        0.1571        -0.2241             -0.0031                 0.1250          2         2     0  16
+   C_CALM_K0126          1.0623        0.1654        -0.2232             -0.0319                 0.2500          2         2     0  16
+   C_CALM_Q0999          1.0623        0.1661        -0.2163             -0.0177                 0.3125          3         3     0  16
+   C_CALM_MAXDD          1.0623        0.1654        -0.2232             -0.0319                 0.2500          2         2     0  16
+   C_CALM_K0252          1.0623        0.1654        -0.2232             -0.0319                 0.2500          2         2     0  16
+   C_CALM_K0504          1.0623        0.1654        -0.2232             -0.0319                 0.2500          2         2     0  16
+   C_CALM_Q0750          1.0535        0.1546        -0.2298             -0.0081                 0.0625          3         3     0  16
+   C_ISSHARPE            1.0479        0.1615        -0.2241             -0.0070                 0.3750          3         3     0  16
+   C_CALM_K0021          1.0172        0.1649        -0.2047              0.0000                 0.4375          6         8     0  16
+   C_ISCAGR              1.0100        0.1673        -0.2297             -0.0070                 0.3750          3         3     0  16
+  C_ISDD (1140's MaxDD chooser) median OOS Sharpe 1.0696; best TRUNCATED chooser C_CALM_Q0990 1.0705  (gap +0.0009)
+  EVERY IS PICK THAT CLEARS 4b (full), with its OOS triple:
+   panel  ladder rung_set      chooser pick  pick_is_default   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+     U56       N     CORE C_CALM_K0021   12            False 0.1771  1.1692 -0.2017 1.2753 1.0885    0.1889      1.1759    -0.2017
+     U56       N      EXT C_CALM_K0021   12            False 0.1771  1.1692 -0.2017 1.2753 1.0885    0.1889      1.1759    -0.2017
+     U56   GROSS     CORE   C_ISSHARPE 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE     C_ISCAGR 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE C_CALM_MAXDD 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE C_CALM_Q0990 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE C_CALM_Q0999 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE C_CALM_K0021 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE C_CALM_K0063 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE C_CALM_K0126 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE C_CALM_K0252 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS     CORE C_CALM_K0504 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT   C_ISSHARPE 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT     C_ISCAGR 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT C_CALM_MAXDD 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT C_CALM_Q0990 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT C_CALM_Q0999 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT C_CALM_K0021 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT C_CALM_K0063 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT C_CALM_K0126 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT C_CALM_K0252 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56   GROSS      EXT C_CALM_K0504 0.75             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE     CORE   C_ISSHARPE    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE     CORE     C_ISCAGR    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE     CORE C_CALM_Q0500    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE     CORE C_CALM_Q0750    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE     CORE C_CALM_Q0900    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE     CORE C_CALM_Q0999    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE     CORE C_CALM_K0021    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE     CORE C_CALM_K0063    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE      EXT C_CALM_Q0500    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+     U56 CADENCE      EXT C_CALM_K0021    W             True 0.1558  1.1397 -0.1913 1.2037 1.0971    0.1697      1.1644    -0.1913
+    B136   GROSS     CORE C_CALM_Q0750 0.55            False 0.1175  1.0618 -0.1551 1.2882 0.8826    0.1176      1.0081    -0.1551
+    B136   GROSS     CORE C_CALM_Q0950  0.6            False 0.1282  1.0622 -0.1684 1.2887 0.8831    0.1283      1.0086    -0.1684
+    B136   GROSS      EXT C_CALM_Q0750 0.55            False 0.1175  1.0618 -0.1551 1.2882 0.8826    0.1176      1.0081    -0.1551
+    B136   GROSS      EXT C_CALM_Q0950  0.6            False 0.1282  1.0622 -0.1684 1.2887 0.8831    0.1283      1.0086    -0.1684
+  distinct BOOKS behind those 36 passes: [('B136', 'GROSS', '0.55'), ('B136', 'GROSS', '0.6'), ('U56', 'CADENCE', 'W'), ('U56', 'GROSS', '0.75'), ('U56', 'N', '12')]
+  of which PICK == FROZEN DEFAULT: 30 of 36
+  BEST IS PICK BY OOS SHARPE: U56 H/CORE C_ISSHARPE pick 252 — full 15.88% / 1.1648 / -21.84%, halves 1.2236/1.1267, OOS 17.31% / 1.1932 / -21.84%
+
+## HYPOTHESES, declared before any number
+  SUPPORTED  H_MAXDD_SIG   MAXDD median b_gap +0.1419, b_sd +0.1654 (1140 committed +0.1419 / +0.1654)
+  SUPPORTED  H_ULCER_SIG   ULCER median b_sd -0.1916 (1140 committed -0.1916)
+  REFUTED    H_SWITCH      rungs on the ULCER side: QUANT 5 of 7, KDAY 0 of 6
+  REFUTED    H_KNIFE_EDGE  signature ON at p>=0.99 and k>=504: False; OFF at p<=0.95 and k<=252: False
+  REFUTED    H_MONOTONE    b_sd rises toward MAXDD in QUANT 86.5%, KDAY 40.0% of adjacent cell comparisons (bar 80%)
+  SUPPORTED  H_CAPITAL     best truncated chooser C_CALM_Q0990 median OOS Sharpe 1.0705 vs C_ISDD 1.0696 (+0.0009)
+  3 of 6 SUPPORTED
+  wrote 2026-09-18_does-a-TRUNCATED-MAXIMUM-behave-like-ULCER-or-like-MAXDD_B.hypotheses.csv  (6 rows, 3 cols)
+
+## CAPITAL ADDENDUM — POST-HOC, LABELLED AS SUCH.  Three facts the declared capital
+##   rule did not ask for, each of which moves the verdict AWAY from a proposal.
+  (1) NO CHOOSER BEATS DOING NOTHING.  15 of 15 choosers — 1140's
+      three and all 12 truncated ones — have a median rule-8 OOS Sharpe advantage over
+      the ladder's FROZEN DEFAULT rung that is <= 0.  Choosing a rung by ANY of these
+      statistics, truncated or not, loses out of sample to keeping the default.
+  (2) THE 6 NON-DEFAULT 4b PASSES BUY NOTHING.  4 of 6 have a
+      LOWER rule-8 OOS Sharpe than the frozen default rung on their own panel and
+      ladder, and the best of the other 2 beats its default by +0.0115 — still inside
+      877's 0.0145 seed floor.  All 6, in full:
+        U56   N       C_CALM_K0021  pick 12    OOS S 1.1759  vs default 1.1644  (+0.0115)
+        U56   N       C_CALM_K0021  pick 12    OOS S 1.1759  vs default 1.1644  (+0.0115)
+        B136  GROSS   C_CALM_Q0750  pick 0.55  OOS S 1.0081  vs default 1.0100  (-0.0019)
+        B136  GROSS   C_CALM_Q0950  pick 0.6   OOS S 1.0086  vs default 1.0100  (-0.0014)
+        B136  GROSS   C_CALM_Q0750  pick 0.55  OOS S 1.0081  vs default 1.0100  (-0.0019)
+        B136  GROSS   C_CALM_Q0950  pick 0.6   OOS S 1.0086  vs default 1.0100  (-0.0014)
+  (3) THE TRUNCATED EDGE IS INSIDE THE RECORD'S OWN NOISE FLOOR.  The best truncated
+      chooser beats C_ISDD by +0.0009 of Sharpe.  Idea 877's committed
+      per-arm seed noise floor is 0.0145 of Sharpe — 16x larger.
+      Quoted from 877, not recomputed here.
+  DECLARED RULE SAYS: KEEP-4b-candidate.  WITH THE ADDENDUM: KILL (capital).
+  NOTHING IS PROPOSED. 4a is 0 of 240; every 4b pass is either the incumbent frozen
+  default or a strictly worse gross-dial neighbour of it; and the truncated-maximum
+  chooser's edge over the MaxDD chooser is an order of magnitude inside the seed floor.
+  The declared capital rule was TOO WEAK, and that is recorded as a defect of this
+  run's pre-registration, not smoothed over.
+
+## THE ANSWER (decision rule declared before any number)
+  H_MAXDD_SIG True  H_ULCER_SIG True  H_SWITCH False  H_KNIFE_EDGE False  H_MONOTONE False
+  => a TRUNCATED MAXIMUM behaves: LIKE MAXDD
+  AND THE ANSWER IS AXIS-DEPENDENT, which is the finding.  The two rules truncate
+  DIFFERENT things and do not agree:
+    QUANT truncates the ORDER STATISTIC — how deep into the tail of the drawdown
+          distribution the number reaches.  Truncating it AT ALL removes the
+          signature (b_sd is negative at every p <= 0.90 and only turns positive
+          between p=0.95 and p=0.99); the MAXDD signature needs p >= 0.999.
+    KDAY  truncates the HORIZON — how far back the peak may be.  Truncating it does
+          NOT remove the signature at any rung tested, down to a 21-day lookback,
+          where the signature is in fact STRONGER than MAXDD's own.
+  So 1140's 'MAX-ness' is more precisely EXTREME-ORDER-STATISTIC-ness: a worst-of-many
+  still grows with the tape however short the window it is taken over, because a longer
+  tape supplies more windows; a 90th-percentile drawdown does not, because it is not a
+  worst-of-anything.  A truncated maximum behaves like ULCER only when the truncation
+  is applied to the ORDER, not to the WINDOW.
+     QUANT  MAXDD signature first ON at p=0.999; 5 of 7 rungs on the ULCER side
+     KDAY   MAXDD signature first ON at k=21; 0 of 6 rungs on the ULCER side
+  CAPITAL (rule 8, both KEEP paths): KILL (capital) (declared rule said KEEP-4b-candidate) — 4a 0 of 240, 4b(full) 36 of 240, of which NON-DEFAULT picks 6; the best
+  truncated chooser is C_CALM_Q0990 at median OOS Sharpe 1.0705 against C_ISDD's 1.0696.
+  SURVIVORSHIP (rule 9): U56 and B136 are CURRENT-CONSTITUENT panels. Every level above
+  is optimistic and every exponent is measured on that inflated tape.
+  1141: DD's 'un-resolvable everywhere' is a LARGE-PANEL fact; SMALL fires less.
+
+
+# done in 363s
