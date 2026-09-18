@@ -1,0 +1,26 @@
+# Idea 1152 (the OPEN one) — should a published RULE-8 REACH carry the LADDER and the ANCHOR's POSITION on it?
+2026-09-18, lane B. Script: `2026-09-18_should-a-published-RULE-8-REACH-carry-the-LADDER-and-the-ANCHOR-s-POSITION-on-it_B.py`. Gates 21/21.
+NOTE: `1152` is used twice in QUEUE.md (defect 932). The Done entry `is-the-4b-GROSS-WINDOW-s-WIDTH...` is a different idea.
+
+## ANSWER: YES — and the record cannot check itself today.
+1. **ARM A (census, dial 1).** Over 6,805 committed csv/csv.gz and 1,210 committed .md at tree `dee41fc`:
+   **NARROW** (machine-readable pick columns) n=2,554 — ladder stated **24 (0.9%)**, anchor stated 575 (22.5%), both 2 (0.1%), **UNCHECKABLE 2,530 (99.1%)**.
+   **WIDE** (adds prose reach sentences) n=6,678 — ladder 754 (11.3%), anchor 855 (12.8%), both 68 (1.0%), **UNCHECKABLE 5,924 (88.7%)**. `H_UNCHECKABLE` HELD, 2 of 2 claim sets.
+2. **ARM B (boundary rate, dial 2).** Among the 754 committed picks whose ladder IS recoverable (14 artefacts, ladder sizes 2–21): **B_STRICT 629 = 83.4%**, B_ADJ 638 = 84.6%. File-weighted 84.7% vs row-weighted 83.4% — idea 973's weighting gap is 1.3 pp here and does not bite. 12 of the 14 artefacts are 100% boundary. `H_BOUNDARY` HELD.
+3. **ARM C (fresh, 36 rule-8 decisions).** B_STRICT **66.7%**, B_ADJ 88.9%, and the MEASURED **B_EXT (pick moves when the ladder is widened) 72.2%**. By ladder (B_STRICT / B_EXT): GROSS 100%/100%, MAXVOL 77.8%/66.7%, N 55.6%/66.7%, H 33.3%/55.6%.
+4. **`H_ARTEFACT` HELD.** A boundary pick moves on extension **19 of 24 (79.2%)** against **7 of 12 (58.3%)** interior. **1101 reproduced exactly (G11):** U56 GROSS IS-Sharpe argmax at the TOP rung 0.75, IS-DD argmax at the BOTTOM rung 0.30, and the IS margin at **6 of 9 GROSS reaches is EXACTLY 0.0000** — the "reach" is the anchor sitting on the boundary, nothing more.
+5. **CAPITAL — KILL. `H_CAPITAL` HELD.** Rule 8, 2017–2026 read once: mean d(OOS Sharpe) pick − anchor = **−0.0280 (SE 0.0126, t −2.22, n=36)**, positive in only **4 of 36**; on the extended ladder **−0.0499**. Boundary picks −0.0193, interior −0.0455. The reach is worth *less than nothing*: the IS argmax is a tax, not a selector, at every ladder and every IS statistic.
+6. **Both KEEP paths, all 102 rungs.** 4a **0 of 102** (U56 0/34, B135 0/34, SMALL663 0/34). 4b **18 of 102** (U56 14, B135 4, SMALL663 0), every one prior art around the incumbent. Binding 4b legs: DD 75 / H2 39 / OOS 37 / CAGR 35 / H1 32. Rule-8 picks clearing 4a **0 of 36**, clearing 4b **6 of 36**. **No new book.**
+7. Reference levels, U56: SPY 15.13% / 0.8849 / −33.72% (halves 0.9600/0.8236, OOS 0.8747); LIVE RULES v2 8.62% / 1.2018 / −12.05% (OOS 1.2781); anchor book 15.78% / 1.1522 / −19.13% (OOS Sharpe 1.1832).
+8. **Bycatch (G3b), a mechanism fact the record has not stated:** the book's return is **not** linear in GROSS away from a rebalance. Held weights are normalised by a portfolio value containing the (1 − gross) cash sleeve, so a lower gross dilutes positions as they drift intra-week; max |ratio − 4/3| = 5.862e-02 over 3,525 off-rebalance days, against 3.55e-14 on the 922 rebalance days. Any claim that "GROSS only scales" is false at the second decimal.
+9. **G1 is vintage-pinned.** Truncated at the 2026-09-16 cache end the anchor replays the committed 15.7147% / 1.1480 / −19.1276% with residual 5.97e-05 — *exactly* the residual every other committed 2026-09-18 lane reports against this triple. Unpinned (cache end 2026-09-17) the triple drifts to 15.7814% / 1.15220 / −19.1276%: idea 1264's one-day drift, reported not gated.
+
+## RECOMMENDED TO THE SUNDAY REVIEW — PUBLISHING ONLY, no rules change, no new book
+Exact wording proposed for PROTOCOL.md (this script does **not** edit PROTOCOL.md, RULES.md, scan.py, bot.py or baseline.py):
+
+> **10. Reaches carry their ladder.** A published rule-8 reach or pick must state (a) the full rung list it was chosen from, (b) the anchor's index on that list, and (c) the IS margin between the pick and the anchor. A pick at rung 0 or rung K−1 must be labelled **BOUNDARY** and may not be described as "reached" without the label, because 83.4% of the record's recoverable picks are boundary picks and 79.2% of boundary picks move when the ladder is widened by one rung at each end. A reach whose IS margin is 0.0000 is the anchor, not a reach, and is published as such.
+
+Cost of the clause, measured: it would make **2,530 of 2,554** machine-readable pick claims (99.1%) checkable that are not checkable today, at the price of three columns (`ladder`, `anchor_index`, `is_margin`) in every walkforward/picks artefact. It changes no committed number and no book: the rule-8 reach has negative OOS value (−0.0280, t −2.22), so nothing in the live record depends on a reach being real.
+
+## SURVIVORSHIP (PROTOCOL rule 9)
+U56 and B135 are CURRENT-constituent lists; SMALL663 is a current sub-$2B screen (52 of 715 names dropped on `max_1d_move >= 1.0`). Every absolute level and every 4b count in ARM C is an UPPER bound. The headline findings are DIFFERENCES between rungs of the same ladder on the same names, so a level bias common to a panel moves every rung together and the boundary/extension/rule-8 results are first-order immune; the 4b counts are not and are quoted as upper bounds. ARM A/B re-read committed artefacts and change no number in them.
