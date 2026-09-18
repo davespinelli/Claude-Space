@@ -1,0 +1,292 @@
+# Idea 1139 — should-a-committed-FLOOR-KEYED-CLAIM-be-required-to-quote-its-RUNG-LIST-rather-than-its-RUNG-COUNT
+# lane B, 2026-09-18.  Costs 10 bps, t+1 execution, warm-up 260 rows, OOS from 2017-01-01 read ONCE.
+
+================ ARM A — CENSUS OF COMMITTED FLOOR-KEYED CLAIMS ================
+   GATE G8 CORE census stamp: 2 files, tree e929781b226c vs > 0 files -> PASS
+   CORE  R_LIST        claims   1810  checkable NOW     91 (  5.0%)  COUNT-only    274 ( 15.1%)  NEITHER   1445 ( 79.8%)  clause would newly require   1719 ( 95.0%)
+         STRICT (sentence names a ladder/rung at all):    564 claims  checkable NOW    61 ( 10.8%)  COUNT-only   117 ( 20.7%)
+   CORE  R_LIST_PLUS   claims   1810  checkable NOW      2 (  0.1%)  COUNT-only    274 ( 15.1%)  NEITHER   1445 ( 79.8%)  clause would newly require   1808 ( 99.9%)
+         STRICT (sentence names a ladder/rung at all):    564 claims  checkable NOW     2 (  0.4%)  COUNT-only   117 ( 20.7%)
+   GATE G8 WIDE census stamp: 1216 files, tree e929781b226c vs > 0 files -> PASS
+   WIDE  R_LIST        claims   5006  checkable NOW    160 (  3.2%)  COUNT-only    557 ( 11.1%)  NEITHER   4289 ( 85.7%)  clause would newly require   4846 ( 96.8%)
+         STRICT (sentence names a ladder/rung at all):   1241 claims  checkable NOW    96 (  7.7%)  COUNT-only   235 ( 18.9%)
+   WIDE  R_LIST_PLUS   claims   5006  checkable NOW      4 (  0.1%)  COUNT-only    557 ( 11.1%)  NEITHER   4289 ( 85.7%)  clause would newly require   5002 ( 99.9%)
+         STRICT (sentence names a ladder/rung at all):   1241 claims  checkable NOW     3 (  0.2%)  COUNT-only   235 ( 18.9%)
+   GATE G6 census shares in [0,1], denominators > 0: all cells vs True -> PASS
+   H_UNCHECKABLE (majority state NEITHER list nor count): max share_nothing 85.7% -> FIRES
+
+================ PANELS ================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+   GATE G5 BASE ladder subset of EXT, anchor on both: base [5, 10, 21, 42, 63, 90, 126, 189, 252] ext [5, 10, 21, 42, 63, 90, 126, 189, 210, 252] anchor 126 vs True -> PASS
+   GATE G3 U56 IS/OOS split: IS ends 2016-12-30, OOS starts 2017-01-03 vs >= 2017-01-01 -> PASS
+
+## U56  n_days=4707  n_names=55  2009-01-13..2026-09-17  IS 2007 / OOS 2440 rows
+   SPY       full  15.13% / 0.8849 / -33.72%  halves 0.9600/0.8236  IS 0.8989  OOS  15.28% / 0.8747 / -33.72%
+   RULESv2   full   8.62% / 1.2018 / -12.05%  halves 1.2332/1.1773  IS 1.1045  OOS   9.47% / 1.2781 / -12.05%
+   GATE G2 U56 anchor cell deterministic (rebuild + rerun): 0 differing rows of 4707 vs 0 (bit for bit) -> PASS
+
+       H     CAGR   Sharpe    MaxDD      H1      H2    IS_S   OOS_S  OOS_CAGR   OOS_DD   turn   4a   4b  fails4b
+       5   13.33%   1.1033  -18.46%  1.1012  1.1122  0.9976  1.1837    15.20%  -18.46%   9.29    n    Y  -
+      10   13.76%   1.1117  -19.39%  1.1446  1.0915  1.0427  1.1656    15.32%  -19.39%   7.40    n    Y  -
+      21   14.18%   1.1083  -20.19%  1.1883  1.0548  1.1178  1.1079    15.16%  -20.19%   5.78    n    Y  -
+      42   14.13%   1.0640  -22.83%  1.1493  1.0116  1.0385  1.0898    15.74%  -22.83%   4.47    n    n  DD
+      63   15.26%   1.1204  -25.53%  1.2146  1.0631  1.1190  1.1306    16.74%  -25.53%   3.68    n    n  DD
+      90   15.40%   1.1070  -25.01%  1.2666  1.0009  1.1747  1.0720    16.15%  -25.01%   3.26    n    n  DD
+   GATE G1 fast runner == engine.backtest (anchor H=126): 2.08e-17 vs < 1e-9 -> PASS
+     126   15.78%   1.1522  -19.13%  1.2127  1.1128  1.1158  1.1832    17.28%  -19.13%   2.75    n    Y  -
+     189   15.58%   1.1232  -21.75%  1.3244  0.9899  1.2466  1.0530    15.80%  -21.75%   2.25    n    n  DD
+     210   15.66%   1.1234  -24.40%  1.3651  0.9789  1.2702  1.0496    16.14%  -24.40%   2.13    n    n  DD
+     252   15.96%   1.1670  -21.84%  1.2250  1.1306  1.1322  1.1969    17.45%  -21.84%   2.01    n    n  DD
+
+   ARM B — INF_FLOOR trigger, bar = SPY's own Sharpe on the same window
+    S_IS    bar  0.8989  FULL-9 floor  0.9976 -> FIRES  | +H210 floor  0.9976 -> FIRES 
+       k=1  C(9,1)=  9  fire   9 (100.0%)  floor range [0.9976, 1.2466]  COUNT determines
+       k=2  C(9,2)= 36  fire  36 (100.0%)  floor range [0.9976, 1.1747]  COUNT determines
+       k=3  C(9,3)= 84  fire  84 (100.0%)  floor range [0.9976, 1.1322]  COUNT determines
+       k=4  C(9,4)=126  fire 126 (100.0%)  floor range [0.9976, 1.1190]  COUNT determines
+       k=5  C(9,5)=126  fire 126 (100.0%)  floor range [0.9976, 1.1178]  COUNT determines
+       k=6  C(9,6)= 84  fire  84 (100.0%)  floor range [0.9976, 1.1158]  COUNT determines
+       k=7  C(9,7)= 36  fire  36 (100.0%)  floor range [0.9976, 1.0427]  COUNT determines
+       k=8  C(9,8)=  9  fire   9 (100.0%)  floor range [0.9976, 1.0385]  COUNT determines
+       k=9  C(9,9)=  1  fire   1 (100.0%)  floor range [0.9976, 0.9976]  COUNT determines
+    S_OOS   bar  0.8747  FULL-9 floor  1.0530 -> FIRES  | +H210 floor  1.0496 -> FIRES 
+       k=1  C(9,1)=  9  fire   9 (100.0%)  floor range [1.0530, 1.1969]  COUNT determines
+       k=2  C(9,2)= 36  fire  36 (100.0%)  floor range [1.0530, 1.1837]  COUNT determines
+       k=3  C(9,3)= 84  fire  84 (100.0%)  floor range [1.0530, 1.1832]  COUNT determines
+       k=4  C(9,4)=126  fire 126 (100.0%)  floor range [1.0530, 1.1656]  COUNT determines
+       k=5  C(9,5)=126  fire 126 (100.0%)  floor range [1.0530, 1.1306]  COUNT determines
+       k=6  C(9,6)= 84  fire  84 (100.0%)  floor range [1.0530, 1.1079]  COUNT determines
+       k=7  C(9,7)= 36  fire  36 (100.0%)  floor range [1.0530, 1.0898]  COUNT determines
+       k=8  C(9,8)=  9  fire   9 (100.0%)  floor range [1.0530, 1.0720]  COUNT determines
+       k=9  C(9,9)=  1  fire   1 (100.0%)  floor range [1.0530, 1.0530]  COUNT determines
+    S_FULL  bar  0.8849  FULL-9 floor  1.0640 -> FIRES  | +H210 floor  1.0640 -> FIRES 
+       k=1  C(9,1)=  9  fire   9 (100.0%)  floor range [1.0640, 1.1670]  COUNT determines
+       k=2  C(9,2)= 36  fire  36 (100.0%)  floor range [1.0640, 1.1522]  COUNT determines
+       k=3  C(9,3)= 84  fire  84 (100.0%)  floor range [1.0640, 1.1232]  COUNT determines
+       k=4  C(9,4)=126  fire 126 (100.0%)  floor range [1.0640, 1.1204]  COUNT determines
+       k=5  C(9,5)=126  fire 126 (100.0%)  floor range [1.0640, 1.1117]  COUNT determines
+       k=6  C(9,6)= 84  fire  84 (100.0%)  floor range [1.0640, 1.1083]  COUNT determines
+       k=7  C(9,7)= 36  fire  36 (100.0%)  floor range [1.0640, 1.1070]  COUNT determines
+       k=8  C(9,8)=  9  fire   9 (100.0%)  floor range [1.0640, 1.1033]  COUNT determines
+       k=9  C(9,9)=  1  fire   1 (100.0%)  floor range [1.0640, 1.0640]  COUNT determines
+    S_DD    bar -0.2023  FULL-9 floor -0.2553 -> silent | +H210 floor -0.2553 -> silent
+       k=1  C(9,1)=  9  fire   4 ( 44.4%)  floor range [-0.2553, -0.1846]  COUNT DOES NOT determine
+       k=2  C(9,2)= 36  fire   6 ( 16.7%)  floor range [-0.2553, -0.1913]  COUNT DOES NOT determine
+       k=3  C(9,3)= 84  fire   4 (  4.8%)  floor range [-0.2553, -0.1939]  COUNT DOES NOT determine
+       k=4  C(9,4)=126  fire   1 (  0.8%)  floor range [-0.2553, -0.2019]  COUNT DOES NOT determine
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [-0.2553, -0.2175]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [-0.2553, -0.2184]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [-0.2553, -0.2283]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [-0.2553, -0.2501]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [-0.2553, -0.2553]  COUNT determines
+    S_CAGR  bar  0.1059  FULL-9 floor  0.1333 -> FIRES  | +H210 floor  0.1333 -> FIRES 
+       k=1  C(9,1)=  9  fire   9 (100.0%)  floor range [0.1333, 0.1596]  COUNT determines
+       k=2  C(9,2)= 36  fire  36 (100.0%)  floor range [0.1333, 0.1578]  COUNT determines
+       k=3  C(9,3)= 84  fire  84 (100.0%)  floor range [0.1333, 0.1558]  COUNT determines
+       k=4  C(9,4)=126  fire 126 (100.0%)  floor range [0.1333, 0.1540]  COUNT determines
+       k=5  C(9,5)=126  fire 126 (100.0%)  floor range [0.1333, 0.1526]  COUNT determines
+       k=6  C(9,6)= 84  fire  84 (100.0%)  floor range [0.1333, 0.1418]  COUNT determines
+       k=7  C(9,7)= 36  fire  36 (100.0%)  floor range [0.1333, 0.1413]  COUNT determines
+       k=8  C(9,8)=  9  fire   9 (100.0%)  floor range [0.1333, 0.1376]  COUNT determines
+       k=9  C(9,9)=  1  fire   1 (100.0%)  floor range [0.1333, 0.1333]  COUNT determines
+    S_4B    bar  0.5000  FULL-9 floor  0.0000 -> silent | +H210 floor  0.0000 -> silent
+       k=1  C(9,1)=  9  fire   4 ( 44.4%)  floor range [0.0000, 1.0000]  COUNT DOES NOT determine
+       k=2  C(9,2)= 36  fire   6 ( 16.7%)  floor range [0.0000, 1.0000]  COUNT DOES NOT determine
+       k=3  C(9,3)= 84  fire   4 (  4.8%)  floor range [0.0000, 1.0000]  COUNT DOES NOT determine
+       k=4  C(9,4)=126  fire   1 (  0.8%)  floor range [0.0000, 1.0000]  COUNT DOES NOT determine
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+   GATE G7 U56 floor monotone in the rung set: all 511 subsets x 6 statistics vs True -> PASS
+
+   ARM C — CAPITAL GATE (rule 8).  Gate key K: floor over rung subset R of an IS-ONLY statistic clears its 4b bar -> allocate to the IS-Sharpe-argmax H in R; else DO NOTHING (hold the live RULES v2 book).  Both keys reported.
+   GATE G4 U56 IS chooser reads no OOS row: 0.00e+00 vs < 1e-12 -> PASS
+    do-nothing OOS 1.2781 | always-act (IS-argmax H=189) 1.0530 | anchor H=126 1.1832 | SPY 0.8747
+    G_SHARPE  decisions 511  GO 511 (100.0%)  picks [5, 10, 21, 42, 63, 90, 126, 189, 252]  OOS Sharpe mean 1.0857  gate-minus-do-nothing mean -0.1924 [-0.2250, -0.0812] pos 0/511  4a 0/511  4b 29/511
+    G_DD      decisions 511  GO 127 ( 24.9%)  picks [5, 10, 21, 42, 63, 90, 189]  OOS Sharpe mean 1.2279  gate-minus-do-nothing mean -0.0502 [-0.2250, +0.0000] pos 0/511  4a 0/511  4b 13/511
+   GATE G3 B135 IS/OOS split: IS ends 2016-12-30, OOS starts 2017-01-03 vs >= 2017-01-01 -> PASS
+
+## B135  n_days=4703  n_names=135  2009-01-13..2026-09-11  IS 2007 / OOS 2436 rows
+   SPY       full  15.16% / 0.8862 / -33.72%  halves 0.9598/0.8261  IS 0.8989  OOS  15.33% / 0.8769 / -33.72%
+   RULESv2   full   7.98% / 1.0994 / -12.24%  halves 1.2351/0.9660  IS 1.0920  OOS   7.88% / 1.1061 / -12.24%
+   GATE G2 B135 anchor cell deterministic (rebuild + rerun): 0 differing rows of 4703 vs 0 (bit for bit) -> PASS
+
+       H     CAGR   Sharpe    MaxDD      H1      H2    IS_S   OOS_S  OOS_CAGR   OOS_DD   turn   4a   4b  fails4b
+       5   13.46%   0.9716  -19.84%  1.1835  0.7871  1.0834  0.8880    12.55%  -19.84%  12.16    n    n  H2
+      10   13.90%   0.9731  -25.03%  1.2516  0.7391  1.1612  0.8364    12.19%  -25.03%   9.58    n    n  H2,OOS,DD
+      21   16.04%   1.0690  -26.37%  1.3230  0.8647  1.2256  0.9605    14.98%  -26.37%   7.37    n    n  DD
+      42   16.35%   1.0459  -25.34%  1.2788  0.8708  1.1562  0.9762    16.18%  -25.34%   5.58    n    n  DD
+      63   17.14%   1.0923  -28.69%  1.3529  0.8941  1.2314  1.0023    16.61%  -28.69%   4.46    n    n  DD
+      90   15.88%   0.9864  -27.88%  1.2112  0.8241  1.1187  0.9055    15.53%  -27.88%   3.58    n    n  H2,DD
+     126   16.18%   1.0715  -20.74%  1.2902  0.8995  1.1445  1.0240    16.29%  -20.74%   3.11    n    n  DD
+     189   16.84%   1.0445  -25.81%  1.2919  0.8913  1.1133  1.0182    18.19%  -25.81%   2.42    n    n  DD
+     210   18.55%   1.1032  -28.72%  1.2973  1.0072  1.1462  1.1024    21.04%  -28.72%   2.28    n    n  DD
+     252   16.39%   1.0723  -23.49%  1.2436  0.9435  1.1158  1.0478    17.05%  -23.49%   2.09    n    n  DD
+
+   ARM B — INF_FLOOR trigger, bar = SPY's own Sharpe on the same window
+    S_IS    bar  0.8989  FULL-9 floor  1.0834 -> FIRES  | +H210 floor  1.0834 -> FIRES 
+       k=1  C(9,1)=  9  fire   9 (100.0%)  floor range [1.0834, 1.2314]  COUNT determines
+       k=2  C(9,2)= 36  fire  36 (100.0%)  floor range [1.0834, 1.2256]  COUNT determines
+       k=3  C(9,3)= 84  fire  84 (100.0%)  floor range [1.0834, 1.1612]  COUNT determines
+       k=4  C(9,4)=126  fire 126 (100.0%)  floor range [1.0834, 1.1562]  COUNT determines
+       k=5  C(9,5)=126  fire 126 (100.0%)  floor range [1.0834, 1.1445]  COUNT determines
+       k=6  C(9,6)= 84  fire  84 (100.0%)  floor range [1.0834, 1.1187]  COUNT determines
+       k=7  C(9,7)= 36  fire  36 (100.0%)  floor range [1.0834, 1.1158]  COUNT determines
+       k=8  C(9,8)=  9  fire   9 (100.0%)  floor range [1.0834, 1.1133]  COUNT determines
+       k=9  C(9,9)=  1  fire   1 (100.0%)  floor range [1.0834, 1.0834]  COUNT determines
+    S_OOS   bar  0.8769  FULL-9 floor  0.8364 -> silent | +H210 floor  0.8364 -> silent
+       k=1  C(9,1)=  9  fire   8 ( 88.9%)  floor range [0.8364, 1.0478]  COUNT DOES NOT determine
+       k=2  C(9,2)= 36  fire  28 ( 77.8%)  floor range [0.8364, 1.0240]  COUNT DOES NOT determine
+       k=3  C(9,3)= 84  fire  56 ( 66.7%)  floor range [0.8364, 1.0182]  COUNT DOES NOT determine
+       k=4  C(9,4)=126  fire  70 ( 55.6%)  floor range [0.8364, 1.0023]  COUNT DOES NOT determine
+       k=5  C(9,5)=126  fire  56 ( 44.4%)  floor range [0.8364, 0.9762]  COUNT DOES NOT determine
+       k=6  C(9,6)= 84  fire  28 ( 33.3%)  floor range [0.8364, 0.9605]  COUNT DOES NOT determine
+       k=7  C(9,7)= 36  fire   8 ( 22.2%)  floor range [0.8364, 0.9055]  COUNT DOES NOT determine
+       k=8  C(9,8)=  9  fire   1 ( 11.1%)  floor range [0.8364, 0.8880]  COUNT DOES NOT determine
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [0.8364, 0.8364]  COUNT determines
+    S_FULL  bar  0.8862  FULL-9 floor  0.9716 -> FIRES  | +H210 floor  0.9716 -> FIRES 
+       k=1  C(9,1)=  9  fire   9 (100.0%)  floor range [0.9716, 1.0923]  COUNT determines
+       k=2  C(9,2)= 36  fire  36 (100.0%)  floor range [0.9716, 1.0723]  COUNT determines
+       k=3  C(9,3)= 84  fire  84 (100.0%)  floor range [0.9716, 1.0715]  COUNT determines
+       k=4  C(9,4)=126  fire 126 (100.0%)  floor range [0.9716, 1.0690]  COUNT determines
+       k=5  C(9,5)=126  fire 126 (100.0%)  floor range [0.9716, 1.0459]  COUNT determines
+       k=6  C(9,6)= 84  fire  84 (100.0%)  floor range [0.9716, 1.0445]  COUNT determines
+       k=7  C(9,7)= 36  fire  36 (100.0%)  floor range [0.9716, 0.9864]  COUNT determines
+       k=8  C(9,8)=  9  fire   9 (100.0%)  floor range [0.9716, 0.9731]  COUNT determines
+       k=9  C(9,9)=  1  fire   1 (100.0%)  floor range [0.9716, 0.9716]  COUNT determines
+    S_DD    bar -0.2023  FULL-9 floor -0.2869 -> silent | +H210 floor -0.2872 -> silent
+       k=1  C(9,1)=  9  fire   1 ( 11.1%)  floor range [-0.2869, -0.1984]  COUNT DOES NOT determine
+       k=2  C(9,2)= 36  fire   0 (  0.0%)  floor range [-0.2869, -0.2074]  COUNT determines
+       k=3  C(9,3)= 84  fire   0 (  0.0%)  floor range [-0.2869, -0.2349]  COUNT determines
+       k=4  C(9,4)=126  fire   0 (  0.0%)  floor range [-0.2869, -0.2503]  COUNT determines
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [-0.2869, -0.2534]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [-0.2869, -0.2581]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [-0.2869, -0.2637]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [-0.2869, -0.2788]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [-0.2869, -0.2869]  COUNT determines
+    S_CAGR  bar  0.1061  FULL-9 floor  0.1346 -> FIRES  | +H210 floor  0.1346 -> FIRES 
+       k=1  C(9,1)=  9  fire   9 (100.0%)  floor range [0.1346, 0.1714]  COUNT determines
+       k=2  C(9,2)= 36  fire  36 (100.0%)  floor range [0.1346, 0.1684]  COUNT determines
+       k=3  C(9,3)= 84  fire  84 (100.0%)  floor range [0.1346, 0.1639]  COUNT determines
+       k=4  C(9,4)=126  fire 126 (100.0%)  floor range [0.1346, 0.1635]  COUNT determines
+       k=5  C(9,5)=126  fire 126 (100.0%)  floor range [0.1346, 0.1618]  COUNT determines
+       k=6  C(9,6)= 84  fire  84 (100.0%)  floor range [0.1346, 0.1604]  COUNT determines
+       k=7  C(9,7)= 36  fire  36 (100.0%)  floor range [0.1346, 0.1588]  COUNT determines
+       k=8  C(9,8)=  9  fire   9 (100.0%)  floor range [0.1346, 0.1390]  COUNT determines
+       k=9  C(9,9)=  1  fire   1 (100.0%)  floor range [0.1346, 0.1346]  COUNT determines
+    S_4B    bar  0.5000  FULL-9 floor  0.0000 -> silent | +H210 floor  0.0000 -> silent
+       k=1  C(9,1)=  9  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=2  C(9,2)= 36  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=3  C(9,3)= 84  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=4  C(9,4)=126  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+   GATE G7 B135 floor monotone in the rung set: all 511 subsets x 6 statistics vs True -> PASS
+
+   ARM C — CAPITAL GATE (rule 8).  Gate key K: floor over rung subset R of an IS-ONLY statistic clears its 4b bar -> allocate to the IS-Sharpe-argmax H in R; else DO NOTHING (hold the live RULES v2 book).  Both keys reported.
+   GATE G4 B135 IS chooser reads no OOS row: 0.00e+00 vs < 1e-12 -> PASS
+    do-nothing OOS 1.1061 | always-act (IS-argmax H=63) 1.0023 | anchor H=126 1.0240 | SPY 0.8769
+    G_SHARPE  decisions 511  GO 511 (100.0%)  picks [5, 10, 21, 42, 63, 90, 126, 189, 252]  OOS Sharpe mean 0.9688  gate-minus-do-nothing mean -0.1373 [-0.2697, -0.0583] pos 0/511  4a 0/511  4b 0/511
+    G_DD      decisions 511  GO   1 (  0.2%)  picks [5]  OOS Sharpe mean 1.1057  gate-minus-do-nothing mean -0.0004 [-0.2181, +0.0000] pos 0/511  4a 0/511  4b 0/511
+   GATE G3 SMALL663 IS/OOS split: IS ends 2016-12-30, OOS starts 2017-01-03 vs >= 2017-01-01 -> PASS
+
+## SMALL663  n_days=4198  n_names=663  2011-01-13..2026-09-11  IS 1502 / OOS 2436 rows
+   SPY       full  14.06% / 0.8582 / -33.72%  halves 0.9140/0.8346  IS 0.8318  OOS  15.33% / 0.8769 / -33.72%
+   RULESv2   full   4.64% / 0.7130 / -12.18%  halves 0.8170/0.6425  IS 0.8390  OOS   4.47% / 0.6518 / -12.18%
+   GATE G2 SMALL663 anchor cell deterministic (rebuild + rerun): 0 differing rows of 4198 vs 0 (bit for bit) -> PASS
+
+       H     CAGR   Sharpe    MaxDD      H1      H2    IS_S   OOS_S  OOS_CAGR   OOS_DD   turn   4a   4b  fails4b
+       5    8.42%   0.5727  -30.15%  0.7034  0.4738  0.5865  0.5678     8.71%  -30.15%  18.67    n    n  H1,H2,OOS,DD,CAGR
+      10    9.44%   0.6225  -34.56%  0.8133  0.4774  0.7738  0.5459     8.43%  -34.56%  14.17    n    n  H1,H2,OOS,DD,CAGR
+      21    8.07%   0.5284  -38.29%  0.8361  0.2974  0.7162  0.4354     6.61%  -38.29%  10.31    n    n  H1,H2,OOS,DD,CAGR
+      42    8.50%   0.5506  -41.23%  0.9433  0.2454  0.8565  0.3926     5.74%  -41.23%   7.55    n    n  H2,OOS,DD,CAGR
+      63    9.11%   0.5754  -36.43%  0.8591  0.3657  0.7960  0.4631     7.25%  -36.43%   5.92    n    n  H1,H2,OOS,DD,CAGR
+      90    7.95%   0.5121  -39.45%  0.5953  0.4588  0.5083  0.5173     8.48%  -39.45%   4.76    n    n  H1,H2,OOS,DD,CAGR
+     126    7.87%   0.5073  -35.81%  0.6636  0.3942  0.6117  0.4534     7.09%  -35.81%   3.94    n    n  H1,H2,OOS,DD,CAGR
+     189   10.50%   0.6415  -36.97%  0.6265  0.6581  0.6375  0.6447    10.88%  -36.97%   3.19    n    n  H1,H2,OOS,DD
+     210    9.39%   0.5761  -40.17%  0.6761  0.5015  0.6333  0.5458     9.07%  -40.17%   3.11    n    n  H1,H2,OOS,DD,CAGR
+     252   13.36%   0.7845  -37.41%  0.9555  0.6419  0.9836  0.6677    11.16%  -37.41%   2.73    n    n  H2,OOS,DD
+
+   ARM B — INF_FLOOR trigger, bar = SPY's own Sharpe on the same window
+    S_IS    bar  0.8318  FULL-9 floor  0.5083 -> silent | +H210 floor  0.5083 -> silent
+       k=1  C(9,1)=  9  fire   2 ( 22.2%)  floor range [0.5083, 0.9836]  COUNT DOES NOT determine
+       k=2  C(9,2)= 36  fire   1 (  2.8%)  floor range [0.5083, 0.8565]  COUNT DOES NOT determine
+       k=3  C(9,3)= 84  fire   0 (  0.0%)  floor range [0.5083, 0.7960]  COUNT determines
+       k=4  C(9,4)=126  fire   0 (  0.0%)  floor range [0.5083, 0.7738]  COUNT determines
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [0.5083, 0.7162]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [0.5083, 0.6375]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [0.5083, 0.6117]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [0.5083, 0.5865]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [0.5083, 0.5083]  COUNT determines
+    S_OOS   bar  0.8769  FULL-9 floor  0.3926 -> silent | +H210 floor  0.3926 -> silent
+       k=1  C(9,1)=  9  fire   0 (  0.0%)  floor range [0.3926, 0.6677]  COUNT determines
+       k=2  C(9,2)= 36  fire   0 (  0.0%)  floor range [0.3926, 0.6447]  COUNT determines
+       k=3  C(9,3)= 84  fire   0 (  0.0%)  floor range [0.3926, 0.5678]  COUNT determines
+       k=4  C(9,4)=126  fire   0 (  0.0%)  floor range [0.3926, 0.5459]  COUNT determines
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [0.3926, 0.5173]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [0.3926, 0.4631]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [0.3926, 0.4534]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [0.3926, 0.4354]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [0.3926, 0.3926]  COUNT determines
+    S_FULL  bar  0.8582  FULL-9 floor  0.5073 -> silent | +H210 floor  0.5073 -> silent
+       k=1  C(9,1)=  9  fire   0 (  0.0%)  floor range [0.5073, 0.7845]  COUNT determines
+       k=2  C(9,2)= 36  fire   0 (  0.0%)  floor range [0.5073, 0.6415]  COUNT determines
+       k=3  C(9,3)= 84  fire   0 (  0.0%)  floor range [0.5073, 0.6225]  COUNT determines
+       k=4  C(9,4)=126  fire   0 (  0.0%)  floor range [0.5073, 0.5754]  COUNT determines
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [0.5073, 0.5727]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [0.5073, 0.5506]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [0.5073, 0.5284]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [0.5073, 0.5121]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [0.5073, 0.5073]  COUNT determines
+    S_DD    bar -0.2023  FULL-9 floor -0.4123 -> silent | +H210 floor -0.4123 -> silent
+       k=1  C(9,1)=  9  fire   0 (  0.0%)  floor range [-0.4123, -0.3015]  COUNT determines
+       k=2  C(9,2)= 36  fire   0 (  0.0%)  floor range [-0.4123, -0.3456]  COUNT determines
+       k=3  C(9,3)= 84  fire   0 (  0.0%)  floor range [-0.4123, -0.3581]  COUNT determines
+       k=4  C(9,4)=126  fire   0 (  0.0%)  floor range [-0.4123, -0.3643]  COUNT determines
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [-0.4123, -0.3697]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [-0.4123, -0.3741]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [-0.4123, -0.3829]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [-0.4123, -0.3945]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [-0.4123, -0.4123]  COUNT determines
+    S_CAGR  bar  0.0984  FULL-9 floor  0.0787 -> silent | +H210 floor  0.0787 -> silent
+       k=1  C(9,1)=  9  fire   2 ( 22.2%)  floor range [0.0787, 0.1336]  COUNT DOES NOT determine
+       k=2  C(9,2)= 36  fire   1 (  2.8%)  floor range [0.0787, 0.1050]  COUNT DOES NOT determine
+       k=3  C(9,3)= 84  fire   0 (  0.0%)  floor range [0.0787, 0.0944]  COUNT determines
+       k=4  C(9,4)=126  fire   0 (  0.0%)  floor range [0.0787, 0.0911]  COUNT determines
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [0.0787, 0.0850]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [0.0787, 0.0842]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [0.0787, 0.0807]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [0.0787, 0.0795]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [0.0787, 0.0787]  COUNT determines
+    S_4B    bar  0.5000  FULL-9 floor  0.0000 -> silent | +H210 floor  0.0000 -> silent
+       k=1  C(9,1)=  9  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=2  C(9,2)= 36  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=3  C(9,3)= 84  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=4  C(9,4)=126  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=5  C(9,5)=126  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=6  C(9,6)= 84  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=7  C(9,7)= 36  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=8  C(9,8)=  9  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+       k=9  C(9,9)=  1  fire   0 (  0.0%)  floor range [0.0000, 0.0000]  COUNT determines
+   GATE G7 SMALL663 floor monotone in the rung set: all 511 subsets x 6 statistics vs True -> PASS
+
+   ARM C — CAPITAL GATE (rule 8).  Gate key K: floor over rung subset R of an IS-ONLY statistic clears its 4b bar -> allocate to the IS-Sharpe-argmax H in R; else DO NOTHING (hold the live RULES v2 book).  Both keys reported.
+   GATE G4 SMALL663 IS chooser reads no OOS row: 0.00e+00 vs < 1e-12 -> PASS
+    do-nothing OOS 0.6518 | always-act (IS-argmax H=252) 0.6677 | anchor H=126 0.4534 | SPY 0.8769
+    G_SHARPE  decisions 511  GO   3 (  0.6%)  picks [42, 252]  OOS Sharpe mean 0.6513  gate-minus-do-nothing mean -0.0004 [-0.2591, +0.0160] pos 2/511  4a 0/511  4b 0/511
+    G_DD      decisions 511  GO   0 (  0.0%)  picks []  OOS Sharpe mean 0.6518  gate-minus-do-nothing mean +0.0000 [+0.0000, +0.0000] pos 0/511  4a 0/511  4b 0/511
+
+================ SUMMARY ================
+ARM B  (panel,stat,k) cells where the rung COUNT does NOT determine the verdict: 21 of 162 (13.0%)  -> H_COUNT_INSUFF FIRES
+ARM C  G_DD      4a PASS 0 of 1533;  4b PASS 13 of 1533;  mean gate-minus-do-nothing OOS Sharpe -0.0169;  GO 128 of 1533
+ARM C  G_SHARPE  4a PASS 0 of 1533;  4b PASS 29 of 1533;  mean gate-minus-do-nothing OOS Sharpe -0.1100;  GO 1025 of 1533
+ARM C  H_CAPITAL (mean gate-minus-do-nothing <= +0.02 AND no 4b pass): DOES NOT FIRE
+ARM C  grid rungs passing 4b outright: 4 of 30; 4a: 0 of 30
+GATES: 17 of 17 passing
+artefacts -> 2026-09-18_should-a-committed-FLOOR-KEYED-CLAIM-be-required-to-quote-its-RUNG-LIST-rather-than-its-RUNG-COUNT_B.*
