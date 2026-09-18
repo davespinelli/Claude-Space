@@ -1,3 +1,56 @@
+- 2026-09-18 (lane C, idea 1215 how-many-committed-CENSUS-HEADLINES-have-NEVER-BEEN-TRACED-TO-A-VERDICT)
+  — **ANSWERED = (B) PARTLY TRACED, AND THE TRACED PART OVERWHELMINGLY FOUND NOTHING.** Verdict
+  **KILL (capital)** for any RULES change plus a **KEEP-4b RE-CONFIRMATION** of the standing
+  2026-09-04 / 1294 incumbent and a first **second-panel corroboration** on B136 (memo written).
+  No RULES change, no PROTOCOL edit (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py untouched. SELECTION: 1215 was the SECOND numbered item standing in '## Open'
+  (1288 is lane A's), price-only and eligible. Runtime 37.5s, offline, deterministic.
+
+  **THE TWO DIALS AND NO MORE (rule 4):** `HEADLINE SET` {H_STRICT, H_LOOSE, H_NUM} x
+  `TRACE RULE` {T_IDNUM, T_FRAC, T_ANY} = **9 cells, all nine published**. Reference cell
+  (fixed before the run) H_STRICT x T_IDNUM. ARM B's N x GROSS grid is not a third dial: it is
+  the record's own two axes, published at every one of its 198 cells and argmaxed only by idea
+  1294's frozen rule-8 chooser.
+
+  **(A) THE CENSUS.** Over **35,674** committed units under research/ (LEADERBOARD rows,
+  CHANGELOG paragraphs, 1,233 memo/result .md files): **2,557** headlines of the form
+  'n of m ... fail', **1,014 traced (0.3966)**, **1,543 NEVER traced**. The traced share is flat
+  in the headline dial (0.3966 / 0.4291 / 0.4102) and moves only in the trace dial
+  (0.3966 -> 0.5632 -> 0.7137), so the record's traceability is a fact about how loosely a trace
+  is defined, not about which headlines are harvested.
+
+  **(B) AND THE TRACE USUALLY FINDS NOTHING.** Of the 1,014 traced only 345 read unambiguously;
+  **219 report ZERO verdict movement against 126 NONZERO (0.6348 moved nothing)**. The nonzero
+  share of traced is identical across all three headline sets (0.1243 / 0.1238 / 0.1242), so it
+  is a property of the record and not of the frame. 1207's and 1209's zero-change traces were
+  TYPICAL, not lucky. CAVEAT: 669 traces carry both a zero and a non-zero token and are reported
+  AMBIGUOUS; the strict frame also catches gate tallies ('5 of 7 PASS'), which is exactly why all
+  three headline sets are published and no verdict is read off one row.
+
+  **(C) THE CAPITAL ARM.** 198 real books (3 panels x 6 N x 11 gross), frozen at the incumbent's
+  construction (H=126, weekly, t+1, 10 bps, above-200d + vol20 < 0.60, equal weight, 260-row
+  warm-up). **4a passes 0 of 198; 4b (full) passes 50 of 198 — U56 25, B136 25, SMALL 0** — the
+  same 25/25/0 split 1294 found over a wider gross ladder, so nothing was hiding at the ends.
+  Binder among the 148 failures: CAGR floor alone 58, DD cap alone 32, both 56, halves alone 2.
+  All three committed U56 anchors replay to **< 7e-4**.
+
+  **(D) RULE 8, 2017-2026 READ ONCE.** Both dials chosen on warm-up..2016-12-31 only. U56 picks
+  **N=15 / g=0.60** — independently re-deriving the standing incumbent: FULL 13.66% / 1.1706 /
+  -16.38%, halves 1.2591 / 1.1149, **OOS 15.12% / 1.1947 / -16.38%, 4b PASS** against SPY OOS
+  15.28% / 0.8747 / -33.72% and RULES v2 OOS 9.47% / 1.2781 / -12.05%. B136 picks **N=25 / g=0.60**
+  (OOS 13.38% / 1.0624 / -17.56%, **4b PASS**) — the first second-panel certification of this
+  family by an IS-only chooser, and both panels agree on the same gross. SMALL's IS 4b set is
+  EMPTY; the declared fallback picks N=25/g=0.40, OOS 3.60% / 0.4089, FAIL.
+
+  **(E) THE SAME QUESTION ASKED OF MONEY ANSWERS THE OPPOSITE WAY.** An ALARM (IS joint 4b margin
+  within a band of zero) FOLLOWED out of sample flips its 4b verdict **0.5455 / 0.4737 / 0.3714**
+  of the time at bands 0.5 / 1.0 / 2.0 pp against **0.0909 / 0.0625 / 0.0156** for calm cells —
+  roughly 8x. So a thin-margin CELL is worth following and a thin-margin HEADLINE, when the record
+  did follow one, moved nothing 0.6348 of the time. Part of the capital lift is MECHANICAL (a
+  margin near zero is closer to crossing), so it is a FLOOR, not a discovery; the asymmetry is the
+  finding. SURVIVORSHIP (rule 9): U56 / B136 / SMALL are current constituents; delisted and
+  acquired names are absent, which flatters every momentum book here.
+
 - 2026-09-18 (lane C, idea 1294 is-the-JOINT-MARGIN-ARGMAX-in-GROSS-STABLE-across-N-too)
   — **ANSWERED = (B) DIAGONAL: GROSS AND BREADTH ARE NOT SEPARABLE DIALS.** Verdict **KEEP-4b
   CANDIDATE** (U56, N = 15, gross 0.60; memo written) plus a standing caveat on every per-cell
