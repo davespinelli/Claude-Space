@@ -1,3 +1,62 @@
+- 2026-09-18 (lane B, idea 932 QUEUE-NUMBERING-and-LANE-COLLISION)
+  — **DEFECT CONFIRMED AND 23x WORSE THAN ALLEGED; RULE ADOPTED AND APPLIED. Verdict
+  KEEP-4b RE-CONFIRMATION (stress, U56) + KILL (capital) for any RULES change** (memo written).
+  SELECTION: 932 IS the LAST numbered item standing in '## Open'. Its two standing SKIPs
+  (2026-09-15 cloud, 2026-09-16 lane B) are OVERTURNED, not repeated: their premise was that a
+  queue-hygiene defect has no book to price, but 932(b) alleges two lanes RAN THE SAME IDEA, and
+  a duplicated run is free only if two independent implementations reach the SAME VERDICT — a
+  question about money. No RULES change, no PROTOCOL edit (rule 6); RULES.md, PROTOCOL.md,
+  scan.py, bot.py and baseline.py untouched. Offline, deterministic, 32.2s.
+
+  **ARM A — THE CENSUS AND THE FIX.** Two dials, SCOPE {S_OPEN, S_ALL} x MATCH {M_EXACT,
+  M_NUMSLUG, M_SLUG} = 6 cells, all published. QUEUE.md's **1,318 numbered lines carry only
+  1,184 distinct numbers, and 69 numbers each carry TWO DIFFERENT ideas** — 932 alleged three
+  (924/925/926), so the defect is **23x** what it was filed for (38 = fix-calendar-day-index AND
+  small-cap-momentum-clean; 39, 81-83, 88, 89, 128, 129, 268-278, 290, 291, 354-359, 435, 679,
+  733, 796, 825, 838-843, 885, 887, 906-909, 921, 922 ...). Redundant-line share runs
+  0.0015 -> 0.0493 -> 0.0569 (S_ALL) and 0.0102 -> 0.0609 -> 0.0660 (S_OPEN) as the match rule
+  loosens: **exact-text matching sees 2 duplicates where identity matching sees 65**, because the
+  record's duplicates are RE-ANNOTATED copies, not byte copies — which is exactly why lanes
+  re-ran ideas. **12 stale Open duplicates removed, 0 of 1,253 (number, slug) pairs lost (G4),
+  only numbered lines touched (G5).** The numbering + claim rule (N: max-number + a per-lane
+  offset with stride 4; C: a claim is real only once PUSHED, later-pushed claim yields; D: an
+  Open line is removable only if its pair stands elsewhere) is ADOPTED into QUEUE.md's header.
+
+  **ARM B — THE LANE-DIVERGENCE TEST (capital).** The certified N=15 / H=126 / g=0.60 book at
+  WARM-UP {200,252,260,378} x START {2008,2009,2010} = 12 cells x 3 panels = **36 books, every
+  one published**, both KEEP paths at each. **4a 0 of 36; 4b 23 of 36.**
+  **U56 passes 4b at ALL TWELVE cells** (CAGR 11.53-13.82%, Sharpe 1.0239-1.1755 vs SPY
+  0.8231-0.9217, MaxDD -16.38%/-17.57%; DD margin +2.66..+3.85 pp, CAGR margin +1.58..+3.26 pp)
+  — on the panel the record certifies, **two lanes CANNOT disagree by convention alone**.
+  **B135 flips**: 11 of 12, failing at (START=2010-01-01, W=378) on the **H2 leg ALONE by -0.0074
+  of Sharpe** (0.8693 vs SPY 0.8767). A second lane using `engine.load_prices`' OWN default start
+  would have published a FAIL where the record publishes a PASS. The mechanism is the HALF-SPLIT
+  POINT: the warm-up decides where `len(r)//2` lands, and SPY's own H2 Sharpe moves 0.7842-0.8767
+  across the twelve cells. **H_SPREAD FAILS**: full-Sharpe spread from convention alone is
+  **0.1516 (U56) / 0.1814 (B135)**, 3-4x the record's own 0.05 decisiveness bar, and full CAGR
+  spans 2.3 / 2.0 pp. **H_OOSFREE HOLDS BIT-EXACTLY (G6, max|d| 0.000e+00)**: the warm-up moves
+  NO out-of-sample return — it changes the published SUMMARY of an IDENTICAL book — while moving
+  full Sharpe by up to 0.0642 and the half Sharpes by up to 0.37. Only the START touches the book,
+  through the 200d/252d history available at the first rebalances. SMALL663 0 of 12 either way,
+  spread 0.0093.
+
+  **RULE 8 (2017-2026 READ ONCE).** Both dials chosen on warm-up..2016-12-31 by argmax IS Sharpe.
+  **All three panels MOVE off the anchor and all three reach exactly +0.0000 of OOS Sharpe**
+  (U56 -> W=378/2008, B135 -> W=378/2009, SMALL663 -> W=252/2008), because the warm-up axis is
+  OOS-inert and each chosen start shares the anchor's OOS book. U56 OOS **15.12% / 1.1947 /
+  -16.38%** vs SPY OOS 15.28% / 0.8747 / -33.72% and RULES v2 OOS 9.47% / 1.2781 / -12.05%;
+  B135 OOS 14.11% / 1.0454 / -15.97%; SMALL663 OOS 6.40% / 0.4653. **Convention is a REPORTING
+  hazard, not an edge — KILL (capital).** A reporting clause ("state the warm-up and the panel
+  start beside every published book number") is PROPOSED in the memo for a Sunday review only.
+
+  **GATES 8 of 8.** G1 the anchor cell replays idea 1215's committed U56 triple 13.66% / 1.1706 /
+  -16.38% to **3.34e-05**. G2 U56 grid bit-identical on re-run. G3 IS/OOS disjoint, OOS starts
+  >= 2017-01-01 in every cell. G0 min 15.2 years (rule 1).
+  SURVIVORSHIP (rule 9): U56 / B135 / SMALL663 are current-constituent lists; every absolute
+  level is optimistic and every 4b pass an UPPER bound. The headline is a DIFFERENCE between
+  conventions on the SAME names in the SAME book, so a panel-common level bias moves every cell
+  together and the finding is first-order immune; the pass COUNTS are not. ARM A is price-free.
+
 - 2026-09-18 (lane cloud, ideas 1296 + 1298 — the sprint's two-idea run)
   — SELECTION: the FIRST numbered item standing in '## Open' was 1204 and the LAST was 932; both,
   and every numbered item between them, are record-bookkeeping censuses, schema clauses or
