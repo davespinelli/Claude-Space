@@ -3418,3 +3418,66 @@ rather than a lookalike.
   count is an UPPER bound. ARM A measures dependence structure, not level, so a common level bias
   does not move an autocorrelation — but the series are the surviving names' series, so even the
   block lengths are the survivors'. ARM B re-reads committed numbers and changes none of them.
+## 2026-09-18 — idea 1250 (lane cloud, idea 2 of 2): is the L NEIGHBOURHOOD of 63 wide enough to make every committed L-KEYED claim SAFE?
+- ANSWERED (B): REAL BUT NARROWER THAN THE RECORD'S OWN SPAN. VERDICT: KILL (capital). No new book,
+  no RULES, scan.py, bot.py or baseline.py change; a PUBLISHING clause is recommended to the Sunday
+  review (rule 6), nothing enacted. 13 of 18 gates (5 failures located below, 4 of them findings),
+  989s, offline, deterministic.
+- 1242 read the neighbourhood off two rung PAIRS (0 of 18 outputs separate at (42,126), 8 of 18 at
+  (21,252)). This run maps it DIRECTLY on a 21-rung numeric L ladder — 1242's 11 rungs plus 10 new
+  ones (16, 26, 32, 52, 79, 100, 160, 200, 378, 756) — plus the degenerate rung L = T. Dial 1 =
+  NOISE MULTIPLE {1.0,1.5,2.0,3.0}, dial 2 = OUTPUT SET {OS_CORE 7, OS_WIDE 14, OS_ALL 18}: 12
+  cells, all published, and all 18 per-output bands at all four multiples in .bands.csv (72 rows).
+- THE MAP at the declared m = 2.0: the five OBSERVED outputs are exactly invariant on all 21 rungs
+  [1,1008]; B_GAPEXCEEDS [1,756]; B_MODALMATCH [1,378]; B_Q95 / B_NULLMED / B_BOOT95 / B_PCTRANK /
+  B_MODALRUNG [1,252]; B_Q05 [10,378]; B_RECRANGE [16,252]; B_PPICK [10,200]; B_PMAX [5,200];
+  B_SD [21,200]; and the BINDING one, B_RESOLVED — the record's decisive bar, cited in 595 committed
+  units — [26,126]. Intersections: OS_CORE [16,200], OS_WIDE = OS_ALL [26,126]. At the strictest
+  m = 1.0 the OS_CORE band is still 5 rungs wide, [42,100], which is exactly WHY 1242's (42,126)
+  pair found nothing: the pair sits on the band's edge and 126 is inside only from m = 1.5 up.
+- THE CLAUSE, PRICED ON THE RECORD'S OWN UNITS (1242's census inherited whole; G9/G10 replay its
+  1272 / 1129 / 158 / 141 and its OS_WIDE 700 exactly): resolved against (21,252) / against (42,126)
+  = 0/110 at m=1.0, 10/141 at m=1.5, 110/141 at m=2.0, 141/141 at m=3.0 for OS_CORE; 17/666, 21/700,
+  115/700, 147/700 for OS_WIDE. H_BAND SUPPORTED, H_COVER REFUTED, H_RESOLVE SUPPORTED.
+- RULE 8: the pre-declared choice rule reaches m = 3.0 / OS_WIDE, IS band [16,200]; read ONCE on
+  2017-2026 book returns that band is [26,79]. 7 of 14 outputs keep or widen, 7 narrow, and
+  B_RESOLVED goes [16,200] -> [26,79]. A neighbourhood still EXISTS out of sample (13 of 13 bar
+  outputs wider than a point at every multiple) but its WIDTH does not transfer: H_TRANSFER REFUTED.
+  A clause must be written on the narrow reading, not the in-sample one.
+- CAPITAL: the book PICK never moves with L — 0 of 72 decisions at all 22 rungs (G12 exact) — so no
+  weights function in this record depends on the block length. What moves is the GATE: inside the
+  rule-8 band [16,200] the P_boot >= 0.90 selector's d_sel spans -0.0014 to +0.0016 (0.0030 wide)
+  and its realised 4b BOTH runs 18-20; over the whole ladder -0.0033 to +0.0027 and 13-21; against
+  do-nothing's 0.7922 and 24. The gate destroys 4 to 6 4b passes at EVERY rung, inside the safe band
+  as much as outside it. H_CAPITAL REFUTED. 4a 0 of 162 (A_DD fails at 153); 4b full 26, 4b OOS 30,
+  BOTH 25 rows -> 19 distinct books (U56 20, B136 5, SMALL663 0), binding leg the DD cap (106 of
+  162), every one prior art. U56 SPY 15.13% / 0.8848 / -33.72% (halves 0.9598/0.8234), OOS 15.28% /
+  0.8745; U56 live RULES v2 @10 bps 8.62% / 1.2017 / -12.05%, OOS 9.47% / 1.2778.
+- THE FIVE FAILING GATES, LOCATED NOT EXCUSED. G6/G7/G8 are pooled replays of 1242 and were EXPECTED
+  to fail: this lane's SMALL panel is the 663-name max_1d_move-filtered one (mandated), 1242's was
+  the unfiltered 715-name panel — 1272's finding, restated as a measurement. Decomposition:
+  (a) B136, the weekly-cached tape, replays to 4.44e-16 in memory and EXACTLY 0.0 artefact-to-
+  artefact over all 18 outputs x 288 rows, so the machinery is identical (G6a fails only its literal
+  'bit for bit' wording); (b) exactly 4 of 72 decisions pick a different rung and all four are on
+  SMALL (G6c PASS), which is the whole of G7's 1-of-72 reach gap and G8's 0.0278 rate gap;
+  (c) G6b FAILS at 0.418 and that is a FINDING: off the degenerate rung a ~1e-6 daily restatement of
+  the adjusted closes moves every level output by only 1e-6 to 5e-5, but B_PCTRANK moves by up to
+  0.418 on 36 of 264 U56 rows, and ALL 18 moves above 0.05 are CH_ISDD at L >= 126, where the draw
+  law is coarse and the observed level sits in a mass point. At L = T every draw reproduces the
+  observed path, so B_PCTRANK and B_GAPEXCEEDS are decided on exact equality and flip 0 <-> 1.
+  IMPLICATION FOR THIS RUN'S OWN ANSWER: B_PCTRANK's measured band [1,252] OVERSTATES its
+  reliability — an output a 1e-6 restatement can move by 0.4 is not made safe by any block-length
+  clause. G7a PASSES: reach is constant across all 22 rungs (the L-free claim itself); only its
+  level (13 here vs 1208's 14) moves with the panel.
+- RECOMMENDED TO THE SUNDAY REVIEW, PUBLISHING ONLY: replace the point convention with a band — 'a
+  resample output published without an L asserts its claim for every L in [42,126]' — which is
+  measured-safe at m >= 1.5 for all 141 unstated-L OS_CORE units and all 700 OS_WIDE ones, is the
+  narrow (out-of-sample) reading rather than the flattering one, and costs nothing because no book
+  depends on L. Do NOT write it at the record's published span (21,252): B_RESOLVED, B_SD, B_PPICK
+  and B_PMAX all break inside it. And publish B_PCTRANK with a tape-vintage stamp, or not at all.
+- Script: research/backtests/2026-09-18_is-the-L-NEIGHBOURHOOD-of-63-WIDE-ENOUGH-to-make-every-committed-L-KEYED-claim-SAFE_cloud.py
+- SURVIVORSHIP (rule 9): U56 and B136 are CURRENT-CONSTITUENT lists; SMALL663 is a current sub-$2B
+  screen with 52 of 715 names dropped on max_1d_move >= 1.0. Every level and 4b count is an UPPER
+  bound. The bands are swings of the SAME statistic on the SAME books at different block lengths, so
+  a level bias moves every rung together and they are first-order immune; the capital table's 4b
+  counts are not, and are quoted as upper bounds.
