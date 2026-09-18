@@ -2478,3 +2478,48 @@ rather than a lookalike.
   of 715 dropped for max_1d_move >= 1.0). Every level is optimistic and every 4b pass an upper bound.
   The headline is a CONTRAST between two choosers picking from the SAME four books on the SAME tape,
   first-order immune to a common level bias; the 4a/4b legs are not.
+## 2026-09-18 — research (lane cloud, idea 1263): portfolio VOL TARGETING on the binding 4b DD leg — KILL (capital), one cell PARKED
+- NO RULES CHANGE, NO NEW BOOK. 126 published cells: TARGET {OFF, 0.06, 0.08, 0.10, 0.12, 0.15, 0.20}
+  annualised x VOL_LOOK {21, 63, 126} days on U56 / B135 / SMALL663 x COMPOSITE3 / M12_1.
+  gross(t) = clip(0.75 x TARGET / vol_hat(t-1), 0, 1.00), vol_hat read on the FROZEN book's own daily
+  path at the decision close and applied at t+1; GROSS_CAP 1.00 so the scaler may reach FULLY
+  INVESTED but never leverage (rule 2). Gates 9 of 9, including the vintage-pinned replay of the
+  committed U56 anchors to 5.97e-05 (COMPOSITE3) and 2.26e-05 (M12_1).
+- THE DD LEG IS BUYABLE — AND HALF THE PURCHASES ARE JUST LESS EXPOSURE. 14 of 126 cells convert a
+  committed 4b FAIL into a PASS (7 U56/M12_1, 6 B135/M12_1, 1 B135/COMPOSITE3), every one on the
+  DRAWDOWN leg. But a scaler allowed up to 1.00 changes the AVERAGE exposure, so every cell was also
+  run against a CONSTANT-GROSS control held at that cell's OWN realised mean gross: 7 OF THE 14
+  CONVERSIONS SURVIVE THAT CONTROL AND 7 DO NOT — for those, de-grossing flat to 0.57-0.69 converts
+  the book with no timing whatsoever. The record's gross dial was already known to be a pure
+  CAGR-for-drawdown slide; this run shows half of vol targeting's headline is that slide re-labelled.
+- POOLED, THE MECHANISM IS A 1.41pp/YR DRAG FOR A COIN-FLIP DRAWDOWN. Over the 108 targeted cells,
+  targeted minus its own gross-matched control: d_CAGR -1.41pp, d_Sharpe -0.0513 (POSITIVE AT 16 OF
+  108), d_OOS_Sharpe -0.0755 (16 of 108), d_MaxDD +1.18pp but POSITIVE AT ONLY 60 OF 108, at +0.70 to
+  +0.91/yr of extra turnover. The flat controls clear 4b at 29 of 126 against the targeted cells' 26.
+- THE ONE STRUCTURE THAT IS REAL IS THE LOOKBACK, AND IT FIRES PRE-DECLARED OUTCOME (D) AT THE LONG
+  END. d_MaxDD runs +4.77pp / +0.46pp / -1.70pp at VOL_LOOK 21 / 63 / 126 and d_Sharpe -0.0278 /
+  -0.0519 / -0.0740: a 126-day estimator de-grosses AFTER the volatility has arrived and makes
+  drawdown WORSE than flat gross. Both DD and Sharpe improve at 16 of 108 cells and 14 of those 16
+  are LOOK 21. Any future risk clause in this record should be read at 21 days or not at all.
+- RULE 8 ASKS FOR THE MILDEST SCALER ON THE LADDER AND STILL LOSES. (TARGET, VOL_LOOK) chosen on
+  warm-up..2016-12-31 by IS Sharpe, 2017-2026 read ONCE: the IS-argmax is TARGET 0.20 — the top rung,
+  i.e. the least targeting available — at 4 of 6 arms. chooser-minus-do-nothing: +0.0087 / +0.0021 /
+  -0.0181 / -0.0122 / -0.1427 / -0.1916, mean -0.0590, beating do-nothing at 2 of 6 and then by less
+  than 0.009; IS/OOS rank correlation negative at 3 of 6. On B135 the rule-8 pick DOES clear 4b where
+  the anchor fails, at an OOS Sharpe BELOW the anchor's (1.0059 vs 1.0240, 0.9882 vs 1.0004) — 4b
+  bought by giving up return, which is idea 1265's question measured live rather than censused.
+  4a 0 of 126 (the DD leg fails at 111 of 126, H2 at 126 of 126).
+- PARKED, NOT KEPT, AND THE MEMO RECOMMENDS AGAINST ENACTMENT. U56 / M12_1 / TARGET 0.15 / LOOK 21:
+  full 18.42% / 1.2368 / -18.50%, halves 1.4299 / 1.0640, OOS 17.76% / 1.1700 / -18.50%, turnover
+  4.34/yr, mean gross 0.8745 with the 1.00 cap binding on 52.3% of weeks. It beats the standing
+  2026-09-04 book on CAGR (+2.64pp), full Sharpe (+0.0846) and MaxDD (+0.63pp), and its gross-matched
+  control FAILS 4b (19.63% / 1.1944 / -23.66%), so this cell is genuinely the timing. It is PARKED
+  because its OOS Sharpe 1.1700 is BELOW the incumbent's 1.1832 and well below live RULES v2's
+  1.2781, rule 8 picks 0.20/21 instead, it fails 4a on H2 and DD, and it costs +1.59/yr of turnover.
+  Memo: research/backtests/2026-09-18_vol-target-DD-leg_cloud.memo.md (exact RULES wording included).
+- Script: research/backtests/2026-09-18_is-the-BINDING-4b-DD-LEG-cheaper-to-buy-with-PORTFOLIO-VOL-TARGETING-than-with-a-BRAKE_cloud.py
+- SURVIVORSHIP (rule 9): U56/B135 current-constituent lists, SMALL663 a current sub-$2B screen (52 of
+  715 dropped). A current-constituent panel UNDERSTATES the deep drawdowns a momentum book took in
+  names later delisted, so the anchor's drawdown is FLATTERED: this mechanism's DD gain is a LOWER
+  bound and the CAGR it gives up is measured against a flattered comparand. The headline contrast
+  (targeted vs gross-matched control on identical holdings) is first-order immune; the 4b legs are not.
