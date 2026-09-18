@@ -1,3 +1,73 @@
+- 2026-09-18 (lane C, idea 1317 can-a-RESIDUAL-TARGETED-SCREEN-reach-an-IDIOSYNCRATIC-drawdown-
+  where-a-VOL-SCREEN-cannot)
+  — **VERDICT: KILL for the residual-vol screen, on BOTH of the hypothesis's clauses. The run
+  re-confirms KEEP-4b for the FROZEN incumbent on U56 and B136, full sample AND rule-8 OOS.**
+  No RULES change, no PROTOCOL edit (rule 6). RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py untouched. Offline, deterministic; 14 of 14 gates; 13.1s; 57 real books.
+  SELECTION: 1317 was the SECOND numbered item standing in '## Open' (1313 first, lane A's).
+  Price-only, no eligibility descent taken.
+
+  **THE SWAP.** The incumbent's only risk screen is `vol20 < 0.60`, a TOTAL-vol bar. 1301 found
+  SMALL's worst episode is 21.2% systematic / 78.8% RESIDUAL, so the queue's hypothesis was that
+  a screen pricing idiosyncratic risk is the one that moves the 4b drawdown leg. Replaced with
+  `RESID_VOL = sd(r - beta*SPY)` (beta by OLS on the same trailing window; verified against a
+  direct polyfit residual to **5.6e-17**). Two dials, all 9 points published on 3 panels:
+  WINDOW {63,126,252} x RESID_MAX {0.5,0.7,0.9}, everything else frozen (N=15/H=126/g=0.60/W).
+
+  **MATCHED ADMISSION IS EXACT, AND THAT COST A RECORD DEFECT TO GET.** Every RESID cell runs
+  beside a TOTAL cell at the same window and percentile, built as "admit the k lowest,
+  k = floor(p * n_candidates(t))" over the above-200d priced measurable set: the two arms admit
+  **exactly the same number of names on every day** (max |difference| = 0 over 27 cells x ~4,200
+  days). A `pct_rank <= p` BAR does NOT: resid_var is clipped at zero and ties at the floor
+  differ between the statistics, admitting up to **18** more eligible names on one arm — measured
+  on this run's own first pass, and the reason the screen is written in the count form.
+
+  **CLAUSE 1 — THE SCREEN DOES NOT REACH THE CAP.** SMALL663, 9 RESID cells: MaxDD -31.52% ..
+  **-24.50%** against the -20.23% cap. **0 of 9 clear the cap; 0 of 9 clear cap AND the 9.84%
+  floor.** The shallowest misses by **4.27 pp** at 6.19% CAGR. It is the best of the record's
+  three instruments on drawdown alone (1301's SELECTION -28.69%, 1297's EXPOSURE -22.43%) and
+  still short, and it buys nothing the CAGR floor can pay for.
+
+  **CLAUSE 2 — AT MATCHED ADMISSION IT IS INDISTINGUISHABLE FROM THE TOTAL-VOL SCREEN.** Over 27
+  matched pairs RESID is shallower in **14 of 27**, median dMaxDD **+0.000 pp**, mean -0.158 pp,
+  **paired t = -0.62**; per-panel medians run -0.44 / +0.21 / -0.62 pp, no consistent sign. RESID
+  has the higher Sharpe in 10 of 27 and the higher OOS Sharpe in 12 of 27.
+
+  **THE MECHANISM, WHICH EXPLAINS CLAUSE 2: BOTH SCREENS ARE DE-BETAERS.** On SMALL the RESID
+  screen does cut the incumbent's drawdown +8.85 pp (-33.35% -> -24.50%), but beta falls
+  **0.658 -> 0.528** and the worst episode flips from **21.2% systematic / 78.8% residual** to
+  **72.4% / 27.6%**, while the residual STREAM's standalone MaxDD only moves -44.68% -> -37.23%.
+  The TOTAL control does the same (beta 0.506, 69.5%/30.5%, residual stream -35.41%) — marginally
+  BETTER on the residual stream than the residual-targeted screen. Low residual vol and low total
+  vol pick nearly the same defensive names, so both act on the part 1301 showed is not the binder.
+
+  **ON THE LARGE PANELS THE SWAP IS STRICTLY WORSE.** U56 incumbent 13.66% / 1.1706 / -16.38%
+  (4b full AND OOS) vs best RESID cell 10.55% / 1.0021 / -15.79%: **-3.10 pp CAGR, -0.1684
+  Sharpe**, 0 of 9 pass 4b full or BOTH. B136 incumbent 13.48% / 1.0670 / -15.97% vs best RESID
+  9.67% / 0.9822 / -17.43%: -3.81 pp / -0.0848, 0 of 9. **4a is 0 of 57.**
+
+  **RULE 8, 2017-2026 READ ONCE, BOTH ARMS, ALL THREE PANELS (6 walks).** Picks by argmax IS
+  Sharpe on warm-up..2016-12-31. U56 RESID w252/p0.9 OOS 11.13% / 0.9808 / -15.92%
+  (**-0.2139** vs the frozen anchor's 1.1947); B136 RESID w252/p0.9 OOS 11.11% / 0.9006 /
+  -19.44% (**-0.1448** vs 1.0454); SMALL RESID w63/p0.5 OOS 3.87% / 0.3506 / -26.09%
+  (**-0.1147** vs 0.4653). The TOTAL control walks land at -0.1369 / -0.1472 / -0.0712.
+  **Every pick, both arms, all three panels, lands BELOW the frozen incumbent out of sample.**
+  The single 4b-BOTH pass among the 54 screen-swap books is the TOTAL control on U56 — not the
+  residual screen it was built to control for — and it still gives up 2.18 pp of CAGR and 0.056
+  of Sharpe to the frozen incumbent, so it is not a candidate either. OOS SPY 15.28-15.33% /
+  0.8747-0.8769 / -33.72%; OOS RULES v2 9.47% / 1.2781, 7.88% / 1.1061, 4.47% / 0.6518.
+
+  **NOT CLAIMED:** that residual risk is irrelevant to SMALL's drawdown (1301's decomposition
+  stands; what is killed is that a residual-vol SCREEN is the instrument that reaches it); that
+  some other residual construction (multi-factor, downside-only, event-triggered) must fail;
+  that any cell here is a new candidate book; that anything in RULES.md changes (rule 6).
+  Script: research/backtests/2026-09-18_can-a-RESIDUAL-TARGETED-SCREEN-reach-an-IDIOSYNCRATIC-drawdown_C.py
+- **SURVIVORSHIP (rule 9):** current constituents only on all three panels; SMALL additionally
+  drops 52 tickers with max_1d_move >= 1.0, leaving 663. The bias is worst on SMALL and flatters
+  the drawdown leg specifically, so the SMALL KILL is the STRONGER reading. The RESID-vs-TOTAL
+  difference is read on the SAME names and days at a matched admission count, so a common level
+  bias moves both arms together and cannot manufacture the null in clause 2.
+
 - 2026-09-18 (lane B, idea 1331 does-a-NO-CHOICE-EQUAL-WEIGHT-OVER-THE-WHOLE-(N,H)-GRID-beat-every-real-time-chooser)
   — **VERDICTS: KILL (capital) for REAL-TIME (N,H) CHOOSING; PARK for the NO-CHOICE GRID AVERAGE
   (misses 4b by 0.33 pp of drawdown on U56); KEEP-4b RE-CONFIRMATION of the FROZEN N=20/H=126
