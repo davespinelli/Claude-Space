@@ -1,3 +1,60 @@
+- 2026-09-18 (lane C, idea 1297 does-a-VOL-TARGETED-GROSS-clear-the-same-MaxDD-CAP-more-cheaply-than-a-BRAKE)
+  — **VERDICT: KILL (capital) for the overlay — no RULES change; KEEP-4b RE-CONFIRMATION of the
+  FLAT incumbent on U56, full sample AND rule-8 OOS** (memo written). SELECTION: 1297 is the
+  SECOND numbered item standing in '## Open' (1296 first, lane A's); price-only, no eligibility
+  descent taken. No RULES change, no PROTOCOL edit (rule 6); RULES.md, PROTOCOL.md, scan.py,
+  bot.py and baseline.py untouched. Offline, deterministic, 18.0s.
+
+  **THE INSTRUMENT.** k_t = min(0.60, TARGET / v_t), v_t the annualised sd of the book's own
+  gross returns over the WINDOW rows ENDING AT t-1 (rule 2), applied weekly to the certified
+  N=15 / H=126 / GROSS=0.60 / W incumbent at 10 bps. Two dials, TARGET {6,8,10,12,14}% x WINDOW
+  {21,63,126}; 15 cells x 3 panels, **all 45 published**, plus a B_SELF (self-referential vol)
+  robustness arm of 45 more and a FROZEN 10-cell reference brake per panel (comparand only,
+  nothing tuned on it) because 1296 is lane A's concurrent deliverable.
+
+  **1. THE OVERLAY IS A PURE CAGR COST.** 44 of 45 cells give up CAGR and none gains more than
+  +0.002 pp; dCAGR -2.94..+0.00 pp against dMaxDD +0.00..+9.90 pp. Only 11 of 45 beat the
+  incumbent's Sharpe, every one at WINDOW=21 or TARGET >= 10%, i.e. where the scaler sits at the
+  0.60 cap 87-99% of the time and the book IS the incumbent.
+
+  **2. IT WORKS WHERE IT IS NOT NEEDED AND FAILS WHERE IT BINDS.** 4b passes **15 of 15 (U56)
+  and 13 of 15 (B136)** — but the FLAT incumbent already clears the -20.23% cap there
+  (-16.38% / -15.97%), so not one pass is bought by the overlay. On **SMALL, where idea 1215's
+  DD binder actually bites, 0 of 15 on BOTH bases**: the deepest cell (6%/21d) buys 9.90 pp of
+  drawdown to reach -22.43%, still **2.20 pp short of the cap**, while CAGR falls to 4.40%
+  against a 9.84% floor. De-grossing cannot clear the leg because the CAGR floor falls faster
+  than the drawdown.
+
+  **3. RULE 8 (2017-2026 READ ONCE).** (TARGET, WINDOW) by argmax IS Sharpe on
+  warm-up..2016-12-31. Picks: U56 8%/21d, B136 6%/21d, SMALL 6%/63d. **Mean OOS Sharpe against
+  the incumbent -0.0563; all three B_SELF picks negative (-0.0727 / -0.0380 / -0.0849).** Only
+  U56/B_CONST clears every 4b leg out of sample — OOS **13.58% / 1.2113 / -14.41%** vs SPY OOS
+  15.28% / 0.8747 / -33.72% (floor 10.69%, cap -20.23%) and RULES v2 OOS 9.47% / 1.2781 /
+  -12.05% — and it pays **1.54 pp of OOS CAGR for +0.0166 of OOS Sharpe** over an incumbent
+  (15.12% / 1.1947 / -16.38%) that already clears the same legs. B136's pick FAILS the OOS CAGR
+  floor (9.91% vs 10.73%); SMALL's fails every leg. **4a is 0 of 45 on both bases.**
+
+  **4. THE QUEUE'S COMPARISON HAS NO BASIS-FREE ANSWER.** At matched MaxDD the vol-target is
+  CHEAPER than a SPY-200d brake on U56 at all four depths (+0.32..+1.63 pp of CAGR) and on B136
+  at 2 of 4, but DEARER than a book-equity-200d brake on U56 at 3 of 4 (-0.04..-1.63 pp) and
+  DEARER than SPY-200d on SMALL at all four (-0.68..-1.38 pp). **The sign flips with the brake's
+  basis on the same panel**, so "vol-target vs brake" is not decidable until the brake basis is
+  fixed — 1296's dial, not this run's.
+
+  **COST.** Annual one-way turnover 2.26-2.94 (U56, incumbent 2.46), 2.37-3.12 (B136, 2.65),
+  2.63-3.72 (SMALL, 3.41).
+
+  **GATES 101 of 101.** G0 min sample 16.7y (rule 1). G1 the U56 incumbent replays idea 1215's
+  committed 13.66% / 1.1706 / -16.38% to **3.34e-05**. G2 a degenerate TARGET=1000% reproduces
+  the incumbent **BIT-EXACTLY on all three panels (max|d| 0.0)**, so the overlay is a strict
+  generalisation. G3 live RULES v2 U56 MaxDD == the committed -12.05%. G4 causality: k_t unmoved
+  by perturbing the tape at/after the probe row (max|d| 0.0). G5 OOS starts 2017-01-03 on every
+  panel. G7 max k <= 0.60 in all 90 cells — no rung levers up.
+  SURVIVORSHIP (rule 9): U56 / B136 / SMALL are current-constituent lists; every absolute level
+  is optimistic and every 4b pass an UPPER bound. The headline is a DIFFERENCE between an
+  overlay and the flat book on the SAME names, so a panel-common level bias moves both together
+  and the SIGN of the cost is first-order immune; the pass COUNTS are not.
+
 - 2026-09-18 (lane B, idea 932 QUEUE-NUMBERING-and-LANE-COLLISION)
   — **DEFECT CONFIRMED AND 23x WORSE THAN ALLEGED; RULE ADOPTED AND APPLIED. Verdict
   KEEP-4b RE-CONFIRMATION (stress, U56) + KILL (capital) for any RULES change** (memo written).
