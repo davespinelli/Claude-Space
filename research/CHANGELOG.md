@@ -3605,3 +3605,61 @@ rather than a lookalike.
   with 52 of 715 names dropped on max_1d_move >= 1.0. Every LEVEL is an UPPER bound. The gap and
   ratio results are BETWEEN rungs of the same panel and are first-order immune to a level bias; the
   capital arm's OOS levels are not, and are quoted as upper bounds.
+
+## 2026-09-18 (lane C) — idea 1259, should a 4b LEG DECIDED INSIDE ITS OWN ROUNDING be PUBLISHABLE as a BINARY? ANSWERED NO / SCHEMA / KILL (capital)
+- ANSWERED NO, AND NOT MARGINALLY. Over 1,224 (panel, book, window, leg) verdicts — 3 panels x 34
+  books x 3 windows x 4 legs — 0.4028 are decided INSIDE 1 SD of their own margin and 0.7549 inside
+  2 SD, under a PAIRED circular block bootstrap (L=63, B=400, seed 1259) in which the book and SPY
+  are resampled on identical block draws, so the SD is the resolution of the comparison actually
+  published. Median |M|/SD is 1.229. Per leg, inside-1-SD share: L_H1 0.5719, L_DD 0.3922,
+  L_H2 0.3660, L_CAGR 0.2810; at 2 SD, 0.9314 / 0.6503 / 0.7908 / 0.6471.
+- BOTH DIAL CELLS AGREE, AND THE BLOCK LENGTH IS NOT THE STORY. V_LAD (the record's own four
+  ladders, 22 rungs) reads 0.399 inside 1 SD and V_GRID (a 12-point N x H product with no GROSS
+  axis) 0.410; at 2 SD, 0.765 and 0.736. Inside-share runs 0.4191 / 0.4028 / 0.3644 at L = 42 / 63 /
+  126, so 1241's un-argued L = 63 is not carrying the result.
+- THE SHAPE THE RECORD PUBLISHES IS WORSE THAN THE LEGS. An all-four-leg 4b PASS is decisive at 1 SD
+  in 1 of 102 (panel, book) cells on the FULL window and in NONE at 2 SD; in sample, 18 passes and
+  ZERO decisive at either bar. And the decisive ones are the axis already ruled out: the single FULL
+  decisive pass is U56 G=0.60 and all three OOS ones are U56 G=0.55/0.60/0.65 — GROSS rungs, whose
+  own SE ideas 1189/1214/1224/1236/1279 measured at ~0. No non-GROSS 4b pass in this run is decisive
+  at 1 SD anywhere.
+- THE DD LEG'S PASSES ARE THE LEAST RESOLVED VERDICTS IN THE RUN. Inside-1-SD share split by
+  direction (PASS / FAIL): L_DD 0.579 / 0.308, L_H1 0.514 / 0.716, L_H2 0.478 / 0.152,
+  L_CAGR 0.198 / 0.442. 1257's headline — an L_DD margin of 3.58e-05 — sits ~1,000x inside that
+  leg's measured SD of 0.0379. It is not a near miss; it is an unmeasured quantity.
+- THE PUBLISHED DIGITS ARE ~40x FINER THAN THE TAPE RESOLVES. Median SD of the margin is 50x / 49x /
+  51x / 76x the printed half-width of L_H1 / L_H2 / L_CAGR / L_DD, and only 0.0090 of verdicts sit
+  inside the PRINTED precision against 0.4028 inside 1 SD. Committed text: LEADERBOARD.md's 3,760
+  4b-mentioning units state a margin in 235 (0.0625) and an SE/SD in 48 (0.0128); CHANGELOG.md's 419
+  state a margin in 14 (0.0334) and an SE/SD in 11 (0.0263).
+- CAPITAL ARM (rule 8, OOS 2017-2026 read once) — KILL, AND THE FILTER IS UNIMPLEMENTABLE. The
+  decisiveness chooser's in-sample candidate set is EMPTY at 12 of 12 (panel x verdict set x bar)
+  cells, so it falls back to max-IS-Sharpe at every one and bars 1.0 and 2.0 pick identically — dial
+  2 is inert in capital. What the arm therefore prices is the IS 4b PASS filter: d(OOS Sharpe)
+  DEC-ANY -0.0994 (SE 0.0371, t -2.68, n=12), and -0.1987 (SE 0.0460, t -4.32) over the 6 cells where
+  the picks differ; d(OOS CAGR) +0.0275, d(OOS MaxDD) -0.0264. Levels: U56 ANY N=40 14.16% / 1.1212 /
+  -22.46% vs DEC N=5,H=63 17.95% / 0.8996 / -26.26%; B136 ANY N=30 16.56% / 1.0663 / -24.35% vs DEC
+  N=5 14.71% / 0.7546 / -28.12%; SMALL663 ANY H=252 11.16% / 0.6677 / -37.41%. SPY OOS 15.28% /
+  0.8747 / -33.72%; RULES v2 OOS 9.47% / 1.2781 / -12.05%; RULES v1 OOS Sharpe 0.7291.
+- KEEP PATHS over all 24 OOS chooser rows: 4b 0, 4a 0. Binding leg is the DD cap, failing 24 of 24
+  (L_H1 8, L_H2 8, L_CAGR 4) — the same leg that binds every recent capital arm, and the same leg
+  whose passes this run finds least resolved.
+- RECOMMENDED TO THE SUNDAY REVIEW, PUBLISHING ONLY (changes no book): a committed 4b leg must be
+  published as a MARGIN WITH ITS OWN SD, not as a bare PASS/FAIL — "L_DD PASS (margin +0.0412,
+  SD 0.0379, 1.09 SD)" rather than "L_DD PASS". A 4b PASS or FAIL whose margin is inside 1 SD must
+  be written as UNRESOLVED and may not be counted in a headline count of passes. Figures may not be
+  printed finer than 0.1 SD of their own leg. The cost is nil (every run already has the returns
+  series a block bootstrap needs); the benefit is measured — 0.4028 of the record's verdict-shaped
+  statements are coin flips at the bar they are published against.
+- NOT CLAIMED: that the 4b bar itself is wrong, or that any specific committed verdict flips. This
+  run measures the RESOLUTION of the legs on its own 34-book grid; it does not re-adjudicate the
+  record's committed rows, whose return series are not all in the repo.
+- Script: research/backtests/2026-09-18_should-a-4b-LEG-DECIDED-INSIDE-ITS-OWN-ROUNDING-be-PUBLISHABLE-as-a-BINARY_C.py
+  Gates: G1 fast runner == engine.backtest 2.08e-17; G2 bootstrap SD stable across rng streams
+  (median relative move 0.0512); G3 no zero-SD leg (0 of 1,224).
+- SURVIVORSHIP (rule 9): U56 (55 names) and B136 (135) are CURRENT-CONSTITUENT lists; the panel the
+  record labels SMALL663 is a current sub-$2B screen now keeping 664 of 715 names on
+  max_1d_move < 1.0 (the label is stale — idea 1074's object). Every LEVEL is an UPPER bound. The
+  inside-share results are ratios of a margin to its own sampling SD on the SAME book and are
+  first-order immune to a level bias; the capital arm's OOS levels are not, and are quoted as upper
+  bounds.
