@@ -1,0 +1,333 @@
+============================================================================================================
+IDEA 1236 (lane C, 2026-09-18) — what does an ANCHOR SUBSTITUTION cost in TURNOVER
+and DRAG rather than SHARPE?
+============================================================================================================
+
+  DELTA(c) = OOS Sharpe(anchor book @ c) - OOS Sharpe(the book the record picked @ c).
+  GROSS PART = DELTA(0); REBATE(c) = DELTA(c) - DELTA(0); SHARE(c) = REBATE/DELTA.
+  ENTIRELY THE REBATE at rung c  <=>  SHARE(c) >= 1.0  <=>  DELTA(0) <= 0 < DELTA(c).
+  OUTCOMES: (A) ENTIRELY REBATE  (B) MOSTLY REBATE, SHARE(10) >= 0.50
+            (C) MOSTLY GROSS, SHARE(10) < 0.50  (D) NO GAIN AT ANY RUNG.
+
+============================================================================================================
+ARM A — PANELS, RUNG BOOKS, TURNOVER
+============================================================================================================
+
+  PANELS: U56 55 names; B136 135; SMALL 664 investable of 715 (51 dropped for max_1d_move >= 1.0); SPY benchmark only.
+  TAPE: U56 ends 2026-09-17, B136 2026-09-11, SMALL 2026-09-11.
+    U56    22 rung books built (N 6 H 4 GROSS 10 CADENCE 2).
+    B136   22 rung books built (N 6 H 4 GROSS 10 CADENCE 2).
+    SMALL  22 rung books built (N 6 H 4 GROSS 10 CADENCE 2).
+    G1 2.082e-17   G2 2.082e-17   G3 live U56 MaxDD -12.0549%  (anchor book -19.1276%)   G4 0.000e+00   G5 0.000e+00
+
+  (A1) ANNUALISED ONE-WAY TURNOVER of every rung book, post-warm-up, and the DRAG in
+       pp/yr of CAGR that each cost rung takes out of it.  This is dial-free.
+
+       panel   ladder    rung     ann turnover   drag pp/yr @10 / @25 / @50   Sharpe @0 / @10 / @50
+       U56     N        5            3.126       0.37 /  0.92 /  1.84       1.0064 / 0.9893 / 0.9205
+       U56     N        10           3.036       0.36 /  0.89 /  1.77       1.1256 / 1.1059 / 1.0265
+       U56     N        15           3.052       0.36 /  0.89 /  1.78       1.1923 / 1.1711 / 1.0857
+       U56     N        20           2.872       0.33 /  0.83 /  1.66       1.1735 / 1.1522 / 1.0668 <- ANCHOR
+       U56     N        30           2.614       0.30 /  0.75 /  1.49       1.1697 / 1.1488 / 1.0651
+       U56     N        40           2.346       0.27 /  0.66 /  1.33       1.1548 / 1.1347 / 1.0541
+       U56     H        21           6.078       0.70 /  1.73 /  3.44       1.1563 / 1.1083 / 0.9161
+       U56     H        63           3.853       0.44 /  1.11 /  2.21       1.1488 / 1.1204 / 1.0060
+       U56     H        126          2.872       0.33 /  0.83 /  1.66       1.1735 / 1.1522 / 1.0668 <- ANCHOR
+       U56     H        252          2.083       0.24 /  0.60 /  1.20       1.1825 / 1.1670 / 1.1050
+       U56     GROSS    0.3          1.195       0.13 /  0.32 /  0.63       1.1727 / 1.1505 / 1.0616
+       U56     GROSS    0.35         1.386       0.15 /  0.37 /  0.74       1.1728 / 1.1507 / 1.0623
+       U56     GROSS    0.4          1.575       0.17 /  0.43 /  0.85       1.1729 / 1.1510 / 1.0630
+       U56     GROSS    0.45         1.763       0.19 /  0.48 /  0.96       1.1730 / 1.1512 / 1.0637
+       U56     GROSS    0.5          1.949       0.22 /  0.54 /  1.07       1.1731 / 1.1514 / 1.0643
+       U56     GROSS    0.55         2.135       0.24 /  0.59 /  1.19       1.1732 / 1.1516 / 1.0649
+       U56     GROSS    0.6          2.319       0.26 /  0.65 /  1.30       1.1732 / 1.1517 / 1.0655
+       U56     GROSS    0.65         2.503       0.28 /  0.71 /  1.42       1.1733 / 1.1519 / 1.0660
+       U56     GROSS    0.7          2.688       0.31 /  0.77 /  1.54       1.1734 / 1.1521 / 1.0664
+       U56     GROSS    0.75         2.872       0.33 /  0.83 /  1.66       1.1735 / 1.1522 / 1.0668 <- ANCHOR
+       U56     CADENCE  W            2.872       0.33 /  0.83 /  1.66       1.1735 / 1.1522 / 1.0668 <- ANCHOR
+       U56     CADENCE  M            2.161       0.25 /  0.62 /  1.23       1.0842 / 1.0682 / 1.0037
+
+       B136    N        5            3.405       0.40 /  1.01 /  2.01       0.9863 / 0.9690 / 0.8991
+       B136    N        10           3.361       0.40 /  0.99 /  1.98       1.0859 / 1.0666 / 0.9884
+       B136    N        15           3.281       0.38 /  0.96 /  1.91       1.0893 / 1.0685 / 0.9845
+       B136    N        20           3.247       0.38 /  0.94 /  1.88       1.0931 / 1.0715 / 0.9847 <- ANCHOR
+       B136    N        30           3.157       0.37 /  0.92 /  1.82       1.1181 / 1.0962 / 1.0084
+       B136    N        40           3.066       0.35 /  0.88 /  1.76       1.1107 / 1.0887 / 1.0004
+       B136    H        21           7.755       0.90 /  2.24 /  4.45       1.1208 / 1.0690 / 0.8611
+       B136    H        63           4.670       0.55 /  1.36 /  2.71       1.1221 / 1.0923 / 0.9724
+       B136    H        126          3.247       0.38 /  0.94 /  1.88       1.0931 / 1.0715 / 0.9847 <- ANCHOR
+       B136    H        252          2.162       0.25 /  0.63 /  1.25       1.0865 / 1.0723 / 1.0153
+       B136    GROSS    0.3          1.348       0.14 /  0.36 /  0.72       1.0900 / 1.0676 / 0.9774
+       B136    GROSS    0.35         1.564       0.17 /  0.42 /  0.84       1.0903 / 1.0681 / 0.9784
+       B136    GROSS    0.4          1.778       0.19 /  0.48 /  0.96       1.0907 / 1.0685 / 0.9793
+       B136    GROSS    0.45         1.990       0.22 /  0.55 /  1.09       1.0910 / 1.0690 / 0.9802
+       B136    GROSS    0.5          2.201       0.24 /  0.61 /  1.22       1.0914 / 1.0694 / 0.9811
+       B136    GROSS    0.55         2.411       0.27 /  0.67 /  1.34       1.0917 / 1.0699 / 0.9819
+       B136    GROSS    0.6          2.620       0.30 /  0.74 /  1.47       1.0921 / 1.0703 / 0.9827
+       B136    GROSS    0.65         2.829       0.32 /  0.81 /  1.61       1.0924 / 1.0707 / 0.9834
+       B136    GROSS    0.7          3.037       0.35 /  0.87 /  1.74       1.0928 / 1.0711 / 0.9841
+       B136    GROSS    0.75         3.247       0.38 /  0.94 /  1.88       1.0931 / 1.0715 / 0.9847 <- ANCHOR
+       B136    CADENCE  W            3.247       0.38 /  0.94 /  1.88       1.0931 / 1.0715 / 0.9847 <- ANCHOR
+       B136    CADENCE  M            2.465       0.29 /  0.72 /  1.43       1.0980 / 1.0821 / 1.0182
+
+       SMALL   N        5            4.509       0.47 /  1.17 /  2.34       0.2913 / 0.2733 / 0.2013
+       SMALL   N        10           4.347       0.48 /  1.19 /  2.36       0.5288 / 0.5077 / 0.4230
+       SMALL   N        15           4.244       0.46 /  1.15 /  2.30       0.5413 / 0.5189 / 0.4290
+       SMALL   N        20           4.149       0.45 /  1.12 /  2.23       0.5284 / 0.5055 / 0.4134 <- ANCHOR
+       SMALL   N        30           3.959       0.43 /  1.07 /  2.13       0.5433 / 0.5201 / 0.4268
+       SMALL   N        40           3.827       0.41 /  1.03 /  2.05       0.5342 / 0.5109 / 0.4174
+       SMALL   H        21          10.951       1.19 /  2.95 /  5.83       0.5899 / 0.5278 / 0.2788
+       SMALL   H        63           6.261       0.69 /  1.71 /  3.40       0.6096 / 0.5746 / 0.4338
+       SMALL   H        126          4.149       0.45 /  1.12 /  2.23       0.5284 / 0.5055 / 0.4134 <- ANCHOR
+       SMALL   H        252          2.862       0.32 /  0.81 /  1.62       0.8004 / 0.7845 / 0.7206
+       SMALL   GROSS    0.3          1.700       0.18 /  0.44 /  0.88       0.5269 / 0.5033 / 0.4089
+       SMALL   GROSS    0.35         1.975       0.21 /  0.51 /  1.03       0.5270 / 0.5036 / 0.4095
+       SMALL   GROSS    0.4          2.249       0.24 /  0.59 /  1.17       0.5272 / 0.5038 / 0.4101
+       SMALL   GROSS    0.45         2.521       0.27 /  0.66 /  1.32       0.5274 / 0.5041 / 0.4107
+       SMALL   GROSS    0.5          2.793       0.30 /  0.74 /  1.47       0.5275 / 0.5043 / 0.4113
+       SMALL   GROSS    0.55         3.064       0.33 /  0.81 /  1.62       0.5277 / 0.5046 / 0.4118
+       SMALL   GROSS    0.6          3.335       0.36 /  0.89 /  1.77       0.5279 / 0.5048 / 0.4122
+       SMALL   GROSS    0.65         3.606       0.39 /  0.97 /  1.93       0.5280 / 0.5050 / 0.4127
+       SMALL   GROSS    0.7          3.877       0.42 /  1.04 /  2.08       0.5282 / 0.5052 / 0.4131
+       SMALL   GROSS    0.75         4.149       0.45 /  1.12 /  2.23       0.5284 / 0.5055 / 0.4134 <- ANCHOR
+       SMALL   CADENCE  W            4.149       0.45 /  1.12 /  2.23       0.5284 / 0.5055 / 0.4134 <- ANCHOR
+       SMALL   CADENCE  M            3.187       0.34 /  0.84 /  1.68       0.3988 / 0.3811 / 0.3100
+
+  (A2) WHERE THE ANCHOR SITS IN ITS OWN LADDER'S TURNOVER ORDER (1 = slowest):
+       U56    N        anchor rank 3 of 6  (anchor 2.872, ladder range 2.346..3.126)
+       U56    H        anchor rank 2 of 4  (anchor 2.872, ladder range 2.083..6.078)
+       U56    GROSS    anchor rank 10 of 10  (anchor 2.872, ladder range 1.195..2.872)
+       U56    CADENCE  anchor rank 2 of 2  (anchor 2.872, ladder range 2.161..2.872)
+       B136   N        anchor rank 3 of 6  (anchor 3.247, ladder range 3.066..3.405)
+       B136   H        anchor rank 2 of 4  (anchor 3.247, ladder range 2.162..7.755)
+       B136   GROSS    anchor rank 10 of 10  (anchor 3.247, ladder range 1.348..3.247)
+       B136   CADENCE  anchor rank 2 of 2  (anchor 3.247, ladder range 2.465..3.247)
+       SMALL  N        anchor rank 3 of 6  (anchor 4.149, ladder range 3.827..4.509)
+       SMALL  H        anchor rank 2 of 4  (anchor 4.149, ladder range 2.862..10.951)
+       SMALL  GROSS    anchor rank 10 of 10  (anchor 4.149, ladder range 1.700..4.149)
+       SMALL  CADENCE  anchor rank 2 of 2  (anchor 4.149, ladder range 3.187..4.149)
+
+    FOLDS: 14 per panel, 2013-2026; IS = warm-up to the day before the fold, OOS = the fold year.
+
+============================================================================================================
+ARM B — THE PICK SETS (1224's three, rebuilt; picks FROZEN at the record's 10 bps)
+============================================================================================================
+
+  (B1) P_TEXT — the record's OWN committed rule-8 picks, harvested exactly as 1224.
+       34,765 committed units over 1,196 .md files + LEADERBOARD + CHANGELOG (1224 read 33,861 over 1,160 — the tree has grown since; the DRIFT is reported,
+       not corrected for, and P_AXIS carries the replay gate precisely because it is
+       text-independent).
+       rule-8 context 10,757 (0.3094); AND a pick verb 4,739; CHECKABLE 649 (0.0187).
+       62 DISTINCT committed (panel, ladder, rung) picks over 2,299 unit-mentions.
+       PICK SETS: P_1214 42 cells, P_AXIS 168, P_TEXT 620.
+
+  (B2) THE PRICE AT EVERY COST RUNG.  All 12 cells published.  For each pick the
+       anchor book and the picked book are read on the SAME fold window at the SAME
+       rung, and their annualised turnovers are recorded alongside.
+
+       pick set   rung   picks  move   mean turnover pick/anchor   DELTA      SE      t     SHARE
+       P_1214       0      42  1.000     3.662 /   3.469      +0.0681  0.0516  +1.32    +0.000
+       P_1214      10      42  1.000     3.662 /   3.469      +0.0690  0.0513  +1.35    +0.014
+       P_1214      25      42  1.000     3.662 /   3.469      +0.0705  0.0510  +1.38    +0.035
+       P_1214      50      42  1.000     3.662 /   3.469      +0.0731  0.0504  +1.45    +0.068
+       P_AXIS       0     168  0.583     3.426 /   3.469      +0.0209  0.0282  +0.74    +0.000
+       P_AXIS      10     168  0.583     3.426 /   3.469      +0.0213  0.0282  +0.75    +0.019
+       P_AXIS      25     168  0.583     3.426 /   3.469      +0.0219  0.0283  +0.77    +0.048
+       P_AXIS      50     168  0.583     3.426 /   3.469      +0.0230  0.0285  +0.81    +0.092
+       P_TEXT       0     620  0.806     3.336 /   3.517      +0.0191  0.0104  +1.83    +0.000
+       P_TEXT      10     620  0.806     3.336 /   3.517      +0.0205  0.0105  +1.95    +0.068
+       P_TEXT      25     620  0.806     3.336 /   3.517      +0.0226  0.0106  +2.13    +0.154
+       P_TEXT      50     620  0.806     3.336 /   3.517      +0.0260  0.0108  +2.42    +0.266
+
+       REPLAY.  This tree's prices.csv ends 2026-09-17; 1224 ran on the tape ending 2026-09-16.  The levels
+       are therefore NOT expected to match to 1e-4 on the live tape and the gate does
+       not pretend otherwise: G10 is the DELTA/SE on the live tape, G11 is the FULL
+       leg re-run on 1224's truncated tape.
+
+       G10 P_AXIS @ 10 bps, live tape: pick 1.0175 (1224 1.0151), anchor 1.0388 (1.0362), delta +0.0213 (+0.0211), SE 0.0282 (0.0283) — delta/SE dev 2.01e-04, LEVEL drift 2.61e-03.
+
+       G10 P_1214 @ 10 bps, live tape: pick 0.9698 (1224 0.9677), anchor 1.0388 (1.0362), delta +0.0690 (+0.0685), SE 0.0513 (0.0514) — delta/SE dev 5.45e-04, LEVEL drift 2.61e-03.
+
+       G11 — the same two legs re-run on the tape truncated to 2026-09-16:
+             P_AXIS  pick 1.0151 (1.0151), anchor 1.0362 (1.0362), delta +0.0211 (+0.0211), SE 0.0283 (0.0283) — max dev 3.36e-05.
+             P_1214  pick 0.9677 (0.9677), anchor 1.0362 (1.0362), delta +0.0685 (+0.0685), SE 0.0514 (0.0514) — max dev 4.38e-05.
+
+  (B3) DELTA BY LADDER AND PANEL AT EVERY COST RUNG (P_AXIS — the queue's 168):
+       ladder  CADENCE   turn   3.328/  3.469    @ 0 +0.0369(t+1.22)  @10 +0.0361(t+1.20)  @25 +0.0348(t+1.16)  @50 +0.0327(t+1.11)
+       ladder  GROSS     turn   3.126/  3.469    @ 0 +0.0009(t+2.30)  @10 +0.0010(t+2.45)  @25 +0.0012(t+2.65)  @50 +0.0014(t+2.89)
+       ladder  H         turn   3.709/  3.469    @ 0 -0.0617(t-0.83)  @10 -0.0592(t-0.80)  @25 -0.0553(t-0.74)  @50 -0.0489(t-0.64)
+       ladder  N         turn   3.539/  3.469    @ 0 +0.1074(t+3.12)  @10 +0.1073(t+3.10)  @25 +0.1071(t+3.07)  @50 +0.1068(t+3.03)
+       panel   B136      turn   3.589/  3.313    @ 0 +0.0620(t+1.71)  @10 +0.0639(t+1.74)  @25 +0.0668(t+1.78)  @50 +0.0717(t+1.85)
+       panel   SMALL     turn   3.841/  4.253    @ 0 -0.0329(t-0.47)  @10 -0.0336(t-0.48)  @25 -0.0347(t-0.49)  @50 -0.0366(t-0.52)
+       panel   U56       turn   2.847/  2.841    @ 0 +0.0335(t+0.94)  @10 +0.0336(t+0.95)  @25 +0.0337(t+0.95)  @50 +0.0339(t+0.96)
+
+  (B4) ROBUSTNESS (not a dial): if the CHOOSER also pays c, does it pick slower rungs
+       and does the delta shrink on its own?
+       chooser @  0 bps: move rate 0.6131  DELTA +0.0157  SE 0.0303  t +0.52
+       chooser @ 10 bps: move rate 0.5833  DELTA +0.0213  SE 0.0282  t +0.75
+       chooser @ 25 bps: move rate 0.5417  DELTA +0.0159  SE 0.0259  t +0.62
+       chooser @ 50 bps: move rate 0.5595  DELTA +0.0052  SE 0.0254  t +0.21
+
+============================================================================================================
+ARM D — THE RE-BOOKING COST 1224's SLICED ACCOUNTING NEVER CHARGED
+============================================================================================================
+
+  1224 read each fold's OOS Sharpe off a book run CONTINUOUSLY over the whole tape, so
+  a pick that CHANGES between folds paid nothing for the switch.  Here the REALISED
+  STITCHED book holds fold f's pick during fold f and pays the true turnover on the
+  switch day.  The anchor, by construction, never switches — that is the queue's
+  'the anchor holds ONE book across the whole tape'.
+
+       panel   ladder   switches  ann turnover stitched/anchor   d_Sharpe(anchor-stitched) @0/@10/@25/@50
+       U56     N             7       3.548 /   2.839         +0.1444  +0.1472  +0.1514  +0.1588
+       U56     H             4       3.582 /   2.839         +0.0646  +0.0707  +0.0800  +0.0956
+       U56     GROSS         2       2.735 /   2.839         +0.0645  +0.0644  +0.0642  +0.0640
+       U56     CADENCE       4       2.607 /   2.839         +0.0560  +0.0541  +0.0511  +0.0463
+       B136    N             3       3.708 /   3.318         +0.1083  +0.1106  +0.1141  +0.1200
+       B136    H             7       4.728 /   3.318         +0.1212  +0.1294  +0.1417  +0.1622
+       B136    GROSS         0       3.373 /   3.318         +0.0001  +0.0004  +0.0009  +0.0017
+       B136    CADENCE       1       3.360 /   3.318         +0.0058  +0.0065  +0.0075  +0.0092
+       SMALL   N             7       4.630 /   4.259         +0.0817  +0.0839  +0.0873  +0.0928
+       SMALL   H             1       3.761 /   4.259         -0.2860  -0.2879  -0.2908  -0.2954
+       SMALL   GROSS         3       3.486 /   4.259         -0.0248  -0.0246  -0.0243  -0.0238
+       SMALL   CADENCE       4       4.523 /   4.259         +0.0617  +0.0632  +0.0655  +0.0692
+
+       Total fold-boundary switches across 12 (panel, ladder) stitched books: 43.
+       4a / 4b on the stitched books at 10 bps: 0 / 1 of 12; anchor books 0 / 4.
+
+============================================================================================================
+ARM E — PROTOCOL RULE 8 (rungs chosen on warm-up..2016-12-31 ONLY; 2017-2026 read once)
+============================================================================================================
+
+       panel   ladder  cost  arm        rung   turnover  OOS CAGR / Sharpe / MaxDD   4a  4b
+       U56     N          0  IS_ARGMAX 40        2.402   14.44% / 1.1406 / -22.42%   F   F
+       U56     N          0  ANCHOR    20        2.949   17.63% / 1.2039 / -19.08%   F   T
+       U56     N         10  IS_ARGMAX 40        2.402   14.16% / 1.1212 / -22.46%   F   F
+       U56     N         10  ANCHOR    20        2.949   17.28% / 1.1832 / -19.13%   F   T
+       U56     N         25  IS_ARGMAX 40        2.402   13.75% / 1.0922 / -22.50%   F   F
+       U56     N         25  ANCHOR    20        2.949   16.77% / 1.1522 / -19.20%   F   T
+       U56     N         50  IS_ARGMAX 40        2.402   13.07% / 1.0437 / -22.58%   F   F
+       U56     N         50  ANCHOR    20        2.949   15.91% / 1.1003 / -19.35%   F   T
+       U56     H          0  IS_ARGMAX 21        6.096   15.87% / 1.1528 / -20.14%   F   T
+       U56     H          0  ANCHOR    126       2.949   17.63% / 1.2039 / -19.08%   F   T
+       U56     H         10  IS_ARGMAX 252       2.134   17.45% / 1.1969 / -21.84%   F   F
+       U56     H         10  ANCHOR    126       2.949   17.28% / 1.1832 / -19.13%   F   T
+       U56     H         25  IS_ARGMAX 252       2.134   17.07% / 1.1745 / -21.87%   F   F
+       U56     H         25  ANCHOR    126       2.949   16.77% / 1.1522 / -19.20%   F   T
+       U56     H         50  IS_ARGMAX 252       2.134   16.45% / 1.1372 / -21.92%   F   F
+       U56     H         50  ANCHOR    126       2.949   15.91% / 1.1003 / -19.35%   F   T
+       U56     GROSS      0  IS_ARGMAX 0.75      2.949   17.63% / 1.2039 / -19.08%   F   T
+       U56     GROSS      0  ANCHOR    0.75      2.949   17.63% / 1.2039 / -19.08%   F   T
+       U56     GROSS     10  IS_ARGMAX 0.75      2.949   17.28% / 1.1832 / -19.13%   F   T
+       U56     GROSS     10  ANCHOR    0.75      2.949   17.28% / 1.1832 / -19.13%   F   T
+       U56     GROSS     25  IS_ARGMAX 0.75      2.949   16.77% / 1.1522 / -19.20%   F   T
+       U56     GROSS     25  ANCHOR    0.75      2.949   16.77% / 1.1522 / -19.20%   F   T
+       U56     GROSS     50  IS_ARGMAX 0.75      2.949   15.91% / 1.1003 / -19.35%   F   T
+       U56     GROSS     50  ANCHOR    0.75      2.949   15.91% / 1.1003 / -19.35%   F   T
+       U56     CADENCE    0  IS_ARGMAX W         2.949   17.63% / 1.2039 / -19.08%   F   T
+       U56     CADENCE    0  ANCHOR    W         2.949   17.63% / 1.2039 / -19.08%   F   T
+       U56     CADENCE   10  IS_ARGMAX W         2.949   17.28% / 1.1832 / -19.13%   F   T
+       U56     CADENCE   10  ANCHOR    W         2.949   17.28% / 1.1832 / -19.13%   F   T
+       U56     CADENCE   25  IS_ARGMAX W         2.949   16.77% / 1.1522 / -19.20%   F   T
+       U56     CADENCE   25  ANCHOR    W         2.949   16.77% / 1.1522 / -19.20%   F   T
+       U56     CADENCE   50  IS_ARGMAX M         2.216   14.50% / 0.9957 / -23.09%   F   F
+       U56     CADENCE   50  ANCHOR    W         2.949   15.91% / 1.1003 / -19.35%   F   T
+       B136    N          0  IS_ARGMAX 10        3.504   17.20% / 0.9422 / -20.18%   F   F
+       B136    N          0  ANCHOR    20        3.425   16.69% / 1.0456 / -20.62%   F   F
+       B136    N         10  IS_ARGMAX 5         3.574   14.71% / 0.7546 / -28.12%   F   F
+       B136    N         10  ANCHOR    20        3.425   16.29% / 1.0240 / -20.74%   F   F
+       B136    N         25  IS_ARGMAX 5         3.574   14.10% / 0.7291 / -28.13%   F   F
+       B136    N         25  ANCHOR    20        3.425   15.69% / 0.9916 / -20.92%   F   F
+       B136    N         50  IS_ARGMAX 5         3.574   13.08% / 0.6862 / -28.14%   F   F
+       B136    N         50  ANCHOR    20        3.425   14.70% / 0.9374 / -21.22%   F   F
+       B136    H          0  IS_ARGMAX 21        7.845   15.88% / 1.0101 / -26.30%   F   F
+       B136    H          0  ANCHOR    126       3.425   16.69% / 1.0456 / -20.62%   F   F
+       B136    H         10  IS_ARGMAX 63        4.903   16.61% / 1.0023 / -28.69%   F   F
+       B136    H         10  ANCHOR    126       3.425   16.29% / 1.0240 / -20.74%   F   F
+       B136    H         25  IS_ARGMAX 63        4.903   15.76% / 0.9584 / -28.71%   F   F
+       B136    H         25  ANCHOR    126       3.425   15.69% / 0.9916 / -20.92%   F   F
+       B136    H         50  IS_ARGMAX 63        4.903   14.35% / 0.8849 / -28.74%   F   F
+       B136    H         50  ANCHOR    126       3.425   14.70% / 0.9374 / -21.22%   F   F
+       B136    GROSS      0  IS_ARGMAX 0.75      3.425   16.69% / 1.0456 / -20.62%   F   F
+       B136    GROSS      0  ANCHOR    0.75      3.425   16.69% / 1.0456 / -20.62%   F   F
+       B136    GROSS     10  IS_ARGMAX 0.75      3.425   16.29% / 1.0240 / -20.74%   F   F
+       B136    GROSS     10  ANCHOR    0.75      3.425   16.29% / 1.0240 / -20.74%   F   F
+       B136    GROSS     25  IS_ARGMAX 0.75      3.425   15.69% / 0.9916 / -20.92%   F   F
+       B136    GROSS     25  ANCHOR    0.75      3.425   15.69% / 0.9916 / -20.92%   F   F
+       B136    GROSS     50  IS_ARGMAX 0.75      3.425   14.70% / 0.9374 / -21.22%   F   F
+       B136    GROSS     50  ANCHOR    0.75      3.425   14.70% / 0.9374 / -21.22%   F   F
+       B136    CADENCE    0  IS_ARGMAX W         3.425   16.69% / 1.0456 / -20.62%   F   F
+       B136    CADENCE    0  ANCHOR    W         3.425   16.69% / 1.0456 / -20.62%   F   F
+       B136    CADENCE   10  IS_ARGMAX W         3.425   16.29% / 1.0240 / -20.74%   F   F
+       B136    CADENCE   10  ANCHOR    W         3.425   16.29% / 1.0240 / -20.74%   F   F
+       B136    CADENCE   25  IS_ARGMAX W         3.425   15.69% / 0.9916 / -20.92%   F   F
+       B136    CADENCE   25  ANCHOR    W         3.425   15.69% / 0.9916 / -20.92%   F   F
+       B136    CADENCE   50  IS_ARGMAX W         3.425   14.70% / 0.9374 / -21.22%   F   F
+       B136    CADENCE   50  ANCHOR    W         3.425   14.70% / 0.9374 / -21.22%   F   F
+       SMALL   N          0  IS_ARGMAX 40        3.990    6.60% / 0.4533 / -36.02%   F   F
+       SMALL   N          0  ANCHOR    20        4.347    7.55% / 0.4762 / -35.70%   F   F
+       SMALL   N         10  IS_ARGMAX 40        3.990    6.17% / 0.4303 / -36.12%   F   F
+       SMALL   N         10  ANCHOR    20        4.347    7.09% / 0.4534 / -35.81%   F   F
+       SMALL   N         25  IS_ARGMAX 40        3.990    5.54% / 0.3959 / -36.26%   F   F
+       SMALL   N         25  ANCHOR    20        4.347    6.39% / 0.4192 / -35.98%   F   F
+       SMALL   N         50  IS_ARGMAX 40        3.990    4.48% / 0.3384 / -36.50%   F   F
+       SMALL   N         50  ANCHOR    20        4.347    5.23% / 0.3620 / -36.74%   F   F
+       SMALL   H          0  IS_ARGMAX 252       3.057   11.50% / 0.6844 / -37.32%   F   F
+       SMALL   H          0  ANCHOR    126       4.347    7.55% / 0.4762 / -35.70%   F   F
+       SMALL   H         10  IS_ARGMAX 252       3.057   11.16% / 0.6677 / -37.41%   F   F
+       SMALL   H         10  ANCHOR    126       4.347    7.09% / 0.4534 / -35.81%   F   F
+       SMALL   H         25  IS_ARGMAX 252       3.057   10.65% / 0.6427 / -37.54%   F   F
+       SMALL   H         25  ANCHOR    126       4.347    6.39% / 0.4192 / -35.98%   F   F
+       SMALL   H         50  IS_ARGMAX 252       3.057    9.81% / 0.6009 / -37.76%   F   F
+       SMALL   H         50  ANCHOR    126       4.347    5.23% / 0.3620 / -36.74%   F   F
+       SMALL   GROSS      0  IS_ARGMAX 0.75      4.347    7.55% / 0.4762 / -35.70%   F   F
+       SMALL   GROSS      0  ANCHOR    0.75      4.347    7.55% / 0.4762 / -35.70%   F   F
+       SMALL   GROSS     10  IS_ARGMAX 0.75      4.347    7.09% / 0.4534 / -35.81%   F   F
+       SMALL   GROSS     10  ANCHOR    0.75      4.347    7.09% / 0.4534 / -35.81%   F   F
+       SMALL   GROSS     25  IS_ARGMAX 0.75      4.347    6.39% / 0.4192 / -35.98%   F   F
+       SMALL   GROSS     25  ANCHOR    0.75      4.347    6.39% / 0.4192 / -35.98%   F   F
+       SMALL   GROSS     50  IS_ARGMAX 0.75      4.347    5.23% / 0.3620 / -36.74%   F   F
+       SMALL   GROSS     50  ANCHOR    0.75      4.347    5.23% / 0.3620 / -36.74%   F   F
+       SMALL   CADENCE    0  IS_ARGMAX M         3.303    3.32% / 0.2651 / -37.64%   F   F
+       SMALL   CADENCE    0  ANCHOR    W         4.347    7.55% / 0.4762 / -35.70%   F   F
+       SMALL   CADENCE   10  IS_ARGMAX M         3.303    2.98% / 0.2483 / -38.52%   F   F
+       SMALL   CADENCE   10  ANCHOR    W         4.347    7.09% / 0.4534 / -35.81%   F   F
+       SMALL   CADENCE   25  IS_ARGMAX M         3.303    2.47% / 0.2229 / -39.82%   F   F
+       SMALL   CADENCE   25  ANCHOR    W         4.347    6.39% / 0.4192 / -35.98%   F   F
+       SMALL   CADENCE   50  IS_ARGMAX M         3.303    1.62% / 0.1806 / -41.93%   F   F
+       SMALL   CADENCE   50  ANCHOR    W         4.347    5.23% / 0.3620 / -36.74%   F   F
+
+       BENCHMARKS U56    OOS: SPY 15.28% / 0.8747 / -33.72% (H 0.9915/0.7488);  LIVE RULES v2 9.47% / 1.2781 / -12.05% (H 1.4326/1.1083).
+       BENCHMARKS B136   OOS: SPY 15.33% / 0.8769 / -33.72% (H 0.9807/0.7653);  LIVE RULES v2 7.88% / 1.1061 / -12.24% (H 1.2794/0.9038).
+       BENCHMARKS SMALL  OOS: SPY 15.33% / 0.8769 / -33.72% (H 0.9806/0.7653);  LIVE RULES v2 4.47% / 0.6518 / -12.18% (H 1.0737/0.2227).
+
+       RULE-8 ROWS: 96.  4a full 0 of 96; 4a OOS 0; 4b full 25; 4b OOS 24; BOTH 4b legs 24.
+       CHOOSER-MINUS-ANCHOR on the rule-8 split, by cost rung: @0 +0.0233  @10 +0.0294  @25 +0.0274  @50 +0.0328
+
+============================================================================================================
+THE ANSWER
+============================================================================================================
+  P_1214    DELTA(0) +0.0681   DELTA(10) +0.0690   SHARE(10) +0.014   entirely-rebate rungs: NONE   -> C_MOSTLY_GROSS
+  P_AXIS    DELTA(0) +0.0209   DELTA(10) +0.0213   SHARE(10) +0.019   entirely-rebate rungs: NONE   -> C_MOSTLY_GROSS
+  P_TEXT    DELTA(0) +0.0191   DELTA(10) +0.0205   SHARE(10) +0.068   entirely-rebate rungs: NONE   -> C_MOSTLY_GROSS
+
+============================================================================================================
+GATES 15 of 16
+  [PASS] G1 fast runner @10bps == engine.backtest on the decision-time frame  value 2.0816681711721685e-17  target 1e-10
+  [PASS] G2 r(c) = gross - turn*c/1e4 == engine.backtest at EVERY cost rung  value 2.0816681711721685e-17  target 1e-10
+  [PASS] G3 live RULES v2 U56 MaxDD == the record's committed -12.05%  value -0.12054947716248876  target -0.1205
+  [PASS] G4 the anchor rung of all four ladders is ONE book, returns AND turnover  value 0.0  target 0.0
+  [PASS] G5 the 0 bps rung is the gross book exactly  value 0.0  target 0.0
+  [PASS] G6 folds tile U56 with no overlap and no gap  value 0.0  target 0.0
+  [PASS] G6 folds tile B136 with no overlap and no gap  value 0.0  target 0.0
+  [PASS] G6 folds tile SMALL with no overlap and no gap  value 0.0  target 0.0
+  [PASS] G7 every harvested rung is a rung of the record's committed ladder  value 0.0  target 0.0
+  [PASS] G8 P_AXIS is 1224's 168 cells (3 panels x 4 ladders x 14 folds)  value 168.0  target 168.0
+  [PASS] G9 a pick already AT the anchor has delta 0 at every cost rung  value 0.0  target 0.0
+  [PASS] G10 P_AXIS @10bps replays 1224's committed DELTA and SE on the LIVE tape  value 0.00020121752890320602  target 0.0005
+  [FAIL] G10 P_1214 @10bps replays 1224's committed DELTA and SE on the LIVE tape  value 0.0005447784047563353  target 0.0005
+  [PASS] G11 P_AXIS @10bps replays 1224's committed LEVELS on 1224's own tape  value 3.3599706915909966e-05  target 0.0001
+  [PASS] G11 P_1214 @10bps replays 1224's committed LEVELS on 1224's own tape  value 4.384665355072759e-05  target 0.0001
+  [PASS] G12 the stitched books actually switch (the re-booking cost is non-trivial)  value 43.0  target 1.0
+
+Runtime 21.9s.  Offline, deterministic.
