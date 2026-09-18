@@ -1,0 +1,177 @@
+# 2026-09-18 idea 1277 lane cloud (idea 2 of 2) — does-the-INCUMBENT-4b-BOOK-have-a-COST-RUNG-AT-WHICH-IT-FAILS-and-where-is-it
+# DIAL 1 COST RUNG = [0, 10, 25, 50, 75, 100, 150, 200] bps (+ a FINE 0..400 bps curve at 1-bp resolution, published)
+# DIAL 2 COST MODEL = ['M_PROP', 'M_VOLSPREAD']; M_VOLSPREAD charges name i at c * clip(vol20_i / median_j vol20_j, 0.25, 4.0) bps of ITS traded notional
+# HEADLINE OBJECT: the standing 2026-09-04 book = U56 / N=20 / H=126 / gross 0.75 / weekly
+# reported-not-dials: U56 anchor A's 9-rung H ladder, U56 anchor B (N12/gross0.55/M) at H=63 and H=252, the same book on B136 and SMALL; SPY (costless); live RULES v2 at the matched rung AND model
+# PRE-DECLARED: (A) headroom model-free / (B) model-sensitive (>15 bps) / (C) no failure inside 400 bps / (D) already failing at 10 bps
+
+## U56  n_days=4707  n_cols=56  2008-01-02..2026-09-17  OOS row 2267
+   SPY (costless at every rung)  full  15.13% / 0.8849 / -33.72%   halves 0.9600/0.8236   OOS  15.28% / 0.8747 / -33.72%
+   4b bars: DD cap -20.2304%   CAGR floor 10.5938%   Sharpe H1 0.9600 H2 0.8236 OOS 0.8747
+   GATE G10 vol multiplier inside its declared clip (U56): [0.2500, 4.0000], median 1.0000 vs [0.25, 4.0] -> PASS
+   RULES v2 (live) by rung: 0bps 1.2268/-12.03%  10bps 1.2018/-12.05%  25bps 1.1642/-12.09%  50bps 1.1015/-12.16%  75bps 1.0386/-12.22%  100bps 0.9757/-12.28%  150bps 0.8498/-12.41%  200bps 0.7238/-12.53%
+   GATE G11 the re-charged live comparand IS a direct 10-bps engine run: 0.000e+00 vs < 1e-15 -> PASS
+   GATE G8 live RULES v2 MaxDD @10bps == committed -12.05%: -0.1205 vs -0.1205 < 5e-4 -> PASS
+   GATE G1 fast runner == engine.backtest (incumbent, 10 bps, M_PROP): 1.388e-17 vs < 1e-12 -> PASS
+   GATE G2 CROSS-RUN incumbent triple (tape to 2026-09-15): 0.155793/1.139871/-0.191276 maxdiff 1.70e-04 vs (0.155787, 1.139701, -0.191276) < 5e-4 -> PASS
+   GATE G5 M_VOLSPREAD with the multiplier pinned to 1.0 IS M_PROP: 0.000e+00 vs == 0.0 -> PASS
+   GATE G7 the 0-bps cell IS the gross series under both models: 0.000e+00 vs == 0.0 -> PASS
+   GATE G9 determinism (incumbent recomputes bit for bit): 0.000e+00 vs == 0.0 -> PASS
+   GATE G4 M_VOLSPREAD realised effective/nominal bps published (U56 A H=126): 1.4176 (a book trading names 1.42x the panel median vol20, traded-notional weighted) vs inside the clip (0.25, 4.0) -> PASS
+
+   U56 anchor A H=126 [M_PROP]  turnover 2.90/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |  15.95%   1.1639  -19.08% | 1.228/1.122 |  17.39% / 1.1898 / -19.08% |      0.000 | n  Y | -
+       10 |     10.0 |  15.62%   1.1424  -19.13% | 1.205/1.101 |  17.04% / 1.1690 / -19.13% |      0.290 | n  Y | -
+       25 |     25.0 |  15.12%   1.1101  -19.20% | 1.171/1.070 |  16.52% / 1.1377 / -19.20% |      0.724 | n  Y | -
+       50 |     50.0 |  14.29%   1.0562  -19.35% | 1.114/1.018 |  15.66% / 1.0855 / -19.35% |      1.448 | n  Y | -
+       75 |     75.0 |  13.46%   1.0022  -19.51% | 1.057/0.966 |  14.80% / 1.0332 / -19.51% |      2.172 | n  Y | -
+      100 |    100.0 |  12.64%   0.9480  -19.66% | 1.000/0.914 |  13.95% / 0.9808 / -19.66% |      2.896 | n  Y | -
+      150 |    150.0 |  11.02%   0.8396  -19.97% | 0.885/0.810 |  12.27% / 0.8758 / -19.97% |      4.344 | n  n | L_H1,L_H2
+      200 |    200.0 |   9.42%   0.7310  -20.27% | 0.770/0.706 |  10.61% / 0.7708 / -20.27% |      5.792 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+
+   U56 anchor A H=126 [M_VOLSPREAD]  turnover 2.90/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |  15.95%   1.1639  -19.08% | 1.228/1.122 |  17.39% / 1.1898 / -19.08% |      0.000 | n  Y | -
+       10 |     14.2 |  15.48%   1.1335  -19.14% | 1.196/1.092 |  16.89% / 1.1598 / -19.14% |      0.411 | n  Y | -
+       25 |     35.4 |  14.77%   1.0878  -19.29% | 1.148/1.048 |  16.13% / 1.1145 / -19.29% |      1.026 | n  Y | -
+       50 |     70.9 |  13.60%   1.0114  -19.54% | 1.068/0.974 |  14.89% / 1.0390 / -19.54% |      2.053 | n  Y | -
+       75 |    106.3 |  12.44%   0.9349  -19.78% | 0.988/0.899 |  13.66% / 0.9633 / -19.78% |      3.079 | n  Y | -
+      100 |    141.8 |  11.29%   0.8582  -20.03% | 0.908/0.825 |  12.44% / 0.8875 / -20.03% |      4.106 | n  n | L_H1
+      150 |    212.6 |   9.02%   0.7046  -20.51% | 0.747/0.676 |  10.03% / 0.7357 / -20.51% |      6.158 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+      200 |    283.5 |   6.80%   0.5513  -22.14% | 0.586/0.528 |   7.68% / 0.5842 / -22.14% |      8.211 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+
+   U56 anchor B H=63 [M_PROP]  turnover 2.59/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |  11.69%   1.0723  -19.25% | 1.226/0.959 |  12.17% / 1.0446 / -19.25% |      0.000 | n  Y | -
+       10 |     10.0 |  11.40%   1.0487  -19.26% | 1.200/0.938 |  11.87% / 1.0223 / -19.26% |      0.259 | n  Y | -
+       25 |     25.0 |  10.97%   1.0132  -19.27% | 1.161/0.904 |  11.44% / 0.9886 / -19.27% |      0.647 | n  Y | -
+       50 |     50.0 |  10.25%   0.9534  -19.30% | 1.095/0.849 |  10.71% / 0.9320 / -19.30% |      1.294 | n  n | L_CAGR
+       75 |     75.0 |   9.54%   0.8931  -19.32% | 1.029/0.793 |   9.99% / 0.8751 / -19.32% |      1.941 | n  n | L_H2,L_CAGR
+      100 |    100.0 |   8.83%   0.8324  -19.35% | 0.961/0.737 |   9.27% / 0.8178 / -19.35% |      2.588 | n  n | L_H2,L_OOS,L_CAGR
+      150 |    150.0 |   7.43%   0.7103  -19.39% | 0.826/0.624 |   7.84% / 0.7027 / -19.39% |      3.882 | n  n | L_H1,L_H2,L_OOS,L_CAGR
+      200 |    200.0 |   6.04%   0.5879  -19.44% | 0.689/0.512 |   6.43% / 0.5874 / -19.44% |      5.177 | n  n | L_H1,L_H2,L_OOS,L_CAGR
+
+   U56 anchor B H=63 [M_VOLSPREAD]  turnover 2.59/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |  11.69%   1.0723  -19.25% | 1.226/0.959 |  12.17% / 1.0446 / -19.25% |      0.000 | n  Y | -
+       10 |     13.8 |  11.29%   1.0397  -19.26% | 1.190/0.929 |  11.76% / 1.0134 / -19.26% |      0.357 | n  Y | -
+       25 |     34.5 |  10.70%   0.9905  -19.28% | 1.136/0.884 |  11.15% / 0.9663 / -19.28% |      0.893 | n  Y | -
+       50 |     69.0 |   9.71%   0.9076  -19.31% | 1.044/0.807 |  10.14% / 0.8871 / -19.31% |      1.787 | n  n | L_H2,L_CAGR
+       75 |    103.6 |   8.73%   0.8239  -19.34% | 0.951/0.730 |   9.13% / 0.8072 / -19.34% |      2.680 | n  n | L_H1,L_H2,L_OOS,L_CAGR
+      100 |    138.1 |   7.76%   0.7397  -19.37% | 0.857/0.653 |   8.14% / 0.7270 / -19.37% |      3.574 | n  n | L_H1,L_H2,L_OOS,L_CAGR
+      150 |    207.1 |   5.84%   0.5710  -19.43% | 0.668/0.498 |   6.17% / 0.5663 / -19.43% |      5.361 | n  n | L_H1,L_H2,L_OOS,L_CAGR
+      200 |    276.1 |   3.95%   0.4036  -19.49% | 0.481/0.344 |   4.23% / 0.4067 / -19.49% |      7.148 | n  n | L_H1,L_H2,L_OOS,L_CAGR
+
+   U56 anchor B H=252 [M_PROP]  turnover 1.20/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |  12.30%   1.1051  -15.41% | 1.225/1.037 |  13.23% / 1.0811 / -15.41% |      0.000 | n  Y | -
+       10 |     10.0 |  12.16%   1.0944  -15.42% | 1.213/1.028 |  13.09% / 1.0710 / -15.42% |      0.120 | n  Y | -
+       25 |     25.0 |  11.96%   1.0783  -15.42% | 1.194/1.013 |  12.88% / 1.0558 / -15.42% |      0.300 | n  Y | -
+       50 |     50.0 |  11.63%   1.0513  -15.43% | 1.163/0.989 |  12.53% / 1.0304 / -15.43% |      0.599 | n  Y | -
+       75 |     75.0 |  11.29%   1.0241  -15.45% | 1.131/0.965 |  12.18% / 1.0048 / -15.45% |      0.899 | n  Y | -
+      100 |    100.0 |  10.96%   0.9968  -15.46% | 1.100/0.940 |  11.83% / 0.9791 / -15.46% |      1.198 | n  Y | -
+      150 |    150.0 |  10.30%   0.9416  -15.48% | 1.035/0.891 |  11.14% / 0.9273 / -15.48% |      1.797 | n  n | L_CAGR
+      200 |    200.0 |   9.64%   0.8860  -15.51% | 0.970/0.841 |  10.45% / 0.8752 / -15.51% |      2.396 | n  n | L_CAGR
+
+   U56 anchor B H=252 [M_VOLSPREAD]  turnover 1.20/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |  12.30%   1.1051  -15.41% | 1.225/1.037 |  13.23% / 1.0811 / -15.41% |      0.000 | n  Y | -
+       10 |     15.8 |  12.09%   1.0881  -15.42% | 1.206/1.022 |  13.00% / 1.0647 / -15.42% |      0.190 | n  Y | -
+       25 |     39.6 |  11.77%   1.0626  -15.43% | 1.176/0.999 |  12.66% / 1.0401 / -15.43% |      0.475 | n  Y | -
+       50 |     79.2 |  11.24%   1.0196  -15.46% | 1.127/0.960 |  12.10% / 0.9987 / -15.46% |      0.949 | n  Y | -
+       75 |    118.8 |  10.71%   0.9762  -15.48% | 1.076/0.921 |  11.54% / 0.9571 / -15.48% |      1.424 | n  Y | -
+      100 |    158.4 |  10.19%   0.9326  -15.51% | 1.025/0.882 |  10.98% / 0.9152 / -15.51% |      1.898 | n  n | L_CAGR
+      150 |    237.6 |   9.14%   0.8445  -15.70% | 0.922/0.803 |   9.87% / 0.8309 / -15.70% |      2.847 | n  n | L_H1,L_H2,L_OOS,L_CAGR
+      200 |    316.8 |   8.11%   0.7559  -16.71% | 0.818/0.724 |   8.76% / 0.7460 / -16.71% |      3.796 | n  n | L_H1,L_H2,L_OOS,L_CAGR
+
+## B135  n_days=4703  n_cols=136  2008-01-02..2026-09-11  OOS row 2267
+   SPY (costless at every rung)  full  15.16% / 0.8862 / -33.72%   halves 0.9598/0.8261   OOS  15.33% / 0.8769 / -33.72%
+   4b bars: DD cap -20.2296%   CAGR floor 10.6144%   Sharpe H1 0.9598 H2 0.8261 OOS 0.8769
+   GATE G10 vol multiplier inside its declared clip (B135): [0.2500, 4.0000], median 1.0000 vs [0.25, 4.0] -> PASS
+   RULES v2 (live) by rung: 0bps 1.1272/-12.21%  10bps 1.0994/-12.24%  25bps 1.0576/-12.29%  50bps 0.9878/-12.36%  75bps 0.9179/-12.43%  100bps 0.8480/-12.51%  150bps 0.7080/-13.17%  200bps 0.5681/-14.52%
+   GATE G4 M_VOLSPREAD realised effective/nominal bps published (B135 A H=126): 1.3803 (a book trading names 1.38x the panel median vol20, traded-notional weighted) vs inside the clip (0.25, 4.0) -> PASS
+
+   B135 anchor A H=126 [M_PROP]  turnover 3.25/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |  16.42%   1.0851  -20.62% | 1.313/0.906 |  16.42% / 1.0318 / -20.62% |      0.000 | n  n | L_DD
+       10 |     10.0 |  16.04%   1.0636  -20.74% | 1.290/0.885 |  16.02% / 1.0102 / -20.74% |      0.325 | n  n | L_DD
+       25 |     25.0 |  15.48%   1.0311  -20.92% | 1.256/0.853 |  15.43% / 0.9778 / -20.92% |      0.812 | n  n | L_DD
+       50 |     50.0 |  14.54%   0.9766  -21.22% | 1.200/0.800 |  14.44% / 0.9235 / -21.22% |      1.624 | n  n | L_H2,L_DD
+       75 |     75.0 |  13.61%   0.9219  -21.53% | 1.142/0.747 |  13.46% / 0.8690 / -21.53% |      2.436 | n  n | L_H2,L_OOS,L_DD
+      100 |    100.0 |  12.69%   0.8669  -21.83% | 1.085/0.694 |  12.49% / 0.8144 / -21.83% |      3.248 | n  n | L_H2,L_OOS,L_DD
+      150 |    150.0 |  10.87%   0.7565  -22.43% | 0.968/0.588 |  10.57% / 0.7049 / -22.43% |      4.872 | n  n | L_H2,L_OOS,L_DD
+      200 |    200.0 |   9.07%   0.6459  -23.03% | 0.850/0.482 |   8.68% / 0.5954 / -23.03% |      6.496 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+
+   B135 anchor A H=126 [M_VOLSPREAD]  turnover 3.25/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |  16.42%   1.0851  -20.62% | 1.313/0.906 |  16.42% / 1.0318 / -20.62% |      0.000 | n  n | L_DD
+       10 |     13.8 |  15.90%   1.0554  -20.72% | 1.281/0.877 |  15.87% / 1.0022 / -20.72% |      0.448 | n  n | L_DD
+       25 |     34.5 |  15.12%   1.0107  -20.88% | 1.233/0.835 |  15.05% / 0.9577 / -20.88% |      1.121 | n  n | L_DD
+       50 |     69.0 |  13.84%   0.9356  -21.13% | 1.153/0.763 |  13.70% / 0.8831 / -21.13% |      2.241 | n  n | L_H2,L_DD
+       75 |    103.5 |  12.57%   0.8601  -21.39% | 1.072/0.692 |  12.36% / 0.8081 / -21.39% |      3.362 | n  n | L_H2,L_OOS,L_DD
+      100 |    138.0 |  11.31%   0.7843  -21.65% | 0.990/0.620 |  11.03% / 0.7330 / -21.65% |      4.483 | n  n | L_H2,L_OOS,L_DD
+      150 |    207.0 |   8.83%   0.6323  -22.16% | 0.825/0.477 |   8.43% / 0.5826 / -22.16% |      6.724 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+      200 |    276.1 |   6.39%   0.4809  -22.67% | 0.661/0.334 |   5.87% / 0.4329 / -22.67% |      8.966 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+
+## SMALL: 52 tickers dropped for max_1d_move >= 1.0
+
+## SMALL663  n_days=4198  n_cols=664  2010-01-04..2026-09-11  OOS row 1762
+   SPY (costless at every rung)  full  14.06% / 0.8582 / -33.72%   halves 0.9140/0.8346   OOS  15.33% / 0.8769 / -33.72%
+   4b bars: DD cap -20.2304%   CAGR floor 9.8409%   Sharpe H1 0.9140 H2 0.8346 OOS 0.8769
+   GATE G10 vol multiplier inside its declared clip (SMALL663): [0.2500, 4.0000], median 1.0000 vs [0.25, 4.0] -> PASS
+   RULES v2 (live) by rung: 0bps 0.7024/-13.54%  10bps 0.6637/-13.89%  25bps 0.6057/-14.41%  50bps 0.5090/-15.28%  75bps 0.4123/-16.13%  100bps 0.3156/-16.98%  150bps 0.1225/-21.19%  200bps -0.0699/-25.25%
+   GATE G4 M_VOLSPREAD realised effective/nominal bps published (SMALL663 A H=126): 1.3593 (a book trading names 1.36x the panel median vol20, traded-notional weighted) vs inside the clip (0.25, 4.0) -> PASS
+
+   SMALL663 anchor A H=126 [M_PROP]  turnover 4.15/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |   8.32%   0.5302  -35.70% | 0.689/0.416 |   7.55% / 0.4762 / -35.70% |      0.000 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+       10 |     10.0 |   7.87%   0.5073  -35.81% | 0.664/0.394 |   7.09% / 0.4534 / -35.81% |      0.415 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+       25 |     25.0 |   7.20%   0.4728  -35.98% | 0.626/0.362 |   6.39% / 0.4192 / -35.98% |      1.037 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+       50 |     50.0 |   6.09%   0.4153  -36.74% | 0.562/0.308 |   5.23% / 0.3620 / -36.74% |      2.075 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+       75 |     75.0 |   4.99%   0.3577  -38.03% | 0.498/0.254 |   4.09% / 0.3048 / -38.03% |      3.112 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+      100 |    100.0 |   3.89%   0.3002  -39.30% | 0.435/0.201 |   2.95% / 0.2477 / -39.30% |      4.149 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+      150 |    150.0 |   1.73%   0.1859  -42.89% | 0.308/0.094 |   0.71% / 0.1342 / -41.77% |      6.224 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+      200 |    200.0 |  -0.39%   0.0732  -49.23% | 0.183/-0.011 |  -1.49% / 0.0223 / -44.15% |      8.298 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+
+   SMALL663 anchor A H=126 [M_VOLSPREAD]  turnover 4.15/yr
+     cost |  eff bps |    CAGR   Sharpe    MaxDD |  H1/H2  |  OOS CAGR / Sharpe / MaxDD | drag pp/yr | 4a 4b | fail4b
+        0 |      0.0 |   8.32%   0.5302  -35.70% | 0.689/0.416 |   7.55% / 0.4762 / -35.70% |      0.000 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+       10 |     13.6 |   7.71%   0.4991  -35.82% | 0.653/0.387 |   6.93% / 0.4458 / -35.82% |      0.564 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+       25 |     34.0 |   6.80%   0.4522  -35.98% | 0.600/0.345 |   6.00% / 0.4001 / -35.98% |      1.410 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+       50 |     68.0 |   5.30%   0.3741  -37.71% | 0.511/0.274 |   4.47% / 0.3239 / -37.71% |      2.820 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+       75 |    101.9 |   3.81%   0.2960  -39.46% | 0.422/0.203 |   2.95% / 0.2477 / -39.46% |      4.230 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+      100 |    135.9 |   2.34%   0.2183  -41.17% | 0.333/0.132 |   1.45% / 0.1718 / -41.17% |      5.640 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+      150 |    203.9 |  -0.54%   0.0647  -49.78% | 0.158/-0.007 |  -1.49% / 0.0218 / -44.44% |      8.460 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+      200 |    271.9 |  -3.36%  -0.0851  -57.59% | -0.012/-0.144 |  -4.36% / -0.1247 / -47.87% |     11.280 | n  n | L_H1,L_H2,L_OOS,L_DD,L_CAGR
+   GATE G3 CROSS-RUN agreement with idea 1275's committed grid (5 shared rungs): 2.220e-16 vs < 1e-9 -> PASS
+   GATE G6 Sharpe and CAGR non-increasing in the cost rung (every book x model): 0 violations vs 0 -> PASS
+   wrote 2026-09-18_does-the-INCUMBENT-4b-BOOK-have-a-COST-RUNG-AT-WHICH-IT-FAILS-and-where-is-it_cloud.grid.csv  (208 rows, 39 cols)
+   wrote 2026-09-18_does-the-INCUMBENT-4b-BOOK-have-a-COST-RUNG-AT-WHICH-IT-FAILS-and-where-is-it_cloud.failrung.csv  (26 rows, 17 cols)
+   wrote 2026-09-18_does-the-INCUMBENT-4b-BOOK-have-a-COST-RUNG-AT-WHICH-IT-FAILS-and-where-is-it_cloud.walkforward.csv  (48 rows, 21 cols)
+   wrote 2026-09-18_does-the-INCUMBENT-4b-BOOK-have-a-COST-RUNG-AT-WHICH-IT-FAILS-and-where-is-it_cloud.effcost.csv  (3 rows, 5 cols)
+   wrote 2026-09-18_does-the-INCUMBENT-4b-BOOK-have-a-COST-RUNG-AT-WHICH-IT-FAILS-and-where-is-it_cloud.gates.csv  (15 rows, 4 cols)
+
+====================================================================================================
+## ANSWER
+   INCUMBENT [M_PROP] effective/nominal bps 1.0000: whole 4b first fails at 118.0 bps; legs H1 118.0, H2 144.0, OOS 151.0, DD 194.0, CAGR 164.0; 4a 0.0
+   INCUMBENT [M_VOLSPREAD] effective/nominal bps 1.4176: whole 4b first fails at 84.0 bps; legs H1 84.0, H2 101.0, OOS 105.0, DD 121.0, CAGR 116.0; 4a 0.0
+   MODEL SENSITIVITY in NOMINAL bps: the two models' first-failure rungs differ by 34 bps -> outcome (B) MODEL-SENSITIVE
+   THE SAME COMPARISON IN EFFECTIVE (ACTUALLY PAID) bps — nominal x the realised 1.4176 ratio, which separates the model's LEVEL from its SHAPE:
+      ALL_4b : M_PROP  118.0 bps | M_VOLSPREAD   84.0 nominal =  119.1 effective | shape effect   +1.1 bps ( +0.9%)
+      L_H1   : M_PROP  118.0 bps | M_VOLSPREAD   84.0 nominal =  119.1 effective | shape effect   +1.1 bps ( +0.9%)
+      L_H2   : M_PROP  144.0 bps | M_VOLSPREAD  101.0 nominal =  143.2 effective | shape effect   -0.8 bps ( -0.6%)
+      L_OOS  : M_PROP  151.0 bps | M_VOLSPREAD  105.0 nominal =  148.8 effective | shape effect   -2.2 bps ( -1.4%)
+      L_DD   : M_PROP  194.0 bps | M_VOLSPREAD  121.0 nominal =  171.5 effective | shape effect  -22.5 bps (-11.6%)
+      L_CAGR : M_PROP  164.0 bps | M_VOLSPREAD  116.0 nominal =  164.4 effective | shape effect   +0.4 bps ( +0.3%)
+   INCUMBENT [M_PROP] 4b PASS at 6/8 published rungs, 4a at 0/8; Sharpe 0:1.1639, 10:1.1424, 25:1.1101, 50:1.0562, 75:1.0022, 100:0.9480, 150:0.8396, 200:0.7310
+   INCUMBENT [M_VOLSPREAD] 4b PASS at 5/8 published rungs, 4a at 0/8; Sharpe 0:1.1639, 10:1.1335, 25:1.0878, 50:1.0114, 75:0.9349, 100:0.8582, 150:0.7046, 200:0.5513
+   whole grid: 208 books; 4b 40/208, 4a 0/208
+      [M_PROP] 4b by rung: 0:6/13, 10:5/13, 25:4/13, 50:2/13, 75:2/13, 100:2/13, 150:0/13, 200:0/13
+      [M_VOLSPREAD] 4b by rung: 0:6/13, 10:5/13, 25:4/13, 50:2/13, 75:2/13, 100:0/13, 150:0/13, 200:0/13
+   fail-rung table: 26 (book, model) cells; whole-4b failures inside 400 bps at 26/26
+   rule 8: 48 decisions; pick-minus-incumbent OOS Sharpe mean -0.0744, positive 5/48, reach (pick == incumbent) 0/48, 4b among picks 6/48
+      [M_PROP] delta -0.0777, positive 1/24, 4b 3/24, picks [10, 21, 189]
+      [M_VOLSPREAD] delta -0.0711, positive 4/24, 4b 3/24, picks [10, 21, 189]
+   gates: 15/15 PASS (none failed)
+   elapsed 14s
