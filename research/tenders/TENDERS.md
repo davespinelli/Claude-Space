@@ -1,18 +1,19 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-09-17 · EDGAR form indexes, last 45 days · 188 tender filings → 132 distinct offers, of which 10 are common-stock self-tenders · 6 carry odd-lot priority (3 in common stock)._
+_Generated 2026-09-18 · EDGAR form indexes, last 45 days · 182 tender filings → 131 distinct offers, of which 11 are common-stock self-tenders · 6 carry odd-lot priority (3 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| GDEV | GDEV Inc. | Fixed price | $11.03 | $11.47 | -3.8% | $-44 | 2026-09-28 | 11 | no | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1848739/000110465926103543/0001104659-26-103543-index.htm) |
-| — | Highlands REIT, Inc. | Fixed price | $0.2000 | n/a | n/a | n/a | 2026-09-29 | 12 | yes | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1661458/000110465926104051/0001104659-26-104051-index.htm) |
-| ABUS | Arbutus Biopharma Corp | Dutch auction | $5.00–$5.75 | $5.07 | -1.4%/+13.4% | $-7/$67 | 2026-09-29 | 12 | yes | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1447028/000110465926100002/0001104659-26-100002-index.htm) |
-| CLYD | BEACON TOPCO, INC. | not found | not found | n/a | n/a | n/a | 2026-09-29 | 12 | yes | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2094256/000110465926107741/0001104659-26-107741-index.htm) |
-| — | VINEBROOK HOMES TRUST, INC. | Fixed price | $33.00 | n/a | n/a | n/a | 2026-10-05 | 18 | no | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1755755/000143774926029656/0001437749-26-029656-index.htm) |
-| NFJ | Virtus Dividend, Interest & Premium St | Fixed price | $15.67 | $15.29 | +2.5% | $38 | 2026-10-05 | 18 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1260563/000119312526377910/0001193125-26-377910-index.htm) |
-| MDT | Medtronic plc | not found | not found | $92.77 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1613103/000162828026061683/0001628280-26-061683-index.htm) |
+| GDEV | GDEV Inc. | Fixed price | $11.03 | $11.47 | -3.8% | $-44 | 2026-09-28 | 10 | no | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1848739/000110465926103543/0001104659-26-103543-index.htm) |
+| — | Highlands REIT, Inc. | Fixed price | $0.2000 | n/a | n/a | n/a | 2026-09-29 | 11 | yes | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1661458/000110465926104051/0001104659-26-104051-index.htm) |
+| ABUS | Arbutus Biopharma Corp | Dutch auction | $5.00–$5.75 | $5.01 | -0.2%/+14.8% | $-1/$73 | 2026-09-29 | 11 | yes | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1447028/000110465926100002/0001104659-26-100002-index.htm) |
+| CLYD | BEACON TOPCO, INC. | not found | not found | n/a | n/a | n/a | 2026-09-29 | 11 | yes | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2094256/000110465926107741/0001104659-26-107741-index.htm) |
+| — | VINEBROOK HOMES TRUST, INC. | Fixed price | $33.00 | n/a | n/a | n/a | 2026-10-05 | 17 | no | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1755755/000143774926029656/0001437749-26-029656-index.htm) |
+| NFJ | Virtus Dividend, Interest & Premium St | Fixed price | $15.67 | $15.26 | +2.7% | $41 | 2026-10-05 | 17 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1260563/000119312526377910/0001193125-26-377910-index.htm) |
+| HERZ | Herzfeld Credit Income Fund, Inc | Fixed price | $19.13 | $15.64 | +22.3% | $346 | 2026-10-15 | 27 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/880406/000165495426008429/0001654954-26-008429-index.htm) |
+| MDT | Medtronic plc | not found | not found | $92.13 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1613103/000162828026061683/0001628280-26-061683-index.htm) |
 
 ### Odd-lot language, quoted
 
@@ -29,11 +30,14 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 |---|---|---|---|---|---|---|---|
 | — | Keystone Private Income Fund | fund/BDC repurchase (NAV) | not found | 2026-03-31 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1788420/000121390026096988/0001213900-26-096988-index.htm) |
 | — | Privacore PCAAM Alternative Growth Fun | fund/BDC repurchase (NAV) | not found | 2026-03-31 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2017577/000121390026085982/0001213900-26-085982-index.htm) |
+| — | AMG Pantheon Fund, LLC | fund/BDC repurchase (NAV) | not found | 2026-04-20 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1609211/000119312526339714/0001193125-26-339714-index.htm) |
 | — | GCM GROSVENOR CORE ABSOLUTE RETURN FUN | fund/BDC repurchase (NAV) | not found | 2026-04-27 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1475457/000119312526337574/0001193125-26-337574-index.htm) |
 | — | GCM GROSVENOR CORE ABSOLUTE RETURN FUN | fund/BDC repurchase (NAV) | not found | 2026-04-27 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1475456/000119312526337509/0001193125-26-337509-index.htm) |
 | — | GCM GROSVENOR CORE ABSOLUTE RETURN MAS | fund/BDC repurchase (NAV) | not found | 2026-04-27 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1212030/000119312526337516/0001193125-26-337516-index.htm) |
 | — | Hedge Fund Guided Portfolio Solution | fund/BDC repurchase (NAV) | not found | 2026-04-27 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1738008/000119312526337566/0001193125-26-337566-index.htm) |
+| — | iDirect Multi-Strategy Fund, LLC | fund/BDC repurchase (NAV) | not found | 2026-05-18 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2023773/000158064226006352/0001580642-26-006352-index.htm) |
 | — | Carlyle AlpInvest Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-05-29 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1899610/000139834426014989/0001398344-26-014989-index.htm) |
+| — | Constitution Capital Access Fund, LLC | fund/BDC repurchase (NAV) | not found | 2026-05-29 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1918767/000121390026100809/0001213900-26-100809-index.htm) |
 | — | Antares Strategic Credit Fund | fund/BDC repurchase (NAV) | not found | 2026-06-11 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1993402/000110465926092070/0001104659-26-092070-index.htm) |
 | — | BBR ALO Fund, LLC | fund/BDC repurchase (NAV) | not found | 2026-06-15 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1811114/000139834426014088/0001398344-26-014088-index.htm) |
 | — | Aspiriant Capital Appreciation Fund | fund/BDC repurchase (NAV) | not found | 2026-06-30 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1830974/000121390026100463/0001213900-26-100463-index.htm) |
@@ -58,18 +62,12 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | ZCAR | Zoomcar Holdings, Inc. | warrant exchange | not found | 2026-08-14 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1854275/000121390026095698/0001213900-26-095698-index.htm) |
 | — | Fortress Private Lending Fund | fund/BDC repurchase (NAV) | $24.21 | 2026-08-19 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2012139/000119312526368859/0001193125-26-368859-index.htm) |
 | — | Lord Abbett Private Credit Fund S | fund/BDC repurchase (NAV) | not found | 2026-08-27 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2041841/000093041326002783/0000930413-26-002783-index.htm) |
-| — | AMG Pantheon Fund, LLC | fund/BDC repurchase (NAV) | not found | 2026-08-28 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1609211/000119312526329591/0001193125-26-329591-index.htm) |
-| — | Stellus Private Credit BDC | fund/BDC repurchase (NAV) | not found | 2026-08-28 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1901037/000110465926089772/0001104659-26-089772-index.htm) |
-| — | Stepstone Private Credit Fund LLC | fund/BDC repurchase (NAV) | $25.83 | 2026-08-28 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1950803/000119312526330447/0001193125-26-330447-index.htm) |
-| — | Bain Capital Private Credit | fund/BDC repurchase (NAV) | not found | 2026-08-31 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1899017/000119312526330882/0001193125-26-330882-index.htm) |
+| — | Stellus Private Credit BDC | fund/BDC repurchase (NAV) | $15.25 | 2026-08-28 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1901037/000110465926104224/0001104659-26-104224-index.htm) |
 | — | Blackstone Private Credit Fund | fund/BDC repurchase (NAV) | not found | 2026-08-31 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1803498/000119312526331631/0001193125-26-331631-index.htm) |
-| — | Fidelity Private Credit Fund | fund/BDC repurchase (NAV) | not found | 2026-08-31 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1920453/000119312526329904/0001193125-26-329904-index.htm) |
 | — | First Eagle Private Credit Fund | fund/BDC repurchase (NAV) | $23.79 | 2026-08-31 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1890107/000119312526331976/0001193125-26-331976-index.htm) |
-| — | Macquarie Focused Access Fund, LLC | fund/BDC repurchase (NAV) | not found | 2026-08-31 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1742836/000110465926089380/0001104659-26-089380-index.htm) |
-| — | Monroe Capital Income Plus Corp | share tender | not found | 2026-08-31 | no | offer price not parsed; no listed ticker (non-traded?); expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1742313/000110465926089853/0001104659-26-089853-index.htm) |
+| — | Monroe Capital Income Plus Corp | share tender | $9.77 | 2026-08-31 | no | no listed ticker (non-traded?); expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1742313/000174231326000055/0001742313-26-000055-index.htm) |
 | — | Silver Point Private Credit Fund | fund/BDC repurchase (NAV) | not found | 2026-08-31 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2033382/000119312526332380/0001193125-26-332380-index.htm) |
 | — | T. Rowe Price OHA Select Private Credi | fund/BDC repurchase (NAV) | not found | 2026-08-31 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1901164/000114036126031022/0001140361-26-031022-index.htm) |
-| — | New Mountain Private Credit Fund | fund/BDC repurchase (NAV) | not found | 2026-09-01 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2037804/000158064226004798/0001580642-26-004798-index.htm) |
 | — | TPG Twin Brook Capital Income Fund | fund/BDC repurchase (NAV) | not found | 2026-09-01 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1913724/000162828026052976/0001628280-26-052976-index.htm) |
 | — | Hamilton Lane Private Assets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-03 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1803491/000121390026086088/0001213900-26-086088-index.htm) |
 | — | Hamilton Lane Private Secondary Fund | fund/BDC repurchase (NAV) | not found | 2026-09-03 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2041398/000121390026086086/0001213900-26-086086-index.htm) |
@@ -79,7 +77,6 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | HPS Corporate Capital Solutions Fund | fund/BDC repurchase (NAV) | not found | 2026-09-04 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1989817/000162828026055161/0001628280-26-055161-index.htm) |
 | — | HPS Corporate Lending Fund | fund/BDC repurchase (NAV) | not found | 2026-09-04 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1838126/000162828026055335/0001628280-26-055335-index.htm) |
 | RXST | RxSight, Inc. | option exchange | $20.00 | 2026-09-04 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1111485/000119312526341304/0001193125-26-341304-index.htm) |
-| — | FS MVP Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-08 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1856156/000139834426013312/0001398344-26-013312-index.htm) |
 | LNC | LINCOLN NATIONAL CORP | debt / preferred tender | not found | 2026-09-08 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/59558/000119312526341416/0001193125-26-341416-index.htm) |
 | — | ADAMS STREET PRIVATE EQUITY NAVIGATOR  | fund/BDC repurchase (NAV) | not found | 2026-09-11 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1862281/000119312526350605/0001193125-26-350605-index.htm) |
 | — | Antares Private Credit Fund | fund/BDC repurchase (NAV) | not found | 2026-09-11 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1976336/000110465926096596/0001104659-26-096596-index.htm) |
@@ -90,13 +87,13 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | Coller Secondaries Private Equity Oppo | fund/BDC repurchase (NAV) | not found | 2026-09-14 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1969180/000121390026089583/0001213900-26-089583-index.htm) |
 | — | Franklin Lexington Private Markets Fun | fund/BDC repurchase (NAV) | not found | 2026-09-14 | unclear | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2008602/000119312526351012/0001193125-26-351012-index.htm) |
 | — | JPMorgan Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-14 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1940499/000119312526351058/0001193125-26-351058-index.htm) |
-| — | Morgan Stanley Private Markets & Alter | fund/BDC repurchase (NAV) | not found | 2026-09-14 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2061233/000158064226005335/0001580642-26-005335-index.htm) |
+| — | Morgan Stanley Private Markets & Alter | fund/BDC repurchase (NAV) | not found | 2026-09-14 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2061233/000158064226005335/0001580642-26-005335-index.htm) |
 | — | North Haven Private Income Fund A LLC | fund/BDC repurchase (NAV) | not found | 2026-09-14 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1973476/000119312526349165/0001193125-26-349165-index.htm) |
 | — | North Haven Private Income Fund LLC | fund/BDC repurchase (NAV) | not found | 2026-09-14 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1851322/000119312526349128/0001193125-26-349128-index.htm) |
 | — | Felicitas Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-15 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1957121/000121390026091144/0001213900-26-091144-index.htm) |
 | — | HarbourVest Private Investments Fund | fund/BDC repurchase (NAV) | not found | 2026-09-16 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2020407/000119312526353453/0001193125-26-353453-index.htm) |
 | — | North Haven Private Assets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-16 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2029010/000110465926096470/0001104659-26-096470-index.htm) |
-| — | Stone Point Credit Income Fund | fund/BDC repurchase (NAV) | not found | 2026-09-17 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2031283/000110465926097733/0001104659-26-097733-index.htm) |
+| — | Stone Point Credit Income Fund | fund/BDC repurchase (NAV) | not found | 2026-09-17 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2031283/000110465926097733/0001104659-26-097733-index.htm) |
 | — | ARES STRATEGIC INCOME FUND | fund/BDC repurchase (NAV) | not found | 2026-09-18 | yes | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1918712/000110465926099224/0001104659-26-099224-index.htm) |
 | — | Ares Core Infrastructure Fund | fund/BDC repurchase (NAV) | not found | 2026-09-18 | yes | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2031750/000110465926099271/0001104659-26-099271-index.htm) |
 | — | John Hancock Comvest Private Income Fu | fund/BDC repurchase (NAV) | $25.09 | 2026-09-18 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1987221/000119312526356287/0001193125-26-356287-index.htm) |
@@ -113,7 +110,7 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | Ironwood Multi-Strategy Fund LLC | fund/BDC repurchase (NAV) | not found | 2026-09-25 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1500234/000114036126034410/0001140361-26-034410-index.htm) |
 | — | Neuberger Private Markets Access Fund  | fund/BDC repurchase (NAV) | not found | 2026-09-25 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1818105/000110465926102911/0001104659-26-102911-index.htm) |
 | — | TPG Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-25 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2060934/000158064226005340/0001580642-26-005340-index.htm) |
-| — | iDirect Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-25 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1606789/000158064226005315/0001580642-26-005315-index.htm) |
+| — | iDirect Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-25 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1606789/000158064226005315/0001580642-26-005315-index.htm) |
 | — | Fidelity Private Credit Co LLC | fund/BDC repurchase (NAV) | not found | 2026-09-28 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2112554/000119312526372873/0001193125-26-372873-index.htm) |
 | — | Nuveen Churchill Private Capital Incom | fund/BDC repurchase (NAV) | $25.00 | 2026-09-28 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1911066/000191106626000101/0001911066-26-000101-index.htm) |
 | — | Ares Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-09-29 | unclear | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1876006/000110465926104342/0001104659-26-104342-index.htm) |
@@ -137,6 +134,7 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | Alternative Investment Partners Absolu | fund/BDC repurchase (NAV) | not found | 2026-10-07 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1343668/000119312526373189/0001193125-26-373189-index.htm) |
 | — | 83 Investment Group Income Fund | fund/BDC repurchase (NAV) | not found | 2026-10-13 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2036029/000158064226006274/0001580642-26-006274-index.htm) |
 | — | Coatue Innovative Strategies Fund | fund/BDC repurchase (NAV) | not found | 2026-10-14 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2044519/000110465926108300/0001104659-26-108300-index.htm) |
+| — | KKR Real Estate Select Trust Inc. | fund/BDC repurchase (NAV) | $27.00 | 2026-10-16 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1803958/000119312526394262/0001193125-26-394262-index.htm) |
 | — | AB Private Credit Investors Corp | fund/BDC repurchase (NAV) | not found | 2026-10-26 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1634452/000119312526373361/0001193125-26-373361-index.htm) |
 | — | Star Mountain Lower Middle-Market Capi | fund/BDC repurchase (NAV) | not found | 2026-10-28 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1786835/000119312526376142/0001193125-26-376142-index.htm) |
 | — | JONES FINANCIAL COMPANIES LLLP | share tender | not found | 2026-12-28 | no | offer price not parsed; no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/815917/000119312526384448/0001193125-26-384448-index.htm) |
@@ -145,13 +143,14 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | BIP Ventures Evergreen BDC | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1950572/000158064226005472/0001580642-26-005472-index.htm) |
 | — | BlackRock Private Investments Fund | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1816389/000119312526391929/0001193125-26-391929-index.htm) |
 | — | Boliden AB | pre-commencement (SC TO-C) | not found | not found | no | — | [SC TO-C](https://www.sec.gov/Archives/edgar/data/1446457/000114036126034601/0001140361-26-034601-index.htm) |
-| — | Evanston Multi-Alpha Fund | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1589390/000158064226004784/0001580642-26-004784-index.htm) |
-| HERZ | Herzfeld Credit Income Fund, Inc | pre-commencement (SC TO-C) | not found | not found | no | — | [SC TO-C](https://www.sec.gov/Archives/edgar/data/880406/000139834426016904/0001398344-26-016904-index.htm) |
+| — | Fidelity Private Credit Fund | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1920453/000119312526384555/0001193125-26-384555-index.htm) |
+| — | New Mountain Private Credit Fund | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2037804/000158064226006079/0001580642-26-006079-index.htm) |
 | — | PARTNERS GROUP NEXT GENERATION INFRAST | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1989393/000139834426015612/0001398344-26-015612-index.htm) |
 | — | Partners Group Growth, LLC | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1991706/000139834426015609/0001398344-26-015609-index.htm) |
 | SQFT | Presidio Property Trust, Inc. | debt / preferred tender | not found | not found | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1080657/000149315226036654/0001493152-26-036654-index.htm) |
 | — | SEI Structured Credit Fund, LP | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1407736/000139834426014339/0001398344-26-014339-index.htm) |
 | — | StepStone Private Markets | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1789470/000119312526343837/0001193125-26-343837-index.htm) |
+| UTMD | UTAH MEDICAL PRODUCTS INC | pre-commencement (SC TO-C) | $75.00 | not found | unclear | — | [SC TO-C](https://www.sec.gov/Archives/edgar/data/706698/000109690626001373/0001096906-26-001373-index.htm) |
 
 ## How odd-lot tenders work, and the risks
 
