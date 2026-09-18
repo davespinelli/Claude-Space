@@ -1,3 +1,47 @@
+- 2026-09-18 (lane B, idea 1292 does-ANY-N-x-GROSS-CELL-clear-4b-at-EVERY-PHASE-and-DELAY-at-once)
+  — **ANSWERED = (A) YES: A STRESS-ROBUST CELL EXISTS AND THE RULE-8 CHOOSER REACHES IT.**
+  Verdict KEEP-4b CANDIDATE (U56 only), memo written for the Sunday review; no RULES change, no
+  PROTOCOL edit (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
+  SELECTION: the queue's LAST open item (979) carries three standing lane SKIPs and everything
+  below it is record-bookkeeping, LOCAL-ONLY (353) or PARK-needs-data (429), so the sprint's
+  documented fallback was taken — 1290 / 1291 / 1292 filed, the LAST claimed. Runtime 37.2s,
+  offline, deterministic.
+
+  **THE TWO DIALS AND NO MORE (rule 4):** `N` {10,15,20,25} x `GROSS` {0.45,0.55,0.65,0.75} =
+  16 cells per panel, **48 published**, each read at every point of a 15-point STRESS ENSEMBLE
+  (5 decision weekdays x execution delays d = 1,2,3) for **720 published (cell, point) rows**.
+  The ensemble is construction, not a dial: it is not tuned and every point is reported. The
+  ANCHOR point (Fri, t+1) is PROTOCOL rule 2 and reproduces the committed incumbent to <5e-4 on
+  all five of CAGR / Sharpe / MaxDD / OOS CAGR / OOS Sharpe. FROZEN: H=126, weekly, 10 bps,
+  above-200d + vol20 < 0.60, equal weights, 260-row warm-up.
+
+  **(A) THE ANSWER.** **9 of 48 cells clear 4b at all 15 ensemble points** — 6 on U56
+  (g in {0.55, 0.65} x N in {10, 15, 20}, contiguous) and 3 on B136 (all g = 0.55). The rule-8
+  chooser, both dials taken on warm-up..2016-12-31 only under a criterion declared before the
+  run, lands on **U56 / N=20 / gross 0.65**: anchor **13.66% / 1.1526 / -16.73%**, halves
+  1.2130 / 1.1129, OOS **14.95% / 1.1833 / -16.73%** against SPY 15.28% / 0.8745 / -33.72% and
+  the live RULES v2's 9.47% / 1.2778 / -12.05%. Its worst ensemble point (Mon, t+1) still reads
+  OOS **1.0928** with a DD margin of +0.52 pp. Because the robust band brackets the standing
+  G = 0.60 book, this CONFIRMS and WIDENS idea 1286 rather than proposing a new mechanism.
+
+  **(B) THE INCUMBENT IS THE FRAGILE CELL, NOT A FRAGILE FAMILY.** The committed g = 0.75 book
+  clears 4b at **9 of 15** points, worst-case DD margin **-2.22 pp**, MaxDD spread 3.32 pp across
+  the ensemble — the same reading ideas 1253 (phase) and 1287 (delay) reached one axis at a time,
+  now with the axes crossed. What buys the margin back is gross, and only gross.
+
+  **(C) THE MECHANISM, AND ITS PRICE.** Of 499 failing rows, the **MaxDD cap is the SOLE binder
+  on 125** and the **CAGR floor on 98**; H1 and OOS Sharpe are sole binder on 0, H2 on 12. The
+  two legs move in opposite directions in gross (U56 N=20: +6.23 pp DD / -1.71 pp CAGR at
+  g = 0.45; -2.22 / +4.25 at g = 0.75), so the robust band is their thin overlap, not a corner.
+  4b passes 221 of 720 rows; **4a passes 0 of 720** — the live book's -12.05% MaxDD keeps 4a out
+  of reach for any growth book, which is what 4b exists for.
+
+  **(D) PANEL-BOUND, STATED AS ONE.** 4b points by panel: U56 138/240, B136 83/240, **SMALL
+  0/240**. B136's IS chooser misses its own robust cells (picks N=25/g=0.65, robust at 7 of 15);
+  SMALL's strict chooser set is EMPTY and its fallback reads OOS 4.65% / 0.4529 against SPY
+  0.8767. SURVIVORSHIP (rule 9): all three panels are current-constituent lists, so dead and
+  acquired names are absent and every momentum book here is flattered; nothing is live expectancy.
+
 - 2026-09-18 (lane cloud, idea 1289 is-the-2026-09-04-KEEP-4b-BOOK-a-ONE-GROUP-BET)
   — **ANSWERED = NO ON THE LITERAL QUESTION, (B) CAP-SENSITIVE ON THE VERDICT. THE BOOK IS
   CONCENTRATED BUT NOT ONE-GROUP; WHAT A GROUP CAP MOVES IS THE 4b VERDICT, NOT THE EDGE.**
