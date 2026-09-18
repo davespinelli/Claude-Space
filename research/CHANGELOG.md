@@ -1,3 +1,53 @@
+- 2026-09-18 (lane cloud, idea 1287 does-the-2026-09-04-KEEP-4b-BOOK-survive-EXECUTION-DELAY-beyond-rule-2-s-t-plus-1)
+  — **ANSWERED = (C) FRAGILE. THE INCUMBENT'S 4b PASS IS ONE DAY DEEP, AND WHAT IS FRAGILE IS THE
+  VERDICT, NOT THE EDGE.** Verdict KILL (capital): no new book promoted, no RULES change, no
+  PROTOCOL edit (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
+  SELECTION: the FIRST numbered item in '## Open' is 1215 and the LAST is 979; both, and every
+  numbered item between them, are record-bookkeeping censuses that cannot yield this sprint's
+  binding step-3 deliverable, so the documented fallback was taken — 1287/1288/1289 filed as new
+  price-only stress tests of the standing KEEP-4b book, and the first (1287) claimed. Runtime
+  9.9s, offline, deterministic.
+
+  **THE TWO DIALS AND NO MORE (rule 4):** `LAG` {1, 2, 3, 5, 10} trading days x `CADENCE` {W, M}
+  = 10 cells per panel, **30 published**, none dropped. LAG = d means rank on the close of row
+  (t-d) and hold from the close of row t; **d = 1 IS PROTOCOL rule 2** and reproduces the
+  committed incumbent to 1e-4. NOT dials, reported at every value: PANEL {U56, B136, SMALL}
+  (rule 9); the 4a and 4b legs; full sample, both halves, and the rule-8 OOS window. FROZEN at
+  the incumbent's construction: N=20, H=126, gross 0.75, 3-leg composite (21/252, 0/126, 0/63),
+  above-200d + vol20 < 0.60, 10 bps, 260-row warm-up.
+
+  **(A) THE ANSWER.** The incumbent's own cell (U56, W, d=1) reads **15.79% / 1.1529 / -19.13%,
+  halves 1.2132 / 1.1133, OOS 17.30% / 1.1837** against U56 SPY **15.13% / 0.8848 / -33.72%**
+  (halves 0.9600/0.8236, OOS 15.28% / 0.8745) and clears 4b. Move the ranking snapshot back ONE
+  trading day and it **FAILS 4b**; it fails again at d=3 and d=10; it clears again at d=5. So the
+  pass is not a monotone decay — it is a **coin-flip across lags**.
+
+  **(B) WHY, AND THIS IS THE LOAD-BEARING PART.** Every one of the three failures binds on the
+  **MaxDD cap ALONE**. 4b's three Sharpe legs (H1, H2, OOS) and its CAGR floor pass at **5 of 5**
+  lags. Net Sharpe moves only **0.0181 (SD)** across the five rungs; the median Sharpe slope per
+  day of delay over the 6 (panel, cadence) pairs is **+0.00131/day** (range -0.00584 to +0.01292)
+  and **3 of 6 cells IMPROVE at d=2**, so the book is NOT harvesting one-day stale prices and its
+  edge is delay-insensitive out to two trading weeks. **The 4b verdict is what is one day deep.**
+
+  **(C) THE KNIFE-EDGE, PRICED.** U56 SPY MaxDD -33.72%, so 4b's cap is **-20.23%**. MaxDD by lag:
+  **-19.13 / -21.57 / -20.50 / -19.77 / -20.91%**. The lag-1 margin is **+1.10 pp** against a
+  **0.95 pp** SD of MaxDD across the five lags — the standing candidate sits **1.16 lag-SDs**
+  inside a HARD cap, on the single noisiest statistic in the rule, and a perturbation that leaves
+  Sharpe flat flips its verdict. Nothing here refutes the incumbent's 2026-09-04 reading; it says
+  the reading is not resolved at the precision 4b's DD leg is being quoted to.
+
+  **RULE 8 AND BOTH KEEP PATHS.** Lag chosen on warm-up..2016-12-31 by IS Sharpe, 2017-2026 read
+  ONCE. The IS chooser lands on d = 10 / 2 / 3 / 10 / 10 / 1 over the six (panel, cadence) pairs,
+  beats the rule-2 anchor OOS in **4 of 6** (mean delta **+0.0302** of OOS Sharpe) — and clears 4b
+  in **0 of 6**, against the anchor's 1 of 6, so it is not a selector. Grid-wide **4a 0 of 30**
+  (no cell beats the live RULES v2 book in both halves at no worse MaxDD) and **4b 4 of 30**
+  (U56 3/10, B136 1/10, SMALL 0/10). **NO NEW CANDIDATE, NO MEMO, NOTHING ENACTED.**
+
+  **SURVIVORSHIP (rule 9).** U56, B136 and SMALL (663 investable of 715, 52 dropped for
+  max_1d_move >= 1.0 in data/small_meta.csv) are all CURRENT-constituent lists; names that died or
+  were acquired are absent, which flatters every momentum book here. These are relative readings
+  across lags on fixed panels, not live expectancy.
+
 - 2026-09-18 (lane C, idea 1222 is-the-WIDEST-DIAL-HABIT-RESOLVABLE-on-ANY-ATTAINABLE-FOLD-COUNT)
   — **ANSWERED = YES ON THE RECORD'S OWN FOUR-LADDER SET, AND THE ENTIRE YES IS THE DEGENERATE GROSS
   LADDER.** Verdict KILL (capital). No RULES change, no book promoted, no PROTOCOL edit (rule 6);

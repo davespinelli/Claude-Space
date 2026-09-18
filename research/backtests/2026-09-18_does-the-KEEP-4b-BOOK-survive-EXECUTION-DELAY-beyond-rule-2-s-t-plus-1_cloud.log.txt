@@ -1,0 +1,144 @@
+====================================================================================================
+IDEA 1287 (lane cloud, 2026-09-18) — does the 2026-09-04 KEEP-4b BOOK survive
+EXECUTION DELAY beyond PROTOCOL rule 2's t+1?
+====================================================================================================
+
+  LAG = d: rank on the close of row (t-d), hold from the close of row t. d=1 IS rule 2.
+  DIALS (2, rule 4): LAG {1,2,3,5,10} x CADENCE {W,M} = 10 cells/panel, 30 published.
+  FROZEN: N=20, H=126, gross=0.75, 10 bps, 3-leg composite, above-200d & vol20<0.60.
+  OUTCOMES: (A) ROBUST to d=5  (B) DECAYS by d<=5  (C) FRAGILE at d=2  (D) NO PASS at d=1.
+
+  PANELS: U56 55 investable; B136 135; SMALL 663 investable (52 dropped for max_1d_move >= 1.0 in data/small_meta.csv). SPY is benchmark only, never held.
+  TAPE: U56 2008-01-02..2026-09-17; SMALL 2010-01-04..2026-09-11.
+
+====================================================================================================
+ARM A — BENCHMARKS (post-warm-up, 10 bps, weekly for the live book)
+====================================================================================================
+
+  panel  series                     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR   OOS Sh
+  U56    SPY (buy & hold)         15.13%   0.8848  -33.72%  0.9598  0.8234    15.28%   0.8745
+  U56    RULES v2 (live book)      8.62%   1.2017  -12.05%  1.2329  1.1771     9.47%   1.2778
+  B136   SPY (buy & hold)         15.16%   0.8861  -33.72%  0.9596  0.8259    15.33%   0.8767
+  B136   RULES v2 (live book)      7.98%   1.0993  -12.24%  1.2348  0.9658     7.88%   1.1059
+  SMALL  SPY (buy & hold)         14.06%   0.8581  -33.72%  0.9138  0.8344    15.33%   0.8767
+  SMALL  RULES v2 (live book)      4.64%   0.7129  -12.18%  0.8168  0.6424     4.47%   0.6516
+
+  4b bars from these: MaxDD cap = 0.60 x SPY MaxDD, CAGR floor = 0.70 x SPY CAGR,
+  Sharpe > SPY in BOTH halves AND in the rule-8 OOS window.
+
+====================================================================================================
+ARM B — THE FULL 30-CELL GRID (every cell published, none selected on)
+====================================================================================================
+
+  --- U56 ----------------------------------------------------------------------------------
+  cad   lag     CAGR   Sharpe    MaxDD      H1      H2  OOScagr   OOSsh  turn/yr   4a  4b
+  W       1   15.79%   1.1529  -19.13%  1.2132  1.1133   17.30%  1.1837     2.77    .   Y
+  W       2   15.26%   1.1046  -21.57%  1.2186  1.0261   16.34%  1.1010     2.80    .   .
+  W       3   15.49%   1.1198  -20.50%  1.1953  1.0686   16.73%  1.1335     2.78    .   .
+  W       5   15.47%   1.1249  -19.77%  1.1780  1.0932   17.15%  1.1611     2.80    .   Y
+  W      10   15.69%   1.1359  -20.91%  1.2427  1.0639   16.82%  1.1329     2.81    .   .
+  M       1   14.43%   1.0681  -23.08%  1.2201  0.9684   15.52%  1.0569     2.16    .   .
+  M       2   15.29%   1.1251  -23.85%  1.2618  1.0369   16.68%  1.1274     2.24    .   .
+  M       3   14.52%   1.0860  -21.50%  1.1071  1.0845   17.06%  1.1656     2.20    .   .
+  M       5   14.78%   1.1014  -20.16%  1.1383  1.0883   17.23%  1.1713     2.19    .   Y
+  M      10   15.14%   1.1043  -21.44%  1.1435  1.0855   17.60%  1.1848     2.15    .   .
+
+  --- B136 ----------------------------------------------------------------------------------
+  cad   lag     CAGR   Sharpe    MaxDD      H1      H2  OOScagr   OOSsh  turn/yr   4a  4b
+  W       1   16.20%   1.0721  -20.74%  1.2907  0.8999   16.30%  1.0245     3.14    .   .
+  W       2   17.84%   1.1551  -19.41%  1.3508  1.0047   18.16%  1.1118     3.16    .   Y
+  W       3   17.77%   1.1431  -21.61%  1.3710  0.9655   17.42%  1.0674     3.11    .   .
+  W       5   16.31%   1.0639  -23.14%  1.3016  0.8779   15.95%  0.9907     3.06    .   .
+  W      10   16.35%   1.0683  -24.56%  1.2594  0.9232   16.83%  1.0374     3.08    .   .
+  M       1   16.86%   1.0820  -27.63%  1.2521  0.9682   18.41%  1.0822     2.46    .   .
+  M       2   16.16%   1.0462  -26.19%  1.2768  0.8767   16.54%  1.0008     2.60    .   .
+  M       3   16.10%   1.0433  -27.68%  1.2683  0.8830   16.89%  1.0132     2.51    .   .
+  M       5   17.17%   1.0888  -26.74%  1.2736  0.9634   18.43%  1.0745     2.53    .   .
+  M      10   18.88%   1.1727  -25.81%  1.3129  1.0810   21.01%  1.1958     2.50    .   .
+
+  --- SMALL ----------------------------------------------------------------------------------
+  cad   lag     CAGR   Sharpe    MaxDD      H1      H2  OOScagr   OOSsh  turn/yr   4a  4b
+  W       1    7.89%   0.5081  -35.81%  0.6644  0.3950    7.10%  0.4542     3.98    .   .
+  W       2    9.03%   0.5648  -35.65%  0.7559  0.4249    8.46%  0.5191     3.96    .   .
+  W       3    8.77%   0.5488  -38.59%  0.6989  0.4398    7.94%  0.4914     3.97    .   .
+  W       5    8.45%   0.5365  -37.49%  0.6825  0.4309    8.09%  0.5024     3.97    .   .
+  W      10    8.63%   0.5417  -37.58%  0.7113  0.4207    7.29%  0.4593     4.02    .   .
+  M       1    5.39%   0.3812  -38.52%  0.6038  0.2305    2.98%  0.2483     3.17    .   .
+  M       2    5.10%   0.3659  -36.12%  0.5209  0.2608    2.85%  0.2423     3.18    .   .
+  M       3    5.70%   0.3943  -38.00%  0.5518  0.2859    3.35%  0.2661     3.20    .   .
+  M       5    6.00%   0.4080  -37.83%  0.5398  0.3228    4.49%  0.3196     3.19    .   .
+  M      10    5.86%   0.4029  -40.12%  0.4797  0.3548    5.37%  0.3640     3.22    .   .
+
+====================================================================================================
+ARM C — THE DECAY: what one day of staleness costs
+====================================================================================================
+
+  panel  cad     Sh(1)    Sh(2)    Sh(3)    Sh(5)   Sh(10)  slope/day  dSh(2-1)  dCAGR(2-1)
+  U56    W      1.1529   1.1046   1.1198   1.1249   1.1359    0.00049   -0.0483      -0.53%
+  U56    M      1.0681   1.1251   1.0860   1.1014   1.1043    0.00177    0.0569       0.86%
+  B136   W      1.0721   1.1551   1.1431   1.0639   1.0683   -0.00584    0.0830       1.64%
+  B136   M      1.0820   1.0462   1.0433   1.0888   1.1727    0.01292   -0.0359      -0.70%
+  SMALL  W      0.5081   0.5648   0.5488   0.5365   0.5417    0.00086    0.0567       1.13%
+  SMALL  M      0.3812   0.3659   0.3943   0.4080   0.4029    0.00326   -0.0152      -0.28%
+
+  Median Sharpe slope per day of delay, over the 6 (panel, cadence) pairs: +0.00131; range -0.00584 to +0.01292.
+  Cells where one extra day COSTS Sharpe (dSh(2-1) < 0): 3 of 6.
+
+====================================================================================================
+ARM D — RULE 8 WALK-FORWARD: lag chosen on warm-up..2016 ONLY, 2017-2026 read ONCE
+====================================================================================================
+
+  CHOOSER: within each (panel, cadence), take the LAG with the highest IS Sharpe
+  (warm-up..2016-12-31).  Then read that cell's 2017-2026 window, once.  The ANCHOR
+  arm is lag = 1 (rule 2), never chosen, always reported.
+
+  panel  cad   IS-pick  ISsh(pick)  OOSsh(pick)  OOSsh(lag1)    delta  4b(pick)  4b(lag1)
+  U56    W          10      1.1505       1.1329       1.1837  -0.0508         .         Y
+  U56    M           2      1.1363       1.1274       1.0569   0.0706         .         .
+  B136   W           3      1.2560       1.0674       1.0245   0.0429         .         .
+  B136   M          10      1.1531       1.1958       1.0822   0.1136         .         .
+  SMALL  W          10      0.7028       0.4593       0.4542   0.0051         .         .
+  SMALL  M           1      0.6668       0.2483       0.2483   0.0000         .         .
+
+  The IS lag chooser beats the rule-2 anchor OOS in 4 of 6 (panel, cadence) pairs; mean delta +0.0302 of OOS Sharpe.
+  Distinct lags the IS chooser lands on: [1, 2, 3, 10].
+
+====================================================================================================
+ARM E — THE ANSWER
+====================================================================================================
+
+  The incumbent's own cell is (U56, W, lag=1). Its 4b legs, lag by lag:
+   lag   b_h1   b_h2   b_oos   b_dd  b_cagr   4b binding leg(s)              
+     1      Y      Y       Y      Y       Y PASS -none-                      
+     2      Y      Y       Y      N       Y FAIL MaxDD cap                   
+     3      Y      Y       Y      N       Y FAIL MaxDD cap                   
+     5      Y      Y       Y      Y       Y PASS -none-                      
+    10      Y      Y       Y      N       Y FAIL MaxDD cap                   
+
+  PRE-DECLARED OUTCOME REACHED: (C) FRAGILE — the 4b pass is one day deep; it is gone at d = 2.
+
+  WHY: the ONLY leg that ever binds is the MaxDD cap.  Its margin, in pp of drawdown:
+  U56 SPY MaxDD -33.72%; 4b cap = 0.60 x that = -20.23%.
+   lag  book MaxDD  margin (pp)   Sharpe  dSharpe vs d=1
+     1     -19.13%         1.10   1.1529          0.0000
+     2     -21.57%        -1.34   1.1046         -0.0483
+     3     -20.50%        -0.27   1.1198         -0.0331
+     5     -19.77%         0.46   1.1249         -0.0280
+    10     -20.91%        -0.68   1.1359         -0.0170
+
+  The lag=1 margin is +1.10 pp against a spread of 0.95 pp of MaxDD across
+  the five lags — i.e. the pass sits 1.16 lag-SDs inside a HARD cap, while
+  Sharpe moves only 0.0181 across the same five rungs and its three legs (H1, H2,
+  OOS) pass at 5 of 5 lags.  The book's EDGE is delay-insensitive; its 4b VERDICT is not,
+  because 4b's binding leg on this book is the single noisiest statistic in the rule.
+
+  Grid-wide: 4a passes 0 of 30 cells; 4b passes 4 of 30.
+  4b passes by lag: d=1: 1/6, d=2: 1/6, d=3: 0/6, d=5: 2/6, d=10: 0/6.
+  4b passes by panel: U56: 3/10, B136: 1/10, SMALL: 0/10.
+
+  SURVIVORSHIP (rule 9): U56, B136 and SMALL are all CURRENT-constituent lists; names
+  that died or were acquired are absent, which flatters every momentum book here.
+  These are relative readings across lags on one fixed panel, not live expectancy.
+
+  Wrote 2026-09-18_does-the-KEEP-4b-BOOK-survive-EXECUTION-DELAY-beyond-rule-2-s-t-plus-1_cloud.grid.csv (30 rows), .decay.csv (6), .walkforward.csv (6), .log.txt
+  Runtime 9.9s, offline, deterministic.
