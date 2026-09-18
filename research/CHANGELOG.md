@@ -2971,3 +2971,62 @@ rather than a lookalike.
   (52 of 715 dropped). The rotation pool is drawn from names that FAILED the trend gate — the
   population a current panel has cleaned of its casualties — so the defensive sleeve's return is
   FLATTERED here and the negative result is understated; the cash control carries no such bias.
+
+## 2026-09-18 (lane B, idea 1081) — the n dial's drawdown slope FLATTENS on small caps but never REVERSES, and the trough is the same crash on every panel
+- QUESTION (queue 1081): 1071 read MaxDD rising monotonically in n on U56 (-19.13% -> -22.98%)
+  and B136 (-20.74% -> -25.38%) as the book's drawdowns being COMMON-FACTOR rather than
+  idiosyncratic. Small caps carry far more idiosyncratic variance, so the reading predicts the
+  n dial should FLATTEN OR REVERSE on the sub-$2B panel. Re-run 1071's n x cap grid there.
+- TWO DIALS AND NO MORE (rule 4), 1071's LADDERS UNCHANGED: N {20, 25, 30, 40} x CAPMULT
+  {1.00, 1.25, 1.50, 2.00, INF}, w_i = min(g/n_sel, k*g/N), residual to CASH. 20 points per
+  panel, ALL PUBLISHED. NOT dials, reported at every value: PANEL {U56, B136, SMALL663}. The
+  book is frozen at 936/1064/1071's construction (RAW composite 21/252 + 0/126 + 0/63, no vol
+  scaler, above-200d AND vol20 < 0.60, H=126, GROSS=0.75, weekly decide / t+1, 10 bps).
+- (A) REFUTED ON THE SIGN. d|MaxDD|/dN is POSITIVE at 15 of 15 (panel, cap) points. The small-
+  cap panel does not reverse and does not go flat: 0 of 5 caps reach <= 0.
+- (B) CONFIRMED ON THE MAGNITUDE, which is the part that transfers. +0.1803 (U56) / +0.2444
+  (B136) against +0.0247 pp per extra name (SMALL663) — 7.3x and 9.9x flatter. N = 20 -> 40
+  costs +3.86pp / +4.64pp of drawdown on the large-cap panels and +0.30pp on the small-cap one,
+  0.84% of its own DD@20 against 20.16% / 22.39%. Rank corr (N, |DD|) +1.00 / +1.00 / +0.60.
+- (C) THE PREMISE IS TRUE AND DOES NOT DO THE WORK. Held-book mean pairwise correlation
+  (trailing 63d at every rebalance) 0.1898 on SMALL663 against 0.3438 / 0.3285; diversification
+  ratio 2.27 against 1.69 / 1.72. The small-cap book really does hold much less correlated
+  names and still buys no drawdown, because THE DEEPEST TROUGH IS THE SAME EVENT EVERYWHERE:
+  Feb-Mar 2020 on all three panels at both N (SMALL663 2020-01-22 -> 2020-03-18, -35.81% at
+  N=20 and -36.12% at N=40). Book VOL falls in N at 3 of 3 panels while MaxDD does not follow
+  it down — DIVERSIFICATION REDUCES VARIANCE THAT THE DRAWDOWN NEVER SEES. That is the same
+  wall 1262 (depth brake), 1263 (vol target), 1264 (inverse-vol sizing) and 1267 (defensive
+  rotation) hit from four other directions this fortnight, reached here without any risk clause
+  at all: the binding 4b leg is a single macro episode, and no re-weighting of a long-only
+  equity book has been found that reaches it.
+- (D) THE CAP DIAL IS INERT ON SMALL663 AND IS REPORTED INERT, NOT AS A NULL (gate G9): the
+  five cap books are BIT-IDENTICAL there, a genuine bind increment of 0.00pp over the breadth
+  floor against U56's 7.78pp and B136's 1.90pp, because a 663-name pool never thins to
+  n_sel < N. 1071's own declaration required this be said rather than counted as five points.
+- CAPITAL: 4a 0 of 60. 4b 10 of 60, of which 8 ARE the incumbent N=20 cell or its cap clones.
+  SMALL663 fails 4b at 20 of 20 cells on ALL FIVE legs (7.87% CAGR against a 9.84% floor,
+  -35.81% DD against a -20.23% cap) even with survivorship inflating its levels.
+- RULE 8: 9 choosers (IS Sharpe / IS |MaxDD| / IS CAGR x 3 panels) on warm-up..2016-12-31,
+  2017-2026 read once. 2 of 9 beat the do-nothing anchor, mean d_OOS_Sharpe -0.0174. IS/OOS
+  Sharpe rank corr -0.30 / +0.58 / -1.00; IS/OOS |MaxDD| rank corr -0.19 / -0.78 / -0.60 — the
+  IS drawdown ordering of the n ladder is ANTI-correlated with its OOS ordering on every panel,
+  so n is not choosable as a drawdown instrument by any honest procedure.
+- VERDICT: KILL (capital), no new book, nothing enacted (rule 6). RULES.md, scan.py, bot.py and
+  baseline.py untouched.
+- PARKED, NOT PROPOSED: B136 N=25 / k=1.00 reads 16.23% / 1.1025 / -19.13%, halves 1.2914 /
+  0.9526, OOS Sharpe 1.0608, and passes every 4b leg against the committed N=20/INF FAIL
+  (16.04% / 1.0634 / -20.74%). NO rule-8 chooser reaches it, so it is PARK at best.
+- Gates 15 of 15. G1 fast runner == engine.backtest 1.39e-17; G2 936/1071's committed U56
+  W/H126 triple 2.60e-03 (tape vintage differs, tolerance declared before the run); G3 SPY OOS
+  triple 3.22e-03; G4 live RULES v2 MaxDD -12.05% at 4.95e-05; G6 SPY eligible on 0 days of the
+  SMALL panel; G7 max target gross 0.750000, no leverage; G8 the N dial is live on all three.
+- Hypotheses 3 of 6: H_SIGN, H_CORR, H_VOL supported; H_FLAT, H_4b, H_R8 refuted.
+- Script: research/backtests/2026-09-18_is-the-COMMON-FACTOR-DRAWDOWN-reading-of-the-n-DIAL-TRUE-on-a-SMALL-CAP-PANEL_B.py
+- SURVIVORSHIP (rule 9): U56/B136 current-constituent lists; SMALL663 a CURRENT sub-$2B screen
+  (52 of 715 dropped for max_1d_move >= 1.0), containing only names still listed, still public
+  and still under $2B today. Its LEVELS are optimistic and every 4b count on it is an UPPER
+  bound — which strengthens the negative result, since it fails all five legs anyway. The
+  headline is a SLOPE IN N measured inside one panel, a difference between two books drawn from
+  the same biased pool over the same tape, and is first-order immune; the correlation contrast
+  is understated if anything, because the missing small caps are the failures whose returns
+  would have been most idiosyncratic.
