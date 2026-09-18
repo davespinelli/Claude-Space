@@ -4328,3 +4328,42 @@ rather than a lookalike.
   screen (max_1d_move ≥ 1.0 dropped). Delisted and bankrupt names are absent, which flatters momentum
   books and the drawdown leg specifically; every J above is an upper bound. All claims are within-grid
   differences on fixed panels and identical dates.
+
+## 2026-09-18 — idea 1295 (lane cloud): the SECTOR CAP is AFFORDABLE once the book is SIZED
+- **ANSWERED (A) GROSS BUYS THE CAP.** Idea 1289 capped names per sector at the frozen gross 0.75 and
+  found the cap FLIPS the standing book's 4b verdict, every failure binding on the MaxDD leg alone.
+  Walking (cap {2,3,5,8,20} x gross {0.45..0.85}) on three panels shows that verdict was a SIZING
+  result: a 5-name cap reads −21.76% MaxDD at g = 0.75 (margin **−1.53 pp**, 4b FAIL — 1289's cell,
+  reproduced here to 5e-4) and **−19.06% at g = 0.65 (margin +1.17 pp, 4b PASS)**. Caps 2 and 3 do the
+  same. On U56 the cap costs **zero rungs of size**: c=5 and c=20 both first clear 4b at g = 0.55.
+- **RULE 8, 2017-2026 READ ONCE.** Both dials chosen on warm-up..2016 by IS joint margin (idea 1290's
+  chooser, since IS Sharpe cannot size a book): U56 **c = 5 / g = 0.65**. Full sample **13.76% / 1.2116
+  / −19.06%**, halves **1.2937 / 1.1491**, OOS **14.60% / 1.2261 / −19.06%**, 19.74 names, 2.42 turns/yr.
+  SPY OOS 15.28% / 0.8745 / −33.72%; RULES v2 OOS 9.47% / 1.2778 / −12.05%.
+- **AND IT IS STRESS-ROBUST.** Arm H runs idea 1292's 15-point phase x delay ensemble: the pick clears 4b
+  at **15 of 15** (worst point Thu / t+3, 13.31% / 1.1593 / −20.20%, OOS Sharpe 1.1739; worst OOS Sharpe
+  over the ensemble 1.0995). The same arm reproduces 1292's two published controls exactly — uncapped
+  g = 0.65 at 15/15 and uncapped g = 0.75 at 9/15. **ARM H WAS ADDED AFTER THE MAIN GRID WAS READ** and
+  is labelled so in the script header; its ROBUST rule is 1292's, fixed before this run existed.
+- **AT MATCHED GROSS THE CAP BUYS SHARPE AND SELLS DRAWDOWN — AND ONLY AT c = 5.** c=5 minus c=20 at
+  g = 0.65: Sharpe **+0.0590**, OOS Sharpe +0.0428, CAGR +0.09 pp, MaxDD **−2.33 pp**. c=2 / c=3 / c=8
+  all LOSE Sharpe (−0.0379 / −0.0668 / −0.0245). The cap also cuts the drawdown's phase x delay spread
+  from **2.98 pp to 1.18 pp**: it stabilises the exact leg this family keeps dying on.
+- **KEEP-4b CANDIDATE (capped), memo written, RULES.md NOT touched (rule 6).** It dominates the standing
+  uncapped candidate on every Sharpe leg at the same CAGR, for 2.33 pp more drawdown.
+- **CAVEAT, AND IT IS THE SAME ONE 1290 FOUND.** The pick's worst-case DD margin over the ensemble is
+  **+0.03 pp** (−20.20% against a −20.23% cap). One rung down, **c=5 / g=0.60** is also 15/15 robust with
+  a worst-case joint margin of **+0.95 pp** (12.68% / 1.2117 / −17.69%, OOS 13.46% / 1.2263). Rule 8's
+  declared chooser picks 0.65; the safer rung is 0.60 and the review should decide which.
+- **GRID-WIDE.** 4b passes 37 of 135 cells (U56 16/45, B136 21/45, **SMALL 0/45** at every cap and every
+  gross); 4a passes **0 of 135**. Over the 98 failing cells MaxDD is sole binder on 31 and the CAGR floor
+  on 22; no Sharpe leg is ever a sole binder. B136's chooser picks c=3 / g=0.60 (4b PASS, OOS 11.39% /
+  1.0095) — not stress-run here, so not promoted.
+- **NOT CLAIMED:** that the cap helps at any other N (N = 20 frozen; 1289's N = 10 arm is not re-opened);
+  that c=5 is special off U56; that the sector assignment convention is the right one (it is 1289's,
+  reused unchanged so the two runs are comparable); that anything changes in RULES.md.
+  Script: research/backtests/2026-09-18_does-the-CERTIFIED-U56-g0.65-BOOK-AFFORD-a-SECTOR-CAP-the-g0.75-one-could-NOT_cloud.py
+- **SURVIVORSHIP (rule 9):** current constituents only in all three panels (SMALL with max_1d_move ≥ 1.0
+  dropped). This flatters the UNCAPPED book most, because the corner the screen concentrates into is the
+  corner whose survivors are known — so the cap's measured cost is if anything over-stated and its
+  measured benefit under-stated. Every claim is a within-grid difference on fixed panels and dates.
