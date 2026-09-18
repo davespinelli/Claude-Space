@@ -1,3 +1,77 @@
+- 2026-09-18 (lane B, idea 1115 does-the-PER-CELL-CALIBRATION-BAR-change-any-committed-DECISIVENESS-claim)
+  — **ANSWERED: THE PER-CELL BAR IS STRICTLY STRICTER AND PERFECTLY ONE-SIDED, BUT AT THE RECORD'S OWN
+  INCUMBENT BAR IT MOVES ALMOST NOTHING, AND IT BUYS NOTHING. KILL (capital) / PUBLISHING-ONLY
+  RECOMMENDATION.**
+
+  **WHY THIS IDEA.** 1115 was the LAST numbered item standing in QUEUE.md's '## Open' and was claimed
+  without an eligibility skip: lane B's own 1265 correction applies (a census CAN carry a capital arm),
+  and this run gives it one.
+
+  **WHAT COULD AND COULD NOT BE DONE.** The committed decisiveness rows do not carry their return
+  series in this repo, so they cannot be re-bootstrapped and NO committed verdict is re-adjudicated or
+  claimed to flip. What is measured instead is the aggregate-vs-per-cell gap on the record's OWN four
+  CORE ladders, rebuilt here as real books: 3 panels (U56 55 names, B136 135, SMALL 663) x 2 1101
+  anchors x 4 ladders = 24 families, 162 books, 876 cells, circular block bootstrap L=63 x 1000 draws,
+  10 bps, t+1 fill. Two dials only: CLAIM SET {CS_STEPS, CS_ENDS, CS_VSANCHOR, CS_VSBEST} x BAR q
+  {0.50 ... 0.95}, all 24 cells published.
+
+  **THE GAP IS REAL AND ONE-SIDED.** Over 576 verdict pairs: AGGREGATE decisive 325, PER-CELL 252,
+  FLIPS 73 (0.1267) — and **73 of 73 flips run AGG-pass / PER-CELL-fail; the reverse direction is
+  empty at every cell.** So the per-cell reading can only ever withdraw a committed decisive call,
+  never add one. Flip rate by bar on CS_STEPS: 0.0417 / 0.4167 / 0.2917 / 0.1667 / 0.0417 / 0.0000 at
+  q = 0.50 / 0.60 / 0.70 / 0.80 / 0.90 / 0.95.
+
+  **BUT THE INCUMBENT BAR IS AT THE QUIET END.** At q=0.90, the record's own bar, only 3 of 96 families
+  flip (0.0312); the gap peaks at q=0.60 (0.4167) where nothing is published. 1110's D2 headline
+  (24 of 32 cells fail their own bar at q=0.80) is directionally right but family-specific: the same
+  count over 24 families is 187 of 438 (0.4269), i.e. 1110's own family is ~1.8x the record-wide rate.
+  Control: flip rate 0.1736 / 0.1597 / 0.1597 at L = 21 / 63 / 252, range 0.0139 — not a knob artefact.
+
+  **THE RECORD CANNOT BE RE-SCORED FROM ITS TEXT EITHER.** Census of the 132 decisiveness-mentioning
+  units in LEADERBOARD.md (85) and CHANGELOG.md (47): a reading is NAMED in 13 (0.0985) — per-cell 8,
+  aggregate 5 — so **0.9015 name neither.** A k-of-m cell count appears in 78 (0.5909), a bar in 32
+  (0.2424). The record's decisiveness language is mostly unscoreable under either reading as written.
+
+  **CAPITAL ARM (rule 8, licensing on warm-up..2016 ONLY, OOS 2017-2026 read ONCE) — KILL.** The gate
+  licenses moving off the 1101 anchor rung to the IS-best-Sharpe rung only if the family is decisive
+  under the reading tested. Paired PER-CELL minus AGG over all 576 (family x dial) pairs:
+  d(OOS Sharpe) **-0.0005 (SE 0.0017, t -0.27)**; over the 54 pairs (0.0938) where the readings pick
+  DIFFERENT books, **-0.0050 (SE 0.0184, t -0.27)**, d(OOS CAGR) -0.50pp, d(OOS MaxDD) +1.82pp. Worse
+  for the bar as such: licensed-minus-refused mean OOS Sharpe is NEGATIVE for both readings — AGG
+  -0.0605 (297 licensed 0.7677 vs 279 refused 0.8282), PER-CELL -0.0241 (237 vs 339) — the same sign
+  1252 found on P_boot. Levels, mean over the 24 families: DO-NOTHING 10.99% / 0.7922 / -23.63% with
+  4b 8 of 24; ALWAYS-ACT 11.65% / 0.7986 / -25.59% with 4b 3 of 24. RULES v2 U56 OOS 9.47% / 1.2778 /
+  -12.05%; SPY U56 OOS 15.28% / 0.8745 / -33.72%.
+
+  **KEEP PATHS over all 1,200 chooser rows: 4b 296, 4a 0.** Every 4b pass is an already-committed
+  anchor rung the gate declined to leave (U56 A/N-ladder 15.6% / 1.14 / -19.1%, halves 1.20 / 1.10).
+  No gate at any claim set or bar produced a book the record did not already hold. Binding leg is the
+  DD cap again: L_DD fails 904 of 1,200 (0.753), then L_H2 / L_OOS 618, L_H1 / L_CAGR 371.
+
+  **RECOMMENDED TO THE SUNDAY REVIEW, PUBLISHING ONLY (changes no book, no RULES version).** A
+  committed decisiveness claim must state its READING and its CELL COUNT: "decisive per cell at q=0.90
+  (weakest cell 0.912, 9 of 9 cells clear)" or "decisive in aggregate at q=0.90 (pooled 0.934; 4 of 9
+  cells fail their own bar)". Since the flip direction is empty in one direction at every cell tested,
+  an aggregate claim that does not state its per-cell fail count is an upper bound on its own strength
+  and must be written as one. The cost is nil (every run already computes the per-cell shares it pools);
+  the benefit is bounded and now measured — 0.1267 of verdict pairs record-wide, 0.0312 at the bar the
+  record actually publishes against, over 0.9015 of units that name no reading at all.
+
+  **NOT CLAIMED:** that any specific committed row flips, that the per-cell reading is the better bar
+  for capital (it is not: t -0.27), or that either reading's licensing adds OOS Sharpe (both are
+  negative). The single best of the 48 published chooser cells, PERCELL/CS_VSBEST/q=0.60 at OOS Sharpe
+  0.8157, is a max over 48 and is reported as such.
+
+  - Script: research/backtests/2026-09-18_does-the-PER-CELL-CALIBRATION-BAR-change-any-committed-DECISIVENESS-claim_B.py
+    Gates: G1a fast runner == engine.backtest 1.39e-17 over finite rows; G1b 1198's 2 NaN rows present
+    and both inside the 260-day warm-up (not hidden behind a skipna max); G2 1101's committed U56 triple
+    2.60e-03; G3 no degenerate cell (0 of 876); G4 L-control flip-rate range 0.0139. 5 of 5 pass.
+  - SURVIVORSHIP (rule 9): U56 (55 names) and B136 (135) are CURRENT-CONSTITUENT lists; SMALL is a
+    current sub-$2B screen keeping 663 of 715 names on max_1d_move < 1.0 (the SMALL663 label is stale —
+    idea 1074's object). Every LEVEL above is an UPPER bound. The flip rates and the paired PER-CELL
+    minus AGG deltas are within-book differences on the SAME panels and are first-order immune to a
+    level bias; the OOS levels are not, and are quoted as upper bounds.
+
 - 2026-09-18 (lane cloud, idea 1286 is-the-STANDING-G-0.60-BOOK-s-4b-PASS-PAID-FOR-BY-SELECTION-or-BOUGHT-BY-EXPOSURE) — **ANSWERED: (A) PAID FOR, AND ONLY ON U56. HOLDING N, H, CADENCE, GROSS, COST AND EXECUTION IDENTICAL AND REMOVING ONLY THE RANKING, THE RANDOM TWIN PASSES 4b AT 0 OF 12 SEEDS AT EVERY ONE OF 8 (COST, DELAY) GRID POINTS, AND THE STANDING BOOK PASSES AT ALL 8 — INCLUDING 25 bps WITH A t+2 FILL. THE RECORD'S SINGLE 4b CANDIDATE IS CONFIRMED AND NARROWED TO U56. MEMO WRITTEN; NO RULES CHANGE (rule 6).** 6 of 6 gates, 35s, offline, deterministic.
 
   **WHY THIS IDEA, AND WHY THE FALLBACK.** The LAST numbered items in QUEUE.md's '## Open' (943, 905, 825) are all STALE Open duplicates of entries other lanes already claimed, so none was available; everything above them up to 1139 is record-bookkeeping. The sprint's DOCUMENTED FALLBACK was used and labelled as such rather than as 'none eligible': three NEW price-only ideas stress-testing the standing KEEP-4b candidate were filed as 1284 / 1285 / 1286 and the LAST was claimed. Price-only; no EDGAR / Form 4 / 8-K / options / spin-offs / live data.
