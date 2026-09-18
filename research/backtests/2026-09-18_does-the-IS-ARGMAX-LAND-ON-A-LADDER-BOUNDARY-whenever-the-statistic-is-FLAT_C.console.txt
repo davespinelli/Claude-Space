@@ -1,0 +1,120 @@
+# 2026-09-18 idea 1195 lane C — does-the-IS-ARGMAX-LAND-ON-A-LADDER-BOUNDARY-whenever-the-statistic-is-FLAT
+# frozen: CAND legs [(21, 252), (0, 126), (0, 63)], elig above-200d & vol20 < 0.6, cap INF, gated weight to CASH, 10 bps, t+1, warm-up 260, IS end 2016-12-31
+# ANCHOR {'N': 20, 'H': 126, 'GROSS': 0.75, 'CADENCE': 'W'}
+# ladder N        (8 rungs): [5, 8, 10, 12, 15, 20, 25, 30]
+# ladder H        (8 rungs): [5, 10, 21, 42, 63, 90, 126, 189]
+# ladder GROSS    (8 rungs): [0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 1.0]
+# ladder CADENCE  (8 rungs): ['D', 'W', '2W', 'M', '2M', 'Q', '2Q', '4Q']
+# DIAL 1 AXIS SET = {'ALL4': ['N', 'H', 'GROSS', 'CADENCE'], 'NONGROSS3': ['N', 'H', 'CADENCE']}
+# DIAL 2 F_BAR = [0.5, 1.0, 2.0, 3.0] SE (a cell is FLAT iff FLAT_RATIO = SPREAD/SE_PAIR < F_BAR)
+# statistics ['Sharpe', 'CAGR', 'MaxDD'] (reported at every value, not a dial); block bootstrap L=63, 1000 draws, shared block index across a ladder's rungs
+# chance line for a boundary landing under a uniform pick over 8 rungs = 0.250
+   GATE G5 four ladders, 8 rungs each, anchor on every one: {'N': (8, True), 'H': (8, True), 'GROSS': (8, True), 'CADENCE': (8, True)} vs all (8, True) -> PASS
+
+## U56  n_days=4707  n_cols=56  2008-01-02..2026-09-17  OOS row 2267
+   SPY     full  15.13% / 0.8849 / -33.72%   OOS  15.28% / 0.8747 / -33.72%   4b caps: DD -20.2304%, CAGR 10.5938%
+   RULESv2 full   8.62% / 1.2018 / -12.05%   OOS   9.47% / 1.2781 / -12.05%
+   building 29 distinct rung books ...
+   built 29 books  [t=2s]
+   GATE G1 fast runner == engine.backtest (U56 anchor): 1.388e-17 vs < 1e-12 -> PASS
+   U56 anchor on the LIVE tape (ungated): 0.156187/1.142433/-0.191276
+   GATE G2 CROSS-RUN U56 anchor triple == 936/1082/1174's (tape to 2026-09-15): 0.155793/1.139871/-0.191276 maxdiff 1.70e-04 vs (0.155787, 1.139701, -0.191276) < 5e-4 -> PASS
+   GATE G3 CROSS-RUN SPY OOS triple (tape to 2026-09-15; live tape reads 0.1528/0.8747/-0.3372): 0.1521/0.8713/-0.3372 maxdiff 2.73e-05 vs (0.1521, 0.8713, -0.3372) < 5e-4 -> PASS
+   GATE G4 live RULES v2 MaxDD == committed -12.05%: -0.1205 vs -0.1205 < 5e-4 -> PASS
+   GATE G6 the GROSS=0.75 rung IS the W rung (the four lines agree where they cross): 0.000e+00 vs == 0.0 -> PASS
+
+   ladder   stat   | IS argmax rung      SPREAD   SE_PAIR  FLAT_RATIO  BOUND P_BOUND MONO |  pickOOS  anchOOS   delta | rankIS/OOS | 4b pick
+   GATE G7 bootstrap determinism (same seed, same draws): 0.000e+00 vs == 0.0 -> PASS
+   N        Sharpe |     12 (idx 3)    0.1417    0.1168     1.214  0   0.353  0.26 |  1.1751  1.1690 +0.0061 | +0.405 | PASS
+   N        CAGR   |      5 (idx 0)    0.0660    0.0429     1.540  1   0.804  0.93 |  0.9061  1.1690 -0.2629 | +0.405 | DD
+   N        MaxDD  |     20 (idx 5)    0.1029    0.0395     2.602  0   0.684  0.79 |  1.1690  1.1690 +0.0000 | +0.405 | PASS
+   H        Sharpe |    189 (idx 7)    0.2618    0.1183     2.212  1   0.732  0.76 |  1.0527  1.1690 -0.1163 | -0.595 | DD
+   H        CAGR   |    189 (idx 7)    0.0433    0.0153     2.820  1   0.671  0.95 |  1.0527  1.1690 -0.1163 | -0.595 | DD
+   H        MaxDD  |     10 (idx 1)    0.0257    0.0170     1.506  0   0.432  0.81 |  1.1494  1.1690 -0.0196 | -0.595 | PASS
+   GATE G9 determinism: U56 GROSS ladder recomputes bit for bit: 0.000e+00 vs == 0.0 -> PASS
+   GROSS    Sharpe |    1.0 (idx 7)    0.0019    0.0030     0.637  1   0.782  1.00 |  1.1698  1.1690 +0.0008 | +1.000 | DD
+   GROSS    CAGR   |    1.0 (idx 7)    0.1397    0.0412     3.393  1   1.000  1.00 |  1.1698  1.1690 +0.0008 | +1.000 | DD
+   GROSS    MaxDD  |   0.25 (idx 0)    0.1366    0.0334     4.086  1   1.000  1.00 |  1.1666  1.1690 -0.0024 | +1.000 | CAGR
+   CADENCE  Sharpe |     2W (idx 2)    0.2386    0.1469     1.625  0   0.032  0.67 |  1.1477  1.1690 -0.0213 | +0.548 | DD
+   CADENCE  CAGR   |     2W (idx 2)    0.0368    0.0206     1.783  0   0.043  0.86 |  1.1477  1.1690 -0.0213 | +0.548 | DD
+   CADENCE  MaxDD  |      D (idx 0)    0.0454    0.0257     1.766  1   0.207  0.93 |  1.1254  1.1690 -0.0437 | +0.548 | DD
+
+## B135  n_days=4703  n_cols=136  2008-01-02..2026-09-11  OOS row 2267
+   SPY     full  15.16% / 0.8862 / -33.72%   OOS  15.33% / 0.8769 / -33.72%   4b caps: DD -20.2296%, CAGR 10.6144%
+   RULESv2 full   7.98% / 1.0994 / -12.24%   OOS   7.88% / 1.1061 / -12.24%
+   building 29 distinct rung books ...
+   built 29 books  [t=10s]
+
+   ladder   stat   | IS argmax rung      SPREAD   SE_PAIR  FLAT_RATIO  BOUND P_BOUND MONO |  pickOOS  anchOOS   delta | rankIS/OOS | 4b pick
+   N        Sharpe |      8 (idx 1)    0.1871    0.1041     1.798  0   0.501  0.76 |  0.7868  1.0102 -0.2234 | -0.786 | H2,OOS,DD
+   N        CAGR   |      5 (idx 0)    0.0850    0.0561     1.516  1   0.798  0.93 |  0.7688  1.0102 -0.2414 | -0.786 | H2,OOS,DD
+   N        MaxDD  |     30 (idx 7)    0.1361    0.0494     2.752  1   0.803  1.00 |  1.0698  1.0102 +0.0595 | -0.786 | DD
+   H        Sharpe |     63 (idx 4)    0.1387    0.0950     1.460  0   0.092  0.14 |  0.9962  1.0102 -0.0140 | +0.024 | DD
+   H        CAGR   |     63 (idx 4)    0.0302    0.0151     2.007  0   0.047  0.10 |  0.9962  1.0102 -0.0140 | +0.024 | DD
+   H        MaxDD  |     10 (idx 1)    0.0196    0.0255     0.766  0   0.399  0.90 |  0.8430  1.0102 -0.1673 | +0.024 | H2,OOS,DD
+   GROSS    Sharpe |    1.0 (idx 7)    0.0053    0.0030     1.767  1   0.944  1.00 |  1.0124  1.0102 +0.0021 | +1.000 | DD
+   GROSS    CAGR   |    1.0 (idx 7)    0.1620    0.0511     3.172  1   1.000  1.00 |  1.0124  1.0102 +0.0021 | +1.000 | DD
+   GROSS    MaxDD  |   0.25 (idx 0)    0.1435    0.0372     3.861  1   1.000  1.00 |  1.0052  1.0102 -0.0051 | +1.000 | CAGR
+   CADENCE  Sharpe |     2M (idx 4)    0.1908    0.1058     1.803  0   0.184  0.12 |  1.0716  1.0102 +0.0614 | -0.190 | DD
+   CADENCE  CAGR   |     2M (idx 4)    0.0368    0.0158     2.323  0   0.201  0.43 |  1.0716  1.0102 +0.0614 | -0.190 | DD
+   CADENCE  MaxDD  |      D (idx 0)    0.0413    0.0314     1.313  1   0.442  0.86 |  0.9524  1.0102 -0.0578 | -0.190 | DD
+
+## SMALL: 52 tickers dropped for max_1d_move >= 1.0
+
+## SMALL663  n_days=4198  n_cols=664  2010-01-04..2026-09-11  OOS row 1762
+   SPY     full  14.06% / 0.8582 / -33.72%   OOS  15.33% / 0.8769 / -33.72%   4b caps: DD -20.2304%, CAGR 9.8409%
+   RULESv2 full   4.30% / 0.6637 / -13.89%   OOS   3.75% / 0.5601 / -13.89%
+   building 29 distinct rung books ...
+   built 29 books  [t=23s]
+
+   ladder   stat   | IS argmax rung      SPREAD   SE_PAIR  FLAT_RATIO  BOUND P_BOUND MONO |  pickOOS  anchOOS   delta | rankIS/OOS | 4b pick
+   N        Sharpe |     25 (idx 6)    0.3292    0.2515     1.309  0   0.031  0.93 |  0.4164  0.4534 -0.0370 | +0.238 | H1,H2,OOS,DD,CAGR
+   N        CAGR   |     25 (idx 6)    0.0403    0.0558     0.723  0   0.084  0.62 |  0.4164  0.4534 -0.0370 | +0.238 | H1,H2,OOS,DD,CAGR
+   N        MaxDD  |     30 (idx 7)    0.1403    0.0838     1.674  1   0.365  0.90 |  0.4388  0.4534 -0.0146 | +0.238 | H1,H2,OOS,DD,CAGR
+   H        Sharpe |     42 (idx 3)    0.3481    0.2039     1.707  0   0.095  0.17 |  0.3926  0.4534 -0.0608 | -0.476 | H2,OOS,DD,CAGR
+   H        CAGR   |     42 (idx 3)    0.0605    0.0364     1.662  0   0.117  0.17 |  0.3926  0.4534 -0.0608 | -0.476 | H2,OOS,DD,CAGR
+   H        MaxDD  |     10 (idx 1)    0.1421    0.0710     2.001  0   0.104  0.81 |  0.5483  0.4534 +0.0948 | -0.476 | H1,H2,OOS,DD,CAGR
+   GROSS    Sharpe |    1.0 (idx 7)    0.0038    0.0055     0.695  1   0.932  1.00 |  0.4545  0.4534 +0.0011 | +1.000 | H1,H2,OOS,DD
+   GROSS    CAGR   |    1.0 (idx 7)    0.0849    0.0670     1.266  1   0.935  1.00 |  0.4545  0.4534 +0.0011 | +1.000 | H1,H2,OOS,DD
+   GROSS    MaxDD  |   0.25 (idx 0)    0.2350    0.0625     3.762  1   1.000  1.00 |  0.4511  0.4534 -0.0023 | +1.000 | H1,H2,OOS,CAGR
+   CADENCE  Sharpe |      M (idx 3)    0.4143    0.2484     1.668  0   0.182  0.81 |  0.2483  0.4534 -0.2052 | +0.333 | H1,H2,OOS,DD,CAGR
+   CADENCE  CAGR   |      D (idx 0)    0.0676    0.0450     1.501  1   0.214  0.88 |  0.3634  0.4534 -0.0900 | +0.333 | H1,H2,OOS,DD,CAGR
+   CADENCE  MaxDD  |      D (idx 0)    0.0957    0.0764     1.254  1   0.298  0.86 |  0.3634  0.4534 -0.0900 | +0.333 | H1,H2,OOS,DD,CAGR
+
+## CROSS-RUN 1189: GROSS ladder, IS Sharpe, argmax rung by panel: {'U56': '1.0', 'B135': '1.0', 'SMALL663': '1.0'}; OOS MaxDD of those picks: {'U56': -0.2493, 'B135': -0.2697, 'SMALL663': -0.4542}
+   GATE G8 CROSS-RUN 1189: IS-Sharpe argmax is the TOP gross rung at 2 of 3 panels: 3 of 3 vs == 2 -> FAIL
+
+## HEADLINE GRID — every one of the 2 x 4 dial points published
+   axis_set   F_BAR | nFLAT  bound|FLAT   nNONFLAT  bound|NONFLAT   diff | dOOS_Sharpe FLAT / NONFLAT | dOOS_MaxDD FLAT / NONFLAT
+   ALL4         0.5 |    0       nan        36      0.528    +nan |      +nan /   -0.0454 |      +nan /   -0.0262
+   ALL4         1.0 |    4     0.500        32      0.531  -0.031 |   -0.0506 /   -0.0447 |   -0.0487 /   -0.0233
+   ALL4         2.0 |   24     0.458        12      0.667  -0.208 |   -0.0665 /   -0.0031 |   -0.0454 /   +0.0124
+   ALL4         3.0 |   31     0.452         5      1.000  -0.548 |   -0.0525 /   -0.0014 |   -0.0421 /   +0.0730
+   NONGROSS3    0.5 |    0       nan        27      0.370    +nan |      +nan /   -0.0604 |      +nan /   -0.0368
+   NONGROSS3    1.0 |    2     0.000        25      0.400  -0.400 |   -0.1021 /   -0.0571 |   -0.0203 /   -0.0381
+   NONGROSS3    2.0 |   20     0.350         7      0.429  -0.079 |   -0.0800 /   -0.0044 |   -0.0389 /   -0.0309
+   NONGROSS3    3.0 |   27     0.370         0        nan    +nan |   -0.0604 /      +nan |   -0.0368 /      +nan
+
+## BAR-FREE: rho(FLAT_RATIO, BOUNDARY) = +0.1527 over 36 cells (ALL4), +0.0689 over 27 (NONGROSS3). Negative = flatter ladders land on boundaries more often.
+   COMPETING READING rho(MONO, BOUNDARY) = +0.7807 (ALL4), +0.6668 (NONGROSS3); MONO by ladder (median) {'CADENCE': 0.857, 'GROSS': 1.0, 'H': 0.762, 'N': 0.905}
+   BOUNDARY rate at MONO >= 0.90: 0.882 over 17 cells; at MONO < 0.90: 0.211 over 19 cells (chance 0.250)
+   FLAT_RATIO by ladder (median): {'CADENCE': 1.668, 'GROSS': 3.172, 'H': 1.707, 'N': 1.54}
+   BOUNDARY rate by ladder: {'CADENCE': 0.444, 'GROSS': 1.0, 'H': 0.222, 'N': 0.444}
+   BOUNDARY rate by statistic: {'CAGR': 0.583, 'MaxDD': 0.667, 'Sharpe': 0.333}
+   overall BOUNDARY rate 0.528 over 36 cells (chance 0.250); mean P_BOUND 0.486
+
+## CAPITAL (rule 8, OOS read once): pick minus anchor, by ladder
+   N        dOOS Sharpe mean -0.0834 (positive at 2 of 9), dOOS MaxDD mean -0.0263 (worse at 6 of 9), dOOS CAGR mean -0.0025
+   H        dOOS Sharpe mean -0.0527 (positive at 1 of 9), dOOS MaxDD mean -0.0402 (worse at 8 of 9), dOOS CAGR mean -0.0093
+   GROSS    dOOS Sharpe mean -0.0002 (positive at 6 of 9), dOOS MaxDD mean +0.0059 (worse at 6 of 9), dOOS CAGR mean -0.0013
+   CADENCE  dOOS Sharpe mean -0.0452 (positive at 2 of 9), dOOS MaxDD mean -0.0440 (worse at 9 of 9), dOOS CAGR mean -0.0022
+   ALL  dOOS Sharpe mean -0.0454 (positive at 11 of 36); dOOS MaxDD mean -0.0262; picks passing 4b 3 of 36; passing 4a 0 of 36
+   rung books: 4b PASS 11 of 87; 4a PASS 0 of 87
+   IS/OOS Sharpe rank correlation over rungs: mean +0.2083, positive at 24 of 36
+
+## 4b PASSES among the 87 rung books (11): U56 N12/H126/g0.75/W CAGR 17.69% S 1.169 DD -20.17% OOS S 1.175; U56 N20/H10/g0.75/W CAGR 13.51% S 1.094 DD -19.33% OOS S 1.149; U56 N20/H126/g0.55/W CAGR 11.41% S 1.142 DD -14.29% OOS S 1.168; U56 N20/H126/g0.65/W CAGR 13.51% S 1.142 DD -16.73% OOS S 1.169; U56 N20/H126/g0.75/2Q CAGR 13.36% S 1.008 DD -17.90% OOS S 1.077; U56 N20/H126/g0.75/Q CAGR 15.42% S 1.141 DD -19.94% OOS S 1.176; U56 N20/H126/g0.75/W CAGR 15.62% S 1.142 DD -19.13% OOS S 1.169; U56 N20/H5/g0.75/W CAGR 13.13% S 1.088 DD -18.48% OOS S 1.167; B135 N15/H126/g0.75/W CAGR 16.78% S 1.068 DD -19.66% OOS S 1.046; B135 N20/H126/g0.55/W CAGR 11.75% S 1.062 DD -15.51% OOS S 1.008; B135 N20/H126/g0.65/W CAGR 13.90% S 1.063 DD -18.15% OOS S 1.009
+## 4b PASSES among the 36 IS-only PICKS (3): U56/N/Sharpe -> 12; U56/N/MaxDD -> 20; U56/H/MaxDD -> 10
+
+## GATES 8 of 9 pass; FAILED: G8
+
+[done in 25s] wrote 2026-09-18_does-the-IS-ARGMAX-LAND-ON-A-LADDER-BOUNDARY-whenever-the-statistic-is-FLAT_C.{cells,books,grid,walkforward,gates}.csv
