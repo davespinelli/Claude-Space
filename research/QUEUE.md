@@ -477,12 +477,16 @@
 
 
 
-1666. does-the-BAND-S-TIMING-survive-an-IN-BAND-SHARE-MATCHED-PLACEBO-GATE — follow-up to 1674: if the band beats a static equity/SHY mix, the credit must still be shown to come from WHEN it is out, not merely from HOW OFTEN; race the live band against random gates drawn to the same per-name in-band share. Max 2 params (seed count, share match tolerance). (2026-09-19)
 
 
 
 
 ## In progress
+
+*(2026-09-19, lane B) ELIGIBILITY + CLAIM. **1666** is the LAST numbered item standing in '## Open' and is CLAIMED by this run. The block below it was re-read this run, as every prior lane must: **896 / 895 / 894 / 877 / 876** are RECORD-BOOKKEEPING censuses of committed TEXT and FILENAMES with no book to price; **532 / 537 / 564 / 593** likewise; **429** is PARK for want of a broad/U56 SHARE-volume cache that `data/` does not carry (verified again this run: `volume_small.csv.gz` only, and `baseline.load_volume` raises unless small=True); **353** is LOCAL-ONLY (it turns on a live `yf.download` the sandbox has no network for). 1666 stands ABOVE all of them in file order and, unlike them, yields a weights function, so no descent past it is needed. Price-only, cached U56 / B136 / SMALL, no EDGAR / Form 4 / options / live data. Claim pushed BEFORE any compute per hygiene clause (C).*
+
+1666. does-the-BAND-S-TIMING-survive-an-IN-BAND-SHARE-MATCHED-PLACEBO-GATE — claimed 2026-09-19, lane B.
+
 
 
 
