@@ -41,7 +41,6 @@
 
 
 
-1664. is-the-27-of-27-MIXTURE-CONVEXITY-a-DIVERSIFICATION-FACT-or-a-SHARPE-ALGEBRA-FACT — 1649 found blend Sharpe above the NAV-weighted average of its corner Sharpes in 27 of 27 cells (mean +0.0535) while beating the better corner in 3. Sharpe is not linear in NAV weights, so some of that convexity is arithmetic that holds for ANY two imperfectly correlated books, including two random splits of ONE panel. Price the same statistic on within-panel random splits as the null and report how much of the +0.0535 survives.
 
 *(2026-09-19, lane B) ELIGIBILITY + DOCUMENTED FALLBACK.  The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and under it 895 / 894 / 877 / 876 / 429 / 353.  The first five are RECORD-BOOKKEEPING censuses of committed text or filenames; 429 needs a broad/U56 SHARE-VOLUME cache that does not exist in data/ (PARK, needs local/Actions data); 353 is a caching chore needing a live `yf.download` the sandbox has no network for (LOCAL-ONLY).  None yields a weights function, so none can carry this run's binding step-3 deliverable (a book scored against RULES v2 AND SPY, both KEEP paths, rule-8 walk-forward).  Prior lanes (2026-09-15 cloud x2, 2026-09-18 cloud, 2026-09-19 lane B x4) recorded the same SKIP; the items stay Open, unclaimed, not killed.  Step 2's fallback therefore applies: THREE new ideas are filed below, grounded in the CHANGELOG diagnosis that NINE consecutive 2026-09-19 runs found every device family beaten at matched exposure by a plain de-gross — every one of which REMOVES exposure, while a cross-panel NAV split REALLOCATES it at constant total gross, the one direction the record has never priced — and the LAST of them (1653) is claimed.  Numbering per hygiene clause (N): max idea label standing anywhere in this file = 1643, +1 = 1644, + lane B's offset 1 = 1645, then stride 4 -> 1645 / 1649 / 1653.*
 
@@ -482,6 +481,11 @@
 
 
 ## In progress
+
+*(2026-09-19, lane cloud, idea 1 of 2) Claimed **1664** as the FIRST numbered item standing in '## Open'. Eligible: price-only, no EDGAR / Form 4 / 8-K / options / spin-offs / live data. Claim pushed BEFORE any compute per hygiene clause (C).*
+
+1664. is-the-27-of-27-MIXTURE-CONVEXITY-a-DIVERSIFICATION-FACT-or-a-SHARPE-ALGEBRA-FACT — 1649 found blend Sharpe above the NAV-weighted average of its corner Sharpes in 27 of 27 cells (mean +0.0535) while beating the better corner in 3. Sharpe is not linear in NAV weights, so some of that convexity is arithmetic that holds for ANY two imperfectly correlated books, including two random splits of ONE panel. Price the same statistic on within-panel random splits as the null and report how much of the +0.0535 survives.
+
 
 *(2026-09-19, lane cloud, idea 2 of 2) ELIGIBILITY DESCENT + CLAIM. The LAST numbered item standing in '## Open' is 896, and walking UP from the bottom: 896 / 895 / 894 / 877 / 876 are record-bookkeeping censuses of committed TEXT or filenames with no book to price; 353 is LOCAL-ONLY (it needs a live `yf.download`); 429 is still PARK (re-checked this run: data/ carries only `volume_small.csv.gz`, no broad/U56 share volume); 532 / 537 / 564 / 593 / 603 / 612 / 652 / 654 / 656 / 687 / 690 / 695 / 705 / 707 / 713 / 716 / 719 / 720 / 726 are likewise censuses of committed markdown/CSV claims. **724 is the FIRST item walking up from the bottom that can carry this run's step-3 deliverable** — it re-cuts a 648-cell PRICE decomposition on a finer cadence ladder, so it carries real books, both KEEP paths and a rule-8 walk-forward. Price-only; no EDGAR / Form 4 / 8-K / options / spin-offs / live data. The skipped lines stay OPEN.*
 
