@@ -1,3 +1,57 @@
+## 2026-09-19 — idea 1377 (lane cloud): RANK-HYSTERESIS BUFFER in place of the 126-day MINIMUM HOLD. **ANSWERED NO — THE BUFFER KEEPS THE FAILURES OUT AND CANNOT BUY THE TURNOVER. KILL.**
+
+  Idea 1366 put a number on the incumbent's calendar immunity: 14.48% / 15.57% / 30.61% of all held
+  name-weeks on U56 / B136 / SMALL sit on names FAILING the book's own eligibility test at H=126. The
+  queue's proposed repair was SIGNAL immunity — keep a name while it still passes the screen and its
+  composite rank is inside b*N, evict it otherwise — on the argument that it should cut the same
+  turnover without carrying failures. It does the first thing and not the second.
+
+  Everything but the hold rule is byte-identical to the frozen 2026-09-04 book (same raw 3-leg
+  composite, same above-200d and vol20 < 0.60 entry test, N=20, equal weight gross/n at 0.75, weekly,
+  10 bps, t+1, 260-row warm-up). H=126 and H=0 are carried as control rows on every panel. G1 replays
+  idea 1350's head-vintage anchor 15.80% / 1.1537 / -19.13% at max|dev| 3.7e-05; G3 shows b=1.0 under
+  E+R is bit-identical to the H=0 control on all three panels; **G8 independently reproduces idea
+  1366's failing-share triple (0.1514 / 0.1520 / 0.3009 against its 0.1448 / 0.1557 / 0.3061).**
+
+  **H_FAIL CONFIRMED, H_TURN REFUTED — and that is the answer.** Under E+R (retain only while ELIGIBLE
+  and inside b*N) the failing share is **0.00% at all 18 cells**. But turnover never returns to the
+  incumbent's **2.75/yr**: the cheapest clean U56 rung is **4.44/yr (+61%)**, with b=1.0/1.5/2.0 at
+  10.13 / 5.49 / 4.67. The mechanism is mechanical, not tuning — losing eligibility ALONE evicts 0.73
+  names per rebalance, and the rank test evicts on top of that. The permissive mode R does reach
+  1.96/yr at b=2.0, but only by letting failures back in (13.08% of held name-weeks). **Calendar
+  immunity is buying a turnover reduction that signal immunity cannot replicate at any b.**
+
+  **WHAT IT DOES BUY, AND THE PRICE.** This is the first mechanism in the record to shallow the U56
+  MaxDD at scale: **+1.63 / +1.90 / +3.87 pp** at b = 1.5 / 2.0 / 3.0 (E+R), widening the 4b DD margin
+  **+1.10 -> +2.73 / +3.01 / +4.97 pp**. It is still not worth buying: the exchange rate is **0.58 /
+  0.58 / 0.97 pp of drawdown per pp of CAGR** on a leg U56 ALREADY PASSES, CAGR falls **15.80% ->
+  12.99 / 12.54 / 11.80%**, the CAGR-floor margin falls **5.22 -> 2.40 / 1.95 / 1.21 pp**, and
+  **Calmar FALLS at every rung (0.826 -> 0.742 / 0.728 / 0.773)**. PARK for U56 E+R as a drawdown
+  instrument; not a KEEP.
+
+  **THE DIAL SATURATES, AND THE PRETTIEST CELL IS AN ARTEFACT.** U56 has 55 investables, so b*N = 60
+  exceeds the whole pool and the rank test CANNOT BIND at b >= 2.75: b = 3.0 / 4.0 / 6.0 are
+  bit-identical at both modes. Under mode R that cell evicts **0.00 names per rebalance** — a literal
+  BUY-AND-NEVER-SELL book, not a hysteresis buffer. It posts the run's best headline (Sharpe **1.3216**,
+  MaxDD -16.91%, turnover 0.91/yr, 4b PASS) and it is published as an artefact: the paired circular-block
+  bootstrap (400 reps x 63-row blocks, seed 20260919, identical blocks both sides) makes its return
+  difference **NEGATIVE and resolvable — FULL t -2.34, OOS t -2.20** — so the +0.168 of Sharpe is pure
+  denominator. Saturation thresholds, now on the record: **U56 2.75, B136 6.75, SMALL 33.25.**
+
+  **BOTH KEEP PATHS.** 4a **0 of 42**. 4b **11 of 42 and all 11 on U56** (2 of them the H=126 and H=0
+  controls). **B136 0 of 14** — under mode R the buffer makes its drawdown WORSE (-22.7% to -27.8%
+  against -20.7%). **SMALL 0 of 14.** Binding legs across the 31 failures: DD 23, H2 14, OOS 13.
+
+  **RULE 8 (b chosen on warm-up..2016-12-31, ties to the LARGEST b, 2017-2026 read ONCE).** The
+  saturation makes the chooser pick b=6.0 on 5 of 6 (panel, mode) cells. **U56 E+R loses -0.0314 of OOS
+  Sharpe** and never finds the ex-post best rung (b=2.0); **B136 E+R loses -0.1204**. The two positive
+  deltas are both unusable: U56 mode R's +0.0562 IS the never-sell artefact, and SMALL's +0.1077 /
+  +0.1038 sit on a panel that fails 4b at 0 of 14. **Fifth dial in a row to fail rule 8 on the live
+  panel** (1358 sleeve, 1362 N, 1366 H, 1369 cluster cap, 1373 inverse-vol).
+
+  Gates **7/7**, offline, deterministic, 11 s, 42 rows + 42 bootstrap rows + 6 rule-8 rows all
+  published. **No memo and no RULES change** (KILL).
+
 ## 2026-09-19 — idea 1369 (lane cloud): CLUSTER CAP on the incumbent's top 20. **THE DIVERSIFICATION DEFECT IS REAL AND THE OBVIOUS REPAIR IS A KILL — CAPPING A CLUSTER MAKES THE DRAWDOWN DEEPER.**
 
   Selection inputs, eligibility, slot count (N=20), min-hold (H=126), gross (0.75), cadence and costs
