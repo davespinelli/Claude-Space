@@ -1,3 +1,85 @@
+## 2026-09-19 — idea 1538 (lane C): IS EXPOSURE-STATE DISAGREEMENT THE THIRD LADDER AXIS, AND IS TWO NUMBERS ENOUGH? **ANSWERED — NO. `flat_one` IS A REAL, LADDER-INDEPENDENT AXIS, BUT IT IS NOT ONE NUMBER: THE RULE FAILS TO TRANSFER TO A HELD-OUT FLAT LADDER BY A FACTOR OF THIRTY. ONE INCIDENTAL KEEP-4b CANDIDATE FALLS OUT. NO RULES CHANGE ENACTED.**
+
+  **THE DEFECT REPAIRED.** Idea 1530 refuted the SCALE/COMPOSITION dichotomy and found, post-hoc,
+  that adding `flat_one` (the share of days two adjacent rungs disagree about being INVESTED AT ALL)
+  took the blend-gap fit from R² 0.0154 to 0.6094 while collapsing ladder identity's contribution
+  from +0.3104 to +0.0053. That was measured on 78 pairs of which **exactly ONE ladder carried any
+  `flat_one`** (the trailing stop, mean 0.3190; cadence 0.0015; the other six EXACTLY 0.0000). A
+  regressor fitted on one ladder's variation describes that ladder. This run BUILT the axis into
+  **three independent mechanisms** and re-fitted: **L_S own-equity drawdown stop (mean flat_one
+  0.3055-0.3306 across panels), L_M SPY price vs its own MA {None,200,150,100} (0.0823-0.0916),
+  L_R cross-sectional breadth {None,0.35,0.50,0.65} (0.0875-0.2370)**. Gate **G11 PASSES**, so the
+  re-fit is a genuine three-mechanism fit. 9 ladders x 4 rungs = 36 rungs and 27 adjacent pairs per
+  panel x 3 blend weights; **351 cells, every one published.** Two tuned parameters only.
+
+  **(1) T1 FAILS, AND IN THE DIRECTION THAT MATTERS.** Pooled over 81 pairs at lambda = 0.50 the
+  two-number fit reads **R² 0.5460 (OV_HOLD) / 0.5435 (OV_CAP)** against the pre-registered 0.80
+  bar — and **BELOW 1530's committed 0.6094**. Measured on three mechanisms instead of one, the
+  result gets WORSE. 1530's figure was flattered by being fitted on the single ladder it described.
+
+  **(2) T4 — THE TEST 1530 COULD NOT RUN — IS WHAT KILLS THE RULE.** Fit the two numbers on the
+  OTHER EIGHT ladders and predict the held-out one: **L_M +0.7652, L_S +0.1075, L_R -32.2242**
+  (OV_CAP: +0.7631 / +0.1358 / -30.8471). A rule that never saw the breadth gate misprices it by a
+  factor of thirty while pricing the SPY macro gate well. **The REASON two books are flat apart is
+  load-bearing: breadth-driven disagreement and stop-driven disagreement do not open the same gap.**
+  A third regressor is needed. (The large negatives on the non-flat ladders — L_G -3.9e4 at
+  mean |D| 0.0001 — are division by a near-zero variance, and say only that those gaps are too
+  small to predict by anything.)
+
+  **(3) WHAT SURVIVES, AND IT IS NOT NOTHING.** **T2 PASSES**: adding ladder identity (9 dummies)
+  raises R² by only **+0.0238 / +0.0259** (bar 0.05) with nine ladders and three flat mechanisms to
+  explain — so `flat_one` is a real axis, not a description of the stop, which is a STRONGER reading
+  of 1530's +0.0053 than 1530 could support. **T3 PASSES** (worst ladder mean residual |t| 1.25).
+  **T5 (rule 8 on the rule itself)** fits coefficients on warm-up..2016-12-31 gaps ONLY and reads
+  2017-2026 ONCE: **OOS R² +0.7317 for two numbers against -0.0398 for one** (OV_CAP +0.7284 vs
+  +0.1461). FAIL at the 0.80 bar, but the TEMPORAL generalisation is real where the CROSS-LADDER one
+  is not, and that asymmetry is the finding. Fitted slope: 10 pp of `flat_one` buys ~0.040 of Sharpe
+  gap against ~0.007 for 10 pp of overlap — **a 5.6x axis.**
+
+  **(4) THE THIRD ROUTE THE IDEA ITSELF PROPOSED DOES NOT BUILD.** 1538 named "a MAXVOL rung coarse
+  enough to empty the book". Carried anyway at m {0.60, 0.12, 0.08, 0.06}: mean `flat_one`
+  **0.0017-0.0101**. The **min-hold H = 126 RETAINS a held name regardless of its eligibility**, so
+  tightening the ceiling SHRINKS the book without EMPTYING it — on U56 the eligible SET is empty on
+  1.0% of days at m = 0.12 and 2.5% at 0.10 while the BOOK is flat on **0.00%** at every m down to
+  0.10 and 1.39% at 0.08 and 0.06. **MAXVOL is an eligibility dial, not an exposure-state dial**,
+  and the record should stop treating the two as interchangeable.
+
+  **(5) CAPITAL — 4a 0/351, 4b 67/351 BOTH, AND THE UNRESTRICTED CHOOSER LOSES TO DOING NOTHING.**
+  Path 4a fires on **0 of 351 cells** full and OOS, matching 1530's 0/336 and 710's 0/495. Path 4b:
+  71/351 full, 74/351 OOS, **67/351 BOTH**, by ladder **L_M 19, L_R 15**, then L_G 8, L_S 7, L_N 6,
+  L_B 5, L_H 3, L_X 2, L_C 2; per panel U56 53/117, B136 14/117, **SMALL 0/117**. **Mean OOS Sharpe:
+  ARGMAX-IS chooser 0.7588 vs DO NOTHING 0.8812 — doing nothing wins**, because on two of three
+  panels the chooser is captured by L_X's unbuildable extreme rungs, which post the run's highest IS
+  Sharpe (U56 1.3176, SMALL 2.0234) and collapse OOS (0.6503, 0.4760). Putting a dead ladder on the
+  grid has a measurable cost and it is reported, not hidden.
+
+  **(6) RULE 8 — ONE INCIDENTAL KEEP-4b CANDIDATE, WITH ITS LIMITS STATED AS LOUDLY AS THE PASS.**
+  The chooser restricted to the three flat ladders lands on **U56 `L_M blend None|200 @ lambda 0.75`**,
+  which is algebraically a **TWO-STATE GROSS** because both sleeves share one selection frame: gross
+  0.75 when SPY is above its 200d MA, **0.5625** when below. Gate **G12** re-runs it as a single book
+  and gets max |dSharpe| **0.0002** against the blend over all 3 lambdas x 3 panels, so the enactable
+  wording IS the measured book. IS 1.1207 (incumbent 1.1158) -> **FULL 14.92% / 1.1788 / -18.05%
+  (4b PASS, halves 1.2196/1.1532)** -> **OOS 16.48% / 1.2250 / -18.05% (4b PASS)**, against the frozen
+  2026-09-04 incumbent's 15.80%/1.1537/-19.13% and OOS 17.32%/1.1857/-19.13%, SPY OOS
+  15.26%/0.8738/-33.72% and RULES v2 OOS 9.46%/1.2769/-12.05%. Turnover 3.24x/yr, charged. On B136 at
+  lambda 0.50 the same cell passes 4b full AND OOS **where the anchor fails both**.
+  **THE HONEST LIMITS.** It is **1 of 3 choosers**, and the one that reaches it restricts the pool to
+  the three flat ladders — no OOS row is read, but a pool restriction is a choice. The OOS Sharpe
+  contrast against the anchor is **+0.0393, t = +1.06** (U56) and +0.0127, t = +0.38 (B136), paired
+  circular-block bootstrap L = 65, 400 reps — **not significant**, the regime idea 1511 measured.
+  **Path 4a is FALSE**, and on SMALL the cell fails 4b on both windows. **NOT proposed for
+  enactment**; PROTOCOL rule 6 gives the Sunday review that call, and the exact RULES wording is
+  line 10 of the memo.
+
+  **NO LEVERAGE (rule 2):** every device on every flat ladder DE-GROSSES to cash; max realised weight
+  sum 1.000000 over all 351 cells (G6). **Survivorship (rule 9):** U56 / B136 / SMALL are
+  current-constituent lists carried back to 2008/2010 — every LEVEL is an UPPER BOUND; what the fit
+  reads is a CONTRAST between a blend and its own two rungs over the same names on the same days.
+  **Gates 14/14 PASS**, including G1 (cross-script replay of the committed 2026-09-04 U56 anchor,
+  max |dev| 3.72e-05), G9 (all three exposure-state devices non-anticipating on a truncated tape)
+  and G11/G12 above. Script
+  `research/backtests/2026-09-19_exposure-state-disagreement-third-ladder-axis_C.py`.
+
 ## 2026-09-19 — idea 710 (lane cloud, run 7): IS THE 4b GROSS WINDOW ON BSTK100 THE SAME WINDOW IDEA 677 MEASURED? **ANSWERED — THE WINDOW IS AN (n, g) RAY, 702's 0.75 IS A GRID ARTEFACT, 677's NEGATIVE MEDIAN WIDTH IS A CORPUS PROPERTY NOT AN AXIS PROPERTY, AND ONE RULE-8-CLEAN KEEP-4b CANDIDATE FALLS OUT. NO RULES CHANGE ENACTED.**
 
   **WHAT WAS WRONG WITH THE COMMITTED READING.** Idea 702 ran CAND-n on BSTK100 over a THREE-RUNG
