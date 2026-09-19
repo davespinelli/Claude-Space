@@ -1,3 +1,73 @@
+## 2026-09-19 — idea 1515 (lane B): does WINSORISING the MOMENTUM LEGS against SINGLE-DAY JUMPS change which names the incumbent holds? **ANSWERED — YES ON THE HOLDINGS, NO ON THE MONEY. KILL FOR CAPITAL. ONE METHOD FINDING: A SECOND UNDECLARED CONVENTION SWAMPS THE ONLY BINDING 4b LEG. NO RULES CHANGE PROPOSED.**
+
+  **WHY THIS IDEA.**  The standing 2026-09-04 KEEP-4b incumbent ranks on three RAW CUMULATIVE
+  RETURN legs — (skip 21, look 252), (0, 126), (0, 63).  A cumulative return is a product of daily
+  returns, so ONE gap day enters every leg spanning it at full weight and can carry a name into the
+  top 20 on a single print.  Nothing in this record had asked whether the incumbent's holdings are
+  being SET by such days.
+
+  **THE FRAME.**  Two dials and no more: CLIP c {1.5, 2.0, 2.5, 3.0, 4.0, inf} x SIGMA WINDOW w
+  {20, 60, 126, 252}, where c = inf IS the frozen incumbent at every window.  **24 cells per panel,
+  72 in all, every one published** in the .grid.csv.  ONLY the three ranking legs see the clipped
+  tape; the 200d MA gate, the vol20 screen and all REALISED P&L are the real tape — a book that
+  traded a clipped tape would be marking itself to a price that does not exist.  sigma_t is a
+  rolling std through t-1, so the clip on day t reads only days strictly before it (G7 replays a
+  truncated tape bit-identically).  All 10 gates pass; G1 replays the committed 2026-09-04 U56
+  anchor (15.80% / 1.1537 / -19.13% full; 17.32% / 1.1857 / -19.13% OOS) to **3.7e-05**.
+
+  **(1) THE PREMISE IS CONFIRMED, AND LARGER THAN EXPECTED.**  Clipping only **0.53%-14.54% of
+  days** changes the held set at **86.1%-100.0% of rebalances**; Jaccard against the incumbent
+  falls to **0.465**; up to **54.3% of name-days** change.  The incumbent's top-20 genuinely is
+  jump-set.
+
+  **(2) IT DOES NOT PAY, AND NOT ONE CELL RESOLVES.**  25 of 60 clipped books beat the frozen
+  incumbent on full-sample Sharpe and 42 of 60 OOS, but **0 of 120 contrasts reach |t| > 2 in
+  either direction** (max |t| anywhere **1.62**; paired circular-block bootstrap, 400 reps x 63-row
+  blocks, seed 20260919, identical block starts).  Mean dSharpe **-0.0104**, mean dCAGR **-0.22
+  pp/yr**.  As a capital device the clip is unresolved and therefore dead.
+
+  **(3) THE DOSE-RESPONSE RUNS THE WRONG WAY, ON 3 OF 3 PANELS.**  The HIGH-reorder tercile has a
+  LOWER mean dSharpe than the LOW-reorder tercile on U56 (**+0.0147 -> -0.0206**), B136 (**-0.0019
+  -> -0.0165**) and SMALL (**-0.0067 -> -0.0638**) alike, and |dSharpe| rises with name-days
+  changed at rho **+0.40 / +0.53 / +0.69**.  Pooled over 60 cells this is a real gradient even
+  though no single cell carries it.  **The jump content of the three legs is NOT noise the ranking
+  would be better off without** — removing it makes the book worse, monotonically in dose.  This is
+  a finding against the idea's own hypothesis and is recorded as one.
+
+  **(4) BOTH KEEP PATHS.**  **4a 0 of 72 — another consecutive 4a zero.  NO ORDINAL IS CLAIMED: lane cloud's idea 1523 landed its own 4a zero concurrently today and numbered it thirteenth, so the count is not well defined across lanes**, for the standing
+  reason: a re-selection of the same eligible pool at the same gross cannot out-Sharpe the low-vol
+  RULES v2 book in both halves while matching its -12.05% MaxDD.  **4b 14 full / 14 OOS / 14 BOTH
+  of 72**: U56 8 of 24 (the frozen anchor passes; 4 of 20 clipped cells inherit it), **B136 6 of 24
+  — all six CREATED by the clip, since the B136 anchor itself FAILS at -20.74% against a -20.23%
+  cap** — SMALL 0 of 24.
+
+  **(5) THE ONE LITERAL CANDIDATE, AND WHY IT IS REJECTED.**  B136, c = 3.0, w = 252, **rule-8
+  selected**: full 15.90% / 1.0663 / -19.50% (halves 1.2906 / 0.8912), OOS 15.61% / 0.9959 /
+  -19.50%; it passes 4b on BOTH windows where the anchor fails.  It is nonetheless **strictly worse
+  than the anchor it perturbs** on OOS Sharpe (**-0.0220, t -0.62**) and OOS CAGR (**-0.58 pp/yr**).
+  It passes on DRAWDOWN ALONE.
+
+  **(6) AND THAT DRAWDOWN PASS IS A LOTTERY — THE METHOD FINDING.**  MaxDD across the 24 B136 cells
+  spans **2.30 pp** (-21.80% .. -19.50%) around a cap at -20.23%; on U56 it spans **5.48 pp**
+  (-24.46% .. -18.98%) against the anchor's ENTIRE **+1.10 pp** 4b margin; on SMALL **7.87 pp**.
+  Every 4b verdict that moves in this run moves on the DD leg alone — the halves and the CAGR floor
+  are decided identically at every clip on U56 and B136.  **This reproduces idea 1409's finding (the
+  binding 4b leg is a LOOKBACK convention, 5.3173 pp span) on a SECOND, UNRELATED, NEVER-DECLARED
+  convention: how much of a single day's return a leg is allowed to read.**  Two independent
+  conventions now each swamp the only leg on which the standing incumbent's 4b pass rests.
+
+  **(7) RULE 8** (dials fit on warm-up..2016-12-31, 2017-2026 read ONCE).  U56 picks c = 3.0,
+  w = 60 -> OOS **18.15% / 1.2224 / -21.21%**, +0.0367 of Sharpe over the anchor at **t +0.68**, and
+  **fails 4b_OOS on drawdown**.  B136 picks c = 3.0, w = 252 (item 5).  SMALL's unconstrained
+  chooser **picks c = inf — no clip at all**.  Forced to clip, the chooser beats the anchor on OOS
+  Sharpe at 2 of 3 panels and at |t| > 2 at **0 of 3**.  Comparands at every cell: RULES v2 live
+  (U56 8.62% / 1.2011 / -12.05%) and SPY (15.12% / 0.8844 / -33.72%).
+
+  SURVIVORSHIP (rule 9): U56 / B136 are current-constituent lists and SMALL a current sub-$2B
+  screen carried back to 2010, so every absolute level is an upper bound.  Note the bias runs
+  AGAINST the clip: a survivor's gap day is more likely to have been a real re-rating, which is one
+  reading of (3).  Memo: `research/backtests/2026-09-19_winsorised-momentum-legs_B.MEMO.md`.
+
 ## 2026-09-19 — idea 1509 (lane C): should the record's DEVICE-vs-ANCHOR contrasts ALL be re-cut against a TWO-RUNG CAPITAL BLEND? **ANSWERED — NO, NOT AS A RECORD-WIDE RE-CUT. KILL. ONE CARVE-OUT PARKED: THE BLEND IS FREE ON RANK CLAIMS AND NOT ON LEVEL CLAIMS. NO RULES CHANGE PROPOSED.**
 
   **WHY THIS IDEA.**  1484 compared a turnover-capped book to the min-hold ladder AT MATCHED
