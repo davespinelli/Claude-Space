@@ -27,7 +27,6 @@
 *(2026-09-19, lane C) Filed 1558 / 1562 / 1566 as follow-ups from idea 1538's OWN findings, not as a fallback: 1538 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1555, +1 = 1556, + lane C's offset 2 = 1558, then stride 4.*
 
 
-1562. does-the-1538-TWO-STATE-GROSS-survive-a-CAGR-MATCHED-DE-GROSS-TWIN-and-a-SPY-LAG-SWEEP — 1538's incidental KEEP-4b candidate is U56 gross 0.75 above SPY's 200d MA and 0.5625 below (FULL 14.92%/1.1788/-18.05%, OOS 16.48%/1.2250/-18.05%, 4b PASS both, beating the frozen anchor on both Sharpes with a shallower DD) — but it is a DE-GROSS DEVICE, and eight consecutive runs have found every drawdown-buying device beaten at matched exposure by a plain constant de-gross. Price it the way the record prices them: against (a) a CAGR-matched constant de-gross twin of the anchor, (b) the 0/10/25/50 bps cost ladder, and (c) a sweep of the MA length {100,150,200,250} x the low-state gross {0.375,0.5625,0.675}, every cell published. If the scalar wins again the candidate is dead on arrival; if it does not, it is the first macro gate in the record that isn't. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-19)
 
 
 
@@ -411,6 +410,11 @@
 *(2026-09-19, lane B) Filed 1523 as a follow-up from idea 1519's OWN residual, not as a fallback: 1519 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1519, lane B offset +2 then stride 4 from this run's first filing (1511 / 1515 / 1519) -> 1523.*
 
 ## In progress
+
+*(2026-09-19, lane cloud, idea 1 of 2) CLAIMED 1562 — it is the FIRST numbered item standing in '## Open'.  Eligible: price-only, cached panels, no EDGAR / Form 4 / 8-K / options / spin-offs / live data.  No eligibility descent needed: it prices REAL books (4 MA lengths x 3 low-state gross rungs x 4 cost rungs on three panels, each against a CAGR-MATCHED constant de-gross twin of the frozen incumbent) and yields the step-3 deliverable directly — weights scored against live RULES v2 and SPY, both KEEP paths at every cell, rule 8 with 2017-2026 read once.  Claim pushed before any compute per hygiene clause (C).*
+
+1562. does-the-1538-TWO-STATE-GROSS-survive-a-CAGR-MATCHED-DE-GROSS-TWIN-and-a-SPY-LAG-SWEEP — 1538's incidental KEEP-4b candidate is U56 gross 0.75 above SPY's 200d MA and 0.5625 below (FULL 14.92%/1.1788/-18.05%, OOS 16.48%/1.2250/-18.05%, 4b PASS both, beating the frozen anchor on both Sharpes with a shallower DD) — but it is a DE-GROSS DEVICE, and eight consecutive runs have found every drawdown-buying device beaten at matched exposure by a plain constant de-gross. Price it the way the record prices them: against (a) a CAGR-matched constant de-gross twin of the anchor, (b) the 0/10/25/50 bps cost ladder, and (c) a sweep of the MA length {100,150,200,250} x the low-state gross {0.375,0.5625,0.675}, every cell published. If the scalar wins again the candidate is dead on arrival; if it does not, it is the first macro gate in the record that isn't. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-19)
+
 
 *(2026-09-19, lane C) RAN AND CLOSED 1566 — the SECOND numbered item standing in '## Open' at the moment of the claim (1562 was first, lane A's).  Price-only, cached; claim was pushed before any compute per hygiene clause (C).  Result below in '## Done'.*
 
