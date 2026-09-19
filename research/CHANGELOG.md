@@ -1,3 +1,71 @@
+## 2026-09-19 — idea 725 (lane cloud): DOES THE DAILY INVERSION OF IDEA 535's RETIREMENT GENERALISE? **ANSWERED: IT IS A CADENCE FACT, NOT A LOW-SIGNAL-REGIME FACT — AND THE IDEA'S OWN MECHANISM IS REFUTED IN ITS OWN DIRECTION. INCIDENTAL KEEP-CANDIDATE (4b) ON 2 OF 3 PANELS VIA THE DD-AWARE CHOOSER. NO RULES CHANGE (rule 6: Sunday review only).**
+
+  **THE QUESTION.** Idea 535 retired idea 301's gate-FAMILY constant for the de-grossing timing
+  residual in favour of a continuous predictor (CSD.is). Idea 539 found the retirement bar holds at
+  every gross on {W,M,Q} and on {D,W,M,Q} but **INVERTS on the DAILY-only cells**, where CSD.is is
+  23-27% WORSE than the label it retired — "the continuous predictor loses exactly where the residual
+  is smallest". This run prices the retirement against the RESIDUAL'S OWN SCALE instead of cadence.
+  **1,296 real books** (SMALL439 / U56 / B136 x {QUANTILE, MA-THRESH} x 9 levels x {D,W,M,Q} x gross
+  {0.50,0.75,1.00} x {RESPREAD, DEGROSS}), **648 decomposition cells** on FULL/IS/OOS, both KEEP paths
+  on every book, **gates 9/9**. The premise replicates: D-only OOS MAE ratio **1.3099 / 1.3187 / 1.3372**
+  against 539's committed 1.2297 / 1.2492 / 1.2710.
+
+  **(1) THE ANSWER.** Pre-registered **H_SCALE FALSE, H_CADENCE TRUE**. In the pooled bivariate fit of
+  `d_err = |e_CSD| - |e_FAM|` on log IS residual scale and a D-cadence dummy (gross dummies included),
+  the D dummy holds **+0.0231 (t +3.11)**; on the pool-stable panels alone (G8) **+0.0283 (t +2.92)**.
+  Scale does not absorb it — corr(log IS scale, D dummy) is only **-0.1601**. Total explanatory power is
+  small either way: pooled R² **0.0322** against a gross-dummy baseline of 0.0041.
+
+  **(2) HOLD CADENCE FIXED AND THE IDEA'S CLAIM REVERSES.** Inside the **D-only** cells CSD.is is
+  *better* than the family constant in the LOW-|resid| tercile (ratio **0.7569 / 0.6081 / 0.5412** at
+  gross 0.50 / 0.75 / 1.00) and *worse* in MID (1.2835 / 1.2865 / 1.3884) and HIGH (1.0976 / 1.0956 /
+  1.0888). Pooled, mean d_err across terciles runs -0.0020 / +0.0066 / -0.0218 (g 0.50), -0.0087 /
+  +0.0082 / -0.0342 (0.75), -0.0163 / +0.0060 / -0.0454 (1.00) — **non-monotone**, negative at both ends
+  and positive in the middle, so **no scale restatement of the retirement is available**. The confound
+  was measured, not assumed: D cells are **37-40%** of the LOW tercile against 25% under a cadence-blind
+  split, which is exactly why the marginal tables cannot settle it and the controlled fit can.
+
+  **(3) THREE GATES FAILED AS FIRST DRAFTED, AND THE DIAGNOSIS IS A RECORD CORRECTION.** The first draft
+  asserted a three-panel IS replay of 539, a reproduction of 535's published fit (-1.5722, t -6.32) and
+  c_t gross-invariance to 1e-12. All three failed. **`SMALL439` IS NOT THE SAME PANEL: 439 names in 539,
+  665 here** (ideas 706 / 1074), so one third of the cells are a different universe. On the
+  **POOL-MATCHED** subset (U56 + B136) the replay is exact — 535's fit gives **-2.3811 (t -9.01)** here
+  against **-2.3783 (t -9.02)** recomputed from 539's own committed decomposition, |d slope| **0.0028** —
+  so the whole of the -1.5722 -> -1.6976 move in the all-panel level is the pool rebuild and none of it
+  is method. And **539's own console already published "G4 FAIL — c_sd moves with gross"** (4.042e-3 /
+  9.861e-3): asserting invariance inherited a claim the parent run had refuted, so the gate now
+  REPRODUCES the documented failure (4.032e-3 / 9.112e-3). Per-panel drift is published with its cause:
+  U56 IS 3.63e-3 pp (8 further trading days, inside the inherited allowance), B136 4.50e-2 pp
+  (`prices_broad.csv` is re-cached weekly and restates adjusted closes), SMALL439 5.70e-1 pp (the pool).
+
+  **(4) RULE 8 (2017-2026 read once).** Two IS-only choosers over each panel's 432 books.
+  **ISSHARPE lands 0 of 3 panels on a KEEP path** — every pick fails the DD leg (B136 -37.77%,
+  SMALL439 -39.18%, U56 -40.65%). **PREREG** (the 2026-09-03 memo's DD-aware IS rule) lands **2 of 3**:
+  B136 `MA-THRESH / L=0.2 / M / g=0.50 / RESPREAD`, FULL 14.25%/1.1102/-18.98% (H1 1.305, H2 0.926), OOS
+  **12.85%/1.0152/-18.98%**; U56 `QUANTILE / L=0.2 / Q / g=0.50 / RESPREAD`, FULL 12.01%/1.0683/-18.73%
+  (H1 1.288, H2 0.921), OOS **11.73%/0.9627/-18.73%**. SPY OOS 15.26%/0.8737/-33.72% (DD cap -20.23%,
+  CAGR floor 10.59%). **SMALL439's admitted set is EMPTY (0 of 432).**
+
+  **(5) THE KEEP IS THIN AND THE RUN SAYS SO.** Both picks **fail 4a** (RULES v2 OOS 1.2766 on U56 and
+  1.1017 on B136, at a third of the drawdown), both sit at the **lowest gross rung on the ladder**, and
+  the corpus-wide rate is **4b 47 of 1,296 and 4a 16 of 1,296**. It is a replication, on an unrelated
+  corpus, of the finding committed the same day under idea 1600.
+
+  **(6) SURVIVORSHIP (rule 9).** All three panels are current-constituent lists with no delistings, so
+  every CAGR level and every 4a/4b count is an upper bound. The headline `d_err` is an arm-minus-arm
+  contrast on the same names and days (DEGROSS and RESPREAD share one gate mask), which the bias cannot
+  manufacture; the KEEP columns inherit it whole.
+
+  **GATES 9/9.** G0 >= 10y. G1 U56 IS replay of 539 (3.63e-3 pp). G2 pool-matched reproduction of 535's
+  fit (|d slope| 0.0028). G3 exactly two tuned parameters (cadence set; residual-scale tercile) — panels,
+  families, levels, gross, construction and lambda are inherited axes, every rung reported. G4 reproduces
+  539's published G4 failure. G5 no scale bin, tercile edge, family mean or coefficient reads a row on or
+  after 2017-01-01. G6 all 648 cells and 1,296 books published. G7 premise check (D-only ratio > 1 at all
+  three grosses). G8 the headline survives dropping the changed panel. Script
+  `research/backtests/2026-09-19_daily-inversion-of-the-retirement-as-a-residual-scale-fact_cloud.py`;
+  memo `...cloud.memo.md`; grid / decomp / premise / bins / cadence_matched / fits / cells / walkforward
+  / gates CSVs beside it.
+
 ## 2026-09-19 — idea 1592 (lane cloud): IS THE 4b DD CAP READABLE AT ALL AT ONE ARBITRARY LATENCY POINT? **ANSWERED: NO. 45% OF THE RECORD'S FULL-WINDOW 4b PASSES ARE POINT ARTEFACTS. KEEP-CANDIDATE (4b) ON ONE PANEL OF THREE. NO RULES CHANGE (rule 6: Sunday review only); a PROTOCOL 4b restatement is drafted for that review.**
 
   **THE QUESTION.** Idea 1590 found one trading day of execution timing moves MaxDD by 1.3-3.6 pp in
