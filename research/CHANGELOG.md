@@ -3304,3 +3304,94 @@
   screen's own rank cut is explained by exposure on BOTH axes and should be priced as a gross
   dial from now on. And since the +3.67 pp drawdown gap sits at ~1.25 of idea 1511's paired
   DD-contrast SE, the one surviving axis is not yet significant — idea 1624 is filed to settle it.*
+
+## 2026-09-19 — idea 1653 (lane B): does a CONSTANT-GROSS U56 x SMALL NAV SPLIT clear 4b against its OWN CORNERS and a MATCHED-DE-GROSS TWIN? **NO — THE REALLOCATION DIRECTION IS THE TENTH DE-GROSS IN COSTUME, AND THE FIRST FAMILY BEATEN ON THE DRAWDOWN AXIS TOO. KILL (capital), NO NEW BOOK FROM THE DEVICE — but the appendix turns up a 4b KEEP-CANDIDATE THE RECORD ALREADY OWNED AND NEVER PRINTED.**
+
+  **THE QUESTION, AND WHY IT IS NOT THE USUAL ONE.** Nine consecutive 2026-09-19 runs found every
+  device family — trailing stops, breadth throttles, vol targeting, MA-distance gates, SPY filters,
+  the drawdown-budget ladder, correlation-cluster caps, the momentum rank cut, the MAXVOL gate —
+  beaten at matched exposure by a plain constant de-gross. Every one of those devices **REMOVES**
+  exposure. A cross-panel NAV split only **MOVES** it, at constant total gross: it is the one
+  direction the record has never priced, and the only lever that can lift CAGR, the 4b leg that
+  binds 26 of 36 cells in idea 1617 and kills the live book on its own.
+
+  **DESIGN.** Two dials and no more: `w` (NAV share to the live U56 band book) x `G` (total target
+  gross), 11 x 3 = 33 cells, each at 10 / 25 / 50 bps, **99 of 99 rows published**. The other
+  sleeve is the identical band book (200d +/-3% hysteresis, no ranking, no vol filter, gate-out to
+  cash, weekly, t+1) run on the 665-name SMALL panel. `w = 1` is the live book exactly (G3 replays
+  `baseline.rules_v2_weights` to 0.000e+00); `w = 0` is the SMALL book alone. Window
+  2011-01-13..2026-09-18 (15.6y, the SMALL panel's intersection). Each cell is paired with a
+  constant de-gross of the **U56 book alone**, bisected to carry the blend's OWN **realised** mean
+  gross — idea 1617's method, pointed for the first time at the additive direction.
+
+  **THE ANSWER IS NO, AND IT IS THE CLEANEST OF THE TEN.** **dSharpe > 0 in 0 of 30** paired cells
+  at 10 bps (mean **-0.2316**), 0 of 30 at 25 and 50 (**-0.2445 / -0.2661**), mean dCAGR
+  **-1.08 pp/yr**, and **OOS dSharpe > 0 in 0 of 30** (mean **-0.3448**). CAGR, Sharpe and OOS
+  Sharpe are **monotone increasing in `w` at all three G**: every dollar moved out of the incumbent
+  costs money on every axis, at every rung, in both windows.
+
+  **AND IT IS THE FIRST FAMILY BEATEN ON THE DRAWDOWN AXIS AS WELL.** Mean **dMaxDD -1.05 pp**
+  (18 of 30 shallower, the mean negative), widening to **-1.28 / -1.70 pp** at 25 / 50 bps. That is
+  the **opposite sign** from idea 1617's eligibility filters (+3.67 pp), the one family a matched
+  de-gross did not dominate. The reallocation direction buys nothing a scalar could not buy cheaper.
+
+  **WHY.** corr(U56 book, SMALL book) daily = **0.7375** (IS 0.8597, OOS 0.6808), and the SMALL
+  corner reads **4.26% / 0.6588 / -14.16%** against the incumbent's **8.14% / 1.1636 / -12.05%**.
+  A 0.74-correlated sleeve with half the Sharpe and 1.18x the drawdown cannot lift a blend.
+
+  **BOTH KEEP PATHS.** **4a 0 of 33 at 10, 25 and 50 bps.** 4b FULL **3 / 2 / 1 of 33** and 4b OOS
+  **3 / 2 / 2** — and **every passer sits at w >= 0.8 with G = 1.00**, maximised at **w = 1.00**,
+  i.e. at no split at all. **4a n 4b = 0**, the umpteenth consecutive disjunction. The pass belongs
+  to the inherited gross dial and survives DESPITE the device, never because of it.
+
+  **RULE 8.** Four IS-only choosers fitted on 2011..2016-12-31, 2017-2026 read once. C_LIVE
+  (w 1.00, G 0.75) OOS **1.2766**; C_PREREG (1.00, 0.75) **1.2766**; C_CALMAR (1.00, 1.00)
+  **1.2759**; C_SHARPE (0.80, 1.00) **1.1952**. **C_SHARPE minus C_LIVE = -0.0814**, and **0 of 4
+  choosers picks any w below 0.8**. The two that clear 4b OOS get there by raising G, not by
+  splitting. Live RULES v2 OOS on this window 9.46% / 1.2766 / -12.05%; SPY OOS 0.8737.
+
+  **THE APPENDIX, AND IT IS THE RUN'S REAL FINDING.** Because every passer sat at G = 1.00 on a
+  window whose SPY CAGR bar is 9.81%, the inherited dial was re-read on the LIVE frame's OWN 17.7y
+  history (bars MaxDD >= -20.23%, CAGR >= 10.59% FULL / 10.68% OOS). **The live RULES v2 book with
+  gross 0.75 -> 1.00 and nothing else changed clears 4b on BOTH windows at 10 AND 25 bps:** FULL
+  **11.53% / 1.2008 / -15.91%**, halves **1.2282 / 1.1798** against SPY's 0.9570 / 0.8249; **OOS
+  12.67% / 1.2759 / -15.91%**. At the live G = 0.75 the same book reads **8.62% / 1.2010 / -12.05%**
+  and fails on the **CAGR floor ALONE** — exactly idea 1454's reading, which is a statement about
+  **0.75**, not about the book.
+
+  **PUBLICATION GAP, NOT A DISCOVERY.** Idea 1498's committed grid ALREADY carries
+  `keep4b=True, keep4b_oos=True` for (U56, LIVE, G=1.00, F=0.00); its memo §4 and this CHANGELOG say
+  the floor "does not close". Both are true — it does not close at 0.75 and it does close two rows
+  down the same table. **G11 replicates that committed cell from an independently built frame to
+  2.614e-04.** The record computed this on 2026-09-19 and printed the opposite sentence.
+
+  **HONEST LABEL ON THE CANDIDATE: A DE-GROSS REVERSAL, NOT ALPHA.** Sharpe is invariant in G to
+  3 dp (**1.2010 / 1.2010 / 1.2009 / 1.2008** across 0.50 / 0.75 / 0.85 / 1.00) because the book is
+  never levered and un-invested NAV earns 0.00%/yr; raising G only stops throwing return away. Idea
+  1600's deflation applies in full — rho(IS MaxDD, OOS MaxDD) is 1 **by construction** on a pure
+  scale dial, so this survives rule 8 as **leverage selection, not forecasting**, and is worth less
+  than a signal discovery. Max realised gross **0.7165**; no shorting, no leverage.
+
+  **GATES 12/12.** G0 15.65y; G1 fast_run vs `engine.backtest` (returns AND turnover) **0.000e+00**
+  with identical NaN masks; G2 the derived 25 bps rung vs a fresh 25 bps engine run **0.000e+00**
+  (cost axis exact); **G3 the w=1, G=0.75 corner replays `baseline.rules_v2_weights` to 0.000e+00 —
+  the corner IS the live book**; G4 target gross an exact convex combination of the two corners'
+  (2.720e-14) and never above G (0.000e+00); G5 two dials, cost/window/panel published axes; **G6 no
+  chooser reads a 2017+ row, TESTED on a hard-truncated array (0.000e+00)**; G7 99 of 99 published;
+  G8 max realised gross 0.7165, no shorting; **G9 realised-gross match 3.331e-16 over 90 twins**;
+  G10 turnover and realised gross published per cell AND per twin; **G11 independent replication of
+  idea 1498's committed G=1.00 cell, 2.614e-04**. Deterministic, offline, 232s.
+
+  **SURVIVORSHIP (rule 9).** U56 is a current-constituent list and SMALL a current sub-$2B screen
+  carried back to 2010, so every ABSOLUTE level — including the appendix's 11.53% and its 4b pass —
+  is an **UPPER BOUND**. The kill is a blend-minus-twin contrast inside one frame over the same
+  names on the same days at the same realised exposure and is first-order immune; the appendix's
+  pass is **NOT**.
+
+  **WHAT THE RECORD SHOULD SAY.** *The reallocation direction is not an escape from the de-gross
+  result — it is the tenth member of the same family, and the first one a matched de-gross beats on
+  the drawdown axis too. The only thing on this grid that clears 4b is the gross dial, and the
+  record has owned that number in a committed CSV since this morning while printing the opposite
+  sentence. Before any new device is priced, the live book should be re-read at the exposure it was
+  never actually run at.* **PROPOSED, NOT ENACTED** (rule 6: Sunday review only) — memo at
+  `research/backtests/2026-09-19_cross-panel-nav-split_B.memo.md` carries the exact clause-2 wording.
