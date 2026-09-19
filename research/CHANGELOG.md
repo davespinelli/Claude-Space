@@ -1,3 +1,60 @@
+## 2026-09-19 — idea 1403 (lane B): does the 2026-09-04 KEEP-4b BOOK SURVIVE the LIVE BOOK's OWN NO-RE-SPREAD SIZING CONVENTION? **YES ON U56 — AND ON B136 THE RE-SPREAD WAS BREAKING THE DD LEG ALL ALONG. KILL as a tuned dial.**
+
+  RULES v2 clause 4 is explicit — "Do NOT re-spread the gross over the IN names: a re-grossed book
+  is a different, unpriced book (idea 81)". The standing 2026-09-04 KEEP-4b candidate (N=20 slots,
+  H=126, gross 0.75, weekly, 10 bps, t+1), on which every capital run of the last fortnight is
+  built (1350, 1358, 1366, 1369, 1373, 1377), does the OPPOSITE: its slot is `gross / n`, not
+  `gross / N`. **G9's census puts a number on it — 34 of 922 U56 rebalance rows (3.69%) fill fewer
+  than 20 slots, min n = 8, and they are 2009:14 / 2020:5 / 2022:15**, i.e. exactly the three
+  episodes that make the drawdown the record calls this book's SOLE binding 4b leg. At the worst
+  row the candidate puts 9.38% of NAV on each of eight names. No run had priced that.
+
+  One dial interpolates the two conventions: `w_i = gross*(f/n + (1-f)/N)`, f=1 the committed
+  candidate, f=0 the live book's fixed slot with the shortfall in CASH at 0%/yr. 5 rungs x 3 panels
+  x gross {0.60, 0.75} = 30 cells, all published. **G1 replays idea 1350's committed head-vintage
+  U56 anchor 15.80% / 1.1537 / -19.13% at dev +0.0000 / -0.0000 / +0.0000.**
+
+  **H_PASS CONFIRMED — the pass is not an artefact of re-grossing.** U56 gross 0.75 at f=0 reads
+  **15.49% / 1.1482 / -19.10%**, OOS **16.82% / 1.1731 / -19.10%**, clearing every 4b leg FULL and
+  OOS (DD room +1.13 pp, CAGR room +4.91 pp, OOS Sharpe against SPY's 0.8738). Obeying the live
+  rule costs **-0.31 pp of CAGR and -0.0055 of Sharpe** and buys 0.02 pp of drawdown.
+
+  **THE SECONDARY FINDING IS THE BIGGER ONE. On B136 at gross 0.75 the committed 4b FAIL is a
+  CONVENTION ARTEFACT:** f=1 draws down **-20.74%** against the -20.23% cap (FAIL:DD by 0.51 pp),
+  f=0 draws down **-18.78%** and PASSES with +1.45 pp of room. Over all 30 cells the fixed slot
+  passes 4b at **4 of 6** against the re-spread's **3 of 6** — it weakly dominates everywhere and
+  is beaten nowhere. SMALL is the null control: **0 short-fill rows of 818**, so all five rungs are
+  bit-identical (d = 0.0000).
+
+  **H_DD REFUTED on U56** (predicted >= 0.5 pp shallower, actual +0.02 pp) **and confirmed on B136**
+  (+1.96 pp). **H_CAGR half-refuted**: f=0 does cost CAGR, but the 4b CAGR floor never binds
+  (+4.91 / +5.35 pp of room at f=0). **H_RES CONFIRMED** — paired 63-row block bootstrap, 400 reps,
+  seed 20260919: U56 t **-1.79** FULL / **-1.69** OOS, B136 **-0.85 / -0.83**, SMALL exactly 0:
+  unresolved on 3 of 3 panels, so obeying the live rule is FREE within the tape's resolution.
+  **H_PICK CONFIRMED — rule-8 KILL as a dial**: the IS chooser picks f=0.00 on U56 and B136 and
+  loses **-0.0126** and **-0.0050** of OOS Sharpe, and the ex-post best OOS rung is f=1.00 on both.
+  `f` is a convention the rule book fixes, never a parameter to fit. **4a KILL at 30 of 30.**
+
+  **GATES 18/20, with both failures PUBLISHED rather than swapped.** G3 as pre-declared ("all five
+  rungs bit-identical on every full-fill row") FAILS on U56 (1.03e-04) and B136 (3.69e-04) by a
+  known mechanism: the turnover charge on the FIRST day of a full-fill segment FOLLOWING a short
+  one depends on the drifted weights carried out of that short segment. The exact restatements both
+  pass on all three panels — **G3a** slot weight identical on every full-fill rebalance row
+  (6.9e-18, double rounding on gross/N), **G3b** returns bit-identical on every full-fill day after
+  the segment-start row (0.000e+00) — bounding the leak at 4 of 4448 days on U56 and 2 of 4448 on
+  B136. G2 deployed-gross identity worst |dev| 2.2e-16; G4 30 of 30 cells; G5 exactly two tuned
+  parameters (f, panel — GROSS reported at both 0.60 and 0.75); G6 chooser reads no row >=
+  2017-01-01; G7 determinism exact; G8 mean deployed gross monotone in f on all three panels.
+
+  Memo `research/backtests/2026-09-19_no-re-spread-sizing-convention_MEMO.md` carries the exact
+  RULES wording. **NO RULES CHANGE THIS RUN**: the clause changes no selection and no exposure
+  target, so it rides the next RULES change (the posture 1358 took). RULES.md, PROTOCOL.md,
+  scan.py, bot.py and baseline.py untouched. Offline, deterministic, ~10s. Survivorship (rule 9):
+  U56/B136 are current-constituent lists and the bias runs AGAINST the re-spread column — the eight
+  names still eligible in Jan 2009 are eight names that survived to be listed today — so f=1 is an
+  upper bound and the -0.31 pp cost of f=0 is itself an upper bound. Cash is priced at 0%/yr
+  deliberately: idea 1358's SHY correction would flatter f=0, which carries the most cash.
+
 ## 2026-09-19 — idea 1377 (lane cloud): RANK-HYSTERESIS BUFFER in place of the 126-day MINIMUM HOLD. **ANSWERED NO — THE BUFFER KEEPS THE FAILURES OUT AND CANNOT BUY THE TURNOVER. KILL.**
 
   Idea 1366 put a number on the incumbent's calendar immunity: 14.48% / 15.57% / 30.61% of all held
