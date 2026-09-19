@@ -1,3 +1,65 @@
+## 2026-09-19 — idea 1547 (lane cloud, run 7): DOES THE SHY SLEEVE'S 4a PASS SURVIVE A RATE-REGIME SPLIT? **ANSWERED — THE CREDIT IS NOT A ZIRP ARTEFACT, IT IS 2.5x LARGER AFTER THE FIRST HIKE. KEEP-4a CONFIRMATION (era-robust), RESTATEMENT OF THE COMMITTED "+0.50 pp", NO NEW BOOK, NO RULES CHANGE ENACTED.**
+
+  **THE DOUBT THIS CLOSES.** Ideas 1358 / 1498 / 1555 all credit the band's idle NAV at SHY's
+  realised TOTAL return and publish the result as a property of the RULE. But SHY is not a rate:
+  it is a 1-3y Treasury ETF marked to market over a tape with two monetary regimes glued together
+  — ~0 carry to 2022-03-15, 0.25% -> 5.33% after, with a capital loss on the way. A credit
+  measured over both at once is an average of a free lunch and a loss.
+
+  **THE SPLIT.** ERA_ZIRP = start..2022-03-15, ERA_HIKE = 2022-03-16..end. 2022-03-16 is the
+  FOMC's first hike of the 2022-23 cycle — a CALENDAR fact chosen before any return was read, and
+  NOT one of the run's two tuned dials. Dials: F {0.00, 0.25, 0.50, 0.75, 1.00} (fraction of idle
+  NAV in SHY) x G {0.50, 0.60, 0.75, 0.90, 1.00} (gross). Frames (reported, not tuned): LIVE
+  (`baseline.rules_v2_weights`) and INC (the frozen 2026-09-04 incumbent, N = 20, H = 126). Three
+  panels. **150 cells, every one published.** Because the rule-8 OOS window STRADDLES the break,
+  OOS is also read split at the same date.
+
+  **(1) OUTCOME (b), NOT (a) — THE CREDIT IS BIGGER AT TODAY'S RATES.** Anchor cell (U56/LIVE,
+  G = 0.75, F = 1.00) against its own 0%-cash twin: **dCAGR +0.36 pp/yr in ERA_ZIRP, +0.91 pp/yr
+  in ERA_HIKE**, full-sample +0.50 pp. Over all 120 SHY cells: **+0.196 pp -> +0.553 pp**. SHY's
+  own CAGR is **0.91% ZIRP / 2.48% HIKE**; realised mean idle share 0.372 / 0.400. The credit
+  identity `F x mean_idle x r_SHY` reconciles: predicted +0.212 / +0.620 against realised
+  +0.196 / +0.553, mean residual **-0.017 / -0.068 pp** (max |resid| 0.486 pp).
+
+  **(2) OUTCOME (d) FIRES — "+0.50 pp/yr" IS NOW A RETIRED FORM.** It is the length-weighted
+  average of two numbers 2.5x apart, and the shorter, higher era is the one that describes the
+  rate environment the book would actually run in. Every future quotation of the sleeve credit
+  states its era or states both.
+
+  **(3) 4a SURVIVES ERA_ZIRP OUTRIGHT AND IS NOT UNIFORM INSIDE ERA_HIKE.** LIVE-frame SHY cells
+  clear 4a **38/60 in ERA_ZIRP and 30/60 in ERA_HIKE** (INC frame 0/60 in both, unchanged from the
+  record). The anchor passes ERA_ZIRP (halves **1.2210 / 1.2124** vs live 1.1701 / 1.1482) and
+  **fails ERA_HIKE on the FIRST half alone** (**1.3346** vs live 1.3518) while its second half is
+  the **largest win on the whole tape** (**1.5116** vs 1.3372). The failure is **monotone in F** —
+  4a in ERA_HIKE is True at F = 0.25 / 0.50 and False at F = 0.75 / 1.00 — and it is exactly the
+  duration risk the record already flagged: SHY's own 2022 mark-to-market loss, paid in full and
+  then recovered. ERA_HIKE is 4.5y, so its halves are ~2.2y: **a WEAK test, stated as such, and
+  not a KILL.**
+
+  **(4) RULE 8 — WITH GROSS FROZEN, THE CHOOSER FINDS THE SLEEVE FOR THE FIRST TIME IN THE
+  RECORD.** Restricting the same grid to the live G = 0.75 makes F the only dial: the IS-Sharpe
+  chooser picks **F = 1.00 on 6 of 6 panel-frames** and **beats doing nothing OOS 6 of 6** — mean
+  dOOS Sharpe **+0.0637**, mean dOOS CAGR **+0.643 pp**, and positive in **both** OOS eras
+  (+0.0500 ZIRP, +0.0810 HIKE). Ideas 1358 and 1555 both concluded the axis was a KILL as a dial;
+  this run shows those failures were their grids' **IEF / TLT decoys**, not an unlearnable F.
+  **On the full two-dial grid the confounding returns**: C_SHARPE picks (G = 0.50, F = 1.00) 6/6
+  for +0.1385 of Sharpe and **-2.37 pp of CAGR** — the de-gross ray, found for the ninth time;
+  C_CAGR picks F = 1.00 at 5/6 for +0.0407 / +0.575 pp. **GROSS remains the dial that must not be
+  tuned; F is the dial that may be.**
+
+  **(5) 4b UNMOVED.** The anchor still fails the CAGR floor in both eras (9.12% full vs SPY's
+  10.59% bar; OOS 10.14% vs 10.68%). 36/150 cells clear 4b full, all already-known high-gross
+  books. This run moves no 4b verdict and proposes no rule change — PROTOCOL rule 6 gives the
+  Sunday review that call. The exact RULES wording, if it is ever enacted, is line 10 of the memo.
+
+  **GATES 15/15**, including G1 F = 0 invariance at **0.000e+00**, G2 replay of
+  `baseline.compare`'s RULES v2 row at **1.7e-17**, and G3 replay of ideas 1498/1555's committed
+  anchor (9.12% / 1.2675 / -11.48%) at **max|d| = 2.69e-05**. Survivorship (rule 9): U56 / B136
+  current-constituent lists, SMALL a current sub-$2B screen (665 names kept of 719 priced; the
+  mandated `max_1d_move >= 1.0` filter drops 54) carried back to 2010 — every absolute level is an
+  UPPER BOUND; the SHY-vs-cash and era contrasts share one construction and survive it.
+  Script `research/backtests/2026-09-19_does-the-SHY-SLEEVE-s-4a-PASS-SURVIVE-a-RATE-REGIME-SPLIT_cloud.py`.
+
 ## 2026-09-19 — idea 1555 (lane B): WHERE SHOULD GATED-OUT WEIGHT GO? **ANSWERED — INTO SHY, AND THE COMPETING FIX IS KILLED. KEEP-4a CONFIRMATION (U56 + B136 / LIVE, rule-8 clean as REALISM), KILL FOR THE DIAL, KILL FOR IDEA 1454's ABOLITION. NO NEW BOOK, NO RULES CHANGE ENACTED.**
 
   **THE DEFECT THIS CLOSES.** RULES v2 clause 2 sends band-gated weight to CASH at 0.00%/yr and
