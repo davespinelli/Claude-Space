@@ -544,3 +544,92 @@
   **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. The
   memo (`2026-09-19_tape-vintage-certified-incumbent_B.memo.md`) carries the exact RULES wording
   and adds one reporting clause: publish the price tape's git blob beside every committed number.
+
+## 2026-09-19 — idea 903 (lane B): is the per-arm 20-seed MEDIAN a biased estimator of every null-minus-BLOCK headline? **ANSWERED (yes, and it explains nothing) / CAPITAL ARM KILL / SCHEMA FIX PROPOSED.**
+
+  **Why this run has a price leg.** Three lanes had skipped 903 as "a census / a null contrast,
+  no book". Lane B's own 1265 and its 904 run (2026-09-18) overturned that premise, and 903's
+  own second clause — "re-price the record's committed 20-seed placebo numbers against it" — is
+  a question about money. 7,200 null books were built and every per-seed Sharpe STORED (the
+  thing 885 could not do, and the reason 903 exists): 3 panels x 6 arms (N {5,10,15,20,25,30} at
+  the frozen H=126, MAXVOL 0.60, GROSS 0.75, weekly, 10 bps, t+1) x 2 gross-matched null kinds
+  (RAND, and a BLOCK circular bootstrap of the real key at LB=13 rebalance rows) x 200 seeds.
+  Dials: S {5,10,20,50,100,200} x estimator {median, mean, trimmed10} — 18 cells per panel, all
+  published.
+
+  **THE DECLARED TEST, AND 885 IS RIGHT.** The sample mean is unbiased at every S by
+  construction, so if the 20->200 drift vanishes under the MEAN, the drift IS the median's
+  small-sample bias. It vanishes. Bias at S=20 (mean over 2,000 random size-S subsets minus the
+  all-200 read, averaged over the 6 arms, RAND null): **median +0.002693 / -0.002938 / -0.003307
+  (U56/B136/SMALL) against mean +0.000019 / -0.000184 / -0.000267.** Scored per (panel, kind)
+  row against that row's own Monte-Carlo floor, the median clears at **4 of 6** and the mean at
+  **0 of 6**. Mean |bias| at S=20: median **0.001779**, trimmed10 **0.000315**, mean **0.000168**.
+
+  **AND IT EXPLAINS NOTHING. The per-arm SD of ONE 20-seed read is 0.027829 of Sharpe, so
+  bias/noise = 0.0639** — the systematic error is **15.7x smaller** than the random error on the
+  very number it biases. 885 measured a real effect and drew the wrong lesson from its size.
+
+  **885's TWO SUPPORTING CLAIMS BOTH FAIL.** (1) "9 of 9 shift the same way": over this run's 36
+  (panel, kind, arm) cells the sign is **15 positive / 21 negative**, consistent WITHIN a panel
+  on RAND (U56 +, B136 -, SMALL -) and different ACROSS them — the unanimity is a property of
+  885's one corpus, not of the median. (2) "cancels between same-construction nulls": true only
+  in the trivial BLOCK-vs-BLOCK direction. The form the record actually publishes is
+  **null-minus-BLOCK**, and there the contrast's median bias at S=20 is **+0.002049 / -0.002728
+  / -0.002471 — 76% to 102% of the RAND arm's own bias** — because BLOCK's own median bias is
+  3.6x to 8.3x smaller. A cross-construction contrast inherits the biased side nearly in full.
+
+  **THE FIX IS FREE AND THE MEDIAN IS STRICTLY DOMINATED.** median -> mean removes the bias AND
+  cuts the per-arm 1-read SD by **-20.3% (U56) / -24.1% (B136) / -21.4% (SMALL)**: the
+  null-Sharpe distribution is near-symmetric, so the median's robustness buys nothing while it
+  pays the usual efficiency penalty. Measured per-arm sigma = **0.0707 / 0.0759 / 0.1021**,
+  between 885's assumed 0.067 and 904's 0.1307 (904's grid included H=21, which disperses more).
+  **RECOMMENDED SCHEMA CHANGE, NOT ENACTED:** a committed placebo statistic should aggregate
+  seeds with the arithmetic MEAN and quote its seed count and its per-arm 1-read SD. PROTOCOL
+  rule 6 confines rules changes to the Sunday review; this run modifies no rule file.
+
+  **THE CAPITAL ANSWER — KILL, NO NEW BOOK.** 108 chooser cells (S x estimator x null kind x
+  panel), every one published: among the 6 arms pick argmax of Sharpe_IS - E_{s<=S}[null], read
+  on IS rows only. **4a 0 of 108; 4b full 0 of 108; 4b full+OOS 0 of 108**, binding legs L_DD
+  108 > L_H2 72 > L_H1 36 = L_CAGR 36. **THE DIAL IS ALL BUT INERT:** distinct picks over the 18
+  RAND cells are **U56 1, B136 1, SMALL 2** — every seed budget and every estimator picks N=5 on
+  two of three panels. Rule 8 (S, estimator picked on warm-up..2016 by argmax IS Sharpe of the
+  selected book; 2017-2026 read ONCE): U56 (S=5, median) -> N=5, OOS 17.32% / 0.9118 / -25.85%;
+  B136 (S=5, median) -> N=5, OOS 14.67% / 0.7513 / -28.12%; SMALL (S=20, median) -> N=25, OOS
+  8.84% / 0.5236 / -36.87%. Mean d(OOS Sharpe) **-0.1536** vs doing nothing, beats it 1 of 3;
+  **-0.0951** vs the raw IS-Sharpe chooser, beats it 0 of 3.
+
+  **THE MECHANISM, INDEPENDENTLY REPRODUCING 904.** Placebo-differencing is a CONCENTRATION
+  BIAS: a random 5-name portfolio is a terrible null, so subtracting it rewards exactly the arms
+  that lose out of sample. U56's pick N=5 reads OOS 0.9118 against ARM-N15's 1.1971 and the
+  frozen ANCHOR-N20's 1.1857. 904 found this at 50 seeds on a 24-book N x H grid; it is
+  unchanged at H=126 with a 200-seed budget, so it is not a seed-budget artefact.
+
+  **H_HINDSIGHT fires again.** Six comparand books clear 4b full AND OOS and **none is reachable
+  by any chooser in this run** — U56 ARM-N15 (17.14% / 1.1722 / -20.14% full, OOS 19.01% /
+  1.1971 / -20.14%), U56 ANCHOR-N20 (15.80% / 1.1537 / -19.13%, OOS 17.32% / 1.1857), B136
+  ARM-N15 (OOS 1.0405), B136 ARM-N10 (OOS 0.9212). Consistent with 1321 / 1323 / 1331 / 904.
+
+  **THE RE-PRICING (903's second clause) — THE PROBLEM IS SEEDS, NOT ESTIMATORS.** Mechanical
+  harvest over research/backtests/*.md + CHANGELOG.md (LEADERBOARD.md and QUEUE.md excluded by
+  declaration, 904's rule): **1,262 files -> 410 placebo-cued sentences -> 24 carrying a >=4-dp
+  decimal -> 18 DIFFERENCES (|x| < 0.1) -> 4 stamped with a seed count -> 1 stamped S=20
+  exactly.** 12 of 18 sit inside the per-arm 1-read 20-seed SD and only 3 of 18 inside the bias.
+  The record's committed placebo numbers are not wrong because the median is biased; they are
+  UNRESOLVED, and the fix for that is seeds.
+
+  **A GATE THIS SCRIPT FAILED FIRST, KEPT IN THE RECORD.** G3 as originally written
+  ("|bias_mean| <= 1e-12") FAILED at **1.824e-03**. The mean IS unbiased in expectation, but the
+  measurement of it is a Monte-Carlo average with SE = sd/sqrt(R), ~3e-3 at S=5 and R=400 — the
+  gate was measuring its own noise. Fixed by publishing the MC SE beside every bias, raising R
+  400 -> 2000, and reading the three estimators on COMMON RANDOM NUMBERS so the median's bias is
+  readable net of the mean arm's residual (bias_net 0.001648). No dial, book or verdict changed.
+  Final gates **10/10**, including G2 (the IS slice of a full-sample build is bit-identical,
+  0.000e+00, to a build stopped at IS_END, which licenses the build-once-slice-twice
+  construction) and G8 (the frozen U56 anchor replays at 15.8028% / 1.1537 / -19.1276%,
+  consistent with idea 1350's committed head anchor).
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 / SMALL are current-constituent lists. Every absolute
+  level is optimistic. The bias headline is a difference between estimators computed on the SAME
+  books and the SAME seeds, so it is first-order immune; the 0-of-108 pass count is not.
+
+  **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
