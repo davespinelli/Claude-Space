@@ -1,3 +1,70 @@
+## 2026-09-19 — idea 1198 (lane C): how many committed RUNNER-EQUIVALENCE GATES were read through a SKIPNA MAX, and did the skip cover any cell OUTSIDE the warm-up? **ANSWERED — THE MAJORITY BASIS IS GENUINELY BLIND, AND IT COVERED NOTHING PUBLISHED. KILL as a dial, CONFIRM the infrastructure.**
+
+  Idea 1191's G1b found `engine.backtest` emits NaN in `returns`, because `engine.py`'s
+  `weights.reindex(...).fillna(0.0).shift(1)` never fills the row the shift vacates: the engine
+  rebalances unconditionally at i = 0, reads an all-NaN target, carries `cur = NaN` to the first
+  scheduled rebalance, and NaNs the turnover at both rows. 1191 observed that both rows sit inside
+  the 260-row warm-up, but also that **no gate has ever checked it**, because `pandas.Series.max()`
+  SKIPS NaN while `ndarray.max()` PROPAGATES it. This run settles both halves.
+
+  **THE CENSUS IS REAL. 279 of 459 engine-equivalence gate lines (60.8%), across 341 of 1,209
+  committed scripts, are on the SKIPNA_PANDAS basis; 127 (27.7%) are STRICT_NUMPY and 53 (11.5%)
+  NaN-aware. 219 of 341 scripts (64.2%) carry NO NaN-propagating gate at all.** C2 runs the
+  blindness rather than asserting it: a CLEAN difference reads 2.776e-17 on both bases; inject ONE
+  NaN at post-warm-up row 3000 and the skipna basis still reads **2.776e-17, unchanged**, while the
+  strict basis reads **nan**. And the record's OWN gate vector (FAST runner minus engine.backtest)
+  **already carries 2 NaN cells** — every skipna gate in the record has been reading past NaN all
+  along and reporting a clean 1e-17.
+
+  **BUT THE SKIP COVERED NOTHING PUBLISHED, AND THAT IS NOW MEASURED RATHER THAN ASSUMED.** The
+  canonical gate re-run on ndarray at 3 panels x 4 cadences x 2 pairs gives **0 of 24 readings with
+  a post-warm-up NaN**, and post-warm-up max |FAST − ENGINE| of **8.327e-17** over the whole grid.
+  The C1 census puts every NaN at row 0 and the first rebalance-application row at **24 of 24**
+  (panel, cadence, book) cells — max index **61**, the Q cadence, against a 260-row warm-up — and
+  the NaN'd turnover charge is **0.00 bps at all 24**, because no book holds a position that early
+  in its own tape. The only way a NaN can reach a published window is a window starting at row 0 of
+  its own `backtest()` call: **1 of 2,511 committed call sites** passes a pre-sliced frame
+  (`2026-09-11_is-n_elig-...-mislabelling_cloud.py`) and it reads from row 260 of that slice.
+
+  **SECONDARY FINDING, AND IT IS NEW: the defect's REACH is wider than 1191 read it.** G3 as
+  pre-declared ("ENGINE == REPAIRED bit-for-bit after the last NaN row") **FAILS at 4.857e-17**, and
+  the failure is published rather than swapped out. The cause is not the book: pandas'
+  `DataFrame.sum(axis=1)` switches accumulation kernel when the frame carries a NaN **anywhere**, so
+  the engine's NaN weight rows (56 to 43,920 cells per run) perturb **every other row too**. G3b
+  demonstrates the kernel switch on a synthetic frame. The magnitude is 15 orders of magnitude below
+  any published digit — G3a, the exact restatement (≤ 1e-15), PASSES on all 24 cells.
+
+  **CAPITAL. The frozen 2026-09-04 incumbent (N = 20, H = 126, gross 0.75, weekly, 10 bps, t+1)
+  priced through all three runners — engine.backtest as committed, a NaN-REPAIRED local copy, and
+  the record's segment FAST runner — is ONE BOOK on all three panels**: worst within-panel
+  full-sample Sharpe spread **2.220e-16**, identical 4a and 4b verdicts at 9 of 9 cells. U56
+  **15.80% / 1.1537 / −19.13%**, OOS 17.32% / 1.1857 / −19.13%, **4b PASS**; B136 16.06% / 1.0654 /
+  −20.74%, **4b FAIL:DD**; SMALL 7.81% / 0.5092 / −36.51%, 4b FAIL on all five legs. **4a 0 of 9.**
+  G1 replays idea 1350's committed head-vintage U56 anchor at dev **+0.0000 / −0.0000 / +0.0000**.
+  So the standing U56 4b pass is **runner-independent**: it is not an artefact of which runner
+  produced it, and the record's fast runners are certified against the engine to 1e-16.
+
+  **RULE 8: KILL AS A TUNED DIAL — the axis is exactly null.** The IS chooser (RUNNER by argmax IS
+  net Sharpe on warm-up..2016-12-31, ties to ENGINE = do nothing, 2017-2026 read ONCE) picks ENGINE
+  on 3 of 3 panels and the OOS delta is **+0.000000** on every one. A dial that cannot move a book
+  is not a dial. (SMALL's ex-post best OOS reads FAST, at a 1e-16 tie — reported, not claimed.)
+
+  **GATES 19/20**, the one failure being G3 in its pre-declared form, published with two exact
+  restatements that pass. G2 REPAIRED carries 0 NaN at all 24 cells; G7 determinism 0.000e+00; G6
+  the chooser reads no row ≥ 2017-01-01; G5 exactly two tuned parameters (RUNNER, BASIS), with
+  PANEL / CADENCE / GROSS / COST reported at every value and never chosen on.
+
+  **NO NEW BOOK AND NO RULES CHANGE.** `engine.py` is NOT modified — the repair exists only as a
+  local copy so the defect could be priced; on this evidence installing it would change no published
+  figure and would reset every committed replay anchor, so it should ride a RULES change rather than
+  lead one. **ONE RECOMMENDATION IS LOGGED HERE FOR THE SUNDAY REVIEW, NOT APPLIED** (PROTOCOL.md
+  untouched): a runner-equivalence gate should state its comparison basis and read the difference on
+  `.values`, i.e. `float(np.abs((a - b).values).max())` with an explicit NaN count, so that a future
+  fast runner that diverges by NaN cannot pass. Offline, deterministic, ~210s. Survivorship (rule 9):
+  U56 / B136 are current-constituent lists and SMALL a current sub-$2B screen, so the absolute levels
+  quoted are upper bounds — the bias is orthogonal to this run's question, which is a property of the
+  arithmetic and not of the names.
+
 ## 2026-09-19 — idea 1403 (lane B): does the 2026-09-04 KEEP-4b BOOK SURVIVE the LIVE BOOK's OWN NO-RE-SPREAD SIZING CONVENTION? **YES ON U56 — AND ON B136 THE RE-SPREAD WAS BREAKING THE DD LEG ALL ALONG. KILL as a tuned dial.**
 
   RULES v2 clause 4 is explicit — "Do NOT re-spread the gross over the IN names: a re-grossed book
