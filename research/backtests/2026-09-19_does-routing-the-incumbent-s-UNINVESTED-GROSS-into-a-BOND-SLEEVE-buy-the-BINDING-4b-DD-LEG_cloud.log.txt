@@ -1,0 +1,197 @@
+============================================================================================================================
+IDEA 1358 (lane cloud, 2026-09-19) — does routing the incumbent's UNINVESTED GROSS into a BOND SLEEVE buy the BINDING 4b DD LEG?
+DIALS: SLEEVE {CASH,SHY,IEF,TLT} x GROSS {0.50,0.60,0.75} at the frozen incumbent (N=15, H=126, MAXVOL 0.60, MA gate ON, weekly, 10 bps on EVERY leg incl. the sleeve, t+1).
+============================================================================================================================
+  SMALL filter: data/small_meta.csv drops 54 tickers with max_1d_move >= 1.0 (protocol-mandated).
+  PANELS: U56 55 names, B136 135, SMALL 665 (of 719 priced).
+  SURVIVORSHIP (rule 9): U56 / B136 / SMALL are CURRENT-constituent lists; SMALL is a sub-$2B screen carried back to 2010, so its LEVELS are an upper bound and only its CONTRASTS across sleeve and gross are read here.  The SLEEVE tickers (SHY/IEF/TLT) are survivorship-free: they are three specific ETFs that existed throughout.
+  NOTE, not a defect: on U56 and B136 the sleeve tickers are ALSO selectable by the scorer, so a sleeve cell can hold the same ETF twice (once by rank, once as residual). That is what an implementer would actually experience and it is left in.
+  TAPE STAMP:
+    U56: 2008-01-02 .. 2026-09-18  4708 rows (18.7y);  977 weekly rebalances
+    B136: 2008-01-02 .. 2026-09-18  4708 rows (18.7y);  977 weekly rebalances
+    SMALL: 2010-01-04 .. 2026-09-18  4203 rows (16.7y);  872 weekly rebalances
+    GATE PASS  G0 min sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G2a joined sleeve returns == U56's own columns (same source file, must be exact): 0.000e+00 (target < 1e-12)
+    GATE PASS  G2b B136's own sleeve columns are the SAME INSTRUMENTS at a different cache vintage (idea 353's open finding: data/prices_broad.csv is a raw yf.download): 1.702e-04 (target < 1e-3 (bounded, not zero))
+
+  WHAT THE SLEEVES THEMSELVES DID (buy-and-hold, each panel's own window, post-warm-up)
+       U56 SHY: CAGR  1.31% Sharpe  0.9579 MaxDD  -5.71% vol 1.37% H1/H2  0.776/ 1.114  |  OOS (2017+, contains 2022)  1.72%/ 1.0772/ -5.71%
+       U56 IEF: CAGR  1.94% Sharpe  0.3187 MaxDD -23.92% vol 6.76% H1/H2  0.515/ 0.126  |  OOS (2017+, contains 2022)  0.88%/ 0.1656/-23.92%
+       U56 TLT: CAGR  1.08% Sharpe  0.1463 MaxDD -48.35% vol 15.12% H1/H2  0.357/-0.059  |  OOS (2017+, contains 2022) -1.09%/ 0.0005/-48.35%
+      B136 SHY: CAGR  1.31% Sharpe  0.9579 MaxDD  -5.71% vol 1.37% H1/H2  0.776/ 1.114  |  OOS (2017+, contains 2022)  1.72%/ 1.0772/ -5.71%
+      B136 IEF: CAGR  1.94% Sharpe  0.3187 MaxDD -23.92% vol 6.76% H1/H2  0.515/ 0.126  |  OOS (2017+, contains 2022)  0.88%/ 0.1656/-23.92%
+      B136 TLT: CAGR  1.08% Sharpe  0.1463 MaxDD -48.35% vol 15.12% H1/H2  0.357/-0.059  |  OOS (2017+, contains 2022) -1.09%/ 0.0005/-48.35%
+     SMALL SHY: CAGR  1.29% Sharpe  0.9595 MaxDD  -5.71% vol 1.35% H1/H2  0.658/ 1.191  |  OOS (2017+, contains 2022)  1.72%/ 1.0772/ -5.71%
+     SMALL IEF: CAGR  2.06% Sharpe  0.3464 MaxDD -23.92% vol 6.49% H1/H2  0.525/ 0.204  |  OOS (2017+, contains 2022)  0.88%/ 0.1656/-23.92%
+     SMALL TLT: CAGR  2.12% Sharpe  0.2159 MaxDD -48.35% vol 14.82% H1/H2  0.472/-0.004  |  OOS (2017+, contains 2022) -1.09%/ 0.0005/-48.35%
+
+  [U56]  SPY: CAGR 15.12% Sharpe 0.8844 MaxDD -33.72% H1/H2 0.9573/0.8251  |  4b bars: DD cap -20.23%, CAGR floor 10.59%
+           RULES v2 live @10bps: CAGR 8.62% Sharpe 1.2011 MaxDD -12.05% H1/H2 1.2279/1.1808
+           OOS SPY 15.26%/0.8738/-33.72%  |  OOS RULES v2 9.46%/1.2769/-12.05%
+    sleeve gross |    CAGR  Sharpe    MaxDD     H1     H2 | DDmargin CGmargin |    vol  turn   drag |  OOSCAGR OOSShrp OOSMaxDD |  ISShrp |  vs CASH same-g  vs VOLMATCH | 4a 4b  fail-legs
+      CASH  0.50 |  11.36%  1.1713  -13.80%  1.252  1.121 |   +6.43%   +0.78% |  9.58%  2.07   20.7 |   12.58%  1.1960  -13.80% |  1.1479 |         +0.0000 +0.0000@g0.50 | 0  1   -
+      CASH  0.60 |  13.67%  1.1717  -16.38%  1.253  1.122 |   +3.85%   +3.08% | 11.50%  2.46   24.6 |   15.15%  1.1965  -16.38% |  1.1482 |         +0.0000 +0.0000@g0.60 | 0  1   -
+      CASH  0.75 |  17.14%  1.1722  -20.14%  1.253  1.122 |   +0.09%   +6.56% | 14.39%  3.05   30.5 |   19.01%  1.1971  -20.14% |  1.1485 |         +0.0000 +0.0000@g0.75 | 0  1   -
+       SHY  0.50 |  12.07%  1.2407  -13.31%  1.308  1.204 |   +6.92%   +1.48% |  9.55%  2.33   23.3 |   13.52%  1.2756  -13.31% |  1.2042 |         +0.0694 +0.0694@g0.50 | 0  1   -
+       SHY  0.60 |  14.24%  1.2182  -16.00%  1.290  1.177 |   +4.23%   +3.66% | 11.47%  2.71   27.1 |   15.91%  1.2500  -16.00% |  1.1857 |         +0.0466 +0.0466@g0.60 | 0  1   -
+       SHY  0.75 |  17.51%  1.1955  -19.92%  1.272  1.150 |   +0.31%   +6.92% | 14.36%  3.24   32.4 |   19.50%  1.2240  -19.92% |  1.1672 |         +0.0233 +0.0233@g0.75 | 0  1   -
+       IEF  0.50 |  12.51%  1.2707  -15.20%  1.506  1.121 |   +5.03%   +1.93% |  9.65%  2.36   23.6 |   13.10%  1.2073  -15.20% |  1.3968 |         +0.0994 +0.0994@g0.50 | 0  1   -
+       IEF  0.60 |  14.62%  1.2548  -15.22%  1.446  1.133 |   +5.01%   +4.03% | 11.39%  2.74   27.4 |   15.57%  1.2167  -15.22% |  1.3373 |         +0.0832 +0.0832@g0.60 | 0  1   -
+       IEF  0.75 |  17.76%  1.2217  -19.45%  1.360  1.134 |   +0.78%   +7.18% | 14.22%  3.26   32.6 |   19.29%  1.2136  -19.45% |  1.2524 |         +0.0495 +0.0495@g0.75 | 0  1   -
+       TLT  0.50 |  12.31%  1.0981  -23.82%  1.406  0.893 |   -3.59%   +1.72% | 11.14%  2.46   24.6 |   12.18%  0.9949  -23.82% |  1.2833 |         -0.0732 -0.0736@g0.60 | 0  0   DD
+       TLT  0.60 |  14.50%  1.1854  -21.25%  1.474  1.002 |   -1.02%   +3.91% | 12.04%  2.83   28.3 |   14.85%  1.1008  -21.25% |  1.3502 |         +0.0137 +0.0135@g0.65 | 0  0   DD
+       TLT  0.75 |  17.73%  1.2191  -19.81%  1.428  1.088 |   +0.42%   +7.14% | 14.22%  3.32   33.2 |   18.86%  1.1772  -19.81% |  1.3104 |         +0.0470 +0.0470@g0.75 | 0  1   -
+    GATE PASS  G1 cross-script replay of idea 1296/1346's U56 anchor (CASH, gross 0.60) on CAGR/Sharpe/MaxDD/H1/H2/turn: 4.441e-16 (target < 5e-6)
+
+  [B136]  SPY: CAGR 15.12% Sharpe 0.8845 MaxDD -33.72% H1/H2 0.9573/0.8251  |  4b bars: DD cap -20.23%, CAGR floor 10.59%
+           RULES v2 live @10bps: CAGR 7.96% Sharpe 1.0973 MaxDD -12.24% H1/H2 1.2298/0.9671
+           OOS SPY 15.26%/0.8739/-33.72%  |  OOS RULES v2 7.85%/1.1019/-12.24%
+    sleeve gross |    CAGR  Sharpe    MaxDD     H1     H2 | DDmargin CGmargin |    vol  turn   drag |  OOSCAGR OOSShrp OOSMaxDD |  ISShrp |  vs CASH same-g  vs VOLMATCH | 4a 4b  fail-legs
+      CASH  0.50 |  11.18%  1.0619  -13.44%  1.231  0.939 |   +6.78%   +0.60% | 10.51%  2.22   22.2 |   11.69%  1.0375  -13.44% |  1.1064 |         +0.0000 +0.0000@g0.50 | 0  1   -
+      CASH  0.60 |  13.43%  1.0630  -15.97%  1.232  0.941 |   +4.26%   +2.85% | 12.61%  2.65   26.5 |   14.03%  1.0387  -15.97% |  1.1072 |         +0.0000 +0.0000@g0.60 | 0  1   -
+      CASH  0.75 |  16.81%  1.0645  -19.66%  1.233  0.942 |   +0.57%   +6.22% | 15.77%  3.28   32.8 |   17.54%  1.0405  -19.66% |  1.1084 |         +0.0000 +0.0000@g0.75 | 0  1   -
+       SHY  0.50 |  11.89%  1.1267  -12.96%  1.284  1.016 |   +7.27%   +1.30% | 10.46%  2.49   24.9 |   12.62%  1.1123  -12.96% |  1.1587 |         +0.0648 +0.0648@g0.50 | 0  1   -
+       SHY  0.60 |  14.01%  1.1063  -15.59%  1.267  0.992 |   +4.64%   +3.42% | 12.57%  2.90   29.0 |   14.79%  1.0888  -15.59% |  1.1420 |         +0.0433 +0.0433@g0.60 | 0  1   -
+       SHY  0.75 |  17.17%  1.0862  -19.43%  1.251  0.968 |   +0.80%   +6.59% | 15.74%  3.48   34.8 |   18.02%  1.0656  -19.43% |  1.1257 |         +0.0216 +0.0216@g0.75 | 0  1   -
+       IEF  0.50 |  12.34%  1.1674  -13.43%  1.501  0.948 |   +6.80%   +1.75% | 10.43%  2.53   25.3 |   12.20%  1.0574  -13.43% |  1.3631 |         +0.1055 +0.1055@g0.50 | 0  1   -
+       IEF  0.60 |  14.39%  1.1459  -14.87%  1.430  0.954 |   +5.36%   +3.80% | 12.41%  2.94   29.4 |   14.46%  1.0614  -14.87% |  1.2946 |         +0.0829 +0.0829@g0.60 | 0  1   -
+       IEF  0.75 |  17.43%  1.1117  -18.96%  1.339  0.953 |   +1.27%   +6.85% | 15.55%  3.50   35.0 |   17.82%  1.0565  -18.96% |  1.2080 |         +0.0472 +0.0472@g0.75 | 0  1   -
+       TLT  0.50 |  12.14%  1.0378  -20.92%  1.461  0.765 |   -0.69%   +1.55% | 11.70%  2.62   26.2 |   11.31%  0.8862  -20.92% |  1.3099 |         -0.0241 -0.0247@g0.55 | 0  0   H2,DD
+       TLT  0.60 |  14.27%  1.0998  -18.84%  1.494  0.849 |   +1.39%   +3.69% | 12.89%  3.02   30.2 |   13.76%  0.9684  -18.84% |  1.3413 |         +0.0368 +0.0368@g0.60 | 0  1   -
+       TLT  0.75 |  17.41%  1.1140  -19.39%  1.415  0.914 |   +0.84%   +6.82% | 15.49%  3.56   35.6 |   17.41%  1.0264  -19.39% |  1.2714 |         +0.0495 +0.0495@g0.75 | 0  1   -
+    GATE PASS  G1 cross-script replay of idea 1296/1346's B136 anchor (CASH, gross 0.60) on CAGR/Sharpe/MaxDD/H1/H2/turn: 1.110e-16 (target < 5e-6)
+
+  [SMALL]  SPY: CAGR 14.01% Sharpe 0.8562 MaxDD -33.72% H1/H2 0.9028/0.8393  |  4b bars: DD cap -20.23%, CAGR floor 9.81%
+           RULES v2 live @10bps: CAGR 4.66% Sharpe 0.7185 MaxDD -12.48% H1/H2 0.8353/0.6380
+           OOS SPY 15.26%/0.8738/-33.72%  |  OOS RULES v2 4.41%/0.6473/-12.48%
+    sleeve gross |    CAGR  Sharpe    MaxDD     H1     H2 | DDmargin CGmargin |    vol  turn   drag |  OOSCAGR OOSShrp OOSMaxDD |  ISShrp |  vs CASH same-g  vs VOLMATCH | 4a 4b  fail-legs
+      CASH  0.50 |   6.40%  0.5563  -27.77%  0.812  0.358 |   -7.54%   -3.41% | 12.58%  2.85   28.5 |    5.46%  0.4723  -27.77% |  0.7108 |         +0.0000 +0.0000@g0.50 | 0  0   H1,H2,DD,CAGR
+      CASH  0.60 |   7.54%  0.5570  -32.63%  0.813  0.358 |  -12.40%   -2.27% | 15.10%  3.41   34.1 |    6.38%  0.4728  -32.63% |  0.7118 |         +0.0000 +0.0000@g0.60 | 0  0   H1,H2,DD,CAGR
+      CASH  0.75 |   9.14%  0.5579  -39.51%  0.814  0.359 |  -19.28%   -0.67% | 18.89%  4.24   42.4 |    7.64%  0.4734  -39.51% |  0.7133 |         +0.0000 +0.0000@g0.75 | 0  0   H1,H2,DD,CAGR
+       SHY  0.50 |   7.06%  0.6067  -25.34%  0.838  0.430 |   -5.11%   -2.75% | 12.54%  3.18   31.8 |    6.34%  0.5359  -25.34% |  0.7383 |         +0.0504 +0.0504@g0.50 | 0  0   H1,H2,DD,CAGR
+       SHY  0.60 |   8.06%  0.5903  -30.82%  0.830  0.406 |  -10.59%   -1.75% | 15.07%  3.72   37.2 |    7.08%  0.5149  -30.82% |  0.7299 |         +0.0334 +0.0334@g0.60 | 0  0   H1,H2,DD,CAGR
+       SHY  0.75 |   9.47%  0.5743  -38.50%  0.822  0.382 |  -18.27%   -0.34% | 18.87%  4.48   44.8 |    8.07%  0.4943  -38.50% |  0.7221 |         +0.0165 +0.0165@g0.75 | 0  0   H1,H2,DD,CAGR
+       IEF  0.50 |   7.56%  0.6490  -23.85%  1.003  0.399 |   -3.62%   -2.25% | 12.42%  3.21   32.1 |    5.95%  0.5037  -23.85% |  0.9403 |         +0.0927 +0.0927@g0.50 | 0  0   H2,DD,CAGR
+       IEF  0.60 |   8.48%  0.6225  -28.61%  0.944  0.388 |   -8.38%   -1.33% | 14.86%  3.75   37.5 |    6.78%  0.4966  -28.61% |  0.8681 |         +0.0656 +0.0656@g0.60 | 0  0   H2,DD,CAGR
+       IEF  0.75 |   9.75%  0.5921  -36.93%  0.881  0.375 |  -16.70%   -0.06% | 18.67%  4.50   45.0 |    7.89%  0.4865  -36.93% |  0.7921 |         +0.0343 +0.0343@g0.75 | 0  0   H1,H2,DD,CAGR
+       TLT  0.50 |   7.89%  0.6358  -31.80%  1.128  0.312 |  -11.57%   -1.92% | 13.36%  3.29   32.9 |    5.14%  0.4186  -31.80% |  1.1042 |         +0.0795 +0.0792@g0.55 | 0  0   H2,DD,CAGR
+       TLT  0.60 |   8.80%  0.6328  -29.97%  1.069  0.336 |   -9.74%   -1.01% | 15.15%  3.82   38.2 |    6.16%  0.4484  -29.97% |  1.0186 |         +0.0758 +0.0758@g0.60 | 0  0   H2,DD,CAGR
+       TLT  0.75 |  10.00%  0.6069  -35.67%  0.959  0.353 |  -15.44%   +0.19% | 18.55%  4.55   45.5 |    7.54%  0.4683  -35.67% |  0.8811 |         +0.0491 +0.0491@g0.75 | 0  0   H2,DD
+    GATE PASS  G1 cross-script replay of idea 1296/1346's SMALL anchor (CASH, gross 0.60) on CAGR/Sharpe/MaxDD/H1/H2/turn: 8.327e-17 (target < 5e-6)
+    GATE PASS  G3 NO LEVERAGE (rule 2): max weight sum over every sleeve cell and rebalance: 1.000000000000 (target <= 1.0 + 1e-12)
+
+============================================================================================================================
+1. DOES THE SLEEVE BUY THE DD LEG?  (DD margin = MaxDD - 0.60 x SPY MaxDD; CAGR margin = CAGR - 0.70 x SPY CAGR.  BOTH must be >= 0 for 4b.)
+============================================================================================================================
+       U56 CASH: g0.50[DD +6.43% / CG +0.78% / S 1.1713 / 4b 1]  g0.60[DD +3.85% / CG +3.08% / S 1.1717 / 4b 1]  g0.75[DD +0.09% / CG +6.56% / S 1.1722 / 4b 1]
+       U56  SHY: g0.50[DD +6.92% / CG +1.48% / S 1.2407 / 4b 1]  g0.60[DD +4.23% / CG +3.66% / S 1.2182 / 4b 1]  g0.75[DD +0.31% / CG +6.92% / S 1.1955 / 4b 1]
+       U56  IEF: g0.50[DD +5.03% / CG +1.93% / S 1.2707 / 4b 1]  g0.60[DD +5.01% / CG +4.03% / S 1.2548 / 4b 1]  g0.75[DD +0.78% / CG +7.18% / S 1.2217 / 4b 1]
+       U56  TLT: g0.50[DD -3.59% / CG +1.72% / S 1.0981 / 4b 0]  g0.60[DD -1.02% / CG +3.91% / S 1.1854 / 4b 0]  g0.75[DD +0.42% / CG +7.14% / S 1.2191 / 4b 1]
+      -> U56: sleeve cells with BOTH a shallower MaxDD AND a higher CAGR than the frozen (CASH, 0.60) anchor: SHY@g0.60, IEF@g0.60
+      B136 CASH: g0.50[DD +6.78% / CG +0.60% / S 1.0619 / 4b 1]  g0.60[DD +4.26% / CG +2.85% / S 1.0630 / 4b 1]  g0.75[DD +0.57% / CG +6.22% / S 1.0645 / 4b 1]
+      B136  SHY: g0.50[DD +7.27% / CG +1.30% / S 1.1267 / 4b 1]  g0.60[DD +4.64% / CG +3.42% / S 1.1063 / 4b 1]  g0.75[DD +0.80% / CG +6.59% / S 1.0862 / 4b 1]
+      B136  IEF: g0.50[DD +6.80% / CG +1.75% / S 1.1674 / 4b 1]  g0.60[DD +5.36% / CG +3.80% / S 1.1459 / 4b 1]  g0.75[DD +1.27% / CG +6.85% / S 1.1117 / 4b 1]
+      B136  TLT: g0.50[DD -0.69% / CG +1.55% / S 1.0378 / 4b 0]  g0.60[DD +1.39% / CG +3.69% / S 1.0998 / 4b 1]  g0.75[DD +0.84% / CG +6.82% / S 1.1140 / 4b 1]
+      -> B136: sleeve cells with BOTH a shallower MaxDD AND a higher CAGR than the frozen (CASH, 0.60) anchor: SHY@g0.60, IEF@g0.60
+     SMALL CASH: g0.50[DD -7.54% / CG -3.41% / S 0.5563 / 4b 0]  g0.60[DD -12.40% / CG -2.27% / S 0.5570 / 4b 0]  g0.75[DD -19.28% / CG -0.67% / S 0.5579 / 4b 0]
+     SMALL  SHY: g0.50[DD -5.11% / CG -2.75% / S 0.6067 / 4b 0]  g0.60[DD -10.59% / CG -1.75% / S 0.5903 / 4b 0]  g0.75[DD -18.27% / CG -0.34% / S 0.5743 / 4b 0]
+     SMALL  IEF: g0.50[DD -3.62% / CG -2.25% / S 0.6490 / 4b 0]  g0.60[DD -8.38% / CG -1.33% / S 0.6225 / 4b 0]  g0.75[DD -16.70% / CG -0.06% / S 0.5921 / 4b 0]
+     SMALL  TLT: g0.50[DD -11.57% / CG -1.92% / S 0.6358 / 4b 0]  g0.60[DD -9.74% / CG -1.01% / S 0.6328 / 4b 0]  g0.75[DD -15.44% / CG +0.19% / S 0.6069 / 4b 0]
+      -> SMALL: sleeve cells with BOTH a shallower MaxDD AND a higher CAGR than the frozen (CASH, 0.60) anchor: SHY@g0.60, IEF@g0.50, IEF@g0.60, TLT@g0.50, TLT@g0.60
+
+2. IS THE SLEEVE AN EDGE OR AN EXPOSURE DIAL?  (every sleeve cell vs the CASH book on the 0.35-1.00 control ladder whose REALISED VOL is nearest)
+       U56  SHY: g0.50[dS +0.0694 dCAGR +0.71% dDD +0.49% dOOSs +0.0796 (twin g0.50 vol 9.58% vs 9.55%)]  g0.60[dS +0.0466 dCAGR +0.57% dDD +0.38% dOOSs +0.0535 (twin g0.60 vol 11.50% vs 11.47%)]  g0.75[dS +0.0233 dCAGR +0.36% dDD +0.23% dOOSs +0.0269 (twin g0.75 vol 14.39% vs 14.36%)]
+       U56  IEF: g0.50[dS +0.0994 dCAGR +1.15% dDD -1.40% dOOSs +0.0113 (twin g0.50 vol 9.58% vs 9.65%)]  g0.60[dS +0.0832 dCAGR +0.95% dDD +1.16% dOOSs +0.0202 (twin g0.60 vol 11.50% vs 11.39%)]  g0.75[dS +0.0495 dCAGR +0.62% dDD +0.70% dOOSs +0.0165 (twin g0.75 vol 14.39% vs 14.22%)]
+       U56  TLT: g0.50[dS -0.0736 dCAGR -1.36% dDD -7.43% dOOSs -0.2015 (twin g0.60 vol 11.50% vs 11.14%)]  g0.60[dS +0.0135 dCAGR -0.33% dDD -3.60% dOOSs -0.0960 (twin g0.65 vol 12.46% vs 12.04%)]  g0.75[dS +0.0470 dCAGR +0.59% dDD +0.33% dOOSs -0.0200 (twin g0.75 vol 14.39% vs 14.22%)]
+      B136  SHY: g0.50[dS +0.0648 dCAGR +0.70% dDD +0.49% dOOSs +0.0748 (twin g0.50 vol 10.51% vs 10.46%)]  g0.60[dS +0.0433 dCAGR +0.57% dDD +0.38% dOOSs +0.0501 (twin g0.60 vol 12.61% vs 12.57%)]  g0.75[dS +0.0216 dCAGR +0.36% dDD +0.23% dOOSs +0.0251 (twin g0.75 vol 15.77% vs 15.74%)]
+      B136  IEF: g0.50[dS +0.1055 dCAGR +1.15% dDD +0.02% dOOSs +0.0199 (twin g0.50 vol 10.51% vs 10.43%)]  g0.60[dS +0.0829 dCAGR +0.95% dDD +1.10% dOOSs +0.0226 (twin g0.60 vol 12.61% vs 12.41%)]  g0.75[dS +0.0472 dCAGR +0.62% dDD +0.70% dOOSs +0.0159 (twin g0.75 vol 15.77% vs 15.55%)]
+      B136  TLT: g0.50[dS -0.0247 dCAGR -0.17% dDD -6.21% dOOSs -0.1520 (twin g0.55 vol 11.56% vs 11.70%)]  g0.60[dS +0.0368 dCAGR +0.84% dDD -2.87% dOOSs -0.0703 (twin g0.60 vol 12.61% vs 12.89%)]  g0.75[dS +0.0495 dCAGR +0.60% dDD +0.27% dOOSs -0.0142 (twin g0.75 vol 15.77% vs 15.49%)]
+     SMALL  SHY: g0.50[dS +0.0504 dCAGR +0.66% dDD +2.44% dOOSs +0.0636 (twin g0.50 vol 12.58% vs 12.54%)]  g0.60[dS +0.0334 dCAGR +0.53% dDD +1.81% dOOSs +0.0422 (twin g0.60 vol 15.10% vs 15.07%)]  g0.75[dS +0.0165 dCAGR +0.33% dDD +1.01% dOOSs +0.0209 (twin g0.75 vol 18.89% vs 18.87%)]
+     SMALL  IEF: g0.50[dS +0.0927 dCAGR +1.16% dDD +3.92% dOOSs +0.0314 (twin g0.50 vol 12.58% vs 12.42%)]  g0.60[dS +0.0656 dCAGR +0.95% dDD +4.02% dOOSs +0.0239 (twin g0.60 vol 15.10% vs 14.86%)]  g0.75[dS +0.0343 dCAGR +0.61% dDD +2.58% dOOSs +0.0132 (twin g0.75 vol 18.89% vs 18.67%)]
+     SMALL  TLT: g0.50[dS +0.0792 dCAGR +0.92% dDD -1.57% dOOSs -0.0539 (twin g0.55 vol 13.84% vs 13.36%)]  g0.60[dS +0.0758 dCAGR +1.27% dDD +2.67% dOOSs -0.0243 (twin g0.60 vol 15.10% vs 15.15%)]  g0.75[dS +0.0491 dCAGR +0.86% dDD +3.83% dOOSs -0.0051 (twin g0.75 vol 18.89% vs 18.55%)]
+    POOLED over all 27 sleeve cells vs their vol-matched CASH twins: mean dSharpe +0.0475 (positive in 25 of 27), mean dCAGR +0.60%, mean dMaxDD +0.21% (positive = SHALLOWER), mean dOOS Sharpe -0.0010 (positive in 18 of 27).
+    And vs the CASH book at the SAME gross (the un-matched, flattering comparison): mean dSharpe +0.0475 (positive in 25 of 27), mean dCAGR +0.79%, mean dMaxDD -0.07%.
+
+2b. IS THAT GAIN RESOLVABLE AT ALL?  Paired circular-block bootstrap of (sleeve Sharpe - vol-matched CASH twin Sharpe): 400 reps x 63-row blocks, seed 20260919, BOTH books resampled on IDENTICAL blocks.  |t| > 2 = resolvable.
+       U56  SHY: g0.50[full +0.0694 +-0.0199 t+3.50 | OOS +0.0796 +-0.0300 t+2.65]  g0.60[full +0.0466 +-0.0132 t+3.53 | OOS +0.0535 +-0.0200 t+2.68]  g0.75[full +0.0233 +-0.0066 t+3.54 | OOS +0.0269 +-0.0100 t+2.69]
+       U56  IEF: g0.50[full +0.0994 +-0.0960 t+1.04 | OOS +0.0113 +-0.1104 t+0.10]  g0.60[full +0.0832 +-0.0641 t+1.30 | OOS +0.0202 +-0.0741 t+0.27]  g0.75[full +0.0495 +-0.0316 t+1.57 | OOS +0.0165 +-0.0369 t+0.45]
+       U56  TLT: g0.50[full -0.0736 +-0.1766 t-0.42 | OOS -0.2015 +-0.1928 t-1.05]  g0.60[full +0.0135 +-0.1296 t+0.10 | OOS -0.0960 +-0.1409 t-0.68]  g0.75[full +0.0470 +-0.0680 t+0.69 | OOS -0.0200 +-0.0747 t-0.27]
+      B136  SHY: g0.50[full +0.0648 +-0.0182 t+3.56 | OOS +0.0748 +-0.0281 t+2.66]  g0.60[full +0.0433 +-0.0121 t+3.58 | OOS +0.0501 +-0.0187 t+2.67]  g0.75[full +0.0216 +-0.0060 t+3.58 | OOS +0.0251 +-0.0094 t+2.68]
+      B136  IEF: g0.50[full +0.1055 +-0.0858 t+1.23 | OOS +0.0199 +-0.0979 t+0.20]  g0.60[full +0.0829 +-0.0571 t+1.45 | OOS +0.0226 +-0.0659 t+0.34]  g0.75[full +0.0472 +-0.0281 t+1.68 | OOS +0.0159 +-0.0329 t+0.48]
+      B136  TLT: g0.50[full -0.0247 +-0.1637 t-0.15 | OOS -0.1520 +-0.1748 t-0.87]  g0.60[full +0.0368 +-0.1178 t+0.31 | OOS -0.0703 +-0.1261 t-0.56]  g0.75[full +0.0495 +-0.0609 t+0.81 | OOS -0.0142 +-0.0663 t-0.21]
+     SMALL  SHY: g0.50[full +0.0504 +-0.0158 t+3.20 | OOS +0.0636 +-0.0232 t+2.75]  g0.60[full +0.0334 +-0.0105 t+3.18 | OOS +0.0422 +-0.0154 t+2.73]  g0.75[full +0.0165 +-0.0052 t+3.15 | OOS +0.0209 +-0.0077 t+2.71]
+     SMALL  IEF: g0.50[full +0.0927 +-0.0633 t+1.46 | OOS +0.0314 +-0.0817 t+0.38]  g0.60[full +0.0656 +-0.0420 t+1.56 | OOS +0.0239 +-0.0545 t+0.44]  g0.75[full +0.0343 +-0.0207 t+1.66 | OOS +0.0132 +-0.0270 t+0.49]
+     SMALL  TLT: g0.50[full +0.0792 +-0.1328 t+0.60 | OOS -0.0539 +-0.1573 t-0.34]  g0.60[full +0.0758 +-0.0922 t+0.82 | OOS -0.0243 +-0.1091 t-0.22]  g0.75[full +0.0491 +-0.0465 t+1.06 | OOS -0.0051 +-0.0554 t-0.09]
+    RESOLVABLE (|t| > 2) on the FULL sample: 9 of 27 sleeve cells;  OOS: 9 of 27.
+       SHY: full mean t +3.43 (resolvable 9/9), OOS mean t +2.69 (resolvable 9/9); OOS dS positive in 9/9, median SE 0.0187
+       IEF: full mean t +1.44 (resolvable 0/9), OOS mean t +0.35 (resolvable 0/9); OOS dS positive in 9/9, median SE 0.0659
+       TLT: full mean t +0.43 (resolvable 0/9), OOS mean t -0.48 (resolvable 0/9); OOS dS positive in 0/9, median SE 0.1261
+
+3. KEEP PATHS OVER ALL 36 CELLS
+    4a (beat the live book): 0 of 36
+    4b full-sample: 21 of 36;  4b full AND OOS Sharpe > SPY: 21 of 36
+         U56: 4a 0/12   4b 10/12   4b+OOS 10/12
+        B136: 4a 0/12   4b 11/12   4b+OOS 11/12
+       SMALL: 4a 0/12   4b 0/12   4b+OOS 0/12
+        CASH: 4a 0/9   4b 6/9   4b+OOS 6/9
+         SHY: 4a 0/9   4b 6/9   4b+OOS 6/9
+         IEF: 4a 0/9   4b 6/9   4b+OOS 6/9
+         TLT: 4a 0/9   4b 3/9   4b+OOS 3/9
+      g0.50: 4a 0/12   4b 6/12   4b+OOS 6/12
+      g0.60: 4a 0/12   4b 7/12   4b+OOS 7/12
+      g0.75: 4a 0/12   4b 8/12   4b+OOS 8/12
+    4b binding legs across all 36 cells: DD fails 15, H2 fails 13, CAGR fails 11, H1 fails 7
+    Cells that BEAT the frozen (CASH, 0.60) incumbent on full-sample Sharpe AND pass 4b full+OOS:
+      U56 CASH@g0.75: 1.1722 vs anchor 1.1717 (+0.0005), OOS 1.1971 vs 1.1965, MaxDD -20.14% vs -16.38%, CAGR 17.14% vs 13.67%, vs vol-matched CASH twin dS +0.0000
+      U56 SHY@g0.50: 1.2407 vs anchor 1.1717 (+0.0690), OOS 1.2756 vs 1.1965, MaxDD -13.31% vs -16.38%, CAGR 12.07% vs 13.67%, vs vol-matched CASH twin dS +0.0694
+      U56 SHY@g0.60: 1.2182 vs anchor 1.1717 (+0.0466), OOS 1.2500 vs 1.1965, MaxDD -16.00% vs -16.38%, CAGR 14.24% vs 13.67%, vs vol-matched CASH twin dS +0.0466
+      U56 SHY@g0.75: 1.1955 vs anchor 1.1717 (+0.0238), OOS 1.2240 vs 1.1965, MaxDD -19.92% vs -16.38%, CAGR 17.51% vs 13.67%, vs vol-matched CASH twin dS +0.0233
+      U56 IEF@g0.50: 1.2707 vs anchor 1.1717 (+0.0990), OOS 1.2073 vs 1.1965, MaxDD -15.20% vs -16.38%, CAGR 12.51% vs 13.67%, vs vol-matched CASH twin dS +0.0994
+      U56 IEF@g0.60: 1.2548 vs anchor 1.1717 (+0.0832), OOS 1.2167 vs 1.1965, MaxDD -15.22% vs -16.38%, CAGR 14.62% vs 13.67%, vs vol-matched CASH twin dS +0.0832
+      U56 IEF@g0.75: 1.2217 vs anchor 1.1717 (+0.0500), OOS 1.2136 vs 1.1965, MaxDD -19.45% vs -16.38%, CAGR 17.76% vs 13.67%, vs vol-matched CASH twin dS +0.0495
+      U56 TLT@g0.75: 1.2191 vs anchor 1.1717 (+0.0475), OOS 1.1772 vs 1.1965, MaxDD -19.81% vs -16.38%, CAGR 17.73% vs 13.67%, vs vol-matched CASH twin dS +0.0470
+      B136 CASH@g0.75: 1.0645 vs anchor 1.0630 (+0.0015), OOS 1.0405 vs 1.0387, MaxDD -19.66% vs -15.97%, CAGR 16.81% vs 13.43%, vs vol-matched CASH twin dS +0.0000
+      B136 SHY@g0.50: 1.1267 vs anchor 1.0630 (+0.0637), OOS 1.1123 vs 1.0387, MaxDD -12.96% vs -15.97%, CAGR 11.89% vs 13.43%, vs vol-matched CASH twin dS +0.0648
+      B136 SHY@g0.60: 1.1063 vs anchor 1.0630 (+0.0433), OOS 1.0888 vs 1.0387, MaxDD -15.59% vs -15.97%, CAGR 14.01% vs 13.43%, vs vol-matched CASH twin dS +0.0433
+      B136 SHY@g0.75: 1.0862 vs anchor 1.0630 (+0.0232), OOS 1.0656 vs 1.0387, MaxDD -19.43% vs -15.97%, CAGR 17.17% vs 13.43%, vs vol-matched CASH twin dS +0.0216
+      B136 IEF@g0.50: 1.1674 vs anchor 1.0630 (+0.1044), OOS 1.0574 vs 1.0387, MaxDD -13.43% vs -15.97%, CAGR 12.34% vs 13.43%, vs vol-matched CASH twin dS +0.1055
+      B136 IEF@g0.60: 1.1459 vs anchor 1.0630 (+0.0829), OOS 1.0614 vs 1.0387, MaxDD -14.87% vs -15.97%, CAGR 14.39% vs 13.43%, vs vol-matched CASH twin dS +0.0829
+      B136 IEF@g0.75: 1.1117 vs anchor 1.0630 (+0.0487), OOS 1.0565 vs 1.0387, MaxDD -18.96% vs -15.97%, CAGR 17.43% vs 13.43%, vs vol-matched CASH twin dS +0.0472
+      B136 TLT@g0.60: 1.0998 vs anchor 1.0630 (+0.0368), OOS 0.9684 vs 1.0387, MaxDD -18.84% vs -15.97%, CAGR 14.27% vs 13.43%, vs vol-matched CASH twin dS +0.0368
+      B136 TLT@g0.75: 1.1140 vs anchor 1.0630 (+0.0510), OOS 1.0264 vs 1.0387, MaxDD -19.39% vs -15.97%, CAGR 17.41% vs 13.43%, vs vol-matched CASH twin dS +0.0495
+
+4. RULE 8 WALK-FORWARD — the (SLEEVE, GROSS) PAIR chosen on warm-up..2016-12-31 by argmax IS Sharpe; 2017-2026 read ONCE
+============================================================================================================================
+       U56: IS pick (IEF, g0.50) IS Sharpe 1.3968 (anchor 1.1482, margin +0.24862) -> OOS  13.10%/1.2073/-15.20%
+            vs FROZEN (CASH, 0.60)  15.15%/1.1965/-16.38%   d Sharpe +0.0108, d CAGR -2.05%, d MaxDD +1.18%
+            vs SPY  15.26%/0.8738/-33.72%   vs RULES v2   9.46%/1.2769/-12.05%
+            4b on every OOS leg: pick 1 [-]  anchor 1   | ex-post best OOS cell (SHY, g0.50) 1.2756
+      B136: IS pick (IEF, g0.50) IS Sharpe 1.3631 (anchor 1.1072, margin +0.25588) -> OOS  12.20%/1.0574/-13.43%
+            vs FROZEN (CASH, 0.60)  14.03%/1.0387/-15.97%   d Sharpe +0.0186, d CAGR -1.83%, d MaxDD +2.54%
+            vs SPY  15.26%/0.8739/-33.72%   vs RULES v2   7.85%/1.1019/-12.24%
+            4b on every OOS leg: pick 1 [-]  anchor 1   | ex-post best OOS cell (SHY, g0.50) 1.1123
+     SMALL: IS pick (TLT, g0.50) IS Sharpe 1.1042 (anchor 0.7118, margin +0.39237) -> OOS   5.14%/0.4186/-31.80%
+            vs FROZEN (CASH, 0.60)   6.38%/0.4728/-32.63%   d Sharpe -0.0541, d CAGR -1.24%, d MaxDD +0.83%
+            vs SPY  15.26%/0.8738/-33.72%   vs RULES v2   4.41%/0.6473/-12.48%
+            4b on every OOS leg: pick 0 [OOS_Sharpe_vs_SPY,DD,CAGR]  anchor 0   | ex-post best OOS cell (SHY, g0.50) 0.5359
+
+    The IS chooser lands on the frozen incumbent (CASH, 0.60) in 0 of 3 panels.
+    Mean OOS Sharpe of the IS-chosen PAIR minus the frozen incumbent: -0.0082 (min -0.0541, max +0.0186); it beats the incumbent in 2 of 3.
+    Mean OOS CAGR difference: -1.71%;  mean OOS MaxDD difference: +1.52% (positive = SHALLOWER).
+    4b on every OOS leg after rule 8: pick 2 of 3, anchor 2 of 3.
+    H_HINDSIGHT: the ex-post best OOS cell differs from the IS pick on 3 of 3 panels.
+
+5. THE 2022 QUESTION — the sleeve's own worst year inside the book (calendar-year returns of each cell, U56 only, the panel the incumbent is carried on)
+    CASH g0.60: 2018: +3.8%  2019:+18.5%  2020:+17.9%  2021:+15.7%  2022: -1.6%  2023:+18.7%  2024:+29.4%  2025:+13.9%  2026:+13.8%
+     SHY g0.60: 2018: +4.4%  2019:+20.1%  2020:+19.3%  2021:+15.3%  2022: -3.2%  2023:+20.6%  2024:+31.3%  2025:+16.1%  2026:+13.9%
+     IEF g0.60: 2018: +4.2%  2019:+22.3%  2020:+22.4%  2021:+14.2%  2022: -7.8%  2023:+20.4%  2024:+29.0%  2025:+17.6%  2026:+12.3%
+     TLT g0.60: 2018: +3.2%  2019:+25.2%  2020:+26.2%  2021:+13.8%  2022:-14.9%  2023:+20.2%  2024:+25.3%  2025:+16.1%  2026:+12.0%
+
+6. THE FULL CASH CONTROL LADDER (0.35-1.00), for the reader who wants the raw exposure shape the sleeve is being scored against
+       U56: g0.35(1.171/7.9%/-9.8%/v6.7%)  g0.40(1.171/9.1%/-11.2%/v7.7%)  g0.45(1.171/10.2%/-12.5%/v8.6%)  g0.50(1.171/11.4%/-13.8%/v9.6%)  g0.55(1.171/12.5%/-15.1%/v10.5%)  g0.60(1.172/13.7%/-16.4%/v11.5%)  g0.65(1.172/14.8%/-17.7%/v12.5%)  g0.70(1.172/16.0%/-18.9%/v13.4%)  g0.75(1.172/17.1%/-20.1%/v14.4%)  g0.80(1.172/18.3%/-21.4%/v15.3%)  g0.85(1.172/19.5%/-22.6%/v16.3%)  g0.90(1.173/20.6%/-23.8%/v17.3%)  g0.95(1.173/21.8%/-25.0%/v18.2%)  g1.00(1.173/22.9%/-26.1%/v19.2%)
+      B136: g0.35(1.060/7.8%/-9.6%/v7.4%)  g0.40(1.061/8.9%/-10.9%/v8.4%)  g0.45(1.061/10.1%/-12.2%/v9.5%)  g0.50(1.062/11.2%/-13.4%/v10.5%)  g0.55(1.062/12.3%/-14.7%/v11.6%)  g0.60(1.063/13.4%/-16.0%/v12.6%)  g0.65(1.064/14.6%/-17.2%/v13.7%)  g0.70(1.064/15.7%/-18.4%/v14.7%)  g0.75(1.065/16.8%/-19.7%/v15.8%)  g0.80(1.065/17.9%/-20.9%/v16.8%)  g0.85(1.066/19.1%/-22.1%/v17.9%)  g0.90(1.066/20.2%/-23.2%/v18.9%)  g0.95(1.066/21.3%/-24.4%/v20.0%)  g1.00(1.067/22.4%/-25.5%/v21.0%)
+     SMALL: g0.35(0.555/4.6%/-20.1%/v8.8%)  g0.40(0.556/5.2%/-22.7%/v10.1%)  g0.45(0.556/5.8%/-25.3%/v11.3%)  g0.50(0.556/6.4%/-27.8%/v12.6%)  g0.55(0.557/7.0%/-30.2%/v13.8%)  g0.60(0.557/7.5%/-32.6%/v15.1%)  g0.65(0.557/8.1%/-35.0%/v16.4%)  g0.70(0.558/8.6%/-37.3%/v17.6%)  g0.75(0.558/9.1%/-39.5%/v18.9%)  g0.80(0.558/9.6%/-41.7%/v20.2%)  g0.85(0.558/10.1%/-43.8%/v21.4%)  g0.90(0.559/10.6%/-45.9%/v22.7%)  g0.95(0.559/11.1%/-47.9%/v24.0%)  g1.00(0.559/11.5%/-49.9%/v25.2%)
+
+  wrote 2026-09-19_does-routing-the-incumbent-s-UNINVESTED-GROSS-into-a-BOND-SLEEVE-buy-the-BINDING-4b-DD-LEG_cloud.grid.csv (36 cells), .controls.csv (42), .bootstrap.csv (27), .walkforward.csv (3), .gates.csv
+  GATES: 7/7 asserted pass (plus 14 published stamps)
+  elapsed 9.5s
