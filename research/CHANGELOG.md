@@ -1,3 +1,66 @@
+## 2026-09-19 — idea 1429 (lane C): does a BETA-KEYED FLOOR-AND-CAP REDISTRIBUTION buy the BINDING 4b DD LEG at IDENTICAL NAMES and IDENTICAL GROSS? **ANSWERED YES ON THE LEG AND MORE CHEAPLY THAN 1433 — BUT PARK (capital), NO NEW BOOK, NO RULES CHANGE.**
+
+  The queue's premise (1429) is exact: the 2026-09-04 incumbent is EQUAL WEIGHT, so a max-weight
+  CAP alone is inert — a cap can only bite if something is redistributed INTO a floor.  This run
+  prices that mirror.  Rank the n held names by their own trailing beta to SPY (ascending) and
+  set `z = 1 - 2(rank - 0.5)/n` (sum EXACTLY 0), `w = (G/n)(1 + c*z)`, G = 0.75: LOWEST beta
+  takes the cap `(G/n)(1 + c(1-1/n))`, HIGHEST takes the floor.  c = 0 IS the frozen incumbent.
+
+  **THE GRID.** C {0, 0.25, 0.50, 0.75, 1.00} x B {20, 63, 126, 252} beta lookback.  20 cells per
+  panel, 60 in all, every one published.  Selection is built ONCE per panel before any dial, so
+  every cell holds the IDENTICAL names on the IDENTICAL rows (G8); every cell's realised mean
+  gross matches the anchor's to **< 1e-12** and every rebalance sums to 0.75 exactly (G7/G7b);
+  the realised max/min weight equals the analytic cap/floor at every rebalance (G11).  Because
+  the multiset is a function of (n, c) alone, every cell at the same c has an IDENTICAL
+  effective-N and Herfindahl path — the ONLY thing any dial moves is WHICH NAME GETS WHICH SLOT.
+
+  **(1) IT BUYS THE BINDING LEG, AND IT KEEPS THE CAGR FLOOR 1433 BROKE.**  U56's 4b DD margin
+  widens from the anchor's **+1.1028 pp to +1.8329 .. +4.4039 pp at 16 of 16 biting cells**
+  (MaxDD -19.13% -> **-15.83%**), at identical gross, identical names and identical name count.
+  Unlike 1433's inverse-vol mirror, whose four widest cells LOST 4b full-sample on the CAGR
+  floor, **4b here passes FULL AND OOS at 16 of 16** with the floor intact (CAGR margin +1.4276
+  .. +4.3802 pp).  **B136 crosses the leg outright: the anchor FAILS at -0.5106 pp, the band
+  passes at 15 of 16 full and 14 of 16 OOS (+0.3821 .. +2.2726 pp).**  Across all panels: 4b full
+  35 of 60, 4b OOS 34, both 34.
+
+  **(2) THE ORDERING IS REAL IN SIGN, UNRESOLVED IN SIZE WHERE THE MONEY IS.**  Two exact
+  controls.  The **ANTI-BETA MIRROR** runs the same band at -c (highest beta takes the cap):
+  identical multiset, identical gross, identical names, identical effective-N path, EXACTLY
+  reversed ordering — the sharpest available null.  The beta ordering draws down LESS than its
+  mirror at **48 of 48 cells** (+1.633 .. +12.951 pp of MaxDD).  The **RANK-PERMUTATION TWIN**
+  (K = 12 seeded shuffles of the cell's own multiset) is beaten on Sharpe at 47 of 48 and on
+  MaxDD at 44 of 48; median percentile 1.000 on both.  But a paired 63-day circular-block
+  bootstrap (400 reps, seed 20260919, identical block starts) puts **|t| > 2 on MaxDD at 0 of 48
+  against the mirror and 1 of 48 against the shuffle**.  On Sharpe it resolves at 2 of 16 on U56
+  (t +1.27 .. +2.25), 7 of 16 on B136 and **16 of 16 on SMALL** (t +2.44 .. +3.98) — and SMALL
+  fails 4b at every cell (DD margin -15.41 .. -9.92 pp).  Beta information resolves only on the
+  panel that cannot carry capital, exactly as 1433's vol information did.
+
+  **(3) THE PRE-REGISTERED BAR FAILS ON LEG (iii) AND RULE 8 LEAVES THE ANCHOR.**  Bar stated in
+  the script header before any number was read: capital only if U56 (i) DD margin > +1.1028 pp
+  AND (ii) 4b passes FULL and OOS AND (iii) |t| vs its own twin > 2.  **(i) 16/16, (ii) 16/16,
+  (iii) 2 of 16 — ALL THREE 2 of 16**, and neither cell was named in advance.  Rule 8 (argmax IS
+  Sharpe on warm-up..2016-12-31, 2017-2026 read ONCE) picks **c = 0, the frozen anchor, on U56
+  AND on B136**; on SMALL it picks (1.00, 126) — OOS Sharpe 0.6385 vs the anchor's 0.4398
+  (+0.1987, t +2.25), OOS MaxDD -31.38% vs -36.51% — on a book that fails every 4b leg.
+  **4a 0 of 60.**
+
+  **(4) THE CAVEAT THAT KEEPS IT OUT OF THE BOOK.**  The rule shuts the DOLLAR exposure channel
+  to machine precision and OPENS the BETA one.  Realised book beta falls **1.0162 -> 0.6516 ..
+  0.9330**, CAGR falls MONOTONICALLY in c (-0.84 .. -3.79 pp vs the anchor) and turnover rises
+  2.87 -> 3.02 .. 9.89 (drag 30.2 .. 98.9 bp/yr).  A plain rotation down the security market line
+  predicts every headline above; the 48/48 mirror sign says the direction is not free, but
+  nothing here resolves that it is more than a beta dial.  The repair is named, not run: a
+  BETA-MATCHED twin, and a rule-8 chooser keyed on the 4b DD margin rather than on Sharpe.
+
+  **VERDICT: PARK (capital).**  No new book, no RULES change, RULES.md / scan.py / bot.py /
+  baseline.py untouched.  Memo:
+  `research/backtests/2026-09-19_beta-keyed-floor-and-cap_C.memo.md`.
+  Survivorship (rule 9): U56/B136 are current-constituent lists, SMALL a current sub-$2B screen
+  carried back to 2010; every level is an upper bound and every 4b pass an optimistic one — what
+  the run reads is a CONTRAST between two orderings of the SAME weights over the SAME names on
+  the SAME days, which the bias cannot manufacture.
+
 ## 2026-09-19 — idea 1433 (lane B): does INTRA-BOOK INVERSE-VOL SIZING buy the BINDING 4b DD LEG at IDENTICAL NAMES and IDENTICAL GROSS? **ANSWERED YES ON THE LEG AND NO ON THE MONEY. KILL (capital), NO NEW BOOK, NO RULES CHANGE — with the month's first non-exposure DD finding logged as a caveat.**
 
   The standing 2026-09-04 KEEP-4b incumbent (U56, N = 20, H = 126, gross 0.75, weekly Fri-decide /
