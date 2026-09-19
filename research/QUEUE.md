@@ -32,10 +32,8 @@
 
 *(2026-09-19, lane B) ELIGIBILITY + DOCUMENTED FALLBACK.  The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and under it 895 / 894 / 877 / 876 / 429 / 353.  The first five are RECORD-BOOKKEEPING censuses of committed text or filenames; 429 needs a broad/U56 SHARE-VOLUME cache that does not exist in data/ (PARK, needs local/Actions data); 353 is a caching chore needing a live `yf.download` the sandbox has no network for (LOCAL-ONLY).  None yields a weights function, so none can carry this run's binding step-3 deliverable (a book scored against RULES v2 AND SPY, both KEEP paths, rule-8 walk-forward).  Prior lanes (2026-09-15 cloud x2, 2026-09-18 cloud, 2026-09-19 lane B x4) recorded the same SKIP; the items stay Open, unclaimed, not killed.  Step 2's fallback therefore applies: THREE new ideas are filed below, grounded in the CHANGELOG diagnosis that NINE consecutive 2026-09-19 runs found every device family beaten at matched exposure by a plain de-gross — every one of which REMOVES exposure, while a cross-panel NAV split REALLOCATES it at constant total gross, the one direction the record has never priced — and the LAST of them (1653) is claimed.  Numbering per hygiene clause (N): max idea label standing anywhere in this file = 1643, +1 = 1644, + lane B's offset 1 = 1645, then stride 4 -> 1645 / 1649 / 1653.*
 
-1645. does-the-SMALL-PANEL-BOOK-ADD-ANYTHING-to-the-U56-BOOK-at-CONSTANT-TOTAL-GROSS — every killed device lowered realised gross; a NAV split between two weakly-correlated single-panel books holds total gross fixed and only moves capital, so it is the one lever that can raise CAGR (the leg that binds 26 of 36 cells in idea 1617) without buying drawdown.
 
 
-1653. does-a-CONSTANT-GROSS-U56-x-SMALL-NAV-SPLIT-CLEAR-4b-on-BOTH-WINDOWS-against-its-OWN-CORNERS-and-a-MATCHED-DEGROSS-TWIN — the full capital arm: price the (w, G) blend grid against its own single-panel corners (w=1, w=0), against a constant de-gross of the U56 book carrying the SAME realised gross, and against RULES v2 and SPY on both KEEP paths, with rule-8 choosers fitted on 2009-2016 and 2017-2026 read once.
 
 
 *(2026-09-19, lane cloud, idea 2 of 2) ELIGIBILITY + DOCUMENTED FALLBACK. The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and descending from it: 896 / 895 / 894 / 877 / 876 are RECORD-BOOKKEEPING censuses of committed FILENAMES and PROSE — file-vs-cell counting, mixed-unit shares, tree stamps, a seed-noise floor, a null-kind recovery — none of which yields a WEIGHTS FUNCTION, a 4a/4b verdict or a rule-8 OOS read, so none can carry this run's binding step-3 deliverable; 429 is PARK for want of data this sandbox does not hold (data/ carries only volume_small.csv.gz, no broad/u56 share volume); 353 is LOCAL-ONLY (it needs a live yf.download the sandbox has no network for). All seven stay OPEN, unclaimed, for a lane that scores the record. Note the asymmetry with idea 1 of this run: 1623 is ALSO a census, but its re-score arm names real books on real prices, so it carries a capital arm and these seven do not. Under the sprint's documented fallback this run therefore FILED 3 new price-only ideas stress-testing the 2026-09-04 KEEP-4b candidate and CLAIMED THE LAST of them (1643). Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1631, +1 = 1632, + the cloud lane's offset 3 = 1635, then stride 4 (1639, 1643).*
@@ -471,6 +469,13 @@
 
 
 ## In progress
+
+*(2026-09-19, lane cloud, idea 1 of 2) CLAIMED 1645 — the FIRST numbered item standing in '## Open' at the moment of the claim. Price-only, cached (U56 + SMALL), no EDGAR / Form 4 / 8-K / options / live data. Claim pushed BEFORE any compute per hygiene clause (C). ALSO removed, under the same clause, the STALE OPEN DUPLICATE of 1653, which stands in '## Done' (lane B, KILL, this same day).*
+
+*SCOPE NOTE, written before any number is read. Lane B's 1653 is 1645's full capital arm and it split the LIVE RULES v2 BAND book across U56 x SMALL at constant total gross: KILL, dSharpe > 0 in 0 of 30 paired cells. It did NOT split the book that matters for capital — the 2026-09-04 KEEP-4b candidate (top-N equal weight, no vol scaler, 126-row min hold, weekly, gross 0.75). This run asks 1645's question of THAT book, and reports the overlap with 1653 explicitly rather than re-deriving it.*
+
+1645. does-the-SMALL-PANEL-BOOK-ADD-ANYTHING-to-the-U56-BOOK-at-CONSTANT-TOTAL-GROSS — every killed device lowered realised gross; a NAV split between two weakly-correlated single-panel books holds total gross fixed and only moves capital, so it is the one lever that can raise CAGR (the leg that binds 26 of 36 cells in idea 1617) without buying drawdown.
+
 
 
 
