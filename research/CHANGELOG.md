@@ -1,3 +1,59 @@
+## 2026-09-19 — idea 1194 (lane C): how many committed 4b PASSES COLLAPSE under a GROSS-FREE KEY? **ANSWERED NO — THE RE-KEY IS NOT A DE-DUPLICATION, IT ERASES THE DIAL THAT DECIDES THE VERDICT. KILL (re-key), KILL (dial), NO NEW BOOK, NO RULES CHANGE — AND ONE CONFIRMED CAVEAT ON THE STANDING INCUMBENT.**
+
+  Idea 1189 recommended keying a 4b pass on `(panel, N, cadence, H)` with GROSS as an ATTRIBUTE,
+  and that re-key collapsed its own 14 passes to 8 (0.43 duplicated). The re-key is sound only if
+  a 4b PASS is INVARIANT to gross within a book. **It is not, and the reason is mechanical.**
+
+  **SHARPE IS FLAT IN GROSS AND THE TWO 4b LEVEL LEGS ARE NOT.** On 270 real books — 3 panels x
+  6 N {10,15,20,25,30,40} x **15 gross rungs 0.30..1.00**, every other byte the frozen 2026-09-04
+  incumbent (H = 126, weekly Fri-decide/Mon-trade, 10 bps, t+1, 260-row warm-up), **all 270
+  published** — U56 N=20 moves **Sharpe 1.1520 -> 1.1542 across the WHOLE ladder (swing 0.0022;
+  OOS swing 0.0029)** while CAGR runs 6.26% -> 21.14% and MaxDD −7.99% -> −24.93%. The 4b CAGR
+  floor therefore binds from BELOW and the 4b DD cap from ABOVE, and a pass is a contiguous
+  **INTERVAL IN GROSS** — contiguous at **18 of 18 families** (G7 tested, not asserted).
+
+  **SO THE KEY CANNOT DROP GROSS.** 4b passes at **49 of 270** cells; median interval width is
+  **2.5 of 15 rungs** (large-cap families 4.5, widest 7); and **only 26 of 49 passing cells (53.1%)
+  still pass at BOTH g−0.05 and g+0.05**. Two cells sharing `(panel, N, cadence, H)` and differing
+  only in gross hold the SAME NAMES ON THE SAME DAYS and return opposite 4b verdicts. Collapsing
+  them does not remove a duplicate; it removes the only field that distinguishes a pass from a fail.
+  **4a: 0 of 270.**
+
+  **AND THE RE-KEY IS UNAPPLICABLE TO 99.3% OF THE RECORD ANYWAY.** Mechanical census of
+  LEADERBOARD.md (7,805 table rows; regexes and recall limits published in the script, counts a
+  LOWER bound): **1,295** rows assert a 4b PASS. Of those, **322 (24.9%) state their gross** and
+  only **9 (0.7%) state the full `(panel, N, cadence, H)` key**. The record cannot be re-keyed
+  mechanically because it was never stamped.
+
+  **THE CAPITAL FINDING — THE FROZEN INCUMBENT IS THE LAST PASSING RUNG OF ITS OWN LADDER.** U56
+  N=20: 4b DD margin **+1.1028 pp at g = 0.75** and **−0.0797 pp at g = 0.80**. The slope is
+  **−24.19 pp per unit gross**, so the headroom is **0.0456 of gross — 0.91 of ONE 0.05 rung.**
+  Symmetrically the CAGR floor is 0.96 pp away at g = 0.55 and fails at 0.50. In **ALL FOUR**
+  large-cap families whose passing interval contains 0.75, **0.75 is the TOP EDGE**; no large-cap
+  family in this grid passes 4b above it. Eight prior runs localised the binding DD leg; this one
+  prices its remaining travel in the one dial that moves it.
+
+  **RULE 8 (IS = warm-up..2016-12-31, 2017-2026 read ONCE).** Letting a chooser touch gross buys
+  nothing: OOS Sharpe(C_FULL, N and g free) − OOS Sharpe(C_NFREE, g frozen at 0.75) =
+  **−0.0003 / +0.0041 / −0.0001** on U56 / B136 / SMALL. Because Sharpe is flat in gross the
+  IS-Sharpe chooser picks **g = 1.00 on all three panels** and then **fails 4b on DD everywhere**.
+  The frozen anchor (N=20, g=0.75) beats both choosers OOS on U56 — **17.32% / 1.1857 / −19.13%**
+  against C_FULL 18.93% / 1.1213 / −29.09% and C_NFREE 14.17% / 1.1216 / −22.46% (SPY OOS
+  15.26% / 0.8738 / −33.72%, live RULES v2 OOS 9.46% / 1.2769 / −12.05%) — and is the only U56 arm
+  of the three that passes 4b. **Freeze both dials.**
+
+  SMALL663 is **0 of 90** and fails H1, H2 and OOS at every rung.
+
+  GATES all pass: G1 incumbent replay 15.80% / **1.1537** / −19.13% against the committed
+  15.80% / 1.1537 / −19.13% (|dSharpe| **3.7e-05**, floor 5e-3); G2 max |gross deviation| 3.3e-16;
+  G3 270 of 270 cells published; G4 exactly two tuned parameters (N, gross); G5 the chooser reads
+  no row on or after 2017-01-01; G6 bit-identical recompute; G7 contiguity tested; G8 census
+  regexes and recall published. Survivorship (rule 9): U56/B136 are current-constituent lists and
+  SMALL a current sub-$2B screen, so every absolute level is an upper bound and every 4b pass an
+  optimistic one; the headline is a WIDTH read over one panel on one set of days.
+
+  **NO RULES CHANGE.** Script `research/backtests/2026-09-19_gross-free-key_C.py`.
+
 ## 2026-09-19 — idea 1413 (lane B): does a PANEL-BREADTH THROTTLE on GROSS buy the BINDING 4b DD LEG, against its OWN EXPOSURE-MATCHED FLAT CUT? **ANSWERED NO — THE SIGNAL IS REAL, THE REPAIR IS REAL, AND AT MATCHED EXPOSURE IT IS WORTH NOTHING ON 90 OF 90 CELLS. KILL (capital), NO NEW BOOK, NO RULES CHANGE.**
 
   The standing 2026-09-04 KEEP-4b incumbent (U56, N = 20, H = 126, gross 0.75, weekly, 10 bps,
