@@ -87,6 +87,100 @@
   **WHAT THE RECORD SHOULD DO.** Retire the convexity COUNT; quote rho beside any convexity
   magnitude and price it against a within-panel split at the same rho. **No RULES change.**
 
+## 2026-09-19 — idea 908 (lane B): WHY IS THE k/n 4b LEG-OVERLAP EMPTY ON EVERY SMALL BLOCK? **ANSWERED — THE QUESTION'S OWN PREMISE IS WRONG (THERE IS NO ONE LEG: THE LEG IS A PROPERTY OF THE CONSTRUCTION, NOT THE PANEL), THE GAP IS A PANEL FACT AND NOT A NAME-COUNT FACT, AND THE EMPTY OVERLAP ITSELF IS A GRID ARTEFACT OF 887's TWO CONSTRUCTIONS. KILL FOR CAPITAL (the one 4b cell dies at 25 bps and is reached by 0 of 108 legal IS-only picks). NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DOUBT THIS CLOSES.** Idea 887 found the two LEVEL legs of path 4b — `L_CAGR` (CAGR >= 0.70
+  x SPY) and `L_DD` (MaxDD >= 0.60 x SPY) — overlapping in 7 of 12 blocks but **0 of 4 on SMALL**,
+  where 174 of 192 cells cleared NEITHER. It never said WHICH leg SMALL fails, nor whether the
+  failure belongs to SMALL-CAP NAMES or merely to HOW MANY names a panel carries (U56 holds 55
+  investable, SMALL 665). This run decomposes it leg by leg against SIZE-MATCHED RANDOM DRAWS
+  from all three panels.
+
+  **CONSTRUCTION.** 887's five families (MOM / MADIST / VOLLO / VOLHI / RAND) and its k/n dial
+  (k_t = max(1, round(q x n_elig,t))), on random sub-panels of size m drawn from each panel's
+  investable columns (SPY is the benchmark only, never held — 887 left it investable, and a
+  size-matched draw must not sometimes contain the yardstick). **Tuned parameters: exactly 2
+  (m, FAMILY), the queue's own.** Reported axes, every point published: panel x q {0.05 .. 1.00}
+  x construction x cost rung {10, 25} bps x 8 seed draws. Weekly, t+1, gross 0.75 frozen at 887's
+  headline. **29,880 cells, all committed.** One calendar for everything: the SMALL cache starts
+  2010, so every book, every baseline and SPY are scored from **2011-01-13** (15.65 y) — without
+  this a "SMALL misses the CAGR floor" reading could be nothing but U56 carrying 2008-09 and
+  SMALL not. All three panels' SPY rows come out identical (n = 3,943; CAGR 14.01%, Sharpe
+  0.8561, MaxDD -33.72%), so the cross-panel contrast is exact. 4a is judged against **RULES v2
+  re-run on the same sub-panel** (a matched-universe baseline).
+
+  **(1) THERE IS NO "THE LEG". THE FAILING LEG IS A PROPERTY OF THE CONSTRUCTION.** On SMALL,
+  RESPREAD (always at full gross) clears `L_DD` in **0 of 1,230 cells** — every size, every seed,
+  every family, every q — while clearing `L_CAGR` at 0.1537. DEGROSS (gross x k/n_e) inverts it
+  exactly: `L_DD` 0.4423, `L_CAGR` **11 of 1,230**. The question asked which leg the small panel
+  is failing; the honest answer is that it fails whichever leg its exposure is not paying for,
+  and 887's two constructions sit at opposite ends of the exposure axis (realised mean gross
+  median **0.2181 under DEGROSS against 0.7500 under RESPREAD**).
+
+  **(2) THE GAP IS A PANEL FACT, NOT A NAME-COUNT FACT (pre-registered read, m = 55).** At the
+  matched size the BOTH-rate is **SMALL 0.0000 against U56 0.1667 and B136 0.1313** — H_PANEL on
+  both contrasts, the pre-registered bar being 0.10. Both legs are worse, not one: `L_CAGR` 0.0917
+  vs 0.4167 / 0.3917, `L_DD` 0.2500 vs 0.6667 / 0.6542. The dilution-proof LEVEL statistic says the
+  same thing and says it larger: **median Calmar at m = 55 is SMALL 0.1123 against U56 0.5251 and
+  B136 0.4696, a factor 4.7.** Size is real but secondary and runs the same way on every panel
+  (U56's BOTH-rate falls 0.1667 -> 0.0292 -> 0.0250 as m goes 55 -> 28 -> 14).
+
+  **(3) A METHOD DEFECT, PUBLISHED BECAUSE IT WOULD HAVE FLIPPED THIS RUN'S OWN HEADLINE.** A
+  pass RATE is a fraction over a construction set, so adding constructions that rarely pass
+  anywhere shrinks every rate AND every difference between rates. Read over 887's two
+  constructions, P2's m = 55 gap is **0.1667 / 0.1313 -> H_PANEL**; read over the six this run
+  ends up with, the SAME cells give **0.1000 / 0.0708 -> H_SIZE**. Same data, opposite verdict,
+  purely from the denominator. Both readings are published side by side and the pre-registered one
+  decides. **Any "matched-control" verdict in this record that is a difference of pass rates is a
+  function of its own construction set; the level statistic (here median Calmar) is not.**
+
+  **(4) THE PRE-REGISTERED MECHANISM IS REFUTED, AND ITS NECESSITY HALF IS A TAUTOLOGY.** Clearing
+  both level legs implies `Calmar >= (0.70 x SPY CAGR)/(0.60 x |SPY MaxDD|) = 1.1667 x SPY Calmar`
+  **by algebra**, so its recall is 1.0000 by construction (FN 0 of 29,880) and publishing that as a
+  finding would be publishing a tautology — this run says so before reading the number. The
+  empirical half fails: precision is **0.1381** at 10 bps, and **SMALL's max Calmar is 0.6899,
+  ABOVE the 0.4849 bar**, so the panel does reach over the ceiling and still never clears both
+  legs. What the Calmar-clearing SMALL cells actually are: RESPREAD books at gross 0.75 with CAGR
+  13-27% and MaxDD **-27% to -54%**, or DEGROSS books at a realised mean gross of **0.0375-0.15**
+  with MaxDD -1.8% to -9.3% and CAGR 1.1-5.1%. Efficient at either end, never at a scale that
+  clears the floor and a depth that clears the cap at once.
+
+  **(5) AND THAT IS BECAUSE THE RUNG THAT WOULD IS NOT IN THE GRID (post-hoc arm, declared as
+  post-hoc, not back-dated).** The k/n family offers only those two exposure regimes with nothing
+  between, so the book that would clear both bars was never a cell 887 could have found. Adding it
+  — the same selections held at a CONSTANT gross c {0.15, 0.25, 0.375, 0.50}, 887's own gross axis
+  widened downward, every rung published — puts **4 of 7,380 SMALL cells over both level legs, all
+  of them at c = 0.375 or c = 0.50**. The empty overlap is a **GRID ARTEFACT of 887's two
+  constructions**, not a property of the small-cap panel.
+
+  **(6) IT IS STILL A KILL FOR CAPITAL.** Exactly **1 of 7,380** SMALL cells clears the WHOLE of 4b
+  at 10 bps — the full 665-name panel, MOM, c = 0.375, q = 0.05: 10.56% / 0.8930 / **-17.30%**,
+  halves 1.0204 / 0.8529, OOS 11.73% / 0.8893 / -17.30%, against a SMALL RULES v2 baseline of
+  4.26% / 0.6588 / -14.16% and SPY's 14.01% / 0.8561 / -33.72%. Every binding margin is inside the
+  record's own measured noise: **CAGR +0.75 pp over the floor, H2 +0.0138, OOS Sharpe +0.0156**
+  (idea 1639's paired bootstrap SE on Sharpe is 0.0666; idea 1511's on the DD leg is 2.93 pp). It
+  **fails 4b outright at 25 bps** (CAGR 8.88% against the 9.81% floor) and it **fails 4a** on its
+  own panel's baseline, on MaxDD. **RULE 8 closes it: 0 of 108 legal IS-only picks on SMALL clear
+  4b, 0 of 108 beat SPY's OOS Sharpe (mean OOS Sharpe of the picks 0.4272 against SPY's 0.8737),
+  and the 4b cell is reached by 0 of the 3 choosers that could name it.** No memo, no book, no
+  RULES change.
+
+  **BOTH KEEP PATHS OVER ALL 14,940 HEADLINE CELLS.** 4b: **216** (U56 68, B136 147, **SMALL 1**),
+  falling to 57 at 25 bps. 4a: **129** (SMALL 89, B136 40, **U56 0**) — the one axis where the small
+  panel leads, and 4a is blind to the CAGR it spends, which is the record's standing diagnosis
+  restated on a third construction.
+
+  **GATES 7/7 PASS.** G0/G1 this run's vectorised clone replays `engine.backtest` in returns and
+  turnover to **3.82e-16 / 4.44e-16**; G2 it replays the LIVE RULES v2 book to **4.15e-16**; G3 at
+  q = 1.00 RESPREAD is bit-identical to DEGROSS (k = n_elig, 0.0); G4 RESPREAD's realised gross is
+  exact to 8.88e-16; G5 no leverage anywhere; G6 15.65 y (rule 1 min 10). Offline, deterministic,
+  331 s. **SURVIVORSHIP (rule 9):** U56 / B136 are current-constituent lists and SMALL a current
+  sub-$2B screen, so every LEVEL here is an upper bound — including SMALL's, which makes the
+  panel's 4.7x Calmar deficit a floor on the true gap, not a ceiling.
+
+  Script: `research/backtests/2026-09-19_why-is-the-k-over-n-4b-overlap-empty-on-every-SMALL-block_B.py`
+
+
 ## 2026-09-19 — idea 1639 (lane C): IS THE KEEP-4b TOP-20 BOOK'S N AN ARGMAX, A PLATEAU MEMBER, OR A POINT ON A MONOTONE RAY? **ANSWERED — (B) PLATEAU MEMBER, EVERYWHERE. N = 20 IS NOT AN INTERIOR ARGMAX ON ANY PANEL-GROSS CELL, 0 OF 36 NEIGHBOUR CONTRASTS REACH |t| > 2, AND 0 OF 12 LEGAL IS-ONLY CHOOSERS REACH IT. KILL AS A RE-TUNE AXIS; NO RULES CHANGE PROPOSED.**
 
   **THE DEFECT THIS CLOSES.** The standing 2026-09-04 KEEP-4b candidate (three-leg composite,
