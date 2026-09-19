@@ -1,3 +1,72 @@
+## 2026-09-19 — idea 718 (lane B): IS "WORSE THAN RANDOM" THE GENERAL SHAPE OF A disp SELECTOR ON THIS LADDER? **ANSWERED — AND THE ANSWER SPLITS BY OUTCOME. ON THE SHARPE PERCENTILE IT IS THE TWO CELLS; ON THE KEEP PATHS IT IS THE RULE. THE PREMISE IS ALSO MISATTRIBUTED (`evol`, NOT disp) AND HALF OF IDEA 714's READING IS A BASE ARTEFACT. NO RULES CHANGE ENACTED.**
+
+  **THE QUESTION.** Idea 714's drawdown-directed selectors landed at the 1.8th percentile of 2,000
+  random picks (return-directed at 55.1%), the same direction as idea 540's SEL-DISP|v below its own
+  anchor in 2 of 3 arms. The queue asked whether sub-random is THE RULE or THE TWO CELLS. Two tuned
+  dials only — SELECTOR (4 characteristics x 4 transforms x 2 directions x 3 arms = 96) and
+  PERCENTILE BASE (EXACT / RESAMP2000 / STRAT / PERMSEL) — x 2 outcomes (Sharpe, MaxDD) x 2 ladders
+  = **1,536 published percentile cells**, every one in `.grid.csv`.
+
+  **(1) T1 — SUB-RANDOM IS *NOT* THE RULE ON THE SHARPE PERCENTILE.** Pre-registered bars (>= 18 of
+  24 = RULE, <= 15 = TWO CELLS): **14 of 24** disp cells sit below the 50th percentile on the
+  INHERITED ladder and **15 of 24** on an independently re-drawn LIVE one. Mean disp percentile
+  0.3993 / 0.3480. Both readings land in the coin-flip band. The queue's own antecedent — 715's
+  45-of-96 at mean 0.383 — is reproduced exactly (G3) and is what it looks like: mildly negative on
+  the mean, a coin flip on the count.
+
+  **(2) BUT ON THE KEEP PATHS IT *IS* THE RULE, AND THAT IS THE LEG THAT MATTERS.** 504 books built
+  as real weights functions and priced here at 10 bps, next-day, weekly, gross 0.75. **Path 4a fires
+  0 of 96 picks and 0 of 504 books, full sample and OOS.** Path 4b: picks FULL 4 / OOS 3 / **BOTH 2
+  (2.1%)** against the population's FULL 44 / OOS 38 / **BOTH 30 (6.0%)**. **SELECTOR LIFT −3.9 pp.**
+  Mean pick OOS Sharpe **0.5194** against the pool's **0.6727**. The selectors *rank* no better than
+  chance and *choose* worse than it. The two arithmetic 4b passers (top10 SEL-evol−|ratio 13.82% /
+  1.0150 / −18.99% full, 14.43% / 1.0305 / −18.99% OOS; top20 SEL-disp−|ratio 10.35% / 0.9544 /
+  −18.15%, OOS 11.20% / 0.9982 / −18.15%) are beaten OOS by the pool's own best book (1.1848, which
+  no selector found) and dominated on all three legs by the frozen 2026-09-04 incumbent. **Not
+  proposed for enactment**; the memo states the four reasons.
+
+  **(3) THE PREMISE IS MISATTRIBUTED — `evol`, NOT disp, AND THE TRANSFORM BEATS THE CHARACTERISTIC.**
+  T3 gap disp vs non-disp **+0.0216 / −0.0290** against a 0.10 bar: not disp-specific. Sub-random
+  counts out of 24, both ladders: **evol 17 / 17** (mean pct 0.2629 / 0.2944), disp 14 / 15, breadth
+  11 / 14, corr 13 / 8. By transform: **residx 17, dm 16** (INHERITED) and **dm 19**, residx 14
+  (LIVE) against none 11 / 9 and ratio 11 / 12. On the live ladder **`dm` is worse than `residx`**,
+  so idea 540's "the CONTROL inverts the ranking" is really **"the WITHIN-STRATUM DE-MEANING inverts
+  it"** — the vol leg of the control adds nothing.
+
+  **(4) HALF OF 714's READING IS A BASE ARTEFACT — THE DRAWDOWN HALF.** 714's 2,000-draw base is NOT
+  a sampling artefact: EXACT vs RESAMP2000 agree to mean |diff| **0.0048 / 0.0063** (max 0.0125 /
+  0.0215). But the **STRATUM-MATCHED** base — the pick's own q rung — moves the **DRAWDOWN**
+  percentile from 0.3684 → **0.5052** (INHERITED) and 0.4057 → **0.5065** (LIVE), to dead random,
+  disp-only 0.3852 → **0.5833** and 0.4301 → **0.5938** (ABOVE random), while the **SHARPE**
+  percentile barely moves (0.3831 → 0.3984, 0.3697 → 0.4349). **Sub-random drawdown is a statement
+  about WHERE argmax lands (715's extreme-q capture), not about what it ranks on. Sub-random Sharpe
+  is not.** Within-cell spread across the 4 bases: mean **0.3463 / 0.3047**, max 0.8310; the
+  sub-random verdict is non-unanimous across bases on **50/96 (52.1%)** and **41/96 (42.7%)** of
+  cells. **The base is a bigger dial than the selector.**
+
+  **(5) METHOD FINDING — THE COMMITTED top-n CONSTRUCTION BREACHES ITS OWN NOMINAL GROSS ON RANK
+  TIES.** `(rank <= n) * gross/n` with pandas' average-rank puts more than n names in the book
+  whenever the score ties at the n-th rank: **332 of 504 books breach gross 0.75 on at least one
+  day, max realised 0.9750 (1.30x nominal)**, touching 24.0 of 4,203 days per breaching book
+  (**0.376%** of all book-days). EWall never breaches. **PROTOCOL rule 2 is NOT violated** (max
+  weight sum 0.975 <= 1.0, G5 PASS) — but nominal gross is an unstated dial in every top-n number
+  this ladder has published, and it is reported rather than clipped.
+
+  **(6) REPRODUCIBILITY BOUND — THE LADDER IS NOT REBUILDABLE.** Idea 715's gate replayed idea 533's
+  panels at machine precision off a **439**-name small pool; today's cache carries **665** (+226,
+  1.51x), so `rng(seed=20260909).choice` lands on different tickers. Run both ways, the sub-random
+  verdict agrees on **71 of 96 cells (74.0%)**, pearson **+0.4798**, spearman **+0.4545**. The
+  aggregate answer replicates; **individual cells do not, and no single-cell reading on this ladder
+  — 714's included — should be quoted without its draw.**
+
+  **SURVIVORSHIP (rule 9):** both ladder ends are current-constituent lists carried back to 2010, so
+  every LEVEL is an UPPER BOUND; what is read here is a within-ladder CONTRAST over the same panels
+  on the same days. **Gates 6/6 PASS** (G1 540's 12 rows at 0.0e+00, G2 4a 0/504 + 4b 41/504, G3
+  715's 45 beat-anchor and 0.3831 mean percentile, G4 vintage, G5 no leverage, G6 SPY one series at
+  sd 1.1e-16 while RULES v2 varies per panel). **KILL for capital. RULES.md, PROTOCOL.md, scan.py,
+  bot.py and baseline.py untouched.** Script
+  `research/backtests/2026-09-19_is-WORSE-THAN-RANDOM-the-general-shape-of-a-disp-selector_B.py`.
+
 ## 2026-09-19 — idea 1538 (lane C): IS EXPOSURE-STATE DISAGREEMENT THE THIRD LADDER AXIS, AND IS TWO NUMBERS ENOUGH? **ANSWERED — NO. `flat_one` IS A REAL, LADDER-INDEPENDENT AXIS, BUT IT IS NOT ONE NUMBER: THE RULE FAILS TO TRANSFER TO A HELD-OUT FLAT LADDER BY A FACTOR OF THIRTY. ONE INCIDENTAL KEEP-4b CANDIDATE FALLS OUT. NO RULES CHANGE ENACTED.**
 
   **THE DEFECT REPAIRED.** Idea 1530 refuted the SCALE/COMPOSITION dichotomy and found, post-hoc,
