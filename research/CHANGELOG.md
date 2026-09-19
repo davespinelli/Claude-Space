@@ -3395,3 +3395,76 @@
   sentence. Before any new device is priced, the live book should be re-read at the exposure it was
   never actually run at.* **PROPOSED, NOT ENACTED** (rule 6: Sunday review only) — memo at
   `research/backtests/2026-09-19_cross-panel-nav-split_B.memo.md` carries the exact clause-2 wording.
+
+## 2026-09-19 — idea 1660 (lane C): the matched-exposure twin is a CLOSED FORM, and the record can stop solving for it
+
+**KEEP (method), with a boundary stated in the same breath.** Idea 1649 reported two panels at
+in-band shares 0.7051 / 0.5482 and realised gross 0.5293 / 0.4113 at the same target 0.75 — ratios
+0.7507 and 0.7503. This run asked whether that is a law, and priced the answer as real books rather
+than as gross numbers. Two dials (band c {0.00, 0.01, 0.03, 0.05, 0.10} x target gross G {0.25,
+0.50, 0.75, 1.00}); PANEL {U56, B136, SMALL}, CADENCE {W, M, Q}, SLICE {FULL, IS, OOS} and COST
+{0, 10, 25, 50} bps published at every value. **8640 rows published.**
+
+**THE FORM HOLDS.** `R / (G * mean in-band share)` over 540 points: U56 mean **0.998846**
+(0.975495-1.015020), B136 0.997280, SMALL 1.005391. Realised gross IS target gross times the gate-out
+complement, to within 0.12% on the live weekly cadence.
+
+**AND IT IS A WEEKLY FACT, NOT A LAW.** The residual is monotone in the rebalance interval and grows
+**16x**: mean absolute error 0.0253 pp weekly, 0.1504 monthly, 0.4137 quarterly (max 0.1253 / 0.8869
+/ **1.7249** pp). A held-target-path refinement, also free, halves the tail to 0.6437 pp but is
+biased +0.1638 pp rather than centred. The whole cadence term is the stale-weight effect.
+
+**PRICED, THE SUBSTITUTION IS INVISIBLE.** Against pre-registered bars — |dSharpe| < 0.0089 (idea
+1617's smallest committed device margin) and |dMaxDD| < 2.93 pp (idea 1511's measured paired
+circular-block SE), both fixed before the run — replacing the 44-step bisection with `k = G * mean s`
+moves the control by max |dSharpe| **0.000496** and max |dMaxDD| **0.5632 pp** over 180 cells x
+FULL/OOS at 10 bps, 18x and 5x inside the bars, and does not drift at 0 / 25 / 50 bps. Using the
+cell's own measured realised gross instead (`k = R_cell`, also bisection-free) is tighter still:
+0.000169 and 0.2295 pp. **Same-slice KEEP-verdict flips: 0 of 540 on 4a and 0 of 540 on 4b.**
+
+**THE BOUNDARY, PUBLISHED NOT BURIED.** Rule 8 fits the twin on IS rows and reads it OOS, and there
+the 1.5 pp of gross the formula adds tips a knife-edge: on U56 quarterly, band 0.00 / G 1.00 — picked
+by BOTH C_SHARPE and C_MEMO — TWIN_BISECT (k 0.689525) posts OOS MaxDD **-20.118%** and PASSES the
+-20.230% cap, while TWIN_R (0.693907, -20.240%) and TWIN_A (0.704109, -20.523%) FAIL. **2 of 27
+chooser rows flip.** The passing margin is 0.11 pp — **1/27th of the 2.93 pp SE the record itself
+measured for a MaxDD contrast**. That is not a formula failure; it is a verdict that was never
+adjudicable. The memo's proposed rule-4 wording says so: a twin whose gross is fitted on one slice
+and read on another, or whose verdict turns on a sub-2.93 pp drawdown margin, MUST still be bisected.
+
+**CAPITAL ARM.** 4b at 10 bps: 13 of 180 CELL books pass FULL, 11 pass OOS, **11 pass both — and all
+11 sit at G = 1.00, the top gross rung**, while the band rung wanders freely across 0.00-0.10 among
+them. On this grid the 4b pass is an EDGE-OF-GRID GROSS claim, the same sentence the rest of the
+2026-09-19 record has written all day. The rule-8 legitimate pick on U56 weekly (C_SHARPE and C_MEMO
+agree, IS rows only, 2017-2026 read exactly once) is **band 0.10 / G 1.00**: FULL 11.72% / 1.1726 /
+-16.30% (halves 1.247 / 1.107), **OOS 12.14% / 1.1940 / -16.30%**, against SPY FULL 15.12% / 0.8844 /
+-33.72% and OOS 15.26% / 0.8738 / -33.72%. It clears **4b on FULL and OOS at 0 / 10 / 25 / 50 bps**,
+and its own realised-gross-matched twin FAILS 4b on both slices — at 1.7x the turnover. 4a fails
+(live RULES v2 draws -12.05%; path 4a cannot adjudicate a growth book).
+
+**THE HONEST HALF.** Pooled over all 180 cells at 10 bps, the band CELL beats its realised-gross-
+matched twin on Sharpe in only **76 of 180 FULL** (mean dSharpe **-0.0407**) and **64 of 180 OOS**
+(mean **-0.0469**), while running shallower in 104 of 180 (mean +0.62 pp). The de-gross result
+survives a fourth family; the headline cell is one of the 76, not the rule.
+
+**GATES 12/12.** G0 18.68y / 18.68y / 16.68y; G1 fast_run vs `engine.backtest`, returns
+**2.776e-17** and turnover 1.943e-16; G2 the derived 25 bps rung vs a fresh 25 bps engine run
+**1.735e-17** (cost axis exact); **G3 the (U56, W, c=0.03, G=0.75) cell replays
+`baseline.rules_v2_weights` to 1.735e-17 — that cell IS the live book**; G4 bisection quality
+**2.900e-14** over every twin; G5 two dials; **G6 no chooser reads a 2017+ row, TESTED on a
+hard-truncated array (0.000e+00, argmax identical)**; G7 8640 of 8640 published; G8 max realised
+gross 0.982143, no shorting, no leverage, **0 twins infeasible**; G9/G10 turnover, realised gross
+and in-band share published per cell and per twin. Deterministic, offline, 695s.
+
+**SURVIVORSHIP (rule 9).** U56 and B136 are current-constituent lists and SMALL a current sub-$2B
+screen carried back to 2010, so every ABSOLUTE level — including the 4b pass — is an **UPPER BOUND**.
+The twin-minus-twin contrast that carries the method result is inside one frame over the same names
+on the same days at the same realised exposure and is first-order immune; the 4b pass counts are NOT.
+
+**WHAT THE RECORD SHOULD SAY.** *The control the record has been paying 44 runs a cell for is one
+multiplication, and has been since the convention was written: gated-out weight goes to cash, so
+realised gross is target gross times the in-band share. Retire the bisection for same-slice
+contrasts. Keep it for the two cases that actually bite — a gross fitted on one window and read on
+another, and any verdict whose margin is under the record's own 2.93 pp drawdown SE — and note that
+the second case is really an argument for not quoting such a verdict at all.* **PROPOSED, NOT
+ENACTED** (rule 6: Sunday review only) — exact wording in
+`research/backtests/2026-09-19_band-gate-out-rate-predicts-realised-gross_C.memo.md`.

@@ -1,0 +1,235 @@
+======================================================================================================================
+IDEA 1660 (lane C, 2026-09-19) — does the BAND's GATE-OUT RATE predict a panel's REALISED
+GROSS well enough to RETIRE the BISECTED TWIN?
+DIALS: band c [0.0, 0.01, 0.03, 0.05, 0.1]  x  G [0.25, 0.5, 0.75, 1.0]  ->  20 cells.
+NOT DIALS, all published: PANEL [U56, B136, SMALL] x CADENCE ['W', 'M', 'Q'] x SLICE [FULL, IS, OOS] x COST [0.0, 10.0, 25.0, 50.0] bps.
+FORM A: R_hat = G * mean(s_t).   FORM B: R_hat = mean(held target path).
+TWINS:  TWIN_BISECT (44-step bisection, status quo) | TWIN_R (k = R_cell) | TWIN_A (k = G * mean(s_t), zero runs)
+PRE-REGISTERED RETIREMENT BARS: |dSharpe| < 0.0089 (idea 1617's smallest committed device margin), |dMaxDD| < 2.93 pp (idea 1511's measured paired SE).
+======================================================================================================================
+
+  SMALL filter (protocol-mandated): data/small_meta.csv drops 54 tickers with max_1d_move >= 1.0; 665 of 719 priced names survive.
+    PUBLISHED  TAPE STAMP U56: 4708 rows 2008-01-02..2026-09-18, 56 traded columns, OOS from 2017-01-03
+    GATE PASS  G0 U56 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    PUBLISHED  TAPE STAMP B136: 4708 rows 2008-01-02..2026-09-18, 136 traded columns, OOS from 2017-01-03
+    GATE PASS  G0 B136 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    PUBLISHED  TAPE STAMP SMALL: 4203 rows 2010-01-04..2026-09-18, 665 traded columns, OOS from 2017-01-03
+    GATE PASS  G0 SMALL sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 exactly two tuned parameters (band c x gross G): 20 cells = 5 band rungs x 4 gross rungs (target 2 dials)
+  SURVIVORSHIP (rule 9): U56 and B136 are CURRENT-constituent lists and SMALL a CURRENT sub-$2B screen carried back to 2010, so every ABSOLUTE level below is an UPPER BOUND. The headline is a TWIN-minus-TWIN contrast inside one frame on the same names, same days, same realised exposure, so it is first-order immune; the 4b pass counts are NOT.
+
+  [G1/G2/G3] fast_run vs engine.backtest (returns AND turnover), live cell + ungated twin
+    GATE PASS  G1 fast_run vs engine.backtest, RETURNS (max |dev|, live cell + ungated twin): 2.776e-17 (target < 1e-12)
+    GATE PASS  G1b fast_run vs engine.backtest, TURNOVER (max |dev|): 1.943e-16 (target < 1e-12)
+    GATE PASS  G2 DERIVED 25 bps rung vs a fresh 25 bps engine run (max |dev|): 1.735e-17 (target < 1e-12)
+    PUBLISHED  G1c engine rows EXCLUDED as non-finite (pre-first-rebalance): 4 of 9416
+    GATE PASS  G3 (U56, W, c=0.03, G=0.75) replays baseline.rules_v2_weights over the SCORED slice: 1.735e-17 (target < 1e-12)
+  [U56   FULL] SPY  15.12% / 0.8844 / -33.72%  | 4b bars DD -20.23%, CAGR 10.59%  | LIVE RULES v2   8.62% / 1.2011 / -12.05%
+  [U56   IS  ] SPY  14.96% / 0.8989 / -22.06%  | 4b bars DD -13.24%, CAGR 10.47%  | LIVE RULES v2   7.61% / 1.1045 /  -7.89%
+  [U56   OOS ] SPY  15.26% / 0.8738 / -33.72%  | 4b bars DD -20.23%, CAGR 10.68%  | LIVE RULES v2   9.46% / 1.2769 / -12.05%
+  [B136  FULL] SPY  15.12% / 0.8845 / -33.72%  | 4b bars DD -20.23%, CAGR 10.59%  | LIVE RULES v2   7.96% / 1.0973 / -12.24%
+  [B136  IS  ] SPY  14.96% / 0.8989 / -22.06%  | 4b bars DD -13.24%, CAGR 10.47%  | LIVE RULES v2   8.10% / 1.0924 /  -7.90%
+  [B136  OOS ] SPY  15.26% / 0.8739 / -33.72%  | 4b bars DD -20.23%, CAGR 10.68%  | LIVE RULES v2   7.85% / 1.1019 / -12.24%
+  [SMALL FULL] SPY  14.01% / 0.8562 / -33.72%  | 4b bars DD -20.23%, CAGR  9.81%  | LIVE RULES v2   4.26% / 0.6589 / -14.16%
+  [SMALL IS  ] SPY  12.02% / 0.8318 / -18.61%  | 4b bars DD -11.16%, CAGR  8.42%  | LIVE RULES v2   5.29% / 0.8754 /  -8.41%
+  [SMALL OOS ] SPY  15.26% / 0.8738 / -33.72%  | 4b bars DD -20.23%, CAGR 10.68%  | LIVE RULES v2   3.63% / 0.5448 / -14.16%
+
+  [GRID] 3 panels x 3 cadences x 20 cells = 180 books, each with 3 twins, 3 slices, 4 cost rungs ...
+    U56   W  done  (69s)
+    U56   M  done  (86s)
+    U56   Q  done  (95s)
+    B136  W  done  (191s)
+    B136  M  done  (221s)
+    B136  Q  done  (236s)
+    SMALL W  done  (518s)
+    SMALL M  done  (629s)
+    SMALL Q  done  (694s)
+    GATE PASS  G4 bisection quality: max |realised(TWIN_BISECT) - R_cell|: 2.900e-14 (target < 1e-9)
+    GATE PASS  G8 no leverage / no shorting: max realised TARGET gross: 0.982143 (target <= 1.000001)
+    PUBLISHED  twins needing leverage (INFEASIBLE, reported never clipped silently): 0
+    GATE PASS  G7 every cell x slice x cost rung x book published: 8640 rows = 3x3x20x3 slices x4 costs x4 books (target 8640)
+    GATE PASS  G6 no chooser reads a 2017+ row (IS Sharpe on a HARD-TRUNCATED tape, max |dev| + same argmax): 0.000e+00, argmax identical=True (target < 1e-12 and True)
+
+======================================================================================================================
+  [Q0] THE FORM — residual (REALISED mean gross) - (predicted), in pp of NAV
+      FORM A: mean -0.0258 pp   mean|.| 0.1964 pp   max|.| 1.7249 pp   at {'panel': 'U56', 'cadence': 'Q', 'band': 0.03, 'gross': 1.0, 'slice': 'IS'}
+    PUBLISHED  Q0 FORM A residual mean|.| / max|.| (pp of NAV, 540 cells): 0.1964 / 1.7249
+      FORM B: mean +0.1638 pp   mean|.| 0.1638 pp   max|.| 0.6437 pp   at {'panel': 'U56', 'cadence': 'Q', 'band': 0.1, 'gross': 0.75, 'slice': 'OOS'}
+    PUBLISHED  Q0 FORM B residual mean|.| / max|.| (pp of NAV, 540 cells): 0.1638 / 0.6437
+      ratio R / (G * s_mean), the 1649 proportionality, by panel:
+        U56    mean 0.998846  min 0.975495  max 1.015020
+        B136   mean 0.997280  min 0.978386  max 1.011462
+        SMALL  mean 1.005391  min 0.989744  max 1.030015
+      by cadence (FORM A |residual|, pp):
+        W  mean 0.0253  max 0.1253
+        M  mean 0.1504  max 0.8869
+        Q  mean 0.4137  max 1.7249
+
+  [Q1] THE TWIN, PRICED — TWIN_R and TWIN_A against TWIN_BISECT at the binding 10 bps
+      TWIN_R      FULL  max|dSharpe| 0.000096 (bar 0.0089)   max|dMaxDD| 0.2108 pp (bar 2.93)   max|dCAGR| 0.1241 pp   -> WITHIN BARS  (180 cells)
+      TWIN_R      OOS   max|dSharpe| 0.000169 (bar 0.0089)   max|dMaxDD| 0.2295 pp (bar 2.93)   max|dCAGR| 0.1392 pp   -> WITHIN BARS  (180 cells)
+      TWIN_A      FULL  max|dSharpe| 0.000233 (bar 0.0089)   max|dMaxDD| 0.5539 pp (bar 2.93)   max|dCAGR| 0.3345 pp   -> WITHIN BARS  (180 cells)
+      TWIN_A      OOS   max|dSharpe| 0.000496 (bar 0.0089)   max|dMaxDD| 0.5632 pp (bar 2.93)   max|dCAGR| 0.3329 pp   -> WITHIN BARS  (180 cells)
+      ALL cost rungs, max |dSharpe| vs TWIN_BISECT:
+          0.0 bps  TWIN_R       max|dSharpe| 0.000174   max|dMaxDD| 0.2295 pp
+          0.0 bps  TWIN_A       max|dSharpe| 0.000504   max|dMaxDD| 0.5632 pp
+         10.0 bps  TWIN_R       max|dSharpe| 0.000169   max|dMaxDD| 0.2295 pp
+         10.0 bps  TWIN_A       max|dSharpe| 0.000496   max|dMaxDD| 0.5632 pp
+         25.0 bps  TWIN_R       max|dSharpe| 0.000165   max|dMaxDD| 0.2295 pp
+         25.0 bps  TWIN_A       max|dSharpe| 0.000484   max|dMaxDD| 0.5632 pp
+         50.0 bps  TWIN_R       max|dSharpe| 0.000158   max|dMaxDD| 0.2295 pp
+         50.0 bps  TWIN_A       max|dSharpe| 0.000463   max|dMaxDD| 0.5632 pp
+
+  [Q2] CAPITAL — both KEEP paths at every cell and every book, 10 bps
+      pass counts out of 180 cells per (book, slice):
+                   keep4a  keep4b
+book        slice                
+CELL        FULL       11      13
+            OOS        13      11
+TWIN_A      FULL       39       2
+            OOS         0       3
+TWIN_BISECT FULL       39       2
+            OOS         0       3
+TWIN_R      FULL       39       2
+            OOS         0       3
+      VERDICT FLIPS keep4a TWIN_R vs TWIN_BISECT: 0 of 540
+      VERDICT FLIPS keep4a TWIN_A vs TWIN_BISECT: 0 of 540
+      VERDICT FLIPS keep4b TWIN_R vs TWIN_BISECT: 0 of 540
+      VERDICT FLIPS keep4b TWIN_A vs TWIN_BISECT: 0 of 540
+      4b FULL-and-OOS passers among CELL books: 11 of 180
+
+  [Q3] RULE 8 — choosers fit on IS ONLY, 2017-2026 read exactly once
+panel cadence  chooser   band  gross        book   k_IS  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_H1  OOS_H2  keep4a  keep4b  SPY_OOS_CAGR  SPY_OOS_Sharpe  SPY_OOS_MaxDD  LIVE_OOS_Sharpe  LIVE_OOS_MaxDD
+  U56       W C_SHARPE 0.1000 1.0000        CELL    NaN    0.1214      1.1940    -0.1630  1.3434  1.0315   False    True        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W C_SHARPE 0.1000 1.0000 TWIN_BISECT 0.7054    0.1285      1.1269    -0.2130  1.2828  0.9632   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W C_SHARPE 0.1000 1.0000      TWIN_R 0.7056    0.1286      1.1269    -0.2130  1.2828  0.9632   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W C_SHARPE 0.1000 1.0000      TWIN_A 0.7057    0.1286      1.1269    -0.2131  1.2828  0.9632   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W   C_MEMO 0.1000 1.0000        CELL    NaN    0.1214      1.1940    -0.1630  1.3434  1.0315   False    True        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W   C_MEMO 0.1000 1.0000 TWIN_BISECT 0.7054    0.1285      1.1269    -0.2130  1.2828  0.9632   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W   C_MEMO 0.1000 1.0000      TWIN_R 0.7056    0.1286      1.1269    -0.2130  1.2828  0.9632   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W   C_MEMO 0.1000 1.0000      TWIN_A 0.7057    0.1286      1.1269    -0.2131  1.2828  0.9632   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W   C_LIVE 0.0300 0.7500        CELL    NaN    0.0946      1.2769    -0.1205  1.4326  1.1059   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.5275    0.0959      1.1269    -0.1625  1.2847  0.9616   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W   C_LIVE 0.0300 0.7500      TWIN_R 0.5278    0.0959      1.1269    -0.1626  1.2847  0.9616   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       W   C_LIVE 0.0300 0.7500      TWIN_A 0.5279    0.0959      1.1269    -0.1627  1.2847  0.9616   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M C_SHARPE 0.1000 1.0000        CELL    NaN    0.1243      1.1293    -0.2083  1.2003  1.0546   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M C_SHARPE 0.1000 1.0000 TWIN_BISECT 0.7010    0.1286      1.1460    -0.2092  1.3044  0.9807   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M C_SHARPE 0.1000 1.0000      TWIN_R 0.7023    0.1288      1.1460    -0.2096  1.3044  0.9807   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M C_SHARPE 0.1000 1.0000      TWIN_A 0.7057    0.1294      1.1460    -0.2105  1.3043  0.9806   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M   C_MEMO 0.0500 1.0000        CELL    NaN    0.1273      1.1751    -0.2099  1.2283  1.1233   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M   C_MEMO 0.0500 1.0000 TWIN_BISECT 0.6763    0.1240      1.1463    -0.2023  1.3051  0.9807   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M   C_MEMO 0.0500 1.0000      TWIN_R 0.6777    0.1242      1.1463    -0.2027  1.3050  0.9807   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M   C_MEMO 0.0500 1.0000      TWIN_A 0.6790    0.1245      1.1463    -0.2031  1.3050  0.9807   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M   C_LIVE 0.0300 0.7500        CELL    NaN    0.0955      1.2245    -0.1438  1.3415  1.0960   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.5273    0.0964      1.1481    -0.1600  1.3088  0.9809   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M   C_LIVE 0.0300 0.7500      TWIN_R 0.5289    0.0967      1.1481    -0.1605  1.3087  0.9809   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       M   C_LIVE 0.0300 0.7500      TWIN_A 0.5279    0.0965      1.1481    -0.1602  1.3088  0.9809   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q C_SHARPE 0.0000 1.0000        CELL    NaN    0.1096      0.9531    -0.2710  0.9695  0.9574   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q C_SHARPE 0.0000 1.0000 TWIN_BISECT 0.6895    0.1298      1.1708    -0.2012  1.3263  1.0087   False    True        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q C_SHARPE 0.0000 1.0000      TWIN_R 0.6939    0.1307      1.1707    -0.2024  1.3260  1.0088   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q C_SHARPE 0.0000 1.0000      TWIN_A 0.7041    0.1326      1.1705    -0.2052  1.3255  1.0089   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q   C_MEMO 0.0000 1.0000        CELL    NaN    0.1096      0.9531    -0.2710  0.9695  0.9574   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q   C_MEMO 0.0000 1.0000 TWIN_BISECT 0.6895    0.1298      1.1708    -0.2012  1.3263  1.0087   False    True        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q   C_MEMO 0.0000 1.0000      TWIN_R 0.6939    0.1307      1.1707    -0.2024  1.3260  1.0088   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q   C_MEMO 0.0000 1.0000      TWIN_A 0.7041    0.1326      1.1705    -0.2052  1.3255  1.0089   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q   C_LIVE 0.0300 0.7500        CELL    NaN    0.0842      0.9744    -0.1990  0.9921  0.9714   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.5113    0.0962      1.1742    -0.1511  1.3349  1.0071   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q   C_LIVE 0.0300 0.7500      TWIN_R 0.5166    0.0972      1.1741    -0.1526  1.3347  1.0072   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+  U56       Q   C_LIVE 0.0300 0.7500      TWIN_A 0.5279    0.0993      1.1739    -0.1558  1.3341  1.0073   False   False        0.1526          0.8738        -0.3372           1.2769         -0.1205
+ B136       W C_SHARPE 0.1000 1.0000        CELL    NaN    0.1102      1.0875    -0.1920  1.2205  0.9364   False    True        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W C_SHARPE 0.1000 1.0000 TWIN_BISECT 0.7330    0.1339      1.0873    -0.2485  1.1947  0.9684   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W C_SHARPE 0.1000 1.0000      TWIN_R 0.7332    0.1339      1.0873    -0.2486  1.1947  0.9685   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W C_SHARPE 0.1000 1.0000      TWIN_A 0.7335    0.1340      1.0873    -0.2487  1.1947  0.9685   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W   C_MEMO 0.1000 1.0000        CELL    NaN    0.1102      1.0875    -0.1920  1.2205  0.9364   False    True        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W   C_MEMO 0.1000 1.0000 TWIN_BISECT 0.7330    0.1339      1.0873    -0.2485  1.1947  0.9684   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W   C_MEMO 0.1000 1.0000      TWIN_R 0.7332    0.1339      1.0873    -0.2486  1.1947  0.9685   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W   C_MEMO 0.1000 1.0000      TWIN_A 0.7335    0.1340      1.0873    -0.2487  1.1947  0.9685   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W   C_LIVE 0.0300 0.7500        CELL    NaN    0.0785      1.1019    -0.1224  1.2916  0.8787   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.5364    0.0978      1.0883    -0.1867  1.1972  0.9676   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W   C_LIVE 0.0300 0.7500      TWIN_R 0.5367    0.0979      1.0883    -0.1868  1.1971  0.9676   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       W   C_LIVE 0.0300 0.7500      TWIN_A 0.5368    0.0979      1.0883    -0.1868  1.1971  0.9676   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M C_SHARPE 0.1000 1.0000        CELL    NaN    0.1137      1.0071    -0.2589  1.0397  1.0040   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M C_SHARPE 0.1000 1.0000 TWIN_BISECT 0.7277    0.1320      1.0944    -0.2431  1.1990  0.9790   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M C_SHARPE 0.1000 1.0000      TWIN_R 0.7293    0.1323      1.0944    -0.2436  1.1990  0.9790   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M C_SHARPE 0.1000 1.0000      TWIN_A 0.7335    0.1330      1.0943    -0.2449  1.1989  0.9790   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M   C_MEMO 0.0500 1.0000        CELL    NaN    0.1106      1.0463    -0.2310  1.1262  0.9700   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M   C_MEMO 0.0500 1.0000 TWIN_BISECT 0.7077    0.1283      1.0947    -0.2369  1.1995  0.9791   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M   C_MEMO 0.0500 1.0000      TWIN_R 0.7093    0.1286      1.0947    -0.2374  1.1995  0.9791   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M   C_MEMO 0.0500 1.0000      TWIN_A 0.7102    0.1288      1.0947    -0.2376  1.1994  0.9791   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M   C_LIVE 0.0300 0.7500        CELL    NaN    0.0820      1.0798    -0.1569  1.2043  0.9399   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.5350    0.0967      1.0970    -0.1822  1.2032  0.9798   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M   C_LIVE 0.0300 0.7500      TWIN_R 0.5370    0.0971      1.0970    -0.1828  1.2031  0.9798   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       M   C_LIVE 0.0300 0.7500      TWIN_A 0.5368    0.0970      1.0970    -0.1828  1.2031  0.9798   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q C_SHARPE 0.0000 1.0000        CELL    NaN    0.0998      0.8620    -0.2940  0.8684  0.9112   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q C_SHARPE 0.0000 1.0000 TWIN_BISECT 0.6957    0.1288      1.1176    -0.2276  1.2182  1.0072   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q C_SHARPE 0.0000 1.0000      TWIN_R 0.7005    0.1297      1.1174    -0.2291  1.2179  1.0073   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q C_SHARPE 0.0000 1.0000      TWIN_A 0.7160    0.1326      1.1170    -0.2340  1.2170  1.0074   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q   C_MEMO 0.0500 1.0000        CELL    NaN    0.1039      0.8952    -0.2920  0.8530  1.0230   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q   C_MEMO 0.0500 1.0000 TWIN_BISECT 0.6961    0.1289      1.1176    -0.2277  1.2182  1.0072   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q   C_MEMO 0.0500 1.0000      TWIN_R 0.7009    0.1298      1.1174    -0.2293  1.2179  1.0073   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q   C_MEMO 0.0500 1.0000      TWIN_A 0.7102    0.1315      1.1172    -0.2322  1.2174  1.0073   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q   C_LIVE 0.0300 0.7500        CELL    NaN    0.0758      0.8821    -0.2184  0.8853  0.9271   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.5234    0.0969      1.1220    -0.1730  1.2278  1.0057   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q   C_LIVE 0.0300 0.7500      TWIN_R 0.5293    0.0979      1.1219    -0.1749  1.2275  1.0057   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+ B136       Q   C_LIVE 0.0300 0.7500      TWIN_A 0.5368    0.0993      1.1217    -0.1773  1.2271  1.0058   False   False        0.1526          0.8739        -0.3372           1.1019         -0.1224
+SMALL       W C_SHARPE 0.1000 1.0000        CELL    NaN    0.0532      0.5840    -0.2032  0.9740  0.1800   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W C_SHARPE 0.1000 1.0000 TWIN_BISECT 0.6295    0.0773      0.5959    -0.3010  0.8116  0.3604   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W C_SHARPE 0.1000 1.0000      TWIN_R 0.6296    0.0773      0.5959    -0.3010  0.8116  0.3604   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W C_SHARPE 0.1000 1.0000      TWIN_A 0.6293    0.0773      0.5959    -0.3009  0.8116  0.3604   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W   C_MEMO 0.0300 0.7500        CELL    NaN    0.0363      0.5448    -0.1416  0.9492  0.1280   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W   C_MEMO 0.0300 0.7500 TWIN_BISECT 0.4537    0.0573      0.5967    -0.2246  0.8148  0.3590   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W   C_MEMO 0.0300 0.7500      TWIN_R 0.4538    0.0573      0.5967    -0.2247  0.8148  0.3590   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W   C_MEMO 0.0300 0.7500      TWIN_A 0.4532    0.0572      0.5967    -0.2244  0.8148  0.3590   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W   C_LIVE 0.0300 0.7500        CELL    NaN    0.0363      0.5448    -0.1416  0.9492  0.1280   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.4537    0.0573      0.5967    -0.2246  0.8148  0.3590   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W   C_LIVE 0.0300 0.7500      TWIN_R 0.4538    0.0573      0.5967    -0.2247  0.8148  0.3590   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       W   C_LIVE 0.0300 0.7500      TWIN_A 0.4532    0.0572      0.5967    -0.2244  0.8148  0.3590   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M C_SHARPE 0.0500 1.0000        CELL    NaN    0.0544      0.5922    -0.2254  0.9376  0.2240   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M C_SHARPE 0.0500 1.0000 TWIN_BISECT 0.6095    0.0717      0.5813    -0.2776  0.7871  0.3610   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M C_SHARPE 0.0500 1.0000      TWIN_R 0.6102    0.0717      0.5813    -0.2779  0.7871  0.3610   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M C_SHARPE 0.0500 1.0000      TWIN_A 0.6068    0.0714      0.5813    -0.2764  0.7872  0.3610   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M   C_MEMO 0.1000 1.0000        CELL    NaN    0.0536      0.5597    -0.2639  0.8468  0.2399   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M   C_MEMO 0.1000 1.0000 TWIN_BISECT 0.6304    0.0739      0.5811    -0.2864  0.7865  0.3612   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M   C_MEMO 0.1000 1.0000      TWIN_R 0.6310    0.0740      0.5811    -0.2867  0.7864  0.3612   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M   C_MEMO 0.1000 1.0000      TWIN_A 0.6293    0.0738      0.5811    -0.2860  0.7865  0.3612   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M   C_LIVE 0.0300 0.7500        CELL    NaN    0.0398      0.5763    -0.1707  0.9314  0.2019   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.4572    0.0550      0.5823    -0.2119  0.7915  0.3597   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M   C_LIVE 0.0300 0.7500      TWIN_R 0.4579    0.0551      0.5823    -0.2122  0.7914  0.3597   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       M   C_LIVE 0.0300 0.7500      TWIN_A 0.4532    0.0545      0.5823    -0.2101  0.7916  0.3597   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q C_SHARPE 0.0500 0.2500        CELL    NaN    0.0126      0.4889    -0.0820  0.6564  0.2836   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q C_SHARPE 0.0500 0.2500 TWIN_BISECT 0.1514    0.0201      0.6123    -0.0669  0.8706  0.3369   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q C_SHARPE 0.0500 0.2500      TWIN_R 0.1534    0.0204      0.6123    -0.0678  0.8705  0.3370   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q C_SHARPE 0.0500 0.2500      TWIN_A 0.1517    0.0202      0.6123    -0.0671  0.8706  0.3369   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q   C_MEMO 0.0300 0.7500        CELL    NaN    0.0330      0.4469    -0.2473  0.5797  0.2829   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q   C_MEMO 0.0300 0.7500 TWIN_BISECT 0.4572    0.0577      0.6070    -0.1978  0.8486  0.3492   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q   C_MEMO 0.0300 0.7500      TWIN_R 0.4609    0.0582      0.6070    -0.1994  0.8483  0.3494   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q   C_MEMO 0.0300 0.7500      TWIN_A 0.4532    0.0573      0.6071    -0.1960  0.8489  0.3491   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q   C_LIVE 0.0300 0.7500        CELL    NaN    0.0330      0.4469    -0.2473  0.5797  0.2829   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q   C_LIVE 0.0300 0.7500 TWIN_BISECT 0.4572    0.0577      0.6070    -0.1978  0.8486  0.3492   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q   C_LIVE 0.0300 0.7500      TWIN_R 0.4609    0.0582      0.6070    -0.1994  0.8483  0.3494   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+SMALL       Q   C_LIVE 0.0300 0.7500      TWIN_A 0.4532    0.0573      0.6071    -0.1960  0.8489  0.3491   False   False        0.1526          0.8738        -0.3372           0.5448         -0.1416
+      OOS 4b passes by (chooser, book): 
+                      keep4a  keep4b
+chooser  book                       
+C_LIVE   CELL              0       0
+         TWIN_A            0       0
+         TWIN_BISECT       0       0
+         TWIN_R            0       0
+C_MEMO   CELL              0       2
+         TWIN_A            0       0
+         TWIN_BISECT       0       1
+         TWIN_R            0       0
+C_SHARPE CELL              0       2
+         TWIN_A            0       0
+         TWIN_BISECT       0       1
+         TWIN_R            0       0
+      max |OOS Sharpe(TWIN_A) - OOS Sharpe(TWIN_BISECT)| over choosers: 0.000571
+
+======================================================================================================================
+  RETIREMENT TEST (pre-registered bars, 10 bps, FULL and OOS):
+    TWIN_R (k = R_cell, no bisection)        within bars: True   verdict flips: 0 4a / 0 4b
+    TWIN_A (k = G * mean s, zero runs)       within bars: True   verdict flips: 0 4a / 0 4b
+    => TWIN_R substitution KEEP (method);  TWIN_A (full closed form) substitution KEEP (method)
+======================================================================================================================
+
+  GATES 12/12 PASS.  Deterministic, offline, 695s.
