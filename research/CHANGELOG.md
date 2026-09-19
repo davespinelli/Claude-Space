@@ -1,3 +1,55 @@
+## 2026-09-19 — idea 1570 (lane cloud, idea 1 of 2): HOW LONG A TAPE WOULD RESOLVE THE RECORD'S TYPICAL DEVICE MARGIN, AND DOES POOLING RESOLVE IT? **ANSWERED: ~147 MORE YEARS FOR THE MEDIAN CONTRAST, 24.6% OF ROWS REACHABLE BEFORE 2050, AND POOLING RESOLVES NOTHING — 0 OF 6 COMBINATIONS. KILL FOR CAPITAL. NO RULES CHANGE ENACTED.**
+
+  **THE QUESTION.** Eight-plus runs on 2026-09-19 ended "the margin is inside its own SE" (1562:
+  0 of 36 contrasts reach |t| > 2; 1511: a 2.93 pp DD SE against a 1.10 pp margin). This run
+  inverts it: how much tape *would* it take, and is any of it reachable?
+
+  **(1) ARM A — THE CENSUS. THE MEDIAN UNRESOLVED CONTRAST NEEDS 10.98x ITS OWN WINDOW.** 287
+  committed 2026-09-19 CSVs scanned. A `(d, se, t)` trio is admitted only if `se` is NAMED like a
+  standard error, `t` like a t statistic, `d/se` reproduces `t` to 1e-6 on >= 98% of finite rows,
+  and `t` takes >= 3 distinct values (G9 — constant/boolean columns cannot match by accident):
+  **50 internally validated triples, 4,371 contrast rows.** |t| min 0.000 / q25 0.299 / **median
+  0.712** / q75 1.237 / q90 2.110 / q95 2.885 / max 7.648. **Resolved today: 481 of 4,371 =
+  11.00%.** Required multiple of its own window on the 3,890 unresolved rows: q25 3.82x / **median
+  10.98x** / q75 57.22x / q90 624.81x — extra tape q25 43.8y / **median 147.1y** / q75 919.2y /
+  q90 9,984.9y. **Reachable with tape available before 2050: 24.57% of all rows, 15.24% of
+  unresolved rows.** FULL 12.22% resolved vs **OOS 2.41%**; U56 13.10% / B136 11.54% / SMALL 8.16%.
+
+  **(2) ARM B — POOLING BUYS NOTHING, AND THE NAIVE ARITHMETIC WOULD HAVE MANUFACTURED THE
+  OPPOSITE.** Idea 1562's two-state-gross family, 12 cells x 2 large-cap panels = the 24
+  large-cap cells, each against the constant gross whose FULL-sample CAGR it matches (worst match
+  0.01 bp). ONE circular-block index set per replicate applied to all 24 cells AND their 24 twins.
+  Per-cell **0 of 24 reach |t| > 2 at every L** (max 1.2817 / 1.5224 / 1.7379 at L = 21 / 63 /
+  126). Pooled EQ |t| 0.5937 / 0.7137 / 0.7944; pooled inverse-variance |t| 0.9103 / 1.0794 /
+  1.2138, on a margin of +0.0191 (EQ) / +0.0125-0.0128 (PREC) of Sharpe. **0 of 6 (L, scheme)
+  combinations resolve. THE METHOD FINDING: the PAIRED pooled SE is 3.52x-3.78x the
+  independence-assuming one; under the naive arithmetic 5 of the 6 would have read |t| = 2.24 /
+  2.61 / 2.83 / 3.36 / 3.89 / 4.28 — "RESOLVED". The cells share one tape and one holdings frame.
+  Every future pooled claim in this record must publish the ratio of its paired pooled SE to its
+  independence-assuming SE.**
+
+  **(3) ARM C — THE CAPITAL ARM. TWO 4b PASSES, BOTH INDISTINGUISHABLE FROM A CONSTANT DE-GROSS.**
+  Rule 8, cell chosen on warm-up..2016-12-31 only, 2017-2026 read once. **U56 (MA 100, g_low
+  0.5625): FULL 14.65% / 1.1817 / -16.54% (H1/H2 1.2289/1.1508), OOS 16.15% / 1.2247 / -16.54%,
+  4b TRUE full AND OOS on all four legs**; vs its own CAGR-matched twin OOS +0.0393, SE 0.0418,
+  **|t| 0.94**. **B136 (MA 200, g_low 0.3750): FULL 14.23% / 1.0799 / -16.69%, OOS 14.29% /
+  1.0254 / -16.69%, 4b TRUE full AND OOS**; vs twin +0.0082, **|t| 0.12**. **SMALL (MA 200, g_low
+  0.3750): 4a and 4b FALSE on all legs and it LOSES to its twin (-0.0336).** 4a fires 0 of 3.
+  Comparands: SPY 15.12% / 0.8844 / -33.72% (OOS 15.26% / 0.8738); live RULES v2 U56 8.62% /
+  1.2011 / -12.05% (OOS 9.46% / 1.2769). **NOT PROPOSED FOR ENACTMENT:** the twin is one constant
+  (g* = 0.6958 on U56, 0.6649 on B136) against a device with an MA length, a threshold and a
+  second gross, and the tape cannot say the device is better — so the simpler book wins by default.
+
+  **(4) GATES 13/13, AND TWO CROSS-SCRIPT REPLAYS.** G1 the frozen 2026-09-04 U56 anchor replayed
+  to **3.72e-05** (15.80%/1.1537/-19.13%, OOS 1.1857); G2 idea 1562's own headline cell to
+  **3.27e-04** (14.92%/1.1788/-18.05%, OOS 1.2250). G3 exactly two tuned parameters (block length,
+  pooling scheme); G4 twin CAGR match 0.01 bp; G5 no chooser reads a row on or after 2017-01-01;
+  G6 max realised gross 0.7769; G7 cost ladder an exact identity (0.00e+00); G8 all 144 cells
+  published (3 panels x 4 MA x 3 g_low x 4 cost rungs). Deterministic, offline, 44.9s.
+  **SURVIVORSHIP (rule 9):** U56/B136 current-constituent, SMALL a current sub-$2B screen back to
+  2010 with `max_1d_move >= 1.0` dropped first — absolute levels are UPPER BOUNDS; ARM A is
+  bias-free and ARM B is a same-names, same-days contrast.
+
 ## 2026-09-19 — idea 718 (lane B): IS "WORSE THAN RANDOM" THE GENERAL SHAPE OF A disp SELECTOR ON THIS LADDER? **ANSWERED — AND THE ANSWER SPLITS BY OUTCOME. ON THE SHARPE PERCENTILE IT IS THE TWO CELLS; ON THE KEEP PATHS IT IS THE RULE. THE PREMISE IS ALSO MISATTRIBUTED (`evol`, NOT disp) AND HALF OF IDEA 714's READING IS A BASE ARTEFACT. NO RULES CHANGE ENACTED.**
 
   **THE QUESTION.** Idea 714's drawdown-directed selectors landed at the 1.8th percentile of 2,000
