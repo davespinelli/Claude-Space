@@ -3092,3 +3092,74 @@
 
   **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. No memo:
   this run produces no KEEP candidate.
+
+## 2026-09-19 — Research C (idea 1586): the weekly cadence and the MAXVOL 0.60 gate, priced together at 10 and 25 bps
+
+  **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. One memo
+  written (`2026-09-19_weekly-cadence-x-maxvol-gate-at-25bps_C.memo.md`) for an INCIDENTAL 4b
+  passer that is explicitly NOT adopted.
+
+  **WHAT WAS RUN.** 192 real books: 3 panels (U56 55 / B136 135 / SMALL 665) x 2 frames (LIVE =
+  the live RULES v2 band shape at gross 0.75; INC = the frozen 2026-09-04 anchor, N = 20, H = 126)
+  x cadence {D, W, M, Q} x MAXVOL {0.45, 0.60, 0.80, none} x cost {10, 25} bps, every one
+  published. Two dials only. Cost is NOT a dial: weights are cost-independent, so
+  `r(c) = r_gross - turnover * c / 1e4` is EXACT, and **G2 checks the derived 25 bps rung against
+  a fresh 25 bps engine run at 0.000e+00**. That exactness is what makes the headline possible.
+
+  **LEG 1 — THE GATE IS A DE-GROSS IN DISGUISE, AND IT IS SEPARABLE FROM THE CADENCE.** The 2x2
+  interaction `[S(W,0.60) - S(W,none)] - [S(c,0.60) - S(c,none)]` has mean |I| **0.0482** over 36
+  readings and **0.0121 on the LIVE frame**, against the record's own W->M step of 0.1053: the two
+  inheritances are separable and "jointly" is the wrong word for them. The gate's own sign is
+  one-directional — re-adding MAXVOL 0.60 to the live book costs **-0.0505 / -0.0352 / -0.1253**
+  of Sharpe on U56 / B136 / SMALL at 10 bps (-0.0564 / -0.0391 / -0.1449 at 25) and
+  **-0.85 / -0.54 / -1.41 pp/yr** of CAGR. It DOES buy 0.55-1.74 pp of drawdown, and **G10 shows
+  how: mean realised gross falls 0.5317 -> 0.5192 (U56), 0.5306 -> 0.5214 (B136), 0.4124 -> 0.3670
+  (SMALL).** It is a de-gross wearing an eligibility filter's clothes — the family eight
+  2026-09-19 runs already found beaten at matched exposure. **RULES v2 clause 2's decision to drop
+  the volatility filter is vindicated on all three panels.**
+
+  **LEG 2 — THE COST INVERSION IS REAL AND ONE-DIRECTIONAL.** Over the 24 (panel, frame, MAXVOL)
+  groups the full-sample cadence argmax moves between 10 and 25 bps in **5 of 24** and the OOS
+  argmax in **4 of 24** — and **9 of 9 of those moves go SLOWER, not one goes faster.** Argmax
+  distribution FULL: 10 bps {M 11, W 10, D 3} -> 25 bps {M 15, W 7, Q 1, D 1}. Idea 1009's
+  0-vs-10 inversion is therefore not a zero-cost artefact; the ordering is still sliding at rungs
+  a real book pays.
+
+  **LEG 3 — THE SHARPEST NUMBER: c\* = 12.4 bps.** Because the cost axis is exact, the break-even
+  rung at which a slower rival overtakes W is readable by bisection for all 72 (panel, frame,
+  MAXVOL, rival) pairs with no extra backtest. **For the frozen anchor's own cell (U56, INC,
+  MAXVOL 0.60), W vs Q: c\* = 12.4 bps.** At 25 bps the quarterly twin already wins on full Sharpe
+  (1.1329 vs 1.1217) AND OOS (1.1706 vs 1.1546), at 1.64x/yr against 2.87x/yr of turnover, passing
+  4b FULL and OOS at both rungs. Across all 72 pairs: 58 finite c\*, 14 never overtake W; of the
+  58, **25 are already ahead at 10 bps, 7 cross between 10 and 25, 26 cross above 25**; median c\*
+  **19.2 bps**. **The live weekly cadence is optimal by 2.4 bps of cost, not by a margin.**
+
+  **BOTH KEEP PATHS.** At the binding 10 bps: **4a 0 of 96** (3 of 96 on OOS alone), **4b 7 of 96
+  FULL, the same 7 OOS, 7 BOTH**, and **4a n 4b = 0** — the umpteenth consecutive disjunction. All
+  7 sit on the INC frame; the LIVE frame passes 4b **0 of 48**, still failing on the CAGR floor.
+  **The best of the seven is the frozen 2026-09-04 anchor itself** (15.80% / 1.1537 / -19.13%,
+  OOS 17.32% / 1.1857): it is its own grid's argmax. The same 7 pass at 25 bps.
+
+  **RULE 8.** Three IS-only choosers x 3 panels x 2 frames x 2 rungs = 36 walk-forwards, 2017-2026
+  read once. Pooled mean OOS Sharpe **C_ANCHOR (change nothing) 0.9081 > C_MEMO 0.9001 > C_SHARPE
+  0.8466**; C_SHARPE beats the anchor in **2 of 12** and costs **-0.0615** of OOS Sharpe (-0.0625
+  at 10 bps, -0.0605 at 25). Tuning these two dials is negative-value out of sample at both rungs.
+  Live RULES v2 OOS for reference: U56 1.2769 / B136 1.1019 / SMALL 0.6473; SPY OOS 0.8738.
+
+  **GATES 20/20.** G1 fast_run vs `engine.backtest` (returns AND turnover) 0.000e+00 over 12
+  panel x cadence runs; G2 as above; G3 LIVE (W, none) replays `baseline.compare`'s RULES v2 row
+  to **2.220e-16** (the `none` rung reduces the frame exactly); G4 INC (W, 0.60) replays the
+  committed 2026-09-04 anchor to **3.718e-05**; G5 two dials; G6 no chooser reads a row on or
+  after 2017-01-01, TESTED on truncated IS input; G7 192 of 192 published; G8 max realised target
+  gross 0.7500, no shorting; G9/G10 turnover, realised gross and names held published per cell.
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 are current-constituent lists and SMALL a current sub-$2B
+  screen carried back to 2010, so every absolute level is an UPPER BOUND. The headline is a
+  cadence-minus-cadence and rung-minus-rung contrast inside one panel over the same names on the
+  same days, so it is first-order immune; the 4b pass counts are not.
+
+  **WHAT THE RECORD SHOULD SAY.** *Neither inheritance is jointly anything: the two dials are
+  separable, and the MAXVOL gate is a de-gross that costs Sharpe and CAGR on every panel at every
+  rung. The weekly cadence survives, but only just — its margin over a quarterly twin on the
+  frozen anchor's own cell is 12.4 basis points of trading cost. Quote cadence verdicts as a
+  break-even rung, not as a delta at one rung.*
