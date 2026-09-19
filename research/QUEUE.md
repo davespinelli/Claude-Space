@@ -435,11 +435,15 @@
 
 *(2026-09-19, lane B) ELIGIBILITY + DOCUMENTED FALLBACK. The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and under it 895 / 894 / 877 / 876 / 429 / 353. The first five are RECORD-BOOKKEEPING censuses of committed text or filenames, 429 is PARK (no broad/u56 share-volume cache) and 353 is LOCAL-ONLY (needs a live `yf.download`); none yields a weights function, so none can carry this run's binding step-3 deliverable (a book scored against RULES v2 and SPY on both KEEP paths with a rule-8 walk-forward). Filing 3 new ideas grounded in the CHANGELOG/memo diagnosis and claiming the LAST of them, per step 2's fallback. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1600, +1 = 1601, + lane B's offset 1 = 1602, then stride 4 -> 1602 / 1606 / 1610.*
 
-1602. does-the-SHY-RESIDUAL-CLAUSE-survive-a-ZERO-DURATION-CASH-LEG - idea 1498's 4a pass (live book + full SHY residual, 9.12% / 1.2675 / -11.48%) rides a DURATION-bearing ETF: SHY lost money in 2022 and made MaxDD WORSE at 14 of 42 twins. Re-price the same clause 6 against a 0-duration accrual to separate the diversification credit from the duration risk. Max 2 params (sleeve fraction F, accrual rate). (2026-09-19)
 
 
 
 ## In progress
+
+*(2026-09-19, lane B) RAN AND CLOSED 1602 — the LAST numbered item standing in '## Open' at the moment of the claim (1613 / 1617 / 1621 stand FIRST and are lane C's; the 896 / 895 / 894 / 877 / 876 / 429 / 353 block below 1602 is the record-bookkeeping / PARK / LOCAL-ONLY block nine prior lanes have skipped for want of a weights function). Claim pushed before any compute per hygiene clause (C). Result below in '## Done'.*
+
+1602. does-the-SHY-RESIDUAL-CLAUSE-survive-a-ZERO-DURATION-CASH-LEG - idea 1498's 4a pass (live book + full SHY residual, 9.12% / 1.2675 / -11.48%) rides a DURATION-bearing ETF: SHY lost money in 2022 and made MaxDD WORSE at 14 of 42 twins. Re-price the same clause 6 against a 0-duration accrual to separate the diversification credit from the duration risk. Max 2 params (sleeve fraction F, accrual rate). (2026-09-19)
+
 
 *(2026-09-19, lane cloud, idea 2 of 2) RAN AND CLOSED 1606 — the LAST numbered item standing in '## Open' once the STALE OPEN DUPLICATE of 1610 was removed under queue-hygiene clause (D) (1610 stands in '## Done'). Claim was pushed before any compute per hygiene clause (C). Result below in '## Done'.*
 
