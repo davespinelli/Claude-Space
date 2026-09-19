@@ -1,3 +1,64 @@
+## 2026-09-19 — idea 1423 (lane B): does a CONVENTION-ENSEMBLE beat the SINGLE COMMITTED CELL on the BINDING 4b DD LEG? **ANSWERED NO — THE BLEND IS A CONCENTRATION DIAL IN A COSTUME. KILL (capital), NO NEW BOOK, NO RULES CHANGE — WITH ONE CAVEAT LOGGED.**
+
+  Idea 1409 (this morning) proved the standing 2026-09-04 KEEP-4b incumbent (U56, N = 20, H = 126,
+  gross 0.75, weekly Fri-decide / Mon-trade, 10 bps, t+1) is **ONE DRAW from a 5.3173 pp DD-margin
+  band** across its 12-1 leg's (skip, long) convention. The textbook antidote to a convention
+  artefact is to stop choosing and AVERAGE the member books — zero tuned lookback parameters, the
+  band's centre instead of its lucky tail. This run prices that antidote, and the trap in it.
+
+  **THE GRID.** BLEND {WAVG (mean of the member weight frames), VOTE (top N = 20 of that blended
+  frame, same H = 126 rule)} x SPAN {SKIP5 = skip {0,5,10,21,42} at long 252; LONG2 = long
+  {189,252} at skip 21; BOTH10 = the full 5 x 2 grid}. Members are the idea-1409 books exactly;
+  only their COMBINATION is new. Three panels, **all 18 cells published**.
+
+  **THE CONTROL IS THE WHOLE POINT.** A blended book shallows drawdown by HOLDING MORE NAMES
+  (WAVG runs **23.5 .. 43.8** names against the anchor's 19.8) — the same plain exposure dial that
+  killed idea 1405 (trailing equity stop) and idea 1413 (breadth throttle). Every cell is therefore
+  paired against its **OWN CONCENTRATION-MATCHED CONTROL**: the frozen anchor convention re-run at
+  that cell's realised name count, DERIVED from the cell and not chosen (worst match 0.450 names,
+  G7). Gaps scored by a PAIRED circular-block bootstrap (400 reps x 63-row blocks, seed 20260919,
+  identical block starts).
+
+  **THE BAR WAS PRE-REGISTERED AND IT FAILS ON BOTH LEGS.** Stated in the script header before the
+  numbers: worth capital only if on U56 (i) the DD margin exceeds the anchor's own **+1.1028 pp**
+  AND (ii) the Sharpe edge over its own control resolves **t > +2**. **(i) 0 of 6 cells** (range
+  -1.5448 .. **+0.2120** pp). **(ii) 0 of 6** (t range -1.12 .. +0.48). **BOTH: 0 of 6.**
+
+  **AND NOTHING RESOLVES ANYWHERE.** Against the concentration-matched twin, **0 of 18 cells
+  resolve |t| > 2 on Sharpe and 0 favour the ensemble**; median dSharpe **-0.0143**, median |t|
+  0.48. On the BINDING leg — MaxDD, bootstrapped on the same blocks as a REPORTED DIAGNOSTIC added
+  after the first pass, which moves no bar — **0 of 18 resolve and 0 are SHALLOWER**; median gap
+  **-0.54 pp**, U56 median **-1.00 pp**. Against the frozen anchor, 1 of 18 resolves and **0 BEAT
+  it**; median dSharpe -0.0185, median dMaxDD -1.45 pp. **4a 0 of 18.**
+
+  **THE CAVEAT, LOGGED HONESTLY.** U56 **WAVG SKIP5** is the grid's only 4b pass (U56 1 of 6, B136
+  0 of 6, SMALL 0 of 6): 15.71% / **1.1477** / **-20.02%**, halves 1.166 / 1.144, DD margin
+  **+0.2120 pp** — a pass **5.2x THINNER** than the anchor's own. Rule 8 lands on exactly this cell
+  on U56, and it is **the record's first DD-leg attack to come out OOS-POSITIVE against the frozen
+  anchor**: OOS 17.76% / **1.2061** / -20.02% against 17.32% / 1.1857 / -19.13%, **dSharpe +0.0204**,
+  **OOS 4b PASSES**. It is still a KILL, because against its own N = 24 twin that edge is
+  **+0.0164 of Sharpe (t +0.48)** and **+1.00 pp of MaxDD (t +0.88)** — unresolved on both, i.e.
+  buyable by turning one exposure dial and nothing more.
+
+  **RULE 8 (IS = warm-up..2016-12-31, 2017-2026 read ONCE).** Picks WAVG SKIP5 on U56 (+0.0204 of
+  OOS Sharpe vs the anchor, -0.89 pp of MaxDD, OOS 4b PASS) and WAVG BOTH10 on B136 (+0.0442,
+  -1.36 pp, 4b FAIL) and SMALL (-0.0692, -3.32 pp, 4b FAIL). Mean OOS Sharpe minus the frozen
+  anchor **-0.0015**, 2 of 3 positive; **minus its OWN control -0.0297, 1 of 3 positive**. OOS 4b
+  1 of 3, 4a 0 of 3. **Convention-averaging buys nothing the concentration dial does not already
+  sell — so it is not a route to the binding leg.**
+
+  GATES all pass: G0 min sample 16.68y; G1 cross-script replay of the committed U56 anchor
+  **|dSharpe| 3.72e-05** (15.80% / 1.1537 / -19.13% full, 1.1857 OOS); G2 18 of 18 published; G3
+  two tuned parameters; G4 max realised weight sum **0.750000** (no leverage, no shorting); G5 the
+  chooser reads no row on or after 2017-01-01; G6 the ensembles genuinely differ from the anchor
+  book — max |W_ens - W_anchor| **7.27e-02**, published rather than asserted, so a null reading
+  could not have been a silent no-op; G7 the concentration match is real, worst |gap| **0.450
+  names**. Survivorship (rule 9): U56/B136 are current-constituent lists and SMALL a current
+  sub-$2B screen (54 tickers with max_1d_move >= 1.0 dropped, 665 kept), so every level is an upper
+  bound; what is read here is a GAP between a book and its own twin on identical names and days.
+
+  **NO RULES CHANGE.** Script `research/backtests/2026-09-19_convention-ensemble-vs-concentration-matched_B.py`.
+
 ## 2026-09-19 — idea 1409 (lane cloud): is the incumbent's 4b DD MARGIN a LOOKBACK-SKIP ARTEFACT? **ANSWERED YES — THE COMMITTED PASS IS A LOOKBACK CONVENTION. KILL (capital), NO NEW BOOK, NO RULES CHANGE — AND A CONFIRMED CAVEAT ON THE STANDING 2026-09-04 INCUMBENT.**
 
   Idea 1257 priced the composite's leg SUBSETS but froze each leg's own (skip, length). The 12-1
