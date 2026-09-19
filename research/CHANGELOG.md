@@ -1,3 +1,92 @@
+## 2026-09-19 — idea 1694 (lane cloud): IS THE KEEP-4b PASS A REBALANCE-CALENDAR-PHASE ARTEFACT? **ANSWERED — THE PHASE IS THE LARGEST UNPRICED DIAL THE RECORD OWNS. THE STANDING U56 WEEKLY PASS SURVIVES ALL 5 WEEKDAYS; B136's SURVIVES ONLY 2 OF 5 AND NEITHER COMMITTED ANCHOR. 4a 0 OF 66. NO RULES CHANGE; A PROTOCOL NOTE IS PROPOSED.**
+
+  **THE DEFECT THIS CLOSES.** Every book in this record rebalances on the LAST TRADING DAY of
+  the period because that is what `engine.rebalance_mask` does. Nobody chose that anchor and no
+  run had priced it. Idea 1590 found ONE day of execution LATENCY kills the standing 4b pass;
+  this run holds latency fixed at t+1 and moves the day you LOOK.
+
+  **CONSTRUCTION.** Two dials: CADENCE {W, M} x PHASE (W: weekday anchor MON..FRI, FRI being
+  exactly `rebalance_mask(idx,'W')`; M: k-th trading day k in {1,5,10,15,20,L}, L being exactly
+  `rebalance_mask(idx,'M')`). Not dials, published at every cell: PANEL {U56, B136, SMALL} and
+  GROSS {0.75, 1.00} — both gross values PRE-REGISTERED from the committed record (0.75 live,
+  1.00 the only gross at which the band book clears 4b FULL-and-OOS, ideas 1498/1649), neither
+  chosen by this run. **66 cells, every one published.** Gates first: the FRI and L masks equal
+  `engine.rebalance_mask` exactly, and the local backtester replays `engine.backtest` at W and M
+  **bit-for-bit (max |d| 0.000e+00)**.
+
+  **(1) THE PHASE MOVES THE BOOK BY MORE THAN ANY DEVICE THE RECORD HAS EVER CERTIFIED.** Within
+  one (panel, gross, cadence) group — identical book, only the anchor moves — mean Sharpe spread
+  **0.0737 (max 0.1639)**, mean MaxDD spread **4.33 pp (max 10.03 pp)**, mean OOS Sharpe spread
+  **0.1005**. Weekly is the calm cadence (0.0416 Sharpe / 1.69 pp), monthly the violent one
+  (0.1060 / 6.97 pp). The standing 4b candidate's Sharpe edge over its matched twin is **0.0089**
+  (idea 1617) and its entire 4b drawdown margin is **1.10 pp** (idea 1511, paired SE 2.93 pp).
+  **M/D15 is the worst phase at 6 of 6 monthly groups** — mid-month rebalancing of a 200d-band
+  book is materially worse than month-end, which no run had said.
+
+  **(2) THE 4b VERDICT IS PHASE-DEPENDENT AT 3 OF 12 GROUPS.** U56 G=1.00 weekly **5 of 5**
+  (the reassuring half, checked for the first time); U56 G=1.00 monthly **5 of 6** (D15 fails);
+  **B136 G=1.00 weekly 2 of 5 (TUE, WED) and monthly 2 of 6 (D1, D5) — and it fails at BOTH
+  anchors the record actually quotes.** Any B136 4b claim that does not name its phase is
+  unadjudicable. Corpus: **4a 0 of 66, 4b FULL 16, 4b FULL-and-OOS 14** — every passer is the
+  already-committed G = 1.00 band book, not a new one.
+
+  **(3) THE COMMITTED ANCHOR IS NOT A NEUTRAL DRAW.** Ranked by Sharpe inside its own phase set,
+  the last-trading-day anchor has **mean rank 2.00 of a mean 5.5 phases against a uniform 3.25**,
+  and rank 1 or 2 in **8 of 12 groups**. Every Sharpe the record has published is quoted at a
+  mildly favourable point of a dial nobody declared. Small, but free to state.
+
+  **(4) RULE 8 — THE IS-FITTED PHASE IS ACTIVELY HARMFUL.** 18 picks, three legal IS-only
+  choosers, 2017-2026 read once. **0 of 18 land back on W/FRI**; mean OOS Sharpe of the picks
+  **0.9188 vs the anchor's 0.9744 (-0.0555)**; **C_SHARPE picks M/D15 at all four U56 and B136
+  cells**, the worst OOS phase (U56 G=1.00 **-0.1639**). 3 of 18 clear 4b OOS, 0 of 18 clear 4a.
+  The same end-seeking failure already found on N (1639), gross (1590) and cadence (1586).
+
+  **WHAT THE RECORD SHOULD DO.** Quote the PHASE beside every committed cadence or device
+  verdict; use the cross-phase spread (0.0416 weekly, 0.1060 monthly) as the noise floor a
+  cadence contrast must clear; do NOT re-tune the phase. **No RULES change proposed.**
+
+## 2026-09-19 — idea 1664 (lane cloud): IS THE 27-of-27 MIXTURE CONVEXITY A DIVERSIFICATION FACT OR A SHARPE-ALGEBRA FACT? **ANSWERED — THE SIGN IS ALGEBRA (99.9% UNDER A NULL THAT CROSSES NOTHING), THE MAGNITUDE IS A rho FACT AND NOT A PANEL FACT. THE CONVEXITY COUNT SHOULD BE RETIRED. KILL STANDS FOR THE BLEND.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1649 reported blend Sharpe above the NAV-weighted average of
+  its two corner Sharpes in **27 of 27 cells (mean +0.0535)** and read it as "real
+  diversification". Sharpe is not linear in NAV weights, so some of that is arithmetic that holds
+  for ANY two imperfectly correlated books — including two random halves of ONE panel.
+
+  **CONSTRUCTION.** Two dials: **w {0.25, 0.50, 0.75} x G {0.50, 0.75, 1.00}**. Published, not
+  dials: PAIR {U56xSMALL, U56xB136, B136xSMALL} x SLICE {FULL, IS, OOS} = **81 cross-panel
+  cells**. Null: 40 random disjoint half-splits per panel, same book, same w, same G, seed
+  20260919 = **3,240 null cells**. Book everywhere: live RULES v2 band 0.03, weekly, t+1, 10 bps.
+  Gate: the (U56, G=0.75) corner replays `baseline.rules_v2_weights` bit-for-bit.
+
+  **(0) THE ALGEBRA, ASSERTED NUMERICALLY.** C decomposes EXACTLY as `C = MIX + DIV`, where
+  `MIX = (S_A - S_B) * w(1-w)(sd_A - sd_B) / (w*sd_A + (1-w)*sd_B)` is vol-mismatch re-weighting
+  and `DIV = (w*mu_A + (1-w)*mu_B) * (1/sd_blend - 1/sd_lin)` is variance sub-additivity, **>= 0
+  for ANY rho < 1 whenever the blend's mean is positive**. Identity holds to **5.1e-16** at all
+  81 + 3,240 cells. Of 1649's number, replicated here at **+0.0536**, **93.1% is DIV** and only
+  6.9% is MIX.
+
+  **(1) THE SIGN CARRIES NO INFORMATION.** Random halves of ONE panel — same names, same gate,
+  same regime, no panel crossed — give **C > 0 in 99.9% of 3,240 cells and 120 of 120 draw-means
+  (100.0%)**. "k of k cells" is an algebraic near-certainty and must never again be published as
+  evidence of diversification.
+
+  **(2) THE MAGNITUDE SEPARATES — ON rho.** Shape-matched null (each draw's own mean over its 27
+  cells): **0 of 120 draws reach +0.0536**; within-U56 reaches 65.6% of it, within-B136 24.0%,
+  within-SMALL 12.4%. But **corr(C, 1 - rho) = +0.9528** over 1,107 even-split cells, and the
+  ordering is decisive: **a random split of U56 (rho 0.865) yields C +0.0352 while the CROSS-PANEL
+  U56xB136 pair (rho 0.964) yields only +0.0088**. Panel-crossing is not the operative property —
+  U56 and B136 share 55 of 56 names (idea 536), so they are barely two books.
+
+  **(3) THE CAPITAL ARM CONFIRMS 1649.** 15 cells published: **4a 0 of 15, 4b FULL 1, 4b OOS 2,
+  4b FULL-and-OOS 1** — and that one is **w = 1.00**, the pure U56 corner at G = 1.00, i.e. no
+  blend. **Of the 9 BLEND cells: 4a 0, 4b FULL 0, 4b OOS 1.** Rule 8, 2017-2026 read once: all
+  three IS-only choosers leave the corner and every one is negative-value OOS (argmax IS Sharpe
+  and IS Calmar **-0.1072**; **argmax IS CONVEXITY ITSELF is worst at -0.2752**). C is not a
+  selection criterion.
+
+  **WHAT THE RECORD SHOULD DO.** Retire the convexity COUNT; quote rho beside any convexity
+  magnitude and price it against a within-panel split at the same rho. **No RULES change.**
+
 ## 2026-09-19 — idea 1639 (lane C): IS THE KEEP-4b TOP-20 BOOK'S N AN ARGMAX, A PLATEAU MEMBER, OR A POINT ON A MONOTONE RAY? **ANSWERED — (B) PLATEAU MEMBER, EVERYWHERE. N = 20 IS NOT AN INTERIOR ARGMAX ON ANY PANEL-GROSS CELL, 0 OF 36 NEIGHBOUR CONTRASTS REACH |t| > 2, AND 0 OF 12 LEGAL IS-ONLY CHOOSERS REACH IT. KILL AS A RE-TUNE AXIS; NO RULES CHANGE PROPOSED.**
 
   **THE DEFECT THIS CLOSES.** The standing 2026-09-04 KEEP-4b candidate (three-leg composite,
