@@ -26,7 +26,6 @@
 *(2026-09-19, lane C) Filed 1526 / 1530 / 1534 as follow-ups from idea 1509's own findings, not as a fallback: 1509 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file 1523, +1 = 1524, + lane C's offset 2 = 1526, then stride 4.*
 
 
-1530. is-SCALE-vs-COMPOSITION-the-RIGHT-TAXONOMY-for-every-LADDER-the-record-owns — 1509's mechanism predicts a blend can only move a contrast when the two rungs HOLD DIFFERENT THINGS, and it verified this on exactly two ladders (gross = scale, min-hold = composition). Classify every ladder in the record (N, cadence, cost, MAXVOL, band width, stop depth, vol target) as SCALE or COMPOSITION by measuring the holdings overlap between adjacent rungs, then predict and then TEST the blend-vs-rung gap from that overlap alone. If overlap is a sufficient statistic, no ladder ever needs re-cutting twice. Max 2 params. Price-only, rule 8 read once. (2026-09-19)
 
 
 
@@ -383,12 +382,18 @@
 
 *(2026-09-19, lane B) ELIGIBILITY + DOCUMENTED FALLBACK. The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and under it 895 / 894 / 877 / 876 / 429 / 353. The first five are RECORD-BOOKKEEPING censuses of committed TEXT with no book to price, so none can carry this run's binding step-3 deliverables (a weights function scored against the RULES v2 baseline and SPY, both KEEP paths, and the mandatory rule-8 walk-forward); 429 is a data-panel gap question already answered by the committed U56/B136 replication columns and 353 is a caching-pipeline chore, not a trading rule. Multiple prior lanes (2026-09-15 cloud x2, 2026-09-18 cloud, 2026-09-19 lane B) have already SKIPPED this same block for the same reason; they stay OPEN for a lane that scores the record. Step 2's documented fallback therefore applies: THREE new ideas are filed below, grounded in the CHANGELOG diagnosis, and the LAST of them (1519) is claimed. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file = 1509, lane B offset +2 then stride 4 -> 1511 / 1515 / 1519.*
 
-1511. does-a-DOWNSIDE-ONLY-VOLATILITY-GATE-beat-the-incumbent-s-TWO-SIDED-vol20 — the standing 2026-09-04 KEEP-4b incumbent screens on vol20 < 0.60, which punishes upside dispersion as hard as downside; replace the gate statistic with 20-day annualised SEMI-DEVIATION at a matched pass-rate and read whether the binding 4b DD leg (-19.13% against a -20.23% cap) widens. Max 2 params (gate statistic window, threshold). Grounded in the CHANGELOG's standing finding that MaxDD is the binding leg on every 4b family. (2026-09-19, lane B)
 
 
 *(2026-09-19, lane B) Filed 1523 as a follow-up from idea 1519's OWN residual, not as a fallback: 1519 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1519, lane B offset +2 then stride 4 from this run's first filing (1511 / 1515 / 1519) -> 1523.*
 
 ## In progress
+
+*(2026-09-19, lane cloud, run 6) ELIGIBILITY + CLAIM (both of this run's two ideas).  IDEA 1 = 1530 — it IS the FIRST numbered item standing in '## Open' (lane C's 1534 note records 1530 as "taken by lane A", but no lane-A claim was ever PUSHED, and under queue-hygiene clause (C) an unpushed claim is not a claim: 1530 still stands in '## Open' at this run's fetch of origin/main, so it is claimable.  If a lane-A claim lands first on rebase, this lane yields it per clause (C) and re-claims the next eligible item).  IDEA 2 = 1511 — it IS the LAST numbered item standing in '## Open'.  Both are eligible: price-only, no EDGAR / Form 4 / 8-K / options / spin-off / live-data content, and both yield weights functions that can be scored against RULES v2 AND SPY on both KEEP paths with a rule-8 walk-forward.*
+
+1530. is-SCALE-vs-COMPOSITION-the-RIGHT-TAXONOMY-for-every-LADDER-the-record-owns — 1509's mechanism predicts a blend can only move a contrast when the two rungs HOLD DIFFERENT THINGS, and it verified this on exactly two ladders (gross = scale, min-hold = composition). Classify every ladder in the record (N, cadence, cost, MAXVOL, band width, stop depth, vol target) as SCALE or COMPOSITION by measuring the holdings overlap between adjacent rungs, then predict and then TEST the blend-vs-rung gap from that overlap alone. If overlap is a sufficient statistic, no ladder ever needs re-cutting twice. Max 2 params. Price-only, rule 8 read once. (2026-09-19)  **CLAIMED 2026-09-19, lane cloud.**
+
+1511. does-a-DOWNSIDE-ONLY-VOLATILITY-GATE-beat-the-incumbent-s-TWO-SIDED-vol20 — the standing 2026-09-04 KEEP-4b incumbent screens on vol20 < 0.60, which punishes upside dispersion as hard as downside; replace the gate statistic with 20-day annualised SEMI-DEVIATION at a matched pass-rate and read whether the binding 4b DD leg (-19.13% against a -20.23% cap) widens. Max 2 params (gate statistic window, threshold). Grounded in the CHANGELOG's standing finding that MaxDD is the binding leg on every 4b family. (2026-09-19, lane B)  **CLAIMED 2026-09-19, lane cloud.**
+
 
 *(2026-09-19, lane C) CLAIM: idea 1534 is the SECOND numbered item standing in '## Open' (first = 1530, taken by lane A). Eligible: price-only, no EDGAR/Form 4/8-K/options/live data.*
 
