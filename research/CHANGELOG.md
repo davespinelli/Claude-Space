@@ -1,3 +1,62 @@
+## 2026-09-19 — idea 1639 (lane C): IS THE KEEP-4b TOP-20 BOOK'S N AN ARGMAX, A PLATEAU MEMBER, OR A POINT ON A MONOTONE RAY? **ANSWERED — (B) PLATEAU MEMBER, EVERYWHERE. N = 20 IS NOT AN INTERIOR ARGMAX ON ANY PANEL-GROSS CELL, 0 OF 36 NEIGHBOUR CONTRASTS REACH |t| > 2, AND 0 OF 12 LEGAL IS-ONLY CHOOSERS REACH IT. KILL AS A RE-TUNE AXIS; NO RULES CHANGE PROPOSED.**
+
+  **THE DEFECT THIS CLOSES.** The standing 2026-09-04 KEEP-4b candidate (three-leg composite,
+  N = 20, H = 126, MAXVOL 0.60, 200d gate, weekly, G = 0.75) has had its U56 cell replayed as a
+  gate by dozens of runs, but no run had ever read N against its own neighbours at matched gross.
+  A number nobody has laddered is an INHERITANCE, not a chosen parameter.
+
+  **CONSTRUCTION.** Two dials and no more: N {10, 14, 20, 28, 40} x GROSS {0.50, 0.75, 1.00} on
+  U56 / B136 / SMALL663 = **45 cells, every one published** at 10 bps, t+1, everything else frozen.
+  A REFINED ladder N {8, 10, 12, 14, 17, 20, 24, 28, 34, 40} at G = 0.75 (30 further cells, all
+  published) is a denser sampling of the SAME dial, not a third parameter — idea 1476 found coarse
+  interior argmaxes relocate on refinement. The plateau SE is not asserted: it is a PAIRED
+  circular-block bootstrap on the two books' own daily returns (block 65 rows, 1000 draws, seed
+  20260919), so one resampled calendar prices both rungs.
+
+  **(1) N = 20 IS A PLATEAU MEMBER AT 9 OF 9 PANEL-GROSS CELLS AND AN ARGMAX AT ONLY 3 (ALL U56).**
+  U56 Sharpe N10/N14/N20/N28/N40 = 1.1081 / 1.1528 / **1.1537** / 1.0845 / 1.1349; B136 argmax is
+  N = 28 (1.1077 vs 20's 1.0654); SMALL argmax is N = 14 (0.5739 vs 0.5092). **0 of 36 neighbour
+  contrasts against N = 20 reach |t| > 2** — max |t| **1.28**, mean |dSharpe| 0.0306 against a mean
+  paired SE of 0.0666. The ladder cannot tell 20 from the best rung on any panel, in either
+  direction. **0 of 9 ladders are monotone in N**, so answer (C) is excluded outright.
+
+  **(2) REFINEMENT RELOCATES THE ARGMAX ON 2 OF 3 PANELS — idea 1476 CONFIRMED.** U56 moves 20 ->
+  **12** (1.1537 -> 1.1713, 17.68% / -20.17%, and it clears 4b FULL and OOS), B136 moves 28 -> 34,
+  SMALL stays at 14. The fine ladder's Sharpe SPREAD (0.1154 U56 / 0.0989 B136 / 0.2129 SMALL) is
+  wider than any neighbour gap the bootstrap can resolve, which is the whole finding: the dial has
+  visible structure and none of it is significant.
+
+  **(3) RULE 8 — REACHING FOR A DIFFERENT N ON IS ROWS IS NEGATIVE-VALUE OOS.** Four legal IS-only
+  choosers (argmax IS Sharpe joint; argmax IS Sharpe over N at G = 0.75; argmax IS Calmar; argmax
+  IS 4b-leg count) on 2009-2016 rows alone, 2017-2026 read ONCE. **0 of 12 (chooser, panel) picks
+  reach N = 20.** Mean OOS Sharpe of the picks **0.8431 vs the N = 20 anchor's 0.8812 on the same
+  panels (-0.0381)**; **1 of 12 picks clears 4b OOS, 0 of 12 clear 4a OOS**, while the anchor cell
+  clears 4b FULL *and* OOS. The IS argmax runs to the ladder's ENDS (N = 40 on U56, N = 10 on B136,
+  N = 28 on SMALL) — the same end-seeking failure the gross dial shows.
+
+  **(4) BOTH KEEP PATHS OVER THE 45 COARSE CELLS: 4a 0, 4b FULL 8, 4b OOS 6, 4b FULL-AND-OOS 5.**
+  The five: U56 N20 G0.75 (the anchor), U56 N14 G0.50, U56 N10 G0.50, B136 N20 G0.50, B136 N28
+  G0.50. **SMALL passes 0 of 15.** Nothing here is a new book — every passer is the incumbent shape
+  at a rung the bootstrap cannot distinguish from it.
+
+  **WHAT THE RECORD SHOULD DO.** Stop quoting N = 20 as a chosen parameter; it is an UNRESOLVABLE
+  dial at this sample length, and that is a defensible reason to leave it alone rather than a
+  reason to move it. **No RULES change is proposed.** A re-tune to the ex-post argmax (N = 12 on
+  U56) is exactly the reach rule 8 just priced at -0.0381 of OOS Sharpe.
+
+  **GATES 8/8 PASS.** G0 16.7y min sample; **G1 the committed 2026-09-04 U56 anchor replayed to
+  |dSharpe| 3.72e-05** (15.80% / 1.1537 / -19.13% full, 17.32% / 1.1857 OOS); G2 no leverage (max
+  realised gross 1.000000, max drift above rung +0.0449); G3 exactly two dials; G4 every IS slice
+  ends 2016-12-30; G5 60 of 60 cells published; G6 realised holding count non-decreasing in N
+  (U56 10.0/13.9/19.8/27.6/38.5); G7 the three gross rungs are ONE exposure family (min corr of the
+  G = 0.50 and G = 1.00 paths 0.9998 — which is why Sharpe barely moves with G and the 4b verdict
+  moves only through the DD cap and the CAGR floor). Offline, deterministic, 12s.
+  Survivorship (rule 9): U56 / B136 current-constituent, SMALL a current sub-$2B screen — every
+  LEVEL is an upper bound; what survives is the SHAPE of Sharpe in N, since every rung inherits the
+  identical bias.
+
+  Script: `research/backtests/2026-09-19_top20-n-argmax-or-plateau_C.py`
+
 ## 2026-09-19 — idea 1666 (lane B): DOES THE BAND'S TIMING SURVIVE AN IN-BAND-SHARE-MATCHED PLACEBO GATE? **ANSWERED — THE *WHEN* IS A DRAWDOWN FACT AND ONLY A DRAWDOWN FACT. KILL FOR THE RETURN CLAIM (0 of 3 panels FULL, 1 of 3 OOS), CONFIRMED FOR THE DRAWDOWN CLAIM (3 of 3, against a null 1670's twin did not impose), AND A METHOD DEFECT THAT WOULD HAVE MANUFACTURED THE OPPOSITE ANSWER.**
 
   **THE DOUBT THIS CLOSES.** 1674 raced the live band against a static equity/SHY mix and 1670
