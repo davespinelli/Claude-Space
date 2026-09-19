@@ -1,3 +1,60 @@
+## 2026-09-19 — idea 1592 (lane cloud): IS THE 4b DD CAP READABLE AT ALL AT ONE ARBITRARY LATENCY POINT? **ANSWERED: NO. 45% OF THE RECORD'S FULL-WINDOW 4b PASSES ARE POINT ARTEFACTS. KEEP-CANDIDATE (4b) ON ONE PANEL OF THREE. NO RULES CHANGE (rule 6: Sunday review only); a PROTOCOL 4b restatement is drafted for that review.**
+
+  **THE QUESTION.** Idea 1590 found one trading day of execution timing moves MaxDD by 1.3-3.6 pp in
+  EITHER direction and 1596 confirmed it at 144 books (sd 1.52 pp, range -3.28..+6.28 pp). That move is
+  larger than the 1.10 pp DD margin every 4b verdict in this record is decided on — and EVERY published
+  4b verdict is quoted at delay +0, one arbitrary point on the latency axis. This run re-reads the same
+  bar on a LATENCY-AVERAGED statistic instead of a point. **96 real books** (U56 / B136 / SMALL x H
+  {21,63,126,252} x cadence {W,M} x gross {0.50,0.60,0.75,1.00}) on the frozen incumbent frame, each at
+  execution delay {+0,+1,+2} at 10 bps: **288 published cells, both KEEP paths under three readings
+  (POINT / MEAN / WORST) at every one, gates 9/9.** G1 replays the committed 2026-09-04 U56 anchor to
+  3.7e-5; G8 reproduces 1590/1596's -2.44 pp dMaxDD(+1) on it to **-2.4391 pp**.
+
+  **(1) THE ANSWER, AND THE SIZE OF IT.** Of the 20 books clearing 4b on the FULL window at POINT,
+  **only 11 survive the WORST-over-{0,1,2} reading**; OOS 17 -> 11; on FULL *and* OOS together
+  **13 -> 7**. The MEAN reading is nearly harmless (80% of FULL and 88% of OOS POINT passes survive) —
+  **it is the worst case that bites**, which is exactly why averaging is not a substitute for it.
+
+  **(2) THE DD LEG IS THE LEG THAT BREAKS.** Among the 20 FULL POINT passers the DD leg flips
+  POINT -> WORST in **6**, H2 Sharpe in 3, the CAGR floor in 3, H1 Sharpe in **0**. The mechanism is
+  arithmetic, not a regime story: over D = {0,1,2} a book's MaxDD moves by mean **1.83 pp** (median 1.69,
+  max 6.80) while the surviving DD-leg margin has median **1.29 pp** (min -1.94), and **64.6% of the 96
+  books have a latency spread wider than the 1.10 pp margin the record decides DD verdicts on.**
+
+  **(3) IT FLIPS A CAPITAL DECISION, NOT JUST CENSUS ROWS.** B136's PREREG pick (the 2026-09-03 memo's
+  own DD-aware IS-only rule), M/H=21/g=0.50, reads 4b **TRUE** on FULL at POINT **and** at MEAN and
+  **FALSE** at WORST: 11.00%/1.0910/-18.72% -> 10.44%/1.0432/-18.86% against the -20.23% cap.
+
+  **(4) RULE 8 (2017-2026 read once).** Three IS-only choosers, admitted sets on warm-up..2016-12-31
+  only. **LATWORST** — the memo's DD rule with the admission computed on the WORST-over-D IS statistics,
+  i.e. the chooser held to the bar the idea proposes — picks U56 **W / H=126 / gross 0.60**, the
+  incumbent's own cadence and brake de-grossed one rung, and it clears 4b FULL and OOS under **all three**
+  readings: FULL 12.19%/1.1044/-17.54% (H1 1.1885, H2 1.0313), OOS **13.06%/1.1014/-17.54%** at WORST
+  against SPY OOS 15.26%/0.8738/-33.72% (floor 10.68%, cap -20.23%) and live RULES v2 OOS
+  9.46%/1.2769/-12.05%. Turnover 2.32x/yr.
+
+  **(5) THE KEEP IS BOUNDED AND THE RUN SAYS SO.** It is **4b only and 4a fails everywhere** (the live
+  book is higher-Sharpe and shallower on every panel), and it is **one panel of three**: 6 of 32 U56
+  books survive WORST on both windows, **1 of 32 on B136, 0 of 32 on SMALL**, where the DD-aware admitted
+  set is **EMPTY at both statistics**. Survivorship (rule 9): U56/B136 are current-constituent lists and
+  SMALL a current sub-$2B screen carried back to 2010, so every pass count is an upper bound; the
+  headline is a within-book contrast between three timings of the same names on the same days, which the
+  bias cannot manufacture.
+
+  **(6) THE PROPOSED PROTOCOL RESTATEMENT (Sunday review only; nothing changes today).** Add to rule 4b,
+  verbatim: *"Every 4b leg is evaluated on the WORST value of its statistic over execution delays
+  {+0, +1, +2} trading days beyond rule 2's decide-at-t / apply-at-t convention. A 4b pass quoted at a
+  single delay is provisional and must be labelled POINT-READ."* It costs 45% of the record's FULL-window
+  passes, and the books it removes are precisely those whose DD margin is inside their own latency spread.
+
+  **GATES 9/9.** G0 >= 10y (16.7y min). G1 anchor replay 3.7e-5. G2 exactly two tuned parameters (the
+  latency set; the statistic) — H / cadence / gross are a published ladder, every rung reported. G3 delay
+  +0 is bit-for-bit PROTOCOL rule 2 against an independently rebuilt lag-1 frame (dev 0). G4 gross <= 1.0.
+  G5 no chooser reads a row on or after 2017-01-01. G6 all 288 cells published. G7 reading nesting
+  (WORST-pass => POINT-pass and MEAN-pass) 0 violations of 576. G8 cross-run replay of 1590/1596.
+  Script `research/backtests/2026-09-19_is-the-4b-dd-cap-readable-at-one-latency-point_cloud.py`; memo
+  `...cloud.memo.md`; grid / census / walk-forward / gates CSVs beside it.
+
 ## 2026-09-19 — idea 1596 (lane C): IS LATENCY FRAGILITY PREDICTABLE EX ANTE FROM TURNOVER OR HOLDING AGE? **ANSWERED: NO. PARK AS PRE-REGISTERED, KILL ON THE DEFLATED READING. THE SHORTCUT IS CLOSED; THE LATENCY AXIS MUST BE READ PER BOOK. NO RULES CHANGE (rule 6: Sunday review only).**
 
   **THE QUESTION.** Idea 1590 killed the standing 4b book because ONE trading day of execution delay
