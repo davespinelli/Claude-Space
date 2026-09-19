@@ -1,3 +1,36 @@
+## 2026-09-19 — idea 1373 (lane C): INVERSE-VOL SLOT WEIGHTING on the incumbent's 20 slots. **A DRAWDOWN INSTRUMENT, NOT A SHARPE ONE — AND ON THE LIVE PANEL THE DRAWDOWN IS NOT FOR SALE AT A PRICE WORTH PAYING.**
+
+  Selection, eligibility and slot count held byte-identical to the frozen 2026-09-04 book (gate G3:
+  p=0 reproduces it exactly, and G1 replays idea 1350's committed head-vintage anchor 15.80% /
+  1.1537 / -19.13% at max|dev| 3.7e-05); gross stays 0.75; only the 20 slot weights move, w
+  proportional to vol^-p. This is NOT the SCORE vol scaler the 2026-09-04 KEEP killed.
+
+  **U56 KILL.** p=1 shallows MaxDD **+2.64 pp** (-19.13% -> -16.49%), widening the 4b DD margin
+  **+1.10 -> +3.74 pp** — a leg U56 already PASSES — and pays for it at **0.78 pp of drawdown per pp
+  of CAGR**: CAGR 15.80% -> 12.40%, the CAGR-floor margin 5.22 -> **1.81 pp** (0.52 pp at p=1.5),
+  Calmar monotonically **0.826 -> 0.752 -> 0.718**, turnover 2.75 -> 5.56/yr. The paired circular-block
+  bootstrap (400 reps x 63-row blocks, seed 20260919, identical blocks both sides) puts the return
+  difference **NEGATIVE and resolvable at 20 of 30 cells** (U56 p=1 FULL **t -4.49**, OOS **t -2.51**);
+  the +0.021 OOS Sharpe is pure denominator. The dial swaps a 5 pp margin for a 1 pp one.
+
+  **B136 is the one place the leg binds, and rule 8 cannot reach it.** At equal weight B136 fails 4b
+  on the **DD cap alone** (margin **-0.51 pp**); every rung p = 0.25..1.00 flips it to a full 4b PASS
+  **full AND OOS**, the drawdown bought **cheaper than 1:1** (1.69 / 1.65 pp per pp of CAGR) with
+  Calmar RISING (0.7743 -> 0.7942 full, 0.7805 -> 0.8101 OOS). But the IS chooser picks **p=0** there.
+  **PARK**, not KEEP: a non-live panel, and not IS-choosable.
+
+  **The split the record should carry: the DRAWDOWN gain is vol INFORMATION, the SHARPE is DISPERSION.**
+  Against a dispersion-matched SHUFFLE null (200 seeds, the identical weight vector dealt to the held
+  names in permuted order), MaxDD percentile reads **1.000 at 4 of 6 (panel, p) cells** (0.875 / 0.955
+  on SMALL), but Sharpe reads **only 0.890-0.910 on B136** against 0.995-1.000 on U56 and SMALL.
+
+  **RULE 8 (p chosen on warm-up..2016-12-31, 2017-2026 read once).** U56 picks p=0 (**+0.0000**), B136
+  picks p=0 (**+0.0000**, leaving its DD fail standing), SMALL picks p=1.5 (+0.0942 but 4b **0 of 12**).
+  H_HINDSIGHT does not even get a chance: the dial is **un-choosable on both 4b-passing panels**.
+  4b: U56 **12/12**, B136 **9/12**, SMALL **0/12**. 4a **0 of 36** (live RULES v2's -12.05% MaxDD stays
+  out of reach for a growth book). Gates **8/8**, offline, deterministic, 63 s, 36 cells + 30 bootstrap
+  rows + 6 nulls all published. **No memo and no RULES change** (PARK, not KEEP).
+
 ## 2026-09-19 — ideas 1358 + 1366 (lane cloud): two attacks on the incumbent's SOLE binding 4b leg (the MaxDD cap). **ONE WORKS AND IS NOT ALPHA; ONE BUYS THE DRAWDOWN AND CANNOT AFFORD IT.**
 
   **1358 — PAY THE RESIDUAL A COUPON, NOT ZERO. 4b KEEP-CANDIDATE for the SUBSTITUTION, rule-8
