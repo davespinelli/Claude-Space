@@ -1,3 +1,46 @@
+## 2026-09-19 — idea 1369 (lane cloud): CLUSTER CAP on the incumbent's top 20. **THE DIVERSIFICATION DEFECT IS REAL AND THE OBVIOUS REPAIR IS A KILL — CAPPING A CLUSTER MAKES THE DRAWDOWN DEEPER.**
+
+  Selection inputs, eligibility, slot count (N=20), min-hold (H=126), gross (0.75), cadence and costs
+  held byte-identical to the frozen 2026-09-04 book; gate G1 replays idea 1350's committed head-vintage
+  anchor 15.80% / 1.1537 / -19.13% at max|dev| 3.7e-05, and G3 shows cap=20 is bit-identical across both
+  RHO controls on all three panels. Convention FILL: a candidate whose cluster is full is SKIPPED and the
+  slot goes to the next name down the SAME ranking, so the cap changes WHICH names are held and nothing
+  else — not N, not gross, not the eligibility test, not the equal weighting. Clustering is causal and
+  deterministic (leader algorithm at correlation >= RHO on the trailing 252 rows ending at the decision
+  row, refreshed the first rebalance of each calendar year, labels frozen between refreshes; RHO
+  published at 0.50 and 0.65 as a control, never chosen on).
+
+  **H_BIND CONFIRMED — the incumbent really is a one-theme book.** The mean largest cluster among its 20
+  slots is **9.20 names at RHO 0.65 and 13.63 at RHO 0.50** on U56 (7.77 / 12.93 on B136), and the book
+  spends **78.4% / 98.2%** of held days with some cluster over 5 slots. On SMALL the statistic is inert
+  (1.55 / 3.37 of 20) — small caps do not co-move enough for the cap to bite, and cap=6 is bit-identical
+  to uncapped there.
+
+  **H_DD FAILS AT EVERY RUNG. U56 KILL.** Against the uncapped -19.13%, MaxDD is **DEEPER** at cap
+  2/3/4/5/6 by **-1.62 / -0.28 / -2.53 / -1.43 / -3.40 pp** (RHO 0.65), taking the 4b DD margin from
+  **+1.10 pp to negative at 9 of the 10 capped cells**, while CAGR falls **15.80% -> 12.68-14.25%** and
+  Sharpe **1.1537 -> 1.0456-1.1531**. The mechanism is not subtle: the cap forces the book down its own
+  ranking into weaker names without removing the market beta that actually produces the drawdown. The
+  paired circular-block bootstrap (400 reps x 63-row blocks, seed 20260919, identical blocks both sides)
+  puts the return difference **NEGATIVE at 10 of 10 U56 cells and resolvable at 7** (FULL t -1.59..-2.88,
+  OOS t -1.95..-3.25; cap=4 OOS **t -3.25**). B136 and SMALL are unresolved at 20 of 20 (|t| <= 1.49).
+
+  **BOTH KEEP PATHS.** 4a **0 of 36** (live RULES v2's -12.05% MaxDD stays out of reach for a growth
+  book). 4b **5 of 36** — and **2 of the 5 are the uncapped incumbent itself**. The only capped survivors
+  are U56 cap=4/RHO 0.50 (DD margin +0.10 pp) and cap=3/RHO 0.65 (+0.83) — both strictly worse than the
+  incumbent's +1.10 — plus B136 cap=6/RHO 0.65 at +0.02 pp. The binding leg is the DD cap at **27 of 31**
+  failures. SMALL fails all five legs at every cap.
+
+  **RULE 8 (cap chosen on warm-up..2016-12-31, ties to the LOOSEST cap, 2017-2026 read ONCE).** U56 picks
+  **cap=6 (RHO 0.50) and cap=5 (RHO 0.65) and LOSES -0.1156 / -0.1211 of OOS Sharpe**; the ex-post best
+  OOS cap is **20, i.e. no cap, at both RHOs**. The dial is anti-selected on the live panel. B136 picks
+  cap=2 for +0.0880 at RHO 0.50, but that cell fails 4b on the DD cap by **0.046 pp** and RHO is a
+  control, not a third dial. SMALL's +0.02 is on a panel that fails 4b at 0 of 12.
+
+  **WHAT THE RECORD SHOULD CARRY:** the incumbent's concentration is now a measured number rather than a
+  worry, and the standard fix is priced and rejected. Gates **8/8**, offline, deterministic, 12 s, 36
+  cells + 30 bootstrap rows + 6 rule-8 rows all published. **No memo and no RULES change** (KILL).
+
 ## 2026-09-19 — idea 1373 (lane C): INVERSE-VOL SLOT WEIGHTING on the incumbent's 20 slots. **A DRAWDOWN INSTRUMENT, NOT A SHARPE ONE — AND ON THE LIVE PANEL THE DRAWDOWN IS NOT FOR SALE AT A PRICE WORTH PAYING.**
 
   Selection, eligibility and slot count held byte-identical to the frozen 2026-09-04 book (gate G3:
