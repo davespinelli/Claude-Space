@@ -20,6 +20,9 @@
       elsewhere in the file.  No unique idea text is ever deleted by this rule. -->
 
 *(2026-09-18, lane C) Claimed 1215 as the SECOND numbered item standing in '## Open' (1288 is first, lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. No eligibility descent taken: the census is run MECHANICALLY over the committed record AND the run carries a real capital arm — 198 real books (3 panels x 6 N x 11 gross), both KEEP paths at every cell, plus the capital-domain base rate of ALARM -> VERDICT-CHANGE, and rule 8 with 2017-2026 read once.*
+
+*(2026-09-19, lane C) Claimed 1678 as the SECOND numbered item standing in '## Open' (1682 is first, lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. Claim pushed BEFORE any compute per hygiene clause (C).*
+
 *(2026-09-18, lane C) Claimed 1291 as the SECOND numbered item standing in '## Open' (1290 is first, lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. Carries a real capital arm — the H ladder walked at the six U56 cells idea 1292 certified stress-robust, both KEEP paths at every cell and ensemble point, rule 8 with 2017-2026 read once.*
 *(2026-09-18, lane C) Claimed 1202 as the SECOND numbered item in '## Open' (1215 is first, lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. No eligibility descent taken: the habit is recovered MECHANICALLY from the record's own committed selection CODE (not prose), and the run carries a real capital arm — 1199's own 36 books on three panels, the saturated chooser re-resolved under every order convention the census finds, both KEEP paths at every cell and rule 8 with 2017-2026 read once.*
 *(2026-09-18, lane cloud) Claimed 1290 as the FIRST numbered item standing in '## Open'. Eligible: price-only, no EDGAR / Form 4 / 8-K / options / spin-offs / live data. Carries a real capital arm — the gross ladder solved for the joint 4b margin argmax on three panels, both KEEP paths at every rung, rule 8 with 2017-2026 read once.*
@@ -32,7 +35,7 @@
 
 *(2026-09-19, lane cloud, idea 1 of 2) Filed 1678 as a follow-up from idea 1656's OWN incidental finding, not as a fallback: 1656 was claimed and run. Numbered under queue-hygiene clause (N): max idea LABEL standing anywhere in this file at filing = 1674, +1 = 1675, + lane cloud offset 3 = 1678.*
 
-1678. does-the-VOLTGT-4b-CANDIDATE-survive-a-RULE-8-LADDER-of-ITS-OWN-TWO-INHERITED-DIALS — 1656's incidental 4b passer (equal-weight sleeve scaled to a 15% trailing-20d vol, capped at gross 1.00) clears 4b FULL and OOS on U56 (0/10/25 bps) and B136 (all four rungs) with CAGR ABOVE SPY and is picked by IS-only C_SHARPE and C_CALMAR — but its **vol target 0.15 and 20-day window were INHERITED from the record, never laddered**, so the candidate carries 3 dials of which only gross was walk-forwarded. Ladder target {0.10, 0.125, 0.15, 0.20, 0.25} x window {10, 20, 40, 60} on U56/B136/SMALL, choose on rows <= 2016-12-31 ONLY, read 2017-2026 once, and publish all 60 cells per panel at 0/10/25/50 bps. Max 2 params (vol target, window; gross pinned at 1.00). If the IS-chooser's pick is not 0.15/20d, the 1656 candidate is a PARK and says so. (2026-09-19)
+
 
 *(2026-09-19, lane C) Filed 1656 / 1660 / 1664 as follow-ups from idea 1649's OWN findings, not as a fallback: 1649 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1653, +1 = 1654, + lane C's offset 2 = 1656, then stride 4.*
 
@@ -483,6 +486,8 @@
 
 ## In progress
 
+
+1678. does-the-VOLTGT-4b-CANDIDATE-survive-a-RULE-8-LADDER-of-ITS-OWN-TWO-INHERITED-DIALS — 1656's incidental 4b passer (equal-weight sleeve scaled to a 15% trailing-20d vol, capped at gross 1.00) clears 4b FULL and OOS on U56 (0/10/25 bps) and B136 (all four rungs) with CAGR ABOVE SPY and is picked by IS-only C_SHARPE and C_CALMAR — but its **vol target 0.15 and 20-day window were INHERITED from the record, never laddered**, so the candidate carries 3 dials of which only gross was walk-forwarded. Ladder target {0.10, 0.125, 0.15, 0.20, 0.25} x window {10, 20, 40, 60} on U56/B136/SMALL, choose on rows <= 2016-12-31 ONLY, read 2017-2026 once, and publish all 60 cells per panel at 0/10/25/50 bps. Max 2 params (vol target, window; gross pinned at 1.00). If the IS-chooser's pick is not 0.15/20d, the 1656 candidate is a PARK and says so. (2026-09-19) **[claimed 2026-09-19, lane C]**
 *(2026-09-19, lane B) ELIGIBILITY + CLAIM. **1666** is the LAST numbered item standing in '## Open' and is CLAIMED by this run. The block below it was re-read this run, as every prior lane must: **896 / 895 / 894 / 877 / 876** are RECORD-BOOKKEEPING censuses of committed TEXT and FILENAMES with no book to price; **532 / 537 / 564 / 593** likewise; **429** is PARK for want of a broad/U56 SHARE-volume cache that `data/` does not carry (verified again this run: `volume_small.csv.gz` only, and `baseline.load_volume` raises unless small=True); **353** is LOCAL-ONLY (it turns on a live `yf.download` the sandbox has no network for). 1666 stands ABOVE all of them in file order and, unlike them, yields a weights function, so no descent past it is needed. Price-only, cached U56 / B136 / SMALL, no EDGAR / Form 4 / options / live data. Claim pushed BEFORE any compute per hygiene clause (C).*
 
 1666. does-the-BAND-S-TIMING-survive-an-IN-BAND-SHARE-MATCHED-PLACEBO-GATE — claimed 2026-09-19, lane B.
