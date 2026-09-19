@@ -81,6 +81,66 @@
   `..._grid.csv` (900 rows), `..._cell.csv`, `..._keeppaths.csv`, `..._rule8.csv`, `..._gates.csv`.
 
 
+## 2026-09-19 — idea 909 (lane B): IS THE 4b DD CAP A BETA CAP ON A PANEL THAT IS NOT U56? **ANSWERED — THE IDENTITY REPLICATES ON ALL THREE PANELS, ITS CONSTANT DOES NOT, AND THE EX-ANTE CAP IT LICENSES IS A KILL (4b 0 of 72, beaten by a plain de-gross on 56 of 72). NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE CLAIM UNDER TEST.** Idea 867 read agreement between PROTOCOL 4b's drawdown leg
+  (MaxDD <= 60% of SPY's) and a single BETA THRESHOLD at **1.0000 on U56** (82 books, zero
+  misclassifications, b\* = 0.596) but only **0.9146-0.9268 on SMALL**, and the record has since
+  treated the DD leg as a beta leg. If that identity is real it is not a curiosity: it says the
+  cap can be cleared EX ANTE by capping beta, which no committed book has tried.
+
+  **(1) THE IDENTITY IS NOT A U56 ARTEFACT.** On a shelf this run BUILDS rather than recovers from
+  prose — 14 frozen shapes (BAND x3, TOPN x4, MAXVOL x3, EQW, V1, VOLTGT x2) x 4 gross rungs =
+  **56 books per panel, 168 in all, every one published** — the best single beta threshold
+  reproduces the DD-cap label at **1.0000 / 1.0000 / 1.0000** on U56 / B136 / SMALL on the NARROW
+  (BAND+TOPN, 28-book) shelf and **0.9821 / 0.9286 / 0.9464** on the WIDE (56-book) shelf, against
+  majority-class base rates of **0.786 / 0.714 / 0.500** published beside every one. 867's SMALL
+  number is reproduced in magnitude on an independent construction.
+
+  **(2) BUT THE CONSTANT IS PANEL-SPECIFIC, AND THAT IS THE WHOLE VALUE OF THE IDENTITY.** b\* is
+  **0.540 (U56) / 0.515 (B136) / 0.355 (SMALL)** and does not transfer: U56's b\* scores **0.7857**
+  on SMALL, SMALL's scores **0.6964** on U56 and on B136. **867's OWN COMMITTED b\* = 0.596, applied
+  verbatim, reads 0.9821 / 0.9286 / 0.7500** — on SMALL, 0.196 below SMALL's own refit and 0.250
+  above a coin. The errors are a named family, not near-ties: U56 1 of 56 (VOLTGT @ gross 1.00,
+  0.94 pp from the bar), B136 4 of 56 (V1 x2, MAXVOL, VOLTGT; 3.21 pp), **SMALL 3 of 56 at 7.46 pp**.
+  Outcome (b) of the four pre-registered outcomes fires: real in FORM, useless as a CONSTANT.
+
+  **(3) THE CAPITAL ARM — AN EX-ANTE BETA CAP — IS A KILL ON EVERY LEG THAT MATTERS.** The live
+  RULES v2 band book (gross 0.75, weekly, 10 bps) de-grossed at each decision close by
+  b / (weights x trailing-L-day name betas). Two dials and no more: **b {0.20..0.90} x L {63, 126,
+  252}**, 24 cells x 3 panels, **all 72 published**. The cap buys drawdown (+6.26 / +6.83 / +3.50 pp
+  at its best cell) by cutting mean gross from 0.533 to 0.23, and pays **-5.06 / -4.77 / -2.55 pp of
+  CAGR** for it. **That purchase is worthless: the live book ALREADY clears the DD leg on all three
+  panels** (-12.05% / -12.24% / -12.48% against a -20.23% bar). **4b passes 0 of 72 FULL and 0 of 72
+  OOS, with the CAGR floor failing at 72 of 72.** Path 4a passes 13 of 72 (U56 7, B136 6, SMALL 0),
+  every one with LOWER CAGR than the book it beats.
+
+  **(4) RULE 8: NO IS-ONLY CHOOSER BEATS DOING NOTHING, ON 3 OF 3 PANELS.** Picks on
+  warm-up..2016-12-31, 2017-2026 read once. C_SHARPE takes b=0.40/L=63 on U56 -> OOS **7.41% /
+  1.275 / -10.23%** against the do-nothing anchor's **9.46% / 1.2769 / -12.05%**; B136 b=0.50/L=63 ->
+  7.12% / 1.088 against **7.85% / 1.102**; SMALL b=0.50/L=252 -> 3.63% / 0.584 against **4.41% /
+  0.647**. C_CAGR|DD selects an unbinding or near-unbinding cap on 3 of 3, i.e. it chooses the
+  anchor. 0 of 6 chooser rows clears 4b OOS. SPY OOS on the same window: 15.26% / 0.8737 / -33.72%.
+
+  **(5) AND THE DEVICE IS A WORSE DE-GROSS THAN A DE-GROSS.** Each cell raced against the same band
+  book at a CONSTANT gross solved to reproduce that cell's own realised mean gross (31-rung ladder
+  per panel, published; match error **1.08e-07**; no parameter added). **dSharpe > 0 in 16 of 72,
+  mean -0.0209; OOS dSharpe > 0 in 5 of 72, mean -0.0308; MaxDD shallower than the twin in only 5 of
+  72, mean -0.47 pp.** The cap's drawdown is typically DEEPER than a constant de-gross at the same
+  exposure — the one thing a beta cap is supposed to be for. Its only win is **path 4a, 13 of 72
+  against the twin's 0 of 72**, on a path blind to the CAGR it spends. This is the tenth consecutive
+  2026-09-19 run in which a device is beaten at matched exposure by plain de-grossing.
+
+  **GATES 11 of 11 PASS.** G0 samples 17.7y / 17.7y / 15.7y. G1 this script's simulator replays
+  `baseline.compare`'s RULES v2 row to **2.220e-16** — published beside it, the ddof0-vs-ddof1 Sharpe
+  convention gap on the same series is **1.350e-04**, larger than several credits the record calls
+  findings. G2 the unbinding cap (b = 9.99) is **bit-identical** to the live book on 3 of 3 panels
+  (0.000e+00). G3 max mean gross 0.5328, no leverage. G4 exactly two tuned parameters. G5 no chooser
+  reads a row on or after 2017-01-01. Deterministic, offline, ~2 min.
+
+  **CAVEATS (rule 9).** All three panels are current-constituent lists: every level is an upper
+  bound. Arm 1's beta is a full-sample ex-post statistic — which is precisely why arm 2 exists, and
+  arm 2 is the arm that fails. **NO RULES CHANGE, NO NEW BOOK, NOTHING ENACTED.**
 ## 2026-09-19 — idea 1602 (lane B): DOES THE SHY RESIDUAL CLAUSE SURVIVE A ZERO-DURATION CASH LEG? **ANSWERED — YES ON RISK, NO ON THE LICENSING. KEEP-4a CONFIRMATION FOR THE ACCRUAL RESTATEMENT (zero tuned parameters), KILL FOR THE ERA-HONEST FORM ON PATH 4a (0 of 492), AND A PROVED DEFECT IN PATH 4a AND RULE 8 THEMSELVES. NO NEW BOOK ENACTED, NO RULES CHANGE.**
 
   **THE DOUBT THIS CLOSES.** Ideas 1358 / 1498 / 1555 / 1547 credit the band's idle NAV with SHY
