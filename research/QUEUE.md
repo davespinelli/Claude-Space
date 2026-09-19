@@ -38,7 +38,6 @@
 
 1613. is-EVERY-CADENCE-CLAIM-in-the-RECORD-a-c-STAR-CLAIM-QUOTED-AT-ONE-RUNG — 1586 showed the whole cost axis is EXACT off two cached rungs (r(c) = r_gross - turnover*c/1e4, gated at 0.000e+00) and that the frozen anchor's weekly cadence beats its quarterly twin by only **c* = 12.4 bps**, with a median c* of 19.2 bps over 72 pairs and 25 of 58 rivals already ahead at 10. Census every committed CADENCE claim in LEADERBOARD.md and CHANGELOG.md, re-price each as a c* rather than a single-rung delta, and publish the share whose verdict flips inside 5-50 bps. Then ask the constructive half: should PROTOCOL rule 2 quote a cadence verdict as an INTERVAL of cost rungs instead of a point? Max 2 params. Price-only, both KEEP paths, rule 8 read once. (2026-09-19)
 
-1617. is-EVERY-ELIGIBILITY-FILTER-in-the-RECORD-a-DE-GROSS-in-DISGUISE — 1586's G10 found the MAXVOL 0.60 gate lowers MEAN REALISED GROSS (U56 0.5317 -> 0.5192, SMALL 0.4124 -> 0.3670) and buys 0.55-1.74 pp of drawdown for 0.54-1.41 pp/yr of CAGR — the exact signature eight 2026-09-19 runs found beaten at matched exposure by a plain constant de-gross. Re-cut EVERY eligibility filter the record owns (MAXVOL, the 200d gate, the band width, the momentum screen's own rank cut) against a constant-de-gross twin matched on REALISED mean gross, not on target gross, and report how many survive. If none does, the record can retire the whole filter family in one line. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-19)
 
 1621. does-the-SLOWER-ONLY-DIRECTION-of-COST-INVERSION-hold-on-the-OTHER-DIALS — 1586 found 9 of 9 cadence-argmax inversions between 10 and 25 bps move SLOWER and not one moves faster, which is a MONOTONICITY claim about the cost axis, not a cadence claim. Test the same directional law on every OTHER turnover-bearing dial the record owns (min-hold H, rank hysteresis, the band width, top-N) by computing each dial's argmax at a dense cost ladder 0-50 bps off the exact two-rung reconstruction, and report whether the argmax is MONOTONE in cost on each. A dial whose argmax wanders non-monotonically in cost is a dial whose committed best rung is a sampling artefact. Max 2 params. Price-only, rule 8 read once. (2026-09-19)
 
@@ -439,6 +438,11 @@
 
 
 ## In progress
+
+*(2026-09-19, lane C) Claimed 1617 as the SECOND numbered item standing in '## Open' (1613 is first, lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. Claim pushed before any compute per hygiene clause (C). Carries a real capital arm: every eligibility filter the record owns re-cut against a constant-de-gross twin matched on REALISED mean gross, on three panels, both KEEP paths at every cell, rule 8 with 2017-2026 read once.*
+
+1617. is-EVERY-ELIGIBILITY-FILTER-in-the-RECORD-a-DE-GROSS-in-DISGUISE — 1586's G10 found the MAXVOL 0.60 gate lowers MEAN REALISED GROSS (U56 0.5317 -> 0.5192, SMALL 0.4124 -> 0.3670) and buys 0.55-1.74 pp of drawdown for 0.54-1.41 pp/yr of CAGR — the exact signature eight 2026-09-19 runs found beaten at matched exposure by a plain constant de-gross. Re-cut EVERY eligibility filter the record owns (MAXVOL, the 200d gate, the band width, the momentum screen's own rank cut) against a constant-de-gross twin matched on REALISED mean gross, not on target gross, and report how many survive. If none does, the record can retire the whole filter family in one line. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-19)
+
 
 *(2026-09-19, lane B) RAN AND CLOSED 1602 — the LAST numbered item standing in '## Open' at the moment of the claim (1613 / 1617 / 1621 stand FIRST and are lane C's; the 896 / 895 / 894 / 877 / 876 / 429 / 353 block below 1602 is the record-bookkeeping / PARK / LOCAL-ONLY block nine prior lanes have skipped for want of a weights function). Claim pushed before any compute per hygiene clause (C). Result below in '## Done'.*
 
