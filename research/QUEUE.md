@@ -9,7 +9,10 @@
       number is ever reused.  A collision that survives a rebase is resolved by RENUMBERING the
       later-pushed line, never by deleting either.
   (C) CLAIMING.  A claim is only real once it is PUSHED.  A lane claims by moving the idea's
-      line to '## In progress' with the date and the lane, pushing that single-file commit
+      line to '## In progress
+
+1610. does-the-INCUMBENT-s-126-DAY-MIN-HOLD-PROTECT-WINNERS-or-TRAP-LOSERS - split the frozen anchor's symmetric 126-day min-hold into H_WIN / H_LOSS and price each side. **(2026-09-19, lane B)**
+' with the date and the lane, pushing that single-file commit
       BEFORE any compute, and re-checking after `git pull --rebase`: if the rebase reveals the
       same idea claimed by another lane, the LATER-pushed claim yields and takes the next
       eligible idea.  An idea standing in '## In progress' or '## Done' is never claimable, and
@@ -423,6 +426,14 @@
 
 
 *(2026-09-19, lane B) Filed 1523 as a follow-up from idea 1519's OWN residual, not as a fallback: 1519 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1519, lane B offset +2 then stride 4 from this run's first filing (1511 / 1515 / 1519) -> 1523.*
+
+*(2026-09-19, lane B) ELIGIBILITY + DOCUMENTED FALLBACK. The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and under it 895 / 894 / 877 / 876 / 429 / 353. The first five are RECORD-BOOKKEEPING censuses of committed text or filenames, 429 is PARK (no broad/u56 share-volume cache) and 353 is LOCAL-ONLY (needs a live `yf.download`); none yields a weights function, so none can carry this run's binding step-3 deliverable (a book scored against RULES v2 and SPY on both KEEP paths with a rule-8 walk-forward). Filing 3 new ideas grounded in the CHANGELOG/memo diagnosis and claiming the LAST of them, per step 2's fallback. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1600, +1 = 1601, + lane B's offset 1 = 1602, then stride 4 -> 1602 / 1606 / 1610.*
+
+1602. does-the-SHY-RESIDUAL-CLAUSE-survive-a-ZERO-DURATION-CASH-LEG - idea 1498's 4a pass (live book + full SHY residual, 9.12% / 1.2675 / -11.48%) rides a DURATION-bearing ETF: SHY lost money in 2022 and made MaxDD WORSE at 14 of 42 twins. Re-price the same clause 6 against a 0-duration accrual to separate the diversification credit from the duration risk. Max 2 params (sleeve fraction F, accrual rate). (2026-09-19)
+
+1606. is-the-4b-DD-CAP-MARGIN-SPENDABLE - the standing 4b anchor runs -19.13% against a -20.23% cap while 1498's 4a book runs -11.48%, i.e. roughly 9 pp of the drawdown budget is unused while the live book misses the 4b CAGR floor by ~2 pp. Price whether any PRE-COMMITTED gross ladder converts unused DD budget into the missing CAGR, or whether the two are the same ray. Max 2 params (gross G, ladder trigger). (2026-09-19)
+
+1610. does-the-INCUMBENT-s-126-DAY-MIN-HOLD-PROTECT-WINNERS-or-TRAP-LOSERS - ideas 1484/1505 give the mechanism for every brake's drawdown damage: a brake holds names the screen has ALREADY DROPPED through the drawdown. That damage is ONE-SIDED, but the record has only ever priced a SYMMETRIC H. Split the incumbent's min-hold into H_WIN (applied to names up since entry) and H_LOSS (applied to names down since entry) and price the two sides separately on the frozen 2026-09-04 anchor. Max 2 params (H_WIN, H_LOSS). (2026-09-19)
 
 ## In progress
 
