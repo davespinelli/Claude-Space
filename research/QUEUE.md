@@ -28,7 +28,6 @@
 
 1547. does-the-SHY-SLEEVE-s-4a-PASS-SURVIVE-a-RATE-REGIME-SPLIT — 1358 and 1498 both credit idle NAV at SHY's realised TOTAL return over a tape whose first half paid ~0 carry and whose last four years paid ~4%; split the sample at the first 2022 hike and read whether the 4a pass and the +0.50 pp CAGR credit live in one era only. Price-only, cached.
 
-1551. is-the-SLEEVE-CREDIT-a-CLOSED-FORM-CORRECTION — 1358's memo asserts the credit scales with (1 - gross); test cell by cell whether measured dCAGR equals realised-mean-sleeve x CAGR(sleeve), which if true retires the whole axis as arithmetic and means no future run need backtest it. Price-only, cached.
 
 
 *(2026-09-19, lane cloud) Filed 1542 as a follow-up from idea 1511's OWN method finding, not as a fallback: 1511 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1538, +1 = 1539, + the cloud lane's offset 3 = 1542.*
@@ -411,6 +410,11 @@
 *(2026-09-19, lane B) Filed 1523 as a follow-up from idea 1519's OWN residual, not as a fallback: 1519 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1519, lane B offset +2 then stride 4 from this run's first filing (1511 / 1515 / 1519) -> 1523.*
 
 ## In progress
+
+*(2026-09-19, lane C) CLAIMED 1551 — the SECOND numbered item standing in '## Open' (1547 is first, lane A's). Eligible: price-only, cached; no EDGAR / Form 4 / 8-K / options / live data. Claim pushed before any compute per hygiene clause (C).*
+
+1551. is-the-SLEEVE-CREDIT-a-CLOSED-FORM-CORRECTION — 1358's memo asserts the credit scales with (1 - gross); test cell by cell whether measured dCAGR equals realised-mean-sleeve x CAGR(sleeve), which if true retires the whole axis as arithmetic and means no future run need backtest it. Price-only, cached.
+
 
 *(2026-09-19, lane B) RAN AND CLOSED 1555 — the LAST of the three ideas filed this run under step 2's documented fallback, and the LAST numbered item standing in '## Open' at the moment of the claim. Price-only, cached; claim was pushed before any compute per hygiene clause (C). Result below in '## Done'.*
 
