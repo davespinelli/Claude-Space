@@ -1,3 +1,60 @@
+## 2026-09-19 — idea 1461 (lane C): is H = 126 the DD-per-CAGR OPTIMUM, or a GRID ARTEFACT? **ANSWERED — GRID ARTEFACT, BOTH WAYS. KILL (the claim). NO RULES CHANGE. One incidental KEEP-4b candidate PARKED, not recommended.**
+
+  **WHY THIS IDEA.**  1444's finding #2 said the beta band's exchange rate (pp of MaxDD bought per pp
+  of CAGR given up, against each rung's own c = 0 anchor) PEAKS at H = 126 on U56 (-0.901) and B136
+  (-1.047) — the frozen incumbent's own min-hold — and concluded "the incumbent is already standing on
+  the best rung".  That peak was read off a SIX-rung ladder {21, 63, 126, 189, 252, 378} whose nearest
+  neighbours to 126 are a factor of 2 and 1.5 away, from a point estimate with NO standard error.
+
+  **THE GRID.**  The same rule, same frozen incumbent (N = 20, gross 0.75, weekly, 10 bps, t+1), with
+  the ladder REFINED to H {100, 112, 126, 142, 160} (126 interior, ~+/-12% and ~+/-27%) and c FROZEN at
+  0.50; the second dial is the bootstrap block length L {21, 63, 126}, all three reported.  225 cells on
+  U56 / B136 / SMALL, every one published.  Gate **G2 is a cross-script replay of the statistic under
+  test**: re-forming 1444's coarse ladder here reproduces its six published U56 slopes and B136's H =
+  126 slope to **4.2e-4**.  All 20 gates pass.
+
+  **(1) THE PEAK MOVED — 126 IS THE ARGMIN ON NO PANEL.**  U56 reads -0.702 / -0.472 / **-0.901** /
+  **-1.391** / -1.128 at H = 100 / 112 / 126 / 142 / 160, so the argmin is **142** and it is 54% steeper
+  than 126; B136 reads +0.221 / -0.280 / -1.047 / -0.066 / **-1.050**, argmin **160**; SMALL's argmin is
+  **160**.  The coarse ladder did not find an optimum, it found the best of six far-apart rungs.
+
+  **(2) AND IT DISSOLVED — THE SLOPE CANNOT SEPARATE ANY RUNG FROM ANY OTHER.**  Under a paired
+  circular-block bootstrap (400 reps; ONE shared block-start matrix per panel x L, so every rung-to-rung
+  gap is paired), the slope's own SE is **0.61 .. 8.96** against a total five-rung spread of **0.92**
+  (U56) and **1.27** (B136).  The 126-vs-best-rival gap reads **|t| 0.14..0.20** on U56 and **|t|
+  0.01..0.09** on B136 at EVERY block length; P(argmin = 126) is **0.038..0.080** (U56) and
+  **0.330..0.338** (B136); the NEW argmin is no better resolved (P(argmin = 142) 0.55..0.75 on U56,
+  P(argmin = 160) 0.50..0.52 on B136).  All three pre-registered legs fail on both large-cap panels at
+  all three block lengths.  **The exchange rate is a ratio of two sub-2-pp differences and carries no
+  resolving power at this sample length.**
+
+  **(3) THE LOOKBACK CONTROL.**  H = 126 also equals the beta lookback B and the composite's middle
+  momentum leg, so the refined ladder was re-run with B decoupled to 252 (published, never selected on).
+  U56's argmin STAYS at 142; B136's moves BACK to 126; SMALL's moves to 112.  A location that relocates
+  when a frozen, non-selected lookback changes is noise, not a property of the min-hold.
+
+  **CAPITAL AND RULE 8.**  4a **0 of 225**; 4b FULL and OOS **44 of 225** (U56 36, B136 8, SMALL 0).  H
+  chosen on warm-up..2016-12-31 at c = 0.50 and 2017-2026 read ONCE under two pre-registered choosers
+  (argmax IS Sharpe; steepest IS slope): neither picks H = 126 on any panel (**0 of 6**).  Both pick
+  **H = 142** on U56 — full 15.47% / 1.2103 / -19.47%, halves 1.302 / 1.158, OOS **17.25% / 1.2350 /
+  -19.47%** against the -20.23% cap (+0.76 pp) and the 10.68% floor (+6.57 pp), turnover 3.42x/yr.  It
+  clears path **4b full sample AND out of sample** and is rule-8 clean, and it is still **PARKED, not
+  recommended**: against the frozen incumbent (OOS 17.32% / 1.1857 / -19.13%) it buys **+0.049 of OOS
+  Sharpe at t = +0.55** and **-0.07 pp of OOS CAGR** while NARROWING the binding 4b DD margin from +1.10
+  to +0.76 pp and raising turnover from 2.87x/yr; its own c = 0 anchor FAILS 4b (-1.15 pp), so the pass
+  is bought by exactly the band device 1436/1444 closed.  B136's picks fail 4b on drawdown (-26.6% and
+  -27.0% against a -20.2% cap); SMALL fails every leg.  SPY OOS 15.26% / 0.8738 / -33.72%; live RULES v2
+  OOS 9.46% / 1.2769 / -12.05%.
+
+  **SURVIVORSHIP (rule 9).**  U56 / B136 are current-constituent lists and SMALL a current sub-$2B
+  screen carried back to 2010; every absolute level is an upper bound and every 4b pass an optimistic
+  one.  What this run reads is a CONTRAST between books over the same names on the same days.
+
+  **CONSEQUENCE FOR THE RECORD.**  A "best rung" read off a ladder whose neighbours are a factor of 2
+  apart, with no SE on the statistic, is not evidence — including 1444's own.  Filed 1468 (does the
+  slope resolve on ANY device family), 1472 (de-gross twin for U56 H = 142) and 1476 (census and
+  re-pricing of every committed best-rung claim).  `research/backtests/2026-09-19_is-H126-the-DD-per-CAGR-optimum_C.py`, memo `.memo.md`, 225 cells in `.grid.csv`, the bootstrap in `.bootstrap.csv` / `.peak.csv`.
+
 ## 2026-09-19 — idea 1454 (lane B): does the 2026-09-03 RECOMMENDATION memo's OWN G-CHOOSING RULE survive PROTOCOL rule 8? **ANSWERED — IT FIRES ITS OWN FALLBACK AND THAT IS WHY THE LIVE BOOK FAILS 4b. KEEP-4b CANDIDATE (U56, rule-8 clean), 4a FAIL 0 of 42, NO RULES CHANGE ENACTED HERE.**
 
   **WHY THIS IDEA.**  Five consecutive runs today (1405 trailing equity stop 216 of 216 cells, 1413
