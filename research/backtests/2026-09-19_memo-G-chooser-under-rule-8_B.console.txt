@@ -1,0 +1,260 @@
+Idea 1454 (lane B, 2026-09-19): does the 2026-09-03 RECOMMENDATION memo's OWN G-choosing
+rule survive PROTOCOL rule 8?
+
+WHY THIS IDEA.  Five consecutive runs on 2026-09-19 (1405 trailing equity stop, 1413 breadth
+throttle, 1433 intra-book inverse-vol, 1429 beta-keyed floor-and-cap, 1436 its beta-matched
+twin) each found a DRAWDOWN-BUYING DEVICE that is beaten, at matched exposure, by a plain
+DE-GROSS of the same anchor.  The record's repeated WINNER is therefore the constant gross
+scalar G itself -- and G has never been scored as a candidate in its own right, nor has the
+rule that SET the live G=0.75 ever been licensed out of sample.  That rule is written down,
+pre-registered, in research/backtests/2026-09-03_RECOMMENDATION.md:
+
+    "gross G (G chosen ONLY from idea 28's three reported values by the pre-stated rule
+     'smallest G whose MaxDD <= 60% of SPY's and CAGR >= 70% of SPY's'; if none, keep 75%)"
+
+This run fits that rule, and its budget-side mirror, on 2009-2016 ALONE and reads 2017-2026
+exactly once.
+
+THE GRID.  G in {0.25, 0.375, 0.50, 0.625, 0.75, 0.875, 1.00} x cadence in {W, M}
+= 14 cells per panel, 42 in all, EVERY ONE REPORTED.  Two tuned parameters exactly (G, cadence).
+The book at every cell is the LIVE RULES v2 shape (`baseline.rules_v2_weights`, band 0.03,
+de-gross to cash, never re-spread) with its gross replaced by G; G=0.75 & W IS the live book.
+No leverage: the ladder stops at G=1.00 (PROTOCOL rule 2).
+
+CHOOSERS, all fit on IS (2009-2016) only, then read once on OOS (2017-2026):
+  C_MEMO   smallest G with IS MaxDD <= 0.60 x SPY_IS MaxDD AND IS CAGR >= 0.70 x SPY_IS CAGR;
+           if no G qualifies, keep 0.75 (the memo's own stated fallback).
+  C_BUDGET largest  G with IS MaxDD <= 0.60 x SPY_IS MaxDD  (spend the whole risk budget).
+  C_ANCHOR G = 0.75, the frozen live value (the null: choosing nothing).
+Each is run per-cadence and jointly over (G, cadence) with IS Sharpe as the tiebreak.
+
+Costs 10 bps per unit turnover, weights decided at t and applied at t+1 (engine), per PROTOCOL.
+Outputs: .grid.csv (every cell), .choosers.csv, .gates.csv, .console.txt.
+
+
+=== PANEL U56  (56 cols, 2009-01-13 -> 2026-09-18) ===
+  SPY      full CAGR 15.12% Sharpe 0.884 MaxDD -33.72% | halves 0.957/0.825 | IS MaxDD -22.06% CAGR 14.96% | OOS CAGR 15.26% Sharpe 0.874 MaxDD -33.72%
+  RULES v2 full CAGR 8.62% Sharpe 1.201 MaxDD -12.05% | halves 1.228/1.181 | OOS CAGR 9.46% Sharpe 1.277 MaxDD -12.05%
+  4b caps on this panel: DD cap -20.23% (IS -13.24%, OOS -20.23%) | CAGR floor 10.59% (IS 10.47%, OOS 10.68%)
+
+  --- ALL 14 GRID POINTS (full sample | halves | OOS) ---
+  cad     G |  CAGR  Sharpe   MaxDD |    H1     H2 | oosCAGR oosShrp oosMaxDD | trn/yr | 4a 4bF 4bO | binding(full/oos)
+    W 0.250 |  2.85%  1.201  -4.10% | 1.226  1.182 |   3.12%   1.278   -4.10% |   0.61 |  F   F   F | CAGR/CAGR
+    W 0.375 |  4.28%  1.201  -6.12% | 1.227  1.181 |   4.69%   1.277   -6.12% |   0.90 |  F   F   F | CAGR/CAGR
+    W 0.500 |  5.72%  1.201  -8.12% | 1.227  1.181 |   6.27%   1.277   -8.12% |   1.19 |  F   F   F | CAGR/CAGR
+    W 0.625 |  7.17%  1.201 -10.10% | 1.227  1.181 |   7.86%   1.277  -10.10% |   1.48 |  F   F   F | CAGR/CAGR
+    W 0.750 |  8.62%  1.201 -12.05% | 1.228  1.181 |   9.46%   1.277  -12.05% |   1.77 |  F   F   F | CAGR/CAGR
+    W 0.875 | 10.07%  1.201 -13.99% | 1.228  1.180 |  11.06%   1.276  -13.99% |   2.06 |  F   F   T | CAGR/-
+    W 1.000 | 11.53%  1.201 -15.91% | 1.228  1.180 |  12.67%   1.276  -15.91% |   2.35 |  F   T   T | -/-
+    M 0.250 |  2.92%  1.169  -4.99% | 1.208  1.137 |   3.14%   1.222   -4.99% |   0.42 |  F   F   F | CAGR/CAGR
+    M 0.375 |  4.40%  1.170  -7.41% | 1.209  1.138 |   4.73%   1.223   -7.41% |   0.62 |  F   F   F | CAGR/CAGR
+    M 0.500 |  5.88%  1.170  -9.78% | 1.210  1.138 |   6.33%   1.223   -9.78% |   0.83 |  F   F   F | CAGR/CAGR
+    M 0.625 |  7.37%  1.171 -12.10% | 1.211  1.139 |   7.94%   1.224  -12.10% |   1.03 |  F   F   F | CAGR/CAGR
+    M 0.750 |  8.88%  1.172 -14.38% | 1.213  1.139 |   9.55%   1.224  -14.38% |   1.23 |  F   F   F | CAGR/CAGR
+    M 0.875 | 10.38%  1.173 -16.62% | 1.214  1.140 |  11.18%   1.225  -16.62% |   1.44 |  F   F   T | CAGR/-
+    M 1.000 | 11.90%  1.173 -18.81% | 1.214  1.140 |  12.82%   1.225  -18.81% |   1.64 |  F   T   T | -/-
+
+  --- CHOOSERS (fit on IS 2009-2016 only, OOS read once) ---
+  [ cad=W] C_MEMO    picks G=0.750 W [MEMO FALLBACK: no rung cleared BOTH IS legs, memo says keep 0.75]  (IS MaxDD -7.89% vs cap -13.24%, IS CAGR 7.61% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 9.46% Sharpe 1.277 MaxDD -12.05%  [OOS cap -20.23% held=True]
+  [ cad=W] C_BUDGET  picks G=1.000 W  (IS MaxDD -10.45% vs cap -13.24%, IS CAGR 10.16% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 12.67% Sharpe 1.276 MaxDD -15.91%  [OOS cap -20.23% held=True]
+  [ cad=W] C_ANCHOR  picks G=0.750 W  (IS MaxDD -7.89% vs cap -13.24%, IS CAGR 7.61% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 9.46% Sharpe 1.277 MaxDD -12.05%  [OOS cap -20.23% held=True]
+  [ cad=M] C_MEMO    picks G=1.000 M  (IS MaxDD -11.10% vs cap -13.24%, IS CAGR 10.79% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 12.82% Sharpe 1.225 MaxDD -18.81%  [OOS cap -20.23% held=True]
+  [ cad=M] C_BUDGET  picks G=1.000 M  (IS MaxDD -11.10% vs cap -13.24%, IS CAGR 10.79% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 12.82% Sharpe 1.225 MaxDD -18.81%  [OOS cap -20.23% held=True]
+  [ cad=M] C_ANCHOR  picks G=0.750 M  (IS MaxDD -8.38% vs cap -13.24%, IS CAGR 8.05% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 9.55% Sharpe 1.224 MaxDD -14.38%  [OOS cap -20.23% held=True]
+  [ joint] C_MEMO    picks G=1.000 M  (IS MaxDD -11.10% vs cap -13.24%, IS CAGR 10.79% vs floor 10.47%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 12.82% Sharpe 1.225 MaxDD -18.81%  [OOS cap -20.23% held=True]
+  [ joint] C_BUDGET  picks G=1.000 M  (IS MaxDD -11.10% vs cap -13.24%, IS CAGR 10.79% vs floor 10.47%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 12.82% Sharpe 1.225 MaxDD -18.81%  [OOS cap -20.23% held=True]
+  [ joint] C_ANCHOR  picks G=0.750 W  (IS MaxDD -7.89% vs cap -13.24%, IS CAGR 7.61% vs floor 10.47%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 9.46% Sharpe 1.277 MaxDD -12.05%  [OOS cap -20.23% held=True]
+
+  --- GATES ---
+  G1_maxdd_monotone_in_G                 [W] True  MaxDD -15.91%..-4.10%
+  G2_turnover_per_unit_gross_constant    [W] True  trn/G 2.352..2.425 (cv 1.13e-02)
+  G1_maxdd_monotone_in_G                 [M] True  MaxDD -18.81%..-4.99%
+  G2_turnover_per_unit_gross_constant    [M] True  trn/G 1.641..1.672 (cv 7.16e-03)
+  G3_anchor_reproduces_live_RULESv2      [W] True  cell 1.200997/-0.120550 vs baseline 1.200997/-0.120550
+  G4_spy_dd_cap_moves_IS_to_OOS          [-] True  SPY MaxDD IS -22.06% -> OOS -33.72%; cap -13.24% -> -20.23% (+6.99 pp)
+
+=== PANEL B136  (136 cols, 2009-01-13 -> 2026-09-18) ===
+  SPY      full CAGR 15.12% Sharpe 0.884 MaxDD -33.72% | halves 0.957/0.825 | IS MaxDD -22.06% CAGR 14.96% | OOS CAGR 15.26% Sharpe 0.874 MaxDD -33.72%
+  RULES v2 full CAGR 7.96% Sharpe 1.097 MaxDD -12.24% | halves 1.230/0.967 | OOS CAGR 7.85% Sharpe 1.102 MaxDD -12.24%
+  4b caps on this panel: DD cap -20.23% (IS -13.24%, OOS -20.23%) | CAGR floor 10.59% (IS 10.47%, OOS 10.68%)
+
+  --- ALL 14 GRID POINTS (full sample | halves | OOS) ---
+  cad     G |  CAGR  Sharpe   MaxDD |    H1     H2 | oosCAGR oosShrp oosMaxDD | trn/yr | 4a 4bF 4bO | binding(full/oos)
+    W 0.250 |  2.64%  1.097  -4.16% | 1.227  0.969 |   2.61%   1.103   -4.16% |   0.69 |  F   F   F | CAGR/CAGR
+    W 0.375 |  3.97%  1.097  -6.21% | 1.228  0.968 |   3.91%   1.103   -6.21% |   1.02 |  F   F   F | CAGR/CAGR
+    W 0.500 |  5.30%  1.097  -8.24% | 1.228  0.968 |   5.22%   1.103   -8.24% |   1.35 |  F   F   F | CAGR/CAGR
+    W 0.625 |  6.63%  1.097 -10.25% | 1.229  0.967 |   6.54%   1.102  -10.25% |   1.68 |  F   F   F | CAGR/CAGR
+    W 0.750 |  7.96%  1.097 -12.24% | 1.230  0.967 |   7.85%   1.102  -12.24% |   2.01 |  F   F   F | CAGR/CAGR
+    W 0.875 |  9.29%  1.097 -14.21% | 1.230  0.966 |   9.16%   1.101  -14.21% |   2.34 |  F   F   F | CAGR/CAGR
+    W 1.000 | 10.63%  1.097 -16.16% | 1.231  0.966 |  10.47%   1.101  -16.16% |   2.67 |  F   T   F | -/CAGR
+    M 0.250 |  2.75%  1.080  -5.45% | 1.208  0.957 |   2.71%   1.078   -5.45% |   0.47 |  F   F   F | CAGR/CAGR
+    M 0.375 |  4.13%  1.081  -8.09% | 1.210  0.957 |   4.08%   1.079   -8.09% |   0.70 |  F   F   F | CAGR/CAGR
+    M 0.500 |  5.52%  1.082 -10.67% | 1.211  0.958 |   5.45%   1.079  -10.67% |   0.93 |  F   F   F | CAGR/CAGR
+    M 0.625 |  6.92%  1.083 -13.21% | 1.212  0.958 |   6.82%   1.079  -13.21% |   1.16 |  F   F   F | CAGR/CAGR
+    M 0.750 |  8.32%  1.083 -15.69% | 1.213  0.959 |   8.20%   1.080  -15.69% |   1.39 |  F   F   F | CAGR/CAGR
+    M 0.875 |  9.72%  1.084 -18.12% | 1.215  0.959 |   9.59%   1.080  -18.12% |   1.62 |  F   F   F | CAGR/CAGR
+    M 1.000 | 11.13%  1.085 -20.50% | 1.216  0.960 |  10.97%   1.080  -20.50% |   1.85 |  F   F   F | DD/DD
+
+  --- CHOOSERS (fit on IS 2009-2016 only, OOS read once) ---
+  [ cad=W] C_MEMO    picks G=1.000 W  (IS MaxDD -10.46% vs cap -13.24%, IS CAGR 10.82% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 10.47% Sharpe 1.101 MaxDD -16.16%  [OOS cap -20.23% held=True]
+  [ cad=W] C_BUDGET  picks G=1.000 W  (IS MaxDD -10.46% vs cap -13.24%, IS CAGR 10.82% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 10.47% Sharpe 1.101 MaxDD -16.16%  [OOS cap -20.23% held=True]
+  [ cad=W] C_ANCHOR  picks G=0.750 W  (IS MaxDD -7.90% vs cap -13.24%, IS CAGR 8.10% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 7.85% Sharpe 1.102 MaxDD -12.24%  [OOS cap -20.23% held=True]
+  [ cad=M] C_MEMO    picks G=1.000 M  (IS MaxDD -10.80% vs cap -13.24%, IS CAGR 11.33% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 10.97% Sharpe 1.080 MaxDD -20.50%  [OOS cap -20.23% held=False]
+  [ cad=M] C_BUDGET  picks G=1.000 M  (IS MaxDD -10.80% vs cap -13.24%, IS CAGR 11.33% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 10.97% Sharpe 1.080 MaxDD -20.50%  [OOS cap -20.23% held=False]
+  [ cad=M] C_ANCHOR  picks G=0.750 M  (IS MaxDD -8.16% vs cap -13.24%, IS CAGR 8.45% vs floor 10.47%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 8.20% Sharpe 1.080 MaxDD -15.69%  [OOS cap -20.23% held=True]
+  [ joint] C_MEMO    picks G=1.000 W  (IS MaxDD -10.46% vs cap -13.24%, IS CAGR 10.82% vs floor 10.47%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 10.47% Sharpe 1.101 MaxDD -16.16%  [OOS cap -20.23% held=True]
+  [ joint] C_BUDGET  picks G=1.000 W  (IS MaxDD -10.46% vs cap -13.24%, IS CAGR 10.82% vs floor 10.47%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 10.47% Sharpe 1.101 MaxDD -16.16%  [OOS cap -20.23% held=True]
+  [ joint] C_ANCHOR  picks G=0.750 W  (IS MaxDD -7.90% vs cap -13.24%, IS CAGR 8.10% vs floor 10.47%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 7.85% Sharpe 1.102 MaxDD -12.24%  [OOS cap -20.23% held=True]
+
+  --- GATES ---
+  G1_maxdd_monotone_in_G                 [W] True  MaxDD -16.16%..-4.16%
+  G2_turnover_per_unit_gross_constant    [W] True  trn/G 2.666..2.747 (cv 1.10e-02)
+  G1_maxdd_monotone_in_G                 [M] True  MaxDD -20.50%..-5.45%
+  G2_turnover_per_unit_gross_constant    [M] True  trn/G 1.845..1.879 (cv 6.71e-03)
+  G3_anchor_reproduces_live_RULESv2      [W] True  cell 1.097202/-0.122411 vs baseline 1.097202/-0.122411
+  G4_spy_dd_cap_moves_IS_to_OOS          [-] True  SPY MaxDD IS -22.06% -> OOS -33.72%; cap -13.24% -> -20.23% (+6.99 pp)
+
+=== PANEL SMALL485  (720 cols, 2011-01-13 -> 2026-09-18) ===
+  SPY      full CAGR 14.01% Sharpe 0.856 MaxDD -33.72% | halves 0.903/0.839 | IS MaxDD -18.61% CAGR 12.02% | OOS CAGR 15.26% Sharpe 0.874 MaxDD -33.72%
+  RULES v2 full CAGR 4.66% Sharpe 0.718 MaxDD -12.48% | halves 0.835/0.638 | OOS CAGR 4.41% Sharpe 0.647 MaxDD -12.48%
+  4b caps on this panel: DD cap -20.23% (IS -11.16%, OOS -20.23%) | CAGR floor 9.81% (IS 8.42%, OOS 10.68%)
+
+  --- ALL 14 GRID POINTS (full sample | halves | OOS) ---
+  cad     G |  CAGR  Sharpe   MaxDD |    H1     H2 | oosCAGR oosShrp oosMaxDD | trn/yr | 4a 4bF 4bO | binding(full/oos)
+    W 0.250 |  1.58%  0.718  -4.28% | 0.833  0.638 |   1.51%   0.648   -4.28% |   0.88 |  F   F   F | H1H2OOSCAGR/H2OOSCAGR
+    W 0.375 |  2.36%  0.718  -6.38% | 0.834  0.638 |   2.25%   0.647   -6.38% |   1.31 |  F   F   F | H1H2OOSCAGR/H2OOSCAGR
+    W 0.500 |  3.13%  0.718  -8.44% | 0.834  0.638 |   2.98%   0.647   -8.44% |   1.75 |  F   F   F | H1H2OOSCAGR/H2OOSCAGR
+    W 0.625 |  3.90%  0.718 -10.47% | 0.835  0.638 |   3.70%   0.647  -10.47% |   2.18 |  F   F   F | H1H2OOSCAGR/H2OOSCAGR
+    W 0.750 |  4.66%  0.718 -12.48% | 0.835  0.638 |   4.41%   0.647  -12.48% |   2.61 |  F   F   F | H1H2OOSCAGR/H2OOSCAGR
+    W 0.875 |  5.41%  0.718 -14.46% | 0.835  0.638 |   5.12%   0.647  -14.46% |   3.04 |  F   F   F | H1H2OOSCAGR/H2OOSCAGR
+    W 1.000 |  6.16%  0.718 -16.40% | 0.836  0.637 |   5.81%   0.647  -16.40% |   3.47 |  F   F   F | H1H2OOSCAGR/H2OOSCAGR
+    M 0.250 |  1.75%  0.763  -5.75% | 0.951  0.625 |   1.58%   0.657   -5.75% |   0.54 |  F   F   F | H2OOSCAGR/H2OOSCAGR
+    M 0.375 |  2.61%  0.764  -8.53% | 0.952  0.626 |   2.37%   0.658   -8.53% |   0.81 |  F   F   F | H2OOSCAGR/H2OOSCAGR
+    M 0.500 |  3.48%  0.765 -11.27% | 0.952  0.627 |   3.14%   0.659  -11.27% |   1.07 |  F   F   F | H2OOSCAGR/H2OOSCAGR
+    M 0.625 |  4.33%  0.766 -13.94% | 0.953  0.628 |   3.90%   0.660  -13.94% |   1.34 |  F   F   F | H2OOSCAGR/H2OOSCAGR
+    M 0.750 |  5.19%  0.767 -16.57% | 0.953  0.630 |   4.66%   0.661  -16.57% |   1.60 |  F   F   F | H2OOSCAGR/H2OOSCAGR
+    M 0.875 |  6.04%  0.768 -19.14% | 0.954  0.631 |   5.41%   0.662  -19.14% |   1.87 |  F   F   F | H2OOSCAGR/H2OOSCAGR
+    M 1.000 |  6.88%  0.769 -21.66% | 0.955  0.632 |   6.15%   0.663  -21.66% |   2.14 |  F   F   F | H2OOSDDCAGR/H2OOSDDCAGR
+
+  --- CHOOSERS (fit on IS 2009-2016 only, OOS read once) ---
+  [ cad=W] C_MEMO    picks G=0.750 W [MEMO FALLBACK: no rung cleared BOTH IS legs, memo says keep 0.75]  (IS MaxDD -8.19% vs cap -11.16%, IS CAGR 5.06% vs floor 8.42%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 4.41% Sharpe 0.647 MaxDD -12.48%  [OOS cap -20.23% held=True]
+  [ cad=W] C_BUDGET  picks G=1.000 W  (IS MaxDD -10.83% vs cap -11.16%, IS CAGR 6.73% vs floor 8.42%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 5.81% Sharpe 0.647 MaxDD -16.40%  [OOS cap -20.23% held=True]
+  [ cad=W] C_ANCHOR  picks G=0.750 W  (IS MaxDD -8.19% vs cap -11.16%, IS CAGR 5.06% vs floor 8.42%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 4.41% Sharpe 0.647 MaxDD -12.48%  [OOS cap -20.23% held=True]
+  [ cad=M] C_MEMO    picks G=0.750 M [MEMO FALLBACK: no rung cleared BOTH IS legs, memo says keep 0.75]  (IS MaxDD -6.92% vs cap -11.16%, IS CAGR 6.05% vs floor 8.42%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 4.66% Sharpe 0.661 MaxDD -16.57%  [OOS cap -20.23% held=True]
+  [ cad=M] C_BUDGET  picks G=1.000 M  (IS MaxDD -9.15% vs cap -11.16%, IS CAGR 8.07% vs floor 8.42%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 6.15% Sharpe 0.663 MaxDD -21.66%  [OOS cap -20.23% held=False]
+  [ cad=M] C_ANCHOR  picks G=0.750 M  (IS MaxDD -6.92% vs cap -11.16%, IS CAGR 6.05% vs floor 8.42%; 7 of 7 rungs clear the IS DD cap)  ->  OOS CAGR 4.66% Sharpe 0.661 MaxDD -16.57%  [OOS cap -20.23% held=True]
+  [ joint] C_MEMO    picks G=0.750 W [MEMO FALLBACK: no rung cleared BOTH IS legs, memo says keep 0.75]  (IS MaxDD -8.19% vs cap -11.16%, IS CAGR 5.06% vs floor 8.42%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 4.41% Sharpe 0.647 MaxDD -12.48%  [OOS cap -20.23% held=True]
+  [ joint] C_BUDGET  picks G=1.000 M  (IS MaxDD -9.15% vs cap -11.16%, IS CAGR 8.07% vs floor 8.42%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 6.15% Sharpe 0.663 MaxDD -21.66%  [OOS cap -20.23% held=False]
+  [ joint] C_ANCHOR  picks G=0.750 W  (IS MaxDD -8.19% vs cap -11.16%, IS CAGR 5.06% vs floor 8.42%; 14 of 14 rungs clear the IS DD cap)  ->  OOS CAGR 4.41% Sharpe 0.647 MaxDD -12.48%  [OOS cap -20.23% held=True]
+
+  --- GATES ---
+  G1_maxdd_monotone_in_G                 [W] True  MaxDD -16.40%..-4.28%
+  G2_turnover_per_unit_gross_constant    [W] True  trn/G 3.469..3.513 (cv 4.61e-03)
+  G1_maxdd_monotone_in_G                 [M] True  MaxDD -21.66%..-5.75%
+  G2_turnover_per_unit_gross_constant    [M] True  trn/G 2.136..2.155 (cv 3.24e-03)
+  G3_anchor_reproduces_live_RULESv2      [W] True  cell 0.718384/-0.124800 vs baseline 0.718384/-0.124800
+  G4_spy_dd_cap_moves_IS_to_OOS          [-] True  SPY MaxDD IS -18.61% -> OOS -33.72%; cap -11.16% -> -20.23% (+9.07 pp)
+
+=== SUMMARY ===
+  grid cells: 42  |  4a passes: 0  |  4b FULL passes: 3  |  4b OOS passes: 4
+  U56       4a 0/14  4bFULL 2/14  4bOOS 4/14
+  B136      4a 0/14  4bFULL 1/14  4bOOS 0/14
+  SMALL485  4a 0/14  4bFULL 0/14  4bOOS 0/14
+
+  CHOOSER LICENSING (does an IS-fit G keep the OOS DD cap?):
+  U56        cad=W C_MEMO    G=0.750W oosMaxDD -12.05% vs cap -20.23% -> HELD | oosCAGR  9.46% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  U56        cad=W C_BUDGET  G=1.000W oosMaxDD -15.91% vs cap -20.23% -> HELD | oosCAGR 12.67% vs floor 10.68% -> ok | 4bFULL True 4bOOS True
+  U56        cad=W C_ANCHOR  G=0.750W oosMaxDD -12.05% vs cap -20.23% -> HELD | oosCAGR  9.46% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  U56        cad=M C_MEMO    G=1.000M oosMaxDD -18.81% vs cap -20.23% -> HELD | oosCAGR 12.82% vs floor 10.68% -> ok | 4bFULL True 4bOOS True
+  U56        cad=M C_BUDGET  G=1.000M oosMaxDD -18.81% vs cap -20.23% -> HELD | oosCAGR 12.82% vs floor 10.68% -> ok | 4bFULL True 4bOOS True
+  U56        cad=M C_ANCHOR  G=0.750M oosMaxDD -14.38% vs cap -20.23% -> HELD | oosCAGR  9.55% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  U56        joint C_MEMO    G=1.000M oosMaxDD -18.81% vs cap -20.23% -> HELD | oosCAGR 12.82% vs floor 10.68% -> ok | 4bFULL True 4bOOS True
+  U56        joint C_BUDGET  G=1.000M oosMaxDD -18.81% vs cap -20.23% -> HELD | oosCAGR 12.82% vs floor 10.68% -> ok | 4bFULL True 4bOOS True
+  U56        joint C_ANCHOR  G=0.750W oosMaxDD -12.05% vs cap -20.23% -> HELD | oosCAGR  9.46% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  B136       cad=W C_MEMO    G=1.000W oosMaxDD -16.16% vs cap -20.23% -> HELD | oosCAGR 10.47% vs floor 10.68% -> FAIL | 4bFULL True 4bOOS False
+  B136       cad=W C_BUDGET  G=1.000W oosMaxDD -16.16% vs cap -20.23% -> HELD | oosCAGR 10.47% vs floor 10.68% -> FAIL | 4bFULL True 4bOOS False
+  B136       cad=W C_ANCHOR  G=0.750W oosMaxDD -12.24% vs cap -20.23% -> HELD | oosCAGR  7.85% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  B136       cad=M C_MEMO    G=1.000M oosMaxDD -20.50% vs cap -20.23% -> BREACHED | oosCAGR 10.97% vs floor 10.68% -> ok | 4bFULL False 4bOOS False
+  B136       cad=M C_BUDGET  G=1.000M oosMaxDD -20.50% vs cap -20.23% -> BREACHED | oosCAGR 10.97% vs floor 10.68% -> ok | 4bFULL False 4bOOS False
+  B136       cad=M C_ANCHOR  G=0.750M oosMaxDD -15.69% vs cap -20.23% -> HELD | oosCAGR  8.20% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  B136       joint C_MEMO    G=1.000W oosMaxDD -16.16% vs cap -20.23% -> HELD | oosCAGR 10.47% vs floor 10.68% -> FAIL | 4bFULL True 4bOOS False
+  B136       joint C_BUDGET  G=1.000W oosMaxDD -16.16% vs cap -20.23% -> HELD | oosCAGR 10.47% vs floor 10.68% -> FAIL | 4bFULL True 4bOOS False
+  B136       joint C_ANCHOR  G=0.750W oosMaxDD -12.24% vs cap -20.23% -> HELD | oosCAGR  7.85% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   cad=W C_MEMO    G=0.750W oosMaxDD -12.48% vs cap -20.23% -> HELD | oosCAGR  4.41% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   cad=W C_BUDGET  G=1.000W oosMaxDD -16.40% vs cap -20.23% -> HELD | oosCAGR  5.81% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   cad=W C_ANCHOR  G=0.750W oosMaxDD -12.48% vs cap -20.23% -> HELD | oosCAGR  4.41% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   cad=M C_MEMO    G=0.750M oosMaxDD -16.57% vs cap -20.23% -> HELD | oosCAGR  4.66% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   cad=M C_BUDGET  G=1.000M oosMaxDD -21.66% vs cap -20.23% -> BREACHED | oosCAGR  6.15% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   cad=M C_ANCHOR  G=0.750M oosMaxDD -16.57% vs cap -20.23% -> HELD | oosCAGR  4.66% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   joint C_MEMO    G=0.750W oosMaxDD -12.48% vs cap -20.23% -> HELD | oosCAGR  4.41% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   joint C_BUDGET  G=1.000M oosMaxDD -21.66% vs cap -20.23% -> BREACHED | oosCAGR  6.15% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+  SMALL485   joint C_ANCHOR  G=0.750W oosMaxDD -12.48% vs cap -20.23% -> HELD | oosCAGR  4.41% vs floor 10.68% -> FAIL | 4bFULL False 4bOOS False
+
+=== RULE-8 SPLIT ROBUSTNESS (the licensable G band at three splits, U56/B136/SMALL485) ===
+  A cell is 'licensable' at a split if it clears all five 4b legs on the post-split window.
+  U56       split 2017: SPY post-split CAGR 15.26% MaxDD -33.72% -> floor 10.68% cap -20.23% | G clearing DD+CAGR: [0.875, 1.0]  (4 of 14 cells)
+  U56       split 2015: SPY post-split CAGR 13.71% MaxDD -33.72% -> floor  9.59% cap -20.23% | G clearing DD+CAGR: [0.875, 1.0]  (4 of 14 cells)
+  U56       split 2019: SPY post-split CAGR 17.27% MaxDD -33.72% -> floor 12.09% cap -20.23% | G clearing DD+CAGR: [1.0]  (2 of 14 cells)
+  B136      split 2017: SPY post-split CAGR 15.26% MaxDD -33.72% -> floor 10.68% cap -20.23% | G clearing DD+CAGR: NONE  (0 of 14 cells)
+  B136      split 2015: SPY post-split CAGR 13.71% MaxDD -33.72% -> floor  9.59% cap -20.23% | G clearing DD+CAGR: NONE  (0 of 14 cells)
+  B136      split 2019: SPY post-split CAGR 17.27% MaxDD -33.72% -> floor 12.09% cap -20.23% | G clearing DD+CAGR: NONE  (0 of 14 cells)
+  SMALL485  split 2017: SPY post-split CAGR 15.26% MaxDD -33.72% -> floor 10.68% cap -20.23% | G clearing DD+CAGR: NONE  (0 of 14 cells)
+  SMALL485  split 2015: SPY post-split CAGR 13.71% MaxDD -33.72% -> floor  9.59% cap -20.23% | G clearing DD+CAGR: NONE  (0 of 14 cells)
+  SMALL485  split 2019: SPY post-split CAGR 17.27% MaxDD -33.72% -> floor 12.09% cap -20.23% | G clearing DD+CAGR: NONE  (0 of 14 cells)
+
+=== STRESS YEARS: headline cell vs live RULES v2 vs SPY (U56) ===
+  2009  headline +22.76%   RULESv2 +16.14%   SPY +31.13%
+  2010  headline  +8.12%   RULESv2  +6.81%   SPY +15.06%
+  2011  headline  +1.56%   RULESv2  -0.61%   SPY  +1.89%
+  2012  headline  +6.42%   RULESv2  +4.35%   SPY +15.99%
+  2013  headline +25.48%   RULESv2 +19.40%   SPY +32.31%
+  2014  headline  +9.07%   RULESv2  +6.18%   SPY +13.46%
+  2015  headline  +4.75%   RULESv2  +3.50%   SPY  +1.23%
+  2016  headline  +9.97%   RULESv2  +6.23%   SPY +12.00%
+  2017  headline +18.83%   RULESv2 +14.27%   SPY +21.71%
+  2018  headline  +1.68%   RULESv2  +0.50%   SPY  -4.57%
+  2019  headline +12.33%   RULESv2  +9.38%   SPY +31.22%
+  2020  headline +18.32%   RULESv2 +14.31%   SPY +18.33%
+  2021  headline +23.78%   RULESv2 +17.07%   SPY +28.73%
+  2022  headline  -6.04%   RULESv2  -4.56%   SPY -18.18%
+  2023  headline +15.37%   RULESv2 +11.54%   SPY +26.18%
+  2024  headline +23.17%   RULESv2 +16.45%   SPY +24.89%
+  2025  headline +14.16%   RULESv2  +8.34%   SPY +17.72%
+  2026  headline  +6.15%   RULESv2  +6.28%   SPY +12.29%
+
+=== COST-RUNG LADDER on the RECOMMENDED cell, U56 (RULES.md clause 7 claims 5/10/25/50 bps) ===
+  CAVEAT (idea 1063): the ladder is ONE-SIDED — SPY buy-and-hold pays no turnover cost at any
+  rung, so the 4b floor/cap it sets never move while the candidate's CAGR falls.
+   0 bps  G=0.75 | CAGR  8.81% (floor 10.59%) MaxDD -12.03% (cap -20.23%) Sharpe 1.226 | OOS CAGR  9.65% (floor 10.68%) | 4bFULL False 4bOOS False binding CAGR/CAGR
+   0 bps  G=1.00 | CAGR 11.79% (floor 10.59%) MaxDD -15.88% (cap -20.23%) Sharpe 1.226 | OOS CAGR 12.94% (floor 10.68%) | 4bFULL True  4bOOS True  binding -/-
+   5 bps  G=0.75 | CAGR  8.71% (floor 10.59%) MaxDD -12.04% (cap -20.23%) Sharpe 1.214 | OOS CAGR  9.55% (floor 10.68%) | 4bFULL False 4bOOS False binding CAGR/CAGR
+   5 bps  G=1.00 | CAGR 11.66% (floor 10.59%) MaxDD -15.90% (cap -20.23%) Sharpe 1.213 | OOS CAGR 12.80% (floor 10.68%) | 4bFULL True  4bOOS True  binding -/-
+  10 bps  G=0.75 | CAGR  8.62% (floor 10.59%) MaxDD -12.05% (cap -20.23%) Sharpe 1.201 | OOS CAGR  9.46% (floor 10.68%) | 4bFULL False 4bOOS False binding CAGR/CAGR
+  10 bps  G=1.00 | CAGR 11.53% (floor 10.59%) MaxDD -15.91% (cap -20.23%) Sharpe 1.201 | OOS CAGR 12.67% (floor 10.68%) | 4bFULL True  4bOOS True  binding -/-
+  25 bps  G=0.75 | CAGR  8.33% (floor 10.59%) MaxDD -12.09% (cap -20.23%) Sharpe 1.163 | OOS CAGR  9.16% (floor 10.68%) | 4bFULL False 4bOOS False binding CAGR/CAGR
+  25 bps  G=1.00 | CAGR 11.14% (floor 10.59%) MaxDD -15.96% (cap -20.23%) Sharpe 1.163 | OOS CAGR 12.27% (floor 10.68%) | 4bFULL True  4bOOS True  binding -/-
+  50 bps  G=0.75 | CAGR  7.85% (floor 10.59%) MaxDD -12.16% (cap -20.23%) Sharpe 1.101 | OOS CAGR  8.68% (floor 10.68%) | 4bFULL False 4bOOS False binding CAGR/CAGR
+  50 bps  G=1.00 | CAGR 10.49% (floor 10.59%) MaxDD -16.04% (cap -20.23%) Sharpe 1.101 | OOS CAGR 11.61% (floor 10.68%) | 4bFULL False 4bOOS True  binding CAGR/-
+
+=== baseline.compare() on the two U56 chooser picks ===
+  The RECOMMENDED cell keeps the LIVE cadence (W, PROTOCOL's default and the frozen live value)
+  and changes ONE number, the gross. The joint chooser's M pick is reported, not recommended:
+  preferring W is not a post-hoc choice, it is declining to change a second dial.
+
+  -- RECOMMENDED (live cadence): G=1.000 cadence W
+                                         CAGR  Sharpe  MaxDD    H1    H2
+name                                                                    
+1454 gross 1.00 W (U56, RULES v2 shape) 0.115   1.201 -0.159 1.228 1.180
+RULES v2 baseline (live)                0.086   1.201 -0.121 1.228 1.181
+RULES v1 (previous)                     0.064   0.656 -0.138 0.651 0.663
+SPY                                     0.151   0.884 -0.337 0.957 0.825
+| 2026-09-19 | 1454 gross 1.00 W (U56, RULES v2 shape) | 11.5% | 1.20 | -15.9% | 1.23 / 1.18 | 1.20 (1.23/1.18) | KILL | 1454 gross 1.00 W (U56, RULES v2 shape) |
+
+  -- joint chooser pick: G=1.000 cadence M
+                                         CAGR  Sharpe  MaxDD    H1    H2
+name                                                                    
+1454 gross 1.00 M (U56, RULES v2 shape) 0.119   1.173 -0.188 1.214 1.140
+RULES v2 baseline (live)                0.086   1.201 -0.121 1.228 1.181
+RULES v1 (previous)                     0.064   0.656 -0.138 0.651 0.663
+SPY                                     0.151   0.884 -0.337 0.957 0.825
+| 2026-09-19 | 1454 gross 1.00 M (U56, RULES v2 shape) | 11.9% | 1.17 | -18.8% | 1.21 / 1.14 | 1.20 (1.23/1.18) | KILL | 1454 gross 1.00 M (U56, RULES v2 shape) |

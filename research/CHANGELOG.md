@@ -1,3 +1,70 @@
+## 2026-09-19 — idea 1454 (lane B): does the 2026-09-03 RECOMMENDATION memo's OWN G-CHOOSING RULE survive PROTOCOL rule 8? **ANSWERED — IT FIRES ITS OWN FALLBACK AND THAT IS WHY THE LIVE BOOK FAILS 4b. KEEP-4b CANDIDATE (U56, rule-8 clean), 4a FAIL 0 of 42, NO RULES CHANGE ENACTED HERE.**
+
+  **WHY THIS IDEA.**  Five consecutive runs today (1405 trailing equity stop 216 of 216 cells, 1413
+  breadth throttle 90 of 90, 1433 intra-book inverse-vol on CAGR, 1429 beta-keyed floor-and-cap, 1436
+  its beta-matched twin 48 of 48) each found a DRAWDOWN-BUYING DEVICE beaten, at matched exposure, by a
+  plain DE-GROSS of the same anchor.  The record's repeated WINNER is therefore the gross scalar itself
+  — and it had never been scored as a candidate, nor had the rule that SET the live G = 0.75 ever been
+  read out of sample.  That rule is written down, pre-registered, in the recommendation memo:
+  *"gross G chosen ONLY from idea 28's three reported values by the pre-stated rule 'smallest G whose
+  MaxDD <= 60% of SPY's and CAGR >= 70% of SPY's'; if none, keep 75%"*.
+
+  **THE GRID.**  The LIVE RULES v2 shape unchanged (`baseline.rules_v2_weights`: 200d +/-3% hysteresis
+  band, hold every IN name, de-gross to cash, never re-spread) with its ONE sizing number walked over
+  G {0.25, 0.375, 0.50, 0.625, 0.75, 0.875, 1.00} x cadence {W, M}: 14 cells per panel on U56 / B136 /
+  SMALL485, **42 cells, every one published**.  Two tuned parameters exactly.  No leverage — the ladder
+  stops at G = 1.00 (PROTOCOL rule 2).  G = 0.75 & W IS the live book and reproduces
+  `baseline.compare`'s baseline row to **1e-9** on Sharpe and MaxDD (gate G3).
+
+  **(1) THE LIVE BOOK IS UNDER-GROSSED, AND ON ONE LEG ONLY.**  At the live weekly cadence on U56,
+  **G = 1.00 clears all five 4b legs FULL-SAMPLE AND OUT-OF-SAMPLE**: CAGR **11.53%** against the
+  10.59% floor (**+0.94 pp**), Sharpe **1.201**, MaxDD **-15.91%** against the -20.23% cap (**+4.32
+  pp**), halves 1.228 / 1.180 against SPY's 0.957 / 0.825; OOS **12.67% / 1.276 / -15.91%** against
+  SPY OOS 15.26% / 0.874 / -33.72%.  Turnover 2.35x/yr.  The live G = 0.75 fails 4b on the **CAGR floor
+  alone** — the single bar RULES.md itself names — by **-1.97 pp full-sample and -1.22 pp OOS**, with
+  all four other legs already passing.  The CAGR floor binds at every rung G <= 0.75 on both cadences;
+  the DD cap binds NOWHERE on U56 up to G = 1.00.
+
+  **(2) RULE 8 IS CLEAN AND THE MEMO GOT ITS OWN RULE BACKWARDS.**  Fit on 2009-2016 alone and read
+  once on 2017-2026, **both** IS-only choosers pick G = 1.00 on U56; the licensable G set is
+  **{0.875, 1.00}** at the 2017 split, **{0.875, 1.00}** at 2015 and **{1.00}** at 2019.  The memo's
+  literal rule, applied to IS at weekly, finds that NO rung clears the IS CAGR floor (best 10.16% at
+  G = 1.00 vs 10.47%), so **its own fallback fires and keeps 0.75** — that is how the live book came to
+  sit below its own bar.  On the full sample the same rule picks **1.00**.  Honest label: C_BUDGET is
+  **DEGENERATE** — the IS DD cap binds at **0 of 7 rungs on all three panels**, so "spend the risk
+  budget" reduces to "take the ladder's ceiling", and the ceiling is 1.00 only because PROTOCOL forbids
+  leverage.  The recommendation keeps the live cadence W; the joint chooser's M pick (11.90% / 1.173 /
+  -18.81%, a DD margin of only +1.42 pp) is reported and NOT recommended.
+
+  **(3) IT IS A RISK-BUDGET FINDING, NOT AN ALPHA ONE.**  Sharpe is **1.201 at all seven weekly rungs**
+  on U56, invariant to 3 dp, and turnover per unit of gross is constant to cv <= 1.1e-2 (gate G2) with
+  MaxDD monotone in G at 6 of 6 panel-cadences (gate G1).  G buys nothing risk-adjusted; it moves the
+  book along its own ray.  **4a fails at 0 of 42 cells** — more gross is strictly deeper MaxDD at an
+  unchanged Sharpe, so this book never beats the book.  4b-only candidate.
+
+  **(4) COST-ROBUST TO 25 bps; THE 0.75 MISS IS NOT FRICTION.**  4b holds FULL and OOS at 0, 5, 10 and
+  25 bps and fails FULL at 50 bps by 0.10 pp (10.49% vs 10.59%) while OOS still passes.  The live 0.75
+  fails the CAGR leg at **every** rung **including 0 bps** (8.81% vs 10.59%), so its failure is
+  exposure, not cost.  Caveat retained (idea 1063): the ladder is one-sided — SPY pays no turnover, so
+  the floor and cap it sets never move.
+
+  **(5) REPLICATION FAILS OFF THE PROTOCOL PANEL — the honest limit.**  **0 of 14** cells clear the two
+  level legs on B136 and **0 of 14** on SMALL485, at all three splits.  B136's G = 1.00 W passes 4b
+  full-sample but misses the OOS CAGR floor by **0.21 pp** (10.47% vs 10.68%); B136 at G = 1.00 M
+  **BREACHES** the OOS DD cap (-20.50% vs -20.23%), as does SMALL485 at G = 1.00 M (-21.66%).  U56 is a
+  current-constituent list (idea 54) and a full-gross long book is the most exposed to that bias.
+
+  **(6) THE CAP ITSELF MOVED, AND THE LUCK RAN THE RIGHT WAY.**  SPY's MaxDD is -22.06% on IS and
+  -33.72% on OOS, so the 4b DD cap loosened **-13.24% -> -20.23% (+6.99 pp)** between the window the G
+  was chosen in and the window it was judged in.  Budgeting against the IS cap was conservative by
+  luck here; a shallower SPY decline would tighten it.  This is filed as idea 1450 for a proper pricing.
+
+  **VERDICT.  KEEP-4b CANDIDATE on U56, rule-8 clean, with the §5 replication limit and the §2
+  degeneracy stated.  4a FAIL.  Nothing enacted: PROTOCOL rule 6 reserves enactment for the Sunday
+  review, and RULES.md / bot.py / scan.py / baseline.py are untouched by this run.**  Exact one-number
+  RULES wording (clause 4 `0.75 / N` -> `1.00 / N`, clause 5's reset line likewise, everything else
+  unchanged) is in `research/backtests/2026-09-19_memo-G-chooser-under-rule-8_B.memo.md`, together with
+  the G = 0.875 fallback if the review declines the survivorship exposure.
 ## 2026-09-19 — idea 1436 (lane cloud): is the BETA BAND's 4b DD GAIN anything more than a BETA-MATCHED EXPOSURE DIAL? **ANSWERED NO — KILL (capital), NO NEW BOOK, NO RULES CHANGE.**
 
   Idea 1429's PARK memo named the repair and did not run it ("a BETA-MATCHED twin").  This run
