@@ -1,3 +1,56 @@
+## 2026-09-19 — idea 1182 (lane C): how many committed LADDER claims name a RUNG the record has measured FEWER THAN TEN TIMES? **ANSWERED: 204 of 4,614 (0.0442) — AND THE RESTRICTION BUYS NOTHING. KILL (capital), no new book.**
+
+  Idea 1174 built the measurement histogram for the hold axis H and found the record's "finer"
+  hold evidence is two runs wearing seven rung labels. This run does the same for the four axes
+  that actually price a book — N, GROSS, COST, CADENCE — and then turns the answer into a
+  capital decision instead of leaving it as bookkeeping.
+
+  **THE CENSUS.** 35,216 committed text units (LEADERBOARD.md + CHANGELOG.md + 1,204
+  `*.result.md` / `*.memo.md`, 15,178,975 bytes off HEAD). A MEASUREMENT is a DISTINCT RUN naming
+  a rung through that axis's own token; a CLAIM is a unit with the token, >= 1 named rung AND a
+  shape verb. At the queue's single-digit bar T = 10: **N 42 of 776 (0.0541), GROSS 23 of 966
+  (0.0238), COST 139 of 2,078 (0.0669), CADENCE 0 of 794 (0.0000)** — 204 of 4,614 overall. Every
+  bar published, none tuned: T = 3 / 5 / 10 / 20 / 50 gives 107 / 149 / 204 / 337 / 484.
+  **The H axis's alarm does not generalise.**
+
+  **WHY NOT — AND THE DEFECT THAT IS REALLY THERE.** The thin tail is small because the mass sits
+  on ONE rung per axis: **N = 20 holds 0.4568 of all run-mass** (51 rungs, HHI 0.2384, 10 rungs
+  cover 90%); **GROSS = 0.75 holds 0.4467**, top two 0.7016; **COST = 10 bps holds 0.4236**, top
+  two 0.6406; **CADENCE = W holds 0.5473**, top two 0.7903. A committed ladder claim is rarely
+  standing on a rung nobody measured — it is usually standing on the rung everybody measured, and
+  no thinness bar can detect that. **The record's axis defect is CONCENTRATION, not thinness.**
+
+  **THE CAPITAL LEG.** 126 real books — N {5,10,15,20,25,30,40} x GROSS {0.35,0.45,0.55,0.65,
+  0.75,1.00} on the frozen 2026-09-04 incumbent frame (H = 126, MAXVOL 0.60, MA gate ON, weekly,
+  10 bps, t+1), three panels, every cell published with both KEEP paths. **4a 0 of 126. 4b 28 of
+  126 full-sample, 20 OOS, 19 both.** The U56 anchor replays to |dSharpe| 3.7e-05.
+
+  **RULE 8 KILLS THE PREMISE.** (N, GROSS) by argmax IS Sharpe on warm-up..2016-12-31, 2017-2026
+  read ONCE, in two variants: C_ALL over all 42 cells, C_THICK restricted to cells both of whose
+  rungs the census measures >= T times, at every T. **14 of 15 (panel x bar) arms pick the
+  IDENTICAL cell**; mean OOS dSharpe **+0.0052**. The one differing arm (SMALL, T = 50, menu 12 of
+  42) gains +0.0782 OOS Sharpe on a book with OOS MaxDD **-49.88%** that fails every 4b leg, and
+  against 40 SIZE-MATCHED RANDOM menus sits at the 0.9625 mid-rank percentile — 1 of 9 arms above
+  the 95th at a draw resolution of 0.025; median arm 0.425, mean tied share 0.575 (a random menu
+  of the same size usually picks the SAME cell). **"The record has barely measured this rung"
+  carries no out-of-sample information about the cell.**
+
+  **DOCUMENTED CAVEAT (not a KEEP).** U56 **N15 g0.75** passes 4b full-sample AND OOS and beats
+  the frozen incumbent on every headline (CAGR 17.14% vs 15.80%, Sharpe 1.1722 vs 1.1537, OOS
+  1.1971 vs 1.1857) — but its 4b DD margin is **+0.0858 pp against the anchor's +1.1028 pp**,
+  12.8x thinner, and its edge is **+0.0185 Sharpe, t +0.34** (paired 63-day circular-block
+  bootstrap, 400 reps). **0 of 27 4b-passing non-anchor cells resolve |t| > 2 on full-sample
+  Sharpe and 0 on OOS Sharpe.** Rule 8's chooser never reaches it: the argmax-IS-Sharpe chooser
+  goes to the **gross corner g = 1.00 on all three panels** and lands OOS-4b-FAIL on all three,
+  while 19 of 126 cells pass 4b both full and OOS. PARK-not-KEEP, per rule 8.
+
+  **GATES** all PASS: G0 >= 10y (16.68); G1 cross-script replay of the committed anchor; G2 126 of
+  126 cells; G3 corpus stamp; G4 no chooser row >= 2017-01-01; G5 no leverage (1.000000); G6 every
+  BOOK rung appears in the census histogram; G7 bit-identical recompute. Two tuned parameters per
+  leg and no more (census: axis set, thinness bar — the bar reported at every value; book: N,
+  GROSS). Survivorship stated (rule 9). RULES.md, scan.py, bot.py, baseline.py NOT modified.
+  Script: `research/backtests/2026-09-19_rung-thinness-census-and-well-measured-rung-chooser_C.py`.
+
 ## 2026-09-19 — idea 1423 (lane B): does a CONVENTION-ENSEMBLE beat the SINGLE COMMITTED CELL on the BINDING 4b DD LEG? **ANSWERED NO — THE BLEND IS A CONCENTRATION DIAL IN A COSTUME. KILL (capital), NO NEW BOOK, NO RULES CHANGE — WITH ONE CAVEAT LOGGED.**
 
   Idea 1409 (this morning) proved the standing 2026-09-04 KEEP-4b incumbent (U56, N = 20, H = 126,
