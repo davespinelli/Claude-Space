@@ -1,3 +1,57 @@
+## 2026-09-19 — idea 1409 (lane cloud): is the incumbent's 4b DD MARGIN a LOOKBACK-SKIP ARTEFACT? **ANSWERED YES — THE COMMITTED PASS IS A LOOKBACK CONVENTION. KILL (capital), NO NEW BOOK, NO RULES CHANGE — AND A CONFIRMED CAVEAT ON THE STANDING 2026-09-04 INCUMBENT.**
+
+  Idea 1257 priced the composite's leg SUBSETS but froze each leg's own (skip, length). The 12-1
+  leg's **21-day skip** decides whether the book buys what has just fallen or what has just risen —
+  whether it runs INTO or AWAY FROM a crash — which is exactly where a −19.13% is made. It had
+  never been walked.
+
+  **THE GRID.** SKIP {0, 5, 10, 21, 42} x LONG {189, 252} on the composite's FIRST leg only; the
+  other two legs (0, 126) and (0, 63), N = 20, H = 126, gross 0.75, MAXVOL 0.60, the 200d MA gate,
+  the weekly cadence, 10 bps and t+1 all frozen. Three panels, **all 30 cells published**.
+
+  **THE BAR WAS PRE-REGISTERED AND IT IS EXCEEDED BY 4.8x.** Stated in the script header before the
+  numbers: if the U56 DD margin's spread across the 10 cells exceeds the incumbent's own
+  **+1.1028 pp**, the committed pass is a convention. **The spread is 5.3173 pp** (−4.2145 at
+  (21, 189) to +1.1028 at (21, 252)). Holding LONG at the incumbent's own 252 and moving the SKIP
+  ALONE, the spread is still **1.5635 pp** — larger than the whole margin.
+
+  **THE INCUMBENT'S CELL IS THE ONLY ONE OF THE TEN THAT PASSES 4b.** U56 **1 of 10**, B136 0 of 10,
+  SMALL 0 of 10; **4a 0 of 30**. On U56 the CAGR, H1 and H2 legs pass at 10 of 10 and the DD leg at
+  1 of 10 — the same one-leg story the record has told eight times, now localised to a lookback
+  convention.
+
+  **AND THE PERFORMANCE EVIDENCE DOES NOT SELECT IT.** At LONG = 252 the five skips run Sharpe
+  **1.1322 .. 1.1556** at **89-91% name overlap** with the anchor book, and the full-sample argmax
+  is **skip 10, not 21**. The four non-anchor skips fail the DD cap by 0.18-0.46 pp. **Two of them
+  BEAT the anchor out of sample and still fail on drawdown**: skip 10 (OOS 18.17% / **1.2261** /
+  −20.67%) and skip 42 (OOS 18.40% / **1.2329** / −20.41%) against the anchor's 17.32% / 1.1857 /
+  −19.13%.
+
+  **WHAT RESOLVES AND WHAT DOES NOT.** Under a PAIRED circular-block bootstrap (400 reps x 63-row
+  blocks, seed 20260919, identical block starts), **4 of 27 non-anchor cells resolve |t| > 2 against
+  the anchor and 0 of the 4 beat it**; median |t| 0.62. All four are LONG = 189 cells — dropping the
+  long leg to 189 costs U56 a mean **−3.18 pp** of DD margin. **The SKIP dial at LONG = 252 is
+  UNRESOLVED (all |t| <= 0.60)** and is reported as such: the record has no evidence that 21 is
+  better than 0, 5, 10 or 42, only that it is the one that happens to clear the cap.
+
+  **RULE 8 (IS = warm-up..2016-12-31, 2017-2026 read ONCE).** The IS-Sharpe chooser lands on the
+  anchor **(21, 252)** on U56 and loses on the other two panels — **(0, 252)** on B136 (−0.0326 of
+  OOS Sharpe, −0.62 pp of MaxDD) and **(10, 189)** on SMALL (−0.1788, −7.37 pp). Mean OOS Sharpe
+  minus the frozen anchor **−0.0705**, **0 of 3 panels positive**; OOS 4b 1 of 3, 4a 0 of 3.
+  **Touching the lookback convention buys nothing out of sample — so freeze it — but the committed
+  +1.10 pp should be read as ONE DRAW FROM A 5.32 pp BAND, not as a property of the strategy.**
+
+  GATES all pass: G1 cross-script replay of the committed anchor **|dSharpe| 3.7e−05** (15.80% /
+  1.1537 / −19.13% full, 1.1857 OOS); G2 skip < long at all 30 cells; G3 30 of 30 published; G4 two
+  tuned parameters; G5 the chooser reads no row on or after 2017-01-01; G6 max realised weight sum
+  **0.750000** (no leverage, no shorting); G7 the legs genuinely differ — max |score − anchor score|
+  **3.31e−01**, published rather than asserted, so a null reading could not have been a silent
+  no-op. Survivorship (rule 9): U56/B136 are current-constituent lists and SMALL a current sub-$2B
+  screen (54 tickers with max_1d_move >= 1.0 dropped, 665 kept), so every level is an upper bound;
+  what is read here is a SPREAD across one dial on identical names and identical days.
+
+  **NO RULES CHANGE.** Script `research/backtests/2026-09-19_lookback-skip-artefact_cloud.py`.
+
 ## 2026-09-19 — idea 1405 (lane cloud): does a TRAILING EQUITY STOP on the incumbent's OWN BOOK buy the BINDING 4b DD LEG? **ANSWERED NO — THE BRAKE IS REAL, IT SHALLOWS THE BINDING LEG, AND AT MATCHED EXPOSURE IT IS WORTH NOTHING ON 216 OF 216 CELLS. KILL (capital), NO NEW BOOK, NO RULES CHANGE.**
 
   The standing 2026-09-04 KEEP-4b incumbent (U56, N = 20, H = 126, gross 0.75, weekly Fri-decide /
