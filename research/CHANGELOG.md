@@ -1,3 +1,85 @@
+## 2026-09-19 — idea 1666 (lane B): DOES THE BAND'S TIMING SURVIVE AN IN-BAND-SHARE-MATCHED PLACEBO GATE? **ANSWERED — THE *WHEN* IS A DRAWDOWN FACT AND ONLY A DRAWDOWN FACT. KILL FOR THE RETURN CLAIM (0 of 3 panels FULL, 1 of 3 OOS), CONFIRMED FOR THE DRAWDOWN CLAIM (3 of 3, against a null 1670's twin did not impose), AND A METHOD DEFECT THAT WOULD HAVE MANUFACTURED THE OPPOSITE ANSWER.**
+
+  **THE DOUBT THIS CLOSES.** 1674 raced the live band against a static equity/SHY mix and 1670
+  found the Sharpe half of that a U56 fact and the drawdown half 60 of 60. Both comparands are out
+  of the market a DIFFERENT amount of the time than the band is, so neither can separate WHEN the
+  band is out from HOW OFTEN — and the CHANGELOG's standing diagnosis is that every device family
+  in the record is beaten at matched exposure by a plain constant de-gross, which is a HOW-OFTEN
+  device. This run holds how often fixed to the day and destroys only the timing.
+
+  **CONSTRUCTION.** CELL = live RULES v2 verbatim (200d +/-3% band with hysteresis, gross 0.75,
+  weekly, gated weight to CASH), weights bit-identical to `baseline.rules_v2_weights` on U56
+  (max |d| 0.000e+00). Three share-matched nulls, ordered by how much gate structure they keep:
+  **ROT-COM** (primary) applies ONE common circular shift, each name permuted within its own
+  priced rows, so per-name in-band share, run-length structure and cross-name synchrony survive
+  exactly; **ROT-IND** shifts each name independently (synchrony destroyed); **IID** draws
+  Bernoulli(p_i) per priced day, rejection-sampled to |share - p_i| <= tol (runs destroyed).
+  Two tuned parameters and only two: seed count S {10, 25, 50} and tolerance tol {0.005, 0.02,
+  0.05}; band pinned at the live 0.03 and gross at 0.75. **900 grid points, every one published**
+  (3 panels x 5 null configurations x 3 S x 4 cost rungs x 5 windows), costs 0/10/25/50 bps off
+  the exact two-rung reconstruction (gated at 0.000e+00 against the engine).
+
+  **(1) THE DRAWDOWN CREDIT IS REAL AND IS NOT AN EXPOSURE ARTEFACT.** At 10 bps, S = 50, ROT-COM:
+  cell MaxDD **-12.05% / -12.24% / -14.16%** (U56 / B136 / SMALL) against null means **-17.38% /
+  -19.34% / -22.23%** — **+5.33 / +7.10 / +8.07 pp**, shallower than **49 / 49 / 48 of 50** draws
+  (p 0.02 / 0.02 / 0.04) on FULL *and* OOS. ROT-IND and IID agree at p 0.00. This is the stronger
+  form of 1670's 60-of-60: that twin was exposure-matched only in the mean of a fitted constant,
+  this null is matched name-by-name and day-count-by-day-count.
+
+  **(2) THE RETURN CREDIT IS NOT.** p(Sharpe) FULL **0.08 / 0.34 / 0.40**, OOS **0.04 / 0.22 /
+  0.30**; dSharpe FULL **+0.1144 / -0.0254 / -0.0008**. On two of three panels a random gate of
+  the same frequency earns MORE than the live band. The pre-registered bar (in the script header
+  before any number was read) required FULL-Sharpe p <= 0.05 on >= 2 of 3, the same OOS, and
+  MaxDD p <= 0.05 on >= 2 of 3: **0/3, 1/3, 3/3**. Two legs fail -> **KILL** for the timing claim
+  on return.
+
+  **(3) AND THE TRADE IS NOT CAPITAL-POSITIVE ON THE RECORD'S OWN BAR.** The cell fails path 4b
+  **12 of 12** (3 panels x 4 rungs) — the DD cap is clear with room on every panel, the Sharpe legs
+  pass on two, and the **CAGR floor (10.68% OOS) binds every time** (cell OOS CAGR 9.46% / 7.85% /
+  3.63%). Meanwhile **10-14% of the ROT-COM draws on B136 and 6-8% on U56 CLEAR 4b** (S = 50; 10-20% on B136 across S), because
+  scrambling the band's timing RAISES OOS CAGR (B136 9.96% null vs 7.85% cell) and the slack DD cap
+  absorbs the deeper drawdowns. Path 4a against the panel's own RULES v2 baseline is a TIE by
+  construction (the cell IS that baseline); the nulls clear 4a against the cell at 2-6% (ROT-COM)
+  and at **0.00 at every IID cell**.
+
+  **(4) THE NULL'S STRENGTH DECIDES THE ANSWER, AND THE WEAK NULL LIES IN THE BAND'S FAVOUR.**
+  dSharpe FULL at 10 bps: ROT-COM +0.1144 / -0.0254 / -0.0008, ROT-IND +0.0671 / -0.0066 /
+  **-0.0643** (SMALL beaten by 50 of 50, p 1.00), IID **+0.2338 / +0.1379 / +0.1389** with
+  p = 0.00 at every FULL and OOS cell. An IID gate is out as often as the band but never in RUNS,
+  so it pays the band's whole cost of being wrong without any of the persistence — a record that
+  had priced the band against it alone would have published a decisive Sharpe win on the two
+  panels where the honest null says the band LOSES. **Any future placebo gate in this record must
+  match run-length structure, not just frequency.**
+
+  **(5) RULE 8 (2017-2026 read ONCE).** The IS-only chooser is the (S, tol) cell maximising the
+  NULL's mean IS Sharpe — the calibration most adverse to the cell — on rows <= 2016-12-31 only:
+  it picks (50, 0.05) on B136, (10, 0.02) on SMALL, (10, 0.005) on U56. OOS at 10 bps, ROT-COM:
+  U56 **1.2766** vs 1.0115 (p 0.00), B136 **1.1017** vs 1.0829 (p 0.22), SMALL **0.5447** vs 0.5202
+  (p 0.30); OOS MaxDD -12.05 / -12.24 / -14.16% vs -18.25 / -19.34 / -21.47% (p 0.00 / 0.02 / 0.10).
+  SPY OOS 15.26% / 0.8737 / -33.72%. The split is the same out of sample as in it.
+
+  **(6) A METHOD DEFECT WORTH KEEPING, BECAUSE IT POINTED THE OTHER WAY.** The first draft failed
+  its own exposure gate by **2.6 pp of mean gross** (null 0.5065 vs cell 0.5327 on U56): `band_state`
+  is structurally OUT for a name's first 200 closes, those rows sit in the warm-up the cell is never
+  scored over, and permuting across the whole history drags them INTO the scored window — docking
+  the null ~5% of capital and handing the cell a Sharpe edge that read p = 0.00 everywhere.
+  Restricting the share match and the permutation to priced rows INSIDE the scored window closes it
+  to **0.00000 at 15 of 15 (panel x null) gates**; the residual constant rescale never exceeds
+  1.0257 (max per-day gross 0.769, no leverage). **A share-matched permutation is not
+  exposure-matched unless the warm-up is excluded**, and the un-excluded version produced exactly
+  the answer the band's advocates would have wanted.
+
+  **WHAT IS AND IS NOT PROPOSED.** Nothing is enacted; no KEEP candidate arises (4a is a tie, 4b
+  fails 12 of 12) so no memo is filed. What the record gains is a sharper statement of the live
+  clause 2: **it is a drawdown device, and its return content off U56 is indistinguishable from a
+  coin-flip gate of the same frequency.** Survivorship (rule 9): U56 / B136 current-constituent
+  lists, SMALL a current sub-$2B screen (665 kept of 719 priced; the mandated max_1d_move >= 1.0
+  filter drops 54) carried back to 2010 — every absolute level is an UPPER BOUND; cell and null are
+  the same names on the same days at the same mean gross, which the bias cannot manufacture. Script
+  `research/backtests/2026-09-19_in-band-share-matched-placebo-gate_B.py`, full console
+  `research/backtests/out/2026-09-19_in-band-share-matched-placebo-gate_B_log.txt`, grids
+  `..._grid.csv` (900 rows), `..._cell.csv`, `..._keeppaths.csv`, `..._rule8.csv`, `..._gates.csv`.
+
 
 ## 2026-09-19 — idea 1602 (lane B): DOES THE SHY RESIDUAL CLAUSE SURVIVE A ZERO-DURATION CASH LEG? **ANSWERED — YES ON RISK, NO ON THE LICENSING. KEEP-4a CONFIRMATION FOR THE ACCRUAL RESTATEMENT (zero tuned parameters), KILL FOR THE ERA-HONEST FORM ON PATH 4a (0 of 492), AND A PROVED DEFECT IN PATH 4a AND RULE 8 THEMSELVES. NO NEW BOOK ENACTED, NO RULES CHANGE.**
 
