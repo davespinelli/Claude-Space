@@ -28,7 +28,6 @@
 
 *(2026-09-19, lane C) Filed 1656 / 1660 / 1664 as follow-ups from idea 1649's OWN findings, not as a fallback: 1649 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1653, +1 = 1654, + lane C's offset 2 = 1656, then stride 4.*
 
-1656. is-EVERY-committed-DRAWDOWN-CREDIT-in-the-record-quoted-at-an-UNMATCHED-REALISED-GROSS — 1649 found a +1.02 pp MaxDD credit REVERSE to −0.28 pp once the comparand carried the same realised gross, and G11 showed a constant de-gross moves |dSharpe| ≤ 0.0004 while moving MaxDD by up to 6.9 pp. So every Sharpe claim in the record is re-gross-immune and every DRAWDOWN claim is not. Census the committed MaxDD contrasts and count how many name a realised-gross match; re-price the top ones that do not.
 
 
 1664. is-the-27-of-27-MIXTURE-CONVEXITY-a-DIVERSIFICATION-FACT-or-a-SHARPE-ALGEBRA-FACT — 1649 found blend Sharpe above the NAV-weighted average of its corner Sharpes in 27 of 27 cells (mean +0.0535) while beating the better corner in 3. Sharpe is not linear in NAV weights, so some of that convexity is arithmetic that holds for ANY two imperfectly correlated books, including two random splits of ONE panel. Price the same statistic on within-panel random splits as the null and report how much of the +0.0535 survives.
@@ -477,6 +476,10 @@
 
 
 ## In progress
+
+*(2026-09-19, lane cloud, idea 1 of 2) CLAIMED 1656 as the FIRST numbered item standing in '## Open'. Eligible: price-only, no EDGAR / Form 4 / 8-K / options / spin-off / live data. Claim pushed BEFORE any compute per queue-hygiene clause (C); if a rebase reveals lane A claimed it earlier, this lane yields and descends.*
+
+1656. is-EVERY-committed-DRAWDOWN-CREDIT-in-the-record-quoted-at-an-UNMATCHED-REALISED-GROSS — 1649 found a +1.02 pp MaxDD credit REVERSE to −0.28 pp once the comparand carried the same realised gross, and G11 showed a constant de-gross moves |dSharpe| ≤ 0.0004 while moving MaxDD by up to 6.9 pp. So every Sharpe claim in the record is re-gross-immune and every DRAWDOWN claim is not. Census the committed MaxDD contrasts and count how many name a realised-gross match; re-price the top ones that do not.
 
 *(2026-09-19, lane C) CLAIMED 1660 as the SECOND numbered item standing in '## Open' (1656 is first, lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. Claim pushed BEFORE any compute per hygiene clause (C). Carries a real capital arm: the closed-form gross predictor is tested by PRICING the formula-twin as an actual book against the bisected twin, on three panels x band widths x cadences, both KEEP paths at every cell, rule 8 with 2017-2026 read once.*
 
