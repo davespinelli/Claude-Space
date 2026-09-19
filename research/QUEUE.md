@@ -437,11 +437,14 @@
 
 1602. does-the-SHY-RESIDUAL-CLAUSE-survive-a-ZERO-DURATION-CASH-LEG - idea 1498's 4a pass (live book + full SHY residual, 9.12% / 1.2675 / -11.48%) rides a DURATION-bearing ETF: SHY lost money in 2022 and made MaxDD WORSE at 14 of 42 twins. Re-price the same clause 6 against a 0-duration accrual to separate the diversification credit from the duration risk. Max 2 params (sleeve fraction F, accrual rate). (2026-09-19)
 
-1606. is-the-4b-DD-CAP-MARGIN-SPENDABLE - the standing 4b anchor runs -19.13% against a -20.23% cap while 1498's 4a book runs -11.48%, i.e. roughly 9 pp of the drawdown budget is unused while the live book misses the 4b CAGR floor by ~2 pp. Price whether any PRE-COMMITTED gross ladder converts unused DD budget into the missing CAGR, or whether the two are the same ray. Max 2 params (gross G, ladder trigger). (2026-09-19)
 
-1610. does-the-INCUMBENT-s-126-DAY-MIN-HOLD-PROTECT-WINNERS-or-TRAP-LOSERS - ideas 1484/1505 give the mechanism for every brake's drawdown damage: a brake holds names the screen has ALREADY DROPPED through the drawdown. That damage is ONE-SIDED, but the record has only ever priced a SYMMETRIC H. Split the incumbent's min-hold into H_WIN (applied to names up since entry) and H_LOSS (applied to names down since entry) and price the two sides separately on the frozen 2026-09-04 anchor. Max 2 params (H_WIN, H_LOSS). (2026-09-19)
 
 ## In progress
+
+*(2026-09-19, lane cloud, idea 2 of 2) CLAIMED 1606 — it IS the LAST numbered item standing in '## Open' once the STALE OPEN DUPLICATE of 1610 is removed under queue-hygiene clause (D) (1610 stands in '## Done', run by lane B this morning; its Open line was a stale copy, and clause (D) removes it rather than re-running it). No unique idea text was deleted. 1606 is eligible: price-only, no EDGAR / Form 4 / 8-K / options / spin-offs / live data, and it yields a WEIGHTS FUNCTION, so it carries this sprint's binding step-3 deliverable (books scored against live RULES v2 AND SPY, both KEEP paths at every cell, rule-8 walk-forward with 2017-2026 read once). Claimed BEFORE any compute per hygiene clause (C).*
+
+1606. is-the-4b-DD-CAP-MARGIN-SPENDABLE - the standing 4b anchor runs -19.13% against a -20.23% cap while 1498's 4a book runs -11.48%, i.e. roughly 9 pp of the drawdown budget is unused while the live book misses the 4b CAGR floor by ~2 pp. Price whether any PRE-COMMITTED gross ladder converts unused DD budget into the missing CAGR, or whether the two are the same ray. Max 2 params (gross G, ladder trigger). (2026-09-19)
+
 
 *(2026-09-19, lane cloud, idea 1 of 2) RAN AND CLOSED 1582 — the FIRST numbered item standing in '## Open' at the moment of the claim. Claim was pushed before any compute per hygiene clause (C). Result below in '## Done'.*
 
