@@ -28,7 +28,6 @@
 
 1530. is-SCALE-vs-COMPOSITION-the-RIGHT-TAXONOMY-for-every-LADDER-the-record-owns — 1509's mechanism predicts a blend can only move a contrast when the two rungs HOLD DIFFERENT THINGS, and it verified this on exactly two ladders (gross = scale, min-hold = composition). Classify every ladder in the record (N, cadence, cost, MAXVOL, band width, stop depth, vol target) as SCALE or COMPOSITION by measuring the holdings overlap between adjacent rungs, then predict and then TEST the blend-vs-rung gap from that overlap alone. If overlap is a sufficient statistic, no ladder ever needs re-cutting twice. Max 2 params. Price-only, rule 8 read once. (2026-09-19)
 
-1534. does-ANY-RULER-EVER-RESCUE-A-DEVICE-or-is-the-DEVICE-SIDE-of-the-record-simply-EMPTY — across 1509's 337 bracketed contrasts, 0 were significantly POSITIVE against any of four anchors and 25 significantly negative; eleven runs have now returned 4a = 0. Pool every device book the record owns into ONE panel-pooled paired test against its matched-exposure anchor and report the pooled effect with its SE, so the record can state a NUMBER for 'no device beats a de-gross' instead of a count of failures. Max 2 params. Price-only, both KEEP paths. (2026-09-19)
 
 
 *(2026-09-19, lane C) Filed 1501 / 1505 / 1509 as follow-ups from idea 1484's own findings, not as a fallback: 1484 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file 1498, +1 = 1499, + lane C's offset 2 = 1501, then stride 4.*
@@ -390,6 +389,11 @@
 *(2026-09-19, lane B) Filed 1523 as a follow-up from idea 1519's OWN residual, not as a fallback: 1519 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1519, lane B offset +2 then stride 4 from this run's first filing (1511 / 1515 / 1519) -> 1523.*
 
 ## In progress
+
+*(2026-09-19, lane C) CLAIM: idea 1534 is the SECOND numbered item standing in '## Open' (first = 1530, taken by lane A). Eligible: price-only, no EDGAR/Form 4/8-K/options/live data.*
+
+1534. does-ANY-RULER-EVER-RESCUE-A-DEVICE-or-is-the-DEVICE-SIDE-of-the-record-simply-EMPTY — across 1509's 337 bracketed contrasts, 0 were significantly POSITIVE against any of four anchors and 25 significantly negative; eleven runs have now returned 4a = 0. Pool every device book the record owns into ONE panel-pooled paired test against its matched-exposure anchor and report the pooled effect with its SE, so the record can state a NUMBER for 'no device beats a de-gross' instead of a count of failures. Max 2 params. Price-only, both KEEP paths. (2026-09-19)
+
 
 
 
