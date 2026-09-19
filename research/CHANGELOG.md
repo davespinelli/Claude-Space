@@ -410,3 +410,73 @@
   first-order immune; the 4b pass count is not.
 
   **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
+
+
+## 2026-09-19 — idea 1350 (lane B): is the 2026-09-04 KEEP-4b pass TAPE-VINTAGE ROBUST? **ANSWERED — YES within the post-fix era / KEEP-4b CONFIRMATION (U56), no new book.**
+
+  **The defect this closes.** Idea 1335's gate G1b replayed a committed cell to 1e-8 on the full
+  sample but FAILED by 6.98e-3 on its HALVES, because commit 4e19a80 rewrote data/prices*.csv
+  wholesale after idea 1305 had committed the same cell. No committed number in this family
+  carries a TAPE STAMP, and the standing candidate sits only 1.10 pp inside a hard DD cap.
+  14 vintages of data/prices.csv are recoverable from this repo's own history (14 DISTINCT
+  blobs, 2026-09-03..2026-09-18, read offline with `git show`, with prices_broad.csv /
+  prices_small.csv.gz taken as of the same commit). 3 panels x 2 readings x N {10,16,20,25} x
+  H {63,126,252} = **912 books**, every one published.
+
+  **THE VERDICT SURVIVES THE TAPE.** The frozen 2026-09-04 book (N=20, H=126, gross 0.75,
+  weekly, 10 bps, t+1) clears 4b on **12 of 12** post-fix vintages on both readings. Head
+  vintage (4e19a80d): 15.80% / 1.1537 / -19.13%, halves 1.2067 / 1.1203, OOS 17.32% / 1.1857 /
+  -19.13%; SPY 15.12% / 0.8844 / -33.72%, OOS 0.8738. Across the 12 the anchor spans
+  15.71..15.82% CAGR and 1.1480..1.1544 Sharpe at a MaxDD of -19.13% (spread 8.2e-7).
+
+  **THE MARGINS BARELY MOVE, AND THE BINDER MOVES LEAST.** Restatement-only (V_TRUNC, every
+  vintage cut to the common end date, so only rewrites of overlapping rows can act): every 4b
+  margin spreads by <= **1.05e-4** and full Sharpe by **5.2e-6**. The drawdown-cap margin — the
+  leg the record calls the modal binder — is **+1.1028 pp against a 1.05e-4 pp spread**, a
+  margin-to-spread ratio of **10,521**. The 2020/2022 drawdown sits deep inside every tape.
+
+  **IDEA 1335's RESIDUAL IS THE TAPE'S NEW ROWS, NOT ITS REWRITES.** Letting each vintage keep
+  its own sample (V_RAW, up to 11 extra sessions) spreads full Sharpe by **6.4e-3**, the H2
+  margin by 1.2e-2, the OOS margin by 1.2e-2 and the CAGR margin by 0.09 pp — the size of the
+  6.98e-3 G1b residual, and ~1,000x the V_TRUNC spread. **Cross-run replay in this repo is
+  resolution-limited to ~6e-3 of Sharpe unless both runs name the same tape blob**, and that
+  limit comes from the extra week of data, not from the restatement.
+
+  **THE VERDICT DOES FLIP — ON 2 OF 14, BOTH A FIXED BUG.** The two vintages below commit
+  c006b439 ("Fix calendar-day index bug: align crypto to equity") carry ~6,060 calendar rows
+  against ~4,700 trading rows and give 11.85/11.87% CAGR, 1.0028/1.0044 Sharpe, -20.89% MaxDD,
+  DD margin **-0.66 pp** -> 4b FAIL. Published, but counted as a data bug, not as tape noise.
+
+  **THE MECHANISM — PRICE CHURN IS AN UPPER BOUND ON WHAT A BOOK FEELS.** 9.2% of overlapping
+  U56 price cells restate per daily step (auto_adjust back-adjusts the whole history on every
+  ex-dividend), but the median |delta daily return| is **1.1e-6** (CSV formatting), only
+  **0..699** return cells per step move by more than 1 bp, and the largest single move (5.1 pp)
+  is in the two CRYPTO columns universe.json excludes. Reporting a restated-cell share without
+  converting it to return space overstates the exposure by three orders of magnitude.
+
+  **RULE 8 — THE CHOOSER IS VINTAGE-STABLE AND STILL LOSES.** Dials chosen on warm-up..2016-12-31
+  only, 2017-2026 read ONCE, the chooser re-run SEPARATELY ON EACH VINTAGE: argmax IS Sharpe
+  picks (16, 63) on **12 of 12** post-fix U56 vintages and loses to the do-nothing anchor by
+  **-0.0400** of mean OOS Sharpe (pick 1.1388..1.1462 vs anchor 1.1759..1.1870); the pick clears
+  4b **0 of 12**, the anchor **12 of 12**. H_HINDSIGHT fires again — the cell nobody had to
+  choose is the one that passes. On SMALL the pick DOES move ((20,63) -> (10,252), 0.43 of OOS
+  Sharpe) but only at the commit where the cached panel went from **445 to 665 names**: that is a
+  universe rebuild, so on SMALL the vintage dial is confounded and is reported as such.
+
+  **KEEP-path census.** 4a **0 of 912** at every cell (live RULES v2: full Sharpe 1.2011,
+  MaxDD -12.05%). 4b 65 of 912 — U56 28/336, BROAD 37/312, **SMALL 0 of 264**.
+
+  **GATES 8/8**: G0 every vintage >= 10y; G1 the 2026-09-16 vintage replays the committed U56
+  anchor 15.7147% / 1.14798 / -19.1276% against 1.14804 (deviation **6e-5** of Sharpe) — the
+  committed anchor IS reproducible once the tape is named; G2 determinism 0.0; G3 14 distinct
+  blobs; G4 all 912 cells published; G5 exactly two tuned parameters (vintage, panel); G6 OOS
+  starts on or after 2017-01-01 everywhere; G7 one V_TRUNC end date per panel.
+
+  **SURVIVORSHIP (rule 9).** U56 / BROAD are current-constituent lists and SMALL a current
+  sub-$2B screen, so every absolute level is an upper bound. The headline is a SPREAD of the
+  SAME book over the SAME names across tapes, so it is first-order immune; the 4b pass count
+  is not.
+
+  **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. The
+  memo (`2026-09-19_tape-vintage-certified-incumbent_B.memo.md`) carries the exact RULES wording
+  and adds one reporting clause: publish the price tape's git blob beside every committed number.
