@@ -1,3 +1,76 @@
+## 2026-09-19 — idea 1690 (lane C): DOES THE 4b PASS SURVIVE DELETING ITS BEST CALENDAR YEAR OR ITS BEST k DAYS? **ANSWERED / KILL (capital) — THE PASS IS A ONE-DAY RESULT, AND THE DAY IS SPY's, NOT THE BOOK's. EVERY FLIP ON EVERY UNIT IS THE DD LEG. THE RETURN SIDE IS INDESTRUCTIBLE. NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1590 found the standing 2026-09-04 candidate cost-robust to
+  120 bps yet dead to ONE day of execution LATENCY, so its 4b margins are thin in ways the cost
+  axis cannot see. Idea 1511 measured its entire 4b drawdown margin at **1.10 pp against a paired
+  bootstrap SE of 2.93 pp**. Nobody had asked how much TAPE it takes to spend that margin.
+
+  **CONSTRUCTION.** The book is NOT rebuilt — positions are history. What is deleted is the
+  SCORING WINDOW: a set of days is removed from the daily return stream of the BOOK, of SPY and of
+  LIVE RULES v2 **identically**, so the 4b bar moves with the tape. Two dials: **UNIT {YEAR,
+  DAY_BOOK, DAY_SPY, DAY_ADV} x k** (0..6 / 0..20 / 0..20 / 0..10). YEAR and DAY_ADV are
+  ADVERSARIAL GREEDY on a scale-free objective (margin / |anchor margin|), so they answer the
+  idea literally. Published, not dials: PANEL {U56, B136, SMALL665}, CONVENTION {SPLICE+DD_SEG,
+  ZERO}, BAR {MOVES, FROZEN}, arena {FULL, IS, OOS}. **979 grid points, every one published.**
+  Conventions: 1254's DD_SEG is right for a YEAR (one long cut) and WRONG for scattered days (the
+  book's best days sit inside its deepest drawdowns, so a splice cuts the drawdown path exactly
+  where it flatters), so DAY_* is headlined under ZERO — the day's return set to 0 in all three
+  streams, calendar and drawdown path intact. Both are computed at every cell.
+
+  **(1) THE SMALLEST DELETION THAT FLIPS THE VERDICT IS ONE TRADING DAY, AND IT IS NOT THE BOOK's.**
+  Zeroing **2020-03-16** — SPY's worst session of the sample, **-10.94%**, on which the book lost
+  only 6.66% — moves **SPY's MaxDD -33.72% -> -26.67%**, tightening the 60% cap from **-20.23% to
+  -16.00%**, while **the book's own MaxDD moves -19.13% -> -19.10%**. DD margin **+0.0110 ->
+  -0.0310**. One scale up, deleting the calendar year **2020** alone takes the cap to -14.70%;
+  exhaustively, **17 of 18 single-year deletions KEEP the pass and only 2020 kills it**. This is
+  idea 1254's OOS-arena finding (the drawdown side is carried by 2020, and not because 2020 was
+  good for the book but because it was bad for SPY) confirmed on the FULL arena and localised to a
+  **single session**.
+
+  **(2) THE RETURN SIDE IS INDESTRUCTIBLE — AND THE BEST-DAY CUT MAKES IT BETTER.** Deleting the
+  book's **20 best days** walks CAGR 15.80% -> **11.42%** and Sharpe 1.1537 -> **0.8994** and flips
+  **no return leg**: H1 +0.2494 -> +0.2406, H2 +0.2952 -> **+0.3642**, OOS +0.3118 -> **+0.3792**,
+  CAGR margin +0.0522 -> +0.0505. H2 and OOS WIDEN, because the same deletion costs SPY more than
+  it costs the book. The cut cannot discriminate: **13 of the book's top-20 days are also SPY's
+  top-20** (10 of 20 on the worst side) and both share one best session (2025-04-09, book +7.55% /
+  SPY +10.50%). The ranked cuts flip only at **k = 9 (DAY_BOOK)** and **k = 7 (DAY_SPY)**, always
+  on DD. **Of 979 grid points, every U56 4b failure names DD and 0 pass 4a.**
+
+  **(3) THE FRAGILITY IS IN THE BAR, NOT THE BOOK — PUBLISHED IN BOTH DIRECTIONS.** With SPY's
+  k=0 bar held FROZEN, DAY_SPY/SPLICE **never flips in 20** and DAY_BOOK/SPLICE flips only at 18
+  (H2); but DAY_BOOK/ZERO flips at **3 instead of 9**, because a frozen cap no longer loosens as
+  SPY's own drawdown deepens. Both directions say the same thing: **a 4b DD verdict is a statement
+  about the benchmark's worst week as much as about the book.**
+
+  **(4) THE OTHER TWO PANELS HAVE NO PASS TO LOSE.** B136 fails 4b at k=0 on DD alone (MaxDD
+  **-20.74%** against a **-20.23%** cap, margin -0.0051) with every return leg positive;
+  SMALL665 fails all five legs. Marked `NO_PASS_AT_K0`, never reported as fragility.
+
+  **(5) RULE 8 — THE FRAGILITY MEASURE IS UNADJUDICABLE IN SAMPLE.** The book **fails 4b at k = 0
+  in the 2009-2016 IS window on all three panels, on the DD leg** (U56 margin **-0.0072**, B136
+  -0.0140), because that window holds no deep SPY drawdown (SPY IS MaxDD -22.06% -> cap -13.24%
+  against a book at -13.95%) — the defect `2026-09-04_is-window-has-no-crash_C` already named. So
+  every IS flip-depth is 0, the IS-only chooser is a **pure tie**, and the IS/OOS flip-depth rank
+  correlation over the 12 (panel, unit) pairs is **undefined (nan)**. It degenerates to the
+  do-nothing anchor U56, whose OOS flip depths are 1 / 1 / 6 / 5 against a 3-panel mean of
+  0.33 / 0.33 / 2.00 / 1.67 and a worst panel (B136) of 0. OOS triples read once (2017-2026):
+  BOOK **17.32% / 1.1857 / -19.13%**, LIVE v2 9.46% / 1.2769 / -12.05%, SPY 15.26% / 0.8738 /
+  -33.72%.
+
+  **GATES 4 of 5, AND THE FAILURE IS PUBLISHED RATHER THAN PATCHED.** G1b: on 1254's own tape
+  (ending **2026-09-16**, 4,446 days) this book replays the committed U56 triple **0.1571 /
+  1.1480 / -0.1913 exactly**. G4 is a cross-run gate reproducing 1254's **9-of-10** OOS-year
+  count. G1, the same replay on THIS run's window, FAILS at 5e-3 (0.1580 / 1.1537 / -0.1913)
+  for one reason: **the committed cache has grown by two trading sessions**, and SPY (0.8844 vs
+  0.8815) and LIVE v2 (1.2011 vs 1.1982) drift the same +0.003 in the same direction. The
+  tolerance was not loosened. **Any committed Sharpe quoted to 3 decimals is a statement about a
+  tape vintage**, which is idea 1350's finding arriving by a second route.
+
+  **WHAT THE RECORD SHOULD DO.** Quote a 4b DD verdict **with its deletion depth** — "DD passes,
+  flip depth 1" is a different claim from "DD passes" — and quote the return legs separately from
+  the DD leg, since on this book they are not remotely the same kind of evidence. Do NOT retune
+  the 60% cap. **No RULES change proposed; the 2026-09-04 candidate is not promoted.**
+
 ## 2026-09-19 — idea 1694 (lane cloud): IS THE KEEP-4b PASS A REBALANCE-CALENDAR-PHASE ARTEFACT? **ANSWERED — THE PHASE IS THE LARGEST UNPRICED DIAL THE RECORD OWNS. THE STANDING U56 WEEKLY PASS SURVIVES ALL 5 WEEKDAYS; B136's SURVIVES ONLY 2 OF 5 AND NEITHER COMMITTED ANCHOR. 4a 0 OF 66. NO RULES CHANGE; A PROTOCOL NOTE IS PROPOSED.**
 
   **THE DEFECT THIS CLOSES.** Every book in this record rebalances on the LAST TRADING DAY of
