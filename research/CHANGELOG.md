@@ -1,3 +1,56 @@
+## 2026-09-19 — idea 1405 (lane cloud): does a TRAILING EQUITY STOP on the incumbent's OWN BOOK buy the BINDING 4b DD LEG? **ANSWERED NO — THE BRAKE IS REAL, IT SHALLOWS THE BINDING LEG, AND AT MATCHED EXPOSURE IT IS WORTH NOTHING ON 216 OF 216 CELLS. KILL (capital), NO NEW BOOK, NO RULES CHANGE.**
+
+  The standing 2026-09-04 KEEP-4b incumbent (U56, N = 20, H = 126, gross 0.75, weekly Fri-decide /
+  Mon-trade, 10 bps, t+1) passes on one leg's margin: MaxDD −19.13% against a −20.23% cap, **+1.10
+  pp**, with only 0.046 of gross of headroom (idea 1194). Every prior attack went at the SIGNAL.
+  An equity-curve brake goes at the leg itself: it predicts nothing, it reacts to the book's own
+  realised loss.
+
+  **THE GRID.** DEPTH {0.05, 0.075, 0.10, 0.125, 0.15, 0.20} x FRAC {0, 0.25, 0.50, 0.75, 1.00} at
+  the frozen incumbent, on three panels. RESTORE {SAME, HALF, PEAK} is a REPORTED axis, not a third
+  dial — rule 8 runs separately inside each convention, so no arm has more than two free parameters.
+  **All 270 cells published** in `.grid.csv`. The brake decides at rebalance row t from the book's
+  own NET equity through row t−1 only, on an already-lagged grid; it touches EXPOSURE, never
+  selection, so the frame is built once and scaled.
+
+  **THE BRAKE WORKS — AND THAT IS NOT THE QUESTION.** U56's 4b DD margin runs **+1.10 pp frozen to
+  +13.62 pp** at (SAME, 0.05, 1.00). 4b passes **59 of 90** U56 cells, 6 of 90 B136, **0 of 90**
+  SMALL. **4a: 0 of 270.**
+
+  **THE CONTROL DECIDES IT.** A brake that shallows drawdown by holding less stock is a gross dial
+  in a costume, so every one of the 216 biting cells is scored against its OWN **exposure-matched
+  FLAT gross cut** (fine ladder 0.20..0.75 by 0.01, controls not dials), gap scored by a PAIRED
+  circular-block bootstrap (400 reps x 63-row blocks, seed 20260919, identical block starts).
+  Against that twin the brake's **median MaxDD edge is −0.01 pp** (U56 −0.002, B136 −0.165, SMALL
+  +0.105) and its **median Sharpe edge −0.1009**. **90 of 216 biting cells resolve |t| > 2 and
+  0 of the 90 favour the brake**; OOS, 31 resolve and 0 favour it. Only **7 of 216** cells show any
+  positive Sharpe gap at all. Of U56's 41 biting 4b passes, median Sharpe gap vs twin **−0.0274**,
+  best MaxDD gap **+3.01 pp**, and the 7 that resolve all resolve AGAINST the brake.
+
+  **THE ONE HONEST CELL, REPORTED AS UNRESOLVED.** U56 / SAME / depth 0.05 / frac 0.25: CAGR 14.02%,
+  Sharpe 1.1522, MaxDD **−16.54%** (DD margin **+3.69 pp** against the frozen +1.10 pp), OOS Sharpe
+  **1.2024** against the anchor's 1.1857. It buys **+1.15 pp** of MaxDD over its g = 0.69 twin for
+  **−0.0013** of Sharpe at **t = −0.04**. Inside its own SE. Not an edge. At depth 0.20 the brake
+  **never fires on U56** at all — the book's own weekly-grid peak-to-trough never reaches −20%.
+
+  **RULE 8 (IS = warm-up..2016-12-31, 2017-2026 read ONCE).** The IS chooser picks **FRAC = 0 — the
+  frozen incumbent — on 7 of 9 (panel, restore) arms**, including all three U56 and all three B136
+  arms. Mean OOS Sharpe minus the frozen anchor **−0.0020**; the two SMALL arms that do brake land
+  −0.0189 and +0.0012. U56 OOS anchor **17.32% / 1.1857 / −19.13%** against SPY 15.26% / 0.8738 /
+  −33.72% and live RULES v2 9.46% / 1.2769 / −12.05%. OOS 4b among the 9 arms: 3 of 9, all the
+  untouched anchor; 4a 0 of 9.
+
+  GATES all pass: G1 cross-script replay of the committed 2026-09-04 U56 anchor **|dSharpe| 3.7e−05**
+  (15.80% / 1.1537 / −19.13% full, 1.1857 OOS); G2 the FRAC = 0 cell is bit-identical to the frozen
+  book at all 18 (depth, restore) cells, max |dret| **0.000e+00**; G3 270 of 270 published; G4 two
+  tuned parameters per arm; G5 the chooser reads no row on or after 2017-01-01; G6 max realised
+  weight sum **0.750000** (no leverage, no shorting); G7 feed-lag sensitivity published.
+  Survivorship (rule 9): U56/B136 are current-constituent lists and SMALL a current sub-$2B screen
+  (54 tickers with max_1d_move >= 1.0 dropped, 665 kept), so every absolute level is an upper bound;
+  what is read here is a CONTRAST between a braked book and its own twin on identical names and days.
+
+  **NO RULES CHANGE.** Script `research/backtests/2026-09-19_trailing-equity-stop-on-the-incumbent_cloud.py`.
+
 ## 2026-09-19 — idea 1194 (lane C): how many committed 4b PASSES COLLAPSE under a GROSS-FREE KEY? **ANSWERED NO — THE RE-KEY IS NOT A DE-DUPLICATION, IT ERASES THE DIAL THAT DECIDES THE VERDICT. KILL (re-key), KILL (dial), NO NEW BOOK, NO RULES CHANGE — AND ONE CONFIRMED CAVEAT ON THE STANDING INCUMBENT.**
 
   Idea 1189 recommended keying a 4b pass on `(panel, N, cadence, H)` with GROSS as an ATTRIBUTE,
