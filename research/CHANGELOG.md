@@ -1,3 +1,59 @@
+## 2026-09-19 — idea 1600 (lane B): DOES A DD-AWARE IS-ONLY CHOOSER REACH THE 4b-PASSING GROSS RUNGS THAT ARGMAX IS SHARPE WALKS PAST? **ANSWERED: YES — 8 OF 12 CELLS AGAINST 0 OF 12, INCLUDING THE (25 bps, +1 DAY) CELL THAT KILLED THE INCUMBENT. KEEP-CANDIDATE UNDER PATH 4b. NO RULES CHANGE ENACTED (rule 6: Sunday review only).**
+
+  **THE QUESTION.** Idea 1590 closed the same day with "0 of 48 legal IS-only choosers reach a
+  4b-passing rung": argmax IS Sharpe took gross 0.95-1.00 at every one of its 48 cells and blew the
+  DD cap, while every 4b pass in its grid sat at 0.50-0.75. That is a statement about the CHOOSER'S
+  OBJECTIVE, not about rule 8, and the record already owns an untested alternative — the
+  2026-09-03 RECOMMENDATION memo pre-registered, in writing, "smallest G whose MaxDD <= 60% of
+  SPY's and CAGR >= 70% of SPY's". This run races five IS-only choosers over the same frozen book
+  (N = 20, H = 126, MAXVOL 0.60, 200d gate, weekly), the same 13-rung gross ladder 0.40..1.00, on
+  three panels x cost {10, 25} bps x execution delay {+0, +1}: **156 published books, 60 published
+  picks, both KEEP paths at every one.**
+
+  **(1) THE RETURN CHOOSERS DISCRIMINATE ON 0.0010 OF SHARPE AND PAY 10.9 pp OF DRAWDOWN.** Across
+  the 13 rungs the IS Sharpe span is **0.0010 (U56), 0.0041 (B136), 0.0033 (SMALL)** while the IS
+  MaxDD span is **10.86 / 11.41 / 18.77 pp**. Gross is a pure scale dial, so IS Sharpe is
+  flat-to-increasing in it. Over the 12 cells: **ISSHARPE mean pick g 0.992, 4b 0/12; ISCALMAR
+  0.983, 0/12; PREREG 0.617, 8/12; SHARPEDD (argmax IS Sharpe inside the memo's admitted set)
+  0.700, 6/12; FROZEN 0.75, 4/12.** The failing OOS leg is **DD in 12 of 12 cells for both return
+  choosers** and 4 of 12 for PREREG.
+
+  **(2) THE HEADLINE BOOK.** U56, (10 bps, +0), PREREG picks **g = 0.60**: FULL **12.61% / 1.1532 /
+  -15.51%** (H1 1.206, H2 1.120), **OOS 13.81% / 1.1851 / -15.51%**, 4b TRUE on BOTH windows,
+  against SPY FULL 15.12% / 0.8844 / -33.72% (bars: DD cap -20.23%, CAGR floor 10.59%), SPY OOS
+  15.26% / 0.8738 / -33.72% and RULES v2 OOS 9.46% / 1.2769 / -12.05%. B136 PREREG g = 0.50: FULL
+  10.69% / 1.0632 / -14.17%, OOS 10.80% / 1.0155 / -14.17%, 4b TRUE both.
+
+  **(3) IT SURVIVES THE CELL THAT KILLED THE INCUMBENT.** 1590's kill was one trading day of
+  latency driving U56's g = 0.75 book from -19.13% to -21.57% through the -20.23% cap. The DD-aware
+  pick is not exposed: at **(25 bps, +1 day)** U56 PREREG g = 0.60 reads FULL **11.80% / 1.0723 /
+  -17.60%**, **OOS 12.66% / 1.0710 / -17.60%**, 4b TRUE both windows; B136 PREREG g = 0.50 FULL
+  11.47% / 1.1214 / -13.33%, OOS 11.56% / 1.0679 / -13.33%, 4b TRUE both — while **FROZEN 0.75 and
+  SHARPEDD 0.70 both FAIL there on U56, on the DD leg.** Three (panel, chooser) pairs hold 4b on
+  both windows at the headline AND the realistic cell: **U56/PREREG, B136/PREREG, B136/SHARPEDD.**
+  H_REACHABLE, pre-registered before the run, therefore FIRES.
+
+  **(4) THE HONEST DEFLATION, STATED IN THE MEMO.** **rho(IS MaxDD, OOS MaxDD) = 1.0000 at all 12
+  cells** (Sharpe 0.9835-1.0000). Every rung is the SAME holdings frame scaled by g, so a drawdown
+  bar read in-sample pins the same ordering out-of-sample BY CONSTRUCTION. This is a
+  **leverage-selection** result, not a forecasting one — which is exactly why it survives rule 8,
+  and exactly why it is worth less than a signal discovery. **Path 4a fires 2 of 156 FULL and 0 of
+  156 OOS: a 4b claim only.** SMALL passes nothing at any of its 4 cells (shelf size 0).
+
+  **(5) GATES 10/10.** G0 16.7y; **G1 the committed 2026-09-04 U56 frozen anchor replayed at
+  3.72e-05**; G2 exactly two tuned parameters (chooser objective, gross rung — cost and delay are
+  published stress axes, every cell reported); G3 the cost ladder an exact identity on one turnover
+  path (0.00e+00); G4 max realised gross 1.000000; **G5 every IS statistic recomputed on a
+  hard-truncated array, 0.00e+00 — no chooser can see a 2017+ row even by accident**; G6 all 156
+  ladder cells and all 60 picks published; G7 delay +0 == the protocol convention (0.00e+00); G8
+  every PREREG / SHARPEDD pick re-derived from the published IS columns alone agrees with the pick
+  taken in the loop. Deterministic, offline, 11.2s. **SURVIVORSHIP (rule 9):** U56 55 names, B136
+  135, SMALL 665 investable after the `small_meta` max_1d_move filter; all current-constituent
+  lists, so every absolute level is an UPPER BOUND and the headline is a CONTRAST BETWEEN CHOOSERS
+  over the SAME books on the SAME days. **PROPOSED, NOT ENACTED** — memo at
+  `research/backtests/2026-09-19_dd-aware-is-only-chooser_B.memo.md` carries the exact RULES
+  clause-3 wording for the Sunday review.
+
 ## 2026-09-19 — idea 1590 (lane cloud, idea 2 of 2): DOES THE STANDING 4b BOOK SURVIVE 25 AND 50 bps AND EXTRA DAYS OF EXECUTION DELAY? **ANSWERED: IT SURVIVES COST TO 120 bps AND DIES TO ONE DAY OF LATENCY AT EVERY COST RUNG, 0 bps INCLUDED. KILL FOR CAPITAL. NO RULES CHANGE ENACTED.**
 
   **THE QUESTION.** Every 4b pass in this record is priced at exactly 10 bps with the decision
