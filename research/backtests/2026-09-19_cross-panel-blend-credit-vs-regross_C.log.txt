@@ -1,0 +1,182 @@
+======================================================================================================================
+IDEA 1649 (lane C, 2026-09-19) — is ANY CROSS-PANEL BLEND CREDIT a RE-GROSS in disguise?
+DIALS: w (NAV share to U56) [0.0, 0.25, 0.5, 0.75, 1.0]  x  G (TOTAL TARGET gross) [0.5, 0.75, 1.0]  ->  15 cells.
+NOT DIALS, all published: SLICE [FULL, IS, OOS] x COST [0.0, 10.0, 25.0, 50.0] bps.  Weekly cadence, t+1 execution, live band 0.03 book on each panel, gated-out weight to 0%-yielding CASH.
+H0: a blend's whole effect vs a corner is reproduced by scaling THAT CORNER to the same
+    REALISED mean gross.  Rejecting H0 = a real cross-panel edge; failing = a re-gross.
+======================================================================================================================
+
+  SMALL filter (protocol-mandated): data/small_meta.csv drops 54 tickers with max_1d_move >= 1.0; 665 of 719 priced names survive.
+  COMMON TAPE (both panels priced): 2010-01-04 .. 2026-09-18  4203 rows (16.7y).  U56 56 traded cols, SMALL 665 traded cols.
+  SURVIVORSHIP (rule 9): U56 is a CURRENT-constituent list and SMALL a CURRENT sub-$2B screen carried back to 2010, so every ABSOLUTE level below is an UPPER BOUND.  The headline is a BLEND-minus-TWIN contrast inside one tape, over the same names on the same days at the same realised exposure, so it is first-order immune; the 4b pass counts are not.
+  SLICES: FULL rows 260..4203 (2011-01-13..2026-09-18), IS 260..1762 (..2016-12-30), OOS 1762..4203 (2017-01-03..).
+    PUBLISHED  TAPE STAMP: 4203 rows 2010-01-04..2026-09-18, U56 56 + SMALL 665 = 721 traded columns
+    GATE PASS  G0 min sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 exactly two tuned parameters (w x G): 15 cells = 5 w-rungs x 3 G-rungs (target 2 dials)
+
+  [G1/G2/G3] fast_run vs engine.backtest (returns AND turnover), live corner + a blend
+    GATE PASS  G1 fast_run vs engine.backtest, RETURNS (max |dev| over finite rows, corner + blend): 1.214e-16 (target < 1e-12)
+    GATE PASS  G1b fast_run vs engine.backtest, TURNOVER (max |dev|): 2.082e-16 (target < 1e-12)
+    GATE PASS  G2 DERIVED 25 bps rung vs a fresh 25 bps engine run (max |dev|): 1.388e-17 (target < 1e-12)
+    PUBLISHED  G1c engine rows EXCLUDED as non-finite (pre-first-rebalance, rows 0 and 5 of 4203, 258 rows before the scored sample starts): 4 of 8406
+    GATE PASS  G3 (w=1.00, G=0.75) replays baseline.rules_v2_weights on U56 (max |dev|): 1.388e-17 (target < 1e-12)
+    GATE PASS  G3b same replay over the SCORED slice only (rows 260+), no exclusions: 1.388e-17 (target < 1e-12)
+  [FULL] SPY  14.01% / 0.8562 / -33.72%   |  4b bars: DD cap -20.23%, CAGR floor  9.81%   |  LIVE RULES v2   8.13% / 1.1621 / -12.07%
+  [IS  ] SPY  12.02% / 0.8318 / -18.61%   |  4b bars: DD cap -11.16%, CAGR floor  8.42%   |  LIVE RULES v2   6.04% / 0.9583 /  -7.90%
+  [OOS ] SPY  15.26% / 0.8738 / -33.72%   |  4b bars: DD cap -20.23%, CAGR floor 10.68%   |  LIVE RULES v2   9.44% / 1.2752 / -12.07%
+
+  [Q0] PREMISE: does SMALL's band gate out more often than U56's?
+      in-band share of priced names, FULL mean:  U56 0.7051   SMALL 0.5482
+      REALISED mean gross at TARGET 0.75      :  U56 0.5293   SMALL 0.4113   (gap +0.1180)
+    PUBLISHED  Q0 in-band share U56 / SMALL (FULL): 0.7051 / 0.5482
+    PUBLISHED  Q0 realised mean gross at target 0.75, U56 / SMALL: 0.5293 / 0.4113
+      PREMISE HOLDS: SMALL realises LESS gross than U56 at the same target, so a NAV split at constant TARGET gross DOES move REALISED exposure.
+    PUBLISHED  Q0 PREMISE (SMALL realises lower gross than U56 at matched target): True
+
+  [CELLS] running 15 blend cells and their realised-gross-matched twins ...
+    GATE PASS  G8 no leverage / no shorting: max realised TARGET gross: 0.982143 (target <= 1.000001)
+    GATE PASS  G4 realised-gross match, max |mean_gross(twin) - mean_gross(cell)| over feasible twins: 1.998e-14 (target < 1e-10)
+    PUBLISHED  G4b twins INFEASIBLE without leverage (target gross would exceed 1.00): 13 of 90  e.g. [('w=0.25 G=1.00', 'S', 'FULL'), ('w=0.25 G=1.00', 'S', 'IS'), ('w=0.25 G=1.00', 'S', 'OOS'), ('w=0.50 G=1.00', 'S', 'FULL')]
+
+  [Q1/Q2/Q3] every cell x cost rung; RAW credit vs the corner, MATCHED credit vs its twin
+    GATE PASS  G7 every cell x slice x cost rung published: 180 rows (target == 180)
+
+  FULL SAMPLE @ 10 bps (the binding rung).  'raw' = vs the corner at matched TARGET gross; 'mat' = vs that corner scaled to the cell's OWN REALISED gross.
+    cell            rgross   CAGR    Sharpe   MaxDD  | rawdS_U  matdS_U | rawdS_S  matdS_S | 4a 4b
+    w=0.00 G=0.50  0.2742   2.87%  0.6587  -9.62% | -0.5034  -0.5033 | +0.0000  +0.0000 | .  .
+    w=0.00 G=0.75  0.4113   4.26%  0.6589 -14.16% | -0.5032  -0.5032 | +0.0000  -0.0000 | .  .
+    w=0.00 G=1.00  0.5484   5.62%  0.6591 -18.53% | -0.5029  -0.5030 | +0.0000  +0.0000 | .  .
+    w=0.25 G=0.50  0.2939   3.51%  0.8309  -7.94% | -0.3312  -0.3311 | +0.1722  +0.1722 | .  .
+    w=0.25 G=0.75  0.4408   5.24%  0.8310 -11.78% | -0.3311  -0.3311 | +0.1721  +0.1721 | .  .
+    w=0.25 G=1.00  0.5877   6.95%  0.8311 -15.52% | -0.3309  -0.3310 | +0.1720     +nan | .  .
+    w=0.50 G=0.50  0.3136   4.14%  0.9817  -6.88% | -0.1803  -0.1803 | +0.3231  +0.3230 | .  .
+    w=0.50 G=0.75  0.4703   6.21%  0.9818 -10.22% | -0.1803  -0.1803 | +0.3229  +0.3228 | .  .
+    w=0.50 G=1.00  0.6270   8.27%  0.9818 -13.51% | -0.1802  -0.1803 | +0.3227     +nan | .  .
+    w=0.75 G=0.50  0.3333   4.77%  1.0938  -7.51% | -0.0682  -0.0682 | +0.4352  +0.4351 | .  .
+    w=0.75 G=0.75  0.4998   7.17%  1.0939 -11.15% | -0.0682  -0.0682 | +0.4350  +0.4348 | .  .
+    w=0.75 G=1.00  0.6663   9.58%  1.0938 -14.72% | -0.0682  -0.0682 | +0.4347     +nan | .  .
+    w=1.00 G=0.50  0.3530   5.40%  1.1620  -8.13% | +0.0000  +0.0000 | +0.5034  +0.5032 | .  .
+    w=1.00 G=0.75  0.5293   8.13%  1.1621 -12.07% | +0.0000  +0.0000 | +0.5032  +0.5030 | .  .
+    w=1.00 G=1.00  0.7056  10.87%  1.1620 -15.94% | +0.0000  -0.0000 | +0.5029     +nan | .  Y
+
+  [G11] what a CONSTANT DE-GROSS does to each axis, measured on the two corners:
+       corner at target G vs the SAME corner scaled to a LOWER realised gross.
+       U56    realised gross x0.90 (target 0.6750): dSharpe +0.0000  dCAGR -0.82%  dMaxDD +1.18%
+       U56    realised gross x0.75 (target 0.5624): dSharpe -0.0000  dCAGR -2.05%  dMaxDD +2.95%
+       U56    realised gross x0.50 (target 0.3749): dSharpe -0.0001  dCAGR -4.09%  dMaxDD +5.95%
+       SMALL  realised gross x0.90 (target 0.6750): dSharpe -0.0001  dCAGR -0.41%  dMaxDD +1.34%
+       SMALL  realised gross x0.75 (target 0.5625): dSharpe -0.0002  dCAGR -1.04%  dMaxDD +3.39%
+       SMALL  realised gross x0.50 (target 0.3749): dSharpe -0.0004  dCAGR -2.10%  dMaxDD +6.88%
+    PUBLISHED  G11 |dSharpe| of a pure constant de-gross, max over 6 (corner x gross fraction) cells: 0.0004  -> a de-gross moves CAGR and MaxDD and leaves SHARPE ~fixed, so the re-gross component of any credit can only live on the CAGR / MaxDD axes
+
+  [Q1 vs Q2] BLEND cells only (w in {0.25,0.50,0.75}); 9 cells per slice.  RAW = vs the
+  corner at matched TARGET gross.  MATCHED = vs that corner scaled to the cell's OWN
+  REALISED gross.  RE-GROSS SHARE = 1 - matched/raw: how much of the raw credit is bought
+  by carrying less exposure rather than by holding different names.
+
+    vs U56 corner (the live book):  slice cost | feasible | dSharpe raw->mat | dCAGR raw->mat (re-gross share) | dMaxDD raw->mat (re-gross share)
+      FULL    0.0 | 9/9 | -0.1847 -> -0.1848 (0->0 win) | -1.89% -> -0.96% (+49.5%) | +1.13% -> -0.18% (+115.6%)
+      FULL   10.0 | 9/9 | -0.1932 -> -0.1932 (0->0 win) | -1.93% -> -1.02% (+47.3%) | +1.02% -> -0.28% (+127.6%)
+      FULL   25.0 | 9/9 | -0.2059 -> -0.2058 (0->0 win) | -1.99% -> -1.11% (+44.2%) | +0.87% -> -0.44% (+151.0%)
+      FULL   50.0 | 9/9 | -0.2271 -> -0.2268 (0->0 win) | -2.09% -> -1.27% (+39.4%) | +0.51% -> -0.80% (+257.7%)
+      IS      0.0 | 9/9 | -0.0055 -> -0.0053 (6->6 win) | -0.32% -> +0.09% (+129.1%) | -0.24% -> -0.75% (-214.4%)
+      IS     10.0 | 9/9 | -0.0129 -> -0.0127 (3->3 win) | -0.36% -> +0.04% (+111.8%) | -0.24% -> -0.76% (-215.8%)
+      IS     25.0 | 9/9 | -0.0240 -> -0.0237 (0->0 win) | -0.42% -> -0.03% (+92.0%) | -0.16% -> -0.71% (-338.5%)
+      IS     50.0 | 9/9 | -0.0426 -> -0.0422 (0->0 win) | -0.51% -> -0.16% (+68.9%) | +0.04% -> -0.54% (+1447.7%)
+      OOS     0.0 | 9/9 | -0.2825 -> -0.2829 (0->0 win) | -2.88% -> -1.52% (+47.1%) | +1.13% -> -0.49% (+143.6%)
+      OOS    10.0 | 9/9 | -0.2915 -> -0.2918 (0->0 win) | -2.92% -> -1.59% (+45.4%) | +1.02% -> -0.60% (+158.5%)
+      OOS    25.0 | 9/9 | -0.3051 -> -0.3052 (0->0 win) | -2.98% -> -1.70% (+43.0%) | +0.87% -> -0.76% (+187.6%)
+      OOS    50.0 | 9/9 | -0.3276 -> -0.3275 (0->0 win) | -3.09% -> -1.87% (+39.3%) | +0.51% -> -1.12% (+320.1%)
+
+    vs SMALL corner:  slice cost | feasible | dSharpe raw->mat | dCAGR raw->mat (re-gross share) | dMaxDD raw->mat (re-gross share)
+      FULL    0.0 | 6/9 | +0.3054 -> +0.3054 (6->6 win) | +1.58% -> +1.05% (+33.5%) | +2.46% -> +4.03% (-64.0%)
+      FULL   10.0 | 6/9 | +0.3101 -> +0.3100 (6->6 win) | +1.61% -> +1.11% (+30.8%) | +2.65% -> +4.25% (-60.9%)
+      FULL   25.0 | 6/9 | +0.3171 -> +0.3169 (6->6 win) | +1.66% -> +1.21% (+26.9%) | +2.92% -> +4.59% (-56.9%)
+      FULL   50.0 | 6/9 | +0.3288 -> +0.3285 (6->6 win) | +1.74% -> +1.37% (+21.0%) | +3.30% -> +5.05% (-53.0%)
+      IS      0.0 | 6/9 | +0.0647 -> +0.0645 (6->6 win) | +0.29% -> -0.07% (+125.0%) | +0.21% -> +0.74% (-244.6%)
+      IS     10.0 | 6/9 | +0.0700 -> +0.0698 (6->6 win) | +0.32% -> -0.02% (+107.3%) | +0.22% -> +0.75% (-240.3%)
+      IS     25.0 | 6/9 | +0.0781 -> +0.0779 (6->6 win) | +0.36% -> +0.05% (+86.6%) | +0.23% -> +0.78% (-234.5%)
+      IS     50.0 | 6/9 | +0.0916 -> +0.0913 (6->6 win) | +0.44% -> +0.17% (+61.9%) | +0.22% -> +0.79% (-261.9%)
+      OOS     0.0 | 6/9 | +0.4346 -> +0.4347 (6->6 win) | +2.37% -> +1.78% (+25.1%) | +2.46% -> +4.55% (-85.1%)
+      OOS    10.0 | 6/9 | +0.4390 -> +0.4391 (6->6 win) | +2.40% -> +1.85% (+22.9%) | +2.65% -> +4.78% (-80.9%)
+      OOS    25.0 | 6/9 | +0.4456 -> +0.4456 (6->6 win) | +2.45% -> +1.97% (+19.7%) | +2.92% -> +5.13% (-75.6%)
+      OOS    50.0 | 6/9 | +0.4566 -> +0.4564 (6->6 win) | +2.53% -> +2.16% (+14.7%) | +3.30% -> +5.63% (-70.4%)
+
+  [MIX] the blend's Sharpe against the NAV-WEIGHTED AVERAGE of its two corner Sharpes
+        (a diversification credit if positive) AND against the BETTER corner (what a
+        manager actually gives up).  10 bps, every slice.
+      FULL  w=0.25 G=0.50  blend 0.8309  NAV-avg of corners 0.7845  -> convexity +0.0464  |  best corner 1.1620 -> -0.3312
+      FULL  w=0.25 G=0.75  blend 0.8310  NAV-avg of corners 0.7847  -> convexity +0.0463  |  best corner 1.1621 -> -0.3311
+      FULL  w=0.25 G=1.00  blend 0.8311  NAV-avg of corners 0.7848  -> convexity +0.0463  |  best corner 1.1620 -> -0.3309
+      FULL  w=0.50 G=0.50  blend 0.9817  NAV-avg of corners 0.9104  -> convexity +0.0714  |  best corner 1.1620 -> -0.1803
+      FULL  w=0.50 G=0.75  blend 0.9818  NAV-avg of corners 0.9105  -> convexity +0.0713  |  best corner 1.1621 -> -0.1803
+      FULL  w=0.50 G=1.00  blend 0.9818  NAV-avg of corners 0.9105  -> convexity +0.0713  |  best corner 1.1620 -> -0.1802
+      FULL  w=0.75 G=0.50  blend 1.0938  NAV-avg of corners 1.0362  -> convexity +0.0576  |  best corner 1.1620 -> -0.0682
+      FULL  w=0.75 G=0.75  blend 1.0939  NAV-avg of corners 1.0363  -> convexity +0.0576  |  best corner 1.1621 -> -0.0682
+      FULL  w=0.75 G=1.00  blend 1.0938  NAV-avg of corners 1.0363  -> convexity +0.0575  |  best corner 1.1620 -> -0.0682
+      IS    w=0.25 G=0.50  blend 0.9205  NAV-avg of corners 0.8950  -> convexity +0.0255  |  best corner 0.9572 -> -0.0367
+      IS    w=0.25 G=0.75  blend 0.9216  NAV-avg of corners 0.8961  -> convexity +0.0255  |  best corner 0.9583 -> -0.0367
+      IS    w=0.25 G=1.00  blend 0.9226  NAV-avg of corners 0.8971  -> convexity +0.0255  |  best corner 0.9593 -> -0.0367
+      IS    w=0.50 G=0.50  blend 0.9503  NAV-avg of corners 0.9158  -> convexity +0.0346  |  best corner 0.9572 -> -0.0069
+      IS    w=0.50 G=0.75  blend 0.9514  NAV-avg of corners 0.9168  -> convexity +0.0346  |  best corner 0.9583 -> -0.0069
+      IS    w=0.50 G=1.00  blend 0.9524  NAV-avg of corners 0.9178  -> convexity +0.0346  |  best corner 0.9593 -> -0.0069
+      IS    w=0.75 G=0.50  blend 0.9622  NAV-avg of corners 0.9365  -> convexity +0.0257  |  best corner 0.9572 -> +0.0049
+      IS    w=0.75 G=0.75  blend 0.9632  NAV-avg of corners 0.9376  -> convexity +0.0257  |  best corner 0.9583 -> +0.0049
+      IS    w=0.75 G=1.00  blend 0.9642  NAV-avg of corners 0.9385  -> convexity +0.0257  |  best corner 0.9593 -> +0.0050
+      OOS   w=0.25 G=0.50  blend 0.7824  NAV-avg of corners 0.7276  -> convexity +0.0548  |  best corner 1.2757 -> -0.4933
+      OOS   w=0.25 G=0.75  blend 0.7821  NAV-avg of corners 0.7274  -> convexity +0.0547  |  best corner 1.2752 -> -0.4931
+      OOS   w=0.25 G=1.00  blend 0.7816  NAV-avg of corners 0.7270  -> convexity +0.0546  |  best corner 1.2745 -> -0.4929
+      OOS   w=0.50 G=0.50  blend 1.0008  NAV-avg of corners 0.9103  -> convexity +0.0905  |  best corner 1.2757 -> -0.2749
+      OOS   w=0.50 G=0.75  blend 1.0003  NAV-avg of corners 0.9100  -> convexity +0.0904  |  best corner 1.2752 -> -0.2748
+      OOS   w=0.50 G=1.00  blend 0.9998  NAV-avg of corners 0.9095  -> convexity +0.0902  |  best corner 1.2745 -> -0.2747
+      OOS   w=0.75 G=0.50  blend 1.1691  NAV-avg of corners 1.0930  -> convexity +0.0760  |  best corner 1.2757 -> -0.1067
+      OOS   w=0.75 G=0.75  blend 1.1685  NAV-avg of corners 1.0926  -> convexity +0.0759  |  best corner 1.2752 -> -0.1067
+      OOS   w=0.75 G=1.00  blend 1.1678  NAV-avg of corners 1.0920  -> convexity +0.0758  |  best corner 1.2745 -> -0.1067
+    -> convexity vs the NAV-weighted corner average: 27 of 27 positive, mean +0.0535; against the BETTER corner 3 of 27 positive, mean -0.1659.
+
+  [Q3] KEEP paths, all 15 cells, at 10 bps.  4b needs BOTH halves > SPY, MaxDD <= 60% of SPY's and CAGR >= 70% of SPY's; FULL and OOS both required by rule 8.
+    w=0.00 G=0.50  4b FULL . OOS .  (legs FULL H1 . H2 . DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.00 G=0.75  4b FULL . OOS .  (legs FULL H1 . H2 . DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.00 G=1.00  4b FULL . OOS .  (legs FULL H1 . H2 . DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.25 G=0.50  4b FULL . OOS .  (legs FULL H1 Y H2 . DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.25 G=0.75  4b FULL . OOS .  (legs FULL H1 Y H2 . DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.25 G=1.00  4b FULL . OOS .  (legs FULL H1 Y H2 . DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.50 G=0.50  4b FULL . OOS .  (legs FULL H1 Y H2 Y DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.50 G=0.75  4b FULL . OOS .  (legs FULL H1 Y H2 Y DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.50 G=1.00  4b FULL . OOS .  (legs FULL H1 Y H2 Y DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.75 G=0.50  4b FULL . OOS .  (legs FULL H1 Y H2 Y DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.75 G=0.75  4b FULL . OOS .  (legs FULL H1 Y H2 Y DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=0.75 G=1.00  4b FULL . OOS .  (legs FULL H1 Y H2 Y DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both Y | S-twin .
+    w=1.00 G=0.50  4b FULL . OOS .  (legs FULL H1 Y H2 Y DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=1.00 G=0.75  4b FULL . OOS .  (legs FULL H1 Y H2 Y DD Y CAGR .)  4a FULL . OOS .  | its U-twin 4b both . | S-twin .
+    w=1.00 G=1.00  4b FULL Y OOS Y  (legs FULL H1 Y H2 Y DD Y CAGR Y)  4a FULL . OOS .  | its U-twin 4b both Y | S-twin .
+    -> 4b on BOTH windows: 1 of 15 cells.  4a on BOTH: 0 of 15.
+    -> of the 4b passers, 1 have a U-twin that ALSO clears 4b on both windows (a pass the twin reproduces is not a blend edge).
+
+  [RULE 8] choosers fit on IS rows ONLY, then OOS read EXACTLY ONCE.
+    GATE PASS  G6 no chooser reads a row on or after 2017-01-01: IS slice ends 2016-12-30, 1502 rows (target < 2017-01-01)
+    C_SHARPE  picks w=0.75 G=1.00  (IS Sharpe 0.9642)  -> OOS  10.68% / 1.1678 / -14.72%   vs SPY 15.26% / 0.8738 / -33.72%   vs LIVE 9.44% / 1.2752 / -12.07%   4a . 4b .   dS vs IS-fit U-twin -0.1068
+    C_MEMO    picks w=1.00 G=0.75  (IS Sharpe 0.9583)  -> OOS   9.44% / 1.2752 / -12.07%   vs SPY 15.26% / 0.8738 / -33.72%   vs LIVE 9.44% / 1.2752 / -12.07%   4a . 4b .   dS vs IS-fit U-twin -0.0000
+    C_LIVE    picks w=1.00 G=0.75  (IS Sharpe 0.9583)  -> OOS   9.44% / 1.2752 / -12.07%   vs SPY 15.26% / 0.8738 / -33.72%   vs LIVE 9.44% / 1.2752 / -12.07%   4a . 4b .   dS vs IS-fit U-twin -0.0000
+
+  [G9] turnover (annualised sum of |dw|) per cell, FULL, and the 10 bps drag it implies
+      w=0.00 G=0.50  turnover  1.723 /yr  -> drag @10bps 0.1723% /yr   realised gross 0.2742
+      w=0.00 G=0.75  turnover  2.572 /yr  -> drag @10bps 0.2572% /yr   realised gross 0.4113
+      w=0.00 G=1.00  turnover  3.419 /yr  -> drag @10bps 0.3419% /yr   realised gross 0.5484
+      w=0.25 G=0.50  turnover  1.590 /yr  -> drag @10bps 0.1590% /yr   realised gross 0.2939
+      w=0.25 G=0.75  turnover  2.373 /yr  -> drag @10bps 0.2373% /yr   realised gross 0.4408
+      w=0.25 G=1.00  turnover  3.155 /yr  -> drag @10bps 0.3155% /yr   realised gross 0.5877
+      w=0.50 G=0.50  turnover  1.455 /yr  -> drag @10bps 0.1455% /yr   realised gross 0.3136
+      w=0.50 G=0.75  turnover  2.170 /yr  -> drag @10bps 0.2170% /yr   realised gross 0.4703
+      w=0.50 G=1.00  turnover  2.883 /yr  -> drag @10bps 0.2883% /yr   realised gross 0.6270
+      w=0.75 G=0.50  turnover  1.319 /yr  -> drag @10bps 0.1319% /yr   realised gross 0.3333
+      w=0.75 G=0.75  turnover  1.962 /yr  -> drag @10bps 0.1962% /yr   realised gross 0.4998
+      w=0.75 G=1.00  turnover  2.604 /yr  -> drag @10bps 0.2604% /yr   realised gross 0.6663
+      w=1.00 G=0.50  turnover  1.181 /yr  -> drag @10bps 0.1181% /yr   realised gross 0.3530
+      w=1.00 G=0.75  turnover  1.753 /yr  -> drag @10bps 0.1753% /yr   realised gross 0.5293
+      w=1.00 G=1.00  turnover  2.324 /yr  -> drag @10bps 0.2324% /yr   realised gross 0.7056
+    PUBLISHED  G9 turnover per cell: published above, 15 of 15
+    PUBLISHED  G10 realised mean gross + in-band share: published above (Q0 and G9 blocks)
+
+  GATES: 20 of 20 pass.
+  elapsed 285.7s
