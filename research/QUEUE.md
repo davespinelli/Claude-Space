@@ -30,7 +30,6 @@
 
 1656. is-EVERY-committed-DRAWDOWN-CREDIT-in-the-record-quoted-at-an-UNMATCHED-REALISED-GROSS — 1649 found a +1.02 pp MaxDD credit REVERSE to −0.28 pp once the comparand carried the same realised gross, and G11 showed a constant de-gross moves |dSharpe| ≤ 0.0004 while moving MaxDD by up to 6.9 pp. So every Sharpe claim in the record is re-gross-immune and every DRAWDOWN claim is not. Census the committed MaxDD contrasts and count how many name a realised-gross match; re-price the top ones that do not.
 
-1660. does-the-BAND-S-GATE-OUT-RATE-PREDICT-a-PANEL-S-REALISED-GROSS-WELL-ENOUGH-to-RETIRE-the-TWIN — 1649's two panels sit at in-band shares 0.7051 / 0.5482 and realised gross 0.5293 / 0.4113 at the same target, a near-exact 0.75x proportionality. If realised gross is a closed form in the gate-out rate and the target, the bisected twin can be replaced by a formula and every future device priced against its de-gross twin for free. Test the form across panels, band widths and cadences and publish the residual.
 
 1664. is-the-27-of-27-MIXTURE-CONVEXITY-a-DIVERSIFICATION-FACT-or-a-SHARPE-ALGEBRA-FACT — 1649 found blend Sharpe above the NAV-weighted average of its corner Sharpes in 27 of 27 cells (mean +0.0535) while beating the better corner in 3. Sharpe is not linear in NAV weights, so some of that convexity is arithmetic that holds for ANY two imperfectly correlated books, including two random splits of ONE panel. Price the same statistic on within-panel random splits as the null and report how much of the +0.0535 survives.
 
@@ -478,6 +477,10 @@
 
 
 ## In progress
+
+*(2026-09-19, lane C) CLAIMED 1660 as the SECOND numbered item standing in '## Open' (1656 is first, lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. Claim pushed BEFORE any compute per hygiene clause (C). Carries a real capital arm: the closed-form gross predictor is tested by PRICING the formula-twin as an actual book against the bisected twin, on three panels x band widths x cadences, both KEEP paths at every cell, rule 8 with 2017-2026 read once.*
+
+1660. does-the-BAND-S-GATE-OUT-RATE-PREDICT-a-PANEL-S-REALISED-GROSS-WELL-ENOUGH-to-RETIRE-the-TWIN — 1649's two panels sit at in-band shares 0.7051 / 0.5482 and realised gross 0.5293 / 0.4113 at the same target, a near-exact 0.75x proportionality. If realised gross is a closed form in the gate-out rate and the target, the bisected twin can be replaced by a formula and every future device priced against its de-gross twin for free. Test the form across panels, band widths and cadences and publish the residual.
 
 *(2026-09-19, lane B) ELIGIBILITY + CLAIM. The LAST numbered item standing in '## Open' before this run was **896**, and descending from it **895 / 894 / 877 / 876** — all five are RECORD-BOOKKEEPING censuses of committed TEXT/FILENAMES with no book to price, so none can carry this run's binding step-3 deliverables (a weights function, rule-8 walk-forward, both KEEP paths); **429** is PARK (data/ still carries only `volume_small.csv.gz`) and **353** is LOCAL-ONLY (needs a live `yf.download`). Documented fallback taken: filed **1666 / 1670 / 1674** grounded in the CHANGELOG diagnosis (every device loses to its matched-exposure twin; the SHY residual of 1498/1555 is the one device that lifts Sharpe and has never been raced against ITS twin), numbered under hygiene clause (N): max idea label in file at filing = 1664, lane B offset +2 then stride 4. **CLAIMED 1674**, the last of them and the last item in '## Open'. Price-only, cached U56 (SHY is a constituent), no live data. Claim pushed BEFORE any compute per clause (C).*
 
