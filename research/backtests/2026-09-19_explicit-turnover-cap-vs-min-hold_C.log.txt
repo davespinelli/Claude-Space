@@ -1,0 +1,361 @@
+============================================================================================================================================
+IDEA 1484 (lane C, 2026-09-19) — does an EXPLICIT TURNOVER CAP buy the 4b DD LEG more cheaply than the MIN-HOLD already in the book?
+The incumbent's H = 126 has never been priced AS a churn brake and the record has NEVER priced a per-rebalance turnover cap (0 hits in LEADERBOARD.md).  Both devices are
+reduced to ONE CURVE over realised annual turnover from the SAME unbraked (H = 1) book and differenced AT MATCHED TURNOVER.
+DIAL 1  CAP [0.05, 0.1, 0.15, 0.2, 0.25, inf].   DIAL 2  COST [0.0, 10.0, 25.0, 50.0] bps (10 is the protocol rung; all published).   FROZEN: N = 20, G = 0.75, weekly, H = 126 for every capital claim.
+COMPARAND CURVE, never selected on: H [1, 21, 42, 63, 95, 126, 189, 252, 378, 504, 756].
+PRE-REGISTERED BAR (stated before any number was read): the cap is a CHEAPER brake only if, at 10 bps, on U56 AND B136, (i) the cap book's Sharpe beats the H-curve's at MATCHED turnover at >= 4 of 5 biting rungs, AND (ii) the mean matched gap resolves at |t| > 2 under a paired block bootstrap (L = 63).
+============================================================================================================================================
+  SMALL filter (protocol-mandated): data/small_meta.csv drops 54 tickers with max_1d_move >= 1.0.
+  PANELS: U56 55 names, B136 135, SMALL 665 (of 719 priced).
+  SURVIVORSHIP (rule 9): U56 / B136 are CURRENT-constituent lists and SMALL a CURRENT sub-$2B screen carried back to 2010.  Every absolute level below is an UPPER BOUND and every 4b pass an optimistic one.  What this run reads is a CONTRAST between two brakes built over the SAME names on the SAME days, which the bias cannot manufacture.
+    TAPE U56: 2008-01-02 .. 2026-09-18  4708 rows (18.7y);  977 weekly rebalances
+    TAPE B136: 2008-01-02 .. 2026-09-18  4708 rows (18.7y);  977 weekly rebalances
+    TAPE SMALL: 2010-01-04 .. 2026-09-18  4203 rows (16.7y);  872 weekly rebalances
+    GATE PASS  G0 min sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 exactly two tuned dials (CAP, COST); the H-ladder is a published comparand curve and no book is ever selected on it: CAP x COST (target 2 dials)
+
+  [U56]  SPY  CAGR 15.12% Sharpe 0.8844 MaxDD -33.72% H1/H2 0.957/0.825  |  4b bars: DD cap -20.23%, CAGR floor 10.59%
+           SPY OOS CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%  |  4b OOS bars: DD cap -20.23%, CAGR floor 10.68%
+           RULES v2 live @10bps  CAGR 8.62% Sharpe 1.2011 MaxDD -12.05% H1/H2 1.228/1.181 | OOS 9.46%/1.2769/-12.05%
+           FROZEN INCUMBENT (H=126, no cap) CAGR 15.78% Sharpe 1.1524 MaxDD -19.13% H1/H2 1.2054/1.1192 | OOS 17.30%/1.1845/-19.13% | turnover 3.037/yr | 4b DD margin +1.1004 pp
+    GATE PASS  G1 cross-script replay of the committed 2026-09-04 U56 anchor (15.80%/1.1537/-19.13% full; OOS Sharpe 1.1857): max|dev| 1.26e-03  (got 0.1578/1.1524/-0.1913, OOS 1.1845) (target < 5e-3 (the record's own tolerance for this replay: `data/prices.csv` is RESTATED daily, so a U56 cross-vintage replay cannot be exact — idea 1272))
+
+    [U56] H-FAMILY COMPARAND CURVE (no cap), net @ 10 bps
+          H   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold
+          1    10.797   12.95%   1.0768  -18.18%   1.086   1.076    14.56%   1.1405  -18.18%  18.12  18.12
+         21     6.233   14.17%   1.1077  -20.20%   1.181   1.059    15.16%   1.1076  -20.20%  18.48  18.48
+         42     4.850   14.12%   1.0639  -22.83%   1.143   1.016    15.74%   1.0905  -22.83%  18.60  18.60
+         63     4.015   15.24%   1.1195  -25.54%   1.207   1.067    16.72%   1.1300  -25.54%  18.68  18.68
+         95     3.470   15.02%   1.0832  -22.56%   1.226   0.991    15.61%   1.0403  -22.56%  18.71  18.71
+        126     3.037   15.78%   1.1524  -19.13%   1.205   1.119    17.30%   1.1845  -19.13%  18.69  18.69   <- INCUMBENT
+        189     2.512   15.56%   1.1224  -21.76%   1.315   0.996    15.79%   1.0526  -21.76%  18.74  18.74
+        252     2.249   15.96%   1.1669  -21.85%   1.219   1.135    17.46%   1.1976  -21.85%  18.74  18.74
+        378     1.747   15.70%   1.1675  -21.66%   1.509   0.969    15.47%   1.0394  -21.66%  18.77  18.77
+        504     1.656   15.52%   1.1487  -18.62%   1.326   1.039    17.01%   1.1392  -18.62%  18.77  18.77
+        756     1.387   16.39%   1.2173  -24.24%   1.614   1.051    17.84%   1.1383  -24.24%  18.77  18.77
+
+    [U56] CAP FAMILY on the UNBRAKED BASE (H=1), mechanism CONVICTION, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   94.5%     2.612   19.11%   1.1820  -24.15%   1.344   1.070    19.90%   1.1394  -24.15%  13.63  17.49    .    .
+        0.10   86.5%     5.101   16.57%   1.1823  -22.42%   1.253   1.145    18.37%   1.2025  -22.42%  17.00  18.36    .    .
+        0.15   75.9%     7.162   14.55%   1.1206  -20.64%   1.151   1.107    16.39%   1.1728  -20.64%  17.80  18.38    .    .
+        0.20   46.9%     8.582   13.80%   1.0951  -20.15%   1.095   1.104    15.79%   1.1672  -20.15%  18.00  18.42    .    Y
+        0.25   25.1%     9.477   13.46%   1.0887  -19.32%   1.077   1.107    15.42%   1.1673  -19.32%  18.03  18.27    .    Y
+         inf    0.0%    10.797   12.95%   1.0768  -18.18%   1.086   1.076    14.56%   1.1405  -18.18%  18.12  18.12    .    Y
+
+    [U56] CAP FAMILY on the UNBRAKED BASE (H=1), mechanism PRORATA, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   94.5%     2.612   15.02%   1.1344  -23.41%   1.188   1.112    17.22%   1.1843  -23.41%  24.57  47.90    .    .
+        0.10   89.4%     5.144   14.30%   1.1097  -21.93%   1.122   1.114    16.52%   1.1775  -21.93%  21.22  35.71    .    .
+        0.15   77.6%     7.259   13.74%   1.0913  -20.38%   1.080   1.111    15.92%   1.1709  -20.38%  19.78  26.81    .    .
+        0.20   48.3%     8.680   13.40%   1.0796  -19.91%   1.069   1.098    15.45%   1.1580  -19.91%  19.00  22.02    .    Y
+        0.25   25.3%     9.542   13.27%   1.0784  -19.51%   1.068   1.096    15.24%   1.1560  -19.51%  18.57  20.04    .    Y
+         inf    0.0%    10.797   12.95%   1.0768  -18.18%   1.086   1.076    14.56%   1.1405  -18.18%  18.12  18.12    .    Y
+
+    [U56] CAP FAMILY on the INCUMBENT BASE (H=126), mechanism CONVICTION, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   73.9%     2.318   16.44%   1.1678  -21.43%   1.240   1.124    17.96%   1.1831  -21.43%  18.71  19.48    .    .
+        0.10   28.1%     2.816   15.96%   1.1528  -21.55%   1.223   1.108    17.43%   1.1741  -21.55%  18.73  18.93    .    .
+        0.15   14.5%     2.938   15.67%   1.1398  -21.13%   1.208   1.095    17.05%   1.1611  -21.13%  18.71  18.82    .    .
+        0.20    7.3%     2.986   15.76%   1.1478  -20.75%   1.206   1.111    17.25%   1.1762  -20.75%  18.72  18.76    .    .
+        0.25    3.7%     3.014   15.71%   1.1459  -20.28%   1.206   1.107    17.15%   1.1725  -20.28%  18.70  18.73    .    .
+         inf    0.0%     3.037   15.78%   1.1524  -19.13%   1.205   1.119    17.30%   1.1845  -19.13%  18.69  18.69    .    Y
+
+    [U56] CAP FAMILY on the INCUMBENT BASE (H=126), mechanism PRORATA, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   74.9%     2.321   15.67%   1.1374  -21.02%   1.222   1.081    17.05%   1.1545  -21.02%  20.33  24.02    .    .
+        0.10   28.7%     2.821   15.68%   1.1383  -20.79%   1.195   1.104    17.27%   1.1696  -20.79%  19.15  19.93    .    .
+        0.15   14.8%     2.938   15.70%   1.1412  -20.57%   1.200   1.104    17.23%   1.1700  -20.57%  18.91  19.30    .    .
+        0.20    7.4%     2.986   15.72%   1.1440  -20.34%   1.203   1.107    17.22%   1.1719  -20.34%  18.81  19.01    .    .
+        0.25    3.6%     3.009   15.74%   1.1461  -20.11%   1.206   1.108    17.21%   1.1734  -20.11%  18.76  18.87    .    Y
+         inf    0.0%     3.037   15.78%   1.1524  -19.13%   1.205   1.119    17.30%   1.1845  -19.13%  18.69  18.69    .    Y
+
+    [U56] MATCHED-TURNOVER CONTRAST — each cap book differenced against a CAPITAL BLEND of the two bracketing H rungs whose blended turnover equals the
+      cap book's own, EXACTLY.  The blend ignores its own cross-sleeve rebalancing turnover, which FLATTERS the H comparand; a cap win is therefore conservative.
+
+      base H=1, CONVICTION, 10 bps
+           cap     turn              blend  Shrp cap  Shrp H@turn     dShrp       t  dCAGR pp  dMaxDD pp
+          0.05    2.612    81%H189+19%H126    1.1820       1.1344   +0.0476   +0.52    +3.488     -2.931
+          0.10    5.101      82%H42+18%H21    1.1823       1.0748   +0.1075   +1.69    +2.434     -0.115
+          0.15    7.162       80%H21+20%H1    1.1206       1.1096   +0.0110   +0.21    +0.615     -1.452
+          0.20    8.582       49%H21+51%H1    1.0951       1.1048   -0.0097   -0.24    +0.241     -1.401
+          0.25    9.477       29%H21+71%H1    1.0887       1.0966   -0.0079   -0.26    +0.143     -0.804
+
+      base H=126, CONVICTION, 10 bps
+           cap     turn              blend  Shrp cap  Shrp H@turn     dShrp       t  dCAGR pp  dMaxDD pp
+          0.05    2.318    74%H252+26%H189    1.1678       1.1643   +0.0035   +0.07    +0.566     -0.139
+          0.10    2.816    42%H189+58%H126    1.1528       1.1501   +0.0027   +0.11    +0.252     -1.439
+          0.15    2.938    19%H189+81%H126    1.1398       1.1533   -0.0135   -0.91    -0.079     -1.663
+          0.20    2.986    10%H189+90%H126    1.1478       1.1533   -0.0055   -0.50    -0.006     -1.449
+          0.25    3.014     4%H189+96%H126    1.1459       1.1529   -0.0071   -0.82    -0.069     -1.071
+
+    [U56] G7 target name sets identical across cap rungs at a given (panel, H): by construction — `segments()` is a pure function of (panel, N, H) and is built ONCE per H and shared by every cap rung and both mechanisms.
+    [U56] done in 6s
+
+  [B136]  SPY  CAGR 15.12% Sharpe 0.8845 MaxDD -33.72% H1/H2 0.957/0.825  |  4b bars: DD cap -20.23%, CAGR floor 10.59%
+           SPY OOS CAGR 15.26% Sharpe 0.8739 MaxDD -33.72%  |  4b OOS bars: DD cap -20.23%, CAGR floor 10.68%
+           RULES v2 live @10bps  CAGR 7.96% Sharpe 1.0973 MaxDD -12.24% H1/H2 1.230/0.967 | OOS 7.85%/1.1019/-12.24%
+           FROZEN INCUMBENT (H=126, no cap) CAGR 16.04% Sharpe 1.0642 MaxDD -20.75% H1/H2 1.2803/0.8956 | OOS 16.17%/1.0168/-20.75% | turnover 3.428/yr | 4b DD margin -0.5157 pp
+
+    [B136] H-FAMILY COMPARAND CURVE (no cap), net @ 10 bps
+          H   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold
+          1    14.303   12.85%   0.9357  -20.06%   1.110   0.784    12.21%   0.8704  -20.06%  18.69  18.69
+         21     7.926   15.96%   1.0651  -26.38%   1.319   0.861    14.85%   0.9544  -26.38%  18.81  18.81
+         42     6.044   16.29%   1.0429  -25.34%   1.275   0.868    16.09%   0.9720  -25.34%  18.86  18.86
+         63     4.849   17.08%   1.0893  -28.70%   1.348   0.893    16.50%   0.9969  -28.70%  18.87  18.87
+         95     3.863   18.46%   1.1528  -26.13%   1.397   0.978    18.55%   1.0787  -26.13%  18.90  18.90
+        126     3.428   16.04%   1.0642  -20.75%   1.280   0.896    16.17%   1.0168  -20.75%  18.85  18.85   <- INCUMBENT
+        189     2.705   16.76%   1.0411  -25.81%   1.281   0.893    18.07%   1.0133  -25.81%  18.90  18.90
+        252     2.342   16.34%   1.0707  -23.50%   1.228   0.954    17.03%   1.0471  -23.50%  18.90  18.90
+        378     1.985   15.80%   1.0221  -24.76%   1.333   0.858    16.15%   0.9333  -24.76%  18.90  18.90
+        504     1.766   14.70%   0.9952  -23.00%   1.167   0.875    16.10%   1.0025  -23.00%  18.90  18.90
+        756     1.489   16.90%   1.0864  -25.36%   1.438   0.999    19.97%   1.0634  -25.36%  18.90  18.90
+
+    [B136] CAP FAMILY on the UNBRAKED BASE (H=1), mechanism CONVICTION, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   94.5%     2.612   20.53%   1.1167  -27.83%   1.366   0.951    20.78%   1.0374  -27.83%  15.15  19.06    .    .
+        0.10   94.1%     5.219   18.57%   1.0977  -28.04%   1.346   0.936    18.48%   1.0051  -28.04%  17.18  19.05    .    .
+        0.15   90.5%     7.725   16.38%   1.0448  -27.31%   1.284   0.872    15.81%   0.9488  -27.31%  18.07  18.90    .    .
+        0.20   74.9%     9.899   14.62%   0.9807  -26.62%   1.159   0.846    14.46%   0.9183  -26.62%  18.59  19.26    .    .
+        0.25   50.4%    11.625   13.68%   0.9523  -24.26%   1.120   0.818    13.35%   0.8917  -24.26%  18.67  19.11    .    .
+         inf    0.0%    14.303   12.85%   0.9357  -20.06%   1.110   0.784    12.21%   0.8704  -20.06%  18.69  18.69    .    .
+
+    [B136] CAP FAMILY on the UNBRAKED BASE (H=1), mechanism PRORATA, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   94.5%     2.612   16.24%   1.0822  -25.57%   1.282   0.946    17.03%   1.0476  -25.57%  34.60 108.15    .    .
+        0.10   94.5%     5.224   15.46%   1.0413  -25.70%   1.259   0.879    15.33%   0.9719  -25.70%  26.57  86.80    .    .
+        0.15   93.3%     7.801   14.56%   1.0022  -24.94%   1.218   0.833    14.06%   0.9225  -24.94%  23.17  57.98    .    .
+        0.20   80.5%    10.065   13.87%   0.9712  -24.17%   1.179   0.803    13.21%   0.8899  -24.17%  21.31  36.35    .    .
+        0.25   56.2%    11.797   13.44%   0.9524  -23.55%   1.152   0.787    12.73%   0.8726  -23.55%  20.16  27.18    .    .
+         inf    0.0%    14.303   12.85%   0.9357  -20.06%   1.110   0.784    12.21%   0.8704  -20.06%  18.69  18.69    .    .
+
+    [B136] CAP FAMILY on the INCUMBENT BASE (H=126), mechanism CONVICTION, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   83.6%     2.460   16.64%   1.0226  -25.56%   1.235   0.881    17.38%   0.9816  -25.56%  18.61  19.88    .    .
+        0.10   39.4%     2.945   16.28%   1.0397  -25.57%   1.261   0.880    16.75%   0.9973  -25.57%  18.88  19.32    .    .
+        0.15   24.8%     3.093   15.98%   1.0312  -26.45%   1.244   0.875    16.46%   0.9931  -26.45%  18.86  19.08    .    .
+        0.20   17.3%     3.178   15.96%   1.0353  -26.79%   1.278   0.855    15.92%   0.9704  -26.79%  18.87  19.02    .    .
+        0.25   13.1%     3.226   16.08%   1.0474  -26.67%   1.300   0.858    15.92%   0.9761  -26.67%  18.88  18.98    .    .
+         inf    0.0%     3.428   16.04%   1.0642  -20.75%   1.280   0.896    16.17%   1.0168  -20.75%  18.85  18.85    .    .
+
+    [B136] CAP FAMILY on the INCUMBENT BASE (H=126), mechanism PRORATA, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   80.8%     2.418   15.70%   1.0330  -25.49%   1.178   0.935    17.27%   1.0460  -25.49%  24.53  34.19    .    .
+        0.10   38.8%     2.911   15.99%   1.0420  -25.25%   1.240   0.899    16.81%   1.0186  -25.25%  21.21  23.86    .    .
+        0.15   25.0%     3.086   15.85%   1.0347  -25.01%   1.230   0.893    16.58%   1.0089  -25.01%  20.21  21.84    .    .
+        0.20   17.2%     3.179   15.89%   1.0391  -24.78%   1.242   0.891    16.44%   1.0049  -24.78%  19.79  20.79    .    .
+        0.25   13.3%     3.236   15.86%   1.0401  -24.54%   1.250   0.884    16.23%   0.9978  -24.54%  19.56  20.35    .    .
+         inf    0.0%     3.428   16.04%   1.0642  -20.75%   1.280   0.896    16.17%   1.0168  -20.75%  18.85  18.85    .    .
+
+    [B136] MATCHED-TURNOVER CONTRAST — each cap book differenced against a CAPITAL BLEND of the two bracketing H rungs whose blended turnover equals the
+      cap book's own, EXACTLY.  The blend ignores its own cross-sleeve rebalancing turnover, which FLATTERS the H comparand; a cap win is therefore conservative.
+
+      base H=1, CONVICTION, 10 bps
+           cap     turn              blend  Shrp cap  Shrp H@turn     dShrp       t  dCAGR pp  dMaxDD pp
+          0.05    2.612    26%H252+74%H189    1.1167       1.0691   +0.0476   +0.60    +3.813     -2.606
+          0.10    5.219      69%H63+31%H42    1.0977       1.0845   +0.0132   +0.19    +1.715     -0.425
+          0.15    7.725      11%H42+89%H21    1.0448       1.0657   -0.0210   -0.40    +0.381     -1.061
+          0.20    9.899       69%H21+31%H1    0.9807       1.0366   -0.0559   -1.33    -0.397     -2.795
+          0.25   11.625       42%H21+58%H1    0.9523       1.0033   -0.0509   -1.74    -0.495     -2.683
+
+      base H=126, CONVICTION, 10 bps
+           cap     turn              blend  Shrp cap  Shrp H@turn     dShrp       t  dCAGR pp  dMaxDD pp
+          0.05    2.460    68%H252+32%H189    1.0226       1.0863   -0.0638   -0.89    +0.090     -1.310
+          0.10    2.945    67%H189+33%H126    1.0397       1.0701   -0.0304   -0.51    -0.300     -1.442
+          0.15    3.093    46%H189+54%H126    1.0312       1.0783   -0.0471   -0.94    -0.456     -3.354
+          0.20    3.178    35%H189+65%H126    1.0353       1.0792   -0.0439   -1.02    -0.387     -4.292
+          0.25    3.226    28%H189+72%H126    1.0474       1.0783   -0.0309   -0.81    -0.217     -4.501
+
+    [B136] G7 target name sets identical across cap rungs at a given (panel, H): by construction — `segments()` is a pure function of (panel, N, H) and is built ONCE per H and shared by every cap rung and both mechanisms.
+    [B136] done in 9s
+
+  [SMALL]  SPY  CAGR 14.01% Sharpe 0.8562 MaxDD -33.72% H1/H2 0.903/0.839  |  4b bars: DD cap -20.23%, CAGR floor 9.81%
+           SPY OOS CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%  |  4b OOS bars: DD cap -20.23%, CAGR floor 10.68%
+           RULES v2 live @10bps  CAGR 4.66% Sharpe 0.7185 MaxDD -12.48% H1/H2 0.835/0.638 | OOS 4.41%/0.6473/-12.48%
+           FROZEN INCUMBENT (H=126, no cap) CAGR 7.78% Sharpe 0.5079 MaxDD -36.53% H1/H2 0.6778/0.3813 | OOS 6.67%/0.4386/-36.53% | turnover 4.371/yr | 4b DD margin -16.3044 pp
+
+    [SMALL] H-FAMILY COMPARAND CURVE (no cap), net @ 10 bps
+          H   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold
+          1    21.525    7.75%   0.5375  -32.83%   0.709   0.407     7.88%   0.5252  -32.83%  18.67  18.67
+         21    11.100    8.99%   0.5791  -40.69%   0.847   0.382     7.60%   0.4863  -40.69%  18.68  18.68
+         42     8.255    9.51%   0.6039  -42.41%   0.970   0.324     6.77%   0.4445  -42.41%  18.73  18.73
+         63     6.418    9.40%   0.5958  -38.63%   0.889   0.375     7.08%   0.4600  -38.63%  18.78  18.78
+         95     5.370    7.81%   0.5060  -43.91%   0.943   0.195     4.07%   0.3029  -43.91%  18.68  18.68
+        126     4.371    7.78%   0.5079  -36.53%   0.678   0.381     6.67%   0.4386  -36.53%  18.78  18.78   <- INCUMBENT
+        189     3.570   10.17%   0.6327  -34.15%   0.591   0.672    10.07%   0.6137  -34.15%  18.78  18.78
+        252     3.057   12.26%   0.7470  -35.38%   0.968   0.557     9.34%   0.5922  -35.38%  18.78  18.78
+        378     2.749    9.98%   0.5927  -37.13%   0.565   0.619    11.40%   0.6597  -37.13%  18.78  18.78
+        504     2.496    7.88%   0.4890  -40.36%   0.571   0.431     6.55%   0.4137  -40.36%  18.78  18.78
+        756     2.368    8.73%   0.5230  -43.99%   0.558   0.497     7.92%   0.4788  -43.99%  18.78  18.78
+
+    [SMALL] CAP FAMILY on the UNBRAKED BASE (H=1), mechanism CONVICTION, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   93.8%     2.614   12.86%   0.6366  -37.32%   0.776   0.580    13.10%   0.6014  -37.32%  14.88  19.91    .    .
+        0.10   93.8%     5.228   12.41%   0.6699  -34.95%   0.911   0.519    11.52%   0.5948  -34.95%  15.63  18.83    .    .
+        0.15   93.7%     7.838   11.50%   0.6519  -32.58%   0.887   0.502    11.33%   0.6079  -32.58%  16.55  18.10    .    .
+        0.20   92.9%    10.433   11.05%   0.6530  -29.49%   0.861   0.515    11.46%   0.6363  -29.49%  17.36  18.85    .    .
+        0.25   88.8%    12.946   10.65%   0.6518  -29.43%   0.869   0.502    10.92%   0.6316  -29.43%  17.84  19.06    .    .
+         inf    0.0%    21.525    7.75%   0.5375  -32.83%   0.709   0.407     7.88%   0.5252  -32.83%  18.67  18.67    .    .
+
+    [SMALL] CAP FAMILY on the UNBRAKED BASE (H=1), mechanism PRORATA, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   93.8%     2.614    8.88%   0.5877  -35.49%   0.698   0.510     8.51%   0.5483  -35.49%  61.22 341.74    .    .
+        0.10   93.8%     5.228    8.84%   0.5923  -36.43%   0.790   0.444     7.69%   0.5104  -36.43%  41.81 267.99    .    .
+        0.15   93.8%     7.842    8.85%   0.5969  -36.04%   0.821   0.426     7.51%   0.5037  -36.04%  33.24 192.89    .    .
+        0.20   93.6%    10.453    8.82%   0.5962  -35.22%   0.808   0.435     7.67%   0.5135  -35.22%  28.47 134.52    .    .
+        0.25   92.0%    13.017    8.72%   0.5909  -34.51%   0.781   0.446     8.05%   0.5343  -34.51%  25.36  93.69    .    .
+         inf    0.0%    21.525    7.75%   0.5375  -32.83%   0.709   0.407     7.88%   0.5252  -32.83%  18.67  18.67    .    .
+
+    [SMALL] CAP FAMILY on the INCUMBENT BASE (H=126), mechanism CONVICTION, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   90.9%     2.587    8.34%   0.5109  -37.07%   0.673   0.408     6.88%   0.4239  -37.07%  16.64  19.31    .    .
+        0.10   52.1%     3.748    7.54%   0.4907  -35.87%   0.734   0.315     6.13%   0.4059  -35.87%  18.50  19.16    .    .
+        0.15   32.3%     3.992    7.87%   0.5079  -35.58%   0.701   0.367     6.82%   0.4412  -35.58%  18.65  18.90    .    .
+        0.20   23.4%     4.115    7.93%   0.5109  -36.65%   0.674   0.394     7.02%   0.4503  -36.65%  18.73  18.95    .    .
+        0.25   18.1%     4.175    8.08%   0.5193  -37.00%   0.725   0.369     6.84%   0.4423  -37.00%  18.76  18.93    .    .
+         inf    0.0%     4.371    7.78%   0.5079  -36.53%   0.678   0.381     6.67%   0.4386  -36.53%  18.78  18.78    .    .
+
+    [SMALL] CAP FAMILY on the INCUMBENT BASE (H=126), mechanism PRORATA, net @ 10 bps
+         cap   bind%   turn/yr     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR  OOSShrp   OOS DD   effN  nHold   4a   4b
+        0.05   90.7%     2.586    9.51%   0.6000  -35.63%   0.808   0.452     8.55%   0.5335  -35.63%  30.24 116.04    .    .
+        0.10   47.6%     3.596    8.46%   0.5422  -36.50%   0.731   0.408     7.86%   0.4950  -36.50%  23.34  27.36    .    .
+        0.15   30.6%     3.869    8.14%   0.5252  -36.49%   0.685   0.411     7.55%   0.4801  -36.49%  21.80  24.30    .    .
+        0.20   21.9%     4.000    7.95%   0.5158  -36.50%   0.685   0.393     7.01%   0.4537  -36.50%  21.03  22.73    .    .
+        0.25   17.2%     4.083    8.07%   0.5220  -36.39%   0.702   0.390     6.91%   0.4489  -36.39%  20.58  21.89    .    .
+         inf    0.0%     4.371    7.78%   0.5079  -36.53%   0.678   0.381     6.67%   0.4386  -36.53%  18.78  18.78    .    .
+
+    [SMALL] MATCHED-TURNOVER CONTRAST — each cap book differenced against a CAPITAL BLEND of the two bracketing H rungs whose blended turnover equals the
+      cap book's own, EXACTLY.  The blend ignores its own cross-sleeve rebalancing turnover, which FLATTERS the H comparand; a cap win is therefore conservative.
+
+      base H=1, CONVICTION, 10 bps
+           cap     turn              blend  Shrp cap  Shrp H@turn     dShrp       t  dCAGR pp  dMaxDD pp
+          0.05    2.614    54%H504+46%H378    0.6366       0.5588   +0.0778   +0.42    +3.853     -1.773
+          0.10    5.228     14%H126+86%H95    0.6699       0.5153   +0.1546   +1.05    +4.537     +7.885
+          0.15    7.838      23%H63+77%H42    0.6519       0.6150   +0.0369   +0.35    +1.940     +8.942
+          0.20   10.433      23%H42+77%H21    0.6530       0.5955   +0.0575   +0.47    +1.886    +11.563
+          0.25   12.946       82%H21+18%H1    0.6518       0.5791   +0.0727   +0.63    +1.847     +9.835
+
+      base H=126, CONVICTION, 10 bps
+           cap     turn              blend  Shrp cap  Shrp H@turn     dShrp       t  dCAGR pp  dMaxDD pp
+          0.05    2.587    64%H504+36%H378    0.5109       0.5457   -0.0349   -0.23    -0.431     -1.749
+          0.10    3.748    78%H189+22%H126    0.4907       0.6214   -0.1306   -1.08    -2.186     -1.798
+          0.15    3.992    47%H189+53%H126    0.5079       0.5894   -0.0815   -1.06    -1.167     -1.609
+          0.20    4.115    32%H189+68%H126    0.5109       0.5665   -0.0556   -0.91    -0.717     -2.446
+          0.25    4.175    24%H189+76%H126    0.5193       0.5539   -0.0345   -0.69    -0.371     -2.250
+
+    [SMALL] G7 target name sets identical across cap rungs at a given (panel, H): by construction — `segments()` is a pure function of (panel, N, H) and is built ONCE per H and shared by every cap rung and both mechanisms.
+    [SMALL] done in 18s
+
+============================================================================================================================================
+GATES
+    GATE PASS  G2 cap = inf is BIT-IDENTICAL to the uncapped book at the same H: 0.000e+00 (target == 0)
+    GATE PASS  G3 realised per-rebalance turnover <= cap at every POST-INCEPTION rebalance of every capped book: max excess 0.000e+00 (target <= 1e-12)
+    GATE PASS  G4 every rebalance's executed weight sum == that rebalance's TARGET gross exactly (G = 0.75, or 0 at a rebalance the screen left with no eligible name): max|dev| 2.220e-16 (target <= 1e-12)
+    PUBLISHED  uncapped builds, max over every book: 54 rebalance(s) (inception plus any exit from a screen-forced cash state).
+    GATE PASS  G6 the rule-8 chooser reads no row on or after 2017-01-01: IS slice ends at index of 2017-01-01 (target by construction)
+    GATE PASS  G7 target name sets bit-identical across cap rungs / mechanisms at a given (panel, H): segments() built once per H and shared (target by construction)
+    GATE PASS  G8 the CAP dial BITES: bind rate strictly decreasing in cap and > 0 at cap = 0.05: monotone True; min bind@0.05 0.739 (target monotone and > 0)
+    GATE PASS  G9 realised turnover monotone: non-decreasing in cap, non-increasing in H: True (target True)
+    GATE PASS  G11 no leverage: max weight sum over every rebalance of every book: 0.750000 (target <= 0.75)
+    GATE PASS  G12 CONVICTION and PRORATA agree exactly at cap = inf: 0.000e+00 (target == 0)
+    GATE PASS  G13 the H-curve BRACKETS every cap rung's turnover (no extrapolation): 0 unbracketed of 240 (target 0 unbracketed)
+    GATE PASS  G10 bit-identical recompute of the U56 headline cell (H=126, cap=0.05, CONVICTION): 0.000e+00 (target == 0)
+
+============================================================================================================================================
+THE PRE-REGISTERED BAR, READ
+  --- mechanism CONVICTION  (the pre-registered one)
+    base H=1    U56    cap beats the matched-turnover H-blend at 3 of 5 rungs;  mean dSharpe +0.0297, paired-bootstrap t = +0.66
+    base H=1    B136   cap beats the matched-turnover H-blend at 2 of 5 rungs;  mean dSharpe -0.0134, paired-bootstrap t = -0.32
+    base H=126  U56    cap beats the matched-turnover H-blend at 2 of 5 rungs;  mean dSharpe -0.0040, paired-bootstrap t = -0.22
+    base H=126  B136   cap beats the matched-turnover H-blend at 0 of 5 rungs;  mean dSharpe -0.0432, paired-bootstrap t = -1.04
+  --- mechanism PRORATA  (the published control)
+    base H=1    U56    cap beats the matched-turnover H-blend at 2 of 5 rungs;  mean dSharpe -0.0054, paired-bootstrap t = -0.15
+    base H=1    B136   cap beats the matched-turnover H-blend at 1 of 5 rungs;  mean dSharpe -0.0406, paired-bootstrap t = -1.98
+    base H=126  U56    cap beats the matched-turnover H-blend at 0 of 5 rungs;  mean dSharpe -0.0134, paired-bootstrap t = -0.83
+    base H=126  B136   cap beats the matched-turnover H-blend at 0 of 5 rungs;  mean dSharpe -0.0394, paired-bootstrap t = -0.96
+
+  BAR (CONVICTION, base H=1, the pure brake-vs-brake read): FAILED — DOMINATED-OR-UNRESOLVED
+
+  DECOMPOSITION OF THE CAP'S MATCHED-TURNOVER GAP INTO TWO CHANNELS.  At a fixed cap rung the two mechanisms hold the SAME targets and trade the SAME amount; they differ ONLY in
+  WHICH names are traded.  So  dSharpe(CONVICTION vs H-blend)  =  BRAKE CHANNEL [PRORATA - H-blend, pure churn reduction]  +  CONVICTION CHANNEL [CONVICTION - PRORATA, the priority ordering].
+     panel  base    cap    turn  BRAKE dShrp  CONV dShrp    TOTAL |  BRAKE dCAGR  CONV dCAGR    TOTAL
+       U56     1   0.05   2.612      +0.0000     +0.0475  +0.0476 |       -0.600      +4.089   +3.488
+       U56     1   0.10   5.101      +0.0332     +0.0726  +0.1075 |       +0.159      +2.275   +2.434
+       U56     1   0.15   7.162      -0.0182     +0.0292  +0.0110 |       -0.166      +0.781   +0.615
+       U56     1   0.20   8.582      -0.0245     +0.0155  -0.0097 |       -0.133      +0.374   +0.241
+       U56     1   0.25   9.477      -0.0174     +0.0103  -0.0079 |       -0.028      +0.171   +0.143
+       U56   126   0.05   2.318      -0.0266     +0.0304  +0.0035 |       -0.195      +0.762   +0.566
+       U56   126   0.10   2.816      -0.0120     +0.0145  +0.0027 |       -0.035      +0.287   +0.252
+       U56   126   0.15   2.938      -0.0121     -0.0014  -0.0135 |       -0.054      -0.025   -0.079
+       U56   126   0.20   2.986      -0.0092     +0.0038  -0.0055 |       -0.047      +0.041   -0.006
+       U56   126   0.25   3.014      -0.0069     -0.0002  -0.0071 |       -0.040      -0.029   -0.069
+      B136     1   0.05   2.612      +0.0130     +0.0345  +0.0476 |       -0.479      +4.292   +3.813
+      B136     1   0.10   5.219      -0.0432     +0.0564  +0.0132 |       -1.401      +3.117   +1.715
+      B136     1   0.15   7.725      -0.0633     +0.0425  -0.0210 |       -1.422      +1.803   +0.381
+      B136     1   0.20   9.899      -0.0625     +0.0094  -0.0559 |       -1.065      +0.668   -0.397
+      B136     1   0.25  11.625      -0.0471     -0.0000  -0.0509 |       -0.649      +0.153   -0.495
+      B136   126   0.05   2.460      -0.0507     -0.0105  -0.0638 |       -0.780      +0.870   +0.090
+      B136   126   0.10   2.945      -0.0251     -0.0023  -0.0304 |       -0.624      +0.325   -0.300
+      B136   126   0.15   3.093      -0.0434     -0.0035  -0.0471 |       -0.597      +0.141   -0.456
+      B136   126   0.20   3.178      -0.0401     -0.0038  -0.0439 |       -0.463      +0.076   -0.387
+      B136   126   0.25   3.226      -0.0380     +0.0074  -0.0309 |       -0.425      +0.208   -0.217
+     SMALL     1   0.05   2.614      +0.0289     +0.0488  +0.0778 |       -0.126      +3.978   +3.853
+     SMALL     1   0.10   5.228      +0.0771     +0.0775  +0.1546 |       +0.965      +3.572   +4.537
+     SMALL     1   0.15   7.838      -0.0181     +0.0550  +0.0369 |       -0.700      +2.640   +1.940
+     SMALL     1   0.20  10.433      +0.0011     +0.0568  +0.0575 |       -0.346      +2.232   +1.886
+     SMALL     1   0.25  12.946      +0.0118     +0.0609  +0.0727 |       -0.084      +1.930   +1.847
+     SMALL   126   0.05   2.587      +0.0549     -0.0891  -0.0349 |       +0.745      -1.175   -0.431
+     SMALL   126   0.10   3.748      -0.0895     -0.0515  -0.1306 |       -1.642      -0.545   -2.186
+     SMALL   126   0.15   3.992      -0.0827     -0.0173  -0.0815 |       -1.257      +0.090   -1.167
+     SMALL   126   0.20   4.115      -0.0723     -0.0049  -0.0556 |       -1.058      +0.341   -0.717
+     SMALL   126   0.25   4.175      -0.0509     -0.0027  -0.0345 |       -0.683      +0.312   -0.371
+    MEAN over all 30 (panel, base, cap) cells:  BRAKE channel -0.0211 Sharpe / -0.441 pp CAGR;  CONVICTION channel +0.0162 Sharpe / +1.125 pp CAGR.
+    BRAKE channel positive at 8 of 30 cells (Sharpe), 3 of 30 (CAGR);  CONVICTION channel at 18 of 30 (Sharpe), 26 of 30 (CAGR).
+
+  BOTH KEEP PATHS at 10 bps over all 105 cells (H-curve + cap grid): 4a 0, 4b FULL 13, 4b FULL *and* OOS 13.
+    of which CAP cells only: 4a 0 of 72, 4b FULL 9, 4b FULL *and* OOS 9.
+    CAP cells clearing 4b FULL and OOS:
+      U56    H=1    cap=0.20 CONVICTION  CAGR 13.80% Sharpe 1.0951 MaxDD -20.15% | OOS 15.79%/1.1672/-20.15% | turnover 8.582/yr
+      U56    H=1    cap=0.25 CONVICTION  CAGR 13.46% Sharpe 1.0887 MaxDD -19.32% | OOS 15.42%/1.1673/-19.32% | turnover 9.477/yr
+      U56    H=1    cap=inf CONVICTION  CAGR 12.95% Sharpe 1.0768 MaxDD -18.18% | OOS 14.56%/1.1405/-18.18% | turnover 10.797/yr
+      U56    H=1    cap=0.20 PRORATA     CAGR 13.40% Sharpe 1.0796 MaxDD -19.91% | OOS 15.45%/1.1580/-19.91% | turnover 8.680/yr
+      U56    H=1    cap=0.25 PRORATA     CAGR 13.27% Sharpe 1.0784 MaxDD -19.51% | OOS 15.24%/1.1560/-19.51% | turnover 9.542/yr
+      U56    H=1    cap=inf PRORATA     CAGR 12.95% Sharpe 1.0768 MaxDD -18.18% | OOS 14.56%/1.1405/-18.18% | turnover 10.797/yr
+      U56    H=126  cap=inf CONVICTION  CAGR 15.78% Sharpe 1.1524 MaxDD -19.13% | OOS 17.30%/1.1845/-19.13% | turnover 3.037/yr
+      U56    H=126  cap=0.25 PRORATA     CAGR 15.74% Sharpe 1.1461 MaxDD -20.11% | OOS 17.21%/1.1734/-20.11% | turnover 3.009/yr
+      U56    H=126  cap=inf PRORATA     CAGR 15.78% Sharpe 1.1524 MaxDD -19.13% | OOS 17.30%/1.1845/-19.13% | turnover 3.037/yr
+
+  BINDING 4b LEG across failing CAP cells: {'DD': 34, 'H1H2DDCAGR': 19, 'H2DD': 4, 'H1H2DD': 4, 'H2': 2}
+
+  RULE 8 WALK-FORWARD (dials fit on warm-up..2016-12-31, 2017-2026 read ONCE):
+    U56    CAP         base=1.0 CONVICTION  picks 0.05   (IS Sharpe 1.2613) -> OOS 19.90%/1.1394/-24.15%  vs do-nothing 1.1405 (d -0.0011) vs SPY 0.8738 vs live 1.2769  4b-OOS .
+    U56    CAP         base=1.0 PRORATA     picks 0.05   (IS Sharpe 1.0756) -> OOS 17.22%/1.1843/-23.41%  vs do-nothing 1.1405 (d +0.0438) vs SPY 0.8738 vs live 1.2769  4b-OOS .
+    U56    CAP         base=126.0 CONVICTION  picks 0.05   (IS Sharpe 1.1568) -> OOS 17.96%/1.1831/-21.43%  vs do-nothing 1.1845 (d -0.0014) vs SPY 0.8738 vs live 1.2769  4b-OOS .
+    U56    CAP         base=126.0 PRORATA     picks 0.05   (IS Sharpe 1.1218) -> OOS 17.05%/1.1545/-21.02%  vs do-nothing 1.1845 (d -0.0300) vs SPY 0.8738 vs live 1.2769  4b-OOS .
+    U56    H(control)  base=nan NONE        picks 756.0  (IS Sharpe 1.4592) -> OOS 17.84%/1.1383/-24.24%  vs do-nothing 1.1845 (d -0.0462) vs SPY 0.8738 vs live 1.2769  4b-OOS .
+    B136   CAP         base=1.0 CONVICTION  picks 0.1    (IS Sharpe 1.2668) -> OOS 18.48%/1.0051/-28.04%  vs do-nothing 0.8704 (d +0.1347) vs SPY 0.8739 vs live 1.1019  4b-OOS .
+    B136   CAP         base=1.0 PRORATA     picks 0.1    (IS Sharpe 1.1522) -> OOS 15.33%/0.9719/-25.70%  vs do-nothing 0.8704 (d +0.1015) vs SPY 0.8739 vs live 1.1019  4b-OOS .
+    B136   CAP         base=126.0 CONVICTION  picks 0.25   (IS Sharpe 1.1614) -> OOS 15.92%/0.9761/-26.67%  vs do-nothing 1.0168 (d -0.0406) vs SPY 0.8739 vs live 1.1019  4b-OOS .
+    B136   CAP         base=126.0 PRORATA     picks inf    (IS Sharpe 1.1379) -> OOS 16.17%/1.0168/-20.75%  vs do-nothing 1.0168 (d +0.0000) vs SPY 0.8739 vs live 1.1019  4b-OOS .
+    B136   H(control)  base=nan NONE        picks 756.0  (IS Sharpe 1.2871) -> OOS 19.97%/1.0634/-25.36%  vs do-nothing 1.0168 (d +0.0467) vs SPY 0.8739 vs live 1.1019  4b-OOS .
+    SMALL  CAP         base=1.0 CONVICTION  picks 0.1    (IS Sharpe 0.8539) -> OOS 11.52%/0.5948/-34.95%  vs do-nothing 0.5252 (d +0.0696) vs SPY 0.8738 vs live 0.6473  4b-OOS .
+    SMALL  CAP         base=1.0 PRORATA     picks 0.15   (IS Sharpe 0.7776) -> OOS 7.51%/0.5037/-36.04%  vs do-nothing 0.5252 (d -0.0215) vs SPY 0.8738 vs live 0.6473  4b-OOS .
+    SMALL  CAP         base=126.0 CONVICTION  picks 0.05   (IS Sharpe 0.6963) -> OOS 6.88%/0.4239/-37.07%  vs do-nothing 0.4386 (d -0.0147) vs SPY 0.8738 vs live 0.6473  4b-OOS .
+    SMALL  CAP         base=126.0 PRORATA     picks 0.05   (IS Sharpe 0.7277) -> OOS 8.55%/0.5335/-35.63%  vs do-nothing 0.4386 (d +0.0949) vs SPY 0.8738 vs live 0.6473  4b-OOS .
+    SMALL  H(control)  base=nan NONE        picks 252.0  (IS Sharpe 1.0073) -> OOS 9.34%/0.5922/-35.38%  vs do-nothing 0.4386 (d +0.1536) vs SPY 0.8738 vs live 0.6473  4b-OOS .
+    MEAN d(OOS Sharpe) vs doing nothing, CAP arms only: +0.0279 (beats it 5 of 12)
+
+  COST LADDER (dial 2) — matched-turnover mean dSharpe, base H=1, CONVICTION:
+        0 bps: mean dSharpe +0.0291, wins 10 of 15, mean dCAGR +1.742 pp, mean dMaxDD +1.223 pp
+       10 bps: mean dSharpe +0.0321, wins 10 of 15, mean dCAGR +1.733 pp, mean dMaxDD +1.345 pp
+       25 bps: mean dSharpe +0.0366, wins 10 of 15, mean dCAGR +1.721 pp, mean dMaxDD +1.411 pp
+       50 bps: mean dSharpe +0.0441, wins 10 of 15, mean dCAGR +1.701 pp, mean dMaxDD +1.450 pp
+  COST LADDER — matched-turnover mean dSharpe, base H=126, CONVICTION:
+        0 bps: mean dSharpe -0.0389, wins 2 of 15, mean dCAGR -0.367 pp, mean dMaxDD -2.076 pp
+       10 bps: mean dSharpe -0.0382, wins 2 of 15, mean dCAGR -0.365 pp, mean dMaxDD -2.034 pp
+       25 bps: mean dSharpe -0.0372, wins 2 of 15, mean dCAGR -0.363 pp, mean dMaxDD -1.968 pp
+       50 bps: mean dSharpe -0.0354, wins 2 of 15, mean dCAGR -0.358 pp, mean dMaxDD -1.876 pp
+
+  GATES 14 of 14 passed.  Runtime 18s.  Offline, deterministic (seed 20260919).
+============================================================================================================================================
