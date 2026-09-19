@@ -1,3 +1,85 @@
+## 2026-09-19 — idea 1498 (lane B): does the record's 0%-CASH CONVENTION hide a 4b pass? **ANSWERED — IT IS WORTH 0.0–1.1 pp/yr, IT DOES NOT RESCUE THE LIVE BOOK'S CAGR FLOOR, AND IT IS THE ONLY DEVICE ON THIS GRID THAT CLEARS PATH 4a. KEEP-4a CANDIDATE (U56/LIVE, rule-8 clean) AND A STRICT 4b IMPROVEMENT TO THE STANDING CANDIDATE. NO RULES CHANGE ENACTED HERE.**
+
+  **WHY THIS IDEA.**  Every de-gross in this record parks un-invested NAV at EXACTLY 0.00%/yr.  The
+  convention was never declared, never tuned and never priced — and today it sits directly on two
+  decisions.  Idea 1454 found the live RULES v2 book fails 4b on the **CAGR FLOOR ALONE** (-1.97 pp
+  full, -1.22 pp OOS, all four other legs passing) and concluded the fix is G = 1.00, i.e. ABOLISH
+  the cash leg because the cash leg earns nothing.  Eight runs (1405, 1413, 1429, 1433, 1436, 1461,
+  1468, 1488) each found a drawdown-buying DEVICE beaten at matched exposure by a plain DE-GROSS — a
+  contest in which the de-gross carries a 0%-yielding bucket.  Crediting that bucket is not a
+  bookkeeping audit: it is an IMPLEMENTABLE RULE CHANGE.
+
+  **THE GRID.**  Un-invested NAV placed in a real **SHY** sleeve that drifts with the book and pays
+  10 bps on its OWN turnover.  Two dials: gross **G** {0.25, 0.375, 0.50, 0.625, 0.75, 0.875, 1.00} x
+  sleeve fraction **F** {0.00, 0.25, 0.50, 0.75, 1.00}; **F = 0.00 IS the standing convention** and is
+  a cell of the grid.  Two frames, reported not tuned: **LIVE** (`rules_v2_weights` band shape) and
+  **INC** (the frozen 2026-09-04 incumbent, N = 20, H = 126).  Three panels.  **210 cells, every one
+  published.**  All **25 gates pass**, including two cross-script replays: LIVE/U56 (0.75, 0.00)
+  reproduces `baseline.compare`'s RULES v2 row to **2.2e-16** and INC/U56 (0.75, 0.00) the committed
+  2026-09-04 anchor to **3.7e-05**.  SHY's own profile is published BEFORE anything is credited:
+  FULL **1.31%/yr, Sharpe 0.958, MaxDD -5.71%**; IS 0.81%, OOS 1.72%.
+
+  **(1) THE CREDIT IS SMALL, MONOTONE, AND NOT FREE ON DRAWDOWN.**  F = 1.00 minus F = 0.00 is
+  **+0.000 .. +1.123 pp/yr of CAGR** (median +0.657), monotone non-decreasing in F at **42 of 42**
+  (panel, frame, G) twins, largest at low G where the bucket is largest.  MaxDD is **WORSE** at
+  F = 1.00 on **14 of 42** twins, worst **-3.56 pp** on SMALL/LIVE.  SHY is a 1-3y Treasury sleeve,
+  not a sweep rate: it is marked to market and it lost 5.71% in 2022.  That is stated, not glossed.
+
+  **(2) IT CANNOT RESCUE THE LIVE BOOK'S 4b CAGR FLOOR, SO 1454's READING STANDS.**  U56/LIVE at the
+  live G = 0.75 moves from **-1.97 pp to -1.47 pp** full-sample and **-1.23 pp to -0.54 pp** OOS
+  against the floor.  The OOS gap narrows by three quarters and still does not close.  **The
+  convention is IMMATERIAL to that decision** — which is itself worth committing, because it retires
+  a standing objection to every de-gross contest in the record.
+
+  **(3) PATH 4a — THE FINDING.  68 of 210 CELLS CLEAR 4a FULL, 59 CLEAR 4a FULL *AND* OOS, AND EVERY
+  ONE OF THEM CARRIES F > 0: 0 of 42 AT F = 0.00.**  The mechanism is visible in the grid, not
+  asserted: at F = 0.00 the LIVE frame's Sharpe is **invariant in G to 4 decimal places**
+  (1.20096 .. 1.20116 across all seven rungs) — a de-gross is a pure ray and cannot beat the book it
+  scales, which is exactly why 1405 / 1413 / 1436 / 1446 / 1454 / 1461 / 1468 / 1488 returned 4a
+  counts of 0/216, 0/90, 0/48, 0/42, 0/42, 0/225, 0/78 and 0/46.  **The cash sleeve is the first
+  device in that run to lift Sharpe at all.**  The best cell is the LIVE BOOK WITH NOTHING ELSE
+  CHANGED, its idle 25% in SHY: full **9.12% / 1.2675 / -11.48%**, halves **1.278 / 1.264** against
+  the live book's **1.228 / 1.181**, MaxDD better than live's -12.05%; OOS **10.14% / 1.3560 /
+  -11.48%** against live OOS **9.46% / 1.2769 / -12.05%**; turnover 1.77 -> 2.80x/yr, charged.
+  **HONEST LABEL: this is DIVERSIFICATION, not alpha** — CAGR rises only +0.50 pp and vol falls.  It
+  beats the live rules because the live rules leave a quarter of NAV in a hole.  It fails 4b on the
+  CAGR floor (-1.47 pp), as the live book always has.
+
+  **(4) PATH 4b — A STRICT IMPROVEMENT TO THE STANDING CANDIDATE, PLUS SIX FLIPS.**  INC/U56 at its
+  OWN G = 0.75 goes **15.80% -> 16.16%** CAGR, **1.1537 -> 1.1787** Sharpe, **-19.13% -> -18.88%**
+  MaxDD — the sole binding 4b leg's margin **+1.1028 -> +1.3544 pp** — and OOS **17.32% -> 17.80% /
+  1.1857 -> 1.2148 / -19.13% -> -18.88%**: better on EVERY 4b leg, full and out of sample, for
+  +0.18x/yr of turnover.  Separately **6 (panel, frame, G, F) cells flip 4b FULL *and* OOS** where
+  their F = 0.00 twin fails: U56/INC G = 0.50 at all four F > 0 (full 10.66% / 1.172 / -12.93%, OOS
+  11.70% / 1.207 / -12.93%, but the full-sample CAGR margin is only **+0.07 pp** — razor-thin, stated
+  not glossed) and B136/LIVE G = 1.00 at F >= 0.75.  Totals: 4b FULL 34/210, OOS 37/210, BOTH 31/210.
+
+  **(5) RULE 8 — F = 1.00 IS A CORNER, NOT A FITTED VALUE.**  Dials fit on warm-up..2016-12-31 only,
+  2017-2026 read ONCE.  `C_SHARPE` picks **F = 1.00 at 6 of 6** panel-frames and `C_CAGR` at **6 of
+  6**; **no chooser picks an interior F**.  `C_MEMO` reads F = 0.00 at 6 of 6, but that is a
+  **TIE-BREAK ARTEFACT OF THIS RUN'S OWN EXTENSION**: the 2026-09-03 memo's rule names only G, every
+  F rung at its chosen G clears its bars identically, so the memo is **SILENT on F** and the 0.00 is
+  this script's, not the data's.  7 of 24 chooser picks clear 4b FULL and OOS.
+
+  **(6) THE HONEST LIMIT — REPLICATION.**  B136/INC at (0.75, 1.00) closes **83%** of its DD deficit
+  (**-0.5106 -> -0.0880 pp**) and still fails 4b; SMALL clears **0 of 70** 4b cells on either frame,
+  and SMALL/LIVE is where the sleeve's drawdown damage is worst.  The 4a result is carried by U56 and
+  B136 LIVE (20 + 20 of the 59) and SMALL/LIVE (16).
+
+  **SURVIVORSHIP (rule 9).**  U56 / B136 are current-constituent lists and SMALL a current sub-$2B
+  screen carried back to 2010; every absolute level is an upper bound.  What survives is the F-to-F
+  CONTRAST on the same names and the same days.  SHY is itself a CONSTITUENT of U56 and B136, so the
+  INC frame may already select it on momentum; that is left unchanged and the sleeve is additive.
+
+  **VERDICT.  KEEP-4a CANDIDATE (U56/LIVE, G = 0.75, F = 1.00), rule-8 clean, labelled
+  diversification not alpha; KEEP-4b CANDIDATE (U56/INC, G = 0.75, F = 1.00) as a strict improvement
+  to the standing 2026-09-04 candidate.  No cell clears both paths (0 of 210).  Nothing enacted:
+  PROTOCOL rule 6 reserves enactment for the Sunday review.**  Filed 1490 (charge SPY the candidate's
+  own turnover before reading its bars) and 1494 (is realised mean gross a sufficient statistic for
+  every device-vs-de-gross loss in the record).
+  `research/backtests/2026-09-19_zero-percent-cash-convention_B.py`, memo `.memo.md`, 210 cells in
+  `.grid.csv`, choosers in `.walkforward.csv`, gates in `.gates.csv`, transcript in `.log.txt`.
+
 ## 2026-09-19 — idea 1461 (lane C): is H = 126 the DD-per-CAGR OPTIMUM, or a GRID ARTEFACT? **ANSWERED — GRID ARTEFACT, BOTH WAYS. KILL (the claim). NO RULES CHANGE. One incidental KEEP-4b candidate PARKED, not recommended.**
 
   **WHY THIS IDEA.**  1444's finding #2 said the beta band's exchange rate (pp of MaxDD bought per pp
