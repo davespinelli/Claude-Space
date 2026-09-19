@@ -1,3 +1,72 @@
+## 2026-09-19 — idea 1413 (lane B): does a PANEL-BREADTH THROTTLE on GROSS buy the BINDING 4b DD LEG, against its OWN EXPOSURE-MATCHED FLAT CUT? **ANSWERED NO — THE SIGNAL IS REAL, THE REPAIR IS REAL, AND AT MATCHED EXPOSURE IT IS WORTH NOTHING ON 90 OF 90 CELLS. KILL (capital), NO NEW BOOK, NO RULES CHANGE.**
+
+  The standing 2026-09-04 KEEP-4b incumbent (U56, N = 20, H = 126, gross 0.75, weekly, 10 bps,
+  next-row) passes on one leg's margin: MaxDD −19.13% against a −20.23% cap, **+1.10 pp**. Eight
+  consecutive runs found the DD leg is the only one that ever binds, and idea 1399 localised it to
+  **34 short-fill rebalance rows**. Short fill is a breadth signal read at its last possible moment —
+  the pool must fall below TWENTY names before the book holds a cent of cash. This run asks whether
+  reading breadth EARLIER buys the leg.
+
+  **THE PREMISE IS FACTUALLY TRUE.** On U56's 923 post-warm-up decision rows, panel breadth (the
+  share of priced, investable names above their 200d with vol20 < 0.60) is below 0.50 at **162** rows
+  and below 0.30 at **73**, against **98** short-fill rows, and the low-breadth rows sit exactly where
+  the drawdown is made (2009: 14, 2022: 28, 2020: 5). A throttle at b0 = 0.70 bites on **41.0%** of
+  rows against short fill's 3.7%.
+
+  **AND THE REPAIR WORKS, ON ITS FACE.** Scaling gross by `min(1, (b_s/b0)**p)`, read at the decision
+  row and applied the next row: **all 25 biting U56 cells have a SHALLOWER MaxDD than the incumbent**
+  (−19.13% → **−13.55%** at p = 3.0 / b0 = 0.70), the 4b DD margin goes +1.10 pp → **+6.68 pp**, and
+  **4b passes at 30 of 30 U56 cells**. Two dials and no more (p, b0); 30 cells per panel, **90 in
+  all, every one published**.
+
+  **THEN THE CONTROL EATS IT, AND THE CONTROL IS THE WHOLE EXPERIMENT.** Idea 1189 established that
+  Sharpe is flat in gross, so any de-grossing slides one book along a fixed-Sharpe CAGR-vs-drawdown
+  line. So every throttled cell here is judged against a **FLAT-GROSS book at that cell's OWN realised
+  mean target gross**, same weight frame, same tape, same cost. **Paired circular-block bootstrap
+  (400 × 63 rows, seed 20260919, identical blocks): of the 75 biting cells across three panels,
+  dSharpe is inside 2 SE at 75 and dMaxDD is inside 2 SE at 75. The largest |t| ANYWHERE in the grid
+  is 1.59 on Sharpe and 1.93 on MaxDD.** U56 means: dSharpe **−0.0003**, dMaxDD **+1.08 pp**, dCAGR
+  **−0.57 pp**. The matched flat cut reaches −15.33% on U56 with no signal at all and also passes 4b
+  at 30 of 30.
+
+  **THE TIMING IS NOT FREE — IT IS STRICTLY DEARER.** U56 annualised turnover runs **2.77 → 4.27
+  turns/yr** across the throttle grid while the matched flat control runs **2.77 → 2.20**. At the most
+  aggressive cell the throttle trades **94% more than its own control** to reach a drawdown 1.78 pp
+  shallower — a gap inside 0.50 SE — and gives up 0.79 pp of CAGR and 0.024 of Sharpe doing it.
+
+  **B136 IS THE CLEANEST STATEMENT: THE CONTROL WINS OUTRIGHT.** The throttle passes 4b at **6 of 30**
+  B136 cells; its own exposure-matched flat cut passes at **24 of 30**. On the second large-cap panel,
+  de-grossing on a breadth signal is strictly worse than de-grossing on nothing. SMALL663 is **0 of 30
+  both ways** and fails all five 4b legs. **4a 0 of 180 books.**
+
+  **RULE 8: THE AXIS IS NULL TO AN OPERATOR TOO.** (p, b0) chosen on warm-up..2016-12-31 ONLY by IS
+  net Sharpe, ties to the lowest p (do nothing), with a declared IS-Calmar control; 2017-2026 read
+  ONCE. **Both choosers pick p = 0 — the incumbent — on U56, OOS delta +0.000000.** On B136 the
+  IS-Sharpe chooser moves and loses **−0.0335** of OOS Sharpe; on SMALL both move and lose **−0.3195**
+  and **−0.2471**. The ex-post best OOS U56 cell (p = 3.0 / b0 = 0.60, OOS 14.54% / **1.2538** /
+  −13.48% against the incumbent's 17.34% / 1.1862 / −19.13%) is **reported, not claimed**: no declared
+  chooser reaches it and its full-sample gap over its own matched flat is 0.09 SE.
+
+  **GATES 6/6.** G1 p = 0 is b0-invariant, worst spread **0.000e+00**. G2 the p = 0 cell replays the
+  committed incumbent to **2.51e-03** — inside the tape-vintage floor, OUTSIDE 5e-4, published rather
+  than smoothed (`data/prices.csv` is restated daily, idea 1272). G3 at p = 0 the matched flat control
+  IS the throttled book, **0.000e+00**. G4 the chooser reads no row ≥ 2017-01-01, asserted in code.
+  G5 mean target gross non-increasing in p at **15 of 15** ladders. G6 exactly two tuned parameters.
+  Deterministic, offline, 28s.
+
+  **SURVIVORSHIP (rule 9).** U56/B136 are current constituents; SMALL is the current sub-$2B screen
+  less 54 tickers with `max_1d_move >= 1.0`. Delisted, acquired and bankrupt names are absent from
+  every panel, which flatters the books **and the breadth series itself** — a name that collapsed is
+  not in breadth's denominator — so the throttle is measured on an OPTIMISTIC signal and this null is
+  if anything generous. Every 4b pass count is an upper bound.
+
+  **WHAT THIS ADDS.** A ninth consecutive mechanism that cannot move the incumbent's sole binding leg
+  on its own account. The new content is the **control**: this is the first run to price an
+  exposure-TIMING mechanism against an exposure-MATCHED flat cut rather than against the incumbent.
+  **ONE RECOMMENDATION IS LOGGED FOR THE SUNDAY REVIEW, NOT APPLIED (rule 6): a 4b pass bought by
+  de-grossing — timed or untimed — should be published beside its own exposure-matched flat control,
+  because at matched exposure the timing was worth nothing on 90 of 90 cells here.**
+
 ## 2026-09-19 — idea 1198 (lane C): how many committed RUNNER-EQUIVALENCE GATES were read through a SKIPNA MAX, and did the skip cover any cell OUTSIDE the warm-up? **ANSWERED — THE MAJORITY BASIS IS GENUINELY BLIND, AND IT COVERED NOTHING PUBLISHED. KILL as a dial, CONFIRM the infrastructure.**
 
   Idea 1191's G1b found `engine.backtest` emits NaN in `returns`, because `engine.py`'s
