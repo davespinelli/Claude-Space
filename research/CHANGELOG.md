@@ -1,3 +1,78 @@
+## 2026-09-19 — idea 1509 (lane C): should the record's DEVICE-vs-ANCHOR contrasts ALL be re-cut against a TWO-RUNG CAPITAL BLEND? **ANSWERED — NO, NOT AS A RECORD-WIDE RE-CUT. KILL. ONE CARVE-OUT PARKED: THE BLEND IS FREE ON RANK CLAIMS AND NOT ON LEVEL CLAIMS. NO RULES CHANGE PROPOSED.**
+
+  **WHY THIS IDEA.**  1484 compared a turnover-capped book to the min-hold ladder AT MATCHED
+  TURNOVER by blending the two BRACKETING RUNGS of the comparand's own dial — a capital split
+  between two ladders, an IMPLEMENTABLE book and therefore a fairer anchor than any single rung.
+  Every OTHER matched-X contrast in this record was cut against a SINGLE RUNG or an INTERPOLATED
+  STATISTIC.  If the blend is the right ruler, ten runs of de-gross twins need re-reading.
+
+  **THE CENSUS (mechanical, gate G13: every classification is a published regex over committed
+  bytes).**  Across LEADERBOARD.md, CHANGELOG.md, every committed memo/result and every committed
+  script docstring: **1,215 matched-X sentences.  8 (0.7%) name a BLEND.  1,207 (99.3%) name a
+  single rung, an interpolated statistic, or nothing.**  Read as a LOWER BOUND on prevalence and
+  nothing more — it counts sentences, not distinct claims, and an unstated anchor is counted
+  UNSTATED, not miscut.
+
+  **THE RE-CUT.**  45 device books per panel (STOP trailing-equity stop, MAGATE SPY-200d gate,
+  VOLTGT vol target; DIAL 1 STRENGTH x DIAL 2 THRESHOLD) on U56 / B136 / SMALL — **135 books, every
+  cell published** — each differenced against FOUR rulers (R_NEAR nearest rung, R_STAT interpolated
+  statistic, R_BLEND two-rung capital blend, R_BLENDC the blend charged its OWN cross-sleeve
+  turnover at 10 bps) on TWO anchor ladders (L_G gross, L_H min-hold) and THREE matching statistics
+  (exposure, CAGR, turnover).  **432 contrasts, 337 bracketed, 95 unbracketed and published.**
+  All 11 gates pass; G1 replays the committed 2026-09-04 U56 anchor to 3.7e-05.
+
+  **(1) THE PRE-REGISTERED BAR WAS NOT MET.**  Written before any number was read: material only if
+  >= 10% of biting contrasts on U56 AND B136 flip the SIGN of dSharpe or change their |t| > 2
+  decision between R_NEAR and R_BLEND.  **Observed: 5.9% sign flips, 0.4% decision changes on 238
+  bracketed contrasts.**
+
+  **(2) THE MECHANISM, MEASURED RATHER THAN ASSERTED (gate G9).**  A blend differs from a rung ONLY
+  IF THE TWO RUNGS HOLD DIFFERENT THINGS.  The gross ladder is a **SCALE** ladder — every rung holds
+  the same names at the same relative weights — and on 27 real blends a two-rung gross blend and the
+  single gross rung at the SAME realised exposure differ by at most **|dSharpe| 2.8e-05 and |dCAGR|
+  6.1e-06**: **0 of 198 sign flips, 0 decision changes** on both L_G combos.  The min-hold ladder is
+  a **COMPOSITION** ladder — which is exactly why 1484's blend mattered — and there the blend does
+  move things: **11.1%** flips on X_TURN and **17.5%** on X_CAGR, but only **1 and 0** |t| > 2
+  decision changes, and 14 of those 18 flips sit on contrasts whose dSharpe is ~0 under BOTH rulers,
+  where a sign is not a finding.
+
+  **(3) THE CARVE-OUT WORTH ADOPTING, AND THE ONLY THING HERE THAT CHANGES PRACTICE.**  Sharpe is
+  scale-invariant, so rounding a matched-X anchor to the nearest rung is free on RANK claims (max
+  |R_NEAR - R_BLEND| dSharpe **0.0004** on L_G).  **CAGR is not.**  The same rounding moves the
+  LEVEL by up to **1.06 pp/yr on L_G and 2.01 pp/yr on L_H** — larger than the 4b CAGR-floor margins
+  this record publishes (1498's razor-thin U56/INC G = 0.50 cell at **+0.07 pp**; the standing
+  candidate at **+1.35 pp**).  **PARKED AS A REPORTING RULE: a committed CAGR- or MaxDD-LEVEL claim
+  cut against a NEAREST RUNG should be re-cut against the blend or an exact continuous rung; rank
+  claims need not be.**  Filed as idea 1526 to be censused and priced rather than adopted by
+  assertion.
+
+  **(4) NO RULER RESCUES ANY DEVICE.**  Of 337 bracketed contrasts, **0 are significantly POSITIVE
+  (|t| > 2, dSharpe > 0) under the blend and 25 are significantly NEGATIVE.**  Ten previous runs
+  found every drawdown-buying device beaten at matched exposure by a plain de-gross; a fairer,
+  implementable anchor does not change that on a single cell.  The best cell any chooser reaches
+  (U56 VOLTGT target 0.20, FRAC 0.50; full 14.94% / 1.1956 / -16.05%, OOS 15.76% / 1.2103 /
+  -16.05%) sits at **dSharpe +0.042, t = +1.20** against its own matched-exposure blend —
+  UNRESOLVED, not a win — and gives up **1.57 pp of OOS CAGR** to the frozen anchor whose Sharpe it
+  beats.
+
+  **(5) BOTH KEEP PATHS AND RULE 8.**  **4a 0 of 135** — the eleventh consecutive zero, for the
+  reason 1498 made explicit: a de-gross is a near-pure ray and cannot beat the book it scales.
+  **4b 50 full / 59 OOS / 50 BOTH**, all on U56 (35) and B136 (15), none on SMALL, and every one
+  inherited from the frozen incumbent's standing pass rather than created by a device.  Dials fit on
+  warm-up..2016-12-31 ONLY, 2017-2026 read ONCE: `C_RAW`, `C_NEAR`, `C_BLEND` and `C_STAT` pick the
+  **IDENTICAL cell on all 3 panels**, so the ruler is **rule-8 unreachable** — the capital arm's
+  pre-registered bar (C_BLEND beats both C_NEAR and the do-nothing anchor on OOS Sharpe at every
+  panel) fails by construction, and the pick beats the do-nothing frozen anchor on OOS Sharpe at
+  1 of 3 panels (U56 1.2103 vs 1.1857; B136 1.0167 vs 1.0180; SMALL 0.3129 vs 0.4398).
+
+  SURVIVORSHIP (rule 9): U56 / B136 are current-constituent lists and SMALL a current sub-$2B screen
+  carried back to 2010; every absolute level above is an upper bound.  What this run reads is a
+  contrast between two RULERS on the same books on the same days, which the bias cannot manufacture.
+
+  Script: `research/backtests/2026-09-19_two-rung-capital-blend-as-the-matched-X-anchor_C.py`
+  (+ `.log.txt`, `.census.csv`, `.census_pivot.csv`, `.grid.csv`, `.recut.csv`, `.algebra.csv`,
+  `.walkforward.csv`, `.gates.csv`, `.result.md`).
+
 ## 2026-09-19 — idea 1498 (lane B): does the record's 0%-CASH CONVENTION hide a 4b pass? **ANSWERED — IT IS WORTH 0.0–1.1 pp/yr, IT DOES NOT RESCUE THE LIVE BOOK'S CAGR FLOOR, AND IT IS THE ONLY DEVICE ON THIS GRID THAT CLEARS PATH 4a. KEEP-4a CANDIDATE (U56/LIVE, rule-8 clean) AND A STRICT 4b IMPROVEMENT TO THE STANDING CANDIDATE. NO RULES CHANGE ENACTED HERE.**
 
   **WHY THIS IDEA.**  Every de-gross in this record parks un-invested NAV at EXACTLY 0.00%/yr.  The
