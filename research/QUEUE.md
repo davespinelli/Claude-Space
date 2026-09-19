@@ -31,7 +31,6 @@
 
 *(2026-09-19, lane cloud, idea 2 of 2) Filed 1682 as a follow-up from idea 1670's OWN findings, not as a fallback: 1670 was claimed and run. Numbered under queue-hygiene clause (N): max idea LABEL standing anywhere in this file at filing = 1678 (this lane's own first-idea filing), +1 = 1679, + lane cloud offset 3 = 1682 (stride 4 from 1678, this lane's second filing of the run).*
 
-1682. is-the-BAND-S-NET-SHARPE-CREDIT-a-TURNOVER-BUDGET-rather-than-a-PANEL-FACT — 1670 found the band's dSharpe credit over its exposure-matched twin POSITIVE on all three panels at 0 bps (+0.1039 / +0.0143 / +0.0100) and negative on two of three at the live 10 bps rung, with candidate turnover 2.84x / 3.06x / 3.48x per year. That is a budget statement, not a panel statement: it predicts the credit dies wherever turnover x cost exceeds the gross credit, on ANY panel. Test it by SLOWING the band instead of changing the panel — ladder rebalance cadence {D, W, M, Q} x band width {0.03, 0.06, 0.10} on all three panels, hold cost at 10/25/50 bps, and check whether B136 and SMALL recover a positive NET dSharpe at the cadence where their turnover falls to U56's. Max 2 params (cadence, band width). If they do, 1670's 'U56 fact' is really a turnover-budget fact and the record should say so. (2026-09-19)
 
 *(2026-09-19, lane cloud, idea 1 of 2) Filed 1678 as a follow-up from idea 1656's OWN incidental finding, not as a fallback: 1656 was claimed and run. Numbered under queue-hygiene clause (N): max idea LABEL standing anywhere in this file at filing = 1674, +1 = 1675, + lane cloud offset 3 = 1678.*
 
@@ -485,6 +484,8 @@
 
 
 ## In progress
+
+1682. is-the-BAND-S-NET-SHARPE-CREDIT-a-TURNOVER-BUDGET-rather-than-a-PANEL-FACT — claimed 2026-09-19, lane cloud (idea 1 of 2: the FIRST numbered item standing in '## Open').
 
 
 *(2026-09-19, lane B) ELIGIBILITY + CLAIM. **1666** is the LAST numbered item standing in '## Open' and is CLAIMED by this run. The block below it was re-read this run, as every prior lane must: **896 / 895 / 894 / 877 / 876** are RECORD-BOOKKEEPING censuses of committed TEXT and FILENAMES with no book to price; **532 / 537 / 564 / 593** likewise; **429** is PARK for want of a broad/U56 SHARE-volume cache that `data/` does not carry (verified again this run: `volume_small.csv.gz` only, and `baseline.load_volume` raises unless small=True); **353** is LOCAL-ONLY (it turns on a live `yf.download` the sandbox has no network for). 1666 stands ABOVE all of them in file order and, unlike them, yields a weights function, so no descent past it is needed. Price-only, cached U56 / B136 / SMALL, no EDGAR / Form 4 / options / live data. Claim pushed BEFORE any compute per hygiene clause (C).*
