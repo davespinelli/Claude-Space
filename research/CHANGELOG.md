@@ -1,3 +1,64 @@
+## 2026-09-19 — idea 1686 (lane cloud): DOES THE KEEP-4b BOOK SURVIVE A PER-NAME AND PER-GROUP CONCENTRATION CAP AT MATCHED REALISED GROSS? **ANSWERED — THE COMMITTED BOOK IS ALREADY CAP-COMPLIANT (A PER-NAME CAP BINDS AT 0 OF 72 CELLS), A 45% GROUP CAP IS FREE, A 30% GROUP CAP COSTS 0.009 OF SHARPE AND A 20% GROUP CAP COSTS THE 4b PASS. WHERE CAPS DO BIND THEY BUY NOTHING AT MATCHED GROSS (39 OF 77 ON SHARPE) AND THEIR ONLY POSITIVE DIRECTION IS THE DE-GROSS RECIPE THE RECORD ALREADY SHIPS. KILL AS A DEVICE; NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Real capital is held under a mandate: x% per name, y% per group.
+  No run had ever asked whether the standing 4b band book can be held under one, and the
+  record's nine-run lesson (every device is beaten at matched exposure by a plain de-gross)
+  says a cap must be priced against a REALISED-GROSS-MATCHED twin, not against the uncapped book.
+
+  **CONSTRUCTION.** Two dials: **c_N {0.02, 0.04, 0.06, 0.10, 0.20, inf} x c_G {0.20, 0.30,
+  0.45, inf}** (fractions of NAV; groups are `research/universe.json`'s four, so c_G is a U56
+  object — B136 and SMALL carry no committed groups). Published, not tuned: **BOOK {DEGROSS =
+  the committed recipe gross/N_priced with gated-out weight to CASH, INBAND = gross/N_inband,
+  the full-exposure book a cap is actually for} x PANEL {U56, B136, SMALL} x GROSS {0.75, 1.00}**.
+  Spill convention fixed and stated: capped weight re-spreads to names with BOTH name and group
+  headroom, the remainder to cash. **144 cells, every one published** (`.grid.csv`), each against
+  its OWN twin: the same uncapped book scaled to the capped book's realised mean gross. Weekly,
+  t+1, 10 bps. Gates: the local replay equals `engine.backtest` at **max|d| 6.9e-18** (U56, B136)
+  and **1.0e-17** (SMALL); and **INBAND capped at c_N = gross/N reproduces
+  `baseline.rules_v2_weights` at max|dw| 0.000e+00** on every fully-priced rebalance day of all
+  three panels — the tight limit of the cap ladder IS the shipped book.
+
+  **(1) A PER-NAME CAP CANNOT BIND ON THE COMMITTED BOOK — 0 OF 72 CELLS.** The recipe divides
+  by names PRICED, not names in band, so the largest position it can ever hold is gross/N:
+  **1.79% of NAV on U56 at G = 1.00, 0.74% on B136, 0.15% on SMALL.** Any mandate stating a
+  per-name limit of 2% or looser is satisfied by construction, at zero cost, at every rung.
+
+  **(2) THE GROUP CAP IS THE ONLY BINDING ONE, AND IT HAS A PRICE.** U56, G = 1.00 (the standing
+  4b cell): **c_G = 0.45 binds on 0% of rebalance days** (the largest group, MEGACAP 20 of 56,
+  reaches 35.7%) and is free — 11.53% / 1.2008 / -15.91% unchanged. **c_G = 0.30 binds on 33.2%**
+  of days and costs **-0.0091 Sharpe FULL and -0.0103 OOS** against its matched-gross twin
+  (11.37% / 1.1918 / -15.85%; OOS 12.46% / 1.2656 / -15.85%) — **4b survives**. **c_G = 0.20
+  binds on 78.3% and breaks the 4b pass on the CAGR floor**: FULL 9.82% against a 10.58% floor,
+  OOS 10.65% against 10.68% — three basis points — for **-0.0588 / -0.0706** of Sharpe.
+
+  **(3) AT MATCHED REALISED GROSS THE CAP IS A COIN FLIP ON SHARPE AND SUB-SE ON DRAWDOWN.**
+  Over the 77 cells whose cap actually binds: **39 of 77 beat their own twin on FULL Sharpe**
+  (mean **-0.0023**, median +0.0002) and **33 of 77 on OOS Sharpe** (mean **-0.0040**). The one
+  systematic effect is depth — **61 of 77 shallower, mean +0.88 pp** — which is **0.30 of the
+  record's own 2.93 pp paired block-bootstrap DD SE** (idea 1511) and therefore unresolvable.
+  **4a: 0 of 144.** 4b FULL 59, OOS 58, FULL-and-OOS 53 — every passer is a book the record
+  already owns.
+
+  **(4) THE CAP'S ONLY POSITIVE DIRECTION IS THE RECIPE ALREADY SHIPPED.** On the construction
+  where caps bite (INBAND, U56, G = 0.75, c_G = inf) the twin gain is monotone in tightness and
+  argmax sits at the grid EDGE: **+0.0734 (c_N 0.02) -> +0.0318 -> +0.0076 -> -0.0063 -> 0.0000**.
+  Tightening further does not open a new book: by gate (2) the limit c_N -> gross/N IS
+  `rules_v2_weights`. The gain is the exposure channel — constant per-name weight with a varying
+  gross — not a concentration channel.
+
+  **(5) RULE 8 — THE IS-FITTED CAP RUNS TO THE EDGE, AGAIN.** 28 picks (3 legal IS-only choosers
+  x 12 (panel, book, gross) cells; 4 cells have no IS 4b pass), 2017-2026 read once. **24 of 28
+  land on the tightest rung offered, 0 interior, 0 on the uncapped corner**; mean OOS dSharpe vs
+  uncapped **+0.0103**; **9 of 28 clear 4b OOS, 0 of 28 clear 4a**. Same end-seeking already
+  found on N (1639), gross (1590), cadence (1586) and phase (1694).
+
+  **WHAT THE RECORD SHOULD DO.** Quote the mandate the book can be held under, not a cap study:
+  **per name >= 2% of NAV is free, per group >= 45% is free, 30% costs ~0.01 of Sharpe and keeps
+  4b, 20% costs the 4b pass.** Do NOT add a cap as a device. **No RULES change proposed.**
+  Caveats: current-constituent survivorship on all three panels; SMALL is 665 names after
+  dropping the 54 with `max_1d_move >= 1.0`; the SPY column enters the panel books as one name
+  exactly as `baseline.rules_v2_weights` does.
+
 ## 2026-09-19 — idea 1690 (lane C): DOES THE 4b PASS SURVIVE DELETING ITS BEST CALENDAR YEAR OR ITS BEST k DAYS? **ANSWERED / KILL (capital) — THE PASS IS A ONE-DAY RESULT, AND THE DAY IS SPY's, NOT THE BOOK's. EVERY FLIP ON EVERY UNIT IS THE DD LEG. THE RETURN SIDE IS INDESTRUCTIBLE. NO NEW BOOK, NO RULES CHANGE.**
 
   **THE DEFECT THIS CLOSES.** Idea 1590 found the standing 2026-09-04 candidate cost-robust to
