@@ -2283,3 +2283,89 @@
 
   **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. No memo:
   this run produces no KEEP candidate.
+
+## 2026-09-19 — idea 708 (lane B): is the per-r COST DRAG INVERSION a record-wide fact or a CAND-n GROSS/n CONVENTION? **ANSWERED — IT IS A CONVENTION, AND THE RAW CLAIM IS NOT EVEN SIGN-STABLE. KILL (capital), NO NEW BOOK, NO RULES CHANGE — with a METHOD FINDING and a self-logged statistic correction.**
+
+  **The claim under test.** Idea 703 (lane C, 2026-09-11) measured cost drag on OOS Sharpe
+  monotone DECREASING in the selection ratio at every width (k = 400: −0.1219 / −0.1168 /
+  −0.0981 / −0.0805 at r = .05/.10/.25/.50) and committed the sentence *"holding more names is
+  CHEAPER, not dearer"*, which inverts the record's recurring cost-of-breadth reasoning and has
+  been quoted since. Every book in that ladder sizes at GROSS/n, so one replacement costs 2G/n
+  of NAV: turnover per unit NAV is a replacement FRACTION, and a fraction falls as its
+  denominator grows even when the book churns the same number of slots.
+
+  **CONSTRUCTION.** DIAL 1 FAMILY {CAND, MADIST, BAND, ADAPT, EWALL}; DIAL 2 COST RUNG {0, 5,
+  10, 25, 50} bps, 10 binding. Exactly two tuned parameters. NOT dials, published at every
+  value: breadth n {5, 10, 20, 40, 80, ALL} (the axis the question is about) and PANEL {U56,
+  B136, SMALL}. Gross frozen at the live 0.75, weekly, t+1, no shorting, no leverage. **25 books
+  per panel, 75 in all, × 5 rungs = 375 cells, every one published.** Costs are RECONSTRUCTED
+  from the turnover identity, not re-fitted (G1 proves the reconstruction exact at 0.000e+00).
+
+  **THE PRE-REGISTERED DISCRIMINATOR, AND IT IS UNANIMOUS.** Drag re-cut in three currencies:
+  T_nav (per unit NAV, the record's), T_gross (per unit deployed capital), T_slot (NAME SLOTS
+  replaced per year = T_nav · nbar / gbar). Meaned over three panels: **rho(n, T_nav) −0.9952
+  (CAND) / −0.9952 (MADIST) / −0.9952 (BAND) / −0.9804 (ADAPT) against rho(n, T_slot) +0.9952 /
+  +0.9952 / +0.8216 / +0.9804.** H_CONVENTION legs 4 of 4 and 4 of 4; **H_GENERAL 0 of 4.** Per
+  unit NAV a wide book looks far cheaper (U56 CAND 23.67 → 8.20 ×/yr, n = 5 → ALL); in slots it
+  churns **more than twice as much** (157.7 → 408.7 on U56, 196 → 1006 on B136, 223 → 4152 on
+  SMALL). Nothing got stabler — GROSS/n shrank the slot.
+
+  **THE DRAG IS T_nav/vol AND NOTHING ELSE.** Over the 75 books, **drag(10 bps) = +0.000167 +
+  0.999786 × (10/1e4)·T_nav/vol_0, R² 0.999983, max |residual| 0.000735 against a mean |drag| of
+  0.106382, Spearman 0.999516.** Slope 1.000, intercept 0.0002. Any ordering of books by drag is
+  an ordering by T_nav, so the inversion restates without residue as "T_nav falls with n" — the
+  convention written down.
+
+  **AND 703's RAW CLAIM DOES NOT REPLICATE WITH A STABLE SIGN. 3 of 12 arms run the other way.**
+  rho(n, drag) is −0.81 / −0.75 / −0.81 / −0.94 on U56 and −1.00 / −0.83 / −0.60 / −1.00 on B136
+  (CAND / MADIST / BAND / ADAPT), but **+0.26 (CAND) / +0.43 (BAND) / +0.60 (ADAPT) on SMALL**,
+  where drag RISES from n = 5 to n = 40 (CAND +0.0810 → +0.1860) before falling. "Monotone
+  decreasing at every width" is a property of 703's one panel.
+
+  **METHOD FINDING (G8): THE RECORD HAS TWO CURRENCIES, NOT THREE.** Every count family
+  re-spreads the full gross over the names it holds, so gbar is constant and T_gross is a fixed
+  multiple of T_nav: their rank correlations against n agree on **12 of 12 arms at max |Δrho|
+  0.000e+00**. "Per unit deployed capital" is not an independent reading of anything on any
+  GROSS/n ladder in this record.
+
+  **BOTH KEEP PATHS.** **4a 0 of 75** — another consecutive 4a zero (live RULES v2 on U56 8.62% /
+  1.2010 / −12.05%, halves 1.2276 / 1.1805). **4b 13 of 75** (U56 3 / B136 10 / SMALL 0), binding
+  legs CAGR 34 < H2 38 < DD 39 < OOS 40 < H1 46. **Not one of the 13 is a new book:** they are the
+  wide/ALL ends — idea 1454's re-spread book (U56 BAND-ALL 12.19% / 1.1567 / −17.71% full, OOS
+  1.1950) and its neighbours, already killed as a dial by idea 1555 (RESPREAD loses to the SHY
+  sleeve on Sharpe 6 of 6 and MaxDD 6 of 6). **H_HINDSIGHT fires again:** all 13 clear 4b full AND
+  OOS and none is reachable by any chooser in this run.
+
+  **RULE 8** (params on warm-up..2016-12-31 only, 2017–2026 read ONCE). **C_DRAG — "pick the
+  cheapest book", this idea's own dial made into a real selector — picks EWALL-ALL on 3 of 3
+  panels and loses to doing nothing on 2 of 3, mean dOOS Sharpe −0.0430.** C_SHARPE picks BAND-5
+  on U56 and B136 and EWALL-ALL on SMALL. Both choosers pooled: mean **−0.0556** vs LIVE (beats it
+  2 of 6) and **+0.0793** vs SPY (4 of 6). The cheapest book in the grid is the one with no
+  selection in it at all.
+
+  **A CORRECTION THIS RUN MADE TO ITSELF, LOGGED RATHER THAN HIDDEN.** The per-slot currency was
+  first written `T_nav / nbar`, which divides by breadth TWICE (a GROSS/n book already carries one
+  factor of 1/n inside T_nav) and forces rho(n, ·) = −1 by construction. The first pass printed
+  rho(n, T_nav) == rho(n, T_gross) == rho(n, T_name) to four decimals on 12 of 12 arms — the
+  signature of exactly that degeneracy — and read **H_GENERAL** off it. Corrected to
+  `T_nav · nbar / gbar`, the verdict **REVERSED to H_CONVENTION, 4 of 4 against 0 of 4.** Both the
+  erroneous reading and the fix stand in the script docstring and the result memo.
+
+  **GATES 91/91**, including G1 cost identity 0.000e+00 over 9 spot cells; G2 this script's own
+  band machinery replays `baseline.rules_v2_weights` at exactly 0.0 on all three panels; G3
+  ADAPT-ALL == CAND-ALL at 0.000e+00 (degeneracy checked, not assumed); G5 no chooser reads a row
+  on or after 2017-01-01; G6 gross in [0, 1] on all 75 books; G7 all 375 cells published.
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 / SMALL are CURRENT-constituent lists, so every absolute
+  level is an upper bound. The headline is a set of within-book turnover decompositions and a
+  difference between two cost rungs on the SAME book over the SAME days, so it is first-order
+  immune; the 4a / 4b pass counts are not.
+
+  **WHAT THE RECORD SHOULD SAY INSTEAD.** *The cost drag of a GROSS/n book falls with n because
+  the convention shrinks each slot to G/n, not because wide books churn less: in name-slots per
+  year, breadth RAISES turnover monotonically on 4 of 4 families and 3 of 3 panels. Drag is
+  T_nav/vol to R² 0.99998 and carries no information of its own. The sign of drag-vs-breadth is
+  panel-dependent, so "holding more names is cheaper" should not be quoted unqualified.*
+
+  **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. No memo:
+  this run produces no KEEP candidate.
