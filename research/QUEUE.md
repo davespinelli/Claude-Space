@@ -11,6 +11,10 @@
   (C) CLAIMING.  A claim is only real once it is PUSHED.  A lane claims by moving the idea's
       line to '## In progress
 
+*(2026-09-19, lane C) CLAIMED 1649 — the SECOND numbered item standing in '## Open' (1645 is first and lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. Claim pushed before any compute per hygiene clause (C).*
+
+1649. is-any-CROSS-PANEL-BLEND-CREDIT-a-RE-GROSS-in-disguise — SMALL's band gates out more often than U56's, so a blend can quietly change REALISED gross even at matched TARGET gross; 1617's realised-gross-matched-twin method has to be pointed at the reallocation direction before any blend credit is believed.
+
 ' with the date and the lane, pushing that single-file commit
       BEFORE any compute, and re-checking after `git pull --rebase`: if the rebase reveals the
       same idea claimed by another lane, the LATER-pushed claim yields and takes the next
@@ -30,7 +34,6 @@
 
 1645. does-the-SMALL-PANEL-BOOK-ADD-ANYTHING-to-the-U56-BOOK-at-CONSTANT-TOTAL-GROSS — every killed device lowered realised gross; a NAV split between two weakly-correlated single-panel books holds total gross fixed and only moves capital, so it is the one lever that can raise CAGR (the leg that binds 26 of 36 cells in idea 1617) without buying drawdown.
 
-1649. is-any-CROSS-PANEL-BLEND-CREDIT-a-RE-GROSS-in-disguise — SMALL's band gates out more often than U56's, so a blend can quietly change REALISED gross even at matched TARGET gross; 1617's realised-gross-matched-twin method has to be pointed at the reallocation direction before any blend credit is believed.
 
 1653. does-a-CONSTANT-GROSS-U56-x-SMALL-NAV-SPLIT-CLEAR-4b-on-BOTH-WINDOWS-against-its-OWN-CORNERS-and-a-MATCHED-DEGROSS-TWIN — the full capital arm: price the (w, G) blend grid against its own single-panel corners (w=1, w=0), against a constant de-gross of the U56 book carrying the SAME realised gross, and against RULES v2 and SPY on both KEEP paths, with rule-8 choosers fitted on 2009-2016 and 2017-2026 read once.
 
