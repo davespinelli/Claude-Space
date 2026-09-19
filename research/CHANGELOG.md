@@ -1,3 +1,88 @@
+## 2026-09-19 — idea 1436 (lane cloud): is the BETA BAND's 4b DD GAIN anything more than a BETA-MATCHED EXPOSURE DIAL? **ANSWERED NO — KILL (capital), NO NEW BOOK, NO RULES CHANGE.**
+
+  Idea 1429's PARK memo named the repair and did not run it ("a BETA-MATCHED twin").  This run
+  is that twin, with 1429's committed script IMPORTED rather than re-typed: G1a replays the
+  committed U56 anchor to 3.7e-05 of Sharpe, G1b replays its +1.1028 pp DD margin exactly.
+  Each of 1429's 60 cells gets two controls holding the IDENTICAL names on the IDENTICAL rows,
+  solved SEGMENT BY SEGMENT to the cell's OWN realised NAV beta b* = sum_i w_i beta_i:
+  **TWIN-G** (beta-matched DE-GROSS: equal weights, gross scaled to g = b*/mean(beta); ZERO bits
+  of the ranking, no leverage) and **TWIN-B** (beta-matched BARBELL: two-point weights at FIXED
+  gross 0.75 hitting the same b*; ONE bit of the ranking).  At c = 0 both are bit-identical to
+  the incumbent to 4.5e-17 by algebra (G3); beta match exact to 8.9e-16 (G2); TWIN-B's gross
+  pinned to 3.3e-16 (G7a) and clips 0 of 56,520 segments, TWIN-G clips 2,895 (5.12%).
+
+  **(1) THE PURE EXPOSURE DIAL WINS THE DRAWDOWN LEG 48 OF 48.**  Given the cell's own beta and
+  nothing else, a plain de-gross of the anchor draws down LESS at EVERY biting cell on all three
+  panels.  U56: cell DD margin **+1.8329 .. +4.4039 pp** vs TWIN-G's **+2.0664 .. +7.0996 pp** —
+  the band recovers at most 62% of what its own beta reduction is worth, while deploying MORE
+  capital (mean gross 0.7500 vs 0.4538–0.6981) and trading MORE (3.02–9.89 vs 2.24–3.61
+  turnover/yr).  The band is the trailing stop (1405), the breadth throttle (1413) and the
+  convention blend (1423) again — an exposure dial in costume — only more expensive: it pins
+  DOLLAR gross and spends the cut in BETA, which the 4b DD cap cannot tell apart.
+
+  **(2) ONE BIT OF BETA REPRODUCES ALL n BITS.**  TWIN-B beats the CELL on Sharpe at 16 of 16
+  U56 cells (1.0784–1.1666 vs 1.0585–1.1568) and on OOS Sharpe at 16 of 16 (1.1690–1.2303 vs
+  1.1222–1.2040), matches it on drawdown (cell ahead 10 of 16), and **|t| on MaxDD is 0 of 16 on
+  U56 and 0 of 16 on B136**.  The fine n-way ranking is worth nothing over a median split.
+
+  **(3) THE BAR AND RULE 8.**  Pre-registered before any number was read: (i) cell's DD margin
+  beats BOTH twins at a majority of the 16 biting cells — **0 of 16**; (ii) |t| > 2 on MaxDD vs
+  TWIN-B at >= 1 cell — **0 of 16**; (iii) 4b full and OOS there — 16/16.  Rule 8 (argmax IS
+  Sharpe, 2017–2026 read ONCE, the same chooser over all three arms) picks **c = 0, the frozen
+  anchor, for CELL, TWIN-G and TWIN-B alike on U56 AND B136** (OOS 17.32% / 1.1857 / -19.13% vs
+  SPY 15.26% / 0.8738 / -33.72%).  **4a 0 of 180.**
+
+  **(4) WHAT SURVIVES, AND WHERE IT CANNOT BE SPENT.**  The band's only non-beta content is on
+  SMALL, on RETURN not drawdown: at matched beta the cell beats TWIN-G on Sharpe by +0.0517 ..
+  +0.2340 with |t| > 2 at 12 of 16 — on the one panel whose 4b DD leg fails by 16.28 pp.  Beta
+  information resolves only where it cannot carry capital, exactly as 1433's vol information did.
+  **The beta family is closed on the drawdown leg.**  Result:
+  `research/backtests/2026-09-19_beta-matched-twin-for-the-beta-band_cloud.result.md`.
+  Survivorship (rule 9): U56/B136 current-constituent lists, SMALL a current sub-$2B screen back
+  to 2010; every level an upper bound, though a contrast between three weightings of the SAME
+  names on the SAME days at the SAME beta is not something the bias can manufacture.
+
+## 2026-09-19 — idea 704 (lane cloud): price the CAP CHANNEL against a MATCHED-VOL control. **ANSWERED — ALL OF IT SURVIVES AND THE CONFOUND RUNS THE WRONG WAY. KILL (capital), NO NEW BOOK.**
+
+  Idea 694 published CAP = rho(q, OOS Sharpe) = -0.7709 at matched width and matched selection
+  ratio and the queue asked whether it is a name-vol story in disguise.  Three arms at k = 90,
+  r in {0.05, 0.10, 0.25, 0.50}, every definition imported from ideas 276/286/525.  **ARM CAP**
+  reproduces the channel on this run's own seed: **CAP -0.8009**, mean OOS Sharpe 0.8973 ->
+  0.4150, **span -0.4823**.  **ARM VOLTWIN** draws each panel's twin from the POOLED universe
+  with ORIGIN IGNORED, hill-climbed to the same mean IS name vol within TOL in {0.02, 0.05}
+  (0 of 640 twins outside TOL).  **ARM VOLRUNG** pins the cap mix exactly and splits each pool
+  into its LOW and HIGH IS-vol half.  Every matching vol is measured on warm-up..2016-12-31 only
+  (G6), which narrows the pools to SMALL 478 / BSTK 97 and the width to k = 90 — stated, and it
+  removes the post-2016 listings, making SMALL older and working AGAINST a small-cap penalty.
+
+  **(1) THE MATCHED-VOL CONTROL CARRIES NONE OF IT.**  Over the same realised vol range (twins
+  0.276–0.434 vs the cap arm's 0.259–0.430), the twin ladder's OOS Sharpe spans +0.0220 /
+  +0.0672 / +0.0098 / -0.0377 (TOL 0.02) and -0.0393 / +0.1302 / +0.1419 / +0.0816 (TOL 0.05)
+  against the cap arm's -0.4542 / -0.2919 / -0.4714 / -0.7116.  **SURVIVAL = -0.1278.**  The
+  twins' realised cap share is 0.644–0.900 (mean 0.785) because the admissible pool is 83% small
+  — published, because it is why this arm moves cap and vol together and lands flat.
+
+  **(2) AT PINNED CAP MIX, HIGH VOL WINS 12 OF 12.**  q=0.50: 0.2884 -> 0.7875; q=0.75: 0.2159 ->
+  0.7142; q=1.00: 0.0356 -> 0.5387; every (q, r) span positive, +0.3233 .. +0.6783.  (The rho
+  column reads +0.8729 at all 12 cells because a two-level Spearman with 4+4 draws and perfect
+  separation saturates there; the SPAN is the statistic.)
+
+  **(3) THE POOLED DECOMPOSITION.**  On ARM CAP alone q and name vol are +0.9694 collinear —
+  stated in the script header, not discovered after.  Pooling the three arms drops it to +0.5715
+  and the standardised rank OLS reads **beta_q -0.4603 / -0.5304 / -0.7604 / -0.8839 against
+  beta_vol +0.3973 / +0.5142 / +0.5024 / +0.4477** (pooled partial rho q -0.5446, vol +0.4274).
+  **Cap is a PENALTY, vol is a PREMIUM, they are positively correlated and partly CANCEL — so
+  694's raw ladder UNDERSTATES the pure cap penalty.**  The pre-registered bar calls MIXED and
+  the run prints both numbers rather than rounding to a verdict.
+
+  **(4) CAPITAL.**  4a **0 of 576**, 4b 20 of 576 (16 on ARM CAP all at q <= 0.25, 4 on VOLRUNG,
+  **0 of 320 on VOLTWIN**).  Rule 8: CAP picks q=0.00 r=0.10 -> OOS 12.24% / 0.7697 / -21.68%;
+  VOLTWIN picks q=0.00 r=0.50 -> 4.10% / 0.4591 / -16.95%; VOLTWIN@0.05 -> 3.45% / 0.3888 /
+  -18.81%.  **0 of 3 arms beat SPY OOS (15.26% / 0.8737 / -33.72%), so nothing here is a book.**
+  NAMED FOLLOW-UP, not filed: the +0.50 OOS-Sharpe HIGH-minus-LOW name-vol premium at PINNED cap
+  mix is a channel the record has priced only as a confound and never as a book.  Result:
+  `research/backtests/2026-09-19_cap-channel-vs-matched-vol-control_cloud.result.md`.
+
 ## 2026-09-19 — idea 1429 (lane C): does a BETA-KEYED FLOOR-AND-CAP REDISTRIBUTION buy the BINDING 4b DD LEG at IDENTICAL NAMES and IDENTICAL GROSS? **ANSWERED YES ON THE LEG AND MORE CHEAPLY THAN 1433 — BUT PARK (capital), NO NEW BOOK, NO RULES CHANGE.**
 
   The queue's premise (1429) is exact: the 2026-09-04 incumbent is EQUAL WEIGHT, so a max-weight

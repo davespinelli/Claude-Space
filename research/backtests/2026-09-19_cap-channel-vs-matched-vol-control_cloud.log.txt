@@ -1,0 +1,115 @@
+================================================================================================================================
+IDEA 704 (lane cloud, 2026-09-19) — price the CAP CHANNEL against a MATCHED-VOL control.
+694 published CAP = rho(q, OOS Sharpe) = -0.7709 at matched k and matched r, worth up to -0.853 of OOS Sharpe.  The confound: small caps ARE volatile names.
+DIALS: Q [0.0, 0.25, 0.5, 0.75, 1.0] x TOL [0.02, 0.05].  NOT dials: k=90, r [0.05, 0.1, 0.25, 0.5], draws, tertiles, panels.
+BAR (pre-registered before any number was read): VOL STORY if the vol-matched twin ladder reproduces >= 70% of the cap span AND the within-r partial |rho(q, OOS S | vol)| < 0.30; CAP STORY if the partial holds >= 0.30 AND the within-q vol slope is |rho| <= 0.15; else MIXED.
+================================================================================================================================
+
+  COMMON CALENDAR 2010-01-04 .. 2026-09-18  (4203 days, 16.7y);  pools: SMALL 665, BSTK 100
+  SURVIVORSHIP (rule 9): BSTK is the CURRENT broad-minus-ETF constituent list and SMALL a CURRENT sub-$2B screen carried back to 2010 (the protocol-mandated max_1d_move >= 1.0 drop is applied inside M276.small_panel and is reported above).  Every absolute level below is an UPPER BOUND.  What this run reads is a CONTRAST between two ways of drawing the SAME k names from the SAME two pools on the SAME days, which the bias inflates on BOTH sides and therefore cannot manufacture — but cannot cure either.
+    GATE PASS  G0 min sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+  ADMISSION (published, and it is a real haircut): the matched-vol control can only admit a name whose IS name vol EXISTS without look-ahead, so names first priced after 2016-12-31 are dropped from BOTH pools — SMALL 665 -> 478 (187 dropped), BSTK 100 -> 97 (3 dropped: ['MMC', 'PLTR', 'UBER']).  This removes the POST-2016 listings, i.e. it makes the SMALL pool OLDER, which if anything works AGAINST finding a small-cap penalty.  It is also why this run reads the contrast at k = 90 rather than 694's k = 100: the q = 0.00 rung needs 90 BSTK names and only 97 survive.
+  IN-SAMPLE NAME VOL (warm-up..2016-12-31): SMALL mean 0.4089 (p10 0.2380 / p90 0.6208), BSTK mean 0.2606 (p10 0.1663 / p90 0.4025)
+  POOL OVERLAP: P(a random SMALL name is LESS volatile than a random BSTK name) = 0.1972 — the separability the vol-matched control depends on; if this were 0 the question would be unanswerable on this data and this run would say so.
+    GATE PASS  G6 NO LOOK-AHEAD in panel construction (every vol used to build or match a panel is measured on warm-up..2016-12-31 only): by construction (target IS window only)
+
+================================================================================================================================
+ARM CAP — 694's construction: q*k from SMALL, (1-q)*k from BSTK, k=90, 8 draws per q.
+    [CAP 10/40]  (34s)
+    [CAP 20/40]  (65s)
+    [CAP 30/40]  (99s)
+    [CAP 40/40]  (132s)
+    GATE PASS  G2 every panel has exactly k distinct columns and exactly round(q*k) from SMALL: 0 violations of 40 (target 0)
+
+================================================================================================================================
+ARM VOLTWIN — for EVERY ARM-CAP panel, a k=90 twin drawn from the POOLED universe (origin ignored) matched to its mean IS name vol within TOL.
+    [VOLTWIN tol=0.02] 40 twins done (265s)
+    [VOLTWIN tol=0.05] 40 twins done (397s)
+    GATE PASS  G3 vol match achieved within TOL: 0 of 80 twins outside TOL (target 0)
+
+================================================================================================================================
+ARM VOLRUNG — at q in [0.5, 0.75, 1.0] each pool is sorted by IS name vol and the panel drawn from its LO or HI vol HALF on BOTH sides, so cap mix is pinned EXACTLY and vol is the only thing that moves.  q in {0.00, 0.25} is UNREACHABLE at k=90: they need 90 and 68 BSTK names and a BSTK vol-half holds only 48.
+    [VOLRUNG q=0.50] done (425s)
+    [VOLRUNG q=0.75] done (449s)
+    [VOLRUNG q=1.00] done (476s)
+    GATE PASS  G8 ARM VOLRUNG's cap mix is pinned (realised q == nominal q at every cell): 0 violations (target 0)
+    GATE PASS  G4 all cells published: 576 books over 144 panels (target 576)
+    GATE PASS  G5 exactly two tuned parameters (q, TOL): Q 5 x TOL 2 (target 2 params)
+    GATE PASS  G9 no leverage (CAND-n at gross 0.75, imported from idea 286): GROSS = 0.75 (target <= 1.0 and no shorting)
+
+================================================================================================================================
+READING 1 — ARM CAP: does this run reproduce the published cap channel?
+    r=0.05 (n= 4)  rho(q, OOS Sharpe) -0.6891   mean OOS Sharpe q=0.00 0.8159 -> q=1.00 0.3617  span -0.4542
+    r=0.10 (n= 9)  rho(q, OOS Sharpe) -0.6677   mean OOS Sharpe q=0.00 0.7697 -> q=1.00 0.4778  span -0.2919
+    r=0.25 (n=22)  rho(q, OOS Sharpe) -0.9097   mean OOS Sharpe q=0.00 0.9390 -> q=1.00 0.4677  span -0.4714
+    r=0.50 (n=45)  rho(q, OOS Sharpe) -0.9372   mean OOS Sharpe q=0.00 1.0645 -> q=1.00 0.3529  span -0.7116
+  CAP = mean over r of within-r rho(q, OOS Sharpe) = -0.8009   (694 committed -0.7709 on its own seed)
+  SPAN = mean over r of the q=0 -> q=1 OOS Sharpe move = -0.4823   (694 committed up to -0.853)
+    GATE PASS  G1 the published CAP channel is reproduced on this run's own draws before it is decomposed (sign negative and |CAP| >= 0.30; the exact -0.7709 is a different seed): CAP -0.8009, SPAN -0.4823 (target CAP < -0.30)
+
+READING 2 — is q still there once NAME VOL is controlled, within r?
+    r=0.05  raw rho(q, OOS S) -0.6891  ->  PARTIAL rho(q, OOS S | vol) -0.2552   |   rank OLS betas  q -0.7785  vol +0.0922  R2 0.4754
+    r=0.10  raw rho(q, OOS S) -0.6677  ->  PARTIAL rho(q, OOS S | vol) -0.4330   |   rank OLS betas  q -1.4092  vol +0.7650  R2 0.4811
+    r=0.25  raw rho(q, OOS S) -0.9097  ->  PARTIAL rho(q, OOS S | vol) -0.5107   |   rank OLS betas  q -1.0032  vol +0.0965  R2 0.8280
+    r=0.50  raw rho(q, OOS S) -0.9372  ->  PARTIAL rho(q, OOS S | vol) -0.7033   |   rank OLS betas  q -1.3428  vol +0.4183  R2 0.8889
+  PARTIAL = mean over r = -0.4756   (bar: |rho| >= 0.30 keeps a cap story alive)
+  NOTE, published not glossed: within an ARM-CAP r-cell, rho(q, name vol) = +0.9694 — q and vol are near-collinear BY CONSTRUCTION, so a partial on this arm ALONE cannot settle it.  That is what arms VOLTWIN and VOLRUNG exist for.
+
+READING 3 — ARM VOLTWIN: does an ORIGIN-FREE ladder at the SAME vol levels reproduce the cap span?
+  TOL 0.02:  twin realised cap share q_realised 0.644..0.900 (mean 0.785); rho(q_target, q_realised) +0.8466; mean |vol gap| 0.01416
+    r=0.05  twin mean OOS Sharpe at the q=0 vol level 0.2484 -> at the q=1 vol level 0.2704  span +0.0220  = -4.8% of the cap span   |  rho(vol, OOS S) +0.1139
+    r=0.10  twin mean OOS Sharpe at the q=0 vol level 0.3219 -> at the q=1 vol level 0.3892  span +0.0672  = -23.0% of the cap span   |  rho(vol, OOS S) +0.1923
+    r=0.25  twin mean OOS Sharpe at the q=0 vol level 0.4627 -> at the q=1 vol level 0.4725  span +0.0098  = -2.1% of the cap span   |  rho(vol, OOS S) +0.0833
+    r=0.50  twin mean OOS Sharpe at the q=0 vol level 0.4591 -> at the q=1 vol level 0.4215  span -0.0377  = 5.3% of the cap span   |  rho(vol, OOS S) -0.0092
+  TOL 0.05:  twin realised cap share q_realised 0.678..0.900 (mean 0.804); rho(q_target, q_realised) +0.3017; mean |vol gap| 0.03401
+    r=0.05  twin mean OOS Sharpe at the q=0 vol level 0.2799 -> at the q=1 vol level 0.2406  span -0.0393  = 8.7% of the cap span   |  rho(vol, OOS S) +0.1463
+    r=0.10  twin mean OOS Sharpe at the q=0 vol level 0.2731 -> at the q=1 vol level 0.4033  span +0.1302  = -44.6% of the cap span   |  rho(vol, OOS S) +0.3878
+    r=0.25  twin mean OOS Sharpe at the q=0 vol level 0.3841 -> at the q=1 vol level 0.5260  span +0.1419  = -30.1% of the cap span   |  rho(vol, OOS S) +0.4499
+    r=0.50  twin mean OOS Sharpe at the q=0 vol level 0.3888 -> at the q=1 vol level 0.4704  span +0.0816  = -11.5% of the cap span   |  rho(vol, OOS S) +0.3797
+  SURVIVAL = mean over (TOL, r) of twin span / cap span = -0.1278  (bar: >= 0.70 means the cap channel IS a vol channel)
+
+READING 4 — ARM VOLRUNG: at PINNED cap mix, how steep is the vol slope?
+    q=0.50 r=0.05  OOS Sharpe LO/HI 0.0527/0.5684  (mean name vol 0.239/0.441)  rho(vol half, OOS S) +0.8729  span +0.5157
+    q=0.50 r=0.10  OOS Sharpe LO/HI 0.1522/0.6857  (mean name vol 0.239/0.441)  rho(vol half, OOS S) +0.8729  span +0.5335
+    q=0.50 r=0.25  OOS Sharpe LO/HI 0.4335/0.8900  (mean name vol 0.239/0.441)  rho(vol half, OOS S) +0.8729  span +0.4564
+    q=0.50 r=0.50  OOS Sharpe LO/HI 0.5150/1.0058  (mean name vol 0.239/0.441)  rho(vol half, OOS S) +0.8729  span +0.4908
+    q=0.75 r=0.05  OOS Sharpe LO/HI 0.1169/0.6378  (mean name vol 0.259/0.476)  rho(vol half, OOS S) +0.8729  span +0.5209
+    q=0.75 r=0.10  OOS Sharpe LO/HI 0.1337/0.6776  (mean name vol 0.259/0.476)  rho(vol half, OOS S) +0.8729  span +0.5439
+    q=0.75 r=0.25  OOS Sharpe LO/HI 0.3009/0.7909  (mean name vol 0.259/0.476)  rho(vol half, OOS S) +0.8729  span +0.4899
+    q=0.75 r=0.50  OOS Sharpe LO/HI 0.3121/0.7507  (mean name vol 0.259/0.476)  rho(vol half, OOS S) +0.8729  span +0.4386
+    q=1.00 r=0.05  OOS Sharpe LO/HI -0.0823/0.5959  (mean name vol 0.279/0.535)  rho(vol half, OOS S) +0.8729  span +0.6783
+    q=1.00 r=0.10  OOS Sharpe LO/HI 0.0507/0.5600  (mean name vol 0.279/0.535)  rho(vol half, OOS S) +0.8729  span +0.5094
+    q=1.00 r=0.25  OOS Sharpe LO/HI 0.0553/0.5569  (mean name vol 0.279/0.535)  rho(vol half, OOS S) +0.8729  span +0.5016
+    q=1.00 r=0.50  OOS Sharpe LO/HI 0.1187/0.4420  (mean name vol 0.279/0.535)  rho(vol half, OOS S) +0.8729  span +0.3233
+    NOTE on the rho column, published not glossed: with TWO vol levels and 4 draws each, a perfect LO<HI separation SATURATES Spearman at exactly +0.8729, which is why the column is identical at every cell.  The informative statistic here is the SPAN, and it is positive at 12 of 12 cells.
+  VOL SLOPE AT PINNED CAP MIX = +0.8729  (bar: |rho| <= 0.15 means vol is NOT the operative variable)
+
+READING 5 — THE POOLED DECOMPOSITION.  On ARM CAP alone q and name vol are 0.97 collinear, so neither a partial nor a regression can separate them THERE.  Pooling all three arms does: VOLRUNG supplies vol variation at PINNED cap mix and VOLTWIN supplies cap variation at MATCHED vol, so the pooled design has both margins.
+    r=0.05 (n= 4)  pooled rho(q, vol) +0.5715 (was +0.9694 on ARM CAP alone)  |  rank OLS  beta_q -0.4603  beta_vol +0.3973  R2 0.1607  |  partial rho: q -0.3812, vol +0.3353
+    r=0.10 (n= 9)  pooled rho(q, vol) +0.5715 (was +0.9694 on ARM CAP alone)  |  rank OLS  beta_q -0.5304  beta_vol +0.5142  R2 0.2340  |  partial rho: q -0.4452, vol +0.4342
+    r=0.25 (n=22)  pooled rho(q, vol) +0.5715 (was +0.9694 on ARM CAP alone)  |  rank OLS  beta_q -0.7604  beta_vol +0.5024  R2 0.3939  |  partial rho: q -0.6254, vol +0.4680
+    r=0.50 (n=45)  pooled rho(q, vol) +0.5715 (was +0.9694 on ARM CAP alone)  |  rank OLS  beta_q -0.8839  beta_vol +0.4477  R2 0.5294  |  partial rho: q -0.7265, vol +0.4721
+  POOLED MEANS: beta_q -0.6588, beta_vol +0.4654; partial rho q -0.5446, vol +0.4274; collinearity +0.5715
+  READ IT PLAINLY: the two channels have OPPOSITE signs.  Cap is a PENALTY and vol is a PREMIUM over this tape, they are positively correlated, so they partly CANCEL — which means 694's raw q ladder UNDERSTATES the pure cap penalty rather than overstating it.  The confound the queue hypothesised runs the WRONG WAY.
+
+KEEP PATHS (rule 4) at every book in every arm:
+    CAP       4a 0 of 160   4b 16 of 160
+    VOLTWIN   4a 0 of 320   4b 0 of 320
+    VOLRUNG   4a 0 of 96   4b 4 of 96
+    ALL      4a 0 of 576   4b 20 of 576
+
+RULE 8 — walk-forward: (q, r) chosen by argmax IS Sharpe on warm-up..2016-12-31, 2017-2026 read ONCE.  Run on ARM CAP and on ARM VOLTWIN so the comparison is chooser-matched.
+    CAP              IS pick q=0.00 r=0.10 (n=9) IS Sharpe 1.1239 -> OOS 12.24% / 0.7697 / -21.68%  | arm mean OOS S 0.6274, best 1.0645 | SPY 15.26%/0.8737/-33.72% | v2 8.45%/1.1045/-12.76%
+    VOLTWIN          IS pick q=0.00 r=0.50 (n=45) IS Sharpe 0.9229 -> OOS 4.10% / 0.4591 / -16.95%  | arm mean OOS S 0.4252, best 0.5674 | SPY 15.26%/0.8737/-33.72% | v2 3.53%/0.5660/-11.68%
+    VOLTWIN_tol0.05  IS pick q=0.00 r=0.50 (n=45) IS Sharpe 0.9250 -> OOS 3.45% / 0.3888 / -18.81%  | arm mean OOS S 0.4002, best 0.5557 | SPY 15.26%/0.8737/-33.72% | v2 3.36%/0.5224/-12.70%
+    GATE PASS  G7 rule-8 chooser reads no row on or after 2017-01-01: IS window = warm-up .. 2016-12-31 (target no OOS leakage)
+    GATE PASS  G10 bit-identical recompute of the first ARM-CAP book: |dOOS Sharpe| 0.000e+00 (target 0.0)
+
+================================================================================================================================
+THE PRE-REGISTERED BAR
+  VOL STORY: (a) SURVIVAL -0.1278 >= 0.70? False   (b) |PARTIAL| 0.4756 < 0.30? False
+  CAP STORY: (a) |PARTIAL| 0.4756 >= 0.30? True   (b) |VOL SLOPE AT PINNED CAP| 0.8729 <= 0.15? False
+  CALL: MIXED — reported with both numbers, not rounded to a verdict
+  CAPITAL VERDICT: 4a 0 of 576, 4b 20 of 576; rule 8's pick beats SPY OOS on 0 of 3 arms.
+
+Wrote /home/user/Claude-Space/research/backtests/2026-09-19_cap-channel-vs-matched-vol-control_cloud.books.csv / .panels.csv / .walkforward.csv / .summary.csv / .gates.csv / .log.txt  (477s)
