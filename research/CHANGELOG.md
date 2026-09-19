@@ -1,3 +1,81 @@
+
+## 2026-09-19 — idea 1602 (lane B): DOES THE SHY RESIDUAL CLAUSE SURVIVE A ZERO-DURATION CASH LEG? **ANSWERED — YES ON RISK, NO ON THE LICENSING. KEEP-4a CONFIRMATION FOR THE ACCRUAL RESTATEMENT (zero tuned parameters), KILL FOR THE ERA-HONEST FORM ON PATH 4a (0 of 492), AND A PROVED DEFECT IN PATH 4a AND RULE 8 THEMSELVES. NO NEW BOOK ENACTED, NO RULES CHANGE.**
+
+  **THE DOUBT THIS CLOSES.** Ideas 1358 / 1498 / 1555 / 1547 credit the band's idle NAV with SHY
+  and publish the result as a property of the RULE. SHY is not cash: it is a 1-3y Treasury ETF
+  marked to market, own MaxDD **-5.71%**, **-3.88% in calendar 2022**, and idea 1555's own preamble
+  flagged the gap in one line while idea 1547 found the 4a pass fails inside ERA_HIKE monotonically
+  in F — i.e. exactly where duration was paid. The committed pass is a SUM of CARRY (idle NAV
+  earning something instead of 0.00%/yr) and DURATION (a bond's own vol, drawdown and 2022 loss),
+  never separated. A real book's idle NAV earns the first with none of the second.
+
+  **CONSTRUCTION.** The sleeve asset is replaced by a SYNTHETIC ZERO-DURATION ACCRUAL: a daily
+  return of exactly (1+a)^(1/252)-1, constant, never marked to market. Dials: **F {0.00, 0.25,
+  0.50, 0.75, 1.00}** x **A {0, 1, 2, 3, 4, 5} %/yr**, and no more; gross FROZEN at G = 0.75 (the
+  live value and the 2026-09-04 anchor value — 1498 already swept it). Reported, not tuned: SHAPE
+  {FLAT, STEP}, where STEP pays 0 before **2022-03-16** (the FOMC's first hike of the 2022-23 cycle,
+  a calendar fact fixed before any return was read, and idea 1547's own break) and a after;
+  FRAME {LIVE, INC}; PANEL {U56, B136, SMALL}. Derived comparands with no free parameter: **SHY**
+  (the committed sleeve), **MATCH1** (flat accrual at SHY's OWN realised CAGR), **MATCH2**
+  (two-piece accrual at SHY's OWN era CAGRs). **450 cells, every one published**, plus a 492-cell
+  break-even scan. **A pre-registered caveat: A IS NOT A DIAL A MANAGER OWNS** — a sweep rate is set
+  by the money market — so the PRIMARY rule-8 chooser runs over F alone at each A and the joint
+  (F, A) chooser is reported and labelled illegitimate.
+
+  **(1) DURATION CONTRIBUTES NOTHING. THE CREDIT IS PURE CARRY.** SHY minus its carry-matched
+  zero-duration twin at F = 1.00, over 6 panel-frames: **dCAGR -0.0024 pp, dSharpe +0.0009, dMaxDD
+  +0.033 pp** (MATCH1); **dSharpe -0.0003** and **0 of 6 on the HIKE era** (MATCH2, mean -0.0316).
+  The twins clear 4a on **3 of 6** panel-frames against SHY's **2 of 6** — SHY's duration COSTS the
+  SMALL/LIVE pass outright, MaxDD **-13.78%** against the twin's **-11.46%**. Outcome (a) of the
+  four pre-registered outcomes fires: the bond is along for the ride and clause 6 should be written
+  as an accrual.
+
+  **(2) THE RESTATED CLAUSE CLEARS 4a FULL *AND* OOS ON 3 OF 3 LIVE PANELS WITH ZERO TUNED
+  PARAMETERS.** Break-even accrual a\*, solved on a 41-rung 0-10% ladder with every rung published:
+  **U56 0.75%, B136 1.00%, SMALL 0.25%** (0.25% on all three if the sweep pays no transaction cost).
+  At a flat 1.00%: U56/LIVE FULL **9.01% / 1.2522 / -12.04%** (H1/H2 1.282/1.229 against the live
+  book's 1.228/1.181), OOS **9.85% / 1.3264 / -12.04%** against the live book's 9.46% / 1.2769.
+  **F is NOT a free parameter**: OOS Sharpe is monotone non-decreasing in F on **78 of 78** (arm,
+  panel, frame) cells, and a book has no reason to leave idle cash uncredited, so F = 1.00 is
+  forced and the restated clause ships with **no tuned dial at all** — the rate is observed.
+  **4b is UNMOVED at 5 of 30**: the CAGR floor still binds (9.01% against a 10.59% bar).
+
+  **(3) BUT THE FLAT RATE IS A COUNTERFACTUAL, AND THE ERA-HONEST FORM IS KILLED: 0 OF 492.** A
+  sweep paid ~0 through ZIRP; SHY's 0.9129%/yr there was ROLL and duration return, not a cash rate.
+  Under the STEP shape, 4a passes **0 of 492** — 41 rungs to 10%/yr x 6 panel-frames x both cost
+  conventions.
+
+  **(4) AND THE REASON IS STRUCTURAL, PROVED RATHER THAN SCANNED (G10).** 4a's first leg is a
+  STRICT inequality against the live book's FIRST-HALF Sharpe. This tape's halves split at ~2017,
+  so the WHOLE first half sits in ZIRP; an honest sweep earns nothing there and the book is
+  **BIT-IDENTICAL** to the live one — max |daily diff| **1.388e-17 / 2.082e-17 / 3.816e-17** on the
+  three panels, H1 **1.2279 vs 1.2279**, **1.2298 vs 1.2298**, **0.8353 vs 0.8353**. *Equal is not
+  greater.* **PATH 4a HAS NO WINDOW IN WHICH TO SEE A CASH-LEG RULE AT ALL**, and every 4a verdict
+  the record has published about the cash leg — including idea 1498's headline pass — is a verdict
+  about what the sleeve INSTRUMENT earned in 2009-2016, not about the rule.
+
+  **(5) RULE 8 IS BLIND FOR THE SAME REASON.** The IS window (warm-up..2016-12-31) is entirely
+  ZIRP, so the IS-Sharpe chooser over F picks **F = 0.00 on 18 of 18 era-honest cells**, at every
+  rate to 5%/yr. Yet that same book at a 5% post-2022 sweep returns OOS **10.57% / 1.4167 /
+  -12.07%** on U56/LIVE against the live book's **9.46% / 1.2769** — **+0.140 of Sharpe, +1.11 pp
+  of CAGR** — and 1.2510 vs 1.1019 on B136, 0.8421 vs 0.6473 on SMALL. Over all legitimate choosers
+  (78 picks): mean d_oSharpe **+0.0520**, beats the null 36/78, beats the live book OOS 25/78, picks
+  F = 0.00 in 42/78. The illegitimate joint (F, A) chooser: mean **+0.0945** but beats the null only
+  **9 of 24**. **Both licensing devices the record owns look only where the answer cannot appear.**
+
+  **WHAT IS AND IS NOT PROPOSED.** The exact RULES wording for the accrual restatement, and the
+  companion PROTOCOL clause this run earns ("a rule whose effect is confined to one monetary regime
+  may not be adjudicated by path 4a's half-sample legs or by rule 8's 2009-2016 IS window"), are
+  lines 8 and 9 of the memo. **Nothing is enacted**; PROTOCOL rule 6 gives the Sunday review that
+  call. **GATES 10/10**, including G3's cross-script replay of ideas 1498/1555's committed U56 SHY
+  cells to the decimal (LIVE 9.12% / 1.2675 / -11.48%, INC 16.16% / 1.1787 / -18.88%). Survivorship
+  (rule 9): U56 / B136 current-constituent lists, SMALL a current sub-$2B screen (665 kept of 719
+  priced; the mandated max_1d_move >= 1.0 filter drops 54) carried back to 2010 — every absolute
+  level is an UPPER BOUND; the SHY-vs-twin contrast is same-names, same-days, same-frame and both
+  arms carry the identical bias. Script
+  `research/backtests/2026-09-19_zero-duration-cash-leg_B.py`, memo
+  `research/backtests/2026-09-19_zero-duration-cash-leg_B.memo.md`.
+
 ## 2026-09-19 — idea 725 (lane cloud): DOES THE DAILY INVERSION OF IDEA 535's RETIREMENT GENERALISE? **ANSWERED: IT IS A CADENCE FACT, NOT A LOW-SIGNAL-REGIME FACT — AND THE IDEA'S OWN MECHANISM IS REFUTED IN ITS OWN DIRECTION. INCIDENTAL KEEP-CANDIDATE (4b) ON 2 OF 3 PANELS VIA THE DD-AWARE CHOOSER. NO RULES CHANGE (rule 6: Sunday review only).**
 
   **THE QUESTION.** Idea 535 retired idea 301's gate-FAMILY constant for the de-grossing timing
