@@ -1927,3 +1927,71 @@
   books and the SAME seeds, so it is first-order immune; the 0-of-108 pass count is not.
 
   **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched.
+
+## 2026-09-19 — idea 1534 (lane C): does ANY ruler ever rescue a DEVICE, or is the device side of the record simply EMPTY? **ANSWERED — THE SIDE IS EMPTY AND THE NUMBER IS -0.0727 ± 0.0291 OF SHARPE / KILL for capital, no new book.**
+
+  **The defect this closes.** Eleven runs had returned 4a = 0 and the record's standing claim
+  "no device beats a de-gross" was a COUNT OF FAILURES, not an effect size. A count cannot be
+  compared to anything, cannot be pooled, and cannot say how big the loss is. This run states
+  the number.
+
+  **CONSTRUCTION.** BASE = the committed 2026-09-04 anchor shape: top-N by H-day momentum among
+  names above their 200d MA with vol20 < 0.60, equal weight at gross 0.75, weekly, 10 bps, t+1.
+  Exactly two tuned parameters, (N, H) = (20, 126), FROZEN at the committed anchor and not
+  searched. DEVICE = any overlay that withdraws exposure: six families x five rungs x three
+  panels = **90 device books**, every rung published. ANCHOR = the SAME base book de-grossed by a
+  CONSTANT chosen so its realised mean gross equals the device's, to **1.92e-07** over all 90
+  pairs (G1). Families: BAND (200d hysteresis band), STOP (trailing equity stop, re-entry
+  fraction 0.50 frozen from idea 1468), VOLTGT (gross scaled to a vol target, no leverage),
+  MAXVOL (name-level vol ceiling), MADIST (distance above the 200d MA), SPYFILT (index MA gate).
+
+  **THE HEADLINE.** Pooled over all 90 pairs the device costs **-0.0727 of Sharpe, SE 0.0291,
+  t -2.50, 95% CI [-0.1298, -0.0157]**; pooled dCAGR **-0.69 pp/yr**; pooled dMaxDD **-1.55 pp**,
+  i.e. the device is **DEEPER** than the plain de-gross twin, not shallower. SEs come from a
+  circular block bootstrap, LB = 65 trading days (~ the record's LB = 13 rebalance rows), B = 500,
+  with the SAME blocks drawn for every book and every panel in a replicate, so cross-book and
+  cross-panel dependence is carried rather than assumed away.
+
+  **NO RULER EVER RESCUES A DEVICE.** Scored book by book against its OWN bootstrap SE:
+  **0 of 90 significantly POSITIVE, 17 significantly NEGATIVE, 73 indeterminate.** This
+  reproduces 1509's 337-contrast reading (0 positive / 25 negative) on an independent
+  construction — paired matched-exposure twins rather than bracketed contrasts.
+
+  **AND THE POOLED SIGNIFICANCE IS ONE FAMILY.** STOP carries it: **-0.2522, SE 0.0718, t -3.51,
+  0 of 15 wins, dMaxDD -7.23 pp**. Ex-STOP the pooled effect over the remaining 75 books is
+  **-0.0368, SE 0.0244, t -1.51 — indistinguishable from zero.** By family: BAND -0.0013
+  (t -0.12), VOLTGT -0.0249 (t -0.62), MAXVOL -0.0508 (t -1.18), MADIST -0.0568 (t -2.42),
+  SPYFILT -0.0504 (t -0.71). By panel: U56 -0.0684 (t -2.41), B136 -0.0800 (t -2.91), SMALL
+  -0.0698 (t -1.49). **The record's sentence should be "STOPS LOSE, THE REST ARE FREE AND
+  POINTLESS", not "devices lose".**
+
+  **THE ONE FAMILY THAT BUYS ANY DRAWDOWN.** VOLTGT is alone in a POSITIVE pooled dMaxDD at
+  matched exposure (**+0.97 pp**, against BAND -0.56, MADIST -0.54, MAXVOL -0.53, SPYFILT -1.40,
+  STOP -7.23) and pays -0.56 pp/yr of CAGR for it. Filed as idea 1537.
+
+  **BOTH KEEP PATHS.** **4a 0 of 93** — the twelfth consecutive 4a zero (live RULES v2 on U56:
+  8.62% / 1.2010 / -12.05%, halves 1.228 / 1.181). **4b 31 of 93**, but **6 of the 31 are the
+  frozen BASE itself** at degenerate rungs (MAXVOL m=0.60 and MADIST k=0.00 ARE the BASE;
+  G2 |dSharpe| = 0.00e+00) and the remainder are inherited from it — no device CREATES a 4b pass
+  its own de-gross twin does not already have.
+
+  **RULE 8.** Device and rung chosen by argmax Sharpe on warm-up..2016-12-31 only, 2017-2026 read
+  ONCE. The chooser picks the **LOOSEST** rung (MAXVOL m=0.80, i.e. the least device) on BOTH U56
+  and B136, and MAXVOL m=0.25 on SMALL. Against its own matched-exposure anchor it runs
+  **-0.0021 / +0.0626 / -0.1953**, mean **-0.0449** of OOS Sharpe, beating it **1 of 3**; against
+  the do-nothing frozen BASE, mean -0.0450, **1 of 3**. H_HINDSIGHT fires again. The one book that
+  beats both (B136 MAXVOL m=0.80, OOS 15.07% / 1.0124 / -19.37%) wins by REMOVING device, which is
+  the thesis, not a counterexample — filed as idea 1541.
+
+  **GATES 7/7**: G1 exposure match 1.92e-07 over all 90 pairs; G2 the two degenerate rungs replay
+  the BASE at 0.00e+00; G3 samples 17.7y / 17.7y / 15.6y (rule 1); G4 all 93 books published in
+  the script's output and in `2026-09-19_pooled-device-vs-degross_C.csv`; G5 exactly two tuned
+  parameters, both frozen; G6 OOS starts 2017-01-01 on every panel and the chooser reads no row
+  at or after it; G7 10 bps per unit turnover, t -> t+1, no shorting, gross <= 0.75.
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 / SMALL are CURRENT-constituent lists, so every absolute
+  level is an upper bound. The headline is a DIFFERENCE between two books over the SAME names on
+  the SAME days, so it is first-order immune; the 4a / 4b pass counts are not.
+
+  **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. No memo:
+  this run produces no KEEP candidate.
