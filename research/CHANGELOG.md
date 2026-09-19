@@ -1,3 +1,73 @@
+## 2026-09-19 — idea 1511 (lane cloud): does a DOWNSIDE-ONLY VOLATILITY GATE beat the incumbent's TWO-SIDED vol20? **ANSWERED — NO, ON EVERY ARM, AND THE PREMISE IS FALSE BEFORE THE GATE STATISTIC IS EVEN CHANGED. KILL. ONE METHOD FINDING THAT INVALIDATES A WHOLE CLASS OF DRAWDOWN CLAIMS. NO RULES CHANGE PROPOSED.**
+
+  **THE FRAME.**  Four gate statistics on the frozen 2026-09-04 incumbent: **VOL** (its own
+  two-sided std, the control), **SEMI0** (downside semi-deviation about zero), **SEMIM** (about the
+  window mean) and **UPM** (ABOVE the window mean — **the placebo**).  SEMIM and UPM are an EXACT
+  decomposition of the control: gate **G10 asserts SEMIM^2 + UPM^2 = VOL^2 * (w-1)/w pointwise to
+  2.8e-14** (the factor is pandas' ddof=1 in the INCUMBENT'S own rolling std, which VOL must keep —
+  it is why G2 is bit-identical).  Two dials: window w {10, 20, 40, 60} and target pass rate
+  q {0.70, 0.80, 0.90, p*, 1.00}, every threshold the q-quantile of ITS OWN statistic over
+  IN-SAMPLE priced cells only, applied unchanged to 2017-2026.  **80 cells per panel, 240 in all,
+  every one published.**  All **11 gates pass**: G1 replays the committed U56 anchor to
+  **3.7e-05**, G2 recovers threshold **exactly 0.600000** and is **bit-identical (0.000e+00)**,
+  G8 matches every pass rate to **3e-05**.
+
+  **(0) THE PREMISE IS FALSE.**  The incumbent's own pass rate p* — the IS share of priced
+  name-days with vol20 < 0.60 — is **96.68% (U56), 96.84% (B136), 88.13% (SMALL)**.  The screen
+  this idea set out to improve excludes **3.3% / 3.2% / 11.9%** of name-days.  Removing it
+  **entirely** costs U56 **0.0176 of Sharpe at t -0.37** while ADDING 0.08 pp/yr of CAGR, and on
+  SMALL it **IMPROVES** Sharpe by **+0.1075** and drawdown by **+4.51 pp**.  A dial that barely
+  turns cannot be improved by relabelling it.
+
+  **(1) THE DRAWDOWN LEG DOES NOT WIDEN — B1 FAIL.**  Mean SEMI0 dMaxDD against the matched VOL
+  control: **U56 +0.61 pp, B136 +0.74 pp** against a pre-registered +1.0 pp bar.  SEMIM is WORSE
+  than the control on both (**-0.39 / -0.13 pp**).  SMALL's +3.00 pp is bought with -0.0099 of
+  Sharpe and -0.38 pp/yr of CAGR on the panel where nothing passes 4b at all.
+
+  **(2) THE PLACEBO KILLS THE STORY.**  Screening on UPSIDE dispersion does what screening on
+  DOWNSIDE dispersion does.  Mean dMaxDD vs control: U56 **downside +0.11 pp vs upside +0.25 pp
+  (the PLACEBO WINS)**, B136 +0.31 vs +0.12, SMALL +1.64 vs +0.61.  Mean dSharpe: U56 **+0.0015 vs
+  +0.0020 (placebo wins again)**, B136 -0.0020 vs -0.0132, SMALL **-0.0099 vs +0.0023 (placebo
+  wins)**.  What little these gates do, they do by being a dispersion screen at a given pass rate —
+  not by which tail they read.
+
+  **(3) THE METHOD FINDING — THE BINDING 4b DRAWDOWN LEG IS NOT MEASURABLE AT THIS SAMPLE LENGTH.**
+  **0 of 240 cells reach |t| > 2 on dMaxDD** (max |t| anywhere **1.72**), and the paired
+  circular-block bootstrap SE of the drawdown contrast averages **2.93 pp — 2.7x the anchor's
+  ENTIRE 1.10 pp 4b margin** (-19.13% against a -20.23% cap).  Realised MaxDD spans **4.66 pp
+  (U56) / 8.63 pp (B136) / 8.94 pp (SMALL)** across each panel's 80 cells.  **Any committed claim
+  that a device MOVED the binding 4b drawdown leg by less than ~3 pp is inside its own SE and is
+  not a finding.**  Ideas 1409 and 1515 each found a CONVENTION that swamps this leg; this run
+  finds the leg is **unresolvable in principle** at 16.7 years, whatever the dial.  Filed as idea
+  1542, with the constructive half attached (is there a drawdown-path statistic whose contrast SE
+  can adjudicate a 1 pp move?).
+
+  **(4) 5 OF THE 6 RESOLVED CELLS RUN THE WRONG WAY.**  Of 240 cells, six reach |t| > 2 on dSharpe
+  and five are NEGATIVE (U56 VOL/w10 -0.0852, VOL/w40 -0.1091, **SEMIM/w20 -0.0775 at t -2.84**,
+  UPM/w40 -0.1132 and -0.0899); the single positive (B136 SEMIM/w10/q0.90, +0.0959, t +2.26) does
+  not survive rule 8.
+
+  **(5) BOTH KEEP PATHS.**  **4a 0 of 240 full and 0 of 240 OOS** — another consecutive 4a zero.
+  **4b 59 full / 58 OOS / 58 BOTH**: U56 43 of 80 (**UPM the PLACEBO produces the most, 13 of 20**,
+  vs VOL 10 / SEMI0 11 / SEMIM 9), B136 16 of 80, **SMALL 0 of 80**.  DD is the binding leg on both
+  surviving panels (U56 43/80, B136 17/80) while H1, H2 and the CAGR floor pass 80/80 on U56.
+  **Sorted by OOS Sharpe the best 4b-BOTH cell in all 240 IS the frozen incumbent (1.1857); the
+  best challenger is UPM/w60/q0.80 at 1.1832 — the placebo.**
+
+  **(6) RULE 8 — B3 FAILS ON 3 OF 3 PANELS.**  Both dials AND every threshold fitted on
+  warm-up..2016-12-31.  The downside-only chooser picks U56 SEMIM/w10/q0.80 -> OOS
+  **14.88% / 1.0937 / -21.51%** vs the anchor's **17.32% / 1.1857 / -19.13%**; B136 SEMIM/w20/q0.80
+  -> **13.19% / 0.8859 / -22.63%** vs **16.19% / 1.0180 / -20.74%**; SMALL SEMI0/w10/q0.70 ->
+  **5.24% / 0.3790 / -33.14%** vs **6.70% / 0.4398 / -36.51%**.  **It loses OOS Sharpe 3 of 3 and
+  OOS CAGR 3 of 3, by 2.44 / 3.00 / 1.46 pp/yr.**  Doing nothing wins.
+
+  Script `research/backtests/2026-09-19_downside-only-volatility-gate_cloud.py`; `.grid.csv`
+  (240 cells), `.matched.csv`, `.walkforward.csv`, `.gates.csv`, `.log.txt`, `.result.md`.
+  SURVIVORSHIP (rule 9): U56/B136 current-constituent lists, SMALL a current sub-$2B screen carried
+  back to 2010 (the protocol's max_1d_move >= 1.0 filter applied), so every absolute level is an
+  UPPER BOUND — and the bias runs AGAINST a downside screen, since a survivor's drawdown was by
+  selection one it recovered from.
+
 ## 2026-09-19 — idea 1530 (lane cloud): is SCALE vs COMPOSITION the RIGHT TAXONOMY for every LADDER the record owns? **ANSWERED — NO, AND THE REFUTATION IS DOUBLE-SIDED. KILL FOR CAPITAL. ONE CONSTRUCTIVE RESIDUE AND ONE METHOD FINDING. NO RULES CHANGE PROPOSED.**
 
   **WHY THIS IDEA.**  Idea 1509 found that a two-rung capital blend can differ from a single rung
