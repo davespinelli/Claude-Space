@@ -1,3 +1,64 @@
+## 2026-09-19 — idea 1596 (lane C): IS LATENCY FRAGILITY PREDICTABLE EX ANTE FROM TURNOVER OR HOLDING AGE? **ANSWERED: NO. PARK AS PRE-REGISTERED, KILL ON THE DEFLATED READING. THE SHORTCUT IS CLOSED; THE LATENCY AXIS MUST BE READ PER BOOK. NO RULES CHANGE (rule 6: Sunday review only).**
+
+  **THE QUESTION.** Idea 1590 killed the standing 4b book because ONE trading day of execution delay
+  moved MaxDD by 1.3-3.6 pp in EITHER direction — larger than the 1.10 pp DD margin every 4b verdict
+  in this record is decided on — and idea 1600 then rescued a book at the (25 bps, +1 day) cell with a
+  DD-aware IS-only chooser. Both readings LOOK at the latency axis. This run asks whether capital
+  could have SKIPPED that look: if dSharpe(+1) and dMaxDD(+1) were a function of a book's OWN realised
+  turnover path or its OWN realised mean holding age — both observable at delay +0, in-sample — a
+  latency-robust book would be pickable ex ante. **144 real books** (3 panels x H {21,42,63,126,252,504}
+  x cadence {W,M} x gross {0.50,0.60,0.75,1.00}), each at delay +0 and +1 at 10 bps: **288 published
+  cells, both KEEP paths at every one, gates 48/48.** G1 replays the committed 2026-09-04 U56 anchor to
+  2e-16 and reproduces 1590's -2.44 pp on that book exactly.
+
+  **(1) THE ALARM IS CONFIRMED AT FOUR TIMES THE BOOK COUNT.** dSharpe(+1) sd 0.0419 (range
+  -0.1276..+0.0912); dMaxDD(+1) sd **1.52 pp, range -3.28..+6.28 pp**, worse in 79 books and better in
+  65. One day of timing **flips the 4b verdict in 7 of 144 books FULL and 11 of 144 OOS.**
+
+  **(2) THE TWO REGRESSORS ARE ONE COLLINEAR AXIS.** corr(turnover/yr, mean holding age) = **-0.681**
+  pooled (-0.766 per unit gross): a faster brake mechanically raises turnover AND lowers age. A
+  coefficient **flips sign between its univariate and its bivariate fit in 7 of 48 (sample, Y,
+  regressor) triples.** Both reach |t| > 2 on dMaxDD(+1) in the pre-registered reading (t[turn] -2.19,
+  t[age] -2.69) — two collinear regressors splitting one axis, not two mechanisms.
+
+  **(3) THE R² THAT CLEARS THE PRE-REGISTERED BAR IS MOSTLY PANEL DUMMIES.** Pooled R² = 0.431 on
+  dMaxDD(+1), but **the dummies alone explain 0.297 on the same 36 rows, so the regressors buy
+  dR² = 0.134**; on dSharpe(+1) they buy nothing (R² 0.093, no regressor at |t| > 2). The bar was
+  written as a pooled R² BEFORE the run and is reported as written — hence the PARK — but the honest
+  answer to "how much of the fragility either explains" is **13.4%**, and the run says so in its own
+  verdict block rather than letting the PARK stand as a half-win.
+
+  **(4) THE DECISIVE FACT, INDEPENDENT OF THE REGRESSION.** For the ex-ante claim to work, IS fragility
+  must survive into the OOS window. It does not: **rho(IS dSharpe(+1), OOS dSharpe(+1)) = -0.18 pooled
+  and NEGATIVE on all three panels** (-0.36 U56, -0.21 B136, -0.07 SMALL); rho(IS dMaxDD, OOS dMaxDD) =
+  **-0.07**. In-sample latency fragility ANTI-PREDICTS out-of-sample latency fragility. No regressor and
+  no model fit on IS rows can repair a transfer with the wrong sign.
+
+  **(5) RULE 8.** PREDROBUST — the idea's own proposal, minimising the IS-fitted predicted |dMaxDD(+1)|
+  inside the 2026-09-03 memo's admitted set — picks U56 M/H=42/g=0.60 (FULL 12.16%/1.1082/-20.88%, OOS
+  13.41%/1.1230/-20.88%, **4b FALSE both windows at both delays**) and B136 W/H=21/g=0.75 (**OOS
+  dMaxDD(+1) = -1.65 pp, the worst of the four choosers**): 4b FULL+OOS at delay +1 on **0 panels**, beats
+  both rivals on **1 of 3** (bar 2). H_USABLE does not fire. REALROBUST (smallest REALISED IS |dMaxDD|,
+  no model) does deliver B136 W/H=126/g=0.50 — FULL 10.69%/1.0632/-14.17% (H1/H2 1.279/0.894), **OOS
+  10.80%/1.0155/-14.17%, 4b TRUE both windows at BOTH delays**, latency HELPING it (+0.95 pp) — against
+  SPY FULL 15.12%/0.8845/-33.72% (DD cap -20.23%, CAGR floor 10.59%), SPY OOS 15.26%/0.8739/-33.72% and
+  RULES v2 OOS 1.1019; but at rho = -0.07 one panel of three is a coin flip. **Path 4a fires 0 of 288.**
+
+  **(6) A GATE THAT FAILED, RECORDED RATHER THAN DROPPED.** G7's first draft asserted the realised
+  contiguous holding spell was <= H + one cadence gap and FAILED on all 144 books. The brake was not
+  violated: it drops a name at age H, the screen may re-take it the same day, and **30.7% of fresh picks
+  are such immediate re-entries**, so a spell runs **1.75x H on average (1.02-4.82x)** with no trade. G7
+  now asserts the brake's true invariant (max age-since-entry among held names < H, holds on all 72
+  frames) and the age regressor is documented as the ECONOMIC holding age.
+
+  **WHAT IT CHANGES.** Nothing in RULES.md. It closes 1596's shortcut: a book's own turnover and its own
+  holding age do not tell capital whether that book is latency-robust. **Idea 1592's route — restating
+  PROTOCOL 4b on a latency-averaged or worst-case DD statistic read directly per book — is the surviving
+  one, and this run supplies the reason it has to be:** 11 of 144 books change their OOS 4b verdict on
+  one day of timing and no summary statistic sorts them. SURVIVORSHIP (rule 9): current-constituent
+  panels, so levels are upper bounds; the headline is a DIFFERENCE between two timings over the same
+  names on the same days, which the bias cannot manufacture.
+
 ## 2026-09-19 — idea 1600 (lane B): DOES A DD-AWARE IS-ONLY CHOOSER REACH THE 4b-PASSING GROSS RUNGS THAT ARGMAX IS SHARPE WALKS PAST? **ANSWERED: YES — 8 OF 12 CELLS AGAINST 0 OF 12, INCLUDING THE (25 bps, +1 DAY) CELL THAT KILLED THE INCUMBENT. KEEP-CANDIDATE UNDER PATH 4b. NO RULES CHANGE ENACTED (rule 6: Sunday review only).**
 
   **THE QUESTION.** Idea 1590 closed the same day with "0 of 48 legal IS-only choosers reach a
