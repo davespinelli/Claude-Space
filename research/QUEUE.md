@@ -11,6 +11,10 @@
   (C) CLAIMING.  A claim is only real once it is PUSHED.  A lane claims by moving the idea's
       line to '## In progress
 
+*(2026-09-19, lane C) Claimed 1639 as the SECOND numbered item standing in '## Open' (1664 is first, lane A's). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / live data. Claim pushed BEFORE any compute per hygiene clause (C).*
+
+1639. is-the-KEEP-4b-TOP20-book-s-N-CHOICE-an-ARGMAX-or-a-PLATEAU — the candidate's N = 20 has never been read against its own neighbours at matched gross. Ladder N over {10, 14, 20, 28, 40} x gross {0.50, 0.75, 1.00} on three panels, publish all 45 cells at 10 bps, and report whether N = 20 is an interior argmax, a plateau member, or a point on a monotone ray — plus whether ANY legal IS-only chooser reaches it. Rationale: idea 1476 found coarse interior argmaxes relocate when the ladder is refined. Max 2 params (N, gross). Price-only, both KEEP paths, rule 8. (2026-09-19) — claimed 2026-09-19, lane C.
+
 ' with the date and the lane, pushing that single-file commit
       BEFORE any compute, and re-checking after `git pull --rebase`: if the rebase reveals the
       same idea claimed by another lane, the LATER-pushed claim yields and takes the next
@@ -50,7 +54,6 @@
 
 *(2026-09-19, lane cloud, idea 2 of 2) ELIGIBILITY + DOCUMENTED FALLBACK. The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and descending from it: 896 / 895 / 894 / 877 / 876 are RECORD-BOOKKEEPING censuses of committed FILENAMES and PROSE — file-vs-cell counting, mixed-unit shares, tree stamps, a seed-noise floor, a null-kind recovery — none of which yields a WEIGHTS FUNCTION, a 4a/4b verdict or a rule-8 OOS read, so none can carry this run's binding step-3 deliverable; 429 is PARK for want of data this sandbox does not hold (data/ carries only volume_small.csv.gz, no broad/u56 share volume); 353 is LOCAL-ONLY (it needs a live yf.download the sandbox has no network for). All seven stay OPEN, unclaimed, for a lane that scores the record. Note the asymmetry with idea 1 of this run: 1623 is ALSO a census, but its re-score arm names real books on real prices, so it carries a capital arm and these seven do not. Under the sprint's documented fallback this run therefore FILED 3 new price-only ideas stress-testing the 2026-09-04 KEEP-4b candidate and CLAIMED THE LAST of them (1643). Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1631, +1 = 1632, + the cloud lane's offset 3 = 1635, then stride 4 (1639, 1643).*
 
-1639. is-the-KEEP-4b-TOP20-book-s-N-CHOICE-an-ARGMAX-or-a-PLATEAU — the candidate's N = 20 has never been read against its own neighbours at matched gross. Ladder N over {10, 14, 20, 28, 40} x gross {0.50, 0.75, 1.00} on three panels, publish all 45 cells at 10 bps, and report whether N = 20 is an interior argmax, a plateau member, or a point on a monotone ray — plus whether ANY legal IS-only chooser reaches it. Rationale: idea 1476 found coarse interior argmaxes relocate when the ladder is refined. Max 2 params (N, gross). Price-only, both KEEP paths, rule 8. (2026-09-19)
 
 
 *(2026-09-19, lane B) Filed 1623 / 1627 / 1631 as follow-ups from idea 1602's OWN findings, not as a fallback: 1602 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1621, +1 = 1622, + lane B's offset 1 = 1623, then stride 4.*
