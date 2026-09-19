@@ -1,3 +1,98 @@
+## 2026-09-19 — idea 1555 (lane B): WHERE SHOULD GATED-OUT WEIGHT GO? **ANSWERED — INTO SHY, AND THE COMPETING FIX IS KILLED. KEEP-4a CONFIRMATION (U56 + B136 / LIVE, rule-8 clean as REALISM), KILL FOR THE DIAL, KILL FOR IDEA 1454's ABOLITION. NO NEW BOOK, NO RULES CHANGE ENACTED.**
+
+  **THE DEFECT THIS CLOSES.** RULES v2 clause 2 sends band-gated weight to CASH at 0.00%/yr and
+  "never re-spreads" it. That destination was never chosen — it is what the first implementation
+  happened to do — and TWO INCOMPATIBLE FIXES for it stood in the record, filed four hours apart
+  and never raced: idea **1454** (the live book fails 4b on the CAGR FLOOR ALONE, so ABOLISH the
+  cash leg, G = 1.00) and ideas **1358 / 1498** (CREDIT the cash leg with SHY, the first device in
+  twelve runs to clear path 4a at all). They cannot both be right. This run puts both — and five
+  other destinations — on the same tape at IDENTICAL selection and IDENTICAL 100% of NAV.
+
+  **CONSTRUCTION.** DEST {CASH, SHY, IEF, TLT, GLD, SPY, RESPREAD} x F {0.00, 0.25, 0.50, 0.75,
+  1.00}, the two and only tuned dials. **GROSS IS FROZEN at G = 0.75** (the live value and the
+  2026-09-04 anchor value) — 1498 already swept it and sweeping it again would be a third
+  parameter. Frames (reported, not dials): **LIVE** = `baseline.rules_v2_weights`; **INC** = the
+  frozen 2026-09-04 incumbent (N = 20, H = 126). Three panels. **210 cells, every one published.**
+  RESPREAD is not an asset: the gated-out weight is re-spread pro rata over the names still inside
+  the band, which at F = 1.00 IS idea 1454's abolition made conditional; an empty band leaves the
+  book in 0% cash, stated not glossed. Every sleeve's returns come from the SAME reference tape on
+  every panel, so the destination contrast is not confounded by which panel prices the sleeve.
+
+  **(1) THE FRAMING CONTROL — 1498's READING SURVIVES.** 1358's ladder (SHY / IEF / TLT) was all
+  bonds, so it could not distinguish "cash earns something" from "the band under-deploys". Adding
+  an EQUITY sleeve does. **SPY clears path 4a at 0 of 30 cells.** On U56/LIVE it buys **+8.27 pp/yr
+  of CAGR (8.51% -> 16.78%)** and pays **0.1516 of Sharpe and 18.24 pp of drawdown** for it,
+  monotone in F at 4 of 4 rungs (Sharpe 1.2011 / 1.1788 / 1.1263 / 1.0764 / 1.0350). The band's
+  de-gross is buying REAL risk reduction, and only a LOW-VOL residual keeps it. 1498's headline is
+  therefore NOT a disguised under-deployment result.
+
+  **(2) IDEA 1454's FIX IS KILLED OUTRIGHT BY IDEA 1498's.** RESPREAD at F = 1.00 against SHY at
+  F = 1.00, same names, same days: **loses on Sharpe at 6 of 6 panel-frames (mean -0.0630 full,
+  -0.0725 OOS)**, **loses on MaxDD at 6 of 6 (mean -12.20 pp DEEPER)**, and wins only on CAGR
+  (6 of 6, +5.39 pp). U56/LIVE turnover goes **1.77 -> 5.68x/yr**. It is the de-gross ray the
+  record has re-found eight times, paid for at full price. **1454's proposed G = 1.00 should not
+  be enacted.**
+
+  **(3) PATH 4a — 10 of 210 FULL, 8 FULL *AND* OOS, AND EVERY ONE OF THE 8 IS SHY ON THE LIVE
+  FRAME.** All four F rungs on U56 **and** all four on B136, so the pass is a WHOLE LADDER, not a
+  corner: U56/LIVE Sharpe 1.2190 / 1.2361 / 1.2523 / 1.2675 and MaxDD -11.91% / -11.77% / -11.63%
+  / -11.48%, monotone in F on Sharpe, CAGR **and** drawdown at once. Best cell **U56/LIVE SHY
+  F = 1.00: full 9.12% / 1.2675 / -11.48%, halves 1.278 / 1.264** against live 1.228 / 1.181, **OOS
+  10.14% / 1.3560 / -11.48%** against live OOS 1.2769; turnover 1.77 -> 2.80x/yr, charged. **This
+  is idea 1498's standing candidate, not a new one** — it is replayed here to the committed decimal
+  (G3). **4a at F = 0.00 is 0 of 42**, all seven destinations bit-identical there (G1 = 0.000e+00).
+  Mean dSharpe vs the cash twin by destination: **GLD +0.0715, IEF +0.0504, SHY +0.0327, SPY
+  -0.0001, RESPREAD -0.0028, TLT -0.0242.**
+
+  **(4) AS A TUNED DIAL THE AXIS IS A KILL, REPRODUCING 1358 ON AN INDEPENDENT GRID.** Dials fit on
+  warm-up..2016-12-31 only, 2017-2026 read ONCE. **C_SHARPE picks IEF x3 and TLT x3 and NEVER finds
+  SHY** — mean OOS dSharpe **-0.0274** against doing nothing, beats it **1 of 6**. **C_CAGR**
+  picks TLT x3 / RESPREAD x2 / CASH x1 — **-0.0699, 0 of 6**. 1358 reached the same conclusion from
+  a (SLEEVE, GROSS) grid; this run reaches it from a (DESTINATION, FRACTION) grid at frozen gross,
+  so the failure is the chooser's, not the parameterisation's. The **ex-post best 4b cell of all
+  210** — U56/LIVE **GLD F = 0.50**, full 11.51% / 1.2634 / -13.70%, OOS 13.26% / **1.4204** /
+  -13.70% — is reached by NO chooser and clears 4a at 0 of 30. **H_HINDSIGHT fires again.**
+
+  **(5) PATH 4b.** 40 of 210 full and 40 full AND OOS, **none of them a new book**: U56/INC SHY
+  inherits the 2026-09-04 candidate's 5 passes, and the GLD / IEF / TLT passes are the hindsight
+  cells of (4). The LIVE-frame book still fails 4b on the CAGR floor at every destination that does
+  not buy it with beta — exactly what 1454 and 1498 found, now confirmed against five more
+  destinations.
+
+  **(6) WHAT THE BOOK ACTUALLY IS.** RULES v2's realised mean gross, published not asserted (G8c):
+  **U56 0.5328 / B136 0.5322 / SMALL 0.4051**. The live rules leave nearly HALF of NAV idle, which
+  is the only reason the destination matters at all. At F = 1.00 the 4a candidate holds a mean
+  **46.7% of NAV in short Treasuries** — a half-bond book whose 4a win is **DIVERSIFICATION, NOT
+  ALPHA** (CAGR +0.50 pp; vol falls).
+
+  **THE HONEST LIMITS.** (a) There is **no zero-duration instrument in the committed cache** (no
+  BIL, no SHV): SHY is the cheapest proxy available and is marked to market — own profile FULL
+  1.31% / 0.958 / **-5.71%**, IS 0.81% / -1.08%, OOS 1.72% / -5.71%. Every "credit the cash" number
+  in this record is optimistic for the ZIRP years and carries genuine duration risk afterwards.
+  (b) The 4a pass is **LIVE frame and large-cap only**: 0 of 30 on SMALL, 0 of 30 on INC. (c) GLD
+  beats SHY on Sharpe at F = 0.25 (1.2770 vs 1.2675) and still fails 4a on drawdown.
+
+  **GATES 8/8**: G0 samples 18.7y / 18.7y / 16.7y (rule 1); **G1 destination invariance at F = 0,
+  0.000e+00** over 6 dests x 6 panel-frames; **G2 LIVE/(CASH, 0.00) reproduces
+  `baseline.rules_v2_weights` to 1.249e-16** on all three panels; **G3 U56 SHY F = 1.00 reproduces
+  idea 1498's two committed cells exactly** (LIVE 9.12% / 1.2675 / -11.48%, INC 16.16% / 1.1787 /
+  -18.88%); G4 no leverage (max deployed 1.000000000000); G5 exactly two tuned parameters; G6 no
+  chooser input reads a row on or after 2017-01-01, tested by refit not asserted; G7 all 210 cells
+  published. G8 publishes every sleeve's standalone profile and RESPREAD's realised mean gross
+  (1.0000 at F = 1.00 on all six panel-frames).
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 are CURRENT-constituent lists and SMALL a CURRENT sub-$2B
+  screen carried back to 2010; every absolute level is an UPPER BOUND. The headlines are CONTRASTS
+  between destinations over the SAME names on the SAME days, so they are first-order immune; the
+  4a / 4b pass counts are not.
+
+  **VERDICT. KEEP-4a CONFIRMATION of idea 1498's candidate (U56 + B136 / LIVE, SHY), now carrying
+  the equity control it lacked; KILL for idea 1454's abolition; KILL for the destination as a tuned
+  dial (rule 8). Enact the residual instrument as REALISM with SHY FIXED, never as a knob.**
+  Memo `research/backtests/2026-09-19_where-should-gated-out-weight-go_B.memo.md`. **No RULES
+  change:** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched (rule 6 reserves
+  enactment for the Sunday review).
+
 ## 2026-09-19 — idea 1511 (lane cloud): does a DOWNSIDE-ONLY VOLATILITY GATE beat the incumbent's TWO-SIDED vol20? **ANSWERED — NO, ON EVERY ARM, AND THE PREMISE IS FALSE BEFORE THE GATE STATISTIC IS EVEN CHANGED. KILL. ONE METHOD FINDING THAT INVALIDATES A WHOLE CLASS OF DRAWDOWN CLAIMS. NO RULES CHANGE PROPOSED.**
 
   **THE FRAME.**  Four gate statistics on the frozen 2026-09-04 incumbent: **VOL** (its own
