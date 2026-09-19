@@ -1,3 +1,67 @@
+## 2026-09-19 — idea 1196 (lane C): should a committed MC FIGURE state its PAIR FORM before its SEED? **YES — AND THE MIGRATION IS FREE.**
+
+  **VERDICT: ANSWERED (schema) + KILL as a capital finding.** The record holds **470 committed pair
+  statistics**, of which **76 (0.1617) are recoverable today**. The binding leg is the KERNEL, not the
+  seed and not the artefact: every LINEAR pair statistic is recoverable from pooled means by
+  construction (1191 G2, re-confirmed here at 5.55e-17) although only 0.108 of them ever stated a
+  seed, while only **11 of 145 NONLINEAR ones (0.076)** still own the per-draw CSV they would need.
+  **0.553 of pair units cannot be classified from their own text at all.** No RULES change, no
+  PROTOCOL edit (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. Offline,
+  deterministic, 327 s.
+
+  **THE INSTRUMENT.** Two dials (rule 4, both named by the queue): **CLAIM SET {C_STRICT, C_PROX,
+  C_ALL} x KERNEL CLASS {LINEAR, NONLINEAR, UNCLASSIFIED}**, all 9 cells published. Corpus 35,100
+  committed text units; 6,950 CSVs, 479 with a per-draw column. Capital arm: 24 real books
+  (3 panels x N {10,12,20,30} x cadence {W,M}, gross 0.75, 10 bps, next-day execution) each against
+  a 200-draw gross-matched null pool read IS-only — 4,800 null backtests.
+
+  **1. DIAL 1 MOVES THE DENOMINATOR AND THEN STOPS MOVING THE NUMERATOR.** MC-derived units run
+  3,215 / 6,695 / 27,046 across the three claim sets, but **C_PROX and C_ALL hold the SAME 470 pair
+  units**, because the pair test itself requires a generator or null token. The same shape as 1191's
+  "39 at every claim set", reached from the other side.
+
+  **2. THE CAPITAL ANSWER: RETIRING THE UNRECOVERABLE FORM CHANGES NO PURCHASE.** Four choosers
+  fitted on warm-up..2016-12-31, 2017-2026 read ONCE. **CH_DIFF (linear, recoverable) and CH_PCT
+  (the record's percentile, not recoverable) pick the same book at 14 of 15 (panel, K) cells and
+  read the same mean modal OOS Sharpe to four decimals — 0.8481 both**; the single disagreement is
+  SMALL at K=200 and is worth **0.0003** of OOS Sharpe. Class means read LINEAR 0.8984 vs NONLINEAR
+  0.8511, but that gap is carried **entirely by CH_Z** (0.9488 against 0.8481 / 0.8481 / 0.8541), the
+  only chooser that divides by the pool's own SD. **Published as a standardisation fact, not as a
+  kernel-class fact.**
+
+  **3. THE RECORD'S PERCENTILE FORM CANNOT RANK.** CH_PCT is tied at its maximum on **5.76 of 8**
+  anchors (U56) and **6.93 of 8** (B136) — 1191's saturation — so its "pick" is the deterministic
+  first-wins tie-break; the linear forms tie at 1.00 of 8 everywhere. Tied counts published; a random
+  tie-break would have manufactured the instability being measured.
+
+  **4. WHAT RE-PUBLICATION COSTS.** Pooled/linear form 10.4 us, exact-pair form 101.4 us (9.8x), the
+  200-draw pool **28.4 s = 2.8e5x the pairing**. The 39 C_STRICT linear units cost **nothing** (already
+  exact); the 11 recoverable nonlinear ones **0.0011 s**; the 79 lost ones need their pools rebuilt at
+  **0.62 compute-hours**. **The record's irreproducibility was never bought with compute; it was bought
+  with a missing sentence.**
+
+  **5. A GATE THAT FAILED, PUBLISHED NOT ABSORBED.** G3 — two mirrored pools with identical mean and
+  sd whose percentile against the same book differs — was pre-declared at the incumbent cell
+  U56/N=20/W and reads exactly **0** there: that book beats all 200 draws, so both pools read
+  percentile 1.000. The gate failed on **saturation**, not on the mathematics, which is the same
+  defect section 3 prices. The proposition was then tested where it is testable (G3b, interior cell
+  chosen mechanically as argmin|pct-0.5|; G3c, a synthetic pair needing no tape: identical mean 0.000
+  and sd 1.154701, percentiles 0.50 vs 0.75) and both hold.
+
+  **6. BOOKS.** 3 of 24 clear 4b full+OOS, 0 of 24 clear 4a: U56 N=20/W (the standing 2026-09-04
+  incumbent, 14.23%/1.1448/-19.39%, halves 1.217/1.100, OOS 15.65%/1.1660/-19.39%), U56 N=30/W (OOS
+  14.02%/1.2276/-18.31%) and U56 N=30/M (OOS 14.43%/1.2180/-18.13%). The only rule-8-reachable pass
+  is the incumbent, reached by CH_Z — **confirmatory, not generative**, and no chooser's pick beats
+  the live book's OOS Sharpe (1.2769 on U56). SURVIVORSHIP (rule 9): U56/B136 are current-constituent
+  lists and SMALL is a current screen output, so every LEVEL is optimistic and every 4a/4b count an
+  UPPER bound.
+
+  **RECOMMENDATION (not enacted — rule 6).** A committed MC figure should state its **kernel class**
+  before its seed, and a LINEAR one should be published as its pooled means: *"Any figure computed
+  from paired draws states its kernel. A kernel whose pair-mean is a function of the pooled means is
+  published AS those pooled means (no seed, no draw order). Any other kernel publishes its per-draw
+  artefact."* Priced here at 0.62 compute-hours and 0.0003 of OOS Sharpe.
+
 ## 2026-09-19 — idea 1298 (lane C): how STALE can the incumbent's SIGNAL be before its 4b PASS dies? **THREE DAYS — AND IT DIES ON DRAWDOWN, NOT ON RETURN.**
 
   **VERDICT: ANSWERED, with a standing CAVEAT on the 2026-09-04 book and a KILL of the lag as a

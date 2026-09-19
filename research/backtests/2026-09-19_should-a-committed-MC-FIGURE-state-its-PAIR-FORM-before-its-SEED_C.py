@@ -425,12 +425,36 @@ def main():
     g2 = float(abs(np.mean(bval - A) - (bval - A.mean())))
     gates.append(("G2 LINEAR kernel: mean of paired diffs == pooled-mean diff (exact)", g2, g2 < 1e-12))
     # G3: a NONLINEAR kernel is NOT recoverable from pooled sufficient statistics.  Two
-    # pools with identical mean and sd to 1e-12 whose percentile against the same book
-    # differs -- constructed, not asserted.
-    q = A.copy(); q2 = 2 * A.mean() - A                       # same mean, same sd, mirrored
+    # pools with identical mean and sd whose percentile against the same book differs --
+    # constructed, not asserted.  AS FIRST STATED this gate was run at the incumbent cell
+    # (U56/N=20/W) and it FAILED at exactly 0.  The failure is REPORTED, NOT ABSORBED,
+    # because it is the finding: that book beats all 200 draws, so BOTH mirrored pools
+    # read percentile 1.000 -- the record's percentile form is SATURATED there and
+    # carries no information at all (1191's CH_PCT result, reached from the other side).
+    # The proposition itself is then tested where it is testable: G3b at the cell whose
+    # percentile is closest to 0.5, chosen MECHANICALLY, and G3c on a synthetic pair that
+    # needs no tape at all.
+    q, q2 = A.copy(), 2 * A.mean() - A                        # same mean, same sd, mirrored
     g3 = float(abs(((q < bval).mean()) - ((q2 < bval).mean())))
-    gates.append((f"G3 NONLINEAR: same pooled mean/sd (dmean {abs(q.mean()-q2.mean()):.2e}, "
-                  f"dsd {abs(q.std(ddof=1)-q2.std(ddof=1)):.2e}), percentile differs", g3, g3 > 1e-6))
+    gates.append((f"G3 as-first-stated at the INCUMBENT cell U56/20/W: mirrored pool, same "
+                  f"mean/sd (dmean {abs(q.mean()-q2.mean()):.2e}, dsd "
+                  f"{abs(q.std(ddof=1)-q2.std(ddof=1)):.2e}); percentile differs -- FAILS "
+                  f"because pct = {float((q<bval).mean()):.3f} is SATURATED (reported, not absorbed)",
+                  g3, g3 > 1e-6))
+    cand = [(abs(float((pools[(r.panel, r.n, r.cadence)] < r.IS_Sharpe).mean()) - 0.5),
+             (r.panel, r.n, r.cadence), float(r.IS_Sharpe)) for _, r in bk.iterrows()]
+    _, ikey, ival = min(cand)
+    I = pools[ikey]; I2 = 2 * I.mean() - I
+    g3b = float(abs(((I < ival).mean()) - ((I2 < ival).mean())))
+    gates.append((f"G3b same construction at the INTERIOR cell {ikey} "
+                  f"(pct {float((I<ival).mean()):.3f}, chosen mechanically as argmin|pct-0.5|)",
+                  g3b, g3b > 1e-6))
+    sy1 = np.array([-1.0, -1.0, 1.0, 1.0]); sy2 = np.array([-1.0, 0.0, 0.0, 1.0]) * np.sqrt(2.0)
+    g3c = float(abs((sy1 < 0.5).mean() - (sy2 < 0.5).mean()))
+    gates.append((f"G3c synthetic, no tape: two 4-point pools, identical mean "
+                  f"({sy1.mean():.3f}/{sy2.mean():.3f}) and sd "
+                  f"({sy1.std(ddof=1):.6f}/{sy2.std(ddof=1):.6f}), percentiles "
+                  f"{(sy1<0.5).mean():.2f} vs {(sy2<0.5).mean():.2f}", g3c, g3c > 1e-6))
     # G4: the kernel lexicon is a PARTITION -- every pair unit lands in exactly one class.
     g4 = float((cdf.KERNEL.isin(["LINEAR", "NONLINEAR", "UNCLASSIFIED"])).mean())
     gates.append(("G4 kernel classes partition the corpus (share classified into exactly one)",
