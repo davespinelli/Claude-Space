@@ -1,3 +1,65 @@
+## 2026-09-19 — idea 1298 (lane C): how STALE can the incumbent's SIGNAL be before its 4b PASS dies? **THREE DAYS — AND IT DIES ON DRAWDOWN, NOT ON RETURN.**
+
+  **VERDICT: ANSWERED, with a standing CAVEAT on the 2026-09-04 book and a KILL of the lag as a
+  dial.** The frozen incumbent (U56, N=20, H=126, gross 0.75, weekly, 10 bps) clears 4b when traded
+  1, 2 or 3 rows late and FAILS at 5, 10 and 21 — with the MaxDD cap the SOLE binding leg at every
+  failing rung. Its drawdown room runs **+1.101 / +0.156 / +0.160 / -0.365 / -0.839 / -0.870 pp**
+  at d = 1 / 2 / 3 / 5 / 10 / 21 while the CAGR leg never binds (+4.9 to +5.3 pp) and the Sharpe
+  legs never bind on U56. **The whole 4b pass rests on 1.10 pp of drawdown room, and one week of
+  trading late costs 1.47 pp of drawdown.** Staleness does not stop this book earning; it makes it
+  take a deeper drawdown, and 4b's cap is where that lands. No RULES change, no PROTOCOL edit
+  (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. Offline,
+  deterministic, 11s.
+
+  **THE INSTRUMENT.** Two dials (rule 4): **LAG {1, 2, 3, 5, 10, 21} x PANEL {U56, B136, SMALL}**,
+  18 cells per construction, **all 36 published** in `.grid.csv`, everything else frozen at the
+  incumbent. d = 1 IS PROTOCOL rule 2.
+
+  **1. THE DECAY IS NOT RESOLVABLE, SO THE PASS/FAIL FLIPS ARE NOT FINDINGS.** A paired
+  circular-block bootstrap (400 reps x 63-row blocks, seed 20260919, both books resampled on
+  IDENTICAL blocks) puts **0 of 36 rungs beyond 2 SE** of d = 1 in Sharpe. Worst |t| on the anchor
+  ladder is -1.25 (U56/LATE, d = 5); worst anywhere +1.92. The U56 ladder IS ordered — rho
+  **-0.886**, OLS **-0.00156** Sharpe per day of staleness — but its entire spread (0.0333) is
+  **1.49x** the median rung SE. Pre-declared outcome **(C) UNRESOLVED**. The honest reading is NOT
+  "the book survives three days": the tape cannot resolve what staleness costs in Sharpe, while
+  what it costs in drawdown is monotone (-0.95 / -0.94 / -1.47 / -1.94 / -1.97 pp) and is enough to
+  break 4b by d = 5. Every 4b flip along this axis — **idea 1287's included** — is a coin flip.
+
+  **2. A RECORD DEFECT, FOUND BY TRYING TO REPLAY 1287.** The record now contains TWO incompatible
+  definitions of "execution lag": **LATE** (decide on the weekly close, TRADE d rows later — this
+  idea's own wording) and **SNAP** (trade on the fixed next row with a d-row-old snapshot — idea
+  1287's `build1`). They are identical at d = 1 and different books at d >= 2, by **up to 0.1051
+  of Sharpe (B136, d = 21)** against a median rung SE of 0.0498 — **2.1x the measurement noise and
+  larger than either ladder's own spread**. U56's 4b verdicts disagree rung for rung: LATE passes
+  at d = 1, 2, 3; SNAP passes at d = 1 and 5 only. SNAP replays 1287's committed rows to **3.4e-2**
+  (most cells ~1e-3) against LATE's **1.0e-1**, a factor 3.0, which settles the attribution: 1287's
+  non-monotone ladder was its CONSTRUCTION plus unresolved noise, not the tape. **A committed lag
+  claim that does not name its construction is uninterpretable** — filed as a schema finding, both
+  arms published whole, nothing selected on the convention (it is a replication control, not a
+  third dial).
+
+  **3. RULE 8 — THE LAG IS A KILL AS A DIAL.** Chosen on warm-up..2016-12-31 by IS Sharpe (ties to
+  the lower lag), 2017-2026 read ONCE, against PROTOCOL's frozen d = 1: IS picks d = 21 / 2 / 10
+  (LATE) and 10 / 3 / 10 (SNAP) on U56 / B136 / SMALL. **Chooser-minus-do-nothing: mean -0.0114 OOS
+  Sharpe over the six arms, worst -0.0618, positive on 3 of 6**, and the IS pick is the ex-post best
+  OOS lag on **0 of 6**. Every selecting IS margin (+0.0066 .. +0.1164) is inside its own rung SE.
+  PROTOCOL rule 2's frozen d = 1 stands, and not because it is safe — because nothing else is
+  choosable.
+
+  **4. THE ANCHOR GATE, REPORTED NOT EXPLAINED AWAY.** (U56, d=1) reads 15.82% / 1.1543 / -19.13%,
+  OOS 17.34% / 1.1862 against the committed 15.79% / 1.1529 / -19.13%, OOS 17.30% / 1.1837 — worst
+  |diff| **2.5e-3**, which MISSES a 5e-4 exact replay and sits INSIDE the tape-vintage floor (idea
+  1335 measured ~7e-3 of half-sample movement from one daily rewrite; commit 4e19a80 rewrote
+  `data/prices*.csv` on 2026-09-18). Every cell here is on ONE tape, so the within-run comparisons
+  are unaffected; only cross-run comparisons carry the floor and are labelled where they appear.
+  4a fails at 36 of 36 cells; 4b passes 3 of 18 under each construction.
+
+  **WHAT THIS DOES TO THE STANDING BOOK.** It does not refute the 2026-09-04 candidate at d = 1; it
+  prices how thin that pass is. 1.10 pp of drawdown room is less than the drawdown one week of late
+  trading adds, and is itself the same order as what a single tape rewrite has been shown to move.
+  Survivorship (rule 9) makes it worse, not better: U56 is a current-constituent list, so the
+  drawdown is flattered and 1.10 pp is an upper bound on the room a real account would have.
+
 ## 2026-09-18 — idea 1354 (lane cloud): is WEEKLY still the CADENCE ARGMAX at EVERY N? **ONLY AT 15 — and the run turned up a KEEP-4b CANDIDATE.**
 
   **VERDICT: ANSWERED — the cadence argmax MOVES WITH N on 3 of 3 panels and W holds it in only

@@ -1,0 +1,221 @@
+====================================================================================================
+IDEA 1298 (lane C, 2026-09-19) — how STALE can the incumbent's SIGNAL be before its
+4b PASS DIES?
+====================================================================================================
+
+  DIALS (2, rule 4): LAG [1, 2, 3, 5, 10, 21] x PANEL {U56, B136, SMALL} = 18 cells per
+  convention, 36 in all, every one published in .grid.csv.
+  CONVENTION (a replication control, NOT a dial; both published, nothing selected on it):
+    LATE = this idea's wording — decide on the weekly close, TRADE d rows later.
+    SNAP = idea 1287's construction — trade on the fixed next row with a d-row-old snapshot.
+  d = 1 is identical under both and IS PROTOCOL rule 2. The VERDICT is taken on LATE.
+  FROZEN: N=20, H=126, gross=0.75, weekly, 10 bps, above-200d & vol20<0.6,
+  3-leg composite, 260-row warm-up, equal weights, first-wins tie-break.
+  RESOLUTION: paired circular-block bootstrap, 400 reps x 63-row blocks,
+  seed 20260919; both books resampled on IDENTICAL blocks so the difference is paired.
+  OUTCOMES (anchor panel U56, in order): (A) FRAGILE (B) DECAYS (C) UNRESOLVED
+  (D) ROBUST (E) MIXED.
+
+  PANELS: U56 55 investable; B136 135; SMALL 665 (54 dropped for max_1d_move >= 1.0). SPY benchmark only.
+  TAPE: U56 2008-01-02 .. 2026-09-18 (4708 rows); B136 2026-09-18; SMALL 2026-09-18.
+
+====================================================================================================
+ARM A — BENCHMARKS (post-warm-up, 10 bps, weekly for the live book)
+====================================================================================================
+
+  panel  series                     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR   OOS Sh
+  U56    SPY (buy & hold)         15.12%   0.8843  -33.72%  0.9570  0.8249    15.26%   0.8737
+  U56    RULES v2 (live book)      8.62%   1.2010  -12.05%  1.2276  1.1805     9.46%   1.2766
+  B136   SPY (buy & hold)         15.12%   0.8844  -33.72%  0.9571  0.8249    15.26%   0.8737
+  B136   RULES v2 (live book)      7.96%   1.0972  -12.24%  1.2296  0.9669     7.85%   1.1017
+  SMALL  SPY (buy & hold)         14.01%   0.8561  -33.72%  0.9026  0.8391    15.26%   0.8737
+  SMALL  RULES v2 (live book)      4.66%   0.7184  -12.48%  0.8351  0.6378     4.41%   0.6472
+
+====================================================================================================
+ARM B — THE ANCHOR GATE: does (U56, d=1) still reproduce the committed incumbent, and do
+1287's committed lag rows reproduce on TODAY's tape?
+====================================================================================================
+
+  (i) the 2026-09-04 incumbent, as committed by idea 1294 (U56, N=20, g=0.75, d=1):
+      stat           this run    committed         diff
+      CAGR             0.1582       0.1579     2.51e-04
+      Sharpe           1.1543       1.1529     1.42e-03
+      MaxDD           -0.1913      -0.1913     1.09e-05
+      OOS_CAGR         0.1734       0.1730     3.64e-04
+      OOS_Sharpe       1.1862       1.1837     2.51e-03
+      Worst |diff| 2.51e-03. EXACT REPLAY (< 5e-4): NO; WITHIN THE TAPE-VINTAGE FLOOR (< 5e-3, idea 1335 measured ~7e-3 on halves from a single daily rewrite): YES.
+
+  (ii) idea 1287's committed weekly lag ladder, replayed under BOTH conventions. Under
+       SNAP — 1287's OWN construction — a residual diff is a TAPE-VINTAGE fact (commit
+       4e19a80 rewrote data/prices*.csv after 1287 ran, idea 1350's finding). Under LATE
+       the diff is CONSTRUCTION, not tape, and that gap is itself this run's finding.
+      panel    d    SNAP Sh  diff vs 1287    LATE Sh  diff vs 1287  SNAP-LATE
+      U56      1   1.154323      1.46e-03   1.154323      1.46e-03   0.00e+00
+      U56      2   1.105628      1.04e-03   1.156739      5.21e-02  -5.11e-02
+      U56      3   1.120931      1.17e-03   1.149722      3.00e-02  -2.88e-02
+      U56      5   1.125668      7.91e-04   1.126287      1.41e-03  -6.18e-04
+      U56     10   1.137300      1.42e-03   1.129510     -6.37e-03   7.79e-03
+      B136     1   1.065987     -6.16e-03   1.065987     -6.16e-03   0.00e+00
+      B136     2   1.156750      1.62e-03   1.056760     -9.84e-02   1.00e-01
+      B136     3   1.136949     -6.17e-03   1.040670     -1.02e-01   9.63e-02
+      B136     5   1.061691     -2.23e-03   1.024119     -3.98e-02   3.76e-02
+      B136    10   1.065693     -2.63e-03   1.021182     -4.71e-02   4.45e-02
+      SMALL    1   0.510032      1.89e-03   0.510032      1.89e-03   0.00e+00
+      SMALL    2   0.558052     -6.76e-03   0.524566     -4.02e-02   3.35e-02
+      SMALL    3   0.515070     -3.37e-02   0.504739     -4.40e-02   1.03e-02
+      SMALL    5   0.525483     -1.10e-02   0.497001     -3.95e-02   2.85e-02
+      SMALL   10   0.536102     -5.55e-03   0.558288      1.66e-02  -2.22e-02
+      Worst |diff| vs 1287 across the 15 replayed cells: SNAP (1287's own construction)
+      3.37e-02; LATE 1.02e-01. Worst |SNAP - LATE| on the same cells: 1.00e-01.
+      SNAP replays 1287 to 3.4e-02 against LATE's 1.0e-01 — a factor 3.0. The d >= 2 gap is therefore CONSTRUCTION, not tape;
+      the tape's own contribution is the d = 1 diff, common to both conventions.
+
+  READING. The d=1 anchor misses the 5e-4 exact-replay gate but sits inside the
+  tape-vintage floor: data/prices*.csv was rewritten wholesale on 2026-09-18 (commit
+  4e19a80) after the committed numbers were taken, and idea 1335 measured ~7e-3 of
+  half-sample Sharpe movement from one such rewrite. EVERY cell in this run is built
+  on ONE tape, so the within-run comparisons below — rung against rung, convention
+  against convention — are unaffected. Only comparisons to committed numbers from
+  other runs carry this floor, and those are labelled where they appear.
+
+====================================================================================================
+ARM C — THE LAG LADDER, EVERY RUNG, BOTH KEEP PATHS
+====================================================================================================
+
+  conv  panel    d     CAGR   Sharpe    MaxDD      H1      H2  OOS CAGR   OOS Sh  turn/yr  4b DD mgn   4b   4a  failing 4b legs
+  LATE  U56      1   15.82%   1.1543  -19.13%  1.2072  1.1209    17.34%   1.1862     2.76     +1.101 PASS FAIL  -
+  LATE  U56      2   15.92%   1.1567  -20.07%  1.2251  1.1115    17.36%   1.1813     2.78     +0.156 PASS FAIL  -
+  LATE  U56      3   15.80%   1.1497  -20.07%  1.2142  1.1075    17.29%   1.1784     2.80     +0.160 PASS FAIL  -
+  LATE  U56      5   15.50%   1.1263  -20.60%  1.1865  1.0882    17.09%   1.1598     2.76     -0.365 FAIL FAIL  DD
+  LATE  U56     10   15.62%   1.1295  -21.07%  1.1869  1.0949    17.24%   1.1609     2.81     -0.839 FAIL FAIL  DD
+  LATE  U56     21   15.64%   1.1234  -21.10%  1.2437  1.0417    16.84%   1.1244     2.81     -0.870 FAIL FAIL  DD
+
+  LATE  B136     1   16.07%   1.0660  -20.74%  1.2821  0.8972    16.20%   1.0184     3.14     -0.510 FAIL FAIL  DD
+  LATE  B136     2   16.01%   1.0568  -23.36%  1.2860  0.8799    15.99%   0.9992     3.15     -3.129 FAIL FAIL  DD
+  LATE  B136     3   15.73%   1.0407  -21.82%  1.2620  0.8706    15.80%   0.9881     3.16     -1.593 FAIL FAIL  DD
+  LATE  B136     5   15.54%   1.0241  -23.41%  1.2445  0.8564    15.62%   0.9716     3.13     -3.184 FAIL FAIL  DD
+  LATE  B136    10   15.65%   1.0212  -25.34%  1.1954  0.8940    16.32%   0.9954     3.18     -5.113 FAIL FAIL  DD
+  LATE  B136    21   16.26%   1.0495  -25.60%  1.2650  0.8943    16.92%   1.0157     3.19     -5.367 FAIL FAIL  DD
+
+  LATE  SMALL    1    7.82%   0.5100  -36.49%  0.6799  0.3834     6.72%   0.4407     3.98    -16.264 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  LATE  SMALL    2    8.11%   0.5246  -37.25%  0.7267  0.3736     6.28%   0.4186     3.97    -17.016 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  LATE  SMALL    3    7.73%   0.5047  -37.80%  0.6891  0.3676     5.94%   0.4011     3.98    -17.565 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  LATE  SMALL    5    7.60%   0.4970  -37.76%  0.7043  0.3430     5.69%   0.3875     3.99    -17.534 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  LATE  SMALL   10    8.84%   0.5583  -35.91%  0.7717  0.4014     7.27%   0.4642     3.99    -15.683 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  LATE  SMALL   21    8.14%   0.5191  -39.88%  0.6489  0.4282     7.59%   0.4757     4.01    -19.645 FAIL FAIL  H1,H2,OOS,DD,CAGR
+
+  SNAP  U56      1   15.82%   1.1543  -19.13%  1.2072  1.1209    17.34%   1.1862     2.76     +1.101 PASS FAIL  -
+  SNAP  U56      2   15.28%   1.1056  -21.57%  1.2127  1.0327    16.37%   1.1027     2.80     -1.336 FAIL FAIL  DD
+  SNAP  U56      3   15.50%   1.1209  -20.50%  1.1896  1.0754    16.76%   1.1355     2.77     -0.265 FAIL FAIL  DD
+  SNAP  U56      5   15.48%   1.1257  -19.77%  1.1720  1.0995    17.17%   1.1624     2.80     +0.456 PASS FAIL  -
+  SNAP  U56     10   15.71%   1.1373  -20.91%  1.2367  1.0713    16.86%   1.1353     2.81     -0.677 FAIL FAIL  DD
+  SNAP  U56     21   16.01%   1.1395  -22.39%  1.1651  1.1357    18.57%   1.2103     2.81     -2.162 FAIL FAIL  DD
+
+  SNAP  B136     1   16.07%   1.0660  -20.74%  1.2821  0.8972    16.20%   1.0184     3.14     -0.510 FAIL FAIL  DD
+  SNAP  B136     2   17.88%   1.1568  -19.41%  1.3621  0.9986    18.00%   1.1030     3.16     +0.816 PASS FAIL  -
+  SNAP  B136     3   17.66%   1.1369  -21.61%  1.3666  0.9581    17.23%   1.0570     3.11     -1.385 FAIL FAIL  DD
+  SNAP  B136     5   16.27%   1.0617  -23.14%  1.2970  0.8777    15.88%   0.9870     3.05     -2.911 FAIL FAIL  DD
+  SNAP  B136    10   16.31%   1.0657  -24.56%  1.2548  0.9223    16.75%   1.0330     3.08     -4.331 FAIL FAIL  DD
+  SNAP  B136    21   18.46%   1.1547  -23.86%  1.2446  1.0907    20.06%   1.1753     3.22     -3.628 FAIL FAIL  DD
+
+  SNAP  SMALL    1    7.82%   0.5100  -36.49%  0.6799  0.3834     6.72%   0.4407     3.98    -16.264 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  SNAP  SMALL    2    8.80%   0.5581  -35.72%  0.7410  0.4209     8.13%   0.5086     3.94    -15.485 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  SNAP  SMALL    3    8.02%   0.5151  -37.85%  0.6803  0.3914     6.70%   0.4358     3.97    -17.620 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  SNAP  SMALL    5    8.19%   0.5255  -36.49%  0.6797  0.4124     7.48%   0.4747     3.95    -16.257 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  SNAP  SMALL   10    8.47%   0.5361  -36.12%  0.7058  0.4138     6.89%   0.4423     4.00    -15.885 FAIL FAIL  H1,H2,OOS,DD,CAGR
+  SNAP  SMALL   21    8.14%   0.5194  -37.17%  0.6341  0.4302     7.28%   0.4668     3.97    -16.941 FAIL FAIL  H1,H2,OOS,DD,CAGR
+
+  LATE: 4b passes 3 of 18 cells; 4a passes 0.
+  SNAP: 4b passes 3 of 18 cells; 4a passes 0.
+
+====================================================================================================
+ARM D — DECAY AGAINST ITS OWN SAMPLING INTERVAL (paired circular-block bootstrap)
+====================================================================================================
+
+  conv  panel    d   dSharpe      SE       t    dCAGR      SE   dMaxDD   dOOS Sh      SE       t    4b  |t|>=2
+  LATE  U56      1   +0.0000  0.0000    +nan   +0.00%  0.0000   +0.00%   +0.0000  0.0000    +nan  PASS      no
+  LATE  U56      2   +0.0024  0.0129   +0.19   +0.11%  0.0018   -0.95%   -0.0049  0.0171   -0.28  PASS      no
+  LATE  U56      3   -0.0046  0.0140   -0.33   -0.02%  0.0021   -0.94%   -0.0078  0.0177   -0.44  PASS      no
+  LATE  U56      5   -0.0280  0.0224   -1.25   -0.32%  0.0032   -1.47%   -0.0264  0.0307   -0.86  FAIL      no
+  LATE  U56     10   -0.0248  0.0256   -0.97   -0.19%  0.0041   -1.94%   -0.0253  0.0294   -0.86  FAIL      no
+  LATE  U56     21   -0.0309  0.0383   -0.81   -0.17%  0.0064   -1.97%   -0.0618  0.0614   -1.01  FAIL      no
+  SNAP  U56      1   +0.0000  0.0000    +nan   +0.00%  0.0000   +0.00%   +0.0000  0.0000    +nan  PASS      no
+  SNAP  U56      2   -0.0487  0.0367   -1.33   -0.54%  0.0055   -2.44%   -0.0835  0.0532   -1.57  FAIL      no
+  SNAP  U56      3   -0.0334  0.0396   -0.84   -0.31%  0.0060   -1.37%   -0.0507  0.0591   -0.86  FAIL      no
+  SNAP  U56      5   -0.0287  0.0407   -0.70   -0.34%  0.0063   -0.65%   -0.0238  0.0623   -0.38  PASS      no
+  SNAP  U56     10   -0.0170  0.0431   -0.39   -0.10%  0.0066   -1.78%   -0.0509  0.0527   -0.97  FAIL      no
+  SNAP  U56     21   -0.0148  0.0500   -0.30   +0.19%  0.0085   -3.26%   +0.0241  0.0707   +0.34  FAIL      no
+  LATE  B136     1   +0.0000  0.0000    +nan   +0.00%  0.0000   +0.00%   +0.0000  0.0000    +nan  FAIL      no
+  LATE  B136     2   -0.0092  0.0167   -0.55   -0.07%  0.0024   -2.62%   -0.0192  0.0238   -0.81  FAIL      no
+  LATE  B136     3   -0.0253  0.0152   -1.67   -0.34%  0.0024   -1.08%   -0.0303  0.0208   -1.45  FAIL      no
+  LATE  B136     5   -0.0419  0.0282   -1.48   -0.53%  0.0044   -2.67%   -0.0468  0.0380   -1.23  FAIL      no
+  LATE  B136    10   -0.0448  0.0425   -1.05   -0.42%  0.0074   -4.60%   -0.0230  0.0495   -0.47  FAIL      no
+  LATE  B136    21   -0.0164  0.0537   -0.31   +0.19%  0.0099   -4.86%   -0.0027  0.0692   -0.04  FAIL      no
+  SNAP  B136     1   +0.0000  0.0000    +nan   +0.00%  0.0000   +0.00%   +0.0000  0.0000    +nan  FAIL      no
+  SNAP  B136     2   +0.0908  0.0473   +1.92   +1.81%  0.0084   +1.33%   +0.0846  0.0583   +1.45  PASS      no
+  SNAP  B136     3   +0.0710  0.0523   +1.36   +1.59%  0.0090   -0.88%   +0.0386  0.0692   +0.56  FAIL      no
+  SNAP  B136     5   -0.0043  0.0621   -0.07   +0.20%  0.0104   -2.40%   -0.0314  0.0857   -0.37  FAIL      no
+  SNAP  B136    10   -0.0003  0.0723   -0.00   +0.24%  0.0119   -3.82%   +0.0146  0.1077   +0.14  FAIL      no
+  SNAP  B136    21   +0.0887  0.0761   +1.17   +2.39%  0.0141   -3.12%   +0.1569  0.1056   +1.49  FAIL      no
+  LATE  SMALL    1   +0.0000  0.0000    +nan   +0.00%  0.0000   +0.00%   +0.0000  0.0000    +nan  FAIL      no
+  LATE  SMALL    2   +0.0145  0.0219   +0.66   +0.29%  0.0042   -0.75%   -0.0221  0.0268   -0.83  FAIL      no
+  LATE  SMALL    3   -0.0053  0.0222   -0.24   -0.09%  0.0043   -1.30%   -0.0396  0.0257   -1.54  FAIL      no
+  LATE  SMALL    5   -0.0130  0.0241   -0.54   -0.22%  0.0046   -1.27%   -0.0532  0.0265   -2.00  FAIL      no
+  LATE  SMALL   10   +0.0483  0.0338   +1.43   +1.02%  0.0066   +0.58%   +0.0235  0.0413   +0.57  FAIL      no
+  LATE  SMALL   21   +0.0091  0.0583   +0.16   +0.32%  0.0110   -3.38%   +0.0350  0.0724   +0.48  FAIL      no
+  SNAP  SMALL    1   +0.0000  0.0000    +nan   +0.00%  0.0000   +0.00%   +0.0000  0.0000    +nan  FAIL      no
+  SNAP  SMALL    2   +0.0480  0.0519   +0.92   +0.98%  0.0101   +0.78%   +0.0679  0.0697   +0.98  FAIL      no
+  SNAP  SMALL    3   +0.0050  0.0522   +0.10   +0.19%  0.0102   -1.36%   -0.0049  0.0691   -0.07  FAIL      no
+  SNAP  SMALL    5   +0.0155  0.0638   +0.24   +0.37%  0.0123   +0.01%   +0.0340  0.0778   +0.44  FAIL      no
+  SNAP  SMALL   10   +0.0261  0.0771   +0.34   +0.65%  0.0148   +0.38%   +0.0016  0.0980   +0.02  FAIL      no
+  SNAP  SMALL   21   +0.0094  0.0847   +0.11   +0.32%  0.0161   -0.68%   +0.0261  0.1073   +0.24  FAIL      no
+
+  Ladder shape (full-sample net Sharpe over the six rungs), per convention and panel:
+  conv  panel   rho(d,Sharpe)  OLS slope /day   spread  median SE  spread/SE
+  LATE  U56            -0.886        -0.00156   0.0333     0.0224       1.49
+  LATE  B136           -0.657        -0.00047   0.0448     0.0282       1.59
+  LATE  SMALL           0.200         0.00086   0.0613     0.0241       2.54
+  SNAP  U56             0.143         0.00062   0.0487     0.0407       1.20
+  SNAP  B136           -0.143         0.00179   0.0951     0.0621       1.53
+  SNAP  SMALL           0.257        -0.00028   0.0480     0.0638       0.75
+
+  The same ladder measured BETWEEN conventions at each rung (|SNAP - LATE| in Sharpe),
+  against the median rung SE — how big the naming ambiguity is next to the effect:
+  panel       d=1      d=2      d=3      d=5     d=10     d=21   med SE
+  U56      0.0000   0.0511   0.0288   0.0006   0.0078   0.0161   0.0375
+  B136     0.0000   0.1000   0.0963   0.0376   0.0445   0.1051   0.0498
+  SMALL    0.0000   0.0335   0.0103   0.0285   0.0222   0.0003   0.0521
+
+====================================================================================================
+ARM E — RULE 8: a lag CHOSEN on warm-up..2016 against PROTOCOL's frozen d = 1
+====================================================================================================
+
+  conv  panel   IS pick  IS Sh pick  IS Sh d=1  IS margin  OOS Sh pick  OOS Sh d=1  chooser gain  ex-post best d
+  LATE  U56          21      1.1322     1.1163    +0.0159       1.1244      1.1862       -0.0618               1
+  LATE  B136          2      1.1462     1.1396    +0.0066       0.9992      1.0184       -0.0192               1
+  LATE  SMALL        10      0.7381     0.6408    +0.0972       0.4642      0.4407       +0.0235              21
+  SNAP  U56          10      1.1505     1.1163    +0.0342       1.1353      1.1862       -0.0509              21
+  SNAP  B136          3      1.2560     1.1396    +0.1164       1.0570      1.0184       +0.0386              21
+  SNAP  SMALL        10      0.7177     0.6408    +0.0769       0.4423      0.4407       +0.0016               2
+
+  Mean chooser-minus-do-nothing across all 6 (convention, panel) arms: -0.0114 OOS Sharpe; worst -0.0618; positive on 3 of 6.
+    LATE: mean -0.0192, worst -0.0618.
+    SNAP: mean -0.0036, worst -0.0509.
+  The IS-chosen lag IS the ex-post best OOS lag on 0 of 6 arms.
+
+====================================================================================================
+ARM F — THE VERDICT, under the outcome rule fixed in the header
+====================================================================================================
+
+  Taken on LATE, the construction this idea's text describes; SNAP is reported above.
+  ANCHOR PANEL U56: 4b FAILS at d = [5, 10, 21]; rho(d, Sharpe) = -0.886; rungs beyond 2 SE below d=1: none; rungs within 2 SE: [2, 3, 5, 10, 21].
+  OUTCOME: C — UNRESOLVED
+
+  [LATE] same three readings on every panel: U56: 4b fails at [5, 10, 21], rho -0.89, resolved rungs none; B136: 4b fails at [2, 3, 5, 10, 21], rho -0.66, resolved rungs none; SMALL: 4b fails at [2, 3, 5, 10, 21], rho +0.20, resolved rungs none
+  [SNAP] same three readings on every panel: U56: 4b fails at [2, 3, 10, 21], rho +0.14, resolved rungs none; B136: 4b fails at [3, 5, 10, 21], rho -0.14, resolved rungs none; SMALL: 4b fails at [2, 3, 5, 10, 21], rho +0.26, resolved rungs none
+
+  THE DRAWDOWN LEG, stated plainly (U56, LATE): 4b's binding margin is the MaxDD cap at
+  every failing rung. Its value at each lag, in pp of room against 0.60 x SPY MaxDD:
+    d=1: +1.101  d=2: +0.156  d=3: +0.160  d=5: -0.365  d=10: -0.839  d=21: -0.870
+
+  Runtime 11s. Deterministic (bootstrap seed 20260919).
