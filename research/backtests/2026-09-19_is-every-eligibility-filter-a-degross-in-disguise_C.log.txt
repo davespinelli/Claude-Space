@@ -1,0 +1,151 @@
+======================================================================================================================
+IDEA 1617 (lane C, 2026-09-19) — is EVERY eligibility filter in the record a CONSTANT
+DE-GROSS in disguise, once its twin is matched on REALISED (not target) mean gross?
+DIALS: FAMILY {MAXVOL, BAND, RANKCUT} x RUNG  ->  12 cells incl. the BASE anchor.
+NOT DIALS, all published: PANEL [U56, B136, SMALL] x COST [0.0, 10.0, 25.0, 50.0] bps.  Gross 0.75, weekly cadence, t+1 execution, gated-out weight to 0%-yielding CASH.
+H0: a filter's whole effect is reproduced by scaling the UNFILTERED book to the same
+    REALISED mean gross.  Rejecting H0 = the filter is a real selection edge.
+======================================================================================================================
+  SMALL filter (protocol-mandated): data/small_meta.csv drops 54 tickers with max_1d_move >= 1.0; 665 of 719 priced names survive.
+  PANELS: U56 55 names + SPY, B136 135 + SPY, SMALL 665 (SPY is a joined BENCHMARK there, not a constituent, so it is NOT traded on SMALL; on U56/B136 it IS a universe constituent and the live book holds it).
+  SURVIVORSHIP (rule 9): U56 / B136 are CURRENT-constituent lists and SMALL a CURRENT sub-$2B screen carried back to 2010, so every absolute level below is an UPPER BOUND.  The headline is a FILTER-minus-TWIN contrast inside one panel, over the same names on the same days at the same realised exposure, so it is first-order immune; the 4b pass counts are not.
+    TAPE U56: 2008-01-02 .. 2026-09-18  4708 rows (18.7y)  OOS starts row 2267 (2017-01-03)
+    PUBLISHED  TAPE STAMP U56: 4708 rows 2008-01-02..2026-09-18
+    TAPE B136: 2008-01-02 .. 2026-09-18  4708 rows (18.7y)  OOS starts row 2267 (2017-01-03)
+    PUBLISHED  TAPE STAMP B136: 4708 rows 2008-01-02..2026-09-18
+    TAPE SMALL: 2010-01-04 .. 2026-09-18  4203 rows (16.7y)  OOS starts row 1762 (2017-01-03)
+    PUBLISHED  TAPE STAMP SMALL: 4203 rows 2010-01-04..2026-09-18
+    GATE PASS  G0 min sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 exactly two tuned parameters (FAMILY x RUNG): 12 cells = 1 BASE + 4 MAXVOL + 4 BAND + 3 RANKCUT (target 2 dials)
+
+  [G1/G2] fast_run vs engine.backtest (returns AND turnover), BASE and live BAND 0.03
+    GATE PASS  G1 fast_run vs engine.backtest, RETURNS (max |dev| over 6 panel x book runs): 0.000e+00 (target < 1e-12)
+    GATE PASS  G1b fast_run vs engine.backtest, TURNOVER (max |dev|): 0.000e+00 (target < 1e-12)
+    GATE PASS  G2 DERIVED 25 bps rung vs a fresh 25 bps engine run (max |dev|): 0.000e+00 (target < 1e-12)
+
+  [U56]  SPY FULL 15.12% / 0.8844 / -33.72%  H1/H2 0.957/0.825  |  4b bars: DD cap -20.23%, CAGR floor 10.59%
+           SPY OOS  15.26% / 0.8738 / -33.72%  |  OOS bars: DD cap -20.23%, floor 10.68%
+           RULES v2 live @10bps  8.62% / 1.2011 / -12.05%  H1/H2 1.228/1.181  (OOS 9.46% / 1.2769 / -12.05%)
+    [U56] 12 cells x 4 cost rungs done, twins solved (49s elapsed)
+
+  [B136]  SPY FULL 15.12% / 0.8845 / -33.72%  H1/H2 0.957/0.825  |  4b bars: DD cap -20.23%, CAGR floor 10.59%
+           SPY OOS  15.26% / 0.8739 / -33.72%  |  OOS bars: DD cap -20.23%, floor 10.68%
+           RULES v2 live @10bps  7.96% / 1.0973 / -12.24%  H1/H2 1.230/0.967  (OOS 7.85% / 1.1019 / -12.24%)
+    [B136] 12 cells x 4 cost rungs done, twins solved (86s elapsed)
+
+  [SMALL]  SPY FULL 14.01% / 0.8562 / -33.72%  H1/H2 0.903/0.839  |  4b bars: DD cap -20.23%, CAGR floor 9.81%
+           SPY OOS  15.26% / 0.8738 / -33.72%  |  OOS bars: DD cap -20.23%, floor 10.68%
+           RULES v2 live @10bps  4.66% / 0.7185 / -12.48%  H1/H2 0.835/0.638  (OOS 4.41% / 0.6473 / -12.48%)
+    [SMALL] 12 cells x 4 cost rungs done, twins solved (196s elapsed)
+    GATE PASS  G7 every cell published: 144 rows in 2026-09-19_is-every-eligibility-filter-a-degross-in-disguise_C.grid.csv (target 144 = 3 panels x 12 cells x 4 rungs)
+    GATE PASS  G8 no leverage, no shorting (max realised target gross): 0.7500 (target <= 0.7500)
+    GATE PASS  G4 REALISED-gross match |mean_gross(twin) - mean_gross(filter)|, max over all cells and both windows: 1.443e-15 (target < 1e-9)
+    GATE PASS  G3 BAND 0.03 on U56 replays baseline.compare's RULES v2 row: 2.220e-16 (target < 1e-12 (it IS the same book))
+
+======================================================================================================================
+Q1/Q2  FILTER vs ITS MATCHED-EXPOSURE TWIN — every non-BASE cell, every panel, @10 bps
+======================================================================================================================
+  panel  cell             gross  twin k     CAGR     twin    dCAGR   Sharpe     twin      dSh    MaxDD     twin     dDD   turn   twin
+  U56    BASE            0.7502  1.0000   13.19%   13.19%   +0.00%   1.1190   1.1190  +0.0000  -22.53%  -22.53%  +0.00%   0.83   0.83  <-BASE
+  U56    MAXVOL 0.45     0.6795  0.9057   10.07%   11.94%   -1.86%   1.1265   1.1189  +0.0077  -15.19%  -20.57%  +5.38%   1.81   0.76
+  U56    MAXVOL 0.60     0.7199  0.9595   11.52%   12.65%   -1.14%   1.1279   1.1190  +0.0089  -16.88%  -21.69%  +4.81%   1.39   0.80
+  U56    MAXVOL 0.80     0.7392  0.9853   12.03%   13.00%   -0.97%   1.0985   1.1190  -0.0206  -18.87%  -22.22%  +3.35%   1.06   0.82
+  U56    MAXVOL 1.00     0.7459  0.9942   12.66%   13.11%   -0.46%   1.1125   1.1190  -0.0065  -20.93%  -22.41%  +1.48%   0.93   0.82
+  U56    BAND 0.00       0.5323  0.7093    8.17%    9.33%   -1.16%   1.1671   1.1184  +0.0487  -12.01%  -16.38%  +4.37%   3.13   0.61
+  U56    BAND 0.03       0.5328  0.7100    8.62%    9.34%   -0.72%   1.2011   1.1184  +0.0827  -12.05%  -16.40%  +4.34%   1.77   0.61  <-LIVE
+  U56    BAND 0.06       0.5094  0.6788    8.30%    8.92%   -0.63%   1.1377   1.1183  +0.0193  -13.47%  -15.72%  +2.25%   1.30   0.59
+  U56    BAND 0.10       0.5174  0.6894    8.76%    9.06%   -0.30%   1.1727   1.1184  +0.0544  -12.35%  -15.95%  +3.60%   1.00   0.59
+  U56    RANKCUT 0.25    0.1822  0.2427    3.95%    3.17%   +0.78%   1.1214   1.1171  +0.0043   -5.64%   -5.84%  +0.20%   2.79   0.23
+  U56    RANKCUT 0.50    0.3700  0.4930    7.17%    6.46%   +0.71%   1.1749   1.1178  +0.0571  -10.83%  -11.60%  +0.77%   3.70   0.44
+  U56    RANKCUT 0.75    0.5548  0.7394   10.10%    9.73%   +0.37%   1.1546   1.1185  +0.0362  -16.26%  -17.03%  +0.77%   3.18   0.63
+  B136   BASE            0.7502  1.0000   14.03%   14.03%   +0.00%   1.1137   1.1137  +0.0000  -25.37%  -25.37%  +0.00%   0.87   0.87  <-BASE
+  B136   MAXVOL 0.45     0.6842  0.9119   10.98%   12.78%   -1.80%   1.1520   1.1136  +0.0384  -15.51%  -23.34%  +7.83%   1.88   0.80
+  B136   MAXVOL 0.60     0.7234  0.9642   12.24%   13.52%   -1.28%   1.1291   1.1137  +0.0155  -18.70%  -24.55%  +5.85%   1.36   0.84
+  B136   MAXVOL 0.80     0.7402  0.9866   12.79%   13.84%   -1.05%   1.1068   1.1137  -0.0069  -20.55%  -25.07%  +4.51%   1.06   0.86
+  B136   MAXVOL 1.00     0.7457  0.9939   13.27%   13.94%   -0.67%   1.1087   1.1137  -0.0050  -23.68%  -25.23%  +1.55%   0.96   0.86
+  B136   BAND 0.00       0.5319  0.7088    7.71%    9.91%   -2.21%   1.0848   1.1134  -0.0286  -12.62%  -18.51%  +5.90%   3.32   0.64
+  B136   BAND 0.03       0.5322  0.7092    7.96%    9.92%   -1.96%   1.0973   1.1134  -0.0161  -12.24%  -18.52%  +6.28%   2.01   0.64  <-LIVE
+  B136   BAND 0.06       0.5256  0.7005    8.07%    9.80%   -1.73%   1.0820   1.1134  -0.0314  -13.69%  -18.31%  +4.62%   1.44   0.63
+  B136   BAND 0.10       0.5346  0.7124    8.63%    9.96%   -1.34%   1.1151   1.1134  +0.0017  -14.58%  -18.60%  +4.02%   1.10   0.64
+  B136   RANKCUT 0.25    0.1843  0.2455    3.33%    3.41%   -0.08%   0.9874   1.1124  -0.1250   -6.66%   -6.71%  +0.05%   2.72   0.24
+  B136   RANKCUT 0.50    0.3717  0.4952    6.64%    6.91%   -0.26%   1.0731   1.1130  -0.0399  -12.19%  -13.21%  +1.02%   3.61   0.47
+  B136   RANKCUT 0.75    0.5577  0.7432    9.89%   10.40%   -0.51%   1.0857   1.1134  -0.0277  -18.38%  -19.34%  +0.96%   3.15   0.67
+  SMALL  BASE            0.7501  1.0000   10.03%   10.03%   +0.00%   0.7041   0.7041  +0.0000  -35.01%  -35.01%  +0.00%   1.51   1.51  <-BASE
+  SMALL  MAXVOL 0.45     0.5210  0.6945    4.12%    7.13%   -3.01%   0.5475   0.7047  -0.1573  -16.75%  -25.45%  +8.69%   3.91   1.07
+  SMALL  MAXVOL 0.60     0.6261  0.8346    5.41%    8.48%   -3.06%   0.5566   0.7045  -0.1478  -21.57%  -29.95%  +8.38%   3.16   1.27
+  SMALL  MAXVOL 0.80     0.6918  0.9222    6.84%    9.31%   -2.47%   0.5935   0.7042  -0.1108  -27.94%  -32.66%  +4.72%   2.39   1.40
+  SMALL  MAXVOL 1.00     0.7191  0.9586    7.80%    9.65%   -1.85%   0.6216   0.7042  -0.0825  -30.92%  -33.77%  +2.85%   1.98   1.45
+  SMALL  BAND 0.00       0.4105  0.5472    3.84%    5.67%   -1.83%   0.6030   0.7050  -0.1020  -13.79%  -20.49%  +6.70%   3.67   0.86
+  SMALL  BAND 0.03       0.4113  0.5482    4.26%    5.68%   -1.42%   0.6589   0.7050  -0.0461  -14.16%  -20.53%  +6.37%   2.57   0.86  <-LIVE
+  SMALL  BAND 0.06       0.4142  0.5521    4.62%    5.72%   -1.10%   0.7008   0.7050  -0.0042  -14.65%  -20.66%  +6.01%   1.95   0.86
+  SMALL  BAND 0.10       0.4228  0.5636    4.86%    5.84%   -0.97%   0.7191   0.7050  +0.0141  -15.55%  -21.06%  +5.51%   1.57   0.88
+  SMALL  RANKCUT 0.25    0.1805  0.2405    1.94%    2.54%   -0.60%   0.5738   0.7054  -0.1317   -9.90%   -9.42%  -0.48%   2.77   0.39
+  SMALL  RANKCUT 0.50    0.3616  0.4819    3.75%    5.02%   -1.27%   0.5823   0.7051  -0.1228  -19.30%  -18.22%  -1.08%   3.77   0.76
+  SMALL  RANKCUT 0.75    0.5423  0.7229    6.14%    7.40%   -1.26%   0.6275   0.7047  -0.0772  -26.89%  -26.38%  -0.52%   3.36   1.11
+
+  COST    0 bps : FULL dSharpe > 0 in 17 of 33 | dMaxDD >= 0 (shallower) in 30 of 33 | JOINT (both) 17 of 33 | mean dSharpe -0.0025  mean dCAGR -0.9617%  mean dMaxDD +3.79%
+  COST   10 bps : FULL dSharpe > 0 in 13 of 33 | dMaxDD >= 0 (shallower) in 30 of 33 | JOINT (both) 13 of 33 | mean dSharpe -0.0273  mean dCAGR -1.1245%  mean dMaxDD +3.67%
+  COST   25 bps : FULL dSharpe > 0 in 5 of 33 | dMaxDD >= 0 (shallower) in 30 of 33 | JOINT (both) 5 of 33 | mean dSharpe -0.0645  mean dCAGR -1.3676%  mean dMaxDD +3.48%
+  COST   50 bps : FULL dSharpe > 0 in 2 of 33 | dMaxDD >= 0 (shallower) in 29 of 33 | JOINT (both) 2 of 33 | mean dSharpe -0.1267  mean dCAGR -1.7700%  mean dMaxDD +3.20%
+
+  FAMILY MAXVOL   @10bps: dSharpe > 0 in 4 of 12  mean -0.0389  [min -0.1573, max +0.0384]  |  mean dCAGR -1.6340%  mean dMaxDD +4.95%  |  OOS dSharpe > 0 in 4 of 12
+  FAMILY BAND     @10bps: dSharpe > 0 in 6 of 12  mean -0.0006  [min -0.1020, max +0.0827]  |  mean dCAGR -1.2815%  mean dMaxDD +5.00%  |  OOS dSharpe > 0 in 7 of 12
+  FAMILY RANKCUT  @10bps: dSharpe > 0 in 3 of 9  mean -0.0474  [min -0.1317, max +0.0571]  |  mean dCAGR -0.2357%  mean dMaxDD +0.19%  |  OOS dSharpe > 0 in 3 of 9
+
+  OOS (2017-2026, twin k re-solved on IS gross only): dSharpe > 0 in 14 of 33  mean -0.0187
+
+======================================================================================================================
+Q3  BOTH KEEP PATHS (rule 4), every cell, filter AND twin, @10 bps binding
+======================================================================================================================
+  4a (beat the live book, both halves + MaxDD): FILTER 0 of 36  |  TWIN 0 of 36
+  4b (beat SPY, both halves + DD cap + CAGR floor), FULL: FILTER 4 of 36  |  TWIN 0 of 36
+  4b OOS: FILTER 4 of 36  |  TWIN 0 of 36
+  4b FULL *and* OOS (the bar a capital-worthy book must clear): 3 of 36
+      PASS  U56    MAXVOL 0.60    FULL 11.52%/1.1279/-16.88% H1/H2 1.158/1.101  OOS 12.04%/1.1765/-16.88%  |  TWIN at the SAME realised gross 12.65%/1.1190/-21.69% -> 4b FULL False, OOS False
+      PASS  U56    MAXVOL 0.80    FULL 12.03%/1.0985/-18.87% H1/H2 1.183/1.024  OOS 12.16%/1.1015/-18.87%  |  TWIN at the SAME realised gross 13.00%/1.1190/-22.22% -> 4b FULL False, OOS False
+      PASS  B136   MAXVOL 0.60    FULL 12.24%/1.1291/-18.70% H1/H2 1.257/1.008  OOS 11.80%/1.1058/-18.70%  |  TWIN at the SAME realised gross 13.52%/1.1137/-24.55% -> 4b FULL False, OOS False
+  cost    0 bps: 4a 4 of 36 | 4b FULL 4 | 4b FULL+OOS 4
+  cost   10 bps: 4a 0 of 36 | 4b FULL 4 | 4b FULL+OOS 3
+  cost   25 bps: 4a 0 of 36 | 4b FULL 4 | 4b FULL+OOS 3
+  cost   50 bps: 4a 0 of 36 | 4b FULL 3 | 4b FULL+OOS 3
+  4b LEG FAILURES @10bps (why the passes are not passes), counted over all 36 cells: H1 9, H2 12, DD 10, CAGR 26
+
+======================================================================================================================
+RULE 8  WALK-FORWARD — parameters chosen on warm-up..2016-12-31 ONLY, 2017-2026 read ONCE
+======================================================================================================================
+    C_MEMO admissible set on IS (MaxDD >= -13.24%, CAGR >= 10.47%): BASE, MAXVOL 0.60, MAXVOL 0.80, MAXVOL 1.00
+
+  [U56]  live RULES v2 OOS Sharpe 1.2769 | SPY OOS Sharpe 0.8738
+    C_SHARPE  picks RANKCUT 0.75   (IS Sharpe 1.1754)  ->  OOS  10.43% / 1.1418 / -16.26%   vs its MATCHED TWIN (k_IS 0.7348)  10.02% / 1.1269 / -16.94%   dSharpe +0.0149   4b OOS fail (twin fail)
+    C_MEMO    picks BASE           (IS Sharpe 1.1103)  ->  OOS  13.67% / 1.1268 / -22.53%   vs its MATCHED TWIN (k_IS 1.0000)  13.67% / 1.1268 / -22.53%   dSharpe +0.0000   4b OOS fail (twin fail)
+    C_LIVE    picks BAND 0.03      (IS Sharpe 1.1045)  ->  OOS   9.46% / 1.2769 / -12.05%   vs its MATCHED TWIN (k_IS 0.7034)   9.59% / 1.1269 / -16.25%   dSharpe +0.1499   4b OOS fail (twin fail)
+    C_BASE    picks BASE           (IS Sharpe 1.1103)  ->  OOS  13.67% / 1.1268 / -22.53%   vs its MATCHED TWIN (k_IS 1.0000)  13.67% / 1.1268 / -22.53%   dSharpe +0.0000   4b OOS fail (twin fail)
+    C_MEMO admissible set on IS (MaxDD >= -13.24%, CAGR >= 10.47%): MAXVOL 0.45, MAXVOL 0.60, MAXVOL 0.80, MAXVOL 1.00
+
+  [B136]  live RULES v2 OOS Sharpe 1.1019 | SPY OOS Sharpe 0.8739
+    C_SHARPE  picks MAXVOL 0.45    (IS Sharpe 1.1666)  ->  OOS  10.64% / 1.1401 / -15.51%   vs its MATCHED TWIN (k_IS 0.9148)  12.53% / 1.0876 / -23.41%   dSharpe +0.0525   4b OOS fail (twin fail)
+    C_MEMO    picks MAXVOL 1.00    (IS Sharpe 1.1494)  ->  OOS  12.78% / 1.0751 / -23.68%   vs its MATCHED TWIN (k_IS 0.9949)  13.63% / 1.0873 / -25.25%   dSharpe -0.0121   4b OOS fail (twin fail)
+    C_LIVE    picks BAND 0.03      (IS Sharpe 1.0924)  ->  OOS   7.85% / 1.1019 / -12.24%   vs its MATCHED TWIN (k_IS 0.7152)   9.78% / 1.0883 / -18.67%   dSharpe +0.0136   4b OOS fail (twin fail)
+    C_BASE    picks BASE           (IS Sharpe 1.1462)  ->  OOS  13.70% / 1.0872 / -25.37%   vs its MATCHED TWIN (k_IS 1.0000)  13.70% / 1.0872 / -25.37%   dSharpe +0.0000   4b OOS fail (twin fail)
+    C_MEMO admissible set on IS (MaxDD >= -11.16%, CAGR >= 8.42%): EMPTY -> falls back to BASE
+
+  [SMALL]  live RULES v2 OOS Sharpe 0.6473 | SPY OOS Sharpe 0.8738
+    C_SHARPE  picks MAXVOL 0.45    (IS Sharpe 1.0185)  ->  OOS   1.96% / 0.2783 / -16.75%   vs its MATCHED TWIN (k_IS 0.7616)   7.08% / 0.5962 / -27.63%   dSharpe -0.3179   4b OOS fail (twin fail)
+    C_MEMO    picks BASE           (IS Sharpe 0.9823)  ->  OOS   9.02% / 0.5953 / -35.01%   vs its MATCHED TWIN (k_IS 1.0000)   9.02% / 0.5953 / -35.01%   dSharpe +0.0000   4b OOS fail (twin fail)
+    C_LIVE    picks BAND 0.03      (IS Sharpe 0.8754)  ->  OOS   3.63% / 0.5448 / -14.16%   vs its MATCHED TWIN (k_IS 0.6049)   5.73% / 0.5967 / -22.46%   dSharpe -0.0520   4b OOS fail (twin fail)
+    C_BASE    picks BASE           (IS Sharpe 0.9823)  ->  OOS   9.02% / 0.5953 / -35.01%   vs its MATCHED TWIN (k_IS 1.0000)   9.02% / 0.5953 / -35.01%   dSharpe +0.0000   4b OOS fail (twin fail)
+
+  POOLED C_SHARPE : mean OOS Sharpe 0.8534  | beats its matched twin in 2 of 3 (mean -0.0835)  | beats live in 1 of 3  | beats SPY in 2 of 3  | 4b OOS 0 of 3
+  POOLED C_MEMO   : mean OOS Sharpe 0.9324  | beats its matched twin in 0 of 3 (mean -0.0040)  | beats live in 0 of 3  | beats SPY in 2 of 3  | 4b OOS 0 of 3
+  POOLED C_LIVE   : mean OOS Sharpe 0.9745  | beats its matched twin in 2 of 3 (mean +0.0372)  | beats live in 0 of 3  | beats SPY in 2 of 3  | 4b OOS 0 of 3
+  POOLED C_BASE   : mean OOS Sharpe 0.9365  | beats its matched twin in 0 of 3 (mean +0.0000)  | beats live in 0 of 3  | beats SPY in 2 of 3  | 4b OOS 0 of 3
+  TUNING VALUE: C_SHARPE minus C_BASE pooled mean OOS Sharpe -0.0831 over 3 panels — i.e. choosing a filter on IS rows is worth this much out of sample relative to choosing NO filter.
+
+  [G6] IS-only test: re-derive C_SHARPE from a TRUNCATED IS input (rows >= 2017 deleted, not masked) and check the pick is identical
+    GATE PASS  G6 chooser reads no row on or after 2017-01-01 (tested on truncated input): identical pick on 3 of 3 panels (target identical)
+    PUBLISHED  G9 turnover per cell (filter and twin): turnover_yr / tw_turnover_yr in .grid.csv
+    PUBLISHED  G10 realised mean gross and mean names held per cell: mean_gross / tw_mean_gross / mean_names / tw_mean_names in .grid.csv
+
+  GATES 15/15 pass (0 fail)
+
+  DONE in 196s

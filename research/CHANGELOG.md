@@ -3241,3 +3241,66 @@
   rung. The weekly cadence survives, but only just — its margin over a quarterly twin on the
   frozen anchor's own cell is 12.4 basis points of trading cost. Quote cadence verdicts as a
   break-even rung, not as a delta at one rung.*
+
+## 2026-09-19 — idea 1617 (lane C): is EVERY eligibility filter a de-gross in disguise?
+
+  **THE QUESTION, AND WHY IT IS NOT THE USUAL ONE.** Eight 2026-09-19 runs found every
+  POSITION-SIZING device (trailing stops, breadth throttles, vol targeting, MA-distance gates,
+  SPY filters, the drawdown-budget ladder) beaten at matched exposure by a plain constant
+  de-gross. Idea 1586's G10 showed the inherited MAXVOL 0.60 gate has the same signature: it
+  lowers REALISED mean gross and buys drawdown for CAGR. This run asks whether the whole
+  ELIGIBILITY-FILTER family — a SELECTION claim, not an exposure claim — falls the same way.
+
+  **DESIGN.** Two dials and no more: FAMILY {MAXVOL, BAND, RANKCUT} x RUNG, 12 cells including
+  the common BASE anchor (hold every priced name at 0.75/N_priced, weekly, t+1, gate-out to
+  cash). Each non-BASE cell is paired with a constant de-gross of the SAME unfiltered book,
+  scaled by a k solved by 60-step bisection so the twin carries the same **REALISED** mean gross
+  — not the same target gross, which is the distinction the idea turns on (the live band runs at
+  a realised 0.533 against a target 0.750). 3 panels x 4 cost rungs, **144 of 144 rows published**.
+
+  **THE ANSWER IS SPLIT, AND THE SPLIT IS THE FINDING.** On the SHARPE axis the null holds:
+  dSharpe > 0 in **13 of 33** at 10 bps, mean **-0.0273**, decaying monotonically with cost
+  (17/33 at 0, **5/33 at 25, 2/33 at 50**), mean dCAGR **-1.12 pp/yr**. On the DRAWDOWN axis the
+  null is **REJECTED**: **30 of 33** filters are SHALLOWER than their matched twin, mean
+  **+3.67 pp**, holding at every cost rung (30/30/30/29) and out of sample (30 of 33, +4.09 pp).
+  This is the opposite sign from every position-sizing device the record has priced.
+
+  **BY FAMILY (10 bps).** BAND dMaxDD **+5.00 pp** (dSharpe > 0 in 6 of 12, mean -0.0006);
+  MAXVOL **+4.95 pp** (4 of 12, -0.0389); **RANKCUT +0.19 pp** (3 of 9, -0.0474) — and on SMALL
+  all three RANKCUT rungs are DEEPER than their twin, the only 3 negative dMaxDD cells in the
+  run, at 2.7-3.8x/yr turnover against the twin's 0.2-1.1x. **The momentum screen's own rank cut
+  IS a pure de-gross in disguise; the price-vs-MA and volatility gates are not.**
+
+  **CAPITAL.** 4a **0 of 36** at 10, 25 and 50 bps (4 of 36 at 0 bps only, cost-matched
+  comparand). 4b FULL 4 of 36, FULL+OOS **3 of 36**, twins **0 of 36** on every reading: all
+  three passers' twins miss the DD cap (-21.69% / -22.22% / -24.55% against -20.23%), so the
+  passes are bought ENTIRELY with drawdown the twin cannot buy. Leg failures over 36 cells:
+  **CAGR 26**, H2 12, DD 10, H1 9 — the CAGR floor binds the whole family, as it binds the live
+  book. Incidental **PARK** (memo written, NOT adopted): vol20 < 0.60, no band, no ranking —
+  U56 11.52% / 1.1279 / -16.88%, **OOS 12.04% / 1.1765 / -16.88%**, B136 12.24% / 1.1291 /
+  -18.70% (OOS 11.80% / 1.1058), clearing 4b FULL and OOS at 0/10/25/50 bps.
+
+  **RULE 8.** Four legal IS-only choosers x 3 panels, 2017-2026 read once. Pooled mean OOS
+  Sharpe **C_LIVE 0.9745 > C_BASE 0.9365 > C_MEMO 0.9324 > C_SHARPE 0.8534**; **0 of 12 picks
+  pass 4b OOS**; **0 of 12 reach the PARK cell**; C_SHARPE minus C_BASE = **-0.0831**. Choosing
+  an eligibility filter on in-sample rows is negative-value out of sample. Live RULES v2 OOS for
+  reference: U56 1.2769 / B136 1.1019 / SMALL 0.6473; SPY OOS 0.8738.
+
+  **GATES 15/15.** G1/G1b fast_run vs `engine.backtest` (returns AND turnover) **0.000e+00**;
+  G2 the derived 25 bps rung vs a fresh 25 bps engine run **0.000e+00**; G3 BAND 0.03 on U56
+  replays `baseline.compare`'s RULES v2 row to **2.220e-16**; **G4 the realised-gross match, max
+  |gap| 1.443e-15 over 66 twins x 2 windows**; G5 two dials; G6 no chooser reads a row on or
+  after 2017-01-01, TESTED on truncated IS input; G7 144 of 144 published; G8 max realised target
+  gross 0.7500; G9/G10 turnover, realised gross and names held published per cell, filter AND twin.
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 are current-constituent lists and SMALL a current sub-$2B
+  screen carried back to 2010, so every absolute level is an UPPER BOUND. The headline is a
+  filter-minus-twin contrast inside one panel, same names, same days, same realised exposure, so
+  it is first-order immune; the 4b pass counts and the PARK's CAGR leg are not.
+
+  **WHAT THE RECORD SHOULD SAY.** *Eligibility filters are not de-gross in costume — but only on
+  the drawdown axis, and only the price-and-volatility gates. Their Sharpe and CAGR are fully
+  explained by the exposure they remove, and the effect gets worse with cost. The momentum
+  screen's own rank cut is explained by exposure on BOTH axes and should be priced as a gross
+  dial from now on. And since the +3.67 pp drawdown gap sits at ~1.25 of idea 1511's paired
+  DD-contrast SE, the one surviving axis is not yet significant — idea 1624 is filed to settle it.*
