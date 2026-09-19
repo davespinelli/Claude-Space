@@ -1,3 +1,83 @@
+## 2026-09-19 — idea 1530 (lane cloud): is SCALE vs COMPOSITION the RIGHT TAXONOMY for every LADDER the record owns? **ANSWERED — NO, AND THE REFUTATION IS DOUBLE-SIDED. KILL FOR CAPITAL. ONE CONSTRUCTIVE RESIDUE AND ONE METHOD FINDING. NO RULES CHANGE PROPOSED.**
+
+  **WHY THIS IDEA.**  Idea 1509 found that a two-rung capital blend can differ from a single rung
+  only when the two rungs HOLD DIFFERENT THINGS, and verified it on exactly TWO ladders: gross
+  (SCALE) and min-hold (COMPOSITION).  Two ladders is not a taxonomy.  If holdings overlap really
+  were a sufficient statistic, no ladder in the record would ever need re-cutting twice.
+
+  **THE FRAME.**  8 ladders off the frozen 2026-09-04 incumbent, each moving ONE dial and nothing
+  else: L_G gross, L_T vol target, L_S trailing-equity stop (**pre-registered SCALE**); L_N, L_H
+  min-hold, L_C cadence, L_V MAXVOL, L_B MA band (**pre-registered COMPOSITION**).  34 rungs, 26
+  adjacent pairs, 3 blend weights -> **112 cells per panel, 336 in all on U56 / B136 / SMALL, every
+  one published**.  Two dials: blend weight lambda {0.25, 0.50, 0.75} and overlap statistic
+  {OV_HOLD composition-only, OV_CAP capital-inclusive}.  All **10 gates pass**; G1 replays the
+  committed anchor to **3.7e-05** and G2 shows it **bit-identical (0.000e+00)** on all 8 ladders.
+
+  **(1) 1509'S MECHANISM REPLAYS EXACTLY.**  G7: the lambda-blend of gross 0.50 and 1.00 equals the
+  single gross rung at the blended exposure to **|dSharpe| 0.000e+00**.  L_G max |D| **0.0002**,
+  L_T max |D| **0.0031**.  Two SCALE ladders, confirmed.
+
+  **(2) AND THEN THE COMPOSITION SIDE TURNS OUT TO BE EMPTY.**  D = Sharpe(blend) - the
+  lambda-weighted rung Sharpes never becomes material on any pre-registered COMPOSITION ladder:
+  max |D| **0.0074** (L_B), **0.0165** (L_N, L_V), **0.0249** (L_C), **0.0255** (L_H).  **93% of
+  the 69 non-stop pairs sit below 0.02.**  The pre-registered label agrees on **26 of 78 pairs
+  (33.3%)**, and all 26 are SCALE labels.
+
+  **(3) THE ONE LADDER THAT DOES OPEN A GAP WAS PRE-REGISTERED AS SCALE.**  L_S (trailing stop) has
+  OV_HOLD **1.0000** — whenever both rungs are invested they hold IDENTICAL portfolios — yet mean D
+  **+0.1247**, max **+0.5421** (B136 0.15 -> 0.10: Sharpe -0.3802 and 0.8374 blend to 0.7707).
+  **Overlap does not even ORDER the gaps**: the lowest-overlap pair in the run (SMALL L_C M -> Q,
+  OV_HOLD **0.2915**) opens a gap 33x SMALLER than an overlap-1.0000 stop pair.
+
+  **(4) ALL THREE PRE-REGISTERED SUFFICIENCY BARS FAIL, TWICE OVER.**  D ~ (1 - OV_HOLD): R^2
+  **0.0154**, ladder identity adds **+0.3104**, L_S residual **t +4.30**.  D ~ (1 - OV_CAP): R^2
+  **0.1117**, **+0.3326**, **t +4.65**.  S1 (R^2 >= 0.80), S2 (dR^2 < 0.05) and S3 (no ladder
+  |t| > 2) all FAIL on both statistics.
+
+  **(5) RULE 8 ON THE TAXONOMY: THE BINARY CUT IS WORSE THAN ASSUMING EVERY LADDER IS SCALE.**
+  theta chosen on warm-up..2016 gaps only.  OV_HOLD: IS 93.6% (baseline 91.0%) -> **OOS 87.2%
+  against an 89.7% majority-class baseline**; OV_CAP: IS 96.2% -> **OOS 82.1%**.  Used as a
+  classifier the taxonomy DESTROYS information.
+
+  **(6) THE CONSTRUCTIVE RESIDUE (POST-HOC, LABELLED AS SUCH): THE MISSING AXIS IS EXPOSURE STATE.**
+  OV_HOLD is blind by construction to days when exactly one rung is flat, and L_S is the only
+  ladder that has any (flat_one **0.3190** vs **0.0000-0.0015** everywhere else).  Adding flat_one:
+  **R^2 0.0154 -> 0.6094**, ladder identity **+0.3104 -> +0.0053**, worst ladder **t +4.30 -> -0.49**.
+  **Two numbers make ladder identity redundant; one does not.**  R^2 0.61 is still short of the
+  0.80 bar and the second regressor is fitted on ONE ladder's variation, so this is a hypothesis,
+  filed as idea 1538, not a finding.
+
+  **(7) METHOD FINDING — THE RECORD'S NAIVE BLEND CHARGE UNDER-COSTS A REAL BLEND.**  The gate
+  premise "netted <= naive" is **FALSE** (222 of 234 blends violate it) because the naive
+  lambda-weighted charge omits the cost of RESTORING the capital split.  The correct bound,
+  netted <= naive + split-restoration, passes **0 of 234**.  A daily constant-mix blend spends
+  **0.57 bp/yr** on restoration and costs **+0.21 bp/yr MORE** than the naive ruler says:
+  cross-sleeve netting saves LESS than restoration costs.  Small, and of the opposite sign to the
+  one a blend ruler is usually assumed to have.
+
+  **(8) BOTH KEEP PATHS.**  **4a 0 of 336 full and 0 of 336 OOS** — another consecutive 4a zero.
+  **4b 76 full / 73 OOS / 70 BOTH of 336**: U56 53 of 112 (all INHERITED from the anchor, which
+  passes both windows), B136 17 of 112 (all CREATED by de-gross devices, 10 on L_T alone, the B136
+  anchor itself failing at -20.74% against a -20.23% cap), SMALL 0 of 112.  **DD is the binding leg
+  everywhere.**  The one literal candidate, U56 L_T = 0.15 (a 15% vol target on the incumbent),
+  is full **15.01% / 1.1806 / -16.61%** and OOS **15.99% / 1.2048 / -16.61%** — it beats the anchor
+  on Sharpe and cuts 2.52 pp of drawdown, but by **+0.0192 of Sharpe at t +0.39** (UNRESOLVED) while
+  giving up **1.33 pp/yr of OOS CAGR**.  Rejected: another de-gross-shaped near-miss.
+
+  **(9) RULE 8 CAPITAL ARM.**  U56 picks L_V = 0.30 and **LOSES** (OOS 1.0163 vs anchor 1.1857,
+  t -1.91); B136 picks L_B = 0.10 and wins (1.1502 vs 1.0180, t +1.31); SMALL picks L_H = 252 and
+  wins (0.5935 vs 0.4398, t +0.95).  Mean 0.9200 vs 0.8812 for doing nothing — but the one panel it
+  loses on is the ONLY panel where the anchor is a 4b passer, and no panel resolves at |t| > 2.
+  **Doing nothing remains unbeaten where it matters.**
+
+  Script `research/backtests/2026-09-19_scale-vs-composition-ladder-taxonomy_cloud.py`;
+  `.grid.csv` (336 cells), `.pairs.csv` (78 pairs x 3 lambdas), `.fit.csv`, `.posthoc_fit.csv`,
+  `.class.csv`, `.rule8_taxonomy.csv`, `.walkforward.csv`, `.gates.csv`, `.log.txt`,
+  `.result.md`.  SURVIVORSHIP (rule 9): U56/B136 current-constituent lists, SMALL a current
+  sub-$2B screen carried back to 2010 (the protocol's max_1d_move >= 1.0 filter applied), so every
+  absolute level is an UPPER BOUND; the run reads CONTRASTS between books over the same names on
+  the same days, which the bias cannot manufacture.
+
 ## 2026-09-19 — idea 1515 (lane B): does WINSORISING the MOMENTUM LEGS against SINGLE-DAY JUMPS change which names the incumbent holds? **ANSWERED — YES ON THE HOLDINGS, NO ON THE MONEY. KILL FOR CAPITAL. ONE METHOD FINDING: A SECOND UNDECLARED CONVENTION SWAMPS THE ONLY BINDING 4b LEG. NO RULES CHANGE PROPOSED.**
 
   **WHY THIS IDEA.**  The standing 2026-09-04 KEEP-4b incumbent ranks on three RAW CUMULATIVE
