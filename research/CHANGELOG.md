@@ -1,3 +1,63 @@
+## 2026-09-19 — idea 1590 (lane cloud, idea 2 of 2): DOES THE STANDING 4b BOOK SURVIVE 25 AND 50 bps AND EXTRA DAYS OF EXECUTION DELAY? **ANSWERED: IT SURVIVES COST TO 120 bps AND DIES TO ONE DAY OF LATENCY AT EVERY COST RUNG, 0 bps INCLUDED. KILL FOR CAPITAL. NO RULES CHANGE ENACTED.**
+
+  **THE QUESTION.** Every 4b pass in this record is priced at exactly 10 bps with the decision
+  taken at close t-1 and applied at t. Real capital pays neither. 624 cells: 3 panels x 13 gross
+  rungs (0.40..1.00 step 0.05) x cost {0, 10, 25, 50} bps x execution delay {+0, +1, +2, +3}
+  trading days ON TOP of rule 2's t-1 -> t, with delay +0 being the protocol convention itself
+  (G7 verified bit-for-bit against an independently rebuilt lag-1 frame, 0.00e+00). The book is
+  frozen throughout: N = 20, H = 126, MAXVOL 0.60, 200d MA gate, weekly.
+
+  **(1) COST IS NOT WHAT KILLS IT.** U56, g = 0.75, delay +0, holds 4b FULL *and* OOS at ALL FOUR
+  cost rungs: 0 bps **16.14% / 1.1750 / -19.08%**, 10 bps **15.80% / 1.1537 / -19.13%** (OOS
+  17.32% / 1.1857), 25 bps **15.31% / 1.1217 / -19.20%** (OOS 16.81% / 1.1546), 50 bps **14.48% /
+  1.0682 / -19.35%** (OOS 15.95% / 1.1028). Bisected on its own turnover path (2.87x/yr) its 4b
+  verdict does not flip until **c* = 120.3 bps** (OOS median c* on U56 139.0). Pooled over the 11
+  books that pass 4b FULL at 0 bps and delay +0, **median c* = 43.8 bps** (q25 42.9, q75 103.8;
+  U56 103.8, B136 43.1, SMALL none) — the pre-registered 25 bps bar is cleared on the cost axis.
+
+  **(2) ONE DAY OF EXECUTION LATENCY DOES, AT EVERY RUNG.** U56, g = 0.75, 10 bps, vs delay +0:
+  **+1 day dSharpe -0.0487, dCAGR -0.54 pp, dMaxDD -2.44 pp (-19.13% -> -21.57%, straight through
+  the 4b DD cap of -20.23%), dOOS Sharpe -0.0835, 4b True -> False FULL AND OOS**; +2 days -0.0334
+  / -1.37 pp; +3 days -0.0418 / -2.79 pp. At delay +1 the g = 0.75 rung fails 4b even at 0 bps.
+  **The binding 4b leg is a LATENCY object, not a cost object, and no cost convention in the
+  record has ever tested it.**
+
+  **(3) AND THE LATENCY AXIS IS NOT MONOTONE — IT IS A COIN FLIP THE SIZE OF THE MARGIN.** B136's
+  frozen book goes the OTHER way: **+1 day turns a 4b FAIL into a 4b PASS** (dSharpe **+0.0907**,
+  dCAGR +1.81 pp, dMaxDD **+1.32 pp**, OOS 16.19%/1.0180 -> 17.98%/1.1024), then loses it at +2
+  (+0.0709, -0.88 pp) and +3 (-0.0013, **-3.61 pp**). SMALL moves +0.0480 / +0.0050 / +0.0131 and
+  passes nothing anywhere. Grid-wide 4b BOTH-window counts by delay: **11 / 11 / 9 / 6 at 0 bps,
+  10 / 10 / 4 / 3 at 10 bps** out of 39 books per cell. **One trading day of execution timing moves
+  MaxDD by 1.3-3.6 pp in EITHER direction — larger than the DD margin every 4b verdict in this
+  record is decided on, and every one is quoted at one arbitrary point on that axis.**
+
+  **(4) THE CAPITAL ARM: NO IS-ONLY CHOOSER REACHES A PASSING RUNG, ANYWHERE.** Gross chosen by
+  argmax IS Sharpe on warm-up..2016-12-31 only, separately at each (cost, delay) cell so the
+  chooser pays the same cost and latency the book does; 2017-2026 read once. **0 of 48 picks clear
+  4b on either window and 0 of 48 clear 4a.** The chooser lands on **g = 0.95-1.00 at every one of
+  the 48 cells** (IS Sharpe is flat-to-increasing in gross) and those rungs blow the DD cap. At the
+  realistic **(25 bps, +1 day)** cell: U56 pick g 0.95 OOS **20.07% / 1.0731 / -26.81%**; B136 pick
+  g 1.00 OOS **23.16% / 1.0719 / -25.52%**; SMALL pick g 1.00 OOS **9.16% / 0.4742 / -45.48%** —
+  all 4b False on both windows against SPY OOS 15.26% / 0.8738 / -33.72% and RULES v2 OOS
+  9.46% / 1.2769 (U56). Over the whole grid **4a fires 5 times FULL and 0 times OOS**. The 4b
+  passes that exist sit at gross 0.50-0.75 and every legal IS-only chooser walks past them.
+  **NOT PROPOSED FOR ENACTMENT.**
+
+  **(5) GATES 12/12, AND AN HONEST LIMIT.** G1 the frozen 2026-09-04 U56 anchor replayed at the
+  (10 bps, +0) cell to **3.72e-05**; G2 exactly two tuned parameters (cost rung, execution delay);
+  G3 cost ladder an exact identity on one turnover path (0.00e+00); G4 max realised gross
+  1.000000; G5 no chooser reads a row on or after 2017-01-01; G6 all 624 cells published;
+  G7 delay +0 == the protocol convention (0.00e+00); G8 all 38 interior c* bracketed (PASS at
+  c*-0.02 bp, FAIL at c*+0.02 bp). Deterministic, offline, 23.0s. **THE LIMIT, stated in the
+  memo:** delay is implemented by reading the signal at close t-1-d and trading at t, which ages
+  the signal and holds the rebalance calendar fixed; a real latency would also move the intraday
+  fill price, so the MaxDD move is a LOWER bound on what an execution study would find, not an
+  upper one. **SURVIVORSHIP (rule 9):** U56 55 names, B136 135, SMALL 665 investable after
+  dropping the 54 `max_1d_move >= 1.0` tickers in `data/small_meta.csv` — the cached small pool has
+  grown well past the 439 / 483 figures older memos quote, so the LABEL is stale, not the run.
+  All are current-constituent lists: every absolute level and every 4a/4b pass count is an UPPER
+  BOUND; the headline is a DEGRADATION over the SAME names on the SAME days.
+
 ## 2026-09-19 — idea 1570 (lane cloud, idea 1 of 2): HOW LONG A TAPE WOULD RESOLVE THE RECORD'S TYPICAL DEVICE MARGIN, AND DOES POOLING RESOLVE IT? **ANSWERED: ~147 MORE YEARS FOR THE MEDIAN CONTRAST, 24.6% OF ROWS REACHABLE BEFORE 2050, AND POOLING RESOLVES NOTHING — 0 OF 6 COMBINATIONS. KILL FOR CAPITAL. NO RULES CHANGE ENACTED.**
 
   **THE QUESTION.** Eight-plus runs on 2026-09-19 ended "the margin is inside its own SE" (1562:
