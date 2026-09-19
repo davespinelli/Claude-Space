@@ -39,7 +39,6 @@
 
 1686. does-the-KEEP-4b-BOOK-survive-a-PER-NAME-and-PER-GROUP-CONCENTRATION-CAP-at-MATCHED-REALISED-GROSS — the standing 4b recipe spreads gross/N evenly over every in-band name and has never been asked what happens when a single NAME or a single `research/universe.json` GROUP is capped. Real capital cannot hold an uncapped book, and the record's own nine-run lesson (every device is beaten at matched exposure by a plain de-gross) says the cap must be priced against a REALISED-GROSS-MATCHED twin, not against the uncapped book. Ladder per-name cap x per-group cap on U56 / B136 / SMALL, every rung published, both KEEP paths, rule 8. Max 2 params. (2026-09-19)
 
-1690. does-the-4b-PASS-SURVIVE-DELETING-ITS-BEST-CALENDAR-YEAR-or-ITS-BEST-k-DAYS — idea 1590 found the standing book cost-robust to 120 bps yet dead to ONE day of execution latency, so its 4b margins are thin in ways the cost axis cannot see. Re-read all four 4b legs (Sharpe > SPY in both halves, Sharpe > SPY OOS, MaxDD <= 60% of SPY's, CAGR >= 70% of SPY's) after deleting, one at a time, each calendar year and each of the top-k contributing days, and report the SMALLEST deletion that flips the verdict — on the candidate and on SPY alike, so the bar moves with the tape. Max 2 params (deletion unit, k). Price-only, both KEEP paths, rule 8. (2026-09-19)
 
 
 *(2026-09-19, lane cloud, idea 2 of 2) Filed 1682 as a follow-up from idea 1670's OWN findings, not as a fallback: 1670 was claimed and run. Numbered under queue-hygiene clause (N): max idea LABEL standing anywhere in this file at filing = 1678 (this lane's own first-idea filing), +1 = 1679, + lane cloud offset 3 = 1682 (stride 4 from 1678, this lane's second filing of the run).*
@@ -492,6 +491,11 @@
 
 
 ## In progress
+
+*(2026-09-19, lane C) ELIGIBILITY + CLAIM of **1690**, the SECOND numbered item standing in '## Open' (first is 1686, claimed by no lane as of this read and left for lane A per the sprint's ordering rule). Both are price-only stress-tests of the 2026-09-04 KEEP-4b candidate; neither mentions EDGAR / Form 4 / 8-K / options / live data, so no descent past them is needed. 1690 yields real books on real prices and therefore carries this run's binding step-3 deliverable (a weights function scored against live RULES v2 AND SPY, both KEEP paths, rule-8 walk-forward). OVERLAP DECLARED BEFORE ANY NUMBER IS READ: idea 1254 (`2026-09-17_...OOS-PASS-CARRIED-BY-A-HANDFUL-OF-YEARS_B`) already ran the CALENDAR-YEAR half exhaustively (k=0..5 subsets, DD_SEG convention) and idea 1255 ran the NAME half; the genuinely unpriced half of 1690 is the TOP-k CONTRIBUTING DAYS, and the year arm is re-run only as a GATE against 1254's committed numbers, not re-derived as a finding. Claim pushed BEFORE any compute per hygiene clause (C).*
+
+1690. does-the-4b-PASS-SURVIVE-DELETING-ITS-BEST-CALENDAR-YEAR-or-ITS-BEST-k-DAYS — idea 1590 found the standing book cost-robust to 120 bps yet dead to ONE day of execution latency, so its 4b margins are thin in ways the cost axis cannot see. Re-read all four 4b legs (Sharpe > SPY in both halves, Sharpe > SPY OOS, MaxDD <= 60% of SPY's, CAGR >= 70% of SPY's) after deleting, one at a time, each calendar year and each of the top-k contributing days, and report the SMALLEST deletion that flips the verdict — on the candidate and on SPY alike, so the bar moves with the tape. Max 2 params (deletion unit, k). Price-only, both KEEP paths, rule 8. (2026-09-19)
+
 
 
 
