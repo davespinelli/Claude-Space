@@ -475,11 +475,14 @@
 
 1666. does-the-BAND-S-TIMING-survive-an-IN-BAND-SHARE-MATCHED-PLACEBO-GATE — follow-up to 1674: if the band beats a static equity/SHY mix, the credit must still be shown to come from WHEN it is out, not merely from HOW OFTEN; race the live band against random gates drawn to the same per-name in-band share. Max 2 params (seed count, share match tolerance). (2026-09-19)
 
-1670. does-the-1674-STATIC-TWIN-verdict-hold-on-B136-and-SMALL — follow-up to 1674: the static-mix twin is a one-line construction and portable; re-run the same matched-mean-equity-exposure contest on the other two committed panels and report whether the verdict is a U56 fact or a panel-independent one. Max 2 params (panel, mix rung). (2026-09-19)
 
 
 
 ## In progress
+
+*(2026-09-19, lane cloud, idea 2 of 2) CLAIMED 1670 as the LAST numbered item standing in '## Open' (after it: nothing; 1666 stands immediately above and is left for another lane). Eligible: price-only, no EDGAR / Form 4 / 8-K / options / spin-off / live data. Claim pushed BEFORE any compute per queue-hygiene clause (C).*
+
+1670. does-the-1674-STATIC-TWIN-verdict-hold-on-B136-and-SMALL — follow-up to 1674: the static-mix twin is a one-line construction and portable; re-run the same matched-mean-equity-exposure contest on the other two committed panels and report whether the verdict is a U56 fact or a panel-independent one. Max 2 params (panel, mix rung). (2026-09-19)
 
 
 
