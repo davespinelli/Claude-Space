@@ -165,6 +165,78 @@
   **SURVIVORSHIP (rule 9):** U56/B136 current-constituent, SMALL a current sub-$2B screen back to
   2010 with `max_1d_move >= 1.0` dropped first — absolute levels are UPPER BOUNDS; ARM A is
   bias-free and ARM B is a same-names, same-days contrast.
+## 2026-09-19 — idea 1574 (lane C): IS EVERY COMMITTED MACRO AND TIMING GAIN IN THE RECORD A ONE-OR-TWO-DAY OBJECT? **ANSWERED — YES, AND THE GENERALISATION IS WORSE THAN THE QUESTION ASSUMED. KILL (H_MICRO). NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE QUESTION.** Idea 1562 found its two-state SPY-trend gross gate worth +0.0238 of pooled Sharpe
+  at 1 day of signal lag, +0.0275 at 2 and +0.0001 at 5 — a margin that evaporates over four trading
+  days, which is not how a state variable behaves. Every macro gate, breadth gate, trailing stop and
+  vol target the record owns is read at exactly one lag and none had ever been swept. Two tuned
+  parameters only — **(device FAMILY, signal LAG)** — over LAG {1, 2, 3, 5, 10, 21} x 8 families x 3
+  panels = **144 published cells**, every one scored against its OWN CAGR-matched constant-gross twin
+  on the same weight frame (|CAGR gap| gated < 20 bp), the comparand idea 1574 specifies.
+
+  **(1) THE PREMISE REPRODUCES EXACTLY, ON THE FRAME IT WAS MEASURED ON, AND THE HALF-LIFE IS 2.7
+  TRADING DAYS.** The main grid rides idea 1534's base book, not idea 1562's, so a separate replay arm
+  rebuilt the 2026-09-04 KEEP-4b incumbent frame (3-leg composite, min-hold H = 126, N = 20) and
+  reproduced the committed anchor to **0.0002 of Sharpe** (15.80% / 1.1535 / −19.13% against the
+  committed 15.80% / 1.1537 / −19.13%; G1b). On that frame the two-state gate's margin over its
+  CAGR-matched twin reads **+0.0254 / +0.0231 / +0.0088 / +0.0000 / +0.0006 / −0.0229** at
+  L = 1 / 2 / 3 / 5 / 10 / 21. Interpolated half-life **2.7 trading days**, and by lag 21 the gate is
+  worth *less than doing nothing*. The queue's own numbers are confirmed, not overturned.
+
+  **(2) BUT ACROSS THE CLASS THERE IS MOSTLY NO GAIN FOR A HALF-LIFE TO BE A PROPERTY OF.** On idea
+  1534's frame, **13 of 15 timing (family, panel) cells have a NEGATIVE lag-1 margin**. On **U56, the
+  panel the live book lives on, ALL FIVE timing families are negative at lag 1**: MACRO2 −0.0019,
+  BREADTH −0.0014, VOLTGT −0.0241, SPYFILT −0.0786, STOP −0.1768. The only two positive cells are
+  SMALL/MACRO2 **+0.0203** and SMALL/SPYFILT **+0.0511**, and both halve in **2.5 d** and **2.3 d**.
+  H_MICRO fires; H_STATE does not fire anywhere. The three eligibility-side families carried as a
+  control (BAND, MAXVOL, MADIST, made to read a stale tape) behave no better, so the short half-life
+  is not a property of gross-path devices specifically.
+
+  **(3) THE LEG THAT SHOULD CHANGE HOW THE RECORD QUOTES THESE NUMBERS: NO POSITIVE TIMING MARGIN
+  ANYWHERE IS RESOLVABLE, AND EVERY RESOLVED ONE IS A COST.** Paired circular-block bootstrap, 500 reps
+  x 65-day blocks, seed 20260919, identical block starts across both legs and across pairs. Only **2 of
+  14** timing lag-1 margins reach |t| > 2 and **both are negative** (U56 STOP t = −2.00, B136 STOP
+  t = −3.00). The two positive cells read t = **+0.80** and **+0.45**. The *decay* is equally
+  unresolvable — m(1)−m(5) **1 of 24**, m(1)−m(21) **0 of 24** — and the mean SE of a margin, **0.0555**,
+  is twelve times the pooled lag-1-to-lag-21 spread of −0.0046. So the half-life this run measures at
+  2.7 days is a real feature of the point estimates and simultaneously a quantity the tape cannot
+  resolve: **the honest reading is that these margins should not be quoted as findings at all.**
+
+  **(4) RULE 8 AND BOTH KEEP PATHS.** 4a fires **0 of 144** cells; 4b **44 of 144** (U56 31, B136 13,
+  SMALL 0). Both choosers read warm-up..2016-12-31 only; 2017-01-01..end read once. Picks and their
+  untouched OOS: U56 **BAND L=2** 13.73% / 1.1109 / −18.32% against the frozen BASE's 13.43% /
+  **1.1133** / −17.99%; B136 **STOP L=3** 7.63% / 0.6236 / −21.46% against 13.41% / **0.9498**; SMALL
+  **MAXVOL L=21** 1.73% / 0.1877 / −38.10% against 6.90% / **0.4669**. **The chooser beats doing
+  nothing in 0 of 6 cells**, mean OOS Sharpe **0.6407** against the anchor's **0.8433** — the same
+  shape idea 1578 reported. SPY full 15.12% / 0.8843 / −33.72%, OOS 15.26% / 0.8737; live RULES v2 on
+  U56 8.62% / 1.2010 / −12.05%. The best 4b passer (U56 MADIST L=5, 12.40% / 1.1337 / −15.80%, OOS
+  15.22% / 1.2952 / −15.80%) is an *eligibility control* cell picked post hoc out of 144 and chosen by
+  neither chooser — **not proposed for enactment**.
+
+  **(5) METHOD FINDING — A DEVICE CAN FALL OFF THE BOTTOM OF ITS OWN COMPARAND FAMILY.** 8 of 144 cells
+  (the SMALL trailing stop at every lag, plus SMALL/MAXVOL L=3 and SMALL/MADIST L=21) land BELOW the
+  CAGR of the most de-grossed book in the constant-gross family (g = 0.20..1.00), so **no CAGR-matched
+  twin exists**: the device destroyed more than *all* of the gross it was supposed to be timing. They
+  are published with `matched = False` and a NaN margin, and excluded from every pooled statistic and
+  from the bootstrap — never silently dropped. **G4 therefore FAILS by design (13/14 gates pass)**; the
+  failure is the finding, not a solver defect.
+
+  **DISCLOSURE (rule 7).** The pre-registration originally carried three verdict branches
+  (H_STATE / H_MICRO / H_UNMEASURABLE). A 3-lag smoke test on U56 alone showed they were not
+  exhaustive — every timing family's lag-1 margin came out negative, which none of the three covers —
+  so a fourth branch, H_NOMARGIN, was added *before* the full run. Nothing measured, no parameter, no
+  rung, no ladder and no ruler changed; only the verdict taxonomy was completed. In the event
+  H_NOMARGIN did not fire (2 of 15 cells are positive) and the verdict is H_MICRO.
+
+  **GATES.** 13/14. G1 replays idea 1534's BASE and its SPYFILT L=200 / STOP d=0.100 / VOLTGT v=0.12
+  cells at 0.00e+00 / 1.11e-16 / 0.00e+00 / 2.22e-16. G1b replays the committed 2026-09-04 anchor to
+  0.0002. G7 confirms lag 1 IS the record's convention (bit-identical books). G3 two tuned parameters.
+  G5 no chooser row on or after 2017-01-01. G6 every multiplier in [0, 1]. G8 all 144 cells published.
+  G4 fails as described in (5). **SURVIVORSHIP (rule 9):** U56 and B136 are current-constituent lists
+  and SMALL a current sub-$2B screen carried back to 2011, so every absolute level is an UPPER BOUND;
+  the headline is a contrast between two books over the same names on the same days differing only in
+  *when* a multiplier is read, which survivorship cannot manufacture.
 
 ## 2026-09-19 — idea 718 (lane B): IS "WORSE THAN RANDOM" THE GENERAL SHAPE OF A disp SELECTOR ON THIS LADDER? **ANSWERED — AND THE ANSWER SPLITS BY OUTCOME. ON THE SHARPE PERCENTILE IT IS THE TWO CELLS; ON THE KEEP PATHS IT IS THE RULE. THE PREMISE IS ALSO MISATTRIBUTED (`evol`, NOT disp) AND HALF OF IDEA 714's READING IS A BASE ARTEFACT. NO RULES CHANGE ENACTED.**
 
