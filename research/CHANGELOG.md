@@ -1,3 +1,64 @@
+## 2026-09-19 — idea 710 (lane cloud, run 7): IS THE 4b GROSS WINDOW ON BSTK100 THE SAME WINDOW IDEA 677 MEASURED? **ANSWERED — THE WINDOW IS AN (n, g) RAY, 702's 0.75 IS A GRID ARTEFACT, 677's NEGATIVE MEDIAN WIDTH IS A CORPUS PROPERTY NOT AN AXIS PROPERTY, AND ONE RULE-8-CLEAN KEEP-4b CANDIDATE FALLS OUT. NO RULES CHANGE ENACTED.**
+
+  **WHAT WAS WRONG WITH THE COMMITTED READING.** Idea 702 ran CAND-n on BSTK100 over a THREE-RUNG
+  gross ladder {0.50, 0.75, 1.00} and reported its 4b passes as a GROSS window — five of six at
+  exactly g = 0.75. A three-rung ladder cannot locate an edge: "the window is 0.75" was a statement
+  about the ladder. This run re-cut the axis at **0.05 resolution** (15 rungs, 0.30..1.00) x idea
+  702's own 11 n rungs on three panels: **495 cells, every one published.**
+
+  **(1) THE EDGES, AS NUMBERS.** BSTK100 / FULL, 677's interpolated leg convention (g_min = the
+  CAGR floor's crossing, g_max = the DD cap's, W = g_max - g_min): **g_min runs 0.4664 (n = 5) ->
+  0.7716 (n = 75) and is UNREACHABLE at n = 100; g_max runs 0.6818 -> 0.9998**, right-censored at
+  1.00 for n = 100. Both edges slide RIGHT, monotonically, with n, on **3 of 3 panels**, and
+  **0 of 99** (panel, window, n) rows has a non-contiguous 4b pass set, so the interpolation is
+  legitimate everywhere it was used. **The window is not a gross. It is an (n, g) ray.**
+
+  **(2) 702's "FIVE OF SIX AT EXACTLY 0.75" IS A GRID ARTEFACT.** At 0.05 the modal passing rung
+  on BSTK100 is **0.70** (6 of 11 n rungs), not 0.75 (4 of 11), and the pass mass spans
+  **0.55..0.95**. 0.70 was simply not on 702's ladder.
+
+  **(3) THE REPLAY IS EXACT WHERE IT CAN BE, AND ONE COMMITTED CLAIM BREAKS.** Re-read at 702's own
+  three rungs this tape gives **0/11 at 0.50, 4/11 at 0.75, 0/11 at 1.00 = 4/33** — precisely 702's
+  committed NATIVE-CALENDAR count (its 6/33 headline was on idea 694's 2010-start calendar; this is
+  the 2008 native tape). The headline cell replays to **max|d| = 1.3e-03**. But 702's CAGR-floor
+  claim — "every g = 0.50 cell tops out at 9.51%" — is **CALENDAR-SPECIFIC and fails here**: the
+  best g = 0.50 cell reaches **11.34%** and 1 of 11 clears the floor. It is recorded as **gate G2a
+  FAIL**, which is the finding, not a defect. 702's DD-cap claim replicates exactly (**9/9** g = 1.00
+  cells at n <= 60 fail the DD leg).
+
+  **(4) AGAINST IDEA 677 — A SCOPE CORRECTION, NOT A CONTRADICTION.** 677 committed a gate-book
+  median **W = -0.0523** with `W >= 0` in 76/180 = **0.422**, i.e. the typical book has an EMPTY 4b
+  window. On CAND-n this run reads **median W = +0.1709** (BSTK100 FULL), **+0.1564** pooled over
+  three panels, `W >= 0` in **28/33 = 0.848** (OOS +0.1400, 29/33). These are DIFFERENT BOOK
+  CORPORA, so 677's reading is a property of its 192 gate books, not of the gross axis, and should
+  be quoted with its corpus from now on. The window's LOCATION is panel-dependent (median W:
+  BSTK100 +0.1709, B136 +0.1210, U56 +0.2187); its SHAPE — the monotone right-slide in n — is not.
+
+  **(5) PATH 4a IS 0 OF 165 ON BSTK100 AND 0 OF 495 OVERALL**, confirming 702's 0/33. CAND-n never
+  beats the live RULES v2 book on both halves at any gross. This family is a 4b story or nothing.
+
+  **(6) RULE 8 — ONE KEEP-4b CANDIDATE, AND CHOOSING THE WINDOW BEATS CHOOSING THE CELL.** Dials fit
+  on warm-up..2016-12-31 only, 2017-2026 read ONCE, four choosers. **C_MIDWIN** — the MIDPOINT of the
+  IS leg-window at the IS-best n — lands on **BSTK100 CAND-75 @ g = 0.85**: IS 11.97% / 1.1311 /
+  -11.28% (4b PASS) -> FULL 11.67% / **1.1123** / -17.35% (4b PASS, halves 1.2834/0.9485) -> **OOS
+  11.42% / 1.0966 / -17.35% (4b PASS, halves 1.3050/0.8489)**, against SPY OOS 15.26% / 0.8739 /
+  -33.72% and RULES v2 OOS 8.73% / 1.1215 / -12.96%. Turnover 5.47x/yr, charged; realised gross
+  0.7229 (n = 75 on 100 names de-grosses the book by 0.13 on its own).
+
+  **THE HONEST LIMIT, STATED AS LOUDLY AS THE PASS.** It is **1 of 3 choosers**: C_SHARPE and C_4b
+  both take **(n = 75, g = 1.00)**, which **FAILS 4b OOS** on the DD leg. And **0 of 3 choosers on
+  any panel beat RULES v2's OOS Sharpe**. The candidate clears the capital bar while staying worse
+  than the live book on Sharpe — which is what path 4b was added on 2026-09-04 to allow, and exactly
+  why it must not be read as a 4a result. **NOT proposed for enactment**; PROTOCOL rule 6 gives the
+  Sunday review that call, and the exact RULES wording is line 10 of the memo.
+
+  **NO LEVERAGE (rule 2):** the ladder stops at g = 1.00 where 677 swept to 1.50; a g_max not reached
+  by 1.00 is reported RIGHT-CENSORED, never extrapolated. **Survivorship (rule 9):** BSTK100 / B136 /
+  U56 are current-constituent lists carried back to 2008 — every level is an UPPER BOUND; what
+  survives is the edges' LOCATION on the gross axis and the cross-panel comparison. **Gates 12/13**,
+  the one FAIL being G2a above. Script
+  `research/backtests/2026-09-19_is-the-4b-GROSS-WINDOW-on-BSTK100-the-same-window-idea-677-measured_cloud.py`.
+
 ## 2026-09-19 — idea 1547 (lane cloud, run 7): DOES THE SHY SLEEVE'S 4a PASS SURVIVE A RATE-REGIME SPLIT? **ANSWERED — THE CREDIT IS NOT A ZIRP ARTEFACT, IT IS 2.5x LARGER AFTER THE FIRST HIKE. KEEP-4a CONFIRMATION (era-robust), RESTATEMENT OF THE COMMITTED "+0.50 pp", NO NEW BOOK, NO RULES CHANGE ENACTED.**
 
   **THE DOUBT THIS CLOSES.** Ideas 1358 / 1498 / 1555 all credit the band's idle NAV at SHY's
