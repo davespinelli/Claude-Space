@@ -1,3 +1,50 @@
+## 2026-09-19 — ideas 1358 + 1366 (lane cloud): two attacks on the incumbent's SOLE binding 4b leg (the MaxDD cap). **ONE WORKS AND IS NOT ALPHA; ONE BUYS THE DRAWDOWN AND CANNOT AFFORD IT.**
+
+  **1358 — PAY THE RESIDUAL A COUPON, NOT ZERO. 4b KEEP-CANDIDATE for the SUBSTITUTION, rule-8
+  KILL for the DIAL.** Every de-grossed book in the record (1296, 1346, 794, 1297) parks its
+  uninvested gross in CASH at 0%/yr. Routing it to **SHY** instead moves U56 at the frozen gross
+  0.60 from **13.67% / 1.1717 / −16.38%** to **14.24% / 1.2182 / −16.00%**, OOS **15.15% / 1.1965**
+  to **15.91% / 1.2500** — strictly dominating the incumbent on Sharpe, CAGR and MaxDD at once and
+  passing every 4b leg full AND OOS. It is the ONLY resolvable effect on the axis: against
+  vol-matched CASH twins drawn from a 14-rung 0.35–1.00 control ladder, a paired 63-row block
+  bootstrap (400 reps, seed 20260919) puts SHY beyond 2 SE at **9 of 9** cells FULL and **9 of 9**
+  OOS; IEF **0 of 9 / 0 of 9**; TLT **0 of 9** and OOS-NEGATIVE at **9 of 9**. But it is a
+  MEASUREMENT CORRECTION, not an edge: SHY is what idle cash earns, the gain scales with
+  (1 − gross) (+0.069 / +0.047 / +0.023 of Sharpe at g 0.50 / 0.60 / 0.75) and vanishes at gross
+  1.00. **As a tuned dial the axis is a rule-8 KILL**: the IS chooser picks IEF / IEF / TLT and
+  loses **0.0082** of mean OOS Sharpe against doing nothing, never finding SHY — which is the
+  ex-post best OOS cell on **3 of 3** panels. Duration is a 2009–2016 mirage: TLT costs the U56
+  book **−14.9% in 2022** against cash's −1.6%, and its own standalone OOS Sharpe is **0.0005**.
+  4a KILL (H2 1.177 vs the live book's 1.1808). SMALL fails 4b at 0 of 12 with or without a
+  sleeve. Memo `research/backtests/2026-09-19_bond-sleeve-residual_MEMO.md` with exact RULES
+  wording; **not recommended for enactment on its own** (it changes no selection and no exposure,
+  so it can ride the next RULES change), but the record needs the note that every published
+  de-grossed book understates itself by (1 − gross) x the T-bill return.
+
+  **1366 — RELEASE THE H=126 HOLD ON LOSS OF ELIGIBILITY. KILL on U56, PARK for MA on B136.**
+  The incumbent makes a name immune from replacement for 126 trading days whatever it does, and
+  that exposure is now a number: **HOLD carries 14.48% / 15.57% / 30.61% of ALL held name-weeks on
+  names that FAIL the book's own eligibility test** on U56 / B136 / SMALL at H=126, rising to
+  19.61% / 20.40% / 36.47% at H=189 (gate G2 confirms ELIG carries 0). Removing it works exactly
+  as advertised on drawdown — **mean +5.59 pp SHALLOWER MaxDD** against turnover-matched HOLD
+  twins on an 11-rung H 21–252 control ladder, U56's room to the 4b DD cap going +3.85% → +7.02% —
+  **and that is the problem**: it pays in CAGR, and the CAGR floor is the leg that then binds
+  (U56 ELIG@H126 **10.17%** against the 10.59% floor). As a Sharpe effect it is **UNRESOLVED**:
+  |t| > 2 at **3 of 18** cells full and **1 of 18** OOS, and that one sits on SMALL, which fails 4b
+  at 0 of 9 regardless. Rule 8 picks HOLD@H189 / MA@H126 / ELIG@H189 for **+0.0537** mean OOS
+  Sharpe but **−0.0394 on U56**, where the ex-post best OOS cell IS the incumbent. 4a 0 of 27.
+  **The one robust secondary finding: an MA-ONLY release dominates a full-eligibility release
+  everywhere (4b full+OOS 6 of 9 vs 2 of 9) — the vol20 < 0.60 gate ejects names in high-vol
+  RALLIES and belongs to ENTRY, not to EXIT.** No memo (not a KEEP), no RULES change.
+
+  **BOTH RUNS:** offline, deterministic, ~10s each; 36 + 27 cells, 42 + 33 controls, 27 + 18
+  bootstrap rows, all published. Gates 7/7 each, including a cross-script replay of ideas
+  1296/1346's committed (gross 0.60, W) anchors to **4.4e-16 / 1.1e-16 / 8.3e-17** on U56 / B136 /
+  SMALL. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. Survivorship (rule 9):
+  U56 / B136 / SMALL are current-constituent lists; for 1366 that bias runs AGAINST the clause
+  (names delisted after breaking down are absent), so the value of exiting is understated, not
+  overstated.
+
 ## 2026-09-19 — idea 1196 (lane C): should a committed MC FIGURE state its PAIR FORM before its SEED? **YES — AND THE MIGRATION IS FREE.**
 
   **VERDICT: ANSWERED (schema) + KILL as a capital finding.** The record holds **470 committed pair
