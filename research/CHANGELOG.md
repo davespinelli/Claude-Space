@@ -1,3 +1,71 @@
+## 2026-09-19 — idea 1433 (lane B): does INTRA-BOOK INVERSE-VOL SIZING buy the BINDING 4b DD LEG at IDENTICAL NAMES and IDENTICAL GROSS? **ANSWERED YES ON THE LEG AND NO ON THE MONEY. KILL (capital), NO NEW BOOK, NO RULES CHANGE — with the month's first non-exposure DD finding logged as a caveat.**
+
+  The standing 2026-09-04 KEEP-4b incumbent (U56, N = 20, H = 126, gross 0.75, weekly Fri-decide /
+  Mon-trade, 10 bps, t+1) passes 4b on ONE leg by +1.1028 pp of MaxDD. Every attack on that leg
+  this month — a trailing equity stop (1405), a breadth throttle (1413), a convention ensemble
+  (1423) — died the SAME death: each shallowed drawdown by HOLDING LESS STOCK or HOLDING MORE
+  NAMES, and each failed against its own exposure-matched twin. This run closes that channel BY
+  CONSTRUCTION and asks whether anything is left.
+
+  **THE GRID.** P {0, 0.5, 1.0, 1.5, 2.0} x L {20, 63, 126, 252}: size the SAME held names by
+  `(1/vol_L)^p` at the SAME gross. P = 0 IS the frozen incumbent, present at every L. 20 cells
+  per panel, 60 in all, every one published. Selection is built ONCE per panel before any dial,
+  so all 60 cells hold the IDENTICAL names on the IDENTICAL rows (G8), and every cell's realised
+  mean gross matches the anchor's to **1.11e-16** (G7). The vol floor is not a third dial: it is
+  inherited from the live `baseline.score` clip at 0.08 annualised.
+
+  **(1) THE BINDING LEG MOVES, AND IT IS NOT AN EXPOSURE DIAL.** U56's 4b DD margin widens from
+  the anchor's **+1.1028 pp to +2.2897 .. +5.6306 pp at 16 of 16 biting cells** — MaxDD -19.13%
+  -> **-14.60%** at p = 2.0 / L = 20, +4.53 pp of headroom — at identical gross, identical names
+  and identical name count. B136's margin crosses from **-0.5106 pp (FAIL) to +1.3995 .. +2.4541
+  pp (PASS) at 16 of 16**. This is the first result this month to move that leg without touching
+  exposure.
+
+  **(2) IT IS AN EXCHANGE, NOT A FREE LUNCH.** Every U56 biting cell is WORSE than the anchor on
+  full-sample Sharpe (**-0.1944 .. -0.0225**) and on CAGR (**-6.41 .. -1.80 pp**; 15.80% ->
+  9.39-14.00%). Turnover runs 2.91-9.07 against 2.87 (drag 29.1-90.7 vs 28.7 bp/yr) and effective
+  N falls 18.69 -> 10.30-17.78. At **p = 2.0 the 4b CAGR FLOOR BREAKS** (margin -0.46 .. -1.19 pp),
+  so the four cells with the WIDEST DD margins in the whole run LOSE 4b full-sample. 4b full 12 /
+  12 / 0 of 16 and 4b OOS 16 / 14 / 0 on U56 / B136 / SMALL. **4a 0 of 60.**
+
+  **(3) THE ORDERING IS REAL IN SIGN, UNRESOLVED IN SIZE WHERE THE MONEY IS.** Every cell is
+  scored against its OWN **WEIGHT-PERMUTATION TWIN**: the cell's own weight multiset re-assigned
+  to the same held names in seeded random order (K = 12), matching gross, names, name count AND
+  the entire weight distribution — identical effective-N path to 2.8e-14 (G9) — so the ONLY
+  difference is WHICH name gets WHICH weight. The real ordering wins at **48 of 48 cells
+  full-sample and 48 of 48 OOS**, a systematic sign. But paired 63-day circular-block bootstrap
+  (400 reps, seed 20260919, identical block starts) puts **|t| > 2 at 0 of 16 on U56** (t +0.57 ..
+  +1.97), **0 of 16 on B136** (+0.47 .. +1.18) and **12 of 16 on SMALL** (+1.48 .. +2.85). Vol
+  information resolves only where cross-sectional vol dispersion is large — and that panel fails
+  4b at every cell (DD margin -9.94 .. -15.47 pp, OOS MaxDD -30.17% .. -35.70%).
+
+  **(4) THE PRE-REGISTERED BAR, AND RULE 8.** The bar was stated in the script header before any
+  number was read: capital only if U56 (i) DD margin > the anchor's +1.1028 pp AND (ii) |t| vs its
+  own permutation twin > 2. **(i) 16 of 16. (ii) 0 of 16. BOTH: 0 of 16.** Rule 8 — (p, L) by
+  argmax IS Sharpe on warm-up..2016-12-31, 2017-2026 read ONCE — **picks p = 0.0, the frozen
+  incumbent itself, on BOTH U56 and B136**, so the OOS book is bit-identical to the anchor
+  (17.32% / 1.1857 / -19.13%, dSharpe +0.0000) against SPY OOS 15.26% / 0.8738 / -33.72%. SMALL
+  picks p = 2.0 / L = 20 for +0.1182 of OOS Sharpe (t +1.40, unresolved) on a book that fails all
+  four OOS 4b legs at MaxDD -32.61%. **A Sharpe chooser declines this trade, so no deployable rule
+  reaches it.**
+
+  **WHAT THE RECORD SHOULD CARRY FORWARD.** The 4b DD cap is NOT un-buyable at fixed exposure —
+  1405/1413/1423 established only that it is un-buyable with exposure. It is buyable with CAGR, at
+  roughly **0.4-0.8 pp of CAGR per pp of DD headroom** on U56, and the exchange is Sharpe-negative
+  in sample at every rung tested. That is a caveat for any future run tempted to read the
+  incumbent's +1.1028 pp as a structural floor.
+
+  **GATES** all PASS: G0 >= 10y (16.68); G1 cross-script replay of the committed U56 anchor
+  (|dSharpe| 3.7e-05); G2 P=0 bit-identical across all four L (0.0); G3 P=0 permutation twin
+  bit-identical to the P=0 cell (0.0); G4 60 of 60 cells published; G5 exactly two tuned
+  parameters; G6 no chooser row on or after 2017-01-01; G7 mean gross equals the anchor's to
+  1.11e-16 and G7b no leverage (max weight sum 0.750000); G8 selection untouched; G9 twin
+  effective-N match 2.8e-14; G10 bit-identical recompute (0.0). Survivorship stated (rule 9):
+  U56 / B136 are current-constituent lists and SMALL a current sub-$2B screen, so every absolute
+  level is an upper bound; what this run reads is a CONTRAST between two sizings of the SAME names
+  on the SAME days. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py NOT modified.
+  Script: `research/backtests/2026-09-19_intra-book-inverse-vol-sizing_B.py`.
+
 ## 2026-09-19 — idea 1182 (lane C): how many committed LADDER claims name a RUNG the record has measured FEWER THAN TEN TIMES? **ANSWERED: 204 of 4,614 (0.0442) — AND THE RESTRICTION BUYS NOTHING. KILL (capital), no new book.**
 
   Idea 1174 built the measurement histogram for the hold axis H and found the record's "finer"
