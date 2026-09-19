@@ -1,3 +1,95 @@
+## 2026-09-18 — idea 1354 (lane cloud): is WEEKLY still the CADENCE ARGMAX at EVERY N? **ONLY AT 15 — and the run turned up a KEEP-4b CANDIDATE.**
+
+  **VERDICT: ANSWERED — the cadence argmax MOVES WITH N on 3 of 3 panels and W holds it in only
+  4 of 12 (panel, N) cells, so idea 1335's "weekly wins" is an N=15 FACT, NOT a cadence fact.
+  PLUS a KEEP-4b candidate: U56 (N=30, QUARTERLY) at gross 0.60 passes 4b on every full-sample
+  AND every OOS leg, replicates on B136, and is the rule-8 IS argmax on U56 — but the IS margin
+  that selects it is +0.00031, so it is MEMO'd and PARKED, not swapped.** SELECTION: every
+  numbered item still standing at the bottom of '## Open' (903 / 896 / 895 / 894 / 877 / 876,
+  and above them 353, 429 and the 687..532 block) is a census of committed TEXT or NUMBERS with
+  no book to price, or needs live / local data this sandbox has no network for, so none can carry
+  the mandatory rule-8 walk-forward or either KEEP path; each of the bottom eight is annotated
+  SKIP in place. This run therefore filed 3 new price-only ideas stress-testing the KEEP-4b
+  candidate — **1346** (gross x cadence, to buy back B136's monthly DD leg), **1350** (is the
+  standing pass TAPE-VINTAGE robust), **1354** (N x cadence) — and claimed the LAST of them.
+  No RULES change, no PROTOCOL edit (rule 6); RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py untouched. Offline, deterministic, 17s. (The run crossed into 2026-09-19 UTC while
+  writing up; every file is stamped 2026-09-18, the date of the claim and of the tape's last row.)
+
+  **THE INSTRUMENT.** Two dials (rule 4): **N {10, 15, 20, 30} x CADENCE {D, W, 2W, M, Q}** = 20
+  cells per panel, **all 60 published** in `.grid.csv`, at the frozen incumbent (3-leg composite,
+  above-200d AND vol20 < 0.60, equal weight, H=126 min hold, gross 0.60, t+1) with COST frozen at
+  PROTOCOL's 10 bps — 1335 had already shown the cadence ranking is invariant to the cost rung on
+  all three panels, so re-sweeping it would add a third dial and no information. Gate **G1: the
+  (N=15, W) cell replays 1335's committed U56 W/10bps row to < 5e-6 on all eight statistics
+  including turnover; 9 of 9 asserted gates pass**, plus 3 published tape stamps.
+
+  **1. THE ANSWER.** Full-sample Sharpe argmax over the 5 cadences, at N = 10 / 15 / 20 / 30:
+  **U56 M, W, W, Q** (1.1210 / 1.1717 / 1.1532 / 1.2097); **B136 M, M, M, W**; **SMALL M, W, 2W,
+  2W**. Moves on **3 of 3 panels**; W holds it in **4 of 12** (panel, N) cells and, out of sample,
+  ranks 1 of 5 in only **2 of 12**. Against 1335's finding that the SAME argmax is perfectly
+  stable across the whole 0-50 bps cost ladder on all three panels, the reading is sharp: **the
+  cadence coordinate is robust to what the tape charges and fragile to how wide the book is.**
+  U56 N=20 is the one near-tie (W 1.153200 vs Q 1.151634, +0.00157, and it REVERSES out of
+  sample: Q 1.188840 vs W 1.185065) — below resolution, so read as indistinguishable.
+
+  **2. WHICH DIAL BINDS.** Mean within-panel Sharpe spread, CADENCE vs N: **U56 0.1490 / 0.0974
+  (1.53x), B136 0.1062 / 0.0661 (1.61x), SMALL 0.2112 / 0.1465 (1.44x)**; OOS 1.43x / 1.45x /
+  2.11x. Cadence commands 1.4-1.6x the spread N does on every panel and in both windows — and yet
+  WHICH cadence wins is decided by N. **The two dials interact; neither is a nuisance parameter
+  for the other**, which is exactly how the record keeps producing coordinates nobody chose.
+
+  **3. THE KEEP-4b CANDIDATE — U56 (N=30, QUARTERLY), gross 0.60, 10 bps.** Three cells beat the
+  frozen (15, W) incumbent on full-sample Sharpe AND pass 4b full+OOS: U56 (30, Q) +0.0380,
+  B136 (30, W) +0.0264, B136 (20, W) +0.0011. Only the first also wins out of sample, and it is
+  the rule-8 IS argmax on U56. **U56 (30, Q): 12.23% / 1.2097 / -18.21%, halves 1.2543 / 1.1945;
+  OOS 13.93% / 1.2610 / -18.21%.** All four 4b legs pass full sample with **2.02 pp of drawdown
+  room** (-18.21% vs the -20.23% cap) and **1.64 pp of CAGR room** (12.23% vs the 10.59% floor)
+  against SPY's 15.12% / 0.8844 / -33.72%, and all four hold out of sample. **+0.0645 of OOS
+  Sharpe over the frozen incumbent for -1.22 pp of OOS CAGR.** It **replicates on B136** (11.50% /
+  1.0332 / -18.81%, OOS 12.49% / 1.0461 / -18.81%, 4b all four legs full and OOS) and carries the
+  **lowest turnover in the entire grid, 1.05/yr** against the incumbent's 2.46 — by 1335's cost
+  ladder, the cell least exposed to the cost rung. It is **not an isolated cell**: the U56 Q
+  ladder rises monotonically in N in both windows (Sharpe 0.9528 -> 1.0292 -> 1.1516 -> 1.2097;
+  OOS 0.9611 -> 1.0110 -> 1.1888 -> 1.2610). **H_HINDSIGHT does NOT fire on U56** — the IS pick IS
+  the ex-post best OOS cell, which is rare in this record.
+
+  **WHY IT IS PARKED AND NOT SWAPPED, stated plainly.** (i) **The selection is not decidable**:
+  its IS Sharpe is 1.148502 against the incumbent's 1.148194, a margin of **+0.00031**, roughly
+  1/23rd of the ~7e-3 half-sample resolution floor idea 1335 measured TODAY from a single daily
+  tape rewrite — rule 8's argmax here is a coin flip, and the N-gradient along Q is the only real
+  evidence. (ii) It **fails outright on SMALL** (0 of 4 legs, -30.41% MaxDD), so this is a
+  large-cap fact. (iii) It is **1 cell of 60** with no multiplicity correction. (iv) It **buys
+  Sharpe with 1.44 pp of full-sample CAGR** (12.23% vs 13.67%). (v) **Quarterly means 75
+  rebalance decisions in 18.7 years and the PHASE inside the quarter is unpriced** — a larger dial
+  at Q than at W, which is what idea 1253 is currently asking of the weekly book. The memo's
+  recommendation is therefore: price the quarterly phase dial and re-confirm on a second tape
+  vintage BEFORE any Sunday swap; if both hold, this is the strongest 4b candidate the record has,
+  because it buys Sharpe with LESS trading rather than more risk.
+
+  **4. RULE 8 (the (N, CADENCE) PAIR chosen on warm-up..2016-12-31 by argmax IS Sharpe; 2017-2026
+  read ONCE).** U56 picks **(30, Q)** -> OOS 13.93% / 1.2610 / -18.21% (4b OOS PASS, +0.0645 vs
+  the frozen incumbent); B136 picks (10, W) -> 13.48% / 0.9186 / -16.41% (4b OOS PASS but
+  **-0.1201** vs the incumbent); SMALL picks (30, M) -> 3.89% / 0.3317 / -29.55% (4b FAIL on
+  Sharpe, DD and CAGR, -0.1411). The IS chooser lands on the frozen incumbent on **0 of 3**
+  panels; choosing the pair is worth a mean **-0.0656 of OOS Sharpe** and -1.42 pp of OOS CAGR and
+  beats the incumbent on **1 of 3**. 4b on every OOS leg after rule 8: **2 of 3**.
+
+  **5. KEEP-PATH CENSUS.** **4a 0 of 60.** **4b 22 of 60 full-sample and 22 of 60 full AND OOS**
+  (U56 16/20, B136 6/20, SMALL 0/20). By cadence: D 2/12, W 8/12, 2W 2/12, M 4/12, Q 6/12 — **W
+  still passes 4b most often even where it is not the argmax**, because the cells that out-Sharpe
+  it mostly do so by taking drawdown.
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 / SMALL are CURRENT-constituent lists; SMALL is a sub-$2B
+  screen carried back to 2010 with the mandated 52 `max_1d_move >= 1.0` tickers dropped (663 of
+  715 kept) and fails 4b on all 20 of its cells. A current-constituent large-cap list flatters a
+  WIDE momentum book, so the (30, Q) candidate's CAGR is the number the bias inflates most; its
+  drawdown margin, which the memo leans on, is the less affected leg.
+
+  **TAPE STAMP (published, not asserted).** U56 4708 rows and B136 4708 rows,
+  2008-01-02..2026-09-18; SMALL 4203 rows, 2010-01-04..2026-09-18. Every number above is on this
+  vintage of `data/prices*.csv` and on no other.
+
 ## 2026-09-18 — idea 1335 (lane cloud): is WEEKLY the CADENCE ARGMAX for the INCUMBENT, or just PROTOCOL's DEFAULT? **IT IS THE ARGMAX. KILL as a dial.**
 
   **VERDICT: ANSWERED, and the queue's own rationale FALSIFIED — the cadence argmax does NOT
