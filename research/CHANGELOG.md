@@ -66,6 +66,70 @@
   sd 1.1e-16 while RULES v2 varies per panel). **KILL for capital. RULES.md, PROTOCOL.md, scan.py,
   bot.py and baseline.py untouched.** Script
   `research/backtests/2026-09-19_is-WORSE-THAN-RANDOM-the-general-shape-of-a-disp-selector_B.py`.
+## 2026-09-19 — idea 1566 (lane C): IS MIN-HOLD RETENTION SILENTLY DISARMING EVERY ELIGIBILITY DEVICE? **ANSWERED — YES IN SUBSTANCE, NO ON THE IDEA'S OWN CONJUNCTION: T1 AND T4 PASS, T2 FAILS ON 3 OF 12 LADDERS. ONE LIVE CLAUSE MEASURES AT EXACTLY ZERO ON ONE PANEL. NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DEFECT PRICED.** Idea 1538 could not empty the book at ANY MAXVOL rung down to m = 0.06 and
+  blamed the min-hold clause: H = 126 RETAINS a held name regardless of its eligibility. This run
+  measured that claim directly for the first time, on 5 configs x 5 H rungs {0, 21, 63, 126, 252}
+  x 3 panels = **75 books, every one published**, and 4 devices x 5 H x 3 panels = **60 contrasts**,
+  each an ON book against an OFF twin differing in ONE eligibility clause with the SCORE KEY held
+  bit-identical, so the contrast is eligibility and never ranking. Two dials only (device, H).
+
+  **(1) THE CENSUS — T1 PASSES.** `OVRC_W` = mean share of BOOK WEIGHT in names THAT DEVICE'S OWN
+  CLAUSE calls ineligible and H keeps anyway. At the live H = 126, U56 / B136 / SMALL:
+  **MAXVOL 0.60 0.0428 / 0.0439 / 0.1750; MAXVOL 0.35 0.1474 / 0.1958 / 0.3600; the 200d MA gate
+  0.1227 / 0.1191 / 0.1803; the +/-3% band 0.1122 / 0.1074 / 0.1747.** On a DAY basis the incumbent
+  U56 book carries at least one overridden name on **47.4%** of days (MAXVOL 0.60), **69.7%** (MA
+  gate) and **72.5%** (band); SMALL at MAXVOL 0.35 reads **95.8%**. G8 confirms the instrument:
+  both override readings are EXACTLY 0.00e+00 at H = 0, where there is no retention to override.
+
+  **(2) T2 FAILS AND THE FAILURE IS INFORMATIVE.** OVRC_W is non-decreasing in H on only **9 of 12**
+  device x panel ladders. All three violations are the TOP rung (B136/MAXVOL060 -0.0035,
+  SMALL/MAXVOL060 -0.0211, SMALL/MAXVOL035 -0.0109 from H 126 to 252): a year-long hold changes the
+  book's COMPOSITION enough that fewer of its names are high-vol to begin with. **"More retention
+  means more disarmament" is false at the long end**, and the record should stop assuming it.
+
+  **(3) THE STRONGEST FORM IS TRUE AND EXACT, ON ONE PANEL.** On SMALL at H >= 63 the per-name 200d
+  MA gate and the +/-3% band produce **BIT-IDENTICAL books to switching them off entirely**
+  (ident_share **1.000**, dSharpe **0.0000**, dMaxDD **0.00%**) while their own clause is overridden
+  on **7.6-27.6%** of book weight. The mechanism is plain: the score key carries the `0.5+0.5*above`
+  MA tilt, so above-MA names already win every entry contest on a 665-name panel, and retention then
+  holds them through the crossings the gate was meant to catch. **An eligibility clause that never
+  binds at entry and is overridden afterwards is a live rule doing nothing** — here, exactly nothing.
+
+  **(4) THE PRICE — T4 PASSES, T3 FAILS BY ONE PANEL.** |dSharpe| against the device's own OFF twin,
+  H = 0 vs H = 126: **MAXVOL060 shrinks on 3/3 panels (0.0496->0.0176, 0.0556->0.0175,
+  0.2134->0.1075), MAXVOL035 3/3 (0.0790->0.0381, 0.1084->0.0523, 0.3806->0.1487), MA200 2/3,
+  BAND03 2/3** — retention roughly halves every device's measured effect (T4 PASS). T3 asked whether
+  the LIVE MAXVOL 0.60 inheritance is INERT at H = 126 (|dSharpe| inside one paired-bootstrap SE on
+  all three panels): U56 **+0.0176 (SE 0.0472, t 0.37) INSIDE**, B136 **-0.0175 (SE 0.0581, t 0.30)
+  INSIDE**, SMALL **-0.1075 (SE 0.1071, t 1.00) OUTSIDE** and costing **-3.34 pp of CAGR**. So on the
+  two large-cap panels the live ceiling moves Sharpe by less than a third of its own SE; on SMALL it
+  is a drag, not a protection. **T3 FAIL** — and the honest reading is "near-inert where it is free,
+  expensive where it is not", not "inert".
+
+  **(5) CAPITAL — 4a 0/75, 4b 12/75 BOTH, AND NOTHING ENACTABLE.** Path 4a fires on **0 of 75** cells
+  full and OOS. Path 4b: **12/75 full = OOS = BOTH, all twelve on U56, 0/25 on B136 and 0/25 on
+  SMALL**; the binding leg is DD on U56 (12/25) while H1/H2/CAGR pass 25/25. Of the twelve, one IS
+  the frozen incumbent, three are argmax-IS REACHABLE and **all three are strictly worse than it**
+  (C_VOL035|H126 1.0980/1.0638, D_NOMA|H126 1.1306/1.1316, E_BAND03|H126 1.1288/1.1337 full/OOS
+  Sharpe vs 1.1537/1.1857). The one cell beating the incumbent on both Sharpes — **U56 D_NOMA|H252,
+  full 14.71%/1.1843/-18.87%, OOS 16.14%/1.2825/-18.87%** — has IS Sharpe 1.0641 against 1.1324 for
+  H126 in its own ladder, so **no legal IS-only chooser reaches it. Recorded as HINDSIGHT; no memo.**
+
+  **(6) RULE 8.** Chooser = argmax IS Sharpe on warm-up..2016-12-31 only, 2017-2026 read ONCE. U56 ->
+  B_NOVOL|H21 OOS 16.76%/1.1450/-22.63%; B136 -> B_NOVOL|H63 16.38%/0.9491/-27.38%; SMALL ->
+  A_INCUMBENT|H252 9.37%/0.5935/-35.37%. **Mean OOS Sharpe 0.8959 vs 0.8812 for doing nothing (T5
+  PASS) — but the whole +0.0147 is SMALL's +0.1537; on BOTH large-cap panels the chooser LOSES to
+  doing nothing.** Benchmarks: SPY 15.12%/0.8844/-33.72% full and 15.26%/0.8738/-33.72% OOS; RULES v2
+  on U56 8.62%/1.2011/-12.05% full and 9.46%/1.2769/-12.05% OOS.
+
+  **WHAT THE RECORD SHOULD CARRY FORWARD.** Every eligibility result in the record was measured at
+  one H without naming H as the thing doing the work: at H = 126 between 4% and 36% of book weight
+  sits in names the device itself rejects, and the device's Sharpe contrast is about half what the
+  same device shows at H = 0. **9/9 construction gates PASS** (G1 replays the committed 2026-09-04
+  U56 anchor to 3.7e-05; G5 no leverage; G6 determinism 0.0; G7 non-anticipation 0.0; G8 census 0.0).
+  RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched; **no RULES change enacted.**
 
 ## 2026-09-19 — idea 1538 (lane C): IS EXPOSURE-STATE DISAGREEMENT THE THIRD LADDER AXIS, AND IS TWO NUMBERS ENOUGH? **ANSWERED — NO. `flat_one` IS A REAL, LADDER-INDEPENDENT AXIS, BUT IT IS NOT ONE NUMBER: THE RULE FAILS TO TRANSFER TO A HELD-OUT FLAT LADDER BY A FACTOR OF THIRTY. ONE INCIDENTAL KEEP-4b CANDIDATE FALLS OUT. NO RULES CHANGE ENACTED.**
 
