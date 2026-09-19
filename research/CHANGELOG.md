@@ -2584,3 +2584,85 @@
 
   **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. No memo:
   this run produces no KEEP candidate.
+
+## 2026-09-19 — idea 766 (lane B): is the DAILY-CADENCE WIN of the MOMENTUM SLICE an EDGE the IS SELECTOR is MISSING? **ANSWERED — NO. IT IS REAL INFORMATION PRICED AT 2.62 bps ON A 10 bps TAPE. KILL for capital, no new book, no RULES change.**
+
+  **THE CLAIM UNDER TEST.** Idea 563 (cloud, 2026-09-11) committed two sentences side by side:
+  MOM-D (the daily-depth-matched 12-1 momentum slice) beats the MA slice on Sharpe in **66.7%**
+  of pairs at cadence D and **13.0%** at Q, *and* the IS-Sharpe selector picks cadence D in **0
+  of 54** MA-THRESH cells and 4 of 54 MOM-D cells. Read together those say the record's own
+  selector systematically refuses the one cell where the momentum slice wins. Either it is an
+  edge left on the table, or it is churn the selector is right to avoid. Nobody had priced it.
+
+  **BOTH CLAUSES OF THE PREMISE REPRODUCE.** On this run's independent grid (5 theta x 3 gross,
+  3 panels) MOM-D beats MA-THRESH on Sharpe in **0.6667** of pairs at D (mean **+0.1063**),
+  0.6778 at W, 0.4000 at M and **0.2000** at Q (mean −0.0275) — 563's 66.7% is hit to four
+  decimals and its 13.0% at Q lands at 20.0% on the wider gross axis. The selector picks D in
+  **0 of 90** MA-THRESH cells and **3 of 90** MOM-D cells. The premise is not the problem.
+
+  **CONSTRUCTION.** Idea 563's, verbatim, so the premise is tested rather than re-invented.
+  MA-THRESH = `px > MA200*(1+theta)`; MOM-D = top k_t by 12-1 momentum with k_t = |MA-THRESH_t|
+  pinned EVERY DAY, so the two arms hold the same NUMBER of names each day and only the NAMES
+  differ. DIAL 1 CADENCE {D, W, M, Q}; DIAL 2 SELECTOR {S_SHARPE, S_CAGR, S_FORCE_D}. Exactly
+  two tuned parameters. NOT dials, published at every value: PANEL {U56, B136, SMALL439} x THETA
+  {0.12, 0.06, 0.00, −0.06, −0.12} x ARM x CONSTRUCTION {RESPREAD, DEGROSS} x GROSS {0.50, 0.75,
+  1.00}. **720 books, every one in `.grid.csv`.** S_ORACLE (argmax OOS Sharpe) is printed as an
+  UNREACHABLE upper bound, never as a verdict.
+
+  **LEG 2 — THE TURNOVER-MATCHED CONTROL, AND IT IS THE WHOLE ANSWER.** Because the engine's
+  cost is exactly `turnover x c / 1e4` in return space, the rung at which the daily book's
+  advantage over the same cell at a slower cadence crosses zero is computable EXACTLY off one
+  held path. Bisected over 540 daily-vs-slower pairs: **at 0 bps the daily cell genuinely wins
+  for the momentum arm** — MOM-D takes 0.80 (vs M) / 0.86 (vs Q) / 0.69 (vs W) of pairs on
+  Sharpe and **1.0000 of them on SMALL439** — and **at 10 bps that collapses to 0.12 / 0.41 /
+  0.03.** Median break-even **c\* = 2.62 bps for MOM-D** (IQR 0.52–7.89, p90 16.90) and **0.00
+  bps for MA-THRESH**, whose daily book is behind before a single basis point is charged. Only
+  **0.1278 of 540 pairs** have c\* above the protocol's binding 10. Median daily turnover
+  8.99x/yr against the weekly twin's 3.76x.
+
+  **LEG 1 — RULE 8, AND IT AGREES.** Cadence chosen on IS Sharpe (start..2016-12-31) ONLY,
+  2017–2026 read ONCE, over 180 (panel, theta, arm, construction, gross) cells. **S_FORCE_D beats
+  S_SHARPE on OOS Sharpe in 0.1111 of 180 cells, mean −0.1033** (MA-THRESH 0.0556 / −0.1422;
+  MOM-D 0.1667 / −0.0645). Mean OOS Sharpe: S_FORCE_D **0.8242**, S_CAGR 0.9054, S_SHARPE
+  **0.9275**, unreachable S_ORACLE 0.9538 — **the selector the record already uses banks 97.2%
+  of the oracle, and forcing the daily cell throws away a tenth of a Sharpe.** It beats RULES v2
+  OOS in 0.15 of cells against the selector's 0.38, and SPY OOS in 0.55 against 0.67.
+
+  **THE CLEANEST FORM OF THE FINDING.** Pooled over the 180 cells, the WEEKLY twin beats the
+  DAILY twin of the SAME cell on full Sharpe in **0.9833** and on OOS Sharpe in **0.9944** —
+  while at ZERO cost that falls to 0.5889 overall and **0.3111 on the MOM-D arm**. The daily
+  book picks better names and hands the difference back at the tape. Nothing is left on the table.
+
+  **BOTH KEEP PATHS.** **4a 15 of 720, 4b 31 of 720, and the two sets are DISJOINT (0 books pass
+  both)** — the twenty-somethingth consecutive 4a/4b disjunction in this record. All 15 4a passes
+  are DEGROSS books that fail 4b on the CAGR floor. **Only 3 of the 31 4b passes sit at cadence
+  D, and all 3 are dominated by their OWN weekly twin on full Sharpe, OOS Sharpe AND turnover
+  (3 of 3)**: the best, U56 theta −0.06 MA-THRESH DEGROSS g1.00, runs 12.29% / 1.1271 / −18.83%
+  (OOS 1.1926) at 6.61x/yr against its weekly twin's 12.97% / 1.1664 / −18.29% (OOS 1.2090) at
+  2.97x. Live RULES v2 @10bps for reference: U56 8.62% / 1.2010 / −12.05% (halves 1.2276/1.1805,
+  OOS 1.2766); B136 1.0972 (1.2296/0.9669); SMALL439 0.6596 (0.8057/0.5480). SPY 15.12% / 0.8843
+  / −33.72% (0.9570/0.8249), OOS 0.8737.
+
+  **GATES 8/8**: G0 fast_run vs `engine.backtest` (returns AND turnover) 0.000e+00 on every panel
+  at D and W; G1 derived 25 bps rung vs a fresh engine run at 25 bps 0.000e+00; G2 daily depth
+  match exact on 0.9694..1.0000 of days, mean |dk| <= 0.031, max |dk| = 1 — REPORTED, not assumed
+  away, since 12-1 momentum needs 252 closes where the 200d MA needs 200; G3 the live baseline row
+  is produced by the committed `baseline.rules_v2_weights` through `engine.backtest`, unmodified;
+  G4 target-gross identity between the two arms 0.000e+00 on exact-match days; G5 no selector reads
+  a row on or after 2017-01-01; G6 720 of 720 books published; G7 10 bps per unit turnover,
+  t -> t+1, no shorting, max realised gross 1.0000.
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 / SMALL439 are CURRENT-constituent lists, so every absolute
+  level is an upper bound. The headline is a cadence-minus-cadence and arm-minus-arm difference
+  INSIDE one panel over the SAME names on the SAME days at identical daily depth, so it is
+  first-order immune; the 4a / 4b pass counts are not.
+
+  **WHAT THE RECORD SHOULD SAY INSTEAD.** *The daily cadence win of the momentum slice is real
+  and it is not alpha the selector is missing. At zero cost the daily book holds better names
+  (MOM-D wins 0.69–0.86 of daily-vs-slower pairs, 1.0000 on SMALL439); the advantage breaks even
+  at a median 2.62 bps and the protocol charges 10. Forcing it costs 0.1033 of OOS Sharpe against
+  the IS selector, which already banks 97.2% of the unreachable oracle. Idea 563's two sentences
+  are both true and their juxtaposition is not evidence of a missed edge.*
+
+  **No RULES change.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched. No memo:
+  this run produces no KEEP candidate.
