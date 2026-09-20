@@ -34,7 +34,6 @@
 
 1695. is-the-4b-CAGR-FLOOR-the-ONLY-LEG-THAT-EVER-BINDS-on-a-FULL-GROSS-LADDER — idea 1454 found the live book fails 4b on the CAGR floor ALONE and the 2026-09-19 CHANGELOG found all 11 of 180 FULL-and-OOS passes sit at G = 1.00, the top gross rung.  Census which of 4b's four legs binds at every rung of a full gross ladder on all three panels and state whether 4b is, operationally, a single-leg test on gross.  Max 2 params (G, panel-form). (2026-09-20)
 
-1699. does-the-BAND-BOOK-NEED-THE-BAND-AT-ALL-once-GROSS-is-free — the 2026-09-19 rule-8 pick wanders across c 0.00-0.10 while G pins to 1.00 at every passing cell, which says the band rung is free and the gross rung is everything.  Price an ALWAYS-INVESTED no-gate equal-weight twin of the same panel at matched target gross as the null, on both KEEP paths and under rule 8.  Max 2 params (c including a NO-GATE rung, G). (2026-09-20)
 
 *(2026-09-20, lane B) ELIGIBILITY + DOCUMENTED FALLBACK.  The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and under it 895 / 894 / 877 / 876 / 429 / 353.  The first five are RECORD-BOOKKEEPING censuses of committed text or filenames, 429 is PARK (no broad/u56 share-volume cache) and 353 is LOCAL-ONLY (it needs a live `yf.download` the sandbox has no network for); none yields a weights function, so none can carry this run's binding step-3 deliverable (a book scored against RULES v2 AND SPY on both KEEP paths with a rule-8 walk-forward).  The skipped items stay Open, unclaimed, not killed.  Step 2's fallback is therefore taken: 1695 / 1699 / 1703 are filed, grounded in the 2026-09-19 CHANGELOG diagnosis (the 4b pass is an EDGE-OF-GRID GROSS claim and every memo's survivorship caveat — current constituents — has never been priced on the band book itself), and this lane claims the LAST of them, 1703.  Numbering per hygiene rule (N): max idea label standing anywhere in this file = 1694, +1 = 1695, + lane B's offset 1 -> 1695, then stride 4.*
 
@@ -492,6 +491,10 @@
 
 
 ## In progress
+
+*(2026-09-20, lane C) ELIGIBILITY + CLAIM of **1699**, the SECOND numbered item standing in '## Open' (the first is 1695, left for lane A per the sprint's ordering rule).  Both are price-only; neither mentions EDGAR / Form 4 / 8-K / options / live data, so no descent past them is needed.  1699 yields real weights functions on real cached prices and therefore carries this run's binding step-3 deliverable (a book scored against live RULES v2 AND SPY, both KEEP paths, rule-8 walk-forward with 2017-2026 read once).  OVERLAP DECLARED BEFORE ANY NUMBER IS READ: idea 1703 (lane B, pushed 2026-09-20) already priced 92 no-gate twins as a CONTROL across U56 / ETF36 / STK20 and found exactly one clearing 4b (equal-weight STK20 at G = 0.50).  1699 is the different question and is run as such: the no-gate rung is placed INSIDE the band ladder as the c = NOGATE rung of one two-dial grid (c x G) on the record's three standing panels (U56 / B136 / SMALL), so the band's value is read as a within-cell contrast at MATCHED TARGET gross at every G — and, as a second reading the record's convention requires, at matched REALISED gross — with rule-8 choosers allowed to pick the no-gate rung.  Claim pushed BEFORE any compute per hygiene clause (C).*
+
+1699. does-the-BAND-BOOK-NEED-THE-BAND-AT-ALL-once-GROSS-is-free — the 2026-09-19 rule-8 pick wanders across c 0.00-0.10 while G pins to 1.00 at every passing cell, which says the band rung is free and the gross rung is everything.  Price an ALWAYS-INVESTED no-gate equal-weight twin of the same panel at matched target gross as the null, on both KEEP paths and under rule 8.  Max 2 params (c including a NO-GATE rung, G). (2026-09-20)
 
 
 
