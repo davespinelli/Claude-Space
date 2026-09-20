@@ -81,6 +81,51 @@
   COUNTS are not.
   `research/backtests/2026-09-20_exposure-neutral-is-chooser_B.py` / `.result.md` / `.grid.csv` /
   `.choosers.csv` / `.twins.csv` / `.truncated.csv` / `.gates.csv`
+## 2026-09-20 — idea 1789 (lane C): IS THE STALE-REFRESH PREFERENCE AN IS-WINDOW FACT OR A REGIME FACT? **ANSWERED — AN IS-WINDOW FACT, AND THE CARRIER IS CRASH-PRESENCE. KILL OF 1767's CHOOSER-BLINDNESS READING; NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1767 found that on rule 8's fixed window all four legal IS-only
+  choosers picked a STALE gross scalar (R = M or Q) on 2009-2016 and then failed the 4b drawdown cap
+  out of sample (U56 t=0.16: all four pick T=Q,R=M, OOS MaxDD **-23.96%** vs the memo's weekly
+  **-19.86%**), and the record read that as a chooser defect. A stale exposure scalar only costs money
+  **when vol spikes**, and 2009-2016 contains no drawdown deeper than the 2015-16 correction.
+
+  **THE ANSWER.** Same book, same two-schedule runner, same panels, same targets, same costs as 1767 —
+  only the chooser's visible window moves (**G3 cross-run reproduces 1767's published picks with 0
+  mismatches, max |d| 4.5e-05**). With IS LENGTH HELD FIXED AT 8 YEARS the STALE share of legal IS-only
+  picks runs **79.2% (W0 2009-2016, rule 8's own) / 75.0 / 62.5 / 41.7 / 0.0 / 0.0 (W5 2014-2021)**, and
+  the collapse lands exactly where the 2020 crash enters the window. The idea's own two named windows
+  agree (N1 2010-2018 **62.5%**, N2 2012-2020 **4.2%**). Rank corr(SPY IS MaxDD, stale share) **+0.638**
+  JOINT / **+0.600** T-conditional, quoted DESCRIPTIVELY — the windows overlap heavily, so no p-value is
+  computable and none is claimed.
+
+  **CRASH-PRESENCE, NOT RECENCY.** The slid family confounds the two (sliding forward both acquires 2020
+  and drops 2009-2012), so a control 2x2 separates them: **main effect of crash-presence -50.0 pp**
+  (stale 2.1% with a crash in IS vs 52.1% without) against **main effect of recency -4.2 pp** (25.0%
+  late vs 29.2% early). X1 2009-2019 -> X2 2009-2020 adds **one year** to an eleven-year window and takes
+  the stale share **54.2% -> 4.2%**.
+
+  **THE MECHANISM, PRICED.** FRESH minus STALE is **-0.0003 Sharpe / +0.23 pp MaxDD inside W0** — an
+  argmax over indistinguishable cells falls to the stale one on noise and saved turnover — and
+  **+0.1967 Sharpe / +12.23 pp MaxDD inside W4**, where every chooser finds it instantly. Reported
+  against our own reading: on the crash-free post-2021 OOS spans d(post Sharpe) turns **-0.1011**, so the
+  preference tracks crash-presence in whichever sample it is measured on, in both directions.
+
+  **THE CAPITAL ARM IS UNCHANGED AND SHARPER.** Over 384 book cells: 4b **119**, **4a 0** (the live
+  book's -12.05% MaxDD is unreachable for a 0.12/0.16-target vol-scaled book). At 10 bps the STALE
+  scalar clears 4b at **0 of 48** cells and the FRESH scalar at **32 of 48** (mean OOS MaxDD -32.37% vs
+  -20.78%); binding leg is `L4_DD` throughout with `L5_CAGR` binding 0 times, and SMALL clears nothing.
+  Rule 8 (2009-2016 chooses, 2017-2026 read once): **4 of 24 picks clear 4b OOS and all four are FRESH**;
+  all 8 U56 picks are stale and clear nothing.
+
+  **WHAT CHANGES.** Nothing in the book. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are
+  untouched (rule 6). One item is left for the Sunday review as a finding, not a change: any claim of
+  the form "no legal IS-only chooser can reach X" that rests on rule 8's fixed 2009-2016 window is
+  untested against the possibility that the window does not contain the event that prices X, and the
+  cheap test is to slide the IS window at fixed length and read whether the argmax moves.
+
+  GATES **10 of 10 PASS**. Survivorship: U56/B136 current-constituent, SMALL a current sub-$2B screen
+  (54 tickers dropped); the window-to-window contrasts are same-tape and first-order immune, the pass
+  COUNTS are not. Script `research/backtests/2026-09-20_stale-refresh-is-window-or-regime_C.py`.
 
 ## 2026-09-20 — idea 1613 (lane C): IS EVERY CADENCE CLAIM IN THE RECORD A c* CLAIM QUOTED AT ONE RUNG? **ANSWERED, BOTH WAYS — YES FOR THE ORDERING, NO FOR THE KEEP VERDICT. KILL: NO RULES CHANGE, NO NEW BOOK.**
 
