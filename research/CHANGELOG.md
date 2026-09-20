@@ -1,3 +1,71 @@
+## 2026-09-20 — idea 1699 (lane C): DOES THE BAND BOOK NEED THE BAND AT ALL ONCE GROSS IS FREE? **ANSWERED — THE BAND IS FREE ON RETURN (28 OF 60 MATCHED PAIRS, MEAN dSHARPE -0.0009, 0 OF 12 BOOTSTRAP CONTRASTS AT |t| > 2), LOAD-BEARING ON THE 4b VERDICT (AN ALWAYS-INVESTED LADDER PASSES AT 0 OF 12 RUNGS), AND ITS ONE REAL EDGE — DEPTH — IS TWO-THIRDS DE-GROSS WITH THE RESIDUAL INSIDE ITS OWN NOISE. KILL OF THE PREMISE; NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** The 2026-09-19 rule-8 pick wanders across c = 0.00-0.10 from
+  chooser to chooser while G pins to 1.00 at every passing cell, and idea 1703 re-read the same
+  thing today (all 5 U56 4b passes at G = 1.00). That pattern says the band rung is free and the
+  gross rung is everything. Every prior run priced the no-gate twin as an OUTSIDE control beside
+  the grid; none had put it INSIDE, as a cell a chooser can legally pick and a 4b verdict can
+  legally land on.
+
+  **CONSTRUCTION.** Two dials and no more: **c {NOGATE, 0.00, 0.03, 0.05, 0.10, 0.15}** x
+  **G {0.25, 0.50, 0.75, 1.00}**, where NOGATE removes the 200d band entirely (always invested,
+  equal weight over the priced names at the same target gross). Published, not tuned: PANEL
+  {U56, B136, SMALL} x WINDOW {FULL, H1, H2, IS, OOS}. 72 books, every cell in `grid.csv`.
+  Weekly, t+1, 10 bps. TWO matchings, both reported: **TARGET** gross (the idea's wording — the
+  investor who has fixed G and asks whether to run the gate) and **REALISED** gross (this
+  record's nine-run convention — the twin's target G' solved by bisection so its realised mean
+  gross equals the band cell's, converged to 9.6e-06). Gates 11 of 11, including a bit-for-bit
+  replay of `baseline.rules_v2_weights` through `engine.backtest` (max|d| 1.7e-17) and a
+  CROSS-RUN reproduction of idea 1703's committed U56 (c=0.10, G=1.00) cell at max|d| 4.7e-05.
+
+  **(1) ON RETURN THE BAND IS FREE, AND THE MATCHING DOES NOT MATTER.** Over 60 matched pairs the
+  band beats its own no-gate twin on FULL Sharpe at **28 of 60** (mean **-0.0009**, median
+  -0.0018), OOS Sharpe 32 of 60 (+0.0180), and on FULL CAGR at **0 of 60** (mean -4.46%/yr).
+  Matching on REALISED gross instead reproduces it to four decimals (28 of 60, mean -0.0009).
+  Per panel the sign is not even stable: U56 +0.0419, B136 **-0.0264**, SMALL -0.0182. The
+  paired circular block bootstrap (21-day blocks, 2,000 draws, seed 20260920) of dSharpe at the
+  two headline cells on three panels under both matchings reaches |t| > 2 at **0 of 12** — max
+  |t| **0.68**, min p **0.497**. The live cell's own +0.0821 carries SE 0.1209.
+
+  **(2) DEPTH IS THE ONE LEG IT WINS, AND TWO-THIRDS OF IT IS DE-GROSS.** Target-matched, the
+  band is shallower at **60 of 60** pairs, mean **+11.80 pp**, and there the bootstrap is
+  emphatic: 6 of 6 headline cells at |t| >= 2.69 (p <= 0.011). Match the twin's REALISED exposure
+  and the edge falls to **+4.11 pp** (U56 +3.03, B136 +4.14, SMALL +5.15) and **0 of 6 clear
+  |t| > 2** — max +1.92 (B136 live, p 0.049), U56 live +4.34 pp at t +1.52, p 0.112. That is the
+  same order as idea 1511's committed paired dMaxDD SE of 2.93 pp. So the band's measurable
+  contribution is that it holds less; the part that is timing is unresolvable at this sample.
+
+  **(3) AND YET REMOVING IT DELETES EVERY PASS — BECAUSE 4b CANNOT BE CLEARED BY A CONSTANT-GROSS
+  BOOK.** No-gate cells clear 4b FULL-and-OOS at **0 of 12**; band cells at 7 of 60. The leg
+  census says exactly why: the always-invested ladder is **squeezed** — on U56 and B136 it fails
+  the CAGR floor at G <= 0.50 (U56 G=0.50: 8.76% against 10.59%) and the DD cap at G >= 0.75
+  (U56 G=0.75: -22.53% against -20.23%), **with no rung in between**, while its Sharpe is flat
+  across the whole gross ladder (1.1174-1.1195 on U56) because scaling a constant book cannot
+  move Sharpe. SMALL additionally fails H2 at 4 of 4. The band escapes the squeeze arithmetically,
+  not cleverly: it holds ~0.69 realised gross and draws down like a ~0.50 book. **The operational
+  reading is that 4b, as written, is passable only by a book whose REALISED GROSS MOVES** — which
+  is a statement about the test, not about trend following, and it belongs beside open idea 1695.
+
+  **(4) RULE 8 (picks fit on warm-up..2016-12-31, 2017-2026 read EXACTLY ONCE).** Four choosers
+  (C_SHARPE / C_MEMO / C_CAGR / C_ANCHOR) x three ARENAS: FULL 24-cell grid, BAND-only 20 cells,
+  NOGATE-only 4. Mean OOS Sharpe: **BAND 0.9613 > FULL 0.9499 > NOGATE 0.9372**. So handing the
+  chooser the no-gate rung does not help — it **hurts**: on U56, C_MEMO and C_CAGR both defect to
+  NOGATE G=0.75 and give up the 4b pass (OOS 1.1268 / -22.53% against the band pick's 1.1940 /
+  -16.30%). The FULL arena lands on NOGATE at 3 of 12 picks and on G = 1.00 at 6 of 12 — the
+  edge-of-grid gross claim again. **4a is 0 of 72 across the whole run.**
+
+  **WHAT THE RECORD SHOULD DO.** Stop quoting c as if it earned Sharpe: it does not, on any panel,
+  under either matching, at any resolvable significance. Quote it as what the numbers support — a
+  STATE-DEPENDENT DE-GROSS whose entire measurable value is that realised exposure falls in bad
+  tape, ~0.69 of target on U56. And read every 4b pass in this repository knowing that the test
+  cannot be cleared by any constant-gross book at any rung: the pass is a statement about moving
+  gross first and about names second. **No RULES change proposed** (4a 0 of 72; the 4b passers are
+  the already-committed band family that idea 1703 showed this morning to be survivorship-
+  conditional). Caveats: current-constituent survivorship on all three panels (rule 9), so every
+  absolute level is an UPPER BOUND — this run reads CONTRASTS on a common tape, which is what
+  survives that; SMALL is 667 columns after the idea-1074 max_1d_move >= 1.0 drop; the SPY column
+  enters each panel's book as one name exactly as `baseline.rules_v2_weights` does.
+
 ## 2026-09-19 — idea 772 (lane cloud): IS THE SMALL 4a BAR CARRIED ENTIRELY BY ITS OOS SECOND HALF? **ANSWERED — THE COLLAPSE IS REAL IN MAGNITUDE (OOS HALVES 0.9496 / 0.1292) AND UNRESOLVABLE IN NOISE (SE 0.6375, t +1.29, p 0.195). THE BAR'S OWN CALENDAR-YEAR SPREAD IS 4.73 OF SHARPE. AND THERE IS NOTHING LEFT TO RE-SCORE: 0 OF 17 PRE-REGISTERED DEVICES CLEAR 4a ON SMALL UNDER THE COMMITTED READING, FULL OR OOS. THE LENIENT 'MIN' BAR IS VACUOUS — THE BAR PASSES ITS OWN TEST. KILL (no book); A PROTOCOL NOTE IS PROPOSED.**
 
   **THE DEFECT THIS CLOSES.** Idea 767 read the live book on the small panel at OOS Sharpe
