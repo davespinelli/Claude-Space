@@ -1,3 +1,91 @@
+## 2026-09-20 — idea 1627 (lane cloud): IS EVERY SLEEVE AND HEDGE IN THE RECORD A CARRY CLAIM WEARING AN INSTRUMENT? **ANSWERED — YES. KILL THE SLEEVE FAMILY; KEEP ONE ACCRUAL LINE. NO NEW BOOK.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1602 took ONE instrument, SHY, and found its whole contribution
+  to the live band book is reproduced by a zero-duration accrual at the same realised rate. But the
+  record has routed weight into SEVEN OTHERS — IEF, TLT, GLD, TIP, HYG, LQD, UUP — and every one of
+  those routings is written as a claim about the INSTRUMENT rather than about the rate it earns.
+
+  **THE CONSTRUCTION.** Live RULES v2 band book (gross 0.75, weekly, 10 bps, t+1); fraction F of the
+  gated-out NAV routed to a sleeve. ETF arm = the instrument marked to market. MATCH arm = a
+  constant daily accrual compounding to THAT INSTRUMENT'S OWN realised CAGR on the same tape, same
+  names, same days, same turnover charge — so `ETF - MATCH` is the instrument's price path and
+  nothing else. MATCH_IS sets the rate from 2009-2016 only and is the arm rule 8 uses. Dials: F
+  {0, 0.25, 0.50, 0.75, 1.00} and the instrument (8). 3 panels x 8 x 5 x 3 = **360 priced cells**,
+  all published.
+
+  **THE ANSWER.** **0 of 24 panel x instrument cells survive at F = 1.00**; 12 of 96 over all F,
+  every one at F <= 0.50 where the sleeve is too small to matter. Mean dSharpe / dMaxDD: SHY
+  **+0.0012 / +0.38 pp** — the only positive, and an independent replication of 1602's +0.0009 on a
+  wider set — then IEF -0.0101/-3.99, UUP -0.0430/-0.11, TIP -0.0529/-3.39, LQD -0.1278/-7.81, TLT
+  -0.1422/-13.21, HYG -0.2482/-8.75, GLD -0.2731/-3.94. The deficit is MONOTONE in F for 7 of 8.
+  TLT at F = 1.00 costs -20.3 pp of MaxDD on U56 and -28.3 pp on SMALL against an accrual paying
+  TLT's own 1.08 %/yr.
+
+  **THE ONE 4b-CLEARING INSTRUMENT IS ALSO THE WORST SUBSTITUTION FAILURE.** Every ETF-arm 4b pass
+  in the run is GLD (U56 and B136 at F = 0.50/0.75/1.00 clear 4b FULL *and* OOS; U56 F = 0.75 OOS
+  15.12 % / 1.4002 / -14.98 % against SPY 15.26 % / 0.8738 / -33.72 %). An accrual at gold's own
+  9.51 %/yr beats it by +0.63 of Sharpe at F = 1.00 with 7.1 pp less drawdown: the pass is CARRY
+  wearing a hedge's name.
+
+  **RULE 8 (2017-2026 read ONCE).** Two IS-only choosers x 3 panels: **the ETF arm's 6 picks clear
+  4a OOS 0 times and 4b OOS 0 times.** U56 and B136 both pick LQD F = 1.00 -> OOS 1.0729 / -24.31 %
+  and 0.9309 / -25.25 % against a live book at 1.2769 / -12.05 % and 1.1019 / -12.24 %; every pick
+  roughly DOUBLES the live drawdown. The 4b-clearing GLD cells sit at IS-Sharpe rank **#35/#39/#40
+  of 40** (U56), **#26/#37/#40** (B136), **#38/#39/#40** (SMALL) — dead last, so no chooser reaches
+  them. MATCH_IS's OOS 4a/4b passes run on a RISKLESS accrual of 8.78 %/yr (HYG IS CAGR) and
+  7.57 %/yr (TLT IS CAGR) and are labelled fiction, not candidates.
+
+  **RESIDUE, not a rules change (rule 6; PROTOCOL.md and RULES.md untouched):** a sleeve should be
+  written as an ACCRUAL RATE, and any instrument proposed above that accrual must clear the
+  `ETF - MATCH` contrast before its name enters the clause. Gates 19/19. Survivorship: B136/SMALL
+  are current constituents; SMALL drops 54 names with `max_1d_move >= 1.0` (665 remain).
+  `research/backtests/2026-09-20_every-sleeve-a-carry-claim_cloud.py`
+
+## 2026-09-20 — idea 956 (lane cloud): DOES A PHASE-AVERAGED 4b VERDICT CHANGE WHICH BOOKS PASS? **ANSWERED — BARELY, AND ONLY IN ONE DIRECTION. KILL THE PROTOCOL CHANGE; PARK ONE FREE REPORTING LINE. NO NEW BOOK.**
+
+  **THE CORPUS.** Six books the record has certified or is standing on — TOP20 (the 2026-09-04
+  first KEEP-4b shape), BAND03_G075 (live RULES v2), BAND10_G100 (1719/896's U56 passer), EWELIG,
+  MAXVOL060 (1617's PARK) and VOLTGT016 (the standing KEEP-4b candidate found by idea 1730 THIS
+  DAY) — x 3 panels x 26 phases (DOM21 + DOW5) x 4 cost rungs = **1,872 scored books**, all
+  published. Dials: phase grid and averaging rule. **MEAN / MEDIAN / MIN / SHARE50 are ESTIMATORS
+  and can never BE a KEEP** — no allocation of capital produces a median-of-Sharpes; TRANCHE (1/P
+  of NAV per phase-book, re-levelled daily) is the only tradable arm.
+
+  **THE ANSWER.** Over 144 (panel x grid x book x cost) cells CANON certifies 30 on 4b FULL.
+  **MEDIAN passes 25, keeps 25 of 30 and newly certifies 0** (disagreement 0.035 FULL / 0.049 OOS);
+  MEAN passes 33, keeps 25 and **newly certifies 8**; MIN 16; SHARE50 25; TRANCHE 38, keeping
+  30 of 30. **The averaging rule is not a neutral estimator choice — MEDIAN only de-certifies and
+  MEAN only loosens** — which is itself the reason not to adopt one silently. At the 10 bps primary
+  rung MEDIAN and CANON disagree on **1 of 36** cells.
+
+  **AND THAT ONE CELL IS THE RECORD'S OWN FIRST KEEP-4b BOOK.** U56/DOM21/**TOP20** passes 4b at the
+  canonical month-end and **fails at 16 of its 21 DOM phases** (phase pass-share **0.238**),
+  de-certifying at all four cost rungs; the only other loss is the same book at B136/DOW5/0 bps.
+  **Every de-certified cell in the run is TOP20.** Every other certified cell in the corpus has a
+  phase pass-share of **0.800-1.000**.
+
+  **CONSTRUCTIVE RESIDUE (Sunday review only; PROTOCOL.md untouched):** publish the **PHASE
+  PASS-SHARE** beside every 4b verdict. It is free — it falls out of the same 21 runs a phase check
+  already makes — it is a statement about the book rather than about an estimator, and on this
+  corpus it is the one number that separates the record's single fragile 4b certification from
+  every robust one.
+
+  **THE STANDING KEEP-4b CANDIDATE SURVIVES, WITH A LIMIT NAMED.** VOLTGT016 clears 4b FULL and OOS
+  at **5 of 5 weekly phases on B136 and 4 of 5 on U56** and holds under CANON, MEAN, MEDIAN,
+  SHARE50 and TRANCHE alike. Its DOM21 failure is NOT a phase result: on a monthly cadence its OOS
+  MaxDD blows out to **-24.2 % (U56) / -26.1 % (B136)** against **-19.9 % / -18.8 %** weekly, so the
+  weekly rebalance is load-bearing and must stay in any RULES wording. Addendum appended to its memo.
+
+  **RULE 8 (2017-2026 read ONCE): the phase is a KILL as a dial.** Choosing the rebalance date in
+  sample is worth **-0.0215** of OOS Sharpe on DOM21 (3 of 18 wins) and **-0.0058** on DOW5 (7 of
+  18); the tradable TRANCHE buys -0.0400 (DOM21) and +0.0021 (DOW5) against CANON — i.e. nothing.
+  Both KEEP paths per-phase @10 bps: DOM21 4a FULL 0/378, 4a OOS 7/378, 4b FULL 31/378, 4b OOS
+  31/378; DOW5 1/90, 11/90, 32/90, 32/90. Binding legs among the 405 4b failures: **L4_DD 0.654**,
+  L5_CAGR 0.637, L2_H2 0.462, L3_OOS 0.412, L1_H1 0.240 — idea 944's ranking reproduced on an
+  independent corpus. Gates 28/28, including a cross-run replay of idea 1730's committed VOLTGT
+  memo at max|d| 0.0000 on both panels.
+  `research/backtests/2026-09-20_phase-averaged-4b-verdict_cloud.py`
+
 ## 2026-09-20 — idea 1738 (lane C): IS THE WINDOW-MATCHED 4a TEST TESTABLE ON A SOMETIMES-OFF CORPUS? **ANSWERED — YES, AND THE TWO WINDOW CONVENTIONS ARE NOT THE SAME TEST. KILL the ACTIVE-DIFF restatement; the ACTIVE-GROSS one is a NO-OP. NO NEW BOOK.**
 
   **THE DEFECT THIS CLOSES.** Idea 1631 priced three restatements of PROTOCOL rule 4a and could not
