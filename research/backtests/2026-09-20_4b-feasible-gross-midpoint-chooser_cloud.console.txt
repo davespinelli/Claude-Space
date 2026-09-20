@@ -1,0 +1,113 @@
+======================================================================================================================
+IDEA 1705 (lane cloud, 2026-09-20) — IS THE 4b-FEASIBLE GROSS INTERVAL MIDPOINT A BETTER
+IS CHOOSER THAN IS-SHARPE ARGMAX?
+DIALS: band c ['NOGATE', 'BAND000', 'BAND003', 'BAND010'] x gross G 0.05..1.00 step 0.05 (20 rungs) = 80 cells/panel.
+Panels U56 / B136 / SMALL (published, NOT a dial).  Weekly cadence, 10 bps, t+1, no leverage.  240 books x 5 windows = 1200 cell-windows, all published.
+======================================================================================================================
+
+  PANELS:
+    U56      56 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  G7 COMPOSITION U56: 56 columns incl. SPY, 2008-01-02..2026-09-18
+    B136    136 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  G7 COMPOSITION B136: 136 columns incl. SPY, 2008-01-02..2026-09-18
+    SMALL   666 columns  2010-01-04 .. 2026-09-18  4203 rows (16.7y)
+    PUBLISHED  G7 COMPOSITION SMALL: 666 columns incl. SPY, 2010-01-04..2026-09-18
+    PUBLISHED  G7 SMALL max_1d_move >= 1.0 drops: 54 names dropped (54 by data/small_meta.csv, 53 by realised price move), 666 columns remain
+  SURVIVORSHIP (rule 9): U56/B136 are CURRENT-constituent lists, SMALL a current screen;
+  every ABSOLUTE level below is an UPPER BOUND.  The object of the run is the CONTRAST
+  between two IS-only choosers on one tape.
+    GATE PASS  G0 U56 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 U56 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G0 B136 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 B136 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G0 SMALL sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 SMALL IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G1 replay of baseline.rules_v2_weights through engine.backtest (U56 live cell): max |diff| 1.735e-17 (target < 1e-12)
+    GATE PASS  G6 determinism (B136 c=0.03 G=0.50 run twice): max |diff| 0.000e+00 (target == 0)
+
+  RUNNING THE GRID ...
+    U56    done  (80 cells)  t=5s
+    B136   done  (80 cells)  t=7s
+    SMALL  done  (80 cells)  t=18s
+    GATE PASS  G3 all cells x windows published: 1200 rows -> 2026-09-20_4b-feasible-gross-midpoint-chooser_cloud.grid.csv (target == 1200)
+    GATE PASS  G2 no leverage (max realised gross over all cells): 1.0000 (target <= 1.0)
+    GATE PASS  G4 tuned dials: 2 (band c, gross G) (target <= 2 (rule 4))
+    GATE PASS  G8 committed RULES v2 U56 FULL cell reproduced: CAGR 8.62% Sharpe 1.2011 MaxDD -12.05% (target 8.62% / 1.2010 / -12.05%)
+
+======================================================================================================================
+(D) BOTH KEEP PATHS OVER ALL 240 CELLS (rule 4).  Counts of cells PASSING, by window:
+======================================================================================================================
+    U56    FULL   4a   0/80   4b   6/80   (legs failing 4b: H1   0  H2   0  DD   7  CAGR  67)
+    U56    H1     4a   0/80   4b   6/80   (legs failing 4b: H1   0  H2   0  DD   5  CAGR  69)
+    U56    H2     4a   0/80   4b   9/80   (legs failing 4b: H1   0  H2   0  DD   7  CAGR  64)
+    U56    IS     4a   0/80   4b   5/80   (legs failing 4b: H1   0  H2   0  DD   5  CAGR  70)
+    U56    OOS    4a   0/80   4b  12/80   (legs failing 4b: H1   0  H2   0  DD   7  CAGR  61)
+    B136   FULL   4a   0/80   4b   3/80   (legs failing 4b: H1   0  H2   0  DD   9  CAGR  68)
+    B136   H1     4a   7/80   4b  10/80   (legs failing 4b: H1   0  H2   0  DD   8  CAGR  62)
+    B136   H2     4a  20/80   4b   0/80   (legs failing 4b: H1   0  H2   0  DD   9  CAGR  71)
+    B136   IS     4a   7/80   4b   6/80   (legs failing 4b: H1   0  H2   0  DD   8  CAGR  66)
+    B136   OOS    4a  14/80   4b   1/80   (legs failing 4b: H1   0  H2   0  DD   9  CAGR  70)
+    SMALL  FULL   4a  18/80   4b   0/80   (legs failing 4b: H1  40  H2  80  DD  13  CAGR  74)
+    SMALL  H1     4a  22/80   4b   0/80   (legs failing 4b: H1  60  H2  40  DD  12  CAGR  72)
+    SMALL  H2     4a   0/80   4b   0/80   (legs failing 4b: H1  20  H2  80  DD  12  CAGR  78)
+    SMALL  IS     4a  22/80   4b   0/80   (legs failing 4b: H1   0  H2  40  DD  12  CAGR  70)
+    SMALL  OOS    4a  13/80   4b   0/80   (legs failing 4b: H1  80  H2  80  DD  13  CAGR  78)
+
+======================================================================================================================
+(B) THE MECHANISM — the 4b-FEASIBLE GROSS INTERVAL, IS vs OOS, per (panel, band).
+    IS = warm-up..2016-12-31 (what a chooser may see).  OOS = 2017-01-01..end (read once).
+======================================================================================================================
+    U56    NOGATE   IS  n= 3 [0.65,0.75] mid 0.70   |  OOS n= 2 [0.60,0.65]   overlap  1   IS-mid clears OOS 4b: no
+    U56    BAND000  IS  n= 0 [nan,nan] mid  --    |  OOS n= 3 [0.90,1.00]   overlap  0   IS-mid clears OOS 4b: n/a
+    U56    BAND003  IS  n= 0 [nan,nan] mid  --    |  OOS n= 4 [0.85,1.00]   overlap  0   IS-mid clears OOS 4b: n/a
+    U56    BAND010  IS  n= 2 [0.95,1.00] mid 0.95   |  OOS n= 3 [0.90,1.00]   overlap  2   IS-mid clears OOS 4b: YES
+    B136   NOGATE   IS  n= 2 [0.55,0.60] mid 0.55   |  OOS n= 0 [nan,nan]   overlap  0   IS-mid clears OOS 4b: no
+    B136   BAND000  IS  n= 0 [nan,nan] mid  --    |  OOS n= 0 [nan,nan]   overlap  0   IS-mid clears OOS 4b: n/a
+    B136   BAND003  IS  n= 1 [1.00,1.00] mid 1.00   |  OOS n= 0 [nan,nan]   overlap  0   IS-mid clears OOS 4b: no
+    B136   BAND010  IS  n= 3 [0.90,1.00] mid 0.95   |  OOS n= 1 [1.00,1.00]   overlap  1   IS-mid clears OOS 4b: no
+    SMALL  NOGATE   IS  n= 0 [nan,nan] mid  --    |  OOS n= 0 [nan,nan]   overlap  0   IS-mid clears OOS 4b: n/a
+    SMALL  BAND000  IS  n= 0 [nan,nan] mid  --    |  OOS n= 0 [nan,nan]   overlap  0   IS-mid clears OOS 4b: n/a
+    SMALL  BAND003  IS  n= 0 [nan,nan] mid  --    |  OOS n= 0 [nan,nan]   overlap  0   IS-mid clears OOS 4b: n/a
+    SMALL  BAND010  IS  n= 0 [nan,nan] mid  --    |  OOS n= 0 [nan,nan]   overlap  0   IS-mid clears OOS 4b: n/a
+
+======================================================================================================================
+(A) RULE 8 — FIVE IS-ONLY CHOOSERS, 2017-01-01..end READ EXACTLY ONCE.
+======================================================================================================================
+
+  U56  (OOS baseline RULES v2: CAGR 9.46% Sharpe 1.2769 MaxDD -12.05%  |  OOS SPY: CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%)
+    C_SHARPE  -> BAND010  G=1.00   OOS CAGR  12.14%  Sharpe  1.1940  MaxDD  -16.30%   4a fail  4b PASS   [argmax IS Sharpe]
+    C_MID     -> BAND010  G=0.95   OOS CAGR  11.53%  Sharpe  1.1941  MaxDD  -15.51%   4a fail  4b PASS   [IS-feasible interval midpoint, band by IS Sharpe at midpoint (interval 0.95-1.00)]
+    C_MIDW    -> NOGATE   G=0.70   OOS CAGR  12.75%  Sharpe  1.1269  MaxDD  -21.15%   4a fail  4b fail   [IS-feasible interval midpoint, band by WIDEST interval (width 3 rungs)]
+    C_LO      -> NOGATE   G=0.65   OOS CAGR  11.83%  Sharpe  1.1269  MaxDD  -19.75%   4a fail  4b PASS   [lowest feasible rung of the widest interval]
+    C_ANCHOR  -> BAND003  G=0.75   OOS CAGR   9.46%  Sharpe  1.2769  MaxDD  -12.05%   4a fail  4b fail   [the LIVE book, choosing nothing]
+    ORACLE    -> BAND003  G=0.05   OOS CAGR   0.62%  Sharpe  1.2781  MaxDD   -0.83%   [NOT REACHABLE: argmax OOS Sharpe.  12/80 cells clear OOS 4b]
+
+  B136  (OOS baseline RULES v2: CAGR 7.85% Sharpe 1.1019 MaxDD -12.24%  |  OOS SPY: CAGR 15.26% Sharpe 0.8739 MaxDD -33.72%)
+    C_SHARPE  -> NOGATE   G=1.00   OOS CAGR  18.27%  Sharpe  1.0857  MaxDD  -32.72%   4a fail  4b fail   [argmax IS Sharpe]
+    C_MID     -> BAND010  G=0.95   OOS CAGR  10.46%  Sharpe  1.0878  MaxDD  -18.28%   4a fail  4b fail   [IS-feasible interval midpoint, band by IS Sharpe at midpoint (interval 0.90-1.00)]
+    C_MIDW    -> BAND010  G=0.95   OOS CAGR  10.46%  Sharpe  1.0878  MaxDD  -18.28%   4a fail  4b fail   [IS-feasible interval midpoint, band by WIDEST interval (width 3 rungs)]
+    C_LO      -> BAND010  G=0.90   OOS CAGR   9.91%  Sharpe  1.0881  MaxDD  -17.36%   4a fail  4b fail   [lowest feasible rung of the widest interval]
+    C_ANCHOR  -> BAND003  G=0.75   OOS CAGR   7.85%  Sharpe  1.1019  MaxDD  -12.24%   4a fail  4b fail   [the LIVE book, choosing nothing]
+    ORACLE    -> BAND000  G=0.05   OOS CAGR   0.51%  Sharpe  1.1127  MaxDD   -0.87%   [NOT REACHABLE: argmax OOS Sharpe.  1/80 cells clear OOS 4b]
+
+  SMALL  (OOS baseline RULES v2: CAGR 3.64% Sharpe 0.5459 MaxDD -14.16%  |  OOS SPY: CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%)
+    C_SHARPE  -> NOGATE   G=1.00   OOS CAGR  11.48%  Sharpe  0.5945  MaxDD  -44.38%   4a fail  4b fail   [argmax IS Sharpe]
+    C_MID     -> NOGATE   G=1.00   OOS CAGR  11.48%  Sharpe  0.5945  MaxDD  -44.38%   4a fail  4b fail   [EMPTY_FALLBACK -> C_SHARPE (no band has an IS-feasible rung)]
+    C_MIDW    -> NOGATE   G=1.00   OOS CAGR  11.48%  Sharpe  0.5945  MaxDD  -44.38%   4a fail  4b fail   [EMPTY_FALLBACK -> C_SHARPE]
+    C_LO      -> NOGATE   G=1.00   OOS CAGR  11.48%  Sharpe  0.5945  MaxDD  -44.38%   4a fail  4b fail   [EMPTY_FALLBACK -> C_SHARPE]
+    C_ANCHOR  -> BAND003  G=0.75   OOS CAGR   3.64%  Sharpe  0.5459  MaxDD  -14.16%   4a fail  4b fail   [the LIVE book, choosing nothing]
+    ORACLE    -> NOGATE   G=0.05   OOS CAGR   0.67%  Sharpe  0.5987  MaxDD   -2.68%   [NOT REACHABLE: argmax OOS Sharpe.  0/80 cells clear OOS 4b]
+
+======================================================================================================================
+THE ANSWER — C_MID (the idea's chooser) vs C_SHARPE (the incumbent), 3 panels:
+======================================================================================================================
+    C_SHARPE   OOS 4a 0/3   OOS 4b 1/3   FULL 4b 1/3   mean OOS Sharpe 0.9581   mean OOS CAGR 13.96%   mean OOS MaxDD -31.13%   mean picked G 1.000
+    C_MID      OOS 4a 0/3   OOS 4b 1/3   FULL 4b 2/3   mean OOS Sharpe 0.9588   mean OOS CAGR 11.16%   mean OOS MaxDD -26.06%   mean picked G 0.967
+    C_MIDW     OOS 4a 0/3   OOS 4b 0/3   FULL 4b 1/3   mean OOS Sharpe 0.9364   mean OOS CAGR 11.57%   mean OOS MaxDD -27.94%   mean picked G 0.883
+    C_LO       OOS 4a 0/3   OOS 4b 1/3   FULL 4b 1/3   mean OOS Sharpe 0.9365   mean OOS CAGR 11.07%   mean OOS MaxDD -27.16%   mean picked G 0.850
+    C_ANCHOR   OOS 4a 0/3   OOS 4b 0/3   FULL 4b 0/3   mean OOS Sharpe 0.9749   mean OOS CAGR 6.98%   mean OOS MaxDD -12.82%   mean picked G 0.750
+    SPY        mean OOS Sharpe 0.8738   mean OOS CAGR 15.26%   mean OOS MaxDD -33.72%
+    RULESv2    mean OOS Sharpe 0.9749   mean OOS CAGR 6.98%   mean OOS MaxDD -12.82%
+
+  GATES: 16/16 pass.
+  wall 18s   artifacts: 2026-09-20_4b-feasible-gross-midpoint-chooser_cloud.{grid,intervals,picks,summary,keep_census,gates}.csv + .console.txt
