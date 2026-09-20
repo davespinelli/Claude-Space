@@ -1,0 +1,674 @@
+======================================================================================================================
+IDEA 1738 (lane C, 2026-09-20) - IS THE WINDOW-MATCHED 4a TEST TESTABLE ON A SOMETIMES-OFF CORPUS?
+======================================================================================================================
+  cost 10 bps, cadence W, gross 0.75, band 0.03, t+1 execution, long-only, no leverage.
+  share ladder (corpus x-axis) (0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
+  TUNED 1/2  MINN (250, 500, 750, 1000, 1500)      TUNED 2/2  f (0.25, 0.5, 0.75)   (control rung f=1.00)
+  IS 2009-2016 chooses; OOS 2017-2026 read once.
+  PANEL U56      56 cols incl. SPY  2008-01-02..2026-09-18  4708 rows (18.7y)
+  PANEL B136    136 cols incl. SPY  2008-01-02..2026-09-18  4708 rows (18.7y)
+  PANEL SMALL   666 cols incl. SPY  2010-01-04..2026-09-18  4203 rows (16.7y)
+  SURVIVORSHIP (rule 9): current-constituent panels; absolute levels are UPPER BOUNDS, every claim below is a CONTRAST on one tape.
+
+[U56] running 141 books ... (2s elapsed)
+[U56] rule-8 IS-only tuned params: MINN* = 250, f* = 0.25 (chosen by R0 (R1b unidentified); IS Sharpe of its pick 1.2801)
+
+[B136] running 141 books ... (91s elapsed)
+[B136] rule-8 IS-only tuned params: MINN* = 250, f* = 0.50 (chosen by R0 (R1b unidentified); IS Sharpe of its pick 1.1890)
+
+[SMALL] running 141 books ... (229s elapsed)
+[SMALL] rule-8 IS-only tuned params: MINN* = 250, f* = 0.25 (chosen by R0 (R1b unidentified); IS Sharpe of its pick 1.2277)
+
+======================================================================================================================
+1. THE CORPUS 1631 DID NOT HAVE.  Realised deployed shares (1631: act 1.000 on 50/52, diff 1.000 on 44/52)
+======================================================================================================================
+            act_share                                     diff_share                                    
+target_s          0.3   0.4   0.5   0.6   0.7   0.8   0.9        0.3   0.4   0.5   0.6   0.7   0.8   0.9
+arm                                                                                                     
+CASH            0.305 0.398 0.494 0.583 0.672 0.767 0.880      0.695 0.602 0.506 0.417 0.328 0.233 0.120
+OVER f=0.25     1.000 1.000 1.000 1.000 1.000 1.000 1.000      0.305 0.398 0.494 0.583 0.672 0.767 0.880
+OVER f=0.50     1.000 1.000 1.000 1.000 1.000 1.000 1.000      0.305 0.398 0.494 0.583 0.672 0.767 0.880
+OVER f=0.75     1.000 1.000 1.000 1.000 1.000 1.000 1.000      0.305 0.398 0.494 0.583 0.672 0.767 0.880
+
+  act-share  range over all 423 cells: 0.170 .. 1.000   (cells strictly inside (0.05,0.95): 126)
+  diff-share range over all 423 cells: 0.000 .. 0.914   (cells strictly inside (0.05,0.95): 420)
+
+======================================================================================================================
+2. ALL GRID POINTS.  4a pass counts and verdict MOVES vs R0, real books and NULLs.
+======================================================================================================================
+            test MINN  pass_real  of_real  pass_NULL  of_NULL  moved_fail_to_pass  moved_pass_to_fail  moved_total
+      R0_CURRENT    -         38      336          0       84                   0                   0            0
+R1a_ACTIVE_GROSS  250         37      336          0       84                   0                   1            1
+R1a_ACTIVE_GROSS  500         37      336          0       84                   0                   1            1
+R1a_ACTIVE_GROSS  750         37      336          0       84                   0                   1            1
+R1a_ACTIVE_GROSS 1000         37      336          0       84                   0                   1            1
+R1a_ACTIVE_GROSS 1500         37      336          0       84                   0                   1            1
+ R1b_ACTIVE_DIFF  250          0      336          0       84                   0                  38           38
+ R1b_ACTIVE_DIFF  500          0      336          0       84                   0                  38           38
+ R1b_ACTIVE_DIFF  750          0      336          0       84                   0                  38           38
+ R1b_ACTIVE_DIFF 1000          0      336          0       84                   0                  38           38
+ R1b_ACTIVE_DIFF 1500          0      336          0       84                   0                  38           38
+
+======================================================================================================================
+3. WHERE DO THE TWO VERDICTS FIRST DIVERGE, AS A FUNCTION OF DEPLOYED SHARE?  (the idea's question)
+   R1a is read against ACT-share (its own window), R1b against DIFF-share.
+======================================================================================================================
+
+  [R1a_ACTIVE_GROSS]  rows = realised act_share bucket, cols = MINN
+    bucket   n  R0_pass  mean_window_days  move@250  pass@250  move@500  pass@500  move@750  pass@750  move@1000  pass@1000  move@1500  pass@1500
+[0.1, 0.2)   1        0               669         0         0         0         0         0         0          0          0          0          0
+[0.2, 0.3)   5        0              1011         0         0         0         0         0         0          0          0          0          0
+[0.3, 0.4)  12        0              1486         0         0         0         0         0         0          0          0          0          0
+[0.4, 0.5)  13        0              1906         0         0         0         0         0         0          0          0          0          0
+[0.5, 0.6)  13        0              2351         0         0         0         0         0         0          0          0          0          0
+[0.6, 0.7)  12        0              2818         0         0         0         0         0         0          0          0          0          0
+[0.7, 0.8)  11        0              3155         0         0         0         0         0         0          0          0          0          0
+[0.8, 0.9)  11        1              3602         1         0         1         0         1         0          1          0          1          0
+[0.9, 1.0) 258       37              4274         0        37         0        37         0        37          0         37          0         37
+    MINN=  250: total moves    1; LOWEST share bucket with a move: [0.8, 0.9)
+    MINN=  500: total moves    1; LOWEST share bucket with a move: [0.8, 0.9)
+    MINN=  750: total moves    1; LOWEST share bucket with a move: [0.8, 0.9)
+    MINN= 1000: total moves    1; LOWEST share bucket with a move: [0.8, 0.9)
+    MINN= 1500: total moves    1; LOWEST share bucket with a move: [0.8, 0.9)
+
+  [R1b_ACTIVE_DIFF]  rows = realised diff_share bucket, cols = MINN
+    bucket  n  R0_pass  mean_window_days  move@250  pass@250  move@500  pass@500  move@750  pass@750  move@1000  pass@1000  move@1500  pass@1500
+[0.0, 0.1)  6        0               401         0         0         0         0         0         0          0          0          0          0
+[0.1, 0.2) 14        1               699         1         0         1         0         1         0          1          0          1          0
+[0.2, 0.3) 26        4              1052         4         0         4         0         4         0          4          0          4          0
+[0.3, 0.4) 48       10              1490        10         0        10         0        10         0         10          0         10          0
+[0.4, 0.5) 52        9              1915         9         0         9         0         9         0          9          0          9          0
+[0.5, 0.6) 52        6              2350         6         0         6         0         6         0          6          0          6          0
+[0.6, 0.7) 48        5              2812         5         0         5         0         5         0          5          0          5          0
+[0.7, 0.8) 38        2              3139         2         0         2         0         2         0          2          0          2          0
+[0.8, 0.9) 34        1              3593         1         0         1         0         1         0          1          0          1          0
+[0.9, 1.0) 18        0              4046         0         0         0         0         0         0          0          0          0          0
+    MINN=  250: total moves   38; LOWEST share bucket with a move: [0.1, 0.2)
+    MINN=  500: total moves   38; LOWEST share bucket with a move: [0.1, 0.2)
+    MINN=  750: total moves   38; LOWEST share bucket with a move: [0.1, 0.2)
+    MINN= 1000: total moves   38; LOWEST share bucket with a move: [0.1, 0.2)
+    MINN= 1500: total moves   38; LOWEST share bucket with a move: [0.1, 0.2)
+
+======================================================================================================================
+4. NULL LEAKAGE.  Does window-matching let a NO-INFORMATION switch through at some share?
+======================================================================================================================
+  NULL books: 84.  R0 passes 0.  R1a@250 0  R1a@500 0  R1a@750 0  R1a@1000 0  R1a@1500 0  |  R1b@250 0  R1b@500 0  R1b@750 0  R1b@1000 0  R1b@1500 0
+  NULL cells passing ANY test: none
+
+======================================================================================================================
+4b. WHY DOES THE DIFF-WINDOW TEST MOVE EVERY VERDICT?  Leg-level decomposition on each window.
+======================================================================================================================
+  books passing R0 (full-window 4a vs RULES v2): 38 of 336.
+
+  [R1a ACTIVE-GROSS window]  of those 38 R0 passes, on this window:
+     leg H1 holds  37   leg H2 holds  37   leg DD holds  37   all three  37
+     zero-variance windows (device is FLAT on every day of its own window, Sharpe undefined): 0 of 38
+     mean dSharpe (device - incumbent) ON THIS WINDOW: +0.0499  (median +0.0383, min -0.0044, max +0.1728)
+     mean dMaxDD: +2.77 pp
+
+  [R1b ACTIVE-DIFF window]  of those 38 R0 passes, on this window:
+     leg H1 holds   0   leg H2 holds   0   leg DD holds  38   all three   0
+     zero-variance windows (device is FLAT on every day of its own window, Sharpe undefined): 0 of 38
+     mean dSharpe (device - incumbent) ON THIS WINDOW: -0.1294  (median -0.0345, min -3.0103, max -0.0033)
+     mean dMaxDD: +5.30 pp
+
+  THE SAME TWO STATISTICS OVER THE WHOLE REAL CORPUS, SPLIT BY ARM (this is the mechanism, not a property of the tape):
+    CASH           n= 84  FULL dS 0.6375   W_DIFF: zero-var   0/ 84, mean dS -3.5646 (|dS| median 3.4603), mean dMaxDD +6.44 pp
+    OVER f=0.25    n= 84  FULL dS 0.8478   W_DIFF: zero-var   0/ 84, mean dS -0.1249 (|dS| median 0.0830), mean dMaxDD +7.91 pp
+    OVER f=0.50    n= 84  FULL dS 0.9480   W_DIFF: zero-var   0/ 84, mean dS -0.0414 (|dS| median 0.0279), mean dMaxDD +5.24 pp
+    OVER f=0.75    n= 84  FULL dS 0.9814   W_DIFF: zero-var   0/ 84, mean dS -0.0135 (|dS| median 0.0091), mean dMaxDD +2.60 pp
+
+  IS ANY WINDOW-MATCHED CONTRAST ADJUDICABLE AT ALL?  Paired circular-block bootstrap t of the
+  MEAN EXCESS return on each window (block 63d, 400 draws, seed 20260920; INHERITED
+  conventions, not tuned parameters).  |t| > 2 = the window can tell the two books apart.
+    ACTIVE-GROSS  n=336  |t|>2: 279  median t -4.067  mean |t| 3.992  max |t| 17.231
+    ACTIVE-DIFF   n=336  |t|>2: 258  median t -3.458  mean |t| 3.453  max |t| 6.446
+    (a window on which no book is distinguishable from the incumbent cannot adjudicate 4a either way)
+
+======================================================================================================================
+5. BOTH KEEP PATHS over the whole corpus (4a judged vs RULES v2, 4b vs SPY).
+======================================================================================================================
+panel  real_books  pass_4a_FULL  pass_4a_OOS  pass_4b_FULL  pass_4b_OOS  BOTH_4b_FULL_and_OOS  NULL_4b_OOS  of_NULL
+  U56         112             7            8             0            0                     0            0       28
+ B136         112             6            4             0            0                     0            0       28
+SMALL         112            25           27             0            0                     0            0       28
+  [U56] FULL bars  RULES v2 8.62% / 1.2010 / -12.05%   SPY 15.12% / 0.8843 / -33.72%
+  [U56] OOS  bars  RULES v2 9.46% / 1.2766 / -12.05%   SPY 15.26% / 0.8737 / -33.72%
+  [B136] FULL bars  RULES v2 7.96% / 1.0972 / -12.24%   SPY 15.12% / 0.8844 / -33.72%
+  [B136] OOS  bars  RULES v2 7.85% / 1.1017 / -12.24%   SPY 15.26% / 0.8737 / -33.72%
+  [SMALL] FULL bars  RULES v2 4.26% / 0.6596 / -14.16%   SPY 14.01% / 0.8561 / -33.72%
+  [SMALL] OOS  bars  RULES v2 3.64% / 0.5458 / -14.16%   SPY 15.26% / 0.8737 / -33.72%
+
+  books clearing 4b on FULL *and* OOS: 0
+
+======================================================================================================================
+6. RULE 8 WALK-FORWARD.  (MINN, f) fixed on 2009-2016; each test used as an IS-ONLY chooser;
+   the book it picks read ONCE on 2017-2026.  ALL grid points shown; (*) marks the IS-chosen cell.
+======================================================================================================================
+panel  MINN    phi                    test *                         picked  n_is_pass  n_is_NULL  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_4a  OOS_4b
+  U56   250 0.2500              R0_CURRENT * BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56   250 0.2500        R1a_ACTIVE_GROSS * BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56   250 0.2500         R1b_ACTIVE_DIFF *               (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56   250 0.5000              R0_CURRENT   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56   250 0.5000        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56   250 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56   250 0.7500              R0_CURRENT   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56   250 0.7500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56   250 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56   500 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56   500 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56   500 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56   500 0.5000              R0_CURRENT   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56   500 0.5000        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56   500 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56   500 0.7500              R0_CURRENT   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56   500 0.7500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56   500 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56   750 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56   750 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56   750 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56   750 0.5000              R0_CURRENT   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56   750 0.5000        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56   750 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56   750 0.7500              R0_CURRENT   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56   750 0.7500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56   750 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56  1000 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56  1000 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56  1000 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56  1000 0.5000              R0_CURRENT   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56  1000 0.5000        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56  1000 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56  1000 0.7500              R0_CURRENT   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56  1000 0.7500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56  1000 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56  1500 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56  1500 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.40          3          0    0.0579      1.1318    -0.0769   False   False
+  U56  1500 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56  1500 0.5000              R0_CURRENT   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56  1500 0.5000        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.50 | s=0.40          5          0    0.0702      1.2408    -0.0867   False   False
+  U56  1500 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56  1500 0.7500              R0_CURRENT   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56  1500 0.7500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.75 | s=0.40          7          0    0.0824      1.2788    -0.1037   False   False
+  U56  1500 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+  U56    -1    NaN -- RULES v2 baseline --                                          -1         -1    0.0946      1.2766    -0.1205   False   False
+  U56    -1    NaN               -- SPY --                                          -1         -1    0.1526      0.8737    -0.3372   False   False
+ B136   250 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136   250 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136   250 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136   250 0.5000              R0_CURRENT *    STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136   250 0.5000        R1a_ACTIVE_GROSS *    STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136   250 0.5000         R1b_ACTIVE_DIFF *               (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136   250 0.7500              R0_CURRENT      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136   250 0.7500        R1a_ACTIVE_GROSS      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136   250 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136   500 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136   500 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136   500 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136   500 0.5000              R0_CURRENT      STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136   500 0.5000        R1a_ACTIVE_GROSS      STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136   500 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136   500 0.7500              R0_CURRENT      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136   500 0.7500        R1a_ACTIVE_GROSS      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136   500 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136   750 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136   750 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136   750 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136   750 0.5000              R0_CURRENT      STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136   750 0.5000        R1a_ACTIVE_GROSS      STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136   750 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136   750 0.7500              R0_CURRENT      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136   750 0.7500        R1a_ACTIVE_GROSS      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136   750 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136  1000 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136  1000 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136  1000 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136  1000 0.5000              R0_CURRENT      STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136  1000 0.5000        R1a_ACTIVE_GROSS      STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136  1000 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136  1000 0.7500              R0_CURRENT      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136  1000 0.7500        R1a_ACTIVE_GROSS      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136  1000 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136  1500 0.2500              R0_CURRENT   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136  1500 0.2500        R1a_ACTIVE_GROSS   BREADTH | OVER f=0.25 | s=0.30          3          0    0.0604      0.9895    -0.0928   False   False
+ B136  1500 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136  1500 0.5000              R0_CURRENT      STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136  1500 0.5000        R1a_ACTIVE_GROSS      STOP | OVER f=0.50 | s=0.60          7          0    0.0567      0.9876    -0.0860   False   False
+ B136  1500 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136  1500 0.7500              R0_CURRENT      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136  1500 0.7500        R1a_ACTIVE_GROSS      STOP | OVER f=0.75 | s=0.60         10          0    0.0677      1.0641    -0.1042   False   False
+ B136  1500 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+ B136    -1    NaN -- RULES v2 baseline --                                          -1         -1    0.0785      1.1017    -0.1224   False   False
+ B136    -1    NaN               -- SPY --                                          -1         -1    0.1526      0.8737    -0.3372   False   False
+SMALL   250 0.2500              R0_CURRENT *  VOLTGT | OVER f=0.25 | s=0.60          2          3    0.0413      0.6689    -0.1083    True   False
+SMALL   250 0.2500        R1a_ACTIVE_GROSS *  VOLTGT | OVER f=0.25 | s=0.60          1          3    0.0413      0.6689    -0.1083    True   False
+SMALL   250 0.2500         R1b_ACTIVE_DIFF *               (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL   250 0.5000              R0_CURRENT    VOLTGT | OVER f=0.50 | s=0.60          6          3    0.0398      0.6332    -0.1083    True   False
+SMALL   250 0.5000        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.50 | s=0.60          5          3    0.0398      0.6332    -0.1083    True   False
+SMALL   250 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL   250 0.7500              R0_CURRENT    VOLTGT | OVER f=0.75 | s=0.60          7          3    0.0381      0.5915    -0.1213    True   False
+SMALL   250 0.7500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.75 | s=0.60          6          3    0.0381      0.5915    -0.1213    True   False
+SMALL   250 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL   500 0.2500              R0_CURRENT    VOLTGT | OVER f=0.25 | s=0.60          2          3    0.0413      0.6689    -0.1083    True   False
+SMALL   500 0.2500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.25 | s=0.60          1          3    0.0413      0.6689    -0.1083    True   False
+SMALL   500 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL   500 0.5000              R0_CURRENT    VOLTGT | OVER f=0.50 | s=0.60          6          3    0.0398      0.6332    -0.1083    True   False
+SMALL   500 0.5000        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.50 | s=0.60          5          3    0.0398      0.6332    -0.1083    True   False
+SMALL   500 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL   500 0.7500              R0_CURRENT    VOLTGT | OVER f=0.75 | s=0.60          7          3    0.0381      0.5915    -0.1213    True   False
+SMALL   500 0.7500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.75 | s=0.60          6          3    0.0381      0.5915    -0.1213    True   False
+SMALL   500 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL   750 0.2500              R0_CURRENT    VOLTGT | OVER f=0.25 | s=0.60          2          3    0.0413      0.6689    -0.1083    True   False
+SMALL   750 0.2500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.25 | s=0.60          1          3    0.0413      0.6689    -0.1083    True   False
+SMALL   750 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL   750 0.5000              R0_CURRENT    VOLTGT | OVER f=0.50 | s=0.60          6          3    0.0398      0.6332    -0.1083    True   False
+SMALL   750 0.5000        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.50 | s=0.60          5          3    0.0398      0.6332    -0.1083    True   False
+SMALL   750 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL   750 0.7500              R0_CURRENT    VOLTGT | OVER f=0.75 | s=0.60          7          3    0.0381      0.5915    -0.1213    True   False
+SMALL   750 0.7500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.75 | s=0.60          6          3    0.0381      0.5915    -0.1213    True   False
+SMALL   750 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL  1000 0.2500              R0_CURRENT    VOLTGT | OVER f=0.25 | s=0.60          2          3    0.0413      0.6689    -0.1083    True   False
+SMALL  1000 0.2500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.25 | s=0.60          1          3    0.0413      0.6689    -0.1083    True   False
+SMALL  1000 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL  1000 0.5000              R0_CURRENT    VOLTGT | OVER f=0.50 | s=0.60          6          3    0.0398      0.6332    -0.1083    True   False
+SMALL  1000 0.5000        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.50 | s=0.60          5          3    0.0398      0.6332    -0.1083    True   False
+SMALL  1000 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL  1000 0.7500              R0_CURRENT    VOLTGT | OVER f=0.75 | s=0.60          7          3    0.0381      0.5915    -0.1213    True   False
+SMALL  1000 0.7500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.75 | s=0.60          6          3    0.0381      0.5915    -0.1213    True   False
+SMALL  1000 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL  1500 0.2500              R0_CURRENT    VOLTGT | OVER f=0.25 | s=0.60          2          3    0.0413      0.6689    -0.1083    True   False
+SMALL  1500 0.2500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.25 | s=0.60          1          3    0.0413      0.6689    -0.1083    True   False
+SMALL  1500 0.2500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL  1500 0.5000              R0_CURRENT    VOLTGT | OVER f=0.50 | s=0.60          6          3    0.0398      0.6332    -0.1083    True   False
+SMALL  1500 0.5000        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.50 | s=0.60          5          3    0.0398      0.6332    -0.1083    True   False
+SMALL  1500 0.5000         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL  1500 0.7500              R0_CURRENT    VOLTGT | OVER f=0.75 | s=0.60          7          3    0.0381      0.5915    -0.1213    True   False
+SMALL  1500 0.7500        R1a_ACTIVE_GROSS    VOLTGT | OVER f=0.75 | s=0.60          6          3    0.0381      0.5915    -0.1213    True   False
+SMALL  1500 0.7500         R1b_ACTIVE_DIFF                 (none passes IS)          0          0       NaN         NaN        NaN   False   False
+SMALL    -1    NaN -- RULES v2 baseline --                                          -1         -1    0.0364      0.5458    -0.1416   False   False
+SMALL    -1    NaN               -- SPY --                                          -1         -1    0.1526      0.8737    -0.3372   False   False
+
+  THE DELIVERABLE ROWS (IS-chosen MINN*, f*):
+panel  MINN    phi             test                         picked  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_4a  OOS_4b
+  U56   250 0.2500       R0_CURRENT BREADTH | OVER f=0.25 | s=0.40    0.0579      1.1318    -0.0769   False   False
+  U56   250 0.2500 R1a_ACTIVE_GROSS BREADTH | OVER f=0.25 | s=0.40    0.0579      1.1318    -0.0769   False   False
+  U56   250 0.2500  R1b_ACTIVE_DIFF               (none passes IS)       NaN         NaN        NaN   False   False
+ B136   250 0.5000       R0_CURRENT    STOP | OVER f=0.50 | s=0.60    0.0567      0.9876    -0.0860   False   False
+ B136   250 0.5000 R1a_ACTIVE_GROSS    STOP | OVER f=0.50 | s=0.60    0.0567      0.9876    -0.0860   False   False
+ B136   250 0.5000  R1b_ACTIVE_DIFF               (none passes IS)       NaN         NaN        NaN   False   False
+SMALL   250 0.2500       R0_CURRENT  VOLTGT | OVER f=0.25 | s=0.60    0.0413      0.6689    -0.1083    True   False
+SMALL   250 0.2500 R1a_ACTIVE_GROSS  VOLTGT | OVER f=0.25 | s=0.60    0.0413      0.6689    -0.1083    True   False
+SMALL   250 0.2500  R1b_ACTIVE_DIFF               (none passes IS)       NaN         NaN        NaN   False   False
+
+======================================================================================================================
+7. EVERY REAL BOOK (full corpus, all rungs).
+======================================================================================================================
+panel  family         arm  target_s  act_share  diff_share   CAGR  Sharpe  MaxDD     H1     H2  n_act  n_diff  R0_CURRENT  R1a_MINN=500  R1b_MINN=500  KEEP4b_FULL  KEEP4b_OOS  OOS_Sharpe
+  U56 SPYFILT        CASH     0.300      0.350       0.650  0.016   0.354 -0.121  0.430  0.295   1559    2889       False         False         False        False       False       0.277
+  U56 SPYFILT OVER f=0.25     0.300      1.000       0.350  0.069   1.245 -0.077  1.220  1.269   4448    1559       False         False         False        False       False       1.399
+  U56 SPYFILT OVER f=0.50     0.300      1.000       0.350  0.075   1.266 -0.087  1.257  1.276   4448    1559        True          True         False        False       False       1.395
+  U56 SPYFILT OVER f=0.75     0.300      1.000       0.350  0.080   1.245 -0.104  1.255  1.239   4448    1559        True          True         False        False       False       1.347
+  U56 SPYFILT        CASH     0.400      0.461       0.539  0.031   0.610 -0.114  0.690  0.549   2049    2399       False         False         False        False       False       0.588
+  U56 SPYFILT OVER f=0.25     0.400      1.000       0.461  0.056   1.116 -0.077  1.060  1.171   4448    2049       False         False         False        False       False       1.256
+  U56 SPYFILT OVER f=0.50     0.400      1.000       0.461  0.066   1.197 -0.087  1.168  1.225   4448    2049       False         False         False        False       False       1.318
+  U56 SPYFILT OVER f=0.75     0.400      1.000       0.461  0.076   1.216 -0.104  1.217  1.217   4448    2049       False         False         False        False       False       1.313
+  U56 SPYFILT        CASH     0.500      0.559       0.441  0.046   0.842 -0.124  0.897  0.799   2488    1960       False         False         False        False       False       0.889
+  U56 SPYFILT OVER f=0.25     0.500      1.000       0.559  0.046   0.995 -0.077  0.965  1.024   4448    2488       False         False         False        False       False       1.083
+  U56 SPYFILT OVER f=0.50     0.500      1.000       0.559  0.059   1.134 -0.087  1.124  1.144   4448    2488       False         False         False        False       False       1.224
+  U56 SPYFILT OVER f=0.75     0.500      1.000       0.559  0.073   1.190 -0.104  1.200  1.182   4448    2488       False         False         False        False       False       1.273
+  U56 SPYFILT        CASH     0.600      0.654       0.346  0.061   1.021 -0.103  1.030  1.017   2907    1541       False         False         False        False       False       1.136
+  U56 SPYFILT OVER f=0.25     0.600      1.000       0.654  0.036   0.872 -0.077  0.871  0.873   4448    2907       False         False         False        False       False       0.913
+  U56 SPYFILT OVER f=0.50     0.600      1.000       0.654  0.053   1.076 -0.087  1.085  1.069   4448    2907       False         False         False        False       False       1.141
+  U56 SPYFILT OVER f=0.75     0.600      1.000       0.654  0.069   1.166 -0.104  1.186  1.152   4448    2907       False         False         False        False       False       1.239
+  U56 SPYFILT        CASH     0.700      0.727       0.273  0.062   0.993 -0.098  0.986  1.001   3234    1214       False         False         False        False       False       1.126
+  U56 SPYFILT OVER f=0.25     0.700      1.000       0.727  0.035   0.958 -0.077  1.017  0.913   4448    3234       False         False         False        False       False       0.950
+  U56 SPYFILT OVER f=0.50     0.700      1.000       0.727  0.052   1.135 -0.087  1.181  1.099   4448    3234       False         False         False        False       False       1.170
+  U56 SPYFILT OVER f=0.75     0.700      1.000       0.727  0.069   1.191 -0.104  1.225  1.164   4448    3234       False         False         False        False       False       1.251
+  U56 SPYFILT        CASH     0.800      0.801       0.199  0.073   1.111 -0.103  1.109  1.114   3565     883       False         False         False        False       False       1.228
+  U56 SPYFILT OVER f=0.25     0.800      1.000       0.801  0.029   0.896 -0.077  1.040  0.813   4448    3565       False         False         False        False       False       0.860
+  U56 SPYFILT OVER f=0.50     0.800      1.000       0.801  0.048   1.112 -0.087  1.199  1.053   4448    3565       False         False         False        False       False       1.130
+  U56 SPYFILT OVER f=0.75     0.800      1.000       0.801  0.067   1.180 -0.104  1.227  1.145   4448    3565       False         False         False        False       False       1.235
+  U56 SPYFILT        CASH     0.900      0.911       0.089  0.084   1.188 -0.121  1.197  1.184   4050     398       False         False         False        False       False       1.281
+  U56 SPYFILT OVER f=0.25     0.900      1.000       0.911  0.022   1.045 -0.041  1.122  0.983   4448    4050       False         False         False        False       False       1.067
+  U56 SPYFILT OVER f=0.50     0.900      1.000       0.911  0.044   1.169 -0.066  1.214  1.133   4448    4050       False         False         False        False       False       1.227
+  U56 SPYFILT OVER f=0.75     0.900      1.000       0.911  0.065   1.194 -0.091  1.226  1.168   4448    4050       False         False         False        False       False       1.264
+  U56    STOP        CASH     0.300      0.313       0.687  0.012   0.366 -0.067  0.203  0.522   1392    3056       False         False         False        False       False       0.515
+  U56    STOP OVER f=0.25     0.300      1.000       0.313  0.064   1.015 -0.115  1.107  0.938   4448    1392       False         False         False        False       False       1.033
+  U56    STOP OVER f=0.50     0.300      1.000       0.313  0.071   1.100 -0.117  1.171  1.041   4448    1392       False         False         False        False       False       1.139
+  U56    STOP OVER f=0.75     0.300      1.000       0.313  0.079   1.162 -0.119  1.211  1.122   4448    1392       False         False         False        False       False       1.220
+  U56    STOP        CASH     0.400      0.426       0.574  0.025   0.614 -0.070  0.649  0.583   1896    2552       False         False         False        False       False       0.633
+  U56    STOP OVER f=0.25     0.400      1.000       0.426  0.055   0.941 -0.115  0.948  0.938   4448    1896       False         False         False        False       False       1.016
+  U56    STOP OVER f=0.50     0.400      1.000       0.426  0.066   1.063 -0.117  1.079  1.052   4448    1896       False         False         False        False       False       1.141
+  U56    STOP OVER f=0.75     0.400      1.000       0.426  0.076   1.148 -0.119  1.171  1.132   4448    1896       False         False         False        False       False       1.226
+  U56    STOP        CASH     0.500      0.515       0.485  0.038   0.845 -0.079  0.807  0.881   2290    2158       False         False         False        False       False       0.916
+  U56    STOP OVER f=0.25     0.500      1.000       0.515  0.047   0.852 -0.115  0.905  0.811   4448    2290       False         False         False        False       False       0.897
+  U56    STOP OVER f=0.50     0.500      1.000       0.515  0.060   1.016 -0.117  1.064  0.978   4448    2290       False         False         False        False       False       1.073
+  U56    STOP OVER f=0.75     0.500      1.000       0.515  0.073   1.130 -0.119  1.168  1.100   4448    2290       False         False         False        False       False       1.197
+  U56    STOP        CASH     0.600      0.609       0.391  0.041   0.814 -0.089  0.832  0.797   2711    1737       False         False         False        False       False       0.954
+  U56    STOP OVER f=0.25     0.600      1.000       0.609  0.047   0.917 -0.077  0.953  0.897   4448    2711       False         False         False        False       False       0.921
+  U56    STOP OVER f=0.50     0.600      1.000       0.609  0.060   1.071 -0.087  1.113  1.044   4448    2711       False         False         False        False       False       1.101
+  U56    STOP OVER f=0.75     0.600      1.000       0.609  0.073   1.159 -0.104  1.195  1.134   4448    2711       False         False         False        False       False       1.214
+  U56    STOP        CASH     0.700      0.713       0.287  0.052   0.945 -0.107  0.860  1.028   3171    1277       False         False         False        False       False       1.173
+  U56    STOP OVER f=0.25     0.700      1.000       0.713  0.041   0.882 -0.077  1.028  0.778   4448    3171       False         False         False        False       False       0.805
+  U56    STOP OVER f=0.50     0.700      1.000       0.713  0.056   1.067 -0.087  1.173  0.988   4448    3171       False         False         False        False       False       1.049
+  U56    STOP OVER f=0.75     0.700      1.000       0.713  0.071   1.161 -0.104  1.223  1.113   4448    3171       False         False         False        False       False       1.196
+  U56    STOP        CASH     0.800      0.805       0.195  0.058   0.953 -0.122  0.961  0.946   3581     867       False         False         False        False       False       1.085
+  U56    STOP OVER f=0.25     0.800      1.000       0.805  0.038   0.960 -0.077  1.090  0.891   4448    3581       False         False         False        False       False       0.919
+  U56    STOP OVER f=0.50     0.800      1.000       0.805  0.054   1.129 -0.087  1.222  1.071   4448    3581       False         False         False        False       False       1.134
+  U56    STOP OVER f=0.75     0.800      1.000       0.805  0.070   1.189 -0.104  1.240  1.151   4448    3581       False         False         False        False       False       1.235
+  U56    STOP        CASH     0.900      0.888       0.112  0.068   1.054 -0.107  1.079  1.031   3949     499       False         False         False        False       False       1.153
+  U56    STOP OVER f=0.25     0.900      1.000       0.888  0.032   0.961 -0.077  1.077  0.900   4448    3949       False         False         False        False       False       0.939
+  U56    STOP OVER f=0.50     0.900      1.000       0.888  0.050   1.143 -0.087  1.217  1.095   4448    3949       False         False         False        False       False       1.167
+  U56    STOP OVER f=0.75     0.900      1.000       0.888  0.068   1.193 -0.104  1.235  1.162   4448    3949       False         False         False        False       False       1.250
+  U56 BREADTH        CASH     0.300      0.312       0.688  0.013   0.316 -0.133  0.374  0.263   1389    3059       False         False         False        False       False       0.363
+  U56 BREADTH OVER f=0.25     0.300      1.000       0.312  0.072   1.272 -0.077  1.287  1.264   4448    1389        True          True         False        False       False       1.325
+  U56 BREADTH OVER f=0.50     0.300      1.000       0.312  0.077   1.280 -0.087  1.301  1.266   4448    1389        True          True         False        False       False       1.344
+  U56 BREADTH OVER f=0.75     0.300      1.000       0.312  0.082   1.251 -0.104  1.275  1.233   4448    1389        True          True         False        False       False       1.322
+  U56 BREADTH        CASH     0.400      0.443       0.557  0.030   0.580 -0.106  0.491  0.663   1972    2476       False         False         False        False       False       0.785
+  U56 BREADTH OVER f=0.25     0.400      1.000       0.443  0.059   1.195 -0.077  1.338  1.080   4448    1972       False         False         False        False       False       1.132
+  U56 BREADTH OVER f=0.50     0.400      1.000       0.443  0.068   1.247 -0.087  1.346  1.166   4448    1972       False         False         False        False       False       1.241
+  U56 BREADTH OVER f=0.75     0.400      1.000       0.443  0.077   1.238 -0.104  1.296  1.191   4448    1972        True          True         False        False       False       1.279
+  U56 BREADTH        CASH     0.500      0.523       0.477  0.041   0.744 -0.124  0.639  0.844   2327    2121       False         False         False        False       False       0.970
+  U56 BREADTH OVER f=0.25     0.500      1.000       0.523  0.051   1.120 -0.077  1.309  0.974   4448    2327       False         False         False        False       False       1.012
+  U56 BREADTH OVER f=0.50     0.500      1.000       0.523  0.063   1.210 -0.087  1.335  1.111   4448    2327       False         False         False        False       False       1.179
+  U56 BREADTH OVER f=0.75     0.500      1.000       0.523  0.074   1.222 -0.104  1.290  1.168   4448    2327       False         False         False        False       False       1.254
+  U56 BREADTH        CASH     0.600      0.614       0.386  0.050   0.851 -0.104  0.832  0.870   2731    1717       False         False         False        False       False       1.001
+  U56 BREADTH OVER f=0.25     0.600      1.000       0.614  0.045   1.078 -0.077  1.148  1.023   4448    2731       False         False         False        False       False       1.055
+  U56 BREADTH OVER f=0.50     0.600      1.000       0.614  0.059   1.193 -0.087  1.247  1.151   4448    2731       False         False         False        False       False       1.217
+  U56 BREADTH OVER f=0.75     0.600      1.000       0.614  0.072   1.215 -0.104  1.253  1.186   4448    2731        True          True         False        False       False       1.270
+  U56 BREADTH        CASH     0.700      0.711       0.289  0.070   1.108 -0.083  1.131  1.087   3161    1287       False         False         False        False       False       1.206
+  U56 BREADTH OVER f=0.25     0.700      1.000       0.711  0.031   0.862 -0.077  0.908  0.836   4448    3161       False         False         False        False       False       0.876
+  U56 BREADTH OVER f=0.50     0.700      1.000       0.711  0.049   1.087 -0.087  1.130  1.057   4448    3161       False         False         False        False       False       1.130
+  U56 BREADTH OVER f=0.75     0.700      1.000       0.711  0.068   1.171 -0.104  1.204  1.147   4448    3161       False         False         False        False       False       1.235
+  U56 BREADTH        CASH     0.800      0.820       0.180  0.079   1.140 -0.121  1.203  1.088   3648     800       False         False         False        False       False       1.194
+  U56 BREADTH OVER f=0.25     0.800      1.000       0.820  0.026   1.022 -0.041  0.942  1.099   4448    3648       False         False         False        False       False       1.163
+  U56 BREADTH OVER f=0.50     0.800      1.000       0.820  0.046   1.171 -0.066  1.153  1.190   4448    3648       False         False         False        False       False       1.276
+  U56 BREADTH OVER f=0.75     0.800      1.000       0.820  0.066   1.198 -0.091  1.209  1.191   4448    3648       False         False         False        False       False       1.284
+  U56 BREADTH        CASH     0.900      0.901       0.099  0.083   1.168 -0.121  1.190  1.151   4007     441       False         False         False        False       False       1.251
+  U56 BREADTH OVER f=0.25     0.900      1.000       0.901  0.023   1.117 -0.041  1.179  1.073   4448    4007       False         False         False        False       False       1.153
+  U56 BREADTH OVER f=0.50     0.900      1.000       0.901  0.044   1.194 -0.066  1.230  1.168   4448    4007       False         False         False        False       False       1.259
+  U56 BREADTH OVER f=0.75     0.900      1.000       0.901  0.065   1.202 -0.091  1.231  1.180   4448    4007       False         False         False        False       False       1.275
+  U56  VOLTGT        CASH     0.300      0.341       0.659  0.022   0.598 -0.100  0.565  0.633   1517    2931       False         False         False        False       False       0.884
+  U56  VOLTGT OVER f=0.25     0.300      1.000       0.341  0.063   1.038 -0.121  1.093  0.997   4448    1517       False         False         False        False       False       1.000
+  U56  VOLTGT OVER f=0.50     0.300      1.000       0.341  0.071   1.120 -0.121  1.171  1.082   4448    1517       False         False         False        False       False       1.123
+  U56  VOLTGT OVER f=0.75     0.300      1.000       0.341  0.079   1.173 -0.121  1.213  1.143   4448    1517       False         False         False        False       False       1.215
+  U56  VOLTGT        CASH     0.400      0.417       0.583  0.033   0.797 -0.070  0.783  0.811   1854    2594       False         False         False        False       False       1.021
+  U56  VOLTGT OVER f=0.25     0.400      1.000       0.417  0.054   0.940 -0.121  0.986  0.907   4448    1854       False         False         False        False       False       0.916
+  U56  VOLTGT OVER f=0.50     0.400      1.000       0.417  0.065   1.064 -0.121  1.110  1.031   4448    1854       False         False         False        False       False       1.077
+  U56  VOLTGT OVER f=0.75     0.400      1.000       0.417  0.076   1.150 -0.121  1.187  1.121   4448    1854       False         False         False        False       False       1.196
+  U56  VOLTGT        CASH     0.500      0.512       0.488  0.032   0.674 -0.085  0.698  0.652   2277    2171       False         False         False        False       False       0.849
+  U56  VOLTGT OVER f=0.25     0.500      1.000       0.512  0.056   1.041 -0.115  1.073  1.021   4448    2277       False         False         False        False       False       1.029
+  U56  VOLTGT OVER f=0.50     0.500      1.000       0.512  0.066   1.142 -0.117  1.177  1.118   4448    2277       False         False         False        False       False       1.165
+  U56  VOLTGT OVER f=0.75     0.500      1.000       0.512  0.076   1.189 -0.119  1.221  1.166   4448    2277       False         False         False        False       False       1.242
+  U56  VOLTGT        CASH     0.600      0.613       0.387  0.046   0.862 -0.091  0.876  0.852   2728    1720       False         False         False        False       False       1.011
+  U56  VOLTGT OVER f=0.25     0.600      1.000       0.613  0.046   0.960 -0.077  0.988  0.938   4448    2728       False         False         False        False       False       0.957
+  U56  VOLTGT OVER f=0.50     0.600      1.000       0.613  0.060   1.106 -0.087  1.136  1.084   4448    2728       False         False         False        False       False       1.139
+  U56  VOLTGT OVER f=0.75     0.600      1.000       0.613  0.073   1.177 -0.104  1.205  1.155   4448    2728       False         False         False        False       False       1.235
+  U56  VOLTGT        CASH     0.700      0.694       0.306  0.050   0.859 -0.096  0.744  0.971   3086    1362       False         False         False        False       False       1.112
+  U56  VOLTGT OVER f=0.25     0.700      1.000       0.694  0.044   1.044 -0.077  1.283  0.880   4448    3086       False         False         False        False       False       0.906
+  U56  VOLTGT OVER f=0.50     0.700      1.000       0.694  0.058   1.172 -0.087  1.323  1.060   4448    3086       False         False         False        False       False       1.122
+  U56  VOLTGT OVER f=0.75     0.700      1.000       0.694  0.072   1.206 -0.104  1.283  1.146   4448    3086       False         False         False        False       False       1.230
+  U56  VOLTGT        CASH     0.800      0.779       0.221  0.063   1.005 -0.103  1.144  0.874   3464     984       False         False         False        False       False       1.010
+  U56  VOLTGT OVER f=0.25     0.800      1.000       0.779  0.036   0.982 -0.077  0.902  1.059   4448    3464       False         False         False        False       False       1.086
+  U56  VOLTGT OVER f=0.50     0.800      1.000       0.779  0.053   1.149 -0.087  1.128  1.176   4448    3464       False         False         False        False       False       1.240
+  U56  VOLTGT OVER f=0.75     0.800      1.000       0.779  0.069   1.196 -0.104  1.203  1.195   4448    3464       False         False         False        False       False       1.280
+  U56  VOLTGT        CASH     0.900      0.913       0.087  0.083   1.210 -0.079  1.268  1.158   4060     388       False         False         False        False       False       1.262
+  U56  VOLTGT OVER f=0.25     0.900      1.000       0.913  0.023   0.870 -0.078  0.890  0.874   4448    4060       False         False         False        False       False       0.937
+  U56  VOLTGT OVER f=0.50     0.900      1.000       0.913  0.044   1.106 -0.092  1.128  1.095   4448    4060       False         False         False        False       False       1.180
+  U56  VOLTGT OVER f=0.75     0.900      1.000       0.913  0.065   1.175 -0.106  1.198  1.159   4448    4060       False         False         False        False       False       1.252
+ B136 SPYFILT        CASH     0.300      0.350       0.650  0.017   0.381 -0.145  0.491  0.283   1559    2889       False         False         False        False       False       0.266
+ B136 SPYFILT OVER f=0.25     0.300      1.000       0.350  0.061   1.084 -0.085  1.183  0.981   4448    1559       False         False         False        False       False       1.159
+ B136 SPYFILT OVER f=0.50     0.300      1.000       0.350  0.068   1.121 -0.087  1.233  1.007   4448    1559        True          True         False        False       False       1.173
+ B136 SPYFILT OVER f=0.75     0.300      1.000       0.350  0.074   1.121 -0.104  1.244  0.998   4448    1559        True          True         False        False       False       1.148
+ B136 SPYFILT        CASH     0.400      0.461       0.539  0.027   0.549 -0.152  0.635  0.472   2049    2399       False         False         False        False       False       0.515
+ B136 SPYFILT OVER f=0.25     0.400      1.000       0.461  0.053   1.004 -0.085  1.097  0.907   4448    2049       False         False         False        False       False       1.040
+ B136 SPYFILT OVER f=0.50     0.400      1.000       0.461  0.062   1.081 -0.087  1.188  0.969   4448    2049       False         False         False        False       False       1.108
+ B136 SPYFILT OVER f=0.75     0.400      1.000       0.461  0.071   1.104 -0.104  1.226  0.982   4448    2049       False         False         False        False       False       1.120
+ B136 SPYFILT        CASH     0.500      0.559       0.441  0.043   0.786 -0.150  0.869  0.707   2488    1960       False         False         False        False       False       0.819
+ B136 SPYFILT OVER f=0.25     0.500      1.000       0.559  0.042   0.877 -0.076  0.988  0.765   4448    2488       False         False         False        False       False       0.861
+ B136 SPYFILT OVER f=0.50     0.500      1.000       0.559  0.055   1.013 -0.086  1.135  0.890   4448    2488       False         False         False        False       False       1.008
+ B136 SPYFILT OVER f=0.75     0.500      1.000       0.559  0.067   1.076 -0.104  1.206  0.948   4448    2488       False         False         False        False       False       1.077
+ B136 SPYFILT        CASH     0.600      0.652       0.348  0.055   0.929 -0.114  0.983  0.876   2902    1546       False         False         False        False       False       1.039
+ B136 SPYFILT OVER f=0.25     0.600      1.000       0.652  0.034   0.786 -0.076  0.918  0.650   4448    2902       False         False         False        False       False       0.707
+ B136 SPYFILT OVER f=0.50     0.600      1.000       0.652  0.049   0.972 -0.086  1.108  0.835   4448    2902       False         False         False        False       False       0.934
+ B136 SPYFILT OVER f=0.75     0.600      1.000       0.652  0.064   1.061 -0.104  1.196  0.926   4448    2902       False         False         False        False       False       1.048
+ B136 SPYFILT        CASH     0.700      0.727       0.273  0.056   0.906 -0.104  0.965  0.846   3234    1214       False         False         False        False       False       1.013
+ B136 SPYFILT OVER f=0.25     0.700      1.000       0.727  0.033   0.856 -0.076  1.034  0.690   4448    3234       False         False         False        False       False       0.746
+ B136 SPYFILT OVER f=0.50     0.700      1.000       0.727  0.049   1.024 -0.086  1.189  0.865   4448    3234       False         False         False        False       False       0.965
+ B136 SPYFILT OVER f=0.75     0.700      1.000       0.727  0.064   1.083 -0.104  1.230  0.939   4448    3234       False         False         False        False       False       1.062
+ B136 SPYFILT        CASH     0.800      0.801       0.199  0.066   1.009 -0.100  1.083  0.932   3565     883       False         False         False        False       False       1.089
+ B136 SPYFILT OVER f=0.25     0.800      1.000       0.801  0.027   0.805 -0.076  1.055  0.615   4448    3565       False         False         False        False       False       0.681
+ B136 SPYFILT OVER f=0.50     0.800      1.000       0.801  0.045   1.007 -0.086  1.207  0.832   4448    3565       False         False         False        False       False       0.939
+ B136 SPYFILT OVER f=0.75     0.800      1.000       0.801  0.062   1.075 -0.104  1.233  0.926   4448    3565       False         False         False        False       False       1.052
+ B136 SPYFILT        CASH     0.900      0.911       0.089  0.077   1.084 -0.122  1.182  0.989   4050     398       False         False         False        False       False       1.124
+ B136 SPYFILT OVER f=0.25     0.900      1.000       0.911  0.021   0.947 -0.041  1.143  0.753   4448    4050       False         False         False        False       False       0.872
+ B136 SPYFILT OVER f=0.50     0.900      1.000       0.911  0.040   1.066 -0.062  1.226  0.908   4448    4050       False         False         False        False       False       1.040
+ B136 SPYFILT OVER f=0.75     0.900      1.000       0.911  0.060   1.090 -0.092  1.232  0.950   4448    4050       False         False         False        False       False       1.084
+ B136    STOP        CASH     0.300      0.324       0.676  0.008   0.253 -0.089  0.374  0.129   1443    3005       False         False         False        False       False       0.291
+ B136    STOP OVER f=0.25     0.300      1.000       0.324  0.060   0.939 -0.118  1.042  0.839   4448    1443       False         False         False        False       False       0.920
+ B136    STOP OVER f=0.50     0.300      1.000       0.324  0.066   1.012 -0.119  1.128  0.898   4448    1443       False         False         False        False       False       1.002
+ B136    STOP OVER f=0.75     0.300      1.000       0.324  0.073   1.065 -0.121  1.191  0.941   4448    1443       False         False         False        False       False       1.062
+ B136    STOP        CASH     0.400      0.416       0.584  0.019   0.501 -0.092  0.486  0.517   1851    2597       False         False         False        False       False       0.648
+ B136    STOP OVER f=0.25     0.400      1.000       0.416  0.053   0.865 -0.118  1.007  0.726   4448    1851       False         False         False        False       False       0.810
+ B136    STOP OVER f=0.50     0.400      1.000       0.416  0.062   0.969 -0.119  1.112  0.831   4448    1851       False         False         False        False       False       0.937
+ B136    STOP OVER f=0.75     0.400      1.000       0.416  0.071   1.046 -0.121  1.185  0.911   4448    1851       False         False         False        False       False       1.034
+ B136    STOP        CASH     0.500      0.502       0.498  0.023   0.555 -0.140  0.567  0.543   2232    2216       False         False         False        False       False       0.707
+ B136    STOP OVER f=0.25     0.500      1.000       0.502  0.051   0.876 -0.118  1.026  0.735   4448    2232       False         False         False        False       False       0.805
+ B136    STOP OVER f=0.50     0.500      1.000       0.502  0.061   0.985 -0.119  1.135  0.842   4448    2232       False         False         False        False       False       0.940
+ B136    STOP OVER f=0.75     0.500      1.000       0.502  0.070   1.057 -0.121  1.200  0.918   4448    2232       False         False         False        False       False       1.038
+ B136    STOP        CASH     0.600      0.588       0.412  0.022   0.460 -0.137  0.465  0.455   2617    1831       False         False         False        False       False       0.677
+ B136    STOP OVER f=0.25     0.600      1.000       0.588  0.053   1.004 -0.076  1.207  0.823   4448    2617       False         False         False        False       False       0.860
+ B136    STOP OVER f=0.50     0.600      1.000       0.588  0.062   1.079 -0.086  1.264  0.908   4448    2617       False         False         False        False       False       0.988
+ B136    STOP OVER f=0.75     0.600      1.000       0.588  0.071   1.103 -0.104  1.262  0.952   4448    2617       False         False         False        False       False       1.064
+ B136    STOP        CASH     0.700      0.696       0.304  0.036   0.654 -0.138  0.789  0.508   3095    1353       False         False         False        False       False       0.730
+ B136    STOP OVER f=0.25     0.700      1.000       0.696  0.046   0.956 -0.076  1.078  0.854   4448    3095       False         False         False        False       False       0.884
+ B136    STOP OVER f=0.50     0.700      1.000       0.696  0.057   1.062 -0.086  1.200  0.937   4448    3095       False         False         False        False       False       1.017
+ B136    STOP OVER f=0.75     0.700      1.000       0.696  0.068   1.098 -0.104  1.235  0.968   4448    3095        True          True         False        False       False       1.080
+ B136    STOP        CASH     0.800      0.789       0.211  0.050   0.827 -0.127  0.989  0.657   3511     937       False         False         False        False       False       0.847
+ B136    STOP OVER f=0.25     0.800      1.000       0.789  0.038   0.917 -0.076  1.014  0.843   4448    3511       False         False         False        False       False       0.883
+ B136    STOP OVER f=0.50     0.800      1.000       0.789  0.052   1.054 -0.086  1.180  0.943   4448    3511       False         False         False        False       False       1.032
+ B136    STOP OVER f=0.75     0.800      1.000       0.789  0.066   1.095 -0.104  1.226  0.971   4448    3511       False         False         False        False       False       1.089
+ B136    STOP        CASH     0.900      0.891       0.109  0.059   0.896 -0.131  1.067  0.722   3965     483       False         False         False        False       False       0.891
+ B136    STOP OVER f=0.25     0.900      1.000       0.891  0.033   0.979 -0.076  1.070  0.906   4448    3965       False         False         False        False       False       0.960
+ B136    STOP OVER f=0.50     0.900      1.000       0.891  0.049   1.096 -0.086  1.214  0.988   4448    3965       False         False         False        False       False       1.088
+ B136    STOP OVER f=0.75     0.900      1.000       0.891  0.064   1.109 -0.104  1.236  0.987   4448    3965        True          True         False        False       False       1.110
+ B136 BREADTH        CASH     0.300      0.266       0.734  0.016   0.408 -0.090  0.419  0.401   1182    3266       False         False         False        False       False       0.552
+ B136 BREADTH OVER f=0.25     0.300      1.000       0.266  0.064   1.076 -0.093  1.278  0.904   4448    1182       False         False         False        False       False       0.989
+ B136 BREADTH OVER f=0.50     0.300      1.000       0.266  0.069   1.110 -0.093  1.298  0.944   4448    1182       False         False         False        False       False       1.051
+ B136 BREADTH OVER f=0.75     0.300      1.000       0.266  0.075   1.114 -0.104  1.275  0.964   4448    1182       False         False         False        False       False       1.087
+ B136 BREADTH        CASH     0.400      0.352       0.648  0.024   0.520 -0.087  0.547  0.493   1565    2883       False         False         False        False       False       0.655
+ B136 BREADTH OVER f=0.25     0.400      1.000       0.352  0.058   1.031 -0.089  1.224  0.870   4448    1565       False         False         False        False       False       0.947
+ B136 BREADTH OVER f=0.50     0.400      1.000       0.352  0.065   1.089 -0.090  1.272  0.929   4448    1565       False         False         False        False       False       1.032
+ B136 BREADTH OVER f=0.75     0.400      1.000       0.352  0.072   1.107 -0.104  1.264  0.959   4448    1565       False         False         False        False       False       1.081
+ B136 BREADTH        CASH     0.500      0.449       0.551  0.029   0.569 -0.156  0.771  0.342   1996    2452       False         False         False        False       False       0.551
+ B136 BREADTH OVER f=0.25     0.500      1.000       0.449  0.054   1.049 -0.076  1.125  0.991   4448    1996       False         False         False        False       False       1.039
+ B136 BREADTH OVER f=0.50     0.500      1.000       0.449  0.063   1.110 -0.086  1.221  1.013   4448    1996       False         False         False        False       False       1.100
+ B136 BREADTH OVER f=0.75     0.500      1.000       0.449  0.071   1.118 -0.104  1.243  1.000   4448    1996        True          True         False        False       False       1.115
+ B136 BREADTH        CASH     0.600      0.531       0.469  0.042   0.744 -0.184  1.104  0.335   2362    2086       False         False         False        False       False       0.541
+ B136 BREADTH OVER f=0.25     0.600      1.000       0.531  0.045   0.959 -0.076  0.865  1.044   4448    2362       False         False         False        False       False       1.088
+ B136 BREADTH OVER f=0.50     0.600      1.000       0.531  0.056   1.066 -0.086  1.089  1.052   4448    2362       False         False         False        False       False       1.138
+ B136 BREADTH OVER f=0.75     0.600      1.000       0.531  0.068   1.100 -0.104  1.189  1.018   4448    2362       False         False         False        False       False       1.133
+ B136 BREADTH        CASH     0.700      0.674       0.326  0.057   0.915 -0.090  1.122  0.696   2998    1450       False         False         False        False       False       0.881
+ B136 BREADTH OVER f=0.25     0.700      1.000       0.674  0.034   0.865 -0.076  0.906  0.838   4448    2998       False         False         False        False       False       0.881
+ B136 BREADTH OVER f=0.50     0.700      1.000       0.674  0.049   1.027 -0.086  1.124  0.942   4448    2998       False         False         False        False       False       1.033
+ B136 BREADTH OVER f=0.75     0.700      1.000       0.674  0.065   1.084 -0.104  1.204  0.971   4448    2998       False         False         False        False       False       1.089
+ B136 BREADTH        CASH     0.800      0.810       0.190  0.072   1.070 -0.096  1.145  0.995   3603     845       False         False         False        False       False       1.141
+ B136 BREADTH OVER f=0.25     0.800      1.000       0.810  0.024   0.772 -0.076  0.998  0.582   4448    3603       False         False         False        False       False       0.661
+ B136 BREADTH OVER f=0.50     0.800      1.000       0.810  0.042   0.995 -0.091  1.180  0.824   4448    3603       False         False         False        False       False       0.939
+ B136 BREADTH OVER f=0.75     0.800      1.000       0.810  0.061   1.070 -0.107  1.222  0.924   4448    3603       False         False         False        False       False       1.052
+ B136 BREADTH        CASH     0.900      0.910       0.090  0.077   1.072 -0.122  1.183  0.963   4046     402       False         False         False        False       False       1.100
+ B136 BREADTH OVER f=0.25     0.900      1.000       0.910  0.021   1.021 -0.043  1.209  0.844   4448    4046       False         False         False        False       False       0.961
+ B136 BREADTH OVER f=0.50     0.900      1.000       0.910  0.041   1.090 -0.062  1.242  0.942   4448    4046       False         False         False        False       False       1.072
+ B136 BREADTH OVER f=0.75     0.900      1.000       0.910  0.060   1.097 -0.092  1.236  0.961   4448    4046       False         False         False        False       False       1.095
+ B136  VOLTGT        CASH     0.300      0.375       0.625  0.023   0.581 -0.082  0.534  0.627   1669    2779       False         False         False        False       False       0.899
+ B136  VOLTGT OVER f=0.25     0.300      1.000       0.375  0.055   0.909 -0.122  1.088  0.732   4448    1669       False         False         False        False       False       0.758
+ B136  VOLTGT OVER f=0.50     0.300      1.000       0.375  0.063   1.001 -0.122  1.165  0.838   4448    1669       False         False         False        False       False       0.909
+ B136  VOLTGT OVER f=0.75     0.300      1.000       0.375  0.071   1.062 -0.122  1.211  0.916   4448    1669       False         False         False        False       False       1.023
+ B136  VOLTGT        CASH     0.400      0.468       0.532  0.026   0.591 -0.066  0.622  0.561   2081    2367       False         False         False        False       False       0.814
+ B136  VOLTGT OVER f=0.25     0.400      1.000       0.468  0.053   0.938 -0.122  1.083  0.797   4448    2081       False         False         False        False       False       0.822
+ B136  VOLTGT OVER f=0.50     0.400      1.000       0.468  0.062   1.028 -0.122  1.173  0.886   4448    2081       False         False         False        False       False       0.959
+ B136  VOLTGT OVER f=0.75     0.400      1.000       0.468  0.071   1.078 -0.122  1.218  0.941   4448    2081       False         False         False        False       False       1.049
+ B136  VOLTGT        CASH     0.500      0.560       0.440  0.036   0.734 -0.066  0.699  0.768   2489    1959       False         False         False        False       False       0.982
+ B136  VOLTGT OVER f=0.25     0.500      1.000       0.560  0.047   0.895 -0.122  1.091  0.704   4448    2489       False         False         False        False       False       0.738
+ B136  VOLTGT OVER f=0.50     0.500      1.000       0.560  0.058   1.011 -0.122  1.188  0.838   4448    2489       False         False         False        False       False       0.918
+ B136  VOLTGT OVER f=0.75     0.500      1.000       0.560  0.069   1.073 -0.122  1.227  0.921   4448    2489       False         False         False        False       False       1.034
+ B136  VOLTGT        CASH     0.600      0.644       0.356  0.037   0.678 -0.090  0.643  0.713   2864    1584       False         False         False        False       False       0.911
+ B136  VOLTGT OVER f=0.25     0.600      1.000       0.644  0.047   0.979 -0.076  1.191  0.770   4448    2864       False         False         False        False       False       0.808
+ B136  VOLTGT OVER f=0.50     0.600      1.000       0.644  0.058   1.074 -0.086  1.260  0.892   4448    2864       False         False         False        False       False       0.977
+ B136  VOLTGT OVER f=0.75     0.600      1.000       0.644  0.069   1.103 -0.104  1.260  0.949   4448    2864       False         False         False        False       False       1.064
+ B136  VOLTGT        CASH     0.700      0.714       0.286  0.044   0.745 -0.106  0.804  0.684   3174    1274       False         False         False        False       False       0.872
+ B136  VOLTGT OVER f=0.25     0.700      1.000       0.714  0.043   1.003 -0.076  1.191  0.832   4448    3174       False         False         False        False       False       0.874
+ B136  VOLTGT OVER f=0.50     0.700      1.000       0.714  0.055   1.100 -0.086  1.272  0.938   4448    3174       False         False         False        False       False       1.027
+ B136  VOLTGT OVER f=0.75     0.700      1.000       0.714  0.067   1.114 -0.104  1.264  0.969   4448    3174        True          True         False        False       False       1.087
+ B136  VOLTGT        CASH     0.800      0.819       0.181  0.064   0.991 -0.102  1.166  0.816   3642     806       False         False         False        False       False       0.979
+ B136  VOLTGT OVER f=0.25     0.800      1.000       0.819  0.029   0.828 -0.076  0.871  0.788   4448    3642       False         False         False        False       False       0.849
+ B136  VOLTGT OVER f=0.50     0.800      1.000       0.819  0.046   1.017 -0.086  1.111  0.926   4448    3642       False         False         False        False       False       1.030
+ B136  VOLTGT OVER f=0.75     0.800      1.000       0.819  0.063   1.079 -0.104  1.198  0.963   4448    3642       False         False         False        False       False       1.088
+ B136  VOLTGT        CASH     0.900      0.914       0.086  0.078   1.119 -0.087  1.272  0.966   4064     384       False         False         False        False       False       1.108
+ B136  VOLTGT OVER f=0.25     0.900      1.000       0.914  0.020   0.767 -0.076  0.863  0.688   4448    4064       False         False         False        False       False       0.778
+ B136  VOLTGT OVER f=0.50     0.900      1.000       0.914  0.040   0.998 -0.091  1.119  0.884   4448    4064       False         False         False        False       False       1.005
+ B136  VOLTGT OVER f=0.75     0.900      1.000       0.914  0.060   1.069 -0.107  1.197  0.945   4448    4064       False         False         False        False       False       1.076
+SMALL SPYFILT        CASH     0.300      0.383       0.617  0.015   0.313 -0.131  0.054  0.484   1512    2431       False         False         False        False       False       0.351
+SMALL SPYFILT OVER f=0.25     0.300      1.000       0.383  0.028   0.632 -0.106  0.903  0.336   3943    1512       False         False         False        False       False       0.457
+SMALL SPYFILT OVER f=0.50     0.300      1.000       0.383  0.033   0.672 -0.118  0.889  0.457   3943    1512       False         False         False        False       False       0.521
+SMALL SPYFILT OVER f=0.75     0.300      1.000       0.383  0.038   0.674 -0.130  0.853  0.519   3943    1512       False         False         False        False       False       0.544
+SMALL SPYFILT        CASH     0.400      0.482       0.518  0.018   0.354 -0.189  0.078  0.547   1899    2044       False         False         False        False       False       0.323
+SMALL SPYFILT OVER f=0.25     0.400      1.000       0.482  0.025   0.621 -0.103  0.929  0.280   3943    1899       False         False         False        False       False       0.511
+SMALL SPYFILT OVER f=0.50     0.400      1.000       0.482  0.031   0.670 -0.116  0.911  0.434   3943    1899       False         False         False        False       False       0.556
+SMALL SPYFILT OVER f=0.75     0.400      1.000       0.482  0.037   0.674 -0.129  0.864  0.510   3943    1899       False         False         False        False       False       0.558
+SMALL SPYFILT        CASH     0.500      0.577       0.423  0.025   0.458 -0.169  0.249  0.616   2274    1669       False         False         False        False       False       0.447
+SMALL SPYFILT OVER f=0.25     0.500      1.000       0.577  0.021   0.572 -0.093  0.893  0.222   3943    2274       False         False         False        False       False       0.420
+SMALL SPYFILT OVER f=0.50     0.500      1.000       0.577  0.028   0.646 -0.109  0.893  0.409   3943    2274       False         False         False        False       False       0.509
+SMALL SPYFILT OVER f=0.75     0.500      1.000       0.577  0.036   0.663 -0.125  0.855  0.501   3943    2274       False         False         False        False       False       0.539
+SMALL SPYFILT        CASH     0.600      0.660       0.340  0.032   0.562 -0.120  0.441  0.663   2603    1340       False         False         False        False       False       0.544
+SMALL SPYFILT OVER f=0.25     0.600      1.000       0.660  0.016   0.481 -0.086  0.793  0.163   3943    2603       False         False         False        False       False       0.323
+SMALL SPYFILT OVER f=0.50     0.600      1.000       0.660  0.025   0.601 -0.102  0.840  0.385   3943    2603       False         False         False        False       False       0.463
+SMALL SPYFILT OVER f=0.75     0.600      1.000       0.660  0.034   0.645 -0.122  0.832  0.492   3943    2603       False         False         False        False       False       0.520
+SMALL SPYFILT        CASH     0.700      0.717       0.283  0.036   0.617 -0.104  0.579  0.656   2828    1115       False         False         False        False       False       0.581
+SMALL SPYFILT OVER f=0.25     0.700      1.000       0.717  0.013   0.437 -0.092  0.707  0.172   3943    2828       False         False         False        False       False       0.284
+SMALL SPYFILT OVER f=0.50     0.700      1.000       0.717  0.023   0.582 -0.102  0.795  0.394   3943    2828       False         False         False        False       False       0.447
+SMALL SPYFILT OVER f=0.75     0.700      1.000       0.717  0.033   0.637 -0.122  0.812  0.496   3943    2828       False         False         False        False       False       0.514
+SMALL SPYFILT        CASH     0.800      0.784       0.216  0.035   0.577 -0.116  0.614  0.556   3092     851       False         False         False        False       False       0.536
+SMALL SPYFILT OVER f=0.25     0.800      1.000       0.784  0.015   0.529 -0.069  0.737  0.338   3943    3092       False         False         False        False       False       0.365
+SMALL SPYFILT OVER f=0.50     0.800      1.000       0.784  0.024   0.630 -0.094  0.813  0.476   3943    3092       False         False         False        False       False       0.488
+SMALL SPYFILT OVER f=0.75     0.800      1.000       0.784  0.034   0.655 -0.118  0.818  0.527   3943    3092       False         False         False        False       False       0.529
+SMALL SPYFILT        CASH     0.900      0.882       0.118  0.044   0.693 -0.119  0.810  0.604   3478     465        True         False         False        False       False       0.582
+SMALL SPYFILT OVER f=0.25     0.900      1.000       0.882  0.009   0.414 -0.064  0.609  0.271   3943    3478       False         False         False        False       False       0.316
+SMALL SPYFILT OVER f=0.50     0.900      1.000       0.882  0.021   0.580 -0.090  0.751  0.451   3943    3478       False         False         False        False       False       0.469
+SMALL SPYFILT OVER f=0.75     0.900      1.000       0.882  0.032   0.635 -0.116  0.790  0.517   3943    3478       False         False         False        False       False       0.522
+SMALL    STOP        CASH     0.300      0.259       0.741 -0.000   0.008 -0.112 -0.007  0.020   1022    2921       False         False         False        False       False       0.073
+SMALL    STOP OVER f=0.25     0.300      1.000       0.259  0.035   0.635 -0.137  0.761  0.536   3943    1022       False         False         False        False       False       0.495
+SMALL    STOP OVER f=0.50     0.300      1.000       0.259  0.038   0.658 -0.139  0.793  0.552   3943    1022       False         False         False        False       False       0.525
+SMALL    STOP OVER f=0.75     0.300      1.000       0.259  0.040   0.665 -0.140  0.808  0.556   3943    1022        True          True         False        False       False       0.542
+SMALL    STOP        CASH     0.400      0.339       0.661  0.005   0.151 -0.088  0.184  0.125   1336    2607       False         False         False        False       False       0.157
+SMALL    STOP OVER f=0.25     0.400      1.000       0.339  0.031   0.590 -0.124  0.713  0.499   3943    1336       False         False         False        False       False       0.468
+SMALL    STOP OVER f=0.50     0.400      1.000       0.339  0.035   0.632 -0.130  0.769  0.530   3943    1336       False         False         False        False       False       0.509
+SMALL    STOP OVER f=0.75     0.400      1.000       0.339  0.039   0.654 -0.136  0.798  0.546   3943    1336       False         False         False        False       False       0.535
+SMALL    STOP        CASH     0.500      0.433       0.567  0.008   0.192 -0.130  0.343  0.057   1706    2237       False         False         False        False       False       0.039
+SMALL    STOP OVER f=0.25     0.500      1.000       0.433  0.030   0.595 -0.115  0.672  0.547   3943    1706       False         False         False        False       False       0.543
+SMALL    STOP OVER f=0.50     0.500      1.000       0.433  0.034   0.641 -0.116  0.752  0.564   3943    1706       False         False         False        False       False       0.561
+SMALL    STOP OVER f=0.75     0.500      1.000       0.433  0.038   0.660 -0.129  0.793  0.562   3943    1706       False         False         False        False       False       0.560
+SMALL    STOP        CASH     0.600      0.542       0.458 -0.001  -0.002 -0.206  0.242 -0.217   2137    1806       False         False         False        False       False      -0.232
+SMALL    STOP OVER f=0.25     0.600      1.000       0.542  0.038   0.832 -0.074  0.863  0.827   3943    2137        True          True         False        False       False       0.845
+SMALL    STOP OVER f=0.50     0.600      1.000       0.542  0.039   0.792 -0.093  0.877  0.740   3943    2137        True          True         False        False       False       0.749
+SMALL    STOP OVER f=0.75     0.600      1.000       0.542  0.041   0.727 -0.117  0.848  0.641   3943    2137        True          True         False        False       False       0.644
+SMALL    STOP        CASH     0.700      0.622       0.378  0.011   0.227 -0.155  0.407  0.069   2452    1491       False         False         False        False       False       0.051
+SMALL    STOP OVER f=0.25     0.700      1.000       0.622  0.029   0.718 -0.074  0.807  0.676   3943    2452        True          True         False        False       False       0.687
+SMALL    STOP OVER f=0.50     0.700      1.000       0.622  0.034   0.726 -0.094  0.849  0.649   3943    2452        True          True         False        False       False       0.654
+SMALL    STOP OVER f=0.75     0.700      1.000       0.622  0.038   0.698 -0.118  0.835  0.600   3943    2452        True          True         False        False       False       0.601
+SMALL    STOP        CASH     0.800      0.719       0.281  0.016   0.307 -0.199  0.624  0.025   2836    1107       False         False         False        False       False       0.079
+SMALL    STOP OVER f=0.25     0.800      1.000       0.719  0.026   0.725 -0.079  0.705  0.768   3943    2836       False         False         False        False       False       0.736
+SMALL    STOP OVER f=0.50     0.800      1.000       0.719  0.032   0.731 -0.100  0.797  0.702   3943    2836       False         False         False        False       False       0.682
+SMALL    STOP OVER f=0.75     0.800      1.000       0.719  0.037   0.698 -0.121  0.812  0.621   3943    2836        True          True         False        False       False       0.610
+SMALL    STOP        CASH     0.900      0.855       0.145  0.038   0.615 -0.153  0.692  0.555   3371     572       False         False         False        False       False       0.532
+SMALL    STOP OVER f=0.25     0.900      1.000       0.855  0.013   0.507 -0.083  0.811  0.317   3943    3371       False         False         False        False       False       0.356
+SMALL    STOP OVER f=0.50     0.900      1.000       0.855  0.023   0.620 -0.103  0.839  0.465   3943    3371       False         False         False        False       False       0.483
+SMALL    STOP OVER f=0.75     0.900      1.000       0.855  0.033   0.651 -0.122  0.823  0.523   3943    3371       False         False         False        False       False       0.528
+SMALL BREADTH        CASH     0.300      0.170       0.830  0.024   0.647 -0.052  0.514  0.773    669    3274       False         False         False        False       False       0.646
+SMALL BREADTH OVER f=0.25     0.300      1.000       0.170  0.023   0.442 -0.142  0.678  0.274   3943     669       False         False         False        False       False       0.334
+SMALL BREADTH OVER f=0.50     0.300      1.000       0.170  0.030   0.536 -0.142  0.748  0.383   3943     669       False         False         False        False       False       0.420
+SMALL BREADTH OVER f=0.75     0.300      1.000       0.170  0.036   0.608 -0.142  0.788  0.474   3943     669       False         False         False        False       False       0.490
+SMALL BREADTH        CASH     0.400      0.237       0.763  0.022   0.526 -0.095  0.493  0.558    936    3007       False         False         False        False       False       0.365
+SMALL BREADTH OVER f=0.25     0.400      1.000       0.237  0.025   0.490 -0.138  0.703  0.349   3943     936       False         False         False        False       False       0.441
+SMALL BREADTH OVER f=0.50     0.400      1.000       0.237  0.031   0.572 -0.139  0.772  0.435   3943     936       False         False         False        False       False       0.492
+SMALL BREADTH OVER f=0.75     0.400      1.000       0.237  0.037   0.627 -0.140  0.801  0.501   3943     936       False         False         False        False       False       0.526
+SMALL BREADTH        CASH     0.500      0.386       0.614  0.018   0.390 -0.184  0.587  0.200   1523    2420       False         False         False        False       False       0.156
+SMALL BREADTH OVER f=0.25     0.500      1.000       0.386  0.026   0.586 -0.126  0.667  0.552   3943    1523       False         False         False        False       False       0.585
+SMALL BREADTH OVER f=0.50     0.500      1.000       0.386  0.032   0.642 -0.131  0.765  0.570   3943    1523       False         False         False        False       False       0.590
+SMALL BREADTH OVER f=0.75     0.500      1.000       0.386  0.037   0.661 -0.136  0.800  0.565   3943    1523       False         False         False        False       False       0.573
+SMALL BREADTH        CASH     0.600      0.483       0.517  0.020   0.399 -0.194  0.590  0.222   1903    2040       False         False         False        False       False       0.154
+SMALL BREADTH OVER f=0.25     0.600      1.000       0.483  0.025   0.607 -0.119  0.705  0.569   3943    1903       False         False         False        False       False       0.632
+SMALL BREADTH OVER f=0.50     0.600      1.000       0.483  0.031   0.660 -0.127  0.793  0.584   3943    1903       False         False         False        False       False       0.621
+SMALL BREADTH OVER f=0.75     0.600      1.000       0.483  0.037   0.669 -0.134  0.812  0.571   3943    1903        True          True         False        False       False       0.586
+SMALL BREADTH        CASH     0.700      0.579       0.421  0.030   0.542 -0.107  0.749  0.362   2284    1659       False         False         False        False       False       0.321
+SMALL BREADTH OVER f=0.25     0.700      1.000       0.579  0.018   0.512 -0.087  0.551  0.503   3943    2284       False         False         False        False       False       0.546
+SMALL BREADTH OVER f=0.50     0.700      1.000       0.579  0.026   0.614 -0.105  0.718  0.551   3943    2284       False         False         False        False       False       0.574
+SMALL BREADTH OVER f=0.75     0.700      1.000       0.579  0.035   0.650 -0.123  0.781  0.557   3943    2284       False         False         False        False       False       0.565
+SMALL BREADTH        CASH     0.800      0.696       0.304  0.034   0.581 -0.129  0.795  0.404   2746    1197       False         False         False        False       False       0.409
+SMALL BREADTH OVER f=0.25     0.800      1.000       0.696  0.016   0.527 -0.071  0.562  0.521   3943    2746       False         False         False        False       False       0.523
+SMALL BREADTH OVER f=0.50     0.800      1.000       0.696  0.025   0.628 -0.095  0.730  0.564   3943    2746       False         False         False        False       False       0.564
+SMALL BREADTH OVER f=0.75     0.800      1.000       0.696  0.034   0.655 -0.118  0.785  0.561   3943    2746       False         False         False        False       False       0.559
+SMALL BREADTH        CASH     0.900      0.828       0.172  0.038   0.613 -0.136  0.801  0.461   3263     680       False         False         False        False       False       0.461
+SMALL BREADTH OVER f=0.25     0.900      1.000       0.828  0.013   0.558 -0.058  0.634  0.523   3943    3263       False         False         False        False       False       0.533
+SMALL BREADTH OVER f=0.50     0.900      1.000       0.828  0.023   0.643 -0.086  0.761  0.562   3943    3263       False         False         False        False       False       0.564
+SMALL BREADTH OVER f=0.75     0.900      1.000       0.828  0.033   0.658 -0.114  0.794  0.558   3943    3263       False         False         False        False       False       0.557
+SMALL  VOLTGT        CASH     0.300      0.211       0.789  0.003   0.133 -0.071  0.112  0.311    831    3112       False         False         False        False       False       0.307
+SMALL  VOLTGT OVER f=0.25     0.300      1.000       0.211  0.037   0.619 -0.125  0.806  0.514   3943     831       False         False         False        False       False       0.473
+SMALL  VOLTGT OVER f=0.50     0.300      1.000       0.211  0.039   0.639 -0.124  0.826  0.526   3943     831       False         False         False        False       False       0.501
+SMALL  VOLTGT OVER f=0.75     0.300      1.000       0.211  0.041   0.653 -0.133  0.824  0.537   3943     831       False         False         False        False       False       0.525
+SMALL  VOLTGT        CASH     0.400      0.276       0.724  0.000   0.024 -0.083  0.092 -0.184   1087    2856       False         False         False        False       False       0.045
+SMALL  VOLTGT OVER f=0.25     0.400      1.000       0.276  0.039   0.671 -0.118  0.884  0.569   3943    1087        True          True         False        False       False       0.539
+SMALL  VOLTGT OVER f=0.50     0.400      1.000       0.276  0.041   0.676 -0.118  0.881  0.563   3943    1087        True          True         False        False       False       0.545
+SMALL  VOLTGT OVER f=0.75     0.400      1.000       0.276  0.042   0.672 -0.127  0.851  0.556   3943    1087        True          True         False        False       False       0.547
+SMALL  VOLTGT        CASH     0.500      0.348       0.652 -0.002  -0.026 -0.111  0.029 -0.184   1373    2570       False         False         False        False       False      -0.077
+SMALL  VOLTGT OVER f=0.25     0.500      1.000       0.348  0.041   0.722 -0.115  1.079  0.574   3943    1373        True          True         False        False       False       0.580
+SMALL  VOLTGT OVER f=0.50     0.500      1.000       0.348  0.041   0.712 -0.115  1.004  0.568   3943    1373        True          True         False        False       False       0.573
+SMALL  VOLTGT OVER f=0.75     0.500      1.000       0.348  0.042   0.690 -0.128  0.903  0.559   3943    1373        True          True         False        False       False       0.562
+SMALL  VOLTGT        CASH     0.600      0.409       0.591 -0.005  -0.119 -0.172  0.042 -0.492   1614    2329       False         False         False        False       False      -0.289
+SMALL  VOLTGT OVER f=0.25     0.600      1.000       0.409  0.044   0.799 -0.108  1.191  0.666   3943    1614        True          True         False        False       False       0.669
+SMALL  VOLTGT OVER f=0.50     0.600      1.000       0.409  0.043   0.764 -0.108  1.065  0.630   3943    1614        True          True         False        False       False       0.633
+SMALL  VOLTGT OVER f=0.75     0.600      1.000       0.409  0.043   0.715 -0.121  0.925  0.590   3943    1614        True          True         False        False       False       0.592
+SMALL  VOLTGT        CASH     0.700      0.487       0.513  0.008   0.198 -0.103  0.401 -0.126   1920    2023       False         False         False        False       False      -0.052
+SMALL  VOLTGT OVER f=0.25     0.700      1.000       0.487  0.033   0.655 -0.110  0.922  0.599   3943    1920        True          True         False        False       False       0.607
+SMALL  VOLTGT OVER f=0.50     0.700      1.000       0.487  0.036   0.677 -0.108  0.912  0.588   3943    1920        True          True         False        False       False       0.596
+SMALL  VOLTGT OVER f=0.75     0.700      1.000       0.487  0.040   0.676 -0.120  0.858  0.571   3943    1920        True          True         False        False       False       0.574
+SMALL  VOLTGT        CASH     0.800      0.585       0.415  0.003   0.080 -0.210  0.551 -0.548   2306    1637       False         False         False        False       False      -0.383
+SMALL  VOLTGT OVER f=0.25     0.800      1.000       0.585  0.038   0.815 -0.073  0.920  0.872   3943    2306        True          True         False        False       False       0.851
+SMALL  VOLTGT OVER f=0.50     0.800      1.000       0.585  0.039   0.780 -0.096  0.900  0.768   3943    2306        True          True         False        False       False       0.754
+SMALL  VOLTGT OVER f=0.75     0.800      1.000       0.585  0.041   0.722 -0.119  0.848  0.657   3943    2306        True          True         False        False       False       0.649
+SMALL  VOLTGT        CASH     0.900      0.762       0.238  0.018   0.335 -0.175  0.805 -0.144   3003     940       False         False         False        False       False      -0.015
+SMALL  VOLTGT OVER f=0.25     0.900      1.000       0.762  0.027   0.736 -0.053  0.612  0.870   3943    3003       False         False         False        False       False       0.807
+SMALL  VOLTGT OVER f=0.50     0.900      1.000       0.762  0.033   0.737 -0.081  0.753  0.765   3943    3003       False         False         False        False       False       0.725
+SMALL  VOLTGT OVER f=0.75     0.900      1.000       0.762  0.038   0.701 -0.112  0.792  0.650   3943    3003       False         False         False        False       False       0.630
+
+======================================================================================================================
+GATES
+======================================================================================================================
+  [PASS] G0 U56 sample >= 10y (rule 1)                        got          18.7y  want >= 10.0y
+  [PASS] G0 B136 sample >= 10y (rule 1)                       got          18.7y  want >= 10.0y
+  [PASS] G0 SMALL sample >= 10y (rule 1)                      got          16.7y  want >= 10.0y
+  [PASS] G1 cost axis exact (U56)                             got       0.00e+00  want < 1e-12
+  [PASS] G2 baseline == live rules_v2 (U56)                   got       0.00e+00  want < 1e-12
+  [PASS] G3a act-share spans 0.3-0.9 (U56)                    got [0.291, 1.000]  want min<=0.35 and max>=0.85
+  [PASS] G3b diff-share spans 0.3-0.9 (U56)                   got [0.000, 0.913]  want min<=0.35 and max>=0.85
+  [PASS] G4 no leverage (U56)                                 got         0.7373  want <= 1.0
+  [PASS] G5 OVER f=1.00 reproduces the incumbent (U56)        got       0.00e+00  want < 1e-12
+  [PASS] G6 chooser reads no 2017+ row (U56)                  got       0.00e+00  want == 0
+  [PASS] G1 cost axis exact (B136)                            got       0.00e+00  want < 1e-12
+  [PASS] G2 baseline == live rules_v2 (B136)                  got       0.00e+00  want < 1e-12
+  [PASS] G3a act-share spans 0.3-0.9 (B136)                   got [0.266, 1.000]  want min<=0.35 and max>=0.85
+  [PASS] G3b diff-share spans 0.3-0.9 (B136)                  got [0.000, 0.914]  want min<=0.35 and max>=0.85
+  [PASS] G4 no leverage (B136)                                got         0.7154  want <= 1.0
+  [PASS] G5 OVER f=1.00 reproduces the incumbent (B136)       got       0.00e+00  want < 1e-12
+  [PASS] G6 chooser reads no 2017+ row (B136)                 got       0.00e+00  want == 0
+  [PASS] G1 cost axis exact (SMALL)                           got       0.00e+00  want < 1e-12
+  [PASS] G2 baseline == live rules_v2 (SMALL)                 got       0.00e+00  want < 1e-12
+  [PASS] G3a act-share spans 0.3-0.9 (SMALL)                  got [0.170, 1.000]  want min<=0.35 and max>=0.85
+  [PASS] G3b diff-share spans 0.3-0.9 (SMALL)                 got [0.000, 0.907]  want min<=0.35 and max>=0.85
+  [PASS] G4 no leverage (SMALL)                               got         0.6803  want <= 1.0
+  [PASS] G5 OVER f=1.00 reproduces the incumbent (SMALL)      got       0.00e+00  want < 1e-12
+  [PASS] G6 chooser reads no 2017+ row (SMALL)                got       0.00e+00  want == 0
+
+  24 of 24 gates pass.
+
+wrote research/backtests/2026-09-20_window-matched-on-sometimes-off-corpus_C.csv   elapsed 654s

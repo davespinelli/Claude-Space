@@ -1,3 +1,61 @@
+## 2026-09-20 — idea 1738 (lane C): IS THE WINDOW-MATCHED 4a TEST TESTABLE ON A SOMETIMES-OFF CORPUS? **ANSWERED — YES, AND THE TWO WINDOW CONVENTIONS ARE NOT THE SAME TEST. KILL the ACTIVE-DIFF restatement; the ACTIVE-GROSS one is a NO-OP. NO NEW BOOK.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1631 priced three restatements of PROTOCOL rule 4a and could not
+  adjudicate the first — the WINDOW-MATCHED one — because its corpus had no variance on the only
+  axis that matters: every committed book is deployed on ~100% of days (act-share 1.000 at 50 of 52
+  cells) and differs from the incumbent's book at diff-share 1.000 at 44 of 52. A window-matched
+  test can only differ from a full-window test when the window is genuinely SHORTER, so 1631's
+  verdict on (i) was a statement about its corpus, not about the restatement.
+
+  **THE CORPUS 1631 LACKED.** Four SWITCH families — SPYFILT / STOP / BREADTH / VOLTGT, the four the
+  idea names — each a causal market-state statistic thresholded at the IS-window quantile that puts
+  its ON-share on a **0.30-0.90 ladder**; two ARMS turn a switch into a book: **CASH** (hold the
+  incumbent when ON, sit flat when OFF -> act-share = s) and **OVER(f)** (BE the incumbent when OFF,
+  hold f x the incumbent when ON -> diff-share = s). 7 shares x 2 arms (f = 0.25/0.50/0.75) x 3
+  panels = **423 books, 336 real + 84 NULL** (seeded uniform switches at the same shares, no
+  information). Realised **act-share 0.170-1.000, diff-share 0.000-0.914**; 420 of 423 cells sit
+  strictly inside (0.05, 0.95) on the diff axis. Weekly, 10 bps, t+1, long-only, max gross 0.7373.
+
+  **THE ANSWER, AND IT SPLITS.** **R1a (the device's DEPLOYED window) moves 1 of 336 verdicts** at
+  every MINN rung {250, 500, 750, 1000, 1500} — one SMALL SPYFILT|CASH|s=0.90 cell missing by
+  dSharpe **-0.0044** — so matching the window to realised gross is a distinction without a
+  difference even across 0.17-1.00 of coverage. **R1b (the days the book actually DIFFERS from the
+  incumbent) flips ALL 38 R0 passes to FAIL and passes 0 of 336 at every rung**, with the lowest
+  divergence at diff-share 0.1-0.2. The two conventions 1631 treated as one restatement are two
+  different tests, and only one of them is a restatement of 4a at all.
+
+  **WHY — AND IT IS MECHANICAL, NOT TAPE.** On the diff window the DD leg still holds **38 of 38**
+  (the deviation is +5.30 pp SHALLOWER) and **both Sharpe legs fail 38 of 38**, because a de-gross
+  deviation leaves Sharpe near-invariant on the very days it is applied: median |dSharpe| runs
+  **0.0830 / 0.0279 / 0.0091 at f = 0.25 / 0.50 / 0.75**, shrinking with (1-f), and what is left is
+  the cash drag, i.e. negative. This is NOT a power failure — the paired circular-block t (63d, 400
+  draws, seed 20260920, inherited conventions) of mean excess on the diff window reaches **|t| > 2
+  at 258 of 336**, and **332 of 336 are NEGATIVE with 0 of 336 positive at |t| > 2**. The window can
+  tell the books apart; its uniform answer is that no deviation in the corpus pays for itself on its
+  own days. NULL leakage is 0 of 84 under every test at every rung.
+
+  **RULE 8 (2017-2026 read ONCE).** R0 and R1a pick the IDENTICAL book on all three panels — U56
+  BREADTH|OVER f=0.25|s=0.40 OOS **5.79% / 1.1318 / -7.69%**; B136 STOP|OVER f=0.50|s=0.60 **5.67% /
+  0.9876 / -8.60%**; SMALL VOLTGT|OVER f=0.25|s=0.60 **4.13% / 0.6689 / -10.83%**, the run's only OOS
+  4a pass — while **R1b selects NOTHING on IS on any panel at any (MINN, f)**, so it cannot serve as
+  a chooser; f* had to fall back to the current rule's IS argmax, which is itself the finding.
+  Both KEEP paths over the corpus: 4a FULL **38/336**, 4a OOS 39/336, **4b FULL 0/336, 4b OOS 0/336**.
+  Bars: SPY FULL 15.12% / 0.8843 / -33.72%, OOS 15.26% / 0.8737 / -33.72%; RULES v2 OOS 9.46% /
+  1.2766 / -12.05% (U56), 7.85% / 1.1017 / -12.24% (B136), 3.64% / 0.5458 / -14.16% (SMALL).
+  GATES **24/24** (cost axis exact 0.00e+00 x3; baseline == live `rules_v2_weights` 0.00e+00 x3;
+  the OVER f=1.00 control reproduces the incumbent 0.00e+00 x3; hard-truncated IS replay identical
+  x3; no leverage). Survivorship (rule 9): current-constituent panels, absolute levels are upper
+  bounds, every claim is a within-tape contrast.
+
+  **CONSTRUCTIVE RESIDUE (proposed for Sunday review only; PROTOCOL.md, RULES.md, scan.py, bot.py
+  and baseline.py NOT modified).** Leave rule 4a as written — this confirms 1631's KILL on a corpus
+  that could have refuted it. But the run turned up the one deviation statistic in the record that
+  ADJUDICATES at this sample length: the diff-window MEAN-EXCESS t, decisive at 258 of 336 cells,
+  against idea 1511's 0 of 240 for a MaxDD contrast and idea 1709's 12 of 27 for an IS-Sharpe
+  margin. A device's deviation should be quoted as that t, on the days it is actually a deviation,
+  rather than as a full-window Sharpe delta — and on that ruler 332 of 336 devices in this corpus
+  are negative.
+
 ## 2026-09-20 — idea 1709 (lane C): IS THE RULE-8 PICK INSTABILITY A PLATEAU ARTEFACT OR A REAL PREFERENCE? **ANSWERED — A PLATEAU ARTEFACT, AT EVERY SINGLE MOVE EVENT. BUT THE PLATEAU IS A HAZARD, NOT A COMFORT. KILL (capital), NO NEW BOOK.**
 
   **THE DEFECT THIS CLOSES.** Idea 720 (earlier today) convicted rule 8's chooser: a year-deleted
