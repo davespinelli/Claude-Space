@@ -1,0 +1,187 @@
+======================================================================================================================
+IDEA 720 (lane cloud, 2026-09-20) — DOES ANY PUBLISHED IS-vs-OOS DRIFT SURVIVE A
+SINGLE-YEAR DELETION?
+DIALS: YEAR {NONE, each calendar year} x BOOK ['LIVE', 'PICK', 'PARK', 'EW100', 'EW050'].
+Panels U56 / B136 / SMALL (published, not a dial).  Weekly, 10 bps, t+1, no leverage.
+DELETION CONVENTION: the BOOK IS NEVER RE-RUN — the year is removed from the SCORED
+RETURN STREAM and the statistic recomputed on the spliced remainder, in order.
+======================================================================================================================
+
+  PANELS:
+    U56      56 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  COMPOSITION U56: 56 columns incl. SPY, 2008-01-02..2026-09-18
+    B136    136 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  COMPOSITION B136: 136 columns incl. SPY, 2008-01-02..2026-09-18
+    SMALL   666 columns  2010-01-04 .. 2026-09-18  4203 rows (16.7y)
+    PUBLISHED  COMPOSITION SMALL: 666 columns incl. SPY, 2010-01-04..2026-09-18
+    PUBLISHED  SMALL max_1d_move >= 1.0 drops: 54 names dropped (54 by data/small_meta.csv, 53 by realised price move), 666 columns remain
+  SURVIVORSHIP (rule 9): current-constituent panels; absolute levels are UPPER BOUNDS.
+    GATE PASS  G0 U56 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 U56 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G0 B136 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 B136 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G0 SMALL sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 SMALL IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G1 replay of baseline.rules_v2_weights through engine.backtest (U56 LIVE, scored window): max|d| 1.735e-17 (target < 1e-12)
+    GATE PASS  G6 determinism: max|d| 0.000e+00 (target == 0)
+    GATE PASS  G2 no leverage (max realised gross over all 15 books): 1.0000 (target <= 1.0)
+    G7 CROSS-RUN U56 LIVE: 8.62% / 1.2011 / -12.05%   vs committed 8.62% / 1.2011 / -12.05%   MATCH
+    G7 CROSS-RUN U56 PICK: 11.72% / 1.1726 / -16.30%   vs committed 11.72% / 1.1726 / -16.30%   MATCH
+    G7 CROSS-RUN U56 PARK: 11.42% / 1.1188 / -19.75%   vs committed 11.42% / 1.1188 / -19.75%   MATCH
+    GATE PASS  G7 undeleted cells reproduce ideas 1695 / 1703 committed numbers: see above (target all MATCH)
+
+  The SPY bars and the live-book 4a bar are RE-SCORED UNDER THE SAME DELETION as the
+  cell they judge — deleting 2020 from the book but not from SPY would be a comparison
+  between two different tapes.
+    GATE PASS  G8 deletion is a PARTITION at every cell (asserted in-loop): 300 asserts (target all pass)
+    GATE PASS  G3 all cells published: 275 (target 275)
+    GATE PASS  G4 exactly two tuned dials: YEAR x BOOK (target == 2)
+    GATE PASS  G9 IS/OOS attribution: every deleted year lies wholly in ONE window: 0 straddling cells (target 0 or explained)
+
+======================================================================================================================
+(A) THE DRIFT — does any undeleted OOS-minus-IS Sharpe drift REVERSE under a one-year deletion?
+======================================================================================================================
+  Undeleted drift (OOS Sharpe - IS Sharpe) per (panel, book), then the range over the
+  single-year deletions, and whether the SIGN ever flips.
+    panel  book  drift0      lo      hi    span  n_flip                                        flip_years
+      U56  LIVE +0.1723 -0.0057 +0.3965 +0.4023       1                                              2011
+      U56  PICK +0.0480 -0.1477 +0.2691 +0.4168       6                     2011,2012,2017,2021,2023,2024
+      U56  PARK +0.0174 -0.1830 +0.3387 +0.5217       9      2011,2015,2017,2019,2021,2023,2024,2025,2026
+      U56 EW100 +0.0146 -0.1861 +0.3334 +0.5195      10 2011,2014,2015,2017,2019,2021,2023,2024,2025,2026
+      U56 EW050 +0.0185 -0.1817 +0.3409 +0.5227       9      2011,2015,2017,2019,2021,2023,2024,2025,2026
+     B136  LIVE +0.0095 -0.1481 +0.2587 +0.4068      10 2010,2011,2012,2015,2017,2019,2021,2023,2024,2026
+     B136  PICK -0.0598 -0.2137 +0.1830 +0.3967       5                          2009,2013,2018,2020,2022
+     B136  PARK -0.0575 -0.2262 +0.1771 +0.4034       5                          2009,2013,2018,2020,2022
+     B136 EW100 -0.0627 -0.2314 +0.1697 +0.4011       5                          2009,2013,2018,2020,2022
+     B136 EW050 -0.0553 -0.2241 +0.1802 +0.4042       5                          2009,2013,2018,2020,2022
+    SMALL  LIVE -0.3296 -0.6819 +0.1893 +0.8712       1                                              2013
+    SMALL  PICK -0.3889 -0.7139 +0.1024 +0.8163       1                                              2013
+    SMALL  PARK -0.3855 -0.7779 -0.0662 +0.7117       0                                                 -
+    SMALL EW100 -0.3883 -0.7786 -0.0694 +0.7092       0                                                 -
+    SMALL EW050 -0.3844 -0.7775 -0.0648 +0.7127       0                                                 -
+
+  (panel, book) drifts whose SIGN reverses under at least one single-year deletion: **12 of 15**.  Mean span over the 19 deletions: 0.5477 of Sharpe.
+
+======================================================================================================================
+(C) THE NOISE SCALE — a calendar year is ~252 days, so how much does deleting ANY 252-day
+    block move the same statistic?  500 random contiguous blocks, seed 20260920.
+======================================================================================================================
+    panel  book  drift0  null_sd  drift_t  max_abs_z  n_z_gt2 worst_year  null_4b_move_rate
+      U56  LIVE +0.1723  +0.0976  +1.7652    +2.2964        1       2013            +0.0000
+      U56  PICK +0.0480  +0.1062  +0.4520    +2.0821        1       2013            +0.0060
+      U56  PARK +0.0174  +0.1041  +0.1669    +3.0866        1       2022            +0.0500
+      U56 EW100 +0.0146  +0.1039  +0.1403    +3.0680        1       2022            +0.0000
+      U56 EW050 +0.0185  +0.1042  +0.1779    +3.0942        1       2022            +0.0000
+     B136  LIVE +0.0095  +0.1006  +0.0941    +2.4764        2       2013            +0.0000
+     B136  PICK -0.0598  +0.1096  -0.5455    +2.2155        1       2013            +0.0180
+     B136  PARK -0.0575  +0.1015  -0.5665    +2.3118        1       2022            +0.0760
+     B136 EW100 -0.0627  +0.1014  -0.6186    +2.2915        1       2022            +0.0000
+     B136 EW050 -0.0553  +0.1015  -0.5449    +2.3198        1       2022            +0.0000
+    SMALL  LIVE -0.3296  +0.1710  -1.9277    +3.0346        2       2013            +0.0000
+    SMALL  PICK -0.3889  +0.1617  -2.4048    +3.0380        2       2013            +0.0000
+    SMALL  PARK -0.3855  +0.1414  -2.7274    +2.7754        2       2011            +0.0000
+    SMALL EW100 -0.3883  +0.1410  -2.7534    +2.7680        2       2011            +0.0000
+    SMALL EW050 -0.3844  +0.1415  -2.7167    +2.7787        2       2011            +0.0000
+
+  Single-year deletions whose drift move exceeds 2 block-deletion SDs: **21 of 260** (8.1%, against a
+  nominal 5% for a 2-SD bar).  Mean null SD of the drift: 0.1191 of
+  Sharpe — deleting ANY 252-day block moves this statistic by about that much, whatever
+  that block contained.
+
+  AND THE UNDELETED DRIFT ITSELF, AGAINST THAT SAME SD: |drift0| / null_sd reaches
+  |t| > 2 at **4 of 15** (panel, book) pairs (max |t| 2.75, 
+  median 0.57).  A statistic that does not differ from zero at
+  its own deletion resolution has no SIGN to reverse, which is why 12 of 15 reverse.
+
+  MATCHED NULL FOR THE VERDICT (B): a RANDOM 252-day deletion moves the 4b FULL verdict
+  at a mean rate of 1.0% over 500 blocks x 15 (panel, book)
+  pairs (max 7.6%).  The single-year rate is measured against
+  this in section (B).
+
+  (C2) IS SIGN-REVERSAL PREDICTED BY THE DRIFT'S OWN RESOLUTION?  Cross-tab of the 15
+  (panel, book) pairs by whether |drift0| clears 2 block-deletion SDs:
+    |t| <= 2 : 11 pairs, 11 with >= 1 sign reversal, mean reversals 6.00 of 19 deletions  (U56/LIVE, U56/PICK, U56/PARK, U56/EW100, U56/EW050, B136/LIVE, B136/PICK, B136/PARK, B136/EW100, B136/EW050, SMALL/LIVE)
+    |t| > 2 :  4 pairs, 1 with >= 1 sign reversal, mean reversals 0.25 of 19 deletions  (SMALL/PICK, SMALL/PARK, SMALL/EW100, SMALL/EW050)
+    THE RULE THIS SUGGESTS: publish |drift| / block-deletion SD beside any IS-vs-OOS
+    drift claim.  Below |t| = 2 the sign is not a finding and should not be quoted as one.
+
+======================================================================================================================
+(B) THE VERDICT — how many committed 4a / 4b verdicts MOVE under a one-year deletion?
+======================================================================================================================
+    panel  book   v4b  moved4b  v4b_oos  moved4b_oos   v4a  moved4a   binding0  n_binding_changes flip_years_4b
+      U56  LIVE False        0    False            0 False        0       CAGR                  0             -
+      U56  PICK  True        0     True            0 False        0       NONE                  0             -
+      U56  PARK  True        1     True            1 False        0       NONE                  1          2020
+      U56 EW100 False        0    False            0 False        0         DD                  0             -
+      U56 EW050 False        0    False            0 False        0       CAGR                  0             -
+     B136  LIVE False        0    False            0 False        0       CAGR                  0             -
+     B136  PICK  True        0     True            4 False        0       NONE                  0             -
+     B136  PARK False        1    False            1 False        0         DD                  1          2020
+     B136 EW100 False        0    False            0 False        0         DD                  0             -
+     B136 EW050 False        0    False            0 False        0       CAGR                  0             -
+    SMALL  LIVE False        0    False            0 False        0 H1+H2+CAGR                  0             -
+    SMALL  PICK False        0    False            0 False        0 H2+DD+CAGR                  6             -
+    SMALL  PARK False        0    False            0 False        0 H2+DD+CAGR                  3             -
+    SMALL EW100 False        0    False            0 False        0      H2+DD                  3             -
+    SMALL EW050 False        0    False            0 False        0 H2+DD+CAGR                  3             -
+
+  4b FULL verdicts that MOVE: 2 of 260 deletions (0.8%, against the random-block null's 1.0%); 4b OOS: 6; 4a: 0.
+  (panel, book) pairs with AT LEAST ONE 4b-moving year: **2 of 15**.
+
+  WHICH YEARS DO THE MOVING (count of 4b FULL flips by deleted year, all panels/books):
+    2020: 2 of 15 (panel, book) verdicts flip when this year is deleted
+
+======================================================================================================================
+(D) THE IS / OOS ASYMMETRY — which SIDE of the drift did the move come from?
+======================================================================================================================
+  A year <= 2016 lies wholly in the IS window and cannot move the OOS number; a year
+  >= 2017 lies wholly in OOS and cannot move IS.  Checked, not assumed:
+    side counts: {'OOS': 150, 'IS': 110}
+    GATE PASS  G9 IS-side deletions leave OOS untouched and vice versa: 0 violations (target == 0)
+    IS-side deletions: mean |d drift| 0.1140   over 110 cells
+    OOS-side deletions: mean |d drift| 0.0807   over 150 cells
+
+======================================================================================================================
+RULE 8 UNDER DELETION — the chooser is re-fit on the YEAR-DELETED IS window; 2017-2026
+read ONCE.  How often does deleting one IS year change the PICK, and what does it cost?
+======================================================================================================================
+
+  UNDELETED picks (the control):
+    panel  chooser  pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_4b   OOS_binding  OOS_4a
+      U56 C_SHARPE  PICK     1.1460    0.1214      1.1940    -0.1630    True          NONE   False
+      U56   C_MEMO  PARK     1.1095    0.1183      1.1269    -0.1975    True          NONE   False
+      U56   C_CAGR  PICK     1.1460    0.1214      1.1940    -0.1630    True          NONE   False
+      U56 C_ANCHOR  LIVE     1.1045    0.0946      1.2769    -0.1205   False          CAGR   False
+     B136 C_SHARPE EW100     1.1484    0.1827      1.0857    -0.3272   False            DD   False
+     B136   C_MEMO  PICK     1.1473    0.1102      1.0875    -0.1920    True          NONE   False
+     B136   C_CAGR  PICK     1.1473    0.1102      1.0875    -0.1920    True          NONE   False
+     B136 C_ANCHOR  LIVE     1.0924    0.0785      1.1019    -0.1224   False          CAGR   False
+    SMALL C_SHARPE EW100     0.9828    0.1148      0.5945    -0.4438   False      H1+H2+DD   False
+    SMALL   C_MEMO  LIVE     0.8755    0.0364      0.5459    -0.1416   False    H1+H2+CAGR   False
+    SMALL   C_CAGR  PICK     0.9730    0.0532      0.5841    -0.2035   False H1+H2+DD+CAGR   False
+    SMALL C_ANCHOR  LIVE     0.8755    0.0364      0.5459    -0.1416   False    H1+H2+CAGR   False
+
+  PICK STABILITY under deleting each single IS year:
+    panel  chooser pick0  n_years  n_changed            picks  oos4b_0  oos4b_changed  oos_sharpe_span
+      U56 C_SHARPE  PICK        8          1       EW100,PICK     True              1           0.0676
+      U56   C_MEMO  PARK        8          2        LIVE,PARK     True              2           0.1500
+      U56   C_CAGR  PICK        8          4        PARK,PICK     True              0           0.0671
+      U56 C_ANCHOR  LIVE        8          0             LIVE    False              0           0.0000
+     B136 C_SHARPE EW100        8          4       EW100,PICK    False              4           0.0019
+     B136   C_MEMO  PICK        8          1        PARK,PICK     True              1           0.0002
+     B136   C_CAGR  PICK        8          1        PARK,PICK     True              1           0.0002
+     B136 C_ANCHOR  LIVE        8          0             LIVE    False              0           0.0000
+    SMALL C_SHARPE EW100        6          4 EW050,EW100,PICK    False              0           0.0130
+    SMALL   C_MEMO  LIVE        6          4        LIVE,PICK    False              0           0.0382
+    SMALL   C_CAGR  PICK        6          0             PICK    False              0           0.0000
+    SMALL C_ANCHOR  LIVE        6          0             LIVE    False              0           0.0000
+
+  Chooser x panel pairs whose PICK changes under at least one single IS-year deletion: **8 of 12**; total changed picks 21 of 88.
+  Pairs whose OOS 4b VERDICT changes: **5 of 12**.
+  Mean OOS Sharpe over all 100 chooser x panel x deletion picks: 0.9838
+  Picks clearing 4b OOS: 44 of 100; clearing 4a OOS: 0 of 100.
+
+  OOS bars (undeleted, per panel):
+    U56    SPY OOS CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%  |  LIVE RULES v2 OOS CAGR 9.46% Sharpe 1.2769 MaxDD -12.05%
+    B136   SPY OOS CAGR 15.26% Sharpe 0.8739 MaxDD -33.72%  |  LIVE RULES v2 OOS CAGR 7.85% Sharpe 1.1019 MaxDD -12.24%
+    SMALL  SPY OOS CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%  |  LIVE RULES v2 OOS CAGR 3.64% Sharpe 0.5459 MaxDD -14.16%

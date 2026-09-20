@@ -1,3 +1,65 @@
+## 2026-09-20 — idea 720 (lane cloud): DOES ANY PUBLISHED IS-vs-OOS DRIFT SURVIVE A SINGLE-YEAR DELETION? **ANSWERED — NO, 12 OF 15 REVERSE SIGN, BUT THAT IS A KILL OF THE STATISTIC, NOT A FINDING ABOUT ANY YEAR: THE DRIFT IS INSIDE ITS OWN DELETION NOISE AT 11 OF 15 PAIRS AND THOSE ARE EXACTLY THE 11 THAT REVERSE. THE 4a/4b VERDICTS ARE ACQUITTED (2 OF 260 MOVE); RULE 8'S PICK IS NOT (8 OF 12 PAIRS MOVE). NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 536 found that deleting calendar 2020 alone reverses idea 301's
+  MA-residual drift on B136 (-0.2423 -> +0.1245) and U56 (-0.0222 -> +0.3213). Nobody had asked
+  whether that is a fact about 2020 or a fact about the resolution of a drift statistic at this
+  sample length. This lane's idea 1695, pushed earlier today, sharpened the stake: 4b is a
+  two-leg gross interval whose mean feasible width is 1.11 of 20 rungs, so every standing verdict
+  in this repository is a knife edge and one year of tape is a large perturbation.
+
+  **CONSTRUCTION.** Two dials: **YEAR {NONE, 2008..2026}** x **BOOK {LIVE (band 0.03 @ G 0.75, as
+  traded), PICK (band 0.10 @ 1.00, the 2026-09-19 rule-8 pick), PARK (no gate @ 0.65, idea 1695's
+  one-rung 4b passer), EW100, EW050}**, on U56 / B136 / SMALL = **275 re-scorings**, every one in
+  `grid.csv`. Deletion convention, stated once and never varied: **the book is never re-run** — it
+  is run once on the full tape and the calendar year is removed from the SCORED RETURN STREAM,
+  which isolates "is this verdict carried by one year?" from "would the signal have differed?".
+  SPY's bars and the live book's 4a bar are re-scored under the SAME deletion, so no cell compares
+  two different tapes. Gates 19 of 19, including an exact reproduction of today's committed U56
+  LIVE / PICK / PARK cells (8.62%/1.2011/-12.05%, 11.72%/1.1726/-16.30%, 11.42%/1.1188/-19.75%),
+  a partition assert at every cell, and a checked (not assumed) IS/OOS attribution: 0 of 260
+  deletions straddle the 2016/2017 boundary and IS-side deletions leave the OOS number bit-identical.
+
+  **(1) THE LITERAL ANSWER IS NO.** **12 of 15** (panel, book) drifts (OOS Sharpe minus IS Sharpe)
+  reverse sign under at least one single-year deletion, with a mean span of **0.5477** of Sharpe
+  over the 19 deletions. U56's no-gate books reverse at 9 or 10 of 19 years; B136's LIVE book at 10.
+
+  **(2) AND THAT IS A FACT ABOUT THE STATISTIC, NOT ABOUT ANY YEAR.** Deleting a RANDOM contiguous
+  252-day block (500 draws, seed 20260920) moves the same drift with SD **0.1191** of Sharpe.
+  Against that SD the UNDELETED drift reaches |t| > 2 at only **4 of 15** pairs (median |t| 0.57,
+  max 2.75), and only **21 of 260** single-year deletions exceed 2 block-SDs — **8.1% against a
+  nominal 5%**, i.e. barely above chance. The years that do reach it are **2013, 2022 and 2011** —
+  not the 2020 idea 536 headlined.
+
+  **(3) THE CONSTRUCTIVE HALF: REVERSAL IS PREDICTED EXACTLY BY RESOLUTION.** Of the 11 pairs whose
+  drift does NOT clear 2 block-SDs, **11 of 11 reverse** (mean 6.00 reversals of 19 deletions). Of
+  the 4 that do clear it — all SMALL, the genuine IS->OOS collapse at t -2.40 to -2.75 — **1 of 4**
+  reverses (mean 0.25). A statistic that does not differ from zero at its own deletion resolution
+  has no sign to reverse. **Proposed reporting rule (NOT adopted here; PROTOCOL.md is unmodified):
+  publish |drift| / block-deletion SD beside every IS-vs-OOS drift claim, and stop quoting the sign
+  below |t| = 2.**
+
+  **(4) THE VERDICTS ARE ACQUITTED — DO NOT CONFLATE THE TWO.** Only **2 of 260** single-year
+  deletions move a 4b FULL verdict (0.8%, against the random-block null's own 1.0%), 6 move a 4b
+  OOS verdict, and **0 of 260** move a 4a verdict. Both 4b movers are the deletion of **2020**
+  acting on idea 1695's PARK book — U56 pass -> fail, B136 fail -> pass — which is precisely the
+  one-rung knife edge this morning's PARK memo flagged. Everything else holds: the live book fails
+  4b on the CAGR floor at every deletion on U56 and B136, and SMALL fails at 5 of 5 books always.
+
+  **(5) RULE 8 IS WHERE THE FRAGILITY ACTUALLY LIVES.** Re-fitting the chooser on a year-deleted IS
+  window and reading 2017-2026 once per deletion: the PICK changes at **8 of 12** chooser x panel
+  pairs (21 of 88 deletions) and the OOS 4b verdict changes at **5 of 12**. Over all 100 picks the
+  mean OOS Sharpe is 0.9838, 44 of 100 clear 4b OOS and **0 of 100 clear 4a**. On U56, C_MEMO's
+  undeleted pick is the PARK book (OOS 11.83% / 1.1269 / -19.75%) and two IS-year deletions move it
+  to LIVE; C_CAGR's pick moves between PICK and PARK at 4 of 8 years.
+
+  **WHAT THE RECORD SHOULD DO.** Retire the IS-vs-OOS drift as a quotable stability statistic — at
+  this sample length it is unresolvable at 11 of 15 of the places the record quotes it, and its
+  sign is a coin toss there. Keep quoting the 4a/4b verdicts, which survive a one-year deletion at
+  258 of 260 and 260 of 260 respectively. And read any rule-8 pick knowing that one year of IS tape
+  moves it two-thirds of the time: the procedure that would promote a book to RULES is less stable
+  than the test it is feeding. No RULES change is proposed and none of RULES.md, PROTOCOL.md,
+  scan.py, bot.py or baseline.py was modified.
+
 ## 2026-09-20 — idea 1695 (lane cloud): IS THE 4b CAGR FLOOR THE ONLY LEG THAT EVER BINDS ON A FULL GROSS LADDER? **ANSWERED — KILL OF THE 'SINGLE-LEG' PREMISE, AND SOMETHING STRONGER IN ITS PLACE: 4b IS NOT A FOUR-LEG TEST AT ALL. DELETING THE H1 AND H2 SHARPE LEGS MOVES 0 OF 900 CELL-WINDOW VERDICTS, AND 4b RESTATED AS {DD, CAGR} ALONE REPRODUCES ALL 900 EXACTLY. NO RULES CHANGE; ONE PARK MEMO.**
 
   **THE DEFECT THIS CLOSES.** Idea 1454 found the live book fails 4b on the CAGR floor alone; the
