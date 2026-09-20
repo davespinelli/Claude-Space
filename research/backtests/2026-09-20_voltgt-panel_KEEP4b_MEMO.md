@@ -94,3 +94,45 @@ sections 2–4 above to max|Δ| 0.0000).
   book's), it is still not tested on SMALL as a candidate (SMALL 4b pass-share 0.000), and its
   status is still **KEEP-candidate, path 4b, awaiting Sunday review**. RULES.md, PROTOCOL.md,
   scan.py, bot.py and baseline.py are untouched by idea 956.
+
+---
+
+## ADDENDUM (2026-09-20, lane B, idea 1771) — the 4b OOS pass is CONVENTION-SELECTED and, on U56,
+## UNREACHABLE BY EVERY LEGAL CHOOSER AT THIS RUNG. **STATUS PROPOSED: PARK, not KEEP.**
+
+Idea 1771 mapped the surface `sigma_t` actually lives on — LOOKBACK `L` {5,10,20,40,60} x
+STALENESS `d` {0,1,2,5}, 20 convention cells — at five targets on three panels with every book's
+realised-mean-gross-matched constant-gross twin as a control (2,400 scored rows, gates 10/10;
+`research/backtests/2026-09-20_voltgt-sigma-convention-surface_B.py` / `.result.md`). It
+reproduces sections 2-4 of this memo at max |Δ| **2.8e-04** and addendum A1 exactly
+(`d=1` → U56 OOS MaxDD **−20.7709%**, 4b OOS FAIL).
+
+* **CONVENTION PASS-SHARE at this memo's own `t = 0.16`: 0.250 on U56 (5 of 20 cells) and 0.400 on
+  B136 (8 of 20).** Section 2's pass is a property of the cell `(L=20, d=0)`, which this memo's
+  RULES wording in section 9 does not even name. Section 5's claim that "the rung is not the
+  finding" holds for the TARGET but not for the CONVENTION: three quarters of the defensible
+  conventions fail on U56.
+* **The carrier is this memo's rung.** The OOS DD-cap fail-share is monotone in the target —
+  U56 0.00 / 0.10 / 0.20 / **0.75** / **0.95** at t = 0.08 / 0.10 / 0.12 / 0.16 / 0.20 — while the
+  CAGR floor binds only below t ≈ 0.10. 4b is a TWO-SIDED SQUEEZE here and the convention-robust
+  band is **t ∈ {0.10, 0.12}** on both panels (pass-share 0.90 / 0.80 on U56, 0.85 / 0.75 on B136).
+  `t = 0.16` is the least convention-robust rung on this memo's own published grid.
+* **And IS Sharpe walks the chooser straight into it.** IS Sharpe peaks at t = 0.16 on both panels
+  and its surface argmax is `t0.16 L20 d1` — the STALER convention, the cell A1 showed fails.
+* **Rule 8 (2017-2026 read once), at this memo's rung: 0 of 3 legal IS-only choosers reach a
+  4b-OOS-passing cell on U56.** `C_ISSHARPE` / `C_ISLEGS` → `L20 d1`, OOS −20.77% FAIL; `C_ISDD` →
+  `L40 d1`, −20.83% FAIL. Only the no-choice control `C_MEMO` passes. B136 survives all three.
+  Overall 7 of 18 legal picks clear 4b OOS and **0 of 24 clear 4a OOS**; SMALL665 0 of 8.
+* **What SURVIVES is the DIAL, not the rung.** Against its own realised-gross-matched constant-gross
+  twin the vol target buys OOS **+0.0587 of Sharpe and +6.16 pp of MaxDD on U56** (win share 0.810)
+  and **+0.0503 / +9.44 pp on B136** (0.790); the twins clear 4b OOS 4 and 0 times against this
+  book's 51 and 47. At this memo's own cell the matched twin (k = 0.9338) posts OOS
+  17.06% / 1.1266 / **−27.46%**. **This is the first device in the record to beat its matched
+  twin at scale.** On SMALL665 the twin wins 100 of 100 (dSharpe −0.2516).
+
+**Proposed status change for the Sunday review: KEEP-candidate (path 4b) → PARK.** Section 9's
+wording must not ship as written: it names a volatility without naming its lookback or its
+staleness, so it is not implementable without a second, uncertified choice, and the rung it fixes
+is the one the surface says is fragile. Idea 1771 does NOT certify t = 0.12 in its place — that is
+an OOS-visible reading and needs its own pre-registered run. RULES.md, PROTOCOL.md, scan.py,
+bot.py and baseline.py are untouched by idea 1771.

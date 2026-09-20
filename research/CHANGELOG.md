@@ -1,3 +1,81 @@
+## 2026-09-20 — idea 1771 (lane B): IS THE STANDING VOLTGT016 4b OOS PASS DECIDABLE ACROSS THE SIGMA-CONVENTION SURFACE? **ANSWERED — NO. IT IS A KNIFE-EDGE, AND THE KNIFE IS THE TARGET RUNG. DOWNGRADE THE RECORD'S ONE STANDING KEEP-4b CANDIDATE TO PARK; KILL THE t = 0.16 CERTIFICATION. THE DIAL SURVIVES — VOL-TARGETING IS THE FIRST DEVICE IN THIS RECORD TO BEAT ITS OWN MATCHED TWIN AT SCALE. NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** The record has exactly ONE standing KEEP-4b candidate heading for a
+  Sunday review (`2026-09-20_voltgt-panel_KEEP4b_MEMO.md`, idea 1730). Its U56 4b OOS pass clears
+  the drawdown cap by **0.37 pp**, and addendum A1 (idea 1715) already flipped it to FAIL by reading
+  `sigma` one day staler — ONE alternative convention, tested ONCE. `sigma_t` is not a primitive: it
+  is a convention with a LOOKBACK `L` and a STALENESS `d`, and the memo's proposed RULES wording
+  (its section 9) names NEITHER. The surface those two choices span had never been mapped.
+
+  **THE CONSTRUCTION.** Two dials, the protocol maximum: `L` {5, 10, 20, 40, 60} x `d` {0, 1, 2, 5}
+  = **20 convention cells**, every grid point reported. Published, not tuned: target
+  `t` {0.08, 0.10, 0.12, 0.16, 0.20}, PANEL {U56, B136, SMALL665}, COST {0, 10, 25, 50} bps. Every
+  VOLTGT book is paired with its OWN constant-gross twin carrying the SAME REALISED MEAN GROSS on
+  the SAME window (bisection, matched to < 1e-10). **300 VOLTGT books + 600 matched twins x 4 cost
+  rungs = 2,400 scored rows, all published.** Verdict rules V1-V4 were fixed in the script header
+  before the run.
+
+  **REPLICATION FIRST.** Idea 1730's 12 published numbers reproduce at max |d| **2.8e-04** (U56 FULL
+  15.61% / 1.2028 / -19.86%, OOS 15.94% / 1.2196 / -19.86%; B136 FULL 15.94% / 1.2050 / -18.76%,
+  OOS 15.36% / 1.1839 / -18.76%), and A1 reproduces exactly: `d = 1` gives U56 OOS MaxDD
+  **-20.7709%** against the published -20.77%, 4b OOS FAIL.
+
+  **THE ANSWER — V1 TRIGGERED. CONVENTION PASS-SHARE 0.250.** At the candidate's own `t = 0.16`,
+  only **5 of 20 convention cells clear 4b OOS on U56** and **8 of 20 on B136**. The memo's cell
+  `(L = 20, d = 0)` is one of the five. A 4b pass holding at a quarter of the conventions its own
+  rule wording leaves open is a property of the CELL, not of the BOOK.
+
+  **THE CARRIER IS THE RUNG, AND 4b HERE IS A TWO-SIDED SQUEEZE.** The OOS DD-cap fail-share is
+  monotone in the target — U56 **0.00 / 0.10 / 0.20 / 0.75 / 0.95** and B136 **0.00 / 0.10 / 0.25 /
+  0.60 / 0.80** at t = 0.08 / 0.10 / 0.12 / 0.16 / 0.20 — while the CAGR floor binds only BELOW
+  t ~ 0.10 (U56 0.45, B136 0.85 at t = 0.08). The convention-robust band is **t in {0.10, 0.12} on
+  BOTH panels** (pass-share 0.90 / 0.80 on U56, 0.85 / 0.75 on B136) and the memo's rung sits on the
+  wrong side of it. This is also a counter-example to the record's standing 'the CAGR floor is the
+  binding leg almost every time': here `L4_DD` fails **0.40** of the whole U56 surface against
+  `L5_CAGR`'s **0.09**.
+
+  **AND IS SHARPE WALKS THE CHOOSER STRAIGHT INTO THE FRAGILE RUNG.** IS Sharpe peaks at t = 0.16 on
+  both panels (U56 1.1822 at L20/d0 against 1.1339 at t = 0.12; B136 1.2301 against 1.1572), and the
+  IS argmax over the whole surface is `t0.16 L20 **d1**` — the STALER convention, which is the cell
+  A1 showed fails.
+
+  **RULE 8 (2017-2026 read ONCE) — AT THE CANDIDATE'S OWN RUNG, 0 OF 3 LEGAL IS-ONLY CHOOSERS REACH
+  A 4b-OOS-PASSING CELL ON U56.** `C_ISSHARPE` and `C_ISLEGS` both pick `L20 d1` -> OOS 15.76% /
+  1.2012 / **-20.77% FAIL**; `C_ISDD` picks `L40 d1` -> **-20.83% FAIL**. Only the no-choice control
+  `C_MEMO` passes, and `C_MEMO` is hindsight. B136 survives all three, so the pass is **panel- AND
+  chooser-dependent**. With `t` free, `C_ISLEGS` lands on **t = 0.12 on BOTH panels** and clears 4b
+  OOS on both (U56 `t0.12 L40 d0` 14.48% / 1.2392 / -18.06%; B136 `t0.12 L20 d0` 13.86% / 1.2220 /
+  -16.01%) — a legal IS-only route to a passing cell that does not go through t = 0.16. Totals:
+  **4b OOS 7 of 18 legal picks, 4a OOS 0 of 24**; SMALL665 0 of 8, every pick below SPY.
+
+  **THE CONTROL — V4 NOT TRIGGERED, AND THIS IS THE RUN'S ONE POSITIVE RESULT.** At IDENTICAL
+  realised mean gross, pooled over 100 cells per panel at 10 bps, the vol target buys OOS
+  **+0.0587 of Sharpe and +6.16 pp of MaxDD on U56** (win share 0.810) and **+0.0503 / +9.44 pp on
+  B136** (0.790); the matched twins clear 4b OOS **4** and **0** times against the VOLTGT books' 51
+  and 47. At the memo's own cell the twin (constant gross k = 0.9338) posts OOS 17.06% / **1.1266** /
+  **-27.46%** against 15.94% / 1.2196 / -19.86%. **This is the first device in this record to survive
+  its own realised-gross-matched twin at scale** — BAND, MAXVOL, SPYFILT, STOP, MADIST and the eight
+  sleeves all lost. It does NOT survive on SMALL665, where the plain twin wins 100 of 100
+  (dSharpe -0.2516), the same panel-dependence idea 1632 found for the band.
+
+  **COST LADDER AND SMALL CAPS.** 4b OOS passes per 100 cells: U56 58 / 51 / 38 / 29 and B136
+  57 / 47 / 40 / 31 at 0 / 10 / 25 / 50 bps. **SMALL665: 0 of 100 at every cost rung and every
+  convention**, confirming addendum A2 on a 5x wider surface.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched):** (1) the standing KEEP-4b candidate should be read as **PARK** — an addendum saying so
+  is appended to its memo; (2) **publish the CONVENTION PASS-SHARE beside any 4b verdict whose signal
+  has a lookback**, the way idea 956 proposed the phase pass-share for the rebalance date — it is
+  free and it separates a 0.90 book from a 0.25 book that read identically at their canonical cell;
+  (3) any RULES wording naming a volatility must also name its lookback and its staleness, or it is
+  not implementable without a second, uncertified choice. This run does NOT certify t = 0.12 in
+  t = 0.16's place: the pass-share table is OOS-visible and cannot select a rung. It also does not
+  close idea 1537, whose block bootstrap of the VOLTGT-vs-twin dMaxDD is not run here. Gates 10/10
+  (fast path == `engine.backtest` at <= 3.5e-17 on all three panels at two cost rungs; twin gross
+  match < 1e-10). Survivorship: U56/B136 are current constituents, SMALL665 a current sub-$2B screen
+  (665 of 719 names, `max_1d_move >= 1.0` dropped) — every pass count is the OPTIMISTIC read.
+  `research/backtests/2026-09-20_voltgt-sigma-convention-surface_B.py`
+
 ## 2026-09-20 — idea 1632 (lane C): IS THE BAND'S U56-ONLY SURVIVAL A PANEL EFFECT OR A NAME-COUNT EFFECT? **ANSWERED — PANEL. KILL THE NAME-COUNT HYPOTHESIS; CONFIRM IDEA 1617. NO NEW BOOK.**
 
   **THE DEFECT THIS CLOSES.** Idea 1617's one convincing survivor — the live band c = 0.03 beating its
