@@ -4561,3 +4561,58 @@ another, and any verdict whose margin is under the record's own 2.93 pp drawdown
 the second case is really an argument for not quoting such a verdict at all.* **PROPOSED, NOT
 ENACTED** (rule 6: Sunday review only) — exact wording in
 `research/backtests/2026-09-19_band-gate-out-rate-predicts-realised-gross_C.memo.md`.
+
+## 2026-09-20 — idea 1628 (lane cloud): DOES THE MAXVOL 0.60 PARK SURVIVE A BAND CROSS AND A CAGR-FLOOR-CHARGED SPY? **ANSWERED — KILL THE CROSS. PARK CONFIRMED AND STRENGTHENED, BUT RULE 8 DENIES KEEP. NO NEW BOOK.**
+
+  **THE CONSTRUCTION.** Equal weight over the priced constituents passing (vol20 < m) AND the 200d
+  MA band of width c, gross 0.75, weekly, 10 bps, t+1, de-gross to CASH. Dials: m in {0.45, 0.60,
+  0.80, 1.00, 1.50, inf} x c in {NOBAND, 0.00, 0.03, 0.10} — exactly TWO tuned parameters — on
+  U56 / B136 / SMALL. **72 books, every rung published.** The cost axis is not a third dial: 1586's
+  identity r(c) = r_gross − turnover*c/1e4 is EXACT (gate G3 = 0.000e+00 against the engine at
+  c = 25), so 0/10/25/50 bps are restatements, not refits.
+
+  **Q1 — SUBSTITUTES, NOT ADDITIVE.** The MAXVOL ceiling's Sharpe gain over its OWN no-ceiling twin
+  is **+0.0176 with no band and −0.0422 / −0.0420 / −0.0403 once the band is on** (c = 0.00 / 0.03 /
+  0.10). INTERACTION = [gain with band] − [gain without] is **negative in 37 of 45 band-on cells,
+  mean −0.0590**, and on U56 and B136 the gain flips sign outright (U56 m = 0.45: +0.1141 → −0.0464;
+  B136 m = 0.45: +0.1501 → −0.0347). The retired v1 vol gate buys nothing live clause 2 has not
+  already bought. Same sign at 25 bps.
+
+  **AND THE CROSS IS WORSE THAN EITHER ALONE.** **0 of 54 band-on cells clear 4b on any panel, FULL
+  or OOS**, against 4 of 18 NOBAND cells on FULL. The mechanism is that the two devices fix
+  DIFFERENT 4b legs and cannot be held at once: the band de-grosses to ~0.52 mean gross and fails
+  the CAGR floor (band OOS CAGR 6.7–9.5% against SPY's 15.26%, floor 10.68%), while the ceiling
+  alone holds 0.72 gross and clears it but pays drawdown. Binding legs over all 72 cells: SH 48,
+  DD 60, CAGR 12.
+
+  **THE PARK CELL REPLICATES — AND BREAKS AN EIGHT-RUN STREAK.** MAXVOL m = 0.60, no band, U56:
+  full **11.52% / 1.1277 / −16.88%**, OOS **12.04% / 1.1762 / −16.88%**; 4b clears FULL *and* OOS at
+  0/10/25/50 bps (Sharpe 0.9920 / 0.9774 / 0.9554 / 0.9188). B136 the same. Against the record's
+  standing killer — a plain de-gross twin (no ceiling, band unchanged, gross re-scaled so realised
+  mean gross MATCHES to 1e-4) — this is the **first device family in the record to survive**:
+  **device 4b passes 4 of 60 cells, the matched de-gross twin 0 of 60**, and on the NOBAND cells the
+  device is +0.0963 (U56) / +0.0983 (B136) of Sharpe and **+4.81 pp / +5.85 pp SHALLOWER**.
+
+  **BUT THE SURVIVAL IS A CORNER, NOT A LAW.** With the band on the device loses to its matched twin
+  in **44 of 45** cells; on SMALL it loses in **15 of 15** (NOBAND −0.1043, mean −0.0855). Pooled over
+  all 60 cells the device wins on Sharpe only **11 of 60**, mean dSharpe **−0.0267**. The de-gross
+  dominance finding stands everywhere except the un-banded large-cap corner.
+
+  **Q2 — IDEA 1490'S WORRY IS A NO-OP HERE.** Charging SPY the candidate's OWN realised turnover
+  moves **0 of 72** 4b verdicts on FULL (4 → 4) and gains exactly **1** on OOS (4 → 5, U56 m = 0.45
+  NOBAND). Binding-leg counts are IDENTICAL under both conventions. At 10 bps the 4b bar is not a
+  costless-SPY artefact; the re-read is worth publishing but is not a blocker.
+
+  **RULE 8 (2017-2026 read ONCE).** Two IS-only choosers x 3 panels over the joint (m, c) grid:
+  **0 of 6 reach the PARK cell** (IS rank #12 / #9 of 24 on U56, #2 / #2 on B136, #11 / #17 on
+  SMALL), and the 6 picks clear **4a OOS 0 of 6** and **4b OOS 0 of 6** costless (1 of 6 charged).
+  U56's Sharpe chooser takes m = inf, c = 0.10 → OOS 9.08% / 1.1944 / −12.35% against the live book
+  at 9.46% / 1.2766 / −12.05% and SPY at 15.26% / 0.8737 / −33.72%. The exposure dial is
+  unresolvable in sample, exactly as 1713 found, so PROTOCOL rule 8 forbids KEEP.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md and PROTOCOL.md untouched):** the ceiling and the
+  band should never be written into the same clause — they are one device measured twice — and the
+  matched-exposure de-gross twin should be a REQUIRED control beside any device claim, since it is
+  the only ruler that separates this PARK from the eight families it killed. Gates 3/3.
+  Survivorship: U56 / B136 / SMALL are CURRENT constituents; SMALL worst (delisted sub-$2B names
+  absent), so every absolute level is optimistic.
