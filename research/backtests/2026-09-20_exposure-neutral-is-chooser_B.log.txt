@@ -1,0 +1,129 @@
+# Idea 1793 (lane B, 2026-09-20) — can an EXPOSURE-NEUTRAL IS-ONLY chooser reach the 4b cells that plain IS Sharpe misses?
+# tuned dials (2): TARGET t [0.08, 0.1, 0.12, 0.16, 0.2] x REFRESH R ['D', 'W', 'M', 'Q'].  reported, not tuned: TRADE T ['W', 'M'] (separate arms), PANEL, COST [0, 10, 25, 50] bps.  sigma convention FIXED at (L=20, d=0).  warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01.
+# SMALL665: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%)
+   SPY                      15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%)
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%)
+   SPY                      14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 bt_two diagonal == engine.backtest (returns / turnover): 0.000e+00 / 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c)=r0-turn*c/1e4 == fresh engine run at 10/25 bps: 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 reproduces the standing KEEP-4b memo (points 2-4, U56 + B136): max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G4 reproduces idea 1767's (T=M, R=W) U56 OOS row: max|d| = 5.027e-05   (target < 1e-3)
+  GATE PASS  G5 a REFRESH row moves every held name by ONE common factor: max spread 8.882e-16 over 133070 refresh rows   (target < 1e-12)
+  GATE PASS  G6 tuned dials: TARGET t, REFRESH R   (target exactly 2)
+  GATE PASS  G7 all grid cells published: 480 rows = 3 panels x 5 t x 2 T x 4 R x 4 costs   (target 480)
+  GATE PASS  G8 twin realised-mean-gross match: max|d| = 2.899e-11   (target < 1e-8)
+  GATE PASS  G9 never levered: max realised gross 1.0000   (target <= 1.0)
+  GATE PASS  G10 every chooser's pick is unchanged on a panel TRUNCATED at 2016-12-31: 36 of 36 identical   (target 36 of 36)
+
+## THE GRID (4b / 4a pass counts, all cells published)
+   cost  0 bps: 4b FULL  41 | 4b OOS  44 | 4b FULL+OOS  41 | 4a   6 | 4a OOS   9  (of 120)
+   cost 10 bps: 4b FULL  35 | 4b OOS  43 | 4b FULL+OOS  35 | 4a   6 | 4a OOS   8  (of 120)
+   cost 25 bps: 4b FULL  33 | 4b OOS  34 | 4b FULL+OOS  32 | 4a   3 | 4a OOS   5  (of 120)
+   cost 50 bps: 4b FULL  21 | 4b OOS  26 | 4b FULL+OOS  21 | 4a   0 | 4a OOS   4  (of 120)
+
+   binding-leg census at 10 bps (cells failing each leg):
+     L1_H1:  21 of 120
+     L2_H2:  46 of 120
+     L3_OOS:  42 of 120
+     L4_DD:  75 of 120
+     L5_CAGR:  44 of 120
+
+   4b FULL+OOS pass share at 10 bps by panel x T:
+     U56       T=W:  9 of 20   (by R: D=4/5, W=3/5, M=2/5, Q=0/5)
+     U56       T=M:  9 of 20   (by R: D=4/5, W=3/5, M=2/5, Q=0/5)
+     B136      T=W:  8 of 20   (by R: D=4/5, W=3/5, M=1/5, Q=0/5)
+     B136      T=M:  9 of 20   (by R: D=4/5, W=3/5, M=2/5, Q=0/5)
+     SMALL665  T=W:  0 of 20   (by R: D=0/5, W=0/5, M=0/5, Q=0/5)
+     SMALL665  T=M:  0 of 20   (by R: D=0/5, W=0/5, M=0/5, Q=0/5)
+
+   4b FULL+OOS pass share at 10 bps by target (pooled over R, T, U56+B136):
+     t=0.08:  4 of 16
+     t=0.10: 11 of 16
+     t=0.12:  8 of 16
+     t=0.16:  8 of 16
+     t=0.20:  4 of 16
+
+## RULE 8 — dials (t, R) chosen on 2009-2016 ONLY; 2017-2026 read ONCE
+ src    panel T_trade      chooser       pick  target R_refresh  in_band  oos_CAGR  oos_Sharpe  oos_MaxDD  turn_py  keep4b_full  keep4b_oos  keep4b  keep4a_oos                             bind
+full      U56       W   C_ISSHARPE t=0.16,R=M  0.1600         M    False    0.1630      1.1815    -0.2452   1.6730        False       False   False       False                            L4_DD
+full      U56       W   C_ISCALMAR t=0.20,R=M  0.2000         M    False    0.1657      1.1026    -0.2770   1.5021        False       False   False       False                            L4_DD
+full      U56       W       C_ISDD t=0.08,R=M  0.0800         M    False    0.1174      1.2561    -0.1628   2.8336         True        True    True       False                             none
+full      U56       W     C_ISLEGS t=0.12,R=M  0.1200         M     True    0.1522      1.2650    -0.2127   2.1347        False       False   False       False                            L4_DD
+full      U56       W        C_GXS t=0.16,R=M  0.1600         M    False    0.1630      1.1815    -0.2452   1.6730        False       False   False       False                            L4_DD
+full      U56       W       C_GXDD t=0.08,R=M  0.0800         M    False    0.1174      1.2561    -0.1628   2.8336         True        True    True       False                             none
+full      U56       W       C_MEMO t=0.16,R=W  0.1600         W    False    0.1594      1.2193    -0.1986   1.8333         True        True    True       False                             none
+full      U56       W C_ORACLE_OOS t=0.12,R=D  0.1200         D     True    0.1513      1.3345    -0.1597   3.7273         True        True    True       False                             none
+full      U56       M   C_ISSHARPE t=0.16,R=M  0.1600         M    False    0.1646      1.2018    -0.2424   1.0541        False       False   False       False                            L4_DD
+full      U56       M   C_ISCALMAR t=0.20,R=M  0.2000         M    False    0.1675      1.1211    -0.2748   0.8984        False       False   False       False                            L4_DD
+full      U56       M       C_ISDD t=0.08,R=M  0.0800         M    False    0.1187      1.2780    -0.1613   2.1901         True        True    True       False                             none
+full      U56       M     C_ISLEGS t=0.12,R=M  0.1200         M     True    0.1537      1.2865    -0.2101   1.4659        False       False   False       False                            L4_DD
+full      U56       M        C_GXS t=0.16,R=M  0.1600         M    False    0.1646      1.2018    -0.2424   1.0541        False       False   False       False                            L4_DD
+full      U56       M       C_GXDD t=0.08,R=M  0.0800         M    False    0.1187      1.2780    -0.1613   2.1901         True        True    True       False                             none
+full      U56       M       C_MEMO t=0.16,R=W  0.1600         W    False    0.1610      1.2343    -0.1968   1.5130         True        True    True       False                             none
+full      U56       M C_ORACLE_OOS t=0.12,R=D  0.1200         D     True    0.1528      1.3485    -0.1579   3.4184         True        True    True       False                             none
+full     B136       W   C_ISSHARPE t=0.20,R=M  0.2000         M    False    0.1629      1.0744    -0.3002   1.5585        False       False   False       False                            L4_DD
+full     B136       W   C_ISCALMAR t=0.20,R=M  0.2000         M    False    0.1629      1.0744    -0.3002   1.5585        False       False   False       False                            L4_DD
+full     B136       W       C_ISDD t=0.08,R=W  0.0800         W    False    0.1097      1.2445    -0.1086   3.6300        False        True   False        True                          L5_CAGR
+full     B136       W     C_ISLEGS t=0.10,R=M  0.1000         M     True    0.1305      1.1884    -0.2027   2.7109        False       False   False       False                            L4_DD
+full     B136       W        C_GXS t=0.20,R=M  0.2000         M    False    0.1629      1.0744    -0.3002   1.5585        False       False   False       False                            L4_DD
+full     B136       W       C_GXDD t=0.10,R=W  0.1000         W     True    0.1268      1.2380    -0.1346   3.1034         True        True    True       False                             none
+full     B136       W       C_MEMO t=0.16,R=W  0.1600         W    False    0.1536      1.1837    -0.1876   1.9289         True        True    True       False                             none
+full     B136       W C_ORACLE_OOS t=0.12,R=D  0.1200         D     True    0.1446      1.2911    -0.1380   3.7333         True        True    True       False                             none
+full     B136       M   C_ISSHARPE t=0.20,R=M  0.2000         M    False    0.1627      1.0824    -0.2967   0.9337        False       False   False       False                            L4_DD
+full     B136       M   C_ISCALMAR t=0.20,R=M  0.2000         M    False    0.1627      1.0824    -0.2967   0.9337        False       False   False       False                            L4_DD
+full     B136       M       C_ISDD t=0.08,R=W  0.0800         W    False    0.1096      1.2466    -0.1086   3.6892        False        True   False        True                          L5_CAGR
+full     B136       M     C_ISLEGS t=0.10,R=M  0.1000         M     True    0.1305      1.2000    -0.1987   1.9991         True        True    True       False                             none
+full     B136       M        C_GXS t=0.20,R=M  0.2000         M    False    0.1627      1.0824    -0.2967   0.9337        False       False   False       False                            L4_DD
+full     B136       M       C_GXDD t=0.10,R=W  0.1000         W     True    0.1269      1.2417    -0.1346   3.0499         True        True    True       False                             none
+full     B136       M       C_MEMO t=0.16,R=W  0.1600         W    False    0.1538      1.1886    -0.1874   1.6078         True        True    True       False                             none
+full     B136       M C_ORACLE_OOS t=0.12,R=D  0.1200         D     True    0.1448      1.2968    -0.1384   3.4120         True        True    True       False                             none
+full SMALL665       W   C_ISSHARPE t=0.12,R=M  0.1200         M     True    0.0420      0.3707    -0.3778   3.0940        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       W   C_ISCALMAR t=0.20,R=M  0.2000         M    False    0.0765      0.4759    -0.4362   2.5554        False       False   False       False               L2_H2|L3_OOS|L4_DD
+full SMALL665       W       C_ISDD t=0.08,R=M  0.0800         M    False    0.0245      0.3026    -0.3189   2.8916        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       W     C_ISLEGS t=0.20,R=M  0.2000         M    False    0.0765      0.4759    -0.4362   2.5554        False       False   False       False               L2_H2|L3_OOS|L4_DD
+full SMALL665       W        C_GXS t=0.12,R=M  0.1200         M     True    0.0420      0.3707    -0.3778   3.0940        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       W       C_GXDD t=0.12,R=M  0.1200         M     True    0.0420      0.3707    -0.3778   3.0940        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       W       C_MEMO t=0.16,R=W  0.1600         W    False    0.0520      0.3994    -0.3148   3.0630        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       W C_ORACLE_OOS t=0.20,R=D  0.2000         D    False    0.0799      0.5219    -0.3178   3.4232        False       False   False       False               L2_H2|L3_OOS|L4_DD
+full SMALL665       M   C_ISSHARPE t=0.12,R=M  0.1200         M     True    0.0405      0.3641    -0.3652   1.9846        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       M   C_ISCALMAR t=0.12,R=M  0.1200         M     True    0.0405      0.3641    -0.3652   1.9846        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       M       C_ISDD t=0.08,R=M  0.0800         M    False    0.0236      0.2970    -0.3074   1.9899        False       False   False       False L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       M     C_ISLEGS t=0.20,R=M  0.2000         M    False    0.0736      0.4651    -0.4275   1.4383        False       False   False       False               L2_H2|L3_OOS|L4_DD
+full SMALL665       M        C_GXS t=0.12,R=M  0.1200         M     True    0.0405      0.3641    -0.3652   1.9846        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       M       C_GXDD t=0.12,R=M  0.1200         M     True    0.0405      0.3641    -0.3652   1.9846        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       M       C_MEMO t=0.16,R=W  0.1600         W    False    0.0502      0.3896    -0.3144   2.7340        False       False   False       False       L2_H2|L3_OOS|L4_DD|L5_CAGR
+full SMALL665       M C_ORACLE_OOS t=0.20,R=D  0.2000         D    False    0.0783      0.5145    -0.3166   2.6254        False       False   False       False               L2_H2|L3_OOS|L4_DD
+
+   arms = 6 (panel x T).  4b FULL+OOS reached:
+     C_ISSHARPE    0 of 6 | 4b OOS 0 | 4a OOS 0 | in-band 2 | mean OOS Sharpe 0.8792 | mean OOS MaxDD -30.46%
+     C_ISCALMAR    0 of 6 | 4b OOS 0 | 4a OOS 0 | in-band 1 | mean OOS Sharpe 0.8701 | mean OOS MaxDD -32.50%
+     C_ISDD        2 of 6 | 4b OOS 4 | 4a OOS 2 | in-band 0 | mean OOS Sharpe 0.9375 | mean OOS MaxDD -19.46%
+     C_ISLEGS      1 of 6 | 4b OOS 1 | 4a OOS 0 | in-band 4 | mean OOS Sharpe 0.9802 | mean OOS MaxDD -28.13%
+     C_GXS         0 of 6 | 4b OOS 0 | 4a OOS 0 | in-band 2 | mean OOS Sharpe 0.8792 | mean OOS MaxDD -30.46%
+     C_GXDD        4 of 6 | 4b OOS 4 | 4a OOS 0 | in-band 4 | mean OOS Sharpe 0.9581 | mean OOS MaxDD -22.27%
+     C_MEMO        4 of 6 | 4b OOS 4 | 4a OOS 0 | in-band 0 | mean OOS Sharpe 0.9358 | mean OOS MaxDD -23.32%
+     C_ORACLE_OOS  4 of 6 | 4b OOS 4 | 4a OOS 0 | in-band 4 | mean OOS Sharpe 1.0512 | mean OOS MaxDD -20.47%
+
+   V1 exposure-neutral reaches MORE arms than the best plain chooser: 4 vs 2 -> TRIGGERED
+   V2 dominance (mean OOS Sharpe 0.9186 vs 0.9167; mean OOS MaxDD -26.36% vs -27.64%) -> TRIGGERED
+   V3 landing zone t in (0.1, 0.12) (share 0.500 vs 0.292) -> TRIGGERED
+   V4 legal IS-only picks clearing 4b FULL+OOS: 7 of 36
+
+## THE DIAL vs ITS OWN FULL-MATCHED TWIN (reporting control, idea 1771's statistic)
+   U56       OOS dSharpe mean -0.0204 (win 0.650) | OOS dMaxDD mean +3.47% (win 0.750) | IS dSharpe mean -0.0748 (win 0.300)
+   B136      OOS dSharpe mean -0.0249 (win 0.550) | OOS dMaxDD mean +5.89% (win 0.750) | IS dSharpe mean -0.0763 (win 0.300)
+   SMALL665  OOS dSharpe mean -0.2976 (win 0.000) | OOS dMaxDD mean -1.72% (win 0.500) | IS dSharpe mean -0.1424 (win 0.125)
+
+## GATES 11 of 11

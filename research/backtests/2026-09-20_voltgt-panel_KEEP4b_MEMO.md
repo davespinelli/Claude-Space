@@ -226,3 +226,42 @@ MaxDD −20.7709%, 4b OOS FAIL) and addendum A2 exactly (PANEL-sourced clears 4b
   −12.05%) **0 of 60** clear 4a. Recorded as a KILL for 4a, not a passer.
 * **Unchanged:** status **PARK** (ideas 1771, 1767). Survivorship as in point 8 and the addenda above.
   RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are untouched by idea 1763.
+
+---
+
+## ADDENDUM (2026-09-20, lane B, idea 1793) — THE TARGET RUNG IS REACHABLE AFTER ALL, BUT ONLY BY
+## AN EXPOSURE-NEUTRAL STATISTIC; AND "IS SHARPE REWARDS THE HIGHER-GROSS BOOK" IS **FALSE**.
+
+Idea 1793 re-ran this book's `t` x `R` grid on three panels at four cost rungs (480 cells, every one
+published; gates 11/11; `research/backtests/2026-09-20_exposure-neutral-is-chooser_B.py` /
+`.result.md`), giving every cell its OWN realised-mean-gross-matched constant-gross twin bisected on
+the **IS window only**, so the twin difference is a LEGAL rule-8 chooser. It reproduces sections 2-4
+of this memo at max |d| **4.605e-05** and idea 1767's `(T=M, R=W)` U56 OOS row at **5.027e-05**.
+
+* **`C_GXDD` — rank by `IS MaxDD(book) - IS MaxDD(twin)` — clears 4b FULL *and* OOS at 4 of 4
+  large-panel arms**, against `C_ISDD` 2 of 4, `C_ISLEGS` 1 of 4 and `C_ISSHARPE` / `C_ISCALMAR`
+  **0 of 4**. U56 pick `t = 0.08, R = M`: OOS **11.87% / 1.2780 / -16.13%**, DD margin **4.10 pp**
+  against this memo's 0.37 pp. B136 pick `t = 0.10, R = W`: OOS **12.69% / 1.2417 / -13.46%**,
+  clearing at **0 / 10 / 25 / 50 bps** where this memo's cell fails at 50. All 36 picks are
+  unchanged when rebuilt on a panel physically truncated at 2016-12-31 (G10).
+* **KILL the explanation idea 1767 gave for its own off-diagonal picks.** The SAME correction on the
+  SHARPE leg (`C_GXS`) makes the IDENTICAL pick to plain `C_ISSHARPE` in 6 of 6 arms: a long-only
+  constant-gross twin's Sharpe is invariant in its gross (twin IS Sharpe spread **0.0007-0.0057**
+  across `k = 0.62 -> 0.98`, against the book's **0.2283-0.3347**; spearman 0.9985-1.0000). Exposure
+  carries ~1% of the IS Sharpe variation here, so IS Sharpe's preference for `t = 0.16-0.20` is a
+  preference for **LESS TIMING**, not for more gross. On the drawdown leg the twin carries 55-75% of
+  the variation, which is why the same correction is decisive there.
+* **The two-sided squeeze is MOVED, not escaped.** The U56 pick swaps this memo's thin DD-cap margin
+  for a thin CAGR-floor margin (**0.68 pp**) and fails at 50 bps on it; only B136's `t = 0.10` sits
+  in the middle of the squeeze.
+* **The REFRESH half is still unreachable.** `R = D` clears 4b FULL+OOS at 4 of 4 arms for every
+  `t >= 0.10` and no legal IS-only chooser ever picks it; the OOS oracle takes `t = 0.12, R = D`
+  (U56 OOS 15.28% / 1.3485 / -15.79%). Idea 1767's wording fix ("at least weekly") is tightened by
+  1793 to "at least monthly" only because that is what its own legal chooser reaches, not because
+  monthly is better.
+* **Unchanged:** SMALL665 clears 4b **0 of 40** at every cost rung (A2, third confirmation); path 4a
+  is 0 of 36 legal picks and its 6 grid passers are B136-restatement artefacts; survivorship as in
+  point 8 and the addenda above. **Status of THIS memo (t = 0.16, R = W): still PARK.** Idea 1793
+  files a SEPARATE KEEP-4b candidate for the CHOOSER (`2026-09-20_exposure-neutral-is-chooser_B.result.md`),
+  awaiting the same Sunday review. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are
+  untouched by idea 1793.

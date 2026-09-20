@@ -1,3 +1,87 @@
+## 2026-09-20 — idea 1793 (lane B): CAN AN EXPOSURE-NEUTRAL IS-ONLY CHOOSER REACH THE 4b CELLS THAT PLAIN IS SHARPE MISSES? **ANSWERED — YES ON THE DRAWDOWN LEG (4 of 4 large-panel arms against 2 of 4 and 0 of 4), NO ON THE SHARPE LEG, WHERE THE SAME CORRECTION IS A PROVABLE NO-OP. KEEP-CANDIDATE (path 4b) FOR THE CHOOSER; KILL THE RECORD'S STANDING "IS SHARPE REWARDS THE HIGHER-GROSS BOOK" EXPLANATION. NO RULES CHANGE.**
+
+  **THE DEFECT THIS PRICES.** Three runs on 2026-09-20 found the SAME failure and none tried to fix
+  it. Idea 1771: IS Sharpe peaks at `t = 0.16` and the surface argmax is the STALER convention,
+  which fails 4b OOS on the drawdown cap. Idea 1767: **23 of 24** legal IS-only picks land
+  off-diagonal on a STALE scalar "because IS Sharpe rewards the lazier, higher-gross book", and on
+  U56 all eight go to `(T=Q, R=M)` and fail. Idea 1763: a chooser handed the sigma source free buys
+  SPY 14 of 18 times because SPY's sigma runs hot and pushes the target argmax one rung UP. All
+  three blamed EXPOSURE. Idea 1771 also built the machinery to test that — the realised-mean-gross-
+  matched constant-gross twin — and that difference is computable ENTIRELY IN SAMPLE, so it is a
+  legal rule-8 chooser that had never been run.
+
+  **THE CONSTRUCTION.** Two dials, the protocol maximum, both spent by the chooser: TARGET
+  `t` {0.08, 0.10, 0.12, 0.16, 0.20} x REFRESH cadence `R` {D, W, M, Q} = 20 cells per arm.
+  Published, not tuned: TRADE cadence `T` {W, M} (each `(panel, T)` is a SEPARATE arm and no chooser
+  ever selects across `T`), PANEL {U56, B136, SMALL665}, COST {0, 10, 25, 50} bps. The sigma
+  convention is FIXED at the standing memo's `(L = 20, d = 0)`. **480 rows, every grid point
+  published.** Each book carries its OWN constant-gross twin bisected to the book's realised mean
+  gross (G8 **2.9e-11**) — one matched on the IS window (what the chooser may see) and one on the
+  full window (reporting only). Verdict rules V1-V4 were fixed in the script header before the run.
+
+  **REPLICATION FIRST.** G3 reproduces the standing KEEP-4b memo's points 2-4 at max |d|
+  **4.605e-05** and G4 reproduces idea 1767's `(T=M, R=W)` U56 OOS row at **5.027e-05**.
+
+  **V1 TRIGGERED. `C_GXDD` — rank by `IS MaxDD(book) - IS MaxDD(its own IS-gross-matched twin)` —
+  clears 4b FULL *and* OOS at 4 of 4 large-panel arms**, against `C_ISDD` **2 of 4**, `C_ISLEGS`
+  1 of 4 and `C_ISSHARPE` / `C_ISCALMAR` **0 of 4**. U56 pick `t=0.08, R=M`: FULL 11.26% / 1.2285 /
+  -16.13% (halves 1.3198 / 1.1442), **OOS 11.87% / 1.2780 / -16.13%** at 2.19 turns/yr against SPY
+  15.12% / 0.8843 / -33.72% (OOS 15.26% / 0.8737) and live RULES v2 8.62% / 1.2010 / -12.05%.
+  B136 pick `t=0.10, R=W`: FULL 12.17% / 1.1817 / -13.46%, OOS 12.69% / 1.2417 / -13.46%, clearing
+  4b FULL+OOS at **0 / 10 / 25 / 50 bps** where the parked memo's own cell fails at 50. DD-cap
+  margins **4.10 pp** (U56) and **6.77 pp** (B136) against the parked memo's 0.37 pp. V2 and V3 also
+  triggered (mean OOS Sharpe 0.9186 vs 0.9167, mean OOS MaxDD -26.36% vs -27.64%; in-band share
+  0.500 vs 0.292).
+
+  **AND THE SHARPE HALF IS A NO-OP, WHICH IS THE KILL THAT MATTERS.** `C_GXS` makes the IDENTICAL
+  pick to plain `C_ISSHARPE` in **6 of 6** arms. Across a twin gross range `k = 0.6218 -> 0.9812`
+  the twin's IS Sharpe spans **0.0007-0.0057** against the book's **0.2283-0.3347** — **0.2% to
+  2.4%** of it — with spearman(is_Sharpe, gx_Sharpe) **0.9985-1.0000** and identical argmax 6 of 6.
+  A long-only constant-gross book's Sharpe is invariant in its gross, so **"IS Sharpe rewards the
+  lazier, HIGHER-GROSS book" is arithmetically impossible**: exposure carries ~1% of the IS Sharpe
+  variation on this dial. What IS Sharpe actually buys is **LESS TIMING** — a higher target is a
+  book closer to always-on, and 2009-2016 did not pay for timing. On the DRAWDOWN leg the twin
+  carries **55-75%** of the book's IS variation (twin spread 0.047-0.080 against the book's
+  0.085-0.092), which is exactly why the same correction is decisive there and vacuous on Sharpe.
+
+  **THE SQUEEZE IS MOVED, NOT ESCAPED.** U56's pick swaps a 0.37 pp DD-cap margin for a **0.68 pp
+  CAGR-floor margin** and FAILS at 50 bps on that floor; only B136's `t = 0.10` sits in the middle.
+  And **half the dial is still unreachable**: `R = D` clears 4b FULL+OOS at 4 of 4 arms for every
+  `t >= 0.10` and **no legal IS-only chooser ever picks it** — the OOS oracle does (`t=0.12, R=D`,
+  U56 OOS 15.28% / 1.3485 / -15.79%). Grid totals: 4b FULL+OOS **41 / 35 / 32 / 21** of 120 at
+  0 / 10 / 25 / 50 bps, 21 of 120 clearing at ALL FOUR rungs. **SMALL665: 0 of 40 at every rung**,
+  confirming the memo's addendum A2 a third time. Binding legs at 10 bps: `L4_DD` 75, `L2_H2` 46,
+  `L5_CAGR` 44, `L3_OOS` 42, `L1_H1` 21 of 120.
+
+  **PATH 4a: KILL.** 0 of 36 legal picks; 6 of 120 grid cells at 10 bps, all B136 at
+  `t in {0.08, 0.10}` with `R in {D, W}` — and only against the live book RESTATED on B136
+  (Sharpe 1.0972) rather than the real live U56 comparand (1.2010), the same panel-restatement
+  artefact idea 1763 recorded.
+
+  **GATES 11 of 11.** G0 >= 10y; G1 the two-schedule runner == `engine.backtest` on returns AND
+  turnover **0.000e+00**; G2 the cost identity == fresh engine runs at 10 and 25 bps **0.000e+00**;
+  G3 / G4 as above; G5 a refresh row moves every held name by ONE common factor (8.9e-16 over
+  133,070 refresh rows); G6 exactly two tuned dials; G7 all 480 cells published; G8 twin gross match
+  2.9e-11; G9 max realised gross 1.0000 (never levered); **G10 all 36 chooser picks are unchanged
+  when every chooser input is rebuilt on a panel PHYSICALLY TRUNCATED at 2016-12-31 — rule 8 tested,
+  not asserted.**
+
+  **RESIDUE (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched):** (1) a
+  KEEP-candidate memo with fully implementable RULES wording — target, lookback, staleness, refresh
+  cadence and trade cadence all named — is written, and an addendum is appended to the parked VOLTGT
+  memo; (2) **any claim that a chooser is bought by EXPOSURE must be scored against a gross-matched
+  twin before it is published**: on the Sharpe leg that correction is provably empty, so the claim
+  can only ever be a TIMING claim; (3) the refresh half of the dial remains PARK — a real, repeatable
+  gain (`R = D`) that no legal in-sample statistic reaches.
+
+  **SURVIVORSHIP.** U56 / B136 are CURRENT-constituent lists and SMALL665 a CURRENT sub-$2B screen
+  (54 tickers with `max_1d_move >= 1.0` dropped). Every CAGR and drawdown LEVEL above is optimistic
+  and both 4b bars are easier here than on a point-in-time panel. The CHOOSER contrast is same-tape,
+  same-names, same-grid with only the ranking statistic moved and is first-order immune; the pass
+  COUNTS are not.
+  `research/backtests/2026-09-20_exposure-neutral-is-chooser_B.py` / `.result.md` / `.grid.csv` /
+  `.choosers.csv` / `.twins.csv` / `.truncated.csv` / `.gates.csv`
+
 ## 2026-09-20 — idea 1613 (lane C): IS EVERY CADENCE CLAIM IN THE RECORD A c* CLAIM QUOTED AT ONE RUNG? **ANSWERED, BOTH WAYS — YES FOR THE ORDERING, NO FOR THE KEEP VERDICT. KILL: NO RULES CHANGE, NO NEW BOOK.**
 
   **THE DEFECT THIS PRICES.** PROTOCOL rule 2 binds every backtest to ONE cost rung, so every cadence
