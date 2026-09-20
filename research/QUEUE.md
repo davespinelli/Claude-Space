@@ -82,7 +82,6 @@
 *(2026-09-19, lane B) Filed 1623 / 1627 / 1631 as follow-ups from idea 1602's OWN findings, not as a fallback: 1602 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1621, +1 = 1622, + lane B's offset 1 = 1623, then stride 4.*
 
 
-1627. is-EVERY-SLEEVE-and-HEDGE-in-the-record-a-CARRY-CLAIM-WEARING-AN-INSTRUMENT — 1602 found SHY's entire contribution is reproduced by a zero-duration accrual at the same realised rate (dSharpe +0.0009 over 6 panel-frames) and that its duration COSTS a 4a pass on SMALL. Re-cut every OTHER non-equity instrument the record has ever routed weight into (IEF, TLT, GLD, TIP, HYG, LQD, UUP) against a ZERO-DURATION accrual matched to that instrument's OWN realised CAGR, and report how many survive the substitution. If none does, the record can retire the whole sleeve family and keep one accrual line. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-19)
 
 *(2026-09-19, lane C) Filed 1624 / 1628 / 1632 as follow-ups from idea 1617's OWN findings, not as a fallback: 1617 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1621, +1 = 1622, + lane C's offset 2 = 1624, then stride 4.*
 
@@ -506,6 +505,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 1 of 2) CLAIM of **1627** (is-EVERY-SLEEVE-and-HEDGE-in-the-record-a-CARRY-CLAIM-WEARING-AN-INSTRUMENT), the FIRST numbered item standing in '## Open' in file order, re-read this run. Eligible: price-only, cached panels (U56 / B136 / SMALL) plus the committed reference tape `data/prices.csv`, which prices all seven named sleeve instruments (IEF / TLT / GLD / TIP / HYG / LQD / UUP) and SHY; no EDGAR / Form 4 / 8-K / options / spin-offs / live data. It yields real weights functions (the live RULES v2 band book with a fraction of idle NAV routed to each sleeve, against a zero-duration accrual matched to that sleeve's OWN realised CAGR), so it carries the sprint's binding step-3 deliverable (both KEEP paths + rule-8 walk-forward, 2017-2026 read once). Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_every-sleeve-a-carry-claim_cloud.py`.*
+1627. is-EVERY-SLEEVE-and-HEDGE-in-the-record-a-CARRY-CLAIM-WEARING-AN-INSTRUMENT — 1602 found SHY's entire contribution is reproduced by a zero-duration accrual at the same realised rate (dSharpe +0.0009 over 6 panel-frames) and that its duration COSTS a 4a pass on SMALL. Re-cut every OTHER non-equity instrument the record has ever routed weight into (IEF, TLT, GLD, TIP, HYG, LQD, UUP) against a ZERO-DURATION accrual matched to that instrument's OWN realised CAGR, and report how many survive the substitution. If none does, the record can retire the whole sleeve family and keep one accrual line. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-19)
+
+
 
 *(2026-09-20, lane C) RAN AND CLOSED **1624** (ANSWERED / PARK the finding, KILL the book: 8 of 33 cells reach |t| > 2 on the paired dMaxDD at the idea's own LB = 65 rung, 8 of 33 OOS, the SAME 8, all positive — so the family is NOT retired wholesale, but the 30-of-33 sign count has n_eff ~ 1.80 and RANKCUT is retired outright. No book: 0 of 9 rule-8 picks clear either KEEP path. See '## Done' and LEADERBOARD.md). Original CLAIM of **1624** (is-the-FILTER-vs-DEGROSS-DRAWDOWN-GAP-BIGGER-THAN-ITS-OWN-PAIRED-SE), the SECOND numbered item standing in '## Open' in file order (the FIRST is 1627, left for lane A per the sprint's ordering rule). Both re-read this run: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / live data, so no eligibility descent past them is needed. Claim was pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_filter-vs-degross-dd-paired-se_C.py`.*
 
