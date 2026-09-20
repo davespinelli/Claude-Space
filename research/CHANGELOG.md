@@ -60,6 +60,73 @@
   `research/backtests/2026-09-20_voltgt-4b-margin-episode-stack_C.py` / `.result.md` /
   `.grid.csv` (1,664) / `.decomp.csv` (1,536) / `.walkforward.csv` (256) / `.episodes.csv` /
   `.ladder.csv` / `.gates.csv` / `.log.txt`.
+## 2026-09-20 — idea 2042 (lane cloud): IS THE STANDING KEEP-4b MARGIN RESOLVABLE, OR A POINT ESTIMATE? **ANSWERED — HALF. FOUR OF RULE 4b'S FIVE LEGS SURVIVE A PAIRED STANDARD ERROR; THE DRAWDOWN CAP IS UNCERTIFIABLE AT 187 OF 187 PASSES, AND A BLOCK BOOTSTRAP CANNOT HONESTLY MEASURE IT EITHER. PARK THE BARE "4b PASS" WORDING. NO BOOK ADDED OR WITHDRAWN, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** PROTOCOL rule 4b is five inequalities against SPY — H1 Sharpe, H2
+  Sharpe, OOS Sharpe, MaxDD <= 0.60x SPY's, CAGR >= 0.70x SPY's — and the record has decided every
+  capital verdict it has ever issued by reading those five as POINT ESTIMATES. Not one committed 4b
+  pass carries a standard error on its own legs. Idea 2022 (this lane, earlier today) showed the
+  cost of that on a book-vs-book contrast; this run applies the same discipline to the thing capital
+  is actually allocated on, the book-vs-SPY margin itself.
+
+  **THE CONSTRUCTION.** The book family is idea 1799's, inherited UNCHANGED and never re-tuned (420
+  cells: `gross_t = min(1, t/sigma20_t)` on an equal-weight panel, calendar or drift refresh, weekly
+  or monthly trade, next-day execution, 0/10/25/50 bps, both KEEP paths at every cell). Each 4b leg
+  then gets a **PAIRED moving-block bootstrap**: the BOOK and SPY are resampled on the SAME day
+  blocks, so the common market factor is differenced out — **gate G7 confirms the pairing is exact,
+  the shared SPY leg cancelling at 1.5e-14 in a cell-vs-cell difference.** Segments (FULL, H1, H2,
+  OOS) are resampled independently so "first half" keeps meaning the first half of the sample. The
+  two tuned dials are BLOCK LENGTH {21, 63} and CONFIDENCE {90, 95, 99}%, and **neither ever selects
+  a book**. B = 500, 2,000 for the deep read, seed 20260924. Gates 10/10, including G5, which
+  reproduces the standing KEEP-4b cell to 1.0e-05.
+
+  **187 PASS ON POINTS, 0 RESOLVE ON ALL FIVE LEGS** — at every one of the six (block, confidence)
+  settings. But the zero is carried by ONE leg, so the run decomposes it instead of publishing it
+  clean.
+
+  **FOUR LEGS ARE REAL.** Over the 187 point-passing cells the mean t is **+2.56** (H1 Sharpe),
+  **+2.38** (H2 Sharpe), **+2.83** (OOS Sharpe) and **+2.85** (CAGR floor), and **88 of 187 resolve
+  all four at 95%** (126 at 90%; 100 at block 63 / 95%). The 99% row is bootstrap noise at B = 500 —
+  a two-sided 99% CI is set by the ~2.5th draw in each tail, which is why block 21 gives 3 and block
+  63 gives 65 there — and is flagged as such rather than quoted.
+
+  **THE DRAWDOWN CAP NEVER IS.** Mean t **+1.14**, CI covering zero at **187 of 187** cells, at every
+  block length and every confidence level. It is also the binding leg at 49 of 420 cells on points,
+  so the clause that most often decides a 4b verdict is the clause that never carries a margin.
+
+  **AND A BLOCK BOOTSTRAP CANNOT CERTIFY IT ANYWAY — MEASURED, NOT ASSERTED.** MaxDD is a path
+  statistic and a moving-block resample breaks the serial dependence that produces long drawdowns.
+  The run quantifies the resulting bias as the gap between each leg's CI midpoint and its point
+  estimate: **-80.8% of the point margin on the DD leg against -1.7% to -3.0% on the four non-path
+  legs, a 27x separation (gate G9).** So the honest claim is that the DD cap is UNCERTIFIABLE, not
+  that its margin is zero. The missing tool is a path-aware test — a stationary bootstrap with a
+  fitted dependence length, or a parametric drawdown model.
+
+  **CAPITAL ARM (rule 8, 2017-2026 read exactly once).** 48 legal IS-only picks at 10 bps; **10 clear
+  4b FULL+OOS on point estimates and 0 at 95%, with 8 of the 10 blocked by the DD cap and 2 by the
+  CAGR floor.** Path 4a is 40 of 420 cells and 5 of 48 picks, likewise point-estimate-only. SMALL665
+  reaches nothing (0 of 140). Deep read (B = 2,000) of the standing KEEP-4b cell — U56, T=M,
+  `t=0.16, h=0.12`, FULL 15.62% / 1.2451 / -18.16% (H1/H2 1.29/1.20), OOS **16.36% / 1.2810 /
+  -18.16%** against SPY 15.12% / 0.8843 / -33.72% (OOS 15.26% / 0.8737 / -33.72%) and live RULES v2
+  8.62% / 1.2010 / -12.05% (OOS 9.46% / 1.2766 / -12.05%) — gives legs t **+2.61 / +3.04 / +3.36 /
+  +0.64 / +4.29**. Its return and Sharpe advantage over SPY is strongly resolvable; its claim to beat
+  60% of SPY's drawdown is not (P(margin > 0) = 0.352, which is the path-statistic bias above, not
+  evidence the book is riskier than it looks). **The candidate is neither killed nor upgraded.**
+
+  **WHAT CHANGES.** Not the rule, and not which cells pass — only what a memo may assert. A 4b pass
+  should be published as "clears 4b FULL and OOS on point estimates; paired-bootstrap t on the
+  narrowest leg = <t> (<leg>)", and where that narrowest leg is the DD cap, as **"4b (DD leg
+  uncertified)"**, not sized on the drawdown claim. A PROTOCOL clause to that effect is DRAFTED in
+  the memo and deliberately NOT APPLIED (rule 6: rules change only at Sunday review).
+
+  **SURVIVORSHIP.** U56 / B136 are current-constituent lists and SMALL665 a current sub-$2B screen
+  (54 tickers with `max_1d_move >= 1.0` dropped first). A bootstrap resamples the tape it is given
+  and **cannot put a confidence interval on survivorship**, so even a resolvable margin here is a
+  margin measured on a favourable panel. SMALL numbers are not comparable with pre-2026-09-20 SMALL
+  results (cache grew 439 -> 665 names).
+
+  Scripts: `research/backtests/2026-09-20_4b-margin-resolvable_cloud.py`; memo
+  `research/backtests/2026-09-20_4b-margin_PARK_MEMO.md`. RULES.md and PROTOCOL.md unchanged.
 
 ## 2026-09-20 — idea 2022 (lane cloud): IS THE DRIFT TRIGGER'S MATCHED-TURNOVER WIN A DRAWDOWN-TIMING FACT OR A COST FACT? **ANSWERED — A DRAWDOWN-TIMING FACT 24 TRADING DAYS WIDE, AND NOT A COST FACT. IDEA 1799'S "263 OF 263" MUST BE RESTATED AS ONE EPISODE COUNTED 263 TIMES. NO NEW BOOK, NO RULES CHANGE.**
 

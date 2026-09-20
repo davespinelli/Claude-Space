@@ -1,0 +1,101 @@
+# Idea 2042 (lane cloud, 2026-09-20) — is the standing KEEP-4b MARGIN resolvable, or a point estimate?
+# tuned dials (2, neither ever selects a book): BLOCK [21, 63], CONFIDENCE [0.9, 0.95, 0.99].  HEADLINE block 21, confidence 95%.
+# book family inherited from idea 1799, NOT re-tuned: t [0.08, 0.1, 0.12, 0.16, 0.2] x [ h [0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25] | R ['D', 'W', 'M', 'Q'] ], trade T ['W', 'M'].  REPORTED: panel, cost [0, 10, 25, 50] bps.
+# warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01; B=500 (deep 2000), seed 20260924.  Book and SPY resampled on the SAME blocks, segment by segment.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W,10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%)
+   SPY                       15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%);  4b bars: DD cap -20.23%, CAGR floor 10.59%
+   grid done (560 scored rows)
+   bootstrap done (140 cells x 2 block lengths x 500 draws)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W,10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%)
+   SPY                       15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%);  4b bars: DD cap -20.23%, CAGR floor 10.59%
+   grid done (560 scored rows)
+   bootstrap done (140 cells x 2 block lengths x 500 draws)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W,10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%)
+   SPY                       14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%);  4b bars: DD cap -20.23%, CAGR floor 9.81%
+   grid done (560 scored rows)
+   bootstrap done (140 cells x 2 block lengths x 500 draws)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 bt_cal diagonal == engine.backtest (returns / turnover): 0.000e+00 / 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turn*c/1e4 == fresh engine run at 10/25 bps: 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 reproduces the standing VOLTGT memo (points 2-4, U56 + B136): max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G4 DRIFT h=0 == CALENDAR R=D, cell by cell (30 cells): 0.000e+00   (target < 1e-12)
+  GATE PASS  G5 reproduces the standing KEEP-4b cell (U56, T=M, t=0.16, h=0.12): max|d| = 9.989e-06   (target < 1e-3)
+  GATE PASS  G6 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+  GATE PASS  G7 the bootstrap is PAIRED (the shared SPY leg cancels in a cell-vs-cell difference): max|d| = 1.532e-14   (target < 1e-12)
+  GATE PASS  G8 every leg has a non-degenerate bootstrap SE: min SE 8.551e-03   (target > 0)
+
+## V1 / V2 — HOW MANY 4b PASSES SURVIVE A PAIRED SE?
+   block 21, 90%: 4b FULL 187/420 point -> **0 resolved**; 4b OOS 225 -> 0; 4b FULL+OOS 187 -> **0 resolved**
+   block 21, 95%: 4b FULL 187/420 point -> **0 resolved**; 4b OOS 225 -> 0; 4b FULL+OOS 187 -> **0 resolved**  <-- HEADLINE
+   block 21, 99%: 4b FULL 187/420 point -> **0 resolved**; 4b OOS 225 -> 0; 4b FULL+OOS 187 -> **0 resolved**
+   block 63, 90%: 4b FULL 187/420 point -> **0 resolved**; 4b OOS 225 -> 0; 4b FULL+OOS 187 -> **0 resolved**
+   block 63, 95%: 4b FULL 187/420 point -> **0 resolved**; 4b OOS 225 -> 0; 4b FULL+OOS 187 -> **0 resolved**
+   block 63, 99%: 4b FULL 187/420 point -> **0 resolved**; 4b OOS 225 -> 0; 4b FULL+OOS 187 -> **0 resolved**
+
+   which leg is unresolvable (block 21, 95%, among the 187 point-passing 4b FULL cells):
+      L1_H1     CI covers 0 at 45/187  (mean point +0.3257, mean SE 0.1320, mean t +2.56)
+      L2_H2     CI covers 0 at 49/187  (mean point +0.3374, mean SE 0.1435, mean t +2.38)
+      L3_OOS    CI covers 0 at 1/187  (mean point +0.4018, mean SE 0.1433, mean t +2.83)
+      L4_DD     CI covers 0 at 187/187  (mean point +0.0416, mean SE 0.0353, mean t +1.14)
+      L5_CAGR   CI covers 0 at 65/187  (mean point +0.0358, mean SE 0.0132, mean t +2.85)
+
+   DECOMPOSITION — the four NON-PATH legs (L1, L2, L3, L5) alone:
+      block 21, 90%: 126/187 (67.4%) of the 4b-FULL passes resolve on all four non-path legs; OOS 122/225 (54.2%) on its two non-path legs
+      block 21, 95%: 88/187 (47.1%) of the 4b-FULL passes resolve on all four non-path legs; OOS 114/225 (50.7%) on its two non-path legs
+      block 21, 99%: 3/187 (1.6%) of the 4b-FULL passes resolve on all four non-path legs; OOS 69/225 (30.7%) on its two non-path legs
+      block 63, 90%: 118/187 (63.1%) of the 4b-FULL passes resolve on all four non-path legs; OOS 119/225 (52.9%) on its two non-path legs
+      block 63, 95%: 100/187 (53.5%) of the 4b-FULL passes resolve on all four non-path legs; OOS 108/225 (48.0%) on its two non-path legs
+      block 63, 99%: 65/187 (34.8%) of the 4b-FULL passes resolve on all four non-path legs; OOS 72/225 (32.0%) on its two non-path legs
+
+   BIAS DIAGNOSTIC — is the block bootstrap centred on the point estimate?  (block 21, 95% CI midpoint vs point, over the 187 passing cells)
+      L1_H1     point +0.3257  CI-mid +0.3159  shift -0.0097  (-3.0% of the point margin)
+      L2_H2     point +0.3374  CI-mid +0.3280  shift -0.0095  (-2.8% of the point margin)
+      L3_OOS    point +0.4018  CI-mid +0.3934  shift -0.0084  (-2.1% of the point margin)
+      L4_DD     point +0.0416  CI-mid +0.0080  shift -0.0336  (-80.8% of the point margin)
+      L5_CAGR   point +0.0358  CI-mid +0.0352  shift -0.0006  (-1.7% of the point margin)
+  GATE PASS  G9 the path-statistic bias is confined to the DD leg: L4_DD -80.8% vs max |shift| on the four non-path legs 3.0%   (target |DD shift| > 5x the largest non-path shift)
+   by panel (4b FULL point -> resolved): B136 95 -> 0; SMALL665 0 -> 0; U56 92 -> 0
+
+## V3 + V4 — RULE 8: (t,h) or (t,R) chosen on 2009-2016 ONLY; 2017-2026 read once
+   legal IS-only picks at 10 bps: n=48; 4b FULL+OOS 10 (point); RESOLVED at 95% 0; 4a 5
+   every reached 4b cell, with its weakest leg:
+      B136/M C_ISLEGS R=M t=0.1: OOS 13.05%/1.2000/-19.87%  weakest leg L4_DD t=+0.12  resolved FULL False / OOS False
+      B136/M C_ISSHARPE h=0.16 t=0.2: OOS 16.63%/1.1957/-19.42%  weakest leg L4_DD t=+0.24  resolved FULL False / OOS False
+      B136/M C_ISCALMAR h=0.25 t=0.16: OOS 14.06%/1.1944/-17.85%  weakest leg L4_DD t=+0.84  resolved FULL False / OOS False
+      B136/M C_ISLEGS h=0.25 t=0.16: OOS 14.06%/1.1944/-17.85%  weakest leg L4_DD t=+0.84  resolved FULL False / OOS False
+      B136/W C_ISSHARPE h=0.25 t=0.16: OOS 14.08%/1.1888/-17.93%  weakest leg L4_DD t=+0.81  resolved FULL False / OOS False
+      B136/W C_ISCALMAR h=0.25 t=0.16: OOS 14.08%/1.1888/-17.93%  weakest leg L4_DD t=+0.81  resolved FULL False / OOS False
+      B136/W C_ISLEGS h=0.25 t=0.16: OOS 14.08%/1.1888/-17.93%  weakest leg L4_DD t=+0.81  resolved FULL False / OOS False
+      U56/M C_ISDD R=M t=0.08: OOS 11.87%/1.2780/-16.13%  weakest leg L5_CAGR t=+0.47  resolved FULL False / OOS False
+      U56/M C_ISSHARPE h=0.12 t=0.16: OOS 16.36%/1.2810/-18.16%  weakest leg L4_DD t=+0.66  resolved FULL False / OOS False
+      U56/W C_ISDD R=M t=0.08: OOS 11.74%/1.2561/-16.28%  weakest leg L5_CAGR t=+0.42  resolved FULL False / OOS False
+
+## THE STANDING KEEP-4b CELL — deep paired bootstrap (B=2000, block 21)
+   L1_H1     point +0.3374  SE 0.1293  t +2.61  P(>0) 0.996  90% [+0.1099, +0.5370]  95% [+0.0760, +0.5728]  99% [+0.0094, +0.6564]
+   L2_H2     point +0.3787  SE 0.1244  t +3.04  P(>0) 1.000  90% [+0.1749, +0.5927]  95% [+0.1342, +0.6310]  99% [+0.0714, +0.6994]
+   L3_OOS    point +0.4073  SE 0.1211  t +3.36  P(>0) 1.000  90% [+0.1976, +0.5969]  95% [+0.1639, +0.6351]  99% [+0.1082, +0.7117]
+   L4_DD     point +0.0207  SE 0.0324  t +0.64  P(>0) 0.352  90% [-0.0631, +0.0416]  95% [-0.0723, +0.0540]  99% [-0.0987, +0.0850]
+   L5_CAGR   point +0.0503  SE 0.0117  t +4.29  P(>0) 1.000  90% [+0.0302, +0.0682]  95% [+0.0258, +0.0727]  99% [+0.0204, +0.0804]
+   O2_DD     point +0.0207  SE 0.0317  t +0.65  P(>0) 0.366  90% [-0.0544, +0.0486]  95% [-0.0644, +0.0579]  99% [-0.0802, +0.0755]
+   O3_CAGR   point +0.0568  SE 0.0164  t +3.46  P(>0) 0.999  90% [+0.0291, +0.0832]  95% [+0.0235, +0.0885]  99% [+0.0131, +0.0993]
+   WEAKEST LEG: L4_DD at t = +0.64; the cell is NOT RESOLVED at 95% on the FULL legs
+
+## CENSUS (every grid point published in .grid.csv.gz)
+    0 bps: cells 420; 4b FULL 217, 4b OOS 230, 4b FULL+OOS 217 (CAL 41 / DRIFT 176); 4a 41, 4a OOS 55
+   10 bps: cells 420; 4b FULL 187, 4b OOS 225, 4b FULL+OOS 187 (CAL 35 / DRIFT 152); 4a 40, 4a OOS 54
+   25 bps: cells 420; 4b FULL 166, 4b OOS 186, 4b FULL+OOS 165 (CAL 32 / DRIFT 133); 4a 26, 4a OOS 44
+   50 bps: cells 420; 4b FULL 128, 4b OOS 153, 4b FULL+OOS 128 (CAL 21 / DRIFT 107); 4a 6, 4a OOS 28
+   binding 4b leg @10bps: none 187; L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 63; L4_DD 49; L5_CAGR 38; L2_H2|L3_OOS|L4_DD|L5_CAGR 37; L2_H2|L3_OOS|L4_DD 28; L1_H1|L2_H2|L3_OOS|L5_CAGR 14; L2_H2|L4_DD|L5_CAGR 2; L2_H2|L4_DD 2
+
+## gates 10/10 pass
+
+## HEADLINE: at block 21 / 95%, 187.0 of 420 cells pass 4b FULL on point estimates and 0.0 are resolvable; 4b FULL+OOS 187.0 -> 0.0.
