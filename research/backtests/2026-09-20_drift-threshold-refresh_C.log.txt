@@ -1,0 +1,104 @@
+# Idea 1799 (lane C, 2026-09-20) — does a DRIFT-THRESHOLD refresh dominate a CALENDAR refresh?
+# tuned dials (2, within a family): TARGET t [0.08, 0.1, 0.12, 0.16, 0.2] x [ DRIFT h [0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25] | CALENDAR R ['D', 'W', 'M', 'Q'] ].  reported, not tuned: TRADE T ['W', 'M'] (separate arms), PANEL, COST [0, 10, 25, 50] bps.  sigma FIXED at (L=20, d=0).  warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%), 1.77 turns/yr
+   SPY                      15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (560 scored rows, 17.7y book window)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%), 2.01 turns/yr
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (560 scored rows, 17.7y book window)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%), 2.57 turns/yr
+   SPY                      14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (560 scored rows, 15.6y book window)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 bt_cal diagonal == engine.backtest (returns / turnover): 0.000e+00 / 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turn*c/1e4 == fresh engine run at 10/25 bps: 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 reproduces the standing VOLTGT memo (points 2-4, U56 + B136): max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G4 DRIFT h=0 == CALENDAR R=D, cell by cell (30 cells): 0.000e+00   (target < 1e-12)
+  GATE PASS  G5 reproduces idea 1793's OOS oracle cell (U56 t=0.12 R=D, T=M): max|d| = 4.875e-05   (target < 1e-3)
+  GATE PASS  G6 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+  GATE PASS  G7 the drift ladder actually moves refresh frequency: refresh/yr 0.8 .. 125.3   (target min < 52 < max)
+
+## V2 — DRIFT vs its own arm's TURNOVER-MATCHED point on the CALENDAR ladder
+   263 drift cells at 10 bps inside the calendar turnover range (7 outside)
+   OOS Sharpe vs turnover-matched calendar: mean +0.0596, win share 1.000; MaxDD mean +4.07 pp; CAGR mean +0.31 pp
+   by panel: B136 mean +0.0647 win 1.00; SMALL665 mean +0.0516 win 1.00; U56 mean +0.0628 win 1.00
+
+## RULE 8 — (t, h) or (t, R) chosen on 2009-2016 ONLY; 2017-2026 read exactly once
+   legal IS-only picks at 10 bps: 48 (4 choosers x 2 families x 6 arms)
+   CAL  : 4b FULL+OOS 3/24, 4a 2/24, 4a OOS 2/24, mean OOS Sharpe 0.9167, mean OOS MaxDD -27.64%, mean turns/yr 2.05
+   DRIFT: 4b FULL+OOS 7/24, 4a 3/24, 4a OOS 4/24, mean OOS Sharpe 0.9794, mean OOS MaxDD -21.14%, mean turns/yr 1.88
+   V1 arms reached (any chooser): CAL 3/6, DRIFT 3/6
+     C_ISSHARPE   4b FULL+OOS arms: CAL 0/6, DRIFT 3/6
+     C_ISCALMAR   4b FULL+OOS arms: CAL 0/6, DRIFT 2/6
+     C_ISDD       4b FULL+OOS arms: CAL 2/6, DRIFT 0/6
+     C_ISLEGS     4b FULL+OOS arms: CAL 1/6, DRIFT 2/6
+   V3 arms whose picks are at least weekly-fresh: CAL 2/6, DRIFT 0/6 (mean refresh/yr CAL 15.4, DRIFT 7.9)
+   DRIFT picks by h rung: h=0.05 x2; h=0.08 x1; h=0.12 x3; h=0.16 x8; h=0.25 x10   (top rung of the ladder is h=0.25)
+   CAL picks by R rung: R=M x22; R=W x2
+   OOS ORACLE (reported, NOT a pick): B136/M/CAL R=D t=0.12 1.2968 4b; B136/M/DRIFT h=0.20 t=0.08 1.3227 4b; B136/W/CAL R=D t=0.12 1.2911 4b; B136/W/DRIFT h=0.25 t=0.1 1.3359 4b; U56/M/CAL R=D t=0.12 1.3485 4b; U56/M/DRIFT h=0.12 t=0.08 1.3989 4b; U56/W/CAL R=D t=0.12 1.3345 4b; U56/W/DRIFT h=0.12 t=0.08 1.3812 4b
+
+## PRE-STATED VERDICTS
+   V1 REACHABILITY   FAIL — DRIFT reaches 4b FULL+OOS on 3 arms vs CALENDAR's 3 (strictly more required)
+   V2 TURNOVER EFF.  PASS — win share 1.000, mean dOOS Sharpe +0.0596 (both must be > 0.5 / > 0)
+   V3 FRESHNESS      FAIL — DRIFT picks weekly-fresh on 0 arms vs CALENDAR's 2
+   V4 CAPITAL        PASS — 10 legal picks at 10 bps clear 4b FULL+OOS (7 DRIFT / 3 CAL)
+      REACHED B136/M/CAL/C_ISLEGS: R=M t=0.1  OOS 13.05% / 1.2000 / -19.87%, FULL 13.16% / 1.2014 / -19.87% (halves 1.3516 / 1.0581), 2.00 turns/yr, refresh 12/yr, mean gross 0.784, 4a False
+      REACHED B136/M/DRIFT/C_ISSHARPE: h=0.16 t=0.2  OOS 16.63% / 1.1957 / -19.42%, FULL 17.31% / 1.2199 / -19.42% (halves 1.3514 / 1.0936), 0.97 turns/yr, refresh 3/yr, mean gross 0.952, 4a False
+      REACHED B136/M/DRIFT/C_ISCALMAR: h=0.25 t=0.16  OOS 14.06% / 1.1944 / -17.85%, FULL 14.42% / 1.2166 / -17.85% (halves 1.3521 / 1.0906), 0.73 turns/yr, refresh 1/yr, mean gross 0.794, 4a False
+      REACHED B136/M/DRIFT/C_ISLEGS: h=0.25 t=0.16  OOS 14.06% / 1.1944 / -17.85%, FULL 14.42% / 1.2166 / -17.85% (halves 1.3521 / 1.0906), 0.73 turns/yr, refresh 1/yr, mean gross 0.794, 4a False
+      REACHED B136/W/DRIFT/C_ISSHARPE: h=0.25 t=0.16  OOS 14.08% / 1.1888 / -17.93%, FULL 14.51% / 1.2148 / -17.93% (halves 1.3527 / 1.0859), 1.19 turns/yr, refresh 1/yr, mean gross 0.793, 4a False
+      REACHED B136/W/DRIFT/C_ISCALMAR: h=0.25 t=0.16  OOS 14.08% / 1.1888 / -17.93%, FULL 14.51% / 1.2148 / -17.93% (halves 1.3527 / 1.0859), 1.19 turns/yr, refresh 1/yr, mean gross 0.793, 4a False
+      REACHED B136/W/DRIFT/C_ISLEGS: h=0.25 t=0.16  OOS 14.08% / 1.1888 / -17.93%, FULL 14.51% / 1.2148 / -17.93% (halves 1.3527 / 1.0859), 1.19 turns/yr, refresh 1/yr, mean gross 0.793, 4a False
+      REACHED U56/M/CAL/C_ISDD: R=M t=0.08  OOS 11.87% / 1.2780 / -16.13%, FULL 11.26% / 1.2285 / -16.13% (halves 1.3198 / 1.1442), 2.19 turns/yr, refresh 12/yr, mean gross 0.690, 4a False
+      REACHED U56/M/DRIFT/C_ISSHARPE: h=0.12 t=0.16  OOS 16.36% / 1.2810 / -18.16%, FULL 15.62% / 1.2451 / -18.16% (halves 1.2944 / 1.2036), 1.13 turns/yr, refresh 5/yr, mean gross 0.896, 4a False
+      REACHED U56/W/CAL/C_ISDD: R=M t=0.08  OOS 11.74% / 1.2561 / -16.28%, FULL 11.19% / 1.2141 / -16.28% (halves 1.3148 / 1.1213), 2.83 turns/yr, refresh 12/yr, mean gross 0.689, 4a False
+   cost-rung robustness of the reached picks (same cell, all rungs):
+      B136/M/CAL R=M t=0.1: 4b FULL+OOS at 0/10/25/50 bps = 1/1/1/1
+      B136/M/DRIFT h=0.16 t=0.2: 4b FULL+OOS at 0/10/25/50 bps = 1/1/1/1
+      B136/M/DRIFT h=0.25 t=0.16: 4b FULL+OOS at 0/10/25/50 bps = 1/1/1/1
+      B136/W/DRIFT h=0.25 t=0.16: 4b FULL+OOS at 0/10/25/50 bps = 1/1/1/1
+      U56/M/CAL R=M t=0.08: 4b FULL+OOS at 0/10/25/50 bps = 1/1/1/0
+      U56/M/DRIFT h=0.12 t=0.16: 4b FULL+OOS at 0/10/25/50 bps = 1/1/1/1
+      U56/W/CAL R=M t=0.08: 4b FULL+OOS at 0/10/25/50 bps = 1/1/1/0
+
+## CENSUS (every grid point published in .grid.csv)
+    0 bps: cells 420; 4b FULL 217, 4b OOS 230, 4b FULL+OOS 217 (CAL 41 / DRIFT 176); 4a 41, 4a OOS 55
+   10 bps: cells 420; 4b FULL 187, 4b OOS 225, 4b FULL+OOS 187 (CAL 35 / DRIFT 152); 4a 40, 4a OOS 54
+   25 bps: cells 420; 4b FULL 166, 4b OOS 186, 4b FULL+OOS 165 (CAL 32 / DRIFT 133); 4a 26, 4a OOS 44
+   50 bps: cells 420; 4b FULL 128, 4b OOS 153, 4b FULL+OOS 128 (CAL 21 / DRIFT 107); 4a 6, 4a OOS 28
+   binding 4b leg at 10 bps (whole grid): none 187; L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 63; L4_DD 49; L5_CAGR 38; L2_H2|L3_OOS|L4_DD|L5_CAGR 37; L2_H2|L3_OOS|L4_DD 28; L1_H1|L2_H2|L3_OOS|L5_CAGR 14; L2_H2|L4_DD|L5_CAGR 2
+   4b FULL+OOS by cell (10 bps, large panels):
+      R=D      16/20  mean OOS Sharpe 1.2785, turns/yr 3.57, refresh/yr 252
+      R=M      7/20  mean OOS Sharpe 1.1933, turns/yr 1.87, refresh/yr 12
+      R=Q      0/20  mean OOS Sharpe 0.9811, turns/yr 1.23, refresh/yr 4
+      R=W      12/20  mean OOS Sharpe 1.2381, turns/yr 2.42, refresh/yr 52
+      h=0.00   16/20  mean OOS Sharpe 1.2785, turns/yr 3.57, refresh/yr 174
+      h=0.01   16/20  mean OOS Sharpe 1.2792, turns/yr 3.42, refresh/yr 69
+      h=0.02   15/20  mean OOS Sharpe 1.2804, turns/yr 3.21, refresh/yr 49
+      h=0.03   15/20  mean OOS Sharpe 1.2801, turns/yr 3.02, refresh/yr 37
+      h=0.05   16/20  mean OOS Sharpe 1.2837, turns/yr 2.70, refresh/yr 24
+      h=0.08   13/20  mean OOS Sharpe 1.2847, turns/yr 2.37, refresh/yr 15
+      h=0.12   16/20  mean OOS Sharpe 1.2843, turns/yr 2.07, refresh/yr 9
+      h=0.16   18/20  mean OOS Sharpe 1.2598, turns/yr 1.82, refresh/yr 6
+      h=0.20   15/20  mean OOS Sharpe 1.2716, turns/yr 1.68, refresh/yr 5
+      h=0.25   12/20  mean OOS Sharpe 1.2398, turns/yr 1.47, refresh/yr 3
+
+## MECHANISM — gross path through the 2020 crash (2020-02-19 -> 2020-03-23), U56 / T=M / t=0.16
+   R=D      gross 2020-02-19 1.000 -> min 0.224 on 2020-03-23; window mean 0.584; sessions above half the pre-crash gross 14
+   R=W      gross 2020-02-19 1.000 -> min 0.224 on 2020-03-23; window mean 0.658; sessions above half the pre-crash gross 17
+   R=M      gross 2020-02-19 1.000 -> min 0.687 on 2020-03-23; window mean 0.811; sessions above half the pre-crash gross 24
+   R=Q      gross 2020-02-19 1.000 -> min 1.000 on 2020-03-17; window mean 1.000; sessions above half the pre-crash gross 24
+   h=0.05   gross 2020-02-19 0.980 -> min 0.254 on 2020-03-23; window mean 0.590; sessions above half the pre-crash gross 14
+   h=0.12   gross 2020-02-19 0.970 -> min 0.254 on 2020-03-23; window mean 0.606; sessions above half the pre-crash gross 14
+   h=0.25   gross 2020-02-19 0.995 -> min 0.385 on 2020-03-23; window mean 0.672; sessions above half the pre-crash gross 14
+
+## gates 8/8 pass
