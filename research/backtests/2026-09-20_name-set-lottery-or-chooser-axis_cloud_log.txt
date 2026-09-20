@@ -1,0 +1,133 @@
+====================================================================================================================
+IDEA 1749 (lane cloud, 2026-09-20) — can a 4b-PASSING BAND BOOK be REACHED by ANY LEGAL
+CHOOSER on the NAME-SET axis, or is the name set a LOTTERY?
+====================================================================================================================
+# dials: DRAW COUNT D [24, 96, 240, 480] x IS RANKING STATISTIC ['IS_SHARPE', 'IS_LEGS', 'IS_CAGRSLACK', 'IS_MINMARG']
+# fixed: U56, N=20 names, band c=0.03, gross 0.75, cadence W, t+1; reported axis: cost [0.0, 10.0, 25.0, 50.0] bps (binding 10)
+# warm-up 260 rows | IS <= 2016-12-31 | OOS >= 2017-01-01
+# the ONLY RNG is the draw index selection, seeded exactly as idea 1632 (G7)
+
+# panel U56: 56 columns, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); scored from 2009-01-13 (17.7y, PROTOCOL rule 1)
+# IS rows 2007 (8.0y)  OOS rows 2441 (9.7y)
+  GATE PASS  G5 tuned dials: DRAW COUNT D, IS RANKING STATISTIC S   (target exactly 2)
+  GATE PASS  G4 chooser window closes before OOS: IS ends at row 2266 (2016-12-30), OOS starts at row 2267 (2017-01-03)   (target IS_end < OOS_start)
+
+# SPY          FULL  15.12% / 0.8843 / -33.72%   H1/H2 0.9570/0.8249   OOS  15.26% / 0.8737 / -33.72%
+# RULES v2 live FULL   8.62% / 1.2010 / -12.05%   H1/H2 1.2276/1.1805   OOS   9.46% / 1.2766 / -12.05%   (the FULL 56-name band book, 10 bps)
+# 4b bars: FULL DD cap -20.23%, CAGR floor 10.59% | OOS DD cap -20.23%, CAGR floor 10.68% | IS DD cap -13.24%, CAGR floor 10.47%
+  GATE PASS  G1 runner == engine.backtest (live band book, full U56): returns 1.735e-17, turnover 1.943e-16   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turnover*c/1e4: max|d| = 1.735e-17   (target < 1e-15)
+
+# running 480 seeded 20-name draws x 4 cost rungs ...
+  GATE PASS  G8 no leverage / no shorting: max realised TARGET gross 0.750000   (target <= 0.75)
+  GATE PASS  G6 every cell published: 1920 rows -> 2026-09-20_name-set-lottery-or-chooser-axis_cloud_grid.csv   (target 1920)
+  GATE PASS  G3 cross-run vs idea 1632's published N=20 draws 3 and 18: max|d| = 2.748e-04   (target < 5e-4 (1632 quotes 4 dp))
+
+## THE DRAW POPULATION at N=20, band c=0.03, gross 0.75, 10 bps (480 draws)
+   SPY inclusion rate in the draw: 34.0% (expected 20/56 = 35.7%)
+   FULL Sharpe    mean    1.1223  sd   0.1120  min    0.8118  p50    1.1220  max    1.3897
+   FULL CAGR      mean    0.0858  sd   0.0145  min    0.0477  p50    0.0848  max    0.1306
+   FULL MaxDD     mean   -0.1226  sd   0.0144  min   -0.1621  p50   -0.1227  max   -0.0783
+   OOS Sharpe     mean    1.1901  sd   0.1166  min    0.8448  p50    1.1934  max    1.5063
+   OOS CAGR       mean    0.0940  sd   0.0166  min    0.0522  p50    0.0931  max    0.1488
+   OOS MaxDD      mean   -0.1222  sd   0.0145  min   -0.1621  p50   -0.1220  max   -0.0783
+   turnover /yr   mean    1.7785  sd   0.1147  min    1.4056  p50    1.7737  max    2.1199
+   4b FULL passes   44 / 480   4b OOS passes  107 / 480   BOTH (the object)   43 / 480
+   4a FULL passes   24 / 480   4a OOS passes   49 / 480
+   binding OOS leg among 4b-OOS failures: O3_OOS 1, O4_DD 0, O5_CAGR 373
+   4b-BOTH passers: draws 3, 18, 24, 25, 30, 33, 80, 81, 90, 91, 95, 133, 163, 166, 167, 170, 181, 187, 225, 229, 231, 238, 241, 250, 259, 272, 299, 315, 335, 339, 343, 354, 360, 364, 384, 397, 424, 428, 439, 455, 456, 471, 473
+
+## Q1 — TOP-DECILE OOS-4b RATE vs the DRAW BASE RATE (the lottery test)
+   'top decile' = the ceil(D/10) draws with the highest IS statistic, ranked on 2009-2016 data ONLY (G4).
+   p = EXACT hypergeometric P(X >= observed) for that many hits in the top decile under the lottery null.
+
+   D=24   target 4b OOS   base rate   6/24 = 25.00%   top decile = 3 draws
+          IS_SHARPE     top-decile   2/3 = 66.67%   lift +41.67%   p = 0.1433   rho(S, OOS Sharpe margin) +0.5165   rho(S, OOS CAGR margin) +0.7374
+          IS_LEGS       top-decile   2/3 = 66.67%   lift +41.67%   p = 0.1433   rho(S, OOS Sharpe margin) +0.4294   rho(S, OOS CAGR margin) +0.5777
+          IS_CAGRSLACK  top-decile   2/3 = 66.67%   lift +41.67%   p = 0.1433   rho(S, OOS Sharpe margin) +0.3548   rho(S, OOS CAGR margin) +0.6896
+          IS_MINMARG    top-decile   2/3 = 66.67%   lift +41.67%   p = 0.1433   rho(S, OOS Sharpe margin) +0.3548   rho(S, OOS CAGR margin) +0.6896
+
+   D=24   target 4b BOTH  base rate   2/24 =  8.33%   top decile = 3 draws
+          IS_SHARPE     top-decile   1/3 = 33.33%   lift +25.00%   p = 0.2391   rho(S, OOS Sharpe margin) +0.5165   rho(S, OOS CAGR margin) +0.7374
+          IS_LEGS       top-decile   1/3 = 33.33%   lift +25.00%   p = 0.2391   rho(S, OOS Sharpe margin) +0.4294   rho(S, OOS CAGR margin) +0.5777
+          IS_CAGRSLACK  top-decile   1/3 = 33.33%   lift +25.00%   p = 0.2391   rho(S, OOS Sharpe margin) +0.3548   rho(S, OOS CAGR margin) +0.6896
+          IS_MINMARG    top-decile   1/3 = 33.33%   lift +25.00%   p = 0.2391   rho(S, OOS Sharpe margin) +0.3548   rho(S, OOS CAGR margin) +0.6896
+
+   D=96   target 4b OOS   base rate  26/96 = 27.08%   top decile = 10 draws
+          IS_SHARPE     top-decile   7/10 = 70.00%   lift +42.92%   p = 0.0035   rho(S, OOS Sharpe margin) +0.4968   rho(S, OOS CAGR margin) +0.5655
+          IS_LEGS       top-decile   7/10 = 70.00%   lift +42.92%   p = 0.0035   rho(S, OOS Sharpe margin) +0.3945   rho(S, OOS CAGR margin) +0.4577
+          IS_CAGRSLACK  top-decile   8/10 = 80.00%   lift +52.92%   p = 0.0004   rho(S, OOS Sharpe margin) +0.5023   rho(S, OOS CAGR margin) +0.6924
+          IS_MINMARG    top-decile   8/10 = 80.00%   lift +52.92%   p = 0.0004   rho(S, OOS Sharpe margin) +0.5023   rho(S, OOS CAGR margin) +0.6924
+
+   D=96   target 4b BOTH  base rate  11/96 = 11.46%   top decile = 10 draws
+          IS_SHARPE     top-decile   7/10 = 70.00%   lift +58.54%   p = 0.0000   rho(S, OOS Sharpe margin) +0.4968   rho(S, OOS CAGR margin) +0.5655
+          IS_LEGS       top-decile   6/10 = 60.00%   lift +48.54%   p = 0.0001   rho(S, OOS Sharpe margin) +0.3945   rho(S, OOS CAGR margin) +0.4577
+          IS_CAGRSLACK  top-decile   6/10 = 60.00%   lift +48.54%   p = 0.0001   rho(S, OOS Sharpe margin) +0.5023   rho(S, OOS CAGR margin) +0.6924
+          IS_MINMARG    top-decile   6/10 = 60.00%   lift +48.54%   p = 0.0001   rho(S, OOS Sharpe margin) +0.5023   rho(S, OOS CAGR margin) +0.6924
+
+   D=240  target 4b OOS   base rate  57/240 = 23.75%   top decile = 24 draws
+          IS_SHARPE     top-decile  11/24 = 45.83%   lift +22.08%   p = 0.0104   rho(S, OOS Sharpe margin) +0.4376   rho(S, OOS CAGR margin) +0.5069
+          IS_LEGS       top-decile  14/24 = 58.33%   lift +34.58%   p = 0.0001   rho(S, OOS Sharpe margin) +0.3493   rho(S, OOS CAGR margin) +0.4096
+          IS_CAGRSLACK  top-decile  16/24 = 66.67%   lift +42.92%   p = 0.0000   rho(S, OOS Sharpe margin) +0.4076   rho(S, OOS CAGR margin) +0.6354
+          IS_MINMARG    top-decile  16/24 = 66.67%   lift +42.92%   p = 0.0000   rho(S, OOS Sharpe margin) +0.4077   rho(S, OOS CAGR margin) +0.6354
+
+   D=240  target 4b BOTH  base rate  22/240 =  9.17%   top decile = 24 draws
+          IS_SHARPE     top-decile   9/24 = 37.50%   lift +28.33%   p = 0.0000   rho(S, OOS Sharpe margin) +0.4376   rho(S, OOS CAGR margin) +0.5069
+          IS_LEGS       top-decile  11/24 = 45.83%   lift +36.67%   p = 0.0000   rho(S, OOS Sharpe margin) +0.3493   rho(S, OOS CAGR margin) +0.4096
+          IS_CAGRSLACK  top-decile  12/24 = 50.00%   lift +40.83%   p = 0.0000   rho(S, OOS Sharpe margin) +0.4076   rho(S, OOS CAGR margin) +0.6354
+          IS_MINMARG    top-decile  12/24 = 50.00%   lift +40.83%   p = 0.0000   rho(S, OOS Sharpe margin) +0.4077   rho(S, OOS CAGR margin) +0.6354
+
+   D=480  target 4b OOS   base rate 107/480 = 22.29%   top decile = 48 draws
+          IS_SHARPE     top-decile  20/48 = 41.67%   lift +19.38%   p = 0.0012   rho(S, OOS Sharpe margin) +0.3775   rho(S, OOS CAGR margin) +0.4333
+          IS_LEGS       top-decile  24/48 = 50.00%   lift +27.71%   p = 0.0000   rho(S, OOS Sharpe margin) +0.2731   rho(S, OOS CAGR margin) +0.3271
+          IS_CAGRSLACK  top-decile  30/48 = 62.50%   lift +40.21%   p = 0.0000   rho(S, OOS Sharpe margin) +0.3571   rho(S, OOS CAGR margin) +0.5897
+          IS_MINMARG    top-decile  30/48 = 62.50%   lift +40.21%   p = 0.0000   rho(S, OOS Sharpe margin) +0.3572   rho(S, OOS CAGR margin) +0.5897
+
+   D=480  target 4b BOTH  base rate  43/480 =  8.96%   top decile = 48 draws
+          IS_SHARPE     top-decile  17/48 = 35.42%   lift +26.46%   p = 0.0000   rho(S, OOS Sharpe margin) +0.3775   rho(S, OOS CAGR margin) +0.4333
+          IS_LEGS       top-decile  17/48 = 35.42%   lift +26.46%   p = 0.0000   rho(S, OOS Sharpe margin) +0.2731   rho(S, OOS CAGR margin) +0.3271
+          IS_CAGRSLACK  top-decile  25/48 = 52.08%   lift +43.12%   p = 0.0000   rho(S, OOS Sharpe margin) +0.3571   rho(S, OOS CAGR margin) +0.5897
+          IS_MINMARG    top-decile  25/48 = 52.08%   lift +43.12%   p = 0.0000   rho(S, OOS Sharpe margin) +0.3572   rho(S, OOS CAGR margin) +0.5897
+
+
+## RULE 8 WALK-FORWARD — each statistic's ARGMAX draw is chosen on 2009-2016 ONLY and its 2017-2026 numbers are read ONCE
+   reference OOS: SPY  15.26% / 0.8737 / -33.72% | RULES v2 live   9.46% / 1.2766 / -12.05%
+
+      D statistic      pick  OOS CAGR  OOS Shrp  OOS MaxDD  4bOOS 4aOOS  binding OOS leg
+     24 IS_SHARPE        18    10.85%    1.1992    -14.75%   True False  none
+     24 IS_LEGS          18    10.85%    1.1992    -14.75%   True False  none
+     24 IS_CAGRSLACK     18    10.85%    1.1992    -14.75%   True False  none
+     24 IS_MINMARG       18    10.85%    1.1992    -14.75%   True False  none
+     96 IS_SHARPE        76    10.27%    1.2845    -11.75%  False  True  O5_CAGR
+     96 IS_LEGS          18    10.85%    1.1992    -14.75%   True False  none
+     96 IS_CAGRSLACK     30    12.41%    1.2785    -14.96%   True False  none
+     96 IS_MINMARG       30    12.41%    1.2785    -14.96%   True False  none
+    240 IS_SHARPE        76    10.27%    1.2845    -11.75%  False  True  O5_CAGR
+    240 IS_LEGS          18    10.85%    1.1992    -14.75%   True False  none
+    240 IS_CAGRSLACK    166    11.74%    1.3112    -13.16%   True False  none
+    240 IS_MINMARG      166    11.74%    1.3112    -13.16%   True False  none
+    480 IS_SHARPE       367     9.66%    1.1274    -14.21%  False False  O5_CAGR
+    480 IS_LEGS          18    10.85%    1.1992    -14.75%   True False  none
+    480 IS_CAGRSLACK    166    11.74%    1.3112    -13.16%   True False  none
+    480 IS_MINMARG      166    11.74%    1.3112    -13.16%   True False  none
+   -> 13 of 16 legal IS-only picks clear 4b OOS; 2 of 16 clear 4a OOS
+
+## COST LADDER (reported axis, not tuned): 4b pass counts over the full 480 draws
+    cost   4b FULL   4b OOS   4b BOTH   4a FULL  mean turn/yr
+       0        58      126        56        24         1.778
+      10        44      107        43        24         1.778
+      25        29       80        28        24         1.778
+      50        13       53        13        26         1.778
+
+## 1632's TWO PASSERS, restated against the widened population
+   draw   3: FULL  10.60% / 1.2061 / -14.25%  OOS  11.95% / 1.2655 / -14.25%  4b BOTH True  | IS Sharpe percentile  70.4%, OOS Sharpe percentile  72.1%
+   draw  18: FULL  11.07% / 1.2354 / -14.75%  OOS  10.85% / 1.1992 / -14.75%  4b BOTH True  | IS Sharpe percentile  95.2%, OOS Sharpe percentile  52.5%
+
+====================================================================================================================
+VERDICT
+  top-decile lifts significant at p < 0.05: 24 of 32 (D x statistic x target) cells; at the widest D=480: 8 of 8
+  largest lift anywhere: IS_SHARPE at D=96 on 4b BOTH — 70.00% vs base 11.46% (lift +58.54%, p = 0.0000)
+  rule 8: 13 of 16 legal IS-only picks clear 4b OOS, 2 of 16 clear 4a OOS
+  gates: 7 / 7 pass
+  runtime 15.2s
+====================================================================================================================
