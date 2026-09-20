@@ -1,3 +1,68 @@
+## 2026-09-20 — idea 2034 (lane cloud): IS THE 4b VERDICT ITSELF A 2020 ARTEFACT ONCE THE SPY BAR IS HELD FIXED? **ANSWERED — YES. THE PUBLISHED `4b 187 -> 80 of 420` COLLAPSE IS A BENCHMARK ARTEFACT: WITH THE BAR FROZEN, 187 OF 187 PUBLISHED PASSES SURVIVE AND THE EXCISION WOULD ADD MORE. PLUS A KILL AND A DUAL-PATH (4a + 4b) KEEP-CANDIDATE.**
+
+  **THE QUESTION.** Idea 2022 published `4b 187 -> 80 of 420 cells, 4a 40 -> 0` on a crash-excised
+  tape and disclosed, but did not remove, the confound: excising 2020 moves SPY's own MaxDD
+  -33.72% -> -24.50%, tightening the 4b cap `0.60 x SPY` -20.23% -> -14.70%, while the book's
+  MaxDD does not move. Idea 2038 called the same thing a BAR SHIFT on the OOS legs. 2034 separates
+  the BOOK effect from the BAR effect on the CENSUS.
+
+  **THE CONSTRUCTION.** Idea 2022's exact 420-cell vol-target corpus rebuilt verbatim (3 panels x
+  t in {0.08,0.10,0.12,0.16,0.20} x T in {W,M} x 14 refresh cells; sigma L=20 d=0; warm-up 260;
+  10 bps, t+1, gross <= 1.00), scored on a **3 x 4 cross**: BOOK TAPE {FULL, CRASH_PT 24d,
+  CRASH_WIDE 51d} x BAR {FULL, CRASH_PT, CRASH_WIDE, ABS}, the bar read INDEPENDENTLY of the book's
+  tape. 2022's convention is the diagonal; the off-diagonals are the two counterfactuals the record
+  never computed. 20,160 scored rows, gates **11/11**, and 2022's census reproduced **exactly**
+  (4b 187 / 80 / 89, 4a 40 / 0 / 0) plus its disclosed bar shift to 5e-4. TUNED: nothing new — `t`
+  and `h` (calendar: `t` and `R`) are 1799/2022's two inherited dials. REPORTED, not tuned: bar
+  convention (the axis), crash window, trade cadence, panel, cost {0,10,25,50} bps.
+
+  **V1 — ATTRIBUTION: BENCHMARK-ARTEFACT.** CRASH_PT, 10 bps, `keep4b_full`:
+  **-107 = BAR -178 + BOOK +79 + INTERACTION -8** (bar share of |effect| 69.3%); CRASH_WIDE
+  -98 = -125 + 67 - 40. `keep4a 40 -> 0` is **-40 BAR / +9 BOOK / -9 INTERACTION**, i.e. 100% bar.
+  The BOOK effect is **POSITIVE on every metric and every window**: with the benchmark frozen,
+  deleting the crash makes MORE cells pass. The sign and dominance hold at every cost rung
+  (BAR -165 / -178 / -164 / -127 vs BOOK +53 / +79 / +58 / +63 at 0 / 10 / 25 / 50 bps).
+
+  **V2 — FOUR OF THE FIVE LEGS LOSE ZERO CELLS TO THE BOOK.** CRASH_PT: L2_H2 loses 195 cells to
+  the bar and 0 to the book, L4_DD 129 / 0, L5_CAGR 87 / 0, L3_OOS 62 / 0. Only L1_H1 loses
+  anything to the book (6 of 343) and its bar move is favourable. Every mean leg-margin move has
+  BAR and BOOK pointing in OPPOSITE directions.
+
+  **V3 — KILL on "excise the crash and the 4b pass dies".** 187 of 187 published passes survive
+  at **100.0%** under bar=FULL and bar=ABS, both windows, against 41.2% / 46.0% under 2022's own
+  moving bar. The standing KEEP-4b candidate (`VOLTGT t=0.10, T=M, R=M`) clears 4b full and OOS at
+  11 of its 12 (book tape x bar) cells on each large panel; the only failures are the pure BAR-only
+  counterfactuals. Its excised-book statistics IMPROVE (U56 13.31% / 1.2437 / -19.39% ->
+  14.73% / 1.3954 / -13.57%).
+
+  **RULE 8 (2017-2026 read ONCE).** 288 picks (3 panels x 3 book tapes x 4 bars x 2 cadences x 2
+  families x 2 legal IS-only choosers). On the deployed tape (FULL book, FULL bar): **10 of 24
+  clear 4b FULL+OOS, 1 of 24 clears 4a**, and `CH_ISMINLEG` REACHES the standing cell on both large
+  panels at T=M — the record's repeated "the cell clears, the chooser does not" does not hold for
+  this chooser. **NEW DUAL-PATH KEEP-CANDIDATE:** `CH_ISMINLEG` on B136 / T=W / DRIFT picks
+  `t = 0.10, h = 0.08`, which clears **BOTH** paths: full **12.51% / 1.2286 / -11.81%** (H1 1.3171
+  / H2 1.1415), OOS **13.01% / 1.2928 / -11.81%**, against SPY 15.12% / 0.8844 / -33.72% (OOS
+  15.26% / 0.8737 / -33.72%) and live RULES v2 7.96% / 1.0972 / -12.24% (OOS 7.85% / 1.1017 /
+  -12.24%). All five 4b legs positive (+0.3600 / +0.3166 / +0.4191 / +8.42 pp / +1.92 pp); 4a by
+  +0.0875 / +0.1746 halves and +0.43 pp MaxDD. Turnover 3.13/yr, mean gross 0.777. Both paths hold
+  at 25 bps; at 50 bps 4b holds and 4a fails.
+
+  **WHAT IT CHANGES.** (1) The record must stop quoting `4b 187 -> 80` as evidence against the
+  vol-target family; any future excision claim must publish the BAR / BOOK / INTERACTION split,
+  extending idea 2038's companion-statistic requirement from the OOS margin to the CENSUS.
+  (2) The standing KEEP-4b candidate keeps its status with the 2022 objection removed.
+  (3) A new DUAL-PATH KEEP-candidate is filed for Sunday review — no rules change here.
+  Survivorship: U56 / B136 are CURRENT constituents and SMALL665 a CURRENT sub-$2B screen (54
+  tickers with `max_1d_move >= 1.0` dropped first), so every LEVEL is optimistic and both 4b bars
+  are easier than on a point-in-time panel; the BAR-vs-BOOK contrast is same-tape / same-names /
+  same-grid and first-order immune, the PASS COUNTS are not. The dual-path cell is 1 of 24 picks on
+  one panel: a multiple-comparison caveat applies. RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py are untouched. Evidence:
+  `research/backtests/2026-09-20_4b-verdict-bar-vs-book_cloud.py` / `.result.md` / `.grid.csv.gz` /
+  `.attribution.csv` / `.legs.csv` / `.survival.csv` / `.standing.csv` / `.barshift.csv` /
+  `.costladder.csv` / `.walkforward.csv` / `.gates.csv` / `.log.txt`, memo
+  `research/backtests/2026-09-20_voltgt-drift-b136_KEEP4b_MEMO.md`.
+
 ## 2026-09-20 — idea 2038 (lane C): DOES THE VOL-TARGET FAMILY'S 4b MARGIN DECOMPOSE INTO A STACK OF DRAWDOWN EPISODES? **ANSWERED — NO. IT IS ONE 23-DAY WINDOW AT 11.5x-40.3x CONCENTRATION, PARTLY CANCELLED BY THE OTHER FOUR; THE STANDING KEEP-4b CANDIDATE IS THE LEAST EPISODE-CONCENTRATED CELL OF THE FOUR PRICED. PLUS A KILL ON READING THE EXCISED VERDICT AS A BOOK FAILURE.**
 
   **THE QUESTION.** Idea 2022 found ONE 24-day window carrying 89% of the drift-vs-calendar edge.
