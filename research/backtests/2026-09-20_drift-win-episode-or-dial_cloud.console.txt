@@ -1,0 +1,111 @@
+# Idea 2022 (lane cloud, 2026-09-20) — is the DRIFT trigger's MATCHED-TURNOVER win a DRAWDOWN-TIMING fact or a COST fact?
+# nothing new is tuned: t [0.08, 0.1, 0.12, 0.16, 0.2] x [ h [0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25] | R ['D', 'W', 'M', 'Q'] ] are idea 1799's two inherited dials.  REPORTED, not tuned: crash window ['CRASH_PT', 'CRASH_WIDE'], block [21, 63], trade T ['W', 'M'], panel, cost [0, 10, 25, 50] bps.  sigma FIXED (L=20, d=0).
+# warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01; bootstrap B=1000 seed 20260922.
+#   CRASH_PT: 2020-02-19 -> 2020-03-23
+#   CRASH_WIDE: 2020-02-19 -> 2020-04-30
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   [FULL      ] LIVE v2 (W,10bps) 8.62%/1.2010/-12.05% (OOS 9.46%/1.2766/-12.05%)   SPY 15.12%/0.8843/-33.72% (OOS 15.26%/0.8737/-33.72%)   [0 days removed]
+   [CRASH_PT  ] LIVE v2 (W,10bps) 9.36%/1.3337/-7.89% (OOS 10.84%/1.5225/-7.22%)   SPY 17.91%/1.0652/-24.50% (OOS 20.42%/1.2093/-24.50%)   [24 days removed]
+   [CRASH_WIDE] LIVE v2 (W,10bps) 9.20%/1.3118/-7.89% (OOS 10.56%/1.4843/-7.22%)   SPY 16.25%/1.0019/-24.50% (OOS 17.35%/1.0985/-24.50%)   [51 days removed]
+   grid done (1680 scored rows)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   [FULL      ] LIVE v2 (W,10bps) 7.96%/1.0972/-12.24% (OOS 7.85%/1.1017/-12.24%)   SPY 15.12%/0.8844/-33.72% (OOS 15.26%/0.8737/-33.72%)   [0 days removed]
+   [CRASH_PT  ] LIVE v2 (W,10bps) 8.68%/1.2217/-9.28% (OOS 9.17%/1.3425/-9.28%)   SPY 17.91%/1.0652/-24.50% (OOS 20.42%/1.2093/-24.50%)   [24 days removed]
+   [CRASH_WIDE] LIVE v2 (W,10bps) 8.62%/1.2119/-9.28% (OOS 9.06%/1.3246/-9.28%)   SPY 16.25%/1.0019/-24.50% (OOS 17.35%/1.0985/-24.50%)   [51 days removed]
+   grid done (1680 scored rows)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   [FULL      ] LIVE v2 (W,10bps) 4.26%/0.6588/-14.16% (OOS 3.63%/0.5447/-14.16%)   SPY 14.01%/0.8561/-33.72% (OOS 15.26%/0.8737/-33.72%)   [0 days removed]
+   [CRASH_PT  ] LIVE v2 (W,10bps) 4.85%/0.7481/-11.89% (OOS 4.58%/0.6808/-11.89%)   SPY 17.13%/1.0717/-24.50% (OOS 20.42%/1.2093/-24.50%)   [24 days removed]
+   [CRASH_WIDE] LIVE v2 (W,10bps) 4.84%/0.7432/-11.89% (OOS 4.55%/0.6729/-11.89%)   SPY 15.26%/0.9981/-24.50% (OOS 17.35%/1.0985/-24.50%)   [51 days removed]
+   grid done (1680 scored rows)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 bt_cal diagonal == engine.backtest (returns / turnover): 0.000e+00 / 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turn*c/1e4 == fresh engine run at 10/25 bps: 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 reproduces the standing VOLTGT memo (points 2-4, U56 + B136): max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G4 DRIFT h=0 == CALENDAR R=D, cell by cell (30 cells): 0.000e+00   (target < 1e-12)
+  GATE PASS  G6 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+  GATE PASS  G7 the drift ladder actually moves refresh frequency: refresh/yr 0.8 .. 125.3   (target min < 52 < max)
+  GATE PASS  G8 CRASH_PT removes a non-empty window on every panel: [24] days   (target > 0)
+  GATE PASS  G8 CRASH_WIDE removes a non-empty window on every panel: [51] days   (target > 0)
+
+## MATCHED-TURNOVER COMPARISON (1799's estimator, recomputed tape by tape)
+  GATE PASS  G5 reproduces idea 1799's V2 headline (263 of 263, mean +0.0596): 263 of 263, mean +0.0596   (target 263 of 263, |d mean| < 1e-3)
+   the 263-pair population is keyed on ['panel', 'target', 'T_trade', 'h']; |keys| = 263
+
+## V1 — DOES THE WIN SURVIVE OUTSIDE THE 2020 CRASH?
+   [FULL      ] 263/263 = 100.0% wins; mean dOOS Sharpe +0.0596 (median +0.0400); mean dOOS MaxDD +4.07 pp; mean dOOS CAGR +0.31 pp; still inside the ladder 263/263
+        B136/M: 44/44 mean +0.0602
+        B136/W: 42/42 mean +0.0693
+        SMALL665/M: 45/45 mean +0.0527
+        SMALL665/W: 45/45 mean +0.0505
+        U56/M: 44/44 mean +0.0556
+        U56/W: 43/43 mean +0.0702
+   [CRASH_PT  ] 188/263 = 71.5% wins; mean dOOS Sharpe +0.0066 (median +0.0068); mean dOOS MaxDD +0.66 pp; mean dOOS CAGR -0.26 pp; still inside the ladder 261/263
+        B136/M: 29/44 mean +0.0041
+        B136/W: 32/42 mean +0.0090
+        SMALL665/M: 34/45 mean +0.0138
+        SMALL665/W: 35/45 mean +0.0051
+        U56/M: 28/44 mean +0.0005
+        U56/W: 30/43 mean +0.0069
+   [CRASH_WIDE] 210/263 = 79.8% wins; mean dOOS Sharpe +0.0126 (median +0.0087); mean dOOS MaxDD +0.65 pp; mean dOOS CAGR -0.06 pp; still inside the ladder 262/263
+        B136/M: 33/44 mean +0.0086
+        B136/W: 35/42 mean +0.0126
+        SMALL665/M: 41/45 mean +0.0233
+        SMALL665/W: 38/45 mean +0.0178
+        U56/M: 32/44 mean +0.0028
+        U56/W: 31/43 mean +0.0099
+   V1 VERDICT: PARTIAL  (excised win shares CRASH_PT 71.5%, CRASH_WIDE 79.8%)
+
+## V2 — PAIRED MOVING-BLOCK BOOTSTRAP ON THE MATCHED DIFFERENCE
+   [FULL       block 21] n=263  mean point +0.0596  mean SE 0.0436  mean |t| 1.49  max |t| 3.07  95% CI excludes 0 at 61/263 (23.2%)  mean P(diff>0) 0.885
+   [FULL       block 63] n=263  mean point +0.0596  mean SE 0.0445  mean |t| 1.51  max |t| 3.22  95% CI excludes 0 at 59/263 (22.4%)  mean P(diff>0) 0.881
+   [CRASH_PT   block 21] n=261  mean point +0.0067  mean SE 0.0311  mean |t| 0.94  max |t| 2.77  95% CI excludes 0 at 26/261 (10.0%)  mean P(diff>0) 0.677
+   [CRASH_PT   block 63] n=261  mean point +0.0067  mean SE 0.0295  mean |t| 1.02  max |t| 3.19  95% CI excludes 0 at 40/261 (15.3%)  mean P(diff>0) 0.683
+   [CRASH_WIDE block 21] n=262  mean point +0.0126  mean SE 0.0283  mean |t| 0.90  max |t| 2.59  95% CI excludes 0 at 26/262 (9.9%)  mean P(diff>0) 0.705
+   [CRASH_WIDE block 63] n=262  mean point +0.0126  mean SE 0.0276  mean |t| 0.96  max |t| 3.11  95% CI excludes 0 at 36/262 (13.7%)  mean P(diff>0) 0.711
+   V2 VERDICT: POINT-ESTIMATE ONLY on the FULL tape (22.8% of cells resolvable at 95%)
+
+## V3 — WHICH LEG CARRIES THE WIN (drawdown timing, or cost/return)?
+   [FULL      ] dOOS MaxDD +4.07 pp (win 98.5%) | dOOS CAGR +0.31 pp (win 87.5%) | dOOS Sharpe win 100.0%
+   [CRASH_PT  ] dOOS MaxDD +0.66 pp (win 88.6%) | dOOS CAGR -0.26 pp (win 54.0%) | dOOS Sharpe win 71.5%
+   [CRASH_WIDE] dOOS MaxDD +0.65 pp (win 88.2%) | dOOS CAGR -0.06 pp (win 59.3%) | dOOS Sharpe win 79.8%
+   cost ladder (FULL tape, the same 263 keys):
+       0 bps: wins 263/263  mean +0.0603
+      10 bps: wins 263/263  mean +0.0596
+      25 bps: wins 262/263  mean +0.0586
+      50 bps: wins 261/263  mean +0.0569
+
+## V4 + RULE 8 — (t, h) or (t, R) chosen on 2009-2016 ONLY; 2017-2026 read once
+   [FULL      ] legal IS-only picks at 10 bps: n=48; 4b FULL+OOS 10; 4a 5; by family CAL 3/24; DRIFT 7/24
+   [CRASH_PT  ] legal IS-only picks at 10 bps: n=48; 4b FULL+OOS 7; 4a 0; by family CAL 2/24; DRIFT 5/24
+   [CRASH_WIDE] legal IS-only picks at 10 bps: n=48; 4b FULL+OOS 9; 4a 0; by family CAL 4/24; DRIFT 5/24
+   [FULL      ] arms (panel x trade) where a legal IS pick clears 4b FULL+OOS: CAL 3/6, DRIFT 3/6
+   [CRASH_PT  ] arms (panel x trade) where a legal IS pick clears 4b FULL+OOS: CAL 2/6, DRIFT 2/6
+   [CRASH_WIDE] arms (panel x trade) where a legal IS pick clears 4b FULL+OOS: CAL 4/6, DRIFT 2/6
+
+## CENSUS (every grid point published in .grid.csv.gz)
+   [FULL      ]  0 bps: cells 420; 4b FULL 217, 4b OOS 230, 4b FULL+OOS 217 (CAL 41 / DRIFT 176); 4a 41, 4a OOS 55
+   [FULL      ] 10 bps: cells 420; 4b FULL 187, 4b OOS 225, 4b FULL+OOS 187 (CAL 35 / DRIFT 152); 4a 40, 4a OOS 54
+   [FULL      ] 25 bps: cells 420; 4b FULL 166, 4b OOS 186, 4b FULL+OOS 165 (CAL 32 / DRIFT 133); 4a 26, 4a OOS 44
+   [FULL      ] 50 bps: cells 420; 4b FULL 128, 4b OOS 153, 4b FULL+OOS 128 (CAL 21 / DRIFT 107); 4a 6, 4a OOS 28
+   [CRASH_PT  ]  0 bps: cells 420; 4b FULL 83, 4b OOS 81, 4b FULL+OOS 80 (CAL 18 / DRIFT 62); 4a 0, 4a OOS 0
+   [CRASH_PT  ] 10 bps: cells 420; 4b FULL 80, 4b OOS 80, 4b FULL+OOS 80 (CAL 18 / DRIFT 62); 4a 0, 4a OOS 0
+   [CRASH_PT  ] 25 bps: cells 420; 4b FULL 59, 4b OOS 53, 4b FULL+OOS 48 (CAL 10 / DRIFT 38); 4a 0, 4a OOS 0
+   [CRASH_PT  ] 50 bps: cells 420; 4b FULL 18, 4b OOS 21, 4b FULL+OOS 18 (CAL 6 / DRIFT 12); 4a 0, 4a OOS 1
+   [CRASH_WIDE]  0 bps: cells 420; 4b FULL 98, 4b OOS 132, 4b FULL+OOS 98 (CAL 22 / DRIFT 76); 4a 0, 4a OOS 0
+   [CRASH_WIDE] 10 bps: cells 420; 4b FULL 89, 4b OOS 118, 4b FULL+OOS 89 (CAL 22 / DRIFT 67); 4a 0, 4a OOS 0
+   [CRASH_WIDE] 25 bps: cells 420; 4b FULL 81, 4b OOS 93, 4b FULL+OOS 81 (CAL 20 / DRIFT 61); 4a 0, 4a OOS 0
+   [CRASH_WIDE] 50 bps: cells 420; 4b FULL 38, 4b OOS 53, 4b FULL+OOS 38 (CAL 8 / DRIFT 30); 4a 0, 4a OOS 1
+   binding 4b leg, FULL tape @10bps: none 187; L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 63; L4_DD 49; L5_CAGR 38; L2_H2|L3_OOS|L4_DD|L5_CAGR 37; L2_H2|L3_OOS|L4_DD 28; L1_H1|L2_H2|L3_OOS|L5_CAGR 14; L2_H2|L4_DD|L5_CAGR 2; L2_H2|L4_DD 2
+
+## gates 10/10 pass
+
+## HEADLINE: V1 PARTIAL; V2 POINT-ESTIMATE ONLY

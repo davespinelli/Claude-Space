@@ -1,3 +1,70 @@
+## 2026-09-20 — idea 2022 (lane cloud): IS THE DRIFT TRIGGER'S MATCHED-TURNOVER WIN A DRAWDOWN-TIMING FACT OR A COST FACT? **ANSWERED — A DRAWDOWN-TIMING FACT 24 TRADING DAYS WIDE, AND NOT A COST FACT. IDEA 1799'S "263 OF 263" MUST BE RESTATED AS ONE EPISODE COUNTED 263 TIMES. NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1799 (same day, lane C) reported that a DRIFT-THRESHOLD refresh
+  beats its own arm's TURNOVER-MATCHED point on the CALENDAR ladder at **263 of 263** cells at 10
+  bps, mean OOS Sharpe **+0.0596**. Two of its own tables said that might be one quarter: the win
+  decomposed as +4.07 pp of OOS MaxDD against only +0.31 pp of OOS CAGR, and its MECHANISM table
+  showed the whole gross gap opening between 2020-02-19 and 2020-03-23. And 1799 published no
+  standard error at all — 263 point estimates cannot distinguish 263 independent wins from one win
+  counted 263 times.
+
+  **THE CONSTRUCTION.** 1799's corpus is rebuilt verbatim (same runners, same panels, same 420-cell
+  grid, same interpolation estimator) and then two readings 1799 did not take: (A) every book's
+  daily net return series has the crash window removed and the matched comparison recomputed END TO
+  END on the excised tape, so turnover AND Sharpe are both excised and the pairs stay matched on the
+  tape they are scored on; (B) a PAIRED moving-block bootstrap in which the whole 13-cell arm is
+  resampled on the SAME day blocks, with 1799's estimator held exact (each calendar rung's Sharpe
+  re-read on the resampled days, interpolated at the drift book's realised turnover, turnover held
+  fixed as a design quantity). B = 1000, seed 20260922. **NOTHING NEW IS TUNED** — `t` and `h` are
+  1799's two inherited dials; crash window {24d peak-to-trough, 51d wide}, block {21, 63}, trade
+  cadence {W, M}, panel {U56, B136, SMALL665} and cost {0, 10, 25, 50} bps are REPORTED. **420 cells
+  x 3 tapes x 4 costs published; gates 10/10**, including G5, an exact replication of 1799's V2
+  headline (263 of 263, mean +0.0596) before anything is excised.
+
+  **THE WIN IS 24 DAYS WIDE.** Removing 2020-02-19 -> 03-23 — **24 of ~2,440 OOS trading days,
+  1.0% of the sample** — takes the mean from +0.0596 to **+0.0066** and the win share from 263/263
+  to 188/263. The 51-day window gives +0.0126 and 210/263. **89.0% of the published edge lives in
+  one quarter**, and all six arms (panel x trade cadence) move the same way; U56/M, the arm carrying
+  1799's own KEEP cell, is the weakest survivor at 28/44, mean +0.0005.
+
+  **IT IS NOT A COST FACT.** Same 263 keys on the FULL tape: 0 bps **+0.0603** (263/263), 10 bps
+  +0.0596, 25 bps +0.0586, 50 bps +0.0569 (261/263). The edge is fully present BEFORE costs and
+  SHRINKS as they rise, so saved turnover is not the mechanism — the gross path through the crash is.
+
+  **THE CREDIT IS DRAWDOWN, AND ONLY DRAWDOWN.** Outside the crash the OOS MaxDD gap keeps its sign
+  at 88.6% of pairs but loses 84% of its size (+4.07 -> **+0.66 pp**), while the OOS CAGR gap turns
+  **negative** (+0.31 -> **-0.26 pp**). Outside 2020 the drift trigger is a small drawdown shaver
+  that costs a little return.
+
+  **AND THE SWEEP WAS NEVER RESOLVABLE.** On the FULL tape only **61 of 263** cells have a 95%
+  bootstrap CI excluding zero (mean |t| **1.49**, max 3.07); crash-excised it is 26 of 261. Block 63
+  agrees (59/263 and 40/261). This is the general lesson for the record: a clean N-of-N sweep across
+  a grid whose cells share one tape is not N pieces of evidence, and any such count published
+  without a paired SE should be read as a single point estimate.
+
+  **CAPITAL ARM (rule 8, 2017-2026 read exactly once).** DRIFT never reaches more arms than CALENDAR
+  on any tape — FULL 3/6 vs 3/6, crash-excised 2/6 vs 2/6 and 2/6 vs 4/6 — reconfirming 1799's own
+  V1 reachability KILL. **Path 4a: KILL on every tape** (40 of 420 cells on FULL, 0 of 420 on both
+  excised). 1799's standing KEEP-4b cell (U56, T=M, `t=0.16, h=0.12`, C_ISSHARPE) posts FULL 15.62%
+  / 1.2451 / -18.16% (H1/H2 1.29/1.20) and OOS **16.36% / 1.2810 / -18.16%** against SPY 15.12% /
+  0.8843 / -33.72% (OOS 15.26% / 0.8737 / -33.72%) and live RULES v2 8.62% / 1.2010 / -12.05% (OOS
+  9.46% / 1.2766 / -12.05%) — **it still clears 4b FULL+OOS on the real tape, and crashes are part
+  of the real tape**, so the candidate is NOT withdrawn. But its own matched edge over the calendar
+  ladder is +0.0735 (t +1.16) full and **-0.0123 (t -0.30)** crash-excised, so the dominance claim
+  attached to it is withdrawn. **DISCLOSED, because it changes how the excised census reads:** the
+  4b collapse 187 -> 80 and the 4a collapse 40 -> 0 are largely a BAR SHIFT — SPY's own MaxDD moves
+  from -33.72% to -24.50%, tightening the 4b cap from -20.23% to -14.70% — while the book's MaxDD is
+  unchanged at -18.16% on all three tapes. The matched DRIFT-vs-CALENDAR contrast is book-against-
+  book on one tape and is immune to that shift; the pass COUNTS are not.
+
+  **SURVIVORSHIP.** U56 / B136 are current-constituent lists and SMALL665 a current sub-$2B screen
+  (54 tickers with `max_1d_move >= 1.0` dropped first). Levels are optimistic and both 4b bars are
+  easier here than on a point-in-time panel; the contrast is first-order immune, the pass counts are
+  not. SMALL numbers are not comparable with pre-2026-09-20 SMALL results (cache grew 439 -> 665).
+
+  Scripts: `research/backtests/2026-09-20_drift-win-episode-or-dial_cloud.py`; caveat memo
+  `research/backtests/2026-09-20_drift-trigger_CAVEAT_MEMO.md`. RULES.md unchanged.
+
 ## 2026-09-20 — idea 736 (lane cloud): IS CT_RANGE A BETTER-BEHAVED READING OF c_t DISPERSION THAN c_sd? **ANSWERED — NO, AND NEITHER IS c_sd: THE TWO ARE INTERCHANGEABLE AND THE OBJECT IS "c_t DISPERSION". BUT THE INTERCHANGEABILITY IS A *TAIL* FACT, NOT A DISPERSION FACT — THE ONE ESTIMATOR THAT DISCARDS THE TAILS IS MEASURABLY WORSE AT 8 OF 8 CELLS. NO NEW BOOK, NO RULES CHANGE.**
 
   **THE DEFECT THIS CLOSES.** Idea 735 fitted 23 predictor forms to the de-grossing TIMING RESIDUAL
