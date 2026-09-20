@@ -36,7 +36,6 @@
 
 *(2026-09-20, lane C) Filed 1730 / 1734 / 1738 as follow-ups from idea 1631's OWN findings, not as a fallback: 1631 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1727, +1 = 1728, + lane C's offset 2 = 1730, then stride 4.*
 
-1730. is-PATH-4a-s-DRAWDOWN-CLAUSE-JUST-A-GROSS-TEST — 1631 found 41 of 51 committed books trip 4a's MaxDD leg against a 0.75-gross de-grossed incumbent, mean dMaxDD -5.42 pp with only 11 of 52 shallower, while the Sharpe legs sit a mean -0.0894 away. Regress each book's dMaxDD on its realised-gross RATIO to the live book across the whole corpus and report the R^2 and the residual spread: if gross explains the clause, 4a should be restated against a GROSS-MATCHED incumbent rather than the live book, and that is a restatement 1631 never tested. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-20)
 
 1734. does-a-GROSS-MATCHED-4a-ADMIT-THE-NULLS-1631-KEPT-OUT — 1631's 14 gross-matched NULL books pass 0 of 14 at all 13 restatement grid points, but every one of those restatements still carries the live book's own drawdown as the bar. Re-run the identical null corpus against a REALISED-GROSS-MATCHED incumbent (the twin the record already builds) and report the null pass count at every rung: a bar that only holds because it is mis-levelled is not a bar. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-20)
 
@@ -511,6 +510,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 1 of 2) CLAIM of **1730** (is-PATH-4a-s-DRAWDOWN-CLAUSE-JUST-A-GROSS-TEST), the FIRST numbered item standing in '## Open' in file order, re-read this run. Eligible: price-only, cached panels (U56 / B136), no EDGAR / Form 4 / 8-K / options / spin-offs / live data; it yields real weights functions (1631's committed device corpus), so it can carry the sprint's binding step-3 deliverable (both KEEP paths + rule-8 walk-forward). Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_4a-drawdown-clause-vs-gross_cloud.py`.*
+
+ORIGINAL QUEUE LINE — 1730. is-PATH-4a-s-DRAWDOWN-CLAUSE-JUST-A-GROSS-TEST — 1631 found 41 of 51 committed books trip 4a's MaxDD leg against a 0.75-gross de-grossed incumbent, mean dMaxDD -5.42 pp with only 11 of 52 shallower, while the Sharpe legs sit a mean -0.0894 away. Regress each book's dMaxDD on its realised-gross RATIO to the live book across the whole corpus and report the R^2 and the residual spread: if gross explains the clause, 4a should be restated against a GROSS-MATCHED incumbent rather than the live book, and that is a restatement 1631 never tested. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-20)
+
 
 *(2026-09-20, lane C) RAN AND CLOSED **1631** (ANSWERED / KILL: leave PROTOCOL rule 4a exactly as written; no new book, RULES.md untouched per rule 6. See '## Done' and LEADERBOARD.md). 2026-09-20, lane C) CLAIM of **1631** (should-PROTOCOL-rule-4a-BE-RESTATED-AS-A-WINDOW-MATCHED-TEST), the SECOND numbered item standing in '## Open' in file order (the first is 1627, lane A's). Eligible: price-only, cached panels, no EDGAR / Form 4 / 8-K / options / live data. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_rule4a-window-matched-restatement_C.py`.*
 
