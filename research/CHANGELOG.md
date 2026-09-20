@@ -1,3 +1,65 @@
+## 2026-09-20 — SUNDAY REVIEW: the strongest standing KEEP-candidate was re-verified and **NOT PROMOTED**. **RULES v2 STANDS. NO RULES CHANGE THIS WEEK.**
+
+  **THE CANDIDATE.** Ranking every KEEP-candidate row in LEADERBOARD.md by min(H1, H2) Sharpe puts
+  one row first by a clear margin: idea 142's by-product, `u56 / S3-50 + band3-rw @10 bps` —
+  ranked top-20 blended 50/50 with the TLT/GLD/UUP sleeve, rescaled to gross 0.75, under the 3%
+  200-day band in the RE-WEIGHT convention, weekly. It is one of only two rows in the whole record
+  to clear PROTOCOL path 4a against the LIVE book AND path 4b at the same time, and idea 142
+  reports it as the S1 rule-8 pick under every selector on u56 @10 bps, so it is not an ex-post
+  cherry-pick.
+
+  **IT VERIFIES.** Its own script was re-run today on the current cache (prices now run to
+  2026-09-18, ten sessions longer than at commit). Committed / re-run: CAGR 11.27% / **11.26%**,
+  Sharpe 1.2624 / **1.2632**, MaxDD −11.63% / **−11.63%**, halves 1.279-1.249 / **1.2822-1.2473**,
+  OOS Sharpe 1.2886 / **1.2881**. Against the live book on the same tape (RULES v2 @10 bps: 8.62%
+  / 1.2010 / −12.05%, halves 1.2276 / 1.1805, OOS 1.2766) it wins both halves and OOS, with a
+  shallower drawdown and 2.6 pp more CAGR. On the review's stated bar, it passes.
+
+  **THE STRESS THAT DECIDED IT.** Idea 142 priced this cell at one cost pair (10 / 25 bps) and, like
+  every row in that run, at t+1 execution only — while this record's own standing note from today
+  (idea 2046) requires any 4a claim to publish its execution delay. So the review priced the
+  candidate itself on both ladders jointly before touching any rule: PANEL {u56, broad} x COST
+  {5, 10, 25, 50} bps x DELAY {t+1, t+2, t+3} = **24 cells, all published**, with the live book
+  scored at the SAME cost and the SAME delay in every cell. Gates 4 of 4 (harness vs
+  engine.backtest 0.000e+00; the (u56, 10 bps, t+1) cell reproduces today's re-run to
+  **0.000e+00**; d = 1 is a no-op shift; 24 of 24 cells published).
+
+  **RESULT — LATENCY-ROBUST, COST-FRAGILE.** **6 of 24 cells clear the promotion bar and all six are
+  u56 at 5 or 10 bps.** Latency is not the problem: t+2 and t+3 both still pass, and the book
+  slightly improves (u56 t+2 @10 bps 1.3013 / −10.73%). Cost is. On u56 at t+1 the candidate runs
+  **1.3099 / 1.2632 / 1.1227 / 0.8880** at 5 / 10 / 25 / 50 bps against the live book's **1.2135 /
+  1.2010 / 1.1634 / 1.1007**: it is ahead at 5 and 10 bps, **behind from 25 bps up**, and it fails
+  4b's CAGR floor at every 25 and 50 bps point on both panels. On `broad` it clears the full bar at
+  no cost rung at t+1 or t+2 (it loses to the live book out of sample). The mechanism is turnover:
+  **8.18x/yr on u56 and 10.88x/yr on broad, against the live book's 1.77x**, so every basis point
+  of cost is charged to it four to six times over.
+
+  **WHY THAT IS DISQUALIFYING RATHER THAN A FOOTNOTE.** The live book's own acceptance record
+  (RULES.md) holds at 5, 10, 25 AND 50 bps; promoting this candidate would replace a cost-robust
+  book with one whose entire advantage lives at or below 10 bps. And 10 bps is not a number this
+  repo can currently defend for a book that trades 8x a year: reconciling `paper/trades.csv`
+  against `products/bot/orders.csv` for 2026-09-11 shows the ledger and the Alpaca reference price
+  disagreeing by **2.1 / 4.1 / 10.1 / 16.0 bps** on the four sells (mean 8.1 bps on the rows that
+  diverge) before any spread or slippage is modelled at all. A pass that needs ≤10 bps sits inside
+  that measurement's own error bar.
+
+  **DECISION.** **RULES v2 stands unchanged**, PROTOCOL untouched, `research/baseline.py`,
+  `products/bot/bot.py` and `research/scan.py` untouched. The candidate is **NOT killed**: it
+  remains a KEEP-candidate on both paths at ≤10 bps, now with a published cost x delay surface, and
+  it is the object to beat at the next review. What would change the answer is a version of this
+  book that keeps the pass while cutting turnover toward the live book's 1.77x — that is the
+  question to file, not another selector census.
+
+  **HEALTH CHECKS (run anyway, though no rule changed).** `python paper/apply_rules.py --dry-run`
+  → "RULES v2: 43/56 names in-band as of 2026-09-18; one position = $1,326 of $99,020 NAV;
+  apply_rules: no trades" (correct — today is not the last trading day of the week).
+  `python products/bot/bot.py --dry-run --force-rebalance` → 43/56 in-band, full target list
+  printed, "(dry run — nothing submitted)". Both clean. Survivorship: u56 and broad are CURRENT
+  constituents (idea 54), so every CAGR level above is optimistic and both 4b bars are easier than
+  on a point-in-time panel; the cost x delay CONTRASTS are same-tape / same-names and first-order
+  immune, the pass counts are not. Evidence:
+  `research/backtests/2026-09-20_sunday-cost-latency-stress-of-the-both-paths-cell_REVIEW.py` /
+  `.grid.csv` / `.console.txt`, and `research/backtests/2026-09-20_SUNDAY-reverify-idea142.console.txt`.
 ## 2026-09-20 — idea 2064 (lane B): DOES THE STANDING KEEP-4b CELL SURVIVE *ADVERSARIAL* (BEST-NAME) DELETION? **ANSWERED — SPLIT. THE RANDOM-DELETION NULL NEVER COVERS THE SURVIVORSHIP DIRECTION (0 OF 8), THE B136 CELL HOLDS TO k = 10 AND BREAKS AT k = 20 THROUGH THE CAGR FLOOR, U56 IS KILLED AT k = 5 BY 0.04 pp, AND 4a DIES A THIRD TIME.**
 
   **THE DEFECT THIS CLOSES.** Idea 2050 deleted `k` names UNIFORMLY AT RANDOM from the standing
