@@ -1,3 +1,58 @@
+## 2026-09-20 — idea 1713 (lane B, run 2): DOES A DELETION-ROBUST RULE-8 CHOOSER BEAT PLAIN IS-ARGMAX OUT OF SAMPLE? **ANSWERED — NO. ROBUSTNESS MOVES THE CELL AT 1 OF 9 PANEL x CHOOSER PAIRS AND THAT ONE MOVE IS A LOSS THAT DESTROYS THE ONLY 4b OOS PASS. KILL; NO NEW BOOK. THE REASON IS THAT THE IS OBJECTIVE CANNOT SEE THE DIAL IT IS PICKING.**
+
+  **THE DEFECT THIS CLOSES.** Idea 720 (earlier today) acquitted the 4a/4b verdicts under a
+  single-calendar-year deletion (2 of 260 and 0 of 260 move) but convicted the CHOOSER: a
+  year-deleted IS window moves the rule-8 pick at 8 of 12 chooser x panel pairs and the OOS 4b
+  verdict at 5 of 12, while 44 of 100 perturbed picks clear 4b OOS and 0 of 100 clear 4a. That
+  left an open constructive question — the perturbation ensemble CONTAINS passing books the
+  argmax walks past, so does choosing a DELETION-ROBUST cell on the same IS window buy anything?
+
+  **CONSTRUCTION.** Two dials and no more: **band c {NOGATE, 0.00, 0.03, 0.10}** x **gross G
+  {0.30,0.40,...,1.00}** on **U56 / B136 / SMALL** = **96 real books**, every one in `grid.csv`.
+  Weekly, 10 bps, next-day execution. Four choosers, all seeing 2009-2016 ONLY — **A_SHARPE**
+  (argmax IS Sharpe, what the record uses), **R_MEAN**, **R_MIN** (worst case) and **R_MODAL**
+  over the 8 leave-one-IS-year-out deletions — plus an **ORACLE_OOS** published as the upper
+  bound, never a pick. 2017-2026 read ONCE per chooser. Deletion convention identical to idea
+  720: the book is never re-run, the year is removed from the SCORED RETURN STREAM. Gates:
+  RULES v2 reproduces the record's committed U56 / B136 / SMALL cells (8.62%/1.2010/-12.05%,
+  7.96%/1.0972/-12.24%, 4.66%/0.7184/-12.48%) and the U56 A_SHARPE pick reproduces the
+  2026-09-19 rule-8 PICK at 11.72%/1.1724/-16.30% against 720's committed 11.72%/1.1726/-16.30%.
+
+  **(1) THE LITERAL ANSWER IS NO.** Robustness moves the chosen cell at **1 of 9** (panel x robust
+  chooser) pairs. The one move is a LOSS: U56 R_MIN goes (0.10, G 1.00) -> (NOGATE, G 1.00),
+  **dOOS Sharpe -0.0676**, and turns the run's only 4b OOS pass into a fail. 4b OOS: A_SHARPE
+  **1/3**, R_MEAN 1/3, R_MODAL 1/3, R_MIN **0/3**. 4a OOS **0/3** for all four.
+
+  **(2) THREE OF THE FOUR CHOOSERS ARE THE SAME FUNCTION.** Over all 96 cells the leave-one-year-out
+  MEAN Sharpe equals the plain IS Sharpe to **max |diff| 0.0032** (mean 0.0010). Deleting one of
+  eight years cannot move an eight-year Sharpe enough to re-rank anything, so R_MEAN and R_MODAL
+  are arithmetically A_SHARPE. Only R_MIN differs — and what worst-case robustness selects for is
+  **less gating** (NOGATE), not better out-of-sample behaviour.
+
+  **(3) WHY — AND THIS IS THE FINDING.** The IS objective is **near-invariant to the dial it is
+  choosing**. IS Sharpe moves **0.0015-0.0106** across the ENTIRE gross ladder (G 0.30 -> 1.00)
+  against a leave-one-year-out SD of **0.090-0.248**: a ratio of **0.010-0.075**. The same ladder
+  moves **OOS MaxDD by 10.9-29.2 pp** and **OOS CAGR by 3.9-12.9 pp**. The argmax-vs-runner-up
+  margin is **0.0002-0.0013** of Sharpe — **0.09% to 1.4% of the deletion SD**. So IS-argmax pins
+  to **G = 1.00 on 3 of 3 panels** while the OOS-Sharpe oracle sits at **G = 0.30 on 3 of 3**, and
+  idea 720's "the pick moves under a deleted year" is on this grid a **PLATEAU** fact: 7 / 4 / 7 of
+  8 LOYO years reproduce the undeleted argmax, and the years that differ separate cells by ~1% of
+  a deletion SD. No re-weighting of a Sharpe objective can fix this, because the flatness is
+  arithmetic (scaling weights barely moves Sharpe), not statistical.
+
+  **(4) THE BAND MARGIN, BY CONTRAST, IS REAL AT TWO PANELS.** argmax-vs-best-OTHER-band is
+  **0.30 deletion-SDs on U56** (c 0.10 over NOGATE) and **0.87 on SMALL** (NOGATE over c 0.10),
+  against 0.012 on B136. The chooser can resolve WHICH BAND; it cannot resolve WHICH GROSS.
+
+  **WHAT THE RECORD SHOULD DO.** Stop trying to stabilise rule 8's chooser by robustifying its
+  objective — the instability is a flat surface, and the one robust variant that does move loses.
+  **Proposed (NOT adopted here; PROTOCOL.md, RULES.md, scan.py, bot.py and baseline.py are all
+  unmodified): rule 8 should pick the BAND by Sharpe and pick GROSS by 4b's own legs** — the
+  feasible interval idea 1695 measured at mean width 1.11 of 20 rungs — rather than by the same
+  argmax. That is idea **1705**, filed this run. Grid-wide this run: FULL 4a **0/96**, FULL 4b
+  5/96, OOS 4a 5/96, OOS 4b 8/96. **SURVIVORSHIP:** U56, B136 and SMALL are all current
+  constituents; every number above inherits that bias.
+
 ## 2026-09-20 — idea 720 (lane cloud): DOES ANY PUBLISHED IS-vs-OOS DRIFT SURVIVE A SINGLE-YEAR DELETION? **ANSWERED — NO, 12 OF 15 REVERSE SIGN, BUT THAT IS A KILL OF THE STATISTIC, NOT A FINDING ABOUT ANY YEAR: THE DRIFT IS INSIDE ITS OWN DELETION NOISE AT 11 OF 15 PAIRS AND THOSE ARE EXACTLY THE 11 THAT REVERSE. THE 4a/4b VERDICTS ARE ACQUITTED (2 OF 260 MOVE); RULE 8'S PICK IS NOT (8 OF 12 PAIRS MOVE). NO RULES CHANGE.**
 
   **THE DEFECT THIS CLOSES.** Idea 536 found that deleting calendar 2020 alone reverses idea 301's
