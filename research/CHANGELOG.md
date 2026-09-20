@@ -4669,3 +4669,61 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   the MaxDD legs separately — the first has a sign, the second does not. Gates 3/3. Survivorship:
   U56 / B136 / SMALL are CURRENT constituents; SMALL worst (delisted sub-$2B names absent), so
   every absolute level is optimistic.
+
+## 2026-09-20 — idea 775 (lane B): IS THE U56 FLOOR ADVANTAGE A DRAW-OVERLAP ARTEFACT? **ANSWERED / SPLIT — KILL THE U56 READING. THE SIGN OF THE ADVANTAGE IS SET BY THE MATCHING CONVENTION. NO NEW BOOK.**
+
+  **THE DEFECT THIS CLOSES.** Idea 567's per-parent draw floor (U56 0.050224, B136 0.099511,
+  SMALL439 0.094077, max/min 1.9813) has been used as a BAR: a cross-panel margin counts as
+  evidence only if it clears its parent's floor, and 558 of the 607 census claims name U56, whose
+  floor is the narrowest. But U56's floor is measured by drawing k = 36 of M = 55 names, so two
+  draws share 65% of their constituents by construction against B136's 27% and SMALL's 5%.
+
+  **THE CONSTRUCTION.** Idea 567's module is IMPORTED, not copied: its crc32 draw seeds, its
+  EWall / MA-RS books at gross {0.50, 0.75, 1.00} x cadence {W, M}, 10 bps, t+1, warm-up 260, and
+  its floor estimator (mean over the six cells of the sd across draws). Only the DRAW SCHEME moves:
+  **K RULE {FIXED_K, RATIO_K (k = phi*M, overlap matched), DISJOINT (partitioned draws, overlap
+  EXACTLY 0)} x LEVEL (k {12,24,36} / phi {0.0541, 0.2667, 0.6545})** = 8 cells x 3 parents x 24
+  draws, every rung published.
+
+  **(A) THE PAIRWISE ANSWER — ARTEFACT.** The **U56/B136 floor ratio runs 0.6517 .. 1.5874** across
+  the eight schemes. At 567's own rung (k = 36 fixed) U56 is **0.652** of B136 with P(U56 narrower)
+  **0.994**; at MATCHED expected overlap (phi 0.2667 and 0.6545) U56 is **1.504x and 1.587x WIDER**
+  with P **0.025 / 0.005**. Its bootstrap interval covers 1.0 in **5 of 8** cells; U56 is the
+  narrowest-floor parent in **4 of 8** and the **WIDEST in 2**.
+
+  **(B) THE THREE-PARENT SPREAD SURVIVES — BUT IT IS SMALL, NOT U56.** Mean max/min over the
+  matched- and zero-overlap arms is **1.5924** against 567's 1.9813, so the pre-registered
+  H_OVERLAP (< 1.25) is FALSIFIED and H_PANEL (>= 1.50) HOLDS as written. The noise null the
+  statistic needs: three sd estimates of ONE true floor at dof 23 give max/min **1.2680 median,
+  1.6601 at the 95th**, and only **4 of 8** cells' bootstrap intervals (2,000 resamples of the
+  draws, of the partitions on DISJOINT) exclude even that median.
+
+  **(C) WHY — THE FINITE-POPULATION LAW.** implied `sigma_p = floor / sqrt((M-k)/(k(M-1)))` reads
+  **U56 0.4417, B136 0.4618, SMALL665 0.7046**: U56/B136 = **0.9565**, 4.4% apart. Pooled
+  log(floor) on log(scale) has slope **+0.6545** (the iid law predicts +1 — names inside a parent
+  are correlated) at **R2 0.7549**; parent dummies add **dR2 +0.1278**, carried by SMALL665
+  **+0.3887** against B136 +0.0509. The one genuine panel fact is that sub-$2B names are ~57% more
+  dispersed than large caps.
+
+  **(D) CAPITAL — KILL.** 6,912 books at 10 bps, t+1: **4a 11, 4b FULL 340, 4b OOS 362, BOTH 1**;
+  **SMALL665 passes 0 of 2,304** on every path; the binding 4b leg is DD (1,958 rows) then CAGR
+  (983). Rule 8 (fitted <= 2016-12-31, 2017-2026 read ONCE): **4a OOS 0/15, 4b OOS 4/15**, and the
+  floor is ANTI-informative as a selector — **C_FLOORMIN mean OOS Sharpe 0.8987 against its mirror
+  C_FLOORMAX 0.9624** (d -0.0637, narrower floor wins 1 of 3 parents), both below do-nothing
+  **C_LIVE 0.9747**. U56's C_FLOORMIN book clears 4b FULL and OOS (11.86% / 1.1212 / -17.76%,
+  H1/H2 1.207/1.059; OOS 12.65% / 1.1340 / -17.76%) against SPY 15.12% / 0.8843 / -33.72% and live
+  RULES v2 8.62% / 1.2010 / -12.05% — but so does C_FLOORMAX, so nothing was chosen, and the book
+  underneath is the record's existing MA-RS gate at gross 0.75, prior art idea 774 already declined
+  to claim. No candidate, no memo.
+
+  **PUBLISHED, NOT REPAIRED (gates 22 of 24; the two failures ARE the finding).** 567's committed
+  floors do not reproduce even on **567's own tape end dates** (G2b max |dev| **4.770e-04**; G2 on
+  today's tape **2.147e-03**) although the RATIO does (1.9855 vs 1.9813) — so the construction is
+  verbatim and the drift is DATA: cache restatement plus 5-10 extra trading days. The SMALL parent's
+  2026-09-11 rebuild (439 -> 665 names) moved its floor **0.094077 -> 0.063317, -32.7%**.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md and PROTOCOL.md untouched):** a per-parent draw
+  floor must carry its **k/M** or be quoted in overlap-free units, and a max/min over parents must
+  be quoted against its own chi/bootstrap null. Survivorship: U56 / B136 are CURRENT constituents
+  and SMALL665 a CURRENT sub-$2B screen, so every absolute level is optimistic; the headline is a
+  within-parent dispersion and is first-order immune, the 4b counts are not.
