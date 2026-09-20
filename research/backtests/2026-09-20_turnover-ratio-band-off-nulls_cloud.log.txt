@@ -1,0 +1,116 @@
+# Idea 267 (lane cloud, 2026-09-20) — is the 1.2x-1.4x TURNOVER-RATIO BAND the rung-sensitivity boundary, or a NULL-ARM artefact?
+# PRE-REGISTERED (inherited from idea 262, never moved): R < 1.2 => c* > 25 bps; R > 1.4 => c* <= 25 bps.  breakeven by 0.05-bps scan + bisection.
+# tuned dials (2, both of the TEST): BE ceiling [60.0, 200.0] (headline 60), statistic ['Sharpe', 'CAGR'] (headline Sharpe).  reported, not tuned: panel, dial family, rung, cost [0, 10, 25, 50] bps.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0 (sprint brief)
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%), 1.77 turns/yr
+   SPY                      15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   23 arms run
+   35 pairs priced
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%), 2.01 turns/yr
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   23 arms run
+   35 pairs priced
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%), 2.57 turns/yr
+   SPY                      14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   23 arms run
+   35 pairs priced
+
+# 276 arm-rows (69 arms x 4 cost rungs); 105 non-null pairs
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 every pair is WITHIN one family and one panel (only the dial moves): 105 pairs, 6 families x 3 panels   (target 35 pairs/panel)
+  GATE PASS  G2 X is always the FASTER arm: min ratio 1.0514   (target >= 1.0)
+  GATE PASS  G3 idea 262's law c* = dS(0)*1e4/(Tx/vx - Ty/vy) reproduces this run's breakevens: rho = 1.0000 over 32 flipping pairs, median |err| 0.028 bps   (target rho > 0.95)
+  GATE PASS  G4 idea 262's committed null table is readable and unchanged in shape: 1176 rows x 17 cols   (target 1176 x 17)
+  GATE PASS  G5 gross never levered: max full-sample gross proxy n/a; max arm CAGR 19.03%   (target books are long-only, weights <= 1)
+
+## V1 — the PRE-REGISTERED band on 105 NON-NULL arm pairs (Sharpe, ceiling 60 bps)
+   cost-relevant pairs (faster arm wins at 0 bps): 56 of 105; the other 49 have the SLOWER arm ahead at zero cost, so no positive-cost breakeven exists and the verdict is cost-invariant
+   R < 1.2: 7 of 8 pairs have c* > 25 bps -> 0.875   (band predicts 1.000)
+   R > 1.4: 18 of 37 pairs have c* <= 25 bps -> 0.486   (band predicts 1.000)
+   inside the band (1.2 <= R <= 1.4): 11 pairs (unscored by construction)
+   V1 -> NOT triggered (both shares >= 0.8)
+          family  n_lo  n_hi  n_mid  share_lo  share_hi  lo_ok  hi_ok  n  med_ratio  med_be  sens_share
+         BAND_v2     0     6      3       NaN     0.833      0      5  9      1.653  13.420       0.667
+          CAD_v1     0    13      0       NaN     0.692      0      9 13      4.993   6.293       0.692
+          CAD_v2     0    13      1       NaN     0.308      0      4 14      1.982  19.238       0.357
+        GROSS_v2     0     5      1       NaN     0.000      0      0  6      1.986     NaN       0.000
+            N_v1     7     0      6     0.857       NaN      6      0 13      1.157   6.787       0.308
+        VOLSC_v1     1     0      0     1.000       NaN      1      0  1      1.100  32.947       0.000
+    [panel] B136     1    12      4     0.000     0.750      0      9 17      1.967   5.519       0.765
+[panel] SMALL665     7    13      4     1.000     0.231      7      3 24      1.584  28.862       0.125
+     [panel] U56     0    12      3       NaN     0.500      0      6 15      2.122  13.451       0.533
+
+   both tuned dials, all four combinations:
+  stat  be_max  cost_relevant  n_lo  n_hi  n_mid  share_lo  share_hi  lo_ok  hi_ok  n
+Sharpe  60.000             56     8    37     11     0.875     0.486      7     18 56
+Sharpe 200.000             56     8    37     11     0.875     0.486      7     18 56
+  CAGR  60.000             56    10    35     11     0.700     0.286      7     10 56
+  CAGR 200.000             56    10    35     11     0.700     0.286      7     10 56
+
+## V2 — the same band on idea 262's COMMITTED null table (1176 pairs, read from disk)
+   cost-relevant null pairs (d0 > 0): 514 of 1176
+   R < 1.2: 174 of 259 have c* > 25 -> 0.672   |   R > 1.4: 183 of 183 have c* <= 25 -> 1.000
+   (all null pairs regardless of orientation: 0.753 / 0.426 over 611 / 430)
+   V2 -> the band FAILS on the arms it was induced from
+
+## V3 — is R a boundary at all?  (edges ignored; direction and separation only)
+   non-null: Spearman rho(R, c*) = -0.3951 (NaN breakevens ranked above the ceiling), AUC of R for 'rung-sensitive' = 0.6797, best single threshold R >= 1.988 at balanced accuracy 0.6406
+   idea 262 nulls: Spearman rho(R, c*) = -0.8158, AUC = 0.9400, best threshold R >= 1.186 at balanced accuracy 0.8698
+ ratio_bin  n_nonnull  p_sens_nonnull  med_be_nonnull  n_null  p_sens_null  med_be_null
+  [1, 1.1)          4           0.000          32.947      83        0.410       23.331
+[1.1, 1.2)          4           0.250          22.664      65        0.585       12.854
+[1.2, 1.4)         11           0.455           8.274      72        0.931        8.781
+  [1.4, 2)         12           0.333          19.238      82        1.000        5.752
+    [2, 4)         18           0.444          16.183      55        1.000        1.209
+[4, 1e+09)          7           0.857           6.293      46        1.000        0.922
+   V3 -> R does NOT separate rung-sensitive pairs off-nulls (AUC bar 0.70)
+
+## RULE 8 — threshold FITTED on 2009-2016 pairs, 2017-2026 read once
+   IS-fitted threshold: R >= 2.257 (IS balanced accuracy 0.6886), applied ONCE to 49 OOS cost-relevant pairs -> plain accuracy 0.6939
+   the PRE-REGISTERED edges on the SAME OOS pairs: R > 1.4 predicts sensitive on 32 pairs, correct 0.406; R < 1.2 predicts insensitive on 10 pairs, correct 0.700
+   IS vs OOS sensitivity agreement on the same pair: 0.554 of 56 pairs
+   V4 -> the IS-fitted threshold does NOT transfer (bar 0.70)
+
+## V5 — CAPITAL: both KEEP paths at every arm x cost rung
+  family  cost  arms  keep4b_full  keep4b_oos  keep4a  keep4a_oos  keep4b
+ BAND_v2     0    12            0           0       5           6       0
+ BAND_v2    10    12            0           0       0           0       0
+ BAND_v2    25    12            0           0       0           0       0
+ BAND_v2    50    12            0           0       0           0       0
+  CAD_v1     0    12            1           1       0           0       1
+  CAD_v1    10    12            0           0       0           0       0
+  CAD_v1    25    12            0           0       0           0       0
+  CAD_v1    50    12            0           0       0           0       0
+  CAD_v2     0    12            0           0       6           6       0
+  CAD_v2    10    12            0           0       0           2       0
+  CAD_v2    25    12            0           0       0           0       0
+  CAD_v2    50    12            0           0       0           0       0
+GROSS_v2     0    12            2           2       9           9       2
+GROSS_v2    10    12            2           1       0           6       1
+GROSS_v2    25    12            1           1       0           0       1
+GROSS_v2    50    12            0           1       0           0       0
+    N_v1     0    15            1           1       0           0       1
+    N_v1    10    15            0           0       0           0       0
+    N_v1    25    15            0           0       0           0       0
+    N_v1    50    15            0           0       0           0       0
+VOLSC_v1     0     6            0           0       0           0       0
+VOLSC_v1    10     6            0           0       0           0       0
+VOLSC_v1    25     6            0           0       0           0       0
+VOLSC_v1    50     6            0           0       0           0       0
+   arms clearing 4b FULL+OOS at 10 bps: 1 of 69
+panel   family           arm  turn_py   CAGR  Sharpe   MaxDD     H1     H2  oos_CAGR  oos_Sharpe  oos_MaxDD  keep4a
+  U56 GROSS_v2 v2 gross 1.00   2.3519 0.1153  1.2008 -0.1591 1.2282 1.1798    0.1267      1.2759    -0.1591   False
+   arms clearing 4a at 10 bps: 0 of 69
+   binding leg at 4b-FULL failures (10 bps): L5_CAGR 22; L1_H1|L2_H2|L3_OOS|L5_CAGR 18; L2_H2|L3_OOS|L4_DD|L5_CAGR 10; L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 8; L2_H2|L3_OOS|L5_CAGR 5; L1_H1|L4_DD 2
+
+# gates: 6/6 pass
+
+# VERDICTS: V1 NOT | V2 band on its own nulls FAILS | V3 NOT | V4 NOT
