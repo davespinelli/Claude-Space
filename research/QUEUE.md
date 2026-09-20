@@ -11,6 +11,11 @@
   (C) CLAIMING.  A claim is only real once it is PUSHED.  A lane claims by moving the idea's
       line to '## In progress
 
+*(2026-09-20, lane cloud, idea 1 of 2) Claimed **1749** as the FIRST numbered item standing in '## Open' in file order. Eligible: price-only on cached panels (U56), no EDGAR / Form 4 / 8-K / options / spin-offs / live data. It yields real weights functions (band books on random 20-name U56 subsets), so it carries the sprint's binding step-3 deliverable: both KEEP paths and a rule-8 walk-forward with 2017-2026 read once. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_name-set-lottery-or-chooser-axis_cloud.py`.*
+
+1749. can-a-4b-PASSING-BAND-BOOK-BE-REACHED-BY-ANY-LEGAL-CHOOSER-ON-THE-NAME-SET-AXIS — 1632's only books clearing 4b FULL *and* OOS are two random 20-name subsets of U56 (draws 3 and 18: FULL 10.60%/1.2062/-14.25% and 11.07%/1.2355/-14.75%, OOS 11.95%/1.2657 and 10.85%/1.1995) and NO IS-only chooser reaches them — 0 of 9 picks clear either KEEP path OOS, all on the CAGR floor. Ask whether the NAME SET is a reachable axis at all: widen the draw count at N=20 on U56, rank every draw by IS Sharpe / IS legs / IS CAGR-floor slack, and report the OOS 4b rate of the top decile against the draw base rate. If the top decile is no better than the base rate, the name set is a lottery and 1632's 3 passers should be recorded as hindsight once and for all. Max 2 params (draw count, IS ranking statistic). Price-only, both KEEP paths, rule 8. (2026-09-20)
+
+
 *(2026-09-20, lane C) RAN AND CLOSED **1738** (ANSWERED / KILL the ACTIVE-DIFF restatement; the ACTIVE-GROSS one is a no-op at 1 of 336. No new book — see '## Done' and LEADERBOARD.md). Original CLAIM of **1738** (is-the-WINDOW-MATCHED-TEST-TESTABLE-ON-A-SOMETIMES-OFF-CORPUS), the SECOND numbered item standing in '## Open' in file order (the FIRST is 1734, left for lane A per the sprint's ordering rule). Both were re-read this run: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data, so no eligibility descent past them is needed. 1738 yields real weights functions (a SPY-filter / stop / band / vol-target corpus built at rungs chosen for their DEPLOYED SHARE), so it carries the sprint's binding step-3 deliverable: both KEEP paths and a rule-8 walk-forward with 2017-2026 read once. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_window-matched-on-sometimes-off-corpus_C.py`.*
 
 
@@ -45,7 +50,6 @@
 
 
 
-1749. can-a-4b-PASSING-BAND-BOOK-BE-REACHED-BY-ANY-LEGAL-CHOOSER-ON-THE-NAME-SET-AXIS — 1632's only books clearing 4b FULL *and* OOS are two random 20-name subsets of U56 (draws 3 and 18: FULL 10.60%/1.2062/-14.25% and 11.07%/1.2355/-14.75%, OOS 11.95%/1.2657 and 10.85%/1.1995) and NO IS-only chooser reaches them — 0 of 9 picks clear either KEEP path OOS, all on the CAGR floor. Ask whether the NAME SET is a reachable axis at all: widen the draw count at N=20 on U56, rank every draw by IS Sharpe / IS legs / IS CAGR-floor slack, and report the OOS 4b rate of the top decile against the draw base rate. If the top decile is no better than the base rate, the name set is a lottery and 1632's 3 passers should be recorded as hindsight once and for all. Max 2 params (draw count, IS ranking statistic). Price-only, both KEEP paths, rule 8. (2026-09-20)
 
 
 *(2026-09-20, lane C) Filed 1730 / 1734 / 1738 as follow-ups from idea 1631's OWN findings, not as a fallback: 1631 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1727, +1 = 1728, + lane C's offset 2 = 1730, then stride 4.*
