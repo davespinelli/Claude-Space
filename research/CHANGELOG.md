@@ -1,3 +1,59 @@
+## 2026-09-20 — idea 1632 (lane C): IS THE BAND'S U56-ONLY SURVIVAL A PANEL EFFECT OR A NAME-COUNT EFFECT? **ANSWERED — PANEL. KILL THE NAME-COUNT HYPOTHESIS; CONFIRM IDEA 1617. NO NEW BOOK.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1617's one convincing survivor — the live band c = 0.03 beating its
+  realised-gross-matched de-gross twin, on U56 alone — is the live book's ONLY matched-exposure win in
+  the record, and it was confounded. U56 is both a different PANEL and the SMALLEST panel by NAME COUNT,
+  and under the live convention (gross / N_priced per eligible name, gated-out weight to cash) the band
+  is a BREADTH device: one gated name moves realised gross by 1/56 on U56 and 1/665 on SMALL. A contrast
+  shrinking like 1/N reproduces 1617's whole cross-panel ordering with no panel content at all.
+
+  **THE CONSTRUCTION.** Two dials: N_NAMES (uniform seeded draws without replacement from each panel's
+  own traded columns; ladder 20/36/56/100/136/300 truncated at panel size, plus each panel's FULL set as
+  the ALL rung) x BAND c {0.00, 0.03, 0.06, 0.10}. Published, not tuned: PANEL {U56, B136, SMALL},
+  DRAW (24 per rung, **291 draws**), COST {0, 10, 25, 50} bps. Every band book is paired with its OWN
+  twin — the same names ungated, scaled by a constant k solved so the twin carries the SAME REALISED mean
+  gross to machine precision (closed form: inside a segment the scaled book's gross path is
+  `kGP / (kGP + 1 - kGF0)` with P, F0 independent of k; gated at G11). **1,164 band books + 1,164 twins
+  x 4 cost rungs = 4,656 rows, all published.**
+
+  **REPLICATION FIRST.** The ALL rungs reproduce 1617 to the published digit: U56 dSharpe **+0.0827 FULL
+  / +0.1499 OOS**, B136 **-0.0161 / +0.0136**, SMALL **-0.0461 / -0.0520**.
+
+  **THE ANSWER — THE DIRECTION IS THE OPPOSITE OF THE HYPOTHESIS.** H0 required mean dSharpe to DECREASE
+  in N; it decreases at **9 of 48 ladder steps — 0 of 8 on U56**, 1 of 16 on B136, 8 of 24 on SMALL. At
+  the matched rung **N = 56, 0 of 48 subsamples reach U56**: B136 draws land at FULL -0.0371 (sd 0.0412)
+  and SMALL at -0.0851 (sd 0.0654) against U56's +0.0827 (z **+2.91 / +2.57**), and OOS 0.000 / 0.000
+  (z **+3.79 / +3.27**); same at the plain 200d gate c = 0.00. Subsampling **U56 DOWN SHRINKS** the
+  contrast: +0.0827 (N=56) -> +0.0610 (36) -> +0.0515 (20). SPY is not the mechanism — U56 draws WITHOUT
+  SPY score +0.0592 against +0.0542 with it.
+
+  **WHICH LEG: THE PANEL DEPENDENCE IS ENTIRELY IN THE RETURN LEG.** The band's DRAWDOWN credit is near
+  panel-invariant and flat in N above 56 (c = 0.03: U56 **+4.34 pp**, B136 +5.93, SMALL +6.45 — U56 gets
+  the SMALLEST credit). Its CAGR cost is flat in N inside a panel and a ~**3x effect ACROSS** them
+  (U56 **-0.72 pp/yr**, SMALL -1.46, B136 **-1.99**). The band does the same thing to drawdown everywhere
+  and only costs U56's names less return.
+
+  **CAPITAL ARM — THE WIN IS REAL AND STILL NOT CAPITAL-WORTHY, AND THE TWIN IS THE BETTER 4b BOOK.** Of
+  1,164 band books at 10 bps: 19 clear 4a FULL, 5 clear 4b FULL, **3 clear 4b FULL *and* OOS** (all U56,
+  N=20, draws 3/18) and none of those clears 4a. Their own matched TWINS clear 4b FULL **19 (U56) / 53
+  (B136)** against the band books' 4 / 1. The 4b CAGR floor fails on **0.996** of band books (DD cap
+  0.069). Cost ladder 4b FULL: 6 / 5 / 4 / 0 at 0 / 10 / 25 / 50 bps.
+
+  **RULE 8 (2017-2026 read ONCE).** Three IS-only choosers x 3 panels: **0 of 9 picks clear 4a OOS and
+  0 of 9 clear 4b OOS**, every one on the CAGR floor (8 of 9 pass the DD cap). The live inheritance is
+  the best OOS contrast in the run (U56 +0.1499) and still delivers OOS 9.46% / 1.2769 / -12.05% against
+  SPY 15.26% / 0.8738 / -33.72% and a 10.68% floor. The 3 passing books are random 20-name subsets no
+  chooser reaches: hindsight, recorded as such.
+
+  **RESIDUE, not a rules change (rule 6; PROTOCOL.md and RULES.md untouched):** the band's drawdown
+  credit is a CONSTANT OF THE CONSTRUCTION and should stop being re-priced panel by panel; its RETURN
+  cost is the only panel-dependent leg, so "the band works on panel X" is a claim about what the gate
+  costs X's names in return and should be written that way. Gates 19/19 (G1/G2/G3/G11 vs
+  engine.backtest 0.000e+00-6.2e-15; G4 gross match 0.000e+00; G6 clean). Survivorship: U56/B136 are
+  current constituents, SMALL a current sub-$2B screen (54 names dropped at max_1d_move >= 1.0, 665
+  remain); the headline is a within-draw contrast and first-order immune, the 4b counts are not.
+  `research/backtests/2026-09-20_band-u56-panel-or-namecount_C.py`
+
 ## 2026-09-20 — idea 1627 (lane cloud): IS EVERY SLEEVE AND HEDGE IN THE RECORD A CARRY CLAIM WEARING AN INSTRUMENT? **ANSWERED — YES. KILL THE SLEEVE FAMILY; KEEP ONE ACCRUAL LINE. NO NEW BOOK.**
 
   **THE DEFECT THIS CLOSES.** Idea 1602 took ONE instrument, SHY, and found its whole contribution
