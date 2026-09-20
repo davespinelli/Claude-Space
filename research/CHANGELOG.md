@@ -1,3 +1,66 @@
+## 2026-09-20 — idea 1613 (lane C): IS EVERY CADENCE CLAIM IN THE RECORD A c* CLAIM QUOTED AT ONE RUNG? **ANSWERED, BOTH WAYS — YES FOR THE ORDERING, NO FOR THE KEEP VERDICT. KILL: NO RULES CHANGE, NO NEW BOOK.**
+
+  **THE DEFECT THIS PRICES.** PROTOCOL rule 2 binds every backtest to ONE cost rung, so every cadence
+  verdict this repository has ever committed is a point reading of a function of cost. Idea 1586 found
+  the frozen anchor's weekly cadence beating its quarterly twin by only **c\* = 12.4 bps**. This run asks
+  how much of the committed cadence record sits on a slope that steep.
+
+  **THE CENSUS.** Mechanical extraction over LEADERBOARD.md and CHANGELOG.md under a rule fixed before the
+  run: **86 BROAD cadence-comparison sentences, 30 STRICT** (explicit ordered pair). **76 of 86 (88.4%)
+  and 25 of 30 (83.3%) are quoted at a SINGLE cost rung**; 8 BROAD quote a ladder, 2 quote a c\*, and
+  exactly **1 of 86 quotes a ladder spanning the whole 5-50 bps band**. Every extracted sentence is
+  published to `.census.csv` so the classification is auditable, and the STRICT denominator is carried
+  because the BROAD rule cannot tell a rebalance cadence from rule 9's weekly cache refresh.
+
+  **THE RE-PRICING.** 24 books (FRAME {LIVE, INC} x PANEL {U56, B136, SMALL} x CADENCE {D, W, M, Q}),
+  the whole cost axis exact: `r(c) = r_gross - turnover*c/1e4` reproduces fresh `engine.backtest` runs at
+  10, 25 and 50 bps to **0.000e+00**, and a closed-form `Sharpe(c)` matches the direct reduction to
+  6.7e-16. Over 180 pairwise verdicts (6 cadence pairs x 5 windows x 6 frame-panels), **43 (23.9%) FLIP
+  SIGN inside 5-50 bps** and **0 of 180 cross more than once** — the comparison is MONOTONE in cost, so
+  a single c\* describes it completely. Median c\* among in-band crossers **27.5 bps** (IQR 17.3-33.7).
+  By frame **LIVE 34.4% vs INC 13.3%**; by window OOS 27.8%, IS 19.4%; by pair DvM 33.3% down to
+  **MvQ 3.3%**. G9: idea 1586's committed headline is re-derived at **c\* = 12.42** against 12.4.
+
+  **AND THE FLIP IS PREDICTABLE FROM THE MARGIN THE RECORD ALREADY PUBLISHES.** Readings with
+  `|dSharpe@10| < 0.05` flip **50.7%** of the time (n = 69); readings at `>= 0.05` flip **7.2%**
+  (n = 111). Median |d@10| is 0.0221 among flippers against 0.0843 among non-flippers.
+
+  **WHY IT IS A KILL ANYWAY.** Scanning c in [0, 50] at 0.25 bps for all 24 books, with the live RULES v2
+  comparator re-priced at the same rung, the **4b verdict (FULL and OOS) is EMPTY over the whole band for
+  22 of 24 books, holds over the ENTIRE band for 2, and is RUNG-CONDITIONAL for 0**. The 4b legs are
+  dominated by the DD cap and the CAGR floor, which a 40 bps cost swing moves far less than it moves the
+  Sharpe ranking of two adjacent cadences. The rung reorders cadences often and changes a KEEP decision
+  never. The two passers are U56/INC: the frozen anchor **W** (15.80% / 1.1537 / -19.13%; OOS 17.32% /
+  1.1857; 2.87x/yr) and its quarterly twin **Q** (15.49% / 1.1515 / -19.89%; OOS 17.43% / 1.1885;
+  **1.64x/yr**), each passing on [0,50]. 4a: 2 of 24 at any rung.
+
+  **RULE 8 (2017-2026 READ ONCE), WITH THE RUNG ITSELF AS DIAL 2.** **4 of 12 (panel x frame x chooser)
+  groups change their IS pick with the rung they quote** — U56/INC/C_SHARPE picks W at 5 and 10 bps and Q
+  at 25 and 50, i.e. the 12.42 bps crossing surfacing as a tuning artefact — so the rung is a real free
+  parameter of a cadence search. Spending it is negative-value: pooled over 24 cells, C_SHARPE mean OOS
+  Sharpe **0.8815** (dS vs anchor **-0.0464**), C_MEMO 0.9198 (-0.0080), **C_ANCHOR 0.9278** for choosing
+  nothing; **0 of 24 beat the live RULES v2 book** on either chooser and 16 of 24 beat SPY.
+
+  **THE CONSTRUCTIVE HALF (memo written, NOT adopted).** A blanket interval requirement in rule 2 buys
+  nothing, because the verdicts this protocol commits to are rung-invariant. The cheap fix is a margin
+  trigger, since c\* costs no extra backtest: *"A claim that one rebalance cadence beats another must
+  publish the break-even cost `c*` at which the comparison reverses whenever the quoted Sharpe margin at
+  10 bps is below 0.05; above that margin the point quote stands."* It fires on 38.3% of readings and
+  catches the half that actually flips. Pre-stated adoption trigger: the flip base rate must survive on a
+  second corpus not built from these two frames.
+
+  **GATES 19 of 19.** G0 >= 10y; G1/G1b fast runner == `engine.backtest` on returns AND turnover
+  (0.000e+00); G2 derived 25 and 50 bps rungs == fresh engine runs (0.000e+00); G3 LIVE/W == the committed
+  RULES v2 baseline row; G4 INC/W == the committed 2026-09-04 anchor (3.7e-05); G5 exactly two dials;
+  G6 no chooser reads a row on or after 2017-01-01 (truncated re-fit, tested not asserted); G7 all 120
+  grid cells published; G8 max realised gross 0.7500; G9 the c\* solver re-derives 1586's 12.4;
+  G11 closed-form Sharpe(c) == the direct reduction (6.7e-16); G10 turnover per cadence published.
+
+  **SURVIVORSHIP.** U56 / B136 are CURRENT-constituent lists and SMALL a CURRENT sub-$2B screen, so every
+  CAGR and drawdown LEVEL is optimistic. The cadence contrasts are same-tape, same-names, same-frame, and
+  the SHAPE of each contrast in cost is arithmetic on one tape. **RULES.md, PROTOCOL.md, scan.py, bot.py
+  and baseline.py are untouched by this run.**
+
 ## 2026-09-20 — idea 1767 (lane cloud): IS THE VOLTGT016 CANDIDATE'S MONTHLY BLOWOUT A REBALANCE-COUNT FACT OR A SIGNAL-STALENESS FACT? **ANSWERED — STALENESS, 100% OF IT. KILL THE STANDING MEMO'S "THE WEEKLY REBALANCE IS LOAD-BEARING". A CHEAPER BOOK DOMINATES IT AND RULE 8 CANNOT REACH THAT EITHER.**
 
   **THE DEFECT THIS CLOSES.** Idea 956 found the standing KEEP-4b candidate's OOS MaxDD goes −19.9% →
