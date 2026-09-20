@@ -41,7 +41,6 @@
 *(2026-09-20, lane C) Filed 1730 / 1734 / 1738 as follow-ups from idea 1631's OWN findings, not as a fallback: 1631 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1727, +1 = 1728, + lane C's offset 2 = 1730, then stride 4.*
 
 
-1734. does-a-GROSS-MATCHED-4a-ADMIT-THE-NULLS-1631-KEPT-OUT — 1631's 14 gross-matched NULL books pass 0 of 14 at all 13 restatement grid points, but every one of those restatements still carries the live book's own drawdown as the bar. Re-run the identical null corpus against a REALISED-GROSS-MATCHED incumbent (the twin the record already builds) and report the null pass count at every rung: a bar that only holds because it is mis-levelled is not a bar. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-20)
 
 
 
@@ -511,6 +510,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 1 of 2) CLAIM of **1734** (does-a-GROSS-MATCHED-4a-ADMIT-THE-NULLS-1631-KEPT-OUT), the FIRST numbered item standing in '## Open' in file order, re-read this run. Eligible: price-only, cached panels (U56 / B136), no EDGAR / Form 4 / 8-K / options / spin-offs / live data; it yields real weights functions (1631's committed device + null corpus), so it carries the sprint's binding step-3 deliverable (both KEEP paths + rule-8 walk-forward). Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_gross-matched-4a-admits-nulls_cloud.py`.*
+
+1734. does-a-GROSS-MATCHED-4a-ADMIT-THE-NULLS-1631-KEPT-OUT — 1631's 14 gross-matched NULL books pass 0 of 14 at all 13 restatement grid points, but every one of those restatements still carries the live book's own drawdown as the bar. Re-run the identical null corpus against a REALISED-GROSS-MATCHED incumbent (the twin the record already builds) and report the null pass count at every rung: a bar that only holds because it is mis-levelled is not a bar. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-20)
+
 
 
 
