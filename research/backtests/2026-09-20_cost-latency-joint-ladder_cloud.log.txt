@@ -1,0 +1,149 @@
+# Idea 2046 (lane cloud, 2026-09-20) — does the DUAL-PATH 4a pass survive the COST and LATENCY ladders JOINTLY?
+# under stress: B136 VOLTGT-DRIFT t=0.10, h=0.08, trade weekly, ENGINE phase (idea 2034)
+# TUNED (2, both inherited): t [0.08, 0.1, 0.12, 0.16, 0.2]; dial = DRIFT h [0.0, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25] | CAL R ['D', 'W', 'M', 'Q']
+# REPORTED, not tuned: delay t+[1, 2, 3] (t+3 never priced in this record), cost [10, 25, 50] bps, panel, family.  cadence FIXED W, phase FIXED = engine mask, sigma FIXED (L=20, d=0).
+# warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01.
+# BASELINES HELD AT THE LIVE CONVENTION: RULES v2 weekly t+1 at 10 bps, and SPY.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0 (data/small_meta.csv)
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE v2 (W, t+1, 10bps)   8.62% / 1.2010 / -12.05%  (H1 1.2276 H2 1.1805; OOS   9.46% / 1.2766 / -12.05%)
+   SPY                         15.12% / 0.8843 / -33.72%  (H1 0.9570 H2 0.8249; OOS  15.26% / 0.8737 / -33.72%)
+   4b bars: MaxDD >= -20.23%, CAGR >= 10.59%
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE v2 (W, t+1, 10bps)   7.96% / 1.0972 / -12.24%  (H1 1.2296 H2 0.9669; OOS   7.85% / 1.1017 / -12.24%)
+   SPY                         15.12% / 0.8844 / -33.72%  (H1 0.9571 H2 0.8249; OOS  15.26% / 0.8737 / -33.72%)
+   4b bars: MaxDD >= -20.23%, CAGR >= 10.59%
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE v2 (W, t+1, 10bps)   4.26% / 0.6588 / -14.16%  (H1 0.8052 H2 0.5471; OOS   3.63% / 0.5447 / -14.16%)
+   SPY                         14.01% / 0.8561 / -33.72%  (H1 0.9026 H2 0.8391; OOS  15.26% / 0.8737 / -33.72%)
+   4b bars: MaxDD >= -20.23%, CAGR >= 9.81%
+   U56: grid done (630 scored rows)
+   B136: grid done (630 scored rows)
+   SMALL665: grid done (630 scored rows)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 DRIFT h=0 == CALENDAR R=D at every (panel, t, delay): 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 the joint grid is complete: 630 books / 1890 scored rows   (target == 630 books)
+  GATE PASS  G3 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+  GATE PASS  G4 reproduces idea 2034's dual-path candidate at (10 bps, t+1): max|d| = 8.327e-17   (target < 1e-9)
+  GATE PASS  G5 reproduces the standing VOLTGT memo (U56 + B136): max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G6 the DELAY axis reaches t+3 and moves the book: mean |dSharpe| t+1 -> t+3 = 0.0275   (target > 1e-4)
+  GATE PASS  G7 net CAGR is monotone non-increasing in cost at every book: 630/630 books   (target == 630)
+
+## V1 / V2 — THE CANDIDATE ON THE FULL JOINT (COST x DELAY) PLANE
+   9 points = cost [10, 25, 50] bps x delay t+[1, 2, 3]
+   delay cost      CAGR   Sharpe    MaxDD      H1      H2   turn/y | 4a   why   4b   bind
+   t+1    10   12.51%   1.2286  -11.81%  1.3171  1.1415   3.13  | True  none  True  none
+   t+1    25   11.98%   1.1812  -12.01%  1.2701  1.0936   3.13  | True  none  True  none
+   t+1    50   11.11%   1.1020  -12.71%  1.1917  1.0137   3.13  | False H1    True  none
+   t+2    10   12.36%   1.2027  -12.82%  1.2841  1.1224   3.18  | False MaxDD True  none
+   t+2    25   11.82%   1.1556  -12.92%  1.2372  1.0751   3.18  | False MaxDD True  none
+   t+2    50   10.94%   1.0770  -13.25%  1.1589  0.9962   3.18  | False H1    True  none
+   t+3    10   12.19%   1.1767  -13.74%  1.2657  1.0891   3.14  | False MaxDD True  none
+   t+3    25   11.67%   1.1306  -13.83%  1.2205  1.0422   3.14  | False H1    True  none
+   t+3    50   10.79%   1.0536  -13.98%  1.1451  0.9638   3.14  | False H1    True  none
+
+   V1  4a kept at 2/9 = 22.2%  -> ARTEFACT
+   V2  4b kept at 9/9 = 100.0%  -> ROBUST
+      by cost  : 10: 4a 1/3 4b 3/3; 25: 4a 1/3 4b 3/3; 50: 4a 0/3 4b 3/3
+      by delay : 1: 4a 2/3 4b 3/3; 2: 4a 0/3 4b 3/3; 3: 4a 0/3 4b 3/3
+      4a failure modes: H1 x4, MaxDD x3
+      binding legs where 4b fails: (none)
+      t+1: dearest cost still clearing 4a = 25 bps;  4b = 50 bps
+      t+2: dearest cost still clearing 4a = NONE;  4b = 50 bps
+      t+3: dearest cost still clearing 4a = NONE;  4b = 50 bps
+
+## V3 — IS THE JOINT MOVE ADDITIVE?  (Sharpe move from the (10 bps, t+1) corner)
+   t+1, 10 bps: Sharpe 1.2286  observed +0.0000  = cost +0.0000 + delay +0.0000 + INTERACTION +0.0000
+   t+1, 25 bps: Sharpe 1.1812  observed -0.0475  = cost -0.0475 + delay +0.0000 + INTERACTION +0.0000  (0.0% of the larger main move)
+   t+1, 50 bps: Sharpe 1.1020  observed -0.1266  = cost -0.1266 + delay +0.0000 + INTERACTION +0.0000  (0.0% of the larger main move)
+   t+2, 10 bps: Sharpe 1.2027  observed -0.0260  = cost +0.0000 + delay -0.0260 + INTERACTION +0.0000  (0.0% of the larger main move)
+   t+2, 25 bps: Sharpe 1.1556  observed -0.0730  = cost -0.0475 + delay -0.0260 + INTERACTION +0.0004  (0.8% of the larger main move)
+   t+2, 50 bps: Sharpe 1.0770  observed -0.1517  = cost -0.1266 + delay -0.0260 + INTERACTION +0.0009  (0.7% of the larger main move)
+   t+3, 10 bps: Sharpe 1.1767  observed -0.0519  = cost +0.0000 + delay -0.0519 + INTERACTION +0.0000  (0.0% of the larger main move)
+   t+3, 25 bps: Sharpe 1.1306  observed -0.0980  = cost -0.0475 + delay -0.0519 + INTERACTION +0.0014  (2.6% of the larger main move)
+   t+3, 50 bps: Sharpe 1.0536  observed -0.1750  = cost -0.1266 + delay -0.0519 + INTERACTION +0.0036  (2.8% of the larger main move)
+   worst interaction over the 4 genuinely joint points: 0.0036 Sharpe = 2.8% of the larger main move -> ADDITIVE (pre-stated bar 20%)
+   MaxDD worst interaction: 0.0067 (0.67 pp)
+
+## CENSUS — 4a / 4b pass counts over the whole corpus, by (delay, cost)
+   t+1, 10 bps: 4b   91/210   4a   21/210
+   t+1, 25 bps: 4b   81/210   4a    4/210
+   t+1, 50 bps: 4b   62/210   4a    0/210
+   t+2, 10 bps: 4b   88/210   4a   14/210
+   t+2, 25 bps: 4b   83/210   4a    0/210
+   t+2, 50 bps: 4b   67/210   4a    0/210
+   t+3, 10 bps: 4b   77/210   4a    2/210
+   t+3, 25 bps: 4b   66/210   4a    0/210
+   t+3, 50 bps: 4b   48/210   4a    0/210
+   by panel: B136      4b  357/630   4a   37/630
+   by panel: SMALL665  4b    0/630   4a    0/630
+   by panel: U56       4b  306/630   4a    4/630
+
+## V4 — RULE 8 (parameters chosen on 2009-2016 ONLY; 2017-2026 read ONCE)
+   108 picks (panel x delay x cost x family x chooser)
+      B136      t+1: 4b  6/12   4a  1/12   lands on the candidate  1/12
+      B136      t+2: 4b  8/12   4a  0/12   lands on the candidate  0/12
+      B136      t+3: 4b  5/12   4a  0/12   lands on the candidate  0/12
+      SMALL665  t+1: 4b  0/12   4a  0/12   lands on the candidate  0/12
+      SMALL665  t+2: 4b  0/12   4a  0/12   lands on the candidate  0/12
+      SMALL665  t+3: 4b  0/12   4a  0/12   lands on the candidate  0/12
+      U56       t+1: 4b  5/12   4a  0/12   lands on the candidate  0/12
+      U56       t+2: 4b  9/12   4a  0/12   lands on the candidate  0/12
+      U56       t+3: 4b  7/12   4a  0/12   lands on the candidate  0/12
+   picks clearing BOTH paths: 1 of 108
+      B136      t+1 10bps DRIFT CH_ISMINLEG -> t=0.10 h=0.08   OOS  13.01% / 1.2928 / -11.81%
+   picks clearing 4b only: 39 of 108
+      B136      t+1 10bps DRIFT CH_ISSHARPE -> t=0.16 h=0.25   OOS  14.08% / 1.1888 / -17.93%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+1 25bps DRIFT CH_ISSHARPE -> t=0.16 h=0.25   OOS  13.86% / 1.1722 / -17.99%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+1 25bps DRIFT CH_ISMINLEG -> t=0.10 h=0.16   OOS  12.42% / 1.2412 / -13.29%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+1 50bps DRIFT CH_ISSHARPE -> t=0.16 h=0.25   OOS  13.50% / 1.1445 / -18.15%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+1 50bps DRIFT CH_ISMINLEG -> t=0.16 h=0.25   OOS  13.50% / 1.1445 / -18.15%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+2 10bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.26% / 1.1961 / -18.76%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+2 10bps DRIFT CH_ISSHARPE -> t=0.20 h=0.16   OOS  16.68% / 1.1907 / -19.19%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+2 10bps DRIFT CH_ISMINLEG -> t=0.10 h=0.16   OOS  13.13% / 1.2889 / -13.89%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+2 25bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  12.83% / 1.1612 / -18.83%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+2 25bps DRIFT CH_ISSHARPE -> t=0.20 h=0.16   OOS  16.39% / 1.1727 / -19.42%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+2 25bps DRIFT CH_ISMINLEG -> t=0.10 h=0.16   OOS  12.74% / 1.2538 / -13.98%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+2 50bps DRIFT CH_ISSHARPE -> t=0.20 h=0.16   OOS  15.91% / 1.1426 / -19.81%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+2 50bps DRIFT CH_ISMINLEG -> t=0.12 h=0.20   OOS  13.26% / 1.1888 / -16.50%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+3 10bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.43% / 1.2099 / -19.61%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+3 10bps DRIFT CH_ISMINLEG -> t=0.10 h=0.16   OOS  12.45% / 1.2181 / -13.93%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+3 25bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.00% / 1.1751 / -19.68%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+3 25bps DRIFT CH_ISMINLEG -> t=0.10 h=0.16   OOS  12.06% / 1.1829 / -14.00%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      B136      t+3 50bps DRIFT CH_ISMINLEG -> t=0.16 h=0.25   OOS  14.00% / 1.1164 / -19.57%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.1017)
+      U56       t+1 10bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.67% / 1.2605 / -19.62%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+1 10bps DRIFT CH_ISMINLEG -> t=0.12 h=0.25   OOS  13.55% / 1.2113 / -16.49%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+1 25bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.25% / 1.2255 / -19.70%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+1 25bps DRIFT CH_ISMINLEG -> t=0.12 h=0.25   OOS  13.27% / 1.1886 / -16.60%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+1 50bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  12.54% / 1.1669 / -19.83%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 10bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.96% / 1.2737 / -17.95%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 10bps DRIFT CH_ISSHARPE -> t=0.16 h=0.16   OOS  15.33% / 1.2294 / -19.24%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 10bps DRIFT CH_ISMINLEG -> t=0.12 h=0.25   OOS  14.59% / 1.2541 / -16.99%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 25bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.53% / 1.2387 / -18.03%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 25bps DRIFT CH_ISSHARPE -> t=0.16 h=0.16   OOS  15.04% / 1.2092 / -19.52%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 25bps DRIFT CH_ISMINLEG -> t=0.12 h=0.25   OOS  14.27% / 1.2295 / -17.07%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 50bps CAL   CH_ISMINLEG -> t=0.12 R=M      OOS  14.49% / 1.2035 / -20.08%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 50bps DRIFT CH_ISSHARPE -> t=0.16 h=0.16   OOS  14.57% / 1.1755 / -19.99%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+2 50bps DRIFT CH_ISMINLEG -> t=0.12 h=0.16   OOS  13.85% / 1.2209 / -16.60%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+3 10bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.82% / 1.2620 / -18.80%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+3 10bps DRIFT CH_ISSHARPE -> t=0.16 h=0.16   OOS  15.05% / 1.2014 / -19.55%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+3 10bps DRIFT CH_ISMINLEG -> t=0.12 h=0.25   OOS  14.38% / 1.2348 / -17.22%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+3 25bps CAL   CH_ISMINLEG -> t=0.10 R=M      OOS  13.39% / 1.2273 / -18.88%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+3 25bps DRIFT CH_ISSHARPE -> t=0.16 h=0.16   OOS  14.77% / 1.1815 / -19.84%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+3 25bps DRIFT CH_ISMINLEG -> t=0.12 h=0.25   OOS  14.07% / 1.2107 / -17.34%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+      U56       t+3 50bps DRIFT CH_ISMINLEG -> t=0.12 h=0.25   OOS  13.55% / 1.1705 / -17.53%  (SPY OOS  15.26% / 0.8737 / -33.72%; LIVE v2 OOS Sharpe 1.2766)
+
+## VERDICT
+   V1 (4a on the joint plane)  ARTEFACT   2/9 = 22.2%
+   V2 (4b on the joint plane)  ROBUST   9/9 = 100.0%
+   V3 (additivity)             ADDITIVE   worst interaction 2.8% of the larger main move
+   gates: 8/8 pass
+   SURVIVORSHIP: U56 / B136 are CURRENT constituents and SMALL a CURRENT sub-$2B screen,
+   so every LEVEL is optimistic and both 4b bars are easier than on a point-in-time
+   panel.  The (cost x delay) CONTRASTS are same-tape / same-names / same-grid and
+   first-order immune; the PASS COUNTS are not.

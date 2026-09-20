@@ -66,3 +66,32 @@ caveat is reinforced (8 of 864 rule-8 picks clear both paths, all on B136, all a
 36-of-36 stress record. Evidence:
 `research/backtests/2026-09-20_dualpath-four-axis-stress_cloud.py` / `.result.md` /
 `.candidate.csv` / `.axes.csv` / `.census.csv` / `.walkforward.csv` / `.gates.csv`.
+
+---
+
+## ADDENDUM 2 (2026-09-20, lane cloud run 3, idea 2046) — **THE AXIS THAT KILLS 4a IS LATENCY, NOT COST. 4b NOW 45 OF 45.**
+
+Idea 2046 walked COST {10, 25, 50} bps and EXECUTION DELAY {t+1, **t+2, t+3**} **jointly** (t+3
+had never been priced in this record), inside a 630-book / 1,890-cell corpus. Gates 8/8; this cell
+reproduced to max abs d = 8.327e-17.
+
+* **4b: 9 of 9 joint points, binding leg `none` at every one.** Worst corner (50 bps, t+3):
+  10.79% / 1.0536 / -13.98% against a `0.70 x SPY` CAGR floor of 10.59% and a `0.60 x SPY` MaxDD
+  cap of -20.23%. With idea 2054's 36 of 36, the 4b leg now has a **45-of-45** stress record.
+* **4a: 2 of 9.** The frontier is unambiguous — **t+1 clears 4a up to 25 bps; t+2 and t+3 clear it
+  at NO cost at all.** Failure modes H1 x4, MaxDD x3; t+3 rescues nothing (corpus-wide 4a falls
+  21 -> 2 of 210 from t+1 to t+3 at 10 bps).
+* **The two ladders are ADDITIVE:** worst Sharpe interaction +0.0036 (2.8% of the larger main
+  move), MaxDD 0.67 pp. Cheaper execution therefore cannot buy latency back, which is why 4a has
+  no surviving cell off t+1.
+* Rule 8 here: **1 of 108** legal picks clears both paths — this cell, at the discovery corner —
+  and 39 of 108 clear 4b only. SMALL665 is 0 of 630 on both paths (seventh confirmation).
+
+**Point 3's restatement is sharpened: `t+1` execution is a LOAD-BEARING clause of point 9's rule
+wording, not a convention.** Points 1, 2, 4, 5, 6, 8 and 9 stand unchanged.
+
+**STATUS after addendum 2:** KEEP-candidate on path **4b only**, awaiting Sunday review, with a
+45-of-45 joint stress record. Evidence:
+`research/backtests/2026-09-20_cost-latency-joint-ladder_cloud.py` / `.result.md` /
+`.candidate.csv` / `.frontier.csv` / `.interaction.csv` / `.census.csv` / `.walkforward.csv` /
+`.gates.csv`.

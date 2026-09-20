@@ -1,3 +1,60 @@
+## 2026-09-20 — idea 2046 (lane cloud): DOES THE DUAL-PATH 4a PASS SURVIVE THE COST AND LATENCY LADDERS *JOINTLY*? **ANSWERED — SPLIT, PLUS A METHOD RESULT. 4b ROBUST 9 OF 9 (t+3 AND 50 bps INCLUDED). 4a IS KILLED BY LATENCY, NOT COST. THE TWO LADDERS ARE ADDITIVE.**
+
+  **THE QUESTION.** Idea 2034's dual-path cell (`B136, VOLTGT t = 0.10, DRIFT h = 0.08, trade
+  weekly`) had cost and latency moved only SEPARATELY — 2034 walked COST {0, 10, 25, 50} at t+1,
+  2054 walked DELAY {t+1, t+2} inside a four-axis cross. Neither walked them together and neither
+  went past t+2. A rule you cannot execute same-week is not a rule you can run.
+
+  **THE CONSTRUCTION.** PANEL {U56, B136, SMALL665} x t {0.08..0.20} x [DRIFT h 10 rungs | CAL R
+  {D,W,M,Q}] x DELAY {t+1, **t+2, t+3**} = **630 books**, x COST {10, 25, 50} bps = **1,890 scored
+  cells**. **t+3 had never been priced in this record.** Cadence held at W and phase at the engine
+  mask (idea 2054 owns those axes). Baselines held at the LIVE convention (RULES v2 weekly t+1 at
+  10 bps, and SPY). Gates **8/8**; the candidate reproduced to **8.327e-17** and the standing
+  VOLTGT memo to 4.605e-05. TUNED: nothing new — `t` and the dial are the two inherited dials.
+
+  **V2 — 4b IS ROBUST, 9 OF 9 (100.0%).** The binding-leg column reads `none` at every point. Worst
+  corner (50 bps, t+3): **10.79% / 1.0536 / -13.98%** against a `0.70 x SPY` CAGR floor of 10.59%
+  and a `0.60 x SPY` MaxDD cap of -20.23%. With idea 2054's 36 of 36 the 4b leg now carries a
+  **45-of-45** stress record. The CAGR leg stays the thin one: +0.20 pp at the worst corner.
+
+  **V1 — 4a IS AN ARTEFACT (2 OF 9) AND THE BINDING AXIS IS LATENCY.** The frontier: **t+1 clears
+  4a up to 25 bps; t+2 and t+3 clear it at NO cost at all.** Failure modes H1 Sharpe x4, MaxDD x3.
+  One extra day pushes MaxDD -11.81% -> -12.82% (t+2) / -13.74% (t+3), through the live book's
+  -12.24%, while both Sharpe halves still clear; adding cost then takes H1 as well. Corpus-wide 4a
+  falls 21 -> 2 of 210 from t+1 to t+3 at 10 bps and is 0 of 210 at every 25/50 bps point off the
+  t+1 corner. This reproduces idea 2054's 22.2% independently, on a different slice of axes, and
+  **t+3 rescues nothing.**
+
+  **V3 — THE TWO LADDERS ARE ADDITIVE (the method result).** Decomposing the Sharpe move from the
+  (10 bps, t+1) corner into cost-only + delay-only + interaction, the worst interaction over the 4
+  genuinely joint points is **+0.0036 Sharpe = 2.8% of the larger main move** (pre-stated bar 20%);
+  on MaxDD, **0.67 pp**. Cost owns -0.1266 of Sharpe at 50 bps and latency -0.0519 at t+3, and they
+  simply add. So the record's habit of pricing cost and latency on separate corpora was legitimate
+  here — and the same additivity means **cheaper execution cannot buy latency back**, which is
+  exactly why 4a has no surviving cell off t+1.
+
+  **RULE 8 (2017-2026 read ONCE).** 108 picks (3 panels x 3 delays x 3 costs x 2 families x 2 legal
+  IS-only choosers). **1 clears BOTH paths** — `B136, t+1, 10 bps, DRIFT, CH_ISMINLEG -> t = 0.10,
+  h = 0.08`, the candidate itself, OOS **13.01% / 1.2928 / -11.81%** (SPY OOS 15.26% / 0.8737 /
+  -33.72%; live RULES v2 OOS 7.85% / 1.1017 / -12.24%). **39 of 108 clear 4b only**, across all
+  three delays and all three costs. **SMALL665 is 0 of 630 grid cells and 0 of 36 picks on BOTH
+  paths — seventh independent confirmation that this family does not work on small caps.**
+
+  **WHAT IT CHANGES.** (1) The candidate's memo gains ADDENDUM 2: KEEP-candidate on path **4b
+  only**, 4b stress record 45 of 45, and `t+1` execution restated as a LOAD-BEARING clause of the
+  rule wording rather than a convention. (2) NEW STANDING NOTE: cost and latency may go on being
+  priced separately on this family (they are additive), but any 4a claim must publish its EXECUTION
+  DELAY, because that is the axis that kills it at every cost. No rules change; Sunday review
+  decides. Survivorship: U56 / B136 are CURRENT constituents and SMALL665 a CURRENT sub-$2B screen
+  (54 tickers with `max_1d_move >= 1.0` dropped first), so every LEVEL is optimistic and both 4b
+  bars are easier than on a point-in-time panel; the (cost x delay) CONTRASTS are same-tape /
+  same-names / same-grid and first-order immune, the PASS COUNTS are not. RULES.md, PROTOCOL.md,
+  scan.py, bot.py and baseline.py are untouched. Evidence:
+  `research/backtests/2026-09-20_cost-latency-joint-ladder_cloud.py` / `.result.md` /
+  `.grid.csv.gz` / `.candidate.csv` / `.frontier.csv` / `.interaction.csv` / `.census.csv` /
+  `.walkforward.csv` / `.gates.csv` / `.log.txt` / `.console.txt`; memo addendum 2 in
+  `research/backtests/2026-09-20_voltgt-drift-b136_KEEP4b_MEMO.md`.
+
 ## 2026-09-20 — idea 2054 (lane cloud): DOES THE DUAL-PATH KEEP-CANDIDATE SURVIVE THE SPRINT'S FOUR STANDING STRESS AXES AT ONCE? **ANSWERED — SPLIT. THE 4b LEG IS ROBUST (36 OF 36, 100.0%). THE 4a LEG IS A DISCOVERY-SETTINGS ARTEFACT (8 OF 36, 22.2%) AND IS DOWNGRADED.**
 
   **THE QUESTION.** Idea 2034 (same run) turned up the first cell in the vol-target family ever to
