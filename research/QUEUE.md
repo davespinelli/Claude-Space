@@ -51,7 +51,6 @@
 
 2034. is-the-4b-VERDICT-ITSELF-a-2020-ARTEFACT-once-the-SPY-BAR-IS-HELD-FIXED — idea 2022 found the crash-excised 4b census falls 187 -> 80 of 420 cells and 4a 40 -> 0, but disclosed that most of that is a BAR SHIFT: excising 2020 moves SPY's own MaxDD from -33.72% to -24.50%, tightening the 4b cap from -20.23% to -14.70%, while the book's MaxDD does not move at all. Re-score the same 420 cells on the crash-excised tape against the FULL-tape SPY bars (and, separately, against a fixed absolute bar), so the BOOK effect and the BAR effect are separated. Max 2 params. Rationale: a capital verdict that moves because the benchmark's worst month was deleted is not a statement about the book. (2026-09-20)
 
-2038. does-the-vol-target-family-s-4b-MARGIN-decompose-into-a-STACK-OF-DRAWDOWN-EPISODES — idea 2022 showed one 24-day window carries 89% of the drift-vs-calendar edge. Ask the same of the 4b margin against SPY: excise each OOS drawdown episode in turn (2018Q4, 2020Q1, 2022, and any other SPY peak-to-trough below -10%), one at a time and cumulatively, and report how much of the standing candidate's OOS Sharpe and CAGR margin each one owns. Max 2 params (episode depth bar, window padding). Rationale: if three quarters own the whole margin, the book is a crash hedge priced as a growth rule. (2026-09-20)
 
 2042. is-the-STANDING-KEEP-4b-MARGIN-RESOLVABLE-or-is-it-A-POINT-ESTIMATE — idea 2022 put a paired block-bootstrap SE on the drift-vs-calendar contrast and found only 61 of 263 cells resolvable at 95%. The record has NEVER put a standard error on the 4b legs themselves. Put a PAIRED block bootstrap (book and SPY resampled on the SAME day blocks) on all five 4b leg margins — H1 Sharpe, H2 Sharpe, OOS Sharpe, MaxDD vs 0.60x SPY, CAGR vs 0.70x SPY — at every cell, and report how many of the 4b passes survive with the 95% CI on their BINDING leg entirely on the passing side, and whether the rule-8-reached cell is one of them. Max 2 params (block length, confidence level). Rationale: a KEEP that cannot reject the null against SPY is not worth real capital. (2026-09-20)
 
@@ -553,6 +552,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane C) CLAIMED **2038** (does-the-vol-target-family-s-4b-MARGIN-decompose-into-a-STACK-OF-DRAWDOWN-EPISODES) — the SECOND item standing in '## Open' in file order (2034 is first and goes to lane A); it names no EDGAR/Form 4/8-K/options/live-data dependency, so it is eligible. Original text follows.*
+
+2038. does-the-vol-target-family-s-4b-MARGIN-decompose-into-a-STACK-OF-DRAWDOWN-EPISODES — idea 2022 showed one 24-day window carries 89% of the drift-vs-calendar edge. Ask the same of the 4b margin against SPY: excise each OOS drawdown episode in turn (2018Q4, 2020Q1, 2022, and any other SPY peak-to-trough below -10%), one at a time and cumulatively, and report how much of the standing candidate's OOS Sharpe and CAGR margin each one owns. Max 2 params (episode depth bar, window padding). Rationale: if three quarters own the whole margin, the book is a crash hedge priced as a growth rule. (2026-09-20)
+
 
 *(2026-09-20, lane cloud, idea 2 of 2) CLAIMED **2042** (is-the-STANDING-KEEP-4b-MARGIN-RESOLVABLE-or-is-it-A-POINT-ESTIMATE) — the LAST of the three ideas this run filed under the sprint's documented fallback (see the filing note in '## Open' for the eligibility descent over 894 / 877 / 876 / 353 / 429 and the 532-726 census block, re-read this run).  Price-only on the committed caches (U56 / B136 / SMALL665); no EDGAR / Form 4 / 8-K / options / spin-offs / live data.  Two tuned dials and no more: BLOCK LENGTH and CONFIDENCE LEVEL, and neither ever selects a book — the book family and its dials are idea 1799's, inherited unchanged.  Both KEEP paths at every cell and a rule-8 walk-forward with 2017-2026 read once.  Claim pushed BEFORE any compute per hygiene clause (C).  Script: `research/backtests/2026-09-20_4b-margin-resolvable_cloud.py`.*
 
