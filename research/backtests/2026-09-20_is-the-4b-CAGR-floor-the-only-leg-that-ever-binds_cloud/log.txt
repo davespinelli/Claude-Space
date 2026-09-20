@@ -1,0 +1,272 @@
+======================================================================================================================
+IDEA 1695 (lane cloud, 2026-09-20) — IS THE 4b CAGR FLOOR THE ONLY LEG THAT EVER BINDS
+ON A FULL GROSS LADDER?
+DIALS: G 0.05..1.00 step 0.05 (20 rungs) x FORM ['NOGATE', 'BAND003', 'BAND010'].  Panels U56 / B136 / SMALL (published, not a dial).
+Weekly cadence, 10 bps, t+1 execution, no leverage.  60 cells/panel x 3 panels = 180 books, x 5 windows = 900 cell-windows.
+======================================================================================================================
+
+  PANELS (the whole grid runs on every one; none is picked on its own result):
+    U56      56 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  G7 COMPOSITION U56: 56 columns incl. SPY, 2008-01-02..2026-09-18
+    B136    136 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  G7 COMPOSITION B136: 136 columns incl. SPY, 2008-01-02..2026-09-18
+    SMALL   666 columns  2010-01-04 .. 2026-09-18  4203 rows (16.7y)
+    PUBLISHED  G7 COMPOSITION SMALL: 666 columns incl. SPY, 2010-01-04..2026-09-18
+    PUBLISHED  G7 SMALL max_1d_move >= 1.0 drops: 54 names dropped (54 by data/small_meta.csv, 53 by realised price move), 666 columns remain
+  SURVIVORSHIP (rule 9): U56 and B136 are CURRENT-constituent lists and SMALL is a
+  current-screen panel, so every ABSOLUTE level below is an UPPER BOUND.  What this run
+  reads is the STRUCTURE OF THE 4b TEST across cells on one tape.
+    GATE PASS  G0 U56 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 U56 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G0 B136 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 B136 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G0 SMALL sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 SMALL IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G1 replay of baseline.rules_v2_weights through engine.backtest (U56 live cell, compared over the SCORED window [WARMUP:] because engine.backtest emits 2 NaN rows before the first rebalance): max|d| 1.735e-17 (target < 1e-12)
+    GATE PASS  G6 determinism (same cell twice): max|d| 0.000e+00 (target == 0)
+
+  SPY on U56: FULL CAGR 15.12%  Sharpe 0.8844  MaxDD -33.72%  H1/H2 0.9573/0.8251
+      4b bars FULL: H1 > 0.9573, H2 > 0.8251, MaxDD >= -20.23%, CAGR >= 10.59%
+      4b bars OOS : H1 > 0.9915, H2 > 0.7471, MaxDD >= -20.23%, CAGR >= 10.68%
+      LIVE RULES v2 (c=0.03,G=0.75) on U56: FULL CAGR 8.62%  Sharpe 1.2011  MaxDD -12.05%  H1/H2 1.2279/1.1808
+
+  SPY on B136: FULL CAGR 15.12%  Sharpe 0.8845  MaxDD -33.72%  H1/H2 0.9573/0.8251
+      4b bars FULL: H1 > 0.9573, H2 > 0.8251, MaxDD >= -20.23%, CAGR >= 10.59%
+      4b bars OOS : H1 > 0.9915, H2 > 0.7471, MaxDD >= -20.23%, CAGR >= 10.68%
+      LIVE RULES v2 (c=0.03,G=0.75) on B136: FULL CAGR 7.96%  Sharpe 1.0973  MaxDD -12.24%  H1/H2 1.2298/0.9671
+
+  SPY on SMALL: FULL CAGR 14.01%  Sharpe 0.8562  MaxDD -33.72%  H1/H2 0.9028/0.8393
+      4b bars FULL: H1 > 0.9028, H2 > 0.8393, MaxDD >= -20.23%, CAGR >= 9.81%
+      4b bars OOS : H1 > 0.9915, H2 > 0.7471, MaxDD >= -20.23%, CAGR >= 10.68%
+      LIVE RULES v2 (c=0.03,G=0.75) on SMALL: FULL CAGR 4.26%  Sharpe 0.6597  MaxDD -14.16%  H1/H2 0.8060/0.5481
+    GATE PASS  G2 no leverage (max realised gross over all 180 books): 1.0000 (target <= 1.0)
+    GATE PASS  G3 all cells x windows published: 900 (target 900)
+    GATE PASS  G4 exactly two tuned dials: G (20 rungs) x FORM (3) (target == 2)
+    PUBLISHED  G7 CROSS-RUN U56 NOGATE G=0.75 FULL: CAGR 13.19%  Sharpe 1.1190  MaxDD -22.53%  mean gross 0.7502  turnover/yr 0.83
+    PUBLISHED  G7 CROSS-RUN U56 BAND003 G=0.75 FULL: CAGR 8.62%  Sharpe 1.2011  MaxDD -12.05%  mean gross 0.5328  turnover/yr 1.77
+    PUBLISHED  G7 CROSS-RUN U56 BAND010 G=1.00 (idea 1703's committed cell: 11.72% / 1.1726 / -16.30%) FULL: CAGR 11.72%  Sharpe 1.1726  MaxDD -16.30%  mean gross 0.6897  turnover/yr 1.32
+
+======================================================================================================================
+(A) THE LEG CENSUS — WHICH LEG BINDS, OVER ALL 900 CELL-WINDOWS
+======================================================================================================================
+  4b PASSES: 50 of 900 cell-windows (5.6%).  4a passes: 95 of 900.
+  Cells failing exactly ONE leg (the leg BINDS): 606; two or more: 244.
+
+  SINGLETON BINDER (cells where exactly one leg fails) — this is idea 1695's question:
+    H1    binds ALONE at    0 cell-windows (  0.0% of singletons,  0.0% of all)
+    H2    binds ALONE at    0 cell-windows (  0.0% of singletons,  0.0% of all)
+    DD    binds ALONE at   92 cell-windows ( 15.2% of singletons, 10.2% of all)
+    CAGR  binds ALONE at  514 cell-windows ( 84.8% of singletons, 57.1% of all)
+
+  PER-LEG FAILURE RATE (any number of co-failures):
+    H1    fails at  140 of 900 cell-windows (15.6%)
+    H2    fails at  220 of 900 cell-windows (24.4%)
+    DD    fails at  134 of 900 cell-windows (14.9%)
+    CAGR  fails at  748 of 900 cell-windows (83.1%)
+
+  SINGLETON BINDER BY PANEL x WINDOW:
+    binding       CAGR  DD
+    panel window          
+    B136  FULL      48   9
+          H1        44   8
+          H2        51   9
+          IS        46   8
+          OOS       50   9
+    SMALL H1         9   8
+          IS        29  10
+    U56   FULL      48   7
+          H1        49   5
+          H2        46   7
+          IS        50   5
+          OOS       44   7
+
+======================================================================================================================
+(B) THE G-ELASTICITY OF EACH LEG — is each leg's pass-set an INTERVAL in G, and which way?
+======================================================================================================================
+  For each (panel, form, window): the G rungs at which each leg PASSES, as [lo, hi] when
+  the pass-set is a contiguous interval, else the literal set.  'ALL' = passes at all 20
+  rungs, '-' = passes at none.  Monotonicity is CHECKED (gate G8), not assumed.
+    GATE PASS  G8 leg pass-sets are CONTIGUOUS in G (non-interval pass-sets counted, not assumed): 0 non-contiguous of 180 (panel,form,window,leg) pass-sets (target published)
+
+    panel    form window  H1  H2          DD        CAGR    FEASIBLE  width
+      U56  NOGATE   FULL ALL ALL [0.05,0.65] [0.65,1.00] [0.65,0.65]      1
+      U56  NOGATE     H1 ALL ALL [0.05,0.75] [0.65,1.00] [0.65,0.75]      3
+      U56  NOGATE     H2 ALL ALL [0.05,0.65] [0.60,1.00] [0.60,0.65]      2
+      U56  NOGATE     IS ALL ALL [0.05,0.75] [0.65,1.00] [0.65,0.75]      3
+      U56  NOGATE    OOS ALL ALL [0.05,0.65] [0.60,1.00] [0.60,0.65]      2
+      U56 BAND003   FULL ALL ALL         ALL [0.95,1.00] [0.95,1.00]      2
+      U56 BAND003     H1 ALL ALL         ALL [1.00,1.00] [1.00,1.00]      1
+      U56 BAND003     H2 ALL ALL         ALL [0.90,1.00] [0.90,1.00]      3
+      U56 BAND003     IS ALL ALL         ALL           -           -      0
+      U56 BAND003    OOS ALL ALL         ALL [0.85,1.00] [0.85,1.00]      4
+      U56 BAND010   FULL ALL ALL         ALL [0.95,1.00] [0.95,1.00]      2
+      U56 BAND010     H1 ALL ALL         ALL [0.95,1.00] [0.95,1.00]      2
+      U56 BAND010     H2 ALL ALL         ALL [0.95,1.00] [0.95,1.00]      2
+      U56 BAND010     IS ALL ALL         ALL [0.95,1.00] [0.95,1.00]      2
+      U56 BAND010    OOS ALL ALL         ALL [0.90,1.00] [0.90,1.00]      3
+     B136  NOGATE   FULL ALL ALL [0.05,0.55] [0.60,1.00]           -      0
+     B136  NOGATE     H1 ALL ALL [0.05,0.60] [0.55,1.00] [0.55,0.60]      2
+     B136  NOGATE     H2 ALL ALL [0.05,0.55] [0.60,1.00]           -      0
+     B136  NOGATE     IS ALL ALL [0.05,0.60] [0.55,1.00] [0.55,0.60]      2
+     B136  NOGATE    OOS ALL ALL [0.05,0.55] [0.60,1.00]           -      0
+     B136 BAND003   FULL ALL ALL         ALL [1.00,1.00] [1.00,1.00]      1
+     B136 BAND003     H1 ALL ALL         ALL [0.95,1.00] [0.95,1.00]      2
+     B136 BAND003     H2 ALL ALL         ALL           -           -      0
+     B136 BAND003     IS ALL ALL         ALL [1.00,1.00] [1.00,1.00]      1
+     B136 BAND003    OOS ALL ALL         ALL           -           -      0
+     B136 BAND010   FULL ALL ALL         ALL [0.95,1.00] [0.95,1.00]      2
+     B136 BAND010     H1 ALL ALL         ALL [0.85,1.00] [0.85,1.00]      4
+     B136 BAND010     H2 ALL ALL         ALL           -           -      0
+     B136 BAND010     IS ALL ALL         ALL [0.90,1.00] [0.90,1.00]      3
+     B136 BAND010    OOS ALL ALL         ALL [1.00,1.00] [1.00,1.00]      1
+    SMALL  NOGATE   FULL ALL   - [0.05,0.40] [0.75,1.00]           -      0
+    SMALL  NOGATE     H1 ALL ALL [0.05,0.45] [0.65,1.00]           -      0
+    SMALL  NOGATE     H2   -   - [0.05,0.40] [0.95,1.00]           -      0
+    SMALL  NOGATE     IS ALL ALL [0.05,0.45] [0.55,1.00]           -      0
+    SMALL  NOGATE    OOS   -   - [0.05,0.40] [0.95,1.00]           -      0
+    SMALL BAND003   FULL   -   -         ALL           -           -      0
+    SMALL BAND003     H1   -   -         ALL           -           -      0
+    SMALL BAND003     H2 ALL   -         ALL           -           -      0
+    SMALL BAND003     IS ALL   -         ALL           -           -      0
+    SMALL BAND003    OOS   -   -         ALL           -           -      0
+    SMALL BAND010   FULL ALL   - [0.05,0.95]           -           -      0
+    SMALL BAND010     H1   - ALL         ALL           -           -      0
+    SMALL BAND010     H2 ALL   -         ALL           -           -      0
+    SMALL BAND010     IS ALL ALL         ALL           -           -      0
+    SMALL BAND010    OOS   -   - [0.05,0.95]           -           -      0
+
+  (B2) IS THE SHARPE LEGS' G-INVARIANCE REAL, OR A THRESHOLD COINCIDENCE?  Spread of the
+  realised statistic ACROSS THE 20 GROSS RUNGS, per (panel, form, window), max over triples:
+    Sharpe(H1)      max spread over the ladder 0.0169   mean 0.0059   (45 triples)
+    Sharpe(H2)      max spread over the ladder 0.0085   mean 0.0037   (45 triples)
+    Sharpe(window)  max spread over the ladder 0.0095   mean 0.0031   (45 triples)
+    MaxDD           max spread over the ladder 0.4170   mean 0.1858   (45 triples)
+    CAGR            max spread over the ladder 0.1918   mean 0.1132   (45 triples)
+    A Sharpe leg whose statistic barely moves over a 20x gross range cannot ADJUDICATE
+    gross; a CAGR/MaxDD leg that moves by tens of points is what the interval is made of.
+
+  DIRECTION TALLY over the (panel, form, window, leg) pass-sets that are neither ALL nor empty:
+     leg  UPPER  LOWER  MIDDLE  ALL  NONE
+      H1      0      0       0   38     7
+      H2      0      0       0   34    11
+      DD      0     17       0   28     0
+    CAGR     31      0       0    0    14
+
+======================================================================================================================
+(C) THE FEASIBLE GROSS WINDOW — the set of G at which ALL FOUR legs pass
+======================================================================================================================
+
+  window FULL:
+      panel    form    FEASIBLE  width
+        U56  NOGATE [0.65,0.65]      1
+        U56 BAND003 [0.95,1.00]      2
+        U56 BAND010 [0.95,1.00]      2
+       B136  NOGATE           -      0
+       B136 BAND003 [1.00,1.00]      1
+       B136 BAND010 [0.95,1.00]      2
+      SMALL  NOGATE           -      0
+      SMALL BAND003           -      0
+      SMALL BAND010           -      0
+
+  window H1:
+      panel    form    FEASIBLE  width
+        U56  NOGATE [0.65,0.75]      3
+        U56 BAND003 [1.00,1.00]      1
+        U56 BAND010 [0.95,1.00]      2
+       B136  NOGATE [0.55,0.60]      2
+       B136 BAND003 [0.95,1.00]      2
+       B136 BAND010 [0.85,1.00]      4
+      SMALL  NOGATE           -      0
+      SMALL BAND003           -      0
+      SMALL BAND010           -      0
+
+  window H2:
+      panel    form    FEASIBLE  width
+        U56  NOGATE [0.60,0.65]      2
+        U56 BAND003 [0.90,1.00]      3
+        U56 BAND010 [0.95,1.00]      2
+       B136  NOGATE           -      0
+       B136 BAND003           -      0
+       B136 BAND010           -      0
+      SMALL  NOGATE           -      0
+      SMALL BAND003           -      0
+      SMALL BAND010           -      0
+
+  window IS:
+      panel    form    FEASIBLE  width
+        U56  NOGATE [0.65,0.75]      3
+        U56 BAND003           -      0
+        U56 BAND010 [0.95,1.00]      2
+       B136  NOGATE [0.55,0.60]      2
+       B136 BAND003 [1.00,1.00]      1
+       B136 BAND010 [0.90,1.00]      3
+      SMALL  NOGATE           -      0
+      SMALL BAND003           -      0
+      SMALL BAND010           -      0
+
+  window OOS:
+      panel    form    FEASIBLE  width
+        U56  NOGATE [0.60,0.65]      2
+        U56 BAND003 [0.85,1.00]      4
+        U56 BAND010 [0.90,1.00]      3
+       B136  NOGATE           -      0
+       B136 BAND003           -      0
+       B136 BAND010 [1.00,1.00]      1
+      SMALL  NOGATE           -      0
+      SMALL BAND003           -      0
+      SMALL BAND010           -      0
+
+  Mean feasible width over all 45 (panel, form, window) triples: 1.11 of 20 rungs; triples with width 0: 22 of 45.
+
+======================================================================================================================
+(D) THE LEG-DELETION COUNTERFACTUAL — how many 4b verdicts move if each leg is DELETED
+======================================================================================================================
+  Baseline 4b passes over all 900 cell-windows: 50
+    deleted  passes  moved  moved_pct
+         H1      50      0   0.000000
+         H2      50      0   0.000000
+         DD     142     92   0.102222
+       CAGR     564    514   0.571111
+
+  A leg whose deletion moves ZERO verdicts is decorative on this grid; a leg whose
+  deletion moves many is where the test's content lives.
+
+  PAIRWISE: 4b restated as the TWO legs that move the most, vs the full four:
+    keeping only ['DD', 'CAGR']: 50 passes, 0 of 900 verdicts move (0.0%)
+
+======================================================================================================================
+RULE 8 — WALK-FORWARD.  Picks fit on warm-up..2016-12-31 ONLY; 2017-2026 read EXACTLY ONCE.
+======================================================================================================================
+    panel  chooser           pick  IS_Sharpe  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_4b   OOS_binding  OOS_4a
+      U56 C_SHARPE BAND010@G=1.00     1.1460    0.1214      1.1940    -0.1630    True          NONE   False
+      U56   C_MEMO  NOGATE@G=0.65     1.1095    0.1183      1.1269    -0.1975    True          NONE   False
+      U56   C_CAGR  NOGATE@G=0.75     1.1103    0.1367      1.1268    -0.2253   False            DD   False
+      U56 C_ANCHOR BAND003@G=0.75     1.1045    0.0946      1.2769    -0.1205   False          CAGR   False
+     B136 C_SHARPE  NOGATE@G=1.00     1.1484    0.1827      1.0857    -0.3272   False            DD   False
+     B136   C_MEMO  NOGATE@G=0.55     1.1443    0.1003      1.0882    -0.1911   False          CAGR   False
+     B136   C_CAGR BAND010@G=1.00     1.1473    0.1102      1.0875    -0.1920    True          NONE   False
+     B136 C_ANCHOR BAND003@G=0.75     1.0924    0.0785      1.1019    -0.1224   False          CAGR   False
+    SMALL C_SHARPE  NOGATE@G=1.00     0.9828    0.1148      0.5945    -0.4438   False      H1+H2+DD   False
+    SMALL   C_MEMO BAND003@G=0.75     0.8755    0.0364      0.5459    -0.1416   False    H1+H2+CAGR   False
+    SMALL   C_CAGR BAND010@G=1.00     0.9730    0.0532      0.5841    -0.2035   False H1+H2+DD+CAGR   False
+    SMALL C_ANCHOR BAND003@G=0.75     0.8755    0.0364      0.5459    -0.1416   False    H1+H2+CAGR   False
+
+  OOS bars for reference (same window, per panel):
+    U56    SPY  OOS CAGR 15.26%  Sharpe 0.8738  MaxDD -33.72%   |  LIVE RULES v2 OOS CAGR 9.46%  Sharpe 1.2769  MaxDD -12.05%
+    B136   SPY  OOS CAGR 15.26%  Sharpe 0.8739  MaxDD -33.72%   |  LIVE RULES v2 OOS CAGR 7.85%  Sharpe 1.1019  MaxDD -12.24%
+    SMALL  SPY  OOS CAGR 15.26%  Sharpe 0.8738  MaxDD -33.72%   |  LIVE RULES v2 OOS CAGR 3.64%  Sharpe 0.5459  MaxDD -14.16%
+
+  Mean OOS Sharpe over the 12 chooser x panel picks: 0.9465
+  Picks clearing 4b OOS: 3 of 12.  Clearing 4a OOS: 0 of 12.
+  Picks landing on the TOP gross rung G=1.00: 5 of 12; on NOGATE: 5 of 12.
+
+  CELLS CLEARING 4b BOTH FULL AND OOS (the record's standing bar for a KEEP-4b):
+    FULL passes 8, OOS passes 10, BOTH 6 of 180
+      panel    form    G
+       B136 BAND010 1.00
+        U56 BAND003 0.95
+        U56 BAND003 1.00
+        U56 BAND010 0.95
+        U56 BAND010 1.00
+        U56  NOGATE 0.65
+    Of the 6 FULL-and-OOS passes, 5 sit at G >= 0.95 (the top of the ladder).

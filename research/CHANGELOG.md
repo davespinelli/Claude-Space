@@ -1,3 +1,65 @@
+## 2026-09-20 — idea 1695 (lane cloud): IS THE 4b CAGR FLOOR THE ONLY LEG THAT EVER BINDS ON A FULL GROSS LADDER? **ANSWERED — KILL OF THE 'SINGLE-LEG' PREMISE, AND SOMETHING STRONGER IN ITS PLACE: 4b IS NOT A FOUR-LEG TEST AT ALL. DELETING THE H1 AND H2 SHARPE LEGS MOVES 0 OF 900 CELL-WINDOW VERDICTS, AND 4b RESTATED AS {DD, CAGR} ALONE REPRODUCES ALL 900 EXACTLY. NO RULES CHANGE; ONE PARK MEMO.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1454 found the live book fails 4b on the CAGR floor alone; the
+  2026-09-19 CHANGELOG found all 11 of 180 FULL-and-OOS passes sitting at G = 1.00; idea 1699
+  (pushed this morning) found an always-invested ladder squeezed between a CAGR floor at G <= 0.50
+  and a DD cap at G >= 0.75 and said in terms that the leg census "belongs beside open idea 1695".
+  Nobody had resolved all four legs at every rung of a FULL gross ladder.
+
+  **CONSTRUCTION.** Two dials and no more: **G 0.05..1.00 step 0.05 (20 rungs)** x **FORM
+  {NOGATE, BAND003 (live), BAND010 (the 2026-09-19 rule-8 pick)}**. Published, not tuned: PANEL
+  {U56, B136, SMALL} x WINDOW {FULL, H1, H2, IS, OOS}. 180 books, 900 cell-windows, every one in
+  `grid.csv`. Weekly, t+1, 10 bps, no leverage (max realised gross 1.0000). Gates 19 of 19,
+  including a bit-for-bit replay of `baseline.rules_v2_weights` through `engine.backtest`
+  (max|d| 1.7e-17 over the scored window) and an EXACT cross-run reproduction of idea 1703's
+  committed U56 (c=0.10, G=1.00) cell at 11.72% / 1.1726 / -16.30%.
+
+  **(1) THE TWO SHARPE LEGS NEVER BIND.** 50 of 900 cell-windows clear 4b. 606 fail exactly one
+  leg, and the binder is **CAGR 514 (84.8%), DD 92 (15.2%), H1 0, H2 0**. The leg-deletion
+  counterfactual is the same fact stated as a test-design claim: deleting H1 moves **0** of 900
+  verdicts, deleting H2 moves **0**, deleting DD moves 92, deleting CAGR moves 514. Keeping only
+  {DD, CAGR} reproduces **all 900** verdicts with zero disagreement. On this grid the H1 and H2
+  legs of PROTOCOL 4b are decorative.
+
+  **(2) AND THE REASON IS ARITHMETIC, NOT EMPIRICAL.** Over a 20x range of target gross the window
+  Sharpe moves by at most **0.0169** (mean 0.0031) while MaxDD moves **41.7 pp** and CAGR **19.2
+  pp**. Scaling a book cannot move its Sharpe, so a Sharpe leg cannot adjudicate gross: at every
+  one of 45 (panel, form, window) triples the H1 and H2 pass-sets are ALL-or-NOTHING. The CAGR leg
+  passes on an UPPER set of G at 31 of 31 non-trivial cases and never a lower one; the DD leg on a
+  LOWER set at 17 of 17 and never an upper one; 0 of 180 pass-sets are non-contiguous.
+  **Operationally, 4b = (a G-invariant Sharpe screen) x (G in [g_CAGR, g_DD]).** Mean feasible
+  width **1.11 of 20 rungs**; **22 of 45** triples are EMPTY.
+
+  **(3) 'EVERY PASS AT G = 1.00' IS A BAND-BOOK ARTEFACT.** The FORM decides which end of the
+  interval binds. NOGATE feasible windows sit at G 0.55-0.75; BAND forms at G 0.85-1.00 — because
+  the band's realised gross is 0.53 of a 0.75 target, so a band book must ask for more gross to
+  clear the same CAGR floor, and its de-gross keeps the DD leg passing at every rung (DD is 'ALL'
+  at every BAND cell on U56 and B136). The record's edge-of-grid gross claim is a statement about
+  the band's de-gross, not about the gross ladder.
+
+  **(4) IDEA 1699'S 'NO RUNG IN BETWEEN' WAS A GRID-RESOLUTION ARTEFACT.** At 0.05 resolution the
+  always-invested U56 ladder does have a rung in between: **G = 0.65 clears 4b in ALL FIVE
+  windows** — no moving average, no band, no ranking, FULL 11.42% / 1.1188 / -19.75%, OOS
+  11.83% / 1.1269 / -19.75%, turnover 0.73x/yr. G=0.60 fails the CAGR floor and G=0.70 fails the
+  DD cap, so the window is **one rung wide**, it is **U56-only** (B136 and SMALL no-gate windows
+  are empty), and U56 is the panel idea 1703 showed is carried by its 20 survivorship-selected
+  mega-caps. **PARK, not KEEP** — memo at `research/backtests/2026-09-20_nogate-G065-U56_PARK_MEMO.md`
+  with the exact RULES wording it would take. The squeeze is real; its emptiness was not.
+
+  **(5) RULE 8 (picks fit on warm-up..2016-12-31, 2017-2026 read EXACTLY ONCE).** Four choosers x
+  three panels: **3 of 12 picks clear 4b OOS, 0 of 12 clear 4a**, mean OOS Sharpe 0.9465; 5 of 12
+  land on G = 1.00 and 5 of 12 on NOGATE. On U56, C_MEMO reaches the G=0.65 no-gate cell from the
+  IS window alone and it holds OOS. SMALL fails every leg at every chooser.
+
+  **WHAT THE RECORD SHOULD DO.** Stop quoting 4b as four facts. It is a Sharpe screen that does not
+  depend on gross, times an interval on gross whose endpoints are the CAGR floor below and the DD
+  cap above — and on this grid the Sharpe screen has never once been the binding constraint. A
+  Sunday review may wish to restate PROTOCOL rule 4b in those terms (this run did NOT modify
+  PROTOCOL.md, RULES.md, scan.py, bot.py or baseline.py). Two consequences for reading the record:
+  any "4b pass" is, to the resolution of this grid, a claim about realised exposure; and any 4b
+  verdict quoted without its feasible-width is quoting a number that is empty at 22 of 45 triples
+  and one rung wide at the median of the rest.
+
 ## 2026-09-20 — idea 1699 (lane C): DOES THE BAND BOOK NEED THE BAND AT ALL ONCE GROSS IS FREE? **ANSWERED — THE BAND IS FREE ON RETURN (28 OF 60 MATCHED PAIRS, MEAN dSHARPE -0.0009, 0 OF 12 BOOTSTRAP CONTRASTS AT |t| > 2), LOAD-BEARING ON THE 4b VERDICT (AN ALWAYS-INVESTED LADDER PASSES AT 0 OF 12 RUNGS), AND ITS ONE REAL EDGE — DEPTH — IS TWO-THIRDS DE-GROSS WITH THE RESIDUAL INSIDE ITS OWN NOISE. KILL OF THE PREMISE; NO NEW BOOK, NO RULES CHANGE.**
 
   **THE DEFECT THIS CLOSES.** The 2026-09-19 rule-8 pick wanders across c = 0.00-0.10 from
