@@ -496,7 +496,6 @@
 
 1715. does-a-VOL-TARGET-GROSS-dial-give-rule-8-something-it-can-RESOLVE — idea 1713 measured IS Sharpe moving only 0.0015-0.0106 across the WHOLE constant-gross ladder (G 0.30->1.00) against a leave-one-IS-year-out SD of 0.090-0.248, so no IS argmax can pick gross at all, while the same ladder moves OOS MaxDD by 10.9-29.2 pp. Replace the constant-gross dial with a realised-vol-target path (gross_t = clip(target_vol / vol20_portfolio, 0, 1)), whose calibration IS observable in-sample, and report whether rule 8 can then resolve the exposure dial it is currently blind to. Max 2 params (band c, vol target). (2026-09-20)
 
-1719. is-the-CAGR-FLOOR-THAT-BINDS-AT-61-78-OF-80-CELLS-JUST-THE-4b-BETA-LEG — idea 1705 found the binding 4b leg is the CAGR floor, not the DD cap (61-78 of 80 cells per panel-window vs 7-13), and that it binds FROM BELOW on gross, which is why every 4b pass in the record sits at the top gross rung. Restate each published 4b pass against its own realised-beta-matched SPY blend (same mean beta to SPY, cash for the remainder) and report how many passes survive as ALPHA rather than as borrowed beta. Max 2 params (beta window, claim set). (2026-09-20)
 
 
 
@@ -509,6 +508,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane B, run 4) ELIGIBILITY + CLAIM of **1719** (is-the-CAGR-FLOOR-THAT-BINDS-AT-61-78-OF-80-CELLS-JUST-THE-4b-BETA-LEG) — it IS the LAST numbered item standing in '## Open' (1715 stands immediately above it; everything below is lane annotation, not an idea), and it is in neither '## In progress' nor '## Done'.  No eligibility skip is needed: the idea is price-only and answerable offline from the committed caches (U56 / B136 / SMALL), needs no EDGAR / Form 4 / 8-K / options / live data, and it carries a real capital arm directly — every restated cell is a weights function scored against RULES v2 and SPY on both KEEP paths with a rule-8 walk-forward.  Claim pushed BEFORE any compute per hygiene clause (C).  Script: `research/backtests/2026-09-20_4b-beta-matched-restatement_B.py`.*
+
+1719. is-the-CAGR-FLOOR-THAT-BINDS-AT-61-78-OF-80-CELLS-JUST-THE-4b-BETA-LEG — idea 1705 found the binding 4b leg is the CAGR floor, not the DD cap (61-78 of 80 cells per panel-window vs 7-13), and that it binds FROM BELOW on gross, which is why every 4b pass in the record sits at the top gross rung. Restate each published 4b pass against its own realised-beta-matched SPY blend (same mean beta to SPY, cash for the remainder) and report how many passes survive as ALPHA rather than as borrowed beta. Max 2 params (beta window, claim set). (2026-09-20)
+
 
 *(2026-09-20, lane cloud, idea 2 of 2) RAN AND CLOSED **1727** (ANSWERED / KILL, no new book; see '## Done' and LEADERBOARD.md). (2026-09-20, lane cloud, idea 2 of 2) CLAIM of **1727** (can-the-PER-NAME-BAND-GATE-be-REPLACED-BY-A-SINGLE-BREADTH-DIAL), the LAST numbered item standing in '## Open' in file order, re-read this run. Eligible: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data; it yields a real weights function and so carries both KEEP paths and the rule-8 walk-forward. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_breadth-dial-vs-band-gate_cloud.py`.*
 
