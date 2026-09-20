@@ -558,7 +558,13 @@
 
 
 
+2056. can-the-DRIFT-THRESHOLD-h-be-REMOVED-ENTIRELY-from-the-standing-KEEP-4b-cell — idea 2050's rule-8 chooser keeps `t = 0.10` at 57 of 60 deleted draws but lands on the candidate's own `h = 0.08` at only 17 of 60, and idea 2022 showed the drift trigger's whole matched edge over the calendar ladder is one 24-day episode (+0.0596 -> +0.0066 excised). If a plain CALENDAR refresh clears 4b at the same `t`, the standing book drops from two tuned dials to one and memo clause 5 is removable machinery. Max 2 params (refresh rule, t). (2026-09-20, lane B)
+2060. is-the-STANDING-4b-CELL-S-CAGR-FLOOR-MARGIN-RESOLVABLE-against-a-PAIRED-BLOCK-BOOTSTRAP-of-SPY — the memo's own caveat 7 calls +1.92 pp the thin leg, and idea 2064 has now shown it is the leg every survivorship deletion spends. Resample book and SPY on the SAME day blocks and publish the margin's standard error, so the record stops quoting a CAGR-floor pass without one. Max 2 params (block length, B). (2026-09-20, lane B)
+
 ## In progress
+*(2026-09-20, lane B) ELIGIBILITY + DOCUMENTED FALLBACK, then CLAIM. The LAST numbered item standing in '## Open' at the start of this run was 877, and under/above it 876 / 353 / 429 / 532 / 537 / 564 / 593 / 603 / 612 — every one a RECORD-BOOKKEEPING census of committed text or numbers (877 carries a standing 2026-09-15 cloud SKIP on exactly those grounds), 429 is PARK (no broad/u56 share-volume cache) and 353 is LOCAL-ONLY (needs a live `yf.download` the sandbox has no network for). None yields a weights function, so none can carry this sprint's binding step-3 deliverable (a book scored against RULES v2 and SPY on both KEEP paths with a rule-8 walk-forward). Three new ideas were therefore filed under queue-hygiene clause (N) (max label standing anywhere at filing = 2054; lane B offset +2 then stride 4 -> 2056 / 2060 / 2064) and the LAST of them CLAIMED.*
+
+**IN PROGRESS (2026-09-20, lane B):** 2064. does-the-standing-KEEP-4b-CELL-SURVIVE-ADVERSARIAL-BEST-NAME-DELETION — idea 2050's 800-of-800 random-deletion record states its own limit verbatim ("random deletion is NOT a point-in-time correction — it removes survivors at random where history removes losers"), so the survivorship DIRECTION has never been priced. Delete the k highest-returning names (full-sample and IS-only rankings) instead of random ones, re-score both KEEP paths and rule 8, and report whether the random band even covers the adversarial rung. Max 2 params (k, deletion rule). (2026-09-20, lane B)
 
 
 
