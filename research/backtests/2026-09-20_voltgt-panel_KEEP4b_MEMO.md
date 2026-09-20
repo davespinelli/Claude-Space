@@ -67,3 +67,30 @@ leave-one-IS-year-out SD ~0.175) and costs less when mis-set (OOS MaxDD span 9.2
 The rung itself is still unresolvable: IS argmax equals the OOS oracle in 0 of 12 cells and beats
 its runner-up by 0.07 of a deletion SD. Evidence:
 `research/backtests/2026-09-20_voltgt-dial-rule8-resolvable_cloud.py` / `.result.md`.
+
+---
+
+## Addendum (2026-09-20, lane cloud, idea 956) — the candidate is PHASE-ROBUST and CADENCE-DEPENDENT
+
+Idea 956 re-scored this book, plus five other committed/standing 4b objects, at all 21 DOM phases
+and all 5 weekly phases on U56 / B136 / SMALL at 0 / 10 / 25 / 50 bps
+(`research/backtests/2026-09-20_phase-averaged-4b-verdict_cloud.py`, gates 28/28; its G3 reproduces
+sections 2–4 above to max|Δ| 0.0000).
+
+* **Phase-robust on its own cadence.** `VOLTGT016` clears 4b FULL *and* OOS at **5 of 5** weekly
+  phases on B136 and **4 of 5** on U56, and keeps its certification under every averaging rule
+  tested — CANON, MEAN, MEDIAN, SHARE50 and TRANCHE (2 of 6 panel × grid cells each); only the
+  worst-phase MIN rule drops it to 1 of 6. Its 4b pass is therefore **not** an artefact of the
+  canonical rebalance date, which is the failure mode idea 944 found in 6 of 9 U56 books.
+* **Cadence-dependent, and this is a real limit on the claim.** On a MONTHLY cadence (DOM21) the
+  book fails 4b on both panels at the canonical phase and at 18 of 21 / 20 of 21 phases: its OOS
+  MaxDD blows out to **−24.2 % (U56) and −26.1 % (B136)** against **−19.9 % / −18.8 %** weekly.
+  The weekly rebalance in section 1 is load-bearing and must stay in any RULES wording.
+* **Rule 8 on the phase dial:** the IS-chosen weekly phase gives U56 OOS 16.30 % / 1.2446 / −18.99 %
+  and B136 15.41 % / 1.1888 / −19.64 %, against the canonical 15.94 % / 1.2193 / −19.86 % and
+  15.36 % / 1.1837 / −18.76 % — i.e. choosing the date in sample buys ≈ +0.025 of OOS Sharpe here
+  and −0.006 across the run's full 18-cell corpus. The phase is not a dial worth adding.
+* **Unchanged:** the book still does not clear path 4a (its drawdown is deeper than the live
+  book's), it is still not tested on SMALL as a candidate (SMALL 4b pass-share 0.000), and its
+  status is still **KEEP-candidate, path 4b, awaiting Sunday review**. RULES.md, PROTOCOL.md,
+  scan.py, bot.py and baseline.py are untouched by idea 956.
