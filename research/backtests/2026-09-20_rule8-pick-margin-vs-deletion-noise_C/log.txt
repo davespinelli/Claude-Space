@@ -1,0 +1,239 @@
+======================================================================================================================
+IDEA 1709 (lane C, 2026-09-20) — IS THE RULE-8 PICK INSTABILITY A PLATEAU ARTEFACT OR A
+REAL PREFERENCE?   720 counted the MOVES; this run measures the MARGIN and its own noise.
+DIALS: BAND c ['NOGATE', 0.0, 0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.15, 0.2] x GROSS G 0.05..1.0 step 0.05
+  = 200 books per panel x 3 panels = 600 books, ALL PUBLISHED.
+Weekly cadence, 10 bps, t+1 execution, no leverage, no shorting.
+DELETION CONVENTION (identical to idea 720): the BOOK IS NEVER RE-RUN — the year is
+removed from the SCORED return stream and the objective recomputed on the remainder.
+======================================================================================================================
+
+  PANELS:
+    U56      56 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  COMPOSITION U56: 56 columns incl. SPY, 2008-01-02..2026-09-18
+    B136    136 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  COMPOSITION B136: 136 columns incl. SPY, 2008-01-02..2026-09-18
+    SMALL   666 columns  2010-01-04 .. 2026-09-18  4203 rows (16.7y)
+    PUBLISHED  COMPOSITION SMALL: 666 columns incl. SPY, 2010-01-04..2026-09-18
+    PUBLISHED  SMALL max_1d_move >= 1.0 drops: 54 names dropped (54 by data/small_meta.csv, 53 by realised price move), 666 columns remain
+  SURVIVORSHIP (rule 9): current-constituent panels; absolute levels are UPPER BOUNDS.
+    GATE PASS  G0 U56 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 U56 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    PUBLISHED  IS years U56: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016] (2007 scored IS days, 2441 scored OOS days)
+    GATE PASS  G0 B136 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 B136 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    PUBLISHED  IS years B136: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016] (2007 scored IS days, 2441 scored OOS days)
+    GATE PASS  G0 SMALL sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 SMALL IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    PUBLISHED  IS years SMALL: [2011, 2012, 2013, 2014, 2015, 2016] (1502 scored IS days, 2441 scored OOS days)
+    GATE PASS  G1 cell (c=0.03, G=0.75) replays baseline.rules_v2_weights through engine.backtest: max|d| 1.735e-17 (target < 1e-12)
+    GATE PASS  G6 determinism: max|d| 0.000e+00 (target == 0)
+
+  Running 200 books per panel ...
+    U56    done  (6.7s elapsed)
+    B136   done  (12.6s elapsed)
+    SMALL  done  (32.7s elapsed)
+    GATE PASS  G2 no leverage (max realised gross over all 600 books): 1.0000 (target <= 1.0)
+    G7 CROSS-RUN U56 LIVE c0.03/g0.75: 8.62% / 1.2011 / -12.05%   vs committed 8.62% / 1.2011 / -12.05%   MATCH
+    G7 CROSS-RUN U56 PICK c0.1/g1.00: 11.72% / 1.1726 / -16.30%   vs committed 11.72% / 1.1726 / -16.30%   MATCH
+    G7 CROSS-RUN U56 PARK NOGATE/g0.65: 11.42% / 1.1188 / -19.75%   vs committed 11.42% / 1.1188 / -19.75%   MATCH
+    GATE PASS  G7 named cells reproduce ideas 1695 / 1703 / 720 committed numbers: see above (target all MATCH)
+    GATE PASS  G3 all cells published: 600 (target 600)
+    GATE PASS  G4 exactly two tuned dials: BAND c x GROSS G (target == 2)
+
+  BOTH KEEP PATHS OVER ALL 600 CELLS:  4a FULL 59, 4a OOS 69, 4b FULL 26, 4b OOS 31, BOTH(4b FULL and OOS) 20.
+    U56    4a   0/200   4b FULL  17/200   4b OOS  28/200   most common 4b binding leg: CAGR (176)
+    B136   4a   0/200   4b FULL   9/200   4b OOS   3/200   most common 4b binding leg: CAGR (181)
+    SMALL  4a  59/200   4b FULL   0/200   4b OOS   0/200   most common 4b binding leg: H1+H2+CAGR (100)
+
+======================================================================================================================
+LEAVE-ONE-IS-YEAR-OUT REFITS — the IS objective recomputed at all 200 cells per panel
+with one calendar year removed from the scored IS days.  The book is never re-run.
+======================================================================================================================
+    U56    8 IS years deleted, 200 cells each = 1600 refits
+    B136   8 IS years deleted, 200 cells each = 1600 refits
+    SMALL  6 IS years deleted, 200 cells each = 1200 refits
+    GATE PASS  G8 every deletion is a PARTITION of the scored days (asserted in-loop): 22 asserts (target all pass)
+    GATE PASS  G9 IS-side deletions leave the OOS number untouched: 0 violations (target == 0)
+
+  BETTER-POWERED NULL: 400 random contiguous 252-day deletions drawn
+  inside the IS window (seed 20260920), so an 8-draw LOYO SD can be judged.
+
+======================================================================================================================
+(A)(B)(C) THE MARGIN AND ITS OWN NOISE — how far ahead is the winner, and is that lead
+bigger than what deleting ONE IS YEAR does to the SAME margin?  Bar: |t| > 2.
+======================================================================================================================
+
+  THE ARGMAX-IS-SHARPE LADDER (rank 2..6 = the runner-up ladder), per panel:
+    panel  rank       winner        rival  obj_win  obj_rival  margin  sd_raw  sd_pair  sd_pair_block   t_pair  t_pair_block  resolved
+      U56     2   c0.1/g1.00   c0.1/g0.95  +1.1460    +1.1459 +0.0001 +0.1229  +0.0000        +0.0000  +2.0603       +2.5451      True
+      U56     3   c0.1/g1.00   c0.1/g0.90  +1.1460    +1.1458 +0.0002 +0.1229  +0.0001        +0.0001  +2.1442       +2.6537      True
+      U56     4   c0.1/g1.00   c0.1/g0.85  +1.1460    +1.1457 +0.0003 +0.1229  +0.0001        +0.0001  +2.2285       +2.7635      True
+      U56     5   c0.1/g1.00   c0.1/g0.80  +1.1460    +1.1456 +0.0003 +0.1229  +0.0002        +0.0001  +2.3030       +2.8617      True
+      U56     6   c0.1/g1.00   c0.1/g0.75  +1.1460    +1.1455 +0.0005 +0.1229  +0.0002        +0.0002  +2.3774       +2.9611      True
+     B136     2 NOGATE/g1.00 NOGATE/g0.95  +1.1484    +1.1480 +0.0004 +0.0966  +0.0000        +0.0000 +11.4860      +14.8962      True
+     B136     3 NOGATE/g1.00 NOGATE/g0.90  +1.1484    +1.1476 +0.0008 +0.0966  +0.0001        +0.0001 +11.6914      +15.1158      True
+     B136     4 NOGATE/g1.00   c0.1/g1.00  +1.1484    +1.1473 +0.0011 +0.0966  +0.0493        +0.0402  +0.0223       +0.0274     False
+     B136     5 NOGATE/g1.00 NOGATE/g0.85  +1.1484    +1.1471 +0.0013 +0.0966  +0.0001        +0.0001 +11.8781      +15.3502      True
+     B136     6 NOGATE/g1.00   c0.1/g0.95  +1.1484    +1.1471 +0.0013 +0.0966  +0.0493        +0.0402  +0.0265       +0.0325     False
+    SMALL     2  c0.15/g1.00  c0.15/g0.95  +1.0095    +1.0093 +0.0002 +0.2848  +0.0001        +0.0001  +2.0356       +3.5456      True
+    SMALL     3  c0.15/g1.00  c0.15/g0.90  +1.0095    +1.0092 +0.0004 +0.2848  +0.0002        +0.0001  +2.0471       +3.5632      True
+    SMALL     4  c0.15/g1.00  c0.15/g0.85  +1.0095    +1.0090 +0.0005 +0.2848  +0.0003        +0.0002  +2.0593       +3.5812      True
+    SMALL     5  c0.15/g1.00  c0.15/g0.80  +1.0095    +1.0088 +0.0007 +0.2848  +0.0004        +0.0002  +2.0717       +3.5999      True
+    SMALL     6  c0.15/g1.00  c0.15/g0.75  +1.0095    +1.0086 +0.0009 +0.2848  +0.0004        +0.0003  +2.0841       +3.6188      True
+
+  WINNER vs RUNNER-UP: mean margin 0.0002 of IS Sharpe against a mean
+  PAIRED leave-one-year-out SD of 0.0001 (block null 0.0000).
+  Panels whose winner is RESOLVED from its runner-up at |t| > 2: **3 of 3**  (t_pair = U56 +2.06, B136 +11.49, SMALL +2.04).
+  The RAW (unpaired) SD of the winner's own objective is 0.1681, 3113.6x the paired SD — quoting the
+  unpaired SD would understate the resolution, which is why both are published.
+  Over the whole rank-2..6 ladder, 13 of 15 (winner, rival) pairs are resolved.
+
+  (A2) THE MARGIN THAT MATTERS.  The rank-2 rival above is the SAME BAND one gross rung
+  down — a near-duplicate of the winner, so that ladder measures GRID RESOLUTION, not
+  preference.  The decisive ladder is the BEST CELL IN EACH OTHER BAND (distinct books):
+    panel       winner band_rival        rival  obj_rival  margin  sd_pair  sd_pair_block  t_pair  t_pair_block  resolved
+      U56   c0.1/g1.00     NOGATE NOGATE/g1.00    +1.1119 +0.0341  +0.0530        +0.0423 +0.6436       +0.8075     False
+      U56   c0.1/g1.00    +0.0000     c0/g1.00    +1.0555 +0.0905  +0.0194        +0.0236 +4.6652       +3.8370      True
+      U56   c0.1/g1.00    +0.0100  c0.01/g1.00    +1.0789 +0.0671  +0.0208        +0.0265 +3.2312       +2.5323      True
+      U56   c0.1/g1.00    +0.0200  c0.02/g1.00    +1.0852 +0.0608  +0.0243        +0.0285 +2.4990       +2.1362      True
+      U56   c0.1/g1.00    +0.0300  c0.03/g1.00    +1.1050 +0.0410  +0.0184        +0.0244 +2.2260       +1.6786      True
+      U56   c0.1/g1.00    +0.0500  c0.05/g1.00    +1.0633 +0.0827  +0.0235        +0.0247 +3.5125       +3.3454      True
+      U56   c0.1/g1.00    +0.0750 c0.075/g1.00    +1.1116 +0.0344  +0.0146        +0.0144 +2.3548       +2.3942      True
+      U56   c0.1/g1.00    +0.1500  c0.15/g1.00    +1.1076 +0.0384  +0.0205        +0.0142 +1.8783       +2.7059     False
+      U56   c0.1/g1.00    +0.2000   c0.2/g1.00    +1.1001 +0.0459  +0.0456        +0.0290 +1.0076       +1.5850     False
+     B136 NOGATE/g1.00    +0.0000     c0/g1.00    +1.0569 +0.0915  +0.0559        +0.0379 +1.6355       +2.4142     False
+     B136 NOGATE/g1.00    +0.0100  c0.01/g1.00    +1.0690 +0.0794  +0.0580        +0.0390 +1.3675       +2.0374     False
+     B136 NOGATE/g1.00    +0.0200  c0.02/g1.00    +1.0911 +0.0573  +0.0571        +0.0387 +1.0033       +1.4829     False
+     B136 NOGATE/g1.00    +0.0300  c0.03/g1.00    +1.0935 +0.0549  +0.0553        +0.0383 +0.9934       +1.4347     False
+     B136 NOGATE/g1.00    +0.0500  c0.05/g1.00    +1.0761 +0.0723  +0.0528        +0.0377 +1.3706       +1.9154     False
+     B136 NOGATE/g1.00    +0.0750 c0.075/g1.00    +1.1347 +0.0137  +0.0500        +0.0372 +0.2745       +0.3687     False
+     B136 NOGATE/g1.00    +0.1000   c0.1/g1.00    +1.1473 +0.0011  +0.0493        +0.0402 +0.0223       +0.0274     False
+     B136 NOGATE/g1.00    +0.1500  c0.15/g1.00    +1.0967 +0.0517  +0.0395        +0.0395 +1.3073       +1.3083     False
+     B136 NOGATE/g1.00    +0.2000   c0.2/g1.00    +1.0708 +0.0776  +0.0303        +0.0403 +2.5625       +1.9244      True
+    SMALL  c0.15/g1.00     NOGATE NOGATE/g1.00    +0.9828 +0.0267  +0.0916        +0.0601 +0.2917       +0.4449     False
+    SMALL  c0.15/g1.00    +0.0000     c0/g1.00    +0.7619 +0.2476  +0.0397        +0.0319 +6.2299       +7.7504      True
+    SMALL  c0.15/g1.00    +0.0100  c0.01/g1.00    +0.8083 +0.2013  +0.0345        +0.0294 +5.8265       +6.8398      True
+    SMALL  c0.15/g1.00    +0.0200  c0.02/g1.00    +0.8564 +0.1531  +0.0321        +0.0272 +4.7635       +5.6247      True
+    SMALL  c0.15/g1.00    +0.0300  c0.03/g1.00    +0.8765 +0.1330  +0.0300        +0.0248 +4.4349       +5.3544      True
+    SMALL  c0.15/g1.00    +0.0500  c0.05/g1.00    +0.9263 +0.0832  +0.0288        +0.0239 +2.8886       +3.4853      True
+    SMALL  c0.15/g1.00    +0.0750 c0.075/g1.00    +0.9564 +0.0531  +0.0323        +0.0250 +1.6470       +2.1214     False
+    SMALL  c0.15/g1.00    +0.1000   c0.1/g1.00    +0.9730 +0.0365  +0.0325        +0.0225 +1.1232       +1.6207     False
+    SMALL  c0.15/g1.00    +0.2000   c0.2/g1.00    +1.0079 +0.0016  +0.0099        +0.0131 +0.1615       +0.1220     False
+
+  Cross-band rivals the IS window can RESOLVE from its own argmax: **12 of 27**  (median |t_pair| 1.65, mean margin 0.0715 of
+  IS Sharpe against a mean paired deletion SD of 0.0378).
+
+  AND THE RECORD'S THREE COMMITTED CELLS, judged by the same test against the panel's
+  OWN IS argmax (is the committed cell distinguishable from the cell rule 8 would pick?):
+    panel book         cell  is_argmax     obj  gap_to_argmax  sd_pair   t_pair  resolved  is_rank
+      U56 LIVE  c0.03/g0.75      False +1.1045        +0.0415  +0.0186  +2.2305      True       86
+      U56 PICK   c0.1/g1.00       True +1.1460        +0.0000  +0.0000      NaN     False        1
+      U56 PARK NOGATE/g0.65      False +1.1095        +0.0365  +0.0531  +0.6869     False       46
+     B136 LIVE  c0.03/g0.75      False +1.0924        +0.0560  +0.0553  +1.0113     False       83
+     B136 PICK   c0.1/g1.00      False +1.1473        +0.0011  +0.0493  +0.0223     False        4
+     B136 PARK NOGATE/g0.65      False +1.1453        +0.0031  +0.0003 +12.5560      True       17
+    SMALL LIVE  c0.03/g0.75      False +0.8755        +0.1340  +0.0300  +4.4704      True      126
+    SMALL PICK   c0.1/g1.00      False +0.9730        +0.0365  +0.0325  +1.1232     False       61
+    SMALL PARK NOGATE/g0.65      False +0.9819        +0.0276  +0.0917  +0.3013     False       48
+
+  Committed cells that the IS window can DISTINGUISH from its own argmax: **3 of 9**.
+
+======================================================================================================================
+(D) DOES THE MARGIN PREDICT THE MOVE?  The argmax is recomputed under each LOYO refit.
+======================================================================================================================
+    panel       argmax  t_pair_rank2  n_years  n_moved  move_rate                                                                    movers
+      U56   c0.1/g1.00       +2.0603        8        2    +0.2500                                       2011->c0.2/g1.00;2013->NOGATE/g1.00
+     B136 NOGATE/g1.00      +11.4860        8        4    +0.5000       2010->c0.1/g1.00;2012->c0.1/g1.00;2015->c0.1/g1.00;2016->c0.1/g1.00
+    SMALL  c0.15/g1.00       +2.0356        6        4    +0.6667 2011->NOGATE/g0.05;2012->c0.1/g1.00;2013->NOGATE/g1.00;2015->NOGATE/g1.00
+
+  Pick moves under at least one LOYO deletion at **3 of 3** panels; 10 of 22 single-year
+  refits move the argmax — 720's result, reproduced on a 200-cell grid.
+
+  EVERY MOVE EVENT, with the UNDELETED separation between the argmax and the cell the
+  refit moved to (this is the test: could the full IS window have told them apart?):
+    panel  deleted_year       argmax     moved_to  undeleted_margin  sd_pair  t_pair  resolved  same_band  d_OOS_Sharpe  OOS_4b_argmax  OOS_4b_moved
+      U56          2011   c0.1/g1.00   c0.2/g1.00           +0.0459  +0.0456 +1.0076     False      False       -0.0697           True          True
+      U56          2013   c0.1/g1.00 NOGATE/g1.00           +0.0341  +0.0530 +0.6436     False      False       -0.0676           True         False
+     B136          2010 NOGATE/g1.00   c0.1/g1.00           +0.0011  +0.0493 +0.0223     False      False       +0.0019          False          True
+     B136          2012 NOGATE/g1.00   c0.1/g1.00           +0.0011  +0.0493 +0.0223     False      False       +0.0019          False          True
+     B136          2015 NOGATE/g1.00   c0.1/g1.00           +0.0011  +0.0493 +0.0223     False      False       +0.0019          False          True
+     B136          2016 NOGATE/g1.00   c0.1/g1.00           +0.0011  +0.0493 +0.0223     False      False       +0.0019          False          True
+    SMALL          2011  c0.15/g1.00 NOGATE/g0.05           +0.0298  +0.0918 +0.3241     False      False       -0.0162          False         False
+    SMALL          2012  c0.15/g1.00   c0.1/g1.00           +0.0365  +0.0325 +1.1232     False      False       -0.0308          False         False
+    SMALL          2013  c0.15/g1.00 NOGATE/g1.00           +0.0267  +0.0916 +0.2917     False      False       -0.0204          False         False
+    SMALL          2015  c0.15/g1.00 NOGATE/g1.00           +0.0267  +0.0916 +0.2917     False      False       -0.0204          False         False
+
+  MOVE EVENTS TO A RIVAL THE UNDELETED IS WINDOW COULD RESOLVE (|t| > 2): **0 of 10**.
+  Median |t| at a move event: 0.292; max 1.123.
+  Move events that cross to a DIFFERENT BAND: 10 of 10.
+  What the move COSTS out of sample: mean d OOS Sharpe -0.0218 (range -0.0697 .. +0.0019);
+  the 4b OOS verdict differs between the argmax and the moved-to cell at 5 of 10 events.
+
+======================================================================================================================
+(E) IS A FLAT IS SURFACE SAFE?  The capital question.  PLATEAU = every cell whose IS
+objective is within 2 PAIRED deletion SDs of the argmax, i.e. the cells the IS
+window cannot tell apart.  If those cells behave DIFFERENTLY out of sample, a flat
+surface is a hazard and not a comfort.
+======================================================================================================================
+    panel       argmax  plateau_n  of  gross_lo  gross_hi  n_bands   IS_lo   IS_hi  OOS_Sharpe_lo  OOS_Sharpe_hi  OOS_Sharpe_spread  OOS_CAGR_lo  OOS_CAGR_hi  OOS_MaxDD_lo  OOS_MaxDD_hi  n_4b_oos  n_4a_oos
+      U56   c0.1/g1.00         59 200   +0.0500   +1.0000        4 +1.0986 +1.1460        +1.1217        +1.1940            +0.0723      +0.0058      +0.1828       -0.2918       -0.0084         7         0
+     B136 NOGATE/g1.00        161 200   +0.0500   +1.0000        9 +1.0528 +1.1484        +1.0330        +1.1247            +0.0917      +0.0051      +0.1827       -0.3272       -0.0084         3        28
+    SMALL  c0.15/g1.00         81 200   +0.0500   +1.0000        5 +0.9525 +1.0095        +0.5742        +0.6149            +0.0408      +0.0028      +0.1148       -0.4438       -0.0103         0        27
+
+  The IS window cannot separate the argmax from 100 of 200 cells on average (50.2% of the grid).
+  Across those IS-indistinguishable cells the OOS Sharpe spread is 0.0683 on average (min 0.0408, max 0.0917),
+  the OOS MaxDD runs -44.38% to -0.84%, and
+  10 of 301 plateau cells clear 4b OOS (4a OOS 55).
+
+======================================================================================================================
+(F) RULE 8 WALK-FORWARD — choosers fit on 2009-2016 IS rows ONLY; 2017-2026 read ONCE
+per chooser.  OOS reported against BOTH the live RULES v2 baseline AND SPY.
+======================================================================================================================
+    panel    chooser         pick  IS_Sharpe  IS_rank  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_4b   OOS_binding  OOS_4a
+      U56   C_SHARPE   c0.1/g1.00     1.1460        1    0.1214      1.1940    -0.1630    True          NONE   False
+      U56     C_MEMO NOGATE/g0.65     1.1095       46    0.1183      1.1269    -0.1975    True          NONE   False
+      U56     C_CAGR NOGATE/g0.75     1.1103       39    0.1367      1.1268    -0.2253   False            DD   False
+      U56   C_ANCHOR  c0.03/g0.75     1.1045       86    0.0946      1.2769    -0.1205   False          CAGR   False
+      U56  C_PLAT_LO NOGATE/g0.05     1.1046       85    0.0090      1.1264    -0.0163   False          CAGR   False
+      U56 C_PLAT_MID  c0.15/g0.55     1.1067       65    0.0633      1.1251    -0.0917   False          CAGR   False
+      U56  C_PLAT_HI   c0.2/g1.00     1.1001      101    0.1182      1.1243    -0.1586    True          NONE   False
+     B136   C_SHARPE NOGATE/g1.00     1.1484        1    0.1827      1.0857    -0.3272   False            DD   False
+     B136     C_MEMO NOGATE/g0.55     1.1443       23    0.1003      1.0882    -0.1911   False          CAGR   False
+     B136     C_CAGR   c0.1/g1.00     1.1473        4    0.1102      1.0875    -0.1920    True          NONE   False
+     B136   C_ANCHOR  c0.03/g0.75     1.0924       83    0.0785      1.1019    -0.1224   False          CAGR   False
+     B136  C_PLAT_LO  c0.01/g0.05     1.0652      180    0.0052      1.1207    -0.0085   False          CAGR    True
+     B136 C_PLAT_MID  c0.01/g0.55     1.0674      166    0.0574      1.1189    -0.0919   False          CAGR    True
+     B136  C_PLAT_HI     c0/g1.00     1.0569      181    0.1033      1.1087    -0.1663   False          CAGR   False
+    SMALL   C_SHARPE  c0.15/g1.00     1.0095        1    0.0581      0.6149    -0.2052   False H1+H2+DD+CAGR   False
+    SMALL     C_MEMO   c0.2/g1.00     1.0079       10    0.0557      0.5745    -0.2138   False H1+H2+DD+CAGR   False
+    SMALL     C_CAGR   c0.2/g1.00     1.0079       10    0.0557      0.5745    -0.2138   False H1+H2+DD+CAGR   False
+    SMALL   C_ANCHOR  c0.03/g0.75     0.8755      126    0.0364      0.5459    -0.1416   False    H1+H2+CAGR   False
+    SMALL  C_PLAT_LO NOGATE/g0.05     0.9798       60    0.0067      0.5987    -0.0268   False    H1+H2+CAGR   False
+    SMALL C_PLAT_MID NOGATE/g0.55     0.9816       50    0.0684      0.5968    -0.2670   False H1+H2+DD+CAGR   False
+    SMALL  C_PLAT_HI   c0.2/g1.00     1.0079       10    0.0557      0.5745    -0.2138   False H1+H2+DD+CAGR   False
+
+  OOS BARS (2017-2026, read once):
+    U56    SPY OOS CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%  |  RULES v2 OOS CAGR 9.46% Sharpe 1.2769 MaxDD -12.05%
+    B136   SPY OOS CAGR 15.26% Sharpe 0.8739 MaxDD -33.72%  |  RULES v2 OOS CAGR 7.85% Sharpe 1.1019 MaxDD -12.24%
+    SMALL  SPY OOS CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%  |  RULES v2 OOS CAGR 3.64% Sharpe 0.5459 MaxDD -14.16%
+
+  Picks clearing 4b OOS: **4 of 21**; clearing 4a OOS: **2 of 21**.  Mean OOS Sharpe 0.9472 against SPY's 0.8738.
+
+  WHAT AN IS TIE COSTS: C_PLAT_LO / MID / HI resolve the SAME IS tie three ways, all
+  three legal IS-only rules.  The spread between them is the price of the chooser's
+  arbitrary tie-break, and C_SHARPE is the plain argmax for comparison:
+    U56    C_SHARPE  c0.1/g1.00       OOS Sharpe +1.1940 CAGR 12.14% MaxDD -16.30% 4b True
+           C_PLAT_LO NOGATE/g0.05     OOS Sharpe +1.1264 CAGR  0.90% MaxDD  -1.63% 4b False   d vs C_SHARPE -0.0676
+           C_PLAT_MID c0.15/g0.55      OOS Sharpe +1.1251 CAGR  6.33% MaxDD  -9.17% 4b False   d vs C_SHARPE -0.0689
+           C_PLAT_HI c0.2/g1.00       OOS Sharpe +1.1243 CAGR 11.82% MaxDD -15.86% 4b True   d vs C_SHARPE -0.0697
+    B136   C_SHARPE  NOGATE/g1.00     OOS Sharpe +1.0857 CAGR 18.27% MaxDD -32.72% 4b False
+           C_PLAT_LO c0.01/g0.05      OOS Sharpe +1.1207 CAGR  0.52% MaxDD  -0.85% 4b False   d vs C_SHARPE +0.0350
+           C_PLAT_MID c0.01/g0.55      OOS Sharpe +1.1189 CAGR  5.74% MaxDD  -9.19% 4b False   d vs C_SHARPE +0.0332
+           C_PLAT_HI c0/g1.00         OOS Sharpe +1.1087 CAGR 10.33% MaxDD -16.63% 4b False   d vs C_SHARPE +0.0230
+    SMALL  C_SHARPE  c0.15/g1.00      OOS Sharpe +0.6149 CAGR  5.81% MaxDD -20.52% 4b False
+           C_PLAT_LO NOGATE/g0.05     OOS Sharpe +0.5987 CAGR  0.67% MaxDD  -2.68% 4b False   d vs C_SHARPE -0.0162
+           C_PLAT_MID NOGATE/g0.55     OOS Sharpe +0.5968 CAGR  6.84% MaxDD -26.70% 4b False   d vs C_SHARPE -0.0181
+           C_PLAT_HI c0.2/g1.00       OOS Sharpe +0.5745 CAGR  5.57% MaxDD -21.38% 4b False   d vs C_SHARPE -0.0405
+
+  Mean OOS CAGR spread across the three tie-breaks: 8.97%; mean OOS Sharpe spread 0.0128.
