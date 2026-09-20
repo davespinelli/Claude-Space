@@ -1,0 +1,182 @@
+# Idea 2026 (lane C, 2026-09-20) — can the DRIFT THRESHOLD be set WITHOUT the IS window?
+# families: CAL ['D', 'W', 'M', 'Q'] | FIXH [0.0, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25] | ASYMH (4:1) | SDMULT [0.0, 0.25, 0.5, 1.0, 2.0, 3.0, 5.0, 8.0] | FRACG [0.0, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5] | ASYMG (4:1)
+# tuned dials (2, within a family): TARGET t [0.08, 0.1, 0.12, 0.16, 0.2] x the family's own scale rung.  reported, not tuned: TRADE T ['W', 'M'], PANEL, COST [0, 10, 25, 50] bps, asymmetry ratio 4:1.  sigma FIXED at (L=20, d=0).
+# PRE-STATED zero-IS constants: k*=1.0, f*=0.1, ASYMH h*=0.12, t*=0.16 (inherited).  warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%), 1.77 turns/yr
+   SPY                      15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (1840 scored rows)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%), 2.01 turns/yr
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (1840 scored rows)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%), 2.57 turns/yr
+   SPY                      14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (1840 scored rows)
+
+# grid: 5520 scored rows (1380 cells x 4 cost rungs)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 bt_cal diagonal == engine.backtest (returns / turnover): 0.000e+00 / 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turn*c/1e4 == fresh engine run at 10/25 bps: 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 reproduces the standing VOLTGT memo (points 2-4, U56 + B136): max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G4 zero-rung cells (FIXH h=0, SDMULT k=0, FRACG f=0) == CALENDAR R=D (90 cells): 0.000e+00   (target < 1e-12)
+  GATE PASS  G5 reproduces idea 1799's KEEP-4b cell (U56 t=0.16 h=0.12 T=M, 10 bps): max|d| = 4.042e-07   (target < 1e-4)
+  GATE PASS  G6 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+  GATE PASS  G7 the ladder-free thresholds actually move refresh frequency: refresh/yr 0.5 .. 168.9   (target min < 52 < max)
+  GATE PASS  G8 the 4:1 asymmetric trigger refreshes at least as often as its symmetric twin: 1.000 of 1080 pairs   (target == 1.000)
+
+## V1 — ZERO-IS REACH at t = t* = 0.16, 10 bps, 6 arms (panel x T)
+   ASYMG   (zero IS)              4b FULL+OOS on 4 of 6 arms; 4a 0; mean 2.31 turns/yr, 24 refreshes/yr
+   ASYMH   (inherited constant)   4b FULL+OOS on 4 of 6 arms; 4a 0; mean 2.11 turns/yr, 15 refreshes/yr
+   FIXH    (inherited constant)   4b FULL+OOS on 4 of 6 arms; 4a 0; mean 1.87 turns/yr, 7 refreshes/yr
+   FRACG   (zero IS)              4b FULL+OOS on 4 of 6 arms; 4a 0; mean 2.11 turns/yr, 13 refreshes/yr
+   SDMULT  (zero IS)              4b FULL+OOS on 3 of 6 arms; 4a 0; mean 2.37 turns/yr, 54 refreshes/yr
+      4b PASS: U56 T=W SDMULT k=1  full 15.61% / 1.2035 / -19.61%  OOS 16.21% / 1.2372 / -19.61%  (2.09 turns/yr)
+      4b PASS: U56 T=W FRACG f=0.1  full 15.58% / 1.2272 / -19.33%  OOS 16.30% / 1.2741 / -19.33%  (1.91 turns/yr)
+      4b PASS: U56 T=W ASYMG f=0.1  full 15.01% / 1.2103 / -18.95%  OOS 15.51% / 1.2421 / -18.95%  (2.07 turns/yr)
+      4b PASS: U56 T=W ASYMH hup=0.12  full 15.06% / 1.2126 / -20.05%  OOS 15.51% / 1.2427 / -20.05%  (1.89 turns/yr)
+      4b PASS: U56 T=W FIXH h=0.12  full 15.53% / 1.2343 / -17.83%  OOS 16.29% / 1.2725 / -17.83%  (1.63 turns/yr)
+      4b PASS: U56 T=M SDMULT k=1  full 15.85% / 1.2228 / -18.57%  OOS 16.60% / 1.2673 / -18.57%  (1.61 turns/yr)
+      4b PASS: U56 T=M FRACG f=0.1  full 15.81% / 1.2470 / -19.12%  OOS 16.55% / 1.2928 / -19.12%  (1.42 turns/yr)
+      4b PASS: U56 T=M ASYMG f=0.1  full 15.08% / 1.2177 / -18.96%  OOS 15.62% / 1.2538 / -18.96%  (1.60 turns/yr)
+      4b PASS: U56 T=M ASYMH hup=0.12  full 15.14% / 1.2235 / -19.97%  OOS 15.73% / 1.2618 / -19.97%  (1.38 turns/yr)
+      4b PASS: U56 T=M FIXH h=0.12  full 15.62% / 1.2451 / -18.16%  OOS 16.36% / 1.2810 / -18.16%  (1.13 turns/yr)
+      4b PASS: B136 T=W SDMULT k=1  full 16.10% / 1.2154 / -18.77%  OOS 15.94% / 1.2176 / -18.77%  (2.23 turns/yr)
+      4b PASS: B136 T=W FRACG f=0.1  full 16.04% / 1.2339 / -17.13%  OOS 16.07% / 1.2564 / -17.13%  (2.04 turns/yr)
+      4b PASS: B136 T=W ASYMG f=0.1  full 15.52% / 1.2276 / -16.59%  OOS 15.44% / 1.2383 / -16.59%  (2.17 turns/yr)
+      4b PASS: B136 T=W ASYMH hup=0.12  full 15.23% / 1.2157 / -17.25%  OOS 15.27% / 1.2345 / -17.25%  (1.99 turns/yr)
+      4b PASS: B136 T=W FIXH h=0.12  full 16.11% / 1.2333 / -18.23%  OOS 15.78% / 1.2329 / -18.23%  (1.84 turns/yr)
+      4b PASS: B136 T=M FRACG f=0.1  full 16.03% / 1.2364 / -17.00%  OOS 16.10% / 1.2621 / -17.00%  (1.54 turns/yr)
+      4b PASS: B136 T=M ASYMG f=0.1  full 15.53% / 1.2316 / -16.53%  OOS 15.47% / 1.2447 / -16.53%  (1.71 turns/yr)
+      4b PASS: B136 T=M ASYMH hup=0.12  full 15.35% / 1.2270 / -17.10%  OOS 15.43% / 1.2488 / -17.10%  (1.52 turns/yr)
+      4b PASS: B136 T=M FIXH h=0.12  full 16.10% / 1.2381 / -18.16%  OOS 15.76% / 1.2371 / -18.16%  (1.34 turns/yr)
+
+## RULE 8 — (t, rung) chosen on 2009-2016 ONLY; 2017-2026 read once
+   picks at 10 bps, FULL ladder (144 = 6 arms x 6 families x 4 choosers):
+   ASYMG   4b FULL+OOS on 4 of 6 arms at its BEST chooser (C_ISCALMAR); mean over choosers 3.00; 4a 4 of 24
+   ASYMH   4b FULL+OOS on 4 of 6 arms at its BEST chooser (C_ISCALMAR); mean over choosers 3.00; 4a 3 of 24
+   CAL     4b FULL+OOS on 2 of 6 arms at its BEST chooser (C_ISDD); mean over choosers 0.75; 4a 2 of 24
+   FIXH    4b FULL+OOS on 3 of 6 arms at its BEST chooser (C_ISSHARPE); mean over choosers 1.75; 4a 3 of 24
+   FRACG   4b FULL+OOS on 4 of 6 arms at its BEST chooser (C_ISSHARPE); mean over choosers 2.25; 4a 0 of 24
+   SDMULT  4b FULL+OOS on 0 of 6 arms at its BEST chooser (C_ISCALMAR); mean over choosers 0.00; 4a 0 of 24
+   V1: best LADDER-FREE pre-stated constant reaches 4 of 6 arms (zero IS spend) vs FIXH's best IS-only chooser 3 of 6  ->  TRIGGERED
+
+## V2 — SCALE INVARIANCE of the realised refresh rate across (panel x target)
+family   rung T_trade  n  refresh_mean  refresh_sd  refresh_cv  turn_cv  gross_cv
+SDMULT 1.0000       W 15       44.6763     13.4494      0.3010   0.2756    0.1553
+SDMULT 1.0000       M 15       44.3249     12.2706      0.2768   0.3385    0.1554
+ FRACG 0.1000       W 15       21.3356     11.0387      0.5174   0.2949    0.1541
+ FRACG 0.1000       M 15       21.4675     11.1912      0.5213   0.3716    0.1539
+ ASYMG 0.1000       W 15       38.6739     19.6990      0.5094   0.3027    0.1528
+ ASYMG 0.1000       M 15       38.6496     19.8003      0.5123   0.3703    0.1533
+ ASYMH 0.1200       W 15       22.2102     10.2277      0.4605   0.2930    0.1563
+ ASYMH 0.1200       M 15       22.3235     10.1804      0.4560   0.3589    0.1563
+  FIXH 0.1200       W 15       10.4454      4.7466      0.4544   0.2780    0.1464
+  FIXH 0.1200       M 15       10.6751      4.8967      0.4587   0.3514    0.1467
+   V2 SDMULT: refresh CV {'W': 0.30104063311807455, 'M': 0.2768344261185668} vs FIXH h=0.12 {'W': 0.4544187362357669, 'M': 0.45870628506825945} -> TRIGGERED
+   V2 FRACG: refresh CV {'W': 0.517382716561449, 'M': 0.5213096526560747} vs FIXH h=0.12 {'W': 0.4544187362357669, 'M': 0.45870628506825945} -> NOT triggered
+   V2 ASYMG: refresh CV {'W': 0.5093605633778853, 'M': 0.512303383730926} vs FIXH h=0.12 {'W': 0.4544187362357669, 'M': 0.45870628506825945} -> NOT triggered
+
+## V3 — LADDER-LENGTH FRAGILITY (full ladder vs its first 4 rungs)
+   ASYMG   pick moves on 24 of 24 (arm x chooser) pairs; OOS 4b verdict moves on 0
+   ASYMH   pick moves on 24 of 24 (arm x chooser) pairs; OOS 4b verdict moves on 0
+   FIXH    pick moves on 22 of 24 (arm x chooser) pairs; OOS 4b verdict moves on 5
+   FRACG   pick moves on 19 of 24 (arm x chooser) pairs; OOS 4b verdict moves on 3
+   SDMULT  pick moves on 15 of 24 (arm x chooser) pairs; OOS 4b verdict moves on 0
+   PRE-STATED constants: pick moves on 0 of 30 by construction (no ladder is read)
+
+## V4 — ASYMMETRY (4:1 tight-DOWN / loose-UP) against its symmetric twin
+          pair   n  keep4b_asym  keep4b_sym  keep4a_asym  keep4a_sym  d_oos_Sharpe  win_oos_Sharpe  d_oos_MaxDD_pp  d_oos_CAGR_pp  d_turn_py  d_crash_gross
+ ASYMH vs FIXH 270          144         136           41          30        0.0008          0.4704          1.0126        -0.3259     0.2630        -0.0335
+ASYMG vs FRACG 210          103          92           34          22        0.0077          0.5238          0.6132        -0.1604     0.2314        -0.0112
+   V4 -> TRIGGERED (asymmetric clears 4b at least as often AND cuts gross at least as deep in the crash)
+
+## V5 — CAPITAL: turnover-matched calendar comparand and the crash-excised tape
+   49 distinct 4b FULL+OOS headline cells to re-read
+panel  target T_trade family   rung       how  turn_py  oos_Sharpe  d_matched_cal  x_oos_Sharpe  x_d_matched_cal  x_keep4b_oos
+ B136  0.1200       M  ASYMH 0.2000   chooser   1.8559      1.2620         0.0389        1.4578          -0.0432          True
+ B136  0.1200       W  ASYMH 0.2500   chooser   2.1037      1.2762         0.1288        1.4621          -0.0507          True
+ B136  0.1600       M  ASYMG 0.1000 prestated   1.7114      1.2447         0.0471        1.4433           0.0271         False
+ B136  0.1600       M  ASYMG 0.3000   chooser   0.8778      1.2302         0.1973        1.4386          -0.0358          True
+ B136  0.1600       M  ASYMG 0.5000   chooser   0.5543      1.2149         0.1992        1.4595          -0.0125         False
+ B136  0.1600       M  ASYMH 0.1200 prestated   1.5199      1.2488         0.0662        1.4564           0.0302         False
+ B136  0.1600       M  ASYMH 0.2000   chooser   1.2216      1.2414         0.0790        1.4634          -0.0131         False
+ B136  0.1600       M   FIXH 0.1200 prestated   1.3382      1.2371         0.0668        1.4540          -0.0029         False
+ B136  0.1600       M   FIXH 0.2500   chooser   0.7315      1.1944         0.1787        1.4468          -0.0252          True
+ B136  0.1600       M  FRACG 0.1000 prestated   1.5390      1.2621         0.0782        1.4617           0.0387         False
+ B136  0.1600       M  FRACG 0.1500   chooser   1.3165      1.2563         0.0875        1.4681           0.0076         False
+ B136  0.1600       W  ASYMG 0.1000 prestated   2.1745      1.2383         0.0363        1.4370           0.0212         False
+ B136  0.1600       W  ASYMG 0.3000   chooser   1.3942      1.1889         0.1828        1.3935          -0.0672          True
+ B136  0.1600       W  ASYMH 0.1200 prestated   1.9875      1.2345         0.0464        1.4434           0.0352         False
+ B136  0.1600       W  ASYMH 0.2000   chooser   1.7050      1.2443         0.1254        1.4678          -0.0126         False
+ B136  0.1600       W   FIXH 0.1200 prestated   1.8403      1.2329         0.0709        1.4497          -0.0026         False
+ B136  0.1600       W   FIXH 0.2500   chooser   1.1859      1.1888         0.1827        1.4420          -0.0186          True
+ B136  0.1600       W  FRACG 0.1000 prestated   2.0362      1.2564         0.0647        1.4571           0.0470         False
+ B136  0.1600       W  FRACG 0.1500   chooser   1.8527      1.2416         0.0766        1.4541           0.0083         False
+ B136  0.1600       W  FRACG 0.5000   chooser   0.9966      1.1579         0.1518        1.3777          -0.0829         False
+ B136  0.1600       W SDMULT 1.0000 prestated   2.2270      1.2176         0.0116        1.4499           0.0320         False
+ B136  0.2000       M   FIXH 0.1600   chooser   0.9738      1.1957         0.0994        1.4160          -0.0321         False
+ B136  0.2000       W  ASYMG 0.5000   chooser   1.0833      1.1864         0.1721        1.4472           0.0066          True
+ B136  0.2000       W  ASYMH 0.2000   chooser   1.4639      1.2230         0.1706        1.4458           0.0007         False
+ B136  0.2000       W  FRACG 0.3000   chooser   1.1501      1.1991         0.1847        1.4658           0.0253         False
+  U56  0.1000       W  FRACG 0.3000   chooser   1.6786      1.3961         0.4102        1.5692           0.1133          True
+  U56  0.1200       M  ASYMG 0.3000   chooser   1.4074      1.3802         0.1247        1.5739           0.0084          True
+  U56  0.1200       M  FRACG 0.2000   chooser   1.4774      1.3225         0.0360        1.5226          -0.0529         False
+  U56  0.1200       W  ASYMG 0.3000   chooser   1.8118      1.3397         0.2087        1.5346           0.0283          True
+  U56  0.1200       W  ASYMH 0.2500   chooser   1.9099      1.3654         0.1938        1.5648           0.0431          True
+  U56  0.1600       M  ASYMG 0.1000 prestated   1.6001      1.2538         0.0141        1.4451          -0.0025         False
+  U56  0.1600       M  ASYMH 0.1200 prestated   1.3813      1.2618         0.0368        1.4575          -0.0062         False
+  U56  0.1600       M  ASYMH 0.2000   chooser   1.0970      1.2716         0.0667        1.4696          -0.0342         False
+  U56  0.1600       M   FIXH 0.1200   chooser   1.1341      1.2810         0.0735        1.4892          -0.0093         False
+  U56  0.1600       M   FIXH 0.1200 prestated   1.1341      1.2810         0.0735        1.4892          -0.0093         False
+  U56  0.1600       M  FRACG 0.1000   chooser   1.4167      1.2928         0.0653        1.4864           0.0277         False
+  U56  0.1600       M  FRACG 0.1000 prestated   1.4167      1.2928         0.0653        1.4864           0.0277         False
+  U56  0.1600       M SDMULT 1.0000 prestated   1.6069      1.2673         0.0271        1.4809           0.0331         False
+  U56  0.1600       W  ASYMG 0.1000 prestated   2.0699      1.2421         0.0100        1.4319          -0.0023         False
+  U56  0.1600       W  ASYMG 0.5000   chooser   0.9472      1.2032         0.1494        1.4400          -0.0110         False
+  U56  0.1600       W  ASYMH 0.1200 prestated   1.8905      1.2427         0.0203        1.4375           0.0079         False
+  U56  0.1600       W  ASYMH 0.2000   chooser   1.5740      1.2539         0.1080        1.4509          -0.0288         False
+  U56  0.1600       W   FIXH 0.1200 prestated   1.6254      1.2725         0.1081        1.4801          -0.0053         False
+  U56  0.1600       W  FRACG 0.1000 prestated   1.9055      1.2741         0.0509        1.4674           0.0374         False
+  U56  0.1600       W  FRACG 0.1500   chooser   1.7094      1.2359         0.0458        1.4462          -0.0304         False
+  U56  0.1600       W SDMULT 1.0000 prestated   2.0923      1.2372         0.0039        1.4656           0.0308         False
+  U56  0.2000       M  ASYMG 0.5000   chooser   0.5820      1.2491         0.1735        1.5498           0.1053          True
+  U56  0.2000       M  ASYMH 0.2500   chooser   0.7574      1.2550         0.1633        1.4669           0.0171         False
+  U56  0.2000       W  ASYMH 0.2000   chooser   1.3675      1.2447         0.1654        1.4678           0.0354         False
+
+## CENSUS — both KEEP paths at every cell (all grid points published)
+family  cost  cells  keep4b_full  keep4b_oos  keep4b  keep4a
+ ASYMG     0    210          105         128     104      36
+ ASYMG    10    210          104         122     103      34
+ ASYMG    25    210          101         102     100      27
+ ASYMG    50    210           79          89      75      16
+ ASYMH     0    270          146         177     146      43
+ ASYMH    10    270          144         172     144      41
+ ASYMH    25    270          135         137     135      26
+ ASYMH    50    270           98         123      98      11
+   CAL     0    120           41          44      41       6
+   CAL    10    120           35          43      35       6
+   CAL    25    120           33          34      32       3
+   CAL    50    120           21          26      21       0
+  FIXH     0    300          176         186     176      35
+  FIXH    10    300          152         182     152      34
+  FIXH    25    300          133         152     133      23
+  FIXH    50    300          107         127     107       6
+ FRACG     0    240          122         144     119      29
+ FRACG    10    240          111         139     108      26
+ FRACG    25    240          106         117     103      16
+ FRACG    50    240           85          94      83      10
+SDMULT     0    240           82          91      82      14
+SDMULT    10    240           62          85      62      14
+SDMULT    25    240           59          66      59       7
+SDMULT    50    240           44          52      44       0
+   binding leg at 4b failures (10bps): L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 182; L5_CAGR 176; L2_H2|L3_OOS|L4_DD|L5_CAGR 133; L4_DD 120; L2_H2|L3_OOS|L4_DD 77; L1_H1|L2_H2|L3_OOS|L5_CAGR 69
+
+# gates: 9/9 pass
