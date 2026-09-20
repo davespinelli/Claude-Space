@@ -1,0 +1,150 @@
+# Idea 2067 (lane cloud, 2026-09-20) — is the FRACTION RULE's crash-excised edge RESOLVABLE?
+# statistic: Sharpe(book) - turnover-matched CALENDAR interp over R ['D', 'W', 'M', 'Q'], paired circular-block bootstrap, weight w frozen at the full-sample turnover match.
+# tuned dials (2, both bootstrap): block L [5, 10, 21, 63] (headline 21), draws 2000 (headline) / 8000 (stability).  seed 2067.
+# reported, not tuned: panel, trade cadence ['W', 'M'], f [0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5], cost [0, 10, 25, 50] bps, tape (ALL / XCRASH 2020-02-19..2020-03-23), window (FULL / OOS >= 2017-01-01).
+# t FIXED at 0.16 (inherited).  sigma (L=20, d=0).  warm-up 260.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0 (sprint brief)
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%), 1.77 turns/yr
+   SPY                      15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   books run (26 cells)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%), 2.01 turns/yr
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   books run (26 cells)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%), 2.57 turns/yr
+   SPY                      14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   books run (26 cells)
+
+# grid: 312 scored rows (78 cells x 4 cost rungs)
+
+## EDGE + PAIRED BLOCK BOOTSTRAP (all cells, both tapes, both windows, 4 blocks)
+   U56 bootstrapped
+   B136 bootstrapped
+   SMALL665 bootstrapped
+# bootstrap rows: 1080
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 reproduces idea 2026's FRACG f=0.10 cells (turnover, OOS Sharpe): max|d| = 0.000e+00   (target < 1e-9)
+  GATE PASS  G2 reproduces idea 2026's matched-calendar edge, ALL tape (d_matched_cal): max|d| = 0.000e+00   (target < 1e-9)
+  GATE PASS  G3 reproduces idea 2026's matched-calendar edge, XCRASH tape (x_d_matched_cal): max|d| = 0.000e+00   (target < 1e-9)
+  GATE PASS  G4 reproduces idea 2026's incumbent FIXH h=0.12 XCRASH edges: max|d| = 0.000e+00   (target < 1e-9)
+  GATE PASS  G2a bootstrap-consistent (ddof=0) vs published (ddof=1) Sharpe convention: max|d| = 4.392e-05   (target < 1e-3)
+  GATE PASS  G5 gross never levered: max gross_mean 0.935269   (target <= 1.0)
+  GATE PASS  G6 every cell bootstrapped on every (tape x window x block): 16 .. 16 rows/cell   (target == 16)
+  GATE PASS  G7 clamped (un-matchable) cells flagged, not silently scored: 10 of 42 FRACG headline cells clamped   (target reported)
+
+## V1 — is the edge RESOLVABLE?  (share of cells whose 95% BASIC interval excludes 0)
+  tape window  block  cells  matched_cells  mean_edge    pos  share_excl0  share_excl0_matched  share_excl0_pct  share_excl0_t  mean_SE  mean_absT
+   ALL   FULL      5     42             32     0.0435 0.9286       0.0238               0.0000           0.0476         0.0238   0.0440     1.0645
+   ALL   FULL     10     42             32     0.0435 0.9286       0.0476               0.0000           0.0476         0.0476   0.0442     1.0474
+   ALL   FULL     21     42             32     0.0435 0.9286       0.0476               0.0000           0.0476         0.0476   0.0436     1.0376
+   ALL   FULL     63     42             32     0.0435 0.9286       0.0476               0.0000           0.0476         0.0476   0.0436     1.0355
+   ALL    OOS      5     42             32     0.0660 1.0000       0.2619               0.3438           0.2619         0.2619   0.0648     1.4091
+   ALL    OOS     10     42             32     0.0660 1.0000       0.2619               0.3438           0.2619         0.2619   0.0659     1.3760
+   ALL    OOS     21     42             32     0.0660 1.0000       0.2619               0.3438           0.2381         0.2619   0.0641     1.3622
+   ALL    OOS     63     42             32     0.0660 1.0000       0.2857               0.3750           0.2619         0.2619   0.0642     1.3947
+XCRASH   FULL      5     42             32    -0.0077 0.5238       0.0000               0.0000           0.0000         0.0000   0.0335     0.7104
+XCRASH   FULL     10     42             32    -0.0077 0.5238       0.0000               0.0000           0.0000         0.0000   0.0325     0.7230
+XCRASH   FULL     21     42             32    -0.0077 0.5238       0.0000               0.0000           0.0000         0.0000   0.0318     0.7379
+XCRASH   FULL     63     42             32    -0.0077 0.5238       0.0000               0.0000           0.0238         0.0238   0.0295     0.7963
+XCRASH    OOS      5     42             32    -0.0204 0.5476       0.0952               0.1250           0.1190         0.0952   0.0475     1.0225
+XCRASH    OOS     10     42             32    -0.0204 0.5476       0.0476               0.0625           0.0952         0.0952   0.0464     1.0179
+XCRASH    OOS     21     42             32    -0.0204 0.5476       0.0476               0.0625           0.1190         0.0714   0.0456     1.0342
+XCRASH    OOS     63     42             32    -0.0204 0.5476       0.1429               0.1875           0.1667         0.1429   0.0414     1.1669
+   V1 headline (XCRASH / OOS / block 21): 0.048 of 42 cells resolvable, mean edge -0.0204, mean SE 0.0456  ->  NOT triggered (bar > 0.5)
+
+## V2 — idea 2026's OWN four pre-stated arms (f = 0.10), interval by interval
+panel T_trade family   rung   tape  turn_py calA calB      w  clamped    edge     SE       t    lo95   hi95  excl0  excl0_pct
+  U56       W  FRACG 0.1000    ALL   1.9055    W    D 0.0925    False  0.0509 0.0201  2.5305  0.0123 0.0908   True       True
+  U56       W  FRACG 0.1000 XCRASH   1.9055    W    D 0.0925    False  0.0374 0.0180  2.0759  0.0029 0.0739   True       True
+  U56       W   FIXH 0.1200    ALL   1.6254    Q    M 0.8660    False  0.1081 0.0816  1.3256 -0.0465 0.2554  False      False
+  U56       W   FIXH 0.1200 XCRASH   1.6254    Q    M 0.8660    False -0.0053 0.0431 -0.1236 -0.0872 0.0814  False      False
+  U56       M  FRACG 0.1000    ALL   1.4167    M    W 0.7902    False  0.0654 0.0321  2.0378  0.0028 0.1265   True       True
+  U56       M  FRACG 0.1000 XCRASH   1.4167    M    W 0.7902    False  0.0277 0.0225  1.2313 -0.0160 0.0724  False      False
+  U56       M   FIXH 0.1200    ALL   1.1341    M    W 0.1744    False  0.0735 0.0657  1.1190 -0.0470 0.2012  False      False
+  U56       M   FIXH 0.1200 XCRASH   1.1341    M    W 0.1744    False -0.0093 0.0408 -0.2288 -0.0862 0.0757  False      False
+ B136       W  FRACG 0.1000    ALL   2.0362    W    D 0.1345    False  0.0647 0.0219  2.9544  0.0247 0.1093   True       True
+ B136       W  FRACG 0.1000 XCRASH   2.0362    W    D 0.1345    False  0.0470 0.0185  2.5350  0.0089 0.0829   True       True
+ B136       W   FIXH 0.1200    ALL   1.8403    M    W 0.4151    False  0.0709 0.0541  1.3101 -0.0334 0.1724  False      False
+ B136       W   FIXH 0.1200 XCRASH   1.8403    M    W 0.4151    False -0.0026 0.0333 -0.0778 -0.0688 0.0634  False      False
+ B136       M  FRACG 0.1000    ALL   1.5390    M    W 0.8555    False  0.0782 0.0329  2.3760  0.0144 0.1452   True       True
+ B136       M  FRACG 0.1000 XCRASH   1.5390    M    W 0.8555    False  0.0388 0.0231  1.6743 -0.0056 0.0836  False      False
+ B136       M   FIXH 0.1200    ALL   1.3382    M    W 0.4339    False  0.0668 0.0497  1.3438 -0.0249 0.1621  False      False
+ B136       M   FIXH 0.1200 XCRASH   1.3382    M    W 0.4339    False -0.0029 0.0331 -0.0872 -0.0674 0.0632  False      False
+   the committed claim: mean XCRASH edge +0.0377 (2026 published +0.0377), 4 of 4 positive; 2 of 4 RESOLVABLE  ->  V2 NOT triggered
+   incumbent FIXH h=0.12: mean XCRASH edge -0.0050 (2026 published -0.0050), 0 of 4 positive; 0 of 4 resolvable
+
+## V3 — block-ladder stability of the V1 share: L=5: 0.095, L=10: 0.048, L=21: 0.048, L=63: 0.143  span 0.095  ->  TRIGGERED (bar <= 0.2)
+   draw-count read: share_excl0 0.048 at B=2000 vs 0.048 at B=8000; mean SE 0.0456 vs 0.0457
+
+## V4 — FRACG(f=0.10) edge MINUS FIXH(h=0.12) edge, PAIRED on identical blocks
+   panel T_trade   tape  block  edge_FRACG  edge_FIXH    diff  clamped     SE       t      lo     hi     plo    phi  excl0  excl0_pct  excl0_t   nb
+     U56       W    ALL     21      0.0509     0.1081 -0.0572    False 0.0738 -0.7756 -0.1966 0.0771 -0.1916 0.0822  False      False    False 2000
+     U56       W XCRASH     21      0.0374    -0.0053  0.0427    False 0.0404  1.0582 -0.0341 0.1208 -0.0354 0.1196  False      False    False 2000
+     U56       M    ALL     21      0.0654     0.0735 -0.0082    False 0.0389 -0.2097 -0.0819 0.0668 -0.0831 0.0656  False      False    False 2000
+     U56       M XCRASH     21      0.0277    -0.0093  0.0371    False 0.0273  1.3578 -0.0147 0.0931 -0.0190 0.0888  False      False    False 2000
+    B136       W    ALL     21      0.0647     0.0709 -0.0062    False 0.0458 -0.1353 -0.0956 0.0797 -0.0921 0.0832  False      False    False 2000
+    B136       W XCRASH     21      0.0470    -0.0026  0.0496    False 0.0312  1.5878 -0.0090 0.1142 -0.0151 0.1082  False      False    False 2000
+    B136       M    ALL     21      0.0782     0.0668  0.0114    False 0.0303  0.3752 -0.0469 0.0708 -0.0480 0.0696  False      False    False 2000
+    B136       M XCRASH     21      0.0388    -0.0029  0.0416    False 0.0247  1.6843 -0.0076 0.0899 -0.0066 0.0909  False      False    False 2000
+SMALL665       W    ALL     21      0.0420     0.0230  0.0190    False 0.0218  0.8722 -0.0227 0.0602 -0.0222 0.0608  False      False    False 2000
+SMALL665       W XCRASH     21      0.0265     0.0208  0.0057    False 0.0209  0.2741 -0.0359 0.0451 -0.0337 0.0474  False      False    False 2000
+SMALL665       M    ALL     21      0.0404     0.0143  0.0261    False 0.0260  1.0042 -0.0228 0.0789 -0.0267 0.0750  False      False    False 2000
+SMALL665       M XCRASH     21      0.0009    -0.0322  0.0331    False 0.0268  1.2362 -0.0183 0.0866 -0.0204 0.0845  False      False    False 2000
+   XCRASH / block 21: mean diff +0.0350, 6 of 6 positive, 0 of 6 resolvable  ->  V4 NOT triggered
+
+## V5 — CAPITAL: both KEEP paths at every cell, all cost rungs
+FRACG family:
+ cost  cells  keep4b_full  keep4b_oos  keep4b  keep4a  keep4a_oos
+    0     42           26          27      25       0           0
+   10     42           25          26      24       0           0
+   25     42           25          26      24       0           0
+   50     42           18          18      17       0           0
+   binding leg at 4b-FULL failures (10 bps): L2_H2|L3_OOS|L4_DD|L5_CAGR 14; L5_CAGR 2; L4_DD 1
+
+## RULE 8 — f chosen on 2009-2016 ONLY, 2017-2026 read once
+   panel T_trade    chooser  pick_f  is_Sharpe  is_legs  oos_CAGR  oos_Sharpe  oos_MaxDD  spy_oos_CAGR  spy_oos_Sharpe  spy_oos_MaxDD  live_oos_CAGR  live_oos_Sharpe  live_oos_MaxDD  keep4b_full  keep4b_oos  keep4b  keep4a  keep4a_oos                       bind
+     U56       W C_ISSHARPE  0.1500     1.1914        3    0.1594      1.2359    -0.1916        0.1526          0.8737        -0.3372         0.0946           1.2766         -0.1205         True        True    True   False       False                       none
+     U56       W C_ISCALMAR  0.1500     1.1914        3    0.1594      1.2359    -0.1916        0.1526          0.8737        -0.3372         0.0946           1.2766         -0.1205         True        True    True   False       False                       none
+     U56       W   C_ISLEGS  0.1500     1.1914        3    0.1594      1.2359    -0.1916        0.1526          0.8737        -0.3372         0.0946           1.2766         -0.1205         True        True    True   False       False                       none
+     U56       W     C_ISDD  0.5000     1.1082        3    0.1162      1.1746    -0.1759        0.1526          0.8737        -0.3372         0.0946           1.2766         -0.1205        False        True   False   False       False                    L5_CAGR
+     U56       M C_ISSHARPE  0.1000     1.1905        3    0.1655      1.2928    -0.1912        0.1526          0.8737        -0.3372         0.0946           1.2766         -0.1205         True        True    True   False       False                       none
+     U56       M C_ISCALMAR  0.5000     1.0923        3    0.1088      1.1315    -0.1580        0.1526          0.8737        -0.3372         0.0946           1.2766         -0.1205        False        True   False   False       False                    L5_CAGR
+     U56       M   C_ISLEGS  0.1000     1.1905        3    0.1655      1.2928    -0.1912        0.1526          0.8737        -0.3372         0.0946           1.2766         -0.1205         True        True    True   False       False                       none
+     U56       M     C_ISDD  0.5000     1.0923        3    0.1088      1.1315    -0.1580        0.1526          0.8737        -0.3372         0.0946           1.2766         -0.1205        False        True   False   False       False                    L5_CAGR
+    B136       W C_ISSHARPE  0.1500     1.2660        3    0.1572      1.2416    -0.1790        0.1526          0.8737        -0.3372         0.0785           1.1017         -0.1224         True        True    True   False       False                       none
+    B136       W C_ISCALMAR  0.5000     1.2269        4    0.1200      1.1579    -0.1563        0.1526          0.8737        -0.3372         0.0785           1.1017         -0.1224         True        True    True   False       False                       none
+    B136       W   C_ISLEGS  0.5000     1.2269        4    0.1200      1.1579    -0.1563        0.1526          0.8737        -0.3372         0.0785           1.1017         -0.1224         True        True    True   False       False                       none
+    B136       W     C_ISDD  0.5000     1.2269        4    0.1200      1.1579    -0.1563        0.1526          0.8737        -0.3372         0.0785           1.1017         -0.1224         True        True    True   False       False                       none
+    B136       M C_ISSHARPE  0.1500     1.2600        3    0.1584      1.2563    -0.1774        0.1526          0.8737        -0.3372         0.0785           1.1017         -0.1224         True        True    True   False       False                       none
+    B136       M C_ISCALMAR  0.5000     1.2126        4    0.0970      1.1578    -0.1573        0.1526          0.8737        -0.3372         0.0785           1.1017         -0.1224         True       False   False   False       False                       none
+    B136       M   C_ISLEGS  0.5000     1.2126        4    0.0970      1.1578    -0.1573        0.1526          0.8737        -0.3372         0.0785           1.1017         -0.1224         True       False   False   False       False                       none
+    B136       M     C_ISDD  0.5000     1.2126        4    0.0970      1.1578    -0.1573        0.1526          0.8737        -0.3372         0.0785           1.1017         -0.1224         True       False   False   False       False                       none
+SMALL665       W C_ISSHARPE  0.5000     1.1222        3    0.0726      0.5862    -0.2700        0.1526          0.8737        -0.3372         0.0363           0.5447         -0.1416        False       False   False   False       False L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W C_ISCALMAR  0.5000     1.1222        3    0.0726      0.5862    -0.2700        0.1526          0.8737        -0.3372         0.0363           0.5447         -0.1416        False       False   False   False       False L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W   C_ISLEGS  0.5000     1.1222        3    0.0726      0.5862    -0.2700        0.1526          0.8737        -0.3372         0.0363           0.5447         -0.1416        False       False   False   False       False L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W     C_ISDD  0.5000     1.1222        3    0.0726      0.5862    -0.2700        0.1526          0.8737        -0.3372         0.0363           0.5447         -0.1416        False       False   False   False       False L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M C_ISSHARPE  0.5000     1.0650        3    0.0708      0.5761    -0.2636        0.1526          0.8737        -0.3372         0.0363           0.5447         -0.1416        False       False   False   False       False L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M C_ISCALMAR  0.5000     1.0650        3    0.0708      0.5761    -0.2636        0.1526          0.8737        -0.3372         0.0363           0.5447         -0.1416        False       False   False   False       False L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M   C_ISLEGS  0.5000     1.0650        3    0.0708      0.5761    -0.2636        0.1526          0.8737        -0.3372         0.0363           0.5447         -0.1416        False       False   False   False       False L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M     C_ISDD  0.5000     1.0650        3    0.0708      0.5761    -0.2636        0.1526          0.8737        -0.3372         0.0363           0.5447         -0.1416        False       False   False   False       False L2_H2|L3_OOS|L4_DD|L5_CAGR
+   rule-8 picks clearing 4b FULL+OOS: 10 of 24; 4a: 0 of 24
+
+## the PRE-STATED arm (f = 0.10), 10 bps, both KEEP paths
+   panel T_trade  turn_py   CAGR  Sharpe   MaxDD     H1     H2  oos_CAGR  oos_Sharpe  oos_MaxDD                       bind  keep4b_full  keep4b_oos  keep4b  keep4a
+     U56       W   1.9055 0.1558  1.2272 -0.1933 1.2741 1.1851    0.1630      1.2741    -0.1933                       none         True        True    True   False
+     U56       M   1.4167 0.1581  1.2470 -0.1912 1.2937 1.2055    0.1655      1.2928    -0.1912                       none         True        True    True   False
+    B136       W   2.0362 0.1604  1.2339 -0.1713 1.3261 1.1445    0.1607      1.2564    -0.1713                       none         True        True    True   False
+    B136       M   1.5390 0.1603  1.2364 -0.1700 1.3256 1.1499    0.1610      1.2621    -0.1700                       none         True        True    True   False
+SMALL665       W   3.2853 0.0857  0.6352 -0.2919 0.9775 0.3770    0.0588      0.4460    -0.2919 L2_H2|L3_OOS|L4_DD|L5_CAGR        False       False   False   False
+SMALL665       M   2.5025 0.0828  0.6177 -0.2907 0.9476 0.3694    0.0576      0.4389    -0.2907 L2_H2|L3_OOS|L4_DD|L5_CAGR        False       False   False   False
+
+# gates: 9/9 pass
+
+# VERDICTS: V1 NOT | V2 NOT | V3 TRIGGERED | V4 NOT
