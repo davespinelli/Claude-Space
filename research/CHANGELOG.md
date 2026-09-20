@@ -1,3 +1,66 @@
+## 2026-09-20 — idea 2038 (lane C): DOES THE VOL-TARGET FAMILY'S 4b MARGIN DECOMPOSE INTO A STACK OF DRAWDOWN EPISODES? **ANSWERED — NO. IT IS ONE 23-DAY WINDOW AT 11.5x-40.3x CONCENTRATION, PARTLY CANCELLED BY THE OTHER FOUR; THE STANDING KEEP-4b CANDIDATE IS THE LEAST EPISODE-CONCENTRATED CELL OF THE FOUR PRICED. PLUS A KILL ON READING THE EXCISED VERDICT AS A BOOK FAILURE.**
+
+  **THE QUESTION.** Idea 2022 found ONE 24-day window carrying 89% of the drift-vs-calendar edge.
+  Idea 2038 asks the same of the 4b margin AGAINST SPY: excise each OOS SPY peak-to-trough episode
+  in turn and cumulatively, and report how much of the standing candidate's OOS Sharpe and CAGR
+  margin each one owns.
+
+  **THE CONSTRUCTION.** Four committed vol-target cells, none chosen by this run — `C_KEEP`
+  (t=0.10, T=M, R=M, the standing KEEP-4b candidate), `C_MEMO` (t=0.16, T=W, R=W, PARK), `C_GXDD`
+  (t=0.08, idea 1793's chooser pick) and `C_ORCL` (t=0.12, R=D, 1793's OOS oracle) — on U56 and
+  B136 at 10 bps, t+1, sigma (L=20, d=0). The record's excision convention: days are dropped from
+  the STATISTIC for book, SPY and live RULES v2 alike, never from the tape. TUNED (2, every grid
+  point published): DEPTH BAR {0.05, 0.10, 0.15, 0.20} x PADDING {0, 5, 10, 20} trading days.
+  1,664 scored rows, gates **11/11**; committed memo rows reproduced to max |d| **4.54e-05** and
+  the IS half invariant to every excision at exactly **0.000e+00**.
+
+  **H_STACK FALSIFIED (0 of 8 panel x cell pairs).** No single episode owns >= 0.50 of any cell's
+  OOS Sharpe margin; the max is **+38.0%** (B136 `C_ORCL`, 2020Q1) and `C_KEEP` reads **+10.8%**
+  (U56) / **+13.3%** (B136). But 2020Q1 is 23 days = **0.94%** of the 2,441-day OOS tape, so its
+  CONCENTRATION RATIO (margin share / day share) is **11.5x-40.3x**, while every other episode runs
+  NEGATIVE on `C_KEEP` and `C_MEMO` — excising 2018Q4, 2025Q1 or 2018-02 RAISES the margin. The
+  whole 5-episode stack at b=10% (326d = 13.4% of days) owns only **+19.1% / +24.0%** of `C_KEEP`'s
+  +0.4085 / +0.3263 Sharpe margin: **concentration 1.43x / 1.80x, the LOWEST of the four cells**
+  (`C_MEMO` 1.17x/1.03x, `C_GXDD` 2.13x/3.69x, `C_ORCL` 3.33x/3.60x). The margin is one window plus
+  a drag, not a stack and not an even spread.
+
+  **KILL — "excise the crashes and the book dies" is a BAR SHIFT, not a book failure.** 4b OOS
+  flips PASS -> FAIL in **127 of 128** (panel x cell x bar x pad) cells, but the BOOK's OOS Sharpe
+  rises **+1.196** (1.2822 -> 2.4778) while SPY's rises **+1.274** (0.8737 -> 2.1472): both legs
+  co-move and the margin loses only 0.078 of 0.408. On the other two legs the bar moves ~14 pp each
+  — the DD cap `0.60 x SPY` tightens **-20.23% -> -5.98%** and the CAGR floor `0.70 x SPY` rises
+  **10.68% -> 25.38%**. This is idea 2034's axis, measured on the 4b legs.
+
+  **H_CAGR CONFIRMED (6 of 8).** The CAGR floor dies first: the stack owns **+80.9%** of `C_KEEP`'s
+  U56 OOS CAGR margin (B136 **+110.0%**, it crosses zero) against +19.1% / +24.0% of the Sharpe
+  margin. Both `C_MEMO` arms are the exceptions. Resolution caveat stated: B136 `C_GXDD`'s base OOS
+  CAGR margin is **+0.47 pp**, so its four-digit CAGR shares are a thin denominator, not a
+  measurement; Sharpe denominators run 0.3080-0.4748 and carry no such degeneracy.
+
+  **H_DIAL FALSIFIED, AND BOTH TUNED DIALS ARE LIVE — ONE OF THEM INVERTS.** The four cells' order
+  on OOS Sharpe margin is not episode-invariant: **11 / 10 distinct orderings** over 208 (bar x pad
+  x mode) cells per panel, modal share only **24.0% / 30.3%**. At b=5% (13 episodes, 476d) the
+  all-excision Sharpe share for `C_KEEP` is **NEGATIVE** (-35.9% U56, -43.1% B136); padding raises
+  it monotonically at b >= 10% (+19.1% -> +35.8% U56, +24.0% -> +61.8% B136, p=0 to p=20), i.e. the
+  edge sits in the RECOVERY leg as much as in the decline.
+
+  **RULE 8 (2017-2026 read ONCE).** Two legal IS-only choosers x two trade cadences x two panels x
+  32 (bar x pad): **16 of 128 picks clear 4b OOS un-excised, 0 of 128 with every episode excised,
+  0 of 128 clear 4a OOS either way.** Only `C_ISLEGS` on B136 T=M reaches the standing cell (OOS
+  13.05% / 1.2000 / -19.87% against SPY 15.26% / 0.8737 / -33.72% and live RULES v2 7.85% / 1.1017
+  / -12.24%). The CELL clears, the CHOOSER does not — ideas 1771 / 1803 reconfirmed.
+
+  **WHAT IT CHANGES.** No status move: the standing KEEP-4b candidate stays a KEEP-candidate
+  awaiting Sunday review, with an addendum filed on its memo. A companion statistic is now required
+  of any future excision claim — publish the CONCENTRATION RATIO and the BOOK-vs-BENCHMARK split of
+  the move, because a raw "share of the margin" is a small difference of two large co-moving legs.
+  Survivorship: U56 / B136 are CURRENT constituents, so every LEVEL is optimistic; SMALL665 not
+  re-run (the family clears 4b 0 of N there, confirmed four times). RULES.md, PROTOCOL.md, scan.py,
+  bot.py and baseline.py are untouched. Evidence:
+  `research/backtests/2026-09-20_voltgt-4b-margin-episode-stack_C.py` / `.result.md` /
+  `.grid.csv` (1,664) / `.decomp.csv` (1,536) / `.walkforward.csv` (256) / `.episodes.csv` /
+  `.ladder.csv` / `.gates.csv` / `.log.txt`.
+
 ## 2026-09-20 — idea 2022 (lane cloud): IS THE DRIFT TRIGGER'S MATCHED-TURNOVER WIN A DRAWDOWN-TIMING FACT OR A COST FACT? **ANSWERED — A DRAWDOWN-TIMING FACT 24 TRADING DAYS WIDE, AND NOT A COST FACT. IDEA 1799'S "263 OF 263" MUST BE RESTATED AS ONE EPISODE COUNTED 263 TIMES. NO NEW BOOK, NO RULES CHANGE.**
 
   **THE DEFECT THIS CLOSES.** Idea 1799 (same day, lane C) reported that a DRIFT-THRESHOLD refresh

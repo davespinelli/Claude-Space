@@ -52,3 +52,42 @@
     candidate; the two are alternatives on the same dial. Evidence:
     `research/backtests/2026-09-20_cost-priced-is-chooser_B.py` / `.result.md` (gates 13/13,
     G4b reproduces all 480 cells of idea 1793's committed grid at max |Δ| 8.882e-16).
+
+---
+
+## ADDENDUM (2026-09-20, lane C, idea 2038) — THE 4b MARGIN IS **NOT** A STACK OF DRAWDOWN
+## EPISODES, AND THIS CELL IS THE LEAST EPISODE-CONCENTRATED OF THE FOUR. **STATUS UNCHANGED.**
+
+Idea 2038 excised every OOS SPY peak-to-trough episode from the statistic — one at a time and
+cumulatively, deepest-first — at four depth bars x four paddings on U56 and B136, for this cell
+and three sibling vol-target cells (1,664 scored rows; gates **11/11**;
+`research/backtests/2026-09-20_voltgt-4b-margin-episode-stack_C.py` / `.result.md`). It
+reproduces sections 2-4 of this memo at max |Δ| **4.54e-05** and the IS half is invariant to
+every excision at exactly **0.000e+00** (G5).
+
+* **The queue's premise is refuted.** No single episode owns >= 0.50 of any cell's OOS Sharpe
+  margin; the max over 8 (panel x cell) pairs is **+38.0%** and THIS cell reads **+10.8%** (U56)
+  / **+13.3%** (B136). Its whole 5-episode stack at b=10% — 326 days, 13.4% of the OOS tape —
+  owns **+19.1% / +24.0%** of its +0.4085 / +0.3263 Sharpe margin, a **concentration of 1.43x /
+  1.80x** against `C_MEMO` 1.17x/1.03x, `C_GXDD` 2.13x/3.69x and the OOS oracle `C_ORCL`
+  3.33x/3.60x. **This cell is not a crash hedge priced as a growth rule.**
+* **But 2020Q1 alone is 23 days (0.94% of the tape) at 11.5x-14.1x concentration**, and the other
+  four episodes (2022, 2018Q4, 2025Q1, 2018-02) run NEGATIVE — excising them RAISES the margin,
+  i.e. this book gives ground to SPY in the shallower declines. The margin is one window plus a
+  drag, not an even spread and not a stack.
+* **Do not read the excised verdict as a book failure.** 4b OOS flips PASS -> FAIL in 127 of 128
+  cells, but that is a BAR SHIFT (idea 2034's axis): the BOOK's OOS Sharpe rises **+1.196**
+  (1.2822 -> 2.4778) while SPY's rises **+1.274** (0.8737 -> 2.1472), and the 4b DD cap tightens
+  **-20.23% -> -5.98%** with the CAGR floor rising **10.68% -> 25.38%**, ~14 pp each.
+* **The CAGR floor is the leg that dies first**, consistent with the record: the stack owns
+  **+80.9%** of this cell's U56 OOS CAGR margin (B136 +110.0%, it crosses zero) against +19.1% /
+  +24.0% of the Sharpe margin. Point 6's "thin on one leg" warning is an EPISODE fact on the CAGR
+  side.
+* **Required companion statistic for any future excision claim:** publish the CONCENTRATION RATIO
+  (margin share / day share) and the BOOK-vs-BENCHMARK split of the move. The raw "share of the
+  margin" is a small difference of two large co-moving legs.
+* **Unchanged:** point 8's thin-chooser caveat (2038's rule 8: 16 of 128 legal picks clear 4b OOS
+  un-excised, 0 of 128 clear 4a, and only `C_ISLEGS` on B136 T=M reaches this cell); survivorship
+  as in point 8; SMALL not re-run (0 of N, confirmed four times). **Status: KEEP-candidate, path
+  4b, awaiting Sunday review.** RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are
+  untouched by idea 2038.
