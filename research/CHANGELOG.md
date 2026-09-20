@@ -1,3 +1,97 @@
+## 2026-09-20 — idea 2064 (lane B): DOES THE STANDING KEEP-4b CELL SURVIVE *ADVERSARIAL* (BEST-NAME) DELETION? **ANSWERED — SPLIT. THE RANDOM-DELETION NULL NEVER COVERS THE SURVIVORSHIP DIRECTION (0 OF 8), THE B136 CELL HOLDS TO k = 10 AND BREAKS AT k = 20 THROUGH THE CAGR FLOOR, U56 IS KILLED AT k = 5 BY 0.04 pp, AND 4a DIES A THIRD TIME.**
+
+  **THE DEFECT THIS CLOSES.** Idea 2050 deleted `k` names UNIFORMLY AT RANDOM from the standing
+  candidate's panel, kept 4b at 800 of 800 draws, and stated its own limit verbatim: *"random
+  deletion is NOT a point-in-time correction — it removes survivors at random where history
+  removes losers — so it bounds the verdict's SENSITIVITY to the name set and does not de-bias the
+  LEVELS."* B136 and U56 are CURRENT-constituent lists, so their bias is DIRECTIONAL: the list
+  over-includes names that went on to win. Nobody had run that direction.
+
+  **CONSTRUCTION.** The standing cell (`VOLTGT t = 0.10, DRIFT h = 0.08, trade W, ENGINE phase,
+  t+1, 10 bps`) re-scored on deleted panels with the whole book rebuilt on what is left. Two dials,
+  both REPORTED at every rung rather than argmaxed: `k` in {5, 10, 20, 40} x RULE in {**BEST**
+  (delete the k highest full-sample annualised returns), **BEST_IS** (the same ranked on 2009-2016
+  only — ex-ante readable), **WORST**, **RANDOM** (30 seeded draws, 2050's null re-run in-script as
+  the control band)}. 266 books at the cell plus 90 rule-8 picks. Nothing tuned. Path 4a scored
+  against BOTH a FIXED bar (live RULES v2 on the full panel) and a MATCHED bar (rebuilt on the same
+  deleted names); 4b's SPY bar is deletion-invariant. **Gates 10/10**; the undeleted B136 reference
+  reproduces idea 2034's published cell to max abs d = **4.441e-16** and the fast runner reproduces
+  idea 1799's verbatim loop to 5.551e-15. The deleted names are the survivorship poster children:
+  B136 BEST-5 = PLTR, AVGO, TSLA, ANET, NVDA; BEST_IS-5 = NFLX, TSLA, AVGO, REGN, BKNG.
+
+  **(A) THE RANDOM NULL NEVER COVERS THE SURVIVORSHIP DIRECTION — 0 OF 8 RUNGS.** At every
+  (panel, k) the adversarial book reads BELOW the MINIMUM of 30 random draws at the same `k`:
+  B136 BEST Sharpe 1.1603 / 1.1266 / 1.0662 / 0.9832 against random bands [1.1827, 1.2420] /
+  [1.1867, 1.2358] / [1.1735, 1.2641] / [1.1767, 1.2626]; U56 1.0932 / 1.0021 / 0.8021 / 0.4457
+  against [1.1830, 1.2860] / [1.1377, 1.3121] / [1.1105, 1.3474] / [0.9233, 1.4035]. **A
+  800-of-800 random-deletion record is evidence about a null whose support does not reach the
+  survivorship direction at all.** This is the general lesson and it applies to every name-set
+  robustness claim in the record, not only this one.
+
+  **(B) B136 HOLDS TO k = 10, BREAKS AT k = 20, AND EVERY BREAK IS THE CAGR FLOOR.** 5 of 8
+  adversarial rungs keep 4b; **all 4 rungs at k <= 10 keep it**. BEST k=5 **11.62% / 1.1603 /
+  -12.76%** (OOS 11.81% / 1.2019 / -12.76%) and k=10 11.14% / 1.1266 / -12.79% PASS; BEST k=20
+  10.38% / 1.0662 / -12.95% FAILS `L5_CAGR` by **-0.21 pp** and k=40 by -1.23 pp; BEST_IS passes to
+  k=20 and fails at k=40 by -0.28 pp. **Not one failure is drawdown** — `L4_DD` never falls below
+  +6.70 pp and both Sharpe halves and the OOS Sharpe leg stay positive at every rung (worst
+  `L1_H1` +0.0606, worst `L3_OOS` +0.1455). The memo's caveat 7 named the CAGR leg's +1.92 pp as
+  the thin margin; **this is the axis that spends it.**
+
+  **(C) U56 IS KILLED AT k = 5, BY 0.04 pp.** BEST-5 reads 10.55% / 1.0932 / -13.01% against the
+  `0.70 x SPY` floor of 10.59%: `L5_CAGR` **-0.0004**, with every other leg still clearing and all
+  OOS legs passing. k=10 misses by 1.29 pp, k=20 by 3.41 pp, k=40 by 7.11 pp with all five legs
+  failing (MaxDD -26.39%). **Deleting five names of fifty-six ends U56's 4b pass**, and the verdict
+  is 0.04 pp wide — published with the margin, per the record's own standing residue.
+
+  **(D) 4a DIES A THIRD TIME — 0 OF 8 ON BOTH BARS**, where the RANDOM control at the same `k`
+  still passes 0.800 / 0.667 / 0.500 / 0.233. **MaxDD is implicated in 8 of 8** (-11.81% ->
+  -12.76% at k=5 and -13.53% at k=40, through the live book's -12.24% — the same 0.43 pp margin
+  ideas 2050 and 2054 both spent) and the **H1 leg joins at 6 of 8** (H2 at 1 of 8). The matched
+  bar moves the live book's own MaxDD the other way (-10.53% at k=40), so it is no rescue. After
+  latency-cost-phase and random deletion, this is the third independent axis to kill 4a.
+
+  **(E) RULE 8, 2017-2026 READ ONCE, ON THE ADVERSARIAL PANELS.** The legal IS-only chooser
+  (argmax min IS 4b-leg slack, idea 2034's own) re-picks `t` and `h` over the inherited 5 x 10
+  ladder at every deleted panel. On B136 it reaches a 4b-clearing book at only **4 of 8**
+  (undeleted 1 of 1; random control 32 of 32), mean OOS **13.22% / 1.1539 / -17.93%** against SPY
+  OOS 15.26% / 0.8737 / -33.72% and live RULES v2 OOS 7.85% / 1.1017 / -12.24% — still ahead of
+  both OOS Sharpe bars, at a drawdown 6.1 pp deeper than the undeleted cell. **All four failures
+  are `L4_DD`**: the winner-stripped IS window pushes the chooser to aggressive cells (`t = 0.16 /
+  0.20`, `h = 0.25`) whose OOS MaxDD breaches the -20.23% cap at -20.40% to -22.68%. The
+  candidate's `t = 0.10` is picked at 2 of 8 and `h = 0.08` at **0 of 8**, against 1.000 / 0.375 on
+  the random control — **adversarial deletion moves the TARGET dial that random deletion left
+  stable at 57 of 60.** U56 reaches 4b at 2 of 8.
+
+  **WHAT THIS TEST CANNOT DO (stated, not repaired).** Deleting winners BOUNDS survivorship bias;
+  it does not correct it. History does not delete the biggest winners — it fails to list the losers
+  that were there at the time and are absent today, and nothing offline can put a delisted 2011
+  name back. `BEST` chooses its deletion with the whole tape in hand (look-ahead in the STRESS,
+  never in the book), so its levels are pessimistic by construction; `BEST_IS` is the ex-ante
+  readable version and both are published side by side. The `k` ladder is ABSOLUTE, so k = 40 is
+  71.4% of U56 and 29.4% of B136 — the per-panel shares are NOT deletion-matched. SMALL665 is not
+  run (six committed confirmations that this family clears 4b 0 of N on small caps).
+
+  **SURVIVORSHIP.** U56 and B136 are CURRENT-constituent lists; every LEVEL here is optimistic and
+  both 4b bars are easier than on a point-in-time panel. That is precisely what this run bounds,
+  and the bound is one-sided.
+
+  **NO NEW KEEP IS FILED, and no rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py untouched).** This run prices an existing candidate.
+  `2026-09-20_voltgt-drift-b136_KEEP4b_MEMO.md` gains a THIRD addendum: caveat 7's survivorship
+  line is replaced by a measured reach (4b tolerates deleting the 10 best of 136 and not the 20
+  best; U56 does not tolerate 5 of 56), point 3's 4a pass is restated a third time, and the STATUS
+  is unchanged — **KEEP-candidate on path 4b only**, now carrying a 36-of-36 four-axis record, an
+  800-of-800 random-deletion record AND a bounded adversarial reach.
+
+  **RESIDUE, not a rules change:** two of this record's name-set robustness claims now rest on a
+  null whose support excludes the direction the bias actually runs. Any future "N of N under
+  resampling" claim should state the null's DIRECTION, not just its count — filed as idea 2060's
+  companion question and left for the Sunday review.
+
+  Evidence: `research/backtests/2026-09-20_adversarial-survivor-deletion_B.py` / `.result.md` /
+  `.books.csv.gz` / `.walkforward.csv` / `.summary.csv` / `.asymmetry.csv` / `.wf_summary.csv` /
+  `.gates.csv` / `.log.txt` / `.console.txt`.
+
 ## 2026-09-20 — idea 2050 (lane C): IS THE DUAL-PATH CELL A B136 NAME-SET ACCIDENT? **ANSWERED — SPLIT AGAIN, AND ALONG THE SAME SEAM. THE 4b LEG SURVIVES RANDOM NAME DELETION 800 OF 800 (100.0%). THE 4a LEG DIES ON THIS SECOND, INDEPENDENT AXIS TOO (0.280 AT k = 40) AND THROUGH THE SAME DRAWDOWN LEG.**
 
   **THE QUESTION.** Idea 2054 left the standing candidate (`B136, VOLTGT t = 0.10, DRIFT h = 0.08,

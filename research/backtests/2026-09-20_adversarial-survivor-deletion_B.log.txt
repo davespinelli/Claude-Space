@@ -1,0 +1,134 @@
+# Idea 2064 (lane B, 2026-09-20) — ADVERSARIAL (best-name) deletion of the standing KEEP-4b cell
+# cell (INHERITED, not tuned): t=0.1, DRIFT h=0.08, trade W, ENGINE phase, t+1, 10 bps
+# DIALS (2): k [5, 10, 20, 40] (k=0 reference) x RULE ['BEST', 'BEST_IS', 'WORST', 'RANDOM']; RANDOM = 30 seeded draws/rung
+# rule 8 at every deterministic deleted panel + first 8 RANDOM draws: ladder t [0.08, 0.1, 0.12, 0.16, 0.2] x h [0.0, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25]; IS <= 2016-12-31 chooses, OOS >= 2017-01-01 read ONCE
+
+## U56: 56 held names, 2008-01-02 -> 2026-09-18 (18.7y); book window from 2009-01-13
+   LIVE v2 (W, t+1, 10bps)   8.62% / 1.2010 / -12.05%  (H1 1.2276 H2 1.1805; OOS   9.46% / 1.2766 / -12.05%)
+   SPY                         15.12% / 0.8843 / -33.72%  (H1 0.9570 H2 0.8249; OOS  15.26% / 0.8737 / -33.72%)
+   4b bars: FULL MaxDD >= -20.23%, CAGR >= 10.59%;  OOS MaxDD >= -20.23%, CAGR >= 10.68%
+   top-5 by full-sample annualised return: PLTR 63.6%, AVGO 40.0%, TSLA 39.9%, NVDA 35.6%, NFLX 32.5%
+   top-5 by IS (<= 2016-12-31) annualised return: NFLX 47.4%, TSLA 40.0%, AVGO 40.0%, META 27.0%, AMZN 25.6%
+   note (U56, t=0.16, h=0): refresh COUNT differs 1994 vs 2690 — at h = 0 the trigger is a floating-point equality test on the deployed gross and the two runners carry it in different last bits; the BOOK is unaffected.  h = 0 is a ladder rung only; the candidate cell is h = 0.08.
+   U56: 133 books, 45 rule-8 picks
+
+## B136: 136 held names, 2008-01-02 -> 2026-09-18 (18.7y); book window from 2009-01-13
+   LIVE v2 (W, t+1, 10bps)   7.96% / 1.0972 / -12.24%  (H1 1.2296 H2 0.9669; OOS   7.85% / 1.1017 / -12.24%)
+   SPY                         15.12% / 0.8844 / -33.72%  (H1 0.9571 H2 0.8249; OOS  15.26% / 0.8737 / -33.72%)
+   4b bars: FULL MaxDD >= -20.23%, CAGR >= 10.59%;  OOS MaxDD >= -20.23%, CAGR >= 10.68%
+   top-5 by full-sample annualised return: PLTR 63.6%, AVGO 40.0%, TSLA 39.9%, ANET 39.2%, NVDA 35.6%
+   top-5 by IS (<= 2016-12-31) annualised return: NFLX 47.3%, TSLA 40.1%, AVGO 39.9%, REGN 35.7%, BKNG 32.7%
+   note (B136, t=0.16, h=0): refresh COUNT differs 2128 vs 2758 — at h = 0 the trigger is a floating-point equality test on the deployed gross and the two runners carry it in different last bits; the BOOK is unaffected.  h = 0 is a ladder rung only; the candidate cell is h = 0.08.
+   B136: 133 books, 45 rule-8 picks
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1a fast DriftBook reproduces idea 1799's verbatim loop (returns/turnover/gross): max|d| = 5.551e-15   (target < 1e-12)
+  GATE PASS  G1b fast DriftBook reproduces its refresh COUNT at every h > 0 cell: max|d| = 0   (target == 0)
+  GATE PASS  G2 fast live-v2 book reproduces engine.backtest: max|d| = 1.388e-17   (target < 1e-12)
+  GATE PASS  G3 undeleted B136 reference reproduces idea 2034's published candidate: max|d| = 4.441e-16   (target < 1e-9)
+  GATE PASS  G4 every deletion removed exactly k names: 266 of 266   (target all)
+  GATE PASS  G5 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+  GATE PASS  G6 both ranking windows resolve >= max(k) names on every panel: 2 of 2   (target all)
+  GATE PASS  G7 census complete: 266 books / 90 rule-8 picks   (target == 266 / 90)
+  GATE PASS  G8 BEST really deletes winners (mean full CAGR of BEST books < WORST books, B136): 10.6225% vs 13.0782%   (target BEST < WORST)
+
+## V1 / V2 / V3 — THE CANDIDATE CELL UNDER ADVERSARIAL DELETION
+   (t=0.10, h=0.08, W, t+1, 10 bps; RANDOM rows are the mean over 30 seeded draws)
+
+   U56  reference (k=0):  12.52% / 1.2434 / -13.49%  4b PASS  4a-fix FAIL  bind none
+         rule   k   frac    n     4b  4b_ful  4b_oos  4a_fix  4a_mat     CAGR   Sharpe    MaxDD   L5_CAGR    L4_DD binding
+         BEST   5   8.9%    1  0.000   0.000   1.000   0.000   0.000   10.55%   1.0932  -13.01%   -0.0004   0.0723 L5_CAGR 1/1
+         BEST  10  17.9%    1  0.000   0.000   0.000   0.000   0.000    9.29%   1.0021  -12.87%   -0.0129   0.0736 L5_CAGR 1/1
+         BEST  20  35.7%    1  0.000   0.000   0.000   0.000   0.000    7.17%   0.8021  -15.84%   -0.0341   0.0439 L1_H1|L5_CAGR 1/1
+         BEST  40  71.4%    1  0.000   0.000   0.000   0.000   0.000    3.48%   0.4457  -26.39%   -0.0711  -0.0616 L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 1/1
+      BEST_IS   5   8.9%    1  1.000   1.000   1.000   0.000   0.000   10.96%   1.1265  -13.37%    0.0037   0.0687 -
+      BEST_IS  10  17.9%    1  0.000   0.000   1.000   0.000   0.000    9.64%   1.0162  -13.45%   -0.0094   0.0678 L1_H1|L5_CAGR 1/1
+      BEST_IS  20  35.7%    1  0.000   0.000   1.000   0.000   0.000    8.47%   0.9171  -18.06%   -0.0211   0.0218 L1_H1|L5_CAGR 1/1
+      BEST_IS  40  71.4%    1  0.000   0.000   0.000   0.000   0.000    4.17%   0.4629  -39.63%   -0.0641  -0.1940 L1_H1|L4_DD|L5_CAGR 1/1
+        WORST   5   8.9%    1  1.000   1.000   1.000   0.000   0.000   13.18%   1.2715  -15.76%    0.0260   0.0447 -
+        WORST  10  17.9%    1  1.000   1.000   1.000   0.000   0.000   13.35%   1.2529  -14.53%    0.0276   0.0571 -
+        WORST  20  35.7%    1  1.000   1.000   1.000   0.000   0.000   14.86%   1.3578  -15.76%    0.0427   0.0447 -
+        WORST  40  71.4%    1  1.000   1.000   1.000   0.000   1.000   17.51%   1.5266  -13.81%    0.0692   0.0642 -
+       RANDOM   5   8.9%   30  1.000   1.000   1.000   0.000   0.000   12.44%   1.2363  -13.89%    0.0186   0.0634 -
+       RANDOM  10  17.9%   30  1.000   1.000   1.000   0.000   0.000   12.33%   1.2234  -13.84%    0.0174   0.0639 -
+       RANDOM  20  35.7%   30  1.000   1.000   1.000   0.000   0.100   12.52%   1.2297  -13.91%    0.0193   0.0632 -
+       RANDOM  40  71.4%   30  0.733   0.733   0.833   0.000   0.067   11.64%   1.1463  -14.86%    0.0106   0.0537 L5_CAGR 3/30
+
+   B136  reference (k=0):  12.51% / 1.2286 / -11.81%  4b PASS  4a-fix PASS  bind none
+         rule   k   frac    n     4b  4b_ful  4b_oos  4a_fix  4a_mat     CAGR   Sharpe    MaxDD   L5_CAGR    L4_DD binding
+         BEST   5   3.7%    1  1.000   1.000   1.000   0.000   0.000   11.62%   1.1603  -12.76%    0.0103   0.0747 -
+         BEST  10   7.4%    1  1.000   1.000   1.000   0.000   0.000   11.14%   1.1266  -12.79%    0.0056   0.0744 -
+         BEST  20  14.7%    1  0.000   0.000   0.000   0.000   0.000   10.38%   1.0662  -12.95%   -0.0021   0.0728 L5_CAGR 1/1
+         BEST  40  29.4%    1  0.000   0.000   0.000   0.000   0.000    9.35%   0.9832  -13.27%   -0.0123   0.0696 L5_CAGR 1/1
+      BEST_IS   5   3.7%    1  1.000   1.000   1.000   0.000   0.000   11.86%   1.1793  -12.89%    0.0127   0.0734 -
+      BEST_IS  10   7.4%    1  1.000   1.000   1.000   0.000   0.000   11.58%   1.1559  -12.90%    0.0099   0.0733 -
+      BEST_IS  20  14.7%    1  1.000   1.000   1.000   0.000   0.000   11.08%   1.1100  -12.94%    0.0050   0.0729 -
+      BEST_IS  40  29.4%    1  0.000   0.000   1.000   0.000   0.000   10.30%   1.0458  -13.53%   -0.0028   0.0670 L5_CAGR 1/1
+        WORST   5   3.7%    1  1.000   1.000   1.000   1.000   1.000   12.75%   1.2403  -11.69%    0.0217   0.0854 -
+        WORST  10   7.4%    1  1.000   1.000   1.000   0.000   1.000   12.67%   1.2210  -12.47%    0.0208   0.0776 -
+        WORST  20  14.7%    1  1.000   1.000   1.000   0.000   1.000   12.98%   1.2396  -12.63%    0.0240   0.0760 -
+        WORST  40  29.4%    1  1.000   1.000   1.000   1.000   1.000   13.91%   1.2980  -12.07%    0.0333   0.0816 -
+       RANDOM   5   3.7%   30  1.000   1.000   1.000   0.800   0.800   12.46%   1.2225  -12.05%    0.0188   0.0818 -
+       RANDOM  10   7.4%   30  1.000   1.000   1.000   0.667   0.633   12.33%   1.2126  -12.11%    0.0174   0.0812 -
+       RANDOM  20  14.7%   30  1.000   1.000   1.000   0.500   0.433   12.33%   1.2110  -12.29%    0.0174   0.0794 -
+       RANDOM  40  29.4%   30  1.000   1.000   1.000   0.233   0.133   12.33%   1.2113  -12.56%    0.0174   0.0767 -
+
+## V5 — DIRECTION ASYMMETRY: is the RANDOM band the right null for survivorship?
+      panel   k   BEST Sh   BEST_IS     WORST  RAND mean  RAND min  RAND max  BEST inside band?
+        U56   5    1.0932    1.1265    1.2715     1.2363    1.1830    1.2860              False
+        U56  10    1.0021    1.0162    1.2529     1.2234    1.1377    1.3121              False
+        U56  20    0.8021    0.9171    1.3578     1.2297    1.1105    1.3474              False
+        U56  40    0.4457    0.4629    1.5266     1.1463    0.9233    1.4035              False
+       B136   5    1.1603    1.1793    1.2403     1.2225    1.1827    1.2420              False
+       B136  10    1.1266    1.1559    1.2210     1.2126    1.1867    1.2358              False
+       B136  20    1.0662    1.1100    1.2396     1.2110    1.1735    1.2641              False
+       B136  40    0.9832    1.0458    1.2980     1.2113    1.1767    1.2626              False
+
+## V4 — RULE 8: a legal IS-only chooser on the adversarially deleted panels
+   ladder t [0.08, 0.1, 0.12, 0.16, 0.2] x h [0.0, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25]; IS <= 2016-12-31 picks, OOS >= 2017-01-01 read ONCE
+      panel     rule   k   n  reach4b  reach4a    oCAGR  oSharpe   oMaxDD  t=0.10  h=0.08  cells4b
+        U56     NONE   0   1    1.000    0.000   13.55%   1.2113  -16.49%   0.000   0.000     35.0
+        U56     BEST   5   1    1.000    0.000   13.33%   1.1248  -17.64%   0.000   0.000     32.0
+        U56     BEST  10   1    1.000    0.000   12.26%   1.0835  -16.79%   0.000   0.000     17.0
+        U56     BEST  20   1    0.000    0.000    9.68%   0.9180  -17.47%   0.000   0.000      0.0
+        U56     BEST  40   1    0.000    0.000    5.43%   0.6455  -17.42%   0.000   0.000      0.0
+        U56  BEST_IS   5   1    1.000    0.000   14.12%   1.1655  -18.94%   0.000   0.000     39.0
+        U56  BEST_IS  10   1    0.000    0.000   13.98%   1.1683  -17.10%   0.000   0.000      3.0
+        U56  BEST_IS  20   1    0.000    0.000   12.46%   1.0721  -20.05%   0.000   0.000      0.0
+        U56  BEST_IS  40   1    0.000    0.000   10.70%   0.8843  -23.21%   0.000   0.000      0.0
+        U56    WORST   5   1    1.000    0.000   14.24%   1.3537  -13.26%   1.000   0.000     25.0
+        U56    WORST  10   1    1.000    0.000   14.39%   1.3170  -13.96%   1.000   0.000     27.0
+        U56    WORST  20   1    1.000    0.000   15.02%   1.3348  -15.82%   1.000   0.000     30.0
+        U56    WORST  40   1    1.000    0.000   15.92%   1.5544  -12.38%   0.000   0.000     30.0
+        U56   RANDOM   5   8    1.000    0.000   14.50%   1.2965  -15.64%   0.250   0.000     34.6
+        U56   RANDOM  10   8    0.875    0.000   13.82%   1.2213  -17.04%   0.250   0.000     34.4
+        U56   RANDOM  20   8    0.875    0.000   15.14%   1.3039  -16.58%   0.375   0.000     34.2
+        U56   RANDOM  40   8    0.625    0.000   12.35%   1.0990  -17.48%   0.250   0.000     20.5
+       B136     NONE   0   1    1.000    1.000   13.01%   1.2928  -11.81%   1.000   1.000     39.0
+       B136     BEST   5   1    1.000    0.000   12.64%   1.2576  -12.47%   1.000   0.000     38.0
+       B136     BEST  10   1    1.000    0.000   12.77%   1.1843  -14.23%   0.000   0.000     37.0
+       B136     BEST  20   1    1.000    0.000   11.63%   1.0922  -16.12%   0.000   0.000     27.0
+       B136     BEST  40   1    0.000    0.000   11.33%   0.9611  -22.68%   0.000   0.000     16.0
+       B136  BEST_IS   5   1    0.000    0.000   14.81%   1.1945  -20.40%   0.000   0.000     36.0
+       B136  BEST_IS  10   1    0.000    0.000   13.78%   1.1664  -21.64%   0.000   0.000     37.0
+       B136  BEST_IS  20   1    1.000    0.000   13.45%   1.2331  -14.55%   0.000   0.000     36.0
+       B136  BEST_IS  40   1    0.000    0.000   15.37%   1.1416  -21.31%   0.000   0.000     26.0
+       B136    WORST   5   1    1.000    0.000   13.53%   1.3069  -13.66%   1.000   0.000     40.0
+       B136    WORST  10   1    1.000    0.000   13.51%   1.2884  -13.48%   1.000   0.000     38.0
+       B136    WORST  20   1    1.000    0.000   13.45%   1.2767  -12.40%   1.000   0.000     42.0
+       B136    WORST  40   1    1.000    0.000   14.49%   1.3595  -12.42%   1.000   0.000     40.0
+       B136   RANDOM   5   8    1.000    0.500   12.95%   1.2765  -12.50%   1.000   0.375     38.8
+       B136   RANDOM  10   8    1.000    0.500   12.93%   1.2718  -12.25%   1.000   0.375     37.5
+       B136   RANDOM  20   8    1.000    0.250   13.13%   1.2832  -12.54%   1.000   0.250     39.5
+       B136   RANDOM  40   8    1.000    0.125   13.15%   1.2695  -14.03%   0.875   0.125     38.0
+
+## VERDICT (pre-stated rules)
+   V1 B136 adversarial 4b: 5 of 8 rungs keep 4b (FULL legs AND OOS); k <= 10 rungs: 4 of 4
+   V1 -> PARTIAL — breaks first at BEST k=20 (L5_CAGR), BEST k=40 (L5_CAGR), BEST_IS k=40 (L5_CAGR)
+   V2 B136 adversarial 4a: fixed bar 0 of 8, matched bar 0 of 8
+   V3 binding legs over failing adversarial rungs: {'L5_CAGR': np.int64(3)}
+   V4 rule-8 reach on B136 adversarial panels: 4b 4 of 8, mean OOS 13.22% / 1.1539 / -17.93%
+   V5 BEST inside the RANDOM Sharpe band: 0 of 8 (panel, k) rungs
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-20_adversarial-survivor-deletion_B.books.csv.gz / .walkforward.csv / .summary.csv / .asymmetry.csv / .wf_summary.csv / .gates.csv / .log.txt

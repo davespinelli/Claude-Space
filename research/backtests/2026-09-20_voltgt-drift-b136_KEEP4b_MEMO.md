@@ -143,3 +143,40 @@ review, now with a 45-of-45 cost x delay x phase stress record (addenda 1 and 2)
 exact RULES wording in point 9 is unchanged. Evidence:
 `research/backtests/2026-09-20_dualpath-name-set-deletion_C.py` / `.result.md` / `.log.txt` /
 `.draws.csv.gz` / `.summary.csv` / `.walkforward.csv` / `.wf_summary.csv` / `.gates.csv`.
+
+---
+
+## ADDENDUM 3 (2026-09-20, lane B, idea 2064) — **THE SURVIVORSHIP CAVEAT IS REPLACED BY A MEASURED REACH, AND THE RANDOM-DELETION RECORD IS NOT THE RIGHT EVIDENCE FOR IT.**
+
+Idea 2050's 800-of-800 record deletes names UNIFORMLY AT RANDOM and says so itself: that bounds
+SENSITIVITY to the name set, not the BIAS, because history removes losers where the random draw
+removes survivors. Idea 2064 ran the survivorship DIRECTION — delete the `k` highest-returning
+names (`BEST`, full sample; `BEST_IS`, ranked on 2009-2016 only) — on 266 books and 90 rule-8
+picks, gates 10/10, this cell reproduced to 4.441e-16.
+
+1. **The random band never covers the adversarial rung: 0 of 8 (panel, k).** At every rung the
+   BEST book reads below the MINIMUM of 30 random draws at the same `k`. **Addendum 2's and idea
+   2050's name-set records must not be quoted as "survivorship-robust".**
+2. **CAVEAT 7 IS REPLACED, NOT LIFTED, BY A REACH.** On B136 the cell keeps 4b after deleting its
+   **10 best names of 136 (7.4%)** — BEST k=10 reads 11.14% / 1.1266 / -12.79% — and **loses it at
+   the 20 best (14.7%)**, 10.38% / 1.0662 / -12.95%, `L5_CAGR` -0.21 pp. `BEST_IS` reaches k=20.
+   On U56 the pass ends at **k = 5**, by **0.04 pp** of CAGR.
+3. **Every break is the CAGR FLOOR; not one is drawdown.** `L4_DD` never falls below +6.70 pp and
+   both Sharpe halves and the OOS leg stay positive at every rung. Caveat 7's "+1.92 pp is thin" is
+   now the operative constraint, with a measured exchange rate on B136: CAGR 12.51% -> 11.62% ->
+   11.14% -> 10.38% -> 9.35% at k = 0 / 5 / 10 / 20 / 40, i.e. **0.18 pp of CAGR per deleted best
+   name at k = 5, falling to 0.08 pp at k = 40.**
+4. **Point 3 is RESTATED a third time.** Path 4a fails 0 of 8 on the fixed bar and 0 of 8 on the
+   matched bar, MaxDD implicated at 8 of 8 and H1 at 6 of 8, while the random control at the same
+   `k` still passes 0.800 / 0.667 / 0.500 / 0.233.
+5. **Rule 8 on adversarial panels:** reach 4 of 8 (random control 32 of 32), mean OOS 13.22% /
+   1.1539 / -17.93% vs SPY OOS 15.26% / 0.8737 / -33.72% and live RULES v2 OOS 7.85% / 1.1017 /
+   -12.24%; all four failures `L4_DD`. The chooser keeps `t = 0.10` at 2 of 8 and `h = 0.08` at
+   **0 of 8** — adversarial deletion moves the TARGET dial random deletion left stable at 57 of 60.
+6. **Bound, not correction.** Nothing offline can restore a delisted 2011 name; `BEST` is
+   deliberately pessimistic (look-ahead in the stress, never in the book) and `BEST_IS` is the
+   ex-ante readable version. Both published.
+7. **STATUS UNCHANGED — KEEP-candidate on path 4b only**, awaiting the Sunday review, now carrying
+   a 36-of-36 four-axis stress record, an 800-of-800 random-deletion record and a **bounded
+   adversarial reach of 10 names of 136**. Anyone quoting the 4b pass must quote that reach with
+   it. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched by idea 2064.
