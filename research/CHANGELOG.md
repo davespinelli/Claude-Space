@@ -1,3 +1,77 @@
+## 2026-09-20 — idea 1785 (lane cloud): DOES THE VOLTGT DIAL'S MATCHED-TWIN WIN SURVIVE A PAIRED CIRCULAR-BLOCK BOOTSTRAP? **ANSWERED — SPLIT. KILL THE SHARPE HALF OF IDEA 1771's HEADLINE (it is not distinguishable from zero, and neither is its opposite on SMALL665); THE DRAWDOWN HALF SURVIVES AT ~2 SIGMA AND NO FURTHER. NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DEFECT THIS PRICES.** Every addendum since 2026-09-20 has demoted the standing VOLTGT memo —
+  its rung (1771), its convention (1771), its cadence clause (1767), its panel-sourcing (1763) — and
+  what is left carrying the object is ONE sentence: "the vol target is the record's FIRST device to
+  beat its own realised-mean-gross-matched constant-gross twin, OOS +0.0587 Sharpe / +6.16 pp MaxDD
+  on U56, win share 0.810". That sentence was published as a POINT ESTIMATE with no standard error,
+  and its "n" was quoted as 100 cells that are 20 conventions x 5 targets on ONE 2,400-day tape.
+  Idea 1537's paired circular-block bootstrap of exactly this dMaxDD had been open and unrun since
+  2026-09-10.
+
+  **THE CONSTRUCTION.** Two dials, the protocol maximum: BLOCK LENGTH `B` {5, 10, 21, 63} and the
+  twin's GROSS-MATCHING WINDOW `M` {IS, FULL, OOS}. Published, not tuned: target `t` {0.08, 0.10,
+  0.12, 0.16, 0.20}, PANEL {U56, B136, SMALL665}, COST {0, 10, 25, 50} bps, the memo's own sigma cell
+  `(L=20, d=0)`, weekly, next-day, gross capped at 1.00. **540 book rows and 540 bootstrap cells at
+  2,000 paired draws each, every grid point published.** Book and twin are resampled with the SAME
+  block offsets, so the difference keeps its pairing; the seed stream is md5-derived and fixed.
+
+  **REPLICATION FIRST.** G1 the fast runner == `engine.backtest` at **1.4e-17 / 2.1e-17 / 3.5e-17**
+  (three panels, 10 and 25 bps); G2 reproduces the memo's sections 2-4 at **2.76e-04**; **G3
+  reproduces idea 1771's pooled headline EXACTLY — U56 +0.0587 / +0.0616 / 0.810 and B136 +0.0503 /
+  +0.0944 / 0.790**; G4 twins bisected to **2.2e-16**. Gates 12 of 12.
+
+  **V1 TRIGGERED AT 4 OF 4 BLOCK LENGTHS. The Sharpe leg is below this tape's resolution.** At the
+  memo's own rung the observed U56 OOS dSharpe is **+0.0930**, and its bootstrap t reads
+  **+0.80 / +0.78 / +0.87 / +1.04** at B = 5 / 10 / 21 / 63 (SE 0.1156 / 0.1198 / 0.1072 / 0.0899,
+  two-sided p **0.398 / 0.450 / 0.400 / 0.307**), with BOTH the percentile and the pivotal 95% CI
+  covering zero. Across all 180 OOS cells only **0.033** reach |t| >= 2 on dSharpe, and on U56 and
+  B136 the CI covers zero at **1.000** under both conventions. The same instrument kills the
+  OPPOSITE claim too: SMALL665's −0.1929 mean twin LOSS reaches |t| >= 2 in only **0.100** of cells.
+  Neither "the dial beats its twin on Sharpe" nor "the twin beats the dial on small caps" is
+  supported.
+
+  **V2: THE TWO LEGS DISAGREE, AND ONLY THE DRAWDOWN LEG CARRIES SIGNAL.** OOS, 10 bps: dSharpe mean
+  +0.0207 with share obs>0 **0.667**; dMaxDD mean +0.0928 with share obs>0 **1.000** and share
+  t >= 2 **0.522** (U56 0.567, B136 **1.000**, SMALL665 0.000), share t <= −2 **0.000**. The book's
+  drawdown beats its matched twin's at **180 of 180** cells. The two legs must never be averaged into
+  one "twin win".
+
+  **V3: THE INSTRUMENT WORKS FOR DRAWDOWN, BUT THE TWO STANDARD CI CONVENTIONS DISAGREE AND THAT IS
+  THE REAL LIMIT.** The dMaxDD SE moves only **1.27x** across the whole block ladder (0.0356 at B=5
+  to 0.0389 at B=63) — V3 PASS. But the **percentile CI covers zero at 1.000 of 180 cells while the
+  pivotal CI excludes it at 1.000 of U56/B136 cells**, because circular block resampling biases the
+  drawdown draw distribution DOWN (boot mean +0.033…+0.047 against an observed +0.076) by shredding
+  the long declines that make a drawdown. The honest statement is the range: **~1.7-2.1 sigma**, and
+  any future wording that leans on this leg must name which CI it used.
+
+  **V4, RULE 8 (2017-2026 read ONCE): THE BOOTSTRAP-t IS A NO-OP ON ONE LEG AND FRAGILE ON THE
+  OTHER.** 33 legal IS-only picks: 4b OOS **17 of 33**, 4a OOS **3 of 33**. `C_BOOTT_S` makes the
+  IDENTICAL pick to plain `C_ISSHARPE` at 4 of 4 block lengths on all three panels — dividing an
+  unresolvable difference by its own SE adds nothing, the same shape of no-op idea 1793 proved for
+  `C_GXS`. `C_BOOTT_D` clears 4b OOS **7 of 12** but **4b FULL 0 of 12**: its U56 pick `t = 0.08`
+  posts OOS **11.38% / 1.2999 / −12.28%** (PASS, against SPY 15.26% / 0.8738 / −33.72% and live
+  RULES v2 9.46% / 1.2769 / −12.05%) yet fails 4b FULL on the CAGR floor (10.22% against
+  0.70 x SPY = 10.58%) — and on B136 the TUNED DIAL moves the verdict (B=5 → `t=0.20`, 4b OOS FAIL;
+  B >= 10 → `t=0.08`, PASS).
+
+  **CAPITAL ARM.** 15 M=IS books x 4 cost rungs: 4b FULL **8 / 6 / 6 / 5** and 4b OOS **8 / 8 / 7 /
+  5** of 15 at 0 / 10 / 25 / 50 bps; 4a FULL 1 / 1 / 0 / 0 and 4a OOS 1 / 1 / 1 / 0. Binding 4b leg
+  OOS at 10 bps is `L4_DD` (7 of 15), the other three 5 each. **PATH 4a: KILL** — its 3 passing picks
+  are all B136 at `t = 0.08` and only against the live book RESTATED on B136 (1.1019) rather than the
+  real live U56 comparand (1.2769), the same panel-restatement artefact ideas 1763 and 1793 recorded.
+  **SMALL665 clears 4b 0 of 45 rows at every cost rung — memo addendum A2's FOURTH confirmation.**
+
+  **WHAT IT CHANGES.** Idea 1771's headline loses its Sharpe half; the 0.810 win share is not
+  independent evidence and must not be quoted as if it were. The standing VOLTGT memo stays **PARK**
+  (ideas 1771 / 1767 / 1793) and nothing here restores it; idea 1793's `C_GXDD` KEEP-4b candidate is
+  untouched, with the one note that its U56 pick is the same `t = 0.08` cell this run finds failing
+  4b FULL on the CAGR floor. **SURVIVORSHIP:** U56 / B136 / SMALL665 are CURRENT constituents; SMALL
+  drops 54 tickers with `max_1d_move >= 1.0` first. RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py are untouched by idea 1785.
+  Evidence: `research/backtests/2026-09-20_voltgt-twin-win-block-bootstrap_cloud.py` / `.result.md`
+  / `.books.csv` / `.bootstrap.csv` / `.walkforward.csv` / `.surface.csv` / `.gates.csv`.
+
 ## 2026-09-20 — idea 1793 (lane B): CAN AN EXPOSURE-NEUTRAL IS-ONLY CHOOSER REACH THE 4b CELLS THAT PLAIN IS SHARPE MISSES? **ANSWERED — YES ON THE DRAWDOWN LEG (4 of 4 large-panel arms against 2 of 4 and 0 of 4), NO ON THE SHARPE LEG, WHERE THE SAME CORRECTION IS A PROVABLE NO-OP. KEEP-CANDIDATE (path 4b) FOR THE CHOOSER; KILL THE RECORD'S STANDING "IS SHARPE REWARDS THE HIGHER-GROSS BOOK" EXPLANATION. NO RULES CHANGE.**
 
   **THE DEFECT THIS PRICES.** Three runs on 2026-09-20 found the SAME failure and none tried to fix
