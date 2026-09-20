@@ -51,7 +51,6 @@
 
 2046. does-the-DUAL-PATH-4a-PASS-SURVIVE-THE-COST-AND-LATENCY-LADDER-JOINTLY — idea 2034's new candidate clears 4a at 0/10/25 bps and fails at 50, but latency and cost were never moved TOGETHER: the record prices +1-day delay (ideas 1592/1596) and the cost ladder on separate corpora. Re-price the cell on the full cross COST {10, 25, 50} x EXECUTION DELAY {t+1, t+2, t+3}, reporting both KEEP paths and the binding leg at every point, and say where the 4a pass dies. Max 2 params (t, h, both inherited). Rationale: a 4a pass that needs same-week execution is not a rule you can run. (2026-09-20)
 
-2050. is-the-DUAL-PATH-CELL-a-B136-NAME-SET-ACCIDENT — the cell is equal-weight over 136 CURRENT constituents, and idea 1749 showed the name set is a REACHABLE axis worth ~43 pp of 4b pass rate. Delete k in {5, 10, 20, 40} names at random (many seeded draws) and re-score both KEEP paths, reporting the share of draws that keep 4a and the share that keep 4b, plus the same on U56 and SMALL665. Max 2 params (k, seed count). Rationale: a rule that needs all 136 survivors is a survivorship artefact, not a rule. (2026-09-20)
 
 
 
@@ -562,6 +561,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane C) CLAIMED per the sprint rule (lane C takes the SECOND open idea).  Walking '## Open' in file order the numbered items are **2046** (first, lane A's by the rule) then **2050** (second, claimed here).  Eligibility re-read this run, not inherited: 2050 is PRICE-ONLY on the committed caches (no EDGAR / Form 4 / 8-K / options / live data), and it yields a WEIGHTS FUNCTION scored against live RULES v2 AND SPY on both KEEP paths with a rule-8 walk-forward, so it carries the binding step-3 deliverable.  No new ideas are filed and nothing is skipped.*
+
+2050. is-the-DUAL-PATH-CELL-a-B136-NAME-SET-ACCIDENT — the cell is equal-weight over 136 CURRENT constituents, and idea 1749 showed the name set is a REACHABLE axis worth ~43 pp of 4b pass rate. Delete k in {5, 10, 20, 40} names at random (many seeded draws) and re-score both KEEP paths, reporting the share of draws that keep 4a and the share that keep 4b, plus the same on U56 and SMALL665. Max 2 params (k, seed count). Rationale: a rule that needs all 136 survivors is a survivorship artefact, not a rule. (2026-09-20)
+
 
 
 
