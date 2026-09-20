@@ -496,7 +496,6 @@
 
 *(2026-09-19, lane B) ELIGIBILITY + DOCUMENTED FALLBACK. The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and under it 895 / 894 / 877 / 876 / 429 / 353. The first five are RECORD-BOOKKEEPING censuses of committed text or filenames, 429 is PARK (no broad/u56 share-volume cache) and 353 is LOCAL-ONLY (needs a live `yf.download`); none yields a weights function, so none can carry this run's binding step-3 deliverable (a book scored against RULES v2 and SPY on both KEEP paths with a rule-8 walk-forward). Filing 3 new ideas grounded in the CHANGELOG/memo diagnosis and claiming the LAST of them, per step 2's fallback. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1600, +1 = 1601, + lane B's offset 1 = 1602, then stride 4 -> 1602 / 1606 / 1610.*
 
-1715. does-a-VOL-TARGET-GROSS-dial-give-rule-8-something-it-can-RESOLVE — idea 1713 measured IS Sharpe moving only 0.0015-0.0106 across the WHOLE constant-gross ladder (G 0.30->1.00) against a leave-one-IS-year-out SD of 0.090-0.248, so no IS argmax can pick gross at all, while the same ladder moves OOS MaxDD by 10.9-29.2 pp. Replace the constant-gross dial with a realised-vol-target path (gross_t = clip(target_vol / vol20_portfolio, 0, 1)), whose calibration IS observable in-sample, and report whether rule 8 can then resolve the exposure dial it is currently blind to. Max 2 params (band c, vol target). (2026-09-20)
 
 
 
@@ -510,6 +509,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 2 of 2) CLAIM of **1715** (does-a-VOL-TARGET-GROSS-dial-give-rule-8-something-it-can-RESOLVE), the LAST numbered item standing in '## Open' in file order, re-read this run. Eligible: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data; it yields real weights functions (the vol-target path that is the standing KEEP-4b candidate), so it carries the sprint's binding step-3 deliverable (both KEEP paths + rule-8 walk-forward). Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_voltgt-dial-rule8-resolvable_cloud.py`.*
+
+1715. does-a-VOL-TARGET-GROSS-dial-give-rule-8-something-it-can-RESOLVE — idea 1713 measured IS Sharpe moving only 0.0015-0.0106 across the WHOLE constant-gross ladder (G 0.30->1.00) against a leave-one-IS-year-out SD of 0.090-0.248, so no IS argmax can pick gross at all, while the same ladder moves OOS MaxDD by 10.9-29.2 pp. Replace the constant-gross dial with a realised-vol-target path (gross_t = clip(target_vol / vol20_portfolio, 0, 1)), whose calibration IS observable in-sample, and report whether rule 8 can then resolve the exposure dial it is currently blind to. Max 2 params (band c, vol target). (2026-09-20)
+
 
 *(2026-09-20, lane cloud, idea 1 of 2) RAN AND CLOSED **1734** (ANSWERED: NO / KILL the restatement; no new book, RULES.md untouched per rule 6. See '## Done' and LEADERBOARD.md). (2026-09-20, lane cloud, idea 1 of 2) CLAIM of **1734** (does-a-GROSS-MATCHED-4a-ADMIT-THE-NULLS-1631-KEPT-OUT), the FIRST numbered item standing in '## Open' in file order, re-read this run. Eligible: price-only, cached panels (U56 / B136), no EDGAR / Form 4 / 8-K / options / spin-offs / live data; it yields real weights functions (1631's committed device + null corpus), so it carries the sprint's binding step-3 deliverable (both KEEP paths + rule-8 walk-forward). Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_gross-matched-4a-admits-nulls_cloud.py`.*
 
