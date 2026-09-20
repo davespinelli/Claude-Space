@@ -1,3 +1,70 @@
+## 2026-09-20 — idea 809 (lane cloud): DOES ANY COMMITTED WIDTH-OR-GROSS 4b BAND HAVE AN *EMPTY IN-SAMPLE COUNTERPART*? **ANSWERED — DOUBLE KILL. THE PRECONDITION IS COSMETIC (2 OF 23), ITS SHARPER REPLACEMENT IS A PANEL CONFOUND, AND EMPTINESS WAS THE WRONG DIAGNOSTIC ALL ALONG — THE IS BAND IS A *DIFFERENT SET* (JACCARD 0.471), NOT A MISSING ONE.**
+
+  **THE QUESTION.** Idea 806 retired both of 589's doubts about a width candidate and still killed
+  it, because the IS window's own 4b band was EMPTY: no width cleared 4b on 2009-2016, so 0 of 4
+  IS-only selectors could reach a band that exists only on the full sample. If that is general,
+  rule 8 needs "the IS band is non-empty" as a precondition before any band is published. Idea 809
+  was SKIPPED on 2026-09-15 as having "no single book to price"; that reading is OVERTURNED here —
+  it asks for every RUNG of two committed ladders, each a real weights function.
+
+  **THE CONSTRUCTION.** Both committed band families, every rung, three panels, scored TWICE: once
+  on the FULL sample against full-sample SPY bars, once INSIDE the IS window alone against SPY's own
+  IS-window bars, reading nothing after the split. BAND (the live RULES v2 ladder) `c` {0.00..0.12}
+  x `G` {0.50, 0.75, 0.85, 1.00} = 28 rungs; VOLTGT (the standing candidate's ladder) `t`
+  {0.08..0.20} x `h` 10 rungs = 50. 3 x 78 = **234 books**, x COST {10, 25, 50} bps x SPLIT
+  {2016-12-31, 2018-12-31} = **1,404 scored cells**. TUNED: 2, and they are the idea's own — the
+  band set and the split. Gates **7/7**, including: the BAND ladder's (c = 0.03, G = 0.75) rung IS
+  `baseline.rules_v2_weights` to max |dw| = **0**. The IS band's third leg is a declared STAND-IN
+  (SPY's IS second-half Sharpe); V1 is reported with it and without it and reads the same.
+
+  **V1 — THE PRECONDITION IS COSMETIC, 2 OF 23 (8.7%).** 23 of 36 ladders have a non-empty FULL
+  band; exactly 2 are ex-post-only, and both are **U56 / BAND at 25 and 50 bps on the 2016 split** —
+  806's own panel and family, above the headline cost. By family BAND 2/11, **VOLTGT 0/12**; by
+  split 2016 2/12, **2018 0/11**. 806's diagnosis was right about its own candidate and wrong as a
+  law. **KILL on the general clause** (pre-stated bars were >= 50% load-bearing / <= 10% cosmetic).
+
+  **V2 — EMPTINESS WAS THE WRONG DIAGNOSTIC (the finding that survives).** Over the 21 ladders where
+  both bands are non-empty, mean **Jaccard 0.471** (median 0.421, min 0.111, max 1.000). The IS band
+  averages **9.33 rungs against the FULL band's 20.05** and contains the FULL band at only **6 of
+  21**. Worst ladder (B136 / BAND / 25 bps / 2018 split): 1 FULL rung against 9 IS rungs, Jaccard
+  **0.111**. The record has been publishing FULL bands roughly twice the size of the band a chooser
+  standing at the split date could actually see, overlapping them about half the time, and has never
+  said so.
+
+  **V3 — THE PRE-STATED TEST WAS MIS-SPECIFIED, AND IS REPORTED RATHER THAN REWRITTEN.** Applied as
+  written it reads REJECT on a paired mean of -0.0012 Sharpe (1 win, 1 loss) — but on **42 of the 44**
+  paired decisions both arms pick the SAME RUNG, so the paired channel is a no-op by construction
+  and the rule never scored the precondition's only real effect, suppression. Named as mis-specified;
+  everything after it is labelled POST-HOC.
+
+  **V3b — AND THE SHARPER PRECONDITION DIES ON A PANEL CONFOUND (the second KILL).** **30 of 72
+  (41.7%) legal IS-argmax picks sit OUTSIDE their own IS 4b band** — the record's standard rule-8
+  chooser routinely publishes a cell its own IS window says fails 4b. Headline split: INSIDE (n=42)
+  OOS Sharpe 1.1715 / OOS 4b 61.9%; OUTSIDE (n=30) 0.6410 / 20.0%. **It does not survive holding
+  panel fixed:** 24 of the 30 OUTSIDE picks are SMALL665 (4b 0 of 468 regardless); B136 reads
+  dSharpe **-0.0920**, U56 +0.1033, and the OUT picks on the large panels cleared OOS 4b at **6 of
+  6**. The whole lift is SMALL-panel selection.
+
+  **V4 — THE STANDING KEEP-CANDIDATE IS NOT AN EX-POST-ONLY OBJECT.** `B136 VOLTGT t = 0.10, h =
+  0.08` is inside its own ladder's IS 4b band at **5 of 6** (cost, split) cells, binding leg `none`,
+  failing only at (50 bps, 2016 split) on H2 / third leg / CAGR. OOS at the headline 13.01% /
+  1.2928 / -11.81%. First time this cell has been scored against an IS-window-only 4b bar.
+  **SMALL665 is 0 of 468 cells inside the FULL band and 0 inside the IS band on both families at
+  every cost and both splits — eighth independent confirmation.**
+
+  **WHAT IT CHANGES.** (1) **No PROTOCOL change is proposed** — both candidate preconditions are
+  killed. (2) A REPORTING REQUIREMENT is proposed instead, because V2 is what survives: any
+  published band should state its **IS-band Jaccard** beside it. (3) The standing 4b KEEP-candidate
+  is unaffected and slightly strengthened. Sunday review decides. Survivorship: U56 / B136 are
+  CURRENT constituents and SMALL665 a CURRENT sub-$2B screen (54 tickers with `max_1d_move >= 1.0`
+  dropped first), so every LEVEL is optimistic and every 4b bar is easier than on a point-in-time
+  panel; the IS-vs-FULL band CONTRAST is same-tape / same-names / same-ladder and first-order
+  immune, the BAND MEMBERSHIP COUNTS are not. RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py are untouched. Evidence:
+  `research/backtests/2026-09-20_is-empty-4b-band_cloud.py` / `.result.md` / `.grid.csv.gz` /
+  `.ladders.csv` / `.walkforward.csv` / `.candidate.csv` / `.gates.csv` / `.log.txt` /
+  `.console.txt`.
+
 ## 2026-09-20 — idea 2046 (lane cloud): DOES THE DUAL-PATH 4a PASS SURVIVE THE COST AND LATENCY LADDERS *JOINTLY*? **ANSWERED — SPLIT, PLUS A METHOD RESULT. 4b ROBUST 9 OF 9 (t+3 AND 50 bps INCLUDED). 4a IS KILLED BY LATENCY, NOT COST. THE TWO LADDERS ARE ADDITIVE.**
 
   **THE QUESTION.** Idea 2034's dual-path cell (`B136, VOLTGT t = 0.10, DRIFT h = 0.08, trade

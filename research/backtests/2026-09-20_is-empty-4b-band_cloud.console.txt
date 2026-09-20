@@ -1,0 +1,148 @@
+# Idea 809 (lane cloud, 2026-09-20) — does any committed WIDTH-or-GROSS 4b band have an EMPTY IN-SAMPLE counterpart, and does the precondition buy anything OOS?
+# TUNED (2, the idea's own): BAND SET {BAND, VOLTGT} and SPLIT ['2016-12-31', '2018-12-31'].
+# REPORTED, not tuned: every rung (BAND c [0.0, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12] x G [0.5, 0.75, 0.85, 1.0] = 28; VOLTGT t [0.08, 0.1, 0.12, 0.16, 0.2] x h [0.0, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25] = 50), cost [10, 25, 50] bps, panel.
+# execution t+1 throughout; cadence W; warm-up 260; sigma L=20.
+# BASELINES: live RULES v2 (W, t+1, 10 bps) AND SPY, both on each panel's own tape.
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0 (data/small_meta.csv)
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE v2 (W, t+1, 10bps)   8.62% / 1.2010 / -12.05%   (OOS   9.46% / 1.2766 / -12.05%)
+   SPY  FULL                   15.12% / 0.8843 / -33.72%
+   SPY  IS (<= 2016-12-31)        14.96% / 0.8986 / -22.06%
+   FULL bars: H1 0.9570 H2 0.8249 tail 0.8737  MaxDD >= -20.23%  CAGR >= 10.59%
+   IS   bars: H1 0.8378 H2 1.0603 tail 1.0603  MaxDD >= -13.24%  CAGR >= 10.47%
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE v2 (W, t+1, 10bps)   7.96% / 1.0972 / -12.24%   (OOS   7.85% / 1.1017 / -12.24%)
+   SPY  FULL                   15.12% / 0.8844 / -33.72%
+   SPY  IS (<= 2016-12-31)        14.96% / 0.8987 / -22.06%
+   FULL bars: H1 0.9571 H2 0.8249 tail 0.8737  MaxDD >= -20.23%  CAGR >= 10.59%
+   IS   bars: H1 0.8378 H2 1.0604 tail 1.0604  MaxDD >= -13.24%  CAGR >= 10.47%
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE v2 (W, t+1, 10bps)   4.26% / 0.6588 / -14.16%   (OOS   3.63% / 0.5447 / -14.16%)
+   SPY  FULL                   14.01% / 0.8561 / -33.72%
+   SPY  IS (<= 2016-12-31)        12.02% / 0.8316 / -18.61%
+   FULL bars: H1 0.9026 H2 0.8391 tail 0.8737  MaxDD >= -20.23%  CAGR >= 9.81%
+   IS   bars: H1 0.9337 H2 0.7152 tail 0.7152  MaxDD >= -11.16%  CAGR >= 8.42%
+   U56: 468 scored cells
+   B136: 468 scored cells
+   SMALL665: 468 scored cells
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 both ladders priced on every panel: 234 books / 1404 cells   (target == 234 books)
+  GATE PASS  G2 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+  GATE PASS  G3 no NaN verdict anywhere: 0 NaN   (target == 0)
+  GATE PASS  G4 the BAND ladder's (c=0.03, G=0.75) rung IS baseline.rules_v2_weights: max|dw| = 0.000e+00   (target < 1e-12)
+  GATE PASS  G5 net CAGR is monotone non-increasing in cost at every book: 468/468   (target == 468)
+  GATE PASS  G6 the IS read is a real sub-window: mean |IS Sharpe - FULL Sharpe| = 0.1068   (target > 1e-3)
+
+## V1 — HOW GENERAL IS 806's EMPTY IS BAND?  (one row per ladder)
+   36 ladders = 3 panels x 2 families x 3 costs x 2 splits
+   panel     family  cost split       rungs  FULL   IS  IS(4leg)  ex-post-only?  jaccard
+   B136      BAND      10 2016-12-31     28     5    5        5  no             1.000
+   B136      BAND      10 2018-12-31     28     5    9        9  no             0.556
+   B136      BAND      25 2016-12-31     28     2    3        3  no             0.667
+   B136      BAND      25 2018-12-31     28     1    9        9  no             0.111
+   B136      BAND      50 2016-12-31     28     2    2        2  no             1.000
+   B136      BAND      50 2018-12-31     28     0    5        5  no             0.000
+   B136      VOLTGT    10 2016-12-31     50    39   13       13  no             0.333
+   B136      VOLTGT    10 2018-12-31     50    39   21       21  no             0.277
+   B136      VOLTGT    25 2016-12-31     50    37    9        9  no             0.243
+   B136      VOLTGT    25 2018-12-31     50    37   17       17  no             0.256
+   B136      VOLTGT    50 2016-12-31     50    33    5        5  no             0.152
+   B136      VOLTGT    50 2018-12-31     50    33   11       11  no             0.189
+   SMALL665  BAND      10 2016-12-31     28     0    0        0  no             n/a
+   SMALL665  BAND      10 2018-12-31     28     0    0        0  no             n/a
+   SMALL665  BAND      25 2016-12-31     28     0    0        0  no             n/a
+   SMALL665  BAND      25 2018-12-31     28     0    0        0  no             n/a
+   SMALL665  BAND      50 2016-12-31     28     0    0        0  no             n/a
+   SMALL665  BAND      50 2018-12-31     28     0    0        0  no             n/a
+   SMALL665  VOLTGT    10 2016-12-31     50     0    0        0  no             n/a
+   SMALL665  VOLTGT    10 2018-12-31     50     0    0        0  no             n/a
+   SMALL665  VOLTGT    25 2016-12-31     50     0    0        0  no             n/a
+   SMALL665  VOLTGT    25 2018-12-31     50     0    0        0  no             n/a
+   SMALL665  VOLTGT    50 2016-12-31     50     0    0        0  no             n/a
+   SMALL665  VOLTGT    50 2018-12-31     50     0    0        0  no             n/a
+   U56       BAND      10 2016-12-31     28     7    2        2  no             0.286
+   U56       BAND      10 2018-12-31     28     7    6        6  no             0.857
+   U56       BAND      25 2016-12-31     28     6    0        0  YES            0.000
+   U56       BAND      25 2018-12-31     28     6    3        3  no             0.500
+   U56       BAND      50 2016-12-31     28     2    0        0  YES            0.000
+   U56       BAND      50 2018-12-31     28     2    2        2  no             1.000
+   U56       VOLTGT    10 2016-12-31     50    35   21       21  no             0.556
+   U56       VOLTGT    10 2018-12-31     50    35   21       21  no             0.514
+   U56       VOLTGT    25 2016-12-31     50    29   11       11  no             0.333
+   U56       VOLTGT    25 2018-12-31     50    29   13       13  no             0.448
+   U56       VOLTGT    50 2016-12-31     50    19    5        5  no             0.200
+   U56       VOLTGT    50 2018-12-31     50    19    8        8  no             0.421
+
+   V1  ladders with a NON-EMPTY FULL band: 23 of 36
+       of those, EX-POST-ONLY (IS band empty): 2 = 8.7%  -> COSMETIC   (pre-stated bars >= 50% / <= 10%)
+       same read DROPPING the IS third leg (4-leg IS band): 2 = 8.7%  -> the substitution is not carrying it
+       by family: BAND: 2/11; VOLTGT: 0/12
+       by panel : B136: 0/11; U56: 2/12
+       by cost  : 10: 0/8; 25: 1/8; 50: 1/7
+       by split : 2016-12-31: 2/12; 2018-12-31: 0/11
+
+## V2 — WHERE THE IS BAND IS NON-EMPTY, DOES IT POINT AT THE RIGHT RUNGS?
+   21 ladders have BOTH bands non-empty.  mean Jaccard 0.471 (median 0.421, min 0.111, max 1.000)
+   IS band CONTAINS the FULL band at 6/21; FULL contains IS at 11/21
+   mean overlap size 7.62 rungs against FULL 20.05 and IS 9.33
+
+## V3 — RULE 8, OOS READ ONCE: DOES 'THE IS BAND IS NON-EMPTY' BUY ANYTHING?
+   72 chooser decisions per arm (panel x family x cost x split x 2 IS-only choosers)
+   UNCONDITIONAL       : published 72/72;  OOS 4b 32, 4b-OOS 32, 4a 4;  mean OOS Sharpe 0.9505; picks that were NOT in their own IS band 30/72
+   IS-BAND-RESTRICTED  : published 44/72 (the rest are SUPPRESSED by the precondition);  OOS 4b 27, 4b-OOS 27, 4a 5;  mean OOS Sharpe 1.1721
+   PAIRED (both arms publish, n = 44): mean d(OOS Sharpe) -0.0012 (median +0.0000, wins 1, losses 1, same rung 42)
+      OOS 4b:  unconditional 28/44  ->  restricted 27/44
+   SUPPRESSED decisions (IS band empty, n = 28): the unconditional pick would have cleared OOS 4b at 4/28 and full 4b at 4/28; mean OOS Sharpe 0.6003 against SPY OOS 0.8975
+   V3 (PRE-STATED RULE, applied as written) -> REJECT
+   AND THE PRE-STATED RULE IS MIS-SPECIFIED, which is reported rather than rewritten:
+      it pairs only the decisions where BOTH arms publish, and on 42 of those 44 the two arms pick the SAME RUNG.  The paired channel is a NO-OP by
+      construction, so a -0.0012 mean is a one-pairing rounding artefact and carries no
+      information about the precondition.  The precondition's whole effect is SUPPRESSION,
+      which the pre-stated rule never scored.  The reading below is therefore POST-HOC and
+      is weaker evidence than a pre-registered test would be.
+
+## V3b — POST-HOC: THE SHARPER PRECONDITION ('the published cell is itself inside its own IS 4b band')
+   of the 72 unconditional IS-argmax picks, 30 (41.7%) sit OUTSIDE their own IS 4b band — i.e. the chooser published a cell its own IS window
+   says fails 4b.  Split by that membership:
+      INSIDE  its IS band (n = 42): mean OOS Sharpe 1.1715, mean OOS CAGR 12.66%, mean OOS MaxDD -17.39%; OOS 4b 26/42 = 61.9%; 4a 4/42
+      OUTSIDE its IS band (n = 30): mean OOS Sharpe 0.6410, mean OOS CAGR 7.26%, mean OOS MaxDD -23.25%; OOS 4b 6/30 = 20.0%; 4a 0/30
+      GAP: OOS Sharpe +0.5305, OOS 4b rate +41.9%
+      holding PANEL fixed (the OUT arm is not just SMALL665):
+         B136      IN n=22 4b 12  |  OUT n= 2 4b 2  |  dSharpe -0.0920
+         SMALL665  IN n= 0 4b 0  |  OUT n=24 4b 0
+         U56       IN n=20 4b 14  |  OUT n= 4 4b 4  |  dSharpe +0.1033
+
+## V4 — IS THE STANDING KEEP-CANDIDATE INSIDE ITS OWN LADDER'S IS BAND?
+   B136 VOLTGT t=0.10|h=0.08, 6 (cost x split) cells
+     10 bps  split 2016-12-31:  FULL band True  (bind none)   IS band True  (bind none)   IS 4-leg True    OOS  13.01% / 1.2928 / -11.81%
+     10 bps  split 2018-12-31:  FULL band True  (bind none)   IS band True  (bind none)   IS 4-leg True    OOS  12.97% / 1.2641 / -11.81%
+     25 bps  split 2016-12-31:  FULL band True  (bind none)   IS band True  (bind none)   IS 4-leg True    OOS  12.50% / 1.2468 / -12.01%
+     25 bps  split 2018-12-31:  FULL band True  (bind none)   IS band True  (bind none)   IS 4-leg True    OOS  12.43% / 1.2153 / -12.01%
+     50 bps  split 2016-12-31:  FULL band True  (bind none)   IS band False (bind L2_H2|L3_OOS|L5_CAGR)   IS 4-leg False   OOS  11.67% / 1.1700 / -12.71%
+     50 bps  split 2018-12-31:  FULL band True  (bind none)   IS band True  (bind none)   IS 4-leg True    OOS  11.52% / 1.1340 / -12.71%
+   V4 -> the candidate is inside at only 5 of 6 (cost, split) cells
+
+## VERDICT
+   V1 ex-post-only share 8.7% of 23 non-empty-FULL ladders -> COSMETIC
+   V2 mean Jaccard(FULL, IS) where both non-empty: 0.471 over 21 ladders
+   V3 precondition, PRE-STATED rule as written -> REJECT (the rule is mis-specified;
+      it scored the paired no-op channel, not the suppression channel — see V3 / V3b)
+   V3b POST-HOC: the sharper 'published cell inside its own IS band' precondition would
+      have suppressed 30 of 72 published picks, whose OOS 4b rate was 20.0% against 61.9% for the picks it keeps —
+      BUT THAT GAP IS CONFOUNDED BY PANEL and does NOT survive: 24 of the 30 suppressed picks are SMALL, a panel that clears 4b at 0 of 468 cells
+      regardless.  Holding panel fixed the gap vanishes or reverses (see V3b's per-panel
+      lines), and on the large panels the OUT picks cleared OOS 4b at 6 of 6.  So the sharper precondition is NOT
+      supported either: this is a SECOND KILL, not a replacement clause.
+   V4 standing candidate -> inside at only 5 of 6 (cost, split) cells
+   gates: 7/7 pass
+   SURVIVORSHIP: U56 / B136 are CURRENT constituents and SMALL a CURRENT sub-$2B screen,
+   so every LEVEL is optimistic and every 4b bar is easier than on a point-in-time panel.
+   The IS-vs-FULL band CONTRAST is same-tape / same-names / same-ladder and first-order
+   immune; the BAND MEMBERSHIP COUNTS are not.
