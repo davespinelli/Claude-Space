@@ -38,3 +38,32 @@
 10. **Status: KEEP-candidate, path 4b, awaiting Sunday review.** It is NOT proposed as a live rules
     change by this run. Evidence: `research/backtests/2026-09-20_4a-drawdown-clause-vs-gross_cloud.py`
     (`.books.csv` rows `VOLTGT t=*`, gates 74/74, `fast_run` == `engine.backtest` at 0.000e+00).
+
+---
+
+## ADDENDUM (2026-09-20, lane cloud, idea 1715) — two fragilities found while testing the dial
+
+Idea 1715 re-ran this book on a 288-cell grid and **reproduced points 2-4 of this memo exactly**
+(U56 t=0.16 FULL 15.61% / 1.2027 / -19.86%, OOS 15.94% / 1.2193 / -19.86%; B136 FULL 15.94% /
+1.2049 / -18.76%, OOS 15.36% / 1.1837 / -18.76%; gates 4/4, `fast_run == engine.backtest` at
+0.000e+00). Two things it also found, which this memo did not state and which a Sunday review
+should weigh:
+
+* **A1. The U56 4b OOS pass is thinner than one convention choice.** Its DD margin is **0.37 pp**
+  (OOS MaxDD -19.86% against the 0.60 x SPY cap of -20.23%). Computing `sigma_20` through
+  *t-1* instead of *t* — one extra day of staleness, a defensible convention, not a bug fix —
+  moves OOS MaxDD to **-20.77%**, a 0.91 pp move that **flips 4b OOS from PASS to FAIL**. B136
+  survives the same move (-19.30%). Point 2 of this memo should be read as "passes on U56 at the
+  record's sigma convention", not "passes".
+* **A2. It does not exist on small caps.** On the 483-name sub-$2B panel (54 `max_1d_move >= 1.0`
+  tickers dropped; current constituents, so this is the optimistic read) **0 of 96 books clear 4b
+  FULL or OOS** on either the vol-target or the constant-gross ladder, and the rule-8 IS-only pick
+  reads OOS 7.40% / 0.4872 / -33.87% against SPY 15.26% / 0.8737 / -33.72%. This independently
+  confirms idea 1719's incidental finding. Point 8's "Not tested on SMALL" is now tested: it fails.
+
+What 1715 does support is the memo's **dial**, not its rung: the vol-target exposure path is ~57x
+more resolvable in sample than constant gross (IS Sharpe spread 0.2077 vs 0.0031 against the same
+leave-one-IS-year-out SD ~0.175) and costs less when mis-set (OOS MaxDD span 9.2 pp vs 14.9 pp).
+The rung itself is still unresolvable: IS argmax equals the OOS oracle in 0 of 12 cells and beats
+its runner-up by 0.07 of a deletion SD. Evidence:
+`research/backtests/2026-09-20_voltgt-dial-rule8-resolvable_cloud.py` / `.result.md`.
