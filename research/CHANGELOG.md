@@ -1,3 +1,64 @@
+## 2026-09-20 — idea 1753 (lane cloud): IS THE STANDING U56 / GROSS-1.00 / WEEKLY 4b PASS A TRADE-CADENCE ARTEFACT? **ANSWERED — NO. IT IS A CONTIGUOUS CADENCE WINDOW D..M THAT DIES ONLY AT Q, AND THE RULE-8 CHOOSER LANDS INSIDE IT. KEEP-CANDIDATE (path 4b) RE-CERTIFIED ON U56 ONLY.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1741 priced the band's drawdown credit at three TRADE cadences and
+  found the sign reversing outright at Q (positive in 89.4% of weekly books, 81.8% of monthly, 3.0% of
+  quarterly). The record's standing band 4b passer — U56, the live RULES v2 clause-2 equal-weight band
+  book (c = 0.03, gated weight to CASH) at gross 1.00, WEEKLY — had never been scored as a 4b VERDICT
+  against that ladder: idea 1694 walked the weekly PHASE, not the CADENCE, and idea 1761's CAL arm
+  published D / W / M / Q without the 2W rung, without per-leg margins, and without a chooser.
+
+  **THE CONSTRUCTION.** Two tuned dials: CADENCE LADDER {D, W, 2W, M, Q} at the committed
+  last-trading-day anchor (2W = every second weekly anchor; BOTH its phases published) x PANEL AXIS
+  {U56, B136, SMALL665}. Reported, not tuned: GROSS {0.75, 1.00}, COST {0, 10, 25, 50} bps
+  reconstructed exactly off the cost-0 leg. **144 scored books, every cell published** to `_grid.csv`,
+  with all five 4b legs, their margins in their own units, and the failing-leg set at each.
+
+  **THE ANSWER — A WINDOW, NOT A RUNG.** On U56 at gross 1.00 / 10 bps, **4 of 5 rungs clear all five
+  4b legs**: D 11.20%/1.1899/−14.77% (OOS 12.45%/1.2873), W 11.53%/1.2008/−15.91% (OOS
+  12.67%/1.2759), 2W-a 11.81%/1.2141/−15.99% (OOS **13.10%/1.3096**), M 11.90%/1.1734/−18.81% (OOS
+  12.82%/1.2251), against SPY 15.12%/0.8843/−33.72% (OOS 15.26%/0.8737/−33.72%). **Q alone fails**, on
+  the DD cap by itself (−26.07% against the −20.23% cap, L4_DD −5.84 pp) while still clearing the CAGR
+  floor by +0.07 pp. 1741's Q reversal is a DRAWDOWN reversal and it does not reach a tradable rung.
+  Over the cost ladder 19 of 24 U56 g=1.00 cells pass; 2W and M survive all four rungs, D and W die
+  only at 50 bps and only on the CAGR floor.
+
+  **RULE 8 (cadence chosen on 2009-2016 only, 2017-2026 read ONCE): the pass is REACHABLE.** All three
+  legal IS-only choosers — IS Sharpe, IS Calmar, IS 4b-leg count — land on **M** on U56 at gross 1.00,
+  inside the passing set, and all three clear 4b OOS: **12.82% / 1.2251 / −18.81%** against live RULES
+  v2 9.46% / 1.2766 / −12.05% and SPY 15.26% / 0.8737 / −33.72%. The cost of choosing against the OOS
+  oracle (2W-a at 1.3096) is **−0.085 of OOS Sharpe**. This is the first cadence dial in the record
+  whose IS argmax reaches a 4b passer; the VOLTGT016 candidate reached 0 of 3 on U56 (idea 1771).
+
+  **WHAT DOES NOT SURVIVE, and it is half the finding.** The window is a **gross-1.00 AND U56** object.
+  At gross 0.75 — the live book's own rung — **0 of 24** cells pass on any panel at any cadence, the
+  CAGR floor binding at every one (idea 1757's realised-gross reading, reproduced here). On B136 only
+  2W-a clears all five legs and the IS choosers pick W/M, which fail OOS: **0 of 6** legal picks. On
+  SMALL665, **0 of 24**, failing 4–5 legs at every rung. **0 of 144 cells clear path 4a** anywhere —
+  the book's H2 sits 0.0007 below the live book's and its drawdown 3.9 pp deeper. Pooled over panels
+  and gross, legal picks clear 4b OOS 3 of 18 and 4a OOS 0 of 18. Binding-leg census over 144 cells:
+  **L5_CAGR 115 / L2_H2 60 / L3_OOS 52 / L1_H1 40 / L4_DD 35**; Q is the only rung where the DD cap is
+  the majority binder (20 of 24).
+
+  **GATES 9 of 9.** G0 the book IS `baseline.rules_v2_weights(px, 0.03, g)` at 0.000e+00; G1 the fast
+  runner == `engine.backtest` on returns AND turnover at 0.000e+00; G2 the cost identity
+  `r(c) = r0 − turnover·c/1e4` == the engine at 10 and 25 bps, 0.000e+00; **G3 CROSS-RUN: idea 1761's
+  12 committed CAL cells (D/W/M/Q x 3 panels, gross 1.00, 10 bps) reproduce at max |Δ| 8.882e-16**;
+  G4 the 2W mask partitions W (977 = 489 + 488, disjoint); G5 SMALL drops 54 tickers at
+  `max_1d_move >= 1.0`, 665 kept; G6 exactly two dials; G7 no chooser statistic reads a row on or
+  after 2017-01-01; G8 all 144 cells published; G9 no RNG anywhere.
+
+  **SURVIVORSHIP.** U56 / B136 are CURRENT-constituent lists and SMALL a CURRENT sub-$2B screen, so
+  every CAGR and drawdown LEVEL above is optimistic and both 4b bars are easier here than on a
+  point-in-time panel. The cadence contrasts are same-tape, same-names, same-rule comparisons with
+  only the trade dates moved and are first-order immune; the pass COUNTS are not.
+
+  **STATUS.** KEEP-candidate (path 4b) for the band book at gross 1.00 on U56 at any cadence in D..M,
+  memo `research/backtests/2026-09-20_band-g100-cadence_KEEP4b_MEMO.md` with exact RULES wording,
+  awaiting Sunday review. **No rule change this run** (PROTOCOL rule 6); RULES.md, PROTOCOL.md,
+  scan.py, bot.py and baseline.py are untouched. Evidence:
+  `research/backtests/2026-09-20_band-g100-cadence-artefact_cloud.py` / `_grid.csv` / `_choosers.csv`
+  / `_gates.csv` / `.txt`.
+
 ## 2026-09-20 — idea 1757 (lane C): IS THE 4b CAGR FLOOR JUST A GROSS BAR IN DISGUISE? **ANSWERED — YES ON THE LEG, NO ON THE VERDICT. KILL THE PER-UNIT RESTATEMENT AND THE NOMINAL-GROSS READING. NO NEW BOOK.**
 
   **THE DEFECT THIS CLOSES.** Idea 1741 found the 4b CAGR floor is the binding leg almost everywhere
