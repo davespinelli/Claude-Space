@@ -36,7 +36,6 @@
 
 *(2026-09-20, lane B, run 2) ELIGIBILITY + DOCUMENTED FALLBACK.  The LAST numbered item standing in '## Open' is **896** (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and walking UP from the bottom of '## Open' in file order, re-read this run rather than assumed: **896 / 895 / 894 / 877 / 876** are record-bookkeeping censuses of committed FILENAMES and PROSE with no book to price; **429** is PARK for want of a broad/U56 SHARE-volume cache (verified again this run: `data/` holds `volume_small.csv.gz` only and `baseline.load_volume` raises unless small=True); **353** is LOCAL-ONLY (it turns on a live `yf.download` the sandbox has no network for).  None yields a WEIGHTS FUNCTION, so none can carry this run's binding step-3 deliverable (a book scored against live RULES v2 AND SPY, both KEEP paths, rule-8 walk-forward with 2017-2026 read once).  They stay OPEN, unclaimed, not killed.  Step 2's documented fallback therefore applies: **1705 / 1709 / 1713** are filed below, grounded in THIS DAY's CHANGELOG diagnosis — idea 720 found that **rule 8's CHOOSER, not the 4a/4b verdicts, is where the fragility lives** (a one-year IS deletion moves the pick at 8 of 12 chooser x panel pairs and the OOS 4b verdict at 5 of 12; 0 of 100 picks clear 4a) and idea 1695 found 4b is a **two-leg gross INTERVAL of mean width 1.11 of 20 rungs**, so a chooser that lands one rung off lands outside.  All three are price-only; no EDGAR / Form 4 / 8-K / options / live data.  This lane claims the LAST of them, **1713**.  Numbering per hygiene clause (N): max idea label standing anywhere in this file = 1703, +1 = 1704, + lane B's offset 1 -> 1705, then stride 4.*
 
-1705. is-the-4b-FEASIBLE-GROSS-INTERVAL-MIDPOINT-a-BETTER-IS-CHOOSER-than-IS-SHARPE-ARGMAX — 1695 showed 4b is operationally the interval [g_CAGR, g_DD] (mean feasible width 1.11 of 20 rungs, empty at 22 of 45 triples) and 720 showed argmax-IS-Sharpe pins to G 0.95-1.00 while the 4b passes sit at 0.50-0.75, which is why 0 of 100 rule-8 picks clear 4a. Price a chooser that computes the 4b-feasible gross interval ON THE IS WINDOW ONLY and picks its MIDPOINT, against the plain IS-Sharpe argmax, on U56 / B136 / SMALL. Max 2 params (band c, gross G). Price-only, both KEEP paths, rule 8 with 2017-2026 read once. (2026-09-20)
 
 
 
@@ -497,6 +496,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 1 of 2) CLAIMED **1705** — it IS the FIRST numbered item standing in '## Open'. Eligible: price-only (cached U56 / B136 / SMALL panels), no EDGAR / Form 4 / 8-K / options / spin-offs / live data. Claim pushed BEFORE any compute per queue-hygiene clause (C). Script: `research/backtests/2026-09-20_4b-feasible-gross-midpoint-chooser_cloud.py`.*
+
+1705. is-the-4b-FEASIBLE-GROSS-INTERVAL-MIDPOINT-a-BETTER-IS-CHOOSER-than-IS-SHARPE-ARGMAX — 1695 showed 4b is operationally the interval [g_CAGR, g_DD] (mean feasible width 1.11 of 20 rungs, empty at 22 of 45 triples) and 720 showed argmax-IS-Sharpe pins to G 0.95-1.00 while the 4b passes sit at 0.50-0.75, which is why 0 of 100 rule-8 picks clear 4a. Price a chooser that computes the 4b-feasible gross interval ON THE IS WINDOW ONLY and picks its MIDPOINT, against the plain IS-Sharpe argmax, on U56 / B136 / SMALL. Max 2 params (band c, gross G). Price-only, both KEEP paths, rule 8 with 2017-2026 read once. (2026-09-20)
+
 
 
 
