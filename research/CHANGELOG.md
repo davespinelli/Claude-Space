@@ -4616,3 +4616,56 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   the only ruler that separates this PARK from the eight families it killed. Gates 3/3.
   Survivorship: U56 / B136 / SMALL are CURRENT constituents; SMALL worst (delisted sub-$2B names
   absent), so every absolute level is optimistic.
+
+## 2026-09-20 — idea 907 (lane cloud): IS THE DELAY-1 DRAWDOWN MOVE A GROSS FACT OR A WIDTH FACT? **ANSWERED — NEITHER OF 887'S TWO READINGS. IT IS A WIDTH FACT, AND ON DRAWDOWN IT IS NOT RELIABLY A COST AT ALL. KILL THE GROSS READING. NO NEW BOOK.**
+
+  **THE DEFECT THIS CLOSES.** Idea 887's reached 4b cell lost 4.51 pp of MaxDD to one further day of
+  execution delay at g = 1.00 and 3.50 pp at g = 0.75 on the same width, and the record has been
+  reading that pair as evidence that the delay cost SCALES WITH EXPOSURE — i.e. that de-grossing
+  buys execution risk back. It is one cell, and it does not replicate.
+
+  **THE CONSTRUCTION.** Names inside the live 200d +/-3% band, ranked by `baseline.score`'s
+  composite, top N held equal-weighted at gross g, shortfall to CASH; weekly, 10 bps. Axes:
+  **d in {0, 1, 2, 3} EXTRA days beyond the engine's own t+1** x g in {0.50, 0.75, 1.00} x
+  N in {5, 10, 20, 40, 80}, on U56 / B136 / SMALL = **180 books, every rung published**. Delay is
+  an execution-realism axis and is NEVER tuned: only (g, N) are ever chosen, and only on IS rows,
+  which is stricter than the idea's own "max 2 params (delay, gross)" allowance. Gate G2 proves
+  `delay=d` is identical to pre-shifting weights AND the rebalance mask by d (0.000e+00).
+
+  **(A) GROSS CARRIES NOTHING.** Regressing dMaxDD(d=1) on nominal gross gives **R² = +0.0012**
+  pooled over 45 cells, and **+0.0005 / +0.0062 / +0.0016** within U56 / B136 / SMALL — with the
+  slope the WRONG SIGN (−0.40 pp per unit of gross: more exposure, *less* drawdown cost). Realised
+  mean gross is no better (+0.0014). Turnover carries +0.1351 pooled and is unstable across panels
+  (+0.8063 on U56, +0.0408 on B136), so it is collinearity with width, not a carrier.
+
+  **(B) WIDTH CARRIES IT — AND REVERSES SIGN.** N alone gives **R² = +0.4665**. Mean dMaxDD(d=1) by
+  width: N=5 **−0.08 pp**, N=10 **+2.20**, N=20 **+0.83**, N=40 **−2.03**, N=80 **−3.10**. Narrow
+  books lose drawdown to a stale trade; wide books GAIN it. A delay cost quoted without its width
+  is unreadable.
+
+  **(C) AND ON DRAWDOWN IT IS A COIN FLIP.** Mean dMaxDD(d=1) = **−0.437 pp** (one extra day makes
+  drawdown SHALLOWER on average) against an SD of **2.427 pp**; only **21 of 45** cells get worse,
+  and 32 of 45 move less than one SD. Same at d=2 (−0.54 pp, 21/45) and d=3 (−0.79 pp, 17/45).
+  **887's pair does not replicate: g=1.00 loses more than g=0.75 at matched width in 8 of 15
+  pairs.**
+
+  **THE ONE LEG THAT DOES HAVE A SIGN IS SHARPE.** dSharpe(d=1) is negative in **37 of 45** cells,
+  mean **−0.0357** (SD 0.0456); dCAGR −0.285 pp. Delay is a real RETURN cost and a non-cost on
+  drawdown, so the two must never be collapsed into one "execution realism" number.
+
+  **DELAY DOES NOT BREAK 4b — IT ADDS PASSES.** 4b FULL passes run **3 / 2 / 4 / 4** across
+  d = 0/1/2/3 and 4b OOS **4 / 3 / 4 / 4**, with a NEW pass appearing at d=2 and d=3. Of the 3 cells
+  clearing 4b FULL at d=0, 2 survive d=1 and 3 survive d=2 and d=3.
+
+  **RULE 8 (2017-2026 read ONCE, at every delay).** Two IS-only choosers x 3 panels, (g, N) fixed on
+  2009-2016 at d=0: the 6 picks clear **4a OOS 0 of 6 at every delay**, and 4b OOS runs
+  **1/6 → 0/6 → 1/6 → 1/6** as d goes 0 → 3. U56's Calmar pick (g = 1.00, N = 10) clears 4b OOS at
+  d=0 (12.59% / 0.8888 / −18.78%), LOSES it at d=1, and regains it at d=2 and d=3 against a live
+  book at 9.46% / 1.2766 / −12.05% and SPY at 15.26% / 0.8737 / −33.72%. A 4b pass that blinks with
+  one day of execution delay is noise, not robustness. Mean OOS Sharpe move at d=1: −0.1357.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md and PROTOCOL.md untouched):** any published delay
+  or execution-realism cost must carry its WIDTH and its dispersion, and must quote the Sharpe and
+  the MaxDD legs separately — the first has a sign, the second does not. Gates 3/3. Survivorship:
+  U56 / B136 / SMALL are CURRENT constituents; SMALL worst (delisted sub-$2B names absent), so
+  every absolute level is optimistic.
