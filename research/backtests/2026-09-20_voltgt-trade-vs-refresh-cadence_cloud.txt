@@ -1,0 +1,156 @@
+# Idea 1767 (lane cloud, 2026-09-20) — is the VOLTGT016 candidate's MONTHLY BLOWOUT a REBALANCE-COUNT fact or a SIGNAL-STALENESS fact?
+# dials: TRADE cadence T ['D', 'W', 'M', 'Q'] x REFRESH cadence R ['D', 'W', 'M', 'Q'] | reported: panel {U56,B136,SMALL}, target [0.12, 0.16], cost [0, 10, 25, 50] bps | warm-up 260 | IS<=2016-12-31 OOS>=2017-01-01
+# no RNG is used anywhere in this script (G9)
+  GATE PASS  G5 SMALL max_1d_move>=1.0 drop: 54 tickers dropped   (target drop applied)
+  GATE PASS  G6 tuned dials: TRADE cadence T, REFRESH cadence R   (target exactly 2)
+# panel U56: 56 held names (56 columns), 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y)
+# panel B136: 136 held names (136 columns), 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y)
+# panel SMALL: 665 held names (720 columns), 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y)
+  GATE PASS  G0 sigma20(t) == trailing std(r[t-19..t]): |d| = 1.277e-15 at t=800   (target < 1e-12)
+# U56: LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05% (OOS 9.46% / 1.2766 / -12.05%) | SPY 15.12% / 0.8843 / -33.72% (OOS 15.26% / 0.8737 / -33.72%)
+# B136: LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24% (OOS 7.85% / 1.1017 / -12.24%) | SPY 15.12% / 0.8844 / -33.72% (OOS 15.26% / 0.8737 / -33.72%)
+# SMALL: LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16% (OOS 3.63% / 0.5447 / -14.16%) | SPY 14.01% / 0.8561 / -33.72% (OOS 15.26% / 0.8737 / -33.72%)
+  GATE PASS  G1 two-schedule runner == engine.backtest on the diagonal: returns 0.000e+00, turnover 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c)=r0-turn*c/1e4: max|d| = 0.000e+00   (target < 1e-15)
+  GATE PASS  G4 a REFRESH row moves every held name by ONE common factor: 85914 refresh rows, max spread of per-name factors 8.882e-16   (target < 1e-12)
+  GATE PASS  G8 every cell published: 384 rows -> 2026-09-20_voltgt-trade-vs-refresh-cadence_cloud_grid.csv   (target 384)
+  GATE PASS  G3 cross-run vs the standing KEEP-4b memo (points 2-4): max|d| = 4.605e-05   (target < 5e-4 (memo quotes 4 dp))
+
+## THE T x R CROSS at target 0.12, 10 bps — OOS MaxDD (the memo's statistic), rows = TRADE cadence T, cols = REFRESH cadence R; diagonal = the standard book
+
+  U56   OOS MaxDD                        OOS Sharpe                      turnover /yr
+        R=D       R=W       R=M       R=Q        |  R=D       R=W       R=M       R=Q        |  R=D      R=W      R=M      R=Q    
+  T=D   -15.83%   -16.30%   -21.04%   -28.99%   |   1.3365    1.2706    1.2644    1.0119   |    4.34    3.68    3.18    2.56
+  T=W   -15.97%   -16.44%   -21.27%   -29.18%   |   1.3345    1.2726    1.2650    1.0111   |    3.73    2.43    2.13    1.52
+  T=M   -15.79%   -16.27%   -21.01%   -29.00%   |   1.3485    1.2852    1.2865    1.0307   |    3.42    2.28    1.47    0.98
+  T=Q   -15.82%   -16.33%   -20.83%   -28.56%   |   1.3576    1.2954    1.2979    1.0557   |    3.29    2.15    1.39    0.72
+
+  B136   OOS MaxDD                        OOS Sharpe                      turnover /yr
+        R=D       R=W       R=M       R=Q        |  R=D       R=W       R=M       R=Q        |  R=D      R=W      R=M      R=Q    
+  T=D   -13.77%   -15.86%   -22.74%   -32.56%   |   1.2906    1.2168    1.2070    0.9667   |    4.37    3.82    3.34    2.67
+  T=W   -13.80%   -16.01%   -22.99%   -32.72%   |   1.2911    1.2217    1.2104    0.9678   |    3.73    2.56    2.28    1.61
+  T=M   -13.84%   -16.01%   -22.54%   -32.51%   |   1.2968    1.2261    1.2216    0.9770   |    3.41    2.39    1.59    1.06
+  T=Q   -13.81%   -15.94%   -22.39%   -32.14%   |   1.3078    1.2374    1.2349    0.9964   |    3.27    2.25    1.49    0.78
+
+  SMALL   OOS MaxDD                        OOS Sharpe                      turnover /yr
+        R=D       R=W       R=M       R=Q        |  R=D       R=W       R=M       R=Q        |  R=D      R=W      R=M      R=Q    
+  T=D   -24.08%   -27.61%   -37.77%   -48.78%   |   0.4246    0.3808    0.3884    0.3589   |    6.21    5.45    4.76    3.79
+  T=W   -24.44%   -27.67%   -37.78%   -48.76%   |   0.4044    0.3708    0.3707    0.3419   |    5.48    3.42    3.09    2.11
+  T=M   -24.43%   -27.70%   -36.52%   -48.08%   |   0.3972    0.3602    0.3641    0.3328   |    5.05    3.32    1.98    1.25
+  T=Q   -24.51%   -27.72%   -36.55%   -47.90%   |   0.4048    0.3686    0.3746    0.3404   |    4.85    3.11    1.92    0.84
+
+## THE T x R CROSS at target 0.16, 10 bps — OOS MaxDD (the memo's statistic), rows = TRADE cadence T, cols = REFRESH cadence R; diagonal = the standard book
+
+  U56   OOS MaxDD                        OOS Sharpe                      turnover /yr
+        R=D       R=W       R=M       R=Q        |  R=D       R=W       R=M       R=Q        |  R=D      R=W      R=M      R=Q    
+  T=D   -19.17%   -19.71%   -24.28%   -28.99%   |   1.2618    1.2177    1.1810    1.0539   |    3.48    3.10    2.82    2.46
+  T=W   -19.34%   -19.86%   -24.52%   -29.18%   |   1.2615    1.2193    1.1815    1.0538   |    2.61    1.83    1.67    1.32
+  T=M   -19.14%   -19.68%   -24.24%   -29.00%   |   1.2769    1.2343    1.2018    1.0740   |    2.20    1.51    1.05    0.76
+  T=Q   -19.18%   -19.74%   -23.96%   -28.56%   |   1.2892    1.2480    1.2184    1.0992   |    2.03    1.34    0.92    0.52
+
+  B136   OOS MaxDD                        OOS Sharpe                      turnover /yr
+        R=D       R=W       R=M       R=Q        |  R=D       R=W       R=M       R=Q        |  R=D      R=W      R=M      R=Q    
+  T=D   -16.85%   -18.56%   -26.30%   -32.56%   |   1.2419    1.1798    1.1436    1.0044   |    3.60    3.22    2.94    2.57
+  T=W   -16.88%   -18.76%   -26.55%   -32.72%   |   1.2434    1.1837    1.1467    1.0061   |    2.73    1.93    1.78    1.41
+  T=M   -16.86%   -18.74%   -26.10%   -32.51%   |   1.2489    1.1886    1.1563    1.0157   |    2.30    1.61    1.13    0.84
+  T=Q   -16.74%   -18.62%   -25.87%   -32.14%   |   1.2619    1.2020    1.1716    1.0355   |    2.13    1.43    0.99    0.57
+
+  SMALL   OOS MaxDD                        OOS Sharpe                      turnover /yr
+        R=D       R=W       R=M       R=Q        |  R=D       R=W       R=M       R=Q        |  R=D      R=W      R=M      R=Q    
+  T=D   -29.26%   -31.34%   -40.18%   -46.61%   |   0.4478    0.4109    0.4539    0.4623   |    5.77    5.31    4.83    4.18
+  T=W   -29.51%   -31.48%   -40.22%   -46.62%   |   0.4296    0.3994    0.4372    0.4466   |    4.54    3.06    2.87    2.21
+  T=M   -29.61%   -31.44%   -39.06%   -45.96%   |   0.4224    0.3896    0.4289    0.4387   |    3.92    2.73    1.72    1.24
+  T=Q   -29.42%   -31.44%   -39.02%   -45.82%   |   0.4305    0.3971    0.4398    0.4455   |    3.65    2.46    1.55    0.81
+
+## THE 2x2 THAT ANSWERS THE QUESTION (target 0.16, 10 bps, OOS)
+
+  U56
+    (T=W,R=W) the candidate      OOS  15.94% /  1.2193 /  -19.86%   turn  1.83/yr
+    (T=M,R=M) idea 956's monthly OOS  16.46% /  1.2018 /  -24.24%   turn  1.05/yr
+    (T=M,R=W) monthly NAMES,     OOS  16.10% /  1.2343 /  -19.68%   turn  1.51/yr   <- isolates STALENESS
+       weekly SCALAR
+    (T=W,R=M) weekly NAMES,      OOS  16.30% /  1.1815 /  -24.52%   turn  1.67/yr   <- isolates REBALANCE COUNT
+       monthly SCALAR
+    DECOMPOSITION of the +4.38 pp W-minus-M OOS drawdown gap: refreshing the SCALAR weekly recovers +4.57 pp (104% of it), re-spreading the NAMES weekly recovers -0.28 pp (-6%); interaction +0.09 pp
+
+  B136
+    (T=W,R=W) the candidate      OOS  15.36% /  1.1837 /  -18.76%   turn  1.93/yr
+    (T=M,R=M) idea 956's monthly OOS  15.93% /  1.1563 /  -26.10%   turn  1.13/yr
+    (T=M,R=W) monthly NAMES,     OOS  15.38% /  1.1886 /  -18.74%   turn  1.61/yr   <- isolates STALENESS
+       weekly SCALAR
+    (T=W,R=M) weekly NAMES,      OOS  15.96% /  1.1467 /  -26.55%   turn  1.78/yr   <- isolates REBALANCE COUNT
+       monthly SCALAR
+    DECOMPOSITION of the +7.35 pp W-minus-M OOS drawdown gap: refreshing the SCALAR weekly recovers +7.36 pp (100% of it), re-spreading the NAMES weekly recovers -0.45 pp (-6%); interaction +0.43 pp
+
+  SMALL
+    (T=W,R=W) the candidate      OOS   5.20% /  0.3994 /  -31.48%   turn  3.06/yr
+    (T=M,R=M) idea 956's monthly OOS   5.93% /  0.4289 /  -39.06%   turn  1.72/yr
+    (T=M,R=W) monthly NAMES,     OOS   5.02% /  0.3896 /  -31.44%   turn  2.73/yr   <- isolates STALENESS
+       weekly SCALAR
+    (T=W,R=M) weekly NAMES,      OOS   6.15% /  0.4372 /  -40.22%   turn  2.87/yr   <- isolates REBALANCE COUNT
+       monthly SCALAR
+    DECOMPOSITION of the +7.58 pp W-minus-M OOS drawdown gap: refreshing the SCALAR weekly recovers +7.62 pp (101% of it), re-spreading the NAMES weekly recovers -1.16 pp (-15%); interaction +1.11 pp
+
+## BOTH KEEP PATHS over all 384 cells
+  4b FULL 119 | 4b OOS 119 | 4b (all five legs) 119 | 4a 0 | 4a OOS 0  of 384
+  U56    t=0.12  4b 32/64   4a  0/64   binding: L1_H1  0  L2_H2  0  L3_OOS  0  L4_DD 32  L5_CAGR  0
+  U56    t=0.16  4b 23/64   4a  0/64   binding: L1_H1  0  L2_H2  0  L3_OOS  0  L4_DD 41  L5_CAGR  0
+  B136   t=0.12  4b 32/64   4a  0/64   binding: L1_H1  0  L2_H2  2  L3_OOS  0  L4_DD 32  L5_CAGR  0
+  B136   t=0.16  4b 32/64   4a  0/64   binding: L1_H1  0  L2_H2  0  L3_OOS  0  L4_DD 32  L5_CAGR  0
+  SMALL  t=0.12  4b  0/64   4a  0/64   binding: L1_H1 40  L2_H2 64  L3_OOS 64  L4_DD 64  L5_CAGR 64
+  SMALL  t=0.16  4b  0/64   4a  0/64   binding: L1_H1 16  L2_H2 64  L3_OOS 64  L4_DD 64  L5_CAGR 61
+  4b (all five legs) pass count by (T,R) at 10 bps, pooled over panels and targets:
+    T=D   R=D:4/6  R=W:4/6  R=M:0/6  R=Q:0/6
+    T=W   R=D:4/6  R=W:4/6  R=M:0/6  R=Q:0/6
+    T=M   R=D:4/6  R=W:4/6  R=M:0/6  R=Q:0/6
+    T=Q   R=D:4/6  R=W:4/6  R=M:0/6  R=Q:0/6
+
+## RULE 8 — (T, R) chosen jointly on 2009-2016 ONLY, 2017-2026 read ONCE
+  GATE PASS  G7 chooser window: all chooser statistics from r.loc[:2016-12-31]   (target no row >= 2017-01-01)
+
+  U56  vs LIVE RULES v2 OOS 9.46%/1.2766/-12.05%  and SPY OOS 15.26%/0.8737/-33.72%
+    t=0.12 C_ISSHARPE    -> T=Q,R=M   OOS  15.66% /  1.2979 /  -20.83%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ISCALMAR    -> T=Q,R=M   OOS  15.66% /  1.2979 /  -20.83%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ISDD        -> T=Q,R=M   OOS  15.66% /  1.2979 /  -20.83%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ISLEGS      -> T=Q,R=M   OOS  15.66% /  1.2979 /  -20.83%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_MEMO_WW     -> T=W,R=W   OOS  14.56% /  1.2726 /  -16.44%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.12 C_ORACLE_OOS  -> T=Q,R=D   OOS  15.55% /  1.3576 /  -15.82%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.16 C_ISSHARPE    -> T=Q,R=M   OOS  16.81% /  1.2184 /  -23.96%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ISCALMAR    -> T=Q,R=M   OOS  16.81% /  1.2184 /  -23.96%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ISDD        -> T=Q,R=M   OOS  16.81% /  1.2184 /  -23.96%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ISLEGS      -> T=Q,R=M   OOS  16.81% /  1.2184 /  -23.96%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_MEMO_WW     -> T=W,R=W   OOS  15.94% /  1.2193 /  -19.86%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.16 C_ORACLE_OOS  -> T=Q,R=D   OOS  16.89% /  1.2892 /  -19.18%   4bOOS Y  4b(all legs) Y  4aOOS .
+
+  B136  vs LIVE RULES v2 OOS 7.85%/1.1017/-12.24%  and SPY OOS 15.26%/0.8737/-33.72%
+    t=0.12 C_ISSHARPE    -> T=Q,R=M   OOS  14.91% /  1.2349 /  -22.39%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ISCALMAR    -> T=Q,R=M   OOS  14.91% /  1.2349 /  -22.39%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ISDD        -> T=Q,R=W   OOS  14.09% /  1.2374 /  -15.94%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.12 C_ISLEGS      -> T=W,R=W   OOS  13.86% /  1.2217 /  -16.01%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.12 C_MEMO_WW     -> T=W,R=W   OOS  13.86% /  1.2217 /  -16.01%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.12 C_ORACLE_OOS  -> T=Q,R=D   OOS  14.70% /  1.3078 /  -13.81%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.16 C_ISSHARPE    -> T=W,R=M   OOS  15.96% /  1.1467 /  -26.55%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ISCALMAR    -> T=Q,R=W   OOS  15.63% /  1.2020 /  -18.62%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.16 C_ISDD        -> T=Q,R=W   OOS  15.63% /  1.2020 /  -18.62%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.16 C_ISLEGS      -> T=W,R=M   OOS  15.96% /  1.1467 /  -26.55%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_MEMO_WW     -> T=W,R=W   OOS  15.36% /  1.1837 /  -18.76%   4bOOS Y  4b(all legs) Y  4aOOS .
+    t=0.16 C_ORACLE_OOS  -> T=Q,R=D   OOS  16.26% /  1.2619 /  -16.74%   4bOOS Y  4b(all legs) Y  4aOOS .
+
+  SMALL  vs LIVE RULES v2 OOS 3.63%/0.5447/-14.16%  and SPY OOS 15.26%/0.8737/-33.72%
+    t=0.12 C_ISSHARPE    -> T=D,R=M   OOS   4.47% /  0.3884 /  -37.77%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ISCALMAR    -> T=D,R=M   OOS   4.47% /  0.3884 /  -37.77%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ISDD        -> T=D,R=M   OOS   4.47% /  0.3884 /  -37.77%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ISLEGS      -> T=D,R=M   OOS   4.47% /  0.3884 /  -37.77%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_MEMO_WW     -> T=W,R=W   OOS   3.97% /  0.3708 /  -27.67%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.12 C_ORACLE_OOS  -> T=D,R=D   OOS   4.63% /  0.4246 /  -24.08%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ISSHARPE    -> T=D,R=M   OOS   6.48% /  0.4539 /  -40.18%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ISCALMAR    -> T=D,R=M   OOS   6.48% /  0.4539 /  -40.18%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ISDD        -> T=D,R=W   OOS   5.40% /  0.4109 /  -31.34%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ISLEGS      -> T=D,R=M   OOS   6.48% /  0.4539 /  -40.18%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_MEMO_WW     -> T=W,R=W   OOS   5.20% /  0.3994 /  -31.48%   4bOOS .  4b(all legs) .  4aOOS .
+    t=0.16 C_ORACLE_OOS  -> T=D,R=Q   OOS   7.06% /  0.4623 /  -46.61%   4bOOS .  4b(all legs) .  4aOOS .
+
+  legal IS-only picks clearing 4b OOS: 4 of 24;  full 4b: 4 of 24;  4a OOS: 0 of 24
+  picks landing on an OFF-DIAGONAL (T != R) cell: 23 of 24
+
+# GATES 9 of 9 PASS

@@ -136,3 +136,45 @@ staleness, so it is not implementable without a second, uncertified choice, and 
 is the one the surface says is fragile. Idea 1771 does NOT certify t = 0.12 in its place — that is
 an OOS-visible reading and needs its own pre-registered run. RULES.md, PROTOCOL.md, scan.py,
 bot.py and baseline.py are untouched by idea 1771.
+
+---
+
+## ADDENDUM (2026-09-20, lane cloud, idea 1767) — SECTION 1's "WEEKLY REBALANCE" IS THE WRONG
+## CLAUSE. The load-bearing dial is the SCALAR REFRESH, and a cheaper book dominates this one.
+
+Idea 1767 crossed TRADE cadence `T` (how often the NAMES are re-spread to equal weight) against
+REFRESH cadence `R` (how often `g = clip(t / sigma20, 0, 1)` is re-read) on the same book — two
+nested schedules, the diagonal `T == R` being this memo's construction exactly (G3 reproduces
+sections 2-4 at max |Δ| **4.605e-05**; gates 9/9;
+`research/backtests/2026-09-20_voltgt-trade-vs-refresh-cadence_cloud.py`, 384 cells published).
+
+* **The monthly blowout idea 956 found is a STALENESS fact, not a rebalance-count fact.** Of the
+  weekly-minus-monthly OOS drawdown gap, refreshing the SCALAR weekly while trading the names
+  MONTHLY recovers **+4.57 pp of +4.38 on U56 (104%), +7.36 of +7.35 on B136 (100%) and +7.62 of
+  +7.58 on SMALL665 (101%)**. Doing the opposite — re-spreading the names weekly on a MONTHLY
+  scalar — recovers **−0.28 / −0.45 / −1.16 pp (−6% / −6% / −15%)**, i.e. nothing at all.
+* **The 4b verdict is a function of R alone.** Pooled over panels and targets at 10 bps, `R ∈
+  {D, W}` clears full 4b in 4 of 6 cells at EVERY trade cadence including quarterly, and
+  `R ∈ {M, Q}` clears 0 of 6 at EVERY trade cadence including daily. `T` is inert on the verdict.
+* **A strictly better and cheaper book exists: (T=M, R=W).** U56 FULL 15.71% / 1.2129 / −19.68%
+  (halves 1.2864 / 1.1468), **OOS 16.11% / 1.2343 / −19.68% at 1.51 turns/yr** against this memo's
+  15.94% / 1.2193 / −19.86% at 1.83 — **+0.015 of OOS Sharpe, +0.18 pp of drawdown and −17.5% of
+  turnover**. B136 OOS 15.38% / 1.1886 / −18.74% at 1.61 against 15.36% / 1.1837 / −18.76% at 1.93.
+  It clears 4b FULL and OOS at 0 / 10 / 25 bps and fails only at 50, on the CAGR floor.
+* **Rule 8 says it is not choosable, which is why this is a PARK and not a promotion.** With `T`
+  and `R` chosen jointly on 2009-2016 only, **4 of 24 legal IS-only picks clear 4b OOS and 0 of 24
+  clear 4a OOS**; **23 of 24 land off-diagonal on the WRONG side**, taking a STALE scalar
+  (`R = M` or `Q`) because IS Sharpe rewards the lazier, higher-gross book. On U56 all eight IS
+  picks go to `(T=Q, R=M)` — OOS −20.83% / −23.96%, 4b OOS FAIL at both targets — while the
+  no-choice control `(T=W, R=W)` passes at both. The gain is real and unreachable in sample.
+* **What this changes in section 9.** The wording must fix the SCALAR REFRESH, not the trade date:
+  a correct version reads "`g` is re-read and the book's total exposure reset to it **at least
+  weekly**; the equal-weight re-spread of the names may run on any cadence from daily to monthly".
+  Shipping "weekly rebalance" as written prices in a cost the book does not need and does not
+  protect the drawdown it claims to.
+* **Unchanged:** 0 of 384 cells clear path 4a on any panel; on SMALL665 every one of 128 cells
+  fails 4-5 legs; the only binding leg on U56/B136 is the DD CAP (32-41 of 64 per panel × target,
+  every other leg binding 0-2 times). Survivorship as stated in point 8 and in idea 1771's
+  addendum. **The candidate's status remains PARK** (idea 1771); idea 1767 does not restore it and
+  does not propose a rules change. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are
+  untouched by idea 1767.

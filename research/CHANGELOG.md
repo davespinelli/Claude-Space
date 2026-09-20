@@ -1,3 +1,71 @@
+## 2026-09-20 — idea 1767 (lane cloud): IS THE VOLTGT016 CANDIDATE'S MONTHLY BLOWOUT A REBALANCE-COUNT FACT OR A SIGNAL-STALENESS FACT? **ANSWERED — STALENESS, 100% OF IT. KILL THE STANDING MEMO'S "THE WEEKLY REBALANCE IS LOAD-BEARING". A CHEAPER BOOK DOMINATES IT AND RULE 8 CANNOT REACH THAT EITHER.**
+
+  **THE DEFECT THIS CLOSES.** Idea 956 found the standing KEEP-4b candidate's OOS MaxDD goes −19.9% →
+  −24.2% on U56 and −18.8% → −26.1% on B136 when the cadence moves weekly → monthly, and its memo
+  addendum concluded "the weekly rebalance is load-bearing and must stay in any RULES wording". But a
+  monthly cadence changes TWO things at once — how often the NAMES are re-spread, and how stale the
+  gross scalar `g = clip(t / sigma20, 0, 1)` is when applied — and in the standard construction `g` can
+  only move ON a trade day, so the two are perfectly confounded. The memo's clause was never a claim
+  about the rebalance.
+
+  **THE CONSTRUCTION.** Two nested schedules on one book, and the separation is the whole run: the book
+  carries a scalar `g_eff` READ OFF `g_t` ONLY ON A REFRESH DAY (schedule **R**), so R alone controls
+  staleness; on a TRADE day (schedule **T**) the names are re-spread to `g_eff * ew_t`; on a refresh day
+  that is not a trade day the book keeps its names and is scaled by ONE common factor to `g_eff`, a pure
+  exposure trade costing |g_eff − held|. The diagonal `T == R` is the committed book exactly. Two tuned
+  dials, T and R, each over {D, W, M, Q}; PANEL {U56, B136, SMALL665}, TARGET {0.12, 0.16} and COST
+  {0, 10, 25, 50} bps are reported axes. **384 scored books, every cell published** to `_grid.csv`.
+
+  **THE ANSWER.** Of the weekly-minus-monthly OOS drawdown gap, refreshing the SCALAR weekly while
+  trading the names MONTHLY recovers **+4.57 pp of +4.38 on U56 (104%), +7.36 of +7.35 on B136 (100%)
+  and +7.62 of +7.58 on SMALL665 (101%)**; doing the opposite — weekly names on a MONTHLY scalar —
+  recovers **−0.28 / −0.45 / −1.16 pp (−6% / −6% / −15%)**. The interaction is +0.09 / +0.43 / +1.11 pp.
+  **The 4b verdict is a function of R alone**: pooled over panels and targets at 10 bps, `R ∈ {D, W}`
+  clears full 4b in 4 of 6 cells at EVERY trade cadence including quarterly, and `R ∈ {M, Q}` clears
+  **0 of 6 at every trade cadence including daily**. T is inert on the verdict.
+
+  **THE CONSTRUCTIVE HALF WORKS.** `(T=M, R=W)` dominates the candidate on both panels at strictly lower
+  cost: U56 FULL 15.71% / 1.2129 / −19.68% (halves 1.2864 / 1.1468), **OOS 16.11% / 1.2343 / −19.68% at
+  1.51 turns/yr** against the memo's 15.94% / 1.2193 / −19.86% at 1.83 — **+0.015 of OOS Sharpe,
+  +0.18 pp of drawdown, −17.5% of turnover**; B136 OOS 15.38% / 1.1886 / −18.74% at 1.61 against
+  15.36% / 1.1837 / −18.76% at 1.93. It clears 4b FULL and OOS at 0 / 10 / 25 bps and fails only at 50,
+  on the CAGR floor.
+
+  **AND RULE 8 CANNOT REACH IT (2017-2026 read ONCE).** With T and R chosen jointly on 2009-2016 only,
+  **4 of 24 legal IS-only picks clear 4b OOS and 0 of 24 clear 4a OOS**; **23 of 24 land off-diagonal on
+  the WRONG side**, taking a STALE scalar (`R = M` or `Q`) because IS Sharpe rewards the lazier,
+  higher-gross book. On U56 all eight IS picks go to `(T=Q, R=M)` — OOS −20.83% / −23.96%, 4b OOS FAIL
+  at both targets — while the no-choice control `(T=W, R=W)` passes at both. The OOS oracle is
+  `(T=Q, R=D)`: U56 16.89% / 1.2892 / −19.18%. So the finding is a WORDING fix, not a tuned pick, and
+  the candidate stays **PARK** (idea 1771); this run does not restore it.
+
+  **WHAT SECTION 9 OF THE MEMO SHOULD SAY INSTEAD.** "`g` is re-read and the book's total exposure reset
+  to it **at least weekly**; the equal-weight re-spread of the names may run on any cadence from daily
+  to monthly." Shipping "weekly rebalance" as written pays a cost the book does not need and does not
+  protect the drawdown it claims to.
+
+  **BINDING LEGS AND THE NEGATIVE HALF.** Over 384 cells: 4b FULL 119, 4b OOS 119, full 4b 119, **4a 0,
+  4a OOS 0**. On U56/B136 the ONLY binding leg is the DD CAP (32-41 of 64 per panel × target; every
+  other leg binds 0-2 times). On SMALL665 every one of 128 cells fails 4-5 legs.
+
+  **GATES 9 of 9.** G0 `sigma20(t)` is a trailing window closing at t, 1.277e-15; G1 the two-schedule
+  runner == `engine.backtest` on returns AND turnover on the diagonal, 0.000e+00; G2 the cost identity
+  `r(c) = r0 − turnover·c/1e4` == the engine at 10 and 25 bps, 0.000e+00; **G3 the standing memo's
+  committed U56 and B136 cells (points 2-4) reproduce at max |Δ| 4.605e-05**; G4 each of 85,914 refresh
+  rows moves every held name by ONE common factor (spread 8.882e-16); G5 SMALL drops 54 tickers at
+  `max_1d_move >= 1.0`; G6 exactly two dials; G7 no chooser statistic reads a row on or after
+  2017-01-01; G8 all 384 cells published; G9 no RNG.
+
+  **SURVIVORSHIP.** U56 / B136 are CURRENT-constituent lists and SMALL a CURRENT sub-$2B screen, so every
+  CAGR and drawdown LEVEL is optimistic. The T × R contrasts are same-tape, same-names, same-scalar
+  comparisons with only the two schedules moved and are first-order immune; the pass COUNTS are not.
+
+  **STATUS.** ANSWERED. No new KEEP, **no rule change** (PROTOCOL rule 6); the standing candidate stays
+  PARK and its memo carries a new addendum with the corrected wording. RULES.md, PROTOCOL.md, scan.py,
+  bot.py and baseline.py are untouched. Evidence:
+  `research/backtests/2026-09-20_voltgt-trade-vs-refresh-cadence_cloud.py` / `_grid.csv` /
+  `_choosers.csv` / `_gates.csv` / `.txt`.
+
 ## 2026-09-20 — idea 1753 (lane cloud): IS THE STANDING U56 / GROSS-1.00 / WEEKLY 4b PASS A TRADE-CADENCE ARTEFACT? **ANSWERED — NO. IT IS A CONTIGUOUS CADENCE WINDOW D..M THAT DIES ONLY AT Q, AND THE RULE-8 CHOOSER LANDS INSIDE IT. KEEP-CANDIDATE (path 4b) RE-CERTIFIED ON U56 ONLY.**
 
   **THE DEFECT THIS CLOSES.** Idea 1741 priced the band's drawdown credit at three TRADE cadences and
