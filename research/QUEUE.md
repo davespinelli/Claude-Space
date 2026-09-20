@@ -498,7 +498,6 @@
 
 1719. is-the-CAGR-FLOOR-THAT-BINDS-AT-61-78-OF-80-CELLS-JUST-THE-4b-BETA-LEG — idea 1705 found the binding 4b leg is the CAGR floor, not the DD cap (61-78 of 80 cells per panel-window vs 7-13), and that it binds FROM BELOW on gross, which is why every 4b pass in the record sits at the top gross rung. Restate each published 4b pass against its own realised-beta-matched SPY blend (same mean beta to SPY, cash for the remainder) and report how many passes survive as ALPHA rather than as borrowed beta. Max 2 params (beta window, claim set). (2026-09-20)
 
-1727. can-the-PER-NAME-BAND-GATE-be-REPLACED-BY-A-SINGLE-BREADTH-DIAL — idea 1723 found the band's per-name SELECTION is worth +0.0757 of OOS Sharpe at t +0.82 (U56) and +0.0049 at t +0.07 (B136) against the SAME panel held equal-weight with NO gate at the SAME target gross, and that the no-gate control is the better rule-8 OOS book on both panels — but that control is not implementable, because its gross path is computed FROM the band it is meant to replace. Close the loop: drive gross from a SINGLE aggregate breadth statistic (share of panel above its own 200d MA, smoothed), hold every priced name equal-weight, and ask whether a one-number exposure dial reproduces the standing 4b candidate at a fraction of its turnover. Max 2 params (breadth smoothing, gross map slope). (2026-09-20)
 
 
 
@@ -510,6 +509,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 2 of 2) CLAIM of **1727** (can-the-PER-NAME-BAND-GATE-be-REPLACED-BY-A-SINGLE-BREADTH-DIAL), the LAST numbered item standing in '## Open' in file order, re-read this run. Eligible: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data; it yields a real weights function and so carries both KEEP paths and the rule-8 walk-forward. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_breadth-dial-vs-band-gate_cloud.py`.*
+
+ORIGINAL QUEUE LINE — 1727. can-the-PER-NAME-BAND-GATE-be-REPLACED-BY-A-SINGLE-BREADTH-DIAL — idea 1723 found the band's per-name SELECTION is worth +0.0757 of OOS Sharpe at t +0.82 (U56) and +0.0049 at t +0.07 (B136) against the SAME panel held equal-weight with NO gate at the SAME target gross, and that the no-gate control is the better rule-8 OOS book on both panels — but that control is not implementable, because its gross path is computed FROM the band it is meant to replace. Close the loop: drive gross from a SINGLE aggregate breadth statistic (share of panel above its own 200d MA, smoothed), hold every priced name equal-weight, and ask whether a one-number exposure dial reproduces the standing 4b candidate at a fraction of its turnover. Max 2 params (breadth smoothing, gross map slope). (2026-09-20)
+
 
 *(2026-09-20, lane cloud, idea 1 of 2) RAN AND CLOSED **1730** (ANSWERED / KILL for the restatement — leave PROTOCOL rule 4a as written; but it turned up a KEEP-4b CANDIDATE, see '## Done', LEADERBOARD.md and `research/backtests/2026-09-20_voltgt-panel_KEEP4b_MEMO.md`). (2026-09-20, lane cloud, idea 1 of 2) CLAIM of **1730** (is-PATH-4a-s-DRAWDOWN-CLAUSE-JUST-A-GROSS-TEST), the FIRST numbered item standing in '## Open' in file order, re-read this run. Eligible: price-only, cached panels (U56 / B136), no EDGAR / Form 4 / 8-K / options / spin-offs / live data; it yields real weights functions (1631's committed device corpus), so it can carry the sprint's binding step-3 deliverable (both KEEP paths + rule-8 walk-forward). Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_4a-drawdown-clause-vs-gross_cloud.py`.*
 
