@@ -1,3 +1,83 @@
+## 2026-09-20 — idea 736 (lane cloud): IS CT_RANGE A BETTER-BEHAVED READING OF c_t DISPERSION THAN c_sd? **ANSWERED — NO, AND NEITHER IS c_sd: THE TWO ARE INTERCHANGEABLE AND THE OBJECT IS "c_t DISPERSION". BUT THE INTERCHANGEABILITY IS A *TAIL* FACT, NOT A DISPERSION FACT — THE ONE ESTIMATOR THAT DISCARDS THE TAILS IS MEASURABLY WORSE AT 8 OF 8 CELLS. NO NEW BOOK, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 735 fitted 23 predictor forms to the de-grossing TIMING RESIDUAL
+  on idea 538's 162 cells and found CT_RANGE is the ONLY non-c_sd form of 20 that walks forward,
+  landing within 0.5% of the incumbent at both splits with the ORDER FLIPPING between them — a coin
+  toss. Both readings were taken at ONE gross (0.75), the rung idea 538 happened to fix, and the
+  record has gone on quoting "c_sd" as if it were the QUANTITY rather than one ESTIMATOR of it.
+
+  **THE CONSTRUCTION.** Two dials, exactly the pair the idea's own text names: ESTIMATOR {CSD,
+  CT_RANGE, CT_IQR, CT_MAD, CT_SD_RANGE, CBAR, TORS + the constants ZERO/GLOBAL/FAMILY} x GROSS
+  {0.25, 0.50, 0.75, 1.00}. Published, not tuned: panel {U56, B136, SMALL665}, family {QUANTILE x9,
+  MA-THRESH x9}, cadence {W, M, Q}, split {S2016, S2018}, 10 bps, next-day execution. **648 cells,
+  1,296 books, 80 fits, every grid point published.** Both constructions share one unit direction,
+  so the whole gross ladder is EXACT off one per-cell state; **G1 re-asserts it against
+  `engine.backtest` at 3.5e-18 … 2.1e-17 on all nine panel x cadence pairs.** The CSD-minus-CT_RANGE
+  OOS MAE difference is given a PAIRED CELL BOOTSTRAP (2,000 draws, fixed md5 seed, the same 162
+  cell indices resampled for both estimators) so the "order flip" is called resolved or not, instead
+  of being read off two point estimates.
+
+  **V1 NOT TRIGGERED, V2 TRIGGERED.** CSD is the point-estimate winner at **8 of 8** cells — 735's
+  order flip does NOT reappear on the current cache — but the difference is not resolvable anywhere:
+  max |t| **1.36**, and the 95% CI covers zero at **8 of 8** (t = -0.61 / -0.68 / -0.67 / -0.93 /
+  -0.62 / -1.13 / -0.69 / -1.36). So the surviving object is **"c_t DISPERSION"** and the record must
+  state which estimator any published number used — idea 564's unnamed-statistic defect, on the
+  scale axis. The two-term `CT_SD_RANGE` buys nothing: OOS MAE ties CSD to five decimals while the
+  second term's IS |t| collapses from **6.87 to 2.24**.
+
+  **V3 IS THE SHARP RESULT: THE INTERCHANGEABILITY IS A TAIL FACT.** CT_RANGE (t -1.32 … -0.61) and
+  CT_MAD (t -1.08 … -0.55) sit inside CSD's CI at **8 of 8** cells; **CT_IQR is EXCLUDED at 8 of 8
+  (t -3.83 … -2.25)** and is the one form that loses to the FAMILY constant outright (0.090373
+  against 0.090030 at gross 0.25 / S2018, the single reason "all four beat FAMILY" reads 7 of 8).
+  Order is stable at 8 of 8: `CSD < {CT_RANGE, CT_MAD} < CT_IQR`, only the middle pair swapping.
+  **What `c_sd` measures is the TAIL of the c_t path, not dispersion generically** — every estimator
+  that keeps the tails is statistically indistinguishable from every other, and the interquartile
+  range, which throws them away, falls measurably behind. That statement is new and falsifiable.
+
+  **THE GROSS RUNG WAS NOT LOAD-BEARING.** CSD's OOS MAE as a share of the FAMILY constant's runs
+  **0.9294 / 0.9150 / 0.9052 / 0.8987** (S2016) and 0.9783 / 0.9721 / 0.9670 / 0.9627 (S2018) across
+  gross 0.25 -> 1.00: the ladder moves the SIZE of the estimator's purchase and never the ORDER, so
+  735's 0.75-only reading did not carry its result, and no rung rescues CT_RANGE.
+
+  **G2c — A DATA-VINTAGE FINDING THE RECORD NEEDS.** G2b reproduces idea 735's committed cells **on
+  U56** (the stable `prices.csv` cache) to **2.61e-07** (c_sd), **3.67e-06** (ct_range), **1.44e-07**
+  (c-bar) and **1.38e-05** (turnover). **B136 and SMALL do NOT reproduce, and the cause is the DATA,
+  not the construction.** `gshare` (n_gated_in / n_live, a pure panel-composition number with no book
+  in it) already differs by **9.58e-06 / 5.12e-05 / 6.42e-02** before any book is run; idea 735 ran
+  on a SMALL panel of **439 names** and today's cache holds **665** after the same `max_1d_move >= 1.0`
+  rule — a DIFFERENT UNIVERSE — and `prices_broad.csv` was re-fetched with restated adjusted closes
+  (B136's IS-window RESPREAD turnover moves **0.184 turns/yr**, SMALL's **1.500**, U56's 1.4e-05,
+  with the IS window ending 2016-12-31 in both runs so a longer tape cannot explain it).
+  **Every committed number on the SMALL panel from before the 2026-09-20 re-cache is on a different
+  universe and is not reproducible today.** A PANEL VINTAGE stamp (name count + cache sha) belongs
+  beside every published panel number — the price-side twin of idea 894's tree stamp.
+
+  **V4, THE CAPITAL ARM.** 1,296 books at 10 bps: 4b **39**, 4a **85**. By gross, 4b is 0 / 13 / 16 /
+  10 of 324 at 0.25 / 0.50 / 0.75 / 1.00. **PATH 4a: KILL** — on U56, the panel the live book actually
+  runs on, 4a is **0 of 432 books and 0 of 20 legal picks**; all 85 passes are on a RESTATED panel
+  (B136 49, SMALL665 36), the artefact ideas 763 / 1793 recorded, and that is already the generous
+  reading under PROTOCOL rule 3's same-panel comparand. **RULE 8 (2017-2026 read ONCE): 4b 2 of 60
+  legal picks, 4a 9 of 60 and all nine at gross 0.25 on the restated panels; the joint (gross, level,
+  cadence) chooser clears 4b 0 of 12.** The best reachable book — U56 QUANTILE top-50% monthly
+  RESPREAD at gross 0.75, FULL 15.48% / 1.2371 / -19.80% (halves 1.344 / 1.155), **OOS 15.96% /
+  1.2185 / -19.80%** at 3.10 turns/yr against SPY 15.12% / 0.8844 / -33.72% (OOS 15.26% / 0.8738) and
+  live RULES v2 8.62% / 1.2011 / -12.05% — clears on a **0.43 pp** OOS drawdown-cap margin, the same
+  knife-edge as the parked VOLTGT memo's 0.37 pp, and is **NOT filed as a KEEP-candidate**: it is one
+  of 1,296 grid points in a run pre-registered for an ESTIMATOR question and needs its own
+  pre-registered pass first. The grid's best 4b book (U56 MA-THRESH theta=0.00 monthly DEGROSS at
+  gross 1.00, OOS 12.68% / 1.2754 / -15.54%) is unreachable by any legal IS-only chooser.
+
+  **SURVIVORSHIP:** all three panels are CURRENT constituent lists — no delistings — so every CAGR
+  LEVEL is inflated and the 4a/4b columns inherit that in full; the headline residual is an
+  arm-minus-arm contrast on the SAME names, days and gross, so the bias very largely cancels out of
+  it. SMALL drops 54 tickers with `max_1d_move >= 1.0` first. The paired-cell bootstrap resamples
+  CELLS, which are not independent, so its SE is if anything optimistic — and it still cannot
+  separate CSD from CT_RANGE. GATES 23 of 23. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  are untouched by idea 736.
+  Evidence: `research/backtests/2026-09-20_ct-dispersion-estimator-on-a-gross-ladder_cloud.py` /
+  `.result.md` / `.cells.csv` / `.books.csv` / `.ladder.csv` / `.compare.csv` / `.family.csv` /
+  `.walkforward.csv` / `.gates.csv`.
+
 ## 2026-09-20 — idea 1785 (lane cloud): DOES THE VOLTGT DIAL'S MATCHED-TWIN WIN SURVIVE A PAIRED CIRCULAR-BLOCK BOOTSTRAP? **ANSWERED — SPLIT. KILL THE SHARPE HALF OF IDEA 1771's HEADLINE (it is not distinguishable from zero, and neither is its opposite on SMALL665); THE DRAWDOWN HALF SURVIVES AT ~2 SIGMA AND NO FURTHER. NO NEW BOOK, NO RULES CHANGE.**
 
   **THE DEFECT THIS PRICES.** Every addendum since 2026-09-20 has demoted the standing VOLTGT memo —

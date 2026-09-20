@@ -1,0 +1,296 @@
+==============================================================================================================
+IDEA 736 (lane cloud, 2026-09-20) — IS CT_RANGE A BETTER-BEHAVED READING OF c_t DISPERSION
+THAN c_sd, OR IS THE OBJECT 'c_t DISPERSION' WITH INTERCHANGEABLE ESTIMATORS?
+==============================================================================================================
+Idea 736 (lane cloud, 2026-09-20): IS CT_RANGE A BETTER-BEHAVED READING OF c_t DISPERSION
+THAN c_sd — OR IS THE SURVIVING OBJECT "c_t DISPERSION" WITH INTERCHANGEABLE ESTIMATORS?
+
+THE DEFECT THIS CLOSES
+----------------------
+Idea 735 fitted 23 predictor forms to the de-grossing TIMING RESIDUAL on idea 538's 162 cells and
+found that **CT_RANGE is the ONLY non-c_sd form of 20 that walks forward**, landing within 0.5% of
+the incumbent c_sd at BOTH splits (OOS MAE 0.176908 vs 0.177296 at S2016; 0.2529 vs 0.2523 at
+S2018).  The order FLIPS between the two splits, which is a coin toss, and the record has gone on
+quoting "c_sd" as if it were the object rather than one estimator of it.  Both readings were taken
+at ONE gross (0.75), the rung idea 538 happened to fix.
+
+If `c_sd` names a real thing, one of the two estimators should dominate somewhere on a gross and
+cadence ladder.  If neither does, the record is quoting an ESTIMATOR where it means a QUANTITY, and
+the honest name is "c_t dispersion" with the estimator stated beside every number.
+
+THE OBJECT
+----------
+    gate mask -> two books on the SAME names, days and cadence:
+        RESPREAD  w = g * e_in / n_in         (gated-out weight re-spread over survivors)
+        DEGROSS   w = g * e_in / n_live       (gated-out weight to CASH; the live clause)
+    c_t     = held gross(DEGROSS) / held gross(RESPREAD)
+    gap0    = 100*(CAGR(DEGROSS,0bps) - CAGR(RESPREAD,0bps))      pp/yr
+    pred0   = 100*(CAGR(c_bar*RESPREAD) - CAGR(RESPREAD))         constant-leverage drag
+    resid0  = gap0 - pred0                                        the TIMING of c_t   <- the target
+Both constructions share one unit direction `u = e_in/n_in`, so held_t = s_t * u_t with
+s_RS = g and s_DG = g * n_in/n_live.  The whole gross ladder is therefore EXACT off one shared
+per-cell state; gate G1 re-asserts it against `engine.backtest` and G2 against idea 735's own
+committed cells.
+
+THE CONSTRUCTION
+----------------
+TUNED (2, the protocol maximum, exactly the two the idea's own text names; ALL grid points reported):
+    P1 ESTIMATOR    {CSD, CT_RANGE, CT_IQR, CT_MAD, CT_SD_RANGE(2-term), CBAR, TORS}
+                    + the three constants {ZERO, GLOBAL, FAMILY} as controls
+    P2 GROSS        {0.25, 0.50, 0.75, 1.00}          (735/538 fixed 0.75)
+PUBLISHED, NOT TUNED (carried from ideas 538 / 735 verbatim):
+    panel     {U56, B136, SMALL665}           SMALL: max_1d_move >= 1.0 dropped first
+              NOTE: idea 735 ran on a 439-name SMALL panel; the cache now holds 665 after the
+              same drop rule, so that panel is a DIFFERENT OBJECT today — see gate G2.
+    family    QUANTILE (9 levels) / MA-THRESH (9 thetas)
+    cadence   {W, M, Q}
+    split     S2016 (IS ends 2016-12-31) / S2018 (IS ends 2018-12-31)
+    cost      10 bps, next-day execution; the 0-bps rung DERIVED as r0 = r10 + turn*bps/1e4
+    -> 162 cells x 4 gross = 648 cells, 1,296 books, 10 estimators x 2 splits x 4 gross = 80 fits.
+
+RESOLUTION INSTRUMENT: the CSD-minus-CT_RANGE OOS MAE difference is given a PAIRED CELL BOOTSTRAP
+    (2,000 draws, fixed md5 seed, the same 162 cell indices resampled for both estimators) so the
+    "order flip" can be called resolved or not, instead of being read off two point estimates.
+
+PRE-STATED VERDICT RULES (fixed before the run; no tuning-until-it-works)
+------------------------------------------------------------------------
+V1  DOMINANCE.  If one estimator's OOS MAE is lower at >= 7 of the 8 (gross x split) cells AND the
+    paired-bootstrap |t| of the difference is >= 2 at a majority of them, that estimator DOMINATES
+    and the record should name it.
+V2  INTERCHANGEABILITY.  If neither dominates and the paired-bootstrap CI of the difference covers
+    zero at every (gross, split) cell, the surviving object is "c_t DISPERSION" and the record must
+    state which estimator any published number used.  That is a naming finding, not a KEEP.
+V3  THE DISPERSION FAMILY IS THE UNIT, NOT THE PAIR.  CT_IQR and CT_MAD are carried so the claim
+    can be tested on the FAMILY: if all four dispersion estimators beat the FAMILY constant and sit
+    inside each other's bootstrap CIs, V2's reading is a property of dispersion, not of two forms.
+V4  RULE 8 IS DECISIVE FOR CAPITAL.  Books are scored on both KEEP paths at every grid point, and
+    (level, cadence) are chosen on the IS window ONLY with 2017-2026 read ONCE.  No estimator
+    result promotes anything; the capital arm stands or falls on its own.
+==============================================================================================================
+  panels: SMALL665 665 names (54 dropped for max_1d_move >= 1.0), U56 55, B136 135
+  SURVIVORSHIP: all three panels are CURRENT constituent lists — no delistings — so every
+  CAGR LEVEL is inflated and the 4a/4b columns inherit that in full. The headline object is
+  an arm-minus-arm contrast on the SAME names, days and gross, so the bias very largely
+  cancels out of gap0/pred0/resid0; it does NOT cancel out of the KEEP columns.
+
+--------------------------------------------------------------------------------------------------------------
+PANEL SMALL665  eval from 2011-01-13
+  S2016: SPY FULL  14.01%/0.8562/-33.72%   OOS  15.26%/0.8738/-33.72%
+  S2018: SPY FULL  14.01%/0.8562/-33.72%   OOS  17.27%/0.9240/-33.72%
+  RULES v2 (same panel) FULL   4.26%/0.6597/-14.16%   OOS   3.64%/0.5459/-14.16%
+    GATE PASS  G1[SMALL665,W] run_scalar == engine.backtest: 5.204e-18 (target <= 1e-15)
+    GATE PASS  G1[SMALL665,M] run_scalar == engine.backtest: 6.939e-18 (target <= 1e-15)
+    GATE PASS  G1[SMALL665,Q] run_scalar == engine.backtest: 1.735e-17 (target <= 1e-15)
+  ... SMALL665 done (47s)
+
+--------------------------------------------------------------------------------------------------------------
+PANEL U56  eval from 2009-01-13
+  S2016: SPY FULL  15.12%/0.8844/-33.72%   OOS  15.26%/0.8738/-33.72%
+  S2018: SPY FULL  15.12%/0.8844/-33.72%   OOS  17.27%/0.9240/-33.72%
+  RULES v2 (same panel) FULL   8.62%/1.2011/-12.05%   OOS   9.46%/1.2769/-12.05%
+    GATE PASS  G1[U56,W] run_scalar == engine.backtest: 3.469e-18 (target <= 1e-15)
+    GATE PASS  G1[U56,M] run_scalar == engine.backtest: 2.082e-17 (target <= 1e-15)
+    GATE PASS  G1[U56,Q] run_scalar == engine.backtest: 2.082e-17 (target <= 1e-15)
+  ... U56 done (58s)
+
+--------------------------------------------------------------------------------------------------------------
+PANEL B136  eval from 2009-01-13
+  S2016: SPY FULL  15.12%/0.8845/-33.72%   OOS  15.26%/0.8739/-33.72%
+  S2018: SPY FULL  15.12%/0.8845/-33.72%   OOS  17.27%/0.9241/-33.72%
+  RULES v2 (same panel) FULL   7.96%/1.0973/-12.24%   OOS   7.85%/1.1019/-12.24%
+    GATE PASS  G1[B136,W] run_scalar == engine.backtest: 5.204e-18 (target <= 1e-15)
+    GATE PASS  G1[B136,M] run_scalar == engine.backtest: 8.674e-18 (target <= 1e-15)
+    GATE PASS  G1[B136,Q] run_scalar == engine.backtest: 1.735e-17 (target <= 1e-15)
+  ... B136 done (74s)
+
+==============================================================================================================
+REPLICATION GATES
+==============================================================================================================
+    GATE PASS  G2a cell alignment vs idea 735 (keys, not values): 324 vs 324 (target identical keys)
+      column                U56          B136      SMALL665
+      c_sd_is         2.612e-07     1.093e-03     3.047e-02
+      ct_range_is     3.669e-06     9.353e-03     1.265e-01
+      c_bar_is        1.443e-07     2.541e-04     6.468e-02
+      resid_is        6.251e-04     3.346e-02     3.006e-01
+      resid_oos       3.139e-02     2.071e-02     9.033e-01
+      gap_is          2.586e-03     4.538e-01     2.980e+00
+      tors_is         1.379e-05     1.845e-01     1.500e+00
+      gshare_is       9.582e-06     5.116e-05     6.418e-02
+    GATE PASS  G2b idea 735's committed cells reproduced ON U56 (the stable prices.csv cache): c_sd 2.61e-07, ct_range 3.67e-06, c_bar 1.44e-07, tors 1.38e-05, resid_is 6.25e-04 (target c_sd/ct_range/c_bar < 1e-5, resid_is < 1e-2 (idea 301's vintage allowance))
+
+  *** G2c — PANEL VINTAGE, PUBLISHED AS A FINDING, NOT ASSERTED AS A GATE ***
+  B136 and SMALL do NOT reproduce idea 735's committed cells, and the cause is the DATA, not
+  the construction (G1 proves the runner is engine-exact to 1e-17 at all nine panel x cadence
+  pairs). `gshare` — n_gated_in / n_live, a pure PANEL-COMPOSITION number with no book in it —
+  already differs by 9.58e-06 (U56), 5.12e-05 (B136) and
+  6.42e-02 (SMALL) before any book is run. Idea 735 ran on a SMALL panel
+  of 439 names (44 dropped); today's cache holds 665 after the same rule (54 dropped) — a
+  DIFFERENT UNIVERSE. `prices_broad.csv` was likewise re-fetched with restated adjusted closes:
+  B136's IS-window RESPREAD turnover moves 0.184 turns/yr and SMALL's
+  1.500, while U56's moves 1.38e-05. The IS window ENDS
+  2016-12-31 in both runs, so a longer tape cannot explain it; the historical prices moved.
+  CONSEQUENCE FOR THE RECORD: every committed number on the SMALL panel from before the
+  2026-09-20 re-cache is on a different universe and is NOT reproducible today. A PANEL
+  VINTAGE stamp (name count + cache sha) belongs beside every published panel number, the
+  price-side twin of idea 894's tree stamp.
+    PUBLISHED  G2c panel vintage non-reproduction (cause named): gshare_is max|d| U56 9.58e-06 / B136 5.12e-05 / SMALL 6.42e-02; SMALL panel 439 names (735) -> 665 names (today)
+
+==============================================================================================================
+THE ESTIMATOR LADDER — fitted on IS cells only, scored ONCE on the OOS truth
+==============================================================================================================
+
+  GROSS 0.25   OOS MAE of resid0 (pp/yr), every form, both splits
+    form              S2016       S2018   IS |t| (S2016)
+    ZERO           0.085377    0.107283      --
+    GLOBAL         0.084876    0.104336      --
+    FAMILY         0.065126    0.090030      --
+    CSD            0.060529    0.088079     6.93
+    CT_RANGE       0.060982    0.088419     6.63
+    CT_IQR         0.064841    0.090373     5.45
+    CT_MAD         0.060863    0.088483     6.72
+    CT_SD_RANGE    0.060497    0.088276     1.77
+    CBAR           0.086173    0.105260     2.26
+    TORS           0.083968    0.102611     4.35
+
+  GROSS 0.50   OOS MAE of resid0 (pp/yr), every form, both splits
+    form              S2016       S2018   IS |t| (S2016)
+    ZERO           0.175030    0.221249      --
+    GLOBAL         0.167796    0.207853      --
+    FAMILY         0.132647    0.184634      --
+    CSD            0.121369    0.179490     6.90
+    CT_RANGE       0.122307    0.180416     6.53
+    CT_IQR         0.129647    0.183940     5.51
+    CT_MAD         0.122362    0.180413     6.74
+    CT_SD_RANGE    0.121420    0.180509     2.01
+    CBAR           0.170635    0.208917     2.41
+    TORS           0.166050    0.206457     4.27
+
+  GROSS 0.75   OOS MAE of resid0 (pp/yr), every form, both splits
+    form              S2016       S2018   IS |t| (S2016)
+    ZERO           0.270619    0.343860      --
+    GLOBAL         0.249040    0.313952      --
+    FAMILY         0.203220    0.285210      --
+    CSD            0.183950    0.275787     6.87
+    CT_RANGE       0.185346    0.277512     6.43
+    CT_IQR         0.195971    0.281904     5.56
+    CT_MAD         0.186069    0.277095     6.75
+    CT_SD_RANGE    0.184741    0.278081     2.24
+    CBAR           0.253229    0.313938     2.58
+    TORS           0.248973    0.313852     4.17
+
+  GROSS 1.00   OOS MAE of resid0 (pp/yr), every form, both splits
+    form              S2016       S2018   IS |t| (S2016)
+    ZERO           0.373995    0.477308      --
+    GLOBAL         0.331028    0.426016      --
+    FAMILY         0.277892    0.393336      --
+    CSD            0.249730    0.378666     6.83
+    CT_RANGE       0.251841    0.381484     6.32
+    CT_IQR         0.264745    0.385793     5.63
+    CT_MAD         0.252590    0.380058     6.76
+    CT_SD_RANGE    0.251617    0.382570     2.47
+    CBAR           0.333801    0.425649     2.76
+    TORS           0.332542    0.428161     4.05
+
+==============================================================================================================
+V1 / V2 — DOES EITHER ESTIMATOR DOMINATE?
+==============================================================================================================
+     gross  split    MAE CSD  MAE CT_RNG    FAMILY    winner         d       SE       t               95% CI
+      0.25  S2016   0.060529    0.060982  0.065126       CSD -0.000453 0.000737   -0.61  [-0.0019,+0.0010]
+      0.25  S2018   0.088079    0.088419  0.090030       CSD -0.000340 0.000499   -0.68  [-0.0013,+0.0006]
+      0.50  S2016   0.121369    0.122307  0.132647       CSD -0.000938 0.001397   -0.67  [-0.0037,+0.0017]
+      0.50  S2018   0.179490    0.180416  0.184634       CSD -0.000926 0.001001   -0.93  [-0.0029,+0.0010]
+      0.75  S2016   0.183950    0.185346  0.203220       CSD -0.001396 0.002243   -0.62  [-0.0057,+0.0029]
+      0.75  S2018   0.275787    0.277512  0.285210       CSD -0.001725 0.001533   -1.13  [-0.0047,+0.0012]
+      1.00  S2016   0.249730    0.251841  0.277892       CSD -0.002112 0.003058   -0.69  [-0.0082,+0.0039]
+      1.00  S2018   0.378666    0.381484  0.393336       CSD -0.002818 0.002066   -1.36  [-0.0069,+0.0012]
+    PUBLISHED  V1 point-estimate winner: CSD 8 of 8 cells, CT_RANGE 0
+    PUBLISHED  V1 difference resolvable (|paired-cell bootstrap t| >= 2): 0 of 8 cells, max |t| 1.36
+    PUBLISHED  V1 DOMINANCE: NOT TRIGGERED — the point-estimate winner is not resolvable
+    PUBLISHED  V2 CI of the CSD-minus-CT_RANGE difference covers zero: 8 of 8 cells
+    PUBLISHED  V2 INTERCHANGEABLE: TRIGGERED — name the object 'c_t dispersion' and state the estimator
+
+  OOS MAE as a SHARE of the FAMILY constant's (the estimator's whole purchase):
+      gross 0.25 S2016: CSD 0.9294   CT_RANGE 0.9364   (FAMILY = 1.0000)
+      gross 0.25 S2018: CSD 0.9783   CT_RANGE 0.9821   (FAMILY = 1.0000)
+      gross 0.50 S2016: CSD 0.9150   CT_RANGE 0.9220   (FAMILY = 1.0000)
+      gross 0.50 S2018: CSD 0.9721   CT_RANGE 0.9772   (FAMILY = 1.0000)
+      gross 0.75 S2016: CSD 0.9052   CT_RANGE 0.9120   (FAMILY = 1.0000)
+      gross 0.75 S2018: CSD 0.9670   CT_RANGE 0.9730   (FAMILY = 1.0000)
+      gross 1.00 S2016: CSD 0.8987   CT_RANGE 0.9063   (FAMILY = 1.0000)
+      gross 1.00 S2018: CSD 0.9627   CT_RANGE 0.9699   (FAMILY = 1.0000)
+
+==============================================================================================================
+V3 — IS IT THE PAIR, OR THE WHOLE DISPERSION FAMILY?
+==============================================================================================================
+     gross  split        CSD   CT_RANGE     CT_IQR     CT_MAD     FAMILY   spread  all<FAM
+      0.25  S2016   0.060529   0.060982   0.064841   0.060863   0.065126 0.004312  True
+      0.25  S2018   0.088079   0.088419   0.090373   0.088483   0.090030 0.002294  False
+      0.50  S2016   0.121369   0.122307   0.129647   0.122362   0.132647 0.008278  True
+      0.50  S2018   0.179490   0.180416   0.183940   0.180413   0.184634 0.004450  True
+      0.75  S2016   0.183950   0.185346   0.195971   0.186069   0.203220 0.012021  True
+      0.75  S2018   0.275787   0.277512   0.281904   0.277095   0.285210 0.006117  True
+      1.00  S2016   0.249730   0.251841   0.264745   0.252590   0.277892 0.015015  True
+      1.00  S2018   0.378666   0.381484   0.385793   0.380058   0.393336 0.007127  True
+
+    paired-cell bootstrap t of CSD minus each other dispersion estimator (CI covering 0 in brackets):
+      gross 0.25 S2016: CT_RANGE t -0.64 [cov0]  CT_IQR t -3.83 [EXCL]  CT_MAD t -0.55 [cov0]
+      gross 0.25 S2018: CT_RANGE t -0.70 [cov0]  CT_IQR t -2.93 [EXCL]  CT_MAD t -0.92 [cov0]
+      gross 0.50 S2016: CT_RANGE t -0.64 [cov0]  CT_IQR t -3.49 [EXCL]  CT_MAD t -0.79 [cov0]
+      gross 0.50 S2018: CT_RANGE t -0.94 [cov0]  CT_IQR t -2.78 [EXCL]  CT_MAD t -1.03 [cov0]
+      gross 0.75 S2016: CT_RANGE t -0.61 [cov0]  CT_IQR t -3.36 [EXCL]  CT_MAD t -1.08 [cov0]
+      gross 0.75 S2018: CT_RANGE t -1.12 [cov0]  CT_IQR t -2.62 [EXCL]  CT_MAD t -0.96 [cov0]
+      gross 1.00 S2016: CT_RANGE t -0.70 [cov0]  CT_IQR t -3.03 [EXCL]  CT_MAD t -1.08 [cov0]
+      gross 1.00 S2018: CT_RANGE t -1.32 [cov0]  CT_IQR t -2.25 [EXCL]  CT_MAD t -0.73 [cov0]
+    PUBLISHED  V3 all four dispersion estimators beat the FAMILY constant at every cell: 7 of 8
+    PUBLISHED  V3 CSD sits inside every other dispersion estimator's CI: 16 of 24
+    PUBLISHED  V3 CSD vs CT_RANGE: CI covers zero at 8 of 8 cells; t range -1.32 .. -0.61
+    PUBLISHED  V3 CSD vs CT_IQR: CI covers zero at 0 of 8 cells; t range -3.83 .. -2.25
+    PUBLISHED  V3 CSD vs CT_MAD: CI covers zero at 8 of 8 cells; t range -1.08 .. -0.55
+
+  IS the estimator ORDER stable across the ladder? (rank of the 4 dispersion forms)
+      gross 0.25 S2016: CSD < CT_MAD < CT_RANGE < CT_IQR
+      gross 0.25 S2018: CSD < CT_RANGE < CT_MAD < CT_IQR
+      gross 0.50 S2016: CSD < CT_RANGE < CT_MAD < CT_IQR
+      gross 0.50 S2018: CSD < CT_MAD < CT_RANGE < CT_IQR
+      gross 0.75 S2016: CSD < CT_RANGE < CT_MAD < CT_IQR
+      gross 0.75 S2018: CSD < CT_MAD < CT_RANGE < CT_IQR
+      gross 1.00 S2016: CSD < CT_RANGE < CT_MAD < CT_IQR
+      gross 1.00 S2018: CSD < CT_MAD < CT_RANGE < CT_IQR
+
+==============================================================================================================
+V4 — CAPITAL ARM, every grid point (10 bps, next-day execution)
+==============================================================================================================
+  1296 books = 3 panels x 2 families x 9 levels x 3 cadences x 4 gross x 2 constructions
+    gross 0.25:  4a  69/324   4b   0/324   mean Sharpe 0.9419   mean MaxDD  -7.81%   mean turn 1.01/yr
+    gross 0.50:  4a  10/324   4b  13/324   mean Sharpe 0.9417   mean MaxDD -15.21%   mean turn 2.00/yr
+    gross 0.75:  4a   3/324   4b  16/324   mean Sharpe 0.9411   mean MaxDD -22.21%   mean turn 2.97/yr
+    gross 1.00:  4a   3/324   4b  10/324   mean Sharpe 0.9401   mean MaxDD -28.84%   mean turn 3.94/yr
+    SMALL665 :  4a  36/432   4b   1/432
+    U56      :  4a   0/432   4b  28/432
+    B136     :  4a  49/432   4b  10/432
+    RESPREAD :  4a  38/648   4b  22/648
+    DEGROSS  :  4a  47/648   4b  17/648
+
+  RULE 8 (level and cadence chosen on 2009-2016 IS Sharpe ONLY; 2017-2026 read ONCE):
+    legal IS-only picks: 4b 2 of 60   4a 9 of 60
+      SMALL665  4b  1/20   4a  5/20   best OOS Sharpe 1.1323 (gross 0.25, RESPREAD, M)
+      U56       4b  1/20   4a  0/20   best OOS Sharpe 1.2202 (gross 1.00, RESPREAD, M)
+      B136      4b  0/20   4a  4/20   best OOS Sharpe 1.1420 (gross 0.25, DEGROSS, Q)
+    JOINT (gross, level, cadence) chooser rows (gross = -1):
+      SMALL665  QUANTILE   RESPREAD  -> level +0.80 Q   OOS   2.94% / 0.5834 / -11.21%   4b .  4a P
+      SMALL665  QUANTILE   DEGROSS   -> level +0.80 Q   OOS   2.38% / 0.5845 /  -8.96%   4b .  4a P
+      SMALL665  MA-THRESH  RESPREAD  -> level +0.30 M   OOS  31.64% / 1.1260 / -39.18%   4b .  4a .
+      SMALL665  MA-THRESH  DEGROSS   -> level -0.06 M   OOS   5.41% / 0.5143 / -27.90%   4b .  4a .
+      U56       QUANTILE   RESPREAD  -> level +0.50 M   OOS  21.46% / 1.2202 / -25.69%   4b .  4a .
+      U56       QUANTILE   DEGROSS   -> level +0.50 M   OOS  10.70% / 1.2199 / -13.57%   4b .  4a .
+      U56       MA-THRESH  RESPREAD  -> level +0.20 Q   OOS  28.06% / 0.9492 / -40.65%   4b .  4a .
+      U56       MA-THRESH  DEGROSS   -> level +0.30 Q   OOS   1.41% / 0.5758 /  -4.47%   4b .  4a .
+      B136      QUANTILE   RESPREAD  -> level +0.90 M   OOS  17.86% / 1.0900 / -31.46%   4b .  4a .
+      B136      QUANTILE   DEGROSS   -> level +0.90 M   OOS  16.09% / 1.0912 / -28.66%   4b .  4a .
+      B136      MA-THRESH  RESPREAD  -> level +0.20 Q   OOS  27.89% / 1.0674 / -37.77%   4b .  4a .
+      B136      MA-THRESH  DEGROSS   -> level -0.25 Q   OOS  13.38% / 1.1253 / -24.16%   4b .  4a .
+
+    best 4b-passing book: U56 MA-THRESH level 0.0 M DEGROSS gross 1.00 — FULL  11.94%/1.2144/-15.54% (H1 1.254 H2 1.179), OOS  12.68%/1.2754/-15.54%
+    PUBLISHED  V4 capital arm: 4b 39 of 1296 books; 4a 85; rule-8 4b 2 of 60 legal picks
+
+  GATES 23 of 23   runtime 74.4s
