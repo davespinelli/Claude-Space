@@ -2,6 +2,14 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-20 | 40722044 | Oracle EPM Automation Specialist | $150 | 0 | drafted |
+| 2026-09-20 | 40651682 | Reckon One Daily Bookkeeping | $520 | 7 | drafted |
+| 2026-09-20 | 40663062 | Ongoing Bookkeeping Support - Xero, Excel & Bank Reconciliation | $420 | 9 | drafted |
+| 2026-09-20 | 40722068 | Daily Excel Supplier Inventory | $560 | 17 | drafted |
+| 2026-09-20 | 40504723 | PDF-to-Excel Data Transfer | $420 | 19 | drafted |
+| 2026-09-20 | 40721839 | Virtual Admin Assistant for Data Entry | $240 | 17 | drafted |
+| 2026-09-20 | 40722013 | VBA Trade Journal Automation Enhancements | $150 | 44 | drafted |
+| 2026-09-20 | 40721796 | AI Dashboard for MongoDB Insights | $120 | 34 | drafted |
 | 2026-09-20 | 40721456 | Hindi sheet typing a project | $190 | 5 | drafted |
 | 2026-09-20 | 40721459 | Power BI Healthcare Analysis Dashboard | $240 | 7 | drafted |
 | 2026-09-20 | 40721608 | Excel Data Entry & Formatting | $225 | 10 | drafted |
@@ -321,6 +329,12 @@
 Proposals live in `products/freelance/proposals/<job id>.md`.
 
 ## Skipped on purpose
+- Need Fresh Scraped B2B Data Provider (40722088) (buying bulk scraped B2B contact data, which is contact-list harvesting and outside what we will supply, despite the $781-$1,563 budget)
+- WordPress Site Repair Needed (40722104) and WordPress Site Repair Needed -- 2 (40722127) (identical duplicate postings, CMS break-fix outside our lane, 50 and 69 bids at $29-$114)
+- AI Workflow Automation Setup (40722139) (70 bids within the first hour and no named tools or systems, so nothing specific to quote against)
+- Claude-Powered Web Dev Platform (40721877) (201 bids; SEO website generation is a crowded content play rather than the data or automation work we deliver)
+- Expense Report Data Entry (40721976) (33 bids at $40-$160, below the batch we already have drafted in the same receipts-to-sheet category)
+- Mechanical engineer, benchtop oboe reed profiling machine (CAD and mechanical design, no overlap with our skills)
 - Pembuatan Laporan & Excel Keuangan (40717996) (Indonesian-language posting and delivery, same reason as the earlier Indonesian data entry rows)
 - Gold Shop Billing and WhatsApp Automation System (40717962) (a private billing website with data ownership and backup guarantees, plus WhatsApp integration, posted at $16-$130; scope and budget do not meet)
 - Italian AI & Automation Project Discovery (40718051) (a lead-sourcing service that means trawling freelance platforms for open postings, much of it behind logins; Italian-language delivery, 68 bids)
