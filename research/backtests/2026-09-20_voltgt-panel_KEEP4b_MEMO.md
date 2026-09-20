@@ -265,3 +265,50 @@ of this memo at max |d| **4.605e-05** and idea 1767's `(T=M, R=W)` U56 OOS row a
   files a SEPARATE KEEP-4b candidate for the CHOOSER (`2026-09-20_exposure-neutral-is-chooser_B.result.md`),
   awaiting the same Sunday review. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are
   untouched by idea 1793.
+
+---
+
+## ADDENDUM (2026-09-20, lane B, idea 1803) — THE REFRESH HALF IS **COST-INERT**: IDEA 1793's
+## UNREACHABLE `R = D` IS NOT AN ACCOUNTING ARTEFACT. STATUS OF THIS MEMO (t = 0.16, R = W): PARK.
+
+Idea 1803 re-ran 1793's exact `t x R` grid and runner and moved one thing: the cost rung the
+CHOOSER's in-sample statistic is priced at, `c_IS in {0, 10, 25, 50}` bps, crossed with six
+statistic families (480 book rows and 480 statistic rows published; gates **13/13**;
+`research/backtests/2026-09-20_cost-priced-is-chooser_B.py` / `.result.md`). Its G4b reproduces
+**all 480 cells** of idea 1793's committed grid at max |Δ| **8.882e-16** with 480/480 identical 4b
+verdicts, G4c its `is_Sharpe` / `gx_MaxDD` columns at 2.22e-16 / 9.98e-17, G3 sections 2-4 of this
+memo at **4.605e-05** and G10 holds all 144 picks unchanged on panels physically truncated at
+2016-12-31.
+
+* **KILL the cost-accounting explanation.** The R-distribution of the 36 (family × arm) picks is
+  **identical** at `c_IS` = 0, 10 and 25 bps (D=0, W=4, M=32, Q=0) and **`R = D` is picked 0 of
+  144 times at every rung**, by every family, on every arm — although `R = D` clears 4b FULL+OOS
+  at 4 of 4 large arms for `t >= 0.10`. Handing the chooser a cost-free statistic buys no
+  freshness at all.
+* **Only ~19% of the stale preference is cost.** Of 60 stale-vs-daily comparisons the stale cell
+  out-Sharpes the daily one in sample at 10 bps in 36; median cost share of that gap **0.187**
+  (mean 0.333, IQR 0.120-0.289) and **2 of 60** gaps flip sign at 0 bps, both on SMALL665, **none
+  on U56/B136**. R=D's extra turnover is real (+2.11 / +2.26 / +2.45 turns/yr) and charged — it is
+  not what the chooser reads. This confirms idea 1789's crash-presence reading and **kills the
+  "saved turnover" half of its own sentence**.
+* **The axis is decisive on the OTHER half of the dial, in the wrong direction.** Legal picks
+  clearing 4b FULL *and* OOS run **13 / 7 / 7 / 8 of 36** at `c_IS` = 0 / 10 / 25 / 50, and mean
+  picked `t` **0.1211 / 0.1378 / 0.1489 / 0.1489**: charging the chooser the costs the book pays
+  walks it UP the target ladder toward the lazy, most-exposed rung (turnover falls 2.19 -> 0.90
+  /yr as `t` goes 0.08 -> 0.20 while mean gross rises 0.69 -> 0.97 and OOS MaxDD deepens −16.1% ->
+  −27.5%). `F_CALMAR` goes from 0 of 6 arms at 10/25/50 bps to 4 of 6 at 0 bps. Stated against our
+  own reading: at the headline rung the flip is a knife edge (IS Calmar 1.2313 vs 1.2334, margin
+  **0.0021**) and choosing `F_CALMAR@0` is a post-hoc pick of 1 family in 6 — **PARK, not a
+  promotion**.
+* **A second candidate cell on the same dial.** `t = 0.10, R = M` clears 4b FULL *and* OOS at
+  **0 / 10 / 25 / 50 bps** on U56 (T=M and T=W) and B136 (T=M) — the only cell on this dial that
+  survives 50 bps. U56 T=M: FULL 13.31% / 1.2437 / −19.39% (halves 1.323 / 1.170), **OOS 13.81% /
+  1.2822 / −19.39%** at 1.91 turns/yr. It trades the squeeze rather than escaping it (CAGR margin
+  +2.73 pp, DD margin +0.84 pp, against 1793's mirror-image +0.68 / +4.10 pp) and it is reached by
+  only 1 of 24 legal choosers on U56. Filed with that caveat as
+  `research/backtests/2026-09-20_voltgt-t010-RM_KEEP4b_MEMO.md`; it does **not** supersede idea
+  1793's candidate, it is an alternative on the same dial.
+* **Unchanged:** SMALL665 clears 4b **0 of 24 choosers on both trade cadences** (A2, fourth
+  confirmation); path 4a is 0 of 60 U56 cells and its 6 B136 passers are the restatement artefact
+  ideas 1763 / 1793 named. **Status of THIS memo (t = 0.16, R = W): still PARK.** RULES.md,
+  PROTOCOL.md, scan.py, bot.py and baseline.py are untouched by idea 1803.

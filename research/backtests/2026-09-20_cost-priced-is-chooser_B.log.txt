@@ -1,0 +1,314 @@
+# Idea 1803 (lane B, 2026-09-20) — can a COST-PRICED IS-only chooser reach the DAILY-refresh cells idea 1793 left unreachable?
+# tuned dials (2): TARGET t [0.08, 0.1, 0.12, 0.16, 0.2] x REFRESH R ['D', 'W', 'M', 'Q'].  AXIS UNDER TEST: chooser = family ['F_SHARPE', 'F_CALMAR', 'F_DD', 'F_LEGS', 'F_GXS', 'F_GXDD'] x c_IS [0, 10, 25, 50] bps.  reported, not tuned: TRADE T ['W', 'M'] (separate arms), PANEL, BOOK COST [0, 10, 25, 50] bps.  sigma FIXED at (L=20, d=0).
+# warm-up 260 rows; IS <= 2016-12-31; OOS >= 2017-01-01 (read ONCE, after every chooser has committed).
+# SMALL665: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%)
+   SPY                      15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%)
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%)
+   SPY                      14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 bt_two diagonal == engine.backtest (returns / turnover): 0.000e+00 / 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turn*c/1e4 == fresh engine run at 10/25 bps: 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 reproduces the standing KEEP-4b memo (points 2-4, U56 + B136): max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G4a reproduces idea 1767's (T=M, R=W) U56 OOS row: max|d| = 5.027e-05   (target < 1e-3)
+  GATE PASS  G4b CROSS-RUN: every shared cell of idea 1793's committed grid: 480 cells, max|d| = 8.882e-16, 4b verdicts identical 480/480   (target < 1e-9 and all verdicts identical)
+  GATE PASS  G4c our c_IS=10 IS statistics == idea 1793's is_Sharpe / gx_MaxDD columns: max|d| = 2.220e-16 (Sharpe) / 9.975e-17 (gx_MaxDD)   (target < 1e-9)
+  GATE PASS  G5 a REFRESH row moves every held name by ONE common factor: max spread 8.882e-16 over 133070 refresh rows   (target < 1e-12)
+  GATE PASS  G6 tuned dials: TARGET t, REFRESH R (the chooser is the axis, not a dial)   (target exactly 2)
+  GATE PASS  G7 all grid cells published: 480 book rows / 480 chooser-stat rows   (target 480 / 480)
+  GATE PASS  G8 twin realised-mean-gross match (IS window): max|d| = 2.887e-11   (target < 1e-8)
+  GATE PASS  G9 never levered: max realised gross 1.0000   (target <= 1.0)
+
+   G10: rebuilding every chooser statistic on panels PHYSICALLY truncated at 2016-12-31 ...
+  GATE PASS  G10 every chooser's pick is unchanged on a panel TRUNCATED at 2016-12-31: 144 of 144 identical   (target 144 of 144)
+
+## THE GRID (all 120 cells x 4 cost rungs published to .grid.csv)
+   book cost  0 bps: 4b FULL  41 | 4b OOS  44 | 4b FULL+OOS  41 | 4a   6 | 4a OOS   9  (of 120)
+   book cost 10 bps: 4b FULL  35 | 4b OOS  43 | 4b FULL+OOS  35 | 4a   6 | 4a OOS   8  (of 120)
+   book cost 25 bps: 4b FULL  33 | 4b OOS  34 | 4b FULL+OOS  32 | 4a   3 | 4a OOS   5  (of 120)
+   book cost 50 bps: 4b FULL  21 | 4b OOS  26 | 4b FULL+OOS  21 | 4a   0 | 4a OOS   4  (of 120)
+
+   binding-leg census at 10 bps (cells failing each leg):
+     L1_H1:  21 of 120
+     L2_H2:  46 of 120
+     L3_OOS:  42 of 120
+     L4_DD:  75 of 120
+     L5_CAGR:  44 of 120
+
+   4b FULL+OOS at 10 bps by panel x T, split by R:
+     U56       T=W:  9 of 20   (by R: D=4/5, W=3/5, M=2/5, Q=0/5)
+     U56       T=M:  9 of 20   (by R: D=4/5, W=3/5, M=2/5, Q=0/5)
+     B136      T=W:  8 of 20   (by R: D=4/5, W=3/5, M=1/5, Q=0/5)
+     B136      T=M:  9 of 20   (by R: D=4/5, W=3/5, M=2/5, Q=0/5)
+     SMALL665  T=W:  0 of 20   (by R: D=0/5, W=0/5, M=0/5, Q=0/5)
+     SMALL665  T=M:  0 of 20   (by R: D=0/5, W=0/5, M=0/5, Q=0/5)
+
+   mean turnover /yr by R (pooled over t, panels, T): D=3.95, W=2.64, M=2.04, Q=1.36
+
+## V3 — IS THE STALE-MINUS-FRESH IS-SHARPE GAP MADE OF COST?
+   cells where the STALE cell out-Sharpes the DAILY one in sample at 10 bps: 36 of 60
+   median cost share of that gap: 0.187   (mean 0.333, IQR 0.120-0.289)
+   gaps that FLIP SIGN when the statistic is priced at 0 bps: 2 of 60
+     U56       stale-wins 10/20 | median cost share 0.191 | flips 0/20 | mean extra turnover of R=D +2.11/yr
+     B136      stale-wins 10/20 | median cost share 0.261 | flips 0/20 | mean extra turnover of R=D +2.26/yr
+     SMALL665  stale-wins 16/20 | median cost share 0.161 | flips 2/20 | mean extra turnover of R=D +2.45/yr
+
+## V1 — WHERE THE ARGMAX LANDS, BY THE COST RUNG THE STATISTIC IS PRICED AT
+   (share of the 6 arms x 6 families whose pick has R in {D, W})
+   c_IS =  0 bps: FRESH (D or W)  4 of 36 (0.111)  |  R=D  0  |  by R: D=0, W=4, M=32, Q=0  |  mean picked t 0.121
+   c_IS = 10 bps: FRESH (D or W)  4 of 36 (0.111)  |  R=D  0  |  by R: D=0, W=4, M=32, Q=0  |  mean picked t 0.138
+   c_IS = 25 bps: FRESH (D or W)  4 of 36 (0.111)  |  R=D  0  |  by R: D=0, W=4, M=32, Q=0  |  mean picked t 0.149
+   c_IS = 50 bps: FRESH (D or W)  2 of 36 (0.056)  |  R=D  0  |  by R: D=0, W=2, M=34, Q=0  |  mean picked t 0.149
+
+   per-family (rows) x c_IS (cols), 1 = FRESH pick on that arm, of 6 arms:
+     F_SHARPE   c0=0/6  c10=0/6  c25=0/6  c50=0/6
+     F_CALMAR   c0=0/6  c10=0/6  c25=0/6  c50=0/6
+     F_DD       c0=2/6  c10=2/6  c25=2/6  c50=1/6
+     F_LEGS     c0=0/6  c10=0/6  c25=0/6  c50=0/6
+     F_GXS      c0=0/6  c10=0/6  c25=0/6  c50=0/6
+     F_GXDD     c0=2/6  c10=2/6  c25=2/6  c50=1/6
+
+## RULE 8 — dials (t, R) chosen on 2009-2016 ONLY; 2017-2026 read ONCE
+   panel T_trade      chooser       pick  turn_py   CAGR  Sharpe   MaxDD     H1     H2  oos_CAGR  oos_Sharpe  oos_MaxDD  keep4b_full  keep4b_oos  keep4b  keep4a  keep4a_oos  keep4b@0  keep4b@25  keep4b@50  cost_fragile                             bind
+     U56       W   F_SHARPE@0 t=0.16,R=M   1.6730 0.1630  1.2028 -0.2452 1.3247 1.0982    0.1630      1.1815    -0.2452        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W   F_CALMAR@0 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W       F_DD@0 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W     F_LEGS@0 t=0.10,R=M   2.5889 0.1323  1.2292 -0.1962 1.3182 1.1474    0.1367      1.2605    -0.1962         True        True    True   False       False      True       True       True         False                             none
+     U56       W      F_GXS@0 t=0.16,R=M   1.6730 0.1630  1.2028 -0.2452 1.3247 1.0982    0.1630      1.1815    -0.2452        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W     F_GXDD@0 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W  F_SHARPE@10 t=0.16,R=M   1.6730 0.1630  1.2028 -0.2452 1.3247 1.0982    0.1630      1.1815    -0.2452        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W  F_CALMAR@10 t=0.20,R=M   1.5021 0.1677  1.1504 -0.2770 1.3041 1.0266    0.1657      1.1026    -0.2770        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W      F_DD@10 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W    F_LEGS@10 t=0.12,R=M   2.1347 0.1473  1.2333 -0.2127 1.3061 1.1672    0.1522      1.2650    -0.2127        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W     F_GXS@10 t=0.16,R=M   1.6730 0.1630  1.2028 -0.2452 1.3247 1.0982    0.1630      1.1815    -0.2452        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W    F_GXDD@10 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W  F_SHARPE@25 t=0.16,R=M   1.6730 0.1630  1.2028 -0.2452 1.3247 1.0982    0.1630      1.1815    -0.2452        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W  F_CALMAR@25 t=0.20,R=M   1.5021 0.1677  1.1504 -0.2770 1.3041 1.0266    0.1657      1.1026    -0.2770        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W      F_DD@25 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W    F_LEGS@25 t=0.12,R=M   2.1347 0.1473  1.2333 -0.2127 1.3061 1.1672    0.1522      1.2650    -0.2127        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W     F_GXS@25 t=0.16,R=M   1.6730 0.1630  1.2028 -0.2452 1.3247 1.0982    0.1630      1.1815    -0.2452        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W    F_GXDD@25 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W  F_SHARPE@50 t=0.16,R=M   1.6730 0.1630  1.2028 -0.2452 1.3247 1.0982    0.1630      1.1815    -0.2452        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W  F_CALMAR@50 t=0.20,R=M   1.5021 0.1677  1.1504 -0.2770 1.3041 1.0266    0.1657      1.1026    -0.2770        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W      F_DD@50 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W    F_LEGS@50 t=0.12,R=M   2.1347 0.1473  1.2333 -0.2127 1.3061 1.1672    0.1522      1.2650    -0.2127        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W     F_GXS@50 t=0.16,R=M   1.6730 0.1630  1.2028 -0.2452 1.3247 1.0982    0.1630      1.1815    -0.2452        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       W    F_GXDD@50 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628         True        True    True   False       False      True       True      False         False                             none
+     U56       W       C_MEMO t=0.16,R=W   1.8333 0.1561  1.2027 -0.1986 1.2828 1.1307    0.1594      1.2193    -0.1986         True        True    True   False       False      True       True      False         False                             none
+     U56       W C_ORACLE_OOS t=0.12,R=D   3.7273 0.1386  1.2319 -0.1597 1.2329 1.2318    0.1513      1.3345    -0.1597         True        True    True   False       False      True       True       True         False                             none
+     U56       M   F_SHARPE@0 t=0.16,R=M   1.0541 0.1638  1.2156 -0.2424 1.3275 1.1191    0.1646      1.2018    -0.2424        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M   F_CALMAR@0 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M       F_DD@0 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M     F_LEGS@0 t=0.10,R=M   1.9108 0.1331  1.2437 -0.1939 1.3234 1.1700    0.1381      1.2822    -0.1939         True        True    True   False       False      True       True       True         False                             none
+     U56       M      F_GXS@0 t=0.16,R=M   1.0541 0.1638  1.2156 -0.2424 1.3275 1.1191    0.1646      1.2018    -0.2424        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M     F_GXDD@0 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M  F_SHARPE@10 t=0.16,R=M   1.0541 0.1638  1.2156 -0.2424 1.3275 1.1191    0.1646      1.2018    -0.2424        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M  F_CALMAR@10 t=0.20,R=M   0.8984 0.1685  1.1618 -0.2748 1.3053 1.0458    0.1675      1.1211    -0.2748        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M      F_DD@10 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M    F_LEGS@10 t=0.12,R=M   1.4659 0.1481  1.2476 -0.2101 1.3111 1.1896    0.1537      1.2865    -0.2101        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M     F_GXS@10 t=0.16,R=M   1.0541 0.1638  1.2156 -0.2424 1.3275 1.1191    0.1646      1.2018    -0.2424        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M    F_GXDD@10 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M  F_SHARPE@25 t=0.16,R=M   1.0541 0.1638  1.2156 -0.2424 1.3275 1.1191    0.1646      1.2018    -0.2424        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M  F_CALMAR@25 t=0.20,R=M   0.8984 0.1685  1.1618 -0.2748 1.3053 1.0458    0.1675      1.1211    -0.2748        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M      F_DD@25 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M    F_LEGS@25 t=0.12,R=M   1.4659 0.1481  1.2476 -0.2101 1.3111 1.1896    0.1537      1.2865    -0.2101        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M     F_GXS@25 t=0.16,R=M   1.0541 0.1638  1.2156 -0.2424 1.3275 1.1191    0.1646      1.2018    -0.2424        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M    F_GXDD@25 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M  F_SHARPE@50 t=0.16,R=M   1.0541 0.1638  1.2156 -0.2424 1.3275 1.1191    0.1646      1.2018    -0.2424        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M  F_CALMAR@50 t=0.20,R=M   0.8984 0.1685  1.1618 -0.2748 1.3053 1.0458    0.1675      1.1211    -0.2748        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M      F_DD@50 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M    F_LEGS@50 t=0.12,R=M   1.4659 0.1481  1.2476 -0.2101 1.3111 1.1896    0.1537      1.2865    -0.2101        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M     F_GXS@50 t=0.16,R=M   1.0541 0.1638  1.2156 -0.2424 1.3275 1.1191    0.1646      1.2018    -0.2424        False       False   False   False       False     False      False      False          True                            L4_DD
+     U56       M    F_GXDD@50 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613         True        True    True   False       False      True       True      False         False                             none
+     U56       M       C_MEMO t=0.16,R=W   1.5130 0.1571  1.2129 -0.1968 1.2864 1.1468    0.1610      1.2343    -0.1968         True        True    True   False       False      True       True      False         False                             none
+     U56       M C_ORACLE_OOS t=0.12,R=D   3.4184 0.1397  1.2421 -0.1579 1.2376 1.2472    0.1528      1.3485    -0.1579         True        True    True   False       False      True       True       True         False                             none
+    B136       W   F_SHARPE@0 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W   F_CALMAR@0 t=0.08,R=M   2.9655 0.1112  1.1796 -0.1646 1.3664 1.0071    0.1114      1.1696    -0.1646         True        True    True   False       False      True      False      False          True                             none
+    B136       W       F_DD@0 t=0.08,R=W   3.6300 0.1024  1.1672 -0.1086 1.2665 1.0718    0.1097      1.2445    -0.1086        False        True   False    True        True      True      False      False          True                          L5_CAGR
+    B136       W     F_LEGS@0 t=0.10,R=M   2.7109 0.1320  1.1959 -0.2027 1.3523 1.0478    0.1305      1.1884    -0.2027        False       False   False   False       False      True      False      False          True                            L4_DD
+    B136       W      F_GXS@0 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W     F_GXDD@0 t=0.10,R=W   3.1034 0.1220  1.1820 -0.1346 1.2796 1.0872    0.1268      1.2380    -0.1346         True        True    True   False       False      True       True       True         False                             none
+    B136       W  F_SHARPE@10 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W  F_CALMAR@10 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W      F_DD@10 t=0.08,R=W   3.6300 0.1024  1.1672 -0.1086 1.2665 1.0718    0.1097      1.2445    -0.1086        False        True   False    True        True      True      False      False          True                          L5_CAGR
+    B136       W    F_LEGS@10 t=0.10,R=M   2.7109 0.1320  1.1959 -0.2027 1.3523 1.0478    0.1305      1.1884    -0.2027        False       False   False   False       False      True      False      False          True                            L4_DD
+    B136       W     F_GXS@10 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W    F_GXDD@10 t=0.10,R=W   3.1034 0.1220  1.1820 -0.1346 1.2796 1.0872    0.1268      1.2380    -0.1346         True        True    True   False       False      True       True       True         False                             none
+    B136       W  F_SHARPE@25 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W  F_CALMAR@25 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W      F_DD@25 t=0.08,R=W   3.6300 0.1024  1.1672 -0.1086 1.2665 1.0718    0.1097      1.2445    -0.1086        False        True   False    True        True      True      False      False          True                          L5_CAGR
+    B136       W    F_LEGS@25 t=0.10,R=M   2.7109 0.1320  1.1959 -0.2027 1.3523 1.0478    0.1305      1.1884    -0.2027        False       False   False   False       False      True      False      False          True                            L4_DD
+    B136       W     F_GXS@25 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W    F_GXDD@25 t=0.10,R=W   3.1034 0.1220  1.1820 -0.1346 1.2796 1.0872    0.1268      1.2380    -0.1346         True        True    True   False       False      True       True       True         False                             none
+    B136       W  F_SHARPE@50 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W  F_CALMAR@50 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W      F_DD@50 t=0.08,R=W   3.6300 0.1024  1.1672 -0.1086 1.2665 1.0718    0.1097      1.2445    -0.1086        False        True   False    True        True      True      False      False          True                          L5_CAGR
+    B136       W    F_LEGS@50 t=0.10,R=M   2.7109 0.1320  1.1959 -0.2027 1.3523 1.0478    0.1305      1.1884    -0.2027        False       False   False   False       False      True      False      False          True                            L4_DD
+    B136       W     F_GXS@50 t=0.20,R=M   1.5585 0.1746  1.1611 -0.3002 1.3704 0.9801    0.1629      1.0744    -0.3002        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       W    F_GXDD@50 t=0.10,R=W   3.1034 0.1220  1.1820 -0.1346 1.2796 1.0872    0.1268      1.2380    -0.1346         True        True    True   False       False      True       True       True         False                             none
+    B136       W       C_MEMO t=0.16,R=W   1.9289 0.1594  1.2049 -0.1876 1.3439 1.0708    0.1536      1.1837    -0.1876         True        True    True   False       False      True       True       True         False                             none
+    B136       W C_ORACLE_OOS t=0.12,R=D   3.7333 0.1393  1.2275 -0.1380 1.2974 1.1590    0.1446      1.2911    -0.1380         True        True    True   False       False      True       True       True         False                             none
+    B136       M   F_SHARPE@0 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M   F_CALMAR@0 t=0.08,R=M   2.2917 0.1109  1.1851 -0.1615 1.3651 1.0175    0.1115      1.1816    -0.1615         True        True    True   False       False      True       True      False         False                             none
+    B136       M       F_DD@0 t=0.08,R=W   3.6892 0.1020  1.1656 -0.1086 1.2611 1.0735    0.1096      1.2466    -0.1086        False        True   False    True        True      True      False      False          True                          L5_CAGR
+    B136       M     F_LEGS@0 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987         True        True    True   False       False      True       True       True         False                             none
+    B136       M      F_GXS@0 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M     F_GXDD@0 t=0.10,R=W   3.0499 0.1217  1.1817 -0.1346 1.2755 1.0904    0.1269      1.2417    -0.1346         True        True    True   False       False      True       True       True         False                             none
+    B136       M  F_SHARPE@10 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M  F_CALMAR@10 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M      F_DD@10 t=0.08,R=W   3.6892 0.1020  1.1656 -0.1086 1.2611 1.0735    0.1096      1.2466    -0.1086        False        True   False    True        True      True      False      False          True                          L5_CAGR
+    B136       M    F_LEGS@10 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987         True        True    True   False       False      True       True       True         False                             none
+    B136       M     F_GXS@10 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M    F_GXDD@10 t=0.10,R=W   3.0499 0.1217  1.1817 -0.1346 1.2755 1.0904    0.1269      1.2417    -0.1346         True        True    True   False       False      True       True       True         False                             none
+    B136       M  F_SHARPE@25 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M  F_CALMAR@25 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M      F_DD@25 t=0.08,R=W   3.6892 0.1020  1.1656 -0.1086 1.2611 1.0735    0.1096      1.2466    -0.1086        False        True   False    True        True      True      False      False          True                          L5_CAGR
+    B136       M    F_LEGS@25 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987         True        True    True   False       False      True       True       True         False                             none
+    B136       M     F_GXS@25 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M    F_GXDD@25 t=0.10,R=W   3.0499 0.1217  1.1817 -0.1346 1.2755 1.0904    0.1269      1.2417    -0.1346         True        True    True   False       False      True       True       True         False                             none
+    B136       M  F_SHARPE@50 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M  F_CALMAR@50 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M      F_DD@50 t=0.08,R=M   2.2917 0.1109  1.1851 -0.1615 1.3651 1.0175    0.1115      1.1816    -0.1615         True        True    True   False       False      True       True      False         False                             none
+    B136       M    F_LEGS@50 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987         True        True    True   False       False      True       True       True         False                             none
+    B136       M     F_GXS@50 t=0.20,R=M   0.9337 0.1738  1.1635 -0.2967 1.3655 0.9871    0.1627      1.0824    -0.2967        False       False   False   False       False     False      False      False          True                            L4_DD
+    B136       M    F_GXDD@50 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987         True        True    True   False       False      True       True       True         False                             none
+    B136       M       C_MEMO t=0.16,R=W   1.6078 0.1591  1.2060 -0.1874 1.3412 1.0754    0.1538      1.1886    -0.1874         True        True    True   False       False      True       True       True         False                             none
+    B136       M C_ORACLE_OOS t=0.12,R=D   3.4120 0.1392  1.2292 -0.1384 1.2951 1.1643    0.1448      1.2968    -0.1384         True        True    True   False       False      True       True       True         False                             none
+SMALL665       W   F_SHARPE@0 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W   F_CALMAR@0 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W       F_DD@0 t=0.08,R=M   2.8916 0.0502  0.5656 -0.3189 0.9168 0.2229    0.0245      0.3026    -0.3189        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W     F_LEGS@0 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W      F_GXS@0 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W     F_GXDD@0 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W  F_SHARPE@10 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W  F_CALMAR@10 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W      F_DD@10 t=0.08,R=M   2.8916 0.0502  0.5656 -0.3189 0.9168 0.2229    0.0245      0.3026    -0.3189        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W    F_LEGS@10 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W     F_GXS@10 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W    F_GXDD@10 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W  F_SHARPE@25 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W  F_CALMAR@25 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W      F_DD@25 t=0.08,R=M   2.8916 0.0502  0.5656 -0.3189 0.9168 0.2229    0.0245      0.3026    -0.3189        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W    F_LEGS@25 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W     F_GXS@25 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W    F_GXDD@25 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W  F_SHARPE@50 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W  F_CALMAR@50 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W      F_DD@50 t=0.08,R=M   2.8916 0.0502  0.5656 -0.3189 0.9168 0.2229    0.0245      0.3026    -0.3189        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W    F_LEGS@50 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W     F_GXS@50 t=0.20,R=M   2.5554 0.1066  0.6566 -0.4362 1.0259 0.4266    0.0765      0.4759    -0.4362        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       W    F_GXDD@50 t=0.12,R=M   3.0940 0.0758  0.6202 -0.3778 1.0166 0.2800    0.0420      0.3707    -0.3778        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W       C_MEMO t=0.16,R=W   3.0630 0.0847  0.6150 -0.3148 0.9874 0.3269    0.0520      0.3994    -0.3148        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       W C_ORACLE_OOS t=0.20,R=D   3.4232 0.1046  0.6847 -0.3178 0.9962 0.4717    0.0799      0.5219    -0.3178        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M   F_SHARPE@0 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M   F_CALMAR@0 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M       F_DD@0 t=0.08,R=M   1.9899 0.0482  0.5513 -0.3074 0.8906 0.2144    0.0236      0.2970    -0.3074        False       False   False   False       False     False      False      False          True L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M     F_LEGS@0 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M      F_GXS@0 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M     F_GXDD@0 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M  F_SHARPE@10 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M  F_CALMAR@10 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M      F_DD@10 t=0.08,R=M   1.9899 0.0482  0.5513 -0.3074 0.8906 0.2144    0.0236      0.2970    -0.3074        False       False   False   False       False     False      False      False          True L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M    F_LEGS@10 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M     F_GXS@10 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M    F_GXDD@10 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M  F_SHARPE@25 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M  F_CALMAR@25 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M      F_DD@25 t=0.08,R=M   1.9899 0.0482  0.5513 -0.3074 0.8906 0.2144    0.0236      0.2970    -0.3074        False       False   False   False       False     False      False      False          True L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M    F_LEGS@25 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M     F_GXS@25 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M    F_GXDD@25 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M  F_SHARPE@50 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M  F_CALMAR@50 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M      F_DD@50 t=0.08,R=M   1.9899 0.0482  0.5513 -0.3074 0.8906 0.2144    0.0236      0.2970    -0.3074        False       False   False   False       False     False      False      False          True L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M    F_LEGS@50 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M     F_GXS@50 t=0.20,R=M   1.4383 0.1021  0.6378 -0.4275 0.9936 0.4139    0.0736      0.4651    -0.4275        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+SMALL665       M    F_GXDD@50 t=0.12,R=M   1.9846 0.0728  0.6053 -0.3652 0.9891 0.2707    0.0405      0.3641    -0.3652        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M       C_MEMO t=0.16,R=W   2.7340 0.0812  0.5949 -0.3144 0.9551 0.3159    0.0502      0.3896    -0.3144        False       False   False   False       False     False      False      False          True       L2_H2|L3_OOS|L4_DD|L5_CAGR
+SMALL665       M C_ORACLE_OOS t=0.20,R=D   2.6254 0.1012  0.6669 -0.3166 0.9644 0.4636    0.0783      0.5145    -0.3166        False       False   False   False       False     False      False      False          True               L2_H2|L3_OOS|L4_DD
+
+   reach by chooser (6 arms = 3 panels x 2 trade cadences):
+     F_SHARPE  @0  4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.8792 | mean OOS MaxDD -30.46% | robust@25 0
+     F_CALMAR  @0  4b FULL+OOS 4 of 6 | 4b OOS 4 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9367 | mean OOS MaxDD -23.22% | robust@25 3
+     F_DD      @0  4b FULL+OOS 2 of 6 | 4b OOS 4 | 4a OOS 2 | FRESH 2 | mean OOS Sharpe 0.9375 | mean OOS MaxDD -19.46% | robust@25 2
+     F_LEGS    @0  4b FULL+OOS 3 of 6 | 4b OOS 3 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9787 | mean OOS MaxDD -27.59% | robust@25 3
+     F_GXS     @0  4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.8792 | mean OOS MaxDD -30.46% | robust@25 0
+     F_GXDD    @0  4b FULL+OOS 4 of 6 | 4b OOS 4 | 4a OOS 0 | FRESH 2 | mean OOS Sharpe 0.9581 | mean OOS MaxDD -22.27% | robust@25 4
+     F_SHARPE  @10 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.8792 | mean OOS MaxDD -30.46% | robust@25 0
+     F_CALMAR  @10 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.8701 | mean OOS MaxDD -32.50% | robust@25 0
+     F_DD      @10 4b FULL+OOS 2 of 6 | 4b OOS 4 | 4a OOS 2 | FRESH 2 | mean OOS Sharpe 0.9375 | mean OOS MaxDD -19.46% | robust@25 2
+     F_LEGS    @10 4b FULL+OOS 1 of 6 | 4b OOS 1 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9802 | mean OOS MaxDD -28.13% | robust@25 1
+     F_GXS     @10 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.8792 | mean OOS MaxDD -30.46% | robust@25 0
+     F_GXDD    @10 4b FULL+OOS 4 of 6 | 4b OOS 4 | 4a OOS 0 | FRESH 2 | mean OOS Sharpe 0.9581 | mean OOS MaxDD -22.27% | robust@25 4
+     F_SHARPE  @25 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9135 | mean OOS MaxDD -32.47% | robust@25 0
+     F_CALMAR  @25 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.8869 | mean OOS MaxDD -33.54% | robust@25 0
+     F_DD      @25 4b FULL+OOS 2 of 6 | 4b OOS 4 | 4a OOS 2 | FRESH 2 | mean OOS Sharpe 0.9375 | mean OOS MaxDD -19.46% | robust@25 2
+     F_LEGS    @25 4b FULL+OOS 1 of 6 | 4b OOS 1 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9802 | mean OOS MaxDD -28.13% | robust@25 1
+     F_GXS     @25 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9135 | mean OOS MaxDD -32.47% | robust@25 0
+     F_GXDD    @25 4b FULL+OOS 4 of 6 | 4b OOS 4 | 4a OOS 0 | FRESH 2 | mean OOS Sharpe 0.9581 | mean OOS MaxDD -22.27% | robust@25 4
+     F_SHARPE  @50 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9135 | mean OOS MaxDD -32.47% | robust@25 0
+     F_CALMAR  @50 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.8869 | mean OOS MaxDD -33.54% | robust@25 0
+     F_DD      @50 4b FULL+OOS 3 of 6 | 4b OOS 4 | 4a OOS 1 | FRESH 1 | mean OOS Sharpe 0.9266 | mean OOS MaxDD -20.34% | robust@25 3
+     F_LEGS    @50 4b FULL+OOS 1 of 6 | 4b OOS 1 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9802 | mean OOS MaxDD -28.13% | robust@25 1
+     F_GXS     @50 4b FULL+OOS 0 of 6 | 4b OOS 0 | 4a OOS 0 | FRESH 0 | mean OOS Sharpe 0.9135 | mean OOS MaxDD -32.47% | robust@25 0
+     F_GXDD    @50 4b FULL+OOS 4 of 6 | 4b OOS 4 | 4a OOS 0 | FRESH 1 | mean OOS Sharpe 0.9512 | mean OOS MaxDD -23.34% | robust@25 4
+     C_MEMO        4b FULL+OOS 4 of 6 | mean OOS Sharpe 0.9358 | mean OOS MaxDD -23.32%
+     C_ORACLE_OOS  4b FULL+OOS 4 of 6 | mean OOS Sharpe 1.0512 | mean OOS MaxDD -20.47%
+
+   V1 c_IS=0 lands FRESH more often than c_IS=10: 4 vs 4 of 36 -> NOT TRIGGERED
+   V2 best c_IS=0 chooser reaches more arms than best c_IS=10: 4 vs 4 -> NOT TRIGGERED
+   V3 the stale-minus-fresh IS gap is majority COST (median share 0.187 >= 0.50) -> NOT TRIGGERED
+   V4 legal IS-only picks clearing 4b FULL+OOS at 10 bps: 35 of 144
+   V5 of those, COST-FRAGILE (fail 4b at 25 bps): 1 of 35
+
+   the reached 4b FULL+OOS cells (V4/V5 detail):
+panel T_trade    chooser       pick  turn_py   CAGR  Sharpe   MaxDD     H1     H2  oos_CAGR  oos_Sharpe  oos_MaxDD  keep4b@0  keep4b@25  keep4b@50
+  U56       W F_CALMAR@0 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       W     F_DD@0 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       W   F_LEGS@0 t=0.10,R=M   2.5889 0.1323  1.2292 -0.1962 1.3182 1.1474    0.1367      1.2605    -0.1962      True       True       True
+  U56       W   F_GXDD@0 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       W    F_DD@10 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       W  F_GXDD@10 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       W    F_DD@25 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       W  F_GXDD@25 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       W    F_DD@50 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       W  F_GXDD@50 t=0.08,R=M   2.8336 0.1119  1.2141 -0.1628 1.3148 1.1213    0.1174      1.2561    -0.1628      True       True      False
+  U56       M F_CALMAR@0 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+  U56       M     F_DD@0 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+  U56       M   F_LEGS@0 t=0.10,R=M   1.9108 0.1331  1.2437 -0.1939 1.3234 1.1700    0.1381      1.2822    -0.1939      True       True       True
+  U56       M   F_GXDD@0 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+  U56       M    F_DD@10 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+  U56       M  F_GXDD@10 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+  U56       M    F_DD@25 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+  U56       M  F_GXDD@25 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+  U56       M    F_DD@50 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+  U56       M  F_GXDD@50 t=0.08,R=M   2.1901 0.1126  1.2285 -0.1613 1.3198 1.1442    0.1187      1.2780    -0.1613      True       True      False
+ B136       W F_CALMAR@0 t=0.08,R=M   2.9655 0.1112  1.1796 -0.1646 1.3664 1.0071    0.1114      1.1696    -0.1646      True      False      False
+ B136       W   F_GXDD@0 t=0.10,R=W   3.1034 0.1220  1.1820 -0.1346 1.2796 1.0872    0.1268      1.2380    -0.1346      True       True       True
+ B136       W  F_GXDD@10 t=0.10,R=W   3.1034 0.1220  1.1820 -0.1346 1.2796 1.0872    0.1268      1.2380    -0.1346      True       True       True
+ B136       W  F_GXDD@25 t=0.10,R=W   3.1034 0.1220  1.1820 -0.1346 1.2796 1.0872    0.1268      1.2380    -0.1346      True       True       True
+ B136       W  F_GXDD@50 t=0.10,R=W   3.1034 0.1220  1.1820 -0.1346 1.2796 1.0872    0.1268      1.2380    -0.1346      True       True       True
+ B136       M F_CALMAR@0 t=0.08,R=M   2.2917 0.1109  1.1851 -0.1615 1.3651 1.0175    0.1115      1.1816    -0.1615      True       True      False
+ B136       M   F_LEGS@0 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987      True       True       True
+ B136       M   F_GXDD@0 t=0.10,R=W   3.0499 0.1217  1.1817 -0.1346 1.2755 1.0904    0.1269      1.2417    -0.1346      True       True       True
+ B136       M  F_LEGS@10 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987      True       True       True
+ B136       M  F_GXDD@10 t=0.10,R=W   3.0499 0.1217  1.1817 -0.1346 1.2755 1.0904    0.1269      1.2417    -0.1346      True       True       True
+ B136       M  F_LEGS@25 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987      True       True       True
+ B136       M  F_GXDD@25 t=0.10,R=W   3.0499 0.1217  1.1817 -0.1346 1.2755 1.0904    0.1269      1.2417    -0.1346      True       True       True
+ B136       M    F_DD@50 t=0.08,R=M   2.2917 0.1109  1.1851 -0.1615 1.3651 1.0175    0.1115      1.1816    -0.1615      True       True      False
+ B136       M  F_LEGS@50 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987      True       True       True
+ B136       M  F_GXDD@50 t=0.10,R=M   1.9991 0.1316  1.2014 -0.1987 1.3516 1.0581    0.1305      1.2000    -0.1987      True       True       True
+
+## GATES 13 of 13
+
+## SURVIVORSHIP: U56 / B136 are CURRENT constituents and SMALL665 a CURRENT sub-$2B screen; every LEVEL is optimistic.  The chooser contrast is same-tape / same-grid with only the statistic's cost rung moved, so it is first-order immune; the pass COUNTS are not.
