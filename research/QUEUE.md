@@ -32,7 +32,6 @@
 *(2026-09-18, lane cloud) ELIGIBILITY DESCENT + DOCUMENTED FALLBACK for this run's SECOND idea. The LAST numbered item standing in '## Open' is 979; descending, 979 / 978 / 977 / 932 / 904 / 903 / 896 / 895 / 894 / 877 / 876 are record-bookkeeping censuses with no capital book to price, 429 is PARK (needs broad/U56 SHARE volume the sandbox does not carry) and 353 is LOCAL-ONLY (needs a live yf.download). None can carry this run's mandatory step-3 deliverable — a weights function scored against the live baseline and SPY, both KEEP paths, a rule-8 walk-forward with 2017-2026 read once. So the sprint's documented fallback is taken: three NEW price-only ideas that stress-test the standing KEEP-4b candidate at the gross idea 1290 just certified (0.65 on U56) are filed as 1293 / 1294 / 1295, and this lane claims the LAST (1295). No EDGAR / Form 4 / 8-K / options / spin-offs / live data in any of the three.*
 ## Open
 
-1695. is-the-4b-CAGR-FLOOR-the-ONLY-LEG-THAT-EVER-BINDS-on-a-FULL-GROSS-LADDER — idea 1454 found the live book fails 4b on the CAGR floor ALONE and the 2026-09-19 CHANGELOG found all 11 of 180 FULL-and-OOS passes sit at G = 1.00, the top gross rung.  Census which of 4b's four legs binds at every rung of a full gross ladder on all three panels and state whether 4b is, operationally, a single-leg test on gross.  Max 2 params (G, panel-form). (2026-09-20)
 
 
 *(2026-09-20, lane B) ELIGIBILITY + DOCUMENTED FALLBACK.  The LAST numbered item standing in '## Open' is 896 (does-the-FILE-vs-CELL-GAP-hold-on-NON-PLACEBO-artifact-families), and under it 895 / 894 / 877 / 876 / 429 / 353.  The first five are RECORD-BOOKKEEPING censuses of committed text or filenames, 429 is PARK (no broad/u56 share-volume cache) and 353 is LOCAL-ONLY (it needs a live `yf.download` the sandbox has no network for); none yields a weights function, so none can carry this run's binding step-3 deliverable (a book scored against RULES v2 AND SPY on both KEEP paths with a rule-8 walk-forward).  The skipped items stay Open, unclaimed, not killed.  Step 2's fallback is therefore taken: 1695 / 1699 / 1703 are filed, grounded in the 2026-09-19 CHANGELOG diagnosis (the 4b pass is an EDGE-OF-GRID GROSS claim and every memo's survivorship caveat — current constituents — has never been priced on the band book itself), and this lane claims the LAST of them, 1703.  Numbering per hygiene rule (N): max idea label standing anywhere in this file = 1694, +1 = 1695, + lane B's offset 1 -> 1695, then stride 4.*
@@ -491,6 +490,11 @@
 
 
 ## In progress
+
+1695. is-the-4b-CAGR-FLOOR-the-ONLY-LEG-THAT-EVER-BINDS-on-a-FULL-GROSS-LADDER — idea 1454 found the live book fails 4b on the CAGR floor ALONE and the 2026-09-19 CHANGELOG found all 11 of 180 FULL-and-OOS passes sit at G = 1.00, the top gross rung.  Census which of 4b's four legs binds at every rung of a full gross ladder on all three panels and state whether 4b is, operationally, a single-leg test on gross.  Max 2 params (G, panel-form). (2026-09-20)  **[CLAIMED 2026-09-20, lane cloud, idea 1 of 2 — FIRST eligible item standing in '## Open'.]**
+
+*(2026-09-20, lane cloud, idea 1 of 2) CLAIM of **1695**, the FIRST numbered item standing in '## Open'. Price-only, names no EDGAR/Form 4/8-K/options/spin-off/live-data object, and yields a weights function (a gross ladder x book-form grid scored on both KEEP paths with a rule-8 walk-forward), so it carries this run's binding step-3 deliverable. Direct follow-up to idea 1699, whose CHANGELOG entry states the leg census 'belongs beside open idea 1695'.*
+
 
 
 
