@@ -5728,3 +5728,82 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   **RESIDUE, not a rules change (rule 6; RULES.md, scan.py, bot.py and baseline.py untouched):** a
   committed 4b drawdown claim should carry the **admitted-name count** it was measured at, the same
   way idea 775's residue asked a draw floor to carry its k/M.
+
+## 2026-09-20 — idea 894 / slug `census-denominator-ladder-stamp` (lane B): REQUIRE A TREE-STAMP BESIDE EVERY PUBLISHED CENSUS DENOMINATOR. **ANSWERED / THE CLAUSE IS LOAD-BEARING FOR CAPITAL — BUT THE THING THAT HAS TO BE STAMPED IS THE LADDER'S *REACH*, NOT ITS *COUNT*. KILL ON THE UNQUALIFIED LADDER-READ VERDICT. NO NEW KEEP, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 889 found idea 871's census, byte-for-byte unchanged, reading
+  70 / 79 / 85 / 86 at four committed trees, and idea 880 dividing by a 70 that was already 79.
+  As prose the fix (print sha + file count) is unfalsifiable hygiene. It becomes a CAPITAL question
+  once you notice that every rule-8 verdict in this record is also a quotient with an unprinted
+  denominator: the chooser reads a LADDER and publishes the argmax, and the ladder's length is as
+  unstamped as a file count. Idea 1799 saw the symptom at ONE ladder length; this run moves the
+  denominator and holds everything else fixed.
+
+  **THE CONSTRUCTION.** Book family = the live book's own two dials, `rules_v2_weights(px, band,
+  gross)`, band {0.00, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.20} x gross {0.50, 0.75, 1.00} = a
+  24-cell ladder per panel. Two tuned params: `stat` (the IS-only chooser) in {IS_SHARPE, IS_CAGR,
+  IS_MINMARG, IS_LEGS} x `order` (the ladder order rule) in {GRID, REVERSE, RAND x 20 seeds}.
+  Published-not-tuned: m = 2..24 (nested prefixes — THE AXIS), panel {U56, B136}, cost {0, 10, 25,
+  50} bps. CONTROL at every prefix: a uniform random pick from the SAME prefix, same seeds. 192
+  book-rows, **20,240 chooser-cells**, 704 streams, weekly, t+1, 10 bps primary. GATES 8/8:
+  `v2w == baseline.rules_v2_weights` max|d| **0.000e+00**, local `bt()` == `engine.backtest`
+  max|d| **6.9e-18**.
+
+  **(A) THE ANSWER — THE DENOMINATOR MOVES THE VERDICT.** With tape, panel, cost, cadence and
+  chooser all fixed, **421 of 704 streams (59.8%)** do not hold a constant 4b-OOS verdict across
+  m; median 1 verdict flip and 2 pick flips per stream (max 6 and 19); OOS Sharpe spread within a
+  stream median **0.0430**, p90 0.1227, max 0.1761. V1's pre-stated bar was 0.20. By order rule:
+  GRID **0.875** unstable, RAND 0.614, REVERSE **0.000**.
+
+  **(B) AND IT IS A REACH FACT, NOT A COUNT FACT.** 4b-OOS pass rate is **0.000** when the prefix
+  contains no passing cell (n = 4,224) and **0.880** when it contains at least one (n = 11,968);
+  corr(verdict, prefix passing share) **+0.5863**. The first passing rung sits at ladder position
+  **17** under GRID, **3** (median) under RAND and **1** under REVERSE — which is exactly why
+  REVERSE never flips. So a bare (sha, file-count) stamp would have caught NONE of this: the
+  number that decides the verdict is where the passing block starts, not how many rungs were shown.
+
+  **(C) THE PRINTED DENOMINATOR OVERSTATES THE REAL ONE BY 8x.** On U56 at 10 bps all **8** gross
+  = 1.00 cells clear 4b FULL *and* OOS and **0 of 16** cells at gross 0.75 / 0.50 do — at Sharpe
+  that is identical across gross inside a band (1.167 / 1.167 / 1.167 at band 0.00, 1.113 across
+  band 0.20). Effective ladder size is **3** (the gross rungs), not the 24 that would be printed.
+  Binding leg is the 4b **CAGR floor**: sole cause of **146 of 150** FULL and **149 of 151** OOS
+  failures across the grid; the DD cap binds 4 times and the H1 Sharpe leg never.
+
+  **(D) THE CHOOSERS ARE NOT THE PROBLEM, AND 1799's WALK IS NOT A DENOMINATOR ARTEFACT.** Paired
+  against a uniform pick from the IDENTICAL prefix (matched on panel x cost x order x seed x m),
+  every statistic beats its control: IS_CAGR **+0.536** (2,175 W / 6 L, z +46.4), IS_MINMARG +0.525
+  (z +45.9), IS_LEGS +0.433 (z +39.5), IS_SHARPE +0.340 (1,572 W / 197 L, z +32.7). The unpaired
+  "inside +/-2 sd of the control" reading (0.65-0.78 of m) is a 20-seed underpowered artefact and
+  is retired here — this run's own V3 is corrected by its own V3b. Top-2-rung pick share tracks
+  chance (mean lift **+0.0282**) and at the full ladder sits BELOW it (0.045 vs 0.083).
+
+  **(E) RULE 8, 2017-2026 READ ONCE.** The IS-only meta-choice ("highest IS-window Sharpe of that
+  stream's full-ladder pick", 2009-2016 only) lands on `band 0.08 / gross 1.00` on BOTH panels.
+  U56 OOS **12.00% / 1.1627 / -19.05%** (FULL 11.37% / 1.1445 / -19.05%, halves 1.2387 / 1.0677),
+  clearing 4b on halves AND OOS and surviving 0/10/25/50 bps (Sharpe 1.178 -> 1.102). B136 OOS
+  10.98% / 1.0923 / -19.50%, clearing at 0/10/25 and dying at 50 bps on the CAGR floor. **4a fails
+  0 of 2 panels and 4 of 192 grid rows.** Comparands: live RULES v2 U56 FULL 8.62% / 1.2011 /
+  -12.05% (OOS 9.46% / 1.2769), SPY FULL 15.12% / 0.8844 / -33.72% (OOS 15.26% / 0.8738).
+
+  **NO NEW KEEP IS FILED, FOR TWO STATED REASONS.** (1) The cell REPRODUCES a result the record
+  already carries ("band 0.08 is the IS pick at EVERY gross and beats SPY's OOS Sharpe at every
+  gross") — this is a cross-check, not a discovery. (2) By this run's own finding, the SAME legal
+  chooser publishes 4b-OOS PASS at only **3 of 23** denominators, so the pass is a full-ladder
+  statement and nothing weaker. Filing it as a candidate would be the exact error idea 894 names.
+
+  **(F) THE LITERAL CENSUS LEG.** `research/backtests/*.py` reads **1328 .. 1339** across the last
+  12 commits touching that directory (+0.8%), one file per commit — the record's most-used
+  denominator drifts monotonically and by construction, so any census quoting it without a stamp is
+  stale the moment the next lane pushes.
+
+  **WHAT THIS TEST CANNOT DO (stated, not repaired).** It moves the denominator of ONE book family
+  (the live book's own two dials) on CURRENT-CONSTITUENT panels, so every absolute 4b level here is
+  optimistic and the 24-cell ladder is not a random sample of the ladders this record publishes on.
+  It bounds the SIZE of the denominator effect on this family; it does not certify the effect's
+  magnitude on the voltgt / drift families.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched):** idea 894's clause should be adopted at the Sunday review in the form this run
+  measured, not the form it was filed in — a published ladder-read verdict carries the ladder's
+  **REACH** (the position of its first passing rung, and the count of passing rungs) alongside its
+  length, because the length alone is the one number that demonstrably does not decide the verdict.
