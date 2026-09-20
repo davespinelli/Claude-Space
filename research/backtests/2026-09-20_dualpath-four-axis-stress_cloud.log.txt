@@ -1,0 +1,148 @@
+# Idea 2054 (lane cloud, 2026-09-20) — does the DUAL-PATH KEEP-candidate survive the sprint's FOUR standing stress axes at once?
+# under stress: B136 VOLTGT-DRIFT t=0.10, h=0.08, trade weekly (idea 2034)
+# TUNED (2, both inherited): t [0.08, 0.1, 0.12, 0.16, 0.2]; dial = DRIFT h [0.0, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25] | CAL R ['D', 'W', 'M', 'Q']
+# REPORTED, not tuned: cadence ['W', 'M'], phase ['ENGINE', 'MON/D1', 'TUE/D5', 'WED/D10', 'THU/D15', 'FRI/D20'], delay t+[1, 2], cost [10, 25, 50] bps, panel.  sigma FIXED (L=20, d=0).
+# warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01.
+# BASELINES HELD AT THE LIVE CONVENTION: RULES v2 weekly t+1 at 10 bps, and SPY.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE v2 (W, t+1, 10bps)   8.62% / 1.2010 / -12.05%  (H1 1.2276 H2 1.1805; OOS   9.46% / 1.2766 / -12.05%)
+   SPY                         15.12% / 0.8843 / -33.72%  (H1 0.9570 H2 0.8249; OOS  15.26% / 0.8737 / -33.72%)
+   4b bars: MaxDD >= -20.23%, CAGR >= 10.59%
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE v2 (W, t+1, 10bps)   7.96% / 1.0972 / -12.24%  (H1 1.2296 H2 0.9669; OOS   7.85% / 1.1017 / -12.24%)
+   SPY                         15.12% / 0.8844 / -33.72%  (H1 0.9571 H2 0.8249; OOS  15.26% / 0.8737 / -33.72%)
+   4b bars: MaxDD >= -20.23%, CAGR >= 10.59%
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE v2 (W, t+1, 10bps)   4.26% / 0.6588 / -14.16%  (H1 0.8052 H2 0.5471; OOS   3.63% / 0.5447 / -14.16%)
+   SPY                         14.01% / 0.8561 / -33.72%  (H1 0.9026 H2 0.8391; OOS  15.26% / 0.8737 / -33.72%)
+   4b bars: MaxDD >= -20.23%, CAGR >= 9.81%
+   weekly trade days per PHASE rung: {'ENGINE': 977, 'MON/D1': 882, 'TUE/D5': 969, 'WED/D10': 967, 'THU/D15': 948, 'FRI/D20': 942}
+   U56: grid done (5040 scored rows)
+   weekly trade days per PHASE rung: {'ENGINE': 977, 'MON/D1': 882, 'TUE/D5': 969, 'WED/D10': 967, 'THU/D15': 948, 'FRI/D20': 942}
+   B136: grid done (5040 scored rows)
+   weekly trade days per PHASE rung: {'ENGINE': 872, 'MON/D1': 786, 'TUE/D5': 865, 'WED/D10': 862, 'THU/D15': 847, 'FRI/D20': 843}
+   SMALL665: grid done (5040 scored rows)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 the ENG phase rung IS engine.rebalance_mask('W') on every panel: max disagreement 0.000e+00 over 3 panels   (target == 0)
+  GATE PASS  G2 DRIFT h=0 == CALENDAR R=D at every (t, cadence, phase, delay): 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 the four-axis grid is complete: 5040 books / 15120 scored rows   (target == 5040 books)
+  GATE PASS  G4 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+   the candidate's DISCOVERY phase rung is ENGINE
+  GATE PASS  G5 reproduces idea 2034's dual-path candidate at its discovery settings: max|d| = 8.327e-17   (target < 1e-9)
+  GATE PASS  G6 reproduces the standing VOLTGT memo (U56 + B136) at the discovery phase: max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G7 the DELAY axis actually moves the book: mean |dSharpe| t+1 -> t+2 = 0.0136   (target > 1e-4)
+
+## V1 / V2 — THE CANDIDATE AT ALL 30 (COST x DELAY x PHASE) POINTS
+   36 points (cost [10, 25, 50] x delay t+[1, 2] x phase 6)
+   cost delay phase        CAGR   Sharpe    MaxDD     H1      H2   |  4a    4b   bind
+     10  t+1  ENGINE    12.51%   1.2286  -11.81%  1.3171  1.1415  | True  True  none
+     10  t+1  FRI/D20   12.51%   1.2283  -11.81%  1.3167  1.1411  | True  True  none
+     10  t+1  MON/D1    12.54%   1.2343  -11.80%  1.3208  1.1494  | True  True  none
+     10  t+1  THU/D15   12.53%   1.2328  -11.65%  1.3195  1.1475  | True  True  none
+     10  t+1  TUE/D5    12.37%   1.2181  -12.87%  1.3158  1.1226  | False True  none
+     10  t+1  WED/D10   12.34%   1.2152  -13.32%  1.3099  1.1229  | False True  none
+     10  t+2  ENGINE    12.36%   1.2027  -12.82%  1.2841  1.1224  | False True  none
+     10  t+2  FRI/D20   12.35%   1.2020  -12.82%  1.2828  1.1223  | False True  none
+     10  t+2  MON/D1    12.21%   1.1917  -12.96%  1.2729  1.1122  | False True  none
+     10  t+2  THU/D15   12.24%   1.1919  -13.07%  1.2784  1.1070  | False True  none
+     10  t+2  TUE/D5    12.22%   1.1918  -12.95%  1.2617  1.1232  | False True  none
+     10  t+2  WED/D10   12.19%   1.1875  -13.52%  1.2740  1.1026  | False True  none
+     25  t+1  ENGINE    11.98%   1.1812  -12.01%  1.2701  1.0936  | True  True  none
+     25  t+1  FRI/D20   11.98%   1.1811  -12.00%  1.2700  1.0935  | True  True  none
+     25  t+1  MON/D1    12.01%   1.1870  -12.17%  1.2735  1.1022  | True  True  none
+     25  t+1  THU/D15   12.01%   1.1854  -12.03%  1.2721  1.1001  | True  True  none
+     25  t+1  TUE/D5    11.85%   1.1708  -12.95%  1.2691  1.0748  | False True  none
+     25  t+1  WED/D10   11.81%   1.1677  -13.41%  1.2632  1.0747  | False True  none
+     25  t+2  ENGINE    11.82%   1.1556  -12.92%  1.2372  1.0751  | False True  none
+     25  t+2  FRI/D20   11.82%   1.1552  -12.92%  1.2362  1.0753  | False True  none
+     25  t+2  MON/D1    11.68%   1.1453  -13.05%  1.2261  1.0663  | False True  none
+     25  t+2  THU/D15   11.71%   1.1450  -13.17%  1.2313  1.0604  | False True  none
+     25  t+2  TUE/D5    11.69%   1.1451  -13.04%  1.2151  1.0762  | False True  none
+     25  t+2  WED/D10   11.66%   1.1404  -13.61%  1.2272  1.0553  | False True  none
+     50  t+1  ENGINE    11.11%   1.1020  -12.71%  1.1917  1.0137  | False True  none
+     50  t+1  FRI/D20   11.11%   1.1024  -12.70%  1.1920  1.0141  | False True  none
+     50  t+1  MON/D1    11.14%   1.1081  -12.79%  1.1944  1.0235  | False True  none
+     50  t+1  THU/D15   11.13%   1.1063  -12.66%  1.1930  1.0211  | False True  none
+     50  t+1  TUE/D5    10.98%   1.0919  -13.09%  1.1911  0.9950  | False True  none
+     50  t+1  WED/D10   10.93%   1.0885  -13.56%  1.1852  0.9943  | False True  none
+     50  t+2  ENGINE    10.94%   1.0770  -13.25%  1.1589  0.9962  | False True  none
+     50  t+2  FRI/D20   10.94%   1.0769  -13.25%  1.1583  0.9968  | False True  none
+     50  t+2  MON/D1    10.81%   1.0679  -13.18%  1.1478  0.9896  | False True  none
+     50  t+2  THU/D15   10.83%   1.0668  -13.32%  1.1526  0.9825  | False True  none
+     50  t+2  TUE/D5    10.82%   1.0670  -13.19%  1.1374  0.9977  | False True  none
+     50  t+2  WED/D10   10.78%   1.0618  -13.77%  1.1490  0.9761  | False True  none
+
+   V1  4a kept at 8/36 = 22.2%  -> ARTEFACT
+   V2  4b kept at 36/36 = 100.0%  -> ROBUST
+   (weekday rungs only, the ENGINE convention excluded: 4a 6/30, 4b 30/30)
+      by cost      : 10: 4a 4/12 4b 12/12; 25: 4a 4/12 4b 12/12; 50: 4a 0/12 4b 12/12
+      by delay     : 1: 4a 8/18 4b 18/18; 2: 4a 0/18 4b 18/18
+      by phase     : ENGINE: 4a 2/6 4b 6/6; FRI/D20: 4a 2/6 4b 6/6; MON/D1: 4a 2/6 4b 6/6; THU/D15: 4a 2/6 4b 6/6; TUE/D5: 4a 0/6 4b 6/6; WED/D10: 4a 0/6 4b 6/6
+      binding legs where 4b fails: (none)
+      4a failure mode counts: H1 x15, MaxDD x13
+
+## V3 — WHICH AXIS OWNS THE SPREAD? (range of axis-conditional means)
+   Sharpe      cost 0.1257   delay 0.0310   phase 0.0143   -> COST
+   MaxDD       cost 0.0051   delay 0.0064   phase 0.0095   -> PHASE
+   CAGR        cost 0.0140   delay 0.0021   phase 0.0017   -> COST
+   oos_Sharpe  cost 0.1211   delay 0.0219   phase 0.0195   -> COST
+   L1_H1       cost 0.1252   delay 0.0408   phase 0.0115   -> COST
+   L2_H2       cost 0.1262   delay 0.0216   phase 0.0196   -> COST
+   L3_OOS      cost 0.1211   delay 0.0219   phase 0.0195   -> COST
+   L4_DD       cost 0.0051   delay 0.0064   phase 0.0095   -> PHASE
+   L5_CAGR     cost 0.0140   delay 0.0021   phase 0.0017   -> COST
+   whole corpus at 10 bps (mean Sharpe spread): B136/M delay 0.0125 phase 0.0148; B136/W delay 0.0128 phase 0.0181; SMALL665/M delay 0.0014 phase 0.0059; SMALL665/W delay 0.0006 phase 0.0150; U56/M delay 0.0054 phase 0.0145; U56/W delay 0.0064 phase 0.0179
+
+## CENSUS — 4a / 4b pass counts over the whole corpus, by (delay, cost)
+   t+1, 10 bps: 4b 1130/2520   4a  236/2520
+   t+1, 25 bps: 4b  991/2520   4a   44/2520
+   t+1, 50 bps: 4b  784/2520   4a    0/2520
+   t+2, 10 bps: 4b 1022/2520   4a  126/2520
+   t+2, 25 bps: 4b  961/2520   4a    2/2520
+   t+2, 50 bps: 4b  771/2520   4a    0/2520
+
+## V4 — RULE 8 (parameters chosen on 2009-2016 ONLY; 2017-2026 read ONCE)
+   864 picks (panel x cadence x phase x delay x cost x family x chooser)
+      B136      t+1 10 bps: 4b 39/48   4a  7/48   lands on the candidate  4/48
+      B136      t+1 25 bps: 4b 33/48   4a  1/48   lands on the candidate  1/48
+      B136      t+1 50 bps: 4b 27/48   4a  0/48   lands on the candidate  0/48
+      B136      t+2 10 bps: 4b 34/48   4a  0/48   lands on the candidate  0/48
+      B136      t+2 25 bps: 4b 31/48   4a  0/48   lands on the candidate  0/48
+      B136      t+2 50 bps: 4b 28/48   4a  0/48   lands on the candidate  0/48
+      SMALL665  t+1 10 bps: 4b  0/48   4a  0/48   lands on the candidate  0/48
+      SMALL665  t+1 25 bps: 4b  0/48   4a  0/48   lands on the candidate  0/48
+      SMALL665  t+1 50 bps: 4b  0/48   4a  0/48   lands on the candidate  0/48
+      SMALL665  t+2 10 bps: 4b  0/48   4a  0/48   lands on the candidate  0/48
+      SMALL665  t+2 25 bps: 4b  0/48   4a  0/48   lands on the candidate  0/48
+      SMALL665  t+2 50 bps: 4b  0/48   4a  0/48   lands on the candidate  0/48
+      U56       t+1 10 bps: 4b 33/48   4a  0/48   lands on the candidate  0/48
+      U56       t+1 25 bps: 4b 26/48   4a  0/48   lands on the candidate  0/48
+      U56       t+1 50 bps: 4b 13/48   4a  0/48   lands on the candidate  0/48
+      U56       t+2 10 bps: 4b 32/48   4a  0/48   lands on the candidate  0/48
+      U56       t+2 25 bps: 4b 32/48   4a  0/48   lands on the candidate  0/48
+      U56       t+2 50 bps: 4b 31/48   4a  0/48   lands on the candidate  0/48
+   picks clearing BOTH paths: 8 of 864
+      B136      T=M MON/D1   t+1 10bps CAL   CH_ISMINLEG -> t=0.10 R=D       OOS  12.95% / 1.2897 / -11.62%  (SPY OOS Sharpe 0.8737, LIVE v2 OOS Sharpe 1.1017)
+      B136      T=M WED/D10  t+1 10bps CAL   CH_ISMINLEG -> t=0.10 R=D       OOS  12.96% / 1.2904 / -11.72%  (SPY OOS Sharpe 0.8737, LIVE v2 OOS Sharpe 1.1017)
+      B136      T=W ENGINE   t+1 10bps DRIFT CH_ISMINLEG -> t=0.10 h=0.08    OOS  13.01% / 1.2928 / -11.81%  (SPY OOS Sharpe 0.8737, LIVE v2 OOS Sharpe 1.1017)
+      B136      T=W FRI/D20  t+1 10bps DRIFT CH_ISMINLEG -> t=0.10 h=0.08    OOS  13.00% / 1.2923 / -11.81%  (SPY OOS Sharpe 0.8737, LIVE v2 OOS Sharpe 1.1017)
+      B136      T=W MON/D1   t+1 10bps CAL   CH_ISMINLEG -> t=0.10 R=D       OOS  13.00% / 1.2923 / -11.64%  (SPY OOS Sharpe 0.8737, LIVE v2 OOS Sharpe 1.1017)
+      B136      T=W THU/D15  t+1 10bps DRIFT CH_ISMINLEG -> t=0.10 h=0.08    OOS  13.06% / 1.2991 / -11.65%  (SPY OOS Sharpe 0.8737, LIVE v2 OOS Sharpe 1.1017)
+      B136      T=W THU/D15  t+1 25bps DRIFT CH_ISMINLEG -> t=0.10 h=0.08    OOS  12.56% / 1.2537 / -12.03%  (SPY OOS Sharpe 0.8737, LIVE v2 OOS Sharpe 1.1017)
+      B136      T=W WED/D10  t+1 10bps CAL   CH_ISMINLEG -> t=0.10 R=D       OOS  12.99% / 1.2917 / -11.66%  (SPY OOS Sharpe 0.8737, LIVE v2 OOS Sharpe 1.1017)
+
+## VERDICT
+   V1 (4a) ARTEFACT   8/36 = 22.2%
+   V2 (4b) ROBUST   36/36 = 100.0%
+   V3 axis owning the Sharpe spread: COST
+   gates: 8/8 pass
+   SURVIVORSHIP: U56 / B136 are CURRENT constituents and SMALL is a CURRENT sub-$2B
+   screen, so every LEVEL is optimistic and both 4b bars are easier than on a
+   point-in-time panel.  The STRESS contrasts are same-tape / same-names / same-grid
+   and first-order immune; the PASS COUNTS are not.

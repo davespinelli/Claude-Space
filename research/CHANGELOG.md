@@ -1,3 +1,65 @@
+## 2026-09-20 — idea 2054 (lane cloud): DOES THE DUAL-PATH KEEP-CANDIDATE SURVIVE THE SPRINT'S FOUR STANDING STRESS AXES AT ONCE? **ANSWERED — SPLIT. THE 4b LEG IS ROBUST (36 OF 36, 100.0%). THE 4a LEG IS A DISCOVERY-SETTINGS ARTEFACT (8 OF 36, 22.2%) AND IS DOWNGRADED.**
+
+  **THE QUESTION.** Idea 2034 (same run) turned up the first cell in the vol-target family ever to
+  clear BOTH KEEP paths — `B136, VOLTGT t = 0.10, DRIFT h = 0.08, trade weekly` — reached by a
+  legal IS-only chooser. It was read at ONE cost, ONE latency, ONE rebalance phase and ONE cadence.
+  The sprint brief names all four as standing stress axes and idea 1694 called PHASE the largest
+  unpriced dial in the record.
+
+  **THE CONSTRUCTION.** The whole corpus on the full cross: PANEL {U56, B136, SMALL665} x t
+  {0.08..0.20} x [DRIFT h 10 rungs | CAL R {D,W,M,Q}] x CADENCE {W, M} x PHASE {ENGINE
+  (`engine.rebalance_mask`, the convention every committed book was run on) + five rungs moving
+  only the day you LOOK} x DELAY {t+1, t+2} = **5,040 books**, x COST {10, 25, 50} bps = **15,120
+  scored cells**. Baselines held at the LIVE convention throughout (RULES v2 weekly t+1 10 bps,
+  and SPY): a delayed, expensive idea must beat the undelayed live book. Gates **8/8**, the
+  candidate reproduced to **8.327e-17** and the standing VOLTGT memo to 4.605e-05. TUNED: nothing
+  new — `t` and `h` are the two inherited dials; every other axis is reported, not tuned.
+
+  **V2 — THE 4b LEG IS ROBUST, 36 OF 36 (100.0%).** The binding-leg column reads `none` at every
+  point. At the WORST corner (50 bps, t+2, WED/D10) the book still reads **10.78% / 1.0618 /
+  -13.77%** against a `0.70 x SPY` CAGR floor of 10.59% and a `0.60 x SPY` MaxDD cap of -20.23%.
+
+  **V1 — THE 4a LEG IS AN ARTEFACT, 8 OF 36 (22.2%).** It fails 28 times, by H1 at 15 and MaxDD at
+  13, **never by H2**. Three axes kill it on their own: **latency** (t+1 -> t+2 takes it 8/18 ->
+  **0/18**, entirely through drawdown — MaxDD -11.81% -> -12.82% through the live book's -12.24%
+  while both Sharpe halves still clear); **cost** (**0/12** at 50 bps while 4b is 12/12); **phase**
+  (at t+1 / 10 bps it holds on ENGINE / FRI / MON / THU and fails on TUE and WED purely through
+  MaxDD, -11.81% -> -12.87% / -13.32%).
+
+  **THE CENSUS SAYS 4a IS A KNIFE-EDGE PATH FOR THE WHOLE FAMILY.** Per (delay, cost) over 2,520
+  cells: 4a **236 / 44 / 0** at t+1 and **126 / 2 / 0** at t+2; 4b **1,130 / 991 / 784** and
+  **1,022 / 961 / 771**. 4b degrades 32% over the worst corner; 4a goes to zero.
+
+  **V3 — COST OWNS SHARPE, PHASE OWNS DRAWDOWN.** Range of the axis-conditional means at the
+  candidate: Sharpe cost **0.1257** / delay 0.0310 / phase 0.0143; MaxDD phase **0.0095** / delay
+  0.0064 / cost 0.0051. Idea 1694 is half-right and the half matters: on the leg that kills 4a,
+  phase beats both other axes. Over the whole corpus at 10 bps the phase spread of mean Sharpe
+  beats the delay spread on 5 of 6 (panel x cadence) arms.
+
+  **RULE 8 (2017-2026 read ONCE).** 864 picks (3 panels x 2 cadences x 6 phases x 2 delays x 3
+  costs x 2 families x 2 legal IS-only choosers). **8 clear BOTH paths — every one on B136, at
+  t+1, via `CH_ISMINLEG`, 7 of 8 at 10 bps.** `t = 0.10` is picked at **8 of 8** (the TARGET is
+  stable across phase, cadence and family) while the refresh MECHANISM moves: 4 picks take DRIFT
+  `h = 0.08` and 4 take CALENDAR `R = D`, reaching the same OOS place — the same
+  drift-vs-calendar non-separability at matched turnover that ideas 1799 / 2022 kept hitting.
+  **SMALL665 clears 4b at 0 of 288 and 4a at 0 of 288** at every cost, delay and phase: sixth
+  independent confirmation that the family does not work on small caps.
+
+  **WHAT IT CHANGES.** (1) Idea 2034's memo carries an ADDENDUM downgrading its point 3: the cell
+  stays a KEEP-candidate on path **4b only**, now with the strongest stress record in the file
+  (36 of 36). (2) NEW STANDING REQUIREMENT: any future 4a claim must publish its (delay x cost x
+  phase) survival share, because 4a is a knife-edge path. (3) Where a verdict turns on MaxDD, the
+  PHASE rung must be reported. No rules change; Sunday review decides.
+  Survivorship: U56 / B136 are CURRENT constituents and SMALL665 a CURRENT sub-$2B screen (54
+  tickers with `max_1d_move >= 1.0` dropped first), so every LEVEL is optimistic and both 4b bars
+  are easier than on a point-in-time panel; the STRESS contrasts are same-tape / same-names /
+  same-grid and first-order immune, the PASS COUNTS are not. RULES.md, PROTOCOL.md, scan.py,
+  bot.py and baseline.py are untouched. Evidence:
+  `research/backtests/2026-09-20_dualpath-four-axis-stress_cloud.py` / `.result.md` /
+  `.grid.csv.gz` / `.candidate.csv` / `.axes.csv` / `.axes_corpus.csv` / `.census.csv` /
+  `.walkforward.csv` / `.gates.csv` / `.log.txt` / `.console.txt`; memo addendum in
+  `research/backtests/2026-09-20_voltgt-drift-b136_KEEP4b_MEMO.md`.
+
 ## 2026-09-20 — idea 2034 (lane cloud): IS THE 4b VERDICT ITSELF A 2020 ARTEFACT ONCE THE SPY BAR IS HELD FIXED? **ANSWERED — YES. THE PUBLISHED `4b 187 -> 80 of 420` COLLAPSE IS A BENCHMARK ARTEFACT: WITH THE BAR FROZEN, 187 OF 187 PUBLISHED PASSES SURVIVE AND THE EXCISION WOULD ADD MORE. PLUS A KILL AND A DUAL-PATH (4a + 4b) KEEP-CANDIDATE.**
 
   **THE QUESTION.** Idea 2022 published `4b 187 -> 80 of 420 cells, 4a 40 -> 0` on a crash-excised

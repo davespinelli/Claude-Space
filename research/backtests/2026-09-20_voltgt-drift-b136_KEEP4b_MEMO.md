@@ -40,3 +40,29 @@
 
 10. **STATUS.** KEEP-candidate on BOTH paths, awaiting Sunday review. Not adopted; RULES.md,
     PROTOCOL.md, scan.py, bot.py and baseline.py are untouched by this run.
+
+---
+
+## ADDENDUM (2026-09-20, lane cloud run 2, idea 2054) — **THE 4a LEG IS DOWNGRADED. THE 4b LEG IS THE MOST STRESS-TESTED IN THE FILE.**
+
+Idea 2054 re-priced this cell on the full cross of the sprint's four standing stress axes —
+COST {10, 25, 50} bps x DELAY {t+1, t+2} x PHASE {ENGINE + five weekday/month-day rungs} — inside
+a 5,040-book corpus (gates 8/8; this cell reproduced to max abs d = 8.327e-17). Result:
+
+* **4b: 36 of 36 points, 100.0%.** The binding-leg column reads `none` at every point. At the
+  WORST corner (50 bps, t+2, WED/D10) the book still reads 10.78% / 1.0618 / -13.77% against a
+  `0.70 x SPY` CAGR floor of 10.59% and a `0.60 x SPY` MaxDD cap of -20.23%.
+* **4a: 8 of 36 points, 22.2% — an ARTEFACT of the discovery settings.** It survives only at
+  t+1, only at <= 25 bps, and only at 4 of the 6 phase rungs. One extra day of execution latency
+  takes it to **0 of 18**, entirely through drawdown (MaxDD -11.81% -> -12.82%, through the live
+  book's -12.24%, while both Sharpe halves still clear). At 50 bps it is 0 of 12.
+
+**Point 3 of this memo is therefore RESTATED:** "PATH 4a PASSES" holds only at t+1 execution, at
+or below 25 bps, and at 4 of 6 rebalance-phase rungs — it is not a robust 4a pass and must not be
+quoted as one. Points 1, 2, 4, 5, 6, 8 and 9 stand unchanged; point 7's multiple-comparison
+caveat is reinforced (8 of 864 rule-8 picks clear both paths, all on B136, all at t+1).
+
+**STATUS after the addendum:** KEEP-candidate on path **4b only**, awaiting Sunday review, with a
+36-of-36 stress record. Evidence:
+`research/backtests/2026-09-20_dualpath-four-axis-stress_cloud.py` / `.result.md` /
+`.candidate.csv` / `.axes.csv` / `.census.csv` / `.walkforward.csv` / `.gates.csv`.
