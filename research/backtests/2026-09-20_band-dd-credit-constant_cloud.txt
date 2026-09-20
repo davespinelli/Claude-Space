@@ -1,0 +1,191 @@
+# Idea 1741 — is the band's drawdown credit a CONSTANT OF THE CONSTRUCTION?
+# seed 20260920 | band c=0.03 | warm-up 260 rows | IS<= 2016-12-31 | OOS>= 2017-01-01
+# panel U56: 56 columns, 2008-01-02 -> 2026-09-18
+# panel B136: 136 columns, 2008-01-02 -> 2026-09-18
+# panel SMALL: 666 columns, 2010-01-04 -> 2026-09-18
+G1  local bt_np vs engine.backtest max|d| = 1.388e-17  ->  PASS
+# U56: RULES v2 (live, 10bps) 8.62%/1.2010/-12.05% | SPY 15.12%/0.8843/-33.72% | SPY OOS 15.26%/0.8737/-33.72%
+# B136: RULES v2 (live, 10bps) 7.96%/1.0972/-12.24% | SPY 15.12%/0.8844/-33.72% | SPY OOS 15.26%/0.8737/-33.72%
+# SMALL: RULES v2 (live, 10bps) 4.26%/0.6596/-14.16% | SPY 14.01%/0.8561/-33.72% | SPY OOS 15.26%/0.8737/-33.72%
+# grid done: U56 (396 rows so far)
+# grid done: B136 (792 rows so far)
+# grid done: SMALL (1188 rows so far)
+G2  realised-gross match band vs twin: max gap = 8.661e-07  ->  PASS
+G3  grid rows = 1188  (panels 3 x N x draws x cadence x gross x cost)
+
+## REPLICATION — 1632's anchor (c=0.03, full panel, weekly, 10 bps)
+  U56    credit = +4.34 pp   (1632 published U56 +4.34 / B136 +5.93 / SMALL +6.45)
+  B136   credit = +6.28 pp   (1632 published U56 +4.34 / B136 +5.93 / SMALL +6.45)
+  SMALL  credit = +6.37 pp   (1632 published U56 +4.34 / B136 +5.93 / SMALL +6.45)
+
+## THE CREDIT'S SPREAD ACROSS EVERY AXIS THAT CANNOT MOVE A CONSTANT
+  ALL 1188 cells: mean +0.21 pp, sd 5.33, min -19.30, max +13.35, range 32.65 pp
+  by panel:
+     panel=  B136  mean +1.14  sd 4.69  [-8.56, +11.42]
+     panel= SMALL  mean -1.47  sd 6.51  [-19.30, +13.35]
+     panel=   U56  mean +0.97  sd 4.07  [-6.30, +8.53]
+  by N:
+     N=    20  mean -0.14  sd 6.07  [-19.30, +11.42]
+     N=    40  mean +0.47  sd 4.56  [-11.06, +13.35]
+     N=    56  mean +0.51  sd 3.84  [-5.79, +5.53]
+     N=   136  mean +1.31  sd 4.69  [-6.04, +7.99]
+     N=   665  mean +0.28  sd 5.70  [-9.42, +8.53]
+  by freq:
+     freq=     M  mean +1.94  sd 2.33  [-3.97, +10.81]
+     freq=     Q  mean -5.64  sd 3.54  [-19.30, +0.09]
+     freq=     W  mean +4.33  sd 3.61  [-11.44, +13.35]
+  by gross:
+     gross=   0.5  mean +0.14  sd 3.61  [-10.36, +7.48]
+     gross=  0.75  mean +0.21  sd 5.22  [-14.99, +10.60]
+     gross=   1.0  mean +0.29  sd 6.70  [-19.30, +13.35]
+  by cost:
+     cost=     0  mean +0.43  sd 5.34  [-18.74, +13.35]
+     cost=    10  mean +0.33  sd 5.33  [-18.86, +12.93]
+     cost=    25  mean +0.18  sd 5.32  [-19.02, +12.29]
+     cost=    50  mean -0.10  sd 5.33  [-19.30, +11.11]
+  WITHIN-cell spread moving only panel : mean 3.44 pp, max 17.83 pp
+  WITHIN-cell spread moving only N     : mean 2.95 pp, max 13.65 pp
+  WITHIN-cell spread moving only freq  : mean 10.29 pp, max 21.73 pp
+  WITHIN-cell spread moving only gross : mean 2.65 pp, max 8.94 pp
+  WITHIN-cell spread moving only cost  : mean 0.54 pp, max 5.55 pp
+
+## PAIRED BLOCK-BOOTSTRAP SE OF THE CREDIT (anchor cells: full panel, W, gross 0.75, 10 bps)
+  U56    block= 21  credit +4.34 pp   paired SE 2.96 pp   t = +1.47
+  U56    block= 63  credit +4.34 pp   paired SE 2.15 pp   t = +2.02
+  B136   block= 21  credit +6.28 pp   paired SE 3.34 pp   t = +1.88
+  B136   block= 63  credit +6.28 pp   paired SE 2.70 pp   t = +2.32
+  SMALL  block= 21  credit +6.37 pp   paired SE 4.54 pp   t = +1.40
+  SMALL  block= 63  credit +6.37 pp   paired SE 4.29 pp   t = +1.48
+  >> observed cross-cell SD 5.33 pp vs largest paired SE 4.54 pp (ratio 1.17) -> THE SPREAD EXCEEDS THE NOISE: NOT A CONSTANT
+
+## DOES A SCALAR CLOSED FORM IN (GATE-OUT RATE, VOL) REPRODUCE THE CREDIT?
+  gate_out alone             R2 = +0.0492   beta = [5.476, -15.076]
+  vol alone                  R2 = +0.0326   beta = [3.613, -40.036]
+  gate_out + vol             R2 = +0.0749   beta = [8.04, -14.033, -35.663]
+  gate_out x vol (product)   R2 = +0.0772   beta = [4.035, -131.685]
+  gate_out + vol + gross     R2 = +0.3131   beta = [1.627, -5.307, -333.931, 37.146]
+     within U56   : R2(gate_out+vol) = +0.0130  (credit sd 4.09 pp)
+     within B136  : R2(gate_out+vol) = +0.0320  (credit sd 4.72 pp)
+     within SMALL : R2(gate_out+vol) = +0.1189  (credit sd 6.59 pp)
+
+## BOTH KEEP PATHS, EVERY CELL (band books; 4a vs live RULES v2, 4b vs SPY)
+  4a FULL      : 43 of 1188
+  4b FULL      : 94 of 1188
+  4b OOS       : 112 of 1188
+  4b FULL & OOS: 89 of 1188
+     cost  0 bps: 4a   8 | 4b FULL  33 | 4b OOS  33 | BOTH  32  (of 297)
+     cost 10 bps: 4a  10 | 4b FULL  29 | 4b OOS  32 | BOTH  27  (of 297)
+     cost 25 bps: 4a  11 | 4b FULL  20 | 4b OOS  27 | BOTH  20  (of 297)
+     cost 50 bps: 4a  14 | 4b FULL  12 | 4b OOS  20 | BOTH  10  (of 297)
+     U56       : 4a   9 | 4b FULL  56 | 4b OOS  75 | BOTH  56  (of 396)
+     B136      : 4a  24 | 4b FULL  38 | 4b OOS  37 | BOTH  33  (of 396)
+     SMALL     : 4a  10 | 4b FULL   0 | 4b OOS   0 | BOTH   0  (of 396)
+  4b FULL-and-OOS passers:
+     U56 N=20 draw=0 M g=1.0 c=0bps  FULL 10.67%/1.0507/-19.31%  OOS 11.56%/1.1040/-19.31%
+     U56 N=20 draw=1 W g=0.75 c=0bps  FULL 10.83%/1.1947/-13.28%  OOS 12.02%/1.2834/-13.28%
+     U56 N=20 draw=1 W g=0.75 c=10bps  FULL 10.61%/1.1728/-13.34%  OOS 11.79%/1.2613/-13.34%
+     U56 N=20 draw=1 W g=1.0 c=0bps  FULL 14.50%/1.1950/-17.49%  OOS 16.12%/1.2831/-17.49%
+     U56 N=20 draw=1 W g=1.0 c=10bps  FULL 14.20%/1.1732/-17.55%  OOS 15.81%/1.2611/-17.55%
+     U56 N=20 draw=1 W g=1.0 c=25bps  FULL 13.76%/1.1404/-17.65%  OOS 15.34%/1.2281/-17.65%
+     U56 N=20 draw=1 W g=1.0 c=50bps  FULL 13.01%/1.0857/-17.82%  OOS 14.56%/1.1730/-17.82%
+     U56 N=20 draw=1 M g=0.75 c=0bps  FULL 11.32%/1.1972/-14.85%  OOS 12.41%/1.2799/-14.85%
+     U56 N=20 draw=1 M g=0.75 c=10bps  FULL 11.17%/1.1829/-14.87%  OOS 12.26%/1.2654/-14.87%
+     U56 N=20 draw=1 M g=0.75 c=25bps  FULL 10.95%/1.1614/-14.91%  OOS 12.02%/1.2435/-14.91%
+     U56 N=20 draw=1 M g=1.0 c=0bps  FULL 15.19%/1.1990/-19.35%  OOS 16.68%/1.2817/-19.35%
+     U56 N=20 draw=1 M g=1.0 c=10bps  FULL 14.98%/1.1847/-19.38%  OOS 16.46%/1.2672/-19.38%
+     U56 N=20 draw=1 M g=1.0 c=25bps  FULL 14.67%/1.1633/-19.43%  OOS 16.14%/1.2454/-19.43%
+     U56 N=20 draw=1 M g=1.0 c=50bps  FULL 14.16%/1.1275/-19.51%  OOS 15.61%/1.2089/-19.51%
+     U56 N=20 draw=3 W g=1.0 c=0bps  FULL 10.70%/1.0918/-16.44%  OOS 11.53%/1.1598/-16.44%
+     U56 N=20 draw=4 W g=1.0 c=0bps  FULL 11.42%/1.1130/-14.55%  OOS 12.51%/1.2078/-14.55%
+     U56 N=20 draw=4 W g=1.0 c=10bps  FULL 11.15%/1.0893/-14.58%  OOS 12.24%/1.1841/-14.58%
+     U56 N=20 draw=4 W g=1.0 c=25bps  FULL 10.75%/1.0537/-14.62%  OOS 11.83%/1.1484/-14.62%
+     U56 N=20 draw=4 M g=1.0 c=0bps  FULL 11.50%/1.0601/-16.86%  OOS 11.98%/1.1107/-16.86%
+     U56 N=20 draw=4 M g=1.0 c=10bps  FULL 11.31%/1.0444/-16.89%  OOS 11.78%/1.0947/-16.89%
+     U56 N=20 draw=4 M g=1.0 c=25bps  FULL 11.03%/1.0208/-16.93%  OOS 11.50%/1.0706/-16.93%
+     U56 N=40 draw=0 W g=1.0 c=0bps  FULL 10.73%/1.1698/-14.88%  OOS 11.91%/1.2739/-14.88%
+     U56 N=40 draw=0 M g=1.0 c=0bps  FULL 10.84%/1.1189/-17.83%  OOS 11.75%/1.1905/-17.83%
+     U56 N=40 draw=0 M g=1.0 c=10bps  FULL 10.66%/1.1023/-17.86%  OOS 11.57%/1.1737/-17.86%
+     U56 N=40 draw=1 W g=1.0 c=0bps  FULL 11.65%/1.2917/-14.44%  OOS 12.29%/1.3459/-14.44%
+     U56 N=40 draw=1 W g=1.0 c=10bps  FULL 11.40%/1.2666/-14.47%  OOS 12.04%/1.3208/-14.47%
+     U56 N=40 draw=1 W g=1.0 c=25bps  FULL 11.03%/1.2290/-14.51%  OOS 11.67%/1.2832/-14.51%
+     U56 N=40 draw=1 M g=1.0 c=0bps  FULL 11.68%/1.2288/-17.01%  OOS 12.26%/1.2684/-17.01%
+     U56 N=40 draw=1 M g=1.0 c=10bps  FULL 11.51%/1.2122/-17.03%  OOS 12.08%/1.2518/-17.03%
+     U56 N=40 draw=1 M g=1.0 c=25bps  FULL 11.24%/1.1872/-17.05%  OOS 11.81%/1.2268/-17.05%
+     U56 N=40 draw=1 M g=1.0 c=50bps  FULL 10.81%/1.1454/-17.10%  OOS 11.37%/1.1851/-17.10%
+     U56 N=40 draw=2 W g=1.0 c=0bps  FULL 12.58%/1.2212/-17.02%  OOS 13.65%/1.2903/-17.02%
+     U56 N=40 draw=2 W g=1.0 c=10bps  FULL 12.31%/1.1970/-17.05%  OOS 13.36%/1.2662/-17.05%
+     U56 N=40 draw=2 W g=1.0 c=25bps  FULL 11.89%/1.1607/-17.09%  OOS 12.94%/1.2300/-17.09%
+     U56 N=40 draw=2 W g=1.0 c=50bps  FULL 11.21%/1.1000/-17.17%  OOS 12.24%/1.1696/-17.17%
+     U56 N=40 draw=3 W g=1.0 c=0bps  FULL 11.78%/1.2223/-15.48%  OOS 12.65%/1.2936/-15.48%
+     U56 N=40 draw=3 W g=1.0 c=10bps  FULL 11.53%/1.1987/-15.51%  OOS 12.40%/1.2701/-15.51%
+     U56 N=40 draw=3 W g=1.0 c=25bps  FULL 11.15%/1.1631/-15.57%  OOS 12.02%/1.2347/-15.57%
+     U56 N=40 draw=3 M g=1.0 c=0bps  FULL 11.64%/1.1505/-17.69%  OOS 12.27%/1.1956/-17.69%
+     U56 N=40 draw=3 M g=1.0 c=10bps  FULL 11.46%/1.1345/-17.71%  OOS 12.08%/1.1797/-17.71%
+     U56 N=40 draw=3 M g=1.0 c=25bps  FULL 11.19%/1.1105/-17.75%  OOS 11.81%/1.1558/-17.75%
+     U56 N=40 draw=3 M g=1.0 c=50bps  FULL 10.74%/1.0703/-17.81%  OOS 11.36%/1.1157/-17.81%
+     U56 N=40 draw=4 W g=1.0 c=0bps  FULL 11.37%/1.1297/-16.07%  OOS 12.45%/1.2050/-16.07%
+     U56 N=40 draw=4 W g=1.0 c=10bps  FULL 11.11%/1.1060/-16.11%  OOS 12.17%/1.1812/-16.11%
+     U56 N=40 draw=4 W g=1.0 c=25bps  FULL 10.72%/1.0705/-16.17%  OOS 11.77%/1.1454/-16.17%
+     U56 N=40 draw=4 M g=1.0 c=0bps  FULL 12.05%/1.1397/-18.88%  OOS 12.95%/1.2045/-18.88%
+     U56 N=40 draw=4 M g=1.0 c=10bps  FULL 11.87%/1.1241/-18.90%  OOS 12.77%/1.1888/-18.90%
+     U56 N=40 draw=4 M g=1.0 c=25bps  FULL 11.59%/1.1005/-18.94%  OOS 12.48%/1.1651/-18.94%
+     U56 N=40 draw=4 M g=1.0 c=50bps  FULL 11.13%/1.0611/-19.01%  OOS 12.01%/1.1254/-19.01%
+     U56 N=56 draw=0 W g=1.0 c=0bps  FULL 11.79%/1.2257/-15.88%  OOS 12.94%/1.3003/-15.88%
+     U56 N=56 draw=0 W g=1.0 c=10bps  FULL 11.53%/1.2008/-15.91%  OOS 12.67%/1.2759/-15.91%
+     U56 N=56 draw=0 W g=1.0 c=25bps  FULL 11.14%/1.1635/-15.96%  OOS 12.27%/1.2393/-15.96%
+     U56 N=56 draw=0 M g=1.0 c=0bps  FULL 12.08%/1.1897/-18.78%  OOS 13.00%/1.2411/-18.78%
+     U56 N=56 draw=0 M g=1.0 c=10bps  FULL 11.90%/1.1734/-18.81%  OOS 12.82%/1.2251/-18.81%
+     U56 N=56 draw=0 M g=1.0 c=25bps  FULL 11.62%/1.1489/-18.84%  OOS 12.54%/1.2010/-18.84%
+     U56 N=56 draw=0 M g=1.0 c=50bps  FULL 11.17%/1.1079/-18.89%  OOS 12.07%/1.1607/-18.89%
+     B136 N=20 draw=0 W g=1.0 c=0bps  FULL 12.56%/1.1472/-19.32%  OOS 11.91%/1.0811/-19.32%
+     B136 N=20 draw=0 W g=1.0 c=10bps  FULL 12.26%/1.1222/-19.34%  OOS 11.61%/1.0558/-19.34%
+     B136 N=20 draw=0 W g=1.0 c=25bps  FULL 11.81%/1.0846/-19.38%  OOS 11.14%/1.0178/-19.38%
+     B136 N=20 draw=2 W g=1.0 c=0bps  FULL 12.47%/1.2003/-14.56%  OOS 12.76%/1.2099/-14.56%
+     B136 N=20 draw=2 W g=1.0 c=10bps  FULL 12.18%/1.1748/-14.59%  OOS 12.46%/1.1839/-14.59%
+     B136 N=20 draw=2 W g=1.0 c=25bps  FULL 11.74%/1.1365/-14.63%  OOS 12.00%/1.1448/-14.63%
+     B136 N=20 draw=2 W g=1.0 c=50bps  FULL 11.01%/1.0724/-14.70%  OOS 11.25%/1.0796/-14.70%
+     B136 N=20 draw=2 M g=1.0 c=0bps  FULL 12.87%/1.1827/-16.72%  OOS 13.29%/1.1993/-16.72%
+     B136 N=20 draw=2 M g=1.0 c=10bps  FULL 12.67%/1.1661/-16.74%  OOS 13.09%/1.1826/-16.74%
+     B136 N=20 draw=2 M g=1.0 c=25bps  FULL 12.37%/1.1412/-16.77%  OOS 12.78%/1.1574/-16.77%
+     B136 N=20 draw=2 M g=1.0 c=50bps  FULL 11.87%/1.0994/-16.82%  OOS 12.26%/1.1154/-16.82%
+     B136 N=20 draw=2 Q g=1.0 c=0bps  FULL 12.48%/1.1008/-18.09%  OOS 13.01%/1.1112/-18.09%
+     B136 N=20 draw=2 Q g=1.0 c=10bps  FULL 12.34%/1.0898/-18.09%  OOS 12.86%/1.1002/-18.09%
+     B136 N=20 draw=2 Q g=1.0 c=25bps  FULL 12.13%/1.0732/-18.09%  OOS 12.65%/1.0836/-18.09%
+     B136 N=20 draw=2 Q g=1.0 c=50bps  FULL 11.79%/1.0454/-18.09%  OOS 12.29%/1.0559/-18.09%
+     B136 N=20 draw=3 W g=1.0 c=0bps  FULL 10.76%/0.9725/-15.32%  OOS 11.08%/1.0315/-15.32%
+     B136 N=20 draw=3 M g=1.0 c=0bps  FULL 10.86%/0.9461/-16.21%  OOS 11.09%/1.0029/-16.21%
+     B136 N=20 draw=3 M g=1.0 c=10bps  FULL 10.66%/0.9305/-16.26%  OOS 10.88%/0.9861/-16.26%
+     B136 N=20 draw=4 W g=1.0 c=0bps  FULL 11.24%/1.0912/-15.64%  OOS 12.65%/1.1862/-15.64%
+     B136 N=20 draw=4 W g=1.0 c=10bps  FULL 10.96%/1.0660/-15.98%  OOS 12.36%/1.1617/-15.98%
+     B136 N=20 draw=4 M g=1.0 c=0bps  FULL 11.20%/1.0279/-20.17%  OOS 11.71%/1.0362/-20.17%
+     B136 N=20 draw=4 M g=1.0 c=10bps  FULL 10.99%/1.0112/-20.19%  OOS 11.50%/1.0197/-20.19%
+     B136 N=20 draw=4 M g=1.0 c=25bps  FULL 10.69%/0.9860/-20.22%  OOS 11.19%/0.9949/-20.22%
+     B136 N=40 draw=0 M g=1.0 c=0bps  FULL 10.93%/1.0198/-19.50%  OOS 11.02%/1.0439/-19.50%
+     B136 N=40 draw=0 M g=1.0 c=10bps  FULL 10.73%/1.0027/-19.52%  OOS 10.81%/1.0256/-19.52%
+     B136 N=40 draw=1 W g=1.0 c=0bps  FULL 11.32%/1.0440/-17.98%  OOS 11.79%/1.0932/-17.98%
+     B136 N=40 draw=1 W g=1.0 c=10bps  FULL 11.02%/1.0190/-18.02%  OOS 11.48%/1.0670/-18.02%
+     B136 N=40 draw=3 M g=1.0 c=0bps  FULL 11.65%/1.0761/-19.97%  OOS 11.27%/1.0736/-19.97%
+     B136 N=40 draw=3 M g=1.0 c=10bps  FULL 11.44%/1.0588/-20.00%  OOS 11.05%/1.0552/-20.00%
+     B136 N=40 draw=3 M g=1.0 c=25bps  FULL 11.13%/1.0328/-20.04%  OOS 10.73%/1.0275/-20.04%
+     B136 N=40 draw=4 W g=1.0 c=0bps  FULL 13.00%/1.1746/-19.31%  OOS 12.73%/1.1615/-19.31%
+     B136 N=40 draw=4 W g=1.0 c=10bps  FULL 12.69%/1.1496/-19.69%  OOS 12.41%/1.1356/-19.69%
+     B136 N=136 draw=0 W g=1.0 c=0bps  FULL 10.92%/1.1248/-16.12%  OOS 10.78%/1.1301/-16.12%
+  4b FULL binding legs (fail counts of 1188): {'H1': 417, 'H2': 606, 'DD': 370, 'CAGR': 1049}
+
+## RULE 8 — dials chosen on warm-up..2016-12-31 ONLY; 2017-2026 read ONCE
+  U56    C_SHARPE  -> N=40 W g=1.0 draw=1 | OOS 12.04%/1.3208/-14.47% | credit OOS +5.85 pp | 4a fail 4b PASS   [live v2 OOS 9.46%/1.2766/-12.05%; SPY OOS 15.26%/0.8737/-33.72%]
+  U56    C_CALMAR  -> N=40 W g=1.0 draw=1 | OOS 12.04%/1.3208/-14.47% | credit OOS +5.85 pp | 4a fail 4b PASS   [live v2 OOS 9.46%/1.2766/-12.05%; SPY OOS 15.26%/0.8737/-33.72%]
+  U56    C_CREDIT  -> N=20 W g=1.0 draw=3 | OOS 11.30%/1.1379/-16.46% | credit OOS +8.52 pp | 4a fail 4b PASS   [live v2 OOS 9.46%/1.2766/-12.05%; SPY OOS 15.26%/0.8737/-33.72%]
+  B136   C_SHARPE  -> N=20 W g=1.0 draw=0 | OOS 11.61%/1.0558/-19.34% | credit OOS +6.49 pp | 4a fail 4b PASS   [live v2 OOS 7.85%/1.1017/-12.24%; SPY OOS 15.26%/0.8737/-33.72%]
+  B136   C_CALMAR  -> N=40 M g=1.0 draw=4 | OOS 13.38%/1.1483/-22.28% | credit OOS +3.19 pp | 4a fail 4b fail   [live v2 OOS 7.85%/1.1017/-12.24%; SPY OOS 15.26%/0.8737/-33.72%]
+  B136   C_CREDIT  -> N=40 W g=1.0 draw=2 | OOS 6.86%/0.7869/-15.32% | credit OOS +6.42 pp | 4a fail 4b fail   [live v2 OOS 7.85%/1.1017/-12.24%; SPY OOS 15.26%/0.8737/-33.72%]
+  SMALL  C_SHARPE  -> N=20 Q g=1.0 draw=3 | OOS 1.38%/0.1758/-38.46% | credit OOS -12.17 pp | 4a fail 4b fail   [live v2 OOS 3.64%/0.5458/-14.16%; SPY OOS 15.26%/0.8737/-33.72%]
+  SMALL  C_CALMAR  -> N=20 M g=1.0 draw=3 | OOS 3.65%/0.3929/-22.90% | credit OOS +4.97 pp | 4a fail 4b fail   [live v2 OOS 3.64%/0.5458/-14.16%; SPY OOS 15.26%/0.8737/-33.72%]
+  SMALL  C_CREDIT  -> N=40 M g=1.0 draw=0 | OOS 4.53%/0.4753/-24.31% | credit OOS +7.13 pp | 4a fail 4b fail   [live v2 OOS 3.64%/0.5458/-14.16%; SPY OOS 15.26%/0.8737/-33.72%]
+  >> picks clearing 4a OOS: 0 of 9; clearing 4b OOS: 4 of 9
+  IS->OOS correlation of the CREDIT across 297 cells: rho = +0.4389 (IS mean +0.87 pp, OOS mean +0.39 pp)
+
+## SURVIVORSHIP CAVEAT
+  U56 / B136 are CURRENT constituents; SMALL is a CURRENT sub-$2B screen, 54 names dropped at
+  max_1d_move >= 1.0 (665 remain).  The credit is a WITHIN-CELL paired contrast on the SAME
+  names and is first-order immune; the 4a/4b pass counts and the rule-8 picks are NOT.
