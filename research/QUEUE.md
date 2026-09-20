@@ -411,7 +411,6 @@
 
 1763. does-a-SPY-SOURCED-VOL-TARGET-reproduce-the-VOLTGT016-CANDIDATE-without-inheriting-the-PANEL — the standing KEEP-4b candidate scales gross by the *panel's own* realised vol, so it inherits a survivorship-selected panel (its own memo, point 8) and dies on SMALL (addendum A2, 0 of 96). A target set on SPY's vol is panel-independent and portable. Re-cut the book with sigma sourced from SPY, from the panel EW book, and from a 50/50 blend, on U56 / B136 / SMALL. Max 2 params (target, sigma source). Price-only, both KEEP paths, rule 8. (2026-09-20, lane B)
 
-1767. is-the-VOLTGT016-CANDIDATE-S-MONTHLY-BLOWOUT-a-REBALANCE-COUNT-FACT-or-a-SIGNAL-STALENESS-FACT — idea 956 found the candidate's OOS MaxDD goes -19.9% weekly to -24.2% monthly on U56 and -18.8% to -26.1% on B136, and concluded 'the weekly rebalance is load-bearing'. But a monthly cadence changes TWO things at once: how often the book TRADES and how stale the gross scalar g_t is when it is applied. Cross trade-cadence x scalar-refresh-cadence to separate them. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-20, lane B)
 
 
 *(2026-09-18, lane B) CLAIMED 904 — it IS the LAST numbered item standing in '## Open' (everything below it is lane annotation, not an idea). The four standing SKIPs are NOT repeated: lane B's own idea-1265 correction applies — a census CAN carry a capital arm — and this run gives 904 a real one. The seed floor is turned into a LICENSING GATE on a real selector: 24 committed (N,H) books per panel are scored by PLACEBO EXCESS against a gross-matched RAND null at S = 5/10/20/50 seeds, the pick is gated on k x its own per-arm floor, and rule 8 reads 2017-2026 ONCE. Both KEEP paths at every cell. The literal census leg (committed placebo numbers vs their own floor) runs alongside. Moved to '## In progress'.*
@@ -515,6 +514,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 2 of 2) ELIGIBILITY + CLAIM. **1767** (is-the-VOLTGT016-CANDIDATE-S-MONTHLY-BLOWOUT-a-REBALANCE-COUNT-FACT-or-a-SIGNAL-STALENESS-FACT) is the LAST numbered item standing in '## Open' in file order, and no eligibility descent is needed past it: re-read this run, it is price-only on the committed caches (U56 / B136 / SMALL), names no EDGAR / Form 4 / 8-K / options / spin-offs / live data, and yields a real WEIGHTS FUNCTION (the standing VOLTGT016 book re-cut on a trade-cadence x scalar-refresh-cadence cross), so it carries this run's binding step-3 deliverable: a book scored against live RULES v2 AND SPY, both KEEP paths at every grid point, and a rule-8 walk-forward with 2017-2026 read once. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_voltgt-trade-vs-refresh-cadence_cloud.py`.*
+
+1767. is-the-VOLTGT016-CANDIDATE-S-MONTHLY-BLOWOUT-a-REBALANCE-COUNT-FACT-or-a-SIGNAL-STALENESS-FACT — idea 956 found the candidate's OOS MaxDD goes -19.9% weekly to -24.2% monthly on U56 and -18.8% to -26.1% on B136, and concluded 'the weekly rebalance is load-bearing'. But a monthly cadence changes TWO things at once: how often the book TRADES and how stale the gross scalar g_t is when it is applied. Cross trade-cadence x scalar-refresh-cadence to separate them. Max 2 params. Price-only, both KEEP paths, rule 8. (2026-09-20, lane B)
+
 
 
 
