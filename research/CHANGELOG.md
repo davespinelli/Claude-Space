@@ -1,3 +1,62 @@
+## 2026-09-19 — idea 772 (lane cloud): IS THE SMALL 4a BAR CARRIED ENTIRELY BY ITS OOS SECOND HALF? **ANSWERED — THE COLLAPSE IS REAL IN MAGNITUDE (OOS HALVES 0.9496 / 0.1292) AND UNRESOLVABLE IN NOISE (SE 0.6375, t +1.29, p 0.195). THE BAR'S OWN CALENDAR-YEAR SPREAD IS 4.73 OF SHARPE. AND THERE IS NOTHING LEFT TO RE-SCORE: 0 OF 17 PRE-REGISTERED DEVICES CLEAR 4a ON SMALL UNDER THE COMMITTED READING, FULL OR OOS. THE LENIENT 'MIN' BAR IS VACUOUS — THE BAR PASSES ITS OWN TEST. KILL (no book); A PROTOCOL NOTE IS PROPOSED.**
+
+  **THE DEFECT THIS CLOSES.** Idea 767 read the live book on the small panel at OOS Sharpe
+  0.5665 with OOS halves 0.9166 / 0.1704. Path 4a asks a device to beat THAT book in both
+  halves, so a comparand that collapses inside one sub-window would make every SMALL 4a
+  verdict a verdict about a degenerate object. No run had asked whether the collapse is
+  resolvable, or what survives a split-aware bar.
+
+  **CONSTRUCTION.** Two dials: **SPLIT {H2, T3, Y}** x **BAR {POOLED, MIN, ALL}** — POOLED is
+  the committed practice (both halves of the window), MIN the lenient reading (device pooled
+  Sharpe > the bar's WORST block), ALL the strict one (device beats the bar in EVERY block);
+  the MaxDD leg is unchanged in all three. Published, not tuned: **PANEL {SMALL, U56, B136} x
+  WINDOW {FULL, IS, OOS} x 17 PRE-REGISTERED DEVICES** rebuilt from `baseline.py` and tuned by
+  no one here (BAND {0.00, 0.03, 0.08} x G {0.75, 1.00}; MAXVOL {0.60, 0.80} x G; TOP-N {10,
+  20, 40} x G, the 2026-09-04 KEEP-4b construction; RULES v1). Weekly, t+1, 10 bps. Gate: the
+  local replay equals `engine.backtest` at **max|d| 1.0e-17 (SMALL), 6.9e-18 (U56, B136)**.
+  Bar reproduction: **OOS 0.5458, halves 0.9496 / 0.1292** against 767's committed
+  0.5665 / 0.9166 / 0.1704 — same sign and shape, the gap being the pool rebuild (idea 1074:
+  `SMALL439` now denotes a 665-name pool after dropping the 54 names with max_1d_move >= 1.0).
+
+  **(1) THE COLLAPSE IS INSIDE ITS OWN NOISE.** Circular block bootstrap of the bar's OOS
+  half-Sharpe difference (21-day blocks, 2,000 draws, seed 20260919): observed **+0.8204**,
+  **SE 0.6375, t +1.29, 95% CI [-1.2954, +1.2312], p 0.195**. The same statistic reads
+  **+0.3266 (p 0.604) on U56** and **+0.4127 (p 0.517) on B136**. A half-Sharpe gap of 0.8 is
+  what a stationary stream of this length produces routinely; "carried entirely by its second
+  half" is not a property the record can measure at this sample size.
+
+  **(2) BUT THE BAR IS NOT A STABLE COMPARAND ON ANY PANEL.** Bar Sharpe by calendar-year block:
+  **SMALL spread 4.7273 (-1.5374 to +3.1899), U56 3.8453, B136 4.7940**; by thirds of OOS,
+  SMALL **-0.3181 / 1.1384 / 0.5281 (spread 1.4565)**. The object a 4a verdict is measured
+  against moves year to year by more than any device margin the record has ever published.
+
+  **(3) THERE IS NOTHING LEFT TO RE-SCORE ON SMALL.** Under the COMMITTED (POOLED) reading the
+  device corpus clears 4a at **0 of 17 FULL, 1 of 17 IS, 0 of 17 OOS** on SMALL, and **0 of 17
+  at every window on U56 and B136**. Under the strict block-dominance readings (ALL x H2/T3/Y)
+  it is **0 of 17 everywhere** except the same lone SMALL IS cell. The SMALL 4a line is empty on
+  the rebuilt pool whichever bar is used, so no committed SMALL 4a pass survives — and none
+  fails — for want of any pass at all. 4b OOS for reference: **SMALL 0 of 17, U56 8, B136 3**.
+
+  **(4) THE LENIENT BAR IS VACUOUS.** Under BAR = MIN the passers are 1-2 of 17 at every
+  panel-window and they include **the bar itself** (`BAND0.03_G0.75` on SMALL and B136,
+  BAND0.00/0.03 on U56): a comparand that clears its own test cannot adjudicate anything.
+  MIN should never be written into a bar rule.
+
+  **(5) RULE 8.** Devices chosen on IS only, 2017-2026 read once. SMALL: both legal choosers
+  pick **RULES v1** — OOS **7.82% / 0.7073 / -31.50%** against the bar's 3.64% / 0.5458 /
+  -14.16% and SPY's 15.26% / 0.8737 / -33.72%. It beats the bar's POOLED OOS Sharpe and still
+  **fails 4a in both halves and in every block, and fails 4b on the drawdown cap (-31.50% vs
+  the -20.23% allowance)**. U56 picks BAND0.08_G1.00 / BAND0.03_G1.00 and B136 BAND0.08_G1.00
+  (4b True, **4a False**). The third chooser, "best IS device that clears 4a under ALL/Y", has
+  **no legal pick on any panel**.
+
+  **WHAT THE RECORD SHOULD DO.** Quote the bar's BLOCK PROFILE (year spread 3.85-4.79 of
+  Sharpe) beside every 4a verdict, never a MIN-style bar, and treat a sub-window Sharpe gap
+  below ~1.3 (the 95% band of this bootstrap) as unreadable. **No RULES change proposed.**
+  Caveats: current-constituent survivorship on all three panels; SMALL is 665 names after the
+  max_1d_move >= 1.0 drop; the SPY column enters the panel books as one name exactly as
+  `baseline.rules_v2_weights` does.
+
 ## 2026-09-19 — idea 1686 (lane cloud): DOES THE KEEP-4b BOOK SURVIVE A PER-NAME AND PER-GROUP CONCENTRATION CAP AT MATCHED REALISED GROSS? **ANSWERED — THE COMMITTED BOOK IS ALREADY CAP-COMPLIANT (A PER-NAME CAP BINDS AT 0 OF 72 CELLS), A 45% GROUP CAP IS FREE, A 30% GROUP CAP COSTS 0.009 OF SHARPE AND A 20% GROUP CAP COSTS THE 4b PASS. WHERE CAPS DO BIND THEY BUY NOTHING AT MATCHED GROSS (39 OF 77 ON SHARPE) AND THEIR ONLY POSITIVE DIRECTION IS THE DE-GROSS RECIPE THE RECORD ALREADY SHIPS. KILL AS A DEVICE; NO RULES CHANGE.**
 
   **THE DEFECT THIS CLOSES.** Real capital is held under a mandate: x% per name, y% per group.
