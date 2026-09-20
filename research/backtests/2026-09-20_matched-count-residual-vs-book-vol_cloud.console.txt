@@ -1,0 +1,207 @@
+======================================================================================================================
+IDEA 723 (lane cloud, 2026-09-20) — IS THE MATCHED-COUNT RESIDUAL EXCESS GAP THE VOL
+CHANNEL ITSELF?  A BOOK-VOL DECOMPOSITION OF THE DRAWDOWN SHORTFALL.
+DIALS (exactly 2, rule 4): NORMALISER ['FULLVOL', 'ROLLVOL', 'DOWNVOL'] x WINDOW [20, 60, 252].
+Book family PUBLISHED IN FULL, not tuned: band c ['NOGATE', 'BAND000', 'BAND003', 'BAND010'] x gross G [0.2, 0.4, 0.6, 0.8, 1.0] = 20 cells/panel x 3 panels = 60 books.
+Nulls: N_DEGROSS (NOGATE twin matched on REALISED MEAN GROSS over a 0.05 ladder) and N_RAND (20 matched-COUNT random baskets, seed 20260723).
+Weekly cadence, 10 bps, t+1 execution, no leverage.  Paired circular-block bootstrap: 400 draws, block 63d.
+======================================================================================================================
+
+  PANELS:
+    U56      56 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  G7 COMPOSITION U56: 56 columns incl. SPY, 2008-01-02..2026-09-18
+    B136    136 columns  2008-01-02 .. 2026-09-18  4708 rows (18.7y)
+    PUBLISHED  G7 COMPOSITION B136: 136 columns incl. SPY, 2008-01-02..2026-09-18
+    SMALL   666 columns  2010-01-04 .. 2026-09-18  4203 rows (16.7y)
+    PUBLISHED  G7 COMPOSITION SMALL: 666 columns incl. SPY, 2010-01-04..2026-09-18
+    PUBLISHED  G7 SMALL max_1d_move >= 1.0 drops: 54 names dropped (54 by data/small_meta.csv, 53 by realised price move), 666 columns remain
+  SURVIVORSHIP (rule 9): U56/B136 are CURRENT-constituent lists, SMALL a current screen;
+  every ABSOLUTE level is an UPPER BOUND.  The object here is a WITHIN-TAPE contrast
+  between a book and its OWN matched null.
+    GATE PASS  G0 U56 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 U56 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G0 B136 sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+    GATE PASS  G5 B136 IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G0 SMALL sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 SMALL IS window ends before 2017-01-01: 2016-12-30 (target < 2017-01-01)
+    GATE PASS  G1 replay of baseline.rules_v2_weights through engine.backtest (U56 live cell): max |diff| 1.735e-17 (target < 1e-12)
+    GATE PASS  G6 determinism (B136 c=0.03 G=0.60 twice): max |diff| 0.000e+00 (target == 0)
+
+  BUILDING THE MATCHING LADDER (NOGATE at 20 gross rungs) AND THE BOOKS ...
+    U56    ladder + 20 books done   t=4s
+    B136   ladder + 20 books done   t=5s
+    SMALL  ladder + 20 books done   t=11s
+    GATE PASS  G2 no leverage (max realised gross over every book and null rung): 1.0000 (target <= 1.0)
+
+  MATCHING THE NULLS (N_DEGROSS on realised mean gross; N_RAND on held-name count) ...
+    U56    nulls done   t=21s
+    B136   nulls done   t=36s
+    SMALL  nulls done   t=90s
+    GATE PASS  G9 N_DEGROSS gross match: worst |d realised mean gross| 0.0247 (target <= 0.03)
+
+  SCORING ...
+    U56    scored   t=92s
+    B136   scored   t=95s
+    SMALL  scored   t=98s
+    GATE PASS  G3 all cells x windows published: 300 rows -> 2026-09-20_matched-count-residual-vs-book-vol_cloud.grid.csv (target == 300)
+    GATE PASS  G9 decomposition identity GROSS + SELECTION == MaxDD(B) - MaxDD(NOGATE G=1.00): max |resid| 0.000e+00 (target < 1e-12)
+    GATE PASS  G4 tuned dials: 2 (normaliser, window); band c and gross G published in full (target <= 2 (rule 4))
+    GATE PASS  G8 committed RULES v2 U56 FULL cell reproduced: CAGR 8.62% Sharpe 1.2011 MaxDD -12.05% (target 8.62% / 1.2010 / -12.05%)
+
+======================================================================================================================
+(1) THE THREE-CHANNEL DECOMPOSITION OF THE DRAWDOWN SHORTFALL (FULL window, pp).
+    total = MaxDD(book) - MaxDD(NOGATE at G=1.00);  GROSS = the de-gross channel;
+    SELECTION = MaxDD(book) - MaxDD(its gross-matched NOGATE twin) = the '717 residual'.
+======================================================================================================================
+    panel  band         G   meanG    MaxDD     twin    GROSS   SELECT  share GROSS
+    U56    NOGATE    0.20   0.200   -6.40%   -6.40%   22.78p    0.00p        1.000
+    U56    NOGATE    0.40   0.400  -12.51%  -12.51%   16.67p    0.00p        1.000
+    U56    NOGATE    0.60   0.600  -18.33%  -18.33%   10.84p    0.00p        1.000
+    U56    NOGATE    0.80   0.800  -23.89%  -23.89%    5.29p    0.00p        1.000
+    U56    NOGATE    1.00   1.000  -29.18%  -29.18%    0.00p    0.00p          nan
+    U56    BAND000   0.20   0.142   -3.28%   -4.83%   24.35p    1.54p        0.940
+    U56    BAND000   0.40   0.284   -6.51%   -9.49%   19.69p    2.98p        0.868
+    U56    BAND000   0.60   0.426   -9.67%  -13.99%   15.19p    4.32p        0.779
+    U56    BAND000   0.80   0.568  -12.78%  -16.90%   12.28p    4.12p        0.749
+    U56    BAND000   1.00   0.710  -15.84%  -21.15%    8.03p    5.31p        0.602
+    U56    BAND003   0.20   0.142   -3.29%   -4.83%   24.35p    1.54p        0.941
+    U56    BAND003   0.40   0.284   -6.52%   -9.49%   19.69p    2.97p        0.869
+    U56    BAND003   0.60   0.426   -9.70%  -13.99%   15.19p    4.29p        0.780
+    U56    BAND003   0.80   0.568  -12.83%  -16.90%   12.28p    4.07p        0.751
+    U56    BAND003   1.00   0.710  -15.91%  -21.15%    8.03p    5.23p        0.605
+    U56    BAND010   0.20   0.138   -3.37%   -4.83%   24.35p    1.46p        0.943
+    U56    BAND010   0.40   0.276   -6.68%   -9.49%   19.69p    2.81p        0.875
+    U56    BAND010   0.60   0.414   -9.94%  -12.51%   16.67p    2.57p        0.867
+    U56    BAND010   0.80   0.552  -13.14%  -16.90%   12.28p    3.76p        0.766
+    U56    BAND010   1.00   0.690  -16.30%  -21.15%    8.03p    4.85p        0.624
+    B136   NOGATE    0.20   0.200   -7.28%   -7.28%   25.45p    0.00p        1.000
+    B136   NOGATE    0.40   0.400  -14.17%  -14.17%   18.55p    0.00p        1.000
+    B136   NOGATE    0.60   0.600  -20.70%  -20.70%   12.02p    0.00p        1.000
+    B136   NOGATE    0.80   0.800  -26.88%  -26.88%    5.84p    0.00p        1.000
+    B136   NOGATE    1.00   1.000  -32.72%  -32.72%    0.00p    0.00p          nan
+    B136   BAND000   0.20   0.142   -3.45%   -5.49%   27.23p    2.04p        0.930
+    B136   BAND000   0.40   0.284   -6.84%  -10.77%   21.95p    3.93p        0.848
+    B136   BAND000   0.60   0.426  -10.16%  -15.84%   16.88p    5.68p        0.748
+    B136   BAND000   0.80   0.567  -13.43%  -19.11%   13.62p    5.68p        0.706
+    B136   BAND000   1.00   0.709  -16.63%  -23.84%    8.88p    7.21p        0.552
+    B136   BAND003   0.20   0.142   -3.34%   -5.49%   27.23p    2.16p        0.927
+    B136   BAND003   0.40   0.284   -6.62%  -10.77%   21.95p    4.15p        0.841
+    B136   BAND003   0.60   0.426   -9.85%  -15.84%   16.88p    5.99p        0.738
+    B136   BAND003   0.80   0.568  -13.03%  -19.11%   13.62p    6.07p        0.692
+    B136   BAND003   1.00   0.709  -16.16%  -23.84%    8.88p    7.68p        0.536
+    B136   BAND010   0.20   0.143   -3.99%   -5.49%   27.23p    1.50p        0.948
+    B136   BAND010   0.40   0.285   -7.91%  -10.77%   21.95p    2.86p        0.885
+    B136   BAND010   0.60   0.428  -11.75%  -15.84%   16.88p    4.09p        0.805
+    B136   BAND010   0.80   0.570  -15.51%  -19.11%   13.62p    3.59p        0.791
+    B136   BAND010   1.00   0.713  -19.20%  -23.84%    8.88p    4.64p        0.657
+    SMALL  NOGATE    0.20   0.200  -10.40%  -10.40%   33.98p    0.00p        1.000
+    SMALL  NOGATE    0.40   0.400  -20.00%  -20.00%   24.38p    0.00p        1.000
+    SMALL  NOGATE    0.60   0.600  -28.84%  -28.84%   15.54p    0.00p        1.000
+    SMALL  NOGATE    0.80   0.800  -36.95%  -36.95%    7.43p    0.00p        1.000
+    SMALL  NOGATE    1.00   1.000  -44.38%  -44.38%    0.00p    0.00p          nan
+    SMALL  BAND000   0.20   0.110   -3.83%   -5.31%   39.08p    1.48p        0.964
+    SMALL  BAND000   0.40   0.219   -7.54%  -10.40%   33.98p    2.86p        0.922
+    SMALL  BAND000   0.60   0.329  -11.15%  -17.68%   26.71p    6.53p        0.804
+    SMALL  BAND000   0.80   0.438  -14.64%  -22.28%   22.10p    7.64p        0.743
+    SMALL  BAND000   1.00   0.548  -18.03%  -26.70%   17.68p    8.67p        0.671
+    SMALL  BAND003   0.20   0.110   -3.94%   -5.31%   39.08p    1.37p        0.966
+    SMALL  BAND003   0.40   0.220   -7.75%  -10.40%   33.98p    2.65p        0.928
+    SMALL  BAND003   0.60   0.329  -11.46%  -17.68%   26.71p    6.22p        0.811
+    SMALL  BAND003   0.80   0.439  -15.05%  -22.28%   22.10p    7.23p        0.753
+    SMALL  BAND003   1.00   0.549  -18.52%  -26.70%   17.68p    8.17p        0.684
+    SMALL  BAND010   0.20   0.113   -4.34%   -5.31%   39.08p    0.97p        0.976
+    SMALL  BAND010   0.40   0.226   -8.54%  -12.88%   31.50p    4.34p        0.879
+    SMALL  BAND010   0.60   0.339  -12.61%  -17.68%   26.71p    5.07p        0.840
+    SMALL  BAND010   0.80   0.451  -16.54%  -22.28%   22.10p    5.74p        0.794
+    SMALL  BAND010   1.00   0.564  -20.35%  -26.70%   17.68p    6.35p        0.736
+
+    POOLED over 60 books: GROSS carries 85.2% of the total shortfall, SELECTION 14.8%.
+    SELECTION mean +3.24 pp, median +2.98 pp, positive (book SHALLOWER than its gross-matched twin) at 45/60 books.
+
+======================================================================================================================
+(2) THE ANSWER — DOES VOL-NORMALISATION REMOVE THE SELECTION RESIDUAL?
+    Per (normaliser, window): the RAW excess vs the gross-matched twin and vs the
+    matched-COUNT random null, and the same excess after dividing by sigma.
+    'Share removed' = 1 - |normalised excess| / |raw excess|, pooled over books.
+======================================================================================================================
+    FULLVOL  W= 20  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.26 pp   share removed   61.1%   (book shallower at raw 45/60, normalised 45/60)
+    FULLVOL  W= 20  N_RAND      raw   +3.18 pp  ->  normalised   +1.21 pp   share removed   61.9%   (book shallower at raw 54/60, normalised 51/60)
+    FULLVOL  W= 60  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.26 pp   share removed   61.1%   (book shallower at raw 45/60, normalised 45/60)
+    FULLVOL  W= 60  N_RAND      raw   +3.18 pp  ->  normalised   +1.21 pp   share removed   61.9%   (book shallower at raw 54/60, normalised 51/60)
+    FULLVOL  W=252  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.26 pp   share removed   61.1%   (book shallower at raw 45/60, normalised 45/60)
+    FULLVOL  W=252  N_RAND      raw   +3.18 pp  ->  normalised   +1.21 pp   share removed   61.9%   (book shallower at raw 54/60, normalised 51/60)
+    ROLLVOL  W= 20  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.81 pp   share removed   44.0%   (book shallower at raw 45/60, normalised 45/60)
+    ROLLVOL  W= 20  N_RAND      raw   +3.18 pp  ->  normalised   +1.74 pp   share removed   45.4%   (book shallower at raw 54/60, normalised 51/60)
+    ROLLVOL  W= 60  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.85 pp   share removed   42.8%   (book shallower at raw 45/60, normalised 45/60)
+    ROLLVOL  W= 60  N_RAND      raw   +3.18 pp  ->  normalised   +1.78 pp   share removed   44.0%   (book shallower at raw 54/60, normalised 51/60)
+    ROLLVOL  W=252  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.73 pp   share removed   46.6%   (book shallower at raw 45/60, normalised 45/60)
+    ROLLVOL  W=252  N_RAND      raw   +3.18 pp  ->  normalised   +1.67 pp   share removed   47.5%   (book shallower at raw 54/60, normalised 51/60)
+    DOWNVOL  W= 20  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.17 pp   share removed   63.9%   (book shallower at raw 45/60, normalised 45/60)
+    DOWNVOL  W= 20  N_RAND      raw   +3.18 pp  ->  normalised   +1.17 pp   share removed   63.3%   (book shallower at raw 54/60, normalised 52/60)
+    DOWNVOL  W= 60  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.17 pp   share removed   63.9%   (book shallower at raw 45/60, normalised 45/60)
+    DOWNVOL  W= 60  N_RAND      raw   +3.18 pp  ->  normalised   +1.17 pp   share removed   63.3%   (book shallower at raw 54/60, normalised 52/60)
+    DOWNVOL  W=252  N_DEGROSS   raw   +3.24 pp  ->  normalised   +1.17 pp   share removed   63.9%   (book shallower at raw 45/60, normalised 45/60)
+    DOWNVOL  W=252  N_RAND      raw   +3.18 pp  ->  normalised   +1.17 pp   share removed   63.3%   (book shallower at raw 54/60, normalised 52/60)
+
+======================================================================================================================
+(3) IS THE SURVIVING RESIDUAL RESOLVABLE?  PAIRED circular-block bootstrap of
+    MaxDD(book) - MaxDD(gross-matched twin) on the FULL window (400 draws, block 63d, seed 20260723).
+======================================================================================================================
+    15/60 of the SELECTION residuals clear |t| >= 2 against their own paired block SE.
+    mean d MaxDD +3.24 pp, mean paired SE 1.87 pp, mean |t| 1.773, max |t| 2.402.
+      U56    resolvable  6/20   mean d  +2.59 pp   mean SE  1.49 pp   mean |t| 1.802
+      B136   resolvable  9/20   mean d  +3.36 pp   mean SE  1.68 pp   mean |t| 2.040
+      SMALL  resolvable  0/20   mean d  +3.76 pp   mean SE  2.43 pp   mean |t| 1.475
+
+======================================================================================================================
+(4) BOTH KEEP PATHS OVER ALL CELLS (rule 4):
+======================================================================================================================
+    U56    FULL   4a  0/20   4b  3/20   (4b legs failing: H1  0  H2  0  DD  2  CAGR 15)
+    U56    H1     4a  0/20   4b  2/20   (4b legs failing: H1  0  H2  0  DD  2  CAGR 16)
+    U56    H2     4a  0/20   4b  4/20   (4b legs failing: H1  0  H2  0  DD  2  CAGR 14)
+    U56    IS     4a  0/20   4b  1/20   (4b legs failing: H1  0  H2  0  DD  2  CAGR 17)
+    U56    OOS    4a  0/20   4b  4/20   (4b legs failing: H1  0  H2  0  DD  2  CAGR 14)
+    B136   FULL   4a  0/20   4b  2/20   (4b legs failing: H1  0  H2  0  DD  3  CAGR 15)
+    B136   H1     4a  1/20   4b  4/20   (4b legs failing: H1  0  H2  0  DD  2  CAGR 14)
+    B136   H2     4a  4/20   4b  0/20   (4b legs failing: H1  0  H2  0  DD  3  CAGR 17)
+    B136   IS     4a  1/20   4b  3/20   (4b legs failing: H1  0  H2  0  DD  2  CAGR 15)
+    B136   OOS    4a  3/20   4b  1/20   (4b legs failing: H1  0  H2  0  DD  3  CAGR 16)
+    SMALL  FULL   4a  4/20   4b  0/20   (4b legs failing: H1 10  H2 20  DD  4  CAGR 18)
+    SMALL  H1     4a  5/20   4b  0/20   (4b legs failing: H1 15  H2 10  DD  4  CAGR 18)
+    SMALL  H2     4a  0/20   4b  0/20   (4b legs failing: H1  5  H2 20  DD  3  CAGR 19)
+    SMALL  IS     4a  5/20   4b  0/20   (4b legs failing: H1  0  H2 10  DD  4  CAGR 17)
+    SMALL  OOS    4a  3/20   4b  0/20   (4b legs failing: H1 20  H2 20  DD  4  CAGR 19)
+
+======================================================================================================================
+(5) RULE 8 — FOUR IS-ONLY CHOOSERS, 2017-01-01..end READ EXACTLY ONCE.
+    C_DDNORM and C_RESID are the choosers this idea's statistic implies; the
+    (normaliser, window) they use is itself picked on the IS window only.
+======================================================================================================================
+
+  U56  (IS-chosen normaliser DOWNVOL/W=20;  OOS baseline RULES v2 CAGR 9.46% Sharpe 1.2769 MaxDD -12.05%  |  OOS SPY CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%)
+    C_SHARPE  -> BAND010  G=1.00   OOS CAGR  12.14%  Sharpe  1.1940  MaxDD  -16.30%   4a fail  4b PASS   [argmax IS Sharpe]
+    C_DDNORM  -> NOGATE   G=1.00   OOS CAGR  18.28%  Sharpe  1.1264  MaxDD  -29.18%   4a fail  4b fail   [argmax IS DDnorm at IS-chosen normaliser DOWNVOL/W=20]
+    C_RESID   -> BAND003  G=0.20   OOS CAGR   2.49%  Sharpe  1.2779  MaxDD   -3.29%   4a fail  4b fail   [argmax IS normalised excess vs gross-matched twin (DOWNVOL/W=20)]
+    C_ANCHOR  -> BAND003  G=0.75   OOS CAGR   9.46%  Sharpe  1.2769  MaxDD  -12.05%   4a fail  4b fail   [the LIVE book, choosing nothing]
+
+  B136  (IS-chosen normaliser ROLLVOL/W=252;  OOS baseline RULES v2 CAGR 7.85% Sharpe 1.1019 MaxDD -12.24%  |  OOS SPY CAGR 15.26% Sharpe 0.8739 MaxDD -33.72%)
+    C_SHARPE  -> NOGATE   G=1.00   OOS CAGR  18.27%  Sharpe  1.0857  MaxDD  -32.72%   4a fail  4b fail   [argmax IS Sharpe]
+    C_DDNORM  -> BAND003  G=1.00   OOS CAGR  10.47%  Sharpe  1.1008  MaxDD  -16.16%   4a fail  4b fail   [argmax IS DDnorm at IS-chosen normaliser ROLLVOL/W=252]
+    C_RESID   -> BAND003  G=0.20   OOS CAGR   2.08%  Sharpe  1.1038  MaxDD   -3.34%   4a fail  4b fail   [argmax IS normalised excess vs gross-matched twin (ROLLVOL/W=252)]
+    C_ANCHOR  -> BAND003  G=0.75   OOS CAGR   7.85%  Sharpe  1.1019  MaxDD  -12.24%   4a fail  4b fail   [the LIVE book, choosing nothing]
+
+  SMALL  (IS-chosen normaliser DOWNVOL/W=20;  OOS baseline RULES v2 CAGR 3.64% Sharpe 0.5459 MaxDD -14.16%  |  OOS SPY CAGR 15.26% Sharpe 0.8738 MaxDD -33.72%)
+    C_SHARPE  -> NOGATE   G=1.00   OOS CAGR  11.48%  Sharpe  0.5945  MaxDD  -44.38%   4a fail  4b fail   [argmax IS Sharpe]
+    C_DDNORM  -> BAND010  G=1.00   OOS CAGR   5.32%  Sharpe  0.5841  MaxDD  -20.35%   4a fail  4b fail   [argmax IS DDnorm at IS-chosen normaliser DOWNVOL/W=20]
+    C_RESID   -> BAND010  G=0.20   OOS CAGR   1.12%  Sharpe  0.5847  MaxDD   -4.34%   4a PASS  4b fail   [argmax IS normalised excess vs gross-matched twin (DOWNVOL/W=20)]
+    C_ANCHOR  -> BAND003  G=0.75   OOS CAGR   3.64%  Sharpe  0.5459  MaxDD  -14.16%   4a fail  4b fail   [the LIVE book, choosing nothing]
+
+  RULE-8 SUMMARY:
+    C_SHARPE   OOS 4a 0/3   OOS 4b 1/3   FULL 4b 1/3   mean OOS Sharpe 0.9581   mean OOS CAGR 13.96%   mean OOS MaxDD -31.13%
+    C_DDNORM   OOS 4a 0/3   OOS 4b 0/3   FULL 4b 1/3   mean OOS Sharpe 0.9371   mean OOS CAGR 11.36%   mean OOS MaxDD -21.90%
+    C_RESID    OOS 4a 1/3   OOS 4b 0/3   FULL 4b 0/3   mean OOS Sharpe 0.9888   mean OOS CAGR 1.90%   mean OOS MaxDD -3.65%
+    C_ANCHOR   OOS 4a 0/3   OOS 4b 0/3   FULL 4b 0/3   mean OOS Sharpe 0.9749   mean OOS CAGR 6.98%   mean OOS MaxDD -12.82%
+    SPY        mean OOS Sharpe 0.8738   mean OOS CAGR 15.26%   mean OOS MaxDD -33.72%
+    RULESv2    mean OOS Sharpe 0.9749   mean OOS CAGR 6.98%   mean OOS MaxDD -12.82%
+
+  GATES: 18/18 pass.   wall 102s
