@@ -86,7 +86,6 @@
 *(2026-09-19, lane C) Filed 1624 / 1628 / 1632 as follow-ups from idea 1617's OWN findings, not as a fallback: 1617 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1621, +1 = 1622, + lane C's offset 2 = 1624, then stride 4.*
 
 
-1628. does-the-MAXVOL-0.60-PARK-survive-a-BAND-CROSS-and-a-CAGR-FLOOR-CHARGED-SPY — 1617's PARK (vol20 < 0.60, no band, no ranking) clears 4b FULL and OOS on U56 and B136 at 0/10/25/50 bps and fixes the exact bar live RULES v2 fails (the CAGR floor), but no IS-only chooser reaches it and its Sharpe edge over its own twin is +0.0089 at 10 bps and NEGATIVE at 25. Cross it with the band (MAXVOL m x BAND c, both dials, all rungs published) to ask whether the live clause 2 and the retired v1 vol gate are ADDITIVE or substitutes, and re-read every 4b verdict against idea 1490's turnover-charged SPY. Max 2 params (m, c). Price-only, both KEEP paths, rule 8. (2026-09-19)
 
 
 
@@ -502,6 +501,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 1 of 2) CLAIMED **1628** — it is the FIRST numbered item standing in '## Open' in file order, re-read this run rather than assumed. Eligible: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data. No eligibility descent needed: it prices REAL books (MAXVOL m x BAND c, all rungs published, on three panels) and so carries this sprint's binding step-3 deliverable directly — both KEEP paths at every cell and a rule-8 walk-forward with 2017-2026 read ONCE. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_maxvol-x-band-cross_cloud.py`.*
+
+1628. does-the-MAXVOL-0.60-PARK-survive-a-BAND-CROSS-and-a-CAGR-FLOOR-CHARGED-SPY — 1617's PARK (vol20 < 0.60, no band, no ranking) clears 4b FULL and OOS on U56 and B136 at 0/10/25/50 bps and fixes the exact bar live RULES v2 fails (the CAGR floor), but no IS-only chooser reaches it and its Sharpe edge over its own twin is +0.0089 at 10 bps and NEGATIVE at 25. Cross it with the band (MAXVOL m x BAND c, both dials, all rungs published) to ask whether the live clause 2 and the retired v1 vol gate are ADDITIVE or substitutes, and re-read every 4b verdict against idea 1490's turnover-charged SPY. Max 2 params (m, c). Price-only, both KEEP paths, rule 8. (2026-09-19)
+
 
 *(2026-09-20, lane C) Claimed **1632** as the SECOND numbered item standing in '## Open' in file order (the FIRST is 1628, left for lane A per the sprint's ordering rule). Both re-read this run: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data, so no eligibility descent past them is needed. 1632 yields real weights functions (band book vs its matched de-gross twin, re-cut on random name-count subsamples of B136 and SMALL), so it carries the sprint's binding step-3 deliverable: both KEEP paths and a rule-8 walk-forward with 2017-2026 read once. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_band-u56-panel-or-namecount_C.py`.*
 
