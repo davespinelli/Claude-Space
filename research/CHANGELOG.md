@@ -5475,3 +5475,62 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   be quoted against its own chi/bootstrap null. Survivorship: U56 / B136 are CURRENT constituents
   and SMALL665 a CURRENT sub-$2B screen, so every absolute level is optimistic; the headline is a
   within-parent dispersion and is first-order immune, the 4b counts are not.
+
+## 2026-09-20 — idea 906 / slug `...ADMISSION-HAIRCUT` (lane B): DOES THE k/n OVERLAP SURVIVE A POINT-IN-TIME-SHAPED ADMISSION HAIRCUT? **ANSWERED / SPLIT — THE U56 OVERLAP SURVIVES, THE B136 ARM IS KILLED, AND THE BINDING DIAL IS BREADTH, NOT SURVIVORSHIP. KEEP-4b CANDIDATE REAFFIRMED, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 887 found 60 of 576 cells clearing both 4b level legs on the k/n
+  (ratio-width) axis and left a standing KEEP-4b candidate (MEMO_887: U56, monthly, r = 0.35,
+  gross 0.75/1.00, PASS full AND OOS). Every panel underneath it is a CURRENT-CONSTITUENT list, so
+  the whole overlap could be an artefact of holding names that are in the file because they won.
+
+  **THE CONSTRUCTION.** Admission is masked at the WEIGHTS level, never in the price history: an
+  unadmitted name cannot be held, but its 200d MA, vol20 and 3/6/12m composite are computed on its
+  full series exactly as the live book does — point-in-time membership with no rolling-window
+  blindness artefact. Two tuned params: `d` (annual drop rate) in {0.00, 0.05, 0.10, 0.20} x `kind`
+  in {RANDOM, WINNERCUT (drop highest full-sample total return — the survivorship windfall),
+  LOSERCUT}. One CONTROL axis, both arms always reported: SHRINK (dropped names are gone, breadth
+  falls) vs ROTATE (one-year exile then re-admission, so one cohort is out at a time and breadth is
+  flat — RANDOM at the same d is then an exactly breadth-matched null for WINNERCUT). 182 panel-cells
+  x 8 books (r x gross) = **1,456 book-cells**, 910 chooser-cells, 5 seeds, 10 bps, t+1, all published.
+  SPY is the benchmark and is never dropped. GATES: local `bt()` == `engine.backtest` max|d|
+  **0.000e+00**; `v2_weights(adm=None)` == `baseline.rules_v2_weights` max|d| **0.000e+00**;
+  MEMO_887 reproduces to max |published − reproduced| **0.0037** (tape drift since 2026-09-14).
+
+  **(A) THE U56 ANSWER — SURVIVES.** At matched breadth the candidate (r = 0.35, g = 0.75) is flat
+  through d = 0.10 in every cut kind, 5 of 5 seeds clearing 4b FULL **and** OOS: WINNERCUT d = 0.05
+  **10.88% / 1.0923 / −12.82%**, d = 0.10 **10.73% / 1.0873 / −12.78%** (OOS Sharpe 1.0946 / 1.0856)
+  against uncut 11.65% / 1.1468 / −12.92%, SPY 15.12% / 0.8843 / −33.72% (bars −20.23% and 10.59%)
+  and live RULES v2 8.62% / 1.2010 / −12.05%. Exiling the ex-post winners at 10%/yr costs 0.06 of
+  Sharpe and 0.9 pp of CAGR and changes no verdict. Seed sd <= 0.0046 of CAGR, <= 0.046 of Sharpe.
+
+  **(B) AND THE DAMAGE THAT DOES APPEAR IS NOT DIRECTIONAL.** Ladder-wide 4b FULL+OOS rate on U56 at
+  d = 0.20, matched breadth: RANDOM **0.625**, WINNERCUT **0.375**, LOSERCUT **0.375**. Dropping the
+  best and dropping the worst cost exactly the same, so what bites at a high exile rate is the
+  PERSISTENT ABSENCE of a fixed subset, not the fact that the absent subset won.
+
+  **(C) THE BINDING DIAL IS BREADTH — AND NO COMMITTED 4b CLAIM IN THIS RECORD QUOTES IT.** Drop-only
+  haircuts take the admitted count **55 -> 39.9 -> 27.1 -> 15.3** and the ladder's 4b rate
+  **0.750 -> 0.700 -> 0.475 -> 0.100**; the leg that goes is the **DD cap** (pass share 0.875 ->
+  0.750 -> 0.575 -> 0.200). Rule 8 (params on 2009–2016 only, 2017–2026 read ONCE), frozen cell's
+  OOS 4b pass rate: **0.867 breadth-matched vs 0.333 drop-only**, the three IS-only choosers
+  0.689–0.844 vs 0.067–0.178, do-nothing RULES v2 0.111.
+
+  **(D) B136 — KILL.** Breadth-matched WINNERCUT clears **0 of 120** book-cells at d = 0.05 / 0.10 /
+  0.20 against RANDOM's 0.100 / 0.175 / 0.175 and LOSERCUT's 0.025 / 0.025 / 0.000 at identical
+  admitted counts; no chooser reaches 4b OOS on more than 0.111 of its breadth-matched cells. 887's
+  cross-panel reading of the overlap does not survive; the U56 reading does. **4a: 2 of 1,456.**
+
+  **THE CANDIDATE, WITH ONE NEW FRAGILITY.** MEMO_887's U56 cell stands at g = 0.75, now stressed:
+  at a **20%/yr** winner exile it falls through the 4b **CAGR floor** (9.73% against 10.59%) while
+  g = 1.00 holds (12.99%) — under this stress the margin that dies first is CAGR, not drawdown.
+
+  **WHAT THE TEST CANNOT DO (stated, not repaired).** A haircut can only REMOVE names the cached
+  panel contains; it cannot ADD index members deleted before today, whose series are not in `data/`.
+  So this bounds the overlap's dependence on the ex-post WINNERS and says nothing about the absence
+  of the FAILED names — that direction needs a point-in-time constituent file (LOCAL/Actions, not
+  cloud). `universe.json` / `universe_broad.json` are CURRENT constituents, so every absolute level
+  here is optimistic and both 4b bars are easier than on a point-in-time panel.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, scan.py, bot.py and baseline.py untouched):** a
+  committed 4b drawdown claim should carry the **admitted-name count** it was measured at, the same
+  way idea 775's residue asked a draw floor to carry its k/M.
