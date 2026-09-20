@@ -49,7 +49,6 @@
 
 *(2026-09-20, lane C) Filed 2022 / 2026 / 2030 as follow-ups from idea 1799's OWN findings, not as a fallback: 1799 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 2020, +1 = 2021, + lane C's offset 2 = 2022, then stride 4.*
 
-2022. is-the-DRIFT-TRIGGER-s-MATCHED-TURNOVER-WIN-a-DRAWDOWN-TIMING-fact-or-a-COST-fact — 1799's 263-of-263 win decomposes as +4.07 pp of OOS MaxDD against only +0.31 pp of CAGR, and its crash table shows the whole gap opening in Feb-Mar 2020. Re-price the same 263 pairs with the 2020 crash EXCISED and with a block-bootstrap paired SE on the matched difference, and say how many of the 263 survive outside that one episode. Rationale: a dominance carried by one quarter is an episode, not a dial. (2026-09-20)
 
 2026. can-the-DRIFT-THRESHOLD-be-SET-WITHOUT-THE-IS-WINDOW — 1799 found the IS chooser walks to the laziest rung of whatever `h` ladder it is given (18 of 24 picks on the top two rungs) so the reach is ladder-length fragile. Price three LADDER-FREE settings that spend no IS statistic: `h` as a fixed multiple of the scalar's own 20-day SD, `h` as a fixed fraction of `g_t`, and a two-sided asymmetric `h` (tight on the way DOWN, loose on the way UP), each against the whole calendar ladder. Max 2 params. Rationale: if the rung cannot be chosen, the fix is a rule that does not need one. (2026-09-20)
 
@@ -544,6 +543,11 @@
 
 
 ## In progress
+
+*(2026-09-20, lane cloud, idea 1 of 2) CLAIMED **2022** (is-the-DRIFT-TRIGGER-s-MATCHED-TURNOVER-WIN-a-DRAWDOWN-TIMING-fact-or-a-COST-fact) — the FIRST numbered item standing in '## Open' in file order, re-read this run.  Eligible: price-only on the committed caches (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data, so no eligibility descent is needed.  It yields real weights functions (idea 1799's DRIFT-vs-CALENDAR refresh corpus re-priced), so it carries the sprint's binding step-3 deliverable: both KEEP paths at every cell and a rule-8 walk-forward with 2017-2026 read once.  NOTHING NEW IS TUNED — `t` and `h` are 1799's inherited dials; the CRASH WINDOW (2 settings) and the BLOCK LENGTH (2 settings) are REPORTED, not tuned.  Claim pushed BEFORE any compute per hygiene clause (C).  Script: `research/backtests/2026-09-20_drift-win-episode-or-dial_cloud.py`.*
+
+2022. is-the-DRIFT-TRIGGER-s-MATCHED-TURNOVER-WIN-a-DRAWDOWN-TIMING-fact-or-a-COST-fact — 1799's 263-of-263 win decomposes as +4.07 pp of OOS MaxDD against only +0.31 pp of CAGR, and its crash table shows the whole gap opening in Feb-Mar 2020. Re-price the same 263 pairs with the 2020 crash EXCISED and with a block-bootstrap paired SE on the matched difference, and say how many of the 263 survive outside that one episode. Rationale: a dominance carried by one quarter is an episode, not a dial. (2026-09-20)
+
 
 
 *(2026-09-20, lane cloud, idea 2 of 2) RAN AND CLOSED **736** (ANSWERED / NO dominance — the object is 'c_t DISPERSION' and the interchangeability is a TAIL fact, plus a data-vintage replication finding; no new book, no rules change — see '## Done' and LEADERBOARD.md). Original claim follows.*
