@@ -1,3 +1,70 @@
+## 2026-09-20 — idea 1709 (lane C): IS THE RULE-8 PICK INSTABILITY A PLATEAU ARTEFACT OR A REAL PREFERENCE? **ANSWERED — A PLATEAU ARTEFACT, AT EVERY SINGLE MOVE EVENT. BUT THE PLATEAU IS A HAZARD, NOT A COMFORT. KILL (capital), NO NEW BOOK.**
+
+  **THE DEFECT THIS CLOSES.** Idea 720 (earlier today) convicted rule 8's chooser: a year-deleted
+  IS window moves the pick at 8 of 12 chooser x panel pairs. But that was measured as a COUNT OF
+  MOVES, and a count cannot distinguish a FLAT surface (ties reshuffling, a statement about the
+  grid) from a REAL preference overturned by one year of tape (a statement about the tape, and a
+  much more serious one). 1709 computes the statistic 720 never did: the MARGIN between the
+  argmax and its rival, against that same margin's own leave-one-IS-year-out spread.
+
+  **CONSTRUCTION.** Two dials and no more: **band c {NOGATE, 0.00, 0.01, 0.02, 0.03, 0.05, 0.075,
+  0.10, 0.15, 0.20}** x **gross G {0.05, 0.10, ..., 1.00}** = 200 books per panel on **U56 /
+  B136 / SMALL** = **600 REAL BOOKS**, every one in `grid.csv` with FULL / H1 / H2 / IS / OOS
+  metrics and both KEEP-path verdicts. Weekly, 10 bps, next-day execution, no leverage (max
+  realised gross 1.0000 over all 600). Deletion convention identical to idea 720: the book is
+  NEVER re-run, the calendar year is removed from the SCORED RETURN STREAM. Gates 21 of 21, incl.
+  a bit-for-bit replay of `baseline.rules_v2_weights` (max|d| < 1e-12) and a cross-run match on
+  all three committed U56 cells (LIVE 8.62%/1.2011/-12.05%, PICK 11.72%/1.1726/-16.30%, PARK
+  11.42%/1.1188/-19.75%).
+
+  **THE METHOD POINT, AND IT MATTERS.** The naive comparator — the LOYO SD of the winner's OWN IS
+  Sharpe — is the WRONG scale by three orders of magnitude (0.1681 against a paired 0.0001): the
+  winner and its rival move together when a year is deleted, and only their DIFFERENCE decides the
+  pick. Every t here is on the PAIRED SD, with a 400-draw random-contiguous-252-day null published
+  beside it. The second trap: the rank-2 rival is the SAME BAND one gross rung down — a
+  near-duplicate, mean margin **0.0002** of IS Sharpe — so the rank ladder measures GRID
+  RESOLUTION, not preference. The ladder that adjudicates is the best cell in each OTHER band.
+
+  **THE ANSWER.** **0 of 10 leave-one-IS-year-out pick moves goes to a rival the undeleted IS
+  window could resolve** at |t| > 2 (median |t| at a move event **0.292**, max **1.123**); 10 of
+  22 single-year refits move the argmax — 720's instability, reproduced on a 200-cell grid — and
+  **10 of 10 moves cross to a different BAND**, never to the adjacent gross rung. On the
+  cross-band ladder only **12 of 27** rivals are resolved (median |t| 1.65, mean margin 0.0715
+  against a mean paired SD of 0.0378), and only **3 of 9** of the record's committed (panel, cell)
+  pairs are distinguishable from their own panel's IS argmax — B136's committed 2026-09-19 PICK
+  sits 0.0011 of IS Sharpe below that panel's argmax against a paired SD of 0.0493, t **+0.02**.
+
+  **BUT FLATNESS IS NOT COMFORT — THE CAPITAL HALF.** The IS window cannot separate its argmax
+  from **100 of 200 cells on average (50.2% of the grid)**, and those IS-indistinguishable cells
+  do NOT behave alike out of sample: OOS CAGR runs **0.28% to 18.27%**, OOS MaxDD **-0.84% to
+  -44.38%**, and only **10 of 301** plateau cells clear 4b OOS. Three LEGAL IS-only tie-breaks of
+  the SAME tie (C_PLAT_LO / MID / HI) spread OOS CAGR by **8.97%** on average. The chooser is not
+  choosing; the tie-break is.
+
+  **RULE 8 (2017-2026 read ONCE per chooser).** 4 of 21 chooser x panel picks clear 4b OOS, **2 of
+  21 clear 4a OOS**; mean OOS Sharpe 0.9472 against SPY's 0.8738. U56 C_SHARPE reaches
+  `c0.10/g1.00` (OOS 12.14% / 1.1940 / -16.30%, 4b OOS PASS) — the record's ALREADY-COMMITTED
+  pick, not a new book. Both KEEP paths over all 600 cells: 4a FULL 59 (all SMALL), 4a OOS 69,
+  4b FULL 26, 4b OOS 31, BOTH 20. OOS bars: SPY 15.26% / 0.8738 / -33.72%; RULES v2 U56 9.46% /
+  1.2769 / -12.05%, B136 7.85% / 1.1019 / -12.24%, SMALL 3.64% / 0.5459 / -14.16%.
+  **NO NEW KEEP CANDIDATE IS PROPOSED** — every 4b-clean cell sits in the known high-gross region
+  the record already holds, and this run's own measurement says no legal IS-only chooser can be
+  trusted to land on it.
+
+  **CONSTRUCTIVE RESIDUE (proposed for Sunday review only; PROTOCOL.md, RULES.md, scan.py, bot.py
+  and baseline.py NOT modified).** Rule 8 should say WHICH argmax and publish its margin: quote
+  every walk-forward pick with the paired leave-one-IS-year-out t against its best CROSS-BAND
+  rival. Below |t| = 2 the pick is a tie-break and should not be quoted as a preference. This
+  agrees with lane B's independent idea 1713 the same day from the other direction — robustness
+  on the IS window buys nothing OOS precisely BECAUSE the IS objective cannot see the dial it is
+  picking.
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 are current-constituent lists; SMALL is a current-screen
+  sub-$2B panel with every name whose max 1-day move >= 1.0 dropped (54 dropped, 666 columns
+  remain). Absolute levels are UPPER BOUNDS; the object measured is the SEPARATION of two cells
+  on one fixed tape. Script
+  `research/backtests/2026-09-20_rule8-pick-margin-vs-deletion-noise_C.py`.
+
 ## 2026-09-20 — idea 1713 (lane B, run 2): DOES A DELETION-ROBUST RULE-8 CHOOSER BEAT PLAIN IS-ARGMAX OUT OF SAMPLE? **ANSWERED — NO. ROBUSTNESS MOVES THE CELL AT 1 OF 9 PANEL x CHOOSER PAIRS AND THAT ONE MOVE IS A LOSS THAT DESTROYS THE ONLY 4b OOS PASS. KILL; NO NEW BOOK. THE REASON IS THAT THE IS OBJECTIVE CANNOT SEE THE DIAL IT IS PICKING.**
 
   **THE DEFECT THIS CLOSES.** Idea 720 (earlier today) acquitted the 4a/4b verdicts under a
