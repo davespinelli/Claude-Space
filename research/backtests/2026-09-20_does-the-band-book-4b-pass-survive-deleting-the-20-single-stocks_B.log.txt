@@ -1,0 +1,133 @@
+======================================================================================================================
+IDEA 1703 (lane B, 2026-09-20) — does the BAND BOOK's 4b pass survive DELETING the 20
+survivorship-selected single stocks?  Panels U56 / ETF36 / STK20 / 20 matched-count
+random ETF20 draws.  DIALS: c [0.0, 0.03, 0.05, 0.1, 0.15] x G [0.25, 0.5, 0.75, 1.0].  Weekly, 10 bps, t+1.
+======================================================================================================================
+
+  TAPE: 2008-01-02 .. 2026-09-18  4708 rows (18.7y), 56 investable columns.
+    GATE PASS  G0 min sample >= 10 years (rule 1): 18.68 (target >= 10.0)
+  ETF36 (36): SPY QQQ IWM DIA EFA EEM VTI RSP XLK XLF XLV XLE XLI XLY XLP XLU XLB XLRE XLC SMH XBI KRE ITB GDX TLT IEF SHY HYG LQD TIP GLD SLV USO UNG DBC UUP
+  STK20 (20): AAPL MSFT NVDA AMZN GOOGL META TSLA AVGO BRK-B JPM LLY UNH V XOM COST NFLX AMD CRM ORCL PLTR
+    PUBLISHED  G7 COMPOSITION ETF36: 36 names: SPY,QQQ,IWM,DIA,EFA,EEM,VTI,RSP,XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU,XLB,XLRE,XLC,SMH,XBI,KRE,ITB,GDX,TLT,IEF,SHY,HYG,LQD,TIP,GLD,SLV,USO,UNG,DBC,UUP
+    PUBLISHED  G7 COMPOSITION STK20: 20 names: AAPL,MSFT,NVDA,AMZN,GOOGL,META,TSLA,AVGO,BRK-B,JPM,LLY,UNH,V,XOM,COST,NFLX,AMD,CRM,ORCL,PLTR
+  SURVIVORSHIP (rule 9) — THE SUBJECT OF THIS RUN: U56 is a CURRENT-constituent list, so every absolute level below is an UPPER BOUND.  STK20 carries the bulk of that bias (its 20 names are in the file because they became the 20 largest US companies); ETF36 carries far less (no ETF is in the file for having won — USO and UNG are in it having lost 80-99%).  The STK20 - ETF36 contrast is a LOWER BOUND on the pass's survivorship content.
+  R20x00: DBC EEM GDX ITB KRE QQQ RSP SHY SLV SMH SPY TIP USO UUP VTI XLB XLC XLE XLP XLY
+  R20x01: DBC EEM GDX HYG ITB LQD QQQ SHY SPY UNG USO UUP VTI XLE XLI XLK XLP XLRE XLU XLY
+  R20x02: DIA EEM EFA GLD ITB KRE LQD RSP SLV SMH TLT VTI XBI XLB XLC XLE XLF XLP XLRE XLV
+    PUBLISHED  G7 RANDOM DRAWS: seed 1703, 20 draws of 20 from ETF36, fixed before any return was read
+
+  SPY FULL 15.12% / 0.8844 / -33.72% H1/H2 0.957/0.825
+      4b bars FULL: Sharpe H1>0.9573, H2>0.8251, MaxDD >= -20.23%, CAGR >= 10.59%
+  SPY OOS  15.26% / 0.8738 / -33.72%
+      4b bars OOS:  MaxDD >= -20.23%, CAGR >= 10.68%
+  SPY IS   14.96% / -22.06%  (the bars C_MEMO and C_CAGR read)
+  RULES v2 LIVE (U56) FULL 8.62% / 1.2011 / -12.05% H1/H2 1.228/1.181
+  RULES v2 LIVE (U56) OOS  9.46% / 1.2769 / -12.05%
+  NOTE ON 4a: path 4a asks whether a candidate beats THE BOOK.  The book is RULES v2 as actually traded, i.e. on U56 — so 4a is judged against that single row on every panel, not against a panel-local re-fit.  The panel-local (c=0.03, G=0.75) cell is in the grid for anyone who wants the other reading.
+    PUBLISHED  G1a engine.backtest NaN warm-up rows (before its first weekly rebalance): 2 of 4708, last at index 3 (warm-up discards the first 260)
+    GATE PASS  G1 replay U56 (c=0.03,G=0.75) vs engine.backtest(baseline.rules_v2_weights), rows >= WARMUP: 1.735e-17 (target < 1e-12)
+    GATE PASS  G2 no leverage / no shorting: max target gross: 1.000000 (target <= 1.000001)
+    GATE PASS  G3 all grid cells published: 460 cells + 92 no-gate controls (target 460 + 92)
+    GATE PASS  G4 tuned parameters: 2 (c, G) (target <= 2 (rule 4))
+    GATE PASS  G6 determinism: ETF36 (0.10,1.00) recompute: 0.000e+00 (target == 0)
+
+======================================================================================================================
+THE THREE LEGS AT THE TWO CELLS THAT MATTER — live (c=0.03, G=0.75) and the 2026-09-19
+rule-8 pick (c=0.10, G=1.00).  4b is judged against SPY, 4a against RULES v2 live on U56.
+======================================================================================================================
+  panel   cell             CAGR  Sharpe    MaxDD     H1     H2   oCAGR  oSharpe   oMaxDD  4b(F/O)  4a  legs failing (FULL)
+  U56     c=0.03 G=0.75   8.62%  1.2011  -12.05%  1.228  1.181   9.46%   1.2769  -12.05%  n/n     n   CAGR
+  U56     c=0.10 G=1.00  11.72%  1.1726  -16.30%  1.247  1.107  12.14%   1.1940  -16.30%  Y/Y     n   (none)
+  ETF36   c=0.03 G=0.75   4.77%  0.8095  -10.49%  0.780  0.838   5.37%   0.9109  -10.49%  n/n     n   H1,CAGR
+  ETF36   c=0.10 G=1.00   6.33%  0.7985  -12.64%  0.816  0.781   6.47%   0.8403  -12.64%  n/n     n   H1,H2,CAGR
+  STK20   c=0.03 G=0.75  15.91%  1.4462  -15.62%  1.563  1.359  17.14%   1.4617  -15.62%  Y/Y     n   (none)
+  STK20   c=0.10 G=1.00  22.00%  1.4057  -22.92%  1.586  1.272  22.93%   1.3714  -22.92%  n/n     n   DD
+
+  SAME TWO CELLS ON THE 20 MATCHED-COUNT RANDOM ETF20 DRAWS (median [min, max]):
+    c=0.03 G=0.75  CAGR 4.70% [3.54%, 6.08%]  Sharpe 0.7846 [0.6218, 0.8984]  MaxDD -10.40% [-12.77%, -8.90%]  4b FULL 0/20  4b OOS 0/20  4a 0/20
+    c=0.10 G=1.00  CAGR 6.24% [5.37%, 7.38%]  Sharpe 0.7693 [0.6825, 0.8799]  MaxDD -13.01% [-17.39%, -11.25%]  4b FULL 0/20  4b OOS 0/20  4a 0/20
+
+  4b / 4a PASS COUNTS OVER THE WHOLE 20-CELL GRID, PER PANEL:
+  panel     4b FULL   4b OOS  4b BOTH  4a FULL   4a OOS   best-Sharpe cell (FULL)
+  U56             5        5        5        0        0   c=0.03 G=0.50 1.2012 / 5.72% / -8.12%
+  ETF36           0        0        0        0        0   c=0.03 G=0.25 0.8097 / 1.61% / -3.55%
+  STK20           6       10        6        9        9   c=0.03 G=1.00 1.4470 / 21.47% / -20.45%
+  R20x00          0        0        0        0        0   c=0.03 G=0.50 0.7822 / 3.49% / -7.86%
+  R20x01          0        0        0        0        0   c=0.03 G=0.25 0.7356 / 1.44% / -3.78%
+  R20x02          0        0        0        0        0   c=0.03 G=0.50 0.7981 / 3.68% / -8.18%
+  R20x03          0        0        0        0        0   c=0.03 G=0.75 0.8444 / 5.20% / -10.22%
+  R20x04          0        0        0        0        0   c=0.03 G=0.50 0.8155 / 3.38% / -7.47%
+  R20x05          0        0        0        0        0   c=0.05 G=0.75 0.7957 / 4.69% / -10.44%
+  R20x06          0        0        0        0        0   c=0.03 G=1.00 0.8371 / 6.64% / -12.89%
+  R20x07          0        0        0        0        0   c=0.03 G=0.25 0.8157 / 1.65% / -3.33%
+  R20x08          0        0        0        0        0   c=0.03 G=0.75 0.8748 / 6.08% / -12.77%
+  R20x09          0        0        0        0        0   c=0.10 G=1.00 0.7558 / 6.50% / -13.21%
+  R20x10          0        0        0        0        0   c=0.03 G=0.75 0.7338 / 4.64% / -11.47%
+  R20x11          0        0        0        0        0   c=0.10 G=1.00 0.7954 / 5.97% / -11.25%
+  R20x12          0        0        0        0        0   c=0.03 G=0.25 0.6957 / 1.37% / -3.09%
+  R20x13          0        0        0        0        0   c=0.10 G=0.75 0.7602 / 4.45% / -9.01%
+  R20x14          0        0        0        0        0   c=0.10 G=0.75 0.8198 / 4.99% / -9.75%
+  R20x15          0        0        0        0        0   c=0.10 G=0.25 0.6986 / 1.38% / -3.53%
+  R20x16          0        0        0        0        0   c=0.03 G=0.25 0.6864 / 1.45% / -4.02%
+  R20x17          0        0        0        0        0   c=0.03 G=0.50 0.8984 / 3.73% / -7.58%
+  R20x18          0        0        0        0        0   c=0.10 G=1.00 0.8091 / 6.61% / -13.14%
+  R20x19          0        0        0        0        0   c=0.15 G=1.00 0.7703 / 5.73% / -12.76%
+
+  WHICH 4b LEG FAILS, PER PANEL, OVER ALL 20 CELLS (FULL window):
+    U56      H1 fails  0/20, H2  0/20, DD  0/20, CAGR 15/20
+    ETF36    H1 fails 20/20, H2 16/20, DD  0/20, CAGR 20/20
+    STK20    H1 fails  0/20, H2  0/20, DD  5/20, CAGR  9/20
+    R20 pool H1 fails 388/400, H2 332/400, DD   0/400, CAGR 400/400
+
+  G8 NO-GATE TWIN (always invested, equal weight, same target gross — the band removed):
+  panel        G    CAGR  Sharpe    MaxDD  oSharpe   oMaxDD  4b F/O
+  U56       0.25   4.36%  1.1174   -7.95%   1.1268   -7.95%  n/n
+  U56       0.50   8.76%  1.1183  -15.46%   1.1269  -15.46%  n/n
+  U56       0.75  13.19%  1.1190  -22.53%   1.1268  -22.53%  n/n
+  U56       1.00  17.63%  1.1195  -29.18%   1.1264  -29.18%  n/n
+  ETF36     0.25   2.68%  0.8146   -7.85%   0.8606   -7.85%  n/n
+  ETF36     0.50   5.33%  0.8152  -15.27%   0.8597  -15.27%  n/n
+  ETF36     0.75   7.93%  0.8156  -22.28%   0.8587  -22.28%  n/n
+  ETF36     1.00  10.48%  0.8157  -28.88%   0.8573  -28.88%  n/n
+  STK20     0.25   7.51%  1.3688   -8.54%   1.3201   -8.54%  n/n
+  STK20     0.50  15.27%  1.3709  -16.69%   1.3226  -16.69%  Y/Y
+  STK20     0.75  23.28%  1.3726  -24.46%   1.3248  -24.46%  n/n
+  STK20     1.00  31.48%  1.3740  -31.82%   1.3267  -31.82%  n/n
+    (the gate's value on a panel is the BAND cell minus this twin at the same G)
+    GATE VALUE U56    G=0.75: dSharpe +0.0821, dMaxDD +10.47%, dCAGR -4.57% (c=0.03 vs no gate)
+    GATE VALUE U56    G=1.00: dSharpe +0.0815, dMaxDD +13.27%, dCAGR -6.10% (c=0.03 vs no gate)
+    GATE VALUE ETF36  G=0.75: dSharpe -0.0061, dMaxDD +11.79%, dCAGR -3.16% (c=0.03 vs no gate)
+    GATE VALUE ETF36  G=1.00: dSharpe -0.0065, dMaxDD +15.01%, dCAGR -4.16% (c=0.03 vs no gate)
+    GATE VALUE STK20  G=0.75: dSharpe +0.0736, dMaxDD +8.84%, dCAGR -7.37% (c=0.03 vs no gate)
+    GATE VALUE STK20  G=1.00: dSharpe +0.0730, dMaxDD +11.37%, dCAGR -10.01% (c=0.03 vs no gate)
+
+======================================================================================================================
+RULE 8 WALK-FORWARD — (c, G) chosen on warm-up..2016-12-31 ONLY; 2017-2026 read ONCE.
+======================================================================================================================
+  panel    chooser   pick            OOS CAGR  OOS Sharpe  OOS MaxDD  4b OOS  4a OOS  vs SPY OOS Sharpe  vs LIVE OOS Sharpe
+  U56      C_SHARPE  c=0.10 G=1.00     12.14%      1.1940    -16.30%    Y       n     +0.3202            -0.0829
+  U56      C_MEMO    c=0.10 G=1.00     12.14%      1.1940    -16.30%    Y       n     +0.3202            -0.0829
+  U56      C_CAGR    c=0.10 G=1.00     12.14%      1.1940    -16.30%    Y       n     +0.3202            -0.0829
+  U56      C_ANCHOR  c=0.03 G=0.75      9.46%      1.2769    -12.05%    n       n     +0.4030            +0.0000
+  ETF36    C_SHARPE  c=0.15 G=1.00      5.74%      0.7663    -12.01%    n       n     -0.1076            -0.5106
+  ETF36    C_MEMO    c=0.03 G=0.75*     5.37%      0.9109    -10.49%    n       n     +0.0371            -0.3659
+  ETF36    C_CAGR    c=0.10 G=1.00      6.47%      0.8403    -12.64%    n       n     -0.0336            -0.4366
+  ETF36    C_ANCHOR  c=0.03 G=0.75      5.37%      0.9109    -10.49%    n       n     +0.0371            -0.3659
+  STK20    C_SHARPE  c=0.10 G=1.00     22.93%      1.3714    -22.92%    n       n     +0.4975            +0.0945
+  STK20    C_MEMO    c=0.00 G=0.75     16.44%      1.4206    -16.55%    Y       n     +0.5468            +0.1437
+  STK20    C_CAGR    c=0.10 G=1.00     22.93%      1.3714    -22.92%    n       n     +0.4975            +0.0945
+  STK20    C_ANCHOR  c=0.03 G=0.75     17.14%      1.4617    -15.62%    Y       n     +0.5878            +0.1848
+  R20 pool C_SHARPE  (20 draws)  OOS CAGR med 5.97%, Sharpe med 0.7728 [0.6159, 0.8646], MaxDD med -12.55%  4b OOS 0/20  4a OOS 0/20
+  R20 pool C_MEMO    (20 draws)  OOS CAGR med 5.04%, Sharpe med 0.8530 [0.7557, 1.0590], MaxDD med -10.40%  4b OOS 0/20  4a OOS 0/20
+  R20 pool C_CAGR    (20 draws)  OOS CAGR med 5.90%, Sharpe med 0.7801 [0.6154, 0.9438], MaxDD med -11.94%  4b OOS 0/20  4a OOS 0/20
+  R20 pool C_ANCHOR  (20 draws)  OOS CAGR med 5.04%, Sharpe med 0.8530 [0.7557, 1.0590], MaxDD med -10.40%  4b OOS 0/20  4a OOS 0/20
+  (* = the chooser's documented fallback fired: no IS cell met the memo's bars)
+    GATE PASS  G5 choosers are IS-only (hard-truncation test): 0 picks changed (target 0)
+
+======================================================================================================================
+ANSWER — 4b passes on FULL *and* OOS:  U56 5/20   ETF36 0/20   STK20 6/20   R20 pool 0/400
+        ETF36 rule-8 picks clearing 4b OOS: 0/4; U56 3/4; STK20 2/4
+======================================================================================================================
+
+Wrote 2026-09-20_does-the-band-book-4b-pass-survive-deleting-the-20-single-stocks_B.grid.csv (460 cells), .nogate.csv (92), .walkforward.csv (92), .gates.csv (11)
+Deterministic, offline, 24s
