@@ -41,8 +41,6 @@
 
 1753. is-the-STANDING-U56-G1-00-WEEKLY-4b-PASS-a-TRADE-CADENCE-ARTEFACT — 1741 priced the band's drawdown credit at three trade cadences and found it POSITIVE in 89.4% of weekly books, 81.8% of monthly and **3.0% of quarterly**, with the sign reversing outright at Q. The record's standing 4b candidate (U56, equal-weight band, gross 1.00, WEEKLY) has never been priced against that: 1694 walked the weekly PHASE but not the cadence itself at G=1.00. Re-price the standing book's 4b verdict at D / W / 2W / M / Q with the phase held at the committed last-trading-day anchor, publish every rung's FULL and OOS legs and the binding leg at each, and say whether the pass survives a cadence it was never chosen on. Max 2 params (cadence ladder, panel axis). Price-only, both KEEP paths, rule 8. (2026-09-20)
 
-1757. is-the-4b-CAGR-FLOOR-just-a-GROSS-BAR-in-disguise — across 1741's 1,188 cells the 4b legs fail at H1 417 / H2 606 / DD 370 / **CAGR 1,049**, i.e. the CAGR floor is the binding leg almost everywhere, and every FULL-and-OOS passer in the run sits at gross 1.00. If the floor is satisfied by exposure alone, 4b is selecting books for holding more beta rather than for any device, and the record's 4b counts are a gross census. Test it directly: hold the device fixed and sweep gross on a dense ladder at every panel and cadence, regress the 4b FULL and OOS pass indicator on realised mean gross alone, and publish the share of the verdict variance gross explains plus the gross rung at which each panel's floor first clears. Then ask the constructive half: should 4b's CAGR floor be stated per unit of realised gross? Max 2 params (gross ladder, panel axis). Price-only, both KEEP paths, rule 8. (2026-09-20)
-
 
 *(2026-09-20, lane C) Filed 1741 / 1745 / 1749 as follow-ups from idea 1632's OWN findings, not as a fallback: 1632 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 1738, +1 = 1739, + lane C's offset 2 = 1741, then stride 4.*
 
@@ -518,6 +516,20 @@
 
 
 ## In progress
+
+1757. is-the-4b-CAGR-FLOOR-just-a-GROSS-BAR-in-disguise — across 1741's 1,188 cells the 4b legs fail at H1 417 / H2 606 / DD 370 / **CAGR 1,049**, i.e. the CAGR floor is the binding leg almost everywhere, and every FULL-and-OOS passer in the run sits at gross 1.00. If the floor is satisfied by exposure alone, 4b is selecting books for holding more beta rather than for any device, and the record's 4b counts are a gross census. Test it directly: hold the device fixed and sweep gross on a dense ladder at every panel and cadence, regress the 4b FULL and OOS pass indicator on realised mean gross alone, and publish the share of the verdict variance gross explains plus the gross rung at which each panel's floor first clears. Then ask the constructive half: should 4b's CAGR floor be stated per unit of realised gross? Max 2 params (gross ladder, panel axis). Price-only, both KEEP paths, rule 8. (2026-09-20)
+
+*(2026-09-20, lane C) CLAIMED **1757** (is-the-4b-CAGR-FLOOR-just-a-GROSS-BAR-in-disguise), the SECOND numbered item standing in '## Open' in file order (the FIRST is **1753**, left for lane A per the sprint's ordering rule). Both re-read this run: price-only on the committed caches (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data, so no eligibility descent past them is needed. 1757 yields real weights functions (the live band device and a no-device de-gross arm, both swept on a dense NOMINAL GROSS ladder at every panel and cadence), so it carries the sprint's binding step-3 deliverable: both KEEP paths at every grid point and a rule-8 walk-forward with 2017-2026 read ONCE. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_4b-cagr-floor-a-gross-bar_C.py`.*
+
+
+
+
+
+
+
+
+
+
 
 *(2026-09-20, lane C) RAN AND CLOSED **1745** (ANSWERED / KILL the whipsaw reading; no new book — see '## Done' and LEADERBOARD.md). Original CLAIM of **1745** (is-the-BAND-S-RETURN-COST-PREDICTED-BY-ITS-NAMES-OWN-WHIPSAW-RATE), the SECOND numbered item standing in '## Open' in file order (the FIRST is **1741**, left for lane A per the sprint's ordering rule). Both re-read this run: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data, so no eligibility descent past them is needed. 1745 yields real weights functions (each draw is a band book and its realised-gross-matched no-gate twin), so it carries the sprint's binding step-3 deliverable: both KEEP paths and a rule-8 walk-forward with 2017-2026 read once. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_band-cagr-cost-vs-whipsaw-rate_C.py`.*
 
