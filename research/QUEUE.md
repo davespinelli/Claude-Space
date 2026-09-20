@@ -44,7 +44,6 @@
 
 1785. does-the-VOLTGT-DIAL-S-MATCHED-TWIN-WIN-survive-a-BLOCK-BOOTSTRAP — idea 1771 made vol-targeting the record's FIRST device to beat its own realised-gross-matched constant-gross twin (OOS +0.0587 Sharpe / +6.16pp MaxDD on U56, win share 0.810), but the difference was never given a standard error and idea 1537's paired circular-block bootstrap of exactly this dMaxDD is still unrun; price both differences against their own block SE before any wording leans on the dial.
 
-1789. is-the-STALE-REFRESH-PREFERENCE-an-IS-WINDOW-fact-or-a-REGIME-fact — in idea 1767 every one of four legal IS-only choosers picked a STALE scalar (R = M or Q) on 2009-2016 and then failed the 4b DD cap out of sample; re-run the same T x R cross with the IS window slid forward so it contains a real drawdown (2010-2018, 2012-2020) and ask whether the preference inverts, i.e. whether rule 8's fixed 2009-2016 window is itself what makes staleness look free.
 
 1793. can-an-EXPOSURE-NEUTRAL-IS-ONLY-CHOOSER-reach-the-4b-CELLS-that-plain-IS-SHARPE-misses — across ideas 1767 / 1771 / 1763 the same failure repeats: every legal IS chooser lands on the highest-exposure, stalest variant (t = 0.16-0.20, R = M/Q) because 2009-2016 pays for exposure, and the pick then fails the 4b DRAWDOWN CAP out of sample; score each variant instead on its IS Sharpe MINUS the IS Sharpe of its OWN realised-gross-matched constant-gross twin (100% in-sample, so rule-8 legal) and ask whether an exposure-neutral chooser reaches the convention-robust cells t in {0.10, 0.12} x R in {D, W} that the hindsight oracle names.
 
@@ -528,6 +527,8 @@
 
 
 ## In progress
+
+*(2026-09-20, lane C) CLAIMED **1789** (is-the-STALE-REFRESH-PREFERENCE-an-IS-WINDOW-fact-or-a-REGIME-fact) — the SECOND numbered item standing in '## Open' in file order (the FIRST is 1785, lane A's; the LAST, 1793, is lane B's). Eligible: price-only, cached panels, no EDGAR / Form 4 / 8-K / options / spin-offs / live data. Two tuned dials and no more: vol TARGET `t` and REFRESH cadence `R`; the IS WINDOW is the axis under test and every grid point is reported. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_stale-refresh-is-window-or-regime_C.py`.*
 
 *(2026-09-20, lane C) RAN AND CLOSED **1613** (ANSWERED both ways / KILL for a rules change — see '## Done' and LEADERBOARD.md). Original CLAIM of **1613** (is-EVERY-CADENCE-CLAIM-in-the-RECORD-a-c-STAR-CLAIM-QUOTED-AT-ONE-RUNG), the SECOND numbered item standing in '## Open' in file order (the FIRST is 1749, left for lane A per the sprint's ordering rule). Both re-read this run: price-only, cached panels (U56 / B136 / SMALL), no EDGAR / Form 4 / 8-K / options / spin-offs / live data, so no eligibility descent past them is needed. 1613 carries a real capital arm — a cadence corpus {D,W,M,Q} on the LIVE RULES v2 frame and the frozen 2026-09-04 incumbent, priced EXACTLY along the whole cost axis off the two-rung reconstruction — so it carries the sprint's binding step-3 deliverable: both KEEP paths at every cell and a rule-8 walk-forward with 2017-2026 read once. Claim pushed BEFORE any compute per hygiene clause (C). Script: `research/backtests/2026-09-20_every-cadence-claim-as-a-c-star_C.py`.*
 
