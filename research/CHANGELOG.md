@@ -1,3 +1,79 @@
+## 2026-09-20 — idea 2050 (lane C): IS THE DUAL-PATH CELL A B136 NAME-SET ACCIDENT? **ANSWERED — SPLIT AGAIN, AND ALONG THE SAME SEAM. THE 4b LEG SURVIVES RANDOM NAME DELETION 800 OF 800 (100.0%). THE 4a LEG DIES ON THIS SECOND, INDEPENDENT AXIS TOO (0.280 AT k = 40) AND THROUGH THE SAME DRAWDOWN LEG.**
+
+  **THE QUESTION.** Idea 2054 left the standing candidate (`B136, VOLTGT t = 0.10, DRIFT h = 0.08,
+  trade weekly, 10 bps, t+1`) a KEEP on path 4b only, with a 36-of-36 stress record across cost x
+  delay x phase. Every one of those 36 points was read on the SAME 136 columns — a CURRENT-
+  constituent list — and idea 1749 had measured the name set as a REACHABLE axis worth ~43 pp of
+  4b pass rate on U56. So the surviving 4b claim had never been separated from its name set.
+
+  **CONSTRUCTION.** `k` names deleted uniformly at random from the book's own held-name list,
+  200 seeded draws at each of k = 5 / 10 / 20 / 40, on B136 and on U56 and SMALL665, with the
+  whole book rebuilt on what is left (equal-weight basket, realised panel vol driving the gross
+  scalar, drift trigger, turnover). 2,403 books at the candidate cell plus 9,150 for the rule-8
+  arm. Two dials only (k, draw count), both REPORTED at every rung rather than argmaxed. Path
+  4a is scored against BOTH a FIXED bar (live RULES v2 on the full panel) and a MATCHED bar (live
+  RULES v2 rebuilt on the same deleted names); path 4b's SPY bar is deletion-invariant by
+  construction. Gates 8/8; the undeleted B136 reference reproduces idea 2034's published cell to
+  max abs d = **4.441e-16**; a fast scalar-factored drift runner reproduces idea 1799's verbatim
+  loop to 3.098e-14 on returns, turnover and gross, with the one h = 0 refresh-COUNT divergence
+  (a floating-point equality test on the deployed gross, book unaffected) logged rather than
+  papered over.
+
+  **(A) 4b IS NOT A NAME-SET ACCIDENT: 800 OF 800, EVERY RUNG.** Including deleting 40 of 136
+  names (29.4%). Over all 800 draws the WORST reading of every leg is still positive: H1
+  **+0.2254**, H2 +0.2064, OOS **+0.2997**, MaxDD vs `0.60 x SPY` **+6.40 pp**, CAGR vs
+  `0.70 x SPY` **+0.63 pp**. Worst single book 11.22% / 1.1099 / -13.83% full and 11.73% /
+  1.1734 / -13.83% OOS, against SPY 15.12% / 0.8843 / -33.72% (OOS 15.26% / 0.8737 / -33.72%)
+  and live RULES v2 on B136 7.96% / 1.0972 / -12.24% (OOS 7.85% / 1.1017 / -12.24%). Mean Sharpe
+  falls 1.2286 -> 1.2078 across the whole ladder, sd 0.0113 (k = 5) to 0.0313 (k = 40). The axis
+  1749 priced at ~43 pp is worth **zero** on this cell. Deleting SPY itself — a held name on this
+  panel — costs nothing (1.000 gone vs 1.000 kept, 111 draws).
+
+  **(B) 4a DIES AGAIN, AND IT IS A BOOK EFFECT NOT A COMPARAND EFFECT.** Share 0.760 -> 0.630 ->
+  0.405 -> 0.280 at k = 5 / 10 / 20 / 40 on the fixed bar, and 0.765 / 0.605 / 0.420 / 0.330 on
+  the matched bar — the two track within 0.05 at every rung, so moving the comparand explains
+  none of it. **381 of the 385 failures fail on MaxDD** and 371 on drawdown ALONE, while both
+  Sharpe halves clear in 786 of 800: the identical mechanism idea 2054 found on the latency axis.
+  The reason is the margin — the candidate's -11.81% sits 0.43 pp inside the live book's -12.24%,
+  and the MEAN deleted book already reads -12.26%. **Deleting five names of 136 breaks 4a in 24%
+  of draws.**
+
+  **(C) RULE 8, 2017-2026 READ ONCE, ON THE DELETED PANELS.** The legal IS-only chooser (argmax
+  min IS 4b-leg slack, idea 2034's own) re-picks `t` and `h` on 2009-2016 over the inherited
+  5 x 10 ladder at every one of 180 deleted draws. On B136 it reaches a 4b-clearing book at
+  **59 of 60**: OOS mean **13.10%** (12.05-15.43%) / **1.2752** (1.1663-1.3716) / worst -21.06%.
+  It keeps `t = 0.10` at **57 of 60** but lands on the candidate's own `h = 0.08` at only
+  **17 of 60** (h = 0.16 at 19, h = 0.12 at 10, h = 0.20 at 10) — the TARGET is the stable dial,
+  the drift THRESHOLD is 1799's lazy-rung wander again — and it does not matter, because **38.5
+  of the 50 ladder cells clear 4b on the average deleted panel**. 4a is reached at only
+  0.267-0.333 of those picks. U56: 53 of 60.
+
+  **(D) THE COMPANIONS.** U56 carries the same cell (4b 1.000 / 1.000 / 0.965 / 0.710 at
+  k = 5 / 10 / 20 / 40, where k = 40 is 71.4% of that panel), and of its 65 failing draws the
+  **CAGR floor is implicated in 54** and drawdown in 2 — the record's standing binding leg.
+  Deleting SPY costs U56 13 pp of 4b share (0.834 gone vs 0.965 kept, 283 draws), where it costs
+  B136 nothing. **SMALL665 is 0 of 800 at every rung and 0 of 60 rule-8 picks — a FURTHER
+  independent confirmation** that this family does not clear 4b on small caps; all five legs fail at all 800.
+
+  **WHAT THIS TEST CANNOT DO (stated, not repaired).** The deletion ladder is ABSOLUTE, so the
+  same k is 71.4% of U56, 29.4% of B136 and 6.0% of SMALL665: the per-panel shares are NOT
+  deletion-matched and must not be compared across panels. And random deletion is NOT a
+  point-in-time correction — it removes survivors at random where history removes losers — so it
+  bounds the verdict's SENSITIVITY to the name set and does not de-bias the LEVELS, which stay
+  optimistic on every panel here.
+
+  **NO NEW KEEP IS FILED, and no rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and
+  baseline.py untouched).** This run prices an existing candidate. `2026-09-20_voltgt-drift-b136_
+  KEEP4b_MEMO.md` gains a second addendum: point 3's 4a pass is restated a second time (it holds
+  only at t+1, at or below 25 bps, at 4 of 6 phase rungs AND only on the exact 136-name list),
+  point 7's survivorship caveat is NARROWED rather than lifted, and the STATUS is unchanged —
+  **KEEP-candidate on path 4b only**, now carrying both a 36-of-36 four-axis record and an
+  800-of-800 name-deletion record.
+
+  **RESIDUE, not a rules change:** the two axes that have now killed this 4a claim both killed it
+  through MaxDD against a 0.43 pp margin. A 4a claim whose drawdown margin is under ~1 pp should
+  be published with the margin, not the verdict — the same discipline idea 894 asked for on
+  ladder reach.
 ## 2026-09-20 — idea 809 (lane cloud): DOES ANY COMMITTED WIDTH-OR-GROSS 4b BAND HAVE AN *EMPTY IN-SAMPLE COUNTERPART*? **ANSWERED — DOUBLE KILL. THE PRECONDITION IS COSMETIC (2 OF 23), ITS SHARPER REPLACEMENT IS A PANEL CONFOUND, AND EMPTINESS WAS THE WRONG DIAGNOSTIC ALL ALONG — THE IS BAND IS A *DIFFERENT SET* (JACCARD 0.471), NOT A MISSING ONE.**
 
   **THE QUESTION.** Idea 806 retired both of 589's doubts about a width candidate and still killed

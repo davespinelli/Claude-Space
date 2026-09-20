@@ -95,3 +95,51 @@ wording, not a convention.** Points 1, 2, 4, 5, 6, 8 and 9 stand unchanged.
 `research/backtests/2026-09-20_cost-latency-joint-ladder_cloud.py` / `.result.md` /
 `.candidate.csv` / `.frontier.csv` / `.interaction.csv` / `.census.csv` / `.walkforward.csv` /
 `.gates.csv`.
+
+---
+
+## ADDENDUM 3 (2026-09-20, lane C, idea 2050) — **THE 4b LEG IS NOT A NAME-SET ACCIDENT. THE 4a LEG DIES ON A SECOND AXIS.**
+
+Idea 2050 deleted `k` names at random from the panel's own held-name list and rebuilt the whole
+book on what was left — the equal-weight basket, the realised panel volatility that drives the
+gross scalar, the drift trigger and the turnover — 200 seeded draws at each of k = 5 / 10 / 20 / 40,
+on B136 and on both companion panels (2,403 rebuilt books; gates 8/8; the undeleted reference
+reproduced this memo's cell to max abs d = 4.441e-16).
+
+* **4b: 800 of 800, 100.0%, at every rung** — including deleting 40 of the 136 names (29.4%).
+  Over all 800 draws the WORST reading of every leg is still positive: H1 **+0.2254**, H2 +0.2064,
+  OOS **+0.2997**, MaxDD vs `0.60 x SPY` **+6.40 pp**, CAGR vs `0.70 x SPY` **+0.63 pp**. Worst
+  single book 11.22% / 1.1099 / -13.83% (OOS 11.73% / 1.1734 / -13.83%). Mean Sharpe falls only
+  1.2286 -> 1.2078 across the whole ladder. Idea 1749 measured the name set as a reachable axis
+  worth ~43 pp of 4b pass rate; **on this cell it is worth zero.** Deleting SPY itself (a held
+  name here) costs nothing: 1.000 with it gone, 1.000 with it kept.
+* **RULE 8 on the deleted panels** (IS 2009-2016 chooses `t` and `h`, 2017-2026 read ONCE): the
+  legal IS-only chooser reaches a 4b-clearing book at **59 of 60** draws, OOS mean **13.10%** /
+  **1.2752** / worst -21.06%, against live RULES v2 OOS 7.85% / 1.1017 / -12.24% and SPY OOS
+  15.26% / 0.8737 / -33.72%. It keeps `t = 0.10` at 57 of 60 but lands on `h = 0.08` at only
+  17 of 60 — **the target is the stable dial, the drift threshold is not** — which does not move
+  the verdict, because 38.5 of the 50 ladder cells clear 4b on the average deleted panel.
+* **4a: 0.760 -> 0.630 -> 0.405 -> 0.280** as k goes 5 -> 10 -> 20 -> 40, and the MATCHED bar
+  (live RULES v2 rebuilt on the same deleted names) tracks the fixed bar within 0.05 at every
+  rung, so it is a BOOK effect, not a comparand effect. **381 of the 385 failures fail on MaxDD**
+  (371 on drawdown alone) while both Sharpe halves clear in 786 of 800 — the identical mechanism
+  ideas 2054 and 2046 found on the latency axis. Deleting FIVE names of 136 breaks 4a in 24% of
+  draws.
+
+**Point 3 of this memo is RESTATED AGAIN, and more narrowly than addenda 1 and 2 left it:** the 4a
+pass holds only at t+1 execution, at or below 25 bps, at 4 of 6 rebalance-phase rungs, **and only
+on the exact 136-name list**. It is not a 4a pass in any usable sense and must not be quoted as
+one. The downgrade in addenda 1 and 2 stands; the name set is a THIRD independent axis on which
+it fails, and the second to fail through drawdown.
+
+**Point 7's survivorship caveat is NARROWED, not lifted.** Random deletion bounds the verdict's
+SENSITIVITY to the name set — it is not a point-in-time correction, because it removes survivors at
+random where history removes losers. The 4b LEVELS here stay optimistic; what this addendum
+establishes is that they are not held up by any small set of particular names.
+
+**STATUS after addendum 3:** unchanged — **KEEP-candidate on path 4b only**, awaiting Sunday
+review, now with a 45-of-45 cost x delay x phase stress record (addenda 1 and 2) AND an
+800-of-800 name-deletion record. The
+exact RULES wording in point 9 is unchanged. Evidence:
+`research/backtests/2026-09-20_dualpath-name-set-deletion_C.py` / `.result.md` / `.log.txt` /
+`.draws.csv.gz` / `.summary.csv` / `.walkforward.csv` / `.wf_summary.csv` / `.gates.csv`.
