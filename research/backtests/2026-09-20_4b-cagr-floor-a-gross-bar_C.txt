@@ -1,0 +1,119 @@
+# Idea 1757 (lane C) — is the 4b CAGR FLOOR just a GROSS BAR in disguise?
+# band c=0.03 | warm-up 260 rows | IS <= 2016-12-31 | OOS >= 2017-01-01 | gross ladder 0.05..1.0 step 0.05 (20 rungs)
+# panel U56: 56 columns, 2008-01-02 -> 2026-09-18
+# panel B136: 136 columns, 2008-01-02 -> 2026-09-18
+# panel SMALL: 666 columns, 2010-01-04 -> 2026-09-18
+G1  bt_np vs engine.backtest            max|d| = 1.388e-17  -> PASS
+G2  BAND arm == baseline.rules_v2_weights max|d| = 0.000e+00  -> PASS
+G3  exact cost reconstruction @25 bps    max|d| = 1.388e-17  -> PASS
+# U56: RULES v2 live 10bps 8.62%/1.2010/-12.05% (OOS 9.46%/1.2766/-12.05%) | SPY 15.12%/0.8843/-33.72% (OOS 15.26%/0.8737/-33.72%) | 4b floors: CAGR 10.59% / OOS 10.68%, DD cap -20.23% / OOS -20.23%
+# B136: RULES v2 live 10bps 7.96%/1.0972/-12.24% (OOS 7.85%/1.1017/-12.24%) | SPY 15.12%/0.8844/-33.72% (OOS 15.26%/0.8737/-33.72%) | 4b floors: CAGR 10.59% / OOS 10.68%, DD cap -20.23% / OOS -20.23%
+# SMALL: RULES v2 live 10bps 4.26%/0.6596/-14.16% (OOS 3.64%/0.5458/-14.16%) | SPY 14.01%/0.8561/-33.72% (OOS 15.26%/0.8737/-33.72%) | 4b floors: CAGR 9.81% / OOS 10.68%, DD cap -20.23% / OOS -20.23%
+# grid done: U56 (640 rows so far)
+# grid done: B136 (1280 rows so far)
+# grid done: SMALL (1920 rows so far)
+G4  grid rows = 1920  (3 panels x 2 devices x 4 cadences x 20 gross x 4 cost)  -> PASS
+G5  NOBAND realised gross vs nominal     max|d| = 6.595e-03 (drift only, diagnostic)
+G6  replication of 1694/1741's U56 BAND W g=1.00 anchor: FULL 11.53%/1.2008/-15.91%, OOS 12.67%/1.2759/-15.91% (published 11.53%/1.2008/-15.91%, OOS 12.67%/1.2759/-15.91%) max|d| = 2.723e-05 -> PASS
+G7  the g=0.75 BAND rung IS the live book: 8.62%/1.2010/-12.05% vs RULES v2 8.62%/1.2010/-12.05%  max|d| = 0.000e+00 -> PASS
+
+## 1. WHICH LEG BINDS (10 bps, 480 cells)
+  4b FULL failures: H1 40 / H2 180 / DD 134 / CAGR 377   [1741 published 417 / 606 / 370 / 1049 of 1,188]
+  4b OOS  failures: SH 160 / DD 134 / CAGR 387
+  cells failing ONLY on the CAGR floor (all other FULL legs pass): 217 of 231
+  4b FULL passes 14 | 4b OOS 20 | BOTH 13 | 4a FULL 44 | 4a OOS 103
+    B136   4b FULL   2/160  4b OOS   1  BOTH   1  4a FULL  10  | CAGR-floor failures 122
+    SMALL  4b FULL   0/160  4b OOS   0  BOTH   0  4a FULL  34  | CAGR-floor failures 136
+    U56    4b FULL  12/160  4b OOS  19  BOTH  12  4a FULL   0  | CAGR-floor failures 119
+
+## 2. DOES REALISED GROSS ALONE EXPLAIN THE 4b VERDICT? (LPM R^2, 10 bps)
+  keep4b_full  base rate 0.029 | gross alone R2 +0.0233 | +device +0.0302 | +panel+cadence +0.0657
+  keep4b_oos   base rate 0.042 | gross alone R2 +0.0279 | +device +0.0350 | +panel+cadence +0.1081
+  f_CAGR       base rate 0.215 | gross alone R2 +0.5689 | +device +0.5977 | +panel+cadence +0.6016
+  o_CAGR       base rate 0.194 | gross alone R2 +0.4586 | +device +0.4744 | +panel+cadence +0.5244
+  f_DD         base rate 0.721 | gross alone R2 +0.5354 | +device +0.5626 | +panel+cadence +0.6173
+  f_H1         base rate 0.917 | gross alone R2 +0.0288 | +device +0.0957 | +panel+cadence +0.3648
+  f_H2         base rate 0.625 | gross alone R2 +0.0091 | +device +0.0123 | +panel+cadence +0.8741
+  within panel (gross alone):
+    B136   4b FULL R2 +0.0081 | 4b OOS +0.0023 | CAGR leg +0.5506
+    SMALL  4b FULL R2 +nan | 4b OOS +nan | CAGR leg +0.5626
+    U56    4b FULL R2 +0.0565 | 4b OOS +0.0773 | CAGR leg +0.5979
+
+## 2b. IS CAGR A STRAIGHT LINE IN REALISED GROSS? (10 bps; the floor as a gross bar)
+  POOLED       CAGR = -0.0048 +0.1667*gross   R2 +0.9241   floor 10.59% crossed at realised gross 0.663
+  B136/BAND    CAGR = -0.0003 +0.1506*gross   R2 +0.9973   floor 10.59% crossed at realised gross 0.705
+  B136/NOBAND  CAGR = -0.0009 +0.1877*gross   R2 +0.9999   floor 10.59% crossed at realised gross 0.569
+  SMALL/BAND   CAGR = +0.0005 +0.1050*gross   R2 +0.9785   floor 9.81% crossed at realised gross 0.930
+  SMALL/NOBAND CAGR = +0.0025 +0.1291*gross   R2 +0.9933   floor 9.81% crossed at realised gross 0.741
+  U56/BAND     CAGR = -0.0004 +0.1602*gross   R2 +0.9950   floor 10.59% crossed at realised gross 0.664
+  U56/NOBAND   CAGR = -0.0008 +0.1779*gross   R2 +0.9997   floor 10.59% crossed at realised gross 0.600
+
+## 3. AT MATCHED REALISED GROSS — does the DEVICE label move the verdict?
+  34 overlapping (panel, 0.025-gross-bin) cells carry BOTH devices
+  mean 4b FULL pass rate  BAND 0.039  vs  NOBAND 0.044  (bins where they differ: 5 of 34)
+  mean CAGR-leg pass rate BAND 0.054  vs  NOBAND 0.154  (differ in 5 bins)
+  mean DD-cap  pass rate  BAND 0.860  vs  NOBAND 0.801  (differ in 13 bins)
+
+## 4. THE GROSS RUNG AT WHICH THE CAGR FLOOR FIRST CLEARS (10 bps)
+  B136   BAND   D  FULL floor clears at nominal nan (realised nan)   OOS at nan (realised nan)
+  B136   BAND   M  FULL floor clears at nominal 1.00 (realised 0.709)   OOS at 1.00 (realised 0.709)
+  B136   BAND   Q  FULL floor clears at nominal nan (realised nan)   OOS at nan (realised nan)
+  B136   BAND   W  FULL floor clears at nominal 1.00 (realised 0.709)   OOS at nan (realised nan)
+  B136   NOBAND D  FULL floor clears at nominal 0.60 (realised 0.600)   OOS at 0.60 (realised 0.600)
+  B136   NOBAND M  FULL floor clears at nominal 0.60 (realised 0.602)   OOS at 0.60 (realised 0.602)
+  B136   NOBAND Q  FULL floor clears at nominal 0.60 (realised 0.606)   OOS at 0.60 (realised 0.606)
+  B136   NOBAND W  FULL floor clears at nominal 0.60 (realised 0.600)   OOS at 0.60 (realised 0.600)
+  SMALL  BAND   D  FULL floor clears at nominal nan (realised nan)   OOS at nan (realised nan)
+  SMALL  BAND   M  FULL floor clears at nominal nan (realised nan)   OOS at nan (realised nan)
+  SMALL  BAND   Q  FULL floor clears at nominal nan (realised nan)   OOS at nan (realised nan)
+  SMALL  BAND   W  FULL floor clears at nominal nan (realised nan)   OOS at nan (realised nan)
+  SMALL  NOBAND D  FULL floor clears at nominal 0.70 (realised 0.700)   OOS at 0.90 (realised 0.900)
+  SMALL  NOBAND M  FULL floor clears at nominal 0.80 (realised 0.801)   OOS at 1.00 (realised 1.000)
+  SMALL  NOBAND Q  FULL floor clears at nominal 0.75 (realised 0.753)   OOS at 0.95 (realised 0.951)
+  SMALL  NOBAND W  FULL floor clears at nominal 0.75 (realised 0.750)   OOS at 0.95 (realised 0.950)
+  U56    BAND   D  FULL floor clears at nominal 0.95 (realised 0.675)   OOS at 0.90 (realised 0.639)
+  U56    BAND   M  FULL floor clears at nominal 0.90 (realised 0.640)   OOS at 0.85 (realised 0.604)
+  U56    BAND   Q  FULL floor clears at nominal 1.00 (realised 0.701)   OOS at 1.00 (realised 0.701)
+  U56    BAND   W  FULL floor clears at nominal 0.95 (realised 0.675)   OOS at 0.85 (realised 0.604)
+  U56    NOBAND D  FULL floor clears at nominal 0.65 (realised 0.650)   OOS at 0.60 (realised 0.600)
+  U56    NOBAND M  FULL floor clears at nominal 0.65 (realised 0.652)   OOS at 0.60 (realised 0.602)
+  U56    NOBAND Q  FULL floor clears at nominal 0.60 (realised 0.606)   OOS at 0.60 (realised 0.606)
+  U56    NOBAND W  FULL floor clears at nominal 0.65 (realised 0.650)   OOS at 0.60 (realised 0.600)
+
+## 5. CONSTRUCTIVE — STATE THE FLOOR PER UNIT OF REALISED GROSS
+  4b FULL passes: as written 14 -> per-unit 231;  4b OOS 20 -> 244;  BOTH 13 -> 231
+  CAGR leg failures: as written 377 -> per-unit 6 of 480
+  cells failing ONLY the per-unit floor: 0 of 231 (as written 217)
+  R2 of the PER-UNIT pass indicator on realised gross alone: +0.0004 (as written +0.5689)
+  corr(realised gross, CAGR) +0.9613 ; corr(realised gross, CAGR/gross) +0.2392
+
+## 6. RULE 8 — IS-only choosers over (device, cadence, gross), 2017-2026 READ ONCE
+  B136   C_SHARPE  -> NOBAND Q g=1.00 (realised 1.000) | OOS 18.52%/1.1077/-32.14% | 4a OOS fail | 4b OOS fail (SH y DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 7.85%/1.1017/-12.24%
+  B136   C_CALMAR  -> BAND   M g=1.00 (realised 0.709) | OOS 10.97%/1.0802/-20.50% | 4a OOS fail | 4b OOS fail (SH y DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 7.85%/1.1017/-12.24%
+  B136   C_FLOOR   -> NOBAND W g=1.00 (realised 1.000) | OOS 18.27%/1.0854/-32.72% | 4a OOS fail | 4b OOS fail (SH y DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 7.85%/1.1017/-12.24%
+  B136   C_FLOORPU -> NOBAND W g=1.00 (realised 1.000) | OOS 18.27%/1.0854/-32.72% | 4a OOS fail | 4b OOS fail (SH y DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 7.85%/1.1017/-12.24%
+  SMALL  C_SHARPE  -> NOBAND D g=0.85 (realised 0.850) | OOS 10.36%/0.6079/-39.23% | 4a OOS fail | 4b OOS fail (SH n DD n CAGR n) | per-unit 4b OOS fail | live v2 OOS 3.64%/0.5458/-14.16%
+  SMALL  C_CALMAR  -> BAND   M g=1.00 (realised 0.552) | OOS 5.23%/0.5779/-22.28% | 4a OOS fail | 4b OOS fail (SH n DD n CAGR n) | per-unit 4b OOS fail | live v2 OOS 3.64%/0.5458/-14.16%
+  SMALL  C_FLOOR   -> NOBAND D g=1.00 (realised 1.000) | OOS 11.86%/0.6079/-44.68% | 4a OOS fail | 4b OOS fail (SH n DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 3.64%/0.5458/-14.16%
+  SMALL  C_FLOORPU -> NOBAND D g=0.50 (realised 0.500) | OOS 6.45%/0.6074/-24.90% | 4a OOS fail | 4b OOS fail (SH n DD n CAGR n) | per-unit 4b OOS fail | live v2 OOS 3.64%/0.5458/-14.16%
+  U56    C_SHARPE  -> NOBAND Q g=1.00 (realised 1.000) | OOS 18.84%/1.1633/-28.56% | 4a OOS fail | 4b OOS fail (SH y DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 9.46%/1.2766/-12.05%
+  U56    C_CALMAR  -> NOBAND Q g=1.00 (realised 1.000) | OOS 18.84%/1.1633/-28.56% | 4a OOS fail | 4b OOS fail (SH y DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 9.46%/1.2766/-12.05%
+  U56    C_FLOOR   -> NOBAND Q g=1.00 (realised 1.000) | OOS 18.84%/1.1633/-28.56% | 4a OOS fail | 4b OOS fail (SH y DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 9.46%/1.2766/-12.05%
+  U56    C_FLOORPU -> NOBAND Q g=1.00 (realised 1.000) | OOS 18.84%/1.1633/-28.56% | 4a OOS fail | 4b OOS fail (SH y DD n CAGR y) | per-unit 4b OOS fail | live v2 OOS 9.46%/1.2766/-12.05%
+  picks clearing 4a OOS: 0 of 12 ; 4b OOS: 0 of 12 ; per-unit 4b OOS: 0 of 12
+
+## 7. COST LADDER (exact reconstruction, G3)
+   0 bps: 4b FULL  19 | 4b OOS  23 | 4a FULL  25 | CAGR-leg failures  372 of 480
+  10 bps: 4b FULL  14 | 4b OOS  20 | 4a FULL  44 | CAGR-leg failures  377 of 480
+  25 bps: 4b FULL  10 | 4b OOS  18 | 4a FULL  60 | CAGR-leg failures  385 of 480
+  50 bps: 4b FULL   8 | 4b OOS  13 | 4a FULL  81 | CAGR-leg failures  392 of 480
+
+## 8. THE GROSS OF EVERY 4b PASSER (10 bps)
+  4b FULL passers (14) occupy REALISED gross [0.606, 0.711] (width 0.104) while their NOMINAL gross spans 0.60..1.00 (5 rungs)
+  necessity: 14 of 14 passers lie in that window (1.000) | sufficiency: 14 of 50 cells IN the window pass (0.280); outside it 0 of 430
+  4b OOS passers (20) occupy realised gross [0.600, 0.711], nominal 0.60..1.00
+  21 cells pass 4b on at least one slice; realised gross min 0.600 / median 0.650 / max 0.711 ; nominal gross values [0.6, 0.65, 0.85, 0.9, 0.95, 1.0]
+  share of 4b FULL passers at nominal gross 1.00: 0.286  [1761 published 52 of 52]
+  by device: BAND 12, NOBAND 9
+
+# log -> 2026-09-20_4b-cagr-floor-a-gross-bar_C.txt

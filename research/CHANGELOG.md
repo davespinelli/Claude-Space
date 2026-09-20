@@ -1,3 +1,68 @@
+## 2026-09-20 — idea 1757 (lane C): IS THE 4b CAGR FLOOR JUST A GROSS BAR IN DISGUISE? **ANSWERED — YES ON THE LEG, NO ON THE VERDICT. KILL THE PER-UNIT RESTATEMENT AND THE NOMINAL-GROSS READING. NO NEW BOOK.**
+
+  **THE DEFECT THIS CLOSES.** Idea 1741 found the 4b CAGR floor is the binding leg almost everywhere
+  (H1 417 / H2 606 / DD 370 / **CAGR 1,049** of 1,188 cells) and idea 1761 found "ALL 52 4b passes sit at
+  gross 1.00, 0 of 168 at gross 0.75". If the floor is satisfied by EXPOSURE alone, PROTOCOL rule 4b is
+  selecting books for holding more beta than for any device, and every 4b count in the record is a gross
+  census quoted as a verdict.
+
+  **THE CONSTRUCTION.** Two tuned dials: GROSS LADDER (0.05..1.00 in 20 rungs — the record's prior grids
+  carried three) x PANEL AXIS {U56, B136, SMALL}. Published, not tuned: DEVICE {BAND = the live RULES v2
+  clause-2 device at c = 0.03 with gated weight to CASH, NOBAND = the same equal-weight book ungated},
+  CADENCE {D, W, M, Q}, COST {0, 10, 25, 50} bps. **1,920 rows, every point published** to
+  `_grid.csv`; both KEEP paths at every one. The second device arm is what lets the question be asked at
+  MATCHED REALISED GROSS rather than at matched labels.
+
+  **THE ANSWER, PART 1 — THE LEG IS A GROSS BAR.** CAGR is a straight line in realised gross: pooled
+  `CAGR = -0.0048 + 0.1667*gross` at **R² +0.9241**, and within every panel x device **R² +0.9785 to
+  +0.9999**. The floor's own pass indicator regressed on realised gross alone gives **R² +0.5689 (FULL) /
+  +0.4586 (OOS)**; adding the DEVICE label buys +0.029 and adding PANEL AND CADENCE +0.033. The floor
+  therefore reduces to one number per cell — the realised gross at which it is crossed: **0.600**
+  (U56/NOBAND) to **0.930** (SMALL/BAND), and SMALL/BAND never crosses it at any cadence.
+
+  **THE ANSWER, PART 2 — THE VERDICT IS NOT A GROSS CENSUS.** Realised gross explains only **R² +0.0233**
+  of the 4b FULL pass indicator and **+0.0279** of the OOS one, because the DD CAP runs the OTHER WAY in
+  gross (its own leg R² +0.5354, opposite sign). 4b is a two-sided EXPOSURE WINDOW: at 10 bps **all 14 of
+  14** 4b FULL passers lie in realised gross **[0.606, 0.711] (width 0.104)**, **0 of the 430 cells
+  outside it pass**, and only 14 of the 50 cells inside it do (sufficiency 0.280). Binding legs over 480
+  cells: H1 40 / H2 180 / DD 134 / **CAGR 377**, and **217 of the 231** cells clearing every other FULL
+  leg die on the floor alone.
+
+  **THE NOMINAL-GROSS READING IS AN ARTEFACT OF A 3-RUNG LADDER.** On 20 rungs the FULL passers span
+  NOMINAL gross 0.60..1.00 (5 rungs; only **28.6%** at 1.00) and collapse onto ONE realised window. The
+  live band device at nominal 1.00 realises **0.710** — exactly where the ungated book at nominal 0.65
+  sits. At matched realised gross (34 panel x 0.025-bin cells carrying both devices) the 4b FULL pass
+  rate is BAND **0.039** vs NOBAND **0.044**, differing in **5 of 34** bins: the device label is nearly
+  inert once exposure is held.
+
+  **THE CONSTRUCTIVE HALF FAILS.** Stating the floor PER UNIT OF REALISED GROSS does remove the exposure
+  content (R² on gross +0.5689 -> **+0.0004**) but removes the LEG with it: CAGR-leg failures fall
+  **377 -> 6 of 480**, 4b FULL passes rise **14 -> 231** (48% of the grid), 4b OOS 20 -> 244, and **not
+  one cell fails the per-unit floor alone**. A bar nothing fails is not a bar. The defensible residue is
+  a REPORTING form, not a protocol change: publish a book's realised mean gross BESIDE its 4b verdict,
+  never divide by it.
+
+  **RULE 8 (2017-2026 READ ONCE).** Four IS-only choosers (IS Sharpe / IS Calmar / IS floor slack / IS
+  per-unit slack) x 3 panels: **0 of 12 clear 4a OOS, 0 of 12 clear 4b OOS, 0 of 12 clear the per-unit
+  4b OOS**. Eleven of 12 picks sit at nominal gross 1.00 and every one dies on the DD CAP, never on the
+  floor — best pick U56 C_SHARPE -> NOBAND Q **OOS 18.84% / 1.1633 / -28.56%** (SH pass, CAGR pass, DD
+  fail at a -20.23% cap) against the live book at 9.46% / 1.2766 / -12.05% and SPY at 15.26% / 0.8737 /
+  -33.72%. This replicates idea 1590's "argmax IS Sharpe lands on gross 0.95-1.00 while the 4b passes sit
+  lower" on a ladder six times denser.
+
+  **CAPITAL ARM.** 13 cells clear 4b FULL *and* OOS — 12 of them the STANDING U56 band family (prior art
+  from 1694/1741) and one a plain de-gross; **none clears 4a on any panel**. Cost ladder 4b FULL 19 / 14 /
+  10 / 8 at 0 / 10 / 25 / 50 bps. **NO NEW BOOK; RULES.md and PROTOCOL.md untouched per rule 6.**
+
+  **GATES 7/7.** G1 bt_np vs `engine.backtest` **1.388e-17**; G2 the BAND arm IS `baseline.rules_v2_weights`
+  at **0.000e+00**; G3 exact cost reconstruction at 25 bps 1.388e-17; G4 1,920 rows; G5 NOBAND realised vs
+  nominal gross 6.6e-03 (drift, diagnostic); G6 the 1694/1741 anchor replicates at **2.723e-05** (FULL
+  11.53% / 1.2008 / -15.91%, OOS 12.67% / 1.2759 / -15.91%); G7 the g=0.75 BAND rung IS the live book at
+  **0.000e+00**. Survivorship: U56/B136 are current constituents, SMALL a current sub-$2B screen (house
+  filter, 666 columns); the leg-vs-verdict statements are within-panel and first-order immune, the pass
+  COUNTS are not.
+  `research/backtests/2026-09-20_4b-cagr-floor-a-gross-bar_C.py`
+
 ## 2026-09-20 — idea 1771 (lane B): IS THE STANDING VOLTGT016 4b OOS PASS DECIDABLE ACROSS THE SIGMA-CONVENTION SURFACE? **ANSWERED — NO. IT IS A KNIFE-EDGE, AND THE KNIFE IS THE TARGET RUNG. DOWNGRADE THE RECORD'S ONE STANDING KEEP-4b CANDIDATE TO PARK; KILL THE t = 0.16 CERTIFICATION. THE DIAL SURVIVES — VOL-TARGETING IS THE FIRST DEVICE IN THIS RECORD TO BEAT ITS OWN MATCHED TWIN AT SCALE. NO NEW BOOK, NO RULES CHANGE.**
 
   **THE DEFECT THIS CLOSES.** The record has exactly ONE standing KEEP-4b candidate heading for a
