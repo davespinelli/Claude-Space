@@ -1,0 +1,182 @@
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+# Idea 1761 — does the band's drawdown credit come from LOOKING or from TRADING?
+# band c=0.03 | warm-up 260 rows | IS<= 2016-12-31 | OOS>= 2017-01-01 | k ladder [1, 2, 4, 8, 16]
+# panel U56: 56 columns, 2008-01-02 -> 2026-09-18
+# panel B136: 136 columns, 2008-01-02 -> 2026-09-18
+# panel SMALL: 666 columns, 2010-01-04 -> 2026-09-18
+G1  bt_mask(calendar) vs engine.backtest max|d| = 1.388e-17 -> PASS
+# U56: RULES v2 (live, 10bps) 8.62%/1.2010/-12.05% (OOS 9.46%/1.2766/-12.05%) | SPY 15.12%/0.8843/-33.72% (OOS 15.26%/0.8737/-33.72%)
+# B136: RULES v2 (live, 10bps) 7.96%/1.0972/-12.24% (OOS 7.85%/1.1017/-12.24%) | SPY 15.12%/0.8844/-33.72% (OOS 15.26%/0.8737/-33.72%)
+# SMALL: RULES v2 (live, 10bps) 4.26%/0.6596/-14.16% (OOS 3.64%/0.5458/-14.16%) | SPY 14.01%/0.8561/-33.72% (OOS 15.26%/0.8737/-33.72%)
+G3  event(k=1e6)|calendar(W) == calendar(W) max|d| = 0.000e+00 -> PASS
+# grid done: U56 (112 rows so far)
+# grid done: B136 (224 rows so far)
+# grid done: SMALL (336 rows so far)
+G2  realised-gross match band vs twin: max gap = 7.089e-07 -> PASS
+G4  grid rows = 336 (3 panels x 14 books x 2 gross x 4 cost)
+
+## REPLICATION — the calendar credit ladder at the live construction (gross 0.75, 10 bps)
+  U56     D: +4.97 pp @ 2.5x/yr  W: +4.34 pp @ 1.8x/yr  M: +1.75 pp @ 1.2x/yr  Q: -4.51 pp @ 0.8x/yr
+  B136    D: +7.13 pp @ 2.7x/yr  W: +6.28 pp @ 2.0x/yr  M: +2.38 pp @ 1.4x/yr  Q: -4.67 pp @ 0.9x/yr
+  SMALL   D: +7.67 pp @ 3.7x/yr  W: +6.37 pp @ 2.6x/yr  M: +2.18 pp @ 1.6x/yr  Q: -7.06 pp @ 1.0x/yr
+  (1741 published W +4.34 / +6.28 / +6.37, M +1.75 / +2.38 / +2.18, Q -4.51 / -4.67 / -7.06)
+
+## LOOKING vs TRADING — credit, turnover, and CREDIT PER UNIT OF TURNOVER (gross 0.75, 10 bps)
+  U56:
+     EVT k=16 fb=NONE   trades    47  turn  0.69x/yr  credit  +6.06 pp  credit/turn  +8.76  Sharpe 1.2108  MaxDD -10.75%  CAGR 9.06%  dSharpe vs twin +0.0812
+     CAL Q              trades    71  turn  0.84x/yr  credit  -4.51 pp  credit/turn  -5.40  Sharpe 0.9933  MaxDD -19.90%  CAGR 8.00%  dSharpe vs twin -0.1603
+     EVT k=16 fb=Q      trades   117  turn  0.98x/yr  credit  +3.95 pp  credit/turn  +4.02  Sharpe 1.1607  MaxDD -12.34%  CAGR 8.50%  dSharpe vs twin +0.0321
+     EVT k=8  fb=NONE   trades   148  turn  1.15x/yr  credit  +4.92 pp  credit/turn  +4.27  Sharpe 1.1360  MaxDD -12.11%  CAGR 8.12%  dSharpe vs twin +0.0088
+     CAL M              trades   213  turn  1.23x/yr  credit  +1.75 pp  credit/turn  +1.42  Sharpe 1.1720  MaxDD -14.38%  CAGR 8.88%  dSharpe vs twin +0.0431
+     EVT k=8  fb=Q      trades   218  turn  1.25x/yr  credit  +4.13 pp  credit/turn  +3.31  Sharpe 1.1435  MaxDD -12.43%  CAGR 8.17%  dSharpe vs twin +0.0220
+     EVT k=4  fb=NONE   trades   334  turn  1.45x/yr  credit  +4.69 pp  credit/turn  +3.24  Sharpe 1.1658  MaxDD -11.90%  CAGR 8.31%  dSharpe vs twin +0.0469
+     EVT k=4  fb=Q      trades   403  turn  1.50x/yr  credit  +4.71 pp  credit/turn  +3.15  Sharpe 1.1608  MaxDD -11.90%  CAGR 8.25%  dSharpe vs twin +0.0416
+     EVT k=2  fb=NONE   trades   671  turn  1.69x/yr  credit  +4.92 pp  credit/turn  +2.91  Sharpe 1.1986  MaxDD -11.42%  CAGR 8.47%  dSharpe vs twin +0.0666
+     EVT k=2  fb=Q      trades   736  turn  1.72x/yr  credit  +4.93 pp  credit/turn  +2.87  Sharpe 1.1968  MaxDD -11.42%  CAGR 8.45%  dSharpe vs twin +0.0664
+     CAL W              trades   923  turn  1.77x/yr  credit  +4.34 pp  credit/turn  +2.45  Sharpe 1.2010  MaxDD -12.05%  CAGR 8.62%  dSharpe vs twin +0.0827
+     EVT k=1  fb=NONE   trades  1184  turn  1.88x/yr  credit  +5.00 pp  credit/turn  +2.66  Sharpe 1.1995  MaxDD -11.43%  CAGR 8.47%  dSharpe vs twin +0.0763
+     EVT k=1  fb=Q      trades  1244  turn  1.89x/yr  credit  +5.00 pp  credit/turn  +2.64  Sharpe 1.1991  MaxDD -11.43%  CAGR 8.46%  dSharpe vs twin +0.0765
+     CAL D              trades  4448  turn  2.46x/yr  credit  +4.97 pp  credit/turn  +2.02  Sharpe 1.1896  MaxDD -11.24%  CAGR 8.37%  dSharpe vs twin +0.0740
+  B136:
+     CAL Q              trades    71  turn  0.90x/yr  credit  -4.67 pp  credit/turn  -5.19  Sharpe 0.9387  MaxDD -21.84%  CAGR 7.78%  dSharpe vs twin -0.1955
+     CAL M              trades   213  turn  1.39x/yr  credit  +2.38 pp  credit/turn  +1.72  Sharpe 1.0833  MaxDD -15.69%  CAGR 8.32%  dSharpe vs twin -0.0305
+     EVT k=16 fb=NONE   trades   219  turn  1.42x/yr  credit  +6.66 pp  credit/turn  +4.67  Sharpe 1.0807  MaxDD -12.00%  CAGR 7.77%  dSharpe vs twin -0.0354
+     EVT k=16 fb=Q      trades   290  turn  1.52x/yr  credit  +6.61 pp  credit/turn  +4.34  Sharpe 1.0611  MaxDD -11.99%  CAGR 7.61%  dSharpe vs twin -0.0494
+     EVT k=8  fb=NONE   trades   476  turn  1.77x/yr  credit  +7.56 pp  credit/turn  +4.28  Sharpe 1.0926  MaxDD -11.12%  CAGR 7.82%  dSharpe vs twin -0.0119
+     EVT k=8  fb=Q      trades   544  turn  1.80x/yr  credit  +7.58 pp  credit/turn  +4.20  Sharpe 1.0894  MaxDD -11.12%  CAGR 7.79%  dSharpe vs twin -0.0164
+     EVT k=4  fb=NONE   trades   901  turn  2.01x/yr  credit  +7.32 pp  credit/turn  +3.65  Sharpe 1.0884  MaxDD -11.26%  CAGR 7.77%  dSharpe vs twin -0.0273
+     CAL W              trades   923  turn  2.01x/yr  credit  +6.28 pp  credit/turn  +3.12  Sharpe 1.0972  MaxDD -12.24%  CAGR 7.96%  dSharpe vs twin -0.0161
+     EVT k=4  fb=Q      trades   962  turn  2.03x/yr  credit  +7.32 pp  credit/turn  +3.61  Sharpe 1.0860  MaxDD -11.26%  CAGR 7.75%  dSharpe vs twin -0.0305
+     EVT k=2  fb=NONE   trades  1552  turn  2.21x/yr  credit  +7.20 pp  credit/turn  +3.26  Sharpe 1.0928  MaxDD -11.23%  CAGR 7.78%  dSharpe vs twin -0.0240
+     EVT k=2  fb=Q      trades  1604  turn  2.22x/yr  credit  +7.20 pp  credit/turn  +3.25  Sharpe 1.0931  MaxDD -11.23%  CAGR 7.78%  dSharpe vs twin -0.0233
+     EVT k=1  fb=NONE   trades  2337  turn  2.36x/yr  credit  +7.12 pp  credit/turn  +3.01  Sharpe 1.0989  MaxDD -11.20%  CAGR 7.83%  dSharpe vs twin -0.0153
+     EVT k=1  fb=Q      trades  2380  turn  2.37x/yr  credit  +7.12 pp  credit/turn  +3.00  Sharpe 1.0987  MaxDD -11.20%  CAGR 7.82%  dSharpe vs twin -0.0153
+     CAL D              trades  4448  turn  2.73x/yr  credit  +7.13 pp  credit/turn  +2.61  Sharpe 1.0956  MaxDD -11.20%  CAGR 7.80%  dSharpe vs twin -0.0152
+  SMALL:
+     CAL Q              trades    63  turn  0.96x/yr  credit  -7.06 pp  credit/turn  -7.38  Sharpe 0.6078  MaxDD -24.73%  CAGR 4.36%  dSharpe vs twin -0.1009
+     CAL M              trades   189  turn  1.60x/yr  credit  +2.18 pp  credit/turn  +1.36  Sharpe 0.7258  MaxDD -17.07%  CAGR 4.90%  dSharpe vs twin +0.0405
+     CAL W              trades   819  turn  2.57x/yr  credit  +6.37 pp  credit/turn  +2.48  Sharpe 0.6588  MaxDD -14.16%  CAGR 4.26%  dSharpe vs twin -0.0461
+     EVT k=16 fb=NONE   trades  1143  turn  2.78x/yr  credit  +7.84 pp  credit/turn  +2.82  Sharpe 0.6515  MaxDD -13.19%  CAGR 4.19%  dSharpe vs twin -0.0530
+     EVT k=16 fb=Q      trades  1191  turn  2.80x/yr  credit  +7.80 pp  credit/turn  +2.78  Sharpe 0.6513  MaxDD -13.23%  CAGR 4.19%  dSharpe vs twin -0.0541
+     EVT k=8  fb=NONE   trades  1988  turn  3.13x/yr  credit  +7.78 pp  credit/turn  +2.49  Sharpe 0.6435  MaxDD -13.25%  CAGR 4.14%  dSharpe vs twin -0.0726
+     EVT k=8  fb=Q      trades  2026  turn  3.14x/yr  credit  +7.73 pp  credit/turn  +2.46  Sharpe 0.6434  MaxDD -13.29%  CAGR 4.14%  dSharpe vs twin -0.0739
+     EVT k=4  fb=NONE   trades  2994  turn  3.42x/yr  credit  +7.68 pp  credit/turn  +2.25  Sharpe 0.6336  MaxDD -13.18%  CAGR 4.06%  dSharpe vs twin -0.0914
+     EVT k=4  fb=Q      trades  3013  turn  3.42x/yr  credit  +7.66 pp  credit/turn  +2.24  Sharpe 0.6335  MaxDD -13.19%  CAGR 4.06%  dSharpe vs twin -0.0923
+     EVT k=2  fb=NONE   trades  3659  turn  3.59x/yr  credit  +7.65 pp  credit/turn  +2.13  Sharpe 0.6264  MaxDD -13.22%  CAGR 4.01%  dSharpe vs twin -0.1022
+     EVT k=2  fb=Q      trades  3668  turn  3.59x/yr  credit  +7.65 pp  credit/turn  +2.13  Sharpe 0.6264  MaxDD -13.22%  CAGR 4.01%  dSharpe vs twin -0.1025
+     EVT k=1  fb=NONE   trades  3870  turn  3.64x/yr  credit  +7.67 pp  credit/turn  +2.10  Sharpe 0.6287  MaxDD -13.20%  CAGR 4.03%  dSharpe vs twin -0.1011
+     EVT k=1  fb=Q      trades  3873  turn  3.64x/yr  credit  +7.67 pp  credit/turn  +2.10  Sharpe 0.6288  MaxDD -13.20%  CAGR 4.03%  dSharpe vs twin -0.1011
+     CAL D              trades  3943  turn  3.66x/yr  credit  +7.67 pp  credit/turn  +2.09  Sharpe 0.6289  MaxDD -13.20%  CAGR 4.03%  dSharpe vs twin -0.1011
+  >> best EVENT book per panel by credit/turn vs the WEEKLY calendar book:
+     U56    EVT k=16 fb=NONE: credit +6.06 pp at 0.69x/yr (+8.76 per turn) vs WEEKLY +4.34 pp at 1.77x/yr (+2.45 per turn) -> EVENT WINS per unit of turnover; credit RETAINED 139.5% at 39.0% of the turnover
+     B136   EVT k=16 fb=NONE: credit +6.66 pp at 1.42x/yr (+4.67 per turn) vs WEEKLY +6.28 pp at 2.01x/yr (+3.12 per turn) -> EVENT WINS per unit of turnover; credit RETAINED 106.0% at 70.8% of the turnover
+     SMALL  EVT k=16 fb=NONE: credit +7.84 pp at 2.78x/yr (+2.82 per turn) vs WEEKLY +6.37 pp at 2.57x/yr (+2.48 per turn) -> EVENT WINS per unit of turnover; credit RETAINED 123.2% at 108.1% of the turnover
+
+## IS THE CREDIT A PURE FUNCTION OF TURNOVER?  (all 84 books at 10 bps, both gross)
+  turnover/yr alone          R2 = +0.4291  beta = [0.137, 2.406]
+  log turnover/yr            R2 = +0.5022  beta = [1.198, 6.083]
+  turnover + panel dummies   R2 = +0.5621  beta = [-1.52, 3.526, 0.446, -3.775]
+  turnover + gross           R2 = +0.4296  beta = [0.74, 2.434, -0.769]
+     within U56   : R2(log turnover) = +0.1868, rho(turnover, credit) = +0.4326
+     within B136  : R2(log turnover) = +0.6409, rho(turnover, credit) = +0.7140
+     within SMALL : R2(log turnover) = +0.8634, rho(turnover, credit) = +0.8468
+
+## BOTH KEEP PATHS, EVERY CELL (4a vs live RULES v2, 4b vs SPY)
+  4a FULL 2 | 4b FULL 52 | 4b OOS 61 | 4b FULL-and-OOS 50  of 336
+     panel=  B136: 4a   0 | 4b FULL  11 | 4b OOS   9 | BOTH   9  (of 112)
+     panel= SMALL: 4a   0 | 4b FULL   0 | 4b OOS   0 | BOTH   0  (of 112)
+     panel=   U56: 4a   2 | 4b FULL  41 | 4b OOS  52 | BOTH  41  (of 112)
+     cost=     0: 4a   0 | 4b FULL  23 | 4b OOS  22 | BOTH  22  (of 84)
+     cost=    10: 4a   0 | 4b FULL  14 | 4b OOS  13 | BOTH  13  (of 84)
+     cost=    25: 4a   1 | 4b FULL  12 | 4b OOS  13 | BOTH  12  (of 84)
+     cost=    50: 4a   1 | 4b FULL   3 | 4b OOS  13 | BOTH   3  (of 84)
+     gross=  0.75: 4a   2 | 4b FULL   0 | 4b OOS   0 | BOTH   0  (of 168)
+     gross=   1.0: 4a   0 | 4b FULL  52 | 4b OOS  61 | BOTH  50  (of 168)
+     kind=   CAL: 4a   0 | 4b FULL  13 | 4b OOS  14 | BOTH  12  (of 96)
+     kind=   EVT: 4a   2 | 4b FULL  39 | 4b OOS  47 | BOTH  38  (of 240)
+  4b FULL-and-OOS passers:
+     U56    CAL D            g=1.0 c= 0bps turn 3.26x  FULL 11.56%/1.2251/-14.68%  OOS 12.83%/1.3225/-14.68%  4a fail
+     U56    CAL D            g=1.0 c=10bps turn 3.26x  FULL 11.20%/1.1899/-14.77%  OOS 12.45%/1.2873/-14.77%  4a fail
+     U56    CAL D            g=1.0 c=25bps turn 3.26x  FULL 10.66%/1.1372/-14.90%  OOS 11.89%/1.2345/-14.90%  4a fail
+     U56    CAL W            g=1.0 c= 0bps turn 2.35x  FULL 11.79%/1.2257/-15.88%  OOS 12.94%/1.3003/-15.88%  4a fail
+     U56    CAL W            g=1.0 c=10bps turn 2.35x  FULL 11.53%/1.2008/-15.91%  OOS 12.67%/1.2759/-15.91%  4a fail
+     U56    CAL W            g=1.0 c=25bps turn 2.35x  FULL 11.14%/1.1635/-15.96%  OOS 12.27%/1.2393/-15.96%  4a fail
+     U56    CAL M            g=1.0 c= 0bps turn 1.64x  FULL 12.08%/1.1897/-18.78%  OOS 13.00%/1.2411/-18.78%  4a fail
+     U56    CAL M            g=1.0 c=10bps turn 1.64x  FULL 11.90%/1.1734/-18.81%  OOS 12.82%/1.2251/-18.81%  4a fail
+     U56    CAL M            g=1.0 c=25bps turn 1.64x  FULL 11.62%/1.1489/-18.84%  OOS 12.54%/1.2010/-18.84%  4a fail
+     U56    CAL M            g=1.0 c=50bps turn 1.64x  FULL 11.17%/1.1079/-18.89%  OOS 12.07%/1.1607/-18.89%  4a fail
+     U56    EVT k=1 fb=NONE  g=1.0 c= 0bps turn 2.49x  FULL 11.60%/1.2266/-14.87%  OOS 12.82%/1.3195/-14.87%  4a fail
+     U56    EVT k=1 fb=NONE  g=1.0 c=10bps turn 2.49x  FULL 11.32%/1.1998/-14.96%  OOS 12.54%/1.2928/-14.96%  4a fail
+     U56    EVT k=1 fb=NONE  g=1.0 c=25bps turn 2.49x  FULL 10.91%/1.1596/-15.08%  OOS 12.11%/1.2529/-15.08%  4a fail
+     U56    EVT k=1 fb=Q     g=1.0 c= 0bps turn 2.50x  FULL 11.59%/1.2265/-14.87%  OOS 12.82%/1.3189/-14.87%  4a fail
+     U56    EVT k=1 fb=Q     g=1.0 c=10bps turn 2.50x  FULL 11.31%/1.1995/-14.96%  OOS 12.53%/1.2921/-14.96%  4a fail
+     U56    EVT k=1 fb=Q     g=1.0 c=25bps turn 2.50x  FULL 10.90%/1.1590/-15.08%  OOS 12.10%/1.2518/-15.08%  4a fail
+     U56    EVT k=2 fb=NONE  g=1.0 c= 0bps turn 2.24x  FULL 11.57%/1.2230/-14.89%  OOS 12.90%/1.3251/-14.89%  4a fail
+     U56    EVT k=2 fb=NONE  g=1.0 c=10bps turn 2.24x  FULL 11.32%/1.1987/-14.97%  OOS 12.64%/1.3010/-14.97%  4a fail
+     U56    EVT k=2 fb=NONE  g=1.0 c=25bps turn 2.24x  FULL 10.95%/1.1624/-15.09%  OOS 12.26%/1.2649/-15.09%  4a fail
+     U56    EVT k=2 fb=Q     g=1.0 c= 0bps turn 2.28x  FULL 11.55%/1.2217/-14.89%  OOS 12.81%/1.3175/-14.89%  4a fail
+     U56    EVT k=2 fb=Q     g=1.0 c=10bps turn 2.28x  FULL 11.30%/1.1971/-14.97%  OOS 12.55%/1.2930/-14.97%  4a fail
+     U56    EVT k=2 fb=Q     g=1.0 c=25bps turn 2.28x  FULL 10.92%/1.1601/-15.09%  OOS 12.16%/1.2563/-15.09%  4a fail
+     U56    EVT k=4 fb=NONE  g=1.0 c= 0bps turn 1.92x  FULL 11.31%/1.1873/-15.46%  OOS 12.48%/1.2701/-15.46%  4a fail
+     U56    EVT k=4 fb=NONE  g=1.0 c=10bps turn 1.92x  FULL 11.09%/1.1668/-15.54%  OOS 12.26%/1.2500/-15.54%  4a fail
+     U56    EVT k=4 fb=NONE  g=1.0 c=25bps turn 1.92x  FULL 10.77%/1.1361/-15.66%  OOS 11.93%/1.2198/-15.66%  4a fail
+     U56    EVT k=4 fb=Q     g=1.0 c= 0bps turn 1.99x  FULL 11.25%/1.1833/-15.46%  OOS 12.32%/1.2574/-15.46%  4a fail
+     U56    EVT k=4 fb=Q     g=1.0 c=10bps turn 1.99x  FULL 11.03%/1.1621/-15.54%  OOS 12.10%/1.2364/-15.54%  4a fail
+     U56    EVT k=4 fb=Q     g=1.0 c=25bps turn 1.99x  FULL 10.70%/1.1302/-15.66%  OOS 11.76%/1.2049/-15.66%  4a fail
+     U56    EVT k=8 fb=NONE  g=1.0 c= 0bps turn 1.53x  FULL 11.01%/1.1570/-15.62%  OOS 11.96%/1.2101/-15.62%  4a fail
+     U56    EVT k=8 fb=NONE  g=1.0 c=10bps turn 1.53x  FULL 10.84%/1.1408/-15.68%  OOS 11.79%/1.1947/-15.68%  4a fail
+     U56    EVT k=8 fb=Q     g=1.0 c= 0bps turn 1.66x  FULL 11.11%/1.1643/-16.14%  OOS 11.99%/1.2116/-16.14%  4a fail
+     U56    EVT k=8 fb=Q     g=1.0 c=10bps turn 1.66x  FULL 10.93%/1.1468/-16.20%  OOS 11.80%/1.1947/-16.20%  4a fail
+     U56    EVT k=8 fb=Q     g=1.0 c=25bps turn 1.66x  FULL 10.65%/1.1205/-16.30%  OOS 11.52%/1.1692/-16.30%  4a fail
+     U56    EVT k=16 fb=NONE g=1.0 c= 0bps turn 0.91x  FULL 12.15%/1.2279/-13.88%  OOS 13.28%/1.2743/-13.88%  4a fail
+     U56    EVT k=16 fb=NONE g=1.0 c=10bps turn 0.91x  FULL 12.04%/1.2183/-13.94%  OOS 13.18%/1.2649/-13.94%  4a fail
+     U56    EVT k=16 fb=NONE g=1.0 c=25bps turn 0.91x  FULL 11.89%/1.2039/-14.02%  OOS 13.02%/1.2507/-14.02%  4a fail
+     U56    EVT k=16 fb=NONE g=1.0 c=50bps turn 0.91x  FULL 11.64%/1.1797/-14.17%  OOS 12.75%/1.2270/-14.17%  4a fail
+     U56    EVT k=16 fb=Q    g=1.0 c= 0bps turn 1.31x  FULL 11.51%/1.1778/-16.04%  OOS 12.42%/1.2224/-16.04%  4a fail
+     U56    EVT k=16 fb=Q    g=1.0 c=10bps turn 1.31x  FULL 11.36%/1.1642/-16.09%  OOS 12.27%/1.2090/-16.09%  4a fail
+     U56    EVT k=16 fb=Q    g=1.0 c=25bps turn 1.31x  FULL 11.14%/1.1437/-16.17%  OOS 12.04%/1.1889/-16.17%  4a fail
+     U56    EVT k=16 fb=Q    g=1.0 c=50bps turn 1.31x  FULL 10.78%/1.1094/-16.29%  OOS 11.67%/1.1552/-16.29%  4a fail
+     B136   CAL D            g=1.0 c= 0bps turn 3.60x  FULL 10.81%/1.1342/-14.63%  OOS 10.87%/1.1695/-14.63%  4a fail
+     B136   CAL W            g=1.0 c= 0bps turn 2.67x  FULL 10.92%/1.1248/-16.12%  OOS 10.78%/1.1301/-16.12%  4a fail
+     B136   EVT k=1 fb=NONE  g=1.0 c= 0bps turn 3.12x  FULL 10.79%/1.1329/-14.63%  OOS 10.86%/1.1684/-14.63%  4a fail
+     B136   EVT k=1 fb=Q     g=1.0 c= 0bps turn 3.14x  FULL 10.79%/1.1328/-14.63%  OOS 10.86%/1.1682/-14.63%  4a fail
+     B136   EVT k=2 fb=NONE  g=1.0 c= 0bps turn 2.92x  FULL 10.71%/1.1239/-14.65%  OOS 10.81%/1.1625/-14.65%  4a fail
+     B136   EVT k=2 fb=Q     g=1.0 c= 0bps turn 2.93x  FULL 10.71%/1.1245/-14.65%  OOS 10.81%/1.1627/-14.65%  4a fail
+     B136   EVT k=4 fb=NONE  g=1.0 c= 0bps turn 2.66x  FULL 10.67%/1.1179/-14.68%  OOS 10.79%/1.1575/-14.68%  4a fail
+     B136   EVT k=4 fb=Q     g=1.0 c= 0bps turn 2.69x  FULL 10.64%/1.1156/-14.68%  OOS 10.77%/1.1555/-14.68%  4a fail
+     B136   EVT k=8 fb=NONE  g=1.0 c= 0bps turn 2.34x  FULL 10.70%/1.1197/-14.50%  OOS 10.68%/1.1455/-14.50%  4a fail
+
+## RULE 8 — k (and book kind) chosen on warm-up..2016-12-31 ONLY; 2017-2026 read ONCE
+  U56    g=0.75 C_SHARPE       -> EVT k=16 fb=NONE turn 0.69x | OOS 9.94%/1.2593/-10.75% | credit OOS +6.06 pp | 4a fail 4b fail
+  U56    g=0.75 C_CALMAR       -> CAL W            turn 1.77x | OOS 9.46%/1.2766/-12.05% | credit OOS +4.34 pp | 4a fail 4b fail
+  U56    g=0.75 C_CREDIT       -> EVT k=1 fb=NONE  turn 1.88x | OOS 9.35%/1.2918/-11.43% | credit OOS +5.00 pp | 4a PASS 4b fail
+  U56    g=0.75 C_CREDPERTURN  -> CAL M            turn 1.23x | OOS 9.55%/1.2242/-14.38% | credit OOS +1.75 pp | 4a fail 4b fail
+  U56    g=1.0 C_SHARPE       -> EVT k=16 fb=NONE turn 0.91x | OOS 13.18%/1.2649/-13.94% | credit OOS +7.69 pp | 4a fail 4b PASS
+  U56    g=1.0 C_CALMAR       -> CAL M            turn 1.64x | OOS 12.82%/1.2251/-18.81% | credit OOS +2.34 pp | 4a fail 4b PASS
+  U56    g=1.0 C_CREDIT       -> EVT k=1 fb=NONE  turn 2.49x | OOS 12.54%/1.2928/-14.96% | credit OOS +6.49 pp | 4a fail 4b PASS
+  U56    g=1.0 C_CREDPERTURN  -> CAL W            turn 2.35x | OOS 12.67%/1.2759/-15.91% | credit OOS +5.51 pp | 4a fail 4b PASS
+  B136   g=0.75 C_SHARPE       -> CAL W            turn 2.01x | OOS 7.85%/1.1017/-12.24% | credit OOS +6.28 pp | 4a fail 4b fail
+  B136   g=0.75 C_CALMAR       -> CAL M            turn 1.39x | OOS 8.20%/1.0796/-15.69% | credit OOS +2.38 pp | 4a fail 4b fail
+  B136   g=0.75 C_CREDIT       -> CAL D            turn 2.73x | OOS 7.82%/1.1278/-11.20% | credit OOS +7.13 pp | 4a PASS 4b fail
+  B136   g=0.75 C_CREDPERTURN  -> CAL M            turn 1.39x | OOS 8.20%/1.0796/-15.69% | credit OOS +2.38 pp | 4a fail 4b fail
+  B136   g=1.0 C_SHARPE       -> CAL W            turn 2.67x | OOS 10.47%/1.1006/-16.16% | credit OOS +7.96 pp | 4a fail 4b fail
+  B136   g=1.0 C_CALMAR       -> CAL M            turn 1.85x | OOS 10.97%/1.0802/-20.50% | credit OOS +3.17 pp | 4a fail 4b fail
+  B136   g=1.0 C_CREDIT       -> CAL D            turn 3.60x | OOS 10.45%/1.1281/-14.72% | credit OOS +9.21 pp | 4a fail 4b fail
+  B136   g=1.0 C_CREDPERTURN  -> CAL M            turn 1.85x | OOS 10.97%/1.0802/-20.50% | credit OOS +3.17 pp | 4a fail 4b fail
+  SMALL  g=0.75 C_SHARPE       -> CAL M            turn 1.60x | OOS 3.98%/0.5762/-17.07% | credit OOS +2.18 pp | 4a fail 4b fail
+  SMALL  g=0.75 C_CALMAR       -> CAL M            turn 1.60x | OOS 3.98%/0.5762/-17.07% | credit OOS +2.18 pp | 4a fail 4b fail
+  SMALL  g=0.75 C_CREDIT       -> CAL M            turn 1.60x | OOS 3.98%/0.5762/-17.07% | credit OOS +2.18 pp | 4a fail 4b fail
+  SMALL  g=0.75 C_CREDPERTURN  -> CAL M            turn 1.60x | OOS 3.98%/0.5762/-17.07% | credit OOS +2.18 pp | 4a fail 4b fail
+  SMALL  g=1.0 C_SHARPE       -> CAL M            turn 2.13x | OOS 5.23%/0.5779/-22.28% | credit OOS +2.99 pp | 4a fail 4b fail
+  SMALL  g=1.0 C_CALMAR       -> CAL M            turn 2.13x | OOS 5.23%/0.5779/-22.28% | credit OOS +2.99 pp | 4a fail 4b fail
+  SMALL  g=1.0 C_CREDIT       -> CAL M            turn 2.13x | OOS 5.23%/0.5779/-22.28% | credit OOS +2.99 pp | 4a fail 4b fail
+  SMALL  g=1.0 C_CREDPERTURN  -> CAL M            turn 2.13x | OOS 5.23%/0.5779/-22.28% | credit OOS +2.99 pp | 4a fail 4b fail
+  >> picks clearing 4a OOS: 2 of 24; 4b OOS: 4 of 24
+  >> EVENT books chosen: 4 of 24
+  IS->OOS correlation of the credit across 84 cells: rho = +0.2763
+
+## SURVIVORSHIP CAVEAT
+  U56 / B136 are CURRENT constituents; SMALL is a CURRENT sub-$2B screen (54 names dropped at
+  max_1d_move >= 1.0, 665 remain).  Every cadence contrast is WITHIN a panel on the SAME names
+  and first-order immune; the 4a / 4b pass counts and the rule-8 picks are NOT.
