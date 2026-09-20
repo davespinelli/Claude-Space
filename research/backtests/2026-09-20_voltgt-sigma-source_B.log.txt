@@ -1,0 +1,367 @@
+==============================================================================================================
+IDEA 1763 (lane B, 2026-09-20) — DOES A SPY-SOURCED VOL TARGET REPRODUCE THE VOLTGT016
+CANDIDATE WITHOUT INHERITING THE PANEL?
+==============================================================================================================
+Idea 1763 (lane B, 2026-09-20): DOES A SPY-SOURCED VOL TARGET REPRODUCE THE VOLTGT016
+CANDIDATE WITHOUT INHERITING THE PANEL?
+
+THE DEFECT THIS CLOSES
+----------------------
+The record's standing vol-target candidate (`2026-09-20_voltgt-panel_KEEP4b_MEMO.md`, idea 1730,
+now PARK after idea 1771) scales the book by `g_t = clip(target / sigma_t, 0, 1)` where `sigma_t`
+is the realised vol of *the panel's own* unlevered equal-weight portfolio.  Its own memo, point 8,
+names the consequence: the target is calibrated on a SURVIVORSHIP-SELECTED panel, so the book
+inherits that panel; addendum A2 then found it does not exist on small caps (0 of 96 books clear
+4b on SMALL).
+
+A target set on SPY's realised vol does not inherit anything.  It is one public series, identical
+for every panel, implementable by anyone, and it removes the circularity of sizing a book by the
+volatility of the very names the book selected.  If the SPY-sourced cut reproduces the candidate,
+the panel-inheritance caveat is not load-bearing and the RULES wording gets strictly simpler.  If
+it does not, the record learns that the candidate's exposure path is a PANEL object and the
+caveat is the finding.
+
+THE CONSTRUCTION
+----------------
+TUNED (2, the protocol maximum; ALL grid points reported):
+    target vol   t     {0.08, 0.10, 0.12, 0.16, 0.20}   (the memo's 0.08/0.12/0.16 + 2 rungs)
+    sigma SOURCE src   {PANEL, SPY, BLEND}              PANEL = the memo's own construction
+                                                        SPY   = sigma of SPY's own daily returns
+                                                        BLEND = 0.5 * PANEL + 0.5 * SPY
+PUBLISHED, NOT TUNED:
+    convention (L, d)  {(20,0) = the memo's cell, (20,1), (10,0), (40,0)}   -- idea 1771's axis,
+                       carried as a SENSITIVITY so the answer is not read at one cell only
+    panel              {U56, B136, SMALL665}
+    cost               {0, 10, 25, 50} bps    (exact: held / turnover do not depend on cost)
+CONTROL (not a dial): every book is paired with its OWN realised-mean-gross-matched CONSTANT-GROSS
+    twin, solved on the same window.  The twin is what "just buy less of it" looks like; a
+    sigma source has to beat that, not cash.
+    -> 3 panels x 3 sources x 5 targets x 4 conventions = 180 books, each with a FULL-matched and
+       an OOS-matched twin, scored at 4 cost rungs = 720 scored rows.
+
+Execution realism throughout: weights decided at close t, applied t+1 (the engine's shift), weekly
+cadence, 10 bps primary cost rung, gross capped at 1.00 (never levered).
+
+PRE-STATED VERDICT RULES (fixed before the run; no tuning-until-it-works)
+------------------------------------------------------------------------
+V1  REPRODUCTION.  At the memo's own cell (L=20, d=0, t=0.16) on U56 and B136, does src=SPY carry
+    the SAME 4b FULL and 4b OOS verdicts as src=PANEL?  If yes, the panel inheritance is not
+    load-bearing for the candidate's pass and the simpler wording is available.
+V2  PORTABILITY.  src=PANEL clears 4b 0 of 96 times on SMALL (memo addendum A2).  If src=SPY
+    clears 4b FULL *and* OOS on SMALL665 at ANY tested rung, the panel inheritance WAS the binding
+    defect.  If it clears 0 of N, the SMALL failure is a PANEL-RETURN fact, not a sigma-source
+    fact, and this idea's premise is KILLED on its own terms.
+V3  RULE 8 IS DECISIVE FOR CAPITAL.  (t, src) chosen on 2009-2016 ONLY; 2017-2026 read ONCE.  If
+    no legal IS-only chooser reaches a 4b-OOS-passing cell, nothing here is capital-worthy
+    whatever the pass-shares say -- the passing cells are hindsight.
+V4  THE TWIN IS THE COMPARAND.  If the matched constant-gross twin clears 4b at least as often as
+    the vol-target book, the sigma source is a parameter that buys nothing.
+V5  CONVENTION ROBUSTNESS.  Idea 1771 showed the candidate's U56 pass is a property of the cell
+    (L=20, d=0): pass-share 0.250 over its 20 convention cells.  Report the same pass-share per
+    SOURCE over this run's 4 conventions.  A source is only "more robust" if its pass-share is
+    HIGHER than PANEL's on the same panels and rungs.
+==============================================================================================================
+  panel U56         56 cols x  4708 days  2008-01-02 -> 2026-09-18
+  panel B136       136 cols x  4708 days  2008-01-02 -> 2026-09-18
+  panel SMALL665   667 cols x  4203 days  2010-01-04 -> 2026-09-18
+
+  PANEL-INDEPENDENCE OF THE SPY-SOURCED SCALAR (gate G5)
+    U56 vs B136     : 4448 common post-warm-up days (2009-01-13..2026-09-18), max|d g_t| 2.397e-03
+    U56 vs SMALL665 : 3943 common post-warm-up days (2011-01-13..2026-09-18), max|d g_t| 1.221e-15
+    GATE PASS  G5a SPY-sourced g_t identical U56 vs SMALL665 (same SPY cache): 1.221e-15 (target == 0 (<= 1e-12))
+    U56 vs B136 re-sourced onto data/prices.csv's SPY: max|d g_t| 0.000e+00
+    PUBLISHED  committed caches' own SPY disagreement (prices.csv vs prices_broad.csv): max|d price| $0.0051, max|d daily return| 1.511e-04  -> the U56-vs-B136 g_t residual of 2.397e-03 is a CACHE artefact
+    GATE PASS  G5b U56-vs-B136 SPY-sourced g_t residual is a CACHE artefact (re-source and it vanishes): 0.000e+00 (was 2.397e-03) (target == 0 (<= 1e-12))
+    PUBLISHED  PANEL-sourced g_t dispersion U56 vs B136 (same post-warm-up days): max|d| 0.2015, mean|d| 0.0158
+    PUBLISHED  PANEL-sourced g_t dispersion U56 vs SMALL665 (same post-warm-up days): max|d| 0.6542, mean|d| 0.0764
+
+--------------------------------------------------------------------------------------------------------------
+PANEL U56
+--------------------------------------------------------------------------------------------------------------
+  SPY   FULL  15.12% / 0.8844 / -33.72%   OOS  15.26% / 0.8738 / -33.72%
+  LIVE  FULL   8.62% / 1.2011 / -12.05%   OOS   9.46% / 1.2769 / -12.05%
+  v1    FULL   6.36% / 0.6557 / -13.83%
+  4b bars FULL: H1>0.9573 H2>0.8251 MaxDD>=-20.23% CAGR>=10.59%
+  4b bars OOS : H1>0.9915 H2>0.7471 MaxDD>=-20.23% CAGR>=10.68%
+    PUBLISHED  sigma corr(PANEL, SPY) [U56, L20 d0]: pearson 0.9910, spearman 0.9746, mean PANEL 0.1438 vs SPY 0.1620, ratio 0.9123
+    GATE PASS  G1 fast_run == engine.backtest [U56, 10bps]: 1.388e-17 (target == 0 (<= 1e-15))
+    GATE PASS  G1 fast_run == engine.backtest [U56, 25bps]: 1.388e-17 (target == 0 (<= 1e-15))
+  src=PANEL  done  (  11.9s)
+  src=SPY    done  (  19.3s)
+  src=BLEND  done  (  26.7s)
+
+--------------------------------------------------------------------------------------------------------------
+PANEL B136
+--------------------------------------------------------------------------------------------------------------
+  SPY   FULL  15.12% / 0.8845 / -33.72%   OOS  15.26% / 0.8739 / -33.72%
+  LIVE  FULL   7.96% / 1.0973 / -12.24%   OOS   7.85% / 1.1019 / -12.24%
+  v1    FULL   6.32% / 0.6294 / -21.20%
+  4b bars FULL: H1>0.9573 H2>0.8251 MaxDD>=-20.23% CAGR>=10.59%
+  4b bars OOS : H1>0.9915 H2>0.7471 MaxDD>=-20.23% CAGR>=10.68%
+    PUBLISHED  sigma corr(PANEL, SPY) [B136, L20 d0]: pearson 0.9910, spearman 0.9803, mean PANEL 0.1518 vs SPY 0.1620, ratio 0.9430
+    GATE PASS  G1 fast_run == engine.backtest [B136, 10bps]: 2.082e-17 (target == 0 (<= 1e-15))
+    GATE PASS  G1 fast_run == engine.backtest [B136, 25bps]: 2.082e-17 (target == 0 (<= 1e-15))
+  src=PANEL  done  (  39.3s)
+  src=SPY    done  (  47.2s)
+  src=BLEND  done  (  55.2s)
+
+--------------------------------------------------------------------------------------------------------------
+PANEL SMALL665
+--------------------------------------------------------------------------------------------------------------
+  SPY   FULL  14.01% / 0.8562 / -33.72%   OOS  15.26% / 0.8738 / -33.72%
+  LIVE  FULL   4.27% / 0.6614 / -14.13%   OOS   3.65% / 0.5479 / -14.13%
+  v1    FULL  10.89% / 0.9233 / -30.86%
+  4b bars FULL: H1>0.9028 H2>0.8393 MaxDD>=-20.23% CAGR>=9.81%
+  4b bars OOS : H1>0.9915 H2>0.7471 MaxDD>=-20.23% CAGR>=10.68%
+    PUBLISHED  sigma corr(PANEL, SPY) [SMALL665, L20 d0]: pearson 0.8728, spearman 0.7612, mean PANEL 0.1767 vs SPY 0.1462, ratio 1.2926
+    GATE PASS  G1 fast_run == engine.backtest [SMALL665, 10bps]: 3.469e-17 (target == 0 (<= 1e-15))
+    GATE PASS  G1 fast_run == engine.backtest [SMALL665, 25bps]: 3.469e-17 (target == 0 (<= 1e-15))
+  src=PANEL  done  (  82.8s)
+  src=SPY    done  (  93.1s)
+  src=BLEND  done  ( 103.3s)
+
+  720 scored rows -> 2026-09-20_voltgt-sigma-source_B.grid.csv
+    GATE PASS  G4 twin realised-mean-gross match (max abs err over all cells): 4.441e-16 / 4.441e-16 (target < 1e-10)
+    GATE PASS  G6 no NaN in scored metrics: 0 (target == 0)
+
+==============================================================================================================
+REPLICATION OF THE STANDING CANDIDATE (idea 1730 memo, idea 1715 addenda A1 and A2)
+==============================================================================================================
+  U56   FULL memo  15.61% / 1.2027 / -19.86%   this run  15.61% / 1.2028 / -19.86%   max|d| 1.06e-04
+  U56   OOS  memo  15.94% / 1.2193 / -19.86%   this run  15.94% / 1.2196 / -19.86%   max|d| 2.76e-04
+  B136  FULL memo  15.94% / 1.2049 / -18.76%   this run  15.94% / 1.2050 / -18.76%   max|d| 8.94e-05
+  B136  OOS  memo  15.36% / 1.1837 / -18.76%   this run  15.36% / 1.1839 / -18.76%   max|d| 2.19e-04
+    GATE PASS  G2 memo replication (idea 1730, 12 published numbers): 2.76e-04 (target <= 5e-4)
+  A1 (idea 1715): U56 PANEL t=0.16 L=20 d=1 OOS MaxDD -20.77% (addendum published -20.77%), 4b OOS FAIL
+    GATE PASS  G3 addendum A1 replication (d=1 flips U56 4b OOS to FAIL): -20.7709% / 4b OOS FAIL (target -20.77% and FAIL)
+    GATE PASS  G7 addendum A2 replication (PANEL-sourced clears 4b 0 times on SMALL665): 0/20 (target == 0)
+
+==============================================================================================================
+THE SIGMA-SOURCE SURFACE AT THE MEMO'S CONVENTION (L=20, d=0) AND 10 bps
+(FULL and OOS 2017-2026: CAGR / Sharpe / MaxDD, 4b verdict.  * = the memo's own cell)
+==============================================================================================================
+
+  U56
+    src        t | FULL CAGR  Sharpe    MaxDD         H1/H2   4b   4a | OOS CAGR  Sharpe    MaxDD   4b   4a |  gross  turn
+    PANEL   0.08 |    10.22%  1.1803  -12.28%  1.203/ 1.160    n    n |   11.38%  1.2999  -12.28%    Y    n |  0.687  3.46
+    PANEL   0.10 |    12.24%  1.2032  -14.55%  1.237/ 1.172    Y    n |   13.23%  1.2922  -14.55%    Y    n |  0.791  2.98
+    PANEL   0.12 |    13.74%  1.2103  -16.44%  1.257/ 1.168    Y    n |   14.56%  1.2728  -16.44%    Y    n |  0.861  2.43
+    PANEL   0.16*|    15.61%  1.2028  -19.86%  1.283/ 1.131    Y    n |   15.94%  1.2196  -19.86%    Y    n |  0.935  1.83
+    PANEL   0.20 |    16.49%  1.1789  -20.82%  1.250/ 1.117    n    n |   16.92%  1.1967  -20.82%    n    n |  0.968  1.53
+    SPY     0.08 |     9.09%  1.1384  -12.07%  1.176/ 1.103    n    n |   10.18%  1.2569  -12.07%    n    n |  0.639  3.64
+    SPY     0.10 |    11.07%  1.1679  -14.30%  1.207/ 1.132    Y    n |   12.10%  1.2648  -14.30%    Y    n |  0.747  3.31
+    SPY     0.12 |    12.61%  1.1879  -16.14%  1.234/ 1.146    Y    n |   13.53%  1.2610  -16.14%    Y    n |  0.820  2.79
+    SPY     0.16 |    14.79%  1.1989  -19.48%  1.283/ 1.124    Y    n |   15.18%  1.2192  -19.48%    Y    n |  0.909  2.07
+    SPY     0.20 |    16.02%  1.1925  -20.91%  1.285/ 1.111    n    n |   16.23%  1.1955  -20.91%    n    n |  0.951  1.68
+    BLEND   0.08 |     9.62%  1.1593  -12.19%  1.190/ 1.130    n    n |   10.73%  1.2778  -12.19%    Y    n |  0.662  3.55
+    BLEND   0.10 |    11.65%  1.1867  -14.43%  1.222/ 1.154    Y    n |   12.68%  1.2801  -14.43%    Y    n |  0.769  3.14
+    BLEND   0.12 |    13.17%  1.2003  -16.30%  1.248/ 1.157    Y    n |   14.02%  1.2664  -16.30%    Y    n |  0.841  2.59
+    BLEND   0.16 |    15.25%  1.2047  -19.78%  1.289/ 1.129    Y    n |   15.57%  1.2207  -19.78%    Y    n |  0.923  1.93
+    BLEND   0.20 |    16.25%  1.1857  -20.99%  1.271/ 1.111    n    n |   16.53%  1.1928  -20.99%    n    n |  0.960  1.61
+
+  B136
+    src        t | FULL CAGR  Sharpe    MaxDD         H1/H2   4b   4a | OOS CAGR  Sharpe    MaxDD   4b   4a |  gross  turn
+    PANEL   0.08 |    10.24%  1.1673  -10.86%  1.267/ 1.072    n    Y |   10.97%  1.2447  -10.86%    Y    Y |  0.675  3.63
+    PANEL   0.10 |    12.20%  1.1821  -13.46%  1.280/ 1.087    Y    n |   12.68%  1.2383  -13.46%    Y    n |  0.781  3.10
+    PANEL   0.12 |    13.68%  1.1921  -16.01%  1.299/ 1.089    Y    n |   13.86%  1.2220  -16.01%    Y    n |  0.848  2.56
+    PANEL   0.16*|    15.94%  1.2050  -18.76%  1.344/ 1.071    Y    n |   15.36%  1.1839  -18.76%    Y    n |  0.925  1.93
+    PANEL   0.20 |    17.17%  1.1971  -20.46%  1.328/ 1.071    n    n |   16.46%  1.1726  -20.46%    n    n |  0.960  1.61
+    SPY     0.08 |     9.64%  1.1626  -10.23%  1.272/ 1.051    n    Y |   10.05%  1.2394  -10.23%    n    Y |  0.639  3.64
+    SPY     0.10 |    11.70%  1.1889  -12.69%  1.287/ 1.089    Y    n |   11.96%  1.2526  -12.69%    Y    n |  0.747  3.32
+    SPY     0.12 |    13.26%  1.2035  -15.10%  1.308/ 1.098    Y    n |   13.29%  1.2408  -15.10%    Y    n |  0.820  2.80
+    SPY     0.16 |    15.55%  1.2112  -18.32%  1.344/ 1.080    Y    n |   14.93%  1.1986  -18.32%    Y    n |  0.909  2.10
+    SPY     0.20 |    16.95%  1.2054  -19.91%  1.341/ 1.073    Y    n |   16.11%  1.1779  -19.91%    Y    n |  0.951  1.72
+    BLEND   0.08 |     9.92%  1.1655  -10.53%  1.271/ 1.061    n    Y |   10.47%  1.2423  -10.53%    n    Y |  0.656  3.63
+    BLEND   0.10 |    12.00%  1.1908  -13.06%  1.285/ 1.097    Y    n |   12.41%  1.2538  -13.06%    Y    n |  0.764  3.23
+    BLEND   0.12 |    13.47%  1.1975  -15.55%  1.305/ 1.091    Y    n |   13.55%  1.2292  -15.55%    Y    n |  0.835  2.66
+    BLEND   0.16 |    15.77%  1.2094  -18.53%  1.345/ 1.077    Y    n |   15.17%  1.1927  -18.53%    Y    n |  0.917  2.00
+    BLEND   0.20 |    17.07%  1.2012  -20.18%  1.336/ 1.071    Y    n |   16.29%  1.1744  -20.18%    Y    n |  0.956  1.66
+
+  SMALL665
+    src        t | FULL CAGR  Sharpe    MaxDD         H1/H2   4b   4a | OOS CAGR  Sharpe    MaxDD   4b   4a |  gross  turn
+    PANEL   0.08 |     4.52%  0.5457  -21.87%  0.809/ 0.281    n    n |    2.90%  0.3700  -21.87%    n    n |  0.547  3.37
+    PANEL   0.10 |     5.77%  0.5747  -24.68%  0.864/ 0.296    n    n |    3.66%  0.3870  -24.68%    n    n |  0.662  3.49
+    PANEL   0.12 |     6.62%  0.5775  -27.60%  0.897/ 0.289    n    n |    3.99%  0.3727  -27.60%    n    n |  0.754  3.42
+    PANEL   0.16*|     8.49%  0.6173  -31.40%  0.991/ 0.329    n    n |    5.24%  0.4022  -31.40%    n    n |  0.876  3.06
+    PANEL   0.20 |    10.26%  0.6678  -33.78%  1.010/ 0.434    n    n |    7.45%  0.4901  -33.78%    n    n |  0.939  2.59
+    SPY     0.08 |     6.35%  0.6109  -22.56%  0.860/ 0.422    n    n |    4.95%  0.4662  -22.56%    n    n |  0.661  4.03
+    SPY     0.10 |     8.13%  0.6672  -23.95%  0.927/ 0.483    n    n |    6.45%  0.5187  -23.95%    n    n |  0.769  3.75
+    SPY     0.12 |     9.42%  0.7011  -25.93%  0.954/ 0.532    n    n |    7.66%  0.5562  -25.93%    n    n |  0.841  3.29
+    SPY     0.16 |    11.20%  0.7379  -28.72%  1.005/ 0.569    n    n |    9.11%  0.5862  -28.72%    n    n |  0.923  2.71
+    SPY     0.20 |    12.28%  0.7542  -30.86%  1.019/ 0.594    n    n |   10.27%  0.6129  -30.86%    n    n |  0.960  2.43
+    BLEND   0.08 |     5.23%  0.5768  -22.14%  0.827/ 0.345    n    n |    3.65%  0.4124  -22.14%    n    n |  0.594  3.54
+    BLEND   0.10 |     6.55%  0.6026  -24.53%  0.888/ 0.355    n    n |    4.51%  0.4265  -24.53%    n    n |  0.712  3.56
+    BLEND   0.12 |     7.74%  0.6267  -26.35%  0.934/ 0.382    n    n |    5.29%  0.4398  -26.35%    n    n |  0.799  3.40
+    BLEND   0.16 |    10.04%  0.6885  -30.12%  1.005/ 0.467    n    n |    7.35%  0.5073  -30.12%    n    n |  0.908  2.81
+    BLEND   0.20 |    11.51%  0.7247  -32.23%  1.018/ 0.536    n    n |    9.24%  0.5720  -32.23%    n    n |  0.955  2.41
+
+==============================================================================================================
+PASS-SHARE BY SOURCE — over the 4 published conventions (L,d) at each (panel, t), 10 bps
+==============================================================================================================
+  panel     src        t   n  4b FULL   4b OOS  4b BOTH  4a FULL   4a OOS |  TWIN 4b F  TWIN 4b O
+  U56       PANEL   0.08   4    0.000    1.000    0.000    0.000    0.000 |      0.250      0.000
+  U56       PANEL   0.10   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  U56       PANEL   0.12   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  U56       PANEL   0.16   4    0.500    0.500    0.500    0.000    0.000 |      0.000      0.000
+  U56       PANEL   0.20   4    0.250    0.250    0.250    0.000    0.000 |      0.000      0.000
+  U56       SPY     0.08   4    0.000    0.000    0.000    0.000    0.000 |      1.000      0.750
+  U56       SPY     0.10   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  U56       SPY     0.12   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  U56       SPY     0.16   4    0.750    0.750    0.750    0.000    0.000 |      0.000      0.000
+  U56       SPY     0.20   4    0.250    0.250    0.250    0.000    0.000 |      0.000      0.000
+  U56       BLEND   0.08   4    0.000    0.250    0.000    0.000    0.000 |      0.750      0.250
+  U56       BLEND   0.10   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  U56       BLEND   0.12   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  U56       BLEND   0.16   4    0.750    0.750    0.750    0.000    0.000 |      0.000      0.000
+  U56       BLEND   0.20   4    0.250    0.250    0.250    0.000    0.000 |      0.000      0.000
+  B136      PANEL   0.08   4    0.000    0.250    0.000    0.500    0.500 |      0.000      0.000
+  B136      PANEL   0.10   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  B136      PANEL   0.12   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  B136      PANEL   0.16   4    0.750    0.750    0.750    0.000    0.000 |      0.000      0.000
+  B136      PANEL   0.20   4    0.250    0.250    0.250    0.000    0.000 |      0.000      0.000
+  B136      SPY     0.08   4    0.000    0.000    0.000    0.500    0.500 |      0.000      0.000
+  B136      SPY     0.10   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  B136      SPY     0.12   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  B136      SPY     0.16   4    0.750    0.750    0.750    0.000    0.000 |      0.000      0.000
+  B136      SPY     0.20   4    0.500    0.500    0.500    0.000    0.000 |      0.000      0.000
+  B136      BLEND   0.08   4    0.000    0.000    0.000    0.500    0.500 |      0.000      0.000
+  B136      BLEND   0.10   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  B136      BLEND   0.12   4    1.000    1.000    1.000    0.000    0.000 |      0.000      0.000
+  B136      BLEND   0.16   4    0.750    0.750    0.750    0.000    0.000 |      0.000      0.000
+  B136      BLEND   0.20   4    0.500    0.500    0.500    0.000    0.000 |      0.000      0.000
+  SMALL665  PANEL   0.08   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  PANEL   0.10   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  PANEL   0.12   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  PANEL   0.16   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  PANEL   0.20   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  SPY     0.08   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  SPY     0.10   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  SPY     0.12   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  SPY     0.16   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  SPY     0.20   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  BLEND   0.08   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  BLEND   0.10   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  BLEND   0.12   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  BLEND   0.16   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+  SMALL665  BLEND   0.20   4    0.000    0.000    0.000    0.000    0.000 |      0.000      0.000
+
+  SOURCE TOTALS (all panels x targets x conventions, 10 bps):
+    src       n  4b FULL   4b OOS  4b BOTH   4a OOS  mean gross  mean turn
+    PANEL    60    0.383    0.467    0.383    0.033       0.813       2.93
+    SPY      60    0.417    0.417    0.417    0.033       0.818       3.06
+    BLEND    60    0.417    0.433    0.417    0.033       0.816       2.96
+
+  U56 + B136 ONLY (the panels the candidate lives on):
+    PANEL    40    0.575    0.700    0.575    0.050
+    SPY      40    0.625    0.625    0.625    0.050
+    BLEND    40    0.625    0.650    0.625    0.050
+
+  WHICH 4b LEG FAILS, per panel x source (all t x conventions, 10 bps):
+    U56       PANEL  FULL L1_H1 0.000 L2_H2 0.000 L4_DD 0.250 L5_CAGR 0.200   OOS L1_H1 0.000 L2_H2 0.000 L4_DD 0.250 L5_CAGR 0.000
+    U56       SPY    FULL L1_H1 0.000 L2_H2 0.000 L4_DD 0.200 L5_CAGR 0.200   OOS L1_H1 0.000 L2_H2 0.000 L4_DD 0.200 L5_CAGR 0.200
+    U56       BLEND  FULL L1_H1 0.000 L2_H2 0.000 L4_DD 0.200 L5_CAGR 0.200   OOS L1_H1 0.000 L2_H2 0.000 L4_DD 0.200 L5_CAGR 0.150
+    B136      PANEL  FULL L1_H1 0.000 L2_H2 0.000 L4_DD 0.200 L5_CAGR 0.200   OOS L1_H1 0.000 L2_H2 0.000 L4_DD 0.200 L5_CAGR 0.150
+    B136      SPY    FULL L1_H1 0.000 L2_H2 0.000 L4_DD 0.150 L5_CAGR 0.200   OOS L1_H1 0.000 L2_H2 0.000 L4_DD 0.150 L5_CAGR 0.200
+    B136      BLEND  FULL L1_H1 0.000 L2_H2 0.000 L4_DD 0.150 L5_CAGR 0.200   OOS L1_H1 0.000 L2_H2 0.000 L4_DD 0.150 L5_CAGR 0.200
+    SMALL665  PANEL  FULL L1_H1 0.500 L2_H2 1.000 L4_DD 0.950 L5_CAGR 0.850   OOS L1_H1 1.000 L2_H2 1.000 L4_DD 0.950 L5_CAGR 1.000
+    SMALL665  SPY    FULL L1_H1 0.250 L2_H2 1.000 L4_DD 1.000 L5_CAGR 0.600   OOS L1_H1 0.900 L2_H2 1.000 L4_DD 1.000 L5_CAGR 0.950
+    SMALL665  BLEND  FULL L1_H1 0.450 L2_H2 1.000 L4_DD 1.000 L5_CAGR 0.750   OOS L1_H1 1.000 L2_H2 1.000 L4_DD 1.000 L5_CAGR 1.000
+
+  COST LADDER (4b OOS pass count over the 20 t x convention cells, per panel x source):
+    U56       PANEL  0bps 15/20  10bps 15/20  25bps 11/20  50bps  9/20
+    U56       SPY    0bps 13/20  10bps 12/20  25bps 12/20  50bps  6/20
+    U56       BLEND  0bps 15/20  10bps 13/20  25bps 12/20  50bps  7/20
+    B136      PANEL  0bps 16/20  10bps 13/20  25bps 12/20  50bps 11/20
+    B136      SPY    0bps 13/20  10bps 13/20  25bps 12/20  50bps  9/20
+    B136      BLEND  0bps 14/20  10bps 13/20  25bps 12/20  50bps 11/20
+    SMALL665  PANEL  0bps  0/20  10bps  0/20  25bps  0/20  50bps  0/20
+    SMALL665  SPY    0bps  0/20  10bps  0/20  25bps  0/20  50bps  0/20
+    SMALL665  BLEND  0bps  0/20  10bps  0/20  25bps  0/20  50bps  0/20
+
+==============================================================================================================
+CONTROL — EACH BOOK vs ITS OWN REALISED-MEAN-GROSS-MATCHED CONSTANT-GROSS TWIN (10 bps)
+==============================================================================================================
+  panel     src      dSharpe    dMaxDD    win |  OOS dSharpe  OOS dMaxDD  OOS win |  4b OOS book  twin
+  U56       PANEL     0.0640     7.95pp  1.000 |       0.1114       8.03pp    1.000 |       15/20     0
+  U56       SPY       0.0442     7.51pp  0.900 |       0.0927       7.66pp    1.000 |       12/20     3
+  U56       BLEND     0.0551     7.71pp  0.950 |       0.1021       7.83pp    1.000 |       13/20     1
+  B136      PANEL     0.0578    11.12pp  0.950 |       0.1016      11.59pp    1.000 |       13/20     0
+  B136      SPY       0.0642    11.02pp  0.950 |       0.1112      11.20pp    1.000 |       13/20     0
+  B136      BLEND     0.0616    11.09pp  0.950 |       0.1069      11.42pp    1.000 |       13/20     0
+  SMALL665  PANEL    -0.1294     6.68pp  0.000 |      -0.2238       4.88pp    0.000 |        0/20     0
+  SMALL665  SPY      -0.0297    10.98pp  0.350 |      -0.0706      10.52pp    0.150 |        0/20     0
+  SMALL665  BLEND    -0.0808     8.90pp  0.150 |      -0.1510       7.75pp    0.000 |        0/20     0
+
+==============================================================================================================
+RULE 8 — (t, src) CHOSEN ON 2009..2016-12-31 ONLY; 2017-01-01..2026 READ ONCE
+==============================================================================================================
+  Choosers, all IS-only and all legal (they see nothing after 2016-12-31):
+    C_ISSHARPE  argmax IS Sharpe
+    C_ISLEGS    max IS 4b-leg count, tie-break on IS Sharpe
+    C_ISDD      argmin IS MaxDD (the leg the candidate's margin sits on)
+    C_MEMO      the memo's own cell (src=PANEL, t=0.16), i.e. no choice at all — control
+  Arms: FIXEDCONV chooses (t, src) at the memo convention (L=20, d=0);
+        FREECONV  chooses (t, src, L, d) jointly — the honest 4-dial read;
+        SRC=<x>   chooses t ONLY inside one source, at the memo convention.
+
+  panel     arm        chooser     pick                    OOS CAGR  OOS Sharpe  OOS MaxDD   4b OOS  4a OOS    vs SPY  vs LIVE
+  U56       FIXEDCONV  C_ISSHARPE  SPY t0.20 L20 d0          16.23%      1.1955    -20.91%     fail    fail   +0.3217  -0.0813
+  U56       FIXEDCONV  C_ISLEGS    PANEL t0.12 L20 d0        14.56%      1.2728    -16.44%     PASS    fail   +0.3990  -0.0041
+  U56       FIXEDCONV  C_ISDD      SPY t0.08 L20 d0          10.18%      1.2569    -12.07%     fail    fail   +0.3831  -0.0200
+  U56       FIXEDCONV  C_MEMO      PANEL t0.16 L20 d0        15.94%      1.2196    -19.86%     PASS    fail   +0.3457  -0.0573
+  U56       FREECONV   C_ISSHARPE  SPY t0.20 L20 d1          16.02%      1.1761    -21.26%     fail    fail   +0.3023  -0.1008
+  U56       FREECONV   C_ISLEGS    BLEND t0.16 L40 d0        15.52%      1.1938    -19.68%     PASS    fail   +0.3199  -0.0831
+  U56       FREECONV   C_ISDD      SPY t0.08 L20 d1           9.89%      1.2041    -12.70%     fail    fail   +0.3302  -0.0728
+  U56       FREECONV   C_MEMO      PANEL t0.16 L20 d1        15.76%      1.2012    -20.77%     fail    fail   +0.3273  -0.0757
+  U56       SRC=PANEL  C_ISSHARPE  PANEL t0.16 L20 d0        15.94%      1.2196    -19.86%     PASS    fail   +0.3457  -0.0573
+  U56       SRC=PANEL  C_ISDD      PANEL t0.08 L20 d0        11.38%      1.2999    -12.28%     PASS    fail   +0.4261  +0.0231
+  U56       SRC=SPY    C_ISSHARPE  SPY t0.20 L20 d0          16.23%      1.1955    -20.91%     fail    fail   +0.3217  -0.0813
+  U56       SRC=SPY    C_ISDD      SPY t0.08 L20 d0          10.18%      1.2569    -12.07%     fail    fail   +0.3831  -0.0200
+  U56       SRC=BLEND  C_ISSHARPE  BLEND t0.16 L20 d0        15.57%      1.2207    -19.78%     PASS    fail   +0.3469  -0.0561
+  U56       SRC=BLEND  C_ISDD      BLEND t0.08 L20 d0        10.73%      1.2778    -12.19%     PASS    fail   +0.4039  +0.0009
+  B136      FIXEDCONV  C_ISSHARPE  SPY t0.20 L20 d0          16.11%      1.1779    -19.91%     PASS    fail   +0.3041  +0.0760
+  B136      FIXEDCONV  C_ISLEGS    SPY t0.12 L20 d0          13.29%      1.2408    -15.10%     PASS    fail   +0.3670  +0.1389
+  B136      FIXEDCONV  C_ISDD      SPY t0.08 L20 d0          10.05%      1.2394    -10.23%     fail    PASS   +0.3656  +0.1375
+  B136      FIXEDCONV  C_MEMO      PANEL t0.16 L20 d0        15.36%      1.1839    -18.76%     PASS    fail   +0.3101  +0.0820
+  B136      FREECONV   C_ISSHARPE  SPY t0.20 L20 d1          15.81%      1.1535    -20.52%     fail    fail   +0.2797  +0.0516
+  B136      FREECONV   C_ISLEGS    SPY t0.12 L20 d0          13.29%      1.2408    -15.10%     PASS    fail   +0.3670  +0.1389
+  B136      FREECONV   C_ISDD      SPY t0.08 L40 d0           9.81%      1.2157    -13.12%     fail    fail   +0.3418  +0.1137
+  B136      FREECONV   C_MEMO      PANEL t0.16 L20 d1        15.14%      1.1621    -19.30%     PASS    fail   +0.2883  +0.0602
+  B136      SRC=PANEL  C_ISSHARPE  PANEL t0.16 L20 d0        15.36%      1.1839    -18.76%     PASS    fail   +0.3101  +0.0820
+  B136      SRC=PANEL  C_ISDD      PANEL t0.08 L20 d0        10.97%      1.2447    -10.86%     PASS    PASS   +0.3709  +0.1428
+  B136      SRC=SPY    C_ISSHARPE  SPY t0.20 L20 d0          16.11%      1.1779    -19.91%     PASS    fail   +0.3041  +0.0760
+  B136      SRC=SPY    C_ISDD      SPY t0.08 L20 d0          10.05%      1.2394    -10.23%     fail    PASS   +0.3656  +0.1375
+  B136      SRC=BLEND  C_ISSHARPE  BLEND t0.20 L20 d0        16.29%      1.1744    -20.18%     PASS    fail   +0.3006  +0.0725
+  B136      SRC=BLEND  C_ISDD      BLEND t0.08 L20 d0        10.47%      1.2423    -10.53%     fail    PASS   +0.3684  +0.1404
+  SMALL665  FIXEDCONV  C_ISSHARPE  SPY t0.20 L20 d0          10.27%      0.6129    -30.86%     fail    fail   -0.2610  +0.0649
+  SMALL665  FIXEDCONV  C_ISLEGS    SPY t0.20 L20 d0          10.27%      0.6129    -30.86%     fail    fail   -0.2610  +0.0649
+  SMALL665  FIXEDCONV  C_ISDD      PANEL t0.08 L20 d0         2.90%      0.3700    -21.87%     fail    fail   -0.5039  -0.1780
+  SMALL665  FIXEDCONV  C_MEMO      PANEL t0.16 L20 d0         5.24%      0.4022    -31.40%     fail    fail   -0.4716  -0.1457
+  SMALL665  FREECONV   C_ISSHARPE  SPY t0.20 L10 d0          11.12%      0.6554    -27.16%     fail    fail   -0.2185  +0.1074
+  SMALL665  FREECONV   C_ISLEGS    SPY t0.20 L10 d0          11.12%      0.6554    -27.16%     fail    fail   -0.2185  +0.1074
+  SMALL665  FREECONV   C_ISDD      PANEL t0.08 L20 d1         2.54%      0.3289    -21.92%     fail    fail   -0.5450  -0.2190
+  SMALL665  FREECONV   C_MEMO      PANEL t0.16 L20 d1         4.90%      0.3815    -32.20%     fail    fail   -0.4924  -0.1665
+  SMALL665  SRC=PANEL  C_ISSHARPE  PANEL t0.20 L20 d0         7.45%      0.4901    -33.78%     fail    fail   -0.3837  -0.0578
+  SMALL665  SRC=PANEL  C_ISDD      PANEL t0.08 L20 d0         2.90%      0.3700    -21.87%     fail    fail   -0.5039  -0.1780
+  SMALL665  SRC=SPY    C_ISSHARPE  SPY t0.20 L20 d0          10.27%      0.6129    -30.86%     fail    fail   -0.2610  +0.0649
+  SMALL665  SRC=SPY    C_ISDD      SPY t0.08 L20 d0           4.95%      0.4662    -22.56%     fail    fail   -0.4076  -0.0817
+  SMALL665  SRC=BLEND  C_ISSHARPE  BLEND t0.16 L20 d0         7.35%      0.5073    -30.12%     fail    fail   -0.3665  -0.0406
+  SMALL665  SRC=BLEND  C_ISDD      BLEND t0.08 L20 d0         3.65%      0.4124    -22.14%     fail    fail   -0.4614  -0.1355
+
+  RULE 8 TOTALS: 4b OOS 16/42 picks, 4a OOS 4/42; the matched TWIN of the same picks clears 4b OOS 3/42.
+  EXCLUDING the no-choice control C_MEMO: 4b OOS 13/36, 4a OOS 4/36.
+  Which SOURCE does a free chooser buy? PANEL 3, SPY 14, BLEND 1
+
+==============================================================================================================
+VERDICT AGAINST THE PRE-STATED RULES V1-V5
+==============================================================================================================
+  V1 U56   @ t=0.16 L20 d0:  PANEL 4b FULL Y OOS Y (15.94%/1.2196/-19.86%)   SPY 4b FULL Y OOS Y (15.18%/1.2192/-19.48%)  -> REPRODUCES
+  V1 B136  @ t=0.16 L20 d0:  PANEL 4b FULL Y OOS Y (15.36%/1.1839/-18.76%)   SPY 4b FULL Y OOS Y (14.93%/1.1986/-18.32%)  -> REPRODUCES
+  V2 SMALL665 with a non-PANEL sigma source: 4b FULL and OOS together 0/40 -> NOT triggered (SMALL failure is a PANEL-RETURN fact; premise KILLED)
+  V3 no legal IS-only chooser reaches a 4b-OOS cell: 13/36 -> not triggered
+  V4 twin clears 4b OOS at least as often as the book: 4 vs 79 -> not triggered
+  V5 convention+rung pass-share on U56+B136, 4b OOS: PANEL 0.700, SPY 0.625, BLEND 0.650 -> SPY NOT more robust than PANEL
+
+  GATES 19/19  (ALL PASS)   runtime 180.1s
+  SURVIVORSHIP: U56 and B136 are CURRENT constituents; SMALL665 is a current sub-$2B screen (names with max_1d_move >= 1.0 dropped).  Every pass-count above is the OPTIMISTIC read.
+  RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are UNTOUCHED by this run (rule 6).

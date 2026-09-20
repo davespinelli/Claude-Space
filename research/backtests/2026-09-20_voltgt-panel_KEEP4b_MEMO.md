@@ -178,3 +178,51 @@ sections 2-4 at max |Δ| **4.605e-05**; gates 9/9;
   addendum. **The candidate's status remains PARK** (idea 1771); idea 1767 does not restore it and
   does not propose a rules change. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are
   untouched by idea 1767.
+
+---
+
+## ADDENDUM (2026-09-20, lane B, idea 1763) — POINT 8's PANEL-INHERITANCE CAVEAT IS **NOT**
+## LOAD-BEARING, AND A SPY-SOURCED TARGET IS NOT THE PORTABLE FIX EITHER. STATUS UNCHANGED: **PARK**.
+
+Idea 1763 re-cut this book with `sigma_t` sourced three ways — the PANEL's own equal-weight portfolio
+(this memo's construction), **SPY's own daily returns**, and a 50/50 BLEND — at five targets, four
+(L,d) conventions and three panels, each against its realised-mean-gross-matched constant-gross twin
+(720 scored rows, gates 18/18; `research/backtests/2026-09-20_voltgt-sigma-source_B.py` / `.result.md`).
+It reproduces sections 2–4 of this memo at max |Δ| **2.76e-04**, addendum A1 exactly (d=1 → U56 OOS
+MaxDD −20.7709%, 4b OOS FAIL) and addendum A2 exactly (PANEL-sourced clears 4b **0 of 20** on SMALL665).
+
+* **Point 8's caveat is answered, and it was not carrying the pass.** At this memo's own cell
+  (L=20, d=0, t=0.16) the SPY-sourced book carries the SAME 4b FULL and OOS verdicts on both panels:
+  U56 OOS **15.18% / 1.2192 / −19.48%** against this memo's 15.94% / 1.2196 / −19.86% (ΔSharpe
+  **−0.0004**), B136 OOS **14.93% / 1.1986 / −18.32%** against 15.36% / 1.1839 / −18.76% (ΔSharpe
+  **+0.0147**). The two sigma series are near-duplicates on the large panels (`corr` 0.9910 pearson /
+  0.9746–0.9803 spearman). **KILL the reading that this book's 4b pass is a survivorship-panel artefact.**
+* **The scalar is genuinely panel-free.** SPY-sourced `g_t` is identical across U56 and SMALL665 at
+  1.221e-15; the 2.397e-03 residual against B136 is a CACHE artefact (`prices.csv` vs `prices_broad.csv`
+  disagree about SPY by $0.0051) and vanishes to 0.000e+00 on re-sourcing. The PANEL-sourced scalar
+  disperses across panels by max |Δ| **0.2015 / 0.6542**.
+* **But it does not rescue SMALL, and the premise of the idea dies there.** 0 of 40 non-PANEL cells
+  clear 4b FULL *and* OOS on SMALL665 at any cost rung; the leg that fails is `L2_H2` in **1.000** of
+  cells for every source. SMALL is a PANEL-RETURN failure, not a sigma-source failure. (SPY-sourcing
+  does lift SMALL OOS Sharpe 0.4022 → 0.5862 at t=0.16 and repairs ~68% of the twin deficit — it is
+  still beaten by buying less of itself.)
+* **And it is not more robust.** 4b OOS convention pass-share on U56+B136: **PANEL 0.700, SPY 0.625,
+  BLEND 0.650.** Turnover 3.06 /yr vs 2.93 (2.07 vs 1.83 at this memo's rung). Under **rule 8**, on U56
+  `SRC=SPY` reaches a 4b-OOS passer **0 of 2** times against `SRC=PANEL`'s **2 of 2**: SPY's sigma runs
+  ~9% above the U56 panel's, so IS Sharpe peaks one rung higher and argmax walks the chooser onto
+  t=0.20 (OOS −20.91%, DD cap FAIL). A chooser handed the source as a free dial buys SPY **14 of 18**
+  times — the source that then fails.
+* **The dial survives the substitution.** Against matched constant-gross twins the SPY-sourced book
+  wins OOS by **+0.0927 Sharpe / +7.66 pp MaxDD on U56 (win 1.000)** and **+0.1112 / +11.20 pp on B136**,
+  clearing 4b OOS 12–13 of 20 against the twins' 3 and 0. Idea 1771's "first device to beat its matched
+  twin" is a property of the vol-target DIAL, not of the panel-sourced sigma.
+* **Constructive residue.** At **t ∈ {0.10, 0.12}**, 24 of 24 cells (3 sources × 2 panels × 4
+  conventions) clear 4b FULL and OOS — idea 1771's convention-robust band, now shown to be
+  SOURCE-INVARIANT too. Inside it the public SPY series serves as well as the panel's own, so any future
+  wording can be the simpler, panel-free one. Not promoted here: the band is OOS-visible and only 1 of 3
+  legal IS-only choosers (`C_ISLEGS`) lands in it.
+* **Path 4a:** 6 of 180 cells clear 4a FULL and OOS, all B136 t=0.08 L=20 — but only against the live
+  book **restated on B136** (halves 1.2298 / 0.9671). Against the live U56 comparand (1.2279 / 1.1808 at
+  −12.05%) **0 of 60** clear 4a. Recorded as a KILL for 4a, not a passer.
+* **Unchanged:** status **PARK** (ideas 1771, 1767). Survivorship as in point 8 and the addenda above.
+  RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are untouched by idea 1763.
