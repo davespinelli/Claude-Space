@@ -1,0 +1,336 @@
+Idea 908 (lane cloud, 2026-09-21) — IS THERE ANY DIAL ON WHICH THE TWO 4b *LEVEL* LEGS
+MOVE THE SAME WAY, OR IS EVERY PASS BOUGHT BY TRADING ONE LEG FOR THE OTHER?
+
+THE QUESTION.  PROTOCOL path 4b has three RATIO legs (H1 / H2 / OOS Sharpe vs SPY) and two
+LEVEL legs: L4_DD (|MaxDD| <= 0.60 x |SPY|) and L5_CAGR (CAGR >= 0.70 x SPY).  Idea 887 turned
+one dial, k/n, and found the two level legs EXACTLY anti-monotone (rho +1.000 / -1.000 under
+DEGROSS; 0 of 90 slices agreeing in sign), i.e. every 4b pass it found sits where the dial has
+already stopped buying.  Today's idea 2042 (lane cloud, same run) independently found the same
+two legs are the BINDING ones at 48 of 48 passing-cell readings and that no 4b pass in its grid
+survives its own error bar.  So the axis matters: if some dial moves BOTH level legs in the
+passing direction, that dial is where a capital-worthy book can live.  This run searches eight
+dials on two panels under both weight conventions and reports whether ANY exists.
+
+THE TWO TUNED PARAMETERS (PROTOCOL rule 4; every grid point reported, none hidden):
+    P1  dial  which ladder is turned        {GROSS, BAND, COUNT, MAXVOL, VOLTGT, MALEN, QELIG, CADENCE}
+    P2  rung  where on that ladder          (4-6 rungs per dial; every rung published)
+    These are ALSO the two dials the rule-8 chooser is allowed to pick over, so rule 8 is a test
+    of this run's own tuning and not an add-on.  Nothing else is tuned.
+
+REPORTED, NOT TUNED: panel {U56, B136}; weight convention {DEGROSS (gated weight -> cash, the
+live book's convention), RESPREAD (gated weight re-spread over survivors, gross held)} wherever
+a dial has an eligibility gate; cost {10 bps headline, plus a 0 / 25 / 50 bps ladder derived
+exactly from turnover, never re-run}; cadence W (the live book's) except on the CADENCE dial.
+
+PRE-REGISTERED BARS, written before any number below was read:
+    B1  CO-MOVE.  A dial co-moves if rho_spearman(rung, L4_DD) and rho_spearman(rung, L5_CAGR)
+        share a sign with |rho| >= 0.60 on BOTH, on BOTH panels, under every convention it has.
+    B2  STEP AGREEMENT.  Adjacent-rung steps where dL4 and dL5 share a sign, >= 0.75 of steps.
+    B3  A dial that clears B1 and B2 is reported as an AXIS WORTH TURNING only if some rung on
+        it also clears 4b outright (all five legs) at 10 bps with next-day execution.
+    A dial failing B1/B2 is reported as anti-monotone (887's finding replicated on a new axis),
+    which is a KILL of that axis, not of the dial's book.
+
+PROTOCOL: rule 2 (10 bps, t+1 via engine.backtest, gross <= 1.00, no shorting/leverage); rule 3
+(live RULES v2 AND SPY at every cell); rule 4 (BOTH KEEP paths at every cell, <= 2 tuned
+parameters, all grid points reported); rule 5 (one idea, deterministic, standalone); rule 8
+(walk-forward: (dial, rung) chosen on 2009-2016 ONLY by pre-registered IS-only choosers,
+2017-2026 read exactly once); rule 9 (survivorship stated).  RULES.md, PROTOCOL.md, scan.py,
+bot.py and baseline.py are NOT modified.
+
+SURVIVORSHIP.  U56 and B136 are CURRENT-constituent lists, so CAGR and MaxDD LEVELS are
+optimistic and both 4b level bars are easier than on a point-in-time panel.  The co-movement
+question is about the SIGN of a within-panel gradient and is first-order robust to that; the
+pass counts are not.
+
+Runs standalone and offline (committed caches only):
+  python research/backtests/2026-09-21_do-the-two-4b-level-legs-ever-co-move_cloud.py
+
+========================================================================================================
+Sample 2009-01-13 .. 2026-09-18 (4448 days after 260-day warm-up); IS <= 2016-12-31 (2007), OOS >= 2017-01-01 (2441).
+SPY: CAGR 15.12%  Sharpe 0.8843  MaxDD -33.72%  H1 0.9570  H2 0.8249  OOS 0.8737 / CAGR 15.26% / MaxDD -33.72%
+RULES v2 live (U56): CAGR 8.62%  Sharpe 1.2010  MaxDD -12.05%  H1 1.2276  H2 1.1805  OOS 1.2766 / CAGR 9.46% / MaxDD -12.05%
+RULES v2 live (B136): CAGR 7.96%  Sharpe 1.0972  MaxDD -12.24%  H1 1.2296  H2 0.9669  OOS 1.1017 / CAGR 7.85% / MaxDD -12.24%
+
+--------------------------------------------------------------------------------------------------------
+SECTION 1 — EVERY RUNG (130 books: 2 panels x 8 dials x rungs x conventions), 10 bps, t+1, cadence W unless the dial IS cadence.
+
+  DIAL GROSS — gross of NAV, band 0.03
+    panel    conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe   turn  L4_DD  L5_CAGR  pass4a  pass4b
+      U56 DEGROSS 0.25 0.0285  1.2009 -0.0410 1.2262 1.1816      1.2776 0.6063 0.1613  -0.0774   False   False
+      U56 DEGROSS  0.5 0.0572  1.2010 -0.0812 1.2270 1.1811      1.2772 1.1948 0.1211  -0.0486   False   False
+      U56 DEGROSS 0.75 0.0862  1.2010 -0.1205 1.2276 1.1805      1.2766 1.7736 0.0818  -0.0197   False   False
+      U56 DEGROSS  1.0 0.1153  1.2008 -0.1591 1.2282 1.1798      1.2759 2.3519 0.0432   0.0095   False    True
+     B136 DEGROSS 0.25 0.0264  1.0970 -0.0416 1.2271 0.9686      1.1034 0.6867 0.1607  -0.0794   False   False
+     B136 DEGROSS  0.5 0.0530  1.0972 -0.0824 1.2284 0.9678      1.1026 1.3545 0.1199  -0.0529   False   False
+     B136 DEGROSS 0.75 0.0796  1.0972 -0.1224 1.2296 0.9669      1.1017 2.0111 0.0799  -0.0263   False   False
+     B136 DEGROSS  1.0 0.1063  1.0971 -0.1616 1.2306 0.9658      1.1006 2.6664 0.0407   0.0004   False    True
+
+  DIAL BAND — 200d band half-width c, gross 0.75
+    panel     conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe   turn   L4_DD  L5_CAGR  pass4a  pass4b
+      U56  DEGROSS  0.0 0.0817  1.1670 -0.1201 1.1828 1.1553      1.2551 3.1327  0.0822  -0.0242   False   False
+      U56  DEGROSS 0.02 0.0847  1.1936 -0.1186 1.2052 1.1862      1.2790 2.1516  0.0837  -0.0212   False   False
+      U56  DEGROSS 0.04 0.0842  1.1683 -0.1256 1.1889 1.1544      1.2512 1.5603  0.0768  -0.0217   False   False
+      U56  DEGROSS 0.06 0.0830  1.1376 -0.1347 1.1845 1.1002      1.2015 1.2952  0.0676  -0.0229   False   False
+      U56  DEGROSS 0.08 0.0850  1.1449 -0.1447 1.2380 1.0685      1.1635 1.1251  0.0576  -0.0208   False   False
+      U56  DEGROSS 0.12 0.0867  1.1465 -0.1215 1.2338 1.0678      1.1676 0.9211  0.0808  -0.0192   False   False
+      U56 RESPREAD  0.0 0.1150  1.0870 -0.1865 1.1682 1.0283      1.1048 7.6068  0.0158   0.0091   False    True
+      U56 RESPREAD 0.02 0.1197  1.1330 -0.1775 1.2030 1.0821      1.1579 5.2685  0.0248   0.0139   False    True
+      U56 RESPREAD 0.04 0.1230  1.1267 -0.1842 1.1562 1.1082      1.1833 3.9071  0.0181   0.0171   False    True
+      U56 RESPREAD 0.06 0.1263  1.1375 -0.1960 1.1625 1.1237      1.1962 3.1876  0.0063   0.0204   False    True
+      U56 RESPREAD 0.08 0.1316  1.1734 -0.1970 1.2655 1.1112      1.1769 2.5997  0.0053   0.0257   False    True
+      U56 RESPREAD 0.12 0.1395  1.2218 -0.1942 1.2617 1.1958      1.2581 1.9322  0.0081   0.0336   False    True
+     B136  DEGROSS  0.0 0.0771  1.0846 -0.1262 1.1982 0.9725      1.1097 3.3240  0.0761  -0.0288   False   False
+     B136  DEGROSS 0.02 0.0798  1.1071 -0.1226 1.2254 0.9903      1.1222 2.3708  0.0797  -0.0261   False   False
+     B136  DEGROSS 0.04 0.0797  1.0882 -0.1267 1.2141 0.9649      1.1018 1.7567  0.0756  -0.0262   False   False
+     B136  DEGROSS 0.06 0.0807  1.0819 -0.1369 1.2191 0.9483      1.0852 1.4436  0.0654  -0.0252   False   False
+     B136  DEGROSS 0.08 0.0849  1.1153 -0.1481 1.2725 0.9638      1.0934 1.2275  0.0542  -0.0209   False   False
+     B136  DEGROSS 0.12 0.0867  1.1040 -0.1481 1.2692 0.9426      1.0773 1.0177  0.0542  -0.0192   False   False
+     B136 RESPREAD  0.0 0.1153  1.0486 -0.2012 1.1573 0.9545      1.0506 7.8435  0.0011   0.0095   False    True
+     B136 RESPREAD 0.02 0.1173  1.0671 -0.1893 1.1761 0.9717      1.0670 5.6528  0.0130   0.0115   False    True
+     B136 RESPREAD 0.04 0.1164  1.0442 -0.1929 1.1257 0.9731      1.0705 4.2397  0.0094   0.0105   False    True
+     B136 RESPREAD 0.06 0.1196  1.0662 -0.2028 1.1418 1.0009      1.0968 3.3436 -0.0005   0.0138   False   False
+     B136 RESPREAD 0.08 0.1248  1.0998 -0.2069 1.2094 1.0074      1.0957 2.7177 -0.0046   0.0190   False   False
+     B136 RESPREAD 0.12 0.1353  1.1690 -0.2174 1.2943 1.0624      1.1490 2.0622 -0.0151   0.0294   False   False
+
+  DIAL COUNT — top-n by 12-1 momentum inside the band, gross 0.75
+    panel     conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe    turn   L4_DD  L5_CAGR  pass4a  pass4b
+      U56  DEGROSS    5 0.2621  1.2110 -0.2845 1.3826 1.1134      1.1307 12.0807 -0.0822   0.1563   False   False
+      U56  DEGROSS   10 0.1895  1.1555 -0.2349 1.2431 1.1101      1.1477  9.9131 -0.0326   0.0836   False   False
+      U56  DEGROSS   20 0.1414  1.1176 -0.1943 1.2756 1.0088      1.0765  7.3259  0.0080   0.0355   False    True
+      U56  DEGROSS   40 0.1087  1.1777 -0.1571 1.2733 1.1044      1.2014  3.0726  0.0452   0.0028   False    True
+      U56  DEGROSS   80 0.0582  1.2067 -0.0837 1.2412 1.1861      1.2786  1.2098  0.1186  -0.0476    True   False
+      U56 RESPREAD    5 0.2621  1.2110 -0.2845 1.3826 1.1134      1.1307 12.0807 -0.0822   0.1563   False   False
+      U56 RESPREAD   10 0.1914  1.1620 -0.2349 1.2431 1.1219      1.1584 10.0614 -0.0326   0.0855   False   False
+      U56 RESPREAD   20 0.1436  1.1013 -0.2057 1.2556 1.0004      1.0651  7.9541 -0.0034   0.0378   False   False
+      U56 RESPREAD   40 0.1202  1.1176 -0.1867 1.2132 1.0500      1.1307  4.8176  0.0156   0.0144   False    True
+      U56 RESPREAD   80 0.1219  1.1573 -0.1771 1.2129 1.1202      1.1954  4.3202  0.0252   0.0160   False    True
+     B136  DEGROSS    5 0.2752  1.1556 -0.3033 1.5372 0.9084      0.9826 13.0571 -0.1010   0.1693   False   False
+     B136  DEGROSS   10 0.2212  1.1395 -0.2549 1.4488 0.9412      1.0275 12.4311 -0.0526   0.1154   False   False
+     B136  DEGROSS   20 0.1623  1.0358 -0.2093 1.2443 0.8887      0.9798 10.9548 -0.0070   0.0564   False   False
+     B136  DEGROSS   40 0.1309  1.0238 -0.2006 1.2347 0.8532      0.9543  8.3212  0.0017   0.0250   False    True
+     B136  DEGROSS   80 0.1096  1.0786 -0.1697 1.2720 0.9077      1.0308  4.5566  0.0326   0.0037   False    True
+     B136 RESPREAD    5 0.2752  1.1556 -0.3033 1.5372 0.9084      0.9826 13.0571 -0.1010   0.1693   False   False
+     B136 RESPREAD   10 0.2214  1.1401 -0.2549 1.4499 0.9412      1.0275 12.4595 -0.0526   0.1155   False   False
+     B136 RESPREAD   20 0.1626  1.0338 -0.2093 1.2239 0.8997      0.9897 11.1140 -0.0070   0.0568   False   False
+     B136 RESPREAD   40 0.1328  1.0107 -0.2072 1.1829 0.8752      0.9709  8.8658 -0.0049   0.0269   False   False
+     B136 RESPREAD   80 0.1192  1.0452 -0.1928 1.2029 0.9086      1.0146  6.0505  0.0095   0.0134   False    True
+
+  DIAL MAXVOL — vol20 ceiling m, gross 0.75
+    panel     conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe   turn  L4_DD  L5_CAGR  pass4a  pass4b
+      U56  DEGROSS  0.3 0.0515  1.0279 -0.0665 1.0925 0.9615      1.1214 2.4454 0.1358  -0.0544   False   False
+      U56  DEGROSS 0.45 0.0726  1.1541 -0.0980 1.1160 1.1911      1.3073 2.0805 0.1043  -0.0333   False   False
+      U56  DEGROSS  0.6 0.0777  1.1505 -0.1092 1.1261 1.1744      1.2696 1.9395 0.0931  -0.0282   False   False
+      U56  DEGROSS  0.8 0.0820  1.1708 -0.1150 1.1909 1.1541      1.2554 1.8486 0.0873  -0.0238   False   False
+      U56  DEGROSS  1.2 0.0850  1.1898 -0.1212 1.2263 1.1601      1.2582 1.7886 0.0811  -0.0208   False   False
+      U56 RESPREAD  0.3 0.0788  0.9606 -0.1988 1.0954 0.8329      0.9607 7.3078 0.0035  -0.0270   False   False
+      U56 RESPREAD 0.45 0.1041  1.1000 -0.1496 1.0894 1.1120      1.2051 5.4232 0.0527  -0.0017   False   False
+      U56 RESPREAD  0.6 0.1121  1.1312 -0.1514 1.1141 1.1499      1.2251 4.8441 0.0509   0.0062   False    True
+      U56 RESPREAD  0.8 0.1137  1.1221 -0.1537 1.1851 1.0711      1.1553 4.5559 0.0486   0.0079   False    True
+      U56 RESPREAD  1.2 0.1192  1.1401 -0.1777 1.2109 1.0887      1.1666 4.3545 0.0246   0.0134   False    True
+     B136  DEGROSS  0.3 0.0495  0.9561 -0.0721 1.1786 0.7115      0.9102 2.9282 0.1302  -0.0563   False   False
+     B136  DEGROSS 0.45 0.0694  1.0616 -0.1020 1.2085 0.9104      1.0616 2.2938 0.1003  -0.0364   False   False
+     B136  DEGROSS  0.6 0.0742  1.0620 -0.1170 1.1984 0.9245      1.0641 2.1251 0.0853  -0.0317   False   False
+     B136  DEGROSS  0.8 0.0780  1.0880 -0.1201 1.2160 0.9605      1.0984 2.0496 0.0822  -0.0279   False   False
+     B136  DEGROSS  1.2 0.0792  1.0940 -0.1227 1.2315 0.9585      1.0941 2.0187 0.0796  -0.0267   False   False
+     B136 RESPREAD  0.3 0.0844  0.9507 -0.1613 1.1559 0.7528      0.8859 8.5907 0.0410  -0.0215   False   False
+     B136 RESPREAD 0.45 0.1000  0.9980 -0.1649 1.1036 0.9000      1.0103 5.7392 0.0374  -0.0059   False   False
+     B136 RESPREAD  0.6 0.1101  1.0543 -0.1680 1.1628 0.9530      1.0564 5.1778 0.0343   0.0042   False    True
+     B136 RESPREAD  0.8 0.1141  1.0702 -0.1688 1.1706 0.9781      1.0802 4.9440 0.0335   0.0083   False    True
+     B136 RESPREAD  1.2 0.1150  1.0544 -0.1855 1.1783 0.9455      1.0444 4.8161 0.0168   0.0092   False    True
+
+  DIAL VOLTGT — book vol target, exposure capped at 1.00
+    panel    conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe   turn  L4_DD  L5_CAGR  pass4a  pass4b
+      U56 DEGROSS 0.06 0.0724  1.1303 -0.0794 1.1316 1.1292      1.2558 3.8175 0.1229  -0.0335   False   False
+      U56 DEGROSS 0.08 0.0885  1.1451 -0.0925 1.1434 1.1473      1.2714 3.4976 0.1098  -0.0174   False   False
+      U56 DEGROSS  0.1 0.0985  1.1480 -0.1149 1.1571 1.1410      1.2553 3.0379 0.0874  -0.0073   False   False
+      U56 DEGROSS 0.14 0.1113  1.1962 -0.1350 1.2151 1.1808      1.2821 2.5180 0.0673   0.0055   False    True
+      U56 DEGROSS  0.2 0.1157  1.2099 -0.1525 1.2306 1.1944      1.2905 2.3568 0.0498   0.0099   False    True
+     B136 DEGROSS 0.06 0.0667  1.0305 -0.0948 1.1540 0.9111      1.0826 4.0509 0.1075  -0.0391   False   False
+     B136 DEGROSS 0.08 0.0815  1.0426 -0.1062 1.1634 0.9253      1.0927 3.7985 0.0961  -0.0244   False   False
+     B136 DEGROSS  0.1 0.0890  1.0320 -0.1187 1.1566 0.9090      1.0655 3.3303 0.0837  -0.0169   False   False
+     B136 DEGROSS 0.14 0.1014  1.0842 -0.1374 1.2105 0.9577      1.0996 2.8371 0.0649  -0.0045   False   False
+     B136 DEGROSS  0.2 0.1067  1.1077 -0.1523 1.2381 0.9784      1.1140 2.6774 0.0500   0.0008   False    True
+
+  DIAL MALEN — trend window length, band 3%, gross 0.75
+    panel     conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe    turn   L4_DD  L5_CAGR  pass4a  pass4b
+      U56  DEGROSS   50 0.0641  0.9801 -0.1167 0.9572 1.0030      1.0955  3.4703  0.0857  -0.0417   False   False
+      U56  DEGROSS  100 0.0693  1.0260 -0.1062 1.1068 0.9485      1.0455  2.5388  0.0961  -0.0365   False   False
+      U56  DEGROSS  150 0.0801  1.1448 -0.1156 1.2284 1.0685      1.1676  2.0550  0.0867  -0.0257   False   False
+      U56  DEGROSS  200 0.0862  1.2010 -0.1205 1.2276 1.1805      1.2766  1.7736  0.0818  -0.0197   False   False
+      U56  DEGROSS  300 0.0837  1.1222 -0.1297 1.1497 1.1032      1.1981  1.5490  0.0726  -0.0222   False   False
+      U56 RESPREAD   50 0.1135  1.0615 -0.2388 1.1503 0.9783      1.0480 10.1264 -0.0365   0.0077   False   False
+      U56 RESPREAD  100 0.1115  1.0532 -0.2161 1.2678 0.8645      0.9457  6.8149 -0.0138   0.0057   False   False
+      U56 RESPREAD  150 0.1166  1.1187 -0.1809 1.2853 0.9819      1.0646  5.1680  0.0214   0.0108   False    True
+      U56 RESPREAD  200 0.1219  1.1567 -0.1771 1.2116 1.1199      1.1950  4.3107  0.0252   0.0161   False    True
+      U56 RESPREAD  300 0.1186  1.1000 -0.1832 1.1915 1.0319      1.1070  3.6396  0.0191   0.0128   False    True
+     B136  DEGROSS   50 0.0612  0.9148 -0.1088 1.0023 0.8209      0.9580  3.7704  0.0935  -0.0447   False   False
+     B136  DEGROSS  100 0.0687  0.9931 -0.1120 1.1701 0.8052      0.9493  2.7479  0.0903  -0.0372   False   False
+     B136  DEGROSS  150 0.0757  1.0683 -0.1185 1.2420 0.8916      1.0328  2.2832  0.0838  -0.0302   False   False
+     B136  DEGROSS  200 0.0796  1.0972 -0.1224 1.2296 0.9669      1.1017  2.0111  0.0799  -0.0263   False   False
+     B136  DEGROSS  300 0.0818  1.0724 -0.1374 1.1954 0.9553      1.0881  1.7202  0.0649  -0.0240   False   False
+     B136 RESPREAD   50 0.1103  1.0063 -0.2183 1.1183 0.8925      0.9958 10.5381 -0.0160   0.0044   False   False
+     B136 RESPREAD  100 0.1114  1.0107 -0.1861 1.2121 0.8143      0.9220  7.1147  0.0162   0.0055   False   False
+     B136 RESPREAD  150 0.1134  1.0385 -0.1831 1.2144 0.8778      0.9828  5.6691  0.0192   0.0075   False    True
+     B136 RESPREAD  200 0.1163  1.0611 -0.1853 1.1721 0.9643      1.0615  4.8005  0.0170   0.0104   False    True
+     B136 RESPREAD  300 0.1191  1.0725 -0.2076 1.2113 0.9559      1.0516  3.8492 -0.0053   0.0133   False   False
+
+  DIAL QELIG — 6m-return percentile floor q, gross 0.75
+    panel     conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe    turn   L4_DD  L5_CAGR  pass4a  pass4b
+      U56  DEGROSS    0 0.0862  1.2010 -0.1205 1.2276 1.1805      1.2766  1.7736  0.0818  -0.0197   False   False
+      U56  DEGROSS   25 0.0768  1.1416 -0.1226 1.1829 1.1092      1.2030  2.8698  0.0797  -0.0291   False   False
+      U56  DEGROSS   50 0.0619  1.1367 -0.0948 1.2086 1.0826      1.1607  3.5574  0.1075  -0.0439   False   False
+      U56  DEGROSS   75 0.0402  1.1323 -0.0547 1.1926 1.0937      1.1443  2.8181  0.1476  -0.0656   False   False
+      U56  DEGROSS   90 0.0249  1.1777 -0.0339 1.3743 1.0397      1.0569  1.5300  0.1684  -0.0809   False   False
+      U56 RESPREAD    0 0.1219  1.1567 -0.1771 1.2116 1.1199      1.1950  4.3107  0.0252   0.0161   False    True
+      U56 RESPREAD   25 0.1197  1.1023 -0.1938 1.1586 1.0641      1.1394  5.9284  0.0085   0.0138   False    True
+      U56 RESPREAD   50 0.1321  1.1093 -0.2037 1.1915 1.0517      1.1221  8.5115 -0.0014   0.0262   False   False
+      U56 RESPREAD   75 0.1641  1.1286 -0.2073 1.1692 1.1089      1.1549 11.8673 -0.0050   0.0582   False   False
+      U56 RESPREAD   90 0.2346  1.1775 -0.2813 1.3637 1.0527      1.0693 14.2276 -0.0789   0.1287   False   False
+     B136  DEGROSS    0 0.0796  1.0972 -0.1224 1.2296 0.9669      1.1017  2.0111  0.0799  -0.0263   False   False
+     B136  DEGROSS   25 0.0725  1.0753 -0.1146 1.2028 0.9529      1.0780  2.9729  0.0877  -0.0334   False   False
+     B136  DEGROSS   50 0.0564  1.0594 -0.0918 1.1997 0.9314      1.0419  3.5877  0.1105  -0.0494   False   False
+     B136  DEGROSS   75 0.0351  1.0719 -0.0526 1.2160 0.9501      1.0348  2.8090  0.1497  -0.0708   False   False
+     B136  DEGROSS   90 0.0185  1.0797 -0.0285 1.2592 0.9476      1.0248  1.5172  0.1738  -0.0874   False   False
+     B136 RESPREAD    0 0.1163  1.0611 -0.1853 1.1721 0.9643      1.0615  4.8005  0.0170   0.0104   False    True
+     B136 RESPREAD   25 0.1159  1.0391 -0.1920 1.1418 0.9488      1.0443  6.1202  0.0103   0.0100   False    True
+     B136 RESPREAD   50 0.1227  1.0375 -0.2020 1.1538 0.9360      1.0314  8.5472  0.0003   0.0169   False    True
+     B136 RESPREAD   75 0.1459  1.0749 -0.2121 1.1818 0.9867      1.0658 11.7622 -0.0098   0.0400   False   False
+     B136 RESPREAD   90 0.1821  1.0881 -0.2562 1.2560 0.9640      1.0386 14.7420 -0.0539   0.0762   False   False
+
+  DIAL CADENCE — rebalance cadence, band 0.03, gross 0.75
+    panel    conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe   turn   L4_DD  L5_CAGR  pass4a  pass4b
+      U56 DEGROSS    D 0.0837  1.1896 -0.1124 1.1936 1.1882      1.2871 2.4650  0.0899  -0.0221   False   False
+      U56 DEGROSS    W 0.0862  1.2010 -0.1205 1.2276 1.1805      1.2766 1.7736  0.0818  -0.0197   False   False
+      U56 DEGROSS    M 0.0888  1.1720 -0.1438 1.2125 1.1395      1.2242 1.2339  0.0585  -0.0171   False   False
+      U56 DEGROSS    Q 0.0800  0.9933 -0.1990 1.1385 0.8911      0.9742 0.8359  0.0033  -0.0259   False   False
+     B136 DEGROSS    D 0.0780  1.0956 -0.1120 1.1993 0.9913      1.1278 2.7314  0.0903  -0.0279   False   False
+     B136 DEGROSS    W 0.0796  1.0972 -0.1224 1.2296 0.9669      1.1017 2.0111  0.0799  -0.0263   False   False
+     B136 DEGROSS    M 0.0832  1.0833 -0.1569 1.2133 0.9586      1.0796 1.3885  0.0454  -0.0227   False   False
+     B136 DEGROSS    Q 0.0778  0.9387 -0.2184 1.1443 0.7700      0.8819 0.8989 -0.0161  -0.0280   False   False
+
+--------------------------------------------------------------------------------------------------------
+SECTION 2 — DO THE TWO LEVEL LEGS CO-MOVE?  rho = Spearman(rung index, leg margin); agree = share of adjacent-rung steps where dL4_DD and dL5_CAGR have the SAME sign.
+  B1 co-move bar: same sign and |rho| >= 0.60 on BOTH legs.   B2: agree >= 0.75.
+
+    panel    dial     conv  rho_L4  rho_L5  agree    B1    B2  n4b  nrung
+      U56   GROSS  DEGROSS  -1.000  +1.000 +0.000 False False    1      4
+      U56    BAND  DEGROSS  -0.600  +0.771 +0.800 False  True    0      6
+      U56    BAND RESPREAD  -0.657  +1.000 +0.400 False False    6      6
+      U56   COUNT  DEGROSS  +1.000  -1.000 +0.000 False False    2      5
+      U56   COUNT RESPREAD  +1.000  -0.900 +0.250 False False    2      5
+      U56  MAXVOL  DEGROSS  -1.000  +1.000 +0.000 False False    0      5
+      U56  MAXVOL RESPREAD  +0.000  +1.000 +0.250 False False    3      5
+      U56  VOLTGT  DEGROSS  -1.000  +1.000 +0.000 False False    2      5
+      U56   MALEN  DEGROSS  -0.700  +0.900 +0.500 False False    0      5
+      U56   MALEN RESPREAD  +0.700  +0.800 +0.750  True  True    3      5
+      U56   QELIG  DEGROSS  +0.900  -1.000 +0.250 False False    0      5
+      U56   QELIG RESPREAD  -1.000  +0.900 +0.250 False False    2      5
+      U56 CADENCE  DEGROSS  -1.000  -0.200 +0.333 False False    0      4
+     B136   GROSS  DEGROSS  -1.000  +1.000 +0.000 False False    1      4
+     B136    BAND  DEGROSS  -0.886  +0.943 +0.600 False False    0      6
+     B136    BAND RESPREAD  -0.829  +0.943 +0.400 False False    3      6
+     B136   COUNT  DEGROSS  +1.000  -1.000 +0.000 False False    2      5
+     B136   COUNT RESPREAD  +1.000  -1.000 +0.000 False False    1      5
+     B136  MAXVOL  DEGROSS  -1.000  +1.000 +0.000 False False    0      5
+     B136  MAXVOL RESPREAD  -1.000  +1.000 +0.000 False False    3      5
+     B136  VOLTGT  DEGROSS  -1.000  +1.000 +0.000 False False    1      5
+     B136   MALEN  DEGROSS  -1.000  +1.000 +0.000 False False    0      5
+     B136   MALEN RESPREAD  +0.300  +1.000 +0.500 False False    2      5
+     B136   QELIG  DEGROSS  +1.000  -1.000 +0.000 False False    0      5
+     B136   QELIG RESPREAD  -1.000  +0.900 +0.250 False False    3      5
+     B136 CADENCE  DEGROSS  -1.000  -0.200 +0.333 False False    0      4
+
+  B1 AND B2 held on EVERY (panel, convention) slice of a dial — the answer to the question:
+    GROSS    co-moves on 0/2 slices   ALL-SLICE: no   rungs clearing full 4b: 2   (rho_L4 -1.00..-1.00, rho_L5 +1.00..+1.00)
+    BAND     co-moves on 0/4 slices   ALL-SLICE: no   rungs clearing full 4b: 9   (rho_L4 -0.89..-0.60, rho_L5 +0.77..+1.00)
+    COUNT    co-moves on 0/4 slices   ALL-SLICE: no   rungs clearing full 4b: 7   (rho_L4 +1.00..+1.00, rho_L5 -1.00..-0.90)
+    MAXVOL   co-moves on 0/4 slices   ALL-SLICE: no   rungs clearing full 4b: 6   (rho_L4 -1.00..+0.00, rho_L5 +1.00..+1.00)
+    VOLTGT   co-moves on 0/2 slices   ALL-SLICE: no   rungs clearing full 4b: 3   (rho_L4 -1.00..-1.00, rho_L5 +1.00..+1.00)
+    MALEN    co-moves on 1/4 slices   ALL-SLICE: no   rungs clearing full 4b: 5   (rho_L4 -1.00..+0.70, rho_L5 +0.80..+1.00)
+    QELIG    co-moves on 0/4 slices   ALL-SLICE: no   rungs clearing full 4b: 5   (rho_L4 -1.00..+1.00, rho_L5 -1.00..+0.90)
+    CADENCE  co-moves on 0/2 slices   ALL-SLICE: no   rungs clearing full 4b: 0   (rho_L4 -1.00..-1.00, rho_L5 -0.20..-0.20)
+
+  ANY DIAL CLEARING B1+B2 ON EVERY SLICE: NO
+  Cost-rung robustness of the same reading (0 / 25 / 50 bps, derived exactly from turnover):
+    @ 0 bps: slices clearing B1 0/26; median agree 0.000
+    @25 bps: slices clearing B1 1/26; median agree 0.250
+    @50 bps: slices clearing B1 2/26; median agree 0.250
+
+--------------------------------------------------------------------------------------------------------
+SECTION 3 — RULE 8 WALK-FORWARD.  (dial, rung) chosen on 2009-2016 ONLY, 2017-2026 read ONCE.
+  Pre-registered IS-only choosers: C1 = max IS Sharpe; C2 = max IS min-leg margin over the four
+  in-sample-computable 4b legs (IS-half1 Sharpe, IS-half2 Sharpe, IS DD cap, IS CAGR floor).
+
+    chooser / scope                         pick                                OOS CAGR  OOS Sharpe  OOS MaxDD  4b/4a(full)
+    SPY                                                                           15.26%      0.8737    -33.72%
+    RULES v2 live (U56)                                                            9.46%      1.2766    -12.05%
+    RULES v2 live (B136)                                                           7.85%      1.1017    -12.24%
+    C1 max IS Sharpe | ALL dials            B136/COUNT/RESPREAD/5                 25.16%      0.9826    -30.33%  fail/fail
+    C2 max IS min-leg | ALL dials           B136/QELIG/RESPREAD/90                18.53%      1.0386    -25.62%  fail/fail
+    C1 max IS Sharpe | dial=GROSS           U56/GROSS/DEGROSS/1.0                 12.67%      1.2759    -15.91%  PASS/fail
+    C2 max IS min-leg | dial=GROSS          B136/GROSS/DEGROSS/1.0                10.47%      1.1006    -16.16%  PASS/fail
+    C1 max IS Sharpe | dial=BAND            B136/BAND/RESPREAD/0.12               13.55%      1.1490    -21.74%  fail/fail
+    C2 max IS min-leg | dial=BAND           B136/BAND/RESPREAD/0.08               12.72%      1.0957    -20.69%  fail/fail
+    C1 max IS Sharpe | dial=COUNT           B136/COUNT/RESPREAD/5                 25.16%      0.9826    -30.33%  fail/fail
+    C2 max IS min-leg | dial=COUNT          B136/COUNT/RESPREAD/80                11.82%      1.0146    -19.28%  PASS/fail
+    C1 max IS Sharpe | dial=MAXVOL          U56/MAXVOL/RESPREAD/1.2               12.83%      1.1666    -17.77%  PASS/fail
+    C2 max IS min-leg | dial=MAXVOL         B136/MAXVOL/RESPREAD/1.2              11.55%      1.0444    -18.55%  PASS/fail
+    C1 max IS Sharpe | dial=VOLTGT          U56/VOLTGT/DEGROSS/0.2                12.74%      1.2905    -15.25%  PASS/fail
+    C2 max IS min-leg | dial=VOLTGT         B136/VOLTGT/DEGROSS/0.2               10.51%      1.1140    -15.23%  PASS/fail
+    C1 max IS Sharpe | dial=MALEN           U56/MALEN/RESPREAD/150                11.47%      1.0646    -18.09%  PASS/fail
+    C2 max IS min-leg | dial=MALEN          B136/MALEN/RESPREAD/150               10.70%      0.9828    -18.31%  PASS/fail
+    C1 max IS Sharpe | dial=QELIG           U56/QELIG/DEGROSS/90                   2.44%      1.0569     -3.39%  fail/fail
+    C2 max IS min-leg | dial=QELIG          B136/QELIG/RESPREAD/90                18.53%      1.0386    -25.62%  fail/fail
+    C1 max IS Sharpe | dial=CADENCE         U56/CADENCE/DEGROSS/M                  9.55%      1.2242    -14.38%  fail/fail
+    C2 max IS min-leg | dial=CADENCE        B136/CADENCE/DEGROSS/M                 8.20%      1.0796    -15.69%  fail/fail
+
+    Of the 18 rule-8 picks: 18 beat SPY's OOS Sharpe, 3 beat the live book's, 9 carry a full-sample 4b pass, 0 a 4a pass.
+
+--------------------------------------------------------------------------------------------------------
+SECTION 4 — KEEP PATHS AT EVERY CELL (PROTOCOL rule 4).
+  4b passes: 37 of 130 rungs.  4a passes: 1.  Both: 0.
+  Rungs clearing 4b:
+    panel   dial     conv rung   CAGR  Sharpe   MaxDD  OOS_Sharpe  L4_DD  L5_CAGR   turn
+      U56  GROSS  DEGROSS  1.0 0.1153  1.2008 -0.1591      1.2759 0.0432   0.0095 2.3519
+      U56   BAND RESPREAD  0.0 0.1150  1.0870 -0.1865      1.1048 0.0158   0.0091 7.6068
+      U56   BAND RESPREAD 0.02 0.1197  1.1330 -0.1775      1.1579 0.0248   0.0139 5.2685
+      U56   BAND RESPREAD 0.04 0.1230  1.1267 -0.1842      1.1833 0.0181   0.0171 3.9071
+      U56   BAND RESPREAD 0.06 0.1263  1.1375 -0.1960      1.1962 0.0063   0.0204 3.1876
+      U56   BAND RESPREAD 0.08 0.1316  1.1734 -0.1970      1.1769 0.0053   0.0257 2.5997
+      U56   BAND RESPREAD 0.12 0.1395  1.2218 -0.1942      1.2581 0.0081   0.0336 1.9322
+      U56  COUNT  DEGROSS   20 0.1414  1.1176 -0.1943      1.0765 0.0080   0.0355 7.3259
+      U56  COUNT  DEGROSS   40 0.1087  1.1777 -0.1571      1.2014 0.0452   0.0028 3.0726
+      U56  COUNT RESPREAD   40 0.1202  1.1176 -0.1867      1.1307 0.0156   0.0144 4.8176
+      U56  COUNT RESPREAD   80 0.1219  1.1573 -0.1771      1.1954 0.0252   0.0160 4.3202
+      U56 MAXVOL RESPREAD  0.6 0.1121  1.1312 -0.1514      1.2251 0.0509   0.0062 4.8441
+      U56 MAXVOL RESPREAD  0.8 0.1137  1.1221 -0.1537      1.1553 0.0486   0.0079 4.5559
+      U56 MAXVOL RESPREAD  1.2 0.1192  1.1401 -0.1777      1.1666 0.0246   0.0134 4.3545
+      U56 VOLTGT  DEGROSS 0.14 0.1113  1.1962 -0.1350      1.2821 0.0673   0.0055 2.5180
+      U56 VOLTGT  DEGROSS  0.2 0.1157  1.2099 -0.1525      1.2905 0.0498   0.0099 2.3568
+      U56  MALEN RESPREAD  150 0.1166  1.1187 -0.1809      1.0646 0.0214   0.0108 5.1680
+      U56  MALEN RESPREAD  200 0.1219  1.1567 -0.1771      1.1950 0.0252   0.0161 4.3107
+      U56  MALEN RESPREAD  300 0.1186  1.1000 -0.1832      1.1070 0.0191   0.0128 3.6396
+      U56  QELIG RESPREAD    0 0.1219  1.1567 -0.1771      1.1950 0.0252   0.0161 4.3107
+      U56  QELIG RESPREAD   25 0.1197  1.1023 -0.1938      1.1394 0.0085   0.0138 5.9284
+     B136  GROSS  DEGROSS  1.0 0.1063  1.0971 -0.1616      1.1006 0.0407   0.0004 2.6664
+     B136   BAND RESPREAD  0.0 0.1153  1.0486 -0.2012      1.0506 0.0011   0.0095 7.8435
+     B136   BAND RESPREAD 0.02 0.1173  1.0671 -0.1893      1.0670 0.0130   0.0115 5.6528
+     B136   BAND RESPREAD 0.04 0.1164  1.0442 -0.1929      1.0705 0.0094   0.0105 4.2397
+     B136  COUNT  DEGROSS   40 0.1309  1.0238 -0.2006      0.9543 0.0017   0.0250 8.3212
+     B136  COUNT  DEGROSS   80 0.1096  1.0786 -0.1697      1.0308 0.0326   0.0037 4.5566
+     B136  COUNT RESPREAD   80 0.1192  1.0452 -0.1928      1.0146 0.0095   0.0134 6.0505
+     B136 MAXVOL RESPREAD  0.6 0.1101  1.0543 -0.1680      1.0564 0.0343   0.0042 5.1778
+     B136 MAXVOL RESPREAD  0.8 0.1141  1.0702 -0.1688      1.0802 0.0335   0.0083 4.9440
+     B136 MAXVOL RESPREAD  1.2 0.1150  1.0544 -0.1855      1.0444 0.0168   0.0092 4.8161
+     B136 VOLTGT  DEGROSS  0.2 0.1067  1.1077 -0.1523      1.1140 0.0500   0.0008 2.6774
+     B136  MALEN RESPREAD  150 0.1134  1.0385 -0.1831      0.9828 0.0192   0.0075 5.6691
+     B136  MALEN RESPREAD  200 0.1163  1.0611 -0.1853      1.0615 0.0170   0.0104 4.8005
+     B136  QELIG RESPREAD    0 0.1163  1.0611 -0.1853      1.0615 0.0170   0.0104 4.8005
+     B136  QELIG RESPREAD   25 0.1159  1.0391 -0.1920      1.0443 0.0103   0.0100 6.1202
+     B136  QELIG RESPREAD   50 0.1227  1.0375 -0.2020      1.0314 0.0003   0.0169 8.5472
+  Rungs clearing 4a (vs the LIVE book):
+    panel  dial    conv rung   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe   turn
+      U56 COUNT DEGROSS   80 0.0582  1.2067 -0.0837 1.2412 1.1861      1.2786 1.2098
+
+========================================================================================================
