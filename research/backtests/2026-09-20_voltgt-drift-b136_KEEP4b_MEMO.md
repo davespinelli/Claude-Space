@@ -180,3 +180,41 @@ picks, gates 10/10, this cell reproduced to 4.441e-16.
    a 36-of-36 four-axis stress record, an 800-of-800 random-deletion record and a **bounded
    adversarial reach of 10 names of 136**. Anyone quoting the 4b pass must quote that reach with
    it. RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched by idea 2064.
+
+---
+
+## ADDENDUM (2026-09-21, lane B, idea 2060) — **CAVEAT 7 NOW CARRIES A STANDARD ERROR, AND THE ERROR BAR CONTAINS ZERO.**
+
+Idea 2060 put a PAIRED circular-block bootstrap on all five 4b legs of this cell — book and SPY
+resampled on the SAME day blocks, each leg on the calendar window it is read on, 2 tuned params
+(block length `B ∈ {5,10,21,63,126}` × seed `∈ {11,22,33}`), nboot 4000, all 30 grid points
+published. This cell reproduced to max abs d **4.07e-05** (gates 8/8).
+
+* **THE CAGR LEG (point 4's `+1.92 pp`) DOES NOT RESOLVE.** SE **1.10 – 1.46 pp**, bootstrap
+  **t +1.32 … +1.76**, two-sided p 0.068 – 0.181, 95% band at the longest block
+  **[−0.30 pp, +4.02 pp]**. It never reaches |t| ≥ 2 at any block length or any seed. The SE is a
+  TAPE fact, not a draw-count fact: the spread across seeds at fixed `B` is 0.033 pp, a factor of
+  43 smaller than the SE itself.
+* **THE THREE SHARPE LEGS DO RESOLVE** (L1 t +2.43…+2.60, L2 +1.84…+2.68, L3 +2.48…+3.12), so
+  caveat 7 named the right leg — and understated it.
+* **THE DD LEG IS THE WORST-RESOLVED OF THE FIVE, WHICH ITS `t` HIDES.** L4 reads t +2.18…+2.52
+  but **fails in 0.099 – 0.279 of draws**, two-to-three times the CAGR leg's rate, because a
+  bootstrap MaxDD contrast is heavily skewed and `obs/SE` is the wrong summary for it. Point 4's
+  `+8.42 pp` of drawdown headroom is the memo's least reliable leg, not its safest.
+* **THE JOINT FIVE-LEG PASS IS 0.635 – 0.856 OF DRAWS (median 0.715).** Point 4's "PATH 4b PASSES,
+  all five legs positive" holds at the point estimate and in roughly seven draws in ten.
+* **THE COST CROSS IS RESTATED.** The 2026-09-20 addendum's "4b: 36 of 36 points, 100.0%" is a
+  point-estimate census: with the error bar attached the joint pass runs 0.766 / 0.716 / 0.618 /
+  **0.396** at 0 / 10 / 25 / 50 bps. At the worst corner it is a coin flip. The SE is flat at
+  1.42 pp across the whole ladder — cost spends the MARGIN, not the precision.
+* **RULE 8 CONFIRMS THE PROVENANCE AND THE VERDICT.** An IS-only chooser on 2009–2016 lands on
+  this memo's own `t = 0.10, h = 0.08`; its OOS margin is **+2.33 pp, SE 1.50 – 2.10 pp,
+  t +1.11 … +1.55** — the OOS leg does not resolve either.
+
+**POINTS 4 AND 7 ARE THEREFORE RESTATED:** the CAGR-floor leg passes as a point estimate and is
+**statistically indistinguishable from a bare pass**; the DD leg's headroom is the memo's least
+reliable number; and any future quotation of this cell's 4b pass should carry the joint-draw rate
+(≈0.72 at 10 bps) beside it. **This is a disclosure, not a demotion** — the cell's status is
+unchanged and nothing was promoted, adopted or tuned. Evidence:
+`research/backtests/2026-09-21_cagr-floor-margin-paired-block-bootstrap_B.py` and its
+`.grid.csv` / `.costladder.csv` / `.walkforward.csv` / `.keeppaths.csv` / `.gates.csv`.
