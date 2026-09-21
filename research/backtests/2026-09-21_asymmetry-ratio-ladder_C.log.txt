@@ -1,0 +1,209 @@
+# Idea 2075 (lane C, 2026-09-21) — does the 4:1 ASYMMETRY RATIO matter, or is ANY tight DOWN-trigger the same?
+# tuned dials (2): RATIO A ['A=1', 'A=2', 'A=4', 'A=8', 'A=16', 'DOWNONLY', 'UPONLY', 'DOWNONLY_TD', 'A1_TD'] x the family's own BASE rung (FIXH h [0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25] | FRACG f [0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5]).
+# reported, NOT tuned: TARGET t [0.1, 0.12, 0.16, 0.2] (pre-stated t*=0.16, inherited), TRADE ['W', 'M'], PANEL, COST [0, 10, 25, 50] bps, CAL comparand R ['D', 'W', 'M', 'Q'].  sigma FIXED (L=20, d=0).
+# PRE-STATED cell under test: A*=4 at h*=0.12 / f*=0.1, t*=0.16.  warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13 (17.7y)
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%), 1.77 turns/yr
+   SPY                      15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   ...4448 scored rows so far
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13 (17.7y)
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%), 2.01 turns/yr
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   ...8896 scored rows so far
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13 (15.6y)
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%), 2.57 turns/yr
+   SPY                      14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   ...13344 scored rows so far
+
+# grid: 13344 scored rows (3336 cells x 4 cost rungs) -> 2026-09-21_asymmetry-ratio-ladder_C.grid.csv.gz
+
+## GATES
+  GATE PASS  G0 sample length (yrs, min over panels): 15.6   (target >= 10)
+  GATE PASS  G4 cost identity |net - engine(cost)|: 0.000e+00   (target < 1e-12)
+  GATE PASS  G5 zero base (FIXH b=0, A=1) == CAL R=D on 4 cells: 0.000e+00   (target == 0)
+  GATE PASS  G6 gross never levered (max held gross): 1.000000   (target <= 1.0)
+  GATE PASS  G1 idea 1799 U56 t=.16 h=.12 T=M 10bps (A=1): 4.042e-07   (target < 1e-4)
+  GATE PASS  G2 idea 2026 U56 t=.16 f=.10 T=M 10bps (A=1, the standing KEEP-4b cell): 3.354e-05   (target < 1e-3)
+  GATE PASS  G3 refresh rate non-decreasing in A: 360 of 360   (target == 360)
+  GATE PASS  G7 DOWNONLY refreshes <= its symmetric twin A=1: 360 of 360   (target == 360)
+  GATE PASS  G8 UPONLY refreshes <= its symmetric twin A=1: 360 of 360   (target == 360)
+  GATE PASS  G9 the 4:1 trigger refreshes >= its symmetric twin (idea 2026 G8 restated): 360 of 360   (target == 360)
+  GATE PASS  G10 pure DOWNONLY is ABSORBING (no re-entry channel): gross==0 and turn==0: 360 of 360   (target == 360)
+  GATE PASS  G11 DOWNONLY_TD refreshes <= its matched twin A1_TD: 360 of 360   (target == 360)
+  GATE PASS  G12 the trade-day re-read only ADDS refreshes (A1_TD >= A=1): 360 of 360   (target == 360)
+   GATES 13/13
+
+## V1 / V2 — the A PROFILE, paired against each base's OWN symmetric twin (A=1)
+   t*=0.16, 10 bps, large panels ['U56', 'B136'] x trade ['W', 'M'], pooled over 8 h and 7 f rungs
+          A  n_pairs  d_oosMaxDD_pp  d_oosCAGR_pp  d_oosSharpe  d_fullMaxDD_pp  d_turn_py  d_refresh_py  d_crashgross  keep4b  keep4b_sym  L5_neg  L5_neg_sym  dd_per_cagr
+          1       60        +0.0000       +0.0000      +0.0000         +0.0000    +0.0000       +0.0000       +0.0000      52          52       2           2          NaN
+          2       60        +0.7077       -0.2013      +0.0094         +0.7077    +0.1032       +3.7071       -0.0201      59          52       0           2      +3.5156
+          4       60        +0.8096       -0.2918      +0.0100         +0.8096    +0.1558       +7.2121       -0.0262      59          52       0           2      +2.7745
+          8       60        +0.9383       -0.3153      +0.0110         +0.9383    +0.1808      +10.2687       -0.0308      58          52       1           2      +2.9761
+         16       60        +0.8185       -0.3490      +0.0091         +0.8185    +0.1923      +12.9267       -0.0318      58          52       0           2      +2.3454
+   DOWNONLY       60       +18.1893      -15.3984          NaN        +18.1893    -1.5708      -11.9721       -0.2397       0          52      60           2      +1.1812
+     UPONLY       60       -11.1625       +1.8972      -0.1244        -11.1625    -0.7851      -11.7313       +0.6967       0          52       0           2          NaN
+DOWNONLY_TD       60        -0.3474       +0.5449      +0.0136         -0.3474    +0.0276      +26.1405       -0.0161      55          52       0           2          NaN
+      A1_TD       60        -0.3228       +0.7432      +0.0101         -0.3228    +0.2131      +31.9891       -0.0159      58          52       0           2          NaN
+   V1 SATURATION: OOS MaxDD credit non-decreasing in A = False; total 1->16 +0.818 pp, last step 8->16 -0.120 pp = -14.6% of it.  V1 NOT TRIGGERED
+   EXCHANGE RATE (pp of OOS MaxDD bought per pp of OOS CAGR given up): 2:3.52 4:2.77 8:2.98 16:2.35 -> best rung A=2
+   V2 CAGR COST: pooled mean OOS CAGR delta monotone non-increasing in A = True; profile 1:+0.000pp 2:-0.201pp 4:-0.292pp 8:-0.315pp 16:-0.349pp; first A with L5_CAGR <= 0 at a PRE-STATED base: none over the ladder.  V2 TRIGGERED
+
+## V3 — does DOWN-ONLY DOMINATE its symmetric twin?  (paired, same base, same arm)
+          A  twin  n  win_oosSharpe  win_oosMaxDD  win_oosCAGR  win_turnover  weak_dominates_all4  share_all4
+   DOWNONLY     1 60              0            60            0            60                    0       0.000
+DOWNONLY_TD A1_TD 60             29            43            4            57                    1       0.017
+     UPONLY     1 60              1             0           54            59                    0       0.000
+          4     1 60             38            48           12             2                    0       0.000
+   V3-pure: the PRE-STATED DOWNONLY rung is ABSORBING (mean gross 0, turnover 0) on 60 of 60 cells — deleting the up-side threshold deletes the book's ONLY re-entry channel.  It fails 4b on 4 legs at once everywhere.  V3-pure NOT TRIGGERED BY CONSTRUCTION, not by returns.
+   V3-TD (POST-HOC): DOWNONLY_TD weakly dominates its MATCHED twin A1_TD on all four axes at 1.7% of 60 (arm x base) pairs; pooled means dSharpe +0.0035, dMaxDD -0.025 pp, dCAGR -0.198 pp, dturn -0.185/yr; 4b 55 vs 58 of 60.  V3 NOT TRIGGERED
+
+## V4 — does the RATIO MATTER at all?  4b FULL+OOS pass counts by A rung (t*, 10 bps, large panels, all bases)
+             cells  keep4b  keep4b_full  keep4a  mean_oosSharpe  mean_oosMaxDD  mean_oosCAGR  mean_turn
+A                                                                                                      
+1               60      52           53       0          1.2358        -0.1819        0.1540     1.5708
+2               60      59           60       0          1.2453        -0.1748        0.1520     1.6741
+4               60      59           60       0          1.2458        -0.1738        0.1511     1.7266
+8               60      58           59       0          1.2468        -0.1725        0.1508     1.7517
+16              60      58           60       0          1.2449        -0.1737        0.1505     1.7632
+DOWNONLY        60       0            0       0             NaN         0.0000        0.0000     0.0000
+UPONLY          60       0            0       0          1.1114        -0.2935        0.1730     0.7857
+DOWNONLY_TD     60      55           55       0          1.2494        -0.1854        0.1594     1.5984
+A1_TD           60      58           58       0          1.2459        -0.1851        0.1614     1.7839
+   V4: 4b pass count over the A ladder runs 52..59 of 60 cells, spread 11.9% of the best.  V4 TRIGGERED (the ratio MOVES the verdict)
+
+## THE PRE-STATED CELLS (t*=0.16, 10 bps) — A* = 4 vs its twin and vs DOWNONLY
+panel T_trade family   base           A   CAGR  Sharpe   MaxDD     H1     H2  oos_CAGR  oos_Sharpe  oos_MaxDD  turn_py  refresh_py  gross_crash_min                       bind  keep4b_full  keep4b_oos  keep4b  keep4a
+  U56       W   FIXH 0.1200           1 0.1553  1.2343 -0.1783 1.2813 1.1947    0.1629      1.2725    -0.1783   1.6254      4.9856           0.2547                       none         True        True    True   False
+  U56       W   FIXH 0.1200           4 0.1506  1.2126 -0.2005 1.2705 1.1606    0.1551      1.2427    -0.2005   1.8905     11.7842           0.2226                       none         True        True    True   False
+  U56       W   FIXH 0.1200          16 0.1491  1.2115 -0.1978 1.2764 1.1518    0.1522      1.2361    -0.1978   1.9354     18.4694           0.2226                       none         True        True    True   False
+  U56       W   FIXH 0.1200    DOWNONLY 0.0000     NaN  0.0000    NaN    NaN    0.0000         NaN     0.0000   0.0000      0.0567           0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR        False       False   False   False
+  U56       W   FIXH 0.1200 DOWNONLY_TD 0.1567  1.2171 -0.1913 1.2741 1.1659    0.1626      1.2540    -0.1913   1.8656     57.1079           0.2244                       none         True        True    True   False
+  U56       W   FIXH 0.1200       A1_TD 0.1571  1.2185 -0.1898 1.2665 1.1757    0.1642      1.2631    -0.1898   1.8805     58.1844           0.2244                       none         True        True    True   False
+  U56       W   FIXH 0.1200      UPONLY 0.1681  1.1193 -0.2797 1.1938 1.0601    0.1742      1.1263    -0.2797   1.0396      0.2833           0.9456                      L4_DD        False       False   False   False
+  U56       W  FRACG 0.1000           1 0.1558  1.2272 -0.1933 1.2741 1.1851    0.1630      1.2741    -0.1933   1.9055     10.4245           0.2226                       none         True        True    True   False
+  U56       W  FRACG 0.1000           4 0.1501  1.2103 -0.1895 1.2666 1.1599    0.1551      1.2421    -0.1895   2.0699     19.1493           0.2226                       none         True        True    True   False
+  U56       W  FRACG 0.1000          16 0.1493  1.2059 -0.1906 1.2653 1.1529    0.1541      1.2355    -0.1906   2.1002     25.9478           0.2226                       none         True        True    True   False
+  U56       W  FRACG 0.1000    DOWNONLY 0.0000     NaN  0.0000    NaN    NaN    0.0000         NaN     0.0000   0.0000      0.0567           0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR        False       False   False   False
+  U56       W  FRACG 0.1000 DOWNONLY_TD 0.1564  1.2198 -0.1894 1.2702 1.1746    0.1632      1.2628    -0.1894   1.9131     58.8642           0.2226                       none         True        True    True   False
+  U56       W  FRACG 0.1000       A1_TD 0.1572  1.2209 -0.1864 1.2680 1.1790    0.1646      1.2662    -0.1864   1.9929     61.8103           0.2226                       none         True        True    True   False
+  U56       W  FRACG 0.1000      UPONLY 0.1617  1.1193 -0.2703 1.1936 1.0602    0.1676      1.1264    -0.2703   1.0013      0.2833           0.9046                      L4_DD        False       False   False   False
+  U56       M   FIXH 0.1200           1 0.1562  1.2451 -0.1816 1.2944 1.2036    0.1636      1.2810    -0.1816   1.1341      4.9290           0.2541                       none         True        True    True   False
+  U56       M   FIXH 0.1200           4 0.1514  1.2235 -0.1997 1.2718 1.1805    0.1573      1.2618    -0.1997   1.3813     11.2176           0.2218                       none         True        True    True   False
+  U56       M   FIXH 0.1200          16 0.1500  1.2215 -0.1968 1.2795 1.1682    0.1537      1.2514    -0.1968   1.4764     18.1295           0.2218                       none         True        True    True   False
+  U56       M   FIXH 0.1200    DOWNONLY 0.0000     NaN  0.0000    NaN    NaN    0.0000         NaN     0.0000   0.0000      0.0567           0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR        False       False   False   False
+  U56       M   FIXH 0.1200 DOWNONLY_TD 0.1599  1.2596 -0.1932 1.3238 1.2008    0.1640      1.2891    -0.1932   1.1689     15.0135           0.2541                       none         True        True    True   False
+  U56       M   FIXH 0.1200       A1_TD 0.1578  1.2231 -0.2004 1.2733 1.1789    0.1651      1.2650    -0.2004   1.3191     17.6196           0.2541                       none         True        True    True   False
+  U56       M   FIXH 0.1200      UPONLY 0.1720  1.1288 -0.2828 1.1946 1.0766    0.1792      1.1423    -0.2828   0.5200      0.2266           0.9660                      L4_DD        False       False   False   False
+  U56       M  FRACG 0.1000           1 0.1581  1.2470 -0.1912 1.2937 1.2055    0.1655      1.2928    -0.1912   1.4167     10.2545           0.2218                       none         True        True    True   False
+  U56       M  FRACG 0.1000           4 0.1508  1.2177 -0.1896 1.2682 1.1726    0.1562      1.2538    -0.1896   1.6001     18.2428           0.2218                       none         True        True    True   False
+  U56       M  FRACG 0.1000          16 0.1508  1.2206 -0.1885 1.2696 1.1769    0.1564      1.2583    -0.1885   1.6384     25.3246           0.2204                       none         True        True    True   False
+  U56       M  FRACG 0.1000    DOWNONLY 0.0000     NaN  0.0000    NaN    NaN    0.0000         NaN     0.0000   0.0000      0.0567           0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR        False       False   False   False
+  U56       M  FRACG 0.1000 DOWNONLY_TD 0.1594  1.2678 -0.1896 1.3268 1.2135    0.1641      1.3024    -0.1896   1.1918     16.7131           0.2218                       none         True        True    True   False
+  U56       M  FRACG 0.1000       A1_TD 0.1600  1.2445 -0.1881 1.2845 1.2091    0.1681      1.2945    -0.1881   1.4307     21.8687           0.2218                       none         True        True    True   False
+  U56       M  FRACG 0.1000      UPONLY 0.1686  1.1288 -0.2777 1.1944 1.0768    0.1756      1.1425    -0.2777   0.5096      0.2266           0.9428                      L4_DD        False       False   False   False
+ B136       W   FIXH 0.1200           1 0.1611  1.2333 -0.1823 1.3496 1.1201    0.1578      1.2329    -0.1823   1.8403      6.2887           0.2228                       none         True        True    True   False
+ B136       W   FIXH 0.1200           4 0.1523  1.2157 -0.1725 1.3192 1.1163    0.1527      1.2345    -0.1725   1.9875     12.9739           0.2228                       none         True        True    True   False
+ B136       W   FIXH 0.1200          16 0.1529  1.2208 -0.1691 1.3271 1.1201    0.1538      1.2374    -0.1691   2.0632     20.6790           0.1953                       none         True        True    True   False
+ B136       W   FIXH 0.1200    DOWNONLY 0.0000     NaN  0.0000    NaN    NaN    0.0000         NaN     0.0000   0.0000      0.0567           0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR        False       False   False   False
+ B136       W   FIXH 0.1200 DOWNONLY_TD 0.1607  1.2279 -0.1717 1.3337 1.1251    0.1589      1.2373    -0.1717   1.9540     57.2779           0.1987                       none         True        True    True   False
+ B136       W   FIXH 0.1200       A1_TD 0.1613  1.2307 -0.1717 1.3318 1.1327    0.1601      1.2442    -0.1717   1.9724     58.5809           0.1987                       none         True        True    True   False
+ B136       W   FIXH 0.1200      UPONLY 0.1874  1.1137 -0.3272 1.2347 1.0053    0.1827      1.0854    -0.3272   1.1389      0.3399           1.0000                      L4_DD        False       False   False   False
+ B136       W  FRACG 0.1000           1 0.1604  1.2339 -0.1713 1.3261 1.1445    0.1607      1.2564    -0.1713   2.0362     11.6709           0.1953                       none         True        True    True   False
+ B136       W  FRACG 0.1000           4 0.1552  1.2276 -0.1659 1.3378 1.1216    0.1544      1.2383    -0.1659   2.1745     21.3588           0.1953                       none         True        True    True   False
+ B136       W  FRACG 0.1000          16 0.1542  1.2239 -0.1682 1.3359 1.1168    0.1536      1.2339    -0.1682   2.2141     29.1205           0.1953                       none         True        True    True   False
+ B136       W  FRACG 0.1000    DOWNONLY 0.0000     NaN  0.0000    NaN    NaN    0.0000         NaN     0.0000   0.0000      0.0567           0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR        False       False   False   False
+ B136       W  FRACG 0.1000 DOWNONLY_TD 0.1603  1.2293 -0.1695 1.3281 1.1333    0.1595      1.2455    -0.1695   2.0023     59.1475           0.1953                       none         True        True    True   False
+ B136       W  FRACG 0.1000       A1_TD 0.1616  1.2340 -0.1695 1.3298 1.1412    0.1613      1.2522    -0.1695   2.0908     63.0000           0.1953                       none         True        True    True   False
+ B136       W  FRACG 0.1000      UPONLY 0.1874  1.1137 -0.3272 1.2347 1.0053    0.1827      1.0854    -0.3272   1.1389      0.3399           1.0000                      L4_DD        False       False   False   False
+ B136       M   FIXH 0.1200           1 0.1610  1.2381 -0.1816 1.3557 1.1236    0.1576      1.2371    -0.1816   1.3382      6.2887           0.2192                       none         True        True    True   False
+ B136       M   FIXH 0.1200           4 0.1535  1.2270 -0.1710 1.3271 1.1309    0.1543      1.2488    -0.1710   1.5199     13.2005           0.2192                       none         True        True    True   False
+ B136       M   FIXH 0.1200          16 0.1530  1.2251 -0.1683 1.3271 1.1283    0.1544      1.2459    -0.1683   1.5932     20.4523           0.1917                       none         True        True    True   False
+ B136       M   FIXH 0.1200    DOWNONLY 0.0000     NaN  0.0000    NaN    NaN    0.0000         NaN     0.0000   0.0000      0.0567           0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR        False       False   False   False
+ B136       M   FIXH 0.1200 DOWNONLY_TD 0.1610  1.2545 -0.1819 1.3561 1.1544    0.1591      1.2690    -0.1819   1.2569     15.2968           0.2192                       none         True        True    True   False
+ B136       M   FIXH 0.1200       A1_TD 0.1622  1.2376 -0.1819 1.3259 1.1523    0.1630      1.2627    -0.1819   1.4305     18.5827           0.2192                       none         True        True    True   False
+ B136       M   FIXH 0.1200      UPONLY 0.1864  1.1137 -0.3251 1.2298 1.0091    0.1821      1.0901    -0.3251   0.5572      0.2833           1.0000                      L4_DD        False       False   False   False
+ B136       M  FRACG 0.1000           1 0.1603  1.2364 -0.1700 1.3256 1.1499    0.1610      1.2621    -0.1700   1.5390     11.5576           0.1917                       none         True        True    True   False
+ B136       M  FRACG 0.1000           4 0.1553  1.2316 -0.1653 1.3394 1.1276    0.1547      1.2447    -0.1653   1.7114     21.4721           0.1917                       none         True        True    True   False
+ B136       M  FRACG 0.1000          16 0.1542  1.2274 -0.1673 1.3379 1.1214    0.1537      1.2391    -0.1673   1.7510     28.6106           0.1917                       none         True        True    True   False
+ B136       M  FRACG 0.1000    DOWNONLY 0.0000     NaN  0.0000    NaN    NaN    0.0000         NaN     0.0000   0.0000      0.0567           0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR        False       False   False   False
+ B136       M  FRACG 0.1000 DOWNONLY_TD 0.1596  1.2541 -0.1699 1.3579 1.1518    0.1576      1.2680    -0.1699   1.2944     17.2797           0.1917                       none         True        True    True   False
+ B136       M  FRACG 0.1000       A1_TD 0.1621  1.2415 -0.1699 1.3278 1.1576    0.1629      1.2686    -0.1699   1.5479     23.3984           0.1917                       none         True        True    True   False
+ B136       M  FRACG 0.1000      UPONLY 0.1864  1.1137 -0.3251 1.2298 1.0091    0.1821      1.0901    -0.3251   0.5572      0.2833           1.0000                      L4_DD        False       False   False   False
+   SMALL panel: 4b 0 of 28 pre-stated cells, 4a 0
+
+## RULE 8 — (A, base) chosen on 2009-2016 ONLY; 2017-2026 read once
+   picks at 10 bps (48 = 3 panels x 2 cadences x 2 bases x 4 choosers):
+panel T_trade family    chooser               cell  oos_CAGR  oos_Sharpe  oos_MaxDD  turn_py                       bind  keep4b  keep4a
+ B136       M   FIXH C_ISSHARPE  h=0.2 DOWNONLY_TD    0.1543      1.2076    -0.1829   1.1697                       none    True   False
+ B136       M   FIXH C_ISCALMAR          h=0.2 A=4    0.1489      1.2414    -0.1760   1.2216                       none    True   False
+ B136       M   FIXH     C_ISDD    h=0.02 DOWNONLY    0.0000         NaN     0.0000   0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR   False   False
+ B136       M   FIXH   C_ISLEGS         h=0.25 A=1    0.1406      1.1944    -0.1785   0.7315                       none    True   False
+ B136       M  FRACG C_ISSHARPE        f=0.5 A1_TD    0.1575      1.2211    -0.1988   1.1422                       none    True   False
+ B136       M  FRACG C_ISCALMAR          f=0.5 A=2    0.1219      1.2275    -0.1417   0.5781                       none    True   False
+ B136       M  FRACG     C_ISDD    f=0.02 DOWNONLY    0.0000         NaN     0.0000   0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR   False   False
+ B136       M  FRACG   C_ISLEGS          f=0.5 A=2    0.1219      1.2275    -0.1417   0.5781                       none    True   False
+ B136       W   FIXH C_ISSHARPE          h=0.2 A=4    0.1502      1.2443    -0.1775   1.7050                       none    True   False
+ B136       W   FIXH C_ISCALMAR         h=0.25 A=1    0.1408      1.1888    -0.1793   1.1859                       none    True   False
+ B136       W   FIXH     C_ISDD    h=0.02 DOWNONLY    0.0000         NaN     0.0000   0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR   False   False
+ B136       W   FIXH   C_ISLEGS         h=0.25 A=1    0.1408      1.1888    -0.1793   1.1859                       none    True   False
+ B136       W  FRACG C_ISSHARPE          f=0.3 A=4    0.1317      1.1889    -0.1494   1.3942                       none    True   False
+ B136       W  FRACG C_ISCALMAR          f=0.5 A=8    0.1187      1.2426    -0.1353   0.9983                       none    True   False
+ B136       W  FRACG     C_ISDD    f=0.02 DOWNONLY    0.0000         NaN     0.0000   0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR   False   False
+ B136       W  FRACG   C_ISLEGS          f=0.3 A=4    0.1317      1.1889    -0.1494   1.3942                       none    True   False
+  U56       M   FIXH C_ISSHARPE  h=0.2 DOWNONLY_TD    0.1617      1.2551    -0.2028   1.1103                      L4_DD   False   False
+  U56       M   FIXH C_ISCALMAR  h=0.2 DOWNONLY_TD    0.1617      1.2551    -0.2028   1.1103                      L4_DD   False   False
+  U56       M   FIXH     C_ISDD    h=0.02 DOWNONLY    0.0000         NaN     0.0000   0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR   False   False
+  U56       M   FIXH   C_ISLEGS  h=0.2 DOWNONLY_TD    0.1617      1.2551    -0.2028   1.1103                      L4_DD   False   False
+  U56       M  FRACG C_ISSHARPE        f=0.5 A1_TD    0.1635      1.2559    -0.2012   1.0628                       none    True   False
+  U56       M  FRACG C_ISCALMAR          f=0.5 A=2    0.1153      1.2423    -0.1399   0.5876                       none    True   False
+  U56       M  FRACG     C_ISDD    f=0.02 DOWNONLY    0.0000         NaN     0.0000   0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR   False   False
+  U56       M  FRACG   C_ISLEGS f=0.15 DOWNONLY_TD    0.1630      1.2878    -0.1880   1.2057                       none    True   False
+  U56       W   FIXH C_ISSHARPE         h=0.25 A=1    0.1554      1.1995    -0.2034   1.3243                      L4_DD   False   False
+  U56       W   FIXH C_ISCALMAR         h=0.25 A=1    0.1554      1.1995    -0.2034   1.3243                      L4_DD   False   False
+  U56       W   FIXH     C_ISDD    h=0.02 DOWNONLY    0.0000         NaN     0.0000   0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR   False   False
+  U56       W   FIXH   C_ISLEGS         h=0.25 A=1    0.1554      1.1995    -0.2034   1.3243                      L4_DD   False   False
+  U56       W  FRACG C_ISSHARPE          f=0.5 A=2    0.1143      1.2253    -0.1391   0.9797                       none    True   False
+  U56       W  FRACG C_ISCALMAR          f=0.5 A=2    0.1143      1.2253    -0.1391   0.9797                       none    True   False
+  U56       W  FRACG     C_ISDD    f=0.02 DOWNONLY    0.0000         NaN     0.0000   0.0000 L1_H1|L2_H2|L3_OOS|L5_CAGR   False   False
+  U56       W  FRACG   C_ISLEGS          f=0.5 A=2    0.1143      1.2253    -0.1391   0.9797                       none    True   False
+   which A rung the LEGAL IS-only choosers land on: DOWNONLY:12, 4:11, 1:8, 2:8, DOWNONLY_TD:5, A1_TD:2, 8:2
+   CHOOSER DEGENERACY (incidental KILL): the absorbing DOWNONLY book is picked on 12 of 48 (arm x base x chooser) cells, and 12 of them are C_ISDD.  C_ISDD maximises IS MaxDD, and a book that holds NOTHING has MaxDD exactly 0, so C_ISDD picks cash whenever the corpus contains a cash book: it is picked at 100% of C_ISDD cells here.  C_ISDD is NOT a legal chooser on any corpus that admits a zero-gross cell.
+   IS-chosen cells clearing 4b FULL+OOS: 18 of 48 (4a 0)
+   PRE-STATED A*=4 clears 4b on 8 of 12 pre-stated cells; its symmetric twin A=1 on 8; DOWNONLY on 0
+
+## V5 — KEEP-4b candidates (4b FULL *and* OOS) at 10 bps, t*, large panels
+   399 of 540 cells clear 4b FULL+OOS; 4a 0
+panel T_trade family               cell   CAGR  Sharpe   MaxDD     H1     H2  oos_CAGR  oos_Sharpe  oos_MaxDD  turn_py
+  U56       M   FIXH h=0.03 DOWNONLY_TD 0.1580  1.2638 -0.1854 1.3144 1.2175    0.1639      1.3069    -0.1854   1.2774
+  U56       M   FIXH h=0.02 DOWNONLY_TD 0.1574  1.2606 -0.1857 1.3120 1.2136    0.1632      1.3033    -0.1857   1.3021
+  U56       M  FRACG f=0.02 DOWNONLY_TD 0.1575  1.2619 -0.1850 1.3148 1.2134    0.1631      1.3032    -0.1850   1.3107
+  U56       M  FRACG  f=0.1 DOWNONLY_TD 0.1594  1.2678 -0.1896 1.3268 1.2135    0.1641      1.3024    -0.1896   1.1918
+  U56       M  FRACG f=0.05 DOWNONLY_TD 0.1578  1.2606 -0.1871 1.3131 1.2125    0.1634      1.3020    -0.1871   1.2671
+  U56       M  FRACG        f=0.3 A1_TD 0.1631  1.2628 -0.1887 1.3152 1.2160    0.1694      1.3007    -0.1887   1.0872
+  U56       M  FRACG        f=0.1 A1_TD 0.1600  1.2445 -0.1881 1.2845 1.2091    0.1681      1.2945    -0.1881   1.4307
+  U56       M  FRACG          f=0.1 A=1 0.1581  1.2470 -0.1912 1.2937 1.2055    0.1655      1.2928    -0.1912   1.4167
+  U56       M   FIXH h=0.05 DOWNONLY_TD 0.1579  1.2588 -0.1900 1.3194 1.2031    0.1626      1.2928    -0.1900   1.2465
+  U56       M   FIXH h=0.12 DOWNONLY_TD 0.1599  1.2596 -0.1932 1.3238 1.2008    0.1640      1.2891    -0.1932   1.1689
+  U56       M   FIXH         h=0.16 A=4 0.1509  1.2472 -0.1765 1.3007 1.2031    0.1598      1.2888    -0.1765   1.2429
+  U56       M  FRACG f=0.15 DOWNONLY_TD 0.1601  1.2659 -0.1880 1.3387 1.1988    0.1630      1.2878    -0.1880   1.2057
+   PRE-STATED KEEP-4b candidate: U56 T=M FIXH h=0.12 A=4 t=0.16  full 15.14% / 1.2235 / -19.97%, halves 1.2718 / 1.1805; OOS 15.73% / 1.2618 / -19.97%; 1.38 turns/yr, 11.2 refreshes/yr
+       0 bps: full 4b=True OOS 4b=True  15.30% / 1.2349 / -19.68%  (OOS 15.91% / 1.2748 / -19.68%)  bind=none
+      10 bps: full 4b=True OOS 4b=True  15.14% / 1.2235 / -19.97%  (OOS 15.73% / 1.2618 / -19.97%)  bind=none
+      25 bps: full 4b=False OOS 4b=False  14.90% / 1.2063 / -20.39%  (OOS 15.46% / 1.2423 / -20.39%)  bind=L4_DD
+      50 bps: full 4b=False OOS 4b=False  14.51% / 1.1776 / -21.10%  (OOS 15.01% / 1.2097 / -21.10%)  bind=L4_DD
+
+## VERDICT
+   V1 NOT TRIGGERED | V2 TRIGGERED | V3 NOT TRIGGERED | V4 TRIGGERED | gates 13/13
+   U56 SPY 15.12% / 0.8843 / -33.72% | live RULES v2 8.62% / 1.2010 / -12.05%
+
+LEADERBOARD rows:
+| 2026-09-21 | 2075-asym-ratio A1-symmetric (U56 FRACG f=.10 t=.16 M 10bps) | 15.8% | 1.25 | -19.1% | 1.29 / 1.21 | 1.20 (1.23/1.18) | KEEP-4b | 2026-09-21_asymmetry-ratio-ladder_C.py |
+| 2026-09-21 | 2075-asym-ratio A4-prestated (U56 FRACG f=.10 t=.16 M 10bps) | 15.1% | 1.22 | -19.0% | 1.27 / 1.17 | 1.20 (1.23/1.18) | KEEP-4b | 2026-09-21_asymmetry-ratio-ladder_C.py |
+| 2026-09-21 | 2075-asym-ratio A16 (U56 FRACG f=.10 t=.16 M 10bps) | 15.1% | 1.22 | -18.8% | 1.27 / 1.18 | 1.20 (1.23/1.18) | KEEP-4b | 2026-09-21_asymmetry-ratio-ladder_C.py |
+| 2026-09-21 | 2075-asym-ratio A1TD-symmetric (U56 FRACG f=.10 t=.16 M 10bps) | 16.0% | 1.24 | -18.8% | 1.28 / 1.21 | 1.20 (1.23/1.18) | KEEP-4b | 2026-09-21_asymmetry-ratio-ladder_C.py |
+| 2026-09-21 | 2075-asym-ratio DOWNONLY-TD (U56 FRACG f=.10 t=.16 M 10bps) | 15.9% | 1.27 | -19.0% | 1.33 / 1.21 | 1.20 (1.23/1.18) | KEEP-4b | 2026-09-21_asymmetry-ratio-ladder_C.py |
