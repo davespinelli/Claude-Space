@@ -1,0 +1,131 @@
+# Idea 2030 (lane C, 2026-09-21) — does the ASYMMETRY of the DRIFT TRIGGER carry the whole effect?
+# tuned dials (2): TARGET t [0.08, 0.1, 0.12, 0.16, 0.2] x THRESHOLD h [0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.16, 0.2, 0.25]   [CALENDAR family spends t x R ['D', 'W', 'M', 'Q']].  reported, not tuned: SIDE ['SYM', 'SYM_TD', 'DOWN_TD', 'UP_TD'] (the axis under test), TRADE T ['W', 'M'], PANEL, COST [0, 10, 25, 50] bps.  sigma FIXED at (L=20, d=0); warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2766 / -12.05%), 1.77 turns/yr
+   SPY                      15.12% / 0.8843 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (2000 scored rows)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%), 2.01 turns/yr
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (2000 scored rows)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%), 2.57 turns/yr
+   SPY                      14.01% / 0.8561 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (2000 scored rows)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 bt_cal diagonal == engine.backtest (returns / turnover): 0.000e+00 / 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turn*c/1e4 == fresh engine run at 10/25 bps: 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 reproduces the standing VOLTGT memo (points 2-4, U56 + B136): max|d| = 4.605e-05   (target < 1e-3)
+  GATE PASS  G4 SYM h=0 == CALENDAR R=D, cell by cell (30 cells): 0.000e+00   (target < 1e-12)
+  GATE PASS  G6 the h -> inf limit of every TD side IS the calendar book at the trade cadence, CAL(R=T) (90 cells): 0.000e+00   (target < 1e-12)
+  GATE PASS  G5 SYM reproduces idea 1799's committed DRIFT grid (1080 rows x 9 cols): max|d| = 8.882e-16   (target < 1e-12)
+  GATE PASS  G7 gross never levered: max gross 1.000000   (target <= 1.0 + 1e-9)
+  GATE PASS  G8 replicates idea 2075's structural KILL: a PURE down-only trigger never leaves zero (90 cells): max gross 0.000e+00   (target == 0)
+  GATE PASS  G9 replicates idea 2075's mirror: PURE up-only never de-grosses in the 2020 crash (min gross 0.784 vs SYM's 0.321): 0.784   (target > SYM max)
+  GATE PASS  G10 the h ladder actually moves refresh frequency: refresh/yr 0.8 .. 150.3   (target min < 52 < max)
+
+## V1 — each SIDE vs its own arm's TURNOVER-MATCHED point on the CALENDAR ladder
+   (this is idea 1799's own ruler; its published SYM mean at 10 bps is +0.0596)
+   side        n  dOOS Sharpe    win  dOOS MaxDD  dOOS CAGR  turn/yr
+   SYM       263      +0.0596  1.000      +4.07pp     +0.31pp     2.73
+   SYM_TD    270      +0.0269  0.963      +1.49pp     +0.20pp     2.88
+   DOWN_TD   270      +0.0438  0.937      +3.04pp     +0.02pp     2.41
+   UP_TD     270      -0.0059  0.370      -1.15pp     +0.26pp     2.47
+   V1 (DOWN owns the Sharpe): DOWN_TD +0.0438 >= 0.5 x SYM +0.0298 AND UP_TD -0.0059 < that  ->  TRIGGERED
+
+## ATTRIBUTION — each side minus the CAL(R=T) zero point (its own h -> inf limit)
+   side      dOOS Sharpe   dOOS MaxDD   dOOS CAGR  dturn/yr   (vs CAL(R=T), 270 cells each, 10 bps)
+   SYM           +0.0571       +4.47pp      +0.26pp     +0.50
+   SYM_TD        +0.0487       +4.34pp      +0.21pp     +0.69
+   DOWN_TD       +0.0507       +4.15pp      -0.01pp     +0.22
+   UP_TD         +0.0025       +0.23pp      +0.24pp     +0.28
+   interaction residual  d_oos_Sharpe   SYM_TD - (DOWN_TD + UP_TD) = -0.00455  (|resid| / |SYM_TD| = 0.094)
+   interaction residual  d_oos_MaxDD    SYM_TD - (DOWN_TD + UP_TD) = -0.00039  (|resid| / |SYM_TD| = 0.009)
+   interaction residual  d_oos_CAGR     SYM_TD - (DOWN_TD + UP_TD) = -0.00024  (|resid| / |SYM_TD| = 0.112)
+   interaction residual  d_turn         SYM_TD - (DOWN_TD + UP_TD) = +0.19260  (|resid| / |SYM_TD| = 0.280)
+
+## V2 — who owns the CAGR cost (4b CAGR margin L5_CAGR, 10 bps, all cells)
+   SYM      L5_CAGR mean   +1.26pp   binds at   98 of 270   OOS CAGR  11.35%   OOS Sharpe 0.9987   OOS MaxDD -19.17%
+   SYM_TD   L5_CAGR mean   +1.30pp   binds at  101 of 270   OOS CAGR  11.30%   OOS Sharpe 0.9902   OOS MaxDD -19.31%
+   DOWN_TD  L5_CAGR mean   +1.14pp   binds at  113 of 270   OOS CAGR  11.08%   OOS Sharpe 0.9923   OOS MaxDD -19.49%
+   UP_TD    L5_CAGR mean   +1.72pp   binds at   90 of 270   OOS CAGR  11.33%   OOS Sharpe 0.9440   OOS MaxDD -23.41%
+   V2 (UP owns the CAGR cost): UP_TD +1.72 > SYM_TD +1.30 > DOWN_TD +1.14  ->  TRIGGERED
+
+## BOTH KEEP PATHS, by side and cost (all cells; SIDES x h ladder)
+    0 bps: DOWN_TD 4b 130/270 (full 130) 4a 35; SYM 4b 159/270 (full 159) 4a 31; SYM_TD 4b 152/270 (full 152) 4a 31; UP_TD 4b 108/270 (full 108) 4a 11
+   10 bps: DOWN_TD 4b 121/270 (full 121) 4a 34; SYM 4b 136/270 (full 136) 4a 30; SYM_TD 4b 131/270 (full 131) 4a 30; UP_TD 4b 89/270 (full 89) 4a 9
+   25 bps: DOWN_TD 4b 117/270 (full 117) 4a 24; SYM 4b 119/270 (full 119) 4a 22; SYM_TD 4b 118/270 (full 118) 4a 22; UP_TD 4b 85/270 (full 85) 4a 9
+   50 bps: DOWN_TD 4b 101/270 (full 101) 4a 17; SYM 4b 99/270 (full 99) 4a 6; SYM_TD 4b 95/270 (full 95) 4a 4; UP_TD 4b 63/270 (full 63) 4a 0
+   binding leg (10 bps, 4b failures): SYM: L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 40, L5_CAGR 26, L2_H2|L3_OOS|L4_DD|L5_CAGR 22; SYM_TD: L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 44, L5_CAGR 29, L4_DD 20; DOWN_TD: L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 46, L5_CAGR 33, L2_H2|L3_OOS|L4_DD|L5_CAGR 29; UP_TD: L4_DD 73, L2_H2|L3_OOS|L4_DD|L5_CAGR 44, L1_H1|L2_H2|L3_OOS|L4_DD|L5_CAGR 28
+   by panel (10 bps, 4b FULL+OOS): B136/DOWN_TD 66/90; B136/SYM 70/90; B136/SYM_TD 69/90; B136/UP_TD 45/90; SMALL665/DOWN_TD 0/90; SMALL665/SYM 0/90; SMALL665/SYM_TD 0/90; SMALL665/UP_TD 0/90; U56/DOWN_TD 55/90; U56/SYM 66/90; U56/SYM_TD 62/90; U56/UP_TD 44/90
+
+## RULE 8 — (t, h) or (t, R) chosen on 2009-2016 ONLY; 2017-2026 read exactly once
+   C_ISDD is REPORTED BUT ILLEGAL (idea 2075: it selects the degenerate low-exposure cell on any corpus admitting a cash cell); it is excluded from every verdict.
+   family     n  4b FULL+OOS   4a  mean OOS CAGR / Sharpe / MaxDD   (10 bps, legal choosers only)
+   CAL       18            1    0   12.38% / 0.9098 / -30.36%
+   DOWN_TD   18            7    0   12.58% / 0.9720 / -23.82%
+   SYM       18            7    0   12.57% / 0.9700 / -23.63%
+   SYM_TD    18           11    0   12.42% / 0.9667 / -23.06%
+   UP_TD     18            9    0   11.99% / 0.9551 / -24.99%
+   picks (10 bps, legal): CAL: R=M x18; DOWN_TD: DOWN_TD h=0.20 x12, DOWN_TD h=0.25 x5, DOWN_TD h=0.16 x1; SYM: SYM h=0.25 x10, SYM h=0.16 x7, SYM h=0.12 x1; SYM_TD: SYM_TD h=0.20 x10, SYM_TD h=0.16 x4, SYM_TD h=0.25 x3, SYM_TD h=0.08 x1; UP_TD: UP_TD h=0.08 x5, UP_TD h=0.20 x4, UP_TD h=0.25 x3, UP_TD h=0.16 x2
+   V3 (the half-rule reaches): DOWN_TD 4b cells 121 >= SYM_TD 131 AND an IS-only chooser reaches one (7 picks)  ->  NOT TRIGGERED
+
+   RULE-8 CELLS CLEARING 4b FULL *AND* OOS, reached by a LEGAL chooser (34 of 72 side picks at 10 bps):
+     B136      T=M SYM      SYM h=0.16         by C_ISSHARPE  OOS  16.63% / 1.1957 / -19.42%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=M SYM      SYM h=0.25         by C_ISCALMAR  OOS  14.06% / 1.1944 / -17.85%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=M SYM      SYM h=0.25         by C_ISLEGS    OOS  14.06% / 1.1944 / -17.85%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=M SYM_TD   SYM_TD h=0.20      by C_ISCALMAR  OOS  15.33% / 1.1786 / -18.29%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=M SYM_TD   SYM_TD h=0.20      by C_ISLEGS    OOS  12.73% / 1.2407 / -13.70%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=M DOWN_TD  DOWN_TD h=0.20     by C_ISLEGS    OOS  12.63% / 1.2605 / -13.70%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=M UP_TD    UP_TD h=0.16       by C_ISCALMAR  OOS  11.49% / 1.1766 / -16.15%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=M UP_TD    UP_TD h=0.20       by C_ISLEGS    OOS  13.12% / 1.1835 / -19.87%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W SYM      SYM h=0.25         by C_ISSHARPE  OOS  14.08% / 1.1888 / -17.93%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W SYM      SYM h=0.25         by C_ISCALMAR  OOS  14.08% / 1.1888 / -17.93%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W SYM      SYM h=0.25         by C_ISLEGS    OOS  14.08% / 1.1888 / -17.93%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W SYM_TD   SYM_TD h=0.25      by C_ISSHARPE  OOS  15.34% / 1.1827 / -18.54%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W SYM_TD   SYM_TD h=0.20      by C_ISCALMAR  OOS  15.39% / 1.1861 / -18.28%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W SYM_TD   SYM_TD h=0.20      by C_ISLEGS    OOS  14.01% / 1.2403 / -14.78%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W DOWN_TD  DOWN_TD h=0.16     by C_ISSHARPE  OOS  16.60% / 1.1901 / -19.33%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W DOWN_TD  DOWN_TD h=0.20     by C_ISCALMAR  OOS  15.39% / 1.1859 / -18.28%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W DOWN_TD  DOWN_TD h=0.20     by C_ISLEGS    OOS  14.08% / 1.2468 / -14.78%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W UP_TD    UP_TD h=0.03       by C_ISSHARPE  OOS  15.55% / 1.1885 / -18.76%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     B136      T=W UP_TD    UP_TD h=0.12       by C_ISLEGS    OOS  13.94% / 1.2257 / -16.01%   (live v2 OOS 1.1017, SPY OOS 0.8737), 4a fail
+     U56       T=M SYM      SYM h=0.12         by C_ISSHARPE  OOS  16.36% / 1.2810 / -18.16%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=M SYM_TD   SYM_TD h=0.20      by C_ISSHARPE  OOS  16.31% / 1.2467 / -18.71%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=M SYM_TD   SYM_TD h=0.20      by C_ISCALMAR  OOS  16.31% / 1.2467 / -18.71%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=M SYM_TD   SYM_TD h=0.20      by C_ISLEGS    OOS  16.31% / 1.2467 / -18.71%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=M UP_TD    UP_TD h=0.20       by C_ISCALMAR  OOS  11.83% / 1.2441 / -16.13%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=M UP_TD    UP_TD h=0.25       by C_ISLEGS    OOS  13.75% / 1.2592 / -19.39%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W SYM_TD   SYM_TD h=0.20      by C_ISSHARPE  OOS  15.99% / 1.2238 / -19.86%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W SYM_TD   SYM_TD h=0.20      by C_ISCALMAR  OOS  15.99% / 1.2238 / -19.86%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W SYM_TD   SYM_TD h=0.16      by C_ISLEGS    OOS  14.79% / 1.2971 / -16.44%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W DOWN_TD  DOWN_TD h=0.20     by C_ISSHARPE  OOS  15.95% / 1.2212 / -19.86%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W DOWN_TD  DOWN_TD h=0.20     by C_ISCALMAR  OOS  15.95% / 1.2212 / -19.86%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W DOWN_TD  DOWN_TD h=0.20     by C_ISLEGS    OOS  14.78% / 1.2975 / -16.44%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W UP_TD    UP_TD h=0.05       by C_ISSHARPE  OOS  16.06% / 1.2188 / -20.01%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W UP_TD    UP_TD h=0.25       by C_ISCALMAR  OOS  15.95% / 1.2198 / -19.86%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+     U56       T=W UP_TD    UP_TD h=0.16       by C_ISLEGS    OOS  14.56% / 1.2720 / -16.44%   (live v2 OOS 1.2766, SPY OOS 0.8737), 4a fail
+
+## MECHANISM — gross through the 2020 crash window (2020-02-19 -> 2020-04-30), 10 bps grid cells
+   SYM      pre 0.877 -> trough 0.162 -> out 0.284   ( 26.6 refreshes/yr)
+   SYM_TD   pre 0.889 -> trough 0.137 -> out 0.289   ( 54.1 refreshes/yr)
+   DOWN_TD  pre 0.887 -> trough 0.137 -> out 0.233   ( 40.4 refreshes/yr)
+   UP_TD    pre 0.911 -> trough 0.137 -> out 0.292   ( 40.3 refreshes/yr)
+   U56 T=M t=0.16 h=0.12  SYM      0.970 -> 0.253 -> 0.448
+   U56 T=M t=0.16 h=0.12  SYM_TD   1.000 -> 0.197 -> 0.356
+   U56 T=M t=0.16 h=0.12  DOWN_TD  1.000 -> 0.197 -> 0.222
+   U56 T=M t=0.16 h=0.12  UP_TD    1.000 -> 0.197 -> 0.356
+
+## PRE-STATED VERDICTS
+   V1 DOWN owns the Sharpe          TRIGGERED
+   V2 UP owns the CAGR cost         TRIGGERED
+   V3 the half-rule reaches         NOT TRIGGERED
+   V4 a reached 4b cell exists      TRIGGERED
+
+## GATES 11/11 passed;  6000 scored rows written to 2026-09-21_drift-trigger-side-attribution_C.grid.csv.gz
