@@ -1,0 +1,184 @@
+Idea 2042 (lane cloud, 2026-09-21) — IS A 4b PASS RESOLVABLE, OR IS IT A POINT ESTIMATE?
+Paired block-bootstrap standard errors on ALL FIVE 4b leg margins, at EVERY CELL of a
+pre-registered 36-cell book grid, plus the rule-8-reached cell.
+
+THE QUESTION.  PROTOCOL path 4b is five inequalities against SPY.  The record publishes
+thousands of 4b verdicts and, until today, not one of them carried an error bar on the leg
+that actually binds.  Lane B's idea 2060 (2026-09-21) put a paired block bootstrap on the five
+legs of ONE cell (the standing VOLTGT-DRIFT candidate) and found the CAGR-floor margin
+unresolvable at 30 (block, seed) points.  This run asks the POPULATION question 2060 could not:
+over a grid of 36 real books, how many of the cells that PASS 4b on the point estimate still
+pass once the 95% CI on their BINDING leg has to sit entirely on the passing side — and is the
+cell a legal IS-only chooser reaches (PROTOCOL rule 8) one of the survivors?
+
+THE TWO TUNED PARAMETERS (PROTOCOL rule 4; every grid point reported, none hidden):
+    P1  B     circular-block length, trading days   {10, 21, 63}
+    P2  conf  confidence level                      {0.90, 0.95}
+    nboot = 1000 per window, seed 2042, ONE index stream shared by every cell (so cells are
+    compared on the same resampled days, and the survival counts below are paired).
+
+REPORTED, NOT TUNED (this is the CELL POPULATION, not a dial being searched):
+    panel  {U56 (research/universe.json), B136 (universe_broad.json)}
+    band   c {0.00, 0.03, 0.08}      200d MA band, baseline.band_state / rules_v2_weights
+    gross  g {0.50, 0.75, 1.00}
+    trade  {W, M}
+    = 2 x 3 x 3 x 2 = 36 cells, every one published, at 10 bps and t+1 execution.
+    The live book (RULES v2: c = 0.03, g = 0.75, W) is cell #14 of this grid by construction,
+    so the grid contains the incumbent and is not built around a winner.
+
+BOOTSTRAP CONVENTION (stated because the convention moves the number — ideas 1511 / 2060):
+  * PAIRED.  Book and SPY are resampled on the SAME circular-block offsets inside a draw, so
+    each margin keeps its day-by-day pairing and the SE is of the CONTRAST, not of two levels.
+  * PER-WINDOW.  Each leg is resampled on the window it is READ on (H1 days for L1, H2 for L2,
+    2017+ for L3, the whole post-warmup sample for L4/L5).  Blocks are shuffled only inside a
+    window, so "half" keeps its meaning.
+  * A block bootstrap of a DRAWDOWN breaks the single longest loss run, so L4's SE is
+    conservative-to-noisy by construction.  It is reported; the headline survival count is
+    driven by L3 and L5, and both are named.
+  * The five windows are resampled independently of one another (they are disjoint or nested
+    day sets).  That is an assumption, stated, not repaired.
+
+PROTOCOL: rule 2 (10 bps, next-day execution via engine.backtest, no shorting/leverage);
+rule 3 (live RULES v2 AND SPY); rule 4 (BOTH KEEP paths at every cell, <= 2 tuned parameters,
+all grid points reported); rule 5 (one idea, deterministic, standalone); rule 8 (walk-forward:
+the cell is chosen on 2009-2016 ONLY by a pre-registered IS-only chooser, 2017-2026 is read
+once, and the pick's OOS legs are bootstrapped); rule 9 (survivorship stated).
+RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are NOT modified.
+
+SURVIVORSHIP.  U56 and B136 are CURRENT-constituent lists, so every CAGR/MaxDD LEVEL here is
+optimistic and both 4b bars are easier than they would be on a point-in-time panel.  The SEs
+are same-tape, same-names, paired contrasts and are first-order immune to that bias; the PASS
+LEVELS are not.
+
+Runs standalone and offline (committed caches only):
+  python research/backtests/2026-09-21_4b-leg-margin-bootstrap-every-cell_cloud.py
+
+====================================================================================================
+Sample 2009-01-13 .. 2026-09-18  n=4448 days after 260-day warm-up
+  H1 2009-01-13..2017-11-09 (2224)   H2 2017-11-10..2026-09-18 (2224)   IS <= 2016-12-31 (2007)   OOS >= 2017-01-01 (2441)
+
+----------------------------------------------------------------------------------------------------
+SECTION 1 — ALL 36 CELLS, point estimates (10 bps, t+1).  SPY and the live book on the same tape:
+  SPY        CAGR 15.12%  Sharpe 0.8843  MaxDD -33.72%  H1 0.9570  H2 0.8249  OOS 0.8737 / CAGR 15.26%
+  RULES v2 (U56)  CAGR 8.62%  Sharpe 1.2010  MaxDD -12.05%  H1 1.2276  H2 1.1805  OOS 1.2766 / CAGR 9.46%
+  RULES v2 (B136)  CAGR 7.96%  Sharpe 1.0972  MaxDD -12.24%  H1 1.2296  H2 0.9669  OOS 1.1017 / CAGR 7.85%
+  4b bars: H1 > SPY H1, H2 > SPY H2, OOS > SPY OOS, |MaxDD| <= 0.60x|SPY|, CAGR >= 0.70x SPY
+panel   band  gross trade   CAGR  Sharpe   MaxDD     H1     H2  OOS_Sharpe   turn  L1_H1  L2_H2  L3_OOS   L4_DD  L5_CAGR  pass4a  pass4b
+  U56 0.0000 0.5000     W 0.0543  1.1670 -0.0810 1.1821 1.1559      1.2555 2.0991 0.2251 0.3310  0.3819  0.1213  -0.0516   False   False
+  U56 0.0000 0.5000     M 0.0588  1.2048 -0.0803 1.2462 1.1672      1.2641 0.9960 0.2892 0.3423  0.3905  0.1220  -0.0470   False   False
+  U56 0.0000 0.7500     W 0.0817  1.1670 -0.1201 1.1828 1.1553      1.2551 3.1327 0.2257 0.3304  0.3814  0.0822  -0.0242   False   False
+  U56 0.0000 0.7500     M 0.0888  1.2066 -0.1183 1.2483 1.1687      1.2656 1.4864 0.2913 0.3438  0.3920  0.0840  -0.0171   False   False
+  U56 0.0000 1.0000     W 0.1092  1.1668 -0.1584 1.1833 1.1547      1.2545 4.1671 0.2262 0.3298  0.3808  0.0439   0.0033   False    True
+  U56 0.0000 1.0000     M 0.1190  1.2084 -0.1549 1.2503 1.1701      1.2670 1.9781 0.2933 0.3452  0.3934  0.0474   0.0132   False    True
+  U56 0.0300 0.5000     W 0.0572  1.2010 -0.0812 1.2270 1.1811      1.2772 1.1948 0.2699 0.3562  0.4035  0.1211  -0.0486   False   False
+  U56 0.0300 0.5000     M 0.0588  1.1704 -0.0978 1.2104 1.1384      1.2232 0.8280 0.2534 0.3135  0.3495  0.1045  -0.0470   False   False
+  U56 0.0300 0.7500     W 0.0862  1.2010 -0.1205 1.2276 1.1805      1.2766 1.7736 0.2706 0.3556  0.4030  0.0818  -0.0197   False   False
+  U56 0.0300 0.7500     M 0.0888  1.1720 -0.1438 1.2125 1.1395      1.2242 1.2339 0.2555 0.3146  0.3505  0.0585  -0.0171   False   False
+  U56 0.0300 1.0000     W 0.1153  1.2008 -0.1591 1.2282 1.1798      1.2759 2.3519 0.2711 0.3549  0.4023  0.0432   0.0095   False    True
+  U56 0.0300 1.0000     M 0.1190  1.1734 -0.1881 1.2145 1.1405      1.2251 1.6406 0.2574 0.3156  0.3515  0.0143   0.0131   False    True
+  U56 0.0800 0.5000     W 0.0565  1.1451 -0.0976 1.2374 1.0693      1.1643 0.7651 0.2803 0.2444  0.2907  0.1047  -0.0493   False   False
+  U56 0.0800 0.5000     M 0.0578  1.0948 -0.1264 1.2113 1.0071      1.0969 0.5638 0.2543 0.1822  0.2233  0.0759  -0.0481   False   False
+  U56 0.0800 0.7500     W 0.0850  1.1449 -0.1447 1.2380 1.0685      1.1635 1.1251 0.2809 0.2436  0.2898  0.0576  -0.0208   False   False
+  U56 0.0800 0.7500     M 0.0871  1.0948 -0.1856 1.2126 1.0066      1.0961 0.8363 0.2555 0.1817  0.2224  0.0167  -0.0188   False   False
+  U56 0.0800 1.0000     W 0.1137  1.1444 -0.1905 1.2384 1.0675      1.1624 1.4817 0.2814 0.2426  0.2888  0.0118   0.0078   False    True
+  U56 0.0800 1.0000     M 0.1166  1.0947 -0.2423 1.2137 1.0060      1.0950 1.1087 0.2567 0.1811  0.2213 -0.0400   0.0108   False   False
+ B136 0.0000 0.5000     W 0.0513  1.0847 -0.0851 1.1972 0.9736      1.1108 2.2276 0.2401 0.1487  0.2371  0.1172  -0.0546   False   False
+ B136 0.0000 0.5000     M 0.0555  1.1230 -0.0833 1.2402 1.0042      1.1357 1.0642 0.2831 0.1793  0.2620  0.1190  -0.0504    True   False
+ B136 0.0000 0.7500     W 0.0771  1.0846 -0.1262 1.1982 0.9725      1.1097 3.3240 0.2411 0.1476  0.2360  0.0761  -0.0288   False   False
+ B136 0.0000 0.7500     M 0.0836  1.1247 -0.1227 1.2426 1.0053      1.1365 1.5885 0.2856 0.1804  0.2629  0.0796  -0.0223   False   False
+ B136 0.0000 1.0000     W 0.1028  1.0844 -0.1663 1.1991 0.9713      1.1084 4.4203 0.2421 0.1464  0.2348  0.0360  -0.0030   False   False
+ B136 0.0000 1.0000     M 0.1119  1.1264 -0.1608 1.2450 1.0064      1.1374 2.1130 0.2879 0.1814  0.2637  0.0415   0.0060   False    True
+ B136 0.0300 0.5000     W 0.0530  1.0972 -0.0824 1.2284 0.9678      1.1026 1.3545 0.2713 0.1429  0.2290  0.1199  -0.0529   False   False
+ B136 0.0300 0.5000     M 0.0552  1.0817 -0.1067 1.2108 0.9576      1.0789 0.9313 0.2538 0.1327  0.2053  0.0956  -0.0507   False   False
+ B136 0.0300 0.7500     W 0.0796  1.0972 -0.1224 1.2296 0.9669      1.1017 2.0111 0.2725 0.1420  0.2280  0.0799  -0.0263   False   False
+ B136 0.0300 0.7500     M 0.0832  1.0833 -0.1569 1.2133 0.9586      1.0796 1.3885 0.2563 0.1337  0.2060  0.0454  -0.0227   False   False
+ B136 0.0300 1.0000     W 0.1063  1.0971 -0.1616 1.2306 0.9658      1.1006 2.6664 0.2735 0.1409  0.2270  0.0407   0.0004   False    True
+ B136 0.0300 1.0000     M 0.1113  1.0849 -0.2050 1.2157 0.9596      1.0802 1.8455 0.2587 0.1347  0.2066 -0.0027   0.0055   False   False
+ B136 0.0800 0.5000     W 0.0565  1.1154 -0.1000 1.2714 0.9649      1.0946 0.8343 0.3143 0.1399  0.2210  0.1023  -0.0494   False   False
+ B136 0.0800 0.5000     M 0.0577  1.0580 -0.1389 1.2553 0.8861      1.0049 0.6135 0.2982 0.0612  0.1312  0.0634  -0.0481   False   False
+ B136 0.0800 0.7500     W 0.0849  1.1153 -0.1481 1.2725 0.9638      1.0934 1.2275 0.3155 0.1389  0.2198  0.0542  -0.0209   False   False
+ B136 0.0800 0.7500     M 0.0870  1.0577 -0.2038 1.2568 0.8853      1.0032 0.9104 0.2997 0.0604  0.1296 -0.0015  -0.0189   False   False
+ B136 0.0800 1.0000     W 0.1135  1.1150 -0.1950 1.2735 0.9625      1.0921 1.6175 0.3165 0.1376  0.2184  0.0073   0.0076   False    True
+ B136 0.0800 1.0000     M 0.1165  1.0572 -0.2658 1.2581 0.8845      1.0014 1.2066 0.3011 0.0596  0.1277 -0.0635   0.0106   False   False
+
+  POINT-ESTIMATE COUNTS: 4b passes 8 of 36; 4a passes 1 of 36; both 0.
+
+----------------------------------------------------------------------------------------------------
+SECTION 2 — PAIRED CIRCULAR-BLOCK BOOTSTRAP, nboot=1000, seed=2042, one index stream per (window, B).
+
+  Per-leg SE (median over the 36 cells) and how many cells' margin exceeds 2 SE, by block length:
+    B= 10d  L1_H1 SE 0.1982 |t|>2 0/36  L2_H2 SE 0.1779 |t|>2 0/36  L3_OOS SE 0.1679 |t|>2 12/36  L4_DD SE 0.0376 |t|>2 17/36  L5_CAGR SE 0.0194 |t|>2 12/36
+    B= 21d  L1_H1 SE 0.1896 |t|>2 0/36  L2_H2 SE 0.1674 |t|>2 3/36  L3_OOS SE 0.1566 |t|>2 12/36  L4_DD SE 0.0339 |t|>2 18/36  L5_CAGR SE 0.0181 |t|>2 12/36
+    B= 63d  L1_H1 SE 0.1691 |t|>2 0/36  L2_H2 SE 0.1416 |t|>2 12/36  L3_OOS SE 0.1404 |t|>2 15/36  L4_DD SE 0.0296 |t|>2 21/36  L5_CAGR SE 0.0160 |t|>2 12/36
+
+----------------------------------------------------------------------------------------------------
+SECTION 3 — DOES A 4b PASS SURVIVE ITS OWN ERROR BAR?
+  BINDING LEG = the passing cell's leg with the smallest bootstrap t (margin / SE).
+  SURVIVES(binding) = that leg's CI lower bound > 0.   SURVIVES(joint) = ALL FIVE CIs' lower bound > 0.
+    B= 10d  conf=0.90   binding-leg survivors 0/8   all-five survivors 0/8
+    B= 10d  conf=0.95   binding-leg survivors 0/8   all-five survivors 0/8
+    B= 21d  conf=0.90   binding-leg survivors 0/8   all-five survivors 0/8
+    B= 21d  conf=0.95   binding-leg survivors 0/8   all-five survivors 0/8
+    B= 63d  conf=0.90   binding-leg survivors 0/8   all-five survivors 0/8
+    B= 63d  conf=0.95   binding-leg survivors 0/8   all-five survivors 0/8
+
+  Which leg BINDS on the passing cells (count over all (B, conf) points):
+    binding
+    L5_CAGR    30
+    L4_DD      18
+
+  Per-cell detail at B=21, conf=0.95 (the mid grid point; every other point is in the csv):
+    panel   band  gross trade  B   conf binding  bind_t  bind_margin  bind_lo  survives_binding  survives_joint
+      U56 0.0000 1.0000     W 21 0.9500 L5_CAGR  0.1940       0.0033  -0.0318             False           False
+      U56 0.0000 1.0000     M 21 0.9500 L5_CAGR  0.7527       0.0132  -0.0221             False           False
+      U56 0.0300 1.0000     W 21 0.9500 L5_CAGR  0.5405       0.0095  -0.0266             False           False
+      U56 0.0300 1.0000     M 21 0.9500   L4_DD  0.4239       0.0143  -0.0389             False           False
+      U56 0.0800 1.0000     W 21 0.9500   L4_DD  0.3498       0.0118  -0.0464             False           False
+     B136 0.0000 1.0000     M 21 0.9500 L5_CAGR  0.3731       0.0060  -0.0261             False           False
+     B136 0.0300 1.0000     W 21 0.9500 L5_CAGR  0.0253       0.0004  -0.0327             False           False
+     B136 0.0800 1.0000     W 21 0.9500   L4_DD  0.2256       0.0073  -0.0479             False           False
+
+----------------------------------------------------------------------------------------------------
+SECTION 4 — RULE 8 WALK-FORWARD.  Cell chosen on 2009-2016 ONLY, 2017-2026 read once.
+  Pre-registered IS-only choosers (both reported; neither is tuned):
+    C1 = max IS Sharpe.   C2 = max IS min-leg margin (the four 4b legs computable in-sample:
+         IS-half1 Sharpe, IS-half2 Sharpe, IS MaxDD cap, IS CAGR floor — OOS is NOT looked at).
+  IS window 2009-01-13 .. 2016-12-30 (2007 days).
+    C1 picks  panel=B136 band=0.08 gross=1.00 trade=W  (IS Sharpe 1.1421, IS min-leg +0.0133)
+    C2 picks  panel=B136 band=0.08 gross=1.00 trade=W  (IS Sharpe 1.1421, IS min-leg +0.0133)
+
+  OOS 2017-2026, read ONCE, for each pick, against the live book and SPY on the same days:
+    who                                    CAGR   Sharpe    MaxDD
+    SPY                                  15.26%   0.8737  -33.72%
+    RULES v2 live (U56)                   9.46%   1.2766  -12.05%
+    RULES v2 live (B136)                  7.85%   1.1017  -12.24%
+    C1 pick B136 c0.08 g1.00 W           10.98%   1.0921  -19.50%
+      full-sample 4b PASS   4a FAIL   | OOS-window 4b PASS  4a FAIL  O1_H1 +0.2392  O2_H2 +0.1869  O3_OOS +0.2184  O4_DD +0.0073  O5_CAGR +0.0030
+      the rule-8-reached cell IS a full-sample 4b pass; binding-leg survival at the six (B, conf) points: 0/6; all-five: 0/6
+    C2 pick B136 c0.08 g1.00 W           10.98%   1.0921  -19.50%
+      full-sample 4b PASS   4a FAIL   | OOS-window 4b PASS  4a FAIL  O1_H1 +0.2392  O2_H2 +0.1869  O3_OOS +0.2184  O4_DD +0.0073  O5_CAGR +0.0030
+      the rule-8-reached cell IS a full-sample 4b pass; binding-leg survival at the six (B, conf) points: 0/6; all-five: 0/6
+
+  Bootstrap of the picks' OOS-window legs (margin / SE / t / 95% CI), all (B) points:
+    chooser panel   band  gross trade  B     leg  margin     se      t    lo90   hi90    lo95   hi95
+         C1  B136 0.0800 1.0000     W 10  O3_OOS  0.2184 0.1560 1.4005 -0.0475 0.4588 -0.0861 0.5065
+         C1  B136 0.0800 1.0000     W 10   O4_DD  0.0073 0.0337 0.2171 -0.0423 0.0708 -0.0515 0.0833
+         C1  B136 0.0800 1.0000     W 10 O5_CAGR  0.0030 0.0219 0.1371 -0.0343 0.0361 -0.0438 0.0430
+         C1  B136 0.0800 1.0000     W 21  O3_OOS  0.2184 0.1465 1.4908 -0.0112 0.4734 -0.0608 0.5152
+         C1  B136 0.0800 1.0000     W 21   O4_DD  0.0073 0.0289 0.2532 -0.0359 0.0590 -0.0434 0.0704
+         C1  B136 0.0800 1.0000     W 21 O5_CAGR  0.0030 0.0209 0.1436 -0.0321 0.0364 -0.0425 0.0399
+         C1  B136 0.0800 1.0000     W 63  O3_OOS  0.2184 0.1399 1.5613 -0.0150 0.4411 -0.0657 0.4909
+         C1  B136 0.0800 1.0000     W 63   O4_DD  0.0073 0.0257 0.2847 -0.0285 0.0563 -0.0395 0.0740
+         C1  B136 0.0800 1.0000     W 63 O5_CAGR  0.0030 0.0194 0.1544 -0.0304 0.0324 -0.0378 0.0369
+         C2  B136 0.0800 1.0000     W 10  O3_OOS  0.2184 0.1560 1.4005 -0.0475 0.4588 -0.0861 0.5065
+         C2  B136 0.0800 1.0000     W 10   O4_DD  0.0073 0.0337 0.2171 -0.0423 0.0708 -0.0515 0.0833
+         C2  B136 0.0800 1.0000     W 10 O5_CAGR  0.0030 0.0219 0.1371 -0.0343 0.0361 -0.0438 0.0430
+         C2  B136 0.0800 1.0000     W 21  O3_OOS  0.2184 0.1465 1.4908 -0.0112 0.4734 -0.0608 0.5152
+         C2  B136 0.0800 1.0000     W 21   O4_DD  0.0073 0.0289 0.2532 -0.0359 0.0590 -0.0434 0.0704
+         C2  B136 0.0800 1.0000     W 21 O5_CAGR  0.0030 0.0209 0.1436 -0.0321 0.0364 -0.0425 0.0399
+         C2  B136 0.0800 1.0000     W 63  O3_OOS  0.2184 0.1399 1.5613 -0.0150 0.4411 -0.0657 0.4909
+         C2  B136 0.0800 1.0000     W 63   O4_DD  0.0073 0.0257 0.2847 -0.0285 0.0563 -0.0395 0.0740
+         C2  B136 0.0800 1.0000     W 63 O5_CAGR  0.0030 0.0194 0.1544 -0.0304 0.0324 -0.0378 0.0369
+
+====================================================================================================
+Files: 2026-09-21_4b-leg-margin-bootstrap-every-cell_cloud.cells.csv, 2026-09-21_4b-leg-margin-bootstrap-every-cell_cloud.legs.csv, 2026-09-21_4b-leg-margin-bootstrap-every-cell_cloud.survival.csv, 2026-09-21_4b-leg-margin-bootstrap-every-cell_cloud.walkforward.csv, 2026-09-21_4b-leg-margin-bootstrap-every-cell_cloud.txt
