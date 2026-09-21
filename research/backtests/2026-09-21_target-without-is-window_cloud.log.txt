@@ -1,0 +1,269 @@
+# Idea 2071 (lane cloud, 2026-09-21) — CAN THE TARGET `t` BE SET WITHOUT THE IS WINDOW?
+# BOOK (inherited, NOT tuned): VOLTGT-DRIFT, h=0.08, trade W, 10 bps, t+1, gross <= 1.00, sigma (L=20, d=0), warm-up 260.
+# TUNED (2): TARGET-RULE FAMILY x that family's own dial. ALL 20 rungs reported per panel:
+#     FIXED      [0.08, 0.1, 0.12, 0.16, 0.2]
+#     SELFQ      [0.1, 0.2, 0.3, 0.4, 0.5]
+#     MEDMULT    [0.5, 0.7, 0.85, 1.0, 1.2]
+#     CASHSHARE  [0.1, 0.2, 0.25, 0.3, 0.4]
+# ZERO-CHOOSER ARMS, PRE-STATED: {'SELFQ': 0.5, 'MEDMULT': 1.0, 'CASHSHARE': 0.25}  (no 2009-2016 statistic anywhere in them)
+# REPORTED, not tuned: panel [B136, U56, SMALL665], cost [0, 10, 25, 50] bps, window [FULL, IS, OOS].
+# Self-scaling estimators: trailing 756d window, min_periods 126 (live before day 260, so no rule carries a cash stub inside the scoring window).
+# SMALL panel: 54 tickers with max_1d_move >= 1.0 dropped per the sprint brief; 665 held names + SPY as benchmark only.
+
+## B136: 136 held names, window 2009-01-13 -> 2026-09-18 (4448 days, 17.7y)
+   SPY  15.12% / 0.8844 / -33.72%  -> 4b bars: CAGR floor 10.59%, DD cap -20.23%; OOS SPY 15.26% / 0.8737
+   live RULES v2  7.96% / 1.0972 / -12.24%  halves 1.2296 / 0.9669
+   SELFQ estimator live from 2008-07-29 (scoring window opens 2009-01-13)
+   MEDMULT estimator live from 2008-07-29 (scoring window opens 2009-01-13)
+
+## U56: 56 held names, window 2009-01-13 -> 2026-09-18 (4448 days, 17.7y)
+   SPY  15.12% / 0.8843 / -33.72%  -> 4b bars: CAGR floor 10.59%, DD cap -20.23%; OOS SPY 15.26% / 0.8737
+   live RULES v2  8.62% / 1.2010 / -12.05%  halves 1.2276 / 1.1805
+   SELFQ estimator live from 2008-07-29 (scoring window opens 2009-01-13)
+   MEDMULT estimator live from 2008-07-29 (scoring window opens 2009-01-13)
+
+## SMALL665: 665 held names, window 2011-01-13 -> 2026-09-18 (3943 days, 15.6y)
+   SPY  14.01% / 0.8561 / -33.72%  -> 4b bars: CAGR floor 9.81%, DD cap -20.23%; OOS SPY 15.26% / 0.8737
+   live RULES v2  4.26% / 0.6588 / -14.16%  halves 0.8052 / 0.5471
+   SELFQ estimator live from 2010-07-30 (scoring window opens 2011-01-13)
+   MEDMULT estimator live from 2010-07-30 (scoring window opens 2011-01-13)
+
+## GATES (printed before any new number is read)
+  GATE PASS  G1 B136 FIXED t=0.10 reproduces the standing memo point 2: max|d| 3.15e-05   (target <= 5e-4)
+  GATE PASS  G2 halves reproduce (1.3171 / 1.1415): max|d| 1.44e-05   (target <= 5e-4)
+  GATE PASS  G3 memo point 5 OOS reproduces (13.01% / 1.2928): max|d| 2.78e-05   (target <= 5e-4)
+  GATE PASS  G4 SPY comparand reproduces (15.12% / 0.8844 / -33.72%): max|d| 4.27e-05   (target <= 5e-4)
+  GATE PASS  G5 the standing cell still reads 4b PASS on all five legs: True   (target True)
+  GATE PASS  G6 SELFQ target on the truncated tape equals the full-tape target (no look-ahead): max|d| 0.00e+00   (target <= 1e-12)
+
+## GRID — every (panel x family x dial x cost) cell, BOTH KEEP paths.  3 x 20 x 4 = 240 rows.
+
+### B136 @ 10 bps — full sample, all 20 cells
+family      dial     CAGR  Sharpe    MaxDD      H1      H2  OOSShp  trn/yr  gross    4b   4a  binding4b
+FIXED       0.08   10.26%  1.1755  -10.44%  1.2628  1.0912  1.2648    3.81  0.679  fail PASS  L5_CAGR
+FIXED       0.10   12.51%  1.2286  -11.81%  1.3171  1.1415  1.2928    3.13  0.777  PASS PASS  none
+FIXED       0.12   14.01%  1.2365  -14.48%  1.3128  1.1616  1.2941    2.72  0.840  PASS fail  none
+FIXED       0.16   16.24%  1.2451  -16.95%  1.3394  1.1542  1.2651    2.02  0.915  PASS fail  none
+FIXED       0.20   16.98%  1.2008  -20.34%  1.3076  1.0996  1.1924    1.67  0.949  fail fail  L4_DD
+SELFQ       0.10   11.20%  1.2121  -10.62%  1.2620  1.1682  1.3228    3.68  0.684  PASS PASS  none
+SELFQ       0.20   12.36%  1.2068  -13.49%  1.2461  1.1755  1.3270    3.43  0.751  PASS fail  none
+SELFQ       0.30   13.30%  1.2139  -14.88%  1.2729  1.1558  1.3022    3.11  0.795  PASS fail  none
+SELFQ       0.40   14.39%  1.2321  -15.37%  1.2990  1.1627  1.3072    2.84  0.837  PASS fail  none
+SELFQ       0.50 * 14.90%  1.2180  -16.24%  1.2939  1.1370  1.2601    2.56  0.860  PASS fail  none
+MEDMULT     0.50    9.61%  1.1691   -9.81%  1.2686  1.0613  1.2482    3.75  0.622  fail PASS  L5_CAGR
+MEDMULT     0.70   12.84%  1.2085  -14.16%  1.3027  1.1068  1.2689    3.16  0.784  PASS fail  none
+MEDMULT     0.85   14.59%  1.2375  -15.63%  1.3275  1.1403  1.2813    2.52  0.848  PASS fail  none
+MEDMULT     1.00 * 15.98%  1.2464  -16.79%  1.3297  1.1569  1.2845    2.25  0.900  PASS fail  none
+MEDMULT     1.20   16.52%  1.2045  -18.04%  1.2647  1.1412  1.2573    1.94  0.929  PASS fail  none
+CASHSHARE   0.10   16.86%  1.1137  -29.84%  1.2339  1.0059  1.0861    1.03  0.900  fail fail  L4_DD
+CASHSHARE   0.20   14.97%  1.1136  -26.88%  1.2331  1.0065  1.0867    0.92  0.800  fail fail  L4_DD
+CASHSHARE   0.25 * 14.03%  1.1136  -25.37%  1.2327  1.0067  1.0870    0.87  0.750  fail fail  L4_DD
+CASHSHARE   0.30   13.08%  1.1135  -23.84%  1.2322  1.0069  1.0873    0.81  0.700  fail fail  L4_DD
+CASHSHARE   0.40   11.20%  1.1134  -20.70%  1.2313  1.0074  1.0878    0.71  0.600  fail fail  L4_DD
+   (* = the PRE-STATED zero-chooser rung)
+
+### U56 @ 10 bps — full sample, all 20 cells
+family      dial     CAGR  Sharpe    MaxDD      H1      H2  OOSShp  trn/yr  gross    4b   4a  binding4b
+FIXED       0.08   10.57%  1.2227  -11.22%  1.2422  1.2047  1.3421    3.56  0.690  fail PASS  L5_CAGR
+FIXED       0.10   12.52%  1.2434  -13.49%  1.2521  1.2358  1.3450    3.03  0.785  PASS fail  none
+FIXED       0.12   13.88%  1.2402  -16.20%  1.2590  1.2233  1.3273    2.50  0.851  PASS fail  none
+FIXED       0.16   15.57%  1.2174  -18.72%  1.2799  1.1602  1.2499    1.91  0.922  PASS fail  none
+FIXED       0.20   16.56%  1.1926  -20.64%  1.2505  1.1419  1.2209    1.57  0.966  fail fail  L4_DD
+SELFQ       0.10   10.64%  1.2103  -10.50%  1.1840  1.2486  1.3657    3.80  0.678  PASS fail  none
+SELFQ       0.20   12.03%  1.2304  -12.32%  1.1983  1.2732  1.3870    3.42  0.748  PASS fail  none
+SELFQ       0.30   13.06%  1.2335  -14.30%  1.2142  1.2591  1.3775    3.08  0.801  PASS fail  none
+SELFQ       0.40   13.78%  1.2378  -15.60%  1.2421  1.2340  1.3406    2.75  0.832  PASS fail  none
+SELFQ       0.50 * 14.63%  1.2459  -16.53%  1.2478  1.2443  1.3415    2.43  0.863  PASS fail  none
+MEDMULT     0.50    8.90%  1.1776   -9.47%  1.1901  1.1752  1.3195    3.69  0.594  fail fail  L5_CAGR
+MEDMULT     0.70   12.28%  1.2386  -12.34%  1.2608  1.2199  1.3567    3.23  0.766  PASS fail  none
+MEDMULT     0.85   14.10%  1.2639  -14.16%  1.2832  1.2467  1.3628    2.67  0.842  PASS fail  none
+MEDMULT     1.00 * 14.94%  1.2557  -16.43%  1.2878  1.2226  1.3272    2.12  0.874  PASS fail  none
+MEDMULT     1.20   15.82%  1.2174  -18.67%  1.2488  1.1850  1.2787    1.96  0.929  PASS fail  none
+CASHSHARE   0.10   15.86%  1.1192  -26.57%  1.1935  1.0602  1.1264    0.98  0.900  fail fail  L4_DD
+CASHSHARE   0.20   14.08%  1.1190  -23.89%  1.1929  1.0603  1.1266    0.88  0.800  fail fail  L4_DD
+CASHSHARE   0.25 * 13.19%  1.1189  -22.53%  1.1925  1.0603  1.1266    0.83  0.750  fail fail  L4_DD
+CASHSHARE   0.30   12.30%  1.1188  -21.15%  1.1922  1.0603  1.1267    0.78  0.700  fail fail  L4_DD
+CASHSHARE   0.40   10.53%  1.1185  -18.33%  1.1915  1.0603  1.1267    0.68  0.600  fail fail  L5_CAGR
+   (* = the PRE-STATED zero-chooser rung)
+
+### SMALL665 @ 10 bps — full sample, all 20 cells
+family      dial     CAGR  Sharpe    MaxDD      H1      H2  OOSShp  trn/yr  gross    4b   4a  binding4b
+FIXED       0.08    4.66%  0.5593  -20.27%  0.7920  0.3299  0.4284    3.71  0.549  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+FIXED       0.10    5.66%  0.5680  -22.80%  0.8471  0.3045  0.4036    3.93  0.661  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+FIXED       0.12    6.85%  0.6005  -24.42%  0.9011  0.3342  0.4175    3.75  0.747  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+FIXED       0.16    8.62%  0.6313  -29.41%  0.9663  0.3741  0.4411    3.40  0.868  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+FIXED       0.20   10.40%  0.6881  -31.69%  0.9977  0.4835  0.5329    2.75  0.914  fail fail  L2_H2,L3_OOS,L4_DD
+SELFQ       0.10    5.48%  0.5228  -23.54%  0.8631  0.2817  0.3670    4.26  0.673  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SELFQ       0.20    6.64%  0.5623  -24.59%  0.8692  0.3493  0.4258    4.20  0.755  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SELFQ       0.30    7.28%  0.5795  -27.45%  0.9024  0.3577  0.4234    3.97  0.801  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SELFQ       0.40    8.22%  0.6179  -27.48%  0.9243  0.4157  0.4686    3.74  0.838  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+SELFQ       0.50 *  8.71%  0.6297  -29.19%  0.9351  0.4369  0.4822    3.37  0.863  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+MEDMULT     0.50    3.92%  0.5298  -16.51%  0.7654  0.2952  0.3808    3.40  0.483  fail fail  L1_H1,L2_H2,L3_OOS,L5_CAGR
+MEDMULT     0.70    5.77%  0.5798  -21.39%  0.8484  0.3271  0.4236    3.96  0.655  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+MEDMULT     0.85    6.83%  0.5943  -23.96%  0.9003  0.3223  0.4065    3.80  0.753  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+MEDMULT     1.00 *  7.84%  0.6176  -27.02%  0.9408  0.3560  0.4256    3.53  0.817  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+MEDMULT     1.20    8.96%  0.6406  -28.99%  0.9735  0.4011  0.4607    3.24  0.872  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+CASHSHARE   0.10   11.84%  0.7034  -40.77%  0.9634  0.5746  0.5944    1.81  0.900  fail fail  L2_H2,L3_OOS,L4_DD
+CASHSHARE   0.20   10.64%  0.7038  -36.97%  0.9632  0.5751  0.5950    1.61  0.800  fail fail  L2_H2,L3_OOS,L4_DD
+CASHSHARE   0.25 * 10.03%  0.7040  -35.01%  0.9631  0.5754  0.5952    1.51  0.750  fail fail  L2_H2,L3_OOS,L4_DD
+CASHSHARE   0.30    9.41%  0.7041  -33.00%  0.9630  0.5757  0.5955    1.41  0.700  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+CASHSHARE   0.40    8.15%  0.7044  -28.86%  0.9627  0.5762  0.5960    1.22  0.600  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+   (* = the PRE-STATED zero-chooser rung)
+
+### 4b / 4a PASS COUNTS by family x cost (all panels pooled, full sample)
+family          4b@0     4b@10     4b@25     4b@50      4a@0     4a@10     4a@25     4a@50
+FIXED           8/15      6/15      6/15      6/15      3/15      3/15      2/15      0/15
+SELFQ          10/15     10/15      9/15      7/15      1/15      1/15      1/15      0/15
+MEDMULT         8/15      8/15      8/15      8/15      1/15      1/15      1/15      0/15
+CASHSHARE       1/15      0/15      0/15      0/15      0/15      0/15      0/15      0/15
+
+## THE HEADLINE — the THREE PRE-STATED ZERO-CHOOSER ARMS, which read NO 2009-2016 statistic at all, beside the standing IS-chosen cell.
+
+### B136
+arm                        cost    CAGR  Sharpe    MaxDD  OOS CAGR  OOSShp    4b   4a  binding4b
+FIXED(0.1) [IS]               0  12.86%  1.2603  -11.74%    13.34%  1.3234  PASS PASS  none
+FIXED(0.1) [IS]              10  12.51%  1.2286  -11.81%    13.01%  1.2928  PASS PASS  none
+FIXED(0.1) [IS]              25  11.98%  1.1812  -12.01%    12.50%  1.2468  PASS PASS  none
+FIXED(0.1) [IS]              50  11.11%  1.1020  -12.71%    11.67%  1.1700  PASS fail  none
+SELFQ(0.5) [0-IS]             0  15.19%  1.2395  -16.14%    14.18%  1.2862  PASS fail  none
+SELFQ(0.5) [0-IS]            10  14.90%  1.2180  -16.24%    13.86%  1.2601  PASS fail  none
+SELFQ(0.5) [0-IS]            25  14.46%  1.1858  -16.40%    13.39%  1.2210  PASS fail  none
+SELFQ(0.5) [0-IS]            50  13.72%  1.1320  -16.74%    12.60%  1.1557  PASS fail  none
+MEDMULT(1) [0-IS]             0  16.24%  1.2644  -16.69%    15.10%  1.3078  PASS fail  none
+MEDMULT(1) [0-IS]            10  15.98%  1.2464  -16.79%    14.80%  1.2845  PASS fail  none
+MEDMULT(1) [0-IS]            25  15.59%  1.2192  -16.95%    14.35%  1.2494  PASS fail  none
+MEDMULT(1) [0-IS]            50  14.94%  1.1740  -17.20%    13.61%  1.1910  PASS fail  none
+CASHSHARE(0.25) [0-IS]        0  14.13%  1.1206  -25.36%    13.80%  1.0943  fail fail  L4_DD
+CASHSHARE(0.25) [0-IS]       10  14.03%  1.1136  -25.37%    13.70%  1.0870  fail fail  L4_DD
+CASHSHARE(0.25) [0-IS]       25  13.88%  1.1031  -25.39%    13.54%  1.0761  fail fail  L4_DD
+CASHSHARE(0.25) [0-IS]       50  13.63%  1.0857  -25.43%    13.29%  1.0580  fail fail  L4_DD
+
+### U56
+arm                        cost    CAGR  Sharpe    MaxDD  OOS CAGR  OOSShp    4b   4a  binding4b
+FIXED(0.1) [IS]               0  12.87%  1.2743  -13.23%    13.99%  1.3757  PASS fail  none
+FIXED(0.1) [IS]              10  12.52%  1.2434  -13.49%    13.65%  1.3450  PASS fail  none
+FIXED(0.1) [IS]              25  12.01%  1.1970  -13.88%    13.14%  1.2988  PASS fail  none
+FIXED(0.1) [IS]              50  11.17%  1.1195  -14.52%    12.28%  1.2216  PASS fail  none
+SELFQ(0.5) [0-IS]             0  14.91%  1.2671  -16.25%    15.33%  1.3660  PASS fail  none
+SELFQ(0.5) [0-IS]            10  14.63%  1.2459  -16.53%    15.03%  1.3415  PASS fail  none
+SELFQ(0.5) [0-IS]            25  14.21%  1.2140  -16.95%    14.57%  1.3046  PASS fail  none
+SELFQ(0.5) [0-IS]            50  13.52%  1.1608  -17.66%    13.81%  1.2430  PASS fail  none
+MEDMULT(1) [0-IS]             0  15.18%  1.2739  -16.17%    15.18%  1.3503  PASS fail  none
+MEDMULT(1) [0-IS]            10  14.94%  1.2557  -16.43%    14.89%  1.3272  PASS fail  none
+MEDMULT(1) [0-IS]            25  14.57%  1.2284  -16.81%    14.46%  1.2925  PASS fail  none
+MEDMULT(1) [0-IS]            50  13.97%  1.1827  -17.46%    13.74%  1.2346  PASS fail  none
+CASHSHARE(0.25) [0-IS]        0  13.29%  1.1260  -22.51%    13.77%  1.1337  fail fail  L4_DD
+CASHSHARE(0.25) [0-IS]       10  13.19%  1.1189  -22.53%    13.67%  1.1266  fail fail  L4_DD
+CASHSHARE(0.25) [0-IS]       25  13.05%  1.1082  -22.55%    13.53%  1.1159  fail fail  L4_DD
+CASHSHARE(0.25) [0-IS]       50  12.82%  1.0904  -22.58%    13.28%  1.0980  fail fail  L4_DD
+
+### SMALL665
+arm                        cost    CAGR  Sharpe    MaxDD  OOS CAGR  OOSShp    4b   4a  binding4b
+FIXED(0.1) [IS]               0   6.08%  0.6047  -22.22%     4.22%  0.4370  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+FIXED(0.1) [IS]              10   5.66%  0.5680  -22.80%     3.85%  0.4036  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+FIXED(0.1) [IS]              25   5.04%  0.5130  -23.67%     3.29%  0.3536  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+FIXED(0.1) [IS]              50   4.02%  0.4212  -25.08%     2.36%  0.2701  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SELFQ(0.5) [0-IS]             0   9.08%  0.6520  -28.88%     7.21%  0.5047  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+SELFQ(0.5) [0-IS]            10   8.71%  0.6297  -29.19%     6.81%  0.4822  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+SELFQ(0.5) [0-IS]            25   8.16%  0.5961  -30.07%     6.21%  0.4483  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SELFQ(0.5) [0-IS]            50   7.26%  0.5402  -31.54%     5.23%  0.3919  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+MEDMULT(1) [0-IS]             0   8.22%  0.6433  -26.43%     5.60%  0.4538  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+MEDMULT(1) [0-IS]            10   7.84%  0.6176  -27.02%     5.18%  0.4256  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+MEDMULT(1) [0-IS]            25   7.27%  0.5791  -27.90%     4.55%  0.3834  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+MEDMULT(1) [0-IS]            50   6.33%  0.5148  -29.34%     3.51%  0.3130  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+CASHSHARE(0.25) [0-IS]        0  10.20%  0.7139  -34.99%     9.19%  0.6048  fail fail  L2_H2,L3_OOS,L4_DD
+CASHSHARE(0.25) [0-IS]       10  10.03%  0.7040  -35.01%     9.02%  0.5952  fail fail  L2_H2,L3_OOS,L4_DD
+CASHSHARE(0.25) [0-IS]       25   9.78%  0.6891  -35.04%     8.75%  0.5809  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+CASHSHARE(0.25) [0-IS]       50   9.37%  0.6642  -35.36%     8.31%  0.5570  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+
+## RULE 8 WALK-FORWARD — each family's dial chosen on 2009-2016 ONLY (argmax min IS 4b-leg slack), 2017-2026 read exactly ONCE.  Every grid point reported.
+
+### B136 — OOS 2017-2026: SPY 15.26% / 0.8737 / -33.72%;  live RULES v2 7.85% / 1.1017 / -12.24%
+family      dial  IS slack   OOS CAGR  OOSShp   OOS DD  4bOOS  4aOOS
+FIXED       0.08   -0.0830     11.08%  1.2648  -10.44%   PASS   PASS
+FIXED       0.10   +0.0144     13.01%  1.2928  -11.81%   PASS   PASS
+FIXED       0.12   -0.0041     14.45%  1.2941  -14.48%   PASS   fail
+FIXED       0.16   -0.0270     16.25%  1.2651  -16.95%   PASS   fail
+FIXED       0.20   -0.0457     16.63%  1.1924  -20.34%   fail   fail
+  -> IS PICK FIXED dial=0.1 (min IS slack +0.0144); OOS read ONCE 13.01% / 1.2928 / -11.81%, 4b PASS, 4a PASS
+SELFQ       0.10   -0.0279     10.54%  1.3228   -8.78%   fail   PASS
+SELFQ       0.20   -0.0025     11.76%  1.3270  -10.68%   PASS   PASS
+SELFQ       0.30   -0.0164     12.45%  1.3022  -12.32%   PASS   fail
+SELFQ       0.40   -0.0213     13.56%  1.3072  -13.83%   PASS   fail
+SELFQ       0.50   -0.0301     13.86%  1.2601  -15.57%   PASS   fail
+  -> IS PICK SELFQ dial=0.2 (min IS slack -0.0025); OOS read ONCE 11.76% / 1.3270 / -10.68%, 4b PASS, 4a PASS   | PRE-STATED dial 0.5: OOS 13.86% / 1.2601 / -15.57%, 4b PASS   [chooser agrees: False]
+MEDMULT     0.50   -0.0902      8.92%  1.2482   -8.57%   fail   PASS
+MEDMULT     0.70   -0.0092     11.79%  1.2689  -11.35%   PASS   PASS
+MEDMULT     0.85   -0.0239     13.45%  1.2813  -13.14%   PASS   fail
+MEDMULT     1.00   -0.0356     14.80%  1.2845  -14.68%   PASS   fail
+MEDMULT     1.20   -0.0481     15.66%  1.2573  -17.39%   PASS   fail
+  -> IS PICK MEDMULT dial=0.7 (min IS slack -0.0092); OOS read ONCE 11.79% / 1.2689 / -11.35%, 4b PASS, 4a PASS   | PRE-STATED dial 1: OOS 14.80% / 1.2845 / -14.68%, 4b PASS   [chooser agrees: False]
+CASHSHARE   0.10   -0.0493     16.44%  1.0861  -29.84%   fail   fail
+CASHSHARE   0.20   -0.0304     14.61%  1.0867  -26.88%   fail   fail
+CASHSHARE   0.25   -0.0209     13.70%  1.0870  -25.37%   fail   fail
+CASHSHARE   0.30   -0.0113     12.78%  1.0873  -23.84%   fail   fail
+CASHSHARE   0.40   +0.0082     10.95%  1.0878  -20.70%   fail   fail
+  -> IS PICK CASHSHARE dial=0.4 (min IS slack +0.0082); OOS read ONCE 10.95% / 1.0878 / -20.70%, 4b fail, 4a fail   | PRE-STATED dial 0.25: OOS 13.70% / 1.0870 / -25.37%, 4b fail   [chooser agrees: False]
+
+### U56 — OOS 2017-2026: SPY 15.26% / 0.8737 / -33.72%;  live RULES v2 9.46% / 1.2766 / -12.05%
+family      dial  IS slack   OOS CAGR  OOSShp   OOS DD  4bOOS  4aOOS
+FIXED       0.08   -0.0703     11.76%  1.3421  -11.22%   PASS   fail
+FIXED       0.10   +0.0070     13.65%  1.3450  -13.49%   PASS   fail
+FIXED       0.12   +0.0003     14.96%  1.3273  -16.20%   PASS   fail
+FIXED       0.16   -0.0222     16.04%  1.2499  -18.72%   PASS   fail
+FIXED       0.20   -0.0342     17.14%  1.2209  -20.64%   fail   fail
+  -> IS PICK FIXED dial=0.1 (min IS slack +0.0070); OOS read ONCE 13.65% / 1.3450 / -13.49%, 4b PASS, 4a fail
+SELFQ       0.10   -0.1046     10.92%  1.3657  -10.50%   PASS   PASS
+SELFQ       0.20   +0.0092     12.44%  1.3870  -11.29%   PASS   PASS
+SELFQ       0.30   -0.0107     13.53%  1.3775  -13.87%   PASS   fail
+SELFQ       0.40   -0.0098     14.14%  1.3406  -15.60%   PASS   fail
+SELFQ       0.50   -0.0178     15.03%  1.3415  -16.53%   PASS   fail
+  -> IS PICK SELFQ dial=0.2 (min IS slack +0.0092); OOS read ONCE 12.44% / 1.3870 / -11.29%, 4b PASS, 4a PASS   | PRE-STATED dial 0.5: OOS 15.03% / 1.3415 / -16.53%, 4b PASS   [chooser agrees: False]
+MEDMULT     0.50   -0.1789      8.91%  1.3195   -9.47%   fail   fail
+MEDMULT     0.70   +0.0090     12.26%  1.3567  -12.13%   PASS   fail
+MEDMULT     0.85   -0.0092     13.98%  1.3628  -13.64%   PASS   fail
+MEDMULT     1.00   -0.0178     14.89%  1.3272  -16.43%   PASS   fail
+MEDMULT     1.20   -0.0303     15.77%  1.2787  -18.67%   PASS   fail
+  -> IS PICK MEDMULT dial=0.7 (min IS slack +0.0090); OOS read ONCE 12.26% / 1.3567 / -12.13%, 4b PASS, 4a fail   | PRE-STATED dial 1: OOS 14.89% / 1.3272 / -16.43%, 4b PASS   [chooser agrees: False]
+CASHSHARE   0.10   -0.0169     16.43%  1.1264  -26.57%   fail   fail
+CASHSHARE   0.20   -0.0012     14.59%  1.1266  -23.89%   fail   fail
+CASHSHARE   0.25   +0.0067     13.67%  1.1266  -22.53%   fail   fail
+CASHSHARE   0.30   +0.0129     12.75%  1.1267  -21.15%   fail   fail
+CASHSHARE   0.40   -0.0041     10.92%  1.1267  -18.33%   PASS   fail
+  -> IS PICK CASHSHARE dial=0.3 (min IS slack +0.0129); OOS read ONCE 12.75% / 1.1267 / -21.15%, 4b fail, 4a fail   | PRE-STATED dial 0.25: OOS 13.67% / 1.1266 / -22.53%, 4b fail   [chooser agrees: False]
+
+### SMALL665 — OOS 2017-2026: SPY 15.26% / 0.8737 / -33.72%;  live RULES v2 3.63% / 0.5447 / -14.16%
+family      dial  IS slack   OOS CAGR  OOSShp   OOS DD  4bOOS  4aOOS
+FIXED       0.08   -0.4079      3.45%  0.4284  -20.27%   fail   fail
+FIXED       0.10   -0.3610      3.85%  0.4036  -22.80%   fail   fail
+FIXED       0.12   -0.2344      4.55%  0.4175  -24.42%   fail   fail
+FIXED       0.16   -0.0865      5.84%  0.4411  -29.41%   fail   fail
+FIXED       0.20   -0.1011      8.16%  0.5329  -31.69%   fail   fail
+  -> IS PICK FIXED dial=0.16 (min IS slack -0.0865); OOS read ONCE 5.84% / 0.4411 / -29.41%, 4b fail, 4a fail
+SELFQ       0.10   -0.3675      3.84%  0.3670  -23.54%   fail   fail
+SELFQ       0.20   -0.3417      5.09%  0.4258  -24.59%   fail   fail
+SELFQ       0.30   -0.3092      5.32%  0.4234  -27.45%   fail   fail
+SELFQ       0.40   -0.2587      6.32%  0.4686  -27.48%   fail   fail
+SELFQ       0.50   -0.1822      6.81%  0.4822  -29.19%   fail   fail
+  -> IS PICK SELFQ dial=0.5 (min IS slack -0.1822); OOS read ONCE 6.81% / 0.4822 / -29.19%, 4b fail, 4a fail   | PRE-STATED dial 0.5: OOS 6.81% / 0.4822 / -29.19%, 4b fail   [chooser agrees: True]
+MEDMULT     0.50   -0.4313      2.68%  0.3808  -16.51%   fail   fail
+MEDMULT     0.70   -0.3529      4.03%  0.4236  -21.39%   fail   fail
+MEDMULT     0.85   -0.2960      4.43%  0.4065  -23.96%   fail   fail
+MEDMULT     1.00   -0.1479      5.18%  0.4256  -27.02%   fail   fail
+MEDMULT     1.20   -0.0895      6.35%  0.4607  -28.99%   fail   fail
+  -> IS PICK MEDMULT dial=1.2 (min IS slack -0.0895); OOS read ONCE 6.35% / 0.4607 / -28.99%, 4b fail, 4a fail   | PRE-STATED dial 1: OOS 5.18% / 0.4256 / -27.02%, 4b fail   [chooser agrees: False]
+CASHSHARE   0.10   -0.0977     10.53%  0.5944  -40.77%   fail   fail
+CASHSHARE   0.20   -0.0760      9.53%  0.5950  -36.97%   fail   fail
+CASHSHARE   0.25   -0.0650      9.02%  0.5952  -35.01%   fail   fail
+CASHSHARE   0.30   -0.0540      8.49%  0.5955  -33.00%   fail   fail
+CASHSHARE   0.40   -0.0316      7.40%  0.5960  -28.86%   fail   fail
+  -> IS PICK CASHSHARE dial=0.4 (min IS slack -0.0316); OOS read ONCE 7.40% / 0.5960 / -28.86%, 4b fail, 4a fail   | PRE-STATED dial 0.25: OOS 9.02% / 0.5952 / -35.01%, 4b fail   [chooser agrees: False]
+
+## SUMMARY — does ANY zero-IS target reach the 4b band?
+  full-sample 4b at 10 bps, zero-IS arms: 4 of 9 (B136/SELFQ=PASS, B136/MEDMULT=PASS, B136/CASHSHARE=fail, U56/SELFQ=PASS, U56/MEDMULT=PASS, U56/CASHSHARE=fail, SMALL665/SELFQ=fail, SMALL665/MEDMULT=fail, SMALL665/CASHSHARE=fail)
+  OOS-window 4b, zero-IS pre-stated arms: 4 of 9
+  full-sample 4b, whole grid at 10 bps: 24 of 60; 4a: 5
+  binding 4b legs among full-sample failures @ 10 bps: L4_DD x11, L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR x8, L2_H2,L3_OOS,L4_DD,L5_CAGR x7, L5_CAGR x5, L2_H2,L3_OOS,L4_DD x4, L1_H1,L2_H2,L3_OOS,L5_CAGR x1
+
+GATES 6/6 passed.
+wrote /home/user/Claude-Space/research/backtests/2026-09-21_target-without-is-window_cloud.grid.csv / .prestated.csv / .walkforward.csv / .gates.csv / .log.txt
