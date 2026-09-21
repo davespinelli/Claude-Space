@@ -70,7 +70,6 @@
 
 
 
-2042. is-the-STANDING-KEEP-4b-MARGIN-RESOLVABLE-or-is-it-A-POINT-ESTIMATE — idea 2022 put a paired block-bootstrap SE on the drift-vs-calendar contrast and found only 61 of 263 cells resolvable at 95%. The record has NEVER put a standard error on the 4b legs themselves. Put a PAIRED block bootstrap (book and SPY resampled on the SAME day blocks) on all five 4b leg margins — H1 Sharpe, H2 Sharpe, OOS Sharpe, MaxDD vs 0.60x SPY, CAGR vs 0.70x SPY — at every cell, and report how many of the 4b passes survive with the 95% CI on their BINDING leg entirely on the passing side, and whether the rule-8-reached cell is one of them. Max 2 params (block length, confidence level). Rationale: a KEEP that cannot reject the null against SPY is not worth real capital. (2026-09-20)
 
 
 
@@ -576,6 +575,11 @@
 *(2026-09-20, lane B) CLAIMED 267 — it is the LAST numbered item standing in '## Open' (everything below it is lane annotation, not an idea) and it carried no claim marker: the 2026-09-20 Sunday review returned it here as standing since 2026-09-06 unclaimed. No eligibility skip is taken and no fallback is used: the idea is price-only, answerable offline from the committed caches, and it yields this protocol's step-3 deliverables directly — its 'non-null arm pairs' ARE real books (cadence / gross / band / count / vol scaler on U56 and B136), so the band is scored as a REAL IS-only screening rule over them, every pick made on 2009-2016 and 2017-2026 read once, both KEEP paths at all 160 capital cells. Moved to '## In progress' and closed in the same run — see '## Done' and LEADERBOARD.md.*
 
 ## In progress
+
+*(2026-09-21, lane cloud, idea 1 of 2) CLAIM. **2042** is the FIRST numbered item in '## Open' in file order and carried no claim marker. It is price-only, answerable offline from the committed caches, and yields this protocol's step-3 deliverables directly (a grid of real books scored against live RULES v2 AND SPY on both KEEP paths, with the rule-8 walk-forward as its subject: the question is whether the rule-8-reached cell's 4b pass survives an error bar). It does NOT duplicate today's lane-B idea 2060, which bootstrapped ONE cell (the standing VOLTGT-DRIFT candidate); 2042 asks the population question — how many of a grid's 4b PASSES survive a CI on their binding leg. Original line follows.*
+
+2042. is-the-STANDING-KEEP-4b-MARGIN-RESOLVABLE-or-is-it-A-POINT-ESTIMATE — idea 2022 put a paired block-bootstrap SE on the drift-vs-calendar contrast and found only 61 of 263 cells resolvable at 95%. The record has NEVER put a standard error on the 4b legs themselves. Put a PAIRED block bootstrap (book and SPY resampled on the SAME day blocks) on all five 4b leg margins — H1 Sharpe, H2 Sharpe, OOS Sharpe, MaxDD vs 0.60x SPY, CAGR vs 0.70x SPY — at every cell, and report how many of the 4b passes survive with the 95% CI on their BINDING leg entirely on the passing side, and whether the rule-8-reached cell is one of them. Max 2 params (block length, confidence level). Rationale: a KEEP that cannot reject the null against SPY is not worth real capital. (2026-09-20) **[claimed 2026-09-21, lane cloud (idea 1 of 2)]**
+
 
 *(2026-09-21, lane B) RAN AND CLOSED **743** (ANSWERED / NO on both readings + a documented KILL of the bounded-statistic hypothesis + an artefact finding against idea 738's published +0.5632 — see '## Done' and LEADERBOARD.md).  The eligibility-descent note for this claim follows below.*
 
