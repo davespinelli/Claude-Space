@@ -218,3 +218,45 @@ reliable number; and any future quotation of this cell's 4b pass should carry th
 unchanged and nothing was promoted, adopted or tuned. Evidence:
 `research/backtests/2026-09-21_cagr-floor-margin-paired-block-bootstrap_B.py` and its
 `.grid.csv` / `.costladder.csv` / `.walkforward.csv` / `.keeppaths.csv` / `.gates.csv`.
+
+---
+
+## ADDENDUM (2026-09-21, lane cloud, idea 2056) — **CLAUSE 5 IS REMOVABLE MACHINERY AGAINST A PRE-STATED DAILY OR WEEKLY GROSS CLOCK, AND NOT OTHERWISE. THE TRIGGER'S MEASURED WORTH IS TURNOVER.**
+
+Idea 2056 replaced the DRIFT trigger with a plain CALENDAR refresh at the same target, across
+`{DRIFT, D, W, M, Q}` x `{0.08, 0.10, 0.12, 0.16, 0.20, MEDMULT_1.00}` x 3 panels x 4 cost rungs
+(360 rows; gates 6/6; this cell reproduced to max abs d **3.15e-05**).
+
+* **The 4b verdict does NOT depend on the trigger.** At every one of the **16 large-panel cells
+  where DRIFT clears 4b, a DAILY or WEEKLY refresh clears it too — 16 of 16, 0 lost.** At this
+  memo's own cell: D reads 12.24% / 1.2059 / -11.79% and W (one clock: gross refreshed on the
+  weekly trade date) 12.20% / 1.1820 / -13.46%, both 4b PASS, against clause 5's 12.51% / 1.2286 /
+  -11.81%.
+* **What clause 5 buys is TURNOVER, not the verdict:** it reaches daily-like drawdown control
+  (-11.81% vs D's -11.79%) at **3.13 turns/yr against D's 4.64**, worth +0.0228 of Sharpe over D
+  and +0.0467 over W at this cell (mean over all large-panel cells: +0.0130 and +0.0236).
+* **A SLOW gross clock is the real failure mode, and it is all drawdown.** M loses 4b at 7 of 8
+  cells and Q at 8 of 8, `L4_DD` binding at 14 of the 15 losses. On B136 the quarterly book's MaxDD
+  pins at **-32.72% at all six targets** — SPY's own — i.e. a quarterly clock does not de-gross
+  inside a crash at all.
+* **RULE 8 IS WHERE THE REMOVAL COSTS SOMETHING.** Given both dials free on 2009-2016, the IS-only
+  chooser lands on **`refresh = M` at 3 of 3 panels** (B136 OOS 13.05% / 1.1884 / -20.27%, 4b
+  **fail**; U56 13.67% / 1.2605 / -19.62%, 4b PASS; SMALL665 fail), and restricting it to calendar
+  rules changes nothing. The IS window holds no 2020-scale crash, so a slow gross clock looks free
+  in sample. **Deleting `h` therefore swaps a threshold dial for a CADENCE dial, and the cadence
+  dial is the one the walk-forward chooser gets wrong.**
+* **A DAILY clock is strictly wider than the trigger on the verdict axis:** 10 of 18 cells clear 4b
+  against DRIFT's 8 of 18, rescuing `t = 0.20` on both large panels, which DRIFT drops on `L4_DD`
+  because 0.08 is a large share of the gross move a wide target ever makes.
+* **Combined with idea 2071's zero-IS target** (`MEDMULT m = 1.00`), a calendar refresh gives a book
+  with **no tuned dial anywhere**: 16 of 32 large-panel cells clear 4b and all 16 are at D or W
+  (B136 D @10 bps 15.98% / 1.2406 / -16.82%, OOS 14.77% / 1.2855). 0 of 16 at M/Q; 0 of 16 on
+  SMALL665 (ninth confirmation for this family).
+
+**CLAUSE 5 IS THEREFORE RESTATED, NOT REMOVED:** if a Sunday review wants the dial count down, the
+legal replacement is *"re-read the gross scalar every day (or on the weekly trade date)"* stated as
+a convention, **not** a refresh cadence selected on the IS window. Points 1-9 of this memo stand;
+this is a disclosure about clause 5's necessity, nothing is promoted or adopted. Evidence:
+`research/backtests/2026-09-21_calendar-vs-drift-refresh-removal_cloud.py` / `.result.md` /
+`.grid.csv` / `.calendar_vs_drift.csv` / `.walkforward.csv` / `.zerodial.csv` / `.gates.csv` /
+`.log.txt`.

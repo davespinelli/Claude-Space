@@ -1,0 +1,348 @@
+# Idea 2056 (lane cloud, 2026-09-21) — CAN THE DRIFT THRESHOLD `h` BE REMOVED FROM THE STANDING KEEP-4b CELL?
+# BOOK (inherited, NOT tuned): equal-weight panel, gross scalar capped at 1.00, trade W, t+1, sigma (L=20, d=0), warm-up 260.
+# TUNED (2): REFRESH RULE ['DRIFT', 'D', 'W', 'M', 'Q'] (DRIFT uses the incumbent h=0.08) x TARGET ['0.08', '0.10', '0.12', '0.16', '0.20', 'MEDMULT_1.00'].  ALL 30 cells reported per panel.
+# MEDMULT_1.00 is idea 2071's ZERO-IS target rung (expanding point-in-time median sigma), a rung of the TARGET axis, not a third dial.
+# REPORTED, not tuned: panel [B136, U56, SMALL665], cost [0, 10, 25, 50] bps, window [FULL, IS, OOS].
+# SMALL panel: 54 tickers with max_1d_move >= 1.0 dropped; 665 held names.
+
+## B136: 136 held names, 2009-01-13 -> 2026-09-18 (4448 days, 17.7y)
+   SPY 15.12% / 0.8844 / -33.72% -> bars: CAGR floor 10.59%, DD cap -20.23%; OOS SPY 15.26% / 0.8737
+   live RULES v2 7.96% / 1.0972 / -12.24% halves 1.2296 / 0.9669
+
+## U56: 56 held names, 2009-01-13 -> 2026-09-18 (4448 days, 17.7y)
+   SPY 15.12% / 0.8843 / -33.72% -> bars: CAGR floor 10.59%, DD cap -20.23%; OOS SPY 15.26% / 0.8737
+   live RULES v2 8.62% / 1.2010 / -12.05% halves 1.2276 / 1.1805
+
+## SMALL665: 665 held names, 2011-01-13 -> 2026-09-18 (3943 days, 15.6y)
+   SPY 14.01% / 0.8561 / -33.72% -> bars: CAGR floor 9.81%, DD cap -20.23%; OOS SPY 15.26% / 0.8737
+   live RULES v2 4.26% / 0.6588 / -14.16% halves 0.8052 / 0.5471
+
+## GATES (printed before any new number is read)
+  GATE PASS  G1 the standing cell (DRIFT h=0.08, t=0.10, B136) reproduces memo point 2: max|d| 3.15e-05   (target <= 5e-4)
+  GATE PASS  G2 halves reproduce (1.3171 / 1.1415): max|d| 1.44e-05   (target <= 5e-4)
+  GATE PASS  G3 memo point 5 OOS reproduces (13.01% / 1.2928): max|d| 2.78e-05   (target <= 5e-4)
+  GATE PASS  G4 SPY comparand reproduces (15.12% / 0.8844 / -33.72%): max|d| 4.27e-05   (target <= 5e-4)
+  GATE PASS  G5 idea 2071's zero-IS MEDMULT rung reproduces cross-run (15.98% / 1.2464 / -16.79%): max|d| 4.87e-05   (target <= 5e-4)
+  GATE PASS  G6 refresh=W fires exactly on the weekly trade dates (one clock): 977 refreshes vs 977 trade days   (target equal)
+
+## GRID — 3 panels x 5 refresh rules x 6 targets x 4 cost rungs = 360 rows, all published.
+
+### B136 @ 10 bps, full sample — 4b verdict by (refresh x target)
+refresh            0.08          0.10          0.12          0.16          0.20  MEDMULT_1.00
+DRIFT           fail/4a       PASS/4a       PASS/--       PASS/--       fail/--       PASS/--
+D               fail/4a       PASS/4a       PASS/--       PASS/--       PASS/--       PASS/--
+W               fail/4a       PASS/--       PASS/--       PASS/--       fail/--       PASS/--
+M               PASS/--       fail/--       fail/--       fail/--       fail/--       fail/--
+Q               fail/--       fail/--       fail/--       fail/--       fail/--       fail/--
+
+### B136 @ 10 bps, full sample — CAGR / Sharpe / MaxDD / turnover per year
+refresh         target     CAGR  Sharpe    MaxDD      H1      H2  OOSShp  trn/yr  ref/yr  gross    4b   4a  binding4b
+DRIFT             0.08   10.26%  1.1755  -10.44%  1.2628  1.0912  1.2648    3.81    26.3  0.679  fail PASS  L5_CAGR
+DRIFT             0.10   12.51%  1.2286  -11.81%  1.3171  1.1415  1.2928    3.13    21.0  0.777  PASS PASS  none
+DRIFT             0.12   14.01%  1.2365  -14.48%  1.3128  1.1616  1.2941    2.72    16.7  0.840  PASS fail  none
+DRIFT             0.16   16.24%  1.2451  -16.95%  1.3394  1.1542  1.2651    2.02    10.0  0.915  PASS fail  none
+DRIFT             0.20   16.98%  1.2008  -20.34%  1.3076  1.0996  1.1924    1.67     5.9  0.949  fail fail  L4_DD
+DRIFT     MEDMULT_1.00   15.98%  1.2464  -16.79%  1.3297  1.1569  1.2845    2.25    11.4  0.900  PASS fail  none
+D                 0.08    9.96%  1.1600   -9.89%  1.2439  1.0782  1.2545    5.64   266.7  0.675  fail PASS  L5_CAGR
+D                 0.10   12.24%  1.2059  -11.79%  1.2819  1.1314  1.2830    4.64   266.7  0.781  PASS PASS  none
+D                 0.12   13.93%  1.2275  -13.80%  1.2974  1.1590  1.2911    3.73   266.7  0.848  PASS fail  none
+D                 0.16   16.05%  1.2254  -16.88%  1.3218  1.1317  1.2434    2.73   266.7  0.924  PASS fail  none
+D                 0.20   17.15%  1.2069  -19.24%  1.3170  1.1009  1.2022    2.13   266.7  0.959  PASS fail  none
+D         MEDMULT_1.00   15.98%  1.2406  -16.82%  1.3185  1.1576  1.2855    2.95   266.7  0.906  PASS fail  none
+W                 0.08   10.24%  1.1672  -10.86%  1.2665  1.0718  1.2445    3.63    55.4  0.675  fail PASS  L5_CAGR
+W                 0.10   12.20%  1.1820  -13.46%  1.2796  1.0872  1.2380    3.10    55.4  0.781  PASS fail  none
+W                 0.12   13.68%  1.1920  -16.01%  1.2989  1.0885  1.2217    2.56    55.4  0.848  PASS fail  none
+W                 0.16   15.94%  1.2049  -18.76%  1.3439  1.0708  1.1837    1.93    55.4  0.925  PASS fail  none
+W                 0.20   17.17%  1.1970  -20.46%  1.3280  1.0709  1.1723    1.61    55.4  0.960  fail fail  L4_DD
+W         MEDMULT_1.00   15.78%  1.2123  -16.33%  1.3261  1.0874  1.2165    2.14    55.4  0.906  PASS fail  none
+M                 0.08   11.12%  1.1796  -16.46%  1.3664  1.0071  1.1696    2.97    12.7  0.679  PASS fail  none
+M                 0.10   13.20%  1.1959  -20.27%  1.3523  1.0478  1.1884    2.71    12.7  0.783  fail fail  L4_DD
+M                 0.12   14.81%  1.2090  -22.99%  1.3363  1.0881  1.2104    2.28    12.7  0.851  fail fail  L4_DD
+M                 0.16   16.69%  1.1963  -26.55%  1.3650  1.0429  1.1467    1.78    12.7  0.924  fail fail  L4_DD
+M                 0.20   17.46%  1.1611  -30.02%  1.3704  0.9801  1.0744    1.56    12.7  0.959  fail fail  L4_DD
+M         MEDMULT_1.00   16.64%  1.2278  -23.21%  1.3522  1.0935  1.2123    1.92    12.7  0.905  fail fail  L4_DD
+Q                 0.08   10.24%  0.9121  -32.72%  1.2062  0.7157  0.8506    1.66     4.2  0.677  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+Q                 0.10   12.17%  0.9820  -32.72%  1.2187  0.8046  0.9257    1.67     4.2  0.774  fail fail  L2_H2,L4_DD
+Q                 0.12   13.45%  1.0122  -32.72%  1.2078  0.8563  0.9678    1.61     4.2  0.840  fail fail  L4_DD
+Q                 0.16   15.35%  1.0592  -32.72%  1.2430  0.9064  1.0061    1.41     4.2  0.916  fail fail  L4_DD
+Q                 0.20   16.54%  1.0860  -32.72%  1.2813  0.9206  1.0144    1.30     4.2  0.955  fail fail  L4_DD
+Q         MEDMULT_1.00   15.18%  1.0617  -32.72%  1.2689  0.8665  0.9759    1.47     4.2  0.895  fail fail  L4_DD
+
+### U56 @ 10 bps, full sample — 4b verdict by (refresh x target)
+refresh            0.08          0.10          0.12          0.16          0.20  MEDMULT_1.00
+DRIFT           fail/4a       PASS/--       PASS/--       PASS/--       fail/--       PASS/--
+D               fail/--       PASS/--       PASS/--       PASS/--       PASS/--       PASS/--
+W               fail/--       PASS/--       PASS/--       PASS/--       fail/--       PASS/--
+M               PASS/--       PASS/--       fail/--       fail/--       fail/--       fail/--
+Q               fail/--       fail/--       fail/--       fail/--       fail/--       fail/--
+
+### U56 @ 10 bps, full sample — CAGR / Sharpe / MaxDD / turnover per year
+refresh         target     CAGR  Sharpe    MaxDD      H1      H2  OOSShp  trn/yr  ref/yr  gross    4b   4a  binding4b
+DRIFT             0.08   10.57%  1.2227  -11.22%  1.2422  1.2047  1.3421    3.56    25.5  0.690  fail PASS  L5_CAGR
+DRIFT             0.10   12.52%  1.2434  -13.49%  1.2521  1.2358  1.3450    3.03    20.4  0.785  PASS fail  none
+DRIFT             0.12   13.88%  1.2402  -16.20%  1.2590  1.2233  1.3273    2.50    15.8  0.851  PASS fail  none
+DRIFT             0.16   15.57%  1.2174  -18.72%  1.2799  1.1602  1.2499    1.91     9.0  0.922  PASS fail  none
+DRIFT             0.20   16.56%  1.1926  -20.64%  1.2505  1.1419  1.2209    1.57     5.4  0.966  fail fail  L4_DD
+DRIFT     MEDMULT_1.00   14.94%  1.2557  -16.43%  1.2878  1.2226  1.3272    2.12    10.8  0.874  PASS fail  none
+D                 0.08    9.97%  1.1698  -11.77%  1.1755  1.1646  1.3054    5.50   266.7  0.687  fail fail  L5_CAGR
+D                 0.10   12.23%  1.2167  -13.90%  1.2214  1.2126  1.3325    4.61   266.7  0.791  PASS fail  none
+D                 0.12   13.86%  1.2319  -15.97%  1.2329  1.2318  1.3345    3.73   266.7  0.861  PASS fail  none
+D                 0.16   15.66%  1.2151  -19.34%  1.2612  1.1740  1.2615    2.61   266.7  0.934  PASS fail  none
+D                 0.20   16.51%  1.1903  -20.19%  1.2365  1.1501  1.2292    1.94   266.7  0.967  PASS fail  none
+D         MEDMULT_1.00   15.30%  1.2607  -15.94%  1.2808  1.2412  1.3440    3.09   266.7  0.896  PASS fail  none
+W                 0.08   10.22%  1.1801  -12.28%  1.2022  1.1593  1.2997    3.46    55.4  0.687  fail fail  L5_CAGR
+W                 0.10   12.24%  1.2031  -14.55%  1.2369  1.1716  1.2919    2.98    55.4  0.791  PASS fail  none
+W                 0.12   13.74%  1.2101  -16.44%  1.2563  1.1679  1.2726    2.43    55.4  0.861  PASS fail  none
+W                 0.16   15.61%  1.2027  -19.86%  1.2828  1.1307  1.2193    1.83    55.4  0.935  PASS fail  none
+W                 0.20   16.49%  1.1787  -20.82%  1.2493  1.1169  1.1964    1.53    55.4  0.968  fail fail  L4_DD
+W         MEDMULT_1.00   15.15%  1.2393  -16.44%  1.2961  1.1796  1.2842    2.13    55.4  0.896  PASS fail  none
+M                 0.08   11.19%  1.2141  -16.28%  1.3148  1.1213  1.2561    2.83    12.7  0.689  PASS fail  none
+M                 0.10   13.23%  1.2292  -19.62%  1.3182  1.1474  1.2605    2.59    12.7  0.792  PASS fail  none
+M                 0.12   14.73%  1.2333  -21.27%  1.3061  1.1672  1.2650    2.13    12.7  0.861  fail fail  L4_DD
+M                 0.16   16.30%  1.2028  -24.52%  1.3247  1.0982  1.1815    1.67    12.7  0.935  fail fail  L4_DD
+M                 0.20   16.77%  1.1504  -27.70%  1.3041  1.0266  1.1026    1.50    12.7  0.967  fail fail  L4_DD
+M         MEDMULT_1.00   15.82%  1.2469  -20.81%  1.3190  1.1716  1.2699    1.92    12.7  0.895  fail fail  L4_DD
+Q                 0.08    9.87%  0.9281  -29.18%  1.1544  0.7711  0.8907    1.62     4.2  0.693  fail fail  L2_H2,L4_DD,L5_CAGR
+Q                 0.10   11.63%  0.9887  -29.18%  1.1604  0.8581  0.9647    1.61     4.2  0.786  fail fail  L4_DD
+Q                 0.12   12.91%  1.0238  -29.18%  1.1621  0.9144  1.0111    1.52     4.2  0.850  fail fail  L4_DD
+Q                 0.16   14.95%  1.0756  -29.18%  1.2064  0.9703  1.0538    1.32     4.2  0.931  fail fail  L4_DD
+Q                 0.20   15.85%  1.0863  -29.18%  1.2207  0.9789  1.0563    1.23     4.2  0.963  fail fail  L4_DD
+Q         MEDMULT_1.00   14.01%  1.0590  -29.18%  1.2154  0.9152  1.0119    1.43     4.2  0.884  fail fail  L4_DD
+
+### SMALL665 @ 10 bps, full sample — 4b verdict by (refresh x target)
+refresh            0.08          0.10          0.12          0.16          0.20  MEDMULT_1.00
+DRIFT           fail/--       fail/--       fail/--       fail/--       fail/--       fail/--
+D               fail/--       fail/--       fail/--       fail/--       fail/--       fail/--
+W               fail/--       fail/--       fail/--       fail/--       fail/--       fail/--
+M               fail/--       fail/--       fail/--       fail/--       fail/--       fail/--
+Q               fail/--       fail/--       fail/--       fail/--       fail/--       fail/--
+
+### SMALL665 @ 10 bps, full sample — CAGR / Sharpe / MaxDD / turnover per year
+refresh         target     CAGR  Sharpe    MaxDD      H1      H2  OOSShp  trn/yr  ref/yr  gross    4b   4a  binding4b
+DRIFT             0.08    4.66%  0.5593  -20.27%  0.7920  0.3299  0.4284    3.71    25.2  0.549  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+DRIFT             0.10    5.66%  0.5680  -22.80%  0.8471  0.3045  0.4036    3.93    25.6  0.661  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+DRIFT             0.12    6.85%  0.6005  -24.42%  0.9011  0.3342  0.4175    3.75    22.0  0.747  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+DRIFT             0.16    8.62%  0.6313  -29.41%  0.9663  0.3741  0.4411    3.40    16.2  0.868  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+DRIFT             0.20   10.40%  0.6881  -31.69%  0.9977  0.4835  0.5329    2.75     9.3  0.914  fail fail  L2_H2,L3_OOS,L4_DD
+DRIFT     MEDMULT_1.00    7.84%  0.6176  -27.02%  0.9408  0.3560  0.4256    3.53    17.8  0.817  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+D                 0.08    4.31%  0.5288  -19.15%  0.7507  0.3073  0.4027    5.58   268.6  0.544  fail fail  L1_H1,L2_H2,L3_OOS,L5_CAGR
+D                 0.10    5.52%  0.5594  -22.03%  0.8134  0.3154  0.4122    5.76   268.6  0.660  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+D                 0.12    6.54%  0.5771  -24.44%  0.8649  0.3173  0.4044    5.48   268.6  0.752  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+D                 0.16    8.51%  0.6235  -29.51%  0.9614  0.3604  0.4296    4.54   268.6  0.875  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+D                 0.20   10.46%  0.6847  -31.78%  0.9962  0.4717  0.5219    3.42   268.6  0.938  fail fail  L2_H2,L3_OOS,L4_DD
+D         MEDMULT_1.00    7.79%  0.6113  -27.36%  0.9263  0.3492  0.4209    4.99   268.6  0.829  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+W                 0.08    4.50%  0.5434  -21.92%  0.8058  0.2795  0.3677    3.37    55.7  0.546  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+W                 0.10    5.75%  0.5727  -24.74%  0.8618  0.2939  0.3851    3.49    55.7  0.661  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+W                 0.12    6.60%  0.5755  -27.67%  0.8943  0.2877  0.3708    3.42    55.7  0.753  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+W                 0.16    8.47%  0.6150  -31.48%  0.9874  0.3269  0.3994    3.06    55.7  0.875  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+W                 0.20   10.23%  0.6655  -33.87%  1.0066  0.4320  0.4872    2.60    55.7  0.939  fail fail  L2_H2,L3_OOS,L4_DD
+W         MEDMULT_1.00    7.76%  0.6033  -28.44%  0.9509  0.3138  0.3834    3.29    55.7  0.830  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+M                 0.08    5.02%  0.5656  -31.89%  0.9168  0.2229  0.3026    2.89    12.8  0.551  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+M                 0.10    6.37%  0.5951  -35.63%  0.9783  0.2403  0.3351    3.12    12.8  0.667  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+M                 0.12    7.58%  0.6202  -37.78%  1.0166  0.2800  0.3707    3.09    12.8  0.755  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+M                 0.16    9.36%  0.6391  -40.22%  1.0017  0.3724  0.4372    2.87    12.8  0.876  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+M                 0.20   10.66%  0.6566  -43.62%  1.0259  0.4266  0.4759    2.56    12.8  0.939  fail fail  L2_H2,L3_OOS,L4_DD
+M         MEDMULT_1.00    8.65%  0.6351  -38.32%  1.0100  0.3322  0.4062    3.02    12.8  0.831  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+Q                 0.08    3.86%  0.3764  -50.65%  0.8539  0.0669  0.1472    1.78     4.3  0.549  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+Q                 0.10    5.43%  0.4603  -49.79%  0.8647  0.1764  0.2598    1.99     4.3  0.661  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+Q                 0.12    6.78%  0.5168  -48.76%  0.8728  0.2659  0.3419    2.11     4.3  0.749  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+Q                 0.16    9.04%  0.5931  -46.62%  0.8989  0.3871  0.4466    2.21     4.3  0.879  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+Q                 0.20   10.38%  0.6339  -45.51%  0.9501  0.4371  0.4838    2.15     4.3  0.939  fail fail  L2_H2,L3_OOS,L4_DD
+Q         MEDMULT_1.00    7.95%  0.5504  -48.36%  0.8710  0.3271  0.3909    2.20     4.3  0.831  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+
+### 4b PASS COUNTS by refresh rule x cost (all panels x targets pooled; 18 cells per rule)
+refresh        4b@0     4b@10     4b@25     4b@50      4a@0     4a@10     4a@25     4a@50  mean turn/yr
+DRIFT         10/18      8/18      8/18      8/18      3/18      3/18      2/18      0/18          2.85
+D             10/18     10/18      9/18      6/18      2/18      2/18      0/18      0/18          4.06
+W             10/18      8/18      8/18      7/18      1/18      1/18      1/18      0/18          2.70
+M              4/18      3/18      3/18      1/18      0/18      0/18      0/18      0/18          2.41
+Q              0/18      0/18      0/18      0/18      0/18      0/18      0/18      0/18          1.68
+
+## THE DIRECT QUESTION — at the SAME target, does the CALENDAR refresh clear 4b where the incumbent DRIFT trigger does?  (10 bps; dS = calendar Sharpe - DRIFT Sharpe)
+refresh    drift-4b cells  kept by cal   lost  gained  mean dSharpe  mean dTurn
+D                       8            8      0       2       -0.0130       +1.21
+W                       8            8      0       0       -0.0236       -0.16
+M                       8            1      7       2       -0.0118       -0.44
+Q                       8            0      8       0       -0.1647       -1.17
+
+  cell-by-cell where DRIFT passes 4b (10 bps):
+    B136      target 0.10          refresh D  -> KEEPS 4b                     dSharpe -0.0228  dCAGR -0.27%  dMaxDD +0.02%  dTurn +1.51/yr
+    B136      target 0.10          refresh W  -> KEEPS 4b                     dSharpe -0.0467  dCAGR -0.31%  dMaxDD -1.65%  dTurn -0.03/yr
+    B136      target 0.10          refresh M  -> LOSES 4b (L4_DD)             dSharpe -0.0327  dCAGR +0.69%  dMaxDD -8.46%  dTurn -0.42/yr
+    B136      target 0.10          refresh Q  -> LOSES 4b (L2_H2,L4_DD)       dSharpe -0.2466  dCAGR -0.34%  dMaxDD -20.91%  dTurn -1.46/yr
+    B136      target 0.12          refresh D  -> KEEPS 4b                     dSharpe -0.0090  dCAGR -0.08%  dMaxDD +0.67%  dTurn +1.02/yr
+    B136      target 0.12          refresh W  -> KEEPS 4b                     dSharpe -0.0446  dCAGR -0.32%  dMaxDD -1.54%  dTurn -0.16/yr
+    B136      target 0.12          refresh M  -> LOSES 4b (L4_DD)             dSharpe -0.0275  dCAGR +0.80%  dMaxDD -8.52%  dTurn -0.44/yr
+    B136      target 0.12          refresh Q  -> LOSES 4b (L4_DD)             dSharpe -0.2243  dCAGR -0.56%  dMaxDD -18.25%  dTurn -1.10/yr
+    B136      target 0.16          refresh D  -> KEEPS 4b                     dSharpe -0.0197  dCAGR -0.19%  dMaxDD +0.07%  dTurn +0.71/yr
+    B136      target 0.16          refresh W  -> KEEPS 4b                     dSharpe -0.0403  dCAGR -0.30%  dMaxDD -1.81%  dTurn -0.09/yr
+    B136      target 0.16          refresh M  -> LOSES 4b (L4_DD)             dSharpe -0.0488  dCAGR +0.45%  dMaxDD -9.60%  dTurn -0.24/yr
+    B136      target 0.16          refresh Q  -> LOSES 4b (L4_DD)             dSharpe -0.1860  dCAGR -0.89%  dMaxDD -15.77%  dTurn -0.61/yr
+    B136      target MEDMULT_1.00  refresh D  -> KEEPS 4b                     dSharpe -0.0058  dCAGR +0.00%  dMaxDD -0.03%  dTurn +0.70/yr
+    B136      target MEDMULT_1.00  refresh W  -> KEEPS 4b                     dSharpe -0.0341  dCAGR -0.20%  dMaxDD +0.46%  dTurn -0.12/yr
+    B136      target MEDMULT_1.00  refresh M  -> LOSES 4b (L4_DD)             dSharpe -0.0185  dCAGR +0.67%  dMaxDD -6.42%  dTurn -0.33/yr
+    B136      target MEDMULT_1.00  refresh Q  -> LOSES 4b (L4_DD)             dSharpe -0.1846  dCAGR -0.80%  dMaxDD -15.93%  dTurn -0.78/yr
+    U56       target 0.10          refresh D  -> KEEPS 4b                     dSharpe -0.0267  dCAGR -0.30%  dMaxDD -0.41%  dTurn +1.58/yr
+    U56       target 0.10          refresh W  -> KEEPS 4b                     dSharpe -0.0403  dCAGR -0.28%  dMaxDD -1.06%  dTurn -0.05/yr
+    U56       target 0.10          refresh M  -> KEEPS 4b                     dSharpe -0.0141  dCAGR +0.71%  dMaxDD -6.14%  dTurn -0.44/yr
+    U56       target 0.10          refresh Q  -> LOSES 4b (L4_DD)             dSharpe -0.2547  dCAGR -0.90%  dMaxDD -15.69%  dTurn -1.42/yr
+    U56       target 0.12          refresh D  -> KEEPS 4b                     dSharpe -0.0083  dCAGR -0.01%  dMaxDD +0.23%  dTurn +1.23/yr
+    U56       target 0.12          refresh W  -> KEEPS 4b                     dSharpe -0.0301  dCAGR -0.14%  dMaxDD -0.24%  dTurn -0.07/yr
+    U56       target 0.12          refresh M  -> LOSES 4b (L4_DD)             dSharpe -0.0069  dCAGR +0.85%  dMaxDD -5.07%  dTurn -0.37/yr
+    U56       target 0.12          refresh Q  -> LOSES 4b (L4_DD)             dSharpe -0.2164  dCAGR -0.96%  dMaxDD -12.97%  dTurn -0.98/yr
+    U56       target 0.16          refresh D  -> KEEPS 4b                     dSharpe -0.0023  dCAGR +0.09%  dMaxDD -0.63%  dTurn +0.71/yr
+    U56       target 0.16          refresh W  -> KEEPS 4b                     dSharpe -0.0147  dCAGR +0.04%  dMaxDD -1.14%  dTurn -0.07/yr
+    U56       target 0.16          refresh M  -> LOSES 4b (L4_DD)             dSharpe -0.0146  dCAGR +0.73%  dMaxDD -5.80%  dTurn -0.23/yr
+    U56       target 0.16          refresh Q  -> LOSES 4b (L4_DD)             dSharpe -0.1418  dCAGR -0.62%  dMaxDD -10.46%  dTurn -0.59/yr
+    U56       target MEDMULT_1.00  refresh D  -> KEEPS 4b                     dSharpe +0.0050  dCAGR +0.36%  dMaxDD +0.48%  dTurn +0.97/yr
+    U56       target MEDMULT_1.00  refresh W  -> KEEPS 4b                     dSharpe -0.0164  dCAGR +0.22%  dMaxDD -0.01%  dTurn +0.01/yr
+    U56       target MEDMULT_1.00  refresh M  -> LOSES 4b (L4_DD)             dSharpe -0.0088  dCAGR +0.88%  dMaxDD -4.39%  dTurn -0.20/yr
+    U56       target MEDMULT_1.00  refresh Q  -> LOSES 4b (L4_DD)             dSharpe -0.1967  dCAGR -0.93%  dMaxDD -12.75%  dTurn -0.69/yr
+
+## RULE 8 WALK-FORWARD — BOTH dials (refresh rule, target) chosen on 2009-2016 ONLY (argmax min IS 4b-leg slack), 2017-2026 read exactly ONCE.  Every grid point reported.
+
+### B136 — OOS 2017-2026 comparands: SPY 15.26% / 0.8737 / -33.72%;  live RULES v2 7.85% / 1.1017 / -12.24%
+refresh         target  IS slack   OOS CAGR  OOSShp   OOS DD  4bOOS  4aOOS
+DRIFT             0.08   -0.0830     11.08%  1.2648  -10.44%   PASS   PASS
+DRIFT             0.10   +0.0144     13.01%  1.2928  -11.81%   PASS   PASS
+DRIFT             0.12   -0.0041     14.45%  1.2941  -14.48%   PASS   fail
+DRIFT             0.16   -0.0270     16.25%  1.2651  -16.95%   PASS   fail
+DRIFT             0.20   -0.0457     16.63%  1.1924  -20.34%   fail   fail
+DRIFT     MEDMULT_1.00   -0.0356     14.80%  1.2845  -14.68%   PASS   fail
+D                 0.08   -0.0888     10.78%  1.2545   -9.89%   PASS   PASS
+D                 0.10   +0.0094     12.91%  1.2830  -11.68%   PASS   PASS
+D                 0.12   -0.0050     14.46%  1.2911  -13.80%   PASS   fail
+D                 0.16   -0.0294     15.99%  1.2434  -16.88%   PASS   fail
+D                 0.20   -0.0438     16.76%  1.2022  -19.24%   PASS   fail
+D         MEDMULT_1.00   -0.0359     14.77%  1.2855  -14.64%   PASS   fail
+W                 0.08   -0.0603     10.97%  1.2445  -10.86%   PASS   PASS
+W                 0.10   +0.0114     12.68%  1.2380  -13.46%   PASS   fail
+W                 0.12   +0.0032     13.86%  1.2217  -16.01%   PASS   fail
+W                 0.16   -0.0165     15.36%  1.1837  -18.76%   PASS   fail
+W                 0.20   -0.0271     16.46%  1.1723  -20.46%   fail   fail
+W         MEDMULT_1.00   -0.0214     14.15%  1.2165  -16.33%   PASS   fail
+M                 0.08   +0.0063     11.14%  1.1696  -16.46%   PASS   fail
+M                 0.10   +0.0145     13.05%  1.1884  -20.27%   fail   fail
+M                 0.12   -0.0054     14.69%  1.2104  -22.99%   fail   fail
+M                 0.16   -0.0269     15.96%  1.1467  -26.55%   fail   fail
+M                 0.20   -0.0269     16.29%  1.0744  -30.02%   fail   fail
+M         MEDMULT_1.00   -0.0269     15.04%  1.2123  -23.21%   fail   fail
+Q                 0.08   -0.0162     10.42%  0.8506  -32.72%   fail   fail
+Q                 0.10   +0.0025     12.13%  0.9257  -32.72%   fail   fail
+Q                 0.12   -0.0063     13.37%  0.9678  -32.72%   fail   fail
+Q                 0.16   -0.0269     14.93%  1.0061  -32.72%   fail   fail
+Q                 0.20   -0.0285     15.67%  1.0144  -32.72%   fail   fail
+Q         MEDMULT_1.00   -0.0269     13.65%  0.9759  -32.72%   fail   fail
+  -> IS PICK (both dials, 2009-2016 only): refresh=M, target=0.10 [min IS slack +0.0145];  OOS read ONCE 13.05% / 1.1884 / -20.27%, 4b fail, 4a fail
+  -> IS PICK RESTRICTED TO CALENDAR REFRESHES (h removed by construction): refresh=M, target=0.10; OOS 13.05% / 1.1884 / -20.27%, 4b fail, 4a fail
+
+### U56 — OOS 2017-2026 comparands: SPY 15.26% / 0.8737 / -33.72%;  live RULES v2 9.46% / 1.2766 / -12.05%
+refresh         target  IS slack   OOS CAGR  OOSShp   OOS DD  4bOOS  4aOOS
+DRIFT             0.08   -0.0703     11.76%  1.3421  -11.22%   PASS   fail
+DRIFT             0.10   +0.0070     13.65%  1.3450  -13.49%   PASS   fail
+DRIFT             0.12   +0.0003     14.96%  1.3273  -16.20%   PASS   fail
+DRIFT             0.16   -0.0222     16.04%  1.2499  -18.72%   PASS   fail
+DRIFT             0.20   -0.0342     17.14%  1.2209  -20.64%   fail   fail
+DRIFT     MEDMULT_1.00   -0.0178     14.89%  1.3272  -16.43%   PASS   fail
+D                 0.08   -0.1135     11.25%  1.3054  -11.77%   PASS   fail
+D                 0.10   +0.0024     13.49%  1.3325  -13.90%   PASS   fail
+D                 0.12   +0.0016     15.13%  1.3345  -15.97%   PASS   fail
+D                 0.16   -0.0214     16.40%  1.2615  -19.34%   PASS   fail
+D                 0.20   -0.0381     17.24%  1.2292  -20.19%   PASS   fail
+D         MEDMULT_1.00   -0.0207     15.18%  1.3440  -15.94%   PASS   fail
+W                 0.08   -0.1067     11.38%  1.2997  -12.28%   PASS   fail
+W                 0.10   +0.0057     13.23%  1.2919  -14.55%   PASS   fail
+W                 0.12   +0.0066     14.56%  1.2726  -16.44%   PASS   fail
+W                 0.16   -0.0104     15.94%  1.2193  -19.86%   PASS   fail
+W                 0.20   -0.0232     16.92%  1.1964  -20.82%   fail   fail
+W         MEDMULT_1.00   -0.0099     14.63%  1.2842  -16.44%   PASS   fail
+M                 0.08   +0.0005     11.74%  1.2561  -16.28%   PASS   fail
+M                 0.10   +0.0223     13.67%  1.2605  -19.62%   PASS   fail
+M                 0.12   +0.0079     15.22%  1.2650  -21.27%   fail   fail
+M                 0.16   -0.0054     16.30%  1.1815  -24.52%   fail   fail
+M                 0.20   -0.0054     16.57%  1.1026  -27.70%   fail   fail
+M         MEDMULT_1.00   -0.0054     15.19%  1.2699  -20.81%   fail   fail
+Q                 0.08   -0.0107     10.26%  0.8907  -29.18%   fail   fail
+Q                 0.10   +0.0073     11.98%  0.9647  -29.18%   fail   fail
+Q                 0.12   -0.0033     13.30%  1.0111  -29.18%   fail   fail
+Q                 0.16   -0.0196     15.14%  1.0538  -29.18%   fail   fail
+Q                 0.20   -0.0228     15.93%  1.0563  -29.18%   fail   fail
+Q         MEDMULT_1.00   -0.0195     13.31%  1.0119  -29.18%   fail   fail
+  -> IS PICK (both dials, 2009-2016 only): refresh=M, target=0.10 [min IS slack +0.0223];  OOS read ONCE 13.67% / 1.2605 / -19.62%, 4b PASS, 4a fail
+  -> IS PICK RESTRICTED TO CALENDAR REFRESHES (h removed by construction): refresh=M, target=0.10; OOS 13.67% / 1.2605 / -19.62%, 4b PASS, 4a fail
+
+### SMALL665 — OOS 2017-2026 comparands: SPY 15.26% / 0.8737 / -33.72%;  live RULES v2 3.63% / 0.5447 / -14.16%
+refresh         target  IS slack   OOS CAGR  OOSShp   OOS DD  4bOOS  4aOOS
+DRIFT             0.08   -0.4079      3.45%  0.4284  -20.27%   fail   fail
+DRIFT             0.10   -0.3610      3.85%  0.4036  -22.80%   fail   fail
+DRIFT             0.12   -0.2344      4.55%  0.4175  -24.42%   fail   fail
+DRIFT             0.16   -0.0865      5.84%  0.4411  -29.41%   fail   fail
+DRIFT             0.20   -0.1011      8.16%  0.5329  -31.69%   fail   fail
+DRIFT     MEDMULT_1.00   -0.1479      5.18%  0.4256  -27.02%   fail   fail
+D                 0.08   -0.4859      3.16%  0.4027  -19.15%   fail   fail
+D                 0.10   -0.4007      3.90%  0.4122  -22.03%   fail   fail
+D                 0.12   -0.2863      4.37%  0.4044  -24.44%   fail   fail
+D                 0.16   -0.0942      5.64%  0.4296  -29.51%   fail   fail
+D                 0.20   -0.0998      7.99%  0.5219  -31.78%   fail   fail
+D         MEDMULT_1.00   -0.1781      5.12%  0.4209  -27.36%   fail   fail
+W                 0.08   -0.3471      2.88%  0.3677  -21.92%   fail   fail
+W                 0.10   -0.2685      3.64%  0.3851  -24.74%   fail   fail
+W                 0.12   -0.1942      3.97%  0.3708  -27.67%   fail   fail
+W                 0.16   -0.0864      5.20%  0.3994  -31.48%   fail   fail
+W                 0.20   -0.0959      7.40%  0.4872  -33.87%   fail   fail
+W         MEDMULT_1.00   -0.1032      4.60%  0.3834  -28.44%   fail   fail
+M                 0.08   -0.0953      2.45%  0.3026  -31.89%   fail   fail
+M                 0.10   -0.0507      3.28%  0.3351  -35.63%   fail   fail
+M                 0.12   -0.0653      4.20%  0.3707  -37.78%   fail   fail
+M                 0.16   -0.0894      6.15%  0.4372  -40.22%   fail   fail
+M                 0.20   -0.0951      7.65%  0.4759  -43.62%   fail   fail
+M         MEDMULT_1.00   -0.0741      5.18%  0.4062  -38.32%   fail   fail
+Q                 0.08   -0.1937      1.06%  0.1472  -50.65%   fail   fail
+Q                 0.10   -0.1696      2.75%  0.2598  -49.79%   fail   fail
+Q                 0.12   -0.1225      4.26%  0.3419  -48.76%   fail   fail
+Q                 0.16   -0.1065      6.71%  0.4466  -46.62%   fail   fail
+Q                 0.20   -0.1083      7.90%  0.4838  -45.51%   fail   fail
+Q         MEDMULT_1.00   -0.1031      5.44%  0.3909  -48.36%   fail   fail
+  -> IS PICK (both dials, 2009-2016 only): refresh=M, target=0.10 [min IS slack -0.0507];  OOS read ONCE 3.28% / 0.3351 / -35.63%, 4b fail, 4a fail
+  -> IS PICK RESTRICTED TO CALENDAR REFRESHES (h removed by construction): refresh=M, target=0.10; OOS 3.28% / 0.3351 / -35.63%, 4b fail, 4a fail
+
+## THE ZERO-DIAL CORNER — CALENDAR refresh x the ZERO-IS target: a book with NO tuned dial anywhere (no `t` off a ladder, no `h`, refresh clock = the trade clock).
+panel     refresh   cost     CAGR  Sharpe    MaxDD  OOS CAGR  OOSShp    4b   4a  binding4b
+B136      D           10   15.98%  1.2406  -16.82%    14.77%  1.2855  PASS fail  none
+B136      D           50   14.62%  1.1464  -17.34%    13.24%  1.1650  PASS fail  none
+B136      W           10   15.78%  1.2123  -16.33%    14.15%  1.2165  PASS fail  none
+B136      W           50   14.79%  1.1451  -16.59%    13.04%  1.1306  PASS fail  none
+B136      M           10   16.64%  1.2278  -23.21%    15.04%  1.2123  fail fail  L4_DD
+B136      M           50   15.75%  1.1695  -23.39%    14.08%  1.1433  fail fail  L4_DD
+B136      Q           10   15.18%  1.0617  -32.72%    13.65%  0.9759  fail fail  L4_DD
+B136      Q           50   14.50%  1.0202  -32.78%    12.93%  0.9304  fail fail  L2_H2,L4_DD
+U56       D           10   15.30%  1.2607  -15.94%    15.18%  1.3440  PASS fail  none
+U56       D           50   13.88%  1.1562  -17.64%    13.53%  1.2119  PASS fail  none
+U56       W           10   15.15%  1.2393  -16.44%    14.63%  1.2842  PASS fail  none
+U56       W           50   14.18%  1.1676  -17.32%    13.49%  1.1942  PASS fail  none
+U56       M           10   15.82%  1.2469  -20.81%    15.19%  1.2699  fail fail  L4_DD
+U56       M           50   14.93%  1.1847  -21.00%    14.22%  1.1977  fail fail  L4_DD
+U56       Q           10   14.01%  1.0590  -29.18%    13.31%  1.0119  fail fail  L4_DD
+U56       Q           50   13.36%  1.0155  -29.24%    12.61%  0.9648  fail fail  L4_DD
+SMALL665  D           10    7.79%  0.6113  -27.36%     5.12%  0.4209  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL665  D           50    5.66%  0.4672  -30.85%     2.75%  0.2616  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL665  W           10    7.76%  0.6033  -28.44%     4.60%  0.3834  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL665  W           50    6.35%  0.5092  -30.08%     3.09%  0.2830  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL665  M           10    8.65%  0.6351  -38.32%     5.18%  0.4062  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL665  M           50    7.34%  0.5531  -39.77%     3.81%  0.3208  fail fail  L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL665  Q           10    7.95%  0.5504  -48.36%     5.44%  0.3909  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+SMALL665  Q           50    7.00%  0.4962  -49.16%     4.45%  0.3371  fail fail  L1_H1,L2_H2,L3_OOS,L4_DD,L5_CAGR
+  zero-dial 4b pass: 16 of 48 across all panels and cost rungs; 16 of 32 on the two large panels.
+
+## SUMMARY
+  full-sample 4b @ 10 bps: 29 of 90 cells; 4a: 6 of 90
+    refresh DRIFT  4b 8/18  4a 3/18  mean Sharpe 1.0205  mean turnover 2.85/yr
+    refresh D      4b 10/18  4a 2/18  mean Sharpe 1.0075  mean turnover 4.06/yr
+    refresh W      4b 8/18  4a 1/18  mean Sharpe 0.9969  mean turnover 2.70/yr
+    refresh M      4b 3/18  4a 0/18  mean Sharpe 1.0088  mean turnover 2.41/yr
+    refresh Q      4b 0/18  4a 0/18  mean Sharpe 0.8559  mean turnover 1.68/yr
+  cells where DRIFT passes 4b and the CALENDAR refresh does NOT: 15 of 32 (by binding leg: L4_DD x14, L2_H2,L4_DD x1)
+  cells where the CALENDAR refresh passes 4b and DRIFT does not: 4
+
+GATES 6/6 passed.
+wrote /home/user/Claude-Space/research/backtests/2026-09-21_calendar-vs-drift-refresh-removal_cloud.grid.csv / .calendar_vs_drift.csv / .walkforward.csv / .zerodial.csv / .gates.csv / .log.txt
