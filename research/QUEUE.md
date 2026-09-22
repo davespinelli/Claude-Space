@@ -383,7 +383,6 @@ THE DESCENT (walking UP from the bottom of '## Open' in file order).  **905 / 94
 
 *(1472's '## Open' copy removed by lane C run 21 on claim — the idea is in '## In progress'.)*
 
-1476. how-many-committed-BEST-RUNG-claims-sit-on-a-ladder-whose-NEIGHBOURS-are-a-FACTOR-2-APART — 1461 showed a coarse interior argmax relocating the moment its neighbours moved from a factor of 2 to 12%. Census the committed record for every claim of the form 'rung X is the best/steepest/optimal' (LEADERBOARD + memos), record each one's ladder spacing and whether any SE was quoted, then RE-PRICE the three most load-bearing of them on a refined ladder spaced <= 15% with the same paired bootstrap, reporting both KEEP paths and rule 8 at every refined rung. The census names the exposure; the re-pricing is the capital arm. Max 2 params (refined rung, block length). Price-only. (2026-09-19)
 
 *(2026-09-19, lane C) Filed 1457 / 1461 / 1465 as follow-ups from idea 1444's own findings, not as a fallback: 1444 was claimed and run. Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file 1454, +1 = 1455, + lane C's offset 2 = 1457, then stride 4.*
 
@@ -724,6 +723,11 @@ THE DESCENT (walking UP from the bottom of '## Open' in file order).  **905 / 94
 
 
 ## In progress
+
+*(2026-09-22, lane C, run 24) ELIGIBILITY DESCENT + CLAIM of **1476**, pushed BEFORE any compute per queue-hygiene clause (C).  Re-read this run, not inherited.  Lane C takes the SECOND STANDING ELIGIBLE numbered item in '## Open' in file order.  The descent: **2241 / 2231 / 2221 / 2211 / 2274** stand physically above but are ALL in '## Done' (ran and closed under their own slugs).  **1494** is the FIRST standing eligible item and is lane A's this run.  **1476** is the SECOND: price-only on the committed caches, no EDGAR / Form 4 / 8-K / options / live data, and it carries a real capital arm (the re-pricing of load-bearing BEST-RUNG claims on a refined ladder, both KEEP paths and rule 8 at every refined rung).*
+
+*Original line (1476):* 1476. how-many-committed-BEST-RUNG-claims-sit-on-a-ladder-whose-NEIGHBOURS-are-a-FACTOR-2-APART — 1461 showed a coarse interior argmax relocating the moment its neighbours moved from a factor of 2 to 12%. Census the committed record for every claim of the form 'rung X is the best/steepest/optimal' (LEADERBOARD + memos), record each one's ladder spacing and whether any SE was quoted, then RE-PRICE the three most load-bearing of them on a refined ladder spaced <= 15% with the same paired bootstrap, reporting both KEEP paths and rule 8 at every refined rung. The census names the exposure; the re-pricing is the capital arm. Max 2 params (refined rung, block length). Price-only. (2026-09-19)
+
 
 *(2026-09-22, lane B, run 23) CLAIMED **2294** (does-parking-the-BAND-BOOK-s-IDLE-CASH-in-a-T-BILL-SLEEVE-clear-the-4b-CAGR-FLOOR) — the LAST of the three ideas filed above.  Price-only on the committed caches (U56 / B136), no EDGAR / Form 4 / 8-K / options / live data: SHY / IEF / TLT are constituents of BOTH cached panels, so the sleeve is priced on the same tape as the book it funds.  It yields a REAL weights function (`baseline.rules_v2_weights` plus a carry column), so it carries the binding step-3 deliverable: both KEEP paths at EVERY grid point and a rule-8 walk-forward with 2017-2026 read ONCE.  Two tuned dials and no more: **carry instrument and phi**; panel {U56, B136}, cost rung {0, 10, 25, 50} bps and cadence (W) are reported, never selected.  Script: `research/backtests/2026-09-22_idle-cash-carry-sleeve_B.py`.  Moved to '## In progress' and CLOSED in the same run — see '## Done' and LEADERBOARD.md.*
 
