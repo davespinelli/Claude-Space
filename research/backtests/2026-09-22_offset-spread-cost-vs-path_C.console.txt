@@ -1,0 +1,258 @@
+====================================================================================================
+IDEA 2115 lane C 2026-09-22 -- is the REBALANCE-OFFSET SPREAD a COST ARTEFACT
+                               or a PATH ARTEFACT?
+====================================================================================================
+run 2026-09-22 05:32 UTC
+tuned: cost rung [0, 10, 25, 50] bps x cadence ['D', 'W', 'M', 'Q']   (16 cells/book/panel)
+not tuned: offsets [0, 1, 2, 3, 4] (measurement only; the book is ALWAYS d=0),
+           books BAND03_G075 / TOP20 / EWELIG, panels U56 + B136,
+           windows FULL / IS ..2016-12-31 / OOS 2017-01-01..
+
+  panel U56     56 cols  2008-01-02 .. 2026-09-18  (4708 rows)
+  panel B136   136 cols  2008-01-02 .. 2026-09-18  (4708 rows)
+
+----------------------------------------------------------------------------------------------------
+CONSTRUCTION GATES
+----------------------------------------------------------------------------------------------------
+  [PASS] G1 local run()+net() == engine.backtest(W,10bps)     got 0.000e+00   bar < 1e-12
+  [PASS] G2 offset_mask(.,0,R) == rebalance_mask(.,R)         got 4/4 cadences, 0 diffs   bar 4/4
+  [PASS] G3 BAND03_G075 == baseline.rules_v2_weights          got 0.000e+00   bar == 0
+  [PASS] G4 cadence D offset masks identical (structural zero) got 0 diffs   bar == 0
+  [PASS] G5 cost linearity: net(path,25) == re-run at 25 bps  got 0.000e+00   bar < 1e-15
+  [PASS] G6 clipping census (periods shorter than d+1 days)   got clip-free offsets [0, 1, 2]; W: d0=0,d1=0,d2=0,d3=2,d4=175   bar published, B1c re-read on clip-free
+  [PASS] G7 SPY buy-and-hold offset-invariant (B7 control)    got 0.0 by construction   bar == 0
+
+  GATES 7/7 PASS
+
+----------------------------------------------------------------------------------------------------
+BUILDING THE GRID
+----------------------------------------------------------------------------------------------------
+  U56   BAND03_G075  D  done  (    3s)
+  U56   BAND03_G075  W  done  (    3s)
+  U56   BAND03_G075  M  done  (    4s)
+  U56   BAND03_G075  Q  done  (    4s)
+  U56   TOP20        D  done  (    5s)
+  U56   TOP20        W  done  (    5s)
+  U56   TOP20        M  done  (    6s)
+  U56   TOP20        Q  done  (    6s)
+  U56   EWELIG       D  done  (    7s)
+  U56   EWELIG       W  done  (    7s)
+  U56   EWELIG       M  done  (    8s)
+  U56   EWELIG       Q  done  (    8s)
+  B136  BAND03_G075  D  done  (    9s)
+  B136  BAND03_G075  W  done  (   10s)
+  B136  BAND03_G075  M  done  (   11s)
+  B136  BAND03_G075  Q  done  (   11s)
+  B136  TOP20        D  done  (   12s)
+  B136  TOP20        W  done  (   12s)
+  B136  TOP20        M  done  (   13s)
+  B136  TOP20        Q  done  (   13s)
+  B136  EWELIG       D  done  (   14s)
+  B136  EWELIG       W  done  (   15s)
+  B136  EWELIG       M  done  (   15s)
+  B136  EWELIG       Q  done  (   16s)
+  grid: 1440 rows -> 2026-09-22_offset-spread-cost-vs-path_C.grid.csv.gz
+
+====================================================================================================
+B1 + B2 -- THE SPREAD AS A FUNCTION OF THE COST RUNG
+====================================================================================================
+S(c) = max - min over the 5 offsets at cost rung c.  Pre-stated buckets:
+   COST artefact  S(0) <= 0.10*S(50)   |   PATH artefact  S(0) >= 0.50*S(50)   |   MIXED else
+
+cells (cadence D excluded as the structural-zero control): 162
+
+BUCKET SHARES, by leg:
+  leg         n    COST   MIXED    PATH    ZERO
+  CAGR       54   0.000   0.000   1.000   0.000
+  Sharpe     54   0.000   0.000   1.000   0.000
+  MaxDD      54   0.000   0.000   1.000   0.000
+  ALL       162   0.000   0.000   1.000   0.000
+
+MEDIAN S(0)/S(10) -- the share of PROTOCOL's own 10 bps spread already present at 0 bps:
+  CAGR     median  1.001   q10  0.994   q90  1.010   n 54
+  Sharpe   median  1.001   q10  0.988   q90  1.015   n 54
+  MaxDD    median  1.000   q10  0.966   q90  1.015   n 54
+
+PER (book, cadence) at window FULL, panel-pooled -- every grid point is in the CSV:
+  panel book         cad leg          S(0)     S(10)     S(25)     S(50)   slope/bp     icept    R2  S0/S10 bucket
+  B136  BAND03_G075  M   CAGR       0.0029    0.0029    0.0029    0.0028  -2.98e-06    0.0029  1.00   1.010 PATH
+  B136  BAND03_G075  M   MaxDD      0.0523    0.0521    0.0519    0.0514  -1.74e-05    0.0523  1.00   1.003 PATH
+  B136  BAND03_G075  M   Sharpe     0.0859    0.0847    0.0830    0.0799  -1.20e-04    0.0859  1.00   1.014 PATH
+  B136  BAND03_G075  Q   CAGR       0.0055    0.0055    0.0055    0.0055  -7.34e-07    0.0055  1.00   1.001 PATH
+  B136  BAND03_G075  Q   MaxDD      0.0012    0.0012    0.0012    0.0012   0.00e+00    0.0012  1.00   1.000 PATH
+  B136  BAND03_G075  Q   Sharpe     0.0654    0.0653    0.0651    0.0648  -1.17e-05    0.0654  1.00   1.002 PATH
+  B136  BAND03_G075  W   CAGR       0.0046    0.0046    0.0046    0.0046   3.62e-08    0.0046  1.00   1.000 PATH
+  B136  BAND03_G075  W   MaxDD      0.0169    0.0170    0.0172    0.0175   1.28e-05    0.0169  1.00   0.992 PATH
+  B136  BAND03_G075  W   Sharpe     0.0494    0.0497    0.0501    0.0507   2.64e-05    0.0494  1.00   0.995 PATH
+  B136  EWELIG       M   CAGR       0.0077    0.0077    0.0077    0.0076  -6.32e-07    0.0077  1.00   1.001 PATH
+  B136  EWELIG       M   MaxDD      0.0815    0.0812    0.0808    0.0800  -2.90e-05    0.0815  1.00   1.004 PATH
+  B136  EWELIG       M   Sharpe     0.1756    0.1740    0.1716    0.1674  -1.65e-04    0.1757  1.00   1.009 PATH
+  B136  EWELIG       Q   CAGR       0.0037    0.0037    0.0037    0.0037   1.23e-06    0.0037  1.00   0.997 PATH
+  B136  EWELIG       Q   MaxDD      0.0023    0.0023    0.0023    0.0023   0.00e+00    0.0023  1.00   1.000 PATH
+  B136  EWELIG       Q   Sharpe     0.0445    0.0446    0.0447    0.0449   7.28e-06    0.0445  1.00   0.998 PATH
+  B136  EWELIG       W   CAGR       0.0069    0.0069    0.0070    0.0070   3.30e-06    0.0069  1.00   0.995 PATH
+  B136  EWELIG       W   MaxDD      0.0289    0.0285    0.0279    0.0260  -5.68e-05    0.0290  0.97   1.014 PATH
+  B136  EWELIG       W   Sharpe     0.0883    0.0893    0.0907    0.0931   9.55e-05    0.0883  1.00   0.989 PATH
+  B136  TOP20        M   CAGR       0.0189    0.0188    0.0187    0.0185  -8.47e-06    0.0189  0.99   1.006 PATH
+  B136  TOP20        M   MaxDD      0.0142    0.0143    0.0145    0.0147   8.94e-06    0.0142  1.00   0.994 PATH
+  B136  TOP20        M   Sharpe     0.1085    0.1096    0.1112    0.1135   9.88e-05    0.1086  1.00   0.990 PATH
+  B136  TOP20        Q   CAGR       0.0150    0.0150    0.0149    0.0147  -6.47e-06    0.0150  1.00   1.004 PATH
+  B136  TOP20        Q   MaxDD      0.0164    0.0164    0.0164    0.0164   0.00e+00    0.0164  1.00   1.000 PATH
+  B136  TOP20        Q   Sharpe     0.0937    0.0935    0.0932    0.0925  -2.41e-05    0.0938  1.00   1.002 PATH
+  B136  TOP20        W   CAGR       0.0069    0.0070    0.0070    0.0070   1.65e-06    0.0069  0.99   0.997 PATH
+  B136  TOP20        W   MaxDD      0.0438    0.0442    0.0460    0.0434  -4.96e-06    0.0445  0.01   0.993 PATH
+  B136  TOP20        W   Sharpe     0.0466    0.0469    0.0474    0.0483   3.30e-05    0.0466  1.00   0.994 PATH
+  U56   BAND03_G075  M   CAGR       0.0017    0.0016    0.0016    0.0016  -1.37e-06    0.0016  0.85   1.019 PATH
+  U56   BAND03_G075  M   MaxDD      0.0433    0.0431    0.0429    0.0425  -1.50e-05    0.0433  1.00   1.003 PATH
+  U56   BAND03_G075  M   Sharpe     0.0559    0.0551    0.0538    0.0517  -8.58e-05    0.0559  1.00   1.015 PATH
+  U56   BAND03_G075  Q   CAGR       0.0064    0.0064    0.0064    0.0064  -1.11e-06    0.0064  1.00   1.002 PATH
+  U56   BAND03_G075  Q   MaxDD      0.0026    0.0026    0.0026    0.0026   0.00e+00    0.0026  1.00   1.000 PATH
+  U56   BAND03_G075  Q   Sharpe     0.0743    0.0741    0.0739    0.0735  -1.56e-05    0.0743  1.00   1.002 PATH
+  U56   BAND03_G075  W   CAGR       0.0038    0.0038    0.0038    0.0039   1.08e-06    0.0038  1.00   0.997 PATH
+  U56   BAND03_G075  W   MaxDD      0.0179    0.0180    0.0181    0.0183   7.59e-06    0.0179  1.00   0.996 PATH
+  U56   BAND03_G075  W   Sharpe     0.0492    0.0494    0.0498    0.0503   2.21e-05    0.0492  1.00   0.996 PATH
+  U56   EWELIG       M   CAGR       0.0089    0.0089    0.0089    0.0088  -1.57e-06    0.0089  1.00   1.002 PATH
+  U56   EWELIG       M   MaxDD      0.0680    0.0677    0.0673    0.0666  -2.85e-05    0.0680  1.00   1.004 PATH
+  U56   EWELIG       M   Sharpe     0.1893    0.1879    0.1858    0.1820  -1.45e-04    0.1894  1.00   1.007 PATH
+  U56   EWELIG       Q   CAGR       0.0044    0.0044    0.0045    0.0045   1.73e-06    0.0044  1.00   0.996 PATH
+  U56   EWELIG       Q   MaxDD      0.0012    0.0012    0.0012    0.0012   0.00e+00    0.0012  1.00   1.000 PATH
+  U56   EWELIG       Q   Sharpe     0.0591    0.0592    0.0593    0.0596   9.66e-06    0.0591  1.00   0.998 PATH
+  U56   EWELIG       W   CAGR       0.0062    0.0062    0.0061    0.0060  -4.21e-06    0.0062  1.00   1.007 PATH
+  U56   EWELIG       W   MaxDD      0.0176    0.0172    0.0172    0.0186   2.38e-05    0.0171  0.57   1.025 PATH
+  U56   EWELIG       W   Sharpe     0.0795    0.0794    0.0792    0.0790  -9.74e-06    0.0795  0.99   1.002 PATH
+  U56   TOP20        M   CAGR       0.0142    0.0142    0.0141    0.0139  -6.67e-06    0.0142  1.00   1.005 PATH
+  U56   TOP20        M   MaxDD      0.0229    0.0226    0.0221    0.0212  -3.38e-05    0.0229  1.00   1.015 PATH
+  U56   TOP20        M   Sharpe     0.1287    0.1281    0.1270    0.1251  -7.21e-05    0.1288  1.00   1.005 PATH
+  U56   TOP20        Q   CAGR       0.0122    0.0121    0.0120    0.0118  -8.88e-06    0.0122  1.00   1.008 PATH
+  U56   TOP20        Q   MaxDD      0.0033    0.0033    0.0033    0.0033   0.00e+00    0.0033  1.00   1.000 PATH
+  U56   TOP20        Q   Sharpe     0.0863    0.0856    0.0846    0.0829  -6.85e-05    0.0863  1.00   1.008 PATH
+  U56   TOP20        W   CAGR       0.0133    0.0136    0.0141    0.0148   2.83e-05    0.0133  1.00   0.978 PATH
+  U56   TOP20        W   MaxDD      0.0439    0.0399    0.0339    0.0240  -3.97e-04    0.0439  1.00   1.100 PATH
+  U56   TOP20        W   Sharpe     0.0916    0.0931    0.0996    0.1103   3.87e-04    0.0904  0.99   0.983 PATH
+
+B1c -- re-read on the CLIP-FREE offsets only (G6):
+  clip-free offsets [0, 1, 2]; n=162; COST 0.000 MIXED 0.012 PATH 0.988 ZERO 0.000; median S0/S10 1.000
+
+====================================================================================================
+B3 -- THE EXACT ARITHMETIC SPLIT (not a fit)
+====================================================================================================
+net_d(c) - net_0(c) = [gross_d - gross_0]  -  (c/1e4)*[turnover_d - turnover_0]
+PATH_d   = CAGR_d(0) - CAGR_0(0)            in pp/yr (cost-free, the FIRST bracket)
+COST_d(c)= (c/1e4) * (annual turnover_d - annual turnover_0)  in pp/yr (the SECOND)
+
+  cost 10 bps: |COST_d| / |PATH_d|  median  0.0072  q90  0.0477  max  3.6641  share > 1 (cost dominates) 0.0069   n=144
+  cost 50 bps: |COST_d| / |PATH_d|  median  0.0358  q90  0.2387  max 18.3205  share > 1 (cost dominates) 0.0139   n=144
+
+  by book, at PROTOCOL's 10 bps (median ratio, and median |PATH_d| in pp/yr):
+    BAND03_G075  ratio median  0.0036   |PATH_d| median  0.168 pp/yr   |COST_d| median 0.0006 pp/yr
+    EWELIG       ratio median  0.0126   |PATH_d| median  0.244 pp/yr   |COST_d| median 0.0023 pp/yr
+    TOP20        ratio median  0.0065   |PATH_d| median  0.775 pp/yr   |COST_d| median 0.0050 pp/yr
+
+  by cadence, at PROTOCOL's 10 bps:
+    M  ratio median  0.0067   |PATH_d| median  0.336 pp/yr   |dTurnover| median  0.023 x/yr
+    Q  ratio median  0.0031   |PATH_d| median  0.336 pp/yr   |dTurnover| median  0.009 x/yr
+    W  ratio median  0.0185   |PATH_d| median  0.232 pp/yr   |dTurnover| median  0.039 x/yr
+
+====================================================================================================
+B4 -- DOES THE COST RUNG MOVE IDEA 914's CLAUSE?
+====================================================================================================
+For every d=0 book: the 4b verdict, each leg margin, and whether that margin exceeds
+its OWN 5-offset spread at the same rung.  Plus the 5-of-5 verdict stability (2119's B3).
+
+  cost  n4b  stable5of5  allLegsClear   clr_H1   clr_H2   clr_DD clr_CAGR
+     0    9       0.333         0.111    0.778    0.889    0.111    0.889
+    10    6       0.333         0.000    0.833    0.833    0.167    0.833
+    25    5       0.200         0.000    0.800    0.600    0.000    0.800
+    50    2       0.000         0.000    0.500    1.000    0.000    1.000
+
+  every d=0 4b PASS, all rungs (panel/book/cadence/window/cost | margins | own spreads):
+    B136  TOP20        M IS   c= 0 | H1  +0.421/sp  0.096ok H2  +0.250/sp  0.142ok DD  +0.499/sp  1.735XX CAGR  +7.268/sp  1.226ok | 5of5 N | allclear N
+    B136  TOP20        M IS   c=10 | H1  +0.380/sp  0.095ok H2  +0.202/sp  0.141ok DD  +0.328/sp  1.711XX CAGR  +6.564/sp  1.232ok | 5of5 N | allclear N
+    B136  TOP20        M IS   c=25 | H1  +0.317/sp  0.095ok H2  +0.129/sp  0.144XX DD  +0.072/sp  1.675XX CAGR  +5.516/sp  1.241ok | 5of5 N | allclear N
+    B136  TOP20        W FULL c= 0 | H1  +0.280/sp  0.057ok H2  +0.070/sp  0.078XX DD  +0.246/sp  4.385XX CAGR  +4.029/sp  0.695ok | 5of5 N | allclear N
+    B136  TOP20        W OOS  c= 0 | H1  +0.040/sp  0.202XX H2  +0.183/sp  0.118ok DD  +0.246/sp  4.385XX CAGR  +3.256/sp  1.053ok | 5of5 N | allclear N
+    U56   TOP20        M FULL c= 0 | H1  +0.292/sp  0.140ok H2  +0.412/sp  0.123ok DD  +0.783/sp  2.292XX CAGR  +4.596/sp  1.424ok | 5of5 N | allclear N
+    U56   TOP20        M FULL c=10 | H1  +0.254/sp  0.142ok H2  +0.378/sp  0.121ok DD  +0.723/sp  2.258XX CAGR  +4.100/sp  1.417ok | 5of5 N | allclear N
+    U56   TOP20        M FULL c=25 | H1  +0.196/sp  0.143ok H2  +0.327/sp  0.119ok DD  +0.634/sp  2.208XX CAGR  +3.360/sp  1.407ok | 5of5 N | allclear N
+    U56   TOP20        M FULL c=50 | H1  +0.099/sp  0.146XX H2  +0.242/sp  0.116ok DD  +0.485/sp  2.123XX CAGR  +2.135/sp  1.391ok | 5of5 N | allclear N
+    U56   TOP20        M IS   c= 0 | H1  +0.151/sp  0.124ok H2  +0.246/sp  0.232ok DD  +1.504/sp  1.259ok CAGR  +2.346/sp  1.889ok | 5of5 Y | allclear Y
+    U56   TOP20        M IS   c=10 | H1  +0.112/sp  0.125XX H2  +0.208/sp  0.234XX DD  +1.348/sp  1.294ok CAGR  +1.860/sp  1.889XX | 5of5 N | allclear N
+    U56   TOP20        M IS   c=25 | H1  +0.054/sp  0.125XX H2  +0.150/sp  0.238XX DD  +1.115/sp  1.351XX CAGR  +1.134/sp  1.890XX | 5of5 N | allclear N
+    U56   TOP20        M OOS  c= 0 | H1  +0.504/sp  0.275ok H2  +0.377/sp  0.116ok DD  +0.783/sp  2.292XX CAGR  +6.483/sp  1.384ok | 5of5 N | allclear N
+    U56   TOP20        M OOS  c=10 | H1  +0.474/sp  0.275ok H2  +0.339/sp  0.118ok DD  +0.723/sp  2.258XX CAGR  +5.979/sp  1.374ok | 5of5 N | allclear N
+    U56   TOP20        M OOS  c=25 | H1  +0.429/sp  0.273ok H2  +0.283/sp  0.120ok DD  +0.634/sp  2.208XX CAGR  +5.227/sp  1.360ok | 5of5 N | allclear N
+    U56   TOP20        M OOS  c=50 | H1  +0.353/sp  0.271ok H2  +0.188/sp  0.123ok DD  +0.485/sp  2.123XX CAGR  +3.982/sp  1.336ok | 5of5 N | allclear N
+    U56   TOP20        W FULL c= 0 | H1  +0.221/sp  0.108ok H2  +0.351/sp  0.142ok DD  +2.010/sp  4.389XX CAGR  +3.129/sp  1.334ok | 5of5 Y | allclear N
+    U56   TOP20        W FULL c=10 | H1  +0.132/sp  0.112ok H2  +0.273/sp  0.144ok DD  +1.922/sp  3.989XX CAGR  +2.039/sp  1.363ok | 5of5 Y | allclear N
+    U56   TOP20        W IS   c= 0 | H1  +0.006/sp  0.175XX H2  +0.299/sp  0.076ok DD  +1.923/sp  3.152XX CAGR  +1.246/sp  1.292XX | 5of5 N | allclear N
+    U56   TOP20        W OOS  c= 0 | H1  +0.347/sp  0.102ok H2  +0.395/sp  0.152ok DD  +2.010/sp  4.849XX CAGR  +4.704/sp  1.738ok | 5of5 Y | allclear N
+    U56   TOP20        W OOS  c=10 | H1  +0.272/sp  0.110ok H2  +0.312/sp  0.154ok DD  +1.922/sp  4.719XX CAGR  +3.605/sp  1.743ok | 5of5 Y | allclear N
+    U56   TOP20        W OOS  c=25 | H1  +0.159/sp  0.122ok H2  +0.188/sp  0.156ok DD  +1.790/sp  4.524XX CAGR  +1.974/sp  1.751ok | 5of5 Y | allclear N
+
+====================================================================================================
+B6 -- PATH 4a AT EVERY GRID POINT (d=0)
+====================================================================================================
+  4a passes: 10 of 216 d=0 cells (0.0463)
+    BAND03_G075    1/ 72   4b   0/ 72
+    EWELIG         9/ 72   4b   0/ 72
+    TOP20          0/ 72   4b  22/ 72
+
+====================================================================================================
+B5 -- RULE 8 WALK-FORWARD (dials chosen on IS 2009..2016 only; OOS read ONCE)
+====================================================================================================
+  U56   BAND03_G075  HEADLINE cadence@10bps   pick M@10bps (IS S 1.105)
+        OOS  book   9.55% /  1.224 / -14.38%   RULESv2   9.46% /  1.277 / -12.05%   SPY  15.29% /  0.875 / -33.72%
+        4b FAIL   4a FAIL   5of5 offsets N   margins/spreads: H1 +0.350/0.216 H2 +0.346/0.137 DD +5.849/4.314 CAGR -1.146/0.320
+  U56   BAND03_G075  SENSITIVITY both dials   pick W@ 0bps (IS S 1.130)
+        OOS  book   9.65% /  1.301 / -12.03%   RULESv2   9.65% /  1.301 / -12.03%   SPY  15.29% /  0.875 / -33.72%
+        4b FAIL   4a FAIL   5of5 offsets N   margins/spreads: H1 +0.462/0.079 H2 +0.385/0.060 DD +8.201/1.791 CAGR -1.049/0.409
+  U56   TOP20        HEADLINE cadence@10bps   pick M@10bps (IS S 1.098)
+        OOS  book  16.68% /  1.284 / -19.51%   RULESv2   9.46% /  1.277 / -12.05%   SPY  15.29% /  0.875 / -33.72%
+        4b PASS   4a FAIL   5of5 offsets N   margins/spreads: H1 +0.474/0.275 H2 +0.339/0.118 DD +0.723/2.258 CAGR +5.979/1.374
+  U56   TOP20        SENSITIVITY both dials   pick M@ 0bps (IS S 1.136)
+        OOS  book  17.18% /  1.317 / -19.45%   RULESv2   9.65% /  1.301 / -12.03%   SPY  15.29% /  0.875 / -33.72%
+        4b PASS   4a FAIL   5of5 offsets N   margins/spreads: H1 +0.504/0.275 H2 +0.377/0.116 DD +0.783/2.292 CAGR +6.483/1.384
+  U56   EWELIG       HEADLINE cadence@10bps   pick M@10bps (IS S 1.054)
+        OOS  book   8.88% /  1.290 / -10.82%   RULESv2   9.46% /  1.277 / -12.05%   SPY  15.29% /  0.875 / -33.72%
+        4b FAIL   4a PASS   5of5 offsets N   margins/spreads: H1 +0.465/0.390 H2 +0.357/0.081 DD +9.414/6.772 CAGR -1.822/0.617
+  U56   EWELIG       SENSITIVITY both dials   pick M@ 0bps (IS S 1.076)
+        OOS  book   9.06% /  1.314 / -10.78%   RULESv2   9.65% /  1.301 / -12.03%   SPY  15.29% /  0.875 / -33.72%
+        4b FAIL   4a PASS   5of5 offsets N   margins/spreads: H1 +0.486/0.395 H2 +0.386/0.080 DD +9.447/6.800 CAGR -1.638/0.614
+  B136  BAND03_G075  HEADLINE cadence@10bps   pick W@10bps (IS S 1.092)
+        OOS  book   7.85% /  1.102 / -12.24%   RULESv2   7.85% /  1.102 / -12.24%   SPY  15.26% /  0.874 / -33.72%
+        4b FAIL   4a FAIL   5of5 offsets N   margins/spreads: H1 +0.300/0.073 H2 +0.132/0.071 DD +7.989/1.702 CAGR -2.833/0.488
+  B136  BAND03_G075  SENSITIVITY both dials   pick W@ 0bps (IS S 1.118)
+        OOS  book   8.07% /  1.131 / -12.21%   RULESv2   8.07% /  1.131 / -12.21%   SPY  15.26% /  0.874 / -33.72%
+        4b FAIL   4a FAIL   5of5 offsets N   margins/spreads: H1 +0.324/0.073 H2 +0.169/0.071 DD +8.018/1.690 CAGR -2.606/0.491
+  B136  TOP20        HEADLINE cadence@10bps   pick M@10bps (IS S 1.234)
+        OOS  book  15.48% /  0.997 / -26.11%   RULESv2   7.85% /  1.102 / -12.24%   SPY  15.26% /  0.874 / -33.72%
+        4b FAIL   4a FAIL   5of5 offsets N   margins/spreads: H1 +0.066/0.311 H2 +0.186/0.136 DD -5.876/1.434 CAGR +4.797/2.783
+  B136  TOP20        SENSITIVITY both dials   pick M@ 0bps (IS S 1.278)
+        OOS  book  16.23% /  1.038 / -26.07%   RULESv2   8.07% /  1.131 / -12.21%   SPY  15.26% /  0.874 / -33.72%
+        4b FAIL   4a FAIL   5of5 offsets N   margins/spreads: H1 +0.104/0.312 H2 +0.232/0.134 DD -5.837/1.425 CAGR +5.553/2.810
+  B136  EWELIG       HEADLINE cadence@10bps   pick M@10bps (IS S 1.083)
+        OOS  book   7.82% /  1.135 / -11.94%   RULESv2   7.85% /  1.102 / -12.24%   SPY  15.26% /  0.874 / -33.72%
+        4b FAIL   4a PASS   5of5 offsets N   margins/spreads: H1 +0.304/0.405 H2 +0.205/0.085 DD +8.290/8.119 CAGR -2.864/0.924
+  B136  EWELIG       SENSITIVITY both dials   pick M@ 0bps (IS S 1.104)
+        OOS  book   8.01% /  1.161 / -11.91%   RULESv2   8.07% /  1.131 / -12.21%   SPY  15.26% /  0.874 / -33.72%
+        4b FAIL   4a PASS   5of5 offsets N   margins/spreads: H1 +0.325/0.409 H2 +0.236/0.084 DD +8.325/8.148 CAGR -2.672/0.928
+
+  FULL-sample halves for the headline picks (both KEEP paths need them):
+    U56   BAND03_G075  FULL   8.88% /  1.172 / -14.38%   H1 1.213 H2 1.140  vs RULESv2 H1 1.228 H2 1.181  vs SPY H1 0.957 H2 0.826   4b FAIL  4a FAIL
+    U56   TOP20        FULL  14.70% /  1.203 / -19.51%   H1 1.211 H2 1.204  vs RULESv2 H1 1.228 H2 1.181  vs SPY H1 0.957 H2 0.826   4b PASS  4a FAIL
+    U56   EWELIG       FULL   8.20% /  1.182 / -10.82%   H1 1.176 H2 1.187  vs RULESv2 H1 1.228 H2 1.181  vs SPY H1 0.957 H2 0.826   4b FAIL  4a FAIL
+    B136  BAND03_G075  FULL   7.96% /  1.097 / -12.24%   H1 1.230 H2 0.967  vs RULESv2 H1 1.230 H2 0.967  vs SPY H1 0.957 H2 0.825   4b FAIL  4a FAIL
+    B136  TOP20        FULL  16.18% /  1.092 / -26.11%   H1 1.329 H2 0.906  vs RULESv2 H1 1.230 H2 0.967  vs SPY H1 0.957 H2 0.825   4b FAIL  4a FAIL
+    B136  EWELIG       FULL   7.96% /  1.110 / -11.94%   H1 1.216 H2 1.001  vs RULESv2 H1 1.230 H2 0.967  vs SPY H1 0.957 H2 0.825   4b FAIL  4a FAIL
+
+====================================================================================================
+VERDICT
+====================================================================================================
+  ANSWER: the offset spread is a PATH artefact.
+    median S(0)/S(10) = 1.000  (162 cells) -- that share of PROTOCOL's own
+    10 bps offset spread survives at ZERO cost.
+    buckets: PATH 1.000  MIXED 0.000  COST 0.000
+    exact split at 10 bps: |COST_d|/|PATH_d| median 0.0072, cost dominates in 0.0069 of offset pairs.
+  CAPITAL: 4b d=0 passes at 10 bps = 6 of 54; rule-8 headline OOS 4b passes 1 of 6, 4a 2.
+  GATES 7/7 PASS.  runtime 17s
+
