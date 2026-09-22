@@ -1,0 +1,484 @@
+======================================================================================================================
+IDEA 1779 (lane C, 2026-09-22) — is the NAME-SET CHOOSER just a TRAILING-RETURN CHOOSER
+in disguise?
+======================================================================================================================
+# TUNED DIALS (exactly 2): CONTROL STATISTIC ['NAIVE_MEANRET', 'NAIVE_MEDRET', 'NAIVE_LOGRET', 'NAIVE_EWBH', 'NAIVE_MEANSHR']
+#                          DECILE WIDTH q [0.05, 0.1, 0.2, 0.25]
+# inherited from 1749, NOT tuned: band c=0.03, gross 0.75, cadence W, t+1, N=20, book statistics ['IS_SHARPE', 'IS_LEGS', 'IS_CAGRSLACK', 'IS_MINMARG'], split 2016-12-31/2017-01-01
+# reported axes: draw count D [24, 96, 240, 480] (nested), cost [0.0, 10.0, 25.0, 50.0] bps (binding 10), panel {U56, B136}, targets {4b OOS, 4b BOTH}
+# the ONLY RNG is the draw index selection, seeded default_rng(16320000 + 1009*N + d) — idea 1632's / 1749's / 1775's formula unchanged (G7)
+
+  GATE PASS  G5 tuned dials: CONTROL STATISTIC, DECILE WIDTH q   (target exactly 2)
+  GATE PASS  G7 seed stream: default_rng(16320000 + 1009*20 + d), d = 0..479   (target 1749's formula unchanged)
+
+----------------------------------------------------------------------------------------------------------------------
+## PANEL U56: 56 columns, draw pool 56; 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y)
+   scored from 2009-01-13 (17.7y, PROTOCOL rule 1); IS rows 2007 (8.0y), OOS rows 2441 (9.7y)
+   SPY            FULL  15.14% / 0.8851 / -33.72%  H1/H2 0.9570/0.8264  OOS  15.29% / 0.8751 / -33.72%
+   RULES v2 live  FULL   8.62% / 1.2010 / -12.05%  H1/H2 1.2276/1.1806  OOS   9.46% / 1.2767 / -12.05%   (the U56 live book, read on this calendar)
+   4b bars: FULL DD cap -20.23%, CAGR floor 10.60% | OOS DD cap -20.23%, CAGR floor 10.70%
+
+   ### U56  N=20  (480 draws, 10 bps, 11.0s)
+       4b FULL   43/480   4b OOS  105/480   4b BOTH   42/480   4a FULL   24/480   4a OOS   49/480
+       binding OOS leg among 4b-OOS failures: O3_OOS 1, O4_DD 0, O5_CAGR 375
+
+       AGREEMENT — Spearman rho over all 480 draws (10 bps)
+       statistic        rho vs IS_CAGRSLACK   rho vs IS_MINMARG   rho(S, OOS CAGR marg)   rho(S, OOS Sharpe marg)
+       IS_SHARPE                     0.8957              0.8957                  0.4333                    0.3774
+       IS_LEGS                       0.7361              0.7362                  0.3271                    0.2729
+       IS_CAGRSLACK                  1.0000              1.0000                  0.5897                    0.3570
+       IS_MINMARG                    1.0000              1.0000                  0.5897                    0.3571
+       NAIVE_MEANRET                 0.8960              0.8960                  0.5686                    0.3985
+       NAIVE_MEDRET                  0.5945              0.5945                  0.4717                    0.1462
+       NAIVE_LOGRET                  0.7891              0.7891                  0.5545                    0.3008
+       NAIVE_EWBH                    0.8960              0.8960                  0.5686                    0.3985
+       NAIVE_MEANSHR                 0.5832              0.5832                  0.3195                    0.1033
+
+       THE QUESTION — top-q OOS-4b rate, NAIVE controls vs 1749's BOOK statistics
+         target 4b OOS   D=240  q=0.05  base  56/240 = 23.33%  top set 12 draws
+            BOOK  IS_LEGS          10/12 = 83.33%  lift +60.00%  p = 1.088e-05
+            BOOK  IS_CAGRSLACK     10/12 = 83.33%  lift +60.00%  p = 1.088e-05
+            BOOK  IS_MINMARG       10/12 = 83.33%  lift +60.00%  p = 1.088e-05
+            BOOK  IS_SHARPE         7/12 = 58.33%  lift +35.00%  p = 7.977e-03
+            NAIVE NAIVE_MEDRET      9/12 = 75.00%  lift +51.67%  p = 1.451e-04  top-set overlap w/ IS_CAGRSLACK 16.7%
+            NAIVE NAIVE_LOGRET      9/12 = 75.00%  lift +51.67%  p = 1.451e-04  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEANRET     8/12 = 66.67%  lift +43.33%  p = 1.284e-03  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_EWBH        8/12 = 66.67%  lift +43.33%  p = 1.284e-03  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEANSHR     6/12 = 50.00%  lift +26.67%  p = 3.593e-02  top-set overlap w/ IS_CAGRSLACK 25.0%
+         target 4b OOS   D=240  q=0.10  base  56/240 = 23.33%  top set 24 draws
+            BOOK  IS_CAGRSLACK     15/24 = 62.50%  lift +39.17%  p = 1.555e-05
+            BOOK  IS_MINMARG       15/24 = 62.50%  lift +39.17%  p = 1.555e-05
+            BOOK  IS_LEGS          13/24 = 54.17%  lift +30.83%  p = 5.370e-04
+            BOOK  IS_SHARPE        11/24 = 45.83%  lift +22.50%  p = 8.959e-03
+            NAIVE NAIVE_MEANRET    16/24 = 66.67%  lift +43.33%  p = 1.984e-06  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEDRET     16/24 = 66.67%  lift +43.33%  p = 1.984e-06  top-set overlap w/ IS_CAGRSLACK 50.0%
+            NAIVE NAIVE_EWBH       16/24 = 66.67%  lift +43.33%  p = 1.984e-06  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_LOGRET     15/24 = 62.50%  lift +39.17%  p = 1.555e-05  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEANSHR    13/24 = 54.17%  lift +30.83%  p = 5.370e-04  top-set overlap w/ IS_CAGRSLACK 41.7%
+         target 4b OOS   D=240  q=0.20  base  56/240 = 23.33%  top set 48 draws
+            BOOK  IS_CAGRSLACK     24/48 = 50.00%  lift +26.67%  p = 4.416e-06
+            BOOK  IS_MINMARG       24/48 = 50.00%  lift +26.67%  p = 4.416e-06
+            BOOK  IS_SHARPE        20/48 = 41.67%  lift +18.33%  p = 1.178e-03
+            BOOK  IS_LEGS          19/48 = 39.58%  lift +16.25%  p = 3.599e-03
+            NAIVE NAIVE_LOGRET     27/48 = 56.25%  lift +32.92%  p = 2.002e-08  top-set overlap w/ IS_CAGRSLACK 62.5%
+            NAIVE NAIVE_MEANRET    24/48 = 50.00%  lift +26.67%  p = 4.416e-06  top-set overlap w/ IS_CAGRSLACK 72.9%
+            NAIVE NAIVE_EWBH       24/48 = 50.00%  lift +26.67%  p = 4.416e-06  top-set overlap w/ IS_CAGRSLACK 72.9%
+            NAIVE NAIVE_MEDRET     23/48 = 47.92%  lift +24.58%  p = 2.114e-05  top-set overlap w/ IS_CAGRSLACK 56.2%
+            NAIVE NAIVE_MEANSHR    21/48 = 43.75%  lift +20.42%  p = 3.449e-04  top-set overlap w/ IS_CAGRSLACK 45.8%
+         target 4b OOS   D=240  q=0.25  base  56/240 = 23.33%  top set 60 draws
+            BOOK  IS_CAGRSLACK     30/60 = 50.00%  lift +26.67%  p = 8.833e-08
+            BOOK  IS_MINMARG       30/60 = 50.00%  lift +26.67%  p = 8.833e-08
+            BOOK  IS_SHARPE        24/60 = 40.00%  lift +16.67%  p = 5.967e-04
+            BOOK  IS_LEGS          23/60 = 38.33%  lift +15.00%  p = 1.817e-03
+            NAIVE NAIVE_MEANRET    30/60 = 50.00%  lift +26.67%  p = 8.833e-08  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_LOGRET     30/60 = 50.00%  lift +26.67%  p = 8.833e-08  top-set overlap w/ IS_CAGRSLACK 65.0%
+            NAIVE NAIVE_EWBH       30/60 = 50.00%  lift +26.67%  p = 8.833e-08  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_MEANSHR    26/60 = 43.33%  lift +20.00%  p = 4.764e-05  top-set overlap w/ IS_CAGRSLACK 48.3%
+            NAIVE NAIVE_MEDRET     25/60 = 41.67%  lift +18.33%  p = 1.773e-04  top-set overlap w/ IS_CAGRSLACK 53.3%
+         target 4b OOS   D=480  q=0.05  base 105/480 = 21.88%  top set 24 draws
+            BOOK  IS_LEGS          16/24 = 66.67%  lift +44.79%  p = 1.577e-06
+            BOOK  IS_CAGRSLACK     16/24 = 66.67%  lift +44.79%  p = 1.577e-06
+            BOOK  IS_MINMARG       16/24 = 66.67%  lift +44.79%  p = 1.577e-06
+            BOOK  IS_SHARPE        11/24 = 45.83%  lift +23.96%  p = 6.373e-03
+            NAIVE NAIVE_LOGRET     19/24 = 79.17%  lift +57.29%  p = 1.165e-09  top-set overlap w/ IS_CAGRSLACK 62.5%
+            NAIVE NAIVE_MEDRET     18/24 = 75.00%  lift +53.12%  p = 1.596e-08  top-set overlap w/ IS_CAGRSLACK 20.8%
+            NAIVE NAIVE_MEANRET    16/24 = 66.67%  lift +44.79%  p = 1.577e-06  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_EWBH       16/24 = 66.67%  lift +44.79%  p = 1.577e-06  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEANSHR    10/24 = 41.67%  lift +19.79%  p = 2.038e-02  top-set overlap w/ IS_CAGRSLACK 33.3%
+         target 4b OOS   D=480  q=0.10  base 105/480 = 21.88%  top set 48 draws
+            BOOK  IS_CAGRSLACK     29/48 = 60.42%  lift +38.54%  p = 8.799e-10
+            BOOK  IS_MINMARG       29/48 = 60.42%  lift +38.54%  p = 8.799e-10
+            BOOK  IS_LEGS          23/48 = 47.92%  lift +26.04%  p = 2.075e-05
+            BOOK  IS_SHARPE        20/48 = 41.67%  lift +19.79%  p = 8.940e-04
+            NAIVE NAIVE_MEANRET    32/48 = 66.67%  lift +44.79%  p = 1.518e-12  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_EWBH       32/48 = 66.67%  lift +44.79%  p = 1.518e-12  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_MEDRET     30/48 = 62.50%  lift +40.62%  p = 1.169e-10  top-set overlap w/ IS_CAGRSLACK 43.8%
+            NAIVE NAIVE_LOGRET     29/48 = 60.42%  lift +38.54%  p = 8.799e-10  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEANSHR    20/48 = 41.67%  lift +19.79%  p = 8.940e-04  top-set overlap w/ IS_CAGRSLACK 47.9%
+         target 4b OOS   D=480  q=0.20  base 105/480 = 21.88%  top set 96 draws
+            BOOK  IS_CAGRSLACK     46/96 = 47.92%  lift +26.04%  p = 1.008e-10
+            BOOK  IS_MINMARG       46/96 = 47.92%  lift +26.04%  p = 1.008e-10
+            BOOK  IS_SHARPE        37/96 = 38.54%  lift +16.67%  p = 2.142e-05
+            BOOK  IS_LEGS          34/96 = 35.42%  lift +13.54%  p = 4.420e-04
+            NAIVE NAIVE_LOGRET     50/96 = 52.08%  lift +30.21%  p = 9.106e-14  top-set overlap w/ IS_CAGRSLACK 67.7%
+            NAIVE NAIVE_MEANRET    46/96 = 47.92%  lift +26.04%  p = 1.008e-10  top-set overlap w/ IS_CAGRSLACK 74.0%
+            NAIVE NAIVE_EWBH       46/96 = 47.92%  lift +26.04%  p = 1.008e-10  top-set overlap w/ IS_CAGRSLACK 74.0%
+            NAIVE NAIVE_MEDRET     42/96 = 43.75%  lift +21.88%  p = 4.253e-08  top-set overlap w/ IS_CAGRSLACK 47.9%
+            NAIVE NAIVE_MEANSHR    38/96 = 39.58%  lift +17.71%  p = 6.945e-06  top-set overlap w/ IS_CAGRSLACK 52.1%
+         target 4b OOS   D=480  q=0.25  base 105/480 = 21.88%  top set 120 draws
+            BOOK  IS_CAGRSLACK     54/120 = 45.00%  lift +23.12%  p = 1.709e-11
+            BOOK  IS_MINMARG       54/120 = 45.00%  lift +23.12%  p = 1.709e-11
+            BOOK  IS_SHARPE        45/120 = 37.50%  lift +15.62%  p = 3.633e-06
+            BOOK  IS_LEGS          41/120 = 34.17%  lift +12.29%  p = 2.107e-04
+            NAIVE NAIVE_MEANRET    56/120 = 46.67%  lift +24.79%  p = 6.140e-13  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_LOGRET     56/120 = 46.67%  lift +24.79%  p = 6.140e-13  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_EWBH       56/120 = 46.67%  lift +24.79%  p = 6.140e-13  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_MEDRET     50/120 = 41.67%  lift +19.79%  p = 6.845e-09  top-set overlap w/ IS_CAGRSLACK 48.3%
+            NAIVE NAIVE_MEANSHR    47/120 = 39.17%  lift +17.29%  p = 3.468e-07  top-set overlap w/ IS_CAGRSLACK 50.0%
+         target 4b BOTH  D=240  q=0.05  base  21/240 =  8.75%  top set 12 draws
+            BOOK  IS_CAGRSLACK     10/12 = 83.33%  lift +74.58%  p = 1.474e-10
+            BOOK  IS_MINMARG       10/12 = 83.33%  lift +74.58%  p = 1.474e-10
+            BOOK  IS_LEGS           8/12 = 66.67%  lift +57.92%  p = 3.381e-07
+            BOOK  IS_SHARPE         6/12 = 50.00%  lift +41.25%  p = 1.430e-04
+            NAIVE NAIVE_LOGRET      9/12 = 75.00%  lift +66.25%  p = 8.951e-09  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEANRET     6/12 = 50.00%  lift +41.25%  p = 1.430e-04  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_EWBH        6/12 = 50.00%  lift +41.25%  p = 1.430e-04  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEDRET      5/12 = 41.67%  lift +32.92%  p = 1.679e-03  top-set overlap w/ IS_CAGRSLACK 16.7%
+            NAIVE NAIVE_MEANSHR     5/12 = 41.67%  lift +32.92%  p = 1.679e-03  top-set overlap w/ IS_CAGRSLACK 25.0%
+         target 4b BOTH  D=240  q=0.10  base  21/240 =  8.75%  top set 24 draws
+            BOOK  IS_CAGRSLACK     12/24 = 50.00%  lift +41.25%  p = 8.745e-09
+            BOOK  IS_MINMARG       12/24 = 50.00%  lift +41.25%  p = 8.745e-09
+            BOOK  IS_LEGS          10/24 = 41.67%  lift +32.92%  p = 2.531e-06
+            BOOK  IS_SHARPE         9/24 = 37.50%  lift +28.75%  p = 2.942e-05
+            NAIVE NAIVE_LOGRET     13/24 = 54.17%  lift +45.42%  p = 3.458e-10  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEANRET    12/24 = 50.00%  lift +41.25%  p = 8.745e-09  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_EWBH       12/24 = 50.00%  lift +41.25%  p = 8.745e-09  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEDRET     11/24 = 45.83%  lift +37.08%  p = 1.692e-07  top-set overlap w/ IS_CAGRSLACK 50.0%
+            NAIVE NAIVE_MEANSHR    10/24 = 41.67%  lift +32.92%  p = 2.531e-06  top-set overlap w/ IS_CAGRSLACK 41.7%
+         target 4b BOTH  D=240  q=0.20  base  21/240 =  8.75%  top set 48 draws
+            BOOK  IS_CAGRSLACK     18/48 = 37.50%  lift +28.75%  p = 1.135e-11
+            BOOK  IS_MINMARG       18/48 = 37.50%  lift +28.75%  p = 1.135e-11
+            BOOK  IS_SHARPE        14/48 = 29.17%  lift +20.42%  p = 1.172e-06
+            BOOK  IS_LEGS          10/48 = 20.83%  lift +12.08%  p = 2.606e-03
+            NAIVE NAIVE_MEANRET    16/48 = 33.33%  lift +24.58%  p = 6.380e-09  top-set overlap w/ IS_CAGRSLACK 72.9%
+            NAIVE NAIVE_EWBH       16/48 = 33.33%  lift +24.58%  p = 6.380e-09  top-set overlap w/ IS_CAGRSLACK 72.9%
+            NAIVE NAIVE_MEDRET     15/48 = 31.25%  lift +22.50%  p = 9.804e-08  top-set overlap w/ IS_CAGRSLACK 56.2%
+            NAIVE NAIVE_LOGRET     15/48 = 31.25%  lift +22.50%  p = 9.804e-08  top-set overlap w/ IS_CAGRSLACK 62.5%
+            NAIVE NAIVE_MEANSHR    13/48 = 27.08%  lift +18.33%  p = 1.111e-05  top-set overlap w/ IS_CAGRSLACK 45.8%
+         target 4b BOTH  D=240  q=0.25  base  21/240 =  8.75%  top set 60 draws
+            BOOK  IS_CAGRSLACK     20/60 = 33.33%  lift +24.58%  p = 9.942e-13
+            BOOK  IS_MINMARG       20/60 = 33.33%  lift +24.58%  p = 9.942e-13
+            BOOK  IS_SHARPE        15/60 = 25.00%  lift +16.25%  p = 3.325e-06
+            BOOK  IS_LEGS          12/60 = 20.00%  lift +11.25%  p = 9.989e-04
+            NAIVE NAIVE_MEANRET    17/60 = 28.33%  lift +19.58%  p = 2.255e-08  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_EWBH       17/60 = 28.33%  lift +19.58%  p = 2.255e-08  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_MEDRET     15/60 = 25.00%  lift +16.25%  p = 3.325e-06  top-set overlap w/ IS_CAGRSLACK 53.3%
+            NAIVE NAIVE_LOGRET     15/60 = 25.00%  lift +16.25%  p = 3.325e-06  top-set overlap w/ IS_CAGRSLACK 65.0%
+            NAIVE NAIVE_MEANSHR    14/60 = 23.33%  lift +14.58%  p = 2.774e-05  top-set overlap w/ IS_CAGRSLACK 48.3%
+         target 4b BOTH  D=480  q=0.05  base  42/480 =  8.75%  top set 24 draws
+            BOOK  IS_CAGRSLACK     16/24 = 66.67%  lift +57.92%  p = 2.686e-13
+            BOOK  IS_MINMARG       16/24 = 66.67%  lift +57.92%  p = 2.686e-13
+            BOOK  IS_LEGS          14/24 = 58.33%  lift +49.58%  p = 1.775e-10
+            BOOK  IS_SHARPE        10/24 = 41.67%  lift +32.92%  p = 7.187e-06
+            NAIVE NAIVE_LOGRET     18/24 = 75.00%  lift +66.25%  p = 1.697e-16  top-set overlap w/ IS_CAGRSLACK 62.5%
+            NAIVE NAIVE_MEANRET    13/24 = 54.17%  lift +45.42%  p = 3.367e-09  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_EWBH       13/24 = 54.17%  lift +45.42%  p = 3.367e-09  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEDRET     10/24 = 41.67%  lift +32.92%  p = 7.187e-06  top-set overlap w/ IS_CAGRSLACK 20.8%
+            NAIVE NAIVE_MEANSHR     9/24 = 37.50%  lift +28.75%  p = 6.295e-05  top-set overlap w/ IS_CAGRSLACK 33.3%
+         target 4b BOTH  D=480  q=0.10  base  42/480 =  8.75%  top set 48 draws
+            BOOK  IS_CAGRSLACK     25/48 = 52.08%  lift +43.33%  p = 9.086e-18
+            BOOK  IS_MINMARG       25/48 = 52.08%  lift +43.33%  p = 9.086e-18
+            BOOK  IS_SHARPE        17/48 = 35.42%  lift +26.67%  p = 2.527e-08
+            BOOK  IS_LEGS          16/48 = 33.33%  lift +24.58%  p = 2.135e-07
+            NAIVE NAIVE_MEANRET    24/48 = 50.00%  lift +41.25%  p = 2.194e-16  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_EWBH       24/48 = 50.00%  lift +41.25%  p = 2.194e-16  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_LOGRET     23/48 = 47.92%  lift +39.17%  p = 4.620e-15  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEDRET     19/48 = 39.58%  lift +30.83%  p = 2.407e-10  top-set overlap w/ IS_CAGRSLACK 43.8%
+            NAIVE NAIVE_MEANSHR    17/48 = 35.42%  lift +26.67%  p = 2.527e-08  top-set overlap w/ IS_CAGRSLACK 47.9%
+         target 4b BOTH  D=480  q=0.20  base  42/480 =  8.75%  top set 96 draws
+            BOOK  IS_CAGRSLACK     36/96 = 37.50%  lift +28.75%  p = 3.066e-22
+            BOOK  IS_MINMARG       36/96 = 37.50%  lift +28.75%  p = 3.066e-22
+            BOOK  IS_SHARPE        26/96 = 27.08%  lift +18.33%  p = 3.913e-10
+            BOOK  IS_LEGS          19/96 = 19.79%  lift +11.04%  p = 8.714e-05
+            NAIVE NAIVE_MEANRET    31/96 = 32.29%  lift +23.54%  p = 1.965e-15  top-set overlap w/ IS_CAGRSLACK 74.0%
+            NAIVE NAIVE_EWBH       31/96 = 32.29%  lift +23.54%  p = 1.965e-15  top-set overlap w/ IS_CAGRSLACK 74.0%
+            NAIVE NAIVE_LOGRET     29/96 = 30.21%  lift +21.46%  p = 3.747e-13  top-set overlap w/ IS_CAGRSLACK 67.7%
+            NAIVE NAIVE_MEDRET     26/96 = 27.08%  lift +18.33%  p = 3.913e-10  top-set overlap w/ IS_CAGRSLACK 47.9%
+            NAIVE NAIVE_MEANSHR    24/96 = 25.00%  lift +16.25%  p = 2.267e-08  top-set overlap w/ IS_CAGRSLACK 52.1%
+         target 4b BOTH  D=480  q=0.25  base  42/480 =  8.75%  top set 120 draws
+            BOOK  IS_CAGRSLACK     39/120 = 32.50%  lift +23.75%  p = 9.664e-23
+            BOOK  IS_MINMARG       39/120 = 32.50%  lift +23.75%  p = 9.664e-23
+            BOOK  IS_SHARPE        30/120 = 25.00%  lift +16.25%  p = 3.370e-11
+            BOOK  IS_LEGS          24/120 = 20.00%  lift +11.25%  p = 3.082e-06
+            NAIVE NAIVE_MEANRET    33/120 = 27.50%  lift +18.75%  p = 2.154e-14  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_EWBH       33/120 = 27.50%  lift +18.75%  p = 2.154e-14  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_LOGRET     30/120 = 25.00%  lift +16.25%  p = 3.370e-11  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEDRET     28/120 = 23.33%  lift +14.58%  p = 2.397e-09  top-set overlap w/ IS_CAGRSLACK 48.3%
+            NAIVE NAIVE_MEANSHR    27/120 = 22.50%  lift +13.75%  p = 1.695e-08  top-set overlap w/ IS_CAGRSLACK 50.0%
+
+       RULE 8 — argmax draw chosen on 2009-2016 ONLY, 2017-2026 read ONCE
+         (SPY OOS 15.29%/0.8751/-33.72%;  RULES v2 OOS 9.46%/1.2767/-12.05%)
+         D=24   IS_SHARPE       pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=24   IS_LEGS         pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=24   IS_CAGRSLACK    pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=24   IS_MINMARG      pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=24   NAIVE_MEANRET   pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=24   NAIVE_MEDRET    pick  16  OOS  10.54% / 1.1841 / -13.86%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   NAIVE_LOGRET    pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=24   NAIVE_EWBH      pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=24   NAIVE_MEANSHR   pick   4  OOS   9.51% / 1.1507 / -13.54%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   IS_SHARPE       pick  76  OOS  10.28% / 1.2846 / -11.75%   4bFULL False 4bOOS False 4bBOTH False 4aFULL  True 4aOOS  True  binding O5_CAGR
+         D=96   IS_LEGS         pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=96   IS_CAGRSLACK    pick  30  OOS  12.41% / 1.2785 / -14.96%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=96   IS_MINMARG      pick  30  OOS  12.41% / 1.2785 / -14.96%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=96   NAIVE_MEANRET   pick  30  OOS  12.41% / 1.2785 / -14.96%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=96   NAIVE_MEDRET    pick  16  OOS  10.54% / 1.1841 / -13.86%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   NAIVE_LOGRET    pick  81  OOS  11.54% / 1.2970 / -11.76%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS  True  binding none
+         D=96   NAIVE_EWBH      pick  30  OOS  12.41% / 1.2785 / -14.96%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=96   NAIVE_MEANSHR   pick  81  OOS  11.54% / 1.2970 / -11.76%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS  True  binding none
+         D=240  IS_SHARPE       pick  76  OOS  10.28% / 1.2846 / -11.75%   4bFULL False 4bOOS False 4bBOTH False 4aFULL  True 4aOOS  True  binding O5_CAGR
+         D=240  IS_LEGS         pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=240  IS_CAGRSLACK    pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=240  IS_MINMARG      pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=240  NAIVE_MEANRET   pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=240  NAIVE_MEDRET    pick 198  OOS  10.52% / 1.1278 / -15.67%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  NAIVE_LOGRET    pick  81  OOS  11.54% / 1.2970 / -11.76%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS  True  binding none
+         D=240  NAIVE_EWBH      pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=240  NAIVE_MEANSHR   pick 135  OOS   9.94% / 1.1297 / -14.33%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  IS_SHARPE       pick 367  OOS   9.66% / 1.1274 / -14.21%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  IS_LEGS         pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=480  IS_CAGRSLACK    pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=480  IS_MINMARG      pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=480  NAIVE_MEANRET   pick 364  OOS  12.90% / 1.3088 / -15.33%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=480  NAIVE_MEDRET    pick 343  OOS  13.41% / 1.2955 / -15.88%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=480  NAIVE_LOGRET    pick 364  OOS  12.90% / 1.3088 / -15.33%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=480  NAIVE_EWBH      pick 364  OOS  12.90% / 1.3088 / -15.33%   4bFULL  True 4bOOS  True 4bBOTH  True 4aFULL False 4aOOS False  binding none
+         D=480  NAIVE_MEANSHR   pick 135  OOS   9.94% / 1.1297 / -14.33%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+
+       COST LADDER (reported, not tuned) — counts over 480 draws
+           0.0 bps   4b FULL   57   4b OOS  124   4b BOTH   55
+          10.0 bps   4b FULL   43   4b OOS  105   4b BOTH   42
+          25.0 bps   4b FULL   29   4b OOS   78   4b BOTH   28
+          50.0 bps   4b FULL   13   4b OOS   51   4b BOTH   13
+
+----------------------------------------------------------------------------------------------------------------------
+## PANEL B136: 136 columns, draw pool 136; 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y)
+   scored from 2009-01-13 (17.7y, PROTOCOL rule 1); IS rows 2007 (8.0y), OOS rows 2441 (9.7y)
+   SPY            FULL  15.12% / 0.8844 / -33.72%  H1/H2 0.9571/0.8249  OOS  15.26% / 0.8737 / -33.72%
+   RULES v2 live  FULL   8.62% / 1.2010 / -12.05%  H1/H2 1.2276/1.1806  OOS   9.46% / 1.2767 / -12.05%   (the U56 live book, read on this calendar)
+   4b bars: FULL DD cap -20.23%, CAGR floor 10.59% | OOS DD cap -20.23%, CAGR floor 10.68%
+
+   ### B136  N=20  (480 draws, 10 bps, 10.8s)
+       4b FULL   14/480   4b OOS   21/480   4b BOTH   12/480   4a FULL    3/480   4a OOS    7/480
+       binding OOS leg among 4b-OOS failures: O3_OOS 85, O4_DD 0, O5_CAGR 459
+
+       AGREEMENT — Spearman rho over all 480 draws (10 bps)
+       statistic        rho vs IS_CAGRSLACK   rho vs IS_MINMARG   rho(S, OOS CAGR marg)   rho(S, OOS Sharpe marg)
+       IS_SHARPE                     0.8706              0.8716                  0.2389                    0.2525
+       IS_LEGS                       0.6842              0.6902                  0.1898                    0.1858
+       IS_CAGRSLACK                  1.0000              0.9992                  0.3859                    0.2520
+       IS_MINMARG                    0.9992              1.0000                  0.3819                    0.2488
+       NAIVE_MEANRET                 0.8061              0.8063                  0.3276                    0.2183
+       NAIVE_MEDRET                  0.5737              0.5712                  0.2919                    0.1037
+       NAIVE_LOGRET                  0.8089              0.8080                  0.3398                    0.1560
+       NAIVE_EWBH                    0.8061              0.8063                  0.3276                    0.2183
+       NAIVE_MEANSHR                 0.6042              0.6051                  0.1255                    0.0282
+
+       THE QUESTION — top-q OOS-4b rate, NAIVE controls vs 1749's BOOK statistics
+         target 4b OOS   D=240  q=0.05  base   9/240 =  3.75%  top set 12 draws
+            BOOK  IS_LEGS           2/12 = 16.67%  lift +12.92%  p = 6.793e-02
+            BOOK  IS_CAGRSLACK      2/12 = 16.67%  lift +12.92%  p = 6.793e-02
+            BOOK  IS_MINMARG        1/12 =  8.33%  lift  +4.58%  p = 3.748e-01
+            BOOK  IS_SHARPE         0/12 =  0.00%  lift  -3.75%  p = 1.000e+00
+            NAIVE NAIVE_MEDRET      1/12 =  8.33%  lift  +4.58%  p = 3.748e-01  top-set overlap w/ IS_CAGRSLACK 16.7%
+            NAIVE NAIVE_LOGRET      1/12 =  8.33%  lift  +4.58%  p = 3.748e-01  top-set overlap w/ IS_CAGRSLACK 33.3%
+            NAIVE NAIVE_MEANRET     0/12 =  0.00%  lift  -3.75%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK 25.0%
+            NAIVE NAIVE_EWBH        0/12 =  0.00%  lift  -3.75%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK 25.0%
+            NAIVE NAIVE_MEANSHR     0/12 =  0.00%  lift  -3.75%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK  0.0%
+         target 4b OOS   D=240  q=0.10  base   9/240 =  3.75%  top set 24 draws
+            BOOK  IS_CAGRSLACK      4/24 = 16.67%  lift +12.92%  p = 6.990e-03
+            BOOK  IS_MINMARG        3/24 = 12.50%  lift  +8.75%  p = 4.955e-02
+            BOOK  IS_LEGS           2/24 =  8.33%  lift  +4.58%  p = 2.236e-01
+            BOOK  IS_SHARPE         1/24 =  4.17%  lift  +0.42%  p = 6.191e-01
+            NAIVE NAIVE_MEDRET      2/24 =  8.33%  lift  +4.58%  p = 2.236e-01  top-set overlap w/ IS_CAGRSLACK 37.5%
+            NAIVE NAIVE_LOGRET      2/24 =  8.33%  lift  +4.58%  p = 2.236e-01  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEANSHR     1/24 =  4.17%  lift  +0.42%  p = 6.191e-01  top-set overlap w/ IS_CAGRSLACK 33.3%
+            NAIVE NAIVE_MEANRET     0/24 =  0.00%  lift  -3.75%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK 50.0%
+            NAIVE NAIVE_EWBH        0/24 =  0.00%  lift  -3.75%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK 50.0%
+         target 4b OOS   D=240  q=0.20  base   9/240 =  3.75%  top set 48 draws
+            BOOK  IS_SHARPE         4/48 =  8.33%  lift  +4.58%  p = 8.171e-02
+            BOOK  IS_LEGS           4/48 =  8.33%  lift  +4.58%  p = 8.171e-02
+            BOOK  IS_CAGRSLACK      4/48 =  8.33%  lift  +4.58%  p = 8.171e-02
+            BOOK  IS_MINMARG        4/48 =  8.33%  lift  +4.58%  p = 8.171e-02
+            NAIVE NAIVE_MEANRET     5/48 = 10.42%  lift  +6.67%  p = 1.753e-02  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_EWBH        5/48 = 10.42%  lift  +6.67%  p = 1.753e-02  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_LOGRET      4/48 =  8.33%  lift  +4.58%  p = 8.171e-02  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_MEDRET      3/48 =  6.25%  lift  +2.50%  p = 2.595e-01  top-set overlap w/ IS_CAGRSLACK 52.1%
+            NAIVE NAIVE_MEANSHR     1/48 =  2.08%  lift  -1.67%  p = 8.709e-01  top-set overlap w/ IS_CAGRSLACK 50.0%
+         target 4b OOS   D=240  q=0.25  base   9/240 =  3.75%  top set 60 draws
+            BOOK  IS_CAGRSLACK      6/60 = 10.00%  lift  +6.25%  p = 8.722e-03
+            BOOK  IS_MINMARG        6/60 = 10.00%  lift  +6.25%  p = 8.722e-03
+            BOOK  IS_SHARPE         5/60 =  8.33%  lift  +4.58%  p = 4.565e-02
+            BOOK  IS_LEGS           4/60 =  6.67%  lift  +2.92%  p = 1.617e-01
+            NAIVE NAIVE_MEANRET     5/60 =  8.33%  lift  +4.58%  p = 4.565e-02  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_LOGRET      5/60 =  8.33%  lift  +4.58%  p = 4.565e-02  top-set overlap w/ IS_CAGRSLACK 73.3%
+            NAIVE NAIVE_EWBH        5/60 =  8.33%  lift  +4.58%  p = 4.565e-02  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_MEDRET      3/60 =  5.00%  lift  +1.25%  p = 3.993e-01  top-set overlap w/ IS_CAGRSLACK 53.3%
+            NAIVE NAIVE_MEANSHR     1/60 =  1.67%  lift  -2.08%  p = 9.287e-01  top-set overlap w/ IS_CAGRSLACK 60.0%
+         target 4b OOS   D=480  q=0.05  base  21/480 =  4.38%  top set 24 draws
+            BOOK  IS_LEGS           4/24 = 16.67%  lift +12.29%  p = 1.627e-02
+            BOOK  IS_CAGRSLACK      4/24 = 16.67%  lift +12.29%  p = 1.627e-02
+            BOOK  IS_MINMARG        4/24 = 16.67%  lift +12.29%  p = 1.627e-02
+            BOOK  IS_SHARPE         2/24 =  8.33%  lift  +3.96%  p = 2.830e-01
+            NAIVE NAIVE_MEDRET      2/24 =  8.33%  lift  +3.96%  p = 2.830e-01  top-set overlap w/ IS_CAGRSLACK 16.7%
+            NAIVE NAIVE_LOGRET      2/24 =  8.33%  lift  +3.96%  p = 2.830e-01  top-set overlap w/ IS_CAGRSLACK 37.5%
+            NAIVE NAIVE_MEANRET     1/24 =  4.17%  lift  -0.21%  p = 6.674e-01  top-set overlap w/ IS_CAGRSLACK 54.2%
+            NAIVE NAIVE_EWBH        1/24 =  4.17%  lift  -0.21%  p = 6.674e-01  top-set overlap w/ IS_CAGRSLACK 54.2%
+            NAIVE NAIVE_MEANSHR     1/24 =  4.17%  lift  -0.21%  p = 6.674e-01  top-set overlap w/ IS_CAGRSLACK  8.3%
+         target 4b OOS   D=480  q=0.10  base  21/480 =  4.38%  top set 48 draws
+            BOOK  IS_CAGRSLACK     10/48 = 20.83%  lift +16.46%  p = 6.086e-06
+            BOOK  IS_MINMARG        7/48 = 14.58%  lift +10.21%  p = 2.537e-03
+            BOOK  IS_LEGS           4/48 =  8.33%  lift  +3.96%  p = 1.477e-01
+            BOOK  IS_SHARPE         3/48 =  6.25%  lift  +1.88%  p = 3.516e-01
+            NAIVE NAIVE_LOGRET      7/48 = 14.58%  lift +10.21%  p = 2.537e-03  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEDRET      5/48 = 10.42%  lift  +6.04%  p = 4.816e-02  top-set overlap w/ IS_CAGRSLACK 29.2%
+            NAIVE NAIVE_MEANRET     3/48 =  6.25%  lift  +1.88%  p = 3.516e-01  top-set overlap w/ IS_CAGRSLACK 56.2%
+            NAIVE NAIVE_EWBH        3/48 =  6.25%  lift  +1.88%  p = 3.516e-01  top-set overlap w/ IS_CAGRSLACK 56.2%
+            NAIVE NAIVE_MEANSHR     3/48 =  6.25%  lift  +1.88%  p = 3.516e-01  top-set overlap w/ IS_CAGRSLACK 33.3%
+         target 4b OOS   D=480  q=0.20  base  21/480 =  4.38%  top set 96 draws
+            BOOK  IS_CAGRSLACK     11/96 = 11.46%  lift  +7.08%  p = 7.241e-04
+            BOOK  IS_MINMARG       11/96 = 11.46%  lift  +7.08%  p = 7.241e-04
+            BOOK  IS_SHARPE         9/96 =  9.38%  lift  +5.00%  p = 1.251e-02
+            BOOK  IS_LEGS           6/96 =  6.25%  lift  +1.88%  p = 2.267e-01
+            NAIVE NAIVE_LOGRET     12/96 = 12.50%  lift  +8.12%  p = 1.316e-04  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEANRET    11/96 = 11.46%  lift  +7.08%  p = 7.241e-04  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_EWBH       11/96 = 11.46%  lift  +7.08%  p = 7.241e-04  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEDRET     10/96 = 10.42%  lift  +6.04%  p = 3.301e-03  top-set overlap w/ IS_CAGRSLACK 45.8%
+            NAIVE NAIVE_MEANSHR     4/96 =  4.17%  lift  -0.21%  p = 6.342e-01  top-set overlap w/ IS_CAGRSLACK 46.9%
+         target 4b OOS   D=480  q=0.25  base  21/480 =  4.38%  top set 120 draws
+            BOOK  IS_CAGRSLACK     13/120 = 10.83%  lift  +6.46%  p = 2.677e-04
+            BOOK  IS_MINMARG       13/120 = 10.83%  lift  +6.46%  p = 2.677e-04
+            BOOK  IS_SHARPE        12/120 = 10.00%  lift  +5.63%  p = 1.318e-03
+            BOOK  IS_LEGS           6/120 =  5.00%  lift  +0.63%  p = 4.334e-01
+            NAIVE NAIVE_LOGRET     13/120 = 10.83%  lift  +6.46%  p = 2.677e-04  top-set overlap w/ IS_CAGRSLACK 73.3%
+            NAIVE NAIVE_MEANRET    12/120 = 10.00%  lift  +5.63%  p = 1.318e-03  top-set overlap w/ IS_CAGRSLACK 74.2%
+            NAIVE NAIVE_EWBH       12/120 = 10.00%  lift  +5.63%  p = 1.318e-03  top-set overlap w/ IS_CAGRSLACK 74.2%
+            NAIVE NAIVE_MEDRET     11/120 =  9.17%  lift  +4.79%  p = 5.375e-03  top-set overlap w/ IS_CAGRSLACK 50.8%
+            NAIVE NAIVE_MEANSHR     7/120 =  5.83%  lift  +1.46%  p = 2.526e-01  top-set overlap w/ IS_CAGRSLACK 55.0%
+         target 4b BOTH  D=240  q=0.05  base   5/240 =  2.08%  top set 12 draws
+            BOOK  IS_LEGS           2/12 = 16.67%  lift +14.58%  p = 2.113e-02
+            BOOK  IS_CAGRSLACK      2/12 = 16.67%  lift +14.58%  p = 2.113e-02
+            BOOK  IS_MINMARG        1/12 =  8.33%  lift  +6.25%  p = 2.279e-01
+            BOOK  IS_SHARPE         0/12 =  0.00%  lift  -2.08%  p = 1.000e+00
+            NAIVE NAIVE_MEDRET      1/12 =  8.33%  lift  +6.25%  p = 2.279e-01  top-set overlap w/ IS_CAGRSLACK 16.7%
+            NAIVE NAIVE_LOGRET      1/12 =  8.33%  lift  +6.25%  p = 2.279e-01  top-set overlap w/ IS_CAGRSLACK 33.3%
+            NAIVE NAIVE_MEANRET     0/12 =  0.00%  lift  -2.08%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK 25.0%
+            NAIVE NAIVE_EWBH        0/12 =  0.00%  lift  -2.08%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK 25.0%
+            NAIVE NAIVE_MEANSHR     0/12 =  0.00%  lift  -2.08%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK  0.0%
+         target 4b BOTH  D=240  q=0.10  base   5/240 =  2.08%  top set 24 draws
+            BOOK  IS_CAGRSLACK      4/24 = 16.67%  lift +14.58%  p = 3.674e-04
+            BOOK  IS_MINMARG        3/24 = 12.50%  lift +10.42%  p = 7.753e-03
+            BOOK  IS_LEGS           2/24 =  8.33%  lift  +6.25%  p = 7.960e-02
+            BOOK  IS_SHARPE         1/24 =  4.17%  lift  +2.08%  p = 4.123e-01
+            NAIVE NAIVE_MEDRET      2/24 =  8.33%  lift  +6.25%  p = 7.960e-02  top-set overlap w/ IS_CAGRSLACK 37.5%
+            NAIVE NAIVE_LOGRET      2/24 =  8.33%  lift  +6.25%  p = 7.960e-02  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEANSHR     1/24 =  4.17%  lift  +2.08%  p = 4.123e-01  top-set overlap w/ IS_CAGRSLACK 33.3%
+            NAIVE NAIVE_MEANRET     0/24 =  0.00%  lift  -2.08%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK 50.0%
+            NAIVE NAIVE_EWBH        0/24 =  0.00%  lift  -2.08%  p = 1.000e+00  top-set overlap w/ IS_CAGRSLACK 50.0%
+         target 4b BOTH  D=240  q=0.20  base   5/240 =  2.08%  top set 48 draws
+            BOOK  IS_SHARPE         4/48 =  8.33%  lift  +6.25%  p = 6.140e-03
+            BOOK  IS_LEGS           4/48 =  8.33%  lift  +6.25%  p = 6.140e-03
+            BOOK  IS_CAGRSLACK      4/48 =  8.33%  lift  +6.25%  p = 6.140e-03
+            BOOK  IS_MINMARG        4/48 =  8.33%  lift  +6.25%  p = 6.140e-03
+            NAIVE NAIVE_MEANRET     4/48 =  8.33%  lift  +6.25%  p = 6.140e-03  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_LOGRET      4/48 =  8.33%  lift  +6.25%  p = 6.140e-03  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_EWBH        4/48 =  8.33%  lift  +6.25%  p = 6.140e-03  top-set overlap w/ IS_CAGRSLACK 64.6%
+            NAIVE NAIVE_MEDRET      2/48 =  4.17%  lift  +2.08%  p = 2.618e-01  top-set overlap w/ IS_CAGRSLACK 52.1%
+            NAIVE NAIVE_MEANSHR     1/48 =  2.08%  lift  +0.00%  p = 6.758e-01  top-set overlap w/ IS_CAGRSLACK 50.0%
+         target 4b BOTH  D=240  q=0.25  base   5/240 =  2.08%  top set 60 draws
+            BOOK  IS_SHARPE         5/60 =  8.33%  lift  +6.25%  p = 8.583e-04
+            BOOK  IS_CAGRSLACK      5/60 =  8.33%  lift  +6.25%  p = 8.583e-04
+            BOOK  IS_MINMARG        5/60 =  8.33%  lift  +6.25%  p = 8.583e-04
+            BOOK  IS_LEGS           4/60 =  6.67%  lift  +4.58%  p = 1.465e-02
+            NAIVE NAIVE_LOGRET      5/60 =  8.33%  lift  +6.25%  p = 8.583e-04  top-set overlap w/ IS_CAGRSLACK 73.3%
+            NAIVE NAIVE_MEANRET     4/60 =  6.67%  lift  +4.58%  p = 1.465e-02  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_EWBH        4/60 =  6.67%  lift  +4.58%  p = 1.465e-02  top-set overlap w/ IS_CAGRSLACK 76.7%
+            NAIVE NAIVE_MEDRET      2/60 =  3.33%  lift  +1.25%  p = 3.672e-01  top-set overlap w/ IS_CAGRSLACK 53.3%
+            NAIVE NAIVE_MEANSHR     1/60 =  1.67%  lift  -0.42%  p = 7.660e-01  top-set overlap w/ IS_CAGRSLACK 60.0%
+         target 4b BOTH  D=480  q=0.05  base  12/480 =  2.50%  top set 24 draws
+            BOOK  IS_LEGS           4/24 = 16.67%  lift +14.17%  p = 1.831e-03
+            BOOK  IS_CAGRSLACK      4/24 = 16.67%  lift +14.17%  p = 1.831e-03
+            BOOK  IS_MINMARG        4/24 = 16.67%  lift +14.17%  p = 1.831e-03
+            BOOK  IS_SHARPE         2/24 =  8.33%  lift  +5.83%  p = 1.164e-01
+            NAIVE NAIVE_LOGRET      2/24 =  8.33%  lift  +5.83%  p = 1.164e-01  top-set overlap w/ IS_CAGRSLACK 37.5%
+            NAIVE NAIVE_MEANRET     1/24 =  4.17%  lift  +1.67%  p = 4.636e-01  top-set overlap w/ IS_CAGRSLACK 54.2%
+            NAIVE NAIVE_MEDRET      1/24 =  4.17%  lift  +1.67%  p = 4.636e-01  top-set overlap w/ IS_CAGRSLACK 16.7%
+            NAIVE NAIVE_EWBH        1/24 =  4.17%  lift  +1.67%  p = 4.636e-01  top-set overlap w/ IS_CAGRSLACK 54.2%
+            NAIVE NAIVE_MEANSHR     1/24 =  4.17%  lift  +1.67%  p = 4.636e-01  top-set overlap w/ IS_CAGRSLACK  8.3%
+         target 4b BOTH  D=480  q=0.10  base  12/480 =  2.50%  top set 48 draws
+            BOOK  IS_CAGRSLACK     10/48 = 20.83%  lift +18.33%  p = 2.276e-09
+            BOOK  IS_MINMARG        7/48 = 14.58%  lift +12.08%  p = 3.525e-05
+            BOOK  IS_LEGS           4/48 =  8.33%  lift  +5.83%  p = 2.394e-02
+            BOOK  IS_SHARPE         3/48 =  6.25%  lift  +3.75%  p = 1.084e-01
+            NAIVE NAIVE_LOGRET      6/48 = 12.50%  lift +10.00%  p = 4.288e-04  top-set overlap w/ IS_CAGRSLACK 58.3%
+            NAIVE NAIVE_MEDRET      4/48 =  8.33%  lift  +5.83%  p = 2.394e-02  top-set overlap w/ IS_CAGRSLACK 29.2%
+            NAIVE NAIVE_MEANRET     3/48 =  6.25%  lift  +3.75%  p = 1.084e-01  top-set overlap w/ IS_CAGRSLACK 56.2%
+            NAIVE NAIVE_EWBH        3/48 =  6.25%  lift  +3.75%  p = 1.084e-01  top-set overlap w/ IS_CAGRSLACK 56.2%
+            NAIVE NAIVE_MEANSHR     3/48 =  6.25%  lift  +3.75%  p = 1.084e-01  top-set overlap w/ IS_CAGRSLACK 33.3%
+         target 4b BOTH  D=480  q=0.20  base  12/480 =  2.50%  top set 96 draws
+            BOOK  IS_CAGRSLACK     11/96 = 11.46%  lift  +8.96%  p = 1.269e-07
+            BOOK  IS_MINMARG       11/96 = 11.46%  lift  +8.96%  p = 1.269e-07
+            BOOK  IS_SHARPE         9/96 =  9.38%  lift  +6.88%  p = 4.783e-05
+            BOOK  IS_LEGS           6/96 =  6.25%  lift  +3.75%  p = 1.805e-02
+            NAIVE NAIVE_LOGRET     11/96 = 11.46%  lift  +8.96%  p = 1.269e-07  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEANRET     9/96 =  9.38%  lift  +6.88%  p = 4.783e-05  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_EWBH        9/96 =  9.38%  lift  +6.88%  p = 4.783e-05  top-set overlap w/ IS_CAGRSLACK 66.7%
+            NAIVE NAIVE_MEDRET      7/96 =  7.29%  lift  +4.79%  p = 3.455e-03  top-set overlap w/ IS_CAGRSLACK 45.8%
+            NAIVE NAIVE_MEANSHR     3/96 =  3.12%  lift  +0.62%  p = 4.424e-01  top-set overlap w/ IS_CAGRSLACK 46.9%
+         target 4b BOTH  D=480  q=0.25  base  12/480 =  2.50%  top set 120 draws
+            BOOK  IS_SHARPE        12/120 = 10.00%  lift  +7.50%  p = 3.878e-08
+            BOOK  IS_CAGRSLACK     12/120 = 10.00%  lift  +7.50%  p = 3.878e-08
+            BOOK  IS_MINMARG       12/120 = 10.00%  lift  +7.50%  p = 3.878e-08
+            BOOK  IS_LEGS           6/120 =  5.00%  lift  +2.50%  p = 5.213e-02
+            NAIVE NAIVE_LOGRET     12/120 = 10.00%  lift  +7.50%  p = 3.878e-08  top-set overlap w/ IS_CAGRSLACK 73.3%
+            NAIVE NAIVE_MEANRET    10/120 =  8.33%  lift  +5.83%  p = 2.916e-05  top-set overlap w/ IS_CAGRSLACK 74.2%
+            NAIVE NAIVE_EWBH       10/120 =  8.33%  lift  +5.83%  p = 2.916e-05  top-set overlap w/ IS_CAGRSLACK 74.2%
+            NAIVE NAIVE_MEDRET      7/120 =  5.83%  lift  +3.33%  p = 1.318e-02  top-set overlap w/ IS_CAGRSLACK 50.8%
+            NAIVE NAIVE_MEANSHR     6/120 =  5.00%  lift  +2.50%  p = 5.213e-02  top-set overlap w/ IS_CAGRSLACK 55.0%
+
+       RULE 8 — argmax draw chosen on 2009-2016 ONLY, 2017-2026 read ONCE
+         (SPY OOS 15.26%/0.8737/-33.72%;  RULES v2 OOS 9.46%/1.2767/-12.05%)
+         D=24   IS_SHARPE       pick  16  OOS   6.23% / 0.9107 / -11.36%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   IS_LEGS         pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   IS_CAGRSLACK    pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   IS_MINMARG      pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   NAIVE_MEANRET   pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   NAIVE_MEDRET    pick   1  OOS   9.29% / 1.0563 / -13.45%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   NAIVE_LOGRET    pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   NAIVE_EWBH      pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=24   NAIVE_MEANSHR   pick   1  OOS   9.29% / 1.0563 / -13.45%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   IS_SHARPE       pick  16  OOS   6.23% / 0.9107 / -11.36%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   IS_LEGS         pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   IS_CAGRSLACK    pick  75  OOS   7.59% / 0.9861 / -12.05%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   IS_MINMARG      pick  75  OOS   7.59% / 0.9861 / -12.05%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   NAIVE_MEANRET   pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   NAIVE_MEDRET    pick   1  OOS   9.29% / 1.0563 / -13.45%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   NAIVE_LOGRET    pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   NAIVE_EWBH      pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=96   NAIVE_MEANSHR   pick  41  OOS   6.83% / 0.8326 / -14.00%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=240  IS_SHARPE       pick  16  OOS   6.23% / 0.9107 / -11.36%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  IS_LEGS         pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  IS_CAGRSLACK    pick  75  OOS   7.59% / 0.9861 / -12.05%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  IS_MINMARG      pick  75  OOS   7.59% / 0.9861 / -12.05%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  NAIVE_MEANRET   pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  NAIVE_MEDRET    pick 167  OOS   9.15% / 1.0264 / -14.58%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  NAIVE_LOGRET    pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  NAIVE_EWBH      pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=240  NAIVE_MEANSHR   pick 192  OOS   8.31% / 1.0548 / -12.09%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  IS_SHARPE       pick  16  OOS   6.23% / 0.9107 / -11.36%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  IS_LEGS         pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  IS_CAGRSLACK    pick 297  OOS   9.64% / 1.1403 / -10.96%   4bFULL  True 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  IS_MINMARG      pick 297  OOS   9.64% / 1.1403 / -10.96%   4bFULL  True 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  NAIVE_MEANRET   pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  NAIVE_MEDRET    pick 435  OOS   9.39% / 1.0984 / -12.96%   4bFULL  True 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  NAIVE_LOGRET    pick 435  OOS   9.39% / 1.0984 / -12.96%   4bFULL  True 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  NAIVE_EWBH      pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+         D=480  NAIVE_MEANSHR   pick 435  OOS   9.39% / 1.0984 / -12.96%   4bFULL  True 4bOOS False 4bBOTH False 4aFULL False 4aOOS False  binding O5_CAGR
+
+       COST LADDER (reported, not tuned) — counts over 480 draws
+           0.0 bps   4b FULL   19   4b OOS   28   4b BOTH   14
+          10.0 bps   4b FULL   14   4b OOS   21   4b BOTH   12
+          25.0 bps   4b FULL    8   4b OOS   18   4b BOTH    7
+          50.0 bps   4b FULL    2   4b OOS    5   4b BOTH    2
+
+======================================================================================================================
+GATES
+  GATE PASS  G1 runner == engine.backtest (full-pool band book, both panels): worst |d| over returns and turnover = 1.804e-16   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turnover*c/1e4: worst |d| = 3.123e-17   (target < 1e-15)
+  GATE PASS  G8 no leverage / no shorting: max realised TARGET gross 0.750000   (target <= 0.75)
+  GATE PASS  G6 every cell published: 3840 rows -> 2026-09-22_name-set-chooser-vs-trailing-return_C.grid.csv.gz   (target 3840)
+  GATE PASS  G4 no statistic reads an OOS row: naive tables built on raw[260:i_is] (through 2016-12-31); book statistics on returns <= 2016-12-31   (target IS_end < OOS_start)
+  GATE PASS  G9 naive controls are BOOK-FREE (band permuted -> identical): worst |d| = 0.000e+00   (target == 0)
+  GATE PASS  G3 cross-run replication of 1749 / 1775 (U56 D=480 q=0.10, 4b BOTH): base 42/480 (1749 quoted 43, 1775 re-read 42); top decile 25/48 (published 25)   (target base in {43,42} and top == 25)
+
+GATES 9/9 PASS      wall 30.1s
