@@ -1,0 +1,339 @@
+# Idea 1062 (lane C, 2026-09-22) — is the D-vs-W MARGIN at 10 bps RESOLVABLE AT ALL?
+# DIAL 1 = COST-RUNG LADDER [0.0, 2.0, 5.0, 7.5, 10.0, 15.0, 25.0, 50.0] bps (8 rungs).
+# DIAL 2 = DENOMINATOR ['DEN_FULL', 'DEN_CANON', 'DEN_PHASE'].  ALL 24 grid points reported.
+# REPORTED, NEVER SELECTED ON: panel ['U56', 'B136'], gross [0.5, 0.75, 1.0], 6 mechanism arms, cadences ['D', 'W', 'M', 'Q'].
+# DECLARED BEFORE ANY NUMBER: a pass rate over n books is NOT n independent draws — the
+#   P phase members of one mechanism are the SAME rule started on different days, so the
+#   honest cluster is the MECHANISM (6), not the book (12 at D, 36 at W).  Every interval
+#   in this run is therefore reported twice: a naive Wilson interval at the published
+#   denominator, and a MECHANISM-CLUSTERED bootstrap.  If the margin is a pure cost
+#   object it is ZERO at 0 bps and grows ~linearly; if it is a STEP on a 12-book grid the
+#   crossing is an INTERVAL, not a point.  Both outcomes are reportable.
+
+  U56: 56 cols x 4708 days, 2008-01-02 -> 2026-09-18; SPY full 15.14% / 0.8851 / -33.72%; SPY OOS 15.29% / 0.8751 / -33.72%
+  B136: 136 cols x 4708 days, 2008-01-02 -> 2026-09-18; SPY full 15.12% / 0.8844 / -33.72%; SPY OOS 15.26% / 0.8737 / -33.72%
+  LIVE RULES v2 U56 @10bps: 8.62% / 1.2010 / -12.05%  (halves 1.2276 / 1.1806; OOS 9.46% / 1.2767 / -12.05%)
+  LIVE RULES v2 B136 @10bps: 7.96% / 1.0972 / -12.24%  (halves 1.2296 / 0.9669; OOS 7.85% / 1.1017 / -12.24%)
+
+====================================================================================================
+REPRODUCTION GATES — printed BEFORE any hypothesis is read
+====================================================================================================
+
+  G1 PASS  OUTSIDE-cost runner == engine.backtest (cost inside) at the NEW fine rungs 7.5 and 15 bps, 3 books x 2 cadences: max|dret| 1.39e-17, max|dturn| 4.44e-16
+  G2 PASS  BAND03 == rules_v2_weights/gross EXACTLY: max|d| 0.00e+00
+  G3 PASS  CROSS-RUN CAND20 weekly @0.75 @10bps: 12.7650% / 1.0623 / -18.31% vs committed 12.66% / 1.0921 / -18.31% (|d| 0.0011/0.0298/0.0000, 961's own tolerance)
+  G4 FAIL  CROSS-RUN SPY OOS at 2016-12-31: 0.1529 / 0.8751 / -0.3372 vs committed (0.1521, 0.8713, -0.3372) (max|d| 3.78e-03)
+  G4b PASS  VINTAGE ISOLATION for G4: this tape ends 2026-09-18, 1059's ended 2026-09-16 (2 extra sessions). TRUNCATED to 1059's last date SPY OOS reads 0.1515 / 0.8684 / -0.3372, max|d| 2.89e-03 vs the untruncated 3.78e-03 — the G4 residual is the PRICE-CACHE VINTAGE, and it SHRINKS when the vintage is matched
+  G5 PASS  CROSS-RUN 1059's committed 4b PASS-RATE cells (D/W/M/Q, gross 0.75, DEN_FULL): U56@0bps 0.833/0.833/0.227/0.044 vs committed 0.833/0.833/-/-; U56@10bps 0.333/0.833/0.205/0.044 vs committed 0.333/0.833/0.205/0.044; U56@25bps 0.000/0.222/0.189/0.042 vs committed 0.000/-/-/-; B136@10bps 0.000/0.028/0.000/0.000 vs committed 0.000/0.028/0.000/0.000  max|d| 4.55e-04
+  G6 PASS  PHASE CONSTRUCTION: every cadence's family has exactly P members and partitions the tape (each day in exactly one phase) at all 8 (panel, cadence) points
+  G9 PASS  cost monotonicity: CAGR non-increasing in the rung for 1,320 of 1,320 books (0 violations) — the outside-cost re-pricing is exact on the FINE ladder too
+  G10 PASS  the fine ladder [0.0, 2.0, 5.0, 7.5, 10.0, 15.0, 25.0, 50.0] CONTAINS 1059's published rungs [0.0, 10.0, 25.0, 50.0], so its cells are reproduced IN PLACE, not interpolated
+  G11 PASS  the 0 bps rung charges nothing: max|drag| 0.00e+00 bp/yr
+GATES: 9 of 10 pass.
+
+====================================================================================================
+(A) THE CENSUS — every (panel, cadence, gross, mechanism, phase) book x fine rung
+====================================================================================================
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.census.csv  (10,560 rows, 31 cols)
+  1,320 distinct books x 8 rungs = 10,560 rows.
+
+====================================================================================================
+(B) THE FINE COST LADDER x DENOMINATOR SURFACE — 4b pass rate, ALL grid points
+====================================================================================================
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.surface.csv  (384 rows, 20 cols)
+  U56 gross 0.75 DEN_FULL (n: D=12, W=36, M=132, Q=384)  4b pass rate by rung:
+    cadence      D      W      M      Q
+    cost                               
+    0.0     0.8333 0.8333 0.2273 0.0443
+    2.0     0.8333 0.8333 0.2273 0.0443
+    5.0     0.8333 0.8333 0.2197 0.0443
+    7.5     0.6667 0.8333 0.2197 0.0443
+    10.0    0.3333 0.8333 0.2045 0.0443
+    15.0    0.0000 0.8333 0.1970 0.0417
+    25.0    0.0000 0.2222 0.1894 0.0417
+    50.0    0.0000 0.0000 0.1212 0.0365
+
+  U56 gross 0.75 DEN_CANON (n: D=6, W=6, M=6, Q=6)  4b pass rate by rung:
+    cadence      D      W      M      Q
+    cost                               
+    0.0     0.8333 0.8333 0.8333 0.0000
+    2.0     0.8333 0.8333 0.8333 0.0000
+    5.0     0.8333 0.8333 0.8333 0.0000
+    7.5     0.6667 0.8333 0.8333 0.0000
+    10.0    0.3333 0.8333 0.6667 0.0000
+    15.0    0.0000 0.8333 0.6667 0.0000
+    25.0    0.0000 0.0000 0.6667 0.0000
+    50.0    0.0000 0.0000 0.6667 0.0000
+
+  U56 gross 0.75 DEN_PHASE (n: D=6, W=30, M=126, Q=378)  4b pass rate by rung:
+    cadence      D      W      M      Q
+    cost                               
+    0.0     0.8333 0.8333 0.1984 0.0450
+    2.0     0.8333 0.8333 0.1984 0.0450
+    5.0     0.8333 0.8333 0.1905 0.0450
+    7.5     0.6667 0.8333 0.1905 0.0450
+    10.0    0.3333 0.8333 0.1825 0.0450
+    15.0    0.0000 0.8333 0.1746 0.0423
+    25.0    0.0000 0.2667 0.1667 0.0423
+    50.0    0.0000 0.0000 0.0952 0.0370
+
+  B136 gross 0.75 DEN_FULL (n: D=12, W=36, M=132, Q=384)  4b pass rate by rung:
+    cadence      D      W      M      Q
+    cost                               
+    0.0     0.0000 0.1389 0.0000 0.0000
+    2.0     0.0000 0.1389 0.0000 0.0000
+    5.0     0.0000 0.0833 0.0000 0.0000
+    7.5     0.0000 0.0556 0.0000 0.0000
+    10.0    0.0000 0.0278 0.0000 0.0000
+    15.0    0.0000 0.0000 0.0000 0.0000
+    25.0    0.0000 0.0000 0.0000 0.0000
+    50.0    0.0000 0.0000 0.0000 0.0000
+
+  B136 gross 0.75 DEN_CANON (n: D=6, W=6, M=6, Q=6)  4b pass rate by rung:
+    cadence      D      W      M      Q
+    cost                               
+    0.0     0.0000 0.1667 0.0000 0.0000
+    2.0     0.0000 0.1667 0.0000 0.0000
+    5.0     0.0000 0.1667 0.0000 0.0000
+    7.5     0.0000 0.0000 0.0000 0.0000
+    10.0    0.0000 0.0000 0.0000 0.0000
+    15.0    0.0000 0.0000 0.0000 0.0000
+    25.0    0.0000 0.0000 0.0000 0.0000
+    50.0    0.0000 0.0000 0.0000 0.0000
+
+  B136 gross 0.75 DEN_PHASE (n: D=6, W=30, M=126, Q=378)  4b pass rate by rung:
+    cadence      D      W      M      Q
+    cost                               
+    0.0     0.0000 0.1333 0.0000 0.0000
+    2.0     0.0000 0.1333 0.0000 0.0000
+    5.0     0.0000 0.0667 0.0000 0.0000
+    7.5     0.0000 0.0667 0.0000 0.0000
+    10.0    0.0000 0.0333 0.0000 0.0000
+    15.0    0.0000 0.0000 0.0000 0.0000
+    25.0    0.0000 0.0000 0.0000 0.0000
+    50.0    0.0000 0.0000 0.0000 0.0000
+
+====================================================================================================
+(C) THE D-vs-W MARGIN M(c) = pass4b(W) - pass4b(D), AND ITS CROSSING RUNG
+====================================================================================================
+  A 'crossing' needs a sign change.  M(c) is reported at every rung; c* is located by
+  LINEAR INTERPOLATION between the two bracketing rungs where M changes sign, and the
+  BRACKET ITSELF is printed beside it because a step function has no interior point.
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.margin.csv  (144 rows, 14 cols)
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.crossing.csv  (18 rows, 11 cols)
+  CROSSING TABLE (all panel x gross x denominator cells):
+    panel  gross     denom  c_star  bracket_lo  bracket_hi  M_at_0  M_at_10  M_max  c_at_Mmax                                                                   note
+      U56 0.5000  DEN_FULL     NaN         NaN         NaN  0.0000   0.0000 0.0000     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+      U56 0.5000 DEN_CANON     NaN         NaN         NaN  0.0000   0.0000 0.0000     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+      U56 0.5000 DEN_PHASE     NaN         NaN         NaN  0.0000   0.0000 0.0000     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+      U56 0.7500  DEN_FULL  5.0000      5.0000      7.5000  0.0000   0.5000 0.8333    15.0000                                      M leaves zero between these rungs
+      U56 0.7500 DEN_CANON  5.0000      5.0000      7.5000  0.0000   0.5000 0.8333    15.0000                                      M leaves zero between these rungs
+      U56 0.7500 DEN_PHASE  5.0000      5.0000      7.5000  0.0000   0.5000 0.8333    15.0000                                      M leaves zero between these rungs
+      U56 1.0000  DEN_FULL 25.0000     25.0000     50.0000  0.0278   0.0000 0.0278     0.0000                                      M leaves zero between these rungs
+      U56 1.0000 DEN_CANON     NaN         NaN         NaN  0.0000   0.0000 0.0000     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+      U56 1.0000 DEN_PHASE 25.0000     25.0000     50.0000  0.0333   0.0000 0.0333     0.0000                                      M leaves zero between these rungs
+     B136 0.5000  DEN_FULL     NaN         NaN         NaN  0.1667   0.0000 0.1667     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+     B136 0.5000 DEN_CANON     NaN         NaN         NaN  0.0000   0.0000 0.0000     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+     B136 0.5000 DEN_PHASE     NaN         NaN         NaN  0.2000   0.0000 0.2000     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+     B136 0.7500  DEN_FULL     NaN         NaN         NaN  0.1389   0.0278 0.1389     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+     B136 0.7500 DEN_CANON     NaN         NaN         NaN  0.1667   0.0000 0.1667     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+     B136 0.7500 DEN_PHASE     NaN         NaN         NaN  0.1333   0.0333 0.1333     0.0000 M <= 0 at EVERY rung on the ladder (no crossing; D never falls behind)
+     B136 1.0000  DEN_FULL  5.4167      5.0000      7.5000 -0.0278   0.1389 0.1389     7.5000                                      M leaves zero between these rungs
+     B136 1.0000 DEN_CANON  5.0000      5.0000      7.5000  0.0000   0.1667 0.1667     7.5000                                      M leaves zero between these rungs
+     B136 1.0000 DEN_PHASE  5.5000      5.0000      7.5000 -0.0333   0.1333 0.1333     7.5000                                      M leaves zero between these rungs
+
+====================================================================================================
+(D) RESOLVABILITY — is M(c) bigger than its own sampling width?
+====================================================================================================
+  TWO RULERS, both printed, neither selected:
+   (i)  NAIVE: independent Wilson intervals at the PUBLISHED denominators (D n, W n).
+   (ii) MECHANISM-CLUSTERED BOOTSTRAP: resample the 6 MECHANISM ARMS with replacement
+        (2,000 draws, seed 106200), carrying each arm's WHOLE phase family at
+        BOTH cadences together, which is the level at which the books are distinct.
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.resolvability.csv  (144 rows, 19 cols)
+  U56, gross 0.75 — M(c) with both rulers:
+        denom    cost  nD  nW      M  M_in_D_books  naive_decisive  boot_lo  boot_hi  boot_decisive
+     DEN_FULL  0.0000  12  36 0.0000        0.0000           False   0.0000   0.0000          False
+     DEN_FULL  2.0000  12  36 0.0000        0.0000           False   0.0000   0.0000          False
+     DEN_FULL  5.0000  12  36 0.0000        0.0000           False   0.0000   0.0000          False
+     DEN_FULL  7.5000  12  36 0.1667        2.0000           False   0.0000   0.5000          False
+     DEN_FULL 10.0000  12  36 0.5000        6.0000            True   0.1667   0.8333           True
+     DEN_FULL 15.0000  12  36 0.8333       10.0000            True   0.5000   1.0000           True
+     DEN_FULL 25.0000  12  36 0.2222        2.6667           False   0.0556   0.4167           True
+     DEN_FULL 50.0000  12  36 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON  0.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON  2.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON  5.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON  7.5000   6   6 0.1667        1.0000           False   0.0000   0.5000          False
+    DEN_CANON 10.0000   6   6 0.5000        3.0000           False   0.1667   0.8333           True
+    DEN_CANON 15.0000   6   6 0.8333        5.0000            True   0.5000   1.0000           True
+    DEN_CANON 25.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON 50.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_PHASE  0.0000   6  30 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_PHASE  2.0000   6  30 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_PHASE  5.0000   6  30 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_PHASE  7.5000   6  30 0.1667        1.0000           False   0.0000   0.5000          False
+    DEN_PHASE 10.0000   6  30 0.5000        3.0000           False   0.1667   0.8333           True
+    DEN_PHASE 15.0000   6  30 0.8333        5.0000            True   0.5000   1.0000           True
+    DEN_PHASE 25.0000   6  30 0.2667        1.6000           False   0.0667   0.5000           True
+    DEN_PHASE 50.0000   6  30 0.0000        0.0000           False   0.0000   0.0000          False
+
+  B136, gross 0.75 — M(c) with both rulers:
+        denom    cost  nD  nW      M  M_in_D_books  naive_decisive  boot_lo  boot_hi  boot_decisive
+     DEN_FULL  0.0000  12  36 0.1389        1.6667           False   0.0278   0.2778           True
+     DEN_FULL  2.0000  12  36 0.1389        1.6667           False   0.0278   0.2778           True
+     DEN_FULL  5.0000  12  36 0.0833        1.0000           False   0.0000   0.1944          False
+     DEN_FULL  7.5000  12  36 0.0556        0.6667           False   0.0000   0.1111          False
+     DEN_FULL 10.0000  12  36 0.0278        0.3333           False   0.0000   0.0833          False
+     DEN_FULL 15.0000  12  36 0.0000        0.0000           False   0.0000   0.0000          False
+     DEN_FULL 25.0000  12  36 0.0000        0.0000           False   0.0000   0.0000          False
+     DEN_FULL 50.0000  12  36 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON  0.0000   6   6 0.1667        1.0000           False   0.0000   0.5000          False
+    DEN_CANON  2.0000   6   6 0.1667        1.0000           False   0.0000   0.5000          False
+    DEN_CANON  5.0000   6   6 0.1667        1.0000           False   0.0000   0.5000          False
+    DEN_CANON  7.5000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON 10.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON 15.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON 25.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_CANON 50.0000   6   6 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_PHASE  0.0000   6  30 0.1333        0.8000           False   0.0333   0.2667           True
+    DEN_PHASE  2.0000   6  30 0.1333        0.8000           False   0.0333   0.2667           True
+    DEN_PHASE  5.0000   6  30 0.0667        0.4000           False   0.0000   0.1333          False
+    DEN_PHASE  7.5000   6  30 0.0667        0.4000           False   0.0000   0.1333          False
+    DEN_PHASE 10.0000   6  30 0.0333        0.2000           False   0.0000   0.1000          False
+    DEN_PHASE 15.0000   6  30 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_PHASE 25.0000   6  30 0.0000        0.0000           False   0.0000   0.0000          False
+    DEN_PHASE 50.0000   6  30 0.0000        0.0000           False   0.0000   0.0000          False
+
+  THE RESOLVABLE RANGE — the rungs at which the D-vs-W margin is DECISIVE:
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.resolvable_range.csv  (18 rows, 9 cols)
+    panel  gross     denom naive_decisive_rungs boot_decisive_rungs  n_naive  n_boot  n_rungs  spans_0_25
+      U56   0.50  DEN_FULL                 none                none        0       0        8        True
+      U56   0.50 DEN_CANON                 none                none        0       0        8        True
+      U56   0.50 DEN_PHASE                 none                none        0       0        8        True
+      U56   0.75  DEN_FULL                10/15            10/15/25        2       3        8       False
+      U56   0.75 DEN_CANON                   15               10/15        1       2        8       False
+      U56   0.75 DEN_PHASE                   15            10/15/25        1       3        8       False
+      U56   1.00  DEN_FULL                 none                none        0       0        8        True
+      U56   1.00 DEN_CANON                 none                none        0       0        8        True
+      U56   1.00 DEN_PHASE                 none                none        0       0        8        True
+     B136   0.50  DEN_FULL                 none                   0        0       1        8       False
+     B136   0.50 DEN_CANON                 none                none        0       0        8        True
+     B136   0.50 DEN_PHASE                 none                   0        0       1        8       False
+     B136   0.75  DEN_FULL                 none                 0/2        0       2        8       False
+     B136   0.75 DEN_CANON                 none                none        0       0        8        True
+     B136   0.75 DEN_PHASE                 none                 0/2        0       2        8       False
+     B136   1.00  DEN_FULL                 none                none        0       0        8        True
+     B136   1.00 DEN_CANON                 none                none        0       0        8        True
+     B136   1.00 DEN_PHASE                 none                none        0       0        8        True
+
+  QUEUE'S OWN FALSIFIER — 'if the width spans the whole 0-25 bps range, 968's weekly
+  headline is a one-book-margin claim': on U56 / gross 0.75 / DEN_FULL the
+  mechanism-clustered interval covers 0 at 4 of 7 rungs in [0, 25] bps -> SPANS THE RANGE: False
+
+====================================================================================================
+(D2) WHICH BOOKS ACTUALLY FLIP — the margin's mechanism-level anatomy
+====================================================================================================
+  U56, gross 0.75, DEN_FULL: 4b pass COUNT per mechanism arm at each rung
+  (D counts out of 2 books per arm, W out of 6; the margin is the difference of the
+   column means, so this table IS the margin, un-aggregated.)
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.anatomy.csv  (48 rows, 12 cols)
+       mech   cost  D_pass  D_n  D_turn  D_CAGR                      D_bind  W_pass  W_n  W_turn  W_CAGR                      W_bind
+     CAND20  0.000       2    2  27.079   0.141                                   6    6  10.718   0.144                            
+     CAND20  2.000       2    2  27.079   0.135                                   6    6  10.718   0.141                            
+     CAND20  5.000       2    2  27.079   0.126                                   6    6  10.718   0.137                            
+     CAND20  7.500       2    2  27.079   0.119                                   6    6  10.718   0.134                            
+     CAND20 10.000       0    2  27.079   0.111                        L_H1       6    6  10.718   0.131                            
+     CAND20 15.000       0    2  27.079   0.096                 L_H1|L_CAGR       6    6  10.718   0.125                            
+     CAND20 25.000       0    2  27.079   0.067      L_H1|L_H2|L_OOS|L_CAGR       1    6  10.718   0.113                   L_H1|L_DD
+     CAND20 50.000       0    2  27.079  -0.003 L_H1|L_H2|L_OOS|L_DD|L_CAGR       0    6  10.718   0.084 L_H1|L_H2|L_OOS|L_DD|L_CAGR
+      R3_55  0.000       2    2  28.153   0.142                                   6    6  11.109   0.142                            
+      R3_55  2.000       2    2  28.153   0.135                                   6    6  11.109   0.139                            
+      R3_55  5.000       2    2  28.153   0.126                                   6    6  11.109   0.135                            
+      R3_55  7.500       2    2  28.153   0.118                                   6    6  11.109   0.132                            
+      R3_55 10.000       0    2  28.153   0.110                        L_H1       6    6  11.109   0.129                            
+      R3_55 15.000       0    2  28.153   0.095                 L_H1|L_CAGR       6    6  11.109   0.123                            
+      R3_55 25.000       0    2  28.153   0.064      L_H1|L_H2|L_OOS|L_CAGR       1    6  11.109   0.110                 L_H1|L_CAGR
+      R3_55 50.000       0    2  28.153  -0.008 L_H1|L_H2|L_OOS|L_DD|L_CAGR       0    6  11.109   0.080 L_H1|L_H2|L_OOS|L_DD|L_CAGR
+      R3_84  0.000       2    2  25.793   0.140                                   6    6  10.241   0.144                            
+      R3_84  2.000       2    2  25.793   0.135                                   6    6  10.241   0.141                            
+      R3_84  5.000       2    2  25.793   0.126                                   6    6  10.241   0.138                            
+      R3_84  7.500       2    2  25.793   0.119                                   6    6  10.241   0.135                            
+      R3_84 10.000       2    2  25.793   0.111                                   6    6  10.241   0.132                            
+      R3_84 15.000       0    2  25.793   0.097                 L_H1|L_CAGR       6    6  10.241   0.126                            
+      R3_84 25.000       0    2  25.793   0.069      L_H1|L_H2|L_OOS|L_CAGR       2    6  10.241   0.115                   L_H1|L_DD
+      R3_84 50.000       0    2  25.793   0.002 L_H1|L_H2|L_OOS|L_DD|L_CAGR       0    6  10.241   0.087 L_H1|L_H2|L_OOS|L_DD|L_CAGR
+       NOR3  0.000       2    2  26.510   0.130                                   6    6  10.179   0.133                            
+       NOR3  2.000       2    2  26.510   0.124                                   6    6  10.179   0.131                            
+       NOR3  5.000       2    2  26.510   0.115                                   6    6  10.179   0.127                            
+       NOR3  7.500       0    2  26.510   0.108                        L_H1       6    6  10.179   0.125                            
+       NOR3 10.000       0    2  26.510   0.101                 L_H1|L_CAGR       6    6  10.179   0.122                            
+       NOR3 15.000       0    2  26.510   0.086      L_H1|L_H2|L_OOS|L_CAGR       6    6  10.179   0.116                            
+       NOR3 25.000       0    2  26.510   0.058 L_H1|L_H2|L_OOS|L_DD|L_CAGR       0    6  10.179   0.105       L_H1|L_H2|L_DD|L_CAGR
+       NOR3 50.000       0    2  26.510  -0.010 L_H1|L_H2|L_OOS|L_DD|L_CAGR       0    6  10.179   0.077 L_H1|L_H2|L_OOS|L_DD|L_CAGR
+    MOMONLY  0.000       2    2  24.584   0.138                                   6    6  10.197   0.139                            
+    MOMONLY  2.000       2    2  24.584   0.133                                   6    6  10.197   0.137                            
+    MOMONLY  5.000       2    2  24.584   0.124                                   6    6  10.197   0.133                            
+    MOMONLY  7.500       2    2  24.584   0.117                                   6    6  10.197   0.130                            
+    MOMONLY 10.000       2    2  24.584   0.111                                   6    6  10.197   0.127                            
+    MOMONLY 15.000       0    2  24.584   0.097            L_H1|L_H2|L_CAGR       6    6  10.197   0.122                            
+    MOMONLY 25.000       0    2  24.584   0.070      L_H1|L_H2|L_OOS|L_CAGR       4    6  10.197   0.110                 L_H2|L_CAGR
+    MOMONLY 50.000       0    2  24.584   0.006 L_H1|L_H2|L_OOS|L_DD|L_CAGR       0    6  10.197   0.082 L_H1|L_H2|L_OOS|L_DD|L_CAGR
+     BAND03  0.000       0    2   2.465   0.086                      L_CAGR       0    6   1.773   0.088                      L_CAGR
+     BAND03  2.000       0    2   2.465   0.086                      L_CAGR       0    6   1.773   0.087                      L_CAGR
+     BAND03  5.000       0    2   2.465   0.085                      L_CAGR       0    6   1.773   0.087                      L_CAGR
+     BAND03  7.500       0    2   2.465   0.084                      L_CAGR       0    6   1.773   0.086                      L_CAGR
+     BAND03 10.000       0    2   2.465   0.084                      L_CAGR       0    6   1.773   0.086                      L_CAGR
+     BAND03 15.000       0    2   2.465   0.082                      L_CAGR       0    6   1.773   0.085                      L_CAGR
+     BAND03 25.000       0    2   2.465   0.080                      L_CAGR       0    6   1.773   0.083                      L_CAGR
+     BAND03 50.000       0    2   2.465   0.073                      L_CAGR       0    6   1.773   0.078                      L_CAGR
+
+  REALISED TURNOVER, U56 gross 0.75: D 22.43 turns/yr, W 9.04 turns/yr, ratio 2.48x.  A rung c therefore costs D ~22.43c bp/yr and W ~9.04c bp/yr; the DIFFERENTIAL drag is ~13.39c bp/yr, i.e. 134 bp/yr at 10 bps.
+  PRE-DECLARED PREDICTION CHECK: a pure cost object is ZERO at 0 bps and grows in c.
+    U56 gross 0.75 DEN_FULL: M(0) = +0.0000 -> CONSISTENT with a pure cost object
+    U56 gross 0.50 DEN_FULL: M(0) = +0.0000
+    U56 gross 0.75 DEN_FULL: M(0) = +0.0000
+    U56 gross 1.00 DEN_FULL: M(0) = +0.0278   <-- NON-ZERO AT ZERO COST
+    B136 gross 0.50 DEN_FULL: M(0) = +0.1667   <-- NON-ZERO AT ZERO COST
+    B136 gross 0.75 DEN_FULL: M(0) = +0.1389   <-- NON-ZERO AT ZERO COST
+    B136 gross 1.00 DEN_FULL: M(0) = -0.0278   <-- NON-ZERO AT ZERO COST
+
+====================================================================================================
+(E) BOTH KEEP PATHS AT EVERY GRID POINT
+====================================================================================================
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.keep_paths.csv  (384 rows, 9 cols)
+  4a TOTAL 34 of 21120 scored cells; 4b TOTAL 1376; BOTH 0.
+  (DEN_FULL / DEN_CANON / DEN_PHASE partition the same books three ways, so these totals
+   double-count by construction; the per-denominator tables below are the honest read.)
+  DEN_FULL gross 0.75: 4a 9 of 9024, 4b 589, BOTH 0
+  DEN_CANON gross 0.75: 4a 0 of 384, 4b 90, BOTH 0
+  DEN_PHASE gross 0.75: 4a 9 of 8640, 4b 499, BOTH 0
+  BINDING 4b LEGS on the 9,872 4b failures (share of failures): L_H1 0.055, L_H2 0.275, L_OOS 0.175, L_DD 0.812, L_CAGR 0.256
+  4a is 17 of 10,560 book-rungs; the DD leg fails on 0.972 of them.
+
+====================================================================================================
+(F) RULE 8 — CADENCE CHOSEN ON 2009-2016 ALONE, 2017-2026 READ ONCE
+====================================================================================================
+  Two IS-only choosers, neither of which reads a row on or after 2017-01-01:
+    C_ISSHARPE  pick the cadence with the highest MEAN IS Sharpe over its population
+    C_ISLEGS    pick the cadence with the most IS 4b legs cleared (IS window only)
+  and, as the zero-parameter comparand, C_FROZEN = W (968's published answer, held fixed).
+  wrote 2026-09-22_d-vs-w-margin-resolvability_C.walkforward.csv  (432 rows, 21 cols)
+  PICK AGREEMENT — how often each IS chooser lands on W (968's published answer):
+    C_ISSHARPE: picks W at 144 of 144 grid points (1.000); mean IS margin (W-D) +0.1994
+    C_ISLEGS: picks W at 131 of 144 grid points (0.910); mean IS margin (W-D) +0.1994
+  OOS, mean over grid points (2017-2026, read ONCE):
+    C_ISSHARPE  OOS CAGR 12.26%  Sharpe 1.0005  MaxDD -18.63%  4b-OOS rate 0.181  beats live 0.000  beats SPY Sharpe 0.812
+    C_ISLEGS    OOS CAGR 12.06%  Sharpe 0.9855  MaxDD -18.88%  4b-OOS rate 0.180  beats live 0.000  beats SPY Sharpe 0.785
+    C_FROZEN    OOS CAGR 12.26%  Sharpe 1.0005  MaxDD -18.63%  4b-OOS rate 0.181  beats live 0.000  beats SPY Sharpe 0.812
+    COMPARANDS (mean over the same grid): live RULES v2 OOS 8.56% / 1.1775 / -12.16%;  SPY OOS 15.27% / 0.8744 / -33.72%
+  DOES THE IS CHOOSER AGREE WITH THE OOS TRUTH?  (per grid point, both cadences scored)
+    C_ISSHARPE  names the OOS-better cadence at 132 of 144 grid points (0.917)
+    C_ISLEGS    names the OOS-better cadence at 121 of 144 grid points (0.840)
+    C_FROZEN    names the OOS-better cadence at 132 of 144 grid points (0.917)
+
+====================================================================================================
+VERDICT
+====================================================================================================
+  U56 / gross 0.75 / DEN_FULL / 10 bps: M = +0.5000 (+6.00 D-books of 12); naive Wilson decisive True; mechanism-clustered 95% CI [+0.1667, +0.8333] decisive True
+  runtime 38.6s

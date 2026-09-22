@@ -1,3 +1,100 @@
+## 2026-09-22 — idea 1062 (lane C): IS THE D-vs-W MARGIN AT 10 bps RESOLVABLE AT ALL? **ANSWERED IN TWO PARTS — (A) YES ON THE CELL IT WAS PUBLISHED ON: the margin is SIX of DAILY's TWELVE books, decisive under a mechanism-clustered bootstrap, and the crossing is bracketed to (5, 7.5] bps. (B) KILL OF THE GENERAL CLAIM: it is decisive at 14 of 144 cells, 8 of them the SAME U56/gross-0.75 cell, it does not exist at either flanking gross rung, and on B136 it is not a cost object at all. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 1059 found PROTOCOL's 10 bps rung decisive at exactly one
+  cadence boundary: between 0 and 10 bps DAILY's 4b pass rate falls 0.833 -> 0.333 while WEEKLY
+  does not move, and at 25 bps D is 0.000. 1062 asks whether that margin is bigger than its own
+  sampling width, given that D's cell carries a TWELVE-book denominator. (Standing defect 932:
+  two '## Open' lines carry the label 1062. This run answers the one at the smaller file offset;
+  the other, `is-the-QUARTER-END-REBALANCE-PENALTY-...`, is untouched and stays OPEN.)
+
+  **THE GRID.** 1,320 distinct books x 8 fine cost rungs = 10,560 published rows: 2 panels
+  (U56, B136) x 6 mechanism arms x 3 gross x the cadence's own phase family plus the canonical
+  period-end; M and Q carried at gross 0.75 for continuity with 968/1059. **Two tuned dials and
+  no more: the COST-RUNG LADDER {0, 2, 5, 7.5, 10, 15, 25, 50} bps — the queue's fine ladder plus
+  PROTOCOL's own rungs, so 1059's cells are reproduced IN PLACE rather than interpolated — and
+  the DENOMINATOR {DEN_FULL = 1059's 6 x (P+1); DEN_CANON = the canonical period-end alone, n=6
+  MATCHED across cadences; DEN_PHASE = the phase members alone}.** Panel, gross {0.50, 0.75,
+  1.00} and the 6 arms are reported, never selected on.
+
+  **GATES — 9 OF 10, AND THE ONE FAILURE IS NAMED, NOT WAIVED.** G1 the outside-cost runner is
+  `engine.backtest` at the NEW rungs 7.5 and 15 bps (max|dret| **1.39e-17**). G2 BAND03 is
+  `rules_v2_weights`/gross EXACTLY (0.00e+00). G3 cross-run CAND20 weekly 12.77% / 1.0623 /
+  -18.31% against committed 12.66% / 1.0921 / -18.31%. **G5 reproduces 1059's committed 4b
+  pass-rate profile to 4.55e-04** — U56@10bps 0.333/0.833/0.205/0.044 and B136@10bps
+  0.000/0.028/0.000/0.000, both exact. G6 phase partition, G9 cost monotonicity 1,320 of 1,320,
+  G10 the ladder contains 1059's rungs, G11 the 0 bps rung charges nothing. **G4 FAILS**: SPY OOS
+  CAGR reads 0.1529 against 1059's committed 0.1521 (3.78e-03, against a 5e-4 tolerance).
+  **G4b isolates it only PARTLY**: truncating this tape to 1059's own last date (2 extra sessions)
+  shrinks the residual to 2.89e-03 but does NOT close it, so the channel is the price-cache
+  vintage PLUS a revision of the committed closes. The gate keeps its original verdict.
+
+  **(A) THE CROSSING, AND THE PRE-DECLARED PREDICTION.** Declared before any number: a pure cost
+  object is ZERO at 0 bps and grows in c; a margin already non-zero at zero cost is not a cost
+  object at all. On U56 / gross 0.75, M(c) = pass4b(W) - pass4b(D) reads **0.0000 / 0.0000 /
+  0.0000 / +0.1667 / +0.5000 / +0.8333 / +0.2222 / 0.0000** across 0/2/5/7.5/10/15/25/50 bps —
+  **exactly zero at three consecutive rungs**, so the prediction HOLDS and the alternative is
+  rejected on this cell. c* = **5.0 bps**, bracket **(5.0, 7.5]**, and that bracket is
+  **IDENTICAL on all three denominators**. Mechanism, measured not asserted: realised turnover
+  D **22.43** vs W **9.04** turns/yr (2.48x), a differential drag of **13.39c bp/yr = 134 bp/yr
+  at 10 bps**. The FIRST binding leg on every dying D book is **L_H1**, not L_CAGR — the rung
+  eats the first half before it eats the CAGR floor, which is the opposite of the live band
+  book's own CAGR-floor profile.
+
+  **(A) RESOLVABILITY — THE QUEUE'S FALSIFIER READS FALSE HERE.** Two rulers, both published,
+  neither selected: a naive Wilson interval at the published denominator, and a
+  **MECHANISM-CLUSTERED bootstrap** (2,000 draws, seed 106200) that resamples the 6 mechanism
+  ARMS and carries each arm's whole phase family at BOTH cadences together — because the P phase
+  members of one mechanism are the SAME rule started on different days, so the honest cluster is
+  6, not 12 or 36. At U56 / gross 0.75 / 10 bps, M = **+0.5000 = 6.00 of D's 12 books**, clustered
+  95% CI **[+0.1667, +0.8333]**, decisive under BOTH rulers; at 15 bps M = +0.8333, CI [+0.5000,
+  +1.0000]. The queue's own falsifier ("if the width spans the whole 0-25 bps range, 968's weekly
+  headline is a one-book-margin claim") therefore reads **FALSE** on the cell 968 published.
+
+  **(B) AND IT IS ONE CELL.** The margin is decisive at **14 of 144** (panel x gross x denominator
+  x rung) cells, and **8 of those 14 are the same U56/gross-0.75 cell** read at 10/15/25 bps under
+  three denominators. **GROSS, a dial this run only REPORTS, decides it**: on U56 the 4b pass rate
+  is **0.000 / 0.000 at every one of the 8 rungs at gross 0.50** (there is no margin to resolve)
+  and **pinned at 0.167 / 0.167 from 0 through 25 bps at gross 1.00** (cost-insensitive; D never
+  falls behind). On **B136 the margin is NON-ZERO AT ZERO COST at every gross** (+0.1667 / +0.1389
+  / **-0.0278** at 0.50 / 0.75 / 1.00 — the last one NEGATIVE, i.e. DAILY ahead), so on that panel
+  it fails the pre-declared cost-object signature outright, and it is decisive at 0 of 8 rungs at
+  10 bps. **DENOMINATOR, this run's second tuned dial, moves the crossing NOWHERE**: DEN_FULL,
+  DEN_CANON (matched n=6 for both cadences, which removes the 12-vs-36 asymmetry the queue
+  suspected) and DEN_PHASE give the identical bracket and the identical M at every rung on
+  U56/0.75. It moves only the margin's PERSISTENCE past 15 bps (at 25 bps DEN_CANON reads
+  M = 0.0000 against DEN_FULL's +0.2222).
+
+  **BOTH KEEP PATHS AT EVERY GRID POINT.** 4a **17**, 4b **688**, **BOTH 0 of 10,560** book-rungs;
+  restricted to the D/W pair this idea is about, 4a 17, 4b 345, **BOTH 0 of 2,304**. All 17 4a
+  passes are ONE object — `BAND03`, the live RULES v2 mechanism itself, on B136 at weekly phase 1
+  (gross 0.50 and 0.75, all 8 rungs) plus phase 3 at 50 bps: a rebalance-PHASE offset of the live
+  book, prior art under idea 914's offset-spread clause, recorded and **NOT promoted**. Binding
+  4b legs over the 9,872 failures: **L_DD 0.812**, L_H2 0.275, L_CAGR 0.256, L_OOS 0.175, L_H1
+  0.055. `BAND03` clears 4b at 0 of 8 rungs at either cadence on U56 (L_CAGR binds everywhere),
+  so the live book's own arm contributes nothing to the margin.
+
+  **RULE 8 — CADENCE CHOSEN ON <= 2016-12-31 ONLY, 2017-2026 READ ONCE, 144 GRID POINTS.**
+  **C_ISSHARPE picks W at 144 of 144** (mean IS margin W-D +0.1994) and is bit-identical to
+  **C_FROZEN = W**, the zero-parameter incumbent: the fitted chooser buys NOTHING. C_ISLEGS picks
+  W at 131 of 144 and is strictly worse. Both C_ISSHARPE and C_FROZEN name the OOS-better cadence
+  at **132 of 144 (0.917)**; C_ISLEGS at 121 of 144 (0.840). Mean OOS: C_ISSHARPE / C_FROZEN
+  **12.26% / 1.0005 / -18.63%**, C_ISLEGS 12.06% / 0.9855 / -18.88%, against live RULES v2 OOS
+  **8.56% / 1.1775 / -12.16%** and SPY OOS **15.27% / 0.8744 / -33.72%**. Every chooser LOSES to
+  the live book on OOS Sharpe at **144 of 144** grid points (beats-live rate 0.000) and to SPY on
+  OOS CAGR; 4b-OOS rate 0.181. **KILL for capital.**
+
+  **WHAT THIS CHANGES.** 968/1059's "weekly beats daily, and 10 bps is the rung that decides it"
+  survives as a statement about **U56 at gross 0.75** and is decisively measured there — it is not
+  a one-book artefact and it is not a denominator artefact. It does NOT survive as a cadence law:
+  the same ladder at gross 0.50 and 1.00, and the whole of B136, show no cost-driven margin at
+  all. Any future claim of the form "cadence X beats cadence Y at rung c" must state its GROSS,
+  because gross is the dial that decides whether the rung bites. No memo, no RULES change; RULES
+  v2 stays at weekly, which is what both the frozen and the fitted chooser pick anyway.
+
+  **SURVIVORSHIP (rule 9).** U56 and B136 are current-constituent panels. The bias is common to
+  both cadences and cancels in the MARGIN, but it flatters both the CAGR floor and the DD cap
+  against SPY, a real index, in every absolute figure above.
+
 ## 2026-09-22 — idea 1472 (lane C): DOES U56 H = 142 SURVIVE A DE-GROSS TWIN AND A c SWEEP, OR IS IT THE BAND AGAIN? **ANSWERED IN TWO PARTS — (A) IT IS *NOT* THE SCALAR: THE FIRST DEVICE IN THIS RECORD TO BEAT ITS OWN CAGR-MATCHED DE-GROSS TWIN ON *BOTH* AXES AT THE LIVE RUNG, AND THE MECHANISM IS BETA *ORDERING*. (B) KILL OF THE GENERAL LAW AND PARK OF THE CANDIDATE: THE SIGN IS SET BY (PANEL, H), THE TWIN CLEARS 4b IN EXACTLY THE SAME 55 OF 150 CELLS WITH 0 FLIPS, 4a IS 0 OF 150, AND RULE 8 REACHES IT AT 0 OF 4 CHOOSERS. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 1461 refined 1444's min-hold ladder and incidentally published
