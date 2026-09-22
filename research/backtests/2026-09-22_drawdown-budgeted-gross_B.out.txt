@@ -1,0 +1,366 @@
+======================================================================================================
+IDEA 2129 lane B 2026-09-22 -- DRAWDOWN-BUDGETED GROSS: can the live book's UNSPENT
+                               drawdown margin be turned into the CAGR the 4b floor wants?
+======================================================================================================
+run 2026-09-22 07:18 UTC
+tuned: budget D ['0.05', '0.10', '0.15', '0.20', 'inf'] x ceiling g_hi [0.75, 0.85, 0.9, 0.95, 1.0]  (25 cells/panel, 50 published)
+not tuned: band 0.03, cadence W, cost 10 bps headline, panels U56 + B136,
+           windows FULL / IS ..2016-12-31 / OOS 2017-01-01.. with H1/H2 inside each (rule 8)
+           offsets [0, 1, 2, 3, 4] are a MEASUREMENT (idea 914's clause, B8); books are d=0
+           NO LEVERAGE anywhere: g_hi <= 1.00 and the matched twin's lam <= g_hi.
+
+  panel U56     56 cols  2008-01-02 .. 2026-09-18  (4708 rows)
+  panel B136   136 cols  2008-01-02 .. 2026-09-18  (4708 rows)
+
+------------------------------------------------------------------------------------------------------
+CONSTRUCTION GATES
+------------------------------------------------------------------------------------------------------
+  [PASS] G1 local run_budget(inf,0.75) == engine.backtest     got 6.939e-18   bar < 1e-12
+  [PASS] G2 base*g_hi == rules_v2_weights(0.03,g_hi)          got 0.000e+00   bar == 0.0
+  [PASS] G3 causality (last-day shock leaves gross path)      got 0.000e+00   bar == 0.0
+  [PASS] G4 matched twin mean target gross (25 cells)         got 1.110e-16   bar < 1e-12
+  [PASS] G5 cost re-run determinism                           got 0.000e+00   bar == 0.0
+  [PASS] G6 clamp [0,g_hi] and g==g_hi at every peak          got clamp=True peak=True   bar both True
+  [PASS] G7 offset clipping census                            got {0: 0, 1: 0, 2: 0, 3: 2, 4: 175}   bar reported
+  [PASS] G8 SPY offset-invariance                             got 1 distinct   bar == 1
+
+------------------------------------------------------------------------------------------------------
+GRID: every (panel, D, g_hi, offset, cost, window) point
+------------------------------------------------------------------------------------------------------
+  U56: 1500 rows cumulative   (119s)
+  B136: 3000 rows cumulative   (273s)
+  published 3000 grid rows -> 2026-09-22_drawdown-budgeted-gross_B.grid.csv.gz
+
+------------------------------------------------------------------------------------------------------
+B1  HEADLINE -- does any finite budget D clear 4b where its own D=inf cell does not?
+------------------------------------------------------------------------------------------------------
+  4b PASSES at d=0, 10 bps: 8 of 150 (panel x window x cell) points
+    U56   FULL  4b  2/25   4a  0/25   legs H1 20 H2 20 DD 25 CAGR  2
+    U56   IS    4b  0/25   4a  0/25   legs H1  6 H2 20 DD 25 CAGR  0
+    U56   OOS   4b  4/25   4a  0/25   legs H1 20 H2 20 DD 25 CAGR  4
+    B136  FULL  4b  1/25   4a  0/25   legs H1 20 H2 14 DD 25 CAGR  1
+    B136  IS    4b  1/25   4a  0/25   legs H1  5 H2 19 DD 25 CAGR  1
+    B136  OOS   4b  0/25   4a  0/25   legs H1 22 H2 15 DD 25 CAGR  0
+  BUDGET-INDUCED FLIPS (finite D passes where its own static D=inf twin fails): 0
+
+  Full 4b leg margins, d=0, 10 bps (pp for DD/CAGR, Sharpe points for H1/H2):
+   -- U56 FULL
+      D      g_hi  meanG   CAGR    Sharpe  MaxDD    M_H1    M_H2    M_DD    M_CAGR  4b 4a
+       0.05  0.75  0.162   1.59%   0.524   -5.85%  -0.166  -0.831  +14.38   -9.00   .  .
+       0.05  0.85  0.128   1.23%   0.444   -5.77%  -0.311  -0.765  +14.46   -9.37   .  .
+       0.05  0.90  0.053   0.41%   0.192   -5.64%  -0.641  -0.883  +14.59  -10.19   .  .
+       0.05  0.95  0.031   0.29%   0.145   -5.18%  -0.751    +nan  +15.05  -10.31   .  .
+       0.05  1.00  0.031   0.24%   0.122   -5.35%  -0.785    +nan  +14.88  -10.35   .  .
+       0.10  0.75  0.402   5.94%   1.066   -8.51%  +0.148  +0.201  +11.72   -4.66   .  .
+       0.10  0.85  0.437   6.24%   1.029   -9.06%  +0.120  +0.155  +11.17   -4.36   .  .
+       0.10  0.90  0.452   6.33%   1.008   -9.29%  +0.104  +0.128  +10.94   -4.27   .  .
+       0.10  0.95  0.465   6.37%   0.985   -9.49%  +0.087  +0.099  +10.74   -4.23   .  .
+       0.10  1.00  0.476   6.35%   0.958   -9.66%  +0.069  +0.062  +10.57   -4.24   .  .
+       0.15  0.75  0.440   6.90%   1.130   -9.73%  +0.204  +0.275  +10.50   -3.70   .  .
+       0.15  0.85  0.488   7.54%   1.115  -10.63%  +0.192  +0.257   +9.60   -3.05   .  .
+       0.15  0.90  0.511   7.84%   1.106  -11.04%  +0.185  +0.247   +9.19   -2.76   .  .
+       0.15  0.95  0.533   8.12%   1.098  -11.44%  +0.178  +0.237   +8.79   -2.48   .  .
+       0.15  1.00  0.555   8.37%   1.090  -11.81%  +0.170  +0.228   +8.42   -2.22   .  .
+       0.20  0.75  0.457   7.36%   1.155  -10.32%  +0.225  +0.305   +9.91   -3.24   .  .
+       0.20  0.85  0.510   8.14%   1.145  -11.39%  +0.217  +0.293   +8.84   -2.46   .  .
+       0.20  0.90  0.536   8.51%   1.140  -11.90%  +0.213  +0.287   +8.33   -2.09   .  .
+       0.20  0.95  0.561   8.87%   1.135  -12.39%  +0.209  +0.280   +7.84   -1.73   .  .
+       0.20  1.00  0.586   9.21%   1.129  -12.86%  +0.204  +0.274   +7.37   -1.39   .  .
+        inf  0.75  0.503   8.62%   1.201  -12.05%  +0.271  +0.354   +8.18   -1.98   .  .
+        inf  0.85  0.571   9.78%   1.201  -13.61%  +0.271  +0.354   +6.62   -0.81   .  .
+        inf  0.90  0.604  10.36%   1.201  -14.38%  +0.271  +0.354   +5.85   -0.23   .  .
+        inf  0.95  0.638  10.95%   1.201  -15.15%  +0.271  +0.354   +5.08   +0.35   Y  .
+        inf  1.00  0.671  11.53%   1.201  -15.91%  +0.271  +0.353   +4.32   +0.93   Y  .
+   -- U56 OOS
+      D      g_hi  meanG   CAGR    Sharpe  MaxDD    M_H1    M_H2    M_DD    M_CAGR  4b 4a
+       0.05  0.75  0.162   1.05%   0.539   -5.85%  -0.228    +nan  +14.38   -9.65   .  .
+       0.05  0.85  0.128   1.23%   0.619   -5.77%  -0.114    +nan  +14.46   -9.47   .  .
+       0.05  0.90  0.053   0.13%   0.117   -5.64%  -0.826    +nan  +14.59  -10.57   .  .
+       0.05  0.95  0.031   0.00%     nan    0.00%    +nan    +nan  +20.23  -10.70   .  .
+       0.05  1.00  0.031   0.00%     nan    0.00%    +nan    +nan  +20.23  -10.70   .  .
+       0.10  0.75  0.402   6.49%   1.159   -8.51%  +0.377  +0.201  +11.72   -4.21   .  .
+       0.10  0.85  0.437   6.78%   1.122   -9.06%  +0.342  +0.169  +11.17   -3.92   .  .
+       0.10  0.90  0.452   6.86%   1.100   -9.29%  +0.320  +0.152  +10.94   -3.84   .  .
+       0.10  0.95  0.465   6.87%   1.077   -9.49%  +0.299  +0.135  +10.74   -3.83   .  .
+       0.10  1.00  0.476   6.80%   1.047   -9.66%  +0.267  +0.118  +10.57   -3.90   .  .
+       0.15  0.75  0.440   7.56%   1.218   -9.73%  +0.417  +0.268  +10.50   -3.14   .  .
+       0.15  0.85  0.488   8.27%   1.203  -10.63%  +0.405  +0.252   +9.60   -2.43   .  .
+       0.15  0.90  0.511   8.60%   1.196  -11.04%  +0.399  +0.243   +9.19   -2.10   .  .
+       0.15  0.95  0.533   8.90%   1.188  -11.44%  +0.393  +0.235   +8.79   -1.80   .  .
+       0.15  1.00  0.555   9.18%   1.181  -11.81%  +0.389  +0.226   +8.42   -1.52   .  .
+       0.20  0.75  0.457   8.07%   1.242  -10.32%  +0.436  +0.295   +9.91   -2.63   .  .
+       0.20  0.85  0.510   8.93%   1.233  -11.39%  +0.428  +0.285   +8.84   -1.77   .  .
+       0.20  0.90  0.536   9.33%   1.228  -11.90%  +0.424  +0.279   +8.33   -1.37   .  .
+       0.20  0.95  0.561   9.73%   1.223  -12.39%  +0.419  +0.274   +7.84   -0.97   .  .
+       0.20  1.00  0.586  10.10%   1.217  -12.86%  +0.414  +0.268   +7.37   -0.60   .  .
+        inf  0.75  0.503   9.46%   1.277  -12.05%  +0.441  +0.356   +8.18   -1.24   .  .
+        inf  0.85  0.571  10.74%   1.276  -13.61%  +0.440  +0.356   +6.62   +0.04   Y  .
+        inf  0.90  0.604  11.38%   1.276  -14.38%  +0.440  +0.356   +5.85   +0.68   Y  .
+        inf  0.95  0.638  12.03%   1.276  -15.15%  +0.439  +0.357   +5.08   +1.32   Y  .
+        inf  1.00  0.671  12.67%   1.276  -15.91%  +0.439  +0.357   +4.32   +1.97   Y  .
+   -- B136 FULL
+      D      g_hi  meanG   CAGR    Sharpe  MaxDD    M_H1    M_H2    M_DD    M_CAGR  4b 4a
+       0.05  0.75  0.162   1.77%   0.560   -5.56%  -0.162  -0.716  +14.67   -8.82   .  .
+       0.05  0.85  0.143   1.41%   0.457   -5.38%  -0.343  -0.622  +14.85   -9.18   .  .
+       0.05  0.90  0.086   0.98%   0.400   -5.27%  -0.447  -0.578  +14.96   -9.60   .  .
+       0.05  0.95  0.030   0.22%   0.113   -5.12%  -0.797    +nan  +15.11  -10.37   .  .
+       0.05  1.00  0.030   0.17%   0.091   -5.28%  -0.829    +nan  +14.95  -10.41   .  .
+       0.10  0.75  0.393   5.18%   0.948   -8.64%  +0.140  -0.043  +11.59   -5.40   .  .
+       0.10  0.85  0.423   5.33%   0.904   -9.20%  +0.112  -0.111  +11.03   -5.25   .  .
+       0.10  0.90  0.434   5.33%   0.878   -9.43%  +0.097  -0.153  +10.80   -5.25   .  .
+       0.10  0.95  0.441   5.24%   0.845   -9.63%  +0.081  -0.213  +10.60   -5.34   .  .
+       0.10  1.00  0.435   5.04%   0.808   -9.80%  +0.064  -0.288  +10.43   -5.55   .  .
+       0.15  0.75  0.436   6.20%   1.020   -9.88%  +0.197  +0.053  +10.35   -4.39   .  .
+       0.15  0.85  0.482   6.73%   1.003  -10.79%  +0.183  +0.030   +9.44   -3.86   .  .
+       0.15  0.90  0.503   6.96%   0.994  -11.22%  +0.176  +0.018   +9.01   -3.62   .  .
+       0.15  0.95  0.524   7.18%   0.985  -11.62%  +0.169  +0.005   +8.61   -3.41   .  .
+       0.15  1.00  0.544   7.38%   0.975  -12.00%  +0.161  -0.007   +8.23   -3.21   .  .
+       0.20  0.75  0.455   6.67%   1.046  -10.48%  +0.220  +0.085   +9.74   -3.91   .  .
+       0.20  0.85  0.507   7.35%   1.037  -11.57%  +0.212  +0.073   +8.66   -3.23   .  .
+       0.20  0.90  0.532   7.67%   1.031  -12.09%  +0.207  +0.066   +8.14   -2.92   .  .
+       0.20  0.95  0.557   7.97%   1.026  -12.59%  +0.202  +0.059   +7.64   -2.62   .  .
+       0.20  1.00  0.581   8.26%   1.020  -13.07%  +0.197  +0.051   +7.16   -2.33   .  .
+        inf  0.75  0.503   7.96%   1.097  -12.24%  +0.272  +0.142   +7.99   -2.63   .  .
+        inf  0.85  0.570   9.03%   1.097  -13.82%  +0.273  +0.142   +6.41   -1.56   .  .
+        inf  0.90  0.603   9.56%   1.097  -14.60%  +0.273  +0.141   +5.63   -1.03   .  .
+        inf  0.95  0.637  10.09%   1.097  -15.38%  +0.273  +0.141   +4.85   -0.49   .  .
+        inf  1.00  0.670  10.63%   1.097  -16.16%  +0.274  +0.141   +4.07   +0.04   Y  .
+   -- B136 OOS
+      D      g_hi  meanG   CAGR    Sharpe  MaxDD    M_H1    M_H2    M_DD    M_CAGR  4b 4a
+       0.05  0.75  0.162   1.34%   0.740   -5.56%  +0.057    +nan  +14.67   -9.34   .  .
+       0.05  0.85  0.143   1.52%   0.803   -5.38%  +0.145    +nan  +14.85   -9.16   .  .
+       0.05  0.90  0.086   1.23%   0.724   -5.27%  +0.033    +nan  +14.96   -9.45   .  .
+       0.05  0.95  0.030   0.00%     nan    0.00%    +nan    +nan  +20.23  -10.68   .  .
+       0.05  1.00  0.030   0.00%     nan    0.00%    +nan    +nan  +20.23  -10.68   .  .
+       0.10  0.75  0.393   4.93%   0.983   -8.64%  +0.222  -0.016  +11.59   -5.75   .  .
+       0.10  0.85  0.423   4.96%   0.933   -9.20%  +0.169  -0.049  +11.03   -5.72   .  .
+       0.10  0.90  0.434   4.87%   0.903   -9.43%  +0.138  -0.068  +10.80   -5.81   .  .
+       0.10  0.95  0.441   4.65%   0.858   -9.63%  +0.083  -0.088  +10.60   -6.03   .  .
+       0.10  1.00  0.435   4.24%   0.811   -9.80%  -0.019  -0.085  +10.43   -6.44   .  .
+       0.15  0.75  0.436   6.04%   1.049   -9.88%  +0.272  +0.054  +10.35   -4.64   .  .
+       0.15  0.85  0.482   6.52%   1.033  -10.79%  +0.259  +0.038   +9.44   -4.16   .  .
+       0.15  0.90  0.503   6.73%   1.024  -11.22%  +0.252  +0.029   +9.01   -3.95   .  .
+       0.15  0.95  0.524   6.92%   1.015  -11.62%  +0.244  +0.019   +8.61   -3.76   .  .
+       0.15  1.00  0.544   7.09%   1.007  -12.00%  +0.239  +0.010   +8.23   -3.59   .  .
+       0.20  0.75  0.455   6.54%   1.069  -10.48%  +0.285  +0.081   +9.74   -4.14   .  .
+       0.20  0.85  0.507   7.19%   1.062  -11.57%  +0.280  +0.071   +8.66   -3.49   .  .
+       0.20  0.90  0.532   7.49%   1.057  -12.09%  +0.277  +0.066   +8.14   -3.19   .  .
+       0.20  0.95  0.557   7.77%   1.052  -12.59%  +0.273  +0.060   +7.64   -2.91   .  .
+       0.20  1.00  0.581   8.04%   1.047  -13.07%  +0.269  +0.054   +7.16   -2.64   .  .
+        inf  0.75  0.503   7.85%   1.102  -12.24%  +0.300  +0.132   +7.99   -2.83   .  .
+        inf  0.85  0.570   8.90%   1.101  -13.82%  +0.299  +0.132   +6.41   -1.78   .  .
+        inf  0.90  0.603   9.42%   1.101  -14.60%  +0.299  +0.132   +5.63   -1.26   .  .
+        inf  0.95  0.637   9.95%   1.101  -15.38%  +0.298  +0.132   +4.85   -0.73   .  .
+        inf  1.00  0.670  10.47%   1.101  -16.16%  +0.298  +0.132   +4.07   -0.21   .  .
+
+------------------------------------------------------------------------------------------------------
+B2  THE CAGR FLOOR -- the one leg the live book fails
+------------------------------------------------------------------------------------------------------
+   -- U56 FULL   CAGR-floor margin (pp), rows = g_hi, cols = D
+      g_hi 0.75     -9.00    -4.66    -3.70    -3.24    -1.98
+      g_hi 0.85     -9.37    -4.36    -3.05    -2.46    -0.81
+      g_hi 0.90    -10.19    -4.27    -2.76    -2.09    -0.23
+      g_hi 0.95    -10.31    -4.23    -2.48    -1.73    +0.35
+      g_hi 1.00    -10.35    -4.24    -2.22    -1.39    +0.93
+   -- U56 IS   CAGR-floor margin (pp), rows = g_hi, cols = D
+      g_hi 0.75     -8.22    -5.20    -4.37    -3.97    -2.86
+      g_hi 0.85     -9.24    -4.90    -3.80    -3.29    -1.84
+      g_hi 0.90     -9.72    -4.79    -3.54    -2.96    -1.33
+      g_hi 0.95     -9.83    -4.71    -3.30    -2.64    -0.82
+      g_hi 1.00     -9.93    -4.65    -3.07    -2.34    -0.31
+   -- U56 OOS   CAGR-floor margin (pp), rows = g_hi, cols = D
+      g_hi 0.75     -9.65    -4.21    -3.14    -2.63    -1.24
+      g_hi 0.85     -9.47    -3.92    -2.43    -1.77    +0.04
+      g_hi 0.90    -10.57    -3.84    -2.10    -1.37    +0.68
+      g_hi 0.95    -10.70    -3.83    -1.80    -0.97    +1.32
+      g_hi 1.00    -10.70    -3.90    -1.52    -0.60    +1.97
+   -- B136 FULL   CAGR-floor margin (pp), rows = g_hi, cols = D
+      g_hi 0.75     -8.82    -5.40    -4.39    -3.91    -2.63
+      g_hi 0.85     -9.18    -5.25    -3.86    -3.23    -1.56
+      g_hi 0.90     -9.60    -5.25    -3.62    -2.92    -1.03
+      g_hi 0.95    -10.37    -5.34    -3.41    -2.62    -0.49
+      g_hi 1.00    -10.41    -5.55    -3.21    -2.33    +0.04
+   -- B136 IS   CAGR-floor margin (pp), rows = g_hi, cols = D
+      g_hi 0.75     -8.18    -4.98    -4.07    -3.63    -2.38
+      g_hi 0.85     -9.20    -4.68    -3.50    -2.92    -1.29
+      g_hi 0.90     -9.79    -4.58    -3.23    -2.58    -0.75
+      g_hi 0.95     -9.98    -4.50    -2.98    -2.26    -0.20
+      g_hi 1.00    -10.09    -4.45    -2.75    -1.95    +0.34
+   -- B136 OOS   CAGR-floor margin (pp), rows = g_hi, cols = D
+      g_hi 0.75     -9.34    -5.75    -4.64    -4.14    -2.83
+      g_hi 0.85     -9.16    -5.72    -4.16    -3.49    -1.78
+      g_hi 0.90     -9.45    -5.81    -3.95    -3.19    -1.26
+      g_hi 0.95    -10.68    -6.03    -3.76    -2.91    -0.73
+      g_hi 1.00    -10.68    -6.44    -3.59    -2.64    -0.21
+  THE LIVE BOOK on this grid (D=inf, g_hi=0.75 == RULES v2):
+    U56   FULL  CAGR  8.62%  floor margin  -1.98 pp   DD margin  +8.18 pp   4b FAIL
+    U56   IS    CAGR  7.61%  floor margin  -2.86 pp   DD margin  +5.35 pp   4b FAIL
+    U56   OOS   CAGR  9.46%  floor margin  -1.24 pp   DD margin  +8.18 pp   4b FAIL
+    B136  FULL  CAGR  7.96%  floor margin  -2.63 pp   DD margin  +7.99 pp   4b FAIL
+    B136  IS    CAGR  8.10%  floor margin  -2.38 pp   DD margin  +5.34 pp   4b FAIL
+    B136  OOS   CAGR  7.85%  floor margin  -2.83 pp   DD margin  +7.99 pp   4b FAIL
+  BEST floor margin reachable AT THE LIVE CEILING g_hi=0.75 (B2's pre-stated test):
+    B136  FULL   -2.63 pp
+    B136  IS     -2.38 pp
+    B136  OOS    -2.83 pp
+    U56   FULL   -1.98 pp
+    U56   IS     -2.86 pp
+    U56   OOS    -1.24 pp
+
+------------------------------------------------------------------------------------------------------
+B3  THE MATCHED-MEAN-GROSS NULL -- is the budget dial anything a static gross is not?
+------------------------------------------------------------------------------------------------------
+  120 budgeted cells (4 finite D x 5 g_hi x 2 panels x 3 windows) vs their FULL-matched twin
+    DISTINCT              108   (90.0%)
+    MARGINAL               12   (10.0%)
+  dSharpe  median -0.1240  mean -0.2666  [-1.1611, -0.0325]
+  dCAGR pp median -0.845  mean -0.900  [-2.551, +0.176]
+  dMaxDD pp median +0.696  mean -0.197  [-4.850, +1.754]
+  budgeted book BEATS its matched twin on Sharpe in 0/120 cells, on MaxDD in 70/120, on CAGR in 3/120
+  cells where the twin PASSES 4b and the budgeted book does not: 120 fail overall; twin-vs-book 4b agreement is read in B5 for the rule-8 picks.
+
+------------------------------------------------------------------------------------------------------
+B4  WHAT THE BUDGET BUYS -- drawdown saved per point of mean gross given up
+------------------------------------------------------------------------------------------------------
+   -- U56 FULL
+      g_hi 0.75  MaxDD by D:  -5.85%   -8.51%   -9.73%  -10.32%  -12.05%   monotone-in-D YES
+         D  0.05  gross given up  34.19 pp -> DD saved  +6.21 pp (+0.182 pp/pp), CAGR  -7.03 pp (-0.206 pp/pp)
+         D  0.10  gross given up  10.09 pp -> DD saved  +3.55 pp (+0.351 pp/pp), CAGR  -2.68 pp (-0.266 pp/pp)
+         D  0.15  gross given up   6.36 pp -> DD saved  +2.33 pp (+0.366 pp/pp), CAGR  -1.72 pp (-0.270 pp/pp)
+         D  0.20  gross given up   4.66 pp -> DD saved  +1.73 pp (+0.371 pp/pp), CAGR  -1.26 pp (-0.270 pp/pp)
+      g_hi 0.85  MaxDD by D:  -5.77%   -9.06%  -10.63%  -11.39%  -13.61%   monotone-in-D YES
+         D  0.05  gross given up  44.23 pp -> DD saved  +7.84 pp (+0.177 pp/pp), CAGR  -8.56 pp (-0.193 pp/pp)
+         D  0.10  gross given up  13.36 pp -> DD saved  +4.54 pp (+0.340 pp/pp), CAGR  -3.55 pp (-0.265 pp/pp)
+         D  0.15  gross given up   8.27 pp -> DD saved  +2.98 pp (+0.361 pp/pp), CAGR  -2.24 pp (-0.271 pp/pp)
+         D  0.20  gross given up   6.05 pp -> DD saved  +2.22 pp (+0.366 pp/pp), CAGR  -1.64 pp (-0.272 pp/pp)
+      g_hi 0.90  MaxDD by D:  -5.64%   -9.29%  -11.04%  -11.90%  -14.38%   monotone-in-D YES
+         D  0.05  gross given up  55.16 pp -> DD saved  +8.74 pp (+0.159 pp/pp), CAGR  -9.95 pp (-0.180 pp/pp)
+         D  0.10  gross given up  15.22 pp -> DD saved  +5.08 pp (+0.334 pp/pp), CAGR  -4.04 pp (-0.265 pp/pp)
+         D  0.15  gross given up   9.31 pp -> DD saved  +3.34 pp (+0.358 pp/pp), CAGR  -2.52 pp (-0.271 pp/pp)
+         D  0.20  gross given up   6.82 pp -> DD saved  +2.48 pp (+0.364 pp/pp), CAGR  -1.86 pp (-0.272 pp/pp)
+      g_hi 0.95  MaxDD by D:  -5.18%   -9.49%  -11.44%  -12.39%  -15.15%   monotone-in-D YES
+         D  0.05  gross given up  60.65 pp -> DD saved  +9.97 pp (+0.164 pp/pp), CAGR -10.66 pp (-0.176 pp/pp)
+         D  0.10  gross given up  17.28 pp -> DD saved  +5.66 pp (+0.327 pp/pp), CAGR  -4.58 pp (-0.265 pp/pp)
+         D  0.15  gross given up  10.43 pp -> DD saved  +3.71 pp (+0.356 pp/pp), CAGR  -2.83 pp (-0.271 pp/pp)
+         D  0.20  gross given up   7.63 pp -> DD saved  +2.76 pp (+0.361 pp/pp), CAGR  -2.08 pp (-0.273 pp/pp)
+      g_hi 1.00  MaxDD by D:  -5.35%   -9.66%  -11.81%  -12.86%  -15.91%   monotone-in-D YES
+         D  0.05  gross given up  63.99 pp -> DD saved +10.56 pp (+0.165 pp/pp), CAGR -11.29 pp (-0.176 pp/pp)
+         D  0.10  gross given up  19.55 pp -> DD saved  +6.26 pp (+0.320 pp/pp), CAGR  -5.18 pp (-0.265 pp/pp)
+         D  0.15  gross given up  11.67 pp -> DD saved  +4.10 pp (+0.352 pp/pp), CAGR  -3.16 pp (-0.271 pp/pp)
+         D  0.20  gross given up   8.49 pp -> DD saved  +3.05 pp (+0.359 pp/pp), CAGR  -2.32 pp (-0.273 pp/pp)
+      STATIC GROSS DIAL (D=inf), same ratio against g_hi=1.00:
+         g_hi 0.75  gross given up  16.78 pp -> DD saved  +3.86 pp (+0.230 pp/pp), CAGR  -2.91 pp (-0.174 pp/pp)
+         g_hi 0.85  gross given up  10.07 pp -> DD saved  +2.30 pp (+0.229 pp/pp), CAGR  -1.75 pp (-0.174 pp/pp)
+         g_hi 0.90  gross given up   6.71 pp -> DD saved  +1.53 pp (+0.228 pp/pp), CAGR  -1.17 pp (-0.174 pp/pp)
+         g_hi 0.95  gross given up   3.36 pp -> DD saved  +0.76 pp (+0.228 pp/pp), CAGR  -0.58 pp (-0.174 pp/pp)
+   -- B136 FULL
+      g_hi 0.75  MaxDD by D:  -5.56%   -8.64%   -9.88%  -10.48%  -12.24%   monotone-in-D YES
+         D  0.05  gross given up  34.10 pp -> DD saved  +6.68 pp (+0.196 pp/pp), CAGR  -6.19 pp (-0.182 pp/pp)
+         D  0.10  gross given up  11.01 pp -> DD saved  +3.60 pp (+0.327 pp/pp), CAGR  -2.77 pp (-0.252 pp/pp)
+         D  0.15  gross given up   6.72 pp -> DD saved  +2.36 pp (+0.352 pp/pp), CAGR  -1.76 pp (-0.262 pp/pp)
+         D  0.20  gross given up   4.81 pp -> DD saved  +1.76 pp (+0.365 pp/pp), CAGR  -1.28 pp (-0.267 pp/pp)
+      g_hi 0.85  MaxDD by D:  -5.38%   -9.20%  -10.79%  -11.57%  -13.82%   monotone-in-D YES
+         D  0.05  gross given up  42.66 pp -> DD saved  +8.44 pp (+0.198 pp/pp), CAGR  -7.62 pp (-0.178 pp/pp)
+         D  0.10  gross given up  14.71 pp -> DD saved  +4.62 pp (+0.314 pp/pp), CAGR  -3.69 pp (-0.251 pp/pp)
+         D  0.15  gross given up   8.83 pp -> DD saved  +3.02 pp (+0.342 pp/pp), CAGR  -2.30 pp (-0.260 pp/pp)
+         D  0.20  gross given up   6.31 pp -> DD saved  +2.25 pp (+0.356 pp/pp), CAGR  -1.67 pp (-0.265 pp/pp)
+      g_hi 0.90  MaxDD by D:  -5.27%   -9.43%  -11.22%  -12.09%  -14.60%   monotone-in-D YES
+         D  0.05  gross given up  51.74 pp -> DD saved  +9.34 pp (+0.180 pp/pp), CAGR  -8.58 pp (-0.166 pp/pp)
+         D  0.10  gross given up  16.98 pp -> DD saved  +5.17 pp (+0.304 pp/pp), CAGR  -4.23 pp (-0.249 pp/pp)
+         D  0.15  gross given up  10.01 pp -> DD saved  +3.38 pp (+0.338 pp/pp), CAGR  -2.60 pp (-0.259 pp/pp)
+         D  0.20  gross given up   7.15 pp -> DD saved  +2.51 pp (+0.352 pp/pp), CAGR  -1.89 pp (-0.265 pp/pp)
+      g_hi 0.95  MaxDD by D:  -5.12%   -9.63%  -11.62%  -12.59%  -15.38%   monotone-in-D YES
+         D  0.05  gross given up  60.71 pp -> DD saved +10.26 pp (+0.169 pp/pp), CAGR  -9.87 pp (-0.163 pp/pp)
+         D  0.10  gross given up  19.64 pp -> DD saved  +5.75 pp (+0.293 pp/pp), CAGR  -4.85 pp (-0.247 pp/pp)
+         D  0.15  gross given up  11.28 pp -> DD saved  +3.76 pp (+0.334 pp/pp), CAGR  -2.92 pp (-0.259 pp/pp)
+         D  0.20  gross given up   8.04 pp -> DD saved  +2.79 pp (+0.348 pp/pp), CAGR  -2.12 pp (-0.264 pp/pp)
+      g_hi 1.00  MaxDD by D:  -5.28%   -9.80%  -12.00%  -13.07%  -16.16%   monotone-in-D YES
+         D  0.05  gross given up  64.06 pp -> DD saved +10.88 pp (+0.170 pp/pp), CAGR -10.45 pp (-0.163 pp/pp)
+         D  0.10  gross given up  23.52 pp -> DD saved  +6.36 pp (+0.270 pp/pp), CAGR  -5.59 pp (-0.238 pp/pp)
+         D  0.15  gross given up  12.64 pp -> DD saved  +4.16 pp (+0.329 pp/pp), CAGR  -3.25 pp (-0.257 pp/pp)
+         D  0.20  gross given up   8.99 pp -> DD saved  +3.09 pp (+0.344 pp/pp), CAGR  -2.37 pp (-0.264 pp/pp)
+      STATIC GROSS DIAL (D=inf), same ratio against g_hi=1.00:
+         g_hi 0.75  gross given up  16.76 pp -> DD saved  +3.92 pp (+0.234 pp/pp), CAGR  -2.67 pp (-0.159 pp/pp)
+         g_hi 0.85  gross given up  10.06 pp -> DD saved  +2.34 pp (+0.233 pp/pp), CAGR  -1.60 pp (-0.159 pp/pp)
+         g_hi 0.90  gross given up   6.70 pp -> DD saved  +1.56 pp (+0.232 pp/pp), CAGR  -1.07 pp (-0.159 pp/pp)
+         g_hi 0.95  gross given up   3.35 pp -> DD saved  +0.78 pp (+0.232 pp/pp), CAGR  -0.53 pp (-0.159 pp/pp)
+
+------------------------------------------------------------------------------------------------------
+B5  RULE 8 -- both dials chosen on IS by IS Sharpe, 2017-2026 read ONCE
+------------------------------------------------------------------------------------------------------
+   -- U56 arm=free   IS-Sharpe argmax -> D inf / g_hi 1.00  (IS Sharpe 1.1047)
+      FULL  11.53% / 1.2009 / -15.91%   SPY 15.14% / 0.8851 / -33.72%   RULESv2  8.62% / 1.2010 / -12.05%   4b PASS  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR Y   margins H1 +0.271 H2 +0.353 DD +4.32pp CAGR +0.93pp
+      IS    10.16% / 1.1047 / -10.45%   SPY 14.96% / 0.8986 / -22.06%   RULESv2  7.61% / 1.1043 /  -7.89%   4b FAIL  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR .   margins H1 +0.079 H2 +0.290 DD +2.79pp CAGR -0.31pp
+      OOS   12.67% / 1.2760 / -15.91%   SPY 15.29% / 0.8751 / -33.72%   RULESv2  9.46% / 1.2767 / -12.05%   4b PASS  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR Y   margins H1 +0.439 H2 +0.357 DD +4.32pp CAGR +1.97pp
+      IS-matched STATIC TWIN (lam_IS 1.0000): OOS 12.67% / 1.2760 / -15.91%   -> budget minus twin  CAGR +0.00pp  Sharpe +0.0000  MaxDD +0.00pp
+   -- U56 arm=live-ceiling   IS-Sharpe argmax -> D inf / g_hi 0.75  (IS Sharpe 1.1043)
+      FULL   8.62% / 1.2010 / -12.05%   SPY 15.14% / 0.8851 / -33.72%   RULESv2  8.62% / 1.2010 / -12.05%   4b FAIL  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR .   margins H1 +0.271 H2 +0.354 DD +8.18pp CAGR -1.98pp
+      IS     7.61% / 1.1043 /  -7.89%   SPY 14.96% / 0.8986 / -22.06%   RULESv2  7.61% / 1.1043 /  -7.89%   4b FAIL  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR .   margins H1 +0.080 H2 +0.288 DD +5.35pp CAGR -2.86pp
+      OOS    9.46% / 1.2767 / -12.05%   SPY 15.29% / 0.8751 / -33.72%   RULESv2  9.46% / 1.2767 / -12.05%   4b FAIL  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR .   margins H1 +0.441 H2 +0.356 DD +8.18pp CAGR -1.24pp
+      IS-matched STATIC TWIN (lam_IS 0.7500): OOS  9.46% / 1.2767 / -12.05%   -> budget minus twin  CAGR +0.00pp  Sharpe -0.0000  MaxDD +0.00pp
+   -- B136 arm=free   IS-Sharpe argmax -> D inf / g_hi 1.00  (IS Sharpe 1.0932)
+      FULL  10.63% / 1.0971 / -16.16%   SPY 15.12% / 0.8844 / -33.72%   RULESv2  7.96% / 1.0972 / -12.24%   4b PASS  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR Y   margins H1 +0.274 H2 +0.141 DD +4.07pp CAGR +0.04pp
+      IS    10.82% / 1.0932 / -10.46%   SPY 14.96% / 0.8987 / -22.06%   RULESv2  8.10% / 1.0922 /  -7.90%   4b PASS  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR Y   margins H1 +0.093 H2 +0.238 DD +2.77pp CAGR +0.34pp
+      OOS   10.47% / 1.1006 / -16.16%   SPY 15.26% / 0.8737 / -33.72%   RULESv2  7.85% / 1.1017 / -12.24%   4b FAIL  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR .   margins H1 +0.298 H2 +0.132 DD +4.07pp CAGR -0.21pp
+      IS-matched STATIC TWIN (lam_IS 1.0000): OOS 10.47% / 1.1006 / -16.16%   -> budget minus twin  CAGR +0.00pp  Sharpe +0.0000  MaxDD +0.00pp
+   -- B136 arm=live-ceiling   IS-Sharpe argmax -> D inf / g_hi 0.75  (IS Sharpe 1.0922)
+      FULL   7.96% / 1.0972 / -12.24%   SPY 15.12% / 0.8844 / -33.72%   RULESv2  7.96% / 1.0972 / -12.24%   4b FAIL  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR .   margins H1 +0.272 H2 +0.142 DD +7.99pp CAGR -2.63pp
+      IS     8.10% / 1.0922 /  -7.90%   SPY 14.96% / 0.8987 / -22.06%   RULESv2  8.10% / 1.0922 /  -7.90%   4b FAIL  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR .   margins H1 +0.093 H2 +0.236 DD +5.34pp CAGR -2.38pp
+      OOS    7.85% / 1.1017 / -12.24%   SPY 15.26% / 0.8737 / -33.72%   RULESv2  7.85% / 1.1017 / -12.24%   4b FAIL  4a FAIL
+            legs H1 Y H2 Y DD Y CAGR .   margins H1 +0.300 H2 +0.132 DD +7.99pp CAGR -2.83pp
+      IS-matched STATIC TWIN (lam_IS 0.7500): OOS  7.85% / 1.1017 / -12.24%   -> budget minus twin  CAGR +0.00pp  Sharpe +0.0000  MaxDD +0.00pp
+
+------------------------------------------------------------------------------------------------------
+B6  PATH 4a at every grid point (vs live RULES v2)
+------------------------------------------------------------------------------------------------------
+    U56   FULL  4a 0/25
+    U56   IS    4a 0/25
+    U56   OOS   4a 0/25
+    B136  FULL  4a 0/25
+    B136  IS    4a 0/25
+    B136  OOS   4a 0/25
+
+------------------------------------------------------------------------------------------------------
+B7  COST LADDER 0/10/25/50 bps (sensitivity, never a selection axis)
+------------------------------------------------------------------------------------------------------
+    U56   FULL  4b passes:  0bps  3/25   10bps  2/25   25bps  1/25   50bps  0/25
+    U56   OOS   4b passes:  0bps  4/25   10bps  4/25   25bps  3/25   50bps  2/25
+    B136  FULL  4b passes:  0bps  1/25   10bps  1/25   25bps  0/25   50bps  0/25
+    B136  OOS   4b passes:  0bps  1/25   10bps  0/25   25bps  0/25   50bps  0/25
+
+------------------------------------------------------------------------------------------------------
+B8  IDEA 914's OFFSET-SPREAD CLAUSE on every 4b pass at d=0, 10 bps
+------------------------------------------------------------------------------------------------------
+    U56   OOS  D   inf g_hi 0.85:  DD margin +6.62 pp vs spread 2.039 pp (ratio 3.25x)  CAGR margin +0.04 pp vs spread 0.469 pp (ratio 0.08x)  stable 3/5 offsets
+    U56   OOS  D   inf g_hi 0.90:  DD margin +5.85 pp vs spread 2.159 pp (ratio 2.71x)  CAGR margin +0.68 pp vs spread 0.503 pp (ratio 1.35x)  stable 5/5 offsets
+    U56   FULL D   inf g_hi 0.95:  DD margin +5.08 pp vs spread 2.279 pp (ratio 2.23x)  CAGR margin +0.35 pp vs spread 0.503 pp (ratio 0.70x)  stable 4/5 offsets
+    U56   OOS  D   inf g_hi 0.95:  DD margin +5.08 pp vs spread 2.279 pp (ratio 2.23x)  CAGR margin +1.32 pp vs spread 0.540 pp (ratio 2.45x)  stable 5/5 offsets
+    U56   FULL D   inf g_hi 1.00:  DD margin +4.32 pp vs spread 2.398 pp (ratio 1.80x)  CAGR margin +0.93 pp vs spread 0.535 pp (ratio 1.75x)  stable 5/5 offsets
+    U56   OOS  D   inf g_hi 1.00:  DD margin +4.32 pp vs spread 2.398 pp (ratio 1.80x)  CAGR margin +1.97 pp vs spread 0.578 pp (ratio 3.41x)  stable 5/5 offsets
+    B136  FULL D   inf g_hi 1.00:  DD margin +4.07 pp vs spread 2.279 pp (ratio 1.79x)  CAGR margin +0.04 pp vs spread 0.625 pp (ratio 0.07x)  stable 4/5 offsets
+    B136  IS   D   inf g_hi 1.00:  DD margin +2.77 pp vs spread 1.727 pp (ratio 1.61x)  CAGR margin +0.34 pp vs spread 0.839 pp (ratio 0.41x)  stable 4/5 offsets
+
+------------------------------------------------------------------------------------------------------
+GATE SUMMARY
+------------------------------------------------------------------------------------------------------
+  [PASS] G1 local run_budget(inf,0.75) == engine.backtest
+  [PASS] G2 base*g_hi == rules_v2_weights(0.03,g_hi)
+  [PASS] G3 causality (last-day shock leaves gross path)
+  [PASS] G4 matched twin mean target gross (25 cells)
+  [PASS] G5 cost re-run determinism
+  [PASS] G6 clamp [0,g_hi] and g==g_hi at every peak
+  [PASS] G7 offset clipping census
+  [PASS] G8 SPY offset-invariance
+
+elapsed 274s
