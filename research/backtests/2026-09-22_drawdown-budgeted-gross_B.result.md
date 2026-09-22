@@ -33,8 +33,11 @@ finite-D cell fires; (ii) the **ceiling is a published dial from the live 0.75 u
 the "spend the budget" half — running *larger* than the live book while nothing has gone wrong —
 is priced, which 852's gross-1.00 parent structurally could not do; (iii) every cell is scored
 against a **matched-mean-gross twin** (gate G4, max|d| 1.110e-16), the null the record adopted
-after 852. Idea 69's PARKed `+0.027 / +0.030` matched-gross premium gets its first matched re-read
-on the live band book, and **it does not reproduce: the sign is negative in 120 of 120 cells.**
+after 852. Idea 69 measured a matched-constant-gross premium of `+0.027 / +0.030` Sharpe for a
+**different** budget construction (a trailing-1y SPY-vs-book ratio, T=0.70/L=252), which is NOT
+re-run here and is NOT refuted by this run. What this run establishes is narrower and its own:
+for the *equity-drawdown-proportional* response, the matched-gross premium is **negative in 120
+of 120 cells**. Whether 69's construction keeps its sign under this control is still open.
 
 ## (A) THE HEADLINE — the budget never flips a verdict, and the DD leg never binds
 
@@ -143,7 +146,10 @@ manufacture; the levels in (A), (B) and (F) are not repaired by it.
    real instrument with the wrong price tag — it buys ~1.5× more drawdown per unit of exposure than
    a flat de-gross and pays ~1.6× more CAGR for it, and CAGR is the only leg that binds.* That
    sentence explains idea 852's KILL, idea 69's PARK and this one with a single number.
-2. **A falsifier worth one run:** the ratio in (C) is fixed by the *shape* of the response. If any
+2. **The open leg this run does NOT close:** idea 69's trailing-1y SPY-vs-book budget has still
+   never been scored against a matched-mean-gross twin. It is a different response shape and this
+   run says nothing about it.
+3. **A falsifier worth one run:** the ratio in (C) is fixed by the *shape* of the response. If any
    response shape can be found whose CAGR cost per pp of exposure is at or below the flat dial's
    −0.174, the device becomes live again. Nothing here says such a shape exists.
-3. **No new KEEP, no PARK memo, no RULES change.**
+4. **No new KEEP, no PARK memo, no RULES change.**
