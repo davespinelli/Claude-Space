@@ -1,0 +1,304 @@
+# Idea 2098 (lane cloud, 2026-09-22) — does the QUIET-TAPE THRESHOLD have a STABLE ARGMAX or is q=0.40 a BOUNDARY PICK?
+# tuned dials (2): QUIET-TAPE DEFINITION ['NEARHI_EXP', 'NEARHI_252', 'VOL60'] x THRESHOLD q [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 0.9, 1.0] (2083 walked only [0.4, 0.5, 0.6, 0.8, 0.9, 1.0]; the NEW rungs are [0.1, 0.2, 0.3]).  reported, not tuned: PANEL ['U56', 'B136', 'SMALL'], chooser FORM ['QRESID', 'QRAW'], beta OLSD, cost x lag ladder at clearers.  shelf 4x5x4 = 80 books/panel, monthly, t+1, 10 bps.
+
+## U56: 56 names, 4708 rows (18.7y), book from 2009-01-13;  IS 2007 days, OOS 2441 days
+   80 books priced
+   SPY FULL 15.14%/0.885/-33.72% (H1 0.957 H2 0.826);  SPY OOS 15.29%/0.875/-33.72%  ->  4b bars: DD FULL -20.23% / OOS -20.23%, CAGR FULL 10.60% / OOS 10.70%
+   live RULES v2 FULL 8.62%/1.201/-12.05% (H1 1.228 H2 1.181), OOS S=1.277
+
+## B136: 136 names, 4708 rows (18.7y), book from 2009-01-13;  IS 2007 days, OOS 2441 days
+   80 books priced
+   SPY FULL 15.12%/0.884/-33.72% (H1 0.957 H2 0.825);  SPY OOS 15.26%/0.874/-33.72%  ->  4b bars: DD FULL -20.23% / OOS -20.23%, CAGR FULL 10.59% / OOS 10.68%
+   live RULES v2 FULL 7.96%/1.097/-12.24% (H1 1.230 H2 0.967), OOS S=1.102
+  SMALL: 720 cols -> 666 kept (54 dropped, max_1d_move >= 1.0)
+
+## SMALL: 665 names, 4203 rows (16.7y), book from 2011-01-13;  IS 1502 days, OOS 2441 days
+   80 books priced
+   SPY FULL 14.03%/0.857/-33.72% (H1 0.903 H2 0.841);  SPY OOS 15.29%/0.875/-33.72%  ->  4b bars: DD FULL -20.23% / OOS -20.23%, CAGR FULL 9.82% / OOS 10.70%
+   live RULES v2 FULL 4.26%/0.659/-14.16% (H1 0.805 H2 0.547), OOS S=0.545
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7/18.7/16.7y   (target >= 10)
+  GATE PASS  G1 q=0.40 NEARHI_EXP/QRESID/U56 reproduces 2083's pick: ('MADIST', 40, 1.0)   (target ('MADIST', 40, 1.0))
+  GATE PASS  G1b ... and 2083's OOS numbers (16.24%/1.3099/-17.67%): 16.2372%/1.3099/-17.6740%   (target |d| < 5e-5)
+  GATE PASS  G1c q=1.00 QRESID reproduces 911's U56 pick (MADIST/ALL/1.0, OOS -22.18%): ('MADIST', 'ALL', 1.0) -22.1818%   (target MADIST/ALL/1.0, -22.18%)
+  GATE PASS  G2 100% SPY book reads beta ~ 1.0: max|beta-1| = 0.0000   (target < 0.05)
+  GATE PASS  G3 no leverage (max shelf gross): 1.0000   (target <= 1.0)
+  GATE PASS  G4 distress series is CAUSAL (truncated tape == full tape on overlap): max|diff| = 0.00e+00   (target == 0)
+  GATE PASS  G5 every grid point published: 165 rows = 3 panels x (3 defs x 9 q x 2 forms + 1 IS_SHARPE)   (target == 165)
+  GATE PASS  G6a q=1.00 keeps EVERY IS day for both NEAR-HIGH definitions: U56:2007/2007; U56:2007/2007; U56:2007/2007; U56:2007/2007; B136:2007/2007; B136:2007/2007; B136:2007/2007; B136:2007/20   (target equal on all)
+  GATE PASS  G6b q=1.00 VOL60 drops EXACTLY its 20-day min_periods warm-up (inherited from 2083's definition; the mask is still causal and the 2083 comparison is unaffected): U56:20; U56:20; B136:20; B136:20; SMALL:20; SMALL:20   (target == 19 or 20 everywhere)
+  GATE PASS  G6b REACH > 0 iff keep4b: 165 of 165   (target all)
+
+## ARM 0 — THE FULL GRID (165 picks; rule 8: IS 2009-2016 chooses, OOS read once).  NEW = a rung 2083 never walked.
+
+   --- U56 ---
+   NEW NEARHI_EXP  q=0.10 QRESID    ('MOM', 20, 1.0)         quietDD  -1.14% ( 312d) -> FULL 19.67%/1.197/-25.25%  OOS 22.24%/1.272/-25.25%  ddgap  -5.02pp  REACH -0.2481 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.10 QRAW      ('MOM', 40, 0.25)        quietDD  -0.13% ( 312d) -> FULL  3.57%/1.188/ -4.80%  OOS  3.94%/1.291/ -4.80%  ddgap +15.43pp  REACH -0.6635 (m5_cagrF)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.20 QRESID    ('MOM', 20, 1.0)         quietDD  -1.14% ( 402d) -> FULL 19.67%/1.197/-25.25%  OOS 22.24%/1.272/-25.25%  ddgap  -5.02pp  REACH -0.2481 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.20 QRAW      ('MOMVS', 40, 0.25)      quietDD  -0.13% ( 402d) -> FULL  3.50%/1.188/ -4.86%  OOS  3.79%/1.271/ -4.86%  ddgap +15.37pp  REACH -0.6696 (m5_cagrF)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.30 QRESID    ('MOM', 40, 1.0)         quietDD  -0.87% ( 603d) -> FULL 14.56%/1.195/-17.96%  OOS 16.17%/1.297/-17.96%  ddgap  +2.27pp  REACH +0.1122 (m6_ddO)  4bF=1 4bO=1 4a=0
+   NEW NEARHI_EXP  q=0.30 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.21% ( 603d) -> FULL  2.59%/0.998/ -4.83%  OOS  2.46%/0.925/ -4.83%  ddgap +15.40pp  REACH -0.7697 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.40 QRESID    ('MADIST', 40, 1.0)      quietDD  -1.54% ( 803d) -> FULL 14.57%/1.197/-17.67%  OOS 16.24%/1.310/-17.67%  ddgap  +2.56pp  REACH +0.1264 (m6_ddO)  4bF=1 4bO=1 4a=0
+       NEARHI_EXP  q=0.40 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.30% ( 803d) -> FULL  2.59%/0.998/ -4.83%  OOS  2.46%/0.925/ -4.83%  ddgap +15.40pp  REACH -0.7697 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.50 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -2.21% (1004d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.50 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.46% (1004d) -> FULL  3.15%/1.151/ -4.16%  OOS  3.33%/1.228/ -4.16%  ddgap +16.07pp  REACH -0.7030 (m5_cagrF)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.60 QRESID    ('MOM', 'ALL', 1.0)      quietDD  -3.15% (1204d) -> FULL 15.83%/1.143/-22.18%  OOS 17.47%/1.219/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.60 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.64% (1204d) -> FULL  2.59%/0.998/ -4.83%  OOS  2.46%/0.925/ -4.83%  ddgap +15.40pp  REACH -0.7697 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.80 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.83% (1605d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.80 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -1.16% (1605d) -> FULL  1.55%/0.785/ -4.37%  OOS  1.42%/0.681/ -4.37%  ddgap +15.86pp  REACH -0.8676 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.90 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -7.91% (1806d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.90 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.67% (1806d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=1.00 QRESID    ('MADIST', 'ALL', 1.0)   quietDD -13.24% (2007d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=1.00 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.80% (2007d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.10 QRESID    ('MOM', 20, 1.0)         quietDD  -1.14% ( 312d) -> FULL 19.67%/1.197/-25.25%  OOS 22.24%/1.272/-25.25%  ddgap  -5.02pp  REACH -0.2481 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.10 QRAW      ('MOM', 40, 0.25)        quietDD  -0.13% ( 312d) -> FULL  3.57%/1.188/ -4.80%  OOS  3.94%/1.291/ -4.80%  ddgap +15.43pp  REACH -0.6635 (m5_cagrF)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.20 QRESID    ('MOM', 20, 1.0)         quietDD  -1.14% ( 402d) -> FULL 19.67%/1.197/-25.25%  OOS 22.24%/1.272/-25.25%  ddgap  -5.02pp  REACH -0.2481 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.20 QRAW      ('MOMVS', 40, 0.25)      quietDD  -0.13% ( 402d) -> FULL  3.50%/1.188/ -4.86%  OOS  3.79%/1.271/ -4.86%  ddgap +15.37pp  REACH -0.6696 (m5_cagrF)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.30 QRESID    ('MOM', 40, 1.0)         quietDD  -0.87% ( 603d) -> FULL 14.56%/1.195/-17.96%  OOS 16.17%/1.297/-17.96%  ddgap  +2.27pp  REACH +0.1122 (m6_ddO)  4bF=1 4bO=1 4a=0
+   NEW NEARHI_252  q=0.30 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.21% ( 603d) -> FULL  2.59%/0.998/ -4.83%  OOS  2.46%/0.925/ -4.83%  ddgap +15.40pp  REACH -0.7697 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.40 QRESID    ('MADIST', 40, 1.0)      quietDD  -1.54% ( 803d) -> FULL 14.57%/1.197/-17.67%  OOS 16.24%/1.310/-17.67%  ddgap  +2.56pp  REACH +0.1264 (m6_ddO)  4bF=1 4bO=1 4a=0
+       NEARHI_252  q=0.40 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.30% ( 803d) -> FULL  2.59%/0.998/ -4.83%  OOS  2.46%/0.925/ -4.83%  ddgap +15.40pp  REACH -0.7697 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.50 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -2.21% (1004d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.50 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.46% (1004d) -> FULL  3.15%/1.151/ -4.16%  OOS  3.33%/1.228/ -4.16%  ddgap +16.07pp  REACH -0.7030 (m5_cagrF)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.60 QRESID    ('MOM', 'ALL', 1.0)      quietDD  -3.15% (1204d) -> FULL 15.83%/1.143/-22.18%  OOS 17.47%/1.219/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.60 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.64% (1204d) -> FULL  2.59%/0.998/ -4.83%  OOS  2.46%/0.925/ -4.83%  ddgap +15.40pp  REACH -0.7697 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.80 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.83% (1605d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.80 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -1.16% (1605d) -> FULL  1.55%/0.785/ -4.37%  OOS  1.42%/0.681/ -4.37%  ddgap +15.86pp  REACH -0.8676 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.90 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -7.91% (1806d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.90 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.67% (1806d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=1.00 QRESID    ('MADIST', 'ALL', 1.0)   quietDD -13.24% (2007d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=1.00 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.80% (2007d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.10 QRESID    ('MOM', 10, 1.0)         quietDD  -7.25% ( 199d) -> FULL 22.50%/1.128/-29.79%  OOS 23.21%/1.102/-29.79%  ddgap  -9.56pp  REACH -0.4727 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.10 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -0.98% ( 199d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.20 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -6.02% ( 398d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.20 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -0.97% ( 398d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.30 QRESID    ('LOWVOL', 20, 1.0)      quietDD  -6.67% ( 596d) -> FULL 10.41%/0.999/-18.53%  OOS  9.83%/0.923/-18.53%  ddgap  +1.70pp  REACH -0.0810 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.30 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -0.97% ( 596d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.40 QRESID    ('LOWVOL', 20, 1.0)      quietDD  -8.81% ( 795d) -> FULL 10.41%/0.999/-18.53%  OOS  9.83%/0.923/-18.53%  ddgap  +1.70pp  REACH -0.0810 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.40 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.77% ( 795d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.50 QRESID    ('LOWVOL', 20, 1.0)      quietDD  -8.06% ( 994d) -> FULL 10.41%/0.999/-18.53%  OOS  9.83%/0.923/-18.53%  ddgap  +1.70pp  REACH -0.0810 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.50 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.95% ( 994d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.60 QRESID    ('MOMVS', 20, 1.0)       quietDD  -9.93% (1192d) -> FULL 14.99%/1.069/-23.64%  OOS 15.18%/1.042/-23.64%  ddgap  -3.41pp  REACH -0.1686 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.60 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.81% (1192d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.80 QRESID    ('MOMVS', 40, 1.0)       quietDD -11.84% (1589d) -> FULL 14.29%/1.195/-18.17%  OOS 15.51%/1.276/-18.17%  ddgap  +2.06pp  REACH +0.1016 (m4_ddF)  4bF=1 4bO=1 4a=0
+       VOL60       q=0.80 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -2.87% (1589d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.90 QRESID    ('MADIST', 'ALL', 1.0)   quietDD -13.24% (1788d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.90 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.80% (1788d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=1.00 QRESID    ('MADIST', 'ALL', 1.0)   quietDD -13.24% (1987d) -> FULL 15.82%/1.141/-22.18%  OOS 17.45%/1.217/-22.18%  ddgap  -1.95pp  REACH -0.0965 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=1.00 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.80% (1987d) -> FULL  1.00%/0.706/ -4.46%  OOS  0.70%/0.470/ -4.46%  ddgap +15.77pp  REACH -0.9343 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       -           q=  -   IS_SHARPE ('MOM', 5, 1.0)          quietDD -21.98% (2007d) -> FULL 24.93%/1.016/-34.61%  OOS 20.92%/0.845/-34.61%  ddgap -14.38pp  REACH -0.7106 (m6_ddO)  4bF=0 4bO=0 4a=0
+
+   --- B136 ---
+   NEW NEARHI_EXP  q=0.10 QRESID    ('MADIST', 40, 1.0)      quietDD  -0.73% ( 315d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.10 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.17% ( 315d) -> FULL  2.01%/0.818/ -5.60%  OOS  1.58%/0.603/ -5.60%  ddgap +14.63pp  REACH -0.8522 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.20 QRESID    ('MADIST', 40, 1.0)      quietDD  -0.97% ( 402d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.20 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.17% ( 402d) -> FULL  2.01%/0.818/ -5.60%  OOS  1.58%/0.603/ -5.60%  ddgap +14.63pp  REACH -0.8522 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.30 QRESID    ('MOM', 40, 1.0)         quietDD  -1.46% ( 602d) -> FULL 18.68%/1.097/-30.73%  OOS 19.27%/1.089/-30.73%  ddgap -10.50pp  REACH -0.5190 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.30 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.24% ( 602d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.40 QRESID    ('MOM', 40, 1.0)         quietDD  -2.28% ( 803d) -> FULL 18.68%/1.097/-30.73%  OOS 19.27%/1.089/-30.73%  ddgap -10.50pp  REACH -0.5190 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.40 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.42% ( 803d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.50 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -2.03% (1004d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.50 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.51% (1004d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.60 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -2.62% (1204d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.60 QRAW      ('MADIST', 'ALL', 0.25)  quietDD  -0.66% (1204d) -> FULL  3.83%/1.059/ -7.58%  OOS  3.95%/1.070/ -7.58%  ddgap +12.65pp  REACH -0.6382 (m5_cagrF)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.80 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.88% (1605d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.80 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -1.23% (1605d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.90 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -7.84% (1806d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.90 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -1.44% (1806d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=1.00 QRESID    ('MADIST', 40, 1.0)      quietDD -15.28% (2007d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=1.00 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.73% (2007d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.10 QRESID    ('MADIST', 40, 1.0)      quietDD  -0.73% ( 315d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.10 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.17% ( 315d) -> FULL  2.01%/0.818/ -5.60%  OOS  1.58%/0.603/ -5.60%  ddgap +14.63pp  REACH -0.8522 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.20 QRESID    ('MADIST', 40, 1.0)      quietDD  -0.97% ( 402d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.20 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.17% ( 402d) -> FULL  2.01%/0.818/ -5.60%  OOS  1.58%/0.603/ -5.60%  ddgap +14.63pp  REACH -0.8522 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.30 QRESID    ('MOM', 40, 1.0)         quietDD  -1.46% ( 602d) -> FULL 18.68%/1.097/-30.73%  OOS 19.27%/1.089/-30.73%  ddgap -10.50pp  REACH -0.5190 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.30 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.24% ( 602d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.40 QRESID    ('MOM', 40, 1.0)         quietDD  -2.28% ( 803d) -> FULL 18.68%/1.097/-30.73%  OOS 19.27%/1.089/-30.73%  ddgap -10.50pp  REACH -0.5190 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.40 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.42% ( 803d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.50 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -2.03% (1004d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.50 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.51% (1004d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.60 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -2.62% (1204d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.60 QRAW      ('MADIST', 'ALL', 0.25)  quietDD  -0.66% (1204d) -> FULL  3.83%/1.059/ -7.58%  OOS  3.95%/1.070/ -7.58%  ddgap +12.65pp  REACH -0.6382 (m5_cagrF)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.80 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.88% (1605d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.80 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -1.23% (1605d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.90 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -7.84% (1806d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.90 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -1.44% (1806d) -> FULL  2.74%/0.936/ -6.94%  OOS  2.44%/0.793/ -6.94%  ddgap +13.28pp  REACH -0.7720 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=1.00 QRESID    ('MADIST', 40, 1.0)      quietDD -15.28% (2007d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=1.00 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.73% (2007d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.10 QRESID    ('MOM', 10, 1.0)         quietDD  -5.81% ( 199d) -> FULL 24.92%/1.084/-35.79%  OOS 24.16%/0.999/-35.79%  ddgap -15.56pp  REACH -0.7693 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.10 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -0.85% ( 199d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.20 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.45% ( 398d) -> FULL 15.55%/1.062/-28.19%  OOS 15.99%/1.068/-28.19%  ddgap  -7.96pp  REACH -0.3935 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.20 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -0.85% ( 398d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.30 QRESID    ('MOM', 10, 1.0)         quietDD -11.20% ( 596d) -> FULL 24.92%/1.084/-35.79%  OOS 24.16%/0.999/-35.79%  ddgap -15.56pp  REACH -0.7693 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.30 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -0.85% ( 596d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.40 QRESID    ('LOWVOL', 40, 1.0)      quietDD  -8.38% ( 795d) -> FULL 11.01%/0.936/-26.23%  OOS  9.61%/0.791/-26.23%  ddgap  -6.00pp  REACH -0.2968 (m4_ddF)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.40 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -1.86% ( 795d) -> FULL  2.01%/0.818/ -5.60%  OOS  1.58%/0.603/ -5.60%  ddgap +14.63pp  REACH -0.8522 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.50 QRESID    ('MOM', 20, 1.0)         quietDD -13.01% ( 994d) -> FULL 21.84%/1.099/-33.68%  OOS 20.81%/1.002/-33.68%  ddgap -13.45pp  REACH -0.6647 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.50 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -1.81% ( 994d) -> FULL  1.34%/0.698/ -4.69%  OOS  1.18%/0.588/ -4.69%  ddgap +15.54pp  REACH -0.8894 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.60 QRESID    ('MOMVS', 20, 1.0)       quietDD  -8.94% (1192d) -> FULL 14.16%/0.987/-24.17%  OOS 13.42%/0.915/-24.17%  ddgap  -3.94pp  REACH -0.1947 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.60 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.37% (1192d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.80 QRESID    ('MADIST', 40, 1.0)      quietDD -17.08% (1589d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.80 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.36% (1589d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.90 QRESID    ('MADIST', 40, 1.0)      quietDD -15.28% (1788d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.90 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.36% (1788d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=1.00 QRESID    ('MADIST', 40, 1.0)      quietDD -15.28% (1987d) -> FULL 18.08%/1.075/-29.35%  OOS 18.28%/1.054/-29.35%  ddgap  -9.12pp  REACH -0.4509 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=1.00 QRAW      ('LOWVOL', 5, 0.25)      quietDD  -1.36% (1987d) -> FULL  0.99%/0.685/ -4.89%  OOS  0.64%/0.417/ -4.89%  ddgap +15.34pp  REACH -0.9400 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       -           q=  -   IS_SHARPE ('MOM', 20, 1.0)         quietDD -16.91% (2007d) -> FULL 21.84%/1.099/-33.68%  OOS 20.81%/1.002/-33.68%  ddgap -13.45pp  REACH -0.6647 (m6_ddO)  4bF=0 4bO=0 4a=0
+
+   --- SMALL ---
+   NEW NEARHI_EXP  q=0.10 QRESID    ('MOM', 'ALL', 1.0)      quietDD  -1.71% ( 224d) -> FULL  8.39%/0.562/-50.36%  OOS  5.63%/0.389/-50.36%  ddgap -30.13pp  REACH -1.4893 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.10 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.26% ( 224d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.20 QRESID    ('MOM', 'ALL', 1.0)      quietDD  -1.45% ( 301d) -> FULL  8.39%/0.562/-50.36%  OOS  5.63%/0.389/-50.36%  ddgap -30.13pp  REACH -1.4893 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.20 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.36% ( 301d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.30 QRESID    ('MADIST', 40, 1.0)      quietDD  -3.43% ( 452d) -> FULL  8.04%/0.483/-48.02%  OOS  7.33%/0.438/-48.02%  ddgap -27.79pp  REACH -1.3737 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_EXP  q=0.30 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -0.47% ( 452d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.40 QRESID    ('MOM', 40, 1.0)         quietDD  -3.73% ( 601d) -> FULL  6.88%/0.432/-50.25%  OOS  4.10%/0.296/-50.25%  ddgap -30.02pp  REACH -1.4839 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.40 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -0.62% ( 601d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.50 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.26% ( 751d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.50 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.65% ( 751d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.60 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.80% ( 901d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.60 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.77% ( 901d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.80 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -6.44% (1201d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.80 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -1.02% (1201d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.90 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -8.02% (1351d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=0.90 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -1.15% (1351d) -> FULL  2.48%/0.904/-10.89%  OOS  1.82%/0.596/-10.89%  ddgap  +9.34pp  REACH -0.8297 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=1.00 QRESID    ('MADIST', 40, 1.0)      quietDD -20.76% (1502d) -> FULL  8.04%/0.483/-48.02%  OOS  7.33%/0.438/-48.02%  ddgap -27.79pp  REACH -1.3737 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_EXP  q=1.00 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -1.78% (1502d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.10 QRESID    ('MOM', 'ALL', 1.0)      quietDD  -1.71% ( 224d) -> FULL  8.39%/0.562/-50.36%  OOS  5.63%/0.389/-50.36%  ddgap -30.13pp  REACH -1.4893 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.10 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.26% ( 224d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.20 QRESID    ('MOM', 'ALL', 1.0)      quietDD  -1.45% ( 301d) -> FULL  8.39%/0.562/-50.36%  OOS  5.63%/0.389/-50.36%  ddgap -30.13pp  REACH -1.4893 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.20 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.36% ( 301d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.30 QRESID    ('MADIST', 40, 1.0)      quietDD  -3.43% ( 452d) -> FULL  8.04%/0.483/-48.02%  OOS  7.33%/0.438/-48.02%  ddgap -27.79pp  REACH -1.3737 (m6_ddO)  4bF=0 4bO=0 4a=0
+   NEW NEARHI_252  q=0.30 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -0.47% ( 452d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.40 QRESID    ('MOM', 40, 1.0)         quietDD  -3.73% ( 601d) -> FULL  6.88%/0.432/-50.25%  OOS  4.10%/0.296/-50.25%  ddgap -30.02pp  REACH -1.4839 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.40 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -0.62% ( 601d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.50 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.26% ( 751d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.50 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.65% ( 751d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.60 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -4.80% ( 901d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.60 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -0.77% ( 901d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.80 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -6.44% (1201d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.80 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -1.02% (1201d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.90 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -8.02% (1351d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=0.90 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -1.15% (1351d) -> FULL  2.48%/0.904/-10.89%  OOS  1.82%/0.596/-10.89%  ddgap  +9.34pp  REACH -0.8297 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=1.00 QRESID    ('MADIST', 40, 1.0)      quietDD -20.76% (1502d) -> FULL  8.04%/0.483/-48.02%  OOS  7.33%/0.438/-48.02%  ddgap -27.79pp  REACH -1.3737 (m6_ddO)  4bF=0 4bO=0 4a=0
+       NEARHI_252  q=1.00 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -1.78% (1502d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.10 QRESID    ('MOM', 'ALL', 1.0)      quietDD  -6.11% ( 149d) -> FULL  8.39%/0.562/-50.36%  OOS  5.63%/0.389/-50.36%  ddgap -30.13pp  REACH -1.4893 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.10 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -0.95% ( 149d) -> FULL  2.48%/0.904/-10.89%  OOS  1.82%/0.596/-10.89%  ddgap  +9.34pp  REACH -0.8297 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.20 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -8.75% ( 297d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.20 QRAW      ('LOWVOL', 40, 0.25)     quietDD  -1.13% ( 297d) -> FULL  2.33%/0.763/-11.49%  OOS  1.69%/0.497/-11.49%  ddgap  +8.74pp  REACH -0.8424 (m7_cagrO)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.30 QRESID    ('MADIST', 'ALL', 1.0)   quietDD  -7.86% ( 445d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+   NEW VOL60       q=0.30 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -1.39% ( 445d) -> FULL  2.48%/0.904/-10.89%  OOS  1.82%/0.596/-10.89%  ddgap  +9.34pp  REACH -0.8297 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.40 QRESID    ('MADIST', 'ALL', 1.0)   quietDD -11.61% ( 593d) -> FULL  8.27%/0.556/-50.12%  OOS  5.64%/0.390/-50.12%  ddgap -29.89pp  REACH -1.4774 (m4_ddF)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.40 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -1.28% ( 593d) -> FULL  2.48%/0.904/-10.89%  OOS  1.82%/0.596/-10.89%  ddgap  +9.34pp  REACH -0.8297 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.50 QRESID    ('MADIST', 20, 1.0)      quietDD -17.37% ( 741d) -> FULL  9.95%/0.526/-44.81%  OOS  9.00%/0.477/-44.81%  ddgap -24.58pp  REACH -1.2151 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.50 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -1.51% ( 741d) -> FULL  2.48%/0.904/-10.89%  OOS  1.82%/0.596/-10.89%  ddgap  +9.34pp  REACH -0.8297 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.60 QRESID    ('MOMVS', 40, 1.0)       quietDD  -8.86% ( 889d) -> FULL  8.60%/0.618/-45.53%  OOS  5.17%/0.388/-45.53%  ddgap -25.30pp  REACH -1.2508 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.60 QRAW      ('LOWVOL', 20, 0.25)     quietDD  -1.11% ( 889d) -> FULL  2.48%/0.904/-10.89%  OOS  1.82%/0.596/-10.89%  ddgap  +9.34pp  REACH -0.8297 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.80 QRESID    ('LOWVOL', 40, 1.0)      quietDD  -7.57% (1185d) -> FULL  8.91%/0.732/-43.20%  OOS  5.92%/0.468/-43.20%  ddgap -22.97pp  REACH -1.1353 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.80 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -1.32% (1185d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.90 QRESID    ('LOWVOL', 40, 1.0)      quietDD  -7.58% (1333d) -> FULL  8.91%/0.732/-43.20%  OOS  5.92%/0.468/-43.20%  ddgap -22.97pp  REACH -1.1353 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=0.90 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -1.32% (1333d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       VOL60       q=1.00 QRESID    ('MADIST', 40, 1.0)      quietDD -20.76% (1482d) -> FULL  8.04%/0.483/-48.02%  OOS  7.33%/0.438/-48.02%  ddgap -27.79pp  REACH -1.3737 (m6_ddO)  4bF=0 4bO=0 4a=0
+       VOL60       q=1.00 QRAW      ('LOWVOL', 10, 0.25)     quietDD  -1.78% (1482d) -> FULL  2.15%/0.832/ -9.23%  OOS  1.35%/0.473/ -9.23%  ddgap +11.00pp  REACH -0.8737 (m7_cagrO)  4bF=0 4bO=0 4a=0
+       -           q=  -   IS_SHARPE ('LOWVOL', 10, 1.0)      quietDD  -6.99% (1502d) -> FULL  8.24%/0.803/-35.26%  OOS  4.71%/0.444/-35.26%  ddgap -15.03pp  REACH -0.7430 (m4_ddF)  4bF=0 4bO=0 4a=0
+
+## ARM 1 — WHERE DOES REACH PEAK ON THE q LADDER?  (18 curves, one per panel x definition x form; ENDPOINT = q* in {0.10, 1.00})
+   U56    NEARHI_EXP  QRESID  q* = 0.40 INTERIOR  REACH* +0.1264  [q0.10 -0.2481 | q0.40 +0.1264 | q1.00 -0.0965]  books 5  4b 2/9
+   U56    NEARHI_EXP  QRAW    q* = 0.10 ENDPOINT  REACH* -0.6635  [q0.10 -0.6635 | q0.40 -0.7697 | q1.00 -0.9343]  books 6  4b 0/9
+   U56    NEARHI_252  QRESID  q* = 0.40 INTERIOR  REACH* +0.1264  [q0.10 -0.2481 | q0.40 +0.1264 | q1.00 -0.0965]  books 5  4b 2/9
+   U56    NEARHI_252  QRAW    q* = 0.10 ENDPOINT  REACH* -0.6635  [q0.10 -0.6635 | q0.40 -0.7697 | q1.00 -0.9343]  books 6  4b 0/9
+   U56    VOL60       QRESID  q* = 0.80 INTERIOR  REACH* +0.1016  [q0.10 -0.4727 | q0.40 -0.0810 | q1.00 -0.0965]  books 5  4b 1/9
+   U56    VOL60       QRAW    q* = 0.10 ENDPOINT  REACH* -0.9343  [q0.10 -0.9343 | q0.40 -0.9343 | q1.00 -0.9343]  books 1  4b 0/9
+   B136   NEARHI_EXP  QRESID  q* = 0.50 INTERIOR  REACH* -0.3935  [q0.10 -0.4509 | q0.40 -0.5190 | q1.00 -0.4509]  books 3  4b 0/9
+   B136   NEARHI_EXP  QRAW    q* = 0.60 INTERIOR  REACH* -0.6382  [q0.10 -0.8522 | q0.40 -0.7720 | q1.00 -0.9400]  books 4  4b 0/9
+   B136   NEARHI_252  QRESID  q* = 0.50 INTERIOR  REACH* -0.3935  [q0.10 -0.4509 | q0.40 -0.5190 | q1.00 -0.4509]  books 3  4b 0/9
+   B136   NEARHI_252  QRAW    q* = 0.60 INTERIOR  REACH* -0.6382  [q0.10 -0.8522 | q0.40 -0.7720 | q1.00 -0.9400]  books 4  4b 0/9
+   B136   VOL60       QRESID  q* = 0.60 INTERIOR  REACH* -0.1947  [q0.10 -0.7693 | q0.40 -0.2968 | q1.00 -0.4509]  books 6  4b 0/9
+   B136   VOL60       QRAW    q* = 0.40 INTERIOR  REACH* -0.8522  [q0.10 -0.9400 | q0.40 -0.8522 | q1.00 -0.9400]  books 3  4b 0/9
+   SMALL  NEARHI_EXP  QRESID  q* = 0.30 INTERIOR  REACH* -1.3737  [q0.10 -1.4893 | q0.40 -1.4839 | q1.00 -1.3737]  books 4  4b 0/9
+   SMALL  NEARHI_EXP  QRAW    q* = 0.90 INTERIOR  REACH* -0.8297  [q0.10 -0.8424 | q0.40 -0.8737 | q1.00 -0.8737]  books 3  4b 0/9
+   SMALL  NEARHI_252  QRESID  q* = 0.30 INTERIOR  REACH* -1.3737  [q0.10 -1.4893 | q0.40 -1.4839 | q1.00 -1.3737]  books 4  4b 0/9
+   SMALL  NEARHI_252  QRAW    q* = 0.90 INTERIOR  REACH* -0.8297  [q0.10 -0.8424 | q0.40 -0.8737 | q1.00 -0.8737]  books 3  4b 0/9
+   SMALL  VOL60       QRESID  q* = 0.80 INTERIOR  REACH* -1.1353  [q0.10 -1.4893 | q0.40 -1.4774 | q1.00 -1.3737]  books 6  4b 0/9
+   SMALL  VOL60       QRAW    q* = 0.10 ENDPOINT  REACH* -0.8297  [q0.10 -0.8297 | q0.40 -0.8297 | q1.00 -0.8737]  books 3  4b 0/9
+
+   V1: interior argmax on 14 of 18 curves  ->  V1 TRIGGERED
+
+## ARM 2 — 2083's OWN CELL: does its q=0.40 pass keep improving below 0.40?
+   U56 NEARHI_EXP  QRESID   q* = 0.40 (not at the low boundary)
+       q=0.10 NEW ('MOM', 20, 1.0)         OOS 22.24%/1.272/-25.25% ddgap  -5.02pp REACH -0.2481 4b=0
+       q=0.20 NEW ('MOM', 20, 1.0)         OOS 22.24%/1.272/-25.25% ddgap  -5.02pp REACH -0.2481 4b=0
+       q=0.30 NEW ('MOM', 40, 1.0)         OOS 16.17%/1.297/-17.96% ddgap  +2.27pp REACH +0.1122 4b=1
+       q=0.40     ('MADIST', 40, 1.0)      OOS 16.24%/1.310/-17.67% ddgap  +2.56pp REACH +0.1264 4b=1
+       q=0.50     ('MADIST', 'ALL', 1.0)   OOS 17.45%/1.217/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+       q=0.60     ('MOM', 'ALL', 1.0)      OOS 17.47%/1.219/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+       q=0.80     ('MADIST', 'ALL', 1.0)   OOS 17.45%/1.217/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+       q=0.90     ('MADIST', 'ALL', 1.0)   OOS 17.45%/1.217/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+       q=1.00     ('MADIST', 'ALL', 1.0)   OOS 17.45%/1.217/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+   U56 NEARHI_252  QRESID   q* = 0.40 (not at the low boundary)
+       q=0.10 NEW ('MOM', 20, 1.0)         OOS 22.24%/1.272/-25.25% ddgap  -5.02pp REACH -0.2481 4b=0
+       q=0.20 NEW ('MOM', 20, 1.0)         OOS 22.24%/1.272/-25.25% ddgap  -5.02pp REACH -0.2481 4b=0
+       q=0.30 NEW ('MOM', 40, 1.0)         OOS 16.17%/1.297/-17.96% ddgap  +2.27pp REACH +0.1122 4b=1
+       q=0.40     ('MADIST', 40, 1.0)      OOS 16.24%/1.310/-17.67% ddgap  +2.56pp REACH +0.1264 4b=1
+       q=0.50     ('MADIST', 'ALL', 1.0)   OOS 17.45%/1.217/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+       q=0.60     ('MOM', 'ALL', 1.0)      OOS 17.47%/1.219/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+       q=0.80     ('MADIST', 'ALL', 1.0)   OOS 17.45%/1.217/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+       q=0.90     ('MADIST', 'ALL', 1.0)   OOS 17.45%/1.217/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+       q=1.00     ('MADIST', 'ALL', 1.0)   OOS 17.45%/1.217/-22.18% ddgap  -1.95pp REACH -0.0965 4b=0
+   ->  V2 TRIGGERED
+
+## ARM 3 — DOES THE SUB-0.40 REGION REACH ANYTHING?  grid points with q<0.40 clearing 4b FULL+OOS: 2 of 54  ->  V3 TRIGGERED
+   whole grid: 4b FULL+OOS 5 of 165 (panels ['U56']); 4b FULL alone 5; 4b OOS alone 5; 4a 0
+   clearing points:
+     U56    NEARHI_EXP  q=0.30 QRESID  ('MOM', 40, 1.0)         FULL 14.56%/1.195/-17.96%  OOS 16.17%/1.297/-17.96%  REACH +0.1122
+     U56    NEARHI_EXP  q=0.40 QRESID  ('MADIST', 40, 1.0)      FULL 14.57%/1.197/-17.67%  OOS 16.24%/1.310/-17.67%  REACH +0.1264
+     U56    NEARHI_252  q=0.30 QRESID  ('MOM', 40, 1.0)         FULL 14.56%/1.195/-17.96%  OOS 16.17%/1.297/-17.96%  REACH +0.1122
+     U56    NEARHI_252  q=0.40 QRESID  ('MADIST', 40, 1.0)      FULL 14.57%/1.197/-17.67%  OOS 16.24%/1.310/-17.67%  REACH +0.1264
+     U56    VOL60       q=0.80 QRESID  ('MOMVS', 40, 1.0)       FULL 14.29%/1.195/-18.17%  OOS 15.51%/1.276/-18.17%  REACH +0.1016
+   binding leg over the whole grid: m7_cagrO=76, m6_ddO=57, m4_ddF=24, m5_cagrF=8
+
+## ARM 4 — POST-HOC DIAGNOSTIC (NOT pre-stated; added after ARM 3 showed every clearer is a k=40 / gross 1.00 book).  What is the SHELF'S OWN 4b base rate, i.e. how much of the reach is the CHOOSER and how much is the CELL?
+   U56    shelf 4b FULL+OOS: 20 of 80 books (25.0%);  4a: 0 of 80
+          clearing books: ('LOWVOL', 'ALL', 0.75), ('LOWVOL', 40, 1.0), ('MADIST', 'ALL', 0.75), ('MADIST', 10, 0.5), ('MADIST', 10, 0.75), ('MADIST', 20, 0.75), ('MADIST', 40, 0.75), ('MADIST', 40, 1.0), ('MADIST', 5, 0.5), ('MOM', 'ALL', 0.75), ('MOM', 10, 0.5), ('MOM', 20, 0.75), ('MOM', 40, 0.75), ('MOM', 40, 1.0), ('MOMVS', 'ALL', 0.75), ('MOMVS', 10, 1.0), ('MOMVS', 20, 0.75), ('MOMVS', 40, 0.75), ('MOMVS', 40, 1.0), ('MOMVS', 5, 1.0)
+          widths ['10', '20', '40', '5', 'ALL'], grosses [0.5, 0.75, 1.0], families ['LOWVOL', 'MADIST', 'MOM', 'MOMVS']
+          QRESID picks clearing 4b: 5 of 27 (18.5%)  vs shelf base rate 25.0%  -> lift -6.5%
+   B136   shelf 4b FULL+OOS: 4 of 80 books (5.0%);  4a: 2 of 80
+          clearing books: ('MADIST', 10, 0.5), ('MADIST', 20, 0.5), ('MADIST', 5, 0.5), ('MOM', 10, 0.5)
+          widths ['10', '20', '5'], grosses [0.5], families ['MADIST', 'MOM']
+          QRESID picks clearing 4b: 0 of 27 (0.0%)  vs shelf base rate 5.0%  -> lift -5.0%
+   SMALL  shelf 4b FULL+OOS: 0 of 80 books (0.0%);  4a: 0 of 80
+          QRESID picks clearing 4b: 0 of 27 (0.0%)  vs shelf base rate 0.0%  -> lift +0.0%
+
+## ROBUSTNESS — cost {0,10,25,50} bps x SIGNAL LAG {0,+1 day} at every book reached by a 4b-clearing grid point
+   U56    ('MOM', 40, 1.0)         lag+0    0bps  FULL 14.92%/1.221/-17.90%  OOS 16.55%/1.324/-17.90%  4b=1
+   U56    ('MOM', 40, 1.0)         lag+0   10bps  FULL 14.56%/1.195/-17.96%  OOS 16.17%/1.297/-17.96%  4b=1
+   U56    ('MOM', 40, 1.0)         lag+0   25bps  FULL 14.03%/1.156/-18.05%  OOS 15.59%/1.257/-18.05%  4b=1
+   U56    ('MOM', 40, 1.0)         lag+0   50bps  FULL 13.14%/1.091/-18.20%  OOS 14.64%/1.189/-18.20%  4b=1
+   U56    ('MOM', 40, 1.0)         lag+1    0bps  FULL 15.07%/1.217/-19.56%  OOS 16.81%/1.325/-19.56%  4b=1
+   U56    ('MOM', 40, 1.0)         lag+1   10bps  FULL 14.71%/1.191/-19.61%  OOS 16.43%/1.299/-19.61%  4b=1
+   U56    ('MOM', 40, 1.0)         lag+1   25bps  FULL 14.17%/1.152/-19.69%  OOS 15.85%/1.259/-19.69%  4b=1
+   U56    ('MOM', 40, 1.0)         lag+1   50bps  FULL 13.28%/1.087/-19.83%  OOS 14.90%/1.192/-19.83%  4b=1
+   U56    ('MADIST', 40, 1.0)      lag+0    0bps  FULL 14.93%/1.222/-17.62%  OOS 16.62%/1.336/-17.62%  4b=1
+   U56    ('MADIST', 40, 1.0)      lag+0   10bps  FULL 14.57%/1.197/-17.67%  OOS 16.24%/1.310/-17.67%  4b=1
+   U56    ('MADIST', 40, 1.0)      lag+0   25bps  FULL 14.04%/1.158/-17.76%  OOS 15.67%/1.270/-17.76%  4b=1
+   U56    ('MADIST', 40, 1.0)      lag+0   50bps  FULL 13.17%/1.094/-17.90%  OOS 14.74%/1.202/-17.90%  4b=1
+   U56    ('MADIST', 40, 1.0)      lag+1    0bps  FULL 15.07%/1.215/-19.56%  OOS 17.01%/1.340/-19.56%  4b=1
+   U56    ('MADIST', 40, 1.0)      lag+1   10bps  FULL 14.71%/1.189/-19.61%  OOS 16.63%/1.314/-19.61%  4b=1
+   U56    ('MADIST', 40, 1.0)      lag+1   25bps  FULL 14.17%/1.151/-19.69%  OOS 16.07%/1.274/-19.69%  4b=1
+   U56    ('MADIST', 40, 1.0)      lag+1   50bps  FULL 13.28%/1.087/-19.83%  OOS 15.13%/1.208/-19.83%  4b=1
+   U56    ('MOMVS', 40, 1.0)       lag+0    0bps  FULL 14.64%/1.220/-18.11%  OOS 15.89%/1.303/-18.11%  4b=1
+   U56    ('MOMVS', 40, 1.0)       lag+0   10bps  FULL 14.29%/1.195/-18.17%  OOS 15.51%/1.276/-18.17%  4b=1
+   U56    ('MOMVS', 40, 1.0)       lag+0   25bps  FULL 13.76%/1.156/-18.27%  OOS 14.94%/1.235/-18.27%  4b=1
+   U56    ('MOMVS', 40, 1.0)       lag+0   50bps  FULL 12.89%/1.090/-18.43%  OOS 14.01%/1.166/-18.43%  4b=1
+   U56    ('MOMVS', 40, 1.0)       lag+1    0bps  FULL 14.64%/1.206/-19.25%  OOS 15.97%/1.290/-19.25%  4b=1
+   U56    ('MOMVS', 40, 1.0)       lag+1   10bps  FULL 14.27%/1.180/-19.31%  OOS 15.59%/1.262/-19.31%  4b=1
+   U56    ('MOMVS', 40, 1.0)       lag+1   25bps  FULL 13.73%/1.140/-19.39%  OOS 15.01%/1.221/-19.39%  4b=1
+   U56    ('MOMVS', 40, 1.0)       lag+1   50bps  FULL 12.83%/1.073/-19.53%  OOS 14.05%/1.152/-19.53%  4b=1
+  GATE PASS  G7 ladder lag=0 @10bps reproduces the grid row: max|diff| = 0.00e+00   (target < 1e-12)
+   ladder 4b hold rate: 24 of 24 cells
+
+## VERDICTS
+   V1 REACH has an INTERIOR argmax on a majority of curves ......... YES  (14/18)
+   V2 2083's q=0.40 does NOT keep improving below 0.40 ............. YES
+   V3 at least one q<0.40 point clears 4b FULL+OOS ................. YES  (2/54)
