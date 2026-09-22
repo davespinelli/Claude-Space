@@ -1,0 +1,145 @@
+# Idea 2101 (lane cloud, 2026-09-22) — is ANY legal IS-ONLY chooser PORTABLE ACROSS PANELS, or is every committed rule-8 pick a PANEL ARTEFACT?
+# TUNED DIALS (2): CHOOSER ['IS_SHARPE', 'IS_LEGS', 'IS_CALMAR', 'IS_MINMARG', 'IS_CAGRSLACK', 'IS_DD', 'CELL_ALPHA']; PANEL ['U56', 'B136', 'SMALL'].
+# REPORTED, NOT TUNED: families BAND [0.0, 0.03, 0.06, 0.1] x gross [0.5, 0.75, 1.0] (W), TOPN [5, 10, 20, 40] x gross [0.5, 0.75, 1.0] (M), VOLTGT [0.08, 0.12, 0.16, 0.2] x gross [0.5, 0.75, 1.0] (M, band 0.03); costs [0, 10, 25, 50] bps (headline 10); warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01 read ONCE.  Execution t+1 (PROTOCOL rule 2).
+  SMALL: dropped 54 tickers with max_1d_move >= 1.0 (data/small_meta.csv); 665 names + SPY benchmark remain
+  GATE PASS  G1_ENGINE_IDENTITY: max|dret| 0.000e+00, max|dturn| 0.000e+00   (target < 1e-12)
+
+## PANEL U56  (55 names, 2008-01-02 -> 2026-09-18, scored from 2009-01-13)
+   SPY      FULL  15.14% / 0.885 / -33.72%   OOS  15.29% / 0.875 / -33.72%
+   RULES v2 FULL   8.64% / 1.208 / -11.90%   OOS   9.49% / 1.285 / -11.90%   (at 10 bps)
+
+## PANEL B136  (135 names, 2008-01-02 -> 2026-09-18, scored from 2009-01-13)
+   SPY      FULL  15.12% / 0.884 / -33.72%   OOS  15.26% / 0.874 / -33.72%
+   RULES v2 FULL   7.96% / 1.099 / -12.18%   OOS   7.85% / 1.104 / -12.18%   (at 10 bps)
+
+## PANEL SMALL  (665 names, 2010-01-04 -> 2026-09-18, scored from 2011-01-13)
+   SPY      FULL  14.03% / 0.857 / -33.72%   OOS  15.29% / 0.875 / -33.72%
+   RULES v2 FULL   4.26% / 0.659 / -14.16%   OOS   3.63% / 0.545 / -14.16%   (at 10 bps)
+
+# ALL GRID POINTS WRITTEN: 432 cell-cost rows -> 2026-09-22_chooser-portability-across-panels_cloud.grid.csv; 252 chooser picks -> 2026-09-22_chooser-portability-across-panels_cloud.choosers.csv
+
+## (1) THE CHOOSER SPREAD AT 10 BPS — OOS-Sharpe PERCENTILE inside the shelf (0.500 = a uniform draw from the same 12 cells)
+panel         B136              SMALL                U56             
+family        BAND  TOPN VOLTGT  BAND  TOPN VOLTGT  BAND  TOPN VOLTGT
+chooser                                                              
+IS_SHARPE    0.792 0.208  0.042 0.792 0.708  0.292 0.792 0.958  0.458
+IS_LEGS      0.875 0.042  0.125 0.792 0.708  0.375 0.875 0.542  0.375
+IS_CALMAR    0.792 0.208  0.458 0.792 0.708  0.292 0.792 0.958  0.708
+IS_MINMARG   0.875 0.042  0.125 0.958 0.708  0.375 0.875 0.542  0.125
+IS_CAGRSLACK 0.792 0.958  0.042 0.792 0.708  0.792 0.792 0.958  0.208
+IS_DD        0.458 0.292  0.292 0.958 0.042  0.208 0.458 0.458  0.542
+CELL_ALPHA   0.208 0.042  0.292 0.208 0.792  0.208 0.208 0.542  0.542
+   spread B136  BAND  : 0.667   (best IS_LEGS, worst CELL_ALPHA)
+   spread B136  TOPN  : 0.917   (best IS_CAGRSLACK, worst IS_LEGS)
+   spread B136  VOLTGT: 0.417   (best IS_CALMAR, worst IS_SHARPE)
+   spread SMALL BAND  : 0.750   (best IS_MINMARG, worst CELL_ALPHA)
+   spread SMALL TOPN  : 0.750   (best CELL_ALPHA, worst IS_DD)
+   spread SMALL VOLTGT: 0.583   (best IS_CAGRSLACK, worst IS_DD)
+   spread U56   BAND  : 0.667   (best IS_LEGS, worst CELL_ALPHA)
+   spread U56   TOPN  : 0.500   (best IS_SHARPE, worst IS_DD)
+   spread U56   VOLTGT: 0.583   (best IS_CALMAR, worst IS_MINMARG)
+  GATE PASS  G2_CHOOSER_MATTERS: max within-shelf percentile spread 0.917   (target > 0.25 (the choice of chooser moves the pick))
+
+## (2) PORTABILITY — SPEARMAN rho of the SEVEN choosers' ranks, panel vs panel
+   BAND    U56   vs B136 : rho = +1.0000
+   BAND    U56   vs SMALL: rho = +0.3757
+   BAND    B136  vs SMALL: rho = +0.3757
+   TOPN    U56   vs B136 : rho = +0.3234
+   TOPN    U56   vs SMALL: rho = +0.2887
+   TOPN    B136  vs SMALL: rho = -0.5601
+   VOLTGT  U56   vs B136 : rho = +0.7594
+   VOLTGT  U56   vs SMALL: rho = -0.7779
+   VOLTGT  B136  vs SMALL: rho = -0.6321
+   POOLED  U56   vs B136 : rho = +0.7092
+   POOLED  U56   vs SMALL: rho = +0.4001
+   POOLED  B136  vs SMALL: rho = +0.3519
+  GATE FAIL  G3_PORTABLE: median cross-panel Spearman rho over 12 (family, pair) readings +0.3638   (target >= +0.50 => choosers are portable machinery)
+
+## (3) SIGN STABILITY — pooled mean OOS percentile per panel (3 families)
+panel          U56  B136  SMALL  all>0.5  beats_ALPHA_3of3
+chooser                                                   
+IS_SHARPE    0.736 0.347  0.597    False              True
+IS_LEGS      0.597 0.347  0.625    False              True
+IS_CALMAR    0.819 0.486  0.597    False              True
+IS_MINMARG   0.514 0.347  0.681    False              True
+IS_CAGRSLACK 0.653 0.597  0.764     True              True
+IS_DD        0.486 0.347  0.403    False              True
+CELL_ALPHA   0.431 0.181  0.403    False             False
+  GATE PASS  G4_ANY_STABLE_RULE: choosers above 0.5 AND above CELL_ALPHA on 3 of 3 panels: ['IS_CAGRSLACK']   (target >= 1 rule stable in sign)
+
+## (4) BOTH KEEP PATHS for every chooser-picked book (rule 8: OOS read once)
+   at 10 bps, over 63 picks (7 choosers x 3 panels x 3 families): 4a FULL+OOS 2; 4b FULL 11; 4b OOS 12; 4b FULL+OOS 11
+   over ALL 108 grid cells at 10 bps: 4a 4; 4b FULL+OOS 18
+
+   every pick at 10 bps (OOS CAGR / Sharpe / MaxDD vs SPY OOS and RULES v2 OOS):
+panel family      chooser           cell  CAGR  Sharpe  MaxDD    H1    H2  oos_CAGR  oos_Sharpe  oos_MaxDD   pct  keep4a  keep4b
+  U56   BAND    IS_SHARPE band0.10_g1.00 0.182   1.226 -0.237 1.270 1.199     0.197       1.259     -0.237 0.792   False   False
+  U56   BAND      IS_LEGS band0.10_g0.75 0.135   1.226 -0.182 1.270 1.199     0.147       1.260     -0.182 0.875   False    True
+  U56   BAND    IS_CALMAR band0.10_g1.00 0.182   1.226 -0.237 1.270 1.199     0.197       1.259     -0.237 0.792   False   False
+  U56   BAND   IS_MINMARG band0.10_g0.75 0.135   1.226 -0.182 1.270 1.199     0.147       1.260     -0.182 0.875   False    True
+  U56   BAND IS_CAGRSLACK band0.10_g1.00 0.182   1.226 -0.237 1.270 1.199     0.197       1.259     -0.237 0.792   False   False
+  U56   BAND        IS_DD band0.03_g0.50 0.081   1.164 -0.120 1.217 1.128     0.089       1.203     -0.120 0.458   False   False
+  U56   BAND   CELL_ALPHA band0.00_g0.50 0.077   1.093 -0.127 1.174 1.033     0.082       1.110     -0.127 0.208   False   False
+  U56   TOPN    IS_SHARPE     top5_g1.00 0.367   1.214 -0.350 1.330 1.169     0.400       1.176     -0.350 0.958   False   False
+  U56   TOPN      IS_LEGS    top10_g0.50 0.139   1.175 -0.184 1.283 1.124     0.153       1.157     -0.184 0.542   False    True
+  U56   TOPN    IS_CALMAR     top5_g1.00 0.367   1.214 -0.350 1.330 1.169     0.400       1.176     -0.350 0.958   False   False
+  U56   TOPN   IS_MINMARG    top10_g0.50 0.139   1.175 -0.184 1.283 1.124     0.153       1.157     -0.184 0.542   False    True
+  U56   TOPN IS_CAGRSLACK     top5_g1.00 0.367   1.214 -0.350 1.330 1.169     0.400       1.176     -0.350 0.958   False   False
+  U56   TOPN        IS_DD    top40_g0.50 0.089   1.117 -0.155 1.229 1.028     0.092       1.102     -0.155 0.458   False   False
+  U56   TOPN   CELL_ALPHA    top10_g0.50 0.139   1.175 -0.184 1.283 1.124     0.153       1.157     -0.184 0.542   False    True
+  U56 VOLTGT    IS_SHARPE volt0.16_g1.00 0.160   1.220 -0.210 1.291 1.161     0.167       1.239     -0.210 0.458   False   False
+  U56 VOLTGT      IS_LEGS volt0.16_g0.75 0.119   1.219 -0.161 1.289 1.161     0.124       1.239     -0.161 0.375   False    True
+  U56 VOLTGT    IS_CALMAR volt0.08_g1.00 0.114   1.225 -0.144 1.303 1.153     0.121       1.274     -0.144 0.708   False    True
+  U56 VOLTGT   IS_MINMARG volt0.20_g0.75 0.121   1.178 -0.181 1.268 1.109     0.127       1.182     -0.181 0.125   False    True
+  U56 VOLTGT IS_CAGRSLACK volt0.20_g1.00 0.163   1.179 -0.235 1.271 1.109     0.171       1.182     -0.235 0.208   False   False
+  U56 VOLTGT        IS_DD volt0.08_g0.50 0.056   1.222 -0.075 1.297 1.153     0.060       1.274     -0.075 0.542   False   False
+  U56 VOLTGT   CELL_ALPHA volt0.08_g0.50 0.056   1.222 -0.075 1.297 1.153     0.060       1.274     -0.075 0.542   False   False
+ B136   BAND    IS_SHARPE band0.10_g1.00 0.174   1.145 -0.264 1.261 1.046     0.176       1.133     -0.264 0.792   False   False
+ B136   BAND      IS_LEGS band0.10_g0.75 0.130   1.145 -0.203 1.260 1.047     0.131       1.134     -0.203 0.875   False   False
+ B136   BAND    IS_CALMAR band0.10_g1.00 0.174   1.145 -0.264 1.261 1.046     0.176       1.133     -0.264 0.792   False   False
+ B136   BAND   IS_MINMARG band0.10_g0.75 0.130   1.145 -0.203 1.260 1.047     0.131       1.134     -0.203 0.875   False   False
+ B136   BAND IS_CAGRSLACK band0.10_g1.00 0.174   1.145 -0.264 1.261 1.046     0.176       1.133     -0.264 0.792   False   False
+ B136   BAND        IS_DD band0.03_g0.50 0.078   1.063 -0.126 1.173 0.967     0.079       1.064     -0.126 0.458   False   False
+ B136   BAND   CELL_ALPHA band0.00_g0.50 0.077   1.050 -0.137 1.158 0.956     0.078       1.053     -0.137 0.208   False   False
+ B136   TOPN    IS_SHARPE    top10_g1.00 0.302   1.126 -0.351 1.436 0.945     0.298       1.018     -0.351 0.208   False   False
+ B136   TOPN      IS_LEGS    top10_g0.50 0.149   1.116 -0.188 1.427 0.931     0.149       1.004     -0.188 0.042   False    True
+ B136   TOPN    IS_CALMAR    top10_g1.00 0.302   1.126 -0.351 1.436 0.945     0.298       1.018     -0.351 0.208   False   False
+ B136   TOPN   IS_MINMARG    top10_g0.50 0.149   1.116 -0.188 1.427 0.931     0.149       1.004     -0.188 0.042   False    True
+ B136   TOPN IS_CAGRSLACK     top5_g1.00 0.375   1.161 -0.364 1.394 1.028     0.386       1.086     -0.364 0.958   False   False
+ B136   TOPN        IS_DD    top40_g0.50 0.102   1.064 -0.179 1.229 0.943     0.106       1.039     -0.179 0.292   False   False
+ B136   TOPN   CELL_ALPHA    top10_g0.50 0.149   1.116 -0.188 1.427 0.931     0.149       1.004     -0.188 0.042   False    True
+ B136 VOLTGT    IS_SHARPE volt0.20_g1.00 0.157   1.113 -0.268 1.279 0.972     0.154       1.069     -0.268 0.042   False   False
+ B136 VOLTGT      IS_LEGS volt0.20_g0.75 0.117   1.112 -0.206 1.276 0.972     0.115       1.070     -0.206 0.125   False   False
+ B136 VOLTGT    IS_CALMAR volt0.08_g1.00 0.104   1.112 -0.149 1.269 0.970     0.108       1.126     -0.149 0.458   False   False
+ B136 VOLTGT   IS_MINMARG volt0.20_g0.75 0.117   1.112 -0.206 1.276 0.972     0.115       1.070     -0.206 0.125   False   False
+ B136 VOLTGT IS_CAGRSLACK volt0.20_g1.00 0.157   1.113 -0.268 1.279 0.972     0.154       1.069     -0.268 0.042   False   False
+ B136 VOLTGT        IS_DD volt0.08_g0.50 0.051   1.109 -0.077 1.263 0.969     0.053       1.126     -0.077 0.292    True   False
+ B136 VOLTGT   CELL_ALPHA volt0.08_g0.50 0.051   1.109 -0.077 1.263 0.969     0.053       1.126     -0.077 0.292    True   False
+SMALL   BAND    IS_SHARPE band0.10_g1.00 0.122   0.739 -0.449 0.917 0.654     0.118       0.666     -0.449 0.792   False   False
+SMALL   BAND      IS_LEGS band0.10_g1.00 0.122   0.739 -0.449 0.917 0.654     0.118       0.666     -0.449 0.792   False   False
+SMALL   BAND    IS_CALMAR band0.10_g1.00 0.122   0.739 -0.449 0.917 0.654     0.118       0.666     -0.449 0.792   False   False
+SMALL   BAND   IS_MINMARG band0.10_g0.50 0.063   0.739 -0.248 0.914 0.656     0.062       0.668     -0.248 0.958   False   False
+SMALL   BAND IS_CAGRSLACK band0.10_g1.00 0.122   0.739 -0.449 0.917 0.654     0.118       0.666     -0.449 0.792   False   False
+SMALL   BAND        IS_DD band0.10_g0.50 0.063   0.739 -0.248 0.914 0.656     0.062       0.668     -0.248 0.958   False   False
+SMALL   BAND   CELL_ALPHA band0.00_g0.50 0.045   0.544 -0.264 0.651 0.493     0.045       0.504     -0.264 0.208   False   False
+SMALL   TOPN    IS_SHARPE    top20_g1.00 0.217   0.796 -0.472 0.832 0.802     0.237       0.795     -0.472 0.708   False   False
+SMALL   TOPN      IS_LEGS    top20_g1.00 0.217   0.796 -0.472 0.832 0.802     0.237       0.795     -0.472 0.708   False   False
+SMALL   TOPN    IS_CALMAR    top20_g1.00 0.217   0.796 -0.472 0.832 0.802     0.237       0.795     -0.472 0.708   False   False
+SMALL   TOPN   IS_MINMARG    top20_g1.00 0.217   0.796 -0.472 0.832 0.802     0.237       0.795     -0.472 0.708   False   False
+SMALL   TOPN IS_CAGRSLACK    top20_g1.00 0.217   0.796 -0.472 0.832 0.802     0.237       0.795     -0.472 0.708   False   False
+SMALL   TOPN        IS_DD    top40_g0.50 0.090   0.741 -0.241 0.725 0.778     0.097       0.726     -0.241 0.042   False   False
+SMALL   TOPN   CELL_ALPHA    top10_g0.50 0.112   0.667 -0.263 0.559 0.763     0.154       0.798     -0.255 0.792   False   False
+SMALL VOLTGT    IS_SHARPE volt0.12_g1.00 0.067   0.596 -0.395 0.941 0.284     0.038       0.364     -0.395 0.292   False   False
+SMALL VOLTGT      IS_LEGS volt0.12_g0.75 0.052   0.596 -0.308 0.940 0.284     0.030       0.365     -0.308 0.375   False   False
+SMALL VOLTGT    IS_CALMAR volt0.12_g1.00 0.067   0.596 -0.395 0.941 0.284     0.038       0.364     -0.395 0.292   False   False
+SMALL VOLTGT   IS_MINMARG volt0.12_g0.75 0.052   0.596 -0.308 0.940 0.284     0.030       0.365     -0.308 0.375   False   False
+SMALL VOLTGT IS_CAGRSLACK volt0.20_g1.00 0.092   0.622 -0.473 0.944 0.415     0.068       0.461     -0.473 0.792   False   False
+SMALL VOLTGT        IS_DD volt0.08_g0.50 0.023   0.536 -0.176 0.836 0.224     0.012       0.295     -0.176 0.208   False   False
+SMALL VOLTGT   CELL_ALPHA volt0.08_g0.50 0.023   0.536 -0.176 0.836 0.224     0.012       0.295     -0.176 0.208   False   False
+  GATE PASS  G5_ANY_KEEP: 4a 2, 4b FULL+OOS 11 of 63 chooser-picked books   (target >= 1 book clears a KEEP path)
+
+## COST LADDER — median cross-panel rho and the stable-rule count at every rung
+     0 bps: pooled rho +0.2057  (U56-B136 +0.206, U56-SMALL +0.236, B136-SMALL +0.112)   stable rules 1 of 6   4a 2  4b 14
+    10 bps: pooled rho +0.4001  (U56-B136 +0.709, U56-SMALL +0.400, B136-SMALL +0.352)   stable rules 1 of 6   4a 2  4b 11
+    25 bps: pooled rho +0.6205  (U56-B136 +0.736, U56-SMALL +0.343, B136-SMALL +0.620)   stable rules 1 of 6   4a 0  4b 11
+    50 bps: pooled rho +0.3965  (U56-B136 +0.382, U56-SMALL +0.397, B136-SMALL +0.869)   stable rules 2 of 6   4a 0  4b 10
