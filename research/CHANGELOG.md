@@ -6300,3 +6300,90 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   (2) Idea 924's mega-cap-sleeve finding gets no regime repair from this direction. (3) The
   always-invested 4b DD failure is now confirmed on a second, independent family; a future run
   proposing any fully-invested single-instrument switch should expect the DD leg to bind first.
+
+## 2026-09-22 — idea 2119 / slug `4b-margin-vs-own-offset-spread-band-gross-ladder` (lane B): HOW MANY 4b PASSES ON A BAND × GROSS LADDER SURVIVE THEIR OWN REBALANCE-OFFSET SPREAD? **ANSWERED / SPLIT — IDEA 914's WEEKDAY FRAGILITY DOES NOT GENERALISE ON THE DD LEG (12 OF 16 SURVIVE) AND DOES GENERALISE ON THE VERDICT (7 OF 16 SURVIVE). THE ONE CELL RULE 8 CAN REACH IS, ON BOTH PANELS, A WEEKDAY-CONTINGENT PASS. KILL FOR CAPITAL; NO NEW KEEP, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 914 killed idea 910's B136 TREND/AGG KEEP-4b candidate
+  because its 0.70 pp DD margin is smaller than the same book's spread across the five weekly
+  rebalance offsets, and stated in its own residue that it "does not certify that every other
+  committed 4b DD margin in the record is as fragile." That certification is what this run
+  supplies, on a population rather than an anecdote.
+
+  **THE CONSTRUCTION.** Two tuned parameters, every grid point published: `band b ∈ {0.00,
+  0.02, 0.03, 0.05, 0.08} × gross g ∈ {0.50, 0.60, 0.75, 0.85, 1.00}` on the LIVE book's own
+  form (`baseline.band_state` + equal weight + de-gross to cash), 25 cells per panel. The
+  centre cell (0.03, 0.75) IS `baseline.rules_v2_weights` — gate G3, max|d| **0.000e+00**, so
+  the ladder literally contains the live book. Published-not-tuned: offset d ∈ {0,1,2,3,4}
+  (a NOISE MEASUREMENT, never selected on — the reported book is always d=0), panel {U56,
+  B136}, cost {0,10,25,50} bps (headline 10), windows {FULL, IS ..2016-12-31, OOS 2017-01-01..}
+  = **3,000 published rows**. Weekly, t+1, long-only, no leverage. Gates 4 of 5: G1 local
+  runner ≡ `engine.backtest` **0.000e+00** over 4,706 rows; G2 `offset_mask(idx,0)` ≡
+  `engine.rebalance_mask` 0 differing rows; G4a every offset trades 52.3×/yr. **G4b FAILS
+  STRUCTURALLY** — 2 weeks cannot carry d=3 and 175 cannot carry d=4 — so every headline is
+  re-read clip-free on {0,1,2} (B1c) instead of the bar being widened; no conclusion moves.
+
+  **(A) THE DD LEG IS ACQUITTED, THE VERDICT IS NOT.** Of the **16** cells that pass 4b at the
+  published offset (FULL+OOS, both panels, 10 bps), **12 have a DD margin bigger than their own
+  5-offset spread**. But only **6 of 16** clear the spread on EVERY leg and only **7 of 16** are
+  still a 4b PASS at 5 of 5 offsets. Per leg: H1 **16/16**, H2 **16/16**, DD **12/16**, CAGR
+  **9/16** — the Sharpe legs never bind (idea 1695 reproduced on a new family) and the carrier
+  of the fragility is CAGR.
+
+  **(B) EVERY PASS SITS AT GROSS = 1.00, AND THE BAND AXIS TRADES ONE BINDING LEG FOR THE
+  OTHER.** No de-grossed cell (g ≤ 0.85) clears 4b at any band on either panel: the CAGR floor
+  kills them and the DD leg never does. Small bands (0.00–0.05) buy a large DD margin (+2.91 to
+  +4.58 pp) and a razor-thin CAGR margin (+0.02 to +0.94 pp); the widest band (0.08) reverses it
+  (DD +0.73 to +1.18 pp, CAGR +0.30 to +1.30 pp). The cost ladder is monotone and rescues
+  nothing (U56 FULL passes 5/5/4/1, B136 OOS 4/1/1/0 at 0/10/25/50 bps) while the DD-survival
+  share is stable, so none of this is a cost story.
+
+  **(C) RULE 8, 2017–2026 READ ONCE — THE PICK PASSES 4b AND THE PASS IS A WEEKDAY.** IS-Sharpe
+  argmax lands on `band 0.08 / gross 1.00` on BOTH panels. U56 OOS **12.00% / 1.1625 / −19.05%**
+  (H1 1.267, H2 1.048), B136 OOS **10.98% / 1.0921 / −19.50%**, against RULES v2 OOS 9.46% /
+  1.2767 / −12.05% (U56) and 7.85% / 1.1017 / −12.24% (B136) and SPY OOS 15.29% / 0.8751 /
+  −33.72%. **4b PASS on FULL, IS and OOS on both panels; 4a FAIL on both.** And the binding
+  margin is inside its own scheduling noise: DD **+1.180 pp vs a 2.136 pp spread** (U56) and
+  **+0.730 vs 2.078** (B136). Rebalance one trading day earlier and MaxDD goes **−19.05% →
+  −20.32%** (U56) and **−19.50% → −20.65%** (B136) against the −20.23% cap: **4b FAIL at 1 of 5
+  weekdays, on both panels, on FULL and OOS alike**, at every cost rung. That is exactly the
+  condition under which 914 killed 910's candidate this morning, so it is killed here too.
+
+  **(D) THE CHOOSER CANNOT SEE THE DIAL THAT DECIDES THE VERDICT.** IS Sharpe moves **0.0013**
+  (U56) / **0.0026** (B136) across the WHOLE gross ladder at a fixed band, against 0.0684 /
+  0.0874 across the grid. Gross is invisible to the IS objective — yet at band 0.08 only
+  gross = 1.00 clears 4b, the four lower rungs all failing the CAGR floor while their DD margins
+  run +3.9 / +5.8 / +8.6 / +10.5 pp. Rule 8 resolves BAND, coin-flips GROSS, and lands on the
+  single cell whose DD margin is smaller than its own weekday noise. Idea 1713/1715's "the IS
+  objective cannot see the dial it is picking" on a new family.
+
+  **(E) TWO CELLS SURVIVE EVERYTHING AND NEITHER CAN BE LICENSED.** `U56 / band 0.02 / gross
+  1.00` (OOS 12.53% / 1.2784 / −15.65%) and `U56 / band 0.03 / gross 1.00` (OOS 12.67% / 1.2760
+  / −15.91%) are the only 2 of 50 cells that pass 4b at d=0, clear every leg's own spread, and
+  stay a PASS at 5 of 5 offsets on FULL *and* OOS. Both **FAIL 4b in the IS window** and rank
+  11th and 6th of 25 on IS Sharpe, so selecting either requires having read 2017–2026. PARK,
+  reported not proposed.
+
+  **(F) THE LIVE BOOK, RE-PRICED ON ITS OWN GRID.** band 0.03 / gross 0.75 fails 4b on the
+  **CAGR floor alone** on both panels in every window (margins −1.98 / −1.25 pp on U56
+  FULL/OOS, −2.63 / −2.83 pp on B136) while its DD margin is **+8.18 / +7.99 pp against a
+  1.80 / 1.70 pp offset spread** — 4.5× outside the scheduling noise. Idea 1454's reading is
+  confirmed on a fresh grid, and the unspent drawdown budget is shown to be real rather than a
+  weekday artefact. 4a is 0 of 25 on U56 in every window, 2 of 25 on B136 (IS and OOS).
+
+  **WHAT THIS RUN CANNOT DO (stated, not repaired).** One book FORM, one cadence (weekly), one
+  offset family (the 5 weekday phases of a weekly rebalance); monthly and quarterly books carry
+  their own spreads and are not priced here. The 16-pass population is this ladder's, not a
+  harvest of the record's committed passes, so (A) bounds THIS family and re-scores no
+  previously published verdict. **SURVIVORSHIP (rule 9):** U56 and B136 are current-constituent
+  lists, so every absolute level is optimistic; the offset contrast is within-tape — same names,
+  same dates, only the weekday moves — and does not repair the level.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched).** (1) A PARK memo is filed for the rule-8 pick with exact RULES wording
+  (`…_B.memo.md`); it should NOT be adopted. (2) The clause idea 914 earned is strengthened in
+  the form measured here — *a 4b DD or CAGR margin must be published beside the book's own
+  rebalance-offset spread on the same window, and a margin inside that spread is not a pass* —
+  and on this ladder it changes **10 of 16** verdicts. (3) The complementary reading is worth
+  a line of its own: the clause is NOT a blanket DD-margin killer, since 12 of 16 DD margins
+  clear their own spread comfortably; a Sunday review adopting it should expect it to bite the
+  CAGR leg first.

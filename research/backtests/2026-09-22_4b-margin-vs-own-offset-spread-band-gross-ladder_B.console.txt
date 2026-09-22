@@ -1,0 +1,157 @@
+====================================================================================================
+IDEA 2119 lane B 2026-09-22 -- how many 4b PASSES on a BAND x GROSS ladder survive
+                                THEIR OWN REBALANCE-OFFSET SPREAD?
+====================================================================================================
+run 2026-09-22 05:20 UTC
+tuned: band [0.0, 0.02, 0.03, 0.05, 0.08] x gross [0.5, 0.6, 0.75, 0.85, 1.0]  (25 cells/panel)
+not tuned: offsets [0, 1, 2, 3, 4] (measurement only, book is always d=0), costs [0, 10, 25, 50] bps,
+           cadence W, panels U56 + B136, windows FULL / IS..2016-12-31 / OOS 2017-01-01..
+
+  panel U56     56 names  2008-01-02 .. 2026-09-18  (4708 sessions)
+  panel B136   136 names  2008-01-02 .. 2026-09-18  (4708 sessions)
+
+----------------------------------------------------------------------------------------------------
+(G) GATES -- printed before any hypothesis is read
+----------------------------------------------------------------------------------------------------
+  G2  offset_mask(idx,0) == engine.rebalance_mask(idx,'W') : 0 differing rows   [PASS]
+  G3  ladder_weights(px,0.03,0.75) == baseline.rules_v2_weights : max|d| 0.000e+00   [PASS]  (the ladder's centre cell IS the live book)
+  G1  local run()+net() == engine.backtest(freq='W',10bps) : max|d| 0.000e+00 over 4706 rows   [PASS]
+  G4a offset fairness (trades/yr): d0=52.3  d1=52.3  d2=52.3  d3=52.3  d4=52.3   bar 50-53   [PASS]
+  G4b offset fairness (clipped weeks): d0=0  d1=0  d2=0  d3=2  d4=175   bar 0   [FAIL — STRUCTURAL, see B1c]
+  G5  comparands: baseline.rules_v2_weights (band 0.03, gross 0.75, W) and SPY buy-and-hold   [PASS by construction]
+  --> 4 of 5 gates PASS.  G4b's structural failure is published, not patched.
+
+----------------------------------------------------------------------------------------------------
+(1) THE GRID -- every one of the 2 x 25 x 5 x 4 cells is written to 2026-09-22_4b-margin-vs-own-offset-spread-band-gross-ladder_B.grid.csv
+----------------------------------------------------------------------------------------------------
+  U56: done (1500 rows so far)
+  B136: done (3000 rows so far)
+  grid rows: 3000
+
+----------------------------------------------------------------------------------------------------
+(2) B1 / B2 / B3 -- of the cells that PASS 4b at the published offset d=0, how many
+    have margins bigger than their own weekday spread?   [10 bps, the protocol rung]
+----------------------------------------------------------------------------------------------------
+  panel  window  4b pass      B1 DD    B1 CAGR  B2 all-leg   B3 5of5
+  U56    FULL          5        4/5        3/5         2/5       3/5
+  U56    IS            1        0/1        0/1         0/1       0/1
+  U56    OOS           6        5/6        5/6         4/6       4/6
+  B136   FULL          4        3/4        1/4         0/4       0/4
+  B136   IS            4        3/4        1/4         0/4       0/4
+  B136   OOS           1        0/1        0/1         0/1       0/1
+
+  B1c (clip-free re-read, offsets {0,1,2} only -- G4b's structural failure priced):
+    U56    FULL    DD 4/5   all-leg 3/5
+    U56    IS      DD 1/1   all-leg 0/1
+    U56    OOS     DD 5/6   all-leg 4/6
+    B136   FULL    DD 3/4   all-leg 0/4
+    B136   IS      DD 4/4   all-leg 4/4
+    B136   OOS     DD 0/1   all-leg 0/1
+
+----------------------------------------------------------------------------------------------------
+(3) B6 -- PATH 4a (beat the live book) at every grid point, d=0, 10 bps
+----------------------------------------------------------------------------------------------------
+  U56    FULL    4a 0 of 25   4b 5 of 25
+  U56    IS      4a 0 of 25   4b 1 of 25
+  U56    OOS     4a 0 of 25   4b 6 of 25
+  B136   FULL    4a 0 of 25   4b 4 of 25
+  B136   IS      4a 2 of 25   4b 4 of 25
+  B136   OOS     4a 2 of 25   4b 1 of 25
+
+----------------------------------------------------------------------------------------------------
+(4) B4 -- the same three bars at every cost rung
+----------------------------------------------------------------------------------------------------
+  panel  window  cost  4b pass     B1 DD   B2 all  B3 5of5
+  U56    FULL       0        5       4/5      3/5      4/5
+  U56    FULL      10        5       4/5      2/5      3/5
+  U56    FULL      25        4       3/4      1/4      1/4
+  U56    FULL      50        1       0/1      0/1      0/1
+  U56    OOS        0        7       6/7      4/7      5/7
+  U56    OOS       10        6       5/6      4/6      4/6
+  U56    OOS       25        5       4/5      4/5      4/5
+  U56    OOS       50        4       3/4      2/4      3/4
+  B136   FULL       0        5       4/5      0/5      0/5
+  B136   FULL      10        4       3/4      0/4      0/4
+  B136   FULL      25        1       0/1      0/1      0/1
+  B136   FULL      50        1       0/1      0/1      0/1
+  B136   OOS        0        4       3/4      0/4      1/4
+  B136   OOS       10        1       0/1      0/1      0/1
+  B136   OOS       25        1       0/1      0/1      0/1
+  B136   OOS       50        0       0/0      0/0      0/0
+
+----------------------------------------------------------------------------------------------------
+(5) B5 -- RULE 8 WALK-FORWARD.  (band, gross) chosen on IS Sharpe ONLY, at d=0,
+    10 bps.  2017-2026 read ONCE.  Both KEEP paths on the OOS window.
+----------------------------------------------------------------------------------------------------
+  U56: IS pick = band 0.08 / gross 1.00  (IS Sharpe 1.1226; IS spread over the 25 cells 0.0684)
+      OOS  pick    12.00% / 1.1625 / -19.05%   H1 1.267  H2 1.048
+      OOS  RULESv2   9.46% / 1.2767 / -12.05%   H1 1.432  H2 1.106
+      OOS  SPY      15.29% / 0.8751 / -33.72%   H1 0.991  H2 0.750
+      4b PASS  (legs H1:ok H2:ok DD:ok CAGR:ok)   4a FAIL
+      margins  DD    +1.180 pp vs own spread  2.136 pp  ->  INSIDE THE WEEKDAY NOISE
+               CAGR  +1.296 pp vs own spread  0.836 pp  ->  SURVIVES
+               H1    +0.276    vs own spread  0.080     H2  +0.298 vs  0.096
+
+  B136: IS pick = band 0.08 / gross 1.00  (IS Sharpe 1.1421; IS spread over the 25 cells 0.0874)
+      OOS  pick    10.98% / 1.0921 / -19.50%   H1 1.230  H2 0.934
+      OOS  RULESv2   7.85% / 1.1017 / -12.24%   H1 1.291  H2 0.878
+      OOS  SPY      15.26% / 0.8737 / -33.72%   H1 0.991  H2 0.747
+      4b PASS  (legs H1:ok H2:ok DD:ok CAGR:ok)   4a FAIL
+      margins  DD    +0.730 pp vs own spread  2.078 pp  ->  INSIDE THE WEEKDAY NOISE
+               CAGR  +0.300 pp vs own spread  0.622 pp  ->  INSIDE THE WEEKDAY NOISE
+               H1    +0.239    vs own spread  0.081     H2  +0.187 vs  0.078
+
+----------------------------------------------------------------------------------------------------
+(6) THE LIVE BOOK'S OWN CELL (band 0.03 / gross 0.75) -- margins vs its own spread
+----------------------------------------------------------------------------------------------------
+  U56    FULL     8.62% / 1.2010 / -12.05%   4b FAIL   DD margin  +8.175 pp  spread  1.798 pp   CAGR margin  -1.978 pp
+  U56    OOS      9.46% / 1.2767 / -12.05%   4b FAIL   DD margin  +8.175 pp  spread  1.798 pp   CAGR margin  -1.245 pp
+  B136   FULL     7.96% / 1.0972 / -12.24%   4b FAIL   DD margin  +7.989 pp  spread  1.702 pp   CAGR margin  -2.627 pp
+  B136   OOS      7.85% / 1.1017 / -12.24%   4b FAIL   DD margin  +7.989 pp  spread  1.702 pp   CAGR margin  -2.833 pp
+
+----------------------------------------------------------------------------------------------------
+(7) WHAT RULE 8 CAN AND CANNOT RESOLVE -- the IS Sharpe ranking it chooses on
+----------------------------------------------------------------------------------------------------
+  U56: IS top 8 (d=0, 10 bps)
+     band  gross    IS Sh  IS 4b   OOS Sh  OOS 4b  OOS mDD  OOS sDD  survDD
+     0.08   1.00   1.1226   PASS   1.1625    PASS    1.180    2.136      NO
+     0.08   0.85   1.1224   fail   1.1632    fail    3.916    1.783     yes
+     0.08   0.75   1.1222   fail   1.1635    fail    5.763    1.553     yes
+     0.08   0.60   1.1220   fail   1.1641    fail    8.571    1.217     yes
+     0.08   0.50   1.1217   fail   1.1644    fail   10.467    0.999     yes
+     0.03   1.00   1.1047   fail   1.2760    PASS    4.319    2.398     yes
+     0.03   0.85   1.1045   fail   1.2765    PASS    6.623    2.039     yes
+     0.03   0.75   1.1043   fail   1.2767    fail    8.175    1.798     yes
+    IS Sharpe moves 0.0013 across the WHOLE gross ladder at a fixed band, vs 0.0684 across the grid:
+    the IS chooser resolves BAND and is blind to GROSS -- and GROSS is the dial the CAGR floor is made of.
+
+  B136: IS top 8 (d=0, 10 bps)
+     band  gross    IS Sh  IS 4b   OOS Sh  OOS 4b  OOS mDD  OOS sDD  survDD
+     0.08   1.00   1.1421   PASS   1.0921    PASS    0.730    2.078      NO
+     0.08   0.85   1.1415   fail   1.0929    fail    3.526    1.733     yes
+     0.08   0.75   1.1411   fail   1.0934    fail    5.415    1.508     yes
+     0.08   0.60   1.1404   fail   1.0942    fail    8.287    1.180     yes
+     0.08   0.50   1.1400   fail   1.0946    fail   10.227    0.968     yes
+     0.03   1.00   1.0932   PASS   1.1006    fail    4.071    2.279     yes
+     0.03   0.85   1.0926   fail   1.1013    fail    6.412    1.933     yes
+     0.03   0.75   1.0922   fail   1.1017    fail    7.989    1.702     yes
+    IS Sharpe moves 0.0026 across the WHOLE gross ladder at a fixed band, vs 0.0874 across the grid:
+    the IS chooser resolves BAND and is blind to GROSS -- and GROSS is the dial the CAGR floor is made of.
+
+----------------------------------------------------------------------------------------------------
+(8) SURVIVORS -- cells that PASS 4b at d=0 AND clear every leg's own offset spread
+    AND are still a PASS at 5 of 5 offsets, on FULL *and* OOS, 10 bps
+----------------------------------------------------------------------------------------------------
+  U56   band 0.02 / gross 1.00:  FULL 11.33% / 1.1934 / -15.65%   OOS 12.53% / 1.2784 / -15.65%
+        IS 4b FAIL   IS Sharpe rank 11 of 25   (rule-8 pick is rank 1)
+  U56   band 0.03 / gross 1.00:  FULL 11.53% / 1.2009 / -15.91%   OOS 12.67% / 1.2760 / -15.91%
+        IS 4b FAIL   IS Sharpe rank 6 of 25   (rule-8 pick is rank 1)
+  survivors: 2 of 50 cells.
+
+====================================================================================================
+HEADLINE
+====================================================================================================
+  Over FULL + OOS on both panels at 10 bps: 16 cells PASS 4b at the published
+  offset.  Of those, 12 have a DD margin bigger than their own weekday spread,
+  6 clear the spread on EVERY leg, and 7 are still a 4b PASS at 5 of 5 offsets.
+
