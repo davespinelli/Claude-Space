@@ -1,0 +1,174 @@
+==============================================================================================
+IDEA 914 lane B 2026-09-22 -- does the B136 TREND/AGG 0.70 pp DD MARGIN survive its
+                              OWN 5-OFFSET REBALANCE SPREAD?
+==============================================================================================
+run 2026-09-22 02:20 UTC   book: band 0.03 / th 0.2 / gross 0.75 / W   offsets [0, 1, 2, 3, 4]   costs [0, 10, 25, 50] bps
+
+  panel B136   136 names  2008-01-02 .. 2026-09-18  (4708 sessions)
+  panel U56     56 names  2008-01-02 .. 2026-09-18  (4708 sessions)
+
+----------------------------------------------------------------------------------------------
+(G) GATES -- five, printed before any hypothesis is read
+----------------------------------------------------------------------------------------------
+  G2  offset_mask(idx,0) == engine.rebalance_mask(idx,'W') : 0 differing rows   [PASS]
+  G1  local run()+net() == engine.backtest(freq='W',10bps) : max|d| 0.000e+00 over 4706 rows, NaN masks identical True   [PASS]
+  G3  reproduces idea 910's memo headline within tape drift (memo 2026-09-15, tape now
+      runs 3 sessions longer):  FULL 12.62% / 1.121 / -19.53%   memo 12.66% / 1.124 / -19.53%
+                                OOS  11.81% / 1.054 / -19.53%   memo 11.89% / 1.060 / -19.53%
+      dCAGR 0.045/0.084 pp, dSharpe 0.0034/0.0059, MaxDD identical to 2dp   [PASS]
+  G4  offset fairness (B136 tape).  G4a = rebalance count, G4b = clipping.
+        d=0  52.29 rebalances/yr    0 clipped weeks   count ok / clipping ok
+        d=1  52.29 rebalances/yr    0 clipped weeks   count ok / clipping ok
+        d=2  52.29 rebalances/yr    0 clipped weeks   count ok / clipping ok
+        d=3  52.29 rebalances/yr    2 clipped weeks   count ok / clipping VIOLATION
+        d=4  52.24 rebalances/yr  175 clipped weeks   count ok / clipping VIOLATION
+      G4a 5 of 5 offsets in 50-53 rebalances/yr                      [PASS]
+      G4b 3 of 5 offsets with zero clipped weeks                     [FAIL]
+      G4b FAILS BY CONSTRUCTION AND THE RUN SAYS SO RATHER THAN RELAXING IT: a week with
+      only 4 trading days has no session 4 before its last, so d=3 clips 2 weeks and d=4
+      clips 175 (every holiday-shortened week), each falling back to that week's FIRST
+      session.  The count clause is unaffected (G4a 5 of 5).  Section (B1c) therefore
+      re-reads the headline on the CLIP-FREE subset {0,1,2} alone; the verdict there is
+      the one that carries, and it is the same verdict.
+  G5  comparands  RULES v2 B136  7.96% / 1.097 / -12.24%   SPY 15.12% / 0.884 / -33.72%
+      SPY MaxDD matches the memo's -33.72% to 2dp                             [PASS]
+  GATES 4 of 5 PASS
+
+----------------------------------------------------------------------------------------------
+(A) EVERY GRID POINT -- 2 panels x 2 constructions x 5 offsets x 4 costs x 3 windows
+----------------------------------------------------------------------------------------------
+  144 rows written to 2026-09-22_b136-trend-agg-dd-margin-vs-offset-spread_B.grid.csv
+
+  B136 / AGG / 10 bps -- the committed book at each of its five weekdays
+    win    d     CAGR  Sharpe    MaxDD     H1     H2  DDmarg  CAGRmarg  4b   4a
+    FULL   0   12.62%   1.121  -19.53%  1.300  0.957   +0.70     +2.03  PASS FAIL
+    FULL   1   12.08%   1.088  -20.65%  1.302  0.888   -0.42     +1.49  FAIL FAIL
+    FULL   2   12.15%   1.064  -23.71%  1.313  0.846   -3.48     +1.56  FAIL FAIL
+    FULL   3   12.20%   1.075  -22.13%  1.326  0.855   -1.90     +1.61  FAIL FAIL
+    FULL   4   12.33%   1.085  -23.03%  1.349  0.853   -2.80     +1.74  FAIL FAIL
+
+    IS     0   13.61%   1.202  -12.61%  1.131  1.331   +0.62     +3.14  PASS FAIL
+    IS     1   13.61%   1.203  -12.57%  1.135  1.329   +0.66     +3.14  PASS FAIL
+    IS     2   13.78%   1.216  -12.57%  1.160  1.325   +0.66     +3.31  PASS FAIL
+    IS     3   13.85%   1.228  -12.64%  1.172  1.335   +0.59     +3.38  PASS FAIL
+    IS     4   14.18%   1.252  -12.24%  1.211  1.340   +0.99     +3.71  PASS FAIL
+
+    OOS    0   11.81%   1.054  -19.53%  1.247  0.848   +0.70     +1.13  PASS FAIL
+    OOS    1   10.83%   0.992  -20.65%  1.189  0.788   -0.42     +0.15  FAIL FAIL
+    OOS    2   10.82%   0.944  -23.71%  1.016  0.866   -3.48     +0.14  FAIL FAIL
+    OOS    3   10.86%   0.954  -22.13%  1.030  0.872   -1.90     +0.18  FAIL FAIL
+    OOS    4   10.82%   0.953  -23.03%  1.024  0.877   -2.80     +0.14  FAIL FAIL
+
+----------------------------------------------------------------------------------------------
+(B) THE PRE-REGISTERED BARS
+----------------------------------------------------------------------------------------------
+  B1  THE QUESTION.  FULL / 10 bps / B136: MaxDD over the 5 offsets runs
+      -23.71% .. -19.53%  ->  OFFSET SPREAD S_DD = 4.18 pp
+      the committed book's own DD MARGIN M = 0.70 pp
+      M > S_DD ?  0.70 > 4.18  ->  DOES NOT SURVIVE                 [FAIL]
+      B1c CLIP-FREE SUBSET {0,1,2} only (the G4b repair): MaxDD -23.71% .. -19.53%, spread 4.18 pp vs margin 0.70 pp -> DOES NOT survive
+      IS  : spread  0.40 pp vs margin  0.62 pp -> survives
+      OOS : spread  4.18 pp vs margin  0.70 pp -> DOES NOT survive
+
+  B2  the 4b DD LEG alone holds at 1 of 5 offsets (FULL, 10 bps)              [FAIL]
+
+  B3  ALL FOUR 4b legs: FULL 1 of 5 offsets, OOS 1 of 5                     [FAIL]
+
+  B4  the same at every cost rung (B136 / AGG), passes of 5 offsets:
+         cost   FULL     IS    OOS   worst-offset FULL MaxDD / DD margin
+            0      1      5      1   -23.59% /  -3.36 pp (d=2)
+           10      1      5      1   -23.71% /  -3.48 pp (d=2)
+           25      1      5      1   -23.89% /  -3.66 pp (d=2)
+           50      1      5      1   -24.19% /  -3.96 pp (d=2)
+      5 of 5 on FULL and OOS at every rung: False                              [FAIL]
+
+----------------------------------------------------------------------------------------------
+(C) B5 -- RULE 8 WALK-FORWARD.  Offset chosen on IS (start..2016-12-31) ONLY,
+    by IS Sharpe.  2017-2026 read ONCE.  Both KEEP paths scored.
+----------------------------------------------------------------------------------------------
+    panel  cost pick   OOS CAGR  Sharpe    MaxDD  DDmarg  4b   4a   | RULES v2 OOS Sharpe | SPY OOS Sharpe
+    B136      0    4     10.99%   0.966  -22.90%   -2.67  FAIL FAIL  |               1.131 |          0.874
+    B136     10    4     10.82%   0.953  -23.03%   -2.80  FAIL FAIL  |               1.102 |          0.874
+    B136     25    4     10.58%   0.934  -23.21%   -2.98  FAIL FAIL  |               1.057 |          0.874
+    B136     50    4     10.17%   0.902  -23.51%   -3.28  FAIL FAIL  |               0.983 |          0.874
+    U56       0    4     12.02%   1.048  -22.51%   -2.28  FAIL FAIL  |               1.301 |          0.875
+    U56      10    4     11.87%   1.037  -22.53%   -2.30  FAIL FAIL  |               1.277 |          0.875
+    U56      25    4     11.66%   1.020  -22.96%   -2.73  FAIL FAIL  |               1.240 |          0.875
+    U56      50    4     11.31%   0.992  -23.67%   -3.44  FAIL FAIL  |               1.178 |          0.875
+    B5 (B136, 10 bps): OOS 4b FAIL                          [FAIL]
+
+    IS Sharpe by offset (the chooser's whole input), B136 10 bps:
+      {0: np.float64(1.2015), 1: np.float64(1.2033), 2: np.float64(1.2157), 3: np.float64(1.2276), 4: np.float64(1.2521)}
+
+  B6  4a passes at 0 of 60 B136/AGG grid points (the memo says 4a fails)
+
+----------------------------------------------------------------------------------------------
+(D0) WHICH DATE.  The argmin-drawdown window of each offset's FULL-sample equity,
+     B136 / AGG / 10 bps -- 'a date, not a book' is a literal claim, so name the date.
+----------------------------------------------------------------------------------------------
+      d    MaxDD  peak         trough       len(sessions)
+      0  -19.53%  2020-02-19   2020-03-12              16
+      1  -20.65%  2020-02-19   2020-04-21              43
+      2  -23.71%  2020-02-19   2020-04-21              43
+      3  -22.13%  2020-02-19   2020-03-16              18
+      4  -23.03%  2020-02-19   2020-04-21              43
+
+----------------------------------------------------------------------------------------------
+(D) THE CANDIDATE REPAIR -- the 5-offset EQUAL-WEIGHT ENSEMBLE (no free parameter)
+----------------------------------------------------------------------------------------------
+    panel  cost win       CAGR  Sharpe    MaxDD  DDmarg  CAGRmarg  4b   4a
+    B136      0 FULL    12.42%   1.107  -20.90%   -0.67     +1.84  FAIL FAIL
+    B136      0 IS      13.90%   1.229  -12.50%   +0.74     +3.43  PASS FAIL
+    B136      0 OOS     11.22%   1.007  -20.90%   -0.67     +0.54  FAIL FAIL
+    B136     10 FULL    12.29%   1.096  -21.02%   -0.79     +1.70  FAIL FAIL
+    B136     10 IS      13.81%   1.222  -12.53%   +0.71     +3.34  PASS FAIL
+    B136     10 OOS     11.05%   0.994  -21.02%   -0.79     +0.37  FAIL FAIL
+    B136     25 FULL    12.08%   1.080  -21.21%   -0.98     +1.49  FAIL FAIL
+    B136     25 IS      13.66%   1.210  -12.58%   +0.66     +3.19  PASS FAIL
+    B136     25 OOS     10.80%   0.973  -21.21%   -0.98     +0.12  FAIL FAIL
+    B136     50 FULL    11.74%   1.052  -21.52%   -1.29     +1.15  FAIL FAIL
+    B136     50 IS      13.42%   1.191  -12.66%   +0.57     +2.95  PASS FAIL
+    B136     50 OOS     10.37%   0.939  -21.52%   -1.29     -0.31  FAIL FAIL
+    U56       0 FULL    12.22%   1.106  -22.46%   -2.23     +1.62  FAIL FAIL
+    U56       0 IS      12.27%   1.164  -11.87%   +1.37     +1.80  PASS FAIL
+    U56       0 OOS     12.17%   1.064  -22.46%   -2.23     +1.47  FAIL FAIL
+    U56      10 FULL    12.09%   1.095  -22.47%   -2.24     +1.49  FAIL FAIL
+    U56      10 IS      12.16%   1.154  -11.90%   +1.33     +1.69  PASS FAIL
+    U56      10 OOS     12.03%   1.053  -22.47%   -2.24     +1.33  FAIL FAIL
+    U56      25 FULL    11.89%   1.079  -22.49%   -2.26     +1.30  FAIL FAIL
+    U56      25 IS      11.98%   1.139  -11.96%   +1.28     +1.51  PASS FAIL
+    U56      25 OOS     11.82%   1.036  -22.49%   -2.26     +1.12  FAIL FAIL
+    U56      50 FULL    11.57%   1.053  -22.62%   -2.39     +0.97  FAIL FAIL
+    U56      50 IS      11.70%   1.114  -12.04%   +1.20     +1.22  PASS FAIL
+    U56      50 OOS     11.46%   1.008  -22.62%   -2.39     +0.76  FAIL FAIL
+
+----------------------------------------------------------------------------------------------
+(E) U56 REPLICATION of the same construction (published, not tuned) -- 10 bps
+----------------------------------------------------------------------------------------------
+    win    d     CAGR  Sharpe    MaxDD  DDmarg  CAGRmarg  4b
+    FULL   0   12.19%   1.103  -22.53%   -2.30     +1.60  FAIL
+    FULL   1   11.98%   1.079  -22.42%   -2.19     +1.38  FAIL
+    FULL   2   12.27%   1.108  -22.30%   -2.07     +1.67  FAIL
+    FULL   3   11.91%   1.081  -23.14%   -2.91     +1.31  FAIL
+    FULL   4   12.07%   1.092  -22.53%   -2.30     +1.47  FAIL
+      -> U56 FULL offset spread 0.84 pp vs margin -2.30 pp: DOES NOT survive
+
+    OOS    0   12.27%   1.074  -22.53%   -2.30     +1.57  FAIL
+    OOS    1   12.06%   1.047  -22.42%   -2.19     +1.36  FAIL
+    OOS    2   12.35%   1.075  -22.30%   -2.07     +1.65  FAIL
+    OOS    3   11.58%   1.018  -23.14%   -2.91     +0.88  FAIL
+    OOS    4   11.87%   1.037  -22.53%   -2.30     +1.17  FAIL
+      -> U56 OOS offset spread 0.84 pp vs margin -2.30 pp: DOES NOT survive
+
+==============================================================================================
+(F) VERDICT
+==============================================================================================
+    B1  FAIL
+    B2  FAIL
+    B3  FAIL
+    B4  FAIL
+    B5  FAIL
+    B6  PASS
+
+    KEEP-4b requires B1 (margin > its own offset spread) AND B3 AND B5: NOT A KEEP
+==============================================================================================

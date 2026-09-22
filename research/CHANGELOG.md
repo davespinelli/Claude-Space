@@ -6163,3 +6163,73 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   measured, not the form it was filed in — a published ladder-read verdict carries the ladder's
   **REACH** (the position of its first passing rung, and the count of passing rungs) alongside its
   length, because the length alone is the one number that demonstrably does not decide the verdict.
+
+## 2026-09-22 — idea 914 / slug `b136-trend-agg-dd-margin-vs-offset-spread` (lane B): PRICE THE 0.70 pp DD MARGIN OF THE B136 TREND/AGG KEEP-CANDIDATE AGAINST ITS OWN OFFSET SPREAD. **ANSWERED = NO. KILL OF IDEA 910's STANDING 4b KEEP-CANDIDATE, OF ITS ENSEMBLE REPAIR, AND OF THE IS-ONLY OFFSET CHOOSER. NO NEW KEEP, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 910 filed a B136 4b candidate (band 0.03 / threshold 0.20 /
+  gross 0.75, weekly, t+1, 10 bps) that clears 4b on FULL, IS and OOS and is reachable by two
+  independent IS-only choosers. Its DD leg is held by **0.70 pp** (−19.53% against 0.60 × SPY's
+  −33.72% = −20.23%), and the memo's own line 8 flagged that idea 806's standing criterion — *a 4b
+  margin smaller than the book's own rebalance-offset spread is a date, not a book* — had never
+  been evaluated for it. This run evaluates it.
+
+  **THE CONSTRUCTION.** Nothing re-tuned: the committed book, the committed panel. Two tuned
+  parameters, both named by the idea, all points published: `offset d ∈ {0..4}` (rebalance d
+  sessions before the week's last, d=0 ≡ `engine.rebalance_mask(·,'W')`, gate G2 = 0 differing
+  rows) × `cost ∈ {0,10,25,50}` bps. Published-not-tuned: panel {B136, U56}, construction {AGG,
+  parameter-free 5-offset ENSEMBLE}, windows {FULL, IS 2009–2016, OOS 2017–2026}. **144 grid
+  rows**, all committed. GATES 4 of 5: local runner ≡ `engine.backtest` max|d| **0.000e+00**;
+  memo reproduced within tape drift (12.62% / 1.121 / −19.53% vs 12.66% / 1.124 / −19.53%).
+
+  **(A) THE ANSWER — THE MARGIN IS 6.0x SMALLER THAN ITS OWN SCHEDULING NOISE.** With tape, panel,
+  names, cost and cadence all fixed and only the WEEKDAY moving, FULL MaxDD runs **−19.53% ..
+  −23.71%**: an offset spread of **4.18 pp** against a **0.70 pp** margin. The same on OOS (4.18 vs
+  0.70). The clip-free offset subset {0,1,2} gives the identical 4.18 pp, so the verdict does not
+  rest on the two offsets whose masks clip holiday weeks (G4b, published as a failure rather than
+  widened). IS is the **one** window where the margin survives its spread (0.62 vs 0.40 pp) — the
+  defect is invisible in sample by construction.
+
+  **(B) AND IT IS LITERALLY A DATE.** All five offsets draw their full-sample maximum from the
+  **same 2020-02-19 peak**. Only the published weekday de-grosses in time to end its decline on
+  **2020-03-12** (16 sessions); d=1, d=2 and d=4 are carried into the April leg and trough on
+  **2020-04-21** (43 sessions), d=3 on 2020-03-16. The 0.70 pp is the width of one March-2020
+  scheduling accident and nothing else.
+
+  **(C) THE PASS SURVIVES AT NO COST RUNG, AND THE FAILURE IS ENTIRELY OUT OF SAMPLE.** All four 4b
+  legs hold at **1 of 5** offsets on FULL and **1 of 5** on OOS, and that count is **1/1/1/1** at
+  0/10/25/50 bps on both windows — while in sample it is **5/5/5/5** at every rung. 4a passes **0
+  of 60** B136/AGG grid points, confirming idea 910's own line 6.
+
+  **(D) RULE 8, 2017–2026 READ ONCE — THE IS-ONLY CHOOSER LANDS ON THE WORST OOS OFFSET.** IS
+  Sharpe is **monotone increasing in the offset** (1.2015 / 1.2033 / 1.2157 / 1.2276 / **1.2521**
+  for d=0..4), so any IS-Sharpe chooser picks **d=4** — the offset with the deepest OOS drawdown —
+  on both panels and at all four cost rungs. B136 OOS **10.82% / 0.953 / −23.03%** (DD margin
+  −2.80 pp) against RULES v2 OOS Sharpe **1.102** and SPY OOS **15.33% / 0.874 / −33.72%**; U56
+  pick d=4 OOS 11.87% / 1.037 / −22.53%. **0 of 8 walk-forward cells clear 4a or 4b.** So the
+  candidate's IS-reachability, which was idea 910's whole contribution, is OOS-anticorrelated on
+  the one dial this run moves.
+
+  **(E) THE REPAIR FAILS TOO.** The parameter-free 5-offset equal-weight ENSEMBLE — the standard
+  de-dating device, no free parameter — does not restore the pass: B136 FULL 12.29% / 1.096 /
+  **−21.02%** (margin −0.79 pp) and OOS 11.05% / 0.994 / −21.02%, 4b FAIL at all four rungs on FULL
+  and OOS while passing IS at all four. U56 ENS: FULL 12.09% / 1.095 / −22.47%, 4b FAIL throughout.
+
+  **(F) THE SPREAD IS A B136 FACT.** The same construction on U56 has a 0.84 pp offset spread and a
+  −2.30 pp margin: 4b FAIL at **0 of 5** offsets on FULL and OOS. It never had the pass to lose,
+  which is why the candidate was filed on B136 and why the B136 spread is the number that matters.
+
+  **WHAT THIS TEST CANNOT DO (stated, not repaired).** B136 and U56 are current-constituent lists,
+  so every absolute level here is survivorship-optimistic; the contrast is within-tape (same names,
+  same dates, only the weekday moves), which is the comparison the idea asks for and does not
+  repair the level. The offset family is the 5 weekly ones the idea names — monthly and phase
+  families are not priced here. The run bounds the size of the scheduling channel on THIS book; it
+  does not certify that every other committed 4b DD margin in the record is as fragile.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched).** (1) Idea 910's B136 TREND/AGG candidate should be struck from the standing
+  candidate list at the Sunday review: its sole distinguishing leg is 6.0x smaller than its own
+  scheduling noise, its repair fails, and its IS-only chooser is OOS-anticorrelated. (2) A rule-4b
+  clause this run earns in the exact form it was measured: *a 4b DD or CAGR margin must exceed the
+  book's own rebalance-offset spread over the offsets of its cadence, and that spread must be
+  published beside the margin* — evaluated on the **OOS** window, because this run shows a margin
+  that survives the test in sample (0.62 vs 0.40 pp) and dies out of sample (0.70 vs 4.18 pp).
