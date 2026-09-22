@@ -1,3 +1,74 @@
+## 2026-09-22 — idea 2274 (lane B): IS THE STANDING 4b CANDIDATE A REBALANCE-PHASE DRAW, AND DOES TRANCHING ACROSS PHASES FIX IT? **ANSWERED = NO, IT IS NOT A DRAW — ALL FIVE WEEKLY PHASES CLEAR 4b FULL AND OOS AT 0/10/25 bps. BY-PRODUCT KILL: THE WINNING PHASE DOES NOT PERSIST AT ALL (IS argmax = OOS argmax at 0 of 32). ONE KEEP-4b CANDIDATE — THE 5-TRANCHE PHASE-AVERAGED BOOK — RECORDED AND NOT RECOMMENDED. 4a IS 0 OF 192. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 2264 (this morning) filed the record's only standing
+  KEEP-4b candidate: the live RULES v2 band book on u56 at gross 1.00 instead of 0.75, OOS
+  12.67% / 1.2760 / -15.91%, margins DD +4.32 pp and CAGR +1.97 pp. Every weekly number in this
+  record, that one included, sits on ONE rebalance phase: `engine.rebalance_mask(freq='W')` fires
+  on the last trading day of each ISO week — Friday — and the other four weekdays have never been
+  priced. Idea 963 measured phase-family CAGR spreads of median 3.04 pp (M) and 4.37 pp (Q). If
+  the WEEKLY spread is of that order, the candidate's margins sit inside their own phase noise.
+
+  **THE GRID.** 192 cells (2 panels {u56, b136} x 4 gross rungs {0.25, 0.50, 0.75, 1.00} x 6
+  phase arms {W0..W4, PHAVG} x 4 cost rungs {0, 10, 25, 50} bps), all published. **Two tuned
+  dials and no more: GROSS and PHASE**; band (3%), cadence, delay (t+1), panel and cost are
+  reported, never selected. PROTOCOL rule 2's no-leverage cap is respected throughout.
+  Phase p groups weeks on `(idx - p days).to_period('W')`: p = 0 is exactly engine's `freq='W'`
+  and p = 1..4 walk the rebalance weekday back one day at a time, giving W0 Fri (942 of 977
+  rebalance days), W1 Mon (882), W2 Tue (969), W3 Wed (967), W4 Thu (948) — the remainders are
+  holiday-shifted and published rather than hidden.
+
+  **GATES — 8 of 8 PASS.** G1: phase-0 mask == `engine.rebalance_mask(idx,'W')` at **0 mismatches
+  of 4,708**. G2: the harness reproduces `engine.backtest` on the live book at **0.000e+00**.
+  G3: the derived cost ladder equals a full re-simulation at **0.000e+00** (the engine never
+  feeds cost back into positions). G4: the gross-0.75 arm IS `baseline.rules_v2_weights`,
+  max|dw| **0.000e+00**. G5: PHAVG as five buy-and-hold tranches differs from a daily-rebalanced
+  mix by **0.0035%** of terminal wealth. G6: 192 of 192 cells. G7: idea 2264's eleven committed
+  numbers reproduce to **4.94e-05**. G8: 32 persistence families priced.
+
+  **PART 1 — THE SPREAD IS REAL AND THE MARGIN IS BIGGER.** In the candidate's own family
+  (u56, gross 1.00, 10 bps) the five phases span OOS CAGR **12.33%-12.83% (0.50 pp)**, OOS Sharpe
+  **1.2492-1.2936 (0.0444)** and OOS MaxDD **-16.61%..-14.21% (2.40 pp)**. 2264's margins are
+  **CAGR +1.97 pp (3.9x the spread)** and **DD +4.32 pp (1.8x the spread)**, and **5 of 5 phases
+  clear 4b in FULL and OOS at 0, 10 and 25 bps — 15 of 15 cells**; at 50 bps all five fail the
+  FULL CAGR floor and all five still clear 4b OOS. Median spread over all 32 (panel, gross, cost)
+  families: full CAGR 0.34 pp, OOS CAGR 0.32 pp, full Sharpe 0.0486, OOS Sharpe 0.0457, OOS MaxDD
+  1.45 pp (maxima 0.59 / 0.62 pp / 0.0537 / 0.0480 / 2.44 pp). The weekly phase is an order of
+  magnitude smaller than 963's monthly and quarterly families, which is what makes the answer NO.
+
+  **PART 2 — BUT THE PHASE IS UNCHOOSABLE, AND THAT IS THE TRANSFERABLE FINDING.** Over the same
+  32 families, spearman(IS phase Sharpe 2009-2016, OOS phase Sharpe 2017-2026) has median
+  **-0.1500** and the IS argmax equals the OOS argmax at **0 of 32** where a uniform draw gives
+  6.4. The IS argmax is W4 (Thu) at 32 of 32; the OOS argmax is W2 (Tue) on u56 and W3 (Wed) on
+  b136, at 32 of 32. A dial with a 2.4 pp drawdown spread and negative persistence is an exposure
+  to be **spent**, not chosen — which is the same lesson as 2264's, one axis over: the record has
+  been selecting on statistics that carry no forecast.
+
+  **PART 3 — THE TRANCHE.** PHAVG is five equal sleeves, sleeve i rebalancing on weekday i, never
+  rebalanced against one another, so it costs no extra turnover. u56, gross 1.00, @10 bps: FULL
+  **11.42% / 1.1916 / -14.99%** (halves 1.2077 / 1.1800), **OOS 12.61% / 1.2768 / -14.99%**,
+  turnover **2.3677x/yr** — against 2264's W0 candidate 11.53% / 1.2009 / -15.91% (OOS 12.67% /
+  1.2760 / -15.91%, 2.3519x/yr), live RULES v2 8.62% / 1.2010 / -12.05% (OOS 9.46% / 1.2767 /
+  -12.05%, 1.77x/yr) and SPY 15.14% / 0.8851 / -33.72% (OOS 15.29% / 0.8751 / -33.72%). It beats
+  its own sleeve mean (OOS Sharpe 1.2768 vs 1.2733, OOS MaxDD -14.99% vs -15.25%, CAGR equal to
+  four decimals), so the rebate is diversification, not arithmetic.
+
+  **PART 4 — RULE 8, AND WHAT IT IS NOT.** Choosing on 2009-2016 and reading 2017-2026 once,
+  4b-OOS reach over 8 (panel x cost) cells each: `C_LIVE` **0**, `C_SHARPE` **2**, `C_DDB`
+  (2264's rule) **4**, **`C_DDB_PHAVG` 5**, `C_ORACLE` (best OOS single phase, peeks) **4** —
+  the zero-parameter tranche beats the oracle it declines to imitate, at median OOS -15.07% vs
+  `C_DDB`'s -16.69%. KEEP counts: **4a 0 of 192, unconditionally**; 4b FULL 28, 4b OOS 30,
+  BOTH 24, BOTH(4a, 4b) **0**. Binding leg over the 164 4b-FULL fails: **L_CAGR 164, every other
+  leg 0**. b136 clears 4b FULL and OOS at only 6 of 96 cells, all gross 1.00 at 0-10 bps.
+
+  **OUTCOME. No rules change.** One KEEP-4b candidate filed and explicitly NOT recommended
+  (`2026-09-22_weekly-rebalance-phase-draw_B_MEMO.md`), carrying the exact RULES wording it would
+  need; it is 2264's sizing decision with a free drawdown rebate attached, and PROTOCOL rule 6
+  gives sizing to the Sunday review. Survivorship (rule 9): u56/b136 are 2026 constituents held
+  from 2008, so every CAGR level is optimistic and both 4b level legs are easier than on a
+  point-in-time panel. Costs flat per unit turnover, no spread/impact/borrow, and the five-sleeve
+  book is modelled at the same per-unit cost as one sleeve — optimistic if there is a fixed
+  per-ticket charge.
+
 ## 2026-09-22 — idea 2264 (lane B): DOES A DRAWDOWN-BUDGETED IS-ONLY GROSS CHOOSER MAKE THE RECORD'S ONLY RELIABLE 4b PASSER RULE-8 REACHABLE? **ANSWERED = YES. THE "NOT REACHABLE" VERDICT WAS A PROPERTY OF THE CHOOSER, NOT OF THE CELL. ONE KEEP-4b CANDIDATE (u56, UNLEVERED, 0-25 bps), RECORDED AND NOT RECOMMENDED. 4a IS A KILL, 0 OF 110. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Three independent runs this month agree on both halves of a
