@@ -1,0 +1,198 @@
+====================================================================================================
+IDEA 2121 lane cloud 2026-09-22 -- can an IS-ONLY CHOOSER THAT SEES GROSS beat IS SHARPE
+                                   on a BAND x GROSS ladder?
+====================================================================================================
+run 2026-09-22 07:49 UTC
+tuned dial 1: ladder cell band [0.0, 0.02, 0.03, 0.05, 0.08] x gross [0.5, 0.6, 0.75, 0.85, 1.0] (25 cells/panel),
+              chosen on IS rows ONLY by each chooser -- never by hand.
+tuned dial 2: chooser set ['IS_SHARPE', 'IS_MINMARG', 'IS_CALMAR', 'IS_CAGRSLACK', 'IS_LEGS', 'IS_DD', 'CELL_ALPHA']
+reported axes: panels U56 + B136, costs [0, 10, 25, 50] bps (protocol 10), cadence W,
+               windows FULL / IS ..2016-12-31 / OOS 2017-01-01.. (rule 8, read once)
+zero-parameter comparands (B5): ['MAXGROSS', 'RANDCELL']
+
+  panel U56     56 names  2008-01-02 .. 2026-09-18  (4708 sessions)
+  panel B136   136 names  2008-01-02 .. 2026-09-18  (4708 sessions)
+
+----------------------------------------------------------------------------------------------------
+(G) GATES -- printed before any hypothesis is read
+----------------------------------------------------------------------------------------------------
+  G2  weekly mask is engine.rebalance_mask(idx,'W') itself : 0 differing rows   [PASS]
+  G3  ladder cell (0.03,0.75) == baseline.rules_v2_weights : max|d| 0.000e+00   [PASS]  (the ladder's centre cell IS the live book)
+  G1  local run()+net() == engine.backtest(freq='W',10bps) : max|d| 0.000e+00 over 4706 rows   [PASS]
+  G4  pick() is handed an IS-ONLY view of the frame (columns is_*) and cannot read an
+      OOS or FULL column -- structural, asserted at call time   [PASS by construction]
+  G5  comparands: baseline.rules_v2_weights (0.03/0.75, W) and SPY buy-and-hold   [PASS]
+  --> 5 of 5 gates PASS.
+
+grid priced: 200 rows published to 2026-09-22_gross-seeing-is-chooser-on-band-gross-ladder_cloud.grid.csv
+
+----------------------------------------------------------------------------------------------------
+(B1) IS the chooser statistic SENSITIVE TO GROSS?  2119 measured IS Sharpe moving
+     0.0013 (U56) / 0.0026 (B136) across the WHOLE gross ladder.  Per statistic:
+     gspread = mean over bands of (max-min across gross);  bspread = mean over gross
+     of (max-min across bands);  gross share = gspread / (gspread + bspread).
+----------------------------------------------------------------------------------------------------
+panel      chooser  gspread  bspread  total_spread  gross_share
+  U56    IS_SHARPE   0.0010   0.0675        0.0684       0.0151
+  U56   IS_MINMARG   0.0501   0.0081        0.0587       0.8605
+  U56    IS_CALMAR   0.0152   0.1610        0.1763       0.0865
+  U56 IS_CAGRSLACK   0.0501   0.0081        0.0587       0.8605
+  U56      IS_LEGS   0.2000   0.2000        1.0000       0.5000
+  U56        IS_DD   0.0527   0.0112        0.0643       0.8249
+ B136    IS_SHARPE   0.0022   0.0854        0.0874       0.0246
+ B136   IS_MINMARG   0.0547   0.0115        0.0670       0.8262
+ B136    IS_CALMAR   0.0188   0.0605        0.0782       0.2368
+ B136 IS_CAGRSLACK   0.0547   0.0115        0.0670       0.8262
+ B136      IS_LEGS   0.8000   0.2000        1.0000       0.8000
+ B136        IS_DD   0.0532   0.0091        0.0637       0.8546
+
+----------------------------------------------------------------------------------------------------
+(B2/B3/B5) RULE 8 -- cell chosen on IS rows ONLY, 2017-2026 read ONCE.
+----------------------------------------------------------------------------------------------------
+  --- U56 @ 0 bps --- benchmarks OOS: RULES v2   9.65% / 1.3012 / -12.03%   SPY  15.29% / 0.8751 / -33.72%
+           chooser        cell  oos_CAGR  oos_Sharpe  oos_MaxDD keep4b_full keep4b_oos keep4a_full keep4a_oos
+         IS_SHARPE b0.08_g1.00    0.1217      1.1778    -0.1904        True       True       False      False
+        IS_MINMARG b0.08_g1.00    0.1217      1.1778    -0.1904        True       True       False      False
+         IS_CALMAR b0.02_g1.00    0.1286      1.3084    -0.1561        True       True       False      False
+      IS_CAGRSLACK b0.08_g1.00    0.1217      1.1778    -0.1904        True       True       False      False
+           IS_LEGS b0.08_g1.00    0.1217      1.1778    -0.1904        True       True       False      False
+             IS_DD b0.02_g0.50    0.0636      1.3100    -0.0796       False      False       False       True
+        CELL_ALPHA b0.00_g0.50    0.0622      1.3003    -0.0807       False      False       False      False
+          MAXGROSS b0.03_g1.00    0.1294      1.3004    -0.1588        True       True       False      False
+          RANDCELL  MEAN-OF-25    0.0927      1.2635    -0.1238         NaN        NaN         NaN        NaN
+  --- U56 @ 10 bps --- benchmarks OOS: RULES v2   9.46% / 1.2767 / -12.05%   SPY  15.29% / 0.8751 / -33.72%
+           chooser        cell  oos_CAGR  oos_Sharpe  oos_MaxDD keep4b_full keep4b_oos keep4a_full keep4a_oos
+         IS_SHARPE b0.08_g1.00    0.1200      1.1625    -0.1905        True       True       False      False
+        IS_MINMARG b0.08_g1.00    0.1200      1.1625    -0.1905        True       True       False      False
+         IS_CALMAR b0.02_g1.00    0.1253      1.2784    -0.1565        True       True       False      False
+      IS_CAGRSLACK b0.08_g1.00    0.1200      1.1625    -0.1905        True       True       False      False
+           IS_LEGS b0.08_g1.00    0.1200      1.1625    -0.1905        True       True       False      False
+             IS_DD b0.02_g0.50    0.0620      1.2796    -0.0799       False      False       False       True
+        CELL_ALPHA b0.00_g0.50    0.0599      1.2556    -0.0810       False      False       False      False
+          MAXGROSS b0.03_g1.00    0.1267      1.2760    -0.1591        True       True       False      False
+          RANDCELL  MEAN-OF-25    0.0906      1.2366    -0.1241         NaN        NaN         NaN        NaN
+  --- U56 @ 25 bps --- benchmarks OOS: RULES v2   9.16% / 1.2399 / -12.09%   SPY  15.29% / 0.8751 / -33.72%
+           chooser        cell  oos_CAGR  oos_Sharpe  oos_MaxDD keep4b_full keep4b_oos keep4a_full keep4a_oos
+         IS_SHARPE b0.08_g1.00    0.1174      1.1396    -0.1907        True       True       False      False
+        IS_MINMARG b0.08_g1.00    0.1174      1.1396    -0.1907        True       True       False      False
+         IS_CALMAR b0.08_g1.00    0.1174      1.1396    -0.1907        True       True       False      False
+      IS_CAGRSLACK b0.08_g1.00    0.1174      1.1396    -0.1907        True       True       False      False
+           IS_LEGS b0.08_g1.00    0.1174      1.1396    -0.1907        True       True       False      False
+             IS_DD b0.02_g0.50    0.0597      1.2339    -0.0802       False      False       False      False
+        CELL_ALPHA b0.00_g0.50    0.0566      1.1885    -0.0814       False      False       False      False
+          MAXGROSS b0.03_g1.00    0.1227      1.2394    -0.1596        True       True       False      False
+          RANDCELL  MEAN-OF-25    0.0874      1.1963    -0.1245         NaN        NaN         NaN        NaN
+  --- U56 @ 50 bps --- benchmarks OOS: RULES v2   8.68% / 1.1784 / -12.16%   SPY  15.29% / 0.8751 / -33.72%
+           chooser        cell  oos_CAGR  oos_Sharpe  oos_MaxDD keep4b_full keep4b_oos keep4a_full keep4a_oos
+         IS_SHARPE b0.08_g1.00    0.1131      1.1014    -0.1910        True       True       False      False
+        IS_MINMARG b0.08_g1.00    0.1131      1.1014    -0.1910        True       True       False      False
+         IS_CALMAR b0.08_g1.00    0.1131      1.1014    -0.1910        True       True       False      False
+      IS_CAGRSLACK b0.08_g1.00    0.1131      1.1014    -0.1910        True       True       False      False
+           IS_LEGS b0.08_g1.00    0.1131      1.1014    -0.1910        True       True       False      False
+             IS_DD b0.02_g0.50    0.0559      1.1577    -0.0808       False      False       False      False
+        CELL_ALPHA b0.00_g0.50    0.0510      1.0764    -0.0822       False      False       False      False
+          MAXGROSS b0.03_g1.00    0.1161      1.1782    -0.1604       False       True       False      False
+          RANDCELL  MEAN-OF-25    0.0822      1.1289    -0.1251         NaN        NaN         NaN        NaN
+  --- B136 @ 0 bps --- benchmarks OOS: RULES v2   8.07% / 1.1314 / -12.21%   SPY  15.26% / 0.8737 / -33.72%
+           chooser        cell  oos_CAGR  oos_Sharpe  oos_MaxDD keep4b_full keep4b_oos keep4a_full keep4a_oos
+         IS_SHARPE b0.08_g1.00    0.1117      1.1095    -0.1948        True       True       False      False
+        IS_MINMARG b0.08_g1.00    0.1117      1.1095    -0.1948        True       True       False      False
+         IS_CALMAR b0.03_g1.00    0.1078      1.1301    -0.1612        True       True       False      False
+      IS_CAGRSLACK b0.08_g1.00    0.1117      1.1095    -0.1948        True       True       False      False
+           IS_LEGS b0.08_g1.00    0.1117      1.1095    -0.1948        True       True       False      False
+             IS_DD b0.03_g0.50    0.0537      1.1326    -0.0822       False      False       False       True
+        CELL_ALPHA b0.00_g0.50    0.0540      1.1605    -0.0847       False      False       False       True
+          MAXGROSS b0.03_g1.00    0.1078      1.1301    -0.1612        True       True       False      False
+          RANDCELL  MEAN-OF-25    0.0804      1.1320    -0.1279         NaN        NaN         NaN        NaN
+  --- B136 @ 10 bps --- benchmarks OOS: RULES v2   7.85% / 1.1017 / -12.24%   SPY  15.26% / 0.8737 / -33.72%
+           chooser        cell  oos_CAGR  oos_Sharpe  oos_MaxDD keep4b_full keep4b_oos keep4a_full keep4a_oos
+         IS_SHARPE b0.08_g1.00    0.1098      1.0921    -0.1950        True       True       False      False
+        IS_MINMARG b0.08_g1.00    0.1098      1.0921    -0.1950        True       True       False      False
+         IS_CALMAR b0.03_g1.00    0.1047      1.1006    -0.1616        True      False       False      False
+      IS_CAGRSLACK b0.08_g1.00    0.1098      1.0921    -0.1950        True       True       False      False
+           IS_LEGS b0.08_g1.00    0.1098      1.0921    -0.1950        True       True       False      False
+             IS_DD b0.03_g0.50    0.0522      1.1026    -0.0824       False      False       False       True
+        CELL_ALPHA b0.00_g0.50    0.0515      1.1108    -0.0851       False      False       False       True
+          MAXGROSS b0.03_g1.00    0.1047      1.1006    -0.1616        True      False       False      False
+          RANDCELL  MEAN-OF-25    0.0781      1.1009    -0.1282         NaN        NaN         NaN        NaN
+  --- B136 @ 25 bps --- benchmarks OOS: RULES v2   7.51% / 1.0571 / -12.29%   SPY  15.26% / 0.8737 / -33.72%
+           chooser        cell  oos_CAGR  oos_Sharpe  oos_MaxDD keep4b_full keep4b_oos keep4a_full keep4a_oos
+         IS_SHARPE b0.08_g1.00    0.1069      1.0660    -0.1953        True       True       False      False
+        IS_MINMARG b0.08_g1.00    0.1069      1.0660    -0.1953        True       True       False      False
+         IS_CALMAR b0.08_g1.00    0.1069      1.0660    -0.1953        True       True       False      False
+      IS_CAGRSLACK b0.08_g1.00    0.1069      1.0660    -0.1953        True       True       False      False
+           IS_LEGS b0.08_g1.00    0.1069      1.0660    -0.1953        True       True       False      False
+             IS_DD b0.03_g0.50    0.0500      1.0576    -0.0827       False      False       False       True
+        CELL_ALPHA b0.00_g0.50    0.0479      1.0361    -0.0856       False      False       False      False
+          MAXGROSS b0.03_g1.00    0.1001      1.0563    -0.1621       False      False       False      False
+          RANDCELL  MEAN-OF-25    0.0746      1.0541    -0.1287         NaN        NaN         NaN        NaN
+  --- B136 @ 50 bps --- benchmarks OOS: RULES v2   6.94% / 0.9828 / -12.36%   SPY  15.26% / 0.8737 / -33.72%
+           chooser        cell  oos_CAGR  oos_Sharpe  oos_MaxDD keep4b_full keep4b_oos keep4a_full keep4a_oos
+         IS_SHARPE b0.08_g1.00    0.1021      1.0225    -0.1958        True      False       False      False
+        IS_MINMARG b0.08_g1.00    0.1021      1.0225    -0.1958        True      False       False      False
+         IS_CALMAR b0.08_g1.00    0.1021      1.0225    -0.1958        True      False       False      False
+      IS_CAGRSLACK b0.08_g1.00    0.1021      1.0225    -0.1958        True      False       False      False
+           IS_LEGS b0.08_g1.00    0.1021      1.0225    -0.1958        True      False       False      False
+             IS_DD b0.03_g0.50    0.0463      0.9826    -0.0832       False      False       False      False
+        CELL_ALPHA b0.00_g0.50    0.0419      0.9114    -0.0865       False      False       False      False
+          MAXGROSS b0.03_g1.00    0.0925      0.9824    -0.1631       False      False       False      False
+          RANDCELL  MEAN-OF-25    0.0687      0.9762    -0.1295         NaN        NaN         NaN        NaN
+
+----------------------------------------------------------------------------------------------------
+(B4) THE OOS VERDICT SPREAD each chooser set produces, per instance (panel x cost).
+----------------------------------------------------------------------------------------------------
+panel  cost  n_distinct_cells  oos_Sharpe_spread  oos_CAGR_spread  oos_MaxDD_spread  n_pass_4b_oos  agree_4b_oos  n_reach_g100
+  U56     0                 4             0.1322           0.0664            0.1108              5         False             5
+  U56    10                 4             0.1171           0.0654            0.1107              5         False             5
+  U56    25                 3             0.0943           0.0608            0.1105              5         False             5
+  U56    50                 3             0.0814           0.0620            0.1103              5         False             5
+ B136     0                 4             0.0511           0.0580            0.1126              5         False             5
+ B136    10                 4             0.0187           0.0583            0.1126              4         False             5
+ B136    25                 3             0.0299           0.0590            0.1126              5         False             5
+ B136    50                 3             0.1111           0.0602            0.1125              0          True             5
+
+----------------------------------------------------------------------------------------------------
+(B5) DOES ANY FITTED CHOOSER BEAT THE ZERO-PARAMETER RULE?  MAXGROSS = band 0.03 (live),
+     gross 1.00, no in-sample data read at all.  RANDCELL = the 25-cell mean.
+----------------------------------------------------------------------------------------------------
+                chooser  n_inst  same_cell_as_MAXGROSS  beats_MAXGROSS_oosSharpe  beats_RANDCELL_oosSharpe  mean_oos_Sharpe  mean_oos_CAGR  n_4b_oos  n_4b_full_and_oos  n_4a_full
+              IS_SHARPE       8                      0                         2                         2           1.1089         0.1128         7                  7          0
+             IS_MINMARG       8                      0                         2                         2           1.1089         0.1128         7                  7          0
+              IS_CALMAR       8                      2                         4                         4           1.1434         0.1133         6                  6          0
+           IS_CAGRSLACK       8                      0                         2                         2           1.1089         0.1128         7                  7          0
+                IS_LEGS       8                      0                         2                         2           1.1089         0.1128         7                  7          0
+                  IS_DD       8                      0                         6                         8           1.1571         0.0554         0                  0          0
+             CELL_ALPHA       8                      0                         2                         4           1.1299         0.0531         0                  0          0
+    MAXGROSS (0 params)       8                      8                         0                         6           1.1579         0.1125         5                  4          0
+RANDCELL (25-cell mean)       8                      0                         2                         0           1.1361         0.0818        -1                 -1         -1
+
+----------------------------------------------------------------------------------------------------
+(B7) POST-HOC DIAGNOSTIC (declared post-hoc; no cell is selected on it).  Is the IS
+     statistic FLAT-BUT-ORDERED in gross rather than a coin flip, and does the OOS
+     gradient point the SAME WAY?
+----------------------------------------------------------------------------------------------------
+             n_blocks  n_monotone_UP  n_monotone_DOWN  n_argmax_at_g100  mean_span
+stat                                                                              
+FULL_Sharpe        40             14               14                14    0.00076
+IS_Sharpe          40             40                0                40    0.00214
+OOS_CAGR           40             40                0                40    0.05569
+OOS_Sharpe         40              0               30                 0    0.00140
+
+     BAND, at the gross rung the verdict lives on (g = 1.00), 10 bps:
+     panel  IS_argmax_band  OOS_argmax_band  OOS_Sharpe_at_IS_pick  OOS_Sharpe_best_band  n_bands_passing_4b_full_and_oos
+       U56          0.0800           0.0200                 1.1625                1.2784                                5
+      B136          0.0800           0.0200                 1.0921                1.1211                                1
+
+====================================================================================================
+HEADLINE
+====================================================================================================
+  B1  gross share of the IS statistic's own spread (10 bps):
+      U56  IS_SHARPE=0.015  IS_MINMARG=0.860  IS_CALMAR=0.086  IS_CAGRSLACK=0.860  IS_LEGS=0.500  IS_DD=0.825
+      B136  IS_SHARPE=0.025  IS_MINMARG=0.826  IS_CALMAR=0.237  IS_CAGRSLACK=0.826  IS_LEGS=0.800  IS_DD=0.855
+  B2  U56 @10bps: 5 of 7 choosers reach gross 1.00 -- IS_SHARPE:b0.08_g1.00, IS_MINMARG:b0.08_g1.00, IS_CALMAR:b0.02_g1.00, IS_CAGRSLACK:b0.08_g1.00, IS_LEGS:b0.08_g1.00, IS_DD:b0.02_g0.50, CELL_ALPHA:b0.00_g0.50
+  B2  B136 @10bps: 5 of 7 choosers reach gross 1.00 -- IS_SHARPE:b0.08_g1.00, IS_MINMARG:b0.08_g1.00, IS_CALMAR:b0.03_g1.00, IS_CAGRSLACK:b0.08_g1.00, IS_LEGS:b0.08_g1.00, IS_DD:b0.03_g0.50, CELL_ALPHA:b0.00_g0.50
+  B3  4b OOS passes over all 7x2x4 chooser picks: 34
+  B4  distinct cells picked per instance: [4, 4, 3, 3, 4, 4, 3, 3]; OOS Sharpe spread 0.0187-0.1322; choosers agree on the 4b OOS verdict in 1 of 8 instances
+  B7  monotone in GROSS: IS_Sharpe UP 40/40, OOS_Sharpe DOWN 30/40, OOS_CAGR UP 40/40  -> the IS gradient is FLAT-BUT-ORDERED, not a coin flip, and its SIGN is INVERTED against OOS Sharpe.
+      band at g=1.00: IS pick vs OOS best -- U56 IS b0.08 (OOS Sharpe 1.1625) vs OOS-best b0.02 (1.2784), 5/5 bands pass 4b, B136 IS b0.08 (OOS Sharpe 1.0921) vs OOS-best b0.02 (1.1211), 1/5 bands pass 4b
+  B5  beats MAXGROSS on OOS Sharpe: IS_SHARPE 2/8, IS_MINMARG 2/8, IS_CALMAR 4/8, IS_CAGRSLACK 2/8, IS_LEGS 2/8, IS_DD 6/8, CELL_ALPHA 2/8

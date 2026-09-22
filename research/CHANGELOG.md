@@ -1,3 +1,75 @@
+## 2026-09-22 — idea 2121 (lane cloud): CAN AN IS-ONLY CHOOSER THAT *SEES GROSS* BEAT IS SHARPE ON A BAND x GROSS LADDER? **ANSWERED = NO — AND 2119'S PREMISE IS RETIRED: IS SHARPE WAS NEVER COIN-FLIPPING GROSS**
+
+  **THE QUESTION.** Idea 2119 laddered the live book over band x gross, found all 16 of its 4b
+  passes at gross 1.00 (the verdict turns ENTIRELY on gross) while IS Sharpe — the chooser the
+  record habitually uses for rule 8 — moves only 0.0013 (U56) / 0.0026 (B136) across the WHOLE
+  gross ladder, and concluded that "rule 8 resolves BAND and COIN-FLIPS GROSS". This run scores
+  legal IS-only choosers that DO see the dial against IS Sharpe on the same 25-cell ladder.
+
+  **THE SETUP.** `baseline.rules_v2_weights`'s own form on its own two dials: band
+  {0.00,0.02,0.03,0.05,0.08} x gross {0.50,0.60,0.75,0.85,1.00}, weekly, t+1, panels U56 and
+  B136, costs {0,10,25,50} bps, 200 grid rows and 72 picks all published. Seven legal IS-only
+  choosers taken VERBATIM from ideas 2087/2109 (IS_SHARPE, IS_MINMARG, IS_CALMAR, IS_CAGRSLACK,
+  IS_LEGS, IS_DD, CELL_ALPHA). 5 of 5 gates PASS (G3 max|d| 0.000e+00 — the ladder's centre cell
+  IS the live book; G1 max|d| 0.000e+00 against `engine.backtest`).
+
+  **THE PREMISE IS HALF RIGHT.** The named choosers really do see gross: gross share of each IS
+  statistic's own spread at 10 bps is IS_SHARPE **0.015 / 0.025** against IS_MINMARG 0.860 /
+  0.826, IS_CAGRSLACK 0.860 / 0.826, IS_DD 0.825 / 0.855 — 34-56x more sensitive. IS_SHARPE's
+  whole-ladder gross spread reproduces 2119 exactly (0.0010 / 0.0022).
+
+  **AND IT CHANGES NOTHING — 5 of 7 choosers pick gross 1.00 in 8 of 8 instances, IS_SHARPE
+  AMONG THEM.** The only chooser that departs from IS Sharpe is IS_CALMAR, and it departs on
+  the BAND, not the gross.
+
+  **WHY: FLAT IS NOT THE SAME AS BLIND.** Over all 40 (panel x cost x band) blocks, **IS Sharpe
+  is monotone INCREASING in gross in 40 of 40 and its argmax is g=1.00 in 40 of 40.** A
+  0.0021-wide gradient that never once reverses is a DETERMINISTIC argmax, not a coin flip.
+  2119's "coin-flips GROSS" reading is retired, and with it the motivation for the whole
+  gross-seeing-chooser family on this ladder.
+
+  **THE SIGN FINDING, which is the one that matters.** On the same 40 blocks OOS CAGR is
+  monotone UP in gross 40/40, while **OOS Sharpe is monotone DOWN 30/40 and never peaks at
+  g=1.00 (0/40)**. Every legal chooser walks UP the gross ladder; risk-adjusted out-of-sample
+  performance walks DOWN it. The picks are "right" only because the 4b CAGR floor is an
+  exposure bar — idea 2125's conclusion, reached independently from the chooser side.
+
+  **THE OOS VERDICT SPREAD (the number the idea asked for).** Per instance the 7 choosers land
+  on **3-4 distinct cells**, OOS Sharpe spread **0.0187-0.1322**, OOS MaxDD spread 11.0-11.3 pp,
+  and they **disagree on the 4b OOS verdict in 7 of 8 instances**. Idea 2109's selection-width
+  finding replicates here: a single-chooser rule-8 verdict on this ladder carries ~0.1 of
+  unreported OOS Sharpe and a whole 4b verdict.
+
+  **THE KILL: NO FITTED CHOOSER BEATS A RULE THAT READS NO IN-SAMPLE DATA.** Mean OOS Sharpe
+  over the 8 instances: **MAXGROSS (zero parameters — live band 0.03, top gross rung, no IS read
+  at all) 1.1579**, the highest of all nine rules, against IS_DD 1.1571, IS_CALMAR 1.1434,
+  RANDCELL 1.1361, CELL_ALPHA 1.1299 and IS_SHARPE = IS_MINMARG = IS_CAGRSLACK = IS_LEGS 1.1089;
+  mean OOS CAGR 0.1125 vs 0.1128. Fitting 25 cells on eight years of in-sample data buys
+  **-0.049 of OOS Sharpe and -0.0003 of OOS CAGR** against reading nothing. The fitted rules win
+  the 4b COUNT (7/8 vs 4/8) only by taking band 0.08, whose extra exposure clears the CAGR floor
+  more often while being the WORST band on OOS Sharpe (U56 1.1625 vs 1.2784 at b0.02).
+
+  **RULE 8, 2017-2026 READ ONCE, 10 bps.** U56: the four gross-blind choosers -> b0.08_g1.00
+  OOS 12.00% / 1.1625 / -19.05% (4b FULL+OOS PASS); IS_CALMAR -> b0.02_g1.00 OOS 12.53% / 1.2784
+  / -15.65% (PASS); MAXGROSS -> b0.03_g1.00 OOS 12.67% / 1.2760 / -15.91% (PASS). B136: the four
+  -> b0.08_g1.00 OOS 10.98% / 1.0921 / -19.50% (PASS); IS_CALMAR and MAXGROSS both FAIL 4b OOS
+  (10.47% / 1.1006 / -16.16%). Benchmarks OOS: RULES v2 9.46% / 1.2767 / -12.05% (U56) and
+  7.85% / 1.1017 / -12.24% (B136); SPY 15.29% / 0.8751 / -33.72%. **PATH 4a: 0 of 72 picks pass
+  anywhere.**
+
+  **PARK by-product, recorded not promoted.** `U56 band 0.02 / gross 1.00 weekly`: FULL 11.33% /
+  1.1934 / -15.65% (halves 1.206 / 1.186), OOS 12.53% / 1.2784 / -15.65%, clears 4b FULL+OOS at
+  0/10/25 bps. 2119 PARKed this cell as UNREACHABLE (rank 11th on IS Sharpe); this run shows it
+  IS reachable, by 1 of 7 legal choosers. It stays PARK because (i) it FAILS 4b inside the IS
+  window itself, (ii) its chooser fails 4b OOS on B136, and (iii) the zero-parameter MAXGROSS
+  matches it. Memo `research/backtests/2026-09-22_gross-seeing-is-chooser-on-band-gross-ladder_cloud.memo.md`.
+
+  **NO RULES CHANGE.** RULES.md / PROTOCOL.md / scan.py / bot.py / baseline.py untouched.
+  **Survivorship (rule 9):** U56 and B136 are current-constituent lists; all absolute CAGR and
+  drawdown levels here are optimistic, and this run is a within-tape chooser contrast only.
+  Script `research/backtests/2026-09-22_gross-seeing-is-chooser-on-band-gross-ladder_cloud.py`,
+  results `..._cloud.result.md`.
+
 ## 2026-09-22 — idea 2125 (lane C): IS THE 4b CAGR FLOOR REACHABLE AT ALL BELOW GROSS 1.00? **ANSWERED = YES, DOWN TO GROSS 0.50 — 2119's "PURE EXPOSURE BAR" READING IS RETIRED — BUT THE DEVICE THAT REACHES IT IS NOT A NON-EXPOSURE DEVICE AND AN INFORMATION-FREE PLACEBO REACHES IT AT THE SAME CELLS. KILL, no new KEEP, no rules change.**
 
   **THE QUESTION.** Idea 2119 laddered the live band book over band x gross and found all 16
