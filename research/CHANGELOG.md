@@ -1,3 +1,80 @@
+## 2026-09-22 — idea 2264 (lane B): DOES A DRAWDOWN-BUDGETED IS-ONLY GROSS CHOOSER MAKE THE RECORD'S ONLY RELIABLE 4b PASSER RULE-8 REACHABLE? **ANSWERED = YES. THE "NOT REACHABLE" VERDICT WAS A PROPERTY OF THE CHOOSER, NOT OF THE CELL. ONE KEEP-4b CANDIDATE (u56, UNLEVERED, 0-25 bps), RECORDED AND NOT RECOMMENDED. 4a IS A KILL, 0 OF 110. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Three independent runs this month agree on both halves of a
+  contradiction nobody had resolved. (i) The ONLY cells clearing PROTOCOL path 4b anywhere on
+  this corpus are plain GROSS rungs of the live RULES v2 band book — idea 2233 (cloud): *"all 4
+  of the grid's 96 4b passes at 10 bps are GROSS passes at the untouched b = 0.03 band (U56 and
+  B136, gross 1.00 and 1.25); 0 come from the BIN or MATCH arms"*; idea 953 the same 4 of 84;
+  idea 2237 found every `b_out` cell clearing 4b is STRICTLY DOMINATED by a gross cell. (ii) All
+  three then PARKed those cells as NOT rule-8 reachable, always for the same reason: the record's
+  habitual IS-Sharpe chooser takes the ladder end `g = 1.50` and blows the OOS DD cap.
+
+  **THE DIAGNOSIS.** IS Sharpe is the one statistic gross is *invariant* to (u56 1.2010 -> 1.2000
+  over g = 0.25..1.50, flat to ~0.003). The chooser was measuring the axis the dial does not move.
+  The leg that actually binds a gross decision is DRAWDOWN, and drawdown is monotone in gross
+  (gate G4, both panels). So this run matches the chooser to the constraint: **pick the largest
+  gross whose IN-SAMPLE MaxDD stays inside `kappa x (IS SPY MaxDD)` — the 4b drawdown cap itself,
+  computed on 2009-2016 alone.** Legal, IS-only, no lookahead.
+
+  **THE GRID.** 110 book cells (gross {0.250..1.500 step 0.125} x cost {0,5,10,25,50} bps x panel
+  {u56, b136}) + 170 chooser cells, all published. Two tuned dials and no more: **kappa and
+  GROSS**; cost, panel, band (3%) and cadence (W) are reported, never selected. **10 of 10 gates
+  PASS**: `g = 0.75` IS the live book (max|dw| **0.0**, max|dr| **0.0**); sizing linearity
+  **3.5e-18**; the committed cells of 2233/2237 reproduce to **5.0e-05**; IS MaxDD monotone in
+  gross; the derived cost ladder equals a full re-simulation at **0.0** (the engine never feeds
+  cost back into positions, so one zero-cost run per (panel, gross) gives every rung exactly).
+
+  **PART 1 — REACHABILITY, WHICH IS THE WHOLE QUESTION.** Scoreboard over 10 panel x cost cells
+  each, 2009-2016 choosing, 2017-2026 read once: `C_LIVE` (the shipped gross 0.75, a
+  no-information control) **0 of 10** on 4b OOS; `C_SHARPE` (habitual) **1 of 10**; `C_CALMAR`
+  **0 of 10**; `C_DDB` at kappa 0.40/0.50/0.60/0.70/0.80/0.90/1.00 reads **0 / 5 / 9 / 1 / 0 / 0 /
+  0**, with kappa = 0.60 also **10 of 10** on 4b FULL. The kappa ladder is sharply peaked, which
+  would be damning if kappa were free. **It is not free at the pick that matters:** under
+  PROTOCOL rule 2's no-leverage cap the budget is SLACK for every kappa >= 0.60, so the rule
+  degenerates to *"take the largest legal gross"* — a ZERO-parameter rule that returns
+  **g = 1.00** on both panels at every cost rung — and kappa = 0.60 is PROTOCOL 4b's own delta,
+  pre-registered 2026-09-04, not chosen here.
+
+  **PART 2 — THE CANDIDATE.** u56, the live band book at **gross 1.00** instead of 0.75, nothing
+  else changed. @10 bps FULL **11.53% / 1.2009 / -15.91%** (halves 1.2282 / 1.1799), **OOS 12.67%
+  / 1.2760 / -15.91%**, turnover **2.35x/yr** — against live RULES v2 8.62% / 1.2010 / -12.05%
+  (OOS 9.46% / 1.2767 / -12.05%, 1.77x/yr) and SPY 15.14% / 0.8851 / -33.72% (OOS 15.29% / 0.8751
+  / -33.72%). 4b passes in FULL *and* OOS at **0 / 5 / 10 / 25 bps**; at 50 bps OOS still passes
+  and FULL misses the CAGR floor by 0.11 pp. OOS margins at 10 bps: DD **+4.32 pp**, CAGR **+1.97
+  pp**. The cost-fragility that disqualified 142's both-paths cell and 2254's hysteresis pick is
+  ABSENT here — 2.35x/yr, not 8.18x — which is the first time in this record a 4b pass has held
+  across the whole cost ladder.
+
+  **PART 3 — WHAT IT IS NOT.** **4a is 0 of 110 book cells and 0 of 170 chooser cells,
+  unconditionally**: gross is Sharpe-neutral, so the book cannot beat the live one in both halves,
+  and it is strictly deeper in drawdown. The candidate buys **+2.91 pp of CAGR with +3.86 pp of
+  MaxDD and no Sharpe at all**. It is a SIZING decision dressed as a rule, and PROTOCOL rule 6
+  gives sizing to the Sunday review, not to a run. It is also **panel-dependent**: on b136 the
+  same pick clears 4b FULL at 0/5/10 bps but misses 4b OOS from 5 bps on, failing the OOS CAGR
+  floor by 0.05-0.21 pp. Binding leg over the 83 4b-FULL fails: **CAGR floor 63, DD cap 20** — the
+  floor still dominates, as 2227 / 2233 / 2237 / 2241 / 2254 all found, but gross is the one dial
+  that climbs it before the DD cap bites.
+
+  **PART 4 — FALSIFICATION, because the forward test is flattered.** The choosing window's SPY
+  MaxDD (-22.06%, 2011) is SHALLOWER than the read window's (-33.72%, 2020), so an IS drawdown
+  budget is automatically conservative out of sample. **Arm R reverses the windows** (2017-2026
+  chooses, 2009-2016 read; cap -13.24%) and removes that advantage entirely: **kappa = 0.60 still
+  clears 4b at 7 of 10 cells**, kappa 0.50 at 3 of 10, kappa 0.40 and kappa >= 0.70 at 0 of 10 —
+  the same peak in the harder direction, with the binding leg correctly flipping to the DD cap
+  (43 of 70 fails). **Arm F** charges `(g-1) x rate` on every levered rung at 0 / 2% / 4% a year:
+  **4 of 8 levered rungs still clear 4b OOS at every rate**, and the two that fail (1.375, 1.50)
+  fail on drawdown, not on financing.
+
+  **OUTCOME.** **No rules change.** One KEEP-4b candidate filed and explicitly NOT recommended
+  (`2026-09-22_dd-budgeted-gross-chooser_B_MEMO.md`), carrying the exact RULES wording it would
+  need. The transferable method finding is larger than the candidate: **a "not rule-8 reachable"
+  verdict is a claim about the chooser as much as about the cell, and this record has been
+  scoring every dial on IS Sharpe — including the two dials (gross, and any pure sizing device)
+  that Sharpe is blind to by construction.** Survivorship (rule 9): u56/b136 are 2026 constituents
+  held from 2008, so every CAGR level is optimistic and both 4b level legs are easier than on a
+  point-in-time panel. Costs flat per unit turnover, no spread/impact/borrow; one cadence (W),
+  one delay (t+1), one band (3%).
+
 ## 2026-09-22 — idea 2254 (lane B): CAN A RANK-HYSTERESIS BUFFER CUT THE BOTH-PATHS CELL'S 8.18x/yr TURNOVER TOWARD THE LIVE BOOK'S 1.77x WITHOUT LOSING THE PASS? **ANSWERED = NO — KILL OF THE QUESTION AS POSED. THE BUFFER IS REAL, FREE AND WALK-FORWARD-STABLE, AND IT MOVES THE NUMBER 31-43% AND THE BAR NOT AT ALL. ONE DUAL-PATH KEEP-CANDIDATE (<= 10 bps) THAT STRICTLY DOMINATES THE STANDING ONE. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** The 2026-09-20 SUNDAY REVIEW re-verified the record's only book
