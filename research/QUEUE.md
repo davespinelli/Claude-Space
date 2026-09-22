@@ -100,7 +100,6 @@ IDEA 2 = **913** — RAN AND CLOSED this run (ANSWERED / PARTIAL — persistence
 
 2256. does-the-BOTH-PATHS-CELL-s-TURNOVER-FLOOR-MOVE-if-the-TWO-LEGS-RUN-on-DIFFERENT-CLOCKS — idea 2246 decomposed the 8.18x/yr into 6.36x equity + 1.82x sleeve and showed the common rescale RE-COUPLES them (+15.6% of turnover) while DECOUPLING the legs entirely costs 2.5 pp of CAGR and both KEEP paths. The untested middle is a CADENCE split: keep the common rescale (so the blend stays the committed book) but refresh the equity leg on a slower clock than the sleeve, or the reverse. Max 2 params (equity cadence, sleeve cadence); panel, cost, blend, band and gross reported, not tuned. Price-only, both KEEP paths, rule 8. (2026-09-22, lane B run 13)
 
-2260. does-a-VOLATILITY-TARGETED-GROSS-CLEAR-4b-WHERE-a-CONSTANT-GROSS-ONLY-DOES-at-g-EQUAL-1 — the record's only reliable 4b passers are CONSTANT gross rungs of the live band book (U56/B136 g = 1.00 and 1.25), and 2237 priced gross as the CHEAPEST dial per pp of drawdown surrendered (R_DD 1.324 vs b_out 2.380). A constant gross spends the DD budget uniformly across calm and violent tape; a trailing-realised-vol target spends it where it is cheap. Walk a vol target with a hard gross cap and report whether any rung clears 4b with MORE margin on the DD leg than plain g = 1.00 at the same CAGR. Max 2 params (vol target, gross cap). Price-only, both KEEP paths, rule 8. (2026-09-22, lane B run 13)
 
 
 
@@ -693,6 +692,10 @@ THE DESCENT (walking UP from the bottom of '## Open' in file order).  **905 / 94
 *(2026-09-20, lane B) CLAIMED 267 — it is the LAST numbered item standing in '## Open' (everything below it is lane annotation, not an idea) and it carried no claim marker: the 2026-09-20 Sunday review returned it here as standing since 2026-09-06 unclaimed. No eligibility skip is taken and no fallback is used: the idea is price-only, answerable offline from the committed caches, and it yields this protocol's step-3 deliverables directly — its 'non-null arm pairs' ARE real books (cadence / gross / band / count / vol scaler on U56 and B136), so the band is scored as a REAL IS-only screening rule over them, every pick made on 2009-2016 and 2017-2026 read once, both KEEP paths at all 160 capital cells. Moved to '## In progress' and closed in the same run — see '## Done' and LEADERBOARD.md.*
 
 ## In progress
+
+*(2026-09-22, lane C, run 14) CLAIMED **2260** — the SECOND numbered item standing in '## Open' in file order (2256 is first and is left for lane A under the sprint's ordering rule).  Price-only on the committed caches; no EDGAR / Form 4 / 8-K / options / live data.  Script `research/backtests/2026-09-22_voltgt-gross-vs-constant-gross-at-matched-CAGR_C.py`.  Pushed BEFORE any compute per queue-hygiene clause (C).*
+
+*Original line (2260):* 2260. does-a-VOLATILITY-TARGETED-GROSS-CLEAR-4b-WHERE-a-CONSTANT-GROSS-ONLY-DOES-at-g-EQUAL-1 — the record's only reliable 4b passers are CONSTANT gross rungs of the live band book (U56/B136 g = 1.00 and 1.25), and 2237 priced gross as the CHEAPEST dial per pp of drawdown surrendered (R_DD 1.324 vs b_out 2.380). A constant gross spends the DD budget uniformly across calm and violent tape; a trailing-realised-vol target spends it where it is cheap. Walk a vol target with a hard gross cap and report whether any rung clears 4b with MORE margin on the DD leg than plain g = 1.00 at the same CAGR. Max 2 params (vol target, gross cap). Price-only, both KEEP paths, rule 8. (2026-09-22, lane B run 13)
 
 
 
