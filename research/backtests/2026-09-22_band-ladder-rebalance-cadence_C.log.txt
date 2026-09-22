@@ -1,0 +1,166 @@
+====================================================================================================
+IDEA 2207 lane C 2026-09-22 -- is the KEEP-4b CANDIDATE a REBALANCE-FREQUENCY object?
+====================================================================================================
+run 2026-09-22 08:31 UTC
+tuned dial 1: CADENCE ['D', 'W', '2W', 'M']
+tuned dial 2: GROSS   [0.5, 0.6, 0.75, 0.85, 1.0]
+reported, NOT tuned: BAND [0.0, 0.02, 0.03, 0.05, 0.08] (all five published; rule-8 primary scope is at the
+                     live band 0.03), PANELS U56 + B136, COST [10, 25] bps (+0 bps for B5),
+                     windows FULL / IS ..2016-12-31 / OOS 2017-01-01.. (rule 8, read once)
+the live book is (band 0.03, gross 0.75, cadence W) -- gate G3
+
+  panel U56     56 names  2008-01-02 .. 2026-09-18  (4708 sessions)
+  panel B136   136 names  2008-01-02 .. 2026-09-18  (4708 sessions)
+
+----------------------------------------------------------------------------------------------------
+(G) GATES -- printed before any hypothesis is read
+----------------------------------------------------------------------------------------------------
+  G2  D/W/M masks ARE engine.rebalance_mask : 0 differing rows; 2W subset of W True, |2W| 489 == ceil(|W| 977/2) True   [PASS]
+  G3  ladder cell (0.03,0.75) == baseline.rules_v2_weights : max|d| 0.000e+00   [PASS]  (the ladder's centre cell IS the live book)
+  G1  local run()+net() == engine.backtest(freq=R,10bps) for R in D/W/M : max|d| 0.000e+00   [PASS]
+  G4  pick() is handed an IS-ONLY view (is_* columns) and cannot read an OOS or FULL
+      column -- structural, asserted at call time   [PASS by construction]
+  G5  comparands: baseline.rules_v2_weights (0.03/0.75, WEEKLY as it runs live) and SPY buy-and-hold   [PASS]
+  --> 5 of 5 gates PASS.
+
+  U56: SPY FULL 15.14% / 0.8851 / -33.72% (H 0.9570/0.8264) | OOS 15.29% / 0.8751 / -33.72%
+        4b bars: DD cap -20.23% FULL / -20.23% OOS; CAGR floor 10.60% FULL / 10.70% OOS
+        live RULES v2 (W) @10bps FULL 8.62% / 1.2010 / -12.05% | OOS 9.46% / 1.2767 / -12.05% | turnover 1.77x/yr
+  B136: SPY FULL 15.12% / 0.8844 / -33.72% (H 0.9571/0.8249) | OOS 15.26% / 0.8737 / -33.72%
+        4b bars: DD cap -20.23% FULL / -20.23% OOS; CAGR floor 10.59% FULL / 10.68% OOS
+        live RULES v2 (W) @10bps FULL 7.96% / 1.0972 / -12.24% | OOS 7.85% / 1.1017 / -12.24% | turnover 2.01x/yr
+
+  priced 200 books (2 panels x 25 cells x 4 cadences) x 3 cost rungs = 600 published rows
+
+----------------------------------------------------------------------------------------------------
+(B1) PASS COUNT PER CADENCE -- flat in R would mean cadence is not a dial
+----------------------------------------------------------------------------------------------------
+  U56 @10bps  4b FULL passes of 25: D= 4  W= 5  2W= 5  M= 3   | 4b OOS: D= 5  W= 6  2W= 8  M= 6   | 4a FULL: D= 0  W= 0  2W= 0  M= 0
+              mean turnover/yr: D= 3.17x  W= 1.89x  2W= 1.51x  M= 1.17x   best FULL Sharpe: D=1.1900 W=1.2011 2W=1.2252 M=1.2084
+  U56 @25bps  4b FULL passes of 25: D= 2  W= 4  2W= 5  M= 3   | 4b OOS: D= 4  W= 5  2W= 7  M= 4   | 4a FULL: D= 0  W= 0  2W= 0  M= 2
+              mean turnover/yr: D= 3.17x  W= 1.89x  2W= 1.51x  M= 1.17x   best FULL Sharpe: D=1.1373 W=1.1635 2W=1.1880 M=1.1804
+  B136 @10bps  4b FULL passes of 25: D= 1  W= 4  2W= 4  M= 2   | 4b OOS: D= 1  W= 1  2W= 3  M= 2   | 4a FULL: D= 2  W= 0  2W= 0  M= 2
+              mean turnover/yr: D= 3.38x  W= 2.08x  2W= 1.67x  M= 1.29x   best FULL Sharpe: D=1.1155 W=1.1154 2W=1.1347 M=1.1264
+  B136 @25bps  4b FULL passes of 25: D= 1  W= 1  2W= 0  M= 2   | 4b OOS: D= 0  W= 1  2W= 0  M= 0   | 4a FULL: D= 2  W= 2  2W= 1  M= 4
+              mean turnover/yr: D= 3.38x  W= 2.08x  2W= 1.67x  M= 1.29x   best FULL Sharpe: D=1.0780 W=1.0909 2W=1.0855 M=1.0944
+
+----------------------------------------------------------------------------------------------------
+(B2) THE PASS SET, not its size -- Jaccard vs WEEKLY, and cadence-robust cells
+----------------------------------------------------------------------------------------------------
+  U56 @10bps  |4b pass| D/W/2W/M = 4/5/5/3   union 5   ALL-FOUR 2   EXACTLY-ONE 0
+       D vs W: jaccard 0.800  (shared 4, only-D 0, lost-from-W 1)
+       W vs W: jaccard 1.000  (shared 5, only-W 0, lost-from-W 0)
+      2W vs W: jaccard 1.000  (shared 5, only-2W 0, lost-from-W 0)
+       M vs W: jaccard 0.600  (shared 3, only-M 0, lost-from-W 2)
+      cadence-robust (all four): ['b0.02_g1.00', 'b0.03_g1.00']
+  U56 @25bps  |4b pass| D/W/2W/M = 2/4/5/3   union 5   ALL-FOUR 1   EXACTLY-ONE 0
+       D vs W: jaccard 0.500  (shared 2, only-D 0, lost-from-W 2)
+       W vs W: jaccard 1.000  (shared 4, only-W 0, lost-from-W 0)
+      2W vs W: jaccard 0.800  (shared 4, only-2W 1, lost-from-W 0)
+       M vs W: jaccard 0.400  (shared 2, only-M 1, lost-from-W 2)
+      cadence-robust (all four): ['b0.03_g1.00']
+  B136 @10bps  |4b pass| D/W/2W/M = 1/4/4/2   union 5   ALL-FOUR 0   EXACTLY-ONE 0
+       D vs W: jaccard 0.250  (shared 1, only-D 0, lost-from-W 3)
+       W vs W: jaccard 1.000  (shared 4, only-W 0, lost-from-W 0)
+      2W vs W: jaccard 0.600  (shared 3, only-2W 1, lost-from-W 1)
+       M vs W: jaccard 0.200  (shared 1, only-M 1, lost-from-W 3)
+  B136 @25bps  |4b pass| D/W/2W/M = 1/1/0/2   union 3   ALL-FOUR 0   EXACTLY-ONE 2
+       D vs W: jaccard 1.000  (shared 1, only-D 0, lost-from-W 0)
+       W vs W: jaccard 1.000  (shared 1, only-W 0, lost-from-W 0)
+      2W vs W: jaccard 0.000  (shared 0, only-2W 0, lost-from-W 1)
+       M vs W: jaccard 0.000  (shared 0, only-M 2, lost-from-W 1)
+      cadence artefacts (one cadence only): ['b0.00_g1.00', 'b0.02_g1.00']
+
+----------------------------------------------------------------------------------------------------
+(B3) BINDING LEG per cadence, and what a WEEKLY margin is worth at other cadences
+----------------------------------------------------------------------------------------------------
+  U56 @10bps  D  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.840   sole binder  H1=0 H2=0 DD=0 CAGR=21
+  U56 @10bps  W  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.800   sole binder  H1=0 H2=0 DD=0 CAGR=20
+  U56 @10bps 2W  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.800   sole binder  H1=0 H2=0 DD=0 CAGR=20
+  U56 @10bps  M  fail rate  H1=0.000  H2=0.000  DD=0.120  CAGR=0.800   sole binder  H1=0 H2=0 DD=2 CAGR=19
+  U56 @25bps  D  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.920   sole binder  H1=0 H2=0 DD=0 CAGR=23
+  U56 @25bps  W  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.840   sole binder  H1=0 H2=0 DD=0 CAGR=21
+  U56 @25bps 2W  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.800   sole binder  H1=0 H2=0 DD=0 CAGR=20
+  U56 @25bps  M  fail rate  H1=0.000  H2=0.000  DD=0.120  CAGR=0.800   sole binder  H1=0 H2=0 DD=2 CAGR=19
+  B136 @10bps  D  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.960   sole binder  H1=0 H2=0 DD=0 CAGR=24
+  B136 @10bps  W  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.840   sole binder  H1=0 H2=0 DD=0 CAGR=21
+  B136 @10bps 2W  fail rate  H1=0.000  H2=0.000  DD=0.040  CAGR=0.800   sole binder  H1=0 H2=0 DD=1 CAGR=20
+  B136 @10bps  M  fail rate  H1=0.000  H2=0.000  DD=0.200  CAGR=0.800   sole binder  H1=0 H2=0 DD=3 CAGR=18
+  B136 @25bps  D  fail rate  H1=0.000  H2=0.200  DD=0.000  CAGR=0.960   sole binder  H1=0 H2=0 DD=0 CAGR=19
+  B136 @25bps  W  fail rate  H1=0.000  H2=0.000  DD=0.000  CAGR=0.960   sole binder  H1=0 H2=0 DD=0 CAGR=24
+  B136 @25bps 2W  fail rate  H1=0.000  H2=0.000  DD=0.040  CAGR=0.960   sole binder  H1=0 H2=0 DD=1 CAGR=24
+  B136 @25bps  M  fail rate  H1=0.000  H2=0.000  DD=0.200  CAGR=0.800   sole binder  H1=0 H2=0 DD=3 CAGR=18
+
+  min 4b leg margin of each WEEKLY passer, re-read at every cadence (pp / Sharpe units):
+cadence                    D      W     2W      M
+panel cost band gross                            
+B136  10   0.02 1.0   -0.245 +0.069 +0.196 +0.157
+           0.03 1.0   -0.179 +0.041 +0.173 -0.272
+           0.05 1.0   -0.154 +0.023 +0.121 -2.869
+           0.08 1.0   +0.147 +0.138 -0.594 -6.349
+      25   0.08 1.0   +0.091 +0.111 -0.610 -6.364
+U56   10   0.00 1.0   -0.404 +0.226 +0.250 +0.293
+           0.02 1.0   +0.232 +0.249 +0.258 +0.283
+           0.03 1.0   +0.237 +0.271 +0.255 +0.257
+           0.05 1.0   +0.242 +0.232 +0.241 -0.757
+           0.08 1.0   +0.257 +0.241 +0.241 -3.996
+      25   0.02 1.0   -0.276 +0.203 +0.220 +0.256
+           0.03 1.0   +0.060 +0.234 +0.223 +0.233
+           0.05 1.0   -0.071 +0.180 +0.216 -0.783
+           0.08 1.0   +0.158 +0.218 +0.223 -4.006
+  of 14 weekly 4b passers x 3 other cadences = 42 re-reads: 26 still pass 4b (61.9%); median min-margin move -0.053
+
+----------------------------------------------------------------------------------------------------
+(B4) RULE 8 -- cadence x gross chosen on IS (..2016-12-31) ONLY, OOS 2017-2026 read ONCE
+----------------------------------------------------------------------------------------------------
+  U56 @10bps  (scope: cadence x gross at band 0.03, 20 cells)
+      IS_SHARPE    -> b0.03_g1.00_M     OOS 12.82% / 1.2252 / -18.81%   4b_OOS True  4b_FULL True  4a_OOS False  OOS rank 16/20  turn 1.64x
+      IS_CALMAR    -> b0.03_g1.00_M     OOS 12.82% / 1.2252 / -18.81%   4b_OOS True  4b_FULL True  4a_OOS False  OOS rank 16/20  turn 1.64x
+      IS_MINMARG   -> b0.03_g1.00_M     OOS 12.82% / 1.2252 / -18.81%   4b_OOS True  4b_FULL True  4a_OOS False  OOS rank 16/20  turn 1.64x
+      MAXGROSS_W   -> b0.03_g1.00_W     OOS 12.67% / 1.2760 / -15.91%   4b_OOS True  4b_FULL True  4a_OOS False  OOS rank 15/20  turn 2.35x
+      RANDCELL     -> mean-over-scope   OOS  9.40% / 1.2743 / -12.27%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 10/20  turn 1.72x
+      comparands: SPY OOS 15.29% / 0.8751 / -33.72%  |  RULES v2 (W) OOS 9.46% / 1.2767 / -12.05%
+  U56 @25bps  (scope: cadence x gross at band 0.03, 20 cells)
+      IS_SHARPE    -> b0.03_g1.00_M     OOS 12.54% / 1.2011 / -18.84%   4b_OOS True  4b_FULL True  4a_OOS False  OOS rank 16/20  turn 1.64x
+      IS_CALMAR    -> b0.03_g1.00_M     OOS 12.54% / 1.2011 / -18.84%   4b_OOS True  4b_FULL True  4a_OOS False  OOS rank 16/20  turn 1.64x
+      IS_MINMARG   -> b0.03_g1.00_M     OOS 12.54% / 1.2011 / -18.84%   4b_OOS True  4b_FULL True  4a_OOS False  OOS rank 16/20  turn 1.64x
+      MAXGROSS_W   -> b0.03_g1.00_W     OOS 12.27% / 1.2394 / -15.96%   4b_OOS True  4b_FULL True  4a_OOS False  OOS rank 10/20  turn 2.35x
+      RANDCELL     -> mean-over-scope   OOS  9.11% / 1.2379 / -12.31%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 10/20  turn 1.72x
+      comparands: SPY OOS 15.29% / 0.8751 / -33.72%  |  RULES v2 (W) OOS 9.16% / 1.2399 / -12.09%
+  B136 @10bps  (scope: cadence x gross at band 0.03, 20 cells)
+      IS_SHARPE    -> b0.03_g1.00_W     OOS 10.47% / 1.1006 / -16.16%   4b_OOS False 4b_FULL True  4a_OOS False  OOS rank 15/20  turn 2.67x
+      IS_CALMAR    -> b0.03_g1.00_M     OOS 10.97% / 1.0802 / -20.50%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 16/20  turn 1.85x
+      IS_MINMARG   -> b0.03_g1.00_M     OOS 10.97% / 1.0802 / -20.50%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 16/20  turn 1.85x
+      MAXGROSS_W   -> b0.03_g1.00_W     OOS 10.47% / 1.1006 / -16.16%   4b_OOS False 4b_FULL True  4a_OOS False  OOS rank 15/20  turn 2.67x
+      RANDCELL     -> mean-over-scope   OOS  7.89% / 1.1091 / -12.73%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 10/20  turn 1.94x
+      comparands: SPY OOS 15.26% / 0.8737 / -33.72%  |  RULES v2 (W) OOS 7.85% / 1.1017 / -12.24%
+  B136 @25bps  (scope: cadence x gross at band 0.03, 20 cells)
+      IS_SHARPE    -> b0.03_g1.00_M     OOS 10.65% / 1.0517 / -20.54%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 16/20  turn 1.85x
+      IS_CALMAR    -> b0.03_g1.00_M     OOS 10.65% / 1.0517 / -20.54%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 16/20  turn 1.85x
+      IS_MINMARG   -> b0.03_g1.00_M     OOS 10.65% / 1.0517 / -20.54%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 16/20  turn 1.85x
+      MAXGROSS_W   -> b0.03_g1.00_W     OOS 10.01% / 1.0563 / -16.21%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 15/20  turn 2.67x
+      RANDCELL     -> mean-over-scope   OOS  7.56% / 1.0656 / -12.78%   4b_OOS False 4b_FULL False 4a_OOS False  OOS rank 10/20  turn 1.94x
+      comparands: SPY OOS 15.26% / 0.8737 / -33.72%  |  RULES v2 (W) OOS 7.51% / 1.0571 / -12.29%
+  3-dial control (100 cells): 4b_OOS passes 10 of 12 fitted picks; cadences picked ['M', 'W']
+  fitted picks overall: 4b_OOS 16/24, 4b_FULL 19/24, 4a_OOS 0/24, 4a_FULL 0/24
+  zero-parameter MAXGROSS_W: 4b_OOS 4/8; mean OOS Sharpe 1.1681 vs fitted 1.1606 (premium -0.0075)
+
+----------------------------------------------------------------------------------------------------
+(B5) MECHANISM -- turnover, cost drag, and the same grid at 0 bps (post-hoc)
+----------------------------------------------------------------------------------------------------
+  U56  turnover/yr D= 3.17x  W= 1.89x  2W= 1.51x  M= 1.17x
+        @ 0bps  4b passes of 25: D= 5  W= 5  2W= 5  M= 3   mean drag/yr D=0.000% W=0.000% 2W=0.000% M=0.000%
+        @10bps  4b passes of 25: D= 4  W= 5  2W= 5  M= 3   mean drag/yr D=0.317% W=0.189% 2W=0.151% M=0.117%
+        @25bps  4b passes of 25: D= 2  W= 4  2W= 5  M= 3   mean drag/yr D=0.792% W=0.474% 2W=0.379% M=0.294%
+  B136  turnover/yr D= 3.38x  W= 2.08x  2W= 1.67x  M= 1.29x
+        @ 0bps  4b passes of 25: D= 5  W= 5  2W= 4  M= 2   mean drag/yr D=0.000% W=0.000% 2W=0.000% M=0.000%
+        @10bps  4b passes of 25: D= 1  W= 4  2W= 4  M= 2   mean drag/yr D=0.338% W=0.208% 2W=0.167% M=0.129%
+        @25bps  4b passes of 25: D= 1  W= 1  2W= 0  M= 2   mean drag/yr D=0.846% W=0.519% 2W=0.418% M=0.323%
+
+====================================================================================================
+HEADLINE
+====================================================================================================
+  1. 4b FULL pass counts by cadence, pooled over panel x cost rung: D=  8  W= 14  2W= 14  M= 10   (of 100 books each)
+  2. pass-set Jaccard vs WEEKLY: median 0.550, range 0.000-1.000 over 12 cadence x panel x cost comparisons
+  3. cells passing 4b at ALL FOUR cadences: U56@10bps 2, U56@25bps 1, B136@10bps 0, B136@25bps 0
+  4. rule 8: 16 of 24 fitted picks clear 4b OOS; MAXGROSS_W 4 of 8
