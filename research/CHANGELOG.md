@@ -1,3 +1,61 @@
+## 2026-09-22 — idea 2241 (lane B): DOES AN ASYMMETRIC 200d BAND (b_in, b_out) CLEAR 4b WHERE THE SYMMETRIC ONE CANNOT? **ANSWERED = NO — KILL ON BOTH KEEP PATHS**
+
+  **WHERE THIS COMES FROM.** 2227 leaves the live RULES v2 band book with a drawdown margin of
+  +8.2 pp against 4b's cap and a CAGR floor it misses by ~1.3 pp OOS, and concludes that no
+  accounting treatment of idle NAV reaches 4b because "the band book is short of RETURN". Clause 2
+  uses ONE constant for both edges of the 200d band (+/-3%). This run separates them — IN above
+  `ma*(1+b_in)` (entry lag), OUT below `ma*(1-b_out)` (exit patience) — because that is the one
+  dial that converts unused drawdown budget into TIME IN MARKET without adding gross or leverage.
+
+  **THE GRID.** 42 cells (b_in in {0.00,0.01,0.02,0.03,0.05,0.08} x b_out in {0.00,0.01,0.02,
+  0.03,0.05,0.08,0.12}) x 5 cost rungs x 2 panels = **420 published rows**, all in `.grid.csv`.
+  Two tuned dials and no more: **b_in and b_out**; gross (0.75, live), cadence (W), cost and panel
+  are reported, never selected. **12 of 12 gates PASS** — G1 `b_in = b_out = 0.03` reproduces
+  `baseline.rules_v2_weights` at max |dw| **0.0**, G2 the state matrix equals `baseline.band_state`
+  at 0.0, G3 the 10 bps return line is **identical** to the live baseline's at 0.0.
+
+  **PART 1 — THE DIAL IS REAL AND IT IS CHEAP.** `dCAGR/d(mean exposure)` = **+0.1133 (U56) /
+  +0.1648 (B136) with R2 0.94** across the 42 cells. Loosening both edges (live 0.03/0.03 ->
+  0.01/0.12 on U56, 0.00/0.12 on B136) is worth **+1.40 pp / +2.21 pp of CAGR** and does it at
+  **LOWER turnover** (1.77 -> 1.16/yr; 2.01 -> 1.28/yr), because a wider hysteresis band trades
+  less. It costs **-3.78 pp / -4.55 pp** of MaxDD, landing at -15.83% / -16.79% against the 4b cap
+  of -20.23%: the budget 2227 identified really is there and really does buy return.
+
+  **PART 2 — AND IT STILL CANNOT REACH, BECAUSE THE CEILING IS STRUCTURAL.** The loosest legal
+  corner (0.00 / 0.12) reaches mean exposure **0.645 — only 86% of the 0.75 gross cap**. So at the
+  **ZERO-cost rung, with BOTH parameters chosen by hindsight**, the best FULL CAGR the whole ladder
+  reaches is **10.15% (U56) / 10.31% (B136)** against a 4b floor of **10.60% / 10.59%** — short by
+  0.45 / 0.28 pp. Consequently the **CAGR floor binds in 100% of 4b-fail rows and the DD cap in
+  0%**, with both SPY Sharpe legs and the OOS Sharpe leg passing in 100% of them. **0 of 420 rows
+  pass 4b in FULL or OOS.** The band's missing return is a **SIZE shortfall dressed as a timing
+  question**; widening the window cannot fix a book whose gross is 0.75.
+
+  **PART 3 — 4a DIES ON A DIFFERENT LEG ON EACH PANEL, AND 0 OF 420 PASS.** U56: **0 of 42** cells
+  beat the live book's Sharpe in BOTH halves — the live symmetric 0.03/0.03 cell IS the Sharpe
+  argmax (1.2010), so symmetry is locally optimal there and the asymmetry is a pure loss. B136:
+  9 of 42 cells beat both halves and 11 of 42 hold the DD leg, but **the two sets are DISJOINT** —
+  the best-Sharpe cell 0.03/0.08 (Sharpe **1.1429** vs live 1.0972, CAGR **9.29%** vs 7.96%) fails
+  4a only because its MaxDD is 2.66 pp worse. That is exactly the asymmetry PROTOCOL rule 4b was
+  added to correct, and 4b then rejects the same cell on return.
+
+  **RULE 8 (2017-2026 READ ONCE).** argmax IS Sharpe on 2009-2016 picks the LOOSE corner at every
+  rung (U56 0.02/0.08, 0.03/0.12 at 50 bps; B136 0.01/0.12). OOS at 10 bps: **U56 9.77% / 1.1848 /
+  -14.61%** and **B136 9.50% / 1.0734 / -16.54%** against live OOS 9.46% / 1.2767 / -12.05% and
+  7.85% / 1.1017 / -12.24%, SPY 15.29% / 0.8751 / -33.72%. Both miss the OOS CAGR floor
+  (10.70% / 10.68%) by **0.9 / 1.2 pp** with the DD cap unbinding by 5.6 / 3.7 pp; **4a is 0 of 10
+  walk-forward cells**. **A finding worth carrying beyond this idea:** the chooser beats the live
+  book IN-SAMPLE by **+0.082 (U56) / +0.118 (B136)** Sharpe and then **LOSES to it OUT-OF-SAMPLE on
+  9 of 10 (panel x cost) cells** — on this ladder IS Sharpe is an **ANTI-PREDICTOR of OOS Sharpe**:
+  the looser band's in-sample gain does not survive, but its extra drawdown does. Any future run
+  that reaches for band width on an IS criterion should cite this.
+
+  **OUTCOME.** No new book, no memo, no rules change (rule 6). `RULES.md` / `PROTOCOL.md` /
+  `scan.py` / `bot.py` / `baseline.py` untouched. Honest limits: one gross (0.75), one cadence (W),
+  one weekday offset, one MA length (200d) — this is a statement about the two edges at the LIVE
+  sizing, not about bands in general; flat per-unit-turnover costs with no spread, impact or borrow;
+  survivorship (rule 9) on both current-constituent panels; the 0.645 exposure ceiling is a property
+  of this band family and this universe, not a theorem.
+
 ## 2026-09-22 — idea 2227 (lane C): IS THE SHY LEG'S +0.50 pp ACCOUNTING GAIN A RATE-REGIME ARTEFACT? **ANSWERED = SPLIT — NO ON THE LEVEL, YES ON THE 25/50 bps VERDICT**
 
   **WHERE THIS COMES FROM.** `engine.backtest` pays 0% on the uninvested residual `1 - sum(w)`,
