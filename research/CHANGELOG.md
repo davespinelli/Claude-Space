@@ -1,3 +1,53 @@
+## 2026-09-22 — idea 2077 (lane C): THE BAND BOOK'S FINANCING FRONTIER. **ANSWERED — FINANCING IS NOT THE BINDING CONSTRAINT; THE 4b DRAWDOWN CAP IS, AT 0%/yr TOO. KILL of the financing hypothesis. NO NEW KEEP, one PARK memo, no rules change.**
+
+  **THE QUESTION.** Idea 2085 found leverage on the live band book Sharpe-neutral across gross
+  0.75->2.00 with the 4b DD cap binding around 1.25-1.5, but modelled financing as a flat rate
+  on borrowed gross sampled at {0,3,6}%/yr on ONE cell. The whole levered case rested on that
+  unpriced assumption. This run prices the frontier: 72 cells (2 panels x 6 financing models
+  {0,2,4,6,8 %/yr flat, TV_SHY} x 6 gross), band .03 / weekly / 10 bps all fixed at the live
+  book's values. Exactly two tuned dials, FIN MODEL and GROSS.
+
+  **THE MECHANISM — nominal gross is a CAP, not a level.** At nominal 1.25 the band book's mean
+  HELD gross is **0.888** (U56) / **0.887** (B136): it borrows on **43.1%** / **40.1%** of days
+  and only **7.6%** / **8.7%** of NAV when it does. Mean borrowed 0.033 / 0.035. So the bill at
+  8%/yr on that rung is **26 bps/yr** and at the TV proxy **12 bps/yr**.
+
+  **THE ANSWER.** The 4b-passing set is **IDENTICAL at all six financing models on both panels**
+  — gross 1.00 and 1.25, never >= 1.50 — and every rung >= 1.50 fails the DD cap at **zero**
+  financing (U56 1.50: MaxDD -23.38% vs a -20.23% cap). Break-even r* (flat rate at which a
+  levered cell's CAGR falls back to gross 1.00's): **78.94% / 68.66%** at g1.25, 31.70 / 30.13
+  at 1.50, 20.92 / 19.44 at 2.00 — **24x** TV_SHY's own 3.24%/yr mean at 1.25. Break-even
+  GROSS: **none exists** on this ladder; at every rung 0-8%/yr all four levered rungs still
+  out-CAGR gross 1.00. 4a: **0 of 72**.
+
+  **BUT FINANCING IS PROCEDURALLY DECISIVE.** On B136 the IS-Sharpe chooser prefers gross 1.25
+  at 0%/yr by **0.00089** of IS Sharpe and flips to gross 1.00 at EVERY non-zero rung, turning
+  an OOS 4b PASS (13.10% CAGR) into a FAIL (10.47% vs a 10.68% floor, missed by 21 bps). A cost
+  that needs 69%/yr to matter economically moves the capital pick at 2%/yr — the chooser
+  fragility of ideas 2087/2101, reached from a different direction.
+
+  **RULE 8, 2017-2026 READ ONCE: 4 of 6 arms clear 4b OOS, 0 of 6 clear 4a.** U56 picks gross
+  1.25 at every financing model -> OOS **15.74% / 1.263 / -19.70%** (halves 1.418/1.093) against
+  SPY 15.29%/0.875/-33.72% and RULES v2 9.46%/1.277/-12.05%. **Idea 914's clause kills it**: DD
+  margin **+0.54 pp** (U56) / **+0.24 pp** (B136) against its own 5-offset DD spread of 3.00 /
+  2.86 pp, and the verdict holds at only **4 of 5** offsets.
+
+  **PARK, NOT KEEP.** The one weekday-robust 4b passer — U56, band .03, **gross 1.00** (the live
+  book with the de-gross removed), DD margin +4.32 pp vs a 2.40 pp spread, 5 of 5 offsets — is
+  **unreachable by rule 8**: IS CAGR 10.16% against the IS 4b floor of 10.47%, illegal for a
+  2016 chooser by 31 bps. It also fails 4a and fails on B136. Memo filed; RULES v2 unchanged.
+
+  **CONVENTION, REPORTED NOT PICKED ON.** Letting idle NAV earn (fin - 150 bps) instead of 0%
+  lifts U56 gross 0.75 from 8.62% to 11.97% at 8%/yr and makes the LIVE de-grossed book a 4b
+  FULL passer at FLAT6/FLAT8. The record's cash convention is load-bearing for the live book's
+  own 4b standing in a high-rate world — the opposite direction from the one this idea chased.
+
+  **CAVEAT, STATED.** No clean bill instrument is cached (no BIL/SHV), so TV_SHY is built from
+  SHY's own trailing 252d total return (+150 bps, floored at 0, lagged 1d). SHY carries ~1.9y
+  duration, so the proxy UNDERSTATES funding when rates rise (its 2022 reading floors to the
+  spread). The FLAT ladder and the model-free break-even r* carry the verdict; the proxy is a
+  path-shape experiment only. Survivorship: current constituents on both panels.
+
 ## 2026-09-22 — idea 2115 (lane C): IS THE REBALANCE-OFFSET SPREAD A COST ARTEFACT OR A PATH ARTEFACT? **ANSWERED, DECISIVELY — PATH, AT 162 OF 162 CELLS. KILL THE COST READING. NO NEW BOOK, NO RULES CHANGE.**
 
   **THE QUESTION.** Idea 914 killed a KEEP-4b candidate because its DD margin was smaller than the
