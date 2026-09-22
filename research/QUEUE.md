@@ -705,6 +705,8 @@ IDEA 2 = the LAST ELIGIBLE item, by a descent walking UP from the bottom of '## 
 
 *Original line (2246):* 2246. does-the-BOTH-PATHS-CELL-s-8.18x-TURNOVER-DECOMPOSE-into-an-EQUITY-LEG-and-a-SLEEVE-LEG — the 2026-09-20 Sunday review disqualified the record's ONLY 4a+4b book (`u56 / S3-50 + band3-rw`) on turnover alone (8.18x/yr on u56, 10.88x on broad, against the live book's 1.77x). Before any device is priced, the record should know WHICH of the two blended legs pays it: the top-20 composite rank churn, the TLT/GLD/UUP risk-parity sleeve's weekly re-solve, or the rescale-to-gross-0.75 that re-couples them. Decompose the turnover series by leg at matched weights and publish the three shares at every cost rung.
 
+*(2026-09-22, lane cloud, run 11) RAN AND CLOSED **1425** this run — see '## Done' and LEADERBOARD.md. Original claim follows.*
+
 *(2026-09-22, lane cloud, run 11) CLAIMED **1425** — script `research/backtests/2026-09-22_incumbent-weight-vector-dd-information_cloud.py`.*
 
 *Original line (1425):* 1425. does-the-frozen-incumbent-s-WEIGHT-VECTOR-carry-ANY-DD-INFORMATION-at-all — before any sizing rule can be a finding, the axis has to have variance: draw random weight vectors (Dirichlet, matched gross, over the incumbent's OWN held set each rebalance) and place the equal-weight anchor's 4b DD margin in that distribution. If the anchor sits mid-band, intra-book sizing is a dead axis and every sizing result in the record is a draw. Max 2 params (Dirichlet concentration, draw count). Price-only. (2026-09-19)
@@ -1312,6 +1314,8 @@ IDEA 2 = **911** (does-the-DD-RESIDUAL-s-IS-to-OOS-PERSISTENCE-survive-an-EPISOD
 
 
 ## Done (see LEADERBOARD.md)
+
+*(2026-09-22, lane cloud, run 11) **1425** does-the-frozen-incumbent-s-WEIGHT-VECTOR-carry-ANY-DD-INFORMATION-at-all — **ANSWERED, KILL as a device**: against a gross- and turnover-matched re-sizing null over its own held set, the equal-weight anchor sits MID-BAND (DD-margin percentile median 52.0, range [45.5,58.5] over 60 cells; CAGR 53.5). The axis is nevertheless OOS-persistent — rule 8's IS-only DD chooser beats the anchor's OOS MaxDD at 60 of 60 cells (OOS-DD percentile median 95.5) — but worth only 0.66 pp (-11.52% vs -12.18%), inside the record's own 2.93 pp DD-leg SE, and 0 of 60 picks clear 4b because the binding leg is the CAGR floor. `research/backtests/2026-09-22_incumbent-weight-vector-dd-information_cloud.py`*
 
 *(2026-09-22, lane cloud, run 11) **2246** does-the-BOTH-PATHS-CELL-s-8.18x-TURNOVER-DECOMPOSE-into-an-EQUITY-LEG-and-a-SLEEVE-LEG — **ANSWERED, no new KEEP**: the equity rank churn pays 77.8% of u56's 8.18x/yr (6.36x) and 83.5% of broad's 10.88x (9.08x), the TLT/GLD/UUP sleeve only 1.82x/1.79x (the size of the whole live book), and the rescale re-coupling +15.6%/+17.4% which costs 2.5 pp of CAGR to remove; a free sleeve still leaves 3.6x-4.5x the live book, so every future turnover device must shrink the leg that also earns. `research/backtests/2026-09-22_both-paths-turnover-leg-decomposition_cloud.py`*
 
