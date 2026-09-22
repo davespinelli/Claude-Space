@@ -1,3 +1,78 @@
+## 2026-09-22 — idea 1472 (lane C): DOES U56 H = 142 SURVIVE A DE-GROSS TWIN AND A c SWEEP, OR IS IT THE BAND AGAIN? **ANSWERED IN TWO PARTS — (A) IT IS *NOT* THE SCALAR: THE FIRST DEVICE IN THIS RECORD TO BEAT ITS OWN CAGR-MATCHED DE-GROSS TWIN ON *BOTH* AXES AT THE LIVE RUNG, AND THE MECHANISM IS BETA *ORDERING*. (B) KILL OF THE GENERAL LAW AND PARK OF THE CANDIDATE: THE SIGN IS SET BY (PANEL, H), THE TWIN CLEARS 4b IN EXACTLY THE SAME 55 OF 150 CELLS WITH 0 FLIPS, 4a IS 0 OF 150, AND RULE 8 REACHES IT AT 0 OF 4 CHOOSERS. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 1461 refined 1444's min-hold ladder and incidentally published
+  ONE KEEP-4b candidate — the beta-tilted band book on U56 at H = 142, c = 0.50 — which passes 4b
+  only WITH the band (its own c = 0 anchor misses the DD leg by -1.15 pp). Six consecutive
+  2026-09-19 runs had found every OTHER drawdown-buying device in this record beaten at MATCHED
+  CAGR by a plain de-gross, i.e. re-discovering one scalar — exposure. 1472 asks whether the beta
+  band is the seventh, or the first exception.
+
+  **THE GRID.** 150 cells (3 panels {U56, B136, SMALL} x H {126, 142} x c {0.00, 0.25, 0.50, 0.75,
+  1.00} x cost {0, 5, 10, 25, 50} bps), all published, plus 480 rank-permutation books. **Two tuned
+  dials and no more: H and c**; panel, cost rung and cadence (W) are reported, never selected on.
+  The rule is 1429/1444/1461's verbatim: hold the N = 20 names the live composite selects under a
+  min-hold H, rank them by trailing 126d beta to SPY ascending, `w_i = (G/n)(1 + c*z_i)` with
+  `z_i = 1 - 2(rank_i - 0.5)/n` summing to zero exactly, G = 0.75, lowest beta on the cap side.
+
+  **TWO PRE-REGISTERED TWINS.** **TWIN-D** (the record's convention): that H's own c = 0 anchor
+  scaled by a CONSTANT k so its NET CAGR equals the band cell's at the SAME cost rung — same names,
+  same days, only exposure differs. **TWIN-P**: the IDENTICAL weight multiset assigned in a
+  seed-drawn RANDOM order — same dispersion, same gross, ZERO beta information, 20 seeds.
+
+  **GATES — 15 of 15 PASS.** G1 cross-script replay of idea 1461's two committed U56 cells to
+  **1.94e-04** (the rounding of its 4-dp publications): anchor 15.80% / 1.1537 / -19.13%, candidate
+  15.47% / 1.2102 / -19.47% and OOS 17.25% / 1.2348 / -19.47%. G2 the c = 0 cell is BIT-IDENTICAL
+  to its anchor (0.00e+00). G3 every rebalance's weight sum == 0.75 (2.2e-16). G4 TWIN-D's achieved
+  CAGR match **9.91e-10** over the feasible cells. G4b TWIN-D's gross never exceeds 1.00.
+  G5 exposure channel SHUT — mean realised gross EQUAL across c at fixed (panel, H), 0.00e+00.
+  G6 TWIN-P at c = 0 is bit-identical to the anchor. G7 selection depends on H ONLY. G8 the band
+  widens monotonically in c. G9 the choosers read no row on or after 2017-01-01. G12 TWIN-D is a
+  pure exposure scalar (turnover/k matches the anchor's to 1.5%). G13 no leverage anywhere.
+
+  **PART A — THE CANDIDATE IS NOT THE SCALAR.** At 10 bps the U56/H=142/c=0.50 cell reads
+  **15.47% / 1.2102 / -19.47%** against a twin at 15.47% / 1.1873 / **-19.84%** (k = 0.9223):
+  **dMaxDD +0.366 pp AND dSharpe +0.0229**, and all four biting c rungs at U56/H=142 win both. The
+  edge is the beta ORDER, not the dispersion — against TWIN-P, t(Sharpe) **21.5**, t(MaxDD)
+  **16.4**, and 0 of 20 permutations beat it on either axis. Every one of the 24 (panel, H, c)
+  permutation contrasts is positive at t >= 2.55.
+
+  **PART B — THE LAW DOES NOT GENERALISE.** Over the 110 biting-and-feasible cells the band beats
+  its twin on DD 65, Sharpe 74, BOTH **62 of 110**. Mean dSharpe by panel: SMALL **+0.0758**,
+  B136 **-0.0040**, U56 **-0.0081**. At 10 bps dMaxDD runs U56/126 **-0.313**, U56/142 **+0.433**,
+  B136/126 +0.398, B136/142 **-1.844**, SMALL/126 +8.022, SMALL/142 +6.399 — the sign is a
+  (panel, H) fact, and the U56/H=142 DD edge itself inverts by 50 bps (-0.396 pp). **10 of 120
+  biting cells have NO feasible twin at all** (SMALL, H = 126, c >= 0.75): the band OUT-EARNS a
+  fully invested gross-1.00 equal-weight anchor and matching it would need leverage PROTOCOL rule 2
+  forbids. They are named and excluded, never silently matched at the ceiling.
+
+  **BOTH KEEP PATHS AT EVERY GRID POINT.** 4a **0 of 150** — the DD leg fails everywhere against
+  the live book's -12.05%. 4b FULL **55 of 150**, 4b OOS **59 of 150** — and **the twin clears 4b
+  in EXACTLY the same 55 cells, 0 flips in either direction.** The band's edge is real and too
+  small to move a verdict. Binding legs on the 95 4b-FULL failures: DD 91, H2 55, OOS 50, H1 43,
+  CAGR 25 — DD binds on 96%, the inverse of the live band book's CAGR-floor profile. SMALL clears
+  4b at 0 of 50.
+
+  **RULE 8 — (H, c) CHOSEN ON <= 2016-12-31 ONLY, 2017-2026 READ ONCE.** Mean OOS Sharpe / CAGR /
+  MaxDD over 3 panels x 5 cost rungs: C_ISSHARPE and C_ISLEGS both **0.9525 / 15.58% / -26.72%**,
+  **4b-OOS 0 of 5**; C_STEEP (this idea's own IS exchange-rate chooser) 0.9184 / 14.47% / -27.49%,
+  4b-OOS 1 of 5; **C_ZERO — the frozen H = 126, c = 0 incumbent, ZERO parameters — 0.8637 / 13.08%
+  / -25.61%, 4b-OOS 5 of 5.** The zero-parameter rule has the LOWEST OOS Sharpe of the four and is
+  the ONLY one that is capital-worthy out of sample. Both fitted choosers pick H = 142 **c = 0.00**,
+  the plain anchor — not the band. C_STEEP reaches the 1472 candidate at 1 of 15 (panel, cost)
+  families and only at the ZERO-cost rung; **at 10 bps on U56 it is reached by 0 of 4.**
+
+  **CAPITAL.** ONE KEEP-4b candidate, RECORDED AND **NOT RECOMMENDED**: U56 / H = 142 / c = 0.50 /
+  W at 0-25 bps. FULL 15.47% / 1.2102 / -19.47% (halves 1.3024 / 1.1579), OOS 17.25% / 1.2348 /
+  -19.47%, turnover 3.42x/yr. Clears 4b on all five legs FULL and OOS (CAGR +4.87 pp over the
+  10.60% floor, MaxDD +0.76 pp inside the -20.23% cap). Against RULES v2 (8.62% / 1.2012 / -12.05%)
+  it is +6.85 pp of CAGR and +0.0090 of Sharpe for -7.42 pp of drawdown, which is why 4a fails.
+  Exact RULES wording published in the memo and proposed for NO change: PROTOCOL rule 8 is not
+  satisfied. SURVIVORSHIP (rule 9): U56 is a current-constituent list, so absolute levels are upper
+  bounds; the twin contrasts are same-names / same-days and the bias cannot manufacture them.
+
+  **NO RULES CHANGE.** Script `research/backtests/2026-09-22_H142-degross-twin-and-c-sweep_C.py`;
+  memo `..._C.memo.md`; grid / permtwin / walkforward / picks / gates CSVs and full log committed.
+
 ## 2026-09-22 — idea 1490 (lane C): DOES THE 4b BAR ITSELF SURVIVE CHARGING SPY THE CANDIDATE'S OWN TURNOVER? **ANSWERED = NO — 16 VERDICT FLIPS IN 320 PUBLISHED ROWS, EVERY ONE OF THEM FAIL -> PASS. KILL of the charged-SPY bar as an adopted convention; the LIVE costless-SPY convention is the CONSERVATIVE one and stays. ONE PROTOCOL rule-4b WORDING CLAUSE PROPOSED. 4a 6 of 320. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** PROTOCOL rule 4b sets both bars off a COSTLESS SPY buy-and-hold
