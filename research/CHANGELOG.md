@@ -7737,3 +7737,48 @@ rung it is sensitive to.  (3) SURVIVORSHIP (rule 9): U56 / B136 are current-cons
 2008 and SMALL is a current sub-$2B screen from 2010 (54 tickers with max_1d_move >= 1.0 dropped, 665
 kept), so absolute levels are optimistic in both runs; the ruler contrast and the crossing locations are
 same-tape, same-book and first-order immune, the pass counts are not.
+
+## 2026-09-22 — lane B run 28 (idea 2304, CLOSED, no rules change)
+
+**IDEA 2304 (gross x cash-sweep against the 4b CAGR floor) — PREMISE KILLED; the 4b cell it reaches is
+a family already recorded, and at the live band it is weaker than the version on record.**
+The live RULES v2 band book (band 0.03, weekly, t+1) walked on two dials and no more — GROSS
+{0.75, 0.85, 1.00} x SWEEP FRACTION phi {0.00, 0.50, 1.00} of the residual `1 - sum(w)` into SHY, the
+instrument fixed a priori by idea 2294's duration finding — on 2 panels x 4 cost rungs = **72 cells, all
+published**.  (A) **THE TWO CHANNELS ARE NOT A JOINT DEVICE.**  At 10 bps the shipped book's 4b CAGR gap is
++1.9783 pp (U56) / +2.6270 pp (B136); **GROSS alone buys +2.9130 / +2.6683 pp and clears it, SWEEP alone
+buys +0.5012 / +0.5161 pp and clears nothing.**  Joint is +3.1093 / +2.8838 pp against a sum-of-parts of
++3.4142 / +3.1844 — **INTERACTION -0.3049 / -0.3006 pp**, and the mechanism is exact: raising gross
+CONSUMES the idle cash the sweep is funded from (realised mean gross 0.5327 -> 0.7102 on U56, idle NAV
+0.4673 -> 0.2898).  This is the run's one genuinely new fact and it is a negative one.  (B) **BOTH KEEP
+PATHS, AND THEY ARE DISJOINT: 4a 12 of 72, every pass at gross 0.75 WITH a sweep (idea 2294 reproduced
+exactly); 4b_FULL 15 of 72, every pass at gross 1.00 (idea 2119 reproduced on a second dial pair); no cell
+passes both**, because 4a is scored against the live book's -12.24% drawdown while every 4b passer runs
+-15.6% to -16.2%.  The 4b DD cap binds in **0 of 72** and CAGR alone in **56 of 57** fails — idea 2284's
+picture on a grid built specifically to spend that slack.  (C) **RULE 8, both dials chosen on 2009-2016
+ONLY and 2017-2026 read ONCE:** the **zero-parameter default (gross 1.00, phi 1.00, nothing fitted)** gives
+U56 OOS **12.9685% / 1.3013 / -15.6411%** and B136 OOS **10.8251% / 1.1327 / -15.8616%**, 4b_OOS PASS on
+both, against the shipped book's 9.4559% / 1.2767 / -12.0549% (U56) and 7.8473% / 1.1017 / -12.2411%
+(B136) and SPY's 15.2870% / 0.8751 / -33.7173%.  But **`C_ISSHARPE` cannot reach that cell** — it picks
+gross 0.75 / phi 1.00, the 4a book, and fails 4b_OOS on both panels; `C_IS4b` is UNDEFINED on U56.  The
+record's chooser law holds on one more dial pair: fitting IS Sharpe buys the 4a book and loses the 4b one.
+(D) **WHY IT IS NOT SHIPPED.**  The cell is the family idea 2213 already recorded-not-recommended at band
+0.08, and at the **LIVE band 0.03 it is strictly weaker**: 4b_FULL at 3 of 4 cost rungs on U56 and **2 of 4
+on B136** (dies at 25 bps, -0.4162 pp on the CAGR leg) against 2213's 4 of 4, with a B136 OOS margin of
+**+0.1451 pp** while 2213 measured a **1.13-1.86 pp weekday-offset spread on that same binding leg**.  The
+MMF variant (sweep turnover rebated) moves **no** FULL verdict.  (E) **CORROBORATION:** lane C's idea-1476
+gross-1.00 figures are reproduced independently to 4 dp (U56 11.5319% / 1.2009 / -15.9110%; B136 10.6273%
+/ 1.0971 / -16.1581%), which is an honest cross-lane check on the plumbing of both runs.
+
+**RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched).**
+(1) **No KEEP memo recommending capital is filed** — a 10-line memo is written and it argues AGAINST the
+cell (`2026-09-22_gross-x-cash-sweep-4b-floor_B_MEMO.md`).  (2) A publishing note is earned and stated,
+not enacted: **"gross 1.00 + cash sweep" should not be described as a joint device.**  Any future row
+combining an exposure dial with a cash-management dial should publish the interaction term, because on
+this book it is negative and roughly a tenth of the joint effect.  (3) Idea **2294's clause-7 cash sweep
+remains the standing 4a proposal and is untouched by this run**; ideas **2296** (a DD-budget re-gross that
+spends the slack leg directly) and **2300** (re-reading the record's de-gross-beats-device verdicts once
+cash earns carry) are filed as the two live branches.  (4) **SURVIVORSHIP (rule 9):** U56 and B136 are
+current-constituent lists held from 2008, so every absolute CAGR is optimistic and both 4b bars are easier
+than they should be; the channel decomposition and the interaction term are same-tape, same-names and
+first-order immune, the pass counts are not.
