@@ -6752,3 +6752,89 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   a line of its own: the clause is NOT a blanket DD-margin killer, since 12 of 16 DD margins
   clear their own spread comfortably; a Sunday review adopting it should expect it to bite the
   CAGR leg first.
+
+## 2026-09-22 — idea 2221 / slug `spend-the-idle-NAV-on-a-beta-sleeve-instead-of-cash` (lane B): CAN THE LIVE BOOK'S UNSPENT DRAWDOWN BUDGET BE SPENT ON A BETA SLEEVE RATHER THAN ON MORE OF THE SAME BOOK? **ANSWERED = YES ON THE MECHANISM, NO ON THE RULE. KILL OF THE T-BILL SWEEP AS A RULES CHANGE (IT FAILS THE COST LADDER v2'S OWN ACCEPTANCE REQUIRES) AND KILL OF THE HABITUAL IS-SHARPE CHOOSER ON THIS DIAL (IT IS ANTI-CORRELATED WITH THE DECIDING LEG, NOT MERELY BLIND TO IT). ONE KEEP-4b CANDIDATE, RECORDED NOT RECOMMENDED. NO RULES CHANGE.**
+
+  **THE DEFECT THIS ATTACKS.** Idea 2119 (F) left the live band book failing 4b on the CAGR
+  floor ALONE in every window (-1.98 pp U56 FULL, -2.83 pp B136 OOS) while its drawdown margin
+  is +8.18 / +7.99 pp, 4.5x outside its own weekday noise, and (B) showed no de-grossed cell
+  clears 4b anywhere on the band x gross grid for exactly that reason. Every device the record
+  has priced spends that unspent budget by buying MORE OF THE SAME BOOK (gross, leverage 2085,
+  re-spread 2081, concentration, VOLTGT), all of which slide along one Sharpe ray. This run
+  tests the one direction nothing had priced: `engine.backtest` pays **0%** on the uninvested
+  residual, and on the live book that residual is **46.7% of NAV on average** (min 26.3%, max
+  93.3%) while its 4b comparand SPY is fully invested.
+
+  **THE CONSTRUCTION.** The idle NAV is held in a BENCH sleeve `phi*SPY + (1-phi)*SHY`, so the
+  book is always exactly 100% invested, long-only, never levered. Two tuned parameters, all 25
+  grid points published: `phi in {0.00,0.25,0.50,0.75,1.00} x band c in {0.00,0.02,0.03,0.05,0.08}`.
+  Gross is FIXED at the live 0.75 and is not a third dial. Control arm NOSLEEVE (the live 0%-cash
+  form) at each band. Published-not-tuned: panel {U56,B136} x offset d in {0..4} (a NOISE
+  measurement; the reported book is always d=0) x cost {0,10,25,50} bps (headline 10) x window
+  {FULL, IS ..2016-12-31, OOS 2017-01-01..} = **3,618 published rows**. Weekly, t+1, 10 bps.
+  GATES 6 of 6: local runner == `engine.backtest` **6.9e-18**; exact cost reconstruction from the
+  turnover series **6.9e-18**; `offset_mask(idx,0)` == `engine.rebalance_mask` **0 differing rows**;
+  NOSLEEVE at c=0.03 == `baseline.rules_v2_weights(px,0.03,0.75)` at **0.000e+00**, so the ladder
+  literally contains the live book. **175 weeks cannot carry d=4** (2119's G4b reproduced
+  independently), so every margin is also re-read clip-free on d in {0,1,2}.
+
+  **(A) THE BUDGET IS SPENDABLE, AND phi = 0.25 IS THE ONLY RUNG THAT CLEARS THE CAGR FLOOR
+  BEFORE IT BREAKS THE DD CAP.** At the live band c=0.03 on U56 FULL, CAGR walks **8.62% ->
+  9.12% -> 11.10% -> 13.05% -> 14.94% -> 16.79%** (NOSLEEVE / phi 0.00 / 0.25 / 0.50 / 0.75 /
+  1.00) and MaxDD walks **-12.05% -> -11.48% -> -15.53% -> -20.66% -> -25.57% -> -30.28%**
+  against a 10.60% floor and a -20.23% cap. The NOSLEEVE control reproduces 2119 exactly: **0 of
+  5 bands pass 4b on either panel in any window, on the CAGR floor alone.** With the sleeve the
+  binding leg FLIPS — among 4b fails at d=0/10 bps the DD leg binds **15 of 26** per panel-window
+  against CAGR 10-14, and the Sharpe legs bind **0 of 26** everywhere.
+
+  **(B) KILL OF THE T-BILL SWEEP AS A RULES CHANGE.** phi=0.00 (idle NAV in SHY, no beta added)
+  is a pure accounting-honesty fix and is worth **+0.50 pp CAGR / +0.067 Sharpe / +0.57 pp of
+  MaxDD** on U56 and +0.52 / +0.070 / +0.59 on B136 — i.e. a quarter of the CAGR shortfall the
+  record attributes to the book is an artefact of paying 0% on half of NAV. It is the ONLY 4a
+  passer in the run (3 of 30 cells per panel, every one phi=0; the live band c=0.03 clears 4a on
+  BOTH panels in ALL THREE windows at 10 bps / d=0). It is still **not adoptable**: the sleeve
+  lifts turnover **1.92x -> 3.03x/yr**, and 4a is **0 of 5 offsets at 25 bps and 0 of 5 at 50 bps
+  on both panels**, against RULES v2's own acceptance record, which holds at 5/10/25/50 bps. At
+  10 bps it already fails 2 of 5 offsets on U56 FULL. SHY's own numbers, stated: CAGR 1.31%
+  (IS 0.81%, OOS 1.72%), MaxDD -5.71%, **-3.90% in 2022** — the sweep is a real allocation with
+  real duration risk, not free money.
+
+  **(C) RULE 8, 2017-2026 READ ONCE — THE HABITUAL CHOOSER IS ANTI-CORRELATED WITH THE DECIDING
+  LEG.** Mean IS Sharpe over the five bands FALLS monotonically **1.134 / 1.137 / 1.097 / 1.054 /
+  1.019** as phi goes 0 -> 1 on U56 (1.136 -> 1.006 on B136) while the deciding leg, CAGR, RISES
+  **7.76% -> 15.99%** (8.40% -> 16.43%). Argmax IS Sharpe therefore picks **phi=0.00 / c=0.08 on
+  BOTH panels** — U56 OOS 9.83% / 1.2619 / -13.96%, B136 OOS 9.03% / 1.1901 / -14.33%, **4b FAIL
+  on the CAGR floor alone at 5 of 5 offsets and 4 of 4 cost rungs on both panels.** This is
+  2119(D) sharpened: on this dial the record's habitual objective does not merely fail to see the
+  dial that decides 4b, it walks AWAY from the passing region.
+
+  **(D) ONE KEEP-4b CANDIDATE, REACHED BY A LEGAL IS-ONLY CHOOSER ON 1 OF 2 PANELS.** C2 (argmax
+  IS Sharpe among cells that pass 4b IN SAMPLE) picks **B136 / phi=0.25 / c=0.08**: FULL 11.06% /
+  1.1520 / -17.34%, IS 11.11% / 1.1668 / -10.48%, **OOS 11.01% / 1.1399 / -17.34%** against SPY
+  OOS 15.29% / 0.8751 / -33.72% and RULES v2 OOS 7.85% / 1.1017 / -12.24% — 4b PASS in FULL, IS
+  and OOS, at **5 of 5 offsets** and at 0/10/25 bps (FAIL at 50). The SAME chooser on U56 picks
+  phi=0.50 / c=0.08 and **FAILS OOS on the DD cap** (-22.06% vs -20.23%) at 5 of 5 offsets, so
+  across panels the chooser is a coin flip. On U56 the cells that DO pass 4b in FULL+OOS
+  (phi=0.25 at c=0.02/0.03/0.05/0.08, 5 of 5 offsets, DD margin +4.70 pp against a 1.56 pp
+  spread — 3.0x outside its own scheduling noise) all **fail 4b IS on the CAGR leg alone**
+  (9.98% vs the 10.47% IS floor), so no honest chooser reaches them. **4a is 0 of 30 for every
+  sleeved cell on both panels.** PARK, memo filed with exact RULES wording, NOT recommended.
+
+  **WHAT THIS RUN CANNOT DO (stated, not repaired).** One sleeve composition (SPY/SHY), one
+  cadence (weekly), one gross (the live 0.75), one offset family. The sleeve's beta leg is SPY,
+  which is also a gated universe name, so at phi=1 with every name out of band the book is 100%
+  SPY; the sleeve ADDS to any core SPY holding and this is by construction, not a bug. The SHY
+  leg's contribution is regime-bound: 0.81% IS against 1.72% OOS, so the accounting gain is
+  larger in the OOS window than in the IS one and would be larger still at today's front-end
+  yields — a forward-looking version of this book is NOT the same object this backtest prices.
+  **SURVIVORSHIP (rule 9):** U56 and B136 are current-constituent lists, so every absolute level
+  is optimistic; the NOSLEEVE-vs-sleeve contrast is within-tape and does not repair the level.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched).** (1) A PARK memo is filed for the B136 candidate with exact RULES wording; it
+  should NOT be adopted. (2) A publishing note is earned and stated, not enacted: **every
+  committed CAGR-floor margin in the record is computed against a book that earns 0% on its idle
+  NAV while its comparand SPY is fully invested, and on the live book that idle NAV is 46.7% of
+  capital** — 0.50 pp of the live book's 1.98 pp shortfall is an accounting convention. A Sunday
+  review adopting that note should expect it to move CAGR-floor margins only, never Sharpe or DD
+  rankings, and should expect the 25/50 bps rungs to take the gain straight back in turnover.
