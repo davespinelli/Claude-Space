@@ -1,3 +1,68 @@
+## 2026-09-22 — idea 2326 (lane cloud): DOES A MINIMUM BREADTH FLOOR ON N_in BEAT THE PER-NAME CAP? **ANSWERED = NO. KILL OF THE PREMISE. NO RULES CHANGE, NO NEW CANDIDATE.**
+
+  **WHERE THIS COMES FROM.** Idea 2300's standing 4b candidate (`RG100 + phi = 1.00`: every name
+  inside the 200d +/-3% band at `gross / N_in`, idle NAV swept to SHY) carries one published risk,
+  CONCENTRATION — 15.0% in a single name on the worst day of U56. Idea 2322 fixed that from the
+  NAME side with a 2.0% per-name cap and cleared 4b on both large-cap panels. 2326 prices the
+  mirror fix from the DAY side, and its filed rationale was explicit: a floor "keeps the
+  candidate's full re-gross on the 99% of days where breadth is healthy and spends nothing there,
+  so if it holds the 4b pass it is the cheaper of the two fixes."
+
+  **THE DEVICE AND THE GRID.** `if N_in < m: w_i = gross / N_t` (fall back to the de-grossed live
+  book) `else: w_i = gross / N_in`; idle NAV -> SHY at phi = 1.00 either way. **Two tuned dials and
+  no more: m {1, 3, 5, 8, 12, 20, INF} and gross {0.75, 1.00}.** m = 1 IS the candidate (gate G2,
+  4.4e-16) and m = INF IS the de-grossed live book with the sweep attached (G3, 7.8e-16), so one
+  ladder spans the two known books. Panels (U56 / B136 / SMALL), rungs {0, 10, 25, 50} bps, the
+  weekly cadence, band 0.03 and the sweep instrument are REPORTED, never selected on. Idea 2322's
+  cap book (CAP2) and the floor-plus-cap family (FLOORCAP, cap value INHERITED from 2322, not
+  tuned) are computed and published as reference books, never selected on, never a dial.
+  **90 books x 4 rungs = 360 published rows.**
+
+  **THE ANSWER: THE FLOOR HOLDS THE PASS AND LOSES THE COMPARISON.** Every floor rung except
+  m = INF keeps the candidate's 4b pass on U56 and B136. But at the live gross (U56, 0.75, 10 bps)
+  the best rung, m = 20, reads **11.91% / 1.2389 / -15.36%, OOS 12.93% / 1.2967**, max per-name
+  weight 3.75%, **turnover 4.49/yr**, against the cap's **11.62% / 1.2687 / -14.81%, OOS 12.77% /
+  1.3318**, max weight **2.00%**, **turnover 3.51/yr**. Per point of CAGR given up against the
+  candidate the cap buys **0.078 Sharpe** and the floor **0.066**, and the floor ends with half
+  again the concentration.
+
+  **THE MECHANISM, MEASURED NOT ASSERTED — the premise fails on its own terms.** On U56 the floor
+  **never binds at all at m <= 5** (min N_in over the scored window is 5, median 42), so the
+  candidate's 15.00% single-name weight survives m = 1 / 3 / 5 UNCHANGED: the dial is inert
+  exactly where the concentration lives. It binds on 1.01% / 3.73% / 10.09% of days at m = 8 / 12
+  / 20 (B136 m=20: 1.93%; SMALL m=20: 0.13%), and because it SWITCHES WEIGHTING SCHEME on those
+  days it **raises** turnover from 4.39 to 4.49-4.58 turns/yr, where the always-on cap **lowers**
+  it to 3.51. "Spends nothing in normal breadth" is true and is the defect, not the virtue.
+
+  **RULE 8 (m, gross fitted on <= 2016-12-31, 2017-2026 read ONCE).** 24 picks. **0 of 24 land on
+  m = 1.** Picks beat CAP2's OOS Sharpe at 9 of 24, its OOS CAGR at 6 of 24, and **BOTH at 0 of
+  24**. **9 of 24 sit on the m = INF endpoint** — the chooser walks all the way back to the
+  de-grossed book — including every SMALL pick at every rung. 12 of 24 also pass 4b full-sample.
+
+  **BOTH KEEP PATHS.** 4b 116, 4a 12 of 360. By family FLOOR 41/168, FLOORCAP 65/168, CAP2 10/24;
+  by panel U56 73/120, B136 43/120, **SMALL 0 of 120 on both paths at every rung** (the same null
+  2322 published for the cap). Every 4a pass is the m = INF de-grossed book and **4a is 0 of 180
+  at 25 and 50 bps**. Dominant binding leg on 4b failures is `L_DD` (45 at every rung), then
+  `L_CAGR` (21 -> 64 as costs rise).
+
+  **BY-PRODUCT: THE FLOOR IS REDUNDANT ON A CAPPED BOOK.** FLOORCAP at m = 1/3/5 is bit-equal to
+  CAP2, and at m = 8/12/20 the whole family moves by <= 0.13 pp of OOS CAGR and <= 0.003 of Sharpe
+  (12.77%/1.3318 -> 12.64%/1.3315). A breadth floor added to a capped book does not earn its
+  parameter.
+
+  **GATES 14 of 14**, including EXTERNAL REPRODUCTIONS of both committed comparands: idea 2300's
+  U56 candidate to **8.25e-04** (read 12.59%/1.1934/-17.39%, OOS 13.85%/1.2397) and idea 2322's
+  U56 cap-2.0% cell to **9.44e-04** (read 11.62%/1.2687/-14.81%, 1.3028/1.2457, OOS 12.77%/1.3318);
+  both residuals are the price-cache vintage, not a construction difference. G1 replica ==
+  `engine.backtest` at 0.00e+00; G4 no leverage; G5 binding-day share monotone at 6 of 6 cells;
+  G6 SHY priced on every held row; G7 SMALL dropped 54 tickers at `max_1d_move >= 1.0`.
+
+  **SURVIVORSHIP, PUBLISHED NOT BURIED.** U56 and B136 are current-constituent lists and SMALL is
+  a current screen of sub-$2B names (665 after the drop rule), so every absolute CAGR here — and
+  therefore every 4b verdict — is optimistic. The floor-vs-cap comparison this entry turns on is a
+  same-names, same-days difference and is far less exposed. Script:
+  `research/backtests/2026-09-22_minimum-breadth-floor-vs-per-name-cap_cloud.py`.
+
 ## 2026-09-22 — idea 2315 (lane cloud): WHEN DOES THE BAND GATE PAY FOR ITSELF? **ANSWERED = IN A MINORITY OF YEARS, AND THE SAVING IS CRISIS-CONCENTRATED. NO RULES CHANGE, NO NEW CANDIDATE.**
 
   **THE QUESTION.** RULES v2 clause 2 gates every name on its own 200d +/-3% band and clause 4
