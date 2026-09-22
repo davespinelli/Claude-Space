@@ -7341,3 +7341,100 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   and the record's habit of quoting one number against idea 945's band is only safe in the
   weekly / unlevered / low-turnover corner.**  (3) The gross dial should never be chosen by IS
   Sharpe: on this grid that chooser costs 24 of 24 4a passes and 10 pp of out-of-sample drawdown.
+
+### 2026-09-22 — research run, lane B, idea 2284 (gate clock on weekly bars) — ANSWERED = NO, KILL, no rules change
+
+  Script `research/backtests/2026-09-22_gate-clock-weekly-bars_B.py` (+ .grid.csv / .walkforward.csv
+  / .gates.csv / .console.txt).
+
+  **THE DEFECT THIS PRICED.**  RULES v2 clause 2 computes the 200-day moving average and the +/-3%
+  hysteresis band on DAILY closes; clause 5 trades WEEKLY.  The gate is therefore SAMPLED FOUR TIMES
+  FINER THAN IT IS EVER EXECUTED — a name can cross both edges inside one week and the book acts on
+  whichever daily state happens to stand at the Friday close.  Nothing in this record had ever moved
+  the gate's SAMPLING CLOCK: a grep of all 1,430 committed backtests finds `resample(` in exactly two
+  files, neither of them a gate.  The reason to look is the standing CHANGELOG diagnosis — every
+  device priced against the binding 4b CAGR floor (gross, leverage 2085, re-spread 2081, the idle-NAV
+  sleeve 2221, VOLTGT) is a SIZING dial and slides along one Sharpe ray.  **GROSS IS FIXED AT THE LIVE
+  0.75 throughout this run and is never a parameter**, so the clock is off that ray by construction.
+
+  **THE CONSTRUCTION.**  Two tuned dials and no more: the weekly MA length **L in {20,30,40,50,60}
+  weekly bars** and the band half-width **c in {0.00,0.02,0.03,0.05,0.08}**.  Reported, never selected
+  on: panel {U56, B136}, cost {0,10,25,50} bps (headline 10), window {FULL, H1, H2, IS ..2016-12-31,
+  OOS 2017-01-01..}, and the DAILY-CLOCK CONTROL (the live clause 2) at each of the same five bands.
+  Weekly cadence, t+1 execution, equal weight across in-band names, gated-out weight to CASH and never
+  re-spread.  **240 published rows** (2 panels x 30 cells x 4 cost rungs).  A common 320-row warm-up is
+  used so that every cell, including L=60, is scored on an identical sample.
+
+  **GATES, 6 of 6.**  G1 the daily-200d control's weights == `baseline.rules_v2_weights(px,0.03,0.75)`
+  at **0.0** on both panels, so the ladder literally contains the live book.  G2 weekly bar ends ==
+  `engine.rebalance_mask(idx,'W')` at **0 differing rows**.  G3a at a week-end date the state equals
+  the state recomputed from a tape TRUNCATED at that date, **0.0 at 4 of 4 dates on both panels**
+  (truncating MID-week is not a valid look-ahead test: the partial week becomes a complete bar and the
+  truncated state is then more current, not future — the first cut of this gate got that wrong and is
+  corrected here).  G3b **0 mid-week state changes**, so the daily index carries no information beyond
+  the last completed weekly bar.  G4 cost reconstruction from the turnover series == a fresh
+  `engine.backtest(cost_bps=25)` at **8.7e-19 / 2.2e-19**, so one simulation serves all four rungs
+  exactly.  G5 the committed live-book OOS triple **7.85% / 1.1017 / -12.24%** reproduces on **B136** at
+  7.8473% / 1.1017 / -12.2411%; **U56's own live-book OOS is 9.4559% / 1.2767 / -12.0549%** — worth
+  recording, because that committed triple is quoted in the record without its panel.
+
+  **(A) THE ANSWER IS NO.  4b IS 0 OF 240 AND THE CAGR FLOOR BINDS ALONE IN 225 OF 240.**  No cell on
+  either clock, either panel, any band, any cost rung clears 4b in FULL, IS or OOS.  Over the 240 4b
+  FAILs the binding leg is **CAGR alone 225, DD alone 0, Sharpe alone 0, joint 15** — the drawdown and
+  Sharpe legs are never the problem on this dial, which is the record's standing picture and is
+  unchanged by moving the clock.
+
+  **(B) MECHANISM — THE CLOCK IS A MONOTONE COARSENESS DIAL AND THE LIVE 200 DAYS SITS AT ITS FLAT
+  POINT.**  Averaged over the five band widths at 10 bps, WEEKLY-minus-DAILY reads dCAGR_FULL /
+  dSharpe_FULL / dMaxDD_FULL / dTurnover of **-1.34pp / -0.1298 / +2.28pp / +0.57x** at L=20, **-0.43 /
+  -0.0379 / +0.86 / +0.12** at L=30, **-0.01 / -0.0047 / +0.21 / -0.13** at L=40, **+0.04 / -0.0175 /
+  -0.27 / -0.27** at L=50 and **-0.11 / -0.0640 / -0.84 / -0.38** at L=60 on U56 (B136 runs -0.95 /
+  -0.0815 / +1.99 / +0.55 at L=20 through +0.07 / -0.0442 / -1.40 / -0.42 at L=60).  **dSharpe_FULL is
+  negative at 10 of 10 (L, panel) rungs and dSharpe_OOS at 10 of 10.**  Coarsening the gate never pays;
+  at L=40, the weekly twin of the live 200 days, it costs essentially nothing either.  The finer daily
+  sampling is FREE INFORMATION the live book is neither wasting nor exploiting — which is the honest
+  answer to the defect as filed.
+
+  **(C) 4a IS 1 OF 240 AND IT IS A COST-RUNG ARTEFACT.**  The only 4a passer is B136 / WEEKLY L=40 /
+  c=0.03 **at 50 bps**: FULL 7.3849% / 1.0158 / -12.1502%, halves 1.2060 / 0.8263 against the live
+  book's 1.1800 / 0.8208 at that rung, OOS 7.00% / 0.9920 / -12.15%, 1.77x/yr.  The same cell FAILS 4a
+  at 0, 10 and 25 bps, against RULES v2's own acceptance record, which holds at 5/10/25/50.  The
+  near-miss is exact: at c=0.03 the weekly twin is **+0.45pp (U56) / +0.21pp (B136) shallower on MaxDD
+  and -0.19x / -0.25x per year lower on turnover**, with dSharpe_H1 **+0.0066 / +0.0119** but
+  dSharpe_H2 **-0.0341 / -0.0085** at 10 bps.  H2 is the leg that kills it, and the H2 gap closes
+  monotonically as costs rise (U56 -0.0341 -> -0.0247 from 10 to 50 bps) — the signature of a TURNOVER
+  REBATE rather than a gate fact.  Idea 931 already priced that null on the cadence dial; **idea 2280
+  is filed to price it here** before any coarser-clock gain in this record is called real.
+
+  **(D) RULE 8, 2017-2026 READ ONCE — THE HABITUAL CHOOSER LOSES TO THE SHIPPED DEFAULT ON BOTH PANELS,
+  AND THE LEGAL CHOOSER IS UNDEFINED.**  Argmax IS Sharpe over the 25 weekly cells picks the WIDEST
+  band on both panels: U56 L=40 c=0.08 (IS Sharpe 1.1741) -> OOS **8.82% / 1.1372 / -14.32%**; B136
+  L=30 c=0.08 (IS 1.1876) -> OOS **7.69% / 1.0433 / -14.10%**.  Against the live RULES v2 book's OOS
+  (9.46% / 1.2767 / -12.05% on U56; 7.85% / 1.1017 / -12.24% on B136) the chooser is beaten on **CAGR,
+  Sharpe AND drawdown on 2 of 2 panels**, and the same chooser run on the DAILY control ladder also
+  picks c=0.08 and also loses (U56 OOS 8.97% / 1.1635 / -14.47%).  Chooser C2 — argmax IS Sharpe among
+  cells passing 4b IN SAMPLE — is **UNDEFINED on both panels because no cell passes 4b in sample**, so
+  no honest chooser reaches a capital book on this dial at all.  This is the record's chooser law
+  (ideas 953 / 2221(C) / 948(D)) reproduced on a dial that is not a sizing dial.
+
+  **WHAT THIS RUN CANNOT DO (stated, not repaired).**  One trading cadence (weekly, the live book's),
+  one gross (0.75), one rebalance phase (Friday — idea 2274's phase question is not re-opened here),
+  one gate family (MA + symmetric hysteresis band), one execution delay (t+1), two panels.  The weekly
+  bar is the ISO-week last close, which is the same object `engine.rebalance_mask(freq='W')` fires on;
+  a Monday-anchored or month-anchored weekly bar is a different tape and is not priced.  L is measured
+  in weekly bars, so L=40 is only the APPROXIMATE twin of 200 trading days (they differ in how holiday
+  weeks are counted); the +/-0.01pp CAGR gap at L=40 should not be read finer than that.  **SURVIVORSHIP
+  (rule 9):** U56 and B136 are current-constituent lists held from 2008, so every absolute CAGR level is
+  optimistic and both 4b bars are easier than on a point-in-time panel; the weekly-vs-daily CLOCK
+  CONTRAST is same-tape, same-names and first-order immune, the pass counts are not.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched).**  (1) **No KEEP memo is filed** — nothing on this grid is a capital candidate, and the
+  lone 4a passer lives at one cost rung out of four.  (2) A publishing note is earned and stated, not
+  enacted: **the record quotes the live-book OOS triple 7.85% / 1.1017 / -12.24% without naming its
+  panel; it is the B136 number, and the U56 book's own OOS is 9.46% / 1.2767 / -12.05%.**  Any future
+  comparison against "the live book's OOS" should state which panel it means.  (3) The gate's SAMPLING
+  CLOCK can now be closed as a research direction at the weekly cadence: it is flat where the live book
+  sits and negative everywhere else.  Ideas **2276** (the same question at the monthly cadence, where
+  the stale-state window is four times longer) and **2280** (re-read any clock gain against idea 931's
+  matched-turnover null) are filed as the two remaining live branches.
