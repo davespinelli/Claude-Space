@@ -1,0 +1,426 @@
+======================================================================================================================
+IDEA 1775 (lane C, 2026-09-22) — does the NAME-SET CHOOSER LIFT REPLICATE on B136 and
+SMALL, or is it a U56 fact?
+======================================================================================================================
+# dials: PANEL {U56, B136, SMALL} x N [20, 40]
+# inherited from 1749, NOT tuned: band c=0.03, gross 0.75, cadence W, t+1, decile = ceil(D/10), statistics ['IS_SHARPE', 'IS_LEGS', 'IS_CAGRSLACK', 'IS_MINMARG'], split 2016-12-31/2017-01-01
+# reported axes: draw count D [24, 96, 240, 480] (nested), cost [0.0, 10.0, 25.0, 50.0] bps (binding 10)
+# the ONLY RNG is the draw index selection, seeded default_rng(16320000 + 1009*N + d) — idea 1632's / 1749's formula unchanged (G7)
+
+  GATE PASS  G5 tuned dials: PANEL, N   (target exactly 2)
+  GATE PASS  G7 seed stream: default_rng(16320000 + 1009*N + d), d = 0..479   (target 1749's formula unchanged)
+  GATE PASS  G9 SMALL trading days subset of U56's: 4203 / 4203 rows found in U56   (target all)
+
+----------------------------------------------------------------------------------------------------------------------
+## PANEL U56: 56 columns, draw pool 56; 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y)
+   scored from 2009-01-13 (17.7y, PROTOCOL rule 1); IS rows 2007 (8.0y), OOS rows 2441 (9.7y)
+   SPY            FULL  15.14% / 0.8851 / -33.72%  H1/H2 0.9570/0.8264  OOS  15.29% / 0.8751 / -33.72%
+   RULES v2 live  FULL   8.62% / 1.2010 / -12.05%  H1/H2 1.2276/1.1806  OOS   9.46% / 1.2767 / -12.05%   (the U56 live book, read on this calendar)
+   FULL-POOL band FULL   8.62% / 1.2010 / -12.05%  H1/H2 1.2276/1.1806  OOS   9.46% / 1.2767 / -12.05%   (reference, all 56 names)
+   4b bars: FULL DD cap -20.23%, CAGR floor 10.60% | OOS DD cap -20.23%, CAGR floor 10.70% | IS DD cap -13.24%, CAGR floor 10.47%
+
+   ### U56  N=20  (480 draws, 10 bps, 11.8s)
+       FULL Sharpe    mean    1.1224  sd   0.1120  min    0.8118  p50    1.1220  max    1.3897
+       FULL CAGR      mean    0.0858  sd   0.0145  min    0.0477  p50    0.0848  max    0.1306
+       FULL MaxDD     mean   -0.1226  sd   0.0144  min   -0.1621  p50   -0.1227  max   -0.0783
+       OOS Sharpe     mean    1.1902  sd   0.1165  min    0.8450  p50    1.1934  max    1.5064
+       OOS CAGR       mean    0.0940  sd   0.0166  min    0.0522  p50    0.0931  max    0.1488
+       OOS MaxDD      mean   -0.1222  sd   0.0145  min   -0.1621  p50   -0.1220  max   -0.0783
+       turnover /yr   mean    1.7785  sd   0.1147  min    1.4056  p50    1.7737  max    2.1199
+       4b FULL   43/480   4b OOS  105/480   4b BOTH   42/480   4a FULL   24/480   4a OOS   49/480
+       binding OOS leg among 4b-OOS failures: O3_OOS 1, O4_DD 0, O5_CAGR 375
+
+       Q1 top-decile vs base rate, target '4b BOTH' (the object 1749 published):
+         D=24   base   1/24 =  4.17%  top decile 3 draws
+                IS_SHARPE       1/3 = 33.33%  lift +29.17%  p = 0.1250  rho(S,OOS Sharpe marg) +0.5165  rho(S,OOS CAGR marg) +0.7374
+                IS_LEGS         1/3 = 33.33%  lift +29.17%  p = 0.1250  rho(S,OOS Sharpe marg) +0.4294  rho(S,OOS CAGR marg) +0.5777
+                IS_CAGRSLACK    1/3 = 33.33%  lift +29.17%  p = 0.1250  rho(S,OOS Sharpe marg) +0.3548  rho(S,OOS CAGR marg) +0.6896
+                IS_MINMARG      1/3 = 33.33%  lift +29.17%  p = 0.1250  rho(S,OOS Sharpe marg) +0.3548  rho(S,OOS CAGR marg) +0.6896
+         D=96   base  10/96 = 10.42%  top decile 10 draws
+                IS_SHARPE       7/10 = 70.00%  lift +59.58%  p = 0.0000  rho(S,OOS Sharpe marg) +0.4968  rho(S,OOS CAGR marg) +0.5663
+                IS_LEGS         5/10 = 50.00%  lift +39.58%  p = 0.0008  rho(S,OOS Sharpe marg) +0.3945  rho(S,OOS CAGR marg) +0.4583
+                IS_CAGRSLACK    6/10 = 60.00%  lift +49.58%  p = 0.0000  rho(S,OOS Sharpe marg) +0.5023  rho(S,OOS CAGR marg) +0.6929
+                IS_MINMARG      6/10 = 60.00%  lift +49.58%  p = 0.0000  rho(S,OOS Sharpe marg) +0.5023  rho(S,OOS CAGR marg) +0.6929
+         D=240  base  21/240 =  8.75%  top decile 24 draws
+                IS_SHARPE       9/24 = 37.50%  lift +28.75%  p = 0.0000  rho(S,OOS Sharpe marg) +0.4373  rho(S,OOS CAGR marg) +0.5068
+                IS_LEGS        10/24 = 41.67%  lift +32.92%  p = 0.0000  rho(S,OOS Sharpe marg) +0.3490  rho(S,OOS CAGR marg) +0.4095
+                IS_CAGRSLACK   12/24 = 50.00%  lift +41.25%  p = 0.0000  rho(S,OOS Sharpe marg) +0.4073  rho(S,OOS CAGR marg) +0.6352
+                IS_MINMARG     12/24 = 50.00%  lift +41.25%  p = 0.0000  rho(S,OOS Sharpe marg) +0.4075  rho(S,OOS CAGR marg) +0.6352
+         D=480  base  42/480 =  8.75%  top decile 48 draws
+                IS_SHARPE      17/48 = 35.42%  lift +26.67%  p = 0.0000  rho(S,OOS Sharpe marg) +0.3774  rho(S,OOS CAGR marg) +0.4333
+                IS_LEGS        16/48 = 33.33%  lift +24.58%  p = 0.0000  rho(S,OOS Sharpe marg) +0.2729  rho(S,OOS CAGR marg) +0.3271
+                IS_CAGRSLACK   25/48 = 52.08%  lift +43.33%  p = 0.0000  rho(S,OOS Sharpe marg) +0.3570  rho(S,OOS CAGR marg) +0.5897
+                IS_MINMARG     25/48 = 52.08%  lift +43.33%  p = 0.0000  rho(S,OOS Sharpe marg) +0.3571  rho(S,OOS CAGR marg) +0.5897
+
+       RULE 8 — argmax draw chosen on 2009-2016 ONLY, 2017-2026 read ONCE (SPY OOS 15.29%/0.8751/-33.72%; RULES v2 OOS 9.46%/1.2767/-12.05%)
+         D=24   IS_SHARPE     pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=24   IS_LEGS       pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=24   IS_CAGRSLACK  pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=24   IS_MINMARG    pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=96   IS_SHARPE     pick  76  OOS  10.28% / 1.2846 / -11.75%   4bFULL False 4bOOS False 4bBOTH False 4aOOS  True  binding O5_CAGR
+         D=96   IS_LEGS       pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=96   IS_CAGRSLACK  pick  30  OOS  12.41% / 1.2785 / -14.96%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=96   IS_MINMARG    pick  30  OOS  12.41% / 1.2785 / -14.96%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=240  IS_SHARPE     pick  76  OOS  10.28% / 1.2846 / -11.75%   4bFULL False 4bOOS False 4bBOTH False 4aOOS  True  binding O5_CAGR
+         D=240  IS_LEGS       pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=240  IS_CAGRSLACK  pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=240  IS_MINMARG    pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=480  IS_SHARPE     pick 367  OOS   9.66% / 1.1274 / -14.21%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_LEGS       pick  18  OOS  10.85% / 1.1992 / -14.75%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=480  IS_CAGRSLACK  pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+         D=480  IS_MINMARG    pick 166  OOS  11.74% / 1.3112 / -13.16%   4bFULL  True 4bOOS  True 4bBOTH  True 4aOOS False  binding none
+
+   ### U56  N=40  (480 draws, 10 bps, 14.0s)
+       FULL Sharpe    mean    1.1853  sd   0.0547  min    0.9655  p50    1.1902  max    1.2908
+       FULL CAGR      mean    0.0865  sd   0.0068  min    0.0643  p50    0.0870  max    0.1028
+       FULL MaxDD     mean   -0.1210  sd   0.0073  min   -0.1409  p50   -0.1212  max   -0.1015
+       OOS Sharpe     mean    1.2591  sd   0.0585  min    1.0191  p50    1.2618  max    1.4114
+       OOS CAGR       mean    0.0949  sd   0.0080  min    0.0677  p50    0.0949  max    0.1119
+       OOS MaxDD      mean   -0.1210  sd   0.0073  min   -0.1409  p50   -0.1212  max   -0.1015
+       turnover /yr   mean    1.7766  sd   0.0569  min    1.5989  p50    1.7765  max    1.9577
+       4b FULL    0/480   4b OOS   26/480   4b BOTH    0/480   4a FULL   47/480   4a OOS   91/480
+       binding OOS leg among 4b-OOS failures: O3_OOS 0, O4_DD 0, O5_CAGR 454
+
+       Q1 top-decile vs base rate, target '4b BOTH' (the object 1749 published):
+         D=24   base   0/24 =  0.00%  top decile 3 draws
+                IS_SHARPE       0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.1791  rho(S,OOS CAGR marg) +0.1913
+                IS_LEGS         0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1260  rho(S,OOS CAGR marg) -0.2297
+                IS_CAGRSLACK    0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2661  rho(S,OOS CAGR marg) +0.3835
+                IS_MINMARG      0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2661  rho(S,OOS CAGR marg) +0.3835
+         D=96   base   0/96 =  0.00%  top decile 10 draws
+                IS_SHARPE       0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.3121  rho(S,OOS CAGR marg) +0.3865
+                IS_LEGS         0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.0313  rho(S,OOS CAGR marg) +0.0215
+                IS_CAGRSLACK    0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2664  rho(S,OOS CAGR marg) +0.5529
+                IS_MINMARG      0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2664  rho(S,OOS CAGR marg) +0.5529
+         D=240  base   0/240 =  0.00%  top decile 24 draws
+                IS_SHARPE       0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.3196  rho(S,OOS CAGR marg) +0.4501
+                IS_LEGS         0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.0562  rho(S,OOS CAGR marg) +0.0814
+                IS_CAGRSLACK    0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2580  rho(S,OOS CAGR marg) +0.5645
+                IS_MINMARG      0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2580  rho(S,OOS CAGR marg) +0.5645
+         D=480  base   0/480 =  0.00%  top decile 48 draws
+                IS_SHARPE       0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.3103  rho(S,OOS CAGR marg) +0.3953
+                IS_LEGS         0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.0788  rho(S,OOS CAGR marg) +0.1020
+                IS_CAGRSLACK    0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2568  rho(S,OOS CAGR marg) +0.5609
+                IS_MINMARG      0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2568  rho(S,OOS CAGR marg) +0.5609
+
+       RULE 8 — argmax draw chosen on 2009-2016 ONLY, 2017-2026 read ONCE (SPY OOS 15.29%/0.8751/-33.72%; RULES v2 OOS 9.46%/1.2767/-12.05%)
+         D=24   IS_SHARPE     pick  19  OOS   8.01% / 1.1656 / -11.56%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=24   IS_LEGS       pick   0  OOS   9.74% / 1.3220 / -12.19%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=24   IS_CAGRSLACK  pick  22  OOS   9.65% / 1.2561 / -12.66%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=24   IS_MINMARG    pick  22  OOS   9.65% / 1.2561 / -12.66%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_SHARPE     pick  68  OOS  10.27% / 1.3158 / -11.48%   4bFULL False 4bOOS False 4bBOTH False 4aOOS  True  binding O5_CAGR
+         D=96   IS_LEGS       pick   0  OOS   9.74% / 1.3220 / -12.19%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_CAGRSLACK  pick  77  OOS  10.82% / 1.2556 / -13.63%   4bFULL False 4bOOS  True 4bBOTH False 4aOOS False  binding none
+         D=96   IS_MINMARG    pick  77  OOS  10.82% / 1.2556 / -13.63%   4bFULL False 4bOOS  True 4bBOTH False 4aOOS False  binding none
+         D=240  IS_SHARPE     pick 142  OOS  10.22% / 1.2542 / -13.17%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_LEGS       pick   0  OOS   9.74% / 1.3220 / -12.19%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_CAGRSLACK  pick 142  OOS  10.22% / 1.2542 / -13.17%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_MINMARG    pick 142  OOS  10.22% / 1.2542 / -13.17%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_SHARPE     pick 142  OOS  10.22% / 1.2542 / -13.17%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_LEGS       pick   0  OOS   9.74% / 1.3220 / -12.19%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_CAGRSLACK  pick 142  OOS  10.22% / 1.2542 / -13.17%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_MINMARG    pick 142  OOS  10.22% / 1.2542 / -13.17%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+
+----------------------------------------------------------------------------------------------------------------------
+## PANEL B136: 136 columns, draw pool 136; 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y)
+   scored from 2009-01-13 (17.7y, PROTOCOL rule 1); IS rows 2007 (8.0y), OOS rows 2441 (9.7y)
+   SPY            FULL  15.12% / 0.8844 / -33.72%  H1/H2 0.9571/0.8249  OOS  15.26% / 0.8737 / -33.72%
+   RULES v2 live  FULL   8.62% / 1.2010 / -12.05%  H1/H2 1.2276/1.1806  OOS   9.46% / 1.2767 / -12.05%   (the U56 live book, read on this calendar)
+   FULL-POOL band FULL   7.96% / 1.0972 / -12.24%  H1/H2 1.2296/0.9669  OOS   7.85% / 1.1017 / -12.24%   (reference, all 136 names)
+   4b bars: FULL DD cap -20.23%, CAGR floor 10.59% | OOS DD cap -20.23%, CAGR floor 10.68% | IS DD cap -13.24%, CAGR floor 10.47%
+
+   ### B136  N=20  (480 draws, 10 bps, 11.7s)
+       FULL Sharpe    mean    1.0084  sd   0.1062  min    0.6930  p50    1.0026  max    1.3406
+       FULL CAGR      mean    0.0792  sd   0.0127  min    0.0501  p50    0.0785  max    0.1182
+       FULL MaxDD     mean   -0.1269  sd   0.0151  min   -0.1748  p50   -0.1269  max   -0.0867
+       OOS Sharpe     mean    0.9972  sd   0.1347  min    0.6151  p50    1.0029  max    1.3492
+       OOS CAGR       mean    0.0777  sd   0.0160  min    0.0438  p50    0.0764  max    0.1317
+       OOS MaxDD      mean   -0.1265  sd   0.0154  min   -0.1748  p50   -0.1266  max   -0.0860
+       turnover /yr   mean    2.0035  sd   0.1172  min    1.6682  p50    2.0068  max    2.3568
+       4b FULL   14/480   4b OOS   21/480   4b BOTH   12/480   4a FULL    3/480   4a OOS    7/480
+       binding OOS leg among 4b-OOS failures: O3_OOS 85, O4_DD 0, O5_CAGR 459
+
+       Q1 top-decile vs base rate, target '4b BOTH' (the object 1749 published):
+         D=24   base   0/24 =  0.00%  top decile 3 draws
+                IS_SHARPE       0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.1722  rho(S,OOS CAGR marg) +0.2565
+                IS_LEGS         0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.0831  rho(S,OOS CAGR marg) +0.0641
+                IS_CAGRSLACK    0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.1287  rho(S,OOS CAGR marg) +0.3487
+                IS_MINMARG      0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.1270  rho(S,OOS CAGR marg) +0.3461
+         D=96   base   3/96 =  3.12%  top decile 10 draws
+                IS_SHARPE       1/10 = 10.00%  lift  +6.88%  p = 0.2837  rho(S,OOS Sharpe marg) +0.3073  rho(S,OOS CAGR marg) +0.3542
+                IS_LEGS         1/10 = 10.00%  lift  +6.88%  p = 0.2837  rho(S,OOS Sharpe marg) +0.2190  rho(S,OOS CAGR marg) +0.2386
+                IS_CAGRSLACK    2/10 = 20.00%  lift +16.88%  p = 0.0279  rho(S,OOS Sharpe marg) +0.2368  rho(S,OOS CAGR marg) +0.4013
+                IS_MINMARG      1/10 = 10.00%  lift  +6.88%  p = 0.2837  rho(S,OOS Sharpe marg) +0.2337  rho(S,OOS CAGR marg) +0.3959
+         D=240  base   5/240 =  2.08%  top decile 24 draws
+                IS_SHARPE       1/24 =  4.17%  lift  +2.08%  p = 0.4123  rho(S,OOS Sharpe marg) +0.2635  rho(S,OOS CAGR marg) +0.2807
+                IS_LEGS         2/24 =  8.33%  lift  +6.25%  p = 0.0796  rho(S,OOS Sharpe marg) +0.2183  rho(S,OOS CAGR marg) +0.2371
+                IS_CAGRSLACK    4/24 = 16.67%  lift +14.58%  p = 0.0004  rho(S,OOS Sharpe marg) +0.2620  rho(S,OOS CAGR marg) +0.3953
+                IS_MINMARG      3/24 = 12.50%  lift +10.42%  p = 0.0078  rho(S,OOS Sharpe marg) +0.2591  rho(S,OOS CAGR marg) +0.3911
+         D=480  base  12/480 =  2.50%  top decile 48 draws
+                IS_SHARPE       3/48 =  6.25%  lift  +3.75%  p = 0.1084  rho(S,OOS Sharpe marg) +0.2525  rho(S,OOS CAGR marg) +0.2389
+                IS_LEGS         4/48 =  8.33%  lift  +5.83%  p = 0.0239  rho(S,OOS Sharpe marg) +0.1858  rho(S,OOS CAGR marg) +0.1898
+                IS_CAGRSLACK   10/48 = 20.83%  lift +18.33%  p = 0.0000  rho(S,OOS Sharpe marg) +0.2520  rho(S,OOS CAGR marg) +0.3859
+                IS_MINMARG      7/48 = 14.58%  lift +12.08%  p = 0.0000  rho(S,OOS Sharpe marg) +0.2488  rho(S,OOS CAGR marg) +0.3819
+
+       RULE 8 — argmax draw chosen on 2009-2016 ONLY, 2017-2026 read ONCE (SPY OOS 15.26%/0.8737/-33.72%; RULES v2 OOS 9.46%/1.2767/-12.05%)
+         D=24   IS_SHARPE     pick  16  OOS   6.23% / 0.9107 / -11.36%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=24   IS_LEGS       pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=24   IS_CAGRSLACK  pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=24   IS_MINMARG    pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_SHARPE     pick  16  OOS   6.23% / 0.9107 / -11.36%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_LEGS       pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_CAGRSLACK  pick  75  OOS   7.59% / 0.9861 / -12.05%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_MINMARG    pick  75  OOS   7.59% / 0.9861 / -12.05%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_SHARPE     pick  16  OOS   6.23% / 0.9107 / -11.36%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_LEGS       pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_CAGRSLACK  pick  75  OOS   7.59% / 0.9861 / -12.05%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_MINMARG    pick  75  OOS   7.59% / 0.9861 / -12.05%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_SHARPE     pick  16  OOS   6.23% / 0.9107 / -11.36%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_LEGS       pick   5  OOS   6.86% / 0.8955 / -11.57%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_CAGRSLACK  pick 297  OOS   9.64% / 1.1403 / -10.96%   4bFULL  True 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_MINMARG    pick 297  OOS   9.64% / 1.1403 / -10.96%   4bFULL  True 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+
+   ### B136  N=40  (480 draws, 10 bps, 13.6s)
+       FULL Sharpe    mean    1.0596  sd   0.0724  min    0.8579  p50    1.0576  max    1.2749
+       FULL CAGR      mean    0.0793  sd   0.0083  min    0.0545  p50    0.0791  max    0.1055
+       FULL MaxDD     mean   -0.1220  sd   0.0103  min   -0.1490  p50   -0.1225  max   -0.0912
+       OOS Sharpe     mean    1.0588  sd   0.0926  min    0.7880  p50    1.0616  max    1.2813
+       OOS CAGR       mean    0.0782  sd   0.0104  min    0.0503  p50    0.0783  max    0.1073
+       OOS MaxDD      mean   -0.1220  sd   0.0103  min   -0.1490  p50   -0.1225  max   -0.0912
+       turnover /yr   mean    2.0074  sd   0.0732  min    1.7349  p50    2.0032  max    2.2548
+       4b FULL    0/480   4b OOS    2/480   4b BOTH    0/480   4a FULL    0/480   4a OOS    0/480
+       binding OOS leg among 4b-OOS failures: O3_OOS 13, O4_DD 0, O5_CAGR 478
+
+       Q1 top-decile vs base rate, target '4b BOTH' (the object 1749 published):
+         D=24   base   0/24 =  0.00%  top decile 3 draws
+                IS_SHARPE       0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.4722  rho(S,OOS CAGR marg) +0.4322
+                IS_LEGS         0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2287  rho(S,OOS CAGR marg) +0.0722
+                IS_CAGRSLACK    0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2548  rho(S,OOS CAGR marg) +0.4496
+                IS_MINMARG      0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2548  rho(S,OOS CAGR marg) +0.4496
+         D=96   base   0/96 =  0.00%  top decile 10 draws
+                IS_SHARPE       0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.1596  rho(S,OOS CAGR marg) +0.1702
+                IS_LEGS         0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0780  rho(S,OOS CAGR marg) -0.0846
+                IS_CAGRSLACK    0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.1738  rho(S,OOS CAGR marg) +0.3472
+                IS_MINMARG      0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.1738  rho(S,OOS CAGR marg) +0.3472
+         D=240  base   0/240 =  0.00%  top decile 24 draws
+                IS_SHARPE       0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2538  rho(S,OOS CAGR marg) +0.2920
+                IS_LEGS         0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.0193  rho(S,OOS CAGR marg) +0.0135
+                IS_CAGRSLACK    0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2485  rho(S,OOS CAGR marg) +0.4370
+                IS_MINMARG      0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2485  rho(S,OOS CAGR marg) +0.4370
+         D=480  base   0/480 =  0.00%  top decile 48 draws
+                IS_SHARPE       0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2702  rho(S,OOS CAGR marg) +0.2656
+                IS_LEGS         0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.0550  rho(S,OOS CAGR marg) +0.0386
+                IS_CAGRSLACK    0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2423  rho(S,OOS CAGR marg) +0.3999
+                IS_MINMARG      0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.2423  rho(S,OOS CAGR marg) +0.3999
+
+       RULE 8 — argmax draw chosen on 2009-2016 ONLY, 2017-2026 read ONCE (SPY OOS 15.26%/0.8737/-33.72%; RULES v2 OOS 9.46%/1.2767/-12.05%)
+         D=24   IS_SHARPE     pick  15  OOS  10.73% / 1.2712 / -12.62%   4bFULL False 4bOOS  True 4bBOTH False 4aOOS False  binding none
+         D=24   IS_LEGS       pick   3  OOS   7.43% / 1.0713 / -11.85%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=24   IS_CAGRSLACK  pick  15  OOS  10.73% / 1.2712 / -12.62%   4bFULL False 4bOOS  True 4bBOTH False 4aOOS False  binding none
+         D=24   IS_MINMARG    pick  15  OOS  10.73% / 1.2712 / -12.62%   4bFULL False 4bOOS  True 4bBOTH False 4aOOS False  binding none
+         D=96   IS_SHARPE     pick  89  OOS   7.73% / 1.0008 / -14.90%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_LEGS       pick  89  OOS   7.73% / 1.0008 / -14.90%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_CAGRSLACK  pick  89  OOS   7.73% / 1.0008 / -14.90%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=96   IS_MINMARG    pick  89  OOS   7.73% / 1.0008 / -14.90%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_SHARPE     pick 212  OOS   8.31% / 1.1437 / -12.21%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_LEGS       pick  89  OOS   7.73% / 1.0008 / -14.90%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_CAGRSLACK  pick 115  OOS  10.39% / 1.2393 / -14.64%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=240  IS_MINMARG    pick 115  OOS  10.39% / 1.2393 / -14.64%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_SHARPE     pick 261  OOS   7.59% / 1.0673 / -11.98%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_LEGS       pick  89  OOS   7.73% / 1.0008 / -14.90%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_CAGRSLACK  pick 115  OOS  10.39% / 1.2393 / -14.64%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+         D=480  IS_MINMARG    pick 115  OOS  10.39% / 1.2393 / -14.64%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O5_CAGR
+
+----------------------------------------------------------------------------------------------------------------------
+## PANEL SMALL665: 720 columns, draw pool 665 (54 dropped for max_1d_move >= 1.0); 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y)
+   scored from 2011-01-13 (15.6y, PROTOCOL rule 1); IS rows 1502 (6.0y), OOS rows 2441 (9.7y)
+   SPY            FULL  14.03% / 0.8570 / -33.72%  H1/H2 0.9026/0.8407  OOS  15.29% / 0.8751 / -33.72%
+   RULES v2 live  FULL   8.14% / 1.1637 / -12.05%  H1/H2 1.0661/1.2535  OOS   9.46% / 1.2767 / -12.05%   (the U56 live book, read on this calendar)
+   FULL-POOL band FULL   4.26% / 0.6588 / -14.16%  H1/H2 0.8052/0.5471  OOS   3.63% / 0.5447 / -14.16%   (reference, all 665 names)
+   4b bars: FULL DD cap -20.23%, CAGR floor  9.82% | OOS DD cap -20.23%, CAGR floor 10.70% | IS DD cap -11.16%, CAGR floor  8.42%
+
+   ### SMALL665  N=20  (480 draws, 10 bps, 10.5s)
+       FULL Sharpe    mean    0.4924  sd   0.1510  min    0.0780  p50    0.4927  max    1.0339
+       FULL CAGR      mean    0.0403  sd   0.0143  min    0.0024  p50    0.0401  max    0.0856
+       FULL MaxDD     mean   -0.2032  sd   0.0407  min   -0.3480  p50   -0.1983  max   -0.1121
+       OOS Sharpe     mean    0.4109  sd   0.1931  min   -0.3546  p50    0.4177  max    1.0625
+       OOS CAGR       mean    0.0339  sd   0.0188  min   -0.0309  p50    0.0338  max    0.0975
+       OOS MaxDD      mean   -0.1980  sd   0.0395  min   -0.3163  p50   -0.1943  max   -0.1121
+       turnover /yr   mean    2.5647  sd   0.1430  min    2.1200  p50    2.5586  max    3.0328
+       4b FULL    0/480   4b OOS    0/480   4b BOTH    0/480   4a FULL    0/480   4a OOS    0/480
+       binding OOS leg among 4b-OOS failures: O3_OOS 474, O4_DD 200, O5_CAGR 480
+
+       Q1 top-decile vs base rate, target '4b BOTH' (the object 1749 published):
+         D=24   base   0/24 =  0.00%  top decile 3 draws
+                IS_SHARPE       0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0635  rho(S,OOS CAGR marg) -0.0417
+                IS_LEGS         0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.0504  rho(S,OOS CAGR marg) +0.0698
+                IS_CAGRSLACK    0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1461  rho(S,OOS CAGR marg) -0.1278
+                IS_MINMARG      0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1722  rho(S,OOS CAGR marg) -0.1635
+         D=96   base   0/96 =  0.00%  top decile 10 draws
+                IS_SHARPE       0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1679  rho(S,OOS CAGR marg) -0.1659
+                IS_LEGS         0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) +0.0052  rho(S,OOS CAGR marg) +0.0082
+                IS_CAGRSLACK    0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1835  rho(S,OOS CAGR marg) -0.1777
+                IS_MINMARG      0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1665  rho(S,OOS CAGR marg) -0.1603
+         D=240  base   0/240 =  0.00%  top decile 24 draws
+                IS_SHARPE       0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1200  rho(S,OOS CAGR marg) -0.1348
+                IS_LEGS         0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0221  rho(S,OOS CAGR marg) -0.0346
+                IS_CAGRSLACK    0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1464  rho(S,OOS CAGR marg) -0.1535
+                IS_MINMARG      0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1487  rho(S,OOS CAGR marg) -0.1599
+         D=480  base   0/480 =  0.00%  top decile 48 draws
+                IS_SHARPE       0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0694  rho(S,OOS CAGR marg) -0.0867
+                IS_LEGS         0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0317  rho(S,OOS CAGR marg) -0.0470
+                IS_CAGRSLACK    0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0848  rho(S,OOS CAGR marg) -0.0943
+                IS_MINMARG      0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1002  rho(S,OOS CAGR marg) -0.1159
+
+       RULE 8 — argmax draw chosen on 2009-2016 ONLY, 2017-2026 read ONCE (SPY OOS 15.29%/0.8751/-33.72%; RULES v2 OOS 9.46%/1.2767/-12.05%)
+         D=24   IS_SHARPE     pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=24   IS_LEGS       pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=24   IS_CAGRSLACK  pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=24   IS_MINMARG    pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=96   IS_SHARPE     pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=96   IS_LEGS       pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=96   IS_CAGRSLACK  pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=96   IS_MINMARG    pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=240  IS_SHARPE     pick 154  OOS   3.04% / 0.4136 / -15.18%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=240  IS_LEGS       pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=240  IS_CAGRSLACK  pick 189  OOS   4.54% / 0.5269 / -21.83%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=240  IS_MINMARG    pick 154  OOS   3.04% / 0.4136 / -15.18%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=480  IS_SHARPE     pick 154  OOS   3.04% / 0.4136 / -15.18%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=480  IS_LEGS       pick  16  OOS   2.02% / 0.2708 / -21.74%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=480  IS_CAGRSLACK  pick 189  OOS   4.54% / 0.5269 / -21.83%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=480  IS_MINMARG    pick 154  OOS   3.04% / 0.4136 / -15.18%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+
+   ### SMALL665  N=40  (480 draws, 10 bps, 12.1s)
+       FULL Sharpe    mean    0.5844  sd   0.1253  min    0.2290  p50    0.5803  max    0.9840
+       FULL CAGR      mean    0.0434  sd   0.0103  min    0.0154  p50    0.0428  max    0.0789
+       FULL MaxDD     mean   -0.1694  sd   0.0289  min   -0.2582  p50   -0.1678  max   -0.1011
+       OOS Sharpe     mean    0.4888  sd   0.1611  min    0.0229  p50    0.4852  max    0.9864
+       OOS CAGR       mean    0.0368  sd   0.0138  min   -0.0014  p50    0.0357  max    0.0783
+       OOS MaxDD      mean   -0.1684  sd   0.0296  min   -0.2582  p50   -0.1665  max   -0.0993
+       turnover /yr   mean    2.5620  sd   0.1035  min    2.2863  p50    2.5605  max    2.9825
+       4b FULL    0/480   4b OOS    0/480   4b BOTH    0/480   4a FULL    0/480   4a OOS    0/480
+       binding OOS leg among 4b-OOS failures: O3_OOS 475, O4_DD 55, O5_CAGR 480
+
+       Q1 top-decile vs base rate, target '4b BOTH' (the object 1749 published):
+         D=24   base   0/24 =  0.00%  top decile 3 draws
+                IS_SHARPE       0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.2226  rho(S,OOS CAGR marg) -0.2113
+                IS_LEGS         0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1667  rho(S,OOS CAGR marg) -0.1572
+                IS_CAGRSLACK    0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1583  rho(S,OOS CAGR marg) -0.1513
+                IS_MINMARG      0/3 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1478  rho(S,OOS CAGR marg) -0.1417
+         D=96   base   0/96 =  0.00%  top decile 10 draws
+                IS_SHARPE       0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1784  rho(S,OOS CAGR marg) -0.1850
+                IS_LEGS         0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1272  rho(S,OOS CAGR marg) -0.1385
+                IS_CAGRSLACK    0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1672  rho(S,OOS CAGR marg) -0.1699
+                IS_MINMARG      0/10 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1687  rho(S,OOS CAGR marg) -0.1718
+         D=240  base   0/240 =  0.00%  top decile 24 draws
+                IS_SHARPE       0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0990  rho(S,OOS CAGR marg) -0.1097
+                IS_LEGS         0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0765  rho(S,OOS CAGR marg) -0.0909
+                IS_CAGRSLACK    0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1367  rho(S,OOS CAGR marg) -0.1399
+                IS_MINMARG      0/24 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.1471  rho(S,OOS CAGR marg) -0.1526
+         D=480  base   0/480 =  0.00%  top decile 48 draws
+                IS_SHARPE       0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0545  rho(S,OOS CAGR marg) -0.0595
+                IS_LEGS         0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0536  rho(S,OOS CAGR marg) -0.0613
+                IS_CAGRSLACK    0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0937  rho(S,OOS CAGR marg) -0.0905
+                IS_MINMARG      0/48 =  0.00%  lift  +0.00%  p = 1.0000  rho(S,OOS Sharpe marg) -0.0996  rho(S,OOS CAGR marg) -0.0986
+
+       RULE 8 — argmax draw chosen on 2009-2016 ONLY, 2017-2026 read ONCE (SPY OOS 15.29%/0.8751/-33.72%; RULES v2 OOS 9.46%/1.2767/-12.05%)
+         D=24   IS_SHARPE     pick  23  OOS   3.23% / 0.4484 / -17.41%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=24   IS_LEGS       pick   4  OOS   2.53% / 0.3528 / -16.01%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=24   IS_CAGRSLACK  pick  23  OOS   3.23% / 0.4484 / -17.41%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=24   IS_MINMARG    pick  23  OOS   3.23% / 0.4484 / -17.41%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=96   IS_SHARPE     pick  36  OOS   1.62% / 0.2466 / -16.26%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=96   IS_LEGS       pick  36  OOS   1.62% / 0.2466 / -16.26%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=96   IS_CAGRSLACK  pick  36  OOS   1.62% / 0.2466 / -16.26%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=96   IS_MINMARG    pick  36  OOS   1.62% / 0.2466 / -16.26%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=240  IS_SHARPE     pick 140  OOS   3.13% / 0.4022 / -22.42%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=240  IS_LEGS       pick  36  OOS   1.62% / 0.2466 / -16.26%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=240  IS_CAGRSLACK  pick 140  OOS   3.13% / 0.4022 / -22.42%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=240  IS_MINMARG    pick 140  OOS   3.13% / 0.4022 / -22.42%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+         D=480  IS_SHARPE     pick 406  OOS   4.58% / 0.5721 / -14.06%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=480  IS_LEGS       pick  36  OOS   1.62% / 0.2466 / -16.26%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=480  IS_CAGRSLACK  pick 406  OOS   4.58% / 0.5721 / -14.06%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O5_CAGR
+         D=480  IS_MINMARG    pick 140  OOS   3.13% / 0.4022 / -22.42%   4bFULL False 4bOOS False 4bBOTH False 4aOOS False  binding O3_OOS|O4_DD|O5_CAGR
+  GATE PASS  G1 runner == engine.backtest (full-pool band book, every panel): worst |d| over returns and turnover = 1.804e-16   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turnover*c/1e4: worst |d| = 6.592e-17   (target < 1e-15)
+  GATE PASS  G8 no leverage / no shorting: max realised TARGET gross 0.750000   (target <= 0.75)
+  GATE PASS  G6 every cell published: 11520 rows -> 2026-09-22_name-set-chooser-lift-replication_C.grid.csv.gz   (target 11520)
+  GATE PASS  G4 chooser window closes before OOS: every statistic in ['IS_SHARPE', 'IS_LEGS', 'IS_CAGRSLACK', 'IS_MINMARG', 'I1_H1', 'I2_H2', 'I4_DD', 'I5_CAGR'] is computed on rows <= 2016-12-31   (target IS_end < OOS_start)
+  GATE PASS  G3a cross-run: 1632's published U56 N=20 draws 3 and 18 reproduce: max|d| = 2.745e-04   (target < 5e-4 (1632 quotes 4 dp))
+  GATE PASS  G3b cross-run: 1749's 43/480 base and 25/48 top-decile counts: base_K 42 (published 43); top-decile k 25 (published 25); verdict moved on draws lost=[3] gained=[], worst binding-leg margin among them 3.283e-06   (target counts equal, OR off by <= 1 draw whose binding margin is < 1e-4 of CAGR)
+
+   ## 1749 -> this run: what the two-day price-cache refresh moved on U56 N=20
+      SPY FULL CAGR 15.1388% here vs 15.12% in 1749's log; SPY OOS CAGR 15.2870% vs 15.26% — so BOTH 4b CAGR floors moved UP between the two runs.
+      draw   3 (LOST): tightest leg L5_CAGR = -3.283e-06  (all legs L1_H1 +0.2701, L2_H2 +0.3730, L4_DD +0.0598, L5_CAGR -0.0000, O3_OOS +0.3904, O4_DD +0.0598, O5_CAGR +0.0125)
+      => the record's 4b verdicts on these cells are quoted at a precision FINER than a two-day cache refresh.
+
+## DUAL-PATH DRAWS (4a FULL *and* 4b FULL *and* 4b OOS at 10 bps): 5 of 2880
+   U56 N=20 draw 187: FULL  10.69% / 1.3134 / -11.65%  halves 1.3347/1.3076  OOS  12.09% / 1.3798 / -11.65%   4a OOS True
+   U56 N=20 draw 238: FULL  11.66% / 1.3396 / -11.52%  halves 1.2919/1.3917  OOS  13.72% / 1.4499 / -11.52%   4a OOS True
+   U56 N=20 draw 250: FULL  10.92% / 1.2792 / -11.34%  halves 1.3315/1.2392  OOS  12.15% / 1.3559 / -11.34%   4a OOS True
+   U56 N=20 draw 384: FULL  10.99% / 1.3480 / -11.96%  halves 1.4010/1.3117  OOS  12.01% / 1.3876 / -11.96%   4a OOS True
+   B136 N=20 draw 261: FULL  11.40% / 1.3406 / -11.98%  halves 1.3720/1.3128  OOS  11.29% / 1.3224 / -11.98%   4a OOS True
+   reached by a LEGAL IS-only chooser: 0 of 96 rule-8 picks — none
+
+======================================================================================================================
+## THE ANSWER — does the lift replicate off U56?
+
+   panel        N  pool   base 4bBOTH best stat      top-decile     lift         p #stats p<0.05
+   U56         20    56    42/480 = 8.75%  IS_CAGRSLACK   25/48   +43.33%    0.0000         4 / 4
+   U56         40    56     0/480 = 0.00%  IS_SHARPE       0/48    +0.00%    1.0000         0 / 4
+   B136        20   136    12/480 = 2.50%  IS_CAGRSLACK   10/48   +18.33%    0.0000         3 / 4
+   B136        40   136     0/480 = 0.00%  IS_SHARPE       0/48    +0.00%    1.0000         0 / 4
+   SMALL665    20   665     0/480 = 0.00%  IS_SHARPE       0/48    +0.00%    1.0000         0 / 4
+   SMALL665    40   665     0/480 = 0.00%  IS_SHARPE       0/48    +0.00%    1.0000         0 / 4
+
+   4b OOS target (the easier one), same table:
+   U56         20  base  105/480 = 21.88%  best IS_CAGRSLACK   29/48  lift +38.54% p = 0.0000  (4 of 4 stats p<0.05)
+   U56         40  base   26/480 =  5.42%  best IS_CAGRSLACK    7/48  lift  +9.17% p = 0.0097  (2 of 4 stats p<0.05)
+   B136        20  base   21/480 =  4.38%  best IS_CAGRSLACK   10/48  lift +16.46% p = 0.0000  (2 of 4 stats p<0.05)
+   B136        40  base    2/480 =  0.42%  best IS_SHARPE       2/48  lift  +3.75% p = 0.0098  (3 of 4 stats p<0.05)
+   SMALL665    20  base    0/480 =  0.00%  best IS_SHARPE       0/48  lift  +0.00% p = 1.0000  (0 of 4 stats p<0.05)
+   SMALL665    40  base    0/480 =  0.00%  best IS_SHARPE       0/48  lift  +0.00% p = 1.0000  (0 of 4 stats p<0.05)
+
+## COST LADDER (reported, not tuned): 4b BOTH counts per cell over the 480 draws
+   panel        N       0 bps      10 bps      25 bps      50 bps
+   U56         20          55          42          28          13
+   U56         40           0           0           0           0
+   B136        20          14          12           7           2
+   B136        40           1           0           0           0
+   SMALL665    20           0           0           0           0
+   SMALL665    40           0           0           0           0
+
+## RULE 8 ROLL-UP over all (panel, N, D, statistic) picks
+   panel        N   4bBOTH   4bOOS  4bFULL   4aOOS  4aFULL    n
+   U56         20       13      13      13       2       2   16
+   U56         40        0       2       0       1       1   16
+   B136        20        0       0       2       0       0   16
+   B136        40        0       3       0       0       0   16
+   SMALL665    20        0       0       0       0       0   16
+   SMALL665    40        0       0       0       0       0   16
+   TOTAL: 4b BOTH 13 of 96; 4b OOS 18; 4a FULL 3; 4a OOS 3
+   binding OOS leg among rule-8 picks that miss 4b OOS: O3_OOS 32, O4_DD 16, O5_CAGR 78
+
+## KEEP-CANDIDATE SHORTLIST — rule-8 picks clearing 4b FULL *and* OOS: 13
+   U56 N=20 D=24 IS_SHARPE pick 18: FULL  11.07% / 1.2354 / -14.75%  halves 1.4073/1.0744  OOS  10.85% / 1.1992 / -14.75%   4a FULL False / OOS False
+   U56 N=20 D=24 IS_LEGS pick 18: FULL  11.07% / 1.2354 / -14.75%  halves 1.4073/1.0744  OOS  10.85% / 1.1992 / -14.75%   4a FULL False / OOS False
+   U56 N=20 D=24 IS_CAGRSLACK pick 18: FULL  11.07% / 1.2354 / -14.75%  halves 1.4073/1.0744  OOS  10.85% / 1.1992 / -14.75%   4a FULL False / OOS False
+   U56 N=20 D=24 IS_MINMARG pick 18: FULL  11.07% / 1.2354 / -14.75%  halves 1.4073/1.0744  OOS  10.85% / 1.1992 / -14.75%   4a FULL False / OOS False
+   U56 N=20 D=96 IS_LEGS pick 18: FULL  11.07% / 1.2354 / -14.75%  halves 1.4073/1.0744  OOS  10.85% / 1.1992 / -14.75%   4a FULL False / OOS False
+   U56 N=20 D=96 IS_CAGRSLACK pick 30: FULL  12.01% / 1.2702 / -14.96%  halves 1.3879/1.1657  OOS  12.41% / 1.2785 / -14.96%   4a FULL False / OOS False
+   U56 N=20 D=96 IS_MINMARG pick 30: FULL  12.01% / 1.2702 / -14.96%  halves 1.3879/1.1657  OOS  12.41% / 1.2785 / -14.96%   4a FULL False / OOS False
+   U56 N=20 D=240 IS_LEGS pick 18: FULL  11.07% / 1.2354 / -14.75%  halves 1.4073/1.0744  OOS  10.85% / 1.1992 / -14.75%   4a FULL False / OOS False
+   U56 N=20 D=240 IS_CAGRSLACK pick 166: FULL  11.75% / 1.3343 / -13.16%  halves 1.4722/1.2104  OOS  11.74% / 1.3112 / -13.16%   4a FULL False / OOS False
+   U56 N=20 D=240 IS_MINMARG pick 166: FULL  11.75% / 1.3343 / -13.16%  halves 1.4722/1.2104  OOS  11.74% / 1.3112 / -13.16%   4a FULL False / OOS False
+   U56 N=20 D=480 IS_LEGS pick 18: FULL  11.07% / 1.2354 / -14.75%  halves 1.4073/1.0744  OOS  10.85% / 1.1992 / -14.75%   4a FULL False / OOS False
+   U56 N=20 D=480 IS_CAGRSLACK pick 166: FULL  11.75% / 1.3343 / -13.16%  halves 1.4722/1.2104  OOS  11.74% / 1.3112 / -13.16%   4a FULL False / OOS False
+   U56 N=20 D=480 IS_MINMARG pick 166: FULL  11.75% / 1.3343 / -13.16%  halves 1.4722/1.2104  OOS  11.74% / 1.3112 / -13.16%   4a FULL False / OOS False
+
+======================================================================================================================
+VERDICT
+  (1) THE LIFT IS MEASURABLE: U56 cells with a significant positive lift on 4b BOTH 1 of 2; OFF-U56 cells (B136, SMALL) 1 of 4
+  (2) THE TARGET IS EMPTY at 4 of 6 cells U56/N=40, B136/N=40, SMALL665/N=20, SMALL665/N=40 — where the 4b-BOTH population is 0/480 no lift can be measured at all, in either direction.
+  (3) THE REACHED BOOK: rule-8 picks clearing 4b FULL and OOS, by cell — B136/N=20 0/16, B136/N=40 0/16, SMALL665/N=20 0/16, SMALL665/N=40 0/16, U56/N=20 13/16, U56/N=40 0/16
+  rule 8 total: 13 of 96 legal IS-only picks clear 4b FULL and OOS; 3 of 96 clear 4a FULL; 0 of 96 clear BOTH paths
+  gates: 10 / 10 pass
+  runtime 99.3s
+======================================================================================================================
