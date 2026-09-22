@@ -1,0 +1,302 @@
+====================================================================================================
+IDEA 2081 lane B 2026-09-22 -- REALLOCATE (constant gross) vs REMOVE (de-gross) the
+                               idle band NAV, against a MATCHED-LEVERAGE control
+====================================================================================================
+run 2026-09-22 06:26 UTC
+tuned: band c [0.0, 0.02, 0.03, 0.05, 0.1] x realloc fraction f [0.0, 0.25, 0.5, 0.75, 1.0]   (25 cells/panel)
+not tuned: gross 0.75, cadence W, cost 10 bps, panels U56 + B136,
+           windows FULL / H1 / H2 / IS ..2016-12-31 / OOS 2017-01-01..  (rule 8)
+           offsets [0, 1, 2, 3, 4] are a MEASUREMENT (idea 914's clause, B8); books are always d=0
+
+  panel U56     56 cols  2008-01-02 .. 2026-09-18  (4708 rows)
+  panel B136   136 cols  2008-01-02 .. 2026-09-18  (4708 rows)
+
+----------------------------------------------------------------------------------------------------
+CONSTRUCTION GATES
+----------------------------------------------------------------------------------------------------
+  [PASS] G1 local run/net == engine.backtest                got 0.000e+00   bar < 1e-12
+  [PASS] G2 REALLOC(0.03,f=0) == rules_v2_weights           got 0.000e+00   bar == 0.0
+  [PASS] G3 f=1 target gross == 0.75 (k>=1), 0 else         got 0 violations   bar 0
+  [PASS] G5 cost linearity (one path, any rung)             got 0.000e+00   bar < 1e-15
+  [PASS] G6 offset clipping census (weeks < d+1 days)       got {0: 0, 1: 0, 2: 0, 3: 2, 4: 175}   bar reported
+
+----------------------------------------------------------------------------------------------------
+PRICING THE GRID (50 cells x REALLOC + 2 controls, 5 offsets on the two
+priced arms) -- every point published to <slug>.grid.csv.gz
+----------------------------------------------------------------------------------------------------
+  U56: 825 rows priced   (29s)
+  B136: 825 rows priced   (66s)
+  [PASS] G4 matched mean target gross (REALLOC vs LEVDG_F)  got 6.661e-16   bar < 1e-12
+  [PASS] G8 f=0: REALLOC == LEVDG_F (lambda == 1)           got 0.000e+00   bar == 0.0
+  [PASS] G7 SPY offset-invariance                           got 0.000e+00   bar == 0.0
+  [PASS] G9 replicates idea 1454's committed U56 re-spread  got 0.1219/1.1568/-0.1771 d=0.00006   bar 12.19%/1.1567/-17.71%, d < 5e-4
+
+GATES: 9 of 9 PASS
+
+  REF U56   FULL  RULES v2  CAGR   8.62% Sharpe  1.201 MaxDD -12.05% (H1 1.228/H2 1.181)   SPY  CAGR  15.14% Sharpe  0.885 MaxDD -33.72% (H1 0.957/H2 0.826)   4b bars: DD cap -20.23% CAGR floor 10.60%
+  REF U56   IS    RULES v2  CAGR   7.61% Sharpe  1.104 MaxDD  -7.89% (H1 0.917/H2 1.348)   SPY  CAGR  14.96% Sharpe  0.899 MaxDD -22.06% (H1 0.838/H2 1.060)   4b bars: DD cap -13.24% CAGR floor 10.47%
+  REF U56   OOS   RULES v2  CAGR   9.46% Sharpe  1.277 MaxDD -12.05% (H1 1.432/H2 1.106)   SPY  CAGR  15.29% Sharpe  0.875 MaxDD -33.72% (H1 0.991/H2 0.750)   4b bars: DD cap -20.23% CAGR floor 10.70%
+  REF B136  FULL  RULES v2  CAGR   7.96% Sharpe  1.097 MaxDD -12.24% (H1 1.230/H2 0.967)   SPY  CAGR  15.12% Sharpe  0.884 MaxDD -33.72% (H1 0.957/H2 0.825)   4b bars: DD cap -20.23% CAGR floor 10.59%
+  REF B136  IS    RULES v2  CAGR   8.10% Sharpe  1.092 MaxDD  -7.90% (H1 0.931/H2 1.297)   SPY  CAGR  14.96% Sharpe  0.899 MaxDD -22.06% (H1 0.838/H2 1.060)   4b bars: DD cap -13.24% CAGR floor 10.47%
+  REF B136  OOS   RULES v2  CAGR   7.85% Sharpe  1.102 MaxDD -12.24% (H1 1.291/H2 0.878)   SPY  CAGR  15.26% Sharpe  0.874 MaxDD -33.72% (H1 0.991/H2 0.747)   4b bars: DD cap -20.23% CAGR floor 10.68%
+
+----------------------------------------------------------------------------------------------------
+B1 + B2  THE HEADLINE GRID at 10 bps, d=0, FULL window: does any f>0 clear 4b
+          where its own f=0 does not, and what does f do to the CAGR FLOOR margin?
+----------------------------------------------------------------------------------------------------
+panel   band     f    CAGR  Sharpe   MaxDD     H1     H2  mgross   turn  mgnCAGR   mgnDD  4b  4a  4bOOS
+U56     0.00  0.00   8.17%   1.167 -12.01%  1.183  1.155   0.533   3.13    -2.43   +8.22   .   .      .
+U56     0.00  0.25   9.02%   1.160 -13.47%  1.193  1.134   0.587   4.15    -1.57   +6.76   .   .      .
+U56     0.00  0.50   9.86%   1.139 -15.21%  1.190  1.100   0.641   5.29    -0.74   +5.02   .   .      Y
+U56     0.00  0.75  10.68%   1.113 -16.94%  1.181  1.064   0.696   6.45    +0.09   +3.29   Y   .      Y
+U56     0.00  1.00  11.50%   1.087 -18.65%  1.168  1.028   0.750   7.61    +0.90   +1.58   Y   .      Y
+U56     0.02  0.00   8.47%   1.194 -11.86%  1.205  1.186   0.533   2.15    -2.13   +8.37   .   .      .
+U56     0.02  0.25   9.37%   1.192 -12.99%  1.218  1.173   0.587   2.85    -1.23   +7.24   .   .      .
+U56     0.02  0.50  10.25%   1.177 -14.59%  1.219  1.146   0.641   3.64    -0.35   +5.64   .   .      Y
+U56     0.02  0.75  11.11%   1.156 -16.18%  1.213  1.114   0.696   4.45    +0.52   +4.05   Y   .      Y
+U56     0.02  1.00  11.97%   1.133 -17.75%  1.203  1.082   0.750   5.27    +1.38   +2.48   Y   .      Y
+U56     0.03  0.00   8.62%   1.201 -12.05%  1.228  1.181   0.533   1.77    -1.98   +8.18   .   .      .
+U56     0.03  0.25   9.53%   1.204 -13.03%  1.235  1.181   0.587   2.34    -1.07   +7.20   .   .      .
+U56     0.03  0.50  10.43%   1.193 -14.60%  1.232  1.166   0.641   2.98    -0.17   +5.63   .   .      Y
+U56     0.03  0.75  11.31%   1.176 -16.17%  1.223  1.144   0.696   3.64    +0.72   +4.06   Y   .      Y
+U56     0.03  1.00  12.19%   1.157 -17.71%  1.212  1.120   0.750   4.31    +1.59   +2.52   Y   .      Y
+U56     0.05  0.00   8.30%   1.145 -12.57%  1.188  1.110   0.514   1.42    -2.30   +7.66   .   .      .
+U56     0.05  0.25   9.40%   1.164 -13.51%  1.206  1.133   0.573   1.88    -1.19   +6.72   .   .      .
+U56     0.05  0.50  10.50%   1.167 -15.14%  1.210  1.137   0.632   2.41    -0.10   +5.09   .   .      Y
+U56     0.05  0.75  11.59%   1.161 -16.82%  1.206  1.131   0.691   2.95    +0.99   +3.41   Y   .      Y
+U56     0.05  1.00  12.67%   1.150 -18.47%  1.198  1.120   0.750   3.49    +2.08   +1.76   Y   .      Y
+U56     0.10  0.00   8.76%   1.173 -12.35%  1.246  1.107   0.517   1.00    -1.84   +7.88   .   .      .
+U56     0.10  0.25   9.94%   1.202 -13.40%  1.264  1.150   0.575   1.26    -0.65   +6.83   .   .      .
+U56     0.10  0.50  11.12%   1.215 -14.90%  1.270  1.174   0.634   1.56    +0.52   +5.33   Y   .      Y
+U56     0.10  0.75  12.30%   1.220 -16.58%  1.268  1.187   0.692   1.87    +1.70   +3.65   Y   .      Y
+U56     0.10  1.00  13.47%   1.219 -18.25%  1.262  1.192   0.750   2.18    +2.87   +1.98   Y   .      Y
+B136    0.00  0.00   7.71%   1.085 -12.62%  1.198  0.973   0.532   3.32    -2.88   +7.61   .   .      .
+B136    0.00  0.25   8.68%   1.091 -13.87%  1.202  0.985   0.587   4.36    -1.90   +6.36   .   .      .
+B136    0.00  0.50   9.64%   1.082 -15.95%  1.193  0.981   0.641   5.51    -0.94   +4.28   .   .      .
+B136    0.00  0.75  10.59%   1.067 -18.05%  1.176  0.969   0.696   6.67    +0.01   +2.18   Y   .      Y
+B136    0.00  1.00  11.53%   1.049 -20.12%  1.157  0.955   0.750   7.84    +0.95   +0.11   Y   .      Y
+B136    0.02  0.00   7.98%   1.107 -12.26%  1.225  0.990   0.532   2.37    -2.61   +7.97   .   .      .
+B136    0.02  0.25   8.94%   1.112 -13.45%  1.227  1.002   0.587   3.12    -1.65   +6.78   .   .      .
+B136    0.02  0.50   9.88%   1.102 -15.01%  1.215  0.997   0.641   3.95    -0.71   +5.22   .   .      .
+B136    0.02  0.75  10.81%   1.086 -16.98%  1.197  0.986   0.696   4.80    +0.22   +3.25   Y   .      Y
+B136    0.02  1.00  11.73%   1.067 -18.93%  1.176  0.972   0.750   5.65    +1.15   +1.30   Y   .      Y
+B136    0.03  0.00   7.96%   1.097 -12.24%  1.230  0.967   0.532   2.01    -2.63   +7.99   .   .      .
+B136    0.03  0.25   8.90%   1.103 -13.43%  1.228  0.983   0.587   2.64    -1.69   +6.80   .   .      .
+B136    0.03  0.50   9.82%   1.094 -14.75%  1.214  0.983   0.641   3.35    -0.77   +5.48   .   .      .
+B136    0.03  0.75  10.73%   1.079 -16.65%  1.194  0.975   0.696   4.07    +0.14   +3.58   Y   .      Y
+B136    0.03  1.00  11.63%   1.061 -18.53%  1.172  0.964   0.750   4.80    +1.04   +1.70   Y   .      Y
+B136    0.05  0.00   7.95%   1.076 -13.14%  1.212  0.942   0.526   1.59    -2.64   +7.09   .   .      .
+B136    0.05  0.25   8.95%   1.089 -14.25%  1.211  0.974   0.582   2.07    -1.64   +5.98   .   .      .
+B136    0.05  0.50   9.94%   1.087 -15.55%  1.197  0.986   0.638   2.61    -0.65   +4.68   .   .      .
+B136    0.05  0.75  10.92%   1.077 -17.53%  1.177  0.987   0.694   3.17    +0.33   +2.70   Y   .      Y
+B136    0.05  1.00  11.89%   1.063 -19.49%  1.155  0.984   0.750   3.72    +1.30   +0.74   Y   .      Y
+B136    0.10  0.00   8.63%   1.115 -14.58%  1.273  0.961   0.534   1.10    -1.96   +5.65   .   .      .
+B136    0.10  0.25   9.73%   1.140 -15.51%  1.285  1.003   0.588   1.38    -0.86   +4.72   .   .      .
+B136    0.10  0.50  10.82%   1.149 -16.59%  1.283  1.027   0.642   1.70    +0.23   +3.64   Y   .      Y
+B136    0.10  0.75  11.91%   1.148 -18.45%  1.272  1.039   0.696   2.01    +1.32   +1.78   Y   .      Y
+B136    0.10  1.00  12.99%   1.142 -20.29%  1.257  1.045   0.750   2.34    +2.40   -0.06   .   .      .
+
+B1 VERDICT: cells where f>0 clears FULL-window 4b and its own f=0 does not: 21 -> [('U56', 0.0, 0.75), ('U56', 0.0, 1.0), ('U56', 0.02, 0.75), ('U56', 0.02, 1.0), ('U56', 0.03, 0.75), ('U56', 0.03, 1.0), ('U56', 0.05, 0.75), ('U56', 0.05, 1.0), ('U56', 0.1, 0.5), ('U56', 0.1, 0.75), ('U56', 0.1, 1.0), ('B136', 0.0, 0.75), ('B136', 0.0, 1.0), ('B136', 0.02, 0.75), ('B136', 0.02, 1.0), ('B136', 0.03, 0.75), ('B136', 0.03, 1.0), ('B136', 0.05, 0.75), ('B136', 0.05, 1.0), ('B136', 0.1, 0.5), ('B136', 0.1, 0.75)]
+            FULL 4b passes overall: 21 of 50;  OOS-window 4b passes: 25 of 50;  4a passes: 0 of 50
+
+B2  CAGR-FLOOR MARGIN (pp, CAGR - 0.70*SPY) as a function of f -- the one bar the live book fails:
+   U56   band 0.00  f=0.00: -2.43  f=0.25: -1.57  f=0.50: -0.74  f=0.75: +0.09  f=1.00: +0.90   (floor cleared at f: [0.75, 1.0])
+   U56   band 0.02  f=0.00: -2.13  f=0.25: -1.23  f=0.50: -0.35  f=0.75: +0.52  f=1.00: +1.38   (floor cleared at f: [0.75, 1.0])
+   U56   band 0.03  f=0.00: -1.98  f=0.25: -1.07  f=0.50: -0.17  f=0.75: +0.72  f=1.00: +1.59   (floor cleared at f: [0.75, 1.0])
+   U56   band 0.05  f=0.00: -2.30  f=0.25: -1.19  f=0.50: -0.10  f=0.75: +0.99  f=1.00: +2.08   (floor cleared at f: [0.75, 1.0])
+   U56   band 0.10  f=0.00: -1.84  f=0.25: -0.65  f=0.50: +0.52  f=0.75: +1.70  f=1.00: +2.87   (floor cleared at f: [0.5, 0.75, 1.0])
+   B136  band 0.00  f=0.00: -2.88  f=0.25: -1.90  f=0.50: -0.94  f=0.75: +0.01  f=1.00: +0.95   (floor cleared at f: [0.75, 1.0])
+   B136  band 0.02  f=0.00: -2.61  f=0.25: -1.65  f=0.50: -0.71  f=0.75: +0.22  f=1.00: +1.15   (floor cleared at f: [0.75, 1.0])
+   B136  band 0.03  f=0.00: -2.63  f=0.25: -1.69  f=0.50: -0.77  f=0.75: +0.14  f=1.00: +1.04   (floor cleared at f: [0.75, 1.0])
+   B136  band 0.05  f=0.00: -2.64  f=0.25: -1.64  f=0.50: -0.65  f=0.75: +0.33  f=1.00: +1.30   (floor cleared at f: [0.75, 1.0])
+   B136  band 0.10  f=0.00: -1.96  f=0.25: -0.86  f=0.50: +0.23  f=0.75: +1.32  f=1.00: +2.40   (floor cleared at f: [0.5, 0.75, 1.0])
+
+----------------------------------------------------------------------------------------------------
+B3  THE MATCHED-LEVERAGE CONTROL (the new leg).  REALLOC minus LEVDG_F at
+    IDENTICAL mean target gross (G4).  Pre-stated: INDIST if |dSharpe|<=0.02 and
+    |dMaxDD|<=0.50pp and |dCAGR|<=0.50pp;  DISTINCT if |dSharpe|>0.05 or |dMaxDD|>1.5pp.
+----------------------------------------------------------------------------------------------------
+panel   band     f   lamF  levgross  dCAGRpp  dSharpe  dMaxDDpp       verdict
+U56     0.00  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+U56     0.00  0.25  1.102     0.826    +0.02   -0.007     -0.28 INDISTINGUISH
+U56     0.00  0.50  1.204     0.903    +0.01   -0.028     -0.85      MARGINAL
+U56     0.00  0.75  1.306     0.979    -0.01   -0.053     -1.41      DISTINCT
+U56     0.00  1.00  1.408     1.056    -0.03   -0.080     -1.97      DISTINCT
+U56     0.02  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+U56     0.02  0.25  1.102     0.827    +0.02   -0.002     +0.03 INDISTINGUISH
+U56     0.02  0.50  1.204     0.903    +0.02   -0.017     -0.40 INDISTINGUISH
+U56     0.02  0.75  1.306     0.980    +0.02   -0.038     -0.83      MARGINAL
+U56     0.02  1.00  1.408     1.056    -0.00   -0.060     -1.26      DISTINCT
+U56     0.03  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+U56     0.03  0.25  1.102     0.826    +0.02   +0.003     +0.21 INDISTINGUISH
+U56     0.03  0.50  1.204     0.903    +0.03   -0.008     -0.18 INDISTINGUISH
+U56     0.03  0.75  1.306     0.979    +0.02   -0.025     -0.57      MARGINAL
+U56     0.03  1.00  1.408     1.056    +0.01   -0.044     -0.95      MARGINAL
+U56     0.05  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+U56     0.05  0.25  1.115     0.836    +0.15   +0.020     +0.45 INDISTINGUISH
+U56     0.05  0.50  1.229     0.922    +0.29   +0.023     +0.19      MARGINAL
+U56     0.05  0.75  1.344     1.008    +0.42   +0.017     -0.11 INDISTINGUISH
+U56     0.05  1.00  1.458     1.094    +0.54   +0.006     -0.41      MARGINAL
+U56     0.10  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+U56     0.10  0.25  1.113     0.834    +0.18   +0.029     +0.29      MARGINAL
+U56     0.10  0.50  1.225     0.919    +0.36   +0.043     +0.13      MARGINAL
+U56     0.10  0.75  1.338     1.003    +0.54   +0.047     -0.24      MARGINAL
+U56     0.10  1.00  1.450     1.088    +0.71   +0.046     -0.59      MARGINAL
+B136    0.00  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+B136    0.00  0.25  1.102     0.827    +0.19   +0.007     -0.01 INDISTINGUISH
+B136    0.00  0.50  1.205     0.904    +0.35   -0.002     -0.85      MARGINAL
+B136    0.00  0.75  1.307     0.980    +0.51   -0.018     -1.73      DISTINCT
+B136    0.00  1.00  1.410     1.057    +0.66   -0.036     -2.59      DISTINCT
+B136    0.02  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+B136    0.02  0.25  1.102     0.827    +0.14   +0.005     +0.03 INDISTINGUISH
+B136    0.02  0.50  1.205     0.904    +0.26   -0.005     -0.33 INDISTINGUISH
+B136    0.02  0.75  1.307     0.980    +0.36   -0.021     -1.11      MARGINAL
+B136    0.02  1.00  1.410     1.057    +0.46   -0.040     -1.87      DISTINCT
+B136    0.03  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+B136    0.03  0.25  1.102     0.827    +0.12   +0.005     +0.02 INDISTINGUISH
+B136    0.03  0.50  1.205     0.904    +0.22   -0.003     -0.09 INDISTINGUISH
+B136    0.03  0.75  1.307     0.980    +0.31   -0.018     -0.80      MARGINAL
+B136    0.03  1.00  1.409     1.057    +0.39   -0.036     -1.49      MARGINAL
+B136    0.05  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+B136    0.05  0.25  1.106     0.830    +0.15   +0.013     +0.24 INDISTINGUISH
+B136    0.05  0.50  1.213     0.910    +0.29   +0.011     +0.27 INDISTINGUISH
+B136    0.05  0.75  1.319     0.989    +0.42   +0.001     -0.38 INDISTINGUISH
+B136    0.05  1.00  1.426     1.069    +0.54   -0.013     -1.02      MARGINAL
+B136    0.10  0.00  1.000     0.750    +0.00   +0.000     +0.00 INDISTINGUISH
+B136    0.10  0.25  1.101     0.826    +0.22   +0.025     +0.48      MARGINAL
+B136    0.10  0.50  1.202     0.901    +0.44   +0.034     +0.80      MARGINAL
+B136    0.10  0.75  1.303     0.977    +0.65   +0.034     +0.32      MARGINAL
+B136    0.10  1.00  1.403     1.053    +0.85   +0.028     -0.14      MARGINAL
+
+B3 VERDICT over the 40 cells with f>0 (f=0 is a structural identity, G8):
+     INDISTINGUISHABLE     15 of 40
+     MARGINAL              19 of 40
+     DISTINCT               6 of 40
+     median |dSharpe| 0.0205   median |dCAGR| 0.240pp   median |dMaxDD| 0.407pp
+     max    |dSharpe| 0.0798   max    |dCAGR| 0.849pp   max    |dMaxDD| 2.587pp
+     sign of dSharpe: REALLOC ahead in 19 of 40; dMaxDD better (shallower) in 13 of 40
+
+----------------------------------------------------------------------------------------------------
+B4  THE DRAWDOWN PRICE OF EXPOSURE.  MaxDD monotone in f?  And pp of drawdown
+    bought per pp of mean gross added -- REALLOC vs 2085's leverage ray (LEVDG_F).
+----------------------------------------------------------------------------------------------------
+   U56   band 0.00  MaxDD -12.01% -13.47% -15.21% -16.94% -18.65%   steps -/-/-/-   dDD/dgross  REALLOC -0.306  LEVRAY -0.215
+   U56   band 0.02  MaxDD -11.86% -12.99% -14.59% -16.18% -17.75%   steps -/-/-/-   dDD/dgross  REALLOC -0.271  LEVRAY -0.213
+   U56   band 0.03  MaxDD -12.05% -13.03% -14.60% -16.17% -17.71%   steps -/-/-/-   dDD/dgross  REALLOC -0.260  LEVRAY -0.217
+   U56   band 0.05  MaxDD -12.57% -13.51% -15.14% -16.82% -18.47%   steps -/-/-/-   dDD/dgross  REALLOC -0.251  LEVRAY -0.233
+   U56   band 0.10  MaxDD -12.35% -13.40% -14.90% -16.58% -18.25%   steps -/-/-/-   dDD/dgross  REALLOC -0.254  LEVRAY -0.228
+   B136  band 0.00  MaxDD -12.62% -13.87% -15.95% -18.05% -20.12%   steps -/-/-/-   dDD/dgross  REALLOC -0.344  LEVRAY -0.226
+   B136  band 0.02  MaxDD -12.26% -13.45% -15.01% -16.98% -18.93%   steps -/-/-/-   dDD/dgross  REALLOC -0.306  LEVRAY -0.220
+   B136  band 0.03  MaxDD -12.24% -13.43% -14.75% -16.65% -18.53%   steps -/-/-/-   dDD/dgross  REALLOC -0.289  LEVRAY -0.220
+   B136  band 0.05  MaxDD -13.14% -14.25% -15.55% -17.53% -19.49%   steps -/-/-/-   dDD/dgross  REALLOC -0.284  LEVRAY -0.238
+   B136  band 0.10  MaxDD -14.58% -15.51% -16.59% -18.45% -20.29%   steps -/-/-/-   dDD/dgross  REALLOC -0.265  LEVRAY -0.259
+   MaxDD monotonically DEEPER in f in 10 of 10 (panel, band) ladders
+
+----------------------------------------------------------------------------------------------------
+B5  RULE 8 WALK-FORWARD.  Both dials picked on IS (2009..2016) by IS Sharpe ONLY,
+    then 2017-2026 read ONCE.  Controls use lambda fitted on IS ONLY (LEVDG_IS).
+----------------------------------------------------------------------------------------------------
+   U56   free  (both dials)     IS pick band=0.10 f=0.75
+        OOS  CAGR  13.22%  Sharpe  1.252  MaxDD -16.58%  (H1 1.404 / H2 1.089)
+        vs RULES v2 OOS  CAGR   9.46%  Sharpe  1.277  MaxDD -12.05%
+        vs SPY       OOS  CAGR  15.29%  Sharpe  0.875  MaxDD -33.72%
+        4a FAIL   4b PASS  legs H1=Y(+0.41) H2=Y(+0.34) DD=Y(+3.65) CAGR=Y(+2.52)
+        IS-matched leverage twin OOS: CAGR  11.95% Sharpe  1.194 MaxDD -16.05%   -> REALLOC minus twin: dCAGR +1.27pp dSharpe +0.058 dMaxDD -0.53pp
+        IDEA 914 CLAUSE on the OOS read: mgnCAGR +2.52pp vs 5-weekday CAGR spread 0.43pp -> SURVIVES;  mgnDD +3.65pp vs DD spread 1.44pp -> SURVIVES;  OOS 4b holds at 5 of 5 offsets
+   U56   c=0.03 fixed (f only)  IS pick band=0.03 f=0.50
+        OOS  CAGR  11.40%  Sharpe  1.250  MaxDD -14.60%  (H1 1.395 / H2 1.094)
+        vs RULES v2 OOS  CAGR   9.46%  Sharpe  1.277  MaxDD -12.05%
+        vs SPY       OOS  CAGR  15.29%  Sharpe  0.875  MaxDD -33.72%
+        4a FAIL   4b PASS  legs H1=Y(+0.40) H2=Y(+0.34) DD=Y(+5.63) CAGR=Y(+0.70)
+        IS-matched leverage twin OOS: CAGR  11.48% Sharpe  1.276 MaxDD -14.49%   -> REALLOC minus twin: dCAGR -0.08pp dSharpe -0.026 dMaxDD -0.11pp
+        IDEA 914 CLAUSE on the OOS read: mgnCAGR +0.70pp vs 5-weekday CAGR spread 0.38pp -> SURVIVES;  mgnDD +5.63pp vs DD spread 1.44pp -> SURVIVES;  OOS 4b holds at 5 of 5 offsets
+   B136  free  (both dials)     IS pick band=0.10 f=0.50
+        OOS  CAGR  10.69%  Sharpe  1.131  MaxDD -16.59%  (H1 1.265 / H2 0.980)
+        vs RULES v2 OOS  CAGR   7.85%  Sharpe  1.102  MaxDD -12.24%
+        vs SPY       OOS  CAGR  15.26%  Sharpe  0.874  MaxDD -33.72%
+        4a FAIL   4b PASS  legs H1=Y(+0.27) H2=Y(+0.23) DD=Y(+3.64) CAGR=Y(+0.01)
+        IS-matched leverage twin OOS: CAGR   9.76% Sharpe  1.088 MaxDD -17.11%   -> REALLOC minus twin: dCAGR +0.93pp dSharpe +0.043 dMaxDD +0.52pp
+        IDEA 914 CLAUSE on the OOS read: mgnCAGR +0.01pp vs 5-weekday CAGR spread 0.32pp -> INSIDE THE SPREAD;  mgnDD +3.64pp vs DD spread 1.69pp -> SURVIVES;  OOS 4b holds at 2 of 5 offsets
+   B136  c=0.03 fixed (f only)  IS pick band=0.03 f=0.25
+        OOS  CAGR   8.86%  Sharpe  1.107  MaxDD -13.43%  (H1 1.284 / H2 0.901)
+        vs RULES v2 OOS  CAGR   7.85%  Sharpe  1.102  MaxDD -12.24%
+        vs SPY       OOS  CAGR  15.26%  Sharpe  0.874  MaxDD -33.72%
+        4a FAIL   4b FAIL  legs H1=Y(+0.29) H2=Y(+0.15) DD=Y(+6.80) CAGR=n(-1.82)
+        IS-matched leverage twin OOS: CAGR   8.63% Sharpe  1.101 MaxDD -13.41%   -> REALLOC minus twin: dCAGR +0.23pp dSharpe +0.005 dMaxDD -0.02pp
+        IDEA 914 CLAUSE on the OOS read: mgnCAGR -1.82pp vs 5-weekday CAGR spread 0.54pp -> INSIDE THE SPREAD;  mgnDD +6.80pp vs DD spread 1.20pp -> SURVIVES;  OOS 4b holds at 0 of 5 offsets
+
+----------------------------------------------------------------------------------------------------
+B6  FINANCING on the control (2%/yr on realised gross above 1.0, stated
+    constant -- 2077's open leg).  Does the leverage twin survive its own borrow bill?
+----------------------------------------------------------------------------------------------------
+   cells whose twin borrows ON AVERAGE (mean realised gross > 1.0): 0 of 50
+   max mean realised gross reached by any twin: 0.7501  (max TARGET gross on a rebalance day: 1.0938), so the
+   twin only borrows on the DAYS when nearly every name is in the band, never on average.
+   financing drag charged on those days, over all 50 twins: CAGR median +0.0000pp, max -0.0008pp; Sharpe median +0.00000
+   B3 re-read against the FINANCED twin (the harder control for REALLOC):
+     INDISTINGUISHABLE     15 of 40
+     MARGINAL              19 of 40
+     DISTINCT               6 of 40
+     median dSharpe -0.0019  median dCAGR +0.240pp  median dMaxDD -0.307pp   (positive = REALLOC ahead)
+
+----------------------------------------------------------------------------------------------------
+B7  PATH 4a at every grid point (above), plus a DECLARED SENSITIVITY cost ladder
+    [0, 10, 25, 50] bps on the four corner cells (band in {0.0,0.1} x f in {0,1}).
+----------------------------------------------------------------------------------------------------
+panel   band     f      0bps CAGR/Sh     10bps CAGR/Sh     25bps CAGR/Sh     50bps CAGR/Sh
+U56     0.00  0.00       8.50%/1.212       8.17%/1.167       7.66%/1.099       6.82%/0.986
+U56     0.00  1.00      12.35%/1.160      11.50%/1.087      10.23%/0.978       8.15%/0.795
+U56     0.10  0.00       8.87%/1.186       8.76%/1.173       8.60%/1.152       8.33%/1.118
+U56     0.10  1.00      13.72%/1.239      13.47%/1.219      13.10%/1.188      12.48%/1.137
+B136    0.00  0.00       8.06%/1.132       7.71%/1.085       7.17%/1.014       6.28%/0.896
+B136    0.00  1.00      12.41%/1.120      11.53%/1.049      10.23%/0.941       8.08%/0.761
+B136    0.10  0.00       8.75%/1.129       8.63%/1.115       8.45%/1.093       8.15%/1.057
+B136    0.10  1.00      13.25%/1.164      12.99%/1.142      12.59%/1.111      11.93%/1.058
+
+----------------------------------------------------------------------------------------------------
+B8  IDEA 914's OFFSET-SPREAD CLAUSE on every FULL-window 4b pass: a DD or CAGR
+    margin only counts if it exceeds that leg's own 5-weekday spread (d=0..4).
+----------------------------------------------------------------------------------------------------
+   U56 band 0.00 f 0.75:  mgnCAGR +0.09pp vs CAGR spread 0.80pp -> INSIDE THE SPREAD | mgnDD +3.29pp vs DD spread 1.53pp -> SURVIVES | 5-offset 4b stability 4 of 5
+   U56 band 0.00 f 1.00:  mgnCAGR +0.90pp vs CAGR spread 0.87pp -> SURVIVES | mgnDD +1.58pp vs DD spread 2.07pp -> INSIDE THE SPREAD | 5-offset 4b stability 5 of 5
+   U56 band 0.02 f 0.75:  mgnCAGR +0.52pp vs CAGR spread 0.67pp -> INSIDE THE SPREAD | mgnDD +4.05pp vs DD spread 1.30pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   U56 band 0.02 f 1.00:  mgnCAGR +1.38pp vs CAGR spread 0.79pp -> SURVIVES | mgnDD +2.48pp vs DD spread 1.73pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   U56 band 0.03 f 0.75:  mgnCAGR +0.72pp vs CAGR spread 0.45pp -> SURVIVES | mgnDD +4.06pp vs DD spread 1.36pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   U56 band 0.03 f 1.00:  mgnCAGR +1.59pp vs CAGR spread 0.48pp -> SURVIVES | mgnDD +2.52pp vs DD spread 1.29pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   U56 band 0.05 f 0.75:  mgnCAGR +0.99pp vs CAGR spread 0.37pp -> SURVIVES | mgnDD +3.41pp vs DD spread 0.97pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   U56 band 0.05 f 1.00:  mgnCAGR +2.08pp vs CAGR spread 0.35pp -> SURVIVES | mgnDD +1.76pp vs DD spread 1.07pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   U56 band 0.10 f 0.50:  mgnCAGR +0.52pp vs CAGR spread 0.20pp -> SURVIVES | mgnDD +5.33pp vs DD spread 1.75pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   U56 band 0.10 f 0.75:  mgnCAGR +1.70pp vs CAGR spread 0.25pp -> SURVIVES | mgnDD +3.65pp vs DD spread 1.44pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   U56 band 0.10 f 1.00:  mgnCAGR +2.87pp vs CAGR spread 0.31pp -> SURVIVES | mgnDD +1.98pp vs DD spread 1.14pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   B136 band 0.00 f 0.75:  mgnCAGR +0.01pp vs CAGR spread 0.66pp -> INSIDE THE SPREAD | mgnDD +2.18pp vs DD spread 1.27pp -> SURVIVES | 5-offset 4b stability 3 of 5
+   B136 band 0.00 f 1.00:  mgnCAGR +0.95pp vs CAGR spread 0.70pp -> SURVIVES | mgnDD +0.11pp vs DD spread 2.21pp -> INSIDE THE SPREAD | 5-offset 4b stability 4 of 5
+   B136 band 0.02 f 0.75:  mgnCAGR +0.22pp vs CAGR spread 0.37pp -> INSIDE THE SPREAD | mgnDD +3.25pp vs DD spread 0.74pp -> SURVIVES | 5-offset 4b stability 4 of 5
+   B136 band 0.02 f 1.00:  mgnCAGR +1.15pp vs CAGR spread 0.41pp -> SURVIVES | mgnDD +1.30pp vs DD spread 1.41pp -> INSIDE THE SPREAD | 5-offset 4b stability 5 of 5
+   B136 band 0.03 f 0.75:  mgnCAGR +0.14pp vs CAGR spread 0.51pp -> INSIDE THE SPREAD | mgnDD +3.58pp vs DD spread 0.95pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   B136 band 0.03 f 1.00:  mgnCAGR +1.04pp vs CAGR spread 0.53pp -> SURVIVES | mgnDD +1.70pp vs DD spread 1.00pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   B136 band 0.05 f 0.75:  mgnCAGR +0.33pp vs CAGR spread 0.45pp -> INSIDE THE SPREAD | mgnDD +2.70pp vs DD spread 1.48pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   B136 band 0.05 f 1.00:  mgnCAGR +1.30pp vs CAGR spread 0.56pp -> SURVIVES | mgnDD +0.74pp vs DD spread 1.29pp -> INSIDE THE SPREAD | 5-offset 4b stability 3 of 5
+   B136 band 0.10 f 0.50:  mgnCAGR +0.23pp vs CAGR spread 0.30pp -> INSIDE THE SPREAD | mgnDD +3.64pp vs DD spread 1.69pp -> SURVIVES | 5-offset 4b stability 5 of 5
+   B136 band 0.10 f 0.75:  mgnCAGR +1.32pp vs CAGR spread 0.30pp -> SURVIVES | mgnDD +1.78pp vs DD spread 1.26pp -> SURVIVES | 5-offset 4b stability 5 of 5
+
+====================================================================================================
+VERDICT
+====================================================================================================
+1. B1 ANSWERED = YES.  Reallocation DOES lift cells over 4b that their own de-gross twin
+   fails: 21 of the 40 f>0 cells clear FULL-window 4b where their own f=0 cell
+   does not, and the f=0 column passes 4b NOWHERE (0 of 10).
+   FULL 4b passes on the grid 21 of 50, OOS-window 4b 25 of 50, 4a 0 of 50.
+2. B2: the binding leg is the one the live book fails.  The CAGR-floor margin moves +3.90pp on average
+   from f=0 to f=1 and crosses zero at f=0.75 on 8 of 10 (panel, band) ladders, f=0.50 on 2.
+3. B3 (the leg no prior run did): reallocation is NOT a pure leverage dial, but it is CLOSE.
+   Against a control with ARITHMETICALLY IDENTICAL mean target gross it is
+   INDISTINGUISHABLE in 15 of 40 f>0 cells, MARGINAL in 19, DISTINCT in 6
+   (median |dSharpe| 0.0205, max 0.0798).  The SIGN is BAND-DEPENDENT: reallocation LOSES
+   to leverage at band 0.00-0.03 and WINS at 0.05-0.10, which no single ray can produce.
+4. B4: MaxDD is monotonically deeper in f at 10 of 10 ladders, and reallocation buys
+   drawdown FASTER per unit of mean gross than the leverage ray at 10 of 10 ladders.
+5. B5 rule 8: both dials picked IS-only, OOS read once -- U56 (band 0.10, f 0.75) clears 4b
+   on all four legs OOS, so this run carries a 4b KEEP-CANDIDATE, not a KILL.  See the memo.
+6. Both KEEP paths evaluated at all 50 grid points; every point in 2026-09-22_reallocate-vs-degross-idle-band-nav_B.grid.csv.gz.
+
+wrote 2026-09-22_reallocate-vs-degross-idle-band-nav_B.out.txt and 2026-09-22_reallocate-vs-degross-idle-band-nav_B.grid.csv.gz  (1650 grid rows, 68s)
