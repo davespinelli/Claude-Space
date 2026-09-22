@@ -6233,3 +6233,70 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   book's own rebalance-offset spread over the offsets of its cadence, and that spread must be
   published beside the margin* — evaluated on the **OOS** window, because this run shows a margin
   that survives the test in sample (0.62 vs 0.40 pp) and dies out of sample (0.70 vs 4.18 pp).
+
+## 2026-09-22 — idea 935 / slug `ew-premium-regime-object-or-constant` (lane B): IS THE RSP-MINUS-SPY EQUAL-WEIGHT PREMIUM A REGIME OBJECT OR A CONSTANT? **ANSWERED — A CONSTANT, AND THE CONSTANT IS ZERO. KILL OF THE REGIME-OBJECT READING, OF ALL THREE EX-ANTE CONDITIONERS, AND OF THE RSP/SPY SWITCH AS A BOOK. NO NEW KEEP, NO RULES CHANGE.**
+
+  **THE DEFECT THIS CLOSES.** Idea 924 measured the only SURVIVORSHIP-FREE leg of U56's +0.2006
+  of Sharpe — RSP vs SPY, two traded ETFs, no name selection — at **+0.0750 (2009–2013),
+  −0.0863 (FULL), −0.1797 (OOS)**. It changes sign on the window the record quotes it in, and
+  every committed citation quotes a single number. Two readings fit that: the premium is a
+  CONSTANT near zero, or it is a REGIME OBJECT whose sign an ex-ante observable can call — in
+  which case a conditioning book is worth capital and the record's constant is a mis-statement.
+
+  **THE CONSTRUCTION.** Two tuned parameters, every grid point published: `v ∈ {BREADTH, DISP,
+  RATE} × q ∈ {0.00, 0.20, 0.40, 0.50, 0.60, 0.80, 1.01}`, where **q=0.00 is always-RSP and
+  q=1.01 is always-SPY** — the two CONSTANT controls, kept inside the grid so conditioning is
+  scored against "do not condition at all". Published-not-tuned: panel {U56, B136} × gross
+  {1.00, 0.75} × cost {0,10,25,50} bps (headline 10) × windows {FULL, IS 2009-12-30..2016-12-31,
+  OOS 2017-01-01..2026-09-18} = **68 capital cells**. BREADTH = share of the panel above its own
+  200d MA; DISP = cross-sectional stdev of trailing 63d returns; RATE = 63d change in IEF. RSP
+  and SPY are excluded from the cross-section so the signal cannot read its own legs, and each
+  variable is an **expanding percentile rank** (min 504 sessions) — causal by construction, no
+  full-sample quantile anywhere. **Direction fixed a priori** (rank ≥ q buys RSP) and declared
+  before any number was read, so a premium running the other way is a KILL, not a re-fit.
+  Weekly, t+1 (engine), 10 bps, long-only, no leverage. **GATE G1**: the two-column runner ≡
+  `engine.backtest` on the full panel, max|d| **0.000e+00** on both panels.
+
+  **(A) THE PREMIUM IS NOT A REGIME OBJECT — 0 OF 18 TERCILE CONTRASTS REACH |t| = 2.** Across 3
+  variables × 3 windows × 2 panels the largest hi-minus-lo t is **1.398**. The tercile LEVELS are
+  no better: over all 54 readings **max |t| = 1.969** — not one tercile of any variable in any
+  window carries a premium distinguishable from zero. The one contrast that looks like something
+  in sample reverses out of it (BREADTH hi−lo **+4.88 → −1.75 pp/yr** on U56, **+6.71 → +2.67**
+  on B136), which is idea 924's own instability reproduced one level down, in the conditioning.
+
+  **(B) 0 OF 68 CAPITAL CELLS CLEAR EITHER KEEP PATH, ON FULL OR OOS.** 4a **0 of 68**; 4b **0 of
+  68** on FULL and **0 of 68** on OOS; **0 of 60** conditioned cells beat SPY's OOS Sharpe
+  (0.8751). Best conditioned cell anywhere: B136/BREADTH/q=0.80/gross 1.00, OOS 13.45% / 0.785 /
+  −34.15%. The 4b DD leg fails structurally at every always-invested cell (cap −20.23%,
+  shallowest cell −26.20%) — idea 1699's "an always-invested ladder passes at 0 of 12 rungs"
+  reproduced on a family it had not been tested on.
+
+  **(C) RULE 8, 2017–2026 READ ONCE — THE IS CHOOSER REFUSES TO CONDITION AT ALL.** At **4 of 4**
+  (panel × gross) the IS-Sharpe chooser picks the CONSTANT control **always-SPY** (IS 0.845 /
+  0.842) over every conditioning cell. Forced to condition (CONSTANT cells removed) it picks
+  BREADTH q=0.20 on both panels: U56 OOS **11.14% / 0.663 / −36.25%**, B136 OOS **10.80% / 0.651
+  / −36.25%**, against RULES v2 OOS 9.46% / 1.277 / −12.05% (U56) and 7.85% / 1.102 / −12.24%
+  (B136) and SPY OOS 15.29% / 0.8751 / −33.72%. 4a FAIL and 4b FAIL at both gross rungs; OOS
+  Sharpe is monotone in cost (0.691 / 0.663 / 0.621 / 0.550 at 0/10/25/50 bps), so no rung
+  rescues it.
+
+  **(D) AND THE REGIME IS BEATEN BY A COIN FLIP AT ITS OWN SWITCHING RATE.** 200 circular
+  block-21 draws preserving the pick's on-fraction exactly (0.911 U56, 0.916 B136): the REAL
+  breadth regime lands at OOS-Sharpe percentile **0.320** (U56) and **0.235** (B136) against null
+  medians 0.678 / 0.679. Conditioning on real breadth is worse than switching at random at the
+  same rate — the third independent way this run says the same thing.
+
+  **WHAT THIS TEST CANNOT DO (stated, not repaired).** Three observables, one direction, one
+  threshold family; a different variable could still carry the premium, and this run only bounds
+  three standard ones at |t| = 2. Both panels are current-constituent lists, so the
+  breadth/dispersion SIGNAL is survivorship-bearing and every absolute level is optimistic — but
+  the RSP-vs-SPY CONTRAST is survivorship-free by construction, which is exactly why idea 924
+  singled it out and why the (A) reading does not depend on the panel.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched).** (1) The record's committed quotations of the equal-weight premium as a single
+  number are **acquitted**, but they should carry their interval: on this tape **+0.0750** and
+  **−0.1797** are the same measurement, not a sign change, and no committed citation says so.
+  (2) Idea 924's mega-cap-sleeve finding gets no regime repair from this direction. (3) The
+  always-invested 4b DD failure is now confirmed on a second, independent family; a future run
+  proposing any fully-invested single-instrument switch should expect the DD leg to bind first.
