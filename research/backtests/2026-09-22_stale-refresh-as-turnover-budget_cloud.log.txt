@@ -1,0 +1,98 @@
+# Idea 1795 (lane cloud, 2026-09-22) — is the STALE-REFRESH PREFERENCE a TURNOVER-BUDGET fact in disguise?
+# tuned dials (2, within a family): TARGET t [0.08, 0.1, 0.12, 0.16, 0.2] x [ BUDGET B [0.5, 1.0, 1.5, 2.0, 3.0, 5.0] turns/yr | CALENDAR R ['D', 'W', 'M', 'Q'] ].  reported, not tuned: TRADE T ['W', 'M'] (separate arms), PANEL, COST [0, 10, 25, 50] bps, choosers (IS_SHARPE, IS_LEGS).  sigma FIXED at (L=20, d=0); budget window 252d.  warm-up 260; IS <= 2016-12-31; OOS >= 2017-01-01.
+# SMALL: dropped 54 tickers with max_1d_move >= 1.0
+
+## U56: 56 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 8.62% / 1.2010 / -12.05%  (OOS 9.46% / 1.2767 / -12.05%), 1.77 turns/yr
+   SPY                      15.14% / 0.8851 / -33.72%  (OOS 15.29% / 0.8751 / -33.72%)
+   grid done (440 scored rows)
+
+## B136: 136 names, 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   LIVE RULES v2 (W, 10bps) 7.96% / 1.0972 / -12.24%  (OOS 7.85% / 1.1017 / -12.24%), 2.01 turns/yr
+   SPY                      15.12% / 0.8844 / -33.72%  (OOS 15.26% / 0.8737 / -33.72%)
+   grid done (440 scored rows)
+
+## SMALL665: 665 names, 2010-01-04 -> 2026-09-18 (4203 rows, 16.7y); book window from 2011-01-13
+   LIVE RULES v2 (W, 10bps) 4.26% / 0.6588 / -14.16%  (OOS 3.63% / 0.5447 / -14.16%), 2.57 turns/yr
+   SPY                      14.03% / 0.8570 / -33.72%  (OOS 15.29% / 0.8751 / -33.72%)
+   grid done (440 scored rows)
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 bt_cal diagonal == engine.backtest (returns / turnover): 0.000e+00 / 0.000e+00   (target < 1e-12)
+  GATE PASS  G2 cost identity r(c) = r0 - turn*c/1e4 == fresh engine run at 10/25 bps: 0.000e+00   (target < 1e-12)
+  GATE PASS  G3 reproduces the standing VOLTGT memo (points 2-4, U56 + B136): max|d| = 9.574e-05   (target < 1e-3)
+  GATE PASS  G4 BUDGET B=inf == CALENDAR R=D, cell by cell (30 cells): 0.000e+00   (target < 1e-12)
+  GATE PASS  G5 gross never exceeds 1.00 (no leverage): 1.000000   (target <= 1.0)
+
+## ARM A — DECOMPOSITION OF EVERY CALENDAR `R` GAP (stale rung minus R=D)
+   IS window @ 10 bps: the stale rung beats R=D on IS Sharpe at 65 of 90 (panel x t x T x R) cells.
+   of those 65: turnover term > 50% of the net-return gap at 9 (13.8%); the stale rung ALSO wins on GROSS return at 65 (100.0%).
+   turnover share of the gap: median 0.148, mean 0.229, IQR [0.098, 0.235]
+   mean d_turnover (stale - D) = -1.859 turns/yr; mean cost saving = 18.6 bp/yr; mean d_gross = 100.0 bp/yr
+   V1 (stale preference is a COST fact): NOT TRIGGERED
+   [reported, not tuned] at 25 bps: 74 stale-wins cells, turnover share > 0.5 at 22
+   [reported, not tuned] at 50 bps: 80 stale-wins cells, turnover share > 0.5 at 45
+
+## ARM B — RULE-8 WALK-FORWARD: legal IS-ONLY choosers, 2017-2026 read once
+   B136       T=M IS_LEGS   BUDGET pick B=3.0   t=0.08  IS S=1.1452 legs=4  ->  OOS  11.88% / 1.3288 / -12.07%  (SPY 15.26%/0.8737/-33.72%; RULESv2 7.85%/1.1017/-12.24%)  4b_full=1 4b_oos=1 4a=1 bind=none  2.89 turns/yr, 107 refresh/yr
+   B136       T=M IS_LEGS   CAL    pick R=M     t=0.10  IS S=1.2029 legs=4  ->  OOS  13.05% / 1.2000 / -19.87%  (SPY 15.26%/0.8737/-33.72%; RULESv2 7.85%/1.1017/-12.24%)  4b_full=1 4b_oos=1 4a=0 bind=none  2.00 turns/yr, 12 refresh/yr
+   B136       T=M IS_SHARPE BUDGET pick B=5.0   t=0.20  IS S=1.2203 legs=3  ->  OOS  16.78% / 1.2073 / -19.20%  (SPY 15.26%/0.8737/-33.72%; RULESv2 7.85%/1.1017/-12.24%)  4b_full=1 4b_oos=1 4a=0 bind=none  1.58 turns/yr, 116 refresh/yr
+   B136       T=M IS_SHARPE CAL    pick R=M     t=0.20  IS S=1.2661 legs=3  ->  OOS  16.27% / 1.0824 / -29.67%  (SPY 15.26%/0.8737/-33.72%; RULESv2 7.85%/1.1017/-12.24%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  0.93 turns/yr, 12 refresh/yr
+   B136       T=W IS_LEGS   BUDGET pick B=inf   t=0.10  IS S=1.1150 legs=4  ->  OOS  12.91% / 1.2830 / -11.68%  (SPY 15.26%/0.8737/-33.72%; RULESv2 7.85%/1.1017/-12.24%)  4b_full=1 4b_oos=1 4a=1 bind=none  4.64 turns/yr, 160 refresh/yr
+   B136       T=W IS_LEGS   CAL    pick R=M     t=0.10  IS S=1.2047 legs=4  ->  OOS  13.05% / 1.1884 / -20.27%  (SPY 15.26%/0.8737/-33.72%; RULESv2 7.85%/1.1017/-12.24%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  2.71 turns/yr, 12 refresh/yr
+   B136       T=W IS_SHARPE BUDGET pick B=5.0   t=0.20  IS S=1.2460 legs=3  ->  OOS  16.76% / 1.2022 / -19.24%  (SPY 15.26%/0.8737/-33.72%; RULESv2 7.85%/1.1017/-12.24%)  4b_full=1 4b_oos=1 4a=0 bind=none  2.06 turns/yr, 101 refresh/yr
+   B136       T=W IS_SHARPE CAL    pick R=M     t=0.20  IS S=1.2719 legs=3  ->  OOS  16.29% / 1.0744 / -30.02%  (SPY 15.26%/0.8737/-33.72%; RULESv2 7.85%/1.1017/-12.24%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  1.56 turns/yr, 12 refresh/yr
+   SMALL665   T=M IS_LEGS   BUDGET pick B=0.5   t=0.12  IS S=1.0221 legs=3  ->  OOS   5.75% / 0.5738 / -21.88%  (SPY 15.29%/0.8751/-33.72%; RULESv2 3.63%/0.5447/-14.16%)  4b_full=0 4b_oos=0 4a=0 bind=L2_H2|L3_OOS|L4_DD|L5_CAGR  0.49 turns/yr, 2 refresh/yr
+   SMALL665   T=M IS_LEGS   CAL    pick R=M     t=0.20  IS S=1.0185 legs=3  ->  OOS   7.36% / 0.4651 / -42.75%  (SPY 15.29%/0.8751/-33.72%; RULESv2 3.63%/0.5447/-14.16%)  4b_full=0 4b_oos=0 4a=0 bind=L2_H2|L3_OOS|L4_DD  1.44 turns/yr, 12 refresh/yr
+   SMALL665   T=M IS_SHARPE BUDGET pick B=0.5   t=0.20  IS S=1.1042 legs=2  ->  OOS   5.61% / 0.5716 / -22.79%  (SPY 15.29%/0.8751/-33.72%; RULESv2 3.63%/0.5447/-14.16%)  4b_full=0 4b_oos=0 4a=0 bind=L2_H2|L3_OOS|L4_DD|L5_CAGR  0.51 turns/yr, 0 refresh/yr
+   SMALL665   T=M IS_SHARPE CAL    pick R=M     t=0.12  IS S=1.0270 legs=2  ->  OOS   4.05% / 0.3641 / -36.52%  (SPY 15.29%/0.8751/-33.72%; RULESv2 3.63%/0.5447/-14.16%)  4b_full=0 4b_oos=0 4a=0 bind=L2_H2|L3_OOS|L4_DD|L5_CAGR  1.98 turns/yr, 12 refresh/yr
+   SMALL665   T=W IS_LEGS   BUDGET pick B=0.5   t=0.20  IS S=1.1426 legs=3  ->  OOS   5.78% / 0.5966 / -22.64%  (SPY 15.29%/0.8751/-33.72%; RULESv2 3.63%/0.5447/-14.16%)  4b_full=0 4b_oos=0 4a=0 bind=L2_H2|L3_OOS|L4_DD|L5_CAGR  0.95 turns/yr, 0 refresh/yr
+   SMALL665   T=W IS_LEGS   CAL    pick R=M     t=0.20  IS S=1.0581 legs=3  ->  OOS   7.65% / 0.4759 / -43.62%  (SPY 15.29%/0.8751/-33.72%; RULESv2 3.63%/0.5447/-14.16%)  4b_full=0 4b_oos=0 4a=0 bind=L2_H2|L3_OOS|L4_DD  2.56 turns/yr, 12 refresh/yr
+   SMALL665   T=W IS_SHARPE BUDGET pick B=0.5   t=0.20  IS S=1.1426 legs=3  ->  OOS   5.78% / 0.5966 / -22.64%  (SPY 15.29%/0.8751/-33.72%; RULESv2 3.63%/0.5447/-14.16%)  4b_full=0 4b_oos=0 4a=0 bind=L2_H2|L3_OOS|L4_DD|L5_CAGR  0.95 turns/yr, 0 refresh/yr
+   SMALL665   T=W IS_SHARPE CAL    pick R=M     t=0.12  IS S=1.0615 legs=2  ->  OOS   4.20% / 0.3707 / -37.78%  (SPY 15.29%/0.8751/-33.72%; RULESv2 3.63%/0.5447/-14.16%)  4b_full=0 4b_oos=0 4a=0 bind=L2_H2|L3_OOS|L4_DD|L5_CAGR  3.09 turns/yr, 12 refresh/yr
+   U56        T=M IS_LEGS   BUDGET pick B=5.0   t=0.12  IS S=1.1219 legs=4  ->  OOS  15.40% / 1.3570 / -15.90%  (SPY 15.29%/0.8751/-33.72%; RULESv2 9.46%/1.2767/-12.05%)  4b_full=1 4b_oos=1 4a=0 bind=none  3.31 turns/yr, 155 refresh/yr
+   U56        T=M IS_LEGS   CAL    pick R=M     t=0.12  IS S=1.1996 legs=4  ->  OOS  15.37% / 1.2866 / -21.01%  (SPY 15.29%/0.8751/-33.72%; RULESv2 9.46%/1.2767/-12.05%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  1.47 turns/yr, 12 refresh/yr
+   U56        T=M IS_SHARPE BUDGET pick B=5.0   t=0.16  IS S=1.1749 legs=3  ->  OOS  16.63% / 1.2728 / -19.77%  (SPY 15.29%/0.8751/-33.72%; RULESv2 9.46%/1.2767/-12.05%)  4b_full=1 4b_oos=1 4a=0 bind=none  2.04 turns/yr, 125 refresh/yr
+   U56        T=M IS_SHARPE CAL    pick R=M     t=0.16  IS S=1.2333 legs=3  ->  OOS  16.46% / 1.2019 / -24.24%  (SPY 15.29%/0.8751/-33.72%; RULESv2 9.46%/1.2767/-12.05%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  1.05 turns/yr, 12 refresh/yr
+   U56        T=W IS_LEGS   BUDGET pick B=2.0   t=0.16  IS S=1.1247 legs=4  ->  OOS  15.55% / 1.1720 / -21.11%  (SPY 15.29%/0.8751/-33.72%; RULESv2 9.46%/1.2767/-12.05%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  1.55 turns/yr, 61 refresh/yr
+   U56        T=W IS_LEGS   CAL    pick R=M     t=0.12  IS S=1.1941 legs=4  ->  OOS  15.22% / 1.2651 / -21.27%  (SPY 15.29%/0.8751/-33.72%; RULESv2 9.46%/1.2767/-12.05%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  2.13 turns/yr, 12 refresh/yr
+   U56        T=W IS_SHARPE BUDGET pick B=5.0   t=0.16  IS S=1.1705 legs=3  ->  OOS  16.49% / 1.2517 / -20.75%  (SPY 15.29%/0.8751/-33.72%; RULESv2 9.46%/1.2767/-12.05%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  2.45 turns/yr, 107 refresh/yr
+   U56        T=W IS_SHARPE CAL    pick R=M     t=0.16  IS S=1.2302 legs=3  ->  OOS  16.30% / 1.1816 / -24.52%  (SPY 15.29%/0.8751/-33.72%; RULESv2 9.46%/1.2767/-12.05%)  4b_full=0 4b_oos=0 4a=0 bind=L4_DD  1.67 turns/yr, 12 refresh/yr
+   V2 REACHABILITY: BUDGET picks clear 4b FULL+OOS on 3 of 6 arms, CALENDAR on 1 of 6  ->  TRIGGERED
+
+## V3 — BUDGET BOOKS AGAINST THE TURNOVER-MATCHED POINT ON THEIR OWN CALENDAR LADDER
+   110 of 180 budget cells fall inside their ladder's turnover range; lift > 0 at 86 (78.2%), mean lift +0.0532, median +0.0317
+   V3: TRIGGERED
+
+## V4 — CAPITAL
+   cells clearing 4b FULL+OOS at 10 bps: 102 of 330  (BUDGET 67, CAL 35)
+   cells a legal IS-only chooser REACHES and that clear 4b FULL+OOS: 7
+     -> B136 T=M BUDGET B=5.0 t=0.20 (IS_SHARPE)
+     -> B136 T=M BUDGET B=3.0 t=0.08 (IS_LEGS)
+     -> B136 T=M CAL R=M t=0.10 (IS_LEGS)
+     -> B136 T=W BUDGET B=5.0 t=0.20 (IS_SHARPE)
+     -> B136 T=W BUDGET B=inf t=0.10 (IS_LEGS)
+     -> U56 T=M BUDGET B=5.0 t=0.16 (IS_SHARPE)
+     -> U56 T=M BUDGET B=5.0 t=0.12 (IS_LEGS)
+   cells clearing 4a (vs live RULES v2) at 10 bps: 11
+
+## STRESS S1 — ONE EXTRA DAY OF EXECUTION LAG (decided t, applied t+2), whole grid
+   4b FULL+OOS cells at 10 bps: 102 at t+1, 91 at t+2; survive the extra day: 85 of 102
+
+## STRESS S2 — DIAL-NEIGHBOUR ROBUSTNESS OF EVERY REACHED 4b CELL
+   B136       T=M BUDGET B=5.0   t=0.20 (IS_SHARPE): 4b holds at 2/2 neighbouring rungs of dial 1 and 1/1 neighbouring targets; survives t+2: True
+   B136       T=M BUDGET B=3.0   t=0.08 (IS_LEGS): 4b holds at 0/2 neighbouring rungs of dial 1 and 1/1 neighbouring targets; survives t+2: True
+   B136       T=M CAL    R=M     t=0.10 (IS_LEGS): 4b holds at 1/2 neighbouring rungs of dial 1 and 1/2 neighbouring targets; survives t+2: False
+   B136       T=W BUDGET B=5.0   t=0.20 (IS_SHARPE): 4b holds at 2/2 neighbouring rungs of dial 1 and 1/1 neighbouring targets; survives t+2: True
+   B136       T=W BUDGET B=inf   t=0.10 (IS_LEGS): 4b holds at 1/1 neighbouring rungs of dial 1 and 1/2 neighbouring targets; survives t+2: True
+   U56        T=M BUDGET B=5.0   t=0.16 (IS_SHARPE): 4b holds at 2/2 neighbouring rungs of dial 1 and 2/2 neighbouring targets; survives t+2: True
+   U56        T=M BUDGET B=5.0   t=0.12 (IS_LEGS): 4b holds at 2/2 neighbouring rungs of dial 1 and 2/2 neighbouring targets; survives t+2: True
+   V5 (a reached 4b cell that is NOT a knife edge: 4b also holds at >=1 neighbour of BOTH dials AND survives t+2): TRIGGERED
+
+## VERDICTS
+   V1 stale preference is a COST fact ............ NO
+   V2 budget reaches more 4b arms than calendar ... YES
+   V3 budget beats turnover-matched calendar ...... YES
+   V4 a reached 4b FULL+OOS cell exists ........... YES
+   V5 a reached 4b cell that is not a knife edge .. YES
