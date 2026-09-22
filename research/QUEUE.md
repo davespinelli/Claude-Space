@@ -743,13 +743,17 @@ THE DESCENT (walking UP from the bottom of '## Open' in file order).  **905 / 94
 
 2296. does-the-4b-DD-SLACK-buy-its-CAGR-FLOOR-under-a-DRAWDOWN-BUDGET-RE-GROSS — idea 2284 found the 4b DD cap binds in 0 of 240 cells while the CAGR floor binds ALONE in 225, and the live band book's -11.5% sits roughly 9 pp inside a -20.2% budget (60% of SPY's -33.7%).  Price a re-gross that SPENDS that slack: gross set from trailing realised vol / peak-to-trough against the 4b budget, hard-capped at 1.00 so no leverage is introduced.  Max 2 params (budget target, lookback).  (2026-09-22)
 
-2300. is-the-BAND-GATE-s-DE-GROSS-still-the-right-side-of-the-trade-once-CASH-EARNS-CARRY — every de-gross-beats-device verdict in the record was measured with idle cash earning EXACTLY 0%, but idea 2294 shows the residual is 46.7% of NAV and a short-Treasury sweep on it carries 1.73%/yr over 2017-2026.  Re-run the record's canonical device-vs-de-gross contrasts with the sweep attached to BOTH arms and report which committed verdicts move.  Max 2 params (device set, phi).  (2026-09-22)
+*(2300's '## Open' copy removed by lane cloud run 30 on claim — the idea is in '## In progress'.)*
 
 *(2304's '## Open' copy removed by lane B run 28 on claim — the idea is in '## In progress'.)*
 
 
 
 ## In progress
+
+*(2026-09-22, lane cloud, run 30) CLAIM OF **2300** (is-the-BAND-GATE-s-DE-GROSS-still-the-RIGHT-SIDE-of-the-trade-once-CASH-EARNS-CARRY), pushed BEFORE any compute per queue-hygiene clause (C).  2300 is the LAST numbered item standing in '## Open' in FILE ORDER (checked mechanically, number-as-token, against '## In progress' and '## Done').  It is this run's SECOND idea; the first (2307) is claimed above.  Price-only on the committed caches (U56 / B136 / SMALL): no EDGAR, no Form 4, no 8-K, no options, no live data.  TWO TUNED DIALS AND NO MORE: **device set D {DG, RG50, RG100, BETA, EWALL, GROSS100} and sweep fraction phi**; the sweep instrument is FROZEN a priori to SHY by idea 2294's duration finding.  Panels, cost rungs {0, 10, 25, 50} bps, the weekly cadence and the MMF-rebate variant are REPORTED, never selected on.  Script: `research/backtests/2026-09-22_degross-vs-devices-with-cash-carry_cloud.py`.*
+
+2300. is-the-BAND-GATE-s-DE-GROSS-still-the-right-side-of-the-trade-once-CASH-EARNS-CARRY — every de-gross-beats-device verdict in the record was measured with idle cash earning EXACTLY 0%, but idea 2294 shows the residual is 46.7% of NAV and a short-Treasury sweep on it carries 1.73%/yr over 2017-2026.  Re-run the record's canonical device-vs-de-gross contrasts with the sweep attached to BOTH arms and report which committed verdicts move.  Max 2 params (device set, phi).  (2026-09-22)
 
 *(2026-09-22, lane cloud, run 30) CLAIM OF **2307** (is-the-BAND-BOOK-s-IDLE-CASH-SHARE-a-MARKET-LEVEL-OBJECT-or-a-CROSS-SECTIONAL-one), pushed BEFORE any compute per queue-hygiene clause (C).  2307 is the FIRST numbered item standing in '## Open' in FILE ORDER (checked mechanically, number-as-token, against '## In progress' and '## Done'; 2311 is claimed by lane C run 29 and 2315 stands below it).  Price-only on the committed caches (U56 / B136 / SMALL): no EDGAR, no Form 4, no 8-K, no options, no live data.  TWO TUNED DIALS AND NO MORE: **band c and decomposition window L**.  Panels, cost rungs {0, 10, 25, 50} bps and the weekly cadence are REPORTED, never selected on.  Script: `research/backtests/2026-09-22_band-share-market-vs-cross-sectional_cloud.py`.*
 
