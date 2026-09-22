@@ -1,0 +1,108 @@
+====================================================================================================
+IDEA 923 lane cloud 2026-09-22 run 8 -- which committed SINGLE-RUNG BANDS are GENUINE
+                                        KNIFE EDGES?
+====================================================================================================
+run 2026-09-22 09:10 UTC
+tuned dial 1 (claim set): coarse gross [0.5, 0.6, 0.75, 0.85, 1.0] / band [0.0, 0.02, 0.03, 0.05, 0.08]; alternative [0.5, 0.6, 0.75, 1.0] / [0.0, 0.02, 0.03, 0.08]
+tuned dial 2 (resolution): fine gross 0.2..1.0 step 0.01 (81); fine band 0.0..0.2 step 0.0025 (81)
+reported axes: panels U56 + B136 + SMALL, costs [0, 10, 25, 50] bps (protocol 10), cadence W, criteria ['4b_FULL', '4b_OOS', '4a_FULL'], windows FULL / IS ..2016-12-31 / OOS 2017-01-01..
+
+  panel U56      56 cols  2008-01-02 .. 2026-09-18  (4708 sessions)
+  panel B136    136 cols  2008-01-02 .. 2026-09-18  (4708 sessions)
+  panel SMALL   666 cols  2010-01-04 .. 2026-09-18  (4203 sessions)
+
+----------------------------------------------------------------------------------------------------
+(G) GATES -- printed before any hypothesis is read
+----------------------------------------------------------------------------------------------------
+  G2  weekly mask is engine.rebalance_mask(idx,'W') itself : 0 differing rows   [PASS]
+  G3  fine grids contain the coarse grids : 0 coarse rungs missing   [PASS]
+  G4  cell (b0.03, g0.75) == baseline.rules_v2_weights : max|d| 0.000e+00   [PASS]
+  G1  local run()+net() == engine.backtest(freq='W',10bps) : max|d| 0.000e+00   [PASS]
+  G5  SMALL hygiene: 54 tickers with max_1d_move >= 1.0 dropped BEFORE pricing; 665 names survive (+SPY as benchmark only)   [PASS]
+  G6  the IS band solver is handed IS-window statistics only   [PASS by construction]
+  --> 6 of 6 gates PASS.
+
+----------------------------------------------------------------------------------------------------
+(PRICE) fine sweeps -- GROSS dial at each coarse band, BAND dial at each coarse gross
+----------------------------------------------------------------------------------------------------
+  U56    priced 810 fine points x 4 cost rungs
+  B136   priced 810 fine points x 4 cost rungs
+  SMALL  priced 810 fine points x 4 cost rungs
+
+----------------------------------------------------------------------------------------------------
+(CLASSIFY) what the record's own COARSE grid would publish, over re-buildable families
+----------------------------------------------------------------------------------------------------
+dial   criterion   EMPTY  SINGLE   MULTI   total
+GROSS  4b_FULL        34      26       0      60
+GROSS  4b_OOS         35      22       3      60
+GROSS  4a_FULL        48       1      11      60
+BAND   4b_FULL        52       3       5      60
+BAND   4b_OOS         51       3       6      60
+BAND   4a_FULL        45       4      11      60
+  --> 59 SINGLE-RUNG bands re-solved, of 360 re-buildable families.
+
+----------------------------------------------------------------------------------------------------
+(W1) THE DISTRIBUTION -- TRUE WIDTHS of the single-rung bands, by dial
+----------------------------------------------------------------------------------------------------
+dial      n      min      p25   median      p75      max  inferred
+GROSS    49   0.0000   0.0200   0.0500   0.0800   0.1800    0.1500
+BAND     10   0.0000   0.0088   0.0225   0.0825   0.1200    0.0300
+  'inferred' = the width a reader infers from 'one rung' on the record's coarse grid.
+
+----------------------------------------------------------------------------------------------------
+(W2/W3/W4) KNIFE EDGES, BOUNDARY CLIPPING, CONTIGUITY
+----------------------------------------------------------------------------------------------------
+dial      n            knife    < coarse step          CLIPPED    discontiguous
+GROSS    49      10/49 (20%)      48/49 (98%)      48/49 (98%)        0/49 (0%)
+       clipping side: LOW edge 0, HIGH edge 48 (HIGH on the gross dial = 'everything up to the no-leverage ceiling')
+BAND     10       2/10 (20%)       6/10 (60%)        0/10 (0%)       7/10 (70%)
+       clipping side: LOW edge 0, HIGH edge 0 (HIGH on the gross dial = 'everything up to the no-leverage ceiling')
+
+----------------------------------------------------------------------------------------------------
+(W5) CONTRAST -- the same statistics on the MULTI-rung bands the record treats as resolved
+----------------------------------------------------------------------------------------------------
+GROSS  n= 14  width median 0.5150 [0.1500, 0.5600]  clipped 14/14 (100%)  discontiguous 0/14
+BAND   n= 22  width median 0.1550 [0.0000, 0.2000]  clipped 12/22 (55%)  discontiguous 11/22
+
+----------------------------------------------------------------------------------------------------
+(TUNED DIALS) is the classification an artefact of the claim set or the resolution?
+----------------------------------------------------------------------------------------------------
+  claimset RECORD resolution FINE: SINGLE n= 59  GROSS median width 0.0500 (n=49)  BAND median width 0.0225 (n=10)  clipped 81%
+  claimset RECORD resolution HALF: SINGLE n= 59  GROSS median width 0.0400 (n=49)  BAND median width 0.0200 (n=10)  clipped 81%
+  claimset ALT    resolution FINE: SINGLE n= 62  GROSS median width 0.0600 (n=43)  BAND median width 0.0825 (n=19)  clipped 74%
+  claimset ALT    resolution HALF: SINGLE n= 62  GROSS median width 0.0600 (n=43)  BAND median width 0.1200 (n=19)  clipped 74%
+
+----------------------------------------------------------------------------------------------------
+(W6) RULE 8 -- bands solved on IS rows ONLY, then re-solved on the untouched OOS window
+----------------------------------------------------------------------------------------------------
+  26 of 120 (panel, cost, dial, fixed) families have a NON-EMPTY IS band.
+  the IS band's midpoint lands INSIDE the OOS band in 8 of 26 (31%).
+  paired width shift OOS - IS over 15 families: median +0.0000, mean +0.0227
+  rho(IS width, OOS width) = -0.1825
+  the IS-chosen point clears 4b OOS in 9 of 26 and 4a OOS in 0 of 26
+
+panel   cost dial    fixed            IS band           OOS band    pick   oCAGR  oShrp  oMaxDD  4bO  4aO
+U56       10 GROSS   0.080      [0.990,1.000]      [0.900,1.000]   0.995  11.88%  1.163 -18.87%    Y    .
+U56       10 BAND    1.000      [0.077,0.130]      [0.000,0.200]   0.104  12.20%  1.193 -16.64%    Y    .
+B136      10 GROSS   0.020      [0.980,1.000]              EMPTY   0.990  10.49%  1.121 -16.02%    .    .
+B136      10 GROSS   0.030      [0.970,1.000]              EMPTY   0.985  10.26%  1.101 -15.85%    .    .
+B136      10 GROSS   0.050      [0.970,1.000]              EMPTY   0.985  10.22%  1.076 -16.99%    .    .
+B136      10 GROSS   0.080      [0.890,1.000]      [0.980,1.000]   0.945  10.43%  1.092 -18.57%    .    .
+B136      10 BAND    1.000      [0.013,0.128]      [0.065,0.185]   0.070  10.85%  1.092 -18.71%    Y    .
+SMALL     10 BAND    1.000      [0.170,0.200]              EMPTY   0.185   5.71%  0.593 -20.97%    .    .
+  comparands at 10 bps: SPY OOS 15.29% / 0.875 / -33.72%   live book OOS 9.46% / 1.277 / -12.05%
+
+----------------------------------------------------------------------------------------------------
+(W7) BOTH KEEP PATHS over every fine grid point, at the protocol 10 bps rung
+----------------------------------------------------------------------------------------------------
+  U56    4b FULL  112/810   4b OOS  151/810   4b FULL&OOS  112   4a FULL    0   4a OOS  128   BOTH PATHS    0
+  B136   4b FULL   77/810   4b OOS   52/810   4b FULL&OOS   52   4a FULL    5   4a OOS  196   BOTH PATHS    0
+  SMALL  4b FULL    0/810   4b OOS    0/810   4b FULL&OOS    0   4a FULL  233   4a OOS  310   BOTH PATHS    0
+
+====================================================================================================
+VERDICT
+====================================================================================================
+  W1  single-rung bands re-solved: GROSS n=49 median true width 0.0500; BAND n=10 median 0.0225
+  W2  genuine knife edges (< 0.02 on gross): 10 of 49
+  W3  boundary-CLIPPED single rungs on gross: 48 of 49
+  W6  the IS band's midpoint lands inside the OOS band 8/26; rho(IS width, OOS width) -0.1825
