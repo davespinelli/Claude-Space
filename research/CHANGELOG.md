@@ -7819,3 +7819,43 @@ exposure path and it is not distinguishable from the live book at this tape's re
 (rule 9): U56 / B136 are current-constituent lists held from 2008 and SMALL is a current sub-$2B screen from
 2010 (tickers with max_1d_move >= 1.0 dropped, 665 kept), so absolute levels are optimistic; the decomposition
 is a same-tape, same-gross, same-day contrast and is first-order immune, the KEEP counts are not.
+
+## 2026-09-22 — lane cloud run 30, idea 2 of 2 (idea 2300, CLOSED, no rules change)
+
+**IDEA 2300 (is the band gate's DE-GROSS still the right side once CASH EARNS CARRY?) — ANSWERED = YES, AND
+CARRY STRENGTHENS IT.  A 4b KEEP-CANDIDATE falls out of the same grid, and it is a RE-GROSS book.**
+Every committed `de-gross beats the device` verdict in this record was scored with idle cash at exactly 0%.
+The canonical contrasts were re-run with a SHY sweep attached to BOTH arms, on two dials and no more — device
+set {DG, RG50, RG100, BETA, EWALL, GROSS100} x sweep fraction phi {0, 0.25, 0.50, 0.75, 1.00} — over 3 panels
+x 4 cost rungs x traded/MMF sleeve = 720 published book-rungs.  phi = 0 reproduces the record's basis exactly
+(gate G5) and DG at phi = 0 is bit-identical to `baseline.rules_v2` (gate G1).  43 gates, 0 failures.
+
+(A) **DIRECTION, AS PRE-REGISTERED.**  d(Sharpe) = DG - DEVICE rises monotonically with phi at **15 of 15**
+(panel, device) cells at 10 bps; the sweep pays the arm holding the most idle NAV and that is always DG.
+(B) **WHICH VERDICTS MOVE: 9 of 60 on Sharpe and 13 of 60 on Calmar at 10 bps, 0 of 60 on CAGR and 0 of 60 on
+MaxDD.**  DG's win rate over the ladder goes 11/15 -> 14/15 (Sharpe) and 10/15 -> 14/15 (Calmar) as phi goes
+0 -> 1.  Every move at 0 / 10 / 25 bps is INTO de-gross's favour; the only three against it are at 50 bps
+(U56/EWALL Sharpe, B136/RG50 and B136/EWALL Calmar), where DG's own sweep turnover (2.79 vs 1.77 /yr) is the
+cost being paid.  (C) **THE SWEEP ALONE IS A 4a PASSER OUT OF SAMPLE ON 3 OF 3 PANELS**: DG + phi = 1.00 at
+10 bps reads U56 9.12% / 1.2675 / -11.48% (OOS 10.14% / 1.3560), B136 8.48% / 1.1669 / -11.65%, SMALL 5.00% /
+0.7645 / -13.49%, and still misses 4b on the CAGR floor — idea 2294 reproduced.  (D) **A 4b KEEP-CANDIDATE:**
+`RG100 + phi = 1.00` (every IN name at 0.75/N_in, residual NAV in SHY) clears 4b FULL and OOS on **U56 and
+B136 at 0 / 10 / 25 bps** (U56 10 bps 12.55% / 1.1896 / -17.39%, OOS 13.77% / 1.2332), fails at 50 bps, and
+clears nothing on SMALL.  Under rule 8 `C_ISCALMAR` picks exactly that cell on U56 and it passes 4b out of
+sample; `C_ISSHARPE` picks RG50/phi=1 (OOS 11.99% / 1.3072 / -14.21%), also a 4b OOS pass.  On B136 and SMALL
+no chooser reaches a 4b passer.  Memo: `research/backtests/2026-09-22_degross-vs-devices-with-cash-carry_cloud.memo.md`.
+(E) **INDEPENDENT REPRODUCTION OF 2304:** the GROSS100 + phi = 1.00 cell clears 4b FULL at 0/10/25 bps on U56
+and 0/10 bps on B136 — 2304's committed reading, cell for cell, from a different construction.  The MMF
+variant (sweep turnover rebated) moves the 10 bps flip counts 9/13 -> 10/17 of 60 and 4a 12 -> 14 of 90 and
+flips no conclusion.
+
+**RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched).**
+(1) The KEEP memo is FILED, NOT ADOPTED: adopting it would be two changes at once (clause 4's de-gross ban
+from idea 81, plus a new cash sleeve) and it needs >= 8 weeks of live tracking under PLAN Tier 3.
+(2) CONCENTRATION is the risk the candidate adds and it is published: the per-name weight `0.75 / N_in` is
+1.79% of NAV at the median but 10.1% at the 99th percentile and 15.0% on the worst day (5 names IN); the live
+book never exceeds 1.34%.  (3) Any future `device vs de-gross` claim should state its cash convention: at 0%
+cash the ladder's Sharpe verdicts are 11 of 15, at full carry 14 of 15.  (4) SURVIVORSHIP (rule 9): U56 and
+B136 are current-constituent lists from 2008, SMALL a current sub-$2B screen from 2010 (max_1d_move >= 1.0
+dropped, 665 kept); the verdict census is a same-tape, same-day, two-arm contrast and is first-order immune,
+but the 4b CAGR leg is an ABSOLUTE bar and is the most contaminated reading in the run.
