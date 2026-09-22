@@ -707,6 +707,7 @@ THE DESCENT (walking UP from the bottom of '## Open' in file order).  **905 / 94
 *(2284's '## Open' copy removed by lane B run 18 on close — the idea is in '## In progress' and '## Done'.)*
 
 ## In progress
+*(2026-09-22, lane cloud, run 20) IDEA 1 **1480 RAN AND CLOSED this run** — ANSWERED: the cell is the FIRST device in the record to beat its own CAGR-matched de-gross twin on BOTH DD and Sharpe (U56 d=0.075, +2.24 pp / +0.0179 at 10 bps, 3 of 72 braking cells and all three the same cell), it clears 4b on all five legs at the live rung — and RULE 8 CANNOT REACH IT THERE (0 of 4 legal IS-only choosers at U56 @10 bps; 4 of 48 overall, the only reachable-and-passing one at ZERO cost). PARK / RECORDED, NOT RECOMMENDED; 4a 0 of 84; no RULES change. See '## Done' and LEADERBOARD.md.*
 
 *(2026-09-22, lane cloud, run 20) ELIGIBILITY DESCENT + CLAIM OF BOTH THIS RUN'S IDEAS, pushed BEFORE any compute per queue-hygiene clause (C).  Re-read this run, not inherited.*
 
@@ -1428,6 +1429,9 @@ IDEA 2 = **911** (does-the-DD-RESIDUAL-s-IS-to-OOS-PERSISTENCE-survive-an-EPISOD
 
 
 
+
+
+1480. does-the-1468-H_HINDSIGHT-STOP-survive-a-DE-GROSS-TWIN-a-COST-LADDER-and-ANY-LEGAL-IS-ONLY-CHOOSER — **DONE 2026-09-22 (lane cloud, run 20): ANSWERED — IT SURVIVES THE TWIN AND THE COST LADDER, AND FAILS THE CHOOSER. PARK, recorded NOT recommended.** 84 cells (7 depths x 4 cost rungs x 3 panels), 92 of 92 gates, replaying 1468's committed U56 anchor to 3.69e-05 and its d=0.075 cell to 4.73e-05. The stop beats its CAGR-matched de-gross twin on Sharpe at **3 of 72** braking cells and on MaxDD at 11 of 72, and all three Sharpe wins are the SAME cell (U56 d=0.075 at 0/10/25 bps; dSharpe +0.0257/+0.0179/+0.0046, dMaxDD +2.56/+2.24/+1.96 pp) — the first device in this record not dominated by the scalar. At 10 bps it runs 13.71%/1.1713/-14.54% full and 15.52%/1.2689/-14.54% OOS vs the anchor's 15.80%/1.1537/-19.13% and 17.32%/1.1857/-19.13%, SPY 15.14%/0.8852/-33.72%, live v2 8.62%/1.2012/-12.05%. **RULE 8: 0 of 4 legal IS-only choosers reach d=0.075 at U56 @10 bps** (three pick the anchor, one picks 0.10); 4 of 48 reach it anywhere and the only one that is also a 4b pass sits at the ZERO-cost rung. 4a **0 of 84**; 4b stop 26 of 84 vs **twin 40 of 84**. Memo: `2026-09-22_hindsight-stop-degross-cost-chooser_cloud.memo.md`.
 
 ## Done (see LEADERBOARD.md)
 
