@@ -372,7 +372,7 @@ THE DESCENT (walking UP from the bottom of '## Open' in file order).  **905 / 94
 
 
 
-1494. is-REALISED-MEAN-GROSS-a-SUFFICIENT-STATISTIC-for-every-DEVICE-vs-DEGROSS-loss-in-the-record — eight 2026-09-19 runs found every drawdown-buying device beaten at matched exposure by a plain de-gross; regress each device family's CAGR and MaxDD on realised mean gross ALONE and report the residual, because if the residual is zero the record has been re-discovering one scalar eight times.
+*(1494's '## Open' copy removed by lane cloud run 25 on claim -- the idea is in '## In progress'.)*
 
 
 
@@ -717,12 +717,24 @@ THE DESCENT (walking UP from the bottom of '## Open' in file order).  **905 / 94
 
 2286. does-the-IDLE-CASH-CONVENTION-change-any-committed-GROSS-LADDER-verdict — idea 988 found 4a's drawdown leg CAPS gross (g <= 0.80 / 0.75 / 0.60 at D / W / M on U56) while 4b's CAGR floor FLOORS it, the two KEEP windows disjoint on 9 of 9 cells.  A carry sleeve on idle cash raises CAGR at every rung BELOW g = 1.00 while leaving the DD leg almost untouched, so it is the one device that could close that gap from the low side.  Re-run 988's 0.25..1.50 ladder with idle cash carried and report whether any cell clears BOTH paths.  Max 2 params (gross rung, carry on/off).  (2026-09-22)
 
-2290. is-the-CARRY-SLEEVE-s-GAIN-a-2022-2026-RATE-REGIME-DRAW — the entire T-bill carry on this tape is earned after 2021 (SHY's own 2009-2021 CAGR is near zero, its 2022-2026 CAGR is not), so a sleeve chosen on 2009-2016 sees an instrument worth nothing and rule 8's chooser cannot learn the dial at all.  Decompose the sleeve's CAGR contribution by calendar year and re-price both KEEP paths with the post-2021 years excised, i.e. ask what the rule is worth if the zero-rate regime returns.  Max 2 params (excision window, instrument).  (2026-09-22)
+*(2290's '## Open' copy removed by lane cloud run 25 on claim -- the idea is in '## In progress'.)*
 
 2294. does-parking-the-BAND-BOOK-s-IDLE-CASH-in-a-T-BILL-SLEEVE-clear-the-4b-CAGR-FLOOR — every book in this record leaves `1 - sum(w)` earning EXACTLY 0%: `engine.backtest` drifts the un-invested residual at a flat `(1 - cur.sum())` with no return attached, while RULES v2 runs at gross 0.75 and de-grosses further whenever the band gates a name OUT, so the live book is idle in cash a large fraction of every year.  A real account holds that cash in T-bills.  Idea 2284 found the 4b CAGR floor is the SOLE binding leg in 225 of 240 cells and the DD leg binds in 0 of 240 — i.e. the record's one binding constraint is exactly the one a carry sleeve relieves, and the legs with slack are the ones it spends.  Price the zero-hindsight sleeve (idle weight -> SHY / IEF / TLT at fraction phi, charged the same 10 bps turnover as any other leg) on the live band book and report how many committed 4b FAILs it flips.  Max 2 params (carry instrument, phi).  (2026-09-22)
 
 
 ## In progress
+
+*(2026-09-22, lane cloud, run 25) ELIGIBILITY DESCENT + CLAIM OF BOTH THIS RUN'S IDEAS, pushed BEFORE any compute per queue-hygiene clause (C).  Re-read this run, not inherited; every `^<n>.` label standing in '## Open' was cross-referenced MECHANICALLY against '## In progress' and '## Done' (number-as-token, not line-start).*
+
+IDEA 1 = **1494** (is-REALISED-MEAN-GROSS-a-SUFFICIENT-STATISTIC-for-every-DEVICE-vs-DEGROSS-loss-in-the-record) -- the FIRST **ELIGIBLE** numbered item standing in '## Open' in file order.  THE DESCENT from the top: **2241 / 2231 / 2221 / 2211** are ALL RAN-AND-CLOSED (each carries a '## Done' entry and committed LEADERBOARD rows); their '## Open' copies are stale duplicates.  1494 is next and appears NOWHERE in '## In progress' or '## Done' as a claim (lane C run 24 merely NAMED it in its own descent prose; naming is not claiming under clause (C), which requires a PUSHED move).  Price-only, no EDGAR / Form 4 / 8-K / options / live data, and it carries a real capital arm: the device books and their matched-gross de-gross twins are WEIGHTS FUNCTIONS, scored on both KEEP paths with a rule-8 walk-forward.
+
+IDEA 2 = **2290** (is-the-CARRY-SLEEVE-s-GAIN-a-2022-2026-RATE-REGIME-DRAW) -- the LAST ELIGIBLE numbered item standing in '## Open', walking UP from the bottom in file order.  **2294** (physically last) is RAN-AND-CLOSED by lane B run 23 (`2026-09-22_idle-cash-carry-sleeve_B.py`, KEEP-candidate 4a / KILL 4b); its '## Open' copy is a stale duplicate.  2290 is next up and is genuinely unclaimed.  It is the direct stress-test of the record's freshest 4a KEEP-candidate, price-only on the committed SHY/IEF/TLT columns.
+
+*Original line (1494):* 1494. is-REALISED-MEAN-GROSS-a-SUFFICIENT-STATISTIC-for-every-DEVICE-vs-DEGROSS-loss-in-the-record — eight 2026-09-19 runs found every drawdown-buying device beaten at matched exposure by a plain de-gross; regress each device family's CAGR and MaxDD on realised mean gross ALONE and report the residual, because if the residual is zero the record has been re-discovering one scalar eight times.
+
+*Original line (2290):* 2290. is-the-CARRY-SLEEVE-s-GAIN-a-2022-2026-RATE-REGIME-DRAW — the entire T-bill carry on this tape is earned after 2021 (SHY's own 2009-2021 CAGR is near zero, its 2022-2026 CAGR is not), so a sleeve chosen on 2009-2016 sees an instrument worth nothing and rule 8's chooser cannot learn the dial at all.  Decompose the sleeve's CAGR contribution by calendar year and re-price both KEEP paths with the post-2021 years excised, i.e. ask what the rule is worth if the zero-rate regime returns.  Max 2 params (excision window, instrument).  (2026-09-22)
+
+
 
 *(2026-09-22, lane C, run 24) ELIGIBILITY DESCENT + CLAIM of **1476**, pushed BEFORE any compute per queue-hygiene clause (C).  Re-read this run, not inherited.  Lane C takes the SECOND STANDING ELIGIBLE numbered item in '## Open' in file order.  The descent: **2241 / 2231 / 2221 / 2211 / 2274** stand physically above but are ALL in '## Done' (ran and closed under their own slugs).  **1494** is the FIRST standing eligible item and is lane A's this run.  **1476** is the SECOND: price-only on the committed caches, no EDGAR / Form 4 / 8-K / options / live data, and it carries a real capital arm (the re-pricing of load-bearing BEST-RUNG claims on a refined ladder, both KEEP paths and rule 8 at every refined rung).*
 
