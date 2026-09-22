@@ -247,6 +247,9 @@ def main():
             for k in WIDTHS:
                 for g in GROSSES:
                     W = book_weights(sig[fam], gate_map[fam], rebal, k, g, px.index, cols)
+                    # SMALL's candidate set excludes the joined SPY benchmark column, so the
+                    # weight frame must be widened to the panel's columns before pricing
+                    W = W.reindex(columns=px.columns).fillna(0.0)
                     res = engine_backtest(px, W, cost_bps=COST, freq="M")
                     r = res["returns"].loc[st:]
                     g_lev = max(g_lev, float(res["weights"].sum(axis=1).max()))
@@ -360,7 +363,7 @@ def main():
         s_h2 = metrics(spy.iloc[h:])["Sharpe"]
         s_oh = len(spy.loc[OOS_START:]) // 2
 
-        def score_pick(key, chooser):
+        def score_pick(key, chooser, is_sharpe_v, is_resid_v):
             r = books[key]
             m, mo = metrics(r), metrics(r.loc[OOS_START:])
             hh = len(r) // 2
@@ -376,18 +379,17 @@ def main():
             l_h1, l_h2 = metrics(lr.iloc[:lh])["Sharpe"], metrics(lr.iloc[lh:])["Sharpe"]
             k4a = bool(h1 > l_h1 and h2 > l_h2 and m["MaxDD"] >= metrics(lr)["MaxDD"])
             return dict(panel=pname, chooser=chooser, book=str(key),
-                        is_sharpe=float(C.set_index("book").loc[key, "is_sharpe"]),
-                        is_resid=float(C.set_index("book").loc[key, "is_resid"]),
+                        is_sharpe=float(is_sharpe_v), is_resid=float(is_resid_v),
                         CAGR=m["CAGR"], Sharpe=m["Sharpe"], MaxDD=m["MaxDD"], H1=h1, H2=h2,
                         oos_CAGR=mo["CAGR"], oos_Sharpe=mo["Sharpe"], oos_MaxDD=mo["MaxDD"],
                         spy_oos_CAGR=s_oos["CAGR"], spy_oos_Sharpe=s_oos["Sharpe"],
                         spy_oos_MaxDD=s_oos["MaxDD"], keep4b_full=k4b_full, keep4b_oos=k4b_oos,
                         keep4b=(k4b_full and k4b_oos), keep4a=k4a)
 
-        pick_resid = C.sort_values("is_resid", ascending=False).iloc[0]["book"]     # shallowest-DD-at-beta
-        pick_sharpe = C.sort_values("is_sharpe", ascending=False).iloc[0]["book"]
-        cap_rows.append(score_pick(pick_resid, "IS_RESID"))
-        cap_rows.append(score_pick(pick_sharpe, "IS_SHARPE"))
+        pr = C.sort_values("is_resid", ascending=False).iloc[0]      # shallowest DD at matched beta
+        ps = C.sort_values("is_sharpe", ascending=False).iloc[0]
+        cap_rows.append(score_pick(pr["book"], "IS_RESID", pr["is_sharpe"], pr["is_resid"]))
+        cap_rows.append(score_pick(ps["book"], "IS_SHARPE", ps["is_sharpe"], ps["is_resid"]))
 
     # ---------------------------------------------------------------- gates
     log("\n## GATES")
