@@ -1,0 +1,140 @@
+# Idea 909 (lane cloud, 2026-09-22) — WHAT IS IN THE DD-RESIDUAL?
+# tuned dials (2): CARRIER SET ['TAIL', 'TIMING', 'BREADTH', 'ALL'] x PANEL ['U56', 'B136', 'SMALL'].  reported, not tuned: beta estimator OLSD, the shelf, the reference choosers.
+# shelf 4x5x4 = 80 books/panel, monthly, t+1, 10 bps.  rule 8: IS ..2016-12-31 fits, OOS 2017-01-01.. read ONCE.  seed 20260922, 2000 perms.
+
+## U56: 56 names, 4708 rows (18.7y), book from 2009-01-13  (IS 2007 d, OOS 2441 d)
+   80 books priced
+   80 books with all carriers defined in both windows
+   867/911 residual reproduced: rho(res_IS,res_OOS) = +0.8373  (residual spread IS 1.30 pp, OOS 2.06 pp)
+
+## B136: 136 names, 4708 rows (18.7y), book from 2009-01-13  (IS 2007 d, OOS 2441 d)
+   80 books priced
+   80 books with all carriers defined in both windows
+   867/911 residual reproduced: rho(res_IS,res_OOS) = +0.3426  (residual spread IS 2.24 pp, OOS 2.69 pp)
+  SMALL: 720 cols -> 666 kept (54 dropped, max_1d_move >= 1.0)
+
+## SMALL: 665 names, 4203 rows (16.7y), book from 2011-01-13  (IS 1502 d, OOS 2441 d)
+   80 books priced
+   80 books with all carriers defined in both windows
+   867/911 residual reproduced: rho(res_IS,res_OOS) = +0.3652  (residual spread IS 3.95 pp, OOS 6.49 pp)
+
+## GATES
+  GATE PASS  G0 sample >= 10y on every panel: U56/B136 18.7y, SMALL 16.7y   (target >= 10)
+  GATE PASS  G2 a 100% SPY book reads beta ~ 1.0: max|beta-1| = 0.0000   (target < 0.05)
+  GATE PASS  G3 no leverage (max shelf gross): 1.0000   (target <= 1.0)
+  GATE PASS  G4 gate_share defined on the shelf: min defined share 1.000   (target >= 0.90)
+  GATE PASS  G5 every grid point published: 12 set rows, 21 single rows   (target 12 / 21)
+
+## ARM 1 — WHAT EXPLAINS res_IS?  single carriers (every grid point)
+   panel  carrier         R2_IS   rho_IS   R2_OOS  rho_OOS   label
+   B136   skew           0.4893  -0.6995   0.0225  +0.1500   daily return skewness
+   B136   eff_breadth    0.3144  +0.5607   0.0336  +0.1833   mean effective breadth (gross^2 / sum w_i^2)
+   B136   n_held         0.3144  +0.5607   0.0336  +0.1834   mean count of held names
+   B136   kurt           0.0343  -0.1852   0.0089  -0.0945   daily excess kurtosis
+   B136   w5             0.0270  +0.1643   0.0220  +0.1482   worst rolling 5-day compounded return
+   B136   mean_gross     0.0124  -0.1114   0.2214  -0.4706   realised mean gross exposure
+   B136   gate_share     0.0064  +0.0798   0.0492  +0.2219   share of the peak-to-trough decline accrued on de-grossed days
+   SMALL  skew           0.2206  -0.4697   0.0000  +0.0021   daily return skewness
+   SMALL  n_held         0.1602  +0.4002   0.0027  +0.0517   mean count of held names
+   SMALL  eff_breadth    0.1601  +0.4002   0.0026  +0.0514   mean effective breadth (gross^2 / sum w_i^2)
+   SMALL  kurt           0.0091  +0.0954   0.1066  -0.3265   daily excess kurtosis
+   SMALL  w5             0.0057  +0.0752   0.0575  +0.2398   worst rolling 5-day compounded return
+   SMALL  mean_gross     0.0021  -0.0463   0.2541  -0.5041   realised mean gross exposure
+   SMALL  gate_share     0.0005  +0.0213   0.0198  +0.1408   share of the peak-to-trough decline accrued on de-grossed days
+   U56    skew           0.4302  -0.6559   0.0192  -0.1386   daily return skewness
+   U56    n_held         0.4221  +0.6497   0.2777  +0.5270   mean count of held names
+   U56    eff_breadth    0.4220  +0.6496   0.2776  +0.5269   mean effective breadth (gross^2 / sum w_i^2)
+   U56    kurt           0.2751  -0.5245   0.0362  -0.1902   daily excess kurtosis
+   U56    mean_gross     0.1148  -0.3388   0.1308  -0.3616   realised mean gross exposure
+   U56    w5             0.0339  +0.1842   0.0163  +0.1276   worst rolling 5-day compounded return
+   U56    gate_share     0.0182  -0.1350   0.2994  +0.5472   share of the peak-to-trough decline accrued on de-grossed days
+   best single carrier per panel: B136=skew (R2 0.489), SMALL=skew (R2 0.221), U56=skew (R2 0.430)
+   R2 >= 0.50 on 0 of 3 panels  ->  V1 NOT TRIGGERED
+
+## ARM 1b — CARRIER SETS (standardised coefficients, every grid point)
+   U56    TAIL     R2_IS= 0.7558 R2_OOS= 0.1310  skew=-0.647(t-11.26); kurt=-0.573(t-9.98); w5=+0.169(t+2.90)
+   U56    TIMING   R2_IS= 0.1836 R2_OOS= 0.4764  gate_share=-0.278(t-2.55); mean_gross=-0.431(t-3.95)
+   U56    BREADTH  R2_IS= 0.4660 R2_OOS= 0.3014  n_held=+409.563(t+2.52); eff_breadth=-408.913(t-2.52)
+   U56    ALL      R2_IS= 0.7715 R2_OOS= 0.6834  skew=-0.492(t-5.19); kurt=-0.499(t-4.88); w5=-0.001(t-0.00); gate_share=-0.044(t-0.66); mean_gross=-0.203(t-1.05); n_held=-71.397(t-0.42); eff_breadth=+71.581(t+0.42)
+   B136   TAIL     R2_IS= 0.6398 R2_OOS= 0.0981  skew=-0.801(t-11.02); kurt=-0.401(t-5.61); w5=+0.032(t+0.45)
+   B136   TIMING   R2_IS= 0.0159 R2_OOS= 0.2609  gate_share=+0.061(t+0.53); mean_gross=-0.100(t-0.87)
+   B136   BREADTH  R2_IS= 0.3144 R2_OOS= 0.1389  n_held=-1.410(t-0.01); eff_breadth=+1.970(t+0.01)
+   B136   ALL      R2_IS= 0.6877 R2_OOS= 0.6040  skew=-0.732(t-8.79); kurt=-0.469(t-4.26); w5=+0.411(t+2.13); gate_share=-0.116(t-1.52); mean_gross=+0.389(t+1.98); n_held=+53.830(t+0.22); eff_breadth=-53.699(t-0.22)
+   SMALL  TAIL     R2_IS= 0.4741 R2_OOS= 0.5241  skew=-0.872(t-8.18); kurt=+0.617(t+5.64); w5=+0.076(t+0.87)
+   SMALL  TIMING   R2_IS= 0.0022 R2_OOS= 0.2557  gate_share=+0.008(t+0.06); mean_gross=-0.044(t-0.37)
+   SMALL  BREADTH  R2_IS= 0.1845 R2_OOS= 0.2429  n_held=+331.353(t+1.52); eff_breadth=-330.953(t-1.51)
+   SMALL  ALL      R2_IS= 0.6074 R2_OOS= 0.6534  skew=-0.788(t-7.86); kurt=+0.565(t+5.33); w5=+0.508(t+3.19); gate_share=-0.110(t-1.31); mean_gross=+0.275(t+2.02); n_held=+839.225(t+3.86); eff_breadth=-838.978(t-3.85)
+
+## ARM 2 — does STRIPPING the carrier take the PERSISTENCE with it?
+   panel  set        rho_raw  rho_stripped     lost             null95  in?
+   U56    TAIL       +0.8373       +0.3494   +0.583 [-0.222,+0.229]  OUT
+   U56    TIMING     +0.8373       +0.5891   +0.297 [-0.223,+0.210]  OUT
+   U56    BREADTH    +0.8373       +0.7398   +0.116 [-0.204,+0.232]  OUT
+   U56    ALL        +0.8373       +0.4751   +0.433 [-0.231,+0.217]  OUT
+   B136   TAIL       +0.3426       +0.1415   +0.587 [-0.212,+0.225]   IN
+   B136   TIMING     +0.3426       +0.2454   +0.284 [-0.203,+0.236]  OUT
+   B136   BREADTH    +0.3426       +0.3271   +0.045 [-0.204,+0.252]  OUT
+   B136   ALL        +0.3426       +0.2218   +0.353 [-0.216,+0.217]  OUT
+   SMALL  TAIL       +0.3652       -0.0001   +1.000 [-0.222,+0.238]   IN
+   SMALL  TIMING     +0.3652       +0.4127   -0.130 [-0.229,+0.235]  OUT
+   SMALL  BREADTH    +0.3652       +0.3411   +0.066 [-0.197,+0.250]  OUT
+   SMALL  ALL        +0.3652       +0.2517   +0.311 [-0.210,+0.226]  OUT
+   best set per panel: B136=ALL, SMALL=ALL, U56=ALL
+   stripping it halves the persistence on 0 of 3 panels  ->  V2 NOT TRIGGERED
+
+## ARM 3 — do the CARRIERS THEMSELVES persist IS->OOS?
+   U56    skew         rho(IS,OOS) = +0.7438
+   U56    kurt         rho(IS,OOS) = +0.1283
+   U56    w5           rho(IS,OOS) = +0.9614
+   U56    gate_share   rho(IS,OOS) = -0.2372
+   U56    mean_gross   rho(IS,OOS) = +0.9999
+   U56    n_held       rho(IS,OOS) = +0.9994
+   U56    eff_breadth  rho(IS,OOS) = +0.9994
+   B136   skew         rho(IS,OOS) = +0.7230
+   B136   kurt         rho(IS,OOS) = +0.0350
+   B136   w5           rho(IS,OOS) = +0.9199
+   B136   gate_share   rho(IS,OOS) = -0.2224
+   B136   mean_gross   rho(IS,OOS) = +0.9999
+   B136   n_held       rho(IS,OOS) = +1.0000
+   B136   eff_breadth  rho(IS,OOS) = +1.0000
+   SMALL  skew         rho(IS,OOS) = +0.5648
+   SMALL  kurt         rho(IS,OOS) = +0.3116
+   SMALL  w5           rho(IS,OOS) = +0.8702
+   SMALL  gate_share   rho(IS,OOS) = +0.4140
+   SMALL  mean_gross   rho(IS,OOS) = +0.9999
+   SMALL  n_held       rho(IS,OOS) = +0.9999
+   SMALL  eff_breadth  rho(IS,OOS) = +0.9999
+
+## ARM 4 — CAPITAL (rule 8): IS-only choosers, OOS 2017-2026 read ONCE
+   panel  chooser             book                          FULL CAGR/S/DD         H1/H2             OOS CAGR/S/DD  4b_f 4b_o 4a
+   U56    IS_CARRIER_TAIL     MADIST|ALL|0.25       3.88%/1.136/ -5.93%   1.14/ 1.14    4.27%/1.217/ -5.93%     0    0  0
+   U56    IS_CARRIER_TIMING   MADIST|20|0.25        4.65%/1.160/ -6.79%   1.12/ 1.20    5.38%/1.273/ -6.79%     0    0  0
+   U56    IS_CARRIER_BREADTH  MADIST|ALL|0.25       3.88%/1.136/ -5.93%   1.14/ 1.14    4.27%/1.217/ -5.93%     0    0  0
+   U56    IS_CARRIER_ALL      MADIST|ALL|0.25       3.88%/1.136/ -5.93%   1.14/ 1.14    4.27%/1.217/ -5.93%     0    0  0
+   U56    IS_RESID            MADIST|ALL|1.00      15.82%/1.141/-22.18%   1.15/ 1.14   17.45%/1.217/-22.18%     0    0  0
+   U56    IS_SHARPE           MOM|5|1.00           24.93%/1.016/-34.61%   1.24/ 0.84   20.92%/0.845/-34.61%     0    0  0
+   B136   IS_CARRIER_TAIL     MADIST|ALL|0.25       3.83%/1.059/ -7.58%   1.15/ 0.98    3.95%/1.070/ -7.58%     0    0  0
+   B136   IS_CARRIER_TIMING   MOM|5|0.25            7.98%/1.134/-11.56%   1.21/ 1.09    8.58%/1.119/-11.56%     0    0  0
+   B136   IS_CARRIER_BREADTH  MADIST|ALL|0.75      11.61%/1.061/-21.66%   1.16/ 0.98   11.95%/1.069/-21.66%     0    0  0
+   B136   IS_CARRIER_ALL      MADIST|ALL|0.25       3.83%/1.059/ -7.58%   1.15/ 0.98    3.95%/1.070/ -7.58%     0    0  0
+   B136   IS_RESID            MADIST|40|1.00       18.08%/1.075/-29.35%   1.19/ 0.98   18.28%/1.054/-29.35%     0    0  0
+   B136   IS_SHARPE           MOM|20|1.00          21.84%/1.099/-33.68%   1.34/ 0.91   20.81%/1.002/-33.68%     0    0  0
+   SMALL  IS_CARRIER_TAIL     MOMVS|40|0.25         2.30%/0.630/-12.48%   1.10/ 0.32    1.54%/0.401/-12.48%     0    0  0
+   SMALL  IS_CARRIER_TIMING   MOM|ALL|0.25          2.28%/0.569/-14.38%   0.90/ 0.36    1.70%/0.398/-14.38%     0    0  0
+   SMALL  IS_CARRIER_BREADTH  MADIST|ALL|0.25       2.25%/0.562/-14.31%   0.88/ 0.36    1.70%/0.399/-14.31%     0    0  0
+   SMALL  IS_CARRIER_ALL      MADIST|40|0.25        2.28%/0.477/-13.47%   0.58/ 0.40    2.18%/0.436/-13.47%     0    0  0
+   SMALL  IS_RESID            MADIST|40|1.00        8.04%/0.483/-48.02%   0.59/ 0.40    7.33%/0.438/-48.02%     0    0  0
+   SMALL  IS_SHARPE           LOWVOL|10|1.00        8.24%/0.803/-35.26%   1.82/ 0.28    4.71%/0.444/-35.26%     0    0  0
+   U56    REFERENCE RULES v2 (live)       8.62%/1.201/-12.05%   1.23/ 1.18    9.46%/1.277/-12.05%
+   U56    REFERENCE SPY                  15.14%/0.885/-33.72%   0.96/ 0.83   15.29%/0.875/-33.72%
+   B136   REFERENCE RULES v2 (live)       7.96%/1.097/-12.24%   1.23/ 0.97    7.85%/1.102/-12.24%
+   B136   REFERENCE SPY                  15.12%/0.884/-33.72%   0.96/ 0.82   15.26%/0.874/-33.72%
+   SMALL  REFERENCE RULES v2 (live)       4.26%/0.659/-14.16%   0.81/ 0.55    3.63%/0.545/-14.16%
+   SMALL  REFERENCE SPY                  14.03%/0.857/-33.72%   0.90/ 0.84   15.29%/0.875/-33.72%
+   4b FULL+OOS reached: any IS_CARRIER set 0/3 panels, IS_RESID 0/3, IS_SHARPE 0/3  ->  V3 NOT TRIGGERED
+   4a (beat the live book) reached on 0 of 18 picks
+
+## VERDICTS (pre-stated)
+   V1 the residual has a NAME (a single carrier at R2 >= 0.50) ... NO
+   V2 that carrier IS what persists (stripping halves rho) ....... NO
+   V3 naming it buys CAPITAL (>= IS_RESID on 4b FULL+OOS) ........ NO
