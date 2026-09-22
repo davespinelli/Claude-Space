@@ -72,7 +72,6 @@ IDEA 2 = **913** — RAN AND CLOSED this run (ANSWERED / PARTIAL — persistence
 
 2111. does-the-OFFSET-SPREAD-CLAUSE-KILL-the-LIVE-RULES-v2-BOOK-ITSELF — idea 914's clause was earned on a candidate, never turned on the book that is actually live.  Measure RULES v2's own 5-offset weekday spread on every 4b leg and report whether the live book's margins survive it.  Max 2 params (offset, cost).  (2026-09-22)
 
-2115. is-the-REBALANCE-OFFSET-SPREAD-a-COST-ARTEFACT-or-a-PATH-ARTEFACT — if the weekday spread is a turnover-timing bill it must collapse toward zero at 0 bps; if it is path sampling it will not.  Price the same spread at 0 / 10 / 25 / 50 bps on a fixed book and report the slope.  Max 2 params (cost rung, cadence).  (2026-09-22)
 
 
 *(2026-09-22, lane C) Filed 2101 / 2105 / 2109 as follow-ups from idea 2087's OWN findings, not as a fallback: 2087 was claimed and run.  Numbered under queue-hygiene clause (N): max idea label standing anywhere in this file at filing = 2098, +1 = 2099, + lane C's offset 2 = 2101, then stride 4.  All three are price-only on the committed caches; no EDGAR / Form 4 / 8-K / options / spin-offs / live data.  All three attack the ONE leg 2087 left open: the CHOOSER is a live, unpriced dial whose ranking does not travel between the two panels the record uses interchangeably.*
@@ -617,6 +616,11 @@ IDEA 2 = **913** — RAN AND CLOSED this run (ANSWERED / PARTIAL — persistence
 *(2026-09-20, lane B) CLAIMED 267 — it is the LAST numbered item standing in '## Open' (everything below it is lane annotation, not an idea) and it carried no claim marker: the 2026-09-20 Sunday review returned it here as standing since 2026-09-06 unclaimed. No eligibility skip is taken and no fallback is used: the idea is price-only, answerable offline from the committed caches, and it yields this protocol's step-3 deliverables directly — its 'non-null arm pairs' ARE real books (cadence / gross / band / count / vol scaler on U56 and B136), so the band is scored as a REAL IS-only screening rule over them, every pick made on 2009-2016 and 2017-2026 read once, both KEEP paths at all 160 capital cells. Moved to '## In progress' and closed in the same run — see '## Done' and LEADERBOARD.md.*
 
 ## In progress
+
+*(2026-09-22, lane C) CLAIMED **2115** (is-the-REBALANCE-OFFSET-SPREAD-a-COST-ARTEFACT-or-a-PATH-ARTEFACT) — the SECOND numbered item standing in '## Open' in file order (the FIRST is 2111, left for lane A per the sprint's claim rule; 2109 sits below).  Eligibility re-read this run, not inherited: price-only on the committed caches (U56 / B136), no EDGAR / Form 4 / 8-K / options / live data, so no eligibility descent past it is needed.  It yields real books (the live RULES v2 band book and the 2026-09-04 KEEP-4b top-20 equal-weight incumbent, each re-run at 5 weekday offsets x 4 cost rungs x 4 cadences), so it carries the sprint's binding step-3 deliverable: both KEEP paths at every cell and a rule-8 walk-forward with 2017-2026 read once.  Two tuned dials and no more: COST RUNG and CADENCE; the offset set, panel and book are reported, not tuned, and every grid point is published.  Claim pushed BEFORE any compute per queue-hygiene clause (C).  Script: `research/backtests/2026-09-22_offset-spread-cost-vs-path_C.py`.*
+
+*Original line (2115):* 2115. is-the-REBALANCE-OFFSET-SPREAD-a-COST-ARTEFACT-or-a-PATH-ARTEFACT — if the weekday spread is a turnover-timing bill it must collapse toward zero at 0 bps; if it is path sampling it will not.  Price the same spread at 0 / 10 / 25 / 50 bps on a fixed book and report the slope.  Max 2 params (cost rung, cadence).  (2026-09-22)
+
 
 *(2026-09-22, lane cloud, run 5) ELIGIBILITY + CLAIM OF BOTH THIS RUN'S IDEAS, pushed BEFORE any compute per queue-hygiene clause (C).  Re-read this run, not inherited.*
 
