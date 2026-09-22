@@ -1,3 +1,64 @@
+## 2026-09-22 — idea 2227 (lane C): IS THE SHY LEG'S +0.50 pp ACCOUNTING GAIN A RATE-REGIME ARTEFACT? **ANSWERED = SPLIT — NO ON THE LEVEL, YES ON THE 25/50 bps VERDICT**
+
+  **WHERE THIS COMES FROM.** `engine.backtest` pays 0% on the uninvested residual `1 - sum(w)`,
+  which on the live RULES v2 band book averages ~45% of NAV. Idea 2213 swept that idle NAV into
+  SHY and credited the fix +0.50 pp CAGR / +0.067 Sharpe; idea 2231 made the sweep lazy
+  (tolerance h = 0.10) and turned it into the record's only robust KEEP-4a candidate. But 2213
+  also states SHY's own CAGR is **0.81% IS against 1.72% OOS** — the credit is larger in exactly
+  the window the record reads last, on one ZIRP-dominated realisation.
+
+  **THE GRID.** 2 panels (U56, B136) x 34 books (NOSLEEVE + {SHY, TRAIL, FLAT y in 9 rungs
+  0.0%..5.0%} x h in {0.00, 0.05, 0.10}) x 5 cost rungs x 3 windows = **1020 published rows**,
+  all in `.grid.csv`. Two tuned dials and no more: **FLAT RATE y and PANEL**; h, cost, cadence,
+  band (0.03), gross (0.75) and phi (0.00) are published, never selected. **18 of 18 gates PASS**
+  — G1 the SHY runner reproduces `engine.backtest` on explicit augmented weights to 8.7e-18,
+  G3 NOSLEEVE IS `baseline.rules_v2_weights` at 0.000e+00, **G5 a ZERO-RATE sleeve's gross returns
+  equal the live book's to 1.0e-17** (the sleeve is pure accounting), G8 TRAIL's rate is strictly
+  lagged (corr 0.053 with same-day SHY).
+
+  **PART 1 — THE LEVEL IS NOT AN ARTEFACT; IT IS ARITHMETIC.** `d(dCAGR)/dy = +0.4770` (U56) /
+  `+0.4747` (B136) with **R2 0.99998** and intercept -0.07 pp: the credit is the mean sleeve share
+  (0.4449) times y, and nothing else. SHY's entire realised path is **EQUIVALENT TO A FLAT
+  1.216% / 1.290%** (1.600% / 1.722% on the OOS leg) — the low end of any plausible cash rate, so
+  the record's number is understated against normal short rates, not inflated. At y = 0.0% the
+  sleeve is strictly worse than the live book (-0.07 pp CAGR, -0.0093 Sharpe): it adds turnover
+  and earns nothing. The window asymmetry 2227 named is real and **entirely** rate-path
+  (SHY OOS-IS +0.40 / +0.47 pp; FLAT +0.00 / +0.02 pp) but is worth under half a point of CAGR.
+
+  **PART 2 — WHAT *IS* AN ARTEFACT, AND IT BINDS THE STANDING CANDIDATE.** The 4a frontier in y is
+  **exactly linear in cost — y >= 0.081% per bp (U56) / 0.089% per bp (B136)** by bisection with
+  every y a fresh full pricing: 0.81%/0.89% at 10 bps, **2.03%/2.23% at 25**, 4.10%/4.50% at 50,
+  identical in FULL and OOS. So a **ZERO-DURATION sleeve paying SHY's own equivalent rate FAILS 4a
+  at 25 bps on both panels — and fails on the DRAWDOWN leg** (dMaxDD -0.02 / -0.03 pp) while both
+  Sharpe legs stay positive. SHY passes there only because duration hands back **+0.50 pp of
+  MaxDD**; duration is worth +0.0015 Sharpe FULL / -0.0064 OOS against the CAGR-matched flat arm,
+  i.e. **all of its value is drawdown and none is return**. 2231's 25/50 bps 4a pass is therefore a
+  BOND fact, not a CASH fact, and must not be carried into a rules change without saying so.
+
+  **RULE 8 (2017-2026 READ ONCE).** Argmax IS Sharpe and argmax IS Sharpe among IS-4a passers both
+  pick the ladder top y = 5.0% at 10 of 10 (panel x cost) cells — IS Sharpe is monotone in y, so
+  that chooser is a **SENSITIVITY, not a strategy**, and is reported rather than claimed. The arm
+  carrying no rate assumption, **TRAIL** (sleeve credited the trailing 252-day realised SHY return,
+  lagged one day), reads OOS **U56 9.99% / 1.3425 / -11.96%** and **B136 8.48% / 1.1834 / -12.14%**
+  against live OOS 9.46% / 1.2767 / -12.05% and 7.85% / 1.1017 / -12.24% — better on all three
+  statistics on both panels — **4a TRUE at 0/5/10/25/50 bps on U56 and 0/5/10 bps on B136**, the
+  B136 DD leg turning -0.20 pp at 25 and -1.12 pp at 50. SPY OOS 15.29% / 0.8751 / -33.72%.
+
+  **4b IS A KILL AND THE REASON HAS NOT MOVED.** 61 of 1020 rows pass, every one at a flat rate no
+  cash instrument paid over this sample; **the CAGR floor binds in 100% of fails and the DD cap in
+  0%** (DD margin +8.2 pp, both Sharpe legs beating SPY by 0.28-0.67). y* to clear the floor:
+  U56 FULL 4.29% / IS 6.11% / OOS 2.76%; B136 5.68% / 5.21% / 6.06%. **No accounting treatment of
+  idle NAV reaches 4b — the band book is short of RETURN, and cash is not where return comes from.**
+
+  **OUTCOME.** No new book and no rules change (rule 6). The deployable object remains idea 2231's
+  sweep; a QUALIFICATION memo (`2026-09-22_flat-rate-idle-nav-sleeve_C.memo.md`) carries the exact
+  RULES wording for the duration/yield clause its adoption would need. Honest limits: FLAT and
+  TRAIL are synthetic accounting lines (no duration, credit or spread) and TRAIL is a lagged rate
+  forecast, not a tradeable instrument — the sandbox carries no bill-yield series, so SHY is the
+  only real cash proxy priced; one band, one gross, one cadence, one weekday offset (d = 0);
+  SHY-arm turnover is an upper bound (core SHY mean weight 1.23% / 0.50%); survivorship (rule 9)
+  on both current-constituent panels.
+
 ## 2026-09-22 — idea 2217 (lane C): DOES AN *IDLE SLEEVE* MOVE WHICH CELL RULE 8 REACHES ON THE 2119 BAND x GROSS LADDER? **ANSWERED = YES ON THE MECHANISM, NO WHERE IT COUNTS**
 
   **WHERE THIS COMES FROM.** 2119(D) found IS Sharpe moves 0.0013 across the WHOLE gross dial at
