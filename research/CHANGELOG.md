@@ -1,3 +1,67 @@
+## 2026-09-22 — idea 2315 (lane cloud): WHEN DOES THE BAND GATE PAY FOR ITSELF? **ANSWERED = IN A MINORITY OF YEARS, AND THE SAVING IS CRISIS-CONCENTRATED. NO RULES CHANGE, NO NEW CANDIDATE.**
+
+  **THE QUESTION.** RULES v2 clause 2 gates every name on its own 200d +/-3% band and clause 4
+  leaves the gated weight in cash. The record has only ever scored that trade in AGGREGATE (full
+  sample, halves, OOS). This run scores it YEAR BY YEAR against the SAME BOOK WITH CLAUSE 2
+  DELETED (`gross / N_t` on every priced name, every day — identical names, gross, cadence,
+  execution and cost rung), and asks in how many calendar years the gate earns its keep.
+
+  **THE PRE-DECLARED PRICE, stated before any number was read.** Per calendar year y:
+  `DRAG_y = ret_UNGATED_y - ret_GATED_y`; `SAVED_y = mdd_GATED_y - mdd_UNGATED_y` (within-year
+  MaxDD, both negative, so + = the gate saved drawdown); worth its price iff
+  `lam * SAVED_y >= DRAG_y`, with **lam = 1.0** (one pp of drawdown avoided buys one pp of return
+  given up) as the headline and the ladder {0.5, 1, 2, 3} published in full.
+
+  **THE GRID.** 168 published rows = 14 books x 3 panels (U56 / B136 / SMALL) x 4 cost rungs
+  {0, 10, 25, 50} bps. **Two tuned dials and no more: band width c {0.00, 0.02, 0.03 live, 0.05,
+  0.08, 0.10} and gross {0.75, 1.00}.** Panels, rungs and the weekly cadence are REPORTED, never
+  selected on.
+
+  **THE ANSWER.** At the U56 live cell (c = 0.03, gross 0.75, 10 bps) the gate is worth its price
+  in **6 of 18 calendar years** — 4 / 6 / 10 / 11 of 18 at lam = 0.5 / 1.0 / 2.0 / 3.0. Total drag
+  paid **+85.59%** (mean +4.75%/yr) against total within-year drawdown saved **+64.39%** (mean
+  +3.58%/yr). The gate COSTS return in **16 of 18 years** and adds it in exactly two (2018, 2022).
+  **2022 (+11.00%), 2020 (+10.47%) and 2009 (+8.59%) supply 46.7% of every point of drawdown it
+  ever saved** — so the queue's own characterisation ("a device that earns its keep in 3 of 18
+  years is a crash hedge priced as a strategy") is CONFIRMED, not refuted. Mechanism, measured not
+  asserted: summed over all years the daily gated-minus-ungated difference is **+397.9% on days
+  the ungated book fell** and **-478.7% on days it rose**. The year-level count is a BAND-WIDTH
+  object and not a gross object — identical at gross 0.75 and 1.00 on all three panels: U56
+  5/5/6/5/5/7 of 18 and B136 5/5/5/5/4/4 of 18 across c = 0.00..0.10, SMALL 6-8 of 16.
+
+  **BOTH KEEP PATHS.** 4b 34, 4a 8 of 168; **all 8 4a passes sit at the ZERO-cost rung, so 4a is
+  0 of 126 at 10/25/50 bps**. All 34 4b passes are gated books at gross 1.00 — the family already
+  committed by ideas 2296/2300, reproduced in place — so this run files **no new candidate**. The
+  UNGATED book is **0 of 24 on both paths**, failing on `L_DD` alone (g0.75 MaxDD -22.53% against
+  the -20.23% cap); every gated-0.75 row fails on `L_CAGR` alone. At the live cell the gate buys
+  **+0.08 Sharpe and 10.5 pp of MaxDD for 4.6 pp of CAGR**.
+
+  **RULE 8 (dials fitted on <= 2016-12-31, 2017-2026 read ONCE).** 24 picks. **0 of 24 land on the
+  live cell**; every pick takes gross 1.00 and a WIDER band (c = 0.10 at 14 of 24). The picks beat
+  the ungated book's OOS Sharpe at **14 of 24** — a coin flip once the width must be chosen
+  without hindsight — and lose its OOS CAGR at **24 of 24**. OOS-only ledger at the live cell:
+  worth its price in **3 of 10 years** (drag +44.63%, saved +37.52%).
+
+  **GATES 11 of 11.** G7 externally reproduces RULES.md's committed v2 acceptance row
+  (8.66%/1.2056/-12.05%, halves 1.2259/1.1908, OOS 1.2851) to max|d| **1.16e-04**; G1 the
+  per-column replica equals `engine.backtest` at 0.00e+00; G8 the year partition is exhaustive
+  (|d| 2.8e-14 over 18 years); G2 the band dial bites; G3 the ungated comparand carries no band
+  dependence; G4 no leverage; G6 SMALL dropped 54 tickers at `max_1d_move >= 1.0`.
+
+  **CAVEATS, PUBLISHED NOT BURIED.** The 260-row warm-up puts the first scored day at 2009-01-13,
+  so **the 2008 leg of the GFC is outside this sample** and the gate's best crisis is understated
+  — the concentration finding is conservative. U56/B136 are current-constituent lists and SMALL is
+  a current screen: absolute CAGRs are survivorship-optimistic, while the gated-minus-ungated
+  difference this entry is about is same-names, same-days. Within-year MaxDD splits any multi-year
+  drawdown across its calendar years by construction.
+
+  **WHAT THIS DOES NOT SAY.** It is not an argument to remove the gate: the gate's Sharpe and
+  MaxDD case (the basis on which v2 was accepted under 4a) is untouched and reproduced here to
+  1.16e-04. It says the CAGR the gate spends is spent every year while the drawdown it buys
+  arrives in three, and that any future claim resting on the gate's average-year value should
+  quote this ledger. Script:
+  `research/backtests/2026-09-22_band-gate-year-by-year-decomposition_cloud.py`.
+
 ## 2026-09-22 — idea 1062 (lane C): IS THE D-vs-W MARGIN AT 10 bps RESOLVABLE AT ALL? **ANSWERED IN TWO PARTS — (A) YES ON THE CELL IT WAS PUBLISHED ON: the margin is SIX of DAILY's TWELVE books, decisive under a mechanism-clustered bootstrap, and the crossing is bracketed to (5, 7.5] bps. (B) KILL OF THE GENERAL CLAIM: it is decisive at 14 of 144 cells, 8 of them the SAME U56/gross-0.75 cell, it does not exist at either flanking gross rung, and on B136 it is not a cost object at all. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 1059 found PROTOCOL's 10 bps rung decisive at exactly one
