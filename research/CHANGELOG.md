@@ -1,3 +1,69 @@
+## 2026-09-22 — idea 2125 (lane C): IS THE 4b CAGR FLOOR REACHABLE AT ALL BELOW GROSS 1.00? **ANSWERED = YES, DOWN TO GROSS 0.50 — 2119's "PURE EXPOSURE BAR" READING IS RETIRED — BUT THE DEVICE THAT REACHES IT IS NOT A NON-EXPOSURE DEVICE AND AN INFORMATION-FREE PLACEBO REACHES IT AT THE SAME CELLS. KILL, no new KEEP, no rules change.**
+
+  **THE QUESTION.** Idea 2119 laddered the live band book over band x gross and found all 16
+  of its 4b passes sitting at gross 1.00 on both panels, every de-grossed cell (g <= 0.85)
+  dying on the CAGR floor while its DD leg never binds — i.e. on the BAND family the 4b CAGR
+  floor is a pure EXPOSURE bar. This run asks whether that is a property of the BAR or of the
+  FAMILY: put a NON-EXPOSURE device on the same book (concentration, a holding count N) and
+  publish the lowest gross at which any book clears the floor.
+
+  **THE BOOK.** RULES v2's own form with ONE new dial: band 0.03 fixed at the live value;
+  among the in-band names hold the top N by the record's own no-vol-scaler composite at g/N
+  each, shortfall to CASH, never re-spread. N=ALL is `baseline.rules_v2_weights` bit-identical
+  (gate G3 max|d| 0.000e+00). Exactly two tuned dials — gross {.50,.60,.75,.85,1.00} x
+  N {5,10,20,40,ALL} — and all 1,800 grid points are published. 4 of 4 gates PASS.
+
+  **THE ANSWER, AND THE PUBLISHED NUMBER.** At 10 bps the de-grossed cells clear the CAGR
+  floor at **13 / 10 / 14 of 20** (U56 FULL/IS/OOS) and **13 / 14 / 13 of 20** (B136), and the
+  **LOWEST gross clearing the floor is 0.50 — the grid's own lower edge — on 6 of 6 blocks**
+  (N=5 and N=10). Lowest gross that is a FULL 4b PASS: 0.50 (U56 all three windows, B136 IS),
+  0.60 (B136 FULL), 0.75 (B136 OOS). The floor is a property of the FAMILY, not of the BAR.
+
+  **BUT NOMINAL AND REALISED GROSS COME APART BY 41%.** Realised mean gross (U56, FULL): the
+  N=ALL band book runs **0.355 / 0.426 / 0.533 / 0.604 / 0.710** at nominal .50/.60/.75/.85/
+  1.00 — about 0.71x nominal, because out-of-band weight is cash — while every finite-N book
+  runs **~1.00x nominal** (there are >= N names in band on almost every date; mean names held
+  5.0 / 9.9 / 19.3 / 35.2 against the live book's 38.4 of 56). At the same NOMINAL g=0.50 the
+  concentrated book carries 41% more REALISED exposure. The idea's question was posed in the
+  nominal dial and is answered in the realised one.
+
+  **MATCHED-REALISED-GROSS CONTROL: a variance trade, monotone in N.** All 77 floor-clearing
+  cells with g <= 0.85 against the plain N=ALL book scaled to the same realised mean gross
+  (max mismatch 1.8e-04): CAGR higher at **76 of 77** (median **+4.29 pp**), Sharpe higher at
+  only **25 of 77** (median **-0.0936**), shallower at only **2 of 77** (median **-5.51 pp**).
+  Median (dCAGR, dSharpe, dMaxDD) by N: 5 (+9.26, -0.104, -9.99) / 10 (+4.65, -0.137, -6.01) /
+  20 (+3.05, -0.092, -3.74) / 40 (+1.98, -0.005, -1.00) / ALL (-0.00, +0.000, +0.00). It buys
+  CAGR with drawdown — which is the trade the 4b DD cap exists to price.
+
+  **THE DECISIVE CONTROL.** ALPHA (alphabetical by ticker, zero information; priced, never
+  selected on) clears the floor at 9-13 of 20 de-grossed cells per block against TOP's 10-14,
+  takes **31 of 120** de-grossed full-4b passes against TOP's **26**, and **7 of 50** triple-
+  window (FULL and IS and OOS) 4b cells against TOP's **3** — and all three of TOP's triple-
+  window cells (U56 g=.50/N=5, U56 g=.85/N=40, B136 g=.75/N=40) are ALPHA passers too. The
+  composite still separates TOP from BOTTOM (best FULL CAGR 30.02% vs 13.39%; BOTTOM takes 5
+  of 120), so the ranking is not noise — but **what reaches the floor below gross 1.00 is
+  CONCENTRATION on a current-constituent tape, not the chooser.**
+
+  **RULE 8, 2017-2026 READ ONCE: reachable, but NOT BY RULE 8.** The IS-Sharpe chooser takes
+  max gross x max concentration on both panels. U56 g=1.00/N=5 -> OOS **30.56% / 1.0376 /
+  -36.53%** (halves 1.107/0.975) against SPY OOS 15.29%/0.8751/-33.72% and RULES v2 OOS
+  9.46%/1.2767/-12.05%: 4b **FAIL** on the DD leg by **-16.30 pp** while clearing CAGR by
+  +19.86 pp. B136 g=1.00/N=10 -> OOS 21.29%/0.8601/-32.95%, 4b FAIL on DD (-12.72 pp) and H1
+  (-0.0668). **4a is 0 of 25 at every panel x window.** The one U56 cell passing 4b in all
+  three windows (g=.50/N=5: FULL 14.99%/1.1022/-19.70%, OOS 15.45%/1.0310/-19.70%, IS
+  14.43%/1.2432/-13.01%, realised gross 0.501) is unreachable by the IS chooser AND is
+  reproduced by the ALPHA placebo — **not even a PARK**.
+
+  **COST.** The reach survives 25 bps on U56 and dies at 50 bps on 4 of 6 blocks; the
+  concentrated books turn over 19-23x/yr against the live book's much lower rate.
+
+  **CAVEAT, STATED.** Survivorship (PROTOCOL rule 9) is load-bearing here in a way it usually
+  is not: U56/B136 are current-constituent lists and a holding-count device concentrates into
+  exactly the names the list was selected on, so every absolute CAGR at small N is optimistic
+  by an unknown and INCREASING amount as N falls. The matched-gross contrast and the placebo
+  rankings are WITHIN-TAPE and carry the verdict; neither repairs the level. Band held fixed
+  at the live 0.03, so nothing here speaks to band x N interaction. RULES v2 untouched.
+
 ## 2026-09-22 — idea 2077 (lane C): THE BAND BOOK'S FINANCING FRONTIER. **ANSWERED — FINANCING IS NOT THE BINDING CONSTRAINT; THE 4b DRAWDOWN CAP IS, AT 0%/yr TOO. KILL of the financing hypothesis. NO NEW KEEP, one PARK memo, no rules change.**
 
   **THE QUESTION.** Idea 2085 found leverage on the live band book Sharpe-neutral across gross
