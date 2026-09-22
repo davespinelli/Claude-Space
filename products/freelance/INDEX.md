@@ -2,6 +2,14 @@
 
 | Date | Job ID | Title | Our price | Bids at draft | Status |
 |---|---|---|---|---|---|
+| 2026-09-22 | 40726880 | Excel Data Entry & Cleanup | $145 | 2 | drafted |
+| 2026-09-22 | 40726642 | Excel Data & PDF Fixes | $240 | 12 | drafted |
+| 2026-09-22 | 40726677 | Excel-Word Conversion & Analysis | $240 | 13 | drafted |
+| 2026-09-22 | 40726685 | RSI Algo Trading Bot Development | $125 | 39 | drafted |
+| 2026-09-22 | 40726196 | Automated Excel Financial Report Generator | $330 | 41 | drafted |
+| 2026-09-22 | 40726670 | Automate Payment Status Data Entry | $150 | 42 | drafted |
+| 2026-09-22 | 40726789 | Accurate, Fast Data Entry Support | $385 | 47 | drafted |
+| 2026-09-22 | 40726821 | AI-based Social Media Automation System | $3,900 | 61 | drafted |
 | 2026-09-22 | 40723939 | Excel Data Analysis Sheet | $245 | 16 | drafted |
 | 2026-09-22 | 40725977 | Google Sheets Cleanup & Automation | $245 | 18 | drafted |
 | 2026-09-22 | 40724677 | Excel Financial Data Comparison | $250 | 20 | drafted |
@@ -856,3 +864,13 @@ Note for the 2026-09-22 12:00 UTC batch: the 2026-09-22 04:55 UTC scan is the la
 40722821, 40724530 and 40723037 are the three trading rows and the reason this run is worth more than an entry-work run: they are the only rows on the board that match the repo's public proof directly, and all three are carried over from earlier scans that never picked them up. Each is written to the same failure from a different angle, because it is the one most of those fields will skip: the strategy is not the order. 40722821 is led on IBKR partial fills and a reconnect that leaves the client flat while the account holds a position, 40724530 on strike, expiry and roll being decisions the code makes for you every session, 40723037 on deciding only on closed candles so the signal cannot change its mind inside the bar. All three quote a paper week before a live key moves, and 40723037 carries the largest real band of the eight at $250 to $750, written in Spanish to match the posting as we did for the German row 40722283.
 
 40724378 is the fastest money of the eight if it lands: three failing DAGs is almost always one cause, and the proposal commits to reporting what actually broke before changing anything, which is the opposite of the per-notebook patching most of that field will offer. 40725976 is the heaviest field drafted at 60 bids and is bid on fit: the same hour is billable time at a client rate and paid time at a tech rate with overtime counted on the week, and a workbook that sorts that out after the fact rather than at entry cannot do both.
+
+
+## Skipped, 2026-09-22 18:00 UTC batch
+- Manual Excel Data Entry Formatting (40726144) (mixed text-and-number records typed straight into a clean sheet, at $16 to $131 against 20 bids. There is no automation lever in it, and it is a near-duplicate of manual-entry rows already drafted this week at 40725159 and 40724853, so a ninth bid in the same category adds nothing)
+- AI-Created Agri Trading Documentary Video (15 bids, $16 to $131) (video production, outside the data and automation stack our public proof covers)
+- B2B Sales Partner / SDR Needed (50% Commission Based) (a commission-only sales role rather than paid delivery work, so there is no fixed price to quote)
+- Need Fresh Scraped B2B Data Provider (bulk scraped B2B contact data, contact-list harvesting on the standing skip list, unchanged from earlier batches)
+- Dark Web Scraping & Intelligence Dashboard System (collection of personal and criminal-market data, on the standing skip list)
+- Walmart Keyword Scraper to Sheets and Daily App Price Scraping Solution (marketplace scraping against terms that prohibit it, the same call as the Amazon listing row)
+- Solana TypeScript Trading Bot (nothing in the description separates ordinary execution from sniping or front-running; unchanged from the earlier batch)
