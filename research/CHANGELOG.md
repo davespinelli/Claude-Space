@@ -1,3 +1,82 @@
+## 2026-09-22 — idea 1490 (lane C): DOES THE 4b BAR ITSELF SURVIVE CHARGING SPY THE CANDIDATE'S OWN TURNOVER? **ANSWERED = NO — 16 VERDICT FLIPS IN 320 PUBLISHED ROWS, EVERY ONE OF THEM FAIL -> PASS. KILL of the charged-SPY bar as an adopted convention; the LIVE costless-SPY convention is the CONSERVATIVE one and stays. ONE PROTOCOL rule-4b WORDING CLAUSE PROPOSED. 4a 6 of 320. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** PROTOCOL rule 4b sets both bars off a COSTLESS SPY buy-and-hold
+  (CAGR >= 70% of SPY's, MaxDD <= 60% of SPY's) while every candidate pays `cost_bps` on its
+  realised turnover. Idea 1063 filed that one-sidedness as a caveat in September and nothing has
+  priced it since. A census of all 8,734 LEADERBOARD rows finds 2,657 asserting a 4b PASS / KEEP /
+  clear and only **106** saying anything at all about SPY's own cost or turnover: the convention
+  has been an unwritten default for the whole record.
+
+  **THE GRID.** 320 rows (2 panels {U56, B136} x 4 gross {0.25, 0.50, 0.75, 1.00} x 2 cadences
+  {W, M} x 5 cost rungs {0, 5, 10, 25, 50} bps x 4 bar conventions), all published. Conventions:
+  **K0** SPY costless (live), **K1** SPY charged the CANDIDATE'S OWN daily turnover series at the
+  same rung (1490's proposal), **K2** SPY charged a flat 2.0x/yr, **K3** candidate also costless.
+  **Two tuned dials and no more: GROSS g and PANEL**; the convention is the axis under test and
+  every level is published; cost rung, cadence and band (3%, live) are reported, never selected on.
+  Books are `baseline.rules_v2_weights` on a gross ladder — the family every standing 4b pass in
+  this record lives in.
+
+  **GATES — 7 of 7 PASS.** G1 live replay 8.62% / 1.2010 / -12.05%. G2 the derived cost ladder
+  equals a full `engine.backtest` re-simulation at 25 bps at **0.000e+00** (positions never depend
+  on cost). G3 the g=0.75 arm IS `baseline.rules_v2_weights`, max|dw| **0.000e+00**. G4 the K0
+  comparand's turnover is 0.0000x/yr by construction. G5 the K1 charge is non-negative everywhere.
+  G6 IS 2007 + OOS 2441 = 4448 sessions, an exact partition. G7 320 of 320 cells.
+
+  **PART 1 — THE SIZE OF THE ASYMMETRY.** Charging SPY the candidate's own turnover loosens the
+  CAGR floor by median **0.116 pp** (max **1.068 pp**, at B136 g=1.00 @50 bps where the candidate
+  turns over 2.6664x/yr) and the MaxDD cap by median **0.020 pp** (max **0.183 pp**). Against
+  that, the 64 CAGR-floor failures under K0 miss by a median of **4.992 pp**, so **61 of 64 are
+  untouchable** and only 3 sit inside the widest relief (min miss 0.109 pp). The cap binds 5 times
+  with a min miss of 0.244 pp — larger than the largest cap relief — so **the drawdown leg never
+  flips under any convention**. The whole effect lives on the CAGR floor, at high gross, at high
+  cost.
+
+  **PART 2 — DIRECTION IS MONOTONE, WHICH IS THE ARGUMENT FOR KEEPING K0.** Charging the comparand
+  can only lower its CAGR and deepen its drawdown, i.e. only LOOSEN the bar. The grid confirms it:
+  **0 pass -> fail on 4b under K1 or K2** across 160 paired cells. The live convention is the
+  conservative one, and adopting K1 would buy the record nothing but passes. **K1 is KILLED as an
+  adopted bar.** K3 (making the candidate costless too) is the mirror image and flips 2 of the 4a
+  passers PASS -> FAIL.
+
+  **PART 3 — THE FLIPS LAND ON THE ONLY STANDING CANDIDATE FAMILY, ONE AT THE LIVE COST RUNG.**
+  All 10 of the K0 4b-BOTH passers are gross **1.00**. K1 adds three (10 -> 13; K2 12, K3 15):
+  U56 g=1.00 W @50 bps, and **B136 g=1.00 W @5 and @10 bps** — the B136 twin of idea 2264's
+  standing candidate (FULL 10.63% / -16.16%, OOS 10.47% / 1.1006 / -16.16%, turnover 2.6664x/yr),
+  4b-OOS FAIL under K0 and PASS under K1. Whether the record's only standing KEEP-4b candidate
+  replicates on the second panel **at the live 10 bps rung** is therefore decided entirely by
+  whether the comparand pays for its own existence. The U56 candidate itself is convention-ROBUST:
+  11.53% / 1.2009 / -15.91% (halves 1.2282 / 1.1799), OOS 12.67% / 1.2760 / -15.91% @10 bps,
+  clearing 4b FULL and OOS under all four conventions at 0/5/10/25 bps; floor margin +0.935 pp
+  (K0) -> +1.124 pp (K1), DD margin +4.319 pp -> +4.354 pp. Recorded, and NOT recommended.
+
+  **PART 4 — RULE 8 AND BOTH KEEP PATHS.** Dials chosen on 2009-2016 only, 2017-2026 read ONCE.
+  4b-OOS reach over 20 families (2 panels x 2 cadences x 5 cost rungs), K0 / K1 / K2 / K3:
+  **C_LIVE (g=0.75) 0 / 0 / 0 / 0**; C_ISSHARPE **11 / 13 / 12 / 15**; C_MAXG (zero-parameter)
+  **11 / 13 / 12 / 15**; C_IS4B_MING **5 / 8 / 7 / 10**, undefined in 23 of 80 families.
+  **C_ISSHARPE picks g = 1.00 at 80 of 80 — it is the zero-parameter rule in disguise**, mean OOS
+  Sharpe identical to 6 dp, which restates 988's finding (gross is a drawdown dial, not a Sharpe
+  dial) from the chooser's side. Mean OOS Sharpe / CAGR / MaxDD @K0: C_MAXG 1.1527 / 11.54% /
+  -17.87%, C_LIVE 1.1526 / 8.62% / -13.61%, C_IS4B_MING 1.1310 / 11.43% / -18.85%. The convention
+  buys +2 of 20 reach and moves no mean OOS statistic for a chooser that does not read the bar:
+  **the walk-forward conclusion is unchanged in kind.** KEEP counts: **4a 6 of 320** (all B136
+  MONTHLY at gross 0.25-0.50 and only at 50 bps — a cost artefact, since K3 flips both K0 passers
+  to FAIL), 4b FULL 55, 4b OOS 51, BOTH 50.
+
+  **PART 5 — WHAT SHOULD CHANGE.** Not the bar, and not RULES.md. The proposal for the Sunday
+  review is to WRITE THE CONVENTION DOWN, with the measured size attached, so that a 4b verdict
+  whose floor margin is smaller than the largest relief the convention can buy has to say so:
+
+  > **4b cost convention.** The SPY comparand in rule 4b is a costless buy-and-hold and is charged
+  > nothing, while the candidate pays `cost_bps` on its realised turnover. This asymmetry is
+  > deliberate and conservative: charging SPY the candidate's own turnover loosens the CAGR floor
+  > by up to 1.068 pp and the MaxDD cap by up to 0.183 pp, and can only convert a FAIL into a PASS
+  > (16 of 16 flips over 320 cells, idea 1490). Any published 4b verdict whose CAGR-floor margin
+  > is smaller than 1.1 pp must state this convention explicitly and report the margin.
+
+  Script `research/backtests/2026-09-22_4b-bar-one-sided-cost-convention_C.py`, memo
+  `..._C_MEMO.md`, full output `..._C.out.txt`, grids `..._C.grid.csv` / `..._C.rule8.csv`.
+  RULES.md, scan.py, bot.py and baseline.py untouched.
+
 ## 2026-09-22 — idea 2274 (lane B): IS THE STANDING 4b CANDIDATE A REBALANCE-PHASE DRAW, AND DOES TRANCHING ACROSS PHASES FIX IT? **ANSWERED = NO, IT IS NOT A DRAW — ALL FIVE WEEKLY PHASES CLEAR 4b FULL AND OOS AT 0/10/25 bps. BY-PRODUCT KILL: THE WINNING PHASE DOES NOT PERSIST AT ALL (IS argmax = OOS argmax at 0 of 32). ONE KEEP-4b CANDIDATE — THE 5-TRANCHE PHASE-AVERAGED BOOK — RECORDED AND NOT RECOMMENDED. 4a IS 0 OF 192. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 2264 (this morning) filed the record's only standing
