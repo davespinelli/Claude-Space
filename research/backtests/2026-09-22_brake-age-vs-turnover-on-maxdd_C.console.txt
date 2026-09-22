@@ -1,0 +1,251 @@
+============================================================================================================================================
+IDEA 1505 (lane C, 2026-09-22) — does SLOWING ANY ROTATION COST DRAWDOWN, or is that specific to the CAP?
+1484 proposed a mechanism that should GENERALISE: a brake holds names the screen has already dropped THROUGH the drawdown, so MaxDD should degrade with realised mean
+HOLDING AGE, not with TURNOVER.  Four brake families over ONE frozen base book; MaxDD regressed on AGE and on TURNOVER, separately and jointly, per panel and pooled.
+DIAL 1  the BRAKE RUNG (one per family).   DIAL 2  the CHOOSER REGRESSOR (AGE vs TURNOVER).   Cost [0.0, 5.0, 10.0, 25.0, 50.0] bps, panels and cadence REPORTED, never selected on.
+FROZEN: N = 20, G = 0.75, MAXVOL = 0.6, t+1, warm-up 260 rows.  Incumbent rung H = 126.
+============================================================================================================================================
+  SMALL filter (protocol-mandated): data/small_meta.csv drops 54 tickers with max_1d_move >= 1.0.
+  PANELS: U56 55 names, B136 135, SMALL 665.
+  SURVIVORSHIP (rule 9): U56 / B136 are CURRENT-constituent lists and SMALL a CURRENT sub-$2B screen carried back.  Every level is an UPPER BOUND; what is read here is a
+  CONTRAST across books built over the SAME names on the SAME days, which the bias cannot manufacture.
+    TAPE U56: 2008-01-02 .. 2026-09-18  4708 rows (18.7y);  977 W / 225 M / 75 Q rebalances
+    TAPE B136: 2008-01-02 .. 2026-09-18  4708 rows (18.7y);  977 W / 225 M / 75 Q rebalances
+    TAPE SMALL: 2010-01-04 .. 2026-09-18  4203 rows (16.7y);  872 W / 201 M / 67 Q rebalances
+    GATE PASS  G0 min sample >= 10 years (rule 1): 16.68 (target >= 10.0)
+    GATE PASS  G5 exactly two tuned dials (BRAKE RUNG, CHOOSER REGRESSOR): 2 (target 2 dials)
+
+  [U56]  SPY FULL 15.14% / 0.8852 / -33.72%  |  4b bars: DD cap -20.23%, CAGR floor 10.60%
+           SPY OOS  15.29% / 0.8753 / -33.72%  |  4b OOS bars: DD cap -20.23%, CAGR floor 10.70%
+           RULES v2 live @10bps FULL 8.62% / 1.2012 / -12.05% (halves 1.228/1.181) | OOS 9.46% / 1.2770 / -12.05%
+    GATE PASS  G1 cross-script replay of 1484's committed U56 incumbent GRID ROW: U56 H=126 @10bps FULL 15.783599%/1.152437/-19.129935% turnover 3.0370x OOS 17.303335%/1.184488; max|dev| vs 1484's grid row 3.77e-07 (target < 1e-5 (tape restated 2026-09-22, see comment))
+           RECORD-HYGIENE NOTE (published, not a gate): idea 1484's IN-SOURCE constant C_U56 reads CAGR 0.1580 / Sharpe 1.1537 / oSharpe 1.1857, which disagrees with 1484's OWN committed grid row
+           (0.157836 / 1.152437 / 1.184488) by 1.3e-3 of Sharpe and 0.02 pp of CAGR.  This run replays the GRID ROW, which is the published number.
+           INCUMBENT H=126 @10bps FULL 15.78% / 1.1524 / -19.13% | OOS 17.30% / 1.1845 / -19.13%
+
+  [B136]  SPY FULL 15.12% / 0.8845 / -33.72%  |  4b bars: DD cap -20.23%, CAGR floor 10.59%
+           SPY OOS  15.26% / 0.8739 / -33.72%  |  4b OOS bars: DD cap -20.23%, CAGR floor 10.68%
+           RULES v2 live @10bps FULL 7.96% / 1.0973 / -12.24% (halves 1.230/0.967) | OOS 7.85% / 1.1019 / -12.24%
+           INCUMBENT H=126 @10bps FULL 16.04% / 1.0642 / -20.75% | OOS 16.17% / 1.0168 / -20.75%
+
+  [SMALL]  SPY FULL 14.03% / 0.8571 / -33.72%  |  4b bars: DD cap -20.23%, CAGR floor 9.82%
+           SPY OOS  15.29% / 0.8753 / -33.72%  |  4b OOS bars: DD cap -20.23%, CAGR floor 10.70%
+           RULES v2 live @10bps FULL 4.66% / 0.7185 / -12.48% (halves 0.835/0.638) | OOS 4.41% / 0.6473 / -12.48%
+           INCUMBENT H=126 @10bps FULL 7.78% / 0.5079 / -36.53% | OOS 6.67% / 0.4386 / -36.53%
+    GATE PASS  G2 inert rungs bit-identical (cap=inf, Kout=20, (W,H) == F1 H): 0.000e+00 (target == 0)
+    GATE PASS  G3 derived cost ladder is exact: 6.939e-18 (target < 1e-15)
+    GATE PASS  G4 no leverage (max executed gross): 0.750000000000 (target <= 0.75+1e-12)
+    GATE PASS  G9 executed-weight POSITION age == target book's CONTINUOUS-HOLD age on uncapped families: 3.411e-13 (target < 1e-9 (float accumulation only))
+    NOTE (published): the min-hold CLOCK and a POSITION's age are different objects. 1484's frame restarts a name's H clock whenever the ranking re-takes it after it has aged out,
+    so 'H = 126' means 'cannot be dropped within 126 days of the last SELECTION event', not 'held 126 days'.  Every age in this run is the POSITION age, which is the quantity the mechanism is about.
+
+  PUBLISHED: 660 grid rows (132 books x 5 cost rungs), every one printed to .grid.csv pass or fail.
+
+  G7 THE DIALS BITE (brake strength increasing):
+panel     family  age_monotone  turn_monotone   age_range   turn_range
+ B136 F1_MINHOLD          True           True 37.6..535.6  1.49..14.30
+ B136     F2_CAP          True           True 37.6..152.9  2.61..14.30
+ B136   F3_CADxH          True           True 37.6..177.9  2.34..14.30
+ B136    F4_HYST          True           True 37.6..104.6  4.42..14.30
+SMALL F1_MINHOLD          True           True 18.0..395.8  2.37..21.52
+SMALL     F2_CAP          True           True 18.0..127.6  2.61..21.52
+SMALL   F3_CADxH          True           True 18.0..144.4  3.06..21.52
+SMALL    F4_HYST          True           True  18.0..35.0 10.56..21.52
+  U56 F1_MINHOLD         False           True 66.3..674.4  1.39..10.80
+  U56     F2_CAP          True           True 66.3..187.9  2.61..10.80
+  U56   F3_CADxH          True           True 66.3..203.5  2.25..10.80
+  U56    F4_HYST          True           True 66.3..147.1  4.78..10.80
+    GATE PASS  G7 age non-decreasing and turnover non-increasing in brake strength: 11/12 age, 12/12 turnover (target published)
+
+  G8 IDENTIFICATION (H3's own test) — can AGE and TURNOVER be told apart at all?
+                  scope   n    corr
+             panel B136  44 -0.2746
+        B136/F1_MINHOLD  11 -0.5988
+            B136/F2_CAP  14 -0.5763
+          B136/F3_CADxH  12 -0.6295
+           B136/F4_HYST   7 -0.8763
+            panel SMALL  44 -0.3792
+       SMALL/F1_MINHOLD  11 -0.5932
+           SMALL/F2_CAP  14 -0.5319
+         SMALL/F3_CADxH  12 -0.5691
+          SMALL/F4_HYST   7 -0.9254
+              panel U56  44 -0.3145
+         U56/F1_MINHOLD  11 -0.6077
+             U56/F2_CAP  14 -0.5834
+           U56/F3_CADxH  12 -0.6878
+            U56/F4_HYST   7 -0.9088
+POOLED (within-panel z) 132 -0.3228
+  age-per-unit-turnover by family (the identifying variation): F1_MINHOLD 76.6, F2_CAP 85.1, F3_CADxH 42.3, F4_HYST 11.9
+    GATE PASS  G8/H3 SEPARABLE: |corr(age, turnover)| < 0.95 pooled: -0.3228 (family ratio spread 11.9..85.1) (target < 0.95)
+  VIF of the joint regression: 1.12
+
+============================================================================================================================================
+THE IDEA'S QUESTION IN PLAIN TERMS, BEFORE ANY REGRESSION: does SLOWING the rotation make the drawdown DEEPER in EVERY family, or only in the CAP?
+Each ladder's UNBRAKED end (H = 1 / cap = inf / Kout = 20 / W,H=1 -- all the SAME book, gate G2) against its MOST-BRAKED rung and against its WORST rung, at 10 bps.
+============================================================================================================================================
+panel     family     unbraked  dd_unbraked  age_unbraked  turn_unbraked        braked  dd_braked  age_braked  turn_braked  d_dd_pp     worst_rung  worst_dd  worst_d_pp  n_rungs_deeper  n_rungs
+ B136 F1_MINHOLD          H=1      -0.2006       37.5815        14.3025         H=756    -0.2536    535.6402       1.4889  -5.3008           H=63   -0.2870     -8.6451              10       10
+ B136     F2_CAP cap=inf/CONV      -0.2006       37.5815        14.3025 cap=0.05/CONV    -0.2783    152.8605       2.6118  -7.7701 cap=0.075/CONV   -0.2828     -8.2232              12       13
+ B136   F3_CADxH        W/H=1      -0.2006       37.5815        14.3025       Q/H=252    -0.2544    152.8334       1.4615  -5.3895         W/H=63   -0.2870     -8.6451              11       11
+ B136    F4_HYST      Kout=20      -0.2006       37.5815        14.3025       Kout=80    -0.2049    104.6394       4.4193  -0.4383        Kout=50   -0.2132     -1.2645               4        6
+SMALL F1_MINHOLD          H=1      -0.3283       18.0191        21.5245         H=756    -0.4399    395.7569       2.3677 -11.1604          H=756   -0.4399    -11.1604              10       10
+SMALL     F2_CAP cap=inf/CONV      -0.3283       18.0191        21.5245 cap=0.05/CONV    -0.3732    127.6487       2.6139  -4.4857  cap=0.05/CONV   -0.3732     -4.4857               9       13
+SMALL   F3_CADxH        W/H=1      -0.3283       18.0191        21.5245       Q/H=252    -0.3952    122.7065       1.6883  -6.6849         Q/H=63   -0.4514    -12.3065              11       11
+SMALL    F4_HYST      Kout=20      -0.3283       18.0191        21.5245       Kout=80    -0.3201     35.0343      10.5619   0.8189        Kout=20   -0.3283      0.0000               0        6
+  U56 F1_MINHOLD          H=1      -0.1818       66.2977        10.7970         H=756    -0.2424    674.3631       1.3874  -6.0587           H=63   -0.2554     -7.3592              10       10
+  U56     F2_CAP cap=inf/CONV      -0.1818       66.2977        10.7970 cap=0.05/CONV    -0.2415    187.8985       2.6118  -5.9714  cap=0.05/CONV   -0.2415     -5.9714              12       13
+  U56   F3_CADxH        W/H=1      -0.1818       66.2977        10.7970       Q/H=252    -0.2020    202.9707       1.3032  -2.0232          Q/H=1   -0.2717     -8.9888              11       11
+  U56    F4_HYST      Kout=20      -0.1818       66.2977        10.7970       Kout=80    -0.1527    147.1027       4.7769   2.9142        Kout=20   -0.1818      0.0000               0        6
+  LADDER ENDS: the most-braked rung is DEEPER than the unbraked book at 10 of 12 (family x panel) ladders; mean deepening -4.30 pp, worst -11.16 pp.
+  ACROSS ALL RUNGS: 100 of 120 braked rungs are DEEPER than their own unbraked book; the WORST rung of each ladder deepens it by -6.42 pp on average.
+
+============================================================================================================================================
+THE IDEA'S QUESTION: MaxDD (pp) regressed on AGE (days) and TURNOVER (x/yr), at 10 bps.  Regressors z-scored WITHIN panel, so betas are pp of MaxDD per 1 sd.
+A NEGATIVE beta = the brake makes the drawdown DEEPER.  OLS t is across BOOKS on ONE tape and is NOT a sampling error; the bootstrap t below is the ruler.
+============================================================================================================================================
+                       scope   n    corr  b_age_uni  t_age_uni  R2_age  b_turn_uni  t_turn_uni  R2_turn  b_age_joint  t_age_joint  b_turn_joint  t_turn_joint  R2_joint
+                  panel B136  44 -0.2746    -0.4536    -1.0329  0.0248      1.3130      3.3170   0.2076      -0.1006      -0.2416        1.2853        3.0872    0.2087
+                 panel SMALL  44 -0.3792    -0.4876    -0.7582  0.0135      2.4321      4.6093   0.3359       0.5076       0.8879        2.6246        4.5910    0.3485
+                   panel U56  44 -0.3145    -0.6677    -1.5042  0.0511      1.3518      3.3367   0.2095      -0.2691      -0.6260        1.2672        2.9475    0.2170
+family F1_MINHOLD (3 panels)  33 -0.5999    -0.5711    -1.1419  0.0404      0.9403      1.9518   0.1094      -0.0109      -0.0177        0.9338        1.5255    0.1094
+    family F2_CAP (3 panels)  42 -0.5639    -0.8129    -2.3978  0.1257      1.7711      7.6922   0.5966       0.2725       0.9769        1.9248        6.8998    0.6063
+  family F3_CADxH (3 panels)  36 -0.6288     0.8062     1.5075  0.0627      1.2251      2.3981   0.1447       2.6076       5.3374        2.8648        5.8638    0.5410
+   family F4_HYST (3 panels)  21 -0.9035     0.0906     0.3720  0.0072     -0.1697     -0.7029   0.0253      -0.3411      -0.5953       -0.4778       -0.8339    0.0442
+POOLED (panel fixed effects) 132 -0.3228    -0.5363    -1.8224  0.0249      1.6990      6.5833   0.2500       0.0135       0.0493        1.7033        6.2229    0.2500
+
+  IS THE SIGN A COST ARTEFACT?  The same pooled regression at every cost rung (a brake lowers turnover, which LOWERS the cost drag, so a cost artefact would push MaxDD the OTHER way):
+ cost_bps   n  b_age_uni  t_age_uni  b_turn_uni  t_turn_uni  b_age_joint  t_age_joint  b_turn_joint  t_turn_joint  R2_joint
+   0.0000 132    -0.6035    -1.9869      1.8853      7.2446       0.0056       0.0201        1.8871        6.8370    0.2876
+   5.0000 132    -0.5700    -1.9085      1.7919      6.9228       0.0093       0.0340        1.7949        6.5380    0.2694
+  10.0000 132    -0.5363    -1.8224      1.6990      6.5833       0.0135       0.0493        1.7033        6.2229    0.2500
+  25.0000 132    -0.4175    -1.4875      1.3906      5.4441       0.0350       0.1291        1.4019        5.1748    0.1858
+  50.0000 132    -0.0746    -0.2768      0.4452      1.6690       0.0771       0.2727        0.4701        1.6620    0.0215
+
+  PAIRED CIRCULAR-BLOCK BOOTSTRAP of the tape (L = 63, 200 reps, one block-start matrix per panel shared by every book): the REGRESSORS are held fixed and each book's MaxDD is recomputed on the resampled path.
+                       scope       coef    mean     sd       t    lo95   hi95  share_neg
+                   panel U56    age_uni -0.1828 0.4441 -0.4117 -0.7993 0.8217     0.6850
+                   panel U56   turn_uni  0.8990 0.8512  1.0561 -0.8687 2.3280     0.1550
+                   panel U56  age_joint  0.1109 0.3398  0.3264 -0.3552 0.7756     0.4100
+                   panel U56 turn_joint  0.9339 0.8371  1.1157 -0.8512 2.3901     0.1450
+                  panel B136    age_uni  0.0011 0.4212  0.0027 -0.6398 0.9371     0.5400
+                  panel B136   turn_uni  0.6459 1.0541  0.6128 -1.9970 2.3208     0.2350
+                  panel B136  age_joint  0.1930 0.2388  0.8086 -0.1521 0.7514     0.2300
+                  panel B136 turn_joint  0.6989 1.0329  0.6767 -1.9978 2.3217     0.2050
+                 panel SMALL    age_uni  0.0249 0.8208  0.0303 -1.3072 1.6874     0.5600
+                 panel SMALL   turn_uni  1.8688 1.6904  1.1055 -1.7449 4.6402     0.1300
+                 panel SMALL  age_joint  0.8566 0.6828  1.2546 -0.2486 2.3435     0.0850
+                 panel SMALL turn_joint  2.1936 1.7369  1.2630 -1.4328 5.3876     0.1200
+POOLED (panel fixed effects)    age_uni -0.0523 0.3857 -0.1355 -0.6664 0.7256     0.5900
+POOLED (panel fixed effects)   turn_uni  1.1379 0.8423  1.3509 -0.5135 2.6821     0.1100
+POOLED (panel fixed effects)  age_joint  0.3516 0.2712  1.2966 -0.1116 0.9206     0.1000
+POOLED (panel fixed effects) turn_joint  1.2514 0.8364  1.4962 -0.3170 2.7620     0.0850
+
+  DELETE-ONE-CALENDAR-YEAR JACKKNIFE (second ruler, no resampling): each book's MaxDD recomputed with one calendar year of the tape removed, the pooled regression re-fit, and the
+  coefficient reported per deleted year.  This says whether a sign is one episode (2020, 2022) or the whole tape.
+ deleted_year  b_age_uni  b_turn_uni  b_age_joint  b_turn_joint
+         2008    -0.5363      1.6990       0.0135        1.7033
+         2009    -0.5363      1.6990       0.0135        1.7033
+         2010    -0.5363      1.6990       0.0135        1.7033
+         2011    -0.5363      1.6990       0.0135        1.7033
+         2012    -0.5363      1.6990       0.0135        1.7033
+         2013    -0.5363      1.6990       0.0135        1.7033
+         2014    -0.5363      1.6990       0.0135        1.7033
+         2015    -0.5363      1.6990       0.0135        1.7033
+         2016    -0.5363      1.6990       0.0135        1.7033
+         2017    -0.5232      1.7325       0.0401        1.7455
+         2018    -0.6098      1.7539      -0.0488        1.7382
+         2019    -0.7797      2.2724      -0.0516        2.2558
+         2020     0.0763      1.9436       0.7855        2.1971
+         2021    -0.4929      1.6987       0.0618        1.7187
+         2022    -0.5465      1.6332      -0.0216        1.6262
+         2023    -0.5271      1.6811       0.0174        1.6867
+         2024    -0.5431      1.6919       0.0033        1.6929
+         2025    -0.5526      1.6586      -0.0193        1.6524
+         2026    -0.5446      1.6887       0.0005        1.6889
+  NOTE (a property of MaxDD, not a bug): deleting a year BEFORE the binding drawdown episode changes nothing at all, because removing it scales the whole later path by a constant and
+  dd = e/cummax - 1 is invariant to that.  The identical rows are the years in which no book's MaxDD is set.
+  SIGN STABILITY across the 19 delete-one-year fits: b_turn_joint positive at 19 of 19; b_age_joint positive at 15 of 19.
+
+============================================================================================================================================
+RULE 8 WALK-FORWARD — every chooser sees warm-up..2016-12-31 ONLY; 2017-2026 read ONCE.
+  C_AGE / C_TURN are DIAL 2: the rung whose IS regression on that regressor predicts the SHALLOWEST MaxDD.  C_SHARPE is the record's habitual chooser, C_LIVE the incumbent.
+============================================================================================================================================
+panel     family  chooser           pick  IS_Sharpe   IS_age  IS_turnover  IS_MaxDD  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  OOS_KEEP_4b  OOS_KEEP_4a  SPY_OOS_CAGR  SPY_OOS_Sharpe  SPY_OOS_MaxDD  BASE_OOS_CAGR  BASE_OOS_Sharpe  BASE_OOS_MaxDD
+  U56 F1_MINHOLD C_SHARPE          H=756     1.4592 544.7617       1.3146   -0.1136    0.1784      1.1383    -0.2424        False        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56 F1_MINHOLD    C_AGE          H=756     1.4592 544.7617       1.3146   -0.1136    0.1784      1.1383    -0.2424        False        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56 F1_MINHOLD   C_TURN            H=1     0.9941  64.8392      10.7605   -0.1156    0.1456      1.1405    -0.1818         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56 F1_MINHOLD   C_LIVE          H=126     1.1145 136.9029       2.9373   -0.1396    0.1730      1.1845    -0.1913         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56     F2_CAP C_SHARPE  cap=0.05/CONV     1.2613 183.8326       2.6054   -0.2177    0.1990      1.1394    -0.2415        False        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56     F2_CAP    C_AGE   cap=inf/CONV     0.9941  64.8392      10.7605   -0.1156    0.1456      1.1405    -0.1818         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56     F2_CAP   C_TURN   cap=inf/CONV     0.9941  64.8392      10.7605   -0.1156    0.1456      1.1405    -0.1818         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56     F2_CAP   C_LIVE   cap=inf/CONV     0.9941  64.8392      10.7605   -0.1156    0.1456      1.1405    -0.1818         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56   F3_CADxH C_SHARPE        W/H=252     1.1309 177.4289       2.1778   -0.1608    0.1746      1.1976    -0.2185        False        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56   F3_CADxH    C_AGE          W/H=1     0.9941  64.8392      10.7605   -0.1156    0.1456      1.1405    -0.1818         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56   F3_CADxH   C_TURN          W/H=1     0.9941  64.8392      10.7605   -0.1156    0.1456      1.1405    -0.1818         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56   F3_CADxH   C_LIVE        W/H=126     1.1145 136.9029       2.9373   -0.1396    0.1730      1.1845    -0.1913         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56    F4_HYST C_SHARPE        Kout=50     1.0102 142.2864       4.6071   -0.1121    0.1294      1.1303    -0.1527         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56    F4_HYST    C_AGE        Kout=50     1.0102 142.2864       4.6071   -0.1121    0.1294      1.1303    -0.1527         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56    F4_HYST   C_TURN        Kout=50     1.0102 142.2864       4.6071   -0.1121    0.1294      1.1303    -0.1527         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+  U56    F4_HYST   C_LIVE        Kout=20     0.9941  64.8392      10.7605   -0.1156    0.1456      1.1405    -0.1818         True        False        0.1529          0.8753        -0.3372         0.0946           1.2770         -0.1205
+ B136 F1_MINHOLD C_SHARPE          H=756     1.2871 462.6487       1.2484   -0.1247    0.1997      1.0634    -0.2536        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136 F1_MINHOLD    C_AGE            H=1     1.0231  41.7659      13.7187   -0.1365    0.1221      0.8704    -0.2006        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136 F1_MINHOLD   C_TURN            H=1     1.0231  41.7659      13.7187   -0.1365    0.1221      0.8704    -0.2006        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136 F1_MINHOLD   C_LIVE          H=126     1.1379 103.1348       3.2098   -0.1465    0.1617      1.0168    -0.2075        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136     F2_CAP C_SHARPE cap=0.075/CONV     1.2856  98.2381       3.9081   -0.1350    0.1980      1.0258    -0.2828        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136     F2_CAP    C_AGE  cap=0.05/PROR     1.1498 810.3350       2.6054   -0.1368    0.1703      1.0476    -0.2557        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136     F2_CAP   C_TURN   cap=inf/CONV     1.0231  41.7659      13.7187   -0.1365    0.1221      0.8704    -0.2006        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136     F2_CAP   C_LIVE   cap=inf/CONV     1.0231  41.7659      13.7187   -0.1365    0.1221      0.8704    -0.2006        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136   F3_CADxH C_SHARPE         W/H=63     1.2321  74.9616       4.5643   -0.1369    0.1650      0.9969    -0.2870        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136   F3_CADxH    C_AGE          W/H=1     1.0231  41.7659      13.7187   -0.1365    0.1221      0.8704    -0.2006        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136   F3_CADxH   C_TURN          W/H=1     1.0231  41.7659      13.7187   -0.1365    0.1221      0.8704    -0.2006        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136   F3_CADxH   C_LIVE        W/H=126     1.1379 103.1348       3.2098   -0.1465    0.1617      1.0168    -0.2075        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136    F4_HYST C_SHARPE        Kout=30     1.1290  62.6720       6.9796   -0.1296    0.1298      0.9048    -0.1989        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136    F4_HYST    C_AGE        Kout=80     1.1121 108.9731       4.0666   -0.1340    0.1234      0.8898    -0.2049        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136    F4_HYST   C_TURN        Kout=80     1.1121 108.9731       4.0666   -0.1340    0.1234      0.8898    -0.2049        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+ B136    F4_HYST   C_LIVE        Kout=20     1.0231  41.7659      13.7187   -0.1365    0.1221      0.8704    -0.2006        False        False        0.1526          0.8739        -0.3372         0.0785           1.1019         -0.1224
+SMALL F1_MINHOLD C_SHARPE          H=252     1.0073 152.1151       2.7453   -0.2909    0.0934      0.5922    -0.3538        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL F1_MINHOLD    C_AGE            H=1     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL F1_MINHOLD   C_TURN            H=1     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL F1_MINHOLD   C_LIVE          H=126     0.6388  80.3344       4.0528   -0.2597    0.0667      0.4386    -0.3653        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL     F2_CAP C_SHARPE   cap=0.1/CONV     0.8539  61.4338       5.2178   -0.1967    0.1152      0.5948    -0.3495        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL     F2_CAP    C_AGE   cap=inf/CONV     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL     F2_CAP   C_TURN   cap=inf/CONV     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL     F2_CAP   C_LIVE   cap=inf/CONV     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL   F3_CADxH C_SHARPE        W/H=252     1.0073 152.1151       2.7453   -0.2909    0.0934      0.5922    -0.3538        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL   F3_CADxH    C_AGE          M/H=1     0.8000  18.0761       9.5216   -0.1722    0.0700      0.4703    -0.3487        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL   F3_CADxH   C_TURN          W/H=1     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL   F3_CADxH   C_LIVE        W/H=126     0.6388  80.3344       4.0528   -0.2597    0.0667      0.4386    -0.3653        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL    F4_HYST C_SHARPE        Kout=80     0.7099  38.8069       9.1236   -0.2196    0.0641      0.4475    -0.3201        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL    F4_HYST    C_AGE        Kout=20     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL    F4_HYST   C_TURN        Kout=20     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+SMALL    F4_HYST   C_LIVE        Kout=20     0.5649  20.0740      19.6995   -0.2012    0.0788      0.5252    -0.3283        False        False        0.1529          0.8753        -0.3372         0.0441           0.6473         -0.1248
+    GATE PASS  G6 the rule-8 chooser reads no row on or after 2017-01-01: IS statistics sliced [WARMUP:i_oos] by construction (target no OOS leakage)
+
+============================================================================================================================================
+HYPOTHESES (pre-registered above, read here for the first time)
+============================================================================================================================================
+  H1 SIGN       : pooled univariate b_age = -0.5363 pp / sd (bootstrap t -0.14, 95% CI [-0.666, +0.726]) -> CONFIRMED (older books draw down deeper)
+  H2 SURVIVAL   : joint b_age +0.0135 (boot t +1.30), b_turn +1.7033 (boot t +1.50) -> AGE does NOT survive, TURNOVER does NOT survive -> H2 FALSIFIED
+  H3 SEPARABLE  : pooled corr(age, turnover) -0.3228, VIF 1.12 -> SEPARABLE
+  H4 INCUMBENT  : MaxDD H=1 vs H=126 (positive delta = incumbent SHALLOWER): B136 -20.06% -> -20.75% (-0.69 pp), SMALL -32.83% -> -36.53% (-3.70 pp), U56 -18.18% -> -19.13% (-0.95 pp) -> FALSIFIED
+  H5 RULE 8     : 12 of 48 chooser picks clear 4b OOS; mean OOS Sharpe C_AGE 0.8561 vs C_TURN 0.8461 vs C_SHARPE 0.9019 vs C_LIVE 0.8627 -> CONFIRMED
+  H6 4a         : 0 of 660 published grid points clear 4a -> FALSIFIED
+  4b (FULL) at every cost rung: 100 of 660 points; at 10 bps alone: 23 of 132.  4b OOS: 107 of 660.
+  BOTH FULL AND OOS 4b: 95 of 660 grid points.
+panel     family          rung  cost_bps   CAGR  Sharpe   MaxDD  age_days  turnover_yr  OOS_CAGR  OOS_Sharpe  OOS_MaxDD
+  U56   F3_CADxH         M/H=1    0.0000 0.1580  1.2493 -0.2021   78.5596       4.7789    0.1779      1.3230    -0.2021
+  U56   F3_CADxH       W/H=126    0.0000 0.1614  1.1750 -0.1908  137.4645       3.0370    0.1767      1.2063    -0.1908
+  U56 F1_MINHOLD         H=126    0.0000 0.1614  1.1750 -0.1908  137.4645       3.0370    0.1767      1.2063    -0.1908
+  U56     F2_CAP  cap=inf/PROR    0.0000 0.1417  1.1669 -0.1809   66.2977      10.7970    0.1580      1.2262    -0.1809
+  U56   F3_CADxH         W/H=1    0.0000 0.1417  1.1669 -0.1809   66.2977      10.7970    0.1580      1.2262    -0.1809
+  U56 F1_MINHOLD           H=1    0.0000 0.1417  1.1669 -0.1809   66.2977      10.7970    0.1580      1.2262    -0.1809
+  U56     F2_CAP  cap=inf/CONV    0.0000 0.1417  1.1669 -0.1809   66.2977      10.7970    0.1580      1.2262    -0.1809
+  U56    F4_HYST       Kout=20    0.0000 0.1417  1.1669 -0.1809   66.2977      10.7970    0.1580      1.2262    -0.1809
+  U56     F2_CAP cap=0.25/CONV    0.0000 0.1454  1.1657 -0.1925   71.8798       9.4772    0.1651      1.2392    -0.1925
+  U56   F3_CADxH       Q/H=126    0.0000 0.1568  1.1638 -0.1989  162.2310       1.6815    0.1763      1.2004    -0.1989
+  U56   F3_CADxH       W/H=126    5.0000 0.1596  1.1637 -0.1910  137.4645       3.0370    0.1749      1.1954    -0.1910
+  U56 F1_MINHOLD         H=126    5.0000 0.1596  1.1637 -0.1910  137.4645       3.0370    0.1749      1.1954    -0.1910
+    GATE PASS  G10 bit-identical recompute of the U56 headline cell: 0.000e+00 (target == 0)
+
+  wrote 2026-09-22_brake-age-vs-turnover-on-maxdd_C.grid.csv (660 rows), .books.csv (132), .reg.csv (13), .boot.csv (16), .walkforward.csv (48), .jackknife.csv (19), .ladderends.csv (12), .gates.csv
+  elapsed 31.1s
