@@ -1,3 +1,83 @@
+## 2026-09-22 — idea 2254 (lane B): CAN A RANK-HYSTERESIS BUFFER CUT THE BOTH-PATHS CELL'S 8.18x/yr TURNOVER TOWARD THE LIVE BOOK'S 1.77x WITHOUT LOSING THE PASS? **ANSWERED = NO — KILL OF THE QUESTION AS POSED. THE BUFFER IS REAL, FREE AND WALK-FORWARD-STABLE, AND IT MOVES THE NUMBER 31-43% AND THE BAR NOT AT ALL. ONE DUAL-PATH KEEP-CANDIDATE (<= 10 bps) THAT STRICTLY DOMINATES THE STANDING ONE. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** The 2026-09-20 SUNDAY REVIEW re-verified the record's only book
+  clearing PROTOCOL path 4a (vs the live RULES v2 book) AND path 4b at once — idea 142's
+  by-product `u56 / S3-50 + band3-rw @10 bps` — and refused to promote it for exactly one reason,
+  quoted here verbatim: *"The mechanism is turnover: 8.18x/yr on u56 and 10.88x/yr on broad,
+  against the live book's 1.77x ... What would change the answer is a version of this book that
+  keeps the pass while cutting turnover toward the live book's 1.77x — that is the question to
+  file, not another selector census."* This run is that question, and the device is the one that
+  carries NO return signal of its own: a **hysteresis buffer on the top-n selection** — a name
+  enters the equity leg when its composite rank reaches `K_in` and is HELD until its rank falls
+  past `K_out >= K_in`, the same ffill state machine `baseline.band_state` already runs on price.
+
+  **THE GRID.** 25 `(K_in, K_out)` pairs (`K_in` in {10,15,20,25,30} x `K_out` in
+  {10,15,20,25,30,40,56}, `K_out >= K_in`) x 5/10/25/50 bps x panels {u56, broad} = **200
+  published rows**, all in `.grid.csv`. Two tuned dials and no more: **K_in and K_out**; cost,
+  panel, cadence (W), delay (t+1), blend (0.50), band (3%) and gross (0.75) are reported, never
+  selected. Sizing is `GROSS / max(h, K_in)` per held name, which is the committed rule's own
+  scarcity behaviour written out and keeps the equity leg's gross independent of the buffer, so
+  `K_out` cannot smuggle in a blend change.
+
+  **GATES — 8 of 8 PASS, and the incumbent is literally on the grid.** G1a: at `K_in = K_out = 20`
+  the held set equals `i133.ranked(px,20,'band3','rw')` at **0 mismatches of 263,648 (u56) /
+  640,288 (broad) name-days**. G1b: weights identical at **6.9e-18** on every non-tie day; they
+  differ only on **46 / 21 of 4,708** days where pandas' AVERAGE tie-rank lets the committed
+  `rank <= 20` rule hold 21 names at 0.75/20 each (gross 0.7875 > 0.75) while the buffered sizing
+  holds gross at exactly 0.75 — the ONLY construction difference, published rather than hidden.
+  G1c: the resulting 10 bps return paths differ by **2.8e-4 / 5.1e-4 per day**. G2: the harness
+  reproduces `engine.backtest` on RULES v2 at **0.000e+00** on both panels. G3: the (u56, 10 bps,
+  20/20) cell reproduces the Sunday review's own idea-142 re-run to **6.5e-4** (turnover 8.18x to
+  the reported digit). G4: 200 of 200 cells published. G5: turnover is non-increasing in `K_out`
+  at fixed `K_in` at **40 of 40** ladders.
+
+  **PART 1 — THE DIAL IS REAL, AND IT IS NOT A TRADE-OFF ON THIS BOOK.** Annual turnover spans
+  **10.72x -> 4.67x on u56 (2.29x)** and **12.62x -> 5.89x on broad (2.14x)**. Over the u56 grid at
+  10 bps `corr(turnover, Sharpe) = -0.8557` and `corr(buffer width, turnover) = -0.7698`: every
+  cell that trades LESS also scores BETTER, so the buffer is not buying cost with signal. On broad
+  the Sharpe correlation is **-0.9145**. The incumbent 20/20 is NOT the Sharpe argmax on either
+  panel (u56 argmax 10/56 at 1.3319; broad argmax 10/56 at 1.2390).
+
+  **PART 2 — AND THE BAR DOES NOT MOVE, BECAUSE THE FLOOR IS A RETURN FLOOR.** The Sunday
+  promotion bar (4a-vs-v2 AND beats-v2-OOS AND 4b) reads **28 / 22 / 0 / 0 of 50** cells at
+  5 / 10 / 25 / 50 bps. **Not one of the 200 cells clears it above 10 bps**, the incumbent
+  included, so the exact fragility that disqualified the candidate survives the device built to
+  cure it. The reason is that turnover and return come off the same dial at the cheap end: the
+  cheapest cell on the whole grid (u56 30/56, **4.67x/yr**) posts CAGR **9.51%** against 4b's
+  **10.60%** floor and dies on the CAGR leg. Across all 98 4b-fail rows **CAGR binds in 96
+  (98.0%)** and the **DD cap in 1 (1.0%)** — the same diagnosis 2227 and 2241 reached on the band
+  book from the other direction. The cheapest cell still clearing the bar at 10 bps is
+  **u56 15/40 at 4.97x/yr** (10.69% / 1.2849 / -11.40%, halves 1.3333 / 1.2432, OOS Sharpe
+  1.3025): a **-39% turnover cut that keeps the pass**, and still **2.8x** the live book's 1.77x.
+  **0 of 200 cells reach 1.77x; 0 reach 4.00x.**
+
+  **PART 3 — RULE 8 (2017-2026 READ ONCE), AND THE ONE THING WORTH CARRYING.** argmax IS Sharpe on
+  2009-2016 picks **`K_in = 10, K_out = 30` at 8 of 8** panel x cost cells — the pick moves with
+  neither panel nor cost rung, which is rare in this record (compare 2241, where the same chooser
+  on band width is an ANTI-predictor of OOS Sharpe). The pick **strictly dominates the standing
+  candidate**: u56 @10 bps full sample **12.55% / 1.3233 / -11.86%** (halves 1.4057 / 1.2531,
+  **5.62x/yr**) against the incumbent's 11.26% / 1.2626 / -11.63% (8.18x) and the live RULES v2
+  book's 8.62% / 1.2010 / -12.05% (halves 1.2276 / 1.1806); **OOS 12.73% / 1.3031 / -11.86%**
+  against incumbent 11.70% / 1.2875 / -11.63%, live book 9.46% / 1.2767 / -12.05%, SPY 15.29% /
+  0.8751 / -33.72%. The pick beats the incumbent OOS Sharpe at **7 of 8** cells and clears 4b OOS
+  at **5 of 8** (u56 at 5/10/25 bps, broad at 5/10; both 50 bps failures bind on OOS CAGR); 4a-OOS
+  against the live book holds at 2 of 8. Mean turnover of the picks **6.58x** vs the incumbent's
+  9.52x.
+
+  **OUTCOME.** **KILL of the question as posed** — the review's 1.77x target is unreachable on this
+  dial and its 25 bps bar is unmoved at 0 of 50. **One dual-path KEEP-candidate filed at <= 10 bps**
+  (`u56 / S3-50 + band3-rw` with `K_in = 10, K_out = 30`), which strictly dominates the 2026-09-20
+  candidate on turnover, CAGR, Sharpe and OOS Sharpe and is reached by a legal IS-only chooser —
+  memo `research/backtests/2026-09-22_rank-hysteresis-turnover-cut_B_MEMO.md` carries the exact
+  proposed RULES wording. It is **NOT proposable for promotion**: at 5.62x/yr it sits in the same
+  `<= 10 bps` corner the review refused, and 10 bps is inside this repo's own ledger-vs-Alpaca
+  measurement error (2.1-16.0 bps on four sells, 2026-09-11). No rules change (rule 6);
+  `RULES.md` / `PROTOCOL.md` / `scan.py` / `bot.py` / `baseline.py` untouched. Honest limits:
+  u56/broad are CURRENT constituents (rule 9 / idea 54), so every CAGR level is optimistic and both
+  4b bars are easier than on a point-in-time panel — the turnover contrasts are same-tape /
+  same-names and first-order immune, the pass counts are not; flat per-unit-turnover costs with no
+  spread, impact or borrow; one cadence, one delay, one blend, one band, one gross, one MA length.
+
 ## 2026-09-22 — idea 2241 (lane B): DOES AN ASYMMETRIC 200d BAND (b_in, b_out) CLEAR 4b WHERE THE SYMMETRIC ONE CANNOT? **ANSWERED = NO — KILL ON BOTH KEEP PATHS**
 
   **WHERE THIS COMES FROM.** 2227 leaves the live RULES v2 band book with a drawdown margin of
