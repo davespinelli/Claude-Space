@@ -1,0 +1,155 @@
+IDEA 988 -- does ANY gross rung clear 4a AND 4b at once on the fast cadences?
+BAND03 book (live RULES v2 shape, band=0.03), gross 0.25..1.5 step 0.05 (26 rungs) x cadence ('D', 'W', 'M') x 3 panels, cost 10 bps, t+1.
+LEVERAGE NOTE: rungs above g = 1.00 are levered; the queue line asks for them, PROTOCOL rule 2's default forbids them, so they are flagged and never recommended.
+
+[U56] 56 cols  2009-01-13..2026-09-18  (1s)
+  SPY      CAGR 15.14%  Sharpe 0.8851  MaxDD -33.72%   -> 4b cap -20.23%, 4b floor 10.60%
+  RULESv2  CAGR 8.62%  Sharpe 1.2010  MaxDD -12.05%   halves 1.2276 / 1.1806  (4a's yardstick)
+  cadence D done (23s)
+  cadence W done (40s)
+  cadence M done (55s)
+
+[B136] 136 cols  2009-01-13..2026-09-18  (57s)
+  SPY      CAGR 15.12%  Sharpe 0.8844  MaxDD -33.72%   -> 4b cap -20.23%, 4b floor 10.59%
+  RULESv2  CAGR 7.96%  Sharpe 1.0972  MaxDD -12.24%   halves 1.2296 / 0.9669  (4a's yardstick)
+  cadence D done (87s)
+  cadence W done (112s)
+  cadence M done (136s)
+
+[SMALL] 666 cols  2011-01-13..2026-09-18  (145s)
+  SPY      CAGR 14.03%  Sharpe 0.8570  MaxDD -33.72%   -> 4b cap -20.23%, 4b floor 9.82%
+  RULESv2  CAGR 4.26%  Sharpe 0.6596  MaxDD -14.16%   halves 0.8057 / 0.5480  (4a's yardstick)
+  cadence D done (247s)
+  cadence W done (341s)
+  cadence M done (431s)
+
+================ GATES ================
+panel                                    gate     value expect   ok
+  U56     G1_D_MaxDD_monotone_deeper_in_gross -0.006556    <=0 True
+  U56 G2_D_Sharpe_range_over_the_whole_ladder  0.001878 report True
+  U56     G1_W_MaxDD_monotone_deeper_in_gross -0.007322    <=0 True
+  U56 G2_W_Sharpe_range_over_the_whole_ladder  0.001046 report True
+  U56     G1_M_MaxDD_monotone_deeper_in_gross -0.008041    <=0 True
+  U56 G2_M_Sharpe_range_over_the_whole_ladder  0.007204 report True
+  U56      G3_W_g0.75_reproduces_live_RULESv2  0.000000     ~0 True
+ B136     G1_D_MaxDD_monotone_deeper_in_gross -0.006538    <=0 True
+ B136 G2_D_Sharpe_range_over_the_whole_ladder  0.002119 report True
+ B136     G1_W_MaxDD_monotone_deeper_in_gross -0.007441    <=0 True
+ B136 G2_W_Sharpe_range_over_the_whole_ladder  0.000746 report True
+ B136     G1_M_MaxDD_monotone_deeper_in_gross -0.008717    <=0 True
+ B136 G2_M_Sharpe_range_over_the_whole_ladder  0.007971 report True
+ B136      G3_W_g0.75_reproduces_live_RULESv2  0.000000     ~0 True
+SMALL                G0_small_blowups_dropped 54.000000     54 True
+SMALL     G1_D_MaxDD_monotone_deeper_in_gross -0.007349    <=0 True
+SMALL G2_D_Sharpe_range_over_the_whole_ladder  0.001436 report True
+SMALL     G1_W_MaxDD_monotone_deeper_in_gross -0.007934    <=0 True
+SMALL G2_W_Sharpe_range_over_the_whole_ladder  0.000922 report True
+SMALL     G1_M_MaxDD_monotone_deeper_in_gross -0.009330    <=0 True
+SMALL G2_M_Sharpe_range_over_the_whole_ladder  0.009680 report True
+SMALL      G3_W_g0.75_reproduces_live_RULESv2  0.000000     ~0 True
+
+================ THE QUEUE'S QUESTION ================
+books published: 234  (3 panels x 3 cadences x 26 rungs)
+clear 4a:            8 of 234
+clear 4b:            35 of 234
+clear 4b FULL+OOS:   34 of 234
+clear BOTH AT ONCE:  0 of 234   <-- the answer
+
+by panel x cadence (4a / 4b / BOTH):
+               keep4a  keep4b  keep_BOTH   n
+panel cadence                               
+B136  D             0       8          0  26
+      M             0       0          0  26
+      W             0       6          0  26
+SMALL D             0       0          0  26
+      M             8       0          0  26
+      W             0       0          0  26
+U56   D             0      10          0  26
+      M             0       4          0  26
+      W             0       7          0  26
+
+unlevered subset (g <= 1.00), which is all PROTOCOL rule 2 permits:
+  4a 8 / 4b 8 / BOTH 0 of 144
+
+================ WHICH LEG REFUSES, AT EVERY RUNG ================
+FAIL rate per leg over all 234 books:
+4a_H1_gt_v2      0.6966
+4a_H2_gt_v2      0.5385
+4a_DD_no_worse   0.6068
+4b_H1_gt_SPY     0.2222
+4b_H2_gt_SPY     0.3333
+4b_OOS_gt_SPY    0.3333
+4b_DD_cap        0.2607
+4b_CAGR_floor    0.7051
+
+SOLE binder (the only leg of its own path that refused):
+  4a: {'4a_H1_gt_v2': 54, '4a_DD_no_worse': 18}
+  4b: {'4b_CAGR_floor': 87, '4b_DD_cap': 34}
+
+================ IS GROSS A SHARPE DIAL? (the mechanism) ================
+4a's two Sharpe legs are the ones gross cannot buy.  Sharpe range over the WHOLE 0.25..1.5 ladder, against the gap each cell must close:
+panel cadence  Sharpe_range  H1_range  H2_range  H1_gap_to_v2  H2_gap_to_v2  MaxDD_range  CAGR_range
+ B136       D       +0.0021   +0.0023   +0.0019       -0.0297       +0.0249      +0.1760     +0.1303
+ B136       M       +0.0080   +0.0121   +0.0049       -0.0093       -0.0055      +0.2411     +0.1407
+ B136       W       +0.0007   +0.0051   +0.0054       +0.0026       +0.0017      +0.1958     +0.1332
+SMALL       D       +0.0014   +0.0013   +0.0016       -0.0573       -0.0064      +0.2030     +0.0639
+SMALL       M       +0.0097   +0.0081   +0.0091       +0.1251       +0.0253      +0.2607     +0.0795
+SMALL       W       +0.0009   +0.0049   +0.0022       +0.0028       +0.0007      +0.2185     +0.0679
+  U56       D       +0.0019   +0.0021   +0.0017       -0.0335       +0.0080      +0.1765     +0.1410
+  U56       M       +0.0072   +0.0099   +0.0049       -0.0095       -0.0383      +0.2215     +0.1511
+  U56       W       +0.0010   +0.0026   +0.0038       +0.0011       +0.0011      +0.1928     +0.1454
+
+MaxDD moves 39x as far as H1 does over the same ladder (mean range 0.2095 vs 0.0054): gross is a DRAWDOWN dial, not a SHARPE dial, and 4a needs Sharpe.
+
+================ THE 984 RUNG, RE-PRICED ================
+panel cadence  gross   CAGR  Sharpe   MaxDD     H1     H2  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  turnover  keep4a  keep4b  keep_BOTH
+  U56       D 1.0000 0.1120  1.1900 -0.1477 1.1940 1.1886    0.1245      1.2874    -0.1477    3.2550   False    True      False
+  U56       W 1.0000 0.1153  1.2009 -0.1591 1.2282 1.1799    0.1267      1.2760    -0.1591    2.3519   False    True      False
+
+the SHALLOWEST rung that still clears 4b, per panel x cadence (the closest any rung gets to 4a's drawdown leg while keeping 4b):
+panel cadence  gross   MaxDD  v2_MaxDD  DD_shortfall_pp     H1  v2_H1     H2  v2_H2  levered
+ B136       D 1.0500 -0.1541   -0.1224          -3.1714 1.1998 1.2296 0.9917 0.9669     True
+ B136       W 1.0000 -0.1616   -0.1224          -3.9170 1.2306 1.2296 0.9658 0.9669    False
+  U56       D 0.9500 -0.1407   -0.1205          -2.0134 1.1940 1.2276 1.1886 1.1806    False
+  U56       M 0.9000 -0.1706   -0.1205          -5.0020 1.2137 1.2276 1.1402 1.1806    False
+  U56       W 0.9500 -0.1515   -0.1205          -3.0913 1.2281 1.2276 1.1801 1.1806    False
+
+================ RULE 8 (chosen on 2009-2016, 2017-2026 read ONCE) ================
+panel         pool       ruler         pick  levered  IS_Sharpe  IS_MaxDD  OOS_CAGR  OOS_Sharpe  OOS_MaxDD  keep4a  keep4b  keep4b_oos  keep_BOTH
+  U56      FAST_DW   IS_Sharpe     W g=1.50     True     1.1052   -0.1550    0.1917      1.2741    -0.2338   False   False       False      False
+  U56      FAST_DW   IS_Calmar     W g=1.50     True     1.1052   -0.1550    0.1917      1.2741    -0.2338   False   False       False      False
+  U56      FAST_DW IS_DDBUDGET     W g=0.75    False     1.1043   -0.0789    0.0946      1.2767    -0.1205   False   False       False      False
+  U56      ALL_DWM   IS_Sharpe     M g=1.50     True     1.1115   -0.1643    0.1945      1.2268    -0.2714   False   False       False      False
+  U56      ALL_DWM   IS_Calmar     M g=1.50     True     1.1115   -0.1643    0.1945      1.2268    -0.2714   False   False       False      False
+  U56      ALL_DWM IS_DDBUDGET     W g=0.75    False     1.1043   -0.0789    0.0946      1.2767    -0.1205   False   False       False      False
+  U56 UNLEVERED_DW   IS_Sharpe     W g=1.00    False     1.1047   -0.1045    0.1267      1.2760    -0.1591   False    True        True      False
+  U56 UNLEVERED_DW   IS_Calmar     W g=1.00    False     1.1047   -0.1045    0.1267      1.2760    -0.1591   False    True        True      False
+  U56 UNLEVERED_DW IS_DDBUDGET     W g=0.75    False     1.1043   -0.0789    0.0946      1.2767    -0.1205   False   False       False      False
+  U56      CONTROL        none          SPY    False     0.8986   -0.2206    0.1529      0.8751    -0.3372   False   False       False      False
+  U56      CONTROL        none RULESv2_live    False     1.1043   -0.0789    0.0946      1.2767    -0.1205   False   False       False      False
+ B136      FAST_DW   IS_Sharpe     W g=1.50     True     1.0948   -0.1548    0.1571      1.0980    -0.2375   False   False       False      False
+ B136      FAST_DW   IS_Calmar     W g=1.50     True     1.0948   -0.1548    0.1571      1.0980    -0.2375   False   False       False      False
+ B136      FAST_DW IS_DDBUDGET     D g=0.75    False     1.0594   -0.0779    0.0782      1.1278    -0.1120   False   False       False      False
+ B136      ALL_DWM   IS_Sharpe     M g=1.50     True     1.0957   -0.1598    0.1656      1.0813    -0.2955   False   False       False      False
+ B136      ALL_DWM   IS_Calmar     M g=1.50     True     1.0957   -0.1598    0.1656      1.0813    -0.2955   False   False       False      False
+ B136      ALL_DWM IS_DDBUDGET     D g=0.75    False     1.0594   -0.0779    0.0782      1.1278    -0.1120   False   False       False      False
+ B136 UNLEVERED_DW   IS_Sharpe     W g=1.00    False     1.0932   -0.1046    0.1047      1.1006    -0.1616   False    True       False      False
+ B136 UNLEVERED_DW   IS_Calmar     W g=1.00    False     1.0932   -0.1046    0.1047      1.1006    -0.1616   False    True       False      False
+ B136 UNLEVERED_DW IS_DDBUDGET     D g=0.75    False     1.0594   -0.0779    0.0782      1.1278    -0.1120   False   False       False      False
+ B136      CONTROL        none          SPY    False     0.8987   -0.2206    0.1526      0.8737    -0.3372   False   False       False      False
+ B136      CONTROL        none RULESv2_live    False     1.0922   -0.0790    0.0785      1.1017    -0.1224   False   False       False      False
+SMALL      FAST_DW   IS_Sharpe     W g=1.50     True     0.8780   -0.1634    0.0687      0.5449    -0.2675   False   False       False      False
+SMALL      FAST_DW   IS_Calmar     W g=1.50     True     0.8780   -0.1634    0.0687      0.5449    -0.2675   False   False       False      False
+SMALL      FAST_DW IS_DDBUDGET     W g=0.75    False     0.8752   -0.0841    0.0364      0.5458    -0.1416   False   False       False      False
+SMALL      ALL_DWM   IS_Sharpe     M g=1.50     True     1.0081   -0.1396    0.0764      0.5822    -0.3200   False   False       False      False
+SMALL      ALL_DWM   IS_Calmar     M g=1.50     True     1.0081   -0.1396    0.0764      0.5822    -0.3200   False   False       False      False
+SMALL      ALL_DWM IS_DDBUDGET     M g=0.85    False     1.0037   -0.0810    0.0449      0.5778    -0.1917   False   False       False      False
+SMALL UNLEVERED_DW   IS_Sharpe     W g=1.00    False     0.8762   -0.1110    0.0476      0.5455    -0.1852   False   False       False      False
+SMALL UNLEVERED_DW   IS_Calmar     W g=1.00    False     0.8762   -0.1110    0.0476      0.5455    -0.1852   False   False       False      False
+SMALL UNLEVERED_DW IS_DDBUDGET     W g=0.75    False     0.8752   -0.0841    0.0364      0.5458    -0.1416   False   False       False      False
+SMALL      CONTROL        none          SPY    False     0.8316   -0.1861    0.1529      0.8751    -0.3372   False   False       False      False
+SMALL      CONTROL        none RULESv2_live    False     0.8752   -0.0841    0.0364      0.5458    -0.1416   False   False       False      False
+
+rule-8 picks clearing BOTH paths: 0 of 33
+
+done in 431s
