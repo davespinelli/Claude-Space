@@ -7917,3 +7917,47 @@ rungs. (4) SURVIVORSHIP (rule 9): U56 and B136 are current-constituent lists hel
 absolute CAGR levels are optimistic; the falsifier is a same-tape, same-day, matched-gross contrast
 and is first-order immune, but the 4b CAGR leg is an ABSOLUTE bar and is the most contaminated
 reading in the run.
+
+## 2026-09-22 — lane C run 30, idea 2322 (CLOSED, no rules change)
+
+**IDEA 2322 (does a PER-NAME WEIGHT CAP keep the KEEP-4b candidate's pass while removing the CONCENTRATION it
+adds?) — ANSWERED = YES, AND THE CAP IMPROVES THE CANDIDATE.  A 4b KEEP-CANDIDATE is filed, and it is the
+capped book, not the uncapped one.**  Idea 2300 filed `RG100 + phi = 1.00` as the record's standing 4b
+candidate and published, as the one risk it adds, a per-name weight of 1.79% at the median but 10.1% at the
+99th percentile and 15.0% on the worst day.  This run prices the one-line fix `w_i = min(gross / N_in, cap)`
+on IN names, with the uncapped residual falling to the SHY sweep that phi = 1.00 already collects — two dials
+and no more, the per-name cap {DG = gross/N_t, 1.5, 2, 3, 4, 6, 10%, INF} and gross {0.75, 1.00}, over 3
+panels x 4 cost rungs = 192 published rows.  The cap is a CONTINUOUS DIAL between the live de-grossed book
+(cap = gross/N_t) and the candidate (cap = INF), so one sweep prices the whole family.  14 gates, 0 failures.
+
+(A) **THE HEADLINE.**  U56 / gross 0.75 / 10 bps at cap 2.0%: **11.58% / 1.2643 / -14.81%**, halves 1.3042 /
+1.2363, **OOS 2017- 12.70% / 1.3243 / -14.81%**, 4b legs 1 1 1 1 1.  Against the uncapped candidate (12.55% /
+1.1896 / -17.39%, OOS 13.77% / 1.2332) the cap costs **0.97 pp of CAGR** and buys **+0.0747 Sharpe, +2.58 pp
+of MaxDD, +0.0911 of OOS Sharpe**, cutting the worst-day position from 15.00% to 2.00% and the 99th percentile
+from 5.77% to 2.00%.  B136 confirms: 11.82% / 1.1180 / -17.10%, OOS 11.65% / 1.0936, 4b PASS.
+(B) **PLATEAU, NOT RIDGE.**  Every cap from 2.0% to INF clears 4b on U56 and from 1.5% to INF on B136 (0/10/25
+bps); the two tighter U56 rungs fail on **L_CAGR alone** (9.78% and 9.12% against a 10.60% floor), so the
+family's floor is bracketed to **(1.5%, 2.0%]**.  (C) **BOTH KEEP PATHS OVER 192 ROWS: 4b 48, 4a 6**; by rung
+4b **16 / 16 / 15 / 1** of 48 at 0 / 10 / 25 / 50 bps.  Every 4a pass is the de-grossed `cap = gross/N_t` book
+at 0/10 bps — 2300's phi=1 sweep, reproduced on 3 of 3 panels; no re-gross book, capped or not, passes 4a
+anywhere.  **Cost, not concentration, is what kills this family.**  (D) **RULE 8** (both dials chosen on
+<= 2016-12-31, 2017-2026 read once): **0 of 24 IS-only picks land on the uncapped book.**  On U56 `C_ISSHARPE`
+picks cap 2.0% at every rung (OOS 12.70% / 1.3243 at 10 bps) and `C_ISCALMAR` picks 10%; on B136 they pick
+1.5% / 2.0%; on SMALL both retreat to the de-grossed book.  The U56 pick beats the live book OOS (1.3243 vs
+1.2767) and SPY OOS (0.8751) at a third of SPY's drawdown.  (E) **PUBLISHED KILLS: SMALL is 0 of 64 at any
+cap** (the cap barely binds — max per-name weight 5.36% uncapped — and MaxDD runs -32.15% to -45.71%, so L_DD
+fails), **and 50 bps is 1 of 48.**
+
+**RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched).**
+(1) The KEEP memo is FILED, NOT ADOPTED, with exact RULES wording for clause 4 (`min(0.75 / N_in, 0.02)` of
+NAV, residual in SHY): adopting it is still two changes at once (clause 4's de-gross ban from idea 81 plus a
+new cash sleeve) and needs >= 8 weeks of live tracking under PLAN Tier 3; turnover rises from the live book's
+1.77x/yr to 3.51x/yr.  (2) The record's standing 4b candidate should from here be quoted **with** its cap: the
+uncapped cell is dominated on Sharpe, MaxDD, OOS Sharpe and concentration by the 2.0% cell, and no legal
+IS-only chooser picks it.  (3) GATES worth carrying: cap = gross/N_t is bit-identical to the live de-grossed
+book + sweep (0.00e+00), cap = INF is bit-identical to an independent RG100 + phi=1 construction (4.44e-16),
+and idea 2300's committed U56 headline reproduces from a different construction to **4.2e-05**.
+(4) SURVIVORSHIP (rule 9): U56 / B136 are current-constituent lists held from 2008 and SMALL is a current
+sub-$2B screen from 2010 (max_1d_move >= 1.0 dropped, 665 kept), so the absolute 4b levels are optimistic; the
+cap-vs-no-cap contrast is same-tape, same-day, same-gross and is first-order immune, but the CAGR floor leg is
+an ABSOLUTE bar and is the most contaminated reading in the run.
