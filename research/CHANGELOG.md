@@ -7859,3 +7859,61 @@ cash the ladder's Sharpe verdicts are 11 of 15, at full carry 14 of 15.  (4) SUR
 B136 are current-constituent lists from 2008, SMALL a current sub-$2B screen from 2010 (max_1d_move >= 1.0
 dropped, 665 kept); the verdict census is a same-tape, same-day, two-arm contrast and is first-order immune,
 but the 4b CAGR leg is an ABSOLUTE bar and is the most contaminated reading in the run.
+
+## 2026-09-22 — lane B run 31 (idea 2296, CLOSED, no rules change)
+
+**IDEA 2296 (does the 4b DRAWDOWN SLACK buy its CAGR FLOOR under a DRAWDOWN-BUDGET RE-GROSS?) —
+ANSWERED = YES THE SLACK BUYS THE FLOOR, AND NO THE DEVICE DOES NOT. KILL of the two-dial budget
+re-gross; the thing that buys the floor is CONSTANT GROSS, with zero parameters.**
+The live band book's -12.05% MaxDD sits 8.18 pp inside the 4b budget (-20.23% = 60% of SPY's
+-33.72%). Target gross G_t was set each day from the live book's OWN trailing realised vol (VOL) or
+its OWN peak-to-trough (DD) against a budget, hard-capped at 1.00. TWO TUNED DIALS AND NO MORE:
+budget target B and lookback L. Signal kind {VOL, DD}, allocation {SCALE = the RULES v2 de-gross
+kept, FILL = re-spread}, panel {U56, B136} and cost rung {0, 10, 25, 50} bps were REPORTED at every
+grid point, never selected on: 880 published book-rungs, 220 distinct books. **14 of 14 gates**:
+static 0.75 / SCALE is bit-identical to `baseline.rules_v2`; max TARGET and HELD gross are exactly
+1.0000 (no leverage at any grid point); both signals recomputed on a truncated tape are identical
+up to the cut (no look-ahead); the matched control's mean gross matches the dynamic book's to 0.0.
+
+(A) **THE PRE-REGISTERED FALSIFIER KILLS THE DEVICE.** Against a constant-gross book at its OWN
+realised mean gross — a zero-parameter competitor — dSharpe median is NEGATIVE at **8 of 8**
+(panel x rung) cells (U56 -0.0055 / -0.0083 / -0.0111 / -0.0176; B136 -0.0007 / -0.0035 / -0.0089 /
+-0.0111) and dCAGR median is NEGATIVE at **8 of 8** (-0.44 to -0.54 pp; the device wins CAGR at only
+7-17 of 100 cells per rung). Pooled over 800 dynamic cells: dSharpe < 0 at 501, dCAGR < 0 at 707,
+dOOS-Sharpe < 0 at 458. Its one real gain is DRAWDOWN — better at 659 of 800, median +0.96 to
++1.83 pp — which converts 51 of 200 cells at 10 bps from a matched-static 4b fail to a pass (losing
+14 the other way). That is a DD-cap effect, not a return effect.
+(B) **BOTH KEEP PATHS AT EVERY GRID POINT: 4a 0 of 880, 4b 297 of 880** (283 of 800 dynamic, 14 of
+80 static). Nothing beats the live book on 4a at any rung: raising gross always costs drawdown and
+the live -12.05% is the tightest DD in the file.
+(C) **RULE 8 — THE IS CHOOSER IS PICKING A GROSS LEVEL, NOT A BUDGET, AND IT RUNS TO THE EDGE.**
+(B, L) chosen on 2009-2016 ALONE by C_ISSHARPE and C_ISCALMAR, 2017-2026 read ONCE, 64 picks.
+**54 of 64 sit on a grid ENDPOINT**; the DD chooser picks B = 0.30, the LARGEST budget (device
+nearly off), at **32 of 32**. OOS the picks beat the LIVE book on Sharpe at **1 of 64**, SPY at 63
+of 64, and the frozen static 0.75 / static 1.00 comparands at 18 of 64 each.
+(D) **THE ZERO-PARAMETER LADDER BEATS THE TUNED DEVICE ON ITS OWN WALK-FORWARD.** Gross chosen on
+2009-2016 ONLY by the Sep-3 memo's PRE-STATED rule passes full 4b at **8 of 16** IS-only picks
+against the device's 17 of 64 — the two dials LOWER the walk-forward pass rate.
+(E) **PUBLISHED CORRECTION TO IDEA 2284.** Its `the 4b DD cap binds in 0 of 240 cells` holds only
+while gross is pinned at 0.75. Spend the slack and the DD leg fails at **34 / 40 / 53 / 61 of 200**
+dynamic cells at 0 / 10 / 25 / 50 bps; the 4b failing-leg census reads `-none-` 109/91/58/25 and
+`CAGR` 57/67/83/69. The CAGR floor stops being the sole binding leg the moment gross moves.
+(F) **BY-PRODUCT 4b KEEP-CANDIDATE, FILED NOT ADOPTED:** RULES v2 at gross **1.00**, de-gross ban
+untouched (clause 4's `0.75 / N` -> `1.00 / N`, nothing else changes). U56 @10bps 11.53% / 1.2009 /
+-15.91%, halves 1.2282 / 1.1799, OOS 12.67% / 1.2760 / -15.91%, turnover 2.35x/yr; B136 10.63% /
+1.0971 / -16.16%, OOS 10.47% / 1.1006 / -16.16%. 4b FULL+OOS at 0/10/25 bps on U56 and 0/10 on
+B136; fails at 50 bps on the CAGR floor; fails 4a everywhere. Memo:
+`research/backtests/2026-09-22_drawdown-budget-regross_B_MEMO.md`.
+
+**RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+untouched).** (1) The memo is FILED, NOT ADOPTED, and carries its own rule-8 caveat: the IS-only
+selection rule reaches gross 1.00 on B136 but FALLS BACK to 0.75 on U56, so the U56 pass is real out
+of sample but not reachable by an IS-only chooser. (2) **Sharpe is INVARIANT in gross on this book**
+(U56 10 bps: 1.2011 at g=0.75, 1.2009 at g=1.00): gross buys CAGR and drawdown in the same
+proportion and buys no risk-adjusted return, so any future claim that a gross device "improves" the
+book must state which of the two it moved. (3) This is a THIRD independent sighting of ideas 2304 /
+2300's GROSS100 cell, here with NO cash sleeve — the two readings agree cell for cell at the same
+rungs. (4) SURVIVORSHIP (rule 9): U56 and B136 are current-constituent lists held from 2008, so
+absolute CAGR levels are optimistic; the falsifier is a same-tape, same-day, matched-gross contrast
+and is first-order immune, but the 4b CAGR leg is an ABSOLUTE bar and is the most contaminated
+reading in the run.
