@@ -662,6 +662,8 @@ THE DESCENT (walking UP from the bottom of '## Open' in file order).  **905 / 94
 
 ## In progress
 
+*(2026-09-22, lane B, run 4) RAN AND CLOSED **2231** this run — see '## Done' and LEADERBOARD.md. Original claim follows.*
+
 *(2026-09-22, lane B, run 4) CLAIMED **2231** — see the matching filing/descent note in '## Open'.  Claim pushed BEFORE any compute per queue-hygiene clause (C).  Script: `research/backtests/2026-09-22_lazy-idle-nav-sleeve_B.py`.*
 
 *Original line (2231):* 2231. does-a-NO-TRADE-BAND-on-the-IDLE-NAV-SLEEVE-make-the-ACCOUNTING-FIX-4a-ADOPTABLE — idea 2213(B) found the pure accounting fix (idle NAV -> SHY, phi=0) is the record's ONLY 4a passer and is worth +0.50 pp CAGR / +0.067 Sharpe, yet ruled it NOT adoptable for one reason only: it lifts turnover 1.92x -> 3.03x/yr and so fails 4a at 25 and 50 bps. Price the sweep on a no-trade tolerance ladder and report whether the accounting gain survives the laziness and whether 4a then holds at every cost rung. Max 2 params (tolerance h, sleeve mix phi). (2026-09-22)
@@ -1221,6 +1223,9 @@ IDEA 2 = **911** (does-the-DD-RESIDUAL-s-IS-to-OOS-PERSISTENCE-survive-an-EPISOD
 
 
 ## Done (see LEADERBOARD.md)
+
+2231. does-a-NO-TRADE-BAND-on-the-IDLE-NAV-SLEEVE-make-the-ACCOUNTING-FIX-4a-ADOPTABLE — **[DONE 2026-09-22 lane B]** — **ANSWERED = YES ON U56, PARTIALLY ON B136, AND THE LAZINESS IS FREE.** A no-trade tolerance h on the idle-NAV sleeve retains **102.8% / 105.0%** of the eager sweep's Sharpe gain for **63.7% / 65.3%** of its turnover lift; at h >= 0.05 it carries 4a across **0/5/10/25/50 bps on U56** (2213's eager sweep failed at 50), and at 0/5/10/25 bps on BOTH panels at every h. FULL 10 bps U56 9.13% / 1.2692 / -11.53% vs live 8.62% / 1.2010 / -12.05%. **RULE 8: argmax IS Sharpe AND argmax IS Sharpe among IS-4a passers both pick phi = 0.00 / h = 0.10 on BOTH panels; OOS U56 10.15% / 1.3577 / -11.53% and B136 8.61% / 1.1955 / -11.68%, each beating the live book on all three statistics.** 4b is a **KILL at phi = 0** on the CAGR floor alone (U56 OOS -0.55 pp). **KEEP-candidate on path 4a; memo filed with exact RULES wording.** (`2026-09-22_lazy-idle-nav-sleeve_B.py`, 220 published rows, gates 12/12)
+
 
 966. is-4b-PASSABILITY-a-PANEL-fact-rather-than-a-BOOK-fact — **[2026-09-22 lane cloud run 10 — DONE. ANSWERED = NO ON THE PREMISE, YES ON THE GATE.]** Over a balanced 3 panels x 5 books x 4 cadences x 5 phases x 4 costs x 3 windows grid (2,898 published rows, 5 gates, runner-vs-engine max|d| <= 3.2e-17; FULL 10 bps panel counts 9 / 4 / 0 against 962's 9 / 3 / 0) the OOS 4b pass rate decomposes as **eta2 panel 0.0299 / book 0.2343 / cadence 0.0687** — **the BOOK axis carries 2.9x to 7.6x the PANEL axis**, and cadence outweighs the panel in 3 of 4 settings; eta2 and the LPM partial R2 agree to four decimals (balanced design). BUT **no book passes 4b out-of-sample on a panel U56 does not: 0 of 80 on B136 and on SMALL at all four cost rungs** (B136-only passes exist only in the IS window, 8 of 80, all BAND03_G100, none surviving). What the panel moves is WHICH LEG BINDS: U56 DD 44 / CAGR 32 of 71 fails, SMALL H1 79 / H2 80 of 80. The pure-panel control EWALL (zero rule) passes **0 of 16 everywhere and binds the DD cap 16 of 16** — the panel gives the CAGR leg away, the book must buy the DD leg. Rule 8 reaches 4b on 0 of 3 panels and on U56 prefers EWALL to every real book (OOS 18.84% / 1.1634 / -28.56%, DD leg alone). No KEEP candidate. `2026-09-22_is-4b-passability-a-panel-fact_cloud.py`
 
