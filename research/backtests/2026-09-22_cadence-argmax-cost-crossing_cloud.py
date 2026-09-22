@@ -20,7 +20,7 @@ band x gross ladder exists only to give the 4b pass COUNT a denominator.
 Rule 8: the cadence is chosen on 2009-2016 ONLY at each rung; 2017-2026 is read ONCE.
 Deterministic, no network.
 """
-import sys
+import sys, pickle
 from pathlib import Path
 import numpy as np, pandas as pd
 
@@ -31,7 +31,7 @@ from engine import backtest  # noqa
 
 CADENCES = ["D", "W", "M", "Q"]
 COSTS = [0, 1, 2, 3, 4, 5, 6, 7.5, 9, 10, 11, 12.5, 15, 17.5, 20, 25, 30, 35, 40, 50]
-BANDS = [0.01, 0.02, 0.03, 0.05, 0.08]
+BANDS = [0.01, 0.03, 0.08]          # reported denominator for the 4b/4a pass count
 GROSS = [0.50, 0.75, 1.00]
 LIVE = (0.03, 0.75)
 IS_END = "2016-12-31"
@@ -85,8 +85,17 @@ def keep4a(r, base):
             and maxdd(r) >= maxdd(base))
 
 
-def build(px):
-    """zero-cost returns + turnover for every (cadence, band, gross)."""
+CACHE = ROOT / "research" / "backtests" / ".cache_1017"
+
+
+def build(pname):
+    """zero-cost returns + turnover for every (cadence, band, gross); cached per panel.
+
+    The sandbox throttles background work, so each panel is computed in its own invocation.
+    """
+    px = PANELS[pname]()
+    print(f"PANEL {pname}: {px.shape[0]} x {px.shape[1]}  "
+          f"{px.index[0].date()} -> {px.index[-1].date()}")
     start = px.index[260]
     out = {}
     for b in BANDS:
@@ -94,8 +103,12 @@ def build(px):
             w = rules_v2_weights(px, band=b, gross=g)
             for f in CADENCES:
                 res = backtest(px, w, cost_bps=0.0, freq=f)
-                out[(f, b, g)] = (res["returns"].loc[start:], res["turnover"].loc[start:])
-    return start, out
+                out[(f, b, g)] = (res["returns"].loc[start:].astype(float),
+                                  res["turnover"].loc[start:].astype(float))
+    CACHE.mkdir(exist_ok=True)
+    with open(CACHE / f"{pname}.pkl", "wb") as fh:
+        pickle.dump(dict(books=out, spy=px["SPY"].pct_change().fillna(0.0).loc[start:]), fh)
+    print(f"cached {pname}: {len(out)} (cadence, band, gross) books")
 
 
 def at_cost(pair, c, sl=None):
@@ -108,13 +121,11 @@ def main():
     rows_live, rows_cnt, rows_r8, rows_keep = [], [], [], []
     panels = {}
 
-    for pname, loader in PANELS.items():
-        px = loader()
-        print(f"\nPANEL {pname}: {px.shape[0]} x {px.shape[1]}  "
-              f"{px.index[0].date()} -> {px.index[-1].date()}")
-        start, books = build(px)
-        spy = px["SPY"].pct_change().fillna(0.0).loc[start:]
-        panels[pname] = (books, spy, start)
+    for pname in PANELS:
+        with open(CACHE / f"{pname}.pkl", "rb") as fh:
+            P = pickle.load(fh)
+        books, spy = P["books"], P["spy"]
+        panels[pname] = (books, spy, None)
         spy_f, spy_i, spy_o = spy.values, spy.loc[:IS_END].values, spy.loc[OOS_START:].values
         base_w = books[("W",) + LIVE]                       # the live book = W, 0.03, 0.75
 
@@ -202,13 +213,13 @@ def main():
             print(f"         {where}")
 
     print("\n" + "#" * 110)
-    print("# C.  4b / 4a PASS COUNTS over the 15-book band x gross ladder, EVERY rung.")
+    print("# C.  4b / 4a PASS COUNTS over the 9-book band x gross ladder (3 bands x 3 gross), EVERY rung.")
     print("#" * 110)
     for p in PANELS:
-        print(f"\n--- {p}: 4b passes of 15 ---")
+        print(f"\n--- {p}: 4b passes of {len(BANDS)*len(GROSS)} ---")
         print(CNT[CNT.panel == p].pivot_table(index="cost", columns="cadence",
               values="n4b")[CADENCES].to_string())
-        print(f"--- {p}: 4a passes of 15 ---")
+        print(f"--- {p}: 4a passes of {len(BANDS)*len(GROSS)} ---")
         print(CNT[CNT.panel == p].pivot_table(index="cost", columns="cadence",
               values="n4a")[CADENCES].to_string())
 
@@ -238,4 +249,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    a = sys.argv[1] if len(sys.argv) > 1 else "REPORT"
+    if a == "REPORT":
+        main()
+    elif a == "ALL":
+        for n in PANELS:
+            build(n)
+        main()
+    else:
+        build(a)

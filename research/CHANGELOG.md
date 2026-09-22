@@ -7689,3 +7689,51 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   sits and negative everywhere else.  Ideas **2276** (the same question at the monthly cadence, where
   the stale-state window is four times longer) and **2280** (re-read any clock gain against idea 931's
   matched-turnover null) are filed as the two remaining live branches.
+
+## 2026-09-22 — lane cloud run 27 (two ideas, both CLOSED, neither a KEEP)
+
+**IDEA 1457 (paired-vs-marginal SE ruler) — ANSWERED / KILL OF THE CAPITAL CLAIM, DEFECT CONFIRMED AND SIZED.**
+Real books (RULES v2's band book over a 5-band x 3-gross ladder) on U56 / B136 / SMALL, every pairwise
+contrast scored under BOTH rulers from the SAME 1,000 circular-block draws, block length L in
+{5,10,21,63,126}.  (A) The marginal ruler is **3.52-4.32x wider on CAGR and 10.35-25.00x wider on Sharpe**
+at 15 of 15 (panel, L) cells — idea 1444's 9.1 / 10.8 / 11.6x is reproduced in kind, and the Sharpe
+blow-up is far larger than the CAGR one it was measured on.  (B) **1,282 of 2,946 marginal-MATCHED
+contrasts (43.5%) are DISTINGUISHABLE under the paired ruler; 0 flip back** (one-way by construction).
+By statistic: CAGR flips 62.5-78.1%; Sharpe flips 0% on B136, 8.6% on U56, 50.5-57.1% on SMALL.  So the
+record's "matched to within its own SE" verdicts ARE ruler artefacts at scale.  (C) **BUT NOTHING REACHES
+CAPITAL.**  Turned into a rule-8 chooser (shallowest IS MaxDD among books inside 2*SE of the IS Sharpe
+leader, chosen on 2009-2016, 2017-2026 read ONCE), the ruler moves the matched set from 15 books to 6-14
+and **moves the PICK at 0 of 15 (panel, L) cells** — the OOS triples are equal to four decimals (U56
+6.20% / 1.2798 / -7.99%; B136 5.22% / 1.1028 / -8.24%; SMALL 2.73% / 0.5868 / -9.90%), because shrinking
+the set never removes the shallowest-DD survivor.  (D) Neither pick clears 4b anywhere: **4b 0 of 120
+FULL and 0 of 120 OOS** over 4 cost rungs; 4a is 0 of 120 FULL and 40 of 120 OOS, all 40 on SMALL where
+the live baseline is weakest and the pick's OOS H2 Sharpe is 0.05-0.19 — a first-half artefact, not a book.
+**PUBLISHING NOTE EARNED (stated, not enacted):** a neutrality claim should name its SE basis; 43.5% of
+them change under the other one.  A VERDICT-level defect is not automatically a CAPITAL-level defect,
+and on this record it is not one.
+
+**IDEA 1017 (cadence argmax cost crossing) — ANSWERED / KILL, plus a RECORD DEFECT ON PROTOCOL RULE 2.**
+The live band book (0.03 / 0.75) at D / W / M / Q on a 20-rung cost ladder, three panels, cost applied
+EXACTLY rather than re-simulated.  (A) **Crossings: U56 W[0,40] -> M[50]; B136 D[0,7.5] -> W[9,20] ->
+M[25,50]; SMALL M[0,50].**  **Q is never the argmax at any rung on any panel**, so idea 1009's
+"D -> M -> Q" does not reproduce on a fine ladder.  (B) **10 bps sits at relative position 0.09 of W's
+plateau on B136 — 1.5 bps above the D->W inversion** — and is interior only on U56 (0.25 of [0,40]) and
+SMALL (0.20, no inversion at all).  On the 4b-pass-count criterion the B136 argmax is **NON-MONOTONE in
+cost** (D -> W -> D -> W) and 10 bps sits 2.5 bps below an inversion on both U56 and B136.  The 4a-count
+ladders are degenerate (0 passes at nearly every rung) and are reported as ties, not read as argmaxes.
+(C) **RULE 8:** the IS cadence chooser's own flip straddles the protocol rung (W->M between 7.5 and 9 bps
+on U56, between 15 and 17.5 on B136); at 10 bps it picks M on U56 and **LOSES to the shipped weekly
+default** (OOS 9.55% / 1.2245 / -14.38% vs 9.46% / 1.2770 / -12.05%), reproduces the default on B136, and
+on SMALL buys +0.0313 of Sharpe and +0.35 pp of CAGR for -2.90 pp of drawdown.  The record's chooser law
+holds on one more dial.  (D) **BOTH KEEP PATHS: 4a 0 of 240 FULL / 0 of 60 OOS; 4b 0 of 240 FULL / 0 of
+60 OOS.**  All 12 of the ladder's 4b passes at 10 bps sit at **gross 1.00** (8 U56, 4 B136, 0 SMALL),
+reproducing idea 2119 on a dial that is not a sizing dial.
+
+**RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched).**
+(1) No KEEP memo is filed from either idea.  (2) PROTOCOL rule 2's 10 bps convention should no longer be
+described as a safe interior choice: on B136 it is 1.5 bps from a cadence inversion and the 4b-count
+ladder there is non-monotone in cost, so any cadence verdict quoted at 10 bps on B136 should state the
+rung it is sensitive to.  (3) SURVIVORSHIP (rule 9): U56 / B136 are current-constituent lists held from
+2008 and SMALL is a current sub-$2B screen from 2010 (54 tickers with max_1d_move >= 1.0 dropped, 665
+kept), so absolute levels are optimistic in both runs; the ruler contrast and the crossing locations are
+same-tape, same-book and first-order immune, the pass counts are not.
