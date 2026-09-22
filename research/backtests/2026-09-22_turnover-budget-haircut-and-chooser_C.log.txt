@@ -1,0 +1,138 @@
+# Idea 2087 (lane C, 2026-09-22) — does the 1795 TURNOVER-BUDGET KEEP-candidate survive a POINT-IN-TIME-SHAPED ADMISSION HAIRCUT and a SECOND CHOOSER?
+# TUNED DIALS (2): HAIRCUT DEPTH d [0.05, 0.1, 0.2, 0.3]; CHOOSER SET ['IS_SHARPE', 'IS_LEGS', 'IS_CALMAR', 'IS_MINMARG', 'IS_CAGRSLACK', 'IS_DD', 'CELL_ALPHA'].
+# REPORTED, NOT TUNED: t [0.08, 0.1, 0.12, 0.16, 0.2] x B [0.5, 1.0, 1.5, 2.0, 3.0, 5.0] (1795's own ladders), cost [0, 10, 25, 50] bps, trade cadence M, panel U56 (candidate's own) + B136 (replication), sigma FIXED at (L=20, d=0), budget window 252d, warm-up 260, IS <= 2016-12-31, OOS >= 2017-01-01 read ONCE.
+# published cell under test: U56, T=M, t=0.12, B=5.0
+
+## U56: 56 columns (55 single names + SPY), 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   SPY bars  FULL 15.14% / 0.8851 / -33.72%   OOS 15.29% / 0.8751 / -33.72%
+   4b bars   DD cap -20.23% (FULL), -20.23% (OOS); CAGR floor 10.60% (FULL), 10.70% (OOS)
+   501 panels to price (401 keep-SPY incl. the undamaged one, 100 SPY-droppable control)
+   priced 501 panels x 30 cells x 4 cost rungs
+
+## B136: 136 columns (135 single names + SPY), 2008-01-02 -> 2026-09-18 (4708 rows, 18.7y); book window from 2009-01-13
+   SPY bars  FULL 15.12% / 0.8844 / -33.72%   OOS 15.26% / 0.8737 / -33.72%
+   4b bars   DD cap -20.23% (FULL), -20.23% (OOS); CAGR floor 10.59% (FULL), 10.68% (OOS)
+   151 panels to price (121 keep-SPY incl. the undamaged one, 30 SPY-droppable control)
+   priced 151 panels x 30 cells x 4 cost rungs
+
+## GATES
+  GATE PASS  G0 sample >= 10y: 18.7y   (target >= 10)
+  GATE PASS  G1 d=0 reproduces the committed 1795 candidate (FULL + OOS, U56 t=0.12 B=5.0): max|d| = 1.210e-04   (target < 1e-3)
+  GATE PASS  G2 the d=0 draw drops NOTHING (identity haircut): 0 names dropped   (target == 0)
+  GATE PASS  G3 gross never exceeds 1.00 (no leverage, any draw): 1.000000   (target <= 1.0)
+  GATE PASS  G4 every haircut draw is a DISTINCT name set: U56 d=0.05: 100/100 unique, 3 dropped; U56 d=0.10: 100/100 unique, 6 dropped; U56 d=0.20: 100/100 unique, 11 dropped; U56 d=0.30: 100/100 unique, 16 dropped; B136 d=0.05: 30/30 unique, 7 dropped; B136 d=0.10: 30/30 unique, 14 dropped; B136 d=0.20: 30/30 unique, 27 dropped; B136 d=0.30: 30/30 unique, 40 dropped   (target all unique)
+  GATE PASS  G5 all four cost rungs scored off ONE gross run (turnover identical across rungs): 1 distinct turn_py over 4 rungs   (target == 1)
+
+## ARM A — DOES THE PUBLISHED CELL SURVIVE THE ADMISSION HAIRCUT?
+   (U56, T=M, t=0.12, B=5.0, 10 bps, 4b FULL+OOS)
+   U56 d=0.00 (undamaged, n=56): FULL 14.07% / 1.2509 / -15.90%   OOS 15.40% / 1.3570 / -15.90%   4b=1 4a=0  bind=none
+   U56 d=0.05 keepSPY  n=100 draws, 53 names: 4b FULL+OOS 1.000 (100/100); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 14.02% [13.50%,14.44%], MaxDD -16.11% [-16.83%,-15.54%], OOS S 1.3473
+   U56 d=0.10 keepSPY  n=100 draws, 50 names: 4b FULL+OOS 1.000 (100/100); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.95% [13.14%,14.57%], MaxDD -16.17% [-17.19%,-15.22%], OOS S 1.3365
+   U56 d=0.20 keepSPY  n=100 draws, 45 names: 4b FULL+OOS 1.000 (100/100); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.83% [12.73%,14.61%], MaxDD -16.31% [-17.85%,-14.75%], OOS S 1.3245
+   U56 d=0.30 keepSPY  n=100 draws, 40 names: 4b FULL+OOS 1.000 (100/100); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.80% [12.59%,15.16%], MaxDD -16.26% [-17.93%,-14.44%], OOS S 1.3175
+   U56 d=0.20 dropSPY  n=100 draws, 45 names: 4b FULL+OOS 1.000 (100/100); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.87% [12.71%,14.75%], MaxDD -16.26% [-17.66%,-14.79%], OOS S 1.3281  [SPY-droppable control]
+   B136 d=0.00 (undamaged, n=136): FULL 13.87% / 1.2271 / -14.48%   OOS 14.38% / 1.2868 / -14.48%   4b=1 4a=0  bind=none
+   B136 d=0.05 keepSPY  n= 30 draws, 129 names: 4b FULL+OOS 1.000 (30/30); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.86% [13.58%,14.05%], MaxDD -15.21% [-16.15%,-14.24%], OOS S 1.2815
+   B136 d=0.10 keepSPY  n= 30 draws, 122 names: 4b FULL+OOS 1.000 (30/30); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.78% [13.46%,14.14%], MaxDD -15.03% [-16.11%,-14.15%], OOS S 1.2744
+   B136 d=0.20 keepSPY  n= 30 draws, 109 names: 4b FULL+OOS 1.000 (30/30); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.93% [13.55%,14.36%], MaxDD -15.29% [-16.47%,-14.26%], OOS S 1.2814
+   B136 d=0.30 keepSPY  n= 30 draws, 96 names: 4b FULL+OOS 1.000 (30/30); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.65% [12.97%,14.33%], MaxDD -15.12% [-16.42%,-13.94%], OOS S 1.2625
+   B136 d=0.20 dropSPY  n= 30 draws, 109 names: 4b FULL+OOS 1.000 (30/30); 4b FULL 1.000, 4b OOS 1.000, 4a 0.000; CAGR 13.81% [13.37%,14.17%], MaxDD -15.10% [-16.30%,-14.17%], OOS S 1.2708  [SPY-droppable control]
+   V1 (cell clears 4b in > half of draws at EVERY depth d <= 0.20): TRIGGERED
+
+## ARM B — RULE-8 WALK-FORWARD: seven legal IS-only choosers, 2017-2026 read ONCE
+   d = 0.00, the UNDAMAGED panel (this is the 'second chooser' question, V2):
+     U56   IS_SHARPE     pick t=0.16|B=5.0     IS S=1.1749 legs=3  ->  OOS  16.63% / 1.2728 / -19.77%   4b_full=1 4b_oos=1 4b=1 4a=0  pub_cell=0  bind=none
+     U56   IS_LEGS       pick t=0.12|B=5.0     IS S=1.1219 legs=4  ->  OOS  15.40% / 1.3570 / -15.90%   4b_full=1 4b_oos=1 4b=1 4a=0  pub_cell=1  bind=none
+     U56   IS_CALMAR     pick t=0.10|B=3.0     IS S=1.0410 legs=4  ->  OOS  14.54% / 1.3289 / -18.12%   4b_full=1 4b_oos=1 4b=1 4a=0  pub_cell=0  bind=none
+     U56   IS_MINMARG    pick t=0.10|B=1.5     IS S=1.0594 legs=4  ->  OOS  13.79% / 1.1322 / -23.84%   4b_full=0 4b_oos=0 4b=0 4a=0  pub_cell=0  bind=L4_DD
+     U56   IS_CAGRSLACK  pick t=0.20|B=5.0     IS S=1.1444 legs=3  ->  OOS  17.44% / 1.2454 / -19.98%   4b_full=1 4b_oos=1 4b=1 4a=0  pub_cell=0  bind=none
+     U56   IS_DD         pick t=0.16|B=0.5     IS S=1.0897 legs=3  ->  OOS  15.18% / 1.1207 / -24.29%   4b_full=0 4b_oos=0 4b=0 4a=0  pub_cell=0  bind=L4_DD
+     U56   CELL_ALPHA    pick t=0.08|B=0.5     IS S=1.0291 legs=2  ->  OOS  17.77% / 1.1474 / -27.77%   4b_full=0 4b_oos=0 4b=0 4a=0  pub_cell=0  bind=L4_DD
+     B136  IS_SHARPE     pick t=0.20|B=5.0     IS S=1.2203 legs=3  ->  OOS  16.78% / 1.2073 / -19.20%   4b_full=1 4b_oos=1 4b=1 4a=0  pub_cell=0  bind=none
+     B136  IS_LEGS       pick t=0.08|B=3.0     IS S=1.1452 legs=4  ->  OOS  11.88% / 1.3288 / -12.07%   4b_full=1 4b_oos=1 4b=1 4a=1  pub_cell=0  bind=none
+     B136  IS_CALMAR     pick t=0.08|B=3.0     IS S=1.1452 legs=4  ->  OOS  11.88% / 1.3288 / -12.07%   4b_full=1 4b_oos=1 4b=1 4a=1  pub_cell=0  bind=none
+     B136  IS_MINMARG    pick t=0.12|B=0.5     IS S=1.1352 legs=4  ->  OOS  17.97% / 1.0805 / -32.51%   4b_full=0 4b_oos=0 4b=0 4a=0  pub_cell=0  bind=L4_DD
+     B136  IS_CAGRSLACK  pick t=0.20|B=5.0     IS S=1.2203 legs=3  ->  OOS  16.78% / 1.2073 / -19.20%   4b_full=1 4b_oos=1 4b=1 4a=0  pub_cell=0  bind=none
+     B136  IS_DD         pick t=0.16|B=0.5     IS S=1.1242 legs=3  ->  OOS  14.94% / 1.0643 / -27.81%   4b_full=0 4b_oos=0 4b=0 4a=0  pub_cell=0  bind=L4_DD
+     B136  CELL_ALPHA    pick t=0.08|B=0.5     IS S=1.0925 legs=3  ->  OOS  16.22% / 1.0517 / -30.63%   4b_full=0 4b_oos=0 4b=0 4a=0  pub_cell=0  bind=L4_DD
+   V2 (> 1 of 7 choosers reaches a 4b FULL+OOS cell on the UNDAMAGED U56 panel): 4 reach -> TRIGGERED
+
+   Under the haircut, per chooser (keep-SPY arms, all depths pooled):
+     U56   IS_SHARPE     4b 0.680 (272/400)  4b_full 0.680  4b_oos 0.680  4a 0.000  lands on the published cell 0.000  mean OOS 16.75%/1.2694/-19.61%
+     U56   IS_LEGS       4b 0.785 (314/400)  4b_full 0.785  4b_oos 0.785  4a 0.000  lands on the published cell 0.550  mean OOS 15.18%/1.2769/-18.12%
+     U56   IS_CALMAR     4b 0.458 (183/400)  4b_full 0.458  4b_oos 0.507  4a 0.000  lands on the published cell 0.025  mean OOS 14.98%/1.1865/-21.49%
+     U56   IS_MINMARG    4b 0.708 (283/400)  4b_full 0.708  4b_oos 0.708  4a 0.000  lands on the published cell 0.087  mean OOS 14.57%/1.2377/-18.80%
+     U56   IS_CAGRSLACK  4b 0.578 (231/400)  4b_full 0.578  4b_oos 0.578  4a 0.000  lands on the published cell 0.000  mean OOS 17.42%/1.2396/-20.22%
+     U56   IS_DD         4b 0.058 (23/400)  4b_full 0.058  4b_oos 0.100  4a 0.005  lands on the published cell 0.000  mean OOS 15.62%/1.1286/-24.91%
+     U56   CELL_ALPHA    4b 0.005 (2/400)  4b_full 0.005  4b_oos 0.007  4a 0.000  lands on the published cell 0.000  mean OOS 17.31%/1.1191/-28.01%
+     B136  IS_SHARPE     4b 0.983 (118/120)  4b_full 0.983  4b_oos 0.983  4a 0.000  lands on the published cell 0.000  mean OOS 16.64%/1.2123/-18.93%
+     B136  IS_LEGS       4b 0.300 (36/120)  4b_full 0.300  4b_oos 0.300  4a 0.067  lands on the published cell 0.050  mean OOS 15.20%/1.1349/-25.00%
+     B136  IS_CALMAR     4b 0.500 (60/120)  4b_full 0.500  4b_oos 0.500  4a 0.167  lands on the published cell 0.000  mean OOS 14.56%/1.1802/-21.76%
+     B136  IS_MINMARG    4b 0.517 (62/120)  4b_full 0.517  4b_oos 0.517  4a 0.175  lands on the published cell 0.000  mean OOS 14.43%/1.1766/-20.72%
+     B136  IS_CAGRSLACK  4b 0.950 (114/120)  4b_full 0.950  4b_oos 0.950  4a 0.000  lands on the published cell 0.000  mean OOS 16.73%/1.2013/-19.41%
+     B136  IS_DD         4b 0.033 (4/120)  4b_full 0.033  4b_oos 0.042  4a 0.017  lands on the published cell 0.000  mean OOS 14.62%/1.0757/-26.56%
+     B136  CELL_ALPHA    4b 0.008 (1/120)  4b_full 0.008  4b_oos 0.008  4a 0.000  lands on the published cell 0.000  mean OOS 15.89%/1.0700/-29.38%
+
+   Under the haircut, per depth (U56, keep-SPY, all seven choosers pooled):
+     d=0.05  4b 0.499 (349/700)  4a 0.000  published-cell rate 0.116
+     d=0.10  4b 0.496 (347/700)  4a 0.000  published-cell rate 0.096
+     d=0.20  4b 0.446 (312/700)  4a 0.000  published-cell rate 0.086
+     d=0.30  4b 0.429 (300/700)  4a 0.003  published-cell rate 0.081
+
+   V3 (pooled (draw, chooser) 4b FULL+OOS share > 0.50): 0.4671 (1308/2800) -> NOT TRIGGERED
+   V4 (that share exceeds the committed zero-signal RAND base rate 0.0360): -> TRIGGERED
+
+## V5 — ONE EXTRA DAY OF EXECUTION LAG (decided t, applied t+2), published cell
+   U56 d=0.00: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   U56 d=0.05: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   U56 d=0.10: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   U56 d=0.20: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   U56 d=0.30: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   B136 d=0.00: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   B136 d=0.05: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   B136 d=0.10: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   B136 d=0.20: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   B136 d=0.30: 4b at t+1 1.000, at t+2 1.000; keeps its verdict 1.000
+   V5: TRIGGERED
+
+## REPORTED, NOT TUNED — THE COST LADDER on the published cell (U56, keep-SPY)
+    0 bps  d=0.00  4b 1.000 (1/1)  CAGR 14.45%  MaxDD -15.50%  OOS S 1.3866
+    0 bps  d=0.05  4b 1.000 (100/100)  CAGR 14.40%  MaxDD -15.71%  OOS S 1.3770
+    0 bps  d=0.10  4b 1.000 (100/100)  CAGR 14.33%  MaxDD -15.77%  OOS S 1.3663
+    0 bps  d=0.20  4b 1.000 (100/100)  CAGR 14.21%  MaxDD -15.92%  OOS S 1.3542
+    0 bps  d=0.30  4b 1.000 (100/100)  CAGR 14.19%  MaxDD -15.87%  OOS S 1.3473
+   10 bps  d=0.00  4b 1.000 (1/1)  CAGR 14.07%  MaxDD -15.90%  OOS S 1.3570
+   10 bps  d=0.05  4b 1.000 (100/100)  CAGR 14.02%  MaxDD -16.11%  OOS S 1.3473
+   10 bps  d=0.10  4b 1.000 (100/100)  CAGR 13.95%  MaxDD -16.17%  OOS S 1.3365
+   10 bps  d=0.20  4b 1.000 (100/100)  CAGR 13.83%  MaxDD -16.31%  OOS S 1.3245
+   10 bps  d=0.30  4b 1.000 (100/100)  CAGR 13.80%  MaxDD -16.26%  OOS S 1.3175
+   25 bps  d=0.00  4b 1.000 (1/1)  CAGR 13.51%  MaxDD -16.50%  OOS S 1.3126
+   25 bps  d=0.05  4b 1.000 (100/100)  CAGR 13.46%  MaxDD -16.70%  OOS S 1.3029
+   25 bps  d=0.10  4b 1.000 (100/100)  CAGR 13.38%  MaxDD -16.76%  OOS S 1.2917
+   25 bps  d=0.20  4b 1.000 (100/100)  CAGR 13.26%  MaxDD -16.90%  OOS S 1.2798
+   25 bps  d=0.30  4b 1.000 (100/100)  CAGR 13.23%  MaxDD -16.84%  OOS S 1.2728
+   50 bps  d=0.00  4b 1.000 (1/1)  CAGR 12.57%  MaxDD -17.48%  OOS S 1.2385
+   50 bps  d=0.05  4b 1.000 (100/100)  CAGR 12.52%  MaxDD -17.68%  OOS S 1.2287
+   50 bps  d=0.10  4b 1.000 (100/100)  CAGR 12.43%  MaxDD -17.73%  OOS S 1.2171
+   50 bps  d=0.20  4b 1.000 (100/100)  CAGR 12.31%  MaxDD -17.86%  OOS S 1.2052
+   50 bps  d=0.30  4b 0.950 (95/100)  CAGR 12.29%  MaxDD -17.81%  OOS S 1.1982
+
+## WHOLE-GRID 4b / 4a CENSUS at 10 bps (every published cell, every draw)
+   U56 d=0.00: 4b FULL+OOS 0.4667 (14/30 cells), 4a 0.0000, binding leg when it fails: {'L4_DD': 14, 'L5_CAGR': 2}
+   U56 d=0.05: 4b FULL+OOS 0.4413 (1324/3000 cells), 4a 0.0000, binding leg when it fails: {'L4_DD': 1456, 'L5_CAGR': 187, 'L4_DD|L5_CAGR': 14}
+   U56 d=0.10: 4b FULL+OOS 0.4347 (1304/3000 cells), 4a 0.0000, binding leg when it fails: {'L4_DD': 1467, 'L5_CAGR': 188, 'L2_H2|L4_DD': 12}
+   U56 d=0.20: 4b FULL+OOS 0.4287 (1286/3000 cells), 4a 0.0000, binding leg when it fails: {'L4_DD': 1444, 'L5_CAGR': 204, 'L4_DD|L5_CAGR': 22}
+   U56 d=0.30: 4b FULL+OOS 0.4130 (1239/3000 cells), 4a 0.0017, binding leg when it fails: {'L4_DD': 1478, 'L5_CAGR': 184, 'L4_DD|L5_CAGR': 22}
+   B136 d=0.00: 4b FULL+OOS 0.5667 (17/30 cells), 4a 0.0333, binding leg when it fails: {'L4_DD': 11, 'L4_DD|L5_CAGR': 1, 'L5_CAGR': 1}
+   B136 d=0.05: 4b FULL+OOS 0.5344 (481/900 cells), 4a 0.0244, binding leg when it fails: {'L4_DD': 365, 'L5_CAGR': 42, 'L4_DD|L5_CAGR': 9}
+   B136 d=0.10: 4b FULL+OOS 0.5122 (461/900 cells), 4a 0.0144, binding leg when it fails: {'L4_DD': 370, 'L5_CAGR': 44, 'L4_DD|L5_CAGR': 13}
+   B136 d=0.20: 4b FULL+OOS 0.5044 (454/900 cells), 4a 0.0200, binding leg when it fails: {'L4_DD': 384, 'L5_CAGR': 52, 'L2_H2|L3_OOS|L4_DD|L5_CAGR': 4}
+   B136 d=0.30: 4b FULL+OOS 0.5156 (464/900 cells), 4a 0.0200, binding leg when it fails: {'L4_DD': 369, 'L5_CAGR': 49, 'L2_H2|L4_DD': 6}
+
+## VERDICTS
+   V1 published cell survives the haircut at every d <= 0.20 ... YES
+   V2 more than one chooser reaches it on the clean panel ..... YES
+   V3 pooled (draw, chooser) 4b share > 0.50 .................. NO  (0.4671)
+   V4 that share beats the zero-signal RAND base rate ......... YES
+   V5 the cell keeps its 4b verdict at t+2 .................... YES
+   CAPITAL: the 1795 candidate is DOWNGRADED (PARK) - see the failing rule above under admission haircuts and a widened chooser set.
