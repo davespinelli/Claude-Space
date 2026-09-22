@@ -7186,3 +7186,87 @@ ENACTED** (rule 6: Sunday review only) — exact wording in
   capital** — 0.50 pp of the live book's 1.98 pp shortfall is an accounting convention. A Sunday
   review adopting that note should expect it to move CAGR-floor margins only, never Sharpe or DD
   rankings, and should expect the 25/50 bps rungs to take the gain straight back in turnover.
+
+### 2026-09-22 — research run, lane B, idea 948 (gross-dial Sharpe neutrality band) — ANSWERED = PARTIAL, no rules change
+
+  Script `research/backtests/2026-09-22_gross-sharpe-neutrality-band_B.py` (+ .grid.csv / .pairs.csv
+  / .gates.csv / .walkforward.csv / .console.txt).  Gross ladder **0.25 / 0.50 / 0.75 / 1.00 / 1.25
+  / 1.50** on the record's own committed books, weekly and monthly, t+1, at 0/10/25/50 bps, with a
+  RAW arm (the engine's free 0% borrow, the record's convention) and a FIN arm (idea 997's 200
+  bps/yr on the levered fraction).  Two tuned dials and no more: GROSS LADDER and CLAIM (book) SET;
+  panel, cadence, cost and arm are reported, never selected on.  **1,056 published cells, 2,640
+  pairwise gross moves, 7 of 7 gates exact.**
+
+  **GATES.**  G1 cost reconstruction from the turnover series == `engine.backtest` at **0.000e+00**
+  on 3 of 3 panels, so one simulation serves all four rungs exactly.  G2 the dial is a pure scalar
+  on target weights (**8.7e-19 .. 3.5e-18**).  G3a the live RULES v2 book's OOS leg reproduces
+  CHANGELOG's 7.85% / 1.1017 / -12.24% to **2.7e-05**; G3b the record's only 4a+4b book monthly
+  reproduces 12.06% / 1.3171 / -10.35% (halves 1.3256/1.3109, OOS 12.71% / 1.3591 / -10.35%) to
+  **3.6e-05**; G3c the same book weekly reproduces the Sunday review's idea-142 re-run to
+  **3.8e-04**.  G6 **`RULESV2` IS `EWall` under band3-dg** — max|dSharpe| **0.000e+00** over 288
+  matched cells, so the four-label claim set holds **three distinct books**.  G7 the live book's
+  own annual turnover reads **1.7736x** against the Sunday review's committed 1.77x.
+
+  **(A) THE ANSWER IS PARTIAL: idea 945's +/-0.005 IS NOT A RESOLUTION LIMIT, IT IS A CADENCE-AND-
+  FINANCING ARTEFACT OF ITS OWN SETUP.**  Over all 2,640 moves **40.9%** exceed the band (median
+  |dSharpe| 0.00386, max 0.05594).  But the exceedances are structured: **RAW / WEEKLY — the live
+  book's own cadence — is 11.2% over the band at a median of 0.00104**, against RAW / MONTHLY 48.8%
+  (median 0.00478) and the financed arm 51.7% (max 0.05594).  De-duplicated over the three distinct
+  books the rate is 46.7%, and by book **RULESV2 25.3% vs S3-50 59.6% vs TOP20 59.6%** — the band
+  holds on the low-turnover book and fails on the two high-turnover ones.  A published gross-Sharpe
+  gain in the record is safely called noise **only if it was measured weekly, unlevered, on a
+  low-turnover book**; every other gross claim sits outside the band and must be read as real,
+  however small.
+
+  **(B) MECHANISM — THE WHOLE EFFECT IS A BETWEEN-REBALANCE NAV-RENORMALISATION ARTEFACT.**  Target
+  weights scale exactly with gross and so do both legs of the net return (the gross return and
+  `bps * turnover`), so under DAILY rebalancing the net path at gross g is exactly (g/0.75)x the
+  path at 0.75: **G5a max|r_g - (g/0.75) r_0.75| = 6.939e-18 on 3 of 3 panels — the dial cannot move
+  Sharpe at all.**  `engine.backtest` drifts between rebalances and renormalises the held vector by
+  TOTAL NAV including cash (`tot = growth.sum() + (1 - cur.sum())`), so the cash cushion damps the
+  drift below gross 1 and amplifies it above, where it is a free 0% borrow.  **G5b: the same
+  deviation is 1.2e-03 / 3.5e-03 / 3.7e-03 at W and 3.2e-03 / 4.9e-03 / 6.3e-03 at M — non-zero and
+  LARGER at the slower clock on 3 of 3 panels**, which is what the artefact predicts and what the
+  ladder spread shows (RAW/W 0.00308 median, RAW/M 0.00997, FIN/M 0.01873, FIN/W 0.02381).  **What
+  the dial moves instead:** median |dSharpe| 0.00386 against median |dCAGR| **5.62 pp** and median
+  |dMaxDD| **10.19 pp** — **26.4 pp of drawdown per unit of Sharpe**, with dCAGR > 0 and dMaxDD < 0
+  in **100.0% of 2,640 moves**.  Gross is a pure sizing dial that buys return with drawdown one for
+  one, and a Sharpe-based reading of it is reading the residue.
+
+  **(C) BOTH KEEP PATHS — NO NEW KEEP.  4a AND 4b ARE OPPOSED ON THIS DIAL AND 0.75 IS THE ONLY RUNG
+  WHERE THEY OVERLAP.**  4a passes **124 of 1,056**, monotone falling in gross: **56 / 44 / 24 / 0 /
+  0 / 0**.  4b passes **166 of 1,056**, running the other way: **0 / 10 / 28 / 62 / 58 / 8**.
+  **BOTH: 22 of 1,056, and every one is gross 0.75 on the already-committed `S3-50 + band3-rw`
+  book** (u56 and broad) — the ladder produces no new both-paths book at any rung.  Binding leg over
+  the 890 4b FAILs: **CAGR sole 296, DD sole 215**, the rest joint.
+
+  **(D) RULE 8, 2017-2026 READ ONCE — KILL OF THE IS-SHARPE CHOOSER ON THE GROSS DIAL.**  Gross
+  picked by argmax IS Sharpe on 2009-2016 alone, per (panel, book, cadence, cost, arm) = 176
+  families.  The IS-Sharpe spread across the six rungs is **0.01471 median / 0.05653 max**, with a
+  median of **3 of 6 rungs tied with the argmax to within 0.005** — and the pick is not
+  directionless: **1.50 at 80 of 176, 1.00 at 72, and the committed default 0.75 at 2 of 176
+  (1.1%), BELOW the 16.7% a uniform draw over six rungs would give.**  Out of sample the pick buys
+  **+0.00148 of median Sharpe (better in 70.5% of families) and +4.17 pp of median CAGR for -10.09
+  pp of median MaxDD, deeper in 97.7% of families**; it lifts 4b FULL 28 -> 41 and 4b OOS 28 -> 43
+  and **destroys 4a outright, 24 -> 0**.  This is idea 953's law at its worst: the chooser reads a
+  dial that is nearly flat in its objective and decisive in the leg it ignores.
+
+  **WHAT THIS RUN CANNOT DO (stated, not repaired).**  Six gross rungs, two cadences, one gate
+  (band3), one band width (3%), one execution delay (t+1), one blend for the sleeve book (0.50), one
+  financing rate (200 bps/yr flat).  Gross > 1.00 is LEVERAGE, admitted only because idea 948 names
+  the 0.25..1.50 ladder; arm RAW prices it at the engine's free 0% borrow and is reported for
+  continuity with the record, **not recommended**.  The NAV-renormalisation finding is a property of
+  `engine.backtest`'s drift convention, which is the record's own convention; it is not a claim
+  about how a real book drifts under a different cash accounting.  **SURVIVORSHIP (rule 9):** u56 /
+  broad / small are current-constituent lists, so every absolute CAGR level is optimistic and both
+  4b bars are easier than on a point-in-time panel; the gross CONTRASTS are same-tape / same-names
+  and first-order immune, the pass counts are not.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched).**  (1) No KEEP memo is filed: the 22 both-paths cells are the incumbent book at its
+  committed gross, already disqualified by the 2026-09-20 Sunday review on turnover.  (2) A
+  publishing note is earned and stated, not enacted: **a gross-Sharpe gain should be published with
+  its CADENCE, its FINANCING arm and its book's TURNOVER, because those three fix the resolution,
+  and the record's habit of quoting one number against idea 945's band is only safe in the
+  weekly / unlevered / low-turnover corner.**  (3) The gross dial should never be chosen by IS
+  Sharpe: on this grid that chooser costs 24 of 24 4a passes and 10 pp of out-of-sample drawdown.
