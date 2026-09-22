@@ -1,21 +1,21 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-09-22 · EDGAR form indexes, last 45 days · 159 tender filings → 123 distinct offers, of which 12 are common-stock self-tenders · 7 carry odd-lot priority (4 in common stock)._
+_Generated 2026-09-22 · EDGAR form indexes, last 45 days · 161 tender filings → 125 distinct offers, of which 12 are common-stock self-tenders · 7 carry odd-lot priority (4 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| GDEV | GDEV Inc. | Fixed price | $11.03 | $11.47 | -3.8% | $-44 | 2026-09-28 | 6 | no | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1848739/000110465926103543/0001104659-26-103543-index.htm) |
+| GDEV | GDEV Inc. | Fixed price | $11.03 | $11.27 | -2.1% | $-24 | 2026-09-28 | 6 | no | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1848739/000110465926103543/0001104659-26-103543-index.htm) |
 | — | Highlands REIT, Inc. | Fixed price | $0.2000 | n/a | n/a | n/a | 2026-09-29 | 7 | yes | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1661458/000110465926104051/0001104659-26-104051-index.htm) |
 | ABUS | Arbutus Biopharma Corp | Dutch auction | $5.00–$5.75 | $5.01 | -0.2%/+14.8% | $-1/$73 | 2026-09-29 | 7 | yes | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1447028/000110465926100002/0001104659-26-100002-index.htm) |
 | CLYD | BEACON TOPCO, INC. | not found | not found | n/a | n/a | n/a | 2026-09-29 | 7 | yes | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2094256/000110465926107741/0001104659-26-107741-index.htm) |
 | — | VINEBROOK HOMES TRUST, INC. | Fixed price | $33.00 | n/a | n/a | n/a | 2026-10-05 | 13 | no | no listed ticker (non-traded?) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1755755/000143774926029656/0001437749-26-029656-index.htm) |
-| NFJ | Virtus Dividend, Interest & Premium St | Fixed price | $15.67 | $15.33 | +2.2% | $34 | 2026-10-05 | 13 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1260563/000119312526377910/0001193125-26-377910-index.htm) |
-| HERZ | Herzfeld Credit Income Fund, Inc | Fixed price | $19.13 | $15.64 | +22.3% | $346 | 2026-10-15 | 23 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/880406/000165495426008429/0001654954-26-008429-index.htm) |
-| XFLT | XAI Floating Rate & Alternative Income | Fixed price | $0.2500 | $19.57 | -98.7% | $-1,913 | 2026-10-19 | 27 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1703079/000121390026101507/0001213900-26-101507-index.htm) |
-| PRIF-PD | Priority Income Fund, Inc. | Fixed price | $3.15 | $24.96 | -87.4% | $-2,159 | 2026-10-30 | 38 | yes | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1554625/000155462526000027/0001554625-26-000027-index.htm) |
-| MDT | Medtronic plc | not found | not found | $92.13 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1613103/000162828026061683/0001628280-26-061683-index.htm) |
+| NFJ | Virtus Dividend, Interest & Premium St | Fixed price | $15.67 | $15.23 | +2.9% | $44 | 2026-10-05 | 13 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1260563/000119312526377910/0001193125-26-377910-index.htm) |
+| HERZ | Herzfeld Credit Income Fund, Inc | Fixed price | $19.13 | $15.77 | +21.3% | $332 | 2026-10-15 | 23 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/880406/000165495426008429/0001654954-26-008429-index.htm) |
+| XFLT | XAI Floating Rate & Alternative Income | Fixed price | $0.2500 | $19.51 | -98.7% | $-1,907 | 2026-10-19 | 27 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1703079/000121390026101507/0001213900-26-101507-index.htm) |
+| PRIF-PD | Priority Income Fund, Inc. | Fixed price | $3.15 | $25.34 | -87.6% | $-2,197 | 2026-10-30 | 38 | yes | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1554625/000155462526000027/0001554625-26-000027-index.htm) |
+| MDT | Medtronic plc | not found | not found | $90.77 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1613103/000162828026061683/0001628280-26-061683-index.htm) |
 
 ### Odd-lot language, quoted
 
@@ -120,6 +120,7 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | 83 Investment Group Income Fund | fund/BDC repurchase (NAV) | not found | 2026-10-13 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2036029/000158064226006274/0001580642-26-006274-index.htm) |
 | — | Coatue Innovative Strategies Fund | fund/BDC repurchase (NAV) | not found | 2026-10-14 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2044519/000110465926108300/0001104659-26-108300-index.htm) |
 | — | KKR Real Estate Select Trust Inc. | fund/BDC repurchase (NAV) | $27.00 | 2026-10-16 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1803958/000119312526394262/0001193125-26-394262-index.htm) |
+| — | Carlyle Credit Solutions, Inc. | fund/BDC repurchase (NAV) | $18.01 | 2026-10-19 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1702510/000170251026000098/0001702510-26-000098-index.htm) |
 | — | Crestline Lending Solutions, LLC | fund/BDC repurchase (NAV) | not found | 2026-10-20 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2035713/000162828026062749/0001628280-26-062749-index.htm) |
 | — | FT Vest Hedged Equity Income Fund: Ser | fund/BDC repurchase (NAV) | $23.91 | 2026-10-20 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2069247/000110465926108822/0001104659-26-108822-index.htm) |
 | — | FT Vest Total Return Income Fund: Seri | fund/BDC repurchase (NAV) | $23.10 | 2026-10-20 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2069248/000110465926108773/0001104659-26-108773-index.htm) |
@@ -142,6 +143,7 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | PARTNERS GROUP NEXT GENERATION INFRAST | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1989393/000139834426015612/0001398344-26-015612-index.htm) |
 | — | Partners Group Growth, LLC | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1991706/000139834426015609/0001398344-26-015609-index.htm) |
 | — | SEI Structured Credit Fund, LP | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1407736/000139834426014339/0001398344-26-014339-index.htm) |
+| — | SKYBRIDGE OPPORTUNITY FUND | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1181848/000119312526396639/0001193125-26-396639-index.htm) |
 | — | StepStone Private Markets | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1789470/000119312526343837/0001193125-26-343837-index.htm) |
 | UTMD | UTAH MEDICAL PRODUCTS INC | pre-commencement (SC TO-C) | $75.00 | not found | unclear | — | [SC TO-C](https://www.sec.gov/Archives/edgar/data/706698/000109690626001373/0001096906-26-001373-index.htm) |
 
