@@ -1,0 +1,140 @@
+====================================================================================================
+Idea 983 — is the 4b DD leg's CADENCE GRADIENT a DRIFT fact or a REBALANCE-COUNT fact?
+  2026-09-22  lane cloud   controls ['DRIFT', 'NODRIFT_G', 'NODRIFT_W']   ladder ['D', 'W', 'M', 'Q']   rungs [0.0, 10.0, 25.0, 50.0]
+====================================================================================================
+  SMALL: dropped 54 tickers with max_1d_move >= 1.0; 665 names remain
+  U56      55 names  2008-01-02..2026-09-18  17.7y
+  B136    135 names  2008-01-02..2026-09-18  17.7y
+  SMALL   665 names  2010-01-04..2026-09-18  15.6y
+  GATE PASS  G4 sample >= 10y on every panel: U56 17.7y, B136 17.7y, SMALL 15.6y (bar >= 10y)  — PROTOCOL rule 1
+  GATE PASS  G0 offset_mask(.,0) == engine.rebalance_mask: D/W/M/Q all equal (bar identical)  — phase 0 IS the engine's own schedule
+  GATE PASS  G2 BAND03@0.75 == baseline.rules_v2_weights: 0.000e+00 (bar < 1e-12)  — the book set nests the live rules
+  GATE PASS  G1 DRIFT runner == engine.backtest: 6.939e-18 over the 4706 finite engine rows (2 rows where engine.backtest itself returns NaN) (bar < 1e-12)  — the inert rung reproduces the live engine elementwise
+
+====================================================================================================
+(B) THE GRID — every (panel, book, gross, cadence, phase, CONTROL) at 4 cost rungs
+====================================================================================================
+  U56    D  1 phases x 10 book-gross x 3 controls x 4 rungs done  [     3s]
+  U56    W  5 phases x 10 book-gross x 3 controls x 4 rungs done  [     4s]
+  U56    M  21 phases x 10 book-gross x 3 controls x 4 rungs done  [    11s]
+  U56    Q  63 phases x 10 book-gross x 3 controls x 4 rungs done  [    32s]
+  B136   D  1 phases x 10 book-gross x 3 controls x 4 rungs done  [    35s]
+  B136   W  5 phases x 10 book-gross x 3 controls x 4 rungs done  [    39s]
+  B136   M  21 phases x 10 book-gross x 3 controls x 4 rungs done  [    53s]
+  B136   Q  63 phases x 10 book-gross x 3 controls x 4 rungs done  [    98s]
+  SMALL  D  1 phases x 10 book-gross x 3 controls x 4 rungs done  [   117s]
+  SMALL  W  5 phases x 10 book-gross x 3 controls x 4 rungs done  [   137s]
+  SMALL  M  21 phases x 10 book-gross x 3 controls x 4 rungs done  [   220s]
+  SMALL  Q  63 phases x 10 book-gross x 3 controls x 4 rungs done  [   462s]
+  grid 32,400 rows / 49 cols over 8,100 phase-book-controls
+
+  GATE PASS  G5 MATCHED GROSS across the ladder AND the controls: max spread 0.000e+00 (bar 0.0)  — one target weight matrix per (panel, book, gross); only the mask/control move
+  GATE PASS  G6 H_BITE (realised gross departs from target under DRIFT, never under the controls): DRIFT max|gross-target|=1.345e-01 NODRIFT_G max|gross-target|=4.441e-16 NODRIFT_W max|gross-target|=0.000e+00 (bar DRIFT >= 5e-3; NODRIFT_* < 1e-12)  — the control actually removes exposure drift (cadences W/M/Q; at D there is none to remove)
+  GATE PASS  G9 the STRICT control DIFFERS (NODRIFT_W turnover > DRIFT at every W/M/Q cell): NODRIFT_W > DRIFT at 90 of 90 (bar all)  — a daily full reset really does trade more
+  GATE PASS  G9c PUBLISHED, not asserted: NODRIFT_G turnover vs DRIFT: higher at 82 of 90 cells (median ratio 1.023x) (bar published)  — a gross-only reset keeps the book near target, so its rebalance-day trade is SMALLER; the two effects can net either way and every cell is in the .gross.csv
+  GATE PASS  G9b at cadence D all three controls are IDENTICAL: max |turnover diff| 0.000e+00 (bar < 1e-12)  — a daily book has no drift to remove, so the control is inert there BY CONSTRUCTION
+  GATE PASS  G8 NEITHER CONTROL creates gross the TARGET does not have: NODRIFT_* max excess over target 4.330e-15; DRIFT max excess 0.0596 (PUBLISHED — that excess IS the drift channel under test); max realised gross 1.223230, max TARGET gross 1.200000 (bar NODRIFT excess <= 1e-9)  — NOTE: idea 981's `ranked_book` uses `rank <= k`, which under TIES selects more than k names, so its TOP05/EXT target gross reaches 1.20. That is a property of the record's committed book set, inherited here verbatim, not of the controls.
+  GATE PASS  G3 CROSS-RUN vs idea 981's committed bycadence.csv (fail_L4_DD, DRIFT @ 10 bps): D and W reproduce EXACTLY (max |diff| 0.000e+00); M and Q move by 0.0048 (this run [0.6333, 0.6467, 0.8365, 0.928] vs 981 [0.6333, 0.6467, 0.8317, 0.927]) (bar < 0.01 with the cause named)  — THE TAPE GREW. Idea 981 ran on 2026-09-15 over U56 .. 2026-09-14 (4,704 rows), B136 .. 2026-09-11 and SMALL .. 2026-09-11 (664 cols, 4,198 rows); this run reads the committed caches as they stand today — U56/B136 .. 2026-09-18 and SMALL .. 2026-09-18 with 665 names. Five extra trading days move the halves split and the OOS window, which flips 3 of 630 books at M and 2 of 1,890 at Q. D and W, where the phase count is 1 and 5, reproduce to 0.0e+00. The DRIFT arm therefore nests 981 and every control below is differenced against THIS RUN'S OWN DRIFT arm, never against 981's published number, so the tape growth cancels exactly.
+  GATE PASS  G10 determinism (U56/BAND03/CORE rebuilt from scratch): 0.000e+00 (bar 0.0)  — 
+  GATE PASS  G11 all cells published: 32,400 (bar 32,400)  — 
+  GATE PASS  G12 exactly two tuned parameters: CONTROL, CADENCE LADDER (bar 2)  — PROTOCOL rule 4
+
+====================================================================================================
+(C) THE ANSWER — L4_DD fail rate by cadence under each control
+====================================================================================================
+
+  cost rung 0 bps   <-- MECHANISM HEADLINE (981's premise rung)
+    control            D        W        M        Q    RANGE Q-D    4b pass        turn D/Q
+    DRIFT         0.5667   0.6467   0.8302   0.9270       0.3603     0.0596    36.3/3.5    
+    NODRIFT_G     0.5667   0.6467   0.8429   0.9360       0.3693     0.0541    36.3/3.8    
+    NODRIFT_W     0.5667   0.6400   0.8429   0.9360       0.3693     0.0559    36.3/6.0    
+
+  cost rung 10 bps   <-- CAPITAL RUNG (PROTOCOL rule 2)
+    control            D        W        M        Q    RANGE Q-D    4b pass        turn D/Q
+    DRIFT         0.6333   0.6467   0.8365   0.9280       0.2947     0.0522    36.3/3.5    
+    NODRIFT_G     0.6333   0.6467   0.8444   0.9376       0.3042     0.0474    36.3/3.8    
+    NODRIFT_W     0.6333   0.6467   0.8460   0.9376       0.3042     0.0481    36.3/6.0    
+
+  cost rung 25 bps
+    control            D        W        M        Q    RANGE Q-D    4b pass        turn D/Q
+    DRIFT         0.7000   0.6533   0.8397   0.9291       0.2291     0.0433    36.3/3.5    
+    NODRIFT_G     0.7000   0.6600   0.8460   0.9392       0.2392     0.0378    36.3/3.8    
+    NODRIFT_W     0.7000   0.6467   0.8571   0.9397       0.2397     0.0348    36.3/6.0    
+
+  cost rung 50 bps
+    control            D        W        M        Q    RANGE Q-D    4b pass        turn D/Q
+    DRIFT         0.8000   0.7067   0.8476   0.9307       0.1307     0.0322    36.3/3.5    
+    NODRIFT_G     0.8000   0.7067   0.8603   0.9423       0.1423     0.0263    36.3/3.8    
+    NODRIFT_W     0.8000   0.7267   0.8651   0.9466       0.1466     0.0200    36.3/6.0    
+
+  SURVIVING SHARE of the gradient (range under control / range under DRIFT):
+    0 bps  DRIFT range +0.3603   NODRIFT_G +0.3693 (102.5% survives)   NODRIFT_W +0.3693 (102.5% survives)
+    10 bps  DRIFT range +0.2947   NODRIFT_G +0.3042 (103.2% survives)   NODRIFT_W +0.3042 (103.2% survives)
+    25 bps  DRIFT range +0.2291   NODRIFT_G +0.2392 (104.4% survives)   NODRIFT_W +0.2397 (104.6% survives)
+    50 bps  DRIFT range +0.1307   NODRIFT_G +0.1423 (108.9% survives)   NODRIFT_W +0.1466 (112.1% survives)
+
+  WHY (the drift channel, measured): realised mean gross and its spread by cadence
+    DRIFT       median realised gross D 0.7486  W 0.7488  M 0.7500  Q 0.7521   |  median |gross-target| D 0.00000  W 0.00138  M 0.00370  Q 0.00693
+    NODRIFT_G   median realised gross D 0.7486  W 0.7486  M 0.7486  Q 0.7479   |  median |gross-target| D 0.00000  W 0.00000  M 0.00000  Q 0.00000
+    NODRIFT_W   median realised gross D 0.7486  W 0.7486  M 0.7486  Q 0.7479   |  median |gross-target| D 0.00000  W 0.00000  M 0.00000  Q 0.00000
+
+  DIAL 2 (CADENCE LADDER) x DIAL 1 (CONTROL), headline rung, every point:
+    CORE4    DRIFT       n   2700  fast 0.5667  slow 0.9270  span +0.3603
+    CORE4    NODRIFT_G   n   2700  fast 0.5667  slow 0.9360  span +0.3693
+    CORE4    NODRIFT_W   n   2700  fast 0.5667  slow 0.9360  span +0.3693
+    COARSE3  DRIFT       n   2670  fast 0.6467  slow 0.9270  span +0.2803
+    COARSE3  NODRIFT_G   n   2670  fast 0.6467  slow 0.9360  span +0.2893
+    COARSE3  NODRIFT_W   n   2670  fast 0.6400  slow 0.9360  span +0.2960
+    FINE2    DRIFT       n    180  fast 0.5667  slow 0.6467  span +0.0800
+    FINE2    NODRIFT_G   n    180  fast 0.5667  slow 0.6467  span +0.0800
+    FINE2    NODRIFT_W   n    180  fast 0.5667  slow 0.6400  span +0.0733
+
+  PER PANEL (headline rung), L4_DD fail rate D -> Q:
+    U56    DRIFT       0.3000 0.4600 0.7000 0.8587   range +0.5587
+    U56    NODRIFT_G   0.3000 0.4600 0.7143 0.8841   range +0.5841
+    U56    NODRIFT_W   0.3000 0.4400 0.7143 0.8825   range +0.5825
+    B136   DRIFT       0.6000 0.6800 0.8714 0.9571   range +0.3571
+    B136   NODRIFT_G   0.6000 0.6800 0.8762 0.9571   range +0.3571
+    B136   NODRIFT_W   0.6000 0.6800 0.8762 0.9556   range +0.3556
+    SMALL  DRIFT       0.8000 0.8000 0.9190 0.9651   range +0.1651
+    SMALL  NODRIFT_G   0.8000 0.8000 0.9381 0.9667   range +0.1667
+    SMALL  NODRIFT_W   0.8000 0.8000 0.9381 0.9698   range +0.1698
+
+====================================================================================================
+(D) RULE 8 — (CONTROL, LADDER) chosen on warm-up..2016-12-31 ONLY, 2017-01-01+ read ONCE
+====================================================================================================
+  GATE PASS  G7 choosers read no OOS row: IS columns are IS_* only; split at 2016-12-31 (bar disjoint)  — the chooser sees IS_* columns exclusively
+    U56    C_ISDD (shallowest IS median MaxDD)          -> (DRIFT, COARSE3)  n   890  OOS median  16.80%  1.0759  -24.99%  4b 0.1292
+    U56    C_ISSHARPE (max IS median Sharpe)            -> (DRIFT, COARSE3)  n   890  OOS median  16.80%  1.0759  -24.99%  4b 0.1292
+    U56    C_LIVE (zero-parameter: DRIFT, CORE4)        -> (DRIFT, CORE4)  n   900  OOS median  16.76%  1.0755  -24.89%  4b 0.1289
+    U56    SPY (OOS)                                        15.29%  0.8753  -33.72%
+    U56    RULES v2 (OOS)                                    9.46%  1.2770  -12.05%
+    B136   C_ISDD (shallowest IS median MaxDD)          -> (NODRIFT_G, COARSE3)  n   890  OOS median  16.08%  0.9310  -28.10%  4b 0.0281
+    B136   C_ISSHARPE (max IS median Sharpe)            -> (NODRIFT_W, COARSE3)  n   890  OOS median  16.09%  0.9288  -28.03%  4b 0.0292
+    B136   C_LIVE (zero-parameter: DRIFT, CORE4)        -> (DRIFT, CORE4)  n   900  OOS median  15.81%  0.9346  -27.90%  4b 0.0278
+    B136   SPY (OOS)                                        15.26%  0.8739  -33.72%
+    B136   RULES v2 (OOS)                                    7.85%  1.1019  -12.24%
+    SMALL  C_ISDD (shallowest IS median MaxDD)          -> (NODRIFT_W, COARSE3)  n   890  OOS median   5.92%  0.4576  -43.05%  4b 0.0000
+    SMALL  C_ISSHARPE (max IS median Sharpe)            -> (NODRIFT_G, COARSE3)  n   890  OOS median   5.91%  0.4500  -42.75%  4b 0.0000
+    SMALL  C_LIVE (zero-parameter: DRIFT, CORE4)        -> (DRIFT, CORE4)  n   900  OOS median   5.81%  0.4554  -42.54%  4b 0.0000
+    SMALL  SPY (OOS)                                        15.29%  0.8753  -33.72%
+    SMALL  RULES v2 (OOS)                                    3.64%  0.5459  -14.16%
+
+====================================================================================================
+(E) BOTH KEEP PATHS at the capital rung (10 bps)
+====================================================================================================
+    DRIFT       4b   141 of  2700 (0.0522);  4a     5 of  2700 (0.0019);  median turnover    4.23/yr  median CAGR  12.65%
+    NODRIFT_G   4b   128 of  2700 (0.0474);  4a     0 of  2700 (0.0000);  median turnover    4.50/yr  median CAGR  12.66%
+    NODRIFT_W   4b   130 of  2700 (0.0481);  4a     0 of  2700 (0.0000);  median turnover    6.65/yr  median CAGR  12.75%
+    4b passes at 10 bps under a NODRIFT control: 258
+
+====================================================================================================
+  PRE-REGISTERED BARS at the mechanism rung (0 bps):
+    RNG(DRIFT)     = +0.3603   (981's committed 10-bps value: +0.2937)
+    RNG(NODRIFT_G) = +0.3693   (102.5% survives)
+    RNG(NODRIFT_W) = +0.3693   (102.5% survives)
+    H_DRIFT (< 50% survives -> a DRIFT fact)          : False
+    H_COUNT (>= 80% survives -> a REBALANCE-COUNT fact): True
+  VERDICT: ANSWERED: the DD leg's cadence gradient is a REBALANCE-COUNT fact
+====================================================================================================
+  GATES: 15 recorded, 0 FAIL
