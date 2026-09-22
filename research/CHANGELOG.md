@@ -1,3 +1,61 @@
+## 2026-09-22 — idea 2211 (lane cloud): DOES ANY IS-ONLY CHOOSER ON THE BAND LADDER BEAT THE ZERO-PARAMETER RULE "TAKE MAX GROSS"? **ANSWERED = NO — IT IS A COIN FLIP, AND ON THE TWO PANELS THE RECORD USES THE FITTING PREMIUM IS ZERO OR NEGATIVE**
+
+  **WHERE THIS COMES FROM.** Idea 2119 found the 4b verdict on the band x gross ladder turns
+  entirely on gross; idea 2125 found an information-free ranking reaches the same cells as the
+  real one; idea 2121 (this lane, earlier today) found IS Sharpe monotone in gross 40 of 40
+  blocks and, as a by-product on ONE family against ONE pinned comparand, that a zero-parameter
+  rule had the highest mean OOS Sharpe of nine rules priced. This run makes that by-product the
+  question, with a WIDER comparand family, a NO-BAND control and a THIRD panel.
+
+  **WHAT IS NEW.** (1) The comparand is a FAMILY: all five bands at g = 1.00 are separate
+  zero-parameter rules, so a fitted chooser must beat the BEST of them. (2) EWALL -- equal-weight
+  every priced name at gross 1.00, weekly, no band, no signal, no parameter of any kind -- asks
+  whether the band device (the live book's whole mechanism) earns anything. (3) SMALL, the
+  sub-$2B panel, with the mandatory hygiene (gate G5: 54 tickers with max_1d_move >= 1.0 dropped
+  BEFORE pricing, 665 surviving) -- the record's band x gross verdicts are all U56/B136.
+  300 grid rows and 168 picks published; 6 of 6 gates PASS (G3 max|d| 0.000e+00, G1 0.000e+00).
+
+  **THE ANSWER.** The best fitted chooser beats the best zero-parameter rule on OOS Sharpe in
+  **6 of 12 panel x cost instances** -- a coin flip -- and the winning margins (+0.0012 U56@10,
+  +0.0005 SMALL@10, +0.0016 U56@0) sit INSIDE the record's own 0.0145 seed-noise floor (871).
+
+  **THE FITTING PREMIUM.** (fitted mean - MAXGROSS-family mean), mean over cost rungs:
+  **U56 -0.0288 OOS Sharpe / -1.81 pp OOS CAGR; B136 +0.0056 / -1.12 pp; SMALL +0.0334 /
+  -0.22 pp.** Mean OOS rank of a fitted pick among 25 cells, where a coin sits at 13.0:
+  **U56 18.1 (worse than a coin), B136 12.9 (a coin), SMALL 6.5.** SMALL is the only panel where
+  fitting beats a coin and it is also the panel where nothing clears the bar.
+
+  **THE MECHANISM: five of seven choosers pick the WORST cell on the ladder.** U56 at 10 bps,
+  IS_SHARPE / IS_MINMARG / IS_CAGRSLACK / IS_LEGS all take b0.08_g1.00, **OOS rank 25 of 25**
+  (12.00% / 1.1625 / -19.05%), while the zero-parameter MAXGROSS_b0.02 is rank 5 (12.53% /
+  1.2784 / -15.65%) and MAXGROSS_b0.03 rank 10. Eight years of in-sample fitting steers AWAY
+  from the good cells, which is 2121's inverted-gradient finding showing up as a rank.
+
+  **THE NO-BAND CONTROL: the band is a DRAWDOWN instrument, not a return instrument.** EWALL
+  earns OOS CAGR 18.28% (U56) / 18.27% (B136) / 11.48% (SMALL) against the band books' 10.5-12.7%
+  / 10.3-11.0% / 4.5-5.3%, and **all 60 of 60 band cells at g = 1.00 are SHALLOWER than EWALL**,
+  by 11-25 pp. EWALL consequently FAILS 4b on every panel at every rung (OOS MaxDD -29.2% /
+  -32.7% / -44.4% against the -20.2% cap). So the band device is real and it is a drawdown
+  device -- consistent with 1534's pooled dMaxDD -- but its Sharpe edge is cost-fragile: band
+  cells beat EWALL 5/5 on U56, **4/5 then 0/5 on B136 at 10 then 25 bps, and 2/5 then 0/5 on
+  SMALL at 0 then 10 bps.**
+
+  **NEW TO THE RECORD: THE FAMILY DOES NOT PORT TO SMALL CAPS.** On the sub-$2B panel, **0 of 25
+  cells x 0 of 7 choosers x 0 of 7 zero-parameter rules clear 4b, at any of the four cost rungs,
+  in any window.** Best OOS Sharpe anywhere 0.5866 against SPY 0.8751; the CAGR floor is missed
+  by 5-8 pp everywhere; RULES v2 itself reads 3.64% / 0.5458 / -14.16% OOS there. Survivorship
+  makes this verdict STRONGER: SMALL is a current-constituent screen, so the family fails on a
+  tape already tilted in its favour.
+
+  **PATH 4a: 1 of 21 fitted picks at 10 bps** (IS_DD on SMALL, b0.08_g0.50, the de-grossed
+  corner), and that pick fails 4b on every leg.
+
+  **NO KEEP CANDIDATE. NO RULES CHANGE.** RULES.md / PROTOCOL.md / scan.py / bot.py /
+  baseline.py untouched. **Survivorship (rule 9):** all three panels are current-constituent;
+  SMALL is the worst of the three and no absolute number in this run is an achievable return.
+  Script `research/backtests/2026-09-22_zero-parameter-comparand-on-the-band-ladder_cloud.py`,
+  results `..._cloud.result.md`.
+
 ## 2026-09-22 — idea 2121 (lane cloud): CAN AN IS-ONLY CHOOSER THAT *SEES GROSS* BEAT IS SHARPE ON A BAND x GROSS LADDER? **ANSWERED = NO — AND 2119'S PREMISE IS RETIRED: IS SHARPE WAS NEVER COIN-FLIPPING GROSS**
 
   **THE QUESTION.** Idea 2119 laddered the live book over band x gross, found all 16 of its 4b
