@@ -1,0 +1,184 @@
+Idea 2090 (lane cloud, 2026-09-22) — IS THE 2083 KEEP-CANDIDATE'S +2.56 pp DD MARGIN
+RESOLVABLE AT 95%, OR IS IT A POINT ESTIMATE?
+
+WHERE THIS COMES FROM.  Idea 2083 (lane C, 2026-09-22) left a 4b KEEP-candidate on U56 —
+MADIST ranking, width k = 40, gross 1.00, monthly, 10 bps, t+1 — whose OOS window reads
+16.24% / 1.3099 / -17.67% against SPY's OOS -33.72% MaxDD, i.e. the drawdown cap (0.60 x SPY
+= -20.23%) is cleared by +2.56 pp.  2083 walked a 16-cell cost x lag ladder and the pass held
+at all 16.  What 2083 did NOT do is put an ERROR BAR on any leg.  Idea 2042 (lane cloud,
+2026-09-21) established over a 36-cell grid that a 4b pass of this shape is usually a POINT
+ESTIMATE whose binding leg does not survive a 95% CI, and idea 2060 found the same on one
+cell.  This run asks the question of 2083's own cell.
+
+THE QUESTION.  Put a PAIRED CIRCULAR-BLOCK BOOTSTRAP on every 4b leg of 2083's cell (and of
+its MOMVS/40 sibling), at the block lengths idea 2042 used, and report whether the DRAWDOWN
+leg and the CAGR leg survive a confidence interval — i.e. whether the +2.56 pp is a finding or
+a draw.
+
+THE TWO TUNED PARAMETERS (PROTOCOL rule 4; every grid point reported, none hidden):
+    P1  B     circular-block length, trading days   {10, 21, 63}      (2042's ladder verbatim)
+    P2  conf  confidence level                      {0.90, 0.95}      (2042's ladder verbatim)
+    nboot = 2000 per window, seed 2090, ONE index stream shared by every cell at a given
+    (window, B), so the cells are resampled on the SAME days and their margins are paired.
+
+REPORTED, NOT TUNED (this is the object being measured, not a dial being searched):
+    cell     MADIST/40/g1.00/M  (2083's candidate)  and  MOMVS/40/g1.00/M  (its sibling)
+    panel    U56 (research/universe.json) headline; B136 (universe_broad.json) as generality
+    legs     the five 4b inequalities, PLUS the OOS-window readings of the DD cap and the CAGR
+             floor, because 2083's headline +2.56 pp is an OOS-window number
+    the live RULES v2 book and SPY at every cell (PROTOCOL rule 3), both KEEP paths (rule 4),
+    and the rule-8 walk-forward pick over 2083's own 80-book shelf.
+
+BOOTSTRAP CONVENTION (stated because the convention moves the number — ideas 1511 / 2042 / 2060):
+  * PAIRED.  Book and SPY are resampled on the SAME circular-block offsets inside a draw, so
+    each margin keeps its day-by-day pairing and the CI is of the CONTRAST, not of two levels.
+  * PER-WINDOW.  Each leg is resampled on the window it is READ on (H1 days for L1, H2 for L2,
+    2017+ for L3 and for the two OOS legs, the whole post-warm-up sample for L4/L5).  Blocks
+    are shuffled only inside a window, so "half" and "OOS" keep their meaning.
+  * A block bootstrap of a DRAWDOWN breaks the single longest loss run, so the DD legs' CIs are
+    conservative-to-noisy BY CONSTRUCTION.  That cuts BOTH ways and is not repaired: it is the
+    reason the DD leg is the one worth bootstrapping at all.
+  * Windows are resampled independently of one another (they are disjoint or nested day sets).
+    That is an assumption, stated, not repaired.
+  * CI = percentile interval of the margin's own bootstrap distribution.  RESOLVABLE means the
+    whole interval sits on the PASSING side (lower bound > 0).
+
+PRE-STATED VERDICT RULES (fixed before the run, not adjusted after):
+  V1  THE IDEA'S OWN QUESTION.  The MADIST/40 cell's OOS DD-leg margin has a lower CI bound
+      > 0 at conf = 0.95 at ALL THREE block lengths.  Triggered -> the +2.56 pp is RESOLVABLE.
+  V2  THE OTHER CANDIDATE LEG.  The same cell's CAGR floor margin (full sample AND OOS) has a
+      lower bound > 0 at 0.95 at all three block lengths.
+  V3  THE WHOLE BAR.  Every one of the five 4b legs is resolvable at 0.95 at all three block
+      lengths -> the 4b pass is a RESOLVABLE pass, not a point estimate.
+  V4  SIBLING.  The MOMVS/40 sibling returns the SAME verdict on the DD leg as MADIST/40.
+
+PROTOCOL: rule 2 (10 bps, next-day execution via engine.backtest, no shorting/leverage);
+rule 3 (live RULES v2 AND SPY at every cell); rule 4 (BOTH KEEP paths, <= 2 tuned parameters,
+all grid points reported); rule 5 (one idea, deterministic, standalone); rule 8 (walk-forward:
+the shelf is chosen on 2009-2016 ONLY by a pre-registered IS-only chooser and 2017-2026 is read
+once); rule 9 (survivorship stated).
+RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py are NOT modified.
+
+SURVIVORSHIP (rule 9).  U56 and B136 are CURRENT-constituent lists, so every CAGR and MaxDD
+LEVEL below is optimistic and both 4b bars are easier than on a point-in-time panel.  The CIs
+are same-tape, same-names, PAIRED contrasts and are first-order immune to that bias; the PASS
+LEVELS are not.
+
+Runs standalone and offline (committed caches only):
+  python research/backtests/2026-09-22_4b-dd-margin-of-the-2083-candidate_cloud.py
+
+====================================================================================================
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+## PANEL U56: 56 names, sample 2009-01-13 .. 2026-09-18  n=4448 days after 260-day warm-up
+   H1 2009-01-13..2017-11-09 (2224)   H2 2017-11-10..2026-09-18 (2224)   IS<= 2016-12-31 (2007)   OOS>= 2017-01-01 (2441)
+   SPY: FULL 15.14% / 0.8851 / -33.72%;  OOS 15.29% / 0.8751 / -33.72%  => 4b bars: full CAGR floor 10.60%, full DD cap -20.23%, OOS DD cap -20.23%
+   RULES v2 (live, weekly, 10 bps): FULL 8.62% / 1.2010 / -12.05%;  halves 1.2276 / 1.1806;  OOS 9.46% / 1.2767 / -12.05%
+
+   CELL MADIST/40/g1.00/M  FULL 14.57% / 1.1965 / -17.67%   halves 1.1834 / 1.2098   OOS 16.24% / 1.3099 / -17.67%
+        leg margins (pp / Sharpe pts, + = passing): L1_H1 +0.2263  L2_H2 +0.3834  L3_OOS +0.4348  L4_DD_FULL +2.5563  L5_CAGR_FULL +3.9759  L4_DD_OOS +2.5563  L5_CAGR_OOS +5.5363
+        4a FAIL   4b PASS
+
+   CELL MOMVS/40/g1.00/M  FULL 14.29% / 1.1946 / -18.17%   halves 1.2106 / 1.1806   OOS 15.51% / 1.2760 / -18.17%
+        leg margins (pp / Sharpe pts, + = passing): L1_H1 +0.2536  L2_H2 +0.3542  L3_OOS +0.4010  L4_DD_FULL +2.0557  L5_CAGR_FULL +3.6920  L4_DD_OOS +2.0557  L5_CAGR_OOS +4.8099
+        4a FAIL   4b PASS
+
+   ---- PAIRED CIRCULAR-BLOCK BOOTSTRAP (2000 draws, seed 2090, shared day-blocks) ----
+
+   MADIST/40/g1.00/M — every grid point (3 blocks x 2 confidences x 7 legs):
+     leg          win        point    bootSD  B=10 90%  B=10 95%  B=21 90%  B=21 95%  B=63 90%  B=63 95%
+     L1_H1        H1       +0.2263    0.1985  [-0.1019,+0.5755]   [-0.1763,+0.6333]   [-0.0850,+0.5673]   [-0.1327,+0.6386]   [-0.0444,+0.5079]   [-0.0997,+0.5743] 
+     L2_H2        H2       +0.3834    0.1900  [+0.0553,+0.6982]*  [-0.0017,+0.7729]   [+0.0563,+0.6727]*  [+0.0038,+0.7239]*  [+0.1002,+0.6103]*  [+0.0494,+0.6479]*
+     L3_OOS       OOS      +0.4348    0.1806  [+0.0998,+0.7361]*  [+0.0461,+0.7982]*  [+0.1140,+0.7166]*  [+0.0644,+0.7600]*  [+0.1631,+0.6494]*  [+0.1171,+0.6973]*
+     L4_DD_FULL   FULL     +0.0256    0.0400  [-0.0776,+0.0686]   [-0.0947,+0.0880]   [-0.0605,+0.0689]   [-0.0734,+0.0843]   [-0.0426,+0.0644]   [-0.0541,+0.0777] 
+     L5_CAGR_FULL FULL     +0.0398    0.0186  [+0.0093,+0.0712]*  [+0.0027,+0.0767]*  [+0.0086,+0.0693]*  [+0.0035,+0.0756]*  [+0.0106,+0.0650]*  [+0.0068,+0.0694]*
+     L4_DD_OOS    OOS      +0.0256    0.0384  [-0.0645,+0.0795]   [-0.0773,+0.0969]   [-0.0506,+0.0763]   [-0.0617,+0.0895]   [-0.0305,+0.0641]   [-0.0401,+0.0751] 
+     L5_CAGR_OOS  OOS      +0.0554    0.0246  [+0.0108,+0.0978]*  [+0.0016,+0.1066]*  [+0.0135,+0.0949]*  [+0.0058,+0.1021]*  [+0.0206,+0.0891]*  [+0.0147,+0.0957]*
+     (* = whole interval on the passing side.  fraction of draws passing, B=21: L1_H1 0.872, L2_H2 0.977, L3_OOS 0.991, L4_DD_FULL 0.512, L5_CAGR_FULL 0.986, L4_DD_OOS 0.558, L5_CAGR_OOS 0.986)
+
+   MOMVS/40/g1.00/M — every grid point (3 blocks x 2 confidences x 7 legs):
+     leg          win        point    bootSD  B=10 90%  B=10 95%  B=21 90%  B=21 95%  B=63 90%  B=63 95%
+     L1_H1        H1       +0.2536    0.1992  [-0.0757,+0.6010]   [-0.1488,+0.6646]   [-0.0532,+0.6015]   [-0.1047,+0.6623]   [-0.0176,+0.5373]   [-0.0747,+0.6003] 
+     L2_H2        H2       +0.3542    0.1879  [+0.0256,+0.6676]*  [-0.0320,+0.7467]   [+0.0355,+0.6480]*  [-0.0197,+0.6955]   [+0.0758,+0.5713]*  [+0.0290,+0.6154]*
+     L3_OOS       OOS      +0.4010    0.1788  [+0.0563,+0.7019]*  [+0.0038,+0.7652]*  [+0.0867,+0.6780]*  [+0.0406,+0.7294]*  [+0.1355,+0.6082]*  [+0.0877,+0.6560]*
+     L4_DD_FULL   FULL     +0.0206    0.0398  [-0.0754,+0.0718]   [-0.0938,+0.0890]   [-0.0604,+0.0684]   [-0.0716,+0.0841]   [-0.0436,+0.0624]   [-0.0566,+0.0745] 
+     L5_CAGR_FULL FULL     +0.0369    0.0183  [+0.0065,+0.0677]*  [+0.0004,+0.0737]*  [+0.0061,+0.0660]*  [+0.0008,+0.0731]*  [+0.0083,+0.0613]*  [+0.0043,+0.0665]*
+     L4_DD_OOS    OOS      +0.0206    0.0383  [-0.0663,+0.0783]   [-0.0803,+0.0945]   [-0.0515,+0.0743]   [-0.0642,+0.0863]   [-0.0319,+0.0616]   [-0.0387,+0.0715] 
+     L5_CAGR_OOS  OOS      +0.0481    0.0241  [+0.0033,+0.0905]*  [-0.0041,+0.0980]   [+0.0071,+0.0867]*  [+0.0010,+0.0936]*  [+0.0147,+0.0805]*  [+0.0068,+0.0878]*
+     (* = whole interval on the passing side.  fraction of draws passing, B=21: L1_H1 0.904, L2_H2 0.967, L3_OOS 0.987, L4_DD_FULL 0.507, L5_CAGR_FULL 0.978, L4_DD_OOS 0.542, L5_CAGR_OOS 0.977)
+
+   ---- RULE 8 WALK-FORWARD on U56: 2083's 80-book shelf, IS-Sharpe chooser on <= 2016-12-31, 2017-01-01+ read ONCE ----
+     shelf = 80 books.  4b passes on the shelf: 20/80; 4a passes: 0/80
+     IS-Sharpe chooser picks MOM/5/g1.00/M (IS Sharpe 1.2706); 2083's own cell MADIST/40/g1.00 sits at IS Sharpe 1.0567, rank 41 of 80
+     OOS read once: 20.92% / 0.8446 / -34.61%   against RULES v2 OOS 9.46% / 1.2767 / -12.05%   and SPY OOS 15.29% / 0.8751 / -33.72%
+     pick 4b FAIL   4a FAIL   leg margins: L1_H1 +0.2802  L2_H2 +0.0177  L3_OOS -0.0304  L4_DD_FULL -0.1438  L5_CAGR_FULL +0.1433  L4_DD_OOS -0.1438  L5_CAGR_OOS +0.1022
+     rule-8 pick, resolvable legs at 95%: L1_H1 0/3, L2_H2 0/3, L3_OOS 0/3, L4_DD_FULL 0/3, L5_CAGR_FULL 3/3, L4_DD_OOS 0/3, L5_CAGR_OOS 0/3
+  GATE PASS  G1 no leverage / no shorting: max gross of the two focus books = 1.00 by construction, weights >= 0   (target true)
+  GATE PASS  G2 bootstrap is centred (|mean(draws) - point| at B=21): 0.0232   (target < 0.05 on Sharpe legs, DD legs biased by construction)
+  GATE PASS  G3 block index is a valid resample (shape, range, length): shape (100, 500), min 0, max 499   (target (100,500), 0..499)
+  GATE PASS  G4 2083's cell reproduces (OOS MaxDD within 0.5 pp of the committed -17.67%): -17.67%   (target ~ -17.67%)
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+
+## PANEL B136: 136 names, sample 2009-01-13 .. 2026-09-18  n=4448 days after 260-day warm-up
+   H1 2009-01-13..2017-11-09 (2224)   H2 2017-11-10..2026-09-18 (2224)   IS<= 2016-12-31 (2007)   OOS>= 2017-01-01 (2441)
+   SPY: FULL 15.12% / 0.8844 / -33.72%;  OOS 15.26% / 0.8737 / -33.72%  => 4b bars: full CAGR floor 10.59%, full DD cap -20.23%, OOS DD cap -20.23%
+   RULES v2 (live, weekly, 10 bps): FULL 7.96% / 1.0972 / -12.24%;  halves 1.2296 / 0.9669;  OOS 7.85% / 1.1017 / -12.24%
+
+   CELL MADIST/40/g1.00/M  FULL 18.08% / 1.0753 / -29.35%   halves 1.1944 / 0.9756   OOS 18.28% / 1.0540 / -29.35%
+        leg margins (pp / Sharpe pts, + = passing): L1_H1 +0.2373  L2_H2 +0.1507  L3_OOS +0.1804  L4_DD_FULL -9.1220  L5_CAGR_FULL +7.4981  L4_DD_OOS -9.1220  L5_CAGR_OOS +7.6049
+        4a FAIL   4b FAIL
+
+   CELL MOMVS/40/g1.00/M  FULL 14.67% / 0.9986 / -29.50%   halves 1.2190 / 0.8143   OOS 13.62% / 0.9061 / -29.50%
+        leg margins (pp / Sharpe pts, + = passing): L1_H1 +0.2620  L2_H2 -0.0106  L3_OOS +0.0324  L4_DD_FULL -9.2666  L5_CAGR_FULL +4.0798  L4_DD_OOS -9.2666  L5_CAGR_OOS +2.9364
+        4a FAIL   4b FAIL
+
+   ---- PAIRED CIRCULAR-BLOCK BOOTSTRAP (2000 draws, seed 2090, shared day-blocks) ----
+
+   MADIST/40/g1.00/M — every grid point (3 blocks x 2 confidences x 7 legs):
+     leg          win        point    bootSD  B=10 90%  B=10 95%  B=21 90%  B=21 95%  B=63 90%  B=63 95%
+     L1_H1        H1       +0.2373    0.1849  [-0.0578,+0.5415]   [-0.1200,+0.5958]   [-0.0538,+0.5590]   [-0.0978,+0.6163]   [-0.0236,+0.5064]   [-0.0766,+0.5604] 
+     L2_H2        H2       +0.1507    0.1542  [-0.0998,+0.3975]   [-0.1506,+0.4425]   [-0.1215,+0.3897]   [-0.1724,+0.4466]   [-0.0802,+0.3571]   [-0.1214,+0.3973] 
+     L3_OOS       OOS      +0.1804    0.1479  [-0.0841,+0.4340]   [-0.1374,+0.4915]   [-0.0796,+0.4159]   [-0.1222,+0.4599]   [-0.0376,+0.3648]   [-0.0860,+0.4058] 
+     L4_DD_FULL   FULL     -0.0912    0.0409  [-0.1589,-0.0149]   [-0.1742,-0.0023]   [-0.1448,-0.0130]   [-0.1619,+0.0019]   [-0.1265,-0.0118]   [-0.1418,+0.0031] 
+     L5_CAGR_FULL FULL     +0.0750    0.0220  [+0.0383,+0.1127]*  [+0.0317,+0.1206]*  [+0.0406,+0.1140]*  [+0.0353,+0.1216]*  [+0.0412,+0.1072]*  [+0.0368,+0.1148]*
+     L4_DD_OOS    OOS      -0.0912    0.0362  [-0.1543,-0.0236]   [-0.1787,-0.0126]   [-0.1454,-0.0271]   [-0.1604,-0.0177]   [-0.1304,-0.0268]   [-0.1493,-0.0161] 
+     L5_CAGR_OOS  OOS      +0.0760    0.0294  [+0.0238,+0.1295]*  [+0.0142,+0.1395]*  [+0.0275,+0.1235]*  [+0.0197,+0.1327]*  [+0.0334,+0.1219]*  [+0.0258,+0.1299]*
+     (* = whole interval on the passing side.  fraction of draws passing, B=21: L1_H1 0.896, L2_H2 0.819, L3_OOS 0.873, L4_DD_FULL 0.028, L5_CAGR_FULL 1.000, L4_DD_OOS 0.006, L5_CAGR_OOS 0.997)
+
+   MOMVS/40/g1.00/M — every grid point (3 blocks x 2 confidences x 7 legs):
+     leg          win        point    bootSD  B=10 90%  B=10 95%  B=21 90%  B=21 95%  B=63 90%  B=63 95%
+     L1_H1        H1       +0.2620    0.1868  [-0.0302,+0.5548]   [-0.0902,+0.6267]   [-0.0374,+0.5905]   [-0.0831,+0.6408]   [-0.0050,+0.5278]   [-0.0556,+0.5749] 
+     L2_H2        H2       -0.0106    0.1653  [-0.2787,+0.2512]   [-0.3280,+0.2973]   [-0.2991,+0.2457]   [-0.3443,+0.3020]   [-0.2673,+0.2303]   [-0.3121,+0.2800] 
+     L3_OOS       OOS      +0.0324    0.1578  [-0.2485,+0.2948]   [-0.3046,+0.3465]   [-0.2356,+0.2930]   [-0.2959,+0.3345]   [-0.2168,+0.2637]   [-0.2567,+0.3139] 
+     L4_DD_FULL   FULL     -0.0927    0.0421  [-0.1447,-0.0021]   [-0.1607,+0.0132]   [-0.1343,-0.0026]   [-0.1508,+0.0158]   [-0.1281,+0.0070]   [-0.1501,+0.0235] 
+     L5_CAGR_FULL FULL     +0.0408    0.0193  [+0.0089,+0.0727]*  [+0.0019,+0.0784]*  [+0.0096,+0.0742]*  [+0.0045,+0.0807]*  [+0.0103,+0.0697]*  [+0.0052,+0.0753]*
+     L4_DD_OOS    OOS      -0.0927    0.0388  [-0.1512,-0.0181]   [-0.1710,-0.0061]   [-0.1435,-0.0190]   [-0.1597,-0.0110]   [-0.1451,-0.0120]   [-0.1641,-0.0003] 
+     L5_CAGR_OOS  OOS      +0.0294    0.0262  [-0.0179,+0.0739]   [-0.0270,+0.0824]   [-0.0154,+0.0720]   [-0.0237,+0.0808]   [-0.0123,+0.0705]   [-0.0222,+0.0779] 
+     (* = whole interval on the passing side.  fraction of draws passing, B=21: L1_H1 0.924, L2_H2 0.471, L3_OOS 0.579, L4_DD_FULL 0.044, L5_CAGR_FULL 0.985, L4_DD_OOS 0.011, L5_CAGR_OOS 0.864)
+
+   ---- RULE 8 WALK-FORWARD on B136: 2083's 80-book shelf, IS-Sharpe chooser on <= 2016-12-31, 2017-01-01+ read ONCE ----
+     shelf = 80 books.  4b passes on the shelf: 6/80; 4a passes: 2/80
+     IS-Sharpe chooser picks MOM/20/g1.00/M (IS Sharpe 1.2434); 2083's own cell MADIST/40/g1.00 sits at IS Sharpe 1.1051, rank 39 of 80
+     OOS read once: 20.81% / 1.0024 / -33.68%   against RULES v2 OOS 7.85% / 1.1017 / -12.24%   and SPY OOS 15.26% / 0.8737 / -33.72%
+     pick 4b FAIL   4a FAIL   leg margins: L1_H1 +0.3782  L2_H2 +0.0899  L3_OOS +0.1287  L4_DD_FULL -0.1345  L5_CAGR_FULL +0.1125  L4_DD_OOS -0.1345  L5_CAGR_OOS +0.1013
+     rule-8 pick, resolvable legs at 95%: L1_H1 1/3, L2_H2 0/3, L3_OOS 0/3, L4_DD_FULL 0/3, L5_CAGR_FULL 3/3, L4_DD_OOS 0/3, L5_CAGR_OOS 3/3
+
+====================================================================================================
+PRE-STATED VERDICTS
+  V1 MADIST/40 OOS DD leg resolvable at 95%: 0/3 block lengths -> NOT TRIGGERED (a point estimate)
+  V2 MADIST/40 CAGR floor resolvable at 95%: full 3/3, OOS 3/3 -> TRIGGERED
+  V3 all five 4b legs resolvable at 95% (of 3 block lengths): L1_H1 0/3, L2_H2 2/3, L3_OOS 3/3, L4_DD_FULL 0/3, L5_CAGR_FULL 3/3 -> NOT TRIGGERED
+  V4 MOMVS/40 sibling agrees on the DD leg: sibling 0/3 vs candidate 0/3 -> TRIGGERED (same answer)
+
+  Binding leg (smallest margin / its own bootstrap SD at B=21), MADIST/40 U56:
+    L1_H1         point +0.2263   SD 0.1985   point/SD +1.14   95% [-0.1327, +0.6386]  NOT RESOLVABLE
+    L2_H2         point +0.3834   SD 0.1900   point/SD +2.02   95% [+0.0038, +0.7239]  RESOLVABLE
+    L3_OOS        point +0.4348   SD 0.1806   point/SD +2.41   95% [+0.0644, +0.7600]  RESOLVABLE
+    L4_DD_FULL    point +0.0256   SD 0.0400   point/SD +0.64   95% [-0.0734, +0.0843]  NOT RESOLVABLE
+    L5_CAGR_FULL  point +0.0398   SD 0.0186   point/SD +2.14   95% [+0.0035, +0.0756]  RESOLVABLE
+    L4_DD_OOS     point +0.0256   SD 0.0384   point/SD +0.67   95% [-0.0617, +0.0895]  NOT RESOLVABLE
+    L5_CAGR_OOS   point +0.0554   SD 0.0246   point/SD +2.25   95% [+0.0058, +0.1021]  RESOLVABLE
+
+  Resolvable-leg count at 90% vs 95% (MADIST/40 U56, over 3 block lengths x 7 legs): 12/21 at 90%, 11/21 at 95%
+
+wrote 2026-09-22_4b-dd-margin-of-the-2083-candidate_cloud.{grid,cells,shelf,walkforward,gates}.csv and .log.txt
