@@ -15,7 +15,7 @@ by two of the five ensembles and by two members.
 
 Script: `2026-09-22_chooser-ensemble-vs-every-single-chooser_C.py` (companion
 `..._C.verify.py`).  Grid `.grid.csv.gz` (**11,280 (panel, family, draw, cell) rows, all
-published**), per-draw picks `.picks.csv` (7,191 rows), per-cell chooser table `.choosers.csv`,
+published**), per-draw picks `.picks.csv.gz` (7,191 rows), per-cell chooser table `.choosers.csv`,
 `.v1.csv`, `.members_beaten.csv`, `.stability.csv`, `.clean_picks.csv`, `.costladder.csv`,
 `.votes.csv`, gates `.gates.csv`, console `.log.txt`.
 
