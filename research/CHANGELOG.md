@@ -1,3 +1,75 @@
+## 2026-09-22 — idea 2217 (lane C): DOES AN *IDLE SLEEVE* MOVE WHICH CELL RULE 8 REACHES ON THE 2119 BAND x GROSS LADDER? **ANSWERED = YES ON THE MECHANISM, NO WHERE IT COUNTS**
+
+  **WHERE THIS COMES FROM.** 2119(D) found IS Sharpe moves 0.0013 across the WHOLE gross dial at
+  fixed band while the 4b verdict turns entirely on gross; 2121 then retired the "coin-flip" half
+  of that (IS Sharpe monotone in gross 40 of 40 blocks, argmax 1.00 in 40 of 40). `engine.backtest`
+  pays exactly 0% on the uninvested residual `1 - sum(w)`, which on this ladder runs from ~25% of
+  NAV (gross 1.00) to ~75% (gross 0.50). A sleeve that PAYS that residual changes the IS objective
+  by a different amount in every cell — the credit scales with `1 - realised gross` — so it should
+  make the IS surface see exposure. This run prices that.
+
+  **THE GRID.** 2 panels x **6 sleeve arms** (NOSLEEVE = the live 0%-cash form, and phi in
+  {0.00, 0.25, 0.50, 0.75, 1.00} with the idle NAV in `phi*SPY + (1-phi)*SHY`) x 25 cells (band
+  {0,0.02,0.03,0.05,0.08} x gross {0.50..1.00}) x 5 weekday offsets x 4 cost rungs x 3 windows =
+  **18,018 published rows**. Tuned dials: exactly two, **BAND and GROSS**, chosen by rule 8 INSIDE
+  each arm; **phi is a published arm, never selected**. Sleeve construction is bit-identical to
+  idea 2221's so the two runs are comparable. **8 of 8 gates PASS on both panels** — G1/G4 max|d|
+  6.9e-18 against `engine.backtest` at 10 and 25 bps, G3 the ladder's centre cell IS
+  `baseline.rules_v2_weights` (0.000e+00), G6 sleeved total weight within 1.6e-15 of 1.00, G2 0
+  differing mask rows, G5 0 clipped weeks at d<=2. Anchors reproduce the record: SPY U56 15.14% /
+  0.8851 / -33.72%, live RULES v2 @10 bps 8.62% / 1.2010 / -12.05%, OOS 9.46% / 1.2767 / -12.05%.
+
+  **THE ANSWER, PART 1 — THE SLEEVE MAKES THE IS SURFACE SEE EXPOSURE, AND INVERTS IT.** IS Sharpe
+  spread across the gross dial goes **0.0010 -> 0.1068** on U56 and **0.0022 -> 0.1034** on B136
+  (100x / 47x) when the idle NAV is swept into SHY, and the slope d(IS Sharpe)/d(gross) **changes
+  sign**, +0.0021 -> **-0.2105** (+0.0043 -> -0.2037), with the argmax moving from gross 1.00 at
+  5 of 5 bands to **gross 0.50 at 5 of 5 bands**. The sign change sits between phi 0.25 and 0.50 on
+  BOTH panels (U56 -0.033 -> +0.101). 2119(D)'s "0.0013 across the dial" is confirmed for the
+  unsleeved ladder and destroyed by what is purely an accounting choice.
+
+  **THE ANSWER, PART 2 — THE PICK DULY MOVES, AND IT MOVES THE WRONG WAY FOR 4b.** Rule 8 (params
+  on 2009-2016 alone, 2017-2026 read once) moves off the no-sleeve cell in **8 of 16** arm x panel x
+  chooser instances, always DOWN the gross dial and **never off band c = 0.08 (16 of 16)** — the
+  sleeve moves gross only, exactly the dial 2119 said the verdict turns on. Scored against the
+  no-sleeve-picked cell priced INSIDE the same arm, **7 of 8 moves raise OOS Sharpe (mean +0.0459)**
+  but cost **-2.55 pp OOS CAGR** and hand back +4.51 pp of drawdown. CAGR is 4b's sole binding leg
+  here (**the two Sharpe legs bind in 0 of 150 fails**), so the move trades away the one thing 4b is
+  short of. Fitted-pick mean OOS rank **9.75 of 25** against a 13.0 coin-flip null. **4b OOS 5 of 16
+  fitted picks, 4b FULL 4 of 16, 4a OOS 2 of 16.**
+
+  **ONE KEEP-*4a* CANDIDATE, RECORDED NOT RECOMMENDED — AND IT IS THE RECORD'S FIRST ROBUST 4a
+  PASSER ON THIS LADDER.** Chooser C1 reaches **phi = 0.00 / c 0.08 / g 0.50 on BOTH panels**: U56
+  FULL **6.51% / 1.3084 / -8.92%** (halves 1.3619/1.2719), OOS 7.12% / 1.3576 / -8.92%; B136 FULL
+  6.49% / 1.2761 / -9.17% (1.3908/1.1708), OOS 6.60% / 1.2912 / -9.17% — against a live book at
+  1.2010 / -12.05% (U56) and 1.0972 / -12.24% (B136). It holds 4a at **15 of 15** offset x cost cells
+  to 25 bps (U56 FULL/IS) and **20 of 20 including 50 bps** (B136), where the unsleeved arm passes 4a
+  at **0 of 25**. Per-arm 4a counts of 25 (U56 FULL): NOSLEEVE 0, phi 0.00 **13**, phi 0.25+ 0.
+
+  **WHY IT IS DEMOTED: AN IDLE-NAV-MATCHED 4a.** PROTOCOL 4a scores against a live book whose idle
+  NAV earns 0%, so a swept candidate collects a credit its comparand is denied. Re-scored against
+  the live cell OF ITS OWN ARM (c0.03 / g0.75 / phi 0.00 — same sweep on both sides, so only the
+  band x gross choice is priced), the candidate holds **17/20 U56 FULL and 19/20 U56 IS but 0 of 20
+  U56 OOS** (dH1 -0.0441), while B136 keeps 20/20 FULL and 16/20 OOS. **One panel passes, one
+  fails** — the same coin-flip failure mode 2221 hit on the other dial. And the sweep applied to the
+  LIVE cell as it stands is worth +0.50 pp CAGR / +0.067 Sharpe (U56 FULL), passes 4a at d = 0,
+  **flickers across weekday offsets at 10 bps (1,0,1,1,0) and dies at 25 bps on both panels**.
+
+  **CROSS-LANE REPLICATION.** `B136 / phi 0.25 / c 0.08 / g 0.750` reproduces idea 2221's recorded
+  KEEP-4b candidate to four decimals in every published number (FULL 11.06% / 1.1520 / -17.34%, OOS
+  11.01% / 1.1399 / -17.34%). 2221 pinned gross at the live 0.75; **a free gross dial lands on 0.75
+  anyway on that panel**, so the pin was not binding. Its OOS CAGR margin over the 4b floor is
+  nevertheless **+0.33 pp against a 0.35 pp offset spread** — inside its own scheduling noise.
+
+  **VERDICT: PARK the T-bill sweep, KILL the filed hope.** The pick moves, the movement is
+  systematic and mechanically understood, and it buys Sharpe with the currency 4b is short of.
+  **NO RULES CHANGE.** RULES.md / PROTOCOL.md / scan.py / bot.py / baseline.py untouched.
+  **Survivorship (rule 9):** U56 and B136 are current-constituent panels; every level is optimistic
+  and this is a within-tape contrast only. The sleeve further assumes SHY/SPY trade at the panel's
+  adjusted closes at the same 10 bps and weekly cadence, and that the idle NAV is genuinely
+  sweepable — SHY total return is an upper bound on what a real cash sweep pays.
+  Script `research/backtests/2026-09-22_idle-sleeve-moves-the-rule-8-pick_C.py`, addendum
+  `..._C.addendum.py`, results `..._C.result.md`, memo `..._C.memo.md`.
+
 ## 2026-09-22 — idea 2207 (lane C): IS THE KEEP-4b CANDIDATE A *REBALANCE-FREQUENCY* OBJECT? **ANSWERED = PARTIALLY — THE PASS SET MOVES WITH CADENCE, THE CORE CELL DOES NOT, AND CADENCE CREATES NOTHING**
 
   **WHERE THIS COMES FROM.** Every band x gross verdict in the record — 2119's ladder, 2121's
