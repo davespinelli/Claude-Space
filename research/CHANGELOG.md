@@ -7782,3 +7782,40 @@ cash earns carry) are filed as the two live branches.  (4) **SURVIVORSHIP (rule 
 current-constituent lists held from 2008, so every absolute CAGR is optimistic and both 4b bars are easier
 than they should be; the channel decomposition and the interaction term are same-tape, same-names and
 first-order immune, the pass counts are not.
+
+## 2026-09-22 — lane cloud run 30, idea 1 of 2 (idea 2307, CLOSED, no rules change)
+
+**IDEA 2307 (is the band book's IDLE-CASH SHARE a market-level object or a cross-sectional one?) —
+ANSWERED, AND THE ANSWER IS MARKET-LEVEL: the 56 name gates are ONE market gate with extra turnover.**
+The live gate matrix `1{IN_it}` was decomposed exactly into the in-band SHARE `S_t` (one number a day) and a
+zero-mean cross-sectional residual, and both halves priced as books on two dials and no more — band c
+{0, 0.02, 0.03, 0.05, 0.08} x decomposition window L {1, 5, 21, 63, 126} — over 3 panels (U56 / B136 / SMALL)
+x 4 cost rungs = 360 published book-rungs.  `LVL1` (every priced name at `(0.75/N) * S_t`) matches the live
+book's gross BIT-FOR-BIT on every row (gate G3, max|d| 1.4e-14), so the contrast is pure cross-section.
+
+(A) **THE LEVEL EXPLAINS ALMOST EVERYTHING.** rho(NAME, LVL1) = 0.9633 / 0.9747 / 0.9747 at the live band on
+U56 / B136 / SMALL; R^2 0.9260-0.9579 across all 15 (panel, band) cells; the residual carries 4.22-7.50% of
+daily return variance.  (B) **AND IT IS NOT PAID FOR.**  At 10 bps the name gates buy +0.29 pp of CAGR
+(Sharpe +0.0353) on U56 and LOSE 0.43 pp (B136) and 0.68 pp (SMALL), while churning 1.77 / 2.01 / 2.57 x per
+year against the twin's 1.25 / 1.25 / 1.30.  At the ZERO-cost rung the same reading is +0.35 / -0.35 / -0.55
+pp, so this is not a cost artefact: on 2 of 3 panels the cross-section is return-negative before costs.
+(C) **PRE-REGISTERED BAR FAILS 3 OF 3**: majority-of-cells 4 of 15; paired 63-day block bootstrap t > +2 at
+0 of 15 (largest +0.65; the only |t| > 2 at 10 bps is SMALL c=0 at -2.13, against the name gates); survives
+25 bps at 4 of 15.  (D) **BOTH KEEP PATHS: 4b 0 of 90 at every rung; 4a 0 of 90 at 0 and 10 bps, 8 of 90 at
+25, 11 of 90 at 50** — every 4a pass is a slow-window level book whose merit is not trading.  The 4b CAGR
+floor binds at 90 of 90 cells at 10 bps.  (E) **RULE 8** (c, L chosen on <= 2016-12-31, 2017-2026 read once):
+on B136 and SMALL BOTH IS-only choosers pick a LEVEL book over every name-gate book, and beat the live
+construction out of sample (1.1194 / 1.1416 vs 1.1017; 0.5463 vs 0.5447).
+
+**TWO GATE FAILURES PUBLISHED AS FINDINGS.**  G9: mean in-band share is NOT monotone in band width on any
+panel (hysteresis delays entry AND exit), and on B136 the whole 0-8% width ladder moves mean exposure by
+0.0081 — band width is not an exposure dial.  G10: var(mean_L(S))/var(S) is non-monotone at 2 of 15 cells
+(c = 0.08, L = 5); the share is slow, a 126-day mean still keeps 65-88% of its variance.
+
+**RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched).**
+(1) No KEEP memo is filed.  (2) Any future device that spends the band book's idle cash should be priced
+against the LVL1 twin, not only against the name-gate book: the twin is the cheaper way to hold the same
+exposure path and it is not distinguishable from the live book at this tape's resolution.  (3) SURVIVORSHIP
+(rule 9): U56 / B136 are current-constituent lists held from 2008 and SMALL is a current sub-$2B screen from
+2010 (tickers with max_1d_move >= 1.0 dropped, 665 kept), so absolute levels are optimistic; the decomposition
+is a same-tape, same-gross, same-day contrast and is first-order immune, the KEEP counts are not.
