@@ -8959,3 +8959,33 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   faster than it buys `L_DD`. `H` is the weaker dial but not free: a 252d peak is worse than a 63d one at every fixed
   `q`, on both panels and both books, because it keeps a name stopped through the recovery it would have been paid for.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py. The standing 4b candidate and its blockers are unchanged.
+
+## 2026-09-23 (lane cloud, run 46, second idea) — idea 2435, two candidates recorded, neither recommended, no rule change
+- **idea 2435, ETF-member attribution on the capped candidate — ANSWERED = YES, AND THE SIGN IS THE OPPOSITE OF THE
+  PREMISE.** The idea was filed on the suspicion that a book permitted to hold SPY answers "does it beat SPY" by
+  construction. Measured: the committed U56 book does park **41.2% of NAV in ETFs** (SPY itself only 1.42%; B136
+  18.4%), but those members are a **DRAG, not the carrier**. Over all 192 exclusion cells against their own NONE
+  anchor (same panel, book, convention, gross, rung): **dSharpe > 0 in 192 of 192, dOOS_Sharpe > 0 in 192 of 192**,
+  dMaxDD shallower in 168 of 192. **Rule 8: 0 of 64 IS-only picks land on NONE, 64 of 64 beat their own NONE anchor
+  out of sample, 53 of 64 beat the live RULES v2 book.** 256 rows, 12 of 12 gates, NONE bit-identical under both
+  conventions to an independent `engine.backtest` construction.
+- **TWO KEEP-CANDIDATES RECORDED, NEITHER RECOMMENDED** (memo: `research/backtests/2026-09-23_etf-member-attribution_MEMO.md`,
+  which carries the exact RULES wording for the 4a one). **A (path 4a, U56 only):** `CAP2` + `NOEQETF`, g = 0.75 —
+  9.24% / 1.5728 / -8.08%, halves 1.6271 / 1.5606, OOS 10.62% / 1.6284, turnover **2.44x/yr**; better than live
+  RULES v2 (8.65% / 1.2052 / -12.05%, 2.79x/yr) on CAGR, Sharpe, both halves, MaxDD AND turnover, with 4a holding at
+  0/10/25/50 bps. **B (path 4b, joint both-panel at 0/10/25 bps):** `CAND` + `NOEQETF`, g = 0.75 — U56
+  15.52% / 1.4628 / -14.92%, OOS 16.99% / 1.4743; B136 12.65% / 1.1558 / -17.38%.
+- **WHY NEITHER IS ADOPTED — rule 9 is decisive here and is stated, not buried.** The tranche stripped away, index
+  funds, is the ONE part of these panels that is not survivorship-selected, so excluding it mechanically raises the
+  NAV share of a current-constituent stock list held from 2008: the measured gain runs in exactly the bias's
+  direction and the committed caches cannot separate them. The reductio is published: U56 / CAND / STOCKS reads
+  21.90% CAGR from twenty current mega-caps. Candidate B also makes the family's one stated adoption blocker WORSE
+  (turnover 4.18x/yr vs 3.51x), and Candidate A runs a 59% SHY sleeve and is not confirmed on B136 (4a 0 of 8).
+  The claim that needs no point-in-time panel to be true is the negative one: **the ETF sleeve does not carry the
+  4b pass; it costs Sharpe in 192 of 192 cells.**
+- **Mechanism located by the two conventions:** DEGROSS shows the equity-ETF sleeve was contributing return AND more
+  than its share of variance (U56/CAP2 dCAGR -1.10/-3.19/-3.53 pp against dSharpe +0.0992/+0.3503/+0.3880); RESPREAD
+  recovers the CAGR on the uncapped book but not the capped one, because a 2% ABSOLUTE cap cannot re-spread over a
+  21-name eligible set (mean SHY 34.4% -> 58.9% -> 72.1%). **The cap, not the exclusion, is what turns Candidate A
+  into a cash fund**, and that is its single failing 4b leg.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is unchanged.
