@@ -1,3 +1,80 @@
+## 2026-09-23 — idea 2467 (lane B, run 53): IS THE CANDIDATE'S 4b PASS A BOOK-WIDTH EFFECT, AND DOES A ONE-INSTRUMENT BAND BOOK REACH IT AT A TENTH OF THE TURNOVER? **ANSWERED = NO, TWICE OVER. KILL of BOOK WIDTH as a turnover device; CONFIRM — via the single-instrument limit — that the standing 4b candidate's whole margin is CROSS-SECTIONAL, not timing. NO KEEP-CANDIDATE, NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Run 51 (idea 2443) wrote the diagnosis this run is grounded in: "Idea
+  2431's adoption bar — cut turnover 3.51x -> 2.42x (-31.0%) at unchanged returns — stands... A
+  device that cuts turnover without cutting exposure remains the only thing that would work." Run 50
+  (idea 2457) then proved BY IDENTITY that the committed candidate IS "hold every in-band name at 2%
+  of NAV, ceiling `g`, residual to SHY", leaving the book exactly two moving parts: the 200d band,
+  and HOW MANY INSTRUMENTS THE RULE IS RUN OVER. Eleven closed devices attacked the first and each
+  paid ~0.10 pp of CAGR per 1% of turnover saved. The second had never been touched.
+
+  **WHAT WAS RUN.** `w_i = min(g / N_in^S, cap_K)` on the members of a sub-book `S` inside the 200d
+  +/-3% band, residual swept to SHY at phi = 1.00, with `cap_K = 0.02 x M / K` (idea 2381's a = 1.0
+  relative-cap unit, panel-scaled) so **`K = ALL` IS the committed CAP2 book EXACTLY**. TWO DIALS:
+  book width `K` {1, 2, 4, 8, 16, 32, ALL} and gross `g` {0.75 live, 1.00}. Sub-books are PRICE-BLIND
+  seeded uniform samples of the panel's own columns (8 seeds); the seed is a PUBLISHED DISTRIBUTION,
+  never a dial, and rule 8 chooses on the SEED MEAN so no seed is selectable out of sample either.
+  **SPYONLY** — hold SPY above its own band, else bills — is a NAMED, ZERO-SELECTION reference arm
+  declared in QUEUE.md before any compute and excluded from the rule-8 pick set. Reported never
+  selected on: panels {U56, B136}, rungs {0, 10, 25, 50} bps, sweeps {SHY phi=1.00, ZERO}, weekly,
+  t+1, band 0.03, MA 200d. **1,600 published rows over 400 realised weight paths, 16 of 16 gates**
+  (G3 `K = ALL` == an independent CAP2 construction to max|d| **0.000e+00** on BOTH panels; G3b
+  reproduces the committed U56 headline 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318, turnover
+  3.51x to 3.95e-05; G1 replica == `engine.backtest` to 0.000e+00; G4 peak gross 1.000000000).
+
+- **THE PREMISE IS REFUTED, AND THE MECHANISM IS THE FINDING: NARROWING THE BOOK CONVERTS RISK-LEG
+  CHURN INTO SWEEP-LEG CHURN ALMOST ONE-FOR-ONE.** Turnover is `sum |dw|` in NAV units and position
+  size scales as `1/K`, so fewer positions each move proportionally more; worse, a narrow book's
+  gross swings the full `0 -> g` on a single flip and the SHY sweep absorbs all of it. Split
+  **total = risk + sweep** at the headline convention: U56 **ALL 3.51 = 2.70 + 0.80** against **K=1
+  2.85 = 1.42 + 1.42**; B136 **ALL 4.68 = 4.29 + 0.39** against **K=1 3.21 = 1.60 + 1.60**. The total
+  ladder is FLAT and non-monotone — U56 2.85 / 3.66 / 3.89 / 3.51 / 3.80 / 3.57 / 3.51 and B136 3.21
+  / 4.45 / 5.12 / 5.59 / 5.12 / 4.76 / 4.68 walking K = 1 -> ALL — and turnover RISES at intermediate
+  widths (U56 K=4 **+11.0%**, B136 K=8 **+19.6%**). The best cut anywhere on the dial is **-18.8%
+  (U56 K=1) / -31.4% (B136 K=1)** and those two cells cost **-6.85 / -4.40 pp of CAGR**. **0 of 14
+  seed-mean width arms clear idea 2431's 2.42x bar** except the two SPYONLY cells (1.99x), which fail
+  4b outright.
+- **WIDTH IS ALSO AN EXPOSURE DIAL, WHICH THE PREMISE DENIED (G8, published).** Mean realised risk
+  gross falls monotonically as the book narrows: U56 **0.672 (ALL) -> 0.670 / 0.665 / 0.663 / 0.625 /
+  0.568 / 0.516 (K=1)**, B136 **0.736 -> 0.519**, ranges of **0.156 / 0.217 of NAV**. A wide book
+  de-grosses only when breadth falls below 67%; a narrow book de-grosses linearly in breadth. So
+  width fails the one test that would have distinguished it from the eleven closed devices.
+- **THE 4b PASS COLLAPSES MONOTONICALLY AS THE BOOK NARROWS, AND 4a IS EMPTY.** Over all 1,600 rows:
+  **ALL 20/32 (62.5%) -> K32 103/256 (40.2%) -> K16 68/256 (26.6%) -> K8 18/256 (7.0%) -> K4 24/256
+  (9.4%) -> K2 0/256 -> K1 0/256 -> SPYONLY 0/32**. Seed-mean pass rate at the headline cell walks
+  U56 1.00 / 0.625 / 0.500 / 0.125 / 0.250 / 0.00 / 0.00 and B136 1.00 / 0.500 / 0.250 / 0.00 / 0.00
+  / 0.00 / 0.00 from ALL down to K = 1. **4a is 0 of 1,600.** 18 rows do pass 4b under the 2.42x bar,
+  but **every one is a SINGLE SEED** (U56 / ZERO / K=4 seed 2, K=8 seeds 1 and 3, K=16 seed 4) whose
+  own width's seed-mean fails 4b and whose width rule 8 picks 0 of 32 times — filed as **seed
+  lotteries, NOT KEEP-candidates**, since no operator can implement "the right 4 of 56 names".
+- **THE SINGLE-INSTRUMENT LIMIT IS THE RUN'S POSITIVE FINDING: THE 200d BAND ON SPY ALONE EARNS
+  NOTHING.** `SPYONLY` on U56 / SHY / g0.75 / 10 bps reads **7.84% / 0.8375 / -20.07%, halves 0.92 /
+  0.77, OOS 8.40% / 0.8544, turnover 1.99x** against SPY buy-and-hold's **15.23% / 0.8897 / -33.72%,
+  halves 0.96 / 0.84, OOS 0.8784**. **Leg string 00010: it fails `L_H1`, `L_H2`, `L_OOS` and
+  `L_CAGR`, and passes only `L_DD` (+0.16 pp).** The timing rule buys drawdown and nothing else — it
+  does not beat simply owning the index on risk-adjusted terms in either half or out of sample.
+  **Every bit of the standing candidate's 4b margin is therefore CROSS-SECTIONAL**, produced by
+  applying the band to many names and letting breadth size the book, not by the band itself. This is
+  the one arm in the run with NO survivorship exposure at all.
+- **RULE 8 IS UNANIMOUS.** Both dials fitted on warm-up..2016-12-31 only, on the seed mean, 2017-2026
+  read ONCE, 32 picks: **32 of 32 land on `K = ALL` and 0 of 32 on any narrower book** (24 at g0.75,
+  8 at g1.00). They beat SPY's OOS Sharpe 32 of 32, the live book's 12 of 32 and the committed cell's
+  8 of 32 — all eight being `ALL / g1.00` B136 ZERO cells, a gross decision rather than a width one.
+  Mean OOS **12.36% / 1.1529 / -17.57%** against the committed cell's **11.50% / 1.1489 / -16.28%**
+  at **4.04x turnover vs 3.80x**: more turnover for +0.0040 of Sharpe.
+- **SURVIVORSHIP (PROTOCOL rule 9), and it cuts one way here.** U56 and B136 are CURRENT constituents
+  of their screens held from 2008, so a narrow random sub-book of survivors is a narrow book of
+  WINNERS. Every small-`K` result above is biased **in the device's favour**, so the collapse is if
+  anything understated. SMALL was not priced, and the reason is stated rather than assumed: 2318 /
+  2322 / 2326 / 2343 read its 4b at 0 of 40-120 and 2383 at 0 of 128 with three legs failing.
+- No change to `RULES.md`, `PROTOCOL.md`, `scan.py`, `bot.py` or `baseline.py` (rule 6). The live book
+  and the standing 4b candidate are unchanged. **Width was the last structural dial the committed
+  candidate had, and it is now priced. Idea 2431's adoption bar stands unmet, and this run is
+  evidence it may be unreachable by construction rather than by search: the only thing that cuts the
+  risk leg hands the saving straight to the sweep leg and removes the cross-section the pass is made
+  of.** See `research/backtests/2026-09-23_book-width-ladder_B.result.md`, 6 LEADERBOARD rows and
+  `research/backtests/2026-09-23_book-width-ladder_B.py`.
+
 ## 2026-09-23 — idea 2443 (lane C, run 51): IS DE-GROSSING A COST DEFENCE FOR THE CAPPED CANDIDATE AT 25 AND 50 bps? **ANSWERED = NO, AND THE SIGN IS THE OPPOSITE OF THE PREMISE. KILL of de-grossing as a cost defence; CONFIRM of idea 2431's breakeven measurement and of run 50's "do not adopt". ONE 4a KEEP-CANDIDATE FILED, NOT ADOPTED. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 2431 published the capped candidate's cost breakeven — the 4b pass
