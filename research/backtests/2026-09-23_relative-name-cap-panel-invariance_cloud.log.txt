@@ -1,0 +1,201 @@
+=== idea 2381 — is the 2% NAME CAP PANEL-INVARIANT, or should it SCALE with 1/N? ===
+    2026-09-23  lane cloud   band 0.03  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  sweep SHY phi=1.00   absolute reference cap 2.00% (idea 2322, FIXED)
+    DIAL 1 cap multiple a ['1.00', '1.25', '1.50', '2.00', 'INF']   DIAL 2 gross g [0.75, 1.0]
+    CONVENTION G (HEADLINE, pre-stated in the pushed claim): c_t = a x gross / N_priced,t
+    CONVENTION A (the idea's literal text):                  c_t = a / N_priced,t
+    GATE PASS  G6 exactly two tuned parameters: cap multiple a, gross g (the absolute 2% cap is a fixed REFERENCE, the convention is REPORTED not selected) (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 per-column replica == engine.backtest: max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G1a convention G at a=1.00 == rules_v2_weights (the live de-grossed book), g=0.75: max|dw| 0.000e+00 (target < 1e-12)
+    GATE PASS  G1a convention G at a=1.00 == rules_v2_weights (the live de-grossed book), g=1.0: max|dw| 0.000e+00 (target < 1e-12)
+    GATE PASS  G1b a=INF == independent uncapped-candidate construction (U56, g=0.75): max|dw| 0.000e+00 (target < 1e-12)
+    GATE PASS  G1c conventions G and A coincide at gross 1.00 (they differ only by the gross factor): max|dw| over all a 0.000e+00 (target < 1e-12)
+    GATE PASS  G4 NO LOOKAHEAD: weights truncated at 2021-02-05 == full-panel weights up to 2021-02-05: max|dw| 0.000e+00 (target < 1e-12)
+
+--- panel U56 (56 names)  SPY 15.23% / 0.8897 / -33.72%   live RULES v2 8.65% / 1.2052 / -12.05%   median N_in 42 of median N_priced 54
+    ... U56 done (10s)
+
+--- panel B136 (136 names)  SPY 15.12% / 0.8844 / -33.72%   live RULES v2 7.96% / 1.0972 / -12.24%   median N_in 101 of median N_priced 132
+    ... B136 done (25s)
+    GATE PASS  G3 no leverage (all books): max row sum 1.000000000 (target <= 1+1e-12)
+    GATE PASS  G5 sweep instrument priced on every held row: SHY non-null on all panels: True (target True)
+    GATE PASS  G8 max per-name weight is non-decreasing along the a ladder: 8 of 8 (panel, conv, gross) cells (target 8 of 8)
+    GATE PASS  G7 reproduces idea 2322's committed U56 CAP2 headline (11.58%/1.2643/-14.81%, OOS 12.70%/1.3243): read 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318 -> max|d| 7.54e-04 (target < 1e-3)
+    PUB   G10 a=1.00 (convention G) reproduces idea 2294's committed idle-cash sleeve (U56): read 9.1538% / 1.2719 / -11.4824% (halves 1.2757 / 1.2732)  vs committed 9.1201% / 1.2675 / -11.4824% (halves 1.2774 / 1.2635)
+    PUB   G10 a=1.00 (convention G) reproduces idea 2294's committed idle-cash sleeve (B136): read 8.4751% / 1.1669 / -11.6473% (halves 1.2772 / 1.0605)  vs committed 8.4751% / 1.1669 / -11.6473% (halves 1.2772 / 1.0605)
+    PUB   G9 the filed premise, MEASURED (U56, absolute 2% cap at g=0.75): the 2% cap binds on 1322 of the window's days (29.7%); median uncapped per-name weight 1.786%; mean names held 38.45; mean book gross 0.672
+    PUB   G9 the filed premise, MEASURED (B136, absolute 2% cap at g=0.75): the 2% cap binds on 230 of the window's days (5.2%); median uncapped per-name weight 0.743%; mean names held 93.22; mean book gross 0.736
+
+=== A. THE FULL LADDER AT THE HEADLINE RUNG (10 bps) — every point, nothing dropped ===
+
+  U56  convention G   [HEADLINE]
+  a      g    |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | maxNameW meanNameW nHeld bookGross bind%  turn/yr
+  1.00   0.75 |  9.15%  1.2719  -11.48% |  1.28   1.27 |  10.21%  1.3636 -11.48% | Y  .  | 11110             |    1.50%     1.39%  38.5     0.533 100.0%    2.79
+  1.25   0.75 | 11.02%  1.2684  -13.68% |  1.29   1.26 |  12.17%  1.3489 -13.68% | .  Y  | 11111             |    1.88%     1.67%  38.5     0.641  56.4%    3.31
+  1.50   0.75 | 11.69%  1.2620  -14.98% |  1.29   1.24 |  12.79%  1.3275 -14.98% | .  Y  | 11111             |    2.25%     1.76%  38.5     0.678  26.5%    3.56
+  2.00   0.75 | 12.05%  1.2412  -15.36% |  1.26   1.23 |  13.20%  1.3091 -15.36% | .  Y  | 11111             |    3.00%     1.84%  38.5     0.706  15.8%    3.90
+  INF    0.75 | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 -17.39% | .  Y  | 11111             |   15.00%     1.95%  38.5     0.750   0.0%    4.39
+  CAP2abs 0.75 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 -14.81% | .  Y  | 11111             |    2.00%     1.75%  38.5     0.672  29.7%    3.51
+  1.00   1.00 | 11.77%  1.2246  -15.64% |  1.24   1.22 |  13.05%  1.3087 -15.64% | .  Y  | 11111             |    2.00%     1.85%  38.5     0.710 100.0%    3.71
+  1.25   1.00 | 14.27%  1.2282  -18.50% |  1.25   1.21 |  15.69%  1.3016 -18.50% | .  Y  | 11111             |    2.50%     2.22%  38.5     0.855  56.4%    4.35
+  1.50   1.00 | 15.17%  1.2240  -20.20% |  1.26   1.20 |  16.52%  1.2826 -20.20% | .  Y  | 11111             |    3.00%     2.35%  38.5     0.904  26.5%    4.63
+  2.00   1.00 | 15.66%  1.2049  -20.68% |  1.23   1.18 |  17.07%  1.2659 -20.68% | .  .  | 11101             |    4.00%     2.45%  38.5     0.941  15.8%    5.05
+  INF    1.00 | 16.37%  1.1604  -23.14% |  1.21   1.13 |  17.92%  1.2011 -23.14% | .  .  | 11101             |   20.00%     2.60%  38.5     1.000   0.0%    5.68
+  CAP2abs 1.00 | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 -17.28% | .  Y  | 11111             |    2.00%     2.00%  38.5     0.768  93.8%    3.99
+
+  U56  convention A   [published, not headline]
+  a      g    |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | maxNameW meanNameW nHeld bookGross bind%  turn/yr
+  1.00   0.75 | 11.38%  1.2739  -14.11% |  1.30   1.26 |  12.49%  1.3455 -14.11% | .  Y  | 11111             |    2.00%     1.71%  38.5     0.659  40.9%    3.40
+  1.25   0.75 | 11.83%  1.2516  -15.36% |  1.28   1.23 |  12.93%  1.3140 -15.36% | .  Y  | 11111             |    2.50%     1.79%  38.5     0.689  21.2%    3.70
+  1.50   0.75 | 12.05%  1.2412  -15.36% |  1.26   1.23 |  13.20%  1.3091 -15.36% | .  Y  | 11111             |    3.00%     1.84%  38.5     0.706  15.8%    3.90
+  2.00   0.75 | 12.32%  1.2272  -15.99% |  1.26   1.20 |  13.38%  1.2824 -15.99% | .  Y  | 11111             |    4.00%     1.88%  38.5     0.724  10.5%    4.11
+  INF    0.75 | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 -17.39% | .  Y  | 11111             |   15.00%     1.95%  38.5     0.750   0.0%    4.39
+  CAP2abs 0.75 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 -14.81% | .  Y  | 11111             |    2.00%     1.75%  38.5     0.672  29.7%    3.51
+  1.00   1.00 | 11.77%  1.2246  -15.64% |  1.24   1.22 |  13.05%  1.3087 -15.64% | .  Y  | 11111             |    2.00%     1.85%  38.5     0.710 100.0%    3.71
+  1.25   1.00 | 14.27%  1.2282  -18.50% |  1.25   1.21 |  15.69%  1.3016 -18.50% | .  Y  | 11111             |    2.50%     2.22%  38.5     0.855  56.4%    4.35
+  1.50   1.00 | 15.17%  1.2240  -20.20% |  1.26   1.20 |  16.52%  1.2826 -20.20% | .  Y  | 11111             |    3.00%     2.35%  38.5     0.904  26.5%    4.63
+  2.00   1.00 | 15.66%  1.2049  -20.68% |  1.23   1.18 |  17.07%  1.2659 -20.68% | .  .  | 11101             |    4.00%     2.45%  38.5     0.941  15.8%    5.05
+  INF    1.00 | 16.37%  1.1604  -23.14% |  1.21   1.13 |  17.92%  1.2011 -23.14% | .  .  | 11101             |   20.00%     2.60%  38.5     1.000   0.0%    5.68
+  CAP2abs 1.00 | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 -17.28% | .  Y  | 11111             |    2.00%     2.00%  38.5     0.768  93.8%    3.99
+
+  B136  convention G   [HEADLINE]
+  a      g    |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | maxNameW meanNameW nHeld bookGross bind%  turn/yr
+  1.00   0.75 |  8.48%  1.1669  -11.65% |  1.28   1.06 |   8.57%  1.1908 -11.65% | Y  .  | 11110             |    0.61%     0.57%  93.2     0.532 100.0%    3.03
+  1.25   0.75 | 10.07%  1.1534  -13.78% |  1.29   1.03 |  10.04%  1.1548 -13.78% | .  .  | 11110             |    0.76%     0.69%  93.2     0.639  59.0%    3.63
+  1.50   0.75 | 10.80%  1.1468  -14.99% |  1.27   1.03 |  10.88%  1.1491 -14.99% | .  Y  | 11111             |    0.91%     0.73%  93.2     0.681  28.3%    3.94
+  2.00   0.75 | 11.23%  1.1197  -16.66% |  1.26   1.00 |  11.20%  1.1060 -16.66% | .  Y  | 11111             |    1.22%     0.76%  93.2     0.709  14.8%    4.30
+  INF    0.75 | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 -18.11% | .  Y  | 11111             |   12.50%     0.80%  93.2     0.750   0.0%    4.91
+  CAP2abs 0.75 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 -17.10% | .  Y  | 11111             |    2.00%     0.79%  93.2     0.736   5.2%    4.68
+  1.00   1.00 | 10.84%  1.1190  -15.86% |  1.24   1.00 |  10.83%  1.1327 -15.86% | .  Y  | 11111             |    0.81%     0.76%  93.2     0.710 100.0%    4.06
+  1.25   1.00 | 12.97%  1.1128  -18.63% |  1.26   0.97 |  12.78%  1.1052 -18.63% | .  Y  | 11111             |    1.02%     0.91%  93.2     0.852  59.0%    4.79
+  1.50   1.00 | 13.95%  1.1094  -20.20% |  1.25   0.98 |  13.91%  1.1034 -20.20% | .  Y  | 11111             |    1.22%     0.97%  93.2     0.908  28.3%    5.13
+  2.00   1.00 | 14.52%  1.0845  -22.38% |  1.23   0.95 |  14.32%  1.0630 -22.38% | .  .  | 11101             |    1.63%     1.01%  93.2     0.945  14.8%    5.56
+  INF    1.00 | 15.52%  1.0615  -24.19% |  1.17   0.96 |  15.77%  1.0610 -24.19% | .  .  | 11101             |   16.67%     1.07%  93.2     1.000   0.0%    6.32
+  CAP2abs 1.00 | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 -22.38% | .  .  | 11101             |    2.00%     1.04%  93.2     0.966  10.0%    5.83
+
+  B136  convention A   [published, not headline]
+  a      g    |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | maxNameW meanNameW nHeld bookGross bind%  turn/yr
+  1.00   0.75 | 10.42%  1.1546  -14.18% |  1.29   1.03 |  10.41%  1.1547 -14.18% | .  .  | 11110             |    0.81%     0.71%  93.2     0.658  45.9%    3.75
+  1.25   0.75 | 10.98%  1.1335  -15.80% |  1.26   1.02 |  11.07%  1.1317 -15.80% | .  Y  | 11111             |    1.02%     0.74%  93.2     0.694  21.2%    4.08
+  1.50   0.75 | 11.23%  1.1197  -16.66% |  1.26   1.00 |  11.20%  1.1060 -16.66% | .  Y  | 11111             |    1.22%     0.76%  93.2     0.709  14.8%    4.30
+  2.00   0.75 | 11.67%  1.1254  -16.66% |  1.26   1.00 |  11.52%  1.1057 -16.66% | .  Y  | 11111             |    1.63%     0.78%  93.2     0.726   9.6%    4.53
+  INF    0.75 | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 -18.11% | .  Y  | 11111             |   12.50%     0.80%  93.2     0.750   0.0%    4.91
+  CAP2abs 0.75 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 -17.10% | .  Y  | 11111             |    2.00%     0.79%  93.2     0.736   5.2%    4.68
+  1.00   1.00 | 10.84%  1.1190  -15.86% |  1.24   1.00 |  10.83%  1.1327 -15.86% | .  Y  | 11111             |    0.81%     0.76%  93.2     0.710 100.0%    4.06
+  1.25   1.00 | 12.97%  1.1128  -18.63% |  1.26   0.97 |  12.78%  1.1052 -18.63% | .  Y  | 11111             |    1.02%     0.91%  93.2     0.852  59.0%    4.79
+  1.50   1.00 | 13.95%  1.1094  -20.20% |  1.25   0.98 |  13.91%  1.1034 -20.20% | .  Y  | 11111             |    1.22%     0.97%  93.2     0.908  28.3%    5.13
+  2.00   1.00 | 14.52%  1.0845  -22.38% |  1.23   0.95 |  14.32%  1.0630 -22.38% | .  .  | 11101             |    1.63%     1.01%  93.2     0.945  14.8%    5.56
+  INF    1.00 | 15.52%  1.0615  -24.19% |  1.17   0.96 |  15.77%  1.0610 -24.19% | .  .  | 11101             |   16.67%     1.07%  93.2     1.000   0.0%    6.32
+  CAP2abs 1.00 | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 -22.38% | .  .  | 11101             |    2.00%     1.04%  93.2     0.966  10.0%    5.83
+
+=== B. THE ANSWER — does ONE value of a clear 4b on BOTH panels at the same (g, rung)? ===
+  (the absolute 2% cap is shown on the same footing as the comparand it has to beat)
+
+  convention G   [HEADLINE]
+  a      g     |  0bps U56/B136  10bps U56/B136  25bps U56/B136  50bps U56/B136  | both-panel rungs
+  1.00   0.75  |    ./.        ./.        ./.        ./.       | 0 of 4
+  1.00   1.00  |    Y/Y        Y/Y        Y/.        ./.       | 2 of 4
+  1.25   0.75  |    Y/.        Y/.        ./.        ./.       | 0 of 4
+  1.25   1.00  |    Y/Y        Y/Y        Y/Y        Y/.       | 3 of 4
+  1.50   0.75  |    Y/Y        Y/Y        Y/.        ./.       | 2 of 4
+  1.50   1.00  |    Y/Y        Y/Y        ./.        ./.       | 2 of 4
+  2.00   0.75  |    Y/Y        Y/Y        Y/.        ./.       | 2 of 4
+  2.00   1.00  |    ./.        ./.        ./.        ./.       | 0 of 4
+  INF    0.75  |    Y/Y        Y/Y        Y/Y        ./.       | 3 of 4
+  INF    1.00  |    ./.        ./.        ./.        ./.       | 0 of 4
+  CAP2abs 0.75  |    Y/Y        Y/Y        Y/Y        ./.       | 3 of 4
+  CAP2abs 1.00  |    Y/.        Y/.        Y/.        Y/.       | 0 of 4
+
+  convention A
+  a      g     |  0bps U56/B136  10bps U56/B136  25bps U56/B136  50bps U56/B136  | both-panel rungs
+  1.00   0.75  |    Y/Y        Y/.        Y/.        ./.       | 1 of 4
+  1.00   1.00  |    Y/Y        Y/Y        Y/.        ./.       | 2 of 4
+  1.25   0.75  |    Y/Y        Y/Y        Y/.        ./.       | 2 of 4
+  1.25   1.00  |    Y/Y        Y/Y        Y/Y        Y/.       | 3 of 4
+  1.50   0.75  |    Y/Y        Y/Y        Y/.        ./.       | 2 of 4
+  1.50   1.00  |    Y/Y        Y/Y        ./.        ./.       | 2 of 4
+  2.00   0.75  |    Y/Y        Y/Y        Y/Y        ./.       | 3 of 4
+  2.00   1.00  |    ./.        ./.        ./.        ./.       | 0 of 4
+  INF    0.75  |    Y/Y        Y/Y        Y/Y        ./.       | 3 of 4
+  INF    1.00  |    ./.        ./.        ./.        ./.       | 0 of 4
+  CAP2abs 0.75  |    Y/Y        Y/Y        Y/Y        ./.       | 3 of 4
+  CAP2abs 1.00  |    Y/.        Y/.        Y/.        Y/.       | 0 of 4
+
+  both-panel 4b pass count by a (summed over 2 gross x 4 rungs, max 8), headline convention G:
+    a = 1.00     -> 2 of 8
+    a = 1.25     -> 3 of 8
+    a = 1.50     -> 4 of 8
+    a = 2.00     -> 2 of 8
+    a = INF      -> 3 of 8
+    a = CAP2abs  -> 3 of 8
+
+=== C. KEEP COUNTS OVER ALL PUBLISHED ROWS ===
+  ladder rows (5 a x 2 conv x 2 gross x 2 panels x 4 rungs = 160):  4b 76   4a 6
+  CAP2 absolute reference rows (16):  4b 10   4a 0
+     0.0 bps:  4b 29/40   4a  2/40   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 8  L_CAGR 3
+    10.0 bps:  4b 28/40   4a  2/40   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 8  L_CAGR 4
+    25.0 bps:  4b 17/40   4a  2/40   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 12  L_CAGR 11
+    50.0 bps:  4b  2/40   4a  0/40   binding leg on 4b FAILs: L_H1 0  L_H2 15  L_OOS 0  L_DD 12  L_CAGR 24
+  4b by (panel, convention, a) over 8 rows each (2 gross x 4 rungs):
+    U56   G: a=1.00  3/8   a=1.25  6/8   a=1.50  5/8   a=2.00  3/8   a=INF   3/8
+    U56   A: a=1.00  6/8   a=1.25  7/8   a=1.50  5/8   a=2.00  3/8   a=INF   3/8
+    B136  G: a=1.00  2/8   a=1.25  3/8   a=1.50  4/8   a=2.00  2/8   a=INF   3/8
+    B136  A: a=1.00  3/8   a=1.25  5/8   a=1.50  4/8   a=2.00  3/8   a=INF   3/8
+
+=== D. WHAT THE RELATIVE CAP DOES TO THE BOOK (g=0.75, convention G, 10 bps) ===
+  panel a      | cap c_t at median N | max name  mean name  nHeld  bookGross  meanSHY  bind%  turn/yr
+  U56   1.00   |  1.389%              |   1.50%     1.39%   38.5     0.533    0.480 100.0%    2.79
+  U56   1.25   |  1.736%              |   1.88%     1.67%   38.5     0.641    0.374  56.4%    3.31
+  U56   1.50   |  2.083%              |   2.25%     1.76%   38.5     0.678    0.338  26.5%    3.56
+  U56   2.00   |  2.778%              |   3.00%     1.84%   38.5     0.706    0.311  15.8%    3.90
+  U56   INF    |   n/a                |  15.00%     1.95%   38.5     0.750    0.269   0.0%    4.39
+  U56   CAP2abs |  2.000%              |   2.00%     1.75%   38.5     0.672    0.344  29.7%    3.51
+  B136  1.00   |  0.568%              |   0.61%     0.57%   93.2     0.532    0.473 100.0%    3.03
+  B136  1.25   |  0.710%              |   0.76%     0.69%   93.2     0.639    0.367  59.0%    3.63
+  B136  1.50   |  0.852%              |   0.91%     0.73%   93.2     0.681    0.326  28.3%    3.94
+  B136  2.00   |  1.136%              |   1.22%     0.76%   93.2     0.709    0.298  14.8%    4.30
+  B136  INF    |   n/a                |  12.50%     0.80%   93.2     0.750    0.259   0.0%    4.91
+  B136  CAP2abs |  2.000%              |   2.00%     0.79%   93.2     0.736    0.272   5.2%    4.68
+
+=== E. RULE 8 — (a, gross) chosen on <= 2016-12-31 ONLY, 2017-2026 read ONCE ===
+  U56   G   0.0bps C_ISSHARPE  -> a 1.50   g 0.75 | OOS 13.18% / 1.3650 / -14.94% | abs-2% OOS 13.17% / 1.3693 | live v2 OOS 1.3085 | SPY OOS 0.8831 | full 4b Y
+  U56   G   0.0bps C_ISCALMAR  -> a INF    g 0.75 | OOS 14.35% / 1.2803 / -17.27% | abs-2% OOS 13.17% / 1.3693 | live v2 OOS 1.3085 | SPY OOS 0.8831 | full 4b Y
+  U56   G  10.0bps C_ISSHARPE  -> a 1.50   g 0.75 | OOS 12.79% / 1.3275 / -14.98% | abs-2% OOS 12.77% / 1.3318 | live v2 OOS 1.2839 | SPY OOS 0.8831 | full 4b Y
+  U56   G  10.0bps C_ISCALMAR  -> a INF    g 0.75 | OOS 13.85% / 1.2397 / -17.39% | abs-2% OOS 12.77% / 1.3318 | live v2 OOS 1.2839 | SPY OOS 0.8831 | full 4b Y
+  U56   G  25.0bps C_ISSHARPE  -> a 1.50   g 0.75 | OOS 12.20% / 1.2712 / -15.05% | abs-2% OOS 12.18% / 1.2755 | live v2 OOS 1.2471 | SPY OOS 0.8831 | full 4b Y
+  U56   G  25.0bps C_ISCALMAR  -> a INF    g 0.75 | OOS 13.10% / 1.1787 / -17.57% | abs-2% OOS 12.18% / 1.2755 | live v2 OOS 1.2471 | SPY OOS 0.8831 | full 4b Y
+  U56   G  50.0bps C_ISSHARPE  -> a 1.50   g 0.75 | OOS 11.21% / 1.1770 / -15.16% | abs-2% OOS 11.21% / 1.1813 | live v2 OOS 1.1856 | SPY OOS 0.8831 | full 4b .
+  U56   G  50.0bps C_ISCALMAR  -> a INF    g 0.75 | OOS 11.87% / 1.0768 / -17.86% | abs-2% OOS 11.21% / 1.1813 | live v2 OOS 1.1856 | SPY OOS 0.8831 | full 4b .
+  U56   A   0.0bps C_ISSHARPE  -> a 1.00   g 0.75 | OOS 12.87% / 1.3827 / -14.07% | abs-2% OOS 13.17% / 1.3693 | live v2 OOS 1.3085 | SPY OOS 0.8831 | full 4b Y
+  U56   A   0.0bps C_ISCALMAR  -> a INF    g 0.75 | OOS 14.35% / 1.2803 / -17.27% | abs-2% OOS 13.17% / 1.3693 | live v2 OOS 1.3085 | SPY OOS 0.8831 | full 4b Y
+  U56   A  10.0bps C_ISSHARPE  -> a 1.00   g 0.75 | OOS 12.49% / 1.3455 / -14.11% | abs-2% OOS 12.77% / 1.3318 | live v2 OOS 1.2839 | SPY OOS 0.8831 | full 4b Y
+  U56   A  10.0bps C_ISCALMAR  -> a INF    g 0.75 | OOS 13.85% / 1.2397 / -17.39% | abs-2% OOS 12.77% / 1.3318 | live v2 OOS 1.2839 | SPY OOS 0.8831 | full 4b Y
+  U56   A  25.0bps C_ISSHARPE  -> a 1.00   g 0.75 | OOS 11.92% / 1.2895 / -14.18% | abs-2% OOS 12.18% / 1.2755 | live v2 OOS 1.2471 | SPY OOS 0.8831 | full 4b Y
+  U56   A  25.0bps C_ISCALMAR  -> a INF    g 0.75 | OOS 13.10% / 1.1787 / -17.57% | abs-2% OOS 12.18% / 1.2755 | live v2 OOS 1.2471 | SPY OOS 0.8831 | full 4b Y
+  U56   A  50.0bps C_ISSHARPE  -> a 1.00   g 0.75 | OOS 10.98% / 1.1960 / -14.29% | abs-2% OOS 11.21% / 1.1813 | live v2 OOS 1.1856 | SPY OOS 0.8831 | full 4b .
+  U56   A  50.0bps C_ISCALMAR  -> a INF    g 0.75 | OOS 11.87% / 1.0768 / -17.86% | abs-2% OOS 11.21% / 1.1813 | live v2 OOS 1.1856 | SPY OOS 0.8831 | full 4b .
+  B136  G   0.0bps C_ISSHARPE  -> a 1.25   g 0.75 | OOS 10.45% / 1.1981 / -13.72% | abs-2% OOS 12.19% / 1.1392 | live v2 OOS 1.1314 | SPY OOS 0.8737 | full 4b .
+  B136  G   0.0bps C_ISCALMAR  -> a 1.25   g 0.75 | OOS 10.45% / 1.1981 / -13.72% | abs-2% OOS 12.19% / 1.1392 | live v2 OOS 1.1314 | SPY OOS 0.8737 | full 4b .
+  B136  G  10.0bps C_ISSHARPE  -> a 1.25   g 0.75 | OOS 10.04% / 1.1548 / -13.78% | abs-2% OOS 11.65% / 1.0936 | live v2 OOS 1.1017 | SPY OOS 0.8737 | full 4b .
+  B136  G  10.0bps C_ISCALMAR  -> a 1.25   g 0.75 | OOS 10.04% / 1.1548 / -13.78% | abs-2% OOS 11.65% / 1.0936 | live v2 OOS 1.1017 | SPY OOS 0.8737 | full 4b .
+  B136  G  25.0bps C_ISSHARPE  -> a 1.25   g 0.75 | OOS  9.43% / 1.0897 / -14.05% | abs-2% OOS 10.85% / 1.0250 | live v2 OOS 1.0571 | SPY OOS 0.8737 | full 4b .
+  B136  G  25.0bps C_ISCALMAR  -> a 1.25   g 0.75 | OOS  9.43% / 1.0897 / -14.05% | abs-2% OOS 10.85% / 1.0250 | live v2 OOS 1.0571 | SPY OOS 0.8737 | full 4b .
+  B136  G  50.0bps C_ISSHARPE  -> a 1.25   g 0.75 | OOS  8.41% / 0.9810 / -15.32% | abs-2% OOS  9.53% / 0.9106 | live v2 OOS 0.9828 | SPY OOS 0.8737 | full 4b .
+  B136  G  50.0bps C_ISCALMAR  -> a 1.25   g 0.75 | OOS  8.41% / 0.9810 / -15.32% | abs-2% OOS  9.53% / 0.9106 | live v2 OOS 0.9828 | SPY OOS 0.8737 | full 4b .
+  B136  A   0.0bps C_ISSHARPE  -> a 1.00   g 0.75 | OOS 10.84% / 1.1979 / -14.12% | abs-2% OOS 12.19% / 1.1392 | live v2 OOS 1.1314 | SPY OOS 0.8737 | full 4b Y
+  B136  A   0.0bps C_ISCALMAR  -> a 1.00   g 0.75 | OOS 10.84% / 1.1979 / -14.12% | abs-2% OOS 12.19% / 1.1392 | live v2 OOS 1.1314 | SPY OOS 0.8737 | full 4b Y
+  B136  A  10.0bps C_ISSHARPE  -> a 1.00   g 0.75 | OOS 10.41% / 1.1547 / -14.18% | abs-2% OOS 11.65% / 1.0936 | live v2 OOS 1.1017 | SPY OOS 0.8737 | full 4b .
+  B136  A  10.0bps C_ISCALMAR  -> a 1.00   g 0.75 | OOS 10.41% / 1.1547 / -14.18% | abs-2% OOS 11.65% / 1.0936 | live v2 OOS 1.1017 | SPY OOS 0.8737 | full 4b .
+  B136  A  25.0bps C_ISSHARPE  -> a 1.00   g 0.75 | OOS  9.78% / 1.0899 / -14.41% | abs-2% OOS 10.85% / 1.0250 | live v2 OOS 1.0571 | SPY OOS 0.8737 | full 4b .
+  B136  A  25.0bps C_ISCALMAR  -> a 1.00   g 0.75 | OOS  9.78% / 1.0899 / -14.41% | abs-2% OOS 10.85% / 1.0250 | live v2 OOS 1.0571 | SPY OOS 0.8737 | full 4b .
+  B136  A  50.0bps C_ISSHARPE  -> a 1.00   g 0.75 | OOS  8.73% / 0.9816 / -15.73% | abs-2% OOS  9.53% / 0.9106 | live v2 OOS 0.9828 | SPY OOS 0.8737 | full 4b .
+  B136  A  50.0bps C_ISCALMAR  -> a 2.00   g 0.75 | OOS  9.48% / 0.9256 / -17.88% | abs-2% OOS  9.53% / 0.9106 | live v2 OOS 0.9828 | SPY OOS 0.8737 | full 4b .
+
+  rule-8 picks beating SPY OOS 32 of 32;  beating the live book OOS 19 of 32;  beating the ABSOLUTE 2% cap OOS 20 of 32
+  picks landing on a=1.00 (the live de-grossed book) 11 of 32;  on a=INF (the uncapped candidate) 8 of 32
+  picks by a: 1.00 x11, INF x8, 1.25 x8, 1.50 x4, 2.00 x1
+
+=== GATES: 17 of 17 pass ===
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-23_relative-name-cap-panel-invariance_cloud.grid.csv / .shape.csv / .walkforward.csv / .gates.csv   (26s)
