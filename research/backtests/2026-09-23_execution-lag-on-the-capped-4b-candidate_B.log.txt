@@ -1,0 +1,211 @@
+=== idea 2355 — does the CAPPED 4b CANDIDATE's pass survive a 1-DAY DELAYED EXECUTION (t+2)?  At what lag does it die? ===
+    2026-09-23  lane B   cadence W  band 0.03  rungs [0.0, 10.0, 25.0, 50.0] bps  name cap 2.00% (FIXED, idea 2322)  sweep SHY phi=1.00
+    DIAL 1 execution lag L [1, 2, 3, 5] trading days (L=1 IS the rule-2 convention)   DIAL 2 gross [0.75, 1.0]
+    GATE PASS  G6 exactly two tuned parameters: execution lag L, gross (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 lag replica at L=1 == engine.backtest (LIVE book, W): max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G4 lag replica at L=1 == engine.backtest (the CAP2 book itself, W): max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G5 fill days at lag L == the L=1 fill days shifted forward by L-1 rows: L=1: 0, L=2: 0, L=3: 0, L=5: 0 disagreements (target 0 everywhere)
+
+--- panel U56 (56 names)  SPY 15.23% / 0.8897 / -33.72%   live RULES v2 (t+1) 8.65% / 1.2052 / -12.05%, turnover 1.77/yr
+    ... U56 done (4s)
+
+--- panel B136 (136 names)  SPY 15.12% / 0.8844 / -33.72%   live RULES v2 (t+1) 7.96% / 1.0972 / -12.24%, turnover 2.01/yr
+    ... B136 done (6s)
+    GATE PASS  G1 the CAP2 decision weights == an independent build (U56): max|dw| 0.000e+00 (target < 1e-12)
+    GATE PASS  G3 no leverage (all 16 legal books): max held row sum 1.000000000 (target <= 1+1e-9)
+    GATE PASS  G9 fire count invariant in L up to edge truncation: B136: 922..923 fills; U56: 923..924 fills (target span <= 5)
+    GATE PASS  G7 sweep instrument priced on every held row: SHY non-null on all panels: True (target True)
+    GATE PASS  G8 reproduces idea 2322's committed U56 CAP2/t+1 headline (11.58%/1.2643/-14.81%, OOS 12.70%/1.3243, turnover 3.51/yr): read 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318, turnover 3.51/yr -> max|d| 7.54e-04 (target < 1e-3)
+
+=== A. THE FULL GRID AT THE HEADLINE RUNG (10 bps) — every point, nothing dropped ===
+
+  U56
+  lag gross |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | turn/yr  x live  fills  meanGross  maxNameHeld
+  t+1 0.75  | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 -14.81% | .  Y  | 11111             |    3.51    1.98    923      1.000        2.74%
+  t+2 0.75  | 11.27%  1.2114  -17.46% |  1.26   1.17 |  12.33%  1.2617 -17.46% | .  Y  | 11111             |    3.54    1.99    924      1.000        3.19%
+  t+3 0.75  | 11.73%  1.2501  -17.24% |  1.30   1.21 |  12.76%  1.2966 -17.24% | .  Y  | 11111             |    3.54    1.99    923      1.000        3.03%
+  t+5 0.75  | 11.76%  1.2337  -17.70% |  1.29   1.19 |  12.70%  1.2700 -17.70% | .  Y  | 11111             |    3.57    2.01    923      1.000        2.99%
+  t+1 1.00  | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 -17.28% | .  Y  | 11111             |    3.99    2.25    923      1.000        2.92%
+  t+2 1.00  | 12.37%  1.1726  -19.10% |  1.21   1.15 |  13.96%  1.2425 -19.10% | .  Y  | 11111             |    4.03    2.27    924      1.000        3.40%
+  t+3 1.00  | 12.95%  1.2144  -19.31% |  1.26   1.19 |  14.42%  1.2739 -19.31% | .  Y  | 11111             |    4.04    2.28    923      1.000        3.23%
+  t+5 1.00  | 12.95%  1.1952  -19.64% |  1.25   1.16 |  14.36%  1.2463 -19.64% | .  Y  | 11111             |    4.09    2.31    923      1.000        3.03%
+
+  B136
+  lag gross |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | turn/yr  x live  fills  meanGross  maxNameHeld
+  t+1 0.75  | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 -17.10% | .  Y  | 11111             |    4.68    2.32    922      1.000        2.50%
+  t+2 0.75  | 11.63%  1.0863  -19.73% |  1.27   0.93 |  11.20%  1.0308 -19.73% | .  Y  | 11111             |    4.70    2.34    923      1.000        2.47%
+  t+3 0.75  | 11.98%  1.1107  -19.65% |  1.27   0.97 |  11.75%  1.0696 -19.65% | .  Y  | 11111             |    4.70    2.34    923      1.000        2.40%
+  t+5 0.75  | 11.76%  1.0811  -20.48% |  1.23   0.95 |  11.68%  1.0479 -20.48% | .  .  | 11101             |    4.73    2.35    923      1.000        2.50%
+  t+1 1.00  | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 -22.38% | .  .  | 11101             |    5.83    2.90    922      1.000        2.50%
+  t+2 1.00  | 14.58%  1.0442  -26.11% |  1.24   0.88 |  13.88%  0.9829 -26.11% | .  .  | 11101             |    5.87    2.92    923      1.000        2.47%
+  t+3 1.00  | 15.19%  1.0751  -26.13% |  1.24   0.93 |  14.88%  1.0351 -26.13% | .  .  | 11101             |    5.89    2.93    923      1.000        2.43%
+  t+5 1.00  | 14.87%  1.0452  -26.96% |  1.22   0.90 |  14.48%  0.9985 -26.96% | .  .  | 11101             |    5.94    2.95    923      1.000        2.50%
+
+=== B. EVERY COST RUNG, U56 and B136 (the whole 64-row grid) ===
+
+  U56 gross 0.75
+  lag  |    0bps: CAGR/Sharpe/4b         10bps: CAGR/Sharpe/4b         25bps: CAGR/Sharpe/4b         50bps: CAGR/Sharpe/4b      
+  t+1  |  12.01%/1.3079/Y       11.62%/1.2687/Y       11.04%/1.2098/Y       10.07%/1.1113/.     
+  t+2  |  11.66%/1.2498/Y       11.27%/1.2114/Y       10.68%/1.1536/Y        9.70%/1.0571/.     
+  t+3  |  12.13%/1.2883/Y       11.73%/1.2501/Y       11.14%/1.1927/Y       10.16%/1.0966/.     
+  t+5  |  12.16%/1.2719/Y       11.76%/1.2337/Y       11.16%/1.1763/Y       10.17%/1.0804/.     
+
+  U56 gross 1.00
+  lag  |    0bps: CAGR/Sharpe/4b         10bps: CAGR/Sharpe/4b         25bps: CAGR/Sharpe/4b         50bps: CAGR/Sharpe/4b      
+  t+1  |  13.11%/1.2579/Y       12.66%/1.2187/Y       11.99%/1.1598/Y       10.88%/1.0614/Y     
+  t+2  |  12.83%/1.2111/Y       12.37%/1.1726/Y       11.70%/1.1146/Y       10.58%/1.0177/.     
+  t+3  |  13.40%/1.2528/Y       12.95%/1.2144/Y       12.27%/1.1567/Y       11.14%/1.0602/Y     
+  t+5  |  13.42%/1.2336/Y       12.95%/1.1952/Y       12.26%/1.1376/Y       11.12%/1.0413/Y     
+
+  B136 gross 0.75
+  lag  |    0bps: CAGR/Sharpe/4b         10bps: CAGR/Sharpe/4b         25bps: CAGR/Sharpe/4b         50bps: CAGR/Sharpe/4b      
+  t+1  |  12.35%/1.1629/Y       11.82%/1.1180/Y       11.04%/1.0505/Y        9.75%/0.9379/.     
+  t+2  |  12.15%/1.1301/Y       11.63%/1.0863/Y       10.85%/1.0204/Y        9.55%/0.9102/.     
+  t+3  |  12.50%/1.1544/Y       11.98%/1.1107/Y       11.19%/1.0450/Y        9.89%/0.9350/.     
+  t+5  |  12.29%/1.1248/.       11.76%/1.0811/.       10.97%/1.0155/.        9.67%/0.9059/.     
+
+  B136 gross 1.00
+  lag  |    0bps: CAGR/Sharpe/4b         10bps: CAGR/Sharpe/4b         25bps: CAGR/Sharpe/4b         50bps: CAGR/Sharpe/4b      
+  t+1  |  15.73%/1.1339/.       15.06%/1.0911/.       14.06%/1.0269/.       12.40%/0.9197/.     
+  t+2  |  15.25%/1.0860/.       14.58%/1.0442/.       13.58%/0.9813/.       11.92%/0.8762/.     
+  t+3  |  15.87%/1.1167/.       15.19%/1.0751/.       14.18%/1.0125/.       12.51%/0.9079/.     
+  t+5  |  15.56%/1.0869/.       14.87%/1.0452/.       13.85%/0.9825/.       12.17%/0.8778/.     
+
+=== C. KEEP COUNTS OVER ALL 64 PUBLISHED ROWS (4 lags x 2 gross x 2 panels x 4 rungs) ===
+  4b passes: 36 of 64      4a passes: 0 of 64
+     0.0 bps:  4b 11/16   4a  0/16   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 5  L_CAGR 0
+    10.0 bps:  4b 11/16   4a  0/16   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 5  L_CAGR 0
+    25.0 bps:  4b 11/16   4a  0/16   binding leg on 4b FAILs: L_H1 0  L_H2 1  L_OOS 0  L_DD 5  L_CAGR 0
+    50.0 bps:  4b  3/16   4a  0/16   binding leg on 4b FAILs: L_H1 0  L_H2 8  L_OOS 5  L_DD 6  L_CAGR 9
+
+  4b pass count by lag (all panels / gross / rungs, 16 rows each):
+    t+1: 4b 10/16   4a  0/16
+    t+2: 4b  9/16   4a  0/16
+    t+3: 4b 10/16   4a  0/16
+    t+5: 4b  7/16   4a  0/16
+
+  4b pass rows (all rungs):
+    U56   t+1 g 0.75   0.0bps  12.01% / 1.3079 / -14.77%   OOS 13.17% / 1.3693   turnover 3.51/yr
+    U56   t+1 g 0.75  10.0bps  11.62% / 1.2687 / -14.81%   OOS 12.77% / 1.3318   turnover 3.51/yr
+    U56   t+1 g 0.75  25.0bps  11.04% / 1.2098 / -14.88%   OOS 12.18% / 1.2755   turnover 3.51/yr
+    U56   t+2 g 0.75   0.0bps  11.66% / 1.2498 / -17.35%   OOS 12.73% / 1.2982   turnover 3.54/yr
+    U56   t+2 g 0.75  10.0bps  11.27% / 1.2114 / -17.46%   OOS 12.33% / 1.2617   turnover 3.54/yr
+    U56   t+2 g 0.75  25.0bps  10.68% / 1.1536 / -17.62%   OOS 11.74% / 1.2067   turnover 3.54/yr
+    U56   t+3 g 0.75   0.0bps  12.13% / 1.2883 / -17.19%   OOS 13.15% / 1.3330   turnover 3.54/yr
+    U56   t+3 g 0.75  10.0bps  11.73% / 1.2501 / -17.24%   OOS 12.76% / 1.2966   turnover 3.54/yr
+    U56   t+3 g 0.75  25.0bps  11.14% / 1.1927 / -17.31%   OOS 12.16% / 1.2419   turnover 3.54/yr
+    U56   t+5 g 0.75   0.0bps  12.16% / 1.2719 / -17.65%   OOS 13.10% / 1.3063   turnover 3.57/yr
+    U56   t+5 g 0.75  10.0bps  11.76% / 1.2337 / -17.70%   OOS 12.70% / 1.2700   turnover 3.57/yr
+    U56   t+5 g 0.75  25.0bps  11.16% / 1.1763 / -17.78%   OOS 12.10% / 1.2154   turnover 3.57/yr
+    U56   t+1 g 1.00   0.0bps  13.11% / 1.2579 / -17.22%   OOS 14.76% / 1.3331   turnover 3.99/yr
+    U56   t+1 g 1.00  10.0bps  12.66% / 1.2187 / -17.28%   OOS 14.29% / 1.2953   turnover 3.99/yr
+    U56   t+1 g 1.00  25.0bps  11.99% / 1.1598 / -17.36%   OOS 13.60% / 1.2384   turnover 3.99/yr
+    U56   t+1 g 1.00  50.0bps  10.88% / 1.0614 / -17.50%   OOS 12.45% / 1.1434   turnover 3.99/yr
+    U56   t+2 g 1.00   0.0bps  12.83% / 1.2111 / -18.98%   OOS 14.43% / 1.2796   turnover 4.03/yr
+    U56   t+2 g 1.00  10.0bps  12.37% / 1.1726 / -19.10%   OOS 13.96% / 1.2425   turnover 4.03/yr
+    U56   t+2 g 1.00  25.0bps  11.70% / 1.1146 / -19.28%   OOS 13.26% / 1.1867   turnover 4.03/yr
+    U56   t+3 g 1.00   0.0bps  13.40% / 1.2528 / -19.26%   OOS 14.89% / 1.3109   turnover 4.04/yr
+    U56   t+3 g 1.00  10.0bps  12.95% / 1.2144 / -19.31%   OOS 14.42% / 1.2739   turnover 4.04/yr
+    U56   t+3 g 1.00  25.0bps  12.27% / 1.1567 / -19.40%   OOS 13.72% / 1.2183   turnover 4.04/yr
+    U56   t+3 g 1.00  50.0bps  11.14% / 1.0602 / -19.55%   OOS 12.56% / 1.1253   turnover 4.04/yr
+    U56   t+5 g 1.00   0.0bps  13.42% / 1.2336 / -19.57%   OOS 14.83% / 1.2831   turnover 4.09/yr
+    U56   t+5 g 1.00  10.0bps  12.95% / 1.1952 / -19.64%   OOS 14.36% / 1.2463   turnover 4.09/yr
+    U56   t+5 g 1.00  25.0bps  12.26% / 1.1376 / -19.73%   OOS 13.65% / 1.1909   turnover 4.09/yr
+    U56   t+5 g 1.00  50.0bps  11.12% / 1.0413 / -19.89%   OOS 12.47% / 1.0983   turnover 4.09/yr
+    B136  t+1 g 0.75   0.0bps  12.35% / 1.1629 / -16.61%   OOS 12.19% / 1.1392   turnover 4.68/yr
+    B136  t+1 g 0.75  10.0bps  11.82% / 1.1180 / -17.10%   OOS 11.65% / 1.0936   turnover 4.68/yr
+    B136  t+1 g 0.75  25.0bps  11.04% / 1.0505 / -17.93%   OOS 10.85% / 1.0250   turnover 4.68/yr
+    B136  t+2 g 0.75   0.0bps  12.15% / 1.1301 / -19.59%   OOS 11.74% / 1.0748   turnover 4.70/yr
+    B136  t+2 g 0.75  10.0bps  11.63% / 1.0863 / -19.73%   OOS 11.20% / 1.0308   turnover 4.70/yr
+    B136  t+2 g 0.75  25.0bps  10.85% / 1.0204 / -19.93%   OOS 10.40% / 0.9646   turnover 4.70/yr
+    B136  t+3 g 0.75   0.0bps  12.50% / 1.1544 / -19.59%   OOS 12.29% / 1.1133   turnover 4.70/yr
+    B136  t+3 g 0.75  10.0bps  11.98% / 1.1107 / -19.65%   OOS 11.75% / 1.0696   turnover 4.70/yr
+    B136  t+3 g 0.75  25.0bps  11.19% / 1.0450 / -19.74%   OOS 10.95% / 1.0037   turnover 4.70/yr
+
+=== D. THE DECAY: what each EXTRA DAY of settlement costs, vs the t+1 convention ===
+  U56 g=0.75  t+1 reference: 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318  4b Y
+    t+1  dCAGR +0.00% (+0.00%/day)  dSharpe +0.0000  dMaxDD +0.00%  dOOS_CAGR +0.00%  dOOS_Sh +0.0000  dTurn +0.00  | legs 11111  4b Y
+    t+2  dCAGR -0.36% (-0.36%/day)  dSharpe -0.0573  dMaxDD -2.65%  dOOS_CAGR -0.44%  dOOS_Sh -0.0702  dTurn +0.03  | legs 11111  4b Y
+    t+3  dCAGR +0.11% (+0.05%/day)  dSharpe -0.0186  dMaxDD -2.43%  dOOS_CAGR -0.02%  dOOS_Sh -0.0353  dTurn +0.03  | legs 11111  4b Y
+    t+5  dCAGR +0.13% (+0.03%/day)  dSharpe -0.0350  dMaxDD -2.89%  dOOS_CAGR -0.07%  dOOS_Sh -0.0618  dTurn +0.07  | legs 11111  4b Y
+  U56 g=1.00  t+1 reference: 12.66% / 1.2187 / -17.28%, OOS 14.29% / 1.2953  4b Y
+    t+1  dCAGR +0.00% (+0.00%/day)  dSharpe +0.0000  dMaxDD +0.00%  dOOS_CAGR +0.00%  dOOS_Sh +0.0000  dTurn +0.00  | legs 11111  4b Y
+    t+2  dCAGR -0.29% (-0.29%/day)  dSharpe -0.0461  dMaxDD -1.82%  dOOS_CAGR -0.34%  dOOS_Sh -0.0528  dTurn +0.04  | legs 11111  4b Y
+    t+3  dCAGR +0.28% (+0.14%/day)  dSharpe -0.0043  dMaxDD -2.04%  dOOS_CAGR +0.13%  dOOS_Sh -0.0214  dTurn +0.05  | legs 11111  4b Y
+    t+5  dCAGR +0.29% (+0.07%/day)  dSharpe -0.0234  dMaxDD -2.36%  dOOS_CAGR +0.06%  dOOS_Sh -0.0490  dTurn +0.10  | legs 11111  4b Y
+  B136 g=0.75  t+1 reference: 11.82% / 1.1180 / -17.10%, OOS 11.65% / 1.0936  4b Y
+    t+1  dCAGR +0.00% (+0.00%/day)  dSharpe +0.0000  dMaxDD +0.00%  dOOS_CAGR +0.00%  dOOS_Sh +0.0000  dTurn +0.00  | legs 11111  4b Y
+    t+2  dCAGR -0.19% (-0.19%/day)  dSharpe -0.0316  dMaxDD -2.63%  dOOS_CAGR -0.45%  dOOS_Sh -0.0628  dTurn +0.03  | legs 11111  4b Y
+    t+3  dCAGR +0.16% (+0.08%/day)  dSharpe -0.0073  dMaxDD -2.55%  dOOS_CAGR +0.10%  dOOS_Sh -0.0240  dTurn +0.02  | legs 11111  4b Y
+    t+5  dCAGR -0.06% (-0.02%/day)  dSharpe -0.0368  dMaxDD -3.39%  dOOS_CAGR +0.03%  dOOS_Sh -0.0457  dTurn +0.05  | legs 11101  4b .
+  B136 g=1.00  t+1 reference: 15.06% / 1.0911 / -22.38%, OOS 14.75% / 1.0637  4b .
+    t+1  dCAGR +0.00% (+0.00%/day)  dSharpe +0.0000  dMaxDD +0.00%  dOOS_CAGR +0.00%  dOOS_Sh +0.0000  dTurn +0.00  | legs 11101  4b .
+    t+2  dCAGR -0.48% (-0.48%/day)  dSharpe -0.0470  dMaxDD -3.73%  dOOS_CAGR -0.87%  dOOS_Sh -0.0808  dTurn +0.04  | legs 11101  4b .
+    t+3  dCAGR +0.13% (+0.07%/day)  dSharpe -0.0160  dMaxDD -3.75%  dOOS_CAGR +0.13%  dOOS_Sh -0.0286  dTurn +0.06  | legs 11101  4b .
+    t+5  dCAGR -0.19% (-0.05%/day)  dSharpe -0.0459  dMaxDD -4.58%  dOOS_CAGR -0.27%  dOOS_Sh -0.0652  dTurn +0.11  | legs 11101  4b .
+
+=== D2. THE LAG AT WHICH THE PASS DIES, per (panel, gross, rung) ===
+  'dies at t+k' = 4b holds at every legal lag < k and fails at k; 'survives' = passes at every L.
+  U56   g=0.75   0.0bps  4b over t+1/t+2/t+3/t+5: YYYY   -> SURVIVES every lag to t+5
+  U56   g=0.75  10.0bps  4b over t+1/t+2/t+3/t+5: YYYY   -> SURVIVES every lag to t+5
+  U56   g=0.75  25.0bps  4b over t+1/t+2/t+3/t+5: YYYY   -> SURVIVES every lag to t+5
+  U56   g=0.75  50.0bps  4b over t+1/t+2/t+3/t+5: ....   -> no pass at t+1 (nothing to lose)
+  U56   g=1.00   0.0bps  4b over t+1/t+2/t+3/t+5: YYYY   -> SURVIVES every lag to t+5
+  U56   g=1.00  10.0bps  4b over t+1/t+2/t+3/t+5: YYYY   -> SURVIVES every lag to t+5
+  U56   g=1.00  25.0bps  4b over t+1/t+2/t+3/t+5: YYYY   -> SURVIVES every lag to t+5
+  U56   g=1.00  50.0bps  4b over t+1/t+2/t+3/t+5: Y.YY   -> dies at t+2
+  B136  g=0.75   0.0bps  4b over t+1/t+2/t+3/t+5: YYY.   -> dies at t+5
+  B136  g=0.75  10.0bps  4b over t+1/t+2/t+3/t+5: YYY.   -> dies at t+5
+  B136  g=0.75  25.0bps  4b over t+1/t+2/t+3/t+5: YYY.   -> dies at t+5
+  B136  g=0.75  50.0bps  4b over t+1/t+2/t+3/t+5: ....   -> no pass at t+1 (nothing to lose)
+  B136  g=1.00   0.0bps  4b over t+1/t+2/t+3/t+5: ....   -> no pass at t+1 (nothing to lose)
+  B136  g=1.00  10.0bps  4b over t+1/t+2/t+3/t+5: ....   -> no pass at t+1 (nothing to lose)
+  B136  g=1.00  25.0bps  4b over t+1/t+2/t+3/t+5: ....   -> no pass at t+1 (nothing to lose)
+  B136  g=1.00  50.0bps  4b over t+1/t+2/t+3/t+5: ....   -> no pass at t+1 (nothing to lose)
+
+=== E. RULE 8 ===
+  WF-A (protocol standard): BOTH dials (L, gross) chosen on <= 2016-12-31, 2017-2026 read ONCE.
+  WF-B (honest reading):    L is IMPOSED, gross alone fitted on <= 2016-12-31, per L.
+  WF-A U56     0.0bps C_ISSHARPE  -> t+3 g 0.75 | OOS 13.15% / 1.3330 / -17.19% | live v2 OOS  9.51% / 1.2839 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  WF-A U56     0.0bps C_ISCALMAR  -> t+1 g 0.75 | OOS 13.17% / 1.3693 / -14.77% | live v2 OOS  9.51% / 1.2839 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  WF-A U56    10.0bps C_ISSHARPE  -> t+3 g 0.75 | OOS 12.76% / 1.2966 / -17.24% | live v2 OOS  9.51% / 1.2839 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  WF-A U56    10.0bps C_ISCALMAR  -> t+1 g 0.75 | OOS 12.77% / 1.3318 / -14.81% | live v2 OOS  9.51% / 1.2839 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  WF-A U56    25.0bps C_ISSHARPE  -> t+3 g 0.75 | OOS 12.16% / 1.2419 / -17.31% | live v2 OOS  9.51% / 1.2839 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  WF-A U56    25.0bps C_ISCALMAR  -> t+1 g 0.75 | OOS 12.18% / 1.2755 / -14.88% | live v2 OOS  9.51% / 1.2839 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  WF-A U56    50.0bps C_ISSHARPE  -> t+3 g 0.75 | OOS 11.18% / 1.1503 / -17.43% | live v2 OOS  9.51% / 1.2839 | SPY OOS 15.45% / 0.8831 | full 4b .
+  WF-A U56    50.0bps C_ISCALMAR  -> t+3 g 0.75 | OOS 11.18% / 1.1503 / -17.43% | live v2 OOS  9.51% / 1.2839 | SPY OOS 15.45% / 0.8831 | full 4b .
+  WF-A B136    0.0bps C_ISSHARPE  -> t+3 g 0.75 | OOS 12.29% / 1.1133 / -19.59% | live v2 OOS  7.85% / 1.1017 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  WF-A B136    0.0bps C_ISCALMAR  -> t+1 g 0.75 | OOS 12.19% / 1.1392 / -16.61% | live v2 OOS  7.85% / 1.1017 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  WF-A B136   10.0bps C_ISSHARPE  -> t+3 g 0.75 | OOS 11.75% / 1.0696 / -19.65% | live v2 OOS  7.85% / 1.1017 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  WF-A B136   10.0bps C_ISCALMAR  -> t+1 g 0.75 | OOS 11.65% / 1.0936 / -17.10% | live v2 OOS  7.85% / 1.1017 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  WF-A B136   25.0bps C_ISSHARPE  -> t+3 g 0.75 | OOS 10.95% / 1.0037 / -19.74% | live v2 OOS  7.85% / 1.1017 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  WF-A B136   25.0bps C_ISCALMAR  -> t+1 g 0.75 | OOS 10.85% / 1.0250 / -17.93% | live v2 OOS  7.85% / 1.1017 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  WF-A B136   50.0bps C_ISSHARPE  -> t+3 g 0.75 | OOS  9.62% / 0.8935 / -19.89% | live v2 OOS  7.85% / 1.1017 | SPY OOS 15.26% / 0.8737 | full 4b .
+  WF-A B136   50.0bps C_ISCALMAR  -> t+1 g 0.75 | OOS  9.53% / 0.9106 / -19.31% | live v2 OOS  7.85% / 1.1017 | SPY OOS 15.26% / 0.8737 | full 4b .
+
+  WF-A: picks landing on t+1 (CAP2 as filed): 7 of 16;  lag distribution {3: 9, 1: 7}
+  WF-A: beating SPY OOS on Sharpe 16 of 16;  beating the live book OOS 6 of 16;  carrying a full-sample 4b 12 of 16
+
+  WF-B (lag imposed, gross fitted IS-only) — OOS by imposed lag:
+    U56   t+1: 8 picks, gross [0.75], mean OOS CAGR 12.33%, mean OOS Sharpe 1.2895, beats SPY OOS 8/8, beats live OOS 4/8, full 4b 6/8
+    U56   t+2: 8 picks, gross [0.75], mean OOS CAGR 11.89%, mean OOS Sharpe 1.2203, beats SPY OOS 8/8, beats live OOS 2/8, full 4b 6/8
+    U56   t+3: 8 picks, gross [0.75], mean OOS CAGR 12.31%, mean OOS Sharpe 1.2554, beats SPY OOS 8/8, beats live OOS 4/8, full 4b 6/8
+    U56   t+5: 8 picks, gross [0.75], mean OOS CAGR 12.26%, mean OOS Sharpe 1.2290, beats SPY OOS 8/8, beats live OOS 2/8, full 4b 6/8
+    B136  t+1: 8 picks, gross [0.75], mean OOS CAGR 11.05%, mean OOS Sharpe 1.0421, beats SPY OOS 8/8, beats live OOS 2/8, full 4b 6/8
+    B136  t+2: 8 picks, gross [0.75], mean OOS CAGR 10.61%, mean OOS Sharpe 0.9810, beats SPY OOS 6/8, beats live OOS 0/8, full 4b 6/8
+    B136  t+3: 8 picks, gross [0.75], mean OOS CAGR 11.15%, mean OOS Sharpe 1.0200, beats SPY OOS 8/8, beats live OOS 2/8, full 4b 6/8
+    B136  t+5: 8 picks, gross [0.75], mean OOS CAGR 11.07%, mean OOS Sharpe 0.9986, beats SPY OOS 6/8, beats live OOS 0/8, full 4b 0/8
+
+=== F. ILLEGAL LOOK-AHEAD CONTROL (L = 0, same-close fill).  NOT a candidate, NOT in ===
+    any KEEP count, NOT in rule 8.  Priced only to bound how much of the book's return 
+    lives in the first day after the decision. ===
+  U56   g=0.75  t+0 (illegal) 12.81% / 1.4000 / -15.32%   vs t+1 11.62% / 1.2687 / -14.81%   -> the FIRST day is worth dCAGR +1.18%, dSharpe +0.1313
+  U56   g=1.00  t+0 (illegal) 14.01% / 1.3473 / -17.58%   vs t+1 12.66% / 1.2187 / -17.28%   -> the FIRST day is worth dCAGR +1.34%, dSharpe +0.1286
+  B136  g=0.75  t+0 (illegal) 13.41% / 1.2622 / -17.20%   vs t+1 11.82% / 1.1180 / -17.10%   -> the FIRST day is worth dCAGR +1.59%, dSharpe +0.1442
+  B136  g=1.00  t+0 (illegal) 17.07% / 1.2292 / -22.86%   vs t+1 15.06% / 1.0911 / -22.38%   -> the FIRST day is worth dCAGR +2.01%, dSharpe +0.1381
+
+=== GATES: 11 of 11 pass ===
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-23_execution-lag-on-the-capped-4b-candidate_B.grid.csv / .turnover.csv / .walkforward.csv / .death.csv / .gates.csv   (7s)
