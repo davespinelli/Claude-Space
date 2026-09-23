@@ -8939,3 +8939,23 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
 - **Queue hygiene:** ideas 2373 and 2381 had run and closed earlier today but were never marked in '## Open'; their
   markers were added this run so a positional eligibility descent cannot re-run them. Nothing was deleted.
 - No change to RULES.md, scan.py, bot.py or baseline.py. The standing 4b candidate and its blockers are unchanged.
+
+## 2026-09-23 (lane cloud, run 46) — idea 2415 KILL, no rule change
+- **idea 2415, per-name trailing-peak stop on the capped candidate — ANSWERED = NO / KILL.** The record's first
+  PER-NAME, TIME-SERIES device against the binding `L_DD` leg behaves exactly like the CROSS-SECTIONAL dials it was
+  filed to escape. Over all 480 stopped cells against their own `q = INF` anchor (same panel, book, gross, `H`, rung):
+  **dCAGR > 0 in 0 of 480, dSharpe > 0 in 10 of 480, dOOS_Sharpe > 0 in 18 of 480**; median exchange rate 1.12 pp of
+  CAGR per pp of drawdown, with 4 of 58 resolvable live-gross cells making drawdown WORSE. There is no middle setting:
+  at `q` = 0.30 the stop moves U56/CAP2 MaxDD by **exactly 0.00 pp** while costing 0.80 pp of CAGR (it never fires
+  inside the drawdown-making episode), and by the time it does bite (`q` = 0.10, MaxDD -14.81% -> -9.11%) the 4b CAGR
+  margin has gone +0.96 pp -> -5.40 pp and `L_CAGR` fails. It also NARROWS cost-reach — at 25 bps and the live gross
+  `q` = INF passes 12 of 12 and every stopped rung passes 0 of 12 bar `q` = 0.30 at 2 of 12 — and it is not a turnover
+  device (3.51 -> 3.50x/yr at the passing end). **Rule 8 is the independent kill:** both dials fitted on <= 2016-12-31
+  only, 2017-2026 read ONCE, 64 picks; the IS chooser takes a stopped book in **46 of 64** and **0 of those 46 beat
+  their own cell's `q` = INF anchor out of sample** (median dOOS_Sharpe -0.0585). 576 rows, **14 of 14 gates**, with
+  `q` = INF bit-identical (max|d| 1.4e-17) to an independent CAP2 construction through `engine.backtest`.
+- **Carry forward:** the per-name/time-series family is now priced and lands where the cross-sectional family landed.
+  `L_DD` on this book is not reachable by REMOVING exposure of any shape, because every removal device pays `L_CAGR`
+  faster than it buys `L_DD`. `H` is the weaker dial but not free: a 252d peak is worse than a 63d one at every fixed
+  `q`, on both panels and both books, because it keeps a name stopped through the recovery it would have been paid for.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py. The standing 4b candidate and its blockers are unchanged.
