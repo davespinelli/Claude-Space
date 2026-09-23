@@ -54,3 +54,30 @@ A RESULTS.md in the style of research/oplev/RESULTS.md:
 - a "For picking stocks" line.
 
 Research only; no trading.
+
+## Deviations
+
+Written 2026-09-23, after the state, ownership and SEC data were collected and the nowcast panel was built, and BEFORE any announcement or drift return was computed. Everything above is unchanged.
+
+**Forced by the data**
+
+1. **Two samples; only the first carries the verdict.** Mississippi, Colorado and Nevada publish revenue only by region, town or reporting area, not by casino. The verdict sample ("property sample") uses property- or operator-level state data only, exactly as pre-registered. A secondary "region sample" adds those three states, imputing each casino's monthly GGR as its share of its unit's slot win and table win: Mississippi from the Gaming Commission's per-casino slot and table counts; Nevada and Colorado from the casino's slot and table counts in its owner's 10-K property table (nearest fiscal year) over the regulator's unit counts; where no count exists, the unit's GGR divided by the number of casinos reporting. The region sample gets the same tests but no verdict. It is the only way Monarch, Red Rock and most of Century and Full House enter.
+2. **Point-in-time state data.** Some monthly reports come out after the company's release, so a nowcast built from all three months would use information the market did not have. The nowcast therefore uses, for each property, only months whose report was published before the 8-K filing date (actual date where found, otherwise month-end + 30 days as in build step 1). A company-quarter qualifies only if the months used cover at least two-thirds of its year-ago covered GGR. The all-three-months version is reported as a sensitivity.
+3. **Prices.** Yahoo has no usable daily history for Isle of Capri, Pinnacle, Tropicana Entertainment, Dover Downs, Empire Resorts, MTR Gaming, Affinity, Caesars Acquisition, the pre-2020 Caesars Entertainment Corp (Yahoo's CZR history is Eldorado's), Golden Entertainment (taken private April 2026; Yahoo dropped the symbol) or Bally's/Twin River before 2024-12-06. Their company-quarters stay in the accuracy checks but not in the return tests. Stooq blocks scripted access with a browser check, which was not bypassed.
+4. **Measure breaks.** Iowa's AGR excludes promotional play from 2026-07 (about -13% mechanically); Iowa months from 2026-07 are not compared with 2025. West Virginia racetrack data exist only from 2018-07, New York only to 2025-09 (the regulator's site blocks scripted access; Internet Archive copies end there).
+5. **VLT states.** Rhode Island and New York report total net terminal income, of which the operator books only its statutory share as revenue, so coverage for Bally's/Twin River and Empire Resorts exceeds what the operator reports. The pre-registered coverage formula is applied literally; this is flagged in the results.
+6. **Missing XBRL.** Monarch's Q2 2026 10-Q is missing from the companyfacts API; its values were read from the filing's own XBRL instance.
+
+**Implementation choices the text did not pin down**
+
+7. Growth rates use the absolute value of the base, (new - old) / |old|, so a smaller loss counts as growth; undefined when the base is zero.
+8. Covered properties are those whose revenue is in the company's reported revenue: owned or leased-and-operated, consolidated, not in discontinued operations. Equity-method joint ventures (e.g. Borgata for Boyd 2014-16, Hollywood Kansas Speedway for Penn) and management contracts are excluded. "Owned in both periods" means held from the first day of the year-ago quarter to the last day of the current quarter.
+9. Coverage denominator (reported gaming revenue a year earlier): us-gaap CasinoRevenue when tagged without dimensions (mostly through 2017, before promotional allowances); otherwise the casino/gaming line of the revenue disaggregation in the 10-Q/10-K (dimensional XBRL, read from the filing instances; 2018 on); total revenue only when neither exists.
+10. First-reported financials: among candidate revenue tags, only values from the first filing that reported the quarter are eligible, and the one closest to operating income + total operating costs (net revenue by identity) is taken. Q2/Q3 come from year-to-date differences when no 3-month value was tagged; Q4 = FY - (Q1 + Q2 + Q3); Bally's Q1 2025 predecessor and successor stubs are summed.
+11. Announcement date: the first 8-K with Item 2.02 filed within 100 days after quarter-end; if the 10-Q/10-K for the quarter was filed earlier, or no Item 2.02 exists (Tropicana Entertainment, Empire Resorts), that filing's date.
+12. Fiscal quarters not ending at a month-end (Isle of Capri; Lakes/Golden before 2015) use the three calendar months ending in the month that holds most of the quarter's last weeks.
+13. Industry median flow-through: the median of the own-company slopes of all casino companies in the SEC panel (priced or not, including MGM and Wynn) with at least 8 year-over-year pairs reported before the announcement.
+14. Analyst estimates: Alpha Vantage is not available locally, but Yahoo's earnings calendar (via yfinance) gives a free consensus-EPS history, so the test is run on it. It is Yahoo's current record, not a point-in-time snapshot, on an adjusted-EPS basis.
+15. Drift window: from the close of the trading day before the latest publication date used in the nowcast to the close of the trading day before the filing date (the start of the announcement window); dropped if empty.
+16. Market cap at announcement: latest cover-page shares outstanding filed before the announcement times the split-unadjusted close on the day before the window.
+17. Signals are winsorised and standardised once on each test sample; the halves and the small-cap/larger splits use those same standardised values. Halves split the sample at its median announcement date.
