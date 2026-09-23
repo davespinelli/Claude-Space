@@ -1,3 +1,65 @@
+## 2026-09-23 — idea 2318 (lane cloud): DOES THE KEEP-4b CANDIDATE SURVIVE THE BAND-WIDTH LADDER, OR IS IT A 3% ARTEFACT? **ANSWERED = PLATEAU, NOT A RIDGE. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 2300's standing candidate (`RG100 + phi = 1.00`: every name inside
+  the 200d +/-3% band at `gross / N_in`, idle NAV swept to SHY) had every one of its cells priced at
+  ONE band width, the live clause-2 constant c = 0.03. The re-gross scale `N / N_in` is a direct
+  function of how many names the band holds IN, so c moves the book's concentration and its cash
+  sweep together. Idea 2343 swept the MA LENGTH at c = 0.03; idea 2241 priced the two EDGES at
+  c = 0.03. The WIDTH itself had never been read.
+
+  **THE GRID. Two tuned dials and no more: c {0.00, 0.02, 0.03, 0.05, 0.08, 0.12} and gross
+  {0.75, 1.00}.** Panels (U56 / B136 / SMALL), rungs {0, 10, 25, 50} bps, MA length 200, the weekly
+  cadence, t+1 and the SHY sweep are REPORTED, never selected on. **36 books x 4 rungs = 144 rows**,
+  13 of 13 gates pass, including G9's external reproduction of idea 2300's committed U56 headline to
+  better than 1e-3 and G2's bit-identity of the c = 0.03 gate with `baseline.band_state`.
+
+  **THE ANSWER: THE PASS IS A CONTIGUOUS INTERIOR PLATEAU.** U56 at gross 0.75, 10 bps clears 4b at
+  **all six widths** — c0.00 11.91% / 1.1238 / -18.33%, c0.02 12.38% / 1.1697 / -17.43%,
+  **c0.03 (live) 12.59% / 1.1934 / -17.39%, OOS 13.85% / 1.2397**, c0.05 13.07% / 1.1853 / -18.16%,
+  c0.08 13.56% / 1.2080 / -19.31%, c0.12 14.34% / 1.2552 / -19.01%. SPY reads 15.23% / 0.8897 /
+  -33.72%, so the DD cap is -20.23% and the CAGR floor 10.66%. B136 at gross 0.75 passes at 4 of 6
+  (c0.00-c0.05) and fails c0.08 / c0.12 on `L_DD` alone. SMALL contributes **0 of 48** (the Sharpe
+  legs, not drawdown) and every gross = 1.00 row in all 144 fails on `L_DD`. **The candidate is not
+  width-fragile: c = 0.03 sits in the interior of its own pass set on both panels that pass.**
+
+  **DEFECT 1 — c = 0.03 IS NOT THE LADDER'S OPTIMUM ON ANY PANEL.** Against the live cell (U56, 0.75,
+  10 bps) the widest rung reads dCAGR **+1.75 pp**, dSharpe **+0.0618**, dOOS_Sharpe **+0.0591**,
+  dMaxDD -1.62 pp — and it does it on **less than half the trading**: turnover falls monotonically
+  4.39 -> 2.08 turns/yr and gate flips 1,745 -> 517. U56 / c = 0.12 / 0.75 clears 4b at all four cost
+  rungs, the 50 bps rung included (13.40% / 1.1794, OOS 14.55% / 1.2208). **It is NOT promoted**: it
+  fails 4b on B136 by 1.11 pp of drawdown (-21.34% against the -20.23% cap), so moving the book onto
+  it would trade the incumbent's TWO-panel pass for a ONE-panel pass, and the 50 bps rung is a
+  reported axis — selecting on it would be tuning.
+
+  **DEFECT 2 — RULE 8 LANDS 0 OF 24 ON THE COMMITTED WIDTH.** With (c, gross) fitted on
+  <= 2016-12-31 only and 2017-2026 read once, the distribution is **c0.12 17, c0.08 5, c0.02 2,
+  c0.03 0, c0.05 0, c0.00 0**, gross 0.75 at 24 of 24. This is the mirror image of idea 2343's MA
+  ladder, where the IS choosers took a shorter lookback and PAID for it: here they take a WIDER band
+  and mostly GAIN out of sample — dOOS_CAGR **+0.75 / +1.74 / +1.91 pp** and dOOS_Sharpe
+  **-0.0204 / +0.0862 / +0.1149** on U56 / B136 / SMALL against the incumbent cell. Picks beat SPY's
+  OOS Sharpe at 16 of 24 and the live RULES v2 book's at 16 of 24; 10 of 24 pass 4b full-sample.
+  **So the plateau says the incumbent width is not FRAGILE, and rule 8 says it is not what an honest
+  out-of-sample chooser would have CHOSEN.** Those are different claims and both are published here.
+
+  **CORRECTION TO THE IDEA'S OWN PREMISE.** 2318 was filed on the reasoning that c moves concentration
+  and the cash sweep together. Only the sweep leg holds. U56 max per-name weight is **non-monotone**
+  in c (18.75 / 15.00 / 15.00 / 15.00 / 18.75 / 18.75% along the ladder) and mean time-IN barely moves
+  (0.710 -> 0.679), so widening the band buys **churn reduction at near-constant exposure**, not a
+  less concentrated book. Concentration remains the candidate's open risk — which is what idea 2332's
+  leave-one-out census, run next in this same sprint, was filed to price.
+
+  **4a: 0 OF 144.** The candidate never clears 4a at any width; its drawdown is 5-6x the live book's.
+  This reproduces the record's standing finding that 4a is unreachable for growth books.
+
+  **SURVIVORSHIP (binding).** B136 (`universe_broad.json`) and the SMALL pool (665 priced sub-$2B
+  names after the mandatory drop of 54 tickers with `max_1d_move >= 1.0`) are CURRENT constituents of
+  their screens and are biased upward. Every B136 and SMALL figure above inherits that bias.
+
+  **VERDICT: ANSWERED = PLATEAU.** The standing candidate keeps its 4b status unchanged and nothing in
+  RULES.md, scan.py, bot.py or baseline.py is touched. The wider band is PARKED, not killed: the open
+  question it leaves is whether a device that holds the c >= 0.08 turnover saving while capping
+  drawdown back under -20.23% can pass on BOTH panels at once.
+
 ## 2026-09-23 — idea 2343 (lane C): IS THE KEEP-4b CANDIDATE A 200d ARTEFACT? THE MA-LENGTH LADDER. **ANSWERED = NO. THE PASS IS A PLATEAU, NOT A RIDGE. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Every 4b-passing book in this record — idea 2300's standing candidate
