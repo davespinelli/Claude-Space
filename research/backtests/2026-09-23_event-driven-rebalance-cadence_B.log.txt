@@ -1,0 +1,218 @@
+=== idea 2499 (lane B, run 62) — CALENDAR vs NAME-SET-CHANGE rebalance cadence ===
+    2026-09-23  lane B   band 0.03  cap 0.02  schedule ceiling W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  sweep SHY
+    DIAL 1 m (names of in-band-set change required to act) [0, 1, 2, 3, 5, 8];  m=0 IS the committed book
+    DIAL 2 gross [0.75, 1.0];  pre-registered zero-fitted point m = 1
+    THE BAR (idea 2431): turnover -31.0% at unchanged returns (3.51x -> 2.42x)
+    THE RATE (idea 2463): exposure-neutral devices buy (0.005, 0.085) pp per 1% saved, de-grossers (-0.195, -0.064)
+    GATE PASS  G8 exactly two tuned parameters: m (set-change threshold), gross (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y, 56 columns, 4710 rows (target >= 10y)
+    PUB   G0b all-NaN columns in U56 (idea 2332's MMC defect, carried forward): 0 dead: []
+    GATE PASS  G6 sweep SHY priced on every in-window row (U56): non-null 4450 of 4450 (target all)
+    GATE PASS  G0 >= 10y (B136): 17.7y, 136 columns, 4708 rows (target >= 10y)
+    PUB   G0b all-NaN columns in B136 (idea 2332's MMC defect, carried forward): 1 dead: ['MMC']
+    GATE PASS  G6 sweep SHY priced on every in-window row (B136): non-null 4448 of 4448 (target all)
+    GATE PASS  G1 m=0 replica == engine.backtest (CAP2, U56, g=0.75): max|d| 1.388e-17 over 4708 of 4710 rows (2 pre-first-rebalance rows engine leaves NaN) (target < 1e-12)
+    PUB   G1b the NaN rows engine skips are all before the scored window (row 260): last NaN row index 3 < 260
+    GATE PASS  G4 m=0 acts on EVERY scheduled rebalance: acting 978 of scheduled 978 (target equal)
+    GATE PASS  G12 turnover is non-zero only on ACTING rebalances (m=8, U56): 132 non-zero rows vs 133 acting rebalances (target non-zero rows <= acting)
+    GATE PASS  G7 no lookahead (m=3 held path, tape truncated at 2018-01-01): max|d| 0.000e+00 (target < 1e-12)
+
+    6 books per (panel, gross); 24 books, x4 cost rungs
+
+--- panel U56  (56 columns)  SPY 15.23% / 0.8897 / -33.72%   live RULES v2 8.65% / 1.2052 / -12.05%
+    ... U56 gross 0.75 done (2s)
+    ... U56 gross 1.00 done (3s)
+
+--- panel B136  (136 columns)  SPY 15.12% / 0.8844 / -33.72%   live RULES v2 7.96% / 1.0972 / -12.24%
+    ... B136 gross 0.75 done (5s)
+    ... B136 gross 1.00 done (6s)
+    GATE PASS  G2 reproduces the committed CAP2 U56 headline (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318): read 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318 -> max|d| 3.95e-05 (target < 1e-3)
+    GATE PASS  G2b reproduces the committed 3.51x turnover (U56, CAP2, g=0.75): 3.5064x (target |d| < 0.01)
+    GATE PASS  G2c reproduces idea 2467's committed 4.68x turnover (B136, CAP2, g=0.75): 4.6751x (target |d| < 0.02)
+    GATE PASS  G11 the 4a comparand IS the committed live RULES v2 book (U56): 8.65% / 1.2052 / -12.05%, halves 1.2262/1.1897 -> max|d| 4.95e-05 (target < 1e-3)
+    GATE PASS  G11 the 4a comparand IS the committed live RULES v2 book (B136): 7.96% / 1.0972 / -12.24%, halves 1.2296/0.9669 -> max|d| 1.07e-05 (target < 1e-3)
+    GATE PASS  G5 no leverage anywhere: max row gross 1.000000000; risk-sleeve rescale events 51 (target <= 1+1e-12)
+    GATE PASS  G10 acting rebalances are non-increasing in m (the ceiling is hard): True (target True)
+    GATE PASS  G9 BOTH dials bite: turnover range over m (min across panel x gross) 0.735x; over gross at m=3 0.376x (target both > 0.05)
+
+=== A.  THE m LADDER at the headline rung (10 bps), both panels, both gross ===
+      m   act/sched   gap_d  setchg  stale    turn/yr    cut     CAGR   dCAGR   pp/1%   Sharpe  MaxDD    OOS_S   legs 4b 4a  grossrel
+  -- U56 gross 0.75   (reference m=0: 3.51 turns/yr, CAGR 11.62%, risk gross 0.6561)
+      0   978/ 978    4.8   1.70   1.1%    3.51x   0.0%  11.62% +0.00%    +nan  1.2687 -14.81%  1.3318  11111  1  0  +0.00%
+      1   667/ 978    7.1   1.70   1.1%    3.34x   4.7%  11.66% +0.04%  +0.008  1.2704 -15.06%  1.3327  11111  1  0  +0.08%
+      2   468/ 978   10.1   1.96   1.5%    3.12x  11.0%  11.70% +0.07%  +0.007  1.2707 -15.06%  1.3408  11111  1  0  +0.19%
+      3   347/ 978   13.6   2.31   1.9%    2.92x  16.8%  11.59% -0.03%  -0.002  1.2581 -15.06%  1.3221  11111  1  0  +0.17%
+      5   212/ 978   22.2   3.19   3.1%    2.56x  27.1%  11.52% -0.10%  -0.004  1.2435 -15.28%  1.3194  11111  1  0  +0.21%
+      8   133/ 978   35.5   4.56   4.5%    2.26x  35.7%  11.78% +0.15%  +0.004  1.2632 -15.32%  1.3428  11111  1  0  +0.14%
+  -- U56 gross 1.00   (reference m=0: 3.99 turns/yr, CAGR 12.66%, risk gross 0.7501)
+      0   978/ 978    4.8   1.70   1.1%    3.99x   0.0%  12.66% +0.00%    +nan  1.2187 -17.28%  1.2953  11111  1  0  +0.00%
+      1   667/ 978    7.1   1.70   1.1%    3.82x   4.2%  12.71% +0.05%  +0.011  1.2214 -17.49%  1.2971  11111  1  0  +0.04%
+      2   468/ 978   10.1   1.96   1.5%    3.52x  11.8%  12.73% +0.07%  +0.006  1.2217 -17.49%  1.3019  11111  1  0  -0.07%
+      3   347/ 978   13.6   2.31   1.9%    3.29x  17.5%  12.69% +0.03%  +0.001  1.2170 -17.49%  1.2975  11111  1  0  -0.23%
+      5   212/ 978   22.2   3.19   3.1%    2.87x  28.0%  12.48% -0.18%  -0.007  1.1910 -17.93%  1.2800  11111  1  0  -0.42%
+      8   133/ 978   35.5   4.56   4.5%    2.53x  36.6%  12.76% +0.10%  +0.003  1.2257 -18.00%  1.3125  11111  1  0  -1.74%
+  -- B136 gross 0.75   (reference m=0: 4.68 turns/yr, CAGR 11.82%, risk gross 0.7283)
+      0   977/ 977    4.8   4.82   1.3%    4.68x   0.0%  11.82% +0.00%    +nan  1.1180 -17.10%  1.0936  11111  1  0  +0.00%
+      1   878/ 977    5.4   4.82   1.3%    4.64x   0.7%  11.83% +0.01%  +0.016  1.1190 -17.10%  1.0937  11111  1  0  +0.01%
+      2   790/ 977    6.0   4.90   1.4%    4.58x   2.1%  11.84% +0.02%  +0.008  1.1195 -17.01%  1.0949  11111  1  0  +0.03%
+      3   686/ 977    6.9   5.13   1.5%    4.49x   4.0%  11.81% -0.01%  -0.003  1.1166 -17.32%  1.0940  11111  1  0  +0.06%
+      5   529/ 977    8.9   5.74   1.9%    4.29x   8.3%  11.82% +0.00%  +0.000  1.1173 -16.94%  1.0916  11111  1  0  +0.10%
+      8   368/ 977   12.8   6.96   2.6%    3.94x  15.7%  11.94% +0.12%  +0.008  1.1247 -17.13%  1.1025  11111  1  0  +0.16%
+  -- B136 gross 1.00   (reference m=0: 5.83 turns/yr, CAGR 15.06%, risk gross 0.9563)
+      0   977/ 977    4.8   4.82   1.3%    5.83x   0.0%  15.06% +0.00%    +nan  1.0911 -22.38%  1.0637  11101  0  0  +0.00%
+      1   878/ 977    5.4   4.82   1.3%    5.79x   0.7%  15.07% +0.01%  +0.011  1.0917 -22.38%  1.0637  11101  0  0  +0.00%
+      2   790/ 977    6.0   4.90   1.4%    5.71x   2.1%  15.07% +0.01%  +0.005  1.0919 -22.38%  1.0652  11101  0  0  +0.00%
+      3   686/ 977    6.9   5.13   1.5%    5.60x   4.0%  15.05% -0.01%  -0.003  1.0901 -22.38%  1.0646  11101  0  0  +0.01%
+      5   529/ 977    8.9   5.74   1.9%    5.36x   8.0%  15.07% +0.01%  +0.001  1.0912 -22.39%  1.0635  11101  0  0  +0.01%
+      8   368/ 977   12.8   6.96   2.6%    4.95x  15.0%  15.21% +0.15%  +0.010  1.0993 -22.59%  1.0752  11101  0  0  -0.09%
+
+    ALL COST RUNGS (m ladder, both panels, both gross) — full grid in .grid.csv
+        0.0 bps: 4b 18 of 24;  4a 0 of 24;  clears the -31.0% bar at dCAGR>=0: 1 of 24;  median dCAGR -0.00%
+       10.0 bps: 4b 18 of 24;  4a 0 of 24;  clears the -31.0% bar at dCAGR>=0: 2 of 24;  median dCAGR +0.01%
+       25.0 bps: 4b 18 of 24;  4a 0 of 24;  clears the -31.0% bar at dCAGR>=0: 2 of 24;  median dCAGR +0.07%
+       50.0 bps: 4b 7 of 24;  4a 0 of 24;  clears the -31.0% bar at dCAGR>=0: 2 of 24;  median dCAGR +0.22%
+
+=== B.  IS THE DEVICE EXPOSURE-NEUTRAL, AND WHAT DOES IT CHARGE PER 1% SAVED? ===
+    GATE PASS  G13 EVENT is exposure-neutral (mean risk gross within +/-2% relative): max |dgross_rel| over all m>0 books 1.735% (target < 2%)
+    pooled pp of CAGR per 1% of turnover saved over 80 rows: median +0.0081, mean +0.0096, IQR +0.0014..+0.0177
+    idea 2463's classes: exposure-neutral (0.005, 0.085), de-grossers (-0.195, -0.064)
+        0.0 bps: median -0.0007 over 20 rows
+       10.0 bps: median +0.0046 over 20 rows
+       25.0 bps: median +0.0117 over 20 rows
+       50.0 bps: median +0.0229 over 20 rows
+      U56 g0.75 @10bps: m=1:+0.008  m=2:+0.007  m=3:-0.002  m=5:-0.004  m=8:+0.004
+      U56 g1.00 @10bps: m=1:+0.011  m=2:+0.006  m=3:+0.001  m=5:-0.007  m=8:+0.003
+      B136 g0.75 @10bps: m=1:+0.016  m=2:+0.008  m=3:-0.003  m=5:+0.000  m=8:+0.008
+      B136 g1.00 @10bps: m=1:+0.011  m=2:+0.005  m=3:-0.003  m=5:+0.001  m=8:+0.010
+
+=== B2.  THE ADOPTION BAR (cut >= 31.0% AND dCAGR >= 0) ===
+      U56 g1.00 m=8  50.0bps  cut  36.6%  dCAGR +0.75%  4b=1 legs 11111 OOS_S 1.2209
+      U56 g1.00 m=8  25.0bps  cut  36.6%  dCAGR +0.34%  4b=1 legs 11111 OOS_S 1.2783
+      U56 g1.00 m=8  10.0bps  cut  36.6%  dCAGR +0.10%  4b=1 legs 11111 OOS_S 1.3125
+      U56 g0.75 m=8  25.0bps  cut  35.7%  dCAGR +0.36%  4b=1 legs 11111 OOS_S 1.3087
+      U56 g0.75 m=8  10.0bps  cut  35.7%  dCAGR +0.15%  4b=1 legs 11111 OOS_S 1.3428
+      U56 g0.75 m=8   0.0bps  cut  35.7%  dCAGR +0.01%  4b=1 legs 11111 OOS_S 1.3654
+      U56 g0.75 m=8  50.0bps  cut  35.7%  dCAGR +0.70%  4b=1 legs 11111 OOS_S 1.2514
+      best cut anywhere: 36.6% (at dCAGR -0.07%, U56 g1.00 m=8)
+
+    leg-failure census over ALL rows:
+      L_H1    fails 0 of 96
+      L_H2    fails 11 of 96
+      L_OOS   fails 0 of 96
+      L_DD    fails 24 of 96
+      L_CAGR  fails 11 of 96
+      leg strings: {'11111': 61, '11101': 18, '11110': 6, '10101': 6, '10110': 5}
+      4b 61 of 96;  4a 0 of 96
+
+=== C.  THE EVENT ITSELF: how often does the in-band NAME SET actually move? ===
+    U56: 978 scheduled weekly rebalances; set change |A_t D A_last| — mean 1.70, median 1, p90 4, max 20
+       m=1: 68.1% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       m=2: 39.9% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       m=3: 22.8% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       m=5: 7.7% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       m=8: 3.0% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       weeks with ZERO set change: 31.9%  -> that is the upper bound on a free saving
+    B136: 977 scheduled weekly rebalances; set change |A_t D A_last| — mean 4.82, median 3, p90 10, max 51
+       m=1: 89.8% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       m=2: 78.8% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       m=3: 64.5% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       m=5: 39.3% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       m=8: 18.6% of weeks would act on the m=0 reference path (unconditional; the realised path differs because skipping widens the comparison)
+       weeks with ZERO set change: 10.2%  -> that is the upper bound on a free saving
+
+=== D.  RULE 8 WALK-FORWARD.  (m, gross) chosen on warm-up..2016-12-31 ONLY; 2017-2026 read ONCE ===
+    chooser      picks (m)                       OOS CAGR / Sharpe    vs SPY / vs CAP2 / vs live
+    C_ISSHARPE  m={1: 7, 8: 9}               OOS 12.99% / 1.1800   SPY 16/16  CAP2 13/16  live 7/16
+        full-sample 4b on the pick 11/16;  cut median 15.0%, dCAGR median +0.14%
+    C_ISCALMAR  m={1: 8, 3: 3, 5: 1, 8: 4}   OOS 12.83% / 1.1559   SPY 16/16  CAP2 12/16  live 6/16
+        full-sample 4b on the pick 10/16;  cut median 6.3%, dCAGR median +0.05%
+    C_ISADOPT   m={0: 13, 8: 3}              OOS 12.97% / 1.1800   SPY 16/16  CAP2 3/16  live 7/16
+        full-sample 4b on the pick 11/16;  cut median 0.0%, dCAGR median +0.00%
+    C_JOINT     m={1: 8, 8: 8}               OOS 12.16% / 1.1952   SPY 16/16  CAP2 14/16  live 8/16
+        full-sample 4b on the pick 14/16;  cut median 10.2%, dCAGR median +0.09%
+    C_PREREG    m={1: 16}                    OOS 12.68% / 1.1451   SPY 16/16  CAP2 12/16  live 6/16
+        full-sample 4b on the pick 10/16;  cut median 2.5%, dCAGR median +0.03%
+    TOTAL PICKS 80;  m=0 (the committed book) picked in 13 of 80
+    [U56] OOS benchmarks read ONCE: SPY 15.45% / 0.8831 / -33.72%;  live RULES v2 9.51% / 1.2839 / -12.05%
+    [B136] OOS benchmarks read ONCE: SPY 15.26% / 0.8737 / -33.72%;  live RULES v2 7.85% / 1.1017 / -12.24%
+
+=== E.  THE ZERO-FITTED BOOK IN FULL  (m = 1: trade only when the set moved at all) ===
+    panel gross  bps   turn/yr   cut    CAGR    dCAGR   Sharpe   H1/H2         MaxDD    OOS CAGR/Sharpe   legs 4b 4a
+    B136  0.75   0.0    4.64x   0.7%  12.35% +0.01%  1.1636  1.3048/1.0371  -16.59%   12.19% / 1.1391   11111  1  0
+    B136  0.75  10.0    4.64x   0.7%  11.83% +0.01%  1.1190  1.2624/0.9905  -17.10%   11.65% / 1.0937   11111  1  0
+    B136  0.75  25.0    4.64x   0.7%  11.06% +0.02%  1.0520  1.1985/0.9205  -17.93%   10.86% / 1.0255   11111  1  0
+    B136  0.75  50.0    4.64x   0.7%   9.77% +0.03%  0.9401  1.0918/0.8039  -19.31%    9.54% / 0.9117   10110  0  0
+    B136  1.00   0.0    5.79x   0.7%  15.74% +0.00%  1.1341  1.2814/1.0012  -22.32%   15.44% / 1.1069   11101  0  0
+    B136  1.00  10.0    5.79x   0.7%  15.07% +0.01%  1.0917  1.2409/0.9569  -22.38%   14.75% / 1.0637   11101  0  0
+    B136  1.00  25.0    5.79x   0.7%  14.07% +0.01%  1.0279  1.1802/0.8903  -22.49%   13.73% / 0.9988   11101  0  0
+    B136  1.00  50.0    5.79x   0.7%  12.43% +0.03%  0.9214  1.0786/0.7792  -22.66%   12.05% / 0.8904   10101  0  0
+    U56   0.75   0.0    3.34x   4.7%  12.03% +0.02%  1.3078  1.3436/1.2834  -15.02%   13.18% / 1.3685   11111  1  0
+    U56   0.75  10.0    3.34x   4.7%  11.66% +0.04%  1.2704  1.3055/1.2466  -15.06%   12.80% / 1.3327   11111  1  0
+    U56   0.75  25.0    3.34x   4.7%  11.10% +0.06%  1.2143  1.2481/1.1913  -15.13%   12.24% / 1.2789   11111  1  0
+    U56   0.75  50.0    3.34x   4.7%  10.18% +0.11%  1.1206  1.1523/1.0988  -15.23%   11.30% / 1.1889   11110  0  0
+    U56   1.00   0.0    3.82x   4.2%  13.14% +0.03%  1.2589  1.2870/1.2438  -17.43%   14.78% / 1.3334   11111  1  0
+    U56   1.00  10.0    3.82x   4.2%  12.71% +0.05%  1.2214  1.2488/1.2066  -17.49%   14.33% / 1.2971   11111  1  0
+    U56   1.00  25.0    3.82x   4.2%  12.07% +0.07%  1.1650  1.1914/1.1507  -17.57%   13.66% / 1.2425   11111  1  0
+    U56   1.00  50.0    3.82x   4.2%  11.00% +0.12%  1.0708  1.0954/1.0574  -17.71%   12.56% / 1.1512   11111  1  0
+    [U56] SPY 15.23% / 0.8897 / -33.72%; halves 0.9566/0.8353; OOS 15.45% / 0.8831; 4b bars: DD >= -20.23%, CAGR >= 10.66%
+    [B136] SPY 15.12% / 0.8844 / -33.72%; halves 0.9571/0.8249; OOS 15.26% / 0.8737; 4b bars: DD >= -20.23%, CAGR >= 10.59%
+
+=== F.  PLACEBO: is the saving bought by the EVENT, or by simply TRADING LESS OFTEN? ===
+    For every (panel, gross, m) the placebo acts at a RANDOM subset of the scheduled weekly
+    rebalances of EXACTLY the same size as the event book's realised acting count, 8 md5
+    seeds each.  Excess = EVENT minus placebo mean.  Headline rung 10 bps.
+    ... U56 placebo done (19s)
+    ... B136 placebo done (31s)
+    panel gross  m   EVENT cut/CAGR/Sharpe      PLACEBO mean cut/CAGR/Sharpe (sd)      EXCESS cut / CAGR / Sharpe
+    B136  0.75  1     0.7%  11.83% 1.1190        3.2%  11.82% 1.1166 (0.0061)       -2.5% +0.01% +0.0024
+    B136  0.75  2     2.1%  11.84% 1.1195        6.3%  11.88% 1.1162 (0.0174)       -4.2% -0.04% +0.0033
+    B136  0.75  3     4.0%  11.81% 1.1166       10.8%  11.77% 1.1049 (0.0299)       -6.8% +0.04% +0.0117
+    B136  0.75  5     8.3%  11.82% 1.1173       19.5%  11.81% 1.1006 (0.0245)      -11.2% +0.02% +0.0168
+    B136  0.75  8    15.7%  11.94% 1.1247       29.9%  11.97% 1.1024 (0.0403)      -14.2% -0.02% +0.0223
+    B136  1.00  1     0.7%  15.07% 1.0917        3.1%  15.09% 1.0872 (0.0218)       -2.4% -0.02% +0.0045
+    B136  1.00  2     2.1%  15.07% 1.0919        6.5%  14.98% 1.0779 (0.0284)       -4.4% +0.09% +0.0140
+    B136  1.00  3     4.0%  15.05% 1.0901       10.5%  15.10% 1.0855 (0.0271)       -6.5% -0.06% +0.0047
+    B136  1.00  5     8.0%  15.07% 1.0912       19.2%  15.45% 1.0896 (0.0326)      -11.2% -0.39% +0.0016
+    B136  1.00  8    15.0%  15.21% 1.0993       28.4%  15.36% 1.0828 (0.0315)      -13.4% -0.15% +0.0164
+    U56   0.75  1     4.7%  11.66% 1.2704       11.7%  11.59% 1.2473 (0.0301)       -7.1% +0.06% +0.0232
+    U56   0.75  2    11.0%  11.70% 1.2707       21.3%  11.72% 1.2265 (0.0344)      -10.3% -0.02% +0.0443
+    U56   0.75  3    16.8%  11.59% 1.2581       29.5%  11.82% 1.2351 (0.0621)      -12.7% -0.23% +0.0230
+    U56   0.75  5    27.1%  11.52% 1.2435       41.0%  11.80% 1.2116 (0.0506)      -13.9% -0.28% +0.0319
+    U56   0.75  8    35.7%  11.78% 1.2632       51.4%  11.98% 1.1955 (0.0431)      -15.7% -0.20% +0.0677
+    U56   1.00  1     4.2%  12.71% 1.2214       10.7%  12.75% 1.2181 (0.0236)       -6.5% -0.04% +0.0033
+    U56   1.00  2    11.8%  12.73% 1.2217       19.8%  12.65% 1.1615 (0.0663)       -8.0% +0.08% +0.0601
+    U56   1.00  3    17.5%  12.69% 1.2170       27.3%  12.79% 1.1818 (0.0455)       -9.8% -0.10% +0.0352
+    U56   1.00  5    28.0%  12.48% 1.1910       38.9%  12.61% 1.1022 (0.0417)      -10.9% -0.13% +0.0888
+    U56   1.00  8    36.6%  12.76% 1.2257       50.2%  13.06% 1.1173 (0.0685)      -13.5% -0.30% +0.1084
+    POOLED over 20 (panel, gross, m) cells: excess cut median -10.1%, excess CAGR median -0.04%, excess Sharpe median +0.0196
+    seed noise floor: median sd of Sharpe across the 8 placebo draws 0.0321, of CAGR 0.33%
+    placebo 4b passes 80 of 160
+    PUB   G14c the placebo's acting count vs the event book's (the placebo is matched, +1 for the forced initialisation act, so the comparison is CONSERVATIVE against the event rule): max excess acts 1, min 1 over 20 cells
+
+    MECHANISM — mean turnover PER ACTING REBALANCE (event vs frequency-matched placebo):
+      B136  0.75 m=1: event 0.0933 of NAV per act, placebo 0.0908, ratio 1.027
+      B136  0.75 m=2: event 0.1022 of NAV per act, placebo 0.0977, ratio 1.046
+      B136  0.75 m=3: event 0.1155 of NAV per act, placebo 0.1072, ratio 1.077
+      B136  0.75 m=5: event 0.1430 of NAV per act, placebo 0.1253, ratio 1.141
+      B136  0.75 m=8: event 0.1890 of NAV per act, placebo 0.1567, ratio 1.206
+      B136  1.00 m=1: event 0.1164 of NAV per act, placebo 0.1134, ratio 1.026
+      B136  1.00 m=2: event 0.1275 of NAV per act, placebo 0.1217, ratio 1.048
+      B136  1.00 m=3: event 0.1441 of NAV per act, placebo 0.1340, ratio 1.075
+      B136  1.00 m=5: event 0.1790 of NAV per act, placebo 0.1568, ratio 1.141
+      B136  1.00 m=8: event 0.2376 of NAV per act, placebo 0.1996, ratio 1.190
+      U56   0.75 m=1: event 0.0885 of NAV per act, placebo 0.0818, ratio 1.082
+      U56   0.75 m=2: event 0.1178 of NAV per act, placebo 0.1039, ratio 1.134
+      U56   0.75 m=3: event 0.1485 of NAV per act, placebo 0.1255, ratio 1.183
+      U56   0.75 m=5: event 0.2129 of NAV per act, placebo 0.1714, ratio 1.242
+      U56   0.75 m=8: event 0.2994 of NAV per act, placebo 0.2247, ratio 1.332
+      U56   1.00 m=1: event 0.1012 of NAV per act, placebo 0.0942, ratio 1.074
+      U56   1.00 m=2: event 0.1329 of NAV per act, placebo 0.1205, ratio 1.102
+      U56   1.00 m=3: event 0.1676 of NAV per act, placebo 0.1473, ratio 1.138
+      U56   1.00 m=5: event 0.2394 of NAV per act, placebo 0.2020, ratio 1.185
+      U56   1.00 m=8: event 0.3359 of NAV per act, placebo 0.2622, ratio 1.281
+    GATE PASS  G15 the EVENT rule trades MORE per acting rebalance than a random cadence (it refuses to skip exactly the weeks whose trade is largest): ratio median 1.136, min 1.026, max 1.332 over 20 cells (target > 1 in every cell)
+    GATE PASS  G14 the EVENT's Sharpe excess over the frequency-matched placebo is RESOLVABLE: 4 of 20 cells have |excess Sharpe| > the seed sd (target published)
+    PUB   G14b the EVENT's turnover cut vs a frequency-matched random cadence: median excess -10.1% (positive = the event saves MORE than random skipping at the same acting count)
+
+=== GATES 25 of 25 ===
+    rows 96; turnover rows 24; walk-forward picks 80; elapsed 31s

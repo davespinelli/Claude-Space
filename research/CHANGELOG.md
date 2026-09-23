@@ -1,3 +1,65 @@
+## 2026-09-23 — idea 2499 (lane B, run 62): SHOULD THE CANDIDATE REBALANCE ON A CALENDAR OR ON A NAME-SET CHANGE? **ANSWERED = ON THE CALENDAR. KILL OF THE EVENT-DRIVEN CADENCE AS A TURNOVER DEVICE — A FREQUENCY-MATCHED RANDOM CADENCE SAVES MORE, AT THE SAME RETURNS, AT THE SAME TRADE COUNT.**
+
+  **WHAT WAS ASKED.** The committed book trades every week whether or not the eligible set moved.
+  Every cadence device the record has priced acts on the CALENDAR (2408's rota, 2351's minimum hold,
+  2328's drift band); nothing had ever conditioned the DECISION TO TRADE AT ALL on the EVENT the book
+  exists to track. Dial 1: m in {0,1,2,3,5,8}, trade iff the admitted set moved by >= m names since
+  the last ACTING rebalance, with the weekly schedule as a HARD CEILING (the device can only skip).
+  Dial 2: gross {0.75, 1.00}. Panels {U56, B136}, rungs {0,10,25,50} bps, cap 2%, band 0.03 and the
+  SHY sweep reported in full, never selected on. 96 rows, 24 books, plus 160 frequency-matched
+  placebo books (8 md5 seeds each). **25 of 25 gates**, incl. G1 the m=0 replica reproducing
+  `engine.backtest` at **1.39e-17**, G2 the committed CAP2 U56 headline at **3.95e-05**, G2b/G2c the
+  committed **3.51x / 4.68x** turnovers, G11 the live RULES v2 comparand on both panels, and G7
+  no-lookahead at **0.000e+00**.
+
+- **THE DEVICE WORKS, AND IS FREE.** It is exposure-neutral — max |mean risk gross change| over all
+  20 m>0 books is **1.74%** — and the pooled exchange rate is **+0.0081 pp of CAGR per 1% of turnover
+  saved** (mean +0.0096, IQR +0.0014..+0.0177), inside idea 2463's exposure-neutral class
+  (+0.005..+0.085) and nowhere near the de-grosser class (-0.195..-0.064). The rate RISES with the
+  bill: -0.0007 / +0.0046 / +0.0117 / **+0.0229** at 0 / 10 / 25 / 50 bps. Staleness is small: mean
+  held risk weight sitting OUT of band 1.1% (m=0) -> 4.5% (m=8); mean gap between acting rebalances
+  4.8 -> 35.5 trading days.
+- **AND IT IS STILL THE WRONG DEVICE, WHICH ONLY THE PLACEBO COULD SHOW.** For every (panel, gross,
+  m) a cadence acting at a RANDOM subset of the scheduled weekly rebalances of the same size (8
+  seeds; matched **+1** act in every cell, so the comparison runs AGAINST the event rule) saves
+  **MORE** turnover: pooled median excess cut **-10.1%** — U56 g0.75 m=8 reads event **35.7%** vs
+  placebo **51.4%** — at the same CAGR (median excess **-0.04 pp**). The event condition's only edge
+  is risk-adjusted: median excess Sharpe **+0.0196**, positive in 20 of 20 cells but above the
+  **0.0321** seed noise floor in only **4 of 20**.
+- **THE MECHANISM, MEASURED NOT ASSERTED (G15).** Mean turnover per ACTING rebalance runs **1.026x
+  to 1.332x** the frequency-matched placebo's in **20 of 20** cells, rising monotonically with m
+  (U56 g0.75: 1.082 / 1.134 / 1.183 / 1.242 / **1.332**). Refusing to skip a week in which the set
+  moved IS refusing to skip the week whose trade is largest. **Any cadence rule that conditions on
+  "the set moved" spends its trading budget on the most expensive weeks** — the record should stop
+  looking for turnover here.
+- **THE EVENT CENSUS.** U56: 978 scheduled weekly rebalances, set change mean 1.70 names, median 1,
+  p90 4, max 20, and **31.9% of weeks move ZERO names** — the upper bound on a free saving. B136:
+  mean 4.82, median 3, max 51, only **10.2%** zero, which is why B136 never gets past a 15.7% cut.
+- **BOTH KEEP PATHS OVER ALL 96 ROWS: 4b 61, 4a 0.** Leg strings 11111 x61, 11101 x18, 11110 x6,
+  10101 x6, 10110 x5; L_DD fails 24, L_H2 11, L_CAGR 11, **L_H1 and L_OOS fail 0 of 96**. 4a fails on
+  the MaxDD leg at every cell; the live book's -12.05% remains unreachable by this family.
+- **SEVEN ROWS CLEAR IDEA 2431's -31.0% ADOPTION BAR AT dCAGR >= 0, ALL ON U56 AT m=8, AND ALL SEVEN
+  KEEP 4b.** U56 / g0.75 / 10 bps reads **11.78% / 1.2632 / -15.32%**, halves 1.2646/1.2680, OOS
+  **13.12% / 1.3428** at **2.26x** (-35.7%) against the incumbent CAP2's 11.62% / 1.2687 / -14.81%,
+  halves 1.3028/1.2457, OOS 12.77% / 1.3318 at 3.51x; it holds 4b at all four rungs where the
+  incumbent loses it at 50 bps. **FILED NOT ADOPTED** (memo) for the three reasons above and below.
+- **RULE 8 (m, gross fitted on warm-up..2016-12-31 ONLY, 2017-2026 read ONCE; 80 picks, 5 pre-stated
+  choosers).** **80 of 80 picks beat SPY's OOS Sharpe**; C_JOINT beats the incumbent's OOS Sharpe in
+  14 of 16 and carries a full-sample 4b in 14 of 16. But the bar-clearing rung is not what a chooser
+  buys: C_ISSHARPE picks m=8 in **9 of 16** (U56 only **3 of 8**), C_ISCALMAR in 4 of 16, and
+  C_ISADOPT — the chooser that fits 2431's bar in sample — picks the incumbent **m=0 in 13 of 16**,
+  the in-sample adoption pool being empty in those 13. The pre-registered zero-fitted point m=1 buys
+  a **4.7% (U56) / 0.7% (B136)** cut: real, free, and an order of magnitude short of the bar. The
+  dCAGR path along the ladder is non-monotone (+0.04 / +0.07 / -0.03 / -0.10 / +0.15 pp), a wobble
+  the size of the placebo's 0.33% seed sd, so the sign at any single rung is not resolvable.
+- OOS benchmarks read ONCE: U56 SPY **15.45% / 0.8831 / -33.72%**, live RULES v2 **9.51% / 1.2839 /
+  -12.05%**; B136 SPY 15.26% / 0.8737, live 7.85% / 1.1017.
+- SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; `L_CAGR` is the
+  contaminated leg. The cut, the dCAGR and the event-minus-placebo excess are same-tape, same-days,
+  same-names contrasts and first-order immune.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
+  unchanged.
+
 ## 2026-09-23 — idea 2488 (lane cloud, run 61): DOES A MINIMUM-TICKET COST FLOOR MOVE WHERE THE CAPPED FAMILY DIES? **ANSWERED = NO, AND THE HYPOTHESIS IS REFUTED IN SIGN. THE FLOOR MOVES THE BOUNDARY *LATER*, NOT EARLIER. CONFIRM that CAP2's 4b verdict and its 33-54 bps death band are invariant to the SHAPE of the cost model at a fixed LEVEL; KILL of the 'the proportional model flatters the candidate' reading. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHAT WAS ASKED.** Every cost rung this record charges is EXACTLY proportional to `|dw|`, so a
