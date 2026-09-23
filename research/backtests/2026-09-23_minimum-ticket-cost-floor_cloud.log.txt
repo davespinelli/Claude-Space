@@ -1,0 +1,284 @@
+=== idea 2488 — DOES A MINIMUM-TICKET COST FLOOR MOVE WHERE THE CAPPED FAMILY DIES?
+    (lane cloud, run 61) ===
+    2026-09-23  band 0.03  MA 200d  cadence ['W', 'M']  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  fine ladder 0..120 bps step 2 (death rung only)  sweep SHY
+    DIAL 1 phi (fixed share of a revenue-neutral bill) [0.0, 0.25, 0.5, 0.75, 1.0]    DIAL 2 gross [0.75, 1.0]
+    PUBLISHED AXIS, NEVER SELECTED ON: book ladder ['CAP0.015', 'CAP2', 'CAP0.030', 'CAND'], panels, rungs, cadence, calibration ['SELF', 'PANEL'].
+    MODEL: cost_t = (1-phi) * c/1e4 * |dw|_t + f * tickets_t, f CALIBRATED so the TOTAL
+    bill equals the flat rung's (G8).  phi = 0 IS the committed model; phi = 1 is a pure
+    per-ticket charge.  Nothing in between changes how MUCH the book pays — only WHICH
+    trades pay it.  SELF calibrates on the book's own path; PANEL fixes f once from the
+    committed reference book (CAP2, g 0.75) and charges it to every book.
+    THE PREMISE IS TESTED: the ticket-size distribution of every book is PUBLISHED over
+    eight pre-registered |dw| buckets BEFORE any verdict is read.
+    SMALL NOT PRICED: 0 of 128 4b cells (idea 2383), 0 of 40-120 (2318/2322/2326/2343);
+    re-shaping a bill cannot mend three legs that fail at a ZERO bill.
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; L_CAGR is
+    the contaminated leg.  The phi contrast is same-path, same-trades, first-order immune;
+    the absolute 4b verdicts and death rungs are not.
+    GATE PASS  G6 exactly two tuned parameters: phi, gross (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 the eligible set IS baseline.band_state & priced, unmodified: 0 differing cells; mean names IN 36.37 (target 0)
+    GATE PASS  G1 at phi = 0 the runner IS engine.backtest (CAP2 and CAND, g 0.75, W, 10 bps, sweep off): max|d| 3.469e-18 (target < 1e-12)
+    GATE PASS  G9 sweep instrument priced on every scored row: SHY non-null on both panels: True (target True)
+
+    32 realised weight paths (the phi dial changes ONLY the bill, never the path).
+    GATE PASS  G4 no leverage anywhere (max gross <= 1): max over 32 paths: 1.000000 (target <= 1+1e-12)
+    GATE PASS  G12 the ticket count never exceeds the investable name count: max tickets/day 127 against {'U56': 56, 'B136': 136} investable (target <= panel width)
+
+=== A. THE PREMISE, TESTED BEFORE ANY VERDICT: WHAT SIZE ARE THE TICKETS?  (share of
+    TICKETS and of TURNOVER in each |dw| bucket; W cadence, g 0.75, 10 bps path) ===
+  panel book |  tickets/yr | mean ticket |      <=1bp |     1-5bp |    5-10bp |   10-25bp |   25-50bp |  50-100bp | 100-200bp |    >200bp
+  U56   CAP0.015|      2061.9 |    14.55 bp |    28.21% |   50.16% |   11.28% |    3.47% |    0.57% |    0.26% |    5.28% |    0.77%
+             |  (turnover) |             |     0.93% |    8.46% |    5.26% |    3.31% |    1.32% |    1.30% |   52.94% |   26.48%
+  U56   CAP2 |      2061.9 |    17.01 bp |    15.33% |   42.14% |   22.77% |   12.49% |    1.80% |    0.29% |    3.60% |    1.59%
+             |  (turnover) |             |     0.44% |    6.93% |    9.43% |   10.56% |    3.44% |    1.10% |   36.23% |   31.87%
+  U56   CAP0.030|      2061.9 |    19.22 bp |    13.39% |   37.89% |   22.71% |   15.50% |    4.35% |    1.18% |    2.78% |    2.19%
+             |  (turnover) |             |     0.34% |    5.56% |    8.34% |   12.04% |    7.63% |    3.94% |   23.95% |   38.21%
+  U56   CAND |      2061.9 |    21.31 bp |    12.99% |   36.36% |   21.78% |   15.27% |    5.37% |    2.49% |    3.52% |    2.22%
+             |  (turnover) |             |     0.28% |    4.66% |    6.98% |   10.43% |    8.41% |    7.87% |   25.76% |   35.61%
+  B136  CAP0.015|      5005.4 |     9.03 bp |    27.64% |   48.53% |   11.08% |    5.85% |    1.26% |    4.05% |    1.48% |    0.10%
+             |  (turnover) |             |     1.46% |   13.04% |    8.39% |    9.63% |    4.58% |   32.70% |   21.03% |    9.17%
+  B136  CAP2 |      5005.4 |     9.34 bp |    27.33% |   47.64% |   11.07% |    6.53% |    1.59% |    4.31% |    1.28% |    0.26%
+             |  (turnover) |             |     1.39% |   12.32% |    8.11% |   10.46% |    5.74% |   33.43% |   18.22% |   10.32%
+  B136  CAP0.030|      5005.4 |     9.57 bp |    27.21% |   47.36% |   10.92% |    6.62% |    1.77% |    4.50% |    1.27% |    0.34%
+             |  (turnover) |             |     1.34% |   11.86% |    7.75% |   10.37% |    6.26% |   33.79% |   17.09% |   11.53%
+  B136  CAND |      5005.4 |     9.80 bp |    27.19% |   47.24% |   10.85% |    6.53% |    1.78% |    4.58% |    1.42% |    0.41%
+             |  (turnover) |             |     1.25% |   11.06% |    7.20% |    9.57% |    5.88% |   32.07% |   17.79% |   15.18%
+    PUB   THE IDEA'S PREMISE ('many small re-sizes'), MEASURED: CAP2: 83.1% of TICKETS are under 10 bp of NAV but they carry only 19.3% of TURNOVER;  CAND: 78.2% of tickets under 10 bp; CAP2 mean ticket 13.17 bp vs CAND 15.56 bp
+    GATE PASS  G13 THE MECHANISM: the TICKET COUNT is NEAR-INVARIANT to the cap (the cap changes ticket SIZE, not ticket COUNT), so a per-ticket charge bills every book in the family alike.  Pre-registered tolerance 1%; this is a MEASURED near-invariance, NOT an identity — the residual is names whose capped weight rounds to no trade on a given day: max relative spread of total tickets across the 4-book cap ladder, over 8 (panel, cadence, gross) cells: 3.021e-03 (0.302%) (target < 1e-2)
+    PUB   CONSEQUENCE — mean TICKET SIZE across the cap ladder (U56 / B136, W, g 0.75): U56 CAP0.015 14.55bp -> CAP2 17.01bp -> CAP0.030 19.22bp -> CAND 21.31bp;  B136 CAP0.015 9.03bp -> CAP2 9.34bp -> CAP0.030 9.57bp -> CAND 9.80bp
+    1280 published rows = 2 panels x 2 cadences x 4 books x 2 gross x 4 rungs x 5 phi x 2 calibrations.
+    GATE PASS  G7 the comparands (SPY and live RULES v2) are BIT-IDENTICAL across every phi and calibration: max spread over all 1280 rows: 0.000e+00 (target 0.0)
+    GATE PASS  G8 SELF calibration is REVENUE-NEUTRAL at every phi (total bill == the flat rung's): max |bill/flat - 1| over 480 arms: 3.331e-16 (target < 1e-12)
+    GATE PASS  G11 PANEL == SELF on the reference book itself (CAP2, g 0.75): max |f_PANEL - f_SELF| over 80 reference arms: 0.000e+00 bp (target < 1e-12)
+    GATE PASS  G10 at phi = 1 the proportional component is exactly zero (the whole bill is per-ticket): checked on 256 rows; f > 0 on 192 of the 192 with a non-zero rung (target f > 0 wherever rung > 0)
+    GATE PASS  G5 at phi = 0 the bill is EXACTLY linear in the rung: max|d| 0.000e+00 (target < 1e-15)
+    GATE PASS  G3 phi = 0 reproduces the committed CAP2 (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318) AND CAND (12.59%/1.1934/-17.39%, OOS 13.85%/1.2397) U56 headlines: CAP2 11.62%/1.2687/-14.81% OOS 12.77%/1.3318; CAND 12.59%/1.1934/-17.39% OOS 13.85%/1.2397 -> max|d| 4.98e-05 (target < 1e-3)
+    ANCHOR published: U56 SPY full 15.23% / 0.8897 / -33.72%, OOS 15.45% / 0.8831; live RULES v2 8.65% / 1.2052 / -12.05%, OOS 1.2839.
+
+=== B. THE CALIBRATED FLOOR ITSELF (PANEL convention, f fixed from CAP2 g 0.75) ===
+  panel cad rung |  phi |    f (bp of NAV per ticket) | CAP2 bill/flat | CAND bill/flat
+  U56   W     10 | 0.25 |                     0.0043 |         1.0000 |         0.9495
+  U56   W     10 | 0.50 |                     0.0085 |         1.0000 |         0.8989
+  U56   W     10 | 0.75 |                     0.0128 |         1.0000 |         0.8484
+  U56   W     10 | 1.00 |                     0.0170 |         1.0000 |         0.7979
+  U56   W     25 | 0.25 |                     0.0106 |         1.0000 |         0.9495
+  U56   W     25 | 0.50 |                     0.0213 |         1.0000 |         0.8989
+  U56   W     25 | 0.75 |                     0.0319 |         1.0000 |         0.8484
+  U56   W     25 | 1.00 |                     0.0425 |         1.0000 |         0.7979
+  U56   W     50 | 0.25 |                     0.0213 |         1.0000 |         0.9495
+  U56   W     50 | 0.50 |                     0.0425 |         1.0000 |         0.8989
+  U56   W     50 | 0.75 |                     0.0638 |         1.0000 |         0.8484
+  U56   W     50 | 1.00 |                     0.0850 |         1.0000 |         0.7979
+  U56   M     10 | 0.25 |                     0.0120 |         1.0000 |         0.9620
+  U56   M     10 | 0.50 |                     0.0239 |         1.0000 |         0.9240
+  U56   M     10 | 0.75 |                     0.0359 |         1.0000 |         0.8860
+  U56   M     10 | 1.00 |                     0.0478 |         1.0000 |         0.8480
+  U56   M     25 | 0.25 |                     0.0299 |         1.0000 |         0.9620
+  U56   M     25 | 0.50 |                     0.0598 |         1.0000 |         0.9240
+  U56   M     25 | 0.75 |                     0.0897 |         1.0000 |         0.8860
+  U56   M     25 | 1.00 |                     0.1195 |         1.0000 |         0.8480
+  U56   M     50 | 0.25 |                     0.0598 |         1.0000 |         0.9620
+  U56   M     50 | 0.50 |                     0.1195 |         1.0000 |         0.9240
+  U56   M     50 | 0.75 |                     0.1793 |         1.0000 |         0.8860
+  U56   M     50 | 1.00 |                     0.2391 |         1.0000 |         0.8480
+  B136  W     10 | 0.25 |                     0.0023 |         1.0000 |         0.9882
+  B136  W     10 | 0.50 |                     0.0047 |         1.0000 |         0.9765
+  B136  W     10 | 0.75 |                     0.0070 |         1.0000 |         0.9647
+  B136  W     10 | 1.00 |                     0.0093 |         1.0000 |         0.9529
+  B136  W     25 | 0.25 |                     0.0058 |         1.0000 |         0.9882
+  B136  W     25 | 0.50 |                     0.0117 |         1.0000 |         0.9765
+  B136  W     25 | 0.75 |                     0.0175 |         1.0000 |         0.9647
+  B136  W     25 | 1.00 |                     0.0234 |         1.0000 |         0.9529
+  B136  W     50 | 0.25 |                     0.0117 |         1.0000 |         0.9882
+  B136  W     50 | 0.50 |                     0.0234 |         1.0000 |         0.9765
+  B136  W     50 | 0.75 |                     0.0350 |         1.0000 |         0.9647
+  B136  W     50 | 1.00 |                     0.0467 |         1.0000 |         0.9529
+  B136  M     10 | 0.25 |                     0.0062 |         1.0000 |         0.9952
+  B136  M     10 | 0.50 |                     0.0124 |         1.0000 |         0.9903
+  B136  M     10 | 0.75 |                     0.0186 |         1.0000 |         0.9855
+  B136  M     10 | 1.00 |                     0.0248 |         1.0000 |         0.9806
+  B136  M     25 | 0.25 |                     0.0155 |         1.0000 |         0.9952
+  B136  M     25 | 0.50 |                     0.0310 |         1.0000 |         0.9903
+  B136  M     25 | 0.75 |                     0.0466 |         1.0000 |         0.9855
+  B136  M     25 | 1.00 |                     0.0621 |         1.0000 |         0.9806
+  B136  M     50 | 0.25 |                     0.0310 |         1.0000 |         0.9952
+  B136  M     50 | 0.50 |                     0.0621 |         1.0000 |         0.9903
+  B136  M     50 | 0.75 |                     0.0931 |         1.0000 |         0.9855
+  B136  M     50 | 1.00 |                     0.1242 |         1.0000 |         0.9806
+    PUB   THE FLOOR RE-PRICES THE FAMILY TOWARDS ONE COMMON BILL (U56, W, 10 bps, g 0.75) — so it HELPS the book trading the BIGGEST tickets, the UNCAPPED one, and HURTS the tightest cap: bill/flat at phi=1: CAP0.015 1.1686; CAP2 1.0000; CAP0.030 0.8846; CAND 0.7979  (every one is 1.0000 at phi=0, spread 0.0000; spread at phi=1 is 0.3707)
+    PUB   THE FLOOR RE-PRICES THE FAMILY TOWARDS ONE COMMON BILL (B136, W, 10 bps, g 0.75) — so it HELPS the book trading the BIGGEST tickets, the UNCAPPED one, and HURTS the tightest cap: bill/flat at phi=1: CAP0.015 1.0348; CAP2 1.0000; CAP0.030 0.9756; CAND 0.9529  (every one is 1.0000 at phi=0, spread 0.0000; spread at phi=1 is 0.0818)
+
+=== C. WHERE THE CAPPED FAMILY DIES — the SMALLEST cost rung at which the row's 4b
+    verdict fails, searched on a FINE ladder 0..120 bps step 2.
+    (`>120` = still passing at the top of the ladder; `0` = never passes.) ===
+  panel cad book  g    cal   |  phi 0.00 | phi 0.25 | phi 0.50 | phi 0.75 | phi 1.00  | d(death) phi 0 -> 1
+  U56   W   CAP0.015 0.75 SELF  |     never |    never |    never |    never |    never  |    n/a
+  U56   W   CAP0.015 0.75 PANEL |     never |    never |    never |    never |    never  |    n/a
+  U56   W   CAP0.015 1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  U56   W   CAP0.015 1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  U56   W   CAP2  0.75 SELF  |       36  |      36  |      36  |      36  |      36   | +0 bps
+  U56   W   CAP2  0.75 PANEL |       36  |      36  |      36  |      36  |      36   | +0 bps
+  U56   W   CAP2  1.00 SELF  |       56  |      56  |      56  |      56  |      56   | +0 bps
+  U56   W   CAP2  1.00 PANEL |       56  |      58  |      60  |      62  |      64   | +8 bps
+  U56   W   CAP0.030 0.75 SELF  |       46  |      46  |      46  |      46  |      46   | +0 bps
+  U56   W   CAP0.030 0.75 PANEL |       46  |      46  |      48  |      50  |      50   | +4 bps
+  U56   W   CAP0.030 1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  U56   W   CAP0.030 1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  U56   W   CAND  0.75 SELF  |       50  |      50  |      50  |      50  |      50   | +0 bps
+  U56   W   CAND  0.75 PANEL |       50  |      54  |      56  |      60  |      62   | +12 bps
+  U56   W   CAND  1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  U56   W   CAND  1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  U56   M   CAP0.015 0.75 SELF  |     never |    never |    never |    never |    never  |    n/a
+  U56   M   CAP0.015 0.75 PANEL |     never |    never |    never |    never |    never  |    n/a
+  U56   M   CAP0.015 1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  U56   M   CAP0.015 1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  U56   M   CAP2  0.75 SELF  |       58  |      58  |      58  |      58  |      58   | +0 bps
+  U56   M   CAP2  0.75 PANEL |       58  |      58  |      58  |      58  |      58   | +0 bps
+  U56   M   CAP2  1.00 SELF  |        6  |       6  |       8  |       8  |      10   | +4 bps
+  U56   M   CAP2  1.00 PANEL |        6  |       6  |       8  |      10  |      12   | +6 bps
+  U56   M   CAP0.030 0.75 SELF  |       70  |      70  |      70  |      70  |      70   | +0 bps
+  U56   M   CAP0.030 0.75 PANEL |       70  |      72  |      74  |      76  |      76   | +6 bps
+  U56   M   CAP0.030 1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  U56   M   CAP0.030 1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  U56   M   CAND  0.75 SELF  |       78  |      78  |      78  |      78  |      78   | +0 bps
+  U56   M   CAND  0.75 PANEL |       78  |      82  |      84  |      88  |      92   | +14 bps
+  U56   M   CAND  1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  U56   M   CAND  1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  W   CAP0.015 0.75 SELF  |       32  |      32  |      32  |      32  |      32   | +0 bps
+  B136  W   CAP0.015 0.75 PANEL |       32  |      32  |      32  |      32  |      30   | -2 bps
+  B136  W   CAP0.015 1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  W   CAP0.015 1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  W   CAP2  0.75 SELF  |       34  |      34  |      34  |      34  |      34   | +0 bps
+  B136  W   CAP2  0.75 PANEL |       34  |      34  |      34  |      34  |      34   | +0 bps
+  B136  W   CAP2  1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  W   CAP2  1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  W   CAP0.030 0.75 SELF  |       36  |      36  |      36  |      36  |      36   | +0 bps
+  B136  W   CAP0.030 0.75 PANEL |       36  |      36  |      36  |      36  |      36   | +0 bps
+  B136  W   CAP0.030 1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  W   CAP0.030 1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  W   CAND  0.75 SELF  |       36  |      36  |      36  |      36  |      36   | +0 bps
+  B136  W   CAND  0.75 PANEL |       36  |      38  |      38  |      38  |      38   | +2 bps
+  B136  W   CAND  1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  W   CAND  1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP0.015 0.75 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP0.015 0.75 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP0.015 1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP0.015 1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP2  0.75 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP2  0.75 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP2  1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP2  1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP0.030 0.75 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP0.030 0.75 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP0.030 1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAP0.030 1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAND  0.75 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAND  0.75 PANEL |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAND  1.00 SELF  |     never |    never |    never |    never |    never  |    n/a
+  B136  M   CAND  1.00 PANEL |     never |    never |    never |    never |    never  |    n/a
+    PUB   DOES THE FLOOR MOVE THE DEATH RUNG?: over 24 rows measurable at BOTH phi 0 and phi 1: median move +0.0 bps, mean +2.25, range [-2, +14]; EARLIER (floor HURTS) 1, LATER (floor HELPS) 8, UNCHANGED 15
+    PUB     under SELF calibration: n=12, median move +0.0 bps, earlier 0 / later 1 / unchanged 11
+    PUB     under PANEL calibration: n=12, median move +3.0 bps, earlier 1 / later 7 / unchanged 4
+
+=== D. BOTH KEEP PATHS OVER ALL PUBLISHED ROWS ===
+  4b 385 of 1280;  4a 0 of 1280
+  cal   phi  | 4b      | 4a | 4b at 10bps | 4b at 25bps | 4b at 50bps | L_DD fail | L_CAGR fail
+  SELF  0.00 |  38/128 |  0 |   11/32    |    11/32    |     4/32    |        67 |          23
+  SELF  0.25 |  38/128 |  0 |   11/32    |    11/32    |     4/32    |        67 |          23
+  SELF  0.50 |  38/128 |  0 |   11/32    |    11/32    |     4/32    |        67 |          23
+  SELF  0.75 |  38/128 |  0 |   11/32    |    11/32    |     4/32    |        67 |          23
+  SELF  1.00 |  38/128 |  0 |   11/32    |    11/32    |     4/32    |        67 |          23
+  PANEL 0.00 |  38/128 |  0 |   11/32    |    11/32    |     4/32    |        67 |          23
+  PANEL 0.25 |  39/128 |  0 |   11/32    |    11/32    |     5/32    |        67 |          23
+  PANEL 0.50 |  39/128 |  0 |   11/32    |    11/32    |     5/32    |        67 |          23
+  PANEL 0.75 |  39/128 |  0 |   11/32    |    11/32    |     5/32    |        67 |          23
+  PANEL 1.00 |  40/128 |  0 |   12/32    |    11/32    |     5/32    |        66 |          23
+
+  HEADLINE CELLS (U56, W, g 0.75, 10 bps) — how far does re-shaping the bill move them?
+  book  cal   |  phi |   CAGR |  Sharpe |   MaxDD |  OOS Sharpe | bill/yr (bp) | 4b
+  CAP0.015 SELF  | 0.00 |  9.82% |  1.2631 | -12.74% |      1.3463 |        30.00 | .
+  CAP0.015 SELF  | 0.25 |  9.82% |  1.2632 | -12.73% |      1.3462 |        30.00 | .
+  CAP0.015 SELF  | 0.50 |  9.82% |  1.2632 | -12.73% |      1.3461 |        30.00 | .
+  CAP0.015 SELF  | 0.75 |  9.82% |  1.2633 | -12.72% |      1.3460 |        30.00 | .
+  CAP0.015 SELF  | 1.00 |  9.82% |  1.2633 | -12.71% |      1.3458 |        30.00 | .
+  CAP0.015 PANEL | 0.00 |  9.82% |  1.2631 | -12.74% |      1.3463 |        30.00 | .
+  CAP0.015 PANEL | 0.25 |  9.81% |  1.2615 | -12.73% |      1.3446 |        31.27 | .
+  CAP0.015 PANEL | 0.50 |  9.79% |  1.2599 | -12.73% |      1.3428 |        32.53 | .
+  CAP0.015 PANEL | 0.75 |  9.78% |  1.2583 | -12.72% |      1.3411 |        33.80 | .
+  CAP0.015 PANEL | 1.00 |  9.77% |  1.2567 | -12.72% |      1.3394 |        35.06 | .
+  CAP2  SELF  | 0.00 | 11.62% |  1.2687 | -14.81% |      1.3318 |        35.06 | Y
+  CAP2  SELF  | 0.25 | 11.62% |  1.2687 | -14.80% |      1.3315 |        35.06 | Y
+  CAP2  SELF  | 0.50 | 11.62% |  1.2688 | -14.80% |      1.3313 |        35.06 | Y
+  CAP2  SELF  | 0.75 | 11.62% |  1.2689 | -14.79% |      1.3310 |        35.06 | Y
+  CAP2  SELF  | 1.00 | 11.62% |  1.2689 | -14.78% |      1.3306 |        35.06 | Y
+  CAP2  PANEL | 0.00 | 11.62% |  1.2687 | -14.81% |      1.3318 |        35.06 | Y
+  CAP2  PANEL | 0.25 | 11.62% |  1.2687 | -14.80% |      1.3315 |        35.06 | Y
+  CAP2  PANEL | 0.50 | 11.62% |  1.2688 | -14.80% |      1.3313 |        35.06 | Y
+  CAP2  PANEL | 0.75 | 11.62% |  1.2689 | -14.79% |      1.3310 |        35.06 | Y
+  CAP2  PANEL | 1.00 | 11.62% |  1.2689 | -14.78% |      1.3306 |        35.06 | Y
+  CAP0.030 SELF  | 0.00 | 12.17% |  1.2399 | -15.36% |      1.3037 |        39.64 | Y
+  CAP0.030 SELF  | 0.25 | 12.17% |  1.2400 | -15.35% |      1.3033 |        39.64 | Y
+  CAP0.030 SELF  | 0.50 | 12.17% |  1.2401 | -15.35% |      1.3029 |        39.64 | Y
+  CAP0.030 SELF  | 0.75 | 12.17% |  1.2402 | -15.34% |      1.3025 |        39.64 | Y
+  CAP0.030 SELF  | 1.00 | 12.17% |  1.2403 | -15.33% |      1.3020 |        39.64 | Y
+  CAP0.030 PANEL | 0.00 | 12.17% |  1.2399 | -15.36% |      1.3037 |        39.64 | Y
+  CAP0.030 PANEL | 0.25 | 12.18% |  1.2412 | -15.35% |      1.3045 |        38.49 | Y
+  CAP0.030 PANEL | 0.50 | 12.19% |  1.2425 | -15.34% |      1.3052 |        37.35 | Y
+  CAP0.030 PANEL | 0.75 | 12.21% |  1.2438 | -15.34% |      1.3060 |        36.21 | Y
+  CAP0.030 PANEL | 1.00 | 12.22% |  1.2450 | -15.33% |      1.3068 |        35.06 | Y
+  CAND  SELF  | 0.00 | 12.59% |  1.1934 | -17.39% |      1.2397 |        43.95 | Y
+  CAND  SELF  | 0.25 | 12.60% |  1.1935 | -17.37% |      1.2395 |        43.95 | Y
+  CAND  SELF  | 0.50 | 12.60% |  1.1936 | -17.35% |      1.2393 |        43.95 | Y
+  CAND  SELF  | 0.75 | 12.60% |  1.1937 | -17.33% |      1.2390 |        43.95 | Y
+  CAND  SELF  | 1.00 | 12.60% |  1.1938 | -17.31% |      1.2388 |        43.95 | Y
+  CAND  PANEL | 0.00 | 12.59% |  1.1934 | -17.39% |      1.2397 |        43.95 | Y
+  CAND  PANEL | 0.25 | 12.62% |  1.1956 | -17.37% |      1.2416 |        41.73 | Y
+  CAND  PANEL | 0.50 | 12.65% |  1.1979 | -17.35% |      1.2435 |        39.50 | Y
+  CAND  PANEL | 0.75 | 12.67% |  1.2001 | -17.32% |      1.2453 |        37.28 | Y
+  CAND  PANEL | 1.00 | 12.70% |  1.2024 | -17.30% |      1.2472 |        35.06 | Y
+
+=== E. RULE 8 WALK-FORWARD — the two dials (phi, gross) fitted on warm-up..2016-12-31
+    ONLY, 2017-2026 read ONCE, separately at every (panel, cadence, book, rung, cal). ===
+  panel cad book  cal   | picks (phi/g)                        | OOS CAGR | OOS Sharpe | > SPY | > live | full 4b
+  U56   W   CAP0.015 SELF  | 1.00/0.75:6, 0.00/0.75:2             |   10.74% |     1.3026 |   8/8   |   6/8   |   0/8
+  U56   W   CAP0.015 PANEL | 0.00/0.75:5, 1.00/0.75:3             |   10.69% |     1.2962 |   8/8   |   5/8   |   0/8
+  U56   W   CAP2  SELF  | 1.00/0.75:6, 0.00/0.75:2             |   12.30% |     1.2870 |   8/8   |   4/8   |   6/8
+  U56   W   CAP2  PANEL | 1.00/0.75:6, 0.00/0.75:2             |   12.30% |     1.2870 |   8/8   |   4/8   |   6/8
+  U56   W   CAP0.030 SELF  | 1.00/1.00:3, 1.00/0.75:3, 0.00/1.00:1, 0.00/0.75:1 |   14.42% |     1.2412 |   8/8   |   3/8   |   3/8
+  U56   W   CAP0.030 PANEL | 1.00/1.00:5, 0.00/0.75:1, 0.00/1.00:1, 1.00/0.75:1 |   15.51% |     1.2558 |   8/8   |   3/8   |   2/8
+  U56   W   CAND  SELF  | 1.00/0.75:6, 0.00/0.75:2             |   13.26% |     1.1920 |   8/8   |   0/8   |   6/8
+  U56   W   CAND  PANEL | 1.00/0.75:4, 0.00/0.75:2, 1.00/1.00:2 |   14.52% |     1.2104 |   8/8   |   0/8   |   6/8
+  U56   M   CAP0.015 SELF  | 0.00/1.00:3, 1.00/0.75:3, 0.00/0.75:2 |   10.97% |     1.2624 |   8/8   |   4/8   |   0/8
+  U56   M   CAP0.015 PANEL | 0.00/0.75:5, 0.00/1.00:3             |   10.98% |     1.2629 |   8/8   |   4/8   |   0/8
+  U56   M   CAP2  SELF  | 0.00/0.75:5, 1.00/0.75:3             |   12.56% |     1.2391 |   8/8   |   2/8   |   8/8
+  U56   M   CAP2  PANEL | 0.00/0.75:5, 1.00/0.75:3             |   12.56% |     1.2391 |   8/8   |   2/8   |   8/8
+  U56   M   CAP0.030 SELF  | 1.00/1.00:4, 0.00/1.00:2, 0.00/0.75:1, 0.50/1.00:1 |   16.09% |     1.1860 |   8/8   |   0/8   |   1/8
+  U56   M   CAP0.030 PANEL | 1.00/1.00:6, 0.00/0.75:1, 0.00/1.00:1 |   16.31% |     1.1997 |   8/8   |   0/8   |   1/8
+  U56   M   CAND  SELF  | 1.00/0.75:6, 0.00/0.75:2             |   13.87% |     1.2118 |   8/8   |   0/8   |   8/8
+  U56   M   CAND  PANEL | 1.00/0.75:3, 1.00/1.00:3, 0.00/0.75:2 |   15.60% |     1.2144 |   8/8   |   0/8   |   5/8
+  B136  W   CAP0.015 SELF  | 0.00/0.75:3, 1.00/0.75:3, 0.50/0.75:2 |   10.95% |     1.0554 |   8/8   |   4/8   |   6/8
+  B136  W   CAP0.015 PANEL | 0.00/0.75:5, 1.00/0.75:2, 0.75/0.75:1 |   10.94% |     1.0537 |   8/8   |   4/8   |   6/8
+  B136  W   CAP2  SELF  | 0.00/0.75:4, 1.00/0.75:2, 0.25/0.75:1, 0.50/0.75:1 |   11.06% |     1.0427 |   8/8   |   2/8   |   6/8
+  B136  W   CAP2  PANEL | 1.00/1.00:4, 0.00/0.75:3, 1.00/0.75:1 |   12.66% |     1.0474 |   8/8   |   2/8   |   4/8
+  B136  W   CAP0.030 SELF  | 0.00/0.75:4, 1.00/0.75:2, 0.00/1.00:1, 0.50/0.75:1 |   11.61% |     1.0334 |   8/8   |   2/8   |   6/8
+  B136  W   CAP0.030 PANEL | 1.00/1.00:6, 0.00/0.75:2             |   13.79% |     1.0362 |   8/8   |   2/8   |   2/8
+  B136  W   CAND  SELF  | 1.00/0.75:6, 0.00/0.75:2             |   11.66% |     1.0487 |   8/8   |   2/8   |   6/8
+  B136  W   CAND  PANEL | 1.00/1.00:4, 0.00/0.75:2, 1.00/0.75:2 |   13.52% |     1.0536 |   8/8   |   2/8   |   4/8
+  B136  M   CAP0.015 SELF  | 0.00/0.75:8                          |   11.64% |     1.0373 |   8/8   |   0/8   |   0/8
+  B136  M   CAP0.015 PANEL | 0.00/0.75:8                          |   11.64% |     1.0373 |   8/8   |   0/8   |   0/8
+  B136  M   CAP2  SELF  | 0.00/0.75:8                          |   11.73% |     1.0331 |   8/8   |   0/8   |   0/8
+  B136  M   CAP2  PANEL | 0.00/0.75:7, 1.00/1.00:1             |   12.16% |     1.0332 |   8/8   |   0/8   |   0/8
+  B136  M   CAP0.030 SELF  | 0.00/0.75:8                          |   12.28% |     1.0640 |   8/8   |   2/8   |   0/8
+  B136  M   CAP0.030 PANEL | 0.00/0.75:4, 1.00/1.00:4             |   13.90% |     1.0476 |   8/8   |   2/8   |   0/8
+  B136  M   CAND  SELF  | 0.00/0.75:6, 0.25/0.75:1, 0.50/0.75:1 |   12.76% |     1.0905 |   8/8   |   4/8   |   0/8
+  B136  M   CAND  PANEL | 0.00/0.75:4, 1.00/0.75:2, 1.00/1.00:2 |   13.75% |     1.0906 |   8/8   |   4/8   |   0/8
+
+  OVERALL rule 8: 256 of 256 picks beat SPY's OOS Sharpe; 69 of 256 beat the LIVE book's; 100 of 256 carry a full-sample 4b.
+  BENCHMARK OOS (2017-2026), read once: SPY 15.36% / 0.8784;  live RULES v2 1.1928  (panel-pooled means).
+    PUB   DOES THE FLOOR MOVE THE RULE-8 PICK?: phi=0.00 picked in 130 of 256; phi=0.25 picked in 2 of 256; phi=0.50 picked in 6 of 256; phi=0.75 picked in 1 of 256; phi=1.00 picked in 117 of 256
+
+=== GATES: 23 of 23 pass ===
+
+Done in 25s.  all gates pass: True

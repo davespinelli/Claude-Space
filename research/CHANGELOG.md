@@ -1,3 +1,63 @@
+## 2026-09-23 — idea 2488 (lane cloud, run 61): DOES A MINIMUM-TICKET COST FLOOR MOVE WHERE THE CAPPED FAMILY DIES? **ANSWERED = NO, AND THE HYPOTHESIS IS REFUTED IN SIGN. THE FLOOR MOVES THE BOUNDARY *LATER*, NOT EARLIER. CONFIRM that CAP2's 4b verdict and its 33-54 bps death band are invariant to the SHAPE of the cost model at a fixed LEVEL; KILL of the 'the proportional model flatters the candidate' reading. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHAT WAS ASKED.** Every cost rung this record charges is EXACTLY proportional to `|dw|`, so a
+  1 bp re-size of a 2% position is billed a thousandth of a full entry. Real execution has a FIXED
+  component — spread crossing, odd lot, minimum commission — that a proportional model prices at
+  ZERO, and the capped candidate is supposedly a book of MANY SMALL RE-SIZES: precisely the trade
+  that model under-charges. If so, idea 2431's death band (4b survives 25 bps, dies between 33 and
+  54 bps per cell) is measured on a bill whose shape is wrong and is OPTIMISTIC.
+
+- **THE MODEL, AND WHY `f` IS NOT A FREE PARAMETER.** `cost_t = (1-phi) * c/1e4 * |dw|_t +
+  f * tickets_t`, with a TICKET one name traded on one rebalance day (the SHY sweep order
+  included) and `f = phi * (c/1e4 * SUM|dw|) / SUM tickets`, so the TOTAL bill equals the flat
+  rung's EXACTLY. `phi` is the FIXED SHARE of a revenue-neutral bill: phi = 0 IS the committed
+  model, phi = 1 is a pure per-ticket charge, and nothing between changes how MUCH the book pays —
+  only WHICH trades pay it. Two conventions published: SELF (`f` from the book's own path,
+  revenue-neutral for every book) and PANEL (`f` fixed once from the committed reference book
+  CAP2 g 0.75 and charged to every book, which is the one that can re-order the family).
+- **23 OF 23 GATES.** G1 at phi = 0 the runner IS `engine.backtest` (max|d| **3.47e-18**). G3
+  reproduces the committed CAP2 (11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318) and CAND
+  (12.59% / 1.1934 / -17.39%) U56 headlines to **4.98e-05**. G8 SELF is revenue-neutral at every
+  phi (max |bill/flat - 1| **3.33e-16**). G11 PANEL == SELF on the reference book (**0.000e+00**).
+  G7 the comparands are bit-identical across every phi and calibration (**0.000e+00**).
+- **THE PREMISE IS HALF RIGHT, AND THE WRONG HALF IS THE ONE THE IDEA NEEDED.** CAP2's tickets ARE
+  overwhelmingly small: **83.1% of them are under 10 bp of NAV**. But those tickets carry only
+  **19.3% of TURNOVER**. They are numerous and economically negligible, so re-shaping the bill
+  onto them moves almost nothing: over the ENTIRE phi 0 -> 1 sweep the committed U56 / W / g 0.75
+  / 10 bps cell moves Sharpe **1.2687 -> 1.2689** and MaxDD **-14.81% -> -14.78%**. **At a fixed
+  level, the SHAPE of the cost model is irrelevant; only the LEVEL matters.**
+- **THE MECHANISM (G13): TICKET COUNT IS NEAR-INVARIANT TO THE CAP, SO THE FLOOR CANNOT SINGLE THE
+  CAPPED BOOK OUT.** Across the whole four-book ladder the total ticket count varies by **0.302%**
+  (pre-registered 1% tolerance; a measured near-invariance, not an identity — the residual is
+  names whose capped weight rounds to no trade on a given day). The cap changes ticket **SIZE**,
+  not ticket **COUNT**: U56 mean ticket runs **14.55 -> 17.01 -> 19.22 -> 21.31 bp** from CAP0.015
+  to CAND at an identical ~2,062 tickets/yr. A per-ticket charge therefore bills every book in the
+  family ALIKE, and under PANEL at phi = 1 the U56 bill/flat runs CAP0.015 **1.1686**, CAP2
+  1.0000, CAP0.030 0.8846, CAND **0.7979**: **the floor HELPS the UNCAPPED book by 20.2% of its
+  bill and HURTS the tightest cap by 16.9%** — the exact opposite of the idea's hypothesis.
+- **THE DEATH RUNG, ON A FINE 0..120 bps LADDER AT STEP 2.** Over the 24 rows measurable at both
+  phi 0 and phi 1: **median move +0.0 bps**, mean +2.25, range [-2, +14]; **8 die LATER, 1
+  EARLIER, 15 UNCHANGED**. Under SELF, **11 of 12 are exactly unchanged**; under PANEL the median
+  move is **+3.0 bps**. The committed CAP2 U56 / W / g 0.75 cell dies at **36 bps at EVERY phi**.
+  Idea 2431's 33-54 bps band is CONFIRMED and is not an artefact of the proportional model.
+- **BOTH KEEP PATHS OVER ALL 1,280 ROWS: 4b 385, 4a 0.** 4a fails on the MaxDD leg at every cell.
+  The 4b count is **38 of 128 at EVERY phi under SELF** — literally invariant — and moves only
+  38 -> 40 under PANEL, entirely from the uncapped book's cheapened bill.
+- **RULE 8.** The two dials (phi, gross) fitted on warm-up..2016-12-31 ONLY, 2017-2026 read ONCE,
+  256 picks across 2 choosers. **256 of 256 beat SPY's OOS Sharpe**, 69 of 256 beat the LIVE
+  book's, 100 of 256 carry a full-sample 4b. The chooser is near-INDIFFERENT to phi (130 picks
+  phi = 0, 117 phi = 1, 9 in between) — a bimodal tie-break on a flat IS surface, which is itself
+  the finding rather than a defect.
+- **WHAT THIS BUYS THE CANDIDATE.** A standing objection to taking CAP2 to real capital was that
+  its cost robustness is measured on a bill shape that flatters a many-small-tickets book. That
+  objection is now closed in the candidate's favour, with the caveat stated plainly: this run
+  varies the bill's SHAPE at a fixed LEVEL. It says nothing about whether 10 bps is the right
+  LEVEL, which remains the binding uncertainty and which idea 2431's death band already prices.
+- **SURVIVORSHIP (rule 9).** U56 / B136 are CURRENT constituents of their screens held from 2008,
+  so absolute levels are biased upward and 4b's `L_CAGR` floor is the most contaminated leg. The
+  phi contrast is same-path, same-days, same-trades — it changes ONLY the bill — and is
+  first-order immune; the absolute 4b verdicts and death rungs are not.
+
 ## 2026-09-23 — idea 2491 (lane cloud, run 61): DOES THE 2% CAP NEED CONTINUOUS ENFORCEMENT, OR ONLY ENTRY ENFORCEMENT? **ANSWERED = NO, NOT TO SAVE TURNOVER — BUT EVERY WAY OF DROPPING IT IS A RE-GROSSING. 0 OF 384 ARMS IS EXPOSURE-NEUTRAL. KILL of the 'entry-only cap is a free saving' reading; PARK of the top-up-only drop. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHAT WAS ASKED.** The committed candidate (idea 2322's CAP2) re-imposes `min(g/N_in, 2%)` on
