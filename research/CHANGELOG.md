@@ -1,3 +1,77 @@
+## 2026-09-23 — idea 2332 (lane cloud): IS THE STANDING 4b CANDIDATE'S PASS A SINGLE-NAME DRAW? THE LEAVE-ONE-OUT DELETION CENSUS. **ANSWERED = IT IS A BOOK, NOT A DRAW. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 2300's standing candidate (`RG100 + phi = 1.00`) published exactly one
+  risk of its own: CONCENTRATION — per-name weight 1.70% of NAV at the median on U56 but 15.0% on the
+  worst day, when only 5 names are IN. Idea 2318, run earlier in this same sprint, CORRECTED the
+  assumption that a wider band de-concentrates the book (U56 max per-name weight is non-monotone in the
+  width), so the concentration question was still open. This census prices its sharpest form: does the
+  4b pass DEPEND on any one name?
+
+  **THE TEST.** Delete one universe member, re-price the WHOLE candidate on the surviving panel, ask
+  whether it still clears 4b full-sample AND out of sample. Run on BOTH panels the incumbent passes on:
+  **U56 (56 deletions) and B136 (136 deletions)**, gross {0.75, 1.00}, rungs {0, 10, 25, 50} bps.
+  **384 books x 4 rungs = 1,536 published rows.** The deletion index is a CENSUS AXIS, not a tuned dial:
+  every level is published and none is selected on, so **gross is the only tuned parameter** — one, under
+  the cap of two. SMALL is NOT censused and the reason is stated in the open: idea 2318 published SMALL's
+  4b pass count at 0 of 48, so there is no pass there for a deletion to break; its undeleted control is
+  reported anyway (8.05% / 0.6563 / -35.11%, 4b FAIL).
+
+  **THE ANSWER: 56 OF 56 AND 136 OF 136.** At gross 0.75 and 0, 10 and 25 bps alike, **every single
+  deletion still clears 4b on both panels.** No deletion breaks the pass. The worst single deletion is
+  NFLX: U56 **11.81% / 1.1372 / -17.52%, OOS 13.48% / 1.2215** against the undeleted control's
+  12.59% / 1.1934 / -17.39%, OOS 13.85% / 1.2397 — i.e. it still clears every leg. The whole census spans
+  dSharpe **[-0.0561, +0.0252]** and dCAGR [-0.79%, +0.30%] on U56, and dSharpe [-0.0328, +0.0136] on
+  B136, so the larger panel is strictly less deletion-sensitive, exactly as `gross / N_in` weighting
+  predicts. **The MEDIAN deletion is mildly POSITIVE** (+0.0025 Sharpe, +0.07 pp CAGR on U56): the typical
+  member is a slight drag, not a carrier. The single-name-draw objection is CLOSED.
+
+  **RULE 8 IS THE STRONGEST READ IN THE RECORD SO FAR. 192 OF 192.** With gross fitted on <= 2016-12-31
+  per deletion and 2017-2026 read ONCE, **all 192 picks take gross 0.75 and all 192 beat SPY's OOS
+  Sharpe.** Full-sample 4b at 56/56 and 136/136 at 0/10/25 bps. U56 at 10 bps: median pick OOS
+  13.93% / 1.2414, **minimum OOS Sharpe 1.1793** against SPY's 0.8831; B136 median 12.31% / 1.1004,
+  minimum 1.0795 against 0.8737. Both pre-stated IS choosers (C_ISSHARPE, C_ISCALMAR) agree at every
+  cell. Unlike the width dial (idea 2318, 0 of 24 picks on the committed value) there is nothing here for
+  an out-of-sample chooser to get wrong: gross 0.75 is what it picks every time.
+
+  **THE CENSUS DOES NOT RESOLVE THE RISK IT WAS FILED AGAINST — IT MILDLY AGGRAVATES IT.** Deleting a
+  name lowers `N_in`, and the candidate re-grosses by `gross / N_in`, so max per-name weight **RISES**
+  under deletion: U56 control 15.00% -> deletions [15.00%, 18.75%]; B136 12.50% -> [12.50%, 15.00%]; at
+  gross 1.00, 20.00% -> 25.00%. Turnover barely moves (U56 4.39 -> [4.32, 4.58] turns/yr). **"Not a draw"
+  and "not concentrated" are different claims, and only the first is established here.** A ~15%
+  single-name weight remains the candidate's open risk, and idea 2322's per-name cap (`CAP2`) remains the
+  live route at it.
+
+  **THE TWO SPECIAL MEMBERS, FLAGGED NOT HIDDEN.** SPY is both a panel member and the 4b benchmark; SHY
+  is both a member and the sweep instrument. Deleting either removes it from the INVESTABLE set only
+  (G10/G11 assert the benchmark series and the sweep leg survive). Dropping SPY at 10 bps / 0.75 reads
+  12.67% / 1.2005 / -17.31%, dSharpe **+0.0071** — the candidate does not lean on holding its own
+  benchmark. Dropping SHY reads 12.86% / 1.1822 / -18.06%, dSharpe -0.0112. Both still clear 4b.
+
+  **SCOPE LIMIT, STATED RATHER THAN BURIED.** At 50 bps and at every gross = 1.00 cell the UNDELETED
+  CONTROL already fails 4b, so those survivor counts (U56 50 bps 35/56; all gross = 1.00 cells 0/56 and
+  0/136) measure a book that does not pass in the first place and are **not** evidence about deletion
+  robustness. The census is informative only at the three rungs where the control passes.
+
+  **4a: 0 OF 1,536**, against a fixed undeleted live comparand AND a deletion-matched live baseline
+  (section G). Deleting a name never rescues 4a.
+
+  **DATA DEFECT, CAUGHT BY A FAILING GATE.** G5 ("every deletion BITES") failed at 382 of 384 and the two
+  inert cells name the cause: **`MMC` is an ALL-NaN column in the committed `data/prices_broad.csv`
+  (0 of 4,708 rows priced)**, so deleting it is a no-op. **B136 is therefore a 135-name panel, and every
+  committed claim in this record quoting it as 136 names overstates its breadth by one.** MMC is the only
+  all-NaN column and no other column has fewer than 260 priced rows. The gate is left FAILING rather than
+  relaxed; repairing the cache is a `cache_prices.py` job and is out of this run's scope.
+
+  **SURVIVORSHIP (binding).** B136 and SMALL are CURRENT constituents of their screens. A leave-one-out
+  census cannot repair that: it prices sensitivity to deleting a SURVIVOR, which is a strictly weaker
+  question than sensitivity to adding back the names the screen already dropped. This limit is stated in
+  the script's own docstring, not just here.
+
+  **VERDICT: ANSWERED = BOOK.** The incumbent keeps its 4b status, strengthened by 192-of-192 rule-8
+  agreement and unanimous deletion survival. Nothing in RULES.md, scan.py, bot.py or baseline.py is
+  touched. Memo with exact RULES wording for a future Sunday review:
+  `research/backtests/2026-09-23_MEMO_standing-4b-candidate.md`.
+
 ## 2026-09-23 — idea 2318 (lane cloud): DOES THE KEEP-4b CANDIDATE SURVIVE THE BAND-WIDTH LADDER, OR IS IT A 3% ARTEFACT? **ANSWERED = PLATEAU, NOT A RIDGE. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 2300's standing candidate (`RG100 + phi = 1.00`: every name inside
