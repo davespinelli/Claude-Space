@@ -8989,3 +8989,38 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   21-name eligible set (mean SHY 34.4% -> 58.9% -> 72.1%). **The cap, not the exclusion, is what turns Candidate A
   into a cash fund**, and that is its single failing 4b leg.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is unchanged.
+
+## 2026-09-23 (lane C, run 48) — idea 2427 KILL as a tuning dial / CONFIRM of the committed gate, no rule change
+- **idea 2427, the 200d MA LOOKBACK itself walked on the capped candidate — ANSWERED = YES IT MOVES, AND EVERY
+  DIRECTION IS DOWNHILL.** The last untouched dial of RULES v2 clause 2 (idea 2343 moved the band WIDTH, idea 2383
+  split its two EDGES; the LOOKBACK `L` had never been priced on this family). Walking `L` in {100, 150, 200, 250,
+  300} x gross {0.75, 1.00} on both panels and both books, Sharpe is **SINGLE-PEAKED at the committed `L = 200`**:
+  the headline cell (U56/CAP2/g0.75/10 bps) reads CAGR **9.67 / 11.00 / 11.62 / 11.57 / 11.27%**, Sharpe **1.0998 /
+  1.2281 / 1.2687 / 1.2453 / 1.1811**, OOS Sharpe **1.1314 / 1.2412 / 1.3318 / 1.2893 / 1.2464**, turnover **5.34 /
+  4.14 / 3.51 / 3.19 / 3.04x/yr**. `dSharpe@10 <= 0` at every `L != 200` on both U56 books.
+- **The short end is CHURN, not signal.** L=100 vs L=200 costs **+52.4 / +58.3 / +48.7 / +48.0%** of turnover for
+  **-1.96 / -1.05 / -0.84 / -0.50 pp** of CAGR at 10 bps and **-0.2004 / -0.2506 / -0.1312 / -0.1397** of OOS Sharpe,
+  with MaxDD worse in 3 of 4; the penalty GROWS with the rung (-1.76 -> -2.72 pp over 0 -> 50 bps). The long end buys
+  only ~13-18% of turnover and is Sharpe-negative in 7 of 8 readings. The single cell where any `L != 200` improves
+  both Sharpe and OOS Sharpe is **B136/CAP2 at L=250 (+0.0150 / +0.0213)**, and that same setting LOSES on U56
+  (-0.0233 / -0.0426): no one `L` beats 200 on both panels.
+- **RULE 8 IS THE VERDICT AND IT IS NEGATIVE.** 32 IS-only picks (2 choosers x 2 panels x 2 books x 4 rungs, fitted
+  on <= 2016-12-31, 2017-2026 read once) land on L=200 only **5 of 32** (distribution L100 3 / L150 **19** / L200 5 /
+  L250 3 / L300 2), beat the committed gate's OOS Sharpe in **3 of 32**, and average **1.0691 OOS Sharpe against the
+  committed 1.1435 (-0.0744)**. An operator who had walked this dial in-sample would have moved to L=150 and given up
+  OOS Sharpe. 31 of 32 still clear SPY OOS (0.8831 / 0.8737) — the book survives the dial; the dial adds nothing.
+- **`L_DD` is the binding leg on every 4b failure at every rung and every `L`** (17 / 17 / 19 / 21 of the fails at
+  0 / 10 / 25 / 50 bps), so the lookback does not touch the leg that blocks adoption. **4a is 0 of 320** at every `L`,
+  consistent with idea 2326's 0-of-180 and idea 2431's 0-of-808.
+- **G11 FAILED AND IS PUBLISHED.** Every row was priced on BOTH the committed window (cache row 260, where an L=300
+  mean does not exist for its first **39** in-window rows) and a fully-warmed window (row 360), so the short end
+  could not be handed a head start. **6 of 160 cells flip their 4b verdict**, 5 of the 6 at the 50 bps rung and 4 of
+  the 6 flipping toward a pass; mean |dSharpe| **0.0187**, mean dCAGR **+0.09 pp**, and the headline cell does not
+  flip at any rung. The ladder's shape and this run's verdict are window-invariant.
+- Breadth rises monotonically with `L` (U56 35.66 -> 38.32 names, B136 87.12 -> 95.25) while turnover falls
+  monotonically (8 of 8 cells): a longer mean holds MORE names for LESS trading. 320 rows, **16 of 17 gates**; G1
+  asserts `band_state_L(200)` is bit-identical to `baseline.band_state` (0 of 263,760 and 0 of 640,288 cells differ),
+  G2/G3 reproduce the committed CAP2 and CAND headlines to 4e-5 and 3e-6, G5 cost linearity exact.
+- **No new KEEP-candidate.** The standing 4b candidate, its `L_DD` blocker and its turnover blocker are unchanged, and
+  the committed `L = 200` is confirmed as the right default rather than an unexamined inheritance.
+- No change to RULES.md, scan.py, bot.py or baseline.py.
