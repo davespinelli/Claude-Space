@@ -9535,3 +9535,51 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   candidate at 2.20x / 2.70x trades LESS than the book it would replace.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
   unchanged.
+
+## 2026-09-23 — lane C run 57, idea 2484: the standing 4b candidate under the tape's own short rate
+- **THE RECORD'S SHARPE HAS NEVER SUBTRACTED A RISK-FREE RATE, AND THE BOOK IT GRADES IS PAID ONE.**
+  The sweep instrument SHY is a PRICED COLUMN of both committed panels, so `run_book`'s residual
+  already EARNS the realised short rate every day, while `sharpe()` and `cagr()` subtract nothing
+  from the book OR the benchmark. The record's two prior rf runs (idea 406 and the cloud's
+  PROTOCOL-amendment run, both 2026-09-10) priced a FLAT 150 / 300 bps credit on the OLD gross
+  ladder. This run prices the realised, time-varying rate on the STANDING capped candidate.
+- **THE CANDIDATE SURVIVES.** Under the textbook EXCESS numeraire `r - r_SHY`, applied
+  SYMMETRICALLY to book, live RULES v2 and SPY, the committed CAP2 cell (cap 2%, g 0.75, weekly,
+  10 bps) clears all five 4b legs on BOTH panels: U56 **10.15% / 1.1046 / -16.19%**, halves
+  1.1757 / 1.0463, OOS **10.83% / 1.1386** (SPY EXCESS 13.68% / 0.8053, OOS 13.45% / 0.7820);
+  B136 **10.34% / 0.9766 / -18.02%**, halves 1.1505 / 0.8162, OOS 9.74% / 0.9231.
+- **BUT THE COMMITTED CONVENTION IS A SUBSIDY TO THE DE-GROSSED BOOK, AND THE SIZE WAS PREDICTED
+  BEFORE COMPUTE.** The hit is `rf / sigma`: the candidate runs risk gross 0.656 with a **34.4%
+  SHY sleeve** at sigma 8.99% against SPY's fully-invested 17.5%. Realised Sharpe loss **-0.1640
+  (book) vs -0.0844 (SPY)**, net **-0.0797**, and the book is hit harder in **32 of 32** cells
+  (mean -0.0660, worst -0.1047). Predicted-vs-realised corr **+0.9956**. The swing is monotone in
+  the cash sleeve: -0.1041 at cap 1.5% (43.7% in SHY), -0.0567 at cap INF (26.9%). All three of
+  4b's Sharpe legs are book-minus-SPY, so the most de-grossed books have been graded on a curve.
+- **`L_OOS` IS THE LEG THAT BREAKS, AND THE REASON IS IN THE RATE PATH.** SHY paid **0.81%/yr
+  across the whole rule-8 IS window and 1.73%/yr out of sample (2.13x)** — the free carry sits in
+  exactly the sample rule 8 reads ONCE. Record-wide 4b falls **25 -> 22 of 64**; per-leg
+  `L_OOS` **64/64 -> 56/64 (8 pass->fail)**, `L_CAGR` 49 -> 46, and `L_H1` / `L_H2` / `L_DD` flip
+  NOTHING. Joint both-panel 4b 9 -> 8 of 32. 4a is **0 -> 0 of 64**: the live book's -12.05%
+  MaxDD is unreachable by this family either way, which is why 4b exists.
+- **ONE COMMITTED CLAIM DIES: the U56 headline's "survives 25 bps" stamp**, by **0.0038 pp** of
+  CAGR (+0.38% -> -0.00% against the 0.70 x SPY floor). Treat 10 bps as the candidate's true cost
+  ceiling on U56. B136's 25 bps pass survives (m_CAGR +0.07%), so this is a U56 fact.
+- **RULE 8 IS NOT NUMERAIRE-STABLE — 12 OF 16 TRIPLES MOVE.** TOTAL and EXCESS choosers agree on
+  **4 of 16** (panel, rung, chooser) triples. Under TOTAL the picks pin to gross 0.75 in 16 of 16;
+  under EXCESS they defect to **gross 1.00 in 11 of 16** and abandon the tight cap (0.015: 4 -> 0).
+  Their full-sample 4b rate collapses **12/16 -> 3/16** and they beat SPY's OOS Sharpe 16/16 ->
+  14/16. The one place the correct numeraire FLATTERS them: they beat the LIVE book's OOS Sharpe
+  **5/16 -> 11/16**, because RULES v2 holds even more cash (46.8%) than the candidate. **The sign
+  of the bias depends on which book holds more cash, so no committed rule-8 conclusion in this
+  record is numeraire-independent.**
+- **PROPOSED REPORTING STAMP (not a rule change, for the Sunday review):** every Sharpe and CAGR
+  quoted for a book holding a cash or T-bill sleeve should be reported in excess of the sweep
+  instrument's own realised return, alongside the total-return figure.
+- 128 published rows (2 panels x 2 gross x 4 caps x 4 rungs x 2 numeraires), **12 of 12 gates**,
+  incl. reproduction of the committed CAP2 and CAND U56 headlines to **4.98e-05**, a bit-identical
+  `baseline.band_state` eligible set, an exact-linearity cost check (3.47e-18) and a replica
+  matching `engine.backtest` to 0.000e+00.
+- SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; `L_CAGR` is the
+  contaminated leg. The TOTAL-vs-EXCESS contrast is same-tape, same-weights and first-order immune.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
+  unchanged.

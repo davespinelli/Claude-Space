@@ -1,0 +1,316 @@
+=== idea 2484 — DOES THE CAPPED CANDIDATE'S 4b PASS SURVIVE THE TAPE'S OWN REALISED SHORT RATE? ===
+    2026-09-23  lane C run 57   band 0.03  MA 200d  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  sweep SHY (phi=1.00)
+    DIAL 1 gross [0.75, 1.0]    DIAL 2 per-name cap ['0.015', '0.020', '0.030', 'INF']  (0.020 = idea 2322's CAP2, INF = CAND)
+    PUBLISHED AXIS, NEVER SELECTED ON: numeraire TOTAL (committed, rf = 0) vs EXCESS (r - r_SHY,
+    applied SYMMETRICALLY to the book, the live RULES v2 baseline AND SPY).
+    PREDICTION, STATED BEFORE COMPUTE: subtracting rf costs Sharpe ~ rf / sigma.  The candidate's
+    sigma ~ 0.10 against SPY's ~ 0.18, so the SAME rate costs the candidate ~1.8x the Sharpe it
+    costs the benchmark, and all three 4b Sharpe legs are candidate-minus-SPY comparisons.
+    SMALL NOT PRICED: 0 of 128 4b cells (idea 2383) and 0 of 40-120 (2318/2322/2326/2343); a
+    numeraire change only REMOVES Sharpe from a de-grossed book and cannot mend three failing legs.
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; L_CAGR is the
+    contaminated leg.  The TOTAL-vs-EXCESS contrast is same-tape, same-weights, first-order immune.
+    GATE PASS  G6 exactly two tuned parameters: gross, per-name cap (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 the eligible set IS baseline.band_state & priced, unmodified: 0 differing cells; mean names IN 36.37 (target 0)
+    GATE PASS  G1 per-column replica == engine.backtest (live RULES v2, flat 10 bps, sweep off): max|d| 0.000e+00 (target < 1e-12)
+
+=== G10. THE RATE PATH — PUBLISHED BEFORE ANY VERDICT IS READ ===
+  panel  window            | SHY annualised total return | ann. arithmetic mean | SHY vol
+  U56    full  2009-01-13..2026-09-22 |                      1.31% |                1.32% |   1.37%
+  U56    H1    2009-01-13..2017-11-10 |                      0.78% |                0.78% |   1.01%
+  U56    H2    2017-11-13..2026-09-22 |                      1.86% |                1.85% |   1.65%
+  U56    IS    warm-up..2016-12-31    |                      0.81% |                0.81% |   1.02%
+  U56    OOS   2017-01-01..end        |                      1.73% |                1.73% |   1.60%
+  B136   full  2009-01-13..2026-09-18 |                      1.31% |                1.31% |   1.37%
+  B136   H1    2009-01-13..2017-11-09 |                      0.78% |                0.78% |   1.01%
+  B136   H2    2017-11-10..2026-09-18 |                      1.84% |                1.84% |   1.65%
+  B136   IS    warm-up..2016-12-31    |                      0.81% |                0.81% |   1.03%
+  B136   OOS   2017-01-01..end        |                      1.72% |                1.72% |   1.60%
+    GATE PASS  G10 the rate is a STEP and the step lands INSIDE the OOS window (U56): IS 0.81%/yr vs OOS 1.73%/yr (ratio 2.13x) (target OOS rate > IS rate)
+    GATE PASS  G7 the EXCESS transform is EXACT (SHY's own excess return is identically zero): max|r_SHY - r_SHY| 0.000e+00 over 4710 rows (target 0.0)
+
+    128 published rows = 2 panels x 2 gross x 4 caps x 4 rungs x 2 numeraires; 16 distinct realised weight paths.
+    GATE PASS  G4 no leverage anywhere (max gross <= 1): max over 16 paths: 1.000000 gross, 0.9261 max single name (target <= 1+1e-12)
+    GATE PASS  G5 the cost charge is EXACTLY linear in the rung (2 x the 25 bps bill == the 50 bps bill): max|d| 3.469e-18 (target < 1e-15)
+    GATE PASS  G9 sweep instrument priced on every scored row: SHY non-null on both panels: True (target True)
+    GATE PASS  G3 the TOTAL numeraire reproduces the committed CAP2 (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318) AND CAND (12.59%/1.1934/-17.39%, OOS 13.85%/1.2397) U56 headlines: CAP2 11.62%/1.2687/-14.81% OOS 12.77%/1.3318; CAND 12.59%/1.1934/-17.39% OOS 13.85%/1.2397 -> max|d| 4.98e-05 (target < 1e-3)
+
+=== A. THE FULL LADDER — EVERY GRID POINT, BOTH NUMERAIRES, gross 0.75 ===
+  panel cap    bps num    |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh | turn/yr | 4a 4b | H1/H2/OOS/DD/CAGR
+  U56   0.015     0 TOTAL  | 10.15%  1.3025  -12.70% |  1.32   1.30 |  11.48%  1.3841 |    3.00 | .  .  | 11110
+  U56   0.015     0 EXCESS |  8.70%  1.1134  -14.10% |  1.17   1.07 |   9.56%  1.1653 |    3.00 | .  .  | 11110
+  U56   0.015    10 TOTAL  |  9.82%  1.2631  -12.74% |  1.28   1.26 |  11.14%  1.3463 |    3.00 | .  .  | 11110
+  U56   0.015    10 EXCESS |  8.38%  1.0747  -14.15% |  1.13   1.03 |   9.23%  1.1277 |    3.00 | .  .  | 11110
+  U56   0.015    25 TOTAL  |  9.33%  1.2040  -12.81% |  1.22   1.20 |  10.63%  1.2895 |    3.00 | .  .  | 11110
+  U56   0.015    25 EXCESS |  7.89%  1.0165  -14.21% |  1.07   0.97 |   8.73%  1.0712 |    3.00 | .  .  | 11110
+  U56   0.015    50 TOTAL  |  8.51%  1.1052  -12.92% |  1.12   1.10 |   9.79%  1.1945 |    3.00 | .  .  | 11110
+  U56   0.015    50 EXCESS |  7.08%  0.9194  -14.32% |  0.97   0.88 |   7.90%  0.9768 |    3.00 | .  .  | 11110
+  U56   0.020     0 TOTAL  | 12.01%  1.3079  -14.77% |  1.34   1.28 |  13.17%  1.3693 |    3.51 | .  Y  | 11111
+  U56   0.020     0 EXCESS | 10.54%  1.1432  -16.15% |  1.21   1.08 |  11.22%  1.1758 |    3.51 | .  Y  | 11111
+  U56   0.020    10 TOTAL  | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 |    3.51 | .  Y  | 11111   <= COMMITTED CAP2 HEADLINE
+  U56   0.020    10 EXCESS | 10.15%  1.1046  -16.19% |  1.18   1.05 |  10.83%  1.1386 |    3.51 | .  Y  | 11111
+  U56   0.020    25 TOTAL  | 11.04%  1.2098  -14.88% |  1.24   1.19 |  12.18%  1.2755 |    3.51 | .  Y  | 11111
+  U56   0.020    25 EXCESS |  9.57%  1.0467  -16.26% |  1.12   0.99 |  10.26%  1.0827 |    3.51 | .  .  | 11110
+  U56   0.020    50 TOTAL  | 10.07%  1.1113  -14.99% |  1.14   1.09 |  11.21%  1.1813 |    3.51 | .  .  | 11110
+  U56   0.020    50 EXCESS |  8.62%  0.9500  -16.37% |  1.02   0.89 |   9.30%  0.9893 |    3.51 | .  .  | 11110
+  U56   0.030     0 TOTAL  | 12.61%  1.2814  -15.31% |  1.31   1.26 |  13.76%  1.3431 |    3.96 | .  Y  | 11111
+  U56   0.030     0 EXCESS | 11.13%  1.1272  -16.69% |  1.19   1.08 |  11.80%  1.1604 |    3.96 | .  Y  | 11111
+  U56   0.030    10 TOTAL  | 12.17%  1.2399  -15.36% |  1.26   1.22 |  13.32%  1.3037 |    3.96 | .  Y  | 11111
+  U56   0.030    10 EXCESS | 10.69%  1.0864  -16.74% |  1.15   1.04 |  11.37%  1.1213 |    3.96 | .  Y  | 11111
+  U56   0.030    25 TOTAL  | 11.50%  1.1776  -15.52% |  1.20   1.16 |  12.66%  1.2445 |    3.96 | .  Y  | 11111
+  U56   0.030    25 EXCESS | 10.03%  1.0252  -16.83% |  1.08   0.98 |  10.72%  1.0627 |    3.96 | .  Y  | 11111
+  U56   0.030    50 TOTAL  | 10.40%  1.0735  -15.81% |  1.09   1.06 |  11.56%  1.1455 |    3.96 | .  .  | 11110
+  U56   0.030    50 EXCESS |  8.94%  0.9229  -17.13% |  0.98   0.88 |   9.64%  0.9648 |    3.96 | .  .  | 11110
+  U56   INF       0 TOTAL  | 13.09%  1.2361  -17.27% |  1.28   1.21 |  14.35%  1.2803 |    4.39 | .  Y  | 11111
+  U56   INF       0 EXCESS | 11.60%  1.0944  -18.57% |  1.17   1.04 |  12.39%  1.1142 |    4.39 | .  Y  | 11111
+  U56   INF      10 TOTAL  | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 |    4.39 | .  Y  | 11111
+  U56   INF      10 EXCESS | 11.11%  1.0523  -18.69% |  1.13   1.00 |  11.89%  1.0739 |    4.39 | .  Y  | 11111
+  U56   INF      25 TOTAL  | 11.85%  1.1292  -17.57% |  1.17   1.10 |  13.10%  1.1787 |    4.39 | .  Y  | 11111
+  U56   INF      25 EXCESS | 10.38%  0.9891  -18.86% |  1.06   0.93 |  11.16%  1.0135 |    4.39 | .  Y  | 11111
+  U56   INF      50 TOTAL  | 10.63%  1.0220  -17.86% |  1.06   1.00 |  11.87%  1.0768 |    4.39 | .  .  | 11110
+  U56   INF      50 EXCESS |  9.17%  0.8837  -19.83% |  0.95   0.83 |   9.94%  0.9127 |    4.39 | .  .  | 11110
+  B136  0.015     0 TOTAL  | 12.14%  1.1693  -16.61% |  1.31   1.05 |  12.04%  1.1503 |    4.52 | .  Y  | 11111
+  B136  0.015     0 EXCESS | 10.66%  1.0235  -17.96% |  1.19   0.87 |  10.12%  0.9751 |    4.52 | .  Y  | 11111
+  B136  0.015    10 TOTAL  | 11.63%  1.1250  -16.66% |  1.26   1.00 |  11.52%  1.1053 |    4.52 | .  Y  | 11111
+  B136  0.015    10 EXCESS | 10.16%  0.9800  -18.02% |  1.15   0.82 |   9.61%  0.9306 |    4.52 | .  Y  | 11111
+  B136  0.015    25 TOTAL  | 10.88%  1.0583  -16.75% |  1.20   0.93 |  10.75%  1.0378 |    4.52 | .  Y  | 11111
+  B136  0.015    25 EXCESS |  9.41%  0.9146  -18.11% |  1.09   0.75 |   8.86%  0.8639 |    4.52 | .  .  | 11110
+  B136  0.015    50 TOTAL  |  9.63%  0.9471  -17.92% |  1.09   0.81 |   9.48%  0.9251 |    4.52 | .  .  | 10110
+  B136  0.015    50 EXCESS |  8.18%  0.8055  -18.25% |  0.99   0.64 |   7.60%  0.7525 |    4.52 | .  .  | 10010
+  B136  0.020     0 TOTAL  | 12.35%  1.1629  -16.61% |  1.30   1.04 |  12.19%  1.1392 |    4.68 | .  Y  | 11111
+  B136  0.020     0 EXCESS | 10.86%  1.0206  -17.96% |  1.19   0.86 |  10.26%  0.9683 |    4.68 | .  Y  | 11111
+  B136  0.020    10 TOTAL  | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 |    4.68 | .  Y  | 11111   <= COMMITTED CAP2 HEADLINE
+  B136  0.020    10 EXCESS | 10.34%  0.9766  -18.02% |  1.15   0.82 |   9.74%  0.9231 |    4.68 | .  Y  | 11111
+  B136  0.020    25 TOTAL  | 11.04%  1.0505  -17.93% |  1.20   0.92 |  10.85%  1.0250 |    4.68 | .  Y  | 11111
+  B136  0.020    25 EXCESS |  9.57%  0.9103  -18.11% |  1.09   0.75 |   8.95%  0.8553 |    4.68 | .  Y  | 11111
+  B136  0.020    50 TOTAL  |  9.75%  0.9379  -19.31% |  1.09   0.80 |   9.53%  0.9106 |    4.68 | .  .  | 10110
+  B136  0.020    50 EXCESS |  8.30%  0.7998  -18.25% |  0.98   0.63 |   7.65%  0.7422 |    4.68 | .  .  | 10010
+  B136  0.030     0 TOTAL  | 12.45%  1.1504  -17.26% |  1.28   1.03 |  12.46%  1.1333 |    4.79 | .  Y  | 11111
+  B136  0.030     0 EXCESS | 10.96%  1.0110  -18.92% |  1.17   0.86 |  10.53%  0.9667 |    4.79 | .  Y  | 11111
+  B136  0.030    10 TOTAL  | 11.91%  1.1053  -17.40% |  1.24   0.99 |  11.91%  1.0877 |    4.79 | .  Y  | 11111
+  B136  0.030    10 EXCESS | 10.43%  0.9666  -19.06% |  1.13   0.82 |   9.99%  0.9216 |    4.79 | .  Y  | 11111
+  B136  0.030    25 TOTAL  | 11.11%  1.0374  -17.84% |  1.17   0.92 |  11.09%  1.0192 |    4.79 | .  Y  | 11111
+  B136  0.030    25 EXCESS |  9.64%  0.9000  -19.28% |  1.07   0.75 |   9.18%  0.8538 |    4.79 | .  Y  | 11111
+  B136  0.030    50 TOTAL  |  9.78%  0.9241  -19.25% |  1.07   0.80 |   9.73%  0.9048 |    4.79 | .  .  | 10110
+  B136  0.030    50 EXCESS |  8.33%  0.7888  -19.63% |  0.96   0.63 |   7.85%  0.7408 |    4.79 | .  .  | 10010
+  B136  INF       0 TOTAL  | 12.54%  1.1384  -17.97% |  1.24   1.05 |  12.85%  1.1446 |    4.91 | .  Y  | 11111
+  B136  INF       0 EXCESS | 11.05%  1.0017  -19.62% |  1.14   0.88 |  10.91%  0.9809 |    4.91 | .  Y  | 11111
+  B136  INF      10 TOTAL  | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 |    4.91 | .  Y  | 11111
+  B136  INF      10 EXCESS | 10.51%  0.9571  -19.76% |  1.09   0.84 |  10.36%  0.9363 |    4.91 | .  Y  | 11111
+  B136  INF      25 TOTAL  | 11.17%  1.0248  -18.33% |  1.13   0.93 |  11.45%  1.0316 |    4.91 | .  Y  | 11111
+  B136  INF      25 EXCESS |  9.70%  0.8901  -19.97% |  1.03   0.77 |   9.54%  0.8692 |    4.91 | .  Y  | 11111
+  B136  INF      50 TOTAL  |  9.81%  0.9109  -19.32% |  1.02   0.82 |  10.08%  0.9184 |    4.91 | .  .  | 10110
+  B136  INF      50 EXCESS |  8.36%  0.7783  -20.33% |  0.92   0.65 |   8.19%  0.7573 |    4.91 | .  .  | 10010
+
+  THE SAME LADDER AT gross 1.00:
+  panel cap    bps num    |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh | turn/yr | 4a 4b | H1/H2/OOS/DD/CAGR
+  U56   0.015     0 TOTAL  | 10.15%  1.3005  -12.70% |  1.32   1.29 |  11.48%  1.3810 |    3.02 | .  .  | 11110
+  U56   0.015     0 EXCESS |  8.70%  1.1118  -14.10% |  1.17   1.07 |   9.57%  1.1627 |    3.02 | .  .  | 11110
+  U56   0.015    10 TOTAL  |  9.82%  1.2610  -12.74% |  1.28   1.25 |  11.14%  1.3429 |    3.02 | .  .  | 11110
+  U56   0.015    10 EXCESS |  8.38%  1.0729  -14.15% |  1.13   1.03 |   9.23%  1.1249 |    3.02 | .  .  | 11110
+  U56   0.015    25 TOTAL  |  9.33%  1.2017  -12.81% |  1.22   1.20 |  10.63%  1.2858 |    3.02 | .  .  | 11110
+  U56   0.015    25 EXCESS |  7.89%  1.0146  -14.21% |  1.07   0.97 |   8.73%  1.0681 |    3.02 | .  .  | 11110
+  U56   0.015    50 TOTAL  |  8.50%  1.1026  -12.92% |  1.12   1.10 |   9.78%  1.1903 |    3.02 | .  .  | 11110
+  U56   0.015    50 EXCESS |  7.08%  0.9171  -14.32% |  0.97   0.87 |   7.89%  0.9731 |    3.02 | .  .  | 11110
+  U56   0.020     0 TOTAL  | 13.11%  1.2579  -17.22% |  1.29   1.24 |  14.76%  1.3331 |    3.99 | .  Y  | 11111
+  U56   0.020     0 EXCESS | 11.62%  1.1130  -18.57% |  1.17   1.07 |  12.78%  1.1644 |    3.99 | .  Y  | 11111
+  U56   0.020    10 TOTAL  | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 |    3.99 | .  Y  | 11111
+  U56   0.020    10 EXCESS | 11.18%  1.0744  -18.62% |  1.13   1.03 |  12.33%  1.1269 |    3.99 | .  Y  | 11111
+  U56   0.020    25 TOTAL  | 11.99%  1.1598  -17.36% |  1.18   1.15 |  13.60%  1.2384 |    3.99 | .  Y  | 11111
+  U56   0.020    25 EXCESS | 10.51%  1.0164  -18.71% |  1.07   0.97 |  11.64%  1.0705 |    3.99 | .  Y  | 11111
+  U56   0.020    50 TOTAL  | 10.88%  1.0614  -17.50% |  1.08   1.05 |  12.45%  1.1434 |    3.99 | .  Y  | 11111
+  U56   0.020    50 EXCESS |  9.41%  0.9195  -18.85% |  0.97   0.88 |  10.51%  0.9762 |    3.99 | .  .  | 11110
+  U56   0.030     0 TOTAL  | 15.89%  1.2560  -20.63% |  1.30   1.22 |  17.28%  1.3078 |    4.75 | .  .  | 11101
+  U56   0.030     0 EXCESS | 14.35%  1.1336  -21.93% |  1.21   1.07 |  15.26%  1.1630 |    4.75 | .  .  | 11101
+  U56   0.030    10 TOTAL  | 15.34%  1.2174  -20.68% |  1.26   1.19 |  16.73%  1.2709 |    4.75 | .  .  | 11101
+  U56   0.030    10 EXCESS | 13.81%  1.0955  -21.99% |  1.17   1.04 |  14.72%  1.1264 |    4.75 | .  .  | 11101
+  U56   0.030    25 TOTAL  | 14.52%  1.1593  -20.77% |  1.20   1.13 |  15.91%  1.2154 |    4.75 | .  .  | 11101
+  U56   0.030    25 EXCESS | 13.00%  1.0383  -22.07% |  1.11   0.98 |  13.91%  1.0715 |    4.75 | .  .  | 11101
+  U56   0.030    50 TOTAL  | 13.17%  1.0622  -20.91% |  1.10   1.03 |  14.55%  1.1227 |    4.75 | .  .  | 11101
+  U56   0.030    50 EXCESS | 11.67%  0.9427  -22.21% |  1.01   0.89 |  12.58%  0.9797 |    4.75 | .  .  | 11101
+  U56   INF       0 TOTAL  | 17.03%  1.2017  -23.00% |  1.25   1.17 |  18.59%  1.2403 |    5.68 | .  .  | 11101
+  U56   INF       0 EXCESS | 15.47%  1.0940  -24.22% |  1.17   1.04 |  16.54%  1.1136 |    5.68 | .  .  | 11101
+  U56   INF      10 TOTAL  | 16.37%  1.1604  -23.14% |  1.21   1.13 |  17.92%  1.2011 |    5.68 | .  .  | 11101
+  U56   INF      10 EXCESS | 14.82%  1.0532  -24.36% |  1.13   1.00 |  15.88%  1.0747 |    5.68 | .  .  | 11101
+  U56   INF      25 TOTAL  | 15.38%  1.0984  -23.36% |  1.15   1.07 |  16.92%  1.1421 |    5.68 | .  .  | 11101
+  U56   INF      25 EXCESS | 13.84%  0.9920  -24.58% |  1.06   0.94 |  14.90%  1.0163 |    5.68 | .  .  | 11101
+  U56   INF      50 TOTAL  | 13.75%  0.9947  -23.73% |  1.04   0.97 |  15.27%  1.0436 |    5.68 | .  .  | 11101
+  U56   INF      50 EXCESS | 12.24%  0.8898  -25.93% |  0.96   0.84 |  13.28%  0.9188 |    5.68 | .  .  | 11101
+  B136  0.015     0 TOTAL  | 15.07%  1.1242  -22.31% |  1.27   1.00 |  14.99%  1.1058 |    5.53 | .  .  | 11101
+  B136  0.015     0 EXCESS | 13.55%  1.0101  -23.59% |  1.18   0.86 |  13.01%  0.9687 |    5.53 | .  .  | 11101
+  B136  0.015    10 TOTAL  | 14.44%  1.0823  -22.38% |  1.23   0.95 |  14.34%  1.0634 |    5.53 | .  .  | 11101
+  B136  0.015    10 EXCESS | 12.92%  0.9689  -23.66% |  1.14   0.81 |  12.37%  0.9267 |    5.53 | .  .  | 11101
+  B136  0.015    25 TOTAL  | 13.49%  1.0194  -22.49% |  1.17   0.89 |  13.37%  0.9996 |    5.53 | .  .  | 11101
+  B136  0.015    25 EXCESS | 11.98%  0.9070  -23.76% |  1.08   0.75 |  11.41%  0.8636 |    5.53 | .  .  | 11101
+  B136  0.015    50 TOTAL  | 11.93%  0.9143  -22.66% |  1.07   0.78 |  11.76%  0.8931 |    5.53 | .  .  | 10101
+  B136  0.015    50 EXCESS | 10.44%  0.8037  -23.93% |  0.98   0.64 |   9.84%  0.7583 |    5.53 | .  .  | 10001
+  B136  0.020     0 TOTAL  | 15.73%  1.1339  -22.31% |  1.28   1.00 |  15.44%  1.1072 |    5.83 | .  .  | 11101
+  B136  0.020     0 EXCESS | 14.19%  1.0233  -23.59% |  1.19   0.87 |  13.45%  0.9740 |    5.83 | .  .  | 11101
+  B136  0.020    10 TOTAL  | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 |    5.83 | .  .  | 11101
+  B136  0.020    10 EXCESS | 13.53%  0.9813  -23.66% |  1.15   0.82 |  12.78%  0.9310 |    5.83 | .  .  | 11101
+  B136  0.020    25 TOTAL  | 14.06%  1.0269  -22.49% |  1.18   0.89 |  13.73%  0.9985 |    5.83 | .  .  | 11101
+  B136  0.020    25 EXCESS | 12.54%  0.9180  -23.76% |  1.09   0.76 |  11.77%  0.8664 |    5.83 | .  .  | 11101
+  B136  0.020    50 TOTAL  | 12.40%  0.9197  -22.66% |  1.08   0.78 |  12.04%  0.8895 |    5.83 | .  .  | 10101
+  B136  0.020    50 EXCESS | 10.91%  0.8125  -23.93% |  0.99   0.64 |  10.11%  0.7587 |    5.83 | .  .  | 10001
+  B136  0.030     0 TOTAL  | 16.09%  1.1275  -22.31% |  1.27   1.00 |  15.77%  1.0984 |    6.08 | .  .  | 11101
+  B136  0.030     0 EXCESS | 14.55%  1.0203  -23.59% |  1.19   0.87 |  13.78%  0.9694 |    6.08 | .  .  | 11101
+  B136  0.030    10 TOTAL  | 15.39%  1.0841  -22.38% |  1.23   0.95 |  15.05%  1.0541 |    6.08 | .  .  | 11101
+  B136  0.030    10 EXCESS | 13.85%  0.9776  -23.66% |  1.15   0.82 |  13.07%  0.9256 |    6.08 | .  .  | 11101
+  B136  0.030    25 TOTAL  | 14.34%  1.0190  -22.49% |  1.17   0.88 |  13.97%  0.9877 |    6.08 | .  .  | 11101
+  B136  0.030    25 EXCESS | 12.82%  0.9135  -23.76% |  1.09   0.75 |  12.01%  0.8599 |    6.08 | .  .  | 11101
+  B136  0.030    50 TOTAL  | 12.61%  0.9102  -23.94% |  1.07   0.77 |  12.20%  0.8769 |    6.08 | .  .  | 10101
+  B136  0.030    50 EXCESS | 11.12%  0.8064  -23.96% |  0.99   0.64 |  10.27%  0.7503 |    6.08 | .  .  | 10001
+  B136  INF       0 TOTAL  | 16.25%  1.1052  -24.01% |  1.22   1.01 |  16.51%  1.1045 |    6.32 | .  .  | 11101
+  B136  INF       0 EXCESS | 14.71%  1.0017  -25.56% |  1.14   0.88 |  14.50%  0.9802 |    6.32 | .  .  | 11101
+  B136  INF      10 TOTAL  | 15.52%  1.0615  -24.19% |  1.17   0.96 |  15.77%  1.0610 |    6.32 | .  .  | 11101
+  B136  INF      10 EXCESS | 13.98%  0.9586  -25.74% |  1.09   0.84 |  13.77%  0.9371 |    6.32 | .  .  | 11101
+  B136  INF      25 TOTAL  | 14.43%  0.9959  -24.47% |  1.11   0.90 |  14.66%  0.9956 |    6.32 | .  .  | 11101
+  B136  INF      25 EXCESS | 12.91%  0.8940  -26.01% |  1.03   0.77 |  12.68%  0.8724 |    6.32 | .  .  | 11101
+  B136  INF      50 TOTAL  | 12.63%  0.8864  -24.92% |  1.00   0.79 |  12.84%  0.8865 |    6.32 | .  .  | 10101
+  B136  INF      50 EXCESS | 11.13%  0.7861  -26.45% |  0.93   0.66 |  10.89%  0.7645 |    6.32 | .  .  | 10001
+
+=== B. THE PRE-STATED PREDICTION, TESTED: DOES THE NUMERAIRE COST THE CANDIDATE MORE SHARPE
+    THAN IT COSTS THE BENCHMARK IT IS JUDGED AGAINST?  (predicted hit = rf_ann / sigma) ===
+  (`risk gross` EXCLUDES the SHY sweep column, so it is the share of NAV actually at equity
+   risk; total gross is 1.00 by construction because the residual is swept, never left idle.)
+  panel cap    bps | risk gross | SHY sleeve | sigma  | dSharpe realised | predicted rf/sigma | SPY dSharpe | predicted SPY | net swing
+  U56   0.015    10 |     0.5627 |     43.73% |  7.65% |          -0.1884 |            -0.1719 |     -0.0844 |       -0.0743 |   -0.1041
+  U56   0.020    10 |     0.6561 |     34.39% |  8.99% |          -0.1640 |            -0.1464 |     -0.0844 |       -0.0743 |   -0.0797
+  U56   0.030    10 |     0.6940 |     30.60% |  9.64% |          -0.1535 |            -0.1365 |     -0.0844 |       -0.0743 |   -0.0691
+  U56   INF      10 |     0.7307 |     26.93% | 10.40% |          -0.1411 |            -0.1265 |     -0.0844 |       -0.0743 |   -0.0567
+  B136  0.015    10 |     0.7174 |     28.26% | 10.25% |          -0.1450 |            -0.1278 |     -0.0840 |       -0.0740 |   -0.0610
+  B136  0.020    10 |     0.7283 |     27.17% | 10.49% |          -0.1414 |            -0.1249 |     -0.0840 |       -0.0740 |   -0.0574
+  B136  0.030    10 |     0.7350 |     26.50% | 10.70% |          -0.1387 |            -0.1224 |     -0.0840 |       -0.0740 |   -0.0547
+  B136  INF      10 |     0.7417 |     25.83% | 10.91% |          -0.1359 |            -0.1202 |     -0.0840 |       -0.0740 |   -0.0520
+
+  Over all 32 (panel, cap, rung) cells at gross 0.75:
+   the numeraire costs the BOOK more Sharpe than it costs SPY in 32 of 32 cells  (mean net swing -0.0660, worst -0.1047)
+   realised vs predicted book hit: mean realised -0.1501 vs predicted -0.1345  (corr +0.9956)
+   realised vs predicted SPY  hit: mean realised -0.0842 vs predicted -0.0742
+
+=== C. THE WHOLE QUESTION: WHICH 4b LEGS FLIP WHEN THE NUMERAIRE IS MADE CONSISTENT? ===
+  over all 64 (panel, gross, cap, rung) cells:
+   4b: TOTAL 25 pass -> EXCESS 22 pass   (pass->fail 3, fail->pass 0)
+   4a: TOTAL 0 pass -> EXCESS 0 pass   (pass->fail 0, fail->pass 0)
+   per-leg flips (TOTAL pass -> EXCESS fail / TOTAL fail -> EXCESS pass):
+    L_H1     pass->fail   0   fail->pass   0   (TOTAL 64/64 -> EXCESS 64/64)
+    L_H2     pass->fail   0   fail->pass   0   (TOTAL 56/64 -> EXCESS 56/64)
+    L_OOS    pass->fail   8   fail->pass   0   (TOTAL 64/64 -> EXCESS 56/64)
+    L_DD     pass->fail   0   fail->pass   0   (TOTAL 40/64 -> EXCESS 40/64)
+    L_CAGR   pass->fail   3   fail->pass   0   (TOTAL 49/64 -> EXCESS 46/64)
+   by cost rung:
+      0.0 bps: 4b  8/16 ->  8/16   4a  0/16 ->  0/16
+     10.0 bps: 4b  8/16 ->  8/16   4a  0/16 ->  0/16
+     25.0 bps: 4b  8/16 ->  6/16   4a  0/16 ->  0/16
+     50.0 bps: 4b  1/16 ->  0/16   4a  0/16 ->  0/16
+   by panel:
+    U56  : 4b 13/32 -> 11/32   4a  0/32 ->  0/32
+    B136 : 4b 12/32 -> 11/32   4a  0/32 ->  0/32
+
+  THE COMMITTED CANDIDATE'S OWN MARGINS, BOTH NUMERAIRES (cap 0.020, gross 0.75):
+  panel  bps num    | m_H1     m_H2     m_OOS    m_DD      m_CAGR   | 4b
+  U56      0 TOTAL  |  +0.3865  +0.4488  +0.4862    +5.47%   +1.35% | PASS
+  U56      0 EXCESS |  +0.3231  +0.3524  +0.3938    +4.95%   +0.96% | PASS
+  U56     10 TOTAL  |  +0.3461  +0.4104  +0.4487    +5.42%   +0.96% | PASS
+  U56     10 EXCESS |  +0.2839  +0.3143  +0.3566    +4.91%   +0.57% | PASS
+  U56     25 TOTAL  |  +0.2855  +0.3527  +0.3923    +5.36%   +0.38% | PASS
+  U56     25 EXCESS |  +0.2249  +0.2570  +0.3007    +4.84%   -0.00% | fail
+  U56     50 TOTAL  |  +0.1841  +0.2563  +0.2981    +5.25%   -0.59% | fail
+  U56     50 EXCESS |  +0.1265  +0.1614  +0.2074    +4.73%   -0.96% | fail
+  B136     0 TOTAL  |  +0.3461  +0.2123  +0.2656    +3.62%   +1.76% | PASS
+  B136     0 EXCESS |  +0.3002  +0.1400  +0.1951    +3.13%   +1.36% | PASS
+  B136    10 TOTAL  |  +0.3032  +0.1655  +0.2199    +3.13%   +1.23% | PASS
+  B136    10 EXCESS |  +0.2585  +0.0937  +0.1500    +3.08%   +0.84% | PASS
+  B136    25 TOTAL  |  +0.2387  +0.0952  +0.1513    +2.29%   +0.45% | PASS
+  B136    25 EXCESS |  +0.1958  +0.0241  +0.0822    +2.99%   +0.07% | PASS
+  B136    50 TOTAL  |  +0.1311  -0.0220  +0.0369    +0.92%   -0.84% | fail
+  B136    50 EXCESS |  +0.0911  -0.0919  -0.0310    +2.85%   -1.21% | fail
+
+=== D. KEEP COUNTS OVER ALL 128 PUBLISHED ROWS ===
+  TOTAL : 4b  25/64   4a   0/64   binding leg on 4b FAILs: L_H1 0  L_H2 8  L_OOS 0  L_DD 24  L_CAGR 15
+  EXCESS: 4b  22/64   4a   0/64   binding leg on 4b FAILs: L_H1 0  L_H2 8  L_OOS 8  L_DD 24  L_CAGR 18
+
+  JOINT BOTH-PANEL 4b (U56 AND B136 at the same gross, cap, rung, numeraire):
+   TOTAL : joint 4b 9 of 32 cells
+   EXCESS: joint 4b 8 of 32 cells
+   EXCESS-numeraire joint cells:
+     gross 0.75 cap 0.020 0 bps
+     gross 0.75 cap 0.020 10 bps
+     gross 0.75 cap 0.030 0 bps
+     gross 0.75 cap 0.030 10 bps
+     gross 0.75 cap 0.030 25 bps
+     gross 0.75 cap INF 0 bps
+     gross 0.75 cap INF 10 bps
+     gross 0.75 cap INF 25 bps
+
+=== E. RULE 8 — the two dials (gross, cap) chosen on warm-up..2016-12-31 ONLY, 2017-2026 read
+    ONCE, separately under EACH numeraire, and scored against the COMMITTED cap 0.020 / 0.75 cell. ===
+  32 picks (2 panels x 2 numeraires x 4 rungs x 2 choosers).
+   TOTAL : beating SPY's OOS Sharpe 16/16   beating the live book's 5/16   beating the COMMITTED cell's 4/16   full-sample 4b 12/16
+           pick over cap: 0.015:4  0.020:8  0.030:0  INF:4   over gross: 0.75:16  1.00:0
+           mean OOS Sharpe of the picks 1.1450  committed cell 1.1658  SPY 0.8784  mean OOS CAGR picks 11.91% vs SPY 15.36%
+   EXCESS: beating SPY's OOS Sharpe 14/16   beating the live book's 11/16   beating the COMMITTED cell's 7/16   full-sample 4b 3/16
+           pick over cap: 0.015:0  0.020:8  0.030:4  INF:4   over gross: 0.75:5  1.00:11
+           mean OOS Sharpe of the picks 0.9712  committed cell 0.9844  SPY 0.7776  mean OOS CAGR picks 12.27% vs SPY 13.36%
+
+   DOES THE NUMERAIRE MOVE THE RULE-8 PICK?  the TOTAL and EXCESS choosers agree on 4 of 16 (panel, rung, chooser) triples.
+
+   panel num    bps chooser     | pick        OOS CAGR  OOS Sh  turn/yr | committed OOS Sh | SPY OOS Sh
+   U56   TOTAL     0 C_ISSHARPE  | 0.020/0.75    13.17%  1.3693    3.51 |           1.3693 |     0.8831
+   U56   TOTAL     0 C_ISCALMAR  | INF/0.75      14.35%  1.2803    4.39 |           1.3693 |     0.8831
+   U56   TOTAL    10 C_ISSHARPE  | 0.020/0.75    12.77%  1.3318    3.51 |           1.3318 |     0.8831
+   U56   TOTAL    10 C_ISCALMAR  | INF/0.75      13.85%  1.2397    4.39 |           1.3318 |     0.8831
+   U56   TOTAL    25 C_ISSHARPE  | 0.020/0.75    12.18%  1.2755    3.51 |           1.2755 |     0.8831
+   U56   TOTAL    25 C_ISCALMAR  | INF/0.75      13.10%  1.1787    4.39 |           1.2755 |     0.8831
+   U56   TOTAL    50 C_ISSHARPE  | 0.020/0.75    11.21%  1.1813    3.51 |           1.1813 |     0.8831
+   U56   TOTAL    50 C_ISCALMAR  | INF/0.75      11.87%  1.0768    4.39 |           1.1813 |     0.8831
+   U56   EXCESS    0 C_ISSHARPE  | 0.020/0.75    11.22%  1.1758    3.51 |           1.1758 |     0.7820
+   U56   EXCESS    0 C_ISCALMAR  | INF/1.00      16.54%  1.1136    5.68 |           1.1758 |     0.7820
+   U56   EXCESS   10 C_ISSHARPE  | 0.020/0.75    10.83%  1.1386    3.51 |           1.1386 |     0.7820
+   U56   EXCESS   10 C_ISCALMAR  | INF/1.00      15.88%  1.0747    5.68 |           1.1386 |     0.7820
+   U56   EXCESS   25 C_ISSHARPE  | 0.020/0.75    10.26%  1.0827    3.51 |           1.0827 |     0.7820
+   U56   EXCESS   25 C_ISCALMAR  | INF/1.00      14.90%  1.0163    5.68 |           1.0827 |     0.7820
+   U56   EXCESS   50 C_ISSHARPE  | 0.020/0.75     9.30%  0.9893    3.51 |           0.9893 |     0.7820
+   U56   EXCESS   50 C_ISCALMAR  | INF/1.00      13.28%  0.9188    5.68 |           0.9893 |     0.7820
+   B136  TOTAL     0 C_ISSHARPE  | 0.015/0.75    12.04%  1.1503    4.52 |           1.1392 |     0.8737
+   B136  TOTAL     0 C_ISCALMAR  | 0.020/0.75    12.19%  1.1392    4.68 |           1.1392 |     0.8737
+   B136  TOTAL    10 C_ISSHARPE  | 0.015/0.75    11.52%  1.1053    4.52 |           1.0936 |     0.8737
+   B136  TOTAL    10 C_ISCALMAR  | 0.020/0.75    11.65%  1.0936    4.68 |           1.0936 |     0.8737
+   B136  TOTAL    25 C_ISSHARPE  | 0.015/0.75    10.75%  1.0378    4.52 |           1.0250 |     0.8737
+   B136  TOTAL    25 C_ISCALMAR  | 0.020/0.75    10.85%  1.0250    4.68 |           1.0250 |     0.8737
+   B136  TOTAL    50 C_ISSHARPE  | 0.015/0.75     9.48%  0.9251    4.52 |           0.9106 |     0.8737
+   B136  TOTAL    50 C_ISCALMAR  | 0.020/0.75     9.53%  0.9106    4.68 |           0.9106 |     0.8737
+   B136  EXCESS    0 C_ISSHARPE  | 0.020/0.75    10.26%  0.9683    4.68 |           0.9683 |     0.7732
+   B136  EXCESS    0 C_ISCALMAR  | 0.030/1.00    13.78%  0.9694    6.08 |           0.9683 |     0.7732
+   B136  EXCESS   10 C_ISSHARPE  | 0.020/1.00    12.78%  0.9310    5.83 |           0.9231 |     0.7732
+   B136  EXCESS   10 C_ISCALMAR  | 0.030/1.00    13.07%  0.9256    6.08 |           0.9231 |     0.7732
+   B136  EXCESS   25 C_ISSHARPE  | 0.020/1.00    11.77%  0.8664    5.83 |           0.8553 |     0.7732
+   B136  EXCESS   25 C_ISCALMAR  | 0.030/1.00    12.01%  0.8599    6.08 |           0.8553 |     0.7732
+   B136  EXCESS   50 C_ISSHARPE  | 0.020/1.00    10.11%  0.7587    5.83 |           0.7422 |     0.7732
+   B136  EXCESS   50 C_ISCALMAR  | 0.030/1.00    10.27%  0.7503    6.08 |           0.7422 |     0.7732
+    GATE PASS  G8 the numeraire BITES (Sharpe falls for the book AND for SPY on every panel/cap): all fall: True; largest book Sharpe loss -0.1884 (target True)
+
+=== F. BOOK FACTS (exposure is the whole mechanism — published, never selected on) ===
+  panel cap    gross | risk gross | SHY sleeve | mean names | turnover/yr | max name w
+  U56   0.015  0.75  |     0.5627 |     43.73% |      38.56 |        3.00 |     0.9261
+  U56   0.020  0.75  |     0.6561 |     34.39% |      38.56 |        3.51 |     0.9015
+  U56   0.030  0.75  |     0.6940 |     30.60% |      38.56 |        3.96 |     0.8521
+  U56   INF    0.75  |     0.7307 |     26.93% |      38.56 |        4.39 |     0.3789
+  U56   0.015  1.00  |     0.5637 |     43.63% |      38.56 |        3.02 |     0.9261
+  U56   0.020  1.00  |     0.7501 |     24.99% |      38.55 |        3.99 |     0.9015
+  U56   0.030  1.00  |     0.8930 |     10.70% |      38.48 |        4.75 |     0.8521
+  U56   INF    1.00  |     0.9740 |      2.60% |      38.44 |        5.68 |     0.2228
+  B136  0.015  0.75  |     0.7174 |     28.26% |      93.29 |        4.52 |     0.9111
+  B136  0.020  0.75  |     0.7283 |     27.17% |      93.29 |        4.68 |     0.8815
+  B136  0.030  0.75  |     0.7350 |     26.50% |      93.29 |        4.79 |     0.8221
+  B136  INF    0.75  |     0.7417 |     25.83% |      93.29 |        4.91 |     0.3604
+  B136  0.015  1.00  |     0.9340 |      6.60% |      93.20 |        5.53 |     0.9111
+  B136  0.020  1.00  |     0.9563 |      4.37% |      93.20 |        5.83 |     0.8815
+  B136  0.030  1.00  |     0.9740 |      2.60% |      93.19 |        6.08 |     0.8221
+  B136  INF    1.00  |     0.9886 |      1.14% |      93.17 |        6.32 |     0.1483
+
+=== GATES: 12 of 12 pass ===
+
+Done in 6s.  all gates pass: True
