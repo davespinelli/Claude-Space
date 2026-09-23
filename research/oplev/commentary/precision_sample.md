@@ -1,0 +1,359 @@
+# Precision check
+
+Random sample (seed 20260923) of files matching the exact phrase "operating leverage" in 8-K, 10-Q and 10-K filings, 2010-01-01 to 2026-09-23. Unit = one matched file. Each file was fetched from EDGAR, HTML stripped, and the text around the phrase read by hand. The label describes the file: if any shown occurrence is management describing the company's own operating leverage, the file gets (a)/(b); (c) only if every shown occurrence is boilerplate; (d) whenever the filer is a bank or other financial firm using the term in the revenue-growth-minus-expense-growth sense. Sub-labels split (a) into *realized* (the period's margins improved because of operating leverage), *forward* (expected or targeted operating leverage) and *model-claim* (a static claim that the business model has high operating leverage, typical of investor decks).
+
+| label | n | share |
+|---|---:|---:|
+| (a) management describing its own operating leverage as positive / improving | 32 | 80% |
+| (b) negative operating leverage / deleveraging | 2 | 5% |
+| (c) risk-factor, forward-looking-statement or other boilerplate | 2 | 5% |
+| (d) bank / financial-company usage (efficiency-ratio sense) | 4 | 10% |
+| (e) other (definitions, generic discussion, third-party, etc.) | 0 | 0% |
+| total | 40 | |
+
+Within (a): forward 15 (38% of sample), realized 14 (35% of sample), model-claim 3 (8% of sample).
+
+Files skipped in the draw (unusable, replaced by the next draw): 0
+
+Cross-tab by filer type and document type:
+
+| filer | document | a | b | c | d | e |
+|---|---|---:|---:|---:|---:|---:|
+| financial (SIC 6000-6999) | 8-K earnings release (Item 2.02 EX-99) | 0 | 0 | 1 | 3 | 0 |
+| financial (SIC 6000-6999) | 8-K other | 0 | 0 | 0 | 1 | 0 |
+| non-financial | 10-K main | 1 | 0 | 0 | 0 | 0 |
+| non-financial | 10-Q main | 12 | 1 | 1 | 0 | 0 |
+| non-financial | 8-K earnings release (Item 2.02 EX-99) | 14 | 1 | 0 | 0 | 0 |
+| non-financial | 8-K other | 5 | 0 | 0 | 0 | 0 |
+
+## How the final event definitions score on all hand-labelled files
+
+90 labelled files: 40 random (all filers, all forms), 20 random 10-K hits, 30 random draws from the first-pass clean definition. Membership is by (CIK, accession) in the FINAL `clean_events.csv.gz` / `clean_negative_events.csv.gz`. The three samples come from different pools (the 10-K draw over-weights 10-Ks), and each row has only a few dozen files, so treat the shares as rough (a 90% share on 30 files has a 95% interval of roughly 74-98%). Unit = file; a filing-level event can carry a different tone in another exhibit of the same filing.
+
+| subset | n | a/realized | a/forward | a/model-claim | b | c | d | e | share (a) | share a/realized |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| all labelled files | 90 | 30 | 26 | 8 | 4 | 9 | 10 | 3 | 71% | 33% |
+| random sample only (unconditional) | 40 | 14 | 15 | 3 | 2 | 2 | 4 | 0 | 80% | 35% |
+| in final clean_events | 69 | 30 | 24 | 8 | 2 | 3 | 0 | 2 | 90% | 43% |
+|   of which 8-K | 34 | 13 | 14 | 5 | 1 | 1 | 0 | 0 | 94% | 38% |
+|   of which 10-Q | 18 | 10 | 4 | 2 | 1 | 1 | 0 | 0 | 89% | 56% |
+|   of which 10-K | 17 | 7 | 6 | 1 | 0 | 1 | 0 | 2 | 82% | 41% |
+| in final kicking_in subset | 14 | 9 | 3 | 0 | 1 | 1 | 0 | 0 | 86% | 64% |
+| in clean_negative_events | 5 | 0 | 2 | 0 | 2 | 1 | 0 | 0 | 40% | 0% |
+| excluded from both | 16 | 0 | 0 | 0 | 0 | 5 | 10 | 1 | 0% | 0% |
+
+---
+
+### 1. Hortonworks, Inc.  (CIK 0001610532) - 10-Q 2016-08-09 - `d197388d10q.htm` -> **(a) / forward**
+SIC 7372; doc_role=main; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1610532/000119312516676731/d197388d10q.htm)
+
+*Why:* MD&A overview: expects increased operating leverage to lift gross and operating margins long term.
+
+> ...vices. We believe that our sales and marketing, research and development and general and administrative costs will decrease as a percentage of revenue in the long term as we are able to reach economies of scale and achieve process improvements and other operational efficiencies. With this increased **operating leverage**, we expect our gross and operating margins to increase in the long term. Revenue Recognition Policies . We typically enter into sales arrangements pursuant to which we provide both support subscription offerings and professional services. On occasion, we sell engineering services as well as a premi...
+
+### 2. SAIA INC  (SAIA)  (CIK 0001177702) - 10-K 2011-02-25 - `c62449e10vk.htm` -> **(a) / forward**
+SIC 4213; doc_role=main; earnings 8-K=False; occurrences in file=3; [link](https://www.sec.gov/Archives/edgar/data/1177702/000095012311018652/c62449e10vk.htm)
+
+*Why:* 10-K business strategy: gains operating leverage from volume/density growth; also warns of unfavorable leverage if economy softens.
+
+> ...t with the continued escalation of commercial insurance and health care costs is important to maintain and improve shareholder returns. Management expects governmental safety regulations and related enforcement initiatives to increase in the future. Increase density in existing geographies. We gain **operating leverage** by growing volume and density within existing geography. We estimate the potential incremental profitability on growth in current markets can be 15 percent or even higher. This improves margins, asset turnover and return on capital. We actively monitor opportunities to add service facilities where ...
+
+> ... the ten percent reduction in the annual retainer and meeting fees paid to the non-employee members of the Company’s Board of Directors. The Company has announced its intention to reinstate one-half of its 401 (k) match effective April 1, 2011. If the Company builds market share, there are numerous **operating leverage** cost benefits. Conversely, should the economy soften from present levels, the Company plans to attempt to match resources and capacity to shifting volume levels to lessen unfavorable **operating leverage**. The success of cost improvement initiatives is also impacted by the cost and availability of dri...
+
+### 3. KFORCE INC  (KFRC)  (CIK 0000930420) - 10-Q 2022-11-02 - `kfrc-20220930.htm` -> **(a) / forward**
+SIC 7363; doc_role=main; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/930420/000093042022000201/kfrc-20220930.htm)
+
+*Why:* MD&A: firm continues to focus on generating increased operating leverage.
+
+> ...increase in the nine month period was primarily driven by (a) higher performance based compensation costs, (b) a gain on the sale of our corporate headquarters that occurred in the second quarter of 2021; and (c) other investments in our business. The Firm continues to focus on generating increased **operating leverage** through solid revenue growth, improved productivity of our associates, structural reductions in operating costs and continuing to exercise solid expense discipline. We are also continuing to make investments in our business, even with some moderation in our revenue growth in the second half of 2022...
+
+### 4. NORTHERN TECHNOLOGIES INTERNATIONAL CORP  (NTIC)  (CIK 0000875582) - 8-K 2018-11-13 - `exh_991.htm` -> **(a) / realized**
+SIC 3470; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/875582/000117184318007861/exh_991.htm)
+
+*Why:* Earnings release: opex/sales fell, primarily a result of operating leverage on higher sales.
+
+> ...ventures increased 18.7% to $120,225,000 during fiscal 2018, compared to $101,261,000 during fiscal 2017. Operating expenses, as a percent of net sales, for the fourth quarter of fiscal 2018 were 42.7%, compared to 47.4% for the same period last fiscal year. This reduction was primarily a result of **operating leverage** on increased net sales. For the full fiscal year, operating expenses, as a percent of net sales, were 44.6%, compared to 50.6% for fiscal 2017. The company reported net income attributable to NTIC for the fourth quarter of fiscal 2018 of $2,142,000 or $0.45 per diluted share, compared to a net inco...
+
+### 5. LINCOLN ELECTRIC HOLDINGS INC  (LECO)  (CIK 0000059527) - 10-Q 2012-07-31 - `a12-13668_110q.htm` -> **(a) / realized**
+SIC 3540; doc_role=main; earnings 8-K=False; occurrences in file=2; [link](https://www.sec.gov/Archives/edgar/data/59527/000110465912052583/a12-13668_110q.htm)
+
+*Why:* MD&A: gross margin up on pricing and operating leverage.
+
+> ...fit increased 15.1% to $224,997 for the second quarter 2012 compared with $195,504 in the second quarter 2011. As a percentage of Net sales, Gross profit increased to 30.2% in the second quarter 2012 from 28.0% in the second quarter 2011. The increase was the result of increased product pricing and **operating leverage** partially offset by lower margins from recent acquisitions. In the second quarter 2012, the Company recorded charges of $1,439 related to the initial accounting for recent acquisitions, charges of $1,039 due to a change in Venezuelan labor law, which provides for increased employee severance obliga...
+
+> ... for the six months ended June 30, 2012 compared with $356,942 in the comparable period in 2011. As a percentage of Net sales, Gross profit increased to 29.9% in the six months ended June 30, 2012 from 27.5% in the comparable period in 2011. The increase was the result of increased product pricing, **operating leverage** and favorable regional mix partially offset by rising material costs and lower margins from recent acquisitions. In the current period, the Company recorded charges of $1,439 related to the initial accounting for recent acquisitions and charges of $1,039 due to a change in Venezuelan labor law, whi...
+
+### 6. Hyatt Hotels Corp  (H)  (CIK 0001468174) - 8-K 2014-03-14 - `d691823dex992.htm` -> **(a) / forward**
+SIC 7011; doc_role=ex99; earnings 8-K=False; occurrences in file=3; [link](https://www.sec.gov/Archives/edgar/data/1468174/000119312514098850/d691823dex992.htm)
+
+*Why:* Investor-day deck: operating leverage listed as an earnings tool; 'strong operating leverage' in 3-5 year outlook.
+
+> ...Hotels Grand Hyatt New York 1,305 Rooms Park Hyatt Zurich 142 Rooms Park Hyatt Paris – Vendôme 153 Rooms Hyatt Regency Orlando 1,641 Rooms Grand Hyatt San Francisco 660 Rooms Grand Hyatt Seoul 601 Rooms Andaz 5 th Avenue 184 Rooms 30 Hyatt Place Omaha Downtown / Old Market 159 Rooms Ownership Tool: **Operating Leverage**, Owner Preference and Recycling Margin growth 31 Contract base expansion Increased brand presence in targeted areas and investment returns **Operating Leverage** Owner Preference Recycling Management Tool: Hyatt’s DNA Rooms Mix As of December 31, 2013. Managed includes owned hotels and managed hotels o...
+
+> ...ms As of December 31, 2013. Superior Long-Term Growth Leveraging Key Strengths • Multiple Earnings Tools • Powerful Brands • Relationships Looking Ahead: Hyatt 3-5 Years Out 97 Superior Long-Term Growth • Industry leading system size growth rate • Continued executed contract base expansion • Strong **operating leverage** • Best locations in key markets • Evolution to higher quality owned portfolio – Expect significant level of dispositions per year, contingent upon reinvestment opportunities and tax planning • Return capital out of operating cash flow and additional balance sheet capacity Growth Quality Return of C...
+
+### 7. Aveanna Healthcare Holdings, Inc.  (AVAH)  (CIK 0001832332) - 8-K 2022-04-27 - `avah-ex99_1.htm` -> **(a) / forward**
+SIC 8082; doc_role=ex99; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1832332/000095017022006291/avah-ex99_1.htm)
+
+*Why:* Investor deck: platform in place to drive operating leverage.
+
+> ..._________ (1) Based on revenue generated in the twelve months ended Q4 2020. (2) Based on revenue generated in the twelve months ended Q4 2021. Compelling Financial Profile Historically stable gross margins of ~30-32%2 with improving reimbursement rates Platform and infrastructure in place to drive **operating leverage** and efficiencies Stable Margin Profile  Revenue CAGR of ~ 10% and Adjusted EBITDA CAGR of ~ 22% from 2018 to 2021 Significant growth opportunities based on unmet demand for Aveanna services Track Record of Double-Digit Revenue & Adjusted EBITDA Growth Proven track record of accretive M&A, executin...
+
+### 8. AVNET INC  (AVT)  (CIK 0000008858) - 10-Q 2022-04-29 - `avt-20220402x10q.htm` -> **(a) / realized**
+SIC 5065; doc_role=main; earnings 8-K=False; occurrences in file=2; [link](https://www.sec.gov/Archives/edgar/data/8858/000000885822000020/avt-20220402x10q.htm)
+
+*Why:* MD&A: SG&A/sales fell on operating leverage from higher sales (section heuristic mislabelled this as risk factors).
+
+> ...entage of gross profit. In the third quarter of fiscal 2022, SG&A expenses were 7.9% of sales and 63.0% of gross profit, as compared with 9.4% and 81.5%, respectively, in the third quarter of fiscal 2021. The decrease in SG&A expenses as a percentage of sales and gross profit primarily results from **operating leverage** created from higher sales, increases in gross profit margin, and lower amortization expense, partially offset by increases in SG&A expenses primarily to support sales volumes. 22 Table of Contents ​ SG&A expenses for the first nine months of fiscal 2022 were $1.50 billion, or 8.4% of sales, as comp...
+
+> ..., in the first nine months of fiscal 2021. SG&A expenses as a percentage of gross profit for the first nine months of fiscal 2022 were 68.6% as compared with 86.3% in the first nine months of fiscal 2021. The decrease in SG&A expenses as a percentage of sales and gross profit primarily results from **operating leverage** created from higher sales, increase in gross profit margin, and lower amortization expense, partially offset by increases in SG&A expenses primarily to support sales volumes. ​ Russian-Ukraine Conflict Related Expenses ​ The Company incurred $26.3 million of costs associated with the Russian-Ukrain...
+
+### 9. TRINITY INDUSTRIES INC  (TRN)  (CIK 0000099780) - 8-K 2012-04-26 - `exhibit5.htm` -> **(b) / negative**
+SIC 3743; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/99780/000129993312000998/exhibit5.htm)
+
+*Why:* Earnings release: difficult to obtain operating leverage in the Energy segment given short production runs.
+
+> ... provide a foundation of work. However, as long as wind tower demand is low, we will remain flexible to accommodate our customers’ production volumes and product mix. In the current operating environment, which has shorter production runs and more product conversions, it will be difficult to obtain **operating leverage**. We are highly focused on returning the Energy segment to profitability. I am pleased with the continued growth of the other businesses within the Energy Equipment Group. They have done a great job taking advantage of opportunities for new products and expanding production capacity in response to m...
+
+### 10. NOBILITY HOMES INC  (NOBH)  (CIK 0000072205) - 8-K 2010-06-14 - `dex991.htm` -> **(a) / forward**
+SIC 2451; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/72205/000119312510138708/dex991.htm)
+
+*Why:* Earnings release outlook: operating leverage inherent in the company should let it outperform the industry.
+
+> ...et area we serve. Job formation, immigration growth and migration trends, plus consumers returning to more affordable housing should favor Florida. Management remains convinced that our specific geographic market is one of the best long-term growth areas in the country and, because of the financial **operating leverage** inherent in the Company, we expect to out-perform the industry. For fiscal 2010, the country must experience a better economy with less uncertainty, improved sales in the existing home market, declining unemployment, continued low interest rates, improving credit markets, increased consumer confide...
+
+### 11. UMB FINANCIAL CORP  (UMBF)  (CIK 0000101382) - 8-K 2017-07-25 - `d431454dex991.htm` -> **(d) / bank**
+SIC 6021; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/101382/000119312517235123/d431454dex991.htm)
+
+*Why:* Bank CEO quote: focus on improved operating leverage (efficiency-ratio sense).
+
+> ...ficiency ratio 69.04 73.36 Non-GAAP - continuing operations Operating return on average assets 0.87 % 0.77 % Operating return on average equity 8.68 7.60 Operating efficiency ratio 68.89 72.21 “Overall, I’m pleased with our results for the first half of the year, as we continue to focus on improved **operating leverage** across the company,” said Mariner Kemper, chairman and chief executive officer. Net interest margin improved three basis points on a linked quarter basis, driven primarily by the favorable change in our earning asset mix, combined with higher interest rates and increased loan volumes. We are please...
+
+### 12. Energy Recovery, Inc.  (ERII)  (CIK 0001421517) - 10-Q 2012-05-09 - `eri_10q-033112.htm` -> **(b) / negative**
+SIC 3559; doc_role=main; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1421517/000143774912004676/eri_10q-033112.htm)
+
+*Why:* MD&A: plant volume determines operating leverage; new capacity will keep weighing on margins unless volume rises.
+
+> ...ocharger and pump sales have a lower gross profit margin compared to sales of PX TM device. Future gross profit is highly dependent on the product and customer mix of our net revenues, overall market demand and competition, and the volume of production in our manufacturing plant that determines our **operating leverage**. Accordingly, we are not able to predict our future gross profit levels with certainty. In addition, our expansion of the production facility will continue to have a negative impact on our margins if our production volume does not increase in the foreseeable future. General and Administrative Expen...
+
+### 13. Sprout Social, Inc.  (SPT)  (CIK 0001517375) - 8-K 2026-08-06 - `a2q26investorpresentatio.htm` -> **(a) / forward**
+SIC 7372; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1517375/000151737526000056/a2q26investorpresentatio.htm)
+
+*Why:* Investor presentation: opportunities to drive incremental operating leverage.
+
+> ...ment Plans $30K ARR and Above Continue Investments in R&D & GTM Expand Customer Share of Wallet Below $30K ARR New Packaging and Product Approach Utilize AI & Automation to Improve LTV to CAC Rule of 40 Target 30% By 4Q 2027 Continued Focus on Growth Opportunities Opportunities To Drive Incremental **Operating Leverage** See appendix for definition of 30% Rule of 40 target. Q2 FY2026 Financial Overview See appendix for definitions of the metrics included on this slide. Non-GAAP Gross Margin, Non-GAAP Operating Margin and Non-GAAP FCF Margin are Non-GAAP financial metrics. See appendix for definitions of these Non-G...
+
+### 14. TECH DATA CORP  (CIK 0000790703) - 10-Q 2017-11-29 - `fy18q3document.htm` -> **(c) / boilerplate**
+SIC 5045; doc_role=main; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/790703/000079070317000058/fy18q3document.htm)
+
+*Why:* Recurring seasonality note in the financial statements: European seasonality typically yields greater operating leverage in Q4.
+
+> ...nify the impact of these factors on the Company's operating results. Recent historical seasonal variations have included an increase in European demand during the Company’s fiscal fourth quarter and decreased demand in other fiscal quarters. The seasonal trend in Europe typically results in greater **operating leverage**, and therefore, lower selling, general and administrative expenses as a percentage of net sales in the region and on a consolidated basis during the second semester of the Company's fiscal year, particularly in the Company's fourth quarter. Therefore, the results of operations for the three and nin...
+
+### 15. COMSCORE, INC.  (SCOR)  (CIK 0001158172) - 10-Q 2010-08-09 - `w79434e10vq.htm` -> **(a) / forward**
+SIC 7389; doc_role=main; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1158172/000095012310075071/w79434e10vq.htm)
+
+*Why:* MD&A liquidity: expects greater economies of scale and operating leverage as customer base grows.
+
+> .... In addition, $4.1 million was used to purchase property and equipment to maintain and expand our technology and infrastructure. Of this amount, $333,000 was funded through landlord allowances received in connection with our Seattle office lease. We expect to achieve greater economies of scale and **operating leverage** as we expand our customer base and utilize our Internet user panel and technical infrastructure more efficiently. While we anticipate that it will be necessary for us to continue to invest in our Internet user panel, technical infrastructure and technical personnel to support the combination of an ...
+
+### 16. Ready Capital Corp  (RC, RCB, RCC, RC-PC, RC-PE)  (CIK 0001527590) - 8-K 2019-02-14 - `a18-40736_6ex99d1.htm` -> **(d) / financial**
+SIC 6798; doc_role=ex99; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1527590/000110465919008800/a18-40736_6ex99d1.htm)
+
+*Why:* Mortgage REIT merger release: combination provides operating leverage across a larger equity base.
+
+> ...nation investment and management of small-balance and middle-market commercial real estate loans. The combined company, which will operate under the name Ready Capital, is expected to have pro forma equity capital in excess of$750M. The combination will enhance shareholder liquidity and provide for **operating leverage** across the larger equity base. Under the terms of the agreement, each ORM share will be converted into 1.441 Ready Capital shares, based on a fixed exchange ratio. The exchange ratio is subject to certain adjustments if either company's book value per share, as defined in the merger agreement, decl...
+
+### 17. MILLER HERMAN INC  (MLKN)  (CIK 0000066382) - 8-K 2017-03-22 - `hmi03042017ex991.htm` -> **(a) / forward**
+SIC 2520; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/66382/000006638217000012/hmi03042017ex991.htm)
+
+*Why:* Earnings release: cost savings will be used to improve operating leverage.
+
+> ...n the early phases of executing on our plan to reduce operating costs, with a target of achieving between $25 million and $35 million of annual savings over the next three fiscal years. These savings will be used to fund future growth initiatives, offset expected inflationary pressures, and improve **operating leverage**. We still have a lot of work to do, but our results this quarter give us confidence we have the right talent and organizational focus to achieve these objectives.” -more- Third Quarter Fiscal 2017 Financial Results FINANCIAL HIGHLIGHTS (Dollars in millions, except per share data) (Unaudited) (Unaud...
+
+### 18. KEY ENERGY SERVICES INC  (CIK 0000318996) - 8-K 2013-09-12 - `d596871dex991.htm` -> **(a) / forward**
+SIC 1389; doc_role=ex99; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/318996/000119312513364677/d596871dex991.htm)
+
+*Why:* Investor deck: 'Operating Leverage Indicates Upside Opportunity' from asset utilization.
+
+> ...l Discipline Note: 2013E operating cash flow based on IBES consensus forecast. 2013E capex based on Key guidance. 1. Peer group composed of BAS, SPN, PES, and FES. Key's capital discipline has provided flexibility and the ability to target modest leverage levels through market cycles 9.4 x 10.0 x 1 **Operating Leverage** Indicates Upside Opportunity Wellbore Cleanout U.S. Rig Hours & Rig Services Revenues U.S. Trucking Hours & Fluid Management Revenues Revenue upside without meaningful expenditure via potential for increased asset utilization Revenues ($ in millions) Revenues ($ in millions) Balanced Approach to Ca...
+
+### 19. Hillenbrand, Inc.  (HI)  (CIK 0001417398) - 8-K 2020-11-12 - `exhibit9912020930.htm` -> **(a) / realized**
+SIC 3990; doc_role=ex99; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1417398/000141739820000040/exhibit9912020930.htm)
+
+*Why:* Earnings release: segment EBITDA margin up 170 bp mainly on operating leverage.
+
+> ...h the Company divested in March of this year. Batesville Batesville fourth quarter revenue of $147 million grew 8% compared to the prior year and 5% sequentially, driven by higher burial casket volume. Adjusted EBITDA margin of 24.3% was 170 basis points higher than the prior year, mainly driven by **operating leverage**, productivity gains, and cost containment actions, which more than offset cost inflation. Fiscal Year 2020 Results Hillenbrand’s revenue of $2.52 billion for fiscal 2020 increased 39%. Excluding the impact of foreign currency exchange, revenue increased 40%. The acquisition of Milacron contributed ...
+
+### 20. ULTRALIFE CORP  (ULBI)  (CIK 0000875657) - 8-K 2025-04-01 - `ex_797283.htm` -> **(a) / forward**
+SIC 3690; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/875657/000143774925010359/ex_797283.htm)
+
+*Why:* Earnings release CEO quote: positioned to more fully realize the operating leverage of the business model.
+
+> ... groundwork to realize the benefits of our investment,” said Mike Manna, President and Chief Executive Officer. “We entered 2025 with a healthy backlog and a schedule of new products to launch representing a broadened opportunity set in high-growth markets that position us to more fully realize the **operating leverage** of our business model through scale, and a strengthened sales and marketing leadership team to expedite organic growth and further leverage our global brand and resources. We are also on track to complete the acquisition integration and realize resulting manufacturing cost efficiencies and U.S.-bas...
+
+### 21. CIENA CORP  (CIEN)  (CIK 0000936395) - 10-Q 2015-09-09 - `a20150731-10q.htm` -> **(a) / forward**
+SIC 3661; doc_role=main; earnings 8-K=False; occurrences in file=2; [link](https://www.sec.gov/Archives/edgar/data/936395/000093639515000053/a20150731-10q.htm)
+
+*Why:* 10-Q overview: 'Business Optimization to Yield Operating Leverage' initiatives.
+
+> ...and cable and multiservice operators. These sales efforts seek opportunities for our solutions in applications including metro aggregation, data center interconnectivity, managed services offerings, cloud-based services, business Ethernet services and mobile backhaul. Business Optimization to Yield **Operating Leverage**. We are actively pursuing initiatives to improve our gross margin, constrain operating expense and redesign certain business processes, systems, and resources. These initiatives include portfolio optimization and engineering efforts to drive improved efficiencies in the design and development of ou...
+
+> ... in the re-engineering of company-wide enterprise resource planning platforms, improved automation of key business processes and systems, and the off-shoring of certain business functions. We seek to leverage these initiatives to promote the profitable growth of our business and to drive additional **operating leverage**. New Product Introduction We have introduced a number of new product platforms and chipsets during fiscal 2015 and in May 2015 launched our new Waveserver™ product. Waveserver is a stackable data center interconnect (DCI) platform that allows network operators, including Web-scale providers and dat...
+
+### 22. Bowlero Corp.  (BOWL)  (CIK 0001840572) - 10-Q 2023-02-15 - `bowl-20230101.htm` -> **(a) / realized**
+SIC 7900; doc_role=main; earnings 8-K=False; occurrences in file=4; [link](https://www.sec.gov/Archives/edgar/data/1840572/000162828023003700/bowl-20230101.htm)
+
+*Why:* MD&A: cost of revenues/revenue fell on improved operating leverage.
+
+> ...ased because of added depreciable assets from acquisitions of businesses, asset acquisitions and capital expenditures. Cost of revenues as a percent of revenues decreased from 69% during the second quarter of fiscal 2022 to almost 66% during the second quarter of fiscal 2023, mainly due to improved **operating leverage** since revenues increased at a higher rate than costs. Additionally, we have recently increased prices in an effort to address the impact of higher costs and to support margin and profit dollars. Gross Profit: Our gross profit increased $29,872 or 47% to $93,679 primarily due to the $68,195 increase...
+
+> ... and profit dollars. Gross Profit: Our gross profit increased $29,872 or 47% to $93,679 primarily due to the $68,195 increase in revenues and the 3% increase in gross profit margin (gross profit divided by revenues). The increase in grow profit margin is due to a number of factors, including higher **operating leverage** in that revenues increased at a higher rate than costs. Selling, general and administrative expenses (“SG&A”): SG&A expenses include employee-related costs, such as payroll and benefits, as well as depreciation and amortization (excluding those related to our center operations), media and promotion...
+
+> ...reased because of added depreciation from acquisitions of businesses, asset acquisitions and capital expenditures. Cost of revenues as a percent of revenues decreased from 69% during the first six months of fiscal 2022 to almost 66% during the first six months of fiscal 2023, mainly due to improved **operating leverage** with revenues increasing at a faster rate than costs. Additionally, we have recently increased prices in an effort to address the impact of higher costs and to improve margins. Gross Profit: Our gross profit increased $40,820 or 35% to $158,737 primarily due to the $117,477 increase in revenues and...
+
+### 23. Royalty Pharma plc  (RPRX)  (CIK 0001802768) - 10-Q 2021-08-11 - `rprx-20210630.htm` -> **(a) / model-claim**
+SIC 2834; doc_role=main; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1802768/000180276821000026/rprx-20210630.htm)
+
+*Why:* Liquidity section: low-cost royalty model 'resulting in high operating leverage' - a static claim that the model has high operating leverage.
+
+> ...ors, many of which are beyond our control. We have historically funded our acquisition program through free cash flow, equity contributions and debt. Our low operating costs coupled with a lack of capital expenditures and low taxes have contributed to our strong financial profile, resulting in high **operating leverage** and high conversion of our Adjusted Cash Receipts to Adjusted Cash Flow. We expect to continue funding our current and planned operating costs (excluding acquisitions) principally through our cash flow from operations and our acquisition program through cash flow and issuances of equity and debt. I...
+
+### 24. ALLSCRIPTS HEALTHCARE SOLUTIONS, INC.  (MDRX)  (CIK 0001124804) - 8-K 2020-01-14 - `a52158287ex99_2.htm` -> **(a) / model-claim**
+SIC 7373; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1124804/000115752320000066/a52158287ex99_2.htm)
+
+*Why:* Earnings deck investment-thesis bullet: 'Significant operating leverage'.
+
+> ...alue at the point of care Robust, diversified and award-winning solutions portfolio Flexible balance sheet with capacity for investment and capital returns High recurring revenue model Track record of successful capital deployment Future growth opportunities distinguishes from EHR peers Significant **operating leverage** Appendix: Non-GAAP Financial Measures Non-GAAP Financial Measures This presentation includes references to non-GAAP revenue, non-GAAP earnings per share, Adjusted EBITDA, and free cash flow, which are considered non-GAAP financial measures under Section 101 of Regulation G under the Securities Exch...
+
+### 25. Opendoor Technologies Inc.  (OPEN)  (CIK 0001801169) - 8-K 2024-11-07 - `exhibit9923q24opendoorsh.htm` -> **(c) / boilerplate**
+SIC 6531; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1801169/000180116924000176/exhibit9923q24opendoorsh.htm)
+
+*Why:* Non-GAAP definition: Adjusted EBITDA used to assess operating leverage (filer SIC 6531, flagged financial).
+
+> ...culated Adjusted EBITDA as Adjusted Net Loss adjusted for depreciation and amortization, property financing and other interest expense, interest income, and income tax expense. Adjusted EBITDA is a supplemental performance measure that our management uses to assess our operating performance and the **operating leverage** in our business. Adjusted EBITDA Margin is Adjusted EBITDA as a percentage of revenue. Definitions 19 Adjusted Operating Expense We also present Adjusted Operating Expense, which is a non-GAAP financial measure that bridges the difference between Contribution Profit and Adjusted EBITDA. We believe ...
+
+### 26. CITIZENS FINANCIAL GROUP INC/RI  (CFG, CFG-PE, CFG-PH)  (CIK 0000759944) - 8-K 2016-04-21 - `d105268dex992.htm` -> **(d) / bank**
+SIC 6022; doc_role=ex99; earnings 8-K=True; occurrences in file=10; [link](https://www.sec.gov/Archives/edgar/data/759944/000119312516549167/d105268dex992.htm)
+
+*Why:* Bank earnings deck: 'positive operating leverage' of 3-4% (revenue growth minus expense growth).
+
+> ...pite oil & gas downgrades – Transferred $373 million of consumer real estate TDRs to held for sale in advance of a targeted June/July sale Allowance coverage of NPLs 113% vs. 115% in 4Q15 and 106% in 1Q15 GAAP diluted EPS of $0.41 up 8% from 1Q15 and up 5% from Adjusted (1) diluted EPS Adjusted (1) **operating leverage** of 3% YoY NIM improved 9 bps to 2.86% from 2.77% in 1Q15 and 4Q15 ROTCE and efficiency ratio stable with 4Q15 (1) 1) Non-GAAP item. Where there is a reference to an “Adjusted” result in a paragraph, all measures which follow that “Adjusted” result are also “Adjusted” and exclude restructuring charg...
+
+> ...fset by lower outside services and the card reward accounting change benefit Provision for credit losses was stable as increased commercial charge-offs were partially offset by a reduction in retail charge-offs Prior-year quarter: GAAP net income increased $14 million, or 7%, reflecting 4% positive **operating leverage**. Diluted EPS were up 8% NII up $68 million driven by 7% average loan growth, improved earning asset yields and mix, partially offset by higher borrowing and deposit costs and an FRB stock dividend reduction. NIM increased by 9 bps Noninterest income decreased $17 million as growth in service charge...
+
+> ... lower outside services and the card reward accounting change benefit Provision for credit losses was stable as increased commercial charge-offs were partially offset by a reduction in retail charge-offs Prior-year Adjusted (1) quarter: Net income increased $8 million, or 4%, reflecting 3% positive **operating leverage**. Adjusted diluted EPS were up 5% NII up $68 million driven by 7% average loan growth, improved earning asset yields and mix, partially offset by higher borrowing and deposit costs and an FRB stock dividend reduction. NIM increased by 9 bps Noninterest income decreased $17 million as growth in servi...
+
+### 27. HyreCar Inc.  (CIK 0001713832) - 8-K 2018-07-31 - `f8k073118ex99-1_hyrecar.htm` -> **(a) / realized**
+SIC 7510; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1713832/000121390018009915/f8k073118ex99-1_hyrecar.htm)
+
+*Why:* Earnings release CEO quote: starting to see some operating leverage, 40% gross margin.
+
+> ...$3.2 million for the full year ending December 31, 2017. Management Commentary “Our record preliminary revenues of approximately $2.1 million in the second quarter of 2018 was a direct result of an increased demand for carsharing services. As we reach critical mass, we are also starting to see some **operating leverage** in the business, as evidenced by our gross profit margin of 40% in the second quarter of 2018,” said Joe Furnari, Chief Executive Officer of HyreCar. “On the heels of our IPO in June—which provided us with gross proceeds of $12.6 million—we believe we now have the growth capital to aggressively inv...
+
+### 28. XPO Logistics, Inc.  (XPO)  (CIK 0001166003) - 8-K 2019-10-28 - `tm19212632_ex99-1.htm` -> **(a) / model-claim**
+SIC 4700; doc_role=ex99; earnings 8-K=False; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1166003/000110465919056891/tm19212632_ex99-1.htm)
+
+*Why:* Investor/strategy release: 'our scale also propels operating leverage'.
+
+> ... important in e-commerce and omnichannel supply chains, where we have a strong global presence. 1 · Currently, we hold less than 2% share of the total addressable market opportunity. Our share growth complements opportunities for further consolidation of fragmented markets. · Our scale also propels **operating leverage**, cross-selling, purchasing power and capacity to innovate. · Our business model is optimized for free cash flow generation in all parts of the cycle: 70% of our revenue is asset-light and 77% of our cost basis is variable. · We serve customers in different verticals with diverse economic cycles and...
+
+### 29. Nimble Storage Inc  (CIK 0001452751) - 8-K 2015-08-25 - `d50521dex991.htm` -> **(a) / realized**
+SIC 3572; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1452751/000119312515301616/d50521dex991.htm)
+
+*Why:* Earnings release: demonstrating improved operating leverage year over year.
+
+> ...m growth given that data growth drives repeat deployments by our customers. Even as we pursue our long-term goal of storage market leadership, our financial strategy has been to balance growth with profitability – investing to drive sustained high growth over many years while demonstrating improved **operating leverage** and increased positive cash flow on a year-over-year basis. Q2FY16 marked strong progress on all fronts: • Record pace of new customer acquisition with 690 new customers - our highest ever in a single quarter. Our global customer base now stands at more than 6,200 customers. • Rapid pace of growth ...
+
+### 30. 1 800 FLOWERS COM INC  (FLWS)  (CIK 0001084869) - 8-K 2013-01-31 - `a50548608ex99_1.htm` -> **(a) / forward**
+SIC 5990; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1084869/000115752313000401/a50548608ex99_1.htm)
+
+*Why:* Earnings release guidance: anticipated improvement in operating leverage drives double-digit EBITDA/EPS growth.
+
+> ...ine guidance for fiscal 2013, saying it continues to expect to achieve revenue growth across all three of its business segments with consolidated revenue growth for the year anticipated to be in the mid-single-digit range. Also, based on anticipated continued improvements in gross profit margin and **operating leverage**, the Company expects to achieve double-digit, year-over-year increases in EBITDA and EPS as well as Free Cash Flow in excess of $20 million. Definitions: * EBITDA : Net income (loss) before interest, taxes, depreciation, amortization. Free Cash Flow : net cash provided by operating activities less ...
+
+### 31. HOPE BANCORP INC  (HOPE)  (CIK 0001128361) - 8-K 2026-01-27 - `a4q25hopeccdeck.htm` -> **(d) / bank**
+SIC 6021; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1128361/000112836126000007/a4q25hopeccdeck.htm)
+
+*Why:* Bank outlook deck: revenue growth with positive operating leverage.
+
+> ...d net interest margin expansion ▪ Continuation of fee income growth momentum ▪ Forward interest rate curve assumes two Fed Funds rate cuts: 25bps each in June 2026 and September 2026 Pre-Provision Net Revenue(2) (excluding notable items) $ 169 ~ 25-30% growth ▪ Revenue growth combined with positive **operating leverage** from investments made to strengthen revenue generating capabilities ▪ Disciplined expense management relative to 4Q25 run-rate, while continuing to invest to support revenue growth (1) The Financial Outlook for 2026 is presented as of January 27, 2026, reflects the Company’s updated financial outlo...
+
+### 32. FEDERAL SIGNAL CORP /DE/  (FSS)  (CIK 0000277509) - 10-Q 2019-07-31 - `fss-2019630x10q.htm` -> **(a) / realized**
+SIC 3711; doc_role=main; earnings 8-K=False; occurrences in file=8; [link](https://www.sec.gov/Archives/edgar/data/277509/000027750919000039/fss-2019630x10q.htm)
+
+*Why:* MD&A: operating income and gross margin up on higher volume and improved operating leverage.
+
+> ...ng systems. Operating income increased by $8.2 million , or 22% , to $46.3 million in the three months ended June 30, 2019 as compared to the prior-year quarter, primarily driven by a $7.6 million increase within our Environmental Solutions Group associated with increased sales volumes and improved **operating leverage**. Operating income in the three months ended June 30, 2019 within our Safety and Security Systems Group increased by $1.3 million , largely due to benefits from pricing actions, favorable sales mix, and lower operating expenses, while Corporate expenses increased by $0.7 million . Consolidated opera...
+
+> ... 30, 2019 , operating income increased by $14.4 million as compared to the corresponding period of the prior year. Within our Environmental Solutions Group, operating income for the six months ended June 30, 2019 increased by $12.7 million , or 22% , largely due to higher sales volumes and improved **operating leverage**. Within our Safety and Security Systems Group, operating income in the six months ended June 30, 2019 increased by $3.9 million , or 27% , largely due to benefits from pricing actions, favorable sales mix, and lower operating expenses, while Corporate expenses increased by $2.2 million . Consolidat...
+
+> ...hs ended June 30, 2019 improved to 27.4% , from 27.2% in the prior-year quarter, primarily driven by improvements within the Safety and Security Group and Environmental Solutions Group of 220 basis points and 20 basis points, respectively. Margin improvements were primarily attributable to improved **operating leverage**, benefits from pricing actions and favorable sales mix. For the six months ended June 30, 2019 , gross profit increased by $18.2 million , or 13% , primarily due to improvements of $15.0 million and $3.2 million within the Environmental Solutions Group and the Safety and Security Systems Group, res...
+
+### 33. Palo Alto Networks Inc  (PANW)  (CIK 0001327567) - 8-K 2017-11-20 - `ex991q118earningsrelease.htm` -> **(a) / forward**
+SIC 3577; doc_role=ex99; earnings 8-K=True; occurrences in file=2; [link](https://www.sec.gov/Archives/edgar/data/1327567/000132756717000032/ex991q118earningsrelease.htm)
+
+*Why:* Earnings release CEO quote: take share at scale while increasing operating leverage (also repeated in the forward-looking-statements legend).
+
+> ...n, and I look forward to continuing to work with Kathy as we drive the next evolution in cybersecurity.” “I’m excited about the growth potential in front of Palo Alto Networks,” said Bonanno. “As the market disruptor, we have a unique opportunity to continue to take share at scale, while increasing **operating leverage**. I look forward to continuing to work with our team to realize the company’s potential.” Recent Highlights • Released Traps version 4.1 – Traps™, our advanced endpoint protection offering, now offers additional features that enable customers to prevent malware and kernel exploit attacks by monitori...
+
+> ...tion offerings and the effectiveness of our offerings to perform as intended, our continued delivery of highly automated and orchestrated security capabilities that increase prevention rates and simplify consumption models, our opportunity to continue to take market share at scale, while increasing **operating leverage**, and our plans to use the upfront cash reimbursement received from our landlords against future rental payments. There are a significant number of factors that could cause actual results to differ materially from statements made in this press release, including: our limited operating history; our a...
+
+### 34. OPTICAL CABLE CORP  (OCC)  (CIK 0001000230) - 8-K 2023-03-14 - `ex_488381.htm` -> **(a) / realized**
+SIC 3357; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/1000230/000143774923006464/ex_488381.htm)
+
+*Why:* Earnings release CEO quote: results demonstrate the strength of our operating leverage.
+
+> ... bottom line results, while our sales order backlog/forward load continued to be higher than typical levels. Our results reflect our success executing our growth strategies and operating efficiently. They also demonstrate the strong demand for our products across our markets and the strength of our **operating leverage**. We remain well-positioned in our target markets, and are confident in OCC’s ability to drive further shareholder value creation.” Conference Call Information As previously announced, OCC will host a conference call today, March 13, 2023, at 10:00 a.m. Eastern Time. Individuals wishing to participa...
+
+### 35. WINNEBAGO INDUSTRIES INC  (WGO)  (CIK 0000107687) - 10-Q 2021-12-17 - `wgo-20211127.htm` -> **(a) / realized**
+SIC 3716; doc_role=main; earnings 8-K=False; occurrences in file=3; [link](https://www.sec.gov/Archives/edgar/data/107687/000010768721000050/wgo-20211127.htm)
+
+*Why:* MD&A: gross margin and segment EBITDA up on operating leverage from higher revenue/units.
+
+> ...2.90 $ 1.70 $ 1.20 70.6 % Diluted weighted average shares outstanding 34,378 33,839 539 1.6 % (1) Percentages may not add due to rounding differences. Net revenues increased primarily due to unit growth and price increases. Gross profit as a percentage of revenue increased primarily due to improved **operating leverage** on higher revenues, price increases, productivity initiatives, and favorable segment mix, partially offset by higher material and component costs. Operating expenses increased primarily due to higher selling costs from improved operating performance, acquisition-related costs, incremental amortizat...
+
+> ...backlog generally can be cancelled or postponed at the option of the dealer at any time without penalty; therefore, backlog may not necessarily be an accurate measure of future sales. Net revenues increased primarily due to unit growth and price increases. Adjusted EBITDA increased primarily due to **operating leverage** on an increase in unit sales, partially offset by higher operating expenses. 25 Table of Contents Motorhome The following is an analysis of key changes in our Motorhome segment for the three months ended November 27, 2021 compared to the three months ended November 28, 2020: Three Months Ended (in ...
+
+> ...acklog generally can be cancelled or postponed at the option of the dealer at any time without penalty; therefore, backlog may not necessarily be an accurate measure of future sales. Net revenues increased primarily due to unit growth and price increases. Adjusted EBITDA increa sed primarily due to **operating leverage** on an increase in unit sales and productivity initiatives, partially offset by higher operating expenses. 26 Table of Contents Marine The following is an analysis of key changes in our Marine segment for the three months ended November 27, 2021 compared to the three months ended November 28, 2020: ...
+
+### 36. Western Midstream Partners, LP  (WES)  (CIK 0001423902) - 8-K 2026-05-06 - `wes2026q1xex991xearningsre.htm` -> **(a) / realized**
+SIC 4922; doc_role=ex99; earnings 8-K=True; occurrences in file=2; [link](https://www.sec.gov/Archives/edgar/data/1423902/000142390226000043/wes2026q1xex991xearningsre.htm)
+
+*Why:* Earnings release: 2025 cost actions materially improved operating leverage.
+
+> ...s increased in March, we benefited directly through skim oil recoveries on the Aris system and the fixed recovery natural-gas 2 processing contracts we have been deliberately building across our portfolio. Combined with the cost reduction actions executed in 2025, which have materially improved our **operating leverage**, the earnings power of WES is increasingly evident.” “The Delaware Basin remains the cornerstone of our growth strategy and the primary driver of our capital allocation. It is the premier operating basin in North America, and WES has built one of the most integrated midstream platforms across crude...
+
+> ... we expect to be towards the high end of both the Adjusted EBITDA and Distributable Cash Flow ranges, without taking into account the impact of the Brazos transaction. This improved outlook is due to increased commercial discussions, the very favorable commodity price environment, and our improving **operating leverage** due to our successful and ongoing cost competitiveness efforts. With that said, we intend to reevaluate our 2026 guidance ranges in conjunction with our second-quarter results after the scheduled close of the Brazos transaction.” “All in all, years of hard work that have culminated in multiple quar...
+
+### 37. INTERNATIONAL FLAVORS & FRAGRANCES INC  (IFF)  (CIK 0000051253) - 10-Q 2011-05-10 - `c15560e10vq.htm` -> **(a) / realized**
+SIC 2860; doc_role=main; earnings 8-K=False; occurrences in file=2; [link](https://www.sec.gov/Archives/edgar/data/51253/000095012311047825/c15560e10vq.htm)
+
+*Why:* MD&A: COGS/sales improved on favorable operating leverage; segment profit on increasing operating leverage.
+
+> ... March 31, 2011 2010 Cost of goods sold 58.4 % 58.7 % Research and development expenses 8.0 % 8.0 % Selling and administrative expenses 14.9 % 16.5 % Cost of goods sold, as a percentage of sales, decreased 30 basis points in 2011 compared to 2010. The improvement versus last year reflects favorable **operating leverage** and ongoing margin recovery efforts in both businesses, benefits associated with the European rationalization that was completed in late 2010, and a stronger sales mix, that more than offset the effects on higher input costs. We expect that these additional costs will begin to impact our reported r...
+
+> ...ments for the reconciliation to Income before taxes. Flavors In the first quarter 2011, Flavors operating profit totaled $79 million, or 23.3% as a percentage of sales, compared to $62 million or 20.5% in 2010. The improvement in profitability was mainly driven by strong sales growth and increasing **operating leverage**, combined with price realization and margin improvement initiatives that more than offset the effects of higher input costs. We continue to see indications of accelerating input costs in our procurement and inventory data. We expect that these additional costs will begin to impact our reported resu...
+
+### 38. PARAMETRIC TECHNOLOGY CORP  (PTC)  (CIK 0000857005) - 8-K 2012-04-25 - `remarks.htm` -> **(a) / forward**
+SIC 7372; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/857005/000085700512000011/remarks.htm)
+
+*Why:* Prepared remarks: investing in sales capacity to create further operating leverage opportunities over time.
+
+> ...significant investments in FY’09 and FY’10 that have helped us achieve a technology leadership position and have driven substantial revenue growth. In FY’12 we are continuing to invest in sales capacity to capitalize on our technology leadership position, driving revenue growth and creating further **operating leverage** opportunities over time. Looking forward, we expect to continue to increase our R&D investments, while having R&D as a percentage of revenue to continue to trend toward more normalized historical levels as it did over the back half of FY’11. TAX RATE Q2 non-GAAP tax rate was 25%, compared to our ex...
+
+### 39. HERSHEY CO  (HSY)  (CIK 0000047111) - 10-Q 2014-10-31 - `hsy-20140928q3.htm` -> **(a) / realized**
+SIC 2060; doc_role=main; earnings 8-K=False; occurrences in file=2; [link](https://www.sec.gov/Archives/edgar/data/47111/000004711114000042/hsy-20140928q3.htm)
+
+*Why:* MD&A: operating leverage from higher volumes added to gross margin, though total gross margin still fell.
+
+> ...re offset in part by supply chain productivity and lower pension costs, which together lowered cost of sales by 2.2%. Gross margin decreased by 230 basis points in the third quarter of 2014 compared to the same period of 2013 . Supply chain productivity and other cost savings initiatives as well as **operating leverage** from the higher sales volumes collectively improved gross margin by 130 basis points. However, these benefits were more than offset by higher commodity and other input costs, primarily dairy ingredients, unfavorable sales mix, and a higher trade rate due to the timing of merchandising and programmi...
+
+> ...the same period of 2013 . Higher commodity and other input costs, supply chain cost inflation, and unfavorable sales mix together reduced gross profit margin by approximately 260 basis points. These reductions were partially offset by supply chain productivity and other cost savings initiatives and **operating leverage** from the higher sales volumes, which together improved gross margin by 120 basis points. Selling, Marketing and Administrative Selling, marketing and administrative expenses increased by 0.2% in the first nine months of 2014 . This includes a reduction of 2.2% in advertising and related consumer ma...
+
+### 40. Skyline Champion Corp  (SKY)  (CIK 0000090896) - 8-K 2022-05-23 - `sky-ex99_1.htm` -> **(a) / realized**
+SIC 2451; doc_role=ex99; earnings 8-K=True; occurrences in file=1; [link](https://www.sec.gov/Archives/edgar/data/90896/000095017022010496/sky-ex99_1.htm)
+
+*Why:* Earnings release: net income up on volume, pricing and operating leverage.
+
+> ...on and the ongoing investments in capacity expansion and the enhanced customer buying experience. Net income increased by 156.1% to $86.8 million for the fourth quarter fiscal 2022 compared to the prior-year period. The increase in net income was driven by the increase in sales volume, pricing, and **operating leverage**. Adjusted EBITDA for the fourth quarter fiscal 2022 increased by 137.0% to $121.4 million compared to the fourth quarter fiscal 2021 driven by an increase in net sales and improved profitability. Adjusted EBITDA margin expanded by 760 basis points to 19.0% due to higher sales and continued operatio...
