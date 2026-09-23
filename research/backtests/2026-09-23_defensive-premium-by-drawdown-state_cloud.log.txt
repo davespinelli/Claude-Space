@@ -1,0 +1,244 @@
+=== idea 2543 — DOES THE CANDIDATE BEAT ITS OWN GROSS-MATCHED BLEND ONLY IN DRAWDOWN WEEKS? ===
+    2026-09-23  lane cloud run 73   band 0.03  MA 200d  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  cap 2%  sweep SHY (phi=1.00)
+    DIAL 1 theta [0.03, 0.05, 0.1, 0.15, 0.2] (SPY drawdown depth)   DIAL 2 gross [0.75, 1.0]   arms ['CAP2', 'CAND', 'BLEND', 'EWBH']
+    STATE IS LAGGED: s_t = 1[dd_SPY,t-1 <= -theta], known at the PRIOR close, so every
+    statistic below is implementable.  The CONTEMPORANEOUS convention is published beside it,
+    never selected on, because it is the one a naive decomposition would use and it FLATTERS.
+    PRIOR, STATED BEFORE COMPUTE AND REFUTABLE BOTH WAYS: a CONCENTRATED premium (in-state
+    share >> day share, few episodes) makes the candidate crash insurance and 2532's MaxDD
+    count meaningful; a DIFFUSE one (concentration ~1, premium positive out-of-state too)
+    makes 2532's count an artefact of WHERE the tape's worst days fell.
+    SMALL NOT PRICED: 0 of 40-128 4b cells with three legs failing at once (2318/2322/2326/
+    2343/2383) — there is no defensive premium there to decompose.
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; `L_CAGR` is the
+    contaminated leg.  `d_t` is a SAME-DAY difference over the identical panel — first-order immune.
+    GATE PASS  G6 exactly two tuned parameters: theta, gross (target 2)
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G1 per-column replica == engine.backtest (live RULES v2, flat 10 bps, sweep off): max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G2 the blend's m_t IS the capped candidate's realised risk gross, day by day: max|d| 9.992e-16; the 2% cap BITES (m_t < g) on 29.7% of scored days, m_t range [0.1000, 0.7500] (target < 1e-12)
+    GATE PASS  G7 the state is CAUSAL (a strict lag of a running max; truncation changes nothing before it): truncation max|d| 0.000e+00; lag identity holds: True (target 0.0 and True)
+
+    64 arm rows = 2 panels x 4 arms x 2 gross x 4 rungs;  80 decomposition rows = 2 panels x 2 x 4 x 5 thetas,  each with a 2000-draw block bootstrap (block 63d).
+    GATE PASS  G4 no leverage anywhere (max gross <= 1): max 1.000000 (target <= 1+1e-12)
+    GATE PASS  G5 the cost charge is EXACTLY linear in the rung: max|d| 3.469e-18 (target < 1e-15)
+    GATE PASS  G9 sweep instrument priced on every held row: SHY non-null both panels: True (target True)
+    GATE PASS  G3 the committed cells reproduce the record's U56 headlines (CAP2 11.62%/1.2687/-14.81%, OOS 12.77%/1.3318; CAND 12.59%/1.1934/-17.39%): CAP2 11.62%/1.2687/-14.81% OOS 12.77%/1.3318; CAND 12.59%/1.1934/-17.39% -> max|d| 4.98e-05 (target < 1e-3)
+    GATE PASS  G8 the decomposition is EXACT (in-state + out-of-state == total premium, every row): max|d| 6.939e-18 over 80 rows (target < 1e-12)
+    GATE FAIL  G10 2532's two headline counts reproduce (CAP2 wins MaxDD and loses CAGR vs BLEND): MaxDD win 16 of 16; CAGR loss 9 of 16 (target 16 of 16 both)
+
+=== A. THE ARMS — EVERY GRID POINT (2 panels x 4 arms x 2 gross x 4 rungs) ===
+  panel arm   gross   bps |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh | turn/yr | mean g | 4a 4b | H1/H2/OOS/DD/CAGR
+  U56   CAP2   0.75   0.0 | 12.01%  1.3079  -14.77% |  1.34   1.28 |  13.17%  1.3693 |    3.51 |  1.000 | .  Y  | 11111
+  U56   CAP2   0.75  10.0 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 |    3.51 |  1.000 | .  Y  | 11111   <= COMMITTED
+  U56   CAP2   0.75  25.0 | 11.04%  1.2098  -14.88% |  1.24   1.19 |  12.18%  1.2755 |    3.51 |  1.000 | .  Y  | 11111
+  U56   CAP2   0.75  50.0 | 10.07%  1.1113  -14.99% |  1.14   1.09 |  11.21%  1.1813 |    3.51 |  1.000 | .  .  | 11110
+  U56   CAP2   1.00   0.0 | 13.11%  1.2579  -17.22% |  1.29   1.24 |  14.76%  1.3331 |    3.99 |  1.000 | .  Y  | 11111
+  U56   CAP2   1.00  10.0 | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 |    3.99 |  1.000 | .  Y  | 11111
+  U56   CAP2   1.00  25.0 | 11.99%  1.1598  -17.36% |  1.18   1.15 |  13.60%  1.2384 |    3.99 |  1.000 | .  Y  | 11111
+  U56   CAP2   1.00  50.0 | 10.88%  1.0614  -17.50% |  1.08   1.05 |  12.45%  1.1434 |    3.99 |  1.000 | .  Y  | 11111
+  U56   CAND   0.75   0.0 | 13.09%  1.2361  -17.27% |  1.28   1.21 |  14.35%  1.2803 |    4.39 |  1.000 | .  Y  | 11111
+  U56   CAND   0.75  10.0 | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 |    4.39 |  1.000 | .  Y  | 11111   <= COMMITTED
+  U56   CAND   0.75  25.0 | 11.85%  1.1292  -17.57% |  1.17   1.10 |  13.10%  1.1787 |    4.39 |  1.000 | .  Y  | 11111
+  U56   CAND   0.75  50.0 | 10.63%  1.0220  -17.86% |  1.06   1.00 |  11.87%  1.0768 |    4.39 |  1.000 | .  .  | 11110
+  U56   CAND   1.00   0.0 | 17.03%  1.2017  -23.00% |  1.25   1.17 |  18.59%  1.2403 |    5.68 |  1.000 | .  .  | 11101
+  U56   CAND   1.00  10.0 | 16.37%  1.1604  -23.14% |  1.21   1.13 |  17.92%  1.2011 |    5.68 |  1.000 | .  .  | 11101
+  U56   CAND   1.00  25.0 | 15.38%  1.0984  -23.36% |  1.15   1.07 |  16.92%  1.1421 |    5.68 |  1.000 | .  .  | 11101
+  U56   CAND   1.00  50.0 | 13.75%  0.9947  -23.73% |  1.04   0.97 |  15.27%  1.0436 |    5.68 |  1.000 | .  .  | 11101
+  U56   BLEND  0.75   0.0 | 11.55%  1.2489  -16.96% |  1.30   1.21 |  12.56%  1.2966 |    2.03 |  1.000 | .  Y  | 11111
+  U56   BLEND  0.75  10.0 | 11.32%  1.2261  -16.97% |  1.28   1.19 |  12.34%  1.2759 |    2.03 |  1.000 | .  Y  | 11111   <= COMMITTED
+  U56   BLEND  0.75  25.0 | 10.98%  1.1920  -16.98% |  1.24   1.16 |  12.02%  1.2448 |    2.03 |  1.000 | .  Y  | 11111
+  U56   BLEND  0.75  50.0 | 10.42%  1.1349  -17.00% |  1.18   1.10 |  11.48%  1.1929 |    2.03 |  1.000 | .  .  | 11110
+  U56   BLEND  1.00   0.0 | 12.59%  1.2158  -19.42% |  1.26   1.19 |  14.09%  1.2831 |    3.20 |  1.000 | .  Y  | 11111
+  U56   BLEND  1.00  10.0 | 12.23%  1.1842  -19.47% |  1.22   1.16 |  13.73%  1.2531 |    3.20 |  1.000 | .  Y  | 11111
+  U56   BLEND  1.00  25.0 | 11.70%  1.1367  -19.54% |  1.17   1.12 |  13.18%  1.2079 |    3.20 |  1.000 | .  Y  | 11111
+  U56   BLEND  1.00  50.0 | 10.80%  1.0574  -19.65% |  1.09   1.04 |  12.27%  1.1324 |    3.20 |  1.000 | .  Y  | 11111
+  U56   EWBH   0.75   0.0 | 13.71%  1.1600  -22.09% |  1.22   1.11 |  14.35%  1.1754 |    0.98 |  1.000 | .  .  | 11101
+  U56   EWBH   0.75  10.0 | 13.60%  1.1515  -22.11% |  1.21   1.10 |  14.24%  1.1670 |    0.98 |  1.000 | .  .  | 11101   <= COMMITTED
+  U56   EWBH   0.75  25.0 | 13.43%  1.1389  -22.14% |  1.20   1.09 |  14.06%  1.1545 |    0.98 |  1.000 | .  .  | 11101
+  U56   EWBH   0.75  50.0 | 13.16%  1.1179  -22.19% |  1.18   1.07 |  13.78%  1.1335 |    0.98 |  1.000 | .  .  | 11101
+  U56   EWBH   1.00   0.0 | 17.83%  1.1302  -29.16% |  1.20   1.07 |  18.54%  1.1401 |    1.09 |  1.000 | .  .  | 11101
+  U56   EWBH   1.00  10.0 | 17.70%  1.1232  -29.18% |  1.19   1.07 |  18.40%  1.1330 |    1.09 |  1.000 | .  .  | 11101
+  U56   EWBH   1.00  25.0 | 17.51%  1.1127  -29.20% |  1.18   1.06 |  18.20%  1.1224 |    1.09 |  1.000 | .  .  | 11101
+  U56   EWBH   1.00  50.0 | 17.19%  1.0951  -29.24% |  1.16   1.04 |  17.87%  1.1048 |    1.09 |  1.000 | .  .  | 11101
+  SPY (U56): 15.23% / 0.8897 / -33.72%  OOS 15.45% / 0.8831   |   live RULES v2: Sharpe 1.2052, MaxDD -12.05%, OOS Sh 1.2839
+  B136  CAP2   0.75   0.0 | 12.35%  1.1629  -16.61% |  1.30   1.04 |  12.19%  1.1392 |    4.68 |  1.000 | .  Y  | 11111
+  B136  CAP2   0.75  10.0 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 |    4.68 |  1.000 | .  Y  | 11111   <= COMMITTED
+  B136  CAP2   0.75  25.0 | 11.04%  1.0505  -17.93% |  1.20   0.92 |  10.85%  1.0250 |    4.68 |  1.000 | .  Y  | 11111
+  B136  CAP2   0.75  50.0 |  9.75%  0.9379  -19.31% |  1.09   0.80 |   9.53%  0.9106 |    4.68 |  1.000 | .  .  | 10110
+  B136  CAP2   1.00   0.0 | 15.73%  1.1339  -22.31% |  1.28   1.00 |  15.44%  1.1072 |    5.83 |  1.000 | .  .  | 11101
+  B136  CAP2   1.00  10.0 | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 |    5.83 |  1.000 | .  .  | 11101
+  B136  CAP2   1.00  25.0 | 14.06%  1.0269  -22.49% |  1.18   0.89 |  13.73%  0.9985 |    5.83 |  1.000 | .  .  | 11101
+  B136  CAP2   1.00  50.0 | 12.40%  0.9197  -22.66% |  1.08   0.78 |  12.04%  0.8895 |    5.83 |  1.000 | .  .  | 10101
+  B136  CAND   0.75   0.0 | 12.54%  1.1384  -17.97% |  1.24   1.05 |  12.85%  1.1446 |    4.91 |  1.000 | .  Y  | 11111
+  B136  CAND   0.75  10.0 | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 |    4.91 |  1.000 | .  Y  | 11111   <= COMMITTED
+  B136  CAND   0.75  25.0 | 11.17%  1.0248  -18.33% |  1.13   0.93 |  11.45%  1.0316 |    4.91 |  1.000 | .  Y  | 11111
+  B136  CAND   0.75  50.0 |  9.81%  0.9109  -19.32% |  1.02   0.82 |  10.08%  0.9184 |    4.91 |  1.000 | .  .  | 10110
+  B136  CAND   1.00   0.0 | 16.25%  1.1052  -24.01% |  1.22   1.01 |  16.51%  1.1045 |    6.32 |  1.000 | .  .  | 11101
+  B136  CAND   1.00  10.0 | 15.52%  1.0615  -24.19% |  1.17   0.96 |  15.77%  1.0610 |    6.32 |  1.000 | .  .  | 11101
+  B136  CAND   1.00  25.0 | 14.43%  0.9959  -24.47% |  1.11   0.90 |  14.66%  0.9956 |    6.32 |  1.000 | .  .  | 11101
+  B136  CAND   1.00  50.0 | 12.63%  0.8864  -24.92% |  1.00   0.79 |  12.84%  0.8865 |    6.32 |  1.000 | .  .  | 10101
+  B136  BLEND  0.75   0.0 | 13.49%  1.1759  -20.27% |  1.34   1.04 |  13.05%  1.1273 |    1.44 |  1.000 | .  .  | 11101
+  B136  BLEND  0.75  10.0 | 13.32%  1.1629  -20.34% |  1.32   1.02 |  12.87%  1.1131 |    1.44 |  1.000 | .  .  | 11101   <= COMMITTED
+  B136  BLEND  0.75  25.0 | 13.08%  1.1435  -20.45% |  1.31   1.00 |  12.61%  1.0919 |    1.44 |  1.000 | .  .  | 11101
+  B136  BLEND  0.75  50.0 | 12.67%  1.1111  -20.63% |  1.28   0.96 |  12.16%  1.0565 |    1.44 |  1.000 | .  .  | 11101
+  B136  BLEND  1.00   0.0 | 16.90%  1.1452  -25.58% |  1.31   1.00 |  16.26%  1.0945 |    2.07 |  1.000 | .  .  | 11101
+  B136  BLEND  1.00  10.0 | 16.66%  1.1307  -25.59% |  1.30   0.98 |  16.01%  1.0793 |    2.07 |  1.000 | .  .  | 11101
+  B136  BLEND  1.00  25.0 | 16.30%  1.1088  -25.60% |  1.28   0.96 |  15.63%  1.0566 |    2.07 |  1.000 | .  .  | 11101
+  B136  BLEND  1.00  50.0 | 15.69%  1.0723  -25.61% |  1.24   0.92 |  15.01%  1.0187 |    2.07 |  1.000 | .  .  | 11101
+  B136  EWBH   0.75   0.0 | 14.50%  1.1495  -24.95% |  1.26   1.05 |  14.29%  1.1285 |    1.02 |  1.000 | .  .  | 11101
+  B136  EWBH   0.75  10.0 | 14.39%  1.1413  -24.97% |  1.25   1.04 |  14.17%  1.1200 |    1.02 |  1.000 | .  .  | 11101   <= COMMITTED
+  B136  EWBH   0.75  25.0 | 14.21%  1.1289  -25.00% |  1.24   1.03 |  13.99%  1.1073 |    1.02 |  1.000 | .  .  | 11101
+  B136  EWBH   0.75  50.0 | 13.92%  1.1083  -25.05% |  1.22   1.01 |  13.69%  1.0861 |    1.02 |  1.000 | .  .  | 11101
+  B136  EWBH   1.00   0.0 | 18.88%  1.1205  -32.71% |  1.24   1.01 |  18.41%  1.0926 |    1.14 |  1.000 | .  .  | 11101
+  B136  EWBH   1.00  10.0 | 18.74%  1.1137  -32.72% |  1.23   1.01 |  18.27%  1.0854 |    1.14 |  1.000 | .  .  | 11101
+  B136  EWBH   1.00  25.0 | 18.54%  1.1034  -32.74% |  1.22   0.99 |  18.06%  1.0747 |    1.14 |  1.000 | .  .  | 11101
+  B136  EWBH   1.00  50.0 | 18.20%  1.0862  -32.78% |  1.21   0.98 |  17.71%  1.0569 |    1.14 |  1.000 | .  .  | 11101
+  SPY (B136): 15.12% / 0.8844 / -33.72%  OOS 15.26% / 0.8737   |   live RULES v2: Sharpe 1.0972, MaxDD -12.24%, OOS Sh 1.1017
+
+  4b passes over the 64 arm rows: CAP2 10/16  CAND 6/16  BLEND 7/16  EWBH 0/16   |  4a: CAP2 0  CAND 0  BLEND 0  EWBH 0
+
+=== A2. UNPLANNED BUT FORCED BY THE NUMBERS — WHICH BLEND DID 2532 / 2550 ACTUALLY PRICE? ===
+    Idea 2550 published BLEND_BH failing 4b in 128 of 128 on `L_DD`, with MaxDD running -24.68%
+    to -44.19% and never within 4.4 pp of the -20.23% bar.  This run's BLEND — gross-matched to
+    the CAPPED candidate's KINKED path `min(g, 0.02 x N_in)`, asserted day-by-day by G2 — does
+    not look like that object at all, while this run's EWBH (CONSTANT gross, the path of the
+    UNCAPPED CAND) does.  The two conventions are reported side by side; neither is selected on.
+  panel gross | BLEND (CAP2-gross-matched)        | EWBH (constant gross)             | 2550's BLEND_BH range
+  U56    0.75 | MaxDD -16.97%  CAGR 11.32%  4b PASS | MaxDD -22.11%  CAGR 13.60%  4b fail | -24.68% .. -44.19%, 0 of 128
+  U56    1.00 | MaxDD -19.47%  CAGR 12.23%  4b PASS | MaxDD -29.18%  CAGR 17.70%  4b fail | -24.68% .. -44.19%, 0 of 128
+  B136   0.75 | MaxDD -20.34%  CAGR 13.32%  4b fail | MaxDD -24.97%  CAGR 14.39%  4b fail | -24.68% .. -44.19%, 0 of 128
+  B136   1.00 | MaxDD -25.59%  CAGR 16.66%  4b fail | MaxDD -32.72%  CAGR 18.74%  4b fail | -24.68% .. -44.19%, 0 of 128
+   4b over this run's 16 rows per arm: BLEND 7/16, EWBH 0/16 — EWBH fails `L_DD` in every one, exactly as 2550 reports.
+   READ THIS NARROWLY: this run cannot re-execute 2550's 128-cell grid, so it does not overturn
+   that KILL.  What it does show, on its own tape, is that the CAP2-KINK-MATCHED blend is a
+   MATERIALLY more defensive object than the constant-gross one (MaxDD -16.97% vs -22.09% at the
+   U56 committed cell) and clears `L_DD` where the constant-gross blend cannot — so 2550's
+   'the comparand is not itself fundable' applies to the CONSTANT-GROSS blend, and the record
+   should say which m_t it means.  FILED AS A QUESTION FOR THE RECORD, NOT AS A KEEP.
+
+=== B. THE WHOLE QUESTION — WHERE IS THE CAP2-minus-BLEND PREMIUM EARNED? (every theta) ===
+  panel gross  bps theta | prem pp/yr |  IN pp/yr  OUT pp/yr | day share | prem share IN | conc | episodes | boot 90% band on prem share IN
+  U56    0.75 10.0  0.03 |      +0.26 |     +0.18      +0.09 |     37.2% |         67.4% | 1.81 |      126 | [-158.0%, 354.0%] (med 67.9%)
+  U56    0.75 10.0  0.05 |      +0.26 |     +0.01      +0.25 |     25.9% |          3.2% | 0.12 |       76 | [-250.3%, 341.9%] (med 42.4%)
+  U56    0.75 10.0  0.10 |      +0.26 |     -0.52      +0.78 |     11.8% |       -198.4% | -16.75 |       39 | [-795.9%, 890.5%] (med -35.1%)
+  U56    0.75 10.0  0.15 |      +0.26 |     -0.40      +0.66 |      5.1% |       -152.5% | -29.63 |       30 | [-499.8%, 461.4%] (med -44.1%)
+  U56    0.75 10.0  0.20 |      +0.26 |     -0.19      +0.45 |      1.3% |        -73.6% | -55.49 |        9 | [-249.2%, 194.8%] (med -18.3%)
+  B136   0.75 10.0  0.03 |      -1.42 |     -0.70      -0.72 |     37.2% |         49.4% | 1.33 |      125 | [-26.3%,  85.7%] (med 46.2%)
+  B136   0.75 10.0  0.05 |      -1.42 |     -0.92      -0.50 |     25.9% |         64.8% | 2.50 |       76 | [ -1.6%, 126.1%] (med 62.0%)
+  B136   0.75 10.0  0.10 |      -1.42 |     -1.35      -0.07 |     11.8% |         94.9% | 8.01 |       39 | [ 41.6%, 234.6%] (med 92.1%)
+  B136   0.75 10.0  0.15 |      -1.42 |     -0.98      -0.44 |      5.1% |         69.1% | 13.43 |       30 | [ 28.2%, 241.9%] (med 68.2%)
+  B136   0.75 10.0  0.20 |      -1.42 |     -0.37      -1.05 |      1.3% |         26.0% | 19.60 |        9 | [  3.7%,  97.4%] (med 24.0%)
+
+  THE SAME DECOMPOSITION, ALL 80 ROWS, SUMMARISED BY theta (both panels, both gross, all rungs):
+  theta | mean prem pp/yr | mean day share | mean prem share IN | mean conc | mean episodes | rows with prem OUT > 0
+   0.03 |           -0.83 |          37.2% |              63.7% |      1.71 |         125.5 |     5 of 16
+   0.05 |           -0.83 |          25.9% |              21.2% |      0.82 |          76.0 |     7 of 16
+   0.10 |           -0.83 |          11.8% |            -126.3% |    -10.67 |          39.0 |    10 of 16
+   0.15 |           -0.83 |           5.1% |             -96.1% |    -18.68 |          30.0 |     8 of 16
+   0.20 |           -0.83 |           1.3% |             -49.7% |    -37.46 |           9.0 |     7 of 16
+
+  CONVENTION CHECK (published, never selected on) — the CONTEMPORANEOUS state flatters by:
+   theta 0.03: lagged prem share IN  63.7%  vs contemporaneous -15.3%  (-79.0%);  conc 1.71 vs -0.41
+   theta 0.05: lagged prem share IN  21.2%  vs contemporaneous  80.6%  (+59.4%);  conc 0.82 vs 3.12
+   theta 0.10: lagged prem share IN -126.3%  vs contemporaneous  58.9%  (+185.3%);  conc -10.67 vs 4.98
+   theta 0.15: lagged prem share IN -96.1%  vs contemporaneous 148.6%  (+244.7%);  conc -18.68 vs 28.87
+   theta 0.20: lagged prem share IN -49.7%  vs contemporaneous   1.4%  (+51.1%);  conc -37.46 vs 1.07
+
+  THE UNCAPPED ARM (CAND - BLEND), same states, published beside it:
+   theta 0.03: CAND prem  +0.43 pp/yr, share IN  53.6%, conc  1.44   (CAP2  -0.83 pp/yr,  63.7%,  1.71)
+   theta 0.05: CAND prem  +0.43 pp/yr, share IN  54.3%, conc  2.10   (CAP2  -0.83 pp/yr,  21.2%,  0.82)
+   theta 0.10: CAND prem  +0.43 pp/yr, share IN  52.9%, conc  4.47   (CAP2  -0.83 pp/yr, -126.3%, -10.67)
+   theta 0.15: CAND prem  +0.43 pp/yr, share IN  40.5%, conc  7.86   (CAP2  -0.83 pp/yr, -96.1%, -18.68)
+   theta 0.20: CAND prem  +0.43 pp/yr, share IN   3.6%, conc  2.70   (CAP2  -0.83 pp/yr, -49.7%, -37.46)
+
+=== B3. THE SHARE STATISTIC THE IDEA ASKED FOR IS NOT ESTIMABLE HERE, SO HERE IS THE ONE THAT IS.
+    A share-of-premium divides by the TOTAL premium, which section B shows is ~0 and SIGN-UNSTABLE
+    (+0.26 pp/yr on U56, -1.42 on B136), so every share and concentration ratio above is a
+    near-zero denominator blowing up — NOT a finding about drawdown weeks.  The CONDITIONAL-MEAN
+    GAP `252 x (mean(d|IN) - mean(d|OUT))` has no such denominator.  It is DERIVED, not tuned: it
+    uses the SAME d_t, the SAME lagged states and the SAME 63-day block bootstrap. ===
+  panel gross  bps theta | mean IN pp/yr | mean OUT pp/yr | GAP pp/yr | boot 90% band on the GAP | gap>0?
+  U56    0.75 10.0  0.03 |         +0.47 |          +0.14 |     +0.34 | [  -1.49,   +2.57] (med +0.59) | YES  band spans 0
+  U56    0.75 10.0  0.05 |         +0.03 |          +0.34 |     -0.31 | [  -2.75,   +2.68] (med -0.11) | no  band spans 0
+  U56    0.75 10.0  0.10 |         -4.38 |          +0.89 |     -5.27 | [  -9.87,   -0.96] (med -5.10) | no  <= band EXCLUDES 0
+  U56    0.75 10.0  0.15 |         -7.75 |          +0.70 |     -8.45 | [ -20.30,   -2.66] (med -8.77) | no  <= band EXCLUDES 0
+  U56    0.75 10.0  0.20 |        -14.52 |          +0.46 |    -14.98 | [ -42.44,   -3.44] (med -14.29) | no  <= band EXCLUDES 0
+  B136   0.75 10.0  0.03 |         -1.89 |          -1.15 |     -0.74 | [  -2.84,   +1.98] (med -0.49) | no  band spans 0
+  B136   0.75 10.0  0.05 |         -3.57 |          -0.68 |     -2.89 | [  -6.30,   +1.06] (med -2.55) | no  band spans 0
+  B136   0.75 10.0  0.10 |        -11.42 |          -0.08 |    -11.33 | [ -18.54,   -4.28] (med -10.96) | no  <= band EXCLUDES 0
+  B136   0.75 10.0  0.15 |        -19.13 |          -0.46 |    -18.67 | [ -37.75,   -9.33] (med -18.83) | no  <= band EXCLUDES 0
+  B136   0.75 10.0  0.20 |        -27.92 |          -1.07 |    -26.86 | [ -61.17,   -9.39] (med -26.53) | no  <= band EXCLUDES 0
+
+  ALL 80 ROWS by theta (both panels, both gross, all rungs):
+  theta | mean GAP pp/yr | rows with GAP > 0 | rows whose 90% band EXCLUDES 0 | mean IN | mean OUT
+   0.03 |          -0.23 |     9 of 16        |     0 of 16                  |   -0.98 |   -0.74
+   0.05 |          -1.74 |     0 of 16        |     1 of 16                  |   -2.12 |   -0.38
+   0.10 |          -8.75 |     0 of 16        |    16 of 16                  |   -8.54 |   +0.21
+   0.15 |         -14.28 |     0 of 16        |    16 of 16                  |  -14.37 |   -0.10
+   0.20 |         -21.37 |     0 of 16        |    16 of 16                  |  -21.92 |   -0.55
+
+  OVER ALL 80 ROWS: the conditional-mean gap is POSITIVE in 9 of 80 and its 90% block-bootstrap band EXCLUDES ZERO in 49 of 80.
+
+=== C. HOW MUCH OF THE PREMIUM IS EARNED IN HOW FEW DAYS — the worst-days census,
+    which needs no threshold at all (published, no dial): ===
+  panel gross  bps | premium pp/yr | share earned on the WORST 1% / 5% / 10% of SPY days | share on SPY-UP days
+  U56    0.75 10.0 |         +0.26 |    338.0% / 616.7% / 647.4% |             -713.0%
+        ^ the SAME cell as CONDITIONAL MEANS (no near-zero denominator): worst 1% +87.5 pp/yr, worst 5% +32.2, the other 95% -1.4
+  B136   0.75 10.0 |         -1.42 |    -90.5% / -183.8% / -211.6% |              364.7%
+        ^ the SAME cell as CONDITIONAL MEANS (no near-zero denominator): worst 1% +127.4 pp/yr, worst 5% +52.2, the other 95% -4.3
+  over all 16 (panel, gross, rung) cells: mean share earned on the worst 1% of SPY days 235.1%, worst 5% 411.3%, worst 10% 411.6%; mean share earned on SPY-UP days -388.1%
+  — every one of those SHARES is a near-zero denominator artefact and is published ONLY to show that it is.  The conditional means over the same 16 cells: worst 1% +110.6 pp/yr, worst 5% +43.2, the other 95% -3.2 — POSITIVE in the tail in 16 of 16 cells and NEGATIVE outside it in 16 of 16.
+
+=== D. RULE 8 — (theta, gross) chosen on warm-up..2016-12-31 ONLY by two pre-stated IS-only
+    choosers, 2017-2026 then read ONCE.  The OOS question for a DECOMPOSITION is whether the
+    IS state split STILL carries the premium out of sample. ===
+   U56    0.0bps C_ISCONC    picks theta 0.03 g 1.00 | IS conc -4.10 share -134.1% prem  +0.32 | OOS conc  3.54 share 144.8% prem  +0.58 pp/yr over 40.9% of days, 52 episodes
+   U56    0.0bps C_ISPREMIN  picks theta 0.20 g 1.00 | IS conc -196.98 share -29.4% prem  +0.32 | OOS conc -20.24 share -46.4% prem  +0.58 pp/yr over 2.3% of days, 8 episodes
+   U56   10.0bps C_ISCONC    picks theta 0.03 g 1.00 | IS conc -5.66 share -185.2% prem  +0.25 | OOS conc  3.94 share 160.8% prem  +0.50 pp/yr over 40.9% of days, 52 episodes
+   U56   10.0bps C_ISPREMIN  picks theta 0.20 g 1.00 | IS conc -254.39 share -38.0% prem  +0.25 | OOS conc -23.85 share -54.7% prem  +0.50 pp/yr over 2.3% of days, 8 episodes
+   U56   25.0bps C_ISCONC    picks theta 0.20 g 0.75 | IS conc 825.15 share 123.3% prem  -0.08 | OOS conc -87.66 share -200.9% prem  +0.14 pp/yr over 2.3% of days, 8 episodes
+   U56   25.0bps C_ISPREMIN  picks theta 0.10 g 0.75 | IS conc 119.56 share 822.1% prem  -0.08 | OOS conc -21.75 share -346.4% prem  +0.14 pp/yr over 15.9% of days, 16 episodes
+   U56   50.0bps C_ISCONC    picks theta 0.20 g 1.00 | IS conc 1666.51 share 249.1% prem  -0.04 | OOS conc -77.07 share -176.7% prem  +0.16 pp/yr over 2.3% of days, 8 episodes
+   U56   50.0bps C_ISPREMIN  picks theta 0.05 g 1.00 | IS conc 84.42 share 1703.6% prem  -0.04 | OOS conc  8.56 share 261.5% prem  +0.16 pp/yr over 30.5% of days, 41 episodes
+   B136   0.0bps C_ISCONC    picks theta 0.20 g 0.75 | IS conc 58.23 share   8.7% prem  -1.38 | OOS conc 28.38 share  65.1% prem  -0.87 pp/yr over 2.3% of days, 8 episodes
+   B136   0.0bps C_ISPREMIN  picks theta 0.10 g 0.75 | IS conc  9.57 share  65.8% prem  -1.38 | OOS conc 11.39 share 181.4% prem  -0.87 pp/yr over 15.9% of days, 16 episodes
+   B136  10.0bps C_ISCONC    picks theta 0.20 g 0.75 | IS conc 47.19 share   7.1% prem  -1.71 | OOS conc 21.11 share  48.4% prem  -1.19 pp/yr over 2.3% of days, 8 episodes
+   B136  10.0bps C_ISPREMIN  picks theta 0.05 g 0.75 | IS conc  3.00 share  60.5% prem  -1.71 | OOS conc  2.29 share  69.9% prem  -1.19 pp/yr over 30.6% of days, 41 episodes
+   B136  25.0bps C_ISCONC    picks theta 0.20 g 0.75 | IS conc 36.78 share   5.5% prem  -2.20 | OOS conc 15.44 share  35.4% prem  -1.67 pp/yr over 2.3% of days, 8 episodes
+   B136  25.0bps C_ISPREMIN  picks theta 0.03 g 0.75 | IS conc  1.75 share  57.4% prem  -2.20 | OOS conc  1.17 share  47.8% prem  -1.67 pp/yr over 40.9% of days, 52 episodes
+   B136  50.0bps C_ISCONC    picks theta 0.20 g 0.75 | IS conc 26.96 share   4.0% prem  -3.02 | OOS conc 10.90 share  25.0% prem  -2.47 pp/yr over 2.3% of days, 8 episodes
+   B136  50.0bps C_ISPREMIN  picks theta 0.03 g 0.75 | IS conc  1.76 share  57.8% prem  -3.02 | OOS conc  1.31 share  53.6% prem  -2.47 pp/yr over 40.9% of days, 52 episodes
+
+   16 picks.  IS concentration mean 151.23 -> OOS -7.66  (-158.89);  IS premium -0.98 pp/yr -> OOS -0.60 pp/yr
+   picks whose OOS concentration EXCEEDS 1 (the split still carries the premium): 11 of 16
+   picks whose OOS premium is POSITIVE at all: 8 of 16
+   pick distribution over theta: 0.03:4  0.05:2  0.10:2  0.15:0  0.20:8   over gross: 0.75:10  1.00:6
+
+   THE SAME RULE-8 TEST ON THE STATISTIC THAT SURVIVES (the conditional-mean GAP), because a
+   walk-forward on a degenerate ratio tests nothing.  theta chosen on warm-up..2016-12-31 ONLY by
+   the magnitude of the IS gap, 2017-2026 then read ONCE:
+    U56   g 0.75 10.0bps picks theta 0.20 | IS gap  -63.32 pp/yr -> OOS gap  -12.58   (IS mean IN  -63.10 -> OOS  -11.92)   sign HOLDS
+    U56   g 1.00 10.0bps picks theta 0.20 | IS gap  -63.44 pp/yr -> OOS gap  -12.71   (IS mean IN  -63.10 -> OOS  -11.92)   sign HOLDS
+    B136  g 0.75 10.0bps picks theta 0.20 | IS gap  -79.16 pp/yr -> OOS gap  -24.47   (IS mean IN  -80.75 -> OOS  -25.09)   sign HOLDS
+    B136  g 1.00 10.0bps picks theta 0.20 | IS gap  -79.02 pp/yr -> OOS gap  -26.25   (IS mean IN  -80.75 -> OOS  -26.88)   sign HOLDS
+    16 picks: the IS sign of the gap HOLDS out of sample in 16 of 16;  mean IS gap -71.16 pp/yr -> OOS -19.01;  picks with a NEGATIVE OOS gap (the candidate LAGS the blend in state): 16 of 16.
+    pick distribution over theta: 0.03:0  0.05:0  0.10:0  0.15:0  0.20:16
+
+=== E. GATES: 11 of 12 pass ===
+   PASS  G6 exactly two tuned parameters
+   PASS  G0 >= 10y (U56)
+   PASS  G0 >= 10y (B136)
+   PASS  G1 per-column replica == engine.backtest (live RULES v2, flat 10 bps, sweep off)
+   PASS  G2 the blend's m_t IS the capped candidate's realised risk gross, day by day
+   PASS  G7 the state is CAUSAL (a strict lag of a running max; truncation changes nothing before it)
+   PASS  G4 no leverage anywhere (max gross <= 1)
+   PASS  G5 the cost charge is EXACTLY linear in the rung
+   PASS  G9 sweep instrument priced on every held row
+   PASS  G3 the committed cells reproduce the record's U56 headlines (CAP2 11.62%/1.2687/-14.81%, OOS 12.77%/1.3318; CAND 12.59%/1.1934/-17.39%)
+   PASS  G8 the decomposition is EXACT (in-state + out-of-state == total premium, every row)
+   FAIL  G10 2532's two headline counts reproduce (CAP2 wins MaxDD and loses CAGR vs BLEND)
+
+  elapsed 17.7s
