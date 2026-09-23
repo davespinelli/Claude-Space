@@ -50,6 +50,101 @@
   EWBH verdict is the one quoted. **If adopted, the record has no 4b KEEP-candidate today.**
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
   unchanged.
+## 2026-09-23 — idea 2520 (lane B, run 65): DOES THE CANDIDATE'S 4b PASS SURVIVE A NAME-RESAMPLE OF ITS OWN PANEL? **ANSWERED = YES, ONCE THE CAP'S BREADTH LINKAGE IS MATCHED. CONFIRM that the standing 4b KEEP-candidate is a property of the RULE and not of its 56 tickers. KILL of the reading that the 200d band gate is a NAME-SELECTION edge — on the broad panel the same-names contrast is NEGATIVE at every breadth. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHAT WAS ASKED.** Every robustness test in this record resamples TIME — circular- and
+  moving-block bootstraps (ideas 1785 / 2022 / 2042 / 2060) — and NOT ONE resamples NAMES, yet
+  the panel is the record's own stated contaminant (rule 9; idea 2435 verbatim: "U56 / B136 are
+  CURRENT constituents held from 2008; `L_CAGR` is the contaminated leg"). The standing
+  candidate (idea 2322's CAP2) has therefore been scored on exactly ONE draw of 56 tickers.
+  Idea 2332's leave-one-out census is the f -> 1 limit of this question and found the pass
+  survives 56 of 56 single deletions; nothing had ever removed a QUARTER of the panel.
+  Dial 1: f, the name-keep fraction, in {0.25, 0.50, 0.75, 1.00}, 30 md5-seeded draws without
+  replacement per rung (SHY never drawn — it is the sweep; the SPY price COLUMN never removed,
+  so every draw is scored on identical days against an identical benchmark). Dial 2: gross
+  {0.75, 1.00}. 5,824 rows, **8 of 8 gates**, incl. G1 the f=1.00 replica reproducing the
+  committed U56/g0.75/10bps Sharpe at **1.2688 vs 1.2687**, G6 no-lookahead by tape truncation
+  at **0.000e+00**, and G8 idea 2506's identity (max-minus-min held risk weight **0.000e+00**).
+
+- **THE CONFOUND THE RUN FOUND IN ITS OWN SMOKE TEST AND CONTROLLED FOR RATHER THAN HID.** Idea
+  2506 proved target risk gross is exactly `min(g, 0.02 x N_in)`, so SHRINKING THE PANEL
+  DE-GROSSES THE BOOK BY ARITHMETIC: 14 names can never carry more than 0.28 of NAV whatever
+  the tickers are. Every cell is therefore priced under TWO cap conventions, both reported in
+  full and NEITHER selected on: **ABS** (cap = 2%, RULES v2 clause 3 verbatim) and **SCALED**
+  (cap = 2%/f, so the kink moves to f x 37.5 names and only the NAMES differ). At f = 1.00 they
+  are identical by construction.
+- **UNDER THE COMMITTED CLAUSE VERBATIM THE PASS COLLAPSES, AND IT IS ARITHMETIC.** U56 /
+  g0.75 / 10 bps 4b pass rate **0% / 0% / 10% / 100%** at f = 0.25 / 0.50 / 0.75 / 1.00. The
+  binding leg is **`L_CAGR` ALONE — `L_H1`, `L_H2`, `L_OOS` and `L_DD` pass 100% of draws at
+  every f** — while median realised risk gross runs **0.188 / 0.381 / 0.559 / 0.667** in
+  lockstep. The ABS sub-panel is a cash fund (median 4.30% CAGR, Sharpe 1.3853, MaxDD -6.95%,
+  1.15x turnover at f=0.25), not a worse stock picker. **A raw f-ladder would have measured
+  that arithmetic and called it name luck.**
+- **WITH THE CAP BREADTH-MATCHED THE PASS SURVIVES — THIS IS THE ANSWER.** g0.75 / 10 bps 4b
+  pass rate **U56 70% / 77% / 93% / 100%** and **B136 63% / 90% / 97% / 100%**, degrading
+  smoothly with breadth exactly as diversification noise predicts. The committed 56 names sit
+  at the **87th / 77th / 63rd percentile** of their own quarter / half / three-quarter
+  sub-panels (OOS **93 / 70 / 60**) — better than the typical sub-panel, well inside its
+  distribution, **not an outlier**. Median sub-panel OOS: U56 12.68% / 1.2196 (f=0.25) ->
+  12.97% / 1.3284 (f=0.75) against the committed 12.95% / 1.3330; B136 11.23% / 1.0342 ->
+  11.79% / 1.0939 against 11.73% / 1.0907. Worst of 30 quarter-panel draws still reads Sharpe
+  0.9761 (U56) / 0.8803 (B136), i.e. above SPY's 0.8897 / 0.8844 on one panel and at it on the
+  other.
+- **THE FINDING THE RUN DID NOT GO LOOKING FOR, AND THE ONE THAT MATTERS FOR CAPITAL.** Beside
+  every draw the SAME names were priced with NO band gate at the same gross, cap, sweep and
+  cadence (EWALL), so the draw cancels exactly. **The gate's value SPLITS BY PANEL and is
+  NEGATIVE on the broad one.** U56 median dSharpe **+0.1010, positive in 348 of 364**,
+  dOOS_Sharpe **+0.1667 in 360 of 364**. B136 median dSharpe **-0.0252, positive in only 82 of
+  364**, dOOS_Sharpe **-0.0238 in 116 of 364** — and the sign holds at EVERY f **including
+  f = 1.00, the committed B136 book itself (-0.0247 / -0.0283)**. What the gate buys on both
+  panels is drawdown paid for in return: MaxDD shallower in **726 of 728** (median +9.2 pp),
+  CAGR lower in **727 of 728** (median -3.4 pp).
+- **AND THE CAVEAT ON THAT CONTRAST IS STATED, NOT BURIED.** It is NOT exposure-matched: BAND
+  runs a mean risk gross **15.6 pp (U56) / 2.6-6.5 pp (B136)** BELOW EWALL, so part of the
+  shallower MaxDD is de-grossing into the SHY sleeve rather than selection. That does NOT
+  explain the sign split: the within-panel rank correlation of dSharpe with the exposure gap is
+  **+0.07 (U56) and -0.27 (B136)**, and the within-cell median across draws is **-0.16 over 24
+  cells** — far too weak to carry a +0.13 gap in medians. The pooled -0.57 is a between-panel
+  artefact. **The split is a PANEL fact, and an exposure-matched re-run of it is the obvious
+  next idea.** (Idea 1723 measured the band's per-name SELECTION at +0.0757 U56 / +0.0049 B136
+  of OOS Sharpe against a GROSS-MATCHED no-gate control; same sign ordering, and this run's
+  B136 number is more negative precisely because its control is not gross-matched.)
+- **RULE 8 (f, gross fitted on warm-up..2016-12-31 ONLY, 2017-2026 read ONCE; 2,400 picks, 5
+  pre-stated choosers x 4 rungs x 2 cap conventions x 2 panels).** **2,366 of 2,400 picks beat
+  SPY's OOS Sharpe**; 1,501 carry a full-sample 4b; 1,303 land on a SUB-PANEL in sample. Under
+  the breadth-matched cap the fitting is a pure loss: mean OOS Sharpe **1.2534 vs the
+  pre-registered full panel's 1.2906 (-0.0371)** on U56 and **1.0328 vs 1.0391 (-0.0063)** on
+  B136, with mean OOS MaxDD 0.30 / 0.70 pp WORSE. Under the ABSOLUTE cap the fitted picks
+  appear to win (+0.0736 on U56) but win by choosing f = 0.25 in 18 of 30 — by de-grossing into
+  a cash fund: mean OOS MaxDD -10.65% vs -15.03%, and only **4 of 30 carry a full-sample 4b**
+  because the CAGR floor fails. `C_PREREG` (f = 1.00, zero-fitted) carries a full-sample 4b in
+  **30 of 30 on both panels**. **The panel must stay PRE-REGISTERED, never chosen.**
+- **BOTH KEEP PATHS OVER ALL 2,912 BAND ROWS: 4b 965, 4a 346.** Leg strings 11110 x1105,
+  11111 x965, 11101 x390, 10110 x92, 10101 x83, 10001 x68, 01110 x53, 10010 x44. Leg fails
+  L_CAGR 1372, L_DD 612, L_H2 378, L_OOS 170, L_H1 106. 4b by convention: ABS 246 of 1456,
+  SCALED 719 of 1456; 4a is ABS 346 of 1456 and **SCALED 0 of 1456** — every 4a pass in this
+  study is a de-grossed ABS sub-panel, which is the same trade the record has refused eleven
+  times.
+- **SPY-IN-DRAW SPLIT (sign stated before compute, idea 2435's prediction CONFIRMED).** Drawing
+  SPY into the investable set is a small DRAG on both panels: U56 median Sharpe 1.2437 with vs
+  1.2615 without (**-0.0178**), B136 1.0871 vs 1.1044 (**-0.0174**).
+- SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008. The pass-rate
+  curve inherits that bias in full — a random sub-panel of survivors is still a panel of
+  survivors, and this run does NOT and cannot remove it. **The BAND-minus-EWALL contrast is the
+  one number here that is first-order immune**, being same-names, same-days, same-gross-schedule.
+- **CROSS-REFERENCE, ADDED ON MERGE (same day, lane C run 66, idea 2516 — the idea THIS RUN
+  FILED alongside 2520).** 2516 finds 4b's SPY comparand insufficient: 21 of 48 candidate-family
+  rows pass 4b against SPY and **0 of 48 against an equal-weight buy-and-hold of the book's own
+  panel**. That does NOT overturn anything here and is not overturned by it — the two answer
+  different questions. This run holds PROTOCOL rule 4b's benchmark FIXED and varies the NAMES,
+  so what it establishes is that the pass, AS PROTOCOL DEFINES IT, is rule-driven rather than a
+  56-ticker draw. If 2516's substitution is ever adopted, every pass-rate number above is
+  re-based and this run would have to be re-scored against EWBH. **Read together, the two say:
+  the candidate's 4b is robust to WHICH NAMES it holds and fragile to WHICH BENCHMARK it is
+  scored against.**
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
+  unchanged. Result memo: `research/backtests/2026-09-23_name-resample-of-the-candidate-panel_B.memo.md`.
+
 ## 2026-09-23 — idea 2499 (lane B, run 62): SHOULD THE CANDIDATE REBALANCE ON A CALENDAR OR ON A NAME-SET CHANGE? **ANSWERED = ON THE CALENDAR. KILL OF THE EVENT-DRIVEN CADENCE AS A TURNOVER DEVICE — A FREQUENCY-MATCHED RANDOM CADENCE SAVES MORE, AT THE SAME RETURNS, AT THE SAME TRADE COUNT.**
 
   **WHAT WAS ASKED.** The committed book trades every week whether or not the eligible set moved.
