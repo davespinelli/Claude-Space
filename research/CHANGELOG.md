@@ -9024,3 +9024,34 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
 - **No new KEEP-candidate.** The standing 4b candidate, its `L_DD` blocker and its turnover blocker are unchanged, and
   the committed `L = 200` is confirmed as the right default rather than an unexamined inheritance.
 - No change to RULES.md, scan.py, bot.py or baseline.py.
+
+## 2026-09-23 (lane cloud, run 49) — idea 2423 ANSWERED: the 4b margin is the RISK BOOK, not the sweep; no rule change
+- **idea 2423, the SWEEP INSTRUMENT priced as a CHOICE for the first time.** The standing candidate parks its
+  whole un-invested residual in SHY at phi = 1.00 — a residual that averages **32.8% of NAV on U56/CAP2 and
+  peaks at 90.0%**, and is largest exactly on the days that set `MaxDD`. Re-priced with the residual in
+  {**ZERO** (un-remunerated cash, the pessimal bound), SHY (committed), IEF, TLT, LQD, TIP} x gross {0.75, 1.00}
+  on both panels, both books, four rungs and two conventions (INCL = the committed panel; EXCL = the five
+  fixed-income ETFs removed from the risk sleeve so the sweep leg is isolated). 384 rows, **13 of 13 gates**.
+- **THE ANSWER IS (b): THE RISK BOOK CARRIES IT.** U56/CAP2/INCL/g0.75/10 bps with a **ZERO** sweep reads
+  **11.30% / 1.2343 / -15.18%, OOS 12.33% / 1.2914 — and PASSES 4b** (SPY 15.23% / 0.8897 / -33.72%, OOS 0.8831),
+  against the committed SHY cell's 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318. **The entire sweep leg is
+  worth +0.33 pp of CAGR and +0.0343 of Sharpe** and contributes 3.17% of total return. The candidate is not a
+  disguised bond fund, and the honest number to ship owes nothing to a bond market.
+- **DURATION AND CREDIT DESTROY THE PASS.** 4b over 64 rows per instrument: ZERO **26** / SHY **28** / IEF **30**
+  / TIP **19** / TLT **1** / LQD **0**, and `L_DD` binds on **63 of 64** TLT failures and **64 of 64** LQD ones.
+  At the headline cell, dMaxDD against the same book's own ZERO row is +0.37 (SHY) / -2.23 (IEF) / -3.05 (TIP)
+  / -9.18 (LQD) / **-14.41 pp (TLT)**: reaching for yield buys CAGR (+1.54 pp on LQD) and pays in exactly the leg
+  that already blocks adoption.
+- **RULE 8 IS THE VERDICT AND IT IS NEGATIVE FOR THE DIAL.** 64 IS-only picks (2 panels x 2 conv x 2 books x
+  4 rungs x 2 choosers, fitted on <= 2016-12-31, 2017-2026 read once) land on **IEF 25 / TLT 20 / TIP 11 /
+  LQD 8 / SHY 0 / ZERO 0** — the in-sample operator reaches for duration every single time — and average
+  **1.0922 OOS Sharpe against the committed 1.1383 (-0.0461)**, beating it in only 3 of 64. 62 of 64 still clear
+  SPY OOS: the book survives the dial; the dial adds nothing. The committed SHY is confirmed as the right
+  default rather than an unexamined inheritance.
+- **THE PESSIMAL BOOK IS ALSO THE CHEAPER ONE.** The sweep leg is itself traded, so removing it removes turnover
+  the book never needed: U56/CAP2 **2.72x/yr vs 3.51x (-22.4%)**, B136/CAP2 4.31 vs 4.68, U56/CAND 4.31 vs 4.39,
+  B136/CAND 4.80 vs 4.91 — against the live book's 1.77x. The candidate's single stated adoption blocker is
+  22% smaller in the ZERO construction, and still 1.54x the live book, so it is reduced and not solved.
+- **One 4b KEEP-candidate filed, not adopted** (the ZERO-sweep variant of the standing candidate; memo on disk
+  with exact RULES wording). 4a **0 of 384**, consistent with 2326's 0-of-180, 2427's 0-of-320, 2431's 0-of-808.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is unchanged.
