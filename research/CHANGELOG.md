@@ -1,3 +1,69 @@
+## 2026-09-23 — idea 2387 (lane C): DOES A BREADTH CAP ON THE NUMBER OF NAMES DO WHAT THE 2% WEIGHT CAP DOES? **ANSWERED = NO. KILL OF THE BREADTH CAP AS THE WEIGHT CAP'S SUBSTITUTE OR IMPROVEMENT. ONE KEEP-CANDIDATE ON 4a, FILED NOT RECOMMENDED. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 2381 measured that idea 2322's standing KEEP-4b candidate (CAP2) is a
+  pure DE-GROSSER: mean names held is 38.45 (U56) / 93.22 (B136) at EVERY per-name cap including INF, so
+  the 2% cap never changes WHO is held, only how much NAV is at risk. The untested mirror is a cap on the
+  COUNT: admit at most `N_max` of the band's IN names, ranked by distance above the 200d MA, each at
+  `gross / min(N_in, N_max)`, residual to SHY. It separates "the pass comes from holding LESS" from "the
+  pass comes from holding FEWER".
+
+  **THE TEST.** Two tuned dials and no more: **`N_max` {10, 20, 30, 50, INF} and gross {0.75, 1.00}**.
+  REPORTED, never selected on: the 2% WEIGHT cap {0.02 = CAP2's own, INF}, panels {U56, B136}, rungs
+  {0, 10, 25, 50} bps, weekly, t+1, band 0.03, sweep SHY phi = 1.00, and the ranking statistic and its
+  tie convention (tie census published: 0 of 4,450 days on U56). **160 published rows, 20 of 20 gates
+  pass**, including two bit-identity anchors at 0.000e+00 (`N_max=INF` + 2% cap == an independent CAP2
+  construction; `N_max=INF` + no cap == an independent uncapped construction, both panels, both gross), a
+  no-lookahead gate at 0.000e+00, and external reproduction of the committed CAP2 U56 headline
+  (11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318, 3.51 turns/yr) to 3.95e-05.
+
+  **THE ANSWER IS NO, AND IT IS NOT CLOSE WHERE THE CAP ACTUALLY BITES.** Both-panel 4b count by `N_max`
+  (2 gross x 4 rungs, max 8): **10 -> 0/8, 20 -> 0/8, 30 -> 2/8, 50 -> 3/8, INF -> 3/8.** The best finite
+  cap only TIES the uncapped count, and it ties by barely biting — mean names held 38.39 against 38.45 on
+  U56. Every cap tight enough to change the book loses. The near-misses are one-panel and are published
+  with their margins: B136 `N_max=20` (no weight cap) clears 4b at 16.33% / 1.0953 / -19.45% where U56
+  `N_max=20` fails `L_DD` by -0.21 pp; B136 `N_max=30` (no weight cap) fails `L_DD` by **0.0018 pp**
+  (-20.231404% against the -20.229572% cap), a hairline published, not waived.
+
+  **THE STRUCTURAL REASON, ASSERTED NOT ASSUMED (gate G9).** Because the per-name weight divides by the
+  HELD count, at `wcap = INF` the risk book's gross is **exactly `gross` on every day with `N_in > 0`, at
+  every `N_max`** (max deviation 2.887e-15 over 20 cells). **The breadth cap RE-CONCENTRATES at constant
+  gross; the weight cap DE-GROSSES at constant breadth.** They are opposites and they fail on opposite
+  legs. Tightening the count alone buys CAGR with drawdown one for one — U56 g=0.75, `N_max`
+  INF/30/20/10 runs CAGR 12.59% / 13.41% / 14.70% / **18.14%** against MaxDD -17.39% / -19.27% / -20.44%
+  / **-21.01%** — and `L_DD` binds on every finite-cap 4b failure at `wcap=INF`. Compose the two caps and
+  the failure flips to `L_CAGR`, because they de-gross twice: `N_max=10` + the 2% cap runs at book gross
+  **0.199**. There is no `N_max` that substitutes for the weight cap.
+
+  **ONE KEEP-CANDIDATE ON 4a — THE FIRST 4a PASSES THIS CAPPED FAMILY HAS EVER PRODUCED (18 of 160).**
+  `N_max=10` + the 2% cap + the SHY sweep is, in words, **at most ten names at 2.00% each, at least 80%
+  of NAV in SHY.** U56 / 10 bps **5.74% / 1.3412 / -7.52%**, halves **1.2990 / 1.3964** against live
+  RULES v2's 1.2052 (1.2262 / 1.1897) at -12.06%; B136 6.37% / 1.3113 / -8.35%, halves 1.5323 / 1.1675
+  against 1.0972. It is rule-8 reachable — **both IS choosers take `N_max=10` at 16 of 16 cells under the
+  2% cap**, with OOS Sharpe above both the live book (1.3947 vs 1.2839 on U56) and CAP2 (1.3318). Memo:
+  `2026-09-23_breadth-cap-on-the-number-of-names_C.memo.md`.
+
+  **AND WHY IT IS FILED, NOT RECOMMENDED — WITH A CORRECTION TO THE RECORD.** It earns 5.74% / 6.37%
+  against the live book's 8.65% / 7.96% and SPY's 15.23%: it beats the live book on Sharpe and drawdown
+  while giving up **2.91 pp of CAGR**, and 4b fails on **`L_CAGR` ALONE** at every rung (-4.57 / -4.92 /
+  -5.45 / -6.31 pp at 0 / 10 / 25 / 50 bps). Since 4a tests no return leg, a book at **19.9% mean equity
+  gross** clears it by shrinking. **The record's standing "4a is unreachable for growth books" becomes
+  "4a is reachable, but only by books that give up return"** — the exact asymmetry PROTOCOL rule 4b was
+  added on 2026-09-04 to fix. A tight breadth cap also DELETES the gross dial (with the 2% cap on and
+  `N_max <= 30`, the g=0.75 and g=1.00 rows are bit-identical), so adopting one would be two rule changes
+  at once, which rule 6 does not permit in a week.
+
+  **RULE 8 IS THE SECOND, INDEPENDENT KILL OF THE 4b CLAIM.** (`N_max`, gross) fitted on <= 2016-12-31
+  only, 2017-2026 read ONCE, 32 picks. **22 of 32 take the TIGHTEST cap `N_max=10`** and 10 of 32 take
+  INF — **nothing in between is ever picked.** 31 of 32 beat SPY's OOS Sharpe, but only **12 of 32** beat
+  the live book's, **12 of 32** the `N_max=INF` anchor's, and only **5 of 32** carry a full-sample 4b
+  pass. Keep counts over all 160 rows: **4b 45, 4a 18.**
+
+  **SURVIVORSHIP (rule 9).** U56 / B136 are current-constituent lists held from 2008, so absolute levels
+  are optimistic and `L_CAGR` is the most contaminated leg — which is the leg the 4a candidate fails, so
+  that failure is if anything understated. A TEN-NAME book drawn from such a list is the most exposed
+  construction in this record. SMALL is not priced (0 of 40-120 in ideas 2318/2322/2326/2343); B136
+  carries an all-NaN `MMC` column and is a 135-name panel (idea 2332's defect, reproduced here).
+
 ## 2026-09-23 — idea 2347 (lane C): DOES A 52-WEEK CHANNEL GATE REACH THE 4b PASS THAT THE 200d MA BAND REACHES, AT MATCHED MEAN EXPOSURE? **ANSWERED = ON ONE PANEL YES, ON TWO NO. KILL OF THE DONCHIAN CHANNEL AS A REPLACEMENT FOR CLAUSE 2's MA BAND. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Every 4b-passing book in this record is gated by a band around a MOVING
