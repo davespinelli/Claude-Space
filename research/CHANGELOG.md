@@ -59,6 +59,66 @@
   same-names contrasts and first-order immune.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
   unchanged.
+## 2026-09-23 — idea 2506 (lane C, run 63): IS THE CANDIDATE'S 2% NAME CAP A CONCENTRATION CONTROL, OR A DISGUISED BREADTH-LINKED GROSS SCHEDULE? **ANSWERED = IT IS A GROSS SCHEDULE, AND THE POINT IS PROVED AS AN IDENTITY RATHER THAN CLAIMED. THE SHAPE LADDER TURNS OUT TO SPAN THE RECORD'S OWN TWO HEADLINE BOOKS: alpha = 0 IS CAND AND alpha = 1 IS THE LIVE RULES v2 BOOK. CONFIRM of CAP2 on 4b (0 of 168 arms dominate it; it carries the most 4b of any shape). KILL of the smooth generalisation — every gain it books is re-grossing. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHAT WAS ASKED.** The standing KEEP-4b candidate (idea 2322's CAP2) sizes every held name at
+  `min(g / N_in, 0.02)`. Twelve runs have swept the cap LEVEL; none has asked what SHAPE the cap
+  is. If `min(g/N_in, c)` is the same number for every held name it cannot de-concentrate an
+  already-equal-weight book, and the clause is doing something other than what its name says.
+
+- **THE IDENTITY, ASSERTED AS A GATE (G7 / G10 / G11), NOT ARGUED.** Max-minus-min held weight is
+  **0.000e+00 on all 48 realised paths** — no arm in this study, capped or not, concentrates
+  anything. Target risk gross IS **`min(g, c x N_in)`** to **2.9e-15** (float summation precision
+  over up to 136 columns): constant GROSS above `N_in = g/c` names, constant WEIGHT-PER-NAME
+  (`= c`) below it, with |w - c| over binding rows **0.000e+00**. **The 2% cap is a breadth-linked
+  de-grosser, not a per-name risk limit.**
+- **THE STRUCTURAL FINDING THE RUN DID NOT EXPECT (G14).** Written as `G_t = g x p_t^alpha` with
+  `p_t = N_in/N_priced`, **alpha = 0 IS CAND** (max|d| **0.000e+00**, G8) and **alpha = 1 IS
+  `baseline.rules_v2_weights` — THE LIVE BOOK — at every panel and gross (max|d| 3.47e-18)**. The
+  candidate's cap is therefore a **KINKED INTERPOLATION BETWEEN THE LIVE BOOK AND THE UNCAPPED
+  CANDIDATE**, a relation between the record's two headline books that had never been written
+  down. It also means the A1.00 arm differs from the 4a baseline by the SHY sweep ALONE, which the
+  run then measures rather than assumes: **+0.50 pp CAGR / +0.0667 Sharpe / +0.57 pp MaxDD on U56
+  and +0.52 / +0.0697 / +0.59 on B136** — an independent reproduction of idea 2227's +0.50 pp.
+- **THE ONE DEFECT FOUND, AND IT IS IN THE WORDING, NOT THE BEHAVIOUR.** The kink sits at a fixed
+  NAME COUNT `g/c`, not a fixed breadth, so the IDENTICAL "2% cap at gross 0.75" binds **29.7% of
+  U56 days and 5.2% of B136 days**; at gross 1.00 on U56 it binds **93.8%** of days, at which
+  point the book is the live book's own schedule wearing a gross-1.00 label. Exact proposed
+  replacement wording is in the result memo for whoever takes CAP2 to a Sunday review; **RULES.md,
+  PROTOCOL.md, scan.py, bot.py and baseline.py are untouched (rule 6).**
+- **WHAT THE GENERALISATION BOUGHT: NOTHING THAT WAS NOT EXPOSURE.** **0 of 168** arms dominate the
+  committed CAP2 cell on all five of (CAGR, Sharpe, MaxDD, OOS Sharpe, turnover). Of the 96 smooth
+  arms, **all 64 with dSharpe > 0, all 74 with dOOS_Sharpe > 0 and all 84 with dTurn < 0 carry
+  dGross < 0** (median -0.119 / -0.137 / -0.135); rank corr(dCAGR, dGross) = **+0.982**. On the
+  **40 gross-neutral arms** (|dGross| <= 0.02) the median dSharpe is **-0.0109** and only 12 of 40
+  improve. Thirteenth instance of idea 2477's reading.
+- **BOTH KEEP PATHS OVER ALL 192 ROWS: 4b 43, 4a 41, JOINT 4a AND 4b 0.** By shape (24 rows each)
+  4b runs **CAP0.020 10**, A0.50 8, CAP0.030 6, CAND 6, A0.25 5, A1.00 5, CAP0.015 3, A2.00 0 —
+  **the committed kink carries the most 4b of any shape on the ladder**, which is the CONFIRM.
+  Cross-panel (same cell on U56 AND B136): 4b **16 of 96**, including CAP0.020 / g0.75 at 0, 10 and
+  25 bps.
+- **THE FIRST 4a PASSES IN THE CAPPED FAMILY'S RECORD, AND THEY ARE PURE DE-GROSSING.** 4a is 41 of
+  192 (15 of 96 cross-panel) against 0 of N in every prior capped-family run; the difference is
+  that this study prices gross 0.50. **33 of the 41 sit at gross 0.50, their mean CAGR is 7.57% =
+  49.8% of SPY's, and `L_CAGR` fails on 0 of 41** — every 4a pass here is exactly the low-return
+  book PROTOCOL 4b was added to reject, and no row passes both paths. 4a's binding leg elsewhere is
+  MaxDD (127 of 151 failures).
+- **RULE 8, AND THE CHOOSER'S DEFECTION.** Two dials (shape, gross) fitted on warm-up..2016-12-31
+  ONLY, 2017-2026 read ONCE, 16 picks across 2 pre-stated IS-only choosers. **16 of 16 beat SPY's
+  OOS Sharpe, 12 of 16 beat the LIVE book's, 12 of 16 carry a full-sample 4a, 0 of 16 carry a
+  full-sample 4b.** **All 16 picks land on gross 0.50** — given a shape dial the IS chooser defects
+  to the lowest gross on the ladder and so selects a 4a book every time. Shape is near-indifferent
+  (KINK 7 / SMOOTH 9), exactly as pre-stated before compute. Benchmarks read ONCE: U56 SPY OOS
+  15.45% / 0.8831 / -33.72% and live RULES v2 OOS 9.51% / 1.2839 / -12.05%; B136 SPY OOS 15.26% /
+  0.8737 / -33.72% and live RULES v2 OOS 7.85% / 1.1017 / -12.24%.
+- **17 OF 17 GATES.** G1 the per-column replica IS `engine.backtest` (max|d| **0.000e+00**). G3
+  reproduces the committed CAP2 (11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318) and CAND (12.59% /
+  1.1934 / -17.39%, OOS 13.85% / 1.2397) U56 headlines to **4.98e-05**. G12 the comparands are
+  bit-identical across every arm. G5 cost exactly linear in the rung (**3.5e-18**).
+- **SURVIVORSHIP (rule 9).** U56 / B136 are CURRENT constituents of their screens held from 2008, so
+  absolute levels are biased upward and 4b's `L_CAGR` floor is the most contaminated leg. The
+  shape-vs-shape contrast is same-tape, same-days, same-names and first-order immune; the absolute
+  4b and 4a verdicts are not.
 
 ## 2026-09-23 — idea 2488 (lane cloud, run 61): DOES A MINIMUM-TICKET COST FLOOR MOVE WHERE THE CAPPED FAMILY DIES? **ANSWERED = NO, AND THE HYPOTHESIS IS REFUTED IN SIGN. THE FLOOR MOVES THE BOUNDARY *LATER*, NOT EARLIER. CONFIRM that CAP2's 4b verdict and its 33-54 bps death band are invariant to the SHAPE of the cost model at a fixed LEVEL; KILL of the 'the proportional model flatters the candidate' reading. NO NEW CANDIDATE, NO RULES CHANGE.**
 
