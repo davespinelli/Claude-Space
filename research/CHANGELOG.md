@@ -1,3 +1,55 @@
+## 2026-09-23 — idea 2516 (lane C, run 66): IS 4b's SPY COMPARAND THE RIGHT BENCHMARK FOR A SURVIVORSHIP-SELECTED PANEL? **ANSWERED = NO. KILL OF THE SPY COMPARAND'S SUFFICIENCY, AND WITH IT OF EVERY 4b PASS IN THE STANDING CANDIDATE FAMILY: 21 OF 48 ROWS PASS 4b AGAINST SPY AND 0 OF 48 AGAINST AN EQUAL-WEIGHT BUY-AND-HOLD OF THE BOOK'S OWN PANEL. 0 OF 21 SURVIVE.**
+
+  **WHAT WAS ASKED.** PROTOCOL rule 4b scores every book against SPY, a cap-weighted index of the
+  POINT-IN-TIME market. The book picks from U56 / B136 — lists of CURRENT constituents held back to
+  2008 (rule 9; idea 2435). The two comparands differ in TWO things at once, the RULE and the PANEL.
+  The like-for-like comparand is **EWBH(panel)**: equal-weight buy-and-hold of the book's own
+  investable set, identical names, identical tape, identical days, identical survivorship draw.
+  Dial 1: benchmark in {SPY, EWBH, EWBH_NOSWEEP, EWRB, EWBH_MEGA20}. Dial 2: gross {0.75, 1.00}.
+  Books {CAP2, CAND, live RULES v2} x panels {U56, B136} x rungs {0,10,25,50} = 48 book-rows, each
+  re-scored under all five benchmarks = **240 published scorings**. **17 of 17 gates**, incl. G5 the
+  committed CAP2 U56 headline at **2.95e-05**, G3 the EWBH machinery reproducing
+  `px['SPY'].pct_change()` on a one-name panel at **2.22e-16**, and G1 the SHY sweep priced on every
+  scored row of both panels.
+
+- **THE HEADLINE.** 4b is **21 of 48 under SPY, 0 of 48 under EWBH** — 0 survive, 0 newly gained.
+  The standing candidate (CAP2 / U56 / g0.75 / 10 bps, 11.62% / 1.2687 / -14.81%) clears every SPY
+  leg with `L_CAGR` slack **+0.0096** and fails EWBH's at **-0.0584**. Its pass had about one point
+  of CAGR headroom over a benchmark its own panel beats by **9.72 pp/yr**.
+- **WHICH LEG BINDS, AND THE ONE THAT SURVIVES.** Under SPY the first-binding leg over 27 failures
+  is `L_CAGR` 14 / `L_DD` 11 / `L_H2` 2. Under EWBH over 48 failures it is `L_CAGR` **27** / `L_H1`
+  10 / `L_H2` 7 / `L_OOS` 3 / `L_DD` **1**, and `L_DD` leg failures FALL 12 -> 8 because EWBH's own
+  drawdown is deeper (-43.86% vs SPY's -33.72% on U56). **The candidate's defensive drawdown is
+  real and is NOT what the substitution takes away; its RETURN margin is.**
+- **THE BENCHMARK GAP ITSELF.** SPY - EWBH = **-9.72 pp CAGR / -0.2018 Sharpe / +10.14 pp MaxDD**
+  (U56) and **-7.06 pp / -0.2077 / -0.93 pp** (B136). The 4b CAGR floor moves **10.66% -> 17.47%**
+  (U56) and 10.59% -> 15.53% (B136); the DD cap LOOSENS -20.23% -> -26.32% (U56).
+- **THE SURVIVORSHIP PREMIUM, MEASURED RATHER THAN CAVEATED.** EWBH of the **20 CURRENT megacaps
+  alone** returns **32.27% / 1.1839 / -48.41%** against SPY's 15.23% / 0.8897 / -33.72%: **+17.04 pp
+  of CAGR, on BOTH panels.** That is the size of the thing rule 4b currently credits to the rule.
+- **THE MILDEST FAIR SUBSTITUTE STILL KILLS IT.** EWRB (equal-weight, WEEKLY-rebalanced, charged at
+  the SAME cost rung — 1.09x/yr turnover, the tradable twin of EWBH) leaves **4 of 21** passes
+  standing; the headline cell's `L_CAGR` slack is **-0.0077**, still negative. EWBH_NOSWEEP (drop
+  SHY from the benchmark) is indistinguishable from EWBH (-9.86 pp vs -9.72 pp).
+- **RULE 8 ISOLATES THE CAUSE.** 16 picks (2 IS-only choosers x 2 panels x 4 rungs; CAP2 11 / CAND
+  4 / LIVEV2 1, gross 0.75 in 15 of 16). The chooser never sees a benchmark, so the PICK is
+  identical under all five and only the VERDICT moves: **16 of 16 beat SPY's OOS Sharpe, 11 of 16
+  beat EWBH's, 7 of 16 beat EWBH_MEGA20's**; OOS-window 4b **14 of 16 -> 0 of 16**. 5 of 16 beat the
+  live book's OOS Sharpe.
+- **PATH 4a: 0 of 48 GENUINE.** The 2 nominal passes are the live book itself priced at a cheaper
+  rung than its own 10 bps comparand, which is not a pass, and the run says so rather than counting
+  them.
+- **WHAT IS NOT CLAIMED.** EWBH is NOT investable — it is the 2026 survivor list bought in 2009, so
+  it is a DIAGNOSTIC CEILING, not a replacement instrument. The exposure asymmetry is UNCHANGED by
+  the substitution (CAP2's mean risk gross **0.6564** on U56, 0.7281 on B136, against 1.00 for every
+  benchmark here), so the PANEL is the only thing that moves. The census covers this run's 48 rows,
+  which are the candidate family itself; the record's other committed 4b passes live in other
+  scripts' books and are not re-priced here.
+- **PROPOSED PROTOCOL WORDING FOR SUNDAY** (memo `2026-09-23_ewbh-panel-benchmark-for-4b_C.memo.md`,
+  point 9): a 4b claim must be reported against SPY **and** EWBH(panel), and where they disagree the
+  EWBH verdict is the one quoted. **If adopted, the record has no 4b KEEP-candidate today.**
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
+  unchanged.
 ## 2026-09-23 — idea 2499 (lane B, run 62): SHOULD THE CANDIDATE REBALANCE ON A CALENDAR OR ON A NAME-SET CHANGE? **ANSWERED = ON THE CALENDAR. KILL OF THE EVENT-DRIVEN CADENCE AS A TURNOVER DEVICE — A FREQUENCY-MATCHED RANDOM CADENCE SAVES MORE, AT THE SAME RETURNS, AT THE SAME TRADE COUNT.**
 
   **WHAT WAS ASKED.** The committed book trades every week whether or not the eligible set moved.
