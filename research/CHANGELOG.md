@@ -1,3 +1,80 @@
+## 2026-09-23 — idea 2510 (lane B, run 71): DOES THE CAPPED CANDIDATE'S 4b PASS SURVIVE A ROLLING EVALUATION START? **ANSWERED = YES, IT SURVIVES — AND THE PREMISE BEHIND THE QUESTION IS FALSE. CONFIRM of the standing candidate's 4b-under-SPY pass on a new axis (14 of 16 cells give the IDENTICAL verdict at all five starts, 9 of 10 committed passes survive every one), plus a KILL of the CRASH-FED reading of 4b's level legs: the binding drawdown is COVID-2020, not 2008-09, so `L_DD` is EXACTLY start-invariant.**
+
+  **WHAT WAS ASKED.** Every scored path in this record begins at row 260 of a 2008-start panel
+  — mid-January 2009 — so the tail of the 2008-09 collapse and the whole 2009-10 rebound sit
+  inside every full-sample number the candidate owns, and 4b's two LEVEL legs (`L_DD`, and
+  `L_H1` through the first-half Sharpe) are fed by the one episode in which a 200d trend gate is
+  most flattered. Ideas 1799 / 2022 EXCISED the crash window mid-sample and read the effect as
+  "mostly a BAR shift"; excising is not the same as never having been there, because a truncated
+  start also moves the compounding base, the half-sample SPLIT POINT and the benchmark's own
+  drawdown. Dial 1: evaluation start S in {COMMITTED (row 260 = 2009-01-13), 2010-01-01,
+  2011-01-01, 2012-01-01, 2013-01-01}. Dial 2: gross {0.75, 1.00}. Panels {U56, B136} x rungs
+  {0, 10, 25, 50} bps x band 0.03 x cap 2% x cadence W x the SHY sweep are reported in full,
+  never selected on. **80 book-rows, 768 decomposition cells, 120 rule-8 picks, 37 of 37 gates**
+  — G4 reproduces idea 2322's committed CAP2 headline (11.62% / 1.2687 / -14.81%) at
+  **2.95e-05**, G7 no-lookahead by tape truncation at **0.000e+00**, G3 the EWBH machinery
+  reproducing `px['SPY'].pct_change()` at 2.22e-16, G5 no leverage (max row gross 1.000000000).
+  The book's DECISION PATH is untouched by the dial (G2): the 200d MA and the band hysteresis
+  are computed on the full tape exactly as the committed book computes them, and only the
+  SCORING WINDOW moves — the honest construction, since an investor starting in 2012 still has
+  the prior 200 closes.
+
+- **THE HEADLINE — THE PASS IS START-ROBUST.** Under SPY (PROTOCOL 4b as written) 4b reads
+  **10 / 10 / 10 / 9 / 11 of 16** at the five starts. **14 of the 16 (panel x gross x rung)
+  cells give the IDENTICAL verdict at every start**, and both flippers sit at the 50 bps rung —
+  U56 g1.00 @50bps passes at four starts and fails at 2012, U56 g0.75 @50bps fails at four and
+  passes at 2013. **9 of the 10 committed-start passes survive all five starts.** The committed
+  headline cell (U56 / g0.75 / 10 bps) reads **11.62% / 1.2687 / -14.81%** from 2009-01-13 and
+  **12.50% / 1.3610 / -14.81%** from 2013-01-02 — the later start is BETTER, not worse.
+- **THE PREMISE IS FALSIFIED BY DIRECT MEASUREMENT, NOT BY ARGUMENT.** The binding drawdown
+  trough is **2020-03-12** for the book (U56 g0.75 -14.81%, U56 g1.00 -17.28%, B136 g1.00
+  -22.38%), **2022-09-30** for B136 g0.75 (-17.10%), **2020-03-23** for SPY (-33.72%) and
+  **2022-10-14** for EWBH(panel). **Not one binding episode is 2008-09.** So the book's MaxDD is
+  EXACTLY invariant to the start (max spread across all cells **0.000000**) and the `L_DD` slack
+  is constant at **+0.0542** at every start. The other suspect leg moves the WRONG way for the
+  premise: the SPY `L_CAGR` slack IMPROVES monotonically **+0.0096 / +0.0114 / +0.0124 / +0.0147
+  / +0.0193** as the 2009 rebound is dropped, because SPY's own CAGR falls faster than the
+  book's. Dropping the crash window HELPS the candidate against SPY.
+- **THE ONE LEG THAT MOVES IS `L_H1`, AND IT IS ABOUT HALF BAR AND HALF BOOK.** SPY `L_H1` slack
+  runs **+0.3461 / +0.2669 / +0.2484 / +0.1994 / +0.2898** while `L_H2` runs the other way
+  **+0.4104 / +0.4291 / +0.4666 / +0.5064 / +0.5144** (U56 g0.75 @10bps) — the half-sample SPLIT
+  POINT moving is most of the story, and the two halves trade the move between them. Decomposing
+  every leg move into d(book) and d(bar) over **768 cells**: median |bar| share **0.560 on
+  `L_H1`**, 0.530 on `L_CAGR`, 0.199 on `L_H2` under SPY, and 1.000 on `L_DD` under EWBH (where
+  only the benchmark moves at all). **Ideas 1799 / 2022's "mostly a BAR shift" is CONFIRMED ONLY
+  WEAKLY — it is roughly 56/44, not a bar artefact.**
+- **IDEA 2516's EWBH KILL IS START-INDEPENDENT.** 4b under EWBH(panel) is **0 of 16 at every one
+  of the five starts — 0 of 80 rows.** The binding leg is `L_CAGR` in 14-16 of 16 rows at every
+  start and it gets WORSE as the start rolls forward: the EWBH CAGR slack on U56 g0.75 @10bps
+  runs **-0.0584 / -0.0455 / -0.0585 / -0.0671 / -0.0816**, because EWBH's own CAGR rises
+  **24.95% -> 29.52%** as the window is cut back to the survivor-heavy part of the tape. **The
+  survivorship premium is not diluted by a later start; it is concentrated by one.** Against
+  EWRB (the TRADABLE equal-weight twin, rebalanced weekly at the same cost rung) 4b is
+  **2 / 1 / 3 / 1 / 3 of 16** — small, non-monotone, and not a verdict anything should be built
+  on. 4a against the live RULES v2 book is **0 of 16 at every start** (0 of 80).
+- **RULE 8 (gross chosen on [S, 2016-12-31] ONLY by three pre-stated IS-only choosers, 2017-2026
+  read ONCE; 120 picks).** The start barely moves the chooser: **23 of 24 (panel, rung, chooser)
+  groups pick the SAME gross at all five starts**, the single flip being C_ISSHARPE at the 2013
+  start. Pooled OOS: `C_PREREG` (gross 0.75, no choice at all) **11.92% / 1.1602 / -15.80%**,
+  `C_ISSHARPE` 12.11% / 1.1602 / -15.80%, `C_ISCAGR` 14.01% / 1.1253 / -19.91%. **40 of 40 picks
+  beat SPY's OOS Sharpe under every chooser** (SPY OOS 15.36% / 0.8784 / -33.72%); 29 of 40 beat
+  EWBH's (OOS 27.53% / 1.0930), 30 of 40 beat EWRB's, and 20 of 40 beat the LIVE baseline's (OOS
+  8.40% / 1.1585 / -12.18%). Full-sample 4b on the pick is 31 of 40 under SPY and **0 of 40**
+  under EWBH. NOTE, REPORTED NOT HIDDEN: the OOS window does not depend on S, so `L_OOS` is
+  start-invariant BY CONSTRUCTION for a given (gross, rung); what S can move is the IS chooser's
+  PICK, and it almost never does.
+- **WHAT IS NOT CLAIMED.** SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from
+  2008, so every CAGR leg here is contaminated — and this run MEASURES that the contamination
+  grows with a later start rather than shrinking. The rolling start is an EVALUATION-WINDOW
+  dial, not a re-warmed book: the signal history is the same tape at every start, which is
+  stated as a convention (G2) and is the reason `L_OOS` cannot move. Nothing here rescues the
+  candidate from 2516's EWBH reading or from 2535's vol-matched reading; it only removes one
+  specific way the SPY-side pass could have been an artefact.
+- **NO NEW CANDIDATE, NO RULES CHANGE.** The book priced here IS the committed candidate, so no
+  new KEEP-candidate is filed and no memo is written. No change to RULES.md, PROTOCOL.md,
+  scan.py, bot.py or baseline.py (rule 6). The live book is unchanged. Script:
+  `research/backtests/2026-09-23_rolling-evaluation-start_B.py`. Five LEADERBOARD rows appended.
+
 ## 2026-09-23 — idea 2539 (lane C, run 69): IS THE 200d BAND's CROSS-SECTIONAL PICK WORTH ANYTHING, AGAINST A BREADTH-MATCHED RANDOM NULL AND AN ANTI-BAND COMPLEMENT? **ANSWERED = NO. KILL of the band gate read as a RETURN-PICKING rule on either panel; CONFIRM of its DRAWDOWN leg as genuinely SELECTION-driven rather than de-grossing; and a METHOD KILL of the re-draw placebo the record has been reading.**
 
   **WHAT WAS ASKED.** Idea 2506 proved the candidate is an EXPOSURE SCHEDULE (`G_t = min(g, cap x
