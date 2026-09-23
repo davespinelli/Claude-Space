@@ -9055,3 +9055,37 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
 - **One 4b KEEP-candidate filed, not adopted** (the ZERO-sweep variant of the standing candidate; memo on disk
   with exact RULES wording). 4a **0 of 384**, consistent with 2326's 0-of-180, 2427's 0-of-320, 2431's 0-of-808.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is unchanged.
+
+## 2026-09-23 (lane cloud, run 49) — idea 2447 KILL of the admission-side turnover device, no rule change
+- **idea 2447, the FIRST device this record has ever aimed at ADMISSION rather than exit or re-size.** The
+  candidate's four killed turnover devices (no-trade band 2328, minimum hold 2351, partial-adjustment damper
+  2391/2404, calendar rota 2408) all act after a name is already held. This one refuses a name up front:
+  count its 200d band-state flips over the trailing `W` sessions and hold nothing with `k` or more. `k = INF`
+  is the committed book EXACTLY (G3, max|d| 5e-5 against both published headlines). Dials: `k` in
+  {INF, 6, 4, 3, 2} x gross {0.75, 1.00}; conventions W in {252 headline, 504}; 320 rows, **13 of 13 gates**.
+- **THE PRIOR WAS STATED BEFORE COMPUTE AND IT HELD.** Idea 1745 KILLED the reading that a name's own
+  200d-crossing rate predicts the band's return cost, so the expectation was LESS TURNOVER AND NO GAIN.
+  Turnover falls in **256 of 256** (k vs its own INF row) — the device does what it says — but CAGR falls in
+  **246 of 256**, Sharpe in **229 of 256** and OOS Sharpe in **189 of 256**. Mean dCAGR at k = 6 / 4 / 3 / 2:
+  **-1.42 / -2.47 / -3.72 / -6.08 pp**; mean dSharpe **-0.0680 / -0.1017 / -0.1795 / -0.3411**.
+- **THE EXCHANGE RATE IS THE WHOLE ANSWER: ~0.1 pp OF CAGR PER 1% OF TURNOVER SAVED.** At 10 bps / W252 /
+  gross 0.75, U56-CAP2 gives up **-0.106 / -0.114 / -0.153 / -0.132 pp** of CAGR per 1% of turnover bought back,
+  B136-CAP2 -0.105 / -0.060 / -0.058 / -0.088. One cell of 16 is positive (B136-CAND k=2, +0.029) and it does
+  not reproduce on U56 (-0.101). Turnover only reaches the live book's **1.77x** at k=2 on U56-CAP2 (**1.99x**),
+  where CAGR has already fallen from **11.62% to 5.92%** and Sharpe from 1.2687 to 1.0295 — the cheapest cell
+  is the one that has stopped being an equity book.
+- **IT TRADES THE DD LEG FOR THE CAGR LEG, WHICH IS THE WRONG TRADE.** `dMaxDD > 0` (shallower) in **236 of
+  256**, so the filter really does cut drawdown; but the binding leg on the 4b failures migrates from `L_DD`
+  (24 / 21 / 12 / 16 / 28 at k = INF / 6 / 4 / 3 / 2) to `L_CAGR` (8 / 25 / 36 / 42 / 50), and 4b passes
+  collapse **32 / 19 / 15 / 8 / 5 of 64**; joint both-panel 4b **12 / 6 / 5 / 3 / 2 of 32**.
+- **RULE 8 REFUSES THE DIAL BY ITSELF.** 64 IS-only picks (2 panels x 2 windows x 2 books x 4 rungs x 2
+  choosers, fitted on <= 2016-12-31, 2017-2026 read once) land on **k = INF in 50 of 64** and average
+  **1.1470 OOS Sharpe against the committed 1.1435 (+0.0035)**, beating it in 5 of 64, at 4.29x turnover
+  against the committed 4.37x. 64 of 64 still clear SPY OOS: the book survives the dial; the dial buys
+  ~2% of turnover and 0.003 of Sharpe. The unfiltered admission rule is confirmed as the right default.
+- **THE CONVENTION IS PUBLISHED, NOT SELECTED ON, AND IT MATTERS:** W252 passes 4b in **53 of 160** against
+  W504's **26 of 160** — a longer flip window refuses more names for longer and is strictly worse. 4a is
+  **0 of 320**, consistent with 2326's 0-of-180, 2423's 0-of-384, 2427's 0-of-320 and 2431's 0-of-808.
+- **No new KEEP-candidate.** The standing 4b candidate, its `L_DD` leg and its 3.51x turnover blocker are
+  unchanged; the admission side is now closed alongside the exit and re-size sides.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is unchanged.
