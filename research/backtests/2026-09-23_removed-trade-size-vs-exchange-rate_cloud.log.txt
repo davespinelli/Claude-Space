@@ -1,0 +1,365 @@
+=== idea 2473 — DOES THE EXCHANGE RATE INSIDE THE EXPOSURE-NEUTRAL CLASS TRACK THE
+    TRADE-SIZE DISTRIBUTION EACH DEVICE REMOVES? ===
+    2026-09-23  lane cloud run 58   band 0.03  cap 0.02  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  sweep SHY (phi=1.00)
+    DIAL 1 device ['HOLD', 'DRIFT', 'BANDW', 'ROTA', 'PARTIAL'] (2463's own class, its published pp-per-1% order)
+    DIAL 2 tier MILD   {'HOLD': 2, 'DRIFT': 0.001, 'BANDW': 0.05, 'ROTA': 2, 'PARTIAL': 0.75}   (every rung VERBATIM from 2463's committed ladders)
+    DIAL 2 tier MID    {'HOLD': 4, 'DRIFT': 0.0025, 'BANDW': 0.08, 'ROTA': 3, 'PARTIAL': 0.5}   (every rung VERBATIM from 2463's committed ladders)
+    DIAL 2 tier STRONG {'HOLD': 8, 'DRIFT': 0.005, 'BANDW': 0.12, 'ROTA': 4, 'PARTIAL': 0.35}   (every rung VERBATIM from 2463's committed ladders)
+    2463's PUBLISHED rates, pp of CAGR per 1% saved: {'HOLD': 0.085, 'DRIFT': 0.02, 'BANDW': 0.009, 'ROTA': 0.008, 'PARTIAL': 0.005}
+    BUCKETS (|dw| of NAV, risk side only): ['<=1bp', '1-5bp', '5-10bp', '10-25bp', '25-50bp', '50-100bp', '100-200bp', '>200bp']   (the 2% cap makes >200bp a WHOLE POSITION)
+    H1 (the idea's reading): removed-turnover-weighted MEAN TRADE SIZE correlates POSITIVELY
+       with the realised rate.  H2: the REDUCTION share of removed turnover does.
+    H3 (the null 2477's result implies): neither does, and the realised RISK-GROSS difference
+       explains the rate better than any size statistic.  All scored by rank correlation over
+       the 60 (panel, gross, device, tier) cells, exposure control on every row.
+    SMALL NOT PRICED: the object is a DIFFERENCE on ONE panel, and SMALL has 0 of 40-128 4b
+    cells (2318/2322/2326/2343/2383) with three legs failing everywhere — no pass to move.
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008.  A RATE is a
+    ratio of two same-tape differences and is first-order immune; the 4b levels carried
+    alongside are NOT, and idea 2480 (this run) showed the 4b CAGR floor is benchmark-dependent.
+    GATE PASS  G6 exactly two tuned parameters: device, strength tier (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 the identity band IS baseline.band_state at 0.03, unmodified: 0 differing cells (target 0)
+    GATE PASS  G1 the identity path == engine.backtest on CAP2 (U56, g0.75, 10 bps): max|d| 1.388e-17 (target < 1e-12)
+
+    256 published rows = 2 panels x 2 gross x (5 devices x 3 tiers + IDENTITY) x 4 rungs; 64 distinct realised paths with a full trade-size histogram.
+    GATE PASS  G4 no leverage anywhere (max gross <= 1): max over 64 paths: 1.000000 gross, 0.9217 max single name; forced de-lever events 2571 (target <= 1+1e-12)
+    GATE PASS  G5 the cost charge is EXACTLY linear in the rung: max|d| 3.469e-18 (target < 1e-15)
+    GATE PASS  G7 every device's IDENTITY rung is BIT-IDENTICAL to the undamped book: max|d| over the 5 devices 0.000e+00 (target 0.0)
+    PUB   G8b risk-side bucket sum vs TOTAL turnover (the gap is the SHY sweep leg, by design): max relative gap 0.4381 over 64 paths
+    GATE PASS  G8 the bucket decomposition is EXACT (per-bucket sum == recorded risk-side turnover): max|d| 8.882e-16 over 4 identity paths (target < 1e-12)
+    GATE PASS  G9 sweep instrument priced on every held row: SHY non-null on both panels: True (target True)
+    GATE PASS  G10 every device actually BITES at its STRONGEST tier (the gate; the weak tiers are a RESULT, published below, not a defect): 20 of 20 STRONG-tier rows cut turnover (target all STRONG rows)
+    PUB   G10b A PREMISE OF 2463's CLASS IS REFUTED IN PASSING: 3 of 60 device cells INCREASE turnover: HOLD/MILD on U56 g0.75: +0.77%; HOLD/MILD on B136 g0.75: +1.94%; HOLD/MID on B136 g0.75: +2.43% -- blocking a reduction today forces a LARGER trade later, so a 'turnover device' can cost turnover; those cells have NO defined pp-per-1%-saved rate and are dropped pairwise from every correlation below (the kept count is reported).
+    GATE PASS  G11 the removed histogram is computed from REALISED executed trades only: sizes/signs/fulls are appended inside the acting-rebalance branch of the realised path; no counterfactual order is ever constructed (target by construction)
+    GATE PASS  G12 the exposure control is real (risk gross retained on every row): identity risk gross 0.6561-0.9563; device d_risk_gross range -0.0333 to +0.0928 (target non-degenerate)
+    GATE PASS  G3 the identity path reproduces the committed CAP2 headline (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318, 3.5064x): 11.62%/1.2687/-14.81% OOS 12.77%/1.3318 turn 3.5064x -> max|d| 3.95e-05 (target < 1e-3)
+
+=== A. THE DELIVERABLE: EACH NEUTRAL DEVICE'S REMOVED-TRADE SIZE HISTOGRAM (U56, g0.75) ===
+    annualised turnover REMOVED in each |dw| bucket (identity minus device; NEGATIVE = the
+    device CREATED turnover in that size class).  The identity row is its own turnover.
+  device  tier   |     <=1bp     1-5bp    5-10bp   10-25bp   25-50bp  50-100bp 100-200bp    >200bp |  total   mean size  red.share  whole.share
+  IDENTITY(own tn)|     0.015     0.242     0.327     0.350     0.081     0.010     1.647     0.032 |  2.704  (total turnover 3.506x)
+  HOLD    MILD  |     0.001     0.008     0.010     0.005    -0.006    -0.002     0.029    -0.003 |  0.041     76.4bp      50.4%       62.8%
+  HOLD    MID   |     0.001     0.015     0.023     0.016    -0.015    -0.004     0.089    -0.014 |  0.112     79.0bp      50.8%       67.2%
+  HOLD    STRONG|     0.002     0.028     0.045     0.043    -0.016    -0.013     0.194    -0.008 |  0.276     95.4bp      50.5%       67.4%
+  DRIFT   MILD  |     0.015     0.242     0.327    -0.181    -0.027    -0.001    -0.002     0.010 |  0.384      4.5bp      50.0%        2.1%
+  DRIFT   MID   |     0.015     0.242     0.327     0.350    -0.256    -0.011     0.009     0.015 |  0.691      6.7bp      50.1%        3.4%
+  DRIFT   STRONG|     0.015     0.242     0.327     0.350     0.081    -0.148     0.027     0.012 |  0.906      9.9bp      50.2%        4.3%
+  BANDW   MILD  |    -0.002    -0.003     0.037     0.052     0.019     0.005     0.456    -0.012 |  0.551    121.7bp      50.1%       80.5%
+  BANDW   MID   |    -0.004    -0.011     0.080     0.106     0.034     0.005     0.837     0.007 |  1.053    125.0bp      50.1%       80.1%
+  BANDW   STRONG|    -0.005    -0.014     0.091     0.142     0.037     0.004     1.128     0.011 |  1.393    127.3bp      49.9%       81.8%
+  ROTA    MILD  |     0.010     0.148     0.149     0.010    -0.034    -0.008     0.146    -0.012 |  0.409     44.7bp      50.1%       32.9%
+  ROTA    MID   |     0.013     0.189     0.213     0.065    -0.052    -0.015     0.246     0.003 |  0.662     57.7bp      50.0%       37.8%
+  ROTA    STRONG|     0.014     0.210     0.248     0.107    -0.074    -0.022     0.299     0.013 |  0.795     61.3bp      50.1%       39.3%
+  PARTIAL MILD  |    -0.004    -0.021     0.027     0.107    -0.211    -0.015     0.445     0.032 |  0.360    192.8bp      50.0%      132.6%
+  PARTIAL MID   |    -0.010    -0.033     0.098     0.051    -0.282    -0.784     1.644     0.032 |  0.716    263.1bp      50.0%      234.1%
+  PARTIAL STRONG|    -0.013    -0.035     0.124     0.046    -0.384    -0.432     1.647     0.032 |  0.984    214.8bp      50.0%      170.6%
+
+  THE SAME HISTOGRAMS AS SHARES OF EACH DEVICE'S OWN REMOVED TOTAL (all 4 panel x gross cells,
+  so the shape is read independently of how much each device removes):
+  panel g    device  tier   |   <=1bp   1-5bp  5-10bp 10-25bp 25-50bp 50-100bp 100-200bp  >200bp
+  U56   0.75 HOLD    MILD  |    1.3%   19.2%   25.5%   11.9%  -15.6%   -5.0%   71.2%   -8.5%
+  U56   0.75 HOLD    MID   |    0.9%   13.7%   20.6%   14.2%  -13.0%   -3.6%   79.6%  -12.4%
+  U56   0.75 HOLD    STRONG|    0.6%   10.3%   16.4%   15.5%   -5.8%   -4.5%   70.3%   -2.9%
+  U56   0.75 DRIFT   MILD  |    4.0%   63.1%   85.3%  -47.2%   -7.0%   -0.3%   -0.6%    2.7%
+  U56   0.75 DRIFT   MID   |    2.2%   35.1%   47.4%   50.7%  -37.1%   -1.6%    1.2%    2.2%
+  U56   0.75 DRIFT   STRONG|    1.7%   26.7%   36.1%   38.6%    8.9%  -16.4%    3.0%    1.4%
+  U56   0.75 BANDW   MILD  |   -0.4%   -0.6%    6.7%    9.3%    3.5%    0.9%   82.6%   -2.1%
+  U56   0.75 BANDW   MID   |   -0.4%   -1.1%    7.6%   10.1%    3.3%    0.4%   79.5%    0.6%
+  U56   0.75 BANDW   STRONG|   -0.4%   -1.0%    6.5%   10.2%    2.7%    0.3%   80.9%    0.8%
+  U56   0.75 ROTA    MILD  |    2.5%   36.1%   36.3%    2.5%   -8.3%   -2.0%   35.7%   -2.8%
+  U56   0.75 ROTA    MID   |    1.9%   28.6%   32.1%    9.8%   -7.9%   -2.3%   37.3%    0.5%
+  U56   0.75 ROTA    STRONG|    1.7%   26.4%   31.2%   13.4%   -9.3%   -2.7%   37.7%    1.6%
+  U56   0.75 PARTIAL MILD  |   -1.2%   -5.9%    7.5%   29.8%  -58.7%   -4.2%  123.7%    8.9%
+  U56   0.75 PARTIAL MID   |   -1.4%   -4.6%   13.7%    7.1%  -39.3% -109.5%  229.6%    4.5%
+  U56   0.75 PARTIAL STRONG|   -1.4%   -3.6%   12.6%    4.6%  -39.0%  -43.9%  167.3%    3.3%
+  U56   1.00 HOLD    MILD  |    1.5%   20.0%   14.2%    4.0%   -8.7%   -1.8%   76.8%   -5.9%
+  U56   1.00 HOLD    MID   |    1.2%   13.4%   13.8%    3.8%   -3.9%   -1.9%   83.0%   -9.5%
+  U56   1.00 HOLD    STRONG|    0.9%   10.7%   10.8%    5.6%   -3.1%   -0.3%   78.2%   -2.7%
+  U56   1.00 DRIFT   MILD  |    6.2%   72.0%   60.3%  -39.4%   -1.5%   -0.5%    1.0%    1.9%
+  U56   1.00 DRIFT   MID   |    3.9%   45.7%   38.7%   30.3%  -22.5%   -1.1%   -0.2%    5.2%
+  U56   1.00 DRIFT   STRONG|    3.4%   40.0%   33.7%   26.6%    5.6%  -14.0%    9.7%   -5.0%
+  U56   1.00 BANDW   MILD  |    0.0%    0.8%    0.1%    0.4%   -0.1%    0.1%   96.7%    2.0%
+  U56   1.00 BANDW   MID   |    0.1%    0.6%   -0.1%   -0.3%   -0.2%    0.0%   97.7%    2.2%
+  U56   1.00 BANDW   STRONG|    0.1%    0.2%   -0.5%   -1.1%   -0.2%   -0.0%   98.5%    3.1%
+  U56   1.00 ROTA    MILD  |    4.0%   38.7%   20.0%    2.7%   -1.4%   -2.2%   39.4%   -1.0%
+  U56   1.00 ROTA    MID   |    3.2%   32.3%   19.2%    4.5%   -2.1%   -1.4%   42.6%    1.8%
+  U56   1.00 ROTA    STRONG|    2.9%   30.4%   19.4%    4.9%   -1.9%   -2.1%   41.6%    4.8%
+  U56   1.00 PARTIAL MILD  |   -2.2%    2.2%    6.9%   20.4%  -96.9%    0.2%  140.8%   28.6%
+  U56   1.00 PARTIAL MID   |   -2.2%    5.0%   14.8%  -14.8%  -57.3% -151.3%  291.7%   14.1%
+  U56   1.00 PARTIAL STRONG|   -2.2%    5.6%   11.4%  -11.5%  -61.8%  -63.1%  211.6%   10.1%
+  B136  0.75 HOLD    MILD  |    2.2%   27.6%   19.5%   43.9%   -5.2%  -13.8%   25.7%   -0.0%
+  B136  0.75 HOLD    MID   |    1.9%   22.3%   18.6%   29.5%    1.5%   10.0%   17.2%   -1.1%
+  B136  0.75 HOLD    STRONG|    1.5%   16.8%   12.6%   18.1%    3.4%   24.6%   23.1%   -0.2%
+  B136  0.75 DRIFT   MILD  |    9.9%   87.4%   57.0%  -50.7%   -6.4%    0.9%    1.6%    0.2%
+  B136  0.75 DRIFT   MID   |    6.1%   53.9%   35.2%   43.5%  -37.1%   -5.0%    2.8%    0.8%
+  B136  0.75 DRIFT   STRONG|    4.9%   43.0%   28.0%   34.7%   16.4%  -29.4%    2.1%    0.3%
+  B136  0.75 BANDW   MILD  |   -1.2%    2.3%    7.0%   15.4%    4.3%   44.6%   27.2%    0.5%
+  B136  0.75 BANDW   MID   |   -1.1%    2.6%    6.2%   12.2%    5.6%   47.7%   26.1%    0.7%
+  B136  0.75 BANDW   STRONG|   -1.1%    1.9%    6.3%   12.5%    6.0%   45.4%   28.4%    0.6%
+  B136  0.75 ROTA    MILD  |    6.8%   43.3%   13.4%   15.6%   -7.8%    0.7%   27.0%    0.9%
+  B136  0.75 ROTA    MID   |    5.1%   37.5%   13.6%   13.1%    2.4%    0.9%   26.7%    0.8%
+  B136  0.75 ROTA    STRONG|    4.5%   34.3%   15.2%   13.5%    0.4%    2.0%   28.9%    1.2%
+  B136  0.75 PARTIAL MILD  |   -2.8%    1.2%   10.6%  -26.6%  -41.6%   65.0%   91.3%    2.9%
+  B136  0.75 PARTIAL MID   |   -2.5%    3.9%    1.3%  -19.5%  -56.2%   92.8%   78.8%    1.5%
+  B136  0.75 PARTIAL STRONG|   -2.4%    4.5%   -0.9%  -26.8%  -17.5%   84.6%   57.5%    1.1%
+  B136  1.00 HOLD    MILD  |   -0.7%   11.7%   19.5%   30.2%  -16.0%  -14.3%   67.5%    2.0%
+  B136  1.00 HOLD    MID   |   -0.5%    5.8%    6.4%   17.8%   -1.7%  -12.8%   86.0%   -0.9%
+  B136  1.00 HOLD    STRONG|   -0.8%   -0.9%    6.5%    7.0%    9.6%    0.6%   77.6%    0.3%
+  B136  1.00 DRIFT   MILD  |    3.7%   72.2%   76.6%  -50.4%   -6.6%  -10.0%   13.4%    1.1%
+  B136  1.00 DRIFT   MID   |    3.1%   38.4%   33.3%   49.8%  -30.2%  -15.1%   20.0%    0.6%
+  B136  1.00 DRIFT   STRONG|    2.3%   31.4%   26.9%   27.0%   18.0%  -29.6%   23.1%    0.9%
+  B136  1.00 BANDW   MILD  |   -0.8%    0.2%    6.0%   13.6%    6.9%   26.1%   47.3%    0.6%
+  B136  1.00 BANDW   MID   |   -0.8%    0.4%    6.0%   11.5%    7.5%   27.5%   47.3%    0.6%
+  B136  1.00 BANDW   STRONG|   -0.8%    0.2%    5.6%   11.7%    6.4%   27.3%   49.0%    0.7%
+  B136  1.00 ROTA    MILD  |    4.8%   42.7%   17.2%   13.0%  -12.6%   -7.0%   41.3%    0.6%
+  B136  1.00 ROTA    MID   |    3.4%   34.3%   18.2%   11.5%   -2.8%   -7.2%   41.8%    0.6%
+  B136  1.00 ROTA    STRONG|    3.1%   31.6%   18.7%   12.9%   -2.0%   -9.3%   44.1%    1.1%
+  B136  1.00 PARTIAL MILD  |   -1.8%   -1.5%    9.4%  -23.3%   -9.2%  -46.2%  168.5%    4.2%
+  B136  1.00 PARTIAL MID   |   -2.0%    1.7%    6.4%  -16.6%  -48.2%   15.6%  140.9%    2.1%
+  B136  1.00 PARTIAL STRONG|   -1.9%    2.4%    3.1%  -17.7%  -33.4%   43.6%  102.4%    1.5%
+
+=== B. EACH DEVICE'S OWN REALISED RATE (pp of CAGR per 1% of turnover saved), 10 bps ===
+  panel g    device  tier   | turnover  dTurn   dCAGR    rate  | 2463 published | dSharpe  dMaxDD  dRiskGross
+  U56   0.75 HOLD    MILD  |     3.53   +0.8%   -0.00pp    +nan |         +0.085 | -0.0101  +0.00%    +0.0035
+  U56   0.75 HOLD    MID   |     3.49   -0.5%   +0.06pp  +0.119 |         +0.085 | -0.0185  +0.00%    +0.0099
+  U56   0.75 HOLD    STRONG|     3.32   -5.2%   +0.51pp  +0.098 |         +0.085 | +0.0009  -0.33%    +0.0237
+  U56   0.75 DRIFT   MILD  |     3.29   -6.0%   +0.04pp  +0.006 |         +0.020 | +0.0045  +0.12%    +0.0017
+  U56   0.75 DRIFT   MID   |     3.16   -9.8%   +0.05pp  +0.005 |         +0.020 | -0.0028  -0.07%    +0.0082
+  U56   0.75 DRIFT   STRONG|     3.07  -12.3%   +0.28pp  +0.023 |         +0.020 | +0.0016  +0.21%    +0.0219
+  U56   0.75 BANDW   MILD  |     2.84  -18.9%   -0.13pp  -0.007 |         +0.009 | -0.0495  -0.79%    +0.0052
+  U56   0.75 BANDW   MID   |     2.20  -37.4%   +0.14pp  +0.004 |         +0.009 | -0.0519  -2.35%    +0.0028
+  U56   0.75 BANDW   STRONG|     1.74  -50.2%   +0.43pp  +0.009 |         +0.009 | -0.0595  -2.04%    +0.0064
+  U56   0.75 ROTA    MILD  |     2.98  -15.0%   -0.07pp  -0.005 |         +0.008 | -0.0400  -3.46%    +0.0008
+  U56   0.75 ROTA    MID   |     2.66  -24.1%   +0.22pp  +0.009 |         +0.008 | -0.0248  -3.41%    +0.0001
+  U56   0.75 ROTA    STRONG|     2.51  -28.4%   +0.04pp  +0.001 |         +0.008 | -0.0512  -3.50%    +0.0014
+  U56   0.75 PARTIAL MILD  |     3.02  -13.8%   +0.06pp  +0.004 |         +0.005 | -0.0021  -0.23%    -0.0001
+  U56   0.75 PARTIAL MID   |     2.56  -27.0%   +0.13pp  +0.005 |         +0.005 | -0.0098  -1.45%    -0.0002
+  U56   0.75 PARTIAL STRONG|     2.22  -36.7%   +0.19pp  +0.005 |         +0.005 | -0.0183  -2.47%    -0.0003
+  U56   1.00 HOLD    MILD  |     3.95   -1.2%   -0.00pp  -0.004 |         +0.085 | -0.0084  +0.00%    +0.0034
+  U56   1.00 HOLD    MID   |     3.82   -4.3%   +0.04pp  +0.009 |         +0.085 | -0.0160  +0.00%    +0.0095
+  U56   1.00 HOLD    STRONG|     3.56  -10.8%   +0.50pp  +0.046 |         +0.085 | +0.0045  -0.42%    +0.0225
+  U56   1.00 DRIFT   MILD  |     3.66   -8.2%   +0.05pp  +0.006 |         +0.020 | +0.0057  +0.09%    -0.0003
+  U56   1.00 DRIFT   MID   |     3.46  -13.3%   +0.11pp  +0.008 |         +0.020 | +0.0055  +0.12%    +0.0033
+  U56   1.00 DRIFT   STRONG|     3.39  -15.0%   +0.44pp  +0.029 |         +0.020 | +0.0085  +0.03%    +0.0143
+  U56   1.00 BANDW   MILD  |     3.18  -20.4%   -0.40pp  -0.020 |         +0.009 | -0.0513  -0.77%    -0.0080
+  U56   1.00 BANDW   MID   |     2.43  -39.1%   -0.01pp  -0.000 |         +0.009 | -0.0447  -3.50%    -0.0174
+  U56   1.00 BANDW   STRONG|     1.91  -52.1%   +0.25pp  +0.005 |         +0.009 | -0.0415  -0.00%    -0.0155
+  U56   1.00 ROTA    MILD  |     3.42  -14.3%   -0.05pp  -0.004 |         +0.008 | -0.0385  -3.19%    +0.0008
+  U56   1.00 ROTA    MID   |     3.06  -23.3%   +0.32pp  +0.014 |         +0.008 | -0.0174  -3.13%    -0.0002
+  U56   1.00 ROTA    STRONG|     2.90  -27.4%   +0.18pp  +0.007 |         +0.008 | -0.0364  -3.21%    +0.0002
+  U56   1.00 PARTIAL MILD  |     3.49  -12.7%   +0.07pp  +0.006 |         +0.005 | -0.0036  -0.38%    -0.0001
+  U56   1.00 PARTIAL MID   |     2.98  -25.3%   +0.14pp  +0.006 |         +0.005 | -0.0173  -2.13%    -0.0004
+  U56   1.00 PARTIAL STRONG|     2.61  -34.7%   +0.21pp  +0.006 |         +0.005 | -0.0314  -3.86%    -0.0007
+  B136  0.75 HOLD    MILD  |     4.77   +1.9%   +0.19pp    +nan |         +0.085 | -0.0016  -0.24%    +0.0074
+  B136  0.75 HOLD    MID   |     4.79   +2.4%   +0.56pp    +nan |         +0.085 | +0.0030  -1.47%    +0.0202
+  B136  0.75 HOLD    STRONG|     4.59   -1.9%   +1.23pp  +0.660 |         +0.085 | +0.0051  -2.16%    +0.0480
+  B136  0.75 DRIFT   MILD  |     4.45   -4.8%   -0.01pp  -0.002 |         +0.020 | -0.0033  +0.05%    +0.0084
+  B136  0.75 DRIFT   MID   |     4.44   -5.1%   +0.39pp  +0.076 |         +0.020 | +0.0036  -0.22%    +0.0402
+  B136  0.75 DRIFT   STRONG|     4.35   -6.9%   +1.32pp  +0.192 |         +0.020 | +0.0206  -0.39%    +0.0928
+  B136  0.75 BANDW   MILD  |     3.67  -21.5%   +0.19pp  +0.009 |         +0.009 | -0.0024  -0.15%    +0.0070
+  B136  0.75 BANDW   MID   |     2.70  -42.2%   +0.73pp  +0.017 |         +0.009 | +0.0332  -0.99%    +0.0074
+  B136  0.75 BANDW   STRONG|     2.11  -54.9%   +1.45pp  +0.026 |         +0.009 | +0.0628  -4.24%    +0.0080
+  B136  0.75 ROTA    MILD  |     3.94  -15.7%   -0.36pp  -0.023 |         +0.008 | -0.0542  -4.57%    +0.0002
+  B136  0.75 ROTA    MID   |     3.46  -25.9%   +0.16pp  +0.006 |         +0.008 | -0.0253  -5.17%    +0.0010
+  B136  0.75 ROTA    STRONG|     3.17  -32.3%   +0.02pp  +0.001 |         +0.008 | -0.0416  -5.17%    +0.0013
+  B136  0.75 PARTIAL MILD  |     3.97  -15.1%   +0.03pp  +0.002 |         +0.005 | -0.0019  -0.13%    -0.0000
+  B136  0.75 PARTIAL MID   |     3.29  -29.6%   +0.13pp  +0.005 |         +0.005 | -0.0017  -1.72%    -0.0001
+  B136  0.75 PARTIAL STRONG|     2.78  -40.4%   +0.29pp  +0.007 |         +0.005 | +0.0033  -2.85%    -0.0002
+  B136  1.00 HOLD    MILD  |     5.79   -0.7%   +0.18pp  +0.258 |         +0.085 | +0.0022  -0.04%    +0.0047
+  B136  1.00 HOLD    MID   |     5.53   -5.2%   +0.44pp  +0.085 |         +0.085 | +0.0099  -0.18%    +0.0092
+  B136  1.00 HOLD    STRONG|     5.02  -13.8%   +0.79pp  +0.057 |         +0.085 | +0.0177  -0.38%    +0.0165
+  B136  1.00 DRIFT   MILD  |     5.57   -4.5%   -0.06pp  -0.013 |         +0.020 | +0.0026  +0.40%    -0.0040
+  B136  1.00 DRIFT   MID   |     5.37   -7.8%   -0.24pp  -0.031 |         +0.020 | +0.0046  +0.49%    -0.0184
+  B136  1.00 DRIFT   STRONG|     5.19  -10.9%   -0.42pp  -0.039 |         +0.020 | +0.0116  +1.50%    -0.0333
+  B136  1.00 BANDW   MILD  |     4.50  -22.7%   +0.25pp  +0.011 |         +0.009 | -0.0008  -0.74%    +0.0080
+  B136  1.00 BANDW   MID   |     3.29  -43.6%   +0.93pp  +0.021 |         +0.009 | +0.0291  -1.79%    +0.0104
+  B136  1.00 BANDW   STRONG|     2.52  -56.8%   +1.86pp  +0.033 |         +0.009 | +0.0544  -4.47%    +0.0151
+  B136  1.00 ROTA    MILD  |     4.99  -14.4%   -0.56pp  -0.039 |         +0.008 | -0.0646  -6.50%    +0.0004
+  B136  1.00 ROTA    MID   |     4.41  -24.3%   +0.15pp  +0.006 |         +0.008 | -0.0355  -7.33%    -0.0001
+  B136  1.00 ROTA    STRONG|     4.07  -30.2%   +0.01pp  +0.000 |         +0.008 | -0.0492  -7.29%    +0.0002
+  B136  1.00 PARTIAL MILD  |     5.01  -14.1%   +0.00pp  +0.000 |         +0.005 | -0.0055  -0.36%    -0.0003
+  B136  1.00 PARTIAL MID   |     4.20  -27.9%   +0.11pp  +0.004 |         +0.005 | -0.0090  -2.33%    -0.0009
+  B136  1.00 PARTIAL STRONG|     3.58  -38.6%   +0.32pp  +0.008 |         +0.005 | -0.0062  -4.14%    -0.0015
+
+=== C. THE ANSWER: DOES THE RATE TRACK THE REMOVED-TRADE SIZE DISTRIBUTION? ===
+    rank (Spearman) correlation of each device-cell's realised rate against each candidate
+    explanator, over all 60 (panel, gross, device, tier) cells and within each panel x gross:
+  explanator                                          |  ALL 60  | U56 .75  U56 1.00  B136 .75  B136 1.00
+  H1  mean REMOVED trade size                         |   -0.035 |   -0.169    -0.296    -0.060    +0.518   (n=57 of 60)
+  H2  REDUCTION share of removed turnover             |   +0.350 |   +0.086    +0.343    +0.819    +0.196   (n=57 of 60)
+  H1b WHOLE-POSITION share of removed turnover (>100bp) |   -0.105 |   -0.182    -0.271    -0.396    +0.546   (n=57 of 60)
+  H2b count of realised FULL EXITS                    |   +0.097 |   +0.347    +0.271    +0.091    -0.227   (n=57 of 60)
+  H3  d RISK GROSS (the exposure control)             |   +0.658 |   +0.468    +0.579    +0.632    +0.743   (n=57 of 60)
+  --  size of the cut itself (dTurn)                  |   +0.101 |   +0.442    +0.146    +0.104    -0.064   (n=57 of 60)
+
+  AND THE SAME TEST WITH THE DEVICE AVERAGED OVER ITS THREE TIERS (5 devices x 4 panel-gross
+  cells = 20 points), which is the level 2463 actually published its rates at:
+  explanator                                          |  ALL 20
+  H1  mean REMOVED trade size                         |   -0.113
+  H2  REDUCTION share of removed turnover             |   +0.576
+  H1b WHOLE-POSITION share of removed turnover (>100bp) |   -0.191
+  H2b count of realised FULL EXITS                    |   +0.239
+  H3  d RISK GROSS (the exposure control)             |   +0.797
+  --  size of the cut itself (dTurn)                  |   +0.430
+
+  THE DEVICE-LEVEL PICTURE (pooled over panels, gross and tiers — 2463's own axis):
+  device  | 2463 rate | this run's rate | mean removed size | reduction share | whole share | d risk gross
+  HOLD    |    +0.085 |          +0.148 |           85.4bp |           50.3% |       59.5% |      +0.0149
+  DRIFT   |    +0.020 |          +0.022 |            8.7bp |           50.0% |        7.4% |      +0.0112
+  BANDW   |    +0.009 |          +0.009 |          114.8bp |           50.0% |       64.3% |      +0.0024
+  ROTA    |    +0.008 |          -0.002 |           58.7bp |           50.0% |       37.8% |      +0.0005
+  PARTIAL |    +0.005 |          +0.005 |          220.7bp |           50.0% |      157.2% |      -0.0004
+
+   rank corr of THIS RUN's device-level rate against 2463's PUBLISHED device-level rate: +0.900 (5 devices)
+
+=== D. BOTH KEEP PATHS OVER ALL 256 PUBLISHED ROWS ===
+  4b passes 133 of 256    4a passes 0 of 256
+   IDENTITY: 4b  10/ 16  4a   0/ 16   4b leg failures: H1   0  H2   2  OOS   0  DD   4  CAGR   2
+   HOLD    : 4b  30/ 48  4a   0/ 48   4b leg failures: H1   0  H2   6  OOS   0  DD  14  CAGR   5
+   DRIFT   : 4b  31/ 48  4a   0/ 48   4b leg failures: H1   0  H2   5  OOS   0  DD  12  CAGR   5
+   BANDW   : 4b  26/ 48  4a   0/ 48   4b leg failures: H1   0  H2   1  OOS   0  DD  20  CAGR   2
+   ROTA    : 4b   9/ 48  4a   0/ 48   4b leg failures: H1   0  H2   5  OOS   2  DD  36  CAGR   6
+   PARTIAL : 4b  27/ 48  4a   0/ 48   4b leg failures: H1   0  H2   2  OOS   0  DD  17  CAGR   4
+     0.0 bps: 4b  39/64   4a   0/64
+    10.0 bps: 4b  39/64   4a   0/64
+    25.0 bps: 4b  39/64   4a   0/64
+    50.0 bps: 4b  16/64   4a   0/64
+
+  EVERY GRID POINT AT THE HEADLINE RUNG (10 bps), both panels, both gross:
+  panel g    device  tier   |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh | turn | 4a 4b | legs
+  U56   0.75 IDENTITY IDENTITY| 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 | 3.51 | .  Y  | 11111   <= COMMITTED
+  U56   0.75 HOLD    MILD  | 11.62%  1.2585  -14.81% |  1.31   1.22 |  12.68%  1.3112 | 3.53 | .  Y  | 11111
+  U56   0.75 HOLD    MID   | 11.69%  1.2502  -14.81% |  1.34   1.18 |  12.42%  1.2717 | 3.49 | .  Y  | 11111
+  U56   0.75 HOLD    STRONG| 12.14%  1.2695  -15.14% |  1.36   1.20 |  12.87%  1.2864 | 3.32 | .  Y  | 11111
+  U56   0.75 DRIFT   MILD  | 11.66%  1.2731  -14.69% |  1.30   1.25 |  12.84%  1.3392 | 3.29 | .  Y  | 11111
+  U56   0.75 DRIFT   MID   | 11.67%  1.2658  -14.88% |  1.30   1.25 |  12.86%  1.3332 | 3.16 | .  Y  | 11111
+  U56   0.75 DRIFT   STRONG| 11.90%  1.2703  -14.60% |  1.27   1.27 |  13.24%  1.3573 | 3.07 | .  Y  | 11111
+  U56   0.75 BANDW   MILD  | 11.49%  1.2192  -15.60% |  1.28   1.18 |  12.60%  1.2652 | 2.84 | .  Y  | 11111
+  U56   0.75 BANDW   MID   | 11.76%  1.2168  -17.16% |  1.31   1.15 |  12.60%  1.2318 | 2.20 | .  Y  | 11111
+  U56   0.75 BANDW   STRONG| 12.05%  1.2092  -16.85% |  1.28   1.15 |  12.58%  1.2295 | 1.74 | .  Y  | 11111
+  U56   0.75 ROTA    MILD  | 11.56%  1.2286  -18.27% |  1.29   1.18 |  12.55%  1.2643 | 2.98 | .  Y  | 11111
+  U56   0.75 ROTA    MID   | 11.85%  1.2439  -18.22% |  1.29   1.22 |  13.09%  1.2966 | 2.66 | .  Y  | 11111
+  U56   0.75 ROTA    STRONG| 11.66%  1.2175  -18.31% |  1.26   1.19 |  13.00%  1.2729 | 2.51 | .  Y  | 11111
+  U56   0.75 PARTIAL MILD  | 11.68%  1.2666  -15.04% |  1.30   1.24 |  12.83%  1.3277 | 3.02 | .  Y  | 11111
+  U56   0.75 PARTIAL MID   | 11.75%  1.2588  -16.26% |  1.30   1.24 |  12.92%  1.3166 | 2.56 | .  Y  | 11111
+  U56   0.75 PARTIAL STRONG| 11.82%  1.2503  -17.28% |  1.29   1.22 |  13.02%  1.3039 | 2.22 | .  Y  | 11111
+  U56   1.00 IDENTITY IDENTITY| 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 | 3.99 | .  Y  | 11111   <= COMMITTED
+  U56   1.00 HOLD    MILD  | 12.66%  1.2103  -17.28% |  1.25   1.19 |  14.20%  1.2787 | 3.95 | .  Y  | 11111
+  U56   1.00 HOLD    MID   | 12.70%  1.2027  -17.28% |  1.28   1.15 |  13.90%  1.2424 | 3.82 | .  Y  | 11111
+  U56   1.00 HOLD    STRONG| 13.16%  1.2232  -17.69% |  1.30   1.17 |  14.39%  1.2603 | 3.56 | .  Y  | 11111
+  U56   1.00 DRIFT   MILD  | 12.71%  1.2244  -17.18% |  1.25   1.21 |  14.37%  1.3040 | 3.66 | .  Y  | 11111
+  U56   1.00 DRIFT   MID   | 12.77%  1.2242  -17.16% |  1.25   1.21 |  14.36%  1.3000 | 3.46 | .  Y  | 11111
+  U56   1.00 DRIFT   STRONG| 13.11%  1.2272  -17.25% |  1.24   1.23 |  14.82%  1.3158 | 3.39 | .  Y  | 11111
+  U56   1.00 BANDW   MILD  | 12.26%  1.1674  -18.05% |  1.21   1.14 |  13.81%  1.2329 | 3.18 | .  Y  | 11111
+  U56   1.00 BANDW   MID   | 12.66%  1.1739  -20.78% |  1.26   1.11 |  13.81%  1.1996 | 2.43 | .  .  | 11101
+  U56   1.00 BANDW   STRONG| 12.91%  1.1772  -17.28% |  1.26   1.11 |  13.78%  1.2055 | 1.91 | .  Y  | 11111
+  U56   1.00 ROTA    MILD  | 12.61%  1.1802  -20.47% |  1.23   1.15 |  14.07%  1.2325 | 3.42 | .  .  | 11101
+  U56   1.00 ROTA    MID   | 12.98%  1.2013  -20.41% |  1.23   1.19 |  14.74%  1.2737 | 3.06 | .  .  | 11101
+  U56   1.00 ROTA    STRONG| 12.85%  1.1823  -20.49% |  1.22   1.16 |  14.61%  1.2482 | 2.90 | .  .  | 11101
+  U56   1.00 PARTIAL MILD  | 12.74%  1.2151  -17.66% |  1.24   1.20 |  14.37%  1.2894 | 3.49 | .  Y  | 11111
+  U56   1.00 PARTIAL MID   | 12.80%  1.2013  -19.41% |  1.24   1.18 |  14.43%  1.2675 | 2.98 | .  Y  | 11111
+  U56   1.00 PARTIAL STRONG| 12.87%  1.1873  -21.13% |  1.23   1.16 |  14.49%  1.2441 | 2.61 | .  .  | 11101
+  B136  0.75 IDENTITY IDENTITY| 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 | 4.68 | .  Y  | 11111   <= COMMITTED
+  B136  0.75 HOLD    MILD  | 12.01%  1.1163  -17.34% |  1.26   0.99 |  11.83%  1.0902 | 4.77 | .  Y  | 11111
+  B136  0.75 HOLD    MID   | 12.38%  1.1210  -18.57% |  1.29   0.97 |  11.91%  1.0726 | 4.79 | .  Y  | 11111
+  B136  0.75 HOLD    STRONG| 13.05%  1.1231  -19.26% |  1.27   0.99 |  12.69%  1.0851 | 4.59 | .  Y  | 11111
+  B136  0.75 DRIFT   MILD  | 11.81%  1.1146  -17.04% |  1.25   0.99 |  11.67%  1.0944 | 4.45 | .  Y  | 11111
+  B136  0.75 DRIFT   MID   | 12.21%  1.1216  -17.32% |  1.26   0.99 |  12.01%  1.1022 | 4.44 | .  Y  | 11111
+  B136  0.75 DRIFT   STRONG| 13.14%  1.1385  -17.48% |  1.25   1.04 |  13.12%  1.1469 | 4.35 | .  Y  | 11111
+  B136  0.75 BANDW   MILD  | 12.01%  1.1156  -17.25% |  1.25   0.99 |  11.92%  1.0981 | 3.67 | .  Y  | 11111
+  B136  0.75 BANDW   MID   | 12.56%  1.1512  -18.08% |  1.31   1.01 |  12.27%  1.1070 | 2.70 | .  Y  | 11111
+  B136  0.75 BANDW   STRONG| 13.27%  1.1807  -21.34% |  1.34   1.05 |  13.08%  1.1387 | 2.11 | .  .  | 11101
+  B136  0.75 ROTA    MILD  | 11.46%  1.0637  -21.67% |  1.23   0.92 |  11.20%  1.0182 | 3.94 | .  .  | 11101
+  B136  0.75 ROTA    MID   | 11.98%  1.0927  -22.26% |  1.24   0.97 |  12.11%  1.0678 | 3.46 | .  .  | 11101
+  B136  0.75 ROTA    STRONG| 11.84%  1.0763  -22.27% |  1.23   0.96 |  12.01%  1.0522 | 3.17 | .  .  | 11101
+  B136  0.75 PARTIAL MILD  | 11.86%  1.1161  -17.23% |  1.26   0.99 |  11.72%  1.0915 | 3.97 | .  Y  | 11111
+  B136  0.75 PARTIAL MID   | 11.96%  1.1162  -18.82% |  1.26   0.99 |  11.89%  1.0917 | 3.29 | .  Y  | 11111
+  B136  0.75 PARTIAL STRONG| 12.11%  1.1213  -19.95% |  1.26   1.00 |  12.13%  1.0973 | 2.78 | .  Y  | 11111
+  B136  1.00 IDENTITY IDENTITY| 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 | 5.83 | .  .  | 11101   <= COMMITTED
+  B136  1.00 HOLD    MILD  | 15.24%  1.0933  -22.42% |  1.25   0.96 |  14.89%  1.0625 | 5.79 | .  .  | 11101
+  B136  1.00 HOLD    MID   | 15.50%  1.1010  -22.57% |  1.27   0.95 |  14.85%  1.0518 | 5.53 | .  .  | 11101
+  B136  1.00 HOLD    STRONG| 15.85%  1.1088  -22.76% |  1.27   0.97 |  15.38%  1.0692 | 5.02 | .  .  | 11101
+  B136  1.00 DRIFT   MILD  | 15.00%  1.0937  -21.98% |  1.24   0.96 |  14.75%  1.0709 | 5.57 | .  .  | 11101
+  B136  1.00 DRIFT   MID   | 14.82%  1.0957  -21.89% |  1.23   0.97 |  14.71%  1.0810 | 5.37 | .  .  | 11101
+  B136  1.00 DRIFT   STRONG| 14.64%  1.1027  -20.88% |  1.23   0.98 |  14.51%  1.0928 | 5.19 | .  .  | 11101
+  B136  1.00 BANDW   MILD  | 15.31%  1.0903  -23.12% |  1.23   0.96 |  15.11%  1.0712 | 4.50 | .  .  | 11101
+  B136  1.00 BANDW   MID   | 15.99%  1.1202  -24.17% |  1.28   0.98 |  15.48%  1.0752 | 3.29 | .  .  | 11101
+  B136  1.00 BANDW   STRONG| 16.92%  1.1455  -26.85% |  1.31   1.00 |  16.33%  1.0945 | 2.52 | .  .  | 11101
+  B136  1.00 ROTA    MILD  | 14.50%  1.0265  -28.88% |  1.22   0.87 |  13.96%  0.9691 | 4.99 | .  .  | 11101
+  B136  1.00 ROTA    MID   | 15.21%  1.0556  -29.71% |  1.22   0.92 |  15.16%  1.0189 | 4.41 | .  .  | 11101
+  B136  1.00 ROTA    STRONG| 15.07%  1.0419  -29.67% |  1.20   0.92 |  15.28%  1.0130 | 4.07 | .  .  | 11101
+  B136  1.00 PARTIAL MILD  | 15.06%  1.0856  -22.74% |  1.24   0.95 |  14.78%  1.0565 | 5.01 | .  .  | 11101
+  B136  1.00 PARTIAL MID   | 15.17%  1.0821  -24.72% |  1.23   0.95 |  14.96%  1.0516 | 4.20 | .  .  | 11101
+  B136  1.00 PARTIAL STRONG| 15.38%  1.0850  -26.52% |  1.24   0.96 |  15.26%  1.0540 | 3.58 | .  .  | 11101
+
+=== E. RULE 8 — the two dials (device, tier) chosen on warm-up..2016-12-31 ONLY, 2017-2026
+    read ONCE, scored against the COMMITTED identity book AND SPY. ===
+  48 picks (2 panels x 2 gross x 4 rungs x 3 choosers).
+   picks beating SPY's OOS Sharpe:                      48 of 48
+   picks beating the LIVE book's OOS Sharpe:             14 of 48
+   picks beating the COMMITTED identity's OOS Sharpe:    13 of 48
+   picks with a POSITIVE OOS dCAGR vs the identity:      39 of 48
+   picks carrying a full-sample 4b pass:                 28 of 48
+   C_ISRATE    picks: HOLD/MID:8  HOLD/STRONG:4  HOLD/MILD:4
+      mean OOS Sharpe 1.1212 vs committed 1.1497  mean OOS dCAGR +0.11pp  mean turnover 4.42x vs 4.50x  4b 10/16
+   C_ISSHARPE  picks: BANDW/STRONG:10  HOLD/STRONG:6
+      mean OOS Sharpe 1.1650 vs committed 1.1497  mean OOS dCAGR +1.02pp  mean turnover 2.68x vs 4.50x  4b 8/16
+   C_ISCALMAR  picks: HOLD/STRONG:8  HOLD/MID:3  BANDW/MID:2  BANDW/STRONG:2  BANDW/MILD:1
+      mean OOS Sharpe 1.1425 vs committed 1.1497  mean OOS dCAGR +0.62pp  mean turnover 3.74x vs 4.50x  4b 10/16
+
+   panel g     bps chooser     pick           | OOS CAGR  OOS Sh  OOS dCAGR OOS dSh | turn  | 4b
+   U56   0.75   0.0 C_ISRATE    HOLD/MID       |   12.82%  1.3089     -0.35pp -0.0604 |  3.49 | PASS
+   U56   0.75   0.0 C_ISSHARPE  HOLD/STRONG    |   13.26%  1.3218     +0.09pp -0.0475 |  3.32 | PASS
+   U56   0.75   0.0 C_ISCALMAR  HOLD/STRONG    |   13.26%  1.3218     +0.09pp -0.0475 |  3.32 | PASS
+   U56   0.75  10.0 C_ISRATE    HOLD/MID       |   12.42%  1.2717     -0.35pp -0.0601 |  3.49 | PASS
+   U56   0.75  10.0 C_ISSHARPE  HOLD/STRONG    |   12.87%  1.2864     +0.09pp -0.0455 |  3.32 | PASS
+   U56   0.75  10.0 C_ISCALMAR  HOLD/STRONG    |   12.87%  1.2864     +0.09pp -0.0455 |  3.32 | PASS
+   U56   0.75  25.0 C_ISRATE    HOLD/MID       |   11.83%  1.2159     -0.36pp -0.0596 |  3.49 | PASS
+   U56   0.75  25.0 C_ISSHARPE  HOLD/STRONG    |   12.29%  1.2331     +0.10pp -0.0424 |  3.32 | PASS
+   U56   0.75  25.0 C_ISCALMAR  BANDW/MILD     |   12.11%  1.2201     -0.08pp -0.0553 |  2.84 | PASS
+   U56   0.75  50.0 C_ISRATE    HOLD/MID       |   10.84%  1.1225     -0.37pp -0.0587 |  3.49 | fail
+   U56   0.75  50.0 C_ISSHARPE  BANDW/STRONG   |   11.73%  1.1536     +0.53pp -0.0277 |  1.74 | PASS
+   U56   0.75  50.0 C_ISCALMAR  BANDW/MID      |   11.56%  1.1382     +0.35pp -0.0430 |  2.20 | PASS
+   U56   1.00   0.0 C_ISRATE    HOLD/MID       |   14.35%  1.2782     -0.41pp -0.0549 |  3.82 | PASS
+   U56   1.00   0.0 C_ISSHARPE  HOLD/STRONG    |   14.81%  1.2938     +0.06pp -0.0393 |  3.56 | PASS
+   U56   1.00   0.0 C_ISCALMAR  HOLD/STRONG    |   14.81%  1.2938     +0.06pp -0.0393 |  3.56 | PASS
+   U56   1.00  10.0 C_ISRATE    HOLD/MID       |   13.90%  1.2424     -0.39pp -0.0529 |  3.82 | PASS
+   U56   1.00  10.0 C_ISSHARPE  HOLD/STRONG    |   14.39%  1.2603     +0.10pp -0.0350 |  3.56 | PASS
+   U56   1.00  10.0 C_ISCALMAR  HOLD/STRONG    |   14.39%  1.2603     +0.10pp -0.0350 |  3.56 | PASS
+   U56   1.00  25.0 C_ISRATE    HOLD/MID       |   13.23%  1.1884     -0.37pp -0.0500 |  3.82 | PASS
+   U56   1.00  25.0 C_ISSHARPE  HOLD/STRONG    |   13.75%  1.2100     +0.15pp -0.0284 |  3.56 | PASS
+   U56   1.00  25.0 C_ISCALMAR  HOLD/STRONG    |   13.75%  1.2100     +0.15pp -0.0284 |  3.56 | PASS
+   U56   1.00  50.0 C_ISRATE    HOLD/MID       |   12.13%  1.0984     -0.32pp -0.0450 |  3.82 | PASS
+   U56   1.00  50.0 C_ISSHARPE  BANDW/STRONG   |   12.83%  1.1299     +0.39pp -0.0135 |  1.91 | PASS
+   U56   1.00  50.0 C_ISCALMAR  BANDW/MID      |   12.63%  1.1070     +0.19pp -0.0364 |  2.43 | fail
+   B136  0.75   0.0 C_ISRATE    HOLD/STRONG    |   13.22%  1.1262     +1.04pp -0.0131 |  4.59 | PASS
+   B136  0.75   0.0 C_ISSHARPE  BANDW/STRONG   |   13.34%  1.1595     +1.15pp +0.0203 |  2.11 | fail
+   B136  0.75   0.0 C_ISCALMAR  HOLD/STRONG    |   13.22%  1.1262     +1.04pp -0.0131 |  4.59 | PASS
+   B136  0.75  10.0 C_ISRATE    HOLD/STRONG    |   12.69%  1.0851     +1.04pp -0.0085 |  4.59 | PASS
+   B136  0.75  10.0 C_ISSHARPE  BANDW/STRONG   |   13.08%  1.1387     +1.43pp +0.0451 |  2.11 | fail
+   B136  0.75  10.0 C_ISCALMAR  HOLD/STRONG    |   12.69%  1.0851     +1.04pp -0.0085 |  4.59 | PASS
+   B136  0.75  25.0 C_ISRATE    HOLD/STRONG    |   11.89%  1.0234     +1.04pp -0.0016 |  4.59 | PASS
+   B136  0.75  25.0 C_ISSHARPE  BANDW/STRONG   |   12.69%  1.1073     +1.84pp +0.0823 |  2.11 | fail
+   B136  0.75  25.0 C_ISCALMAR  HOLD/STRONG    |   11.89%  1.0234     +1.04pp -0.0016 |  4.59 | PASS
+   B136  0.75  50.0 C_ISRATE    HOLD/STRONG    |   10.56%  0.9204     +1.04pp +0.0098 |  4.59 | fail
+   B136  0.75  50.0 C_ISSHARPE  BANDW/STRONG   |   12.04%  1.0552     +2.51pp +0.1446 |  2.11 | fail
+   B136  0.75  50.0 C_ISCALMAR  BANDW/STRONG   |   12.04%  1.0552     +2.51pp +0.1446 |  2.11 | fail
+   B136  1.00   0.0 C_ISRATE    HOLD/MILD      |   15.58%  1.1051     +0.14pp -0.0020 |  5.79 | fail
+   B136  1.00   0.0 C_ISSHARPE  BANDW/STRONG   |   16.66%  1.1139     +1.22pp +0.0067 |  2.52 | fail
+   B136  1.00   0.0 C_ISCALMAR  HOLD/MID       |   15.51%  1.0924     +0.07pp -0.0147 |  5.53 | fail
+   B136  1.00  10.0 C_ISRATE    HOLD/MILD      |   14.89%  1.0625     +0.14pp -0.0012 |  5.79 | fail
+   B136  1.00  10.0 C_ISSHARPE  BANDW/STRONG   |   16.33%  1.0945     +1.58pp +0.0308 |  2.52 | fail
+   B136  1.00  10.0 C_ISCALMAR  HOLD/MID       |   14.85%  1.0518     +0.10pp -0.0119 |  5.53 | fail
+   B136  1.00  25.0 C_ISRATE    HOLD/MILD      |   13.88%  0.9985     +0.15pp +0.0001 |  5.79 | fail
+   B136  1.00  25.0 C_ISSHARPE  BANDW/STRONG   |   15.84%  1.0655     +2.11pp +0.0670 |  2.52 | fail
+   B136  1.00  25.0 C_ISCALMAR  HOLD/MID       |   13.88%  0.9908     +0.15pp -0.0076 |  5.53 | fail
+   B136  1.00  50.0 C_ISRATE    HOLD/MILD      |   12.20%  0.8917     +0.16pp +0.0022 |  5.79 | fail
+   B136  1.00  50.0 C_ISSHARPE  BANDW/STRONG   |   15.03%  1.0171     +2.99pp +0.1276 |  2.52 | fail
+   B136  1.00  50.0 C_ISCALMAR  BANDW/STRONG   |   15.03%  1.0171     +2.99pp +0.1276 |  2.52 | fail
+
+=== GATES: 16 of 16 pass ===
+
+Done in 30s.  all gates pass: True

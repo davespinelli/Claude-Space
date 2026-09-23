@@ -1,3 +1,75 @@
+## 2026-09-23 — idea 2473 (lane cloud, run 58): DOES THE EXCHANGE RATE INSIDE THE EXPOSURE-NEUTRAL CLASS TRACK THE TRADE-SIZE DISTRIBUTION EACH DEVICE REMOVES? **ANSWERED = NO, AND THE IDEA'S OWN MECHANISM IS EXACTLY BACKWARDS. THE RATE IS AN EXPOSURE ARTEFACT INSIDE THE 'NEUTRAL' CLASS TOO. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHAT WAS ASKED.** Idea 2463 left five devices — PARTIAL / ROTA / BANDW / DRIFT / HOLD —
+  measured as exposure-neutral and free-or-better, with realised rates ranging +0.005 to +0.085 pp
+  of CAGR per 1% of turnover saved and no mechanism attached. 2473 stated the untested reading: a
+  device removing SMALL DRIFT TRIMS should buy LESS than one removing WHOLE EXITS it would have to
+  RE-ENTER. The deliverable it asked for: each device's REMOVED-TRADE SIZE HISTOGRAM published
+  against its own realised rate. Measured here, not assumed: the per-bucket annualised turnover of
+  each device's realised path is subtracted from the identity path's over eight pre-registered
+  |dw| buckets, so a NEGATIVE entry (turnover the device CREATED) can show — and does.
+
+- **16 OF 16 GATES, AND THE RUN REPRODUCES BOTH OBJECTS IT IS MEASURING.** G1 the identity path IS
+  `engine.backtest` on CAP2 (max|d| **1.39e-17**). G7 every device's IDENTITY rung is
+  **bit-identical** to the undamped book (**0.000e+00**), so no "saving" can be an implementation
+  difference. G3 reproduces the committed CAP2 headline (11.62% / 1.2687 / -14.81%, OOS 12.77% /
+  1.3318, 3.5064x) to **3.95e-05**. G8 the bucket decomposition is exact to **8.9e-16**. And this
+  run's device-level rates reproduce **2463's published device-level rates at rank corr +0.900**
+  (the one inversion is ROTA, read here at -0.002 against 2463's +0.008).
+- **THE ANSWER IS NO, AND THE SIGN IS THE POINT.** The removed-turnover-weighted MEAN TRADE SIZE
+  has rank correlation **-0.035** with the realised rate over the 57 scorable cells, **-0.113** at
+  2463's own device level, and is NEGATIVE in 3 of the 4 panel x gross cells. The whole-position
+  share (>100 bp) reads -0.105 / -0.191. **The idea's mechanism runs backwards in the data:
+  PARTIAL removes the LARGEST trades (220.7 bp mean removed size, 157% whole-position share) and
+  earns the LOWEST rate (+0.005); DRIFT removes the SMALLEST (8.7 bp) and earns the second-HIGHEST
+  (+0.022).**
+- **WHAT DOES EXPLAIN THE RATE IS EXPOSURE, AT THREE TIMES THE RANK CORRELATION OF ANY SIZE
+  STATISTIC.** d RISK GROSS scores **+0.658** over the 57 cells and **+0.797** at device level,
+  against +0.101 / +0.430 for the size of the cut itself and +0.097 / +0.239 for the full-exit
+  count. The device-level ordering is monotone in exposure and in nothing else: HOLD **+0.0149**
+  d risk gross / rate +0.148, DRIFT **+0.0112** / +0.022, BANDW **+0.0024** / +0.009, ROTA
+  **+0.0005** / -0.002, PARTIAL **-0.0004** / +0.005. Idea 2477's finding — the rate splits by
+  EXPOSURE and not by device NAME — therefore holds INSIDE the neutral class, which is exactly
+  where 2463 left it open.
+- **THE STRUCTURAL REASON THE SIZE READING FAILS: EVERY DEVICE REMOVES TURNOVER SYMMETRICALLY.**
+  The REDUCTION share of removed turnover is pinned at **50.3 / 50.0 / 50.0 / 50.0 / 50.0%** for
+  HOLD / DRIFT / BANDW / ROTA / PARTIAL; the H2 correlation of +0.350 is 4th-digit noise around
+  one half. Even HOLD, which by construction blocks ONLY reductions, removes a symmetric bill,
+  because a blocked reduction removes its matching RE-ENTRY too. The idea's premise separated
+  "small drift trims" from "whole exits it would have to re-enter"; measured, **no device in this
+  class is asymmetric in size-weighted turnover**, so there is no such distinction to price.
+- **A PREMISE OF 2463's CLASS IS REFUTED IN PASSING: 3 OF 60 DEVICE CELLS *INCREASE* TURNOVER.**
+  HOLD/MILD reads **+0.77%** on U56 g0.75 and **+1.94%** on B136 g0.75, HOLD/MID **+2.43%** on
+  B136 g0.75. Blocking a reduction today forces a LARGER trade later, so a member of the
+  "free-or-better per 1% saved" class can COST turnover and has no defined per-1%-saved rate at
+  all. Those cells are dropped PAIRWISE from every correlation and the kept count (n = 57 of 60)
+  is printed on every line. The histograms show the same mechanism bucket by bucket: HOLD's
+  removed distribution is **NEGATIVE in the 25-50 bp, 50-100 bp and >200 bp buckets** while
+  strongly positive in the 100-200 bp class.
+- **RULE 8, AND ITS PRACTICAL COROLLARY.** The two dials (device, tier) fitted on
+  warm-up..2016-12-31 ONLY, 2017-2026 read ONCE, 48 picks across 3 choosers. All **48 of 48** beat
+  SPY's OOS Sharpe, but only **14 of 48** beat the LIVE book's and **13 of 48** the COMMITTED
+  identity's; **28 of 48** carry a full-sample 4b. The rate-maximising chooser `C_ISRATE` defects
+  to HOLD at every single cell (HOLD/MID 8, HOLD/STRONG 4, HOLD/MILD 4), buys **4.42x turnover
+  against the committed 4.50x — essentially no cut — and LOSES OOS Sharpe (1.1212 vs 1.1497)**,
+  while `C_ISSHARPE` picks BANDW/STRONG or HOLD/STRONG and delivers **2.68x turnover, +1.02 pp OOS
+  dCAGR and 1.1650 OOS Sharpe**. **Choosing on the exchange rate is strictly worse out of sample
+  than choosing on Sharpe** — which is what one should expect once the rate is known to be an
+  exposure artefact, and it is a direct warning against idea 2431's adoption bar being read as a
+  selection criterion.
+- **BOTH KEEP PATHS OVER ALL 256 ROWS: 4b 133, 4a 0.** 4a fails on the MaxDD leg at every cell
+  (the live book's -12.05% is unreachable by this family, the situation PROTOCOL 4b exists for).
+  No new candidate is filed: every 4b row here is a re-measurement of a device already committed
+  by 2463 / 2477, and idea 2480 (this same run) showed those 4b levels are benchmark-dependent.
+- **SURVIVORSHIP (rule 9).** U56 and B136 are CURRENT constituents held from 2008. This idea's
+  object is a RATE — a ratio of two same-tape, same-day differences — and is first-order immune;
+  the 4b levels carried alongside are not.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). See
+  LEADERBOARD.md (5 rows) and
+  `research/backtests/2026-09-23_removed-trade-size-vs-exchange-rate_cloud.py` plus its
+  `.grid.csv` / `.histograms.csv` / `.cells.csv` / `.correlations.csv` / `.walkforward.csv` /
+  `.gates.csv` / `.log.txt`.
+
 ## 2026-09-23 — idea 2480 (lane cloud, run 58): DOES THE CAPPED CANDIDATE'S 4b PASS SURVIVE REPLACING SPY WITH THE PANEL'S OWN EQUAL-WEIGHT BUY-AND-HOLD IN ALL FIVE LEGS? **ANSWERED = NO. 4 OF 16 COMMITTED 4b PASSES SURVIVE ON U56, 0 OF 6 ON B136, 0 OF 16 UNDER LITERAL BUY-AND-HOLD. THE HEADLINE CANDIDATE CELL FAILS `L_CAGR` BY 0.77 pp. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHAT WAS ASKED.** PROTOCOL 4b judges all five legs against SPY, a CAP-WEIGHTED index. The
