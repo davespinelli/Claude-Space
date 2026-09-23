@@ -1,3 +1,61 @@
+## 2026-09-23 — idea 2459 (lane cloud, run 55): DOES THE 200d BAND EARN ITS KEEP ON SPY ALONE, ACROSS MA LENGTHS? **ANSWERED = NO, AT EVERY LENGTH AND EVERY WIDTH. KILL of the timing rule as a standalone book, and the first NUMBER on how the standing candidate's 4b margin splits between TIMING and CROSS-SECTION. NO KEEP-CANDIDATE, NO RULES CHANGE.**
+
+  **WHAT WAS ASKED.** The standing 4b KEEP-candidate is exactly two things: a 200d band gate,
+  and the decision to run it over many names and let BREADTH size the book. Idea 2467 priced
+  the gate on SPY alone at ONE point (L = 200, b = 0.03) and found leg string 00010. 2459 asked
+  for the SURFACE: 6 MA lengths {50, 100, 150, 200, 250, 300} x 5 band half-widths {0.00, 0.01,
+  0.03, 0.06, 0.10}, gross {0.75, 1.00}, both price frames, 4 cost rungs — 480 rows over 120
+  weight paths. The book is one instrument: hold SPY at gross `g` while it is IN the `L`-day
+  band under clause-2 hysteresis, residual in full to SHY, weekly, t+1.
+
+- **20 OF 20 GATES, AND THE COMMITTED CELL REPRODUCES EXACTLY.** G1 `band_state_L(200, 0.03)`
+  is `baseline.band_state(0.03)` on SPY at **0 differing cells of 4,710** — the ladder's centre
+  IS the live clause-2 object. G2 reproduces idea 2467's published SPYONLY cell (7.84% /
+  0.8375 / -20.07%, halves 0.92 / 0.77, OOS 8.40% / 0.8544, 1.99x, legs **00010**) to
+  **2.97e-04**, and G2b re-asserts its leg string. G3: the 2-column frame is the full
+  56-column frame at **0.000e+00**. G9: the CAP2 comparand reproduces the committed candidate
+  headline (11.62% / 1.2687 / -14.81%) to 2.95e-05. G7 no lookahead (0.000e+00), G4 peak gross
+  1.000000000, G5 both dials bite (time-IN 0.626 to 0.829 over L, turnover 6.02x -> 0.96x over b).
+- **THE ANSWER IS NO AND THE BINDING LEG IS ALMOST UNIVERSAL. 4b 2 of 480, 4a 0 of 480, and at
+  any NON-ZERO cost rung 4b is 0 of 360.** `L_CAGR` fails on **478 of 480 rows**: the highest
+  CAGR any SPY-alone timing cell reaches ANYWHERE is **10.91%** against SPY's 15.23%. Leg
+  failures over 480 rows: `L_CAGR` 478, `L_H1` 458, `L_H2` 374, `L_OOS` 355, `L_DD` 332. Leg
+  strings: 00000:250, 00010:97, 01100:63, 01110:29, 00100:17, 11110:12, 10010:6, 11111:2,
+  10000:2, 00110:2. **The only two passers are L = 150 / b = 0.03 / gross 1.00 at ZERO cost**
+  (U56 10.91% / 0.9284 / -19.08%, halves 0.9878 / 0.8719, OOS 11.21% / 0.9595, 2.60x; B136
+  10.81% / 0.9206 / -19.08%), clearing the 10.66% CAGR floor by 0.25 and 0.22 pp — **both die
+  at 10 bps**. The timing rule buys drawdown and, at best, a sliver of Sharpe.
+- **THE DELIVERABLE THE IDEA ASKED FOR — THE MARGIN SPLIT.** At 10 bps / gross 0.75 the best
+  SPY-alone cell on the whole surface is L = 150, b = 0.03: U56 **8.35% / 0.9441 / -15.76%,
+  halves 0.9970 / 0.8942, OOS 8.66% / 0.9815, 2.15x**; B136 8.27% / 0.9361, OOS 0.9668. Against
+  SPY buy-and-hold (0.8897 / 0.8844) and the CAP2 candidate (1.2687 / 1.1180): **timing adds
+  +0.0544 / +0.0517 of Sharpe over owning the index; the cross-section adds a further +0.3246 /
+  +0.1819. The 200d gate therefore generates 14.3% (U56) and 22.1% (B136) of the candidate's
+  whole SPY-relative Sharpe margin, and the cross-section generates 85.7% / 77.9%.** On CAGR
+  the timing contribution is NEGATIVE everywhere. This is idea 2467's qualitative finding
+  ("every bit of the margin is cross-sectional") turned into a measured share, and the surface
+  shows 2467 was reading a representative point, not an unlucky one: only **4 of 60** cells at
+  10 bps / gross 0.75 beat SPY's Sharpe at all.
+- **THE LIVE GATE IS NOT EVEN THE BEST POINT ON ITS OWN SURFACE.** L = 200, b = 0.03 reads
+  Sharpe **0.8375** against SPY's 0.8897 and against L = 150 / b = 0.03's 0.9441. That is not
+  an argument for re-dialling it — rule 8 says the opposite, below — but it does mean the
+  committed length carries no standalone timing edge to defend.
+- **RULE 8 IS UNANIMOUS AND LANDS NOWHERE USEFUL.** (L, b) fitted on warm-up..2016-12-31 only,
+  2017-2026 read ONCE, 32 picks: **32 of 32 take L = 100, b = 0.06** and **0 of 32** take the
+  live L = 200, b = 0.03. The picked cell reads U56 7.91% / 0.9085 / -13.19%, OOS 7.88% /
+  0.9043, 1.81x. Picks beat SPY's OOS Sharpe in **8 of 32**, the live RULES v2 book's in
+  **0 of 32**, the CAP2 candidate's in **0 of 32**, and carry a full-sample 4b in **0 of 32**.
+- **THE WARM-IN ASYMMETRY IS HANDLED IN THE OPEN.** Re-scored on an equal-state window
+  (index[360:], every length with >= 60 sessions of live state), 4b reads **2 of 480** —
+  identical to the headline window. The long end is not understated by the warm-in.
+- **NO SURVIVORSHIP EXPOSURE (rule 9), FOR ONCE.** SPY and SHY are index funds priced from
+  their own inception, not current constituents of a screen, so this is the one arm in the
+  record the current-constituent bias cannot flatter. It is also the arm that fails.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). No memo — there
+  is no KEEP-candidate. See LEADERBOARD.md (4 rows),
+  `research/backtests/2026-09-23_spy-alone-band-across-ma-lengths_cloud.py` and its
+  `.grid.csv` / `.walkforward.csv` / `.gates.csv` / `.log.txt`.
+
 ## 2026-09-23 — idea 2439 (lane cloud, run 55): DOES A BAND ENTRY-AGE FILTER CUT THE CAPPED CANDIDATE'S TURNOVER WHERE EVERY EXIT-SIDE DEVICE FAILED? **ANSWERED = NO. KILL of ADMISSION AGE as a turnover device. NO KEEP-CANDIDATE, NO RULES CHANGE. One PARKED observation: a SHORT age is a near-free risk-adjusted gain that rule 8 never selects.**
 
   **WHAT WAS AT STAKE.** Every turnover device the record has closed — the weight-drift band
