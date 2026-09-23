@@ -1,0 +1,350 @@
+=== idea 2453 — IS THE CANDIDATE'S 4b PASS STABLE TO THE BAND STATE'S INITIAL CONDITION
+    AND ITS BURN-IN? ===
+    2026-09-23  lane cloud run 52   band 0.03  MA 200d  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  cap 2%  sweep SHY (phi=1.00)
+    DIAL 1 initial condition ['OUT', 'IN', 'NEUTRAL'] (OUT is committed)     DIAL 2 scored start [260, 500, 756] rows (260 is committed)
+    PREDICTION MADE BEFORE COMPUTE: on the candidate's gross/N_in sizing OUT and NEUTRAL
+    are the SAME BOOK BY CONSTRUCTION (the denominator counts only IN names), so the
+    convention can bite only on the LIVE book, whose denominator is the whole panel.
+    G5 asserts that identity; G5b measures the live book's gap.
+    THE 4b BARS ARE RECOMPUTED ON EVERY WINDOW: SPY's CAGR / Sharpe / MaxDD are re-read at
+    each scored start, so L_DD and L_CAGR are never carried over from the committed one.
+    The OOS window (2017-01-01 on) is IDENTICAL across all three starts (G9).
+    SMALL NOT PRICED: 0 of 128 4b cells (2383) and 0 of 40-120 (2318/2322/2326/2343).
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; L_CAGR is
+    the contaminated leg, and a LATER start moves the window but does not repair it.
+    GATE PASS  G6 exactly two tuned parameters: initial condition, scored start (target 2)
+    GATE PASS  G0 >= 10y at the LATEST scored start (U56, row 756): 15.7y, 56 investable, 4710 rows; starts row 260 = 2009-01-13, row 500 = 2009-12-24, row 756 = 2010-12-31 (target >= 10y)
+    GATE PASS  G0 >= 10y at the LATEST scored start (B136, row 756): 15.7y, 136 investable, 4708 rows; starts row 260 = 2009-01-13, row 500 = 2009-12-24, row 756 = 2010-12-31 (target >= 10y)
+    GATE PASS  G2 init = OUT IS baseline.band_state, unmodified: 0 differing cells of 263760 (target 0)
+    GATE PASS  G1 per-column replica == engine.backtest (live RULES v2 at init=OUT, 10 bps, no sweep): max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G3b the 4a comparand reproduces the live book's published numbers at (OUT, row 260): turnover 1.773x (record 1.77x)  Sharpe 1.2052 halves 1.2262/1.1897 (record 1.2052, 1.2262/1.1897)  MaxDD -12.05% (record -12.05%) (target Sharpe within 1e-3, turnover within 0.05x)
+    GATE PASS  G5 on the candidate's gross/N_in books OUT == NEUTRAL EXACTLY (the prediction): max|d weight| 0.000e+00 over 2 panels x 2 books x 2 gross (target < 1e-15)
+    PUB   G5b the OUT/NEUTRAL gap on the LIVE book (whole-panel denominator): U56: max|d weight| 9.5745e-04  B136: max|d weight| 2.5837e-04
+
+=== A. THE BURN-IN, MEASURED — how long does the band state remember t = 0? ===
+  U56: share of PRICED names that have NEVER crossed either edge, by row — row 260 (2009-01-13): 0.0%   row 500 (2009-12-24): 2.0%   row 756 (2010-12-31): 1.9%
+        last row at which ANY name still disagrees: row 3407 (2021-07-15); the state is FULLY FORGOTTEN from row 3408 (2021-07-16) onward.  MA 200d is complete from row 199.
+    GATE PASS  G8 IN and OUT agree on EVERY priced name-day after that name's first crossing (U56): 0 disagreeing cells of 242582 (target 0)
+    PUB   G7 the burn-in decay (U56): row 200: 6.0%  row 260: 0.0%  row 400: 0.0%  row 500: 2.0%  row 756: 1.9%  row 1000: 0.0%
+  B136: share of PRICED names that have NEVER crossed either edge, by row — row 260 (2009-01-13): 0.0%   row 500 (2009-12-24): 0.8%   row 756 (2010-12-31): 0.8%
+        last row at which ANY name still disagrees: row 3407 (2021-07-15); the state is FULLY FORGOTTEN from row 3408 (2021-07-16) onward.  MA 200d is complete from row 199.
+    GATE PASS  G8 IN and OUT agree on EVERY priced name-day after that name's first crossing (B136): 0 disagreeing cells of 589301 (target 0)
+    PUB   G7 the burn-in decay (B136): row 200: 4.1%  row 260: 0.0%  row 400: 0.0%  row 500: 0.8%  row 756: 0.8%  row 1000: 0.0%
+  the OOS window is 2443 rows on U56 (2017-01-03 to 2026-09-22) at EVERY scored start.
+    GATE PASS  G9 the OOS window is IDENTICAL across all three scored starts (so every OOS contrast here is same-window): by construction: OOS is a calendar slice, not a row offset (target True)
+
+    288 published rows = 2 panels x 3 starts x 2 books x 2 gross x 3 inits x 4 rungs; 72 scored (path, window) combinations.
+    GATE PASS  G4 no leverage anywhere (max gross <= 1): max 1.000000000000; max single risk name 0.9015 (target <= 1+1e-12)
+    GATE PASS  G3 (OUT, row 260) reproduces the committed CAP2 (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318, 3.51x) AND CAND (12.59%/1.1934/-17.39%, OOS 13.85%/1.2397) U56 headlines: CAP2 11.62%/1.2687/-14.81% OOS 12.77%/1.3318 turn 3.51x; CAND 12.59%/1.1934/-17.39% OOS 13.85%/1.2397 -> max|d| 3.62e-04 (target < 1e-3)
+
+=== B. THE BARS THEMSELVES MOVE WITH THE SCORED START (SPY re-read on each window) ===
+  panel start (row)      | SPY CAGR  SPY Sh  SPY MaxDD |  H1    H2   | L_DD bar  L_CAGR bar | rows
+  U56   2009-01-13 (r 260) |   15.23%  0.8897    -33.72% |  0.96  0.84 |  -20.23%      10.66% | 4450
+  U56   2009-12-24 (r 500) |   14.27%  0.8676    -33.72% |  0.91  0.85 |  -20.23%       9.99% | 4210
+  U56   2010-12-31 (r 756) |   14.27%  0.8697    -33.72% |  0.91  0.86 |  -20.23%       9.99% | 3954
+  B136  2009-01-13 (r 260) |   15.12%  0.8844    -33.72% |  0.96  0.82 |  -20.23%      10.59% | 4448
+  B136  2009-12-24 (r 500) |   14.15%  0.8618    -33.72% |  0.91  0.84 |  -20.23%       9.91% | 4208
+  B136  2010-12-31 (r 756) |   14.14%  0.8634    -33.72% |  0.91  0.85 |  -20.23%       9.90% | 3952
+
+=== C. THE FULL (init x start) LADDER, g 0.75 — EVERY GRID POINT ===
+  panel book  init    start bps |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh | turn/yr | 4a 4b | H1/H2/OOS/DD/CAGR
+  U56   CAP2 OUT     r 260   0.0 | 12.01%  1.3079  -14.77% |  1.34   1.28 |  13.17%  1.3693 |    3.51 | .  Y  | 11111   <= COMMITTED
+  U56   CAP2 OUT     r 260  10.0 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 |    3.51 | .  Y  | 11111   <= COMMITTED
+  U56   CAP2 OUT     r 260  25.0 | 11.04%  1.2098  -14.88% |  1.24   1.19 |  12.18%  1.2755 |    3.51 | .  Y  | 11111   <= COMMITTED
+  U56   CAP2 OUT     r 260  50.0 | 10.07%  1.1113  -14.99% |  1.14   1.09 |  11.21%  1.1813 |    3.51 | .  .  | 11110   <= COMMITTED
+  U56   CAP2 OUT     r 500   0.0 | 11.52%  1.2668  -14.77% |  1.21   1.32 |  13.17%  1.3693 |    3.52 | .  Y  | 11111
+  U56   CAP2 OUT     r 500  10.0 | 11.13%  1.2271  -14.81% |  1.17   1.28 |  12.77%  1.3318 |    3.52 | .  Y  | 11111
+  U56   CAP2 OUT     r 500  25.0 | 10.54%  1.1675  -14.88% |  1.11   1.22 |  12.18%  1.2755 |    3.52 | .  Y  | 11111
+  U56   CAP2 OUT     r 500  50.0 |  9.57%  1.0680  -14.99% |  1.01   1.12 |  11.21%  1.1813 |    3.52 | .  .  | 11110
+  U56   CAP2 OUT     r 756   0.0 | 11.61%  1.2841  -14.77% |  1.20   1.36 |  13.17%  1.3693 |    3.46 | .  Y  | 11111
+  U56   CAP2 OUT     r 756  10.0 | 11.23%  1.2448  -14.81% |  1.16   1.32 |  12.77%  1.3318 |    3.46 | .  Y  | 11111
+  U56   CAP2 OUT     r 756  25.0 | 10.65%  1.1858  -14.88% |  1.10   1.26 |  12.18%  1.2755 |    3.46 | .  Y  | 11111
+  U56   CAP2 OUT     r 756  50.0 |  9.70%  1.0871  -14.99% |  1.00   1.16 |  11.21%  1.1813 |    3.46 | .  .  | 11110
+  U56   CAP2 IN      r 260   0.0 | 12.11%  1.3141  -14.77% |  1.34   1.30 |  13.32%  1.3799 |    3.50 | .  Y  | 11111
+  U56   CAP2 IN      r 260  10.0 | 11.72%  1.2750  -14.81% |  1.30   1.26 |  12.92%  1.3424 |    3.50 | .  Y  | 11111
+  U56   CAP2 IN      r 260  25.0 | 11.14%  1.2163  -14.88% |  1.24   1.20 |  12.33%  1.2862 |    3.50 | .  Y  | 11111
+  U56   CAP2 IN      r 260  50.0 | 10.17%  1.1182  -14.99% |  1.14   1.10 |  11.35%  1.1922 |    3.50 | .  .  | 11110
+  U56   CAP2 IN      r 500   0.0 | 11.64%  1.2748  -14.77% |  1.22   1.33 |  13.32%  1.3799 |    3.52 | .  Y  | 11111
+  U56   CAP2 IN      r 500  10.0 | 11.25%  1.2353  -14.81% |  1.18   1.29 |  12.92%  1.3424 |    3.52 | .  Y  | 11111
+  U56   CAP2 IN      r 500  25.0 | 10.66%  1.1760  -14.88% |  1.12   1.23 |  12.33%  1.2862 |    3.52 | .  Y  | 11111
+  U56   CAP2 IN      r 500  50.0 |  9.69%  1.0768  -14.99% |  1.02   1.13 |  11.35%  1.1922 |    3.52 | .  .  | 11110
+  U56   CAP2 IN      r 756   0.0 | 11.67%  1.2869  -14.77% |  1.19   1.38 |  13.32%  1.3799 |    3.45 | .  Y  | 11111
+  U56   CAP2 IN      r 756  10.0 | 11.29%  1.2477  -14.81% |  1.15   1.34 |  12.92%  1.3424 |    3.45 | .  Y  | 11111
+  U56   CAP2 IN      r 756  25.0 | 10.71%  1.1888  -14.88% |  1.09   1.28 |  12.33%  1.2862 |    3.45 | .  Y  | 11111
+  U56   CAP2 IN      r 756  50.0 |  9.76%  1.0905  -14.99% |  0.99   1.18 |  11.35%  1.1922 |    3.45 | .  .  | 11110
+  U56   CAP2 NEUTRAL r 260   0.0 | 12.01%  1.3079  -14.77% |  1.34   1.28 |  13.17%  1.3693 |    3.51 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 260  10.0 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 |    3.51 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 260  25.0 | 11.04%  1.2098  -14.88% |  1.24   1.19 |  12.18%  1.2755 |    3.51 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 260  50.0 | 10.07%  1.1113  -14.99% |  1.14   1.09 |  11.21%  1.1813 |    3.51 | .  .  | 11110
+  U56   CAP2 NEUTRAL r 500   0.0 | 11.52%  1.2668  -14.77% |  1.21   1.32 |  13.17%  1.3693 |    3.52 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 500  10.0 | 11.13%  1.2271  -14.81% |  1.17   1.28 |  12.77%  1.3318 |    3.52 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 500  25.0 | 10.54%  1.1675  -14.88% |  1.11   1.22 |  12.18%  1.2755 |    3.52 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 500  50.0 |  9.57%  1.0680  -14.99% |  1.01   1.12 |  11.21%  1.1813 |    3.52 | .  .  | 11110
+  U56   CAP2 NEUTRAL r 756   0.0 | 11.61%  1.2841  -14.77% |  1.20   1.36 |  13.17%  1.3693 |    3.46 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 756  10.0 | 11.23%  1.2448  -14.81% |  1.16   1.32 |  12.77%  1.3318 |    3.46 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 756  25.0 | 10.65%  1.1858  -14.88% |  1.10   1.26 |  12.18%  1.2755 |    3.46 | .  Y  | 11111
+  U56   CAP2 NEUTRAL r 756  50.0 |  9.70%  1.0871  -14.99% |  1.00   1.16 |  11.21%  1.1813 |    3.46 | .  .  | 11110
+  U56   CAND OUT     r 260   0.0 | 13.09%  1.2361  -17.27% |  1.28   1.21 |  14.35%  1.2803 |    4.39 | .  Y  | 11111   <= COMMITTED
+  U56   CAND OUT     r 260  10.0 | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 |    4.39 | .  Y  | 11111   <= COMMITTED
+  U56   CAND OUT     r 260  25.0 | 11.85%  1.1292  -17.57% |  1.17   1.10 |  13.10%  1.1787 |    4.39 | .  Y  | 11111   <= COMMITTED
+  U56   CAND OUT     r 260  50.0 | 10.63%  1.0220  -17.86% |  1.06   1.00 |  11.87%  1.0768 |    4.39 | .  .  | 11110   <= COMMITTED
+  U56   CAND OUT     r 500   0.0 | 12.66%  1.2119  -17.27% |  1.20   1.23 |  14.35%  1.2803 |    4.31 | .  Y  | 11111
+  U56   CAND OUT     r 500  10.0 | 12.18%  1.1694  -17.39% |  1.16   1.19 |  13.85%  1.2397 |    4.31 | .  Y  | 11111
+  U56   CAND OUT     r 500  25.0 | 11.46%  1.1057  -17.57% |  1.10   1.12 |  13.10%  1.1787 |    4.31 | .  Y  | 11111
+  U56   CAND OUT     r 500  50.0 | 10.26%  0.9993  -17.86% |  0.99   1.02 |  11.87%  1.0768 |    4.31 | .  Y  | 11111
+  U56   CAND OUT     r 756   0.0 | 12.70%  1.2180  -17.27% |  1.18   1.26 |  14.35%  1.2803 |    4.24 | .  Y  | 11111
+  U56   CAND OUT     r 756  10.0 | 12.23%  1.1761  -17.39% |  1.14   1.22 |  13.85%  1.2397 |    4.24 | .  Y  | 11111
+  U56   CAND OUT     r 756  25.0 | 11.51%  1.1132  -17.57% |  1.08   1.16 |  13.10%  1.1787 |    4.24 | .  Y  | 11111
+  U56   CAND OUT     r 756  50.0 | 10.34%  1.0081  -17.86% |  0.97   1.05 |  11.87%  1.0768 |    4.24 | .  Y  | 11111
+  U56   CAND IN      r 260   0.0 | 13.22%  1.2458  -17.27% |  1.28   1.23 |  14.59%  1.2973 |    4.37 | .  Y  | 11111
+  U56   CAND IN      r 260  10.0 | 12.73%  1.2034  -17.39% |  1.24   1.19 |  14.09%  1.2569 |    4.37 | .  Y  | 11111
+  U56   CAND IN      r 260  25.0 | 11.99%  1.1396  -17.57% |  1.17   1.12 |  13.35%  1.1963 |    4.37 | .  Y  | 11111
+  U56   CAND IN      r 260  50.0 | 10.77%  1.0332  -17.86% |  1.06   1.02 |  12.11%  1.0951 |    4.37 | .  Y  | 11111
+  U56   CAND IN      r 500   0.0 | 12.82%  1.2234  -17.27% |  1.21   1.25 |  14.59%  1.2973 |    4.29 | .  Y  | 11111
+  U56   CAND IN      r 500  10.0 | 12.33%  1.1813  -17.39% |  1.16   1.21 |  14.09%  1.2569 |    4.29 | .  Y  | 11111
+  U56   CAND IN      r 500  25.0 | 11.61%  1.1181  -17.57% |  1.10   1.14 |  13.35%  1.1963 |    4.29 | .  Y  | 11111
+  U56   CAND IN      r 500  50.0 | 10.42%  1.0124  -17.86% |  0.99   1.04 |  12.11%  1.0951 |    4.29 | .  Y  | 11111
+  U56   CAND IN      r 756   0.0 | 12.80%  1.2254  -17.27% |  1.17   1.29 |  14.59%  1.2973 |    4.22 | .  Y  | 11111
+  U56   CAND IN      r 756  10.0 | 12.32%  1.1837  -17.39% |  1.13   1.24 |  14.09%  1.2569 |    4.22 | .  Y  | 11111
+  U56   CAND IN      r 756  25.0 | 11.61%  1.1212  -17.57% |  1.07   1.18 |  13.35%  1.1963 |    4.22 | .  Y  | 11111
+  U56   CAND IN      r 756  50.0 | 10.44%  1.0168  -17.86% |  0.96   1.07 |  12.11%  1.0951 |    4.22 | .  Y  | 11111
+  U56   CAND NEUTRAL r 260   0.0 | 13.09%  1.2361  -17.27% |  1.28   1.21 |  14.35%  1.2803 |    4.39 | .  Y  | 11111
+  U56   CAND NEUTRAL r 260  10.0 | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 |    4.39 | .  Y  | 11111
+  U56   CAND NEUTRAL r 260  25.0 | 11.85%  1.1292  -17.57% |  1.17   1.10 |  13.10%  1.1787 |    4.39 | .  Y  | 11111
+  U56   CAND NEUTRAL r 260  50.0 | 10.63%  1.0220  -17.86% |  1.06   1.00 |  11.87%  1.0768 |    4.39 | .  .  | 11110
+  U56   CAND NEUTRAL r 500   0.0 | 12.66%  1.2119  -17.27% |  1.20   1.23 |  14.35%  1.2803 |    4.31 | .  Y  | 11111
+  U56   CAND NEUTRAL r 500  10.0 | 12.18%  1.1694  -17.39% |  1.16   1.19 |  13.85%  1.2397 |    4.31 | .  Y  | 11111
+  U56   CAND NEUTRAL r 500  25.0 | 11.46%  1.1057  -17.57% |  1.10   1.12 |  13.10%  1.1787 |    4.31 | .  Y  | 11111
+  U56   CAND NEUTRAL r 500  50.0 | 10.26%  0.9993  -17.86% |  0.99   1.02 |  11.87%  1.0768 |    4.31 | .  Y  | 11111
+  U56   CAND NEUTRAL r 756   0.0 | 12.70%  1.2180  -17.27% |  1.18   1.26 |  14.35%  1.2803 |    4.24 | .  Y  | 11111
+  U56   CAND NEUTRAL r 756  10.0 | 12.23%  1.1761  -17.39% |  1.14   1.22 |  13.85%  1.2397 |    4.24 | .  Y  | 11111
+  U56   CAND NEUTRAL r 756  25.0 | 11.51%  1.1132  -17.57% |  1.08   1.16 |  13.10%  1.1787 |    4.24 | .  Y  | 11111
+  U56   CAND NEUTRAL r 756  50.0 | 10.34%  1.0081  -17.86% |  0.97   1.05 |  11.87%  1.0768 |    4.24 | .  Y  | 11111
+  B136  CAP2 OUT     r 260   0.0 | 12.35%  1.1629  -16.61% |  1.30   1.04 |  12.19%  1.1392 |    4.68 | .  Y  | 11111   <= COMMITTED
+  B136  CAP2 OUT     r 260  10.0 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 |    4.68 | .  Y  | 11111   <= COMMITTED
+  B136  CAP2 OUT     r 260  25.0 | 11.04%  1.0505  -17.93% |  1.20   0.92 |  10.85%  1.0250 |    4.68 | .  Y  | 11111   <= COMMITTED
+  B136  CAP2 OUT     r 260  50.0 |  9.75%  0.9379  -19.31% |  1.09   0.80 |   9.53%  0.9106 |    4.68 | .  .  | 10110   <= COMMITTED
+  B136  CAP2 OUT     r 500   0.0 | 11.93%  1.1385  -16.61% |  1.24   1.05 |  12.19%  1.1392 |    4.63 | .  Y  | 11111
+  B136  CAP2 OUT     r 500  10.0 | 11.41%  1.0935  -17.10% |  1.20   1.00 |  11.65%  1.0936 |    4.63 | .  Y  | 11111
+  B136  CAP2 OUT     r 500  25.0 | 10.64%  1.0259  -17.93% |  1.13   0.93 |  10.85%  1.0250 |    4.63 | .  Y  | 11111
+  B136  CAP2 OUT     r 500  50.0 |  9.37%  0.9131  -19.31% |  1.03   0.81 |   9.53%  0.9106 |    4.63 | .  .  | 10110
+  B136  CAP2 OUT     r 756   0.0 | 11.88%  1.1451  -16.61% |  1.24   1.07 |  12.19%  1.1392 |    4.56 | .  Y  | 11111
+  B136  CAP2 OUT     r 756  10.0 | 11.37%  1.1003  -17.10% |  1.20   1.02 |  11.65%  1.0936 |    4.56 | .  Y  | 11111
+  B136  CAP2 OUT     r 756  25.0 | 10.61%  1.0329  -17.93% |  1.14   0.95 |  10.85%  1.0250 |    4.56 | .  Y  | 11111
+  B136  CAP2 OUT     r 756  50.0 |  9.35%  0.9204  -19.31% |  1.04   0.82 |   9.53%  0.9106 |    4.56 | .  .  | 10110
+  B136  CAP2 IN      r 260   0.0 | 12.39%  1.1662  -16.64% |  1.31   1.04 |  12.25%  1.1437 |    4.66 | .  Y  | 11111
+  B136  CAP2 IN      r 260  10.0 | 11.87%  1.1215  -17.10% |  1.26   1.00 |  11.71%  1.0982 |    4.66 | .  Y  | 11111
+  B136  CAP2 IN      r 260  25.0 | 11.09%  1.0542  -17.93% |  1.20   0.93 |  10.91%  1.0297 |    4.66 | .  Y  | 11111
+  B136  CAP2 IN      r 260  50.0 |  9.80%  0.9419  -19.31% |  1.09   0.81 |   9.59%  0.9156 |    4.66 | .  .  | 10110
+  B136  CAP2 IN      r 500   0.0 | 11.98%  1.1425  -16.64% |  1.24   1.06 |  12.25%  1.1437 |    4.62 | .  Y  | 11111
+  B136  CAP2 IN      r 500  10.0 | 11.47%  1.0976  -17.10% |  1.20   1.01 |  11.71%  1.0982 |    4.62 | .  Y  | 11111
+  B136  CAP2 IN      r 500  25.0 | 10.70%  1.0302  -17.93% |  1.14   0.94 |  10.91%  1.0297 |    4.62 | .  Y  | 11111
+  B136  CAP2 IN      r 500  50.0 |  9.42%  0.9177  -19.31% |  1.03   0.81 |   9.59%  0.9156 |    4.62 | .  .  | 10110
+  B136  CAP2 IN      r 756   0.0 | 11.91%  1.1474  -16.64% |  1.24   1.07 |  12.25%  1.1437 |    4.55 | .  Y  | 11111
+  B136  CAP2 IN      r 756  10.0 | 11.40%  1.1026  -17.10% |  1.20   1.03 |  11.71%  1.0982 |    4.55 | .  Y  | 11111
+  B136  CAP2 IN      r 756  25.0 | 10.64%  1.0354  -17.93% |  1.14   0.95 |  10.91%  1.0297 |    4.55 | .  Y  | 11111
+  B136  CAP2 IN      r 756  50.0 |  9.39%  0.9233  -19.31% |  1.03   0.83 |   9.59%  0.9156 |    4.55 | .  .  | 10110
+  B136  CAP2 NEUTRAL r 260   0.0 | 12.35%  1.1629  -16.61% |  1.30   1.04 |  12.19%  1.1392 |    4.68 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 260  10.0 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 |    4.68 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 260  25.0 | 11.04%  1.0505  -17.93% |  1.20   0.92 |  10.85%  1.0250 |    4.68 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 260  50.0 |  9.75%  0.9379  -19.31% |  1.09   0.80 |   9.53%  0.9106 |    4.68 | .  .  | 10110
+  B136  CAP2 NEUTRAL r 500   0.0 | 11.93%  1.1385  -16.61% |  1.24   1.05 |  12.19%  1.1392 |    4.63 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 500  10.0 | 11.41%  1.0935  -17.10% |  1.20   1.00 |  11.65%  1.0936 |    4.63 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 500  25.0 | 10.64%  1.0259  -17.93% |  1.13   0.93 |  10.85%  1.0250 |    4.63 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 500  50.0 |  9.37%  0.9131  -19.31% |  1.03   0.81 |   9.53%  0.9106 |    4.63 | .  .  | 10110
+  B136  CAP2 NEUTRAL r 756   0.0 | 11.88%  1.1451  -16.61% |  1.24   1.07 |  12.19%  1.1392 |    4.56 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 756  10.0 | 11.37%  1.1003  -17.10% |  1.20   1.02 |  11.65%  1.0936 |    4.56 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 756  25.0 | 10.61%  1.0329  -17.93% |  1.14   0.95 |  10.85%  1.0250 |    4.56 | .  Y  | 11111
+  B136  CAP2 NEUTRAL r 756  50.0 |  9.35%  0.9204  -19.31% |  1.04   0.82 |   9.53%  0.9106 |    4.56 | .  .  | 10110
+  B136  CAND OUT     r 260   0.0 | 12.54%  1.1384  -17.97% |  1.24   1.05 |  12.85%  1.1446 |    4.91 | .  Y  | 11111   <= COMMITTED
+  B136  CAND OUT     r 260  10.0 | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 |    4.91 | .  Y  | 11111   <= COMMITTED
+  B136  CAND OUT     r 260  25.0 | 11.17%  1.0248  -18.33% |  1.13   0.93 |  11.45%  1.0316 |    4.91 | .  Y  | 11111   <= COMMITTED
+  B136  CAND OUT     r 260  50.0 |  9.81%  0.9109  -19.32% |  1.02   0.82 |  10.08%  0.9184 |    4.91 | .  .  | 10110   <= COMMITTED
+  B136  CAND OUT     r 500   0.0 | 12.32%  1.1400  -17.97% |  1.23   1.06 |  12.85%  1.1446 |    4.73 | .  Y  | 11111
+  B136  CAND OUT     r 500  10.0 | 11.79%  1.0954  -18.11% |  1.19   1.02 |  12.29%  1.0994 |    4.73 | .  Y  | 11111
+  B136  CAND OUT     r 500  25.0 | 11.00%  1.0284  -18.33% |  1.13   0.94 |  11.45%  1.0316 |    4.73 | .  Y  | 11111
+  B136  CAND OUT     r 500  50.0 |  9.69%  0.9165  -19.32% |  1.03   0.82 |  10.08%  0.9184 |    4.73 | .  .  | 10110
+  B136  CAND OUT     r 756   0.0 | 12.30%  1.1462  -17.97% |  1.24   1.08 |  12.85%  1.1446 |    4.67 | .  Y  | 11111
+  B136  CAND OUT     r 756  10.0 | 11.77%  1.1017  -18.11% |  1.20   1.03 |  12.29%  1.0994 |    4.67 | .  Y  | 11111
+  B136  CAND OUT     r 756  25.0 | 10.99%  1.0350  -18.33% |  1.14   0.96 |  11.45%  1.0316 |    4.67 | .  Y  | 11111
+  B136  CAND OUT     r 756  50.0 |  9.70%  0.9236  -19.32% |  1.03   0.84 |  10.08%  0.9184 |    4.67 | .  .  | 10110
+  B136  CAND IN      r 260   0.0 | 12.59%  1.1420  -18.00% |  1.24   1.05 |  12.92%  1.1495 |    4.89 | .  Y  | 11111
+  B136  CAND IN      r 260  10.0 | 12.04%  1.0967  -18.15% |  1.20   1.01 |  12.36%  1.1045 |    4.89 | .  Y  | 11111
+  B136  CAND IN      r 260  25.0 | 11.22%  1.0287  -18.37% |  1.13   0.94 |  11.53%  1.0368 |    4.89 | .  Y  | 11111
+  B136  CAND IN      r 260  50.0 |  9.86%  0.9151  -19.32% |  1.02   0.82 |  10.15%  0.9240 |    4.89 | .  .  | 10110
+  B136  CAND IN      r 500   0.0 | 12.38%  1.1442  -18.00% |  1.24   1.07 |  12.92%  1.1495 |    4.72 | .  Y  | 11111
+  B136  CAND IN      r 500  10.0 | 11.85%  1.0997  -18.15% |  1.20   1.02 |  12.36%  1.1045 |    4.72 | .  Y  | 11111
+  B136  CAND IN      r 500  25.0 | 11.06%  1.0329  -18.37% |  1.13   0.95 |  11.53%  1.0368 |    4.72 | .  Y  | 11111
+  B136  CAND IN      r 500  50.0 |  9.75%  0.9214  -19.32% |  1.03   0.83 |  10.15%  0.9240 |    4.72 | .  .  | 10110
+  B136  CAND IN      r 756   0.0 | 12.33%  1.1487  -18.00% |  1.24   1.09 |  12.92%  1.1495 |    4.66 | .  Y  | 11111
+  B136  CAND IN      r 756  10.0 | 11.81%  1.1044  -18.15% |  1.20   1.04 |  12.36%  1.1045 |    4.66 | .  Y  | 11111
+  B136  CAND IN      r 756  25.0 | 11.03%  1.0378  -18.37% |  1.13   0.97 |  11.53%  1.0368 |    4.66 | .  Y  | 11111
+  B136  CAND IN      r 756  50.0 |  9.74%  0.9268  -19.32% |  1.03   0.85 |  10.15%  0.9240 |    4.66 | .  .  | 11110
+  B136  CAND NEUTRAL r 260   0.0 | 12.54%  1.1384  -17.97% |  1.24   1.05 |  12.85%  1.1446 |    4.91 | .  Y  | 11111
+  B136  CAND NEUTRAL r 260  10.0 | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 |    4.91 | .  Y  | 11111
+  B136  CAND NEUTRAL r 260  25.0 | 11.17%  1.0248  -18.33% |  1.13   0.93 |  11.45%  1.0316 |    4.91 | .  Y  | 11111
+  B136  CAND NEUTRAL r 260  50.0 |  9.81%  0.9109  -19.32% |  1.02   0.82 |  10.08%  0.9184 |    4.91 | .  .  | 10110
+  B136  CAND NEUTRAL r 500   0.0 | 12.32%  1.1400  -17.97% |  1.23   1.06 |  12.85%  1.1446 |    4.73 | .  Y  | 11111
+  B136  CAND NEUTRAL r 500  10.0 | 11.79%  1.0954  -18.11% |  1.19   1.02 |  12.29%  1.0994 |    4.73 | .  Y  | 11111
+  B136  CAND NEUTRAL r 500  25.0 | 11.00%  1.0284  -18.33% |  1.13   0.94 |  11.45%  1.0316 |    4.73 | .  Y  | 11111
+  B136  CAND NEUTRAL r 500  50.0 |  9.69%  0.9165  -19.32% |  1.03   0.82 |  10.08%  0.9184 |    4.73 | .  .  | 10110
+  B136  CAND NEUTRAL r 756   0.0 | 12.30%  1.1462  -17.97% |  1.24   1.08 |  12.85%  1.1446 |    4.67 | .  Y  | 11111
+  B136  CAND NEUTRAL r 756  10.0 | 11.77%  1.1017  -18.11% |  1.20   1.03 |  12.29%  1.0994 |    4.67 | .  Y  | 11111
+  B136  CAND NEUTRAL r 756  25.0 | 10.99%  1.0350  -18.33% |  1.14   0.96 |  11.45%  1.0316 |    4.67 | .  Y  | 11111
+  B136  CAND NEUTRAL r 756  50.0 |  9.70%  0.9236  -19.32% |  1.03   0.84 |  10.08%  0.9184 |    4.67 | .  .  | 10110
+
+  (gross 1.00 rows are in the CSV; the headline conclusions are quoted at the live 0.75.)
+
+=== D. HOW MUCH OF THE 4b MARGIN IS A t = 0 ARTEFACT? (each cell vs its own committed (OUT, row 260) cell, at 10 bps) ===
+  panel book  g    init    start | dCAGR   dSharpe   dMaxDD  | dOOS Sh | m_DD (pp)   m_CAGR (pp) | 4b
+  U56   CAP2 0.75 OUT     r 500 |  -0.50%   -0.0415   +0.00% |  +0.0000 |     +5.42        +1.14 | PASS
+  U56   CAP2 0.75 OUT     r 756 |  -0.40%   -0.0238   +0.00% |  +0.0000 |     +5.42        +1.24 | PASS
+  U56   CAP2 0.75 IN      r 260 |  +0.10%   +0.0064   +0.00% |  +0.0106 |     +5.42        +1.06 | PASS
+  U56   CAP2 0.75 IN      r 500 |  -0.38%   -0.0333   +0.00% |  +0.0106 |     +5.42        +1.26 | PASS
+  U56   CAP2 0.75 IN      r 756 |  -0.34%   -0.0210   +0.00% |  +0.0106 |     +5.42        +1.30 | PASS
+  U56   CAP2 0.75 NEUTRAL r 260 |  +0.00%   +0.0000   +0.00% |  +0.0000 |     +5.42        +0.96 | PASS
+  U56   CAP2 0.75 NEUTRAL r 500 |  -0.50%   -0.0415   +0.00% |  +0.0000 |     +5.42        +1.14 | PASS
+  U56   CAP2 0.75 NEUTRAL r 756 |  -0.40%   -0.0238   +0.00% |  +0.0000 |     +5.42        +1.24 | PASS
+  U56   CAND 0.75 OUT     r 500 |  -0.42%   -0.0239   +0.00% |  +0.0000 |     +2.84        +2.19 | PASS
+  U56   CAND 0.75 OUT     r 756 |  -0.37%   -0.0173   +0.00% |  +0.0000 |     +2.84        +2.24 | PASS
+  U56   CAND 0.75 IN      r 260 |  +0.13%   +0.0100   +0.00% |  +0.0172 |     +2.84        +2.07 | PASS
+  U56   CAND 0.75 IN      r 500 |  -0.26%   -0.0121   +0.00% |  +0.0172 |     +2.84        +2.35 | PASS
+  U56   CAND 0.75 IN      r 756 |  -0.27%   -0.0096   +0.00% |  +0.0172 |     +2.84        +2.34 | PASS
+  U56   CAND 0.75 NEUTRAL r 260 |  +0.00%   +0.0000   +0.00% |  +0.0000 |     +2.84        +1.93 | PASS
+  U56   CAND 0.75 NEUTRAL r 500 |  -0.42%   -0.0239   +0.00% |  +0.0000 |     +2.84        +2.19 | PASS
+  U56   CAND 0.75 NEUTRAL r 756 |  -0.37%   -0.0173   +0.00% |  +0.0000 |     +2.84        +2.24 | PASS
+  B136  CAP2 0.75 OUT     r 500 |  -0.41%   -0.0244   -0.00% |  +0.0000 |     +3.13        +1.51 | PASS
+  B136  CAP2 0.75 OUT     r 756 |  -0.45%   -0.0177   -0.00% |  +0.0000 |     +3.13        +1.47 | PASS
+  B136  CAP2 0.75 IN      r 260 |  +0.05%   +0.0035   -0.00% |  +0.0046 |     +3.13        +1.28 | PASS
+  B136  CAP2 0.75 IN      r 500 |  -0.35%   -0.0204   -0.00% |  +0.0046 |     +3.13        +1.56 | PASS
+  B136  CAP2 0.75 IN      r 756 |  -0.42%   -0.0153   -0.00% |  +0.0046 |     +3.13        +1.50 | PASS
+  B136  CAP2 0.75 NEUTRAL r 260 |  +0.00%   +0.0000   +0.00% |  +0.0000 |     +3.13        +1.23 | PASS
+  B136  CAP2 0.75 NEUTRAL r 500 |  -0.41%   -0.0244   -0.00% |  +0.0000 |     +3.13        +1.51 | PASS
+  B136  CAP2 0.75 NEUTRAL r 756 |  -0.45%   -0.0177   -0.00% |  +0.0000 |     +3.13        +1.47 | PASS
+  B136  CAND 0.75 OUT     r 500 |  -0.19%   +0.0024   +0.00% |  +0.0000 |     +2.12        +1.89 | PASS
+  B136  CAND 0.75 OUT     r 756 |  -0.21%   +0.0087   +0.00% |  +0.0000 |     +2.12        +1.87 | PASS
+  B136  CAND 0.75 IN      r 260 |  +0.05%   +0.0037   -0.03% |  +0.0051 |     +2.08        +1.45 | PASS
+  B136  CAND 0.75 IN      r 500 |  -0.14%   +0.0067   -0.03% |  +0.0051 |     +2.08        +1.94 | PASS
+  B136  CAND 0.75 IN      r 756 |  -0.18%   +0.0114   -0.03% |  +0.0051 |     +2.08        +1.91 | PASS
+  B136  CAND 0.75 NEUTRAL r 260 |  +0.00%   +0.0000   +0.00% |  +0.0000 |     +2.12        +1.40 | PASS
+  B136  CAND 0.75 NEUTRAL r 500 |  -0.19%   +0.0024   +0.00% |  +0.0000 |     +2.12        +1.89 | PASS
+  B136  CAND 0.75 NEUTRAL r 756 |  -0.21%   +0.0087   +0.00% |  +0.0000 |     +2.12        +1.87 | PASS
+
+  Over all 64 (cell vs its own committed cell) pairs at 10 bps:
+   |dSharpe| <= 0.01 in 26 of 64   |dCAGR| <= 0.10 pp in 13   4b kept in 40 of 40   4b LOST in 0
+   by initial condition (mean over panels, books, gross, starts):
+    OUT      dCAGR -0.42%  dSharpe -0.0176  dMaxDD +0.00%  dOOS Sh +0.0000  dTurn -0.114x   4b 10/16
+    IN       dCAGR -0.18%  dSharpe -0.0058  dMaxDD -0.02%  dOOS Sh +0.0096  dTurn -0.089x   4b 15/24
+    NEUTRAL  dCAGR -0.28%  dSharpe -0.0117  dMaxDD +0.00%  dOOS Sh +0.0000  dTurn -0.076x   4b 15/24
+   by scored start:
+    row  260  dCAGR +0.05%  dSharpe +0.0031  dMaxDD -0.01%  dOOS Sh +0.0048   4b 10/16
+    row  500  dCAGR -0.40%  dSharpe -0.0205  dMaxDD -0.01%  dOOS Sh +0.0032   4b 15/24
+    row  756  dCAGR -0.38%  dSharpe -0.0108  dMaxDD -0.01%  dOOS Sh +0.0032   4b 15/24
+
+   THE MARGIN LEDGER — how far each cell clears the two ABSOLUTE 4b bars (pp), 10 bps, g0.75.  A margin that survives every (init, start) is not a t=0 artefact.
+   panel book  | m_DD at (OUT,260) -> range over all 9 cells | m_CAGR at (OUT,260) -> range
+   U56   CAP2 |    +5.42 -> [+5.42, +5.42] |    +0.96 -> [+0.96, +1.30]
+   U56   CAND |    +2.84 -> [+2.84, +2.84] |    +1.93 -> [+1.93, +2.35]
+   B136  CAP2 |    +3.13 -> [+3.13, +3.13] |    +1.23 -> [+1.23, +1.56]
+   B136  CAND |    +2.12 -> [+2.08, +2.12] |    +1.40 -> [+1.40, +1.94]
+
+=== E. KEEP COUNTS OVER ALL 288 PUBLISHED ROWS ===
+  4b passes: 151 of 288      4a passes: 0 of 288
+   init OUT     : 4b  50/96   4a   0/96   binding leg on 4b FAILs: L_H1 0  L_H2 12  L_OOS 0  L_DD 36  L_CAGR 10
+   init IN      : 4b  51/96   4a   0/96   binding leg on 4b FAILs: L_H1 0  L_H2 11  L_OOS 0  L_DD 36  L_CAGR 9
+   init NEUTRAL : 4b  50/96   4a   0/96   binding leg on 4b FAILs: L_H1 0  L_H2 12  L_OOS 0  L_DD 36  L_CAGR 10
+   start r 260: 4b  49/96   4a   0/96   binding leg on 4b FAILs: L_H1 0  L_H2 12  L_OOS 0  L_DD 36  L_CAGR 11
+   start r 500: 4b  51/96   4a   0/96   binding leg on 4b FAILs: L_H1 0  L_H2 12  L_OOS 0  L_DD 36  L_CAGR 9
+   start r 756: 4b  51/96   4a   0/96   binding leg on 4b FAILs: L_H1 0  L_H2 11  L_OOS 0  L_DD 36  L_CAGR 9
+     0.0 bps: 4b  45/72   4a   0/72
+    10.0 bps: 4b  45/72   4a   0/72
+    25.0 bps: 4b  45/72   4a   0/72
+    50.0 bps: 4b  16/72   4a   0/72
+
+  JOINT both-panel 4b: 54 of 144 cells;  by init: OUT:18/48  IN:18/48  NEUTRAL:18/48;  by start: r260:18/48  r500:18/48  r756:18/48
+
+  4a PASSES (Sharpe > live RULES v2 under the SAME convention in BOTH halves AND MaxDD no worse): 0
+
+=== F. RULE 8 — the two dials (initial condition, scored start) chosen on
+    start..2016-12-31 ONLY, 2017-2026 read ONCE, scored against the COMMITTED (OUT, r260). ===
+  64 picks (2 panels x 2 books x 2 gross x 4 rungs x 2 choosers).
+   picks beating SPY's OOS Sharpe:                          64 of 64
+   picks beating the live book's OOS Sharpe:                16 of 64
+   picks beating the COMMITTED (OUT,r260) cell's OOS Sharpe: 45 of 64
+   picks landing ON the committed convention:               11 of 64
+   picks carrying a full-sample 4b pass:                    34 of 64
+   pick distribution: IN/r260:45  OUT/r260:11  OUT/r756:8
+   mean OOS CAGR / Sharpe / MaxDD of the IS-only picks: 13.65% / 1.1334 / -19.52%
+   the COMMITTED (OUT, r260) cell's:                    13.53% / 1.1262 / -19.51%  (+0.0072 Sharpe)
+   the LIVE RULES v2 baseline's:                        8.76% / 1.1994
+   SPY's:                                               15.36% / 0.8784 / -33.72%
+
+   panel book  g    bps chooser     | pick        OOS CAGR  OOS Sh | committed OOS CAGR / Sh
+   U56   CAP2 0.75   0.0 C_ISSHARPE  | IN/r260       13.32%  1.3799 |            13.17% / 1.3693
+   U56   CAP2 0.75   0.0 C_ISCALMAR  | OUT/r260      13.17%  1.3693 |            13.17% / 1.3693
+   U56   CAP2 0.75  10.0 C_ISSHARPE  | IN/r260       12.92%  1.3424 |            12.77% / 1.3318
+   U56   CAP2 0.75  10.0 C_ISCALMAR  | OUT/r260      12.77%  1.3318 |            12.77% / 1.3318
+   U56   CAP2 0.75  25.0 C_ISSHARPE  | IN/r260       12.33%  1.2862 |            12.18% / 1.2755
+   U56   CAP2 0.75  25.0 C_ISCALMAR  | OUT/r260      12.18%  1.2755 |            12.18% / 1.2755
+   U56   CAP2 0.75  50.0 C_ISSHARPE  | IN/r260       11.35%  1.1922 |            11.21% / 1.1813
+   U56   CAP2 0.75  50.0 C_ISCALMAR  | OUT/r260      11.21%  1.1813 |            11.21% / 1.1813
+   U56   CAP2 1.00   0.0 C_ISSHARPE  | IN/r260       14.99%  1.3456 |            14.76% / 1.3331
+   U56   CAP2 1.00   0.0 C_ISCALMAR  | OUT/r260      14.76%  1.3331 |            14.76% / 1.3331
+   U56   CAP2 1.00  10.0 C_ISSHARPE  | IN/r260       14.52%  1.3079 |            14.29% / 1.2953
+   U56   CAP2 1.00  10.0 C_ISCALMAR  | OUT/r260      14.29%  1.2953 |            14.29% / 1.2953
+   U56   CAP2 1.00  25.0 C_ISSHARPE  | IN/r260       13.82%  1.2512 |            13.60% / 1.2384
+   U56   CAP2 1.00  25.0 C_ISCALMAR  | OUT/r260      13.60%  1.2384 |            13.60% / 1.2384
+   U56   CAP2 1.00  50.0 C_ISSHARPE  | IN/r260       12.67%  1.1564 |            12.45% / 1.1434
+   U56   CAP2 1.00  50.0 C_ISCALMAR  | OUT/r260      12.45%  1.1434 |            12.45% / 1.1434
+   U56   CAND 0.75   0.0 C_ISSHARPE  | OUT/r260      14.35%  1.2803 |            14.35% / 1.2803
+   U56   CAND 0.75   0.0 C_ISCALMAR  | IN/r260       14.59%  1.2973 |            14.35% / 1.2803
+   U56   CAND 0.75  10.0 C_ISSHARPE  | IN/r260       14.09%  1.2569 |            13.85% / 1.2397
+   U56   CAND 0.75  10.0 C_ISCALMAR  | IN/r260       14.09%  1.2569 |            13.85% / 1.2397
+   U56   CAND 0.75  25.0 C_ISSHARPE  | IN/r260       13.35%  1.1963 |            13.10% / 1.1787
+   U56   CAND 0.75  25.0 C_ISCALMAR  | IN/r260       13.35%  1.1963 |            13.10% / 1.1787
+   U56   CAND 0.75  50.0 C_ISSHARPE  | IN/r260       12.11%  1.0951 |            11.87% / 1.0768
+   U56   CAND 0.75  50.0 C_ISCALMAR  | IN/r260       12.11%  1.0951 |            11.87% / 1.0768
+   U56   CAND 1.00   0.0 C_ISSHARPE  | IN/r260       18.91%  1.2572 |            18.59% / 1.2403
+   U56   CAND 1.00   0.0 C_ISCALMAR  | IN/r260       18.91%  1.2572 |            18.59% / 1.2403
+   U56   CAND 1.00  10.0 C_ISSHARPE  | IN/r260       18.25%  1.2183 |            17.92% / 1.2011
+   U56   CAND 1.00  10.0 C_ISCALMAR  | IN/r260       18.25%  1.2183 |            17.92% / 1.2011
+   U56   CAND 1.00  25.0 C_ISSHARPE  | IN/r260       17.25%  1.1597 |            16.92% / 1.1421
+   U56   CAND 1.00  25.0 C_ISCALMAR  | IN/r260       17.25%  1.1597 |            16.92% / 1.1421
+   U56   CAND 1.00  50.0 C_ISSHARPE  | IN/r260       15.61%  1.0619 |            15.27% / 1.0436
+   U56   CAND 1.00  50.0 C_ISCALMAR  | IN/r260       15.61%  1.0619 |            15.27% / 1.0436
+   B136  CAP2 0.75   0.0 C_ISSHARPE  | IN/r260       12.25%  1.1437 |            12.19% / 1.1392
+   B136  CAP2 0.75   0.0 C_ISCALMAR  | IN/r260       12.25%  1.1437 |            12.19% / 1.1392
+   B136  CAP2 0.75  10.0 C_ISSHARPE  | IN/r260       11.71%  1.0982 |            11.65% / 1.0936
+   B136  CAP2 0.75  10.0 C_ISCALMAR  | IN/r260       11.71%  1.0982 |            11.65% / 1.0936
+   B136  CAP2 0.75  25.0 C_ISSHARPE  | IN/r260       10.91%  1.0297 |            10.85% / 1.0250
+   B136  CAP2 0.75  25.0 C_ISCALMAR  | IN/r260       10.91%  1.0297 |            10.85% / 1.0250
+   B136  CAP2 0.75  50.0 C_ISSHARPE  | IN/r260        9.59%  0.9156 |             9.53% / 0.9106
+   B136  CAP2 0.75  50.0 C_ISCALMAR  | IN/r260        9.59%  0.9156 |             9.53% / 0.9106
+   B136  CAP2 1.00   0.0 C_ISSHARPE  | IN/r260       15.52%  1.1114 |            15.44% / 1.1072
+   B136  CAP2 1.00   0.0 C_ISCALMAR  | IN/r260       15.52%  1.1114 |            15.44% / 1.1072
+   B136  CAP2 1.00  10.0 C_ISSHARPE  | IN/r260       14.83%  1.0680 |            14.75% / 1.0637
+   B136  CAP2 1.00  10.0 C_ISCALMAR  | IN/r260       14.83%  1.0680 |            14.75% / 1.0637
+   B136  CAP2 1.00  25.0 C_ISSHARPE  | IN/r260       13.81%  1.0029 |            13.73% / 0.9985
+   B136  CAP2 1.00  25.0 C_ISCALMAR  | OUT/r260      13.73%  0.9985 |            13.73% / 0.9985
+   B136  CAP2 1.00  50.0 C_ISSHARPE  | IN/r260       12.12%  0.8942 |            12.04% / 0.8895
+   B136  CAP2 1.00  50.0 C_ISCALMAR  | IN/r260       12.12%  0.8942 |            12.04% / 0.8895
+   B136  CAND 0.75   0.0 C_ISSHARPE  | OUT/r756      12.85%  1.1446 |            12.85% / 1.1446
+   B136  CAND 0.75   0.0 C_ISCALMAR  | IN/r260       12.92%  1.1495 |            12.85% / 1.1446
+   B136  CAND 0.75  10.0 C_ISSHARPE  | OUT/r756      12.29%  1.0994 |            12.29% / 1.0994
+   B136  CAND 0.75  10.0 C_ISCALMAR  | IN/r260       12.36%  1.1045 |            12.29% / 1.0994
+   B136  CAND 0.75  25.0 C_ISSHARPE  | OUT/r756      11.45%  1.0316 |            11.45% / 1.0316
+   B136  CAND 0.75  25.0 C_ISCALMAR  | IN/r260       11.53%  1.0368 |            11.45% / 1.0316
+   B136  CAND 0.75  50.0 C_ISSHARPE  | OUT/r756      10.08%  0.9184 |            10.08% / 0.9184
+   B136  CAND 0.75  50.0 C_ISCALMAR  | IN/r260       10.15%  0.9240 |            10.08% / 0.9184
+   B136  CAND 1.00   0.0 C_ISSHARPE  | OUT/r756      16.51%  1.1045 |            16.51% / 1.1045
+   B136  CAND 1.00   0.0 C_ISCALMAR  | IN/r260       16.61%  1.1094 |            16.51% / 1.1045
+   B136  CAND 1.00  10.0 C_ISSHARPE  | OUT/r756      15.77%  1.0610 |            15.77% / 1.0610
+   B136  CAND 1.00  10.0 C_ISCALMAR  | IN/r260       15.86%  1.0660 |            15.77% / 1.0610
+   B136  CAND 1.00  25.0 C_ISSHARPE  | OUT/r756      14.66%  0.9956 |            14.66% / 0.9956
+   B136  CAND 1.00  25.0 C_ISCALMAR  | IN/r260       14.76%  1.0008 |            14.66% / 0.9956
+   B136  CAND 1.00  50.0 C_ISSHARPE  | OUT/r756      12.84%  0.8865 |            12.84% / 0.8865
+   B136  CAND 1.00  50.0 C_ISCALMAR  | OUT/r260      12.84%  0.8865 |            12.84% / 0.8865
+
+=== GATES: 15 of 15 pass ===
+
+Done in 13s.  all gates pass: True
