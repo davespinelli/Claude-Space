@@ -1,0 +1,184 @@
+=== idea 2491 — DOES THE 2% CAP NEED CONTINUOUS ENFORCEMENT, OR ONLY ENTRY
+    ENFORCEMENT?  (lane cloud, run 61) ===
+    2026-09-23  band 0.03  MA 200d  cadence ['W', 'M']  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  sweep SHY (phi=1.00)
+    DIAL 1 per-name cap ['0.015', '0.020', '0.030', 'INF'] (0.020 = idea 2322's CAP2, INF = CAND)    DIAL 2 gross [0.75, 1.0]
+    PUBLISHED AXIS, NEVER SELECTED ON: enforcement mode ['CONT', 'RATCHET', 'RAT_CAP', 'RAT_BUD'], panels, rungs, cadence.
+    CONT re-imposes min(g/N_in, cap) every rebalance (the committed book).  RATCHET binds
+    at ENTRY ONLY and lets a held name drift.  RAT_CAP keeps the ceiling but drops the
+    TOP-UP.  RAT_BUD is the EXPOSURE-MATCHED ratchet (risk gross <= g by construction).
+    PRE-STATED RISK: twelve killed turnover devices all bought their saving by CUTTING
+    EXPOSURE (idea 2477: the rate splits by risk gross, rank corr +0.797, not by device).
+    A ratchet de-grosses on the top-up leg and LEVERAGES/CONCENTRATES on the trim leg;
+    which way it nets is the measurement.  Risk gross and max name weight are published
+    on every row.
+    SMALL NOT PRICED: 0 of 128 4b cells (idea 2383), 0 of 40-120 (2318/2322/2326/2343).
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; L_CAGR is
+    the contaminated leg.  The mode-vs-mode contrast is same-tape, same-days, first-order
+    immune; the absolute 4b verdicts are not.
+    GATE PASS  G6 exactly two tuned parameters: per-name cap, gross (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 the eligible set IS baseline.band_state & priced, unmodified: 0 differing cells; mean names IN 36.37 (target 0)
+    GATE PASS  G1 the CONT runner IS engine.backtest on the same risk-weight frame (cap 0.020 and INF, g 0.75, W, 10 bps, sweep off): max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G9 sweep instrument priced on every scored row: SHY non-null on both panels: True (target True)
+
+    512 published rows = 2 panels x 2 cadences x 4 modes x 4 caps x 2 gross x 4 rungs;  128 distinct realised weight paths.
+    GATE PASS  G7 the comparands (SPY and live RULES v2) are BIT-IDENTICAL across every mode: max spread over all 512 rows: 0.000e+00 (target 0.0)
+    GATE PASS  G4 no leverage anywhere (max gross <= 1): max over 128 paths: 1.000000 gross, 0.5650 max single name; 5623 leverage clips fired (target <= 1+1e-12)
+    GATE PASS  G10 RAT_BUD's POST-TRADE risk gross never exceeds its g (the exposure-matched arm; the book still DRIFTS above g between rebalances, exactly as CONT does): worst post-trade excess over 32 paths: +2.220e-16 (target <= 1e-9)
+    PUB   LEVERAGE CLIPS (a ratchet target whose risk weights summed above 1.0 and was scaled back) — the ceiling the entry-only rule runs into: CONT: 302 clips over 12 of 32 paths; RATCHET: 2800 clips over 28 of 32 paths; RAT_CAP: 2478 clips over 25 of 32 paths; RAT_BUD: 43 clips over 14 of 32 paths
+    GATE PASS  G11 at cap = INF an infinite ceiling cannot trim, so RAT_CAP IS RATCHET bit-for-bit: max|d| over 8 matched paths: 0.000e+00 (target 0.0)
+    GATE PASS  G5 the cost charge is EXACTLY linear in the rung (2 x the 25 bps bill == the 50 bps bill): max|d| 3.469e-18 (target < 1e-15)
+    GATE PASS  G3 CONT reproduces the committed CAP2 (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318) AND CAND (12.59%/1.1934/-17.39%, OOS 13.85%/1.2397) U56 headlines: CAP2 11.62%/1.2687/-14.81% OOS 12.77%/1.3318; CAND 12.59%/1.1934/-17.39% OOS 13.85%/1.2397 -> max|d| 4.98e-05 (target < 1e-3)
+    ANCHOR published: U56 SPY full 15.23% / 0.8897 / -33.72%, OOS 15.45% / 0.8831; live RULES v2 8.65% / 1.2052 / -12.05%, OOS 9.51% / 1.2839.
+    GATE PASS  G8 the ratchet BITES at every matched cell (it changes the realised path): smallest max|d| vs CONT over 96 matched pairs: 2.185e-03 (target > 1e-9)
+
+=== A. WHAT THE RATCHET ACTUALLY DOES TO THE BOOK (headline cell: cap 0.020, g 0.75, W) ===
+  panel mode     | turn/yr | d_turn  | risk gross (min..max) | SHY sleeve | mean names | max name w | mean max w
+  U56   CONT     |   3.506 |  +0.00% | 0.6718 (0.100..0.763) |     32.82% |      38.44 |     0.0274 |     0.0187
+  U56   RATCHET  |   3.131 | -10.70% | 0.7917 (0.122..1.000) |     20.83% |      38.44 |     0.1793 |     0.0655
+  U56   RAT_CAP  |   3.095 | -11.73% | 0.7020 (0.092..0.930) |     29.80% |      38.44 |     0.0284 |     0.0205
+  U56   RAT_BUD  |   2.490 | -28.98% | 0.6386 (0.079..0.758) |     36.14% |      38.23 |     0.1469 |     0.0611
+  B136  CONT     |   4.675 |  +0.00% | 0.7360 (0.139..0.763) |     26.40% |      93.17 |     0.0250 |     0.0094
+  B136  RATCHET  |   4.130 | -11.67% | 0.8637 (0.153..1.000) |     13.63% |      93.17 |     0.0812 |     0.0308
+  B136  RAT_CAP  |   4.141 | -11.41% | 0.8569 (0.135..1.000) |     14.31% |      93.17 |     0.0264 |     0.0191
+  B136  RAT_BUD  |   2.889 | -38.21% | 0.6767 (0.153..0.764) |     32.33% |      92.11 |     0.1142 |     0.0435
+
+=== B. THE EXCHANGE RATE — pp of CAGR per 1% of turnover SAVED, on the record's own
+    convention d_CAGR_pp / -d_turn_pct.  Every killed device paid about -0.10. ===
+  panel cad mode     cap    g    rung |  turn/yr | d_turn  | dCAGR_pp | pp per 1% | d_risk_gross | bar?
+  U56   W   RATCHET  0.020  0.75     0 |    3.131 | -10.70% |    +4.32 |    +0.404 |      +0.1199 | no
+  U56   W   RATCHET  0.020  0.75    10 |    3.131 | -10.70% |    +4.35 |    +0.406 |      +0.1199 | no
+  U56   W   RATCHET  0.020  0.75    25 |    3.131 | -10.70% |    +4.39 |    +0.410 |      +0.1199 | no
+  U56   W   RATCHET  0.020  0.75    50 |    3.131 | -10.70% |    +4.46 |    +0.417 |      +0.1199 | no
+  U56   W   RAT_CAP  0.020  0.75     0 |    3.095 | -11.73% |    +0.31 |    +0.027 |      +0.0302 | no
+  U56   W   RAT_CAP  0.020  0.75    10 |    3.095 | -11.73% |    +0.36 |    +0.031 |      +0.0302 | no
+  U56   W   RAT_CAP  0.020  0.75    25 |    3.095 | -11.73% |    +0.42 |    +0.036 |      +0.0302 | no
+  U56   W   RAT_CAP  0.020  0.75    50 |    3.095 | -11.73% |    +0.53 |    +0.046 |      +0.0302 | no
+  U56   W   RAT_BUD  0.020  0.75     0 |    2.490 | -28.98% |    +1.71 |    +0.059 |      -0.0332 | no
+  U56   W   RAT_BUD  0.020  0.75    10 |    2.490 | -28.98% |    +1.82 |    +0.063 |      -0.0332 | no
+  U56   W   RAT_BUD  0.020  0.75    25 |    2.490 | -28.98% |    +1.98 |    +0.068 |      -0.0332 | no
+  U56   W   RAT_BUD  0.020  0.75    50 |    2.490 | -28.98% |    +2.25 |    +0.078 |      -0.0332 | no
+  U56   M   RATCHET  0.020  0.75     0 |    2.341 |  -2.05% |    +3.86 |    +1.886 |      +0.1202 | no
+  U56   M   RATCHET  0.020  0.75    10 |    2.341 |  -2.05% |    +3.86 |    +1.884 |      +0.1202 | no
+  U56   M   RATCHET  0.020  0.75    25 |    2.341 |  -2.05% |    +3.85 |    +1.882 |      +0.1202 | no
+  U56   M   RATCHET  0.020  0.75    50 |    2.341 |  -2.05% |    +3.84 |    +1.877 |      +0.1202 | no
+  U56   M   RAT_CAP  0.020  0.75     0 |    2.296 |  -3.95% |    +0.53 |    +0.133 |      +0.0282 | no
+  U56   M   RAT_CAP  0.020  0.75    10 |    2.296 |  -3.95% |    +0.54 |    +0.136 |      +0.0282 | no
+  U56   M   RAT_CAP  0.020  0.75    25 |    2.296 |  -3.95% |    +0.55 |    +0.139 |      +0.0282 | no
+  U56   M   RAT_CAP  0.020  0.75    50 |    2.296 |  -3.95% |    +0.57 |    +0.145 |      +0.0282 | no
+  U56   M   RAT_BUD  0.020  0.75     0 |    1.817 | -23.96% |    +1.76 |    +0.073 |      -0.0212 | no
+  U56   M   RAT_BUD  0.020  0.75    10 |    1.817 | -23.96% |    +1.82 |    +0.076 |      -0.0212 | no
+  U56   M   RAT_BUD  0.020  0.75    25 |    1.817 | -23.96% |    +1.91 |    +0.080 |      -0.0212 | no
+  U56   M   RAT_BUD  0.020  0.75    50 |    1.817 | -23.96% |    +2.06 |    +0.086 |      -0.0212 | no
+  B136  W   RATCHET  0.020  0.75     0 |    4.130 | -11.67% |    +3.05 |    +0.261 |      +0.1277 | no
+  B136  W   RATCHET  0.020  0.75    10 |    4.130 | -11.67% |    +3.10 |    +0.265 |      +0.1277 | no
+  B136  W   RATCHET  0.020  0.75    25 |    4.130 | -11.67% |    +3.17 |    +0.272 |      +0.1277 | no
+  B136  W   RATCHET  0.020  0.75    50 |    4.130 | -11.67% |    +3.29 |    +0.282 |      +0.1277 | no
+  B136  W   RAT_CAP  0.020  0.75     0 |    4.141 | -11.41% |    +2.56 |    +0.224 |      +0.1209 | no
+  B136  W   RAT_CAP  0.020  0.75    10 |    4.141 | -11.41% |    +2.61 |    +0.228 |      +0.1209 | no
+  B136  W   RAT_CAP  0.020  0.75    25 |    4.141 | -11.41% |    +2.68 |    +0.235 |      +0.1209 | no
+  B136  W   RAT_CAP  0.020  0.75    50 |    4.141 | -11.41% |    +2.80 |    +0.245 |      +0.1209 | no
+  B136  W   RAT_BUD  0.020  0.75     0 |    2.889 | -38.21% |    -0.31 |    -0.008 |      -0.0593 | no
+  B136  W   RAT_BUD  0.020  0.75    10 |    2.889 | -38.21% |    -0.11 |    -0.003 |      -0.0593 | no
+  B136  W   RAT_BUD  0.020  0.75    25 |    2.889 | -38.21% |    +0.19 |    +0.005 |      -0.0593 | YES
+  B136  W   RAT_BUD  0.020  0.75    50 |    2.889 | -38.21% |    +0.68 |    +0.018 |      -0.0593 | YES
+  B136  M   RATCHET  0.020  0.75     0 |    2.852 |  -6.04% |    +3.52 |    +0.582 |      +0.1220 | no
+  B136  M   RATCHET  0.020  0.75    10 |    2.852 |  -6.04% |    +3.53 |    +0.584 |      +0.1220 | no
+  B136  M   RATCHET  0.020  0.75    25 |    2.852 |  -6.04% |    +3.55 |    +0.587 |      +0.1220 | no
+  B136  M   RATCHET  0.020  0.75    50 |    2.852 |  -6.04% |    +3.57 |    +0.591 |      +0.1220 | no
+  B136  M   RAT_CAP  0.020  0.75     0 |    2.870 |  -5.46% |    +2.82 |    +0.516 |      +0.1102 | no
+  B136  M   RAT_CAP  0.020  0.75    10 |    2.870 |  -5.46% |    +2.83 |    +0.518 |      +0.1102 | no
+  B136  M   RAT_CAP  0.020  0.75    25 |    2.870 |  -5.46% |    +2.84 |    +0.521 |      +0.1102 | no
+  B136  M   RAT_CAP  0.020  0.75    50 |    2.870 |  -5.46% |    +2.87 |    +0.526 |      +0.1102 | no
+  B136  M   RAT_BUD  0.020  0.75     0 |    2.037 | -32.91% |    +0.66 |    +0.020 |      -0.0544 | YES
+  B136  M   RAT_BUD  0.020  0.75    10 |    2.037 | -32.91% |    +0.77 |    +0.023 |      -0.0544 | YES
+  B136  M   RAT_BUD  0.020  0.75    25 |    2.037 | -32.91% |    +0.94 |    +0.028 |      -0.0544 | YES
+  B136  M   RAT_BUD  0.020  0.75    50 |    2.037 | -32.91% |    +1.21 |    +0.037 |      -0.0544 | YES
+    PUB   turnover-SAVING arms: 384 of 384; median d_turn -14.68%, best -43.44%, worst -2.05%
+    PUB   pooled MEDIAN pp of CAGR per 1% of turnover saved (this run's RATCHET reading): +0.0668 over 384 saving arms (every killed device paid ~-0.10)
+    PUB   idea 2431's adoption bar (-31.0% turnover at dCAGR >= 0), cleared by: 48 of 384 arms
+    PUB   EXPOSURE NEUTRALITY (the test all twelve killed devices failed): d risk gross over the 384 arms: median -0.0414, range [-0.1126, +0.1312]; d max name weight median +0.0743, max +0.3292
+    PUB     RATCHET: d_turn median -12.29%, dCAGR median +3.11 pp, rate median +0.2685 over 128 saving arms: d risk gross median +0.0975, d max name w median +0.0719, dSharpe median +0.0571, dOOS_Sharpe median +0.0556
+    PUB     RAT_CAP: d_turn median -11.88%, dCAGR median +0.37 pp, rate median +0.0309 over 128 saving arms: d risk gross median -0.0245, d max name w median +0.0024, dSharpe median +0.0529, dOOS_Sharpe median +0.0661
+    PUB     RAT_BUD: d_turn median -31.27%, dCAGR median +0.96 pp, rate median +0.0296 over 128 saving arms: d risk gross median -0.0551, d max name w median +0.1271, dSharpe median +0.0333, dOOS_Sharpe median -0.0157
+
+=== B2. THE EXPOSURE-NEUTRALITY TEST — the one every killed device failed.  A saving is
+    only FREE if the book did not simply take MORE RISK.  Two pre-stated tolerances:
+    |d realised risk gross| <= 0.02 and |d max single-name weight| <= 0.005. ===
+  mode     | saving | dCAGR>=0 | dSharpe>=0 | dOOS_Sh>=0 | CONC neutral | GROSS neutral | SAVING+FREE+NEUTRAL
+  RATCHET  | 128/128|   118/128|     104/128|      92/128|         8/128|          0/128|              0/128
+  RAT_CAP  | 128/128|    86/128|     119/128|     123/128|        92/128|          0/128|              0/128
+  RAT_BUD  | 128/128|   100/128|      88/128|      52/128|         0/128|          0/128|              0/128
+    PUB   VERDICT ON NEUTRALITY: 0 of 384 arms are SAVING AND free-or-better AND neutral on BOTH tolerances;  0 of 384 are gross-neutral at all;  100 of 384 are concentration-neutral
+    PUB   THE TRIM LEG IS THE CAP (U56, W, cap 0.020, g 0.75, 10 bps): max single-name weight CONT 0.0274, RATCHET 0.1793, RAT_CAP 0.0284, RAT_BUD 0.1469 against a NOMINAL cap of 0.0200
+
+=== B3. DOES THE RATCHET KEEP THE COMMITTED BOOK'S 4b PASSES, OR TRADE THEM? ===
+  mode     | 4b rows | kept where CONT passes | NEW passes where CONT fails | LOST
+  RATCHET  |    58/128|                     25/38  |                          33 |   13
+  RAT_CAP  |    50/128|                     29/38  |                          21 |    9
+  RAT_BUD  |    81/128|                     34/38  |                          47 |    4
+
+=== C. HEADLINE CELLS (cap 0.020, gross 0.75, 10 bps) — FULL, HALVES, OOS ===
+  panel cad mode     |   CAGR |  Sharpe |   MaxDD |   H1   /   H2  |  OOS CAGR | OOS Sharpe | 4a | 4b | failing 4b legs
+  U56   W   CONT     | 11.62% |  1.2687 | -14.81% |  1.303 /  1.246 |    12.77% |     1.3318 | .  | Y  | -
+  U56   W   RATCHET  | 15.97% |  1.2410 | -18.79% |  1.314 /  1.195 |    17.82% |     1.2722 | .  | Y  | -
+  U56   W   RAT_CAP  | 11.98% |  1.2383 | -15.61% |  1.251 /  1.234 |    13.46% |     1.3208 | .  | Y  | -
+  U56   W   RAT_BUD  | 13.44% |  1.2494 | -15.04% |  1.375 /  1.154 |    14.37% |     1.2386 | .  | Y  | -
+  U56   M   CONT     | 11.89% |  1.2286 | -17.91% |  1.280 /  1.192 |    12.87% |     1.2671 | .  | Y  | -
+  U56   M   RATCHET  | 15.75% |  1.1765 | -21.04% |  1.263 /  1.124 |    17.57% |     1.2001 | .  | .  | L_DD
+  U56   M   RAT_CAP  | 12.42% |  1.2127 | -18.40% |  1.250 /  1.188 |    13.62% |     1.2637 | .  | Y  | -
+  U56   M   RAT_BUD  | 13.71% |  1.2168 | -16.59% |  1.328 /  1.141 |    14.95% |     1.2179 | .  | Y  | -
+  B136  W   CONT     | 11.82% |  1.1180 | -17.10% |  1.260 /  0.990 |    11.65% |     1.0936 | .  | Y  | -
+  B136  W   RATCHET  | 14.92% |  1.1591 | -18.44% |  1.285 /  1.045 |    15.08% |     1.1550 | .  | Y  | -
+  B136  W   RAT_CAP  | 14.43% |  1.1577 | -18.33% |  1.281 /  1.044 |    14.51% |     1.1588 | .  | Y  | -
+  B136  W   RAT_BUD  | 11.72% |  1.1754 | -18.88% |  1.390 /  0.981 |    11.04% |     1.0994 | .  | Y  | -
+  B136  M   CONT     | 12.08% |  1.0949 | -22.03% |  1.243 /  0.974 |    12.13% |     1.0648 | .  | .  | L_DD
+  B136  M   RATCHET  | 15.61% |  1.1527 | -22.82% |  1.319 /  1.013 |    15.77% |     1.1255 | .  | .  | L_DD
+  B136  M   RAT_CAP  | 14.91% |  1.1517 | -22.84% |  1.294 /  1.028 |    14.92% |     1.1306 | .  | .  | L_DD
+  B136  M   RAT_BUD  | 12.86% |  1.1760 | -17.53% |  1.385 /  1.007 |    12.92% |     1.1287 | .  | Y  | -
+  COMPARANDS (U56, identical on every row): SPY 15.23% / 0.8897 / -33.72%, OOS 15.45% / 0.8831; live RULES v2 8.65% / 1.2052 / -12.05%, OOS 9.51% / 1.2839.
+
+=== D. BOTH KEEP PATHS OVER ALL PUBLISHED ROWS ===
+  4b 227 of 512;  4a 0 of 512
+  mode     | rows | 4b   | 4a  | 4b at 10bps | L_H1 fail | L_H2 fail | L_OOS fail | L_DD fail | L_CAGR fail
+  CONT     |  128 |   38 |   0 |          11 |         0 |         9 |          0 |        67 |          23
+  RATCHET  |  128 |   58 |   0 |          16 |         0 |         0 |          0 |        70 |           0
+  RAT_CAP  |  128 |   50 |   0 |          14 |         0 |         0 |          0 |        60 |          18
+  RAT_BUD  |  128 |   81 |   0 |          21 |         0 |         4 |          0 |        43 |           6
+  by (panel, cadence, rung), 4b count out of 8 (mode x cap x gross = 32) :
+    U56   W: 0bps 26/32  10bps 26/32  25bps 26/32  50bps 20/32
+    U56   M: 0bps 14/32  10bps 13/32  25bps 13/32  50bps 13/32
+    B136  W: 0bps 22/32  10bps 19/32  25bps 18/32  50bps  1/32
+    B136  M: 0bps  4/32  10bps  4/32  25bps  4/32  50bps  4/32
+
+=== E. RULE 8 WALK-FORWARD — the two dials (cap, gross) fitted on warm-up..2016-12-31
+    ONLY, 2017-2026 read ONCE, separately at every (panel, cadence, mode, rung). ===
+  panel cad mode     | picks (cap/g)                  | OOS CAGR | OOS Sharpe | OOS MaxDD | > SPY | > live | full 4b
+  U56   W   CONT     | 0.020/0.75:4, INF/0.75:4       |   12.81% |     1.2417 |   -16.19% |   8/8   |   2/8   |   6/8
+  U56   W   RATCHET  | 0.020/1.00:4, 0.030/0.75:4     |   17.74% |     1.2641 |   -18.71% |   8/8   |   4/8   |   8/8
+  U56   W   RAT_CAP  | INF/0.75:5, INF/1.00:2, 0.015/0.75:1 |   17.37% |     1.2869 |   -17.94% |   8/8   |   5/8   |   7/8
+  U56   W   RAT_BUD  | 0.030/0.75:7, 0.030/1.00:1     |   13.28% |     1.1207 |   -15.38% |   8/8   |   0/8   |   8/8
+  U56   M   CONT     | 0.020/0.75:8                   |   12.57% |     1.2400 |   -17.95% |   8/8   |   2/8   |   8/8
+  U56   M   RATCHET  | 0.030/1.00:8                   |   18.49% |     1.2239 |   -22.56% |   8/8   |   0/8   |   0/8
+  U56   M   RAT_CAP  | 0.030/0.75:8                   |   15.95% |     1.2366 |   -21.29% |   8/8   |   0/8   |   0/8
+  U56   M   RAT_BUD  | 0.020/0.75:4, 0.030/0.75:4     |   14.37% |     1.1827 |   -15.97% |   8/8   |   0/8   |   8/8
+  B136  W   CONT     | 0.015/0.75:4, 0.020/0.75:4     |   11.00% |     1.0484 |   -17.36% |   8/8   |   3/8   |   6/8
+  B136  W   RATCHET  | 0.015/0.75:5, 0.030/1.00:3     |   14.60% |     1.1140 |   -19.92% |   8/8   |   5/8   |   3/8
+  B136  W   RAT_CAP  | 0.020/0.75:4, 0.030/0.75:2, 0.030/1.00:1, INF/1.00:1 |   14.32% |     1.1255 |   -19.56% |   8/8   |   6/8   |   5/8
+  B136  W   RAT_BUD  | 0.015/0.75:4, 0.030/1.00:4     |   12.00% |     1.0306 |   -21.04% |   8/8   |   1/8   |   4/8
+  B136  M   CONT     | 0.030/0.75:5, 0.020/0.75:3     |   12.08% |     1.0523 |   -22.07% |   8/8   |   2/8   |   0/8
+  B136  M   RATCHET  | 0.030/0.75:4, 0.020/1.00:3, 0.030/1.00:1 |   15.62% |     1.1115 |   -22.85% |   8/8   |   6/8   |   0/8
+  B136  M   RAT_CAP  | 0.030/0.75:6, 0.030/1.00:2     |   15.17% |     1.1221 |   -22.52% |   8/8   |   6/8   |   0/8
+  B136  M   RAT_BUD  | 0.015/1.00:4, 0.030/0.75:4     |   14.34% |     1.1005 |   -20.39% |   8/8   |   5/8   |   4/8
+
+  OVERALL rule 8: 128 of 128 picks beat SPY's OOS Sharpe; 47 of 128 beat the LIVE book's; 67 of 128 carry a full-sample 4b.
+  BENCHMARK OOS (2017-2026), read once: SPY 15.36% / 0.8784 / -33.72%;  live RULES v2 8.68% / 1.1928  (panel-pooled means).
+    CONT    : OOS Sharpe mean 1.1456, OOS CAGR mean 12.12%; the (cap, gross) pick matches CONT's in 32 of 32 draws
+    RATCHET : OOS Sharpe mean 1.1784, OOS CAGR mean 16.61%; the (cap, gross) pick matches CONT's in 5 of 32 draws
+    RAT_CAP : OOS Sharpe mean 1.1928, OOS CAGR mean 15.70%; the (cap, gross) pick matches CONT's in 4 of 32 draws
+    RAT_BUD : OOS Sharpe mean 1.1086, OOS CAGR mean 13.50%; the (cap, gross) pick matches CONT's in 9 of 32 draws
+
+=== GATES: 23 of 23 pass ===
+
+Done in 26s.  all gates pass: True

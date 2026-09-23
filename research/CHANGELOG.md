@@ -1,3 +1,60 @@
+## 2026-09-23 — idea 2491 (lane cloud, run 61): DOES THE 2% CAP NEED CONTINUOUS ENFORCEMENT, OR ONLY ENTRY ENFORCEMENT? **ANSWERED = NO, NOT TO SAVE TURNOVER — BUT EVERY WAY OF DROPPING IT IS A RE-GROSSING. 0 OF 384 ARMS IS EXPOSURE-NEUTRAL. KILL of the 'entry-only cap is a free saving' reading; PARK of the top-up-only drop. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHAT WAS ASKED.** The committed candidate (idea 2322's CAP2) re-imposes `min(g/N_in, 2%)` on
+  EVERY weekly rebalance, so a name that drifted ABOVE its cap is TRIMMED and one that drifted
+  BELOW is TOPPED UP. Idea 2457 proved the DENOMINATOR is an identity for the sizing but said
+  nothing about the cap or its re-imposition. Every weekly trim and top-up is turnover no NAME
+  DECISION asked for. 2491 asked whether a RATCHET cap — binding at ENTRY ONLY — cuts it.
+
+- **23 OF 23 GATES, AND THE RUN REPRODUCES THE BOOK IT IS MEASURING.** G1 the CONT runner IS
+  `engine.backtest` on the same risk-weight frame at cap 0.020 AND INF (max|d| **0.000e+00**).
+  G3 reproduces the committed CAP2 headline (11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318) and
+  the uncapped CAND (12.59% / 1.1934 / -17.39%, OOS 13.85% / 1.2397) to **4.98e-05**. G7 the
+  comparands (SPY, live RULES v2) are bit-identical across every mode (**0.000e+00**). G11 at
+  cap = INF an infinite ceiling cannot trim, so RAT_CAP IS RATCHET bit-for-bit.
+- **THE SAVING IS UNIVERSAL AND THE RATE IS POSITIVE — AND NEITHER SURVIVES THE NEUTRALITY TEST.**
+  **384 of 384** arms SAVE turnover (median **-14.68%**, best -43.44%, worst -2.05%) at a pooled
+  median of **+0.0668 pp of CAGR per 1% saved**, against the ~**-0.10** every one of the record's
+  twelve killed turnover devices paid. But **0 of 384 arms is gross-neutral** at
+  |d risk gross| <= 0.02, and **0 of 384** is saving AND free-or-better AND neutral on both
+  pre-stated tolerances. Idea 2477's reading — the rate splits by realised risk gross (rank corr
+  +0.797) and not by device name — therefore holds here too: **the positive rate is exposure.**
+- **THE DECOMPOSITION IS THE FINDING: THE TURNOVER LIVES IN THE TOP-UP LEG, THE CAGR LIVES IN THE
+  TRIM LEG, AND THE TRIM LEG *IS* THE CAP.** At U56 / W / cap 0.020 / g 0.75 / 10 bps: dropping
+  BOTH legs (RATCHET) saves -10.70% of turnover and buys **+4.35 pp** of CAGR — by taking max
+  single-name weight from **0.0274 to 0.1793 under a NOMINAL 2% cap, a 9.0x breach**. Dropping
+  ONLY the top-up (RAT_CAP) saves **MORE** turnover (**-11.73%**) for **+0.36 pp**, with max name
+  weight **0.0284** — concentration-neutral in **92 of 128** arms. **Idea 2322's cap is doing real
+  work and cannot be made entry-only**; what CAN be dropped is the top-up, and that is worth about
+  12% of the bill, not 4 pp of CAGR.
+- **THE EXPOSURE-MATCHED ARM CLEARS IDEA 2431's BAR AND STILL IS NOT ADOPTABLE.** RAT_BUD (held
+  weights kept, entrants funded only out of `max(0, g - kept)`, post-trade risk gross <= g by
+  construction, G10 worst excess **+2.2e-16**) saves a median **-31.27%** and is the only arm
+  clearing 2431's adoption bar (-31.0% at dCAGR >= 0), **48 of 384** arms. But rationing ENTRANTS
+  while leaving HELD weights alone concentrates the book by the back door: max name weight
+  **0.1469** under the same 2% cap, and OOS Sharpe falls (median dOOS_Sharpe **-0.0157**).
+- **BOTH KEEP PATHS OVER ALL 512 ROWS: 4b 227, 4a 0.** 4a fails on the MaxDD leg at every cell.
+  All three ratchets carry MORE 4b than the committed continuous cap (RAT_BUD **81**, RATCHET
+  **58**, RAT_CAP **50** vs CONT **38** of 128); RAT_BUD keeps **34 of CONT's 38** and adds 47.
+  That is not a promotion: a 4b pass bought by re-grossing is the exact failure mode this record
+  has killed twelve times.
+- **RULE 8, AND THE PICK MOVES.** The two dials (cap, gross) fitted on warm-up..2016-12-31 ONLY,
+  2017-2026 read ONCE, 128 picks across 2 choosers. **128 of 128 beat SPY's OOS Sharpe**, 47 of
+  128 beat the LIVE book's, 67 of 128 carry a full-sample 4b. RAT_CAP has the best OOS Sharpe mean
+  (**1.1928** vs CONT's 1.1456) and RATCHET the best OOS CAGR (**16.61%** vs 12.12%) — but
+  **RAT_CAP's (cap, gross) pick matches CONT's in only 4 of 32 draws and RATCHET's in 5 of 32**,
+  the chooser defecting to a LOOSER cap once the cap is no longer re-imposed. That is the same
+  chooser-stability warning idea 2495 published, arriving from a different direction.
+- **WHY NO MEMO.** RAT_CAP passes 4b at the committed cell but is not BETTER there (Sharpe 1.2383
+  vs 1.2687, MaxDD -15.61% vs -14.81%, OOS Sharpe 1.3208 vs 1.3318), so it is not a wholesale
+  replacement under rule 6, and it is not gross-neutral, so it is not adoptable as a bolt-on
+  either. It is PARKED with the exact rebuild it needs: fund the dropped top-up into the SHY
+  sweep so realised risk gross is pinned to CONT's path day by day, then re-price.
+- **SURVIVORSHIP (rule 9).** U56 / B136 are CURRENT constituents of their screens held from 2008,
+  so absolute levels are biased upward and 4b's `L_CAGR` floor is the most contaminated leg. The
+  mode-vs-mode contrast is same-tape, same-days, same-names and first-order immune; the absolute
+  4b verdicts are not.
+
 ## 2026-09-23 — idea 2473 (lane cloud, run 58): DOES THE EXCHANGE RATE INSIDE THE EXPOSURE-NEUTRAL CLASS TRACK THE TRADE-SIZE DISTRIBUTION EACH DEVICE REMOVES? **ANSWERED = NO, AND THE IDEA'S OWN MECHANISM IS EXACTLY BACKWARDS. THE RATE IS AN EXPOSURE ARTEFACT INSIDE THE 'NEUTRAL' CLASS TOO. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHAT WAS ASKED.** Idea 2463 left five devices — PARTIAL / ROTA / BANDW / DRIFT / HOLD —
