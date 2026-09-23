@@ -9089,3 +9089,47 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
 - **No new KEEP-candidate.** The standing 4b candidate, its `L_DD` leg and its 3.51x turnover blocker are
   unchanged; the admission side is now closed alongside the exit and re-size sides.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is unchanged.
+
+## 2026-09-23 (lane B, run 50) — idea 2457 KILL of the fixed per-name notional, by identity; no rule change
+- **idea 2457 aimed at the ONE part of the turnover bill no device had touched: the re-size TRIGGER.**
+  The record's five killed devices — admission (2447), exit (2351, 2328), re-size magnitude (2391 /
+  2404 damper, 2408 rota) — all refuse a trade the signal asked for, and all were measured at
+  ~0.1 pp of CAGR per 1% of turnover saved. The filed hypothesis: the candidate's SHARED denominator
+  `N_in(t)` moves weekly, so every held name is re-priced even when nothing about it changed, and
+  replacing it with a CONSTANT per-name notional `w*` would cut that churn for nothing. Dials:
+  `w*` in {0.0125, 0.0150, 0.0200, 0.0250, 0.0300} x gross ceiling {0.75, 1.00}; FLOAT (the committed
+  `min(g/N_in, 2%)` book) carried as a labelled comparand arm. 192 rows, **15 of 15 gates**.
+- **THE HYPOTHESIS IS REFUTED BY AN IDENTITY, NOT BY A CLOSE CALL.** `min(0.75/N, 2%)` and
+  `2% x min(1, 0.75/(2% x N))` are the same function: **G11 reads max|d| 3.5e-18 on BOTH panels.**
+  The live candidate ALREADY IS a fixed 2% per-name notional, scaled only by the no-leverage
+  ceiling, which binds on **70.3% of scored days** on U56. The `FIX0.0200 / g0.75` arm is bit-equal
+  to FLOAT at every rung (dTurnover +0.0%, dCAGR +0.00%, dSharpe 0.0000). There is no denominator
+  churn to harvest, and the 2% cap — filed by idea 2322 as a concentration control — turns out to
+  be doing the sizing job this idea proposed to give it.
+- **WHAT THE DIAL ACTUALLY IS: AN EXPOSURE DIAL.** G7 confirms every arm holds the IDENTICAL name
+  set on every day (0 differing cells over 12 weight paths), so the only thing `w*` moves is gross.
+  CAGR per unit of realised risk gross across w* = FLOAT / 0.0125 / 0.0150 / 0.0200 / 0.0250 /
+  0.0300: **U56 17.29 / 17.48 / 17.06 / 17.29 / 17.14 / 17.10%**, **B136 16.07 / 15.90 / 16.05 /
+  16.07 / 16.08 / 16.04%**; turnover per unit of risk gross **5.22 / 5.24 / 5.21 / 5.22 / 5.43 /
+  5.57** and **6.35 / 6.12 / 6.23 / 6.35 / 6.42 / 6.45**. Both ratios move under 2% while risk gross
+  moves 0.481 -> 0.711. Raw turnover DOES fall (U56 3.51x -> 2.52x, -28.2% at w*=0.0125) at
+  **-0.114 / -0.125 pp of CAGR per 1% saved** — the same exchange rate the five killed devices paid.
+- **RULE 8 REFUSES THE DIAL.** 32 IS-only picks (2 panels x 2 sweeps x 4 rungs x 2 choosers, fitted
+  on <= 2016-12-31, 2017-2026 read once) land on **FLOAT in 17 of 32** and average **1.1555 OOS
+  Sharpe against the committed cell's 1.1489 (+0.0066)** at **4.07x turnover vs the committed
+  3.80x** — the in-sample operator pays MORE turnover for 0.007 of Sharpe. 32 of 32 clear SPY's OOS
+  Sharpe; only 11 of 32 clear the live book's.
+- **ONE 4a KEEP-CANDIDATE, FILED AND NOT ADOPTED — AND IT IS THE FIRST 4a PASS IN FIVE RUNS** (2326
+  0/180, 2423 0/384, 2427 0/320, 2431 0/808, 2447 0/320). `FIX w* = 0.0125` on U56: **8.40% /
+  1.2946 / -10.43%**, halves **1.3076 / 1.2947** against live RULES v2's 1.2262 / 1.1897, OOS
+  9.56% / 1.3808, turnover **2.52x** (1.60x under a ZERO sweep, BELOW the live book's 1.77x); 10 of
+  192 rows, at 0 / 10 / 25 bps under both sweeps. It fails 4b on **`L_CAGR` alone** (8.40% against
+  the 10.66% floor, -2.26 pp), rule 8 picks it in **0 of 8** U56 cells, and it carries **0 of 16**
+  joint both-panel 4b. Memo on disk with exact RULES wording. **Recommendation: do not adopt** — a
+  4a pass bought by holding less is a gross decision, not a rule change, and is strictly dominated
+  by lowering G on the committed rule, which needs no new clause.
+- **4b 83 of 192; 4a 10 of 192** — the first non-zero 4a count in this stretch, and it comes from
+  de-grossing rather than from a device. The sweep convention is published, not selected on:
+  SHY 42/96 vs ZERO 41/96. Gross 0.75 59/96 vs gross 1.00 24/96.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
+  unchanged, and so are the standing candidate's `L_DD` leg and its 3.51x turnover blocker.
