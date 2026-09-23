@@ -1,0 +1,156 @@
+=== idea 2359 — does a SLOWER REBALANCE CADENCE keep the CAPPED 4b candidate's pass while cutting its 3.51x/yr turnover? ===
+    2026-09-23  lane cloud   band 0.03  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  name cap 2.00% (FIXED, idea 2322)  sweep SHY phi=1.00
+    DIAL 1 cadence ['W', '2W', 'M', 'Q']   DIAL 2 gross [0.75, 1.0]
+    GATE PASS  G6 exactly two tuned parameters: rebalance cadence, gross (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G4 cadence mask == engine.rebalance_mask at every stride-1 rung: W: 0 disagreements, M: 0 disagreements, Q: 0 disagreements (target 0 everywhere)
+    PUB   rebalance fires over the U56 tape (4,710 rows): {'W': 978, '2W': 489, 'M': 225, 'Q': 75}
+    GATE PASS  G2 per-column replica == engine.backtest (live book, W): max|d| 0.000e+00 (target < 1e-12)
+
+--- panel U56 (56 names)  SPY 15.23% / 0.8897 / -33.72%   live RULES v2 (W) 8.65% / 1.2052 / -12.05%, turnover 1.77/yr
+    ... U56 done (2s)
+
+--- panel B136 (136 names)  SPY 15.12% / 0.8844 / -33.72%   live RULES v2 (W) 7.96% / 1.0972 / -12.24%, turnover 2.01/yr
+    ... B136 done (3s)
+    GATE PASS  G1 the W rung's weights == an independent CAP2 build (U56): max|dw| 0.000e+00 (target < 1e-12)
+    GATE PASS  G3 no leverage (all 16 books): max held row sum 1.000000000 (target <= 1+1e-9)
+    GATE PASS  G5 turnover non-increasing along W -> 2W -> M -> Q: 4 of 4 (panel, gross) cells (target 4 of 4)
+    GATE PASS  G7 sweep instrument priced on every held row: SHY non-null on all panels: True (target True)
+    GATE PASS  G8 reproduces idea 2322's committed U56 CAP2/W headline (11.58%/1.2643/-14.81%, OOS 12.70%/1.3243, turnover 3.51/yr): read 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318, turnover 3.51/yr -> max|d| 7.54e-04 (target < 1e-3)
+
+=== A. THE FULL GRID AT THE HEADLINE RUNG (10 bps) — every point, nothing dropped ===
+
+  U56
+  cad  gross |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | turn/yr  x live  fires  meanGross  maxNameHeld
+  W    0.75  | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 -14.81% | .  Y  | 11111             |    3.51    1.98    924      1.000        2.74%
+  2W   0.75  | 11.56%  1.2286  -18.27% |  1.29   1.18 |  12.55%  1.2643 -18.27% | .  Y  | 11111             |    2.98    1.68    462      1.000        3.14%
+  M    0.75  | 11.89%  1.2286  -17.91% |  1.28   1.19 |  12.87%  1.2671 -17.91% | .  Y  | 11111             |    2.39    1.35    213      1.000        3.43%
+  Q    0.75  | 10.96%  1.0931  -21.25% |  1.21   1.01 |  11.66%  1.0882 -21.25% | .  .  | 11101             |    1.59    0.90     71      1.000        5.06%
+  W    1.00  | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 -17.28% | .  Y  | 11111             |    3.99    2.25    924      1.000        2.92%
+  2W   1.00  | 12.61%  1.1802  -20.47% |  1.23   1.15 |  14.07%  1.2325 -20.47% | .  .  | 11101             |    3.42    1.93    462      1.000        3.34%
+  M    1.00  | 13.08%  1.1922  -20.26% |  1.24   1.16 |  14.44%  1.2427 -20.26% | .  .  | 11101             |    2.77    1.56    213      1.000        3.91%
+  Q    1.00  | 11.76%  1.0063  -28.48% |  1.16   0.91 |  12.69%  0.9885 -28.48% | .  .  | 11101             |    1.88    1.06     71      1.000        5.50%
+
+  B136
+  cad  gross |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | turn/yr  x live  fires  meanGross  maxNameHeld
+  W    0.75  | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 -17.10% | .  Y  | 11111             |    4.68    2.32    923      1.000        2.50%
+  2W   0.75  | 11.46%  1.0637  -21.67% |  1.23   0.92 |  11.20%  1.0182 -21.67% | .  .  | 11101             |    3.94    1.96    461      1.000        2.97%
+  M    0.75  | 12.08%  1.0949  -22.03% |  1.24   0.97 |  12.13%  1.0648 -22.03% | .  .  | 11101             |    3.04    1.51    213      1.000        3.15%
+  Q    0.75  | 12.13%  1.1068  -23.74% |  1.31   0.94 |  11.77%  1.0355 -23.74% | .  .  | 11101             |    1.80    0.89     71      1.000        3.61%
+  W    1.00  | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 -22.38% | .  .  | 11101             |    5.83    2.90    923      1.000        2.50%
+  2W   1.00  | 14.50%  1.0265  -28.88% |  1.22   0.87 |  13.96%  0.9691 -28.88% | .  .  | 11101             |    4.99    2.48    461      1.000        2.97%
+  M    1.00  | 15.49%  1.0646  -29.25% |  1.22   0.94 |  15.47%  1.0293 -29.25% | .  .  | 11101             |    3.88    1.93    213      1.000        3.15%
+  Q    1.00  | 15.13%  1.0446  -31.88% |  1.26   0.87 |  14.55%  0.9681 -31.88% | .  .  | 11101             |    2.33    1.16     71      1.000        4.29%
+
+=== B. EVERY COST RUNG, U56 and B136 (the whole 64-row grid) ===
+
+  U56 gross 0.75
+  cad  |    0bps: CAGR/Sharpe/4b         10bps: CAGR/Sharpe/4b         25bps: CAGR/Sharpe/4b         50bps: CAGR/Sharpe/4b      
+  W    |  12.01%/1.3079/Y       11.62%/1.2687/Y       11.04%/1.2098/Y       10.07%/1.1113/.     
+  2W   |  11.89%/1.2610/Y       11.56%/1.2286/Y       11.06%/1.1800/Y       10.23%/1.0986/.     
+  M    |  12.16%/1.2536/Y       11.89%/1.2286/Y       11.49%/1.1909/Y       10.82%/1.1275/Y     
+  Q    |  11.13%/1.1090/.       10.96%/1.0931/.       10.69%/1.0690/.       10.25%/1.0284/.     
+
+  U56 gross 1.00
+  cad  |    0bps: CAGR/Sharpe/4b         10bps: CAGR/Sharpe/4b         25bps: CAGR/Sharpe/4b         50bps: CAGR/Sharpe/4b      
+  W    |  13.11%/1.2579/Y       12.66%/1.2187/Y       11.99%/1.1598/Y       10.88%/1.0614/Y     
+  2W   |  13.00%/1.2128/.       12.61%/1.1802/.       12.04%/1.1312/.       11.08%/1.0493/.     
+  M    |  13.40%/1.2178/Y       13.08%/1.1922/.       12.61%/1.1537/.       11.83%/1.0891/.     
+  Q    |  11.97%/1.0223/.       11.76%/1.0063/.       11.44%/0.9822/.       10.92%/0.9415/.     
+
+  B136 gross 0.75
+  cad  |    0bps: CAGR/Sharpe/4b         10bps: CAGR/Sharpe/4b         25bps: CAGR/Sharpe/4b         50bps: CAGR/Sharpe/4b      
+  W    |  12.35%/1.1629/Y       11.82%/1.1180/Y       11.04%/1.0505/Y        9.75%/0.9379/.     
+  2W   |  11.90%/1.1006/.       11.46%/1.0637/.       10.80%/1.0082/.        9.71%/0.9153/.     
+  M    |  12.43%/1.1226/.       12.08%/1.0949/.       11.58%/1.0532/.       10.73%/0.9832/.     
+  Q    |  12.33%/1.1234/.       12.13%/1.1068/.       11.83%/1.0817/.       11.32%/1.0394/.     
+
+  B136 gross 1.00
+  cad  |    0bps: CAGR/Sharpe/4b         10bps: CAGR/Sharpe/4b         25bps: CAGR/Sharpe/4b         50bps: CAGR/Sharpe/4b      
+  W    |  15.73%/1.1339/.       15.06%/1.0911/.       14.06%/1.0269/.       12.40%/0.9197/.     
+  2W   |  15.07%/1.0619/.       14.50%/1.0265/.       13.65%/0.9733/.       12.23%/0.8843/.     
+  M    |  15.94%/1.0913/.       15.49%/1.0646/.       14.82%/1.0244/.       13.71%/0.9569/.     
+  Q    |  15.40%/1.0607/.       15.13%/1.0446/.       14.73%/1.0202/.       14.06%/0.9792/.     
+
+=== C. KEEP COUNTS OVER ALL 64 PUBLISHED ROWS (4 cadences x 2 gross x 2 panels x 4 rungs) ===
+  4b passes: 18 of 64      4a passes: 0 of 64
+     0.0 bps:  4b  6/16   4a  0/16   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 10  L_CAGR 0
+    10.0 bps:  4b  5/16   4a  0/16   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 11  L_CAGR 0
+    25.0 bps:  4b  5/16   4a  0/16   binding leg on 4b FAILs: L_H1 0  L_H2 1  L_OOS 0  L_DD 11  L_CAGR 0
+    50.0 bps:  4b  2/16   4a  0/16   binding leg on 4b FAILs: L_H1 0  L_H2 5  L_OOS 2  L_DD 11  L_CAGR 5
+
+  4b pass rows (all rungs):
+    U56   cad W    g 0.75   0.0bps  12.01% / 1.3079 / -14.77%   OOS 13.17% / 1.3693   turnover 3.51/yr
+    U56   cad W    g 0.75  10.0bps  11.62% / 1.2687 / -14.81%   OOS 12.77% / 1.3318   turnover 3.51/yr
+    U56   cad W    g 0.75  25.0bps  11.04% / 1.2098 / -14.88%   OOS 12.18% / 1.2755   turnover 3.51/yr
+    U56   cad 2W   g 0.75   0.0bps  11.89% / 1.2610 / -18.24%   OOS 12.88% / 1.2944   turnover 2.98/yr
+    U56   cad 2W   g 0.75  10.0bps  11.56% / 1.2286 / -18.27%   OOS 12.55% / 1.2643   turnover 2.98/yr
+    U56   cad 2W   g 0.75  25.0bps  11.06% / 1.1800 / -18.33%   OOS 12.05% / 1.2189   turnover 2.98/yr
+    U56   cad M    g 0.75   0.0bps  12.16% / 1.2536 / -17.88%   OOS 13.14% / 1.2909   turnover 2.39/yr
+    U56   cad M    g 0.75  10.0bps  11.89% / 1.2286 / -17.91%   OOS 12.87% / 1.2671   turnover 2.39/yr
+    U56   cad M    g 0.75  25.0bps  11.49% / 1.1909 / -17.96%   OOS 12.47% / 1.2312   turnover 2.39/yr
+    U56   cad M    g 0.75  50.0bps  10.82% / 1.1275 / -18.04%   OOS 11.80% / 1.1709   turnover 2.39/yr
+    U56   cad W    g 1.00   0.0bps  13.11% / 1.2579 / -17.22%   OOS 14.76% / 1.3331   turnover 3.99/yr
+    U56   cad W    g 1.00  10.0bps  12.66% / 1.2187 / -17.28%   OOS 14.29% / 1.2953   turnover 3.99/yr
+    U56   cad W    g 1.00  25.0bps  11.99% / 1.1598 / -17.36%   OOS 13.60% / 1.2384   turnover 3.99/yr
+    U56   cad W    g 1.00  50.0bps  10.88% / 1.0614 / -17.50%   OOS 12.45% / 1.1434   turnover 3.99/yr
+    U56   cad M    g 1.00   0.0bps  13.40% / 1.2178 / -20.21%   OOS 14.76% / 1.2673   turnover 2.77/yr
+    B136  cad W    g 0.75   0.0bps  12.35% / 1.1629 / -16.61%   OOS 12.19% / 1.1392   turnover 4.68/yr
+    B136  cad W    g 0.75  10.0bps  11.82% / 1.1180 / -17.10%   OOS 11.65% / 1.0936   turnover 4.68/yr
+    B136  cad W    g 0.75  25.0bps  11.04% / 1.0505 / -17.93%   OOS 10.85% / 1.0250   turnover 4.68/yr
+
+=== D. THE TRADE: what each step of the clock BUYS (turnover) and COSTS (return), vs W ===
+  U56 g=0.75  W reference: 11.62% / 1.2687 / -14.81%, turnover 3.51/yr (1.98x the live book's 1.77)
+    W    dTurn  +0.00/yr ( +0.0%)   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | 4b Y  x live turnover 1.98
+    2W   dTurn  -0.52/yr (-15.0%)   dCAGR -0.07%  dSharpe -0.0400  dMaxDD -3.46%  dOOS_Sh -0.0676  | 4b Y  x live turnover 1.68
+    M    dTurn  -1.12/yr (-31.8%)   dCAGR +0.27%  dSharpe -0.0401  dMaxDD -3.10%  dOOS_Sh -0.0648  | 4b Y  x live turnover 1.35
+    Q    dTurn  -1.91/yr (-54.6%)   dCAGR -0.67%  dSharpe -0.1756  dMaxDD -6.45%  dOOS_Sh -0.2437  | 4b .  x live turnover 0.90
+  U56 g=1.00  W reference: 12.66% / 1.2187 / -17.28%, turnover 3.99/yr (2.25x the live book's 1.77)
+    W    dTurn  +0.00/yr ( +0.0%)   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | 4b Y  x live turnover 2.25
+    2W   dTurn  -0.57/yr (-14.3%)   dCAGR -0.05%  dSharpe -0.0385  dMaxDD -3.19%  dOOS_Sh -0.0627  | 4b .  x live turnover 1.93
+    M    dTurn  -1.22/yr (-30.5%)   dCAGR +0.42%  dSharpe -0.0265  dMaxDD -2.98%  dOOS_Sh -0.0526  | 4b .  x live turnover 1.56
+    Q    dTurn  -2.11/yr (-52.9%)   dCAGR -0.91%  dSharpe -0.2123  dMaxDD -11.21%  dOOS_Sh -0.3068  | 4b .  x live turnover 1.06
+  B136 g=0.75  W reference: 11.82% / 1.1180 / -17.10%, turnover 4.68/yr (2.32x the live book's 2.01)
+    W    dTurn  +0.00/yr ( +0.0%)   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | 4b Y  x live turnover 2.32
+    2W   dTurn  -0.73/yr (-15.7%)   dCAGR -0.36%  dSharpe -0.0542  dMaxDD -4.57%  dOOS_Sh -0.0754  | 4b .  x live turnover 1.96
+    M    dTurn  -1.64/yr (-35.1%)   dCAGR +0.26%  dSharpe -0.0231  dMaxDD -4.93%  dOOS_Sh -0.0288  | 4b .  x live turnover 1.51
+    Q    dTurn  -2.88/yr (-61.6%)   dCAGR +0.31%  dSharpe -0.0112  dMaxDD -6.65%  dOOS_Sh -0.0581  | 4b .  x live turnover 0.89
+  B136 g=1.00  W reference: 15.06% / 1.0911 / -22.38%, turnover 5.83/yr (2.90x the live book's 2.01)
+    W    dTurn  +0.00/yr ( +0.0%)   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | 4b .  x live turnover 2.90
+    2W   dTurn  -0.84/yr (-14.4%)   dCAGR -0.56%  dSharpe -0.0646  dMaxDD -6.50%  dOOS_Sh -0.0946  | 4b .  x live turnover 2.48
+    M    dTurn  -1.95/yr (-33.4%)   dCAGR +0.43%  dSharpe -0.0265  dMaxDD -6.87%  dOOS_Sh -0.0344  | 4b .  x live turnover 1.93
+    Q    dTurn  -3.50/yr (-60.1%)   dCAGR +0.07%  dSharpe -0.0465  dMaxDD -9.50%  dOOS_Sh -0.0956  | 4b .  x live turnover 1.16
+
+=== D2. IS A SLOWER CLOCK A COST REBATE OR A RETURN EFFECT?  (the 0 bps column) ===
+  If the gain were a pure cost rebate it would vanish at 0 bps.  dCAGR vs W at each rung:
+  U56 g=0.75: 2W@0bps -0.13%  M@0bps +0.14%  Q@0bps -0.88%  2W@10bps -0.07%  M@10bps +0.27%  Q@10bps -0.67%  2W@25bps +0.02%  M@25bps +0.45%  Q@25bps -0.35%  2W@50bps +0.16%  M@50bps +0.76%  Q@50bps +0.18%
+  U56 g=1.00: 2W@0bps -0.12%  M@0bps +0.28%  Q@0bps -1.15%  2W@10bps -0.05%  M@10bps +0.42%  Q@10bps -0.91%  2W@25bps +0.04%  M@25bps +0.62%  Q@25bps -0.55%  2W@50bps +0.20%  M@50bps +0.95%  Q@50bps +0.04%
+  B136 g=0.75: 2W@0bps -0.45%  M@0bps +0.08%  Q@0bps -0.02%  2W@10bps -0.36%  M@10bps +0.26%  Q@10bps +0.31%  2W@25bps -0.24%  M@25bps +0.54%  Q@25bps +0.79%  2W@50bps -0.03%  M@50bps +0.98%  Q@50bps +1.58%
+  B136 g=1.00: 2W@0bps -0.66%  M@0bps +0.21%  Q@0bps -0.34%  2W@10bps -0.56%  M@10bps +0.43%  Q@10bps +0.07%  2W@25bps -0.41%  M@25bps +0.76%  Q@25bps +0.67%  2W@50bps -0.17%  M@50bps +1.31%  Q@50bps +1.65%
+
+=== E. RULE 8 — (cadence, gross) chosen on <= 2016-12-31 ONLY, 2017-2026 read once ===
+  U56     0.0bps C_ISSHARPE  -> cad W    g 0.75 | OOS 13.17% / 1.3693 / -14.77% | turnover 3.51/yr | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56     0.0bps C_ISCALMAR  -> cad W    g 0.75 | OOS 13.17% / 1.3693 / -14.77% | turnover 3.51/yr | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56    10.0bps C_ISSHARPE  -> cad W    g 0.75 | OOS 12.77% / 1.3318 / -14.81% | turnover 3.51/yr | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56    10.0bps C_ISCALMAR  -> cad W    g 0.75 | OOS 12.77% / 1.3318 / -14.81% | turnover 3.51/yr | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56    25.0bps C_ISSHARPE  -> cad M    g 0.75 | OOS 12.47% / 1.2312 / -17.96% | turnover 2.39/yr | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56    25.0bps C_ISCALMAR  -> cad M    g 0.75 | OOS 12.47% / 1.2312 / -17.96% | turnover 2.39/yr | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56    50.0bps C_ISSHARPE  -> cad M    g 0.75 | OOS 11.80% / 1.1709 / -18.04% | turnover 2.39/yr | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56    50.0bps C_ISCALMAR  -> cad M    g 0.75 | OOS 11.80% / 1.1709 / -18.04% | turnover 2.39/yr | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  B136    0.0bps C_ISSHARPE  -> cad Q    g 0.75 | OOS 11.97% / 1.0518 / -23.74% | turnover 1.80/yr | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136    0.0bps C_ISCALMAR  -> cad W    g 0.75 | OOS 12.19% / 1.1392 / -16.61% | turnover 4.68/yr | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136   10.0bps C_ISSHARPE  -> cad Q    g 0.75 | OOS 11.77% / 1.0355 / -23.74% | turnover 1.80/yr | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136   10.0bps C_ISCALMAR  -> cad W    g 0.75 | OOS 11.65% / 1.0936 / -17.10% | turnover 4.68/yr | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136   25.0bps C_ISSHARPE  -> cad Q    g 0.75 | OOS 11.46% / 1.0108 / -23.74% | turnover 1.80/yr | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136   25.0bps C_ISCALMAR  -> cad Q    g 0.75 | OOS 11.46% / 1.0108 / -23.74% | turnover 1.80/yr | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136   50.0bps C_ISSHARPE  -> cad Q    g 0.75 | OOS 10.94% / 0.9693 / -23.74% | turnover 1.80/yr | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136   50.0bps C_ISCALMAR  -> cad Q    g 0.75 | OOS 10.94% / 0.9693 / -23.74% | turnover 1.80/yr | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+
+  rule-8 picks landing on the W rung (CAP2 as filed): 6 of 16
+  rule-8 picks beating SPY OOS on Sharpe: 16 of 16;  beating the live book OOS: 5 of 16
+  rule-8 picks carrying a full-sample 4b: 10 of 16
+
+=== GATES: 11 of 11 pass ===
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-23_rebalance-cadence-on-the-capped-4b-candidate_cloud.grid.csv / .turnover.csv / .walkforward.csv / .gates.csv   (4s)
