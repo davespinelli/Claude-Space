@@ -1,0 +1,158 @@
+=== idea 2535 — DOES THE CANDIDATE'S DRAWDOWN EDGE SURVIVE A REALISED-VOL-MATCHED
+    COMPARAND?  (lane cloud, run 70) ===
+    2026-09-23  band 0.03  MA 200d  cadence ['W', 'M']  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  sweep SHY (phi=1.00)
+    DIAL 1 trailing vol window L [21, 63, 126, 252]    DIAL 2 gross [0.75, 1.0]
+    PUBLISHED, NEVER SELECTED ON: panels, cadence, per-name cap ['0.020', 'INF'], rungs
+    COMPARANDS, ALL SCORED, NONE SELECTED ON: ['SPY', 'EWBH', 'BLEND_G', 'VOLM_L21', 'VOLM_L63', 'VOLM_L126', 'VOLM_L252', 'VOLM_RB_L63']
+    VOLM_t = k_t x EWBH(panel) + (1 - k_t) x SHY, k_t = sigma_L(cand)/sigma_L(EWBH)
+    clipped to [0,1] — the SAME names on the SAME tape at the CANDIDATE'S OWN TRAILING
+    REALISED VOL rather than its GROSS.  Gross is not risk: the band gate de-grosses
+    exactly when the panel is choppy, so a gross-matched blend is de-risked at the same
+    TIMES the candidate is.  Matching on vol removes that.
+    TWO BARS: 4b-PROTO (rule 4b verbatim) and 4b-STRICT (no SPY-calibrated constant).
+    SURVIVORSHIP (rule 9): U56/B136 are CURRENT constituents held back to 2008.  EWBH,
+    BLEND_G and VOLM carry the IDENTICAL contamination on the IDENTICAL tape, so the
+    candidate-vs-VOLM contrast is differenced clean; the SPY columns are NOT.
+    GATE PASS  G6 exactly two tuned parameters: trailing vol window L, gross (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 the eligible set IS baseline.band_state & priced, unmodified: 0 differing cells; mean names IN 36.37 (target 0)
+    GATE PASS  G1 the candidate runner IS engine.backtest on the same risk-weight frame (cap 0.020 and INF, g 0.75, W, 10 bps, sweep off): max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G9 sweep instrument priced on every scored row: SHY non-null on both panels: True (target True)
+    GATE PASS  G11 the vol-matching statistic is CAUSAL (k_t uses no return after t): max|k_full - k_truncated| over the first 400 days 0.000e+00 (target < 1e-12)
+    GATE PASS  G8 EWBH is pure drift — zero turnover after inception (U56): max|d| between its realised return and the held-weight identity 5.794e-16 (target < 1e-12)
+    PUB   G10 EWBH sleeve (U56): 48 names, SPY and SHY excluded; EWBH 25.24% / 1.0941 / -44.19% / vol 23.00%, halves 1.2520 / 1.0541, OOS 30.35% / 1.1217
+    GATE PASS  G8 EWBH is pure drift — zero turnover after inception (B136): max|d| between its realised return and the held-weight identity 5.798e-16 (target < 1e-12)
+    PUB   G10 EWBH sleeve (B136): 121 names, SPY and SHY excluded; EWBH 22.32% / 1.0935 / -33.00% / vol 20.32%, halves 1.2333 / 1.0157, OOS 24.30% / 1.0855
+    GATE PASS  G4 no leverage EVER, in the book OR in any blend: max PRE-clamp target gross 1.000000000000000; 151 float-level rescales; max REALISED book gross 1.000000000000; max blend gross 1.000000000000 (target <= 1 + 1e-9 everywhere)
+    GATE PASS  G5 VOLM is vol-matched EX ANTE on every unclipped day (|k_t x sigma_L(EWBH) - sigma_L(cand)|): max 3.469e-18 over 64 (cell, L) pairs; clip binds on 0.534% of scored days (mean), max 4.272% (target < 1e-12)
+    GATE PASS  G5b BLEND_G is gross-matched to its own candidate cell (continuity with 2532): max |mean gross(blend) - mean risk gross(cand)| 3.174e-03 over 16 cells (target < 5e-3)
+    GATE PASS  G7 SPY and EWBH are bit-identical across every arm within a panel (they hold no position that trades, so no rung and no dial can touch them): distinct values {('B136', 'EWBH'): np.int64(1), ('B136', 'SPY'): np.int64(1), ('U56', 'EWBH'): np.int64(1), ('U56', 'SPY'): np.int64(1)} (target all 1)
+    GATE PASS  G7b the traded comparands move with the cost rung and with NOTHING ELSE: their CAGR is monotonically non-increasing in the rung in every cell: 0 monotonicity violations over 384 scored comparand rows (target 0)
+    PUB   G3 committed U56 CAP2 W 10bps g0.75 headline reproduced here: 11.62% / 1.2687 / -14.81%, halves 1.3028 / 1.2457, OOS 12.77% / 1.3318, turnover 3.51x/yr
+
+=== A. EVERY COMPARAND AT THE COMMITTED CELL (cap 0.020, g 0.75, W, 10 bps) ===
+  panel comparand   |   CAGR |  Sharpe |   MaxDD |    Vol |   H1   /   H2  |  OOS CAGR | OOS Sharpe | mean gross | turn x/yr
+  U56   CANDIDATE   | 11.62% |  1.2687 | -14.81% |  8.99% |  1.303 /  1.246 |    12.77% |     1.3318 |     0.6718 |      3.51
+  U56   SPY         | 15.23% |  0.8897 | -33.72% | 17.70% |  0.957 /  0.835 |    15.45% |     0.8831 |     1.0000 |      0.00
+  U56   EWBH        | 25.24% |  1.0941 | -44.19% | 23.00% |  1.252 /  1.054 |    30.35% |     1.1217 |     1.0000 |      0.00
+  U56   BLEND_G     | 16.55% |  1.1137 | -30.11% | 14.73% |  1.342 /  1.051 |    20.11% |     1.1348 |     0.6718 |       nan
+  U56   VOLM_L21    | 12.00% |  1.2328 | -16.54% |  9.56% |  1.272 /  1.211 |    13.53% |     1.3050 |     0.4627 |      3.57
+  U56   VOLM_L63    | 11.75% |  1.2166 | -17.89% |  9.51% |  1.271 /  1.182 |    13.19% |     1.2815 |     0.4580 |      1.48
+  U56   VOLM_L126   | 11.49% |  1.1976 | -19.77% |  9.46% |  1.251 /  1.165 |    13.07% |     1.2710 |     0.4502 |      1.02
+  U56   VOLM_L252   | 10.77% |  1.1394 | -21.57% |  9.37% |  1.221 /  1.092 |    12.32% |     1.1945 |     0.4340 |      0.74
+  U56   VOLM_RB_L63 |  7.78% |  1.1475 | -13.82% |  6.73% |  1.129 /  1.173 |     7.79% |     1.2614 |     0.4580 |      1.48
+  B136  CANDIDATE   | 11.82% |  1.1180 | -17.10% | 10.49% |  1.260 /  0.990 |    11.65% |     1.0936 |     0.7360 |      4.68
+  B136  SPY         | 15.12% |  0.8844 | -33.72% | 17.70% |  0.957 /  0.825 |    15.26% |     0.8737 |     1.0000 |      0.00
+  B136  EWBH        | 22.32% |  1.0935 | -33.00% | 20.32% |  1.233 /  1.016 |    24.30% |     1.0855 |     1.0000 |      0.00
+  B136  BLEND_G     | 15.56% |  1.0768 | -27.59% | 14.40% |  1.287 /  0.964 |    16.77% |     1.0410 |     0.7360 |       nan
+  B136  VOLM_L21    | 13.23% |  1.1969 | -18.41% | 10.88% |  1.298 /  1.118 |    14.07% |     1.2190 |     0.5758 |      3.06
+  B136  VOLM_L63    | 13.20% |  1.2046 | -18.20% | 10.78% |  1.320 /  1.115 |    13.88% |     1.2136 |     0.5713 |      1.24
+  B136  VOLM_L126   | 12.69% |  1.1674 | -18.80% | 10.73% |  1.273 /  1.088 |    13.61% |     1.1891 |     0.5633 |      0.85
+  B136  VOLM_L252   | 12.01% |  1.1222 | -19.53% | 10.61% |  1.235 /  1.044 |    13.03% |     1.1404 |     0.5474 |      0.66
+  B136  VOLM_RB_L63 | 10.61% |  1.1656 | -20.06% |  9.00% |  1.296 /  1.036 |     9.97% |     1.1367 |     0.5713 |      1.24
+
+  VOL-MATCH DIAGNOSTICS at the same cell (k_t = sigma_L(cand)/sigma_L(EWBH)):
+  panel |   L | mean k | clip binds | blend realised vol | candidate realised vol | vol ratio
+  U56   |  21 | 0.4612 |    0.0000% |              9.56% |                  8.99% |    1.0643
+  U56   |  63 | 0.4576 |    0.0000% |              9.51% |                  8.99% |    1.0578
+  U56   | 126 | 0.4498 |    0.0000% |              9.46% |                  8.99% |    1.0526
+  U56   | 252 | 0.4337 |    0.0000% |              9.37% |                  8.99% |    1.0425
+  B136  |  21 | 0.5745 |    0.0000% |             10.88% |                 10.49% |    1.0377
+  B136  |  63 | 0.5710 |    0.0000% |             10.78% |                 10.49% |    1.0279
+  B136  | 126 | 0.5630 |    0.0000% |             10.73% |                 10.49% |    1.0235
+  B136  | 252 | 0.5472 |    0.0000% |             10.61% |                 10.49% |    1.0120
+
+=== B. THE VERDICT — 4b UNDER EVERY COMPARAND, OVER ALL PUBLISHED BOOK-ROWS ===
+  64 book-rows (2 panels x 2 cadences x 2 caps x 2 gross x 4 rungs), each scored against 8 comparands = 512 scorings.
+  comparand   | 4b-PROTO | 4b-STRICT | L_H1 f | L_H2 f | L_OOS f | L_DD f | L_CAGR f | first-binding leg (PROTO)
+  SPY         |       25 |        14 |      0 |      4 |       0 |     35 |        4 | L_DD 33, L_H2 4, L_CAGR 2
+  EWBH        |        0 |         0 |     48 |     31 |      25 |     24 |       58 | L_H1 48, L_CAGR 10, L_H2 6
+  BLEND_G     |        0 |         0 |     54 |     28 |      25 |     40 |       34 | L_H1 54, L_DD 8, L_CAGR 2
+  VOLM_L21    |        0 |         0 |     45 |     52 |      52 |     64 |        0 | L_H1 45, L_DD 12, L_H2 7
+  VOLM_L63    |        0 |         2 |     51 |     54 |      55 |     64 |        0 | L_H1 51, L_DD 7, L_H2 5, L_OOS 1
+  VOLM_L126   |        0 |         5 |     45 |     53 |      54 |     64 |        0 | L_H1 45, L_DD 9, L_H2 9, L_OOS 1
+  VOLM_L252   |        0 |        14 |     41 |     40 |      45 |     64 |        0 | L_H1 41, L_DD 14, L_H2 8, L_OOS 1
+  VOLM_RB_L63 |        0 |         1 |     30 |     40 |      43 |     64 |        0 | L_H1 30, L_DD 21, L_H2 11, L_OOS 2
+  4a (vs the live RULES v2 book, comparand-independent): 0 of 64
+
+=== C. WHICH LEGS MOVE — the share of book-rows on which the CANDIDATE IS AHEAD, ===
+    under each comparand (4b-STRICT legs; this is the idea's own headline question) ===
+  comparand   | Sharpe H1 | Sharpe H2 | Sharpe OOS | MaxDD no worse | CAGR no lower
+  SPY         |    100.0% |     93.8% |     100.0% |         100.0% |         21.9%
+  EWBH        |     25.0% |     51.6% |      60.9% |         100.0% |          0.0%
+  BLEND_G     |     15.6% |     56.2% |      60.9% |         100.0% |          0.0%
+  VOLM_L21    |     29.7% |     18.8% |      18.8% |          53.1% |         10.9%
+  VOLM_L63    |     20.3% |     15.6% |      14.1% |          64.1% |          9.4%
+  VOLM_L126   |     29.7% |     17.2% |      15.6% |          71.9% |          9.4%
+  VOLM_L252   |     35.9% |     37.5% |      29.7% |          73.4% |         34.4%
+  VOLM_RB_L63 |     53.1% |     37.5% |      32.8% |          25.0% |         93.8%
+
+  THE MOVE ITSELF (VOLM_L63 minus BLEND_G, in percentage points of book-rows ahead):
+    Sharpe H1         :   +4.7 pp   (13 vs 10 of 64)
+    Sharpe H2         :  -40.6 pp   (10 vs 36 of 64)
+    Sharpe OOS        :  -46.9 pp   (9 vs 39 of 64)
+    MaxDD no worse    :  -35.9 pp   (41 vs 64 of 64)
+    CAGR no lower     :   +9.4 pp   (6 vs 0 of 64)
+
+  MEDIAN GAP (candidate minus comparand) at every comparand, over all book-rows:
+  comparand   | d CAGR pp | d Sharpe | d MaxDD pp | d Vol pp
+  SPY         |     -2.58 |   0.2223 |      12.51 |    -6.75
+  EWBH        |    -10.62 |   0.0155 |      17.77 |    -9.37
+  BLEND_G     |     -5.60 |   0.0201 |      10.38 |    -5.73
+  VOLM_L21    |     -1.33 |  -0.0730 |       0.27 |    -0.30
+  VOLM_L63    |     -1.22 |  -0.0752 |       0.44 |    -0.18
+  VOLM_L126   |     -0.98 |  -0.0550 |       2.54 |    -0.14
+  VOLM_L252   |     -0.32 |  -0.0181 |       3.23 |    -0.01
+  VOLM_RB_L63 |      2.49 |  -0.0172 |      -1.91 |     2.33
+
+=== D. HEADLINE LADDER (g 0.75, W, 10 bps) — CANDIDATE vs ITS OWN VOLM_L63 ===
+  panel cap   |   CAGR |  Sharpe |   MaxDD | VOLM CAGR | VOLM Sharpe | VOLM MaxDD | dSharpe | dCAGR pp | dMaxDD pp | 4b-P | 4b-S | failing STRICT legs
+  U56   0.020 | 11.62% |  1.2687 | -14.81% |    11.75% |      1.2166 |    -17.89% | +0.0521 |    -0.13 |     +3.08 |  .   |  .   | S_CAGR
+  U56   INF   | 12.59% |  1.1934 | -17.39% |    13.21% |      1.2324 |    -22.00% | -0.0391 |    -0.61 |     +4.61 |  .   |  .   | S_H1,S_H2,S_OOS,S_CAGR
+  B136  0.020 | 11.82% |  1.1180 | -17.10% |    13.20% |      1.2046 |    -18.20% | -0.0866 |    -1.38 |     +1.11 |  .   |  .   | S_H1,S_H2,S_OOS,S_CAGR
+  B136  INF   | 11.99% |  1.0930 | -18.11% |    13.66% |      1.2141 |    -18.22% | -0.1211 |    -1.67 |     +0.11 |  .   |  .   | S_H1,S_H2,S_OOS,S_CAGR
+
+  THE SAME CELL AT EVERY VOL WINDOW (dial 1 reported in full, never selected on):
+  panel cap   |    L | VOLM CAGR | VOLM Sharpe | VOLM MaxDD | dSharpe | dMaxDD pp | 4b-P | 4b-S
+  U56   0.020 |   21 |    12.00% |      1.2328 |    -16.54% | +0.0359 |     +1.73 |  .   |  .  
+  U56   0.020 |   63 |    11.75% |      1.2166 |    -17.89% | +0.0521 |     +3.08 |  .   |  .  
+  U56   0.020 |  126 |    11.49% |      1.1976 |    -19.77% | +0.0711 |     +4.96 |  .   |  Y  
+  U56   0.020 |  252 |    10.77% |      1.1394 |    -21.57% | +0.1293 |     +6.76 |  .   |  Y  
+  U56   INF   |   21 |    13.54% |      1.2451 |    -18.32% | -0.0517 |     +0.93 |  .   |  .  
+  U56   INF   |   63 |    13.21% |      1.2324 |    -22.00% | -0.0391 |     +4.61 |  .   |  .  
+  U56   INF   |  126 |    13.09% |      1.2288 |    -22.43% | -0.0354 |     +5.04 |  .   |  .  
+  U56   INF   |  252 |    12.53% |      1.1895 |    -23.01% | +0.0038 |     +5.62 |  .   |  .  
+  B136  0.020 |   21 |    13.23% |      1.1969 |    -18.41% | -0.0790 |     +1.31 |  .   |  .  
+  B136  0.020 |   63 |    13.20% |      1.2046 |    -18.20% | -0.0866 |     +1.11 |  .   |  .  
+  B136  0.020 |  126 |    12.69% |      1.1674 |    -18.80% | -0.0494 |     +1.70 |  .   |  .  
+  B136  0.020 |  252 |    12.01% |      1.1222 |    -19.53% | -0.0042 |     +2.44 |  .   |  .  
+  B136  INF   |   21 |    13.82% |      1.2175 |    -18.42% | -0.1245 |     +0.31 |  .   |  .  
+  B136  INF   |   63 |    13.66% |      1.2141 |    -18.22% | -0.1211 |     +0.11 |  .   |  .  
+  B136  INF   |  126 |    13.26% |      1.1876 |    -18.98% | -0.0946 |     +0.86 |  .   |  .  
+  B136  INF   |  252 |    12.67% |      1.1498 |    -19.62% | -0.0568 |     +1.51 |  .   |  .  
+
+=== E. RULE 8 WALK-FORWARD — the book dials (cap, gross) fitted on warm-up..2016-12-31
+    ONLY, 2017-2026 read ONCE, separately at every (panel, cadence, rung).  The vol
+    window L is a COMPARAND dial and is NEVER chosen — all four are reported on the
+    same pick, because choosing it would be selecting a benchmark. ===
+  panel cad | picks (cap/g)             | OOS CAGR | OOS Sharpe | OOS MaxDD | > live | > SPY | > EWBH | > BLEND_G | > VOLM_L63
+  U56   W   | 0.020/0.75:4, INF/0.75:4  |   12.81% |     1.2417 |   -16.19% |   2/8   |  8/8   |   7/8   |      7/8   |       3/8
+  U56   M   | 0.020/0.75:8              |   12.57% |     1.2400 |   -17.95% |   2/8   |  8/8   |   8/8   |      8/8   |       0/8
+  B136  W   | 0.020/0.75:8              |   11.05% |     1.0421 |   -17.74% |   2/8   |  8/8   |   4/8   |      4/8   |       0/8
+  B136  M   | 0.020/0.75:8              |   11.73% |     1.0331 |   -22.07% |   0/8   |  8/8   |   2/8   |      0/8   |       0/8
+
+  OOS (2017-2026, read ONCE) POOLED OVER ALL 32 PICKS — the numbers rule 8 asks
+  for: PICK CAGR 12.04% / Sharpe 1.1392 / MaxDD -18.49%
+                       LIVE BASELINE CAGR 8.68% / Sharpe 1.1928 / MaxDD -12.15%
+                       SPY           CAGR 15.36% / Sharpe 0.8784 / MaxDD -33.72%
+  beat the LIVE book's OOS Sharpe 6 of 32; SPY's 32; EWBH's 21; BLEND_G's 19.
+  VOLM_L21 : beat its OOS Sharpe 4 of 32 (its mean OOS Sharpe 1.2442); OOS MaxDD no worse 14 of 32 (its mean OOS MaxDD -17.93%); full-sample 4b on the pick 0 PROTO / 0 STRICT
+  VOLM_L63 : beat its OOS Sharpe 3 of 32 (its mean OOS Sharpe 1.2436); OOS MaxDD no worse 22 of 32 (its mean OOS MaxDD -18.75%); full-sample 4b on the pick 0 PROTO / 1 STRICT
+  VOLM_L126: beat its OOS Sharpe 5 of 32 (its mean OOS Sharpe 1.2317); OOS MaxDD no worse 22 of 32 (its mean OOS MaxDD -19.91%); full-sample 4b on the pick 0 PROTO / 4 STRICT
+  VOLM_L252: beat its OOS Sharpe 11 of 32 (its mean OOS Sharpe 1.1803); OOS MaxDD no worse 24 of 32 (its mean OOS MaxDD -20.88%); full-sample 4b on the pick 0 PROTO / 10 STRICT
+  full-sample 4b on the pick: SPY 20 of 32, EWBH 0.
+
+=== GATES: 17 of 17 pass ===
+
+Done in 107s.  all gates pass: True
