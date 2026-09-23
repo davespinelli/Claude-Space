@@ -1,3 +1,71 @@
+## 2026-09-23 — idea 2404 (lane B, run 43): DOES THE DAMPER'S MaxDD/CAGR CHANGE COME FROM LAG OR FROM UNPAID COST? **ANSWERED = BOTH, AND THE SPLIT IS CLEAN AND OPPOSITE BY METRIC. CONFIRM of run 39's CAGR attribution; the MaxDD damage is PURE LAG and cost explains NONE of it. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 2391 (run 39) filed the record's first partial-adjustment damper
+  at `lam = 0.40` on the capped candidate — move every risk name a fraction `lam` of the way to
+  target each week, SHY absorbing the residual — measured CAGR **+0.17 pp (U56) / +0.22 pp (B136)**
+  and MaxDD **2.11 / 2.43 pp WORSE** at 10 bps, and attributed the CAGR to "the un-traded distance
+  is un-charged". A damped book differs from its anchor in TWO ways at once — it PAYS LESS and it
+  HOLDS A DIFFERENT PORTFOLIO — and run 39 read only the sum.
+
+  **THE INSTRUMENT IS AN EXACT ALGEBRAIC SPLIT, NOT A REGRESSION.** This record prices every book
+  as `priced(rung) = r0 - turnover x rung/1e4`, so from ONE damped pass and ONE undamped pass four
+  books follow: `U` (undamped holdings, undamped bill), `LAG` (DAMPED holdings, UNDAMPED bill),
+  `COST` (undamped holdings, DAMPED bill), `D` (both — run 39's book). `(D-U) == (LAG-U) + (COST-U)`
+  holds on the return series to **1.39e-17** over 336 cells (G14), and at 0 bps `LAG == D` and
+  `COST == U` at **0.000e+00** (G15), so **the 0 bps column is pure LAG by construction** — exactly
+  what the idea asked for. CAGR/Sharpe/MaxDD are non-linear in the path, so their three deltas are
+  published WITH the interaction residual rather than asserted to add up (≤ 0.0005 pp on CAGR
+  everywhere, ≤ 0.153 pp on MaxDD at worst). Two dials and no more: `lam` {1.00, 0.85, 0.70, 0.55,
+  0.40, 0.25, 0.10} x `gross` {0.50, 0.75, 1.00}. Reported never selected on: books {CAP2, CAND},
+  panels {U56, B136}, rungs {0, 10, 25, 50} bps, weekly, band 0.03, t+1, SHY sweep phi = 1.00.
+  **1344 rows, 18 of 18 gates**, including external reproduction of idea 2336's CAP2 U56 headline
+  (3.95e-05), idea 2300/2332's CAND U56 headline (3.04e-06) and **idea 2391's own `lam = 0.40`
+  headline 11.79% / 1.2538 / -16.92%, OOS 12.98% / 1.3091, 2.34 turns/yr (3.69e-05)**.
+
+  **RUN 39 WAS RIGHT ABOUT THE CAGR AND NEVER LOOKED AT THE DRAWDOWN.** At `lam = 0.40`, 10 bps,
+  live gross, `dCAGR total = LAG + COST + interaction`: U56/CAP2 **+0.1697 = +0.0396 + 0.1300 +
+  0.0002** (cost share **77%**), U56/CAND **+0.3289 = +0.1418 + 0.1869** (**57%**), B136/CAP2
+  **+0.2235 = +0.0322 + 0.1912** (**86%**), B136/CAND **+0.3531 = +0.1435 + 0.2094** (**59%**). The
+  same split on MaxDD: **-2.1072 = -2.1652 + 0.0200**, **-1.1334 = -1.1954 + 0.0626**, **-2.4266 =
+  -2.5005 + 0.2267**, **-2.3308 = -2.4055 + 0.0765**. The cost channel's effect on drawdown is
+  POSITIVE in every cell — a smaller bill can only help — so the whole 1.1-2.5 pp of drawdown
+  damage is the holdings path.
+
+  **THE CENSUS CONFIRMS THE TWO CHANNELS HAVE DIFFERENT SHAPES.** Over all 288 damped cells,
+  `LAG`'s CAGR contribution is rung-invariant and reads it: median **+0.0736 / +0.0732 / +0.0726 /
+  +0.0716 pp** at 0 / 10 / 25 / 50 bps. `COST`'s is linear in the rung: **+0.0000 / +0.1396 /
+  +0.3470 / +0.6880 pp** (1 : 2.49 : 4.93 against the ideal 1 : 2.5 : 5). Cells where
+  |LAG| > |COST| on CAGR: **72/72, 9/72, 0/72, 0/72** — above the live rung the damper's return
+  gain is ENTIRELY a cost rebate. On MaxDD the ordering inverts (**72/72, 71/72, 67/72, 50/72**)
+  and **MaxDD is worsened by the COST channel in 0 of 288 cells at any rung**. Pure-lag drawdown
+  damage is monotone in the dial (U56/CAP2, 0 bps): **-0.12 / -0.39 / -1.15 / -2.10 / -3.31 /
+  -4.91 pp** at lam 0.85 -> 0.10, against a pure-lag CAGR of only **+0.001 -> +0.077 pp**.
+
+  **THE 4b COUNTS SAY IT TWICE: THE REAL BOOK TRACKS LAG, NOT THE REBATE.** Joint both-panel 4b at
+  the live gross (4 rungs, max 4), CAP2: incumbent `lam = 1.00` **3/4**; `COST` (rebate only)
+  **3/4 -> 4/4 -> 4/4 -> 4/4** all the way to lam 0.10; `LAG` (lag only) **3/4 -> 3/4 -> 0/4 ->
+  0/4**; the real book `D` **3/4 at 0.55, 4/4 at 0.40, then 0/4 at 0.25 and 0.10**. CAND is the
+  same shape. `L_DD` and `L_CAGR` are the only binding legs anywhere (0 bps: L_DD 100, L_CAGR 112,
+  L_H1 / L_H2 / L_OOS 0 each). **`D`'s single 4/4 cell at lam = 0.40 is a rebate artifact sitting
+  one notch above a cliff the lag channel drives**, which is why it should not be pushed further.
+
+  **RULE 8 IS THE INDEPENDENT KILL, AND ITS FAILURE MODE IS THE SAME ONE.** (`lam`, `gross`) fitted
+  on <= 2016-12-31 only, 2017-2026 read ONCE, 32 picks: **0 of 32 carry a full-sample 4b pass**,
+  only **6 of 32** land on the undamped incumbent, **23 of 32 land on lam = 0.10** (joint both-panel
+  4b 0/4) and **32 of 32 pick gross 0.50**, which is below the 4b CAGR floor by construction. At
+  10 bps U56/CAP2's pick (0.10, 0.50) reads OOS **9.74% / 1.3040 / -12.88%** against the undamped
+  anchor's **12.77% / 1.3318 / -14.81%**, live RULES v2's **10.21% / 1.3636** and SPY's **15.45% /
+  0.8831**; B136/CAP2's pick reads **9.50% / 1.2053 / -14.74%** against the anchor's **11.65% /
+  1.0936**, RULES v2's **8.57% / 1.1908** and SPY's **15.26% / 0.8737**. An in-sample chooser
+  reliably buys the cost rebate and reliably eats the lag.
+
+  **AMENDMENT FILED (not a Sunday-review item).** Idea 2391's "the un-traded distance is
+  un-charged" is recorded **CONFIRMED for CAGR and INAPPLICABLE to MaxDD**. Any future turnover
+  device in this record should publish its **0 bps column** beside its headline: that column is the
+  device's pure holdings-path bill, it is the leg (`L_DD`) this family actually dies on, and it is
+  free to compute from the same pass. Caveats unchanged: current-constituent survivorship (rule 9),
+  one regime, SMALL not priced (0 of 40-120 4b passes there per ideas 2318 / 2322 / 2326 / 2343).
+
 ## 2026-09-23 — idea 2399 (lane C): DOES AN EQUITY-CURVE DE-GROSSING GATE CUT THE CAPPED CANDIDATE'S DRAWDOWN WHERE NAME-LEVEL DEVICES COULD NOT? **ANSWERED = NO. KILL AS THE `L_DD` FIX. ONE BOTH-PANEL 4b PASSER, DOMINATED BY THE INCUMBENT, FILED NOT RECOMMENDED. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** `L_DD` binds on 29 of 29 sub-50bps 4b FAILs in idea 2391 and on every
