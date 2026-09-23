@@ -1,0 +1,166 @@
+=== idea 2339 — does a per-GROUP (SECTOR) CAP on the CAPPED 4b candidate buy anything the PER-NAME cap did not? ===
+    2026-09-23  lane cloud   band 0.03  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  name cap 2.00% (FIXED, idea 2322)  sweep SHY phi=1.00
+    DIAL 1 group cap s ['0.10', '0.20', '0.30', '0.40', '0.60', 'INF']   DIAL 2 gross [0.75, 1.0]
+    GATE PASS  G6 exactly two tuned parameters: group cap s, gross (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G8 group partition covers every investable column exactly once (U56): named blocks {'megacap': 20, 'sectors': 16, 'bonds_fx_commod': 12, 'broad': 8}, singletons 0, total 56 (target covers, no dupes)
+    GATE PASS  G0 >= 10y (B136): 17.7y, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G8 group partition covers every investable column exactly once (B136): named blocks {'megacap': 20, 'sectors': 16, 'bonds_fx_commod': 12, 'broad': 8}, singletons 80, total 136 (target covers, no dupes)
+    PUB   B136 group map is PARTIAL by construction: 56 of 136 names carry a universe.json block; the other 80 are singletons and the cap can NEVER bind on them. ROBUSTNESS read, not a replication.
+    GATE PASS  G2 per-column replica == engine.backtest: max|d| 0.000e+00 (target < 1e-12)
+
+--- panel U56 (56 names)  SPY 15.23% / 0.8897 / -33.72%   live RULES v2 8.65% / 1.2052 / -12.05%
+    ... U56 done (3s)
+
+--- panel B136 (136 names)  SPY 15.12% / 0.8844 / -33.72%   live RULES v2 7.96% / 1.0972 / -12.24%
+    ... B136 done (6s)
+    GATE PASS  G1 s=INF == idea 2322's CAP2 + sweep (U56, independent construction): max|dw| 0.000e+00 (target < 1e-12)
+    GATE PASS  G3 no leverage (all 24 books): max row sum 1.000000000 (target <= 1+1e-12)
+    GATE PASS  G4a every finite s is HONOURED (max BOOK group weight <= s on every row): True (target True)
+    GATE PASS  G4b max group weight is non-decreasing along the numeric s ladder: 4 of 4 (panel, gross) cells (target 4 of 4)
+    GATE PASS  G5 sweep instrument priced on every held row: SHY non-null on all panels: True (target True)
+    GATE PASS  G7 reproduces idea 2322's committed U56 CAP2 headline (11.58%/1.2643/-14.81%, OOS 12.70%/1.3243): read 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318 -> max|d| 7.54e-04 (target < 1e-3)
+
+=== A. THE FULL GRID AT THE HEADLINE RUNG (10 bps) — every point, nothing dropped ===
+
+  U56
+  s      gross |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | maxGrpW maxNamedGrp maxNameW turn/yr bindDays
+  0.10   0.75  |  6.16%  1.3024   -7.93% |  1.31   1.31 |   6.81%  1.3704  -7.93% | Y  .  | 11110             |  10.00%      10.00%    2.00%    2.27     4393
+  0.20   0.75  |  9.76%  1.2315  -12.93% |  1.27   1.20 |  10.52%  1.2820 -12.93% | .  .  | 11110             |  20.00%      20.00%    2.00%    3.48     3876
+  0.30   0.75  | 11.53%  1.2639  -14.81% |  1.30   1.24 |  12.66%  1.3274 -14.81% | .  Y  | 11111             |  30.00%      30.00%    2.00%    3.53      619
+  0.40   0.75  | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 -14.81% | .  Y  | 11111             |  40.00%      40.00%    2.00%    3.51       12
+  0.60   0.75  | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 -14.81% | .  Y  | 11111             |  40.00%      40.00%    2.00%    3.51        0
+  INF    0.75  | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 -14.81% | .  Y  | 11111             |  40.00%      40.00%    2.00%    3.51        0
+  0.10   1.00  |  6.16%  1.3031   -7.93% |  1.31   1.31 |   6.82%  1.3704  -7.93% | Y  .  | 11110             |  10.00%      10.00%    2.00%    2.27     4393
+  0.20   1.00  |  9.91%  1.2075  -13.43% |  1.24   1.19 |  10.80%  1.2663 -13.43% | .  .  | 11110             |  20.00%      20.00%    2.00%    3.47     3876
+  0.30   1.00  | 12.11%  1.2056  -16.72% |  1.23   1.19 |  13.45%  1.2773 -16.72% | .  Y  | 11111             |  30.00%      30.00%    2.00%    3.94     2489
+  0.40   1.00  | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 -17.28% | .  Y  | 11111             |  40.00%      40.00%    2.00%    3.99       66
+  0.60   1.00  | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 -17.28% | .  Y  | 11111             |  40.00%      40.00%    2.00%    3.99        0
+  INF    1.00  | 12.66%  1.2187  -17.28% |  1.25   1.20 |  14.29%  1.2953 -17.28% | .  Y  | 11111             |  40.00%      40.00%    2.00%    3.99        0
+
+  B136   [group map PARTIAL: singletons can never bind]
+  s      gross |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh  OOS DD | 4a 4b | H1/H2/OOS/DD/CAGR | maxGrpW maxNamedGrp maxNameW turn/yr bindDays
+  0.10   0.75  | 11.29%  1.1086  -17.03% |  1.27   0.96 |  10.86%  1.0659 -17.03% | .  Y  | 11111             |  10.00%      10.00%    2.00%    4.70     3641
+  0.20   0.75  | 11.81%  1.1175  -17.10% |  1.26   0.99 |  11.63%  1.0925 -17.10% | .  Y  | 11111             |  20.00%      20.00%    2.00%    4.67       49
+  0.30   0.75  | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 -17.10% | .  Y  | 11111             |  26.00%      26.00%    2.00%    4.68        0
+  0.40   0.75  | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 -17.10% | .  Y  | 11111             |  26.00%      26.00%    2.00%    4.68        0
+  0.60   0.75  | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 -17.10% | .  Y  | 11111             |  26.00%      26.00%    2.00%    4.68        0
+  INF    0.75  | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 -17.10% | .  Y  | 11111             |  26.00%      26.00%    2.00%    4.68        0
+  0.10   1.00  | 13.36%  1.0632  -19.97% |  1.23   0.91 |  12.69%  1.0180 -19.97% | .  Y  | 11111             |  10.00%      10.00%    2.00%    5.86     4391
+  0.20   1.00  | 15.00%  1.0888  -22.38% |  1.24   0.95 |  14.63%  1.0575 -22.38% | .  .  | 11101             |  20.00%      20.00%    2.00%    5.83      184
+  0.30   1.00  | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 -22.38% | .  .  | 11101             |  30.00%      30.00%    2.00%    5.83        4
+  0.40   1.00  | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 -22.38% | .  .  | 11101             |  31.58%      31.58%    2.00%    5.83        0
+  0.60   1.00  | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 -22.38% | .  .  | 11101             |  31.58%      31.58%    2.00%    5.83        0
+  INF    1.00  | 15.06%  1.0911  -22.38% |  1.24   0.96 |  14.75%  1.0637 -22.38% | .  .  | 11101             |  31.58%      31.58%    2.00%    5.83        0
+
+=== B. KEEP COUNTS OVER ALL PUBLISHED ROWS (6 s x 2 gross x 2 panels x 4 rungs) ===
+  4b passes: 47 of 96      4a passes: 6 of 96
+     0.0 bps:  4b 15/24   4a  2/24   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 5  L_CAGR 4
+    10.0 bps:  4b 15/24   4a  2/24   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 5  L_CAGR 4
+    25.0 bps:  4b 14/24   4a  2/24   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 5  L_CAGR 5
+    50.0 bps:  4b  3/24   4a  0/24   binding leg on 4b FAILs: L_H1 0  L_H2 12  L_OOS 1  L_DD 6  L_CAGR 15
+
+  4b pass rows (all rungs):
+    U56   s 0.30   g 0.75   0.0bps  11.92% / 1.3035 / -14.77%   OOS 13.06% / 1.3654
+    U56   s 0.30   g 0.75  10.0bps  11.53% / 1.2639 / -14.81%   OOS 12.66% / 1.3274
+    U56   s 0.30   g 0.75  25.0bps  10.94% / 1.2043 / -14.88%   OOS 12.06% / 1.2703
+    U56   s 0.40   g 0.75   0.0bps  12.01% / 1.3079 / -14.77%   OOS 13.17% / 1.3693
+    U56   s 0.40   g 0.75  10.0bps  11.62% / 1.2687 / -14.81%   OOS 12.77% / 1.3318
+    U56   s 0.40   g 0.75  25.0bps  11.04% / 1.2098 / -14.88%   OOS 12.18% / 1.2755
+    U56   s 0.60   g 0.75   0.0bps  12.01% / 1.3079 / -14.77%   OOS 13.17% / 1.3693
+    U56   s 0.60   g 0.75  10.0bps  11.62% / 1.2687 / -14.81%   OOS 12.77% / 1.3318
+    U56   s 0.60   g 0.75  25.0bps  11.04% / 1.2098 / -14.88%   OOS 12.18% / 1.2755
+    U56   s INF    g 0.75   0.0bps  12.01% / 1.3079 / -14.77%   OOS 13.17% / 1.3693
+    U56   s INF    g 0.75  10.0bps  11.62% / 1.2687 / -14.81%   OOS 12.77% / 1.3318
+    U56   s INF    g 0.75  25.0bps  11.04% / 1.2098 / -14.88%   OOS 12.18% / 1.2755
+    U56   s 0.30   g 1.00   0.0bps  12.55% / 1.2456 / -16.67%   OOS 13.91% / 1.3161
+    U56   s 0.30   g 1.00  10.0bps  12.11% / 1.2056 / -16.72%   OOS 13.45% / 1.2773
+    U56   s 0.30   g 1.00  25.0bps  11.45% / 1.1456 / -16.80%   OOS 12.77% / 1.2189
+    U56   s 0.40   g 1.00   0.0bps  13.11% / 1.2579 / -17.22%   OOS 14.76% / 1.3331
+    U56   s 0.40   g 1.00  10.0bps  12.66% / 1.2187 / -17.28%   OOS 14.29% / 1.2953
+    U56   s 0.40   g 1.00  25.0bps  11.99% / 1.1598 / -17.36%   OOS 13.60% / 1.2384
+    U56   s 0.40   g 1.00  50.0bps  10.88% / 1.0614 / -17.50%   OOS 12.45% / 1.1434
+    U56   s 0.60   g 1.00   0.0bps  13.11% / 1.2579 / -17.22%   OOS 14.76% / 1.3331
+    U56   s 0.60   g 1.00  10.0bps  12.66% / 1.2187 / -17.28%   OOS 14.29% / 1.2953
+    U56   s 0.60   g 1.00  25.0bps  11.99% / 1.1598 / -17.36%   OOS 13.60% / 1.2384
+    U56   s 0.60   g 1.00  50.0bps  10.88% / 1.0614 / -17.50%   OOS 12.45% / 1.1434
+    U56   s INF    g 1.00   0.0bps  13.11% / 1.2579 / -17.22%   OOS 14.76% / 1.3331
+    U56   s INF    g 1.00  10.0bps  12.66% / 1.2187 / -17.28%   OOS 14.29% / 1.2953
+    U56   s INF    g 1.00  25.0bps  11.99% / 1.1598 / -17.36%   OOS 13.60% / 1.2384
+    U56   s INF    g 1.00  50.0bps  10.88% / 1.0614 / -17.50%   OOS 12.45% / 1.1434
+    B136  s 0.10   g 0.75   0.0bps  11.82% / 1.1554 / -16.46%   OOS 11.40% / 1.1138
+    B136  s 0.10   g 0.75  10.0bps  11.29% / 1.1086 / -17.03%   OOS 10.86% / 1.0659
+    B136  s 0.20   g 0.75   0.0bps  12.33% / 1.1624 / -16.61%   OOS 12.17% / 1.1381
+    B136  s 0.20   g 0.75  10.0bps  11.81% / 1.1175 / -17.10%   OOS 11.63% / 1.0925
+    B136  s 0.20   g 0.75  25.0bps  11.03% / 1.0500 / -17.93%   OOS 10.83% / 1.0239
+    B136  s 0.30   g 0.75   0.0bps  12.35% / 1.1629 / -16.61%   OOS 12.19% / 1.1392
+    B136  s 0.30   g 0.75  10.0bps  11.82% / 1.1180 / -17.10%   OOS 11.65% / 1.0936
+    B136  s 0.30   g 0.75  25.0bps  11.04% / 1.0505 / -17.93%   OOS 10.85% / 1.0250
+    B136  s 0.40   g 0.75   0.0bps  12.35% / 1.1629 / -16.61%   OOS 12.19% / 1.1392
+    B136  s 0.40   g 0.75  10.0bps  11.82% / 1.1180 / -17.10%   OOS 11.65% / 1.0936
+    B136  s 0.40   g 0.75  25.0bps  11.04% / 1.0505 / -17.93%   OOS 10.85% / 1.0250
+    B136  s 0.60   g 0.75   0.0bps  12.35% / 1.1629 / -16.61%   OOS 12.19% / 1.1392
+    B136  s 0.60   g 0.75  10.0bps  11.82% / 1.1180 / -17.10%   OOS 11.65% / 1.0936
+    B136  s 0.60   g 0.75  25.0bps  11.04% / 1.0505 / -17.93%   OOS 10.85% / 1.0250
+    B136  s INF    g 0.75   0.0bps  12.35% / 1.1629 / -16.61%   OOS 12.19% / 1.1392
+    B136  s INF    g 0.75  10.0bps  11.82% / 1.1180 / -17.10%   OOS 11.65% / 1.0936
+    B136  s INF    g 0.75  25.0bps  11.04% / 1.0505 / -17.93%   OOS 10.85% / 1.0250
+    B136  s 0.10   g 1.00   0.0bps  14.03% / 1.1102 / -19.90%   OOS 13.37% / 1.0664
+    B136  s 0.10   g 1.00  10.0bps  13.36% / 1.0632 / -19.97%   OOS 12.69% / 1.0180
+    B136  s 0.10   g 1.00  25.0bps  12.37% / 0.9926 / -20.07%   OOS 11.67% / 0.9453
+
+=== C. WHAT THE GROUP CAP COSTS: CAP2 (s=INF) minus each s, 10 bps ===
+  U56 g=0.75   CAP2 reference: max BOOK group weight 40.00% (named blocks 40.00%), turnover 3.51/yr
+    s 0.10   dCAGR -5.46%  dSharpe +0.0338  dMaxDD +6.88%  dOOS_Sh +0.0386  | max book grp 10.00%  mean book gross 0.372  mean SHY 0.640  turn  2.27  bind days 4393
+    s 0.20   dCAGR -1.86%  dSharpe -0.0371  dMaxDD +1.88%  dOOS_Sh -0.0499  | max book grp 20.00%  mean book gross 0.600  mean SHY 0.415  turn  3.48  bind days 3876
+    s 0.30   dCAGR -0.10%  dSharpe -0.0048  dMaxDD +0.00%  dOOS_Sh -0.0044  | max book grp 30.00%  mean book gross 0.670  mean SHY 0.346  turn  3.53  bind days 619
+    s 0.40   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | max book grp 40.00%  mean book gross 0.672  mean SHY 0.344  turn  3.51  bind days 12
+    s 0.60   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | max book grp 40.00%  mean book gross 0.672  mean SHY 0.344  turn  3.51  bind days 0
+    s INF    dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | max book grp 40.00%  mean book gross 0.672  mean SHY 0.344  turn  3.51  bind days 0
+  B136 g=0.75   CAP2 reference: max BOOK group weight 26.00% (named blocks 26.00%), turnover 4.68/yr
+    s 0.10   dCAGR -0.53%  dSharpe -0.0093  dMaxDD +0.07%  dOOS_Sh -0.0277  | max book grp 10.00%  mean book gross 0.718  mean SHY 0.290  turn  4.70  bind days 3641
+    s 0.20   dCAGR -0.01%  dSharpe -0.0005  dMaxDD +0.00%  dOOS_Sh -0.0011  | max book grp 20.00%  mean book gross 0.736  mean SHY 0.272  turn  4.67  bind days 49
+    s 0.30   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | max book grp 26.00%  mean book gross 0.736  mean SHY 0.272  turn  4.68  bind days 0
+    s 0.40   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | max book grp 26.00%  mean book gross 0.736  mean SHY 0.272  turn  4.68  bind days 0
+    s 0.60   dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | max book grp 26.00%  mean book gross 0.736  mean SHY 0.272  turn  4.68  bind days 0
+    s INF    dCAGR +0.00%  dSharpe +0.0000  dMaxDD +0.00%  dOOS_Sh +0.0000  | max book grp 26.00%  mean book gross 0.736  mean SHY 0.272  turn  4.68  bind days 0
+
+=== D. RULE 8 — (s, gross) chosen on <= 2016-12-31 ONLY, 2017-2026 read once ===
+  U56     0.0bps C_ISSHARPE  -> s 0.10   g 1.00 | OOS  7.06% / 1.4165 /  -7.67% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56     0.0bps C_ISCALMAR  -> s 0.10   g 1.00 | OOS  7.06% / 1.4165 /  -7.67% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56    10.0bps C_ISSHARPE  -> s 0.10   g 1.00 | OOS  6.82% / 1.3704 /  -7.93% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56    10.0bps C_ISCALMAR  -> s 0.10   g 1.00 | OOS  6.82% / 1.3704 /  -7.93% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56    25.0bps C_ISSHARPE  -> s 0.10   g 1.00 | OOS  6.46% / 1.3012 /  -8.32% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56    25.0bps C_ISCALMAR  -> s 0.10   g 1.00 | OOS  6.46% / 1.3012 /  -8.32% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56    50.0bps C_ISSHARPE  -> s 0.40   g 0.75 | OOS 11.21% / 1.1813 / -14.99% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56    50.0bps C_ISCALMAR  -> s 0.10   g 1.00 | OOS  5.86% / 1.1854 /  -8.97% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  B136    0.0bps C_ISSHARPE  -> s 0.10   g 0.75 | OOS 11.40% / 1.1138 / -16.46% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136    0.0bps C_ISCALMAR  -> s 0.10   g 0.75 | OOS 11.40% / 1.1138 / -16.46% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136   10.0bps C_ISSHARPE  -> s 0.10   g 0.75 | OOS 10.86% / 1.0659 / -17.03% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136   10.0bps C_ISCALMAR  -> s 0.10   g 0.75 | OOS 10.86% / 1.0659 / -17.03% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136   25.0bps C_ISSHARPE  -> s 0.10   g 0.75 | OOS 10.06% / 0.9939 / -17.88% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136   25.0bps C_ISCALMAR  -> s 0.10   g 0.75 | OOS 10.06% / 0.9939 / -17.88% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136   50.0bps C_ISSHARPE  -> s 0.10   g 0.75 | OOS  8.74% / 0.8738 / -19.28% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136   50.0bps C_ISCALMAR  -> s 0.30   g 0.75 | OOS  9.53% / 0.9106 / -19.31% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+
+  rule-8 picks landing on s=INF (the uncapped-by-group CAP2 candidate): 0 of 16
+  rule-8 picks beating SPY OOS: 16 of 16;  beating the live book OOS: 8 of 16
+
+=== E. GROUP CONCENTRATION of the RISK BOOK (cash sweep excluded) — the risk this idea was filed to price (g=0.75) ===
+  panel s      max grp  max NAMED grp  p99 grp  max name  days the cap binds  turnover/yr   mean book gross
+  U56   0.10    10.00%        10.00%   10.00%     2.00%                4393         2.27             0.372
+  U56   0.20    20.00%        20.00%   20.00%     2.00%                3876         3.48             0.600
+  U56   0.30    30.00%        30.00%   30.00%     2.00%                 619         3.53             0.670
+  U56   0.40    40.00%        40.00%   32.14%     2.00%                  12         3.51             0.672
+  U56   0.60    40.00%        40.00%   32.14%     2.00%                   0         3.51             0.672
+  U56   INF     40.00%        40.00%   32.14%     2.00%                   0         3.51             0.672
+  B136  0.10    10.00%        10.00%   10.00%     2.00%                3641         4.70             0.718
+  B136  0.20    20.00%        20.00%   10.26%     2.00%                  49         4.67             0.736
+  B136  0.30    26.00%        26.00%   10.26%     2.00%                   0         4.68             0.736
+  B136  0.40    26.00%        26.00%   10.26%     2.00%                   0         4.68             0.736
+  B136  0.60    26.00%        26.00%   10.26%     2.00%                   0         4.68             0.736
+  B136  INF     26.00%        26.00%   10.26%     2.00%                   0         4.68             0.736
+
+=== GATES: 13 of 13 pass ===
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-23_sector-cap-on-the-capped-4b-candidate_cloud.grid.csv / .concentration.csv / .walkforward.csv / .gates.csv   (7s)
