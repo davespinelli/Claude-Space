@@ -8546,3 +8546,57 @@ and idea 2300's committed U56 headline reproduces from a different construction 
 sub-$2B screen from 2010 (max_1d_move >= 1.0 dropped, 665 kept), so the absolute 4b levels are optimistic; the
 cap-vs-no-cap contrast is same-tape, same-day, same-gross and is first-order immune, but the CAGR floor leg is
 an ABSOLUTE bar and is the most contaminated reading in the run.
+
+## 2026-09-23 — lane B run 39, idea 2391 (CLOSED, no rules change)
+
+**IDEA 2391 (does PARTIAL-ADJUSTMENT TRADE-FRACTION DAMPING cut the CAPPED candidate's turnover where the
+DEADBAND and the HOLD FLOOR could not?) — ANSWERED = YES. A 4b KEEP-CANDIDATE is filed: CAP2 with a linear
+damper at `lam = 0.40`.**  The record had killed both DISCRETE turnover devices on this book — idea 2328's
+weight-drift no-trade band (3.51 -> 3.07 turns/yr only at broken held-set fidelity) and idea 2351's minimum
+holding period — and both fail the same way, by having to break the held set before they cut anything.  The
+third classical device is LINEAR and had never been priced anywhere in this record: at each weekly rebalance
+move every risk name a fraction `lam` of the way from held to target, SHY absorbing the residual.  Two dials
+(`lam` {1.00, 0.85, 0.70, 0.55, 0.40, 0.25, 0.10} and gross {0.75, 1.00}) over 2 books x 2 panels x 4 cost
+rungs = 224 published rows.  `lam = 1.00` IS CAP2 and is bit-identical to `engine.backtest` (max|d| 1.39e-17).
+19 gates, 0 failures.
+
+(A) **THE HEADLINE.**  U56 / gross 0.75 / 10 bps at `lam = 0.40`: **11.79% / 1.2538 / -16.92%**, halves
+1.2922 / 1.2294, **OOS 2017- 12.98% / 1.3091**, 4b legs 1 1 1 1 1.  B136: **12.04% / 1.1189 / -19.52%**,
+halves 1.2604 / 0.9978, OOS 12.03% / 1.0947, 4b PASS.  Turnover falls **3.51 -> 2.34x/yr on U56 (-33.2%)**
+and **4.68 -> 2.97x on B136 (-36.5%)**, i.e. the device does what neither deadband could.
+(B) **THE RESULT THAT MATTERS IS AT 50 bps, THE RUNG THIS FAMILY HAS ALWAYS DIED ON.**  The undamped
+candidate FAILS 4b at 50 bps on BOTH panels (U56 10.07% / 1.1113, `L_CAGR` against a 10.66% floor; B136
+9.75% / 0.9379, `L_H2` 0.8029 AND `L_CAGR`).  At `lam = 0.40` both PASS: U56 10.75% / 1.1515 / -17.13%,
+B136 10.72% / 1.0069 / -19.89%.  Idea 2322's published complaint — "cost, not concentration, is what kills
+this family" — is answered for the first time.
+(C) **THE BILL.**  CAGR **+0.17 / +0.22 pp** (the un-traded distance is un-charged), Sharpe -0.0149 /
++0.0009, **MaxDD -2.11 / -2.43 pp**.  `L_DD` is the binding leg on **29 of 29** sub-50bps 4b FAILs across all
+224 rows, and B136's `lam = 0.40` DD margin is **0.71 pp at 10 bps and 0.34 pp at 50 bps** against the
+-20.23% cap.  That thinness is why this is filed and not adopted.
+(D) **RULE 8 ENDORSES DAMPING AND DOES NOT PICK THIS `lam`.**  32 IS-only picks (<= 2016-12-31, 2017-2026
+read once): damped in **25 of 32**, beat SPY OOS **32 of 32**, beat the undamped book OOS **19 of 32**,
+panels agree on (lam, gross) in **10 of 16** cells — but the pick distribution is `lam=0.10` **19**,
+`lam=1.00` 7, `lam=0.85` 3, `lam=0.70` 1, `lam=0.25` 2 and **`lam=0.40` ZERO**, and `lam=0.10` fails
+full-sample 4b on B136.  The filed `lam` is NOT IS-reachable; its only defence is the PLATEAU (every `lam` in
+[0.40, 1.00] keeps joint both-panel 4b at 0/10/25 bps), and the record must quote it as a turnover constraint
+chosen inside a flat region, never as an optimum.
+(E) **PUBLISHED KILLS AND COUNTS: 4b 96 of 224, 4a 0 of 224** (by rung 27 / 27 / 27 / 15 of 56 — damping is
+what holds the 50 bps column up); only **2 of 32** rule-8 picks beat live RULES v2's OOS Sharpe, so no claim
+is made that this book beats the live book.
+
+**RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched).**
+(1) The KEEP memo is FILED, NOT ADOPTED, with exact RULES wording for clause 4 (trade 40% of the distance to
+`min(0.75 / N_in, 0.02)` of NAV each week, residual in SHY): adopting it is a THIRD simultaneous change on
+top of CAP2's own two and needs >= 8 weeks of live tracking under PLAN Tier 3.
+(2) **A CORRECTION THE RECORD SHOULD CARRY (G10):** measured on this tape, this weekly cadence and the same
+`sum|dw|` convention as every book in the run, the LIVE RULES v2 book runs **2.79x/yr (U56) / 3.03x (B136)**,
+NOT the **1.77x** quoted since idea 2322.  "Cut the candidate's turnover toward the live book" is therefore a
+smaller gap than published, and `lam = 0.40` already sits BELOW the live rate on U56 (2.34x < 2.79x).
+(3) **THE DEVICE'S OWN COST IS MEASURED, NOT ASSUMED.**  A gated-OUT name is only ever sold fractionally, so
+post-trade stub NAV runs 1.84% (U56) / 2.52% (B136) at `lam = 0.40`, held-set fidelity falls to 76.1%, mean
+names held RISES 37.6 -> 50.7 and 92.3 -> 125.1, and max per-name weight moves only 2.74% -> 2.83%: the stub
+DILUTES and does not undo what the 2% cap exists to do.  The DAILY stub at `lam = 1.00` (0.63% / 0.92%) is
+pure weekly-cadence drift and is published separately so the two are never conflated.
+(4) SURVIVORSHIP (rule 9): U56 / B136 are current-constituent lists held from 2008, so absolute 4b levels are
+optimistic; the damped-vs-undamped contrast is same-tape, same-day, same-gross and first-order immune, but
+`L_CAGR` is an ABSOLUTE bar and is the most contaminated reading in the run.
