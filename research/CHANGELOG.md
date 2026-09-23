@@ -1,3 +1,80 @@
+## 2026-09-23 — idea 2539 (lane C, run 69): IS THE 200d BAND's CROSS-SECTIONAL PICK WORTH ANYTHING, AGAINST A BREADTH-MATCHED RANDOM NULL AND AN ANTI-BAND COMPLEMENT? **ANSWERED = NO. KILL of the band gate read as a RETURN-PICKING rule on either panel; CONFIRM of its DRAWDOWN leg as genuinely SELECTION-driven rather than de-grossing; and a METHOD KILL of the re-draw placebo the record has been reading.**
+
+  **WHAT WAS ASKED.** Idea 2506 proved the candidate is an EXPOSURE SCHEDULE (`G_t = min(g, cap x
+  n_t)`); idea 2532 found it behind an all-names blend at its own gross path on CAGR in 128 of 128
+  rows; idea 2520 (pushed hours earlier) found the gate's paired value SPLITS BY PANEL and closed
+  with the ask in terms — "an exposure-matched re-run of it is the obvious next idea". Every
+  placebo in the record is turnover-matched (2499), ticket-matched (2512) or gross-matched (1723,
+  2532); **none is COUNT-matched**. This run builds that null. On every rebalance date the band
+  admits n_t of N_t priced names at per-name weight `per_t = min(g/n_t, cap)`. `RAND_s` draws n_t
+  names UNIFORMLY AT RANDOM from the same priced set at the IDENTICAL per_t; `RAND_STICKY_s` is its
+  TURNOVER-MATCHED twin (keeps last week's names, trades only the count difference); `ANTI_ALL`
+  holds the whole out-of-band complement at the band's own gross m_t; `ANTI_s` is its count-matched
+  draw; `ALL` holds every priced name at m_t. Dial 1: gross {0.75, 1.00}. Dial 2: cap {0.020, INF}.
+  Panels {U56, B136} x rungs {0, 10, 25, 50} bps x 51 arms = **1,632 book-rows, 408 priced arms,
+  K = 16 md5 seeds per seeded arm. 20 of 20 gates**, incl. G3 the committed CAP2 U56 g0.75 @10bps
+  headline at **2.95e-05**, G5 every one of 408 arms carrying the band's own risk gross on every
+  scored rebalance date at **4.44e-16**, G6 exact breadth match (**max |dcount| 0**), G8
+  no-lookahead by tape truncation at **0.000e+00**, and G9 idea 2506's equal-weight identity.
+
+- **THE HEADLINE — THE PICK IS NOT WORTH ANYTHING RESOLVABLE.** Cost-free (0 bps), against the
+  turnover-matched null, the committed candidate's edge is **+0.0492 Sharpe on U56 (z +1.42 against
+  a 0.0372 seed floor) and -0.0104 on B136 (z +0.07)**; CAGR **+0.31 pp (z +0.98) and -0.99 pp
+  (z -3.50)**. Headline cell (U56 / g0.75 / cap 2% / 0 bps): BAND **12.01% / 1.3079 / -14.77%**
+  against the null's 11.70% / 1.2587 / -16.50% and ALL's 11.55% / 1.2489 / -16.96%. On B136 the
+  band is BEHIND on CAGR at the 0th percentile of its own 16 draws. **No panel resolves a positive
+  return edge at 2 SE, and the two panels disagree in sign.**
+- **THE LEG THAT DOES SURVIVE, AND THE CONFOUND THAT IS GONE.** Because every arm carries the
+  band's OWN risk-gross path day by day (G5), exposure is differenced out BY CONSTRUCTION — the
+  thing idea 2520 had to caveat ("part of the shallower MaxDD is de-grossing"). What remains is
+  **DRAWDOWN: the band is shallower than the turnover-matched null in 16 of 16 U56 cells and 16 of
+  16 B136 cells, median +4.10 / +5.07 pp, z +3.34 / +4.72**, and -14.77% vs -16.50% (z +2.69) /
+  -16.61% vs -20.29% (z +5.43) at the headline. **The 200d gate is a drawdown instrument whose
+  selection genuinely helps — it picks names that fall less exactly when it is already de-grossed —
+  and it is not a return-picking rule.** OOS Sharpe is the one return statistic ahead in 8 of 8
+  panel-cells (+0.0716 U56 / +0.0008 B136 medians), and on B136 that is indistinguishable from zero.
+- **METHOD FINDING: A NULL THAT RE-DRAWS EVERY PERIOD IS A COST ARTEFACT.** The naive null trades
+  **18.84x/yr (U56) and 23.13x/yr (B136) against the band's 3.51x / 4.68x**, so its verdict is a
+  function of the cost rung and nothing else: BAND-minus-RAND median Sharpe runs **+0.0766 /
+  +0.2405 / +0.4862 / +0.8919 at 0 / 10 / 25 / 50 bps (U56)** and **-0.0016 / +0.1526 / +0.3807 /
+  +0.7629 (B136)**. At the protocol's own 10 bps rung, **68% (U56) and 101% (B136) of the apparent
+  edge is the null paying the band's cost bill five times over.** The turnover-matched twin moves
+  the other way (+0.0668 -> +0.0372 / -0.0065 -> -0.0512), the correct sign for a cheaper
+  comparand. Any placebo in the record that re-draws each period without turnover-matching
+  over-credits the rule by that amount.
+- **THE ANTI-BAND COMPLEMENT, PRICED AS A REAL BOOK.** U56 **8.10% / 0.7364 / -26.39%** at 0 bps
+  against the band's 12.01% / 1.3079 / -14.77% — the admission decision is worth +0.57 Sharpe
+  against its own complement. B136 **13.59% / 1.0456 / -25.00%**: the complement EARNS MORE CAGR
+  than the band (+1.24 pp) and loses only on risk. **4a 0 of 32 and 4b 0 of 32 under both
+  benchmarks**, so it is not a candidate. It also explains the small BAND-minus-RAND gap: with mean
+  breadth **38.5 of 56 (U56) and 93.2 of 136 (B136)** a random draw at the band's own breadth is
+  already ~69% in-band, so the null embeds most of the gate.
+- **BOTH KEEP PATHS OVER ALL 1,632 ROWS: 4a 0, 4b under EWBH(panel) 0, 4b under SPY 163.** By arm
+  the SPY count is BAND 16, RAND_STICKY 97, RAND 43, ALL 7, ANTI_ALL 0, ANTI 0 — **a random
+  turnover-matched draw carries SIX TIMES the band's raw 4b-under-SPY count**, which is the same
+  finding read through the protocol's own bar. First-binding leg under EWBH is `L_CAGR` 1402 /
+  `L_DD` 228 / `L_H1` 2; under SPY it is `L_DD` 802 / `L_CAGR` 667.
+- **RULE 8 (arm, gross fitted on warm-up..2016-12-31 ONLY, 2017-2026 read ONCE; 32 picks, 2
+  pre-stated IS-only choosers x 2 panels x 2 caps x 4 rungs).** The IS chooser is **a coin flip
+  between the gate and no gate: ALL 17, BAND 15** (gross 0.75 in 29 of 32). **32 of 32 picks beat
+  SPY's OOS Sharpe, 27 of 32 beat EWBH(panel)'s, 19 of 32 beat the LIVE baseline's, and 0 of 32
+  carry a full-sample 4b under EWBH** (15 of 32 under SPY). OOS means: U56 pick **13.72% / 1.2434 /
+  -18.44%** vs baseline 9.29% / 1.2563 / -12.08%, SPY 15.45% / 0.8831 / -33.72%, EWBH 30.13% /
+  1.1205; B136 pick **13.11% / 1.0965 / -21.48%** vs baseline 7.59% / 1.0682 / -12.27%, SPY 15.26%
+  / 0.8737, EWBH 24.21% / 1.0853. The zero-fitted `C_PREREG` reads OOS **12.77% / 1.3318 / -14.81%**
+  (U56) and **11.65% / 1.0936 / -17.10%** (B136) — a BETTER OOS Sharpe than the mean fitted pick on
+  both panels, so the arm must stay pre-registered.
+- **WHAT IS NOT CLAIMED.** SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from
+  2008, so every CAGR leg here is contaminated — but the band-vs-null contrast is same-tape,
+  same-names-pool, same-days, same-count, same-gross and same-turnover, and is first-order immune.
+  The null draws from the SAME priced set the band draws from, which under the committed convention
+  includes the SPY and SHY columns; the SHY sweep is applied identically to every arm. K = 16 is
+  reported, never selected on, and every z is quoted against its own seed dispersion rather than a
+  t-table. This run re-prices ITS OWN 1,632 rows, not the record's markdown.
+- **NO NEW CANDIDATE, NO RULES CHANGE.** No change to RULES.md, PROTOCOL.md, scan.py, bot.py or
+  baseline.py (rule 6). The live book is unchanged. Script:
+  `research/backtests/2026-09-23_band-cross-sectional-null_C.py`. Five LEADERBOARD rows appended.
+
 ## 2026-09-23 — idea 2516 (lane C, run 66): IS 4b's SPY COMPARAND THE RIGHT BENCHMARK FOR A SURVIVORSHIP-SELECTED PANEL? **ANSWERED = NO. KILL OF THE SPY COMPARAND'S SUFFICIENCY, AND WITH IT OF EVERY 4b PASS IN THE STANDING CANDIDATE FAMILY: 21 OF 48 ROWS PASS 4b AGAINST SPY AND 0 OF 48 AGAINST AN EQUAL-WEIGHT BUY-AND-HOLD OF THE BOOK'S OWN PANEL. 0 OF 21 SURVIVE.**
 
   **WHAT WAS ASKED.** PROTOCOL rule 4b scores every book against SPY, a cap-weighted index of the
