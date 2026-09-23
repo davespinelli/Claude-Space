@@ -1,3 +1,72 @@
+## 2026-09-23 — idea 2443 (lane C, run 51): IS DE-GROSSING A COST DEFENCE FOR THE CAPPED CANDIDATE AT 25 AND 50 bps? **ANSWERED = NO, AND THE SIGN IS THE OPPOSITE OF THE PREMISE. KILL of de-grossing as a cost defence; CONFIRM of idea 2431's breakeven measurement and of run 50's "do not adopt". ONE 4a KEEP-CANDIDATE FILED, NOT ADOPTED. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 2431 published the capped candidate's cost breakeven — the 4b pass
+  survives 25 bps on 5 of 8 cells and dies between 33 and 54 bps — but that whole measurement was
+  taken on a gross dial read at only {0.75, 1.00}. The operator's natural next move is to shrink the
+  book, so this run walked gross on a fine ladder and asked one falsifiable question: **is the 4b
+  death rung monotone (rising) in 1/gross?**
+
+  **WHAT WAS RUN.** `w_i = min(g / N_in, cap)` on names inside the 200d +/- 3% band, idle NAV swept
+  to SHY at phi = 1.00 (`CAND` cap INF, `CAP2` cap 0.020). TWO DIALS: gross `g` {0.40, 0.55, 0.70,
+  **0.75 = the committed anchor**, 0.85, 1.00} and the cost rung on a 1-bp ladder 0..100 (101 rungs
+  containing 10, 25 and 50 exactly). Reported never selected on: panels {U56, B136}, books {CAP2,
+  CAND}, weekly, t+1, band 0.03, the SHY sweep. 2424 rows, all published. **22 of 22 gate entries
+  pass**, 7 of them PUBLISHED-not-asserted: G1 the linear-cost ladder IS `engine.backtest(cost_bps=c)`
+  to max|d| **0.000e+00** on four independent books, G2/G3 reproduce both committed g=0.75 headlines
+  (max|d| 2.5e-05 / 4.0e-05), G4 no leverage (peak gross 1.000000000), G5 every 4a/4b leg is a
+  DOWN-SET in `c` (0 violations over 24 cells x 7 legs), G5b Sharpe and CAGR strictly decreasing in
+  `c` in 24 of 24. SMALL not priced, and the reason stated rather than buried: 2318 / 2322 / 2326 /
+  2343 each read SMALL's 4b at 0 of 40-120, so there is no pass whose death rung could be walked.
+
+- **THE ANSWER: THE DEATH RUNG FALLS AS GROSS FALLS.** Read from g = 1.00 DOWN to g = 0.40 —
+  U56/CAP2 **54 / 52 / 34 / 19 / never / never**; U56/CAND never / 49 / 49 / 35 / never / never;
+  B136/CAP2 never / 42 / 33 / 21 / never / never; B136/CAND never / never / 35 / 23 / never / never.
+  **0 of 4 ladders are non-decreasing; 11 falls against 3 rises over 20 steps.** Below g = 0.70 the
+  4b pass is dead at **0 bps** in 8 of 8 (panel, book) cells, so there is no cost tolerance left to
+  measure at all. At 25 bps 9 of 24 rows pass and **every one sits at g >= 0.70**; at 50 bps 2 of 24
+  and both at g >= 0.85. De-grossing does not buy room to pay a real spread — it removes the room
+  the book already had.
+- **THE MECHANISM, MEASURED.** De-grossing is a near-exact SCALE dial and is therefore powerless on
+  a ratio: `turnover / g` spreads 5.68..6.21 (cv **0.032**) on U56/CAND, 6.32..6.93 (0.034) on
+  B136/CAND, 5.83..6.84 (0.057) on B136/CAP2, widest 3.99..5.79 (0.133) on U56/CAP2 where the 2% cap
+  unbinds; `CAGR@10 / g` spreads 12.66..17.91% (0.116) and 15.06..17.46% (0.053). Both scale-free
+  ratios are flat and only the LEVELS move. **`L_CAGR` is the only non-scale-free bar in 4b and it
+  binds first:** margin against the 10.66% floor runs **+2.00 / +1.75 / +0.96 / +0.36 / -1.50 /
+  -3.50 pp** at g = 1.00 / 0.85 / 0.75 / 0.70 / 0.55 / 0.40 (U56/CAP2), and `L_CAGR` is the binding
+  leg at the death rung in 4 of 4 cells at every g <= 0.75. The ABSOLUTE budget shrinks too: the
+  bill payable at the death rung is **2.16 / 1.95 / 1.19 / 0.64 pp of NAV per year** at g = 1.00 /
+  0.85 / 0.75 / 0.70. Cost room is lost in both units, the rung and the dollar bill.
+- **THE STRUCTURAL FINDING — THE 4a AND 4b FEASIBLE SETS ARE DISJOINT IN GROSS.** Over 2424 rows 4a
+  passes **249** and 4b passes **458** and **no row passes both at any of the 101 rungs**. By gross
+  (4a / 4a@base-pinned-10 / 4b of 404 each): g0.40 **196 / 117 / 0**, g0.55 **53 / 29 / 0**, g0.70
+  **0 / 0 / 102**, g0.75 **0 / 0 / 155**, g0.85 **0 / 0 / 146**, g1.00 **0 / 0 / 55**. 4a's MaxDD
+  clause rewards holding less and 4b's CAGR floor punishes it, so on the one dial an operator
+  actually controls the two KEEP paths point in opposite directions. This is the record's cleanest
+  statement of why PROTOCOL rule 4 needs two paths, and of why a 4a pass bought by de-grossing is
+  not progress toward capital.
+- **RULE 8, AND THE TENSION IT EXPOSES.** `g` fitted on warm-up..2016-12-31 only by two pre-stated
+  IS choosers, 2017-2026 read once, 32 picks: **32 of 32 land on g = 0.40 and 0 of 32 on the
+  committed 0.75**; they beat the live baseline OOS **32 of 32** and SPY OOS **32 of 32** at mean OOS
+  Sharpe **1.2497 against the committed cell's 1.1435 (+0.1063)** — and **0 of 32 carry a full-sample
+  4b pass**, failing `L_CAGR` alone in all 32. De-grossing is a real risk-adjusted improvement out of
+  sample and a real absolute-return degradation; 4b is written on the levels, and 4b governs capital.
+  Separately the death rung is itself unstable walked forward (G12): IS -> OOS moves **-23..+70 bps**,
+  median +0 over 24 cells (U56/CAP2 g0.75 IS 3 -> OOS 60; B136/CAP2 g0.75 IS 40 -> OOS 28) — the
+  breakeven is a full-sample measurement and is documented as such, never as a forward tolerance.
+- **ONE 4a KEEP-CANDIDATE, FILED AND NOT ADOPTED.** `CAP2 / g = 0.40` on U56 at 10 bps: **7.16% /
+  1.3375 / -8.15%**, halves **1.3510 / 1.3350** against live RULES v2's 1.2262 / 1.1897 and MaxDD
+  -12.05%, OOS **7.92% / 1.4072 / -8.15%**, turnover **2.32x/yr** against the live book's 1.77x. 4a
+  holds to **68 bps** (36 with the baseline pinned at 10) and is **joint both-panel 4a on BOTH books
+  at 0 / 10 / 25 bps** — which run 50's `FIX w* = 0.0125` was not (U56 only) — and **rule 8 picks it
+  32 of 32**, which that candidate was not (0 of 8). It fails 4b on **`L_CAGR` alone by -3.50 pp**,
+  a WIDER miss than run 50's -2.26 pp. **Recommendation: do not adopt** — it is the committed rule
+  with `G` turned down, adds no clause, and is exactly the dominating alternative run 50 named
+  without pricing. Memo with exact RULES wording on disk.
+- No change to `RULES.md`, `PROTOCOL.md`, `scan.py`, `bot.py` or `baseline.py` (rule 6). The live
+  book is unchanged. **Idea 2431's adoption bar — cut turnover 3.51x -> 2.42x (-31.0%) at unchanged
+  returns — stands, and this run closes de-grossing as a way to clear it.** A device that cuts
+  turnover without cutting exposure remains the only thing that would work.
+
 ## 2026-09-23 — idea 2419 (lane C, run 45): IS THE CAPPED CANDIDATE'S DRAWDOWN CARRIED BY ITS MOST-EXTENDED NAMES? **ANSWERED = NO. KILL of the extended-name trim, and — via its own placebo — a POSITIVE finding: extendedness on this book is a RETURN SOURCE, not a crash hazard. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 2387 (run 40) priced the BREADTH CAP, which KEEPS the `N_max`
