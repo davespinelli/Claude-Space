@@ -1,3 +1,82 @@
+## 2026-09-23 — idea 2336 (lane B): DOES THE STANDING 4b CANDIDATE BEAT A BETA-MATCHED STATIC SPY/SHY TWIN AT ITS OWN REALISED EXPOSURE? **ANSWERED = YES. KILL OF THE BETA-DRAW PREMISE. NO NEW BOOK, NO RULES CHANGE — THE STANDING CANDIDATE IS CONFIRMED AGAINST ITS OWN STRONGEST NULL.**
+
+  **WHERE THIS COMES FROM.** Idea 2300 filed `RG100 + phi = 1.00` as the record's standing 4b
+  candidate, idea 2322 improved it with a 2.0% per-name cap (CAP2) and idea 2326 failed to beat
+  that cap from the breadth side. Meanwhile idea 955 answered that the 4b CAGR floor IS a beta bar
+  (beta explains 96.3% of the CAGR spread along the gross ladder) and idea 1436 killed the beta
+  band as "nothing more than a beta-matched exposure dial" — but BOTH were priced against the
+  DE-GROSSED live book, never against the books the record is about to recommend for real capital.
+  The honest null for a fully-invested, trend-gated, cash-into-T-bills book is a ZERO-PARAMETER
+  static blend of SPY and SHY held at the candidate's OWN realised exposure, traded on the same
+  weekly clock and charged the same costs.
+
+  **THE DEVICE AND THE GRID.** **Two tuned dials and no more: matching convention m {MEAN_GROSS
+  (same dollars in equities), OLS_BETA (same realised beta on SPY, solved by fixed point on the
+  full drifted and costed book)} and gross g {0.75, 1.00}.** Panels (U56 / B136), rungs {0, 10, 25,
+  50} bps, book family {CAND, CAP2}, cadence W, band 0.03, sweep instrument SHY, cap value 2.0%
+  (INHERITED from 2322, not tuned) and fit window {FULL, IS} are REPORTED, never selected on.
+  **170 published rows, 42 distinct books, 128 of the rows twins.** The null is given its BEST shot
+  on the full-sample comparison (x fitted on the full sample, an advantage the candidate does not
+  get); rule 8 fits x on <= 2016-12-31 only.
+
+  **THE ANSWER: AT IDENTICAL BETA THE CANDIDATE EARNS +4.46 pp OF CAGR A YEAR.** U56 / 0.75 /
+  10 bps. `CAP2` reads **11.62% / 1.2687 / -14.81%**, halves 1.3028 / 1.2457, **OOS 12.77% /
+  1.3318**, beta 0.4044, turnover 3.51x/yr. Its OLS_BETA twin (x = 0.4117, realised beta matched to
+  **9.5e-11**) reads **7.16% / 0.9958 / -14.02%, OOS 7.53% / 1.0114** -> **+4.46 pp CAGR, +0.2728
+  Sharpe, -0.79 pp MaxDD, +0.3204 OOS Sharpe**. Its MEAN_GROSS twin (x = 0.6561, mean equity gross
+  matched to 2.3e-04) reads 10.56% / 0.9280 / -22.65% -> **+1.06 pp CAGR, +0.3407 Sharpe, +7.84 pp
+  MaxDD, +0.4011 OOS Sharpe**. The uncapped `CAND` cell (12.59% / 1.1934 / -17.39%, beta 0.4996)
+  beats its beta twin (8.48% / 0.9620 / -17.43%) by +4.11 pp of CAGR **at a drawdown level to 0.04
+  pp**. Paired circular block bootstrap (400 draws, block 63, seed 20260923) on the full-sample
+  Sharpe gap: **t = 1.998 to 3.234, positive at 16 of 16 cells**, the weakest exactly on the
+  2-sigma line — real, not overwhelming, on one tape.
+
+  **THE MECHANISM, MEASURED — AND A FINDING ABOUT 4b ITSELF.** Over 128 twin rows the static blend
+  clears 4b's drawdown leg at **40** and its CAGR leg at **75** and **BOTH TOGETHER AT 0**: moving
+  exposure moves both legs along the same beta line, so no static x enters 4b's DD x CAGR box. The
+  candidate enters it at 16 of 32. The converse is the sharper record finding: **4b's three Sharpe
+  legs (L_H1, L_H2, L_OOS) are passed by the null at 128 of 128 rows** — a SPY/SHY blend beats
+  SPY's Sharpe at every exposure — so those three legs carry NO information about skill, and every
+  4b verdict in this record is decided by the joint DD-and-CAGR box alone. Any future 4b claim
+  should be read that way.
+
+  **RULE 8 (both dials fitted on <= 2016-12-31, 2017-2026 read ONCE).** 16 picks. The pick beats
+  **BOTH** IS-fitted twins on OOS Sharpe **and** OOS CAGR at **12 of 16**; **U56 is 8 of 8**
+  (C_ISSHARPE takes CAP2 g=0.75 at every rung, OOS 1.3318 against twins 0.9330 / 1.0210;
+  C_ISCALMAR takes CAND g=0.75, OOS 1.2397 against 0.9173 / 0.9844). The 4 failures are **all B136
+  at 25 and 50 bps**, on OOS CAGR against the MEAN_GROSS twin.
+
+  **EVERY LOSS IN THE RUN IS A COST OBJECT.** At 0 and 10 bps the candidate beats its twin on all
+  four axes (full Sharpe, full CAGR, OOS Sharpe, OOS CAGR) at **31 of 32** cells — the exception a
+  -0.06 pp OOS-CAGR hairline; at 25 and 50 bps that falls to **16 of 32**. Turnover is 3.51-6.32x/yr
+  against the twin's 0.02-0.44x. This family's failure mode is unchanged from 2322 and 2326: cost,
+  not concentration, and now demonstrably not beta.
+
+  **BOTH KEEP PATHS: 4b 16, 4a 0 of 170** (CAND 6/16, CAP2 10/16, live RULES v2 0/8, SPY 0/2,
+  TWIN_MEAN_GROSS **0 of 64**, TWIN_OLS_BETA **0 of 64**).
+
+  **GATES 37 of 37**, including EXTERNAL REPRODUCTION of both committed comparands against idea
+  2326's re-read: idea 2300's U56 candidate at 12.5950% / 1.1934 / -17.3923%, OOS 13.8525% / 1.2397
+  (max|d| **4.98e-05**) and idea 2322's CAP2 cell at 11.6230% / 1.2687 / -14.8091%, OOS 12.7739% /
+  1.3318 (**4.14e-05**); the residual to the ORIGINAL 2300/2322 commits is 6.5e-03 / 7.5e-03, the
+  same price-cache vintage gap idea 2326 published. G1 de-gross replica == `baseline.rules_v2_weights`
+  at 0.00e+00; G2 replica == `engine.backtest` at 0.00e+00; G3 no leverage at any cell (max row sum
+  exactly 1.000000000); G6/G7 the twins' exposure and beta matched to 2.4e-05..2.3e-04 and
+  7e-12..9.5e-11; G10 the IS fit's last row is 2016-12-30; G11 the 2.0% cap binds exactly.
+
+  **RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py
+  untouched).** (1) The KEEP memo is a CONFIRMATION of idea 2322's, with the same clause-4 wording
+  (`min(0.75 / N_in, 0.02)` of NAV, residual in SHY), still FILED and NOT ADOPTED — adoption is two
+  changes at once and needs >= 8 weeks of live tracking under PLAN Tier 3. (2) **SURVIVORSHIP (rule
+  9) BITES ON THIS RUN'S HEADLINE and is published, not buried:** U56 and B136 are current-constituent
+  lists held from 2008 while the twin holds survivorship-free SPY, so the CAGR side of the gap is
+  contaminated IN THE CANDIDATE'S FAVOUR and +4.46 pp is not a live expectation; the Sharpe and
+  drawdown sides are less exposed but not immune. (3) One tape, 17.7 years, one QQQ-favourable
+  regime; only 2020 and 2022 are real stress tests. (4) SMALL was not priced here — 2322 and 2326
+  already published it as 0 of 120 on both paths.
+  Script: `research/backtests/2026-09-23_beta-matched-static-twin-for-the-standing-candidate_B.py`,
+  memo `research/backtests/2026-09-23_beta-matched-static-twin-for-the-standing-candidate_B.memo.md`.
+
 ## 2026-09-22 — idea 2326 (lane cloud): DOES A MINIMUM BREADTH FLOOR ON N_in BEAT THE PER-NAME CAP? **ANSWERED = NO. KILL OF THE PREMISE. NO RULES CHANGE, NO NEW CANDIDATE.**
 
   **WHERE THIS COMES FROM.** Idea 2300's standing 4b candidate (`RG100 + phi = 1.00`: every name
