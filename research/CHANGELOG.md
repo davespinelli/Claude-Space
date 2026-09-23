@@ -1,3 +1,87 @@
+## 2026-09-23 — idea 2477 (lane B, run 56): DOES A ZERO-PARAMETER STACK OF THE EXPOSURE-NEUTRAL DEVICES CLEAR THE -31.0% ADOPTION BAR AND SURVIVE RULE 8, WHERE EVERY FITTED SINGLE DEVICE DOES NOT? **ANSWERED = YES ON ONE PANEL AND ONE GROSS RUNG — AND THE SECOND HALF OF THE QUESTION IS REFUTED BY THE RUN'S OWN CONTROLS. ONE KEEP-4b CANDIDATE RECORDED AND NOT RECOMMENDED. NO RULES CHANGE.**
+
+  **WHAT WAS ASKED.** Idea 2463 refuted the record's `-0.10 pp per 1% of turnover saved` as a
+  TURNOVER rate (it is a DE-GROSSING rate) and left five devices — PARTIAL / ROTA / BANDW /
+  DRIFT / HOLD — measured as EXPOSURE-NEUTRAL and free-or-better per unit removed, yet filed
+  its one 4b candidate NOT ADOPTED because rule 8 refused it at **0 of 48 picks**. The
+  structural reading: a chooser has to pick a RUNG on a LADDER and the IS chooser picks the
+  wrong one. A STACK switched on at PRE-REGISTERED rungs has nothing to fit, so rule 8
+  collapses to "does the fixed book hold out of sample". 2477 priced it: stack depth
+  k = 0..5 (devices added in 2463's OWN published pp-per-1% order, HOLD -> DRIFT -> BANDW ->
+  ROTA -> PARTIAL) x three strength tiers whose every rung is taken VERBATIM from 2463's
+  committed ladders, on U56 and B136, gross {0.75, 1.00}, 4 cost rungs — 496 rows over 124
+  books, plus 15 SINGLE-device controls per (panel, gross) so the stack is never read alone.
+
+- **26 OF 26 GATES, AND THE RUN REPRODUCES FOUR COMMITTED OBJECTS FROM TWO OTHER LANES.**
+  G1 the k=0 replica IS `engine.backtest` on CAP2 (max|d| **1.39e-17**). G4a-G4f every device's
+  identity rung AND the FULL five-device identity stack are **bit-identical** to the undamped
+  book (**0.000e+00**), so no "saving" can be an implementation difference. G7 truncating the
+  tape at 2018-01-01 leaves the whole prior held path unchanged (**0.000e+00**). G2 reproduces
+  idea 2336/2463's committed CAP2 headline (11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318) to
+  **3.95e-05** and its 3.51x turnover to 3.5064x. **G3a/G3b reproduce lane C idea 2463's
+  BANDW b=0.08 and PARTIAL phi=0.40 rows on BOTH panels** to 4.73e-04 / 2.82e-04 / 2.41e-04 /
+  2.04e-04. **G11 (added after a defect this run CAUGHT IN ITSELF)**: the first pass routed the
+  4a comparand through the SHY-sweep engine, turning RULES v2's CASH residual into a bond
+  sleeve and reading its Sharpe as 1.2719 instead of the committed 1.2052; the comparand is now
+  `engine.backtest(rules_v2_weights)` exactly as `baseline.compare()` builds it, gated to the
+  committed 8.65% / 1.2052 / -12.05%, halves 1.2262/1.1897 at **4.95e-05**. The 4a verdict was
+  unaffected — it fails on the MaxDD leg under either comparand — but the published figure was
+  wrong and is corrected here.
+- **THE ANSWER TO THE FIRST HALF IS YES, AND IT IS THE RUN'S ONE CANDIDATE.** The
+  zero-parameter point (k = 5, MILD: HOLD 2 + DRIFT 0.0010 + BANDW 0.05 + ROTA 2 +
+  PARTIAL 0.75) on U56 / gross 0.75 / 10 bps reads **11.71% / 1.1910 / -19.43%, halves
+  1.2632 / 1.1447, OOS 12.90% / 1.2257, at 1.98 turns a year** against the incumbent CAP2's
+  3.51x — a **-43.4% cut at dCAGR +0.08 pp**, clearing idea 2431's -31.0% adoption bar, and it
+  **keeps the 4b pass at ALL FOUR cost rungs (0 / 10 / 25 / 50 bps)**. Because nothing is
+  fitted, rule 8 is satisfied by construction and 2017-2026 is untouched. Memo filed:
+  `2026-09-23_zero-parameter-exposure-neutral-stack_B.memo.md`.
+- **THE ANSWER TO THE SECOND HALF IS NO: STACKING IS NOT REQUIRED, AND THE BEST SINGLE DEVICE
+  DOMINATES THE STACK.** The idea's clause "where every FITTED SINGLE DEVICE does not" is
+  refuted by this run's own controls: **22 of 240 single-device rows clear the bar AND keep
+  4b**. BANDW b = 0.08 ALONE reads **11.76% / 1.2168 / -17.16% at 2.20x (-37.4%)**, dCAGR
+  +0.14 pp, OOS 12.60% / 1.2318 — a HIGHER Sharpe, a 2.27 pp shallower drawdown and a 3.07 pp
+  fatter DD margin than the five-device stack, at a comparable cut. **The stack buys turnover,
+  not quality.**
+- **THE SAVINGS OVERLAP AT DEPTH (idea 2469 answered in passing).** Ratio of the stack's own
+  cut to the sum of its members' solo cuts, 60 cells: **k=1 1.000 / k=2 1.334-1.714 /
+  k=3 0.943-1.057 / k=4 0.710-0.855 / k=5 0.615-0.815**, pooled median **0.968** (range
+  0.586-3.474). Two free devices really do suppress DIFFERENT trades — HOLD blocks reductions,
+  DRIFT blocks small moves, and together they super-add — but by the fourth and fifth they are
+  competing for the same trades and the marginal device returns 60-80 cents on the dollar.
+- **RULE 8 REPRODUCES 2463'S FAILURE MODE EXACTLY, AND ONLY THE ZERO-PARAMETER ARM ESCAPES IT.**
+  48 picks, (k, tier) fitted on warm-up..2016-12-31, 2017-2026 read ONCE. `C_ZEROPARAM` (no
+  choice at all) beats SPY's OOS Sharpe **16 of 16** and carries a full-sample 4b on **4 of
+  16** — exactly the four U56 g=0.75 rungs — but beats the incumbent CAP2's OOS Sharpe in only
+  **2 of 16** and the live book's in **0 of 16**. Both FITTED choosers defect to the STRONG
+  tier (`C_ISSHARPE` {(5,STRONG):9, (1,STRONG):5, (4,STRONG):2}; `C_ISADOPT` {(4,STRONG):13,
+  (5,STRONG):3}), buy more OOS CAGR (15.29% / 15.59%) at LOWER OOS Sharpe (1.1615 / 1.1490),
+  and carry a full-sample 4b at **6 of 16** and **0 of 16**. **Neither ever reaches k = 3,
+  which is where this grid's best 4b-preserving cuts actually sit** (k=3 STRONG: 1.15x, -67.3%,
+  dCAGR +0.74 pp, 1.2179 / -17.11%, OOS 1.2674, 4b at 4 of 4 rungs).
+- **BOTH KEEP PATHS OVER ALL 256 STACK ROWS: 4b 107, 4a 0.** Leg-failure census: `L_DD` fails
+  **137 of 256**, `L_H2` 15, `L_CAGR` 13, and `L_H1` and `L_OOS` fail **0 of 256**; leg strings
+  11101:125, 11111:107, 10101:11, 11110:9, 10110:3, 10100:1. **4a is 0 of 256 on the MaxDD leg
+  alone** — the live book's -12.05% is unreachable by any member of this family, which is
+  precisely the situation PROTOCOL path 4b was added for. The adoption bar is cleared by
+  24 / 28 / 31 / 32 of 64 stack points at 0 / 10 / 25 / 50 bps, but only **5 / 6 / 7 / 6** of
+  those also keep 4b.
+- **WHY THE CANDIDATE IS RECORDED AND NOT RECOMMENDED, IN THREE MEASURED REASONS.** (a) Its DD
+  margin is **0.80 pp** (-19.43% against the -20.23% cap), the thinnest of its five legs; ideas
+  2042 / 2090 established that a margin of this size is a point estimate, not a property.
+  (b) It is Sharpe-DOMINATED both by the incumbent it would replace (1.1910 vs 1.2687) and by a
+  single device (BANDW alone, 1.2168). (c) The pass is **one panel and one gross rung**: the
+  same book fails `L_DD` on B136 g0.75 (-22.95%) and U56 g1.00 (-22.70%) at 4 of 4 rungs.
+  Idea 2431's bar asked for a cut at UNCHANGED RETURNS: this meets the bar as written (CAGR
+  unchanged) and misses it as intended (0.078 of Sharpe and 4.62 pp of drawdown given back).
+- **SURVIVORSHIP (rule 9).** U56 and B136 are CURRENT constituents of a screen, so every
+  absolute CAGR here is flattered. The turnover cut and the dCAGR are differences between books
+  holding the same names on the same tape and are far less exposed than any level.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). See
+  LEADERBOARD.md (5 rows), the memo, and
+  `research/backtests/2026-09-23_zero-parameter-exposure-neutral-stack_B.py` with its
+  `.grid.csv` / `.turnover.csv` / `.additivity.csv` / `.walkforward.csv` / `.gates.csv` /
+  `.log.txt`.
+
 ## 2026-09-23 — idea 2459 (lane cloud, run 55): DOES THE 200d BAND EARN ITS KEEP ON SPY ALONE, ACROSS MA LENGTHS? **ANSWERED = NO, AT EVERY LENGTH AND EVERY WIDTH. KILL of the timing rule as a standalone book, and the first NUMBER on how the standing candidate's 4b margin splits between TIMING and CROSS-SECTION. NO KEEP-CANDIDATE, NO RULES CHANGE.**
 
   **WHAT WAS ASKED.** The standing 4b KEEP-candidate is exactly two things: a 200d band gate,
