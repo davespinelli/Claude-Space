@@ -1,3 +1,71 @@
+## 2026-09-23 — idea 2480 (lane cloud, run 58): DOES THE CAPPED CANDIDATE'S 4b PASS SURVIVE REPLACING SPY WITH THE PANEL'S OWN EQUAL-WEIGHT BUY-AND-HOLD IN ALL FIVE LEGS? **ANSWERED = NO. 4 OF 16 COMMITTED 4b PASSES SURVIVE ON U56, 0 OF 6 ON B136, 0 OF 16 UNDER LITERAL BUY-AND-HOLD. THE HEADLINE CANDIDATE CELL FAILS `L_CAGR` BY 0.77 pp. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHAT WAS ASKED.** PROTOCOL 4b judges all five legs against SPY, a CAP-WEIGHTED index. The
+  standing candidate is an EQUAL-WEIGHTED book over a CURRENT-CONSTITUENT panel, so two confounds
+  ride in every committed 4b margin and neither has ever been separated from the band gate: the
+  EQUAL-WEIGHT PREMIUM of the panel itself, and the rule-9 survivorship that flatters the panel
+  but not SPY. 2480 replaced the benchmark with the panel's OWN equal-weight buy-and-hold — same
+  names, same tape, no timing, gross 1.00, charged at the same rung — which carries BOTH confounds,
+  so whatever margin survives is the band gate and nothing else.
+
+- **16 OF 16 GATES PASS AND THE RUN REPRODUCES THE OBJECTS IT IS TESTING.** G1 the per-column
+  replica IS `engine.backtest` on the live book (max|d| **0.000e+00**). G2 the gate is
+  `baseline.band_state` bit for bit (0 differing cells). G3 reproduces the committed CAP2
+  (11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318) AND CAND (12.59% / 1.1934 / -17.39%, OOS
+  13.85% / 1.2397) U56 headlines to **4.98e-05**, and G12 reproduces their 4b PASS verdict with
+  leg string 11111. G7/G10 the EW benchmark is untimed and runs at gross exactly 1.000000 holding
+  54.12 of 54.12 priced names (U56) and 131.37 of 131.38 (B136); G8 its name set IS the book's
+  investable set (set difference 0); G11 EW_DRIFT's lifetime turnover is **exactly 1.0**.
+- **THE ANSWER IS NO, AND THE COUNT IS THE DELIVERABLE.** Over the 32 (panel, book, gross, rung)
+  cells: 4b **16 -> 4** under EW_REBAL and **16 -> 0** under EW_DRIFT, with **0 new passes**
+  either way. U56 keeps **4 of 10** (CAP2 g1.00 and CAND g0.75, each only at 0 and 10 bps);
+  **B136 keeps 0 of 6**, three of its passes dying on three or four legs at once. The standing
+  headline cell — U56 / CAP2 / g0.75 / 10 bps, the one the record calls the candidate — **fails**,
+  on `L_CAGR` alone, by **0.77 pp**: 11.62% against the 0.70 x 17.70% = **12.39%** floor the
+  panel's own untimed equal weight sets, where SPY's floor is 10.66%.
+- **THE CONFOUND IS LARGE AND IT IS MOSTLY RETURN, NOT RISK.** The panel's own untimed equal
+  weight beats SPY on the same tape by **dCAGR +2.47 pp (U56) / +3.62 pp (B136)** and **dSharpe
+  +0.234 / +0.229**, at a drawdown SHALLOWER by 4.54 pp / 0.99 pp. The substitution therefore
+  raises the CAGR floor and all three Sharpe bars while LOOSENING the DD cap, and the leg census
+  shows the binding leg changing identity: under SPY the failures are `L_DD` 12 and `L_H2` 4 of 32
+  with `L_H1` and `L_OOS` at **0**; under EW_REBAL they are **`L_CAGR` 18, `L_H1` 17, `L_H2` 16,
+  `L_DD` 14, `L_OOS` 12**. The five-leg pass was resting on SPY's 33.72% cap-weighted drawdown.
+- **THE PRE-STATED PREDICTION IS CONFIRMED ON EVERY SIGN.** Written before compute: `L_CAGR`,
+  `L_H1` and `L_H2` get HARDER and `L_DD` gets EASIER. At the headline cell the margins move
+  H1 **+0.346 -> +0.109**, H2 **+0.410 -> +0.178**, OOS **+0.449 -> +0.199**, CAGR **+0.96% ->
+  -0.77%**, DD **+5.42% -> +2.70%** (still passing, and +11.57% under EW_DRIFT).
+- **WHAT SURVIVES IS WORTH SAYING PLAINLY: THE BAND GATE IS REAL, BUT A THIRD TO A HALF THE SIZE
+  THE RECORD REPORTS.** All three Sharpe legs still pass at the headline cell against the panel's
+  own equal weight, so the gate does earn a genuine risk-adjusted margin over the names it trades
+  — it is simply not large enough to clear a return floor set by those same names, which is what
+  4b asks of a capital-worthy rule.
+- **RULE 8.** The two dials (gross, cap) fitted on warm-up..2016-12-31 ONLY, 2017-2026 read ONCE,
+  16 picks (CAP2/0.75 twelve times, CAND/0.75 four) scored under all three benchmarks. They beat
+  the benchmark's OOS Sharpe **16 of 16 under SPY but 11 of 16 under EW_REBAL**, and carry a
+  full-sample 4b at **12 / 2 / 0 of 16** (SPY / EW_REBAL / EW_DRIFT). Mean OOS CAGR of the picks
+  is **11.93% against the panel's own EW 18.18%** at a mean OOS Sharpe of **1.1419 against
+  1.1012**: out of sample the gate buys 0.04 of Sharpe and gives up 6.25 pp of CAGR to the panel
+  it trades. Picks beat the LIVE book's OOS Sharpe in only 4 of 16, benchmark-independently.
+- **4a IS 0 OF 32 UNDER ALL THREE BENCHMARKS** (4a is benchmark-invariant; it fails on the MaxDD
+  leg against the live book's -12.05%), so nothing here is a KEEP on either path and no memo is
+  filed.
+- **SURVIVORSHIP (rule 9).** U56 and B136 are CURRENT constituents held from 2008. This run IS
+  that caveat made numerical: the EW benchmark carries the SAME bias as the book, so the
+  candidate-vs-EW margin is the first in this record that is first-order immune to it, while every
+  candidate-vs-SPY margin is not. The EW benchmark is NOT investable as stated (it presumes the
+  2026 constituent list was knowable in 2008) — it is a CEILING on what the panel could have paid,
+  which is the right object for a falsification test and the wrong one for an adoption decision.
+- **WHAT THIS DOES AND DOES NOT CHANGE.** It does not retract the candidate's committed numbers,
+  which reproduce here to 5e-05. It does establish that its 4b margin is benchmark-dependent, that
+  the dependence is concentrated in `L_CAGR`, and that PROTOCOL 4b's SPY benchmark is the loosest
+  of the three tested. A PROTOCOL amendment is NOT proposed here (rule 6: Sunday review only);
+  this is filed as the measurement the amendment would need.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). See
+  LEADERBOARD.md (5 rows) and
+  `research/backtests/2026-09-23_panel-own-equal-weight-benchmark_cloud.py` plus its
+  `.grid.csv` / `.books.csv` / `.benchmarks.csv` / `.survival.csv` / `.walkforward.csv` /
+  `.gates.csv` / `.log.txt`.
+
 ## 2026-09-23 — idea 2477 (lane B, run 56): DOES A ZERO-PARAMETER STACK OF THE EXPOSURE-NEUTRAL DEVICES CLEAR THE -31.0% ADOPTION BAR AND SURVIVE RULE 8, WHERE EVERY FITTED SINGLE DEVICE DOES NOT? **ANSWERED = YES ON ONE PANEL AND ONE GROSS RUNG — AND THE SECOND HALF OF THE QUESTION IS REFUTED BY THE RUN'S OWN CONTROLS. ONE KEEP-4b CANDIDATE RECORDED AND NOT RECOMMENDED. NO RULES CHANGE.**
 
   **WHAT WAS ASKED.** Idea 2463 refuted the record's `-0.10 pp per 1% of turnover saved` as a
