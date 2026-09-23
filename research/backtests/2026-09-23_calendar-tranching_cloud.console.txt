@@ -1,0 +1,271 @@
+=== idea 2408 — DOES CALENDAR TRANCHING CUT THE CANDIDATE'S TURNOVER WITHOUT THE DAMPER'S STUB? ===
+    2026-09-23  lane cloud run 44   band 0.03  MA 200d  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  sweep SHY (phi=1.00, EXEMPT from the rota)  offset 0
+    DIAL 1 tranche count k [1, 2, 4, 8]   DIAL 2 tranche ASSIGNMENT salt s [0, 1, 2, 3] (md5(ticker|s) mod k)
+    reference (never selected on): idea 2391's damper at lam [1.0, 0.5, 0.25, 0.125], paired 1:1 with k (lam = 1/k);
+    the realised turnover of BOTH is published so the match is MEASURED, not assumed.
+    THE CLAIM UNDER TEST: 'the stub is zero by construction'.  TRUE of traded names, FALSE of the book —
+    both are measured separately (stub_traded, stub_total) and both are published.
+    SMALL NOT PRICED: 0 of 128 4b cells in idea 2383 and 0 of 40-120 in 2318 / 2322 / 2326 / 2343.
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; L_CAGR is the
+    contaminated leg.  The rota-vs-damper contrast is same-tape, same-target and first-order immune.
+    GATE PASS  G7 exactly two tuned parameters: k, tranche assignment salt s (target 2)
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 the gate IS baseline.band_state (live clause 2), unmodified: 0 differing cells; mean names IN 36 (target 0)
+    GATE PASS  G1 per-column replica == engine.backtest (live RULES v2 through the DAMP runner at lam=1): max|d| 8.674e-19 (target < 1e-12)
+    GATE PASS  G3 k = 1 (all 4 salts) AND lam = 1.00 == an independent CAP2 construction through engine.backtest: max|d| 1.388e-17 (target < 1e-12)
+    GATE PASS  G8 the weight path is causal (panel truncated at 2021-02-05, k=4 s=0): max|dr| 0.000e+00 (target < 1e-12)
+
+--- panel U56 (56 columns)  SPY 15.23% / 0.8897 / -33.72%   live RULES v2 8.65% / 1.2052 / -12.05%
+    4b bars here: DD cap -20.23%   CAGR floor 10.66%   SPY halves 0.9566/0.8353   SPY OOS Sharpe 0.8831
+    ... U56 done (17s)
+
+--- panel B136 (136 columns)  SPY 15.12% / 0.8844 / -33.72%   live RULES v2 7.96% / 1.0972 / -12.24%
+    4b bars here: DD cap -20.23%   CAGR floor 10.59%   SPY halves 0.9571/0.8249   SPY OOS Sharpe 0.8737
+    ... B136 done (37s)
+    GATE PASS  G4 no leverage anywhere (realised row sums): max gross 1.000000000 (target <= 1+1e-12)
+    PUB   G4b the rota's OWN artifact: rebalances at which the STALE equity sleeve already summed to > 1 of NAV and had to be de-grossed pro rata (never a source of leverage, but it means the rota does not always reach its target even in the tranche it trades): 5391 such rebalances over 136 books; 49 books affected, all at gross [0.75, 1.0]; worst single book 205 of ~924 rebalances
+    GATE PASS  G9 sweep instrument priced on every held row: SHY non-null on both panels: True (target True)
+    GATE FAIL  G5 the k dial BITES and turnover is MONOTONE DECREASING in k: 6 of 8 (panel, book, gross, salt) ladders   NON-MONOTONE: U56/CAND/g0.75/s0 [k1:4.39 k2:4.44 k4:3.77 k8:3.04]; U56/CAND/g1.00/s0 [k1:5.68 k2:5.74 k4:4.85 k8:3.83] (target 8 of 8)
+    PUB   G5b WHY G5 FAILS, stated rather than patched: on the UNCAPPED book (CAND) on U56, k=2 costs MORE turnover than k=1: freezing half the names for a week lets the other half's targets drift further before they are re-set, and the stale sleeve periodically has to be de-grossed (see G4b).  A rota is therefore NOT a turnover cut per se — it is one only once k is large enough that the saved rebalances outweigh the extra distance travelled by the ones that remain.
+    GATE PASS  G6 the ROTA's TRADED-name stub is EXACTLY ZERO at every k (the idea's structural claim): max over 104 rota books 0.000e+00  vs the DAMPER's mean traded-name stub 3.4694% (target 0 for ROTA, > 0 for DAMP)
+    GATE PASS  G11 every name is fully re-set at least once in every window of k weeks: max observed gap / k over 104 rota books: 8 weeks at k up to 8 (target gap <= k)
+    GATE PASS  G10 reproduces the committed CAP2 U56 headline (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318) at k=1: read 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318 -> max|d| 3.95e-05 (target < 1e-3)
+    GATE PASS  G10 reproduces the committed CAND U56 headline (12.59%/1.1934/-17.39%, OOS 13.85%/1.2397) at k=1: read 12.59% / 1.1934 / -17.39%, OOS 13.85% / 1.2397 -> max|d| 4.98e-05 (target < 1e-3)
+
+=== A. THE DEVICE'S OWN BILL, MEASURED — ROTA vs the lam-MATCHED DAMPER (gross 0.75) ===
+    stub_traded = NAV left in names that TRADED this week and whose target is zero (the idea's claim).
+    stub_total  = NAV left in ANY held name whose target is zero (what actually costs money).
+  panel book  device  par | turn/yr | stub_traded | stub_total | fidelity | mean names | resets/wk | max gap
+  U56   CAP2 ROTA   1.000 |    3.51 |     0.0000% |    0.0000% |   100.0% |       37.6 |      55.0 |       1   <= COMMITTED BOOK
+  U56   CAP2 ROTA   2.000 |    3.30 |     0.0000% |    0.7634% |    98.4% |       37.5 |      27.5 |       2   (salt sd of turnover 0.036)
+  U56   CAP2 ROTA   4.000 |    2.85 |     0.0000% |    2.0018% |    95.9% |       37.5 |      13.7 |       4   (salt sd of turnover 0.038)
+  U56   CAP2 ROTA   8.000 |    2.31 |     0.0000% |    3.8972% |    92.1% |       37.4 |       6.9 |       8   (salt sd of turnover 0.024)
+  U56   CAP2 DAMP   1.000 |    3.51 |     0.0000% |    0.0000% |   100.0% |       37.6 |      55.0 |       0   <= COMMITTED BOOK
+  U56   CAP2 DAMP   0.500 |    2.56 |     1.3039% |    1.3039% |   100.0% |       49.5 |      55.0 |       0
+  U56   CAP2 DAMP   0.250 |    1.92 |     3.1490% |    3.1490% |   100.0% |       51.6 |      55.0 |       0
+  U56   CAP2 DAMP   0.125 |    1.39 |     5.5747% |    5.5747% |   100.0% |       51.8 |      55.0 |       0
+  U56   CAND ROTA   1.000 |    4.39 |     0.0000% |    0.0000% |   100.0% |       37.6 |      55.0 |       1   <= COMMITTED BOOK
+  U56   CAND ROTA   2.000 |    4.38 |     0.0000% |    0.9980% |    98.4% |       37.5 |      27.5 |       2   (salt sd of turnover 0.083)
+  U56   CAND ROTA   4.000 |    3.77 |     0.0000% |    2.4923% |    95.9% |       37.5 |      13.7 |       4   (salt sd of turnover 0.055)
+  U56   CAND ROTA   8.000 |    3.03 |     0.0000% |    4.6835% |    92.1% |       37.4 |       6.9 |       8   (salt sd of turnover 0.066)
+  U56   CAND DAMP   1.000 |    4.39 |     0.0000% |    0.0000% |   100.0% |       37.6 |      55.0 |       0   <= COMMITTED BOOK
+  U56   CAND DAMP   0.500 |    3.04 |     1.6125% |    1.6125% |   100.0% |       49.6 |      55.0 |       0
+  U56   CAND DAMP   0.250 |    2.18 |     3.7777% |    3.7777% |   100.0% |       51.6 |      55.0 |       0
+  U56   CAND DAMP   0.125 |    1.51 |     6.5658% |    6.5658% |   100.0% |       51.8 |      55.0 |       0
+  B136  CAP2 ROTA   1.000 |    4.68 |     0.0000% |    0.0000% |   100.0% |       92.3 |     135.0 |       1   <= COMMITTED BOOK
+  B136  CAP2 ROTA   2.000 |    4.34 |     0.0000% |    1.0919% |    98.2% |       92.2 |      67.5 |       2   (salt sd of turnover 0.017)
+  B136  CAP2 ROTA   4.000 |    3.59 |     0.0000% |    2.7967% |    95.3% |       92.1 |      33.8 |       4   (salt sd of turnover 0.016)
+  B136  CAP2 ROTA   8.000 |    2.74 |     0.0000% |    5.2127% |    91.2% |       91.8 |      16.9 |       8   (salt sd of turnover 0.027)
+  B136  CAP2 DAMP   1.000 |    4.68 |     0.0000% |    0.0000% |   100.0% |       92.3 |     135.0 |       0   <= COMMITTED BOOK
+  B136  CAP2 DAMP   0.500 |    3.29 |     1.8107% |    1.8107% |   100.0% |      122.7 |     135.0 |       0
+  B136  CAP2 DAMP   0.250 |    2.35 |     4.1775% |    4.1775% |   100.0% |      127.1 |     135.0 |       0
+  B136  CAP2 DAMP   0.125 |    1.59 |     7.0052% |    7.0052% |   100.0% |      127.5 |     135.0 |       0
+  B136  CAND ROTA   1.000 |    4.91 |     0.0000% |    0.0000% |   100.0% |       92.3 |     135.0 |       1   <= COMMITTED BOOK
+  B136  CAND ROTA   2.000 |    4.61 |     0.0000% |    1.1576% |    98.2% |       92.2 |      67.5 |       2   (salt sd of turnover 0.034)
+  B136  CAND ROTA   4.000 |    3.82 |     0.0000% |    2.9224% |    95.3% |       92.1 |      33.8 |       4   (salt sd of turnover 0.023)
+  B136  CAND ROTA   8.000 |    2.90 |     0.0000% |    5.3976% |    91.2% |       91.8 |      16.9 |       8   (salt sd of turnover 0.027)
+  B136  CAND DAMP   1.000 |    4.91 |     0.0000% |    0.0000% |   100.0% |       92.3 |     135.0 |       0   <= COMMITTED BOOK
+  B136  CAND DAMP   0.500 |    3.39 |     1.8924% |    1.8924% |   100.0% |      122.7 |     135.0 |       0
+  B136  CAND DAMP   0.250 |    2.40 |     4.3527% |    4.3527% |   100.0% |      127.1 |     135.0 |       0
+  B136  CAND DAMP   0.125 |    1.62 |     7.3092% |    7.3092% |   100.0% |      127.5 |     135.0 |       0
+
+=== B. THE FULL LADDER at 10 bps, gross 0.75 — EVERY GRID POINT (salts shown individually) ===
+  panel book device  par salt |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh | 4a 4b | H1/H2/OOS/DD/CAGR
+  U56   CAP2 ROTA   1.000   0 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 | .  Y  | 11111
+  U56   CAP2 ROTA   2.000   0 | 11.63%  1.2512  -16.15% |  1.30   1.22 |  12.70%  1.3013 | .  Y  | 11111
+  U56   CAP2 ROTA   2.000   1 | 11.69%  1.2638  -15.67% |  1.30   1.24 |  12.72%  1.3176 | .  Y  | 11111
+  U56   CAP2 ROTA   2.000   2 | 11.82%  1.2697  -15.46% |  1.29   1.26 |  13.03%  1.3374 | .  Y  | 11111
+  U56   CAP2 ROTA   2.000   3 | 11.73%  1.2708  -15.03% |  1.29   1.26 |  12.94%  1.3437 | .  Y  | 11111
+  U56   CAP2 ROTA   4.000   0 | 11.69%  1.2387  -16.93% |  1.28   1.21 |  12.83%  1.2919 | .  Y  | 11111
+  U56   CAP2 ROTA   4.000   1 | 11.58%  1.2116  -18.19% |  1.26   1.18 |  12.67%  1.2555 | .  Y  | 11111
+  U56   CAP2 ROTA   4.000   2 | 11.63%  1.2224  -17.70% |  1.25   1.21 |  12.96%  1.2862 | .  Y  | 11111
+  U56   CAP2 ROTA   4.000   3 | 11.67%  1.2369  -16.53% |  1.26   1.22 |  12.86%  1.2995 | .  Y  | 11111
+  U56   CAP2 ROTA   8.000   0 | 11.98%  1.2209  -18.70% |  1.26   1.20 |  13.31%  1.2720 | .  Y  | 11111
+  U56   CAP2 ROTA   8.000   1 | 11.98%  1.2070  -19.81% |  1.26   1.17 |  13.28%  1.2482 | .  Y  | 11111
+  U56   CAP2 ROTA   8.000   2 | 11.81%  1.2089  -19.68% |  1.22   1.21 |  13.34%  1.2785 | .  Y  | 11111
+  U56   CAP2 ROTA   8.000   3 | 11.76%  1.2201  -18.10% |  1.22   1.23 |  13.32%  1.3038 | .  Y  | 11111
+  U56   CAP2 DAMP   1.000   0 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 | .  Y  | 11111
+  U56   CAP2 DAMP   0.500   0 | 11.75%  1.2588  -16.26% |  1.30   1.24 |  12.92%  1.3166 | .  Y  | 11111
+  U56   CAP2 DAMP   0.250   0 | 11.87%  1.2401  -18.11% |  1.29   1.21 |  13.09%  1.2882 | .  Y  | 11111
+  U56   CAP2 DAMP   0.125   0 | 11.94%  1.2126  -19.41% |  1.28   1.17 |  13.16%  1.2464 | .  Y  | 11111
+  U56   CAND ROTA   1.000   0 | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 | .  Y  | 11111
+  U56   CAND ROTA   2.000   0 | 12.82%  1.2075  -17.70% |  1.25   1.18 |  14.14%  1.2524 | .  Y  | 11111
+  U56   CAND ROTA   2.000   1 | 12.83%  1.2159  -16.46% |  1.24   1.20 |  14.08%  1.2687 | .  Y  | 11111
+  U56   CAND ROTA   2.000   2 | 12.87%  1.2038  -17.41% |  1.22   1.20 |  14.35%  1.2662 | .  Y  | 11111
+  U56   CAND ROTA   2.000   3 | 12.94%  1.2243  -17.22% |  1.23   1.23 |  14.53%  1.3001 | .  Y  | 11111
+  U56   CAND ROTA   4.000   0 | 12.89%  1.2060  -17.54% |  1.25   1.18 |  14.18%  1.2476 | .  Y  | 11111
+  U56   CAND ROTA   4.000   1 | 13.11%  1.2013  -18.84% |  1.24   1.18 |  14.46%  1.2452 | .  Y  | 11111
+  U56   CAND ROTA   4.000   2 | 12.56%  1.1605  -19.36% |  1.16   1.17 |  14.32%  1.2334 | .  Y  | 11111
+  U56   CAND ROTA   4.000   3 | 12.70%  1.1910  -17.69% |  1.19   1.20 |  14.36%  1.2687 | .  Y  | 11111
+  U56   CAND ROTA   8.000   0 | 13.20%  1.2026  -18.92% |  1.25   1.17 |  14.42%  1.2342 | .  Y  | 11111
+  U56   CAND ROTA   8.000   1 | 13.45%  1.2020  -20.19% |  1.26   1.18 |  14.94%  1.2368 | .  Y  | 11111
+  U56   CAND ROTA   8.000   2 | 12.69%  1.1511  -20.87% |  1.15   1.16 |  14.51%  1.2231 | .  .  | 11101
+  U56   CAND ROTA   8.000   3 | 12.79%  1.1870  -18.75% |  1.15   1.23 |  14.84%  1.2877 | .  Y  | 11111
+  U56   CAND DAMP   1.000   0 | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 | .  Y  | 11111
+  U56   CAND DAMP   0.500   0 | 12.87%  1.2096  -18.20% |  1.25   1.19 |  14.22%  1.2581 | .  Y  | 11111
+  U56   CAND DAMP   0.250   0 | 13.01%  1.2095  -19.17% |  1.26   1.18 |  14.34%  1.2495 | .  Y  | 11111
+  U56   CAND DAMP   0.125   0 | 13.06%  1.1978  -19.91% |  1.27   1.15 |  14.26%  1.2195 | .  Y  | 11111
+  B136  CAP2 ROTA   1.000   0 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 | .  Y  | 11111
+  B136  CAP2 ROTA   2.000   0 | 11.61%  1.0869  -18.50% |  1.23   0.96 |  11.48%  1.0584 | .  Y  | 11111
+  B136  CAP2 ROTA   2.000   1 | 11.65%  1.0943  -19.17% |  1.24   0.96 |  11.44%  1.0643 | .  Y  | 11111
+  B136  CAP2 ROTA   2.000   2 | 11.93%  1.1120  -18.45% |  1.25   0.99 |  11.89%  1.0898 | .  Y  | 11111
+  B136  CAP2 ROTA   2.000   3 | 11.96%  1.1226  -18.15% |  1.25   1.01 |  11.93%  1.1052 | .  Y  | 11111
+  B136  CAP2 ROTA   4.000   0 | 12.06%  1.1181  -19.34% |  1.25   1.01 |  12.10%  1.1019 | .  Y  | 11111
+  B136  CAP2 ROTA   4.000   1 | 11.78%  1.0731  -21.82% |  1.23   0.94 |  11.66%  1.0335 | .  .  | 11101
+  B136  CAP2 ROTA   4.000   2 | 12.00%  1.0973  -21.74% |  1.24   0.98 |  12.06%  1.0715 | .  .  | 11101
+  B136  CAP2 ROTA   4.000   3 | 11.97%  1.1045  -20.81% |  1.24   0.98 |  11.93%  1.0803 | .  .  | 11101
+  B136  CAP2 ROTA   8.000   0 | 12.71%  1.1413  -21.70% |  1.26   1.05 |  13.06%  1.1361 | .  .  | 11101
+  B136  CAP2 ROTA   8.000   1 | 12.50%  1.1166  -22.29% |  1.26   1.00 |  12.69%  1.0899 | .  .  | 11101
+  B136  CAP2 ROTA   8.000   2 | 12.27%  1.1097  -22.49% |  1.24   1.01 |  12.58%  1.0972 | .  .  | 11101
+  B136  CAP2 ROTA   8.000   3 | 12.15%  1.1069  -21.74% |  1.22   1.02 |  12.59%  1.1085 | .  .  | 11101
+  B136  CAP2 DAMP   1.000   0 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 | .  Y  | 11111
+  B136  CAP2 DAMP   0.500   0 | 11.96%  1.1162  -18.82% |  1.26   0.99 |  11.89%  1.0917 | .  Y  | 11111
+  B136  CAP2 DAMP   0.250   0 | 12.30%  1.1294  -20.87% |  1.27   1.01 |  12.40%  1.1055 | .  .  | 11101
+  B136  CAP2 DAMP   0.125   0 | 12.70%  1.1460  -22.26% |  1.29   1.03 |  12.95%  1.1198 | .  .  | 11101
+  B136  CAND ROTA   1.000   0 | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 | .  Y  | 11111
+  B136  CAND ROTA   2.000   0 | 12.14%  1.0965  -19.46% |  1.18   1.03 |  12.76%  1.1220 | .  Y  | 11111
+  B136  CAND ROTA   2.000   1 | 12.05%  1.0936  -19.74% |  1.16   1.04 |  12.68%  1.1276 | .  Y  | 11111
+  B136  CAND ROTA   2.000   2 | 12.27%  1.1021  -19.86% |  1.19   1.03 |  12.84%  1.1205 | .  Y  | 11111
+  B136  CAND ROTA   2.000   3 | 12.28%  1.1091  -19.64% |  1.18   1.05 |  12.91%  1.1380 | .  Y  | 11111
+  B136  CAND ROTA   4.000   0 | 12.54%  1.1252  -19.84% |  1.20   1.06 |  13.13%  1.1497 | .  Y  | 11111
+  B136  CAND ROTA   4.000   1 | 12.35%  1.0846  -21.91% |  1.19   1.00 |  12.81%  1.0883 | .  .  | 11101
+  B136  CAND ROTA   4.000   2 | 12.25%  1.0860  -22.32% |  1.18   1.01 |  12.86%  1.1001 | .  .  | 11101
+  B136  CAND ROTA   4.000   3 | 12.26%  1.0956  -21.48% |  1.18   1.02 |  12.75%  1.1104 | .  .  | 11101
+  B136  CAND ROTA   8.000   0 | 13.15%  1.1440  -21.79% |  1.21   1.09 |  13.93%  1.1758 | .  .  | 11101
+  B136  CAND ROTA   8.000   1 | 12.97%  1.1211  -22.17% |  1.21   1.05 |  13.70%  1.1331 | .  .  | 11101
+  B136  CAND ROTA   8.000   2 | 12.35%  1.0891  -22.98% |  1.16   1.03 |  13.24%  1.1185 | .  .  | 11101
+  B136  CAND ROTA   8.000   3 | 12.62%  1.1146  -22.03% |  1.18   1.06 |  13.52%  1.1478 | .  .  | 11101
+  B136  CAND DAMP   1.000   0 | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 | .  Y  | 11111
+  B136  CAND DAMP   0.500   0 | 12.26%  1.1068  -20.03% |  1.20   1.03 |  12.78%  1.1222 | .  Y  | 11111
+  B136  CAND DAMP   0.250   0 | 12.53%  1.1182  -21.31% |  1.21   1.05 |  13.17%  1.1339 | .  .  | 11101
+  B136  CAND DAMP   0.125   0 | 12.86%  1.1338  -22.47% |  1.24   1.05 |  13.52%  1.1391 | .  .  | 11101
+
+=== C. HEAD TO HEAD AT (APPROXIMATELY) MATCHED TURNOVER — the whole question ===
+    ROTA k vs DAMP lam = 1/k.  The turnover match is MEASURED and printed; where it is loose the
+    comparison is stated as loose rather than quietly used.
+  panel book  g   bps | k |  ROTA turn  Sharpe   MaxDD  4b | DAMP turn  Sharpe   MaxDD  4b | dSharpe  dMaxDD
+  U56   CAP2 0.75  10.0 | 1 |       3.51  1.2687 -14.81% 1/1 |      3.51  1.2687 -14.81%  Y |  +0.0000  -0.00%
+  U56   CAP2 0.75  10.0 | 2 |       3.30  1.2639 -15.58% 4/4 |      2.56  1.2588 -16.26%  Y |  +0.0050  +0.68%
+  U56   CAP2 0.75  10.0 | 4 |       2.85  1.2274 -17.34% 4/4 |      1.92  1.2401 -18.11%  Y |  -0.0127  +0.77%
+  U56   CAP2 0.75  10.0 | 8 |       2.31  1.2142 -19.07% 4/4 |      1.39  1.2126 -19.41%  Y |  +0.0017  +0.34%
+  U56   CAND 0.75  10.0 | 1 |       4.39  1.1934 -17.39% 1/1 |      4.39  1.1934 -17.39%  Y |  +0.0000  +0.00%
+  U56   CAND 0.75  10.0 | 2 |       4.38  1.2129 -17.20% 4/4 |      3.04  1.2096 -18.20%  Y |  +0.0033  +1.00%
+  U56   CAND 0.75  10.0 | 4 |       3.77  1.1897 -18.36% 4/4 |      2.18  1.2095 -19.17%  Y |  -0.0198  +0.81%
+  U56   CAND 0.75  10.0 | 8 |       3.03  1.1857 -19.68% 3/4 |      1.51  1.1978 -19.91%  Y |  -0.0121  +0.23%
+  B136  CAP2 0.75  10.0 | 1 |       4.68  1.1180 -17.10% 1/1 |      4.68  1.1180 -17.10%  Y |  +0.0000  +0.00%
+  B136  CAP2 0.75  10.0 | 2 |       4.34  1.1039 -18.57% 4/4 |      3.29  1.1162 -18.82%  Y |  -0.0123  +0.25%
+  B136  CAP2 0.75  10.0 | 4 |       3.59  1.0982 -20.93% 1/4 |      2.35  1.1294 -20.87%  . |  -0.0311  -0.06%
+  B136  CAP2 0.75  10.0 | 8 |       2.74  1.1186 -22.05% 0/4 |      1.59  1.1460 -22.26%  . |  -0.0274  +0.20%
+  B136  CAND 0.75  10.0 | 1 |       4.91  1.0930 -18.11% 1/1 |      4.91  1.0930 -18.11%  Y |  +0.0000  +0.00%
+  B136  CAND 0.75  10.0 | 2 |       4.61  1.1003 -19.67% 4/4 |      3.39  1.1068 -20.03%  Y |  -0.0064  +0.36%
+  B136  CAND 0.75  10.0 | 4 |       3.82  1.0979 -21.39% 1/4 |      2.40  1.1182 -21.31%  . |  -0.0204  -0.08%
+  B136  CAND 0.75  10.0 | 8 |       2.90  1.1172 -22.24% 0/4 |      1.62  1.1338 -22.47%  . |  -0.0166  +0.23%
+
+   over all 128 matched (panel, book, gross, rung, k) cells:
+    ROTA turnover < DAMP turnover in 28 of 128   (mean ROTA 4.13x vs DAMP 3.16x)
+    ROTA Sharpe  > DAMP Sharpe  in 26 of 128   (mean dSharpe -0.0174)
+    ROTA MaxDD   > DAMP MaxDD (shallower) in 98 of 128   (mean dMaxDD +0.44%)
+
+=== C2. THE SCALE-FREE COMPARISON: TURNOVER SAVED PER pp OF MaxDD GIVEN UP (10 bps, gross 0.75) ===
+    Section C's lam = 1/k pairing is NOT a turnover match — ROTA runs HEAVIER than its paired damper
+    in 100 of 128 cells — so it flatters ROTA on the turnover axis.  This exchange rate needs no
+    match: each device is measured against ITS OWN undamped anchor (k=1 / lam=1.00).
+  panel book | device  par |  d turn/yr  d MaxDD  d Sharpe |  turnover saved per pp of MaxDD given up
+  U56   CAP2 | ROTA   2.000 |      -0.20   -0.77%   -0.0048 |   0.266 x/yr per pp
+  U56   CAP2 | ROTA   4.000 |      -0.66   -2.53%   -0.0413 |   0.260 x/yr per pp
+  U56   CAP2 | ROTA   8.000 |      -1.20   -4.26%   -0.0544 |   0.280 x/yr per pp
+  U56   CAP2 | DAMP   0.500 |      -0.95   -1.45%   -0.0098 |   0.653 x/yr per pp
+  U56   CAP2 | DAMP   0.250 |      -1.58   -3.30%   -0.0286 |   0.479 x/yr per pp
+  U56   CAP2 | DAMP   0.125 |      -2.12   -4.60%   -0.0561 |   0.461 x/yr per pp
+  U56   CAND | ROTA   2.000 |      -0.01   +0.20%   +0.0195 |  (drawdown not given up)
+  U56   CAND | ROTA   4.000 |      -0.62   -0.96%   -0.0037 |   0.647 x/yr per pp
+  U56   CAND | ROTA   8.000 |      -1.36   -2.29%   -0.0077 |   0.595 x/yr per pp
+  U56   CAND | DAMP   0.500 |      -1.35   -0.81%   +0.0162 |   1.679 x/yr per pp
+  U56   CAND | DAMP   0.250 |      -2.21   -1.77%   +0.0161 |   1.248 x/yr per pp
+  U56   CAND | DAMP   0.125 |      -2.88   -2.52%   +0.0044 |   1.143 x/yr per pp
+  B136  CAP2 | ROTA   2.000 |      -0.34   -1.47%   -0.0140 |   0.228 x/yr per pp
+  B136  CAP2 | ROTA   4.000 |      -1.08   -3.83%   -0.0197 |   0.282 x/yr per pp
+  B136  CAP2 | ROTA   8.000 |      -1.94   -4.96%   +0.0006 |   0.391 x/yr per pp
+  B136  CAP2 | DAMP   0.500 |      -1.38   -1.72%   -0.0017 |   0.803 x/yr per pp
+  B136  CAP2 | DAMP   0.250 |      -2.32   -3.78%   +0.0114 |   0.615 x/yr per pp
+  B136  CAP2 | DAMP   0.125 |      -3.08   -5.16%   +0.0281 |   0.597 x/yr per pp
+  B136  CAND | ROTA   2.000 |      -0.30   -1.56%   +0.0073 |   0.190 x/yr per pp
+  B136  CAND | ROTA   4.000 |      -1.09   -3.27%   +0.0049 |   0.333 x/yr per pp
+  B136  CAND | ROTA   8.000 |      -2.00   -4.13%   +0.0242 |   0.485 x/yr per pp
+  B136  CAND | DAMP   0.500 |      -1.52   -1.92%   +0.0138 |   0.792 x/yr per pp
+  B136  CAND | DAMP   0.250 |      -2.51   -3.20%   +0.0252 |   0.785 x/yr per pp
+  B136  CAND | DAMP   0.125 |      -3.28   -4.36%   +0.0408 |   0.753 x/yr per pp
+   ROTA: median exchange rate 0.282 turnover-x/yr saved per pp of MaxDD given up  (n=11, mean dSharpe -0.0074)
+   DAMP: median exchange rate 0.769 turnover-x/yr saved per pp of MaxDD given up  (n=12, mean dSharpe +0.0050)
+
+=== D. KEEP COUNTS OVER ALL 544 PUBLISHED ROWS ===
+  4b passes: 199 of 544      4a passes: 0 of 544
+   ROTA   1.000: 4b  16/32   4a   0/32   binding leg on 4b FAILs: L_H1 0  L_H2 4  L_OOS 0  L_DD 12  L_CAGR 4
+   ROTA   2.000: 4b  68/128   4a   0/128   binding leg on 4b FAILs: L_H1 0  L_H2 7  L_OOS 2  L_DD 49  L_CAGR 12
+   ROTA   4.000: 4b  39/128   4a   0/128   binding leg on 4b FAILs: L_H1 0  L_H2 4  L_OOS 0  L_DD 84  L_CAGR 10
+   ROTA   8.000: 4b  27/128   4a   0/128   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 101  L_CAGR 0
+   DAMP   1.000: 4b  16/32   4a   0/32   binding leg on 4b FAILs: L_H1 0  L_H2 4  L_OOS 0  L_DD 12  L_CAGR 4
+   DAMP   0.500: 4b  17/32   4a   0/32   binding leg on 4b FAILs: L_H1 0  L_H2 1  L_OOS 0  L_DD 13  L_CAGR 2
+   DAMP   0.250: 4b   8/32   4a   0/32   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 24  L_CAGR 0
+   DAMP   0.125: 4b   8/32   4a   0/32   binding leg on 4b FAILs: L_H1 0  L_H2 0  L_OOS 0  L_DD 24  L_CAGR 0
+     0.0 bps: 4b  57/136   4a   0/136
+    10.0 bps: 4b  57/136   4a   0/136
+    25.0 bps: 4b  57/136   4a   0/136
+    50.0 bps: 4b  28/136   4a   0/136
+
+  JOINT BOTH-PANEL 4b (U56 AND B136 at the same book, device, param, salt, gross, rung):
+   joint 4b: 49 of 272 cells
+    ROTA: 1.000: 6/16  2.000: 24/64  4.000: 7/64  8.000: 0/64
+    DAMP: 1.000: 6/16  0.500: 6/16  0.250: 0/16  0.125: 0/16
+
+  4a PASSES (Sharpe > live RULES v2 in BOTH halves AND MaxDD no worse), every one: 0
+
+=== E. RULE 8 — (k, salt) chosen on <= 2016-12-31 ONLY, 2017-2026 read ONCE ===
+  U56   CAP2 g0.75   0.0bps C_ISSHARPE  -> k 2 s1 | OOS 13.09% / 1.3525 / -15.60% | incumbent (k=1) OOS 13.17% / 1.3693 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAP2 g0.75   0.0bps C_ISCALMAR  -> k 2 s1 | OOS 13.09% / 1.3525 / -15.60% | incumbent (k=1) OOS 13.17% / 1.3693 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAP2 g0.75  10.0bps C_ISSHARPE  -> k 2 s1 | OOS 12.72% / 1.3176 / -15.67% | incumbent (k=1) OOS 12.77% / 1.3318 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAP2 g0.75  10.0bps C_ISCALMAR  -> k 2 s1 | OOS 12.72% / 1.3176 / -15.67% | incumbent (k=1) OOS 12.77% / 1.3318 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAP2 g0.75  25.0bps C_ISSHARPE  -> k 2 s1 | OOS 12.17% / 1.2653 / -15.78% | incumbent (k=1) OOS 12.18% / 1.2755 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAP2 g0.75  25.0bps C_ISCALMAR  -> k 2 s1 | OOS 12.17% / 1.2653 / -15.78% | incumbent (k=1) OOS 12.18% / 1.2755 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAP2 g0.75  50.0bps C_ISSHARPE  -> k 8 s1 | OOS 12.28% / 1.1629 / -19.88% | incumbent (k=1) OOS 11.21% / 1.1813 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAP2 g0.75  50.0bps C_ISCALMAR  -> k 2 s1 | OOS 11.26% / 1.1779 / -15.97% | incumbent (k=1) OOS 11.21% / 1.1813 | SPY OOS 15.45% / 0.8831 | full 4b .
+  U56   CAND g0.75   0.0bps C_ISSHARPE  -> k 2 s0 | OOS 14.64% / 1.2921 / -17.63% | incumbent (k=1) OOS 14.35% / 1.2803 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAND g0.75   0.0bps C_ISCALMAR  -> k 2 s0 | OOS 14.64% / 1.2921 / -17.63% | incumbent (k=1) OOS 14.35% / 1.2803 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAND g0.75  10.0bps C_ISSHARPE  -> k 8 s0 | OOS 14.42% / 1.2342 / -18.92% | incumbent (k=1) OOS 13.85% / 1.2397 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAND g0.75  10.0bps C_ISCALMAR  -> k 2 s0 | OOS 14.14% / 1.2524 / -17.70% | incumbent (k=1) OOS 13.85% / 1.2397 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAND g0.75  25.0bps C_ISSHARPE  -> k 8 s0 | OOS 13.91% / 1.1953 / -18.95% | incumbent (k=1) OOS 13.10% / 1.1787 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAND g0.75  25.0bps C_ISCALMAR  -> k 4 s1 | OOS 13.83% / 1.1963 / -18.90% | incumbent (k=1) OOS 13.10% / 1.1787 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  U56   CAND g0.75  50.0bps C_ISSHARPE  -> k 8 s1 | OOS 13.64% / 1.1404 / -20.27% | incumbent (k=1) OOS 11.87% / 1.0768 | SPY OOS 15.45% / 0.8831 | full 4b .
+  U56   CAND g0.75  50.0bps C_ISCALMAR  -> k 4 s1 | OOS 12.78% / 1.1145 / -19.00% | incumbent (k=1) OOS 11.87% / 1.0768 | SPY OOS 15.45% / 0.8831 | full 4b Y
+  B136  CAP2 g0.75   0.0bps C_ISSHARPE  -> k 1 s0 | OOS 12.19% / 1.1392 / -16.61% | incumbent (k=1) OOS 12.19% / 1.1392 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  B136  CAP2 g0.75   0.0bps C_ISCALMAR  -> k 1 s0 | OOS 12.19% / 1.1392 / -16.61% | incumbent (k=1) OOS 12.19% / 1.1392 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  B136  CAP2 g0.75  10.0bps C_ISSHARPE  -> k 8 s1 | OOS 12.69% / 1.0899 / -22.29% | incumbent (k=1) OOS 11.65% / 1.0936 | SPY OOS 15.26% / 0.8737 | full 4b .
+  B136  CAP2 g0.75  10.0bps C_ISCALMAR  -> k 1 s0 | OOS 11.65% / 1.0936 / -17.10% | incumbent (k=1) OOS 11.65% / 1.0936 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  B136  CAP2 g0.75  25.0bps C_ISSHARPE  -> k 8 s1 | OOS 12.23% / 1.0550 / -22.34% | incumbent (k=1) OOS 10.85% / 1.0250 | SPY OOS 15.26% / 0.8737 | full 4b .
+  B136  CAP2 g0.75  25.0bps C_ISCALMAR  -> k 2 s2 | OOS 11.15% / 1.0279 / -18.60% | incumbent (k=1) OOS 10.85% / 1.0250 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  B136  CAP2 g0.75  50.0bps C_ISSHARPE  -> k 8 s1 | OOS 11.48% / 0.9967 / -22.44% | incumbent (k=1) OOS  9.53% / 0.9106 | SPY OOS 15.26% / 0.8737 | full 4b .
+  B136  CAP2 g0.75  50.0bps C_ISCALMAR  -> k 4 s2 | OOS 10.41% / 0.9388 / -22.01% | incumbent (k=1) OOS  9.53% / 0.9106 | SPY OOS 15.26% / 0.8737 | full 4b .
+  B136  CAND g0.75   0.0bps C_ISSHARPE  -> k 8 s1 | OOS 14.03% / 1.1567 / -22.12% | incumbent (k=1) OOS 12.85% / 1.1446 | SPY OOS 15.26% / 0.8737 | full 4b .
+  B136  CAND g0.75   0.0bps C_ISCALMAR  -> k 1 s0 | OOS 12.85% / 1.1446 / -17.97% | incumbent (k=1) OOS 12.85% / 1.1446 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  B136  CAND g0.75  10.0bps C_ISSHARPE  -> k 8 s1 | OOS 13.70% / 1.1331 / -22.17% | incumbent (k=1) OOS 12.29% / 1.0994 | SPY OOS 15.26% / 0.8737 | full 4b .
+  B136  CAND g0.75  10.0bps C_ISCALMAR  -> k 1 s0 | OOS 12.29% / 1.0994 / -18.11% | incumbent (k=1) OOS 12.29% / 1.0994 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  B136  CAND g0.75  25.0bps C_ISSHARPE  -> k 8 s1 | OOS 13.22% / 1.0977 / -22.26% | incumbent (k=1) OOS 11.45% / 1.0316 | SPY OOS 15.26% / 0.8737 | full 4b .
+  B136  CAND g0.75  25.0bps C_ISCALMAR  -> k 2 s2 | OOS 12.07% / 1.0595 / -20.01% | incumbent (k=1) OOS 11.45% / 1.0316 | SPY OOS 15.26% / 0.8737 | full 4b Y
+  B136  CAND g0.75  50.0bps C_ISSHARPE  -> k 8 s1 | OOS 12.43% / 1.0387 / -22.40% | incumbent (k=1) OOS 10.08% / 0.9184 | SPY OOS 15.26% / 0.8737 | full 4b .
+  B136  CAND g0.75  50.0bps C_ISCALMAR  -> k 8 s1 | OOS 12.43% / 1.0387 / -22.40% | incumbent (k=1) OOS 10.08% / 0.9184 | SPY OOS 15.26% / 0.8737 | full 4b .
+
+  64 picks (2 panels x 2 books x 2 gross x 4 rungs x 2 choosers).
+   picks landing on the INCUMBENT (k = 1, i.e. NO tranching): 13 of 64
+   picks beating SPY's OOS Sharpe:                 64 of 64
+   picks beating the incumbent's own OOS Sharpe:   34 of 64
+   picks beating the live book's OOS Sharpe:       19 of 64
+   picks carrying a full-sample 4b pass:           28 of 64
+   pick distribution over k:    1:13  2:21  4:3  8:27
+   pick distribution over salt: 0:26  1:35  2:3  3:0
+
+=== GATES: 15 of 16 pass ===
+
+Done in 39s.  all gates pass: False

@@ -8795,3 +8795,20 @@ is again not reproduced.
 (4) SURVIVORSHIP (rule 9): U56 / B136 are current-constituent lists held from 2008, so absolute 4b levels
 are optimistic.  The FASTEXIT-vs-SYM contrast is same-tape, same-day, same-gross, same-`lam_in` and is
 first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated reading in the run.
+
+## 2026-09-23 (lane cloud, run 44) — two KILLs, no rule change
+- **idea 2395, volatility-scaled cost model — ANSWERED = NO / KILL as a re-pricing device, CONFIRM of the record.**
+  With `k` pinned so the scaled model spends exactly the flat rung's total bill, the highest 4b-passing rung is
+  identical at p = 0.0/0.5/1.0/1.5 in 16 of 16 (panel, book, gross) cells and 0 of 192 scaled rows flip their 4b
+  verdict. SHY's share of the bill collapses 22.87% -> 0.25% while max |dSharpe| is 0.0070. The record's "dies at
+  50 bps" verdicts are statements about the LEVEL, not the convention. Rule 8: 192/192 picks beat SPY OOS under
+  every cost model, 0 verdict flips. 384 rows, 14/14 gates.
+- **idea 2408, calendar tranching — ANSWERED = NO / KILL as a turnover device.** The rota's structural claim is
+  true (traded-name stub exactly 0 at every one of 104 books) and buys nothing: book-level stale-OUT NAV runs
+  0.76/2.00/3.90% at k=2/4/8. Scale-free, the rota saves a median 0.282 turnover-x/yr per pp of MaxDD given up
+  against the damper's 0.769, and loses Sharpe (-0.0074) where the damper gains (+0.0050). G5 FAILED and is
+  reported: on the uncapped U56 book k=2 costs MORE turnover than k=1. Joint both-panel 4b k=8: 0 of 64. Rule 8
+  sends 27 of 64 in-sample picks to k=8, the single worst 4b setting. 544 rows, 14/15 gates.
+- **Queue hygiene:** ideas 2373 and 2381 had run and closed earlier today but were never marked in '## Open'; their
+  markers were added this run so a positional eligibility descent cannot re-run them. Nothing was deleted.
+- No change to RULES.md, scan.py, bot.py or baseline.py. The standing 4b candidate and its blockers are unchanged.
