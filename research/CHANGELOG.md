@@ -1,3 +1,86 @@
+## 2026-09-23 — idea 2347 (lane C): DOES A 52-WEEK CHANNEL GATE REACH THE 4b PASS THAT THE 200d MA BAND REACHES, AT MATCHED MEAN EXPOSURE? **ANSWERED = ON ONE PANEL YES, ON TWO NO. KILL OF THE DONCHIAN CHANNEL AS A REPLACEMENT FOR CLAUSE 2's MA BAND. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Every 4b-passing book in this record is gated by a band around a MOVING
+  AVERAGE, and the record has swept only that band's DIALS: idea 2241 its two EDGES, idea 2318 its WIDTH,
+  idea 2343 its MA LENGTH. Three dials, ONE construction. This run swaps the construction: a Donchian
+  channel (IN on a new h-day high, OUT on a new h-day low, previous state in between) is hysteretic like
+  clause 2 but uses no average anywhere. The idea's own rationale set the test: *if a gate with a
+  completely different construction reaches the same 4b cell, the pass is a property of TREND-GATING; if
+  only the MA band reaches it, the pass is a property of the MA.*
+
+  **THE TEST.** Two tuned dials and no more: **channel length h {63, 126, 189, 252, 378} and gross
+  {0.75, 1.00}**. REPORTED, never selected on: book {CAND = idea 2300's `RG100 + phi = 1.00`, DEGROSS =
+  the live clause-2 accounting}, panels {U56, B136, SMALL}, rungs {0, 10, 25, 50} bps, weekly, t+1, sweep
+  SHY, and the exposure scalers of section E. **408 published rows. 15 of 15 gates pass**, including G2
+  (`ma_state` is `baseline.band_state` bit for bit), G3 (the DEGROSS/MA book IS `rules_v2_weights`),
+  G10 (no day is both a new h-day high and a new h-day low) and EXTERNAL REPRODUCTION of idea 2300's
+  committed U56 candidate: **12.5950% / 1.1934 / -17.3923%, OOS 13.8525% / 1.2397** at max|d| 3.04e-06.
+
+  **HALF THE ANSWER IS YES, AND IT IS THE HALF THE RECORD DID NOT HAVE. THE 4b PASS IS NOT AN MA
+  PROPERTY.** On U56 / CAND / gross 0.75, **DON126, DON189, DON252 and DON378 each clear 4b at ALL FOUR
+  cost rungs** — one rung MORE than the incumbent MA band, which fails at 50 bps — while DON63 clears
+  none (`L_DD`). h = 252, the 52-week channel of the idea's title, reads **12.38% / 1.0831 / -19.12%,
+  OOS 13.22% / 1.1041 at 2.13 turns/yr** against the MA's 12.59% / 1.1934 / -17.39%, OOS 13.85% / 1.2397
+  at 4.39. **A gate with no average in it reaches the cell.** The pass belongs to trend-gating.
+
+  **THE OTHER HALF IS NO, AND IT DECIDES THE RUN: THE INCUMBENT'S PASS IS A TWO-PANEL PASS AND THE
+  CHANNEL'S IS NOT.** On B136 the MA takes 3 of 8 cells and **every Donchian takes 0 of 8, every failure
+  on `L_DD` ALONE**. Against the 0.60 x SPY cap of **-20.23%**: MA **-17.97%**, DON63 -20.51%,
+  DON126 -20.95%, DON189 -21.29%, DON252 -22.17%, DON378 -23.33%. The channel buys its cheapness with
+  drawdown, and on the wider panel drawdown is the binding leg. SMALL is 0 of 8 for every gate, the MA
+  included — idea 2318's reading, reproduced not re-discovered.
+
+  **AT MATCHED MEAN EXPOSURE THE MA GATE STRICTLY DOMINATES, BOTH WAYS THE MATCH CAN BE READ.** (i) Under
+  CAND the books are ALREADY exposure-matched by construction — `RG100` re-grosses to `gross` whenever any
+  name is IN, so mean equity share is **0.7305 (MA) against 0.7307 / 0.7314 / 0.7309 / 0.7322** for
+  DON63..252 on U56, a ratio of **1.0000 to 1.0022**, and the same on B136. The comparison the idea asked
+  for is available with NO rescaling: what differs is WHEN the gate is on, not how much it holds (breadth
+  differs by at most 7%). (ii) Under DEGROSS, where exposure genuinely varies, the scaler is computed from
+  exposure ALONE in BOTH directions and lands EXACTLY (residual 0.0000 on all 30 matched books, **0 clips**,
+  IS-only scaler published beside it and agreeing to ~0.01). **The MA still wins at every h: U56 Sharpe
+  1.2052 against 0.9894-1.1647; B136 1.0972 against 0.9825-1.0770.** Where the channel wins 4b cells it
+  wins them by being CHEAPER, never by being a better gate.
+
+  **RULE 8 IS DECISIVE: THE HONEST CHOOSER NEVER FINDS THE CELL THAT PASSES.** (h, gross) fitted on
+  <= 2016-12-31 only, 2017-2026 read ONCE, two pre-stated IS choosers, over the Donchian-only pool and
+  over the pool including the incumbent — **96 picks. 64 of 96 beat SPY's OOS Sharpe, but only 17 of 96
+  beat the live book's and only 16 of 96 beat their own MA-GATED TWIN's**; 26 of 96 carry a full-sample
+  4b pass. **On U56 / CAND, 0 of 16 picks land on DON126**, the one length whose full-sample CAGR beats
+  the MA's: the choosers take **DON63** at 0 and 10 bps (OOS Sharpe **0.9812** against the MA twin's
+  **1.2397**) and DON378 at 25 and 50 bps. **On B136 / CAND all 16 picks are DON378**, which carries no
+  full-sample 4b pass at all. Pool ALL takes the incumbent MA gate only **4 of 48**. The pick distribution
+  is bimodal at the ladder's ENDS (DON126 21, DON378 19, DON63 5, DON252 3, **DON189 0**) — the choosers
+  never converge on the 52-week channel the idea was filed about.
+
+  **A HARD DEFECT THE MA BAND DOES NOT HAVE.** Max per-name weight, U56 / CAND / 0.75: MA **15.00%**,
+  DON126 12.50%, DON189 15.00%, **DON252 75.00%**, DON378 37.50%; at gross 1.00 **DON252 puts 100.00% of
+  NAV into a single name**, and DON378 spends **121 days fully out**. Idea 2332 closed the single-name-draw
+  objection but left concentration as the standing candidate's one open risk at 15.0%; the 52-week channel
+  makes it five times worse. A gate that can become one name is not a rule constant, whatever its pass count.
+
+  **WARM-IN, HANDLED NOT BURIED.** DON(378) is OUT before 379 closes exist. The headline window is the
+  record's convention (index[260:], so the MA cell reproduces idea 2300 exactly); the SAME return series
+  re-read on an EQUAL-STATE window (index[440:]) gives 42 of 288 4b passes against 37, and the **U56 CAND
+  pass set is UNCHANGED** (MA Y, DON63 ., DON126/189/252/378 Y on both). Neither window is selected on.
+
+  **BOTH KEEP PATHS OVER ALL 408 ROWS: 4b 37, 4a 15.** 4a is 15 at the 0 bps rung and **0 at 10, 25 and
+  50 bps**, as in every prior run on this family. By panel U56 31 / B136 6 / SMALL 0; by book CAND 22/144,
+  DEGROSS 15/264; by gate MA 11/108, DON126 8/60, DON189 7/60, DON252 7/60, DON378 4/60, **DON63 0/60**.
+
+  **SCOPE.** Survivorship (rule 9) stands unchanged: U56, B136 and SMALL are current-constituent lists read
+  from 2008, so every CAGR here is contaminated in the books' favour. Idea 2332's `MMC` all-NaN defect is
+  re-published, not re-discovered: B136 remains a 135-priced-name panel. SMALL drops 54 names on the
+  committed `max_1d_move >= 1.0` rule.
+
+  **WHAT CHANGES: NOTHING.** RULES v2 stands and idea 2300's `RG100 + phi = 1.00` (with idea 2322's `CAP2`)
+  remains the standing KEEP-4b candidate. **The one cell worth naming — U56 / CAND / DON126 / 0.75, 4b at
+  all four rungs including 50 bps, 12.89% / 1.1800 / -18.77%, OOS 13.87% / 1.2003 at 3.18 turns/yr — is
+  NOT filed as a candidate**: it fails B136 outright where the incumbent passes, it is Sharpe-dominated by
+  the MA at matched exposure on both panels, and rule 8 picks it 0 of 16 times on the one panel it passes
+  on. What the run DOES add to the record is a fact the MA-dial sweeps could not reach: **the 4b pass is a
+  property of trend-gating, and the MA band's claim on it is that it is the CHEAPEST-DRAWDOWN member of
+  that family, not the only member.**
+
 ## 2026-09-23 — idea 2328 (lane B): DOES A WEIGHT-DRIFT NO-TRADE BAND CUT THE CAPPED CANDIDATE'S 3.51x TURNOVER WITHOUT LOSING ITS 4b PASS? **ANSWERED = NO. KILL OF THE DRIFT BAND AS A TURNOVER DEVICE, PLUS A BY-PRODUCT KILL OF THE SEPARATION THE IDEA WAS FILED TO BUY. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 2322's `CAP2` (idea 2300's `RG100 + phi = 1.00` plus a 2.0% per-name
