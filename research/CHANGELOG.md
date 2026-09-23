@@ -8666,3 +8666,61 @@ pure weekly-cadence drift and is published separately so the two are never confl
 (4) SURVIVORSHIP (rule 9): U56 / B136 are current-constituent lists held from 2008, so absolute 4b levels are
 optimistic; the damped-vs-undamped contrast is same-tape, same-day, same-gross and first-order immune, but
 `L_CAGR` is an ABSOLUTE bar and is the most contaminated reading in the run.
+
+## 2026-09-23 — lane B run 42, idea 2412 (CLOSED, no rules change)
+
+**IDEA 2412 (is the damper's bill ASYMMETRIC — does SLOW-IN / FAST-OUT keep the turnover cut and restore
+the held set?) — ANSWERED = NO AS FILED, YES AS A DOMINANCE. KILL as a turnover device; an AMENDMENT
+memo is filed against idea 2391's clause 4.**  Run 39's damper shrinks EVERY trade with one fraction, so
+a name the 200d band gates OUT decays as `(1 - lam)^k` and never reaches zero (post-trade stub 1.84% /
+2.52% of NAV, held-set fidelity 76.1%, mean names held 37.6 -> 50.7).  Two dials — `lam_in` {1.00, 0.85,
+0.70, 0.55, 0.40, 0.25, 0.10} and the exit rule E {SYM (run 39's book), FASTEXIT (`lam_out` = 1.00 for
+band-gated-OUT names), FASTDOWN (`lam_out` = 1.00 for any reduction)} — over 2 books x 2 panels x 2 gross
+x 4 cost rungs = 672 published rows.  Gross was FIXED at the live 0.75 for every selection and verdict;
+gross 1.00 is published beside it.  21 gates, 0 failures: `lam_in` = 1.00 is bit-identical to
+`engine.backtest` under ALL THREE exit rules (max|d| < 1e-12), and ideas 2336 / 2300-2332 / 2391's three
+committed headlines all reproduce to < 1e-3.
+
+(A) **THE KILL IS THE FILING'S OWN PREMISE.**  The idea argued exits are a MINORITY of a long-only book's
+turnover and so are cheap to un-damp.  Measured: the buy/sell split is **exactly 50% SELL at every
+`lam_in`, every exit rule, every book and both panels** (U56/CAP2 1.36B/1.35S; B136/CAND 2.37B/2.39S) —
+a book held to `gross / N_in` must buy what it sells.  Un-damping the exit therefore returns roughly half
+the cut by construction: U56/CAP2 **3.51 -> 2.34x/yr (SYM, -33.2%) but only 3.51 -> 2.81x (FASTEXIT,
+-19.8%)**; B136 4.68 -> 2.97x vs 4.68 -> 3.68x.  And the rung that made run 39's case is lost: **SYM
+`lam` = 0.40 is the ONLY row in the whole CAP2 grid with joint both-panel 4b at 50 bps; no FASTEXIT or
+FASTDOWN row reaches it.**  4a is **0 of 672**.
+(B) **THE DOMINANCE IS REAL AND IS THE RESULT WORTH KEEPING.**  At every matched `lam_in` < 1, on both
+panels and both books — **56 of 56 matched pairs** — FASTEXIT minus SYM is positive on Sharpe, OOS
+Sharpe, MaxDD, held-set fidelity and stub.  U56/CAP2 at `lam_in` = 0.40: **dSharpe +0.0354, dMaxDD
++2.96 pp, dOOS_Sharpe +0.0706, dfidelity +23.89 pp (76.1% -> EXACTLY 100%, asserted as gate G13),
+dstubNAV -1.78 pp (-> 0, gate G12), dnames -13.1**, paid for with **dCAGR -0.43 pp**.  The headline row:
+**11.36% / 1.2891 / -13.96%**, halves 1.2888 / 1.2954, **OOS 12.73% / 1.3797** — a SHALLOWER drawdown and
+a HIGHER OOS Sharpe than the UNDAMPED candidate itself (-14.81%, 1.3318).
+(C) **IT RELIEVES EXACTLY THE LEG THAT BINDS.**  `L_DD` is the binding leg on **57 of 67** 4b FAILs at
+10 bps (`L_CAGR` 10; `L_H1`/`L_H2`/`L_OOS` 0), confirming run 39's diagnosis from an independent grid.
+The DD margin against the 0.60 x SPY cap widens **U56 +3.31 -> +6.27 pp and B136 +0.71 -> +4.08 pp** —
+B136's 0.71 pp thinness was the stated reason run 39 filed rather than adopted.  At 50 bps the mix flips
+to `L_CAGR` 69 / `L_DD` 61 / `L_H2` 32: cost, not drawdown, is what kills that column.
+(D) **RULE 8 DOES NOT ENDORSE THE ASYMMETRIC RULE.**  32 IS-only picks (<= 2016-12-31, 2017-2026 read
+once) land **SYM 24 / FASTEXIT 8 / FASTDOWN 0**, all eight FASTEXIT picks coming from C_ISCALMAR and none
+from C_ISSHARPE; `lam_in` distribution 1.00:2 / 0.85:3 / 0.70:7 / 0.55:0 / 0.40:0 / 0.25:2 / 0.10:18, so
+**`lam_in` = 0.40 is again NOT IS-reachable (0 of 32)**, exactly as in run 39.  32 of 32 beat SPY OOS,
+24 of 32 the undamped book, 20 of 32 run 39's SYM 0.40, but only **2 of 32 beat live RULES v2's OOS
+Sharpe**, so no claim is made that this book beats the live book.  The amendment below is therefore filed
+on DOMINANCE (a same-`lam_in`, same-tape contrast), never on an IS pick.
+
+**RESIDUE, not a rules change (rule 6; RULES.md, PROTOCOL.md, scan.py, bot.py and baseline.py untouched).**
+(1) The AMENDMENT memo carries exact RULES wording for idea 2391's clause 4 and applies ONLY IF that
+damper is ever adopted: *a name the 200d +/-3% band gates OUT is EXEMPT from the damper and is sold in
+FULL at that week's rebalance; the damper applies to purchases and to re-sizings of names the band still
+holds, and never delays an exit.*  It is a SAFETY clause, not a return claim, and it is not a candidate
+in its own right.
+(2) **THE RECORD'S 50/50 BUY-SELL FACT SHOULD BE CARRIED FORWARD:** any future turnover device on this
+family that argues from "exits are the cheap half" is arguing from a premise this run measured and
+falsified.  Half of every turn is a sale, at every dial.
+(3) Live RULES v2 turnover re-measured here on the same tape, cadence and `sum|dw|` convention:
+**2.79x/yr (U56) / 3.03x (B136)** — run 39's correction (2) reproduces exactly; the record's older 1.77x
+is again not reproduced.
+(4) SURVIVORSHIP (rule 9): U56 / B136 are current-constituent lists held from 2008, so absolute 4b levels
+are optimistic.  The FASTEXIT-vs-SYM contrast is same-tape, same-day, same-gross, same-`lam_in` and is
+first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated reading in the run.
