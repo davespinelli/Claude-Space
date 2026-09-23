@@ -10064,3 +10064,68 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   contaminated leg. The k-vs-k contrast is same-tape, same-days, same-names and first-order immune.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
   unchanged.
+
+## 2026-09-23 — lane B run 68, idea 2528: does the EWBH gap close at higher gross, or is it a rule deficit?
+- **THE QUESTION.** Idea 2516 replaced rule 4b's SPY comparand with the panel's own equal-weight
+  buy-and-hold (EWBH) and every committed capped-family 4b pass vanished; idea 2532 matched the
+  blend to the candidate's realised gross and found it ahead on MaxDD in 128 of 128 rows and
+  behind on CAGR in 128 of 128. Both comparisons charge the candidate with an EXPOSURE
+  difference — the capped books run gross 0.75-1.00 and park the rest in SHY while EWBH runs
+  1.00 all day. **So sweep the candidate's gross UP and ask where its CAGR reaches EWBH's.**
+- **THE ANSWER IS NOWHERE, AND IT IS UNANIMOUS. 0 of 32 (panel x cap x rung) cells reach EWBH's
+  CAGR at any gross on the ladder, and 0 of 128 book-rows are ahead of EWBH on CAGR.** Best CAGR
+  anywhere at 10 bps: U56 **16.37%** (cap INF, g >= 1.00) against EWBH's **24.97%**, a **-8.60 pp**
+  shortfall; B136 **15.52%** against **22.21%**, **-6.69 pp**. The shortfall is smallest at the
+  loosest cap and widest at the tightest, and grows monotonically with the cost rung.
+- **THE LADDER HAS TWO DISTINCT RUNGS, NOT FOUR, AND THAT IS AN IDENTITY (G9).** Above g = 1.00
+  either the per-name cap binds (`min(g/N_in, cap) = cap` once `g >= cap x N_in`) or the
+  no-leverage clip binds (cap INF), so **g = 1.25 and g = 1.50 are numerically identical to
+  g = 1.00 at 8 of 8 (panel, cap) pairs** (max abs daily return difference 0.000e+00 to
+  3.05e-16). This is run 50's `min(g/N_in, cap) == cap x min(1, g/(cap x N_in))` identity read on
+  the gross axis: **the book cannot run above 1.00 of NAV without leverage, and PROTOCOL rule 2
+  forbids leverage.** The idea's ladder is exhausted at its second rung, by construction.
+- **THE LEVERAGE COUNTERFACTUAL, PUBLISHED AND NOT PROPOSED.** What multiple L of the book's
+  daily return reaches EWBH's CAGR, financing charged at ZERO (generous to the book)? **Median
+  1.53x** — U56 2.50 / 1.95 / 1.62 / 1.52x at caps 0.015 / 0.020 / 0.030 / INF, B136 1.54 / 1.48
+  / 1.45 / 1.44x. MaxDD at that leverage: U56 -29.57 / -31.59 / -31.86 / -33.82% (EWBH -43.97%),
+  B136 -33.03 / -31.81 / -31.23 / -33.69% (EWBH **-32.95%**). **On B136 the levered book is worse
+  than EWBH on drawdown in 2 of 4 caps while merely MATCHING it on return.** The drawdown
+  advantage the record calls this family's edge is bought entirely with de-grossing and is repaid
+  in full the moment the gross is put back. Sharpe is invariant to L by construction and is
+  reported unchanged, which is the point: the family's whole claim is a Sharpe claim, and Sharpe
+  is not what rule 4b's CAGR floor asks for.
+- **BOTH KEEP PATHS OVER ALL 128 ROWS: 4a 0, 4b-vs-SPY 33 (U56 21 / B136 12), 4b-PROTO-vs-EWBH 0,
+  4b-STRICT-vs-EWBH 0, 4b-STRICT-vs-EWBH_NOSWEEP 0.** Every 4b-vs-SPY pass sits at **g = 0.75** and
+  none above it — raising gross destroys the DD leg, binding in **72 of 95** SPY-fail rows
+  (L_H2 16, L_CAGR 23, L_H1 0, L_OOS 0). Against EWBH the binding leg is **L_CAGR in 128 of 128**
+  fail rows with **L_DD in 0**: the book never loses on drawdown and never wins on return.
+- **RULE 8** ((g, cap) fitted on warm-up..2016-12-31 ONLY by two pre-stated IS-only choosers,
+  2017-2026 read ONCE, 16 picks over panel x rung): **16 of 16 picks beat SPY's OOS Sharpe, 10 of
+  16 beat EWBH's OOS Sharpe, 5 of 16 beat the live book's, and 0 of 16 beat EWBH's OOS CAGR.**
+  U56 / 10 bps: C_ISSHARPE picks (cap 0.020, g 0.75) -> OOS 12.77% / 1.3318 / -14.81%; C_ISCAGR
+  picks (INF, 1.00) -> 17.92% / 1.2011 / -23.14%. B136 / 10 bps: (0.015, 0.75) -> 11.52% / 1.1053
+  / -16.66%; (0.030, 1.25) -> 15.05% / 1.0541 / -22.38% — and **1.25 is a duplicate of 1.00, so
+  the IS chooser is choosing between numerically identical books**, a fresh instance of idea
+  2495's caveat that a committed rule-8 triple is one draw and not a determinate choice.
+  Benchmarks read ONCE: SPY OOS 15.45% / 0.8831 / -33.72%, EWBH OOS 30.15% / 1.1203 / -43.97%
+  (U56) and 24.24% / 1.0848 / -32.95% (B136), live RULES v2 OOS 9.51% / 1.2839 / -12.05%.
+- **THE DIAGNOSIS THIS LEAVES THE RECORD.** Idea 2528 was filed with its own verdict written in
+  advance: "if no attainable gross closes the CAGR gap at a MaxDD the 4b DD leg would accept, the
+  deficit is in the RULE and the capped family is finished." No attainable gross closes it at any
+  MaxDD at all. Taken with 2516 (the EWBH comparand removes every committed 4b pass) and 2532
+  (the candidate loses to its own gross-matched blend on CAGR 128 of 128), **the capped band
+  family is established as a de-grossing product: it converts return into drawdown at roughly
+  fair odds and adds nothing a lower constant exposure would not.** The open question the record
+  should now carry is no longer "which turnover device" or "which gross" but whether ANY member
+  of this family beats holding its own panel — and three independent runs today say no.
+- 128 published book-rows + 32 gap rows + 16 walk-forward rows, **56 of 56 gates**, incl. G3
+  reproducing the committed U56 CAP2 headline to 4 decimals (11.6230% / 1.2687 / -14.8091% vs
+  11.62% / 1.2687 / -14.81%), G4 no-leverage (max book gross 1.000000 on all 32 books), G7 EWBH
+  trading exactly once at inception, G8 exact cost linearity (0.000e+00 on both panels) and G9
+  the ladder-saturation identity.
+- SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008, and BOTH CAGR legs
+  (the book's and EWBH's alike) are contaminated — EWBH is the MORE contaminated of the two, which
+  makes this a conservative reading of the gap, not a flattering one. The gross-vs-gross contrast
+  is same-tape, same-names, same-days and first-order immune.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
+  unchanged. No new KEEP candidate.
