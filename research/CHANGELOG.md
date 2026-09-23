@@ -1,3 +1,82 @@
+## 2026-09-23 — idea 2328 (lane B): DOES A WEIGHT-DRIFT NO-TRADE BAND CUT THE CAPPED CANDIDATE'S 3.51x TURNOVER WITHOUT LOSING ITS 4b PASS? **ANSWERED = NO. KILL OF THE DRIFT BAND AS A TURNOVER DEVICE, PLUS A BY-PRODUCT KILL OF THE SEPARATION THE IDEA WAS FILED TO BUY. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 2322's `CAP2` (idea 2300's `RG100 + phi = 1.00` plus a 2.0% per-name
+  cap) runs at **3.51 turns/yr against the live book's 1.77**, and idea 2326 published 4a at 0 of 180 at
+  25 and 50 bps across that family: the family's pass lives on the CHEAP cost rungs. A drift no-trade band
+  (trade name i only when `|w_target_i - w_held_i| > d`, SHY absorbing the residual at phi = 1.00) was
+  filed as the ONE device that lowers turnover WITHOUT changing the held set — i.e. as the instrument that
+  separates "the book earns its costs" from "the book was never charged enough".
+
+  **THE TEST.** Two tuned dials and no more: **drift width d {0, 0.0010, 0.0025, 0.0050, 0.0075, 0.0100,
+  0.0125, 0.0175} of NAV and gross {0.75, 1.00}**. The top rung is deliberately held BELOW CAP2's 2.0%
+  cap so a fresh entry is never mechanically blocked by construction. REPORTED, never selected on: book
+  {CAP2, CAND}, panels {U56, B136}, rungs {0, 10, 25, 50} bps, weekly, band 0.03, t+1. **64 books x 4
+  rungs = 256 published rows. 14 of 14 gates pass**, including G1 (at d = 0 the damped replica is
+  bit-identical to `engine.backtest`, max|d| 1.4e-17) and EXTERNAL REPRODUCTION of both committed
+  headlines: CAP2 U56 **11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318, 3.51 turns/yr** (idea 2336) and
+  CAND U56 **12.5950% / 1.1934 / -17.3923%, OOS 13.8525% / 1.2397** (ideas 2300 / 2332).
+
+  **THE ANSWER: THE PREMISE IS FALSE. WHERE THE HELD SET IS UNTOUCHED THE DEVICE CUTS 12% OF TURNOVER,
+  NOT 50%.** Held-set fidelity (the share of (day, name) cells whose IN/OUT state matches the undamped
+  book) is published at every rung. On U56 it stays at **100.0000% out to d = 0.0075**, and over that
+  whole range turnover falls only **3.51 -> 3.07 turns/yr (-12.3%)**. The deep cuts all sit where fidelity
+  has broken: U56 d = 0.0175 is **-47.3% turnover at 82.43% fidelity**; B136 d = 0.0175 is **-76.9% at
+  51.74%**. A book that matches the candidate on barely half its holding decisions is a DIFFERENT BOOK,
+  not a cheaper one. **"Lowers turnover without changing the held set" is not available at any width that
+  matters.**
+
+  **THE MECHANISM, AND WHY ITS SIGN FLIPS BETWEEN PANELS.** The band's bite is set entirely by d against
+  the per-name target `min(gross / N_in, cap)`. On U56 that target is pinned at the 2.0% cap, so no d on
+  this ladder can block an ENTRY and only drifted-down EXITS are blocked: mean names held IN **RISES
+  37.56 -> 43.43** and max per-name weight rises 2.74% -> 4.12%. On B136 the target is `0.75 / ~92 =
+  0.82%`, below most of the ladder, so ENTRIES are blocked instead: names IN **FALLS 92.29 -> 54.69**.
+  Same dial, opposite book, decided by panel width. That alone disqualifies it as a rule constant.
+
+  **THE DECISIVE ARITHMETIC: THE GAIN IS NOT A COST REBATE.** U56 / CAP2 / gross 0.75, measured at the
+  ZERO-cost rung where no rebate can exist: d = 0.0075 earns **+0.80 pp of CAGR** while the entire
+  turnover saving is worth **+0.042 pp at 10 bps** — a factor of **19**. At d = 0.0100 it is +1.03 pp
+  against +0.040 pp, a factor of **26**. The drift band is a RETURN device (it lets winners run between
+  rebalances) wearing a cost device's clothes, so it **cannot** perform the separation it was filed to
+  perform. That is this run's by-product KILL.
+
+  **IT DOES RESCUE THE 50 bps RUNG — BY THE WRONG LEG.** U56 / CAP2 / 0.75 at 50 bps fails 4b at d = 0 on
+  **`L_CAGR` alone** (10.07% against SPY's floor of 10.66%) and passes from d = 0.0075 up. The rescue is
+  the drift-return, not the 0.04 pp rebate, and it is paid for in drawdown: MaxDD **-14.81% -> -15.95%**
+  (d = 0.0100) -> **-19.11%** (d = 0.0175) and full-sample Sharpe **1.2687 -> 1.2449 -> 1.2242**. Buying a
+  CAGR leg with drawdown is not what the idea asked for.
+
+  **BOTH KEEP PATHS OVER ALL 256 ROWS: 4b 126, 4a 0.** By book CAP2 80/128, CAND 46/128; by panel U56
+  83/128, B136 43/128; by gross 0.75 98/128, 1.00 28/128; by rung 36/35/33/22 at 0/10/25/50 bps. **4a is
+  0 of 256**, as in every prior run on this family. The dominant binding leg on 4b failures is `L_DD`
+  (28-31 at every rung), `L_CAGR` and `L_H2` joining only at 50 bps (11 and 13).
+
+  **RULE 8 (d, gross fitted on <= 2016-12-31, 2017-2026 read ONCE): 20 OF 32 PICKS LAND ON THE LADDER'S
+  TOP RUNG d = 0.0175 — THE ONE WHERE FIDELITY IS BROKEN.** Distribution **d0.0175 20, d0.0100 7,
+  d0 5**; the IS choosers systematically walk to the endpoint. **32 of 32 picks beat SPY's OOS Sharpe**
+  (U56 SPY OOS 15.45% / 0.8831; B136 15.26% / 0.8737) and all beat the live book's OOS CAGR, but only
+  **15 of 32 beat the UNDAMPED book's own OOS Sharpe** and only **20 of 32** carry a full-sample 4b pass.
+  On U56 / CAP2 the choosers take d = 0 at 3 of 8 and beat the undamped book at just **2 of 8** — i.e. on
+  the panel the candidate actually lives on, an honest chooser buys the drift band and is not paid for it.
+
+  **THE ONE CELL WORTH NAMING, AND WHY IT IS NOT A CANDIDATE.** B136 / CAP2 / 0.75 / d = 0.0175 reads
+  **12.44% / 1.2601 / -17.49%, halves 1.49 / 1.12, OOS 13.09% / 1.2033 at 1.08 turns/yr** — 4b PASS at
+  every one of the four rungs (the undamped book fails at 50 bps) and turnover BELOW the live book's 1.77.
+  It is not filed as a candidate: at **51.74% held-set fidelity** it is a different strategy, its device is
+  an entry floor in disguise (d = 0.0175 > `0.75 / 92`), which is idea 2326's already-priced minimum-weight
+  family rather than a turnover device, and the SAME d on U56 moves the book the opposite way and LOWERS
+  Sharpe. A dial whose sign is a function of panel width is not a rule.
+
+  **SCOPE.** SMALL is not priced and the reason is stated rather than buried: ideas 2318 / 2322 / 2326 /
+  2343 each published SMALL's 4b pass count at 0, so there is no pass there for a turnover device to keep.
+  Survivorship (rule 9) stands unchanged: U56 and B136 are current-constituent lists read from 2008, so
+  every CAGR here is contaminated in the books' favour. Idea 2332's `MMC` all-NaN defect is re-published,
+  not re-discovered: B136 remains a 135-priced-name panel.
+
+  **WHAT CHANGES: NOTHING.** RULES v2 stands. The standing candidate's 3.51 turns/yr is NOT reducible by
+  this device, and the record should stop treating "high turnover" as a fixable property of this family —
+  on U56 the turnover is the band's entry/exit traffic at a 2% cap, and nothing that leaves the held set
+  intact can remove it.
+
 ## 2026-09-23 — idea 2332 (lane cloud): IS THE STANDING 4b CANDIDATE'S PASS A SINGLE-NAME DRAW? THE LEAVE-ONE-OUT DELETION CENSUS. **ANSWERED = IT IS A BOOK, NOT A DRAW. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 2300's standing candidate (`RG100 + phi = 1.00`) published exactly one
