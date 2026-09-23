@@ -1,0 +1,244 @@
+=== idea 2395 — DOES A VOLATILITY-SCALED COST MODEL MOVE WHERE THE CAPPED FAMILY DIES? ===
+    2026-09-23  lane cloud run 44   band 0.03  MA 200d  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  cap 2%  sweep SHY (phi=1.00)  vol lookback 20d
+    DIAL 1 exponent p [0.0, 0.5, 1.0, 1.5]   DIAL 2 gross [0.75, 1.0]
+    conventions ['RAW', 'CLIP5', 'CAUSAL']; HEADLINE = RAW.  books ['CAP2', 'CAND'] + live RULES v2 as the 4a baseline,
+    the baseline charged under THE SAME cost model as the book it is judged against.
+    k is calibrated so the TOTAL BILL EQUALS THE FLAT RUNG'S TOTAL BILL: same money, different distribution.
+    SMALL NOT PRICED: 0 of 128 4b cells in idea 2383 (L_DD, L_H2, L_OOS fail everywhere) and 0 of 40-120
+    in ideas 2318 / 2322 / 2326 / 2343 — no pass there for a cost reshuffle to keep or break.
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; L_CAGR is the contaminated
+    leg.  The flat-vs-scaled contrast is same-tape, same-weights, same-total-bill and first-order immune.
+    GATE PASS  G7 exactly two tuned parameters: p, gross (target 2)
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+load_prices: network unavailable (ModuleNotFoundError); using prices.csv
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 the gate IS baseline.band_state (live clause 2), unmodified: 0 differing cells; mean names IN 36 (target 0)
+    GATE PASS  G1 per-column replica == engine.backtest (live RULES v2, flat 10 bps, sweep off): max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G3 p = 0 IS the flat rung == an independent CAP2 construction through engine.backtest: max|d| 1.388e-17 (target < 1e-12)
+    GATE PASS  G8 rel_i,t is causal (panel truncated at 2021-02-05): max|drel| 0.000e+00 (target < 1e-12)
+
+--- panel U56 (56 columns)  SPY 15.23% / 0.8897 / -33.72%
+    4b bars here: DD cap -20.23%   CAGR floor 10.66%   SPY halves 0.9566/0.8353   SPY OOS Sharpe 0.8831
+    ... U56 done (7s)
+
+--- panel B136 (136 columns)  SPY 15.12% / 0.8844 / -33.72%
+    4b bars here: DD cap -20.23%   CAGR floor 10.59%   SPY halves 0.9571/0.8249   SPY OOS Sharpe 0.8737
+    ... B136 done (14s)
+    GATE PASS  G4 no leverage anywhere (realised row sums): max gross 1.000000000 (target <= 1+1e-12)
+    GATE PASS  G9 sweep instrument priced on every held row: SHY non-null on both panels: True (target True)
+    GATE PASS  G5 the calibration pins the TOTAL bill to the flat rung's total (RAW, CLIP5): max|d total bill| 2.776e-17 over 64 (panel, book, conv, p, gross) cells (target < 1e-12)
+    PUB   G5b CAUSAL total bill / flat total bill (expanding k, NOT pinned): min 1.0000  max 1.3248
+    GATE PASS  G6 the p dial changes NO weight, only the charge (at 0 bps every p must coincide): distinct Sharpes per (panel, book, gross) at 0 bps: 1 (target 1)
+    GATE PASS  G6b the p dial BITES on the DISTRIBUTION of the bill (SHY's share of it must move): SHY share of turnover 10.8% vs SHY share of the scaled bill at p=1.0 0.6% (target materially different)
+    GATE PASS  G10 reproduces the committed CAP2 (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318) AND CAND (12.59%/1.1934/-17.39%, OOS 13.85%/1.2397) U56 headlines: CAP2 11.62%/1.2687/-14.81% OOS 12.77%/1.3318; CAND 12.59%/1.1934/-17.39% OOS 13.85%/1.2397 -> max|d| 4.98e-05 (target < 1e-3)
+
+=== A. THE FULL LADDER, convention RAW, gross 0.75 — EVERY GRID POINT ===
+  panel book  p   bps |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh | 4a 4b | H1/H2/OOS/DD/CAGR
+  U56   CAP2 0.0   0.0 | 12.01%  1.3079  -14.77% |  1.34   1.28 |  13.17%  1.3693 | .  Y  | 11111   <= FLAT (anchor)
+  U56   CAP2 0.0  10.0 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 | .  Y  | 11111   <= FLAT (anchor)
+  U56   CAP2 0.0  25.0 | 11.04%  1.2098  -14.88% |  1.24   1.19 |  12.18%  1.2755 | .  Y  | 11111   <= FLAT (anchor)
+  U56   CAP2 0.0  50.0 | 10.07%  1.1113  -14.99% |  1.14   1.09 |  11.21%  1.1813 | .  .  | 11110   <= FLAT (anchor)
+  U56   CAP2 0.5   0.0 | 12.01%  1.3079  -14.77% |  1.34   1.28 |  13.17%  1.3693 | .  Y  | 11111
+  U56   CAP2 0.5  10.0 | 11.62%  1.2687  -14.81% |  1.30   1.24 |  12.76%  1.3307 | .  Y  | 11111
+  U56   CAP2 0.5  25.0 | 11.04%  1.2099  -14.88% |  1.24   1.19 |  12.15%  1.2726 | .  Y  | 11111
+  U56   CAP2 0.5  50.0 | 10.06%  1.1116  -15.00% |  1.15   1.09 |  11.14%  1.1756 | .  .  | 11110
+  U56   CAP2 1.0   0.0 | 12.01%  1.3079  -14.77% |  1.34   1.28 |  13.17%  1.3693 | .  Y  | 11111
+  U56   CAP2 1.0  10.0 | 11.62%  1.2687  -14.81% |  1.30   1.24 |  12.76%  1.3304 | .  Y  | 11111
+  U56   CAP2 1.0  25.0 | 11.03%  1.2099  -14.87% |  1.25   1.19 |  12.14%  1.2718 | .  Y  | 11111
+  U56   CAP2 1.0  50.0 | 10.06%  1.1116  -14.98% |  1.15   1.09 |  11.12%  1.1740 | .  .  | 11110
+  U56   CAP2 1.5   0.0 | 12.01%  1.3079  -14.77% |  1.34   1.28 |  13.17%  1.3693 | .  Y  | 11111
+  U56   CAP2 1.5  10.0 | 11.62%  1.2687  -14.80% |  1.30   1.24 |  12.75%  1.3302 | .  Y  | 11111
+  U56   CAP2 1.5  25.0 | 11.03%  1.2098  -14.86% |  1.24   1.19 |  12.14%  1.2713 | .  Y  | 11111
+  U56   CAP2 1.5  50.0 | 10.06%  1.1115  -14.96% |  1.15   1.09 |  11.11%  1.1729 | .  .  | 11110
+  U56   CAND 0.0   0.0 | 13.09%  1.2361  -17.27% |  1.28   1.21 |  14.35%  1.2803 | .  Y  | 11111   <= FLAT (anchor)
+  U56   CAND 0.0  10.0 | 12.59%  1.1934  -17.39% |  1.24   1.17 |  13.85%  1.2397 | .  Y  | 11111   <= FLAT (anchor)
+  U56   CAND 0.0  25.0 | 11.85%  1.1292  -17.57% |  1.17   1.10 |  13.10%  1.1787 | .  Y  | 11111   <= FLAT (anchor)
+  U56   CAND 0.0  50.0 | 10.63%  1.0220  -17.86% |  1.06   1.00 |  11.87%  1.0768 | .  .  | 11110   <= FLAT (anchor)
+  U56   CAND 0.5   0.0 | 13.09%  1.2361  -17.27% |  1.28   1.21 |  14.35%  1.2803 | .  Y  | 11111
+  U56   CAND 0.5  10.0 | 12.58%  1.1925  -17.38% |  1.24   1.17 |  13.83%  1.2383 | .  Y  | 11111
+  U56   CAND 0.5  25.0 | 11.83%  1.1269  -17.55% |  1.17   1.10 |  13.06%  1.1752 | .  Y  | 11111
+  U56   CAND 0.5  50.0 | 10.58%  1.0175  -17.82% |  1.06   0.99 |  11.78%  1.0698 | .  .  | 11110
+  U56   CAND 1.0   0.0 | 13.09%  1.2361  -17.27% |  1.28   1.21 |  14.35%  1.2803 | .  Y  | 11111
+  U56   CAND 1.0  10.0 | 12.58%  1.1921  -17.37% |  1.24   1.17 |  13.82%  1.2375 | .  Y  | 11111
+  U56   CAND 1.0  25.0 | 11.82%  1.1261  -17.52% |  1.17   1.10 |  13.03%  1.1731 | .  Y  | 11111
+  U56   CAND 1.0  50.0 | 10.56%  1.0158  -17.76% |  1.06   0.99 |  11.73%  1.0656 | .  .  | 11110
+  U56   CAND 1.5   0.0 | 13.09%  1.2361  -17.27% |  1.28   1.21 |  14.35%  1.2803 | .  Y  | 11111
+  U56   CAND 1.5  10.0 | 12.58%  1.1920  -17.36% |  1.24   1.16 |  13.82%  1.2369 | .  Y  | 11111
+  U56   CAND 1.5  25.0 | 11.81%  1.1258  -17.48% |  1.17   1.10 |  13.01%  1.1716 | .  Y  | 11111
+  U56   CAND 1.5  50.0 | 10.55%  1.0153  -17.69% |  1.06   0.99 |  11.69%  1.0627 | .  .  | 11110
+  B136  CAP2 0.0   0.0 | 12.35%  1.1629  -16.61% |  1.30   1.04 |  12.19%  1.1392 | .  Y  | 11111   <= FLAT (anchor)
+  B136  CAP2 0.0  10.0 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 | .  Y  | 11111   <= FLAT (anchor)
+  B136  CAP2 0.0  25.0 | 11.04%  1.0505  -17.93% |  1.20   0.92 |  10.85%  1.0250 | .  Y  | 11111   <= FLAT (anchor)
+  B136  CAP2 0.0  50.0 |  9.75%  0.9379  -19.31% |  1.09   0.80 |   9.53%  0.9106 | .  .  | 10110   <= FLAT (anchor)
+  B136  CAP2 0.5   0.0 | 12.35%  1.1629  -16.61% |  1.30   1.04 |  12.19%  1.1392 | .  Y  | 11111
+  B136  CAP2 0.5  10.0 | 11.82%  1.1178  -17.05% |  1.26   0.99 |  11.65%  1.0936 | .  Y  | 11111
+  B136  CAP2 0.5  25.0 | 11.03%  1.0501  -17.83% |  1.19   0.92 |  10.85%  1.0251 | .  Y  | 11111
+  B136  CAP2 0.5  50.0 |  9.73%  0.9370  -19.11% |  1.08   0.80 |   9.52%  0.9107 | .  .  | 10110
+  B136  CAP2 1.0   0.0 | 12.35%  1.1629  -16.61% |  1.30   1.04 |  12.19%  1.1392 | .  Y  | 11111
+  B136  CAP2 1.0  10.0 | 11.82%  1.1177  -17.02% |  1.26   0.99 |  11.65%  1.0937 | .  Y  | 11111
+  B136  CAP2 1.0  25.0 | 11.03%  1.0500  -17.75% |  1.19   0.92 |  10.85%  1.0253 | .  Y  | 11111
+  B136  CAP2 1.0  50.0 |  9.73%  0.9368  -18.95% |  1.08   0.81 |   9.53%  0.9112 | .  .  | 10110
+  B136  CAP2 1.5   0.0 | 12.35%  1.1629  -16.61% |  1.30   1.04 |  12.19%  1.1392 | .  Y  | 11111
+  B136  CAP2 1.5  10.0 | 11.82%  1.1177  -16.99% |  1.26   0.99 |  11.65%  1.0940 | .  Y  | 11111
+  B136  CAP2 1.5  25.0 | 11.03%  1.0499  -17.68% |  1.19   0.92 |  10.86%  1.0260 | .  Y  | 11111
+  B136  CAP2 1.5  50.0 |  9.73%  0.9368  -18.80% |  1.08   0.81 |   9.54%  0.9126 | .  .  | 10110
+  B136  CAND 0.0   0.0 | 12.54%  1.1384  -17.97% |  1.24   1.05 |  12.85%  1.1446 | .  Y  | 11111   <= FLAT (anchor)
+  B136  CAND 0.0  10.0 | 11.99%  1.0930  -18.11% |  1.20   1.00 |  12.29%  1.0994 | .  Y  | 11111   <= FLAT (anchor)
+  B136  CAND 0.0  25.0 | 11.17%  1.0248  -18.33% |  1.13   0.93 |  11.45%  1.0316 | .  Y  | 11111   <= FLAT (anchor)
+  B136  CAND 0.0  50.0 |  9.81%  0.9109  -19.32% |  1.02   0.82 |  10.08%  0.9184 | .  .  | 10110   <= FLAT (anchor)
+  B136  CAND 0.5   0.0 | 12.54%  1.1384  -17.97% |  1.24   1.05 |  12.85%  1.1446 | .  Y  | 11111
+  B136  CAND 0.5  10.0 | 11.98%  1.0922  -18.11% |  1.20   1.00 |  12.28%  1.0984 | .  Y  | 11111
+  B136  CAND 0.5  25.0 | 11.14%  1.0228  -18.32% |  1.13   0.93 |  11.42%  1.0290 | .  Y  | 11111
+  B136  CAND 0.5  50.0 |  9.76%  0.9069  -19.31% |  1.01   0.81 |  10.01%  0.9133 | .  .  | 10110
+  B136  CAND 1.0   0.0 | 12.54%  1.1384  -17.97% |  1.24   1.05 |  12.85%  1.1446 | .  Y  | 11111
+  B136  CAND 1.0  10.0 | 11.97%  1.0918  -18.10% |  1.20   1.00 |  12.27%  1.0980 | .  Y  | 11111
+  B136  CAND 1.0  25.0 | 11.13%  1.0219  -18.29% |  1.13   0.93 |  11.41%  1.0281 | .  Y  | 11111
+  B136  CAND 1.0  50.0 |  9.74%  0.9051  -19.21% |  1.01   0.81 |   9.99%  0.9115 | .  .  | 10110
+  B136  CAND 1.5   0.0 | 12.54%  1.1384  -17.97% |  1.24   1.05 |  12.85%  1.1446 | .  Y  | 11111
+  B136  CAND 1.5  10.0 | 11.97%  1.0916  -18.08% |  1.19   1.00 |  12.27%  1.0981 | .  Y  | 11111
+  B136  CAND 1.5  25.0 | 11.12%  1.0213  -18.25% |  1.12   0.93 |  11.41%  1.0283 | .  Y  | 11111
+  B136  CAND 1.5  50.0 |  9.72%  0.9040  -19.07% |  1.01   0.81 |   9.99%  0.9119 | .  .  | 10110
+
+=== B. THE WHOLE QUESTION: DOES THE 4b BOUNDARY MOVE, AND IN WHICH DIRECTION? ===
+    (for each (panel, book, gross, conv): the HIGHEST rung at which 4b still passes, per p.
+     'dies at 50 bps' is a claim about the FLAT column; if the other columns agree, the record's
+     cost conclusions are robust to the MODEL and not only to the LEVEL.)
+  panel book  g   conv   | p=0.0  p=0.5  p=1.0  p=1.5   <- highest 4b-passing rung (bps), 'none' = no pass
+  U56   CAP2 0.75 RAW    |  25.0   25.0   25.0   25.0    (unmoved)
+  U56   CAP2 0.75 CLIP5  |  25.0   25.0   25.0   25.0    (unmoved)
+  U56   CAP2 0.75 CAUSAL |  25.0   25.0   25.0   25.0    (unmoved)
+  U56   CAP2 1.00 RAW    |  50.0   50.0   50.0   50.0    (unmoved)
+  U56   CAP2 1.00 CLIP5  |  50.0   50.0   50.0   50.0    (unmoved)
+  U56   CAP2 1.00 CAUSAL |  50.0   50.0   50.0   25.0    <-- MOVED
+  U56   CAND 0.75 RAW    |  25.0   25.0   25.0   25.0    (unmoved)
+  U56   CAND 0.75 CLIP5  |  25.0   25.0   25.0   25.0    (unmoved)
+  U56   CAND 0.75 CAUSAL |  25.0   25.0   25.0   25.0    (unmoved)
+  U56   CAND 1.00 RAW    | none   none   none   none     (unmoved)
+  U56   CAND 1.00 CLIP5  | none   none   none   none     (unmoved)
+  U56   CAND 1.00 CAUSAL | none   none   none   none     (unmoved)
+  B136  CAP2 0.75 RAW    |  25.0   25.0   25.0   25.0    (unmoved)
+  B136  CAP2 0.75 CLIP5  |  25.0   25.0   25.0   25.0    (unmoved)
+  B136  CAP2 0.75 CAUSAL |  25.0   25.0   25.0   25.0    (unmoved)
+  B136  CAP2 1.00 RAW    | none   none   none   none     (unmoved)
+  B136  CAP2 1.00 CLIP5  | none   none   none   none     (unmoved)
+  B136  CAP2 1.00 CAUSAL | none   none   none   none     (unmoved)
+  B136  CAND 0.75 RAW    |  25.0   25.0   25.0   25.0    (unmoved)
+  B136  CAND 0.75 CLIP5  |  25.0   25.0   25.0   25.0    (unmoved)
+  B136  CAND 0.75 CAUSAL |  25.0   25.0   25.0   25.0    (unmoved)
+  B136  CAND 1.00 RAW    | none   none   none   none     (unmoved)
+  B136  CAND 1.00 CLIP5  | none   none   none   none     (unmoved)
+  B136  CAND 1.00 CAUSAL | none   none   none   none     (unmoved)
+
+  BOUNDARY MOVED in 1 of 24 (panel, book, gross, convention) cells.
+
+=== C. WHERE THE SAME MONEY GOES (10 bps, gross 0.75, convention RAW) ===
+  panel book  p  |      k    | SHY share of TURNOVER | SHY share of the BILL | total bill (ret units) | turn/yr
+  U56   CAP2 0.0 |    1.0000 |                22.87% |                22.87% |                 0.0619 |    3.51
+  U56   CAP2 0.5 |    1.0911 |                22.87% |                 5.66% |                 0.0620 |    3.51
+  U56   CAP2 1.0 |    0.9369 |                22.87% |                 1.20% |                 0.0621 |    3.51
+  U56   CAP2 1.5 |    0.7090 |                22.87% |                 0.25% |                 0.0621 |    3.51
+  U56   CAND 0.0 |    1.0000 |                 3.52% |                 3.52% |                 0.0776 |    4.39
+  U56   CAND 0.5 |    0.9797 |                 3.52% |                 0.79% |                 0.0793 |    4.39
+  U56   CAND 1.0 |    0.8491 |                 3.52% |                 0.17% |                 0.0800 |    4.39
+  U56   CAND 1.5 |    0.6670 |                 3.52% |                 0.04% |                 0.0803 |    4.39
+  B136  CAP2 0.0 |    1.0000 |                 8.26% |                 8.26% |                 0.0825 |    4.68
+  B136  CAP2 0.5 |    1.0153 |                 8.26% |                 1.82% |                 0.0830 |    4.68
+  B136  CAP2 1.0 |    0.9192 |                 8.26% |                 0.38% |                 0.0831 |    4.68
+  B136  CAP2 1.5 |    0.7723 |                 8.26% |                 0.08% |                 0.0831 |    4.68
+  B136  CAND 0.0 |    1.0000 |                 2.91% |                 2.91% |                 0.0866 |    4.91
+  B136  CAND 0.5 |    0.9953 |                 2.91% |                 0.63% |                 0.0882 |    4.91
+  B136  CAND 1.0 |    0.9077 |                 2.91% |                 0.14% |                 0.0889 |    4.91
+  B136  CAND 1.5 |    0.7721 |                 2.91% |                 0.03% |                 0.0894 |    4.91
+
+=== D. THE COST OF THE CONVENTION, IN SHARPE AND CAGR (vs the p=0 FLAT anchor, same rung) ===
+  panel book  g   bps | p=0.5: dCAGR  dSharpe | p=1.0: dCAGR  dSharpe | p=1.5: dCAGR  dSharpe
+  U56   CAP2 0.75   0.0 |  +0.00%  +0.0000 |  +0.00%  +0.0000 |  +0.00%  +0.0000
+  U56   CAP2 0.75  10.0 |  -0.00%  +0.0000 |  -0.00%  +0.0000 |  -0.00%  +0.0000
+  U56   CAP2 0.75  25.0 |  -0.00%  +0.0001 |  -0.00%  +0.0001 |  -0.00%  +0.0001
+  U56   CAP2 0.75  50.0 |  -0.00%  +0.0002 |  -0.00%  +0.0002 |  -0.01%  +0.0002
+  U56   CAP2 1.00   0.0 |  +0.00%  +0.0000 |  +0.00%  +0.0000 |  +0.00%  +0.0000
+  U56   CAP2 1.00  10.0 |  -0.00%  -0.0000 |  -0.00%  -0.0000 |  -0.00%  -0.0000
+  U56   CAP2 1.00  25.0 |  -0.00%  -0.0000 |  -0.00%  -0.0000 |  -0.00%  -0.0001
+  U56   CAP2 1.00  50.0 |  -0.00%  -0.0000 |  -0.00%  -0.0000 |  -0.01%  -0.0001
+  U56   CAND 0.75   0.0 |  +0.00%  +0.0000 |  +0.00%  +0.0000 |  +0.00%  +0.0000
+  U56   CAND 0.75  10.0 |  -0.01%  -0.0009 |  -0.02%  -0.0012 |  -0.02%  -0.0014
+  U56   CAND 0.75  25.0 |  -0.03%  -0.0023 |  -0.04%  -0.0031 |  -0.04%  -0.0034
+  U56   CAND 0.75  50.0 |  -0.05%  -0.0045 |  -0.07%  -0.0062 |  -0.08%  -0.0068
+  U56   CAND 1.00   0.0 |  +0.00%  +0.0000 |  +0.00%  +0.0000 |  +0.00%  +0.0000
+  U56   CAND 1.00  10.0 |  -0.01%  -0.0009 |  -0.02%  -0.0012 |  -0.02%  -0.0013
+  U56   CAND 1.00  25.0 |  -0.04%  -0.0022 |  -0.05%  -0.0030 |  -0.06%  -0.0033
+  U56   CAND 1.00  50.0 |  -0.07%  -0.0044 |  -0.10%  -0.0060 |  -0.11%  -0.0065
+  B136  CAP2 0.75   0.0 |  +0.00%  +0.0000 |  +0.00%  +0.0000 |  +0.00%  +0.0000
+  B136  CAP2 0.75  10.0 |  -0.00%  -0.0002 |  -0.00%  -0.0002 |  -0.00%  -0.0002
+  B136  CAP2 0.75  25.0 |  -0.01%  -0.0004 |  -0.01%  -0.0005 |  -0.01%  -0.0006
+  B136  CAP2 0.75  50.0 |  -0.01%  -0.0009 |  -0.02%  -0.0011 |  -0.02%  -0.0011
+  B136  CAP2 1.00   0.0 |  +0.00%  +0.0000 |  +0.00%  +0.0000 |  +0.00%  +0.0000
+  B136  CAP2 1.00  10.0 |  -0.00%  -0.0001 |  -0.00%  -0.0001 |  -0.00%  -0.0001
+  B136  CAP2 1.00  25.0 |  -0.01%  -0.0002 |  -0.01%  -0.0003 |  -0.01%  -0.0003
+  B136  CAP2 1.00  50.0 |  -0.01%  -0.0004 |  -0.02%  -0.0005 |  -0.02%  -0.0006
+  B136  CAND 0.75   0.0 |  +0.00%  +0.0000 |  +0.00%  +0.0000 |  +0.00%  +0.0000
+  B136  CAND 0.75  10.0 |  -0.01%  -0.0008 |  -0.01%  -0.0012 |  -0.02%  -0.0014
+  B136  CAND 0.75  25.0 |  -0.02%  -0.0020 |  -0.04%  -0.0029 |  -0.04%  -0.0035
+  B136  CAND 0.75  50.0 |  -0.05%  -0.0040 |  -0.07%  -0.0058 |  -0.09%  -0.0069
+  B136  CAND 1.00   0.0 |  +0.00%  +0.0000 |  +0.00%  +0.0000 |  +0.00%  +0.0000
+  B136  CAND 1.00  10.0 |  -0.01%  -0.0008 |  -0.02%  -0.0012 |  -0.02%  -0.0014
+  B136  CAND 1.00  25.0 |  -0.04%  -0.0021 |  -0.05%  -0.0030 |  -0.06%  -0.0035
+  B136  CAND 1.00  50.0 |  -0.07%  -0.0041 |  -0.10%  -0.0059 |  -0.12%  -0.0070
+
+=== E. KEEP COUNTS OVER ALL 384 PUBLISHED ROWS (2 panels x 2 books x 3 conv x 4 p x 2 gross x 4 rungs) ===
+  4b passes: 191 of 384      4a passes: 0 of 384
+   p 0.0: 4b  48/96   4a   0/96   binding leg on 4b FAILs: L_H1 0  L_H2 12  L_OOS 0  L_DD 36  L_CAGR 12
+   p 0.5: 4b  48/96   4a   0/96   binding leg on 4b FAILs: L_H1 0  L_H2 12  L_OOS 0  L_DD 36  L_CAGR 12
+   p 1.0: 4b  48/96   4a   0/96   binding leg on 4b FAILs: L_H1 2  L_H2 12  L_OOS 0  L_DD 36  L_CAGR 12
+   p 1.5: 4b  47/96   4a   0/96   binding leg on 4b FAILs: L_H1 4  L_H2 12  L_OOS 0  L_DD 36  L_CAGR 13
+     0.0 bps: 4b  60/96   4a   0/96   by p: p0.0:15/24  p0.5:15/24  p1.0:15/24  p1.5:15/24
+    10.0 bps: 4b  60/96   4a   0/96   by p: p0.0:15/24  p0.5:15/24  p1.0:15/24  p1.5:15/24
+    25.0 bps: 4b  60/96   4a   0/96   by p: p0.0:15/24  p0.5:15/24  p1.0:15/24  p1.5:15/24
+    50.0 bps: 4b  11/96   4a   0/96   by p: p0.0:3/24  p0.5:3/24  p1.0:3/24  p1.5:2/24
+   convention RAW   : 4b  64/128   4a   0/128
+   convention CLIP5 : 4b  64/128   4a   0/128
+   convention CAUSAL: 4b  63/128   4a   0/128
+
+  JOINT BOTH-PANEL 4b (U56 AND B136 at the same book, conv, p, gross, rung):
+   joint 4b: 72 of 192 cells
+    p 0.0: CAP2 9/24  CAND 9/24
+    p 0.5: CAP2 9/24  CAND 9/24
+    p 1.0: CAP2 9/24  CAND 9/24
+    p 1.5: CAP2 9/24  CAND 9/24
+
+  4a PASSES (Sharpe > live RULES v2 in BOTH halves AND MaxDD no worse), every one: 0
+
+=== F. RULE 8 — the STRATEGY's dials (book, gross) chosen on <= 2016-12-31 ONLY, 2017-2026 read ONCE,
+    SEPARATELY UNDER EACH COST MODEL.  The question is whether the OOS verdict depends on the convention. ===
+  192 picks (2 panels x 3 conv x 4 p x 4 rungs x 2 choosers).
+   picks beating SPY's OOS Sharpe:           192 of 192
+   picks beating the live book's OOS Sharpe: 65 of 192
+   picks carrying a full-sample 4b pass:     144 of 192
+   pick distribution over book:  CAP2:154  CAND:38
+   pick distribution over gross: 0.75:192  1.00:0
+
+   DOES THE COST MODEL CHANGE WHAT RULE 8 PICKS, OR WHAT IT CONCLUDES?
+   panel conv   bps chooser     | p=0.0 pick  OOS Sh | p=0.5 pick  OOS Sh | p=1.0 pick  OOS Sh | p=1.5 pick  OOS Sh
+   U56   RAW      0.0 C_ISSHARPE  | CAP2/0.75 1.3693 | CAP2/0.75 1.3693 | CAP2/0.75 1.3693 | CAP2/0.75 1.3693
+   U56   RAW      0.0 C_ISCALMAR  | CAND/0.75 1.2803 | CAND/0.75 1.2803 | CAND/0.75 1.2803 | CAND/0.75 1.2803
+   U56   RAW     10.0 C_ISSHARPE  | CAP2/0.75 1.3318 | CAP2/0.75 1.3307 | CAP2/0.75 1.3304 | CAP2/0.75 1.3302
+   U56   RAW     10.0 C_ISCALMAR  | CAND/0.75 1.2397 | CAND/0.75 1.2383 | CAND/0.75 1.2375 | CAND/0.75 1.2369
+   U56   RAW     25.0 C_ISSHARPE  | CAP2/0.75 1.2755 | CAP2/0.75 1.2726 | CAP2/0.75 1.2718 | CAP2/0.75 1.2713
+   U56   RAW     25.0 C_ISCALMAR  | CAND/0.75 1.1787 | CAP2/0.75 1.2726 | CAP2/0.75 1.2718 | CAND/0.75 1.1716
+   U56   RAW     50.0 C_ISSHARPE  | CAP2/0.75 1.1813 | CAP2/0.75 1.1756 | CAP2/0.75 1.1740 | CAP2/0.75 1.1729
+   U56   RAW     50.0 C_ISCALMAR  | CAND/0.75 1.0768 | CAP2/0.75 1.1756 | CAP2/0.75 1.1740 | CAND/0.75 1.0627
+   B136  RAW      0.0 C_ISSHARPE  | CAP2/0.75 1.1392 | CAP2/0.75 1.1392 | CAP2/0.75 1.1392 | CAP2/0.75 1.1392
+   B136  RAW      0.0 C_ISCALMAR  | CAP2/0.75 1.1392 | CAP2/0.75 1.1392 | CAP2/0.75 1.1392 | CAP2/0.75 1.1392
+   B136  RAW     10.0 C_ISSHARPE  | CAP2/0.75 1.0936 | CAP2/0.75 1.0936 | CAP2/0.75 1.0937 | CAP2/0.75 1.0940
+   B136  RAW     10.0 C_ISCALMAR  | CAP2/0.75 1.0936 | CAP2/0.75 1.0936 | CAP2/0.75 1.0937 | CAP2/0.75 1.0940
+   B136  RAW     25.0 C_ISSHARPE  | CAP2/0.75 1.0250 | CAP2/0.75 1.0251 | CAP2/0.75 1.0253 | CAP2/0.75 1.0260
+   B136  RAW     25.0 C_ISCALMAR  | CAP2/0.75 1.0250 | CAP2/0.75 1.0251 | CAP2/0.75 1.0253 | CAP2/0.75 1.0260
+   B136  RAW     50.0 C_ISSHARPE  | CAP2/0.75 0.9106 | CAP2/0.75 0.9107 | CAP2/0.75 0.9112 | CAP2/0.75 0.9126
+   B136  RAW     50.0 C_ISCALMAR  | CAP2/0.75 0.9106 | CAP2/0.75 0.9107 | CAP2/0.75 0.9112 | CAP2/0.75 0.9126
+
+   RULE-8 PICK-OR-VERDICT FLIPS ACROSS p: 4 of 48 (panel, conv, rung, chooser) cells.
+
+=== GATES: 14 of 14 pass ===
+
+Done in 15s.  all gates pass: True
