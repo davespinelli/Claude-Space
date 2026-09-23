@@ -1,3 +1,54 @@
+## 2026-09-23 — idea 2550 (lane C, run 72): DOES THE GROSS-MATCHED EWBH BLEND THAT KILLED THE CAPPED CANDIDATE ITSELF PASS 4b? **ANSWERED = NO. KILL OF THE BLEND AS A FUNDABLE BOOK — 0 OF 128 ROWS PASS 4b-PROTO AGAINST SPY AND 0 OF 128 AGAINST EWBH, BINDING ON `L_DD` IN 128 OF 128. CONFIRM THAT THE STANDING CAPPED CANDIDATE IS THE ONLY ARM ON THIS SHELF CARRYING A 4b-PROTO PASS (38 OF 128). NO NEW CANDIDATE, NO RULES CHANGE.**
+
+- **THE HOLE THIS RUN CLOSED.** Three runs today used the same yardstick to kill the capped family:
+  2516 (SPY -> EWBH removes every committed 4b pass), 2532 (the candidate loses to a GROSS-MATCHED
+  EWBH BLEND of its own panel on CAGR 128 of 128) and 2528 (no attainable gross closes that gap).
+  **Not one of them ever scored the BLEND as a BOOK** — it lived only in `base_*` / `x_*` columns
+  and its own 4b verdict was never computed. This run puts it on the LEFT of the comparison.
+- **THE ANSWER IS UNANIMOUS AND IT IS THE LEG NOBODY ASKED ABOUT.** BLEND_BH passes 4b-PROTO in
+  **0 of 128** rows vs SPY; so do BLEND_RB (0), a constant IS-solved BLEND_CONST (0) and EWBH
+  itself (0). **`L_DD` is the first binding leg in 128 of 128 BLEND_BH fail rows and `L_CAGR` in
+  0.** 4b needs MaxDD >= 0.60 x SPY's -33.72% = **-20.23%**; BLEND_BH runs **-24.68% to -44.19%**,
+  best slack **-0.0445**, median -0.1259 (U56) / -0.0884 (B136) — never within 4.4 pp of the bar.
+  The 128-of-128 CAGR win 2532 published is real and is simply not enough: 4b is a conjunction.
+- **WHAT THAT CHANGES IN THE RECORD.** "The capped family is a de-grossing product" stands as a
+  description of the RULE but does NOT license "so hold the blend instead". At PROTOCOL's own bar
+  the blend is not capital-worthy, and the candidate's 4b-under-SPY pass is restored to what it
+  always was: the best of a bad shelf, not evidence of an edge. The instruction to the Sunday
+  review is "nothing here is fundable yet", not "the family is finished and the comparand wins".
+- **METHOD FINDING, PUBLISHED AND NOT SELECTED ON — THE RANKING INVERTS BETWEEN 4b's TWO BARS.**
+  4b-PROTO (rule 4b verbatim, 0.60 DD / 0.70 CAGR constants written for SPY): CAND **38** /
+  BLEND_BH 0 / BLEND_CONST 0 / BLEND_RB 0 / EWBH 0 of 128. 4b-STRICT (beat SPY outright, no
+  SPY-calibrated constant): BLEND_BH **76** / BLEND_CONST **72** / EWBH **64** / BLEND_RB 33 /
+  CAND **24** of 128. **Every 4b-PROTO pass in this record therefore rests on the 0.60 DD
+  constant, not on beating SPY.** Which bar the review reads decides which book it prefers.
+- **SECOND KILL — THE CANDIDATE'S GROSS PATH IS NOT THE BLEND'S ACTIVE INGREDIENT.** BLEND_CONST
+  (`gbar x EWBH_drifted + (1-gbar) x SHY`, gbar SOLVED on warm-up..2016-12-31 only, causal under
+  G10, zero extra tuned parameters) beats the path-following BLEND_BH on the rule-8 census —
+  beats live v2 OOS **10/32 vs 8/32**, beats EWBH OOS **30/32 vs 25/32** — at **0.40-0.59x/yr
+  turnover against BLEND_BH's 0.35-2.23x and the candidate's 3.00-4.91x**. Following the
+  candidate's exposure timing is worth less than a constant slice at the same mean level.
+- **RULE 8** ((cap, gross) fitted on warm-up..2016-12-31 ONLY by two pre-stated IS-only choosers,
+  2017-2026 read ONCE; 128 picks = 2 panels x 2 cadences x 4 rungs x 2 choosers x 4 arms):
+  **4b-OOS vs SPY CAND 20/32, BLEND_BH 0/32, BLEND_RB 0/32, BLEND_CONST 0/32; vs EWBH 0/32 on all
+  four.** All 128 picks beat SPY's OOS Sharpe. Median OOS — CAND 12.16% / 1.1448 / -17.91%,
+  BLEND_BH 19.05% / 1.1104 / -28.71%, BLEND_CONST 17.82% / 1.1180 / -28.42%, BLEND_RB 12.83% /
+  1.0783 / -23.96%. Benchmarks read ONCE: SPY OOS 15.45% / 0.8831, EWBH OOS 30.35% / 1.1217 (U56)
+  and 24.30% / 1.0855 (B136), live RULES v2 OOS 1.3085. The walk-forward reproduces the
+  full-sample split exactly — no arm's verdict depends on seeing the second half.
+- 1,280 published scorings (128 cells x 5 arms x 2 comparands) + 128 walk-forward picks,
+  **20 of 20 gates**, incl. G1 the candidate runner IS `engine.backtest` (max|d| 0.000e+00),
+  G3 reproducing the committed U56 CAP2 headline (11.6230% / 1.2687 / -14.8091% vs 11.62% /
+  1.2687 / -14.81%), G4 no leverage (max realised gross 1.000000000000), G5 gross-matching
+  (max|d| 3.174e-03), G8 EWBH trading exactly once at inception, G10 gbar IS-only and G11 exact
+  cost linearity (0.000e+00).
+- SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008. The blend arms hold
+  the WHOLE survivor panel all the time and are therefore MORE contaminated than the candidate, so
+  **this KILL is the conservative reading** — a blend pass would have been the flattered one.
+  Every SPY-relative column is biased upward for every arm and is kept for protocol continuity.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
+  unchanged. No new KEEP candidate.
+
 ## 2026-09-23 — idea 2510 (lane B, run 71): DOES THE CAPPED CANDIDATE'S 4b PASS SURVIVE A ROLLING EVALUATION START? **ANSWERED = YES, IT SURVIVES — AND THE PREMISE BEHIND THE QUESTION IS FALSE. CONFIRM of the standing candidate's 4b-under-SPY pass on a new axis (14 of 16 cells give the IDENTICAL verdict at all five starts, 9 of 10 committed passes survive every one), plus a KILL of the CRASH-FED reading of 4b's level legs: the binding drawdown is COVID-2020, not 2008-09, so `L_DD` is EXACTLY start-invariant.**
 
   **WHAT WAS ASKED.** Every scored path in this record begins at row 260 of a 2008-start panel
